@@ -1,36 +1,25 @@
 package school.magiccodex.paper;
-
 import com.ticxo.modelengine.api.ModelEngineAPI;
+import com.ticxo.modelengine.api.model.ActiveModel;
 import org.bukkit.entity.LivingEntity;
 
-/** Custom creatures use a dedicated textured model, never a single-color tint. */
+/** Dedicated textured models; eligibility is checked by ShinyBridge using registered Mythic identity. */
 final class CustomShinyModels {
-    static void apply(LivingEntity entity,boolean shiny){
-        if(!entity.getScoreboardTags().contains("chacademia_custom"))return;
-        var modeled=ModelEngineAPI.getModeledEntity(entity.getUniqueId());if(modeled==null)return;
-        for(var entry:java.util.List.copyOf(modeled.getModels().entrySet())){
-            String old=entry.getKey();
-            String wanted=targetModelId(old,shiny);if(wanted==null||wanted.equals(old))continue;
-            var replacement=ModelEngineAPI.createActiveModel(wanted);
-            if(replacement==null)throw new IllegalStateException("Missing shiny model: "+wanted);
-            replacement.setScale(entry.getValue().getScale().x());
-            modeled.removeModel(old);
-            try{modeled.addModel(replacement,true);entry.getValue().destroy();}
-            catch(RuntimeException error){replacement.destroy();modeled.addModel(entry.getValue(),true);throw error;}
-        }
-    }
-    static String targetModelId(String old,boolean shiny){
-        String claudeNormal=switch(old){
-            case "doxy","doxy_shiny" -> "doxy";
-            case "fenrir_mother","fenrir_mother_shiny" -> "fenrir_mother";
-            case "fenrir_pup","fenrir_pup_shiny" -> "fenrir_pup";
-            case "goblin","goblin_shiny" -> "goblin";
-            default -> null;
-        };
-        if(claudeNormal!=null)return claudeNormal+(shiny?"_shiny":"");
-        if(!old.startsWith("ca_"))return null;
-        String normal=old.endsWith("_s")?old.substring(0,old.length()-2):old;
-        return normal+(shiny?"_s":"");
-    }
-    private CustomShinyModels(){}
+ static void apply(LivingEntity entity,boolean shiny){
+  var modeled=ModelEngineAPI.getModeledEntity(entity.getUniqueId());
+  if(modeled==null){
+   if(entity.getScoreboardTags().contains("chacademia_custom"))throw new IllegalStateException("Custom model is not attached yet");
+   return; // Registered vanilla-looking Mythic creatures legitimately have no ModelEngine model.
+  }
+  ShinyModelSwap.apply(new ShinyModelSwap.Models<ActiveModel>(){
+   public java.util.Map<String,ActiveModel> current(){return modeled.getModels();}
+   public ActiveModel create(String id){return ModelEngineAPI.createActiveModel(id);}
+   public void scale(ActiveModel replacement,ActiveModel original){replacement.setScale(original.getScale().x());}
+   public void remove(String id){modeled.removeModel(id);}
+   public void add(ActiveModel model){modeled.addModel(model,true);}
+   public void destroy(ActiveModel model){model.destroy();}
+  },shiny);
+ }
+ static String targetModelId(String id,boolean shiny){return ShinyModelSwap.target(id,shiny);}
+ private CustomShinyModels(){}
 }

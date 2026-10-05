@@ -26,8 +26,12 @@ final class ShinyBridge implements Listener,CommandExecutor,AutoCloseable {
  private void reload(){config=YamlConfiguration.loadConfiguration(new java.io.File(plugin.getDataFolder(),"shiny.yml"));}
  boolean isShiny(LivingEntity e){return e.getPersistentDataContainer().getOrDefault(key,PersistentDataType.BYTE,(byte)0)==1||e.getScoreboardTags().contains("chacademia_shiny");}
  private void appearance(LivingEntity e,boolean shiny){
-  if(e.getScoreboardTags().contains("chacademia_custom")&&Bukkit.getPluginManager().isPluginEnabled("ModelEngine"))CustomShinyModels.apply(e,shiny);
-  if(e.getCustomName()!=null&&e.getScoreboardTags().contains("chacademia_custom"))e.setCustomName((shiny?"§e":"§f")+ChatColor.stripColor(e.getCustomName()));
+  boolean custom=ShinyModelSwap.customAppearance(e.getScoreboardTags().contains("chacademia_custom"),taming.profileId(e)!=null&&taming.configuredMythic(e));
+  if(custom){
+   if(Bukkit.getPluginManager().isPluginEnabled("ModelEngine"))CustomShinyModels.apply(e,shiny);
+   else if(e.getScoreboardTags().contains("chacademia_custom"))throw new IllegalStateException("ModelEngine is unavailable");
+   if(e.getCustomName()!=null)e.setCustomName((shiny?"§e":"§f")+ChatColor.stripColor(e.getCustomName()));
+  }
  }
  private void remember(LivingEntity e){if(isShiny(e)){e.getPersistentDataContainer().set(key,PersistentDataType.BYTE,(byte)1);loaded.put(e.getUniqueId(),e);try{appearance(e,true);}catch(RuntimeException|LinkageError ex){plugin.getLogger().warning("이로치 모델 연결: "+ex.getMessage());}}}
  void mark(LivingEntity e,boolean shiny){appearance(e,shiny);e.getPersistentDataContainer().set(key,PersistentDataType.BYTE,(byte)(shiny?1:0));if(shiny){e.addScoreboardTag("chacademia_shiny");loaded.put(e.getUniqueId(),e);}else{e.removeScoreboardTag("chacademia_shiny");loaded.remove(e.getUniqueId());}for(var p:e.getTrackedBy())send(p,e,shiny);}

@@ -45,14 +45,14 @@ Set-Location 'C:\Chacademi\staging\shop-ui-refine-20261005-task9\source'
 
 | 모듈 | 테스트 | 실패/오류/건너뜀 |
 | --- | ---: | --- |
-| MagicCodex Bridge | 184 | 0 / 0 / 0 |
+| MagicCodex Bridge | 192 | 0 / 0 / 0 |
 | ChacaNPC + protocol | 12 | 0 / 0 / 0 |
 | Fabric UI | 185 | 0 / 0 / 0 |
-| 합계 | 381 | 0 / 0 / 0 |
+| 합계 | 389 | 0 / 0 / 0 |
 
 Bridge에는 자동완성 12개와 full preview/완료 영수증 프로토콜 4개 테스트가 포함된다. Fabric에는 다음 tick 예약/취소/서버 이동, 늦은 응답·중복 응답·타임아웃, 선택지/직접 입력 기록, 완료음 판정 9개 회귀 테스트가 추가됐다. 메뉴 이름을 `우편함`으로 통일하면서 기존 메뉴 테스트의 기대 문자열을 갱신했으며 배율/hitbox assertions는 유지했다.
 
-실제 최종 JAR에서 기존 client 자산 **895개(기존 893개 + 승인 PNG 2개)** 및 보호 Bridge 클래스 **48개**가 이전 통합 산출물과 byte-identical함을 확인했다. 9개 자산 메타데이터는 Git clone에서 줄바꿈만 달랐으므로 내용 동일성을 먼저 확인하고 원래 JAR 바이트로 복원했다. 펫/이로치/장비/닉네임 서버/대화 facade/VFX/ChacaNPC source 보존도 확인했다.
+실제 최종 JAR에서 기존 client 자산 **895개(기존 893개 + 승인 PNG 2개)** 및 보호 Bridge 클래스 **47개** (승인된 `CustomShinyModels` 변경 제외)가 이전 통합 산출물과 byte-identical함을 확인했다. 9개 자산 메타데이터는 Git clone에서 줄바꿈만 달랐으므로 내용 동일성을 먼저 확인하고 원래 JAR 바이트로 복원했다. 펫/장비/닉네임 서버/대화 facade/VFX/ChacaNPC source 보존도 확인했다. 이로치는 아래 승인된 후속 수정만 반영했다.
 
 ## 최종 산출물
 
@@ -60,12 +60,24 @@ Bridge에는 자동완성 12개와 full preview/완료 영수증 프로토콜 4�
 
 | 파일 | SHA256 |
 | --- | --- |
-| magic-codex-bridge-0.30.0-catalog.alpha.1.jar | 7CE121712C7C469C7CB134934646CA596FC2F65E4D9C5FAE16AE13E68ED12A27 |
+| magic-codex-bridge-0.30.0-catalog.alpha.1.jar | DA81A97FF5687DA506F3B2D42683BD32922A7083497DDF23B7E1A478171B84CF |
 | magic-codex-ui-0.39.0-catalog.alpha.2+mc1.21.4.jar | 68B1093EE8A3C266EE06CEAE2AA5143E72398A600EEA19AF0DD3BA42B73E84A6 |
 | chaca-npc-0.2.0.jar | 1C83007BE562F8591C26D65004B85F22A5253FAD992A6F5FE91416FE718CE66A |
 | Citizens-2.0.37-b3725.jar | 90E2C3C0948F9B54D3196B52C36116651E9512D3656EB4B1B9F110848C3FECA2 |
 
 ChacaNPC/Citizens는 기존 최종 exact-build 파일을 그대로 보존했다. 이번 ChacaNPC 소스 빌드/테스트도 통과했으나 제공받은 최종 파일을 다시 교체하지 않았다. 상세 manifest는 staging의 `FINAL-VERIFICATION.json`이다.
+
+## MythicMobs 등록 몹 이로치 지정·해제 후속 수정
+
+`c76fbcee4bdcb4de5e7fa0ec322aad938762a65c`의 UI 통합본에서 이어서 수정했다. 등록된 MythicMobs ID가 교화 대상이어도 `chacademia_custom` scoreboard 태그가 없으면 두 군데의 태그 검사 때문에 모델 교체를 건너뛰고 성공 메시지만 출력하던 경로를 제거했다. 기존 `TamingBridge.profileId`의 등록 ID/펫 제외 판정과 `configuredMythic` 확인을 함께 사용한다. 태그를 강제로 추가하거나 모든 Mythic 몹을 등록하지 않는다.
+
+기존 전용 모델 이름(doxy/fenrir_mother/fenrir_pup/goblin의 `_shiny`, `ca_` 모델의 `_s`)을 유지한다. 등록된 vanilla 외형 Mythic 몹은 ModelEngine 모델이 없어도 기존 희귀 상태 처리를 유지한다. custom 태그가 있는데 모델이 아직 연결되지 않았거나 ModelEngine이 없으면 성공 처리하지 않는다. 연결된 모델에 지원되는 모델 쌍이 없거나 대체 모델이 누락돼도 오류로 처리한다.
+
+모든 교체 모델을 먼저 생성·크기 복사한 뒤 기존 모델을 분리한다. 연결 중 실패하면 이미 삽입된 대체 모델까지 제거하고 원본을 다시 연결하며 원본을 파괴하지 않는다. 기존 `mark`의 희귀 PDC/태그/추적목록/클라이언트 전송은 외형 변경이 성공한 다음에만 진행된다. 모델 변경은 기존처럼 서버 메인 스레드에서 실행한다. NPC 배회/AI 및 기존 리소스는 수정하지 않았다.
+
+`ShinyModelSwapTest` 8개가 추가됐다: 무태그 등록 판정, 5개 기존 모델 계열의 지정·해제 매핑, 반복 명령/크기/교화 연출 모델 보존, 누락 모델 원본 보존, 삽입 후 실패 원복, 다중 모델 사전 준비, 해제 실패 시 이로치 원복, 미지원 모델 실패 처리. 위 호스팅 명령으로 Bridge 192/NPC 12/UI 185, 총 389개 테스트가 실패·오류·건너뜀 없이 통과했다. 서버 JAR 빌드와 Fabric remapJar도 성공했다. UI와 NPC/Citizens 최종 JAR 해시는 이전 통합본과 동일하다.
+
+실제 MythicMobs/ModelEngine 런타임에서 직접 소환하고 명령을 실행하는 게임 검증은 미실시다. 회귀 테스트는 모델 교체 어댑터를 사용하므로 실제 플러그인의 애니메이션/시각 효과/라이프사이클까지 검증했다고 주장하지 않는다. 운영 배포와 서버 재시작 없이 확인할 수 있는 범위만 수행했다. 추후 게임 검증에서는 등록 몹 직접 소환 → 지정 → 재지정 → 해제 → 재해제, 무태그 개체, 모델 누락 실패 후 기존 상태, 교화 잠금/미등록/펫 거부를 확인한다.
 
 ## 남은 검증과 배포 상태
 
