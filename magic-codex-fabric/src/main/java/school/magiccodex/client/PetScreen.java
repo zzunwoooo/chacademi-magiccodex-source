@@ -24,7 +24,8 @@ public final class PetScreen extends Screen {
     private record Icon(Entry source,ItemStack stack){}
     private final Map<String,LivingEntity> previewEntities=new HashMap<>();
     private String hover="",previous="";
-    private float yaw=180,zoom=1;private boolean dragging;private double dragX;
+    private static final float DEFAULT_YAW=170; // Ten degrees off the original front view.
+    private float yaw=DEFAULT_YAW,zoom=1;private boolean dragging;private double dragX;
     public PetScreen(){super(Text.literal("펫 도감"));}
     public record Fit(float x,float y,float scale){double mx(double x){return (x-this.x)/scale;}double my(double y){return (y-this.y)/scale;}}
     public static Fit fit(int width,int height){float s=Math.max(.1f,Math.min((width-16)/1280f,(height-16)/720f));return new Fit((width-1280*s)/2,(height-720*s)/2,s);}
@@ -45,7 +46,7 @@ public final class PetScreen extends Screen {
         var f=fit(width,height);double mx=f.mx(mouseX),my=f.my(mouseY);
         String hot=hit(mx,my);if(!hot.equals(hover)&&!hot.isEmpty()&&!hot.equals("model"))sound(1.4f,.055f);hover=hot;
         var entry=PetClient.STATE.selected();
-        if(entry!=null&&!entry.id().equals(previous)){previous=entry.id();yaw=180;zoom=1;}
+        if(entry!=null&&!entry.id().equals(previous)){previous=entry.id();yaw=DEFAULT_YAW;zoom=1;}
         var text=UiResources.text();var images=UiResources.images();text.beginFrame();images.beginFrame();
         c.fill(0,0,width,height,0x46040C18);
         c.getMatrices().push();

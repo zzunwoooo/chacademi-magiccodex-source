@@ -62,6 +62,7 @@ final class ShinyBridge implements Listener,CommandExecutor,AutoCloseable {
   if(!ShinyProtocol.CHANNEL.equals(event.getChannel()))return;var p=event.getPlayer();
   Bukkit.getScheduler().runTask(plugin,()->{if(!p.isOnline())return;for(var e:List.copyOf(loaded.values()))if(e.isValid()&&e.getTrackedBy().contains(p))send(p,e,true);});
  }
+ static int soundIntervalTicks(int seconds){return Math.clamp(seconds,5,300)*2;}
  private void tick(){tick++;
   for(var e:List.copyOf(loaded.values())){
    if(!e.isValid()||e.isDead()){loaded.remove(e.getUniqueId());continue;}
@@ -69,7 +70,7 @@ final class ShinyBridge implements Listener,CommandExecutor,AutoCloseable {
    var loc=e.getLocation().add(0,Math.min(e.getHeight()*.6,3),0);
    if(config.getBoolean("particles",true))e.getWorld().spawnParticle(Particle.END_ROD,loc,2,Math.max(.2,Math.min(e.getWidth(),2))*.5,.35,.35,.012);
    if(tick%10==0)for(var p:viewers)send(p,e,true);
-   int interval=Math.clamp(config.getInt("sound-interval-seconds",12),5,300)*2;
+   int interval=soundIntervalTicks(config.getInt("sound-interval-seconds",6));
    if(config.getBoolean("sound",true)&&tick%interval==0){
     for(var p:viewers)if(p.getLocation().distanceSquared(loc)<24*24){p.playSound(loc,Sound.BLOCK_AMETHYST_BLOCK_CHIME,.5f,1.3f);p.playSound(loc,Sound.BLOCK_NOTE_BLOCK_CHIME,.25f,1.8f);}
    }
@@ -79,7 +80,7 @@ final class ShinyBridge implements Listener,CommandExecutor,AutoCloseable {
   if(!sender.hasPermission("magiccodex.shiny.admin"))return true;
   if(args.length==1&&args[0].equalsIgnoreCase("reload")){reload();sender.sendMessage("이로치 설정을 다시 불러왔습니다.");return true;}
   if(!(sender instanceof Player p)||args.length!=1||!(args[0].equals("지정")||args[0].equals("해제"))){sender.sendMessage("/이로치관리 지정 | 해제 | reload");return true;}
-  var target=p.getTargetEntity(16);if(!(target instanceof LivingEntity e)||taming.profileId(e)==null){p.sendMessage("등록된 야생 교화 대상을 바라봐 주세요.");return true;}
+  LivingEntity e=taming.target(p,16);if(e==null||taming.profileId(e)==null){p.sendMessage("등록된 야생 교화 대상을 바라봐 주세요.");return true;}
   if(taming.captureLocked(e)){p.sendMessage("교화가 끝난 뒤 변경해 주세요.");return true;}
   try{mark(e,args[0].equals("지정"));p.sendMessage(args[0].equals("지정")?"이로치로 지정했습니다.":"일반 개체로 변경했습니다.");}catch(RuntimeException|LinkageError ex){p.sendMessage("이로치 전용 모델을 확인해 주세요.");plugin.getLogger().warning("이로치 모델 변경 실패: "+ex.getMessage());}return true;
  }

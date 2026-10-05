@@ -90,11 +90,72 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
         }catch(Exception ex){return null;}
         return profiles.values().stream().filter(p->p.vanilla.equals(e.getType().name())).findFirst().orElse(null);
     }
-    private LivingEntity target(Player p){
-        var eye=p.getEyeLocation();var direction=eye.getDirection();
-        var block=p.getWorld().rayTraceBlocks(eye,direction,range,FluidCollisionMode.NEVER,true);double distance=block==null?range:block.getHitPosition().distance(eye.toVector());
-        var hit=p.getWorld().rayTraceEntities(eye,direction,distance,.25,e->e instanceof LivingEntity&&e!=p&&!(e instanceof ArmorStand)&&e.isValid()&&!e.isDead());
-        return hit!=null&&hit.getHitEntity() instanceof LivingEntity e?e:null;
+    private LivingEntity target(Player p){return target(p,range);}
+    /** Shared server-authoritative ray for taming and rarity commands. Never picks by proximity. */
+    LivingEntity target(Player p,double maxRange){
+        if(!p.isOnline()||p.isDead()||p.getGameMode()==GameMode.SPECTATOR)return null;
+        var eye=p.getEyeLocation();var origin=eye.toVector();var direction=eye.getDirection();
+        var block=p.getWorld().rayTraceBlocks(eye,direction,maxRange,FluidCollisionMode.NEVER,true);
+        double limit=block==null?maxRange:Math.min(maxRange,block.getHitPosition().distance(origin));
+        if(limit<=0)return null;
+        var hit=p.getWorld().rayTraceEntities(eye,direction,limit,.25,e->e!=p&&e.isValid()&&!e.isDead()
+                &&(e instanceof LivingEntity||e instanceof org.bukkit.entity.Interaction||e instanceof org.bukkit.entity.Display));
+        double closest=hit==null?Double.POSITIVE_INFINITY:rayHitDistance(origin,direction,hit.getHitPosition(),limit);
+        LivingEntity selected=hit==null?null:originalTarget(hit.getHitEntity());
+        // Only query loaded bases in this bounded region; inspect actual sub-hitboxes, not visual proximity.
+        if(models)try{
+            for(var candidate:p.getWorld().getNearbyLivingEntities(eye,maxRange)){
+                if(candidate==p||!candidate.isValid()||candidate.isDead())continue;
+                var modeled=com.ticxo.modelengine.api.ModelEngineAPI.getModeledEntity(candidate.getUniqueId());
+                if(modeled==null)continue;
+                for(var model:modeled.getModels().values())for(var bone:model.getBones().values()){
+                    var behavior=bone.getBoneBehavior(com.ticxo.modelengine.api.model.bone.BoneBehaviorTypes.SUB_HITBOX);
+                    if(behavior.isEmpty())continue;
+                    var sub=behavior.get().getHitboxEntity();if(sub==null||sub.getLocation().getWorld()!=p.getWorld())continue;
+                    var box=sub.getOrientedBoundingBox();if(box==null)continue;
+                    var intersection=box.rayTrace(origin.toVector3f(),direction.toVector3f(),limit,null);
+                    var point=box.contains(origin.toVector3f())?origin:intersection==null?null:intersection.getHitPosition();
+                    double distance=rayHitDistance(origin,direction,point,limit);
+                    if(distance<closest){
+                        var base=originalBase(sub.getBone().getActiveModel().getModeledEntity());
+                        if(base!=null&&base!=p&&base.isValid()&&!base.isDead()&&base.getWorld()==p.getWorld()){
+                            closest=distance;selected=base;
+                        }
+                    }
+                }
+            }
+        }catch(RuntimeException|LinkageError ex){
+            // Fail closed if the installed ModelEngine API cannot establish the hit's owner.
+            return null;
+        }
+        // A nearer unregistered mob remains a blocker: eligibility is checked after the ray is resolved.
+        return selected!=null&&selected!=p&&selected.isValid()&&!selected.isDead()&&selected.getWorld()==p.getWorld()
+                &&p.getLocation().distanceSquared(selected.getLocation())<=maxRange*maxRange?selected:null;
+    }
+    private LivingEntity originalTarget(Entity hit){
+        if(hit==null)return null;
+        if(models)try{
+            var tracker=com.ticxo.modelengine.api.ModelEngineAPI.getInteractionTracker();
+            var sub=tracker.getHitbox(hit.getEntityId());
+            if(sub!=null)return originalBase(sub.getBone().getActiveModel().getModeledEntity());
+            var model=tracker.getModelRelay(hit.getEntityId());if(model!=null)return originalBase(model.getModeledEntity());
+            var relay=tracker.getEntityRelay(hit.getEntityId());
+            if(relay!=null)return originalBase(com.ticxo.modelengine.api.ModelEngineAPI.getModeledEntity(relay));
+        }catch(RuntimeException|LinkageError ex){return null;}
+        return hit instanceof LivingEntity living&&!(living instanceof ArmorStand)?living:null;
+    }
+    private static LivingEntity originalBase(com.ticxo.modelengine.api.model.ModeledEntity modeled){
+        if(modeled==null)return null;
+        var base=modeled.getBase().getOriginal();return base instanceof LivingEntity living?living:null;
+    }
+    static double rayHitDistance(Vector origin,Vector direction,Vector point,double limit){
+        if(point==null||!Double.isFinite(limit)||limit<0)return Double.POSITIVE_INFINITY;
+        var offset=point.clone().subtract(origin);double length=direction.length();
+        if(!Double.isFinite(length)||length<1e-9)return Double.POSITIVE_INFINITY;
+        double along=offset.dot(direction)/length;
+        double perpendicular=Math.max(0,offset.lengthSquared()-along*along);
+        return Double.isFinite(along)&&Double.isFinite(perpendicular)&&along>=0&&along<=limit&&perpendicular<=1e-4
+                ?along:Double.POSITIVE_INFINITY;
     }
     private boolean reachable(Player p,LivingEntity e){return p.isOnline()&&!p.isDead()&&p.getGameMode()!=GameMode.SPECTATOR&&e.isValid()&&!e.isDead()&&p.getWorld()==e.getWorld()&&p.getLocation().distanceSquared(e.getLocation())<=range*range&&p.hasLineOfSight(e);}
     private double chance(LivingEntity e,Profile p){var a=e.getAttribute(Attribute.MAX_HEALTH);return TamingRules.chance(p.base,p.bonus,e.getHealth(),a==null?20:a.getValue(),p.boss);}

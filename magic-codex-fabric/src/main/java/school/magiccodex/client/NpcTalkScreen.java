@@ -21,7 +21,7 @@ public final class NpcTalkScreen extends Screen {
  private record Option(int number,String label,Runnable action){}
  private final Screen parent;private final String session;
  private String speaker,portraitName,text="",stallText="",message="";
- private int hearts,page,shown,historyScroll;private boolean inputEnabled,directInput,log,closed;
+ private int hearts,page,shown,historyScroll,inputOffset;private boolean inputEnabled,directInput,log,closed;
  private List<NpcTalkProtocol.Button> buttons=List.of();private List<Line> lines=List.of();
  private long start,lastSound,messageAt,closeAt;private String offerTitle,offerToken;
  private final NpcTalkFlow flow=new NpcTalkFlow();private final ConversationHistory history=new ConversationHistory();
@@ -102,31 +102,31 @@ public final class NpcTalkScreen extends Screen {
   var f=fit();double mx=f.localX(mouseX),my=f.localY(mouseY);var images=UiResources.images();images.beginFrame();UiResources.text().beginFrame();c.fill(0,0,width,height,0x30030A12);c.getMatrices().push();
   try{
    c.getMatrices().translate(f.x(),f.y(),0);c.getMatrices().scale(f.scale(),f.scale(),1);
-   if(portraitPresent)images.drawTexture(c,portrait,65,15,0,0,700,1050,1024,1536,1024,1536);
+   c.enableScissor(65,75,765,639);try{if(portraitPresent)images.drawTexture(c,portrait,65,15,0,0,700,1050,1024,1536,1024,1536);}finally{c.disableScissor();}
    // The lower nameplate is the only NPC name. Vector hearts avoid font/placeholder glyphs.
-   for(int i=0;i<NpcTalkProtocol.MAX_HEARTS;i++)heart(c,812+i*31,97,i<hearts?0xFFE8A0BF:0x707C8999);
+   for(int i=0;i<NpcTalkProtocol.MAX_HEARTS;i++)heart(c,810+i*38,97,i<Math.clamp(hearts,0,NpcTalkProtocol.MAX_HEARTS)?0xFFE8A0BF:0xFF71849A);
    label(c,sound?"♪ 소리 켜짐":"♪ 소리 꺼짐",1110,54,21,0xFFD8DFE7,false,false,175);label(c,"기록",1305,54,21,0xFFD8DFE7,false,false,90);label(c,log?"기록 닫기 ×":"닫기 ×",1430,54,21,0xFFD8DFE7,false,false,130);
    if(log){drawHistory(c);return;}
-   if(directInput&&inputEnabled){
-    c.fill(914,457,1513,609,0xD0101D2C);label(c,"직접 말하기",944,481,23,0xFFE8D19B,true,false,450);
-    images.drawTexture(c,CHOICE,935,505,73,270,443,60,1952,210,2098,749,input.isFocused()?0xFFFFFFFF:0xFFB8C4D0);
-    drawInput(c,now);images.drawTexture(c,CHOICE,1390,505,73,270,109,60,1952,210,2098,749,hit(mx,my,1390,505,109,60)?0xFFFFFFFF:0xFFCBD5DD);label(c,"전송",1444,535,22,0xFFF0F3F5,false,true,90);label(c,"Enter 전송 · Esc 입력 닫기",944,589,19,0xFFB8C4D0,false,false,520);
+   if(directInput&&inputEnabled){c.draw();c.getMatrices().push();c.getMatrices().translate(0,0,400);
+    c.fill(0,0,1600,900,0xA0050A13);c.fill(420,300,1180,540,0xF3101D2C);c.drawBorder(420,300,760,240,0xFF647F96);label(c,"직접 말하기",454,338,28,0xFFE8D19B,true,false,560);FriendsScreen.cross(c,1130,334,hit(mx,my,1114,318,32,32)?0xFF92E7F2:0xFFF0F3F5);
+    images.drawTexture(c,CHOICE,454,390,73,270,570,60,1952,210,2098,749,input.isFocused()?0xFFFFFFFF:0xFFB8C4D0);
+    drawInput(c,now);images.drawTexture(c,CHOICE,1038,390,73,270,128,60,1952,210,2098,749,hit(mx,my,1038,390,128,60)?0xFFFFFFFF:0xFFCBD5DD);label(c,"전송",1102,420,22,0xFFF0F3F5,false,true,90);label(c,"Enter 전송 · Esc 입력 닫기",454,500,19,0xFFB8C4D0,false,false,650);c.draw();c.getMatrices().pop();
    }
    images.drawTexture(c,PANEL,60,639,44,199,1480,220,2085,316,2172,724);images.drawTexture(c,NAME,86,615,200,244,255,54,1810,235,2172,724);label(c,speaker,131,642,23,0xFFE8D19B,true,false,193);
    if(flow.waiting()&&!closed)label(c,stallText.isEmpty()?".".repeat((int)(now/350%3)+1):stallText,120,704,29,0xFFB8C4D0,false,false,1330);
    else{int remaining=shown;for(int i=page*3;i<Math.min(page*3+3,lines.size());i++){var row=lines.get(i);int n=Math.min(remaining,row.ends.length-1);remaining-=n;if(n>0){int y=704+(i-page*3)*43;boolean partial=n<row.ends.length-1;if(partial)c.enableScissor(115,y-24,120+(int)Math.ceil(row.ends[n])+1,y+26);label(c,row.text,120,y,29,0xFFF0F1F4,false,false,1330);if(partial)c.disableScissor();}}}
-   var opts=options();for(int i=0;i<opts.size();i++){int y=590-opts.size()*75+i*75;boolean hovered=hit(mx,my,962,y,545,67);c.fill(952,y-2,1517,y+69,0xD5101D2C);images.drawTexture(c,CHOICE,962,y,73,270,545,67,1952,210,2098,749,hovered?0xFFFFFFFF:0xFFCBD5DD);label(c,opts.get(i).number()+". "+opts.get(i).label(),1005,y+33,24,0xFFEEF1F5,false,false,465);}
+   var opts=options();for(int i=0;i<opts.size();i++){int y=590-opts.size()*75+i*75;boolean hovered=hit(mx,my,962,y,545,67);String option=opts.get(i).number()+". "+opts.get(i).label();label(c,option,1006,y+34,24,0xE8000000,false,false,465);label(c,option,1005,y+33,24,hovered?0xFF92E7F2:0xFFEEF1F5,false,false,465);if(hovered)HudMesh.line(c,1005,y+53,1490,y+53,1,0x8092E7F2);}
    String hint=closed||directInput?"":flow.waiting()?"처리 중…":!complete()?"Enter  바로 보기":!lastPage()?"Enter  다음":"4  직접 말하기 · Esc  닫기";
    label(c,hint,800,825,20,0xFFC1CEDD,false,true,520);if(!message.isEmpty()&&now-messageAt<7000)label(c,message,800,874,19,0xFFE8D19B,false,true,1300);
   }finally{c.getMatrices().pop();images.endFrame();}
  }
  private void drawInput(DrawContext c,long now){
-  String value=input.getText();if(value.isEmpty()){label(c,"할 말을 입력하세요",957,535,23,0xFF9FB0C0,false,false,395);if(input.isFocused()&&now/500%2==0)c.fill(957,521,959,549,0xFF91E8F5);return;}
+  String value=input.getText();if(value.isEmpty()){inputOffset=0;label(c,"할 말을 입력하세요",476,420,23,0xFF9FB0C0,false,false,395);if(input.isFocused()&&now/500%2==0)c.fill(476,406,478,434,0xFF91E8F5);return;}
   // Track the actual edit cursor so clipboard edits and arrows remain visible.
-  int cursor=input.getCursor(),from=0;while(from<cursor&&UiResources.text().width(value.substring(from,cursor),23,FONT)>382)from++;
-  int to=value.length();while(to>from&&UiResources.text().width(value.substring(from,to),23,FONT)>390)to--;
-  label(c,value.substring(from,to),957,535,23,0xFFF0F1F4,false,false,395);
-  if(input.isFocused()&&now/500%2==0){int x=957+(int)UiResources.text().width(value.substring(from,cursor),23,FONT);c.fill(x,521,x+2,549,0xFF91E8F5);}
+  int cursor=input.getCursor(),from=0;while(from<cursor&&UiResources.text().width(value.substring(from,cursor),23,FONT)>520)from++;
+  int to=value.length();while(to>from&&UiResources.text().width(value.substring(from,to),23,FONT)>520)to--;
+  inputOffset=from;int anchor=((school.magiccodex.mixin.TextFieldAccessor)input).magiccodex$selectionEnd();int lo=Math.max(from,Math.min(cursor,anchor)),hi=Math.min(to,Math.max(cursor,anchor));if(input.isFocused()&&lo<hi){int a=476+(int)UiResources.text().width(value.substring(from,lo),23,FONT),b=476+(int)UiResources.text().width(value.substring(from,hi),23,FONT);c.fill(a,404,b,436,0x8865A5C5);}label(c,value.substring(from,to),476,420,23,0xFFF0F1F4,false,false,520);
+  if(input.isFocused()&&now/500%2==0){int x=476+(int)UiResources.text().width(value.substring(from,cursor),23,FONT);c.fill(x,406,x+2,434,0xFF91E8F5);}
  }
  private void drawHistory(DrawContext c){
   c.fill(240,130,1510,855,0xF30D192A);label(c,"대화 기록",274,168,27,0xFFE8D19B,true,false,1100);
@@ -137,8 +137,9 @@ public final class NpcTalkScreen extends Screen {
   label(c,"휠로 스크롤 · Esc 또는 기록 닫기",274,825,19,0xFFB2C2D0,false,false,1100);
  }
  private void heart(DrawContext c,float x,float y,int color){
-  float[] xs={0,5,10,15,20,20,10,0},ys={5,0,4,0,5,10,21,10};var m=c.getMatrices().peek().getPositionMatrix();
-  c.draw(p->{var v=p.getBuffer(net.minecraft.client.render.RenderLayer.getGui());for(int i=0;i<xs.length;i++){int j=(i+1)%xs.length;v.vertex(m,x+10,y+9,0).color(color);v.vertex(m,x+xs[j],y+ys[j],0).color(color);v.vertex(m,x+xs[i],y+ys[i],0).color(color);v.vertex(m,x+10,y+9,0).color(color);}});
+  // Opaque scan-line icon avoids font availability and culled triangle-fan geometry.
+  String[] rows={"01100110","11111111","11111111","11111111","01111110","00111100","00011000"};
+  for(int row=0;row<rows.length;row++)for(int col=0;col<8;col++)if(rows[row].charAt(col)=='1')c.fill((int)x+col*3,(int)y+row*3,(int)x+col*3+3,(int)y+row*3+3,color);
  }
  private void label(DrawContext c,String value,float x,float y,float size,int color,boolean bold,boolean centered,float max){var font=bold?BOLD:FONT;float actual=Math.min(size,size*max/Math.max(max,UiResources.text().width(value,size,font)));UiResources.text().draw(c,value,x,y,actual,color,font,centered);}
  private static boolean hit(double x,double y,int a,int b,int w,int h){return x>=a&&x<a+w&&y>=b&&y<b+h;}
@@ -156,13 +157,13 @@ public final class NpcTalkScreen extends Screen {
  @Override public boolean mouseClicked(double x,double y,int button){
   if(button!=0)return false;var f=fit();double mx=f.localX(x),my=f.localY(y);
   if(log){if(hit(mx,my,1280,24,280,60)){log=false;input.setFocused(directInput);}return true;}
+  if(directInput){if(hit(mx,my,1038,390,128,60)){submit();return true;}if(hit(mx,my,1114,318,32,32)){directInput=false;input.setFocused(false);click();return true;}boolean focused=hit(mx,my,454,390,570,60);input.setFocused(focused);if(focused){String value=input.getText();inputOffset=Math.min(inputOffset,value.length());int at=inputOffset;while(at<value.length()&&UiResources.text().width(value.substring(inputOffset,at+1),23,FONT)<mx-476)at++;input.setCursor(at,false);}trace("focus",0);return true;}
   if(hit(mx,my,1090,24,180,60)){sound=!sound;click();return true;}
   if(hit(mx,my,1280,24,130,60)){log=true;historyScroll=Integer.MAX_VALUE;if(input!=null)input.setFocused(false);trace("history-open",0);return true;}
   if(hit(mx,my,1420,24,140,60)){close();return true;}
-  if(directInput){if(hit(mx,my,1390,505,109,60)){submit();return true;}input.setFocused(hit(mx,my,935,505,443,60));trace("focus",0);return true;}
   var opts=options();for(int i=0;i<opts.size();i++)if(hit(mx,my,962,590-opts.size()*75+i*75,545,67)){opts.get(i).action().run();return true;}
   if(hit(mx,my,60,639,1480,220))advanceText();return true;
  }
- @Override public boolean mouseScrolled(double x,double y,double h,double v){if(log){historyScroll=Math.max(0,historyScroll-(int)Math.signum(v)*3);return true;}return super.mouseScrolled(x,y,h,v);}
+ @Override public boolean mouseScrolled(double x,double y,double h,double v){if(log){historyScroll=Math.max(0,historyScroll-(int)Math.signum(v)*3);return true;}if(directInput)return true;return super.mouseScrolled(x,y,h,v);}
  @Override public void close(){if(!closed){closed=true;NpcTalkClient.send(session,NpcTalkProtocol.C_CLOSE,0,"",false);}if(client!=null)client.setScreen(parent);}
 }

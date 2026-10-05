@@ -20,6 +20,10 @@ public abstract class PlayerHudMixin {
     private void magiccodex$hotbar(DrawContext ctx,RenderTickCounter ticks,CallbackInfo ci){
         if(PlayerHudClient.active()){PlayerHudClient.hotbar(ctx);ci.cancel();}
     }
+    @Inject(method="renderChat",at=@At("HEAD"),cancellable=true)
+    private void magiccodex$npcChat(DrawContext ctx,RenderTickCounter ticks,CallbackInfo ci){
+        if(net.minecraft.client.MinecraftClient.getInstance().currentScreen instanceof school.magiccodex.client.NpcTalkScreen)ci.cancel();
+    }
     // Air, mount health and status effects remain available. HUD off restores all vanilla bars.
     @Inject(method={"renderHealthBar","renderFood","renderExperienceBar","renderExperienceLevel"},at=@At("HEAD"),cancellable=true)
     private void magiccodex$replaceVitals(CallbackInfo ci){
