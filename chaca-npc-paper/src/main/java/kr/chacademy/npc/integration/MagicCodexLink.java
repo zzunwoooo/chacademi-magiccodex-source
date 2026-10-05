@@ -124,6 +124,17 @@ public final class MagicCodexLink implements Listener {
 
     // ------------------------------------------------------------------ API
 
+    /** Optional v1 extension: plain configured nickname, preserving old/disconnected bridge fallback. */
+    public String playerName(Player player) {
+        try {
+            Object value = call("playerName", player);
+            if (value instanceof String name && !name.isBlank()) return name;
+        } catch (ReflectiveOperationException | RuntimeException ignored) {
+            // Older v1 bridge or unavailable integration: no nickname source.
+        }
+        return player.getName();
+    }
+
     /** {score, heart} */
     public CompletableFuture<int[]> affinity(UUID player, String npc) {
         return future("affinity", player, npc);

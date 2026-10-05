@@ -30,6 +30,11 @@ public final class NpcSocialFacade {
         return API_VERSION;
     }
 
+    /** Configured plain nickname only; title prefix/suffix are excluded. Main-thread access. */
+    public String playerName(Player player) {
+        return service.playerName(player);
+    }
+
     // ------------------------------------------------------------------ 호감도
 
     /** {score, heart} */

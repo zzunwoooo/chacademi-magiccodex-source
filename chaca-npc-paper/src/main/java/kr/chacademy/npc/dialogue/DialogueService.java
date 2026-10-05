@@ -116,7 +116,7 @@ public final class DialogueService {
             close(p, false);
         }
         long now = System.currentTimeMillis();
-        DialogueSession s = new DialogueSession(p.getUniqueId(), p.getName(), c, citizensId, adminTest, now, viewFor(p));
+        DialogueSession s = new DialogueSession(p.getUniqueId(), link().playerName(p), c, citizensId, adminTest, now, viewFor(p));
         sessions.put(p.getUniqueId(), s);
         loadContext(p, s);
         if (citizensId != null) {
@@ -437,7 +437,7 @@ public final class DialogueService {
         PromptBuilder.Context x = new PromptBuilder.Context();
         x.nowMillis = now;
         x.stage = stage;
-        x.playerName = s.npcNickname != null ? s.npcNickname : s.nickname != null ? s.nickname : p.getName();
+        x.playerName = s.npcNickname != null ? s.npcNickname : s.nickname != null ? s.nickname : link().playerName(p);
         x.storyChapter = s.storyChapter != null ? s.storyChapter : st.defaultStoryChapter;
         fillPlace(x, c, slot);
         x.todayMood = moodOfDay(c.id());
@@ -598,7 +598,7 @@ public final class DialogueService {
             if (reply.promise() != null) {
                 String promise = reply.promise();
                 s.promises.add(0, promise);
-                plugin.social().recordEvent(uuid, p.getName(), c.id(), "promise", promise);
+                plugin.social().recordEvent(uuid, link().playerName(p), c.id(), "promise", promise);
             }
             if (reply.hint() != null) {
                 String h = reply.hint();
@@ -850,8 +850,8 @@ public final class DialogueService {
             }
             plugin.database().run(() -> plugin.storage().addQuestLog(pid, c.id(), pq.questId(), offeredAt, true, now));
             String title = link().questTitle(pq.questId());
-            plugin.social().recordEvent(p.getUniqueId(), p.getName(), c.id(), "quest_accept",
-                    p.getName() + "이(가) " + c.name() + "의 부탁(" + (title.isBlank() ? pq.questId() : title) + ")을 들어주기로 함");
+            plugin.social().recordEvent(p.getUniqueId(), link().playerName(p), c.id(), "quest_accept",
+                    link().playerName(p) + "이(가) " + c.name() + "의 부탁(" + (title.isBlank() ? pq.questId() : title) + ")을 들어주기로 함");
             DialogueSession cur = sessions.get(p.getUniqueId());
             if (cur != null && cur.quests != null && cur.character().id().equals(c.id())) {
                 Set<String> acc = new HashSet<>(cur.quests.accepted());

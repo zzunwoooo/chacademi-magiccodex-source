@@ -89,6 +89,11 @@ final class NpcSocialService implements Listener, AutoCloseable {
         Bukkit.getServicesManager().register(NpcSocialFacade.class, facade, plugin, org.bukkit.plugin.ServicePriority.Normal);
     }
 
+    String playerName(Player player) {
+        if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("server thread required");
+        return plugin.names().name(player);
+    }
+
     // ------------------------------------------------------------------ 공통
 
     private interface Job<T> {
@@ -280,7 +285,7 @@ final class NpcSocialService implements Listener, AutoCloseable {
     }
 
     private void notify(Player p, String npc, String type, String value) {
-        Map<String, String> event = Map.of("player", p.getUniqueId().toString(), "playerName", p.getName(),
+        Map<String, String> event = Map.of("player", p.getUniqueId().toString(), "playerName", plugin.names().name(p),
                 "npc", npc, "type", type, "value", value);
         for (var l : listeners) {
             try {

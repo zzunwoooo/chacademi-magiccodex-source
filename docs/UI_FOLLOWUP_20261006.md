@@ -16,12 +16,12 @@ Prerequisites are rechecked inside the existing per-player DB transaction using 
 Response v3 carries main flags and remaining slots; the new client also reads v2. Requests remain v2. Future deployment must update Fabric and Bridge together because old clients cannot parse v3 responses.
 
 Deferred:
-- Title close X: actual Library pixels unavailable; geometry unchanged.
-- NPC address policy: current per-NPC nickname > ChacaNPC nickname > account name conflicts with always using configured MagicCodex nickname. No override applied. Decision needed: preserve explicit addresses and use configured nickname as fallback, or force configured nickname?
+- Title close X now follows parent-verified pixel evidence: relative 13px left/25px down in a 1014px-wide reference, normalized to 14/27 in the 1080px layout. Rendering and hitbox use shared constants; multi-scale click tests pass. In-game rendering remains unverified.
+- NPC address resolved: explicit per-NPC/ChacaNPC addresses are preserved; otherwise configured plain MagicCodex nickname is used for session, AI prompt and new event records. No title prefix/suffix. Older/disconnected Bridge retains legacy fallback; deploy the integrated Bridge and ChacaNPC together.
 - Actual visual checks for menu style, title slots, item name clarity and paper colors remain pending.
-- Approved pet filter patch is integrated: only pet_model/ and textures/vanilla_shiny/ retain their requested filtering; UI/font smoothing stays enabled. Reviewed optional diagnostic patch (JVM opt-in, one GPU snapshot, 90-second timeout) is NOT integrated. No diagnostic activation or production instrumentation. Separate ShopAdmin work awaits later integration.
+- Approved pet filter patch is integrated: only pet_model/ and textures/vanilla_shiny/ retain their requested filtering; UI/font smoothing stays enabled. Reviewed optional diagnostic patch (JVM opt-in, one GPU snapshot, 90-second timeout) is NOT integrated. No diagnostic activation or production instrumentation. The two isolated ShopAdmin patches are integrated with existing revision/session/permission checks; general ShopScreen is unchanged by those patches.
 - Command policy remains pending approval; no overhaul.
 
-Minimum tests: Paper QuestStoreTest (7), QuestRevisionTest (6), QuestPrerequisiteTest (5), TitleTest (5); Fabric TopMenuTest (4), PlayerHudTest (5), StatsTest (4), TitleLayoutTest (3). Final results/hashes are recorded in sibling FOLLOWUP-VERIFICATION.json and provisional JARs in followup-ready. Full regression is reserved for final integration with pending patches.
+Minimum tests: Paper QuestStoreTest (7), QuestRevisionTest (6), QuestPrerequisiteTest (5), TitleTest (5); Fabric TopMenuTest (4), PlayerHudTest (5), StatsTest (4), TitleLayoutTest (3). Final results/hashes are recorded in sibling FOLLOWUP-VERIFICATION.json and provisional JARs in followup-ready. Final integrated full regression passed: Paper 214, ChacaNPC 15, Fabric 189 (418 total), no failures/errors/skips. See FINAL_INTEGRATION_20261006.md and sibling FINAL-INTEGRATION-VERIFICATION.json. Final artifacts are in integrated-ready.
 
 Pet filter validation: CodexTextureFilterTest (3), PetPreviewRegressionTest (4), PetTest (7); actual in-game quality remains unverified.

@@ -23,6 +23,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private WalletBridge wallet;
     private MailboxBridge mailbox;
     private ShopBridge shops;
+    private ShopAdminBridge shopAdmin;
     private ManaBridge mana;
     private SpellRuntime spellRuntime;
     Boolean runtimeCast(Player player,String id){
@@ -113,7 +114,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         try{titles=new TitleBridge(this);}catch(Exception error){getLogger().severe("칭호 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
         if(!mana.isCatalogMode()&&getServer().getPluginManager().isPluginEnabled("MythicMobs"))try{spellRuntime=new SpellRuntime(this);}catch(Exception error){getLogger().severe("마법 실행 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
         mana.bindSpellCommand();
-        try { mailbox=new MailboxBridge(this); shops=new ShopBridge(this); } catch(Exception e) { getLogger().severe("Mailbox initialization failed: "+e.getClass().getSimpleName()); getServer().getPluginManager().disablePlugin(this); return; }
+        try { mailbox=new MailboxBridge(this); shops=new ShopBridge(this); shopAdmin=new ShopAdminBridge(this); } catch(Exception e) { getLogger().severe("Mailbox initialization failed: "+e.getClass().getSimpleName()); getServer().getPluginManager().disablePlugin(this); return; }
         getLogger().info("권한 연동 준비 완료. 활성 도감만 조회, 작업당 최대 " + budget + "회, 보조 확인 " + refresh / 1000 + "초.");
     }
     private void markDirty(UUID player) {
@@ -170,7 +171,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     }
     @EventHandler public void onWorldChange(PlayerChangedWorldEvent event) { markDirty(event.getPlayer().getUniqueId()); }
     @Override public void onDisable() {
-        if(shops!=null)shops.close(); if(mailbox!=null)mailbox.close();
+        if(shopAdmin!=null)shopAdmin.close(); if(shops!=null)shops.close(); if(mailbox!=null)mailbox.close();
         if(spellRuntime!=null){spellRuntime.close();spellRuntime=null;}
         if(titles!=null){titles.close();titles=null;}
         if(npcSocial!=null){npcSocial.close();npcSocial=null;}
