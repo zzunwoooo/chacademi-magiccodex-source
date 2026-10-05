@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "night_lullaby"
+name: "밤의 자장가"
+category: "dark"
+description: "주변 팬텀들이 20초간 자신을 공격 대상으로 삼지 못하게 합니다. 먼저 공격하면 해제됩니다.\n\n팬텀의 공격을 겪고도 잠들지 않은 채 아침을 기다려 본 밤이 어둠을 달래는 노래가 된다."
+icon: "magiccodex:textures/spells/expansion_2/night_lullaby.png"
+permission: "magic.learned.night_lullaby"
+discovery:
+  description: "팬텀에게 공격받은 뒤 잠들지 않고 날이 밝을 때까지 생존하기."
+research: "잠 못 드는 밤의 손님에게 먼저 자장가를 불러 주었다."
+cast:
+  command: "마법 밤의자장가"
+  cooldown-seconds: 30
+  mana-cost: 30
+order: 1860

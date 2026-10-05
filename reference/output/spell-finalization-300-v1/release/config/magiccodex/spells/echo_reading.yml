@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "echo_reading"
+name: "잔향 읽기"
+category: "dark"
+description: "특정 물건에 남은 과거의 잔향을 읽어 사건의 단서를 찾습니다.\n\n분실물 보관소의 여러 물건을 조사하면 주인이 떠난 뒤에도 남는 기억을 읽게 된다."
+icon: "magiccodex:textures/spells/intermediate/echo_reading.png"
+permission: "magic.learned.echo_reading"
+discovery:
+  description: "분실물 보관소에서 서로 다른 분실물 5개 조사하기."
+research: "물건은 입이 없지만 아무것도 기억하지 못하는 것은 아니다."
+cast:
+  command: "마법 잔향읽기"
+  cooldown-seconds: 10
+  mana-cost: 25
+order: 1700

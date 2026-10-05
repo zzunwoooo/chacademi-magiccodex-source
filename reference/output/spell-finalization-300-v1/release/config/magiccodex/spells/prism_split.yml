@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "prism_split"
+name: "프리즘 분광"
+category: "light"
+description: "흰 광선을 여러 색으로 나눠 색에 맞는 수신 장치에 보낸다.\n\n빛 응용 수업에서 흰 빛의 여러 색을 구별하면 장치마다 필요한 빛을 따로 보낼 수 있다."
+icon: "magiccodex:textures/spells/expansion_3/prism_split.png"
+permission: "magic.learned.prism_split"
+discovery:
+  description: "빛 마법 응용 수업의 분광 실습을 완료하기."
+research: "흰빛은 하나의 색이 아니라 여러 빛이 함께 만든 약속이다."
+cast:
+  command: "마법 프리즘분광"
+  cooldown-seconds: 15
+  mana-cost: 45
+order: 2980

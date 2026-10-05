@@ -1,0 +1,1602 @@
+[
+  {
+    "id": "wind_basket",
+    "icon": "magiccodex:textures/spells/novice/wind_basket.png",
+    "file": "wind_basket.png",
+    "sha256": "4f0b314dbeee0e79a0fc9aa8a144d5ee4ec092812ccf314c5d55f00d7e5456eb",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice\\wind_basket.png",
+    "bytes": 1146413
+  },
+  {
+    "id": "feather_step",
+    "icon": "magiccodex:textures/spells/novice/feather_step.png",
+    "file": "feather_step.png",
+    "sha256": "ee71eeb1ec664ceb7967ed41642180f126d2372f943d4ab40fed843b68b5e5e3",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice\\feather_step.png",
+    "bytes": 1071441
+  },
+  {
+    "id": "harvest_wind",
+    "icon": "magiccodex:textures/spells/novice/harvest_wind.png",
+    "file": "harvest_wind.png",
+    "sha256": "815cca40c729dc5e5ec6c62df376fe1b235213f62e73bcc898391986422b516c",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice\\harvest_wind.png",
+    "bytes": 1300183
+  },
+  {
+    "id": "wind_push",
+    "icon": "magiccodex:textures/spells/novice_extra/wind_push.png",
+    "file": "wind_push.png",
+    "sha256": "3fa682b0100af55022ab1a88b2297b2b2b31160536fa0e5461c4bcd12466f42f",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice_extra\\wind_push.png",
+    "bytes": 898882
+  },
+  {
+    "id": "light_leap",
+    "icon": "magiccodex:textures/spells/novice_extra/light_leap.png",
+    "file": "light_leap.png",
+    "sha256": "5eea7eeceaa3750873ce8b541361226e41fcde97c3a687808efd459a743612fd",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice_extra\\light_leap.png",
+    "bytes": 1114333
+  },
+  {
+    "id": "flight",
+    "icon": "magiccodex:textures/spells/intermediate/flight.png",
+    "file": "flight.png",
+    "sha256": "30c03986a89c98d5e98a791a173d002299b822c5752b964cf0bdcbff02ef778c",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\flight.png",
+    "bytes": 1235605
+  },
+  {
+    "id": "far_touch",
+    "icon": "magiccodex:textures/spells/intermediate/far_touch.png",
+    "file": "far_touch.png",
+    "sha256": "b98963f4a3bd19b3142d4f14a373914e3e2f4e32570bf3e6013761d9e2a94810",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\far_touch.png",
+    "bytes": 949014
+  },
+  {
+    "id": "aerial_haul",
+    "icon": "magiccodex:textures/spells/intermediate/aerial_haul.png",
+    "file": "aerial_haul.png",
+    "sha256": "74b5b69b6e8b8238f1da5e7fab22b5ee20b06c99dcbeaba87a2da3c0cebfed7e",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\aerial_haul.png",
+    "bytes": 1306441
+  },
+  {
+    "id": "wind_message",
+    "icon": "magiccodex:textures/spells/intermediate/wind_message.png",
+    "file": "wind_message.png",
+    "sha256": "55a558f54c57a8fff3633096a49229e6812933e746bf9681fde1d4adede0d18d",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\wind_message.png",
+    "bytes": 1187985
+  },
+  {
+    "id": "storm_command",
+    "icon": "magiccodex:textures/spells/advanced/storm_command.png",
+    "file": "storm_command.png",
+    "sha256": "56271c4badad4e6eeaa25e7eb798a8dc601a2d2d34057e65b301df1acd24b74d",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\advanced\\storm_command.png",
+    "bytes": 1286986
+  },
+  {
+    "id": "wind_vault",
+    "icon": "magiccodex:textures/spells/advanced/wind_vault.png",
+    "file": "wind_vault.png",
+    "sha256": "51909d2209da6a415ed33cce5d4579bf7598a02c741e8040c17fee38e4266bce",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\advanced\\wind_vault.png",
+    "bytes": 1193876
+  },
+  {
+    "id": "vacuum_cleave",
+    "icon": "magiccodex:textures/spells/advanced/vacuum_cleave.png",
+    "file": "vacuum_cleave.png",
+    "sha256": "36715d2ebed2f6116e6b33290889052e4e91d367e819ae2f11f48404c2851da3",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\advanced\\vacuum_cleave.png",
+    "bytes": 1215384
+  },
+  {
+    "id": "wind_grooming",
+    "icon": "magiccodex:textures/spells/expansion/wind_grooming.png",
+    "file": "wind_grooming.png",
+    "sha256": "20616ad06a135a8ae8f6646890add0a8bf58ea7a08447080afd708bd748572bd",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\wind_grooming.png",
+    "bytes": 2012391
+  },
+  {
+    "id": "dust_duster",
+    "icon": "magiccodex:textures/spells/expansion_2/dust_duster.png",
+    "file": "dust_duster.png",
+    "sha256": "10eee094edec98469d85b0be10ece691e180f73346360e7f33936c7e0d7f0d09",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\dust_duster.png",
+    "bytes": 1519863
+  },
+  {
+    "id": "leaf_cleanup",
+    "icon": "magiccodex:textures/spells/expansion_2/leaf_cleanup.png",
+    "file": "leaf_cleanup.png",
+    "sha256": "f4bd649239898e97f4d0d94f211d875a54f38a744666fd5898ca216944ec3035",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\leaf_cleanup.png",
+    "bytes": 1811673
+  },
+  {
+    "id": "gale_dash",
+    "icon": "magiccodex:textures/spells/expansion/gale_dash.png",
+    "file": "gale_dash.png",
+    "sha256": "a8ac6dc8edf5bd32e501c87c0befd49f431c9a554b4147d123aa3b60061bf47e",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\gale_dash.png",
+    "bytes": 1194661
+  },
+  {
+    "id": "feather_rustle",
+    "icon": "magiccodex:textures/spells/expansion_2/feather_rustle.png",
+    "file": "feather_rustle.png",
+    "sha256": "e0e056bbf971fc8188a01c7511df39dc82c1745a07af5b7cf1c7d019f4b044b4",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\feather_rustle.png",
+    "bytes": 1411050
+  },
+  {
+    "id": "cross_breeze",
+    "icon": "magiccodex:textures/spells/expansion_2/cross_breeze.png",
+    "file": "cross_breeze.png",
+    "sha256": "2e1be6630b8b603a81cddf2d445beb2fc172c714c22634171ac121d7525e3a83",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\cross_breeze.png",
+    "bytes": 1621817
+  },
+  {
+    "id": "returning_blade",
+    "icon": "magiccodex:textures/spells/expansion_2/returning_blade.png",
+    "file": "returning_blade.png",
+    "sha256": "7053c449a52bb49adc15fec93da64d4fef88c8616100d7979151a39cc399e9b9",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\returning_blade.png",
+    "bytes": 1512018
+  },
+  {
+    "id": "pressure_press",
+    "icon": "magiccodex:textures/spells/expansion_2/pressure_press.png",
+    "file": "pressure_press.png",
+    "sha256": "84596a3db4fbb7ce5ae7badff6498c89a11b07b65a857b1c43781ac32b435c1f",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\pressure_press.png",
+    "bytes": 1437205
+  },
+  {
+    "id": "returning_wind",
+    "icon": "magiccodex:textures/spells/expansion/returning_wind.png",
+    "file": "returning_wind.png",
+    "sha256": "84fa02d1ee93aeec42945d4b85ca3047e0134e86c80342f1b532420dd1d7a579",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\returning_wind.png",
+    "bytes": 1505577
+  },
+  {
+    "id": "wind_decoy",
+    "icon": "magiccodex:textures/spells/expansion_2/wind_decoy.png",
+    "file": "wind_decoy.png",
+    "sha256": "376c265a69ceabeb84407785673d2c1786d30255143416e0be25c8d2d3312841",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\wind_decoy.png",
+    "bytes": 1192219
+  },
+  {
+    "id": "air_step",
+    "icon": "magiccodex:textures/spells/expansion_2/air_step.png",
+    "file": "air_step.png",
+    "sha256": "5b7fb821595917fc6d27032ab576e27bbcf8758fd6d137501ca7f5e96d63baf8",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\air_step.png",
+    "bytes": 1391654
+  },
+  {
+    "id": "weightless_zone",
+    "icon": "magiccodex:textures/spells/expansion/weightless_zone.png",
+    "file": "weightless_zone.png",
+    "sha256": "5e8a019d39dc8a46c9af806f1588f4dba83c113c12ea4df4d2fe4ed04059835d",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\weightless_zone.png",
+    "bytes": 1218210
+  },
+  {
+    "id": "lightning_needle",
+    "icon": "magiccodex:textures/spells/expansion_2/lightning_needle.png",
+    "file": "lightning_needle.png",
+    "sha256": "5c3bacf73eff5e2c5256e3e1625e62202893dda7578799c70e4ef04fe9b6c5ca",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\lightning_needle.png",
+    "bytes": 1620754
+  },
+  {
+    "id": "air_stacking",
+    "icon": "magiccodex:textures/spells/expansion_2/air_stacking.png",
+    "file": "air_stacking.png",
+    "sha256": "04ccd3593dce7edddc78364bb9495fed9c1e8993d9af1b4d67141492b5bcdd83",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\air_stacking.png",
+    "bytes": 1371646
+  },
+  {
+    "id": "descent_command",
+    "icon": "magiccodex:textures/spells/expansion/descent_command.png",
+    "file": "descent_command.png",
+    "sha256": "4f3f8080d545df60636c75ff1674eacb36a3ce9648af8fcf94fd33ab33ff9e49",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\descent_command.png",
+    "bytes": 1517089
+  },
+  {
+    "id": "arrested_orbit",
+    "icon": "magiccodex:textures/spells/expansion_2/arrested_orbit.png",
+    "file": "arrested_orbit.png",
+    "sha256": "556ef7d8124e04f1ffdbbc8c7e203a5f7025e3262b01e476431ea039ff586855",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\arrested_orbit.png",
+    "bytes": 1282368
+  },
+  {
+    "id": "crossfire",
+    "icon": "magiccodex:textures/spells/expansion_2/crossfire.png",
+    "file": "crossfire.png",
+    "sha256": "823d6216bd9cda8d652e3db406ed8b9d923c9ed6cadd87c98d9cda91cf1c15c6",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\crossfire.png",
+    "bytes": 1456600
+  },
+  {
+    "id": "trajectory_acceleration",
+    "icon": "magiccodex:textures/spells/expansion/trajectory_acceleration.png",
+    "file": "trajectory_acceleration.png",
+    "sha256": "eb61906713f396cc427a4f878e5fea52d792441be27621d8e37ddb4048482d94",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\trajectory_acceleration.png",
+    "bytes": 1213931
+  },
+  {
+    "id": "resonant_arrow",
+    "icon": "magiccodex:textures/spells/expansion_2/resonant_arrow.png",
+    "file": "resonant_arrow.png",
+    "sha256": "e5bac8de5979d8d9842edf6b160a328dc52e8f9eb74a9c7578923763f0578c2b",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\resonant_arrow.png",
+    "bytes": 1239053
+  },
+  {
+    "id": "pressure_rupture",
+    "icon": "magiccodex:textures/spells/expansion_2/pressure_rupture.png",
+    "file": "pressure_rupture.png",
+    "sha256": "8946720c1531291477d0f77b7da1cd97c86f4bdc353fc56d622e4c21353a1d62",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\pressure_rupture.png",
+    "bytes": 1731279
+  },
+  {
+    "id": "storm_crown",
+    "icon": "magiccodex:textures/spells/expansion_2/storm_crown.png",
+    "file": "storm_crown.png",
+    "sha256": "05c883ff9e51ceef40e7587f9655156d391d8194a3d10bd2df1bfac98441d81e",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\storm_crown.png",
+    "bytes": 1786564
+  },
+  {
+    "id": "hearth_touch",
+    "icon": "magiccodex:textures/spells/novice/hearth_touch.png",
+    "file": "hearth_touch.png",
+    "sha256": "4ca40f212ca50ebabeb0683a0e2f209e8bb1077a9366945a439832cb5507a300",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice\\hearth_touch.png",
+    "bytes": 1298635
+  },
+  {
+    "id": "ember_bolt",
+    "icon": "magiccodex:textures/spells/novice_extra/ember_bolt.png",
+    "file": "ember_bolt.png",
+    "sha256": "a400047debd985be796d1d590105293c822b6e66241a1f73f1f3390db19ddfab",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice_extra\\ember_bolt.png",
+    "bytes": 717331
+  },
+  {
+    "id": "rekindle",
+    "icon": "magiccodex:textures/spells/novice_extra/rekindle.png",
+    "file": "rekindle.png",
+    "sha256": "7d24aaf71d068c9b810ebf5a85e70b8ea05171801b37177f14316fde5fbd6787",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice_extra\\rekindle.png",
+    "bytes": 678254
+  },
+  {
+    "id": "flame_forging",
+    "icon": "magiccodex:textures/spells/intermediate/flame_forging.png",
+    "file": "flame_forging.png",
+    "sha256": "bb9500d0c4fff71c206842f7b45a9a57d38d974295fe79c7f32c74fa7633873f",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\flame_forging.png",
+    "bytes": 1129867
+  },
+  {
+    "id": "ember_trap",
+    "icon": "magiccodex:textures/spells/intermediate/ember_trap.png",
+    "file": "ember_trap.png",
+    "sha256": "cee48f75491721b39e32bf92522b79fc504d2aee5c856f0b130cd7493f8222fb",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\ember_trap.png",
+    "bytes": 902075
+  },
+  {
+    "id": "fire_curtain",
+    "icon": "magiccodex:textures/spells/intermediate/fire_curtain.png",
+    "file": "fire_curtain.png",
+    "sha256": "f5fcc7b780e9e640af088d1916926022f1253df0302ca10e441b08432bf62c88",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\fire_curtain.png",
+    "bytes": 1442857
+  },
+  {
+    "id": "phoenix_oath",
+    "icon": "magiccodex:textures/spells/advanced/phoenix_oath.png",
+    "file": "phoenix_oath.png",
+    "sha256": "b53f313aceb2ed65f0a09c8aae80ab615d57b7eba7bc63435c54f52081d33571",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\advanced\\phoenix_oath.png",
+    "bytes": 1618345
+  },
+  {
+    "id": "living_furnace",
+    "icon": "magiccodex:textures/spells/advanced/living_furnace.png",
+    "file": "living_furnace.png",
+    "sha256": "db8a7b667537c2c69a2eb0681cbf3738aee9331ede9e5ee4c8df1bd1d13f5c21",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\advanced\\living_furnace.png",
+    "bytes": 1093987
+  },
+  {
+    "id": "falling_star",
+    "icon": "magiccodex:textures/spells/advanced/falling_star.png",
+    "file": "falling_star.png",
+    "sha256": "83d681164973dd52d04377a8c9dde9a4b2bee6f5fa70f33937b789b4eff7e938",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\advanced\\falling_star.png",
+    "bytes": 1165494
+  },
+  {
+    "id": "palm_fireworks",
+    "icon": "magiccodex:textures/spells/expansion/palm_fireworks.png",
+    "file": "palm_fireworks.png",
+    "sha256": "d3cfe561cac7bce7d5a5e3dd1c84dbac6d18ba106481f013ecc39a12048cc359",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\palm_fireworks.png",
+    "bytes": 1058731
+  },
+  {
+    "id": "wick_trimming",
+    "icon": "magiccodex:textures/spells/expansion_2/wick_trimming.png",
+    "file": "wick_trimming.png",
+    "sha256": "959f71aff34282f157a36654556850eeae9a5276f25f7bdd41d3a65dfa18748a",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\wick_trimming.png",
+    "bytes": 1152815
+  },
+  {
+    "id": "glass_firing",
+    "icon": "magiccodex:textures/spells/expansion_2/glass_firing.png",
+    "file": "glass_firing.png",
+    "sha256": "b0187897ac92c90b6113cbc03c0746b13a696dcebf8998b114d69c95da3380a8",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\glass_firing.png",
+    "bytes": 1287745
+  },
+  {
+    "id": "charcoal_conversion",
+    "icon": "magiccodex:textures/spells/expansion_2/charcoal_conversion.png",
+    "file": "charcoal_conversion.png",
+    "sha256": "815dee72ba6d5853312a734c6e97b6a3557c8410c63b91fbd58bb56cf97a0c0b",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\charcoal_conversion.png",
+    "bytes": 1360349
+  },
+  {
+    "id": "sponge_drying",
+    "icon": "magiccodex:textures/spells/expansion_2/sponge_drying.png",
+    "file": "sponge_drying.png",
+    "sha256": "63a77cf1f30e7a9d42a0fd25e4a35068e452dcd364e1aa4ff7642e0c2d6e00fe",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\sponge_drying.png",
+    "bytes": 1139128
+  },
+  {
+    "id": "flame_lash",
+    "icon": "magiccodex:textures/spells/expansion/flame_lash.png",
+    "file": "flame_lash.png",
+    "sha256": "85c14640e5e7a1cec7052c4dadcf022a5eee21088a00aba80cc6e93186264a55",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\flame_lash.png",
+    "bytes": 1218284
+  },
+  {
+    "id": "cinder_detonation",
+    "icon": "magiccodex:textures/spells/expansion/cinder_detonation.png",
+    "file": "cinder_detonation.png",
+    "sha256": "9d5b09b1ff9f6dc61819863af36da23e9bc0ffb56e22d8d4f9da461679e29338",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\cinder_detonation.png",
+    "bytes": 1523195
+  },
+  {
+    "id": "flame_footprints",
+    "icon": "magiccodex:textures/spells/expansion_2/flame_footprints.png",
+    "file": "flame_footprints.png",
+    "sha256": "23ad6228ee230a984e4502a52e7b15b37724de3cea501fe644a70d7db5921ce3",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\flame_footprints.png",
+    "bytes": 1187105
+  },
+  {
+    "id": "boiling_armor",
+    "icon": "magiccodex:textures/spells/expansion_2/boiling_armor.png",
+    "file": "boiling_armor.png",
+    "sha256": "c725fe130ecc2c83c77bcdfe02b85042fddf8b73abdc2d4c64a07e32351a40c9",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\boiling_armor.png",
+    "bytes": 1842387
+  },
+  {
+    "id": "kiln_breath",
+    "icon": "magiccodex:textures/spells/expansion_2/kiln_breath.png",
+    "file": "kiln_breath.png",
+    "sha256": "9440d21ff21304b67394d304b3f91d96a9d6fd44422bcd1184e81c29ce6c488e",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\kiln_breath.png",
+    "bytes": 1436098
+  },
+  {
+    "id": "glaze_coating",
+    "icon": "magiccodex:textures/spells/expansion_2/glaze_coating.png",
+    "file": "glaze_coating.png",
+    "sha256": "8a6104d374b98f3c5557cd54a545a56fa5d84f0d5f41dc03e361e0aa33990c07",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\glaze_coating.png",
+    "bytes": 1581257
+  },
+  {
+    "id": "ash_brand",
+    "icon": "magiccodex:textures/spells/expansion/ash_brand.png",
+    "file": "ash_brand.png",
+    "sha256": "791bf83d7c9055affd28ba4133d466b8764ba920a59e1cb88637c812006bb4ab",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\ash_brand.png",
+    "bytes": 1735485
+  },
+  {
+    "id": "explosive_wedge",
+    "icon": "magiccodex:textures/spells/expansion_2/explosive_wedge.png",
+    "file": "explosive_wedge.png",
+    "sha256": "e003d6474fc83191b6e5a460937fdd5203f1b99196d544a37cfdcef7c82f7207",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\explosive_wedge.png",
+    "bytes": 1167190
+  },
+  {
+    "id": "fireproof_film",
+    "icon": "magiccodex:textures/spells/expansion_2/fireproof_film.png",
+    "file": "fireproof_film.png",
+    "sha256": "3c57f7643f1c4527a68806b7dfa861529537ba749264ceb4b02425154b6f0a0d",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\fireproof_film.png",
+    "bytes": 1570210
+  },
+  {
+    "id": "flame_leap",
+    "icon": "magiccodex:textures/spells/expansion/flame_leap.png",
+    "file": "flame_leap.png",
+    "sha256": "6c67c31a720e4f6cad95b1733b0f0aaa9c80e4fa635107b91829532d1f0294d7",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\flame_leap.png",
+    "bytes": 1407327
+  },
+  {
+    "id": "heat_recovery",
+    "icon": "magiccodex:textures/spells/expansion_2/heat_recovery.png",
+    "file": "heat_recovery.png",
+    "sha256": "9617b415d01128567c6113992b9db2aac0907fbf7b4c817061dedb8543a555b5",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\heat_recovery.png",
+    "bytes": 1240104
+  },
+  {
+    "id": "firebird_hunt",
+    "icon": "magiccodex:textures/spells/expansion_2/firebird_hunt.png",
+    "file": "firebird_hunt.png",
+    "sha256": "f0bd4ceffe389856cd8670a20f70928ed7ee5e71310b1b127f21f6235b013c0e",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\firebird_hunt.png",
+    "bytes": 1379102
+  },
+  {
+    "id": "lava_suture",
+    "icon": "magiccodex:textures/spells/expansion_2/lava_suture.png",
+    "file": "lava_suture.png",
+    "sha256": "aa663fd13b1d35a609d0d614d8b2fe5195c64260cb1f13bd9fc906187e032b25",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\lava_suture.png",
+    "bytes": 1475163
+  },
+  {
+    "id": "flame_sword_dance",
+    "icon": "magiccodex:textures/spells/expansion_2/flame_sword_dance.png",
+    "file": "flame_sword_dance.png",
+    "sha256": "4a2142a3b869660d727abc86534d053aae8f31490ea145127f476bbf8cb26c45",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\flame_sword_dance.png",
+    "bytes": 1203270
+  },
+  {
+    "id": "incandescent_break",
+    "icon": "magiccodex:textures/spells/expansion_2/incandescent_break.png",
+    "file": "incandescent_break.png",
+    "sha256": "25182c6058ae1c4ab95b83f7c5e6b46780e6bf925914e3c1033f98962f4bc445",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\incandescent_break.png",
+    "bytes": 1600301
+  },
+  {
+    "id": "blue_bonfire",
+    "icon": "magiccodex:textures/spells/expansion_2/blue_bonfire.png",
+    "file": "blue_bonfire.png",
+    "sha256": "fe7cd4ffcb3b93bb1979b543d10c6ac0005f7b251424a0c5be415a5ed7bfa2df",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\blue_bonfire.png",
+    "bytes": 1224235
+  },
+  {
+    "id": "crimson_heart",
+    "icon": "magiccodex:textures/spells/expansion/crimson_heart.png",
+    "file": "crimson_heart.png",
+    "sha256": "36ead12bc8a85c8354d683ce6032ea687254dbc39b26d525e01c2c218d8a8b26",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\crimson_heart.png",
+    "bytes": 1669679
+  },
+  {
+    "id": "crimson_breath",
+    "icon": "magiccodex:textures/spells/expansion_2/crimson_breath.png",
+    "file": "crimson_breath.png",
+    "sha256": "ecbbde89df2f67d140c3d1aa90ef4bded75b606643cd235dbe2cf61e7863aeaa",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\crimson_breath.png",
+    "bytes": 1491120
+  },
+  {
+    "id": "water_breath",
+    "icon": "magiccodex:textures/spells/novice/water_breath.png",
+    "file": "water_breath.png",
+    "sha256": "329f3355f08bdf2100b9b173192176137a0b2806265495cc43a5b67163dee299",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice\\water_breath.png",
+    "bytes": 1397947
+  },
+  {
+    "id": "tide_stride",
+    "icon": "magiccodex:textures/spells/novice/tide_stride.png",
+    "file": "tide_stride.png",
+    "sha256": "3c53c4a0c6f48de62744441f7c1974f4bb9af6a121ae96d987640a6279e80860",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice\\tide_stride.png",
+    "bytes": 1379251
+  },
+  {
+    "id": "water_bolt",
+    "icon": "magiccodex:textures/spells/novice_extra/water_bolt.png",
+    "file": "water_bolt.png",
+    "sha256": "bd9556dc1737c179aea2f3c918186eb7a767da9026e37ff9ca10733ea88122d7",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice_extra\\water_bolt.png",
+    "bytes": 694970
+  },
+  {
+    "id": "quench",
+    "icon": "magiccodex:textures/spells/novice_extra/quench.png",
+    "file": "quench.png",
+    "sha256": "8d793df73eb15f67a2bb300d30184d4305f7a5cb40805137e6577c654edcff44",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice_extra\\quench.png",
+    "bytes": 781348
+  },
+  {
+    "id": "purifying_wave",
+    "icon": "magiccodex:textures/spells/intermediate/purifying_wave.png",
+    "file": "purifying_wave.png",
+    "sha256": "9b82f6135ba9b5a4df0e4099fa2ed1955cab4dd34fdcfba04d0f9147c3e8de9f",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\purifying_wave.png",
+    "bytes": 1079444
+  },
+  {
+    "id": "ice_bridge",
+    "icon": "magiccodex:textures/spells/intermediate/ice_bridge.png",
+    "file": "ice_bridge.png",
+    "sha256": "a3767f07f5a94566ec0a2d0e7d32801dfa84e9c7e34f66da0d32b5c62c07e017",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\ice_bridge.png",
+    "bytes": 911296
+  },
+  {
+    "id": "water_mirror",
+    "icon": "magiccodex:textures/spells/intermediate/water_mirror.png",
+    "file": "water_mirror.png",
+    "sha256": "94ac83a06a629503b730e6a63f987cd4e42bd8bf88c5a8fbc37d163c56b15196",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\water_mirror.png",
+    "bytes": 1470093
+  },
+  {
+    "id": "spring_unseal",
+    "icon": "magiccodex:textures/spells/intermediate/spring_unseal.png",
+    "file": "spring_unseal.png",
+    "sha256": "0cdd87ee63fcd0bf5344101333352f133e969c039656400c39767890393e25e2",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\spring_unseal.png",
+    "bytes": 1583705
+  },
+  {
+    "id": "water_elemental",
+    "icon": "magiccodex:textures/spells/advanced/water_elemental.png",
+    "file": "water_elemental.png",
+    "sha256": "dd3cd1109ba3e901d2b64e80b6202a71df79de41174b078d5d0ce16847860afa",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\advanced\\water_elemental.png",
+    "bytes": 1430384
+  },
+  {
+    "id": "eternal_ice_prison",
+    "icon": "magiccodex:textures/spells/advanced/eternal_ice_prison.png",
+    "file": "eternal_ice_prison.png",
+    "sha256": "97834285de820612af2b6ac32df14ceb49fc3deda6b63c275e4211940a5c26b2",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\advanced\\eternal_ice_prison.png",
+    "bytes": 1355564
+  },
+  {
+    "id": "cauldron_fill",
+    "icon": "magiccodex:textures/spells/expansion/cauldron_fill.png",
+    "file": "cauldron_fill.png",
+    "sha256": "793911b04769f6077cbb9bfd54bb8684ffb037f52cb6fec9c27febdc851efefd",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\cauldron_fill.png",
+    "bytes": 1324156
+  },
+  {
+    "id": "dye_rinse",
+    "icon": "magiccodex:textures/spells/expansion/dye_rinse.png",
+    "file": "dye_rinse.png",
+    "sha256": "7fb7fa6e30907cd6ce201faa7e334fee8b8e3c518bcc49fb9edd1f62ff4888fd",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\dye_rinse.png",
+    "bytes": 1664531
+  },
+  {
+    "id": "moist_farmland",
+    "icon": "magiccodex:textures/spells/expansion_2/moist_farmland.png",
+    "file": "moist_farmland.png",
+    "sha256": "8c5e64d1b4dd393efd64bd27bf33f7345f91c619f4fc97d77d7aad4d32a082ce",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\moist_farmland.png",
+    "bytes": 1294976
+  },
+  {
+    "id": "wash_letters",
+    "icon": "magiccodex:textures/spells/expansion_2/wash_letters.png",
+    "file": "wash_letters.png",
+    "sha256": "86071e721da044f9251e3afc04fcd660762a0f3e3699cdefc2860abbefcdb519",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\wash_letters.png",
+    "bytes": 1827179
+  },
+  {
+    "id": "handful_of_snow",
+    "icon": "magiccodex:textures/spells/expansion_2/handful_of_snow.png",
+    "file": "handful_of_snow.png",
+    "sha256": "4c7d1b1da4c54afb534f818820766bf3b4668404ae68dcbd9aea86ae260174a6",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\handful_of_snow.png",
+    "bytes": 1284133
+  },
+  {
+    "id": "fish_lure",
+    "icon": "magiccodex:textures/spells/expansion/fish_lure.png",
+    "file": "fish_lure.png",
+    "sha256": "2b18637621d84c5fbb8f22b6127961096ae72af35c2c29314f3e63e3b9c9baf5",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\fish_lure.png",
+    "bytes": 1694895
+  },
+  {
+    "id": "dew_gathering",
+    "icon": "magiccodex:textures/spells/expansion_2/dew_gathering.png",
+    "file": "dew_gathering.png",
+    "sha256": "c38749fa9c491587a6c7aa56c9952807ef527feb6fdaa8e3d86e50a3ac52ede0",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\dew_gathering.png",
+    "bytes": 1222097
+  },
+  {
+    "id": "quiet_mooring",
+    "icon": "magiccodex:textures/spells/expansion_2/quiet_mooring.png",
+    "file": "quiet_mooring.png",
+    "sha256": "65d03120c7b5c9f041b5dc224172fd26f614cbffff10614aae6c4087400c98b0",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\quiet_mooring.png",
+    "bytes": 1330067
+  },
+  {
+    "id": "frost_rupture",
+    "icon": "magiccodex:textures/spells/expansion/frost_rupture.png",
+    "file": "frost_rupture.png",
+    "sha256": "eb6d3c087f9b2f010c5d34993b471edfe22fd22e04e3dc33aee702fbeae70df5",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\frost_rupture.png",
+    "bytes": 1245807
+  },
+  {
+    "id": "wet_footprints",
+    "icon": "magiccodex:textures/spells/expansion_2/wet_footprints.png",
+    "file": "wet_footprints.png",
+    "sha256": "6278f10841be365e4f24510e8aeb35d5e3ef7ba2b67652149c02b85bf6d15c0b",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\wet_footprints.png",
+    "bytes": 842600
+  },
+  {
+    "id": "pressure_weight",
+    "icon": "magiccodex:textures/spells/expansion_2/pressure_weight.png",
+    "file": "pressure_weight.png",
+    "sha256": "4fa09eb1d7fc420204dd68be94c97dc50f6527e8e5cb13dc8bc36fbdff31e4cf",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\pressure_weight.png",
+    "bytes": 1889565
+  },
+  {
+    "id": "cold_storage",
+    "icon": "magiccodex:textures/spells/expansion_2/cold_storage.png",
+    "file": "cold_storage.png",
+    "sha256": "9d2ec22eb30b448b35ed3f4c2ffebe5492416eeca8f608b3fa58df658cce9236",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\cold_storage.png",
+    "bytes": 1658750
+  },
+  {
+    "id": "current_sorting",
+    "icon": "magiccodex:textures/spells/expansion_2/current_sorting.png",
+    "file": "current_sorting.png",
+    "sha256": "5a138b70f382b70c41d1d68fff74b7d2fba35a0616c8c5666a5cc3019f0c1a69",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\current_sorting.png",
+    "bytes": 1090641
+  },
+  {
+    "id": "dampen_powder",
+    "icon": "magiccodex:textures/spells/expansion/dampen_powder.png",
+    "file": "dampen_powder.png",
+    "sha256": "3491da7d9acf16406f213f4c04de74329196035d4d325295d3db3a666007ebe7",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\dampen_powder.png",
+    "bytes": 1334934
+  },
+  {
+    "id": "potion_mist",
+    "icon": "magiccodex:textures/spells/expansion_2/potion_mist.png",
+    "file": "potion_mist.png",
+    "sha256": "66595a833a044864f3b8c218b455cb4bf939fde4805486dde30e66ff3a94bcca",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\potion_mist.png",
+    "bytes": 1340966
+  },
+  {
+    "id": "waterwheel_shield",
+    "icon": "magiccodex:textures/spells/expansion_2/waterwheel_shield.png",
+    "file": "waterwheel_shield.png",
+    "sha256": "40abce304143527d101bed2a8f01780ba560bffbfe5376e7d9fa3343d042072a",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\waterwheel_shield.png",
+    "bytes": 1780266
+  },
+  {
+    "id": "liquid_barrier",
+    "icon": "magiccodex:textures/spells/expansion_2/liquid_barrier.png",
+    "file": "liquid_barrier.png",
+    "sha256": "94ff44ac8f05666a400256ebbbc78971a3d6d61431cca444de850019fd12b286",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\liquid_barrier.png",
+    "bytes": 1597062
+  },
+  {
+    "id": "water_rebound",
+    "icon": "magiccodex:textures/spells/expansion_2/water_rebound.png",
+    "file": "water_rebound.png",
+    "sha256": "1a0db67ba5de0a41db709080a4bb64ece79ec64a239a7f558e2293add0f3c8d2",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\water_rebound.png",
+    "bytes": 1509126
+  },
+  {
+    "id": "tidal_wave",
+    "icon": "magiccodex:textures/spells/expansion_2/tidal_wave.png",
+    "file": "tidal_wave.png",
+    "sha256": "6765992e035738578ae634dee3563e4a188647e407fca24c4c1c30fca436bb31",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\tidal_wave.png",
+    "bytes": 1641892
+  },
+  {
+    "id": "life_distribution",
+    "icon": "magiccodex:textures/spells/expansion/life_distribution.png",
+    "file": "life_distribution.png",
+    "sha256": "47e98ad2f814b44eb9b46fd5ce48995b376279064c1b9a2a9c77653d0104e90a",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\life_distribution.png",
+    "bytes": 1360494
+  },
+  {
+    "id": "thaw_pulse",
+    "icon": "magiccodex:textures/spells/expansion_2/thaw_pulse.png",
+    "file": "thaw_pulse.png",
+    "sha256": "0c137efd34202d79fb79a1d93c9e5db40dd064708c74f663e6c151a44ad9cc77",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\thaw_pulse.png",
+    "bytes": 1391429
+  },
+  {
+    "id": "abyssal_pressure",
+    "icon": "magiccodex:textures/spells/expansion_2/abyssal_pressure.png",
+    "file": "abyssal_pressure.png",
+    "sha256": "6c85771cc5fed4f4598fab7b43b4d0e80a13ba2b4656081630bd38961c0036cd",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\abyssal_pressure.png",
+    "bytes": 1491892
+  },
+  {
+    "id": "verdant_touch",
+    "icon": "magiccodex:textures/spells/novice/verdant_touch.png",
+    "file": "verdant_touch.png",
+    "sha256": "8a5f4cc3130394c8053387ad8db59c3148278da0494e6ac7c0db7a10a8377aee",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice\\verdant_touch.png",
+    "bytes": 1146272
+  },
+  {
+    "id": "ore_whisper",
+    "icon": "magiccodex:textures/spells/novice/ore_whisper.png",
+    "file": "ore_whisper.png",
+    "sha256": "f6d7dfa51a5b13cbc0ae92cd0bbed3af7e633ea1152add819a8233f8c18213f4",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice\\ore_whisper.png",
+    "bytes": 1653132
+  },
+  {
+    "id": "pebble_toss",
+    "icon": "magiccodex:textures/spells/novice_extra/pebble_toss.png",
+    "file": "pebble_toss.png",
+    "sha256": "a83c2d5c9b8151a13819ba34bfcff25567ae840363670da190ef978a3752791d",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice_extra\\pebble_toss.png",
+    "bytes": 540477
+  },
+  {
+    "id": "miners_rhythm",
+    "icon": "magiccodex:textures/spells/novice_extra/miners_rhythm.png",
+    "file": "miners_rhythm.png",
+    "sha256": "29d5a87be707a19194a4c86ae0bb3904c8dfbfb37f619d6316dab935c579d83a",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice_extra\\miners_rhythm.png",
+    "bytes": 813869
+  },
+  {
+    "id": "earth_shaping",
+    "icon": "magiccodex:textures/spells/intermediate/earth_shaping.png",
+    "file": "earth_shaping.png",
+    "sha256": "3955116eaa883fcecf3c3dfe37ec0ae68a9ad65cb2940324b05b146f9c10f555",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\earth_shaping.png",
+    "bytes": 1057524
+  },
+  {
+    "id": "stone_wall",
+    "icon": "magiccodex:textures/spells/intermediate/stone_wall.png",
+    "file": "stone_wall.png",
+    "sha256": "d1d1cd78cf165cc20221fc28bfba800df4a05349b3d5762314085f025973b45f",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\stone_wall.png",
+    "bytes": 1455910
+  },
+  {
+    "id": "vine_ladder",
+    "icon": "magiccodex:textures/spells/intermediate/vine_ladder.png",
+    "file": "vine_ladder.png",
+    "sha256": "799dbb06383b83171c9be873c23bec14c7d66c2febf4b27eb280016e173a300f",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\vine_ladder.png",
+    "bytes": 1099491
+  },
+  {
+    "id": "earth_elemental",
+    "icon": "magiccodex:textures/spells/advanced/earth_elemental.png",
+    "file": "earth_elemental.png",
+    "sha256": "dcbdc1f766151d44586c36e552c2d77ad4f23011f41abcf0db69fe8c27e11467",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\advanced\\earth_elemental.png",
+    "bytes": 1737015
+  },
+  {
+    "id": "earthquake",
+    "icon": "magiccodex:textures/spells/advanced/earthquake.png",
+    "file": "earthquake.png",
+    "sha256": "79d8ed8867aa4c20c6a96b5bdc5d0ed140a55da326e0df3f83040d53b4bc0f10",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\advanced\\earthquake.png",
+    "bytes": 1362475
+  },
+  {
+    "id": "climate_control",
+    "icon": "magiccodex:textures/spells/advanced/climate_control.png",
+    "file": "climate_control.png",
+    "sha256": "38fdf83e98e076bafefc6490deab8eb2a150a7b3db3bce99d6a7a662d6381b42",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\advanced\\climate_control.png",
+    "bytes": 1379549
+  },
+  {
+    "id": "moss_coating",
+    "icon": "magiccodex:textures/spells/expansion_2/moss_coating.png",
+    "file": "moss_coating.png",
+    "sha256": "6ceb45df63ebf670215734e3f99197773605d06cbcb5951d01eae0d5f1f9620f",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\moss_coating.png",
+    "bytes": 1676261
+  },
+  {
+    "id": "grass_sprouting",
+    "icon": "magiccodex:textures/spells/expansion_2/grass_sprouting.png",
+    "file": "grass_sprouting.png",
+    "sha256": "4a0c1ba61a48c315ae5281d212872d70e6a353b93c2361b14ca36443f85ec106",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\grass_sprouting.png",
+    "bytes": 1475368
+  },
+  {
+    "id": "seed_row",
+    "icon": "magiccodex:textures/spells/expansion/seed_row.png",
+    "file": "seed_row.png",
+    "sha256": "bbc8f78a641af3c4f82a7d59af028cdc5542e05acb24f11b73b5d903993114f2",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\seed_row.png",
+    "bytes": 1464451
+  },
+  {
+    "id": "bee_calm",
+    "icon": "magiccodex:textures/spells/expansion/bee_calm.png",
+    "file": "bee_calm.png",
+    "sha256": "a2c7de6ac0af218e3766389435ee4c60e913d743e777ecd3829decb82eecb2ba",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\bee_calm.png",
+    "bytes": 1798677
+  },
+  {
+    "id": "flint_sorting",
+    "icon": "magiccodex:textures/spells/expansion_2/flint_sorting.png",
+    "file": "flint_sorting.png",
+    "sha256": "9f1758c78e3bb85e91da358c78d317101c2b29f627e3b7af37c00fd93d8be128",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\flint_sorting.png",
+    "bytes": 1123672
+  },
+  {
+    "id": "bark_peeling",
+    "icon": "magiccodex:textures/spells/expansion_2/bark_peeling.png",
+    "file": "bark_peeling.png",
+    "sha256": "f0e03c68c849508921b3e605bb6ae9fdf2304c091848127cd4ca17220eb80408",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\bark_peeling.png",
+    "bytes": 1632548
+  },
+  {
+    "id": "thorn_armor",
+    "icon": "magiccodex:textures/spells/expansion/thorn_armor.png",
+    "file": "thorn_armor.png",
+    "sha256": "c0e59f1b0732a20f1b4ca0d77d8eb0a586dc00bac1db3c5fe50a3159526cf1a7",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\thorn_armor.png",
+    "bytes": 2207241
+  },
+  {
+    "id": "compost_return",
+    "icon": "magiccodex:textures/spells/expansion_2/compost_return.png",
+    "file": "compost_return.png",
+    "sha256": "f88ab2618da7c4bb4d97e1cdb884b67867ac224c6dd425594deb521306f01f13",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\compost_return.png",
+    "bytes": 1739953
+  },
+  {
+    "id": "thorn_seeds",
+    "icon": "magiccodex:textures/spells/expansion_2/thorn_seeds.png",
+    "file": "thorn_seeds.png",
+    "sha256": "c062265023729c3e28a1a2ae332fb6167f2adfacb5a63663a55ca55397ed38fe",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\thorn_seeds.png",
+    "bytes": 1589698
+  },
+  {
+    "id": "pollen_matchmaking",
+    "icon": "magiccodex:textures/spells/expansion_2/pollen_matchmaking.png",
+    "file": "pollen_matchmaking.png",
+    "sha256": "41341cfe88e4986bb0fa1ced2dc6788e89d64c12050bee4ff3e854663a8c9316",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\pollen_matchmaking.png",
+    "bytes": 1611840
+  },
+  {
+    "id": "automatic_supply",
+    "icon": "magiccodex:textures/spells/expansion_2/automatic_supply.png",
+    "file": "automatic_supply.png",
+    "sha256": "7d5998bcf11c85fda5d73228fadf2d43e7260f451e52c2b4530e5b457a08f50b",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\automatic_supply.png",
+    "bytes": 1536610
+  },
+  {
+    "id": "earth_anchor",
+    "icon": "magiccodex:textures/spells/expansion/earth_anchor.png",
+    "file": "earth_anchor.png",
+    "sha256": "ce64a4c399a10d7f30b933062c5df2b91a16c930a99ab8dd32f9fe47349bfcd0",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\earth_anchor.png",
+    "bytes": 1753445
+  },
+  {
+    "id": "weathering_touch",
+    "icon": "magiccodex:textures/spells/expansion/weathering_touch.png",
+    "file": "weathering_touch.png",
+    "sha256": "739240d1474849c00fb55fea82969df1a5c0ab74d5badff1913fe683bf38bbad",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\weathering_touch.png",
+    "bytes": 1715291
+  },
+  {
+    "id": "dormant_seed",
+    "icon": "magiccodex:textures/spells/expansion_2/dormant_seed.png",
+    "file": "dormant_seed.png",
+    "sha256": "f3cee330aca1438b22d08b2f566b99704d8f0c944ca07e58038d72c184d6d5fc",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\dormant_seed.png",
+    "bytes": 1447940
+  },
+  {
+    "id": "counterweight",
+    "icon": "magiccodex:textures/spells/expansion_2/counterweight.png",
+    "file": "counterweight.png",
+    "sha256": "aadb220c2538c7bdfde3c7ee33ca61159acca5d763b94befd61f9cdd47d74a35",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\counterweight.png",
+    "bytes": 1441825
+  },
+  {
+    "id": "vein_fracture",
+    "icon": "magiccodex:textures/spells/expansion/vein_fracture.png",
+    "file": "vein_fracture.png",
+    "sha256": "bb6ba03a35d417be53335977587b7e71a356b09fe40324ed91600fb519364af7",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\vein_fracture.png",
+    "bytes": 1855317
+  },
+  {
+    "id": "iron_carapace",
+    "icon": "magiccodex:textures/spells/expansion/iron_carapace.png",
+    "file": "iron_carapace.png",
+    "sha256": "ca9ce9d682c1d0dcc4236f678829f954b960d6ce47c75cdea971928381a1c6be",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\iron_carapace.png",
+    "bytes": 2195079
+  },
+  {
+    "id": "material_exchange",
+    "icon": "magiccodex:textures/spells/expansion_2/material_exchange.png",
+    "file": "material_exchange.png",
+    "sha256": "f3ffe38e1649c6420fff9dc717e68ea7f443750d708c1ec4f0cea7e90c8d2c5d",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\material_exchange.png",
+    "bytes": 1743624
+  },
+  {
+    "id": "remembering_field",
+    "icon": "magiccodex:textures/spells/expansion_2/remembering_field.png",
+    "file": "remembering_field.png",
+    "sha256": "8fcb3344d0de1e81dce0c4ccbaeb794c1489e1823e01b6309aeee42006decd0a",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\remembering_field.png",
+    "bytes": 1425444
+  },
+  {
+    "id": "little_giant",
+    "icon": "magiccodex:textures/spells/expansion_2/little_giant.png",
+    "file": "little_giant.png",
+    "sha256": "be8eacd51f5df4103dcde37f246fe31e6fc0c4543dccaf71282d4e8f80dcc214",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\little_giant.png",
+    "bytes": 1746706
+  },
+  {
+    "id": "spring_ground",
+    "icon": "magiccodex:textures/spells/expansion_2/spring_ground.png",
+    "file": "spring_ground.png",
+    "sha256": "ddf6d72522a6ccd4c25bd907807cb1cfa491f7ed11d8b76ee5bccae812efbe81",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\spring_ground.png",
+    "bytes": 1530871
+  },
+  {
+    "id": "mountain_back",
+    "icon": "magiccodex:textures/spells/expansion_2/mountain_back.png",
+    "file": "mountain_back.png",
+    "sha256": "90077dbf0a4363b404b9ff21fa4dd80be34b240b0b0723271d96d913002864a0",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\mountain_back.png",
+    "bytes": 1860404
+  },
+  {
+    "id": "earth_embrace",
+    "icon": "magiccodex:textures/spells/expansion_2/earth_embrace.png",
+    "file": "earth_embrace.png",
+    "sha256": "64309f848ea1fb9e6d5b549a9d1d7acc0bd23e3eccf0ac05e244b41a15301635",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\earth_embrace.png",
+    "bytes": 1918195
+  },
+  {
+    "id": "forest_throne",
+    "icon": "magiccodex:textures/spells/expansion_2/forest_throne.png",
+    "file": "forest_throne.png",
+    "sha256": "eb3d4f47e7701beffabe8e5fb718240691bf6b173ae83901c4593b50f7ad70eb",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\forest_throne.png",
+    "bytes": 1692092
+  },
+  {
+    "id": "primordial_stone",
+    "icon": "magiccodex:textures/spells/expansion_2/primordial_stone.png",
+    "file": "primordial_stone.png",
+    "sha256": "715f87fb3636b2c6f0911bf56b5970214b88ff5f63de5522e726b7d6fc9b467b",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\primordial_stone.png",
+    "bytes": 1434201
+  },
+  {
+    "id": "guiding_star",
+    "icon": "magiccodex:textures/spells/novice/guiding_star.png",
+    "file": "guiding_star.png",
+    "sha256": "cd60435c057b4f2d554ee7824126bd36a80e7c683d09b7d500e4ee05564401ce",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice\\guiding_star.png",
+    "bytes": 485269
+  },
+  {
+    "id": "minor_heal",
+    "icon": "magiccodex:textures/spells/novice_extra/minor_heal.png",
+    "file": "minor_heal.png",
+    "sha256": "37a7bfbb98f56cc2f0bed677e42a1275f1b7ad17488903c8a2988c22a8f45af9",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice_extra\\minor_heal.png",
+    "bytes": 1152561
+  },
+  {
+    "id": "light_mark",
+    "icon": "magiccodex:textures/spells/novice_extra/light_mark.png",
+    "file": "light_mark.png",
+    "sha256": "dda60b9301227f0ed96ded344391dda46d8501ea2bd5c8007cb0b72d6001387a",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice_extra\\light_mark.png",
+    "bytes": 654471
+  },
+  {
+    "id": "spatial_leap",
+    "icon": "magiccodex:textures/spells/intermediate/spatial_leap.png",
+    "file": "spatial_leap.png",
+    "sha256": "0631f0c0a022a5c56bb9bd05476c22aad746084a6004972dce5ef33197804364",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\spatial_leap.png",
+    "bytes": 1356206
+  },
+  {
+    "id": "luminous_archive",
+    "icon": "magiccodex:textures/spells/intermediate/luminous_archive.png",
+    "file": "luminous_archive.png",
+    "sha256": "019c7dde69d92c1db3e68941bcadf9d2b0d9002fa92e08f5043b5a495f942785",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\luminous_archive.png",
+    "bytes": 1361086
+  },
+  {
+    "id": "true_sight",
+    "icon": "magiccodex:textures/spells/intermediate/true_sight.png",
+    "file": "true_sight.png",
+    "sha256": "16bb9656220068dca53fff0815a08ed631292f95a436638070676f3978cdcfbd",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\true_sight.png",
+    "bytes": 1207621
+  },
+  {
+    "id": "protective_ward",
+    "icon": "magiccodex:textures/spells/intermediate/protective_ward.png",
+    "file": "protective_ward.png",
+    "sha256": "d886c7182cef6385fb7a0b200200edce43544e432e3fc81781a8b5b564ee556f",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\protective_ward.png",
+    "bytes": 1009535
+  },
+  {
+    "id": "constellation_blessing",
+    "icon": "magiccodex:textures/spells/advanced/constellation_blessing.png",
+    "file": "constellation_blessing.png",
+    "sha256": "18eee64546f99e58585f26984f90d704e7aca260df890d4e1f233b95831bcf2d",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\advanced\\constellation_blessing.png",
+    "bytes": 862853
+  },
+  {
+    "id": "arcane_imprint",
+    "icon": "magiccodex:textures/spells/advanced/arcane_imprint.png",
+    "file": "arcane_imprint.png",
+    "sha256": "63719c14f499ab027eada6ef22db6e4fcb1943008bd42da51cd0eec3ba70ff3a",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\advanced\\arcane_imprint.png",
+    "bytes": 739983
+  },
+  {
+    "id": "dawn_ritual",
+    "icon": "magiccodex:textures/spells/advanced/dawn_ritual.png",
+    "file": "dawn_ritual.png",
+    "sha256": "61bd22f9aa6a6e5cbd9f25575635295eb67810a867dc7be7e4cd1c9e21ce3007",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\advanced\\dawn_ritual.png",
+    "bytes": 1656521
+  },
+  {
+    "id": "firefly_mark",
+    "icon": "magiccodex:textures/spells/expansion_2/firefly_mark.png",
+    "file": "firefly_mark.png",
+    "sha256": "d7192102f2b8aafc590c9a110be384ca69bb28b8b076ccb18a6677da0ad39fd1",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\firefly_mark.png",
+    "bytes": 1218477
+  },
+  {
+    "id": "rainbow_collar",
+    "icon": "magiccodex:textures/spells/expansion_2/rainbow_collar.png",
+    "file": "rainbow_collar.png",
+    "sha256": "1e7bae81615bf94a159d77e3b6145602bff1fe5e2790d4ebcad0593994548398",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\rainbow_collar.png",
+    "bytes": 1286984
+  },
+  {
+    "id": "comforting_light",
+    "icon": "magiccodex:textures/spells/expansion/comforting_light.png",
+    "file": "comforting_light.png",
+    "sha256": "1288d274430498da8bb1ca8f27d518fedf4fd57e8270a4d70e361cd53cacad49",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\comforting_light.png",
+    "bytes": 1255353
+  },
+  {
+    "id": "sun_drying",
+    "icon": "magiccodex:textures/spells/expansion_2/sun_drying.png",
+    "file": "sun_drying.png",
+    "sha256": "6e8216e22bc3eed09d78983dfd7db375ec60ce4769002bd3a231b7996bf06705",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\sun_drying.png",
+    "bytes": 1506487
+  },
+  {
+    "id": "luminous_copy",
+    "icon": "magiccodex:textures/spells/expansion_2/luminous_copy.png",
+    "file": "luminous_copy.png",
+    "sha256": "0518e171ef57fc1d16a1300d46e8504456a84ea3b27f4eeec2c125ff7bfe7902",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\luminous_copy.png",
+    "bytes": 1678638
+  },
+  {
+    "id": "exorcism_flash",
+    "icon": "magiccodex:textures/spells/expansion/exorcism_flash.png",
+    "file": "exorcism_flash.png",
+    "sha256": "fc477c87ac5009aed0955c11d6205bdd7282318d6d01dc4d883341eda8c1521b",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\exorcism_flash.png",
+    "bytes": 1665001
+  },
+  {
+    "id": "arcane_mending",
+    "icon": "magiccodex:textures/spells/expansion/arcane_mending.png",
+    "file": "arcane_mending.png",
+    "sha256": "256448ccd68e1f6288f6b9e7e8a7cdb95c9056c24bf7d6b2918ba206fa29df99",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\arcane_mending.png",
+    "bytes": 1455150
+  },
+  {
+    "id": "guiding_fletching",
+    "icon": "magiccodex:textures/spells/expansion_2/guiding_fletching.png",
+    "file": "guiding_fletching.png",
+    "sha256": "40b2a710c1e1d205db409c96479665f0096596c8fb6f79f40b04088ec553f519",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\guiding_fletching.png",
+    "bytes": 1175204
+  },
+  {
+    "id": "sharing_table",
+    "icon": "magiccodex:textures/spells/expansion_2/sharing_table.png",
+    "file": "sharing_table.png",
+    "sha256": "0e07a5579eed8a0fe51acd75b6e261f3bbac99e76a208c3c970f292adda6920c",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\sharing_table.png",
+    "bytes": 1581476
+  },
+  {
+    "id": "summons_letter",
+    "icon": "magiccodex:textures/spells/expansion_2/summons_letter.png",
+    "file": "summons_letter.png",
+    "sha256": "27b181bd10edbdefd4e6ed56dc8b8e1d83216a50bde5b05f946c203a289c3722",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\summons_letter.png",
+    "bytes": 1504104
+  },
+  {
+    "id": "starlight_survey",
+    "icon": "magiccodex:textures/spells/expansion_2/starlight_survey.png",
+    "file": "starlight_survey.png",
+    "sha256": "2e5120b45c7a86c1f194142d89000a4ff60b1766bd495631ed1035640d98b325",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\starlight_survey.png",
+    "bytes": 592631
+  },
+  {
+    "id": "luminous_handover",
+    "icon": "magiccodex:textures/spells/expansion_2/luminous_handover.png",
+    "file": "luminous_handover.png",
+    "sha256": "1576ec07135d0ae9db84b726175cd61f1c7933c4baeed0bbf6327e819c96073c",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\luminous_handover.png",
+    "bytes": 1499500
+  },
+  {
+    "id": "mana_conduit",
+    "icon": "magiccodex:textures/spells/expansion_2/mana_conduit.png",
+    "file": "mana_conduit.png",
+    "sha256": "f2b68e41ce69bbb84e039ac4a0fe969225226888495574eb6cf2720f59671b64",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\mana_conduit.png",
+    "bytes": 1205102
+  },
+  {
+    "id": "companion_return",
+    "icon": "magiccodex:textures/spells/expansion/companion_return.png",
+    "file": "companion_return.png",
+    "sha256": "1f41c8bba164585f15cd7984c6a92afd3b085711729710d0ae9db9a0c9c77865",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\companion_return.png",
+    "bytes": 1621335
+  },
+  {
+    "id": "merciful_arrow",
+    "icon": "magiccodex:textures/spells/expansion_2/merciful_arrow.png",
+    "file": "merciful_arrow.png",
+    "sha256": "7dab08502dd8b06e1aca3f736c21c5415871ae0301fdd2f4ec1fc0a294f4083d",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\merciful_arrow.png",
+    "bytes": 822704
+  },
+  {
+    "id": "mana_deposit",
+    "icon": "magiccodex:textures/spells/expansion_2/mana_deposit.png",
+    "file": "mana_deposit.png",
+    "sha256": "8c34326206e0b63f82d9a2ef991f3a8cd1c062f9687e9779b5a6c3df000cc369",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\mana_deposit.png",
+    "bytes": 1221409
+  },
+  {
+    "id": "flawless_moment",
+    "icon": "magiccodex:textures/spells/expansion/flawless_moment.png",
+    "file": "flawless_moment.png",
+    "sha256": "901f3ac79c7401117071db6c9d681bb7563a599a0d258765d2f7a76d92835429",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\flawless_moment.png",
+    "bytes": 1454071
+  },
+  {
+    "id": "guardian_oath",
+    "icon": "magiccodex:textures/spells/expansion_2/guardian_oath.png",
+    "file": "guardian_oath.png",
+    "sha256": "2d73bd63d65dc8d26edabe1795ba0c938fd14ca1f85042b11b2da7070e395f44",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\guardian_oath.png",
+    "bytes": 1960975
+  },
+  {
+    "id": "experience_exchange",
+    "icon": "magiccodex:textures/spells/expansion_2/experience_exchange.png",
+    "file": "experience_exchange.png",
+    "sha256": "5afbc72db9ba1be37ee29e5eaf4d72724a6693a2d5081eb3e6248b6d8a9cc798",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\experience_exchange.png",
+    "bytes": 1349454
+  },
+  {
+    "id": "solar_judgment",
+    "icon": "magiccodex:textures/spells/expansion/solar_judgment.png",
+    "file": "solar_judgment.png",
+    "sha256": "1d8c6f528f897026e0ae9a0237796aae3328dfa4cc95bbd07e5f26d62705887b",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\solar_judgment.png",
+    "bytes": 1189544
+  },
+  {
+    "id": "white_night_sanctuary",
+    "icon": "magiccodex:textures/spells/expansion_2/white_night_sanctuary.png",
+    "file": "white_night_sanctuary.png",
+    "sha256": "682a50304a613a570d0aa5d9fa8026288a55a41d4bd73c35c21c301a9b97f23b",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\white_night_sanctuary.png",
+    "bytes": 1680335
+  },
+  {
+    "id": "starlight_reprise",
+    "icon": "magiccodex:textures/spells/expansion_2/starlight_reprise.png",
+    "file": "starlight_reprise.png",
+    "sha256": "0d008ad49578a91f8f2cb7a9a542718d914fc854156c64c243d93df3cc89878d",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\starlight_reprise.png",
+    "bytes": 1210394
+  },
+  {
+    "id": "constellation_emissary",
+    "icon": "magiccodex:textures/spells/expansion_2/constellation_emissary.png",
+    "file": "constellation_emissary.png",
+    "sha256": "28e09ecd5cc317e54454af69d0412e6893d005e0920c5364d9dd536b73e1d913",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\constellation_emissary.png",
+    "bytes": 1173230
+  },
+  {
+    "id": "night_sight",
+    "icon": "magiccodex:textures/spells/novice/night_sight.png",
+    "file": "night_sight.png",
+    "sha256": "271d5afc8195241c68c3236da84b3d30b65437e9066c09873335792f8716382c",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice\\night_sight.png",
+    "bytes": 1103072
+  },
+  {
+    "id": "shadow_bind",
+    "icon": "magiccodex:textures/spells/novice_extra/shadow_bind.png",
+    "file": "shadow_bind.png",
+    "sha256": "e1784a90dee08750acb6d99ec9ebe77b4ecf5f9d5bc21d7cba33489e66288e7e",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice_extra\\shadow_bind.png",
+    "bytes": 722014
+  },
+  {
+    "id": "faint_veil",
+    "icon": "magiccodex:textures/spells/novice_extra/faint_veil.png",
+    "file": "faint_veil.png",
+    "sha256": "6bdc0a88162b728f44ac8d4103d36fc4090c5bf04456cf3b373b0eb5f59bdb83",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\novice_extra\\faint_veil.png",
+    "bytes": 989493
+  },
+  {
+    "id": "shadow_double",
+    "icon": "magiccodex:textures/spells/intermediate/shadow_double.png",
+    "file": "shadow_double.png",
+    "sha256": "a68a3ca3fd74db4fa9e5fea8b3ab389a901a0a323d7cc5ddf9d03226bf0c0986",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\shadow_double.png",
+    "bytes": 1406026
+  },
+  {
+    "id": "echo_reading",
+    "icon": "magiccodex:textures/spells/intermediate/echo_reading.png",
+    "file": "echo_reading.png",
+    "sha256": "e60f72ce8680e287f79939303607e33ecd622bc0bb34742c935541314680ac7f",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\echo_reading.png",
+    "bytes": 939453
+  },
+  {
+    "id": "sealing_thread",
+    "icon": "magiccodex:textures/spells/intermediate/sealing_thread.png",
+    "file": "sealing_thread.png",
+    "sha256": "2a59160cc6adab71c49d1fa09a30bc579c4c5d9694e5a01b3ff4abd98a7b2791",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\intermediate\\sealing_thread.png",
+    "bytes": 1263131
+  },
+  {
+    "id": "afterlife_gate",
+    "icon": "magiccodex:textures/spells/advanced/afterlife_gate.png",
+    "file": "afterlife_gate.png",
+    "sha256": "c974c255dcd3fbaf130bac81d3c4b0e354eacd62a1d9859b4822f726ff5c92f6",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\advanced\\afterlife_gate.png",
+    "bytes": 1650949
+  },
+  {
+    "id": "shadow_exchange",
+    "icon": "magiccodex:textures/spells/advanced/shadow_exchange.png",
+    "file": "shadow_exchange.png",
+    "sha256": "a1be9cf8ff83b58dfaadf16582932cd90fcb059ce4c91cedca7852a26771f583",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\advanced\\shadow_exchange.png",
+    "bytes": 1251129
+  },
+  {
+    "id": "forbidden_contract",
+    "icon": "magiccodex:textures/spells/advanced/forbidden_contract.png",
+    "file": "forbidden_contract.png",
+    "sha256": "6b2e424a6accf7c3caefa99d330b8ead05f3836d85c962aa472ee5774e373cf4",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\advanced\\forbidden_contract.png",
+    "bytes": 1436603
+  },
+  {
+    "id": "ink_fingertip",
+    "icon": "magiccodex:textures/spells/expansion_2/ink_fingertip.png",
+    "file": "ink_fingertip.png",
+    "sha256": "35e92c06e09c344f296192b1599afea2748d93956ebac8f51f746a67a5538c5e",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\ink_fingertip.png",
+    "bytes": 1169127
+  },
+  {
+    "id": "drowsiness",
+    "icon": "magiccodex:textures/spells/expansion/drowsiness.png",
+    "file": "drowsiness.png",
+    "sha256": "23ef18374b536494c8c106d9a59fb31cda28002af521fedc4a8093cd489bfcc2",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\drowsiness.png",
+    "bytes": 1481972
+  },
+  {
+    "id": "misfortune_whisper",
+    "icon": "magiccodex:textures/spells/expansion/misfortune_whisper.png",
+    "file": "misfortune_whisper.png",
+    "sha256": "5f96161b55669323375c259e16c826a40b07e1292ee00efcb553499685819431",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\misfortune_whisper.png",
+    "bytes": 1344715
+  },
+  {
+    "id": "shadow_nail",
+    "icon": "magiccodex:textures/spells/expansion_2/shadow_nail.png",
+    "file": "shadow_nail.png",
+    "sha256": "3d21e00478d06148c8d9989f751b562dc47335ca87c91b6404276c6fb5733653",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\shadow_nail.png",
+    "bytes": 1488103
+  },
+  {
+    "id": "night_lullaby",
+    "icon": "magiccodex:textures/spells/expansion_2/night_lullaby.png",
+    "file": "night_lullaby.png",
+    "sha256": "0f4c16c52333c3de09173dae0b92c722e942fbc8e99d55137567f8a989fae0eb",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\night_lullaby.png",
+    "bytes": 1821500
+  },
+  {
+    "id": "life_siphon",
+    "icon": "magiccodex:textures/spells/expansion/life_siphon.png",
+    "file": "life_siphon.png",
+    "sha256": "5ff9c756feb75eca480a605130e3f2a581f5a826ff76f6d0fa74cd7fde3c89bb",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\life_siphon.png",
+    "bytes": 1163705
+  },
+  {
+    "id": "hungry_shadow",
+    "icon": "magiccodex:textures/spells/expansion/hungry_shadow.png",
+    "file": "hungry_shadow.png",
+    "sha256": "b0c58bfd3b46e9cd87a547a183ecd92398d01494907281b078297d284a7788f7",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\hungry_shadow.png",
+    "bytes": 1684775
+  },
+  {
+    "id": "loosen_grasp",
+    "icon": "magiccodex:textures/spells/expansion_2/loosen_grasp.png",
+    "file": "loosen_grasp.png",
+    "sha256": "3d0a47b790a9d22620e6dc645195782098b2c1e1af1eabac22a9ee2d2736e5ac",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\loosen_grasp.png",
+    "bytes": 1743406
+  },
+  {
+    "id": "shadow_tracking",
+    "icon": "magiccodex:textures/spells/expansion_2/shadow_tracking.png",
+    "file": "shadow_tracking.png",
+    "sha256": "0813544abe8b0facecef15451c45da2c9f8f805c4880a071aa947b89ceb8fe6a",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\shadow_tracking.png",
+    "bytes": 986201
+  },
+  {
+    "id": "healing_seal",
+    "icon": "magiccodex:textures/spells/expansion_2/healing_seal.png",
+    "file": "healing_seal.png",
+    "sha256": "973e15799de9dfe5c9ab21abd174f1dc6ee0db5a9bd8ea43e76a36a3a9b13a50",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\healing_seal.png",
+    "bytes": 1664452
+  },
+  {
+    "id": "shadow_scales",
+    "icon": "magiccodex:textures/spells/expansion_2/shadow_scales.png",
+    "file": "shadow_scales.png",
+    "sha256": "73e0de552d227a65703ce95aaee39ca9bece8b1f76eec8af6c0bb571021458e8",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\shadow_scales.png",
+    "bytes": 1330817
+  },
+  {
+    "id": "curse_transfer",
+    "icon": "magiccodex:textures/spells/expansion/curse_transfer.png",
+    "file": "curse_transfer.png",
+    "sha256": "159d255ac14cb82dd3e44860a143d3370345fcf723cedc82a5bd32171d8436c3",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\curse_transfer.png",
+    "bytes": 1311611
+  },
+  {
+    "id": "warning_thread",
+    "icon": "magiccodex:textures/spells/expansion_2/warning_thread.png",
+    "file": "warning_thread.png",
+    "sha256": "b264f811ace8fd7f38e5c2d833cbb2d23fc87018b7ca839caad0561ac14ea983",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\warning_thread.png",
+    "bytes": 1222908
+  },
+  {
+    "id": "final_knot",
+    "icon": "magiccodex:textures/spells/expansion_2/final_knot.png",
+    "file": "final_knot.png",
+    "sha256": "9ce5e6f813980549c00b1fb0c7326479294472c62ff7dd5ba5472896dc1c4de7",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\final_knot.png",
+    "bytes": 1736008
+  },
+  {
+    "id": "discord",
+    "icon": "magiccodex:textures/spells/expansion/discord.png",
+    "file": "discord.png",
+    "sha256": "00f5d14400a68d6f1ace45289a960eddfc662d38d160f725888424cd1973905b",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\discord.png",
+    "bytes": 1735370
+  },
+  {
+    "id": "wound_accounting",
+    "icon": "magiccodex:textures/spells/expansion_2/wound_accounting.png",
+    "file": "wound_accounting.png",
+    "sha256": "bc5e1368c22d32c2687e0c629873fc7a3da80cd1a4ea9193441fcb46fde2b698",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\wound_accounting.png",
+    "bytes": 2169289
+  },
+  {
+    "id": "inverted_offering",
+    "icon": "magiccodex:textures/spells/expansion_2/inverted_offering.png",
+    "file": "inverted_offering.png",
+    "sha256": "601fa566963937a7d225df7b076d259dffedc59b2992bc899beafffaf971c184",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\inverted_offering.png",
+    "bytes": 1529299
+  },
+  {
+    "id": "night_chain",
+    "icon": "magiccodex:textures/spells/expansion/night_chain.png",
+    "file": "night_chain.png",
+    "sha256": "2652bc441285b4ac19546277b5a63b7e100b7fce8d729dc7225150a03e361c41",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\night_chain.png",
+    "bytes": 1659275
+  },
+  {
+    "id": "ghost_tool",
+    "icon": "magiccodex:textures/spells/expansion_2/ghost_tool.png",
+    "file": "ghost_tool.png",
+    "sha256": "495c22c6bc0ebe7c57149baf601a9408eea52d1d8ecab72bacf7a3bb0c1c37bc",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\ghost_tool.png",
+    "bytes": 1428258
+  },
+  {
+    "id": "bell_of_fear",
+    "icon": "magiccodex:textures/spells/expansion_2/bell_of_fear.png",
+    "file": "bell_of_fear.png",
+    "sha256": "393f68266263d8bdc497962ec9182da7b08fdfab3bea80490df494e9aa91da3b",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\bell_of_fear.png",
+    "bytes": 1477100
+  },
+  {
+    "id": "pain_deferral",
+    "icon": "magiccodex:textures/spells/expansion/pain_deferral.png",
+    "file": "pain_deferral.png",
+    "sha256": "a70a048cf337888ca87618b11c154402b456c03840ebb55a8b34824147a6bec2",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\pain_deferral.png",
+    "bytes": 1590328
+  },
+  {
+    "id": "eclipse_eye",
+    "icon": "magiccodex:textures/spells/expansion_2/eclipse_eye.png",
+    "file": "eclipse_eye.png",
+    "sha256": "66ce67322d0f8181ad3f75da837d118cca0a7e83f520cdc29f39a77713444be9",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\eclipse_eye.png",
+    "bytes": 1694536
+  },
+  {
+    "id": "death_ledger",
+    "icon": "magiccodex:textures/spells/expansion_2/death_ledger.png",
+    "file": "death_ledger.png",
+    "sha256": "e6d95de9a8cd49fad2119accf77d2a1960cb8aa5d8d8f53ad7c29a07ff56bffd",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\death_ledger.png",
+    "bytes": 1904631
+  },
+  {
+    "id": "black_harvest",
+    "icon": "magiccodex:textures/spells/expansion/black_harvest.png",
+    "file": "black_harvest.png",
+    "sha256": "93669176b314155902d1e1a7ef8cc55bf44ebbea0a713e29f4901517cb17fdca",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion\\black_harvest.png",
+    "bytes": 1456456
+  },
+  {
+    "id": "void_maw",
+    "icon": "magiccodex:textures/spells/expansion_2/void_maw.png",
+    "file": "void_maw.png",
+    "sha256": "6cc9bc183783732ec153f094a621796b4efa4f5e74418ad7d1182d5d7a753530",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\void_maw.png",
+    "bytes": 1736397
+  },
+  {
+    "id": "twilight_bargain",
+    "icon": "magiccodex:textures/spells/expansion_2/twilight_bargain.png",
+    "file": "twilight_bargain.png",
+    "sha256": "f57cb451ae6135ab7f3fa990ef2e09ced59afe285ad6350696defeedeba573ca",
+    "source": "output\\all-spells-v5\\chacademia-spells-200\\resourcepacks\\chacademia-spells\\assets\\magiccodex\\textures\\spells\\expansion_2\\twilight_bargain.png",
+    "bytes": 1406684
+  }
+]

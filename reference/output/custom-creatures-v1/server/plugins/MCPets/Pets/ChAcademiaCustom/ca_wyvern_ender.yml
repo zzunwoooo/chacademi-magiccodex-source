@@ -1,0 +1,17 @@
+"Id": "ca_wyvern_ender"
+"MythicMob": "CA_Pet_wyvern_ender"
+"Permission": "chacademia.pet.ca_wyvern_ender"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f공허 와이번"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "가파른 산맥에 둥지를 튼 비행 포식자. 공허 계열의 변이 개체."
+    - "서식지: 뒤틀린 메사 / 신기루 섬"
+    - "3성"

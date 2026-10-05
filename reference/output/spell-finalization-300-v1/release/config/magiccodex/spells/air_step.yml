@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "air_step"
+name: "허공 디딤"
+category: "wind"
+description: "발밑에 20초간 유지되는 작은 마법 발판을 만듭니다. 한 번에 하나만 유지됩니다.\n\n날 수 없는 구역에서도 비행을 여러 번 시도했던 발은, 허공에 머물 다른 방법을 찾는다."
+icon: "magiccodex:textures/spells/expansion_2/air_step.png"
+permission: "magic.learned.air_step"
+discovery:
+  description: "비행 금지 구역에서 비행 마법 25번 사용"
+research: "진짜 마법사라면 비행할 수 없는 곳에서도 비행 할 수 있어야 한다."
+cast:
+  command: "마법 허공디딤"
+  cooldown-seconds: 30
+  mana-cost: 95
+order: 260

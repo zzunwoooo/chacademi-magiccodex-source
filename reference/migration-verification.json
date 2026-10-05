@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-02",
+  "importedFiles": 1337,
+  "missingFiles": [],
+  "adaptedFiles": [
+    "reference/output/spell-classification-editor-v2/icon-preview.js",
+    "reference/output/spell-classification-editor-v2/README.md",
+    "reference/output/spell-classification-editor-v2/start-editor.ps1",
+    "reference/output/discovery-editor-v1/icon-preview.js",
+    "reference/output/discovery-editor-v1/README.md",
+    "reference/output/discovery-editor-v1/start-editor.ps1",
+    "reference/output/discovery-editor-v1/test_server.py",
+    "reference/output/spell-finalization-300-v1/review.html",
+    "reference/output/spell-revision-v2/review.html"
+  ],
+  "reason": "Host Python path, unavailable artwork fallback, migration notices, and optional-art test expectations. Private-path checks remain active."
+}

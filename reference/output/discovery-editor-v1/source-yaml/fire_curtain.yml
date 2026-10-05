@@ -1,0 +1,17 @@
+# 설명·발견 조건·쿨타임은 수정 가능한 기획 초안입니다.
+# 발견 조건은 UI 표시용 문구이며 실제 판정 기능은 연결되지 않았습니다.
+# cast.command는 실제 시전 기능 연결 후 / 없이 입력하세요.
+id: "fire_curtain"
+name: "불의 장막"
+category: "fire"
+rank: "중급"
+description: "짧은 시간 불의 장막을 펼쳐 통과하는 몬스터를 공격합니다."
+icon: "magiccodex:textures/spells/intermediate/fire_curtain.png"
+permission: "magic.learned.fire_curtain"
+discovery:
+  description: "화염 실습실에서 세 개의 화로를 정해진 순서로 점화하기."
+research: ""
+cast:
+  command: ""
+  cooldown-seconds: 30
+order: 1070

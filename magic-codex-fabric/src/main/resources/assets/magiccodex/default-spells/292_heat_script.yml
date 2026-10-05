@@ -1,0 +1,14 @@
+id: heat_script
+name: 열문자
+category: fire
+description: 열에 반응하는 석판을 달궈 숨겨진 문자나 순서를 드러낸다.
+icon: ''
+permission: magic.learned.heat_script
+discovery:
+  description: 고대 유적의 열에 반응하는 석판을 조사하기.
+research: 보이지 않는 문장을 태우는 것이 아니라, 읽을 만큼만 따뜻하게 만든다.
+cast:
+  command: ''
+  cooldown-seconds: 10
+  mana-cost: 25
+order: 292

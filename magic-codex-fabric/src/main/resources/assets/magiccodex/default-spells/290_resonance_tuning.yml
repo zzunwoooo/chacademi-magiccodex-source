@@ -1,0 +1,14 @@
+id: resonance_tuning
+name: 공명 맞추기
+category: wind
+description: 정해진 높낮이의 소리를 장치에 전달해 종이나 수정의 공명을 맞춘다.
+icon: ''
+permission: magic.learned.resonance_tuning
+discovery:
+  description: 소리 블록을 서로 다른 높낮이로 5회 조율하기.
+research: 소리를 크게 만드는 것보다 알맞은 높이를 찾는 것이 중요하다.
+cast:
+  command: ''
+  cooldown-seconds: 10
+  mana-cost: 25
+order: 290

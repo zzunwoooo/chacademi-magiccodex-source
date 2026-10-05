@@ -1,0 +1,17 @@
+"Id": "ca_lostasset_mob3_timberpile"
+"MythicMob": "CA_Pet_lostasset_mob3_timberpile"
+"Permission": "chacademia.pet.ca_lostasset_mob3_timberpile"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f장작 꼬마"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "쓰러진 나무 주변에서 움직이는 작은 나무 정령."
+    - "서식지: 숲 우거진 고지 / 자작나무 타이가"
+    - "1성"

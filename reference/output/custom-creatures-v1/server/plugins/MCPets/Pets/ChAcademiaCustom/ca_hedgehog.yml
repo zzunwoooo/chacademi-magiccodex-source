@@ -1,0 +1,17 @@
+"Id": "ca_hedgehog"
+"MythicMob": "CA_Pet_hedgehog"
+"Permission": "chacademia.pet.ca_hedgehog"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f낙엽 고슴도치"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "낙엽 아래에서 먹이를 찾는 조심스러운 숲 주민."
+    - "서식지: 자작나무 타이가 / 라벤더 숲"
+    - "1성"

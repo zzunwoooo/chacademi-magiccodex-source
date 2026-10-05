@@ -1,0 +1,17 @@
+"Id": "ca_horse_magma"
+"MythicMob": "CA_Pet_horse_magma"
+"Permission": "chacademia.pet.ca_horse_magma"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f마그마 준마"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "넓은 지형을 달리는 힘찬 말. 마그마 계열의 변이 개체."
+    - "서식지: 화산 봉우리 / 현무암 절벽"
+    - "2성"

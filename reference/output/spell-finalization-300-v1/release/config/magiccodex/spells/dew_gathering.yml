@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "dew_gathering"
+name: "이슬 모으기"
+category: "water"
+description: "소지한 빈 병 최대 3개에 물을 채웁니다.\n\n빈 병으로 물을 거듭 길어 본 손에 작은 물방울이 모이기 시작한다."
+icon: "magiccodex:textures/spells/expansion_2/dew_gathering.png"
+permission: "magic.learned.dew_gathering"
+discovery:
+  description: "빈 병으로 물을 10번 뜨기."
+research: "새벽의 이슬을 모으던 약초사의 손끝에는 늘 작은 물방울이 맺혔다."
+cast:
+  command: "마법 이슬모으기"
+  cooldown-seconds: 5
+  mana-cost: 6
+order: 850

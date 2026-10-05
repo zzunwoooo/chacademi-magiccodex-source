@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "spring_unseal"
+name: "수맥 개방"
+category: "water"
+description: "바라보는 곳에 물을 설치한다.\n\n양동이로 가마솥을 거듭 채운 손은 물이 흘러갈 자리를 먼저 읽는다."
+icon: "magiccodex:textures/spells/intermediate/spring_unseal.png"
+permission: "magic.learned.spring_unseal"
+discovery:
+  description: "물 양동이로 가마솥을 누적 30번 채우기."
+research: "마른 수로를 바라보던 물레방앗간 주인의 부탁에서 시작된 마법."
+cast:
+  command: "마법 수맥개방"
+  cooldown-seconds: 60
+  mana-cost: 30
+order: 730

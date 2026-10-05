@@ -1,0 +1,17 @@
+"Id": "ca_swordfish"
+"MythicMob": "CA_Pet_swordfish"
+"Permission": "chacademia.pet.ca_swordfish"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f푸른창 황새치"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "따뜻한 깊은 바다의 넓은 수역을 가른다."
+    - "서식지: 따뜻한 심해"
+    - "2성"

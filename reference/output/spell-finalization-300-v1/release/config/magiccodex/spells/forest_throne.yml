@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "forest_throne"
+name: "숲의 왕좌"
+category: "earth"
+description: "8초 동안 제자리에 뿌리내립니다. 움직일 수 없는 대신 주변 6블록 안에서 뿌리가 솟아 적을 차례로 공격합니다.\n\n움직이지 않는 숲의 왕이 어떻게 숲 전체를 움직이는지는 그 이름을 담은 옛 기록에 남아 있다."
+icon: "magiccodex:textures/spells/expansion_2/forest_throne.png"
+permission: "magic.learned.forest_throne"
+discovery:
+  description: "도서관에서 '움직이지 않는 숲의 왕' 책 읽기."
+research: "숲의 왕에게는 다리가 필요 없다. 숲 전체가 그의 손발이므로.\n자리에서 일어날 생각이라면 왕좌를 먼저 거두도록 하자."
+cast:
+  command: "마법 숲의왕좌"
+  cooldown-seconds: 90
+  mana-cost: 380
+order: 1310

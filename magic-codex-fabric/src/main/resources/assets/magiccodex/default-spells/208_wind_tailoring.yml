@@ -1,0 +1,14 @@
+id: wind_tailoring
+name: 바람 재단
+category: wind
+description: 양털을 소비해 같은 색의 카펫으로 가공한다.
+icon: ''
+permission: magic.learned.wind_tailoring
+discovery:
+  description: 양털로 카펫을 누적 32개 제작하기.
+research: 가위가 없어도 재단은 가능하다. 그렇다고 원단까지 필요 없어지는 것은 아니다.
+cast:
+  command: ''
+  cooldown-seconds: 4
+  mana-cost: 10
+order: 208

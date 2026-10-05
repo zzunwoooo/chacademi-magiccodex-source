@@ -1,0 +1,93 @@
+[
+  {
+    "file": "mana-spells.yml",
+    "id": "crimson_breath",
+    "field": "mana-cost",
+    "before": 350,
+    "after": 2500
+  },
+  {
+    "file": "mana-spells.yml",
+    "id": "crimson_breath",
+    "field": "cooldown-seconds",
+    "before": 60,
+    "after": 1000
+  },
+  {
+    "file": "mana-spells.yml",
+    "id": "crimson_breath",
+    "field": "command",
+    "before": "마법 홍염의숨",
+    "after": "마법 드래곤브레스"
+  },
+  {
+    "file": "mana-spells.yml",
+    "id": "spring_unseal",
+    "field": "mana-cost",
+    "before": 100,
+    "after": 30
+  },
+  {
+    "file": "mana-spells.yml",
+    "id": "water_elemental",
+    "field": "command",
+    "before": "마법 물의정령소환",
+    "after": "마법 운디네"
+  },
+  {
+    "file": "mana-spells.yml",
+    "id": "quiet_mooring",
+    "field": "mana-cost",
+    "before": 10,
+    "after": 100
+  },
+  {
+    "file": "mana-spells.yml",
+    "id": "current_sorting",
+    "field": "mana-cost",
+    "before": 35,
+    "after": 350
+  },
+  {
+    "file": "mana-spells.yml",
+    "id": "current_sorting",
+    "field": "cooldown-seconds",
+    "before": 10,
+    "after": 1200
+  },
+  {
+    "file": "mana-spells.yml",
+    "id": "current_sorting",
+    "field": "command",
+    "before": "마법 물살분류",
+    "after": "마법 사금추출"
+  },
+  {
+    "file": "donation-spells.yml",
+    "id": "crimson_breath",
+    "field": "name",
+    "before": "홍염의 숨",
+    "after": "드래곤 브레스"
+  },
+  {
+    "file": "donation-spells.yml",
+    "id": "water_elemental",
+    "field": "name",
+    "before": "물의 정령 소환",
+    "after": "운디네"
+  },
+  {
+    "file": "donation-spells.yml",
+    "id": "quiet_mooring",
+    "field": "name",
+    "before": "잔잔한 정박",
+    "after": "노아의 방주"
+  },
+  {
+    "file": "donation-spells.yml",
+    "id": "current_sorting",
+    "field": "name",
+    "before": "물살 분류",
+    "after": "사금 추출"
+  }
+]

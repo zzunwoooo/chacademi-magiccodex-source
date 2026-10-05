@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "companion_return"
+name: "동행 귀환"
+category: "light"
+description: "자신과 바로 옆에서 웅크린 동료 최대 2명을 자신의 침대 부활 지점으로 이동시킵니다. 안전한 도착지가 없으면 실패합니다.\n\n침대에서 멀리 떠났다가 같은 곳으로 돌아와 잠든 경험이 귀환할 길을 기억한다."
+icon: "magiccodex:textures/spells/expansion/companion_return.png"
+permission: "magic.learned.companion_return"
+discovery:
+  description: "침대에서 1500블록 이상 멀어졌다가 같은 침대에 돌아와 잠들기."
+research: "먼 길에서 돌아온 뒤 가장 먼저 떠오른 것은 동료의 지친 얼굴이었다."
+cast:
+  command: "마법 동행귀환"
+  cooldown-seconds: 90
+  mana-cost: 160
+order: 1460

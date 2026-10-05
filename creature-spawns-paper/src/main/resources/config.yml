@@ -1,0 +1,18 @@
+{
+  "enabled": true,
+  "worlds": [
+    "world"
+  ],
+  "player-min-distance": 24,
+  "player-max-distance": 80,
+  "area-cap": 24,
+  "shiny-denominator": 4096,
+  "excluded-areas": {
+    "spawn": {
+      "world": "world",
+      "x": 0,
+      "z": 0,
+      "radius": 96
+    }
+  }
+}

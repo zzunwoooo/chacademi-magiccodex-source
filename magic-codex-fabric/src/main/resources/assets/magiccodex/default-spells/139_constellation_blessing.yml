@@ -1,0 +1,14 @@
+id: constellation_blessing
+name: 성좌의 가호
+category: light
+description: 자신과 6블록 안의 동료에게 30초 동안 이동 속도와 피해 저항 효과를 부여합니다.
+icon: magiccodex:textures/spells/advanced/constellation_blessing.png
+permission: magic.learned.constellation_blessing
+discovery:
+  description: 천문대에서 서로 다른 별자리의 관측 수업을 3회 마치기.
+research: 멀리 있는 별도 자신을 올려다보는 사람을 기억할까?
+cast:
+  command: ''
+  cooldown-seconds: 90
+  mana-cost: 200
+order: 139

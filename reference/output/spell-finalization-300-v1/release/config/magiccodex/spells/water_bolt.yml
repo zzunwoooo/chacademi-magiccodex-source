@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "water_bolt"
+name: "물방울 탄환"
+category: "water"
+description: "물방울을 날려 몬스터 하나에 약한 피해를 주고 조금 밀어냅니다.\n\n물 마법의 첫 수업에서는 작은 물방울도 탄환이 될 수 있음을 배운다."
+icon: "magiccodex:textures/spells/novice_extra/water_bolt.png"
+permission: "magic.learned.water_bolt"
+discovery:
+  description: "물 마법 기초 수업을 통해 습득."
+research: "작은 물방울도 충분히 빠르면 훌륭한 탄환이 된다."
+cast:
+  command: "마법 물방울탄환"
+  cooldown-seconds: 4
+  mana-cost: 5
+order: 680

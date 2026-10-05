@@ -1,0 +1,17 @@
+"Id": "ca_wyvern_green_shiny"
+"MythicMob": "CA_Pet_wyvern_green_shiny"
+"Permission": "chacademia.pet.ca_wyvern_green_shiny"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e녹빛 와이번"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "가파른 산맥에 둥지를 튼 비행 포식자. 녹빛 계열의 변이 개체."
+    - "서식지: 바위 산맥 / 바위 첨탑"
+    - "3성"

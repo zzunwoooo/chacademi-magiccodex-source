@@ -1,0 +1,14 @@
+id: air_compass
+name: 허공 나침반
+category: wind
+description: 눈앞에 동서남북을 표시하는 작은 바람개비를 띄운다.
+icon: ''
+permission: magic.learned.air_compass
+discovery:
+  description: 나침반을 든 채 누적 300블록 이동하기.
+research: 바람은 늘 같은 쪽으로 불지 않는다. 방향을 아는 것과 바람을 믿는 것은 다르다.
+cast:
+  command: ''
+  cooldown-seconds: 3
+  mana-cost: 5
+order: 212

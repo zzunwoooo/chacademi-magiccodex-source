@@ -1,0 +1,565 @@
+{
+  "schema": "chacademia.classification-edits.v2",
+  "datasetId": "classification-238-df7127cb9216",
+  "revision": 0,
+  "edits": {
+    "crimson_heart": {
+      "condition": "체력이 하트 1칸 이하인 상태에서 화염 마법으로 몬스터 처치하기.",
+      "reviewed": true
+    },
+    "blue_bonfire": {
+      "condition": "학교 도서관에서 '불꽃의 색과 마력' 책 읽기.",
+      "reviewed": true,
+      "description": "60초간 유지되는 푸른 화톳불을 설치합니다. 10블록 안에 있을 경우 마나 회복량이 10% 증가합니다."
+    },
+    "crimson_breath": {
+      "condition": "최대 마나량 2500 달성",
+      "reviewed": true,
+      "description": "전설속의 드래곤의 숨결을 현현한다.",
+      "research": "드래곤의 브레스는 그 무엇보다도 뜨거운 온도를 지니고 있다.\n드래곤의 마나 코어 없이는 시도조차 불가능한 고위급 마법이다.",
+      "name": "드래곤 브레스",
+      "mana": 2500,
+      "cooldown": 1000,
+      "command": "마법 드래곤브레스"
+    },
+    "water_breath": {
+      "condition": "물에 잠긴 상태에서 죽지 않고 30초 버티기",
+      "reviewed": true
+    },
+    "tide_stride": {
+      "condition": "수영으로 누적 500블록 이동하기.",
+      "reviewed": true
+    },
+    "water_bolt": {
+      "condition": "물 마법 기초 수업을 통해 습득.",
+      "reviewed": true
+    },
+    "quench": {
+      "condition": "불이 붙은 상태에서 물에 들어가 불 끄기 5회.",
+      "reviewed": true
+    },
+    "purifying_wave": {
+      "condition": "독에 걸린 상태에서 우유를 마시기 3회.",
+      "reviewed": true
+    },
+    "ice_bridge": {
+      "condition": "차가운 바다에 방문하기",
+      "reviewed": true
+    },
+    "water_mirror": {
+      "condition": "학교 도서관에서 '수면에 비친 먼 풍경' 책 읽기.",
+      "reviewed": true,
+      "description": "물 속의 숨겨진 통로를 발견해낸다."
+    },
+    "spring_unseal": {
+      "condition": "물 양동이로 가마솥을 누적 30번 채우기.",
+      "reviewed": true,
+      "description": "바라보는 곳에 물을 설치한다.",
+      "mana": 30
+    },
+    "water_elemental": {
+      "condition": "'정령계약서 - 수' 도서 읽기",
+      "reviewed": true,
+      "research": "자유로운 물의 정령 운디네와 계약을 맺는다.\n물은 흩어지지만 약속은 흩어지지 않는다.",
+      "name": "운디네",
+      "command": "마법 운디네"
+    },
+    "eternal_ice_prison": {
+      "condition": "물 마법 응용 수업을 통해 낮은 확률로 습득.",
+      "reviewed": true
+    },
+    "cauldron_fill": {
+      "condition": "도서관에서 '화학 기초' 책 읽기",
+      "reviewed": true,
+      "research": "물이 없는 곳에서 물을 만들어 내기 위해서는 마법 수련 뿐만 아니라 화학 공부도 동반 되어야 한다."
+    },
+    "dye_rinse": {
+      "condition": "가마솥으로 가죽 장비의 염색을 3번 지우기.",
+      "reviewed": true
+    },
+    "fish_lure": {
+      "condition": "낚시로 물고기를 누적 30마리 낚기.",
+      "reviewed": true
+    },
+    "frost_rupture": {
+      "condition": "눈덩이를 몬스터에게 누적 50번 명중하기.",
+      "reviewed": true,
+      "research": "눈싸움 중 눈덩이에 돌을 넣어 던지는 행위는 명백한 불법이다."
+    },
+    "dampen_powder": {
+      "condition": "물속에서 TNT 폭발을 3번 살아남기.",
+      "reviewed": false,
+      "description": "가까이 있는 점화된 TNT를 최대 3개까지 소멸시킵니다."
+    },
+    "life_distribution": {
+      "condition": "투척용 치유 물약 한 병으로 자신과 동료 2명을 함께 회복하기.",
+      "reviewed": true,
+      "description": "자신과 6블록 안에서 동료 최대 3명의 현재 체력을 합쳐, 각자의 최대 체력에 비례해 나눕니다. 전체 체력은 늘어나지 않습니다."
+    },
+    "moist_farmland": {
+      "condition": "물에서 떨어진 마른 경작지에 씨앗을 20번 심기.",
+      "reviewed": true,
+      "description": "주변의 마른 경작지 최대 9칸을 적십니다."
+    },
+    "wash_letters": {
+      "condition": "같은 표지판의 글씨를 10번 고쳐 쓰기.",
+      "reviewed": true
+    },
+    "handful_of_snow": {
+      "condition": "눈을 제작대에서 눈덩이로 4회 분해",
+      "reviewed": true
+    },
+    "dew_gathering": {
+      "condition": "빈 병으로 물을 10번 뜨기.",
+      "reviewed": true
+    },
+    "quiet_mooring": {
+      "condition": "보트 설치 5회.",
+      "reviewed": true,
+      "description": "현재 위치에 보트를 설치한다. 물이 아니라면 실패한다.",
+      "name": "노아의 방주",
+      "mana": 100
+    },
+    "wet_footprints": {
+      "condition": "비가 오는 날 몬스터를 10회 처치",
+      "reviewed": true
+    },
+    "pressure_weight": {
+      "condition": "물에 잠긴 상태에서 누적 60초 버티기",
+      "reviewed": true
+    },
+    "cold_storage": {
+      "condition": "영하 10도 이하의 온도에 노출되기",
+      "reviewed": true,
+      "description": "보유한 아이템을 열기로부터 지켜줍니다."
+    },
+    "current_sorting": {
+      "name": "사금 추출",
+      "condition": "물 속에 잠겨진 금 광석 캐기",
+      "reviewed": true,
+      "mana": 350,
+      "cooldown": 1200,
+      "command": "마법 사금추출",
+      "description": "물 속에서 사금을 찾아냅니다. 물이 없다면 실패합니다.",
+      "research": "물 속에 숨겨진 금을 찾아내어 마법 연구비로 사용하도록 하자."
+    },
+    "potion_mist": {
+      "description": "손에 든 물약 하나를 소비해 가까운 동료들에게 10초간 분무합니다.",
+      "condition": "서로 다른 종류의 물약 5종을 직접 양조하기.",
+      "reviewed": true
+    }
+  },
+  "exportedAt": "2026-09-30T13:03:18.622Z",
+  "baseline": {
+    "crimson_heart": {
+      "condition": "체력이 하트 1칸 이하인 상태에서 발화로 몬스터 처치하기.",
+      "description": "자신의 현재 체력을 절반 소모해 주변에 강한 폭발을 일으킵니다. 소모한 체력에 따라 위력이 증가하며 지형은 파괴하지 않습니다.",
+      "research": "심장의 마지막 불씨까지 꺼내 쓰겠다는 각오가 필요하다.",
+      "category": "fire",
+      "name": "홍련의 심장",
+      "mana": 400,
+      "cooldown": 180,
+      "order": 480,
+      "permission": "magic.learned.crimson_heart",
+      "command": "마법 홍련의심장",
+      "sha256": "18ef17c2a52fc1d3c771aa6ab9eb106260f1ca6f16c81875e2044234ef56d38b",
+      "file": "crimson_heart.yml"
+    },
+    "blue_bonfire": {
+      "condition": "학교 도서관에서 '불꽃의 색과 마력' 책 읽기.",
+      "description": "60초간 유지되는 푸른 화톳불을 설치합니다. 6블록 안의 자신과 동료가 사용하는 마나를 10% 줄입니다. 유지 중 10초마다 숯 하나를 소모합니다.",
+      "research": "차가워 보이는 푸른 불꽃이 마법사의 마나를 가장 따뜻하게 감싸준다.",
+      "category": "fire",
+      "name": "푸른 화톳불",
+      "mana": 180,
+      "cooldown": 90,
+      "order": 640,
+      "permission": "magic.learned.blue_bonfire",
+      "command": "마법 푸른화톳불",
+      "sha256": "2fabf206a0532a073ac7ab7feeb106fa6e294ac0a730c0ac457576aad8a404cf",
+      "file": "blue_bonfire.yml"
+    },
+    "crimson_breath": {
+      "condition": "파이어 볼로 블레이즈를 누적 30마리 처치하기.",
+      "description": "3초 동안 정면으로 화염 숨결을 내뿜습니다. 같은 적을 계속 맞히면 피해가 증가합니다.",
+      "research": "용의 숨결을 동경하던 학자는 끝내 자신의 목도리를 태워 버렸다.",
+      "category": "fire",
+      "name": "홍염의 숨",
+      "mana": 350,
+      "cooldown": 60,
+      "order": 650,
+      "permission": "magic.learned.crimson_breath",
+      "command": "마법 홍염의숨",
+      "sha256": "2e02cbd2fe6f4aa2aba1c1cecd65d1992ac43e33d2bde11cf5f1624c15ab5dd0",
+      "file": "crimson_breath.yml"
+    },
+    "water_breath": {
+      "condition": "익사 피해를 받은 뒤 물 밖으로 나와 살아남기.",
+      "description": "30초 동안 물속에서 숨을 쉴 수 있습니다.",
+      "research": "물고기는 숨을 참는 것이 아니라 물속에서 숨을 쉰다.",
+      "category": "water",
+      "name": "물결 숨결",
+      "mana": 25,
+      "cooldown": 30,
+      "order": 660,
+      "permission": "magic.learned.water_breath",
+      "command": "마법 물결숨결",
+      "sha256": "061b8c0c021569a93ee13bf38a3b3eb09213bccf8bb57a8ad7eebe501eda9a5c",
+      "file": "water_breath.yml"
+    },
+    "tide_stride": {
+      "condition": "수영으로 누적 500블록 이동하기.",
+      "description": "15초 동안 물살을 타고 더 빠르게 헤엄칩니다.",
+      "research": "물을 밀어내려 하지 말고, 물이 가고 싶은 방향을 읽어 보자.",
+      "category": "water",
+      "name": "물살 타기",
+      "mana": 15,
+      "cooldown": 15,
+      "order": 670,
+      "permission": "magic.learned.tide_stride",
+      "command": "마법 물살타기",
+      "sha256": "0c5e019f95fc9d802d0e21905b0a534f4ca11f00aec413dd9f59b480318fd426",
+      "file": "tide_stride.yml"
+    },
+    "water_bolt": {
+      "condition": "물 마법 기초 수업을 통해 습득.",
+      "description": "물방울을 날려 몬스터 하나에 약한 피해를 주고 조금 밀어냅니다.",
+      "research": "작은 물방울도 충분히 빠르면 훌륭한 탄환이 된다.",
+      "category": "water",
+      "name": "물방울 탄환",
+      "mana": 5,
+      "cooldown": 4,
+      "order": 680,
+      "permission": "magic.learned.water_bolt",
+      "command": "마법 물방울탄환",
+      "sha256": "cf35df08ee3f641a215afc00d485d4934fbd067bdba144da1bc6fb330f252830",
+      "file": "water_bolt.yml"
+    },
+    "quench": {
+      "condition": "불이 붙은 상태에서 물에 들어가 불 끄기 5회.",
+      "description": "몸에 붙은 불을 즉시 끕니다. 이후 다시 붙는 불까지 막아 주지는 않습니다.",
+      "research": "화염 실습을 시작하기 전에 꼭 배워 두어야 할 마법.",
+      "category": "water",
+      "name": "불길 씻기",
+      "mana": 5,
+      "cooldown": 3,
+      "order": 690,
+      "permission": "magic.learned.quench",
+      "command": "마법 불길씻기",
+      "sha256": "476ce6d6b7d2279a6d4f50726aeefdc94e02589989a5fd91e665a7f2574e8e6c",
+      "file": "quench.yml"
+    },
+    "purifying_wave": {
+      "condition": "독에 걸린 상태에서 우유를 마시기 3회.",
+      "description": "자신과 5블록 안의 동료에게 걸린 독·나약함·구속을 씻어냅니다.",
+      "research": "맑은 물은 몸에 묻은 먼지뿐 아니라 잘못된 마력도 씻어낸다.",
+      "category": "water",
+      "name": "정화의 물결",
+      "mana": 65,
+      "cooldown": 25,
+      "order": 700,
+      "permission": "magic.learned.purifying_wave",
+      "command": "마법 정화의물결",
+      "sha256": "494a7534b8fe0d59d148b18ceab2b7724512cb7b9439ca1107040f7f01ce005d",
+      "file": "purifying_wave.yml"
+    },
+    "ice_bridge": {
+      "condition": "차가운 바다에서 보트 없이 누적 300블록 헤엄치기.",
+      "description": "바라보는 수면에 최대 12블록 길이의 얼음 다리를 만듭니다. 다리는 20초 뒤 사라집니다.",
+      "research": "다리를 놓을 나무가 없다면 발밑의 물을 빌리면 된다.",
+      "category": "water",
+      "name": "얼음 다리",
+      "mana": 80,
+      "cooldown": 30,
+      "order": 710,
+      "permission": "magic.learned.ice_bridge",
+      "command": "마법 얼음다리",
+      "sha256": "905549f0b022a95faddd10dccd1bf37263cda76c1c1edabdb68df0e6ba8ea9b1",
+      "file": "ice_bridge.yml"
+    },
+    "water_mirror": {
+      "condition": "학교 도서관에서 '수면에 비친 먼 풍경' 책 읽기.",
+      "description": "바라보는 관측 수반과 연결된 다른 수반 주변의 모습을 10초 동안 확인합니다.",
+      "research": "한쪽 수반에 손을 담그자, 먼 곳의 수면에도 물결이 일었다.",
+      "category": "water",
+      "name": "수면의 거울",
+      "mana": 45,
+      "cooldown": 20,
+      "order": 720,
+      "permission": "magic.learned.water_mirror",
+      "command": "마법 수면의거울",
+      "sha256": "41cba71e4130a2ddb804e352ec8ceb454c3dbed3fd0db17bb674b5f2aa4a7a49",
+      "file": "water_mirror.yml"
+    },
+    "spring_unseal": {
+      "condition": "물 양동이로 가마솥을 누적 30번 채우기.",
+      "description": "바라보는 수원 장치에 60초간 물을 공급합니다. 연결된 수로와 수차가 작동합니다.",
+      "research": "마른 수로를 바라보던 물레방앗간 주인의 부탁에서 시작된 마법.",
+      "category": "water",
+      "name": "수맥 개방",
+      "mana": 100,
+      "cooldown": 60,
+      "order": 730,
+      "permission": "magic.learned.spring_unseal",
+      "command": "마법 수맥개방",
+      "sha256": "2010830036a43e0f6ebc20e867344098c19eb0f8989579fb228d7b429ca14d87",
+      "file": "spring_unseal.yml"
+    },
+    "water_elemental": {
+      "condition": "물속에서 물방울 탄환으로 드라운드 50마리 처치하기.",
+      "description": "60초간 주인을 따라다니며 물 투사체로 공격을 돕는 물의 정령을 소환합니다. 한 마리만 유지됩니다.",
+      "research": "물은 흩어지지만 약속은 흩어지지 않는다.",
+      "category": "water",
+      "name": "물의 정령 소환",
+      "mana": 220,
+      "cooldown": 120,
+      "order": 740,
+      "permission": "magic.learned.water_elemental",
+      "command": "마법 물의정령소환",
+      "sha256": "2b733ba647891b33dc24a632d9c9a8669385ee00340b8f40274b06edb6d4be15",
+      "file": "water_elemental.yml"
+    },
+    "eternal_ice_prison": {
+      "condition": "물 마법 응용 수업을 통해 낮은 확률로 습득.",
+      "description": "적 하나를 최대 5초 동안 얼음 결정에 가둡니다. 일반 몬스터는 움직이거나 공격할 수 없으며, 일정 피해를 받으면 풀려납니다. 보스는 이동 속도만 감소합니다.",
+      "research": "아무리 분노한 적도 얼음 속에서는 잠시 생각할 시간을 갖게 된다.",
+      "category": "water",
+      "name": "만년빙옥",
+      "mana": 240,
+      "cooldown": 60,
+      "order": 750,
+      "permission": "magic.learned.eternal_ice_prison",
+      "command": "마법 만년빙옥",
+      "sha256": "32a8ccf09deef352b930a41afb2a515313d7683cb8011138b18cb92efbbbd153",
+      "file": "eternal_ice_prison.yml"
+    },
+    "cauldron_fill": {
+      "condition": "빈 가마솥을 물 양동이로 5번 채우기.",
+      "description": "바라보는 가마솥의 물을 한 단계 채웁니다.",
+      "research": "기숙사의 물 당번이 처음으로 웃으며 출근한 날이었다.",
+      "category": "water",
+      "name": "가마솥 채우기",
+      "mana": 8,
+      "cooldown": 3,
+      "order": 760,
+      "permission": "magic.learned.cauldron_fill",
+      "command": "마법 가마솥채우기",
+      "sha256": "00311ed1837e4cd99a8a71196b97f0d25470c3fd6c9467487868e2ddbe7b3406",
+      "file": "cauldron_fill.yml"
+    },
+    "dye_rinse": {
+      "condition": "가마솥으로 가죽 장비의 염색을 3번 지우기.",
+      "description": "손에 든 가죽 장비의 염색을 지웁니다.",
+      "research": "실수로 물든 망토를 버리기에는 아직 새 옷이었다.",
+      "category": "water",
+      "name": "염색 씻기",
+      "mana": 5,
+      "cooldown": 5,
+      "order": 770,
+      "permission": "magic.learned.dye_rinse",
+      "command": "마법 염색씻기",
+      "sha256": "d3f3afe1e55f830602b0211626bb90fc9b9d11f53bd440e8fd7dbd8ede0ae324",
+      "file": "dye_rinse.yml"
+    },
+    "fish_lure": {
+      "condition": "낚시로 물고기를 누적 30마리 낚기.",
+      "description": "현재 던져 둔 낚싯찌의 입질 대기 시간을 줄입니다. 낚시 보상 확률은 바꾸지 않습니다.",
+      "research": "낚싯대를 오래 드리운다고 모든 물고기가 찾아오는 것은 아니다.",
+      "category": "water",
+      "name": "물고기 유인",
+      "mana": 18,
+      "cooldown": 20,
+      "order": 780,
+      "permission": "magic.learned.fish_lure",
+      "command": "마법 물고기유인",
+      "sha256": "61e44a6fdd3cca5eeb29490e9a92e52b67be7c24182a826f80d0c42bbb0f89f1",
+      "file": "fish_lure.yml"
+    },
+    "frost_rupture": {
+      "condition": "눈덩이를 몬스터에게 누적 50번 명중하기.",
+      "description": "지정한 바닥에 서리 표시를 남깁니다. 1초 뒤 얼음 가시가 솟아 주변 적에게 피해를 줍니다.",
+      "research": "부드러운 눈송이 아래에 날카로운 겨울이 숨어 있다.",
+      "category": "water",
+      "name": "서리 파열",
+      "mana": 55,
+      "cooldown": 15,
+      "order": 790,
+      "permission": "magic.learned.frost_rupture",
+      "command": "마법 서리파열",
+      "sha256": "01f3340ded7337169e26eede637be6624d0d3d6f588d5e4fdf66a7ee470cff5e",
+      "file": "frost_rupture.yml"
+    },
+    "dampen_powder": {
+      "condition": "물속에서 TNT 폭발을 3번 살아남기.",
+      "description": "가까이 있는 점화된 TNT를 최대 3개까지 소멸시킵니다. TNT 아이템은 반환하지 않습니다.",
+      "research": "폭발을 막는 가장 간단한 방법은 화약을 젖게 만드는 것이다.",
+      "category": "water",
+      "name": "화약 적시기",
+      "mana": 110,
+      "cooldown": 30,
+      "order": 800,
+      "permission": "magic.learned.dampen_powder",
+      "command": "마법 화약적시기",
+      "sha256": "4a06cb61f072e2867d78f7130ae9f65d93c1e73c9d98d7dfe7aeece8755a8b7a",
+      "file": "dampen_powder.yml"
+    },
+    "life_distribution": {
+      "condition": "투척용 치유 물약 한 병으로 자신과 동료 2명을 함께 회복하기.",
+      "description": "자신과 6블록 안에서 웅크린 동료 최대 3명의 현재 체력을 합쳐, 각자의 최대 체력에 비례해 나눕니다. 전체 체력은 늘어나지 않습니다.",
+      "research": "누군가의 상처를 나누어 짊어지는 일에는 용기가 필요하다.",
+      "category": "water",
+      "name": "생명의 분배",
+      "mana": 160,
+      "cooldown": 45,
+      "order": 810,
+      "permission": "magic.learned.life_distribution",
+      "command": "마법 생명의분배",
+      "sha256": "754f89e55c86be9592ee44320abcde5a74d1a44b750876e342942df4cca3a324",
+      "file": "life_distribution.yml"
+    },
+    "moist_farmland": {
+      "condition": "물에서 떨어진 마른 경작지에 씨앗을 20번 심기.",
+      "description": "주변의 마른 경작지 최대 9칸을 적십니다. 작물 성장 단계는 바꾸지 않습니다.",
+      "research": "갈라진 흙이 먼저 목마르다고 말하고 있었다.",
+      "category": "water",
+      "name": "촉촉한 밭",
+      "mana": 15,
+      "cooldown": 10,
+      "order": 820,
+      "permission": "magic.learned.moist_farmland",
+      "command": "마법 촉촉한밭",
+      "sha256": "41facbcc114e7303c6a35f3a694cf5853f671f5423ad3e8f79857465ce698e41",
+      "file": "moist_farmland.yml"
+    },
+    "wash_letters": {
+      "condition": "같은 표지판의 글씨를 10번 고쳐 쓰기.",
+      "description": "자신이 수정할 수 있는 표지판의 한쪽 글씨를 지웁니다.",
+      "research": "지우고 다시 쓰는 일도 마법 연구의 일부다.",
+      "category": "water",
+      "name": "글씨 씻기",
+      "mana": 3,
+      "cooldown": 2,
+      "order": 830,
+      "permission": "magic.learned.wash_letters",
+      "command": "마법 글씨씻기",
+      "sha256": "4245f0a6f840e5bc06ff345f7a48fdb0b4465a17642fab2ca8610fb2c7c6175e",
+      "file": "wash_letters.yml"
+    },
+    "handful_of_snow": {
+      "condition": "눈덩이로 눈 골렘을 10번 맞히기.",
+      "description": "눈 블록 하나를 눈덩이 4개로 흩어 놓습니다.",
+      "research": "눈싸움에 진 학생이 다음 겨울을 기다리며 연구했다고 한다.",
+      "category": "water",
+      "name": "눈 한 줌",
+      "mana": 5,
+      "cooldown": 3,
+      "order": 840,
+      "permission": "magic.learned.handful_of_snow",
+      "command": "마법 눈한줌",
+      "sha256": "3c4d7f7d4dce8ed4956a7000a77b4c91acf4fe26571647168d22770822c0e23f",
+      "file": "handful_of_snow.yml"
+    },
+    "dew_gathering": {
+      "condition": "비가 오는 동안 빈 병으로 물을 10번 뜨기.",
+      "description": "소지한 빈 병 최대 3개에 물을 채웁니다.",
+      "research": "새벽의 이슬을 모으던 약초사의 손끝에는 늘 작은 물방울이 맺혔다.",
+      "category": "water",
+      "name": "이슬 모으기",
+      "mana": 6,
+      "cooldown": 5,
+      "order": 850,
+      "permission": "magic.learned.dew_gathering",
+      "command": "마법 이슬모으기",
+      "sha256": "6b441e69ebf3044f9ca2c7e8b5771137cde74a0e58deae2556c1e00dda5dd3b0",
+      "file": "dew_gathering.yml"
+    },
+    "quiet_mooring": {
+      "condition": "보트를 탄 채 이동하지 않고 60초 머무르기.",
+      "description": "자신이 타고 있는 보트를 멈추고, 내린 뒤에도 15초간 제자리에 고정합니다.",
+      "research": "노를 내려놓고 책을 읽으려면 먼저 배부터 멈춰야 한다.",
+      "category": "water",
+      "name": "잔잔한 정박",
+      "mana": 10,
+      "cooldown": 15,
+      "order": 860,
+      "permission": "magic.learned.quiet_mooring",
+      "command": "마법 잔잔한정박",
+      "sha256": "6226fb923549a5a3d5bba1b13b0bf1ec301a0fee1903c665873cb6d948f52c0e",
+      "file": "quiet_mooring.yml"
+    },
+    "wet_footprints": {
+      "condition": "비 오는 날 같은 몬스터를 30초간 10블록 안에서 따라가기.",
+      "description": "바라보는 적 하나가 20초간 물방울 흔적을 남기게 합니다.",
+      "research": "바닥에 남은 한 방울이 도망간 범인의 발걸음을 알려 주었다.",
+      "category": "water",
+      "name": "젖은 발자국",
+      "mana": 20,
+      "cooldown": 20,
+      "order": 870,
+      "permission": "magic.learned.wet_footprints",
+      "command": "마법 젖은발자국",
+      "sha256": "69bd17496a33b9a5832e23033e61535957d3697f751b33bcdbee0a7ac1383954",
+      "file": "wet_footprints.yml"
+    },
+    "pressure_weight": {
+      "condition": "물속에서 철 갑옷을 모두 입고 누적 60초 버티기.",
+      "description": "물속의 적 하나를 5초 동안 가라앉힙니다. 육지에서는 사용할 수 없습니다.",
+      "research": "깊은 곳으로 내려갈수록 물은 생각보다 무거워진다.",
+      "category": "water",
+      "name": "수압추",
+      "mana": 60,
+      "cooldown": 20,
+      "order": 880,
+      "permission": "magic.learned.pressure_weight",
+      "command": "마법 수압추",
+      "sha256": "6ac543730000d6d87e1bbdfe3612623e65138ed14f636eae3d70150fd807f6b2",
+      "file": "pressure_weight.yml"
+    },
+    "cold_storage": {
+      "condition": "눈이 내리는 곳에 음식 아이템을 떨어뜨린 뒤 60초 후 다시 줍기.",
+      "description": "바닥에 놓인 아이템 몇 개의 자연 소멸 시간을 2분간 멈춥니다. 다른 플레이어는 주울 수 있습니다.",
+      "research": "눈 속에 묻어 둔 도시락이 뜻밖의 연구 재료가 되었다.",
+      "category": "water",
+      "name": "냉장 손길",
+      "mana": 25,
+      "cooldown": 15,
+      "order": 890,
+      "permission": "magic.learned.cold_storage",
+      "command": "마법 냉장손길",
+      "sha256": "6efa5a2f4512031c3b2bf36ea5e8a0ff558ccf8993385d1576080a6d9a77d3d2",
+      "file": "cold_storage.yml"
+    },
+    "current_sorting": {
+      "condition": "흐르는 물 위에 떨어진 서로 다른 아이템 5종을 줍기.",
+      "description": "지정한 종류의 바닥 아이템만 골라 가까운 한 지점으로 모읍니다. 다른 물건은 그대로 둡니다.",
+      "research": "홍수 뒤 뒤섞인 물건들을 정리하던 상인의 작은 발명.",
+      "category": "water",
+      "name": "물살 분류",
+      "mana": 35,
+      "cooldown": 10,
+      "order": 900,
+      "permission": "magic.learned.current_sorting",
+      "command": "마법 물살분류",
+      "sha256": "d830d82eb54de5ed534862418e54b8b7178d622b76ab479c541419c535991362",
+      "file": "current_sorting.yml"
+    },
+    "potion_mist": {
+      "condition": "서로 다른 종류의 물약 5종을 직접 양조하기.",
+      "description": "소지한 일반 물약 하나를 소비해 가까운 동료들에게 짧은 지속시간으로 분무합니다.",
+      "research": "한 병으로 여러 사람을 구할 수는 없을까? 약제사의 고민이 안개가 되었다.",
+      "category": "water",
+      "name": "약액 분무",
+      "mana": 90,
+      "cooldown": 30,
+      "order": 910,
+      "permission": "magic.learned.potion_mist",
+      "command": "마법 약액분무",
+      "sha256": "2959d2d19ae9b912e4a366a1d3a0c228db61cdac948d07896d9a51def1208409",
+      "file": "potion_mist.yml"
+    }
+  },
+  "validation": {
+    "invalidIds": []
+  },
+  "note": "마법 설정 및 설명 수정본입니다. 항목에 없는 필드는 유지합니다. 실제 YAML의 최신 내용과 baseline을 비교한 뒤 반영하세요."
+}

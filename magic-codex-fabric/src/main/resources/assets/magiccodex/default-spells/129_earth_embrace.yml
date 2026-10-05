@@ -1,0 +1,14 @@
+id: earth_embrace
+name: 대지의 품
+category: earth
+description: 작은 구역을 잠시 보호해 폭발에 의한 블록 파괴를 막습니다. 생명체가 받는 폭발 피해는 남습니다.
+icon: magiccodex:textures/spells/expansion_2/earth_embrace.png
+permission: magic.learned.earth_embrace
+discovery:
+  description: 크리퍼 폭발로 생긴 구덩이에 흙 32개 메우기.
+research: 다시 지은 집이 또 무너지지 않기를 바라는 마음에서 탄생했다. 폭발이 아프지 않게 되는 주문은 아니다.
+cast:
+  command: ''
+  cooldown-seconds: 45
+  mana-cost: 160
+order: 129

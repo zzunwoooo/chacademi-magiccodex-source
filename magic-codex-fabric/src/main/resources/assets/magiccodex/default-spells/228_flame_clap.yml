@@ -1,0 +1,14 @@
+id: flame_clap
+name: 불꽃 박수
+category: fire
+description: 짧고 강한 섬광을 터뜨려 주변 적의 준비 중인 공격을 끊는다.
+icon: ''
+permission: magic.learned.flame_clap
+discovery:
+  description: 화염 마법 기초 수업의 섬광 실습을 완료하기.
+research: 큰 폭발 대신 눈앞에서 한순간 밝아지는 불을 선택했다.
+cast:
+  command: ''
+  cooldown-seconds: 15
+  mana-cost: 55
+order: 228

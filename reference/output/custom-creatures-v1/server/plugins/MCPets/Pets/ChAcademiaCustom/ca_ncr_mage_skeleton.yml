@@ -1,0 +1,17 @@
+"Id": "ca_ncr_mage_skeleton"
+"MythicMob": "CA_Pet_ncr_mage_skeleton"
+"Permission": "chacademia.pet.ca_ncr_mage_skeleton"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f망각의 해골술사"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "감염 동굴의 봉인실에 남은 마법사."
+    - "서식지: 감염 동굴 / 깊은 동굴"
+    - "3성"

@@ -1,0 +1,2203 @@
+# 서버가 신뢰하는 시전 목록. 클라이언트 YAML 변경 후 비용/권한/명령도 함께 갱신하세요.
+# enabled: false는 패시브 또는 아직 명령이 없는 마법입니다. /codexmana reload로 반영합니다.
+spells:
+  wind_basket:
+    # 바람 바구니
+    enabled: true
+    command: "마법 바람바구니"
+    permission: "magic.learned.wind_basket"
+    mana-cost: 30
+    cooldown-seconds: 15
+  feather_step:
+    # 페더 폴
+    enabled: true
+    command: "마법 페더폴"
+    permission: "magic.learned.feather_step"
+    mana-cost: 5
+    cooldown-seconds: 5
+  harvest_wind:
+    # 수확의 바람
+    enabled: true
+    command: "마법 수확의바람"
+    permission: "magic.learned.harvest_wind"
+    mana-cost: 33
+    cooldown-seconds: 60
+  wind_push:
+    # 윈드 푸쉬
+    enabled: true
+    command: "마법 윈드 푸쉬"
+    permission: "magic.learned.wind_push"
+    mana-cost: 10
+    cooldown-seconds: 5
+  light_leap:
+    # 상승 기류
+    enabled: true
+    command: "마법 상승기류"
+    permission: "magic.learned.light_leap"
+    mana-cost: 20
+    cooldown-seconds: 10
+  flight:
+    # 비행
+    enabled: true
+    command: "마법 비행"
+    permission: "magic.learned.flight"
+    mana-cost: 80
+    cooldown-seconds: 30
+  far_touch:
+    # 손길 너머
+    enabled: true
+    command: "마법 손길너머"
+    permission: "magic.learned.far_touch"
+    mana-cost: 20
+    cooldown-seconds: 15
+  aerial_haul:
+    # 부유
+    enabled: true
+    command: "마법 부유"
+    permission: "magic.learned.aerial_haul"
+    mana-cost: 250
+    cooldown-seconds: 120
+  wind_message:
+    # 바람의 전언
+    enabled: true
+    command: "마법 바람의전언"
+    permission: "magic.learned.wind_message"
+    mana-cost: 1
+    cooldown-seconds: 1
+  storm_command:
+    # 폭풍의 지휘
+    enabled: true
+    command: "마법 폭풍의지휘"
+    permission: "magic.learned.storm_command"
+    mana-cost: 170
+    cooldown-seconds: 30
+  wind_vault:
+    # 바람의 금고
+    enabled: false
+    command: "패시브"
+    permission: "magic.learned.wind_vault"
+    mana-cost: 0
+    cooldown-seconds: 0
+  vacuum_cleave:
+    # 윈드 커터
+    enabled: true
+    command: "마법 윈드커터"
+    permission: "magic.learned.vacuum_cleave"
+    mana-cost: 30
+    cooldown-seconds: 7
+  gale_dash:
+    # 바람 걸음
+    enabled: true
+    command: "마법 바람걸음"
+    permission: "magic.learned.gale_dash"
+    mana-cost: 5
+    cooldown-seconds: 3
+  returning_wind:
+    # 되받는 바람
+    enabled: true
+    command: "마법 되받는바람"
+    permission: "magic.learned.returning_wind"
+    mana-cost: 90
+    cooldown-seconds: 30
+  wind_grooming:
+    # 바람 털빗
+    enabled: true
+    command: "마법 바람털빗"
+    permission: "magic.learned.wind_grooming"
+    mana-cost: 5
+    cooldown-seconds: 32
+  weightless_zone:
+    # 무중력 지대
+    enabled: true
+    command: "마법 무중력지대"
+    permission: "magic.learned.weightless_zone"
+    mana-cost: 160
+    cooldown-seconds: 40
+  descent_command:
+    # 낙하 명령
+    enabled: true
+    command: "마법 낙하명령"
+    permission: "magic.learned.descent_command"
+    mana-cost: 270
+    cooldown-seconds: 30
+  trajectory_acceleration:
+    # 미라지 슈터
+    enabled: false
+    command: "패시브"
+    permission: "magic.learned.trajectory_acceleration"
+    mana-cost: 10
+    cooldown-seconds: 0
+  dust_duster:
+    # 클린
+    enabled: true
+    command: "마법 클린"
+    permission: "magic.learned.dust_duster"
+    mana-cost: 10
+    cooldown-seconds: 10
+  leaf_cleanup:
+    # 잎새 청소
+    enabled: true
+    command: "마법 잎새청소"
+    permission: "magic.learned.leaf_cleanup"
+    mana-cost: 70
+    cooldown-seconds: 30
+  feather_rustle:
+    # 깃털 털기
+    enabled: true
+    command: "마법 깃털털기"
+    permission: "magic.learned.feather_rustle"
+    mana-cost: 30
+    cooldown-seconds: 60
+  cross_breeze:
+    # 바람 화살
+    enabled: true
+    command: "마법 바람화살"
+    permission: "magic.learned.cross_breeze"
+    mana-cost: 40
+    cooldown-seconds: 12
+  returning_blade:
+    # 되돌이 칼날
+    enabled: true
+    command: "마법 되돌이칼날"
+    permission: "magic.learned.returning_blade"
+    mana-cost: 35
+    cooldown-seconds: 12
+  pressure_press:
+    # 윈드 프레스
+    enabled: false
+    command: ""
+    permission: "magic.learned.pressure_press"
+    mana-cost: 70
+    cooldown-seconds: 20
+  wind_decoy:
+    # 바람 미끼
+    enabled: true
+    command: "마법 바람미끼"
+    permission: "magic.learned.wind_decoy"
+    mana-cost: 90
+    cooldown-seconds: 25
+  air_step:
+    # 허공 디딤
+    enabled: true
+    command: "마법 허공디딤"
+    permission: "magic.learned.air_step"
+    mana-cost: 95
+    cooldown-seconds: 30
+  lightning_needle:
+    # 라이트닝 쇼크
+    enabled: true
+    command: "마법 라이트닝쇼크"
+    permission: "magic.learned.lightning_needle"
+    mana-cost: 250
+    cooldown-seconds: 60
+  air_stacking:
+    # 허공 쌓기
+    enabled: true
+    command: "마법 허공쌓기"
+    permission: "magic.learned.air_stacking"
+    mana-cost: 110
+    cooldown-seconds: 25
+  arrested_orbit:
+    # 퍼붓는 화살
+    enabled: true
+    command: "마법 퍼붓는화살"
+    permission: "magic.learned.arrested_orbit"
+    mana-cost: 200
+    cooldown-seconds: 10
+  crossfire:
+    # 크로스 애로우
+    enabled: true
+    command: "마법 크로스애로우"
+    permission: "magic.learned.crossfire"
+    mana-cost: 750
+    cooldown-seconds: 120
+  resonant_arrow:
+    # 미스틱 슈터
+    enabled: false
+    command: "패시브"
+    permission: "magic.learned.resonant_arrow"
+    mana-cost: 50
+    cooldown-seconds: 0
+  pressure_rupture:
+    # 토네이도 스핀
+    enabled: true
+    command: "마법 토네이도스핀"
+    permission: "magic.learned.pressure_rupture"
+    mana-cost: 90
+    cooldown-seconds: 30
+  storm_crown:
+    # 삼중 탄환
+    enabled: true
+    command: "마법 삼중탄환"
+    permission: "magic.learned.storm_crown"
+    mana-cost: 333
+    cooldown-seconds: 33
+  hearth_touch:
+    # 손끝의 화로
+    enabled: true
+    command: "마법 손끝의화로"
+    permission: "magic.learned.hearth_touch"
+    mana-cost: 20
+    cooldown-seconds: 5
+  ember_bolt:
+    # 파이어 볼
+    enabled: true
+    command: "마법 파이어볼"
+    permission: "magic.learned.ember_bolt"
+    mana-cost: 5
+    cooldown-seconds: 4
+  rekindle:
+    # 다시 타오르는 불
+    enabled: true
+    command: "마법 다시타오르는불"
+    permission: "magic.learned.rekindle"
+    mana-cost: 10
+    cooldown-seconds: 3
+  flame_forging:
+    # 불꽃 단조
+    enabled: true
+    command: "마법 불꽃단조"
+    permission: "magic.learned.flame_forging"
+    mana-cost: 50
+    cooldown-seconds: 30
+  ember_trap:
+    # 잿불 덫
+    enabled: true
+    command: "마법 잿불덫"
+    permission: "magic.learned.ember_trap"
+    mana-cost: 30
+    cooldown-seconds: 20
+  fire_curtain:
+    # 플레어 월
+    enabled: true
+    command: "마법 플레어월"
+    permission: "magic.learned.fire_curtain"
+    mana-cost: 100
+    cooldown-seconds: 30
+  phoenix_oath:
+    # 불사조의 서약
+    enabled: true
+    command: "마법 불사조의서약"
+    permission: "magic.learned.phoenix_oath"
+    mana-cost: 300
+    cooldown-seconds: 600
+  living_furnace:
+    # 살아 있는 화로
+    enabled: true
+    command: "마법 살아있는화로"
+    permission: "magic.learned.living_furnace"
+    mana-cost: 50
+    cooldown-seconds: 20
+  falling_star:
+    # 메테오 스트라이크
+    enabled: true
+    command: "마법 메테오스트라이크"
+    permission: "magic.learned.falling_star"
+    mana-cost: 700
+    cooldown-seconds: 360
+  flame_lash:
+    # 화염 채찍
+    enabled: true
+    command: "마법 화염채찍"
+    permission: "magic.learned.flame_lash"
+    mana-cost: 75
+    cooldown-seconds: 18
+  cinder_detonation:
+    # 스타 퓨리
+    enabled: true
+    command: "마법 스타퓨리"
+    permission: "magic.learned.cinder_detonation"
+    mana-cost: 120
+    cooldown-seconds: 30
+  palm_fireworks:
+    # 손바닥 폭죽
+    enabled: true
+    command: "마법 손바닥폭죽"
+    permission: "magic.learned.palm_fireworks"
+    mana-cost: 20
+    cooldown-seconds: 60
+  ash_brand:
+    # 재의 낙인
+    enabled: true
+    command: "마법 재의낙인"
+    permission: "magic.learned.ash_brand"
+    mana-cost: 200
+    cooldown-seconds: 35
+  flame_leap:
+    # 블레이즈 킥
+    enabled: true
+    command: "마법 블레이즈킥"
+    permission: "magic.learned.flame_leap"
+    mana-cost: 230
+    cooldown-seconds: 30
+  crimson_heart:
+    # 홍련의 심장
+    enabled: true
+    command: "마법 홍련의심장"
+    permission: "magic.learned.crimson_heart"
+    mana-cost: 400
+    cooldown-seconds: 180
+  wick_trimming:
+    # 심지 줄이기
+    enabled: false
+    command: ""
+    permission: "magic.learned.wick_trimming"
+    mana-cost: 50
+    cooldown-seconds: 5
+  glass_firing:
+    # 광석 재련
+    enabled: true
+    command: "마법 광석재련"
+    permission: "magic.learned.glass_firing"
+    mana-cost: 3
+    cooldown-seconds: 0
+  charcoal_conversion:
+    # 발화
+    enabled: true
+    command: "마법 발화"
+    permission: "magic.learned.charcoal_conversion"
+    mana-cost: 60
+    cooldown-seconds: 10
+  sponge_drying:
+    # 스펀지 말리기
+    enabled: true
+    command: "마법 스펀지말리기"
+    permission: "magic.learned.sponge_drying"
+    mana-cost: 30
+    cooldown-seconds: 15
+  flame_footprints:
+    # 불꽃 걸음
+    enabled: true
+    command: "마법 불꽃걸음"
+    permission: "magic.learned.flame_footprints"
+    mana-cost: 10
+    cooldown-seconds: 0
+  boiling_armor:
+    # 끓는 갑주
+    enabled: true
+    command: "마법 끓는갑주"
+    permission: "magic.learned.boiling_armor"
+    mana-cost: 80
+    cooldown-seconds: 30
+  kiln_breath:
+    # 가마 숨결
+    enabled: true
+    command: "마법 가마숨결"
+    permission: "magic.learned.kiln_breath"
+    mana-cost: 50
+    cooldown-seconds: 60
+  glaze_coating:
+    # 화염의 정복자
+    enabled: true
+    command: "마법 화염의정복자"
+    permission: "magic.learned.glaze_coating"
+    mana-cost: 0
+    cooldown-seconds: 0
+  explosive_wedge:
+    # 폭발 쐐기
+    enabled: true
+    command: "마법 폭발쐐기"
+    permission: "magic.learned.explosive_wedge"
+    mana-cost: 350
+    cooldown-seconds: 30
+  fireproof_film:
+    # 내연성
+    enabled: true
+    command: "마법 내연성"
+    permission: "magic.learned.fireproof_film"
+    mana-cost: 0
+    cooldown-seconds: 0
+  heat_recovery:
+    # 열량 보존
+    enabled: true
+    command: "마법 열량보존"
+    permission: "magic.learned.heat_recovery"
+    mana-cost: 500
+    cooldown-seconds: 60
+  firebird_hunt:
+    # 불새
+    enabled: true
+    command: "마법 불새"
+    permission: "magic.learned.firebird_hunt"
+    mana-cost: 130
+    cooldown-seconds: 30
+  lava_suture:
+    # 용암 봉합
+    enabled: true
+    command: "마법 용암봉합"
+    permission: "magic.learned.lava_suture"
+    mana-cost: 30
+    cooldown-seconds: 5
+  flame_sword_dance:
+    # 화염 검무
+    enabled: true
+    command: "마법 화염검무"
+    permission: "magic.learned.flame_sword_dance"
+    mana-cost: 300
+    cooldown-seconds: 60
+  incandescent_break:
+    # 파이어 스트라이크
+    enabled: true
+    command: "마법 파이어스트라이크"
+    permission: "magic.learned.incandescent_break"
+    mana-cost: 180
+    cooldown-seconds: 60
+  blue_bonfire:
+    # 푸른 화톳불
+    enabled: true
+    command: "마법 푸른화톳불"
+    permission: "magic.learned.blue_bonfire"
+    mana-cost: 180
+    cooldown-seconds: 90
+  crimson_breath:
+    # 드래곤 브레스
+    enabled: true
+    command: "마법 드래곤브레스"
+    permission: "magic.learned.crimson_breath"
+    mana-cost: 2500
+    cooldown-seconds: 1000
+  water_breath:
+    # 물결 숨결
+    enabled: true
+    command: "마법 물결숨결"
+    permission: "magic.learned.water_breath"
+    mana-cost: 25
+    cooldown-seconds: 30
+  tide_stride:
+    # 물살 타기
+    enabled: true
+    command: "마법 물살타기"
+    permission: "magic.learned.tide_stride"
+    mana-cost: 15
+    cooldown-seconds: 15
+  water_bolt:
+    # 물방울 탄환
+    enabled: true
+    command: "마법 물방울탄환"
+    permission: "magic.learned.water_bolt"
+    mana-cost: 5
+    cooldown-seconds: 4
+  quench:
+    # 불길 씻기
+    enabled: true
+    command: "마법 불길씻기"
+    permission: "magic.learned.quench"
+    mana-cost: 5
+    cooldown-seconds: 3
+  purifying_wave:
+    # 정화의 물결
+    enabled: true
+    command: "마법 정화의물결"
+    permission: "magic.learned.purifying_wave"
+    mana-cost: 65
+    cooldown-seconds: 25
+  ice_bridge:
+    # 얼음 다리
+    enabled: true
+    command: "마법 얼음다리"
+    permission: "magic.learned.ice_bridge"
+    mana-cost: 80
+    cooldown-seconds: 30
+  water_mirror:
+    # 수면의 거울
+    enabled: true
+    command: "마법 수면의거울"
+    permission: "magic.learned.water_mirror"
+    mana-cost: 45
+    cooldown-seconds: 20
+  spring_unseal:
+    # 수맥 개방
+    enabled: true
+    command: "마법 수맥개방"
+    permission: "magic.learned.spring_unseal"
+    mana-cost: 30
+    cooldown-seconds: 60
+  water_elemental:
+    # 운디네
+    enabled: true
+    command: "마법 운디네"
+    permission: "magic.learned.water_elemental"
+    mana-cost: 220
+    cooldown-seconds: 120
+  eternal_ice_prison:
+    # 만년빙옥
+    enabled: true
+    command: "마법 만년빙옥"
+    permission: "magic.learned.eternal_ice_prison"
+    mana-cost: 240
+    cooldown-seconds: 60
+  cauldron_fill:
+    # 가마솥 채우기
+    enabled: true
+    command: "마법 가마솥채우기"
+    permission: "magic.learned.cauldron_fill"
+    mana-cost: 8
+    cooldown-seconds: 3
+  dye_rinse:
+    # 염색 씻기
+    enabled: true
+    command: "마법 염색씻기"
+    permission: "magic.learned.dye_rinse"
+    mana-cost: 5
+    cooldown-seconds: 5
+  fish_lure:
+    # 물고기 유인
+    enabled: true
+    command: "마법 물고기유인"
+    permission: "magic.learned.fish_lure"
+    mana-cost: 18
+    cooldown-seconds: 20
+  frost_rupture:
+    # 서리 파열
+    enabled: true
+    command: "마법 서리파열"
+    permission: "magic.learned.frost_rupture"
+    mana-cost: 55
+    cooldown-seconds: 15
+  dampen_powder:
+    # 화약 적시기
+    enabled: true
+    command: "마법 화약적시기"
+    permission: "magic.learned.dampen_powder"
+    mana-cost: 110
+    cooldown-seconds: 30
+  life_distribution:
+    # 생명의 분배
+    enabled: true
+    command: "마법 생명의분배"
+    permission: "magic.learned.life_distribution"
+    mana-cost: 160
+    cooldown-seconds: 45
+  moist_farmland:
+    # 촉촉한 밭
+    enabled: true
+    command: "마법 촉촉한밭"
+    permission: "magic.learned.moist_farmland"
+    mana-cost: 15
+    cooldown-seconds: 10
+  wash_letters:
+    # 글씨 씻기
+    enabled: true
+    command: "마법 글씨씻기"
+    permission: "magic.learned.wash_letters"
+    mana-cost: 3
+    cooldown-seconds: 2
+  handful_of_snow:
+    # 눈 한 줌
+    enabled: true
+    command: "마법 눈한줌"
+    permission: "magic.learned.handful_of_snow"
+    mana-cost: 5
+    cooldown-seconds: 3
+  dew_gathering:
+    # 이슬 모으기
+    enabled: true
+    command: "마법 이슬모으기"
+    permission: "magic.learned.dew_gathering"
+    mana-cost: 6
+    cooldown-seconds: 5
+  quiet_mooring:
+    # 노아의 방주
+    enabled: true
+    command: "마법 잔잔한정박"
+    permission: "magic.learned.quiet_mooring"
+    mana-cost: 100
+    cooldown-seconds: 15
+  wet_footprints:
+    # 젖은 발자국
+    enabled: true
+    command: "마법 젖은발자국"
+    permission: "magic.learned.wet_footprints"
+    mana-cost: 20
+    cooldown-seconds: 20
+  pressure_weight:
+    # 수압추
+    enabled: true
+    command: "마법 수압추"
+    permission: "magic.learned.pressure_weight"
+    mana-cost: 60
+    cooldown-seconds: 20
+  cold_storage:
+    # 냉장 손길
+    enabled: true
+    command: "마법 냉장손길"
+    permission: "magic.learned.cold_storage"
+    mana-cost: 25
+    cooldown-seconds: 15
+  current_sorting:
+    # 사금 추출
+    enabled: true
+    command: "마법 사금추출"
+    permission: "magic.learned.current_sorting"
+    mana-cost: 350
+    cooldown-seconds: 1200
+  potion_mist:
+    # 약액 분무
+    enabled: true
+    command: "마법 약액분무"
+    permission: "magic.learned.potion_mist"
+    mana-cost: 90
+    cooldown-seconds: 30
+  waterwheel_shield:
+    # 물레 방패
+    enabled: true
+    command: "마법 물레방패"
+    permission: "magic.learned.waterwheel_shield"
+    mana-cost: 85
+    cooldown-seconds: 25
+  liquid_barrier:
+    # 액체 차단
+    enabled: true
+    command: "마법 액체차단"
+    permission: "magic.learned.liquid_barrier"
+    mana-cost: 100
+    cooldown-seconds: 25
+  water_rebound:
+    # 수면 탄성
+    enabled: true
+    command: "마법 수면탄성"
+    permission: "magic.learned.water_rebound"
+    mana-cost: 40
+    cooldown-seconds: 20
+  tidal_wave:
+    # 해일
+    enabled: true
+    command: "마법 해일"
+    permission: "magic.learned.tidal_wave"
+    mana-cost: 180
+    cooldown-seconds: 35
+  thaw_pulse:
+    # 해빙의 맥동
+    enabled: true
+    command: "마법 해빙의맥동"
+    permission: "magic.learned.thaw_pulse"
+    mana-cost: 120
+    cooldown-seconds: 30
+  abyssal_pressure:
+    # 심해의 압력
+    enabled: true
+    command: "마법 심해의압력"
+    permission: "magic.learned.abyssal_pressure"
+    mana-cost: 420
+    cooldown-seconds: 90
+  verdant_touch:
+    # 풍요의 손길
+    enabled: true
+    command: "마법 풍요의손길"
+    permission: "magic.learned.verdant_touch"
+    mana-cost: 25
+    cooldown-seconds: 20
+  ore_whisper:
+    # 땅의 속삭임
+    enabled: true
+    command: "마법 땅의속삭임"
+    permission: "magic.learned.ore_whisper"
+    mana-cost: 30
+    cooldown-seconds: 20
+  pebble_toss:
+    # 조약돌 던지기
+    enabled: true
+    command: "마법 조약돌던지기"
+    permission: "magic.learned.pebble_toss"
+    mana-cost: 5
+    cooldown-seconds: 3
+  miners_rhythm:
+    # 광부의 박자
+    enabled: true
+    command: "마법 광부의박자"
+    permission: "magic.learned.miners_rhythm"
+    mana-cost: 20
+    cooldown-seconds: 20
+  earth_shaping:
+    # 대지 성형
+    enabled: true
+    command: "마법 대지성형"
+    permission: "magic.learned.earth_shaping"
+    mana-cost: 70
+    cooldown-seconds: 30
+  stone_wall:
+    # 석벽
+    enabled: true
+    command: "마법 석벽"
+    permission: "magic.learned.stone_wall"
+    mana-cost: 60
+    cooldown-seconds: 20
+  vine_ladder:
+    # 덩굴 사다리
+    enabled: true
+    command: "마법 덩굴사다리"
+    permission: "magic.learned.vine_ladder"
+    mana-cost: 35
+    cooldown-seconds: 15
+  earth_elemental:
+    # 그놈
+    enabled: true
+    command: "마법 그놈"
+    permission: "magic.learned.earth_elemental"
+    mana-cost: 250
+    cooldown-seconds: 120
+  earthquake:
+    # 지진
+    enabled: true
+    command: "마법 지진"
+    permission: "magic.learned.earthquake"
+    mana-cost: 200
+    cooldown-seconds: 45
+  climate_control:
+    # 기후 통제
+    enabled: true
+    command: "마법 기후통제"
+    permission: "magic.learned.climate_control"
+    mana-cost: 450
+    cooldown-seconds: 300
+  seed_row:
+    # 씨앗 줄심기
+    enabled: true
+    command: "마법 씨앗줄심기"
+    permission: "magic.learned.seed_row"
+    mana-cost: 12
+    cooldown-seconds: 5
+  bee_calm:
+    # 벌떼 달래기
+    enabled: true
+    command: "마법 벌떼달래기"
+    permission: "magic.learned.bee_calm"
+    mana-cost: 15
+    cooldown-seconds: 15
+  thorn_armor:
+    # 가시 갑옷
+    enabled: true
+    command: "마법 가시갑옷"
+    permission: "magic.learned.thorn_armor"
+    mana-cost: 55
+    cooldown-seconds: 25
+  vein_fracture:
+    # 광맥 파쇄
+    enabled: true
+    command: "마법 광맥파쇄"
+    permission: "magic.learned.vein_fracture"
+    mana-cost: 90
+    cooldown-seconds: 20
+  earth_anchor:
+    # 대지의 닻
+    enabled: true
+    command: "마법 대지의닻"
+    permission: "magic.learned.earth_anchor"
+    mana-cost: 80
+    cooldown-seconds: 30
+  weathering_touch:
+    # 풍화의 손길
+    enabled: true
+    command: "마법 풍화의손길"
+    permission: "magic.learned.weathering_touch"
+    mana-cost: 20
+    cooldown-seconds: 8
+  iron_carapace:
+    # 철의 외피
+    enabled: true
+    command: "마법 철의외피"
+    permission: "magic.learned.iron_carapace"
+    mana-cost: 100
+    cooldown-seconds: 35
+  moss_coating:
+    # 이끼 입히기
+    enabled: true
+    command: "마법 이끼입히기"
+    permission: "magic.learned.moss_coating"
+    mana-cost: 12
+    cooldown-seconds: 5
+  grass_sprouting:
+    # 잔디 돋우기
+    enabled: true
+    command: "마법 잔디돋우기"
+    permission: "magic.learned.grass_sprouting"
+    mana-cost: 10
+    cooldown-seconds: 5
+  flint_sorting:
+    # 돌 고르기
+    enabled: true
+    command: "마법 돌고르기"
+    permission: "magic.learned.flint_sorting"
+    mana-cost: 8
+    cooldown-seconds: 3
+  bark_peeling:
+    # 껍질 벗기기
+    enabled: true
+    command: "마법 껍질벗기기"
+    permission: "magic.learned.bark_peeling"
+    mana-cost: 18
+    cooldown-seconds: 8
+  compost_return:
+    # 퇴비 환원
+    enabled: true
+    command: "마법 퇴비환원"
+    permission: "magic.learned.compost_return"
+    mana-cost: 20
+    cooldown-seconds: 10
+  thorn_seeds:
+    # 가시 씨앗
+    enabled: true
+    command: "마법 가시씨앗"
+    permission: "magic.learned.thorn_seeds"
+    mana-cost: 35
+    cooldown-seconds: 8
+  pollen_matchmaking:
+    # 꽃가루 중매
+    enabled: true
+    command: "마법 꽃가루중매"
+    permission: "magic.learned.pollen_matchmaking"
+    mana-cost: 25
+    cooldown-seconds: 15
+  automatic_supply:
+    # 자동 보급
+    enabled: true
+    command: "마법 자동보급"
+    permission: "magic.learned.automatic_supply"
+    mana-cost: 20
+    cooldown-seconds: 30
+  dormant_seed:
+    # 동면의 씨앗
+    enabled: true
+    command: "마법 동면의씨앗"
+    permission: "magic.learned.dormant_seed"
+    mana-cost: 10
+    cooldown-seconds: 5
+  counterweight:
+    # 반격의 무게추
+    enabled: true
+    command: "마법 반격의무게추"
+    permission: "magic.learned.counterweight"
+    mana-cost: 65
+    cooldown-seconds: 20
+  material_exchange:
+    # 자재 치환
+    enabled: true
+    command: "마법 자재치환"
+    permission: "magic.learned.material_exchange"
+    mana-cost: 60
+    cooldown-seconds: 15
+  remembering_field:
+    # 기억하는 밭
+    enabled: true
+    command: "마법 기억하는밭"
+    permission: "magic.learned.remembering_field"
+    mana-cost: 45
+    cooldown-seconds: 30
+  little_giant:
+    # 작은 거인
+    enabled: true
+    command: "마법 작은거인"
+    permission: "magic.learned.little_giant"
+    mana-cost: 180
+    cooldown-seconds: 60
+  spring_ground:
+    # 용수철 지반
+    enabled: true
+    command: "마법 용수철지반"
+    permission: "magic.learned.spring_ground"
+    mana-cost: 65
+    cooldown-seconds: 20
+  mountain_back:
+    # 산맥의 등
+    enabled: true
+    command: "마법 산맥의등"
+    permission: "magic.learned.mountain_back"
+    mana-cost: 220
+    cooldown-seconds: 40
+  earth_embrace:
+    # 대지의 품
+    enabled: true
+    command: "마법 대지의품"
+    permission: "magic.learned.earth_embrace"
+    mana-cost: 160
+    cooldown-seconds: 45
+  forest_throne:
+    # 숲의 왕좌
+    enabled: true
+    command: "마법 숲의왕좌"
+    permission: "magic.learned.forest_throne"
+    mana-cost: 380
+    cooldown-seconds: 90
+  primordial_stone:
+    # 원초의 돌
+    enabled: true
+    command: "마법 원초의돌"
+    permission: "magic.learned.primordial_stone"
+    mana-cost: 500
+    cooldown-seconds: 120
+  guiding_star:
+    # 길잡이 별
+    enabled: true
+    command: "마법 길잡이별"
+    permission: "magic.learned.guiding_star"
+    mana-cost: 8
+    cooldown-seconds: 10
+  minor_heal:
+    # 작은 치유
+    enabled: true
+    command: "마법 작은치유"
+    permission: "magic.learned.minor_heal"
+    mana-cost: 15
+    cooldown-seconds: 10
+  light_mark:
+    # 빛의 낙인
+    enabled: true
+    command: "마법 빛의낙인"
+    permission: "magic.learned.light_mark"
+    mana-cost: 10
+    cooldown-seconds: 8
+  spatial_leap:
+    # 공간 도약
+    enabled: true
+    command: "마법 공간도약"
+    permission: "magic.learned.spatial_leap"
+    mana-cost: 100
+    cooldown-seconds: 60
+  luminous_archive:
+    # 빛의 서고
+    enabled: true
+    command: "마법 빛의서고"
+    permission: "magic.learned.luminous_archive"
+    mana-cost: 20
+    cooldown-seconds: 5
+  true_sight:
+    # 진실의 눈
+    enabled: true
+    command: "마법 진실의눈"
+    permission: "magic.learned.true_sight"
+    mana-cost: 65
+    cooldown-seconds: 30
+  protective_ward:
+    # 보호 결계
+    enabled: true
+    command: "마법 보호결계"
+    permission: "magic.learned.protective_ward"
+    mana-cost: 100
+    cooldown-seconds: 30
+  constellation_blessing:
+    # 성좌의 가호
+    enabled: true
+    command: "마법 성좌의가호"
+    permission: "magic.learned.constellation_blessing"
+    mana-cost: 200
+    cooldown-seconds: 90
+  arcane_imprint:
+    # 마력 각인
+    enabled: true
+    command: "마법 마력각인"
+    permission: "magic.learned.arcane_imprint"
+    mana-cost: 180
+    cooldown-seconds: 60
+  dawn_ritual:
+    # 여명의 의식
+    enabled: true
+    command: "마법 여명의의식"
+    permission: "magic.learned.dawn_ritual"
+    mana-cost: 300
+    cooldown-seconds: 180
+  comforting_light:
+    # 위로의 빛
+    enabled: true
+    command: "마법 위로의빛"
+    permission: "magic.learned.comforting_light"
+    mana-cost: 35
+    cooldown-seconds: 15
+  exorcism_flash:
+    # 퇴마의 섬광
+    enabled: true
+    command: "마법 퇴마의섬광"
+    permission: "magic.learned.exorcism_flash"
+    mana-cost: 60
+    cooldown-seconds: 18
+  arcane_mending:
+    # 마력 봉합
+    enabled: true
+    command: "마법 마력봉합"
+    permission: "magic.learned.arcane_mending"
+    mana-cost: 80
+    cooldown-seconds: 30
+  companion_return:
+    # 동행 귀환
+    enabled: true
+    command: "마법 동행귀환"
+    permission: "magic.learned.companion_return"
+    mana-cost: 160
+    cooldown-seconds: 90
+  flawless_moment:
+    # 무결의 순간
+    enabled: true
+    command: "마법 무결의순간"
+    permission: "magic.learned.flawless_moment"
+    mana-cost: 220
+    cooldown-seconds: 90
+  solar_judgment:
+    # 태양의 심판
+    enabled: true
+    command: "마법 태양의심판"
+    permission: "magic.learned.solar_judgment"
+    mana-cost: 400
+    cooldown-seconds: 90
+  firefly_mark:
+    # 반딧불 표식
+    enabled: true
+    command: "마법 반딧불표식"
+    permission: "magic.learned.firefly_mark"
+    mana-cost: 3
+    cooldown-seconds: 2
+  rainbow_collar:
+    # 무지개 목줄
+    enabled: true
+    command: "마법 무지개목줄"
+    permission: "magic.learned.rainbow_collar"
+    mana-cost: 2
+    cooldown-seconds: 2
+  sun_drying:
+    # 햇살 말림
+    enabled: true
+    command: "마법 햇살말림"
+    permission: "magic.learned.sun_drying"
+    mana-cost: 12
+    cooldown-seconds: 5
+  luminous_copy:
+    # 빛의 필사
+    enabled: true
+    command: "마법 빛의필사"
+    permission: "magic.learned.luminous_copy"
+    mana-cost: 10
+    cooldown-seconds: 5
+  guiding_fletching:
+    # 유도 깃
+    enabled: true
+    command: "마법 유도깃"
+    permission: "magic.learned.guiding_fletching"
+    mana-cost: 30
+    cooldown-seconds: 12
+  sharing_table:
+    # 나눔 식탁
+    enabled: true
+    command: "마법 나눔식탁"
+    permission: "magic.learned.sharing_table"
+    mana-cost: 15
+    cooldown-seconds: 15
+  summons_letter:
+    # 소환장
+    enabled: true
+    command: "마법 소환장"
+    permission: "magic.learned.summons_letter"
+    mana-cost: 35
+    cooldown-seconds: 20
+  starlight_survey:
+    # 별빛 측량
+    enabled: true
+    command: "마법 별빛측량"
+    permission: "magic.learned.starlight_survey"
+    mana-cost: 5
+    cooldown-seconds: 3
+  luminous_handover:
+    # 빛의 교대
+    enabled: true
+    command: "마법 빛의교대"
+    permission: "magic.learned.luminous_handover"
+    mana-cost: 70
+    cooldown-seconds: 25
+  mana_conduit:
+    # 마력 전선
+    enabled: true
+    command: "마법 마력전선"
+    permission: "magic.learned.mana_conduit"
+    mana-cost: 10
+    cooldown-seconds: 10
+  merciful_arrow:
+    # 자비의 화살
+    enabled: true
+    command: "마법 자비의화살"
+    permission: "magic.learned.merciful_arrow"
+    mana-cost: 45
+    cooldown-seconds: 15
+  mana_deposit:
+    # 마력 예금
+    enabled: true
+    command: "마법 마력예금"
+    permission: "magic.learned.mana_deposit"
+    mana-cost: 10
+    cooldown-seconds: 5
+  guardian_oath:
+    # 수호자의 서약
+    enabled: true
+    command: "마법 수호자의서약"
+    permission: "magic.learned.guardian_oath"
+    mana-cost: 130
+    cooldown-seconds: 45
+  experience_exchange:
+    # 경험의 환전
+    enabled: true
+    command: "마법 경험의환전"
+    permission: "magic.learned.experience_exchange"
+    mana-cost: 0
+    cooldown-seconds: 60
+  white_night_sanctuary:
+    # 백야의 성역
+    enabled: true
+    command: "마법 백야의성역"
+    permission: "magic.learned.white_night_sanctuary"
+    mana-cost: 250
+    cooldown-seconds: 180
+  starlight_reprise:
+    # 별빛 재현
+    enabled: true
+    command: "마법 별빛재현"
+    permission: "magic.learned.starlight_reprise"
+    mana-cost: 350
+    cooldown-seconds: 60
+  constellation_emissary:
+    # 성좌의 대리인
+    enabled: true
+    command: "마법 성좌의대리인"
+    permission: "magic.learned.constellation_emissary"
+    mana-cost: 280
+    cooldown-seconds: 120
+  night_sight:
+    # 밤눈
+    enabled: true
+    command: "마법 밤눈"
+    permission: "magic.learned.night_sight"
+    mana-cost: 10
+    cooldown-seconds: 30
+  shadow_bind:
+    # 그림자 매듭
+    enabled: true
+    command: "마법 그림자매듭"
+    permission: "magic.learned.shadow_bind"
+    mana-cost: 10
+    cooldown-seconds: 6
+  faint_veil:
+    # 옅은 은신
+    enabled: true
+    command: "마법 옅은은신"
+    permission: "magic.learned.faint_veil"
+    mana-cost: 30
+    cooldown-seconds: 20
+  shadow_double:
+    # 그림자 분신
+    enabled: true
+    command: "마법 그림자분신"
+    permission: "magic.learned.shadow_double"
+    mana-cost: 75
+    cooldown-seconds: 25
+  echo_reading:
+    # 잔향 읽기
+    enabled: true
+    command: "마법 잔향읽기"
+    permission: "magic.learned.echo_reading"
+    mana-cost: 25
+    cooldown-seconds: 10
+  sealing_thread:
+    # 봉인의 실
+    enabled: true
+    command: "마법 봉인의실"
+    permission: "magic.learned.sealing_thread"
+    mana-cost: 40
+    cooldown-seconds: 20
+  afterlife_gate:
+    # 사후세계의 문
+    enabled: true
+    command: "마법 사후세계의문"
+    permission: "magic.learned.afterlife_gate"
+    mana-cost: 350
+    cooldown-seconds: 180
+  shadow_exchange:
+    # 그림자 교환
+    enabled: true
+    command: "마법 그림자교환"
+    permission: "magic.learned.shadow_exchange"
+    mana-cost: 100
+    cooldown-seconds: 30
+  forbidden_contract:
+    # 금서의 계약
+    enabled: true
+    command: "마법 금서의계약"
+    permission: "magic.learned.forbidden_contract"
+    mana-cost: 200
+    cooldown-seconds: 120
+  life_siphon:
+    # 생명 갈취
+    enabled: true
+    command: "마법 생명갈취"
+    permission: "magic.learned.life_siphon"
+    mana-cost: 55
+    cooldown-seconds: 15
+  drowsiness:
+    # 졸음
+    enabled: true
+    command: "마법 졸음"
+    permission: "magic.learned.drowsiness"
+    mana-cost: 20
+    cooldown-seconds: 10
+  misfortune_whisper:
+    # 불운의 속삭임
+    enabled: true
+    command: "마법 불운의속삭임"
+    permission: "magic.learned.misfortune_whisper"
+    mana-cost: 35
+    cooldown-seconds: 12
+  hungry_shadow:
+    # 굶주린 그림자
+    enabled: true
+    command: "마법 굶주린그림자"
+    permission: "magic.learned.hungry_shadow"
+    mana-cost: 20
+    cooldown-seconds: 15
+  curse_transfer:
+    # 저주의 전가
+    enabled: true
+    command: "마법 저주의전가"
+    permission: "magic.learned.curse_transfer"
+    mana-cost: 90
+    cooldown-seconds: 30
+  discord:
+    # 불화
+    enabled: true
+    command: "마법 불화"
+    permission: "magic.learned.discord"
+    mana-cost: 110
+    cooldown-seconds: 30
+  night_chain:
+    # 밤의 사슬
+    enabled: true
+    command: "마법 밤의사슬"
+    permission: "magic.learned.night_chain"
+    mana-cost: 200
+    cooldown-seconds: 45
+  pain_deferral:
+    # 고통 유예
+    enabled: true
+    command: "마법 고통유예"
+    permission: "magic.learned.pain_deferral"
+    mana-cost: 150
+    cooldown-seconds: 45
+  black_harvest:
+    # 검은 수확
+    enabled: true
+    command: "마법 검은수확"
+    permission: "magic.learned.black_harvest"
+    mana-cost: 450
+    cooldown-seconds: 120
+  ink_fingertip:
+    # 먹물 손끝
+    enabled: true
+    command: "마법 먹물손끝"
+    permission: "magic.learned.ink_fingertip"
+    mana-cost: 3
+    cooldown-seconds: 2
+  shadow_nail:
+    # 그림자 못
+    enabled: true
+    command: "마법 그림자못"
+    permission: "magic.learned.shadow_nail"
+    mana-cost: 45
+    cooldown-seconds: 15
+  night_lullaby:
+    # 밤의 자장가
+    enabled: true
+    command: "마법 밤의자장가"
+    permission: "magic.learned.night_lullaby"
+    mana-cost: 30
+    cooldown-seconds: 30
+  loosen_grasp:
+    # 손아귀 풀기
+    enabled: true
+    command: "마법 손아귀풀기"
+    permission: "magic.learned.loosen_grasp"
+    mana-cost: 60
+    cooldown-seconds: 20
+  shadow_tracking:
+    # 그림자 추적
+    enabled: true
+    command: "마법 그림자추적"
+    permission: "magic.learned.shadow_tracking"
+    mana-cost: 25
+    cooldown-seconds: 20
+  healing_seal:
+    # 회복 봉인
+    enabled: true
+    command: "마법 회복봉인"
+    permission: "magic.learned.healing_seal"
+    mana-cost: 85
+    cooldown-seconds: 25
+  shadow_scales:
+    # 어둠의 저울
+    enabled: true
+    command: "마법 어둠의저울"
+    permission: "magic.learned.shadow_scales"
+    mana-cost: 100
+    cooldown-seconds: 20
+  warning_thread:
+    # 경고의 실
+    enabled: true
+    command: "마법 경고의실"
+    permission: "magic.learned.warning_thread"
+    mana-cost: 20
+    cooldown-seconds: 15
+  final_knot:
+    # 끝매듭
+    enabled: true
+    command: "마법 끝매듭"
+    permission: "magic.learned.final_knot"
+    mana-cost: 35
+    cooldown-seconds: 20
+  wound_accounting:
+    # 상처 회계
+    enabled: true
+    command: "마법 상처회계"
+    permission: "magic.learned.wound_accounting"
+    mana-cost: 180
+    cooldown-seconds: 35
+  inverted_offering:
+    # 뒤집힌 공물
+    enabled: true
+    command: "마법 뒤집힌공물"
+    permission: "magic.learned.inverted_offering"
+    mana-cost: 50
+    cooldown-seconds: 30
+  ghost_tool:
+    # 유령 도구
+    enabled: true
+    command: "마법 유령도구"
+    permission: "magic.learned.ghost_tool"
+    mana-cost: 45
+    cooldown-seconds: 10
+  bell_of_fear:
+    # 공포의 종
+    enabled: true
+    command: "마법 공포의종"
+    permission: "magic.learned.bell_of_fear"
+    mana-cost: 140
+    cooldown-seconds: 40
+  eclipse_eye:
+    # 월식의 눈
+    enabled: true
+    command: "마법 월식의눈"
+    permission: "magic.learned.eclipse_eye"
+    mana-cost: 160
+    cooldown-seconds: 35
+  death_ledger:
+    # 죽음의 장부
+    enabled: true
+    command: "마법 죽음의장부"
+    permission: "magic.learned.death_ledger"
+    mana-cost: 180
+    cooldown-seconds: 45
+  void_maw:
+    # 공허의 입
+    enabled: true
+    command: "마법 공허의입"
+    permission: "magic.learned.void_maw"
+    mana-cost: 500
+    cooldown-seconds: 90
+  twilight_bargain:
+    # 황혼의 거래
+    enabled: true
+    command: "마법 황혼의거래"
+    permission: "magic.learned.twilight_bargain"
+    mana-cost: 0
+    cooldown-seconds: 90
+
+  wind_courier:
+    # 바람 우편 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 바람우편"
+    permission: "magic.learned.wind_courier"
+    mana-cost: 12
+    cooldown-seconds: 5
+
+  air_display:
+    # 허공 진열 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 허공진열"
+    permission: "magic.learned.air_display"
+    mana-cost: 8
+    cooldown-seconds: 5
+
+  sail_breeze:
+    # 돛바람 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 돛바람"
+    permission: "magic.learned.sail_breeze"
+    mana-cost: 18
+    cooldown-seconds: 10
+
+  air_brake:
+    # 급제동 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 급제동"
+    permission: "magic.learned.air_brake"
+    mana-cost: 20
+    cooldown-seconds: 12
+
+  headwind_field:
+    # 역풍 지대 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 역풍지대"
+    permission: "magic.learned.headwind_field"
+    mana-cost: 65
+    cooldown-seconds: 25
+
+  vortex_center:
+    # 소용돌이 중심 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 소용돌이중심"
+    permission: "magic.learned.vortex_center"
+    mana-cost: 100
+    cooldown-seconds: 30
+
+  wall_echo_burst:
+    # 벽울림 탄 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 벽울림탄"
+    permission: "magic.learned.wall_echo_burst"
+    mana-cost: 55
+    cooldown-seconds: 15
+
+  blindside_turn:
+    # 빈틈 돌리기 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 빈틈돌리기"
+    permission: "magic.learned.blindside_turn"
+    mana-cost: 15
+    cooldown-seconds: 10
+
+  wind_tailoring:
+    # 바람 재단 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 바람재단"
+    permission: "magic.learned.wind_tailoring"
+    mana-cost: 10
+    cooldown-seconds: 4
+
+  whistle_procession:
+    # 휘파람 행진 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 휘파람행진"
+    permission: "magic.learned.whistle_procession"
+    mana-cost: 18
+    cooldown-seconds: 15
+
+  wind_performance:
+    # 바람 연주 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 바람연주"
+    permission: "magic.learned.wind_performance"
+    mana-cost: 6
+    cooldown-seconds: 2
+
+  draft_closer:
+    # 문풍지 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 문풍지"
+    permission: "magic.learned.draft_closer"
+    mana-cost: 10
+    cooldown-seconds: 5
+
+  air_compass:
+    # 허공 나침반 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 허공나침반"
+    permission: "magic.learned.air_compass"
+    mana-cost: 5
+    cooldown-seconds: 3
+
+  experience_confluence:
+    # 흩어진 경험 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 흩어진경험"
+    permission: "magic.learned.experience_confluence"
+    mana-cost: 15
+    cooldown-seconds: 8
+
+  melody_bottle:
+    # 선율 담기 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 선율담기"
+    permission: "magic.learned.melody_bottle"
+    mana-cost: 12
+    cooldown-seconds: 8
+
+  copper_polish:
+    # 구리 광내기 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 구리광내기"
+    permission: "magic.learned.copper_polish"
+    mana-cost: 15
+    cooldown-seconds: 5
+
+  wax_melting:
+    # 밀랍 녹이기 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 밀랍녹이기"
+    permission: "magic.learned.wax_melting"
+    mana-cost: 12
+    cooldown-seconds: 5
+
+  charcoal_scent:
+    # 숯내음 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 숯내음"
+    permission: "magic.learned.charcoal_scent"
+    mana-cost: 18
+    cooldown-seconds: 8
+
+  glass_craft:
+    # 유리 세공 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 유리세공"
+    permission: "magic.learned.glass_craft"
+    mana-cost: 15
+    cooldown-seconds: 5
+
+  heated_hooves:
+    # 뜨거운 발굽 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 뜨거운발굽"
+    permission: "magic.learned.heated_hooves"
+    mana-cost: 55
+    cooldown-seconds: 20
+
+  residual_heat:
+    # 잔열 회수 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 잔열회수"
+    permission: "magic.learned.residual_heat"
+    mana-cost: 35
+    cooldown-seconds: 20
+
+  searing_edge:
+    # 달궈진 칼끝 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 달궈진칼끝"
+    permission: "magic.learned.searing_edge"
+    mana-cost: 50
+    cooldown-seconds: 15
+
+  fuse_bond:
+    # 도화선 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 도화선"
+    permission: "magic.learned.fuse_bond"
+    mana-cost: 90
+    cooldown-seconds: 25
+
+  ember_transfer:
+    # 불씨 옮기기 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 불씨옮기기"
+    permission: "magic.learned.ember_transfer"
+    mana-cost: 40
+    cooldown-seconds: 15
+
+  flame_boundary:
+    # 화염 고리 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 화염고리"
+    permission: "magic.learned.flame_boundary"
+    mana-cost: 100
+    cooldown-seconds: 30
+
+  heat_accumulation:
+    # 열기 축적 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 열기축적"
+    permission: "magic.learned.heat_accumulation"
+    mana-cost: 120
+    cooldown-seconds: 35
+
+  sulfur_cloud:
+    # 유황 구름 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 유황구름"
+    permission: "magic.learned.sulfur_cloud"
+    mana-cost: 75
+    cooldown-seconds: 25
+
+  flame_seam:
+    # 화염 봉합선 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 화염봉합선"
+    permission: "magic.learned.flame_seam"
+    mana-cost: 85
+    cooldown-seconds: 25
+
+  flame_clap:
+    # 불꽃 박수 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 불꽃박수"
+    permission: "magic.learned.flame_clap"
+    mana-cost: 55
+    cooldown-seconds: 15
+
+  ashen_farewell:
+    # 잿빛 작별 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 잿빛작별"
+    permission: "magic.learned.ashen_farewell"
+    mana-cost: 20
+    cooldown-seconds: 10
+
+  bubble_plate:
+    # 거품 접시 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 거품접시"
+    permission: "magic.learned.bubble_plate"
+    mana-cost: 12
+    cooldown-seconds: 5
+
+  waterweed_trim:
+    # 수초 손질 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 수초손질"
+    permission: "magic.learned.waterweed_trim"
+    mana-cost: 18
+    cooldown-seconds: 8
+
+  drain_pocket:
+    # 물 빼기 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 물빼기"
+    permission: "magic.learned.drain_pocket"
+    mana-cost: 45
+    cooldown-seconds: 20
+
+  mud_kneading:
+    # 진흙 반죽 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 진흙반죽"
+    permission: "magic.learned.mud_kneading"
+    mana-cost: 10
+    cooldown-seconds: 5
+
+  sloshing_pail:
+    # 찰랑이는 통 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 찰랑이는통"
+    permission: "magic.learned.sloshing_pail"
+    mana-cost: 8
+    cooldown-seconds: 4
+
+  surface_walk:
+    # 수면 산책 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 수면산책"
+    permission: "magic.learned.surface_walk"
+    mana-cost: 35
+    cooldown-seconds: 20
+
+  diving_bell:
+    # 잠수 종 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 잠수종"
+    permission: "magic.learned.diving_bell"
+    mana-cost: 90
+    cooldown-seconds: 35
+
+  droplet_lens:
+    # 물방울 렌즈 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 물방울렌즈"
+    permission: "magic.learned.droplet_lens"
+    mana-cost: 10
+    cooldown-seconds: 5
+
+  cold_compress:
+    # 차가운 찜질 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 차가운찜질"
+    permission: "magic.learned.cold_compress"
+    mana-cost: 30
+    cooldown-seconds: 20
+
+  bubble_brand:
+    # 수포 낙인 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 수포낙인"
+    permission: "magic.learned.bubble_brand"
+    mana-cost: 40
+    cooldown-seconds: 12
+
+  ice_wedge:
+    # 얼음 쐐기 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 얼음쐐기"
+    permission: "magic.learned.ice_wedge"
+    mana-cost: 65
+    cooldown-seconds: 18
+
+  slippery_floor:
+    # 미끄러운 바닥 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 미끄러운바닥"
+    permission: "magic.learned.slippery_floor"
+    mana-cost: 40
+    cooldown-seconds: 20
+
+  chain_droplet:
+    # 연쇄 물방울 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 연쇄물방울"
+    permission: "magic.learned.chain_droplet"
+    mana-cost: 75
+    cooldown-seconds: 18
+
+  splitting_lance:
+    # 갈라지는 창 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 갈라지는창"
+    permission: "magic.learned.splitting_lance"
+    mana-cost: 95
+    cooldown-seconds: 25
+
+  healing_reserve:
+    # 물결 저금 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 물결저금"
+    permission: "magic.learned.healing_reserve"
+    mana-cost: 100
+    cooldown-seconds: 40
+
+  petal_dye:
+    # 꽃잎 염색 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 꽃잎염색"
+    permission: "magic.learned.petal_dye"
+    mana-cost: 10
+    cooldown-seconds: 5
+
+  mushroom_picking:
+    # 버섯 따기 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 버섯따기"
+    permission: "magic.learned.mushroom_picking"
+    mana-cost: 8
+    cooldown-seconds: 4
+
+  hive_inspection:
+    # 벌집 살피기 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 벌집살피기"
+    permission: "magic.learned.hive_inspection"
+    mana-cost: 6
+    cooldown-seconds: 3
+
+  honey_tapping:
+    # 꿀 뜨기 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 꿀뜨기"
+    permission: "magic.learned.honey_tapping"
+    mana-cost: 12
+    cooldown-seconds: 8
+
+  sapling_move:
+    # 묘목 이사 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 묘목이사"
+    permission: "magic.learned.sapling_move"
+    mana-cost: 10
+    cooldown-seconds: 5
+
+  path_tamping:
+    # 돌길 다지기 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 돌길다지기"
+    permission: "magic.learned.path_tamping"
+    mana-cost: 12
+    cooldown-seconds: 5
+
+  soil_tilling:
+    # 밭 갈기 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 밭갈기"
+    permission: "magic.learned.soil_tilling"
+    mana-cost: 15
+    cooldown-seconds: 6
+
+  gravel_sifting:
+    # 자갈 체질 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 자갈체질"
+    permission: "magic.learned.gravel_sifting"
+    mana-cost: 15
+    cooldown-seconds: 5
+
+  stone_joinery:
+    # 반듯한 모서리 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 반듯한모서리"
+    permission: "magic.learned.stone_joinery"
+    mana-cost: 12
+    cooldown-seconds: 5
+
+  buried_cache:
+    # 땅속 보관 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 땅속보관"
+    permission: "magic.learned.buried_cache"
+    mana-cost: 25
+    cooldown-seconds: 12
+
+  root_trip:
+    # 뿌리 걸림 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 뿌리걸림"
+    permission: "magic.learned.root_trip"
+    mana-cost: 40
+    cooldown-seconds: 15
+
+  crystal_resonance:
+    # 수정 공명 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 수정공명"
+    permission: "magic.learned.crystal_resonance"
+    mana-cost: 75
+    cooldown-seconds: 22
+
+  sand_blind:
+    # 모래 눈속임 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 모래눈속임"
+    permission: "magic.learned.sand_blind"
+    mana-cost: 25
+    cooldown-seconds: 10
+
+  lodestone_trace:
+    # 자철석 손길 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 자철석손길"
+    permission: "magic.learned.lodestone_trace"
+    mana-cost: 12
+    cooldown-seconds: 8
+
+  crumbling_foothold:
+    # 무너지는 발판 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 무너지는발판"
+    permission: "magic.learned.crumbling_foothold"
+    mana-cost: 50
+    cooldown-seconds: 18
+
+  luminous_signature:
+    # 빛의 서명 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 빛의서명"
+    permission: "magic.learned.luminous_signature"
+    mana-cost: 5
+    cooldown-seconds: 3
+
+  starlit_nametag:
+    # 별빛 이름표 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 별빛이름표"
+    permission: "magic.learned.starlit_nametag"
+    mana-cost: 8
+    cooldown-seconds: 5
+
+  color_finder:
+    # 색 찾기 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 색찾기"
+    permission: "magic.learned.color_finder"
+    mana-cost: 4
+    cooldown-seconds: 2
+
+  luminous_frame:
+    # 별빛 액자 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 별빛액자"
+    permission: "magic.learned.luminous_frame"
+    mana-cost: 12
+    cooldown-seconds: 5
+
+  exhibit_anchor:
+    # 전시 고정 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 전시고정"
+    permission: "magic.learned.exhibit_anchor"
+    mana-cost: 10
+    cooldown-seconds: 5
+
+  light_portrait:
+    # 빛의 초상 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 빛의초상"
+    permission: "magic.learned.light_portrait"
+    mana-cost: 20
+    cooldown-seconds: 12
+
+  promise_star:
+    # 약속의 별 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 약속의별"
+    permission: "magic.learned.promise_star"
+    mana-cost: 15
+    cooldown-seconds: 10
+
+  home_check:
+    # 귀가 확인 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 귀가확인"
+    permission: "magic.learned.home_check"
+    mana-cost: 5
+    cooldown-seconds: 3
+
+  clear_eyes:
+    # 맑은 눈 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 맑은눈"
+    permission: "magic.learned.clear_eyes"
+    mana-cost: 20
+    cooldown-seconds: 12
+
+  light_rhythm:
+    # 빛의 박자 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 빛의박자"
+    permission: "magic.learned.light_rhythm"
+    mana-cost: 35
+    cooldown-seconds: 12
+
+  frontal_duel:
+    # 정면 승부 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 정면승부"
+    permission: "magic.learned.frontal_duel"
+    mana-cost: 70
+    cooldown-seconds: 25
+
+  last_lantern:
+    # 마지막 등불 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 마지막등불"
+    permission: "magic.learned.last_lantern"
+    mana-cost: 65
+    cooldown-seconds: 25
+
+  star_farewell:
+    # 별의 배웅 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 별의배웅"
+    permission: "magic.learned.star_farewell"
+    mana-cost: 80
+    cooldown-seconds: 25
+
+  light_severance:
+    # 빛의 단절 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 빛의단절"
+    permission: "magic.learned.light_severance"
+    mana-cost: 90
+    cooldown-seconds: 30
+
+  dawn_promise:
+    # 새벽의 약속 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 새벽의약속"
+    permission: "magic.learned.dawn_promise"
+    mana-cost: 75
+    cooldown-seconds: 30
+
+  silent_steps:
+    # 조용한 발걸음 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 조용한발걸음"
+    permission: "magic.learned.silent_steps"
+    mana-cost: 20
+    cooldown-seconds: 15
+
+  forgotten_name:
+    # 잊힌 이름 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 잊힌이름"
+    permission: "magic.learned.forgotten_name"
+    mana-cost: 8
+    cooldown-seconds: 4
+
+  empty_page:
+    # 빈 페이지 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 빈페이지"
+    permission: "magic.learned.empty_page"
+    mana-cost: 6
+    cooldown-seconds: 4
+
+  night_cover:
+    # 밤의 덮개 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 밤의덮개"
+    permission: "magic.learned.night_cover"
+    mana-cost: 15
+    cooldown-seconds: 8
+
+  shadow_pouch:
+    # 그림자 주머니 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 그림자주머니"
+    permission: "magic.learned.shadow_pouch"
+    mana-cost: 100
+    cooldown-seconds: 90
+
+  ghost_palm:
+    # 유령 손바닥 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 유령손바닥"
+    permission: "magic.learned.ghost_palm"
+    mana-cost: 12
+    cooldown-seconds: 6
+
+  black_silence:
+    # 검은 침묵 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 검은침묵"
+    permission: "magic.learned.black_silence"
+    mana-cost: 95
+    cooldown-seconds: 30
+
+  oblivion_mark:
+    # 망각의 표식 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 망각의표식"
+    permission: "magic.learned.oblivion_mark"
+    mana-cost: 40
+    cooldown-seconds: 20
+
+  delayed_fear:
+    # 뒤늦은 공포 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 뒤늦은공포"
+    permission: "magic.learned.delayed_fear"
+    mana-cost: 65
+    cooldown-seconds: 22
+
+  fugitive_toll:
+    # 도망자의 대가 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 도망자의대가"
+    permission: "magic.learned.fugitive_toll"
+    mana-cost: 75
+    cooldown-seconds: 25
+
+  hungry_edge:
+    # 굶주린 칼끝 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 굶주린칼끝"
+    permission: "magic.learned.hungry_edge"
+    mana-cost: 60
+    cooldown-seconds: 18
+
+  shadow_retrace:
+    # 되짚는 그림자 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 되짚는그림자"
+    permission: "magic.learned.shadow_retrace"
+    mana-cost: 45
+    cooldown-seconds: 25
+
+  black_pulse:
+    # 검은 박동 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 검은박동"
+    permission: "magic.learned.black_pulse"
+    mana-cost: 120
+    cooldown-seconds: 40
+
+  empty_grave:
+    # 빈 무덤 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 빈무덤"
+    permission: "magic.learned.empty_grave"
+    mana-cost: 15
+    cooldown-seconds: 10
+
+  ill_choice:
+    # 불길한 선택 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 불길한선택"
+    permission: "magic.learned.ill_choice"
+    mana-cost: 70
+    cooldown-seconds: 25
+
+  resonance_tuning:
+    # 공명 맞추기 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 공명맞추기"
+    permission: "magic.learned.resonance_tuning"
+    mana-cost: 25
+    cooldown-seconds: 10
+
+  breath_reversal:
+    # 숨결 반전 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 숨결반전"
+    permission: "magic.learned.breath_reversal"
+    mana-cost: 30
+    cooldown-seconds: 12
+
+  heat_script:
+    # 열문자 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 열문자"
+    permission: "magic.learned.heat_script"
+    mana-cost: 25
+    cooldown-seconds: 10
+
+  heat_transfer:
+    # 열의 이동 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 열의이동"
+    permission: "magic.learned.heat_transfer"
+    mana-cost: 45
+    cooldown-seconds: 15
+
+  level_balance:
+    # 수평 맞추기 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 수평맞추기"
+    permission: "magic.learned.level_balance"
+    mana-cost: 30
+    cooldown-seconds: 12
+
+  ice_cog:
+    # 얼음 톱니 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 얼음톱니"
+    permission: "magic.learned.ice_cog"
+    mana-cost: 35
+    cooldown-seconds: 15
+
+  weight_sigil:
+    # 무게의 인장 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 무게의인장"
+    permission: "magic.learned.weight_sigil"
+    mana-cost: 40
+    cooldown-seconds: 15
+
+  prism_split:
+    # 프리즘 분광 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 프리즘분광"
+    permission: "magic.learned.prism_split"
+    mana-cost: 45
+    cooldown-seconds: 15
+
+  light_afterimage:
+    # 빛의 잔상 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 빛의잔상"
+    permission: "magic.learned.light_afterimage"
+    mana-cost: 35
+    cooldown-seconds: 12
+
+  shadow_passage:
+    # 그림자 통행 — 효과 구현 전 시전 비활성
+    enabled: false
+    command: "마법 그림자통행"
+    permission: "magic.learned.shadow_passage"
+    mana-cost: 60
+    cooldown-seconds: 20

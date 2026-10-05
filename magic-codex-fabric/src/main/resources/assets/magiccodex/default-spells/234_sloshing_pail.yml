@@ -1,0 +1,14 @@
+id: sloshing_pail
+name: 찰랑이는 통
+category: water
+description: 가까운 소에서 빈 양동이에 우유를 받는다.
+icon: ''
+permission: magic.learned.sloshing_pail
+discovery:
+  description: 양동이로 우유를 누적 10회 받기.
+research: 목장 일을 대신하는 손길이다. 소가 없는 곳에서 우유가 생기지는 않는다.
+cast:
+  command: ''
+  cooldown-seconds: 4
+  mana-cost: 8
+order: 234

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "sand_blind"
+name: "모래 눈속임"
+category: "earth"
+description: "정면에 모래를 뿌려 적의 시야를 짧게 흐린다.\n\n모래를 오래 다룬 손은 한 줌의 알갱이가 시선을 가리는 순간을 안다."
+icon: "magiccodex:textures/spells/expansion_3/sand_blind.png"
+permission: "magic.learned.sand_blind"
+discovery:
+  description: "모래를 누적 64개 채굴하기."
+research: "강한 모래폭풍이 아니라 잠깐 눈앞을 흐리는 작은 틈이다."
+cast:
+  command: "마법 모래눈속임"
+  cooldown-seconds: 10
+  mana-cost: 25
+order: 2580

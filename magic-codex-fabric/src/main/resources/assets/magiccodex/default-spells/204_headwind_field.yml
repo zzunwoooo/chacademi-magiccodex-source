@@ -1,0 +1,14 @@
+id: headwind_field
+name: 역풍 지대
+category: wind
+description: 작은 구역을 통과하는 적의 투사체 속도를 낮춘다.
+icon: ''
+permission: magic.learned.headwind_field
+discovery:
+  description: 방패로 스켈레톤의 화살을 20회 막기.
+research: 가벼운 바람도 방향이 맞으면 화살의 기세를 꺾는다.
+cast:
+  command: ''
+  cooldown-seconds: 25
+  mana-cost: 65
+order: 204

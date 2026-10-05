@@ -1,0 +1,17 @@
+"Id": "ca_baby_polar_bear_shiny"
+"MythicMob": "CA_Pet_baby_polar_bear_shiny"
+"Permission": "chacademia.pet.ca_baby_polar_bear_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e눈송이 아기곰"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "얼음 늪 가장자리에서 노는 어린 곰."
+    - "서식지: 얼음 늪 / 눈 덮인 방패암 지대"
+    - "1성"

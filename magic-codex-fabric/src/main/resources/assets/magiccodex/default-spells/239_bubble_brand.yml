@@ -1,0 +1,14 @@
+id: bubble_brand
+name: 수포 낙인
+category: water
+description: 적에게 물방울 세 개를 붙여 후속 공격마다 하나씩 터뜨린다.
+icon: ''
+permission: magic.learned.bubble_brand
+discovery:
+  description: 물방울 탄환을 몬스터에게 누적 30회 명중하기.
+research: 적에게 남은 작은 거품마다 다음 타격을 기다리는 힘이 담겨 있다.
+cast:
+  command: ''
+  cooldown-seconds: 12
+  mana-cost: 40
+order: 239

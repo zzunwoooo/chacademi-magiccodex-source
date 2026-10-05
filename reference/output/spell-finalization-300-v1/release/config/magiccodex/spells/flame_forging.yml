@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "flame_forging"
+name: "불꽃 단조"
+category: "fire"
+description: "손에 든 아이템을 특별한 재료로 단조한다.\n알맞은 재료가 아닐 경우 실패한다.\n\n대장간의 모루를 살펴보면 불과 망치가 금속을 다루는 순서를 이해할 수 있다."
+icon: "magiccodex:textures/spells/intermediate/flame_forging.png"
+permission: "magic.learned.flame_forging"
+discovery:
+  description: "대장간의 모루를 살펴보기."
+research: "불은 예로부터 다양한 도구를 만드는 데에 필수적인 재료였다."
+cast:
+  command: "마법 불꽃단조"
+  cooldown-seconds: 30
+  mana-cost: 50
+order: 370

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "shadow_exchange"
+name: "그림자 교환"
+category: "dark"
+description: "12블록 안의 일반 몬스터 또는 웅크린 동료와 자신의 위치를 맞바꿉니다. 안전한 공간이 없으면 실패합니다.\n\n엔더 진주로 거듭 자리를 옮긴 몸은 두 그림자 사이의 거리를 접는 법을 기억한다."
+icon: "magiccodex:textures/spells/advanced/shadow_exchange.png"
+permission: "magic.learned.shadow_exchange"
+discovery:
+  description: "엔더 진주로 순간 이동한 횟수 30회 달성하기."
+research: "내 그림자가 네 자리에 있었다면 결과는 달라졌을까?"
+cast:
+  command: "마법 그림자교환"
+  cooldown-seconds: 30
+  mana-cost: 100
+order: 1730

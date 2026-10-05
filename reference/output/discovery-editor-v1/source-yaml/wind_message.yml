@@ -1,0 +1,17 @@
+# 설명·발견 조건·쿨타임은 수정 가능한 기획 초안입니다.
+# 발견 조건은 UI 표시용 문구이며 실제 판정 기능은 연결되지 않았습니다.
+# cast.command는 실제 시전 기능 연결 후 / 없이 입력하세요.
+id: "wind_message"
+name: "바람의 전언"
+category: "wind"
+rank: "중급"
+description: "바람에 짧은 말을 실어 지정한 상대에게 전합니다."
+icon: "magiccodex:textures/spells/intermediate/wind_message.png"
+permission: "magic.learned.wind_message"
+discovery:
+  description: "옛 종탑에서 서로 떨어진 두 전언석을 연결하기."
+research: ""
+cast:
+  command: ""
+  cooldown-seconds: 10
+order: 1040

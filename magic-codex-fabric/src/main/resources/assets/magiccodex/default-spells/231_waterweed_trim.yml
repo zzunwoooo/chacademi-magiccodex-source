@@ -1,0 +1,14 @@
+id: waterweed_trim
+name: 수초 손질
+category: water
+description: 주변 해초와 켈프를 정리하며 켈프의 밑동은 남긴다.
+icon: ''
+permission: magic.learned.waterweed_trim
+discovery:
+  description: 해초와 켈프를 합쳐 누적 64개 수확하기.
+research: 수초를 다 뽑아 버리면 다음 수확도 없다. 뿌리를 남겨 주는 물결이다.
+cast:
+  command: ''
+  cooldown-seconds: 8
+  mana-cost: 18
+order: 231

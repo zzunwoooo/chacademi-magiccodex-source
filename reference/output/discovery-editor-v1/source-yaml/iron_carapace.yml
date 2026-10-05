@@ -1,0 +1,22 @@
+# UTF-8 / 들여쓰기는 공백 2칸입니다.
+# description: 도감에 보이는 효과 설명입니다. 자유롭게 수정하세요.
+# discovery.description: 획득 조건의 표시 문구입니다. 자동 판정 로직이 아닙니다.
+# circle: 1~9 정수. 서클을 미정으로 두려면 해당 줄을 삭제하세요.
+# cast.command: 서버 스킬 연결 후 / 없이 입력하세요. 현재는 미연결입니다.
+# cast.mana-cost: 표시용 소모량. 서버 마나 차감은 별도로 구현해야 합니다.
+id: "iron_carapace"
+name: "철의 외피"
+category: "earth"
+circle: 6
+rank: "중급"
+description: "10초 동안 받는 피해를 줄입니다. 대신 이동 속도와 공격 속도가 느려집니다."
+icon: "magiccodex:textures/spells/expansion/iron_carapace.png"
+permission: "magic.learned.iron_carapace"
+discovery:
+  description: "철 갑옷을 모두 착용하고 몬스터의 공격을 50번 받기."
+research: ""
+cast:
+  command: ""
+  cooldown-seconds: 60
+  mana-cost: 130
+order: 3310

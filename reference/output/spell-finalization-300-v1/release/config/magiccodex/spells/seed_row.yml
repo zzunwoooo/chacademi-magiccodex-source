@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "seed_row"
+name: "씨앗 줄심기"
+category: "earth"
+description: "소지한 씨앗을 소비해 앞쪽 경작지 최대 5칸에 일렬로 심습니다.\n\n경작지에 씨앗을 거듭 심은 손은 줄을 따라 이어지는 생명의 자리를 기억한다."
+icon: "magiccodex:textures/spells/expansion/seed_row.png"
+permission: "magic.learned.seed_row"
+discovery:
+  description: "경작지에 씨앗 누적 50개 심기."
+research: "허리를 굽히지 않고 밭을 가꾸는 법. 농사 동아리에서 가장 인기가 많은 실습이다."
+cast:
+  command: "마법 씨앗줄심기"
+  cooldown-seconds: 5
+  mana-cost: 12
+order: 1080

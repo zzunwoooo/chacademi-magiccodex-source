@@ -1,0 +1,17 @@
+"Id": "ca_ncr_warrior_skeleton_shiny"
+"MythicMob": "CA_Pet_ncr_warrior_skeleton_shiny"
+"Permission": "chacademia.pet.ca_ncr_warrior_skeleton_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e유적의 검병"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "오래된 지하 회랑을 배회하는 해골 전사."
+    - "서식지: 깊은 동굴 / 화강암 동굴"
+    - "2성"

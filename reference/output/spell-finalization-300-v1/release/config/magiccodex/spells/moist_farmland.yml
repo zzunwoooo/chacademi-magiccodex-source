@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "moist_farmland"
+name: "촉촉한 밭"
+category: "water"
+description: "주변의 마른 경작지 최대 9칸을 적십니다.\n\n물기 없는 경작지에 씨앗을 거듭 심어 본 손은 싹보다 먼저 흙이 목마르다는 것을 안다."
+icon: "magiccodex:textures/spells/expansion_2/moist_farmland.png"
+permission: "magic.learned.moist_farmland"
+discovery:
+  description: "물에서 떨어진 마른 경작지에 씨앗을 20번 심기."
+research: "갈라진 흙이 먼저 목마르다고 말하고 있었다."
+cast:
+  command: "마법 촉촉한밭"
+  cooldown-seconds: 10
+  mana-cost: 15
+order: 820

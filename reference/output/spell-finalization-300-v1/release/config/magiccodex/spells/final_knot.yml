@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "final_knot"
+name: "끝매듭"
+category: "dark"
+description: "적 하나를 표시합니다. 시간 안에 직접 처치하면 그 적의 드롭이 자신의 인벤토리로 들어옵니다.\n\n적을 쓰러뜨린 뒤 떨어진 물건을 거듭 거두다 보면 마지막에 묶어 둘 매듭을 떠올리게 된다."
+icon: "magiccodex:textures/spells/expansion_2/final_knot.png"
+permission: "magic.learned.final_knot"
+discovery:
+  description: "몬스터를 처치한 뒤 떨어진 아이템을 누적 256개 줍기."
+research: "마지막 매듭을 묶을 때까지 사냥은 끝난 것이 아니다."
+cast:
+  command: "마법 끝매듭"
+  cooldown-seconds: 20
+  mana-cost: 35
+order: 1920

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "mushroom_picking"
+name: "버섯 따기"
+category: "earth"
+description: "주변의 작은 버섯을 모은다.\n\n낮은 곳의 버섯을 거듭 거두어 본 손은 발밑에 숨은 작은 모양도 놓치지 않는다."
+icon: "magiccodex:textures/spells/expansion_3/mushroom_picking.png"
+permission: "magic.learned.mushroom_picking"
+discovery:
+  description: "작은 버섯을 누적 32개 수확하기."
+research: "숲 바닥의 보물을 모으는 주문이다. 큰 버섯 기둥까지 뽑아 오지는 않는다."
+cast:
+  command: "마법 버섯따기"
+  cooldown-seconds: 4
+  mana-cost: 8
+order: 2470

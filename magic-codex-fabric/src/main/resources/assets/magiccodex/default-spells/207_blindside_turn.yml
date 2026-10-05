@@ -1,0 +1,14 @@
+id: blindside_turn
+name: 빈틈 돌리기
+category: wind
+description: 일반 몬스터를 반대 방향으로 돌아보게 한다.
+icon: ''
+permission: magic.learned.blindside_turn
+discovery:
+  description: 몬스터의 근접 공격을 방패로 15회 막기.
+research: 눈을 돌리는 짧은 틈이면 충분하다. 뒤통수를 오래 구경할 필요는 없다.
+cast:
+  command: ''
+  cooldown-seconds: 10
+  mana-cost: 15
+order: 207

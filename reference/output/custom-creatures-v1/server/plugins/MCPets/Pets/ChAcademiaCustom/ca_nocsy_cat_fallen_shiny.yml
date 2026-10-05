@@ -1,0 +1,17 @@
+"Id": "ca_nocsy_cat_fallen_shiny"
+"MythicMob": "CA_Pet_nocsy_cat_fallen_shiny"
+"Permission": "chacademia.pet.ca_nocsy_cat_fallen_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e달그늘 고양이"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "달빛 숲의 오래된 유적에 드물게 나타난다."
+    - "서식지: 달빛 숲 / 달빛 계곡"
+    - "3성"

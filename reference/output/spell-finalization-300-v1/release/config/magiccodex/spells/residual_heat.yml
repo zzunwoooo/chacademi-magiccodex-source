@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "residual_heat"
+name: "잔열 회수"
+category: "fire"
+description: "자신의 화염 공격이 끝난 자리에서 잔열을 거두어 마나 일부를 회복한다.\n\n많은 화염 공격 뒤에 남은 온기를 살피면 꺼지는 열도 마나로 돌아올 길이 있다."
+icon: "magiccodex:textures/spells/expansion_3/residual_heat.png"
+permission: "magic.learned.residual_heat"
+discovery:
+  description: "화염 마법으로 몬스터를 누적 40마리 처치하기."
+research: "불이 사라진 자리도 곧바로 차가워지지는 않는다."
+cast:
+  command: "마법 잔열회수"
+  cooldown-seconds: 20
+  mana-cost: 35
+order: 2210

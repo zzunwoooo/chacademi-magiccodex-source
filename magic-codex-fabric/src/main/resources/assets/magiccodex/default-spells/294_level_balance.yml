@@ -1,0 +1,14 @@
+id: level_balance
+name: 수평 맞추기
+category: water
+description: 연결된 두 수조의 수위를 같게 해 부표나 수문 높이를 조절한다.
+icon: ''
+permission: magic.learned.level_balance
+discovery:
+  description: 물 양동이로 가마솥을 채운 뒤 다시 비우기 10회.
+research: 물을 새로 만드는 대신 두 그릇 사이의 차이를 거둔다.
+cast:
+  command: ''
+  cooldown-seconds: 12
+  mana-cost: 30
+order: 294

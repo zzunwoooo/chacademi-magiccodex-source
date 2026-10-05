@@ -1,0 +1,14 @@
+id: water_mirror
+name: 수면의 거울
+category: water
+description: 숨겨진 수중 통로를 발견합니다. 수중 기믹 시스템과의 연결은 추후 진행합니다.
+icon: magiccodex:textures/spells/intermediate/water_mirror.png
+permission: magic.learned.water_mirror
+discovery:
+  description: 학교 도서관에서 '수면에 비친 먼 풍경' 책 읽기.
+research: 한쪽 수반에 손을 담그자, 먼 곳의 수면에도 물결이 일었다.
+cast:
+  command: ''
+  cooldown-seconds: 20
+  mana-cost: 45
+order: 71

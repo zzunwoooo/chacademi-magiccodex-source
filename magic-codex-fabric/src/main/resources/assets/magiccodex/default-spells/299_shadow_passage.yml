@@ -1,0 +1,14 @@
+id: shadow_passage
+name: 그림자 통행
+category: dark
+description: 지정된 얇은 그림자 문을 잠시 통과한다.
+icon: ''
+permission: magic.learned.shadow_passage
+discovery:
+  description: 어둠 마법 응용 수업의 그림자 이동 실습을 완료하기.
+research: 모든 벽이 문이 되는 것은 아니다. 통행을 허락한 그림자의 경계만 지나간다.
+cast:
+  command: ''
+  cooldown-seconds: 20
+  mana-cost: 60
+order: 299

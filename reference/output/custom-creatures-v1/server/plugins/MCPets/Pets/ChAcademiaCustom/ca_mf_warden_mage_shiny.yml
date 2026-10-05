@@ -1,0 +1,17 @@
+"Id": "ca_mf_warden_mage_shiny"
+"MythicMob": "CA_Pet_mf_warden_mage_shiny"
+"Permission": "chacademia.pet.ca_mf_warden_mage_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e봉인의 술사"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "깊은 봉인실에서 마력을 다루는 수호자."
+    - "서식지: 깊은 동굴"
+    - "3성"

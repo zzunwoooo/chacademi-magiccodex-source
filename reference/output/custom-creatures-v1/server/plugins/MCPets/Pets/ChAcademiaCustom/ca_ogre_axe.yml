@@ -1,0 +1,17 @@
+"Id": "ca_ogre_axe"
+"MythicMob": "CA_Pet_ogre_axe"
+"Permission": "chacademia.pet.ca_ogre_axe"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f벌목꾼 오우거"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "거목 주변의 폐허에서 침입자를 경계한다."
+    - "서식지: 시베리아 타이가 / 숲 우거진 고지"
+    - "2성"

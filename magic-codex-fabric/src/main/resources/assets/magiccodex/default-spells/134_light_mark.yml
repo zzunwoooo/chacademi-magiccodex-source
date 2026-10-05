@@ -1,0 +1,14 @@
+id: light_mark
+name: 빛의 낙인
+category: light
+description: 바라보는 몬스터 하나의 윤곽을 8초 동안 밝힙니다.
+icon: magiccodex:textures/spells/novice_extra/light_mark.png
+permission: magic.learned.light_mark
+discovery:
+  description: 분광 화살을 몬스터에게 5번 명중하기.
+research: 놓치지 않겠다는 시선이 빛의 표식으로 남는다.
+cast:
+  command: ''
+  cooldown-seconds: 8
+  mana-cost: 10
+order: 134

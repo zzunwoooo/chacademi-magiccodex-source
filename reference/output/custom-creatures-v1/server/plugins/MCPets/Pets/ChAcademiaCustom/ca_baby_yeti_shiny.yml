@@ -1,0 +1,17 @@
+"Id": "ca_baby_yeti_shiny"
+"MythicMob": "CA_Pet_baby_yeti_shiny"
+"Permission": "chacademia.pet.ca_baby_yeti_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e눈산 꼬마예티"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "빙하 협곡의 작은 굴에서 모습을 드러낸다."
+    - "서식지: 빙하 협곡 / 얼어붙은 절벽"
+    - "2성"

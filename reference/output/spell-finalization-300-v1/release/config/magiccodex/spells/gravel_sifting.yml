@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "gravel_sifting"
+name: "자갈 체질"
+category: "earth"
+description: "자갈을 모래로 바꾼다.\n\n자갈을 오래 다루어 본 손은 큰 돌 사이의 고운 모래를 느낄 수 있다."
+icon: "magiccodex:textures/spells/expansion_3/gravel_sifting.png"
+permission: "magic.learned.gravel_sifting"
+discovery:
+  description: "자갈을 누적 64개 채굴하기."
+research: "거친 알갱이를 더 작은 결로 나누는 일이다. 새로운 땅을 만들어 내는 것은 아니다."
+cast:
+  command: "마법 자갈체질"
+  cooldown-seconds: 5
+  mana-cost: 15
+order: 2530

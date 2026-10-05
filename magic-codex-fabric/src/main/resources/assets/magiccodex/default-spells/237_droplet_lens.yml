@@ -1,0 +1,14 @@
+id: droplet_lens
+name: 물방울 렌즈
+category: water
+description: 바라보는 방향을 확대해 먼 건물이나 지형을 살펴본다.
+icon: ''
+permission: magic.learned.droplet_lens
+discovery:
+  description: 망원경으로 먼 곳을 누적 10회 관측하기.
+research: 큰 유리 없이도 빛은 굽어진다. 흔들리는 물방울은 먼저 안정시켜야 한다.
+cast:
+  command: ''
+  cooldown-seconds: 5
+  mana-cost: 10
+order: 237

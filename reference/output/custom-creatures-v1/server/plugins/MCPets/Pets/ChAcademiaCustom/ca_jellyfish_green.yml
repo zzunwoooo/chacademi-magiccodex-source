@@ -1,0 +1,17 @@
+"Id": "ca_jellyfish_green"
+"MythicMob": "CA_Pet_jellyfish_green"
+"Permission": "chacademia.pet.ca_jellyfish_green"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f비취 해파리"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "따뜻한 바다 속에서 물결을 따라 천천히 떠다닌다."
+    - "서식지: 따뜻한 심해"
+    - "1성"

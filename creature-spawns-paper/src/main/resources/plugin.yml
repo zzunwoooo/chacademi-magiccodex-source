@@ -1,0 +1,13 @@
+name: ChAcademiaWildlife
+version: 0.3.0
+main: school.chacademia.wildlife.WildlifePlugin
+api-version: '1.21.4'
+depend: [MythicMobs]
+softdepend: [MagicCodexBridge, WorldGuard]
+commands:
+  야생관리:
+    permission: chacademia.wildlife.admin
+    usage: /야생관리 reload | check <id> | structures
+permissions:
+  chacademia.wildlife.admin:
+    default: op

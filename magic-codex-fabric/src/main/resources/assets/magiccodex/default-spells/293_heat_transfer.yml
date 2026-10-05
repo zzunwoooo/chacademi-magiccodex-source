@@ -1,0 +1,14 @@
+id: heat_transfer
+name: 열의 이동
+category: fire
+description: 두 장치 사이에서 열을 옮겨 한쪽을 식히고 다른 쪽에 동력을 준다.
+icon: ''
+permission: magic.learned.heat_transfer
+discovery:
+  description: 화염 마법 응용 수업의 열전달 실습을 완료하기.
+research: 한쪽에서 빌린 온기가 다른 쪽의 움직임이 된다.
+cast:
+  command: ''
+  cooldown-seconds: 15
+  mana-cost: 45
+order: 293

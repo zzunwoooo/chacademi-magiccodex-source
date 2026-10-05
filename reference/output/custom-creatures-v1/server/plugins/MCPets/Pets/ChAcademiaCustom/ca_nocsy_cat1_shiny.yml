@@ -1,0 +1,17 @@
+"Id": "ca_nocsy_cat1_shiny"
+"MythicMob": "CA_Pet_nocsy_cat1_shiny"
+"Permission": "chacademia.pet.ca_nocsy_cat1_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e햇살 고양이"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "햇볕 드는 공터에서 쉬기를 좋아한다."
+    - "서식지: 벚꽃 숲 / 꽃피는 계곡"
+    - "1성"

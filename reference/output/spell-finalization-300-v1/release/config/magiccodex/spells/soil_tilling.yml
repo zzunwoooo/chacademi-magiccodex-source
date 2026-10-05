@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "soil_tilling"
+name: "밭 갈기"
+category: "earth"
+description: "앞쪽의 흙을 경작지로 만든다.\n\n괭이로 밭을 여러 번 일군 손은 씨앗을 기다리는 흙의 결을 안다."
+icon: "magiccodex:textures/spells/expansion_3/soil_tilling.png"
+permission: "magic.learned.soil_tilling"
+discovery:
+  description: "괭이로 경작지를 누적 50칸 만들기."
+research: "씨앗을 부르는 주문보다 먼저 준비해야 하는 땅이 있다."
+cast:
+  command: "마법 밭갈기"
+  cooldown-seconds: 6
+  mana-cost: 15
+order: 2520

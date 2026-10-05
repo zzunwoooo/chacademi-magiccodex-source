@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "luminous_frame"
+name: "별빛 액자"
+category: "light"
+description: "재료를 소비해 아이템 액자를 발광 아이템 액자로 바꾼다.\n\n물건을 밝게 보여 줄 액자를 직접 만들어 보면 평범한 틀에도 빛을 옮길 수 있다."
+icon: "magiccodex:textures/spells/expansion_3/luminous_frame.png"
+permission: "magic.learned.luminous_frame"
+discovery:
+  description: "발광 아이템 액자를 4개 제작하기."
+research: "전시는 그림자를 줄이는 일부터 달라진다."
+cast:
+  command: "마법 별빛액자"
+  cooldown-seconds: 5
+  mana-cost: 12
+order: 2640

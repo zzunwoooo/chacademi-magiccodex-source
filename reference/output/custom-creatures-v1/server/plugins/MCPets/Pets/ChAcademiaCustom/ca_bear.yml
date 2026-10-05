@@ -1,0 +1,17 @@
+"Id": "ca_bear"
+"MythicMob": "CA_Pet_bear"
+"Permission": "chacademia.pet.ca_bear"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f산림 불곰"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "침엽수림 깊은 곳의 바위 굴을 차지한 큰 곰."
+    - "서식지: 시베리아 타이가 / 고산 숲"
+    - "2성"

@@ -1,0 +1,17 @@
+"Id": "ca_golem_magma"
+"MythicMob": "CA_Pet_golem_magma"
+"Permission": "chacademia.pet.ca_golem_magma"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f마그마 고대 골렘"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "특정 유적의 마력을 지키는 거대한 수호체. 마그마 계열의 변이 개체."
+    - "서식지: 화산 봉우리 / 현무암 절벽"
+    - "3성"

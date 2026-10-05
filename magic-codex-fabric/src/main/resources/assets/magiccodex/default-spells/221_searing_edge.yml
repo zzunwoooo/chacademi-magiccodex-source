@@ -1,0 +1,14 @@
+id: searing_edge
+name: 달궈진 칼끝
+category: fire
+description: 다음 근접 공격이 적의 방어력 일부를 무시한다.
+icon: ''
+permission: magic.learned.searing_edge
+discovery:
+  description: 발화가 부여된 검으로 몬스터를 누적 20마리 처치하기.
+research: 칼날을 뜨겁게 만드는 것만으로는 부족하다. 베는 순간까지 열을 모아 두어야 한다.
+cast:
+  command: ''
+  cooldown-seconds: 15
+  mana-cost: 50
+order: 221

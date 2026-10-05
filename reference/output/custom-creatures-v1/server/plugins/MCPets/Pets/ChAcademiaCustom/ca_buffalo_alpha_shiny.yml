@@ -1,0 +1,17 @@
+"Id": "ca_buffalo_alpha_shiny"
+"MythicMob": "CA_Pet_buffalo_alpha_shiny"
+"Permission": "chacademia.pet.ca_buffalo_alpha_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e고원의 우두머리"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "버팔로 무리의 영역을 지키는 가장 강한 개체."
+    - "서식지: 대초원 / 온대 고지"
+    - "2성"

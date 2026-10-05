@@ -1,0 +1,19 @@
+# 손에 든 등록된 마법봉만 강화합니다. 모든 수치는 서버에서 계산합니다.
+maximum-attempts: 10
+consume-attempt-on-failure: true
+cost: 2000
+# 코어에 저장된 core_stat_gain × 아래 수치. 감정된 기존 코어 값 유지.
+gain:
+  power: 1.0
+  mana: 2.5
+  haste: 0.5
+# 1코어에서 시작, 코어가 많을수록 더 짧은 타이밍 판정.
+starcatch:
+  interval-ms: 1100
+  minimum-window-ms: 65
+  first-window-ms: 155
+  window-decrease-ms: 9
+# 0 이상이면 감정 코어의 저장값 대신 이 성공 확률/보너스를 사용합니다.
+# 예: 0.6 = 60%. 기본 -1은 코어 저장값 사용.
+base-chance-override: -1
+bonus-chance-override: -1

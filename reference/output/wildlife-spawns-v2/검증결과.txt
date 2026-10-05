@@ -1,0 +1,21 @@
+[16:41:30 INFO]: [SpawnFixture] BASELINE_PASS registered=138 weightedPairs=138 customBiome=OK sea=OK thunder=OK moon=OK MMCondition=OK naturalSpawn=OK group=3 cap=6 templates=585
+[16:41:30 INFO]: [SpawnFixture] SEASON_PASS actualClimateService=OK species=138 seasons=4 accepted=479 denied=73 unavailable=OK seasonal=26 yearRound=112
+[16:41:33 INFO]: [SpawnFixture] LANDMARK_FOUND chacademia:ruined_gate start=3504,1712 box=BoundingBox [minX=3490.0, minY=62.0, minZ=1712.0, maxX=3504.0, maxY=82.0, maxZ=1730.0] pieces=1
+[16:41:35 INFO]: [SpawnFixture] RARE_PASS nocsy_cat_fallen
+[16:41:35 INFO]: [SpawnFixture] RARE_PASS horse_unicorn
+[16:41:35 INFO]: [SpawnFixture] RARE_PASS kitsune_normal
+[16:41:39 INFO]: [SpawnFixture] LANDMARK_FOUND chacademia:ancient_ruins start=2448,1184 box=BoundingBox [minX=2448.0, minY=187.0, minZ=1150.0, maxX=2478.0, maxY=218.0, maxZ=1184.0] pieces=1
+[16:41:41 INFO]: [SpawnFixture] RARE_PASS ogre_hammer
+[16:41:41 INFO]: [SpawnFixture] RARE_PASS raptor_nightmare
+[16:41:41 INFO]: [SpawnFixture] RARE_PASS wolfhawk_fullmoon
+[16:41:45 INFO]: [SpawnFixture] LANDMARK_FOUND chacademia:forest_guardian start=-1392,-1840 box=BoundingBox [minX=-1392.0, minY=75.0, minZ=-1885.0, maxX=-1345.0, maxY=127.0, maxZ=-1840.0] pieces=1
+[16:41:46 INFO]: [SpawnFixture] RARE_PASS lostasset_mob3_herbgolem
+[16:41:46 INFO]: [SpawnFixture] RARE_PASS stag_rune
+[16:41:50 INFO]: [SpawnFixture] LANDMARK_FOUND chacademia:mushroom_guardian start=448,448 box=BoundingBox [minX=442.0, minY=62.0, minZ=448.0, maxX=448.0, maxY=74.0, maxZ=460.0] pieces=1
+[16:41:58 INFO]: [SpawnFixture] LANDMARK_FOUND chacademia:colossal_guardian start=3536,848 box=BoundingBox [minX=3536.0, minY=84.0, minZ=805.0, maxX=3578.0, maxY=143.0, maxZ=848.0] pieces=1
+[16:42:00 INFO]: [SpawnFixture] RARE_PASS hippogryph_royal
+[16:42:00 INFO]: [SpawnFixture] RARE_PASS golem_royal
+[16:42:03 INFO]: [SpawnFixture] SPAWN_PASS landmarks=5 naturalStarts=5 rarePositive=10 rareOutside=10 templates=585 baseline=OK
+585개 전체 스키메틱 블록/상태 대조 통과. NBT585개 원본 바이트 보존. 풀 참조585개 중복/누락0.
+자연 생성 다섯 유형 실제 블록 재질 대조: 45192/45203개 일치. 하단 일부 블록은 다른 월드 생성 장식·지형과 겹친 흔적이 있어 개별 보고서에 기록했습니다.
+테스트 서버의 구조물 주변 검사에서는 지형·바이옴 조건을 각각 통제한 진단용 발판을 사용했습니다. 전체 자연 서식지 분포를 플레이로 검수한 결과는 아닙니다.

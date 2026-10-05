@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "oblivion_mark"
+name: "망각의 표식"
+category: "dark"
+description: "일반 몬스터가 자신에게 쌓은 적대심을 지운다.\n\n옅은 은신으로 시선을 피한 경험이 상대의 기억에서도 한 발 물러날 방법을 알려 준다."
+icon: "magiccodex:textures/spells/expansion_3/oblivion_mark.png"
+permission: "magic.learned.oblivion_mark"
+discovery:
+  description: "옅은 은신을 누적 15회 사용하기."
+research: "눈앞에서 사라지는 것과 마음에서 잊히는 것은 서로 다른 주문이다."
+cast:
+  command: "마법 망각의표식"
+  cooldown-seconds: 20
+  mana-cost: 40
+order: 2830

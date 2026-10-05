@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "buried_cache"
+name: "땅속 보관"
+category: "earth"
+description: "지정한 장소에 소량의 아이템을 묻고 다시 꺼낸다.\n\n땅에 놓인 물건을 거듭 되찾아 보면 잠깐 맡겨 둘 흙의 자리를 떠올릴 수 있다."
+icon: "magiccodex:textures/spells/expansion_3/buried_cache.png"
+permission: "magic.learned.buried_cache"
+discovery:
+  description: "땅에 떨어뜨린 아이템을 누적 30개 다시 줍기."
+research: "장소를 잊으면 보물도 잊힌다. 묻은 자리의 기록을 함께 남기도록 하자."
+cast:
+  command: "마법 땅속보관"
+  cooldown-seconds: 12
+  mana-cost: 25
+order: 2550

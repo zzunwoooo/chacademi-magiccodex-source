@@ -1,0 +1,14 @@
+id: buried_cache
+name: 땅속 보관
+category: earth
+description: 지정한 장소에 소량의 아이템을 묻고 다시 꺼낸다.
+icon: ''
+permission: magic.learned.buried_cache
+discovery:
+  description: 땅에 떨어뜨린 아이템을 누적 30개 다시 줍기.
+research: 장소를 잊으면 보물도 잊힌다. 묻은 자리의 기록을 함께 남기도록 하자.
+cast:
+  command: ''
+  cooldown-seconds: 12
+  mana-cost: 25
+order: 254

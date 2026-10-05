@@ -1,0 +1,14 @@
+id: hive_inspection
+name: 벌집 살피기
+category: earth
+description: 벌집 안의 벌 수와 꿀이 찬 정도를 확인한다.
+icon: ''
+permission: magic.learned.hive_inspection
+discovery:
+  description: 벌집을 누적 10회 조사하기.
+research: 벌집의 겉모양이 같아도 안에서 기다리는 계절은 다르다.
+cast:
+  command: ''
+  cooldown-seconds: 3
+  mana-cost: 6
+order: 247

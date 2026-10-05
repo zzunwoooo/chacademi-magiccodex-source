@@ -1,0 +1,14 @@
+id: whistle_procession
+name: 휘파람 행진
+category: wind
+description: 주변의 가축들이 잠시 시전자의 뒤를 따라오게 한다.
+icon: ''
+permission: magic.learned.whistle_procession
+discovery:
+  description: 먹이를 들고 소·양·돼지를 각각 50블록 이상 이끌기.
+research: 뒤따르는 발굽 소리가 하나둘 늘어나면 목장까지의 길도 짧게 느껴진다.
+cast:
+  command: ''
+  cooldown-seconds: 15
+  mana-cost: 18
+order: 209

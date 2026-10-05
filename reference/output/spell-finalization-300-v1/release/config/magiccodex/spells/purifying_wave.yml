@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "purifying_wave"
+name: "정화의 물결"
+category: "water"
+description: "자신과 5블록 안의 동료에게 걸린 독·나약함·구속을 씻어냅니다.\n\n독에 걸렸을 때 우유로 몸을 추스른 경험이 물에 담을 정화의 원리를 알려 준다."
+icon: "magiccodex:textures/spells/intermediate/purifying_wave.png"
+permission: "magic.learned.purifying_wave"
+discovery:
+  description: "독에 걸린 상태에서 우유를 마시기 3회."
+research: "맑은 물은 몸에 묻은 먼지뿐 아니라 잘못된 마력도 씻어낸다."
+cast:
+  command: "마법 정화의물결"
+  cooldown-seconds: 25
+  mana-cost: 65
+order: 700

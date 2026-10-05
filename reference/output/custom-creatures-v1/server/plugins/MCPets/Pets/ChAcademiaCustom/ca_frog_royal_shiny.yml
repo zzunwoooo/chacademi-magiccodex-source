@@ -1,0 +1,17 @@
+"Id": "ca_frog_royal_shiny"
+"MythicMob": "CA_Pet_frog_royal_shiny"
+"Permission": "chacademia.pet.ca_frog_royal_shiny"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e왕실 왕개구리"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "깊은 늪 가장자리에서 모습을 드러내는 큰 개구리. 왕실 행사 중에만 만날 수 있는 개체."
+    - "서식지: 벚꽃 계곡"
+    - "3성"

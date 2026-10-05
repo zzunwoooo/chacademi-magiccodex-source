@@ -1,0 +1,17 @@
+"Id": "ca_lostasset_mob2_mushroomfairy"
+"MythicMob": "CA_Pet_lostasset_mob2_mushroomfairy"
+"Permission": "chacademia.pet.ca_lostasset_mob2_mushroomfairy"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f포자 요정"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "습한 숲과 버섯 동굴 사이에서 자라난 요정."
+    - "서식지: 균류 동굴 / 달빛 숲"
+    - "2성"

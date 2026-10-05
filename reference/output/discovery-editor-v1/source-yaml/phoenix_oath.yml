@@ -1,0 +1,17 @@
+# 설명·발견 조건·쿨타임은 수정 가능한 기획 초안입니다.
+# 발견 조건은 UI 표시용 문구이며 실제 판정 기능은 연결되지 않았습니다.
+# cast.command는 실제 시전 기능 연결 후 / 없이 입력하세요.
+id: "phoenix_oath"
+name: "불사조의 서약"
+category: "fire"
+rank: "고급"
+description: "자신에게 서약을 남겨 지속 시간 중 치명적인 피해를 한 번 막습니다. 동료에게는 적용할 수 없습니다."
+icon: "magiccodex:textures/spells/advanced/phoenix_oath.png"
+permission: "magic.learned.phoenix_oath"
+discovery:
+  description: "불사조 성소에서 잿빛 깃털을 봉헌하고 재생의 기록을 읽기."
+research: ""
+cast:
+  command: ""
+  cooldown-seconds: 600
+order: 2040

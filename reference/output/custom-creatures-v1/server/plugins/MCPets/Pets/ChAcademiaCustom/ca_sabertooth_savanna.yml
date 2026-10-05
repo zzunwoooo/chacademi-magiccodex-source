@@ -1,0 +1,17 @@
+"Id": "ca_sabertooth_savanna"
+"MythicMob": "CA_Pet_sabertooth_savanna"
+"Permission": "chacademia.pet.ca_sabertooth_savanna"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f초원 검치호"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "거대한 송곳니를 가진 날렵한 포식자. 초원 계열의 변이 개체."
+    - "서식지: 갈라진 사바나 / 사바나 비탈"
+    - "2성"

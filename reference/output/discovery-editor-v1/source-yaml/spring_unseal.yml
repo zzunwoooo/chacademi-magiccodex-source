@@ -1,0 +1,17 @@
+# 설명·발견 조건·쿨타임은 수정 가능한 기획 초안입니다.
+# 발견 조건은 UI 표시용 문구이며 실제 판정 기능은 연결되지 않았습니다.
+# cast.command는 실제 시전 기능 연결 후 / 없이 입력하세요.
+id: "spring_unseal"
+name: "수맥 개방"
+category: "water"
+rank: "중급"
+description: "봉인된 수원을 깨워 지정된 수로에 물을 공급하고 수차와 수위 장치를 작동시킵니다."
+icon: "magiccodex:textures/spells/intermediate/spring_unseal.png"
+permission: "magic.learned.spring_unseal"
+discovery:
+  description: "말라버린 수로의 세 봉인석을 조사하고 수원 복원 기록을 읽기."
+research: ""
+cast:
+  command: ""
+  cooldown-seconds: 60
+order: 1210

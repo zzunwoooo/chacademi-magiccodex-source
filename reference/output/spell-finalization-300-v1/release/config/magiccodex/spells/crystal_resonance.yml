@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "crystal_resonance"
+name: "수정 공명"
+category: "earth"
+description: "적에게 붙인 수정이 다른 플레이어의 공격에 반응해 추가 피해를 준다.\n\n같은 적을 동료와 거듭 쓰러뜨린 경험이 서로 다른 타격을 하나의 공명으로 잇는다."
+icon: "magiccodex:textures/spells/expansion_3/crystal_resonance.png"
+permission: "magic.learned.crystal_resonance"
+discovery:
+  description: "동료와 함께 같은 몬스터를 누적 20마리 처치하기."
+research: "하나의 수정에 여러 사람의 힘이 닿으면 울림도 커진다."
+cast:
+  command: "마법 수정공명"
+  cooldown-seconds: 22
+  mana-cost: 75
+order: 2570

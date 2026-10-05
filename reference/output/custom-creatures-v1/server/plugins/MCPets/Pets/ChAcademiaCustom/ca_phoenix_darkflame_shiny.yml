@@ -1,0 +1,17 @@
+"Id": "ca_phoenix_darkflame_shiny"
+"MythicMob": "CA_Pet_phoenix_darkflame_shiny"
+"Permission": "chacademia.pet.ca_phoenix_darkflame_shiny"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e흑염 피닉스"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "마력이 모이는 높은 지형에 내려앉는 불사조. 흑염 계열의 변이 개체."
+    - "서식지: 현무암 절벽 / 화산 분화구"
+    - "3성"

@@ -1,0 +1,17 @@
+"Id": "ca_ice_knight"
+"MythicMob": "CA_Pet_ice_knight"
+"Permission": "chacademia.pet.ca_ice_knight"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f서리 기사"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "빙하 유적 주변을 지키는 작은 얼음 기사."
+    - "서식지: 빙하 협곡 / 서리불 동굴"
+    - "3성"

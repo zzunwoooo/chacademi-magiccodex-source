@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "feather_rustle"
+name: "깃털 털기"
+category: "wind"
+description: "성체 닭 한 마리에게서 깃털 하나를 얻습니다.\n\n닭에게 씨앗을 건네며 가까이 지내다 보면, 깃털 사이의 가벼운 떨림도 보이기 시작한다."
+icon: "magiccodex:textures/spells/expansion_2/feather_rustle.png"
+permission: "magic.learned.feather_rustle"
+discovery:
+  description: "닭에게 씨앗을 누적 16번 먹이기."
+research: "깃털은 중요한 마법 재료입니다."
+cast:
+  command: "마법 깃털털기"
+  cooldown-seconds: 60
+  mana-cost: 30
+order: 210

@@ -1,0 +1,14 @@
+id: frontal_duel
+name: 정면 승부
+category: light
+description: 표식 대상과 정면에서 주고받는 공격이 강해진다.
+icon: ''
+permission: magic.learned.frontal_duel
+discovery:
+  description: 방패를 들고 몬스터를 누적 30마리 처치하기.
+research: 등을 노리는 싸움과는 다른 약속이다. 서로 마주 보고 힘을 겨룬다.
+cast:
+  command: ''
+  cooldown-seconds: 25
+  mana-cost: 70
+order: 270

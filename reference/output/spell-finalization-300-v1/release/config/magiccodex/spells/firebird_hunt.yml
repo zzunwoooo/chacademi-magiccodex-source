@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "firebird_hunt"
+name: "불새"
+category: "fire"
+description: "불새를 소환하여 전방을 불태운다.\n\n불새의 날갯짓과 불꽃을 관찰한 실습 기록이 살아 있는 불의 모습을 알려 준다."
+icon: "magiccodex:textures/spells/expansion_2/firebird_hunt.png"
+permission: "magic.learned.firebird_hunt"
+discovery:
+  description: "불새 관측 실습을 완료하기."
+research: "불과 새는 신화속에서 다양한 요소로 엮인다."
+cast:
+  command: "마법 불새"
+  cooldown-seconds: 30
+  mana-cost: 130
+order: 600

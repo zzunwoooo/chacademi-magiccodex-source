@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "resonant_arrow"
+name: "미스틱 슈터"
+category: "wind"
+description: "마법 칸에 등록한 상태일 경우 공격 적중 시 마나를 소모하여 바람의 화살을 추가로 쏘아낸다.\n\n미라지 슈터에 많은 마나를 흘려보낸 손끝은, 더 깊은 공명의 결을 기억한다."
+icon: "magiccodex:textures/spells/expansion_2/resonant_arrow.png"
+permission: "magic.learned.resonant_arrow"
+discovery:
+  description: "미라지 슈터로 소모한 마나 10000 달성"
+research: "미라지 슈터의 마나 흐름을 이해하였다.\n한층 더 단련 된 신기루가 적을 꿰뚫는다."
+cast:
+  command: "패시브"
+  cooldown-seconds: 0
+  mana-cost: 50
+order: 310

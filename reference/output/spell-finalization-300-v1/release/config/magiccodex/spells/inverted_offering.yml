@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "inverted_offering"
+name: "뒤집힌 공물"
+category: "dark"
+description: "다음에 직접 처치한 일반 몬스터의 일반 드롭을 포기하고 추가 경험치를 얻습니다. 퀘스트 보상은 제외합니다.\n\n마나가 줄어든 상태에서 경험치 구슬을 거듭 거두면 물건보다 경험을 바라는 마음이 짙어진다."
+icon: "magiccodex:textures/spells/expansion_2/inverted_offering.png"
+permission: "magic.learned.inverted_offering"
+discovery:
+  description: "마나가 절반 이하일 때 경험치 구슬을 누적 300개 줍기."
+research: "물건 대신 경험을 받겠다는 거래를 그림자가 먼저 제안했다."
+cast:
+  command: "마법 뒤집힌공물"
+  cooldown-seconds: 30
+  mana-cost: 50
+order: 1940

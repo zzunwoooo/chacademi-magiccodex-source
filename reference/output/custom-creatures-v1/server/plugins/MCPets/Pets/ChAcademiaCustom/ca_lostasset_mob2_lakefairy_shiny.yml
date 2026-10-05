@@ -1,0 +1,17 @@
+"Id": "ca_lostasset_mob2_lakefairy_shiny"
+"MythicMob": "CA_Pet_lostasset_mob2_lakefairy_shiny"
+"Permission": "chacademia.pet.ca_lostasset_mob2_lakefairy_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e달물결 요정"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "달빛이 비치는 물가에 머무르는 작은 요정."
+    - "서식지: 달빛 계곡 / 난초 늪"
+    - "2성"

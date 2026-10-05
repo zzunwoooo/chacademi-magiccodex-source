@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "leaf_cleanup"
+name: "잎새 청소"
+category: "wind"
+description: "바라보는 곳 주변의 나뭇잎 최대 32개를 정리합니다. 통나무는 남깁니다.\n\n여러 묘목을 심은 정원사는 떨어진 잎이 어디로 모이는지 알아차린다."
+icon: "magiccodex:textures/spells/expansion_2/leaf_cleanup.png"
+permission: "magic.learned.leaf_cleanup"
+discovery:
+  description: "종류에 상관없이 묘묙을 20개 심기."
+research: "자연을 사랑합시다."
+cast:
+  command: "마법 잎새청소"
+  cooldown-seconds: 30
+  mana-cost: 70
+order: 200

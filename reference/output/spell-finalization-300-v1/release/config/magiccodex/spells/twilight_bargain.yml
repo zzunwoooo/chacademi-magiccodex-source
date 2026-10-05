@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "twilight_bargain"
+name: "황혼의 거래"
+category: "dark"
+description: "10초 동안 마법 사용 마나의 절반을 체력으로 대신 지불합니다. 대신 지불하는 마나 50당 하트 1칸을 소모하며, 사용 후 하트 1칸 미만이 되는 마법은 사용할 수 없습니다.\n\n마나와 체력이 거의 남지 않은 상태에서도 적을 쓰러뜨리고 살아남았다면 마지막 대가를 이해할 수 있다."
+icon: "magiccodex:textures/spells/expansion_2/twilight_bargain.png"
+permission: "magic.learned.twilight_bargain"
+discovery:
+  description: "마나가 5 이하이고 체력이 하트 3칸 이하인 상태에서 몬스터를 처치하고 살아남기."
+research: "마나가 없다면 다른 것으로 지불하면 된다. 가격은 결코 싸지 않다."
+cast:
+  command: "마법 황혼의거래"
+  cooldown-seconds: 90
+  mana-cost: 0
+order: 2000

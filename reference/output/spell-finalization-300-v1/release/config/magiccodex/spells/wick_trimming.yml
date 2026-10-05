@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "wick_trimming"
+name: "심지 줄이기"
+category: "fire"
+description: "바라보는 불타고 있는 블럭의 불을 끕니다.\n\n촛불을 거듭 꺼 본 손은 불꽃의 크기를 줄이는 작은 차이부터 알아차린다."
+icon: "magiccodex:textures/spells/expansion_2/wick_trimming.png"
+permission: "magic.learned.wick_trimming"
+discovery:
+  description: "촛불 10회 소화"
+research: "자나깨나 불조심. 꺼진 촛불도 다시보자."
+cast:
+  command: ""
+  cooldown-seconds: 5
+  mana-cost: 50
+order: 490

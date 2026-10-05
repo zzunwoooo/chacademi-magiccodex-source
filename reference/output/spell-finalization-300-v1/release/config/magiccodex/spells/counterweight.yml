@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "counterweight"
+name: "반격의 무게추"
+category: "earth"
+description: "짧은 시간 안에 방패로 공격을 막으면 상대의 균형을 무너뜨려 잠깐 행동을 멈추게 합니다.\n\n방패로 막은 힘을 곧바로 반격에 이어 본 경험이 무게를 돌려주는 주문이 된다."
+icon: "magiccodex:textures/spells/expansion_2/counterweight.png"
+permission: "magic.learned.counterweight"
+discovery:
+  description: "방패로 공격을 막은 뒤 같은 몬스터 반격하기 10회."
+research: "막아 낸 힘을 흘려보내지 않고 돌려준다. 방패 수업이 끝나도 팔이 저린 이유와는 관계없다."
+cast:
+  command: "마법 반격의무게추"
+  cooldown-seconds: 20
+  mana-cost: 65
+order: 1240

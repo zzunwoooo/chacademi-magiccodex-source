@@ -1,0 +1,17 @@
+"Id": "ca_tortoise"
+"MythicMob": "CA_Pet_tortoise"
+"Permission": "chacademia.pet.ca_tortoise"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f초원 육지거북"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "마른 초원의 풀 사이를 느긋하게 걷는다."
+    - "서식지: 대초원 / 관목 초원"
+    - "1성"

@@ -1,0 +1,17 @@
+"Id": "ca_lostasset_mob2_flowersprite"
+"MythicMob": "CA_Pet_lostasset_mob2_flowersprite"
+"Permission": "chacademia.pet.ca_lostasset_mob2_flowersprite"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f꽃망울 정령"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "꽃이 무성한 곳에서 드물게 모습을 드러내는 정령."
+    - "서식지: 꽃피는 계곡 / 라벤더 계곡"
+    - "2성"

@@ -1,0 +1,14 @@
+id: bubble_plate
+name: 거품 접시
+category: water
+description: 음식을 거품에 띄워 동료가 받아 먹게 한다.
+icon: ''
+permission: magic.learned.bubble_plate
+discovery:
+  description: 자신이 떨어뜨린 음식 아이템을 동료가 누적 16개 줍기.
+research: 접시를 씻을 필요는 없어졌다. 음식을 준비할 필요까지 사라진 것은 아니다.
+cast:
+  command: ''
+  cooldown-seconds: 5
+  mana-cost: 12
+order: 230

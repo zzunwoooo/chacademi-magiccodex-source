@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "warning_thread"
+name: "경고의 실"
+category: "dark"
+description: "한 지점에 60초간 감지 실을 남깁니다. 적이 처음 접근하면 시전자에게 방향과 경고음을 전달합니다.\n\n직접 놓은 철사 덫을 몬스터가 여러 번 건드리면 침입을 알려 주는 떨림이 손에 익는다."
+icon: "magiccodex:textures/spells/expansion_2/warning_thread.png"
+permission: "magic.learned.warning_thread"
+discovery:
+  description: "자신이 설치한 철사 덫을 몬스터가 10번 작동시키기."
+research: "팽팽하게 당겨 둔 실 하나가 잠든 야영지를 깨웠다."
+cast:
+  command: "마법 경고의실"
+  cooldown-seconds: 15
+  mana-cost: 20
+order: 1910

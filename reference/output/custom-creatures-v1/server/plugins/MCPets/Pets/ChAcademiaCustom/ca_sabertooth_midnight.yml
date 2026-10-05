@@ -1,0 +1,17 @@
+"Id": "ca_sabertooth_midnight"
+"MythicMob": "CA_Pet_sabertooth_midnight"
+"Permission": "chacademia.pet.ca_sabertooth_midnight"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f한밤 검치호"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "거대한 송곳니를 가진 날렵한 포식자. 한밤 계열의 변이 개체."
+    - "서식지: 달빛 숲"
+    - "2성"

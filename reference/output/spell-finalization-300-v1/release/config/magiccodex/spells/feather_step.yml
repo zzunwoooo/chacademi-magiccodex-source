@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "feather_step"
+name: "페더 폴"
+category: "wind"
+description: "5초 동안 몸이 가벼워져 천천히 낙하합니다.\n\n높은 곳에서의 추락이 한 번의 끝을 남겼다면, 그 기억은 다음 낙하를 바꿀 실마리가 된다."
+icon: "magiccodex:textures/spells/novice/feather_step.png"
+permission: "magic.learned.feather_step"
+discovery:
+  description: "낙하 피해를 받은 뒤 1회 사망하기."
+research: "땅으로 떨어지는 대신, 바람 위에 잠깐 기대어 보세요."
+cast:
+  command: "마법 페더폴"
+  cooldown-seconds: 5
+  mana-cost: 5
+order: 20

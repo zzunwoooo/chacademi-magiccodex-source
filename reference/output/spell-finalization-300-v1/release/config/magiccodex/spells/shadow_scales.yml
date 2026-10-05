@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "shadow_scales"
+name: "어둠의 저울"
+category: "dark"
+description: "자신보다 체력 비율이 높은 적을 한 번 공격합니다. 체력 비율 차이가 클수록 추가 피해를 줍니다.\n\n거의 꺼진 자신의 생명과 아직 넉넉한 적의 생명을 마주하면 저울의 불균형이 드러난다."
+icon: "magiccodex:textures/spells/expansion_2/shadow_scales.png"
+permission: "magic.learned.shadow_scales"
+discovery:
+  description: "체력이 하트 1칸 이하일 때 체력이 절반 이상 남은 몬스터 처치하기."
+research: "기울어진 저울은 약한 쪽에 조금 더 무거운 추를 얹는다."
+cast:
+  command: "마법 어둠의저울"
+  cooldown-seconds: 20
+  mana-cost: 100
+order: 1900

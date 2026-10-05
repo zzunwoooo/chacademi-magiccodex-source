@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "shadow_double"
+name: "그림자 분신"
+category: "dark"
+description: "8초간 제자리에 그림자 분신을 남겨 일반 몬스터의 관심을 끌고 감응 장치를 작동시킵니다.\n\n자신을 향해 오는 공격을 거듭 받아 낸 뒤에는, 그 시선을 대신 받을 모습을 떠올릴 수 있다."
+icon: "magiccodex:textures/spells/intermediate/shadow_double.png"
+permission: "magic.learned.shadow_double"
+discovery:
+  description: "몬스터의 근접 공격을 방패로 10회 막기."
+research: "쫓기는 이가 둘이라면 쫓는 이도 잠시 망설이게 된다."
+cast:
+  command: "마법 그림자분신"
+  cooldown-seconds: 25
+  mana-cost: 75
+order: 1690

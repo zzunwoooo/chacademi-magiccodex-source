@@ -1,0 +1,17 @@
+"Id": "ca_squirrel_shiny"
+"MythicMob": "CA_Pet_squirrel_shiny"
+"Permission": "chacademia.pet.ca_squirrel_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e도토리 다람쥐"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "나무 사이를 오가며 도토리를 숨기는 작은 숲 주민."
+    - "서식지: 숲 우거진 고지 / 자작나무 타이가"
+    - "1성"

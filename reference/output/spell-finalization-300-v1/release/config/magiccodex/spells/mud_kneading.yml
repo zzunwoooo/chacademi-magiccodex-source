@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "mud_kneading"
+name: "진흙 반죽"
+category: "water"
+description: "흙을 진흙으로 바꾼다.\n\n흙에 물을 거듭 부어 본 손끝은 알맞게 젖은 땅의 질감을 기억한다."
+icon: "magiccodex:textures/spells/expansion_3/mud_kneading.png"
+permission: "magic.learned.mud_kneading"
+discovery:
+  description: "물병으로 흙을 진흙으로 누적 20회 바꾸기."
+research: "너무 마르면 흙이고 너무 젖으면 물이다. 그 사이의 질감을 다루는 주문이다."
+cast:
+  command: "마법 진흙반죽"
+  cooldown-seconds: 5
+  mana-cost: 10
+order: 2340

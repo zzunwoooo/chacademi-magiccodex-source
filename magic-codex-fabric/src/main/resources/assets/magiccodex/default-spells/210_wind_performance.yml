@@ -1,0 +1,14 @@
+id: wind_performance
+name: 바람 연주
+category: wind
+description: 선택한 악기 음을 짧게 울려 합주에 사용한다.
+icon: ''
+permission: magic.learned.wind_performance
+discovery:
+  description: 소리 블록을 누적 20회 연주하기.
+research: 바람은 오래전부터 소리를 운반했다. 이제 악기를 대신 울리게 할 차례다.
+cast:
+  command: ''
+  cooldown-seconds: 2
+  mana-cost: 6
+order: 210

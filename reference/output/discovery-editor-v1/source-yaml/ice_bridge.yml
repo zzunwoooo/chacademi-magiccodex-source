@@ -1,0 +1,17 @@
+# 설명·발견 조건·쿨타임은 수정 가능한 기획 초안입니다.
+# 발견 조건은 UI 표시용 문구이며 실제 판정 기능은 연결되지 않았습니다.
+# cast.command는 실제 시전 기능 연결 후 / 없이 입력하세요.
+id: "ice_bridge"
+name: "얼음 다리"
+category: "water"
+rank: "중급"
+description: "지정된 수면에 잠시 건널 수 있는 얼음 다리를 만듭니다."
+icon: "magiccodex:textures/spells/intermediate/ice_bridge.png"
+permission: "magic.learned.ice_bridge"
+discovery:
+  description: "얼어붙은 호수의 세 관측 지점에서 얼음 결을 조사하기."
+research: ""
+cast:
+  command: ""
+  cooldown-seconds: 45
+order: 1090

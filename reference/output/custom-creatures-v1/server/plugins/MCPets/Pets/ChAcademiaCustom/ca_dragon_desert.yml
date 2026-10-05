@@ -1,0 +1,17 @@
+"Id": "ca_dragon_desert"
+"MythicMob": "CA_Pet_dragon_desert"
+"Permission": "chacademia.pet.ca_dragon_desert"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f사막 드래곤"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "영역의 높은 곳에 둥지를 짓는 거대한 용. 사막 계열의 변이 개체."
+    - "서식지: 고대 모래 지대 / 사막 첨탑"
+    - "3성"

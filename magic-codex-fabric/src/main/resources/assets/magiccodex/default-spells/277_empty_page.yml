@@ -1,0 +1,14 @@
+id: empty_page
+name: 빈 페이지
+category: dark
+description: 작성 중인 책의 내용을 비워 다시 사용한다.
+icon: ''
+permission: magic.learned.empty_page
+discovery:
+  description: 책과 깃펜으로 작성 중인 글을 10회 수정하기.
+research: 새로 시작할 여백을 만든다. 이미 서명한 기록은 함부로 지우지 않는다.
+cast:
+  command: ''
+  cooldown-seconds: 4
+  mana-cost: 6
+order: 277

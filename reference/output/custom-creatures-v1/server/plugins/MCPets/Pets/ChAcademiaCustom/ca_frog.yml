@@ -1,0 +1,17 @@
+"Id": "ca_frog"
+"MythicMob": "CA_Pet_frog"
+"Permission": "chacademia.pet.ca_frog"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f난초 개구리"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "난초가 핀 늪의 얕은 물가에 숨어 산다."
+    - "서식지: 난초 늪 / 따뜻한 강"
+    - "1성"

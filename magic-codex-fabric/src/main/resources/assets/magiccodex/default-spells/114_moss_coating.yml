@@ -1,0 +1,14 @@
+id: moss_coating
+name: 이끼 입히기
+category: earth
+description: 덩굴을 소비해 석재 벽돌 최대 4개에 이끼를 입힙니다.
+icon: magiccodex:textures/spells/expansion_2/moss_coating.png
+permission: magic.learned.moss_coating
+discovery:
+  description: 덩굴과 석재 벽돌을 함께 소지한 채 비 맞기.
+research: 정원은 새로 만들었는데 너무 새것처럼 보인다는 부탁에서 시작되었다.
+cast:
+  command: ''
+  cooldown-seconds: 5
+  mana-cost: 12
+order: 114

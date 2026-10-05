@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "heated_hooves"
+name: "뜨거운 발굽"
+category: "fire"
+description: "탑승한 말의 다음 점프를 강화하고 착지 지점에 불꽃을 터뜨린다.\n\n말과 함께 도약을 거듭한 기수가 착지까지 이어지는 열을 익힌다."
+icon: "magiccodex:textures/spells/expansion_3/heated_hooves.png"
+permission: "magic.learned.heated_hooves"
+discovery:
+  description: "말을 타고 누적 30회 점프하기."
+research: "발굽에 실린 열은 땅을 딛는 순간까지 모여 있다."
+cast:
+  command: "마법 뜨거운발굽"
+  cooldown-seconds: 20
+  mana-cost: 55
+order: 2200

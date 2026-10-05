@@ -1,0 +1,1802 @@
+[
+  {
+    "id": "wind_basket",
+    "name": "바람 바구니",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "떨어진 아이템을 누적 1000개 줍기."
+  },
+  {
+    "id": "feather_step",
+    "name": "페더 폴",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "낙하 피해를 받은 뒤 1회 사망하기."
+  },
+  {
+    "id": "harvest_wind",
+    "name": "수확의 바람",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "자라지 않은 밀·당근·감자를 각각 12개씩 잘라내기."
+  },
+  {
+    "id": "wind_push",
+    "name": "윈드 푸쉬",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "바람 마법 기초 수업을 통해 습득"
+  },
+  {
+    "id": "light_leap",
+    "name": "상승 기류",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "달리면서 점프한 횟수를 30번 채우기."
+  },
+  {
+    "id": "flight",
+    "name": "비행",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "바람 마법 비행 실습 수업을 완료하기."
+  },
+  {
+    "id": "far_touch",
+    "name": "손길 너머",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "레버·버튼·압력판을 각각 10회 작동시키기."
+  },
+  {
+    "id": "aerial_haul",
+    "name": "부유",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "손길 너머를 누적 50회 사용하기."
+  },
+  {
+    "id": "wind_message",
+    "name": "바람의 전언",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "1명과 친구가 되기."
+  },
+  {
+    "id": "storm_command",
+    "name": "폭풍의 지휘",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "30도 이상의 기온을 가진 공간에서, 상승기류 마법 사용 후 떨어지기 전에 한 바퀴 회전하기."
+  },
+  {
+    "id": "wind_vault",
+    "name": "바람의 금고",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "인벤토리에 공간이 없을 때 아이템 획득하기."
+  },
+  {
+    "id": "vacuum_cleave",
+    "name": "윈드 커터",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "바람 마법 중급 수업을 통해 습득"
+  },
+  {
+    "id": "gale_dash",
+    "name": "바람 걸음",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "달리기로 누적 1,000블록 이동하기."
+  },
+  {
+    "id": "returning_wind",
+    "name": "되받는 바람",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "바람 마법 중급 수업을 통해 낮은 확률로 습득"
+  },
+  {
+    "id": "wind_grooming",
+    "name": "바람 털빗",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "가위로 양털을 10번 깎기."
+  },
+  {
+    "id": "weightless_zone",
+    "name": "무중력 지대",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "바람 마법 고급 수업을 통해 습득"
+  },
+  {
+    "id": "descent_command",
+    "name": "낙하 명령",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "공중에 떠 있는 몬스터에게 윈드 프레스 50회 사용하기."
+  },
+  {
+    "id": "trajectory_acceleration",
+    "name": "미라지 슈터",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "4가지 계절의 이상현상을 모두 마주하기."
+  },
+  {
+    "id": "dust_duster",
+    "name": "클린",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "기숙사 배정"
+  },
+  {
+    "id": "leaf_cleanup",
+    "name": "잎새 청소",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "종류에 상관없이 묘묙을 20개 심기."
+  },
+  {
+    "id": "feather_rustle",
+    "name": "깃털 털기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "닭에게 씨앗을 누적 16번 먹이기."
+  },
+  {
+    "id": "cross_breeze",
+    "name": "바람 화살",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "바람 마법 기초 수업을 통해 낮은 확률로 습득"
+  },
+  {
+    "id": "returning_blade",
+    "name": "되돌이 칼날",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "윈드커터 50회 사용"
+  },
+  {
+    "id": "pressure_press",
+    "name": "윈드 프레스",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "앵무새를 1회 공격하기."
+  },
+  {
+    "id": "wind_decoy",
+    "name": "바람 미끼",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "반경 7블럭 안에 10마리의 몬스터와 함께 있기."
+  },
+  {
+    "id": "air_step",
+    "name": "허공 디딤",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "비행 금지 구역에서 비행 마법 25번 사용"
+  },
+  {
+    "id": "lightning_needle",
+    "name": "라이트닝 쇼크",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "번개에 맞아 사망하기."
+  },
+  {
+    "id": "air_stacking",
+    "name": "허공 쌓기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "아카데미 건물의 모든 스팟 확인하기."
+  },
+  {
+    "id": "arrested_orbit",
+    "name": "퍼붓는 화살",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "바람 마법 고급 수업을 통해 낮은 확률로 습득"
+  },
+  {
+    "id": "crossfire",
+    "name": "크로스 애로우",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "바람 마법으로 몬스터를 일격에 100회 처치."
+  },
+  {
+    "id": "resonant_arrow",
+    "name": "미스틱 슈터",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "미라지 슈터로 소모한 마나 10000 달성"
+  },
+  {
+    "id": "pressure_rupture",
+    "name": "토네이도 스핀",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "움직이지 않는 상태에서 시선을 돌려 10바퀴 회전"
+  },
+  {
+    "id": "storm_crown",
+    "name": "삼중 탄환",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "70블럭 밖의 적을 화살로 명중하기"
+  },
+  {
+    "id": "hearth_touch",
+    "name": "손끝의 화로",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "화로에서 직접 구운 음식을 누적 16개 꺼내기."
+  },
+  {
+    "id": "ember_bolt",
+    "name": "파이어 볼",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "화염 마법 기초 수업을 통해 습득"
+  },
+  {
+    "id": "rekindle",
+    "name": "다시 타오르는 불",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "촛불에 라이터로 불 붙이기."
+  },
+  {
+    "id": "flame_forging",
+    "name": "불꽃 단조",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "대장간의 모루를 살펴보기."
+  },
+  {
+    "id": "ember_trap",
+    "name": "잿불 덫",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "화염 마법 기초 수업을 통해 낮은 확률로 습득"
+  },
+  {
+    "id": "fire_curtain",
+    "name": "플레어 월",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "화염 마법 중급 수업을 통해 습득"
+  },
+  {
+    "id": "phoenix_oath",
+    "name": "불사조의 서약",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "펫 '불사조' 획득"
+  },
+  {
+    "id": "living_furnace",
+    "name": "살아 있는 화로",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "손끝의 화로 마법으로 64번 구워내기"
+  },
+  {
+    "id": "falling_star",
+    "name": "메테오 스트라이크",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "메테오 스트라이크를 제외한 모든 화염 마법 습득하기."
+  },
+  {
+    "id": "flame_lash",
+    "name": "화염 채찍",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "낚싯대로 몬스터를 5번 끌어당기기."
+  },
+  {
+    "id": "cinder_detonation",
+    "name": "스타 퓨리",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "불타는 몬스터를 30회 처치하기."
+  },
+  {
+    "id": "palm_fireworks",
+    "name": "손바닥 폭죽",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "폭죽 로켓을 10번 발사하기."
+  },
+  {
+    "id": "ash_brand",
+    "name": "재의 낙인",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "화염 마법으로 적 30회 처치"
+  },
+  {
+    "id": "flame_leap",
+    "name": "블레이즈 킥",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "달리며 몬스터에게 근접 공격을 30회 명중하기."
+  },
+  {
+    "id": "crimson_heart",
+    "name": "홍련의 심장",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "체력이 하트 1칸 이하인 상태에서 화염 마법으로 몬스터 처치하기."
+  },
+  {
+    "id": "wick_trimming",
+    "name": "심지 줄이기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "촛불 10회 소화"
+  },
+  {
+    "id": "glass_firing",
+    "name": "광석 재련",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "화염 마법 중급 수업을 통해 습득"
+  },
+  {
+    "id": "charcoal_conversion",
+    "name": "발화",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "화염 마법 중급 수업을 통해 낮은 확률로 습득"
+  },
+  {
+    "id": "sponge_drying",
+    "name": "스펀지 말리기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "젖은 스펀지 획득"
+  },
+  {
+    "id": "flame_footprints",
+    "name": "불꽃 걸음",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "불이 붙은 상태에서 30초간 살아남기"
+  },
+  {
+    "id": "boiling_armor",
+    "name": "끓는 갑주",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "입고있는 갑옷 2회 파괴"
+  },
+  {
+    "id": "kiln_breath",
+    "name": "가마 숨결",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "대장간에서 아이템 제작 3회"
+  },
+  {
+    "id": "glaze_coating",
+    "name": "화염의 정복자",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "받은 화염 도트 데미지 100 달성"
+  },
+  {
+    "id": "explosive_wedge",
+    "name": "폭발 쐐기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "불붙은 몬스터를 근접 공격으로 20번 처치하기."
+  },
+  {
+    "id": "fireproof_film",
+    "name": "내연성",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "여름의 더위에 사라진 아이템 3회"
+  },
+  {
+    "id": "heat_recovery",
+    "name": "열량 보존",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "몸에 붙은 불을 누적 10회 끄기."
+  },
+  {
+    "id": "firebird_hunt",
+    "name": "불새",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "불새 관측 실습을 완료하기."
+  },
+  {
+    "id": "lava_suture",
+    "name": "용암 봉합",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "용암에 물을 부어 흑요석을 누적 32개 만들기."
+  },
+  {
+    "id": "flame_sword_dance",
+    "name": "화염 검무",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "발화가 인첸트 된 검으로 몬스터 50회 처치"
+  },
+  {
+    "id": "incandescent_break",
+    "name": "파이어 스트라이크",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "방패를 사용하는 적과의 실습 전투를 완료하기."
+  },
+  {
+    "id": "blue_bonfire",
+    "name": "푸른 화톳불",
+    "task": "60초 소환 유지, 반경 10블록 마나 회복량 10% 증가. 마나 소모 감소·숯 소비와 구별해야 함.",
+    "condition": "학교 도서관에서 '불꽃의 색과 마력' 책 읽기."
+  },
+  {
+    "id": "crimson_breath",
+    "name": "드래곤 브레스",
+    "task": "드래곤 브레스 시전 이름·명령을 연결하고 실제 공격 효과·연출 정의. 최대 마나 2500 조건 판정. 연구 기록의 드래곤 코어는 획득 조건에 자동 추가하지 않음.",
+    "condition": "최대 마나량 2500 달성"
+  },
+  {
+    "id": "water_breath",
+    "name": "물결 숨결",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "물에 잠긴 상태에서 죽지 않고 30초 버티기"
+  },
+  {
+    "id": "tide_stride",
+    "name": "물살 타기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "수영으로 누적 500블록 이동하기."
+  },
+  {
+    "id": "water_bolt",
+    "name": "물방울 탄환",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "물 마법 기초 수업을 통해 습득."
+  },
+  {
+    "id": "quench",
+    "name": "불길 씻기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "불이 붙은 상태에서 물에 들어가 불 끄기 5회."
+  },
+  {
+    "id": "purifying_wave",
+    "name": "정화의 물결",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "독에 걸린 상태에서 우유를 마시기 3회."
+  },
+  {
+    "id": "ice_bridge",
+    "name": "얼음 다리",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "차가운 바다에 방문하기"
+  },
+  {
+    "id": "water_mirror",
+    "name": "수면의 거울",
+    "task": "숨겨진 수중 통로 등록·검색·표시. 기존 관측 수반 장치 효과와 다름.",
+    "condition": "학교 도서관에서 '수면에 비친 먼 풍경' 책 읽기."
+  },
+  {
+    "id": "spring_unseal",
+    "name": "수맥 개방",
+    "task": "시선 위치에 물 설치. 물 설치 범위·보호 구역·지속 여부는 구현 시 결정.",
+    "condition": "물 양동이로 가마솥을 누적 30번 채우기."
+  },
+  {
+    "id": "water_elemental",
+    "name": "운디네",
+    "task": "운디네 새 명령과 기존 정령 스킬 연결. 정령계약서 독서 완료 이벤트.",
+    "condition": "'정령계약서 - 수' 도서 읽기"
+  },
+  {
+    "id": "eternal_ice_prison",
+    "name": "만년빙옥",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "물 마법 응용 수업을 통해 낮은 확률로 습득."
+  },
+  {
+    "id": "cauldron_fill",
+    "name": "가마솥 채우기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "도서관에서 '화학 기초' 책 읽기"
+  },
+  {
+    "id": "dye_rinse",
+    "name": "염색 씻기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "가마솥으로 가죽 장비의 염색을 3번 지우기."
+  },
+  {
+    "id": "fish_lure",
+    "name": "물고기 유인",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "낚시로 물고기를 누적 30마리 낚기."
+  },
+  {
+    "id": "frost_rupture",
+    "name": "서리 파열",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "눈덩이를 몬스터에게 누적 50번 명중하기."
+  },
+  {
+    "id": "dampen_powder",
+    "name": "화약 적시기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "물속에서 TNT 폭발을 3번 살아남기."
+  },
+  {
+    "id": "life_distribution",
+    "name": "생명의 분배",
+    "task": "웅크림 조건을 없앤 동료 선택 규칙 반영. 파티 등 동료 기준으로 대상 제한, 전체 체력 보존.",
+    "condition": "투척용 치유 물약 한 병으로 자신과 동료 2명을 함께 회복하기."
+  },
+  {
+    "id": "moist_farmland",
+    "name": "촉촉한 밭",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "물에서 떨어진 마른 경작지에 씨앗을 20번 심기."
+  },
+  {
+    "id": "wash_letters",
+    "name": "글씨 씻기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "같은 표지판의 글씨를 10번 고쳐 쓰기."
+  },
+  {
+    "id": "handful_of_snow",
+    "name": "눈 한 줌",
+    "task": "눈 블록을 눈덩이로 분해하는 제작법 등록 및 제작 4회 판정. 바닐라 기본 제작법에는 해당 역분해가 없음.",
+    "condition": "눈을 제작대에서 눈덩이로 4회 분해"
+  },
+  {
+    "id": "dew_gathering",
+    "name": "이슬 모으기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "빈 병으로 물을 10번 뜨기."
+  },
+  {
+    "id": "quiet_mooring",
+    "name": "노아의 방주",
+    "task": "노아의 방주: 물 위 현재 위치에 보트 생성. 기존 보트 고정 스킬과 다름. 수종·보트 회수 여부 정의. 시전 명령은 사용자가 수정하지 않아 기존 명령을 보존.",
+    "condition": "보트 설치 5회."
+  },
+  {
+    "id": "wet_footprints",
+    "name": "젖은 발자국",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "비가 오는 날 몬스터를 10회 처치"
+  },
+  {
+    "id": "pressure_weight",
+    "name": "수압추",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "물에 잠긴 상태에서 누적 60초 버티기"
+  },
+  {
+    "id": "cold_storage",
+    "name": "냉장 손길",
+    "task": "영하 10도 조건을 현재 기후 시스템 온도와 연결. 아이템을 열기에서 보호한다는 효과의 범위·지속시간·보호 대상 이벤트 정의.",
+    "condition": "영하 10도 이하의 온도에 노출되기"
+  },
+  {
+    "id": "current_sorting",
+    "name": "사금 추출",
+    "task": "사금 추출 새 명령·채굴 조건 연결. 사금 획득량·사용 빈도·물 판정 정의. 기존 바닥 아이템 분류 스킬과 다름.",
+    "condition": "물 속에 잠겨진 금 광석 캐기"
+  },
+  {
+    "id": "potion_mist",
+    "name": "약액 분무",
+    "task": "손에 든 물약 소비·범위 분무 10초. 즉시 회복 물약과 지속 물약 처리 구분.",
+    "condition": "서로 다른 종류의 물약 5종을 직접 양조하기."
+  },
+  {
+    "id": "waterwheel_shield",
+    "name": "물레 방패",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "물속에서 방패로 몬스터의 공격을 10회 막기."
+  },
+  {
+    "id": "liquid_barrier",
+    "name": "액체 차단",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "흐르는 물과 용암을 블록으로 각각 5회 막기."
+  },
+  {
+    "id": "water_rebound",
+    "name": "수면 탄성",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "10블록 이상 높이에서 물로 뛰어들어 5회 살아남기."
+  },
+  {
+    "id": "tidal_wave",
+    "name": "해일",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "물 마법 실전 수업을 통해 습득."
+  },
+  {
+    "id": "thaw_pulse",
+    "name": "해빙의 맥동",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "가루눈에서 동결 피해를 받은 뒤 모닥불로 몸 녹이기."
+  },
+  {
+    "id": "abyssal_pressure",
+    "name": "심해의 압력",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "물결 숨결을 사용한 상태에서 깊은 바다에 누적 60초 머무르기."
+  },
+  {
+    "id": "verdant_touch",
+    "name": "풍요의 손길",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "다 자란 밀·당근·감자를 각각 20개 수확하기."
+  },
+  {
+    "id": "ore_whisper",
+    "name": "땅의 속삭임",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "석탄 광석 32개와 철 광석 16개 직접 채굴하기."
+  },
+  {
+    "id": "pebble_toss",
+    "name": "조약돌 던지기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "대지 마법 기초 수업을 통해 습득."
+  },
+  {
+    "id": "miners_rhythm",
+    "name": "광부의 박자",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "곡괭이로 돌과 심층암을 합쳐 누적 300개 채굴하기."
+  },
+  {
+    "id": "earth_shaping",
+    "name": "대지 성형",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "흙 블록 누적 100개 설치하기."
+  },
+  {
+    "id": "stone_wall",
+    "name": "석벽",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "대지 마법 방어 수업을 통해 습득."
+  },
+  {
+    "id": "vine_ladder",
+    "name": "덩굴 사다리",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "덩굴을 타고 누적 50블록 이동하기."
+  },
+  {
+    "id": "earth_elemental",
+    "name": "그놈",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "도서관에서 '정령계약서 - 지' 책 읽기."
+  },
+  {
+    "id": "earthquake",
+    "name": "지진",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "대지 마법 실전 수업을 통해 습득."
+  },
+  {
+    "id": "climate_control",
+    "name": "기후 통제",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "봄·여름·가을·겨울의 기상 관측 수업을 각각 1회 마치기."
+  },
+  {
+    "id": "seed_row",
+    "name": "씨앗 줄심기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "경작지에 씨앗 누적 50개 심기."
+  },
+  {
+    "id": "bee_calm",
+    "name": "벌떼 달래기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "꽃을 든 상태에서 벌을 5회 번식시키기."
+  },
+  {
+    "id": "thorn_armor",
+    "name": "가시 갑옷",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "달콤한 열매 덤불에 누적 10회 찔리기."
+  },
+  {
+    "id": "vein_fracture",
+    "name": "광맥 파쇄",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "다이아몬드 광석 누적 20개 직접 채굴하기."
+  },
+  {
+    "id": "earth_anchor",
+    "name": "대지의 닻",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "방패로 몬스터의 공격 누적 30회 막기."
+  },
+  {
+    "id": "weathering_touch",
+    "name": "풍화의 손길",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "석재 벽돌을 누적 30개 설치하기."
+  },
+  {
+    "id": "iron_carapace",
+    "name": "철의 외피",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "철 갑옷을 입은 상태에서 몬스터에게 누적 100 피해 받기."
+  },
+  {
+    "id": "moss_coating",
+    "name": "이끼 입히기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "덩굴과 석재 벽돌을 함께 소지한 채 비 맞기."
+  },
+  {
+    "id": "grass_sprouting",
+    "name": "잔디 돋우기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "흙 위에 꽃 누적 10개 심기."
+  },
+  {
+    "id": "flint_sorting",
+    "name": "돌 고르기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "자갈을 캐서 부싯돌 누적 16개 얻기."
+  },
+  {
+    "id": "bark_peeling",
+    "name": "껍질 벗기기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "도끼로 원목 껍질 누적 32회 벗기기."
+  },
+  {
+    "id": "compost_return",
+    "name": "퇴비 환원",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "퇴비통에서 뼛가루 누적 16개 꺼내기."
+  },
+  {
+    "id": "thorn_seeds",
+    "name": "가시 씨앗",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "선인장 누적 20개 수확하기."
+  },
+  {
+    "id": "pollen_matchmaking",
+    "name": "꽃가루 중매",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "소·양·돼지를 각각 3회 번식시키기."
+  },
+  {
+    "id": "automatic_supply",
+    "name": "자동 보급",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "같은 종류의 건축 블록 누적 100개 설치하기."
+  },
+  {
+    "id": "dormant_seed",
+    "name": "동면의 씨앗",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "밀·당근·감자의 씨앗 또는 작물을 각각 16개 함께 소지하기."
+  },
+  {
+    "id": "counterweight",
+    "name": "반격의 무게추",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "방패로 공격을 막은 뒤 같은 몬스터 반격하기 10회."
+  },
+  {
+    "id": "material_exchange",
+    "name": "자재 치환",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "서로 다른 건축 블록 5종을 각각 10개 설치하기."
+  },
+  {
+    "id": "remembering_field",
+    "name": "기억하는 밭",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "작물을 수확한 경작지에 씨앗 다시 심기 10회."
+  },
+  {
+    "id": "little_giant",
+    "name": "작은 거인",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "철 골렘에게 받은 피해를 누적 50 달성하기."
+  },
+  {
+    "id": "spring_ground",
+    "name": "용수철 지반",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "슬라임 블록 위에서 5회 연속 튀어 오르기."
+  },
+  {
+    "id": "mountain_back",
+    "name": "산맥의 등",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "조약돌 던지기로 몬스터 누적 30마리 처치하기."
+  },
+  {
+    "id": "earth_embrace",
+    "name": "대지의 품",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "크리퍼 폭발로 생긴 구덩이에 흙 32개 메우기."
+  },
+  {
+    "id": "forest_throne",
+    "name": "숲의 왕좌",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "도서관에서 '움직이지 않는 숲의 왕' 책 읽기."
+  },
+  {
+    "id": "primordial_stone",
+    "name": "원초의 돌",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "대지 마법 응용 수업을 통해 낮은 확률로 습득."
+  },
+  {
+    "id": "guiding_star",
+    "name": "길잡이 별",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "나침반을 들고 누적 1000블록 걸어가기."
+  },
+  {
+    "id": "minor_heal",
+    "name": "작은 치유",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "빛 마법 기초 수업을 통해 습득."
+  },
+  {
+    "id": "light_mark",
+    "name": "빛의 낙인",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "분광 화살을 몬스터에게 5번 명중하기."
+  },
+  {
+    "id": "spatial_leap",
+    "name": "공간 도약",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "서로 다른 전이석 3곳에 처음 방문하기."
+  },
+  {
+    "id": "luminous_archive",
+    "name": "빛의 서고",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "엔더 상자에 서로 다른 아이템 20종 넣기."
+  },
+  {
+    "id": "true_sight",
+    "name": "진실의 눈",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "투명화 상태의 몬스터를 5회 처치하기."
+  },
+  {
+    "id": "protective_ward",
+    "name": "보호 결계",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "빛 마법 방어 수업을 통해 습득."
+  },
+  {
+    "id": "constellation_blessing",
+    "name": "성좌의 가호",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "천문대에서 서로 다른 별자리의 관측 수업을 3회 마치기."
+  },
+  {
+    "id": "arcane_imprint",
+    "name": "마력 각인",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "모루로 도구에 이름을 10번 붙이기."
+  },
+  {
+    "id": "dawn_ritual",
+    "name": "여명의 의식",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "독·나약함·구속 상태에서 정화의 물결로 회복한 횟수를 각각 1회 달성하기."
+  },
+  {
+    "id": "comforting_light",
+    "name": "위로의 빛",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "다른 플레이어에게 투척용 치유 물약을 10번 맞히기."
+  },
+  {
+    "id": "exorcism_flash",
+    "name": "퇴마의 섬광",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "햇빛에 불타는 좀비와 스켈레톤을 합쳐 50마리 처치하기."
+  },
+  {
+    "id": "arcane_mending",
+    "name": "마력 봉합",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "모루에서 내구도가 닳은 도구를 10번 수리하기."
+  },
+  {
+    "id": "companion_return",
+    "name": "동행 귀환",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "침대에서 1500블록 이상 멀어졌다가 같은 침대에 돌아와 잠들기."
+  },
+  {
+    "id": "flawless_moment",
+    "name": "무결의 순간",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "방패로 공격을 10번 연속 막고 그동안 피해를 받지 않기."
+  },
+  {
+    "id": "solar_judgment",
+    "name": "태양의 심판",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "퇴마의 섬광으로 언데드를 누적 150마리 처치하기."
+  },
+  {
+    "id": "firefly_mark",
+    "name": "반딧불 표식",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "밤에 횃불을 누적 30개 설치하기."
+  },
+  {
+    "id": "rainbow_collar",
+    "name": "무지개 목줄",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "길들인 동물의 목줄을 서로 다른 5가지 색으로 염색하기."
+  },
+  {
+    "id": "sun_drying",
+    "name": "햇살 말림",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "낮에 썩은 살점을 5번 먹고 허기 효과가 끝날 때까지 살아남기."
+  },
+  {
+    "id": "luminous_copy",
+    "name": "빛의 필사",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "책과 깃펜으로 책을 작성한 뒤 서명하기."
+  },
+  {
+    "id": "guiding_fletching",
+    "name": "유도 깃",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "달리는 몬스터에게 활을 20번 명중하기."
+  },
+  {
+    "id": "sharing_table",
+    "name": "나눔 식탁",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "자신이 떨어뜨린 음식 아이템을 다른 플레이어가 누적 64개 줍게 하기."
+  },
+  {
+    "id": "summons_letter",
+    "name": "소환장",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "길들인 늑대나 고양이와 함께 누적 2000블록 이동하기."
+  },
+  {
+    "id": "starlight_survey",
+    "name": "별빛 측량",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "학교 건축 수업을 1회 마치기."
+  },
+  {
+    "id": "luminous_handover",
+    "name": "빛의 교대",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "다른 플레이어를 공격 중인 몬스터를 직접 20마리 처치하기."
+  },
+  {
+    "id": "mana_conduit",
+    "name": "마력 전선",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "위로의 빛을 동료에게 누적 20회 사용하기."
+  },
+  {
+    "id": "merciful_arrow",
+    "name": "자비의 화살",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "빛 마법 응용 수업을 통해 낮은 확률로 습득."
+  },
+  {
+    "id": "mana_deposit",
+    "name": "마력 예금",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "빈 마력석을 손에 든 채 마나를 최대치까지 5번 회복하기."
+  },
+  {
+    "id": "guardian_oath",
+    "name": "수호자의 서약",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "체력이 하트 2칸 이하인 동료에게 위로의 빛을 10번 사용하기."
+  },
+  {
+    "id": "experience_exchange",
+    "name": "경험의 환전",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "경험치 30레벨을 보유한 채 마나를 5 이하까지 소모하기."
+  },
+  {
+    "id": "white_night_sanctuary",
+    "name": "백야의 성역",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "침대에서 자지 않고 모닥불 8블록 안에서 밤부터 해 뜰 때까지 생존하기."
+  },
+  {
+    "id": "starlight_reprise",
+    "name": "별빛 재현",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "서로 다른 원소의 마법 6개를 30초 안에 사용하기."
+  },
+  {
+    "id": "constellation_emissary",
+    "name": "성좌의 대리인",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "성좌의 가호를 동료 3명에게 동시에 적용하기 10회."
+  },
+  {
+    "id": "night_sight",
+    "name": "밤눈",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "빛이 없는 동굴에서 횃불을 놓지 않고 120초 머무르기."
+  },
+  {
+    "id": "shadow_bind",
+    "name": "그림자 매듭",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "어둠 마법 기초 수업을 통해 습득."
+  },
+  {
+    "id": "faint_veil",
+    "name": "옅은 은신",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "밤에 웅크린 채 누적 200블록 이동하기."
+  },
+  {
+    "id": "shadow_double",
+    "name": "그림자 분신",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "몬스터의 근접 공격을 방패로 10회 막기."
+  },
+  {
+    "id": "echo_reading",
+    "name": "잔향 읽기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "분실물 보관소에서 서로 다른 분실물 5개 조사하기."
+  },
+  {
+    "id": "sealing_thread",
+    "name": "봉인의 실",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "자신의 상자를 누적 100번 열고 닫기."
+  },
+  {
+    "id": "afterlife_gate",
+    "name": "사후세계의 문",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "서로 다른 원인으로 5회 사망하기."
+  },
+  {
+    "id": "shadow_exchange",
+    "name": "그림자 교환",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "엔더 진주로 순간 이동한 횟수 30회 달성하기."
+  },
+  {
+    "id": "forbidden_contract",
+    "name": "금서의 계약",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "학교 금서고에서 '대가 없는 기적은 없다' 책 읽기."
+  },
+  {
+    "id": "life_siphon",
+    "name": "생명 갈취",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "체력이 하트 3칸 이하인 상태에서 몬스터를 누적 20마리 처치하기."
+  },
+  {
+    "id": "drowsiness",
+    "name": "졸음",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "침대에서 누적 10번 잠들기."
+  },
+  {
+    "id": "misfortune_whisper",
+    "name": "불운의 속삭임",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "나약함 효과에 걸린 상태로 몬스터를 5마리 처치하기."
+  },
+  {
+    "id": "hungry_shadow",
+    "name": "굶주린 그림자",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "배고픔이 2칸 이하인 상태에서 몬스터를 누적 10마리 처치하기."
+  },
+  {
+    "id": "curse_transfer",
+    "name": "저주의 전가",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "독·나약함·구속 효과를 각각 3번 겪기."
+  },
+  {
+    "id": "discord",
+    "name": "불화",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "스켈레톤의 화살에 맞은 다른 몬스터가 스켈레톤을 공격하는 상황을 10번 만들기."
+  },
+  {
+    "id": "night_chain",
+    "name": "밤의 사슬",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "어둠 마법 실전 수업을 통해 습득."
+  },
+  {
+    "id": "pain_deferral",
+    "name": "고통 유예",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "재생 효과를 받는 동안 몬스터에게 누적 100 피해 받기."
+  },
+  {
+    "id": "black_harvest",
+    "name": "검은 수확",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "생명 갈취로 일반 몬스터를 누적 100마리 처치하기."
+  },
+  {
+    "id": "ink_fingertip",
+    "name": "먹물 손끝",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "먹물 주머니와 숯을 각각 16개씩 함께 소지하기."
+  },
+  {
+    "id": "shadow_nail",
+    "name": "그림자 못",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "엔더맨을 누적 10마리 처치하기."
+  },
+  {
+    "id": "night_lullaby",
+    "name": "밤의 자장가",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "팬텀에게 공격받은 뒤 잠들지 않고 날이 밝을 때까지 생존하기."
+  },
+  {
+    "id": "loosen_grasp",
+    "name": "손아귀 풀기",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "무기를 든 몬스터의 공격을 방패로 30번 막기."
+  },
+  {
+    "id": "shadow_tracking",
+    "name": "그림자 추적",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "밤에 몬스터를 누적 20마리 처치하기."
+  },
+  {
+    "id": "healing_seal",
+    "name": "회복 봉인",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "물약을 마시는 중인 마녀를 10마리 처치하기."
+  },
+  {
+    "id": "shadow_scales",
+    "name": "어둠의 저울",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "체력이 하트 1칸 이하일 때 체력이 절반 이상 남은 몬스터 처치하기."
+  },
+  {
+    "id": "warning_thread",
+    "name": "경고의 실",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "자신이 설치한 철사 덫을 몬스터가 10번 작동시키기."
+  },
+  {
+    "id": "final_knot",
+    "name": "끝매듭",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "몬스터를 처치한 뒤 떨어진 아이템을 누적 256개 줍기."
+  },
+  {
+    "id": "wound_accounting",
+    "name": "상처 회계",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "한 몬스터를 10번 이상 직접 공격한 뒤 처치하기."
+  },
+  {
+    "id": "inverted_offering",
+    "name": "뒤집힌 공물",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "마나가 절반 이하일 때 경험치 구슬을 누적 300개 줍기."
+  },
+  {
+    "id": "ghost_tool",
+    "name": "유령 도구",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "곡괭이·도끼·삽·괭이로 각각 블록을 64개 부수기."
+  },
+  {
+    "id": "bell_of_fear",
+    "name": "공포의 종",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "밤에 종을 울린 뒤 30초 안에 몬스터 5마리를 처치하기."
+  },
+  {
+    "id": "eclipse_eye",
+    "name": "월식의 눈",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "투명화 물약을 마신 상태에서 마녀를 5마리 처치하기."
+  },
+  {
+    "id": "death_ledger",
+    "name": "죽음의 장부",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "10초 안에 일반 몬스터 5마리를 직접 처치하기."
+  },
+  {
+    "id": "void_maw",
+    "name": "공허의 입",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "학교 도서관에서 숨겨진 '텅 빈 것의 식욕' 책 읽기."
+  },
+  {
+    "id": "twilight_bargain",
+    "name": "황혼의 거래",
+    "task": "기존 동작과 새 획득 조건 연결 확인 필요",
+    "condition": "마나가 5 이하이고 체력이 하트 3칸 이하인 상태에서 몬스터를 처치하고 살아남기."
+  },
+  {
+    "id": "wind_courier",
+    "name": "바람 우편",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "자신이 떨어뜨린 아이템을 친구가 누적 20개 줍기."
+  },
+  {
+    "id": "air_display",
+    "name": "허공 진열",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "아이템 액자에 물건을 누적 10회 넣기."
+  },
+  {
+    "id": "sail_breeze",
+    "name": "돛바람",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "보트를 타고 누적 500블록 이동하기."
+  },
+  {
+    "id": "air_brake",
+    "name": "급제동",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "상승 기류를 누적 20회 사용하기."
+  },
+  {
+    "id": "headwind_field",
+    "name": "역풍 지대",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "방패로 스켈레톤의 화살을 20회 막기."
+  },
+  {
+    "id": "vortex_center",
+    "name": "소용돌이 중심",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "바람 마법 실전 수업을 완료하기."
+  },
+  {
+    "id": "wall_echo_burst",
+    "name": "벽울림 탄",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "벽에 화살을 누적 30회 명중하기."
+  },
+  {
+    "id": "blindside_turn",
+    "name": "빈틈 돌리기",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "몬스터의 근접 공격을 방패로 15회 막기."
+  },
+  {
+    "id": "wind_tailoring",
+    "name": "바람 재단",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "양털로 카펫을 누적 32개 제작하기."
+  },
+  {
+    "id": "whistle_procession",
+    "name": "휘파람 행진",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "먹이를 들고 소·양·돼지를 각각 50블록 이상 이끌기."
+  },
+  {
+    "id": "wind_performance",
+    "name": "바람 연주",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "소리 블록을 누적 20회 연주하기."
+  },
+  {
+    "id": "draft_closer",
+    "name": "문풍지",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "자신이 설치한 문을 누적 30회 닫기."
+  },
+  {
+    "id": "air_compass",
+    "name": "허공 나침반",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "나침반을 든 채 누적 300블록 이동하기."
+  },
+  {
+    "id": "experience_confluence",
+    "name": "흩어진 경험",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "경험치 구슬을 누적 200개 획득하기."
+  },
+  {
+    "id": "melody_bottle",
+    "name": "선율 담기",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "바람 연주를 누적 10회 사용하기."
+  },
+  {
+    "id": "copper_polish",
+    "name": "구리 광내기",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "도끼로 산화된 구리를 누적 16회 긁기."
+  },
+  {
+    "id": "wax_melting",
+    "name": "밀랍 녹이기",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "밀랍칠한 구리에서 도끼로 밀랍을 8회 제거하기."
+  },
+  {
+    "id": "charcoal_scent",
+    "name": "숯내음",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "화로에서 숯을 누적 32개 꺼내기."
+  },
+  {
+    "id": "glass_craft",
+    "name": "유리 세공",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "색유리를 서로 다른 3가지 색으로 제작하기."
+  },
+  {
+    "id": "heated_hooves",
+    "name": "뜨거운 발굽",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "말을 타고 누적 30회 점프하기."
+  },
+  {
+    "id": "residual_heat",
+    "name": "잔열 회수",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "화염 마법으로 몬스터를 누적 40마리 처치하기."
+  },
+  {
+    "id": "searing_edge",
+    "name": "달궈진 칼끝",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "발화가 부여된 검으로 몬스터를 누적 20마리 처치하기."
+  },
+  {
+    "id": "fuse_bond",
+    "name": "도화선",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "서로 다른 몬스터 2마리에 불을 붙이는 실습을 5회 완료하기."
+  },
+  {
+    "id": "ember_transfer",
+    "name": "불씨 옮기기",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "발화를 누적 20회 사용하기."
+  },
+  {
+    "id": "flame_boundary",
+    "name": "화염 고리",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "화염 마법 방어 실습을 완료하기."
+  },
+  {
+    "id": "heat_accumulation",
+    "name": "열기 축적",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "불이 붙은 상태에서 누적 60초 생존하기."
+  },
+  {
+    "id": "sulfur_cloud",
+    "name": "유황 구름",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "화약을 누적 32개 획득하기."
+  },
+  {
+    "id": "flame_seam",
+    "name": "화염 봉합선",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "블록 위의 불을 부싯돌과 부시로 누적 20회 붙이기."
+  },
+  {
+    "id": "flame_clap",
+    "name": "불꽃 박수",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "화염 마법 기초 수업의 섬광 실습을 완료하기."
+  },
+  {
+    "id": "ashen_farewell",
+    "name": "잿빛 작별",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "자신이 소환한 마법 소환물을 누적 10회 해제하기."
+  },
+  {
+    "id": "bubble_plate",
+    "name": "거품 접시",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "자신이 떨어뜨린 음식 아이템을 동료가 누적 16개 줍기."
+  },
+  {
+    "id": "waterweed_trim",
+    "name": "수초 손질",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "해초와 켈프를 합쳐 누적 64개 수확하기."
+  },
+  {
+    "id": "drain_pocket",
+    "name": "물 빼기",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "스펀지로 물을 누적 10회 흡수하기."
+  },
+  {
+    "id": "mud_kneading",
+    "name": "진흙 반죽",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "물병으로 흙을 진흙으로 누적 20회 바꾸기."
+  },
+  {
+    "id": "sloshing_pail",
+    "name": "찰랑이는 통",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "양동이로 우유를 누적 10회 받기."
+  },
+  {
+    "id": "surface_walk",
+    "name": "수면 산책",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "보트 없이 수영으로 누적 300블록 이동하기."
+  },
+  {
+    "id": "diving_bell",
+    "name": "잠수 종",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "물결 숨결을 누적 15회 사용하기."
+  },
+  {
+    "id": "droplet_lens",
+    "name": "물방울 렌즈",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "망원경으로 먼 곳을 누적 10회 관측하기."
+  },
+  {
+    "id": "cold_compress",
+    "name": "차가운 찜질",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "체력이 감소한 상태에서 물속에 누적 30초 머무르기."
+  },
+  {
+    "id": "bubble_brand",
+    "name": "수포 낙인",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "물방울 탄환을 몬스터에게 누적 30회 명중하기."
+  },
+  {
+    "id": "ice_wedge",
+    "name": "얼음 쐐기",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "눈덩이를 몬스터에게 누적 30회 명중하기."
+  },
+  {
+    "id": "slippery_floor",
+    "name": "미끄러운 바닥",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "얼음 위에서 누적 200블록 이동하기."
+  },
+  {
+    "id": "chain_droplet",
+    "name": "연쇄 물방울",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "물방울 탄환으로 몬스터를 누적 30마리 처치하기."
+  },
+  {
+    "id": "splitting_lance",
+    "name": "갈라지는 창",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "물 마법 실전 수업의 얼음 투사체 실습을 완료하기."
+  },
+  {
+    "id": "healing_reserve",
+    "name": "물결 저금",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "체력이 하트 1칸 이하인 상태에서 투척용 치유 물약으로 5회 회복하기."
+  },
+  {
+    "id": "petal_dye",
+    "name": "꽃잎 염색",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "서로 다른 5가지 꽃을 획득하기."
+  },
+  {
+    "id": "mushroom_picking",
+    "name": "버섯 따기",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "작은 버섯을 누적 32개 수확하기."
+  },
+  {
+    "id": "hive_inspection",
+    "name": "벌집 살피기",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "벌집을 누적 10회 조사하기."
+  },
+  {
+    "id": "honey_tapping",
+    "name": "꿀 뜨기",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "유리병으로 꿀을 누적 10회 채집하기."
+  },
+  {
+    "id": "sapling_move",
+    "name": "묘목 이사",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "묘목을 심은 뒤 다시 회수하기 10회."
+  },
+  {
+    "id": "path_tamping",
+    "name": "돌길 다지기",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "삽으로 길 블록을 누적 32개 만들기."
+  },
+  {
+    "id": "soil_tilling",
+    "name": "밭 갈기",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "괭이로 경작지를 누적 50칸 만들기."
+  },
+  {
+    "id": "gravel_sifting",
+    "name": "자갈 체질",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "자갈을 누적 64개 채굴하기."
+  },
+  {
+    "id": "stone_joinery",
+    "name": "반듯한 모서리",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "석재 계단과 반 블록을 각각 16개 제작하기."
+  },
+  {
+    "id": "buried_cache",
+    "name": "땅속 보관",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "땅에 떨어뜨린 아이템을 누적 30개 다시 줍기."
+  },
+  {
+    "id": "root_trip",
+    "name": "뿌리 걸림",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "덩굴 사다리를 누적 15회 사용하기."
+  },
+  {
+    "id": "crystal_resonance",
+    "name": "수정 공명",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "동료와 함께 같은 몬스터를 누적 20마리 처치하기."
+  },
+  {
+    "id": "sand_blind",
+    "name": "모래 눈속임",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "모래를 누적 64개 채굴하기."
+  },
+  {
+    "id": "lodestone_trace",
+    "name": "자철석 손길",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "삼지창을 누적 10회 던지고 회수하기."
+  },
+  {
+    "id": "crumbling_foothold",
+    "name": "무너지는 발판",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "모래나 자갈이 아래로 떨어지는 상황을 20회 만들기."
+  },
+  {
+    "id": "luminous_signature",
+    "name": "빛의 서명",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "책과 깃펜으로 서로 다른 책 3권에 서명하기."
+  },
+  {
+    "id": "starlit_nametag",
+    "name": "별빛 이름표",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "이름표로 자신의 동물에게 이름을 3회 붙이기."
+  },
+  {
+    "id": "color_finder",
+    "name": "색 찾기",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "서로 다른 색의 양털 8종 획득하기."
+  },
+  {
+    "id": "luminous_frame",
+    "name": "별빛 액자",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "발광 아이템 액자를 4개 제작하기."
+  },
+  {
+    "id": "exhibit_anchor",
+    "name": "전시 고정",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "자신의 아이템 액자 속 물건을 누적 20회 회전시키기."
+  },
+  {
+    "id": "light_portrait",
+    "name": "빛의 초상",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "친구와 함께 같은 장소에서 모임 활동을 3회 완료하기."
+  },
+  {
+    "id": "promise_star",
+    "name": "약속의 별",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "친구와 함께 누적 500블록 이동하기."
+  },
+  {
+    "id": "home_check",
+    "name": "귀가 확인",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "같은 침대에서 누적 5회 잠들기."
+  },
+  {
+    "id": "clear_eyes",
+    "name": "맑은 눈",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "실명과 어둠 효과를 각각 3회 겪기."
+  },
+  {
+    "id": "light_rhythm",
+    "name": "빛의 박자",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "빛 마법 전투 실습의 연속 타격 과정을 완료하기."
+  },
+  {
+    "id": "frontal_duel",
+    "name": "정면 승부",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "방패를 들고 몬스터를 누적 30마리 처치하기."
+  },
+  {
+    "id": "last_lantern",
+    "name": "마지막 등불",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "체력이 하트 2칸 이하인 동료를 작은 치유로 10회 회복하기."
+  },
+  {
+    "id": "star_farewell",
+    "name": "별의 배웅",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "동료를 공격하던 몬스터를 누적 20마리 처치하기."
+  },
+  {
+    "id": "light_severance",
+    "name": "빛의 단절",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "빛 마법 응용 수업의 결계 해제 실습을 완료하기."
+  },
+  {
+    "id": "dawn_promise",
+    "name": "새벽의 약속",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "동료에게 위로의 빛을 누적 20회 사용하기."
+  },
+  {
+    "id": "silent_steps",
+    "name": "조용한 발걸음",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "웅크린 채 누적 300블록 이동하기."
+  },
+  {
+    "id": "forgotten_name",
+    "name": "잊힌 이름",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "모루에서 아이템 이름을 누적 10회 변경하기."
+  },
+  {
+    "id": "empty_page",
+    "name": "빈 페이지",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "책과 깃펜으로 작성 중인 글을 10회 수정하기."
+  },
+  {
+    "id": "night_cover",
+    "name": "밤의 덮개",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "촛불을 누적 20회 끄기."
+  },
+  {
+    "id": "shadow_pouch",
+    "name": "그림자 주머니",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "사망 후 떨어진 자신의 아이템을 누적 3회 회수하기."
+  },
+  {
+    "id": "ghost_palm",
+    "name": "유령 손바닥",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "빈손으로 문·레버·버튼을 합쳐 누적 30회 작동시키기."
+  },
+  {
+    "id": "black_silence",
+    "name": "검은 침묵",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "물약을 마시는 마녀를 누적 10마리 처치하기."
+  },
+  {
+    "id": "oblivion_mark",
+    "name": "망각의 표식",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "옅은 은신을 누적 15회 사용하기."
+  },
+  {
+    "id": "delayed_fear",
+    "name": "뒤늦은 공포",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "밤에 종을 울린 뒤 몬스터를 누적 10마리 처치하기."
+  },
+  {
+    "id": "fugitive_toll",
+    "name": "도망자의 대가",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "활로 도망가는 몬스터를 누적 15마리 처치하기."
+  },
+  {
+    "id": "hungry_edge",
+    "name": "굶주린 칼끝",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "방패를 든 몬스터를 누적 15마리 처치하기."
+  },
+  {
+    "id": "shadow_retrace",
+    "name": "되짚는 그림자",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "엔더 진주로 누적 15회 순간 이동하기."
+  },
+  {
+    "id": "black_pulse",
+    "name": "검은 박동",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "재생 효과를 받은 채 몬스터에게 누적 100 피해 받기."
+  },
+  {
+    "id": "empty_grave",
+    "name": "빈 무덤",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "서로 다른 사망 위치 3곳에 다시 방문하기."
+  },
+  {
+    "id": "ill_choice",
+    "name": "불길한 선택",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "어둠 마법 응용 수업의 약화 실습을 완료하기."
+  },
+  {
+    "id": "resonance_tuning",
+    "name": "공명 맞추기",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "소리 블록을 서로 다른 높낮이로 5회 조율하기."
+  },
+  {
+    "id": "breath_reversal",
+    "name": "숨결 반전",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "바람 마법 응용 수업의 송풍 실습을 완료하기."
+  },
+  {
+    "id": "heat_script",
+    "name": "열문자",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "고대 유적의 열에 반응하는 석판을 조사하기."
+  },
+  {
+    "id": "heat_transfer",
+    "name": "열의 이동",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "화염 마법 응용 수업의 열전달 실습을 완료하기."
+  },
+  {
+    "id": "level_balance",
+    "name": "수평 맞추기",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "물 양동이로 가마솥을 채운 뒤 다시 비우기 10회."
+  },
+  {
+    "id": "ice_cog",
+    "name": "얼음 톱니",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "물 마법 응용 수업의 얼음 성형 실습을 완료하기."
+  },
+  {
+    "id": "weight_sigil",
+    "name": "무게의 인장",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "무게 압력판을 서로 다른 아이템 수량으로 5회 작동시키기."
+  },
+  {
+    "id": "prism_split",
+    "name": "프리즘 분광",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "빛 마법 응용 수업의 분광 실습을 완료하기."
+  },
+  {
+    "id": "light_afterimage",
+    "name": "빛의 잔상",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "고대 유적의 빛 감응판을 누적 5회 작동시키기."
+  },
+  {
+    "id": "shadow_passage",
+    "name": "그림자 통행",
+    "task": "게임 효과 및 획득 판정 구현 필요",
+    "condition": "어둠 마법 응용 수업의 그림자 이동 실습을 완료하기."
+  }
+]

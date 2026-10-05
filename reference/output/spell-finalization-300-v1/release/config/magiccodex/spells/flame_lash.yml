@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "flame_lash"
+name: "화염 채찍"
+category: "fire"
+description: "정면의 적을 화염의 채찍으로 공격한다. \n공격당한 상대를 내 쪽으로 끌고온다.\n\n낚싯대로 몬스터를 여러 번 끌어당긴 손이 불꽃의 길고 유연한 궤적을 떠올린다."
+icon: "magiccodex:textures/spells/expansion/flame_lash.png"
+permission: "magic.learned.flame_lash"
+discovery:
+  description: "낚싯대로 몬스터를 5번 끌어당기기."
+research: "화염은 자유로운 형상을 가지고 있기 떄문에 무엇이든 될 수 있다."
+cast:
+  command: "마법 화염채찍"
+  cooldown-seconds: 18
+  mana-cost: 75
+order: 430

@@ -1,0 +1,17 @@
+"Id": "ca_glacialcore"
+"MythicMob": "CA_Pet_glacialcore"
+"Permission": "chacademia.pet.ca_glacialcore"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f빙핵의 수호자"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "빙하 신전 가장 깊은 곳에 잠든 얼음 보스."
+    - "서식지: 빙하 협곡 / 서리불 동굴"
+    - "3성"

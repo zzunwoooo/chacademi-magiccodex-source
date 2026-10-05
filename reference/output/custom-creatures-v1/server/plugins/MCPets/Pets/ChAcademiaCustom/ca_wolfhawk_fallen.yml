@@ -1,0 +1,17 @@
+"Id": "ca_wolfhawk_fallen"
+"MythicMob": "CA_Pet_wolfhawk_fallen"
+"Permission": "chacademia.pet.ca_wolfhawk_fallen"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f타락 울프호크"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "산악 둥지 주변에서 영역을 지키는 날렵한 생물. 타락 계열의 변이 개체."
+    - "서식지: 달빛 숲 / 깊은 동굴"
+    - "3성"

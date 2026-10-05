@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "ember_transfer"
+name: "불씨 옮기기"
+category: "fire"
+description: "불타는 적의 불을 다른 적에게 옮기며 남은 연소 시간을 유지한다.\n\n직접 일으킨 불을 오래 다루다 보면 다른 자리로 옮길 불씨가 보인다."
+icon: "magiccodex:textures/spells/expansion_3/ember_transfer.png"
+permission: "magic.learned.ember_transfer"
+discovery:
+  description: "발화를 누적 20회 사용하기."
+research: "불의 시간을 새로 만드는 대신 남은 시간을 이어 준다."
+cast:
+  command: "마법 불씨옮기기"
+  cooldown-seconds: 15
+  mana-cost: 40
+order: 2240

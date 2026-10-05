@@ -1,0 +1,14 @@
+id: breath_reversal
+name: 숨결 반전
+category: wind
+description: 송풍 장치의 바람 방향을 뒤집어 발판이나 풍차의 진행을 바꾼다.
+icon: ''
+permission: magic.learned.breath_reversal
+discovery:
+  description: 바람 마법 응용 수업의 송풍 실습을 완료하기.
+research: 같은 바람도 방향 하나에 열리는 길과 닫히는 길이 바뀐다.
+cast:
+  command: ''
+  cooldown-seconds: 12
+  mana-cost: 30
+order: 291

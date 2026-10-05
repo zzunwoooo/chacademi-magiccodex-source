@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "sloshing_pail"
+name: "찰랑이는 통"
+category: "water"
+description: "가까운 소에서 빈 양동이에 우유를 받는다.\n\n소에게서 우유를 거듭 받은 손은 빈 통을 채울 부드러운 흐름을 익힌다."
+icon: "magiccodex:textures/spells/expansion_3/sloshing_pail.png"
+permission: "magic.learned.sloshing_pail"
+discovery:
+  description: "양동이로 우유를 누적 10회 받기."
+research: "목장 일을 대신하는 손길이다. 소가 없는 곳에서 우유가 생기지는 않는다."
+cast:
+  command: "마법 찰랑이는통"
+  cooldown-seconds: 4
+  mana-cost: 8
+order: 2350

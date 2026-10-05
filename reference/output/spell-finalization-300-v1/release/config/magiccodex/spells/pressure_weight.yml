@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "pressure_weight"
+name: "수압추"
+category: "water"
+description: "물속의 적 하나를 5초 동안 가라앉힙니다. 육지에서는 사용할 수 없습니다.\n\n물에 잠겨 오래 버틴 몸은 사방에서 누르는 물의 무게를 기억한다."
+icon: "magiccodex:textures/spells/expansion_2/pressure_weight.png"
+permission: "magic.learned.pressure_weight"
+discovery:
+  description: "물에 잠긴 상태에서 누적 60초 버티기"
+research: "깊은 곳으로 내려갈수록 물은 생각보다 무거워진다."
+cast:
+  command: "마법 수압추"
+  cooldown-seconds: 20
+  mana-cost: 60
+order: 880

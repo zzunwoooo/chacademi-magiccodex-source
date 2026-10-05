@@ -1,0 +1,17 @@
+"Id": "ca_piranha_shiny"
+"MythicMob": "CA_Pet_piranha_shiny"
+"Permission": "chacademia.pet.ca_piranha_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e붉은이빨 피라냐"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "따뜻한 강에서 무리 지어 헤엄치는 사나운 물고기."
+    - "서식지: 따뜻한 강 / 사막 오아시스"
+    - "2성"

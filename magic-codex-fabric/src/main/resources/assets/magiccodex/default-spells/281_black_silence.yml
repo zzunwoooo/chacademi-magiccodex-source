@@ -1,0 +1,14 @@
+id: black_silence
+name: 검은 침묵
+category: dark
+description: 적의 새 마법 시전을 잠시 막고 일반 공격은 허용한다.
+icon: ''
+permission: magic.learned.black_silence
+discovery:
+  description: 물약을 마시는 마녀를 누적 10마리 처치하기.
+research: 몸을 멈추기보다 다음 주문의 시작을 잠깐 가린다.
+cast:
+  command: ''
+  cooldown-seconds: 30
+  mana-cost: 95
+order: 281

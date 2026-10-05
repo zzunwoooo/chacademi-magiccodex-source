@@ -1,0 +1,14 @@
+id: counterweight
+name: 반격의 무게추
+category: earth
+description: 짧은 시간 안에 방패로 공격을 막으면 상대의 균형을 무너뜨려 잠깐 행동을 멈추게 합니다.
+icon: magiccodex:textures/spells/expansion_2/counterweight.png
+permission: magic.learned.counterweight
+discovery:
+  description: 방패로 공격을 막은 뒤 같은 몬스터 반격하기 10회.
+research: 막아 낸 힘을 흘려보내지 않고 돌려준다. 방패 수업이 끝나도 팔이 저린 이유와는 관계없다.
+cast:
+  command: ''
+  cooldown-seconds: 20
+  mana-cost: 65
+order: 123

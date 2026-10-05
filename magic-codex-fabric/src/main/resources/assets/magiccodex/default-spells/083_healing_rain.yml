@@ -1,0 +1,14 @@
+id: healing_rain
+name: 치유의 비
+category: water
+description: 범위 안의 아군을 회복시키는 비와 무지개를 만듭니다.
+icon: ''
+permission: magic.learned.healing_rain
+discovery:
+  description: 치유 포션을 10회 마시기.
+research: ''
+cast:
+  command: 마법 healing_rain
+  cooldown-seconds: 40
+  mana-cost: 180
+order: 83

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "flame_footprints"
+name: "불꽃 걸음"
+category: "fire"
+description: "마법 칸에 등록한 상태일 경우 매 초 마나를 소모하여 화염의 발자국을 남깁니다.\n화염의 발자국은 2초 뒤 폭발하여 몬스터에게 피해를 줍니다.\n\n몸에 불이 붙은 채 한동안 살아남은 발걸음은 불길 속에서도 제 속도를 기억한다."
+icon: "magiccodex:textures/spells/expansion_2/flame_footprints.png"
+permission: "magic.learned.flame_footprints"
+discovery:
+  description: "불이 붙은 상태에서 30초간 살아남기"
+research: "발을 내딛음과 동시에 공격 한다면 어느 순간에도 공격이 가능하다."
+cast:
+  command: "마법 불꽃걸음"
+  cooldown-seconds: 0
+  mana-cost: 10
+order: 530

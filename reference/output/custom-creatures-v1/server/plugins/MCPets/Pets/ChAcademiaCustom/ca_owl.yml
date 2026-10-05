@@ -1,0 +1,17 @@
+"Id": "ca_owl"
+"MythicMob": "CA_Pet_owl"
+"Permission": "chacademia.pet.ca_owl"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f밤눈 올빼미"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "어두운 숲길을 지켜보다 밤에 모습을 드러내는 새."
+    - "서식지: 시베리아 타이가 / 달빛 숲"
+    - "1성"

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "ashen_farewell"
+name: "잿빛 작별"
+category: "fire"
+description: "자신의 임시 마법 소환물을 해제하며 작은 불꽃을 남긴다.\n\n함께 싸운 소환물을 거듭 돌려보내면 사라지는 자리에 남길 작은 불이 생긴다."
+icon: "magiccodex:textures/spells/expansion_3/ashen_farewell.png"
+permission: "magic.learned.ashen_farewell"
+discovery:
+  description: "자신이 소환한 마법 소환물을 누적 10회 해제하기."
+research: "작별은 소환의 반대가 아니다. 약속을 마치고 돌아가는 과정이다."
+cast:
+  command: "마법 잿빛작별"
+  cooldown-seconds: 10
+  mana-cost: 20
+order: 2300

@@ -1,0 +1,14 @@
+id: fuse_bond
+name: 도화선
+category: fire
+description: 적 둘을 불의 선으로 연결하고 거리가 벌어지면 폭발시킨다.
+icon: ''
+permission: magic.learned.fuse_bond
+discovery:
+  description: 서로 다른 몬스터 2마리에 불을 붙이는 실습을 5회 완료하기.
+research: 멀어질수록 위험해지는 선이다. 도화선은 적 사이에만 연결해야 한다.
+cast:
+  command: ''
+  cooldown-seconds: 25
+  mana-cost: 90
+order: 222

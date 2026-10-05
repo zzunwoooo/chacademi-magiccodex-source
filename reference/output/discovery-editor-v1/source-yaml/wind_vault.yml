@@ -1,0 +1,17 @@
+# 설명·발견 조건·쿨타임은 수정 가능한 기획 초안입니다.
+# 발견 조건은 UI 표시용 문구이며 실제 판정 기능은 연결되지 않았습니다.
+# cast.command는 실제 시전 기능 연결 후 / 없이 입력하세요.
+id: "wind_vault"
+name: "바람의 금고"
+category: "wind"
+rank: "고급"
+description: "소지한 물품을 등록된 개인 보관함으로 전송합니다. 보관함이 가득 차면 전송하지 않습니다."
+icon: "magiccodex:textures/spells/advanced/wind_vault.png"
+permission: "magic.learned.wind_vault"
+discovery:
+  description: "옛 운송소에서 바람의 보관함과 화물 표식을 연결하기."
+research: ""
+cast:
+  command: ""
+  cooldown-seconds: 60
+order: 2020

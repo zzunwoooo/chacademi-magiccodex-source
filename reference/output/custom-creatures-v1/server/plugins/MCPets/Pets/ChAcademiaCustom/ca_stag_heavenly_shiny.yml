@@ -1,0 +1,17 @@
+"Id": "ca_stag_heavenly_shiny"
+"MythicMob": "CA_Pet_stag_heavenly_shiny"
+"Permission": "chacademia.pet.ca_stag_heavenly_shiny"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e천상 영록"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "오래된 숲의 마력을 품은 신비한 사슴. 천상 계열의 변이 개체."
+    - "서식지: 봄 하늘섬"
+    - "3성"

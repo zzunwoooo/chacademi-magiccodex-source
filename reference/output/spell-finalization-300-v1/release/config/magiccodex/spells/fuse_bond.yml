@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "fuse_bond"
+name: "도화선"
+category: "fire"
+description: "적 둘을 불의 선으로 연결하고 거리가 벌어지면 폭발시킨다.\n\n서로 다른 적에게 불을 붙이는 실습에서 두 불씨를 이어 볼 생각이 태어난다."
+icon: "magiccodex:textures/spells/expansion_3/fuse_bond.png"
+permission: "magic.learned.fuse_bond"
+discovery:
+  description: "서로 다른 몬스터 2마리에 불을 붙이는 실습을 5회 완료하기."
+research: "멀어질수록 위험해지는 선이다. 도화선은 적 사이에만 연결해야 한다."
+cast:
+  command: "마법 도화선"
+  cooldown-seconds: 25
+  mana-cost: 90
+order: 2230

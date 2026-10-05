@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "water_elemental"
+name: "운디네"
+category: "water"
+description: "60초간 주인을 따라다니며 물 투사체로 공격을 돕는 물의 정령을 소환합니다. 한 마리만 유지됩니다.\n\n운디네를 부르는 것은 명령이 아니라 계약이다. 물의 정령과 맺는 약속이 기록된 계약서를 살펴보자."
+icon: "magiccodex:textures/spells/advanced/water_elemental.png"
+permission: "magic.learned.water_elemental"
+discovery:
+  description: "'정령계약서 - 수' 도서 읽기"
+research: "자유로운 물의 정령 운디네와 계약을 맺는다.\n물은 흩어지지만 약속은 흩어지지 않는다."
+cast:
+  command: "마법 운디네"
+  cooldown-seconds: 120
+  mana-cost: 220
+order: 740

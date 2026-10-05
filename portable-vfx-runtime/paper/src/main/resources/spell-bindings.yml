@@ -1,0 +1,3898 @@
+schema-version: 1
+bindings:
+  feather_fall:
+    folder: FeatherFall
+    number: 1
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/FeatherFall/vfx.json
+    - received_vfx/all97/unpacked/effects/FeatherFall/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:featherfall/aura
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 194
+      finish-after-ticks: 100
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  wind_basket:
+    folder: WindBasket
+    number: 2
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/WindBasket/vfx.json
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:windbasket/main
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 75
+      finish-after-ticks: 40
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  harvest_wind:
+    folder: HarvestWind
+    number: 3
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/HarvestWind/vfx.json
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:harvestwind/main
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 80
+      finish-after-ticks: 44
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    anchor-verification: reviewed original description or included NOTES placement
+      verified
+  wind_push:
+    folder: WindPush
+    number: 4
+    range: 10
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: preserved approved range; other unspecified numbers editable
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/WindPush/vfx.json
+    - received_vfx/all97/unpacked/effects/WindPush/NOTES.md
+    phases:
+    - role: projectile
+      follow-entity: false
+      trigger: cast
+      effect: claude:windpush/projectile
+      anchor: projectile
+      delay-ticks: 0
+      duration-ticks: 82
+      finish-after-ticks: 20
+    - role: impact
+      follow-entity: false
+      trigger: impact
+      effect: claude:windpush/impact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 40
+      finish-after-ticks: 20
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  light_leap:
+    folder: LightLeap
+    number: 5
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/LightLeap/vfx.json
+    - received_vfx/all97/unpacked/effects/LightLeap/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:lightleap/main
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 78
+      finish-after-ticks: 40
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  flight:
+    folder: Flight
+    number: 6
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/Flight/vfx.json
+    - received_vfx/all97/unpacked/effects/Flight/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:flight/main
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 74
+      finish-after-ticks: 40
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  far_touch:
+    folder: FarTouch
+    number: 7
+    range: 30
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: preserved approved range; other unspecified numbers editable
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/FarTouch/vfx.json
+    - received_vfx/all97/unpacked/effects/FarTouch/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:fartouch/main
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 79
+      finish-after-ticks: 40
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  wind_message:
+    folder: WindMessage
+    number: 9
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/WindMessage/vfx.json
+    - received_vfx/all97/unpacked/effects/WindMessage/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:windmessage/main
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 84
+      finish-after-ticks: 44
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  storm_command:
+    folder: StormCommand
+    number: 10
+    range: 10
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/StormCommand/vfx.json
+    - received_vfx/all97/unpacked/effects/StormCommand/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:stormcommand/cast
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 104
+      finish-after-ticks: 50
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:stormcommand/storm
+      anchor: target
+      delay-ticks: 50
+      duration-ticks: 170
+      finish-after-ticks: 80
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  vacuum_cleave:
+    folder: VacuumCleave
+    number: 11
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/VacuumCleave/vfx.json
+    - received_vfx/all97/unpacked/effects/VacuumCleave/NOTES.md
+    phases:
+    - role: projectile
+      follow-entity: false
+      trigger: cast
+      effect: claude:vacuumcleave/projectile
+      anchor: projectile
+      delay-ticks: 0
+      duration-ticks: 202
+      finish-after-ticks: 100
+    - role: impact
+      follow-entity: false
+      trigger: impact
+      effect: claude:vacuumcleave/impact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 25
+      finish-after-ticks: 12
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  gale_dash:
+    folder: GaleDash
+    number: 12
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/GaleDash/vfx.json
+    - received_vfx/all97/unpacked/effects/GaleDash/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:galedash/dash
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 15
+      finish-after-ticks: 5
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  returning_wind:
+    folder: ReturningWind
+    number: 13
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/ReturningWind/vfx.json
+    - received_vfx/all97/unpacked/effects/ReturningWind/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:returningwind/ward
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 25
+      finish-after-ticks: 10
+    - role: impact
+      follow-entity: false
+      trigger: external:projectile_reflect
+      effect: claude:returningwind/reflect
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 17
+      finish-after-ticks: 6
+    external-events:
+    - projectile_reflect
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  wind_grooming:
+    folder: WindGrooming
+    number: 14
+    range: 10
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: preserved approved range; other unspecified numbers editable
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/WindGrooming/vfx.json
+    - received_vfx/all97/unpacked/effects/WindGrooming/NOTES.md
+    phases:
+    - role: projectile
+      follow-entity: false
+      trigger: cast
+      effect: claude:windgrooming/scissors
+      anchor: projectile
+      delay-ticks: 0
+      duration-ticks: 47
+      finish-after-ticks: 25
+    - role: impact
+      follow-entity: false
+      trigger: expire
+      effect: claude:windgrooming/dissolve
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 47
+      finish-after-ticks: 20
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    trajectory: free_orbit
+    pending: notcollisionprojectile; airnormaldissolve after1.25 editable duration,
+      pathwithin10caster
+  weightless_zone:
+    folder: WeightlessZone
+    number: 15
+    range: 15
+    speed: 0.6
+    holdTicks: 60
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/WeightlessZone/vfx.json
+    - received_vfx/all97/unpacked/effects/WeightlessZone/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:weightlesszone/begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 54
+      finish-after-ticks: 20
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:weightlesszone/sustain
+      anchor: target
+      delay-ticks: 14
+      duration-ticks: 130
+      finish-after-ticks: 60
+    - role: static
+      follow-entity: false
+      trigger: expire
+      effect: claude:weightlesszone/end
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 60
+      finish-after-ticks: 20
+      end-branch: any
+      stop-effects:
+      - claude:weightlesszone/begin
+      - claude:weightlesszone/sustain
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    sequence:
+      sustainStart: 0.7
+      hold:
+        min: 0.5
+        max: 30
+        default: 3
+      holdInput: holdDuration
+      onSustainStop: stopEmitting
+      onCancel: jumpToEnd
+  trajectory_acceleration:
+    folder: TrajectoryAcceleration
+    number: 17
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/TrajectoryAcceleration/vfx.json
+    - received_vfx/all97/unpacked/effects/TrajectoryAcceleration/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:trajectoryacceleration/summon
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 22
+      finish-after-ticks: 10
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:trajectoryacceleration/idle
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 622
+      finish-after-ticks: 600
+    - role: projectile
+      follow-entity: false
+      trigger: external:valid_direct_damage
+      effect: claude:trajectoryacceleration/projectile
+      anchor: projectile
+      delay-ticks: 0
+      duration-ticks: 322
+      finish-after-ticks: 160
+      offset:
+      - 0.52
+      - 1.92
+      - -0.22
+      stop-effects:
+      - claude:trajectoryacceleration/idle
+    - role: impact
+      follow-entity: false
+      trigger: impact
+      effect: claude:trajectoryacceleration/impact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 36
+      finish-after-ticks: 20
+    external-events:
+    - valid_direct_damage_excluding_dot_and_own_support_damage
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    pending: idle duration30sec is editable safe cap, not normative duration; external
+      attack bridge required
+  dust_duster:
+    folder: DustDuster
+    number: 18
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/DustDuster/vfx.json
+    - received_vfx/all97/unpacked/effects/DustDuster/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:dustduster/sweep
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 68
+      finish-after-ticks: 34
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  leaf_cleanup:
+    folder: LeafCleanup
+    number: 19
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/LeafCleanup/vfx.json
+    - received_vfx/all97/unpacked/effects/LeafCleanup/NOTES.md
+    phases:
+    - role: link
+      follow-entity: false
+      trigger: cast
+      effect: claude:leafcleanup/stream
+      anchor: external
+      delay-ticks: 0
+      duration-ticks: 54
+      finish-after-ticks: 28
+      link-source: target
+      link-target: caster
+      offset:
+      - 0
+      - 0
+      - 0
+      target-offset:
+      - 0
+      - 1.3
+      - 0
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  feather_rustle:
+    folder: FeatherRustle
+    number: 20
+    range: 10
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: preserved approved range; other unspecified numbers editable
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/FeatherRustle/vfx.json
+    - received_vfx/all97/unpacked/effects/FeatherRustle/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:featherrustle/main
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 60
+      finish-after-ticks: 30
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  cross_breeze:
+    folder: CrossBreeze
+    number: 21
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/CrossBreeze/vfx.json
+    - received_vfx/all97/unpacked/effects/CrossBreeze/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:crossbreeze/summon
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 22
+      finish-after-ticks: 10
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:crossbreeze/hold
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 62
+      finish-after-ticks: 40
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:crossbreeze/charge
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 82
+      finish-after-ticks: 40
+    - role: projectile
+      follow-entity: false
+      trigger: cast
+      effect: claude:crossbreeze/projectile
+      anchor: projectile
+      delay-ticks: 40
+      duration-ticks: 322
+      finish-after-ticks: 160
+      offset:
+      - 0.64
+      - 1.86
+      - -0.12
+      stop-effects:
+      - claude:crossbreeze/hold
+      - claude:crossbreeze/charge
+    - role: impact
+      follow-entity: false
+      trigger: impact
+      effect: claude:crossbreeze/impact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 36
+      finish-after-ticks: 20
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  returning_blade:
+    folder: ReturningBlade
+    number: 22
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/ReturningBlade/vfx.json
+    - received_vfx/all97/unpacked/effects/ReturningBlade/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:returningblade/launch
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 19
+      finish-after-ticks: 6
+    - role: projectile
+      follow-entity: false
+      trigger: cast
+      effect: claude:returningblade/blade
+      anchor: projectile
+      delay-ticks: 6
+      duration-ticks: 1202
+      finish-after-ticks: 600
+      offset:
+      - 0
+      - 1.15
+      - 1.1
+    - role: impact
+      follow-entity: false
+      trigger: external:return_to_caster
+      effect: claude:returningblade/catch
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 32
+      finish-after-ticks: 10
+    external-events:
+    - return_to_caster
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    trajectory: out-and-back
+    impact-normal:
+    - 0
+    - 1
+    - 0
+  pressure_press:
+    folder: PressurePress
+    number: 23
+    range: 15
+    speed: 0.6
+    holdTicks: 8
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/PressurePress/vfx.json
+    - received_vfx/all97/unpacked/effects/PressurePress/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:pressurepress/gather
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 19
+      finish-after-ticks: 6
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:pressurepress/press
+      anchor: target
+      delay-ticks: 7
+      duration-ticks: 25
+      finish-after-ticks: 8
+    - role: attached
+      follow-entity: true
+      trigger: expire
+      effect: claude:pressurepress/release
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 20
+      finish-after-ticks: 3
+      end-branch: any
+      stop-effects:
+      - claude:pressurepress/gather
+      - claude:pressurepress/press
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    sequence:
+      sustainStart: 0.35
+      hold:
+        min: 0.1
+        max: 5
+        default: 0.4
+      holdInput: holdDuration
+      onSustainStop: stopEmitting
+      onCancel: jumpToEnd
+  wind_decoy:
+    folder: WindDecoy
+    number: 24
+    range: 10
+    speed: 0.6
+    holdTicks: 58
+    numeric-provenance: preserved approved range; other unspecified numbers editable
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/WindDecoy/vfx.json
+    - received_vfx/all97/unpacked/effects/WindDecoy/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:winddecoy/begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 43
+      finish-after-ticks: 20
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:winddecoy/sustain
+      anchor: target
+      delay-ticks: 20
+      duration-ticks: 92
+      finish-after-ticks: 58
+    - role: static
+      follow-entity: false
+      trigger: expire
+      effect: claude:winddecoy/end
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 50
+      finish-after-ticks: 20
+      end-branch: any
+      stop-effects:
+      - claude:winddecoy/begin
+      - claude:winddecoy/sustain
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    sequence:
+      sustainStart: 1
+      hold:
+        min: 0.5
+        max: 30
+        default: 2.9
+      holdInput: holdDuration
+      onSustainStop: stopEmitting
+      onCancel: jumpToEnd
+  air_step:
+    folder: AirStep
+    number: 25
+    range: 15
+    speed: 0.6
+    holdTicks: 60
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/AirStep/vfx.json
+    - received_vfx/all97/unpacked/effects/AirStep/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:airstep/begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 27
+      finish-after-ticks: 10
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:airstep/sustain
+      anchor: target
+      delay-ticks: 9
+      duration-ticks: 96
+      finish-after-ticks: 60
+    - role: static
+      follow-entity: false
+      trigger: expire
+      effect: claude:airstep/end
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 38
+      finish-after-ticks: 10
+      end-branch: any
+      stop-effects:
+      - claude:airstep/begin
+      - claude:airstep/sustain
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    sequence:
+      sustainStart: 0.45
+      hold:
+        min: 0.1
+        max: 600
+        default: 3
+      holdInput: holdDuration
+      onSustainStop: stopEmitting
+      onCancel: jumpToEnd
+  lightning_needle:
+    folder: LightningNeedle
+    number: 26
+    range: 20
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: preserved approved range; other unspecified numbers editable
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/LightningNeedle/vfx.json
+    - received_vfx/all97/unpacked/effects/LightningNeedle/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:lightningneedle/strike
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 88
+      finish-after-ticks: 40
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  air_stacking:
+    folder: AirStacking
+    number: 27
+    range: 10
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: preserved approved range; other unspecified numbers editable
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/AirStacking/vfx.json
+    - received_vfx/all97/unpacked/effects/AirStacking/NOTES.md
+    phases:
+    - role: impact
+      follow-entity: false
+      trigger: cast
+      effect: claude:airstacking/place
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 18
+      finish-after-ticks: 8
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  arrested_orbit:
+    folder: ArrestedOrbit
+    number: 28
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/ArrestedOrbit/vfx.json
+    - received_vfx/all97/unpacked/effects/ArrestedOrbit/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:arrestedorbit/summon
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 22
+      finish-after-ticks: 10
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:arrestedorbit/idle1
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 60
+      finish-after-ticks: 38
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:arrestedorbit/idle2
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 60
+      finish-after-ticks: 38
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:arrestedorbit/idle3
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 60
+      finish-after-ticks: 38
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:arrestedorbit/idle4
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 60
+      finish-after-ticks: 38
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:arrestedorbit/idle5
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 60
+      finish-after-ticks: 38
+    - role: projectile
+      follow-entity: false
+      trigger: external:shot
+      effect: claude:arrestedorbit/projectile
+      anchor: projectile
+      delay-ticks: 0
+      duration-ticks: 322
+      finish-after-ticks: 160
+    - role: impact
+      follow-entity: false
+      trigger: impact
+      effect: claude:arrestedorbit/impact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 33
+      finish-after-ticks: 20
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    salvo:
+      count: 5
+      projectileSystem: projectile
+      impactSystem: impact
+      frame: attached
+      fireStart:
+        min: 0.3
+        max: 10
+        default: 0.9
+      fireStartInput: fireStart
+      interval:
+        min: 0.05
+        max: 1
+        default: 0.2
+      intervalInput: fireInterval
+      onFire: stopIdleAndLaunch
+      shots:
+      - index: 0
+        slot:
+        - -0.95
+        - 2.25
+        - -0.35
+        aim:
+        - 0.0902
+        - 0.10126
+        stopSystems:
+        - idle1
+      - index: 1
+        slot:
+        - 0.9
+        - 1
+        - 0.15
+        aim:
+        - -0.04494
+        - -0.10135
+        stopSystems:
+        - idle2
+      - index: 2
+        slot:
+        - 0.62
+        - 2.5
+        - -0.7
+        aim:
+        - 0.11269
+        - -0.06383
+        stopSystems:
+        - idle3
+      - index: 3
+        slot:
+        - -1.2
+        - 1.25
+        - 0.3
+        aim:
+        - -0.01708
+        - 0.13707
+        stopSystems:
+        - idle4
+      - index: 4
+        slot:
+        - -0.1
+        - 2.85
+        - -0.95
+        aim:
+        - 0.1447
+        - 0.01005
+        stopSystems:
+        - idle5
+  crossfire:
+    folder: Crossfire
+    number: 29
+    range: 15
+    speed: 0.6
+    holdTicks: 16
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/Crossfire/vfx.json
+    - received_vfx/all97/unpacked/effects/Crossfire/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:crossfire/summon
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 25
+      finish-after-ticks: 10
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:crossfire/charge
+      anchor: target
+      delay-ticks: 10
+      duration-ticks: 42
+      finish-after-ticks: 16
+    - role: static
+      follow-entity: false
+      trigger: expire
+      effect: claude:crossfire/strike
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 66
+      finish-after-ticks: 20
+      end-branch: any
+      stop-effects:
+      - claude:crossfire/summon
+      - claude:crossfire/charge
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    sequence:
+      sustainStart: 0.5
+      hold:
+        min: 0.3
+        max: 8
+        default: 0.8
+      holdInput: holdDuration
+      onSustainStop: stopEmitting
+      onCancel: jumpToEnd
+  resonant_arrow:
+    folder: ResonantArrow
+    number: 30
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/ResonantArrow/vfx.json
+    - received_vfx/all97/unpacked/effects/ResonantArrow/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:resonantarrow/summon
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 22
+      finish-after-ticks: 10
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:resonantarrow/idle
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 58
+      finish-after-ticks: 36
+    - role: projectile
+      follow-entity: false
+      trigger: external:shot
+      effect: claude:resonantarrow/projectile
+      anchor: projectile
+      delay-ticks: 0
+      duration-ticks: 322
+      finish-after-ticks: 160
+    - role: impact
+      follow-entity: false
+      trigger: impact
+      effect: claude:resonantarrow/impact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 25
+      finish-after-ticks: 12
+    external-events:
+    - valid_direct_damage_excluding_dot_and_own_support_damage
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    salvo:
+      count: 1
+      projectileSystem: projectile
+      impactSystem: impact
+      frame: attached
+      fireStart:
+        min: 0.3
+        max: 30
+        default: 1.6
+      fireStartInput: fireStart
+      interval:
+        min: 0.05
+        max: 1
+        default: 0.2
+      intervalInput: fireInterval
+      onFire: stopIdleAndLaunch
+      shots:
+      - index: 0
+        slot:
+        - -0.56
+        - 1.95
+        - -0.22
+        aim:
+        - 0.05947
+        - 0.06066
+        stopSystems:
+        - idle
+    salvo-mode: external-direct-damage
+  pressure_rupture:
+    folder: PressureRupture
+    number: 31
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/PressureRupture/vfx.json
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:pressurerupture/main
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 59
+      finish-after-ticks: 38
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  storm_crown:
+    folder: StormCrown
+    number: 32
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/StormCrown/vfx.json
+    - received_vfx/all97/unpacked/effects/StormCrown/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:stormcrown/summon
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 25
+      finish-after-ticks: 12
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:stormcrown/idle1
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 448
+      finish-after-ticks: 46
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:stormcrown/idle2
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 448
+      finish-after-ticks: 46
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:stormcrown/idle3
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 448
+      finish-after-ticks: 46
+    - role: projectile
+      follow-entity: false
+      trigger: external:shot
+      effect: claude:stormcrown/projo
+      anchor: projectile
+      delay-ticks: 0
+      duration-ticks: 322
+      finish-after-ticks: 160
+    - role: projectile
+      follow-entity: false
+      trigger: external:shot
+      effect: claude:stormcrown/projt
+      anchor: projectile
+      delay-ticks: 0
+      duration-ticks: 322
+      finish-after-ticks: 160
+    - role: projectile
+      follow-entity: false
+      trigger: external:shot
+      effect: claude:stormcrown/projv
+      anchor: projectile
+      delay-ticks: 0
+      duration-ticks: 322
+      finish-after-ticks: 160
+    - role: impact
+      follow-entity: false
+      trigger: impact
+      effect: claude:stormcrown/impacto
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 32
+      finish-after-ticks: 20
+    - role: impact
+      follow-entity: false
+      trigger: impact
+      effect: claude:stormcrown/impactt
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 32
+      finish-after-ticks: 20
+    - role: impact
+      follow-entity: false
+      trigger: impact
+      effect: claude:stormcrown/impactv
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 32
+      finish-after-ticks: 20
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    salvo:
+      count: 3
+      projectileSystem: projO
+      impactSystem: impactO
+      frame: attached
+      fireStart:
+        min: 0.5
+        max: 10
+        default: 1.3
+      fireStartInput: fireStart
+      interval:
+        min: 0.08
+        max: 1.5
+        default: 0.32
+      intervalInput: fireInterval
+      onFire: stopIdleAndLaunch
+      shots:
+      - index: 0
+        slot:
+        - 0.64
+        - 1.6
+        - -0.08
+        aim:
+        - 0.01099
+        - -0.07037
+        stopSystems:
+        - idle1
+        projectileSystem: projO
+        impactSystem: impactO
+      - index: 1
+        slot:
+        - -0.68
+        - 1.98
+        - -0.38
+        aim:
+        - 0.05099
+        - 0.07237
+        stopSystems:
+        - idle2
+        projectileSystem: projT
+        impactSystem: impactT
+      - index: 2
+        slot:
+        - 0.44
+        - 2.42
+        - -0.7
+        aim:
+        - 0.09447
+        - -0.04533
+        stopSystems:
+        - idle3
+        projectileSystem: projV
+        impactSystem: impactV
+  hearth_touch:
+    folder: HearthTouch
+    number: 33
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/HearthTouch/vfx.json
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:hearthtouch/hearth
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 35
+      finish-after-ticks: 18
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  ember_bolt:
+    folder: Fireball
+    number: 34
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/Fireball/vfx.json
+    phases:
+    - role: projectile
+      follow-entity: false
+      trigger: cast
+      effect: claude:fireball/projectile
+      anchor: projectile
+      delay-ticks: 0
+      duration-ticks: 42
+      finish-after-ticks: 20
+    - role: impact
+      follow-entity: false
+      trigger: impact
+      effect: claude:fireball/impact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 82
+      finish-after-ticks: 40
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  rekindle:
+    folder: Rekindle
+    number: 35
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/Rekindle/vfx.json
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:rekindle/main
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 43
+      finish-after-ticks: 20
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  flame_forging:
+    folder: FlameForging
+    number: 36
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/FlameForging/vfx.json
+    - received_vfx/all97/unpacked/effects/FlameForging/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:flameforging/forge
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 33
+      finish-after-ticks: 13
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  ember_trap:
+    folder: EmberTrap
+    number: 37
+    range: 15
+    speed: 0.6
+    holdTicks: 1200
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/EmberTrap/vfx.json
+    - received_vfx/all97/unpacked/effects/EmberTrap/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:embertrap/install
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 37
+      finish-after-ticks: 12
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:embertrap/armed
+      anchor: target
+      delay-ticks: 11
+      duration-ticks: 1246
+      finish-after-ticks: 1200
+    - role: static
+      follow-entity: false
+      trigger: external:trigger
+      effect: claude:embertrap/explode
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 52
+      finish-after-ticks: 8
+      end-branch: trigger
+      stop-effects:
+      - claude:embertrap/install
+      - claude:embertrap/armed
+    - role: static
+      follow-entity: false
+      trigger: expire
+      effect: claude:embertrap/dismiss
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 34
+      finish-after-ticks: 4
+      end-branch: expire
+      stop-effects:
+      - claude:embertrap/install
+      - claude:embertrap/armed
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    sequence:
+      sustainStart: 0.55
+      hold:
+        min: 0.5
+        max: 60
+        default: 60
+      holdInput: holdDuration
+      onSustainStop: stopEmitting
+      onCancel: jumpToEnd
+      triggerInput: trigger
+      onTrigger: stopEmittingAndPlayTriggerEnd
+  fire_curtain:
+    folder: FireCurtain
+    number: 38
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/FireCurtain/vfx.json
+    - received_vfx/all97/unpacked/effects/FireCurtain/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:firecurtain/begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 42
+      finish-after-ticks: 20
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:firecurtain/sustain
+      anchor: target
+      delay-ticks: 15
+      duration-ticks: 146
+      finish-after-ticks: 100
+    - role: static
+      follow-entity: false
+      trigger: expire
+      effect: claude:firecurtain/end
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 74
+      finish-after-ticks: 24
+      end-branch: any
+      stop-effects:
+      - claude:firecurtain/begin
+      - claude:firecurtain/sustain
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    sequence:
+      sustainStart: 0.75
+      hold:
+        min: 1
+        max: 30
+        default: 5
+      holdInput: holdDuration
+      onSustainStop: stopEmitting
+      onCancel: jumpToEnd
+  phoenix_oath:
+    folder: PhoenixOath
+    number: 39
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/PhoenixOath/vfx.json
+    - received_vfx/all97/unpacked/effects/PhoenixOath/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:phoenixoath/cast
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 69
+      finish-after-ticks: 32
+    - role: attached
+      follow-entity: true
+      trigger: external:lethal_prevention
+      effect: claude:phoenixoath/guard
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 70
+      finish-after-ticks: 28
+    external-events:
+    - lethal_prevention
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    buff-duration-seconds: 300
+    no-persistent-visual: true
+  living_furnace:
+    folder: LivingFurnace
+    number: 40
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/LivingFurnace/vfx.json
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:livingfurnace/furnace
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 37
+      finish-after-ticks: 19
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  falling_star:
+    folder: FallingStar
+    number: 41
+    range: 20
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/FallingStar/vfx.json
+    - received_vfx/all97/unpacked/effects/FallingStar/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:fallingstar/chant
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 118
+      finish-after-ticks: 68
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:fallingstar/mark
+      anchor: target
+      delay-ticks: 12
+      duration-ticks: 162
+      finish-after-ticks: -1
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:fallingstar/release
+      anchor: caster
+      delay-ticks: 68
+      duration-ticks: 40
+      finish-after-ticks: 10
+    - role: projectile
+      follow-entity: false
+      trigger: cast
+      effect: claude:fallingstar/meteor
+      anchor: projectile
+      delay-ticks: 68
+      duration-ticks: 622
+      finish-after-ticks: 20
+      offset:
+      - -3
+      - 24
+      - 19
+      stop-effects:
+      - claude:fallingstar/chant
+    - role: impact
+      follow-entity: false
+      trigger: impact
+      effect: claude:fallingstar/impact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 78
+      finish-after-ticks: 20
+      stop-effects:
+      - claude:fallingstar/mark
+    - role: static
+      follow-entity: false
+      trigger: impact
+      effect: claude:fallingstar/afterglow
+      anchor: impact
+      delay-ticks: 16
+      duration-ticks: 150
+      finish-after-ticks: 56
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    trajectory: targeted-meteor
+    timing-provenance: 3.4/.6/.8 projecteditable defaults; NOTES externaltiming, not
+      normative demo authority
+  flame_lash:
+    folder: FlameLash
+    number: 42
+    range: 8
+    speed: 0.6
+    holdTicks: 20
+    numeric-provenance: preserved approved range; other unspecified numbers editable
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/FlameLash/vfx.json
+    - received_vfx/all97/unpacked/effects/FlameLash/NOTES.md
+    phases:
+    - role: link
+      follow-entity: false
+      trigger: cast
+      effect: claude:flamelash/extend
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 18
+      finish-after-ticks: 6
+    - role: link
+      follow-entity: false
+      trigger: cast
+      effect: claude:flamelash/pull
+      anchor: caster
+      delay-ticks: 6
+      duration-ticks: 32
+      finish-after-ticks: 20
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:flamelash/wrap
+      anchor: caster
+      delay-ticks: 6
+      duration-ticks: 40
+      finish-after-ticks: 20
+    - role: link
+      follow-entity: false
+      trigger: expire
+      effect: claude:flamelash/snap
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 24
+      finish-after-ticks: 4
+      end-branch: expire
+      stop-effects:
+      - claude:flamelash/extend
+      - claude:flamelash/pull
+      - claude:flamelash/wrap
+    - role: attached
+      follow-entity: true
+      trigger: expire
+      effect: claude:flamelash/wrapbreak
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 25
+      finish-after-ticks: 2
+      end-branch: expire
+      stop-effects:
+      - claude:flamelash/extend
+      - claude:flamelash/pull
+      - claude:flamelash/wrap
+    - role: link
+      follow-entity: false
+      trigger: external:trigger
+      effect: claude:flamelash/retract
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 22
+      finish-after-ticks: 6
+      end-branch: trigger
+      stop-effects:
+      - claude:flamelash/extend
+      - claude:flamelash/pull
+      - claude:flamelash/wrap
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    sequence:
+      sustainStart: 0.3
+      hold:
+        min: 0.2
+        max: 10
+        default: 1
+      holdInput: holdDuration
+      onSustainStop: stopEmitting
+      onCancel: jumpToEnd
+      triggerInput: trigger
+      onTrigger: stopEmittingAndPlayTriggerEnd
+  palm_fireworks:
+    folder: PalmFireworks
+    number: 44
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/PalmFireworks/vfx.json
+    - received_vfx/all97/unpacked/effects/PalmFireworks/NOTES.md
+    phases:
+    - role: projectile
+      follow-entity: false
+      trigger: cast
+      effect: claude:palmfireworks/rocket
+      anchor: projectile
+      delay-ticks: 0
+      duration-ticks: 34
+      finish-after-ticks: 20
+    - role: impact
+      follow-entity: false
+      trigger: impact
+      effect: claude:palmfireworks/pop
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 71
+      finish-after-ticks: 36
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  ash_brand:
+    folder: AshBrand
+    number: 45
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/AshBrand/vfx.json
+    - received_vfx/all97/unpacked/effects/AshBrand/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:ashbrand/mark
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 114
+      finish-after-ticks: 60
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:ashbrand/explode
+      anchor: target
+      delay-ticks: 60
+      duration-ticks: 38
+      finish-after-ticks: 6
+    - role: link
+      follow-entity: false
+      trigger: external:transfer
+      effect: claude:ashbrand/transfer
+      anchor: external
+      delay-ticks: 0
+      duration-ticks: 20
+      finish-after-ticks: 2
+    external-events:
+    - transfer
+    - new_target_mark
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    reapply-immunity-seconds: 10
+    pending: transfer target selection external
+  flame_leap:
+    folder: BlazeKick
+    number: 46
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/BlazeKick/vfx.json
+    - received_vfx/all97/unpacked/effects/BlazeKick/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:blazekick/flame_leap
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 43
+      finish-after-ticks: 15
+    - role: impact
+      follow-entity: false
+      trigger: external:contact
+      effect: claude:blazekick/flame_leap_hit
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 33
+      finish-after-ticks: 5
+    external-events:
+    - contact
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  crimson_heart:
+    folder: CrimsonHeart
+    number: 47
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/CrimsonHeart/vfx.json
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:crimsonheart/crimsonheart
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 114
+      finish-after-ticks: 60
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  wick_trimming:
+    folder: WickTrimming
+    number: 48
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/WickTrimming/vfx.json
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:wicktrimming/main
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 45
+      finish-after-ticks: 20
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  glass_firing:
+    folder: GlassFiring
+    number: 49
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/GlassFiring/vfx.json
+    phases:
+    - role: impact
+      follow-entity: false
+      trigger: cast
+      effect: claude:glassfiring/glass_firing
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 25
+      finish-after-ticks: 8
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  charcoal_conversion:
+    folder: CharcoalConversion
+    number: 50
+    range: 20
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: preserved approved range; other unspecified numbers editable
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/CharcoalConversion/vfx.json
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:charcoalconversion/charcoal_conversion
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 28
+      finish-after-ticks: 9
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    anchor-verification: reviewed original description or included NOTES placement
+      verified
+  sponge_drying:
+    folder: SpongeDrying
+    number: 51
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/SpongeDrying/vfx.json
+    - received_vfx/all97/unpacked/effects/SpongeDrying/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:spongedrying/dry
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 43
+      finish-after-ticks: 20
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  flame_footprints:
+    folder: FlameFootprints
+    number: 52
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/FlameFootprints/vfx.json
+    - received_vfx/all97/unpacked/effects/FlameFootprints/NOTES.md
+    phases:
+    - role: impact
+      follow-entity: false
+      trigger: external:left_step
+      effect: claude:flamefootprints/stepl
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 88
+      finish-after-ticks: 46
+    - role: impact
+      follow-entity: false
+      trigger: external:right_step
+      effect: claude:flamefootprints/stepr
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 88
+      finish-after-ticks: 46
+    external-events:
+    - left_step
+    - right_step
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    pending: movementstep event binding required; eachstep authored2sec fuse
+  boiling_armor:
+    folder: BoilingArmor
+    number: 53
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/BoilingArmor/vfx.json
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:boilingarmor/boiling_armor
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 59
+      finish-after-ticks: 30
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  kiln_breath:
+    folder: KilnBreath
+    number: 54
+    range: 15
+    speed: 0.6
+    holdTicks: 400
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/KilnBreath/vfx.json
+    - received_vfx/all97/unpacked/effects/KilnBreath/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:kilnbreath/ignite
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 37
+      finish-after-ticks: 9
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:kilnbreath/breathe
+      anchor: caster
+      delay-ticks: 9
+      duration-ticks: 459
+      finish-after-ticks: 400
+    - role: attached
+      follow-entity: true
+      trigger: expire
+      effect: claude:kilnbreath/diedown
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 49
+      finish-after-ticks: 7
+      end-branch: any
+      stop-effects:
+      - claude:kilnbreath/ignite
+      - claude:kilnbreath/breathe
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    sequence:
+      sustainStart: 0.45
+      hold:
+        min: 0.5
+        max: 600
+        default: 20
+      holdInput: holdDuration
+      onSustainStop: stopEmitting
+      onCancel: jumpToEnd
+      triggerInput: null
+      onTrigger: null
+  glaze_coating:
+    folder: GlazeCoating
+    number: 55
+    range: 15
+    speed: 0.6
+    holdTicks: 140
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/GlazeCoating/vfx.json
+    - received_vfx/all97/unpacked/effects/GlazeCoating/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:glazecoating/glaze_coating_begin
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 13
+      finish-after-ticks: 2
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:glazecoating/glaze_coating
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 258
+      finish-after-ticks: 140
+    - role: attached
+      follow-entity: true
+      trigger: expire
+      effect: claude:glazecoating/glaze_coating_end
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 51
+      finish-after-ticks: 4
+      end-branch: any
+      stop-effects:
+      - claude:glazecoating/glaze_coating_begin
+      - claude:glazecoating/glaze_coating
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    sequence:
+      sustainStart: 0
+      hold:
+        min: 0.05
+        max: 86400
+        default: 7
+      holdInput: holdDuration
+      onSustainStop: stopEmitting
+      onCancel: jumpToEnd
+      triggerInput: null
+      onTrigger: null
+  explosive_wedge:
+    folder: ExplosiveWedge
+    number: 56
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/ExplosiveWedge/vfx.json
+    - received_vfx/all97/unpacked/effects/ExplosiveWedge/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:explosivewedge/wedge_attach
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 624
+      finish-after-ticks: 600
+    - role: attached
+      follow-entity: true
+      trigger: external:melee_hit
+      effect: claude:explosivewedge/wedge_explode
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 38
+      finish-after-ticks: 8
+      stop-effects:
+      - claude:explosivewedge/wedge_attach
+    external-events:
+    - melee_hit
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    pending: duration30sec editable cap; melee hit signal external
+  heat_recovery:
+    folder: HeatRecovery
+    number: 58
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/HeatRecovery/vfx.json
+    - received_vfx/all97/unpacked/effects/HeatRecovery/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:heatrecovery/heat_recovery
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 53
+      finish-after-ticks: 26
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    anchor-verification: reviewed original description or included NOTES placement
+      verified
+  firebird_hunt:
+    folder: FirebirdHunt
+    number: 59
+    range: 10
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/FirebirdHunt/vfx.json
+    - received_vfx/all97/unpacked/effects/FirebirdHunt/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:firebirdhunt/summon
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 36
+      finish-after-ticks: 10
+    - role: projectile
+      follow-entity: false
+      trigger: cast
+      effect: claude:firebirdhunt/firebird
+      anchor: projectile
+      delay-ticks: 9
+      duration-ticks: 1202
+      finish-after-ticks: 600
+      offset:
+      - 0
+      - 1.55
+      - 1.4
+    - role: impact
+      follow-entity: false
+      trigger: impact
+      effect: claude:firebirdhunt/dissolve
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 62
+      finish-after-ticks: 20
+    - role: impact
+      follow-entity: false
+      trigger: expire
+      effect: claude:firebirdhunt/dissolve
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 62
+      finish-after-ticks: 20
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    impact-normal: negative-incoming
+    pending: impact andexpiry mutuallyexclusive
+  lava_suture:
+    folder: LavaSuture
+    number: 60
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/LavaSuture/vfx.json
+    - received_vfx/all97/unpacked/effects/LavaSuture/NOTES.md
+    phases:
+    - role: impact
+      follow-entity: false
+      trigger: cast
+      effect: claude:lavasuture/suture
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 55
+      finish-after-ticks: 30
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  flame_sword_dance:
+    folder: FlameSwordDance
+    number: 61
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/FlameSwordDance/vfx.json
+    - received_vfx/all97/unpacked/effects/FlameSwordDance/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:flamesworddance/summon
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 47
+      finish-after-ticks: 18
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:flamesworddance/idle1
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 480
+      finish-after-ticks: 78
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:flamesworddance/idle2
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 480
+      finish-after-ticks: 78
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:flamesworddance/idle3
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 480
+      finish-after-ticks: 78
+    - role: projectile
+      follow-entity: false
+      trigger: external:shot
+      effect: claude:flamesworddance/projectile
+      anchor: projectile
+      delay-ticks: 0
+      duration-ticks: 322
+      finish-after-ticks: 160
+    - role: impact
+      follow-entity: false
+      trigger: impact
+      effect: claude:flamesworddance/impact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 102
+      finish-after-ticks: 52
+    - role: attached
+      follow-entity: true
+      trigger: external:dismiss
+      effect: claude:flamesworddance/dismiss1
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 86
+      finish-after-ticks: 44
+    - role: attached
+      follow-entity: true
+      trigger: external:dismiss
+      effect: claude:flamesworddance/dismiss2
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 86
+      finish-after-ticks: 44
+    - role: attached
+      follow-entity: true
+      trigger: external:dismiss
+      effect: claude:flamesworddance/dismiss3
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 86
+      finish-after-ticks: 44
+    external-events:
+    - attack_consumes_one_sword
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    salvo:
+      count: 3
+      projectileSystem: projectile
+      impactSystem: impact
+      frame: attached
+      fireStart:
+        min: 0.6
+        max: 10
+        default: 1.8
+      fireStartInput: fireStart
+      interval:
+        min: 0.1
+        max: 3
+        default: 0.7
+      intervalInput: fireInterval
+      onFire: stopIdleAndLaunch
+      shots:
+      - index: 0
+        slot:
+        - 1.05
+        - 1.45
+        - 0.15
+        aim:
+        - 0.01683
+        - -0.11809
+        stopSystems:
+        - idle1
+        projectileSystem: projectile
+        impactSystem: impact
+      - index: 1
+        slot:
+        - -1.15
+        - 1.1
+        - -0.3
+        aim:
+        - -0.02134
+        - 0.12303
+        stopSystems:
+        - idle2
+        projectileSystem: projectile
+        impactSystem: impact
+      - index: 2
+        slot:
+        - 0.25
+        - 2.6
+        - -0.95
+        aim:
+        - 0.12988
+        - -0.02512
+        stopSystems:
+        - idle3
+        projectileSystem: projectile
+        impactSystem: impact
+    salvo-mode: external-attack
+  incandescent_break:
+    folder: IncandescentBreak
+    number: 62
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/IncandescentBreak/vfx.json
+    - received_vfx/all97/unpacked/effects/IncandescentBreak/NOTES.md
+    phases:
+    - role: link
+      follow-entity: false
+      trigger: cast
+      effect: claude:incandescentbreak/beam
+      anchor: external
+      delay-ticks: 0
+      duration-ticks: 40
+      finish-after-ticks: 20
+      offset:
+      - 0.3
+      - 1.37
+      - 0.45
+      link-source: caster
+      link-target: target
+      target-offset:
+      - 0
+      - 0
+      - 0
+    - role: impact
+      follow-entity: false
+      trigger: cast
+      effect: claude:incandescentbreak/impact
+      anchor: target
+      delay-ticks: 6
+      duration-ticks: 34
+      finish-after-ticks: 10
+    - role: impact
+      follow-entity: false
+      trigger: external:shield_hit
+      effect: claude:incandescentbreak/impactshield
+      anchor: impact
+      delay-ticks: 6
+      duration-ticks: 34
+      finish-after-ticks: 10
+    external-events:
+    - shield_hit
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    trajectory: raycast_link
+    pending: shield usesimpactShield insteadimpact; sourcecast muzzle targetraycastendpoint
+  blue_bonfire:
+    folder: BlueBonfire
+    number: 63
+    range: 15
+    speed: 0.6
+    holdTicks: 1200
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/BlueBonfire/vfx.json
+    - received_vfx/all97/unpacked/effects/BlueBonfire/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:bluebonfire/ignite
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 58
+      finish-after-ticks: 20
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:bluebonfire/burn
+      anchor: target
+      delay-ticks: 18
+      duration-ticks: 1292
+      finish-after-ticks: 1200
+    - role: static
+      follow-entity: false
+      trigger: expire
+      effect: claude:bluebonfire/dieout
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 82
+      finish-after-ticks: 20
+      end-branch: any
+      stop-effects:
+      - claude:bluebonfire/ignite
+      - claude:bluebonfire/burn
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    sequence:
+      sustainStart: 0.9
+      hold:
+        min: 1
+        max: 120
+        default: 60
+      holdInput: holdDuration
+      onSustainStop: stopEmitting
+      onCancel: jumpToEnd
+      triggerInput: null
+      onTrigger: null
+  crimson_breath:
+    folder: CrimsonBreath
+    number: 64
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/CrimsonBreath/vfx.json
+    - received_vfx/all97/unpacked/effects/CrimsonBreath/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:crimsonbreath/chant
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 162
+      finish-after-ticks: 100
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:crimsonbreath/dragon
+      anchor: caster
+      delay-ticks: 100
+      duration-ticks: 206
+      finish-after-ticks: 148
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:crimsonbreath/breath
+      anchor: caster
+      delay-ticks: 148
+      duration-ticks: 142
+      finish-after-ticks: 100
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:crimsonbreath/fade
+      anchor: caster
+      delay-ticks: 248
+      duration-ticks: 144
+      finish-after-ticks: 70
+      stop-effects:
+      - claude:crimsonbreath/chant
+      - claude:crimsonbreath/dragon
+      - claude:crimsonbreath/breath
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    timing-provenance: NOTES fixed dragon->breath2.4sec; chant5/hold5 projectdefaults
+      matching original draft, editable
+  water_breath:
+    folder: WaterBreath
+    number: 65
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/WaterBreath/vfx.json
+    - received_vfx/all97/unpacked/effects/WaterBreath/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:waterbreath/water_breath
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 49
+      finish-after-ticks: 23
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  tide_stride:
+    folder: TideStride
+    number: 66
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/TideStride/vfx.json
+    - received_vfx/all97/unpacked/effects/TideStride/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:tidestride/tide_stride
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 50
+      finish-after-ticks: 25
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  water_bolt:
+    folder: WaterBolt
+    number: 67
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/WaterBolt/vfx.json
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:waterbolt/cast
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 18
+      finish-after-ticks: 8
+    - role: projectile
+      follow-entity: false
+      trigger: cast
+      effect: claude:waterbolt/projectile
+      anchor: projectile
+      delay-ticks: 8
+      duration-ticks: 322
+      finish-after-ticks: 160
+    - role: impact
+      follow-entity: false
+      trigger: impact
+      effect: claude:waterbolt/impact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 39
+      finish-after-ticks: 20
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  quench:
+    folder: Quench
+    number: 68
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/Quench/vfx.json
+    - received_vfx/all97/unpacked/effects/Quench/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:quench/quench
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 37
+      finish-after-ticks: 13
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    anchor-verification: reviewed original description or included NOTES placement
+      verified
+  purifying_wave:
+    folder: PurifyingWave
+    number: 69
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/PurifyingWave/vfx.json
+    - received_vfx/all97/unpacked/effects/PurifyingWave/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:purifyingwave/wave
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 61
+      finish-after-ticks: 26
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:purifyingwave/purify_target
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 35
+      finish-after-ticks: 9
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  ice_bridge:
+    folder: IceBridge
+    number: 70
+    range: 15
+    speed: 0.6
+    holdTicks: 300
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/IceBridge/vfx.json
+    - received_vfx/all97/unpacked/effects/IceBridge/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:icebridge/icebridge_begin
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+      finish-after-ticks: 6
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:icebridge/icebridge
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 332
+      finish-after-ticks: 300
+    - role: attached
+      follow-entity: true
+      trigger: expire
+      effect: claude:icebridge/icebridge_end
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 57
+      finish-after-ticks: 2
+      end-branch: any
+      stop-effects:
+      - claude:icebridge/icebridge_begin
+      - claude:icebridge/icebridge
+    - role: impact
+      follow-entity: false
+      trigger: external:step
+      effect: claude:icebridge/step
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 62
+      finish-after-ticks: 28
+    external-events:
+    - step
+    review: sequence exact; auxiliary phases require actual heal/ally/mining/step
+      events, never fire automatically
+    sequence:
+      sustainStart: 0
+      hold:
+        min: 0.1
+        max: 60
+        default: 15
+      holdInput: holdDuration
+      onSustainStop: stopEmitting
+      onCancel: jumpToEnd
+      triggerInput: null
+      onTrigger: null
+  spring_unseal:
+    folder: SpringUnseal
+    number: 72
+    range: 20
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: preserved approved range; other unspecified numbers editable
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/SpringUnseal/vfx.json
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:springunseal/spring_unseal
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 61
+      finish-after-ticks: 30
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  water_elemental:
+    folder: WaterElemental
+    number: 73
+    range: 15
+    speed: 0.6
+    holdTicks: 600
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/WaterElemental/vfx.json
+    - received_vfx/all97/unpacked/effects/WaterElemental/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:waterelemental/summon
+      anchor: external
+      delay-ticks: 0
+      duration-ticks: 50
+      finish-after-ticks: 24
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:waterelemental/idle
+      anchor: external
+      delay-ticks: 20
+      duration-ticks: 1782
+      finish-after-ticks: 580
+    - role: attached
+      follow-entity: true
+      trigger: external:attack
+      effect: claude:waterelemental/attack
+      anchor: external
+      delay-ticks: 0
+      duration-ticks: 38
+      finish-after-ticks: 18
+      stop-effects:
+      - claude:waterelemental/idle
+    - role: projectile
+      follow-entity: false
+      trigger: external:attack
+      effect: claude:waterelemental/projectile
+      anchor: projectile
+      delay-ticks: 9
+      duration-ticks: 162
+      finish-after-ticks: 80
+      offset:
+      - 0.01
+      - 0.178
+      - 0.24
+      projectile-origin: virtual
+    - role: attached
+      follow-entity: true
+      trigger: external:attack
+      effect: claude:waterelemental/idle
+      anchor: external
+      delay-ticks: 18
+      duration-ticks: 1782
+      finish-after-ticks: 580
+    - role: impact
+      follow-entity: false
+      trigger: impact
+      effect: claude:waterelemental/impact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 38
+      finish-after-ticks: 20
+    - role: attached
+      follow-entity: true
+      trigger: expire
+      effect: claude:waterelemental/dismiss
+      anchor: external
+      delay-ticks: 0
+      duration-ticks: 60
+      finish-after-ticks: 20
+      stop-effects:
+      - claude:waterelemental/idle
+      - claude:waterelemental/attack
+    external-events:
+    - attack
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    anchor-contract: invisible spirit anchor NOTcaster; summonfollowoffset (.9,1.3,-.45)
+      suggested; entity retained2.7s dismiss
+    pending: requires owned spirit anchor,targetscan and attack scheduler separate
+      fromrender
+    virtual-anchor:
+      offset:
+      - 0.9
+      - 1.3
+      - -0.45
+      lifetime-ticks: 600
+      attack-interval-ticks: 40
+      attack-range: 15
+      attack-event: ''
+    activation-policy: summon/idle/follow/dismiss now; realattack hookup later; attack
+      event operator preview available
+  eternal_ice_prison:
+    folder: EternalIcePrison
+    number: 74
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/EternalIcePrison/vfx.json
+    - received_vfx/all97/unpacked/effects/EternalIcePrison/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:eternaliceprison/eternal_ice_prison_begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 38
+      finish-after-ticks: 12
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:eternaliceprison/eternal_ice_prison
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 238
+      finish-after-ticks: 100
+    - role: attached
+      follow-entity: true
+      trigger: expire
+      effect: claude:eternaliceprison/eternal_ice_prison_end
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 90
+      finish-after-ticks: 36
+      end-branch: any
+      stop-effects:
+      - claude:eternaliceprison/eternal_ice_prison_begin
+      - claude:eternaliceprison/eternal_ice_prison
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    sequence:
+      sustainStart: 0
+      hold:
+        min: 0.1
+        max: 5
+        default: 5
+      holdInput: holdDuration
+      onSustainStop: stopEmitting
+      onCancel: jumpToEnd
+      triggerInput: null
+      onTrigger: null
+  cauldron_fill:
+    folder: CauldronFill
+    number: 75
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/CauldronFill/vfx.json
+    - received_vfx/all97/unpacked/effects/CauldronFill/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:cauldronfill/main
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 36
+      finish-after-ticks: 20
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  dye_rinse:
+    folder: DyeRinse
+    number: 76
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/DyeRinse/vfx.json
+    - received_vfx/all97/unpacked/effects/DyeRinse/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:dyerinse/dye_rinse
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 38
+      finish-after-ticks: 22
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  fish_lure:
+    folder: FishLure
+    number: 77
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/FishLure/vfx.json
+    - received_vfx/all97/unpacked/effects/FishLure/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:fishlure/main
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 80
+      finish-after-ticks: 40
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  frost_rupture:
+    folder: FrostRupture
+    number: 78
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/FrostRupture/vfx.json
+    - received_vfx/all97/unpacked/effects/FrostRupture/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:frostrupture/warn
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 44
+      finish-after-ticks: 20
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:frostrupture/rupture
+      anchor: target
+      delay-ticks: 20
+      duration-ticks: 52
+      finish-after-ticks: 20
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  pressure_lance:
+    folder: PressureLance
+    number: 79
+    range: 15
+    speed: 1.25
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/PressureLance/vfx.json
+    - received_vfx/all97/unpacked/effects/PressureLance/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:pressurelance/summon
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 22
+      finish-after-ticks: 10
+    - role: projectile
+      follow-entity: false
+      trigger: cast
+      effect: claude:pressurelance/projectile
+      anchor: projectile
+      delay-ticks: 10
+      duration-ticks: 322
+      finish-after-ticks: 160
+      offset:
+      - 0.62
+      - 1.42
+      - 0.35
+      stop-effects:
+      - claude:pressurelance/summon
+    - role: impact
+      follow-entity: false
+      trigger: external:pierce_enemy
+      effect: claude:pressurelance/pierce
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 26
+      finish-after-ticks: 12
+    - role: impact
+      follow-entity: false
+      trigger: expire
+      effect: claude:pressurelance/dissolve
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 44
+      finish-after-ticks: 20
+    - role: impact
+      follow-entity: false
+      trigger: external:block_contact
+      effect: claude:pressurelance/splash
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 34
+      finish-after-ticks: 16
+    external-events:
+    - pierce_enemy
+    - block_contact
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    trajectory: piercing
+    target-limit: 3
+    pending: dissolve airnormal atcentre; block splash realnormal attip centre+forward1.4;
+      stop=block orrange
+  life_distribution:
+    folder: LifeDistribution
+    number: 80
+    range: 6
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/LifeDistribution/vfx.json
+    - received_vfx/all97/unpacked/effects/LifeDistribution/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:lifedistribution/range
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 79
+      finish-after-ticks: 38
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:lifedistribution/receive
+      anchor: caster
+      delay-ticks: 6
+      duration-ticks: 62
+      finish-after-ticks: 34
+    - role: link
+      follow-entity: false
+      trigger: external:selected_ally
+      effect: claude:lifedistribution/link
+      anchor: external
+      delay-ticks: 6
+      duration-ticks: 52
+      finish-after-ticks: 32
+      offset:
+      - 0
+      - 1.15
+      - 0
+      target-offset:
+      - 0
+      - 1.1
+      - 0
+    - role: attached
+      follow-entity: true
+      trigger: external:selected_ally
+      effect: claude:lifedistribution/receive
+      anchor: target
+      delay-ticks: 6
+      duration-ticks: 62
+      finish-after-ticks: 34
+    external-events:
+    - selected_ally
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    target-limit: 3
+  moist_farmland:
+    folder: MoistFarmland
+    number: 81
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/MoistFarmland/vfx.json
+    - received_vfx/all97/unpacked/effects/MoistFarmland/NOTES.md
+    phases:
+    - role: impact
+      follow-entity: false
+      trigger: cast
+      effect: claude:moistfarmland/moisten
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 52
+      finish-after-ticks: 30
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  wash_letters:
+    folder: WashLetters
+    number: 82
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/WashLetters/vfx.json
+    - received_vfx/all97/unpacked/effects/WashLetters/NOTES.md
+    phases:
+    - role: impact
+      follow-entity: false
+      trigger: cast
+      effect: claude:washletters/wash
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 39
+      finish-after-ticks: 18
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  healing_rain:
+    folder: HealingRain
+    number: 83
+    range: 15
+    speed: 0.6
+    holdTicks: 60
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/HealingRain/vfx.json
+    - received_vfx/all97/unpacked/effects/HealingRain/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:healingrain/begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 54
+      finish-after-ticks: 20
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:healingrain/sustain
+      anchor: target
+      delay-ticks: 18
+      duration-ticks: 126
+      finish-after-ticks: 60
+    - role: static
+      follow-entity: false
+      trigger: expire
+      effect: claude:healingrain/end
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 54
+      finish-after-ticks: 20
+      end-branch: any
+      stop-effects:
+      - claude:healingrain/begin
+      - claude:healingrain/sustain
+    - role: attached
+      follow-entity: true
+      trigger: external:heal
+      effect: claude:healingrain/heal
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 38
+      finish-after-ticks: 12
+    external-events:
+    - heal
+    review: sequence exact; auxiliary phases require actual heal/ally/mining/step
+      events, never fire automatically
+    sequence:
+      sustainStart: 0.9
+      hold:
+        min: 0.5
+        max: 30
+        default: 3
+      holdInput: holdDuration
+      onSustainStop: stopEmitting
+      onCancel: jumpToEnd
+      triggerInput: null
+      onTrigger: null
+  dew_gathering:
+    folder: DewGathering
+    number: 84
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/DewGathering/vfx.json
+    - received_vfx/all97/unpacked/effects/DewGathering/NOTES.md
+    phases:
+    - role: link
+      follow-entity: false
+      trigger: cast
+      effect: claude:dewgathering/dew_gathering
+      anchor: external
+      delay-ticks: 0
+      duration-ticks: 47
+      finish-after-ticks: 25
+      link-source: caster
+      link-target: caster
+      offset:
+      - 0.2
+      - 1.3
+      - 0.45
+      target-offset:
+      - -0.15
+      - 1.3
+      - 0.45
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  quiet_mooring:
+    folder: QuietMooring
+    number: 85
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/QuietMooring/vfx.json
+    - received_vfx/all97/unpacked/effects/QuietMooring/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:quietmooring/quiet_mooring
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 49
+      finish-after-ticks: 24
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    anchor-verification: reviewed original description or included NOTES placement
+      verified
+  bubble_aria:
+    folder: BubbleAria
+    number: 86
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/BubbleAria/vfx.json
+    - received_vfx/all97/unpacked/effects/BubbleAria/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:bubblearia/form
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 34
+      finish-after-ticks: 12
+    - role: projectile
+      follow-entity: false
+      trigger: cast
+      effect: claude:bubblearia/projectile
+      anchor: projectile
+      delay-ticks: 12
+      duration-ticks: 186
+      finish-after-ticks: 160
+      offset:
+      - 0
+      - 1.35
+      - 0.9
+      stop-effects:
+      - claude:bubblearia/form
+    - role: impact
+      follow-entity: false
+      trigger: impact
+      effect: claude:bubblearia/impact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 80
+      finish-after-ticks: 40
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  pressure_hammer:
+    folder: PressureHammer
+    number: 87
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/PressureHammer/vfx.json
+    - received_vfx/all97/unpacked/effects/PressureHammer/NOTES.md
+    phases:
+    - role: impact
+      follow-entity: false
+      trigger: cast
+      effect: claude:pressurehammer/hammer
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 74
+      finish-after-ticks: 40
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  waterspout:
+    folder: Waterspout
+    number: 88
+    range: 15
+    speed: 0.6
+    holdTicks: 38
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/Waterspout/vfx.json
+    - received_vfx/all97/unpacked/effects/Waterspout/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:waterspout/begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 54
+      finish-after-ticks: 22
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:waterspout/sustain
+      anchor: target
+      delay-ticks: 22
+      duration-ticks: 72
+      finish-after-ticks: 38
+    - role: static
+      follow-entity: false
+      trigger: expire
+      effect: claude:waterspout/end
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 58
+      finish-after-ticks: 20
+      end-branch: any
+      stop-effects:
+      - claude:waterspout/begin
+      - claude:waterspout/sustain
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    sequence:
+      sustainStart: 1.1
+      hold:
+        min: 0.5
+        max: 30
+        default: 1.9
+      holdInput: holdDuration
+      onSustainStop: stopEmitting
+      onCancel: jumpToEnd
+      triggerInput: null
+      onTrigger: null
+  current_sorting:
+    folder: CurrentSorting
+    number: 89
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/CurrentSorting/vfx.json
+    - received_vfx/all97/unpacked/effects/CurrentSorting/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:currentsorting/main
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 52
+      finish-after-ticks: 30
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    anchor-verification: reviewed original description or included NOTES placement
+      verified
+  potion_mist:
+    folder: PotionMist
+    number: 90
+    range: 15
+    speed: 0.6
+    holdTicks: 189
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/PotionMist/vfx.json
+    - received_vfx/all97/unpacked/effects/PotionMist/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:potionmist/potion_mist_begin
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 36
+      finish-after-ticks: 11
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:potionmist/potion_mist
+      anchor: caster
+      delay-ticks: 11
+      duration-ticks: 235
+      finish-after-ticks: 189
+    - role: attached
+      follow-entity: true
+      trigger: expire
+      effect: claude:potionmist/potion_mist_end
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 56
+      finish-after-ticks: 6
+      end-branch: any
+      stop-effects:
+      - claude:potionmist/potion_mist_begin
+      - claude:potionmist/potion_mist
+    - role: link
+      follow-entity: false
+      trigger: external:potion_mist_stream
+      effect: claude:potionmist/potion_mist_stream
+      anchor: external
+      delay-ticks: 0
+      duration-ticks: 58
+      finish-after-ticks: 20
+    - role: attached
+      follow-entity: true
+      trigger: external:potion_mist_ally
+      effect: claude:potionmist/potion_mist_ally
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 82
+      finish-after-ticks: 20
+    external-events:
+    - potion_mist_stream
+    - potion_mist_ally
+    review: sequence exact; auxiliary phases require actual heal/ally/mining/step
+      events, never fire automatically
+    sequence:
+      sustainStart: 0.55
+      hold:
+        min: 0.5
+        max: 30
+        default: 9.45
+      holdInput: holdDuration
+      onSustainStop: stopEmitting
+      onCancel: jumpToEnd
+      triggerInput: null
+      onTrigger: null
+  waterwheel_shield:
+    folder: WaterwheelShield
+    number: 91
+    range: 15
+    speed: 0.6
+    holdTicks: 120
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/WaterwheelShield/vfx.json
+    - received_vfx/all97/unpacked/effects/WaterwheelShield/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:waterwheelshield/form
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 25
+      finish-after-ticks: 10
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:waterwheelshield/wheel
+      anchor: caster
+      delay-ticks: 10
+      duration-ticks: 189
+      finish-after-ticks: 120
+    - role: impact
+      follow-entity: false
+      trigger: external:deflect
+      effect: claude:waterwheelshield/deflect
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 20
+      finish-after-ticks: 2
+    - role: attached
+      follow-entity: true
+      trigger: external:trigger
+      effect: claude:waterwheelshield/burst
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 29
+      finish-after-ticks: 6
+      end-branch: trigger
+      stop-effects:
+      - claude:waterwheelshield/form
+      - claude:waterwheelshield/wheel
+    - role: attached
+      follow-entity: true
+      trigger: expire
+      effect: claude:waterwheelshield/subside
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 29
+      finish-after-ticks: 8
+      end-branch: expire
+      stop-effects:
+      - claude:waterwheelshield/form
+      - claude:waterwheelshield/wheel
+    external-events:
+    - deflect
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    sequence:
+      sustainStart: 0.5
+      hold:
+        min: 0.05
+        max: 86400
+        default: 6
+      holdInput: holdDuration
+      onSustainStop: stopEmitting
+      onCancel: jumpToEnd
+      triggerInput: trigger
+      onTrigger: stopEmittingAndPlayTriggerEnd
+  concrete_curing:
+    folder: ConcreteCuring
+    number: 92
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/ConcreteCuring/vfx.json
+    - received_vfx/all97/unpacked/effects/ConcreteCuring/NOTES.md
+    phases:
+    - role: impact
+      follow-entity: false
+      trigger: cast
+      effect: claude:concretecuring/wet_start
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 13
+      finish-after-ticks: 2
+    - role: impact
+      follow-entity: false
+      trigger: external:connected_block
+      effect: claude:concretecuring/cure
+      anchor: external
+      delay-ticks: 0
+      duration-ticks: 24
+      finish-after-ticks: 9
+    external-events:
+    - connected_block
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    target-limit: 16
+    pending: BFS6neighbors; cure t=.05+depth*min(.10,.85/maxDepth), bottomfaceup.
+      No conversion gameplay here
+  ripple_guard:
+    folder: RippleGuard
+    number: 93
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/RippleGuard/vfx.json
+    - received_vfx/all97/unpacked/effects/RippleGuard/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:rippleguard/guard
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 80
+      finish-after-ticks: 40
+    - role: impact
+      follow-entity: false
+      trigger: external:projectile_block
+      effect: claude:rippleguard/block
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 21
+      finish-after-ticks: 6
+    external-events:
+    - projectile_block
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  tidal_wave:
+    folder: TidalWave
+    number: 94
+    range: 12
+    speed: 0.4
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/TidalWave/vfx.json
+    - received_vfx/all97/unpacked/effects/TidalWave/NOTES.md
+    phases:
+    - role: projectile
+      follow-entity: false
+      trigger: cast
+      effect: claude:tidalwave/wave
+      anchor: projectile
+      delay-ticks: 0
+      duration-ticks: 442
+      finish-after-ticks: 40
+      offset:
+      - 0
+      - 0
+      - 3.6
+      width: 7
+      motion-delay-ticks: 9
+    - role: impact
+      follow-entity: false
+      trigger: impact
+      effect: claude:tidalwave/collapse
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 86
+      finish-after-ticks: 20
+      width: 7
+    - role: impact
+      follow-entity: false
+      trigger: external:wave_touches_enemy
+      effect: claude:tidalwave/splash
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 40
+      finish-after-ticks: 10
+    external-events:
+    - wave_touches_enemy
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    trajectory: ground
+    notes: wave stop also collapse onrangeexpiry; splashoncepertarget withoutstoppingwave
+  bouncing_droplet:
+    folder: BouncingDroplet
+    number: 95
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/BouncingDroplet/vfx.json
+    - received_vfx/all97/unpacked/effects/BouncingDroplet/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:bouncingdroplet/form
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 19
+      finish-after-ticks: 8
+    - role: projectile
+      follow-entity: false
+      trigger: cast
+      effect: claude:bouncingdroplet/hop
+      anchor: projectile
+      delay-ticks: 8
+      duration-ticks: 242
+      finish-after-ticks: 120
+      offset:
+      - 0
+      - 1.3
+      - 0.8
+    - role: impact
+      follow-entity: false
+      trigger: external:nonfinal_hit
+      effect: claude:bouncingdroplet/bounce
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 27
+      finish-after-ticks: 10
+    - role: projectile
+      follow-entity: false
+      trigger: external:nonfinal_hit
+      effect: claude:bouncingdroplet/hop
+      anchor: projectile
+      delay-ticks: 3
+      duration-ticks: 242
+      finish-after-ticks: 120
+      offset:
+      - 0
+      - 0.3
+      - 0
+    - role: impact
+      follow-entity: false
+      trigger: external:final_hit
+      effect: claude:bouncingdroplet/burst
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 54
+      finish-after-ticks: 10
+    external-events:
+    - nonfinal_hit
+    - final_hit
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    trajectory: chain-distinct-targets
+    max-targets: 4
+    pending: server targetselection and distincthit logic required; never fixedpreviewtarget
+  abyssal_pressure:
+    folder: AbyssalPressure
+    number: 96
+    range: 15
+    speed: 0.6
+    holdTicks: 84
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/AbyssalPressure/vfx.json
+    - received_vfx/all97/unpacked/effects/AbyssalPressure/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:abyssalpressure/begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 58
+      finish-after-ticks: 20
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:abyssalpressure/sustain
+      anchor: target
+      delay-ticks: 12
+      duration-ticks: 142
+      finish-after-ticks: 84
+    - role: static
+      follow-entity: false
+      trigger: expire
+      effect: claude:abyssalpressure/end
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 70
+      finish-after-ticks: 20
+      end-branch: any
+      stop-effects:
+      - claude:abyssalpressure/begin
+      - claude:abyssalpressure/sustain
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    sequence:
+      sustainStart: 0.6
+      hold:
+        min: 0.5
+        max: 30
+        default: 4.2
+      holdInput: holdDuration
+      onSustainStop: stopEmitting
+      onCancel: jumpToEnd
+      triggerInput: null
+      onTrigger: null
+  verdant_touch:
+    folder: VerdantTouch
+    number: 97
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/VerdantTouch/vfx.json
+    - received_vfx/all97/unpacked/effects/VerdantTouch/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:verdanttouch/verdant_touch
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 62
+      finish-after-ticks: 30
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  ore_whisper:
+    folder: OreWhisper
+    number: 98
+    range: 10
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/OreWhisper/vfx.json
+    - received_vfx/all97/unpacked/effects/OreWhisper/NOTES.md
+    phases:
+    - role: static
+      follow-entity: false
+      trigger: cast
+      effect: claude:orewhisper/pulse
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 42
+      finish-after-ticks: 8
+    - role: static
+      follow-entity: false
+      trigger: external:ore_detected
+      effect: claude:orewhisper/marker
+      anchor: external
+      delay-ticks: 0
+      duration-ticks: 202
+      finish-after-ticks: 100
+    external-events:
+    - ore_detected
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+    target-limit: 3
+    pending: marker perorecentre, delay .05+dist/8, depthtestoff required
+  pebble_toss:
+    folder: PebbleToss
+    number: 99
+    range: 15
+    speed: 0.6
+    holdTicks: 100
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/PebbleToss/vfx.json
+    - received_vfx/all97/unpacked/effects/PebbleToss/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:pebbletoss/summon
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 210
+      finish-after-ticks: 8
+    - role: projectile
+      follow-entity: false
+      trigger: cast
+      effect: claude:pebbletoss/projectile
+      anchor: projectile
+      delay-ticks: 8
+      duration-ticks: 322
+      finish-after-ticks: 160
+    - role: impact
+      follow-entity: false
+      trigger: impact
+      effect: claude:pebbletoss/impact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 47
+      finish-after-ticks: 24
+    external-events: []
+    review: candidate; implementer must verify anchors against catalog; demo ignored
+  miners_rhythm:
+    folder: MinersRhythm
+    number: 100
+    range: 15
+    speed: 0.6
+    holdTicks: 300
+    numeric-provenance: editable project defaults unless overridden; user authorized
+      defaults
+    evidence:
+    - received_vfx/all97/unpacked/effects/MinersRhythm/vfx.json
+    - received_vfx/all97/unpacked/effects/MinersRhythm/NOTES.md
+    phases:
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:minersrhythm/miners_rhythm_begin
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 22
+      finish-after-ticks: 4
+    - role: attached
+      follow-entity: true
+      trigger: cast
+      effect: claude:minersrhythm/miners_rhythm
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 320
+      finish-after-ticks: 300
+    - role: impact
+      follow-entity: false
+      trigger: external:miners_rhythm_hit
+      effect: claude:minersrhythm/miners_rhythm_hit
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+      finish-after-ticks: 2
+    external-events:
+    - miners_rhythm_hit
+    review: sequence exact; auxiliary phases require actual heal/ally/mining/step
+      events, never fire automatically
+    sequence:
+      sustainStart: 0
+      hold:
+        min: 0.5
+        max: 600
+        default: 15
+      holdInput: holdDuration
+      onSustainStop: stopEmitting
+      onCancel: jumpToEnd
+      triggerInput: null
+      onTrigger: null

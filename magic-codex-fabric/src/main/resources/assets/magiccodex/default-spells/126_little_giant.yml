@@ -1,0 +1,14 @@
+id: little_giant
+name: 작은 거인
+category: earth
+description: 15초 동안 몸집과 근접 공격 거리가 커집니다. 좁은 통로는 지나기 어려워집니다.
+icon: magiccodex:textures/spells/expansion_2/little_giant.png
+permission: magic.learned.little_giant
+discovery:
+  description: 철 골렘에게 받은 피해를 누적 50 달성하기.
+research: 몸집을 키우는 것보다 원래대로 돌아오는 것이 중요하다. 기숙사 문 앞에서 곤란해진 선배의 기록을 참고하자.
+cast:
+  command: ''
+  cooldown-seconds: 60
+  mana-cost: 180
+order: 126

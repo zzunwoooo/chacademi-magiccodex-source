@@ -1,0 +1,14 @@
+id: exhibit_anchor
+name: 전시 고정
+category: light
+description: 자신의 액자 속 물건이 돌아가거나 빠지지 않게 고정한다.
+icon: ''
+permission: magic.learned.exhibit_anchor
+discovery:
+  description: 자신의 아이템 액자 속 물건을 누적 20회 회전시키기.
+research: 예쁜 각도를 찾는 데는 오래 걸렸고, 바뀌는 데는 한 번의 손길이면 충분했다.
+cast:
+  command: ''
+  cooldown-seconds: 5
+  mana-cost: 10
+order: 264

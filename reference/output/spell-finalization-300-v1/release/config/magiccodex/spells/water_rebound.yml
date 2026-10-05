@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "water_rebound"
+name: "수면 탄성"
+category: "water"
+description: "높은 곳에서 물에 착수하면 한 번 튀어 오릅니다.\n\n높은 곳에서 물로 거듭 뛰어들면 착수할 때의 힘을 다시 위로 돌려보낼 수 있다."
+icon: "magiccodex:textures/spells/expansion_2/water_rebound.png"
+permission: "magic.learned.water_rebound"
+discovery:
+  description: "10블록 이상 높이에서 물로 뛰어들어 5회 살아남기."
+research: "수면이 단단하다는 사실을 몸으로 증명할 필요는 없다. 이 마법부터 배우도록 하자."
+cast:
+  command: "마법 수면탄성"
+  cooldown-seconds: 20
+  mana-cost: 40
+order: 940

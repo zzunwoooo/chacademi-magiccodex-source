@@ -1,0 +1,14 @@
+id: empty_grave
+name: 빈 무덤
+category: dark
+description: 사망 위치에 개인 표식을 남겨 돌아올 때 알아보게 한다.
+icon: ''
+permission: magic.learned.empty_grave
+discovery:
+  description: 서로 다른 사망 위치 3곳에 다시 방문하기.
+research: 잃어버린 것은 몸이 아니라 돌아갈 길일 때도 있다.
+cast:
+  command: ''
+  cooldown-seconds: 10
+  mana-cost: 15
+order: 288

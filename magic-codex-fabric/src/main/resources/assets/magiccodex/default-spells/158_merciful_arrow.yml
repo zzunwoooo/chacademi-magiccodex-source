@@ -1,0 +1,14 @@
+id: merciful_arrow
+name: 자비의 화살
+category: light
+description: 다음 일반 화살 한 발을 치유 화살로 바꿉니다. 동료에게 맞으면 피해 대신 회복을 줍니다.
+icon: magiccodex:textures/spells/expansion_2/merciful_arrow.png
+permission: magic.learned.merciful_arrow
+discovery:
+  description: 빛 마법 응용 수업을 통해 낮은 확률로 습득.
+research: 화살이 반드시 상처만 남겨야 한다는 법은 없다.
+cast:
+  command: ''
+  cooldown-seconds: 15
+  mana-cost: 45
+order: 158

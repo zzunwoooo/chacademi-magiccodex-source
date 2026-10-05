@@ -1,0 +1,14 @@
+id: light_portrait
+name: 빛의 초상
+category: light
+description: 사진이나 모임 장식으로 쓸 정적인 빛 실루엣을 남긴다.
+icon: ''
+permission: magic.learned.light_portrait
+discovery:
+  description: 친구와 함께 같은 장소에서 모임 활동을 3회 완료하기.
+research: 움직이는 기억을 한 장의 고요한 형태로 남기는 주문이다.
+cast:
+  command: ''
+  cooldown-seconds: 12
+  mana-cost: 20
+order: 265

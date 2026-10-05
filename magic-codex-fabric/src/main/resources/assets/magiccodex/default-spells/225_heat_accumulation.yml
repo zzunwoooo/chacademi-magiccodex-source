@@ -1,0 +1,14 @@
+id: heat_accumulation
+name: 열기 축적
+category: fire
+description: 제자리에 서서 열기를 모은 뒤 근거리 폭발로 방출한다.
+icon: ''
+permission: magic.learned.heat_accumulation
+discovery:
+  description: 불이 붙은 상태에서 누적 60초 생존하기.
+research: 움직임을 줄여야 열이 모인다. 충분히 모인 뒤에는 오래 품지 말자.
+cast:
+  command: ''
+  cooldown-seconds: 35
+  mana-cost: 120
+order: 225

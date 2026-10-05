@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "air_stacking"
+name: "허공 쌓기"
+category: "wind"
+description: "손에 든 건축 블록을 소비해 바라보는 위치에 최대 6칸을 일렬로 놓습니다.\n\n아카데미의 여러 장소를 빠짐없이 둘러보면, 높은 곳을 잇는 보이지 않는 발판을 떠올릴 수 있다."
+icon: "magiccodex:textures/spells/expansion_2/air_stacking.png"
+permission: "magic.learned.air_stacking"
+discovery:
+  description: "아카데미 건물의 모든 스팟 확인하기."
+research: "마법을 건축에도 활용할 수 있게 개량한 학자 덕분에 멋있는 아카데미가 탄생하였다."
+cast:
+  command: "마법 허공쌓기"
+  cooldown-seconds: 25
+  mana-cost: 110
+order: 280

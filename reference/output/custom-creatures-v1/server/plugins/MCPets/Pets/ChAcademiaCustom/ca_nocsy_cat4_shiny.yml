@@ -1,0 +1,17 @@
+"Id": "ca_nocsy_cat4_shiny"
+"MythicMob": "CA_Pet_nocsy_cat4_shiny"
+"Permission": "chacademia.pet.ca_nocsy_cat4_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e나른한 고양이"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "벚나무 그늘에서 낮잠을 즐긴다."
+    - "서식지: 벚꽃 숲 / 꽃피는 계곡"
+    - "1성"

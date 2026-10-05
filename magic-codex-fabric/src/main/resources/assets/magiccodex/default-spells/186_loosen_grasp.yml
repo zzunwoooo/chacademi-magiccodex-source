@@ -1,0 +1,14 @@
+id: loosen_grasp
+name: 손아귀 풀기
+category: dark
+description: 무기를 든 일반 몬스터가 4초간 무기를 사용하지 못하게 합니다. 무기는 아이템으로 떨어지지 않습니다.
+icon: magiccodex:textures/spells/expansion_2/loosen_grasp.png
+permission: magic.learned.loosen_grasp
+discovery:
+  description: 무기를 든 몬스터의 공격을 방패로 30번 막기.
+research: 손에서 힘이 빠지는 그 짧은 순간이면 충분하다.
+cast:
+  command: ''
+  cooldown-seconds: 20
+  mana-cost: 60
+order: 186

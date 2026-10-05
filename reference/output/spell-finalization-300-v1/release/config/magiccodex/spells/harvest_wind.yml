@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "harvest_wind"
+name: "수확의 바람"
+category: "wind"
+description: "주변의 다 자란 밀·당근·감자를 최대 64개까지 수확합니다.\n\n아직 여물지 않은 밀과 당근, 감자를 성급히 거둔 흔적에서 수확을 재촉하는 바람이 시작된다."
+icon: "magiccodex:textures/spells/novice/harvest_wind.png"
+permission: "magic.learned.harvest_wind"
+discovery:
+  description: "자라지 않은 밀·당근·감자를 각각 12개씩 잘라내기."
+research: "서투른 바람은 어린 싹을 자르기 마련이죠."
+cast:
+  command: "마법 수확의바람"
+  cooldown-seconds: 60
+  mana-cost: 33
+order: 30

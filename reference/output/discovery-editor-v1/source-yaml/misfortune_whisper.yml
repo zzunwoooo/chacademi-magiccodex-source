@@ -1,0 +1,22 @@
+# UTF-8 / 들여쓰기는 공백 2칸입니다.
+# description: 도감에 보이는 효과 설명입니다. 자유롭게 수정하세요.
+# discovery.description: 획득 조건의 표시 문구입니다. 자동 판정 로직이 아닙니다.
+# circle: 1~9 정수. 서클을 미정으로 두려면 해당 줄을 삭제하세요.
+# cast.command: 서버 스킬 연결 후 / 없이 입력하세요. 현재는 미연결입니다.
+# cast.mana-cost: 표시용 소모량. 서버 마나 차감은 별도로 구현해야 합니다.
+id: "misfortune_whisper"
+name: "불운의 속삭임"
+category: "dark"
+circle: 2
+rank: "초급"
+description: "적 하나의 근접 공격력을 8초 동안 낮춥니다."
+icon: "magiccodex:textures/spells/expansion/misfortune_whisper.png"
+permission: "magic.learned.misfortune_whisper"
+discovery:
+  description: "나약함 효과가 있는 상태에서 몬스터를 3마리 처치하기."
+research: ""
+cast:
+  command: ""
+  cooldown-seconds: 20
+  mana-cost: 60
+order: 3180

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "light_portrait"
+name: "빛의 초상"
+category: "light"
+description: "사진이나 모임 장식으로 쓸 정적인 빛 실루엣을 남긴다.\n\n친구와 모여 같은 순간을 나눈 경험이 사라지지 않을 모습을 빛에 남긴다."
+icon: "magiccodex:textures/spells/expansion_3/light_portrait.png"
+permission: "magic.learned.light_portrait"
+discovery:
+  description: "친구와 함께 같은 장소에서 모임 활동을 3회 완료하기."
+research: "움직이는 기억을 한 장의 고요한 형태로 남기는 주문이다."
+cast:
+  command: "마법 빛의초상"
+  cooldown-seconds: 12
+  mana-cost: 20
+order: 2660

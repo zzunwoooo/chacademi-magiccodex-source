@@ -1,0 +1,14 @@
+id: ashen_farewell
+name: 잿빛 작별
+category: fire
+description: 자신의 임시 마법 소환물을 해제하며 작은 불꽃을 남긴다.
+icon: ''
+permission: magic.learned.ashen_farewell
+discovery:
+  description: 자신이 소환한 마법 소환물을 누적 10회 해제하기.
+research: 작별은 소환의 반대가 아니다. 약속을 마치고 돌아가는 과정이다.
+cast:
+  command: ''
+  cooldown-seconds: 10
+  mana-cost: 20
+order: 229

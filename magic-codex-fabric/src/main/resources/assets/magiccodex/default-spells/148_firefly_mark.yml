@@ -1,0 +1,14 @@
+id: firefly_mark
+name: 반딧불 표식
+category: light
+description: 바라보는 곳에 60초간 작은 빛 입자를 남깁니다. 실제 블록 밝기는 바꾸지 않습니다.
+icon: magiccodex:textures/spells/expansion_2/firefly_mark.png
+permission: magic.learned.firefly_mark
+discovery:
+  description: 밤에 횃불을 누적 30개 설치하기.
+research: 돌아오는 길을 잊지 않도록 작은 별을 남겨 두자.
+cast:
+  command: ''
+  cooldown-seconds: 2
+  mana-cost: 3
+order: 148

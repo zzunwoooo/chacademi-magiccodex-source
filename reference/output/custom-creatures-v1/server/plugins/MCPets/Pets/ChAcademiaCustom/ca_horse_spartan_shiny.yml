@@ -1,0 +1,17 @@
+"Id": "ca_horse_spartan_shiny"
+"MythicMob": "CA_Pet_horse_spartan_shiny"
+"Permission": "chacademia.pet.ca_horse_spartan_shiny"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e철갑 준마"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "넓은 지형을 달리는 힘찬 말. 철갑 계열의 변이 개체."
+    - "서식지: 대초원 / 온대 고지"
+    - "2성"

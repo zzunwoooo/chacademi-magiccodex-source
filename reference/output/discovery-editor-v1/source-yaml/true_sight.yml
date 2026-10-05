@@ -1,0 +1,17 @@
+# 설명·발견 조건·쿨타임은 수정 가능한 기획 초안입니다.
+# 발견 조건은 UI 표시용 문구이며 실제 판정 기능은 연결되지 않았습니다.
+# cast.command는 실제 시전 기능 연결 후 / 없이 입력하세요.
+id: "true_sight"
+name: "진실의 눈"
+category: "light"
+rank: "중급"
+description: "지정된 환영과 숨겨진 단서를 드러냅니다."
+icon: "magiccodex:textures/spells/intermediate/true_sight.png"
+permission: "magic.learned.true_sight"
+discovery:
+  description: "환영 실습실에서 모습이 다른 세 거울의 비밀을 풀기."
+research: ""
+cast:
+  command: ""
+  cooldown-seconds: 30
+order: 1160

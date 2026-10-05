@@ -1,0 +1,17 @@
+"Id": "ca_buffalo_shiny"
+"MythicMob": "CA_Pet_buffalo_shiny"
+"Permission": "chacademia.pet.ca_buffalo_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e고원 버팔로"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "풀 많은 고원의 무리를 이끄는 튼튼한 초식동물."
+    - "서식지: 대초원 / 온대 고지"
+    - "2성"

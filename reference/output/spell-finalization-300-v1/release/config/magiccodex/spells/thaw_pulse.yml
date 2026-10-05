@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "thaw_pulse"
+name: "해빙의 맥동"
+category: "water"
+description: "자신과 5블록 안의 동료에게 걸린 빙결을 해제합니다. 풀려난 대상이 많을수록 주변 적에게 더 강한 냉기 피해를 줍니다.\n\n가루눈에 얼어붙은 몸을 모닥불 곁에서 녹여 본 경험이 차가운 마력을 풀어내는 길이 된다."
+icon: "magiccodex:textures/spells/expansion_2/thaw_pulse.png"
+permission: "magic.learned.thaw_pulse"
+discovery:
+  description: "가루눈에서 동결 피해를 받은 뒤 모닥불로 몸 녹이기."
+research: "겨울 야외 실습에서는 동료의 손끝이 얼어붙기 전에 알아차리는 것이 중요하다."
+cast:
+  command: "마법 해빙의맥동"
+  cooldown-seconds: 30
+  mana-cost: 120
+order: 960

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "tide_stride"
+name: "물살 타기"
+category: "water"
+description: "15초 동안 물살을 타고 더 빠르게 헤엄칩니다.\n\n수영으로 긴 거리를 지나온 몸은 물살을 거스르기보다 함께 나아가는 법을 안다."
+icon: "magiccodex:textures/spells/novice/tide_stride.png"
+permission: "magic.learned.tide_stride"
+discovery:
+  description: "수영으로 누적 500블록 이동하기."
+research: "물을 밀어내려 하지 말고, 물이 가고 싶은 방향을 읽어 보자."
+cast:
+  command: "마법 물살타기"
+  cooldown-seconds: 15
+  mana-cost: 15
+order: 670

@@ -1,0 +1,139 @@
+﻿항목 ID,이름,설명,주 서식지,보조 서식지,바이옴 ID,별,기본 포획%,체력 10% 포획%,체력 보너스%p,보스,출현 방식,조건,모델 ID
+squirrel,도토리 다람쥐,나무 사이를 오가며 도토리를 숨기는 작은 숲 주민.,숲 우거진 고지,자작나무 타이가,"terralith:forested_highlands, terralith:birch_taiga",1,55.0,73.0,20.0,False,일반 · 소규모 무리,나무 아래와 숲 가장자리의 육상 개체.,squirrel
+owl,밤눈 올빼미,어두운 숲길을 지켜보다 밤에 모습을 드러내는 새.,시베리아 타이가,달빛 숲,"terralith:siberian_taiga, terralith:moonlight_grove",1,35.0,57.5,25.0,False,일반 · 소규모 무리,침엽수림의 바위·거목 주변 육상 개체. 야간 출현 권장.,owl
+skunk,줄무늬 스컹크,수풀에 숨어 지내며 낯선 발소리에 경계하는 동물.,관목 초원,숲 우거진 고지,"terralith:brushland, terralith:forested_highlands",1,45.0,67.5,25.0,False,일반 · 소규모 무리,나무 아래와 숲 가장자리의 육상 개체.,skunk
+hedgehog,낙엽 고슴도치,낙엽 아래에서 먹이를 찾는 조심스러운 숲 주민.,자작나무 타이가,라벤더 숲,"terralith:birch_taiga, terralith:lavender_forest",1,55.0,73.0,20.0,False,일반 · 소규모 무리,나무 아래와 숲 가장자리의 육상 개체.,hedgehog
+elk,고산 엘크,고산 숲의 넓은 공터를 무리 지어 걷는 사슴.,고산 숲,고산 고지,"terralith:alpine_grove, terralith:alpine_highlands",2,18.0,33.3,17.0,False,드묾 · 소수 개체,침엽수림의 바위·거목 주변 육상 개체.,elk
+lil_bird,꽃숲 작은새,꽃피는 계곡의 가지 위에 모이는 작은 새.,꽃피는 계곡,벚꽃 숲,"terralith:blooming_valley, terralith:sakura_grove",1,55.0,73.0,20.0,False,일반 · 소규모 무리,나무 아래와 숲 가장자리의 육상 개체.,lil_bird
+raccoon,개울 너구리,개울과 숲의 경계를 오가며 먹이를 찾는다.,푸른 계곡,숲 우거진 고지,"terralith:lush_valley, terralith:forested_highlands",1,45.0,67.5,25.0,False,일반 · 소규모 무리,나무 아래와 숲 가장자리의 육상 개체.,raccoon
+frog,난초 개구리,난초가 핀 늪의 얕은 물가에 숨어 산다.,난초 늪,따뜻한 강,"terralith:orchid_swamp, terralith:warm_river",1,50.0,72.5,25.0,False,일반 · 소규모 무리,늪과 강의 물가. 육상·수중 조건은 개체별 지정.,frog
+bear,산림 불곰,침엽수림 깊은 곳의 바위 굴을 차지한 큰 곰.,시베리아 타이가,고산 숲,"terralith:siberian_taiga, terralith:alpine_grove",2,12.0,23.7,13.0,False,드묾 · 소수 개체,침엽수림의 바위·거목 주변 육상 개체.,bear
+bear_black,그늘 흑곰,그늘진 고지대 숲에서 영역을 지키는 곰.,숲 우거진 고지,방패암 숲,"terralith:forested_highlands, terralith:shield",2,14.0,26.6,14.0,False,드묾 · 소수 개체,나무 아래와 숲 가장자리의 육상 개체.,bear_black
+bear_polar,빙하 백곰,얼어붙은 절벽과 빙하 가장자리를 순찰한다.,얼어붙은 절벽,빙하 협곡,"terralith:frozen_cliffs, terralith:glacial_chasm",2,10.0,20.8,12.0,False,드묾 · 소수 개체,빙하·설림의 육상 구역.,bear_polar
+timber_wolf,침엽 숲늑대,차가운 숲에서 무리와 함께 사냥하는 늑대.,시베리아 타이가,자작나무 타이가,"terralith:siberian_taiga, terralith:birch_taiga",2,20.0,38.0,20.0,False,드묾 · 소수 개체,침엽수림의 바위·거목 주변 육상 개체.,timber_wolf
+tortoise,초원 육지거북,마른 초원의 풀 사이를 느긋하게 걷는다.,대초원,관목 초원,"terralith:steppe, terralith:brushland",1,55.0,73.0,20.0,False,일반 · 소규모 무리,초원 공터의 작은 무리.,tortoise
+catfish,온수 메기,따뜻한 강의 바닥 가까이에서 헤엄친다.,따뜻한 강,난초 늪,"terralith:warm_river, terralith:orchid_swamp",1,45.0,67.5,25.0,False,일반 · 소규모 무리,지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.,catfish
+butterfly,라벤더 나비,라벤더와 계곡의 꽃을 따라 날아다닌다.,라벤더 계곡,꽃피는 계곡,"terralith:lavender_valley, terralith:blooming_valley",1,60.0,73.5,15.0,False,일반 · 소규모 무리,거목·꽃 군락 인근 소규모 출현 지점.,butterfly
+buffalo,고원 버팔로,풀 많은 고원의 무리를 이끄는 튼튼한 초식동물.,대초원,온대 고지,"terralith:steppe, terralith:temperate_highlands",2,20.0,33.5,15.0,False,드묾 · 소수 개체,초원 공터의 작은 무리.,buffalo
+boar,덤불 멧돼지,덤불을 헤치며 뿌리와 열매를 찾는다.,관목 초원,숲 우거진 고지,"terralith:brushland, terralith:forested_highlands",1,35.0,57.5,25.0,False,일반 · 소규모 무리,나무 아래와 숲 가장자리의 육상 개체.,boar
+alpha_boar,송곳니 우두머리,오래된 숲의 멧돼지 무리를 지키는 강한 개체.,숲 우거진 고지,방패암 숲,"terralith:forested_highlands, terralith:shield",2,8.0,17.0,10.0,False,드묾 · 소수 개체,나무 아래와 숲 가장자리의 육상 개체.,alpha_boar
+crocodile,난초늪 악어,따뜻한 늪의 물가에서 조용히 먹잇감을 기다린다.,난초 늪,따뜻한 강,"terralith:orchid_swamp, terralith:warm_river",2,12,23.7,13,False,드묾 · 소수 개체,늪과 강의 물가. 육상·수중 조건은 개체별 지정.,crocodile
+buffalo-alpha,고원의 우두머리,버팔로 무리의 영역을 지키는 가장 강한 개체.,대초원,온대 고지,"terralith:steppe, terralith:temperate_highlands",2,8,17.0,10,False,드묾 · 소수 개체,초원 공터의 작은 무리.,buffalo
+lostasset_mob1_chicken,아침볕 수탉,학교 외곽 목초지에서 아침을 알리는 새.,꽃피는 고원,온대 고지,"terralith:blooming_plateau, terralith:temperate_highlands",1,60.0,73.5,15.0,False,일반 · 소규모 무리,해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.,lostasset_mob1_chicken
+lostasset_mob1_rabbit,꽃밭 흰토끼,꽃밭과 벚나무 아래를 뛰어다니는 흰토끼.,꽃피는 계곡,벚꽃 계곡,"terralith:blooming_valley, terralith:sakura_valley",1,60.0,73.5,15.0,False,일반 · 소규모 무리,해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.,lostasset_mob1_rabbit
+lostasset_mob1_sheep,구름 양,구름처럼 포근한 모습으로 고원 풀밭을 거닌다.,고산 고지,온대 고지,"terralith:alpine_highlands, terralith:temperate_highlands",1,45.0,67.5,25.0,False,일반 · 소규모 무리,초원 공터의 작은 무리.,lostasset_mob1_sheep
+lostasset_mob1_wolf,목초지 양치기,초원 주변을 맴돌며 무리의 움직임을 살피는 늑대.,온대 고지,방패암 공터,"terralith:temperate_highlands, terralith:shield_clearing",2,20.0,38.0,20.0,False,드묾 · 소수 개체,해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.,lostasset_mob1_wolf
+lostasset_mob2_flowersprite,꽃망울 정령,꽃이 무성한 곳에서 드물게 모습을 드러내는 정령.,꽃피는 계곡,라벤더 계곡,"terralith:blooming_valley, terralith:lavender_valley",2,15.0,28.5,15.0,False,드묾 · 소수 개체,거목·꽃 군락 인근 소규모 출현 지점.,lostasset_mob2_flowersprite
+lostasset_mob2_lakefairy,달물결 요정,달빛이 비치는 물가에 머무르는 작은 요정.,달빛 계곡,난초 늪,"terralith:moonlight_valley, terralith:orchid_swamp",2,12.0,23.7,13.0,False,드묾 · 소수 개체,늪과 강의 물가. 육상·수중 조건은 개체별 지정.,lostasset_mob2_lakefairy
+lostasset_mob2_leaffairy,잎새 요정,잎사귀 사이에서 숲의 바람을 따라 움직인다.,자수정 우림,달빛 숲,"terralith:amethyst_rainforest, terralith:moonlight_grove",2,15.0,28.5,15.0,False,드묾 · 소수 개체,거목·꽃 군락 인근 소규모 출현 지점.,lostasset_mob2_leaffairy
+lostasset_mob2_mushroomfairy,포자 요정,습한 숲과 버섯 동굴 사이에서 자라난 요정.,균류 동굴,달빛 숲,"terralith:cave/fungal_caves, terralith:moonlight_grove",2,15.0,28.5,15.0,False,드묾 · 소수 개체,거목·꽃 군락 인근 소규모 출현 지점.,lostasset_mob2_mushroomfairy
+lostasset_mob3_herbgolem,약초 수호골렘,약초 군락 주변을 지키는 오래된 숲의 수호자.,자수정 우림,라벤더 숲,"terralith:amethyst_rainforest, terralith:lavender_forest",3,3.0,6.6,4.0,False,희귀 · 지정 지점,거목·꽃 군락 인근 소규모 출현 지점.,lostasset_mob3_herbgolem
+lostasset_mob3_herbthief,약초 도둑,숲 가장자리에서 약초를 모아 숨기는 작은 생물.,라벤더 숲,꽃피는 계곡,"terralith:lavender_forest, terralith:blooming_valley",1,35.0,57.5,25.0,False,일반 · 소규모 무리,나무 아래와 숲 가장자리의 육상 개체.,lostasset_mob3_herbthief
+lostasset_mob3_mossyboar,이끼 등멧돼지,습한 숲에서 등에 이끼를 두른 멧돼지.,운무 숲,자수정 우림,"terralith:cloud_forest, terralith:amethyst_rainforest",2,16.0,28.6,14.0,False,드묾 · 소수 개체,거목·꽃 군락 인근 소규모 출현 지점.,lostasset_mob3_mossyboar
+lostasset_mob3_timberpile,장작 꼬마,쓰러진 나무 주변에서 움직이는 작은 나무 정령.,숲 우거진 고지,자작나무 타이가,"terralith:forested_highlands, terralith:birch_taiga",1,40.0,62.5,25.0,False,일반 · 소규모 무리,나무 아래와 숲 가장자리의 육상 개체.,lostasset_mob3_timberpile
+bulb_amethyst,자수정 새싹,자수정 지형의 마력을 머금은 작은 정령.,자수정 협곡,자수정 우림,"terralith:amethyst_canyon, terralith:amethyst_rainforest",2,15.0,28.5,15.0,False,드묾 · 소수 개체,동굴 내부에 한정. 지표 출현 금지.,bulb_amethyst
+bulb_crimsonspore,진홍 포자,붉은 지형과 뜨거운 동굴에서 자란 포자 정령.,뒤틀린 메사,열수 동굴,"terralith:warped_mesa, terralith:cave/thermal_caves",2,12.0,23.7,13.0,False,드묾 · 소수 개체,오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님.,bulb_crimsonspore
+bulb_dripleaf,물잎 새싹,습한 지하 정글의 잎사귀 사이에 숨어 산다.,지하 정글,푸른 계곡,"terralith:cave/underground_jungle, terralith:lush_valley",1,40.0,62.5,25.0,False,일반 · 소규모 무리,동굴 내부에 한정. 지표 출현 금지.,bulb_dripleaf
+bulb_lilypad,수련잎 새싹,늪 가장자리의 수련잎 주변을 떠도는 정령.,난초 늪,따뜻한 강,"terralith:orchid_swamp, terralith:warm_river",1,45.0,67.5,25.0,False,일반 · 소규모 무리,늪과 강의 물가. 육상·수중 조건은 개체별 지정.,bulb_lilypad
+bulb_warpedfungus,뒤틀린 균새싹,기묘한 지형의 마력을 흡수한 푸른 균 정령.,뒤틀린 메사,균류 동굴,"terralith:warped_mesa, terralith:cave/fungal_caves",2,12.0,23.7,13.0,False,드묾 · 소수 개체,오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님.,bulb_warpedfungus
+crab,자갈집게 게,자갈 해변과 바닷물의 경계에서 먹이를 찾는다.,자갈 해변,흰 절벽,"terralith:gravel_beach, terralith:white_cliffs",1,55.0,73.0,20.0,False,일반 · 소규모 무리,자갈 해변·흰 절벽 아래 해안의 육상과 얕은 물 경계.,crab
+piranha,붉은이빨 피라냐,따뜻한 강에서 무리 지어 헤엄치는 사나운 물고기.,따뜻한 강,사막 오아시스,"terralith:warm_river, terralith:desert_oasis",2,20.0,38.0,20.0,False,드묾 · 소수 개체,지정 바이옴 안의 수중에서만 출현. 피라냐는 오아시스 수역 포함.,piranha
+swordfish,푸른창 황새치,따뜻한 깊은 바다의 넓은 수역을 가른다.,따뜻한 심해,,terralith:deep_warm_ocean,2,15.0,33.0,20.0,False,드묾 · 소수 개체,지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.,swordfish
+jellyfish_blue,청빛 해파리,따뜻한 바다 속에서 물결을 따라 천천히 떠다닌다.,따뜻한 심해,,terralith:deep_warm_ocean,1,40,62.5,25,False,일반 · 소규모 무리,지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.,jellyfish_blue
+jellyfish_green,비취 해파리,따뜻한 바다 속에서 물결을 따라 천천히 떠다닌다.,따뜻한 심해,,terralith:deep_warm_ocean,1,40,62.5,25,False,일반 · 소규모 무리,지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.,jellyfish_green
+jellyfish_pink,분홍 해파리,따뜻한 바다 속에서 물결을 따라 천천히 떠다닌다.,따뜻한 심해,,terralith:deep_warm_ocean,2,20,33.5,15,False,드묾 · 소수 개체,지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.,jellyfish_pink
+jellyfish_yellow,금빛 해파리,따뜻한 바다 속에서 물결을 따라 천천히 떠다닌다.,따뜻한 심해,,terralith:deep_warm_ocean,2,20,33.5,15,False,드묾 · 소수 개체,지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.,jellyfish_yellow
+seahorse_blue,청빛 해마,따뜻한 바다의 산호·해초 주변에 몸을 숨긴다.,따뜻한 심해,,terralith:deep_warm_ocean,1,40,62.5,25,False,일반 · 소규모 무리,지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.,seahorse_blue
+seahorse_green,비취 해마,따뜻한 바다의 산호·해초 주변에 몸을 숨긴다.,따뜻한 심해,,terralith:deep_warm_ocean,1,40,62.5,25,False,일반 · 소규모 무리,지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.,seahorse_green
+seahorse_pink,분홍 해마,따뜻한 바다의 산호·해초 주변에 몸을 숨긴다.,따뜻한 심해,,terralith:deep_warm_ocean,2,20,33.5,15,False,드묾 · 소수 개체,지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.,seahorse_pink
+seahorse_yellow,금빛 해마,따뜻한 바다의 산호·해초 주변에 몸을 숨긴다.,따뜻한 심해,,terralith:deep_warm_ocean,2,20,33.5,15,False,드묾 · 소수 개체,지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.,seahorse_yellow
+ogre_club,숲몽둥이 오우거,숲의 무너진 야영지를 차지한 거친 오우거.,숲 우거진 고지,방패암 숲,"terralith:forested_highlands, terralith:shield",2,7.0,14.2,8.0,False,드묾 · 소수 개체,나무 아래와 숲 가장자리의 육상 개체.,ogre_club
+ogre_axe,벌목꾼 오우거,거목 주변의 폐허에서 침입자를 경계한다.,시베리아 타이가,숲 우거진 고지,"terralith:siberian_taiga, terralith:forested_highlands",2,6.0,13.2,8.0,False,드묾 · 소수 개체,나무 아래와 숲 가장자리의 육상 개체.,ogre_axe
+ogre_hammer,산울림 오우거,바위 협곡의 통로를 차지한 강력한 오우거.,바위 산맥,화강암 절벽,"terralith:rocky_mountains, terralith:granite_cliffs",3,2.0,4.7,3.0,False,희귀 · 지정 지점,절벽·고지대에 지정한 둥지.,ogre_hammer
+ncr_spear_skeleton,유적의 창병,지하 유적의 좁은 통로를 지키는 해골 병사.,깊은 동굴,안산암 동굴,"terralith:cave/deep_caves, terralith:cave/andesite_caves",2,10.0,19.0,10.0,False,드묾 · 소수 개체,지정 동굴 안에 설치한 유적·봉인실 전용. 바이옴 전체 자연 스폰 금지.,ncr_spear_skeleton
+ncr_warrior_skeleton,유적의 검병,오래된 지하 회랑을 배회하는 해골 전사.,깊은 동굴,화강암 동굴,"terralith:cave/deep_caves, terralith:cave/granite_caves",2,10.0,19.0,10.0,False,드묾 · 소수 개체,지정 동굴 안에 설치한 유적·봉인실 전용. 바이옴 전체 자연 스폰 금지.,ncr_warrior_skeleton
+ncr_archer_skeleton,유적의 궁수,무너진 회랑의 먼 곳에서 침입자를 겨눈다.,깊은 동굴,응회암 동굴,"terralith:cave/deep_caves, terralith:cave/tuff_caves",2,8.0,17.0,10.0,False,드묾 · 소수 개체,지정 동굴 안에 설치한 유적·봉인실 전용. 바이옴 전체 자연 스폰 금지.,ncr_archer_skeleton
+ncr_mage_skeleton,망각의 해골술사,감염 동굴의 봉인실에 남은 마법사.,감염 동굴,깊은 동굴,"terralith:cave/infested_caves, terralith:cave/deep_caves",3,2.0,4.7,3.0,False,희귀 · 지정 지점,지정 동굴 안에 설치한 유적·봉인실 전용. 바이옴 전체 자연 스폰 금지.,ncr_mage_skeleton
+mf_warden_knight,봉인의 기사,깊은 동굴의 봉인 구역을 지키는 기사.,깊은 동굴,,terralith:cave/deep_caves,3,1.0,2.35,1.5,False,희귀 · 지정 지점,지정 동굴 안에 설치한 유적·봉인실 전용. 바이옴 전체 자연 스폰 금지.,mf_warden_knight
+mf_warden_archer,봉인의 궁수,봉인 유적 외곽을 감시하는 궁수.,깊은 동굴,,terralith:cave/deep_caves,3,1.2,2.82,1.8,False,희귀 · 지정 지점,지정 동굴 안에 설치한 유적·봉인실 전용. 바이옴 전체 자연 스폰 금지.,mf_warden_archer
+mf_warden_tank,봉인의 거벽,봉인실 입구에서 물러서지 않는 거대한 수호자.,깊은 동굴,,terralith:cave/deep_caves,3,0.8,1.88,1.2,False,희귀 · 지정 지점,지정 동굴 안에 설치한 유적·봉인실 전용. 바이옴 전체 자연 스폰 금지.,mf_warden_tank
+mf_warden_mage,봉인의 술사,깊은 봉인실에서 마력을 다루는 수호자.,깊은 동굴,,terralith:cave/deep_caves,3,0.8,1.88,1.2,False,희귀 · 지정 지점,지정 동굴 안에 설치한 유적·봉인실 전용. 바이옴 전체 자연 스폰 금지.,mf_warden_mage
+glacialcore,빙핵의 수호자,빙하 신전 가장 깊은 곳에 잠든 얼음 보스.,빙하 협곡,서리불 동굴,"terralith:glacial_chasm, terralith:cave/frostfire_caves",3,0.4,0.4,0.0,True,전용 보스,빙하 협곡 또는 서리불 동굴의 전용 보스 신전. 일반 자연 스폰 금지.,glacialcore
+nocsy_cat1,햇살 고양이,햇볕 드는 공터에서 쉬기를 좋아한다.,벚꽃 숲,꽃피는 계곡,"terralith:sakura_grove, terralith:blooming_valley",1,60,73.5,15,False,일반 · 소규모 무리,해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.,nocsy_cat1
+nocsy_cat2,꽃길 고양이,꽃밭 가장자리를 조용히 산책한다.,벚꽃 숲,꽃피는 계곡,"terralith:sakura_grove, terralith:blooming_valley",1,60,73.5,15,False,일반 · 소규모 무리,해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.,nocsy_cat2
+nocsy_cat3,책방 고양이,학교 외곽 길목에 머무르는 호기심 많은 고양이.,벚꽃 숲,꽃피는 계곡,"terralith:sakura_grove, terralith:blooming_valley",1,60,73.5,15,False,일반 · 소규모 무리,해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.,nocsy_cat3
+nocsy_cat4,나른한 고양이,벚나무 그늘에서 낮잠을 즐긴다.,벚꽃 숲,꽃피는 계곡,"terralith:sakura_grove, terralith:blooming_valley",1,60,73.5,15,False,일반 · 소규모 무리,해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.,nocsy_cat4
+nocsy_cat5,장난꾸러기 고양이,떨어지는 꽃잎을 따라 뛰어다닌다.,벚꽃 숲,꽃피는 계곡,"terralith:sakura_grove, terralith:blooming_valley",1,60,73.5,15,False,일반 · 소규모 무리,해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.,nocsy_cat5
+nocsy_cat6,산들 고양이,잔잔한 계곡의 바람을 즐기는 고양이.,벚꽃 숲,꽃피는 계곡,"terralith:sakura_grove, terralith:blooming_valley",1,60,73.5,15,False,일반 · 소규모 무리,해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.,nocsy_cat6
+nocsy_cat_fallen,달그늘 고양이,달빛 숲의 오래된 유적에 드물게 나타난다.,달빛 숲,달빛 계곡,"terralith:moonlight_grove, terralith:moonlight_valley",3,3.0,6.6,4.0,False,희귀 · 지정 지점,거목·꽃 군락 인근 소규모 출현 지점.,nocsy_cat_fallen
+voxelspawns_pug,산책 퍼그,학교 외곽 벚꽃길을 산책하는 작은 개.,벚꽃 계곡,꽃피는 계곡,"terralith:sakura_valley, terralith:blooming_valley",1,60.0,73.5,15.0,False,일반 · 소규모 무리,해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.,voxelspawns_pug
+baby_polar_bear,눈송이 아기곰,얼음 늪 가장자리에서 노는 어린 곰.,얼음 늪,눈 덮인 방패암 지대,"terralith:ice_marsh, terralith:snowy_shield",1,40.0,62.5,25.0,False,일반 · 소규모 무리,빙하·설림의 육상 구역.,baby_polar_bear
+baby_yeti,눈산 꼬마예티,빙하 협곡의 작은 굴에서 모습을 드러낸다.,빙하 협곡,얼어붙은 절벽,"terralith:glacial_chasm, terralith:frozen_cliffs",2,12.0,23.7,13.0,False,드묾 · 소수 개체,빙하·설림의 육상 구역.,baby_yeti
+frost_ferret,서리 족제비,눈 덮인 나무뿌리 사이로 재빠르게 움직인다.,눈 덮인 단풍 숲,겨울 숲,"terralith:snowy_maple_forest, terralith:wintry_forest",2,18.0,33.3,17.0,False,드묾 · 소수 개체,빙하·설림의 육상 구역.,frost_ferret
+gangster_snowman,심술 눈사람,겨울 숲의 마력이 뭉쳐 움직이기 시작했다.,겨울 숲,눈 덮인 벚꽃 숲,"terralith:wintry_forest, terralith:snowy_cherry_grove",2,15.0,28.5,15.0,False,드묾 · 소수 개체,빙하·설림의 육상 구역.,gangster_snowman
+ice_knight,서리 기사,빙하 유적 주변을 지키는 작은 얼음 기사.,빙하 협곡,서리불 동굴,"terralith:glacial_chasm, terralith:cave/frostfire_caves",3,3.0,6.6,4.0,False,희귀 · 지정 지점,빙하·설림의 육상 구역.,ice_knight
+dragon_desert,사막 드래곤,영역의 높은 곳에 둥지를 짓는 거대한 용. 사막 계열의 변이 개체.,고대 모래 지대,사막 첨탑,"terralith:ancient_sands, terralith:desert_spires",3,0.8,1.88,1.2,False,희귀 · 지정 지점,모래 언덕·사암 협곡 주변. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,dragon_desert
+dragon_glacial,빙하 드래곤,영역의 높은 곳에 둥지를 짓는 거대한 용. 빙하 계열의 변이 개체.,빙하 협곡,얼어붙은 절벽,"terralith:glacial_chasm, terralith:frozen_cliffs",3,0.8,1.88,1.2,False,희귀 · 지정 지점,빙하·설림의 육상 구역. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,dragon_glacial
+dragon_nether,화산 드래곤,영역의 높은 곳에 둥지를 짓는 거대한 용. 화산 계열의 변이 개체.,화산 분화구,화산 봉우리,"terralith:volcanic_crater, terralith:volcanic_peaks",3,0.8,1.88,1.2,False,희귀 · 지정 지점,오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,dragon_nether
+dragon_sculk,스컬크 드래곤,영역의 높은 곳에 둥지를 짓는 거대한 용. 스컬크 계열의 변이 개체.,깊은 동굴,,terralith:cave/deep_caves,3,0.8,1.88,1.2,False,희귀 · 지정 지점,동굴 내부의 별도 유적 구역. 바이옴 전체 자연 스폰 제외. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,dragon_sculk
+lizard_aqua,물가 왕도마뱀,거친 환경에 적응한 커다란 도마뱀. 물가 계열의 변이 개체.,따뜻한 강,난초 늪,"terralith:warm_river, terralith:orchid_swamp",2,16,28.6,14,False,드묾 · 소수 개체,늪과 강의 물가. 육상·수중 조건은 개체별 지정. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,lizard_aqua
+lizard_lava,용암 왕도마뱀,거친 환경에 적응한 커다란 도마뱀. 용암 계열의 변이 개체.,화산 분화구,열수 동굴,"terralith:volcanic_crater, terralith:cave/thermal_caves",2,16,28.6,14,False,드묾 · 소수 개체,오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,lizard_lava
+manticore_aether,창공 만티코어,황량한 협곡의 그늘에서 먹잇감을 기다린다. 창공 계열의 변이 개체.,봄 하늘섬,여름 하늘섬,"terralith:skylands_spring, terralith:skylands_summer",3,1.5,3.75,2.5,False,희귀 · 지정 지점,모래 언덕·사암 협곡 주변. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,manticore_aether
+manticore_dusk,황혼 만티코어,황량한 협곡의 그늘에서 먹잇감을 기다린다. 황혼 계열의 변이 개체.,달빛 계곡,사막 협곡,"terralith:moonlight_valley, terralith:desert_canyon",3,1.5,3.75,2.5,False,희귀 · 지정 지점,모래 언덕·사암 협곡 주변. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,manticore_dusk
+manticore_soul,혼령 만티코어,황량한 협곡의 그늘에서 먹잇감을 기다린다. 혼령 계열의 변이 개체.,깊은 동굴,달빛 계곡,"terralith:cave/deep_caves, terralith:moonlight_valley",3,1.5,3.75,2.5,False,희귀 · 지정 지점,오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,manticore_soul
+manticore_venom,맹독 만티코어,황량한 협곡의 그늘에서 먹잇감을 기다린다. 맹독 계열의 변이 개체.,사막 협곡,고대 모래 지대,"terralith:desert_canyon, terralith:ancient_sands",3,1.5,3.75,2.5,False,희귀 · 지정 지점,모래 언덕·사암 협곡 주변. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,manticore_venom
+panda_normal,대나무 판다,정글의 대나무 군락에서 느긋하게 지낸다. ,열대 정글,,terralith:tropical_jungle,1,40,62.5,25,False,일반 · 소규모 무리,정글 수풀과 유적 외곽. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,panda_normal
+sabertooth_arctic,설원 검치호,거대한 송곳니를 가진 날렵한 포식자. 설원 계열의 변이 개체.,눈 덮인 방패암 지대,겨울 숲,"terralith:snowy_shield, terralith:wintry_forest",2,10,19.0,10,False,드묾 · 소수 개체,빙하·설림의 육상 구역. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,sabertooth_arctic
+sabertooth_midnight,한밤 검치호,거대한 송곳니를 가진 날렵한 포식자. 한밤 계열의 변이 개체.,달빛 숲,,terralith:moonlight_grove,2,10,19.0,10,False,드묾 · 소수 개체,초원 공터의 작은 무리. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,sabertooth_midnight
+sabertooth_savanna,초원 검치호,거대한 송곳니를 가진 날렵한 포식자. 초원 계열의 변이 개체.,갈라진 사바나,사바나 비탈,"terralith:fractured_savanna, terralith:savanna_slopes",2,10,19.0,10,False,드묾 · 소수 개체,초원 공터의 작은 무리. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,sabertooth_savanna
+capybara,물가 카피바라,잔잔한 강가에서 무리와 함께 쉬는 동물. ,따뜻한 강,푸른 계곡,"terralith:warm_river, terralith:lush_valley",1,50,72.5,25,False,일반 · 소규모 무리,늪과 강의 물가. 육상·수중 조건은 개체별 지정. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,capybara
+horse_glacial,빙하 준마,넓은 지형을 달리는 힘찬 말. 빙하 계열의 변이 개체.,빙하 협곡,얼어붙은 절벽,"terralith:glacial_chasm, terralith:frozen_cliffs",2,20,33.5,15,False,드묾 · 소수 개체,빙하·설림의 육상 구역. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,horse_glacial
+horse_magma,마그마 준마,넓은 지형을 달리는 힘찬 말. 마그마 계열의 변이 개체.,화산 봉우리,현무암 절벽,"terralith:volcanic_peaks, terralith:basalt_cliffs",2,20,33.5,15,False,드묾 · 소수 개체,오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,horse_magma
+horse_pegasus,페가수스,넓은 지형을 달리는 힘찬 말. 페가수스 계열의 변이 개체.,봄 하늘섬,고산 고지,"terralith:skylands_spring, terralith:alpine_highlands",3,4,7.6,4,False,희귀 · 지정 지점,초원 공터의 작은 무리. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,horse_pegasus
+horse_spartan,철갑 준마,넓은 지형을 달리는 힘찬 말. 철갑 계열의 변이 개체.,대초원,온대 고지,"terralith:steppe, terralith:temperate_highlands",2,20,33.5,15,False,드묾 · 소수 개체,초원 공터의 작은 무리. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,horse_spartan
+horse_unicorn,유니콘,넓은 지형을 달리는 힘찬 말. 유니콘 계열의 변이 개체.,벚꽃 숲,라벤더 숲,"terralith:sakura_grove, terralith:lavender_forest",3,4,7.6,4,False,희귀 · 지정 지점,거목·꽃 군락 인근 소규모 출현 지점. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,horse_unicorn
+kitsune_demonic,마성 키츠네,마력이 짙은 숲길에 드물게 모습을 보이는 여우. 마성 계열의 변이 개체.,뒤틀린 메사,맨틀 동굴,"terralith:warped_mesa, terralith:cave/mantle_caves",3,2,4.7,3,False,희귀 · 지정 지점,오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,kitsune_demonic
+kitsune_inferno,업화 키츠네,마력이 짙은 숲길에 드물게 모습을 보이는 여우. 업화 계열의 변이 개체.,화산 분화구,,terralith:volcanic_crater,3,2,4.7,3,False,희귀 · 지정 지점,오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,kitsune_inferno
+kitsune_normal,키츠네,마력이 짙은 숲길에 드물게 모습을 보이는 여우. ,벚꽃 숲,달빛 숲,"terralith:sakura_grove, terralith:moonlight_grove",3,3,6.6,4,False,희귀 · 지정 지점,거목·꽃 군락 인근 소규모 출현 지점. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,kitsune_normal
+phantom_ender,공허 팬텀,빛이 적은 봉인 지대에서 떠도는 비행 생물. 공허 계열의 변이 개체.,뒤틀린 메사,신기루 섬,"terralith:warped_mesa, terralith:mirage_isles",3,2,4.7,3,False,희귀 · 지정 지점,오버월드의 기이한 지형에 설치할 봉인 구역. 엔드 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,phantom_ender
+phantom_ghost,망령 팬텀,빛이 적은 봉인 지대에서 떠도는 비행 생물. 망령 계열의 변이 개체.,깊은 동굴,달빛 계곡,"terralith:cave/deep_caves, terralith:moonlight_valley",3,2,4.7,3,False,희귀 · 지정 지점,동굴 내부의 별도 유적 구역. 바이옴 전체 자연 스폰 제외. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,phantom_ghost
+phoenix_darkflame,흑염 피닉스,마력이 모이는 높은 지형에 내려앉는 불사조. 흑염 계열의 변이 개체.,현무암 절벽,화산 분화구,"terralith:basalt_cliffs, terralith:volcanic_crater",3,1,2.35,1.5,False,희귀 · 지정 지점,오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,phoenix_darkflame
+phoenix_flame,불꽃 피닉스,마력이 모이는 높은 지형에 내려앉는 불사조. 불꽃 계열의 변이 개체.,화산 봉우리,,terralith:volcanic_peaks,3,1,2.35,1.5,False,희귀 · 지정 지점,절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,phoenix_flame
+phoenix_light,광휘 피닉스,마력이 모이는 높은 지형에 내려앉는 불사조. 광휘 계열의 변이 개체.,봄 하늘섬,,terralith:skylands_spring,3,1,2.35,1.5,False,희귀 · 지정 지점,절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,phoenix_light
+phoenix_thunder,뇌광 피닉스,마력이 모이는 높은 지형에 내려앉는 불사조. 뇌광 계열의 변이 개체.,바람 깎인 첨탑,,terralith:windswept_spires,3,1,2.35,1.5,False,희귀 · 지정 지점,절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,phoenix_thunder
+basilisk_obsidian,흑요 바실리스크,오래된 정글의 바위 틈에 자리 잡은 거대 파충류. 흑요 계열의 변이 개체.,현무암 절벽,화산 봉우리,"terralith:basalt_cliffs, terralith:volcanic_peaks",3,2,4.7,3,False,희귀 · 지정 지점,오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,basilisk_obsidian
+basilisk_snowstorm,눈보라 바실리스크,오래된 정글의 바위 틈에 자리 잡은 거대 파충류. 눈보라 계열의 변이 개체.,빙하 협곡,겨울 하늘섬,"terralith:glacial_chasm, terralith:skylands_winter",3,2,4.7,3,False,희귀 · 지정 지점,빙하·설림의 육상 구역. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,basilisk_snowstorm
+basilisk_wild,야생 바실리스크,오래된 정글의 바위 틈에 자리 잡은 거대 파충류. ,바위 정글,정글 산맥,"terralith:rocky_jungle, terralith:jungle_mountains",3,2,4.7,3,False,희귀 · 지정 지점,정글 수풀과 유적 외곽. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,basilisk_wild
+hippogryph_common,산악 히포그리프,높은 절벽에 둥지를 만들고 주변을 살핀다. ,에메랄드 봉우리,고산 고지,"terralith:emerald_peaks, terralith:alpine_highlands",3,3,6.6,4,False,희귀 · 지정 지점,절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,hippogryph_common
+hippogryph_crystal,수정 히포그리프,높은 절벽에 둥지를 만들고 주변을 살핀다. 수정 계열의 변이 개체.,자수정 협곡,에메랄드 봉우리,"terralith:amethyst_canyon, terralith:emerald_peaks",3,3,6.6,4,False,희귀 · 지정 지점,절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,hippogryph_crystal
+hippogryph_fallen,타락 히포그리프,높은 절벽에 둥지를 만들고 주변을 살핀다. 타락 계열의 변이 개체.,달빛 숲,깊은 동굴,"terralith:moonlight_grove, terralith:cave/deep_caves",3,2,4.7,3,False,희귀 · 지정 지점,동굴 내부의 별도 유적 구역. 바이옴 전체 자연 스폰 제외. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,hippogryph_fallen
+hippogryph_royal,왕실 히포그리프,높은 절벽에 둥지를 만들고 주변을 살핀다. 왕실 행사 중에만 만날 수 있는 개체.,벚꽃 계곡,,terralith:sakura_valley,3,2,4.7,3,False,이벤트 전용,운영자가 여는 한정 교화 구역. 평시 자연 스폰 없음. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,hippogryph_royal
+raptor_nightmare,악몽 랩터,정글 수풀을 가르며 사냥하는 민첩한 포식자. 악몽 계열의 변이 개체.,달빛 숲,달빛 계곡,"terralith:moonlight_grove, terralith:moonlight_valley",3,2,4.7,3,False,희귀 · 지정 지점,동굴 내부의 별도 유적 구역. 바이옴 전체 자연 스폰 제외. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,raptor_nightmare
+raptor_red,적갈 랩터,정글 수풀을 가르며 사냥하는 민첩한 포식자. 적갈 계열의 변이 개체.,열대 정글,바위 정글,"terralith:tropical_jungle, terralith:rocky_jungle",2,10,20.8,12,False,드묾 · 소수 개체,정글 수풀과 유적 외곽. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,raptor_red
+raptor_undead,불사 랩터,정글 수풀을 가르며 사냥하는 민첩한 포식자. 불사 계열의 변이 개체.,감염 동굴,깊은 동굴,"terralith:cave/infested_caves, terralith:cave/deep_caves",3,2,4.7,3,False,희귀 · 지정 지점,동굴 내부의 별도 유적 구역. 바이옴 전체 자연 스폰 제외. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,raptor_undead
+sky_serpent_jade,비취 하늘뱀,높은 하늘섬 사이를 유영하는 긴 몸의 생물. 비취 계열의 변이 개체.,봄 하늘섬,바람 깎인 첨탑,"terralith:skylands_spring, terralith:windswept_spires",3,1.5,3.75,2.5,False,희귀 · 지정 지점,절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,sky_serpent_jade
+sky_serpent_magma,마그마 하늘뱀,높은 하늘섬 사이를 유영하는 긴 몸의 생물. 마그마 계열의 변이 개체.,화산 봉우리,현무암 절벽,"terralith:volcanic_peaks, terralith:basalt_cliffs",3,1.5,3.75,2.5,False,희귀 · 지정 지점,오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,sky_serpent_magma
+sky_serpent_solar,태양 하늘뱀,높은 하늘섬 사이를 유영하는 긴 몸의 생물. 태양 계열의 변이 개체.,여름 하늘섬,,terralith:skylands_summer,3,1.5,3.75,2.5,False,희귀 · 지정 지점,절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,sky_serpent_solar
+sky_serpent_spectral,영체 하늘뱀,높은 하늘섬 사이를 유영하는 긴 몸의 생물. 영체 계열의 변이 개체.,달빛 계곡,가을 하늘섬,"terralith:moonlight_valley, terralith:skylands_autumn",3,1.5,3.75,2.5,False,희귀 · 지정 지점,오버월드의 기이한 지형에 설치할 봉인 구역. 엔드 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,sky_serpent_spectral
+stag_demonic,마성 영록,오래된 숲의 마력을 품은 신비한 사슴. 마성 계열의 변이 개체.,뒤틀린 메사,맨틀 동굴,"terralith:warped_mesa, terralith:cave/mantle_caves",3,2,4.7,3,False,희귀 · 지정 지점,오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,stag_demonic
+stag_heavenly,천상 영록,오래된 숲의 마력을 품은 신비한 사슴. 천상 계열의 변이 개체.,봄 하늘섬,,terralith:skylands_spring,3,3,6.6,4,False,희귀 · 지정 지점,거목·꽃 군락 인근 소규모 출현 지점. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,stag_heavenly
+stag_rune,룬 영록,오래된 숲의 마력을 품은 신비한 사슴. 룬 계열의 변이 개체.,자수정 우림,달빛 숲,"terralith:amethyst_rainforest, terralith:moonlight_grove",3,3,6.6,4,False,희귀 · 지정 지점,거목·꽃 군락 인근 소규모 출현 지점. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,stag_rune
+stag_void,심연 영록,오래된 숲의 마력을 품은 신비한 사슴. 심연 계열의 변이 개체.,신기루 섬,뒤틀린 메사,"terralith:mirage_isles, terralith:warped_mesa",3,2,4.7,3,False,희귀 · 지정 지점,오버월드의 기이한 지형에 설치할 봉인 구역. 엔드 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,stag_void
+frog_green,녹빛 왕개구리,깊은 늪 가장자리에서 모습을 드러내는 큰 개구리. 녹빛 계열의 변이 개체.,난초 늪,푸른 계곡,"terralith:orchid_swamp, terralith:lush_valley",2,20,33.5,15,False,드묾 · 소수 개체,늪과 강의 물가. 육상·수중 조건은 개체별 지정. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,frog_green
+frog_permafrost,영구동토 왕개구리,깊은 늪 가장자리에서 모습을 드러내는 큰 개구리. 영구동토 계열의 변이 개체.,얼음 늪,얼어붙은 절벽,"terralith:ice_marsh, terralith:frozen_cliffs",2,20,33.5,15,False,드묾 · 소수 개체,빙하·설림의 육상 구역. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,frog_permafrost
+frog_royal,왕실 왕개구리,깊은 늪 가장자리에서 모습을 드러내는 큰 개구리. 왕실 행사 중에만 만날 수 있는 개체.,벚꽃 계곡,,terralith:sakura_valley,3,2,4.7,3,False,이벤트 전용,운영자가 여는 한정 교화 구역. 평시 자연 스폰 없음. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,frog_royal
+golem_arcane,비전 고대 골렘,특정 유적의 마력을 지키는 거대한 수호체. 비전 계열의 변이 개체.,자수정 협곡,깊은 동굴,"terralith:amethyst_canyon, terralith:cave/deep_caves",3,2,4.7,3,False,희귀 · 지정 지점,동굴 내부의 별도 유적 구역. 바이옴 전체 자연 스폰 제외. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,golem_arcane
+golem_corrupted,오염 고대 골렘,특정 유적의 마력을 지키는 거대한 수호체. 오염 계열의 변이 개체.,감염 동굴,,terralith:cave/infested_caves,3,2,4.7,3,False,희귀 · 지정 지점,동굴 내부의 별도 유적 구역. 바이옴 전체 자연 스폰 제외. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,golem_corrupted
+golem_magma,마그마 고대 골렘,특정 유적의 마력을 지키는 거대한 수호체. 마그마 계열의 변이 개체.,화산 봉우리,현무암 절벽,"terralith:volcanic_peaks, terralith:basalt_cliffs",3,2,4.7,3,False,희귀 · 지정 지점,오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,golem_magma
+golem_royal,왕실 고대 골렘,특정 유적의 마력을 지키는 거대한 수호체. 왕실 행사 중에만 만날 수 있는 개체.,벚꽃 계곡,,terralith:sakura_valley,3,2,4.7,3,False,이벤트 전용,운영자가 여는 한정 교화 구역. 평시 자연 스폰 없음. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,golem_royal
+tusker_demonic,마성 터스커,숲의 길목을 따라 이동하는 큰 엄니의 생물. 마성 계열의 변이 개체.,뒤틀린 메사,맨틀 동굴,"terralith:warped_mesa, terralith:cave/mantle_caves",3,2,4.7,3,False,희귀 · 지정 지점,오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,tusker_demonic
+tusker_dreamlight,꿈빛 터스커,숲의 길목을 따라 이동하는 큰 엄니의 생물. 꿈빛 계열의 변이 개체.,라벤더 계곡,달빛 계곡,"terralith:lavender_valley, terralith:moonlight_valley",2,12,23.7,13,False,드묾 · 소수 개체,거목·꽃 군락 인근 소규모 출현 지점. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,tusker_dreamlight
+tusker_forest,숲 터스커,숲의 길목을 따라 이동하는 큰 엄니의 생물. 숲 계열의 변이 개체.,숲 우거진 고지,운무 숲,"terralith:forested_highlands, terralith:cloud_forest",2,12,23.7,13,False,드묾 · 소수 개체,나무 아래와 숲 가장자리의 육상 개체. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,tusker_forest
+wolfhawk_dire,거친 울프호크,산악 둥지 주변에서 영역을 지키는 날렵한 생물. 거친 계열의 변이 개체.,바람 깎인 첨탑,바위 산맥,"terralith:windswept_spires, terralith:rocky_mountains",3,2,4.7,3,False,희귀 · 지정 지점,절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,wolfhawk_dire
+wolfhawk_fallen,타락 울프호크,산악 둥지 주변에서 영역을 지키는 날렵한 생물. 타락 계열의 변이 개체.,달빛 숲,깊은 동굴,"terralith:moonlight_grove, terralith:cave/deep_caves",3,2,4.7,3,False,희귀 · 지정 지점,동굴 내부의 별도 유적 구역. 바이옴 전체 자연 스폰 제외. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,wolfhawk_fallen
+wolfhawk_fullmoon,만월 울프호크,산악 둥지 주변에서 영역을 지키는 날렵한 생물. 만월 계열의 변이 개체.,달빛 계곡,,terralith:moonlight_valley,3,2,4.7,3,False,희귀 · 지정 지점,절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,wolfhawk_fullmoon
+wolfhawk_stormcloud,먹구름 울프호크,산악 둥지 주변에서 영역을 지키는 날렵한 생물. 먹구름 계열의 변이 개체.,바람 깎인 첨탑,바위 산맥,"terralith:windswept_spires, terralith:rocky_mountains",3,2,4.7,3,False,희귀 · 지정 지점,절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,wolfhawk_stormcloud
+wyvern_ender,공허 와이번,가파른 산맥에 둥지를 튼 비행 포식자. 공허 계열의 변이 개체.,뒤틀린 메사,신기루 섬,"terralith:warped_mesa, terralith:mirage_isles",3,1.5,3.75,2.5,False,희귀 · 지정 지점,오버월드의 기이한 지형에 설치할 봉인 구역. 엔드 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,wyvern_ender
+wyvern_green,녹빛 와이번,가파른 산맥에 둥지를 튼 비행 포식자. 녹빛 계열의 변이 개체.,바위 산맥,바위 첨탑,"terralith:rocky_mountains, terralith:stony_spires",3,1.5,3.75,2.5,False,희귀 · 지정 지점,절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,wyvern_green
+wyvern_inferno,업화 와이번,가파른 산맥에 둥지를 튼 비행 포식자. 업화 계열의 변이 개체.,화산 분화구,,terralith:volcanic_crater,3,1.5,3.75,2.5,False,희귀 · 지정 지점,오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,wyvern_inferno
+wyvern_undead,불사 와이번,가파른 산맥에 둥지를 튼 비행 포식자. 불사 계열의 변이 개체.,감염 동굴,깊은 동굴,"terralith:cave/infested_caves, terralith:cave/deep_caves",3,1.5,3.75,2.5,False,희귀 · 지정 지점,동굴 내부의 별도 유적 구역. 바이옴 전체 자연 스폰 제외. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.,wyvern_undead

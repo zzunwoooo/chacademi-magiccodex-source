@@ -1,0 +1,17 @@
+"Id": "ca_hippogryph_royal"
+"MythicMob": "CA_Pet_hippogryph_royal"
+"Permission": "chacademia.pet.ca_hippogryph_royal"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f왕실 히포그리프"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "높은 절벽에 둥지를 만들고 주변을 살핀다. 왕실 행사 중에만 만날 수 있는 개체."
+    - "서식지: 벚꽃 계곡"
+    - "3성"

@@ -1,0 +1,14 @@
+id: material_exchange
+name: 자재 치환
+category: earth
+description: 소유 구역의 같은 건축 블록 최대 9개를 소지한 다른 자재로 바꿉니다. 기존 자재는 회수합니다.
+icon: magiccodex:textures/spells/expansion_2/material_exchange.png
+permission: magic.learned.material_exchange
+discovery:
+  description: 서로 다른 건축 블록 5종을 각각 10개 설치하기.
+research: 다 지은 벽의 색이 마음에 들지 않는 날이 있다. 설계도를 다시 그리기 전에 이 주문을 떠올려 보자.
+cast:
+  command: ''
+  cooldown-seconds: 15
+  mana-cost: 60
+order: 124

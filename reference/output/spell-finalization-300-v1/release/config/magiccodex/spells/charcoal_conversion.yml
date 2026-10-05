@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "charcoal_conversion"
+name: "발화"
+category: "fire"
+description: "바라보는 대상을 10초간 발화합니다.\n\n중급 화염 실습의 드문 깨달음이 물체에 직접 불을 붙이는 힘으로 이어진다."
+icon: "magiccodex:textures/spells/expansion_2/charcoal_conversion.png"
+permission: "magic.learned.charcoal_conversion"
+discovery:
+  description: "화염 마법 중급 수업을 통해 낮은 확률로 습득"
+research: "탈 물질, 산소, 충분한 열.. 대부분 마나로 대체할 수 있겠군."
+cast:
+  command: "마법 발화"
+  cooldown-seconds: 10
+  mana-cost: 60
+order: 510

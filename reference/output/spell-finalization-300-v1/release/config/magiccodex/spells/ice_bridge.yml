@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "ice_bridge"
+name: "얼음 다리"
+category: "water"
+description: "바라보는 수면에 최대 12블록 길이의 얼음 다리를 만듭니다. 다리는 20초 뒤 사라집니다.\n\n차가운 바다를 직접 찾아가면 물결 위에 놓을 얼음의 결을 관찰할 수 있다."
+icon: "magiccodex:textures/spells/intermediate/ice_bridge.png"
+permission: "magic.learned.ice_bridge"
+discovery:
+  description: "차가운 바다에 방문하기"
+research: "다리를 놓을 나무가 없다면 발밑의 물을 빌리면 된다."
+cast:
+  command: "마법 얼음다리"
+  cooldown-seconds: 30
+  mana-cost: 80
+order: 710

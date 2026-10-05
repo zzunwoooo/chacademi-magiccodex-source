@@ -1,0 +1,17 @@
+"Id": "ca_mf_warden_knight"
+"MythicMob": "CA_Pet_mf_warden_knight"
+"Permission": "chacademia.pet.ca_mf_warden_knight"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f봉인의 기사"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "깊은 동굴의 봉인 구역을 지키는 기사."
+    - "서식지: 깊은 동굴"
+    - "3성"

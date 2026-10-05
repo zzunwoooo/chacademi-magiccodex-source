@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "last_lantern"
+name: "마지막 등불"
+category: "light"
+description: "체력이 낮은 동료에게 쓰는 다음 치유 효과를 강화한다.\n\n꺼져 가는 동료에게 작은 치유를 거듭 건넨 손은 마지막 한 번을 더 강하게 비춘다."
+icon: "magiccodex:textures/spells/expansion_3/last_lantern.png"
+permission: "magic.learned.last_lantern"
+discovery:
+  description: "체력이 하트 2칸 이하인 동료를 작은 치유로 10회 회복하기."
+research: "아직 빛이 남아 있다면 도움도 늦지 않았다."
+cast:
+  command: "마법 마지막등불"
+  cooldown-seconds: 25
+  mana-cost: 65
+order: 2720

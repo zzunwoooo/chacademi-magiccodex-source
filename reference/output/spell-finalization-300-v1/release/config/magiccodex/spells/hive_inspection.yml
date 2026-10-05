@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "hive_inspection"
+name: "벌집 살피기"
+category: "earth"
+description: "벌집 안의 벌 수와 꿀이 찬 정도를 확인한다.\n\n벌집을 조용히 여러 번 살펴보면 안쪽의 날갯짓과 꿀의 무게를 구별하게 된다."
+icon: "magiccodex:textures/spells/expansion_3/hive_inspection.png"
+permission: "magic.learned.hive_inspection"
+discovery:
+  description: "벌집을 누적 10회 조사하기."
+research: "벌집의 겉모양이 같아도 안에서 기다리는 계절은 다르다."
+cast:
+  command: "마법 벌집살피기"
+  cooldown-seconds: 3
+  mana-cost: 6
+order: 2480

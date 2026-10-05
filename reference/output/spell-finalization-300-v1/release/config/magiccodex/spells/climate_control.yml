@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "climate_control"
+name: "기후 통제"
+category: "earth"
+description: "기후 제어 장치에 연결된 지역의 날씨를 5분간 맑음 또는 비로 바꿉니다.\n\n네 계절의 기상을 모두 관측한 뒤에야 하늘이 바뀌는 흐름을 조율할 수 있다."
+icon: "magiccodex:textures/spells/advanced/climate_control.png"
+permission: "magic.learned.climate_control"
+discovery:
+  description: "봄·여름·가을·겨울의 기상 관측 수업을 각각 1회 마치기."
+research: "좋은 날씨의 기준은 사람마다 다르다. 농사 짓는 학생과 소풍 가는 학생의 의견부터 들어 보자."
+cast:
+  command: "마법 기후통제"
+  cooldown-seconds: 300
+  mana-cost: 450
+order: 1070

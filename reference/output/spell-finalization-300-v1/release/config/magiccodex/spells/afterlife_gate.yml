@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "afterlife_gate"
+name: "사후세계의 문"
+category: "dark"
+description: "살아 있는 상태로 사후세계에 진입해 망자와 대화하고 잃어버린 지식을 탐색합니다.\n\n서로 다른 끝을 여러 번 겪은 영혼은 산 사람에게 보이지 않는 경계의 문을 알아본다."
+icon: "magiccodex:textures/spells/advanced/afterlife_gate.png"
+permission: "magic.learned.afterlife_gate"
+discovery:
+  description: "서로 다른 원인으로 5회 사망하기."
+research: "돌아갈 길을 기억하는 자만이 살아서 저편을 걸을 수 있다."
+cast:
+  command: "마법 사후세계의문"
+  cooldown-seconds: 180
+  mana-cost: 350
+order: 1720

@@ -1,0 +1,14 @@
+id: color_finder
+name: 색 찾기
+category: light
+description: 바라보는 건축 블록의 색과 이름을 알려준다.
+icon: ''
+permission: magic.learned.color_finder
+discovery:
+  description: 서로 다른 색의 양털 8종 획득하기.
+research: 같아 보이는 색도 햇빛과 그림자 아래에서는 다르게 빛난다.
+cast:
+  command: ''
+  cooldown-seconds: 2
+  mana-cost: 4
+order: 262

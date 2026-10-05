@@ -1,0 +1,14 @@
+id: fugitive_toll
+name: 도망자의 대가
+category: dark
+description: 표식 대상이 자신에게서 멀어질 때 피해를 준다.
+icon: ''
+permission: magic.learned.fugitive_toll
+discovery:
+  description: 활로 도망가는 몬스터를 누적 15마리 처치하기.
+research: 도망가는 길이 길어질수록 남겨 둔 그림자는 무거워진다.
+cast:
+  command: ''
+  cooldown-seconds: 25
+  mana-cost: 75
+order: 284

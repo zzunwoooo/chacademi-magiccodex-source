@@ -1,0 +1,14 @@
+id: home_check
+name: 귀가 확인
+category: light
+description: 자신의 침대와 부활 지점이 유효한지 확인한다.
+icon: ''
+permission: magic.learned.home_check
+discovery:
+  description: 같은 침대에서 누적 5회 잠들기.
+research: 집이 그대로 있는지 확인하는 것만으로도 먼 여행의 마음이 가벼워진다.
+cast:
+  command: ''
+  cooldown-seconds: 3
+  mana-cost: 5
+order: 267

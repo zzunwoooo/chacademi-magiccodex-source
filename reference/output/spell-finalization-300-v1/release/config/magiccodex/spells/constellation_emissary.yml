@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "constellation_emissary"
+name: "성좌의 대리인"
+category: "light"
+description: "30초간 작은 별의 사역마를 소환합니다. 8블록 안에서 체력이 낮은 동료를 찾아 최대 5번 치료합니다.\n\n여러 동료에게 성좌의 가호를 함께 나누어 주다 보면 별의 도움을 대신 전할 사역마를 부를 수 있다."
+icon: "magiccodex:textures/spells/expansion_2/constellation_emissary.png"
+permission: "magic.learned.constellation_emissary"
+discovery:
+  description: "성좌의 가호를 동료 3명에게 동시에 적용하기 10회."
+research: "바쁜 별을 대신해 작은 사자가 아픈 이들을 찾아다닌다."
+cast:
+  command: "마법 성좌의대리인"
+  cooldown-seconds: 120
+  mana-cost: 280
+order: 1650

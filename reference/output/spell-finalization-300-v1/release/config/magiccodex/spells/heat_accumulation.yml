@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "heat_accumulation"
+name: "열기 축적"
+category: "fire"
+description: "제자리에 서서 열기를 모은 뒤 근거리 폭발로 방출한다.\n\n열을 견딘 시간이 쌓이면 흩어지던 불을 몸 가까이에 붙잡아 둘 수 있다."
+icon: "magiccodex:textures/spells/expansion_3/heat_accumulation.png"
+permission: "magic.learned.heat_accumulation"
+discovery:
+  description: "불이 붙은 상태에서 누적 60초 생존하기."
+research: "움직임을 줄여야 열이 모인다. 충분히 모인 뒤에는 오래 품지 말자."
+cast:
+  command: "마법 열기축적"
+  cooldown-seconds: 35
+  mana-cost: 120
+order: 2260

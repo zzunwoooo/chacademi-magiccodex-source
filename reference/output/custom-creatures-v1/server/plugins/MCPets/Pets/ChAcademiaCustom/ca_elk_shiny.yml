@@ -1,0 +1,17 @@
+"Id": "ca_elk_shiny"
+"MythicMob": "CA_Pet_elk_shiny"
+"Permission": "chacademia.pet.ca_elk_shiny"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e고산 엘크"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "고산 숲의 넓은 공터를 무리 지어 걷는 사슴."
+    - "서식지: 고산 숲 / 고산 고지"
+    - "2성"

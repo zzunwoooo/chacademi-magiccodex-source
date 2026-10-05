@@ -1,0 +1,14 @@
+id: night_lullaby
+name: 밤의 자장가
+category: dark
+description: 주변 팬텀들이 20초간 자신을 공격 대상으로 삼지 못하게 합니다. 먼저 공격하면 해제됩니다.
+icon: magiccodex:textures/spells/expansion_2/night_lullaby.png
+permission: magic.learned.night_lullaby
+discovery:
+  description: 팬텀에게 공격받은 뒤 잠들지 않고 날이 밝을 때까지 생존하기.
+research: 잠 못 드는 밤의 손님에게 먼저 자장가를 불러 주었다.
+cast:
+  command: ''
+  cooldown-seconds: 30
+  mana-cost: 30
+order: 185

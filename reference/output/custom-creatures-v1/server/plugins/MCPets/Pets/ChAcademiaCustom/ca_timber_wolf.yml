@@ -1,0 +1,17 @@
+"Id": "ca_timber_wolf"
+"MythicMob": "CA_Pet_timber_wolf"
+"Permission": "chacademia.pet.ca_timber_wolf"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f침엽 숲늑대"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "차가운 숲에서 무리와 함께 사냥하는 늑대."
+    - "서식지: 시베리아 타이가 / 자작나무 타이가"
+    - "2성"

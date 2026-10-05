@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "wind_decoy"
+name: "바람 미끼"
+category: "wind"
+description: "지정한 위치에서 소리를 내 일반 몬스터의 관심을 잠깐 그쪽으로 돌립니다.\n\n많은 몬스터에게 가까이 둘러싸였을 때, 몸 대신 시선을 끌 바람이 필요해진다."
+icon: "magiccodex:textures/spells/expansion_2/wind_decoy.png"
+permission: "magic.learned.wind_decoy"
+discovery:
+  description: "반경 7블럭 안에 10마리의 몬스터와 함께 있기."
+research: "몬스터들에게 둘러 쌓인 위기의 마법사에게 한 줄기 희망을.."
+cast:
+  command: "마법 바람미끼"
+  cooldown-seconds: 25
+  mana-cost: 90
+order: 250

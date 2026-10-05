@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "spring_ground"
+name: "용수철 지반"
+category: "earth"
+description: "한 지점에 임시 도약판을 설치합니다. 밟으면 지정한 방향으로 튀어 오르며 몇 번 사용하면 사라집니다.\n\n슬라임 블록 위에서 연달아 튀어 오르면 단단한 땅에도 반동을 빌릴 수 있다."
+icon: "magiccodex:textures/spells/expansion_2/spring_ground.png"
+permission: "magic.learned.spring_ground"
+discovery:
+  description: "슬라임 블록 위에서 5회 연속 튀어 오르기."
+research: "땅이 단단해야만 한다는 생각을 잠시 내려놓자. 착지할 곳까지 내려놓으면 안 된다."
+cast:
+  command: "마법 용수철지반"
+  cooldown-seconds: 20
+  mana-cost: 65
+order: 1280

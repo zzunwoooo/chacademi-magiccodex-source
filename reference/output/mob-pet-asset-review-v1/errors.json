@@ -1,0 +1,22 @@
+[
+  {
+    "archive": "동물의숲.zip",
+    "path": "BULBPACK_VOL_2.zip",
+    "error": "File is not a zip file"
+  },
+  {
+    "archive": "동물의숲.zip",
+    "path": "Playbox-Cherry-Blossom-Furniture-wtkvzv (1).zip",
+    "error": "File is not a zip file"
+  },
+  {
+    "archive": "동물의숲.zip",
+    "path": "Playbox-Cherry-Blossom-Furniture-wtkvzv.zip",
+    "error": "File is not a zip file"
+  },
+  {
+    "archive": "동물의숲.zip > Wisteria_Tree_Pack.zip",
+    "path": "__MACOSX/Wisteria_Tree_Pack/Wisteria_Tree_Pack_Example/._Wisteria Example Pack.zip",
+    "error": "File is not a zip file"
+  }
+]

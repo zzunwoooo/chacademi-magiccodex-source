@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "shadow_pouch"
+name: "그림자 주머니"
+category: "dark"
+description: "사망 시 떨어뜨리지 않을 일반 아이템 한 칸을 지정한다.\n\n죽음 뒤에 자기 물건을 되찾아 본 기억이 다음에는 놓치지 않을 작은 주머니를 만든다."
+icon: "magiccodex:textures/spells/expansion_3/shadow_pouch.png"
+permission: "magic.learned.shadow_pouch"
+discovery:
+  description: "사망 후 떨어진 자신의 아이템을 누적 3회 회수하기."
+research: "그림자가 기억할 수 있는 자리는 작다. 모든 짐을 맡길 수는 없다."
+cast:
+  command: "마법 그림자주머니"
+  cooldown-seconds: 90
+  mana-cost: 100
+order: 2800

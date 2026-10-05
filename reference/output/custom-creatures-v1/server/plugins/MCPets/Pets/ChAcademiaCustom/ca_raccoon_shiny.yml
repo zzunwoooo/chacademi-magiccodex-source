@@ -1,0 +1,17 @@
+"Id": "ca_raccoon_shiny"
+"MythicMob": "CA_Pet_raccoon_shiny"
+"Permission": "chacademia.pet.ca_raccoon_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e개울 너구리"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "개울과 숲의 경계를 오가며 먹이를 찾는다."
+    - "서식지: 푸른 계곡 / 숲 우거진 고지"
+    - "1성"

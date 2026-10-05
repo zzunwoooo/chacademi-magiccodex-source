@@ -1,0 +1,14 @@
+id: light_rhythm
+name: 빛의 박자
+category: light
+description: 간격에 맞춰 세 번 공격하면 마지막 공격이 강화된다.
+icon: ''
+permission: magic.learned.light_rhythm
+discovery:
+  description: 빛 마법 전투 실습의 연속 타격 과정을 완료하기.
+research: 빠른 공격보다 일정한 호흡이 마지막 타격을 더 단단하게 만든다.
+cast:
+  command: ''
+  cooldown-seconds: 12
+  mana-cost: 35
+order: 269

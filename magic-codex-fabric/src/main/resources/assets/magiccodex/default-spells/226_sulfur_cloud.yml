@@ -1,0 +1,14 @@
+id: sulfur_cloud
+name: 유황 구름
+category: fire
+description: 화염 공격이 닿으면 한 번 폭발하는 연기 구름을 남긴다.
+icon: ''
+permission: magic.learned.sulfur_cloud
+discovery:
+  description: 화약을 누적 32개 획득하기.
+research: 혼자서는 조용한 연기다. 불꽃이 닿는 순간 이야기가 달라진다.
+cast:
+  command: ''
+  cooldown-seconds: 25
+  mana-cost: 75
+order: 226

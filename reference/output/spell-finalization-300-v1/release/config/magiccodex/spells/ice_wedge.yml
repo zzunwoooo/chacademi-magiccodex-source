@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "ice_wedge"
+name: "얼음 쐐기"
+category: "water"
+description: "적에게 얼음 조각을 박아 움직일수록 추가 피해를 준다.\n\n눈덩이를 거듭 맞힌 경험은 얼음이 몸에 남는 자리를 알려 준다."
+icon: "magiccodex:textures/spells/expansion_3/ice_wedge.png"
+permission: "magic.learned.ice_wedge"
+discovery:
+  description: "눈덩이를 몬스터에게 누적 30회 명중하기."
+research: "달아나는 발걸음이 박힌 얼음을 더 깊이 밀어 넣는다."
+cast:
+  command: "마법 얼음쐐기"
+  cooldown-seconds: 18
+  mana-cost: 65
+order: 2410

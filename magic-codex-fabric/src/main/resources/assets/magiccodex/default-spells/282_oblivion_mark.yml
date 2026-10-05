@@ -1,0 +1,14 @@
+id: oblivion_mark
+name: 망각의 표식
+category: dark
+description: 일반 몬스터가 자신에게 쌓은 적대심을 지운다.
+icon: ''
+permission: magic.learned.oblivion_mark
+discovery:
+  description: 옅은 은신을 누적 15회 사용하기.
+research: 눈앞에서 사라지는 것과 마음에서 잊히는 것은 서로 다른 주문이다.
+cast:
+  command: ''
+  cooldown-seconds: 20
+  mana-cost: 40
+order: 282

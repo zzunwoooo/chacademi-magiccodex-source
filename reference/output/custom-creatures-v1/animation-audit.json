@@ -1,0 +1,2440 @@
+[
+  {
+    "model": "squirrel",
+    "modelId": "ca_squirrel",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "death"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "C:\\Users\\matil\\Desktop\\일본\\차카데미\\output\\mob-pet-asset-review-v1\\rar-wilderness\\plugins\\ModelEngine\\blueprints\\squirrel.bbmodel"
+  },
+  {
+    "model": "owl",
+    "modelId": "ca_owl",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_land",
+      "fidget"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "C:\\Users\\matil\\Desktop\\일본\\차카데미\\output\\mob-pet-asset-review-v1\\rar-wilderness\\plugins\\ModelEngine\\blueprints\\owl.bbmodel"
+  },
+  {
+    "model": "skunk",
+    "modelId": "ca_skunk",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "death",
+      "spray"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "C:\\Users\\matil\\Desktop\\일본\\차카데미\\output\\mob-pet-asset-review-v1\\rar-wilderness\\plugins\\ModelEngine\\blueprints\\skunk.bbmodel"
+  },
+  {
+    "model": "hedgehog",
+    "modelId": "ca_hedgehog",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "death"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "C:\\Users\\matil\\Desktop\\일본\\차카데미\\output\\mob-pet-asset-review-v1\\rar-wilderness\\plugins\\ModelEngine\\blueprints\\hedgehog.bbmodel"
+  },
+  {
+    "model": "elk",
+    "modelId": "ca_elk",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "death",
+      "fidget",
+      "fidget2",
+      "run",
+      "run_death",
+      "elk_call"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "C:\\Users\\matil\\Desktop\\일본\\차카데미\\output\\mob-pet-asset-review-v1\\rar-wilderness\\plugins\\ModelEngine\\blueprints\\elk.bbmodel"
+  },
+  {
+    "model": "lil_bird",
+    "modelId": "ca_lil_bird",
+    "originalAnimations": [
+      "idle",
+      "fidget"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "C:\\Users\\matil\\Desktop\\일본\\차카데미\\output\\mob-pet-asset-review-v1\\rar-wilderness\\plugins\\ModelEngine\\blueprints\\lil_bird.bbmodel"
+  },
+  {
+    "model": "raccoon",
+    "modelId": "ca_raccoon",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "death",
+      "run",
+      "fidget"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "C:\\Users\\matil\\Desktop\\일본\\차카데미\\output\\mob-pet-asset-review-v1\\rar-wilderness\\plugins\\ModelEngine\\blueprints\\raccoon.bbmodel"
+  },
+  {
+    "model": "frog",
+    "modelId": "ca_frog",
+    "originalAnimations": [
+      "idle",
+      "death",
+      "jump"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "C:\\Users\\matil\\Desktop\\일본\\차카데미\\output\\mob-pet-asset-review-v1\\rar-wilderness\\plugins\\ModelEngine\\blueprints\\frog.bbmodel"
+  },
+  {
+    "model": "bear",
+    "modelId": "ca_bear",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "death",
+      "get_up",
+      "idle_awake",
+      "attack"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "C:\\Users\\matil\\Desktop\\일본\\차카데미\\output\\mob-pet-asset-review-v1\\rar-wilderness\\plugins\\ModelEngine\\blueprints\\bear.bbmodel"
+  },
+  {
+    "model": "bear_black",
+    "modelId": "ca_bear_black",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "death",
+      "get_up",
+      "idle_awake",
+      "attack"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "C:\\Users\\matil\\Desktop\\일본\\차카데미\\output\\mob-pet-asset-review-v1\\rar-wilderness\\plugins\\ModelEngine\\blueprints\\bear_black.bbmodel"
+  },
+  {
+    "model": "bear_polar",
+    "modelId": "ca_bear_polar",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "death",
+      "get_up",
+      "idle_awake",
+      "attack"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "C:\\Users\\matil\\Desktop\\일본\\차카데미\\output\\mob-pet-asset-review-v1\\rar-wilderness\\plugins\\ModelEngine\\blueprints\\bear_polar.bbmodel"
+  },
+  {
+    "model": "timber_wolf",
+    "modelId": "ca_timber_wolf",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "sneak",
+      "run",
+      "attack_1",
+      "attack_2",
+      "attack_3",
+      "pounce",
+      "death"
+    ],
+    "attack": "attack_1",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > nature_mobs.zip"
+  },
+  {
+    "model": "tortoise",
+    "modelId": "ca_tortoise",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "bite",
+      "hide",
+      "hit_shell",
+      "death"
+    ],
+    "attack": "bite",
+    "hurt": "hit_shell",
+    "added": [],
+    "source": "동물의숲.zip > nature_mobs.zip"
+  },
+  {
+    "model": "catfish",
+    "modelId": "ca_catfish",
+    "originalAnimations": [
+      "walk",
+      "idle",
+      "death"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > nature_mobs.zip"
+  },
+  {
+    "model": "butterfly",
+    "modelId": "ca_butterfly",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "death"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > nature_mobs.zip"
+  },
+  {
+    "model": "buffalo",
+    "modelId": "ca_buffalo",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "stampede",
+      "rear",
+      "lick",
+      "consume",
+      "death"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > nature_mobs.zip"
+  },
+  {
+    "model": "boar",
+    "modelId": "ca_boar",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "charge",
+      "rear",
+      "death",
+      "blitz"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > nature_mobs.zip"
+  },
+  {
+    "model": "alpha_boar",
+    "modelId": "ca_alpha_boar",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "charge",
+      "rear",
+      "death"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > nature_mobs.zip"
+  },
+  {
+    "model": "crocodile",
+    "modelId": "ca_crocodile",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "float",
+      "swim",
+      "attack_1",
+      "attack_2",
+      "land_death",
+      "water_death"
+    ],
+    "attack": "attack_1",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > nature_mobs.zip"
+  },
+  {
+    "model": "lostasset_mob1_chicken",
+    "modelId": "ca_lostasset_mob1_chicken",
+    "originalAnimations": [
+      "spawn",
+      "idle",
+      "walk",
+      "attack",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_01_Farmstead.zip"
+  },
+  {
+    "model": "lostasset_mob1_rabbit",
+    "modelId": "ca_lostasset_mob1_rabbit",
+    "originalAnimations": [
+      "spawn",
+      "idle",
+      "walk",
+      "attack",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_01_Farmstead.zip"
+  },
+  {
+    "model": "lostasset_mob1_sheep",
+    "modelId": "ca_lostasset_mob1_sheep",
+    "originalAnimations": [
+      "spawn",
+      "idle",
+      "walk",
+      "attack",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_01_Farmstead.zip"
+  },
+  {
+    "model": "lostasset_mob1_wolf",
+    "modelId": "ca_lostasset_mob1_wolf",
+    "originalAnimations": [
+      "idle",
+      "death",
+      "spawn",
+      "walk",
+      "attack",
+      "howling"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_01_Farmstead.zip"
+  },
+  {
+    "model": "lostasset_mob2_flowersprite",
+    "modelId": "ca_lostasset_mob2_flowersprite",
+    "originalAnimations": [
+      "spawn",
+      "walk",
+      "idle",
+      "attack",
+      "death",
+      "pattern1",
+      "pattern2"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_02_FairyLake.zip"
+  },
+  {
+    "model": "lostasset_mob2_lakefairy",
+    "modelId": "ca_lostasset_mob2_lakefairy",
+    "originalAnimations": [
+      "spawn",
+      "idle",
+      "walk",
+      "attack",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_02_FairyLake.zip"
+  },
+  {
+    "model": "lostasset_mob2_leaffairy",
+    "modelId": "ca_lostasset_mob2_leaffairy",
+    "originalAnimations": [
+      "spawn",
+      "idle",
+      "walk",
+      "attack",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_02_FairyLake.zip"
+  },
+  {
+    "model": "lostasset_mob2_mushroomfairy",
+    "modelId": "ca_lostasset_mob2_mushroomfairy",
+    "originalAnimations": [
+      "spawn",
+      "idle",
+      "walk",
+      "attack",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_02_FairyLake.zip"
+  },
+  {
+    "model": "lostasset_mob3_herbgolem",
+    "modelId": "ca_lostasset_mob3_herbgolem",
+    "originalAnimations": [
+      "spawn",
+      "idle",
+      "walk",
+      "death",
+      "attack",
+      "pattern1",
+      "pattern2"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_03_HerbGarden.zip"
+  },
+  {
+    "model": "lostasset_mob3_herbthief",
+    "modelId": "ca_lostasset_mob3_herbthief",
+    "originalAnimations": [
+      "spawn",
+      "idle",
+      "walk",
+      "attack",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_03_HerbGarden.zip"
+  },
+  {
+    "model": "lostasset_mob3_mossyboar",
+    "modelId": "ca_lostasset_mob3_mossyboar",
+    "originalAnimations": [
+      "spawn",
+      "idle",
+      "walk",
+      "attack",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_03_HerbGarden.zip"
+  },
+  {
+    "model": "lostasset_mob3_timberpile",
+    "modelId": "ca_lostasset_mob3_timberpile",
+    "originalAnimations": [
+      "spawn",
+      "idle",
+      "walk",
+      "death",
+      "attack"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_03_HerbGarden.zip"
+  },
+  {
+    "model": "bulb_amethyst",
+    "modelId": "ca_bulb_amethyst",
+    "originalAnimations": [
+      "outidle",
+      "surprise",
+      "idle",
+      "walk"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "C:\\Users\\matil\\Desktop\\일본\\차카데미\\output\\mob-pet-asset-review-v1\\rar-bulb2\\plugins\\ModelEngine\\blueprints\\bulb_amethyst.bbmodel"
+  },
+  {
+    "model": "bulb_crimsonspore",
+    "modelId": "ca_bulb_crimsonspore",
+    "originalAnimations": [
+      "outidle",
+      "surprise",
+      "idle",
+      "walk"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "C:\\Users\\matil\\Desktop\\일본\\차카데미\\output\\mob-pet-asset-review-v1\\rar-bulb2\\plugins\\ModelEngine\\blueprints\\bulb_crimsonspore.bbmodel"
+  },
+  {
+    "model": "bulb_dripleaf",
+    "modelId": "ca_bulb_dripleaf",
+    "originalAnimations": [
+      "outidle",
+      "surprise",
+      "idle",
+      "walk"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "C:\\Users\\matil\\Desktop\\일본\\차카데미\\output\\mob-pet-asset-review-v1\\rar-bulb2\\plugins\\ModelEngine\\blueprints\\bulb_dripleaf.bbmodel"
+  },
+  {
+    "model": "bulb_lilypad",
+    "modelId": "ca_bulb_lilypad",
+    "originalAnimations": [
+      "outidle",
+      "surprise",
+      "idle",
+      "walk"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "C:\\Users\\matil\\Desktop\\일본\\차카데미\\output\\mob-pet-asset-review-v1\\rar-bulb2\\plugins\\ModelEngine\\blueprints\\bulb_lilypad.bbmodel"
+  },
+  {
+    "model": "bulb_warpedfungus",
+    "modelId": "ca_bulb_warpedfungus",
+    "originalAnimations": [
+      "outidle",
+      "surprise",
+      "idle",
+      "walk"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "C:\\Users\\matil\\Desktop\\일본\\차카데미\\output\\mob-pet-asset-review-v1\\rar-bulb2\\plugins\\ModelEngine\\blueprints\\bulb_warpedfungus.bbmodel"
+  },
+  {
+    "model": "crab",
+    "modelId": "ca_crab",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "attack",
+      "dance",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip"
+  },
+  {
+    "model": "piranha",
+    "modelId": "ca_piranha",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "attack",
+      "walk2",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip"
+  },
+  {
+    "model": "swordfish",
+    "modelId": "ca_swordfish",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "walk2",
+      "attack",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip"
+  },
+  {
+    "model": "jellyfish_blue",
+    "modelId": "ca_jellyfish_blue",
+    "originalAnimations": [
+      "idle",
+      "lunge",
+      "walk2",
+      "death"
+    ],
+    "attack": "lunge",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip"
+  },
+  {
+    "model": "jellyfish_green",
+    "modelId": "ca_jellyfish_green",
+    "originalAnimations": [
+      "idle",
+      "lunge",
+      "walk2",
+      "death"
+    ],
+    "attack": "lunge",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip"
+  },
+  {
+    "model": "jellyfish_pink",
+    "modelId": "ca_jellyfish_pink",
+    "originalAnimations": [
+      "idle",
+      "lunge",
+      "walk2",
+      "death"
+    ],
+    "attack": "lunge",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip"
+  },
+  {
+    "model": "jellyfish_yellow",
+    "modelId": "ca_jellyfish_yellow",
+    "originalAnimations": [
+      "idle",
+      "lunge",
+      "walk2",
+      "death"
+    ],
+    "attack": "lunge",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip"
+  },
+  {
+    "model": "seahorse_blue",
+    "modelId": "ca_seahorse_blue",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "walk2",
+      "death"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip"
+  },
+  {
+    "model": "seahorse_green",
+    "modelId": "ca_seahorse_green",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "walk2",
+      "death"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip"
+  },
+  {
+    "model": "seahorse_pink",
+    "modelId": "ca_seahorse_pink",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "walk2",
+      "death"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip"
+  },
+  {
+    "model": "seahorse_yellow",
+    "modelId": "ca_seahorse_yellow",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "walk2",
+      "death"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip"
+  },
+  {
+    "model": "ogre_club",
+    "modelId": "ca_ogre_club",
+    "originalAnimations": [
+      "disable",
+      "idle",
+      "walk",
+      "run",
+      "wakeup",
+      "attack1",
+      "attack2",
+      "rush",
+      "death",
+      "sleep"
+    ],
+    "attack": "attack1",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "1.0 CoolMobs - Ogres.zip"
+  },
+  {
+    "model": "ogre_axe",
+    "modelId": "ca_ogre_axe",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run",
+      "attack1",
+      "attack2",
+      "leap",
+      "sleep",
+      "wakeup",
+      "death"
+    ],
+    "attack": "attack1",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "1.0 CoolMobs - Ogres.zip"
+  },
+  {
+    "model": "ogre_hammer",
+    "modelId": "ca_ogre_hammer",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run",
+      "attack1",
+      "attack2",
+      "jump",
+      "sleep",
+      "wakeup",
+      "death"
+    ],
+    "attack": "attack1",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "1.0 CoolMobs - Ogres.zip"
+  },
+  {
+    "model": "ncr_spear_skeleton",
+    "modelId": "ca_ncr_spear_skeleton",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "attack",
+      "death",
+      "death_second",
+      "stun",
+      "attack_parry"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "Necron_Skeletons_v1.zip"
+  },
+  {
+    "model": "ncr_warrior_skeleton",
+    "modelId": "ca_ncr_warrior_skeleton",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "attack",
+      "attack2",
+      "death",
+      "death_second",
+      "stun",
+      "attack_parry",
+      "attack2_parry"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "Necron_Skeletons_v1.zip"
+  },
+  {
+    "model": "ncr_archer_skeleton",
+    "modelId": "ca_ncr_archer_skeleton",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "attack",
+      "death",
+      "attack2",
+      "death_second",
+      "stun",
+      "attack2_parry"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "Necron_Skeletons_v1.zip"
+  },
+  {
+    "model": "ncr_mage_skeleton",
+    "modelId": "ca_ncr_mage_skeleton",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "attack",
+      "attack2",
+      "death",
+      "death_second",
+      "stun"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "Necron_Skeletons_v1.zip"
+  },
+  {
+    "model": "mf_warden_knight",
+    "modelId": "ca_mf_warden_knight",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "attack",
+      "heavy_slash",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "Warden Expansion Pack 1.1.0.zip"
+  },
+  {
+    "model": "mf_warden_archer",
+    "modelId": "ca_mf_warden_archer",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "attack",
+      "kick",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "Warden Expansion Pack 1.1.0.zip"
+  },
+  {
+    "model": "mf_warden_tank",
+    "modelId": "ca_mf_warden_tank",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "attack",
+      "pillar",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "Warden Expansion Pack 1.1.0.zip"
+  },
+  {
+    "model": "mf_warden_mage",
+    "modelId": "ca_mf_warden_mage",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "attack",
+      "tentacle",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "Warden Expansion Pack 1.1.0.zip"
+  },
+  {
+    "model": "glacialcore",
+    "modelId": "ca_glacialcore",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "skill1",
+      "skill2",
+      "skill3",
+      "skill4",
+      "skill5",
+      "skill6",
+      "spawn",
+      "death"
+    ],
+    "attack": "skill1",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "glacialcore.zip"
+  },
+  {
+    "model": "nocsy_cat1",
+    "modelId": "ca_nocsy_cat1",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "sit_start",
+      "sit_loop",
+      "sit_end",
+      "sleep_start",
+      "sleep_loop",
+      "sleep_end",
+      "stretch",
+      "prepare_attack",
+      "wiggling",
+      "attack",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Kingdom-Cats-By-Nocsy-3.0.0-savzbh.zip"
+  },
+  {
+    "model": "nocsy_cat2",
+    "modelId": "ca_nocsy_cat2",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "sit_start",
+      "sit_loop",
+      "sit_end",
+      "sleep_start",
+      "sleep_loop",
+      "sleep_end",
+      "stretch",
+      "prepare_attack",
+      "wiggling",
+      "attack",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Kingdom-Cats-By-Nocsy-3.0.0-savzbh.zip"
+  },
+  {
+    "model": "nocsy_cat3",
+    "modelId": "ca_nocsy_cat3",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "sit_start",
+      "sit_loop",
+      "sit_end",
+      "sleep_start",
+      "sleep_loop",
+      "sleep_end",
+      "stretch",
+      "prepare_attack",
+      "wiggling",
+      "attack",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Kingdom-Cats-By-Nocsy-3.0.0-savzbh.zip"
+  },
+  {
+    "model": "nocsy_cat4",
+    "modelId": "ca_nocsy_cat4",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "sit_start",
+      "sit_loop",
+      "sit_end",
+      "sleep_start",
+      "sleep_loop",
+      "sleep_end",
+      "stretch",
+      "prepare_attack",
+      "wiggling",
+      "attack",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Kingdom-Cats-By-Nocsy-3.0.0-savzbh.zip"
+  },
+  {
+    "model": "nocsy_cat5",
+    "modelId": "ca_nocsy_cat5",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "sit_start",
+      "sit_loop",
+      "sit_end",
+      "sleep_start",
+      "sleep_loop",
+      "sleep_end",
+      "stretch",
+      "prepare_attack",
+      "wiggling",
+      "attack",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Kingdom-Cats-By-Nocsy-3.0.0-savzbh.zip"
+  },
+  {
+    "model": "nocsy_cat6",
+    "modelId": "ca_nocsy_cat6",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "sit_start",
+      "sit_loop",
+      "sit_end",
+      "sleep_start",
+      "sleep_loop",
+      "sleep_end",
+      "stretch",
+      "prepare_attack",
+      "wiggling",
+      "attack",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Kingdom-Cats-By-Nocsy-3.0.0-savzbh.zip"
+  },
+  {
+    "model": "nocsy_cat_fallen",
+    "modelId": "ca_nocsy_cat_fallen",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "sit_start",
+      "sit_loop",
+      "sit_end",
+      "sleep_start",
+      "sleep_loop",
+      "sleep_end",
+      "stretch",
+      "prepare_attack",
+      "wiggling",
+      "attack",
+      "death"
+    ],
+    "attack": "attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Kingdom-Cats-By-Nocsy-3.0.0-savzbh.zip"
+  },
+  {
+    "model": "voxelspawns_pug",
+    "modelId": "ca_voxelspawns_pug",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "ass_slide",
+      "playwithme",
+      "lookylooky",
+      "sitdown",
+      "sit_idle",
+      "getup",
+      "bark",
+      "despawn",
+      "jump"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Voxelspawns_Pug.zip"
+  },
+  {
+    "model": "baby_polar_bear",
+    "modelId": "ca_baby_polar_bear",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "scratch",
+      "death"
+    ],
+    "attack": "scratch",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Winter_Pets_2023.zip"
+  },
+  {
+    "model": "baby_yeti",
+    "modelId": "ca_baby_yeti",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "throw",
+      "death"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Winter_Pets_2023.zip"
+  },
+  {
+    "model": "frost_ferret",
+    "modelId": "ca_frost_ferret",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "throw",
+      "death"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Winter_Pets_2023.zip"
+  },
+  {
+    "model": "gangster_snowman",
+    "modelId": "ca_gangster_snowman",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "shoot",
+      "death"
+    ],
+    "attack": "shoot",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Winter_Pets_2023.zip"
+  },
+  {
+    "model": "ice_knight",
+    "modelId": "ca_ice_knight",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "slash",
+      "death"
+    ],
+    "attack": "slash",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_hurt"
+    ],
+    "source": "동물의숲.zip > Winter_Pets_2023.zip"
+  },
+  {
+    "model": "dragon_desert",
+    "modelId": "ca_dragon_desert",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip"
+  },
+  {
+    "model": "dragon_glacial",
+    "modelId": "ca_dragon_glacial",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip"
+  },
+  {
+    "model": "dragon_nether",
+    "modelId": "ca_dragon_nether",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip"
+  },
+  {
+    "model": "dragon_sculk",
+    "modelId": "ca_dragon_sculk",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip"
+  },
+  {
+    "model": "lizard_aqua",
+    "modelId": "ca_lizard_aqua",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_swim",
+      "walk_swim",
+      "dash"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip"
+  },
+  {
+    "model": "lizard_lava",
+    "modelId": "ca_lizard_lava",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_swim",
+      "walk_swim",
+      "dash"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip"
+  },
+  {
+    "model": "manticore_aether",
+    "modelId": "ca_manticore_aether",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip"
+  },
+  {
+    "model": "manticore_dusk",
+    "modelId": "ca_manticore_dusk",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip"
+  },
+  {
+    "model": "manticore_soul",
+    "modelId": "ca_manticore_soul",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip"
+  },
+  {
+    "model": "manticore_venom",
+    "modelId": "ca_manticore_venom",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip"
+  },
+  {
+    "model": "panda_normal",
+    "modelId": "ca_panda_normal",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip"
+  },
+  {
+    "model": "sabertooth_arctic",
+    "modelId": "ca_sabertooth_arctic",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip"
+  },
+  {
+    "model": "sabertooth_midnight",
+    "modelId": "ca_sabertooth_midnight",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip"
+  },
+  {
+    "model": "sabertooth_savanna",
+    "modelId": "ca_sabertooth_savanna",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip"
+  },
+  {
+    "model": "capybara",
+    "modelId": "ca_capybara",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip"
+  },
+  {
+    "model": "horse_glacial",
+    "modelId": "ca_horse_glacial",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip"
+  },
+  {
+    "model": "horse_magma",
+    "modelId": "ca_horse_magma",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip"
+  },
+  {
+    "model": "horse_pegasus",
+    "modelId": "ca_horse_pegasus",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip"
+  },
+  {
+    "model": "horse_spartan",
+    "modelId": "ca_horse_spartan",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip"
+  },
+  {
+    "model": "horse_unicorn",
+    "modelId": "ca_horse_unicorn",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip"
+  },
+  {
+    "model": "kitsune_demonic",
+    "modelId": "ca_kitsune_demonic",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip"
+  },
+  {
+    "model": "kitsune_inferno",
+    "modelId": "ca_kitsune_inferno",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip"
+  },
+  {
+    "model": "kitsune_normal",
+    "modelId": "ca_kitsune_normal",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip"
+  },
+  {
+    "model": "phantom_ender",
+    "modelId": "ca_phantom_ender",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip"
+  },
+  {
+    "model": "phantom_ghost",
+    "modelId": "ca_phantom_ghost",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip"
+  },
+  {
+    "model": "phoenix_darkflame",
+    "modelId": "ca_phoenix_darkflame",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip"
+  },
+  {
+    "model": "phoenix_flame",
+    "modelId": "ca_phoenix_flame",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip"
+  },
+  {
+    "model": "phoenix_light",
+    "modelId": "ca_phoenix_light",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip"
+  },
+  {
+    "model": "phoenix_thunder",
+    "modelId": "ca_phoenix_thunder",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip"
+  },
+  {
+    "model": "basilisk_obsidian",
+    "modelId": "ca_basilisk_obsidian",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run",
+      "swim_idle",
+      "swim_walk",
+      "dash"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip"
+  },
+  {
+    "model": "basilisk_snowstorm",
+    "modelId": "ca_basilisk_snowstorm",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run",
+      "swim_idle",
+      "swim_walk",
+      "dash"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip"
+  },
+  {
+    "model": "basilisk_wild",
+    "modelId": "ca_basilisk_wild",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run",
+      "swim_idle",
+      "swim_walk",
+      "dash"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip"
+  },
+  {
+    "model": "hippogryph_common",
+    "modelId": "ca_hippogryph_common",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip"
+  },
+  {
+    "model": "hippogryph_crystal",
+    "modelId": "ca_hippogryph_crystal",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip"
+  },
+  {
+    "model": "hippogryph_fallen",
+    "modelId": "ca_hippogryph_fallen",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip"
+  },
+  {
+    "model": "hippogryph_royal",
+    "modelId": "ca_hippogryph_royal",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip"
+  },
+  {
+    "model": "raptor_nightmare",
+    "modelId": "ca_raptor_nightmare",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip"
+  },
+  {
+    "model": "raptor_red",
+    "modelId": "ca_raptor_red",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip"
+  },
+  {
+    "model": "raptor_undead",
+    "modelId": "ca_raptor_undead",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip"
+  },
+  {
+    "model": "sky_serpent_jade",
+    "modelId": "ca_sky_serpent_jade",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip"
+  },
+  {
+    "model": "sky_serpent_magma",
+    "modelId": "ca_sky_serpent_magma",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip"
+  },
+  {
+    "model": "sky_serpent_solar",
+    "modelId": "ca_sky_serpent_solar",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip"
+  },
+  {
+    "model": "sky_serpent_spectral",
+    "modelId": "ca_sky_serpent_spectral",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip"
+  },
+  {
+    "model": "stag_demonic",
+    "modelId": "ca_stag_demonic",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip"
+  },
+  {
+    "model": "stag_heavenly",
+    "modelId": "ca_stag_heavenly",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip"
+  },
+  {
+    "model": "stag_rune",
+    "modelId": "ca_stag_rune",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip"
+  },
+  {
+    "model": "stag_void",
+    "modelId": "ca_stag_void",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip"
+  },
+  {
+    "model": "frog_green",
+    "modelId": "ca_frog_green",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "jump"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL4.zip"
+  },
+  {
+    "model": "frog_permafrost",
+    "modelId": "ca_frog_permafrost",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "jump"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL4.zip"
+  },
+  {
+    "model": "frog_royal",
+    "modelId": "ca_frog_royal",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "jump"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL4.zip"
+  },
+  {
+    "model": "golem_arcane",
+    "modelId": "ca_golem_arcane",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL4.zip"
+  },
+  {
+    "model": "golem_corrupted",
+    "modelId": "ca_golem_corrupted",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL4.zip"
+  },
+  {
+    "model": "golem_magma",
+    "modelId": "ca_golem_magma",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL4.zip"
+  },
+  {
+    "model": "golem_royal",
+    "modelId": "ca_golem_royal",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL4.zip"
+  },
+  {
+    "model": "tusker_demonic",
+    "modelId": "ca_tusker_demonic",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL4.zip"
+  },
+  {
+    "model": "tusker_dreamlight",
+    "modelId": "ca_tusker_dreamlight",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL4.zip"
+  },
+  {
+    "model": "tusker_forest",
+    "modelId": "ca_tusker_forest",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "run"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL4.zip"
+  },
+  {
+    "model": "wolfhawk_dire",
+    "modelId": "ca_wolfhawk_dire",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL4.zip"
+  },
+  {
+    "model": "wolfhawk_fallen",
+    "modelId": "ca_wolfhawk_fallen",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL4.zip"
+  },
+  {
+    "model": "wolfhawk_fullmoon",
+    "modelId": "ca_wolfhawk_fullmoon",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL4.zip"
+  },
+  {
+    "model": "wolfhawk_stormcloud",
+    "modelId": "ca_wolfhawk_stormcloud",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL4.zip"
+  },
+  {
+    "model": "wyvern_ender",
+    "modelId": "ca_wyvern_ender",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL4.zip"
+  },
+  {
+    "model": "wyvern_green",
+    "modelId": "ca_wyvern_green",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL4.zip"
+  },
+  {
+    "model": "wyvern_inferno",
+    "modelId": "ca_wyvern_inferno",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL4.zip"
+  },
+  {
+    "model": "wyvern_undead",
+    "modelId": "ca_wyvern_undead",
+    "originalAnimations": [
+      "idle",
+      "walk",
+      "idle_fly",
+      "walk_fly",
+      "glide"
+    ],
+    "attack": "ca_attack",
+    "hurt": "ca_hurt",
+    "added": [
+      "ca_attack",
+      "ca_hurt"
+    ],
+    "source": "samus2002_RPG_MOUNT_PACK_VOL4.zip"
+  }
+]

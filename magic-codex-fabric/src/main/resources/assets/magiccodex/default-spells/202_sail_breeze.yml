@@ -1,0 +1,14 @@
+id: sail_breeze
+name: 돛바람
+category: wind
+description: 탑승한 보트를 바라보는 방향으로 가속한다.
+icon: ''
+permission: magic.learned.sail_breeze
+discovery:
+  description: 보트를 타고 누적 500블록 이동하기.
+research: 노를 젓지 않아도 앞으로 나아갈 수 있다. 방향을 잘못 읽으면 목적지에서도 더 멀어진다.
+cast:
+  command: ''
+  cooldown-seconds: 10
+  mana-cost: 18
+order: 202

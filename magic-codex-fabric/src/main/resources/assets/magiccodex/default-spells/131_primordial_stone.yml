@@ -1,0 +1,14 @@
+id: primordial_stone
+name: 원초의 돌
+category: earth
+description: 주변의 일반 석재를 최대 32개 흡수해 거대한 돌핵을 만듭니다. 다시 사용하면 한 발의 무거운 포탄으로 발사합니다.
+icon: magiccodex:textures/spells/expansion_2/primordial_stone.png
+permission: magic.learned.primordial_stone
+discovery:
+  description: 대지 마법 응용 수업을 통해 낮은 확률로 습득.
+research: 모양도 이름도 없던 시절, 모든 돌은 하나였다고 한다. 그 시절의 무게를 잠시 되돌리는 고위급 마법이다.
+cast:
+  command: ''
+  cooldown-seconds: 120
+  mana-cost: 500
+order: 131

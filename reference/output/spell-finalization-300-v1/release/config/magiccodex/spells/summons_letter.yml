@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "summons_letter"
+name: "소환장"
+category: "light"
+description: "같은 지역에 있는 자신의 길들인 동물 한 마리를 안전한 발치로 부릅니다.\n\n늑대나 고양이와 먼 길을 함께 걸어 온 약속은 이름을 부르는 한마디에도 이어진다."
+icon: "magiccodex:textures/spells/expansion_2/summons_letter.png"
+permission: "magic.learned.summons_letter"
+discovery:
+  description: "길들인 늑대나 고양이와 함께 누적 2000블록 이동하기."
+research: "멀리서도 제 이름을 알아듣는 친구에게 보내는 짧은 편지."
+cast:
+  command: "마법 소환장"
+  cooldown-seconds: 20
+  mana-cost: 35
+order: 1550

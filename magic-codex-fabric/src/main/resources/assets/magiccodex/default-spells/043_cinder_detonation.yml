@@ -1,0 +1,14 @@
+id: cinder_detonation
+name: 스타 퓨리
+category: fire
+description: 15블록 이내의 불타는 대상에서 불길을 빼내 퍼뜨린 뒤 다시 모아 한 번 폭발시킵니다.
+icon: magiccodex:textures/spells/expansion/cinder_detonation.png
+permission: magic.learned.cinder_detonation
+discovery:
+  description: 불타는 몬스터를 30회 처치하기.
+research: 불타고 있는 상대의 화염을 조종하면 더 큰 폭발을 이뤄낼 수 있다.
+cast:
+  command: 마법 cinder_detonation
+  cooldown-seconds: 30
+  mana-cost: 120
+order: 43

@@ -1,0 +1,25 @@
+{
+  "clientTests": 178,
+  "serverTests": 118,
+  "failures": 0,
+  "clientBuild": "passed",
+  "serverBuild": "passed",
+  "actual300YamlLoad": "passed",
+  "user29EditsPreserved": "passed",
+  "requestBytes": 8692,
+  "responseBytes": 52,
+  "uniqueSpellOrders": 300,
+  "artifacts": [
+    {
+      "file": "output\\spell-finalization-300-v1\\release\\binaries\\magic-codex-ui-0.37.0+mc1.21.4.jar",
+      "bytes": 166914025,
+      "sha256": "63fb837af3c4bc11147d454651ab1410c0942af2e999e625afef45ca3e144d16"
+    },
+    {
+      "file": "output\\spell-finalization-300-v1\\release\\binaries\\magic-codex-bridge-0.28.0.jar",
+      "bytes": 1324095,
+      "sha256": "43186fc482ba1a6e3995eab40b7284c95c071e254da7749aff3586c4efdb9b2f"
+    }
+  ],
+  "deployed": false
+}

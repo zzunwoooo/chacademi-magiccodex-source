@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "splitting_lance"
+name: "갈라지는 창"
+category: "water"
+description: "첫 적에게 맞은 얼음 창이 파편으로 갈라져 뒤쪽을 공격한다.\n\n물 실전 수업에서 익힌 얼음 투사체는 부서지는 순간까지 공격의 일부가 된다."
+icon: "magiccodex:textures/spells/expansion_3/splitting_lance.png"
+permission: "magic.learned.splitting_lance"
+discovery:
+  description: "물 마법 실전 수업의 얼음 투사체 실습을 완료하기."
+research: "창은 첫 적에게, 파편은 그 뒤에 기다리는 적에게 향한다."
+cast:
+  command: "마법 갈라지는창"
+  cooldown-seconds: 25
+  mana-cost: 95
+order: 2440

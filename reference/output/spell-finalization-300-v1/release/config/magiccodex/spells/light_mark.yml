@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "light_mark"
+name: "빛의 낙인"
+category: "light"
+description: "바라보는 몬스터 하나의 윤곽을 8초 동안 밝힙니다.\n\n분광 화살을 적에게 거듭 맞힌 눈은 빛이 남긴 자리를 놓치지 않는다."
+icon: "magiccodex:textures/spells/novice_extra/light_mark.png"
+permission: "magic.learned.light_mark"
+discovery:
+  description: "분광 화살을 몬스터에게 5번 명중하기."
+research: "놓치지 않겠다는 시선이 빛의 표식으로 남는다."
+cast:
+  command: "마법 빛의낙인"
+  cooldown-seconds: 8
+  mana-cost: 10
+order: 1350

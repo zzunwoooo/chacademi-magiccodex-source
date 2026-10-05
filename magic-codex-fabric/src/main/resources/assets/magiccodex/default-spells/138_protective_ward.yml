@@ -1,0 +1,14 @@
+id: protective_ward
+name: 보호 결계
+category: light
+description: 5초 동안 정면에 빛의 결계를 펼쳐 적의 투사체를 막습니다.
+icon: magiccodex:textures/spells/intermediate/protective_ward.png
+permission: magic.learned.protective_ward
+discovery:
+  description: 빛 마법 방어 수업을 통해 습득.
+research: 누군가의 앞을 가로막기 위해서가 아니라 뒤에 있는 이를 지키기 위한 빛.
+cast:
+  command: ''
+  cooldown-seconds: 30
+  mana-cost: 100
+order: 138

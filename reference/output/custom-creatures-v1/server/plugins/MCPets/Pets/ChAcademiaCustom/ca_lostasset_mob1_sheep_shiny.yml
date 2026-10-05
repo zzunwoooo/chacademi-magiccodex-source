@@ -1,0 +1,17 @@
+"Id": "ca_lostasset_mob1_sheep_shiny"
+"MythicMob": "CA_Pet_lostasset_mob1_sheep_shiny"
+"Permission": "chacademia.pet.ca_lostasset_mob1_sheep_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e구름 양"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "구름처럼 포근한 모습으로 고원 풀밭을 거닌다."
+    - "서식지: 고산 고지 / 온대 고지"
+    - "1성"

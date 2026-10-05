@@ -1,0 +1,17 @@
+"Id": "ca_tusker_dreamlight_shiny"
+"MythicMob": "CA_Pet_tusker_dreamlight_shiny"
+"Permission": "chacademia.pet.ca_tusker_dreamlight_shiny"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e꿈빛 터스커"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "숲의 길목을 따라 이동하는 큰 엄니의 생물. 꿈빛 계열의 변이 개체."
+    - "서식지: 라벤더 계곡 / 달빛 계곡"
+    - "2성"

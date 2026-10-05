@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "forgotten_name"
+name: "잊힌 이름"
+category: "dark"
+description: "모루에서 붙인 사용자 지정 아이템 이름을 지운다.\n\n물건의 이름을 여러 번 바꾸다 보면 그 자리에 남은 글자를 비우는 법도 보인다."
+icon: "magiccodex:textures/spells/expansion_3/forgotten_name.png"
+permission: "magic.learned.forgotten_name"
+discovery:
+  description: "모루에서 아이템 이름을 누적 10회 변경하기."
+research: "이름을 지워도 물건의 재료와 지난 사용 흔적은 남는다."
+cast:
+  command: "마법 잊힌이름"
+  cooldown-seconds: 4
+  mana-cost: 8
+order: 2770

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "solar_judgment"
+name: "태양의 심판"
+category: "light"
+description: "1.5초간 준비한 뒤 정면으로 굵은 빛줄기를 발사합니다. 경로의 적을 관통하며 벽에 닿으면 멈춥니다.\n\n퇴마의 섬광으로 많은 언데드를 쓰러뜨린 빛이 한낮의 태양처럼 강해진다."
+icon: "magiccodex:textures/spells/expansion/solar_judgment.png"
+permission: "magic.learned.solar_judgment"
+discovery:
+  description: "퇴마의 섬광으로 언데드를 누적 150마리 처치하기."
+research: "흩어진 햇살을 한 줄로 모으자 그림자가 설 곳이 사라졌다."
+cast:
+  command: "마법 태양의심판"
+  cooldown-seconds: 90
+  mana-cost: 400
+order: 1480

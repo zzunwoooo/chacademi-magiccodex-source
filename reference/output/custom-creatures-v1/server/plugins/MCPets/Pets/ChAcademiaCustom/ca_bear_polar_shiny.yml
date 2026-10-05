@@ -1,0 +1,17 @@
+"Id": "ca_bear_polar_shiny"
+"MythicMob": "CA_Pet_bear_polar_shiny"
+"Permission": "chacademia.pet.ca_bear_polar_shiny"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e빙하 백곰"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "얼어붙은 절벽과 빙하 가장자리를 순찰한다."
+    - "서식지: 얼어붙은 절벽 / 빙하 협곡"
+    - "2성"

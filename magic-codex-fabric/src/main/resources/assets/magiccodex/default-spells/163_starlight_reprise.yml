@@ -1,0 +1,15 @@
+id: starlight_reprise
+name: 별빛 재현
+category: light
+description: 직전에 사용한 공격용 투사체 마법을 한 번 더 발동합니다. 원래 마법의 마나도 함께 소모하며 쿨타임은 초기화하지 않습니다.
+  소환·이동·변환·재현 마법에는 적용되지 않습니다.
+icon: magiccodex:textures/spells/expansion_2/starlight_reprise.png
+permission: magic.learned.starlight_reprise
+discovery:
+  description: 서로 다른 원소의 마법 6개를 30초 안에 사용하기.
+research: 사라진 별빛은 눈을 감은 뒤에도 잠시 남아 있다.
+cast:
+  command: ''
+  cooldown-seconds: 60
+  mana-cost: 350
+order: 163

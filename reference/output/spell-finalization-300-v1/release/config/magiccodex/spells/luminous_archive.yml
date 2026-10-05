@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "luminous_archive"
+name: "빛의 서고"
+category: "light"
+description: "자신만 사용할 수 있는 마법 보관함을 엽니다.\n\n엔더 상자에 여러 종류의 물건을 넣어 본 경험이 빛 속의 보관 공간을 떠올리게 한다."
+icon: "magiccodex:textures/spells/intermediate/luminous_archive.png"
+permission: "magic.learned.luminous_archive"
+discovery:
+  description: "엔더 상자에 서로 다른 아이템 20종 넣기."
+research: "아무에게도 빌려주고 싶지 않은 책을 위해 작은 서고를 만들었다."
+cast:
+  command: "마법 빛의서고"
+  cooldown-seconds: 5
+  mana-cost: 20
+order: 1370

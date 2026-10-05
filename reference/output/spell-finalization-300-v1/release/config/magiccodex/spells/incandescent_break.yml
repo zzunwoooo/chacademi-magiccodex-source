@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "incandescent_break"
+name: "파이어 스트라이크"
+category: "fire"
+description: "짧은 열선을 쏴 방패를 든 적의 방어를 무너뜨리고 잠시 방패를 사용하지 못하게 합니다.\n\n방패를 든 상대와의 실습을 마친 뒤에는 단단한 방어를 가르는 열의 방향이 보인다."
+icon: "magiccodex:textures/spells/expansion_2/incandescent_break.png"
+permission: "magic.learned.incandescent_break"
+discovery:
+  description: "방패를 사용하는 적과의 실습 전투를 완료하기."
+research: "화염은 내부를 직접 타격하기 떄문에, 방패에 막히지 않는다."
+cast:
+  command: "마법 파이어스트라이크"
+  cooldown-seconds: 60
+  mana-cost: 180
+order: 630

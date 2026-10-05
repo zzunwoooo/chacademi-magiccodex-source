@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "boiling_armor"
+name: "끓는 갑주"
+category: "fire"
+description: "착용한 갑옷 아이템들의 내구도를 회복한다.\n\n입고 있던 갑옷이 거듭 부서진 기억이 더 뜨거운 외피를 찾게 한다."
+icon: "magiccodex:textures/spells/expansion_2/boiling_armor.png"
+permission: "magic.learned.boiling_armor"
+discovery:
+  description: "입고있는 갑옷 2회 파괴"
+research: "사람에게 피가 흐른다면 강철에는 화염이 흐른다."
+cast:
+  command: "마법 끓는갑주"
+  cooldown-seconds: 30
+  mana-cost: 80
+order: 540

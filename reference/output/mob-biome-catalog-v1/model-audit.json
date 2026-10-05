@@ -1,0 +1,824 @@
+[
+  {
+    "id": "alpha_boar",
+    "faces": 114,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "baby_polar_bear",
+    "faces": 144,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "baby_yeti",
+    "faces": 192,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "basilisk_obsidian",
+    "faces": 714,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "basilisk_snowstorm",
+    "faces": 714,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "basilisk_wild",
+    "faces": 714,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "bear",
+    "faces": 378,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "bear_black",
+    "faces": 378,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "bear_polar",
+    "faces": 378,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "boar",
+    "faces": 102,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "buffalo",
+    "faces": 174,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "bulb_amethyst",
+    "faces": 72,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "bulb_crimsonspore",
+    "faces": 66,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "bulb_dripleaf",
+    "faces": 78,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "bulb_lilypad",
+    "faces": 120,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "bulb_warpedfungus",
+    "faces": 60,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "butterfly",
+    "faces": 30,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "capybara",
+    "faces": 90,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "catfish",
+    "faces": 48,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "crab",
+    "faces": 312,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "crocodile",
+    "faces": 360,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "dragon_desert",
+    "faces": 732,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "dragon_glacial",
+    "faces": 732,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "dragon_nether",
+    "faces": 732,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "dragon_sculk",
+    "faces": 732,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "elk",
+    "faces": 282,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "frog",
+    "faces": 90,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "frog_green",
+    "faces": 162,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "frog_permafrost",
+    "faces": 162,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "frog_royal",
+    "faces": 186,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "frost_ferret",
+    "faces": 198,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "gangster_snowman",
+    "faces": 156,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "glacialcore",
+    "faces": 2208,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "golem_arcane",
+    "faces": 324,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "golem_corrupted",
+    "faces": 324,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "golem_magma",
+    "faces": 324,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "golem_royal",
+    "faces": 324,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "hedgehog",
+    "faces": 114,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "hippogryph_common",
+    "faces": 378,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "hippogryph_crystal",
+    "faces": 378,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "hippogryph_fallen",
+    "faces": 378,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "hippogryph_royal",
+    "faces": 378,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "horse_glacial",
+    "faces": 276,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "horse_magma",
+    "faces": 264,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "horse_pegasus",
+    "faces": 294,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "horse_spartan",
+    "faces": 246,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "horse_unicorn",
+    "faces": 222,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "ice_knight",
+    "faces": 120,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "jellyfish_blue",
+    "faces": 48,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "jellyfish_green",
+    "faces": 48,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "jellyfish_pink",
+    "faces": 48,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "jellyfish_yellow",
+    "faces": 48,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "kitsune_demonic",
+    "faces": 390,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "kitsune_inferno",
+    "faces": 390,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "kitsune_normal",
+    "faces": 390,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "lil_bird",
+    "faces": 36,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "lizard_aqua",
+    "faces": 264,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "lizard_lava",
+    "faces": 264,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "lostasset_mob1_chicken",
+    "faces": 74,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "lostasset_mob1_rabbit",
+    "faces": 78,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "lostasset_mob1_sheep",
+    "faces": 72,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "lostasset_mob1_wolf",
+    "faces": 138,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "lostasset_mob2_flowersprite",
+    "faces": 121,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "lostasset_mob2_lakefairy",
+    "faces": 78,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "lostasset_mob2_leaffairy",
+    "faces": 86,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "lostasset_mob2_mushroomfairy",
+    "faces": 62,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "lostasset_mob3_herbgolem",
+    "faces": 74,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "lostasset_mob3_herbthief",
+    "faces": 56,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "lostasset_mob3_mossyboar",
+    "faces": 88,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "lostasset_mob3_timberpile",
+    "faces": 48,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "manticore_aether",
+    "faces": 594,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "manticore_dusk",
+    "faces": 594,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "manticore_soul",
+    "faces": 594,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "manticore_venom",
+    "faces": 594,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "mf_warden_archer",
+    "faces": 252,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "mf_warden_knight",
+    "faces": 180,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "mf_warden_mage",
+    "faces": 168,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "mf_warden_tank",
+    "faces": 138,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "ncr_archer_skeleton",
+    "faces": 393,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "ncr_mage_skeleton",
+    "faces": 308,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "ncr_spear_skeleton",
+    "faces": 298,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "ncr_warrior_skeleton",
+    "faces": 263,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "nocsy_cat1",
+    "faces": 312,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "nocsy_cat2",
+    "faces": 312,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "nocsy_cat3",
+    "faces": 312,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "nocsy_cat4",
+    "faces": 432,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "nocsy_cat5",
+    "faces": 648,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "nocsy_cat6",
+    "faces": 312,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "nocsy_cat_fallen",
+    "faces": 558,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "ogre_axe",
+    "faces": 222,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "ogre_club",
+    "faces": 378,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "ogre_hammer",
+    "faces": 294,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "owl",
+    "faces": 198,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "panda_normal",
+    "faces": 252,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "phantom_ender",
+    "faces": 216,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "phantom_ghost",
+    "faces": 216,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "phoenix_darkflame",
+    "faces": 420,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "phoenix_flame",
+    "faces": 420,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "phoenix_light",
+    "faces": 420,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "phoenix_thunder",
+    "faces": 420,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "piranha",
+    "faces": 48,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "raccoon",
+    "faces": 138,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "raptor_nightmare",
+    "faces": 240,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "raptor_red",
+    "faces": 240,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "raptor_undead",
+    "faces": 240,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "sabertooth_arctic",
+    "faces": 456,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "sabertooth_midnight",
+    "faces": 456,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "sabertooth_savanna",
+    "faces": 456,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "seahorse_blue",
+    "faces": 36,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "seahorse_green",
+    "faces": 36,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "seahorse_pink",
+    "faces": 36,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "seahorse_yellow",
+    "faces": 36,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "skunk",
+    "faces": 138,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "sky_serpent_jade",
+    "faces": 222,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "sky_serpent_magma",
+    "faces": 222,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "sky_serpent_solar",
+    "faces": 222,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "sky_serpent_spectral",
+    "faces": 222,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "squirrel",
+    "faces": 114,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "stag_demonic",
+    "faces": 360,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "stag_heavenly",
+    "faces": 360,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "stag_rune",
+    "faces": 360,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "stag_void",
+    "faces": 360,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "swordfish",
+    "faces": 78,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "timber_wolf",
+    "faces": 318,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "tortoise",
+    "faces": 60,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "tusker_demonic",
+    "faces": 258,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "tusker_dreamlight",
+    "faces": 258,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "tusker_forest",
+    "faces": 258,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "voxelspawns_pug",
+    "faces": 84,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "wolfhawk_dire",
+    "faces": 606,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "wolfhawk_fallen",
+    "faces": 606,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "wolfhawk_fullmoon",
+    "faces": 606,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "wolfhawk_stormcloud",
+    "faces": 606,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "wyvern_ender",
+    "faces": 432,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "wyvern_green",
+    "faces": 432,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "wyvern_inferno",
+    "faces": 426,
+    "missingTextures": 0,
+    "unsupported": []
+  },
+  {
+    "id": "wyvern_undead",
+    "faces": 432,
+    "missingTextures": 0,
+    "unsupported": []
+  }
+]

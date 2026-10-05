@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "diving_bell"
+name: "잠수 종"
+category: "water"
+description: "수중에 여러 사람이 잠시 숨을 고를 작은 공기 공간을 만든다.\n\n물결 숨결로 수중에 익숙해지면 동료도 함께 쉬어 갈 공기 주머니를 떠올릴 수 있다."
+icon: "magiccodex:textures/spells/expansion_3/diving_bell.png"
+permission: "magic.learned.diving_bell"
+discovery:
+  description: "물결 숨결을 누적 15회 사용하기."
+research: "깊은 물속에서 나누는 숨은 서로에게 가장 가까운 대피소다."
+cast:
+  command: "마법 잠수종"
+  cooldown-seconds: 35
+  mana-cost: 90
+order: 2370

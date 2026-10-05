@@ -1,0 +1,14 @@
+id: copper_polish
+name: 구리 광내기
+category: fire
+description: 구리 블록의 산화를 한 단계 벗겨 낸다.
+icon: ''
+permission: magic.learned.copper_polish
+discovery:
+  description: 도끼로 산화된 구리를 누적 16회 긁기.
+research: 금속의 오래된 색을 걷어 낸다. 구리의 지난 시간을 전부 지우는 것은 아니다.
+cast:
+  command: ''
+  cooldown-seconds: 5
+  mana-cost: 15
+order: 215

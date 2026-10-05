@@ -1,0 +1,17 @@
+"Id": "ca_capybara"
+"MythicMob": "CA_Pet_capybara"
+"Permission": "chacademia.pet.ca_capybara"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f물가 카피바라"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "잔잔한 강가에서 무리와 함께 쉬는 동물. "
+    - "서식지: 따뜻한 강 / 푸른 계곡"
+    - "1성"

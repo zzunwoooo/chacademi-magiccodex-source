@@ -1,0 +1,17 @@
+"Id": "ca_panda_normal"
+"MythicMob": "CA_Pet_panda_normal"
+"Permission": "chacademia.pet.ca_panda_normal"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f대나무 판다"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "정글의 대나무 군락에서 느긋하게 지낸다. "
+    - "서식지: 열대 정글"
+    - "1성"

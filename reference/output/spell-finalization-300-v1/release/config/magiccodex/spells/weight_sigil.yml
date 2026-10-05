@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "weight_sigil"
+name: "무게의 인장"
+category: "earth"
+description: "지정 물체의 무게 판정을 바꿔 저울이나 감지 발판을 작동시킨다.\n\n무게를 읽는 발판에 물건을 달리 올려 본 경험이 보이지 않는 무게의 눈금을 알려 준다."
+icon: "magiccodex:textures/spells/expansion_3/weight_sigil.png"
+permission: "magic.learned.weight_sigil"
+discovery:
+  description: "무게 압력판을 서로 다른 아이템 수량으로 5회 작동시키기."
+research: "물체를 크게 만들지 않고도 저울이 읽을 무게를 바꾼다."
+cast:
+  command: "마법 무게의인장"
+  cooldown-seconds: 15
+  mana-cost: 40
+order: 2970

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "shadow_passage"
+name: "그림자 통행"
+category: "dark"
+description: "지정된 얇은 그림자 문을 잠시 통과한다.\n\n어둠 응용 수업에서 그림자의 틈을 읽은 뒤에는 얇은 경계 너머로 길을 이을 수 있다."
+icon: "magiccodex:textures/spells/expansion_3/shadow_passage.png"
+permission: "magic.learned.shadow_passage"
+discovery:
+  description: "어둠 마법 응용 수업의 그림자 이동 실습을 완료하기."
+research: "모든 벽이 문이 되는 것은 아니다. 통행을 허락한 그림자의 경계만 지나간다."
+cast:
+  command: "마법 그림자통행"
+  cooldown-seconds: 20
+  mana-cost: 60
+order: 3000

@@ -1,0 +1,14 @@
+id: ice_wedge
+name: 얼음 쐐기
+category: water
+description: 적에게 얼음 조각을 박아 움직일수록 추가 피해를 준다.
+icon: ''
+permission: magic.learned.ice_wedge
+discovery:
+  description: 눈덩이를 몬스터에게 누적 30회 명중하기.
+research: 달아나는 발걸음이 박힌 얼음을 더 깊이 밀어 넣는다.
+cast:
+  command: ''
+  cooldown-seconds: 18
+  mana-cost: 65
+order: 240

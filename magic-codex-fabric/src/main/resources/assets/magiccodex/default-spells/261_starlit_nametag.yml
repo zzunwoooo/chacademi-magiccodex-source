@@ -1,0 +1,14 @@
+id: starlit_nametag
+name: 별빛 이름표
+category: light
+description: 이름표를 소비해 자신의 동물에게 이름을 붙인다.
+icon: ''
+permission: magic.learned.starlit_nametag
+discovery:
+  description: 이름표로 자신의 동물에게 이름을 3회 붙이기.
+research: 무슨 이름을 붙일지는 주인의 몫이다. 이름표는 약속을 남길 재료가 된다.
+cast:
+  command: ''
+  cooldown-seconds: 5
+  mana-cost: 8
+order: 261

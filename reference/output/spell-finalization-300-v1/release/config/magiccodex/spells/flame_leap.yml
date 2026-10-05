@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "flame_leap"
+name: "블레이즈 킥"
+category: "fire"
+description: "몸에 불을 둘러 체술을 강화하여 적을 휘둘러 차 강력한 피해를 입힌다.\n\n달리는 몸과 이어지는 근접 타격이 맞물리면, 발끝에도 불꽃을 싣게 된다."
+icon: "magiccodex:textures/spells/expansion/flame_leap.png"
+permission: "magic.learned.flame_leap"
+discovery:
+  description: "달리며 몬스터에게 근접 공격을 30회 명중하기."
+research: "체내의 열을 끌어올리면 마법사의 몸으로도 격투가의 체술을 흉내낼 수 있게 된다."
+cast:
+  command: "마법 블레이즈킥"
+  cooldown-seconds: 30
+  mana-cost: 230
+order: 470

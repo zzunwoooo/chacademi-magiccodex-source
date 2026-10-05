@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "wash_letters"
+name: "글씨 씻기"
+category: "water"
+description: "자신이 수정할 수 있는 표지판의 한쪽 글씨를 지웁니다.\n\n같은 표지판의 문장을 거듭 고쳐 쓰다 보면 지우는 손길도 하나의 주문이 된다."
+icon: "magiccodex:textures/spells/expansion_2/wash_letters.png"
+permission: "magic.learned.wash_letters"
+discovery:
+  description: "같은 표지판의 글씨를 10번 고쳐 쓰기."
+research: "지우고 다시 쓰는 일도 마법 연구의 일부다."
+cast:
+  command: "마법 글씨씻기"
+  cooldown-seconds: 2
+  mana-cost: 3
+order: 830

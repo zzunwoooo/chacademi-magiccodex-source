@@ -1,0 +1,17 @@
+"Id": "ca_wyvern_inferno"
+"MythicMob": "CA_Pet_wyvern_inferno"
+"Permission": "chacademia.pet.ca_wyvern_inferno"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f업화 와이번"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "가파른 산맥에 둥지를 튼 비행 포식자. 업화 계열의 변이 개체."
+    - "서식지: 화산 분화구"
+    - "3성"

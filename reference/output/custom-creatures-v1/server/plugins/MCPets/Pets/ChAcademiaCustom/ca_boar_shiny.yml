@@ -1,0 +1,17 @@
+"Id": "ca_boar_shiny"
+"MythicMob": "CA_Pet_boar_shiny"
+"Permission": "chacademia.pet.ca_boar_shiny"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e덤불 멧돼지"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "덤불을 헤치며 뿌리와 열매를 찾는다."
+    - "서식지: 관목 초원 / 숲 우거진 고지"
+    - "1성"

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "night_cover"
+name: "밤의 덮개"
+category: "dark"
+description: "관리 구역의 켜진 초들을 한꺼번에 끈다.\n\n촛불을 거듭 꺼 본 손은 여러 불빛 위에 한 번의 밤을 덮을 수 있다."
+icon: "magiccodex:textures/spells/expansion_3/night_cover.png"
+permission: "magic.learned.night_cover"
+discovery:
+  description: "촛불을 누적 20회 끄기."
+research: "방을 어둡게 만드는 데도 주인의 허락이 필요하다."
+cast:
+  command: "마법 밤의덮개"
+  cooldown-seconds: 8
+  mana-cost: 15
+order: 2790

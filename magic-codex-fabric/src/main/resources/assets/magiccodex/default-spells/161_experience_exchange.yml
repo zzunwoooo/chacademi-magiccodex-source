@@ -1,0 +1,14 @@
+id: experience_exchange
+name: 경험의 환전
+category: light
+description: 경험치 5레벨을 소비해 마나 100을 회복합니다. 경험치가 부족하거나 마나가 가득 차 있으면 사용할 수 없습니다.
+icon: magiccodex:textures/spells/expansion_2/experience_exchange.png
+permission: magic.learned.experience_exchange
+discovery:
+  description: 경험치 30레벨을 보유한 채 마나를 5 이하까지 소모하기.
+research: 몸이 기억한 경험을 잠시 마력으로 바꾸어 빌려 쓴다.
+cast:
+  command: ''
+  cooldown-seconds: 60
+  mana-cost: 0
+order: 161

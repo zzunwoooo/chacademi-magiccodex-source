@@ -1,0 +1,17 @@
+"Id": "ca_phantom_ghost"
+"MythicMob": "CA_Pet_phantom_ghost"
+"Permission": "chacademia.pet.ca_phantom_ghost"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f망령 팬텀"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "빛이 적은 봉인 지대에서 떠도는 비행 생물. 망령 계열의 변이 개체."
+    - "서식지: 깊은 동굴 / 달빛 계곡"
+    - "3성"

@@ -1,0 +1,17 @@
+# 설명·발견 조건·쿨타임은 수정 가능한 기획 초안입니다.
+# 발견 조건은 UI 표시용 문구이며 실제 판정 기능은 연결되지 않았습니다.
+# cast.command는 실제 시전 기능 연결 후 / 없이 입력하세요.
+id: "eternal_ice_prison"
+name: "만년빙옥"
+category: "water"
+rank: "고급"
+description: "적을 얼음 결정에 가둬 이동과 공격을 봉쇄합니다. 시간이 지나거나 일정 피해를 받으면 풀려납니다."
+icon: "magiccodex:textures/spells/advanced/eternal_ice_prison.png"
+permission: "magic.learned.eternal_ice_prison"
+discovery:
+  description: "빙결 유적에서 얼음 감옥의 세 봉인을 해독하기."
+research: ""
+cast:
+  command: ""
+  cooldown-seconds: 60
+order: 2080

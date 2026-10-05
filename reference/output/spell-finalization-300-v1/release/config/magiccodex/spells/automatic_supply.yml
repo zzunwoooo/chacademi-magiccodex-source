@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "automatic_supply"
+name: "자동 보급"
+category: "earth"
+description: "30초간 손에 든 건축 블록을 다 쓰면 인벤토리의 같은 블록을 손으로 보충합니다.\n\n같은 재료로 많은 블록을 쌓다 보면 빈손과 가방 사이의 짧은 틈이 유난히 불편해진다."
+icon: "magiccodex:textures/spells/expansion_2/automatic_supply.png"
+permission: "magic.learned.automatic_supply"
+discovery:
+  description: "같은 종류의 건축 블록 누적 100개 설치하기."
+research: "손에 든 블록은 다 썼는데 벽은 아직 반도 못 쌓았다. 가방을 다시 여는 수고부터 줄여 보자."
+cast:
+  command: "마법 자동보급"
+  cooldown-seconds: 30
+  mana-cost: 20
+order: 1220

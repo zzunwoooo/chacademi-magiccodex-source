@@ -1,0 +1,14 @@
+id: flint_sorting
+name: 돌 고르기
+category: earth
+description: 자갈 하나를 소비해 부싯돌 하나를 골라냅니다.
+icon: magiccodex:textures/spells/expansion_2/flint_sorting.png
+permission: magic.learned.flint_sorting
+discovery:
+  description: 자갈을 캐서 부싯돌 누적 16개 얻기.
+research: 모든 자갈에 쓸 만한 돌이 숨어 있는 것은 아니다. 마법으로 고르더라도 재료는 필요하다.
+cast:
+  command: ''
+  cooldown-seconds: 3
+  mana-cost: 8
+order: 116

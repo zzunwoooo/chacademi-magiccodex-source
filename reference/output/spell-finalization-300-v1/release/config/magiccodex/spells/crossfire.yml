@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "crossfire"
+name: "크로스 애로우"
+category: "wind"
+description: "피할 수 없는 바람의 화살을 두 발 쏘아내어 타겟이 된 적은 즉사 합니다.\n대상이 플레이어나 보스 몬스터일 경우 최대 체력의 20% 미만에서 즉사 합니다.\n\n바람으로 적을 한 번에 쓰러뜨리는 경험이 쌓이면, 한 줄기 공격에 머물 이유도 사라진다."
+icon: "magiccodex:textures/spells/expansion_2/crossfire.png"
+permission: "magic.learned.crossfire"
+discovery:
+  description: "바람 마법으로 몬스터를 일격에 100회 처치."
+research: "거센 바람이 적을 피할 수 없는 죽음으로 이끈다."
+cast:
+  command: "마법 크로스애로우"
+  cooldown-seconds: 120
+  mana-cost: 750
+order: 300

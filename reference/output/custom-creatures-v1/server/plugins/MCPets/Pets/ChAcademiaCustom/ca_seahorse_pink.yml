@@ -1,0 +1,17 @@
+"Id": "ca_seahorse_pink"
+"MythicMob": "CA_Pet_seahorse_pink"
+"Permission": "chacademia.pet.ca_seahorse_pink"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f분홍 해마"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "따뜻한 바다의 산호·해초 주변에 몸을 숨긴다."
+    - "서식지: 따뜻한 심해"
+    - "2성"

@@ -1,0 +1,14 @@
+id: shadow_pouch
+name: 그림자 주머니
+category: dark
+description: 사망 시 떨어뜨리지 않을 일반 아이템 한 칸을 지정한다.
+icon: ''
+permission: magic.learned.shadow_pouch
+discovery:
+  description: 사망 후 떨어진 자신의 아이템을 누적 3회 회수하기.
+research: 그림자가 기억할 수 있는 자리는 작다. 모든 짐을 맡길 수는 없다.
+cast:
+  command: ''
+  cooldown-seconds: 90
+  mana-cost: 100
+order: 279

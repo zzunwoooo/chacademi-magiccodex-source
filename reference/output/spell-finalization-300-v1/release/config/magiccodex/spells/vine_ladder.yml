@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "vine_ladder"
+name: "덩굴 사다리"
+category: "earth"
+description: "바라보는 벽에 최대 8블록 높이의 덩굴 사다리를 만듭니다. 덩굴은 30초 뒤 사라집니다.\n\n덩굴을 타고 높은 곳에 거듭 올라 본 몸은 잎과 줄기가 지탱하는 힘을 안다."
+icon: "magiccodex:textures/spells/intermediate/vine_ladder.png"
+permission: "magic.learned.vine_ladder"
+discovery:
+  description: "덩굴을 타고 누적 50블록 이동하기."
+research: "올라갈 곳을 정한 뒤 덩굴을 부르자. 나중에 내려올 길도 생각해 두도록 하자."
+cast:
+  command: "마법 덩굴사다리"
+  cooldown-seconds: 15
+  mana-cost: 35
+order: 1040

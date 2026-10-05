@@ -1,0 +1,17 @@
+"Id": "ca_lostasset_mob2_leaffairy"
+"MythicMob": "CA_Pet_lostasset_mob2_leaffairy"
+"Permission": "chacademia.pet.ca_lostasset_mob2_leaffairy"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f잎새 요정"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "잎사귀 사이에서 숲의 바람을 따라 움직인다."
+    - "서식지: 자수정 우림 / 달빛 숲"
+    - "2성"

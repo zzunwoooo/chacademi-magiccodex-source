@@ -1,0 +1,17 @@
+# 설명·발견 조건·쿨타임은 수정 가능한 기획 초안입니다.
+# 발견 조건은 UI 표시용 문구이며 실제 판정 기능은 연결되지 않았습니다.
+# cast.command는 실제 시전 기능 연결 후 / 없이 입력하세요.
+id: "vacuum_cleave"
+name: "진공 절단"
+category: "wind"
+rank: "고급"
+description: "관통하는 바람의 칼날로 적을 공격하고 지정된 마법 사슬을 절단합니다."
+icon: "magiccodex:textures/spells/advanced/vacuum_cleave.png"
+permission: "magic.learned.vacuum_cleave"
+discovery:
+  description: "바람 유적에서 끊어진 봉인 사슬의 절단면을 조사하기."
+research: ""
+cast:
+  command: ""
+  cooldown-seconds: 30
+order: 2030

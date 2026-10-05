@@ -1,0 +1,14 @@
+id: crumbling_foothold
+name: 무너지는 발판
+category: earth
+description: 적이 밟으면 잠시 뒤 무너지는 작은 돌 발판을 남긴다.
+icon: ''
+permission: magic.learned.crumbling_foothold
+discovery:
+  description: 모래나 자갈이 아래로 떨어지는 상황을 20회 만들기.
+research: 발을 올리는 순간이 아니라 잠깐 뒤를 노리는 돌이다.
+cast:
+  command: ''
+  cooldown-seconds: 18
+  mana-cost: 50
+order: 259

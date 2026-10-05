@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "wind_push"
+name: "윈드 푸쉬"
+category: "wind"
+description: "정면 가까이에 있는 몬스터 하나를 바람으로 밀어냅니다.\n\n바람을 다루는 첫 수업에서는 밀어내는 힘부터 배운다."
+icon: "magiccodex:textures/spells/novice_extra/wind_push.png"
+permission: "magic.learned.wind_push"
+discovery:
+  description: "바람 마법 기초 수업을 통해 습득"
+research: "꽤 먼 곳까지 날려보냈군요?"
+cast:
+  command: "마법 윈드 푸쉬"
+  cooldown-seconds: 5
+  mana-cost: 10
+order: 40

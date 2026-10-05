@@ -1,0 +1,14 @@
+id: night_cover
+name: 밤의 덮개
+category: dark
+description: 관리 구역의 켜진 초들을 한꺼번에 끈다.
+icon: ''
+permission: magic.learned.night_cover
+discovery:
+  description: 촛불을 누적 20회 끄기.
+research: 방을 어둡게 만드는 데도 주인의 허락이 필요하다.
+cast:
+  command: ''
+  cooldown-seconds: 8
+  mana-cost: 15
+order: 278

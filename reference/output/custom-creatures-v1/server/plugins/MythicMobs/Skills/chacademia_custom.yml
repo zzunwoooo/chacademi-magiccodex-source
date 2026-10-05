@@ -1,0 +1,1104 @@
+"CA_Hurt_squirrel":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_squirrel_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_owl":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_owl_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_skunk":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_skunk_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_hedgehog":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_hedgehog_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_elk":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_elk_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lil_bird":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lil_bird_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_raccoon":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_raccoon_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_frog":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_frog_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_bear":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_bear_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_bear_black":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_bear_black_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_bear_polar":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_bear_polar_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_timber_wolf":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_timber_wolf_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_tortoise":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=hit_shell} @self"
+"CA_Hurt_tortoise_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=hit_shell} @self"
+"CA_Hurt_catfish":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_catfish_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_butterfly":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_butterfly_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_buffalo":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_buffalo_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_boar":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_boar_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_alpha_boar":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_alpha_boar_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_crocodile":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_crocodile_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_buffalo_alpha":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_buffalo_alpha_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob1_chicken":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob1_chicken_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob1_rabbit":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob1_rabbit_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob1_sheep":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob1_sheep_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob1_wolf":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob1_wolf_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob2_flowersprite":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob2_flowersprite_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob2_lakefairy":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob2_lakefairy_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob2_leaffairy":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob2_leaffairy_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob2_mushroomfairy":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob2_mushroomfairy_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob3_herbgolem":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob3_herbgolem_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob3_herbthief":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob3_herbthief_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob3_mossyboar":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob3_mossyboar_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob3_timberpile":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lostasset_mob3_timberpile_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_bulb_amethyst":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_bulb_amethyst_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_bulb_crimsonspore":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_bulb_crimsonspore_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_bulb_dripleaf":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_bulb_dripleaf_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_bulb_lilypad":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_bulb_lilypad_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_bulb_warpedfungus":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_bulb_warpedfungus_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_crab":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_crab_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_piranha":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_piranha_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_swordfish":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_swordfish_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_jellyfish_blue":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_jellyfish_blue_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_jellyfish_green":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_jellyfish_green_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_jellyfish_pink":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_jellyfish_pink_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_jellyfish_yellow":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_jellyfish_yellow_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_seahorse_blue":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_seahorse_blue_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_seahorse_green":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_seahorse_green_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_seahorse_pink":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_seahorse_pink_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_seahorse_yellow":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_seahorse_yellow_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_ogre_club":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_ogre_club_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_ogre_axe":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_ogre_axe_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_ogre_hammer":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_ogre_hammer_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_ncr_spear_skeleton":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_ncr_spear_skeleton_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_ncr_warrior_skeleton":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_ncr_warrior_skeleton_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_ncr_archer_skeleton":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_ncr_archer_skeleton_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_ncr_mage_skeleton":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_ncr_mage_skeleton_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_mf_warden_knight":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_mf_warden_knight_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_mf_warden_archer":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_mf_warden_archer_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_mf_warden_tank":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_mf_warden_tank_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_mf_warden_mage":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_mf_warden_mage_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_glacialcore":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_glacialcore_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_nocsy_cat1":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_nocsy_cat1_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_nocsy_cat2":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_nocsy_cat2_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_nocsy_cat3":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_nocsy_cat3_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_nocsy_cat4":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_nocsy_cat4_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_nocsy_cat5":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_nocsy_cat5_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_nocsy_cat6":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_nocsy_cat6_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_nocsy_cat_fallen":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_nocsy_cat_fallen_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_voxelspawns_pug":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_voxelspawns_pug_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_baby_polar_bear":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_baby_polar_bear_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_baby_yeti":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_baby_yeti_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_frost_ferret":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_frost_ferret_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_gangster_snowman":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_gangster_snowman_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_ice_knight":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_ice_knight_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_dragon_desert":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_dragon_desert_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_dragon_glacial":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_dragon_glacial_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_dragon_nether":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_dragon_nether_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_dragon_sculk":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_dragon_sculk_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lizard_aqua":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lizard_aqua_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lizard_lava":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_lizard_lava_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_manticore_aether":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_manticore_aether_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_manticore_dusk":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_manticore_dusk_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_manticore_soul":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_manticore_soul_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_manticore_venom":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_manticore_venom_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_panda_normal":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_panda_normal_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_sabertooth_arctic":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_sabertooth_arctic_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_sabertooth_midnight":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_sabertooth_midnight_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_sabertooth_savanna":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_sabertooth_savanna_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_capybara":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_capybara_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_horse_glacial":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_horse_glacial_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_horse_magma":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_horse_magma_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_horse_pegasus":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_horse_pegasus_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_horse_spartan":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_horse_spartan_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_horse_unicorn":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_horse_unicorn_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_kitsune_demonic":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_kitsune_demonic_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_kitsune_inferno":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_kitsune_inferno_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_kitsune_normal":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_kitsune_normal_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_phantom_ender":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_phantom_ender_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_phantom_ghost":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_phantom_ghost_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_phoenix_darkflame":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_phoenix_darkflame_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_phoenix_flame":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_phoenix_flame_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_phoenix_light":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_phoenix_light_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_phoenix_thunder":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_phoenix_thunder_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_basilisk_obsidian":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_basilisk_obsidian_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_basilisk_snowstorm":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_basilisk_snowstorm_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_basilisk_wild":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_basilisk_wild_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_hippogryph_common":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_hippogryph_common_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_hippogryph_crystal":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_hippogryph_crystal_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_hippogryph_fallen":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_hippogryph_fallen_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_hippogryph_royal":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_hippogryph_royal_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_raptor_nightmare":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_raptor_nightmare_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_raptor_red":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_raptor_red_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_raptor_undead":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_raptor_undead_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_sky_serpent_jade":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_sky_serpent_jade_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_sky_serpent_magma":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_sky_serpent_magma_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_sky_serpent_solar":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_sky_serpent_solar_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_sky_serpent_spectral":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_sky_serpent_spectral_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_stag_demonic":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_stag_demonic_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_stag_heavenly":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_stag_heavenly_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_stag_rune":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_stag_rune_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_stag_void":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_stag_void_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_frog_green":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_frog_green_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_frog_permafrost":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_frog_permafrost_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_frog_royal":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_frog_royal_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_golem_arcane":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_golem_arcane_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_golem_corrupted":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_golem_corrupted_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_golem_magma":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_golem_magma_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_golem_royal":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_golem_royal_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_tusker_demonic":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_tusker_demonic_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_tusker_dreamlight":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_tusker_dreamlight_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_tusker_forest":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_tusker_forest_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_wolfhawk_dire":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_wolfhawk_dire_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_wolfhawk_fallen":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_wolfhawk_fallen_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_wolfhawk_fullmoon":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_wolfhawk_fullmoon_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_wolfhawk_stormcloud":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_wolfhawk_stormcloud_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_wyvern_ender":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_wyvern_ender_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_wyvern_green":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_wyvern_green_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_wyvern_inferno":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_wyvern_inferno_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_wyvern_undead":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"
+"CA_Hurt_wyvern_undead_shiny":
+  "Cooldown": 0.35
+  "Skills":
+    - "state{s=ca_hurt} @self"

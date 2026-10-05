@@ -1,0 +1,14 @@
+id: mushroom_picking
+name: 버섯 따기
+category: earth
+description: 주변의 작은 버섯을 모은다.
+icon: ''
+permission: magic.learned.mushroom_picking
+discovery:
+  description: 작은 버섯을 누적 32개 수확하기.
+research: 숲 바닥의 보물을 모으는 주문이다. 큰 버섯 기둥까지 뽑아 오지는 않는다.
+cast:
+  command: ''
+  cooldown-seconds: 4
+  mana-cost: 8
+order: 246

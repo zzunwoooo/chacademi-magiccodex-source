@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "rainbow_collar"
+name: "무지개 목줄"
+category: "light"
+description: "자신이 길들인 늑대나 고양이의 목줄 색을 순서대로 바꿉니다.\n\n길들인 동물의 목줄에 여러 색을 입혀 보면 빛으로 바꿀 색의 결도 익숙해진다."
+icon: "magiccodex:textures/spells/expansion_2/rainbow_collar.png"
+permission: "magic.learned.rainbow_collar"
+discovery:
+  description: "길들인 동물의 목줄을 서로 다른 5가지 색으로 염색하기."
+research: "주인의 망토와 목줄 색이 같아야 한다는 사소한 고집에서 시작되었다."
+cast:
+  command: "마법 무지개목줄"
+  cooldown-seconds: 2
+  mana-cost: 2
+order: 1500

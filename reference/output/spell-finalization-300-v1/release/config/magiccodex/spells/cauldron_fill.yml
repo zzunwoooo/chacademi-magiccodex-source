@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "cauldron_fill"
+name: "가마솥 채우기"
+category: "water"
+description: "바라보는 가마솥의 물을 한 단계 채웁니다.\n\n없는 물을 만들어 내는 데에는 마력만으로 부족하다. 도서관의 화학 기초에서 재료와 변화의 원리를 찾을 수 있다."
+icon: "magiccodex:textures/spells/expansion/cauldron_fill.png"
+permission: "magic.learned.cauldron_fill"
+discovery:
+  description: "도서관에서 '화학 기초' 책 읽기"
+research: "물이 없는 곳에서 물을 만들어 내기 위해서는 마법 수련 뿐만 아니라 화학 공부도 동반 되어야 한다."
+cast:
+  command: "마법 가마솥채우기"
+  cooldown-seconds: 3
+  mana-cost: 8
+order: 760

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "level_balance"
+name: "수평 맞추기"
+category: "water"
+description: "연결된 두 수조의 수위를 같게 해 부표나 수문 높이를 조절한다.\n\n가마솥을 채우고 비우는 일을 반복하면 서로 다른 수위가 만날 높이를 읽는다."
+icon: "magiccodex:textures/spells/expansion_3/level_balance.png"
+permission: "magic.learned.level_balance"
+discovery:
+  description: "물 양동이로 가마솥을 채운 뒤 다시 비우기 10회."
+research: "물을 새로 만드는 대신 두 그릇 사이의 차이를 거둔다."
+cast:
+  command: "마법 수평맞추기"
+  cooldown-seconds: 12
+  mana-cost: 30
+order: 2950

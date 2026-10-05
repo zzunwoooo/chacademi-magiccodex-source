@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "waterwheel_shield"
+name: "물레 방패"
+category: "water"
+description: "몸 주위를 도는 물레가 다음 근접 공격 한 번을 약화시키고 공격자를 옆으로 밀어냅니다.\n\n물속에서 방패로 공격을 여러 번 받아 낸 경험이 흐르는 방어를 만든다."
+icon: "magiccodex:textures/spells/expansion_2/waterwheel_shield.png"
+permission: "magic.learned.waterwheel_shield"
+discovery:
+  description: "물속에서 방패로 몬스터의 공격을 10회 막기."
+research: "물을 막는 대신 돌려보내자. 파도도 정면으로 부딪히는 법만 아는 것은 아니다."
+cast:
+  command: "마법 물레방패"
+  cooldown-seconds: 25
+  mana-cost: 85
+order: 920

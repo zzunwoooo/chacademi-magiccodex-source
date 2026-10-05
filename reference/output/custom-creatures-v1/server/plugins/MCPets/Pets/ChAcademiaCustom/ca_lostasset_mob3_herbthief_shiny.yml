@@ -1,0 +1,17 @@
+"Id": "ca_lostasset_mob3_herbthief_shiny"
+"MythicMob": "CA_Pet_lostasset_mob3_herbthief_shiny"
+"Permission": "chacademia.pet.ca_lostasset_mob3_herbthief_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e약초 도둑"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "숲 가장자리에서 약초를 모아 숨기는 작은 생물."
+    - "서식지: 라벤더 숲 / 꽃피는 계곡"
+    - "1성"

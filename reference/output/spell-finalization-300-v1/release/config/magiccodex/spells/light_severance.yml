@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "light_severance"
+name: "빛의 단절"
+category: "light"
+description: "마법의 사슬이나 피해 공유 연결을 하나 끊는다.\n\n빛 응용 수업에서 연결의 구조를 배운 뒤에는 묶인 마력의 약한 틈을 끊을 수 있다."
+icon: "magiccodex:textures/spells/expansion_3/light_severance.png"
+permission: "magic.learned.light_severance"
+discovery:
+  description: "빛 마법 응용 수업의 결계 해제 실습을 완료하기."
+research: "강한 사슬이라도 이어진 자리에는 틈이 있다."
+cast:
+  command: "마법 빛의단절"
+  cooldown-seconds: 30
+  mana-cost: 90
+order: 2740

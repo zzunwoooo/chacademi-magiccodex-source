@@ -1,0 +1,17 @@
+"Id": "ca_kitsune_demonic_shiny"
+"MythicMob": "CA_Pet_kitsune_demonic_shiny"
+"Permission": "chacademia.pet.ca_kitsune_demonic_shiny"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e마성 키츠네"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "마력이 짙은 숲길에 드물게 모습을 보이는 여우. 마성 계열의 변이 개체."
+    - "서식지: 뒤틀린 메사 / 맨틀 동굴"
+    - "3성"

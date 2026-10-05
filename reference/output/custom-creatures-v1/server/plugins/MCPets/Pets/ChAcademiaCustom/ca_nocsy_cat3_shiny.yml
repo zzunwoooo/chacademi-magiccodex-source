@@ -1,0 +1,17 @@
+"Id": "ca_nocsy_cat3_shiny"
+"MythicMob": "CA_Pet_nocsy_cat3_shiny"
+"Permission": "chacademia.pet.ca_nocsy_cat3_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e책방 고양이"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "학교 외곽 길목에 머무르는 호기심 많은 고양이."
+    - "서식지: 벚꽃 숲 / 꽃피는 계곡"
+    - "1성"

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "root_trip"
+name: "뿌리 걸림"
+category: "earth"
+description: "적이 일정 거리 이상 이동하면 뿌리가 솟아 넘어뜨린다.\n\n덩굴 사다리로 줄기의 힘을 익힌 손이 이번에는 발목을 붙잡을 뿌리를 찾는다."
+icon: "magiccodex:textures/spells/expansion_3/root_trip.png"
+permission: "magic.learned.root_trip"
+discovery:
+  description: "덩굴 사다리를 누적 15회 사용하기."
+research: "뿌리는 달리는 적을 따라가지 않는다. 지나올 자리를 기다릴 뿐이다."
+cast:
+  command: "마법 뿌리걸림"
+  cooldown-seconds: 15
+  mana-cost: 40
+order: 2560

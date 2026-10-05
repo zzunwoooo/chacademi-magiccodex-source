@@ -1,0 +1,17 @@
+"Id": "ca_dragon_glacial"
+"MythicMob": "CA_Pet_dragon_glacial"
+"Permission": "chacademia.pet.ca_dragon_glacial"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f빙하 드래곤"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "영역의 높은 곳에 둥지를 짓는 거대한 용. 빙하 계열의 변이 개체."
+    - "서식지: 빙하 협곡 / 얼어붙은 절벽"
+    - "3성"

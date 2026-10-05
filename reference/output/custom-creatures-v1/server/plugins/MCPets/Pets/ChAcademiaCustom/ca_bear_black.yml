@@ -1,0 +1,17 @@
+"Id": "ca_bear_black"
+"MythicMob": "CA_Pet_bear_black"
+"Permission": "chacademia.pet.ca_bear_black"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f그늘 흑곰"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "그늘진 고지대 숲에서 영역을 지키는 곰."
+    - "서식지: 숲 우거진 고지 / 방패암 숲"
+    - "2성"

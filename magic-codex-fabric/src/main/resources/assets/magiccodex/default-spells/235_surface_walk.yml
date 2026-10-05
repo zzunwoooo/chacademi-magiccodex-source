@@ -1,0 +1,14 @@
+id: surface_walk
+name: 수면 산책
+category: water
+description: 잠시 물 위를 걷고 웅크리면 물속으로 들어간다.
+icon: ''
+permission: magic.learned.surface_walk
+discovery:
+  description: 보트 없이 수영으로 누적 300블록 이동하기.
+research: 가라앉지 않으려면 수면을 세게 누르기보다 넓게 힘을 나누어야 한다.
+cast:
+  command: ''
+  cooldown-seconds: 20
+  mana-cost: 35
+order: 235

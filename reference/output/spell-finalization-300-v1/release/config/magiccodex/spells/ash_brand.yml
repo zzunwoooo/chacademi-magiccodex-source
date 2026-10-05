@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "ash_brand"
+name: "재의 낙인"
+category: "fire"
+description: "적에게 8초간 낙인을 남깁니다. 그 안에 처치하면 폭발해 주변 적에게 피해를 줍니다. 폭발은 연쇄하지 않습니다.\n\n화염으로 적을 쓰러뜨리고 남은 재가 다음 불꽃의 표식이 된다."
+icon: "magiccodex:textures/spells/expansion/ash_brand.png"
+permission: "magic.learned.ash_brand"
+discovery:
+  description: "화염 마법으로 적 30회 처치"
+research: "사람은 모두나 체내에 작은 불꽃을 품고있다."
+cast:
+  command: "마법 재의낙인"
+  cooldown-seconds: 35
+  mana-cost: 200
+order: 460

@@ -1,0 +1,17 @@
+# 설명·발견 조건·쿨타임은 수정 가능한 기획 초안입니다.
+# 발견 조건은 UI 표시용 문구이며 실제 판정 기능은 연결되지 않았습니다.
+# cast.command는 실제 시전 기능 연결 후 / 없이 입력하세요.
+id: "forbidden_contract"
+name: "금서의 계약"
+category: "dark"
+rank: "고급"
+description: "금서에서 일시적인 힘을 빌리는 대신 대가를 받습니다. 책마다 능력과 계약 해제 조건이 다릅니다."
+icon: "magiccodex:textures/spells/advanced/forbidden_contract.png"
+permission: "magic.learned.forbidden_contract"
+discovery:
+  description: "금서고에서 봉인된 계약서를 해독하고 대가를 확인한 뒤 계약하기."
+research: ""
+cast:
+  command: ""
+  cooldown-seconds: 180
+order: 2170

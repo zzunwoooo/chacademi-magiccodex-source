@@ -1,0 +1,14 @@
+id: arcane_imprint
+name: 마력 각인
+category: light
+description: 손에 든 도구에 60초간 마력을 각인합니다. 무기는 공격력이, 채집 도구는 작업 속도가 증가합니다. 같은 각인은 중첩되지 않습니다.
+icon: magiccodex:textures/spells/advanced/arcane_imprint.png
+permission: magic.learned.arcane_imprint
+discovery:
+  description: 모루로 도구에 이름을 10번 붙이기.
+research: 이름을 새긴 도구에 마음까지 새겨 넣을 수 있다면.
+cast:
+  command: ''
+  cooldown-seconds: 60
+  mana-cost: 180
+order: 140

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "dampen_powder"
+name: "화약 적시기"
+category: "water"
+description: "가까이 있는 점화된 TNT를 최대 3개까지 소멸시킵니다.\n\n물속에서 터지는 TNT를 몇 번 견뎌 보면 젖은 화약이 잃어버린 힘을 알아차린다."
+icon: "magiccodex:textures/spells/expansion/dampen_powder.png"
+permission: "magic.learned.dampen_powder"
+discovery:
+  description: "물속에서 TNT 폭발을 3번 살아남기."
+research: "폭발을 막는 가장 간단한 방법은 화약을 젖게 만드는 것이다."
+cast:
+  command: "마법 화약적시기"
+  cooldown-seconds: 30
+  mana-cost: 110
+order: 800

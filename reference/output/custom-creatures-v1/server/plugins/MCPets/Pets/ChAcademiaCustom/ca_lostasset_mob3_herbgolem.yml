@@ -1,0 +1,17 @@
+"Id": "ca_lostasset_mob3_herbgolem"
+"MythicMob": "CA_Pet_lostasset_mob3_herbgolem"
+"Permission": "chacademia.pet.ca_lostasset_mob3_herbgolem"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f약초 수호골렘"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "약초 군락 주변을 지키는 오래된 숲의 수호자."
+    - "서식지: 자수정 우림 / 라벤더 숲"
+    - "3성"

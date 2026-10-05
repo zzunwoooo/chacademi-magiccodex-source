@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "arrested_orbit"
+name: "퍼붓는 화살"
+category: "wind"
+description: "근처에 바람의 화살을 5개 소환하여 빠르게 쏘아낸다.\n\n고급 바람 수업에서는 드물게, 움직이는 화살을 허공에 붙잡는 법까지 배운다."
+icon: "magiccodex:textures/spells/expansion_2/arrested_orbit.png"
+permission: "magic.learned.arrested_orbit"
+discovery:
+  description: "바람 마법 고급 수업을 통해 낮은 확률로 습득"
+research: "강력한 마법사가 압축하여 발사하는 바람은 음속에 가깝다고 한다."
+cast:
+  command: "마법 퍼붓는화살"
+  cooldown-seconds: 10
+  mana-cost: 200
+order: 290

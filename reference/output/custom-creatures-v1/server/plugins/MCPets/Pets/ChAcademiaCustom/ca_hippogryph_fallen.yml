@@ -1,0 +1,17 @@
+"Id": "ca_hippogryph_fallen"
+"MythicMob": "CA_Pet_hippogryph_fallen"
+"Permission": "chacademia.pet.ca_hippogryph_fallen"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f타락 히포그리프"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "높은 절벽에 둥지를 만들고 주변을 살핀다. 타락 계열의 변이 개체."
+    - "서식지: 달빛 숲 / 깊은 동굴"
+    - "3성"

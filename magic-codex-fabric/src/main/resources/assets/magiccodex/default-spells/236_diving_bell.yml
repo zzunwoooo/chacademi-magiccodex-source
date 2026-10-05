@@ -1,0 +1,14 @@
+id: diving_bell
+name: 잠수 종
+category: water
+description: 수중에 여러 사람이 잠시 숨을 고를 작은 공기 공간을 만든다.
+icon: ''
+permission: magic.learned.diving_bell
+discovery:
+  description: 물결 숨결을 누적 15회 사용하기.
+research: 깊은 물속에서 나누는 숨은 서로에게 가장 가까운 대피소다.
+cast:
+  command: ''
+  cooldown-seconds: 35
+  mana-cost: 90
+order: 236

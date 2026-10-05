@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "descent_command"
+name: "낙하 명령"
+category: "wind"
+description: "공중에 떠 있는 몬스터 하나를 아래로 내리꽂습니다. 지면에 부딪히면 추가 피해를 줍니다.\n\n허공의 적에게 바람의 압력을 거듭 가하다 보면, 그 힘을 아래로 향하게 할 수 있다."
+icon: "magiccodex:textures/spells/expansion/descent_command.png"
+permission: "magic.learned.descent_command"
+discovery:
+  description: "공중에 떠 있는 몬스터에게 윈드 프레스 50회 사용하기."
+research: "강력한 마법사의 윈드 프레스는 더욱 강력한 파괴력을 가지게 된다."
+cast:
+  command: "마법 낙하명령"
+  cooldown-seconds: 30
+  mana-cost: 270
+order: 170

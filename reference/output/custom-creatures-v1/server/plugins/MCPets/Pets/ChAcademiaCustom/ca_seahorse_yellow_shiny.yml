@@ -1,0 +1,17 @@
+"Id": "ca_seahorse_yellow_shiny"
+"MythicMob": "CA_Pet_seahorse_yellow_shiny"
+"Permission": "chacademia.pet.ca_seahorse_yellow_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e금빛 해마"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "따뜻한 바다의 산호·해초 주변에 몸을 숨긴다."
+    - "서식지: 따뜻한 심해"
+    - "2성"

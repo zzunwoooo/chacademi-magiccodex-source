@@ -1,0 +1,14 @@
+id: vortex_center
+name: 소용돌이 중심
+category: wind
+description: 지면에 회오리를 만들어 주변 적을 한 지점으로 모은다.
+icon: ''
+permission: magic.learned.vortex_center
+discovery:
+  description: 바람 마법 실전 수업을 완료하기.
+research: 회오리의 중심은 가장 조용하다. 그 주변이 그렇지 않을 뿐이다.
+cast:
+  command: ''
+  cooldown-seconds: 30
+  mana-cost: 100
+order: 205

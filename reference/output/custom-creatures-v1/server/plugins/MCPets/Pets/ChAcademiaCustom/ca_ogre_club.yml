@@ -1,0 +1,17 @@
+"Id": "ca_ogre_club"
+"MythicMob": "CA_Pet_ogre_club"
+"Permission": "chacademia.pet.ca_ogre_club"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f숲몽둥이 오우거"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "숲의 무너진 야영지를 차지한 거친 오우거."
+    - "서식지: 숲 우거진 고지 / 방패암 숲"
+    - "2성"

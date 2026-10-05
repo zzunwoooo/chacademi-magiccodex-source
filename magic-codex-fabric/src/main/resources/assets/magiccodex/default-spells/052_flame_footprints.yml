@@ -1,0 +1,14 @@
+id: flame_footprints
+name: 불꽃 걸음
+category: fire
+description: 슬롯 장착 중 이동한 곳에 불꽃 발자국이 남습니다. 각 발자국은 잠시 뒤 폭발하며, 장착 중 매초 마나 10을 소모합니다.
+icon: magiccodex:textures/spells/expansion_2/flame_footprints.png
+permission: magic.learned.flame_footprints
+discovery:
+  description: 불이 붙은 상태에서 30초간 살아남기
+research: 발을 내딛음과 동시에 공격 한다면 어느 순간에도 공격이 가능하다.
+cast:
+  command: 마법 flame_footprints
+  cooldown-seconds: 0
+  mana-cost: 10
+order: 52

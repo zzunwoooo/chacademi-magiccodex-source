@@ -1,0 +1,14 @@
+id: guardian_oath
+name: 수호자의 서약
+category: light
+description: 동료 한 명이 받는 피해의 일부를 자신이 대신 받습니다. 일정 거리 안에서만 유지됩니다.
+icon: magiccodex:textures/spells/expansion_2/guardian_oath.png
+permission: magic.learned.guardian_oath
+discovery:
+  description: 체력이 하트 2칸 이하인 동료에게 위로의 빛을 10번 사용하기.
+research: 네가 쓰러지기 전에 내가 먼저 손을 내밀겠다.
+cast:
+  command: ''
+  cooldown-seconds: 45
+  mana-cost: 130
+order: 160

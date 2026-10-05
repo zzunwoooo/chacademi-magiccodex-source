@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "heat_script"
+name: "열문자"
+category: "fire"
+description: "열에 반응하는 석판을 달궈 숨겨진 문자나 순서를 드러낸다.\n\n고대 석판을 살피면 열이 닿았을 때만 드러나는 글자의 흔적을 찾을 수 있다."
+icon: "magiccodex:textures/spells/expansion_3/heat_script.png"
+permission: "magic.learned.heat_script"
+discovery:
+  description: "고대 유적의 열에 반응하는 석판을 조사하기."
+research: "보이지 않는 문장을 태우는 것이 아니라, 읽을 만큼만 따뜻하게 만든다."
+cast:
+  command: "마법 열문자"
+  cooldown-seconds: 10
+  mana-cost: 25
+order: 2930

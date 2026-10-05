@@ -1,0 +1,17 @@
+"Id": "ca_frost_ferret"
+"MythicMob": "CA_Pet_frost_ferret"
+"Permission": "chacademia.pet.ca_frost_ferret"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f서리 족제비"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "눈 덮인 나무뿌리 사이로 재빠르게 움직인다."
+    - "서식지: 눈 덮인 단풍 숲 / 겨울 숲"
+    - "2성"

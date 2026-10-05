@@ -1,0 +1,17 @@
+"Id": "ca_lostasset_mob3_mossyboar_shiny"
+"MythicMob": "CA_Pet_lostasset_mob3_mossyboar_shiny"
+"Permission": "chacademia.pet.ca_lostasset_mob3_mossyboar_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e이끼 등멧돼지"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "습한 숲에서 등에 이끼를 두른 멧돼지."
+    - "서식지: 운무 숲 / 자수정 우림"
+    - "2성"

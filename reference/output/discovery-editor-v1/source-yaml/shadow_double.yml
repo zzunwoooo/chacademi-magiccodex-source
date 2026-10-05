@@ -1,0 +1,17 @@
+# 설명·발견 조건·쿨타임은 수정 가능한 기획 초안입니다.
+# 발견 조건은 UI 표시용 문구이며 실제 판정 기능은 연결되지 않았습니다.
+# cast.command는 실제 시전 기능 연결 후 / 없이 입력하세요.
+id: "shadow_double"
+name: "그림자 분신"
+category: "dark"
+rank: "중급"
+description: "자리에 남아 적을 유인하거나 전용 장치를 반응시키는 그림자 분신을 만듭니다."
+icon: "magiccodex:textures/spells/intermediate/shadow_double.png"
+permission: "magic.learned.shadow_double"
+discovery:
+  description: "그림자 실습실의 두 발판에 남은 분신 기록을 읽기."
+research: ""
+cast:
+  command: ""
+  cooldown-seconds: 30
+order: 1180

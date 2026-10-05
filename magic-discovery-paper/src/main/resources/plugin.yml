@@ -1,0 +1,14 @@
+name: MagicDiscovery
+version: '${version}'
+main: school.magiccodex.discovery.MagicDiscovery
+api-version: '1.21.4'
+softdepend: [LuckPerms, MagicCodexBridge]
+commands:
+  magicdiscovery:
+    description: Discovery integration and administration
+    permission: magicdiscovery.admin
+  칭호수령:
+    description: Claim configured discovery title items
+permissions:
+  magicdiscovery.admin:
+    default: op

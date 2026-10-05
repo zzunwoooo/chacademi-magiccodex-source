@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "surface_walk"
+name: "수면 산책"
+category: "water"
+description: "잠시 물 위를 걷고 웅크리면 물속으로 들어간다.\n\n보트 없이 긴 물길을 건너 본 발은 수면을 잠깐 발판으로 삼고 싶어진다."
+icon: "magiccodex:textures/spells/expansion_3/surface_walk.png"
+permission: "magic.learned.surface_walk"
+discovery:
+  description: "보트 없이 수영으로 누적 300블록 이동하기."
+research: "가라앉지 않으려면 수면을 세게 누르기보다 넓게 힘을 나누어야 한다."
+cast:
+  command: "마법 수면산책"
+  cooldown-seconds: 20
+  mana-cost: 35
+order: 2360

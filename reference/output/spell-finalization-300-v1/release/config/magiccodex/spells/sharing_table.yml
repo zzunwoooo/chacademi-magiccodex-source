@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "sharing_table"
+name: "나눔 식탁"
+category: "light"
+description: "자신의 배고픔 일부를 가까운 동료 한 명에게 나눠 줍니다. 전체 음식량은 늘어나지 않습니다.\n\n내려놓은 음식을 다른 사람이 받아 간 경험이 쌓이면 나눔의 자리를 넓힐 수 있다."
+icon: "magiccodex:textures/spells/expansion_2/sharing_table.png"
+permission: "magic.learned.sharing_table"
+discovery:
+  description: "자신이 떨어뜨린 음식 아이템을 다른 플레이어가 누적 64개 줍게 하기."
+research: "함께 먹는 식사는 언제나 혼자 먹을 때보다 따뜻하다."
+cast:
+  command: "마법 나눔식탁"
+  cooldown-seconds: 15
+  mana-cost: 15
+order: 1540

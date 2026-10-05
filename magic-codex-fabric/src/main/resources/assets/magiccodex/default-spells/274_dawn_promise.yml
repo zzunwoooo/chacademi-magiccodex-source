@@ -1,0 +1,14 @@
+id: dawn_promise
+name: 새벽의 약속
+category: light
+description: 동료가 표식이 끝날 때까지 피해를 받지 않으면 회복한다.
+icon: ''
+permission: magic.learned.dawn_promise
+discovery:
+  description: 동료에게 위로의 빛을 누적 20회 사용하기.
+research: 아무 일도 일어나지 않는 시간이 누군가에게는 가장 큰 회복이다.
+cast:
+  command: ''
+  cooldown-seconds: 30
+  mana-cost: 75
+order: 274

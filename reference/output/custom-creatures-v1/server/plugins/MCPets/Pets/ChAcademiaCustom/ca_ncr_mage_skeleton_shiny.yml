@@ -1,0 +1,17 @@
+"Id": "ca_ncr_mage_skeleton_shiny"
+"MythicMob": "CA_Pet_ncr_mage_skeleton_shiny"
+"Permission": "chacademia.pet.ca_ncr_mage_skeleton_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e망각의 해골술사"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "감염 동굴의 봉인실에 남은 마법사."
+    - "서식지: 감염 동굴 / 깊은 동굴"
+    - "3성"

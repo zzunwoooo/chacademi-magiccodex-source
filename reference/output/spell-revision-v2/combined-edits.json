@@ -1,0 +1,1349 @@
+{
+  "schema": "chacademia.classification-edits.v2",
+  "datasetId": "classification-238-df7127cb9216",
+  "revision": 0,
+  "edits": {
+    "crimson_heart": {
+      "condition": "체력이 하트 1칸 이하인 상태에서 화염 마법으로 몬스터 처치하기.",
+      "reviewed": true
+    },
+    "blue_bonfire": {
+      "condition": "학교 도서관에서 '불꽃의 색과 마력' 책 읽기.",
+      "reviewed": true,
+      "description": "60초간 유지되는 푸른 화톳불을 설치합니다. 10블록 안에 있을 경우 마나 회복량이 10% 증가합니다."
+    },
+    "crimson_breath": {
+      "condition": "최대 마나량 2500 달성",
+      "reviewed": true,
+      "description": "전설속의 드래곤의 숨결을 현현한다.",
+      "research": "드래곤의 브레스는 그 무엇보다도 뜨거운 온도를 지니고 있다.\n드래곤의 마나 코어 없이는 시도조차 불가능한 고위급 마법이다.",
+      "name": "드래곤 브레스",
+      "mana": 2500,
+      "cooldown": 1000,
+      "command": "마법 드래곤브레스"
+    },
+    "water_breath": {
+      "condition": "물에 잠긴 상태에서 죽지 않고 30초 버티기",
+      "reviewed": true
+    },
+    "tide_stride": {
+      "condition": "수영으로 누적 500블록 이동하기.",
+      "reviewed": true
+    },
+    "water_bolt": {
+      "condition": "물 마법 기초 수업을 통해 습득.",
+      "reviewed": true
+    },
+    "quench": {
+      "condition": "불이 붙은 상태에서 물에 들어가 불 끄기 5회.",
+      "reviewed": true
+    },
+    "purifying_wave": {
+      "condition": "독에 걸린 상태에서 우유를 마시기 3회.",
+      "reviewed": true
+    },
+    "ice_bridge": {
+      "condition": "차가운 바다에 방문하기",
+      "reviewed": true
+    },
+    "water_mirror": {
+      "condition": "학교 도서관에서 '수면에 비친 먼 풍경' 책 읽기.",
+      "reviewed": true,
+      "description": "물 속의 숨겨진 통로를 발견해낸다."
+    },
+    "spring_unseal": {
+      "condition": "물 양동이로 가마솥을 누적 30번 채우기.",
+      "reviewed": true,
+      "description": "바라보는 곳에 물을 설치한다.",
+      "mana": 30
+    },
+    "water_elemental": {
+      "condition": "'정령계약서 - 수' 도서 읽기",
+      "reviewed": true,
+      "research": "자유로운 물의 정령 운디네와 계약을 맺는다.\n물은 흩어지지만 약속은 흩어지지 않는다.",
+      "name": "운디네",
+      "command": "마법 운디네"
+    },
+    "eternal_ice_prison": {
+      "condition": "물 마법 응용 수업을 통해 낮은 확률로 습득.",
+      "reviewed": true
+    },
+    "cauldron_fill": {
+      "condition": "도서관에서 '화학 기초' 책 읽기",
+      "reviewed": true,
+      "research": "물이 없는 곳에서 물을 만들어 내기 위해서는 마법 수련 뿐만 아니라 화학 공부도 동반 되어야 한다."
+    },
+    "dye_rinse": {
+      "condition": "가마솥으로 가죽 장비의 염색을 3번 지우기.",
+      "reviewed": true
+    },
+    "fish_lure": {
+      "condition": "낚시로 물고기를 누적 30마리 낚기.",
+      "reviewed": true
+    },
+    "frost_rupture": {
+      "condition": "눈덩이를 몬스터에게 누적 50번 명중하기.",
+      "reviewed": true,
+      "research": "눈싸움 중 눈덩이에 돌을 넣어 던지는 행위는 명백한 불법이다."
+    },
+    "dampen_powder": {
+      "condition": "물속에서 TNT 폭발을 3번 살아남기.",
+      "reviewed": false,
+      "description": "가까이 있는 점화된 TNT를 최대 3개까지 소멸시킵니다."
+    },
+    "life_distribution": {
+      "condition": "투척용 치유 물약 한 병으로 자신과 동료 2명을 함께 회복하기.",
+      "reviewed": true,
+      "description": "자신과 6블록 안에서 동료 최대 3명의 현재 체력을 합쳐, 각자의 최대 체력에 비례해 나눕니다. 전체 체력은 늘어나지 않습니다."
+    },
+    "moist_farmland": {
+      "condition": "물에서 떨어진 마른 경작지에 씨앗을 20번 심기.",
+      "reviewed": true,
+      "description": "주변의 마른 경작지 최대 9칸을 적십니다."
+    },
+    "wash_letters": {
+      "condition": "같은 표지판의 글씨를 10번 고쳐 쓰기.",
+      "reviewed": true
+    },
+    "handful_of_snow": {
+      "condition": "눈을 제작대에서 눈덩이로 4회 분해",
+      "reviewed": true
+    },
+    "dew_gathering": {
+      "condition": "빈 병으로 물을 10번 뜨기.",
+      "reviewed": true
+    },
+    "quiet_mooring": {
+      "condition": "보트 설치 5회.",
+      "reviewed": true,
+      "description": "현재 위치에 보트를 설치한다. 물이 아니라면 실패한다.",
+      "name": "노아의 방주",
+      "mana": 100
+    },
+    "wet_footprints": {
+      "condition": "비가 오는 날 몬스터를 10회 처치",
+      "reviewed": true
+    },
+    "pressure_weight": {
+      "condition": "물에 잠긴 상태에서 누적 60초 버티기",
+      "reviewed": true
+    },
+    "cold_storage": {
+      "condition": "영하 10도 이하의 온도에 노출되기",
+      "reviewed": true,
+      "description": "보유한 아이템을 열기로부터 지켜줍니다."
+    },
+    "current_sorting": {
+      "name": "사금 추출",
+      "condition": "물 속에 잠겨진 금 광석 캐기",
+      "reviewed": true,
+      "mana": 350,
+      "cooldown": 1200,
+      "command": "마법 사금추출",
+      "description": "물 속에서 사금을 찾아냅니다. 물이 없다면 실패합니다.",
+      "research": "물 속에 숨겨진 금을 찾아내어 마법 연구비로 사용하도록 하자."
+    },
+    "potion_mist": {
+      "description": "손에 든 물약 하나를 소비해 가까운 동료들에게 10초간 분무합니다.",
+      "condition": "서로 다른 종류의 물약 5종을 직접 양조하기.",
+      "reviewed": true
+    },
+    "waterwheel_shield": {
+      "condition": "물속에서 방패로 몬스터의 공격을 10회 막기.",
+      "research": "물을 막는 대신 돌려보내자. 파도도 정면으로 부딪히는 법만 아는 것은 아니다.",
+      "reviewed": false
+    },
+    "liquid_barrier": {
+      "condition": "도서관에서 '물이 넘치지 않는 잔' 책 읽기.",
+      "research": "잔에 물을 가득 채우고도 한 방울 흘리지 않는 실험에서 시작되었다.",
+      "reviewed": false
+    },
+    "water_rebound": {
+      "condition": "10블록 이상 높이에서 물로 뛰어들어 5회 살아남기.",
+      "description": "높은 곳에서 물에 착수하면 한 번 튀어 오릅니다.",
+      "research": "수면이 단단하다는 사실을 몸으로 증명할 필요는 없다. 이 마법부터 배우도록 하자.",
+      "reviewed": false
+    },
+    "tidal_wave": {
+      "condition": "물 마법 실전 수업을 통해 습득.",
+      "description": "정면으로 파도를 보내 적에게 피해를 주고 밀어냅니다.",
+      "research": "바다는 물 한 방울의 힘이 모인 결과다. 충분한 마력이 있다면 호수에서도 해일을 일으킬 수 있다.",
+      "reviewed": false
+    },
+    "thaw_pulse": {
+      "condition": "가루눈에서 동결 피해를 받은 뒤 모닥불로 몸 녹이기.",
+      "research": "겨울 야외 실습에서는 동료의 손끝이 얼어붙기 전에 알아차리는 것이 중요하다.",
+      "reviewed": false
+    },
+    "abyssal_pressure": {
+      "condition": "도서관에서 '심해 탐사 기록' 책을 읽고 깊은 바다에 방문하기.",
+      "research": "수면 아래가 조용하다고 아무 일도 없는 것은 아니다. 깊은 바다는 물의 무게만으로 모든 것을 짓누른다.",
+      "reviewed": false
+    },
+    "verdant_touch": {
+      "condition": "다 자란 밀·당근·감자를 각각 20개 수확하기.",
+      "research": "약초학 실습에서 가장 먼저 배우는 것은 싹을 재촉하는 법이 아니라, 제대로 자란 식물을 알아보는 법이다.",
+      "reviewed": false
+    },
+    "ore_whisper": {
+      "condition": "석탄 광석 32개와 철 광석 16개 직접 채굴하기.",
+      "research": "광석마다 마력의 울림이 다르다. 곡괭이를 들기 전에 귀부터 기울여 보자.",
+      "reviewed": false
+    },
+    "pebble_toss": {
+      "condition": "대지 마법 기초 수업을 통해 습득.",
+      "research": "아무리 작은 돌이어도 사람에게 던지면 징계 대상이다.",
+      "reviewed": false
+    },
+    "miners_rhythm": {
+      "condition": "곡괭이로 돌과 심층암을 합쳐 누적 300개 채굴하기.",
+      "research": "곡괭이 소리가 일정해지면 마력도 그 박자를 따라 흐른다. 옆 사람의 작업 속도에 맞출 필요는 없다.",
+      "reviewed": false
+    },
+    "earth_shaping": {
+      "condition": "흙 블록 누적 100개 설치하기.",
+      "research": "길이 불편하면 길을 바꾸면 된다. 단, 다른 학생의 기숙사 바닥을 바꾸지는 말자.",
+      "reviewed": false
+    },
+    "stone_wall": {
+      "condition": "대지 마법 방어 수업을 통해 습득.",
+      "research": "시험지 앞에 세워도 감독 교수의 시선을 막아 주지는 않는다.",
+      "reviewed": false
+    },
+    "vine_ladder": {
+      "condition": "덩굴을 타고 누적 50블록 이동하기.",
+      "research": "올라갈 곳을 정한 뒤 덩굴을 부르자. 나중에 내려올 길도 생각해 두도록 하자.",
+      "reviewed": false
+    },
+    "earth_elemental": {
+      "condition": "도서관에서 '정령계약서 - 지' 책 읽기.",
+      "name": "그놈",
+      "command": "마법 그놈",
+      "research": "말수가 적은 땅의 정령 그놈과 계약을 맺는다.\n느리게 대답하지만 한 번 한 약속은 산처럼 무겁다.",
+      "reviewed": false
+    },
+    "earthquake": {
+      "condition": "대지 마법 실전 수업을 통해 습득.",
+      "description": "주변 6블록의 지면을 흔들어 적에게 피해를 줍니다.",
+      "research": "발밑의 작은 떨림을 한곳에 모으면 바위도 견디지 못한다. 학교 안에서는 허가 없이 사용하지 말자.",
+      "reviewed": false
+    },
+    "climate_control": {
+      "condition": "봄·여름·가을·겨울의 기상 관측 수업을 각각 1회 마치기.",
+      "research": "좋은 날씨의 기준은 사람마다 다르다. 농사 짓는 학생과 소풍 가는 학생의 의견부터 들어 보자.",
+      "reviewed": false
+    },
+    "seed_row": {
+      "condition": "경작지에 씨앗 누적 50개 심기.",
+      "research": "허리를 굽히지 않고 밭을 가꾸는 법. 농사 동아리에서 가장 인기가 많은 실습이다.",
+      "reviewed": false
+    },
+    "bee_calm": {
+      "condition": "도서관에서 '양봉 입문' 책 읽기.",
+      "research": "벌에게 사과하는 주문은 아니다. 꿀을 훔친 사실까지 잊어 주지는 않는다.",
+      "reviewed": false
+    },
+    "thorn_armor": {
+      "condition": "달콤한 열매 덤불에 누적 10회 찔리기.",
+      "research": "왜 식물에 가시가 필요한지 충분히 이해했다면, 이제 직접 둘러 볼 차례다.",
+      "reviewed": false
+    },
+    "vein_fracture": {
+      "condition": "다이아몬드 광석 누적 20개 직접 채굴하기.",
+      "research": "한 광석을 발견했다면 주변에도 같은 광맥이 있을 수 있다. 운보다 지질학이 도움이 될 때도 있다.",
+      "reviewed": false
+    },
+    "earth_anchor": {
+      "condition": "방패로 몬스터의 공격 누적 30회 막기.",
+      "research": "밀리지 않는다고 움직일 수 없는 것은 아니다. 산처럼 서 있다가도 수업 종이 울리면 걸어가야 한다.",
+      "reviewed": false
+    },
+    "weathering_touch": {
+      "condition": "도서관에서 '돌에 남은 시간' 책 읽기.",
+      "research": "새 벽돌을 오래된 유적처럼 꾸미는 데 쓰인다. 오래된 유적을 새 건물처럼 만드는 주문은 따로 연구 중이다.",
+      "reviewed": false
+    },
+    "iron_carapace": {
+      "condition": "철 갑옷을 입은 상태에서 몬스터에게 누적 100 피해 받기.",
+      "research": "몸을 강철처럼 만들 수는 있지만 강철의 무게까지 없앨 수는 없다.",
+      "reviewed": false
+    },
+    "moss_coating": {
+      "condition": "덩굴과 석재 벽돌을 함께 소지한 채 비 맞기.",
+      "research": "정원은 새로 만들었는데 너무 새것처럼 보인다는 부탁에서 시작되었다.",
+      "reviewed": false
+    },
+    "grass_sprouting": {
+      "condition": "흙 위에 꽃 누적 10개 심기.",
+      "research": "황량한 마당에도 봄은 온다. 조금 재촉해 주는 정도라면 괜찮을 것이다.",
+      "reviewed": false
+    },
+    "flint_sorting": {
+      "condition": "자갈을 캐서 부싯돌 누적 16개 얻기.",
+      "research": "모든 자갈에 쓸 만한 돌이 숨어 있는 것은 아니다. 마법으로 고르더라도 재료는 필요하다.",
+      "reviewed": false
+    },
+    "bark_peeling": {
+      "condition": "도끼로 원목 껍질 누적 32회 벗기기.",
+      "research": "나무의 옷만 벗겨야 한다. 옆에서 작업하는 학생의 망토에는 적용되지 않는다.",
+      "reviewed": false
+    },
+    "compost_return": {
+      "condition": "퇴비통에서 뼛가루 누적 16개 꺼내기.",
+      "research": "버린 잎도 다음 봄의 양분이 된다. 약초학 교수는 이것을 재활용보다 조금 더 멋진 이름으로 부른다.",
+      "reviewed": false
+    },
+    "thorn_seeds": {
+      "condition": "선인장 누적 20개 수확하기.",
+      "research": "씨앗을 심으라고 받은 것인지 발사하라고 받은 것인지, 실습 전에 확인하자.",
+      "reviewed": false
+    },
+    "pollen_matchmaking": {
+      "condition": "소·양·돼지를 각각 3회 번식시키기.",
+      "research": "동물마다 좋아하는 먹이가 다르다. 마법을 배웠다고 목장 관리의 기본까지 생략할 수는 없다.",
+      "reviewed": false
+    },
+    "automatic_supply": {
+      "condition": "같은 종류의 건축 블록 누적 100개 설치하기.",
+      "research": "손에 든 블록은 다 썼는데 벽은 아직 반도 못 쌓았다. 가방을 다시 여는 수고부터 줄여 보자.",
+      "reviewed": false
+    },
+    "dormant_seed": {
+      "condition": "도서관에서 '씨앗이 잠드는 계절' 책 읽기.",
+      "research": "꽃이 가장 아름답게 피어난 순간을 남겨 두고 싶었던 정원사의 연구다. 깨우는 주문도 함께 배워야 한다.",
+      "reviewed": false
+    },
+    "counterweight": {
+      "condition": "방패로 공격을 막은 뒤 같은 몬스터 반격하기 10회.",
+      "research": "막아 낸 힘을 흘려보내지 않고 돌려준다. 방패 수업이 끝나도 팔이 저린 이유와는 관계없다.",
+      "reviewed": false
+    },
+    "material_exchange": {
+      "condition": "도서관에서 '건축 재료의 성질' 책 읽기.",
+      "research": "다 지은 벽의 색이 마음에 들지 않는 날이 있다. 설계도를 다시 그리기 전에 이 주문을 떠올려 보자.",
+      "reviewed": false
+    },
+    "remembering_field": {
+      "condition": "작물을 수확한 경작지에 씨앗 다시 심기 10회.",
+      "research": "밭은 지난 계절의 작물을 기억한다. 씨앗을 챙기지 않은 주인까지 대신 기억해 줄 수는 없다.",
+      "reviewed": false
+    },
+    "little_giant": {
+      "condition": "도서관에서 '거인의 체격과 마력' 책 읽기.",
+      "research": "몸집을 키우는 것보다 원래대로 돌아오는 것이 중요하다. 기숙사 문 앞에서 곤란해진 선배의 기록을 참고하자.",
+      "reviewed": false
+    },
+    "spring_ground": {
+      "condition": "슬라임 블록 위에서 5회 연속 튀어 오르기.",
+      "research": "땅이 단단해야만 한다는 생각을 잠시 내려놓자. 착지할 곳까지 내려놓으면 안 된다.",
+      "reviewed": false
+    },
+    "mountain_back": {
+      "condition": "조약돌 던지기로 몬스터 누적 30마리 처치하기.",
+      "research": "작은 돌로 시작한 연습이 이제 바위를 움직인다. 뒤에서 밀어 주던 동료는 먼저 비켜 서야 한다.",
+      "reviewed": false
+    },
+    "earth_embrace": {
+      "condition": "크리퍼 폭발로 생긴 구덩이에 흙 32개 메우기.",
+      "research": "다시 지은 집이 또 무너지지 않기를 바라는 마음에서 탄생했다. 폭발이 아프지 않게 되는 주문은 아니다.",
+      "reviewed": false
+    },
+    "forest_throne": {
+      "condition": "도서관에서 '움직이지 않는 숲의 왕' 책 읽기.",
+      "research": "숲의 왕에게는 다리가 필요 없다. 숲 전체가 그의 손발이므로.\n자리에서 일어날 생각이라면 왕좌를 먼저 거두도록 하자.",
+      "reviewed": false
+    },
+    "primordial_stone": {
+      "condition": "대지 마법 응용 수업을 통해 낮은 확률로 습득.",
+      "research": "모양도 이름도 없던 시절, 모든 돌은 하나였다고 한다. 그 시절의 무게를 잠시 되돌리는 고위급 마법이다.",
+      "reviewed": false
+    }
+  },
+  "exportedAt": "2026-09-30T13:44:10.588827+00:00",
+  "baseline": {
+    "crimson_heart": {
+      "condition": "체력이 하트 1칸 이하인 상태에서 발화로 몬스터 처치하기.",
+      "description": "자신의 현재 체력을 절반 소모해 주변에 강한 폭발을 일으킵니다. 소모한 체력에 따라 위력이 증가하며 지형은 파괴하지 않습니다.",
+      "research": "심장의 마지막 불씨까지 꺼내 쓰겠다는 각오가 필요하다.",
+      "category": "fire",
+      "name": "홍련의 심장",
+      "mana": 400,
+      "cooldown": 180,
+      "order": 480,
+      "permission": "magic.learned.crimson_heart",
+      "command": "마법 홍련의심장",
+      "sha256": "18ef17c2a52fc1d3c771aa6ab9eb106260f1ca6f16c81875e2044234ef56d38b",
+      "file": "crimson_heart.yml"
+    },
+    "blue_bonfire": {
+      "condition": "학교 도서관에서 '불꽃의 색과 마력' 책 읽기.",
+      "description": "60초간 유지되는 푸른 화톳불을 설치합니다. 6블록 안의 자신과 동료가 사용하는 마나를 10% 줄입니다. 유지 중 10초마다 숯 하나를 소모합니다.",
+      "research": "차가워 보이는 푸른 불꽃이 마법사의 마나를 가장 따뜻하게 감싸준다.",
+      "category": "fire",
+      "name": "푸른 화톳불",
+      "mana": 180,
+      "cooldown": 90,
+      "order": 640,
+      "permission": "magic.learned.blue_bonfire",
+      "command": "마법 푸른화톳불",
+      "sha256": "2fabf206a0532a073ac7ab7feeb106fa6e294ac0a730c0ac457576aad8a404cf",
+      "file": "blue_bonfire.yml"
+    },
+    "crimson_breath": {
+      "condition": "파이어 볼로 블레이즈를 누적 30마리 처치하기.",
+      "description": "3초 동안 정면으로 화염 숨결을 내뿜습니다. 같은 적을 계속 맞히면 피해가 증가합니다.",
+      "research": "용의 숨결을 동경하던 학자는 끝내 자신의 목도리를 태워 버렸다.",
+      "category": "fire",
+      "name": "홍염의 숨",
+      "mana": 350,
+      "cooldown": 60,
+      "order": 650,
+      "permission": "magic.learned.crimson_breath",
+      "command": "마법 홍염의숨",
+      "sha256": "2e02cbd2fe6f4aa2aba1c1cecd65d1992ac43e33d2bde11cf5f1624c15ab5dd0",
+      "file": "crimson_breath.yml"
+    },
+    "water_breath": {
+      "condition": "익사 피해를 받은 뒤 물 밖으로 나와 살아남기.",
+      "description": "30초 동안 물속에서 숨을 쉴 수 있습니다.",
+      "research": "물고기는 숨을 참는 것이 아니라 물속에서 숨을 쉰다.",
+      "category": "water",
+      "name": "물결 숨결",
+      "mana": 25,
+      "cooldown": 30,
+      "order": 660,
+      "permission": "magic.learned.water_breath",
+      "command": "마법 물결숨결",
+      "sha256": "061b8c0c021569a93ee13bf38a3b3eb09213bccf8bb57a8ad7eebe501eda9a5c",
+      "file": "water_breath.yml"
+    },
+    "tide_stride": {
+      "condition": "수영으로 누적 500블록 이동하기.",
+      "description": "15초 동안 물살을 타고 더 빠르게 헤엄칩니다.",
+      "research": "물을 밀어내려 하지 말고, 물이 가고 싶은 방향을 읽어 보자.",
+      "category": "water",
+      "name": "물살 타기",
+      "mana": 15,
+      "cooldown": 15,
+      "order": 670,
+      "permission": "magic.learned.tide_stride",
+      "command": "마법 물살타기",
+      "sha256": "0c5e019f95fc9d802d0e21905b0a534f4ca11f00aec413dd9f59b480318fd426",
+      "file": "tide_stride.yml"
+    },
+    "water_bolt": {
+      "condition": "물 마법 기초 수업을 통해 습득.",
+      "description": "물방울을 날려 몬스터 하나에 약한 피해를 주고 조금 밀어냅니다.",
+      "research": "작은 물방울도 충분히 빠르면 훌륭한 탄환이 된다.",
+      "category": "water",
+      "name": "물방울 탄환",
+      "mana": 5,
+      "cooldown": 4,
+      "order": 680,
+      "permission": "magic.learned.water_bolt",
+      "command": "마법 물방울탄환",
+      "sha256": "cf35df08ee3f641a215afc00d485d4934fbd067bdba144da1bc6fb330f252830",
+      "file": "water_bolt.yml"
+    },
+    "quench": {
+      "condition": "불이 붙은 상태에서 물에 들어가 불 끄기 5회.",
+      "description": "몸에 붙은 불을 즉시 끕니다. 이후 다시 붙는 불까지 막아 주지는 않습니다.",
+      "research": "화염 실습을 시작하기 전에 꼭 배워 두어야 할 마법.",
+      "category": "water",
+      "name": "불길 씻기",
+      "mana": 5,
+      "cooldown": 3,
+      "order": 690,
+      "permission": "magic.learned.quench",
+      "command": "마법 불길씻기",
+      "sha256": "476ce6d6b7d2279a6d4f50726aeefdc94e02589989a5fd91e665a7f2574e8e6c",
+      "file": "quench.yml"
+    },
+    "purifying_wave": {
+      "condition": "독에 걸린 상태에서 우유를 마시기 3회.",
+      "description": "자신과 5블록 안의 동료에게 걸린 독·나약함·구속을 씻어냅니다.",
+      "research": "맑은 물은 몸에 묻은 먼지뿐 아니라 잘못된 마력도 씻어낸다.",
+      "category": "water",
+      "name": "정화의 물결",
+      "mana": 65,
+      "cooldown": 25,
+      "order": 700,
+      "permission": "magic.learned.purifying_wave",
+      "command": "마법 정화의물결",
+      "sha256": "494a7534b8fe0d59d148b18ceab2b7724512cb7b9439ca1107040f7f01ce005d",
+      "file": "purifying_wave.yml"
+    },
+    "ice_bridge": {
+      "condition": "차가운 바다에서 보트 없이 누적 300블록 헤엄치기.",
+      "description": "바라보는 수면에 최대 12블록 길이의 얼음 다리를 만듭니다. 다리는 20초 뒤 사라집니다.",
+      "research": "다리를 놓을 나무가 없다면 발밑의 물을 빌리면 된다.",
+      "category": "water",
+      "name": "얼음 다리",
+      "mana": 80,
+      "cooldown": 30,
+      "order": 710,
+      "permission": "magic.learned.ice_bridge",
+      "command": "마법 얼음다리",
+      "sha256": "905549f0b022a95faddd10dccd1bf37263cda76c1c1edabdb68df0e6ba8ea9b1",
+      "file": "ice_bridge.yml"
+    },
+    "water_mirror": {
+      "condition": "학교 도서관에서 '수면에 비친 먼 풍경' 책 읽기.",
+      "description": "바라보는 관측 수반과 연결된 다른 수반 주변의 모습을 10초 동안 확인합니다.",
+      "research": "한쪽 수반에 손을 담그자, 먼 곳의 수면에도 물결이 일었다.",
+      "category": "water",
+      "name": "수면의 거울",
+      "mana": 45,
+      "cooldown": 20,
+      "order": 720,
+      "permission": "magic.learned.water_mirror",
+      "command": "마법 수면의거울",
+      "sha256": "41cba71e4130a2ddb804e352ec8ceb454c3dbed3fd0db17bb674b5f2aa4a7a49",
+      "file": "water_mirror.yml"
+    },
+    "spring_unseal": {
+      "condition": "물 양동이로 가마솥을 누적 30번 채우기.",
+      "description": "바라보는 수원 장치에 60초간 물을 공급합니다. 연결된 수로와 수차가 작동합니다.",
+      "research": "마른 수로를 바라보던 물레방앗간 주인의 부탁에서 시작된 마법.",
+      "category": "water",
+      "name": "수맥 개방",
+      "mana": 100,
+      "cooldown": 60,
+      "order": 730,
+      "permission": "magic.learned.spring_unseal",
+      "command": "마법 수맥개방",
+      "sha256": "2010830036a43e0f6ebc20e867344098c19eb0f8989579fb228d7b429ca14d87",
+      "file": "spring_unseal.yml"
+    },
+    "water_elemental": {
+      "condition": "물속에서 물방울 탄환으로 드라운드 50마리 처치하기.",
+      "description": "60초간 주인을 따라다니며 물 투사체로 공격을 돕는 물의 정령을 소환합니다. 한 마리만 유지됩니다.",
+      "research": "물은 흩어지지만 약속은 흩어지지 않는다.",
+      "category": "water",
+      "name": "물의 정령 소환",
+      "mana": 220,
+      "cooldown": 120,
+      "order": 740,
+      "permission": "magic.learned.water_elemental",
+      "command": "마법 물의정령소환",
+      "sha256": "2b733ba647891b33dc24a632d9c9a8669385ee00340b8f40274b06edb6d4be15",
+      "file": "water_elemental.yml"
+    },
+    "eternal_ice_prison": {
+      "condition": "물 마법 응용 수업을 통해 낮은 확률로 습득.",
+      "description": "적 하나를 최대 5초 동안 얼음 결정에 가둡니다. 일반 몬스터는 움직이거나 공격할 수 없으며, 일정 피해를 받으면 풀려납니다. 보스는 이동 속도만 감소합니다.",
+      "research": "아무리 분노한 적도 얼음 속에서는 잠시 생각할 시간을 갖게 된다.",
+      "category": "water",
+      "name": "만년빙옥",
+      "mana": 240,
+      "cooldown": 60,
+      "order": 750,
+      "permission": "magic.learned.eternal_ice_prison",
+      "command": "마법 만년빙옥",
+      "sha256": "32a8ccf09deef352b930a41afb2a515313d7683cb8011138b18cb92efbbbd153",
+      "file": "eternal_ice_prison.yml"
+    },
+    "cauldron_fill": {
+      "condition": "빈 가마솥을 물 양동이로 5번 채우기.",
+      "description": "바라보는 가마솥의 물을 한 단계 채웁니다.",
+      "research": "기숙사의 물 당번이 처음으로 웃으며 출근한 날이었다.",
+      "category": "water",
+      "name": "가마솥 채우기",
+      "mana": 8,
+      "cooldown": 3,
+      "order": 760,
+      "permission": "magic.learned.cauldron_fill",
+      "command": "마법 가마솥채우기",
+      "sha256": "00311ed1837e4cd99a8a71196b97f0d25470c3fd6c9467487868e2ddbe7b3406",
+      "file": "cauldron_fill.yml"
+    },
+    "dye_rinse": {
+      "condition": "가마솥으로 가죽 장비의 염색을 3번 지우기.",
+      "description": "손에 든 가죽 장비의 염색을 지웁니다.",
+      "research": "실수로 물든 망토를 버리기에는 아직 새 옷이었다.",
+      "category": "water",
+      "name": "염색 씻기",
+      "mana": 5,
+      "cooldown": 5,
+      "order": 770,
+      "permission": "magic.learned.dye_rinse",
+      "command": "마법 염색씻기",
+      "sha256": "d3f3afe1e55f830602b0211626bb90fc9b9d11f53bd440e8fd7dbd8ede0ae324",
+      "file": "dye_rinse.yml"
+    },
+    "fish_lure": {
+      "condition": "낚시로 물고기를 누적 30마리 낚기.",
+      "description": "현재 던져 둔 낚싯찌의 입질 대기 시간을 줄입니다. 낚시 보상 확률은 바꾸지 않습니다.",
+      "research": "낚싯대를 오래 드리운다고 모든 물고기가 찾아오는 것은 아니다.",
+      "category": "water",
+      "name": "물고기 유인",
+      "mana": 18,
+      "cooldown": 20,
+      "order": 780,
+      "permission": "magic.learned.fish_lure",
+      "command": "마법 물고기유인",
+      "sha256": "61e44a6fdd3cca5eeb29490e9a92e52b67be7c24182a826f80d0c42bbb0f89f1",
+      "file": "fish_lure.yml"
+    },
+    "frost_rupture": {
+      "condition": "눈덩이를 몬스터에게 누적 50번 명중하기.",
+      "description": "지정한 바닥에 서리 표시를 남깁니다. 1초 뒤 얼음 가시가 솟아 주변 적에게 피해를 줍니다.",
+      "research": "부드러운 눈송이 아래에 날카로운 겨울이 숨어 있다.",
+      "category": "water",
+      "name": "서리 파열",
+      "mana": 55,
+      "cooldown": 15,
+      "order": 790,
+      "permission": "magic.learned.frost_rupture",
+      "command": "마법 서리파열",
+      "sha256": "01f3340ded7337169e26eede637be6624d0d3d6f588d5e4fdf66a7ee470cff5e",
+      "file": "frost_rupture.yml"
+    },
+    "dampen_powder": {
+      "condition": "물속에서 TNT 폭발을 3번 살아남기.",
+      "description": "가까이 있는 점화된 TNT를 최대 3개까지 소멸시킵니다. TNT 아이템은 반환하지 않습니다.",
+      "research": "폭발을 막는 가장 간단한 방법은 화약을 젖게 만드는 것이다.",
+      "category": "water",
+      "name": "화약 적시기",
+      "mana": 110,
+      "cooldown": 30,
+      "order": 800,
+      "permission": "magic.learned.dampen_powder",
+      "command": "마법 화약적시기",
+      "sha256": "4a06cb61f072e2867d78f7130ae9f65d93c1e73c9d98d7dfe7aeece8755a8b7a",
+      "file": "dampen_powder.yml"
+    },
+    "life_distribution": {
+      "condition": "투척용 치유 물약 한 병으로 자신과 동료 2명을 함께 회복하기.",
+      "description": "자신과 6블록 안에서 웅크린 동료 최대 3명의 현재 체력을 합쳐, 각자의 최대 체력에 비례해 나눕니다. 전체 체력은 늘어나지 않습니다.",
+      "research": "누군가의 상처를 나누어 짊어지는 일에는 용기가 필요하다.",
+      "category": "water",
+      "name": "생명의 분배",
+      "mana": 160,
+      "cooldown": 45,
+      "order": 810,
+      "permission": "magic.learned.life_distribution",
+      "command": "마법 생명의분배",
+      "sha256": "754f89e55c86be9592ee44320abcde5a74d1a44b750876e342942df4cca3a324",
+      "file": "life_distribution.yml"
+    },
+    "moist_farmland": {
+      "condition": "물에서 떨어진 마른 경작지에 씨앗을 20번 심기.",
+      "description": "주변의 마른 경작지 최대 9칸을 적십니다. 작물 성장 단계는 바꾸지 않습니다.",
+      "research": "갈라진 흙이 먼저 목마르다고 말하고 있었다.",
+      "category": "water",
+      "name": "촉촉한 밭",
+      "mana": 15,
+      "cooldown": 10,
+      "order": 820,
+      "permission": "magic.learned.moist_farmland",
+      "command": "마법 촉촉한밭",
+      "sha256": "41facbcc114e7303c6a35f3a694cf5853f671f5423ad3e8f79857465ce698e41",
+      "file": "moist_farmland.yml"
+    },
+    "wash_letters": {
+      "condition": "같은 표지판의 글씨를 10번 고쳐 쓰기.",
+      "description": "자신이 수정할 수 있는 표지판의 한쪽 글씨를 지웁니다.",
+      "research": "지우고 다시 쓰는 일도 마법 연구의 일부다.",
+      "category": "water",
+      "name": "글씨 씻기",
+      "mana": 3,
+      "cooldown": 2,
+      "order": 830,
+      "permission": "magic.learned.wash_letters",
+      "command": "마법 글씨씻기",
+      "sha256": "4245f0a6f840e5bc06ff345f7a48fdb0b4465a17642fab2ca8610fb2c7c6175e",
+      "file": "wash_letters.yml"
+    },
+    "handful_of_snow": {
+      "condition": "눈덩이로 눈 골렘을 10번 맞히기.",
+      "description": "눈 블록 하나를 눈덩이 4개로 흩어 놓습니다.",
+      "research": "눈싸움에 진 학생이 다음 겨울을 기다리며 연구했다고 한다.",
+      "category": "water",
+      "name": "눈 한 줌",
+      "mana": 5,
+      "cooldown": 3,
+      "order": 840,
+      "permission": "magic.learned.handful_of_snow",
+      "command": "마법 눈한줌",
+      "sha256": "3c4d7f7d4dce8ed4956a7000a77b4c91acf4fe26571647168d22770822c0e23f",
+      "file": "handful_of_snow.yml"
+    },
+    "dew_gathering": {
+      "condition": "비가 오는 동안 빈 병으로 물을 10번 뜨기.",
+      "description": "소지한 빈 병 최대 3개에 물을 채웁니다.",
+      "research": "새벽의 이슬을 모으던 약초사의 손끝에는 늘 작은 물방울이 맺혔다.",
+      "category": "water",
+      "name": "이슬 모으기",
+      "mana": 6,
+      "cooldown": 5,
+      "order": 850,
+      "permission": "magic.learned.dew_gathering",
+      "command": "마법 이슬모으기",
+      "sha256": "6b441e69ebf3044f9ca2c7e8b5771137cde74a0e58deae2556c1e00dda5dd3b0",
+      "file": "dew_gathering.yml"
+    },
+    "quiet_mooring": {
+      "condition": "보트를 탄 채 이동하지 않고 60초 머무르기.",
+      "description": "자신이 타고 있는 보트를 멈추고, 내린 뒤에도 15초간 제자리에 고정합니다.",
+      "research": "노를 내려놓고 책을 읽으려면 먼저 배부터 멈춰야 한다.",
+      "category": "water",
+      "name": "잔잔한 정박",
+      "mana": 10,
+      "cooldown": 15,
+      "order": 860,
+      "permission": "magic.learned.quiet_mooring",
+      "command": "마법 잔잔한정박",
+      "sha256": "6226fb923549a5a3d5bba1b13b0bf1ec301a0fee1903c665873cb6d948f52c0e",
+      "file": "quiet_mooring.yml"
+    },
+    "wet_footprints": {
+      "condition": "비 오는 날 같은 몬스터를 30초간 10블록 안에서 따라가기.",
+      "description": "바라보는 적 하나가 20초간 물방울 흔적을 남기게 합니다.",
+      "research": "바닥에 남은 한 방울이 도망간 범인의 발걸음을 알려 주었다.",
+      "category": "water",
+      "name": "젖은 발자국",
+      "mana": 20,
+      "cooldown": 20,
+      "order": 870,
+      "permission": "magic.learned.wet_footprints",
+      "command": "마법 젖은발자국",
+      "sha256": "69bd17496a33b9a5832e23033e61535957d3697f751b33bcdbee0a7ac1383954",
+      "file": "wet_footprints.yml"
+    },
+    "pressure_weight": {
+      "condition": "물속에서 철 갑옷을 모두 입고 누적 60초 버티기.",
+      "description": "물속의 적 하나를 5초 동안 가라앉힙니다. 육지에서는 사용할 수 없습니다.",
+      "research": "깊은 곳으로 내려갈수록 물은 생각보다 무거워진다.",
+      "category": "water",
+      "name": "수압추",
+      "mana": 60,
+      "cooldown": 20,
+      "order": 880,
+      "permission": "magic.learned.pressure_weight",
+      "command": "마법 수압추",
+      "sha256": "6ac543730000d6d87e1bbdfe3612623e65138ed14f636eae3d70150fd807f6b2",
+      "file": "pressure_weight.yml"
+    },
+    "cold_storage": {
+      "condition": "눈이 내리는 곳에 음식 아이템을 떨어뜨린 뒤 60초 후 다시 줍기.",
+      "description": "바닥에 놓인 아이템 몇 개의 자연 소멸 시간을 2분간 멈춥니다. 다른 플레이어는 주울 수 있습니다.",
+      "research": "눈 속에 묻어 둔 도시락이 뜻밖의 연구 재료가 되었다.",
+      "category": "water",
+      "name": "냉장 손길",
+      "mana": 25,
+      "cooldown": 15,
+      "order": 890,
+      "permission": "magic.learned.cold_storage",
+      "command": "마법 냉장손길",
+      "sha256": "6efa5a2f4512031c3b2bf36ea5e8a0ff558ccf8993385d1576080a6d9a77d3d2",
+      "file": "cold_storage.yml"
+    },
+    "current_sorting": {
+      "condition": "흐르는 물 위에 떨어진 서로 다른 아이템 5종을 줍기.",
+      "description": "지정한 종류의 바닥 아이템만 골라 가까운 한 지점으로 모읍니다. 다른 물건은 그대로 둡니다.",
+      "research": "홍수 뒤 뒤섞인 물건들을 정리하던 상인의 작은 발명.",
+      "category": "water",
+      "name": "물살 분류",
+      "mana": 35,
+      "cooldown": 10,
+      "order": 900,
+      "permission": "magic.learned.current_sorting",
+      "command": "마법 물살분류",
+      "sha256": "d830d82eb54de5ed534862418e54b8b7178d622b76ab479c541419c535991362",
+      "file": "current_sorting.yml"
+    },
+    "potion_mist": {
+      "condition": "서로 다른 종류의 물약 5종을 직접 양조하기.",
+      "description": "소지한 일반 물약 하나를 소비해 가까운 동료들에게 짧은 지속시간으로 분무합니다.",
+      "research": "한 병으로 여러 사람을 구할 수는 없을까? 약제사의 고민이 안개가 되었다.",
+      "category": "water",
+      "name": "약액 분무",
+      "mana": 90,
+      "cooldown": 30,
+      "order": 910,
+      "permission": "magic.learned.potion_mist",
+      "command": "마법 약액분무",
+      "sha256": "2959d2d19ae9b912e4a366a1d3a0c228db61cdac948d07896d9a51def1208409",
+      "file": "potion_mist.yml"
+    },
+    "waterwheel_shield": {
+      "name": "물레 방패",
+      "category": "water",
+      "description": "몸 주위를 도는 물레가 다음 근접 공격 한 번을 약화시키고 공격자를 옆으로 밀어냅니다.",
+      "condition": "물속에서 방패로 몬스터의 공격을 20번 막기.",
+      "research": "고인 물은 뚫려도 회전하는 물은 공격을 흘려보낸다.",
+      "mana": 85,
+      "cooldown": 25,
+      "order": 920,
+      "permission": "magic.learned.waterwheel_shield",
+      "command": "마법 물레방패",
+      "file": "waterwheel_shield.yml",
+      "sha256": "d47acbcfe38b4411adda103f5b02b26c88010eff295644286033ebfd30023d6b"
+    },
+    "liquid_barrier": {
+      "name": "액체 차단",
+      "category": "water",
+      "description": "작은 경계 안으로 물과 용암이 새로 흘러드는 것을 15초간 막습니다. 이미 있는 액체는 남깁니다.",
+      "condition": "흐르는 물과 용암의 길을 블록으로 각각 10번 막기.",
+      "research": "벽을 쌓을 틈도 없이 물이 밀려오던 광산에서 탄생했다.",
+      "mana": 100,
+      "cooldown": 25,
+      "order": 930,
+      "permission": "magic.learned.liquid_barrier",
+      "command": "마법 액체차단",
+      "file": "liquid_barrier.yml",
+      "sha256": "aecbbaaedfc78c1de4700c56b84f785decf6b6ce3de38fc1461cb9f3e0c20afd"
+    },
+    "water_rebound": {
+      "name": "수면 탄성",
+      "category": "water",
+      "description": "높은 곳에서 물에 착수하면 한 번 튀어 오릅니다. 반동 높이는 제한되며 원하는 방향으로 빠져나올 수 있습니다.",
+      "condition": "10블록 이상 높이에서 물로 뛰어들어 10번 살아남기.",
+      "research": "수면에 부딪힌 충격을 다시 위로 돌려보내면 어떨까?",
+      "mana": 40,
+      "cooldown": 20,
+      "order": 940,
+      "permission": "magic.learned.water_rebound",
+      "command": "마법 수면탄성",
+      "file": "water_rebound.yml",
+      "sha256": "5f597cda893102bd0f749af023fdbfc790eb7a55de1d76108ff0147fd37e5503"
+    },
+    "tidal_wave": {
+      "name": "해일",
+      "category": "water",
+      "description": "앞으로 이동하는 낮은 파도를 보냅니다. 적을 밀어내며 공격하고 빈 보트도 함께 떠밉니다.",
+      "condition": "물 마법 실전 수업을 통해 습득.",
+      "research": "바다는 물 한 방울의 힘이 모인 결과다.",
+      "mana": 180,
+      "cooldown": 35,
+      "order": 950,
+      "permission": "magic.learned.tidal_wave",
+      "command": "마법 해일",
+      "file": "tidal_wave.yml",
+      "sha256": "e0cecbdc72eaf0ab1cb05f251a67fa61f0b4549d19721cbc3d1fbb0854bd7a37"
+    },
+    "thaw_pulse": {
+      "name": "해빙의 맥동",
+      "category": "water",
+      "description": "자신과 5블록 안의 동료에게 걸린 빙결을 해제합니다. 풀려난 대상이 많을수록 주변 적에게 더 강한 냉기 피해를 줍니다.",
+      "condition": "가루눈 속에서 동결 피해를 받은 뒤 모닥불 근처로 탈출하기.",
+      "research": "얼어붙은 손으로 동료를 붙잡았던 기억이 따뜻한 파동으로 남았다.",
+      "mana": 120,
+      "cooldown": 30,
+      "order": 960,
+      "permission": "magic.learned.thaw_pulse",
+      "command": "마법 해빙의맥동",
+      "file": "thaw_pulse.yml",
+      "sha256": "f66615d565b425d45472f72a6f19798fa0dd3ef01a442f64bd25cf83a9197d5e"
+    },
+    "abyssal_pressure": {
+      "name": "심해의 압력",
+      "category": "water",
+      "description": "지정한 5블록 범위에 6초간 심해의 압력을 내립니다. 적의 이동과 공격을 둔하게 하고 매초 피해를 줍니다.",
+      "condition": "물결 숨결을 사용한 상태로 Y좌표 40 이하의 바다에서 60초 머무르기.",
+      "research": "빛조차 닿지 않는 깊은 바다는 모든 것을 짓누른다.",
+      "mana": 420,
+      "cooldown": 90,
+      "order": 970,
+      "permission": "magic.learned.abyssal_pressure",
+      "command": "마법 심해의압력",
+      "file": "abyssal_pressure.yml",
+      "sha256": "d0fd47b58b83d0101533e048b4d009ffce80786bdf9e4509acb2f3bb06146eb3"
+    },
+    "verdant_touch": {
+      "name": "풍요의 손길",
+      "category": "earth",
+      "description": "주변의 밀·당근·감자를 최대 8개까지 한 단계 성장시킵니다.",
+      "condition": "다 자란 밀·당근·감자를 각각 30개씩 수확하기.",
+      "research": "새싹이 자라기를 기다리는 마음도 훌륭한 마법의 씨앗이다.",
+      "mana": 25,
+      "cooldown": 20,
+      "order": 980,
+      "permission": "magic.learned.verdant_touch",
+      "command": "마법 풍요의손길",
+      "file": "verdant_touch.yml",
+      "sha256": "c089793e88194237a723975befa1637acd90c6bd79a2ed86ff2f1fdd2ac3e88a"
+    },
+    "ore_whisper": {
+      "name": "땅의 속삭임",
+      "category": "earth",
+      "description": "가까운 광물 최대 3개의 위치를 5초 동안 표시합니다.",
+      "condition": "석탄 광석 64개와 철 광석 32개를 직접 채굴하기.",
+      "research": "조용히 귀를 기울이면 돌 속의 금속도 저마다 다른 소리를 낸다.",
+      "mana": 30,
+      "cooldown": 20,
+      "order": 990,
+      "permission": "magic.learned.ore_whisper",
+      "command": "마법 땅의속삭임",
+      "file": "ore_whisper.yml",
+      "sha256": "e0aca50c2aa3d8680010b04ceb0da2c3a92b73365817fdf2e7e4ca266479012b"
+    },
+    "pebble_toss": {
+      "name": "조약돌 던지기",
+      "category": "earth",
+      "description": "작은 조약돌을 날려 몬스터 하나에 약한 피해를 줍니다.",
+      "condition": "대지 마법 기초 수업을 통해 습득.",
+      "research": "누군가는 별을 떨어뜨리지만, 처음에는 조약돌 하나면 충분하다.",
+      "mana": 5,
+      "cooldown": 3,
+      "order": 1000,
+      "permission": "magic.learned.pebble_toss",
+      "command": "마법 조약돌던지기",
+      "file": "pebble_toss.yml",
+      "sha256": "5530e2ff591548abd88ee06e4f727c9ff05959b640668c8ced2d45c3c6346075"
+    },
+    "miners_rhythm": {
+      "name": "광부의 박자",
+      "category": "earth",
+      "description": "15초 동안 채광에 리듬이 붙어 블록을 조금 더 빠르게 캡니다.",
+      "condition": "곡괭이로 돌과 심층암을 합쳐 누적 500개 채굴하기.",
+      "research": "곡괭이가 돌을 두드리는 일정한 박자 속에서 마력의 흐름을 발견했다.",
+      "mana": 20,
+      "cooldown": 20,
+      "order": 1010,
+      "permission": "magic.learned.miners_rhythm",
+      "command": "마법 광부의박자",
+      "file": "miners_rhythm.yml",
+      "sha256": "026198d101e41e61026e139173ef14ba9c7f91da846f9e497fedbf49dfc06f9b"
+    },
+    "earth_shaping": {
+      "name": "대지 성형",
+      "category": "earth",
+      "description": "자신의 건축 구역에서 바라보는 흙 지형 최대 9칸을 한 칸 높이거나 낮춥니다. 높일 때는 소지한 흙을 소비합니다.",
+      "condition": "흙 블록을 누적 200개 설치하기.",
+      "research": "험한 길을 탓하던 마법사는 결국 길의 높이를 바꾸기로 했다.",
+      "mana": 70,
+      "cooldown": 30,
+      "order": 1020,
+      "permission": "magic.learned.earth_shaping",
+      "command": "마법 대지성형",
+      "file": "earth_shaping.yml",
+      "sha256": "dee704ab57f207522eb2a2f0ccd919c32a9292f12bf335f079ae278af0bf7d11"
+    },
+    "stone_wall": {
+      "name": "석벽",
+      "category": "earth",
+      "description": "정면에 10초간 유지되는 작은 돌벽을 세워 적의 이동과 투사체를 막습니다.",
+      "condition": "대지 마법 방어 수업을 통해 습득.",
+      "research": "급할 때는 주문보다 단단한 벽 하나가 더 든든하다.",
+      "mana": 60,
+      "cooldown": 20,
+      "order": 1030,
+      "permission": "magic.learned.stone_wall",
+      "command": "마법 석벽",
+      "file": "stone_wall.yml",
+      "sha256": "2b0e35e8a21f1ddc5210501a22f9de67d221e2199a3cb0e8568a7ae7693bc904"
+    },
+    "vine_ladder": {
+      "name": "덩굴 사다리",
+      "category": "earth",
+      "description": "바라보는 벽에 최대 8블록 높이의 덩굴 사다리를 만듭니다. 덩굴은 30초 뒤 사라집니다.",
+      "condition": "덩굴을 타고 누적 100블록 이동하기.",
+      "research": "햇빛을 향해 오르는 덩굴에게 잠시 길을 빌린다.",
+      "mana": 35,
+      "cooldown": 15,
+      "order": 1040,
+      "permission": "magic.learned.vine_ladder",
+      "command": "마법 덩굴사다리",
+      "file": "vine_ladder.yml",
+      "sha256": "3af515af5814b8164843ab052868926bbcc86cabe7b5e1d8f721fc39eb173fc2"
+    },
+    "earth_elemental": {
+      "name": "땅의 정령 소환",
+      "category": "earth",
+      "description": "60초간 주인을 따라다니며 근접 공격을 돕는 땅의 정령을 소환합니다. 한 마리만 유지됩니다.",
+      "condition": "학교 도서관에서 '돌에도 이름이 있다' 책 읽기.",
+      "research": "느리고 말수도 적지만 한 번 맺은 약속은 산처럼 무겁다.",
+      "mana": 250,
+      "cooldown": 120,
+      "order": 1050,
+      "permission": "magic.learned.earth_elemental",
+      "command": "마법 땅의정령소환",
+      "file": "earth_elemental.yml",
+      "sha256": "ead35884c5a2befe9cc918952f459384ea28670814cc68f03eb71c0235214838"
+    },
+    "earthquake": {
+      "name": "지진",
+      "category": "earth",
+      "description": "반경 6블록의 지면에 충격을 일으켜 적을 공격하고, 진동 장치에 에너지를 공급합니다.",
+      "condition": "대지 마법 실전 수업을 통해 습득.",
+      "research": "발밑의 작은 떨림을 한곳으로 모으면 바위도 견디지 못한다.",
+      "mana": 200,
+      "cooldown": 45,
+      "order": 1060,
+      "permission": "magic.learned.earthquake",
+      "command": "마법 지진",
+      "file": "earthquake.yml",
+      "sha256": "9f28eeee2062318793abc40f57c22a24d97b298c7101c85160848e43acadd117"
+    },
+    "climate_control": {
+      "name": "기후 통제",
+      "category": "earth",
+      "description": "기후 제어 장치에 연결된 지역의 날씨를 5분간 맑음 또는 비로 바꿉니다.",
+      "condition": "봄·여름·가을·겨울의 기상 관측 수업을 각각 1회 마치기.",
+      "research": "농부가 바라던 비와 여행자가 바라던 맑은 날, 누구의 부탁을 먼저 들어야 할까?",
+      "mana": 450,
+      "cooldown": 300,
+      "order": 1070,
+      "permission": "magic.learned.climate_control",
+      "command": "마법 기후통제",
+      "file": "climate_control.yml",
+      "sha256": "8909400116390e943b53f6039f8fcfb4a603377c758715662ab8eb287b5dcc76"
+    },
+    "seed_row": {
+      "name": "씨앗 줄심기",
+      "category": "earth",
+      "description": "소지한 씨앗을 소비해 앞쪽 경작지 최대 5칸에 일렬로 심습니다.",
+      "condition": "밀 씨앗을 경작지에 누적 100개 심기.",
+      "research": "허리를 펴고 씨앗을 심는 날을 꿈꾸던 농부가 있었다.",
+      "mana": 12,
+      "cooldown": 5,
+      "order": 1080,
+      "permission": "magic.learned.seed_row",
+      "command": "마법 씨앗줄심기",
+      "file": "seed_row.yml",
+      "sha256": "b1b3c12a8339426906676ac2a197c46dbaf64479673da302699dee2f0ed619e6"
+    },
+    "bee_calm": {
+      "name": "벌떼 달래기",
+      "category": "earth",
+      "description": "주변에서 화난 벌을 진정시킵니다. 다시 공격하면 다시 화를 냅니다.",
+      "condition": "꽃을 든 상태에서 벌에게 5번 공격받고 살아남기.",
+      "research": "화를 내는 벌도 꽃향기를 싫어하는 것은 아니다.",
+      "mana": 15,
+      "cooldown": 15,
+      "order": 1090,
+      "permission": "magic.learned.bee_calm",
+      "command": "마법 벌떼달래기",
+      "file": "bee_calm.yml",
+      "sha256": "75c69bc5d20257f1e7e8e7af7c9ce2ff7743d97088dc233b45e58f942b0ce47c"
+    },
+    "thorn_armor": {
+      "name": "가시 갑옷",
+      "category": "earth",
+      "description": "8초 동안 근접 공격을 받으면 공격자에게 작은 반격 피해를 줍니다.",
+      "condition": "달콤한 열매 덤불에 누적 20번 찔리기.",
+      "research": "따끔한 경험을 많이 한 학생은 결국 자신도 가시를 두르기로 했다.",
+      "mana": 55,
+      "cooldown": 25,
+      "order": 1100,
+      "permission": "magic.learned.thorn_armor",
+      "command": "마법 가시갑옷",
+      "file": "thorn_armor.yml",
+      "sha256": "29c3d52febde90fe9f02a51211adf8b8192d9815a3f6304ea952b84c14277181"
+    },
+    "vein_fracture": {
+      "name": "광맥 파쇄",
+      "category": "earth",
+      "description": "바라보는 광석과 이어진 같은 종류의 광석을 최대 8개까지 캡니다. 도구 내구도는 캔 수만큼 소모합니다.",
+      "condition": "다이아몬드 광석을 직접 누적 50개 채굴하기.",
+      "research": "광부는 반짝이는 돌 하나를 찾으면 그 옆도 꼭 두드려 본다.",
+      "mana": 90,
+      "cooldown": 20,
+      "order": 1110,
+      "permission": "magic.learned.vein_fracture",
+      "command": "마법 광맥파쇄",
+      "file": "vein_fracture.yml",
+      "sha256": "0d651dc6a00bb084344c278662c7b9e6a5d30b289fa466a5c8fbe1794f1718ea"
+    },
+    "earth_anchor": {
+      "name": "대지의 닻",
+      "category": "earth",
+      "description": "10초 동안 일반 공격으로 밀려나지 않게 합니다. 이동은 가능합니다.",
+      "condition": "방패로 넉백을 유발하는 공격을 누적 30번 막기.",
+      "research": "산은 바람이 분다고 자리를 옮기지 않는다.",
+      "mana": 80,
+      "cooldown": 30,
+      "order": 1120,
+      "permission": "magic.learned.earth_anchor",
+      "command": "마법 대지의닻",
+      "file": "earth_anchor.yml",
+      "sha256": "ec30b7364249282699901f12af134c371a148feb25587bf6e02d4fe6735efe4a"
+    },
+    "weathering_touch": {
+      "name": "풍화의 손길",
+      "category": "earth",
+      "description": "지정한 작은 범위의 석재 벽돌을 금 간 석재 벽돌로 바꿉니다.",
+      "condition": "석재 벽돌을 누적 100개 설치한 뒤 20개 회수하기.",
+      "research": "시간이 남길 흔적을 잠시 앞당겨 빌려온다.",
+      "mana": 20,
+      "cooldown": 8,
+      "order": 1130,
+      "permission": "magic.learned.weathering_touch",
+      "command": "마법 풍화의손길",
+      "file": "weathering_touch.yml",
+      "sha256": "a4b1b9f8905529641b3fd3ebc8e5871b0d4ee10b214d0843bca60250966dd61d"
+    },
+    "iron_carapace": {
+      "name": "철의 외피",
+      "category": "earth",
+      "description": "10초 동안 받는 피해를 줄입니다. 대신 이동 속도와 공격 속도가 느려집니다.",
+      "condition": "철 갑옷을 모두 입은 상태에서 몬스터에게 누적 200 피해 받기.",
+      "research": "강철처럼 단단한 몸에는 강철만큼 무거운 발걸음이 따라온다.",
+      "mana": 100,
+      "cooldown": 35,
+      "order": 1140,
+      "permission": "magic.learned.iron_carapace",
+      "command": "마법 철의외피",
+      "file": "iron_carapace.yml",
+      "sha256": "58477e04683daae9c4c146a75ac5d698e51ea2e76630b8544486eda18009302a"
+    },
+    "moss_coating": {
+      "name": "이끼 입히기",
+      "category": "earth",
+      "description": "덩굴을 소비해 석재 벽돌 최대 4개에 이끼를 입힙니다.",
+      "condition": "비 오는 날 덩굴과 석재 벽돌을 함께 소지하고 60초 머무르기.",
+      "research": "새로 쌓은 담장에도 오래된 숲의 흔적을 남길 수 있다.",
+      "mana": 12,
+      "cooldown": 5,
+      "order": 1150,
+      "permission": "magic.learned.moss_coating",
+      "command": "마법 이끼입히기",
+      "file": "moss_coating.yml",
+      "sha256": "9e21048367b22f17dbdfedbc28cd0a16b47b25195c0dfebc6bb48fe05d0d1d86"
+    },
+    "grass_sprouting": {
+      "name": "잔디 돋우기",
+      "category": "earth",
+      "description": "잔디가 자랄 수 있는 흙 최대 4칸을 잔디 블록으로 바꿉니다.",
+      "condition": "햇빛이 드는 흙 블록 옆에 꽃을 20번 심기.",
+      "research": "황량한 마당에 처음 돋아난 잔디 한 포기는 꽤 큰 위로였다.",
+      "mana": 10,
+      "cooldown": 5,
+      "order": 1160,
+      "permission": "magic.learned.grass_sprouting",
+      "command": "마법 잔디돋우기",
+      "file": "grass_sprouting.yml",
+      "sha256": "316a1aede12d1e0b24eafe215db4f5d5d6d95bc986c18c3134775d8f988781ef"
+    },
+    "flint_sorting": {
+      "name": "돌 고르기",
+      "category": "earth",
+      "description": "자갈 하나를 소비해 부싯돌 하나를 골라냅니다.",
+      "condition": "자갈을 캐서 부싯돌을 누적 32개 얻기.",
+      "research": "수많은 자갈 중 쓸 만한 돌 하나를 고르는 일에도 요령이 있다.",
+      "mana": 8,
+      "cooldown": 3,
+      "order": 1170,
+      "permission": "magic.learned.flint_sorting",
+      "command": "마법 돌고르기",
+      "file": "flint_sorting.yml",
+      "sha256": "6f92ae0789228d552c46f4802fc21acc30ef902571884e57d6288b600cde11ed"
+    },
+    "bark_peeling": {
+      "name": "껍질 벗기기",
+      "category": "earth",
+      "description": "연결된 원목 최대 6개의 껍질을 벗깁니다. 나무 종류는 유지합니다.",
+      "condition": "도끼로 원목 껍질을 누적 64번 벗기기.",
+      "research": "나무의 옷을 벗기는 일이다. 속살까지 다치게 해서는 안 된다.",
+      "mana": 18,
+      "cooldown": 8,
+      "order": 1180,
+      "permission": "magic.learned.bark_peeling",
+      "command": "마법 껍질벗기기",
+      "file": "bark_peeling.yml",
+      "sha256": "5890a3e899c9c3699e38900b8bbd2cc330b0df011d5e3940cc67b9fb1e8b2597"
+    },
+    "compost_return": {
+      "name": "퇴비 환원",
+      "category": "earth",
+      "description": "지정한 식물성 재료를 소비해 정해진 비율로 뼛가루를 만듭니다.",
+      "condition": "퇴비통에서 뼛가루를 누적 32개 꺼내기.",
+      "research": "버려진 잎이 다음 봄의 양분으로 돌아온다.",
+      "mana": 20,
+      "cooldown": 10,
+      "order": 1190,
+      "permission": "magic.learned.compost_return",
+      "command": "마법 퇴비환원",
+      "file": "compost_return.yml",
+      "sha256": "50026193e7558be68e943486d5cb115b56b21d164bec11f1e06f272de5ae9247"
+    },
+    "thorn_seeds": {
+      "name": "가시 씨앗",
+      "category": "earth",
+      "description": "정면으로 씨앗 5개를 부채꼴로 발사합니다. 가까이서 여러 발을 맞히기 좋은 공격입니다.",
+      "condition": "선인장에 닿아 피해를 받은 뒤 선인장을 32개 수확하기.",
+      "research": "작은 씨앗도 자신을 지킬 가시 하나쯤은 품고 있다.",
+      "mana": 35,
+      "cooldown": 8,
+      "order": 1200,
+      "permission": "magic.learned.thorn_seeds",
+      "command": "마법 가시씨앗",
+      "file": "thorn_seeds.yml",
+      "sha256": "18503bd84d8109f249798c8d400466706eed5b90fd63d6ab58ab80b264797314"
+    },
+    "pollen_matchmaking": {
+      "name": "꽃가루 중매",
+      "category": "earth",
+      "description": "번식 가능한 동물 한 쌍에게 소지한 먹이를 전달해 번식을 돕습니다. 성장과 번식 대기시간은 지킵니다.",
+      "condition": "소·양·돼지를 각각 5번 번식시키기.",
+      "research": "목장의 봄은 꽃가루보다 부지런한 손길에서 시작된다.",
+      "mana": 25,
+      "cooldown": 15,
+      "order": 1210,
+      "permission": "magic.learned.pollen_matchmaking",
+      "command": "마법 꽃가루중매",
+      "file": "pollen_matchmaking.yml",
+      "sha256": "cf7afbddf1de9c4ec759547aa4d00afdd4d011b5c61871beb60f3f1316b0f927"
+    },
+    "automatic_supply": {
+      "name": "자동 보급",
+      "category": "earth",
+      "description": "30초간 손에 든 건축 블록을 다 쓰면 인벤토리의 같은 블록을 손으로 보충합니다.",
+      "condition": "같은 종류의 건축 블록을 30초 안에 64개 설치하기.",
+      "research": "가방을 열 때마다 잊어버리는 설계도를 위해 고안한 마법.",
+      "mana": 20,
+      "cooldown": 30,
+      "order": 1220,
+      "permission": "magic.learned.automatic_supply",
+      "command": "마법 자동보급",
+      "file": "automatic_supply.yml",
+      "sha256": "f9b0ba0ae213eedb1498570b72d300e659816b0a74f8fa712e412787af7e7067"
+    },
+    "dormant_seed": {
+      "name": "동면의 씨앗",
+      "category": "earth",
+      "description": "작물 한 포기의 성장을 멈춥니다. 다시 사용하면 해제되어 정원의 특정 모습을 유지할 수 있습니다.",
+      "condition": "같은 작물이 한 단계 자라는 모습을 5블록 안에서 10번 지켜보기.",
+      "research": "가장 아름다운 순간에 잠시 멈추고 싶었던 정원사의 바람.",
+      "mana": 10,
+      "cooldown": 5,
+      "order": 1230,
+      "permission": "magic.learned.dormant_seed",
+      "command": "마법 동면의씨앗",
+      "file": "dormant_seed.yml",
+      "sha256": "8f9763fc2686dcb2101539e7d703a84c044f825fad801aac53ad39ec846b8969"
+    },
+    "counterweight": {
+      "name": "반격의 무게추",
+      "category": "earth",
+      "description": "짧은 시간 안에 방패로 공격을 막으면 상대의 균형을 무너뜨려 잠깐 행동을 멈추게 합니다.",
+      "condition": "방패로 막은 뒤 2초 안에 같은 몬스터를 근접 공격하기 20회.",
+      "research": "공격을 견딘 무게는 사라지는 것이 아니라 되돌려줄 차례를 기다린다.",
+      "mana": 65,
+      "cooldown": 20,
+      "order": 1240,
+      "permission": "magic.learned.counterweight",
+      "command": "마법 반격의무게추",
+      "file": "counterweight.yml",
+      "sha256": "357d4a2422a7a2dbb168553dc7faf40ee6d10feecf882f8983c1276dd97af67d"
+    },
+    "material_exchange": {
+      "name": "자재 치환",
+      "category": "earth",
+      "description": "소유 구역의 같은 건축 블록 최대 9개를 소지한 다른 자재로 바꿉니다. 기존 자재는 회수합니다.",
+      "condition": "자신이 설치한 건축 블록을 누적 100개 부수고 다시 놓기.",
+      "research": "완성한 벽의 색이 마음에 들지 않았던 건축가의 집념.",
+      "mana": 60,
+      "cooldown": 15,
+      "order": 1250,
+      "permission": "magic.learned.material_exchange",
+      "command": "마법 자재치환",
+      "file": "material_exchange.yml",
+      "sha256": "e2844e13cb1b425d3d7e02404fbdec321d07a04bf691ccbc0bba64654f578af2"
+    },
+    "remembering_field": {
+      "name": "기억하는 밭",
+      "category": "earth",
+      "description": "작은 경작지를 30초간 표시합니다. 직접 수확하면 소지한 씨앗을 사용해 같은 작물을 다시 심습니다.",
+      "condition": "같은 경작지에서 작물을 수확하고 다시 심기 20회.",
+      "research": "밭은 지난 계절에 무엇을 길렀는지 기억하고 있다.",
+      "mana": 45,
+      "cooldown": 30,
+      "order": 1260,
+      "permission": "magic.learned.remembering_field",
+      "command": "마법 기억하는밭",
+      "file": "remembering_field.yml",
+      "sha256": "69fe585c3415664288be0b04c7dc3ef4ca2be841c1263a51fd8cef04b558a52a"
+    },
+    "little_giant": {
+      "name": "작은 거인",
+      "category": "earth",
+      "description": "15초 동안 몸집과 근접 공격 거리가 커집니다. 좁은 통로는 지나기 어려워집니다.",
+      "condition": "철 골렘이 몬스터를 처치하는 모습을 10블록 안에서 10번 지켜보기.",
+      "research": "크다는 것은 멀리 손이 닿는다는 뜻이기도 하다.",
+      "mana": 180,
+      "cooldown": 60,
+      "order": 1270,
+      "permission": "magic.learned.little_giant",
+      "command": "마법 작은거인",
+      "file": "little_giant.yml",
+      "sha256": "af01a61681912ee9ad3fc9708c46ba8a7d9eec0356fc95c8373b6df072da6f7d"
+    },
+    "spring_ground": {
+      "name": "용수철 지반",
+      "category": "earth",
+      "description": "한 지점에 임시 도약판을 설치합니다. 밟으면 지정한 방향으로 튀어 오르며 몇 번 사용하면 사라집니다.",
+      "condition": "슬라임 블록 위에서 땅에 닿지 않고 8번 연속 튀어 오르기.",
+      "research": "단단한 대지도 가끔은 장난을 치고 싶을 것이다.",
+      "mana": 65,
+      "cooldown": 20,
+      "order": 1280,
+      "permission": "magic.learned.spring_ground",
+      "command": "마법 용수철지반",
+      "file": "spring_ground.yml",
+      "sha256": "7a6b02315375958728708b215706cf51b197b84f015bbc1144f2b52acefc0a9e"
+    },
+    "mountain_back": {
+      "name": "산맥의 등",
+      "category": "earth",
+      "description": "커다란 바위를 앞으로 굴립니다. 적을 밀며 여러 번 공격하고 벽에 부딪히면 부서집니다.",
+      "condition": "조약돌 던지기로 몬스터를 누적 100마리 처치하기.",
+      "research": "작은 돌을 굴리던 손이 이제 산의 등을 밀어낸다.",
+      "mana": 220,
+      "cooldown": 40,
+      "order": 1290,
+      "permission": "magic.learned.mountain_back",
+      "command": "마법 산맥의등",
+      "file": "mountain_back.yml",
+      "sha256": "f8f67e08ca6c8d7dc6c4b147aebd01f24ea0938ff2ad605657988e3a4c8f3ac5"
+    },
+    "earth_embrace": {
+      "name": "대지의 품",
+      "category": "earth",
+      "description": "작은 구역을 잠시 보호해 폭발에 의한 블록 파괴를 막습니다. 생명체가 받는 폭발 피해는 남습니다.",
+      "condition": "크리퍼 폭발로 생긴 구덩이에 흙을 누적 64개 메우기.",
+      "research": "집을 다시 세우는 손길을 대지는 외면하지 않았다.",
+      "mana": 160,
+      "cooldown": 45,
+      "order": 1300,
+      "permission": "magic.learned.earth_embrace",
+      "command": "마법 대지의품",
+      "file": "earth_embrace.yml",
+      "sha256": "908830f35adf942322a3aa85fa651bec0541e597f0c8bb650a660c58d6e20b8a"
+    },
+    "forest_throne": {
+      "name": "숲의 왕좌",
+      "category": "earth",
+      "description": "8초 동안 제자리에 뿌리내립니다. 움직일 수 없는 대신 주변 6블록 안에서 뿌리가 솟아 적을 차례로 공격합니다.",
+      "condition": "학교 도서관에서 '움직이지 않는 숲의 왕' 책 읽기.",
+      "research": "숲의 왕에게는 다리가 필요 없다. 숲 전체가 그의 손발이므로.",
+      "mana": 380,
+      "cooldown": 90,
+      "order": 1310,
+      "permission": "magic.learned.forest_throne",
+      "command": "마법 숲의왕좌",
+      "file": "forest_throne.yml",
+      "sha256": "e9637a5b75c5c5fac7adaae1f2be5bfed9df1f175423a84e93590cbdea5cfe48"
+    },
+    "primordial_stone": {
+      "name": "원초의 돌",
+      "category": "earth",
+      "description": "주변의 일반 석재를 최대 32개 흡수해 거대한 돌핵을 만듭니다. 다시 사용하면 한 발의 무거운 포탄으로 발사합니다.",
+      "condition": "화강암·섬록암·안산암·심층암을 각각 64개씩 직접 채굴하기.",
+      "research": "모양도 이름도 없던 시절, 모든 돌은 하나였다고 한다.",
+      "mana": 500,
+      "cooldown": 120,
+      "order": 1320,
+      "permission": "magic.learned.primordial_stone",
+      "command": "마법 원초의돌",
+      "file": "primordial_stone.yml",
+      "sha256": "fc1f5f2716cc45541eb137ad442b98613fcd4dbb8b4fff30977125b1accff645"
+    }
+  },
+  "validation": {
+    "invalidIds": []
+  },
+  "note": "사용자 작성 29개 보존. 물·대지 제안 41개는 reviewed=false. 게임 동작 구현과 배포는 별도."
+}

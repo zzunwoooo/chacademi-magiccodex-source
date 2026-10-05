@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "cold_storage"
+name: "냉장 손길"
+category: "water"
+description: "보유한 아이템을 열기로부터 지켜줍니다.\n\n영하의 매서운 추위를 몸으로 겪으면 물건을 감쌀 차가운 보호막을 떠올릴 수 있다."
+icon: "magiccodex:textures/spells/expansion_2/cold_storage.png"
+permission: "magic.learned.cold_storage"
+discovery:
+  description: "영하 10도 이하의 온도에 노출되기"
+research: "눈 속에 묻어 둔 도시락이 뜻밖의 연구 재료가 되었다."
+cast:
+  command: "마법 냉장손길"
+  cooldown-seconds: 15
+  mana-cost: 25
+order: 890

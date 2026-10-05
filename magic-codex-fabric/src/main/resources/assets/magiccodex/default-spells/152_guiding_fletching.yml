@@ -1,0 +1,14 @@
+id: guiding_fletching
+name: 유도 깃
+category: light
+description: 다음 일반 화살 한 발이 조준한 적 쪽으로 조금 휘어집니다. 벽을 돌아가지는 않습니다.
+icon: magiccodex:textures/spells/expansion_2/guiding_fletching.png
+permission: magic.learned.guiding_fletching
+discovery:
+  description: 달리는 몬스터에게 활을 20번 명중하기.
+research: 조금 빗나간 화살에게 한 번 더 기회를 주었다.
+cast:
+  command: ''
+  cooldown-seconds: 12
+  mana-cost: 30
+order: 152

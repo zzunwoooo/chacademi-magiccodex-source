@@ -1,0 +1,17 @@
+"Id": "ca_kitsune_normal"
+"MythicMob": "CA_Pet_kitsune_normal"
+"Permission": "chacademia.pet.ca_kitsune_normal"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f키츠네"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "마력이 짙은 숲길에 드물게 모습을 보이는 여우. "
+    - "서식지: 벚꽃 숲 / 달빛 숲"
+    - "3성"

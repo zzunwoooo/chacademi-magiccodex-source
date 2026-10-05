@@ -1,0 +1,17 @@
+"Id": "ca_tortoise_shiny"
+"MythicMob": "CA_Pet_tortoise_shiny"
+"Permission": "chacademia.pet.ca_tortoise_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e초원 육지거북"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "마른 초원의 풀 사이를 느긋하게 걷는다."
+    - "서식지: 대초원 / 관목 초원"
+    - "1성"

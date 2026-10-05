@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "explosive_wedge"
+name: "폭발 쐐기"
+category: "fire"
+description: "적에게 쐐기를 박습니다. 이후 그 적을 근접 공격하면 쐐기가 터지며 추가 피해를 줍니다.\n\n불타는 적을 가까이에서 쓰러뜨린 경험은 남은 열을 한 점에 박아 넣는 감각으로 이어진다."
+icon: "magiccodex:textures/spells/expansion_2/explosive_wedge.png"
+permission: "magic.learned.explosive_wedge"
+discovery:
+  description: "불붙은 몬스터를 근접 공격으로 20번 처치하기."
+research: "화염 내성이 높은 적도 내부에서 터지는 폭발까지는 막을 수 없다."
+cast:
+  command: "마법 폭발쐐기"
+  cooldown-seconds: 30
+  mana-cost: 350
+order: 570

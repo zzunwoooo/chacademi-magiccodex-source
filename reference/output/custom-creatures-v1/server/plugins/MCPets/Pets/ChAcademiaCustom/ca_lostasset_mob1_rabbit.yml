@@ -1,0 +1,17 @@
+"Id": "ca_lostasset_mob1_rabbit"
+"MythicMob": "CA_Pet_lostasset_mob1_rabbit"
+"Permission": "chacademia.pet.ca_lostasset_mob1_rabbit"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f꽃밭 흰토끼"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "꽃밭과 벚나무 아래를 뛰어다니는 흰토끼."
+    - "서식지: 꽃피는 계곡 / 벚꽃 계곡"
+    - "1성"

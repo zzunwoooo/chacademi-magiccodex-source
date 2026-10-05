@@ -1,0 +1,16 @@
+id: earth_elemental
+name: 그놈
+category: earth
+description: 60초간 주인을 따라다니며 근접 공격을 돕는 땅의 정령을 소환합니다. 한 마리만 유지됩니다.
+icon: magiccodex:textures/spells/advanced/earth_elemental.png
+permission: magic.learned.earth_elemental
+discovery:
+  description: 도서관에서 '정령계약서 - 지' 책 읽기.
+research: '말수가 적은 땅의 정령 그놈과 계약을 맺는다.
+
+  느리게 대답하지만 한 번 한 약속은 산처럼 무겁다.'
+cast:
+  command: ''
+  cooldown-seconds: 120
+  mana-cost: 250
+order: 104

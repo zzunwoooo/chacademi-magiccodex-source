@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "ink_fingertip"
+name: "먹물 손끝"
+category: "dark"
+description: "소지한 숯 하나를 검은색 염료로 바꿉니다.\n\n먹물과 숯을 함께 넉넉히 챙긴 손끝에서 검은 색의 깊이가 달라진다."
+icon: "magiccodex:textures/spells/expansion_2/ink_fingertip.png"
+permission: "magic.learned.ink_fingertip"
+discovery:
+  description: "먹물 주머니와 숯을 각각 16개씩 함께 소지하기."
+research: "잉크가 떨어진 시험장에서 발견되었다는 기록이 있다."
+cast:
+  command: "마법 먹물손끝"
+  cooldown-seconds: 2
+  mana-cost: 3
+order: 1840

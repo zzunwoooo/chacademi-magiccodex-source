@@ -1,0 +1,14 @@
+id: spatial_leap
+name: 공간 도약
+category: light
+description: 이미 발견한 전이석으로 공간을 넘어 이동합니다.
+icon: magiccodex:textures/spells/intermediate/spatial_leap.png
+permission: magic.learned.spatial_leap
+discovery:
+  description: 서로 다른 전이석 3곳에 처음 방문하기.
+research: 먼 거리를 접는 데에는 목적지를 분명하게 떠올리는 일이 먼저다.
+cast:
+  command: ''
+  cooldown-seconds: 60
+  mana-cost: 100
+order: 135

@@ -1,0 +1,14 @@
+id: mana_deposit
+name: 마력 예금
+category: light
+description: 빈 마력석에 자신의 마나를 저장합니다. 나중에 자신만 꺼내 쓸 수 있으며 저장량은 늘어나지 않습니다.
+icon: magiccodex:textures/spells/expansion_2/mana_deposit.png
+permission: magic.learned.mana_deposit
+discovery:
+  description: 빈 마력석을 손에 든 채 마나를 최대치까지 5번 회복하기.
+research: 오늘 남은 여유를 내일의 자신에게 맡긴다.
+cast:
+  command: ''
+  cooldown-seconds: 5
+  mana-cost: 10
+order: 159

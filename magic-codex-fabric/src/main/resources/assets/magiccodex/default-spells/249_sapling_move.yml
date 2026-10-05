@@ -1,0 +1,14 @@
+id: sapling_move
+name: 묘목 이사
+category: earth
+description: 심어 놓은 묘목을 뽑아 다른 땅에 옮긴다.
+icon: ''
+permission: magic.learned.sapling_move
+discovery:
+  description: 묘목을 심은 뒤 다시 회수하기 10회.
+research: 새 나무의 집을 바꾸는 주문이다. 다 자란 숲을 통째로 옮기지는 않는다.
+cast:
+  command: ''
+  cooldown-seconds: 5
+  mana-cost: 10
+order: 249

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "weightless_zone"
+name: "무중력 지대"
+category: "wind"
+description: "지정한 작은 범위의 몬스터들을 3초 동안 천천히 공중에 띄웁니다.\n\n고급 바람 수업에서는 물체를 움직이는 힘보다, 무게를 지탱하는 힘을 먼저 이해해야 한다."
+icon: "magiccodex:textures/spells/expansion/weightless_zone.png"
+permission: "magic.learned.weightless_zone"
+discovery:
+  description: "바람 마법 고급 수업을 통해 습득"
+research: "넓은 범위의 기류를 조종하면 마치 중력을 다루는 것 처럼 보인다."
+cast:
+  command: "마법 무중력지대"
+  cooldown-seconds: 40
+  mana-cost: 160
+order: 160

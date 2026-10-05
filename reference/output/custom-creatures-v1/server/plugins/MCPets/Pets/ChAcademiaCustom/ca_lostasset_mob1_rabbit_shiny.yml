@@ -1,0 +1,17 @@
+"Id": "ca_lostasset_mob1_rabbit_shiny"
+"MythicMob": "CA_Pet_lostasset_mob1_rabbit_shiny"
+"Permission": "chacademia.pet.ca_lostasset_mob1_rabbit_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e꽃밭 흰토끼"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "꽃밭과 벚나무 아래를 뛰어다니는 흰토끼."
+    - "서식지: 꽃피는 계곡 / 벚꽃 계곡"
+    - "1성"

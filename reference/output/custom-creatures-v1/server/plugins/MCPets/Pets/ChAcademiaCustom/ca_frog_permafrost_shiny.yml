@@ -1,0 +1,17 @@
+"Id": "ca_frog_permafrost_shiny"
+"MythicMob": "CA_Pet_frog_permafrost_shiny"
+"Permission": "chacademia.pet.ca_frog_permafrost_shiny"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e영구동토 왕개구리"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "깊은 늪 가장자리에서 모습을 드러내는 큰 개구리. 영구동토 계열의 변이 개체."
+    - "서식지: 얼음 늪 / 얼어붙은 절벽"
+    - "2성"

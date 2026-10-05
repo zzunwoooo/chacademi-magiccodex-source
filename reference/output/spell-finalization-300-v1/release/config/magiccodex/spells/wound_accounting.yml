@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "wound_accounting"
+name: "상처 회계"
+category: "dark"
+description: "적에게 5초간 표식을 남겨 자신이 준 직접 피해를 기록합니다. 종료 시 기록한 피해의 25%를 추가로 입힙니다.\n\n한 적에게 많은 타격을 쌓고 쓰러뜨린 경험은 상처가 남긴 합계를 기억한다."
+icon: "magiccodex:textures/spells/expansion_2/wound_accounting.png"
+permission: "magic.learned.wound_accounting"
+discovery:
+  description: "한 몬스터를 10번 이상 직접 공격한 뒤 처치하기."
+research: "사소한 상처도 장부에 쌓이면 무거운 빚이 된다."
+cast:
+  command: "마법 상처회계"
+  cooldown-seconds: 35
+  mana-cost: 180
+order: 1930

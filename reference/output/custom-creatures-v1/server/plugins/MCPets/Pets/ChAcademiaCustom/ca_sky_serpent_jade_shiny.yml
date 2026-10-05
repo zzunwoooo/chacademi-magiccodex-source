@@ -1,0 +1,17 @@
+"Id": "ca_sky_serpent_jade_shiny"
+"MythicMob": "CA_Pet_sky_serpent_jade_shiny"
+"Permission": "chacademia.pet.ca_sky_serpent_jade_shiny"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e비취 하늘뱀"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "높은 하늘섬 사이를 유영하는 긴 몸의 생물. 비취 계열의 변이 개체."
+    - "서식지: 봄 하늘섬 / 바람 깎인 첨탑"
+    - "3성"

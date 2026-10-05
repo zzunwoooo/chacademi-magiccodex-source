@@ -1,0 +1,17 @@
+"Id": "ca_nocsy_cat5"
+"MythicMob": "CA_Pet_nocsy_cat5"
+"Permission": "chacademia.pet.ca_nocsy_cat5"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f장난꾸러기 고양이"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "떨어지는 꽃잎을 따라 뛰어다닌다."
+    - "서식지: 벚꽃 숲 / 꽃피는 계곡"
+    - "1성"

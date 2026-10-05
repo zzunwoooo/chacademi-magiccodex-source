@@ -1,0 +1,17 @@
+"Id": "ca_owl_shiny"
+"MythicMob": "CA_Pet_owl_shiny"
+"Permission": "chacademia.pet.ca_owl_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e밤눈 올빼미"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "어두운 숲길을 지켜보다 밤에 모습을 드러내는 새."
+    - "서식지: 시베리아 타이가 / 달빛 숲"
+    - "1성"

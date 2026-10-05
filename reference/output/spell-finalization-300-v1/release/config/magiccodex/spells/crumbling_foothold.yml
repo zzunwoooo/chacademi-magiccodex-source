@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "crumbling_foothold"
+name: "무너지는 발판"
+category: "earth"
+description: "적이 밟으면 잠시 뒤 무너지는 작은 돌 발판을 남긴다.\n\n지탱하던 블록을 치워 모래와 자갈을 떨어뜨려 보면 무너질 발판의 균형을 이해하게 된다."
+icon: "magiccodex:textures/spells/expansion_3/crumbling_foothold.png"
+permission: "magic.learned.crumbling_foothold"
+discovery:
+  description: "모래나 자갈이 아래로 떨어지는 상황을 20회 만들기."
+research: "발을 올리는 순간이 아니라 잠깐 뒤를 노리는 돌이다."
+cast:
+  command: "마법 무너지는발판"
+  cooldown-seconds: 18
+  mana-cost: 50
+order: 2600

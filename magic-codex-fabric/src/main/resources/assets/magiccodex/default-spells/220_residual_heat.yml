@@ -1,0 +1,14 @@
+id: residual_heat
+name: 잔열 회수
+category: fire
+description: 자신의 화염 공격이 끝난 자리에서 잔열을 거두어 마나 일부를 회복한다.
+icon: ''
+permission: magic.learned.residual_heat
+discovery:
+  description: 화염 마법으로 몬스터를 누적 40마리 처치하기.
+research: 불이 사라진 자리도 곧바로 차가워지지는 않는다.
+cast:
+  command: ''
+  cooldown-seconds: 20
+  mana-cost: 35
+order: 220

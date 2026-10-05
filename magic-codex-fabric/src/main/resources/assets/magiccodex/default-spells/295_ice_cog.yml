@@ -1,0 +1,14 @@
+id: ice_cog
+name: 얼음 톱니
+category: water
+description: 망가진 기계의 지정된 틈에 임시 얼음 톱니를 만든다.
+icon: ''
+permission: magic.learned.ice_cog
+discovery:
+  description: 물 마법 응용 수업의 얼음 성형 실습을 완료하기.
+research: 영원한 부품은 아니지만 멈춘 기계가 다시 움직일 짧은 시간은 빌려줄 수 있다.
+cast:
+  command: ''
+  cooldown-seconds: 15
+  mana-cost: 35
+order: 295

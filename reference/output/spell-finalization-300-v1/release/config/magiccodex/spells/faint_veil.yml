@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "faint_veil"
+name: "옅은 은신"
+category: "dark"
+description: "8초 동안 몸을 투명하게 만듭니다. 갑옷과 손에 든 물건은 그대로 보입니다.\n\n밤에 몸을 낮추어 먼 길을 움직여 본 발걸음은 눈길을 피하는 어둠을 익힌다."
+icon: "magiccodex:textures/spells/novice_extra/faint_veil.png"
+permission: "magic.learned.faint_veil"
+discovery:
+  description: "밤에 웅크린 채 누적 200블록 이동하기."
+research: "기숙사 점호를 피하려던 학생의 연구였다는 소문이 있다."
+cast:
+  command: "마법 옅은은신"
+  cooldown-seconds: 20
+  mana-cost: 30
+order: 1680

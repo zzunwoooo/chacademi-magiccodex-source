@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "handful_of_snow"
+name: "눈 한 줌"
+category: "water"
+description: "눈 블록 하나를 눈덩이 4개로 흩어 놓습니다.\n\n눈을 눈덩이로 풀어내는 제작을 반복하면 뭉친 눈 사이의 틈을 느낄 수 있다."
+icon: "magiccodex:textures/spells/expansion_2/handful_of_snow.png"
+permission: "magic.learned.handful_of_snow"
+discovery:
+  description: "눈을 제작대에서 눈덩이로 4회 분해"
+research: "눈싸움에 진 학생이 다음 겨울을 기다리며 연구했다고 한다."
+cast:
+  command: "마법 눈한줌"
+  cooldown-seconds: 3
+  mana-cost: 5
+order: 840

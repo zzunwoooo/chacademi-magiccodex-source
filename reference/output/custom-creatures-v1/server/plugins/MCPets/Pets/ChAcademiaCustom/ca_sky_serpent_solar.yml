@@ -1,0 +1,17 @@
+"Id": "ca_sky_serpent_solar"
+"MythicMob": "CA_Pet_sky_serpent_solar"
+"Permission": "chacademia.pet.ca_sky_serpent_solar"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f태양 하늘뱀"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "높은 하늘섬 사이를 유영하는 긴 몸의 생물. 태양 계열의 변이 개체."
+    - "서식지: 여름 하늘섬"
+    - "3성"

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "flame_clap"
+name: "불꽃 박수"
+category: "fire"
+description: "짧고 강한 섬광을 터뜨려 주변 적의 준비 중인 공격을 끊는다.\n\n기초 화염 수업의 섬광 실습에서는 짧은 불빛도 상대의 호흡을 끊을 수 있음을 배운다."
+icon: "magiccodex:textures/spells/expansion_3/flame_clap.png"
+permission: "magic.learned.flame_clap"
+discovery:
+  description: "화염 마법 기초 수업의 섬광 실습을 완료하기."
+research: "큰 폭발 대신 눈앞에서 한순간 밝아지는 불을 선택했다."
+cast:
+  command: "마법 불꽃박수"
+  cooldown-seconds: 15
+  mana-cost: 55
+order: 2290

@@ -1,0 +1,14 @@
+id: fireproof_film
+name: 내연성
+category: fire
+description: 인벤토리 속 아이템을 여름의 무더위 속에서 보호한다.
+icon: magiccodex:textures/spells/expansion_2/fireproof_film.png
+permission: magic.learned.fireproof_film
+discovery:
+  description: 여름의 더위에 사라진 아이템 3회
+research: 뜨거운 사막을 지날 때는 소지품을 잘 확인하자.
+cast:
+  command: ''
+  cooldown-seconds: 0
+  mana-cost: 0
+order: 57

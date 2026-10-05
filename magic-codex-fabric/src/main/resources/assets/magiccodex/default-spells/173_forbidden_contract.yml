@@ -1,0 +1,14 @@
+id: forbidden_contract
+name: 금서의 계약
+category: dark
+description: 30초 동안 마법 공격력이 증가하는 대신 회복 효과가 절반으로 줄어듭니다.
+icon: magiccodex:textures/spells/advanced/forbidden_contract.png
+permission: magic.learned.forbidden_contract
+discovery:
+  description: 학교 금서고에서 '대가 없는 기적은 없다' 책 읽기.
+research: 계약서의 작은 글씨를 읽지 않은 마법사는 오래 살지 못했다.
+cast:
+  command: ''
+  cooldown-seconds: 120
+  mana-cost: 200
+order: 173

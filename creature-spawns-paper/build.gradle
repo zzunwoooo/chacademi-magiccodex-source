@@ -1,0 +1,12 @@
+plugins { id 'java' }
+group = 'school.chacademia'
+version = '0.3.0'
+base { archivesName = 'chacademia-wildlife' }
+repositories { mavenCentral(); maven { url = 'https://repo.papermc.io/repository/maven-public/' } }
+dependencies {
+ compileOnly 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
+ compileOnly files('../plugins/MythicMobs-5.9.0.jar')
+ compileOnly files('../magic-codex-paper/build/libs/magic-codex-bridge-0.26.0.jar')
+}
+java { toolchain.languageVersion = JavaLanguageVersion.of(21) }
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8'; options.release = 21 }

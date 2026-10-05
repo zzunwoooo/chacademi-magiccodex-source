@@ -1,0 +1,17 @@
+# 설명·발견 조건·쿨타임은 수정 가능한 기획 초안입니다.
+# 발견 조건은 UI 표시용 문구이며 실제 판정 기능은 연결되지 않았습니다.
+# cast.command는 실제 시전 기능 연결 후 / 없이 입력하세요.
+id: "shadow_exchange"
+name: "그림자 교환"
+category: "dark"
+rank: "고급"
+description: "허용된 대상과 자신의 위치를 맞바꿉니다. 전용 퍼즐이나 동료 구조, 전투에 활용할 수 있습니다."
+icon: "magiccodex:textures/spells/advanced/shadow_exchange.png"
+permission: "magic.learned.shadow_exchange"
+discovery:
+  description: "그림자 유적에서 서로 마주 보는 두 인형의 위치 수수께끼를 풀기."
+research: ""
+cast:
+  command: ""
+  cooldown-seconds: 30
+order: 2160

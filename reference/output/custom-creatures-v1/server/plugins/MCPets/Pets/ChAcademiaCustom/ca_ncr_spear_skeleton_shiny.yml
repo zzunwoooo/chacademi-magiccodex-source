@@ -1,0 +1,17 @@
+"Id": "ca_ncr_spear_skeleton_shiny"
+"MythicMob": "CA_Pet_ncr_spear_skeleton_shiny"
+"Permission": "chacademia.pet.ca_ncr_spear_skeleton_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e유적의 창병"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "지하 유적의 좁은 통로를 지키는 해골 병사."
+    - "서식지: 깊은 동굴 / 안산암 동굴"
+    - "2성"

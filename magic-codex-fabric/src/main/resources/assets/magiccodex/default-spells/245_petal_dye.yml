@@ -1,0 +1,14 @@
+id: petal_dye
+name: 꽃잎 염색
+category: earth
+description: 꽃을 소비해 가죽 장비를 해당 색으로 물들인다.
+icon: ''
+permission: magic.learned.petal_dye
+discovery:
+  description: 서로 다른 5가지 꽃을 획득하기.
+research: 꽃을 색으로 바꾸는 일에도 재료가 필요하다. 정원에는 다음 꽃을 남겨 두자.
+cast:
+  command: ''
+  cooldown-seconds: 5
+  mana-cost: 10
+order: 245

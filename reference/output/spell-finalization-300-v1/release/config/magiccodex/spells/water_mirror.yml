@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "water_mirror"
+name: "수면의 거울"
+category: "water"
+description: "물 속의 숨겨진 통로를 발견해낸다.\n\n물 아래의 낯선 길을 보는 법은 도서관의 수면 관측 기록에 남아 있다."
+icon: "magiccodex:textures/spells/intermediate/water_mirror.png"
+permission: "magic.learned.water_mirror"
+discovery:
+  description: "학교 도서관에서 '수면에 비친 먼 풍경' 책 읽기."
+research: "한쪽 수반에 손을 담그자, 먼 곳의 수면에도 물결이 일었다."
+cast:
+  command: "마법 수면의거울"
+  cooldown-seconds: 20
+  mana-cost: 45
+order: 720

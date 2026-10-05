@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "forbidden_contract"
+name: "금서의 계약"
+category: "dark"
+description: "30초 동안 마법 공격력이 증가하는 대신 회복 효과가 절반으로 줄어듭니다.\n\n대가 없는 기적을 경계한 금서의 계약문에는, 힘을 빌리는 대신 내어 줄 것이 적혀 있다."
+icon: "magiccodex:textures/spells/advanced/forbidden_contract.png"
+permission: "magic.learned.forbidden_contract"
+discovery:
+  description: "학교 금서고에서 '대가 없는 기적은 없다' 책 읽기."
+research: "계약서의 작은 글씨를 읽지 않은 마법사는 오래 살지 못했다."
+cast:
+  command: "마법 금서의계약"
+  cooldown-seconds: 120
+  mana-cost: 200
+order: 1740

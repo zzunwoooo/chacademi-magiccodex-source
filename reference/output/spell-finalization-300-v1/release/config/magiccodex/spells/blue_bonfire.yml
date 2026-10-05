@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "blue_bonfire"
+name: "푸른 화톳불"
+category: "fire"
+description: "60초간 유지되는 푸른 화톳불을 설치합니다. 10블록 안에 있을 경우 마나 회복량이 10% 증가합니다.\n\n불꽃의 색이 달라지는 까닭은 도서관의 화염 연구서에 기록되어 있다."
+icon: "magiccodex:textures/spells/expansion_2/blue_bonfire.png"
+permission: "magic.learned.blue_bonfire"
+discovery:
+  description: "학교 도서관에서 '불꽃의 색과 마력' 책 읽기."
+research: "차가워 보이는 푸른 불꽃이 마법사의 마나를 가장 따뜻하게 감싸준다."
+cast:
+  command: "마법 푸른화톳불"
+  cooldown-seconds: 90
+  mana-cost: 180
+order: 640

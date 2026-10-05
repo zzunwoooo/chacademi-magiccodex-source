@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "tidal_wave"
+name: "해일"
+category: "water"
+description: "정면으로 파도를 보내 적에게 피해를 주고 밀어냅니다.\n\n물 마법 실전 수업에서는 작은 물결을 적을 밀어내는 파도로 잇는 법을 배운다."
+icon: "magiccodex:textures/spells/expansion_2/tidal_wave.png"
+permission: "magic.learned.tidal_wave"
+discovery:
+  description: "물 마법 실전 수업을 통해 습득."
+research: "바다는 물 한 방울의 힘이 모인 결과다. 충분한 마력이 있다면 호수에서도 해일을 일으킬 수 있다."
+cast:
+  command: "마법 해일"
+  cooldown-seconds: 35
+  mana-cost: 180
+order: 950

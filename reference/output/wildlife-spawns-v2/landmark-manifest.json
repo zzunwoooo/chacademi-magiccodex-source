@@ -1,0 +1,4352 @@
+{
+  "source": "plugins/FastAsyncWorldEdit/schematics/16,17,19,20,21.schem",
+  "counts": {
+    "ruined_gate": 12,
+    "ancient_ruins": 32,
+    "forest_guardian": 4,
+    "mushroom_guardian": 54,
+    "colossal_guardian": 60
+  },
+  "assets": [
+    {
+      "id": "natural_16_r01_c01",
+      "source": "16.schem",
+      "row": 1,
+      "column": 1,
+      "size": [
+        19,
+        28,
+        13
+      ],
+      "blocks": 1742,
+      "offset": [
+        -9,
+        0,
+        -6
+      ],
+      "source_bounds": [
+        1,
+        2,
+        4,
+        19,
+        29,
+        16
+      ],
+      "landmark": "ruined_gate"
+    },
+    {
+      "id": "natural_16_r02_c01",
+      "source": "16.schem",
+      "row": 2,
+      "column": 1,
+      "size": [
+        19,
+        24,
+        13
+      ],
+      "blocks": 1493,
+      "offset": [
+        -9,
+        0,
+        -6
+      ],
+      "source_bounds": [
+        1,
+        2,
+        24,
+        19,
+        25,
+        36
+      ],
+      "landmark": "ruined_gate"
+    },
+    {
+      "id": "natural_16_r03_c01",
+      "source": "16.schem",
+      "row": 3,
+      "column": 1,
+      "size": [
+        19,
+        19,
+        15
+      ],
+      "blocks": 1101,
+      "offset": [
+        -9,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        1,
+        2,
+        43,
+        19,
+        20,
+        57
+      ],
+      "landmark": "ruined_gate"
+    },
+    {
+      "id": "natural_16_r04_c01",
+      "source": "16.schem",
+      "row": 4,
+      "column": 1,
+      "size": [
+        19,
+        21,
+        15
+      ],
+      "blocks": 1092,
+      "offset": [
+        -9,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        1,
+        2,
+        63,
+        19,
+        22,
+        77
+      ],
+      "landmark": "ruined_gate"
+    },
+    {
+      "id": "natural_16_r05_c01",
+      "source": "16.schem",
+      "row": 5,
+      "column": 1,
+      "size": [
+        19,
+        19,
+        15
+      ],
+      "blocks": 1101,
+      "offset": [
+        -9,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        1,
+        2,
+        83,
+        19,
+        20,
+        97
+      ],
+      "landmark": "ruined_gate"
+    },
+    {
+      "id": "natural_16_r06_c01",
+      "source": "16.schem",
+      "row": 6,
+      "column": 1,
+      "size": [
+        19,
+        21,
+        15
+      ],
+      "blocks": 1092,
+      "offset": [
+        -9,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        1,
+        2,
+        103,
+        19,
+        22,
+        117
+      ],
+      "landmark": "ruined_gate"
+    },
+    {
+      "id": "natural_16_r07_c01",
+      "source": "16.schem",
+      "row": 7,
+      "column": 1,
+      "size": [
+        19,
+        28,
+        13
+      ],
+      "blocks": 1751,
+      "offset": [
+        -9,
+        0,
+        -6
+      ],
+      "source_bounds": [
+        1,
+        2,
+        124,
+        19,
+        29,
+        136
+      ],
+      "landmark": "ruined_gate"
+    },
+    {
+      "id": "natural_16_r08_c01",
+      "source": "16.schem",
+      "row": 8,
+      "column": 1,
+      "size": [
+        19,
+        24,
+        13
+      ],
+      "blocks": 1505,
+      "offset": [
+        -9,
+        0,
+        -6
+      ],
+      "source_bounds": [
+        1,
+        2,
+        144,
+        19,
+        25,
+        156
+      ],
+      "landmark": "ruined_gate"
+    },
+    {
+      "id": "natural_16_r09_c01",
+      "source": "16.schem",
+      "row": 9,
+      "column": 1,
+      "size": [
+        19,
+        19,
+        15
+      ],
+      "blocks": 1114,
+      "offset": [
+        -9,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        1,
+        2,
+        163,
+        19,
+        20,
+        177
+      ],
+      "landmark": "ruined_gate"
+    },
+    {
+      "id": "natural_16_r10_c01",
+      "source": "16.schem",
+      "row": 10,
+      "column": 1,
+      "size": [
+        19,
+        21,
+        15
+      ],
+      "blocks": 1108,
+      "offset": [
+        -9,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        1,
+        2,
+        183,
+        19,
+        22,
+        197
+      ],
+      "landmark": "ruined_gate"
+    },
+    {
+      "id": "natural_16_r11_c01",
+      "source": "16.schem",
+      "row": 11,
+      "column": 1,
+      "size": [
+        19,
+        19,
+        15
+      ],
+      "blocks": 1114,
+      "offset": [
+        -9,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        1,
+        2,
+        203,
+        19,
+        20,
+        217
+      ],
+      "landmark": "ruined_gate"
+    },
+    {
+      "id": "natural_16_r12_c01",
+      "source": "16.schem",
+      "row": 12,
+      "column": 1,
+      "size": [
+        19,
+        21,
+        15
+      ],
+      "blocks": 1108,
+      "offset": [
+        -9,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        1,
+        2,
+        223,
+        19,
+        22,
+        237
+      ],
+      "landmark": "ruined_gate"
+    },
+    {
+      "id": "natural_17_r01_c01",
+      "source": "17.schem",
+      "row": 1,
+      "column": 1,
+      "size": [
+        27,
+        36,
+        15
+      ],
+      "blocks": 2579,
+      "offset": [
+        -13,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        7,
+        2,
+        13,
+        33,
+        37,
+        27
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r01_c02",
+      "source": "17.schem",
+      "row": 1,
+      "column": 2,
+      "size": [
+        25,
+        36,
+        21
+      ],
+      "blocks": 2582,
+      "offset": [
+        -12,
+        0,
+        -10
+      ],
+      "source_bounds": [
+        48,
+        2,
+        10,
+        72,
+        37,
+        30
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r01_c03",
+      "source": "17.schem",
+      "row": 1,
+      "column": 3,
+      "size": [
+        33,
+        40,
+        23
+      ],
+      "blocks": 5040,
+      "offset": [
+        -16,
+        0,
+        -11
+      ],
+      "source_bounds": [
+        84,
+        2,
+        9,
+        116,
+        41,
+        31
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r01_c04",
+      "source": "17.schem",
+      "row": 1,
+      "column": 4,
+      "size": [
+        39,
+        40,
+        33
+      ],
+      "blocks": 5045,
+      "offset": [
+        -19,
+        0,
+        -16
+      ],
+      "source_bounds": [
+        121,
+        2,
+        4,
+        159,
+        41,
+        36
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r02_c01",
+      "source": "17.schem",
+      "row": 2,
+      "column": 1,
+      "size": [
+        28,
+        28,
+        15
+      ],
+      "blocks": 2363,
+      "offset": [
+        -13,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        7,
+        2,
+        53,
+        34,
+        29,
+        67
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r02_c02",
+      "source": "17.schem",
+      "row": 2,
+      "column": 2,
+      "size": [
+        27,
+        28,
+        21
+      ],
+      "blocks": 2403,
+      "offset": [
+        -13,
+        0,
+        -10
+      ],
+      "source_bounds": [
+        47,
+        2,
+        50,
+        73,
+        29,
+        70
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r02_c03",
+      "source": "17.schem",
+      "row": 2,
+      "column": 3,
+      "size": [
+        29,
+        32,
+        23
+      ],
+      "blocks": 4463,
+      "offset": [
+        -14,
+        0,
+        -11
+      ],
+      "source_bounds": [
+        86,
+        2,
+        49,
+        114,
+        33,
+        71
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r02_c04",
+      "source": "17.schem",
+      "row": 2,
+      "column": 4,
+      "size": [
+        35,
+        32,
+        31
+      ],
+      "blocks": 4513,
+      "offset": [
+        -18,
+        0,
+        -15
+      ],
+      "source_bounds": [
+        122,
+        2,
+        45,
+        156,
+        33,
+        75
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r03_c01",
+      "source": "17.schem",
+      "row": 3,
+      "column": 1,
+      "size": [
+        28,
+        28,
+        15
+      ],
+      "blocks": 2365,
+      "offset": [
+        -13,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        7,
+        2,
+        93,
+        34,
+        29,
+        107
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r03_c02",
+      "source": "17.schem",
+      "row": 3,
+      "column": 2,
+      "size": [
+        27,
+        28,
+        21
+      ],
+      "blocks": 2490,
+      "offset": [
+        -13,
+        0,
+        -10
+      ],
+      "source_bounds": [
+        47,
+        2,
+        90,
+        73,
+        29,
+        110
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r03_c03",
+      "source": "17.schem",
+      "row": 3,
+      "column": 3,
+      "size": [
+        29,
+        32,
+        23
+      ],
+      "blocks": 4465,
+      "offset": [
+        -14,
+        0,
+        -11
+      ],
+      "source_bounds": [
+        86,
+        2,
+        89,
+        114,
+        33,
+        111
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r03_c04",
+      "source": "17.schem",
+      "row": 3,
+      "column": 4,
+      "size": [
+        35,
+        32,
+        31
+      ],
+      "blocks": 4600,
+      "offset": [
+        -18,
+        0,
+        -15
+      ],
+      "source_bounds": [
+        122,
+        2,
+        85,
+        156,
+        33,
+        115
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r04_c01",
+      "source": "17.schem",
+      "row": 4,
+      "column": 1,
+      "size": [
+        27,
+        36,
+        15
+      ],
+      "blocks": 2593,
+      "offset": [
+        -13,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        7,
+        2,
+        133,
+        33,
+        37,
+        147
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r04_c02",
+      "source": "17.schem",
+      "row": 4,
+      "column": 2,
+      "size": [
+        25,
+        36,
+        21
+      ],
+      "blocks": 2602,
+      "offset": [
+        -12,
+        0,
+        -10
+      ],
+      "source_bounds": [
+        48,
+        2,
+        130,
+        72,
+        37,
+        150
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r04_c03",
+      "source": "17.schem",
+      "row": 4,
+      "column": 3,
+      "size": [
+        33,
+        40,
+        23
+      ],
+      "blocks": 5077,
+      "offset": [
+        -16,
+        0,
+        -11
+      ],
+      "source_bounds": [
+        84,
+        2,
+        129,
+        116,
+        41,
+        151
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r04_c04",
+      "source": "17.schem",
+      "row": 4,
+      "column": 4,
+      "size": [
+        39,
+        40,
+        33
+      ],
+      "blocks": 5092,
+      "offset": [
+        -19,
+        0,
+        -16
+      ],
+      "source_bounds": [
+        121,
+        2,
+        124,
+        159,
+        41,
+        156
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r05_c01",
+      "source": "17.schem",
+      "row": 5,
+      "column": 1,
+      "size": [
+        28,
+        28,
+        15
+      ],
+      "blocks": 2390,
+      "offset": [
+        -13,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        7,
+        2,
+        173,
+        34,
+        29,
+        187
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r05_c02",
+      "source": "17.schem",
+      "row": 5,
+      "column": 2,
+      "size": [
+        27,
+        28,
+        21
+      ],
+      "blocks": 2425,
+      "offset": [
+        -13,
+        0,
+        -10
+      ],
+      "source_bounds": [
+        47,
+        2,
+        170,
+        73,
+        29,
+        190
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r05_c03",
+      "source": "17.schem",
+      "row": 5,
+      "column": 3,
+      "size": [
+        29,
+        32,
+        23
+      ],
+      "blocks": 4542,
+      "offset": [
+        -14,
+        0,
+        -11
+      ],
+      "source_bounds": [
+        86,
+        2,
+        169,
+        114,
+        33,
+        191
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r05_c04",
+      "source": "17.schem",
+      "row": 5,
+      "column": 4,
+      "size": [
+        35,
+        32,
+        31
+      ],
+      "blocks": 4586,
+      "offset": [
+        -18,
+        0,
+        -15
+      ],
+      "source_bounds": [
+        122,
+        2,
+        165,
+        156,
+        33,
+        195
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r06_c01",
+      "source": "17.schem",
+      "row": 6,
+      "column": 1,
+      "size": [
+        28,
+        28,
+        15
+      ],
+      "blocks": 2392,
+      "offset": [
+        -13,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        7,
+        2,
+        213,
+        34,
+        29,
+        227
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r06_c02",
+      "source": "17.schem",
+      "row": 6,
+      "column": 2,
+      "size": [
+        27,
+        28,
+        21
+      ],
+      "blocks": 2512,
+      "offset": [
+        -13,
+        0,
+        -10
+      ],
+      "source_bounds": [
+        47,
+        2,
+        210,
+        73,
+        29,
+        230
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r06_c03",
+      "source": "17.schem",
+      "row": 6,
+      "column": 3,
+      "size": [
+        29,
+        32,
+        23
+      ],
+      "blocks": 4544,
+      "offset": [
+        -14,
+        0,
+        -11
+      ],
+      "source_bounds": [
+        86,
+        2,
+        209,
+        114,
+        33,
+        231
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r06_c04",
+      "source": "17.schem",
+      "row": 6,
+      "column": 4,
+      "size": [
+        35,
+        32,
+        31
+      ],
+      "blocks": 4672,
+      "offset": [
+        -18,
+        0,
+        -15
+      ],
+      "source_bounds": [
+        122,
+        2,
+        205,
+        156,
+        33,
+        235
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r07_c01",
+      "source": "17.schem",
+      "row": 7,
+      "column": 1,
+      "size": [
+        21,
+        21,
+        21
+      ],
+      "blocks": 2782,
+      "offset": [
+        -10,
+        0,
+        -10
+      ],
+      "source_bounds": [
+        10,
+        2,
+        250,
+        30,
+        22,
+        270
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r07_c02",
+      "source": "17.schem",
+      "row": 7,
+      "column": 2,
+      "size": [
+        24,
+        21,
+        17
+      ],
+      "blocks": 2685,
+      "offset": [
+        -13,
+        0,
+        -6
+      ],
+      "source_bounds": [
+        47,
+        2,
+        254,
+        70,
+        22,
+        270
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r07_c03",
+      "source": "17.schem",
+      "row": 7,
+      "column": 3,
+      "size": [
+        25,
+        24,
+        19
+      ],
+      "blocks": 4628,
+      "offset": [
+        -14,
+        0,
+        -9
+      ],
+      "source_bounds": [
+        86,
+        2,
+        251,
+        110,
+        25,
+        269
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r07_c04",
+      "source": "17.schem",
+      "row": 7,
+      "column": 4,
+      "size": [
+        24,
+        23,
+        20
+      ],
+      "blocks": 4735,
+      "offset": [
+        -13,
+        0,
+        -11
+      ],
+      "source_bounds": [
+        127,
+        2,
+        249,
+        150,
+        24,
+        268
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r08_c01",
+      "source": "17.schem",
+      "row": 8,
+      "column": 1,
+      "size": [
+        21,
+        20,
+        21
+      ],
+      "blocks": 2760,
+      "offset": [
+        -10,
+        0,
+        -10
+      ],
+      "source_bounds": [
+        10,
+        2,
+        290,
+        30,
+        21,
+        310
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r08_c02",
+      "source": "17.schem",
+      "row": 8,
+      "column": 2,
+      "size": [
+        24,
+        20,
+        17
+      ],
+      "blocks": 2660,
+      "offset": [
+        -13,
+        0,
+        -6
+      ],
+      "source_bounds": [
+        47,
+        2,
+        294,
+        70,
+        21,
+        310
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r08_c03",
+      "source": "17.schem",
+      "row": 8,
+      "column": 3,
+      "size": [
+        25,
+        24,
+        19
+      ],
+      "blocks": 4603,
+      "offset": [
+        -14,
+        0,
+        -9
+      ],
+      "source_bounds": [
+        86,
+        2,
+        291,
+        110,
+        25,
+        309
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_17_r08_c04",
+      "source": "17.schem",
+      "row": 8,
+      "column": 4,
+      "size": [
+        24,
+        23,
+        20
+      ],
+      "blocks": 4703,
+      "offset": [
+        -13,
+        0,
+        -11
+      ],
+      "source_bounds": [
+        127,
+        2,
+        289,
+        150,
+        24,
+        308
+      ],
+      "landmark": "ancient_ruins"
+    },
+    {
+      "id": "natural_19_r01_c01",
+      "source": "19.schem",
+      "row": 1,
+      "column": 1,
+      "size": [
+        46,
+        53,
+        48
+      ],
+      "blocks": 17336,
+      "offset": [
+        -21,
+        0,
+        -25
+      ],
+      "source_bounds": [
+        12,
+        2,
+        8,
+        57,
+        54,
+        55
+      ],
+      "landmark": "forest_guardian"
+    },
+    {
+      "id": "natural_19_r01_c02",
+      "source": "19.schem",
+      "row": 1,
+      "column": 2,
+      "size": [
+        36,
+        50,
+        37
+      ],
+      "blocks": 7707,
+      "offset": [
+        -12,
+        0,
+        -18
+      ],
+      "source_bounds": [
+        81,
+        2,
+        15,
+        116,
+        51,
+        51
+      ],
+      "landmark": "forest_guardian"
+    },
+    {
+      "id": "natural_19_r02_c01",
+      "source": "19.schem",
+      "row": 2,
+      "column": 1,
+      "size": [
+        48,
+        53,
+        49
+      ],
+      "blocks": 16056,
+      "offset": [
+        -22,
+        0,
+        -25
+      ],
+      "source_bounds": [
+        11,
+        2,
+        74,
+        58,
+        54,
+        122
+      ],
+      "landmark": "forest_guardian"
+    },
+    {
+      "id": "natural_19_r02_c02",
+      "source": "19.schem",
+      "row": 2,
+      "column": 2,
+      "size": [
+        41,
+        51,
+        33
+      ],
+      "blocks": 7370,
+      "offset": [
+        -15,
+        0,
+        -17
+      ],
+      "source_bounds": [
+        78,
+        2,
+        82,
+        118,
+        52,
+        114
+      ],
+      "landmark": "forest_guardian"
+    },
+    {
+      "id": "natural_20_r01_c01",
+      "source": "20.schem",
+      "row": 1,
+      "column": 1,
+      "size": [
+        12,
+        16,
+        7
+      ],
+      "blocks": 389,
+      "offset": [
+        -5,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        5,
+        2,
+        7,
+        16,
+        17,
+        13
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r01_c02",
+      "source": "20.schem",
+      "row": 1,
+      "column": 2,
+      "size": [
+        12,
+        14,
+        7
+      ],
+      "blocks": 476,
+      "offset": [
+        -6,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        24,
+        2,
+        7,
+        35,
+        15,
+        13
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r01_c03",
+      "source": "20.schem",
+      "row": 1,
+      "column": 3,
+      "size": [
+        12,
+        13,
+        7
+      ],
+      "blocks": 340,
+      "offset": [
+        -5,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        45,
+        2,
+        7,
+        56,
+        14,
+        13
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r01_c04",
+      "source": "20.schem",
+      "row": 1,
+      "column": 4,
+      "size": [
+        12,
+        14,
+        7
+      ],
+      "blocks": 462,
+      "offset": [
+        -6,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        64,
+        2,
+        7,
+        75,
+        15,
+        13
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r02_c01",
+      "source": "20.schem",
+      "row": 2,
+      "column": 1,
+      "size": [
+        13,
+        10,
+        7
+      ],
+      "blocks": 368,
+      "offset": [
+        -6,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        4,
+        2,
+        27,
+        16,
+        11,
+        33
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r02_c02",
+      "source": "20.schem",
+      "row": 2,
+      "column": 2,
+      "size": [
+        13,
+        13,
+        7
+      ],
+      "blocks": 444,
+      "offset": [
+        -6,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        24,
+        2,
+        27,
+        36,
+        14,
+        33
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r02_c03",
+      "source": "20.schem",
+      "row": 2,
+      "column": 3,
+      "size": [
+        13,
+        10,
+        7
+      ],
+      "blocks": 358,
+      "offset": [
+        -6,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        44,
+        2,
+        27,
+        56,
+        11,
+        33
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r02_c04",
+      "source": "20.schem",
+      "row": 2,
+      "column": 4,
+      "size": [
+        13,
+        12,
+        7
+      ],
+      "blocks": 430,
+      "offset": [
+        -6,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        64,
+        2,
+        27,
+        76,
+        13,
+        33
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r03_c01",
+      "source": "20.schem",
+      "row": 3,
+      "column": 1,
+      "size": [
+        12,
+        13,
+        7
+      ],
+      "blocks": 347,
+      "offset": [
+        -5,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        5,
+        2,
+        47,
+        16,
+        14,
+        53
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r03_c02",
+      "source": "20.schem",
+      "row": 3,
+      "column": 2,
+      "size": [
+        12,
+        19,
+        7
+      ],
+      "blocks": 507,
+      "offset": [
+        -6,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        24,
+        2,
+        47,
+        35,
+        20,
+        53
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r03_c03",
+      "source": "20.schem",
+      "row": 3,
+      "column": 3,
+      "size": [
+        12,
+        13,
+        7
+      ],
+      "blocks": 340,
+      "offset": [
+        -5,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        45,
+        2,
+        47,
+        56,
+        14,
+        53
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r03_c04",
+      "source": "20.schem",
+      "row": 3,
+      "column": 4,
+      "size": [
+        12,
+        14,
+        7
+      ],
+      "blocks": 462,
+      "offset": [
+        -6,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        64,
+        2,
+        47,
+        75,
+        15,
+        53
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r04_c01",
+      "source": "20.schem",
+      "row": 4,
+      "column": 1,
+      "size": [
+        13,
+        10,
+        7
+      ],
+      "blocks": 364,
+      "offset": [
+        -6,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        4,
+        2,
+        67,
+        16,
+        11,
+        73
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r04_c02",
+      "source": "20.schem",
+      "row": 4,
+      "column": 2,
+      "size": [
+        13,
+        12,
+        7
+      ],
+      "blocks": 438,
+      "offset": [
+        -6,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        24,
+        2,
+        67,
+        36,
+        13,
+        73
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r04_c03",
+      "source": "20.schem",
+      "row": 4,
+      "column": 3,
+      "size": [
+        13,
+        10,
+        7
+      ],
+      "blocks": 358,
+      "offset": [
+        -6,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        44,
+        2,
+        67,
+        56,
+        11,
+        73
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r04_c04",
+      "source": "20.schem",
+      "row": 4,
+      "column": 4,
+      "size": [
+        13,
+        12,
+        7
+      ],
+      "blocks": 430,
+      "offset": [
+        -6,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        64,
+        2,
+        67,
+        76,
+        13,
+        73
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r05_c01",
+      "source": "20.schem",
+      "row": 5,
+      "column": 1,
+      "size": [
+        12,
+        17,
+        7
+      ],
+      "blocks": 376,
+      "offset": [
+        -5,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        5,
+        2,
+        87,
+        16,
+        18,
+        93
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r05_c02",
+      "source": "20.schem",
+      "row": 5,
+      "column": 2,
+      "size": [
+        12,
+        14,
+        7
+      ],
+      "blocks": 467,
+      "offset": [
+        -6,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        24,
+        2,
+        87,
+        35,
+        15,
+        93
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r05_c03",
+      "source": "20.schem",
+      "row": 5,
+      "column": 3,
+      "size": [
+        12,
+        13,
+        7
+      ],
+      "blocks": 340,
+      "offset": [
+        -5,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        45,
+        2,
+        87,
+        56,
+        14,
+        93
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r05_c04",
+      "source": "20.schem",
+      "row": 5,
+      "column": 4,
+      "size": [
+        12,
+        14,
+        7
+      ],
+      "blocks": 462,
+      "offset": [
+        -6,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        64,
+        2,
+        87,
+        75,
+        15,
+        93
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r06_c01",
+      "source": "20.schem",
+      "row": 6,
+      "column": 1,
+      "size": [
+        13,
+        14,
+        7
+      ],
+      "blocks": 400,
+      "offset": [
+        -6,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        4,
+        2,
+        107,
+        16,
+        15,
+        113
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r06_c02",
+      "source": "20.schem",
+      "row": 6,
+      "column": 2,
+      "size": [
+        13,
+        12,
+        7
+      ],
+      "blocks": 437,
+      "offset": [
+        -6,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        24,
+        2,
+        107,
+        36,
+        13,
+        113
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r06_c03",
+      "source": "20.schem",
+      "row": 6,
+      "column": 3,
+      "size": [
+        13,
+        10,
+        7
+      ],
+      "blocks": 358,
+      "offset": [
+        -6,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        44,
+        2,
+        107,
+        56,
+        11,
+        113
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r06_c04",
+      "source": "20.schem",
+      "row": 6,
+      "column": 4,
+      "size": [
+        13,
+        12,
+        7
+      ],
+      "blocks": 430,
+      "offset": [
+        -6,
+        0,
+        -3
+      ],
+      "source_bounds": [
+        64,
+        2,
+        107,
+        76,
+        13,
+        113
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r07_c03",
+      "source": "20.schem",
+      "row": 7,
+      "column": 3,
+      "size": [
+        17,
+        22,
+        12
+      ],
+      "blocks": 604,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        42,
+        2,
+        123,
+        58,
+        23,
+        134
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r07_c04",
+      "source": "20.schem",
+      "row": 7,
+      "column": 4,
+      "size": [
+        17,
+        22,
+        12
+      ],
+      "blocks": 865,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        62,
+        2,
+        123,
+        78,
+        23,
+        134
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r08_c01",
+      "source": "20.schem",
+      "row": 8,
+      "column": 1,
+      "size": [
+        13,
+        18,
+        11
+      ],
+      "blocks": 588,
+      "offset": [
+        -6,
+        0,
+        -6
+      ],
+      "source_bounds": [
+        4,
+        2,
+        144,
+        16,
+        19,
+        154
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r08_c02",
+      "source": "20.schem",
+      "row": 8,
+      "column": 2,
+      "size": [
+        17,
+        20,
+        14
+      ],
+      "blocks": 1202,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        22,
+        2,
+        143,
+        38,
+        21,
+        156
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r08_c03",
+      "source": "20.schem",
+      "row": 8,
+      "column": 3,
+      "size": [
+        17,
+        22,
+        11
+      ],
+      "blocks": 563,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        42,
+        2,
+        143,
+        58,
+        23,
+        153
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r08_c04",
+      "source": "20.schem",
+      "row": 8,
+      "column": 4,
+      "size": [
+        17,
+        20,
+        12
+      ],
+      "blocks": 814,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        62,
+        2,
+        143,
+        78,
+        21,
+        154
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r09_c01",
+      "source": "20.schem",
+      "row": 9,
+      "column": 1,
+      "size": [
+        13,
+        18,
+        11
+      ],
+      "blocks": 588,
+      "offset": [
+        -6,
+        0,
+        -6
+      ],
+      "source_bounds": [
+        4,
+        2,
+        164,
+        16,
+        19,
+        174
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r09_c02",
+      "source": "20.schem",
+      "row": 9,
+      "column": 2,
+      "size": [
+        17,
+        20,
+        14
+      ],
+      "blocks": 1202,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        22,
+        2,
+        163,
+        38,
+        21,
+        176
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r09_c03",
+      "source": "20.schem",
+      "row": 9,
+      "column": 3,
+      "size": [
+        17,
+        22,
+        12
+      ],
+      "blocks": 604,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        42,
+        2,
+        163,
+        58,
+        23,
+        174
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r09_c04",
+      "source": "20.schem",
+      "row": 9,
+      "column": 4,
+      "size": [
+        17,
+        22,
+        12
+      ],
+      "blocks": 865,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        62,
+        2,
+        163,
+        78,
+        23,
+        174
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r10_c01",
+      "source": "20.schem",
+      "row": 10,
+      "column": 1,
+      "size": [
+        13,
+        18,
+        11
+      ],
+      "blocks": 588,
+      "offset": [
+        -6,
+        0,
+        -6
+      ],
+      "source_bounds": [
+        4,
+        2,
+        184,
+        16,
+        19,
+        194
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r10_c02",
+      "source": "20.schem",
+      "row": 10,
+      "column": 2,
+      "size": [
+        17,
+        20,
+        14
+      ],
+      "blocks": 1202,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        22,
+        2,
+        183,
+        38,
+        21,
+        196
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r10_c03",
+      "source": "20.schem",
+      "row": 10,
+      "column": 3,
+      "size": [
+        17,
+        22,
+        11
+      ],
+      "blocks": 563,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        42,
+        2,
+        183,
+        58,
+        23,
+        193
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r10_c04",
+      "source": "20.schem",
+      "row": 10,
+      "column": 4,
+      "size": [
+        17,
+        20,
+        12
+      ],
+      "blocks": 814,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        62,
+        2,
+        183,
+        78,
+        21,
+        194
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r11_c01",
+      "source": "20.schem",
+      "row": 11,
+      "column": 1,
+      "size": [
+        13,
+        18,
+        11
+      ],
+      "blocks": 588,
+      "offset": [
+        -6,
+        0,
+        -6
+      ],
+      "source_bounds": [
+        4,
+        2,
+        204,
+        16,
+        19,
+        214
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r11_c02",
+      "source": "20.schem",
+      "row": 11,
+      "column": 2,
+      "size": [
+        17,
+        20,
+        14
+      ],
+      "blocks": 1202,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        22,
+        2,
+        203,
+        38,
+        21,
+        216
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r11_c03",
+      "source": "20.schem",
+      "row": 11,
+      "column": 3,
+      "size": [
+        17,
+        22,
+        12
+      ],
+      "blocks": 604,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        42,
+        2,
+        203,
+        58,
+        23,
+        214
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r11_c04",
+      "source": "20.schem",
+      "row": 11,
+      "column": 4,
+      "size": [
+        17,
+        22,
+        12
+      ],
+      "blocks": 865,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        62,
+        2,
+        203,
+        78,
+        23,
+        214
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r12_c01",
+      "source": "20.schem",
+      "row": 12,
+      "column": 1,
+      "size": [
+        13,
+        18,
+        11
+      ],
+      "blocks": 588,
+      "offset": [
+        -6,
+        0,
+        -6
+      ],
+      "source_bounds": [
+        4,
+        2,
+        224,
+        16,
+        19,
+        234
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r12_c02",
+      "source": "20.schem",
+      "row": 12,
+      "column": 2,
+      "size": [
+        17,
+        20,
+        14
+      ],
+      "blocks": 1202,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        22,
+        2,
+        223,
+        38,
+        21,
+        236
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r12_c03",
+      "source": "20.schem",
+      "row": 12,
+      "column": 3,
+      "size": [
+        17,
+        22,
+        11
+      ],
+      "blocks": 563,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        42,
+        2,
+        223,
+        58,
+        23,
+        233
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r12_c04",
+      "source": "20.schem",
+      "row": 12,
+      "column": 4,
+      "size": [
+        17,
+        20,
+        12
+      ],
+      "blocks": 814,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        62,
+        2,
+        223,
+        78,
+        21,
+        234
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r13_c01",
+      "source": "20.schem",
+      "row": 13,
+      "column": 1,
+      "size": [
+        13,
+        18,
+        11
+      ],
+      "blocks": 588,
+      "offset": [
+        -6,
+        0,
+        -6
+      ],
+      "source_bounds": [
+        4,
+        2,
+        244,
+        16,
+        19,
+        254
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r13_c02",
+      "source": "20.schem",
+      "row": 13,
+      "column": 2,
+      "size": [
+        17,
+        20,
+        14
+      ],
+      "blocks": 1202,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        22,
+        2,
+        243,
+        38,
+        21,
+        256
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r13_c03",
+      "source": "20.schem",
+      "row": 13,
+      "column": 3,
+      "size": [
+        17,
+        22,
+        12
+      ],
+      "blocks": 604,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        42,
+        2,
+        243,
+        58,
+        23,
+        254
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r13_c04",
+      "source": "20.schem",
+      "row": 13,
+      "column": 4,
+      "size": [
+        17,
+        22,
+        12
+      ],
+      "blocks": 865,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        62,
+        2,
+        243,
+        78,
+        23,
+        254
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r14_c01",
+      "source": "20.schem",
+      "row": 14,
+      "column": 1,
+      "size": [
+        13,
+        18,
+        11
+      ],
+      "blocks": 588,
+      "offset": [
+        -6,
+        0,
+        -6
+      ],
+      "source_bounds": [
+        4,
+        2,
+        264,
+        16,
+        19,
+        274
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r14_c02",
+      "source": "20.schem",
+      "row": 14,
+      "column": 2,
+      "size": [
+        17,
+        20,
+        14
+      ],
+      "blocks": 1202,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        22,
+        2,
+        263,
+        38,
+        21,
+        276
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r14_c03",
+      "source": "20.schem",
+      "row": 14,
+      "column": 3,
+      "size": [
+        17,
+        22,
+        11
+      ],
+      "blocks": 563,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        42,
+        2,
+        263,
+        58,
+        23,
+        273
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_20_r14_c04",
+      "source": "20.schem",
+      "row": 14,
+      "column": 4,
+      "size": [
+        17,
+        20,
+        12
+      ],
+      "blocks": 814,
+      "offset": [
+        -8,
+        0,
+        -7
+      ],
+      "source_bounds": [
+        62,
+        2,
+        263,
+        78,
+        21,
+        274
+      ],
+      "landmark": "mushroom_guardian"
+    },
+    {
+      "id": "natural_21_r01_c01",
+      "source": "21.schem",
+      "row": 1,
+      "column": 1,
+      "size": [
+        44,
+        60,
+        44
+      ],
+      "blocks": 27116,
+      "offset": [
+        -20,
+        0,
+        -19
+      ],
+      "source_bounds": [
+        13,
+        2,
+        14,
+        56,
+        61,
+        57
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r01_c02",
+      "source": "21.schem",
+      "row": 1,
+      "column": 2,
+      "size": [
+        55,
+        61,
+        44
+      ],
+      "blocks": 28598,
+      "offset": [
+        -25,
+        0,
+        -20
+      ],
+      "source_bounds": [
+        74,
+        2,
+        13,
+        128,
+        62,
+        56
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r01_c03",
+      "source": "21.schem",
+      "row": 1,
+      "column": 3,
+      "size": [
+        48,
+        61,
+        50
+      ],
+      "blocks": 28976,
+      "offset": [
+        -22,
+        0,
+        -19
+      ],
+      "source_bounds": [
+        143,
+        2,
+        14,
+        190,
+        62,
+        63
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r01_c04",
+      "source": "21.schem",
+      "row": 1,
+      "column": 4,
+      "size": [
+        46,
+        60,
+        44
+      ],
+      "blocks": 28270,
+      "offset": [
+        -21,
+        0,
+        -16
+      ],
+      "source_bounds": [
+        210,
+        2,
+        17,
+        255,
+        61,
+        60
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r01_c05",
+      "source": "21.schem",
+      "row": 1,
+      "column": 5,
+      "size": [
+        55,
+        61,
+        44
+      ],
+      "blocks": 29734,
+      "offset": [
+        -25,
+        0,
+        -17
+      ],
+      "source_bounds": [
+        272,
+        2,
+        16,
+        326,
+        62,
+        59
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r01_c06",
+      "source": "21.schem",
+      "row": 1,
+      "column": 6,
+      "size": [
+        47,
+        61,
+        50
+      ],
+      "blocks": 29891,
+      "offset": [
+        -20,
+        0,
+        -22
+      ],
+      "source_bounds": [
+        343,
+        2,
+        11,
+        389,
+        62,
+        60
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r02_c01",
+      "source": "21.schem",
+      "row": 2,
+      "column": 1,
+      "size": [
+        59,
+        60,
+        29
+      ],
+      "blocks": 26534,
+      "offset": [
+        -28,
+        0,
+        -13
+      ],
+      "source_bounds": [
+        5,
+        2,
+        86,
+        63,
+        61,
+        114
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r02_c02",
+      "source": "21.schem",
+      "row": 2,
+      "column": 2,
+      "size": [
+        56,
+        61,
+        33
+      ],
+      "blocks": 27964,
+      "offset": [
+        -26,
+        0,
+        -13
+      ],
+      "source_bounds": [
+        73,
+        2,
+        86,
+        128,
+        62,
+        118
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r02_c03",
+      "source": "21.schem",
+      "row": 2,
+      "column": 3,
+      "size": [
+        59,
+        61,
+        29
+      ],
+      "blocks": 28103,
+      "offset": [
+        -27,
+        0,
+        -12
+      ],
+      "source_bounds": [
+        138,
+        2,
+        87,
+        196,
+        62,
+        115
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r02_c04",
+      "source": "21.schem",
+      "row": 2,
+      "column": 4,
+      "size": [
+        59,
+        60,
+        32
+      ],
+      "blocks": 27614,
+      "offset": [
+        -27,
+        0,
+        -12
+      ],
+      "source_bounds": [
+        204,
+        2,
+        87,
+        262,
+        61,
+        118
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r02_c05",
+      "source": "21.schem",
+      "row": 2,
+      "column": 5,
+      "size": [
+        56,
+        61,
+        35
+      ],
+      "blocks": 28929,
+      "offset": [
+        -25,
+        0,
+        -13
+      ],
+      "source_bounds": [
+        272,
+        2,
+        86,
+        327,
+        62,
+        120
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r02_c06",
+      "source": "21.schem",
+      "row": 2,
+      "column": 6,
+      "size": [
+        59,
+        61,
+        31
+      ],
+      "blocks": 29085,
+      "offset": [
+        -26,
+        0,
+        -10
+      ],
+      "source_bounds": [
+        337,
+        2,
+        89,
+        395,
+        62,
+        119
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r03_c01",
+      "source": "21.schem",
+      "row": 3,
+      "column": 1,
+      "size": [
+        43,
+        61,
+        53
+      ],
+      "blocks": 22384,
+      "offset": [
+        -23,
+        0,
+        -25
+      ],
+      "source_bounds": [
+        10,
+        2,
+        140,
+        52,
+        62,
+        192
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r03_c02",
+      "source": "21.schem",
+      "row": 3,
+      "column": 2,
+      "size": [
+        52,
+        61,
+        50
+      ],
+      "blocks": 39125,
+      "offset": [
+        -28,
+        0,
+        -24
+      ],
+      "source_bounds": [
+        71,
+        2,
+        141,
+        122,
+        62,
+        190
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r03_c03",
+      "source": "21.schem",
+      "row": 3,
+      "column": 3,
+      "size": [
+        40,
+        61,
+        40
+      ],
+      "blocks": 34761,
+      "offset": [
+        -18,
+        0,
+        -21
+      ],
+      "source_bounds": [
+        147,
+        2,
+        144,
+        186,
+        62,
+        183
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r03_c04",
+      "source": "21.schem",
+      "row": 3,
+      "column": 4,
+      "size": [
+        20,
+        31,
+        20
+      ],
+      "blocks": 4196,
+      "offset": [
+        -9,
+        0,
+        -14
+      ],
+      "source_bounds": [
+        222,
+        2,
+        151,
+        241,
+        32,
+        170
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r03_c05",
+      "source": "21.schem",
+      "row": 3,
+      "column": 5,
+      "size": [
+        43,
+        60,
+        53
+      ],
+      "blocks": 22261,
+      "offset": [
+        -23,
+        0,
+        -25
+      ],
+      "source_bounds": [
+        274,
+        2,
+        140,
+        316,
+        61,
+        192
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r03_c06",
+      "source": "21.schem",
+      "row": 3,
+      "column": 6,
+      "size": [
+        52,
+        60,
+        50
+      ],
+      "blocks": 38909,
+      "offset": [
+        -28,
+        0,
+        -24
+      ],
+      "source_bounds": [
+        335,
+        2,
+        141,
+        386,
+        61,
+        190
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r03_c07",
+      "source": "21.schem",
+      "row": 3,
+      "column": 7,
+      "size": [
+        40,
+        60,
+        40
+      ],
+      "blocks": 34553,
+      "offset": [
+        -18,
+        0,
+        -21
+      ],
+      "source_bounds": [
+        411,
+        2,
+        144,
+        450,
+        61,
+        183
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r03_c08",
+      "source": "21.schem",
+      "row": 3,
+      "column": 8,
+      "size": [
+        20,
+        30,
+        20
+      ],
+      "blocks": 4122,
+      "offset": [
+        -9,
+        0,
+        -14
+      ],
+      "source_bounds": [
+        486,
+        2,
+        151,
+        505,
+        31,
+        170
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r04_c01",
+      "source": "21.schem",
+      "row": 4,
+      "column": 1,
+      "size": [
+        44,
+        60,
+        43
+      ],
+      "blocks": 21906,
+      "offset": [
+        -24,
+        0,
+        -21
+      ],
+      "source_bounds": [
+        9,
+        2,
+        210,
+        52,
+        61,
+        252
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r04_c02",
+      "source": "21.schem",
+      "row": 4,
+      "column": 2,
+      "size": [
+        52,
+        61,
+        47
+      ],
+      "blocks": 38442,
+      "offset": [
+        -28,
+        0,
+        -23
+      ],
+      "source_bounds": [
+        71,
+        2,
+        208,
+        122,
+        62,
+        254
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r04_c03",
+      "source": "21.schem",
+      "row": 4,
+      "column": 3,
+      "size": [
+        38,
+        61,
+        36
+      ],
+      "blocks": 33207,
+      "offset": [
+        -18,
+        0,
+        -17
+      ],
+      "source_bounds": [
+        147,
+        2,
+        214,
+        184,
+        62,
+        249
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r04_c04",
+      "source": "21.schem",
+      "row": 4,
+      "column": 4,
+      "size": [
+        19,
+        31,
+        18
+      ],
+      "blocks": 4015,
+      "offset": [
+        -9,
+        0,
+        -9
+      ],
+      "source_bounds": [
+        222,
+        2,
+        222,
+        240,
+        32,
+        239
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r04_c05",
+      "source": "21.schem",
+      "row": 4,
+      "column": 5,
+      "size": [
+        44,
+        60,
+        43
+      ],
+      "blocks": 21802,
+      "offset": [
+        -24,
+        0,
+        -21
+      ],
+      "source_bounds": [
+        273,
+        2,
+        210,
+        316,
+        61,
+        252
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r04_c06",
+      "source": "21.schem",
+      "row": 4,
+      "column": 6,
+      "size": [
+        52,
+        60,
+        47
+      ],
+      "blocks": 38309,
+      "offset": [
+        -28,
+        0,
+        -23
+      ],
+      "source_bounds": [
+        335,
+        2,
+        208,
+        386,
+        61,
+        254
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r04_c07",
+      "source": "21.schem",
+      "row": 4,
+      "column": 7,
+      "size": [
+        38,
+        60,
+        36
+      ],
+      "blocks": 33047,
+      "offset": [
+        -18,
+        0,
+        -17
+      ],
+      "source_bounds": [
+        411,
+        2,
+        214,
+        448,
+        61,
+        249
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r04_c08",
+      "source": "21.schem",
+      "row": 4,
+      "column": 8,
+      "size": [
+        19,
+        30,
+        18
+      ],
+      "blocks": 3955,
+      "offset": [
+        -9,
+        0,
+        -9
+      ],
+      "source_bounds": [
+        486,
+        2,
+        222,
+        504,
+        31,
+        239
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r05_c01",
+      "source": "21.schem",
+      "row": 5,
+      "column": 1,
+      "size": [
+        43,
+        60,
+        53
+      ],
+      "blocks": 22261,
+      "offset": [
+        -23,
+        0,
+        -25
+      ],
+      "source_bounds": [
+        10,
+        2,
+        272,
+        52,
+        61,
+        324
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r05_c02",
+      "source": "21.schem",
+      "row": 5,
+      "column": 2,
+      "size": [
+        52,
+        60,
+        50
+      ],
+      "blocks": 38909,
+      "offset": [
+        -28,
+        0,
+        -24
+      ],
+      "source_bounds": [
+        71,
+        2,
+        273,
+        122,
+        61,
+        322
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r05_c03",
+      "source": "21.schem",
+      "row": 5,
+      "column": 3,
+      "size": [
+        40,
+        60,
+        40
+      ],
+      "blocks": 34553,
+      "offset": [
+        -18,
+        0,
+        -21
+      ],
+      "source_bounds": [
+        147,
+        2,
+        276,
+        186,
+        61,
+        315
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r05_c04",
+      "source": "21.schem",
+      "row": 5,
+      "column": 4,
+      "size": [
+        20,
+        30,
+        20
+      ],
+      "blocks": 4122,
+      "offset": [
+        -9,
+        0,
+        -14
+      ],
+      "source_bounds": [
+        222,
+        2,
+        283,
+        241,
+        31,
+        302
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r05_c05",
+      "source": "21.schem",
+      "row": 5,
+      "column": 5,
+      "size": [
+        43,
+        60,
+        53
+      ],
+      "blocks": 22261,
+      "offset": [
+        -23,
+        0,
+        -25
+      ],
+      "source_bounds": [
+        274,
+        2,
+        272,
+        316,
+        61,
+        324
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r05_c06",
+      "source": "21.schem",
+      "row": 5,
+      "column": 6,
+      "size": [
+        52,
+        60,
+        50
+      ],
+      "blocks": 38909,
+      "offset": [
+        -28,
+        0,
+        -24
+      ],
+      "source_bounds": [
+        335,
+        2,
+        273,
+        386,
+        61,
+        322
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r05_c07",
+      "source": "21.schem",
+      "row": 5,
+      "column": 7,
+      "size": [
+        40,
+        60,
+        40
+      ],
+      "blocks": 34553,
+      "offset": [
+        -18,
+        0,
+        -21
+      ],
+      "source_bounds": [
+        411,
+        2,
+        276,
+        450,
+        61,
+        315
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r05_c08",
+      "source": "21.schem",
+      "row": 5,
+      "column": 8,
+      "size": [
+        20,
+        30,
+        20
+      ],
+      "blocks": 4122,
+      "offset": [
+        -9,
+        0,
+        -14
+      ],
+      "source_bounds": [
+        486,
+        2,
+        283,
+        505,
+        31,
+        302
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r06_c01",
+      "source": "21.schem",
+      "row": 6,
+      "column": 1,
+      "size": [
+        44,
+        60,
+        43
+      ],
+      "blocks": 21802,
+      "offset": [
+        -24,
+        0,
+        -21
+      ],
+      "source_bounds": [
+        9,
+        2,
+        342,
+        52,
+        61,
+        384
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r06_c02",
+      "source": "21.schem",
+      "row": 6,
+      "column": 2,
+      "size": [
+        52,
+        60,
+        47
+      ],
+      "blocks": 38309,
+      "offset": [
+        -28,
+        0,
+        -23
+      ],
+      "source_bounds": [
+        71,
+        2,
+        340,
+        122,
+        61,
+        386
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r06_c03",
+      "source": "21.schem",
+      "row": 6,
+      "column": 3,
+      "size": [
+        38,
+        60,
+        36
+      ],
+      "blocks": 33047,
+      "offset": [
+        -18,
+        0,
+        -17
+      ],
+      "source_bounds": [
+        147,
+        2,
+        346,
+        184,
+        61,
+        381
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r06_c04",
+      "source": "21.schem",
+      "row": 6,
+      "column": 4,
+      "size": [
+        19,
+        30,
+        18
+      ],
+      "blocks": 3955,
+      "offset": [
+        -9,
+        0,
+        -9
+      ],
+      "source_bounds": [
+        222,
+        2,
+        354,
+        240,
+        31,
+        371
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r06_c05",
+      "source": "21.schem",
+      "row": 6,
+      "column": 5,
+      "size": [
+        44,
+        60,
+        43
+      ],
+      "blocks": 21802,
+      "offset": [
+        -24,
+        0,
+        -21
+      ],
+      "source_bounds": [
+        273,
+        2,
+        342,
+        316,
+        61,
+        384
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r06_c06",
+      "source": "21.schem",
+      "row": 6,
+      "column": 6,
+      "size": [
+        52,
+        60,
+        47
+      ],
+      "blocks": 38309,
+      "offset": [
+        -28,
+        0,
+        -23
+      ],
+      "source_bounds": [
+        335,
+        2,
+        340,
+        386,
+        61,
+        386
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r06_c07",
+      "source": "21.schem",
+      "row": 6,
+      "column": 7,
+      "size": [
+        38,
+        60,
+        36
+      ],
+      "blocks": 33047,
+      "offset": [
+        -18,
+        0,
+        -17
+      ],
+      "source_bounds": [
+        411,
+        2,
+        346,
+        448,
+        61,
+        381
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r06_c08",
+      "source": "21.schem",
+      "row": 6,
+      "column": 8,
+      "size": [
+        19,
+        30,
+        18
+      ],
+      "blocks": 3955,
+      "offset": [
+        -9,
+        0,
+        -9
+      ],
+      "source_bounds": [
+        486,
+        2,
+        354,
+        504,
+        31,
+        371
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r07_c01",
+      "source": "21.schem",
+      "row": 7,
+      "column": 1,
+      "size": [
+        43,
+        60,
+        53
+      ],
+      "blocks": 22261,
+      "offset": [
+        -23,
+        0,
+        -25
+      ],
+      "source_bounds": [
+        10,
+        2,
+        404,
+        52,
+        61,
+        456
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r07_c02",
+      "source": "21.schem",
+      "row": 7,
+      "column": 2,
+      "size": [
+        52,
+        60,
+        50
+      ],
+      "blocks": 38909,
+      "offset": [
+        -28,
+        0,
+        -24
+      ],
+      "source_bounds": [
+        71,
+        2,
+        405,
+        122,
+        61,
+        454
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r07_c03",
+      "source": "21.schem",
+      "row": 7,
+      "column": 3,
+      "size": [
+        40,
+        60,
+        40
+      ],
+      "blocks": 34553,
+      "offset": [
+        -18,
+        0,
+        -21
+      ],
+      "source_bounds": [
+        147,
+        2,
+        408,
+        186,
+        61,
+        447
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r07_c04",
+      "source": "21.schem",
+      "row": 7,
+      "column": 4,
+      "size": [
+        20,
+        30,
+        20
+      ],
+      "blocks": 4122,
+      "offset": [
+        -9,
+        0,
+        -14
+      ],
+      "source_bounds": [
+        222,
+        2,
+        415,
+        241,
+        31,
+        434
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r07_c05",
+      "source": "21.schem",
+      "row": 7,
+      "column": 5,
+      "size": [
+        43,
+        60,
+        53
+      ],
+      "blocks": 22261,
+      "offset": [
+        -23,
+        0,
+        -25
+      ],
+      "source_bounds": [
+        274,
+        2,
+        404,
+        316,
+        61,
+        456
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r07_c06",
+      "source": "21.schem",
+      "row": 7,
+      "column": 6,
+      "size": [
+        52,
+        60,
+        50
+      ],
+      "blocks": 38909,
+      "offset": [
+        -28,
+        0,
+        -24
+      ],
+      "source_bounds": [
+        335,
+        2,
+        405,
+        386,
+        61,
+        454
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r07_c07",
+      "source": "21.schem",
+      "row": 7,
+      "column": 7,
+      "size": [
+        40,
+        60,
+        40
+      ],
+      "blocks": 34553,
+      "offset": [
+        -18,
+        0,
+        -21
+      ],
+      "source_bounds": [
+        411,
+        2,
+        408,
+        450,
+        61,
+        447
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r07_c08",
+      "source": "21.schem",
+      "row": 7,
+      "column": 8,
+      "size": [
+        20,
+        30,
+        20
+      ],
+      "blocks": 4122,
+      "offset": [
+        -9,
+        0,
+        -14
+      ],
+      "source_bounds": [
+        486,
+        2,
+        415,
+        505,
+        31,
+        434
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r08_c01",
+      "source": "21.schem",
+      "row": 8,
+      "column": 1,
+      "size": [
+        44,
+        60,
+        43
+      ],
+      "blocks": 21802,
+      "offset": [
+        -24,
+        0,
+        -21
+      ],
+      "source_bounds": [
+        9,
+        2,
+        474,
+        52,
+        61,
+        516
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r08_c02",
+      "source": "21.schem",
+      "row": 8,
+      "column": 2,
+      "size": [
+        52,
+        60,
+        47
+      ],
+      "blocks": 38309,
+      "offset": [
+        -28,
+        0,
+        -23
+      ],
+      "source_bounds": [
+        71,
+        2,
+        472,
+        122,
+        61,
+        518
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r08_c03",
+      "source": "21.schem",
+      "row": 8,
+      "column": 3,
+      "size": [
+        38,
+        60,
+        36
+      ],
+      "blocks": 33047,
+      "offset": [
+        -18,
+        0,
+        -17
+      ],
+      "source_bounds": [
+        147,
+        2,
+        478,
+        184,
+        61,
+        513
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r08_c04",
+      "source": "21.schem",
+      "row": 8,
+      "column": 4,
+      "size": [
+        19,
+        30,
+        18
+      ],
+      "blocks": 3955,
+      "offset": [
+        -9,
+        0,
+        -9
+      ],
+      "source_bounds": [
+        222,
+        2,
+        486,
+        240,
+        31,
+        503
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r08_c05",
+      "source": "21.schem",
+      "row": 8,
+      "column": 5,
+      "size": [
+        44,
+        60,
+        43
+      ],
+      "blocks": 21802,
+      "offset": [
+        -24,
+        0,
+        -21
+      ],
+      "source_bounds": [
+        273,
+        2,
+        474,
+        316,
+        61,
+        516
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r08_c06",
+      "source": "21.schem",
+      "row": 8,
+      "column": 6,
+      "size": [
+        52,
+        60,
+        47
+      ],
+      "blocks": 38309,
+      "offset": [
+        -28,
+        0,
+        -23
+      ],
+      "source_bounds": [
+        335,
+        2,
+        472,
+        386,
+        61,
+        518
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r08_c07",
+      "source": "21.schem",
+      "row": 8,
+      "column": 7,
+      "size": [
+        38,
+        60,
+        36
+      ],
+      "blocks": 33047,
+      "offset": [
+        -18,
+        0,
+        -17
+      ],
+      "source_bounds": [
+        411,
+        2,
+        478,
+        448,
+        61,
+        513
+      ],
+      "landmark": "colossal_guardian"
+    },
+    {
+      "id": "natural_21_r08_c08",
+      "source": "21.schem",
+      "row": 8,
+      "column": 8,
+      "size": [
+        19,
+        30,
+        18
+      ],
+      "blocks": 3955,
+      "offset": [
+        -9,
+        0,
+        -9
+      ],
+      "source_bounds": [
+        486,
+        2,
+        486,
+        504,
+        31,
+        503
+      ],
+      "landmark": "colossal_guardian"
+    }
+  ],
+  "rareMobs": {
+    "ogre_hammer": [
+      [
+        "ancient_ruins"
+      ],
+      64,
+      [
+        "terralith:forested_highlands",
+        "terralith:shield"
+      ],
+      "any"
+    ],
+    "lostasset_mob3_herbgolem": [
+      [
+        "forest_guardian",
+        "colossal_guardian"
+      ],
+      64,
+      null,
+      "any"
+    ],
+    "horse_unicorn": [
+      [
+        "colossal_guardian",
+        "ruined_gate"
+      ],
+      64,
+      null,
+      "day"
+    ],
+    "kitsune_normal": [
+      [
+        "colossal_guardian",
+        "ruined_gate"
+      ],
+      64,
+      null,
+      "night"
+    ],
+    "stag_rune": [
+      [
+        "forest_guardian",
+        "colossal_guardian"
+      ],
+      64,
+      null,
+      "any"
+    ],
+    "golem_royal": [
+      [
+        "colossal_guardian"
+      ],
+      72,
+      null,
+      "any"
+    ],
+    "hippogryph_royal": [
+      [
+        "colossal_guardian"
+      ],
+      72,
+      null,
+      "day"
+    ],
+    "raptor_nightmare": [
+      [
+        "ancient_ruins",
+        "colossal_guardian"
+      ],
+      64,
+      null,
+      "night"
+    ],
+    "wolfhawk_fullmoon": [
+      [
+        "ancient_ruins",
+        "colossal_guardian"
+      ],
+      72,
+      null,
+      "night"
+    ],
+    "nocsy_cat_fallen": [
+      [
+        "ruined_gate",
+        "mushroom_guardian"
+      ],
+      48,
+      null,
+      "night"
+    ]
+  },
+  "biomes": {
+    "ruined_gate": [
+      "terralith:forested_highlands",
+      "terralith:shield",
+      "terralith:lavender_forest",
+      "terralith:moonlight_grove"
+    ],
+    "ancient_ruins": [
+      "terralith:forested_highlands",
+      "terralith:shield",
+      "terralith:moonlight_valley",
+      "terralith:lavender_valley"
+    ],
+    "forest_guardian": [
+      "terralith:forested_highlands",
+      "terralith:amethyst_rainforest",
+      "terralith:moonlight_grove",
+      "terralith:cloud_forest"
+    ],
+    "mushroom_guardian": [
+      "terralith:moonlight_grove",
+      "terralith:moonlight_valley",
+      "terralith:orchid_swamp",
+      "terralith:amethyst_rainforest"
+    ],
+    "colossal_guardian": [
+      "terralith:moonlight_grove",
+      "terralith:moonlight_valley",
+      "terralith:amethyst_rainforest",
+      "terralith:sakura_valley",
+      "terralith:sakura_grove",
+      "terralith:lavender_forest"
+    ]
+  },
+  "poolReferences": 585,
+  "missing": []
+}

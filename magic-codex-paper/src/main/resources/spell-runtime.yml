@@ -1,0 +1,250 @@
+# 서버 마력 스냅샷: 피해 = base-damage + power-ratio * 마력. 쿨타임은 기존 마법 가속 공식 사용.
+spells:
+  feather_fall:
+    name: "페더 폴"
+    skill: "CHA_feather_step"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  light_leap:
+    name: "상승 기류"
+    skill: "CHA_light_leap"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  wind_push:
+    name: "윈드 푸쉬"
+    skill: "CHA_wind_push"
+    target: "ENTITY"
+    range: 6
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  weightless_zone:
+    name: "무중력 지대"
+    skill: "CHA_weightless_zone"
+    target: "AIM"
+    range: 16
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  pressure_press:
+    name: "윈드 프레스"
+    skill: "CHA_pressure_press"
+    target: "AIR_ENTITY"
+    range: 20
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  vacuum_cleave:
+    name: "윈드 커터"
+    skill: "CHA_vacuum_cleave"
+    target: "AIM"
+    range: 24
+    utility: false
+    base-damage: 4
+    power-ratio: 0.35
+  cross_breeze:
+    name: "바람 화살"
+    skill: "CHA_cross_breeze"
+    target: "AIM"
+    range: 30
+    utility: false
+    base-damage: 7
+    power-ratio: 0.55
+  returning_blade:
+    name: "되돌이 칼날"
+    skill: "CHA_returning_blade"
+    target: "AIM"
+    range: 18
+    utility: false
+    base-damage: 4
+    power-ratio: 0.3
+  arrested_orbit:
+    name: "퍼붓는 화살"
+    skill: "CHA_arrested_orbit"
+    target: "AIM"
+    range: 25
+    utility: false
+    base-damage: 3
+    power-ratio: 0.2
+  pressure_rupture:
+    name: "토네이도 스핀"
+    skill: "CHA_pressure_rupture"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 4
+    power-ratio: 0.3
+  ember_bolt:
+    name: "파이어 볼"
+    skill: "CHA_ember_bolt"
+    target: "AIM"
+    range: 24
+    utility: false
+    base-damage: 2
+    power-ratio: 0.25
+  charcoal_conversion:
+    name: "발화"
+    skill: "CHA_charcoal_conversion"
+    target: "ENTITY"
+    range: 18
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  fire_curtain:
+    name: "플레어 월"
+    skill: "CHA_fire_curtain"
+    target: "AIM"
+    range: 12
+    utility: false
+    base-damage: 2
+    power-ratio: 0.12
+  flame_lash:
+    name: "화염 채찍"
+    skill: "CHA_flame_lash"
+    target: "ENTITY"
+    range: 8
+    utility: false
+    base-damage: 6
+    power-ratio: 0.5
+  cinder_detonation:
+    name: "스타 퓨리"
+    skill: "CHA_cinder_detonation"
+    target: "BURNING_ENTITY"
+    range: 18
+    utility: false
+    base-damage: 8
+    power-ratio: 0.6
+  palm_fireworks:
+    name: "손바닥 폭죽"
+    skill: "CHA_palm_fireworks"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  wind_basket:
+    name: "바람 바구니"
+    skill: "CHA_wind_basket"
+    target: "SELF"
+    range: 24
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  harvest_wind:
+    name: "수확의 바람"
+    skill: "CHA_harvest_wind"
+    target: "SELF"
+    range: 24
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  far_touch:
+    name: "손길 너머"
+    skill: "CHA_far_touch"
+    target: "SELF"
+    range: 24
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  gale_dash:
+    name: "바람 걸음"
+    skill: "CHA_gale_dash"
+    target: "SELF"
+    range: 24
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  wind_grooming:
+    name: "바람 털빗"
+    skill: "CHA_wind_grooming"
+    target: "SELF"
+    range: 24
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  dust_duster:
+    name: "클린"
+    skill: "CHA_dust_duster"
+    target: "SELF"
+    range: 24
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  leaf_cleanup:
+    name: "잎새 청소"
+    skill: "CHA_leaf_cleanup"
+    target: "SELF"
+    range: 24
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  feather_rustle:
+    name: "깃털 털기"
+    skill: "CHA_feather_rustle"
+    target: "SELF"
+    range: 24
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  hearth_touch:
+    name: "손끝의 화로"
+    skill: "CHA_hearth_touch"
+    target: "SELF"
+    range: 24
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  rekindle:
+    name: "다시 타오르는 불"
+    skill: "CHA_rekindle"
+    target: "SELF"
+    range: 24
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  living_furnace:
+    name: "살아 있는 화로"
+    skill: "CHA_living_furnace"
+    target: "SELF"
+    range: 24
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  sponge_drying:
+    name: "스펀지 말리기"
+    skill: "CHA_sponge_drying"
+    target: "SELF"
+    range: 24
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  boiling_armor:
+    name: "끓는 갑주"
+    skill: "CHA_boiling_armor"
+    target: "SELF"
+    range: 24
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  lava_suture:
+    name: "용암 봉합"
+    skill: "CHA_lava_suture"
+    target: "SELF"
+    range: 24
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  wick_trimming:
+    name: "심지 줄이기"
+    skill: "CHA_wick_trimming"
+    target: "SELF"
+    range: 24
+    utility: true
+    base-damage: 0
+    power-ratio: 0

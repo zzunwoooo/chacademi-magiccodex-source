@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "experience_confluence"
+name: "흩어진 경험"
+category: "wind"
+description: "주변 경험치 구슬들을 하나로 합치며 총량을 유지한다.\n\n흩어진 경험의 빛을 거듭 거두다 보면 하나로 모일 길이 보인다."
+icon: "magiccodex:textures/spells/expansion_3/experience_confluence.png"
+permission: "magic.learned.experience_confluence"
+discovery:
+  description: "경험치 구슬을 누적 200개 획득하기."
+research: "작은 깨달음을 합쳐도 경험의 총량은 달라지지 않는다. 거두기 편해질 뿐이다."
+cast:
+  command: "마법 흩어진경험"
+  cooldown-seconds: 8
+  mana-cost: 15
+order: 2140

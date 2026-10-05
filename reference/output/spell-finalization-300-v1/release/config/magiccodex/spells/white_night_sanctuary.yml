@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "white_night_sanctuary"
+name: "백야의 성역"
+category: "light"
+description: "작은 야영 구역에 90초간 일반 적대 몬스터가 자연 생성되지 못하게 합니다. 이미 있던 적과 생성기는 영향을 받지 않습니다.\n\n잠들지 않고 모닥불 곁에서 밤을 지나 아침을 맞은 경험이 어둠을 밀어내는 성역을 만든다."
+icon: "magiccodex:textures/spells/expansion_2/white_night_sanctuary.png"
+permission: "magic.learned.white_night_sanctuary"
+discovery:
+  description: "침대에서 자지 않고 모닥불 8블록 안에서 밤부터 해 뜰 때까지 생존하기."
+research: "오늘 밤만큼은 모두가 편히 눈을 감을 수 있기를."
+cast:
+  command: "마법 백야의성역"
+  cooldown-seconds: 180
+  mana-cost: 250
+order: 1630

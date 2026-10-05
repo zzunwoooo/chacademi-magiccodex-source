@@ -1,0 +1,14 @@
+id: shadow_tracking
+name: 그림자 추적
+category: dark
+description: 지정한 적 한 마리까지의 방향과 거리를 잠시 알려줍니다. 일정 거리 밖으로 나가면 끊깁니다.
+icon: magiccodex:textures/spells/expansion_2/shadow_tracking.png
+permission: magic.learned.shadow_tracking
+discovery:
+  description: 밤에 몬스터를 누적 20마리 처치하기.
+research: 달아난 발자국은 지워져도 그림자의 방향은 남는다.
+cast:
+  command: ''
+  cooldown-seconds: 20
+  mana-cost: 25
+order: 187

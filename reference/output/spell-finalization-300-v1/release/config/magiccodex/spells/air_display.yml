@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "air_display"
+name: "허공 진열"
+category: "wind"
+description: "아이템 하나를 공중에 띄워 천천히 회전시킨다.\n\n액자에 물건을 거듭 전시하다 보면 틀 없이 보여 줄 방법을 떠올릴 수 있다."
+icon: "magiccodex:textures/spells/expansion_3/air_display.png"
+permission: "magic.learned.air_display"
+discovery:
+  description: "아이템 액자에 물건을 누적 10회 넣기."
+research: "보기 좋은 각도는 물건마다 다르다. 허공의 작은 진열대는 어느 방향에서든 살펴볼 수 있다."
+cast:
+  command: "마법 허공진열"
+  cooldown-seconds: 5
+  mana-cost: 8
+order: 2020

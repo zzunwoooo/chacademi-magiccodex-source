@@ -1,0 +1,14 @@
+id: pain_deferral
+name: 고통 유예
+category: dark
+description: 6초 동안 받는 피해의 절반을 뒤로 미룹니다. 미룬 피해는 효과 종료 후 5초에 걸쳐 받습니다.
+icon: magiccodex:textures/spells/expansion/pain_deferral.png
+permission: magic.learned.pain_deferral
+discovery:
+  description: 재생 효과를 받는 동안 몬스터에게 누적 100 피해 받기.
+research: 아프지 않은 것이 아니다. 아직 아플 차례가 오지 않았을 뿐이다.
+cast:
+  command: ''
+  cooldown-seconds: 45
+  mana-cost: 150
+order: 181

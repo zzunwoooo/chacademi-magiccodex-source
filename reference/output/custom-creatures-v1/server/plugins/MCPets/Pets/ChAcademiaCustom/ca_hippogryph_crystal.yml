@@ -1,0 +1,17 @@
+"Id": "ca_hippogryph_crystal"
+"MythicMob": "CA_Pet_hippogryph_crystal"
+"Permission": "chacademia.pet.ca_hippogryph_crystal"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f수정 히포그리프"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "높은 절벽에 둥지를 만들고 주변을 살핀다. 수정 계열의 변이 개체."
+    - "서식지: 자수정 협곡 / 에메랄드 봉우리"
+    - "3성"

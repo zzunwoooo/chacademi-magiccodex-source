@@ -1,0 +1,17 @@
+"Id": "ca_raptor_red"
+"MythicMob": "CA_Pet_raptor_red"
+"Permission": "chacademia.pet.ca_raptor_red"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f적갈 랩터"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "정글 수풀을 가르며 사냥하는 민첩한 포식자. 적갈 계열의 변이 개체."
+    - "서식지: 열대 정글 / 바위 정글"
+    - "2성"

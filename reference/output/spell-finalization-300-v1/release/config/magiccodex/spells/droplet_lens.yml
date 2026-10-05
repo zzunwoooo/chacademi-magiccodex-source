@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "droplet_lens"
+name: "물방울 렌즈"
+category: "water"
+description: "바라보는 방향을 확대해 먼 건물이나 지형을 살펴본다.\n\n망원경으로 멀리 살펴본 눈은 작은 물방울에도 렌즈의 곡선을 찾는다."
+icon: "magiccodex:textures/spells/expansion_3/droplet_lens.png"
+permission: "magic.learned.droplet_lens"
+discovery:
+  description: "망원경으로 먼 곳을 누적 10회 관측하기."
+research: "큰 유리 없이도 빛은 굽어진다. 흔들리는 물방울은 먼저 안정시켜야 한다."
+cast:
+  command: "마법 물방울렌즈"
+  cooldown-seconds: 5
+  mana-cost: 10
+order: 2380

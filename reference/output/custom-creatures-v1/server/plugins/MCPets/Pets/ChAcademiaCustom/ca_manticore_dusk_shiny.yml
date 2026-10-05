@@ -1,0 +1,17 @@
+"Id": "ca_manticore_dusk_shiny"
+"MythicMob": "CA_Pet_manticore_dusk_shiny"
+"Permission": "chacademia.pet.ca_manticore_dusk_shiny"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e황혼 만티코어"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "황량한 협곡의 그늘에서 먹잇감을 기다린다. 황혼 계열의 변이 개체."
+    - "서식지: 달빛 계곡 / 사막 협곡"
+    - "3성"

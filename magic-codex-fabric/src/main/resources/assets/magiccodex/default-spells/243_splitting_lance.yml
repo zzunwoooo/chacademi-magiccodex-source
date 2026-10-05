@@ -1,0 +1,14 @@
+id: splitting_lance
+name: 갈라지는 창
+category: water
+description: 첫 적에게 맞은 얼음 창이 파편으로 갈라져 뒤쪽을 공격한다.
+icon: ''
+permission: magic.learned.splitting_lance
+discovery:
+  description: 물 마법 실전 수업의 얼음 투사체 실습을 완료하기.
+research: 창은 첫 적에게, 파편은 그 뒤에 기다리는 적에게 향한다.
+cast:
+  command: ''
+  cooldown-seconds: 25
+  mana-cost: 95
+order: 243

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "protective_ward"
+name: "보호 결계"
+category: "light"
+description: "5초 동안 정면에 빛의 결계를 펼쳐 적의 투사체를 막습니다.\n\n빛의 방어 수업에서는 상처를 고치는 것보다 먼저 막아 내는 법을 배운다."
+icon: "magiccodex:textures/spells/intermediate/protective_ward.png"
+permission: "magic.learned.protective_ward"
+discovery:
+  description: "빛 마법 방어 수업을 통해 습득."
+research: "누군가의 앞을 가로막기 위해서가 아니라 뒤에 있는 이를 지키기 위한 빛."
+cast:
+  command: "마법 보호결계"
+  cooldown-seconds: 30
+  mana-cost: 100
+order: 1390

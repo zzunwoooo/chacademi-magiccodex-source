@@ -1,0 +1,14 @@
+id: hungry_edge
+name: 굶주린 칼끝
+category: dark
+description: 다음 공격이 체력보다 보호막에 강한 피해를 준다.
+icon: ''
+permission: magic.learned.hungry_edge
+discovery:
+  description: 방패를 든 몬스터를 누적 15마리 처치하기.
+research: 날카로운 굶주림은 살보다 마력의 외피를 먼저 탐한다.
+cast:
+  command: ''
+  cooldown-seconds: 18
+  mana-cost: 60
+order: 285

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "flame_boundary"
+name: "화염 고리"
+category: "fire"
+description: "적 주위에 불의 고리를 만들어 경계를 넘으면 피해를 준다.\n\n화염 방어 실습에서는 벽뿐 아니라 적이 넘기 어려운 경계도 배운다."
+icon: "magiccodex:textures/spells/expansion_3/flame_boundary.png"
+permission: "magic.learned.flame_boundary"
+discovery:
+  description: "화염 마법 방어 실습을 완료하기."
+research: "고리의 안쪽보다 경계가 뜨겁다. 한 걸음의 선택을 묻는 불이다."
+cast:
+  command: "마법 화염고리"
+  cooldown-seconds: 30
+  mana-cost: 100
+order: 2250

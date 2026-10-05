@@ -1,0 +1,14 @@
+id: ember_transfer
+name: 불씨 옮기기
+category: fire
+description: 불타는 적의 불을 다른 적에게 옮기며 남은 연소 시간을 유지한다.
+icon: ''
+permission: magic.learned.ember_transfer
+discovery:
+  description: 발화를 누적 20회 사용하기.
+research: 불의 시간을 새로 만드는 대신 남은 시간을 이어 준다.
+cast:
+  command: ''
+  cooldown-seconds: 15
+  mana-cost: 40
+order: 223

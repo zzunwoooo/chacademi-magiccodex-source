@@ -1,0 +1,14 @@
+name: ChAcademiaTornado
+version: '${version}'
+main: school.chacademia.tornado.TornadoPlugin
+api-version: '1.21.4'
+depend: [MythicMobs, WorldGuard, ModelEngine]
+softdepend: [MagicCodexBridge]
+commands:
+  chatornado:
+    description: Inspect or stop active tornadoes
+    usage: /chatornado <status|stop>
+    permission: chacademia.tornado.admin
+permissions:
+  chacademia.tornado.admin:
+    default: op

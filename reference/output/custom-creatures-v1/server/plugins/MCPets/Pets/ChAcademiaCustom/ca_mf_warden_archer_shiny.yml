@@ -1,0 +1,17 @@
+"Id": "ca_mf_warden_archer_shiny"
+"MythicMob": "CA_Pet_mf_warden_archer_shiny"
+"Permission": "chacademia.pet.ca_mf_warden_archer_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e봉인의 궁수"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "봉인 유적 외곽을 감시하는 궁수."
+    - "서식지: 깊은 동굴"
+    - "3성"

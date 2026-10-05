@@ -1,0 +1,14 @@
+id: gravel_sifting
+name: 자갈 체질
+category: earth
+description: 자갈을 모래로 바꾼다.
+icon: ''
+permission: magic.learned.gravel_sifting
+discovery:
+  description: 자갈을 누적 64개 채굴하기.
+research: 거친 알갱이를 더 작은 결로 나누는 일이다. 새로운 땅을 만들어 내는 것은 아니다.
+cast:
+  command: ''
+  cooldown-seconds: 5
+  mana-cost: 15
+order: 252

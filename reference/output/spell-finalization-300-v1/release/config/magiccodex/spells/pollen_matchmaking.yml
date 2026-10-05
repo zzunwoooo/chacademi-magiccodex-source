@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "pollen_matchmaking"
+name: "꽃가루 중매"
+category: "earth"
+description: "번식 가능한 동물 한 쌍에게 소지한 먹이를 전달해 번식을 돕습니다. 성장과 번식 대기시간은 지킵니다.\n\n소와 양, 돼지의 번식을 도와 본 경험이 생명을 잇는 꽃가루의 길이 된다."
+icon: "magiccodex:textures/spells/expansion_2/pollen_matchmaking.png"
+permission: "magic.learned.pollen_matchmaking"
+discovery:
+  description: "소·양·돼지를 각각 3회 번식시키기."
+research: "동물마다 좋아하는 먹이가 다르다. 마법을 배웠다고 목장 관리의 기본까지 생략할 수는 없다."
+cast:
+  command: "마법 꽃가루중매"
+  cooldown-seconds: 15
+  mana-cost: 25
+order: 1210

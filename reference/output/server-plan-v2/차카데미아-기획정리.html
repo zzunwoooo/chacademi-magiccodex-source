@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>차카데미아 — 서버 기획 정리</title>
+<style>
+:root{--bg:#efeee9;--paper:#fffefa;--ink:#23333e;--muted:#637079;--line:#dedfd8;--navy:#142c3d;--gold:#b49b67}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard","Noto Sans KR","Malgun Gothic",sans-serif;font-size:15px;line-height:1.8;word-break:keep-all;overflow-wrap:break-word}
+.sheet{max-width:1000px;margin:48px auto;background:var(--paper);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 16px 60px #152a3510}
+header{padding:42px 52px 38px;background:var(--navy);color:#f5f4ee;border-top:4px solid var(--gold)}
+.meta{display:flex;justify-content:space-between;gap:16px;color:#bac7ce;font-size:11px;letter-spacing:.035em}
+h1{font-size:40px;letter-spacing:-.05em;line-height:1.3;margin:23px 0 17px;font-weight:750}
+.intro{max-width:790px;margin:0;color:#e0e5e4;font-size:16px;line-height:1.9}
+.intro strong{color:#fff;font-weight:650}
+main{padding:34px 52px 38px}
+.section-title{display:flex;align-items:baseline;gap:13px;margin:0 0 20px}
+.section-title span{color:#a08b60;font-size:11px;font-weight:700}
+h2{margin:0;font-size:19px;letter-spacing:-.035em;line-height:1.5}
+.content-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 32px}
+article{padding:20px 0;border-top:1px solid var(--line)}
+.card-title{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.mark{width:6px;height:6px;background:#8ba49e;border-radius:50%;flex:none}
+h3{margin:0;font-size:16px;font-weight:700;letter-spacing:-.025em}
+article p{margin:0;color:var(--muted);font-size:14px;line-height:1.85}
+.detail{margin-top:26px;padding:24px 26px;background:#f0f2ed;border-radius:10px}
+.detail h2{font-size:17px;margin-bottom:14px}
+dl{margin:0;display:grid;grid-template-columns:100px 1fr;gap:10px 20px;font-size:13px}
+dt{font-weight:700;color:#42564f}dd{margin:0;color:#56655e}
+.houses{display:flex;flex-wrap:wrap;gap:6px 18px}
+.house{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.flag{display:inline-block;width:8px;height:12px;background:var(--color);clip-path:polygon(0 0,100% 0,100% 100%,50% 76%,0 100%)}
+.note{color:#788179;font-size:12px;margin:21px 0 0;line-height:1.8}
+footer{display:flex;justify-content:space-between;gap:16px;padding:18px 52px;border-top:1px solid var(--line);font-size:11px;color:#7c8588}
+@media(max-width:700px){.sheet{margin:0;border:0;border-radius:0;box-shadow:none}header{padding:29px 25px 28px}h1{font-size:34px;margin-top:22px}.intro{font-size:14px}main{padding:28px 25px}.content-grid{grid-template-columns:1fr}.detail{padding:21px 18px}dl{grid-template-columns:1fr;gap:4px}dd{margin-bottom:10px}dd:last-child{margin-bottom:0}footer{padding:18px 25px}.meta{font-size:10px}article{padding:18px 0}}
+@media print{@page{size:A4;margin:13mm}body{background:white;font-size:10pt;print-color-adjust:exact;-webkit-print-color-adjust:exact}.sheet{margin:0;max-width:none;border:0;border-radius:0;box-shadow:none}header{padding:24px 28px}h1{font-size:30px;margin:15px 0 12px}.intro{font-size:11px}.meta{font-size:9px}main{padding:22px 28px}.section-title{margin-bottom:14px}h2{font-size:16px}.content-grid{column-gap:24px}article{padding:12px 0;break-inside:avoid}h3{font-size:13px}article p{font-size:10.5px;line-height:1.8}.detail{margin-top:18px;padding:17px 20px;break-inside:avoid}.detail h2{font-size:14px}dl{font-size:10px;gap:7px 15px;grid-template-columns:75px 1fr}.note{font-size:9px;margin-top:14px}footer{padding:13px 28px;font-size:9px}}
+</style>
+</head>
+<body>
+<div class="sheet">
+<header>
+  <div class="meta"><span>마인크래프트 마법학교 서버</span><span>기획 정리 · 2026.09.22</span></div>
+  <h1>차카데미아</h1>
+  <p class="intro"><strong>마법을 발견하고 수집해 학교에 기증하는 것</strong>이 핵심인 마법학교 RPG 서버입니다. 생활과 탐험 중에 마법을 배우고, 배운 마법을 퀴디치·던전·학교 활동에 활용합니다.</p>
+</header>
+<main>
+  <div class="section-title"><span>01</span><h2>주요 콘텐츠</h2></div>
+  <div class="content-grid">
+    <article><div class="card-title"><span class="mark"></span><h3>마법 발견과 도감</h3></div><p>행동, 상황, 수업과 책을 통해 마법을 획득합니다. 생활·이동·공격·보조 마법을 포함해 400종까지 확대할 계획이며, 배우기 전에는 획득 조건을 숨깁니다.</p></article>
+    <article><div class="card-title"><span class="mark"></span><h3>학교 기증과 기숙사</h3></div><p>발견한 마법을 학교에 기증하고 기숙사에 기여합니다. 최초 발견자를 위한 칭호 보상을 마련하며, 기증 점수와 기숙사 경쟁의 세부 규칙은 별도로 정합니다.</p></article>
+    <article><div class="card-title"><span class="mark"></span><h3>퀴디치</h3></div><p>출전 전에 사용할 마법을 선택하는 3대3 팀 경기입니다. 각자 가져온 마법과 팀의 조합에 따라 경기 전략이 달라집니다.</p></article>
+    <article><div class="card-title"><span class="mark"></span><h3>야생 탐험과 던전</h3></div><p>야생을 탐험하며 던전을 발견합니다. 획득한 마법으로 기믹을 해결하거나 보스를 공략하며, 탐험과 전투를 함께 즐깁니다.</p></article>
+    <article><div class="card-title"><span class="mark"></span><h3>캐릭터와 장비 성장</h3></div><p>마법봉·아티팩트·방어구를 강화해 캐릭터를 성장시킵니다. 플레이어의 서클은 1~9단계로 구분하고, 성장에 따라 캐릭터 주변 연출도 달라집니다.</p></article>
+    <article><div class="card-title"><span class="mark"></span><h3>펫과 치장품 수집</h3></div><p>마법 외에도 펫과 치장품을 수집합니다. 캐릭터를 꾸미고, 다양한 수집 목표를 이어갈 수 있도록 구성합니다.</p></article>
+    <article><div class="card-title"><span class="mark"></span><h3>수업·도서관·친구</h3></div><p>학교에서 얻은 지식을 마법 발견에 활용합니다. 친구 목록에서 상대 정보를 확인하고, ‘바람의 전언’ 마법으로 귓말을 보냅니다.</p></article>
+    <article><div class="card-title"><span class="mark"></span><h3>계절 콘텐츠</h3></div><p>계절에 맞는 활동과 이벤트를 운영합니다. 계절별 콘텐츠와 보상, 진행 주기는 추후 구체화합니다.</p></article>
+  </div>
+  <section class="detail" aria-labelledby="basics">
+    <h2 id="basics">기본 구성</h2>
+    <dl>
+      <dt>마법 속성</dt><dd>바람 · 화염 · 물 · 대지 · 빛 · 어둠</dd>
+      <dt>마법 사용</dt><dd>최대 6개를 단축키에 등록하고, 마나와 재사용 시간을 적용합니다. 퀴디치의 반입 개수와 제한은 별도로 정합니다.</dd>
+      <dt>성장 구분</dt><dd>플레이어의 서클은 유지하며, 마법 자체에는 별도의 등급을 두지 않습니다.</dd>
+      <dt>기숙사</dt><dd class="houses"><span class="house"><i class="flag" style="--color:#963e43" aria-hidden="true"></i>아르케온 · 빨강</span><span class="house"><i class="flag" style="--color:#37638e" aria-hidden="true"></i>루미나 · 파랑</span><span class="house"><i class="flag" style="--color:#447355" aria-hidden="true"></i>베스티아즈 · 초록</span><span class="house"><i class="flag" style="--color:#b5983e" aria-hidden="true"></i>노크세르 · 노랑</span></dd>
+      <dt>전용 UI</dt><dd>도감, 키 설정, 상태 표시, 스테이터스와 친구창을 전용 모드로 제공합니다.</dd>
+    </dl>
+  </section>
+  <p class="note">전체 기획 방향을 정리한 문서입니다. 콘텐츠별 구현 상태와는 구분하며, 경기 규칙·기증 보상·서클 승급·강화 수치는 후속 기획에서 확정합니다.</p>
+</main>
+<footer><span>차카데미아</span><span>서버 기획 정리</span></footer>
+</div>
+</body>
+</html>

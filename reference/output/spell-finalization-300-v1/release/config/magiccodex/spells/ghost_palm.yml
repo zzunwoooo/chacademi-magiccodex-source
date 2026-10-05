@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "ghost_palm"
+name: "유령 손바닥"
+category: "dark"
+description: "장비를 벗지 않고 빈손 상호작용을 한 번 수행한다.\n\n빈손으로 여러 장치를 움직인 경험이 장비를 내려놓지 않아도 같은 손길을 부른다."
+icon: "magiccodex:textures/spells/expansion_3/ghost_palm.png"
+permission: "magic.learned.ghost_palm"
+discovery:
+  description: "빈손으로 문·레버·버튼을 합쳐 누적 30회 작동시키기."
+research: "손은 가득 차 있어도 그림자에는 빈 손바닥 하나가 남아 있다."
+cast:
+  command: "마법 유령손바닥"
+  cooldown-seconds: 6
+  mana-cost: 12
+order: 2810

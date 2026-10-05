@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "lodestone_trace"
+name: "자철석 손길"
+category: "earth"
+description: "자신이 던진 회수 가능한 투척 아이템의 착지 위치를 표시한다.\n\n던진 삼지창을 거듭 되찾은 경험이 떠난 물체와 남은 손을 이어 준다."
+icon: "magiccodex:textures/spells/expansion_3/lodestone_trace.png"
+permission: "magic.learned.lodestone_trace"
+discovery:
+  description: "삼지창을 누적 10회 던지고 회수하기."
+research: "되돌아오지 않는 물건이라면 먼저 떨어진 곳부터 알아야 한다."
+cast:
+  command: "마법 자철석손길"
+  cooldown-seconds: 8
+  mana-cost: 12
+order: 2590

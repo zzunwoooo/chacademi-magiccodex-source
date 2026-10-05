@@ -1,0 +1,14 @@
+id: earth_shaping
+name: 대지 성형
+category: earth
+description: 자신의 건축 구역에서 바라보는 흙 지형 최대 9칸을 한 칸 높이거나 낮춥니다. 높일 때는 소지한 흙을 소비합니다.
+icon: magiccodex:textures/spells/intermediate/earth_shaping.png
+permission: magic.learned.earth_shaping
+discovery:
+  description: 흙 블록 누적 100개 설치하기.
+research: 길이 불편하면 길을 바꾸면 된다. 단, 다른 학생의 기숙사 바닥을 바꾸지는 말자.
+cast:
+  command: ''
+  cooldown-seconds: 30
+  mana-cost: 70
+order: 101

@@ -1,0 +1,3816 @@
+{
+  "status": "proposal_not_applied",
+  "source": "Chacademia-Terralith-1.21.4-v1.zip / active format-61 overlay",
+  "customBiomesInGenerator": 95,
+  "formula": "base + healthBonus * (1 - health/maxHealth); bosses: base only",
+  "entries": [
+    {
+      "id": "squirrel",
+      "name": "도토리 다람쥐",
+      "region": "숲",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:forested_highlands, terralith:birch_taiga",
+      "habitat": "나무 아래와 숲 가장자리의 육상 개체.",
+      "pack": "Wilderness 2.2",
+      "entryId": "squirrel",
+      "description": "나무 사이를 오가며 도토리를 숨기는 작은 숲 주민.",
+      "biomeIds": [
+        "terralith:forested_highlands",
+        "terralith:birch_taiga"
+      ],
+      "biomeNames": [
+        "숲 우거진 고지",
+        "자작나무 타이가"
+      ],
+      "stars": 1,
+      "baseChance": 55.0,
+      "healthBonus": 20.0,
+      "chanceAt10": 73.0,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "owl",
+      "name": "밤눈 올빼미",
+      "region": "침엽수림",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:siberian_taiga, terralith:moonlight_grove",
+      "habitat": "침엽수림의 바위·거목 주변 육상 개체. 야간 출현 권장.",
+      "pack": "Wilderness 2.2",
+      "entryId": "owl",
+      "description": "어두운 숲길을 지켜보다 밤에 모습을 드러내는 새.",
+      "biomeIds": [
+        "terralith:siberian_taiga",
+        "terralith:moonlight_grove"
+      ],
+      "biomeNames": [
+        "시베리아 타이가",
+        "달빛 숲"
+      ],
+      "stars": 1,
+      "baseChance": 35.0,
+      "healthBonus": 25.0,
+      "chanceAt10": 57.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "skunk",
+      "name": "줄무늬 스컹크",
+      "region": "숲",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:brushland, terralith:forested_highlands",
+      "habitat": "나무 아래와 숲 가장자리의 육상 개체.",
+      "pack": "Wilderness 2.2",
+      "entryId": "skunk",
+      "description": "수풀에 숨어 지내며 낯선 발소리에 경계하는 동물.",
+      "biomeIds": [
+        "terralith:brushland",
+        "terralith:forested_highlands"
+      ],
+      "biomeNames": [
+        "관목 초원",
+        "숲 우거진 고지"
+      ],
+      "stars": 1,
+      "baseChance": 45.0,
+      "healthBonus": 25.0,
+      "chanceAt10": 67.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "hedgehog",
+      "name": "낙엽 고슴도치",
+      "region": "숲",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:birch_taiga, terralith:lavender_forest",
+      "habitat": "나무 아래와 숲 가장자리의 육상 개체.",
+      "pack": "Wilderness 2.2",
+      "entryId": "hedgehog",
+      "description": "낙엽 아래에서 먹이를 찾는 조심스러운 숲 주민.",
+      "biomeIds": [
+        "terralith:birch_taiga",
+        "terralith:lavender_forest"
+      ],
+      "biomeNames": [
+        "자작나무 타이가",
+        "라벤더 숲"
+      ],
+      "stars": 1,
+      "baseChance": 55.0,
+      "healthBonus": 20.0,
+      "chanceAt10": 73.0,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "elk",
+      "name": "고산 엘크",
+      "region": "침엽수림",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:alpine_grove, terralith:alpine_highlands",
+      "habitat": "침엽수림의 바위·거목 주변 육상 개체.",
+      "pack": "Wilderness 2.2",
+      "entryId": "elk",
+      "description": "고산 숲의 넓은 공터를 무리 지어 걷는 사슴.",
+      "biomeIds": [
+        "terralith:alpine_grove",
+        "terralith:alpine_highlands"
+      ],
+      "biomeNames": [
+        "고산 숲",
+        "고산 고지"
+      ],
+      "stars": 2,
+      "baseChance": 18.0,
+      "healthBonus": 17.0,
+      "chanceAt10": 33.3,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "lil_bird",
+      "name": "꽃숲 작은새",
+      "region": "숲",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:blooming_valley, terralith:sakura_grove",
+      "habitat": "나무 아래와 숲 가장자리의 육상 개체.",
+      "pack": "Wilderness 2.2",
+      "entryId": "lil_bird",
+      "description": "꽃피는 계곡의 가지 위에 모이는 작은 새.",
+      "biomeIds": [
+        "terralith:blooming_valley",
+        "terralith:sakura_grove"
+      ],
+      "biomeNames": [
+        "꽃피는 계곡",
+        "벚꽃 숲"
+      ],
+      "stars": 1,
+      "baseChance": 55.0,
+      "healthBonus": 20.0,
+      "chanceAt10": 73.0,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "raccoon",
+      "name": "개울 너구리",
+      "region": "숲",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:lush_valley, terralith:forested_highlands",
+      "habitat": "나무 아래와 숲 가장자리의 육상 개체.",
+      "pack": "Wilderness 2.2",
+      "entryId": "raccoon",
+      "description": "개울과 숲의 경계를 오가며 먹이를 찾는다.",
+      "biomeIds": [
+        "terralith:lush_valley",
+        "terralith:forested_highlands"
+      ],
+      "biomeNames": [
+        "푸른 계곡",
+        "숲 우거진 고지"
+      ],
+      "stars": 1,
+      "baseChance": 45.0,
+      "healthBonus": 25.0,
+      "chanceAt10": 67.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "frog",
+      "name": "난초 개구리",
+      "region": "늪",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:orchid_swamp, terralith:warm_river",
+      "habitat": "늪과 강의 물가. 육상·수중 조건은 개체별 지정.",
+      "pack": "Wilderness 2.2",
+      "entryId": "frog",
+      "description": "난초가 핀 늪의 얕은 물가에 숨어 산다.",
+      "biomeIds": [
+        "terralith:orchid_swamp",
+        "terralith:warm_river"
+      ],
+      "biomeNames": [
+        "난초 늪",
+        "따뜻한 강"
+      ],
+      "stars": 1,
+      "baseChance": 50.0,
+      "healthBonus": 25.0,
+      "chanceAt10": 72.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "bear",
+      "name": "산림 불곰",
+      "region": "침엽수림",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:siberian_taiga, terralith:alpine_grove",
+      "habitat": "침엽수림의 바위·거목 주변 육상 개체.",
+      "pack": "Wilderness 2.2",
+      "entryId": "bear",
+      "description": "침엽수림 깊은 곳의 바위 굴을 차지한 큰 곰.",
+      "biomeIds": [
+        "terralith:siberian_taiga",
+        "terralith:alpine_grove"
+      ],
+      "biomeNames": [
+        "시베리아 타이가",
+        "고산 숲"
+      ],
+      "stars": 2,
+      "baseChance": 12.0,
+      "healthBonus": 13.0,
+      "chanceAt10": 23.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "bear_black",
+      "name": "그늘 흑곰",
+      "region": "숲",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:forested_highlands, terralith:shield",
+      "habitat": "나무 아래와 숲 가장자리의 육상 개체.",
+      "pack": "Wilderness 2.2",
+      "entryId": "bear_black",
+      "description": "그늘진 고지대 숲에서 영역을 지키는 곰.",
+      "biomeIds": [
+        "terralith:forested_highlands",
+        "terralith:shield"
+      ],
+      "biomeNames": [
+        "숲 우거진 고지",
+        "방패암 숲"
+      ],
+      "stars": 2,
+      "baseChance": 14.0,
+      "healthBonus": 14.0,
+      "chanceAt10": 26.6,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "bear_polar",
+      "name": "빙하 백곰",
+      "region": "설원",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:frozen_cliffs, terralith:glacial_chasm",
+      "habitat": "빙하·설림의 육상 구역.",
+      "pack": "Wilderness 2.2",
+      "entryId": "bear_polar",
+      "description": "얼어붙은 절벽과 빙하 가장자리를 순찰한다.",
+      "biomeIds": [
+        "terralith:frozen_cliffs",
+        "terralith:glacial_chasm"
+      ],
+      "biomeNames": [
+        "얼어붙은 절벽",
+        "빙하 협곡"
+      ],
+      "stars": 2,
+      "baseChance": 10.0,
+      "healthBonus": 12.0,
+      "chanceAt10": 20.8,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "timber_wolf",
+      "name": "침엽 숲늑대",
+      "region": "침엽수림",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:siberian_taiga, terralith:birch_taiga",
+      "habitat": "침엽수림의 바위·거목 주변 육상 개체.",
+      "pack": "동물의숲.zip > nature_mobs.zip",
+      "entryId": "timber_wolf",
+      "description": "차가운 숲에서 무리와 함께 사냥하는 늑대.",
+      "biomeIds": [
+        "terralith:siberian_taiga",
+        "terralith:birch_taiga"
+      ],
+      "biomeNames": [
+        "시베리아 타이가",
+        "자작나무 타이가"
+      ],
+      "stars": 2,
+      "baseChance": 20.0,
+      "healthBonus": 20.0,
+      "chanceAt10": 38.0,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "tortoise",
+      "name": "초원 육지거북",
+      "region": "초원",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:steppe, terralith:brushland",
+      "habitat": "초원 공터의 작은 무리.",
+      "pack": "동물의숲.zip > nature_mobs.zip",
+      "entryId": "tortoise",
+      "description": "마른 초원의 풀 사이를 느긋하게 걷는다.",
+      "biomeIds": [
+        "terralith:steppe",
+        "terralith:brushland"
+      ],
+      "biomeNames": [
+        "대초원",
+        "관목 초원"
+      ],
+      "stars": 1,
+      "baseChance": 55.0,
+      "healthBonus": 20.0,
+      "chanceAt10": 73.0,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "catfish",
+      "name": "온수 메기",
+      "region": "늪",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:warm_river, terralith:orchid_swamp",
+      "habitat": "지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.",
+      "pack": "동물의숲.zip > nature_mobs.zip",
+      "entryId": "catfish",
+      "description": "따뜻한 강의 바닥 가까이에서 헤엄친다.",
+      "biomeIds": [
+        "terralith:warm_river",
+        "terralith:orchid_swamp"
+      ],
+      "biomeNames": [
+        "따뜻한 강",
+        "난초 늪"
+      ],
+      "stars": 1,
+      "baseChance": 45.0,
+      "healthBonus": 25.0,
+      "chanceAt10": 67.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "butterfly",
+      "name": "라벤더 나비",
+      "region": "마법숲",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:lavender_valley, terralith:blooming_valley",
+      "habitat": "거목·꽃 군락 인근 소규모 출현 지점.",
+      "pack": "BugCollector",
+      "entryId": "butterfly",
+      "description": "라벤더와 계곡의 꽃을 따라 날아다닌다.",
+      "biomeIds": [
+        "terralith:lavender_valley",
+        "terralith:blooming_valley"
+      ],
+      "biomeNames": [
+        "라벤더 계곡",
+        "꽃피는 계곡"
+      ],
+      "stars": 1,
+      "baseChance": 60.0,
+      "healthBonus": 15.0,
+      "chanceAt10": 73.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "buffalo",
+      "name": "고원 버팔로",
+      "region": "초원",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:steppe, terralith:temperate_highlands",
+      "habitat": "초원 공터의 작은 무리.",
+      "pack": "동물의숲.zip > nature_mobs.zip",
+      "entryId": "buffalo",
+      "description": "풀 많은 고원의 무리를 이끄는 튼튼한 초식동물.",
+      "biomeIds": [
+        "terralith:steppe",
+        "terralith:temperate_highlands"
+      ],
+      "biomeNames": [
+        "대초원",
+        "온대 고지"
+      ],
+      "stars": 2,
+      "baseChance": 20.0,
+      "healthBonus": 15.0,
+      "chanceAt10": 33.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "boar",
+      "name": "덤불 멧돼지",
+      "region": "숲",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:brushland, terralith:forested_highlands",
+      "habitat": "나무 아래와 숲 가장자리의 육상 개체.",
+      "pack": "동물의숲.zip > nature_mobs.zip",
+      "entryId": "boar",
+      "description": "덤불을 헤치며 뿌리와 열매를 찾는다.",
+      "biomeIds": [
+        "terralith:brushland",
+        "terralith:forested_highlands"
+      ],
+      "biomeNames": [
+        "관목 초원",
+        "숲 우거진 고지"
+      ],
+      "stars": 1,
+      "baseChance": 35.0,
+      "healthBonus": 25.0,
+      "chanceAt10": 57.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "alpha_boar",
+      "name": "송곳니 우두머리",
+      "region": "숲",
+      "role": "정예",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:forested_highlands, terralith:shield",
+      "habitat": "나무 아래와 숲 가장자리의 육상 개체.",
+      "pack": "동물의숲.zip > nature_mobs.zip",
+      "entryId": "alpha_boar",
+      "description": "오래된 숲의 멧돼지 무리를 지키는 강한 개체.",
+      "biomeIds": [
+        "terralith:forested_highlands",
+        "terralith:shield"
+      ],
+      "biomeNames": [
+        "숲 우거진 고지",
+        "방패암 숲"
+      ],
+      "stars": 2,
+      "baseChance": 8.0,
+      "healthBonus": 10.0,
+      "chanceAt10": 17.0,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "crocodile",
+      "name": "난초늪 악어",
+      "region": "늪",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:orchid_swamp, terralith:warm_river",
+      "habitat": "늪과 강의 물가. 육상·수중 조건은 개체별 지정.",
+      "pack": "동물의숲.zip > nature_mobs.zip",
+      "entryId": "crocodile",
+      "description": "따뜻한 늪의 물가에서 조용히 먹잇감을 기다린다.",
+      "biomeIds": [
+        "terralith:orchid_swamp",
+        "terralith:warm_river"
+      ],
+      "biomeNames": [
+        "난초 늪",
+        "따뜻한 강"
+      ],
+      "stars": 2,
+      "baseChance": 12,
+      "healthBonus": 13,
+      "chanceAt10": 23.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "buffalo",
+      "name": "고원의 우두머리",
+      "region": "초원",
+      "role": "정예",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:steppe, terralith:temperate_highlands",
+      "habitat": "초원 공터의 작은 무리.",
+      "pack": "동물의숲.zip > nature_mobs.zip",
+      "entryId": "buffalo-alpha",
+      "description": "버팔로 무리의 영역을 지키는 가장 강한 개체.",
+      "biomeIds": [
+        "terralith:steppe",
+        "terralith:temperate_highlands"
+      ],
+      "biomeNames": [
+        "대초원",
+        "온대 고지"
+      ],
+      "stars": 2,
+      "baseChance": 8,
+      "healthBonus": 10,
+      "chanceAt10": 17.0,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "lostasset_mob1_chicken",
+      "name": "아침볕 수탉",
+      "region": "학교",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:blooming_plateau, terralith:temperate_highlands",
+      "habitat": "해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.",
+      "pack": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_01_Farmstead.zip",
+      "entryId": "lostasset_mob1_chicken",
+      "description": "학교 외곽 목초지에서 아침을 알리는 새.",
+      "biomeIds": [
+        "terralith:blooming_plateau",
+        "terralith:temperate_highlands"
+      ],
+      "biomeNames": [
+        "꽃피는 고원",
+        "온대 고지"
+      ],
+      "stars": 1,
+      "baseChance": 60.0,
+      "healthBonus": 15.0,
+      "chanceAt10": 73.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "lostasset_mob1_rabbit",
+      "name": "꽃밭 흰토끼",
+      "region": "학교",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:blooming_valley, terralith:sakura_valley",
+      "habitat": "해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.",
+      "pack": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_01_Farmstead.zip",
+      "entryId": "lostasset_mob1_rabbit",
+      "description": "꽃밭과 벚나무 아래를 뛰어다니는 흰토끼.",
+      "biomeIds": [
+        "terralith:blooming_valley",
+        "terralith:sakura_valley"
+      ],
+      "biomeNames": [
+        "꽃피는 계곡",
+        "벚꽃 계곡"
+      ],
+      "stars": 1,
+      "baseChance": 60.0,
+      "healthBonus": 15.0,
+      "chanceAt10": 73.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "lostasset_mob1_sheep",
+      "name": "구름 양",
+      "region": "초원",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:alpine_highlands, terralith:temperate_highlands",
+      "habitat": "초원 공터의 작은 무리.",
+      "pack": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_01_Farmstead.zip",
+      "entryId": "lostasset_mob1_sheep",
+      "description": "구름처럼 포근한 모습으로 고원 풀밭을 거닌다.",
+      "biomeIds": [
+        "terralith:alpine_highlands",
+        "terralith:temperate_highlands"
+      ],
+      "biomeNames": [
+        "고산 고지",
+        "온대 고지"
+      ],
+      "stars": 1,
+      "baseChance": 45.0,
+      "healthBonus": 25.0,
+      "chanceAt10": 67.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "lostasset_mob1_wolf",
+      "name": "목초지 양치기",
+      "region": "학교",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:temperate_highlands, terralith:shield_clearing",
+      "habitat": "해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.",
+      "pack": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_01_Farmstead.zip",
+      "entryId": "lostasset_mob1_wolf",
+      "description": "초원 주변을 맴돌며 무리의 움직임을 살피는 늑대.",
+      "biomeIds": [
+        "terralith:temperate_highlands",
+        "terralith:shield_clearing"
+      ],
+      "biomeNames": [
+        "온대 고지",
+        "방패암 공터"
+      ],
+      "stars": 2,
+      "baseChance": 20.0,
+      "healthBonus": 20.0,
+      "chanceAt10": 38.0,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "lostasset_mob2_flowersprite",
+      "name": "꽃망울 정령",
+      "region": "마법숲",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:blooming_valley, terralith:lavender_valley",
+      "habitat": "거목·꽃 군락 인근 소규모 출현 지점.",
+      "pack": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_02_FairyLake.zip",
+      "entryId": "lostasset_mob2_flowersprite",
+      "description": "꽃이 무성한 곳에서 드물게 모습을 드러내는 정령.",
+      "biomeIds": [
+        "terralith:blooming_valley",
+        "terralith:lavender_valley"
+      ],
+      "biomeNames": [
+        "꽃피는 계곡",
+        "라벤더 계곡"
+      ],
+      "stars": 2,
+      "baseChance": 15.0,
+      "healthBonus": 15.0,
+      "chanceAt10": 28.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "lostasset_mob2_lakefairy",
+      "name": "달물결 요정",
+      "region": "늪",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:moonlight_valley, terralith:orchid_swamp",
+      "habitat": "늪과 강의 물가. 육상·수중 조건은 개체별 지정.",
+      "pack": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_02_FairyLake.zip",
+      "entryId": "lostasset_mob2_lakefairy",
+      "description": "달빛이 비치는 물가에 머무르는 작은 요정.",
+      "biomeIds": [
+        "terralith:moonlight_valley",
+        "terralith:orchid_swamp"
+      ],
+      "biomeNames": [
+        "달빛 계곡",
+        "난초 늪"
+      ],
+      "stars": 2,
+      "baseChance": 12.0,
+      "healthBonus": 13.0,
+      "chanceAt10": 23.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "lostasset_mob2_leaffairy",
+      "name": "잎새 요정",
+      "region": "마법숲",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:amethyst_rainforest, terralith:moonlight_grove",
+      "habitat": "거목·꽃 군락 인근 소규모 출현 지점.",
+      "pack": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_02_FairyLake.zip",
+      "entryId": "lostasset_mob2_leaffairy",
+      "description": "잎사귀 사이에서 숲의 바람을 따라 움직인다.",
+      "biomeIds": [
+        "terralith:amethyst_rainforest",
+        "terralith:moonlight_grove"
+      ],
+      "biomeNames": [
+        "자수정 우림",
+        "달빛 숲"
+      ],
+      "stars": 2,
+      "baseChance": 15.0,
+      "healthBonus": 15.0,
+      "chanceAt10": 28.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "lostasset_mob2_mushroomfairy",
+      "name": "포자 요정",
+      "region": "마법숲",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:cave/fungal_caves, terralith:moonlight_grove",
+      "habitat": "거목·꽃 군락 인근 소규모 출현 지점.",
+      "pack": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_02_FairyLake.zip",
+      "entryId": "lostasset_mob2_mushroomfairy",
+      "description": "습한 숲과 버섯 동굴 사이에서 자라난 요정.",
+      "biomeIds": [
+        "terralith:cave/fungal_caves",
+        "terralith:moonlight_grove"
+      ],
+      "biomeNames": [
+        "균류 동굴",
+        "달빛 숲"
+      ],
+      "stars": 2,
+      "baseChance": 15.0,
+      "healthBonus": 15.0,
+      "chanceAt10": 28.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "lostasset_mob3_herbgolem",
+      "name": "약초 수호골렘",
+      "region": "마법숲",
+      "role": "정예",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:amethyst_rainforest, terralith:lavender_forest",
+      "habitat": "거목·꽃 군락 인근 소규모 출현 지점.",
+      "pack": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_03_HerbGarden.zip",
+      "entryId": "lostasset_mob3_herbgolem",
+      "description": "약초 군락 주변을 지키는 오래된 숲의 수호자.",
+      "biomeIds": [
+        "terralith:amethyst_rainforest",
+        "terralith:lavender_forest"
+      ],
+      "biomeNames": [
+        "자수정 우림",
+        "라벤더 숲"
+      ],
+      "stars": 3,
+      "baseChance": 3.0,
+      "healthBonus": 4.0,
+      "chanceAt10": 6.6,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "lostasset_mob3_herbthief",
+      "name": "약초 도둑",
+      "region": "숲",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:lavender_forest, terralith:blooming_valley",
+      "habitat": "나무 아래와 숲 가장자리의 육상 개체.",
+      "pack": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_03_HerbGarden.zip",
+      "entryId": "lostasset_mob3_herbthief",
+      "description": "숲 가장자리에서 약초를 모아 숨기는 작은 생물.",
+      "biomeIds": [
+        "terralith:lavender_forest",
+        "terralith:blooming_valley"
+      ],
+      "biomeNames": [
+        "라벤더 숲",
+        "꽃피는 계곡"
+      ],
+      "stars": 1,
+      "baseChance": 35.0,
+      "healthBonus": 25.0,
+      "chanceAt10": 57.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "lostasset_mob3_mossyboar",
+      "name": "이끼 등멧돼지",
+      "region": "마법숲",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:cloud_forest, terralith:amethyst_rainforest",
+      "habitat": "거목·꽃 군락 인근 소규모 출현 지점.",
+      "pack": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_03_HerbGarden.zip",
+      "entryId": "lostasset_mob3_mossyboar",
+      "description": "습한 숲에서 등에 이끼를 두른 멧돼지.",
+      "biomeIds": [
+        "terralith:cloud_forest",
+        "terralith:amethyst_rainforest"
+      ],
+      "biomeNames": [
+        "운무 숲",
+        "자수정 우림"
+      ],
+      "stars": 2,
+      "baseChance": 16.0,
+      "healthBonus": 14.0,
+      "chanceAt10": 28.6,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "lostasset_mob3_timberpile",
+      "name": "장작 꼬마",
+      "region": "숲",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:forested_highlands, terralith:birch_taiga",
+      "habitat": "나무 아래와 숲 가장자리의 육상 개체.",
+      "pack": "LostAssets_MobsPack_01-03_Bundle.zip > LostAssets_MobsPack_03_HerbGarden.zip",
+      "entryId": "lostasset_mob3_timberpile",
+      "description": "쓰러진 나무 주변에서 움직이는 작은 나무 정령.",
+      "biomeIds": [
+        "terralith:forested_highlands",
+        "terralith:birch_taiga"
+      ],
+      "biomeNames": [
+        "숲 우거진 고지",
+        "자작나무 타이가"
+      ],
+      "stars": 1,
+      "baseChance": 40.0,
+      "healthBonus": 25.0,
+      "chanceAt10": 62.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "bulb_amethyst",
+      "name": "자수정 새싹",
+      "region": "지하",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:amethyst_canyon, terralith:amethyst_rainforest",
+      "habitat": "동굴 내부에 한정. 지표 출현 금지.",
+      "pack": "BULB VOL2",
+      "entryId": "bulb_amethyst",
+      "description": "자수정 지형의 마력을 머금은 작은 정령.",
+      "biomeIds": [
+        "terralith:amethyst_canyon",
+        "terralith:amethyst_rainforest"
+      ],
+      "biomeNames": [
+        "자수정 협곡",
+        "자수정 우림"
+      ],
+      "stars": 2,
+      "baseChance": 15.0,
+      "healthBonus": 15.0,
+      "chanceAt10": 28.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "bulb_crimsonspore",
+      "name": "진홍 포자",
+      "region": "화산·이계",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:warped_mesa, terralith:cave/thermal_caves",
+      "habitat": "오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님.",
+      "pack": "BULB VOL2",
+      "entryId": "bulb_crimsonspore",
+      "description": "붉은 지형과 뜨거운 동굴에서 자란 포자 정령.",
+      "biomeIds": [
+        "terralith:warped_mesa",
+        "terralith:cave/thermal_caves"
+      ],
+      "biomeNames": [
+        "뒤틀린 메사",
+        "열수 동굴"
+      ],
+      "stars": 2,
+      "baseChance": 12.0,
+      "healthBonus": 13.0,
+      "chanceAt10": 23.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "bulb_dripleaf",
+      "name": "물잎 새싹",
+      "region": "지하",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:cave/underground_jungle, terralith:lush_valley",
+      "habitat": "동굴 내부에 한정. 지표 출현 금지.",
+      "pack": "BULB VOL2",
+      "entryId": "bulb_dripleaf",
+      "description": "습한 지하 정글의 잎사귀 사이에 숨어 산다.",
+      "biomeIds": [
+        "terralith:cave/underground_jungle",
+        "terralith:lush_valley"
+      ],
+      "biomeNames": [
+        "지하 정글",
+        "푸른 계곡"
+      ],
+      "stars": 1,
+      "baseChance": 40.0,
+      "healthBonus": 25.0,
+      "chanceAt10": 62.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "bulb_lilypad",
+      "name": "수련잎 새싹",
+      "region": "늪",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:orchid_swamp, terralith:warm_river",
+      "habitat": "늪과 강의 물가. 육상·수중 조건은 개체별 지정.",
+      "pack": "BULB VOL2",
+      "entryId": "bulb_lilypad",
+      "description": "늪 가장자리의 수련잎 주변을 떠도는 정령.",
+      "biomeIds": [
+        "terralith:orchid_swamp",
+        "terralith:warm_river"
+      ],
+      "biomeNames": [
+        "난초 늪",
+        "따뜻한 강"
+      ],
+      "stars": 1,
+      "baseChance": 45.0,
+      "healthBonus": 25.0,
+      "chanceAt10": 67.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "bulb_warpedfungus",
+      "name": "뒤틀린 균새싹",
+      "region": "화산·이계",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:warped_mesa, terralith:cave/fungal_caves",
+      "habitat": "오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님.",
+      "pack": "BULB VOL2",
+      "entryId": "bulb_warpedfungus",
+      "description": "기묘한 지형의 마력을 흡수한 푸른 균 정령.",
+      "biomeIds": [
+        "terralith:warped_mesa",
+        "terralith:cave/fungal_caves"
+      ],
+      "biomeNames": [
+        "뒤틀린 메사",
+        "균류 동굴"
+      ],
+      "stars": 2,
+      "baseChance": 12.0,
+      "healthBonus": 13.0,
+      "chanceAt10": 23.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "crab",
+      "name": "자갈집게 게",
+      "region": "바다",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:gravel_beach, terralith:white_cliffs",
+      "habitat": "자갈 해변·흰 절벽 아래 해안의 육상과 얕은 물 경계.",
+      "pack": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip",
+      "entryId": "crab",
+      "description": "자갈 해변과 바닷물의 경계에서 먹이를 찾는다.",
+      "biomeIds": [
+        "terralith:gravel_beach",
+        "terralith:white_cliffs"
+      ],
+      "biomeNames": [
+        "자갈 해변",
+        "흰 절벽"
+      ],
+      "stars": 1,
+      "baseChance": 55.0,
+      "healthBonus": 20.0,
+      "chanceAt10": 73.0,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "piranha",
+      "name": "붉은이빨 피라냐",
+      "region": "늪",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:warm_river, terralith:desert_oasis",
+      "habitat": "지정 바이옴 안의 수중에서만 출현. 피라냐는 오아시스 수역 포함.",
+      "pack": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip",
+      "entryId": "piranha",
+      "description": "따뜻한 강에서 무리 지어 헤엄치는 사나운 물고기.",
+      "biomeIds": [
+        "terralith:warm_river",
+        "terralith:desert_oasis"
+      ],
+      "biomeNames": [
+        "따뜻한 강",
+        "사막 오아시스"
+      ],
+      "stars": 2,
+      "baseChance": 20.0,
+      "healthBonus": 20.0,
+      "chanceAt10": 38.0,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "swordfish",
+      "name": "푸른창 황새치",
+      "region": "바다",
+      "role": "일반 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:deep_warm_ocean",
+      "habitat": "지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.",
+      "pack": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip",
+      "entryId": "swordfish",
+      "description": "따뜻한 깊은 바다의 넓은 수역을 가른다.",
+      "biomeIds": [
+        "terralith:deep_warm_ocean"
+      ],
+      "biomeNames": [
+        "따뜻한 심해"
+      ],
+      "stars": 2,
+      "baseChance": 15.0,
+      "healthBonus": 20.0,
+      "chanceAt10": 33.0,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "jellyfish_blue",
+      "name": "청빛 해파리",
+      "region": "바다",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:deep_warm_ocean",
+      "habitat": "지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.",
+      "pack": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip",
+      "entryId": "jellyfish_blue",
+      "description": "따뜻한 바다 속에서 물결을 따라 천천히 떠다닌다.",
+      "biomeIds": [
+        "terralith:deep_warm_ocean"
+      ],
+      "biomeNames": [
+        "따뜻한 심해"
+      ],
+      "stars": 1,
+      "baseChance": 40,
+      "healthBonus": 25,
+      "chanceAt10": 62.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "jellyfish_green",
+      "name": "비취 해파리",
+      "region": "바다",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:deep_warm_ocean",
+      "habitat": "지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.",
+      "pack": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip",
+      "entryId": "jellyfish_green",
+      "description": "따뜻한 바다 속에서 물결을 따라 천천히 떠다닌다.",
+      "biomeIds": [
+        "terralith:deep_warm_ocean"
+      ],
+      "biomeNames": [
+        "따뜻한 심해"
+      ],
+      "stars": 1,
+      "baseChance": 40,
+      "healthBonus": 25,
+      "chanceAt10": 62.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "jellyfish_pink",
+      "name": "분홍 해파리",
+      "region": "바다",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:deep_warm_ocean",
+      "habitat": "지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.",
+      "pack": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip",
+      "entryId": "jellyfish_pink",
+      "description": "따뜻한 바다 속에서 물결을 따라 천천히 떠다닌다.",
+      "biomeIds": [
+        "terralith:deep_warm_ocean"
+      ],
+      "biomeNames": [
+        "따뜻한 심해"
+      ],
+      "stars": 2,
+      "baseChance": 20,
+      "healthBonus": 15,
+      "chanceAt10": 33.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "jellyfish_yellow",
+      "name": "금빛 해파리",
+      "region": "바다",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:deep_warm_ocean",
+      "habitat": "지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.",
+      "pack": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip",
+      "entryId": "jellyfish_yellow",
+      "description": "따뜻한 바다 속에서 물결을 따라 천천히 떠다닌다.",
+      "biomeIds": [
+        "terralith:deep_warm_ocean"
+      ],
+      "biomeNames": [
+        "따뜻한 심해"
+      ],
+      "stars": 2,
+      "baseChance": 20,
+      "healthBonus": 15,
+      "chanceAt10": 33.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "seahorse_blue",
+      "name": "청빛 해마",
+      "region": "바다",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:deep_warm_ocean",
+      "habitat": "지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.",
+      "pack": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip",
+      "entryId": "seahorse_blue",
+      "description": "따뜻한 바다의 산호·해초 주변에 몸을 숨긴다.",
+      "biomeIds": [
+        "terralith:deep_warm_ocean"
+      ],
+      "biomeNames": [
+        "따뜻한 심해"
+      ],
+      "stars": 1,
+      "baseChance": 40,
+      "healthBonus": 25,
+      "chanceAt10": 62.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "seahorse_green",
+      "name": "비취 해마",
+      "region": "바다",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:deep_warm_ocean",
+      "habitat": "지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.",
+      "pack": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip",
+      "entryId": "seahorse_green",
+      "description": "따뜻한 바다의 산호·해초 주변에 몸을 숨긴다.",
+      "biomeIds": [
+        "terralith:deep_warm_ocean"
+      ],
+      "biomeNames": [
+        "따뜻한 심해"
+      ],
+      "stars": 1,
+      "baseChance": 40,
+      "healthBonus": 25,
+      "chanceAt10": 62.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "seahorse_pink",
+      "name": "분홍 해마",
+      "region": "바다",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:deep_warm_ocean",
+      "habitat": "지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.",
+      "pack": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip",
+      "entryId": "seahorse_pink",
+      "description": "따뜻한 바다의 산호·해초 주변에 몸을 숨긴다.",
+      "biomeIds": [
+        "terralith:deep_warm_ocean"
+      ],
+      "biomeNames": [
+        "따뜻한 심해"
+      ],
+      "stars": 2,
+      "baseChance": 20,
+      "healthBonus": 15,
+      "chanceAt10": 33.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "seahorse_yellow",
+      "name": "금빛 해마",
+      "region": "바다",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:deep_warm_ocean",
+      "habitat": "지정 바이옴의 수중 전용. 수심·유효 물 공간을 확인해서 출현.",
+      "pack": "동물의숲.zip > Aquatic-Pack-by-LunarStudios.zip",
+      "entryId": "seahorse_yellow",
+      "description": "따뜻한 바다의 산호·해초 주변에 몸을 숨긴다.",
+      "biomeIds": [
+        "terralith:deep_warm_ocean"
+      ],
+      "biomeNames": [
+        "따뜻한 심해"
+      ],
+      "stars": 2,
+      "baseChance": 20,
+      "healthBonus": 15,
+      "chanceAt10": 33.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "ogre_club",
+      "name": "숲몽둥이 오우거",
+      "region": "숲",
+      "role": "정예",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:forested_highlands, terralith:shield",
+      "habitat": "나무 아래와 숲 가장자리의 육상 개체.",
+      "pack": "1.0 CoolMobs - Ogres.zip",
+      "entryId": "ogre_club",
+      "description": "숲의 무너진 야영지를 차지한 거친 오우거.",
+      "biomeIds": [
+        "terralith:forested_highlands",
+        "terralith:shield"
+      ],
+      "biomeNames": [
+        "숲 우거진 고지",
+        "방패암 숲"
+      ],
+      "stars": 2,
+      "baseChance": 7.0,
+      "healthBonus": 8.0,
+      "chanceAt10": 14.2,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "ogre_axe",
+      "name": "벌목꾼 오우거",
+      "region": "숲",
+      "role": "정예",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:siberian_taiga, terralith:forested_highlands",
+      "habitat": "나무 아래와 숲 가장자리의 육상 개체.",
+      "pack": "1.0 CoolMobs - Ogres.zip",
+      "entryId": "ogre_axe",
+      "description": "거목 주변의 폐허에서 침입자를 경계한다.",
+      "biomeIds": [
+        "terralith:siberian_taiga",
+        "terralith:forested_highlands"
+      ],
+      "biomeNames": [
+        "시베리아 타이가",
+        "숲 우거진 고지"
+      ],
+      "stars": 2,
+      "baseChance": 6.0,
+      "healthBonus": 8.0,
+      "chanceAt10": 13.2,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "ogre_hammer",
+      "name": "산울림 오우거",
+      "region": "산악",
+      "role": "정예",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:rocky_mountains, terralith:granite_cliffs",
+      "habitat": "절벽·고지대에 지정한 둥지.",
+      "pack": "1.0 CoolMobs - Ogres.zip",
+      "entryId": "ogre_hammer",
+      "description": "바위 협곡의 통로를 차지한 강력한 오우거.",
+      "biomeIds": [
+        "terralith:rocky_mountains",
+        "terralith:granite_cliffs"
+      ],
+      "biomeNames": [
+        "바위 산맥",
+        "화강암 절벽"
+      ],
+      "stars": 3,
+      "baseChance": 2.0,
+      "healthBonus": 3.0,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "ncr_spear_skeleton",
+      "name": "유적의 창병",
+      "region": "던전",
+      "role": "정예",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:cave/deep_caves, terralith:cave/andesite_caves",
+      "habitat": "지정 동굴 안에 설치한 유적·봉인실 전용. 바이옴 전체 자연 스폰 금지.",
+      "pack": "Necron_Skeletons_v1.zip",
+      "entryId": "ncr_spear_skeleton",
+      "description": "지하 유적의 좁은 통로를 지키는 해골 병사.",
+      "biomeIds": [
+        "terralith:cave/deep_caves",
+        "terralith:cave/andesite_caves"
+      ],
+      "biomeNames": [
+        "깊은 동굴",
+        "안산암 동굴"
+      ],
+      "stars": 2,
+      "baseChance": 10.0,
+      "healthBonus": 10.0,
+      "chanceAt10": 19.0,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "ncr_warrior_skeleton",
+      "name": "유적의 검병",
+      "region": "던전",
+      "role": "정예",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:cave/deep_caves, terralith:cave/granite_caves",
+      "habitat": "지정 동굴 안에 설치한 유적·봉인실 전용. 바이옴 전체 자연 스폰 금지.",
+      "pack": "Necron_Skeletons_v1.zip",
+      "entryId": "ncr_warrior_skeleton",
+      "description": "오래된 지하 회랑을 배회하는 해골 전사.",
+      "biomeIds": [
+        "terralith:cave/deep_caves",
+        "terralith:cave/granite_caves"
+      ],
+      "biomeNames": [
+        "깊은 동굴",
+        "화강암 동굴"
+      ],
+      "stars": 2,
+      "baseChance": 10.0,
+      "healthBonus": 10.0,
+      "chanceAt10": 19.0,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "ncr_archer_skeleton",
+      "name": "유적의 궁수",
+      "region": "던전",
+      "role": "정예",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:cave/deep_caves, terralith:cave/tuff_caves",
+      "habitat": "지정 동굴 안에 설치한 유적·봉인실 전용. 바이옴 전체 자연 스폰 금지.",
+      "pack": "Necron_Skeletons_v1.zip",
+      "entryId": "ncr_archer_skeleton",
+      "description": "무너진 회랑의 먼 곳에서 침입자를 겨눈다.",
+      "biomeIds": [
+        "terralith:cave/deep_caves",
+        "terralith:cave/tuff_caves"
+      ],
+      "biomeNames": [
+        "깊은 동굴",
+        "응회암 동굴"
+      ],
+      "stars": 2,
+      "baseChance": 8.0,
+      "healthBonus": 10.0,
+      "chanceAt10": 17.0,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "ncr_mage_skeleton",
+      "name": "망각의 해골술사",
+      "region": "던전",
+      "role": "정예",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:cave/infested_caves, terralith:cave/deep_caves",
+      "habitat": "지정 동굴 안에 설치한 유적·봉인실 전용. 바이옴 전체 자연 스폰 금지.",
+      "pack": "Necron_Skeletons_v1.zip",
+      "entryId": "ncr_mage_skeleton",
+      "description": "감염 동굴의 봉인실에 남은 마법사.",
+      "biomeIds": [
+        "terralith:cave/infested_caves",
+        "terralith:cave/deep_caves"
+      ],
+      "biomeNames": [
+        "감염 동굴",
+        "깊은 동굴"
+      ],
+      "stars": 3,
+      "baseChance": 2.0,
+      "healthBonus": 3.0,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "mf_warden_knight",
+      "name": "봉인의 기사",
+      "region": "던전",
+      "role": "정예",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "3차",
+      "biomes": "terralith:cave/deep_caves",
+      "habitat": "지정 동굴 안에 설치한 유적·봉인실 전용. 바이옴 전체 자연 스폰 금지.",
+      "pack": "Warden Expansion Pack 1.1.0.zip",
+      "entryId": "mf_warden_knight",
+      "description": "깊은 동굴의 봉인 구역을 지키는 기사.",
+      "biomeIds": [
+        "terralith:cave/deep_caves"
+      ],
+      "biomeNames": [
+        "깊은 동굴"
+      ],
+      "stars": 3,
+      "baseChance": 1.0,
+      "healthBonus": 1.5,
+      "chanceAt10": 2.35,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "mf_warden_archer",
+      "name": "봉인의 궁수",
+      "region": "던전",
+      "role": "정예",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "3차",
+      "biomes": "terralith:cave/deep_caves",
+      "habitat": "지정 동굴 안에 설치한 유적·봉인실 전용. 바이옴 전체 자연 스폰 금지.",
+      "pack": "Warden Expansion Pack 1.1.0.zip",
+      "entryId": "mf_warden_archer",
+      "description": "봉인 유적 외곽을 감시하는 궁수.",
+      "biomeIds": [
+        "terralith:cave/deep_caves"
+      ],
+      "biomeNames": [
+        "깊은 동굴"
+      ],
+      "stars": 3,
+      "baseChance": 1.2,
+      "healthBonus": 1.8,
+      "chanceAt10": 2.82,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "mf_warden_tank",
+      "name": "봉인의 거벽",
+      "region": "던전",
+      "role": "정예",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "3차",
+      "biomes": "terralith:cave/deep_caves",
+      "habitat": "지정 동굴 안에 설치한 유적·봉인실 전용. 바이옴 전체 자연 스폰 금지.",
+      "pack": "Warden Expansion Pack 1.1.0.zip",
+      "entryId": "mf_warden_tank",
+      "description": "봉인실 입구에서 물러서지 않는 거대한 수호자.",
+      "biomeIds": [
+        "terralith:cave/deep_caves"
+      ],
+      "biomeNames": [
+        "깊은 동굴"
+      ],
+      "stars": 3,
+      "baseChance": 0.8,
+      "healthBonus": 1.2,
+      "chanceAt10": 1.88,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "mf_warden_mage",
+      "name": "봉인의 술사",
+      "region": "던전",
+      "role": "정예",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "3차",
+      "biomes": "terralith:cave/deep_caves",
+      "habitat": "지정 동굴 안에 설치한 유적·봉인실 전용. 바이옴 전체 자연 스폰 금지.",
+      "pack": "Warden Expansion Pack 1.1.0.zip",
+      "entryId": "mf_warden_mage",
+      "description": "깊은 봉인실에서 마력을 다루는 수호자.",
+      "biomeIds": [
+        "terralith:cave/deep_caves"
+      ],
+      "biomeNames": [
+        "깊은 동굴"
+      ],
+      "stars": 3,
+      "baseChance": 0.8,
+      "healthBonus": 1.2,
+      "chanceAt10": 1.88,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "glacialcore",
+      "name": "빙핵의 수호자",
+      "region": "설원",
+      "role": "보스",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "3차",
+      "biomes": "terralith:glacial_chasm, terralith:cave/frostfire_caves",
+      "habitat": "빙하 협곡 또는 서리불 동굴의 전용 보스 신전. 일반 자연 스폰 금지.",
+      "pack": "glacialcore.zip",
+      "entryId": "glacialcore",
+      "description": "빙하 신전 가장 깊은 곳에 잠든 얼음 보스.",
+      "biomeIds": [
+        "terralith:glacial_chasm",
+        "terralith:cave/frostfire_caves"
+      ],
+      "biomeNames": [
+        "빙하 협곡",
+        "서리불 동굴"
+      ],
+      "stars": 3,
+      "baseChance": 0.4,
+      "healthBonus": 0.0,
+      "chanceAt10": 0.4,
+      "boss": true,
+      "captureRule": "사망 유예 30초 동안만 시도 · 체력 보너스 없음",
+      "spawnRarity": "전용 보스"
+    },
+    {
+      "id": "nocsy_cat1",
+      "name": "햇살 고양이",
+      "region": "학교",
+      "role": "꾸밈 펫",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:sakura_grove, terralith:blooming_valley",
+      "habitat": "해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.",
+      "pack": "동물의숲.zip > Kingdom-Cats-By-Nocsy-3.0.0-savzbh.zip",
+      "entryId": "nocsy_cat1",
+      "description": "햇볕 드는 공터에서 쉬기를 좋아한다.",
+      "biomeIds": [
+        "terralith:sakura_grove",
+        "terralith:blooming_valley"
+      ],
+      "biomeNames": [
+        "벚꽃 숲",
+        "꽃피는 계곡"
+      ],
+      "stars": 1,
+      "baseChance": 60,
+      "healthBonus": 15,
+      "chanceAt10": 73.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "nocsy_cat2",
+      "name": "꽃길 고양이",
+      "region": "학교",
+      "role": "꾸밈 펫",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:sakura_grove, terralith:blooming_valley",
+      "habitat": "해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.",
+      "pack": "동물의숲.zip > Kingdom-Cats-By-Nocsy-3.0.0-savzbh.zip",
+      "entryId": "nocsy_cat2",
+      "description": "꽃밭 가장자리를 조용히 산책한다.",
+      "biomeIds": [
+        "terralith:sakura_grove",
+        "terralith:blooming_valley"
+      ],
+      "biomeNames": [
+        "벚꽃 숲",
+        "꽃피는 계곡"
+      ],
+      "stars": 1,
+      "baseChance": 60,
+      "healthBonus": 15,
+      "chanceAt10": 73.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "nocsy_cat3",
+      "name": "책방 고양이",
+      "region": "학교",
+      "role": "꾸밈 펫",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:sakura_grove, terralith:blooming_valley",
+      "habitat": "해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.",
+      "pack": "동물의숲.zip > Kingdom-Cats-By-Nocsy-3.0.0-savzbh.zip",
+      "entryId": "nocsy_cat3",
+      "description": "학교 외곽 길목에 머무르는 호기심 많은 고양이.",
+      "biomeIds": [
+        "terralith:sakura_grove",
+        "terralith:blooming_valley"
+      ],
+      "biomeNames": [
+        "벚꽃 숲",
+        "꽃피는 계곡"
+      ],
+      "stars": 1,
+      "baseChance": 60,
+      "healthBonus": 15,
+      "chanceAt10": 73.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "nocsy_cat4",
+      "name": "나른한 고양이",
+      "region": "학교",
+      "role": "꾸밈 펫",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:sakura_grove, terralith:blooming_valley",
+      "habitat": "해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.",
+      "pack": "동물의숲.zip > Kingdom-Cats-By-Nocsy-3.0.0-savzbh.zip",
+      "entryId": "nocsy_cat4",
+      "description": "벚나무 그늘에서 낮잠을 즐긴다.",
+      "biomeIds": [
+        "terralith:sakura_grove",
+        "terralith:blooming_valley"
+      ],
+      "biomeNames": [
+        "벚꽃 숲",
+        "꽃피는 계곡"
+      ],
+      "stars": 1,
+      "baseChance": 60,
+      "healthBonus": 15,
+      "chanceAt10": 73.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "nocsy_cat5",
+      "name": "장난꾸러기 고양이",
+      "region": "학교",
+      "role": "꾸밈 펫",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:sakura_grove, terralith:blooming_valley",
+      "habitat": "해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.",
+      "pack": "동물의숲.zip > Kingdom-Cats-By-Nocsy-3.0.0-savzbh.zip",
+      "entryId": "nocsy_cat5",
+      "description": "떨어지는 꽃잎을 따라 뛰어다닌다.",
+      "biomeIds": [
+        "terralith:sakura_grove",
+        "terralith:blooming_valley"
+      ],
+      "biomeNames": [
+        "벚꽃 숲",
+        "꽃피는 계곡"
+      ],
+      "stars": 1,
+      "baseChance": 60,
+      "healthBonus": 15,
+      "chanceAt10": 73.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "nocsy_cat6",
+      "name": "산들 고양이",
+      "region": "학교",
+      "role": "꾸밈 펫",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:sakura_grove, terralith:blooming_valley",
+      "habitat": "해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.",
+      "pack": "동물의숲.zip > Kingdom-Cats-By-Nocsy-3.0.0-savzbh.zip",
+      "entryId": "nocsy_cat6",
+      "description": "잔잔한 계곡의 바람을 즐기는 고양이.",
+      "biomeIds": [
+        "terralith:sakura_grove",
+        "terralith:blooming_valley"
+      ],
+      "biomeNames": [
+        "벚꽃 숲",
+        "꽃피는 계곡"
+      ],
+      "stars": 1,
+      "baseChance": 60,
+      "healthBonus": 15,
+      "chanceAt10": 73.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "nocsy_cat_fallen",
+      "name": "달그늘 고양이",
+      "region": "마법숲",
+      "role": "희귀 생물",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:moonlight_grove, terralith:moonlight_valley",
+      "habitat": "거목·꽃 군락 인근 소규모 출현 지점.",
+      "pack": "동물의숲.zip > Kingdom-Cats-By-Nocsy-3.0.0-savzbh.zip",
+      "entryId": "nocsy_cat_fallen",
+      "description": "달빛 숲의 오래된 유적에 드물게 나타난다.",
+      "biomeIds": [
+        "terralith:moonlight_grove",
+        "terralith:moonlight_valley"
+      ],
+      "biomeNames": [
+        "달빛 숲",
+        "달빛 계곡"
+      ],
+      "stars": 3,
+      "baseChance": 3.0,
+      "healthBonus": 4.0,
+      "chanceAt10": 6.6,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "voxelspawns_pug",
+      "name": "산책 퍼그",
+      "region": "학교",
+      "role": "꾸밈 펫",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "1차",
+      "biomes": "terralith:sakura_valley, terralith:blooming_valley",
+      "habitat": "해당 바이옴의 학교 외곽 야생 개체만 교화 가능. NPC 소유·전시 개체 제외.",
+      "pack": "동물의숲.zip > Voxelspawns_Pug.zip",
+      "entryId": "voxelspawns_pug",
+      "description": "학교 외곽 벚꽃길을 산책하는 작은 개.",
+      "biomeIds": [
+        "terralith:sakura_valley",
+        "terralith:blooming_valley"
+      ],
+      "biomeNames": [
+        "벚꽃 계곡",
+        "꽃피는 계곡"
+      ],
+      "stars": 1,
+      "baseChance": 60.0,
+      "healthBonus": 15.0,
+      "chanceAt10": 73.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "baby_polar_bear",
+      "name": "눈송이 아기곰",
+      "region": "설원",
+      "role": "꾸밈 펫",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:ice_marsh, terralith:snowy_shield",
+      "habitat": "빙하·설림의 육상 구역.",
+      "pack": "동물의숲.zip > Winter_Pets_2023.zip",
+      "entryId": "baby_polar_bear",
+      "description": "얼음 늪 가장자리에서 노는 어린 곰.",
+      "biomeIds": [
+        "terralith:ice_marsh",
+        "terralith:snowy_shield"
+      ],
+      "biomeNames": [
+        "얼음 늪",
+        "눈 덮인 방패암 지대"
+      ],
+      "stars": 1,
+      "baseChance": 40.0,
+      "healthBonus": 25.0,
+      "chanceAt10": 62.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "baby_yeti",
+      "name": "눈산 꼬마예티",
+      "region": "설원",
+      "role": "꾸밈 펫",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:glacial_chasm, terralith:frozen_cliffs",
+      "habitat": "빙하·설림의 육상 구역.",
+      "pack": "동물의숲.zip > Winter_Pets_2023.zip",
+      "entryId": "baby_yeti",
+      "description": "빙하 협곡의 작은 굴에서 모습을 드러낸다.",
+      "biomeIds": [
+        "terralith:glacial_chasm",
+        "terralith:frozen_cliffs"
+      ],
+      "biomeNames": [
+        "빙하 협곡",
+        "얼어붙은 절벽"
+      ],
+      "stars": 2,
+      "baseChance": 12.0,
+      "healthBonus": 13.0,
+      "chanceAt10": 23.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "frost_ferret",
+      "name": "서리 족제비",
+      "region": "설원",
+      "role": "꾸밈 펫",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:snowy_maple_forest, terralith:wintry_forest",
+      "habitat": "빙하·설림의 육상 구역.",
+      "pack": "동물의숲.zip > Winter_Pets_2023.zip",
+      "entryId": "frost_ferret",
+      "description": "눈 덮인 나무뿌리 사이로 재빠르게 움직인다.",
+      "biomeIds": [
+        "terralith:snowy_maple_forest",
+        "terralith:wintry_forest"
+      ],
+      "biomeNames": [
+        "눈 덮인 단풍 숲",
+        "겨울 숲"
+      ],
+      "stars": 2,
+      "baseChance": 18.0,
+      "healthBonus": 17.0,
+      "chanceAt10": 33.3,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "gangster_snowman",
+      "name": "심술 눈사람",
+      "region": "설원",
+      "role": "꾸밈 펫",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:wintry_forest, terralith:snowy_cherry_grove",
+      "habitat": "빙하·설림의 육상 구역.",
+      "pack": "동물의숲.zip > Winter_Pets_2023.zip",
+      "entryId": "gangster_snowman",
+      "description": "겨울 숲의 마력이 뭉쳐 움직이기 시작했다.",
+      "biomeIds": [
+        "terralith:wintry_forest",
+        "terralith:snowy_cherry_grove"
+      ],
+      "biomeNames": [
+        "겨울 숲",
+        "눈 덮인 벚꽃 숲"
+      ],
+      "stars": 2,
+      "baseChance": 15.0,
+      "healthBonus": 15.0,
+      "chanceAt10": 28.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "ice_knight",
+      "name": "서리 기사",
+      "region": "설원",
+      "role": "꾸밈 펫",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:glacial_chasm, terralith:cave/frostfire_caves",
+      "habitat": "빙하·설림의 육상 구역.",
+      "pack": "동물의숲.zip > Winter_Pets_2023.zip",
+      "entryId": "ice_knight",
+      "description": "빙하 유적 주변을 지키는 작은 얼음 기사.",
+      "biomeIds": [
+        "terralith:glacial_chasm",
+        "terralith:cave/frostfire_caves"
+      ],
+      "biomeNames": [
+        "빙하 협곡",
+        "서리불 동굴"
+      ],
+      "stars": 3,
+      "baseChance": 3.0,
+      "healthBonus": 4.0,
+      "chanceAt10": 6.6,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "dragon_desert",
+      "name": "사막 드래곤",
+      "region": "사막",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:ancient_sands, terralith:desert_spires",
+      "habitat": "모래 언덕·사암 협곡 주변. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip",
+      "entryId": "dragon_desert",
+      "description": "영역의 높은 곳에 둥지를 짓는 거대한 용. 사막 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:ancient_sands",
+        "terralith:desert_spires"
+      ],
+      "biomeNames": [
+        "고대 모래 지대",
+        "사막 첨탑"
+      ],
+      "stars": 3,
+      "baseChance": 0.8,
+      "healthBonus": 1.2,
+      "chanceAt10": 1.88,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "dragon_glacial",
+      "name": "빙하 드래곤",
+      "region": "설원",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:glacial_chasm, terralith:frozen_cliffs",
+      "habitat": "빙하·설림의 육상 구역. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip",
+      "entryId": "dragon_glacial",
+      "description": "영역의 높은 곳에 둥지를 짓는 거대한 용. 빙하 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:glacial_chasm",
+        "terralith:frozen_cliffs"
+      ],
+      "biomeNames": [
+        "빙하 협곡",
+        "얼어붙은 절벽"
+      ],
+      "stars": 3,
+      "baseChance": 0.8,
+      "healthBonus": 1.2,
+      "chanceAt10": 1.88,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "dragon_nether",
+      "name": "화산 드래곤",
+      "region": "화산·이계",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:volcanic_crater, terralith:volcanic_peaks",
+      "habitat": "오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip",
+      "entryId": "dragon_nether",
+      "description": "영역의 높은 곳에 둥지를 짓는 거대한 용. 화산 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:volcanic_crater",
+        "terralith:volcanic_peaks"
+      ],
+      "biomeNames": [
+        "화산 분화구",
+        "화산 봉우리"
+      ],
+      "stars": 3,
+      "baseChance": 0.8,
+      "healthBonus": 1.2,
+      "chanceAt10": 1.88,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "dragon_sculk",
+      "name": "스컬크 드래곤",
+      "region": "던전",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:cave/deep_caves",
+      "habitat": "동굴 내부의 별도 유적 구역. 바이옴 전체 자연 스폰 제외. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip",
+      "entryId": "dragon_sculk",
+      "description": "영역의 높은 곳에 둥지를 짓는 거대한 용. 스컬크 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:cave/deep_caves"
+      ],
+      "biomeNames": [
+        "깊은 동굴"
+      ],
+      "stars": 3,
+      "baseChance": 0.8,
+      "healthBonus": 1.2,
+      "chanceAt10": 1.88,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "lizard_aqua",
+      "name": "물가 왕도마뱀",
+      "region": "늪",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:warm_river, terralith:orchid_swamp",
+      "habitat": "늪과 강의 물가. 육상·수중 조건은 개체별 지정. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip",
+      "entryId": "lizard_aqua",
+      "description": "거친 환경에 적응한 커다란 도마뱀. 물가 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:warm_river",
+        "terralith:orchid_swamp"
+      ],
+      "biomeNames": [
+        "따뜻한 강",
+        "난초 늪"
+      ],
+      "stars": 2,
+      "baseChance": 16,
+      "healthBonus": 14,
+      "chanceAt10": 28.6,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "lizard_lava",
+      "name": "용암 왕도마뱀",
+      "region": "화산·이계",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:volcanic_crater, terralith:cave/thermal_caves",
+      "habitat": "오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip",
+      "entryId": "lizard_lava",
+      "description": "거친 환경에 적응한 커다란 도마뱀. 용암 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:volcanic_crater",
+        "terralith:cave/thermal_caves"
+      ],
+      "biomeNames": [
+        "화산 분화구",
+        "열수 동굴"
+      ],
+      "stars": 2,
+      "baseChance": 16,
+      "healthBonus": 14,
+      "chanceAt10": 28.6,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "manticore_aether",
+      "name": "창공 만티코어",
+      "region": "사막",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:skylands_spring, terralith:skylands_summer",
+      "habitat": "모래 언덕·사암 협곡 주변. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip",
+      "entryId": "manticore_aether",
+      "description": "황량한 협곡의 그늘에서 먹잇감을 기다린다. 창공 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:skylands_spring",
+        "terralith:skylands_summer"
+      ],
+      "biomeNames": [
+        "봄 하늘섬",
+        "여름 하늘섬"
+      ],
+      "stars": 3,
+      "baseChance": 1.5,
+      "healthBonus": 2.5,
+      "chanceAt10": 3.75,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "manticore_dusk",
+      "name": "황혼 만티코어",
+      "region": "사막",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:moonlight_valley, terralith:desert_canyon",
+      "habitat": "모래 언덕·사암 협곡 주변. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip",
+      "entryId": "manticore_dusk",
+      "description": "황량한 협곡의 그늘에서 먹잇감을 기다린다. 황혼 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:moonlight_valley",
+        "terralith:desert_canyon"
+      ],
+      "biomeNames": [
+        "달빛 계곡",
+        "사막 협곡"
+      ],
+      "stars": 3,
+      "baseChance": 1.5,
+      "healthBonus": 2.5,
+      "chanceAt10": 3.75,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "manticore_soul",
+      "name": "혼령 만티코어",
+      "region": "화산·이계",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:cave/deep_caves, terralith:moonlight_valley",
+      "habitat": "오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip",
+      "entryId": "manticore_soul",
+      "description": "황량한 협곡의 그늘에서 먹잇감을 기다린다. 혼령 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:cave/deep_caves",
+        "terralith:moonlight_valley"
+      ],
+      "biomeNames": [
+        "깊은 동굴",
+        "달빛 계곡"
+      ],
+      "stars": 3,
+      "baseChance": 1.5,
+      "healthBonus": 2.5,
+      "chanceAt10": 3.75,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "manticore_venom",
+      "name": "맹독 만티코어",
+      "region": "사막",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:desert_canyon, terralith:ancient_sands",
+      "habitat": "모래 언덕·사암 협곡 주변. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip",
+      "entryId": "manticore_venom",
+      "description": "황량한 협곡의 그늘에서 먹잇감을 기다린다. 맹독 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:desert_canyon",
+        "terralith:ancient_sands"
+      ],
+      "biomeNames": [
+        "사막 협곡",
+        "고대 모래 지대"
+      ],
+      "stars": 3,
+      "baseChance": 1.5,
+      "healthBonus": 2.5,
+      "chanceAt10": 3.75,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "panda_normal",
+      "name": "대나무 판다",
+      "region": "정글",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:tropical_jungle",
+      "habitat": "정글 수풀과 유적 외곽. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip",
+      "entryId": "panda_normal",
+      "description": "정글의 대나무 군락에서 느긋하게 지낸다. ",
+      "biomeIds": [
+        "terralith:tropical_jungle"
+      ],
+      "biomeNames": [
+        "열대 정글"
+      ],
+      "stars": 1,
+      "baseChance": 40,
+      "healthBonus": 25,
+      "chanceAt10": 62.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "sabertooth_arctic",
+      "name": "설원 검치호",
+      "region": "설원",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:snowy_shield, terralith:wintry_forest",
+      "habitat": "빙하·설림의 육상 구역. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip",
+      "entryId": "sabertooth_arctic",
+      "description": "거대한 송곳니를 가진 날렵한 포식자. 설원 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:snowy_shield",
+        "terralith:wintry_forest"
+      ],
+      "biomeNames": [
+        "눈 덮인 방패암 지대",
+        "겨울 숲"
+      ],
+      "stars": 2,
+      "baseChance": 10,
+      "healthBonus": 10,
+      "chanceAt10": 19.0,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "sabertooth_midnight",
+      "name": "한밤 검치호",
+      "region": "초원",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:moonlight_grove",
+      "habitat": "초원 공터의 작은 무리. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip",
+      "entryId": "sabertooth_midnight",
+      "description": "거대한 송곳니를 가진 날렵한 포식자. 한밤 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:moonlight_grove"
+      ],
+      "biomeNames": [
+        "달빛 숲"
+      ],
+      "stars": 2,
+      "baseChance": 10,
+      "healthBonus": 10,
+      "chanceAt10": 19.0,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "sabertooth_savanna",
+      "name": "초원 검치호",
+      "region": "초원",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:fractured_savanna, terralith:savanna_slopes",
+      "habitat": "초원 공터의 작은 무리. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL1_v1.1-4hdcma.zip",
+      "entryId": "sabertooth_savanna",
+      "description": "거대한 송곳니를 가진 날렵한 포식자. 초원 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:fractured_savanna",
+        "terralith:savanna_slopes"
+      ],
+      "biomeNames": [
+        "갈라진 사바나",
+        "사바나 비탈"
+      ],
+      "stars": 2,
+      "baseChance": 10,
+      "healthBonus": 10,
+      "chanceAt10": 19.0,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "capybara",
+      "name": "물가 카피바라",
+      "region": "늪",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:warm_river, terralith:lush_valley",
+      "habitat": "늪과 강의 물가. 육상·수중 조건은 개체별 지정. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip",
+      "entryId": "capybara",
+      "description": "잔잔한 강가에서 무리와 함께 쉬는 동물. ",
+      "biomeIds": [
+        "terralith:warm_river",
+        "terralith:lush_valley"
+      ],
+      "biomeNames": [
+        "따뜻한 강",
+        "푸른 계곡"
+      ],
+      "stars": 1,
+      "baseChance": 50,
+      "healthBonus": 25,
+      "chanceAt10": 72.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "일반 · 소규모 무리"
+    },
+    {
+      "id": "horse_glacial",
+      "name": "빙하 준마",
+      "region": "설원",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:glacial_chasm, terralith:frozen_cliffs",
+      "habitat": "빙하·설림의 육상 구역. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip",
+      "entryId": "horse_glacial",
+      "description": "넓은 지형을 달리는 힘찬 말. 빙하 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:glacial_chasm",
+        "terralith:frozen_cliffs"
+      ],
+      "biomeNames": [
+        "빙하 협곡",
+        "얼어붙은 절벽"
+      ],
+      "stars": 2,
+      "baseChance": 20,
+      "healthBonus": 15,
+      "chanceAt10": 33.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "horse_magma",
+      "name": "마그마 준마",
+      "region": "화산·이계",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:volcanic_peaks, terralith:basalt_cliffs",
+      "habitat": "오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip",
+      "entryId": "horse_magma",
+      "description": "넓은 지형을 달리는 힘찬 말. 마그마 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:volcanic_peaks",
+        "terralith:basalt_cliffs"
+      ],
+      "biomeNames": [
+        "화산 봉우리",
+        "현무암 절벽"
+      ],
+      "stars": 2,
+      "baseChance": 20,
+      "healthBonus": 15,
+      "chanceAt10": 33.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "horse_pegasus",
+      "name": "페가수스",
+      "region": "초원",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:skylands_spring, terralith:alpine_highlands",
+      "habitat": "초원 공터의 작은 무리. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip",
+      "entryId": "horse_pegasus",
+      "description": "넓은 지형을 달리는 힘찬 말. 페가수스 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:skylands_spring",
+        "terralith:alpine_highlands"
+      ],
+      "biomeNames": [
+        "봄 하늘섬",
+        "고산 고지"
+      ],
+      "stars": 3,
+      "baseChance": 4,
+      "healthBonus": 4,
+      "chanceAt10": 7.6,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "horse_spartan",
+      "name": "철갑 준마",
+      "region": "초원",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:steppe, terralith:temperate_highlands",
+      "habitat": "초원 공터의 작은 무리. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip",
+      "entryId": "horse_spartan",
+      "description": "넓은 지형을 달리는 힘찬 말. 철갑 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:steppe",
+        "terralith:temperate_highlands"
+      ],
+      "biomeNames": [
+        "대초원",
+        "온대 고지"
+      ],
+      "stars": 2,
+      "baseChance": 20,
+      "healthBonus": 15,
+      "chanceAt10": 33.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "horse_unicorn",
+      "name": "유니콘",
+      "region": "마법숲",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:sakura_grove, terralith:lavender_forest",
+      "habitat": "거목·꽃 군락 인근 소규모 출현 지점. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip",
+      "entryId": "horse_unicorn",
+      "description": "넓은 지형을 달리는 힘찬 말. 유니콘 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:sakura_grove",
+        "terralith:lavender_forest"
+      ],
+      "biomeNames": [
+        "벚꽃 숲",
+        "라벤더 숲"
+      ],
+      "stars": 3,
+      "baseChance": 4,
+      "healthBonus": 4,
+      "chanceAt10": 7.6,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "kitsune_demonic",
+      "name": "마성 키츠네",
+      "region": "화산·이계",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:warped_mesa, terralith:cave/mantle_caves",
+      "habitat": "오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip",
+      "entryId": "kitsune_demonic",
+      "description": "마력이 짙은 숲길에 드물게 모습을 보이는 여우. 마성 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:warped_mesa",
+        "terralith:cave/mantle_caves"
+      ],
+      "biomeNames": [
+        "뒤틀린 메사",
+        "맨틀 동굴"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "kitsune_inferno",
+      "name": "업화 키츠네",
+      "region": "화산·이계",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:volcanic_crater",
+      "habitat": "오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip",
+      "entryId": "kitsune_inferno",
+      "description": "마력이 짙은 숲길에 드물게 모습을 보이는 여우. 업화 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:volcanic_crater"
+      ],
+      "biomeNames": [
+        "화산 분화구"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "kitsune_normal",
+      "name": "키츠네",
+      "region": "마법숲",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:sakura_grove, terralith:moonlight_grove",
+      "habitat": "거목·꽃 군락 인근 소규모 출현 지점. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip",
+      "entryId": "kitsune_normal",
+      "description": "마력이 짙은 숲길에 드물게 모습을 보이는 여우. ",
+      "biomeIds": [
+        "terralith:sakura_grove",
+        "terralith:moonlight_grove"
+      ],
+      "biomeNames": [
+        "벚꽃 숲",
+        "달빛 숲"
+      ],
+      "stars": 3,
+      "baseChance": 3,
+      "healthBonus": 4,
+      "chanceAt10": 6.6,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "phantom_ender",
+      "name": "공허 팬텀",
+      "region": "기이한 지형",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:warped_mesa, terralith:mirage_isles",
+      "habitat": "오버월드의 기이한 지형에 설치할 봉인 구역. 엔드 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip",
+      "entryId": "phantom_ender",
+      "description": "빛이 적은 봉인 지대에서 떠도는 비행 생물. 공허 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:warped_mesa",
+        "terralith:mirage_isles"
+      ],
+      "biomeNames": [
+        "뒤틀린 메사",
+        "신기루 섬"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "phantom_ghost",
+      "name": "망령 팬텀",
+      "region": "던전",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:cave/deep_caves, terralith:moonlight_valley",
+      "habitat": "동굴 내부의 별도 유적 구역. 바이옴 전체 자연 스폰 제외. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip",
+      "entryId": "phantom_ghost",
+      "description": "빛이 적은 봉인 지대에서 떠도는 비행 생물. 망령 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:cave/deep_caves",
+        "terralith:moonlight_valley"
+      ],
+      "biomeNames": [
+        "깊은 동굴",
+        "달빛 계곡"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "phoenix_darkflame",
+      "name": "흑염 피닉스",
+      "region": "화산·이계",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:basalt_cliffs, terralith:volcanic_crater",
+      "habitat": "오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip",
+      "entryId": "phoenix_darkflame",
+      "description": "마력이 모이는 높은 지형에 내려앉는 불사조. 흑염 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:basalt_cliffs",
+        "terralith:volcanic_crater"
+      ],
+      "biomeNames": [
+        "현무암 절벽",
+        "화산 분화구"
+      ],
+      "stars": 3,
+      "baseChance": 1,
+      "healthBonus": 1.5,
+      "chanceAt10": 2.35,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "phoenix_flame",
+      "name": "불꽃 피닉스",
+      "region": "산악",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:volcanic_peaks",
+      "habitat": "절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip",
+      "entryId": "phoenix_flame",
+      "description": "마력이 모이는 높은 지형에 내려앉는 불사조. 불꽃 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:volcanic_peaks"
+      ],
+      "biomeNames": [
+        "화산 봉우리"
+      ],
+      "stars": 3,
+      "baseChance": 1,
+      "healthBonus": 1.5,
+      "chanceAt10": 2.35,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "phoenix_light",
+      "name": "광휘 피닉스",
+      "region": "산악",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:skylands_spring",
+      "habitat": "절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip",
+      "entryId": "phoenix_light",
+      "description": "마력이 모이는 높은 지형에 내려앉는 불사조. 광휘 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:skylands_spring"
+      ],
+      "biomeNames": [
+        "봄 하늘섬"
+      ],
+      "stars": 3,
+      "baseChance": 1,
+      "healthBonus": 1.5,
+      "chanceAt10": 2.35,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "phoenix_thunder",
+      "name": "뇌광 피닉스",
+      "region": "산악",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:windswept_spires",
+      "habitat": "절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL2_v1.1-npykcr.zip",
+      "entryId": "phoenix_thunder",
+      "description": "마력이 모이는 높은 지형에 내려앉는 불사조. 뇌광 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:windswept_spires"
+      ],
+      "biomeNames": [
+        "바람 깎인 첨탑"
+      ],
+      "stars": 3,
+      "baseChance": 1,
+      "healthBonus": 1.5,
+      "chanceAt10": 2.35,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "basilisk_obsidian",
+      "name": "흑요 바실리스크",
+      "region": "화산·이계",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:basalt_cliffs, terralith:volcanic_peaks",
+      "habitat": "오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip",
+      "entryId": "basilisk_obsidian",
+      "description": "오래된 정글의 바위 틈에 자리 잡은 거대 파충류. 흑요 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:basalt_cliffs",
+        "terralith:volcanic_peaks"
+      ],
+      "biomeNames": [
+        "현무암 절벽",
+        "화산 봉우리"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "basilisk_snowstorm",
+      "name": "눈보라 바실리스크",
+      "region": "설원",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:glacial_chasm, terralith:skylands_winter",
+      "habitat": "빙하·설림의 육상 구역. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip",
+      "entryId": "basilisk_snowstorm",
+      "description": "오래된 정글의 바위 틈에 자리 잡은 거대 파충류. 눈보라 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:glacial_chasm",
+        "terralith:skylands_winter"
+      ],
+      "biomeNames": [
+        "빙하 협곡",
+        "겨울 하늘섬"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "basilisk_wild",
+      "name": "야생 바실리스크",
+      "region": "정글",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:rocky_jungle, terralith:jungle_mountains",
+      "habitat": "정글 수풀과 유적 외곽. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip",
+      "entryId": "basilisk_wild",
+      "description": "오래된 정글의 바위 틈에 자리 잡은 거대 파충류. ",
+      "biomeIds": [
+        "terralith:rocky_jungle",
+        "terralith:jungle_mountains"
+      ],
+      "biomeNames": [
+        "바위 정글",
+        "정글 산맥"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "hippogryph_common",
+      "name": "산악 히포그리프",
+      "region": "산악",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:emerald_peaks, terralith:alpine_highlands",
+      "habitat": "절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip",
+      "entryId": "hippogryph_common",
+      "description": "높은 절벽에 둥지를 만들고 주변을 살핀다. ",
+      "biomeIds": [
+        "terralith:emerald_peaks",
+        "terralith:alpine_highlands"
+      ],
+      "biomeNames": [
+        "에메랄드 봉우리",
+        "고산 고지"
+      ],
+      "stars": 3,
+      "baseChance": 3,
+      "healthBonus": 4,
+      "chanceAt10": 6.6,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "hippogryph_crystal",
+      "name": "수정 히포그리프",
+      "region": "산악",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:amethyst_canyon, terralith:emerald_peaks",
+      "habitat": "절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip",
+      "entryId": "hippogryph_crystal",
+      "description": "높은 절벽에 둥지를 만들고 주변을 살핀다. 수정 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:amethyst_canyon",
+        "terralith:emerald_peaks"
+      ],
+      "biomeNames": [
+        "자수정 협곡",
+        "에메랄드 봉우리"
+      ],
+      "stars": 3,
+      "baseChance": 3,
+      "healthBonus": 4,
+      "chanceAt10": 6.6,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "hippogryph_fallen",
+      "name": "타락 히포그리프",
+      "region": "던전",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:moonlight_grove, terralith:cave/deep_caves",
+      "habitat": "동굴 내부의 별도 유적 구역. 바이옴 전체 자연 스폰 제외. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip",
+      "entryId": "hippogryph_fallen",
+      "description": "높은 절벽에 둥지를 만들고 주변을 살핀다. 타락 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:moonlight_grove",
+        "terralith:cave/deep_caves"
+      ],
+      "biomeNames": [
+        "달빛 숲",
+        "깊은 동굴"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "hippogryph_royal",
+      "name": "왕실 히포그리프",
+      "region": "이벤트",
+      "role": "한정 교화",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:sakura_valley",
+      "habitat": "운영자가 여는 한정 교화 구역. 평시 자연 스폰 없음. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip",
+      "entryId": "hippogryph_royal",
+      "description": "높은 절벽에 둥지를 만들고 주변을 살핀다. 왕실 행사 중에만 만날 수 있는 개체.",
+      "biomeIds": [
+        "terralith:sakura_valley"
+      ],
+      "biomeNames": [
+        "벚꽃 계곡"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "이벤트 전용"
+    },
+    {
+      "id": "raptor_nightmare",
+      "name": "악몽 랩터",
+      "region": "던전",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:moonlight_grove, terralith:moonlight_valley",
+      "habitat": "동굴 내부의 별도 유적 구역. 바이옴 전체 자연 스폰 제외. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip",
+      "entryId": "raptor_nightmare",
+      "description": "정글 수풀을 가르며 사냥하는 민첩한 포식자. 악몽 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:moonlight_grove",
+        "terralith:moonlight_valley"
+      ],
+      "biomeNames": [
+        "달빛 숲",
+        "달빛 계곡"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "raptor_red",
+      "name": "적갈 랩터",
+      "region": "정글",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:tropical_jungle, terralith:rocky_jungle",
+      "habitat": "정글 수풀과 유적 외곽. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip",
+      "entryId": "raptor_red",
+      "description": "정글 수풀을 가르며 사냥하는 민첩한 포식자. 적갈 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:tropical_jungle",
+        "terralith:rocky_jungle"
+      ],
+      "biomeNames": [
+        "열대 정글",
+        "바위 정글"
+      ],
+      "stars": 2,
+      "baseChance": 10,
+      "healthBonus": 12,
+      "chanceAt10": 20.8,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "raptor_undead",
+      "name": "불사 랩터",
+      "region": "던전",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:cave/infested_caves, terralith:cave/deep_caves",
+      "habitat": "동굴 내부의 별도 유적 구역. 바이옴 전체 자연 스폰 제외. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip",
+      "entryId": "raptor_undead",
+      "description": "정글 수풀을 가르며 사냥하는 민첩한 포식자. 불사 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:cave/infested_caves",
+        "terralith:cave/deep_caves"
+      ],
+      "biomeNames": [
+        "감염 동굴",
+        "깊은 동굴"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "sky_serpent_jade",
+      "name": "비취 하늘뱀",
+      "region": "산악",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:skylands_spring, terralith:windswept_spires",
+      "habitat": "절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip",
+      "entryId": "sky_serpent_jade",
+      "description": "높은 하늘섬 사이를 유영하는 긴 몸의 생물. 비취 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:skylands_spring",
+        "terralith:windswept_spires"
+      ],
+      "biomeNames": [
+        "봄 하늘섬",
+        "바람 깎인 첨탑"
+      ],
+      "stars": 3,
+      "baseChance": 1.5,
+      "healthBonus": 2.5,
+      "chanceAt10": 3.75,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "sky_serpent_magma",
+      "name": "마그마 하늘뱀",
+      "region": "화산·이계",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:volcanic_peaks, terralith:basalt_cliffs",
+      "habitat": "오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip",
+      "entryId": "sky_serpent_magma",
+      "description": "높은 하늘섬 사이를 유영하는 긴 몸의 생물. 마그마 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:volcanic_peaks",
+        "terralith:basalt_cliffs"
+      ],
+      "biomeNames": [
+        "화산 봉우리",
+        "현무암 절벽"
+      ],
+      "stars": 3,
+      "baseChance": 1.5,
+      "healthBonus": 2.5,
+      "chanceAt10": 3.75,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "sky_serpent_solar",
+      "name": "태양 하늘뱀",
+      "region": "산악",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:skylands_summer",
+      "habitat": "절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip",
+      "entryId": "sky_serpent_solar",
+      "description": "높은 하늘섬 사이를 유영하는 긴 몸의 생물. 태양 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:skylands_summer"
+      ],
+      "biomeNames": [
+        "여름 하늘섬"
+      ],
+      "stars": 3,
+      "baseChance": 1.5,
+      "healthBonus": 2.5,
+      "chanceAt10": 3.75,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "sky_serpent_spectral",
+      "name": "영체 하늘뱀",
+      "region": "기이한 지형",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:moonlight_valley, terralith:skylands_autumn",
+      "habitat": "오버월드의 기이한 지형에 설치할 봉인 구역. 엔드 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip",
+      "entryId": "sky_serpent_spectral",
+      "description": "높은 하늘섬 사이를 유영하는 긴 몸의 생물. 영체 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:moonlight_valley",
+        "terralith:skylands_autumn"
+      ],
+      "biomeNames": [
+        "달빛 계곡",
+        "가을 하늘섬"
+      ],
+      "stars": 3,
+      "baseChance": 1.5,
+      "healthBonus": 2.5,
+      "chanceAt10": 3.75,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "stag_demonic",
+      "name": "마성 영록",
+      "region": "화산·이계",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:warped_mesa, terralith:cave/mantle_caves",
+      "habitat": "오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip",
+      "entryId": "stag_demonic",
+      "description": "오래된 숲의 마력을 품은 신비한 사슴. 마성 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:warped_mesa",
+        "terralith:cave/mantle_caves"
+      ],
+      "biomeNames": [
+        "뒤틀린 메사",
+        "맨틀 동굴"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "stag_heavenly",
+      "name": "천상 영록",
+      "region": "마법숲",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:skylands_spring",
+      "habitat": "거목·꽃 군락 인근 소규모 출현 지점. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip",
+      "entryId": "stag_heavenly",
+      "description": "오래된 숲의 마력을 품은 신비한 사슴. 천상 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:skylands_spring"
+      ],
+      "biomeNames": [
+        "봄 하늘섬"
+      ],
+      "stars": 3,
+      "baseChance": 3,
+      "healthBonus": 4,
+      "chanceAt10": 6.6,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "stag_rune",
+      "name": "룬 영록",
+      "region": "마법숲",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:amethyst_rainforest, terralith:moonlight_grove",
+      "habitat": "거목·꽃 군락 인근 소규모 출현 지점. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip",
+      "entryId": "stag_rune",
+      "description": "오래된 숲의 마력을 품은 신비한 사슴. 룬 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:amethyst_rainforest",
+        "terralith:moonlight_grove"
+      ],
+      "biomeNames": [
+        "자수정 우림",
+        "달빛 숲"
+      ],
+      "stars": 3,
+      "baseChance": 3,
+      "healthBonus": 4,
+      "chanceAt10": 6.6,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "stag_void",
+      "name": "심연 영록",
+      "region": "기이한 지형",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:mirage_isles, terralith:warped_mesa",
+      "habitat": "오버월드의 기이한 지형에 설치할 봉인 구역. 엔드 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL3-bvbqa8.zip",
+      "entryId": "stag_void",
+      "description": "오래된 숲의 마력을 품은 신비한 사슴. 심연 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:mirage_isles",
+        "terralith:warped_mesa"
+      ],
+      "biomeNames": [
+        "신기루 섬",
+        "뒤틀린 메사"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "frog_green",
+      "name": "녹빛 왕개구리",
+      "region": "늪",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:orchid_swamp, terralith:lush_valley",
+      "habitat": "늪과 강의 물가. 육상·수중 조건은 개체별 지정. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL4.zip",
+      "entryId": "frog_green",
+      "description": "깊은 늪 가장자리에서 모습을 드러내는 큰 개구리. 녹빛 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:orchid_swamp",
+        "terralith:lush_valley"
+      ],
+      "biomeNames": [
+        "난초 늪",
+        "푸른 계곡"
+      ],
+      "stars": 2,
+      "baseChance": 20,
+      "healthBonus": 15,
+      "chanceAt10": 33.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "frog_permafrost",
+      "name": "영구동토 왕개구리",
+      "region": "설원",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:ice_marsh, terralith:frozen_cliffs",
+      "habitat": "빙하·설림의 육상 구역. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL4.zip",
+      "entryId": "frog_permafrost",
+      "description": "깊은 늪 가장자리에서 모습을 드러내는 큰 개구리. 영구동토 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:ice_marsh",
+        "terralith:frozen_cliffs"
+      ],
+      "biomeNames": [
+        "얼음 늪",
+        "얼어붙은 절벽"
+      ],
+      "stars": 2,
+      "baseChance": 20,
+      "healthBonus": 15,
+      "chanceAt10": 33.5,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "frog_royal",
+      "name": "왕실 왕개구리",
+      "region": "이벤트",
+      "role": "한정 교화",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:sakura_valley",
+      "habitat": "운영자가 여는 한정 교화 구역. 평시 자연 스폰 없음. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL4.zip",
+      "entryId": "frog_royal",
+      "description": "깊은 늪 가장자리에서 모습을 드러내는 큰 개구리. 왕실 행사 중에만 만날 수 있는 개체.",
+      "biomeIds": [
+        "terralith:sakura_valley"
+      ],
+      "biomeNames": [
+        "벚꽃 계곡"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "이벤트 전용"
+    },
+    {
+      "id": "golem_arcane",
+      "name": "비전 고대 골렘",
+      "region": "던전",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:amethyst_canyon, terralith:cave/deep_caves",
+      "habitat": "동굴 내부의 별도 유적 구역. 바이옴 전체 자연 스폰 제외. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL4.zip",
+      "entryId": "golem_arcane",
+      "description": "특정 유적의 마력을 지키는 거대한 수호체. 비전 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:amethyst_canyon",
+        "terralith:cave/deep_caves"
+      ],
+      "biomeNames": [
+        "자수정 협곡",
+        "깊은 동굴"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "golem_corrupted",
+      "name": "오염 고대 골렘",
+      "region": "던전",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:cave/infested_caves",
+      "habitat": "동굴 내부의 별도 유적 구역. 바이옴 전체 자연 스폰 제외. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL4.zip",
+      "entryId": "golem_corrupted",
+      "description": "특정 유적의 마력을 지키는 거대한 수호체. 오염 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:cave/infested_caves"
+      ],
+      "biomeNames": [
+        "감염 동굴"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "golem_magma",
+      "name": "마그마 고대 골렘",
+      "region": "화산·이계",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:volcanic_peaks, terralith:basalt_cliffs",
+      "habitat": "오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL4.zip",
+      "entryId": "golem_magma",
+      "description": "특정 유적의 마력을 지키는 거대한 수호체. 마그마 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:volcanic_peaks",
+        "terralith:basalt_cliffs"
+      ],
+      "biomeNames": [
+        "화산 봉우리",
+        "현무암 절벽"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "golem_royal",
+      "name": "왕실 고대 골렘",
+      "region": "이벤트",
+      "role": "한정 교화",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:sakura_valley",
+      "habitat": "운영자가 여는 한정 교화 구역. 평시 자연 스폰 없음. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL4.zip",
+      "entryId": "golem_royal",
+      "description": "특정 유적의 마력을 지키는 거대한 수호체. 왕실 행사 중에만 만날 수 있는 개체.",
+      "biomeIds": [
+        "terralith:sakura_valley"
+      ],
+      "biomeNames": [
+        "벚꽃 계곡"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "이벤트 전용"
+    },
+    {
+      "id": "tusker_demonic",
+      "name": "마성 터스커",
+      "region": "화산·이계",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:warped_mesa, terralith:cave/mantle_caves",
+      "habitat": "오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL4.zip",
+      "entryId": "tusker_demonic",
+      "description": "숲의 길목을 따라 이동하는 큰 엄니의 생물. 마성 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:warped_mesa",
+        "terralith:cave/mantle_caves"
+      ],
+      "biomeNames": [
+        "뒤틀린 메사",
+        "맨틀 동굴"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "tusker_dreamlight",
+      "name": "꿈빛 터스커",
+      "region": "마법숲",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:lavender_valley, terralith:moonlight_valley",
+      "habitat": "거목·꽃 군락 인근 소규모 출현 지점. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL4.zip",
+      "entryId": "tusker_dreamlight",
+      "description": "숲의 길목을 따라 이동하는 큰 엄니의 생물. 꿈빛 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:lavender_valley",
+        "terralith:moonlight_valley"
+      ],
+      "biomeNames": [
+        "라벤더 계곡",
+        "달빛 계곡"
+      ],
+      "stars": 2,
+      "baseChance": 12,
+      "healthBonus": 13,
+      "chanceAt10": 23.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "tusker_forest",
+      "name": "숲 터스커",
+      "region": "숲",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:forested_highlands, terralith:cloud_forest",
+      "habitat": "나무 아래와 숲 가장자리의 육상 개체. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL4.zip",
+      "entryId": "tusker_forest",
+      "description": "숲의 길목을 따라 이동하는 큰 엄니의 생물. 숲 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:forested_highlands",
+        "terralith:cloud_forest"
+      ],
+      "biomeNames": [
+        "숲 우거진 고지",
+        "운무 숲"
+      ],
+      "stars": 2,
+      "baseChance": 12,
+      "healthBonus": 13,
+      "chanceAt10": 23.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "드묾 · 소수 개체"
+    },
+    {
+      "id": "wolfhawk_dire",
+      "name": "거친 울프호크",
+      "region": "산악",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:windswept_spires, terralith:rocky_mountains",
+      "habitat": "절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL4.zip",
+      "entryId": "wolfhawk_dire",
+      "description": "산악 둥지 주변에서 영역을 지키는 날렵한 생물. 거친 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:windswept_spires",
+        "terralith:rocky_mountains"
+      ],
+      "biomeNames": [
+        "바람 깎인 첨탑",
+        "바위 산맥"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "wolfhawk_fallen",
+      "name": "타락 울프호크",
+      "region": "던전",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:moonlight_grove, terralith:cave/deep_caves",
+      "habitat": "동굴 내부의 별도 유적 구역. 바이옴 전체 자연 스폰 제외. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL4.zip",
+      "entryId": "wolfhawk_fallen",
+      "description": "산악 둥지 주변에서 영역을 지키는 날렵한 생물. 타락 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:moonlight_grove",
+        "terralith:cave/deep_caves"
+      ],
+      "biomeNames": [
+        "달빛 숲",
+        "깊은 동굴"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "wolfhawk_fullmoon",
+      "name": "만월 울프호크",
+      "region": "산악",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:moonlight_valley",
+      "habitat": "절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL4.zip",
+      "entryId": "wolfhawk_fullmoon",
+      "description": "산악 둥지 주변에서 영역을 지키는 날렵한 생물. 만월 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:moonlight_valley"
+      ],
+      "biomeNames": [
+        "달빛 계곡"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "wolfhawk_stormcloud",
+      "name": "먹구름 울프호크",
+      "region": "산악",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:windswept_spires, terralith:rocky_mountains",
+      "habitat": "절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL4.zip",
+      "entryId": "wolfhawk_stormcloud",
+      "description": "산악 둥지 주변에서 영역을 지키는 날렵한 생물. 먹구름 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:windswept_spires",
+        "terralith:rocky_mountains"
+      ],
+      "biomeNames": [
+        "바람 깎인 첨탑",
+        "바위 산맥"
+      ],
+      "stars": 3,
+      "baseChance": 2,
+      "healthBonus": 3,
+      "chanceAt10": 4.7,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "wyvern_ender",
+      "name": "공허 와이번",
+      "region": "기이한 지형",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:warped_mesa, terralith:mirage_isles",
+      "habitat": "오버월드의 기이한 지형에 설치할 봉인 구역. 엔드 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL4.zip",
+      "entryId": "wyvern_ender",
+      "description": "가파른 산맥에 둥지를 튼 비행 포식자. 공허 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:warped_mesa",
+        "terralith:mirage_isles"
+      ],
+      "biomeNames": [
+        "뒤틀린 메사",
+        "신기루 섬"
+      ],
+      "stars": 3,
+      "baseChance": 1.5,
+      "healthBonus": 2.5,
+      "chanceAt10": 3.75,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "wyvern_green",
+      "name": "녹빛 와이번",
+      "region": "산악",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:rocky_mountains, terralith:stony_spires",
+      "habitat": "절벽·고지대에 지정한 둥지. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL4.zip",
+      "entryId": "wyvern_green",
+      "description": "가파른 산맥에 둥지를 튼 비행 포식자. 녹빛 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:rocky_mountains",
+        "terralith:stony_spires"
+      ],
+      "biomeNames": [
+        "바위 산맥",
+        "바위 첨탑"
+      ],
+      "stars": 3,
+      "baseChance": 1.5,
+      "healthBonus": 2.5,
+      "chanceAt10": 3.75,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "wyvern_inferno",
+      "name": "업화 와이번",
+      "region": "화산·이계",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:volcanic_crater",
+      "habitat": "오버월드의 Terralith 화산 지대. 네더 차원 자동 배치 아님. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL4.zip",
+      "entryId": "wyvern_inferno",
+      "description": "가파른 산맥에 둥지를 튼 비행 포식자. 업화 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:volcanic_crater"
+      ],
+      "biomeNames": [
+        "화산 분화구"
+      ],
+      "stars": 3,
+      "baseChance": 1.5,
+      "healthBonus": 2.5,
+      "chanceAt10": 3.75,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    },
+    {
+      "id": "wyvern_undead",
+      "name": "불사 와이번",
+      "region": "던전",
+      "role": "희귀 탑승",
+      "note": "검토용 신규 제안. 기존 펫 등급·확률 및 서버 설정은 변경하지 않음.",
+      "priority": "2차",
+      "biomes": "terralith:cave/infested_caves, terralith:cave/deep_caves",
+      "habitat": "동굴 내부의 별도 유적 구역. 바이옴 전체 자연 스폰 제외. 탑승 팩 원본과 별개로 야생형 AI·교화 프로필 필요.",
+      "pack": "samus2002_RPG_MOUNT_PACK_VOL4.zip",
+      "entryId": "wyvern_undead",
+      "description": "가파른 산맥에 둥지를 튼 비행 포식자. 불사 계열의 변이 개체.",
+      "biomeIds": [
+        "terralith:cave/infested_caves",
+        "terralith:cave/deep_caves"
+      ],
+      "biomeNames": [
+        "감염 동굴",
+        "깊은 동굴"
+      ],
+      "stars": 3,
+      "baseChance": 1.5,
+      "healthBonus": 2.5,
+      "chanceAt10": 3.75,
+      "boss": false,
+      "captureRule": "현재 교화 시스템의 유효 대상일 때 시도 · 체력 감소에 따라 보너스",
+      "spawnRarity": "희귀 · 지정 지점"
+    }
+  ]
+}

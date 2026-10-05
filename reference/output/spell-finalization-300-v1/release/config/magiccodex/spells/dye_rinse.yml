@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "dye_rinse"
+name: "염색 씻기"
+category: "water"
+description: "손에 든 가죽 장비의 염색을 지웁니다.\n\n가마솥에서 가죽 장비의 물든 색을 여러 번 지워 보면 물이 색을 거두는 감각이 남는다."
+icon: "magiccodex:textures/spells/expansion/dye_rinse.png"
+permission: "magic.learned.dye_rinse"
+discovery:
+  description: "가마솥으로 가죽 장비의 염색을 3번 지우기."
+research: "실수로 물든 망토를 버리기에는 아직 새 옷이었다."
+cast:
+  command: "마법 염색씻기"
+  cooldown-seconds: 5
+  mana-cost: 5
+order: 770

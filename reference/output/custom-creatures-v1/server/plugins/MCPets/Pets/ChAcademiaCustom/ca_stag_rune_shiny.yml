@@ -1,0 +1,17 @@
+"Id": "ca_stag_rune_shiny"
+"MythicMob": "CA_Pet_stag_rune_shiny"
+"Permission": "chacademia.pet.ca_stag_rune_shiny"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e룬 영록"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "오래된 숲의 마력을 품은 신비한 사슴. 룬 계열의 변이 개체."
+    - "서식지: 자수정 우림 / 달빛 숲"
+    - "3성"

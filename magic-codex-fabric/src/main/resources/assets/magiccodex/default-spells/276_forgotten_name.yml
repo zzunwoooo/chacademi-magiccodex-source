@@ -1,0 +1,14 @@
+id: forgotten_name
+name: 잊힌 이름
+category: dark
+description: 모루에서 붙인 사용자 지정 아이템 이름을 지운다.
+icon: ''
+permission: magic.learned.forgotten_name
+discovery:
+  description: 모루에서 아이템 이름을 누적 10회 변경하기.
+research: 이름을 지워도 물건의 재료와 지난 사용 흔적은 남는다.
+cast:
+  command: ''
+  cooldown-seconds: 4
+  mana-cost: 8
+order: 276

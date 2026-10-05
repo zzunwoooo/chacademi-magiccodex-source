@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "earth_anchor"
+name: "대지의 닻"
+category: "earth"
+description: "10초 동안 일반 공격으로 밀려나지 않게 합니다. 이동은 가능합니다.\n\n방패로 몬스터의 공격을 거듭 받아 내면 발밑의 땅을 붙잡는 감각이 남는다."
+icon: "magiccodex:textures/spells/expansion/earth_anchor.png"
+permission: "magic.learned.earth_anchor"
+discovery:
+  description: "방패로 몬스터의 공격 누적 30회 막기."
+research: "밀리지 않는다고 움직일 수 없는 것은 아니다. 산처럼 서 있다가도 수업 종이 울리면 걸어가야 한다."
+cast:
+  command: "마법 대지의닻"
+  cooldown-seconds: 30
+  mana-cost: 80
+order: 1120

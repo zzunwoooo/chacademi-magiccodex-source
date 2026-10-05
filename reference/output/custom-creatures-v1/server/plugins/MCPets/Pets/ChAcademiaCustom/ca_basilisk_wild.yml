@@ -1,0 +1,17 @@
+"Id": "ca_basilisk_wild"
+"MythicMob": "CA_Pet_basilisk_wild"
+"Permission": "chacademia.pet.ca_basilisk_wild"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f야생 바실리스크"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "오래된 정글의 바위 틈에 자리 잡은 거대 파충류. "
+    - "서식지: 바위 정글 / 정글 산맥"
+    - "3성"

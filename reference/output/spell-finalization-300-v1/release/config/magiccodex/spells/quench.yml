@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "quench"
+name: "불길 씻기"
+category: "water"
+description: "몸에 붙은 불을 즉시 끕니다. 이후 다시 붙는 불까지 막아 주지는 않습니다.\n\n몸에 붙은 불을 물에 뛰어들어 거듭 꺼 보면 물이 열을 씻어내는 순간이 익숙해진다."
+icon: "magiccodex:textures/spells/novice_extra/quench.png"
+permission: "magic.learned.quench"
+discovery:
+  description: "불이 붙은 상태에서 물에 들어가 불 끄기 5회."
+research: "화염 실습을 시작하기 전에 꼭 배워 두어야 할 마법."
+cast:
+  command: "마법 불길씻기"
+  cooldown-seconds: 3
+  mana-cost: 5
+order: 690

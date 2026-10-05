@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "far_touch"
+name: "손길 너머"
+category: "wind"
+description: "손이 닿지 않는 곳의 지정된 레버나 장치를 마법의 손으로 조작합니다.\n\n손끝으로 여러 장치를 움직여 본 경험이 손이 닿지 않는 곳까지 이어진다."
+icon: "magiccodex:textures/spells/intermediate/far_touch.png"
+permission: "magic.learned.far_touch"
+discovery:
+  description: "레버·버튼·압력판을 각각 10회 작동시키기."
+research: "정교한 바람 컨트롤은 복잡한 기계도 조종할 수 있다."
+cast:
+  command: "마법 손길너머"
+  cooldown-seconds: 15
+  mana-cost: 20
+order: 70

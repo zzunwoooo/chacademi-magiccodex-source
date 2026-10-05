@@ -1,0 +1,14 @@
+id: healing_reserve
+name: 물결 저금
+category: water
+description: 최대 체력을 넘긴 치유 일부를 저장했다가 다음 피해 뒤 회복한다.
+icon: ''
+permission: magic.learned.healing_reserve
+discovery:
+  description: 체력이 하트 1칸 이하인 상태에서 투척용 치유 물약으로 5회 회복하기.
+research: 넘치는 치유를 흘려보내지 않고 한 번의 위기에 대비한다.
+cast:
+  command: ''
+  cooldown-seconds: 40
+  mana-cost: 100
+order: 244

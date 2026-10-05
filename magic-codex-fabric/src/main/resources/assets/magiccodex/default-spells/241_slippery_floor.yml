@@ -1,0 +1,14 @@
+id: slippery_floor
+name: 미끄러운 바닥
+category: water
+description: 작은 구역에서 급정지와 방향 전환을 어렵게 한다.
+icon: ''
+permission: magic.learned.slippery_floor
+discovery:
+  description: 얼음 위에서 누적 200블록 이동하기.
+research: 달리기보다 멈추기가 어려운 바닥이다. 방향을 돌릴 때도 주의가 필요하다.
+cast:
+  command: ''
+  cooldown-seconds: 20
+  mana-cost: 40
+order: 241

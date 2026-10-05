@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "cross_breeze"
+name: "바람 화살"
+category: "wind"
+description: "바람의 힘으로 가속 된 강력한 화살을 하나 발사합니다.\n\n기초 바람 실습의 작은 깨달음이 공기를 화살처럼 뻗게 한다."
+icon: "magiccodex:textures/spells/expansion_2/cross_breeze.png"
+permission: "magic.learned.cross_breeze"
+discovery:
+  description: "바람 마법 기초 수업을 통해 낮은 확률로 습득"
+research: "구식 무기에 바람의 힘을 더하니 의외로 효과적인 활용이 가능하였다."
+cast:
+  command: "마법 바람화살"
+  cooldown-seconds: 12
+  mana-cost: 40
+order: 220

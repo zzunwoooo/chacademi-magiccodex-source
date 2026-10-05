@@ -1,0 +1,17 @@
+id: taming
+name: 교화
+description: |-
+  대상을 교화해 펫 도감에 등록합니다.
+  일반 몹은 체력이 낮을수록 성공 확률이 높아지며,
+  보스는 쓰러진 뒤 남은 시간 동안 시도할 수 있습니다.
+category: light
+icon: magiccodex:textures/gui/taming/taming_icon.png
+permission: magiccodex.taming
+discovery:
+  description: 교화 마법 사용 권한 획득
+research: 함께할 동료를 찾아보세요.
+cast:
+  command: 교화
+  cooldown-seconds: 8
+  mana-cost: 15
+order: 9990

@@ -1,0 +1,14 @@
+id: flame_boundary
+name: 화염 고리
+category: fire
+description: 적 주위에 불의 고리를 만들어 경계를 넘으면 피해를 준다.
+icon: ''
+permission: magic.learned.flame_boundary
+discovery:
+  description: 화염 마법 방어 실습을 완료하기.
+research: 고리의 안쪽보다 경계가 뜨겁다. 한 걸음의 선택을 묻는 불이다.
+cast:
+  command: ''
+  cooldown-seconds: 30
+  mana-cost: 100
+order: 224

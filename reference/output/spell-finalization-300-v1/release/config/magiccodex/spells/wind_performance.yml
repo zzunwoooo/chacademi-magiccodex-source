@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "wind_performance"
+name: "바람 연주"
+category: "wind"
+description: "선택한 악기 음을 짧게 울려 합주에 사용한다.\n\n소리 블록을 거듭 울린 손끝에서 공기의 높낮이가 익숙해진다."
+icon: "magiccodex:textures/spells/expansion_3/wind_performance.png"
+permission: "magic.learned.wind_performance"
+discovery:
+  description: "소리 블록을 누적 20회 연주하기."
+research: "바람은 오래전부터 소리를 운반했다. 이제 악기를 대신 울리게 할 차례다."
+cast:
+  command: "마법 바람연주"
+  cooldown-seconds: 2
+  mana-cost: 6
+order: 2110

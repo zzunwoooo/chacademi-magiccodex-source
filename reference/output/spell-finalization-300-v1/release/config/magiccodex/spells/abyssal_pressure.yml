@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "abyssal_pressure"
+name: "심해의 압력"
+category: "water"
+description: "지정한 5블록 범위에 6초간 심해의 압력을 내립니다. 적의 이동과 공격을 둔하게 하고 매초 피해를 줍니다.\n\n물결 숨결을 빌려 깊은 바다에 머물면 수면에서는 느낄 수 없던 압력이 몸에 남는다."
+icon: "magiccodex:textures/spells/expansion_2/abyssal_pressure.png"
+permission: "magic.learned.abyssal_pressure"
+discovery:
+  description: "물결 숨결을 사용한 상태에서 깊은 바다에 누적 60초 머무르기."
+research: "수면 아래가 조용하다고 아무 일도 없는 것은 아니다. 깊은 바다는 물의 무게만으로 모든 것을 짓누른다."
+cast:
+  command: "마법 심해의압력"
+  cooldown-seconds: 90
+  mana-cost: 420
+order: 970

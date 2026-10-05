@@ -1,0 +1,17 @@
+# 설명·발견 조건·쿨타임은 수정 가능한 기획 초안입니다.
+# 발견 조건은 UI 표시용 문구이며 실제 판정 기능은 연결되지 않았습니다.
+# cast.command는 실제 시전 기능 연결 후 / 없이 입력하세요.
+id: "purifying_wave"
+name: "정화의 물결"
+category: "water"
+rank: "중급"
+description: "정화의 물결로 지정된 해로운 효과와 오염된 장치를 씻어냅니다."
+icon: "magiccodex:textures/spells/intermediate/purifying_wave.png"
+permission: "magic.learned.purifying_wave"
+discovery:
+  description: "오염된 샘에서 정화 실험 기록을 찾아 읽기."
+research: ""
+cast:
+  command: ""
+  cooldown-seconds: 45
+order: 1080

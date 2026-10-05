@@ -1,0 +1,17 @@
+"Id": "ca_voxelspawns_pug"
+"MythicMob": "CA_Pet_voxelspawns_pug"
+"Permission": "chacademia.pet.ca_voxelspawns_pug"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f산책 퍼그"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "학교 외곽 벚꽃길을 산책하는 작은 개."
+    - "서식지: 벚꽃 계곡 / 꽃피는 계곡"
+    - "1성"

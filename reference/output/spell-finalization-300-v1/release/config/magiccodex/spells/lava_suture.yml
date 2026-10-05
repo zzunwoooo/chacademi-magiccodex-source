@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "lava_suture"
+name: "용암 봉합"
+category: "fire"
+description: "가까운 용암을 흑요석으로 굳힙니다.\n\n용암을 물로 식혀 흑요석을 거듭 만들어 보면 굳어지는 경계의 힘을 읽을 수 있다."
+icon: "magiccodex:textures/spells/expansion_2/lava_suture.png"
+permission: "magic.learned.lava_suture"
+discovery:
+  description: "용암에 물을 부어 흑요석을 누적 32개 만들기."
+research: "화염을 지배하는 마법사는 급속도로 온도를 내릴 수도 있는 법."
+cast:
+  command: "마법 용암봉합"
+  cooldown-seconds: 5
+  mana-cost: 30
+order: 610

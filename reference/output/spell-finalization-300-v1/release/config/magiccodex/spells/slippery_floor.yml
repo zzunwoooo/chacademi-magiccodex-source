@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "slippery_floor"
+name: "미끄러운 바닥"
+category: "water"
+description: "작은 구역에서 급정지와 방향 전환을 어렵게 한다.\n\n얼음 위에서 오래 움직여 본 발은 미끄러지는 순간의 힘을 안다."
+icon: "magiccodex:textures/spells/expansion_3/slippery_floor.png"
+permission: "magic.learned.slippery_floor"
+discovery:
+  description: "얼음 위에서 누적 200블록 이동하기."
+research: "달리기보다 멈추기가 어려운 바닥이다. 방향을 돌릴 때도 주의가 필요하다."
+cast:
+  command: "마법 미끄러운바닥"
+  cooldown-seconds: 20
+  mana-cost: 40
+order: 2420

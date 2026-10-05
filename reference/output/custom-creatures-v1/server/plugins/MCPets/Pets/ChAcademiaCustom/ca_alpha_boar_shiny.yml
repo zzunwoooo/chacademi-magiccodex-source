@@ -1,0 +1,17 @@
+"Id": "ca_alpha_boar_shiny"
+"MythicMob": "CA_Pet_alpha_boar_shiny"
+"Permission": "chacademia.pet.ca_alpha_boar_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e송곳니 우두머리"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "오래된 숲의 멧돼지 무리를 지키는 강한 개체."
+    - "서식지: 숲 우거진 고지 / 방패암 숲"
+    - "2성"

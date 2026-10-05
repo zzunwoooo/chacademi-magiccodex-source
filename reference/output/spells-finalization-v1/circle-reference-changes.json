@@ -1,0 +1,20 @@
+[
+  {
+    "id": "aerial_haul",
+    "field": "condition",
+    "before": "6서클 달성",
+    "after": "학교 도서관에서 '부유물의 무게와 균형' 책을 읽은 뒤 손길 너머 50회 사용하기."
+  },
+  {
+    "id": "aerial_haul",
+    "field": "research",
+    "before": "6서클 바람 마법의 기본, 사람에게 사용은 금지되어있다.",
+    "after": "정교한 바람 조종의 기본, 사람에게 사용은 금지되어있다."
+  },
+  {
+    "id": "descent_command",
+    "field": "condition",
+    "before": "6서클 달성 후 윈드 프레스 사용",
+    "after": "공중에 떠 있는 몬스터에게 윈드 프레스 50회 사용하기."
+  }
+]

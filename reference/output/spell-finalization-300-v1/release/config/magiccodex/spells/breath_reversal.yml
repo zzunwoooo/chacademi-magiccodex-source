@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "breath_reversal"
+name: "숨결 반전"
+category: "wind"
+description: "송풍 장치의 바람 방향을 뒤집어 발판이나 풍차의 진행을 바꾼다.\n\n송풍 실습에서 바람의 길을 읽으면 밀어 주는 힘을 반대쪽으로 돌릴 수 있다."
+icon: "magiccodex:textures/spells/expansion_3/breath_reversal.png"
+permission: "magic.learned.breath_reversal"
+discovery:
+  description: "바람 마법 응용 수업의 송풍 실습을 완료하기."
+research: "같은 바람도 방향 하나에 열리는 길과 닫히는 길이 바뀐다."
+cast:
+  command: "마법 숨결반전"
+  cooldown-seconds: 12
+  mana-cost: 30
+order: 2920

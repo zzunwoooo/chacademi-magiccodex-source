@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "earthquake"
+name: "지진"
+category: "earth"
+description: "주변 6블록의 지면을 흔들어 적에게 피해를 줍니다.\n\n대지 실전 수업에서는 지면의 작은 떨림을 한 번의 충격으로 모으는 법을 배운다."
+icon: "magiccodex:textures/spells/advanced/earthquake.png"
+permission: "magic.learned.earthquake"
+discovery:
+  description: "대지 마법 실전 수업을 통해 습득."
+research: "발밑의 작은 떨림을 한곳에 모으면 바위도 견디지 못한다. 학교 안에서는 허가 없이 사용하지 말자."
+cast:
+  command: "마법 지진"
+  cooldown-seconds: 45
+  mana-cost: 200
+order: 1060

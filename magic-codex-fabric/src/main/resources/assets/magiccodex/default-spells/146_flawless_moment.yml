@@ -1,0 +1,14 @@
+id: flawless_moment
+name: 무결의 순간
+category: light
+description: 2초 동안 피해를 받지 않습니다. 유지 중에는 자신도 이동하거나 공격할 수 없습니다.
+icon: magiccodex:textures/spells/expansion/flawless_moment.png
+permission: magic.learned.flawless_moment
+discovery:
+  description: 방패로 공격을 10번 연속 막고 그동안 피해를 받지 않기.
+research: 아무것도 다치지 않는 순간에는 아무것도 움직여서는 안 된다.
+cast:
+  command: ''
+  cooldown-seconds: 90
+  mana-cost: 220
+order: 146

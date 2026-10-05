@@ -1,0 +1,17 @@
+"Id": "ca_horse_unicorn"
+"MythicMob": "CA_Pet_horse_unicorn"
+"Permission": "chacademia.pet.ca_horse_unicorn"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f유니콘"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "넓은 지형을 달리는 힘찬 말. 유니콘 계열의 변이 개체."
+    - "서식지: 벚꽃 숲 / 라벤더 숲"
+    - "3성"

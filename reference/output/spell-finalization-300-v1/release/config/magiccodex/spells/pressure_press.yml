@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "pressure_press"
+name: "윈드 프레스"
+category: "wind"
+description: "공중에 위치한 대상을 낙하시킵니다.\n\n앵무새의 날개를 거칠게 건드렸던 순간, 공기가 눌렸다가 되돌아오는 감각이 남는다."
+icon: "magiccodex:textures/spells/expansion_2/pressure_press.png"
+permission: "magic.learned.pressure_press"
+discovery:
+  description: "앵무새를 1회 공격하기."
+research: "하늘을 나는 새도 무거운 바람 속에선 날지 못하게 된다."
+cast:
+  command: ""
+  cooldown-seconds: 20
+  mana-cost: 70
+order: 240

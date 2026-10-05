@@ -1,0 +1,14 @@
+id: charcoal_scent
+name: 숯내음
+category: fire
+description: 원목을 소비해 숯으로 바꾼다.
+icon: ''
+permission: magic.learned.charcoal_scent
+discovery:
+  description: 화로에서 숯을 누적 32개 꺼내기.
+research: 나무의 모양은 사라져도 그 안의 온기는 다른 불을 지핀다.
+cast:
+  command: ''
+  cooldown-seconds: 8
+  mana-cost: 18
+order: 217

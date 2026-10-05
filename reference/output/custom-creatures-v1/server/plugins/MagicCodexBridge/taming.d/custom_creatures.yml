@@ -1,0 +1,2485 @@
+"targets":
+  "ca_squirrel":
+    "mythic-id": "CA_Wild_squirrel"
+    "pet-id": "ca_squirrel"
+    "name": "도토리 다람쥐"
+    "boss": false
+    "chance": 0.55
+    "low-health-bonus": 0.2
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_squirrel_shiny":
+    "mythic-id": "CA_Wild_squirrel_shiny"
+    "pet-id": "ca_squirrel"
+    "name": "도토리 다람쥐"
+    "boss": false
+    "chance": 0.55
+    "low-health-bonus": 0.2
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_owl":
+    "mythic-id": "CA_Wild_owl"
+    "pet-id": "ca_owl"
+    "name": "밤눈 올빼미"
+    "boss": false
+    "chance": 0.35
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_owl_shiny":
+    "mythic-id": "CA_Wild_owl_shiny"
+    "pet-id": "ca_owl"
+    "name": "밤눈 올빼미"
+    "boss": false
+    "chance": 0.35
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_skunk":
+    "mythic-id": "CA_Wild_skunk"
+    "pet-id": "ca_skunk"
+    "name": "줄무늬 스컹크"
+    "boss": false
+    "chance": 0.45
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_skunk_shiny":
+    "mythic-id": "CA_Wild_skunk_shiny"
+    "pet-id": "ca_skunk"
+    "name": "줄무늬 스컹크"
+    "boss": false
+    "chance": 0.45
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_hedgehog":
+    "mythic-id": "CA_Wild_hedgehog"
+    "pet-id": "ca_hedgehog"
+    "name": "낙엽 고슴도치"
+    "boss": false
+    "chance": 0.55
+    "low-health-bonus": 0.2
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_hedgehog_shiny":
+    "mythic-id": "CA_Wild_hedgehog_shiny"
+    "pet-id": "ca_hedgehog"
+    "name": "낙엽 고슴도치"
+    "boss": false
+    "chance": 0.55
+    "low-health-bonus": 0.2
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_elk":
+    "mythic-id": "CA_Wild_elk"
+    "pet-id": "ca_elk"
+    "name": "고산 엘크"
+    "boss": false
+    "chance": 0.18
+    "low-health-bonus": 0.17
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_elk_shiny":
+    "mythic-id": "CA_Wild_elk_shiny"
+    "pet-id": "ca_elk"
+    "name": "고산 엘크"
+    "boss": false
+    "chance": 0.18
+    "low-health-bonus": 0.17
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lil_bird":
+    "mythic-id": "CA_Wild_lil_bird"
+    "pet-id": "ca_lil_bird"
+    "name": "꽃숲 작은새"
+    "boss": false
+    "chance": 0.55
+    "low-health-bonus": 0.2
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lil_bird_shiny":
+    "mythic-id": "CA_Wild_lil_bird_shiny"
+    "pet-id": "ca_lil_bird"
+    "name": "꽃숲 작은새"
+    "boss": false
+    "chance": 0.55
+    "low-health-bonus": 0.2
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_raccoon":
+    "mythic-id": "CA_Wild_raccoon"
+    "pet-id": "ca_raccoon"
+    "name": "개울 너구리"
+    "boss": false
+    "chance": 0.45
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_raccoon_shiny":
+    "mythic-id": "CA_Wild_raccoon_shiny"
+    "pet-id": "ca_raccoon"
+    "name": "개울 너구리"
+    "boss": false
+    "chance": 0.45
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_frog":
+    "mythic-id": "CA_Wild_frog"
+    "pet-id": "ca_frog"
+    "name": "난초 개구리"
+    "boss": false
+    "chance": 0.5
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_frog_shiny":
+    "mythic-id": "CA_Wild_frog_shiny"
+    "pet-id": "ca_frog"
+    "name": "난초 개구리"
+    "boss": false
+    "chance": 0.5
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_bear":
+    "mythic-id": "CA_Wild_bear"
+    "pet-id": "ca_bear"
+    "name": "산림 불곰"
+    "boss": false
+    "chance": 0.12
+    "low-health-bonus": 0.13
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_bear_shiny":
+    "mythic-id": "CA_Wild_bear_shiny"
+    "pet-id": "ca_bear"
+    "name": "산림 불곰"
+    "boss": false
+    "chance": 0.12
+    "low-health-bonus": 0.13
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_bear_black":
+    "mythic-id": "CA_Wild_bear_black"
+    "pet-id": "ca_bear_black"
+    "name": "그늘 흑곰"
+    "boss": false
+    "chance": 0.14
+    "low-health-bonus": 0.14
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_bear_black_shiny":
+    "mythic-id": "CA_Wild_bear_black_shiny"
+    "pet-id": "ca_bear_black"
+    "name": "그늘 흑곰"
+    "boss": false
+    "chance": 0.14
+    "low-health-bonus": 0.14
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_bear_polar":
+    "mythic-id": "CA_Wild_bear_polar"
+    "pet-id": "ca_bear_polar"
+    "name": "빙하 백곰"
+    "boss": false
+    "chance": 0.1
+    "low-health-bonus": 0.12
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_bear_polar_shiny":
+    "mythic-id": "CA_Wild_bear_polar_shiny"
+    "pet-id": "ca_bear_polar"
+    "name": "빙하 백곰"
+    "boss": false
+    "chance": 0.1
+    "low-health-bonus": 0.12
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_timber_wolf":
+    "mythic-id": "CA_Wild_timber_wolf"
+    "pet-id": "ca_timber_wolf"
+    "name": "침엽 숲늑대"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.2
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_timber_wolf_shiny":
+    "mythic-id": "CA_Wild_timber_wolf_shiny"
+    "pet-id": "ca_timber_wolf"
+    "name": "침엽 숲늑대"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.2
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_tortoise":
+    "mythic-id": "CA_Wild_tortoise"
+    "pet-id": "ca_tortoise"
+    "name": "초원 육지거북"
+    "boss": false
+    "chance": 0.55
+    "low-health-bonus": 0.2
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_tortoise_shiny":
+    "mythic-id": "CA_Wild_tortoise_shiny"
+    "pet-id": "ca_tortoise"
+    "name": "초원 육지거북"
+    "boss": false
+    "chance": 0.55
+    "low-health-bonus": 0.2
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_catfish":
+    "mythic-id": "CA_Wild_catfish"
+    "pet-id": "ca_catfish"
+    "name": "온수 메기"
+    "boss": false
+    "chance": 0.45
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_catfish_shiny":
+    "mythic-id": "CA_Wild_catfish_shiny"
+    "pet-id": "ca_catfish"
+    "name": "온수 메기"
+    "boss": false
+    "chance": 0.45
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_butterfly":
+    "mythic-id": "CA_Wild_butterfly"
+    "pet-id": "ca_butterfly"
+    "name": "라벤더 나비"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_butterfly_shiny":
+    "mythic-id": "CA_Wild_butterfly_shiny"
+    "pet-id": "ca_butterfly"
+    "name": "라벤더 나비"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_buffalo":
+    "mythic-id": "CA_Wild_buffalo"
+    "pet-id": "ca_buffalo"
+    "name": "고원 버팔로"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_buffalo_shiny":
+    "mythic-id": "CA_Wild_buffalo_shiny"
+    "pet-id": "ca_buffalo"
+    "name": "고원 버팔로"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_boar":
+    "mythic-id": "CA_Wild_boar"
+    "pet-id": "ca_boar"
+    "name": "덤불 멧돼지"
+    "boss": false
+    "chance": 0.35
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_boar_shiny":
+    "mythic-id": "CA_Wild_boar_shiny"
+    "pet-id": "ca_boar"
+    "name": "덤불 멧돼지"
+    "boss": false
+    "chance": 0.35
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_alpha_boar":
+    "mythic-id": "CA_Wild_alpha_boar"
+    "pet-id": "ca_alpha_boar"
+    "name": "송곳니 우두머리"
+    "boss": false
+    "chance": 0.08
+    "low-health-bonus": 0.1
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_alpha_boar_shiny":
+    "mythic-id": "CA_Wild_alpha_boar_shiny"
+    "pet-id": "ca_alpha_boar"
+    "name": "송곳니 우두머리"
+    "boss": false
+    "chance": 0.08
+    "low-health-bonus": 0.1
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_crocodile":
+    "mythic-id": "CA_Wild_crocodile"
+    "pet-id": "ca_crocodile"
+    "name": "난초늪 악어"
+    "boss": false
+    "chance": 0.12
+    "low-health-bonus": 0.13
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_crocodile_shiny":
+    "mythic-id": "CA_Wild_crocodile_shiny"
+    "pet-id": "ca_crocodile"
+    "name": "난초늪 악어"
+    "boss": false
+    "chance": 0.12
+    "low-health-bonus": 0.13
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_buffalo_alpha":
+    "mythic-id": "CA_Wild_buffalo_alpha"
+    "pet-id": "ca_buffalo_alpha"
+    "name": "고원의 우두머리"
+    "boss": false
+    "chance": 0.08
+    "low-health-bonus": 0.1
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_buffalo_alpha_shiny":
+    "mythic-id": "CA_Wild_buffalo_alpha_shiny"
+    "pet-id": "ca_buffalo_alpha"
+    "name": "고원의 우두머리"
+    "boss": false
+    "chance": 0.08
+    "low-health-bonus": 0.1
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob1_chicken":
+    "mythic-id": "CA_Wild_lostasset_mob1_chicken"
+    "pet-id": "ca_lostasset_mob1_chicken"
+    "name": "아침볕 수탉"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob1_chicken_shiny":
+    "mythic-id": "CA_Wild_lostasset_mob1_chicken_shiny"
+    "pet-id": "ca_lostasset_mob1_chicken"
+    "name": "아침볕 수탉"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob1_rabbit":
+    "mythic-id": "CA_Wild_lostasset_mob1_rabbit"
+    "pet-id": "ca_lostasset_mob1_rabbit"
+    "name": "꽃밭 흰토끼"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob1_rabbit_shiny":
+    "mythic-id": "CA_Wild_lostasset_mob1_rabbit_shiny"
+    "pet-id": "ca_lostasset_mob1_rabbit"
+    "name": "꽃밭 흰토끼"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob1_sheep":
+    "mythic-id": "CA_Wild_lostasset_mob1_sheep"
+    "pet-id": "ca_lostasset_mob1_sheep"
+    "name": "구름 양"
+    "boss": false
+    "chance": 0.45
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob1_sheep_shiny":
+    "mythic-id": "CA_Wild_lostasset_mob1_sheep_shiny"
+    "pet-id": "ca_lostasset_mob1_sheep"
+    "name": "구름 양"
+    "boss": false
+    "chance": 0.45
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob1_wolf":
+    "mythic-id": "CA_Wild_lostasset_mob1_wolf"
+    "pet-id": "ca_lostasset_mob1_wolf"
+    "name": "목초지 양치기"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.2
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob1_wolf_shiny":
+    "mythic-id": "CA_Wild_lostasset_mob1_wolf_shiny"
+    "pet-id": "ca_lostasset_mob1_wolf"
+    "name": "목초지 양치기"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.2
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob2_flowersprite":
+    "mythic-id": "CA_Wild_lostasset_mob2_flowersprite"
+    "pet-id": "ca_lostasset_mob2_flowersprite"
+    "name": "꽃망울 정령"
+    "boss": false
+    "chance": 0.15
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob2_flowersprite_shiny":
+    "mythic-id": "CA_Wild_lostasset_mob2_flowersprite_shiny"
+    "pet-id": "ca_lostasset_mob2_flowersprite"
+    "name": "꽃망울 정령"
+    "boss": false
+    "chance": 0.15
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob2_lakefairy":
+    "mythic-id": "CA_Wild_lostasset_mob2_lakefairy"
+    "pet-id": "ca_lostasset_mob2_lakefairy"
+    "name": "달물결 요정"
+    "boss": false
+    "chance": 0.12
+    "low-health-bonus": 0.13
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob2_lakefairy_shiny":
+    "mythic-id": "CA_Wild_lostasset_mob2_lakefairy_shiny"
+    "pet-id": "ca_lostasset_mob2_lakefairy"
+    "name": "달물결 요정"
+    "boss": false
+    "chance": 0.12
+    "low-health-bonus": 0.13
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob2_leaffairy":
+    "mythic-id": "CA_Wild_lostasset_mob2_leaffairy"
+    "pet-id": "ca_lostasset_mob2_leaffairy"
+    "name": "잎새 요정"
+    "boss": false
+    "chance": 0.15
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob2_leaffairy_shiny":
+    "mythic-id": "CA_Wild_lostasset_mob2_leaffairy_shiny"
+    "pet-id": "ca_lostasset_mob2_leaffairy"
+    "name": "잎새 요정"
+    "boss": false
+    "chance": 0.15
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob2_mushroomfairy":
+    "mythic-id": "CA_Wild_lostasset_mob2_mushroomfairy"
+    "pet-id": "ca_lostasset_mob2_mushroomfairy"
+    "name": "포자 요정"
+    "boss": false
+    "chance": 0.15
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob2_mushroomfairy_shiny":
+    "mythic-id": "CA_Wild_lostasset_mob2_mushroomfairy_shiny"
+    "pet-id": "ca_lostasset_mob2_mushroomfairy"
+    "name": "포자 요정"
+    "boss": false
+    "chance": 0.15
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob3_herbgolem":
+    "mythic-id": "CA_Wild_lostasset_mob3_herbgolem"
+    "pet-id": "ca_lostasset_mob3_herbgolem"
+    "name": "약초 수호골렘"
+    "boss": false
+    "chance": 0.03
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob3_herbgolem_shiny":
+    "mythic-id": "CA_Wild_lostasset_mob3_herbgolem_shiny"
+    "pet-id": "ca_lostasset_mob3_herbgolem"
+    "name": "약초 수호골렘"
+    "boss": false
+    "chance": 0.03
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob3_herbthief":
+    "mythic-id": "CA_Wild_lostasset_mob3_herbthief"
+    "pet-id": "ca_lostasset_mob3_herbthief"
+    "name": "약초 도둑"
+    "boss": false
+    "chance": 0.35
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob3_herbthief_shiny":
+    "mythic-id": "CA_Wild_lostasset_mob3_herbthief_shiny"
+    "pet-id": "ca_lostasset_mob3_herbthief"
+    "name": "약초 도둑"
+    "boss": false
+    "chance": 0.35
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob3_mossyboar":
+    "mythic-id": "CA_Wild_lostasset_mob3_mossyboar"
+    "pet-id": "ca_lostasset_mob3_mossyboar"
+    "name": "이끼 등멧돼지"
+    "boss": false
+    "chance": 0.16
+    "low-health-bonus": 0.14
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob3_mossyboar_shiny":
+    "mythic-id": "CA_Wild_lostasset_mob3_mossyboar_shiny"
+    "pet-id": "ca_lostasset_mob3_mossyboar"
+    "name": "이끼 등멧돼지"
+    "boss": false
+    "chance": 0.16
+    "low-health-bonus": 0.14
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob3_timberpile":
+    "mythic-id": "CA_Wild_lostasset_mob3_timberpile"
+    "pet-id": "ca_lostasset_mob3_timberpile"
+    "name": "장작 꼬마"
+    "boss": false
+    "chance": 0.4
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lostasset_mob3_timberpile_shiny":
+    "mythic-id": "CA_Wild_lostasset_mob3_timberpile_shiny"
+    "pet-id": "ca_lostasset_mob3_timberpile"
+    "name": "장작 꼬마"
+    "boss": false
+    "chance": 0.4
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_bulb_amethyst":
+    "mythic-id": "CA_Wild_bulb_amethyst"
+    "pet-id": "ca_bulb_amethyst"
+    "name": "자수정 새싹"
+    "boss": false
+    "chance": 0.15
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_bulb_amethyst_shiny":
+    "mythic-id": "CA_Wild_bulb_amethyst_shiny"
+    "pet-id": "ca_bulb_amethyst"
+    "name": "자수정 새싹"
+    "boss": false
+    "chance": 0.15
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_bulb_crimsonspore":
+    "mythic-id": "CA_Wild_bulb_crimsonspore"
+    "pet-id": "ca_bulb_crimsonspore"
+    "name": "진홍 포자"
+    "boss": false
+    "chance": 0.12
+    "low-health-bonus": 0.13
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_bulb_crimsonspore_shiny":
+    "mythic-id": "CA_Wild_bulb_crimsonspore_shiny"
+    "pet-id": "ca_bulb_crimsonspore"
+    "name": "진홍 포자"
+    "boss": false
+    "chance": 0.12
+    "low-health-bonus": 0.13
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_bulb_dripleaf":
+    "mythic-id": "CA_Wild_bulb_dripleaf"
+    "pet-id": "ca_bulb_dripleaf"
+    "name": "물잎 새싹"
+    "boss": false
+    "chance": 0.4
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_bulb_dripleaf_shiny":
+    "mythic-id": "CA_Wild_bulb_dripleaf_shiny"
+    "pet-id": "ca_bulb_dripleaf"
+    "name": "물잎 새싹"
+    "boss": false
+    "chance": 0.4
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_bulb_lilypad":
+    "mythic-id": "CA_Wild_bulb_lilypad"
+    "pet-id": "ca_bulb_lilypad"
+    "name": "수련잎 새싹"
+    "boss": false
+    "chance": 0.45
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_bulb_lilypad_shiny":
+    "mythic-id": "CA_Wild_bulb_lilypad_shiny"
+    "pet-id": "ca_bulb_lilypad"
+    "name": "수련잎 새싹"
+    "boss": false
+    "chance": 0.45
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_bulb_warpedfungus":
+    "mythic-id": "CA_Wild_bulb_warpedfungus"
+    "pet-id": "ca_bulb_warpedfungus"
+    "name": "뒤틀린 균새싹"
+    "boss": false
+    "chance": 0.12
+    "low-health-bonus": 0.13
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_bulb_warpedfungus_shiny":
+    "mythic-id": "CA_Wild_bulb_warpedfungus_shiny"
+    "pet-id": "ca_bulb_warpedfungus"
+    "name": "뒤틀린 균새싹"
+    "boss": false
+    "chance": 0.12
+    "low-health-bonus": 0.13
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_crab":
+    "mythic-id": "CA_Wild_crab"
+    "pet-id": "ca_crab"
+    "name": "자갈집게 게"
+    "boss": false
+    "chance": 0.55
+    "low-health-bonus": 0.2
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_crab_shiny":
+    "mythic-id": "CA_Wild_crab_shiny"
+    "pet-id": "ca_crab"
+    "name": "자갈집게 게"
+    "boss": false
+    "chance": 0.55
+    "low-health-bonus": 0.2
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_piranha":
+    "mythic-id": "CA_Wild_piranha"
+    "pet-id": "ca_piranha"
+    "name": "붉은이빨 피라냐"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.2
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_piranha_shiny":
+    "mythic-id": "CA_Wild_piranha_shiny"
+    "pet-id": "ca_piranha"
+    "name": "붉은이빨 피라냐"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.2
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_swordfish":
+    "mythic-id": "CA_Wild_swordfish"
+    "pet-id": "ca_swordfish"
+    "name": "푸른창 황새치"
+    "boss": false
+    "chance": 0.15
+    "low-health-bonus": 0.2
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_swordfish_shiny":
+    "mythic-id": "CA_Wild_swordfish_shiny"
+    "pet-id": "ca_swordfish"
+    "name": "푸른창 황새치"
+    "boss": false
+    "chance": 0.15
+    "low-health-bonus": 0.2
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_jellyfish_blue":
+    "mythic-id": "CA_Wild_jellyfish_blue"
+    "pet-id": "ca_jellyfish_blue"
+    "name": "청빛 해파리"
+    "boss": false
+    "chance": 0.4
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_jellyfish_blue_shiny":
+    "mythic-id": "CA_Wild_jellyfish_blue_shiny"
+    "pet-id": "ca_jellyfish_blue"
+    "name": "청빛 해파리"
+    "boss": false
+    "chance": 0.4
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_jellyfish_green":
+    "mythic-id": "CA_Wild_jellyfish_green"
+    "pet-id": "ca_jellyfish_green"
+    "name": "비취 해파리"
+    "boss": false
+    "chance": 0.4
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_jellyfish_green_shiny":
+    "mythic-id": "CA_Wild_jellyfish_green_shiny"
+    "pet-id": "ca_jellyfish_green"
+    "name": "비취 해파리"
+    "boss": false
+    "chance": 0.4
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_jellyfish_pink":
+    "mythic-id": "CA_Wild_jellyfish_pink"
+    "pet-id": "ca_jellyfish_pink"
+    "name": "분홍 해파리"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_jellyfish_pink_shiny":
+    "mythic-id": "CA_Wild_jellyfish_pink_shiny"
+    "pet-id": "ca_jellyfish_pink"
+    "name": "분홍 해파리"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_jellyfish_yellow":
+    "mythic-id": "CA_Wild_jellyfish_yellow"
+    "pet-id": "ca_jellyfish_yellow"
+    "name": "금빛 해파리"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_jellyfish_yellow_shiny":
+    "mythic-id": "CA_Wild_jellyfish_yellow_shiny"
+    "pet-id": "ca_jellyfish_yellow"
+    "name": "금빛 해파리"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_seahorse_blue":
+    "mythic-id": "CA_Wild_seahorse_blue"
+    "pet-id": "ca_seahorse_blue"
+    "name": "청빛 해마"
+    "boss": false
+    "chance": 0.4
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_seahorse_blue_shiny":
+    "mythic-id": "CA_Wild_seahorse_blue_shiny"
+    "pet-id": "ca_seahorse_blue"
+    "name": "청빛 해마"
+    "boss": false
+    "chance": 0.4
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_seahorse_green":
+    "mythic-id": "CA_Wild_seahorse_green"
+    "pet-id": "ca_seahorse_green"
+    "name": "비취 해마"
+    "boss": false
+    "chance": 0.4
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_seahorse_green_shiny":
+    "mythic-id": "CA_Wild_seahorse_green_shiny"
+    "pet-id": "ca_seahorse_green"
+    "name": "비취 해마"
+    "boss": false
+    "chance": 0.4
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_seahorse_pink":
+    "mythic-id": "CA_Wild_seahorse_pink"
+    "pet-id": "ca_seahorse_pink"
+    "name": "분홍 해마"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_seahorse_pink_shiny":
+    "mythic-id": "CA_Wild_seahorse_pink_shiny"
+    "pet-id": "ca_seahorse_pink"
+    "name": "분홍 해마"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_seahorse_yellow":
+    "mythic-id": "CA_Wild_seahorse_yellow"
+    "pet-id": "ca_seahorse_yellow"
+    "name": "금빛 해마"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_seahorse_yellow_shiny":
+    "mythic-id": "CA_Wild_seahorse_yellow_shiny"
+    "pet-id": "ca_seahorse_yellow"
+    "name": "금빛 해마"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_ogre_club":
+    "mythic-id": "CA_Wild_ogre_club"
+    "pet-id": "ca_ogre_club"
+    "name": "숲몽둥이 오우거"
+    "boss": false
+    "chance": 0.07
+    "low-health-bonus": 0.08
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_ogre_club_shiny":
+    "mythic-id": "CA_Wild_ogre_club_shiny"
+    "pet-id": "ca_ogre_club"
+    "name": "숲몽둥이 오우거"
+    "boss": false
+    "chance": 0.07
+    "low-health-bonus": 0.08
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_ogre_axe":
+    "mythic-id": "CA_Wild_ogre_axe"
+    "pet-id": "ca_ogre_axe"
+    "name": "벌목꾼 오우거"
+    "boss": false
+    "chance": 0.06
+    "low-health-bonus": 0.08
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_ogre_axe_shiny":
+    "mythic-id": "CA_Wild_ogre_axe_shiny"
+    "pet-id": "ca_ogre_axe"
+    "name": "벌목꾼 오우거"
+    "boss": false
+    "chance": 0.06
+    "low-health-bonus": 0.08
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_ogre_hammer":
+    "mythic-id": "CA_Wild_ogre_hammer"
+    "pet-id": "ca_ogre_hammer"
+    "name": "산울림 오우거"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_ogre_hammer_shiny":
+    "mythic-id": "CA_Wild_ogre_hammer_shiny"
+    "pet-id": "ca_ogre_hammer"
+    "name": "산울림 오우거"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_ncr_spear_skeleton":
+    "mythic-id": "CA_Wild_ncr_spear_skeleton"
+    "pet-id": "ca_ncr_spear_skeleton"
+    "name": "유적의 창병"
+    "boss": false
+    "chance": 0.1
+    "low-health-bonus": 0.1
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_ncr_spear_skeleton_shiny":
+    "mythic-id": "CA_Wild_ncr_spear_skeleton_shiny"
+    "pet-id": "ca_ncr_spear_skeleton"
+    "name": "유적의 창병"
+    "boss": false
+    "chance": 0.1
+    "low-health-bonus": 0.1
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_ncr_warrior_skeleton":
+    "mythic-id": "CA_Wild_ncr_warrior_skeleton"
+    "pet-id": "ca_ncr_warrior_skeleton"
+    "name": "유적의 검병"
+    "boss": false
+    "chance": 0.1
+    "low-health-bonus": 0.1
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_ncr_warrior_skeleton_shiny":
+    "mythic-id": "CA_Wild_ncr_warrior_skeleton_shiny"
+    "pet-id": "ca_ncr_warrior_skeleton"
+    "name": "유적의 검병"
+    "boss": false
+    "chance": 0.1
+    "low-health-bonus": 0.1
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_ncr_archer_skeleton":
+    "mythic-id": "CA_Wild_ncr_archer_skeleton"
+    "pet-id": "ca_ncr_archer_skeleton"
+    "name": "유적의 궁수"
+    "boss": false
+    "chance": 0.08
+    "low-health-bonus": 0.1
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_ncr_archer_skeleton_shiny":
+    "mythic-id": "CA_Wild_ncr_archer_skeleton_shiny"
+    "pet-id": "ca_ncr_archer_skeleton"
+    "name": "유적의 궁수"
+    "boss": false
+    "chance": 0.08
+    "low-health-bonus": 0.1
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_ncr_mage_skeleton":
+    "mythic-id": "CA_Wild_ncr_mage_skeleton"
+    "pet-id": "ca_ncr_mage_skeleton"
+    "name": "망각의 해골술사"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_ncr_mage_skeleton_shiny":
+    "mythic-id": "CA_Wild_ncr_mage_skeleton_shiny"
+    "pet-id": "ca_ncr_mage_skeleton"
+    "name": "망각의 해골술사"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_mf_warden_knight":
+    "mythic-id": "CA_Wild_mf_warden_knight"
+    "pet-id": "ca_mf_warden_knight"
+    "name": "봉인의 기사"
+    "boss": false
+    "chance": 0.01
+    "low-health-bonus": 0.015
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_mf_warden_knight_shiny":
+    "mythic-id": "CA_Wild_mf_warden_knight_shiny"
+    "pet-id": "ca_mf_warden_knight"
+    "name": "봉인의 기사"
+    "boss": false
+    "chance": 0.01
+    "low-health-bonus": 0.015
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_mf_warden_archer":
+    "mythic-id": "CA_Wild_mf_warden_archer"
+    "pet-id": "ca_mf_warden_archer"
+    "name": "봉인의 궁수"
+    "boss": false
+    "chance": 0.012
+    "low-health-bonus": 0.018000000000000002
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_mf_warden_archer_shiny":
+    "mythic-id": "CA_Wild_mf_warden_archer_shiny"
+    "pet-id": "ca_mf_warden_archer"
+    "name": "봉인의 궁수"
+    "boss": false
+    "chance": 0.012
+    "low-health-bonus": 0.018000000000000002
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_mf_warden_tank":
+    "mythic-id": "CA_Wild_mf_warden_tank"
+    "pet-id": "ca_mf_warden_tank"
+    "name": "봉인의 거벽"
+    "boss": false
+    "chance": 0.008
+    "low-health-bonus": 0.012
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_mf_warden_tank_shiny":
+    "mythic-id": "CA_Wild_mf_warden_tank_shiny"
+    "pet-id": "ca_mf_warden_tank"
+    "name": "봉인의 거벽"
+    "boss": false
+    "chance": 0.008
+    "low-health-bonus": 0.012
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_mf_warden_mage":
+    "mythic-id": "CA_Wild_mf_warden_mage"
+    "pet-id": "ca_mf_warden_mage"
+    "name": "봉인의 술사"
+    "boss": false
+    "chance": 0.008
+    "low-health-bonus": 0.012
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_mf_warden_mage_shiny":
+    "mythic-id": "CA_Wild_mf_warden_mage_shiny"
+    "pet-id": "ca_mf_warden_mage"
+    "name": "봉인의 술사"
+    "boss": false
+    "chance": 0.008
+    "low-health-bonus": 0.012
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_glacialcore":
+    "mythic-id": "CA_Wild_glacialcore"
+    "pet-id": "ca_glacialcore"
+    "name": "빙핵의 수호자"
+    "boss": true
+    "chance": 0.004
+    "low-health-bonus": 0.0
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_glacialcore_shiny":
+    "mythic-id": "CA_Wild_glacialcore_shiny"
+    "pet-id": "ca_glacialcore"
+    "name": "빙핵의 수호자"
+    "boss": true
+    "chance": 0.004
+    "low-health-bonus": 0.0
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_nocsy_cat1":
+    "mythic-id": "CA_Wild_nocsy_cat1"
+    "pet-id": "ca_nocsy_cat1"
+    "name": "햇살 고양이"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_nocsy_cat1_shiny":
+    "mythic-id": "CA_Wild_nocsy_cat1_shiny"
+    "pet-id": "ca_nocsy_cat1"
+    "name": "햇살 고양이"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_nocsy_cat2":
+    "mythic-id": "CA_Wild_nocsy_cat2"
+    "pet-id": "ca_nocsy_cat2"
+    "name": "꽃길 고양이"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_nocsy_cat2_shiny":
+    "mythic-id": "CA_Wild_nocsy_cat2_shiny"
+    "pet-id": "ca_nocsy_cat2"
+    "name": "꽃길 고양이"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_nocsy_cat3":
+    "mythic-id": "CA_Wild_nocsy_cat3"
+    "pet-id": "ca_nocsy_cat3"
+    "name": "책방 고양이"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_nocsy_cat3_shiny":
+    "mythic-id": "CA_Wild_nocsy_cat3_shiny"
+    "pet-id": "ca_nocsy_cat3"
+    "name": "책방 고양이"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_nocsy_cat4":
+    "mythic-id": "CA_Wild_nocsy_cat4"
+    "pet-id": "ca_nocsy_cat4"
+    "name": "나른한 고양이"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_nocsy_cat4_shiny":
+    "mythic-id": "CA_Wild_nocsy_cat4_shiny"
+    "pet-id": "ca_nocsy_cat4"
+    "name": "나른한 고양이"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_nocsy_cat5":
+    "mythic-id": "CA_Wild_nocsy_cat5"
+    "pet-id": "ca_nocsy_cat5"
+    "name": "장난꾸러기 고양이"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_nocsy_cat5_shiny":
+    "mythic-id": "CA_Wild_nocsy_cat5_shiny"
+    "pet-id": "ca_nocsy_cat5"
+    "name": "장난꾸러기 고양이"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_nocsy_cat6":
+    "mythic-id": "CA_Wild_nocsy_cat6"
+    "pet-id": "ca_nocsy_cat6"
+    "name": "산들 고양이"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_nocsy_cat6_shiny":
+    "mythic-id": "CA_Wild_nocsy_cat6_shiny"
+    "pet-id": "ca_nocsy_cat6"
+    "name": "산들 고양이"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_nocsy_cat_fallen":
+    "mythic-id": "CA_Wild_nocsy_cat_fallen"
+    "pet-id": "ca_nocsy_cat_fallen"
+    "name": "달그늘 고양이"
+    "boss": false
+    "chance": 0.03
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_nocsy_cat_fallen_shiny":
+    "mythic-id": "CA_Wild_nocsy_cat_fallen_shiny"
+    "pet-id": "ca_nocsy_cat_fallen"
+    "name": "달그늘 고양이"
+    "boss": false
+    "chance": 0.03
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_voxelspawns_pug":
+    "mythic-id": "CA_Wild_voxelspawns_pug"
+    "pet-id": "ca_voxelspawns_pug"
+    "name": "산책 퍼그"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_voxelspawns_pug_shiny":
+    "mythic-id": "CA_Wild_voxelspawns_pug_shiny"
+    "pet-id": "ca_voxelspawns_pug"
+    "name": "산책 퍼그"
+    "boss": false
+    "chance": 0.6
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_baby_polar_bear":
+    "mythic-id": "CA_Wild_baby_polar_bear"
+    "pet-id": "ca_baby_polar_bear"
+    "name": "눈송이 아기곰"
+    "boss": false
+    "chance": 0.4
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_baby_polar_bear_shiny":
+    "mythic-id": "CA_Wild_baby_polar_bear_shiny"
+    "pet-id": "ca_baby_polar_bear"
+    "name": "눈송이 아기곰"
+    "boss": false
+    "chance": 0.4
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_baby_yeti":
+    "mythic-id": "CA_Wild_baby_yeti"
+    "pet-id": "ca_baby_yeti"
+    "name": "눈산 꼬마예티"
+    "boss": false
+    "chance": 0.12
+    "low-health-bonus": 0.13
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_baby_yeti_shiny":
+    "mythic-id": "CA_Wild_baby_yeti_shiny"
+    "pet-id": "ca_baby_yeti"
+    "name": "눈산 꼬마예티"
+    "boss": false
+    "chance": 0.12
+    "low-health-bonus": 0.13
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_frost_ferret":
+    "mythic-id": "CA_Wild_frost_ferret"
+    "pet-id": "ca_frost_ferret"
+    "name": "서리 족제비"
+    "boss": false
+    "chance": 0.18
+    "low-health-bonus": 0.17
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_frost_ferret_shiny":
+    "mythic-id": "CA_Wild_frost_ferret_shiny"
+    "pet-id": "ca_frost_ferret"
+    "name": "서리 족제비"
+    "boss": false
+    "chance": 0.18
+    "low-health-bonus": 0.17
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_gangster_snowman":
+    "mythic-id": "CA_Wild_gangster_snowman"
+    "pet-id": "ca_gangster_snowman"
+    "name": "심술 눈사람"
+    "boss": false
+    "chance": 0.15
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_gangster_snowman_shiny":
+    "mythic-id": "CA_Wild_gangster_snowman_shiny"
+    "pet-id": "ca_gangster_snowman"
+    "name": "심술 눈사람"
+    "boss": false
+    "chance": 0.15
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_ice_knight":
+    "mythic-id": "CA_Wild_ice_knight"
+    "pet-id": "ca_ice_knight"
+    "name": "서리 기사"
+    "boss": false
+    "chance": 0.03
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_ice_knight_shiny":
+    "mythic-id": "CA_Wild_ice_knight_shiny"
+    "pet-id": "ca_ice_knight"
+    "name": "서리 기사"
+    "boss": false
+    "chance": 0.03
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_dragon_desert":
+    "mythic-id": "CA_Wild_dragon_desert"
+    "pet-id": "ca_dragon_desert"
+    "name": "사막 드래곤"
+    "boss": false
+    "chance": 0.008
+    "low-health-bonus": 0.012
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_dragon_desert_shiny":
+    "mythic-id": "CA_Wild_dragon_desert_shiny"
+    "pet-id": "ca_dragon_desert"
+    "name": "사막 드래곤"
+    "boss": false
+    "chance": 0.008
+    "low-health-bonus": 0.012
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_dragon_glacial":
+    "mythic-id": "CA_Wild_dragon_glacial"
+    "pet-id": "ca_dragon_glacial"
+    "name": "빙하 드래곤"
+    "boss": false
+    "chance": 0.008
+    "low-health-bonus": 0.012
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_dragon_glacial_shiny":
+    "mythic-id": "CA_Wild_dragon_glacial_shiny"
+    "pet-id": "ca_dragon_glacial"
+    "name": "빙하 드래곤"
+    "boss": false
+    "chance": 0.008
+    "low-health-bonus": 0.012
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_dragon_nether":
+    "mythic-id": "CA_Wild_dragon_nether"
+    "pet-id": "ca_dragon_nether"
+    "name": "화산 드래곤"
+    "boss": false
+    "chance": 0.008
+    "low-health-bonus": 0.012
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_dragon_nether_shiny":
+    "mythic-id": "CA_Wild_dragon_nether_shiny"
+    "pet-id": "ca_dragon_nether"
+    "name": "화산 드래곤"
+    "boss": false
+    "chance": 0.008
+    "low-health-bonus": 0.012
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_dragon_sculk":
+    "mythic-id": "CA_Wild_dragon_sculk"
+    "pet-id": "ca_dragon_sculk"
+    "name": "스컬크 드래곤"
+    "boss": false
+    "chance": 0.008
+    "low-health-bonus": 0.012
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_dragon_sculk_shiny":
+    "mythic-id": "CA_Wild_dragon_sculk_shiny"
+    "pet-id": "ca_dragon_sculk"
+    "name": "스컬크 드래곤"
+    "boss": false
+    "chance": 0.008
+    "low-health-bonus": 0.012
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lizard_aqua":
+    "mythic-id": "CA_Wild_lizard_aqua"
+    "pet-id": "ca_lizard_aqua"
+    "name": "물가 왕도마뱀"
+    "boss": false
+    "chance": 0.16
+    "low-health-bonus": 0.14
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lizard_aqua_shiny":
+    "mythic-id": "CA_Wild_lizard_aqua_shiny"
+    "pet-id": "ca_lizard_aqua"
+    "name": "물가 왕도마뱀"
+    "boss": false
+    "chance": 0.16
+    "low-health-bonus": 0.14
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lizard_lava":
+    "mythic-id": "CA_Wild_lizard_lava"
+    "pet-id": "ca_lizard_lava"
+    "name": "용암 왕도마뱀"
+    "boss": false
+    "chance": 0.16
+    "low-health-bonus": 0.14
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_lizard_lava_shiny":
+    "mythic-id": "CA_Wild_lizard_lava_shiny"
+    "pet-id": "ca_lizard_lava"
+    "name": "용암 왕도마뱀"
+    "boss": false
+    "chance": 0.16
+    "low-health-bonus": 0.14
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_manticore_aether":
+    "mythic-id": "CA_Wild_manticore_aether"
+    "pet-id": "ca_manticore_aether"
+    "name": "창공 만티코어"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_manticore_aether_shiny":
+    "mythic-id": "CA_Wild_manticore_aether_shiny"
+    "pet-id": "ca_manticore_aether"
+    "name": "창공 만티코어"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_manticore_dusk":
+    "mythic-id": "CA_Wild_manticore_dusk"
+    "pet-id": "ca_manticore_dusk"
+    "name": "황혼 만티코어"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_manticore_dusk_shiny":
+    "mythic-id": "CA_Wild_manticore_dusk_shiny"
+    "pet-id": "ca_manticore_dusk"
+    "name": "황혼 만티코어"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_manticore_soul":
+    "mythic-id": "CA_Wild_manticore_soul"
+    "pet-id": "ca_manticore_soul"
+    "name": "혼령 만티코어"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_manticore_soul_shiny":
+    "mythic-id": "CA_Wild_manticore_soul_shiny"
+    "pet-id": "ca_manticore_soul"
+    "name": "혼령 만티코어"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_manticore_venom":
+    "mythic-id": "CA_Wild_manticore_venom"
+    "pet-id": "ca_manticore_venom"
+    "name": "맹독 만티코어"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_manticore_venom_shiny":
+    "mythic-id": "CA_Wild_manticore_venom_shiny"
+    "pet-id": "ca_manticore_venom"
+    "name": "맹독 만티코어"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_panda_normal":
+    "mythic-id": "CA_Wild_panda_normal"
+    "pet-id": "ca_panda_normal"
+    "name": "대나무 판다"
+    "boss": false
+    "chance": 0.4
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_panda_normal_shiny":
+    "mythic-id": "CA_Wild_panda_normal_shiny"
+    "pet-id": "ca_panda_normal"
+    "name": "대나무 판다"
+    "boss": false
+    "chance": 0.4
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_sabertooth_arctic":
+    "mythic-id": "CA_Wild_sabertooth_arctic"
+    "pet-id": "ca_sabertooth_arctic"
+    "name": "설원 검치호"
+    "boss": false
+    "chance": 0.1
+    "low-health-bonus": 0.1
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_sabertooth_arctic_shiny":
+    "mythic-id": "CA_Wild_sabertooth_arctic_shiny"
+    "pet-id": "ca_sabertooth_arctic"
+    "name": "설원 검치호"
+    "boss": false
+    "chance": 0.1
+    "low-health-bonus": 0.1
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_sabertooth_midnight":
+    "mythic-id": "CA_Wild_sabertooth_midnight"
+    "pet-id": "ca_sabertooth_midnight"
+    "name": "한밤 검치호"
+    "boss": false
+    "chance": 0.1
+    "low-health-bonus": 0.1
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_sabertooth_midnight_shiny":
+    "mythic-id": "CA_Wild_sabertooth_midnight_shiny"
+    "pet-id": "ca_sabertooth_midnight"
+    "name": "한밤 검치호"
+    "boss": false
+    "chance": 0.1
+    "low-health-bonus": 0.1
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_sabertooth_savanna":
+    "mythic-id": "CA_Wild_sabertooth_savanna"
+    "pet-id": "ca_sabertooth_savanna"
+    "name": "초원 검치호"
+    "boss": false
+    "chance": 0.1
+    "low-health-bonus": 0.1
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_sabertooth_savanna_shiny":
+    "mythic-id": "CA_Wild_sabertooth_savanna_shiny"
+    "pet-id": "ca_sabertooth_savanna"
+    "name": "초원 검치호"
+    "boss": false
+    "chance": 0.1
+    "low-health-bonus": 0.1
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_capybara":
+    "mythic-id": "CA_Wild_capybara"
+    "pet-id": "ca_capybara"
+    "name": "물가 카피바라"
+    "boss": false
+    "chance": 0.5
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_capybara_shiny":
+    "mythic-id": "CA_Wild_capybara_shiny"
+    "pet-id": "ca_capybara"
+    "name": "물가 카피바라"
+    "boss": false
+    "chance": 0.5
+    "low-health-bonus": 0.25
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_horse_glacial":
+    "mythic-id": "CA_Wild_horse_glacial"
+    "pet-id": "ca_horse_glacial"
+    "name": "빙하 준마"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_horse_glacial_shiny":
+    "mythic-id": "CA_Wild_horse_glacial_shiny"
+    "pet-id": "ca_horse_glacial"
+    "name": "빙하 준마"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_horse_magma":
+    "mythic-id": "CA_Wild_horse_magma"
+    "pet-id": "ca_horse_magma"
+    "name": "마그마 준마"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_horse_magma_shiny":
+    "mythic-id": "CA_Wild_horse_magma_shiny"
+    "pet-id": "ca_horse_magma"
+    "name": "마그마 준마"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_horse_pegasus":
+    "mythic-id": "CA_Wild_horse_pegasus"
+    "pet-id": "ca_horse_pegasus"
+    "name": "페가수스"
+    "boss": false
+    "chance": 0.04
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_horse_pegasus_shiny":
+    "mythic-id": "CA_Wild_horse_pegasus_shiny"
+    "pet-id": "ca_horse_pegasus"
+    "name": "페가수스"
+    "boss": false
+    "chance": 0.04
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_horse_spartan":
+    "mythic-id": "CA_Wild_horse_spartan"
+    "pet-id": "ca_horse_spartan"
+    "name": "철갑 준마"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_horse_spartan_shiny":
+    "mythic-id": "CA_Wild_horse_spartan_shiny"
+    "pet-id": "ca_horse_spartan"
+    "name": "철갑 준마"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_horse_unicorn":
+    "mythic-id": "CA_Wild_horse_unicorn"
+    "pet-id": "ca_horse_unicorn"
+    "name": "유니콘"
+    "boss": false
+    "chance": 0.04
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_horse_unicorn_shiny":
+    "mythic-id": "CA_Wild_horse_unicorn_shiny"
+    "pet-id": "ca_horse_unicorn"
+    "name": "유니콘"
+    "boss": false
+    "chance": 0.04
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_kitsune_demonic":
+    "mythic-id": "CA_Wild_kitsune_demonic"
+    "pet-id": "ca_kitsune_demonic"
+    "name": "마성 키츠네"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_kitsune_demonic_shiny":
+    "mythic-id": "CA_Wild_kitsune_demonic_shiny"
+    "pet-id": "ca_kitsune_demonic"
+    "name": "마성 키츠네"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_kitsune_inferno":
+    "mythic-id": "CA_Wild_kitsune_inferno"
+    "pet-id": "ca_kitsune_inferno"
+    "name": "업화 키츠네"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_kitsune_inferno_shiny":
+    "mythic-id": "CA_Wild_kitsune_inferno_shiny"
+    "pet-id": "ca_kitsune_inferno"
+    "name": "업화 키츠네"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_kitsune_normal":
+    "mythic-id": "CA_Wild_kitsune_normal"
+    "pet-id": "ca_kitsune_normal"
+    "name": "키츠네"
+    "boss": false
+    "chance": 0.03
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_kitsune_normal_shiny":
+    "mythic-id": "CA_Wild_kitsune_normal_shiny"
+    "pet-id": "ca_kitsune_normal"
+    "name": "키츠네"
+    "boss": false
+    "chance": 0.03
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_phantom_ender":
+    "mythic-id": "CA_Wild_phantom_ender"
+    "pet-id": "ca_phantom_ender"
+    "name": "공허 팬텀"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_phantom_ender_shiny":
+    "mythic-id": "CA_Wild_phantom_ender_shiny"
+    "pet-id": "ca_phantom_ender"
+    "name": "공허 팬텀"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_phantom_ghost":
+    "mythic-id": "CA_Wild_phantom_ghost"
+    "pet-id": "ca_phantom_ghost"
+    "name": "망령 팬텀"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_phantom_ghost_shiny":
+    "mythic-id": "CA_Wild_phantom_ghost_shiny"
+    "pet-id": "ca_phantom_ghost"
+    "name": "망령 팬텀"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_phoenix_darkflame":
+    "mythic-id": "CA_Wild_phoenix_darkflame"
+    "pet-id": "ca_phoenix_darkflame"
+    "name": "흑염 피닉스"
+    "boss": false
+    "chance": 0.01
+    "low-health-bonus": 0.015
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_phoenix_darkflame_shiny":
+    "mythic-id": "CA_Wild_phoenix_darkflame_shiny"
+    "pet-id": "ca_phoenix_darkflame"
+    "name": "흑염 피닉스"
+    "boss": false
+    "chance": 0.01
+    "low-health-bonus": 0.015
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_phoenix_flame":
+    "mythic-id": "CA_Wild_phoenix_flame"
+    "pet-id": "ca_phoenix_flame"
+    "name": "불꽃 피닉스"
+    "boss": false
+    "chance": 0.01
+    "low-health-bonus": 0.015
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_phoenix_flame_shiny":
+    "mythic-id": "CA_Wild_phoenix_flame_shiny"
+    "pet-id": "ca_phoenix_flame"
+    "name": "불꽃 피닉스"
+    "boss": false
+    "chance": 0.01
+    "low-health-bonus": 0.015
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_phoenix_light":
+    "mythic-id": "CA_Wild_phoenix_light"
+    "pet-id": "ca_phoenix_light"
+    "name": "광휘 피닉스"
+    "boss": false
+    "chance": 0.01
+    "low-health-bonus": 0.015
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_phoenix_light_shiny":
+    "mythic-id": "CA_Wild_phoenix_light_shiny"
+    "pet-id": "ca_phoenix_light"
+    "name": "광휘 피닉스"
+    "boss": false
+    "chance": 0.01
+    "low-health-bonus": 0.015
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_phoenix_thunder":
+    "mythic-id": "CA_Wild_phoenix_thunder"
+    "pet-id": "ca_phoenix_thunder"
+    "name": "뇌광 피닉스"
+    "boss": false
+    "chance": 0.01
+    "low-health-bonus": 0.015
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_phoenix_thunder_shiny":
+    "mythic-id": "CA_Wild_phoenix_thunder_shiny"
+    "pet-id": "ca_phoenix_thunder"
+    "name": "뇌광 피닉스"
+    "boss": false
+    "chance": 0.01
+    "low-health-bonus": 0.015
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_basilisk_obsidian":
+    "mythic-id": "CA_Wild_basilisk_obsidian"
+    "pet-id": "ca_basilisk_obsidian"
+    "name": "흑요 바실리스크"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_basilisk_obsidian_shiny":
+    "mythic-id": "CA_Wild_basilisk_obsidian_shiny"
+    "pet-id": "ca_basilisk_obsidian"
+    "name": "흑요 바실리스크"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_basilisk_snowstorm":
+    "mythic-id": "CA_Wild_basilisk_snowstorm"
+    "pet-id": "ca_basilisk_snowstorm"
+    "name": "눈보라 바실리스크"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_basilisk_snowstorm_shiny":
+    "mythic-id": "CA_Wild_basilisk_snowstorm_shiny"
+    "pet-id": "ca_basilisk_snowstorm"
+    "name": "눈보라 바실리스크"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_basilisk_wild":
+    "mythic-id": "CA_Wild_basilisk_wild"
+    "pet-id": "ca_basilisk_wild"
+    "name": "야생 바실리스크"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_basilisk_wild_shiny":
+    "mythic-id": "CA_Wild_basilisk_wild_shiny"
+    "pet-id": "ca_basilisk_wild"
+    "name": "야생 바실리스크"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_hippogryph_common":
+    "mythic-id": "CA_Wild_hippogryph_common"
+    "pet-id": "ca_hippogryph_common"
+    "name": "산악 히포그리프"
+    "boss": false
+    "chance": 0.03
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_hippogryph_common_shiny":
+    "mythic-id": "CA_Wild_hippogryph_common_shiny"
+    "pet-id": "ca_hippogryph_common"
+    "name": "산악 히포그리프"
+    "boss": false
+    "chance": 0.03
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_hippogryph_crystal":
+    "mythic-id": "CA_Wild_hippogryph_crystal"
+    "pet-id": "ca_hippogryph_crystal"
+    "name": "수정 히포그리프"
+    "boss": false
+    "chance": 0.03
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_hippogryph_crystal_shiny":
+    "mythic-id": "CA_Wild_hippogryph_crystal_shiny"
+    "pet-id": "ca_hippogryph_crystal"
+    "name": "수정 히포그리프"
+    "boss": false
+    "chance": 0.03
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_hippogryph_fallen":
+    "mythic-id": "CA_Wild_hippogryph_fallen"
+    "pet-id": "ca_hippogryph_fallen"
+    "name": "타락 히포그리프"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_hippogryph_fallen_shiny":
+    "mythic-id": "CA_Wild_hippogryph_fallen_shiny"
+    "pet-id": "ca_hippogryph_fallen"
+    "name": "타락 히포그리프"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_hippogryph_royal":
+    "mythic-id": "CA_Wild_hippogryph_royal"
+    "pet-id": "ca_hippogryph_royal"
+    "name": "왕실 히포그리프"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_hippogryph_royal_shiny":
+    "mythic-id": "CA_Wild_hippogryph_royal_shiny"
+    "pet-id": "ca_hippogryph_royal"
+    "name": "왕실 히포그리프"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_raptor_nightmare":
+    "mythic-id": "CA_Wild_raptor_nightmare"
+    "pet-id": "ca_raptor_nightmare"
+    "name": "악몽 랩터"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_raptor_nightmare_shiny":
+    "mythic-id": "CA_Wild_raptor_nightmare_shiny"
+    "pet-id": "ca_raptor_nightmare"
+    "name": "악몽 랩터"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_raptor_red":
+    "mythic-id": "CA_Wild_raptor_red"
+    "pet-id": "ca_raptor_red"
+    "name": "적갈 랩터"
+    "boss": false
+    "chance": 0.1
+    "low-health-bonus": 0.12
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_raptor_red_shiny":
+    "mythic-id": "CA_Wild_raptor_red_shiny"
+    "pet-id": "ca_raptor_red"
+    "name": "적갈 랩터"
+    "boss": false
+    "chance": 0.1
+    "low-health-bonus": 0.12
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_raptor_undead":
+    "mythic-id": "CA_Wild_raptor_undead"
+    "pet-id": "ca_raptor_undead"
+    "name": "불사 랩터"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_raptor_undead_shiny":
+    "mythic-id": "CA_Wild_raptor_undead_shiny"
+    "pet-id": "ca_raptor_undead"
+    "name": "불사 랩터"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_sky_serpent_jade":
+    "mythic-id": "CA_Wild_sky_serpent_jade"
+    "pet-id": "ca_sky_serpent_jade"
+    "name": "비취 하늘뱀"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_sky_serpent_jade_shiny":
+    "mythic-id": "CA_Wild_sky_serpent_jade_shiny"
+    "pet-id": "ca_sky_serpent_jade"
+    "name": "비취 하늘뱀"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_sky_serpent_magma":
+    "mythic-id": "CA_Wild_sky_serpent_magma"
+    "pet-id": "ca_sky_serpent_magma"
+    "name": "마그마 하늘뱀"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_sky_serpent_magma_shiny":
+    "mythic-id": "CA_Wild_sky_serpent_magma_shiny"
+    "pet-id": "ca_sky_serpent_magma"
+    "name": "마그마 하늘뱀"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_sky_serpent_solar":
+    "mythic-id": "CA_Wild_sky_serpent_solar"
+    "pet-id": "ca_sky_serpent_solar"
+    "name": "태양 하늘뱀"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_sky_serpent_solar_shiny":
+    "mythic-id": "CA_Wild_sky_serpent_solar_shiny"
+    "pet-id": "ca_sky_serpent_solar"
+    "name": "태양 하늘뱀"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_sky_serpent_spectral":
+    "mythic-id": "CA_Wild_sky_serpent_spectral"
+    "pet-id": "ca_sky_serpent_spectral"
+    "name": "영체 하늘뱀"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_sky_serpent_spectral_shiny":
+    "mythic-id": "CA_Wild_sky_serpent_spectral_shiny"
+    "pet-id": "ca_sky_serpent_spectral"
+    "name": "영체 하늘뱀"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_stag_demonic":
+    "mythic-id": "CA_Wild_stag_demonic"
+    "pet-id": "ca_stag_demonic"
+    "name": "마성 영록"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_stag_demonic_shiny":
+    "mythic-id": "CA_Wild_stag_demonic_shiny"
+    "pet-id": "ca_stag_demonic"
+    "name": "마성 영록"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_stag_heavenly":
+    "mythic-id": "CA_Wild_stag_heavenly"
+    "pet-id": "ca_stag_heavenly"
+    "name": "천상 영록"
+    "boss": false
+    "chance": 0.03
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_stag_heavenly_shiny":
+    "mythic-id": "CA_Wild_stag_heavenly_shiny"
+    "pet-id": "ca_stag_heavenly"
+    "name": "천상 영록"
+    "boss": false
+    "chance": 0.03
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_stag_rune":
+    "mythic-id": "CA_Wild_stag_rune"
+    "pet-id": "ca_stag_rune"
+    "name": "룬 영록"
+    "boss": false
+    "chance": 0.03
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_stag_rune_shiny":
+    "mythic-id": "CA_Wild_stag_rune_shiny"
+    "pet-id": "ca_stag_rune"
+    "name": "룬 영록"
+    "boss": false
+    "chance": 0.03
+    "low-health-bonus": 0.04
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_stag_void":
+    "mythic-id": "CA_Wild_stag_void"
+    "pet-id": "ca_stag_void"
+    "name": "심연 영록"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_stag_void_shiny":
+    "mythic-id": "CA_Wild_stag_void_shiny"
+    "pet-id": "ca_stag_void"
+    "name": "심연 영록"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_frog_green":
+    "mythic-id": "CA_Wild_frog_green"
+    "pet-id": "ca_frog_green"
+    "name": "녹빛 왕개구리"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_frog_green_shiny":
+    "mythic-id": "CA_Wild_frog_green_shiny"
+    "pet-id": "ca_frog_green"
+    "name": "녹빛 왕개구리"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_frog_permafrost":
+    "mythic-id": "CA_Wild_frog_permafrost"
+    "pet-id": "ca_frog_permafrost"
+    "name": "영구동토 왕개구리"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_frog_permafrost_shiny":
+    "mythic-id": "CA_Wild_frog_permafrost_shiny"
+    "pet-id": "ca_frog_permafrost"
+    "name": "영구동토 왕개구리"
+    "boss": false
+    "chance": 0.2
+    "low-health-bonus": 0.15
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_frog_royal":
+    "mythic-id": "CA_Wild_frog_royal"
+    "pet-id": "ca_frog_royal"
+    "name": "왕실 왕개구리"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_frog_royal_shiny":
+    "mythic-id": "CA_Wild_frog_royal_shiny"
+    "pet-id": "ca_frog_royal"
+    "name": "왕실 왕개구리"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_golem_arcane":
+    "mythic-id": "CA_Wild_golem_arcane"
+    "pet-id": "ca_golem_arcane"
+    "name": "비전 고대 골렘"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_golem_arcane_shiny":
+    "mythic-id": "CA_Wild_golem_arcane_shiny"
+    "pet-id": "ca_golem_arcane"
+    "name": "비전 고대 골렘"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_golem_corrupted":
+    "mythic-id": "CA_Wild_golem_corrupted"
+    "pet-id": "ca_golem_corrupted"
+    "name": "오염 고대 골렘"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_golem_corrupted_shiny":
+    "mythic-id": "CA_Wild_golem_corrupted_shiny"
+    "pet-id": "ca_golem_corrupted"
+    "name": "오염 고대 골렘"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_golem_magma":
+    "mythic-id": "CA_Wild_golem_magma"
+    "pet-id": "ca_golem_magma"
+    "name": "마그마 고대 골렘"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_golem_magma_shiny":
+    "mythic-id": "CA_Wild_golem_magma_shiny"
+    "pet-id": "ca_golem_magma"
+    "name": "마그마 고대 골렘"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_golem_royal":
+    "mythic-id": "CA_Wild_golem_royal"
+    "pet-id": "ca_golem_royal"
+    "name": "왕실 고대 골렘"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_golem_royal_shiny":
+    "mythic-id": "CA_Wild_golem_royal_shiny"
+    "pet-id": "ca_golem_royal"
+    "name": "왕실 고대 골렘"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_tusker_demonic":
+    "mythic-id": "CA_Wild_tusker_demonic"
+    "pet-id": "ca_tusker_demonic"
+    "name": "마성 터스커"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_tusker_demonic_shiny":
+    "mythic-id": "CA_Wild_tusker_demonic_shiny"
+    "pet-id": "ca_tusker_demonic"
+    "name": "마성 터스커"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_tusker_dreamlight":
+    "mythic-id": "CA_Wild_tusker_dreamlight"
+    "pet-id": "ca_tusker_dreamlight"
+    "name": "꿈빛 터스커"
+    "boss": false
+    "chance": 0.12
+    "low-health-bonus": 0.13
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_tusker_dreamlight_shiny":
+    "mythic-id": "CA_Wild_tusker_dreamlight_shiny"
+    "pet-id": "ca_tusker_dreamlight"
+    "name": "꿈빛 터스커"
+    "boss": false
+    "chance": 0.12
+    "low-health-bonus": 0.13
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_tusker_forest":
+    "mythic-id": "CA_Wild_tusker_forest"
+    "pet-id": "ca_tusker_forest"
+    "name": "숲 터스커"
+    "boss": false
+    "chance": 0.12
+    "low-health-bonus": 0.13
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_tusker_forest_shiny":
+    "mythic-id": "CA_Wild_tusker_forest_shiny"
+    "pet-id": "ca_tusker_forest"
+    "name": "숲 터스커"
+    "boss": false
+    "chance": 0.12
+    "low-health-bonus": 0.13
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_wolfhawk_dire":
+    "mythic-id": "CA_Wild_wolfhawk_dire"
+    "pet-id": "ca_wolfhawk_dire"
+    "name": "거친 울프호크"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_wolfhawk_dire_shiny":
+    "mythic-id": "CA_Wild_wolfhawk_dire_shiny"
+    "pet-id": "ca_wolfhawk_dire"
+    "name": "거친 울프호크"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_wolfhawk_fallen":
+    "mythic-id": "CA_Wild_wolfhawk_fallen"
+    "pet-id": "ca_wolfhawk_fallen"
+    "name": "타락 울프호크"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_wolfhawk_fallen_shiny":
+    "mythic-id": "CA_Wild_wolfhawk_fallen_shiny"
+    "pet-id": "ca_wolfhawk_fallen"
+    "name": "타락 울프호크"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_wolfhawk_fullmoon":
+    "mythic-id": "CA_Wild_wolfhawk_fullmoon"
+    "pet-id": "ca_wolfhawk_fullmoon"
+    "name": "만월 울프호크"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_wolfhawk_fullmoon_shiny":
+    "mythic-id": "CA_Wild_wolfhawk_fullmoon_shiny"
+    "pet-id": "ca_wolfhawk_fullmoon"
+    "name": "만월 울프호크"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_wolfhawk_stormcloud":
+    "mythic-id": "CA_Wild_wolfhawk_stormcloud"
+    "pet-id": "ca_wolfhawk_stormcloud"
+    "name": "먹구름 울프호크"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_wolfhawk_stormcloud_shiny":
+    "mythic-id": "CA_Wild_wolfhawk_stormcloud_shiny"
+    "pet-id": "ca_wolfhawk_stormcloud"
+    "name": "먹구름 울프호크"
+    "boss": false
+    "chance": 0.02
+    "low-health-bonus": 0.03
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_wyvern_ender":
+    "mythic-id": "CA_Wild_wyvern_ender"
+    "pet-id": "ca_wyvern_ender"
+    "name": "공허 와이번"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_wyvern_ender_shiny":
+    "mythic-id": "CA_Wild_wyvern_ender_shiny"
+    "pet-id": "ca_wyvern_ender"
+    "name": "공허 와이번"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_wyvern_green":
+    "mythic-id": "CA_Wild_wyvern_green"
+    "pet-id": "ca_wyvern_green"
+    "name": "녹빛 와이번"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_wyvern_green_shiny":
+    "mythic-id": "CA_Wild_wyvern_green_shiny"
+    "pet-id": "ca_wyvern_green"
+    "name": "녹빛 와이번"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_wyvern_inferno":
+    "mythic-id": "CA_Wild_wyvern_inferno"
+    "pet-id": "ca_wyvern_inferno"
+    "name": "업화 와이번"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_wyvern_inferno_shiny":
+    "mythic-id": "CA_Wild_wyvern_inferno_shiny"
+    "pet-id": "ca_wyvern_inferno"
+    "name": "업화 와이번"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_wyvern_undead":
+    "mythic-id": "CA_Wild_wyvern_undead"
+    "pet-id": "ca_wyvern_undead"
+    "name": "불사 와이번"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false
+  "ca_wyvern_undead_shiny":
+    "mythic-id": "CA_Wild_wyvern_undead_shiny"
+    "pet-id": "ca_wyvern_undead"
+    "name": "불사 와이번"
+    "boss": false
+    "chance": 0.015
+    "low-health-bonus": 0.025
+    "model-scale": 1
+    "roll-shiny": false

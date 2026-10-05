@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "iron_carapace"
+name: "철의 외피"
+category: "earth"
+description: "10초 동안 받는 피해를 줄입니다. 대신 이동 속도와 공격 속도가 느려집니다.\n\n철 갑옷을 입고 몬스터의 공격을 견딘 몸은 금속의 단단함과 무게를 함께 기억한다."
+icon: "magiccodex:textures/spells/expansion/iron_carapace.png"
+permission: "magic.learned.iron_carapace"
+discovery:
+  description: "철 갑옷을 입은 상태에서 몬스터에게 누적 100 피해 받기."
+research: "몸을 강철처럼 만들 수는 있지만 강철의 무게까지 없앨 수는 없다."
+cast:
+  command: "마법 철의외피"
+  cooldown-seconds: 35
+  mana-cost: 100
+order: 1140

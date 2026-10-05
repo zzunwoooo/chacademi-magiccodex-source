@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "storm_command"
+name: "폭풍의 지휘"
+category: "wind"
+description: "범위에 폭풍을 일으켜 적을 공격하고 바람 시설에 에너지를 공급합니다.\n\n뜨거운 공기를 타고 뛰어올라 한 바퀴 돌아보자. 몸을 감싼 바람도 함께 방향을 바꾼다."
+icon: "magiccodex:textures/spells/advanced/storm_command.png"
+permission: "magic.learned.storm_command"
+discovery:
+  description: "30도 이상의 기온을 가진 공간에서, 상승기류 마법 사용 후 떨어지기 전에 한 바퀴 회전하기."
+research: "상승기류와 저기압 그리고 회전!"
+cast:
+  command: "마법 폭풍의지휘"
+  cooldown-seconds: 30
+  mana-cost: 170
+order: 100

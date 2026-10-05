@@ -1,0 +1,17 @@
+"Id": "ca_gangster_snowman_shiny"
+"MythicMob": "CA_Pet_gangster_snowman_shiny"
+"Permission": "chacademia.pet.ca_gangster_snowman_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e심술 눈사람"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "겨울 숲의 마력이 뭉쳐 움직이기 시작했다."
+    - "서식지: 겨울 숲 / 눈 덮인 벚꽃 숲"
+    - "2성"

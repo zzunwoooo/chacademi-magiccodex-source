@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "curse_transfer"
+name: "저주의 전가"
+category: "dark"
+description: "자신에게 걸린 독·나약함·구속 중 하나를 제거하고 적에게 남은 지속 시간만큼 옮깁니다.\n\n독과 나약함, 구속을 각각 겪어 본 마력은 그 불편한 무게를 다른 곳으로 옮길 수 있다."
+icon: "magiccodex:textures/spells/expansion/curse_transfer.png"
+permission: "magic.learned.curse_transfer"
+discovery:
+  description: "독·나약함·구속 효과를 각각 3번 겪기."
+research: "남에게 권하기 전에 자신이 먼저 맛보았다는 점에서는 정직한 마법이다."
+cast:
+  command: "마법 저주의전가"
+  cooldown-seconds: 30
+  mana-cost: 90
+order: 1790

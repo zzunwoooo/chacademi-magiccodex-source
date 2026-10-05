@@ -1,0 +1,17 @@
+"Id": "ca_phoenix_flame_shiny"
+"MythicMob": "CA_Pet_phoenix_flame_shiny"
+"Permission": "chacademia.pet.ca_phoenix_flame_shiny"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e불꽃 피닉스"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "마력이 모이는 높은 지형에 내려앉는 불사조. 불꽃 계열의 변이 개체."
+    - "서식지: 화산 봉우리"
+    - "3성"

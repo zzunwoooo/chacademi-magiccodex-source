@@ -1,0 +1,17 @@
+"Id": "ca_lostasset_mob2_flowersprite_shiny"
+"MythicMob": "CA_Pet_lostasset_mob2_flowersprite_shiny"
+"Permission": "chacademia.pet.ca_lostasset_mob2_flowersprite_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e꽃망울 정령"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "꽃이 무성한 곳에서 드물게 모습을 드러내는 정령."
+    - "서식지: 꽃피는 계곡 / 라벤더 계곡"
+    - "2성"

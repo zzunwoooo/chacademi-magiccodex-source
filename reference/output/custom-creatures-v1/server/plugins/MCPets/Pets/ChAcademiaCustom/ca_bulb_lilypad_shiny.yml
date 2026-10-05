@@ -1,0 +1,17 @@
+"Id": "ca_bulb_lilypad_shiny"
+"MythicMob": "CA_Pet_bulb_lilypad_shiny"
+"Permission": "chacademia.pet.ca_bulb_lilypad_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e수련잎 새싹"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "늪 가장자리의 수련잎 주변을 떠도는 정령."
+    - "서식지: 난초 늪 / 따뜻한 강"
+    - "1성"

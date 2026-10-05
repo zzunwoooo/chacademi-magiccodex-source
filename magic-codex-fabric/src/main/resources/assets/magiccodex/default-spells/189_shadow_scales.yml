@@ -1,0 +1,14 @@
+id: shadow_scales
+name: 어둠의 저울
+category: dark
+description: 자신보다 체력 비율이 높은 적을 한 번 공격합니다. 체력 비율 차이가 클수록 추가 피해를 줍니다.
+icon: magiccodex:textures/spells/expansion_2/shadow_scales.png
+permission: magic.learned.shadow_scales
+discovery:
+  description: 체력이 하트 1칸 이하일 때 체력이 절반 이상 남은 몬스터 처치하기.
+research: 기울어진 저울은 약한 쪽에 조금 더 무거운 추를 얹는다.
+cast:
+  command: ''
+  cooldown-seconds: 20
+  mana-cost: 100
+order: 189

@@ -1,0 +1,14 @@
+id: earth_anchor
+name: 대지의 닻
+category: earth
+description: 10초 동안 일반 공격으로 밀려나지 않게 합니다. 이동은 가능합니다.
+icon: magiccodex:textures/spells/expansion/earth_anchor.png
+permission: magic.learned.earth_anchor
+discovery:
+  description: 방패로 몬스터의 공격 누적 30회 막기.
+research: 밀리지 않는다고 움직일 수 없는 것은 아니다. 산처럼 서 있다가도 수업 종이 울리면 걸어가야 한다.
+cast:
+  command: ''
+  cooldown-seconds: 30
+  mana-cost: 80
+order: 111

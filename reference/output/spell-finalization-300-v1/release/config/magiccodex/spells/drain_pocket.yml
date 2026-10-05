@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "drain_pocket"
+name: "물 빼기"
+category: "water"
+description: "작은 구역의 물을 제거해 수중 건축을 돕는다.\n\n스펀지로 젖은 공간을 여러 번 비워 보면 물이 빠져나갈 자리를 읽게 된다."
+icon: "magiccodex:textures/spells/expansion_3/drain_pocket.png"
+permission: "magic.learned.drain_pocket"
+discovery:
+  description: "스펀지로 물을 누적 10회 흡수하기."
+research: "수중 건축에서 가장 필요한 것은 더 많은 물이 아니라 잠깐의 빈자리다."
+cast:
+  command: "마법 물빼기"
+  cooldown-seconds: 20
+  mana-cost: 45
+order: 2330

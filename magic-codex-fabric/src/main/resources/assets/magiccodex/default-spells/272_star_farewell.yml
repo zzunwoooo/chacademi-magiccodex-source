@@ -1,0 +1,14 @@
+id: star_farewell
+name: 별의 배웅
+category: light
+description: 처치한 적의 자리에 동료가 주우면 보호막을 얻는 별을 남긴다.
+icon: ''
+permission: magic.learned.star_farewell
+discovery:
+  description: 동료를 공격하던 몬스터를 누적 20마리 처치하기.
+research: 싸움이 끝난 자리에 잠깐의 보호를 놓아 다음 발걸음을 돕는다.
+cast:
+  command: ''
+  cooldown-seconds: 25
+  mana-cost: 80
+order: 272

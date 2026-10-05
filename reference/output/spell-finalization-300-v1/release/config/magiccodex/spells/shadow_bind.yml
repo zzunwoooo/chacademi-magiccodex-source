@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "shadow_bind"
+name: "그림자 매듭"
+category: "dark"
+description: "가까운 몬스터 하나의 발밑에 그림자를 묶어 3초 동안 느리게 만듭니다.\n\n어둠의 첫 수업은 상대의 발밑에 놓인 그림자를 묶는 것부터 시작한다."
+icon: "magiccodex:textures/spells/novice_extra/shadow_bind.png"
+permission: "magic.learned.shadow_bind"
+discovery:
+  description: "어둠 마법 기초 수업을 통해 습득."
+research: "그림자의 발목을 붙잡으면 주인도 멀리 달아나지 못한다."
+cast:
+  command: "마법 그림자매듭"
+  cooldown-seconds: 6
+  mana-cost: 10
+order: 1670

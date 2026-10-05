@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "lightning_needle"
+name: "라이트닝 쇼크"
+category: "wind"
+description: "대상 위치에 강력한 뇌운을 소환하여 벼락을 내리친다.\n\n벼락이 남긴 마지막 순간을 기억하는 마력은, 그 충격을 가는 바늘에 담아낸다."
+icon: "magiccodex:textures/spells/expansion_2/lightning_needle.png"
+permission: "magic.learned.lightning_needle"
+discovery:
+  description: "번개에 맞아 사망하기."
+research: "번개를 이해하기 위해 번개를 맞아본 괴짜 마법 학자가 있었다."
+cast:
+  command: "마법 라이트닝쇼크"
+  cooldown-seconds: 60
+  mana-cost: 250
+order: 270

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "pressure_rupture"
+name: "토네이도 스핀"
+category: "wind"
+description: "고속으로 회전하여 바람을 일으켜 주변의 적을 밀어내고 피해를 준다.\n\n제자리에 선 채 시선을 여러 바퀴 돌려 보자. 몸이 멈춰 있어도 공기는 회전할 수 있다."
+icon: "magiccodex:textures/spells/expansion_2/pressure_rupture.png"
+permission: "magic.learned.pressure_rupture"
+discovery:
+  description: "움직이지 않는 상태에서 시선을 돌려 10바퀴 회전"
+research: "회오리 속에 숨어 적을 공격한다면, 백전백승일지니."
+cast:
+  command: "마법 토네이도스핀"
+  cooldown-seconds: 30
+  mana-cost: 90
+order: 320

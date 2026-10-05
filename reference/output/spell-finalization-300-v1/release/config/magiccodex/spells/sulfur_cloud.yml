@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "sulfur_cloud"
+name: "유황 구름"
+category: "fire"
+description: "화염 공격이 닿으면 한 번 폭발하는 연기 구름을 남긴다.\n\n화약을 모으며 익힌 특유의 냄새가 불을 기다리는 구름의 성질을 알려 준다."
+icon: "magiccodex:textures/spells/expansion_3/sulfur_cloud.png"
+permission: "magic.learned.sulfur_cloud"
+discovery:
+  description: "화약을 누적 32개 획득하기."
+research: "혼자서는 조용한 연기다. 불꽃이 닿는 순간 이야기가 달라진다."
+cast:
+  command: "마법 유황구름"
+  cooldown-seconds: 25
+  mana-cost: 75
+order: 2270

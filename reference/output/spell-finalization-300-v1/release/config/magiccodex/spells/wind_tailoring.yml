@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "wind_tailoring"
+name: "바람 재단"
+category: "wind"
+description: "양털을 소비해 같은 색의 카펫으로 가공한다.\n\n양털로 카펫을 여러 번 만들어 본 손은 바람으로 잘라 낼 결을 안다."
+icon: "magiccodex:textures/spells/expansion_3/wind_tailoring.png"
+permission: "magic.learned.wind_tailoring"
+discovery:
+  description: "양털로 카펫을 누적 32개 제작하기."
+research: "가위가 없어도 재단은 가능하다. 그렇다고 원단까지 필요 없어지는 것은 아니다."
+cast:
+  command: "마법 바람재단"
+  cooldown-seconds: 4
+  mana-cost: 10
+order: 2090

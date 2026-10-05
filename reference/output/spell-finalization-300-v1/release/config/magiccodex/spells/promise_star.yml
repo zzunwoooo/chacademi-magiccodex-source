@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "promise_star"
+name: "약속의 별"
+category: "light"
+description: "동의한 동료와 일정 거리 이상 떨어지면 서로에게 알린다.\n\n친구와 먼 길을 함께 걸으면 서로 멀어지는 순간을 알려 줄 약속도 필요해진다."
+icon: "magiccodex:textures/spells/expansion_3/promise_star.png"
+permission: "magic.learned.promise_star"
+discovery:
+  description: "친구와 함께 누적 500블록 이동하기."
+research: "같은 길을 걷기로 한 별 두 개는 거리가 벌어지면 서로를 부른다."
+cast:
+  command: "마법 약속의별"
+  cooldown-seconds: 10
+  mana-cost: 15
+order: 2670

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "luminous_signature"
+name: "빛의 서명"
+category: "light"
+description: "책이나 장비에 자신의 서명을 남긴다.\n\n직접 쓴 여러 책에 이름을 남긴 손은 빛으로도 자기 흔적을 새길 수 있다."
+icon: "magiccodex:textures/spells/expansion_3/luminous_signature.png"
+permission: "magic.learned.luminous_signature"
+discovery:
+  description: "책과 깃펜으로 서로 다른 책 3권에 서명하기."
+research: "이름의 주인은 바뀌지 않는다. 빛은 서명을 더 오래 알아보게 할 뿐이다."
+cast:
+  command: "마법 빛의서명"
+  cooldown-seconds: 3
+  mana-cost: 5
+order: 2610

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "heat_transfer"
+name: "열의 이동"
+category: "fire"
+description: "두 장치 사이에서 열을 옮겨 한쪽을 식히고 다른 쪽에 동력을 준다.\n\n열전달 실습에서는 더 뜨거운 곳과 더 차가운 곳 사이에 놓인 길을 배운다."
+icon: "magiccodex:textures/spells/expansion_3/heat_transfer.png"
+permission: "magic.learned.heat_transfer"
+discovery:
+  description: "화염 마법 응용 수업의 열전달 실습을 완료하기."
+research: "한쪽에서 빌린 온기가 다른 쪽의 움직임이 된다."
+cast:
+  command: "마법 열의이동"
+  cooldown-seconds: 15
+  mana-cost: 45
+order: 2940

@@ -1,0 +1,946 @@
+[
+  {
+    "model": "squirrel",
+    "palette": "\uafc0\uac08\uc0c9",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 304,
+    "visiblePixels": 304
+  },
+  {
+    "model": "owl",
+    "palette": "\uccad\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 1087,
+    "visiblePixels": 1087
+  },
+  {
+    "model": "skunk",
+    "palette": "\ubbfc\ud2b8\uc0b0\ud638",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 516,
+    "visiblePixels": 516
+  },
+  {
+    "model": "hedgehog",
+    "palette": "\uc0b0\ud638\ud06c\ub9bc",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 229,
+    "visiblePixels": 229
+  },
+  {
+    "model": "elk",
+    "palette": "\ud558\ub298\ubcf5\uc22d\uc544",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 4139,
+    "visiblePixels": 4139
+  },
+  {
+    "model": "lil_bird",
+    "palette": "\uc5f0\ub450\ubd84\ud64d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 74,
+    "visiblePixels": 74
+  },
+  {
+    "model": "raccoon",
+    "palette": "\ucf54\ub784\ub0a8\uc0c9",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 1014,
+    "visiblePixels": 1014
+  },
+  {
+    "model": "frog",
+    "palette": "\ud638\ubc15\uccad\ub85d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 175,
+    "visiblePixels": 175
+  },
+  {
+    "model": "bear",
+    "palette": "\uc62c\ub9ac\ube0c\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 22066,
+    "visiblePixels": 22066
+  },
+  {
+    "model": "bear_black",
+    "palette": "\ubc31\uccad",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 22066,
+    "visiblePixels": 22066
+  },
+  {
+    "model": "bear_polar",
+    "palette": "\ud558\ub298\ubcf5\uc22d\uc544",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 22066,
+    "visiblePixels": 22066
+  },
+  {
+    "model": "timber_wolf",
+    "palette": "\uc7a5\ubbf8\ube44\ucde8",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 8739,
+    "visiblePixels": 8739
+  },
+  {
+    "model": "tortoise",
+    "palette": "\ud638\ubc15\uccad\ub85d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 6031,
+    "visiblePixels": 6031
+  },
+  {
+    "model": "catfish",
+    "palette": "\uc0b0\ud638\ud06c\ub9bc",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 1730,
+    "visiblePixels": 1730
+  },
+  {
+    "model": "butterfly",
+    "palette": "\uccad\uc625\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 969,
+    "visiblePixels": 969
+  },
+  {
+    "model": "buffalo",
+    "palette": "\uafc0\uac08\uc0c9",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 8398,
+    "visiblePixels": 8398
+  },
+  {
+    "model": "boar",
+    "palette": "\ubbfc\ud2b8\uc0b0\ud638",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 3870,
+    "visiblePixels": 3870
+  },
+  {
+    "model": "alpha_boar",
+    "palette": "\ub8e8\ube44\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 4853,
+    "visiblePixels": 4853
+  },
+  {
+    "model": "crocodile",
+    "palette": "\ucf54\ub784\ub0a8\uc0c9",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 6189,
+    "visiblePixels": 6189
+  },
+  {
+    "model": "lostasset_mob1_chicken",
+    "palette": "\uccad\uc625\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 1928,
+    "visiblePixels": 1928
+  },
+  {
+    "model": "lostasset_mob1_rabbit",
+    "palette": "\uc9c4\uc8fc\ubd84\ud64d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 1567,
+    "visiblePixels": 1567
+  },
+  {
+    "model": "lostasset_mob1_sheep",
+    "palette": "\uc0b4\uad6c\ubbfc\ud2b8",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 1722,
+    "visiblePixels": 1722
+  },
+  {
+    "model": "lostasset_mob1_wolf",
+    "palette": "\uccad\uc625\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 2880,
+    "visiblePixels": 2880
+  },
+  {
+    "model": "lostasset_mob2_flowersprite",
+    "palette": "\ud558\ub298\ubcf5\uc22d\uc544",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 3944,
+    "visiblePixels": 3944
+  },
+  {
+    "model": "lostasset_mob2_lakefairy",
+    "palette": "\uc0b0\ud638\ud06c\ub9bc",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 2064,
+    "visiblePixels": 2064
+  },
+  {
+    "model": "lostasset_mob2_leaffairy",
+    "palette": "\uc5f0\ub450\ubd84\ud64d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 3605,
+    "visiblePixels": 3605
+  },
+  {
+    "model": "lostasset_mob2_mushroomfairy",
+    "palette": "\ud638\ubc15\uccad\ub85d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 2140,
+    "visiblePixels": 2140
+  },
+  {
+    "model": "lostasset_mob3_herbgolem",
+    "palette": "\uc7a5\ubbf8\ube44\ucde8",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 3113,
+    "visiblePixels": 3113
+  },
+  {
+    "model": "lostasset_mob3_herbthief",
+    "palette": "\uccad\uc625\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 2244,
+    "visiblePixels": 2244
+  },
+  {
+    "model": "lostasset_mob3_mossyboar",
+    "palette": "\uafc0\uac08\uc0c9",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 2828,
+    "visiblePixels": 2828
+  },
+  {
+    "model": "lostasset_mob3_timberpile",
+    "palette": "\ubbfc\ud2b8\uc0b0\ud638",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 2668,
+    "visiblePixels": 2668
+  },
+  {
+    "model": "bulb_amethyst",
+    "palette": "\uae30\uc874 \uc0c8\uc2f9 \ud314\ub808\ud2b8 \uc720\uc9c0"
+  },
+  {
+    "model": "bulb_crimsonspore",
+    "palette": "\uae30\uc874 \uc0c8\uc2f9 \ud314\ub808\ud2b8 \uc720\uc9c0"
+  },
+  {
+    "model": "bulb_dripleaf",
+    "palette": "\uae30\uc874 \uc0c8\uc2f9 \ud314\ub808\ud2b8 \uc720\uc9c0"
+  },
+  {
+    "model": "bulb_lilypad",
+    "palette": "\uae30\uc874 \uc0c8\uc2f9 \ud314\ub808\ud2b8 \uc720\uc9c0"
+  },
+  {
+    "model": "bulb_warpedfungus",
+    "palette": "\uae30\uc874 \uc0c8\uc2f9 \ud314\ub808\ud2b8 \uc720\uc9c0"
+  },
+  {
+    "model": "crab",
+    "palette": "\uccad\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 1172,
+    "visiblePixels": 1172
+  },
+  {
+    "model": "piranha",
+    "palette": "\ud638\ubc15\uccad\ub85d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 396,
+    "visiblePixels": 396
+  },
+  {
+    "model": "swordfish",
+    "palette": "\ub8e8\ube44\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 1590,
+    "visiblePixels": 1590
+  },
+  {
+    "model": "jellyfish_blue",
+    "palette": "\uc0b0\ud638\ud06c\ub9bc",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 334,
+    "visiblePixels": 334
+  },
+  {
+    "model": "jellyfish_green",
+    "palette": "\ub77c\uc77c\ub77d\ub808\ubaac",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 334,
+    "visiblePixels": 334
+  },
+  {
+    "model": "jellyfish_pink",
+    "palette": "\ube59\ud558\ub77c\uc784",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 334,
+    "visiblePixels": 334
+  },
+  {
+    "model": "jellyfish_yellow",
+    "palette": "\uccad\ub85d\uc790\ud64d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 334,
+    "visiblePixels": 334
+  },
+  {
+    "model": "seahorse_blue",
+    "palette": "\ud638\ubc15\uccad\ub85d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 162,
+    "visiblePixels": 162
+  },
+  {
+    "model": "seahorse_green",
+    "palette": "\uc7a5\ubbf8\ube44\ucde8",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 162,
+    "visiblePixels": 162
+  },
+  {
+    "model": "seahorse_pink",
+    "palette": "\uc5f0\ub450\ubd84\ud64d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 162,
+    "visiblePixels": 162
+  },
+  {
+    "model": "seahorse_yellow",
+    "palette": "\ud558\ub298\ubcf5\uc22d\uc544",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 162,
+    "visiblePixels": 162
+  },
+  {
+    "model": "ogre_club",
+    "palette": "\uccad\uc625\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 12335,
+    "visiblePixels": 12335
+  },
+  {
+    "model": "ogre_axe",
+    "palette": "\ucf54\ub784\ub0a8\uc0c9",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 11288,
+    "visiblePixels": 11288
+  },
+  {
+    "model": "ogre_hammer",
+    "palette": "\uc62c\ub9ac\ube0c\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 8684,
+    "visiblePixels": 8684
+  },
+  {
+    "model": "ncr_spear_skeleton",
+    "palette": "\uccad\uc625\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 2193,
+    "visiblePixels": 2193
+  },
+  {
+    "model": "ncr_warrior_skeleton",
+    "palette": "\ub8e8\ube44\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 2380,
+    "visiblePixels": 2380
+  },
+  {
+    "model": "ncr_archer_skeleton",
+    "palette": "\uafc0\uac08\uc0c9",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 3089,
+    "visiblePixels": 3089
+  },
+  {
+    "model": "ncr_mage_skeleton",
+    "palette": "\ub77c\uc77c\ub77d\ub808\ubaac",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 2473,
+    "visiblePixels": 2473
+  },
+  {
+    "model": "mf_warden_knight",
+    "palette": "\ud751\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 7976,
+    "visiblePixels": 7976
+  },
+  {
+    "model": "mf_warden_archer",
+    "palette": "\uc62c\ub9ac\ube0c\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 7713,
+    "visiblePixels": 7713
+  },
+  {
+    "model": "mf_warden_tank",
+    "palette": "\ubc31\uccad",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 15802,
+    "visiblePixels": 15802
+  },
+  {
+    "model": "mf_warden_mage",
+    "palette": "\ub8e8\ube44\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 5099,
+    "visiblePixels": 5099
+  },
+  {
+    "model": "glacialcore",
+    "palette": "\ud751\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 358044,
+    "visiblePixels": 358044
+  },
+  {
+    "model": "nocsy_cat1",
+    "palette": "\uc0b4\uad6c\ubbfc\ud2b8",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 1570,
+    "visiblePixels": 1570
+  },
+  {
+    "model": "nocsy_cat2",
+    "palette": "\uccad\uc625\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 1249,
+    "visiblePixels": 1249
+  },
+  {
+    "model": "nocsy_cat3",
+    "palette": "\uc7a5\ubbf8\ube44\ucde8",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 1305,
+    "visiblePixels": 1305
+  },
+  {
+    "model": "nocsy_cat4",
+    "palette": "\ud751\ubc31",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 1339,
+    "visiblePixels": 1339
+  },
+  {
+    "model": "nocsy_cat5",
+    "palette": "\uafc0\uac08\uc0c9",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 1685,
+    "visiblePixels": 1685
+  },
+  {
+    "model": "nocsy_cat6",
+    "palette": "\ub77c\uc77c\ub77d\ub808\ubaac",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 1249,
+    "visiblePixels": 1249
+  },
+  {
+    "model": "nocsy_cat_fallen",
+    "palette": "\ubc31\uccad",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 1988,
+    "visiblePixels": 1988
+  },
+  {
+    "model": "voxelspawns_pug",
+    "palette": "\uc0b4\uad6c\ubbfc\ud2b8",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 1302,
+    "visiblePixels": 1302
+  },
+  {
+    "model": "baby_polar_bear",
+    "palette": "\uc9c4\uc8fc\ubd84\ud64d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 822,
+    "visiblePixels": 822
+  },
+  {
+    "model": "baby_yeti",
+    "palette": "\uc5f0\ub450\ubd84\ud64d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 904,
+    "visiblePixels": 904
+  },
+  {
+    "model": "frost_ferret",
+    "palette": "\ucf54\ub784\ub0a8\uc0c9",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 1052,
+    "visiblePixels": 1052
+  },
+  {
+    "model": "gangster_snowman",
+    "palette": "\ud558\ub298\ubcf5\uc22d\uc544",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 1079,
+    "visiblePixels": 1079
+  },
+  {
+    "model": "ice_knight",
+    "palette": "\ud751\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 1152,
+    "visiblePixels": 1152
+  },
+  {
+    "model": "dragon_desert",
+    "palette": "\uccad\uc625\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 13442,
+    "visiblePixels": 13442
+  },
+  {
+    "model": "dragon_glacial",
+    "palette": "\ud751\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 13442,
+    "visiblePixels": 13442
+  },
+  {
+    "model": "dragon_nether",
+    "palette": "\ubc31\uccad",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 13442,
+    "visiblePixels": 13442
+  },
+  {
+    "model": "dragon_sculk",
+    "palette": "\ub8e8\ube44\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 13442,
+    "visiblePixels": 13442
+  },
+  {
+    "model": "lizard_aqua",
+    "palette": "\uc0b4\uad6c\ubbfc\ud2b8",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 9786,
+    "visiblePixels": 9786
+  },
+  {
+    "model": "lizard_lava",
+    "palette": "\ubbfc\ud2b8\uc0b0\ud638",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 9786,
+    "visiblePixels": 9786
+  },
+  {
+    "model": "manticore_aether",
+    "palette": "\uc0b4\uad6c\ubbfc\ud2b8",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 13739,
+    "visiblePixels": 13739
+  },
+  {
+    "model": "manticore_dusk",
+    "palette": "\uccad\uc625\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 13739,
+    "visiblePixels": 13739
+  },
+  {
+    "model": "manticore_soul",
+    "palette": "\ud638\ubc15\uccad\ub85d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 13739,
+    "visiblePixels": 13739
+  },
+  {
+    "model": "manticore_venom",
+    "palette": "\ub77c\uc77c\ub77d\ub808\ubaac",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 13739,
+    "visiblePixels": 13739
+  },
+  {
+    "model": "panda_normal",
+    "palette": "\uafc0\uac08\uc0c9",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 17374,
+    "visiblePixels": 17374
+  },
+  {
+    "model": "sabertooth_arctic",
+    "palette": "\uafc0\uac08\uc0c9",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 13450,
+    "visiblePixels": 13450
+  },
+  {
+    "model": "sabertooth_midnight",
+    "palette": "\ubbfc\ud2b8\uc0b0\ud638",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 13450,
+    "visiblePixels": 13450
+  },
+  {
+    "model": "sabertooth_savanna",
+    "palette": "\uccad\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 13450,
+    "visiblePixels": 13450
+  },
+  {
+    "model": "capybara",
+    "palette": "\uc0b4\uad6c\ubbfc\ud2b8",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 7004,
+    "visiblePixels": 7004
+  },
+  {
+    "model": "horse_glacial",
+    "palette": "\uc0b0\ud638\ud06c\ub9bc",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 9041,
+    "visiblePixels": 9041
+  },
+  {
+    "model": "horse_magma",
+    "palette": "\uccad\uc625\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 9108,
+    "visiblePixels": 9108
+  },
+  {
+    "model": "horse_pegasus",
+    "palette": "\ud558\ub298\ubcf5\uc22d\uc544",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 10478,
+    "visiblePixels": 10478
+  },
+  {
+    "model": "horse_spartan",
+    "palette": "\uc62c\ub9ac\ube0c\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 10498,
+    "visiblePixels": 10498
+  },
+  {
+    "model": "horse_unicorn",
+    "palette": "\ud751\ubc31",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 9028,
+    "visiblePixels": 9028
+  },
+  {
+    "model": "kitsune_demonic",
+    "palette": "\uc9c4\uc8fc\ubd84\ud64d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 5579,
+    "visiblePixels": 5579
+  },
+  {
+    "model": "kitsune_inferno",
+    "palette": "\uccad\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 5579,
+    "visiblePixels": 5579
+  },
+  {
+    "model": "kitsune_normal",
+    "palette": "\ud751\ubc31",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 5579,
+    "visiblePixels": 5579
+  },
+  {
+    "model": "phantom_ender",
+    "palette": "\ud638\ubc15\uccad\ub85d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 11466,
+    "visiblePixels": 11466
+  },
+  {
+    "model": "phantom_ghost",
+    "palette": "\uc7a5\ubbf8\ube44\ucde8",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 11466,
+    "visiblePixels": 11466
+  },
+  {
+    "model": "phoenix_darkflame",
+    "palette": "\ud638\ubc15\uccad\ub85d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 7359,
+    "visiblePixels": 7359
+  },
+  {
+    "model": "phoenix_flame",
+    "palette": "\ube59\ud558\ub77c\uc784",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 7359,
+    "visiblePixels": 7359
+  },
+  {
+    "model": "phoenix_light",
+    "palette": "\uc7a5\ubbf8\ube44\ucde8",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 7359,
+    "visiblePixels": 7359
+  },
+  {
+    "model": "phoenix_thunder",
+    "palette": "\ub8e8\ube44\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 7359,
+    "visiblePixels": 7359
+  },
+  {
+    "model": "basilisk_obsidian",
+    "palette": "\uccad\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 12150,
+    "visiblePixels": 12150
+  },
+  {
+    "model": "basilisk_snowstorm",
+    "palette": "\uc7a5\ubbf8\ube44\ucde8",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 12150,
+    "visiblePixels": 12150
+  },
+  {
+    "model": "basilisk_wild",
+    "palette": "\uc0b4\uad6c\ubbfc\ud2b8",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 12150,
+    "visiblePixels": 12150
+  },
+  {
+    "model": "hippogryph_common",
+    "palette": "\ucf54\ub784\ub0a8\uc0c9",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 8177,
+    "visiblePixels": 8177
+  },
+  {
+    "model": "hippogryph_crystal",
+    "palette": "\uc5f0\ub450\ubd84\ud64d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 8183,
+    "visiblePixels": 8183
+  },
+  {
+    "model": "hippogryph_fallen",
+    "palette": "\ubc31\uccad",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 8181,
+    "visiblePixels": 8181
+  },
+  {
+    "model": "hippogryph_royal",
+    "palette": "\ub8e8\ube44\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 16354,
+    "visiblePixels": 16354
+  },
+  {
+    "model": "raptor_nightmare",
+    "palette": "\ud638\ubc15\uccad\ub85d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 5641,
+    "visiblePixels": 5641
+  },
+  {
+    "model": "raptor_red",
+    "palette": "\uccad\uc625\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 5635,
+    "visiblePixels": 5635
+  },
+  {
+    "model": "raptor_undead",
+    "palette": "\ub77c\uc77c\ub77d\ub808\ubaac",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 5088,
+    "visiblePixels": 5088
+  },
+  {
+    "model": "sky_serpent_jade",
+    "palette": "\uc0b0\ud638\ud06c\ub9bc",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 10699,
+    "visiblePixels": 10699
+  },
+  {
+    "model": "sky_serpent_magma",
+    "palette": "\ud558\ub298\ubcf5\uc22d\uc544",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 19516,
+    "visiblePixels": 19516
+  },
+  {
+    "model": "sky_serpent_solar",
+    "palette": "\uccad\ub85d\uc790\ud64d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 21386,
+    "visiblePixels": 21386
+  },
+  {
+    "model": "sky_serpent_spectral",
+    "palette": "\ud638\ubc15\uccad\ub85d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 21386,
+    "visiblePixels": 21386
+  },
+  {
+    "model": "stag_demonic",
+    "palette": "\ube59\ud558\ub77c\uc784",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 11256,
+    "visiblePixels": 11256
+  },
+  {
+    "model": "stag_heavenly",
+    "palette": "\uc7a5\ubbf8\ube44\ucde8",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 11256,
+    "visiblePixels": 11256
+  },
+  {
+    "model": "stag_rune",
+    "palette": "\uc0b4\uad6c\ubbfc\ud2b8",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 11256,
+    "visiblePixels": 11256
+  },
+  {
+    "model": "stag_void",
+    "palette": "\uccad\uc625\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 11256,
+    "visiblePixels": 11256
+  },
+  {
+    "model": "frog_green",
+    "palette": "\uc0b0\ud638\ud06c\ub9bc",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 9086,
+    "visiblePixels": 9086
+  },
+  {
+    "model": "frog_permafrost",
+    "palette": "\uc62c\ub9ac\ube0c\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 9086,
+    "visiblePixels": 9086
+  },
+  {
+    "model": "frog_royal",
+    "palette": "\uccad\ub85d\uc790\ud64d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 18344,
+    "visiblePixels": 18344
+  },
+  {
+    "model": "golem_arcane",
+    "palette": "\ud638\ubc15\uccad\ub85d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 13486,
+    "visiblePixels": 13486
+  },
+  {
+    "model": "golem_corrupted",
+    "palette": "\uc9c4\uc8fc\ubd84\ud64d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 13486,
+    "visiblePixels": 13486
+  },
+  {
+    "model": "golem_magma",
+    "palette": "\ube59\ud558\ub77c\uc784",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 13486,
+    "visiblePixels": 13486
+  },
+  {
+    "model": "golem_royal",
+    "palette": "\uccad\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 26526,
+    "visiblePixels": 26526
+  },
+  {
+    "model": "tusker_demonic",
+    "palette": "\uc5f0\ub450\ubd84\ud64d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 19050,
+    "visiblePixels": 19050
+  },
+  {
+    "model": "tusker_dreamlight",
+    "palette": "\uccad\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 26456,
+    "visiblePixels": 26456
+  },
+  {
+    "model": "tusker_forest",
+    "palette": "\uc0b0\ud638\ud06c\ub9bc",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 13646,
+    "visiblePixels": 13646
+  },
+  {
+    "model": "wolfhawk_dire",
+    "palette": "\uc7a5\ubbf8\ube44\ucde8",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 11522,
+    "visiblePixels": 11522
+  },
+  {
+    "model": "wolfhawk_fallen",
+    "palette": "\ubbfc\ud2b8\uc0b0\ud638",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 11522,
+    "visiblePixels": 11522
+  },
+  {
+    "model": "wolfhawk_fullmoon",
+    "palette": "\ucf54\ub784\ub0a8\uc0c9",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 22864,
+    "visiblePixels": 22864
+  },
+  {
+    "model": "wolfhawk_stormcloud",
+    "palette": "\uc62c\ub9ac\ube0c\uae08",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 14446,
+    "visiblePixels": 14446
+  },
+  {
+    "model": "wyvern_ender",
+    "palette": "\ubbfc\ud2b8\uc0b0\ud638",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 23152,
+    "visiblePixels": 23152
+  },
+  {
+    "model": "wyvern_green",
+    "palette": "\ucf54\ub784\ub0a8\uc0c9",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 21033,
+    "visiblePixels": 21033
+  },
+  {
+    "model": "wyvern_inferno",
+    "palette": "\ube59\ud558\ub77c\uc784",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 23333,
+    "visiblePixels": 23333
+  },
+  {
+    "model": "wyvern_undead",
+    "palette": "\ud638\ubc15\uccad\ub85d",
+    "method": "dominant-color / accent / neutral separation",
+    "changedVisiblePixels": 14708,
+    "visiblePixels": 14708
+  }
+]

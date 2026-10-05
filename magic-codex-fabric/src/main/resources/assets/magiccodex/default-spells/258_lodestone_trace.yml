@@ -1,0 +1,14 @@
+id: lodestone_trace
+name: 자철석 손길
+category: earth
+description: 자신이 던진 회수 가능한 투척 아이템의 착지 위치를 표시한다.
+icon: ''
+permission: magic.learned.lodestone_trace
+discovery:
+  description: 삼지창을 누적 10회 던지고 회수하기.
+research: 되돌아오지 않는 물건이라면 먼저 떨어진 곳부터 알아야 한다.
+cast:
+  command: ''
+  cooldown-seconds: 8
+  mana-cost: 12
+order: 258

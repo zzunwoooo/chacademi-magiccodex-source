@@ -1,0 +1,22 @@
+# UTF-8 / 들여쓰기는 공백 2칸입니다.
+# description: 도감에 보이는 효과 설명입니다. 자유롭게 수정하세요.
+# discovery.description: 획득 조건의 표시 문구입니다. 자동 판정 로직이 아닙니다.
+# circle: 1~9 정수. 서클을 미정으로 두려면 해당 줄을 삭제하세요.
+# cast.command: 서버 스킬 연결 후 / 없이 입력하세요. 현재는 미연결입니다.
+# cast.mana-cost: 표시용 소모량. 서버 마나 차감은 별도로 구현해야 합니다.
+id: "palm_fireworks"
+name: "손바닥 폭죽"
+category: "fire"
+circle: 1
+rank: "초급"
+description: "머리 위로 작은 폭죽을 터뜨립니다. 신호나 축하에 사용하는 장식 마법입니다."
+icon: "magiccodex:textures/spells/expansion/palm_fireworks.png"
+permission: "magic.learned.palm_fireworks"
+discovery:
+  description: "폭죽 로켓을 10번 발사하기."
+research: ""
+cast:
+  command: ""
+  cooldown-seconds: 10
+  mana-cost: 50
+order: 3050

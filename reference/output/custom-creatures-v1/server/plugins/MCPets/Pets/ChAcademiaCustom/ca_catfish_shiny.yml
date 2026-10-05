@@ -1,0 +1,17 @@
+"Id": "ca_catfish_shiny"
+"MythicMob": "CA_Pet_catfish_shiny"
+"Permission": "chacademia.pet.ca_catfish_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e온수 메기"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "따뜻한 강의 바닥 가까이에서 헤엄친다."
+    - "서식지: 따뜻한 강 / 난초 늪"
+    - "1성"

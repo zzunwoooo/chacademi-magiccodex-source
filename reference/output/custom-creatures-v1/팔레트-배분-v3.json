@@ -1,0 +1,971 @@
+{
+  "counts": {
+    "꿀갈색": 7,
+    "청금": 7,
+    "민트산호": 7,
+    "산호크림": 8,
+    "하늘복숭아": 7,
+    "연두분홍": 6,
+    "코랄남색": 7,
+    "호박청록": 12,
+    "올리브금": 6,
+    "백청": 5,
+    "장미비취": 9,
+    "청옥금": 12,
+    "루비금": 7,
+    "진주분홍": 4,
+    "살구민트": 8,
+    "기존 새싹 팔레트 유지": 5,
+    "라일락레몬": 5,
+    "빙하라임": 5,
+    "청록자홍": 3,
+    "흑금": 4,
+    "흑백": 3
+  },
+  "models": [
+    {
+      "model": "squirrel",
+      "palette": "꿀갈색",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 304,
+      "visiblePixels": 304
+    },
+    {
+      "model": "owl",
+      "palette": "청금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 1087,
+      "visiblePixels": 1087
+    },
+    {
+      "model": "skunk",
+      "palette": "민트산호",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 516,
+      "visiblePixels": 516
+    },
+    {
+      "model": "hedgehog",
+      "palette": "산호크림",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 229,
+      "visiblePixels": 229
+    },
+    {
+      "model": "elk",
+      "palette": "하늘복숭아",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 4139,
+      "visiblePixels": 4139
+    },
+    {
+      "model": "lil_bird",
+      "palette": "연두분홍",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 74,
+      "visiblePixels": 74
+    },
+    {
+      "model": "raccoon",
+      "palette": "코랄남색",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 1014,
+      "visiblePixels": 1014
+    },
+    {
+      "model": "frog",
+      "palette": "호박청록",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 175,
+      "visiblePixels": 175
+    },
+    {
+      "model": "bear",
+      "palette": "올리브금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 22066,
+      "visiblePixels": 22066
+    },
+    {
+      "model": "bear_black",
+      "palette": "백청",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 22066,
+      "visiblePixels": 22066
+    },
+    {
+      "model": "bear_polar",
+      "palette": "하늘복숭아",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 22066,
+      "visiblePixels": 22066
+    },
+    {
+      "model": "timber_wolf",
+      "palette": "장미비취",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 8739,
+      "visiblePixels": 8739
+    },
+    {
+      "model": "tortoise",
+      "palette": "호박청록",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 6031,
+      "visiblePixels": 6031
+    },
+    {
+      "model": "catfish",
+      "palette": "산호크림",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 1730,
+      "visiblePixels": 1730
+    },
+    {
+      "model": "butterfly",
+      "palette": "청옥금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 969,
+      "visiblePixels": 969
+    },
+    {
+      "model": "buffalo",
+      "palette": "꿀갈색",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 8398,
+      "visiblePixels": 8398
+    },
+    {
+      "model": "boar",
+      "palette": "민트산호",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 3870,
+      "visiblePixels": 3870
+    },
+    {
+      "model": "alpha_boar",
+      "palette": "루비금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 4853,
+      "visiblePixels": 4853
+    },
+    {
+      "model": "crocodile",
+      "palette": "코랄남색",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 6189,
+      "visiblePixels": 6189
+    },
+    {
+      "model": "lostasset_mob1_chicken",
+      "palette": "청옥금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 1928,
+      "visiblePixels": 1928
+    },
+    {
+      "model": "lostasset_mob1_rabbit",
+      "palette": "진주분홍",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 1567,
+      "visiblePixels": 1567
+    },
+    {
+      "model": "lostasset_mob1_sheep",
+      "palette": "살구민트",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 1722,
+      "visiblePixels": 1722
+    },
+    {
+      "model": "lostasset_mob1_wolf",
+      "palette": "청옥금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 2880,
+      "visiblePixels": 2880
+    },
+    {
+      "model": "lostasset_mob2_flowersprite",
+      "palette": "하늘복숭아",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 3944,
+      "visiblePixels": 3944
+    },
+    {
+      "model": "lostasset_mob2_lakefairy",
+      "palette": "산호크림",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 2064,
+      "visiblePixels": 2064
+    },
+    {
+      "model": "lostasset_mob2_leaffairy",
+      "palette": "연두분홍",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 3605,
+      "visiblePixels": 3605
+    },
+    {
+      "model": "lostasset_mob2_mushroomfairy",
+      "palette": "호박청록",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 2140,
+      "visiblePixels": 2140
+    },
+    {
+      "model": "lostasset_mob3_herbgolem",
+      "palette": "장미비취",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 3113,
+      "visiblePixels": 3113
+    },
+    {
+      "model": "lostasset_mob3_herbthief",
+      "palette": "청옥금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 2244,
+      "visiblePixels": 2244
+    },
+    {
+      "model": "lostasset_mob3_mossyboar",
+      "palette": "꿀갈색",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 2828,
+      "visiblePixels": 2828
+    },
+    {
+      "model": "lostasset_mob3_timberpile",
+      "palette": "민트산호",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 2668,
+      "visiblePixels": 2668
+    },
+    {
+      "model": "bulb_amethyst",
+      "palette": "기존 새싹 팔레트 유지"
+    },
+    {
+      "model": "bulb_crimsonspore",
+      "palette": "기존 새싹 팔레트 유지"
+    },
+    {
+      "model": "bulb_dripleaf",
+      "palette": "기존 새싹 팔레트 유지"
+    },
+    {
+      "model": "bulb_lilypad",
+      "palette": "기존 새싹 팔레트 유지"
+    },
+    {
+      "model": "bulb_warpedfungus",
+      "palette": "기존 새싹 팔레트 유지"
+    },
+    {
+      "model": "crab",
+      "palette": "청금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 1172,
+      "visiblePixels": 1172
+    },
+    {
+      "model": "piranha",
+      "palette": "호박청록",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 396,
+      "visiblePixels": 396
+    },
+    {
+      "model": "swordfish",
+      "palette": "루비금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 1590,
+      "visiblePixels": 1590
+    },
+    {
+      "model": "jellyfish_blue",
+      "palette": "산호크림",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 334,
+      "visiblePixels": 334
+    },
+    {
+      "model": "jellyfish_green",
+      "palette": "라일락레몬",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 334,
+      "visiblePixels": 334
+    },
+    {
+      "model": "jellyfish_pink",
+      "palette": "빙하라임",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 334,
+      "visiblePixels": 334
+    },
+    {
+      "model": "jellyfish_yellow",
+      "palette": "청록자홍",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 334,
+      "visiblePixels": 334
+    },
+    {
+      "model": "seahorse_blue",
+      "palette": "호박청록",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 162,
+      "visiblePixels": 162
+    },
+    {
+      "model": "seahorse_green",
+      "palette": "장미비취",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 162,
+      "visiblePixels": 162
+    },
+    {
+      "model": "seahorse_pink",
+      "palette": "연두분홍",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 162,
+      "visiblePixels": 162
+    },
+    {
+      "model": "seahorse_yellow",
+      "palette": "하늘복숭아",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 162,
+      "visiblePixels": 162
+    },
+    {
+      "model": "ogre_club",
+      "palette": "청옥금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 12335,
+      "visiblePixels": 12335
+    },
+    {
+      "model": "ogre_axe",
+      "palette": "코랄남색",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 11288,
+      "visiblePixels": 11288
+    },
+    {
+      "model": "ogre_hammer",
+      "palette": "올리브금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 8684,
+      "visiblePixels": 8684
+    },
+    {
+      "model": "ncr_spear_skeleton",
+      "palette": "청옥금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 2193,
+      "visiblePixels": 2193
+    },
+    {
+      "model": "ncr_warrior_skeleton",
+      "palette": "루비금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 2380,
+      "visiblePixels": 2380
+    },
+    {
+      "model": "ncr_archer_skeleton",
+      "palette": "꿀갈색",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 3089,
+      "visiblePixels": 3089
+    },
+    {
+      "model": "ncr_mage_skeleton",
+      "palette": "라일락레몬",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 2473,
+      "visiblePixels": 2473
+    },
+    {
+      "model": "mf_warden_knight",
+      "palette": "흑금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 7976,
+      "visiblePixels": 7976
+    },
+    {
+      "model": "mf_warden_archer",
+      "palette": "올리브금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 7713,
+      "visiblePixels": 7713
+    },
+    {
+      "model": "mf_warden_tank",
+      "palette": "백청",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 15802,
+      "visiblePixels": 15802
+    },
+    {
+      "model": "mf_warden_mage",
+      "palette": "루비금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 5099,
+      "visiblePixels": 5099
+    },
+    {
+      "model": "glacialcore",
+      "palette": "흑금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 358044,
+      "visiblePixels": 358044
+    },
+    {
+      "model": "nocsy_cat1",
+      "palette": "살구민트",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 1570,
+      "visiblePixels": 1570
+    },
+    {
+      "model": "nocsy_cat2",
+      "palette": "청옥금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 1249,
+      "visiblePixels": 1249
+    },
+    {
+      "model": "nocsy_cat3",
+      "palette": "장미비취",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 1305,
+      "visiblePixels": 1305
+    },
+    {
+      "model": "nocsy_cat4",
+      "palette": "흑백",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 1339,
+      "visiblePixels": 1339
+    },
+    {
+      "model": "nocsy_cat5",
+      "palette": "꿀갈색",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 1685,
+      "visiblePixels": 1685
+    },
+    {
+      "model": "nocsy_cat6",
+      "palette": "라일락레몬",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 1249,
+      "visiblePixels": 1249
+    },
+    {
+      "model": "nocsy_cat_fallen",
+      "palette": "백청",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 1988,
+      "visiblePixels": 1988
+    },
+    {
+      "model": "voxelspawns_pug",
+      "palette": "살구민트",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 1302,
+      "visiblePixels": 1302
+    },
+    {
+      "model": "baby_polar_bear",
+      "palette": "진주분홍",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 822,
+      "visiblePixels": 822
+    },
+    {
+      "model": "baby_yeti",
+      "palette": "연두분홍",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 904,
+      "visiblePixels": 904
+    },
+    {
+      "model": "frost_ferret",
+      "palette": "코랄남색",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 1052,
+      "visiblePixels": 1052
+    },
+    {
+      "model": "gangster_snowman",
+      "palette": "하늘복숭아",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 1079,
+      "visiblePixels": 1079
+    },
+    {
+      "model": "ice_knight",
+      "palette": "흑금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 1152,
+      "visiblePixels": 1152
+    },
+    {
+      "model": "dragon_desert",
+      "palette": "청옥금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 13442,
+      "visiblePixels": 13442
+    },
+    {
+      "model": "dragon_glacial",
+      "palette": "흑금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 13442,
+      "visiblePixels": 13442
+    },
+    {
+      "model": "dragon_nether",
+      "palette": "백청",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 13442,
+      "visiblePixels": 13442
+    },
+    {
+      "model": "dragon_sculk",
+      "palette": "루비금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 13442,
+      "visiblePixels": 13442
+    },
+    {
+      "model": "lizard_aqua",
+      "palette": "살구민트",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 9786,
+      "visiblePixels": 9786
+    },
+    {
+      "model": "lizard_lava",
+      "palette": "민트산호",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 9786,
+      "visiblePixels": 9786
+    },
+    {
+      "model": "manticore_aether",
+      "palette": "살구민트",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 13739,
+      "visiblePixels": 13739
+    },
+    {
+      "model": "manticore_dusk",
+      "palette": "청옥금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 13739,
+      "visiblePixels": 13739
+    },
+    {
+      "model": "manticore_soul",
+      "palette": "호박청록",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 13739,
+      "visiblePixels": 13739
+    },
+    {
+      "model": "manticore_venom",
+      "palette": "라일락레몬",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 13739,
+      "visiblePixels": 13739
+    },
+    {
+      "model": "panda_normal",
+      "palette": "꿀갈색",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 17374,
+      "visiblePixels": 17374
+    },
+    {
+      "model": "sabertooth_arctic",
+      "palette": "꿀갈색",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 13450,
+      "visiblePixels": 13450
+    },
+    {
+      "model": "sabertooth_midnight",
+      "palette": "민트산호",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 13450,
+      "visiblePixels": 13450
+    },
+    {
+      "model": "sabertooth_savanna",
+      "palette": "청금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 13450,
+      "visiblePixels": 13450
+    },
+    {
+      "model": "capybara",
+      "palette": "살구민트",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 7004,
+      "visiblePixels": 7004
+    },
+    {
+      "model": "horse_glacial",
+      "palette": "산호크림",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 9041,
+      "visiblePixels": 9041
+    },
+    {
+      "model": "horse_magma",
+      "palette": "청옥금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 9108,
+      "visiblePixels": 9108
+    },
+    {
+      "model": "horse_pegasus",
+      "palette": "하늘복숭아",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 10478,
+      "visiblePixels": 10478
+    },
+    {
+      "model": "horse_spartan",
+      "palette": "올리브금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 10498,
+      "visiblePixels": 10498
+    },
+    {
+      "model": "horse_unicorn",
+      "palette": "흑백",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 9028,
+      "visiblePixels": 9028
+    },
+    {
+      "model": "kitsune_demonic",
+      "palette": "진주분홍",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 5579,
+      "visiblePixels": 5579
+    },
+    {
+      "model": "kitsune_inferno",
+      "palette": "청금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 5579,
+      "visiblePixels": 5579
+    },
+    {
+      "model": "kitsune_normal",
+      "palette": "흑백",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 5579,
+      "visiblePixels": 5579
+    },
+    {
+      "model": "phantom_ender",
+      "palette": "호박청록",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 11466,
+      "visiblePixels": 11466
+    },
+    {
+      "model": "phantom_ghost",
+      "palette": "장미비취",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 11466,
+      "visiblePixels": 11466
+    },
+    {
+      "model": "phoenix_darkflame",
+      "palette": "호박청록",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 7359,
+      "visiblePixels": 7359
+    },
+    {
+      "model": "phoenix_flame",
+      "palette": "빙하라임",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 7359,
+      "visiblePixels": 7359
+    },
+    {
+      "model": "phoenix_light",
+      "palette": "장미비취",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 7359,
+      "visiblePixels": 7359
+    },
+    {
+      "model": "phoenix_thunder",
+      "palette": "루비금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 7359,
+      "visiblePixels": 7359
+    },
+    {
+      "model": "basilisk_obsidian",
+      "palette": "청금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 12150,
+      "visiblePixels": 12150
+    },
+    {
+      "model": "basilisk_snowstorm",
+      "palette": "장미비취",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 12150,
+      "visiblePixels": 12150
+    },
+    {
+      "model": "basilisk_wild",
+      "palette": "살구민트",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 12150,
+      "visiblePixels": 12150
+    },
+    {
+      "model": "hippogryph_common",
+      "palette": "코랄남색",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 8177,
+      "visiblePixels": 8177
+    },
+    {
+      "model": "hippogryph_crystal",
+      "palette": "연두분홍",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 8183,
+      "visiblePixels": 8183
+    },
+    {
+      "model": "hippogryph_fallen",
+      "palette": "백청",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 8181,
+      "visiblePixels": 8181
+    },
+    {
+      "model": "hippogryph_royal",
+      "palette": "루비금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 16354,
+      "visiblePixels": 16354
+    },
+    {
+      "model": "raptor_nightmare",
+      "palette": "호박청록",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 5641,
+      "visiblePixels": 5641
+    },
+    {
+      "model": "raptor_red",
+      "palette": "청옥금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 5635,
+      "visiblePixels": 5635
+    },
+    {
+      "model": "raptor_undead",
+      "palette": "라일락레몬",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 5088,
+      "visiblePixels": 5088
+    },
+    {
+      "model": "sky_serpent_jade",
+      "palette": "산호크림",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 10699,
+      "visiblePixels": 10699
+    },
+    {
+      "model": "sky_serpent_magma",
+      "palette": "하늘복숭아",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 19516,
+      "visiblePixels": 19516
+    },
+    {
+      "model": "sky_serpent_solar",
+      "palette": "청록자홍",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 21386,
+      "visiblePixels": 21386
+    },
+    {
+      "model": "sky_serpent_spectral",
+      "palette": "호박청록",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 21386,
+      "visiblePixels": 21386
+    },
+    {
+      "model": "stag_demonic",
+      "palette": "빙하라임",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 11256,
+      "visiblePixels": 11256
+    },
+    {
+      "model": "stag_heavenly",
+      "palette": "장미비취",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 11256,
+      "visiblePixels": 11256
+    },
+    {
+      "model": "stag_rune",
+      "palette": "살구민트",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 11256,
+      "visiblePixels": 11256
+    },
+    {
+      "model": "stag_void",
+      "palette": "청옥금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 11256,
+      "visiblePixels": 11256
+    },
+    {
+      "model": "frog_green",
+      "palette": "산호크림",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 9086,
+      "visiblePixels": 9086
+    },
+    {
+      "model": "frog_permafrost",
+      "palette": "올리브금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 9086,
+      "visiblePixels": 9086
+    },
+    {
+      "model": "frog_royal",
+      "palette": "청록자홍",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 18344,
+      "visiblePixels": 18344
+    },
+    {
+      "model": "golem_arcane",
+      "palette": "호박청록",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 13486,
+      "visiblePixels": 13486
+    },
+    {
+      "model": "golem_corrupted",
+      "palette": "진주분홍",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 13486,
+      "visiblePixels": 13486
+    },
+    {
+      "model": "golem_magma",
+      "palette": "빙하라임",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 13486,
+      "visiblePixels": 13486
+    },
+    {
+      "model": "golem_royal",
+      "palette": "청금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 26526,
+      "visiblePixels": 26526
+    },
+    {
+      "model": "tusker_demonic",
+      "palette": "연두분홍",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 19050,
+      "visiblePixels": 19050
+    },
+    {
+      "model": "tusker_dreamlight",
+      "palette": "청금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 26456,
+      "visiblePixels": 26456
+    },
+    {
+      "model": "tusker_forest",
+      "palette": "산호크림",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 13646,
+      "visiblePixels": 13646
+    },
+    {
+      "model": "wolfhawk_dire",
+      "palette": "장미비취",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 11522,
+      "visiblePixels": 11522
+    },
+    {
+      "model": "wolfhawk_fallen",
+      "palette": "민트산호",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 11522,
+      "visiblePixels": 11522
+    },
+    {
+      "model": "wolfhawk_fullmoon",
+      "palette": "코랄남색",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 22864,
+      "visiblePixels": 22864
+    },
+    {
+      "model": "wolfhawk_stormcloud",
+      "palette": "올리브금",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 14446,
+      "visiblePixels": 14446
+    },
+    {
+      "model": "wyvern_ender",
+      "palette": "민트산호",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 23152,
+      "visiblePixels": 23152
+    },
+    {
+      "model": "wyvern_green",
+      "palette": "코랄남색",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 21033,
+      "visiblePixels": 21033
+    },
+    {
+      "model": "wyvern_inferno",
+      "palette": "빙하라임",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 23333,
+      "visiblePixels": 23333
+    },
+    {
+      "model": "wyvern_undead",
+      "palette": "호박청록",
+      "method": "dominant-color / accent / neutral separation",
+      "changedVisiblePixels": 14708,
+      "visiblePixels": 14708
+    }
+  ]
+}

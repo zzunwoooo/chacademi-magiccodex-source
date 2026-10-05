@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "color_finder"
+name: "색 찾기"
+category: "light"
+description: "바라보는 건축 블록의 색과 이름을 알려준다.\n\n여러 색의 양털을 모아 본 눈은 건축 재료 사이의 미묘한 색도 구별한다."
+icon: "magiccodex:textures/spells/expansion_3/color_finder.png"
+permission: "magic.learned.color_finder"
+discovery:
+  description: "서로 다른 색의 양털 8종 획득하기."
+research: "같아 보이는 색도 햇빛과 그림자 아래에서는 다르게 빛난다."
+cast:
+  command: "마법 색찾기"
+  cooldown-seconds: 2
+  mana-cost: 4
+order: 2630

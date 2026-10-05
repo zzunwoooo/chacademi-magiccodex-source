@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "earth_elemental"
+name: "그놈"
+category: "earth"
+description: "60초간 주인을 따라다니며 근접 공격을 돕는 땅의 정령을 소환합니다. 한 마리만 유지됩니다.\n\n땅의 정령 그놈은 먼저 약속을 묻는다. 대지의 정령계약서에 그 대답이 기록되어 있다."
+icon: "magiccodex:textures/spells/advanced/earth_elemental.png"
+permission: "magic.learned.earth_elemental"
+discovery:
+  description: "도서관에서 '정령계약서 - 지' 책 읽기."
+research: "말수가 적은 땅의 정령 그놈과 계약을 맺는다.\n느리게 대답하지만 한 번 한 약속은 산처럼 무겁다."
+cast:
+  command: "마법 그놈"
+  cooldown-seconds: 120
+  mana-cost: 250
+order: 1050

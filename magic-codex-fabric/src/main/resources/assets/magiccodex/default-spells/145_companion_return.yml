@@ -1,0 +1,14 @@
+id: companion_return
+name: 동행 귀환
+category: light
+description: 자신과 바로 옆에서 웅크린 동료 최대 2명을 자신의 침대 부활 지점으로 이동시킵니다. 안전한 도착지가 없으면 실패합니다.
+icon: magiccodex:textures/spells/expansion/companion_return.png
+permission: magic.learned.companion_return
+discovery:
+  description: 침대에서 1500블록 이상 멀어졌다가 같은 침대에 돌아와 잠들기.
+research: 먼 길에서 돌아온 뒤 가장 먼저 떠오른 것은 동료의 지친 얼굴이었다.
+cast:
+  command: ''
+  cooldown-seconds: 90
+  mana-cost: 160
+order: 145

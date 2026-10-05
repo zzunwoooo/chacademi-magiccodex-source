@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "cold_compress"
+name: "차가운 찜질"
+category: "water"
+description: "쉬는 동안 체력을 서서히 회복하며 이동하거나 피해를 받으면 끝난다.\n\n다친 몸을 차가운 물에 잠시 맡겨 본 기억이 고요한 회복의 손길이 된다."
+icon: "magiccodex:textures/spells/expansion_3/cold_compress.png"
+permission: "magic.learned.cold_compress"
+discovery:
+  description: "체력이 감소한 상태에서 물속에 누적 30초 머무르기."
+research: "서두르지 않는 치료다. 쉬고 있는 동안에만 차가운 물결이 상처를 달랜다."
+cast:
+  command: "마법 차가운찜질"
+  cooldown-seconds: 20
+  mana-cost: 30
+order: 2390

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "dust_duster"
+name: "클린"
+category: "wind"
+description: "가까운 거미줄을 최대 3개 걷어냅니다.\n\n기숙사를 배정받은 학생에게는 자기 방을 돌볼 작은 바람도 주어진다."
+icon: "magiccodex:textures/spells/expansion_2/dust_duster.png"
+permission: "magic.learned.dust_duster"
+discovery:
+  description: "기숙사 배정"
+research: "기숙사 방을 깨끗하게 유지하기 위해 교장선생님이 고안한 마법"
+cast:
+  command: "마법 클린"
+  cooldown-seconds: 10
+  mana-cost: 10
+order: 190

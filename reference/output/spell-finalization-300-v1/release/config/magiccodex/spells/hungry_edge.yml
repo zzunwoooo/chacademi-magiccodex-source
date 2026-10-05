@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "hungry_edge"
+name: "굶주린 칼끝"
+category: "dark"
+description: "다음 공격이 체력보다 보호막에 강한 피해를 준다.\n\n방패로 몸을 가린 적을 여러 번 상대하면 생명보다 보호를 먼저 베는 힘을 읽는다."
+icon: "magiccodex:textures/spells/expansion_3/hungry_edge.png"
+permission: "magic.learned.hungry_edge"
+discovery:
+  description: "방패를 든 몬스터를 누적 15마리 처치하기."
+research: "날카로운 굶주림은 살보다 마력의 외피를 먼저 탐한다."
+cast:
+  command: "마법 굶주린칼끝"
+  cooldown-seconds: 18
+  mana-cost: 60
+order: 2860

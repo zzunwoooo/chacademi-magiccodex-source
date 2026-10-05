@@ -1,0 +1,2348 @@
+{
+  "CA_Natural_squirrel": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_squirrel 4095",
+      "CA_Wild_squirrel_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=squirrel} true"
+    ]
+  },
+  "CA_Natural_owl": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_owl 4095",
+      "CA_Wild_owl_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=owl} true"
+    ]
+  },
+  "CA_Natural_skunk": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_skunk 4095",
+      "CA_Wild_skunk_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=skunk} true"
+    ]
+  },
+  "CA_Natural_hedgehog": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_hedgehog 4095",
+      "CA_Wild_hedgehog_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=hedgehog} true"
+    ]
+  },
+  "CA_Natural_elk": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_elk 4095",
+      "CA_Wild_elk_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=elk} true"
+    ]
+  },
+  "CA_Natural_lil_bird": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_lil_bird 4095",
+      "CA_Wild_lil_bird_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=lil_bird} true"
+    ]
+  },
+  "CA_Natural_raccoon": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_raccoon 4095",
+      "CA_Wild_raccoon_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=raccoon} true"
+    ]
+  },
+  "CA_Natural_frog": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_frog 4095",
+      "CA_Wild_frog_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=frog} true"
+    ]
+  },
+  "CA_Natural_bear": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_bear 4095",
+      "CA_Wild_bear_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=bear} true"
+    ]
+  },
+  "CA_Natural_bear_black": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_bear_black 4095",
+      "CA_Wild_bear_black_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=bear_black} true"
+    ]
+  },
+  "CA_Natural_bear_polar": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_bear_polar 4095",
+      "CA_Wild_bear_polar_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=bear_polar} true"
+    ]
+  },
+  "CA_Natural_timber_wolf": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_timber_wolf 4095",
+      "CA_Wild_timber_wolf_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=timber_wolf} true"
+    ]
+  },
+  "CA_Natural_tortoise": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_tortoise 4095",
+      "CA_Wild_tortoise_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=tortoise} true"
+    ]
+  },
+  "CA_Natural_catfish": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_catfish 4095",
+      "CA_Wild_catfish_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "SEA",
+    "Conditions": [
+      "cahabitat{id=catfish} true"
+    ]
+  },
+  "CA_Natural_butterfly": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_butterfly 4095",
+      "CA_Wild_butterfly_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=butterfly} true"
+    ]
+  },
+  "CA_Natural_buffalo": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_buffalo 4095",
+      "CA_Wild_buffalo_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=buffalo} true"
+    ]
+  },
+  "CA_Natural_boar": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_boar 4095",
+      "CA_Wild_boar_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=boar} true"
+    ]
+  },
+  "CA_Natural_alpha_boar": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_alpha_boar 4095",
+      "CA_Wild_alpha_boar_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=alpha_boar} true"
+    ]
+  },
+  "CA_Natural_crocodile": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_crocodile 4095",
+      "CA_Wild_crocodile_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=crocodile} true"
+    ]
+  },
+  "CA_Natural_buffalo_alpha": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_buffalo_alpha 4095",
+      "CA_Wild_buffalo_alpha_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=buffalo_alpha} true"
+    ]
+  },
+  "CA_Natural_lostasset_mob1_chicken": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_lostasset_mob1_chicken 4095",
+      "CA_Wild_lostasset_mob1_chicken_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=lostasset_mob1_chicken} true"
+    ]
+  },
+  "CA_Natural_lostasset_mob1_rabbit": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_lostasset_mob1_rabbit 4095",
+      "CA_Wild_lostasset_mob1_rabbit_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=lostasset_mob1_rabbit} true"
+    ]
+  },
+  "CA_Natural_lostasset_mob1_sheep": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_lostasset_mob1_sheep 4095",
+      "CA_Wild_lostasset_mob1_sheep_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=lostasset_mob1_sheep} true"
+    ]
+  },
+  "CA_Natural_lostasset_mob1_wolf": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_lostasset_mob1_wolf 4095",
+      "CA_Wild_lostasset_mob1_wolf_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=lostasset_mob1_wolf} true"
+    ]
+  },
+  "CA_Natural_lostasset_mob2_flowersprite": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_lostasset_mob2_flowersprite 4095",
+      "CA_Wild_lostasset_mob2_flowersprite_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=lostasset_mob2_flowersprite} true"
+    ]
+  },
+  "CA_Natural_lostasset_mob2_lakefairy": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_lostasset_mob2_lakefairy 4095",
+      "CA_Wild_lostasset_mob2_lakefairy_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=lostasset_mob2_lakefairy} true"
+    ]
+  },
+  "CA_Natural_lostasset_mob2_leaffairy": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_lostasset_mob2_leaffairy 4095",
+      "CA_Wild_lostasset_mob2_leaffairy_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=lostasset_mob2_leaffairy} true"
+    ]
+  },
+  "CA_Natural_lostasset_mob2_mushroomfairy": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_lostasset_mob2_mushroomfairy 4095",
+      "CA_Wild_lostasset_mob2_mushroomfairy_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=lostasset_mob2_mushroomfairy} true"
+    ]
+  },
+  "CA_Natural_lostasset_mob3_herbgolem": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_lostasset_mob3_herbgolem 4095",
+      "CA_Wild_lostasset_mob3_herbgolem_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=lostasset_mob3_herbgolem} true"
+    ]
+  },
+  "CA_Natural_lostasset_mob3_herbthief": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_lostasset_mob3_herbthief 4095",
+      "CA_Wild_lostasset_mob3_herbthief_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=lostasset_mob3_herbthief} true"
+    ]
+  },
+  "CA_Natural_lostasset_mob3_mossyboar": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_lostasset_mob3_mossyboar 4095",
+      "CA_Wild_lostasset_mob3_mossyboar_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=lostasset_mob3_mossyboar} true"
+    ]
+  },
+  "CA_Natural_lostasset_mob3_timberpile": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_lostasset_mob3_timberpile 4095",
+      "CA_Wild_lostasset_mob3_timberpile_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=lostasset_mob3_timberpile} true"
+    ]
+  },
+  "CA_Natural_bulb_amethyst": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_bulb_amethyst 4095",
+      "CA_Wild_bulb_amethyst_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=bulb_amethyst} true"
+    ]
+  },
+  "CA_Natural_bulb_crimsonspore": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_bulb_crimsonspore 4095",
+      "CA_Wild_bulb_crimsonspore_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=bulb_crimsonspore} true"
+    ]
+  },
+  "CA_Natural_bulb_dripleaf": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_bulb_dripleaf 4095",
+      "CA_Wild_bulb_dripleaf_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=bulb_dripleaf} true"
+    ]
+  },
+  "CA_Natural_bulb_lilypad": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_bulb_lilypad 4095",
+      "CA_Wild_bulb_lilypad_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=bulb_lilypad} true"
+    ]
+  },
+  "CA_Natural_bulb_warpedfungus": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_bulb_warpedfungus 4095",
+      "CA_Wild_bulb_warpedfungus_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=bulb_warpedfungus} true"
+    ]
+  },
+  "CA_Natural_crab": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_crab 4095",
+      "CA_Wild_crab_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=crab} true"
+    ]
+  },
+  "CA_Natural_piranha": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_piranha 4095",
+      "CA_Wild_piranha_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "SEA",
+    "Conditions": [
+      "cahabitat{id=piranha} true"
+    ]
+  },
+  "CA_Natural_swordfish": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_swordfish 4095",
+      "CA_Wild_swordfish_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "SEA",
+    "Conditions": [
+      "cahabitat{id=swordfish} true"
+    ]
+  },
+  "CA_Natural_jellyfish_blue": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_jellyfish_blue 4095",
+      "CA_Wild_jellyfish_blue_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "SEA",
+    "Conditions": [
+      "cahabitat{id=jellyfish_blue} true"
+    ]
+  },
+  "CA_Natural_jellyfish_green": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_jellyfish_green 4095",
+      "CA_Wild_jellyfish_green_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "SEA",
+    "Conditions": [
+      "cahabitat{id=jellyfish_green} true"
+    ]
+  },
+  "CA_Natural_jellyfish_pink": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_jellyfish_pink 4095",
+      "CA_Wild_jellyfish_pink_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "SEA",
+    "Conditions": [
+      "cahabitat{id=jellyfish_pink} true"
+    ]
+  },
+  "CA_Natural_jellyfish_yellow": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_jellyfish_yellow 4095",
+      "CA_Wild_jellyfish_yellow_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "SEA",
+    "Conditions": [
+      "cahabitat{id=jellyfish_yellow} true"
+    ]
+  },
+  "CA_Natural_seahorse_blue": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_seahorse_blue 4095",
+      "CA_Wild_seahorse_blue_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "SEA",
+    "Conditions": [
+      "cahabitat{id=seahorse_blue} true"
+    ]
+  },
+  "CA_Natural_seahorse_green": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_seahorse_green 4095",
+      "CA_Wild_seahorse_green_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "SEA",
+    "Conditions": [
+      "cahabitat{id=seahorse_green} true"
+    ]
+  },
+  "CA_Natural_seahorse_pink": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_seahorse_pink 4095",
+      "CA_Wild_seahorse_pink_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "SEA",
+    "Conditions": [
+      "cahabitat{id=seahorse_pink} true"
+    ]
+  },
+  "CA_Natural_seahorse_yellow": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_seahorse_yellow 4095",
+      "CA_Wild_seahorse_yellow_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "SEA",
+    "Conditions": [
+      "cahabitat{id=seahorse_yellow} true"
+    ]
+  },
+  "CA_Natural_ogre_club": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_ogre_club 4095",
+      "CA_Wild_ogre_club_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=ogre_club} true"
+    ]
+  },
+  "CA_Natural_ogre_axe": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_ogre_axe 4095",
+      "CA_Wild_ogre_axe_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=ogre_axe} true"
+    ]
+  },
+  "CA_Natural_ogre_hammer": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_ogre_hammer 4095",
+      "CA_Wild_ogre_hammer_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=ogre_hammer} true"
+    ]
+  },
+  "CA_Natural_ncr_spear_skeleton": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_ncr_spear_skeleton 4095",
+      "CA_Wild_ncr_spear_skeleton_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=ncr_spear_skeleton} true"
+    ]
+  },
+  "CA_Natural_ncr_warrior_skeleton": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_ncr_warrior_skeleton 4095",
+      "CA_Wild_ncr_warrior_skeleton_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=ncr_warrior_skeleton} true"
+    ]
+  },
+  "CA_Natural_ncr_archer_skeleton": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_ncr_archer_skeleton 4095",
+      "CA_Wild_ncr_archer_skeleton_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=ncr_archer_skeleton} true"
+    ]
+  },
+  "CA_Natural_ncr_mage_skeleton": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_ncr_mage_skeleton 4095",
+      "CA_Wild_ncr_mage_skeleton_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=ncr_mage_skeleton} true"
+    ]
+  },
+  "CA_Natural_mf_warden_knight": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_mf_warden_knight 4095",
+      "CA_Wild_mf_warden_knight_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=mf_warden_knight} true"
+    ]
+  },
+  "CA_Natural_mf_warden_archer": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_mf_warden_archer 4095",
+      "CA_Wild_mf_warden_archer_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=mf_warden_archer} true"
+    ]
+  },
+  "CA_Natural_mf_warden_tank": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_mf_warden_tank 4095",
+      "CA_Wild_mf_warden_tank_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=mf_warden_tank} true"
+    ]
+  },
+  "CA_Natural_mf_warden_mage": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_mf_warden_mage 4095",
+      "CA_Wild_mf_warden_mage_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=mf_warden_mage} true"
+    ]
+  },
+  "CA_Natural_glacialcore": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_glacialcore 4095",
+      "CA_Wild_glacialcore_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.0006,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 1800,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=glacialcore} true"
+    ]
+  },
+  "CA_Natural_nocsy_cat1": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_nocsy_cat1 4095",
+      "CA_Wild_nocsy_cat1_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=nocsy_cat1} true"
+    ]
+  },
+  "CA_Natural_nocsy_cat2": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_nocsy_cat2 4095",
+      "CA_Wild_nocsy_cat2_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=nocsy_cat2} true"
+    ]
+  },
+  "CA_Natural_nocsy_cat3": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_nocsy_cat3 4095",
+      "CA_Wild_nocsy_cat3_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=nocsy_cat3} true"
+    ]
+  },
+  "CA_Natural_nocsy_cat4": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_nocsy_cat4 4095",
+      "CA_Wild_nocsy_cat4_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=nocsy_cat4} true"
+    ]
+  },
+  "CA_Natural_nocsy_cat5": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_nocsy_cat5 4095",
+      "CA_Wild_nocsy_cat5_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=nocsy_cat5} true"
+    ]
+  },
+  "CA_Natural_nocsy_cat6": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_nocsy_cat6 4095",
+      "CA_Wild_nocsy_cat6_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=nocsy_cat6} true"
+    ]
+  },
+  "CA_Natural_nocsy_cat_fallen": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_nocsy_cat_fallen 4095",
+      "CA_Wild_nocsy_cat_fallen_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=nocsy_cat_fallen} true"
+    ]
+  },
+  "CA_Natural_voxelspawns_pug": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_voxelspawns_pug 4095",
+      "CA_Wild_voxelspawns_pug_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=voxelspawns_pug} true"
+    ]
+  },
+  "CA_Natural_baby_polar_bear": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_baby_polar_bear 4095",
+      "CA_Wild_baby_polar_bear_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=baby_polar_bear} true"
+    ]
+  },
+  "CA_Natural_baby_yeti": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_baby_yeti 4095",
+      "CA_Wild_baby_yeti_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=baby_yeti} true"
+    ]
+  },
+  "CA_Natural_frost_ferret": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_frost_ferret 4095",
+      "CA_Wild_frost_ferret_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=frost_ferret} true"
+    ]
+  },
+  "CA_Natural_gangster_snowman": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_gangster_snowman 4095",
+      "CA_Wild_gangster_snowman_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=gangster_snowman} true"
+    ]
+  },
+  "CA_Natural_ice_knight": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_ice_knight 4095",
+      "CA_Wild_ice_knight_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=ice_knight} true"
+    ]
+  },
+  "CA_Natural_dragon_desert": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_dragon_desert 4095",
+      "CA_Wild_dragon_desert_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=dragon_desert} true"
+    ]
+  },
+  "CA_Natural_dragon_glacial": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_dragon_glacial 4095",
+      "CA_Wild_dragon_glacial_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=dragon_glacial} true"
+    ]
+  },
+  "CA_Natural_dragon_nether": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_dragon_nether 4095",
+      "CA_Wild_dragon_nether_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=dragon_nether} true"
+    ]
+  },
+  "CA_Natural_dragon_sculk": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_dragon_sculk 4095",
+      "CA_Wild_dragon_sculk_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=dragon_sculk} true"
+    ]
+  },
+  "CA_Natural_lizard_aqua": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_lizard_aqua 4095",
+      "CA_Wild_lizard_aqua_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=lizard_aqua} true"
+    ]
+  },
+  "CA_Natural_lizard_lava": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_lizard_lava 4095",
+      "CA_Wild_lizard_lava_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=lizard_lava} true"
+    ]
+  },
+  "CA_Natural_manticore_aether": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_manticore_aether 4095",
+      "CA_Wild_manticore_aether_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=manticore_aether} true"
+    ]
+  },
+  "CA_Natural_manticore_dusk": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_manticore_dusk 4095",
+      "CA_Wild_manticore_dusk_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=manticore_dusk} true"
+    ]
+  },
+  "CA_Natural_manticore_soul": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_manticore_soul 4095",
+      "CA_Wild_manticore_soul_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=manticore_soul} true"
+    ]
+  },
+  "CA_Natural_manticore_venom": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_manticore_venom 4095",
+      "CA_Wild_manticore_venom_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=manticore_venom} true"
+    ]
+  },
+  "CA_Natural_panda_normal": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_panda_normal 4095",
+      "CA_Wild_panda_normal_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=panda_normal} true"
+    ]
+  },
+  "CA_Natural_sabertooth_arctic": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_sabertooth_arctic 4095",
+      "CA_Wild_sabertooth_arctic_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=sabertooth_arctic} true"
+    ]
+  },
+  "CA_Natural_sabertooth_midnight": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_sabertooth_midnight 4095",
+      "CA_Wild_sabertooth_midnight_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=sabertooth_midnight} true"
+    ]
+  },
+  "CA_Natural_sabertooth_savanna": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_sabertooth_savanna 4095",
+      "CA_Wild_sabertooth_savanna_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=sabertooth_savanna} true"
+    ]
+  },
+  "CA_Natural_capybara": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_capybara 4095",
+      "CA_Wild_capybara_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.045,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 20,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=capybara} true"
+    ]
+  },
+  "CA_Natural_horse_glacial": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_horse_glacial 4095",
+      "CA_Wild_horse_glacial_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=horse_glacial} true"
+    ]
+  },
+  "CA_Natural_horse_magma": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_horse_magma 4095",
+      "CA_Wild_horse_magma_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=horse_magma} true"
+    ]
+  },
+  "CA_Natural_horse_pegasus": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_horse_pegasus 4095",
+      "CA_Wild_horse_pegasus_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=horse_pegasus} true"
+    ]
+  },
+  "CA_Natural_horse_spartan": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_horse_spartan 4095",
+      "CA_Wild_horse_spartan_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=horse_spartan} true"
+    ]
+  },
+  "CA_Natural_horse_unicorn": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_horse_unicorn 4095",
+      "CA_Wild_horse_unicorn_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=horse_unicorn} true"
+    ]
+  },
+  "CA_Natural_kitsune_demonic": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_kitsune_demonic 4095",
+      "CA_Wild_kitsune_demonic_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=kitsune_demonic} true"
+    ]
+  },
+  "CA_Natural_kitsune_inferno": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_kitsune_inferno 4095",
+      "CA_Wild_kitsune_inferno_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=kitsune_inferno} true"
+    ]
+  },
+  "CA_Natural_kitsune_normal": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_kitsune_normal 4095",
+      "CA_Wild_kitsune_normal_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=kitsune_normal} true"
+    ]
+  },
+  "CA_Natural_phantom_ender": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_phantom_ender 4095",
+      "CA_Wild_phantom_ender_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=phantom_ender} true"
+    ]
+  },
+  "CA_Natural_phantom_ghost": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_phantom_ghost 4095",
+      "CA_Wild_phantom_ghost_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=phantom_ghost} true"
+    ]
+  },
+  "CA_Natural_phoenix_darkflame": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_phoenix_darkflame 4095",
+      "CA_Wild_phoenix_darkflame_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=phoenix_darkflame} true"
+    ]
+  },
+  "CA_Natural_phoenix_flame": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_phoenix_flame 4095",
+      "CA_Wild_phoenix_flame_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=phoenix_flame} true"
+    ]
+  },
+  "CA_Natural_phoenix_light": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_phoenix_light 4095",
+      "CA_Wild_phoenix_light_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=phoenix_light} true"
+    ]
+  },
+  "CA_Natural_phoenix_thunder": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_phoenix_thunder 4095",
+      "CA_Wild_phoenix_thunder_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=phoenix_thunder} true"
+    ]
+  },
+  "CA_Natural_basilisk_obsidian": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_basilisk_obsidian 4095",
+      "CA_Wild_basilisk_obsidian_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=basilisk_obsidian} true"
+    ]
+  },
+  "CA_Natural_basilisk_snowstorm": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_basilisk_snowstorm 4095",
+      "CA_Wild_basilisk_snowstorm_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=basilisk_snowstorm} true"
+    ]
+  },
+  "CA_Natural_basilisk_wild": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_basilisk_wild 4095",
+      "CA_Wild_basilisk_wild_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=basilisk_wild} true"
+    ]
+  },
+  "CA_Natural_hippogryph_common": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_hippogryph_common 4095",
+      "CA_Wild_hippogryph_common_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=hippogryph_common} true"
+    ]
+  },
+  "CA_Natural_hippogryph_crystal": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_hippogryph_crystal 4095",
+      "CA_Wild_hippogryph_crystal_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=hippogryph_crystal} true"
+    ]
+  },
+  "CA_Natural_hippogryph_fallen": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_hippogryph_fallen 4095",
+      "CA_Wild_hippogryph_fallen_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=hippogryph_fallen} true"
+    ]
+  },
+  "CA_Natural_hippogryph_royal": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_hippogryph_royal 4095",
+      "CA_Wild_hippogryph_royal_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=hippogryph_royal} true"
+    ]
+  },
+  "CA_Natural_raptor_nightmare": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_raptor_nightmare 4095",
+      "CA_Wild_raptor_nightmare_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=raptor_nightmare} true"
+    ]
+  },
+  "CA_Natural_raptor_red": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_raptor_red 4095",
+      "CA_Wild_raptor_red_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=raptor_red} true"
+    ]
+  },
+  "CA_Natural_raptor_undead": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_raptor_undead 4095",
+      "CA_Wild_raptor_undead_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=raptor_undead} true"
+    ]
+  },
+  "CA_Natural_sky_serpent_jade": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_sky_serpent_jade 4095",
+      "CA_Wild_sky_serpent_jade_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=sky_serpent_jade} true"
+    ]
+  },
+  "CA_Natural_sky_serpent_magma": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_sky_serpent_magma 4095",
+      "CA_Wild_sky_serpent_magma_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=sky_serpent_magma} true"
+    ]
+  },
+  "CA_Natural_sky_serpent_solar": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_sky_serpent_solar 4095",
+      "CA_Wild_sky_serpent_solar_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=sky_serpent_solar} true"
+    ]
+  },
+  "CA_Natural_sky_serpent_spectral": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_sky_serpent_spectral 4095",
+      "CA_Wild_sky_serpent_spectral_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=sky_serpent_spectral} true"
+    ]
+  },
+  "CA_Natural_stag_demonic": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_stag_demonic 4095",
+      "CA_Wild_stag_demonic_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=stag_demonic} true"
+    ]
+  },
+  "CA_Natural_stag_heavenly": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_stag_heavenly 4095",
+      "CA_Wild_stag_heavenly_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=stag_heavenly} true"
+    ]
+  },
+  "CA_Natural_stag_rune": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_stag_rune 4095",
+      "CA_Wild_stag_rune_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=stag_rune} true"
+    ]
+  },
+  "CA_Natural_stag_void": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_stag_void 4095",
+      "CA_Wild_stag_void_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=stag_void} true"
+    ]
+  },
+  "CA_Natural_frog_green": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_frog_green 4095",
+      "CA_Wild_frog_green_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=frog_green} true"
+    ]
+  },
+  "CA_Natural_frog_permafrost": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_frog_permafrost 4095",
+      "CA_Wild_frog_permafrost_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=frog_permafrost} true"
+    ]
+  },
+  "CA_Natural_frog_royal": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_frog_royal 4095",
+      "CA_Wild_frog_royal_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=frog_royal} true"
+    ]
+  },
+  "CA_Natural_golem_arcane": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_golem_arcane 4095",
+      "CA_Wild_golem_arcane_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=golem_arcane} true"
+    ]
+  },
+  "CA_Natural_golem_corrupted": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_golem_corrupted 4095",
+      "CA_Wild_golem_corrupted_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=golem_corrupted} true"
+    ]
+  },
+  "CA_Natural_golem_magma": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_golem_magma 4095",
+      "CA_Wild_golem_magma_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=golem_magma} true"
+    ]
+  },
+  "CA_Natural_golem_royal": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_golem_royal 4095",
+      "CA_Wild_golem_royal_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=golem_royal} true"
+    ]
+  },
+  "CA_Natural_tusker_demonic": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_tusker_demonic 4095",
+      "CA_Wild_tusker_demonic_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=tusker_demonic} true"
+    ]
+  },
+  "CA_Natural_tusker_dreamlight": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_tusker_dreamlight 4095",
+      "CA_Wild_tusker_dreamlight_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=tusker_dreamlight} true"
+    ]
+  },
+  "CA_Natural_tusker_forest": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_tusker_forest 4095",
+      "CA_Wild_tusker_forest_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.018,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 60,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=tusker_forest} true"
+    ]
+  },
+  "CA_Natural_wolfhawk_dire": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_wolfhawk_dire 4095",
+      "CA_Wild_wolfhawk_dire_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=wolfhawk_dire} true"
+    ]
+  },
+  "CA_Natural_wolfhawk_fallen": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_wolfhawk_fallen 4095",
+      "CA_Wild_wolfhawk_fallen_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=wolfhawk_fallen} true"
+    ]
+  },
+  "CA_Natural_wolfhawk_fullmoon": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_wolfhawk_fullmoon 4095",
+      "CA_Wild_wolfhawk_fullmoon_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=wolfhawk_fullmoon} true"
+    ]
+  },
+  "CA_Natural_wolfhawk_stormcloud": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_wolfhawk_stormcloud 4095",
+      "CA_Wild_wolfhawk_stormcloud_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=wolfhawk_stormcloud} true"
+    ]
+  },
+  "CA_Natural_wyvern_ender": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_wyvern_ender 4095",
+      "CA_Wild_wyvern_ender_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=wyvern_ender} true"
+    ]
+  },
+  "CA_Natural_wyvern_green": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_wyvern_green 4095",
+      "CA_Wild_wyvern_green_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=wyvern_green} true"
+    ]
+  },
+  "CA_Natural_wyvern_inferno": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_wyvern_inferno 4095",
+      "CA_Wild_wyvern_inferno_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=wyvern_inferno} true"
+    ]
+  },
+  "CA_Natural_wyvern_undead": {
+    "Action": "ADD",
+    "Types": [
+      "CA_Wild_wyvern_undead 4095",
+      "CA_Wild_wyvern_undead_shiny 1"
+    ],
+    "Worlds": "world",
+    "Chance": 0.004,
+    "Priority": 1,
+    "UseWorldScaling": false,
+    "Level": 1,
+    "Cooldown": 240,
+    "PositionType": "LAND",
+    "Conditions": [
+      "cahabitat{id=wyvern_undead} true"
+    ]
+  }
+}

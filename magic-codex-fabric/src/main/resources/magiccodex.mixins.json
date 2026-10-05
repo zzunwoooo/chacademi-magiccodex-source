@@ -1,0 +1,22 @@
+{
+  "required": true,
+  "package": "school.magiccodex.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "ShinyEntityMixin",
+    "ShinyLayerMixin",
+    "ShinyDragonMixin",
+    "CodexTextureFilterMixin",
+    "TextFieldAccessor",
+    "CodexKeyboardMixin",
+    "CastingKeyBindingMixin",
+    "PlayerHudMixin",
+    "TamingNameMixin",
+    "ItemTooltipMixin",
+    "TooltipScrollMixin",
+    "HandledItemTooltipMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

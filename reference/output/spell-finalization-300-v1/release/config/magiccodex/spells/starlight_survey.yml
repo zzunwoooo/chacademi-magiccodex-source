@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "starlight_survey"
+name: "별빛 측량"
+category: "light"
+description: "바라보는 블록의 좌표와 자신과의 거리를 표시합니다. 건축 간격을 맞추는 데 사용합니다.\n\n학교의 건축 수업은 별빛처럼 곧은 기준선을 읽는 법도 알려 준다."
+icon: "magiccodex:textures/spells/expansion_2/starlight_survey.png"
+permission: "magic.learned.starlight_survey"
+discovery:
+  description: "학교 건축 수업을 1회 마치기."
+research: "한 칸만 어긋나도 탑은 기울어진다. 별은 그런 실수를 하지 않는다."
+cast:
+  command: "마법 별빛측량"
+  cooldown-seconds: 3
+  mana-cost: 5
+order: 1560

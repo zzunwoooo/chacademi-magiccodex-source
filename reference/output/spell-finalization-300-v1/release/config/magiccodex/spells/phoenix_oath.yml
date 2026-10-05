@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "phoenix_oath"
+name: "불사조의 서약"
+category: "fire"
+description: "자신에게 서약을 남겨 지속 시간 중 치명적인 피해를 한 번 막습니다.\n\n불사조가 동료가 되어 준다면, 꺼진 뒤 다시 타오르는 불의 약속도 이해할 수 있다."
+icon: "magiccodex:textures/spells/advanced/phoenix_oath.png"
+permission: "magic.learned.phoenix_oath"
+discovery:
+  description: "펫 '불사조' 획득"
+research: "수명이 다한 불사조는 화염으로 돌아가 다음 생을 준비한다."
+cast:
+  command: "마법 불사조의서약"
+  cooldown-seconds: 600
+  mana-cost: 300
+order: 400

@@ -1,0 +1,17 @@
+"Id": "ca_basilisk_obsidian"
+"MythicMob": "CA_Pet_basilisk_obsidian"
+"Permission": "chacademia.pet.ca_basilisk_obsidian"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f흑요 바실리스크"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "오래된 정글의 바위 틈에 자리 잡은 거대 파충류. 흑요 계열의 변이 개체."
+    - "서식지: 현무암 절벽 / 화산 봉우리"
+    - "3성"

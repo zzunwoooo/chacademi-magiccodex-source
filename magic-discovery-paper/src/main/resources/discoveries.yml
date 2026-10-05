@@ -1,0 +1,657 @@
+# 작성 완료 62종. condition-text는 표시용 원문, requirements는 서버 판정용입니다.
+spells:
+  wind_basket:
+    name: "바람 바구니"
+    permission: "magic.learned.wind_basket"
+    icon: "magiccodex:textures/spells/novice/wind_basket.png"
+    category: "wind"
+    condition-text: "떨어진 아이템을 누적 1000개 줍기."
+    requirements:
+      "pickup.items": 1000
+    chance: 1.0
+    prerequisites: []
+  feather_step:
+    name: "페더 폴"
+    permission: "magic.learned.feather_step"
+    icon: "magiccodex:textures/spells/novice/feather_step.png"
+    category: "wind"
+    condition-text: "낙하 피해를 받은 뒤 1회 사망하기."
+    requirements:
+      "death.after_fall": 1
+    chance: 1.0
+    prerequisites: []
+  harvest_wind:
+    name: "수확의 바람"
+    permission: "magic.learned.harvest_wind"
+    icon: "magiccodex:textures/spells/novice/harvest_wind.png"
+    category: "wind"
+    condition-text: "자라지 않은 밀·당근·감자를 각각 12개씩 잘라내기."
+    requirements:
+      "break.young_wheat": 12
+      "break.young_carrots": 12
+      "break.young_potatoes": 12
+    chance: 1.0
+    prerequisites: []
+  wind_push:
+    name: "윈드 푸쉬"
+    permission: "magic.learned.wind_push"
+    icon: "magiccodex:textures/spells/novice_extra/wind_push.png"
+    category: "wind"
+    condition-text: "바람 마법 기초 수업을 통해 습득"
+    requirements:
+      "lesson.wind.basic": 1
+    chance: 1.0
+    prerequisites: []
+  light_leap:
+    name: "상승 기류"
+    permission: "magic.learned.light_leap"
+    icon: "magiccodex:textures/spells/novice_extra/light_leap.png"
+    category: "wind"
+    condition-text: "달리면서 점프한 횟수를 30번 채우기."
+    requirements:
+      "jump.sprinting": 30
+    chance: 1.0
+    prerequisites: []
+  flight:
+    name: "비행"
+    permission: "magic.learned.flight"
+    icon: "magiccodex:textures/spells/intermediate/flight.png"
+    category: "wind"
+    condition-text: "학교 도서관에서 비행 연구 기록을 읽기."
+    requirements:
+      "book.flight": 1
+    chance: 1.0
+    prerequisites: []
+  far_touch:
+    name: "손길 너머"
+    permission: "magic.learned.far_touch"
+    icon: "magiccodex:textures/spells/intermediate/far_touch.png"
+    category: "wind"
+    condition-text: "학교 도서관에서 '기계에 대한 이해' 책을 읽기"
+    requirements:
+      "book.machines": 1
+    chance: 1.0
+    prerequisites: []
+  aerial_haul:
+    name: "부유"
+    permission: "magic.learned.aerial_haul"
+    icon: "magiccodex:textures/spells/intermediate/aerial_haul.png"
+    category: "wind"
+    condition-text: "6서클 달성"
+    requirements:
+      "state.circle": 6
+    chance: 1.0
+    prerequisites: []
+  wind_message:
+    name: "바람의 전언"
+    permission: "magic.learned.wind_message"
+    icon: "magiccodex:textures/spells/intermediate/wind_message.png"
+    category: "wind"
+    condition-text: "1명과 친구가 되기."
+    requirements:
+      "friend.added": 1
+    chance: 1.0
+    prerequisites: []
+  storm_command:
+    name: "폭풍의 지휘"
+    permission: "magic.learned.storm_command"
+    icon: "magiccodex:textures/spells/advanced/storm_command.png"
+    category: "wind"
+    condition-text: "30도 이상의 기온을 가진 공간에서, 상승기류 마법 사용 후 떨어지기 전에 한 바퀴 회전하기."
+    requirements:
+      "wind.hot_air_rotation": 1
+    chance: 1.0
+    prerequisites: []
+  wind_vault:
+    name: "바람의 금고"
+    permission: "magic.learned.wind_vault"
+    icon: "magiccodex:textures/spells/advanced/wind_vault.png"
+    category: "wind"
+    condition-text: "인벤토리에 공간이 없을 때 아이템 획득하기."
+    requirements:
+      "pickup.full_inventory": 1
+    chance: 1.0
+    prerequisites: []
+  vacuum_cleave:
+    name: "윈드 커터"
+    permission: "magic.learned.vacuum_cleave"
+    icon: "magiccodex:textures/spells/advanced/vacuum_cleave.png"
+    category: "wind"
+    condition-text: "바람 마법 중급 수업을 통해 습득"
+    requirements:
+      "lesson.wind.intermediate": 1
+    chance: 1.0
+    prerequisites: []
+  wind_grooming:
+    name: "바람 털빗"
+    permission: "magic.learned.wind_grooming"
+    icon: "magiccodex:textures/spells/expansion/wind_grooming.png"
+    category: "wind"
+    condition-text: "가위로 양털을 10번 깎기."
+    requirements:
+      "shear.sheep": 10
+    chance: 1.0
+    prerequisites: []
+  dust_duster:
+    name: "클린"
+    permission: "magic.learned.dust_duster"
+    icon: "magiccodex:textures/spells/expansion_2/dust_duster.png"
+    category: "wind"
+    condition-text: "기숙사 배정"
+    requirements:
+      "dormitory.assigned": 1
+    chance: 1.0
+    prerequisites: []
+  leaf_cleanup:
+    name: "잎새 청소"
+    permission: "magic.learned.leaf_cleanup"
+    icon: "magiccodex:textures/spells/expansion_2/leaf_cleanup.png"
+    category: "wind"
+    condition-text: "종류에 상관없이 묘묙을 20개 심기."
+    requirements:
+      "plant.sapling": 20
+    chance: 1.0
+    prerequisites: []
+  gale_dash:
+    name: "바람 걸음"
+    permission: "magic.learned.gale_dash"
+    icon: "magiccodex:textures/spells/expansion/gale_dash.png"
+    category: "wind"
+    condition-text: "달리기로 누적 1,000블록 이동하기."
+    requirements:
+      "sprint.centimeters": 100000
+    chance: 1.0
+    prerequisites: []
+  feather_rustle:
+    name: "깃털 털기"
+    permission: "magic.learned.feather_rustle"
+    icon: "magiccodex:textures/spells/expansion_2/feather_rustle.png"
+    category: "wind"
+    condition-text: "닭에게 씨앗을 누적 16번 먹이기."
+    requirements:
+      "feed.chicken": 16
+    chance: 1.0
+    prerequisites: []
+  cross_breeze:
+    name: "바람 화살"
+    permission: "magic.learned.cross_breeze"
+    icon: "magiccodex:textures/spells/expansion_2/cross_breeze.png"
+    category: "wind"
+    condition-text: "바람 마법 기초 수업을 통해 낮은 확률로 습득"
+    requirements:
+      "lesson.wind.basic": 1
+    chance: 0.1
+    prerequisites: []
+  returning_blade:
+    name: "되돌이 칼날"
+    permission: "magic.learned.returning_blade"
+    icon: "magiccodex:textures/spells/expansion_2/returning_blade.png"
+    category: "wind"
+    condition-text: "윈드커터 50회 사용"
+    requirements:
+      "cast.vacuum_cleave": 50
+    chance: 1.0
+    prerequisites: []
+  pressure_press:
+    name: "윈드 프레스"
+    permission: "magic.learned.pressure_press"
+    icon: "magiccodex:textures/spells/expansion_2/pressure_press.png"
+    category: "wind"
+    condition-text: "앵무새를 1회 공격하기."
+    requirements:
+      "hit.parrot": 1
+    chance: 1.0
+    prerequisites: []
+  returning_wind:
+    name: "되받는 바람"
+    permission: "magic.learned.returning_wind"
+    icon: "magiccodex:textures/spells/expansion/returning_wind.png"
+    category: "wind"
+    condition-text: "바람 마법 중급 수업을 통해 낮은 확률로 습득"
+    requirements:
+      "lesson.wind.intermediate": 1
+    chance: 0.1
+    prerequisites: []
+  wind_decoy:
+    name: "바람 미끼"
+    permission: "magic.learned.wind_decoy"
+    icon: "magiccodex:textures/spells/expansion_2/wind_decoy.png"
+    category: "wind"
+    condition-text: "반경 7블럭 안에 10마리의 몬스터와 함께 있기."
+    requirements:
+      "nearby.ten_monsters": 1
+    chance: 1.0
+    prerequisites: []
+  air_step:
+    name: "허공 디딤"
+    permission: "magic.learned.air_step"
+    icon: "magiccodex:textures/spells/expansion_2/air_step.png"
+    category: "wind"
+    condition-text: "비행 금지 구역에서 비행 마법 25번 사용"
+    requirements:
+      "cast.flight.prohibited": 25
+    chance: 1.0
+    prerequisites: []
+  weightless_zone:
+    name: "무중력 지대"
+    permission: "magic.learned.weightless_zone"
+    icon: "magiccodex:textures/spells/expansion/weightless_zone.png"
+    category: "wind"
+    condition-text: "바람 마법 고급 수업을 통해 습득"
+    requirements:
+      "lesson.wind.advanced": 1
+    chance: 1.0
+    prerequisites: []
+  lightning_needle:
+    name: "라이트닝 쇼크"
+    permission: "magic.learned.lightning_needle"
+    icon: "magiccodex:textures/spells/expansion_2/lightning_needle.png"
+    category: "wind"
+    condition-text: "번개에 맞아 사망하기."
+    requirements:
+      "death.lightning": 1
+    chance: 1.0
+    prerequisites: []
+  air_stacking:
+    name: "허공 쌓기"
+    permission: "magic.learned.air_stacking"
+    icon: "magiccodex:textures/spells/expansion_2/air_stacking.png"
+    category: "wind"
+    condition-text: "아카데미 건물의 모든 스팟 확인하기."
+    requirements:
+      "academy.all_spots": 1
+    chance: 1.0
+    prerequisites: []
+  descent_command:
+    name: "낙하 명령"
+    permission: "magic.learned.descent_command"
+    icon: "magiccodex:textures/spells/expansion/descent_command.png"
+    category: "wind"
+    condition-text: "6서클 달성 후 윈드 프레스 사용"
+    requirements:
+      "cast.pressure_press.circle6": 1
+    chance: 1.0
+    prerequisites: []
+  arrested_orbit:
+    name: "퍼붓는 화살"
+    permission: "magic.learned.arrested_orbit"
+    icon: "magiccodex:textures/spells/expansion_2/arrested_orbit.png"
+    category: "wind"
+    condition-text: "바람 마법 고급 수업을 통해 낮은 확률로 습득"
+    requirements:
+      "lesson.wind.advanced": 1
+    chance: 0.1
+    prerequisites: []
+  crossfire:
+    name: "크로스 애로우"
+    permission: "magic.learned.crossfire"
+    icon: "magiccodex:textures/spells/expansion_2/crossfire.png"
+    category: "wind"
+    condition-text: "바람 마법으로 몬스터를 일격에 100회 처치."
+    requirements:
+      "kill.wind.one_hit": 100
+    chance: 1.0
+    prerequisites: []
+  trajectory_acceleration:
+    name: "미라지 슈터"
+    permission: "magic.learned.trajectory_acceleration"
+    icon: "magiccodex:textures/spells/expansion/trajectory_acceleration.png"
+    category: "wind"
+    condition-text: "4가지 계절의 이상현상을 모두 마주하기."
+    requirements:
+      "anomaly.spring": 1
+      "anomaly.summer": 1
+      "anomaly.autumn": 1
+      "anomaly.winter": 1
+    chance: 1.0
+    prerequisites: []
+  resonant_arrow:
+    name: "미스틱 슈터"
+    permission: "magic.learned.resonant_arrow"
+    icon: "magiccodex:textures/spells/expansion_2/resonant_arrow.png"
+    category: "wind"
+    condition-text: "미라지 슈터로 소모한 마나 10000 달성"
+    requirements:
+      "mana.trajectory_acceleration": 10000
+    chance: 1.0
+    prerequisites: []
+  pressure_rupture:
+    name: "토네이도 스핀"
+    permission: "magic.learned.pressure_rupture"
+    icon: "magiccodex:textures/spells/expansion_2/pressure_rupture.png"
+    category: "wind"
+    condition-text: "움직이지 않는 상태에서 시선을 돌려 10바퀴 회전"
+    requirements:
+      "rotate.stationary_ten": 1
+    chance: 1.0
+    prerequisites: []
+  storm_crown:
+    name: "삼중 탄환"
+    permission: "magic.learned.storm_crown"
+    icon: "magiccodex:textures/spells/expansion_2/storm_crown.png"
+    category: "wind"
+    condition-text: "70블럭 밖의 적을 화살로 명중하기"
+    requirements:
+      "arrow.distant_hit": 1
+    chance: 1.0
+    prerequisites: []
+  hearth_touch:
+    name: "손끝의 화로"
+    permission: "magic.learned.hearth_touch"
+    icon: "magiccodex:textures/spells/novice/hearth_touch.png"
+    category: "fire"
+    condition-text: "화로에서 직접 구운 음식을 누적 16개 꺼내기."
+    requirements:
+      "furnace.food_taken": 16
+    chance: 1.0
+    prerequisites: []
+  ember_bolt:
+    name: "파이어 볼"
+    permission: "magic.learned.ember_bolt"
+    icon: "magiccodex:textures/spells/novice_extra/ember_bolt.png"
+    category: "fire"
+    condition-text: "화염 마법 기초 수업을 통해 습득"
+    requirements:
+      "lesson.fire.basic": 1
+    chance: 1.0
+    prerequisites: []
+  rekindle:
+    name: "다시 타오르는 불"
+    permission: "magic.learned.rekindle"
+    icon: "magiccodex:textures/spells/novice_extra/rekindle.png"
+    category: "fire"
+    condition-text: "촛불에 라이터로 불 붙이기."
+    requirements:
+      "candle.lit": 1
+    chance: 1.0
+    prerequisites: []
+  flame_forging:
+    name: "불꽃 단조"
+    permission: "magic.learned.flame_forging"
+    icon: "magiccodex:textures/spells/intermediate/flame_forging.png"
+    category: "fire"
+    condition-text: "대장간의 모루를 살펴보기."
+    requirements:
+      "smithy.anvil_inspected": 1
+    chance: 1.0
+    prerequisites: []
+  ember_trap:
+    name: "잿불 덫"
+    permission: "magic.learned.ember_trap"
+    icon: "magiccodex:textures/spells/intermediate/ember_trap.png"
+    category: "fire"
+    condition-text: "화염 마법 기초 수업을 통해 낮은 확률로 습득"
+    requirements:
+      "lesson.fire.basic": 1
+    chance: 0.1
+    prerequisites: []
+  fire_curtain:
+    name: "플레어 월"
+    permission: "magic.learned.fire_curtain"
+    icon: "magiccodex:textures/spells/intermediate/fire_curtain.png"
+    category: "fire"
+    condition-text: "화염 마법 중급 수업을 통해 습득"
+    requirements:
+      "lesson.fire.intermediate": 1
+    chance: 1.0
+    prerequisites: []
+  phoenix_oath:
+    name: "불사조의 서약"
+    permission: "magic.learned.phoenix_oath"
+    icon: "magiccodex:textures/spells/advanced/phoenix_oath.png"
+    category: "fire"
+    condition-text: "펫 '불사조' 획득"
+    requirements:
+      "pet.phoenix": 1
+    chance: 1.0
+    prerequisites: []
+  living_furnace:
+    name: "살아 있는 화로"
+    permission: "magic.learned.living_furnace"
+    icon: "magiccodex:textures/spells/advanced/living_furnace.png"
+    category: "fire"
+    condition-text: "손끝의 화로 마법으로 64번 구워내기"
+    requirements:
+      "cook.hearth_touch": 64
+    chance: 1.0
+    prerequisites: []
+  falling_star:
+    name: "메테오 스트라이크"
+    permission: "magic.learned.falling_star"
+    icon: "magiccodex:textures/spells/advanced/falling_star.png"
+    category: "fire"
+    condition-text: "모든 화염 마법 습득"
+    requirements: {}
+    chance: 1.0
+    prerequisites:
+      - "magic.learned.hearth_touch"
+      - "magic.learned.ember_bolt"
+      - "magic.learned.rekindle"
+      - "magic.learned.flame_forging"
+      - "magic.learned.ember_trap"
+      - "magic.learned.fire_curtain"
+      - "magic.learned.phoenix_oath"
+      - "magic.learned.living_furnace"
+      - "magic.learned.flame_lash"
+      - "magic.learned.cinder_detonation"
+      - "magic.learned.palm_fireworks"
+      - "magic.learned.ash_brand"
+      - "magic.learned.flame_leap"
+      - "magic.learned.crimson_heart"
+      - "magic.learned.wick_trimming"
+      - "magic.learned.glass_firing"
+      - "magic.learned.charcoal_conversion"
+      - "magic.learned.sponge_drying"
+      - "magic.learned.flame_footprints"
+      - "magic.learned.boiling_armor"
+      - "magic.learned.kiln_breath"
+      - "magic.learned.glaze_coating"
+      - "magic.learned.explosive_wedge"
+      - "magic.learned.fireproof_film"
+      - "magic.learned.heat_recovery"
+      - "magic.learned.firebird_hunt"
+      - "magic.learned.lava_suture"
+      - "magic.learned.flame_sword_dance"
+      - "magic.learned.incandescent_break"
+      - "magic.learned.blue_bonfire"
+      - "magic.learned.crimson_breath"
+  palm_fireworks:
+    name: "손바닥 폭죽"
+    permission: "magic.learned.palm_fireworks"
+    icon: "magiccodex:textures/spells/expansion/palm_fireworks.png"
+    category: "fire"
+    condition-text: "폭죽 로켓을 10번 발사하기."
+    requirements:
+      "firework.launched": 10
+    chance: 1.0
+    prerequisites: []
+  wick_trimming:
+    name: "심지 줄이기"
+    permission: "magic.learned.wick_trimming"
+    icon: "magiccodex:textures/spells/expansion_2/wick_trimming.png"
+    category: "fire"
+    condition-text: "촛불 10회 소화"
+    requirements:
+      "candle.extinguished": 10
+    chance: 1.0
+    prerequisites: []
+  glass_firing:
+    name: "광석 재련"
+    permission: "magic.learned.glass_firing"
+    icon: "magiccodex:textures/spells/expansion_2/glass_firing.png"
+    category: "fire"
+    condition-text: "화염 마법 중급 수업을 통해 습득"
+    requirements:
+      "lesson.fire.intermediate": 1
+    chance: 1.0
+    prerequisites: []
+  charcoal_conversion:
+    name: "발화"
+    permission: "magic.learned.charcoal_conversion"
+    icon: "magiccodex:textures/spells/expansion_2/charcoal_conversion.png"
+    category: "fire"
+    condition-text: "화염 마법 중급 수업을 통해 낮은 확률로 습득"
+    requirements:
+      "lesson.fire.intermediate": 1
+    chance: 0.1
+    prerequisites: []
+  sponge_drying:
+    name: "스펀지 말리기"
+    permission: "magic.learned.sponge_drying"
+    icon: "magiccodex:textures/spells/expansion_2/sponge_drying.png"
+    category: "fire"
+    condition-text: "젖은 스펀지 획득"
+    requirements:
+      "obtain.wet_sponge": 1
+    chance: 1.0
+    prerequisites: []
+  flame_lash:
+    name: "화염 채찍"
+    permission: "magic.learned.flame_lash"
+    icon: "magiccodex:textures/spells/expansion/flame_lash.png"
+    category: "fire"
+    condition-text: "낚싯대로 몬스터를 5번 끌어당기기."
+    requirements:
+      "fish.monster_pulled": 5
+    chance: 1.0
+    prerequisites: []
+  cinder_detonation:
+    name: "스타 퓨리"
+    permission: "magic.learned.cinder_detonation"
+    icon: "magiccodex:textures/spells/expansion/cinder_detonation.png"
+    category: "fire"
+    condition-text: "불타는 몬스터를 30회 처치하기."
+    requirements:
+      "kill.burning_monster": 30
+    chance: 1.0
+    prerequisites: []
+  flame_footprints:
+    name: "불꽃 걸음"
+    permission: "magic.learned.flame_footprints"
+    icon: "magiccodex:textures/spells/expansion_2/flame_footprints.png"
+    category: "fire"
+    condition-text: "불이 붙은 상태에서 30초간 살아남기"
+    requirements:
+      "burn.survive_thirty": 1
+    chance: 1.0
+    prerequisites: []
+  boiling_armor:
+    name: "끓는 갑주"
+    permission: "magic.learned.boiling_armor"
+    icon: "magiccodex:textures/spells/expansion_2/boiling_armor.png"
+    category: "fire"
+    condition-text: "입고있는 갑옷 2회 파괴"
+    requirements:
+      "armor.broken": 2
+    chance: 1.0
+    prerequisites: []
+  kiln_breath:
+    name: "가마 숨결"
+    permission: "magic.learned.kiln_breath"
+    icon: "magiccodex:textures/spells/expansion_2/kiln_breath.png"
+    category: "fire"
+    condition-text: "대장간에서 아이템 제작 3회"
+    requirements:
+      "smithy.item_crafted": 3
+    chance: 1.0
+    prerequisites: []
+  glaze_coating:
+    name: "화염의 정복자"
+    permission: "magic.learned.glaze_coating"
+    icon: "magiccodex:textures/spells/expansion_2/glaze_coating.png"
+    category: "fire"
+    condition-text: "받은 화염 도트 데미지 100 달성"
+    requirements:
+      "damage.fire_tick": 100
+    chance: 1.0
+    prerequisites: []
+  ash_brand:
+    name: "재의 낙인"
+    permission: "magic.learned.ash_brand"
+    icon: "magiccodex:textures/spells/expansion/ash_brand.png"
+    category: "fire"
+    condition-text: "화염 마법으로 적 30회 처치"
+    requirements:
+      "kill.fire": 30
+    chance: 1.0
+    prerequisites: []
+  explosive_wedge:
+    name: "폭발 쐐기"
+    permission: "magic.learned.explosive_wedge"
+    icon: "magiccodex:textures/spells/expansion_2/explosive_wedge.png"
+    category: "fire"
+    condition-text: "불붙은 몬스터를 근접 공격으로 20번 처치하기."
+    requirements:
+      "kill.burning_melee": 20
+    chance: 1.0
+    prerequisites: []
+  fireproof_film:
+    name: "내연성"
+    permission: "magic.learned.fireproof_film"
+    icon: "magiccodex:textures/spells/expansion_2/fireproof_film.png"
+    category: "fire"
+    condition-text: "여름의 더위에 사라진 아이템 3회"
+    requirements:
+      "summer.item_lost": 3
+    chance: 1.0
+    prerequisites: []
+  flame_leap:
+    name: "블레이즈 킥"
+    permission: "magic.learned.flame_leap"
+    icon: "magiccodex:textures/spells/expansion/flame_leap.png"
+    category: "fire"
+    condition-text: "학교 도서관에서 숨겨진 '체술 강화' 책 읽기."
+    requirements:
+      "book.martial_arts": 1
+    chance: 1.0
+    prerequisites: []
+  heat_recovery:
+    name: "열량 보존"
+    permission: "magic.learned.heat_recovery"
+    icon: "magiccodex:textures/spells/expansion_2/heat_recovery.png"
+    category: "fire"
+    condition-text: "학교 도서관에서 '에너지에 관하여' 책 읽기."
+    requirements:
+      "book.energy": 1
+    chance: 1.0
+    prerequisites: []
+  firebird_hunt:
+    name: "불새"
+    permission: "magic.learned.firebird_hunt"
+    icon: "magiccodex:textures/spells/expansion_2/firebird_hunt.png"
+    category: "fire"
+    condition-text: "학교 도서관에서 '불사조, 주작, 가루다' 책 읽기."
+    requirements:
+      "book.firebirds": 1
+    chance: 1.0
+    prerequisites: []
+  lava_suture:
+    name: "용암 봉합"
+    permission: "magic.learned.lava_suture"
+    icon: "magiccodex:textures/spells/expansion_2/lava_suture.png"
+    category: "fire"
+    condition-text: "용암에 물을 부어 흑요석을 누적 32개 만들기."
+    requirements:
+      "water.obsidian_created": 32
+    chance: 1.0
+    prerequisites: []
+  flame_sword_dance:
+    name: "화염 검무"
+    permission: "magic.learned.flame_sword_dance"
+    icon: "magiccodex:textures/spells/expansion_2/flame_sword_dance.png"
+    category: "fire"
+    condition-text: "발화가 인첸트 된 검으로 몬스터 50회 처치"
+    requirements:
+      "kill.fire_aspect_sword": 50
+    chance: 1.0
+    prerequisites: []
+  incandescent_break:
+    name: "파이어 스트라이크"
+    permission: "magic.learned.incandescent_break"
+    icon: "magiccodex:textures/spells/expansion_2/incandescent_break.png"
+    category: "fire"
+    condition-text: "방패를 사용하는 적과의 실습 전투를 완료하기."
+    requirements:
+      "practice.shield_completed": 1
+    chance: 1.0
+    prerequisites: []

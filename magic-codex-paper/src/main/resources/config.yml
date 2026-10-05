@@ -1,0 +1,29 @@
+# 도감을 열고 있는 플레이어의 YAML에 지정된 권한만 확인합니다.
+# 일반 권한 변경을 놓치지 않기 위한 보조 확인 주기. 200틱 = 정상 TPS에서 10초.
+refresh-interval-ticks: 200
+# 즉시 조회와 정기 작업이 공유하는 1초 구간당 권한 확인 상한. 최소 256.
+max-permission-checks-per-pass: 2048
+# 닫기 신호를 받지 못해도 구독을 자동 정리합니다.
+session-timeout-seconds: 45
+
+# 모드의 잔액 표시 구독자만 확인. 기본 0.5초 간격, 2틱마다 나누어 조회합니다.
+# 변경된 잔액만 전송하며 30초마다 연결 유지 응답을 보냅니다.
+# 초당 상한을 넘는 인원이 접속하면 순서대로 처리하므로 갱신이 늦어질 수 있습니다.
+wallet:
+  refresh-millis: 500
+  max-reads-per-second: 128
+
+# 신규 플레이어 기본값. 기존 플레이어 수치는 저장되며 관리자 명령으로 변경합니다.
+# 정상 TPS에서 20틱마다 회복합니다. 사망 중·오프라인에는 회복하지 않습니다.
+mana:
+  default-maximum: 100
+  default-regeneration: 5
+  default-haste: 0
+
+# 바이옴 계산은 추후 연결합니다. 지금은 기본값 또는 관리자/API 지정 온도를 전송합니다.
+# 개인 지정값은 접속 종료 시 초기화됩니다. 기존 config에 이 항목이 없어도 18°C가 적용됩니다.
+temperature:
+  default-celsius: 18
+
+# Skript nameset.sk display name; UUID remains the internal identity.
+display-name-placeholder: "%user_nickname%"

@@ -1,0 +1,17 @@
+"Id": "ca_ncr_archer_skeleton"
+"MythicMob": "CA_Pet_ncr_archer_skeleton"
+"Permission": "chacademia.pet.ca_ncr_archer_skeleton"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f유적의 궁수"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "무너진 회랑의 먼 곳에서 침입자를 겨눈다."
+    - "서식지: 깊은 동굴 / 응회암 동굴"
+    - "2성"

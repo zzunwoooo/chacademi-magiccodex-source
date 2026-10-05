@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "aerial_haul"
+name: "부유"
+category: "wind"
+description: "지정된 화물 혹은 몬스터를 공중에 띄워 5초간 자유롭게 조종한다.\n\n멀리 뻗은 손길에 익숙해지면, 밀고 당기는 힘을 허공에 붙잡아 둘 수 있다."
+icon: "magiccodex:textures/spells/intermediate/aerial_haul.png"
+permission: "magic.learned.aerial_haul"
+discovery:
+  description: "손길 너머를 누적 50회 사용하기."
+research: "정교한 바람 조종의 기본, 사람에게 사용은 금지되어있다."
+cast:
+  command: "마법 부유"
+  cooldown-seconds: 120
+  mana-cost: 250
+order: 80

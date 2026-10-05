@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "life_distribution"
+name: "생명의 분배"
+category: "water"
+description: "자신과 6블록 안에서 동료 최대 3명의 현재 체력을 합쳐, 각자의 최대 체력에 비례해 나눕니다. 전체 체력은 늘어나지 않습니다.\n\n치유 물약 한 병으로 자신과 여러 동료를 함께 돌본 경험이 생명을 나누는 실마리가 된다."
+icon: "magiccodex:textures/spells/expansion/life_distribution.png"
+permission: "magic.learned.life_distribution"
+discovery:
+  description: "투척용 치유 물약 한 병으로 자신과 동료 2명을 함께 회복하기."
+research: "누군가의 상처를 나누어 짊어지는 일에는 용기가 필요하다."
+cast:
+  command: "마법 생명의분배"
+  cooldown-seconds: 45
+  mana-cost: 160
+order: 810

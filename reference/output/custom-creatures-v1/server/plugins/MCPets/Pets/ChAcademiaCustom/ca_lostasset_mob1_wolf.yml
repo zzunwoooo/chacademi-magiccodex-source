@@ -1,0 +1,17 @@
+"Id": "ca_lostasset_mob1_wolf"
+"MythicMob": "CA_Pet_lostasset_mob1_wolf"
+"Permission": "chacademia.pet.ca_lostasset_mob1_wolf"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f목초지 양치기"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "초원 주변을 맴돌며 무리의 움직임을 살피는 늑대."
+    - "서식지: 온대 고지 / 방패암 공터"
+    - "2성"

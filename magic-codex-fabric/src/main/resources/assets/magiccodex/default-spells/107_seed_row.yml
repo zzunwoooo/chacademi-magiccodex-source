@@ -1,0 +1,14 @@
+id: seed_row
+name: 씨앗 줄심기
+category: earth
+description: 소지한 씨앗을 소비해 앞쪽 경작지 최대 5칸에 일렬로 심습니다.
+icon: magiccodex:textures/spells/expansion/seed_row.png
+permission: magic.learned.seed_row
+discovery:
+  description: 경작지에 씨앗 누적 50개 심기.
+research: 허리를 굽히지 않고 밭을 가꾸는 법. 농사 동아리에서 가장 인기가 많은 실습이다.
+cast:
+  command: ''
+  cooldown-seconds: 5
+  mana-cost: 12
+order: 107

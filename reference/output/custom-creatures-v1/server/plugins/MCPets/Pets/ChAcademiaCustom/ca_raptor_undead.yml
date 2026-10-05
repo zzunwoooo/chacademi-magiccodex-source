@@ -1,0 +1,17 @@
+"Id": "ca_raptor_undead"
+"MythicMob": "CA_Pet_raptor_undead"
+"Permission": "chacademia.pet.ca_raptor_undead"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f불사 랩터"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "정글 수풀을 가르며 사냥하는 민첩한 포식자. 불사 계열의 변이 개체."
+    - "서식지: 감염 동굴 / 깊은 동굴"
+    - "3성"

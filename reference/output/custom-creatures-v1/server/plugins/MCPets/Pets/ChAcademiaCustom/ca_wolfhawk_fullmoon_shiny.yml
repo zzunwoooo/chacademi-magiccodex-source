@@ -1,0 +1,17 @@
+"Id": "ca_wolfhawk_fullmoon_shiny"
+"MythicMob": "CA_Pet_wolfhawk_fullmoon_shiny"
+"Permission": "chacademia.pet.ca_wolfhawk_fullmoon_shiny"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e만월 울프호크"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "산악 둥지 주변에서 영역을 지키는 날렵한 생물. 만월 계열의 변이 개체."
+    - "서식지: 달빛 계곡"
+    - "3성"

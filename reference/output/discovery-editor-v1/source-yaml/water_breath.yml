@@ -1,0 +1,18 @@
+# UTF-8 / 공백 2칸 / 이름·설명·획득 조건은 편하게 수정하세요.
+# discovery.description은 표시 문구입니다. 실제 획득 판정은 아직 연결하지 않았습니다.
+# 실제 시전 기능 연결 후 cast.command에 "cast water_breath" 같은 명령어를 넣으세요.
+# command는 / 없이 작성합니다. 현재 빈 문자열이므로 마법을 시전하지 않습니다.
+id: "water_breath"
+name: "물결 숨결"
+category: "water"
+rank: "초급"
+description: "30초 동안 물속에서 숨을 쉴 수 있습니다."
+icon: "magiccodex:textures/spells/novice/water_breath.png"
+permission: "magic.learned.water_breath"
+discovery:
+  description: "물속에 머문 시간을 누적 3분 채우기."
+research: "물결 사이에 고요한 숨 한 모금을 남겨 둡니다."
+cast:
+  command: ""
+  cooldown-seconds: 45
+order: 60

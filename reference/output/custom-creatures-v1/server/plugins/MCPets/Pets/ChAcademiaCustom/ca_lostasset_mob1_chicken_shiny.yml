@@ -1,0 +1,17 @@
+"Id": "ca_lostasset_mob1_chicken_shiny"
+"MythicMob": "CA_Pet_lostasset_mob1_chicken_shiny"
+"Permission": "chacademia.pet.ca_lostasset_mob1_chicken_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e아침볕 수탉"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "학교 외곽 목초지에서 아침을 알리는 새."
+    - "서식지: 꽃피는 고원 / 온대 고지"
+    - "1성"

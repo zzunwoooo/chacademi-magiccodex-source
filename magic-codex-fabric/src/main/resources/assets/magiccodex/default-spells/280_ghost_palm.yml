@@ -1,0 +1,14 @@
+id: ghost_palm
+name: 유령 손바닥
+category: dark
+description: 장비를 벗지 않고 빈손 상호작용을 한 번 수행한다.
+icon: ''
+permission: magic.learned.ghost_palm
+discovery:
+  description: 빈손으로 문·레버·버튼을 합쳐 누적 30회 작동시키기.
+research: 손은 가득 차 있어도 그림자에는 빈 손바닥 하나가 남아 있다.
+cast:
+  command: ''
+  cooldown-seconds: 6
+  mana-cost: 12
+order: 280

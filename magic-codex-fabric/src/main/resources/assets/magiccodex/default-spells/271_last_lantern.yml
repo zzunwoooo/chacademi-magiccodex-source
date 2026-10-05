@@ -1,0 +1,14 @@
+id: last_lantern
+name: 마지막 등불
+category: light
+description: 체력이 낮은 동료에게 쓰는 다음 치유 효과를 강화한다.
+icon: ''
+permission: magic.learned.last_lantern
+discovery:
+  description: 체력이 하트 2칸 이하인 동료를 작은 치유로 10회 회복하기.
+research: 아직 빛이 남아 있다면 도움도 늦지 않았다.
+cast:
+  command: ''
+  cooldown-seconds: 25
+  mana-cost: 65
+order: 271

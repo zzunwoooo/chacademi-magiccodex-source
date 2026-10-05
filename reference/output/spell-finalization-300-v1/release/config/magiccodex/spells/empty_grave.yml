@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "empty_grave"
+name: "빈 무덤"
+category: "dark"
+description: "사망 위치에 개인 표식을 남겨 돌아올 때 알아보게 한다.\n\n자신이 끝을 맞은 여러 자리를 다시 찾으면, 비어 있는 무덤에도 길잡이의 흔적을 남길 수 있다."
+icon: "magiccodex:textures/spells/expansion_3/empty_grave.png"
+permission: "magic.learned.empty_grave"
+discovery:
+  description: "서로 다른 사망 위치 3곳에 다시 방문하기."
+research: "잃어버린 것은 몸이 아니라 돌아갈 길일 때도 있다."
+cast:
+  command: "마법 빈무덤"
+  cooldown-seconds: 10
+  mana-cost: 15
+order: 2890

@@ -1,0 +1,17 @@
+"Id": "ca_lostasset_mob2_lakefairy"
+"MythicMob": "CA_Pet_lostasset_mob2_lakefairy"
+"Permission": "chacademia.pet.ca_lostasset_mob2_lakefairy"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f달물결 요정"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "달빛이 비치는 물가에 머무르는 작은 요정."
+    - "서식지: 달빛 계곡 / 난초 늪"
+    - "2성"

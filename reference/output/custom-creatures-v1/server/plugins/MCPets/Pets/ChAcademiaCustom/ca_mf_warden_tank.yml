@@ -1,0 +1,17 @@
+"Id": "ca_mf_warden_tank"
+"MythicMob": "CA_Pet_mf_warden_tank"
+"Permission": "chacademia.pet.ca_mf_warden_tank"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f봉인의 거벽"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "봉인실 입구에서 물러서지 않는 거대한 수호자."
+    - "서식지: 깊은 동굴"
+    - "3성"

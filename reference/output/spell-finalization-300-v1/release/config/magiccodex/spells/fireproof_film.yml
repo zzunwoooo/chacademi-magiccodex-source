@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "fireproof_film"
+name: "내연성"
+category: "fire"
+description: "인벤토리 속 아이템을 여름의 무더위 속에서 보호한다.\n\n여름 더위에 물건을 잃어 본 기억이 열을 막는 얇은 막을 찾게 한다."
+icon: "magiccodex:textures/spells/expansion_2/fireproof_film.png"
+permission: "magic.learned.fireproof_film"
+discovery:
+  description: "여름의 더위에 사라진 아이템 3회"
+research: "뜨거운 사막을 지날 때는 소지품을 잘 확인하자."
+cast:
+  command: "마법 내연성"
+  cooldown-seconds: 0
+  mana-cost: 0
+order: 580

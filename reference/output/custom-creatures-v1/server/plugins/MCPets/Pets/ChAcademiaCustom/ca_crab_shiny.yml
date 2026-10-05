@@ -1,0 +1,17 @@
+"Id": "ca_crab_shiny"
+"MythicMob": "CA_Pet_crab_shiny"
+"Permission": "chacademia.pet.ca_crab_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e자갈집게 게"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "자갈 해변과 바닷물의 경계에서 먹이를 찾는다."
+    - "서식지: 자갈 해변 / 흰 절벽"
+    - "1성"

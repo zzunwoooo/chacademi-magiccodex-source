@@ -1,0 +1,14 @@
+id: luminous_frame
+name: 별빛 액자
+category: light
+description: 재료를 소비해 아이템 액자를 발광 아이템 액자로 바꾼다.
+icon: ''
+permission: magic.learned.luminous_frame
+discovery:
+  description: 발광 아이템 액자를 4개 제작하기.
+research: 전시는 그림자를 줄이는 일부터 달라진다.
+cast:
+  command: ''
+  cooldown-seconds: 5
+  mana-cost: 12
+order: 263

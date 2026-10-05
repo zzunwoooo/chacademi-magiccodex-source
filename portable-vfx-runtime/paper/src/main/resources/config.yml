@@ -1,0 +1,13 @@
+# PortableVFX Paper 1.21.4 / Java 21. No gameplay or third-party gameplay hooks.
+# Values outside the hard safety ceilings are clamped and logged on load.
+view:
+  max-radius: 128.0           # 1..256 blocks; play radius is capped by this value
+  default-radius: 64.0       # 1..max-radius
+limits:
+  max-active-handles: 512    # 1..4096
+  packets-per-tick: 1024     # 1..8192; all PLAY/POSE/IMPACT/FINISH/STOP/CLEAR share this budget
+  packets-per-player-per-tick: 32 # 1..128; authoritative cast starts reserve 2 packets
+  # Fixed per-viewer class caps inside the value above (match the client's admission buckets):
+  # PLAY/IMPACT 48 burst +8/tick, POSE/LINK_POSE/ORIENT 16/tick, STOP/CLEAR/FINISH 10/tick.
+  play-requests-per-tick: 128 # 1..1024; includes plays with zero eligible recipients
+  max-duration-ticks: 12000  # 1..12000; command default is min(40, configured maximum)

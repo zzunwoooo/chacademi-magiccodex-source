@@ -1,0 +1,17 @@
+"Id": "ca_bulb_dripleaf"
+"MythicMob": "CA_Pet_bulb_dripleaf"
+"Permission": "chacademia.pet.ca_bulb_dripleaf"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f물잎 새싹"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "습한 지하 정글의 잎사귀 사이에 숨어 산다."
+    - "서식지: 지하 정글 / 푸른 계곡"
+    - "1성"

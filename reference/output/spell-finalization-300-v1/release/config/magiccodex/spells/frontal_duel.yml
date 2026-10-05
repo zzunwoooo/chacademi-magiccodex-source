@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "frontal_duel"
+name: "정면 승부"
+category: "light"
+description: "표식 대상과 정면에서 주고받는 공격이 강해진다.\n\n방패를 든 채 정면에서 적을 거듭 상대하면 물러서지 않을 빛의 기준선이 생긴다."
+icon: "magiccodex:textures/spells/expansion_3/frontal_duel.png"
+permission: "magic.learned.frontal_duel"
+discovery:
+  description: "방패를 들고 몬스터를 누적 30마리 처치하기."
+research: "등을 노리는 싸움과는 다른 약속이다. 서로 마주 보고 힘을 겨룬다."
+cast:
+  command: "마법 정면승부"
+  cooldown-seconds: 25
+  mana-cost: 70
+order: 2710

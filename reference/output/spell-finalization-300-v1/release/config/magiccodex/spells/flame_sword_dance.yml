@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "flame_sword_dance"
+name: "화염 검무"
+category: "fire"
+description: "불꽃 검 세 자루를 준비합니다. 이후 공격할 때마다 한 자루가 함께 공격하고 사라집니다.\n\n불이 붙는 검으로 많은 몬스터를 쓰러뜨린 손은 검날보다 긴 불꽃의 춤을 기억한다."
+icon: "magiccodex:textures/spells/expansion_2/flame_sword_dance.png"
+permission: "magic.learned.flame_sword_dance"
+discovery:
+  description: "발화가 인첸트 된 검으로 몬스터 50회 처치"
+research: "춤추는 듯한 불의 검에 홀려 몸이 불타는 것도 잊고 바라보았다."
+cast:
+  command: "마법 화염검무"
+  cooldown-seconds: 60
+  mana-cost: 300
+order: 620

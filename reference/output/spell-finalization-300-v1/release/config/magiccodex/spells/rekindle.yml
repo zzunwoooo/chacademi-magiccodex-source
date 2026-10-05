@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "rekindle"
+name: "다시 타오르는 불"
+category: "fire"
+description: "바라보는 꺼진 모닥불이나 초에 작은 불을 붙입니다.\n\n꺼진 촛불에 다시 불을 붙이는 작은 손길이 이 주문의 시작이다."
+icon: "magiccodex:textures/spells/novice_extra/rekindle.png"
+permission: "magic.learned.rekindle"
+discovery:
+  description: "촛불에 라이터로 불 붙이기."
+research: "사라진 온기를 되찾는 데에는 작은 불 하나면 충분합니다."
+cast:
+  command: "마법 다시타오르는불"
+  cooldown-seconds: 3
+  mana-cost: 10
+order: 360

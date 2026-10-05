@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "fire_curtain"
+name: "플레어 월"
+category: "fire"
+description: "짧은 시간 불의 장막을 펼쳐 통과하는 몬스터를 공격합니다.\n\n중급 화염 수업에서는 불꽃을 날리는 대신 벽처럼 펼치는 법을 배운다."
+icon: "magiccodex:textures/spells/intermediate/fire_curtain.png"
+permission: "magic.learned.fire_curtain"
+discovery:
+  description: "화염 마법 중급 수업을 통해 습득"
+research: "마법사는 공간을 통제한다."
+cast:
+  command: "마법 플레어월"
+  cooldown-seconds: 30
+  mana-cost: 100
+order: 390

@@ -1,0 +1,17 @@
+"Id": "ca_nocsy_cat3"
+"MythicMob": "CA_Pet_nocsy_cat3"
+"Permission": "chacademia.pet.ca_nocsy_cat3"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f책방 고양이"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "학교 외곽 길목에 머무르는 호기심 많은 고양이."
+    - "서식지: 벚꽃 숲 / 꽃피는 계곡"
+    - "1성"

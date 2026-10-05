@@ -1,0 +1,14 @@
+id: path_tamping
+name: 돌길 다지기
+category: earth
+description: 앞쪽 흙이나 잔디를 길 블록으로 만든다.
+icon: ''
+permission: magic.learned.path_tamping
+discovery:
+  description: 삽으로 길 블록을 누적 32개 만들기.
+research: 많은 발걸음이 지나기 전에 땅의 높이와 결을 고르게 만든다.
+cast:
+  command: ''
+  cooldown-seconds: 5
+  mana-cost: 12
+order: 250

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "compost_return"
+name: "퇴비 환원"
+category: "earth"
+description: "지정한 식물성 재료를 소비해 정해진 비율로 뼛가루를 만듭니다.\n\n퇴비통에서 뼛가루를 거듭 꺼내 본 사람은 버려진 잎이 돌아오는 길을 안다."
+icon: "magiccodex:textures/spells/expansion_2/compost_return.png"
+permission: "magic.learned.compost_return"
+discovery:
+  description: "퇴비통에서 뼛가루 누적 16개 꺼내기."
+research: "버린 잎도 다음 봄의 양분이 된다. 약초학 교수는 이것을 재활용보다 조금 더 멋진 이름으로 부른다."
+cast:
+  command: "마법 퇴비환원"
+  cooldown-seconds: 10
+  mana-cost: 20
+order: 1190

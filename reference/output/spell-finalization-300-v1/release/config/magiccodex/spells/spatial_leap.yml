@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "spatial_leap"
+name: "공간 도약"
+category: "light"
+description: "이미 발견한 전이석으로 공간을 넘어 이동합니다.\n\n여러 전이석을 직접 찾아가면 서로 먼 장소를 잇는 공간의 결을 느낄 수 있다."
+icon: "magiccodex:textures/spells/intermediate/spatial_leap.png"
+permission: "magic.learned.spatial_leap"
+discovery:
+  description: "서로 다른 전이석 3곳에 처음 방문하기."
+research: "먼 거리를 접는 데에는 목적지를 분명하게 떠올리는 일이 먼저다."
+cast:
+  command: "마법 공간도약"
+  cooldown-seconds: 60
+  mana-cost: 100
+order: 1360

@@ -1,0 +1,14 @@
+id: dawn_ritual
+name: 여명의 의식
+category: light
+description: 자신과 8블록 안의 동료에게 걸린 독·나약함·구속을 해제하고 20초간 재적용을 막습니다. 의식 장치에 남은 저주도 해제합니다.
+icon: magiccodex:textures/spells/advanced/dawn_ritual.png
+permission: magic.learned.dawn_ritual
+discovery:
+  description: 독·나약함·구속 상태에서 정화의 물결로 회복한 횟수를 각각 1회 달성하기.
+research: 가장 어두운 밤이 끝날 때 첫 빛은 조용히 찾아온다.
+cast:
+  command: ''
+  cooldown-seconds: 180
+  mana-cost: 300
+order: 141

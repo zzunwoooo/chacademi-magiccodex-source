@@ -1,0 +1,14 @@
+id: guiding_star
+name: 길잡이 별
+category: light
+description: 현재 월드의 저장된 길잡이 표식 방향을 10초 동안 빛으로 안내합니다.
+icon: magiccodex:textures/spells/novice/guiding_star.png
+permission: magic.learned.guiding_star
+discovery:
+  description: 나침반을 들고 누적 1000블록 걸어가기.
+research: 길을 잃은 아이에게 별 하나가 집으로 가는 방향을 알려 주었다.
+cast:
+  command: ''
+  cooldown-seconds: 10
+  mana-cost: 8
+order: 132

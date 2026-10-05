@@ -1,0 +1,17 @@
+"Id": "ca_boar"
+"MythicMob": "CA_Pet_boar"
+"Permission": "chacademia.pet.ca_boar"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f덤불 멧돼지"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "덤불을 헤치며 뿌리와 열매를 찾는다."
+    - "서식지: 관목 초원 / 숲 우거진 고지"
+    - "1성"

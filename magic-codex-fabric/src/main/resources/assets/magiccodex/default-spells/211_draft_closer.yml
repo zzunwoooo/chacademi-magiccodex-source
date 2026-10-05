@@ -1,0 +1,14 @@
+id: draft_closer
+name: 문풍지
+category: wind
+description: 자신이 관리하는 문을 열린 뒤 잠시 지나면 자동으로 닫는다.
+icon: ''
+permission: magic.learned.draft_closer
+discovery:
+  description: 자신이 설치한 문을 누적 30회 닫기.
+research: 마지막으로 방을 나가는 사람이 문을 닫는다는 약속을 바람에게도 알려 주었다.
+cast:
+  command: ''
+  cooldown-seconds: 5
+  mana-cost: 10
+order: 211

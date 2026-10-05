@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "vacuum_cleave"
+name: "윈드 커터"
+category: "wind"
+description: "관통하는 바람의 칼날로 적을 공격하고 마법 사슬을 절단합니다.\n\n바람의 기초를 지나 중급 수업에 이르면, 공기를 칼날처럼 다루는 법을 배운다."
+icon: "magiccodex:textures/spells/advanced/vacuum_cleave.png"
+permission: "magic.learned.vacuum_cleave"
+discovery:
+  description: "바람 마법 중급 수업을 통해 습득"
+research: "압축된 바람을 칼날의 형태로 쏘아 보내면 공격력이 극대화 된다."
+cast:
+  command: "마법 윈드커터"
+  cooldown-seconds: 7
+  mana-cost: 30
+order: 120

@@ -1,0 +1,36 @@
+# Same file on school / wild / dungeon. IDs stay stable; display names may change.
+# initial: true grants on first creation only; revoking it does not re-grant on login.
+titles:
+  prefix_starlight:
+    side: prefix
+    name: 별빛을 발견한
+    color: '#96E4EC'
+  prefix_bond:
+    side: prefix
+    name: 작은 인연을 맺은
+    color: '#96E4EC'
+  prefix_forest:
+    side: prefix
+    name: 숲을 거니는
+    color: '#96E4EC'
+  prefix_miracle:
+    side: prefix
+    name: 기적을 이루는
+    color: '#96E4EC'
+  suffix_researcher:
+    side: suffix
+    name: 연구가
+    color: '#DEC58E'
+  suffix_student:
+    side: suffix
+    name: 학생
+    color: '#DEC58E'
+    initial: true
+  suffix_tamer:
+    side: suffix
+    name: 교화사
+    color: '#DEC58E'
+  suffix_explorer:
+    side: suffix
+    name: 탐험가
+    color: '#DEC58E'

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "mana_conduit"
+name: "마력 전선"
+category: "light"
+description: "5초 동안 가까운 동료 한 명에게 매초 자신의 마나 20을 전달합니다. 서로 10블록 이상 떨어지면 끊깁니다.\n\n위로의 빛을 거듭 나누어 본 마력은 치료뿐 아니라 힘 자체를 건네는 길도 찾는다."
+icon: "magiccodex:textures/spells/expansion_2/mana_conduit.png"
+permission: "magic.learned.mana_conduit"
+discovery:
+  description: "위로의 빛을 동료에게 누적 20회 사용하기."
+research: "서로를 믿는 두 마법사 사이에는 보이지 않는 길이 놓인다."
+cast:
+  command: "마법 마력전선"
+  cooldown-seconds: 10
+  mana-cost: 10
+order: 1580

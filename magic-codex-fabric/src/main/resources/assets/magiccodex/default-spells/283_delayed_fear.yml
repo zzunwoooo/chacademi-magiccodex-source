@@ -1,0 +1,14 @@
+id: delayed_fear
+name: 뒤늦은 공포
+category: dark
+description: 표식이 끝날 때 자신을 바라보던 적을 짧게 굳힌다.
+icon: ''
+permission: magic.learned.delayed_fear
+discovery:
+  description: 밤에 종을 울린 뒤 몬스터를 누적 10마리 처치하기.
+research: 한순간의 놀람을 바로 꺼내지 않고 뒤늦은 기억으로 돌려준다.
+cast:
+  command: ''
+  cooldown-seconds: 22
+  mana-cost: 65
+order: 283

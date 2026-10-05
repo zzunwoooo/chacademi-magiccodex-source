@@ -1,0 +1,17 @@
+"Id": "ca_skunk_shiny"
+"MythicMob": "CA_Pet_skunk_shiny"
+"Permission": "chacademia.pet.ca_skunk_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e줄무늬 스컹크"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "수풀에 숨어 지내며 낯선 발소리에 경계하는 동물."
+    - "서식지: 관목 초원 / 숲 우거진 고지"
+    - "1성"

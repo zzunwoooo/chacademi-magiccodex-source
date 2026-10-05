@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "dawn_promise"
+name: "새벽의 약속"
+category: "light"
+description: "동료가 표식이 끝날 때까지 피해를 받지 않으면 회복한다.\n\n위로의 빛을 여러 번 건넨 마음이 다음 상처 없이 지나갈 짧은 시간을 약속한다."
+icon: "magiccodex:textures/spells/expansion_3/dawn_promise.png"
+permission: "magic.learned.dawn_promise"
+discovery:
+  description: "동료에게 위로의 빛을 누적 20회 사용하기."
+research: "아무 일도 일어나지 않는 시간이 누군가에게는 가장 큰 회복이다."
+cast:
+  command: "마법 새벽의약속"
+  cooldown-seconds: 30
+  mana-cost: 75
+order: 2750

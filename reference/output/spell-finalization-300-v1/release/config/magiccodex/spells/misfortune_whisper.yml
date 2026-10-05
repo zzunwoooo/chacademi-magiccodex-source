@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "misfortune_whisper"
+name: "불운의 속삭임"
+category: "dark"
+description: "적 하나의 근접 공격력을 8초 동안 낮춥니다.\n\n나약함에 걸린 채 몬스터를 쓰러뜨려 보면 힘이 빠진 상대의 빈틈을 이해하게 된다."
+icon: "magiccodex:textures/spells/expansion/misfortune_whisper.png"
+permission: "magic.learned.misfortune_whisper"
+discovery:
+  description: "나약함 효과에 걸린 상태로 몬스터를 5마리 처치하기."
+research: "힘이 빠지는 기분을 알기에 상대에게도 정확히 전할 수 있다."
+cast:
+  command: "마법 불운의속삭임"
+  cooldown-seconds: 12
+  mana-cost: 35
+order: 1770

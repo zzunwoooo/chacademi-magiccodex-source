@@ -1,0 +1,17 @@
+"Id": "ca_tusker_forest"
+"MythicMob": "CA_Pet_tusker_forest"
+"Permission": "chacademia.pet.ca_tusker_forest"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f숲 터스커"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "숲의 길목을 따라 이동하는 큰 엄니의 생물. 숲 계열의 변이 개체."
+    - "서식지: 숲 우거진 고지 / 운무 숲"
+    - "2성"

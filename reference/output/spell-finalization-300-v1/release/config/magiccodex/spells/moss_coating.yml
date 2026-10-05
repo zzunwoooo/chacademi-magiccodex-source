@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "moss_coating"
+name: "이끼 입히기"
+category: "earth"
+description: "덩굴을 소비해 석재 벽돌 최대 4개에 이끼를 입힙니다.\n\n덩굴과 석재 벽돌을 챙긴 채 비를 맞으면 젖은 돌에 초록이 머무는 까닭을 알게 된다."
+icon: "magiccodex:textures/spells/expansion_2/moss_coating.png"
+permission: "magic.learned.moss_coating"
+discovery:
+  description: "덩굴과 석재 벽돌을 함께 소지한 채 비 맞기."
+research: "정원은 새로 만들었는데 너무 새것처럼 보인다는 부탁에서 시작되었다."
+cast:
+  command: "마법 이끼입히기"
+  cooldown-seconds: 5
+  mana-cost: 12
+order: 1150

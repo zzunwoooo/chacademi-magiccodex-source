@@ -1,0 +1,17 @@
+"Id": "ca_ogre_hammer_shiny"
+"MythicMob": "CA_Pet_ogre_hammer_shiny"
+"Permission": "chacademia.pet.ca_ogre_hammer_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e산울림 오우거"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "바위 협곡의 통로를 차지한 강력한 오우거."
+    - "서식지: 바위 산맥 / 화강암 절벽"
+    - "3성"

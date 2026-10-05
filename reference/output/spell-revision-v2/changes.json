@@ -1,0 +1,338 @@
+[
+  {
+    "id": "crimson_heart",
+    "name": "홍련의 심장",
+    "field": "condition",
+    "before": "체력이 하트 1칸 이하인 상태에서 발화로 몬스터 처치하기.",
+    "after": "체력이 하트 1칸 이하인 상태에서 화염 마법으로 몬스터 처치하기.",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "blue_bonfire",
+    "name": "푸른 화톳불",
+    "field": "description",
+    "before": "60초간 유지되는 푸른 화톳불을 설치합니다. 6블록 안의 자신과 동료가 사용하는 마나를 10% 줄입니다. 유지 중 10초마다 숯 하나를 소모합니다.",
+    "after": "60초간 유지되는 푸른 화톳불을 설치합니다. 10블록 안에 있을 경우 마나 회복량이 10% 증가합니다.",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "crimson_breath",
+    "name": "드래곤 브레스",
+    "field": "condition",
+    "before": "파이어 볼로 블레이즈를 누적 30마리 처치하기.",
+    "after": "최대 마나량 2500 달성",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "crimson_breath",
+    "name": "드래곤 브레스",
+    "field": "description",
+    "before": "3초 동안 정면으로 화염 숨결을 내뿜습니다. 같은 적을 계속 맞히면 피해가 증가합니다.",
+    "after": "전설속의 드래곤의 숨결을 현현한다.",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "crimson_breath",
+    "name": "드래곤 브레스",
+    "field": "research",
+    "before": "용의 숨결을 동경하던 학자는 끝내 자신의 목도리를 태워 버렸다.",
+    "after": "드래곤의 브레스는 그 무엇보다도 뜨거운 온도를 지니고 있다.\n드래곤의 마나 코어 없이는 시도조차 불가능한 고위급 마법이다.",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "crimson_breath",
+    "name": "드래곤 브레스",
+    "field": "name",
+    "before": "홍염의 숨",
+    "after": "드래곤 브레스",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "crimson_breath",
+    "name": "드래곤 브레스",
+    "field": "mana",
+    "before": 350,
+    "after": 2500,
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "crimson_breath",
+    "name": "드래곤 브레스",
+    "field": "cooldown",
+    "before": 60,
+    "after": 1000,
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "crimson_breath",
+    "name": "드래곤 브레스",
+    "field": "command",
+    "before": "마법 홍염의숨",
+    "after": "마법 드래곤브레스",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "water_breath",
+    "name": "물결 숨결",
+    "field": "condition",
+    "before": "익사 피해를 받은 뒤 물 밖으로 나와 살아남기.",
+    "after": "물에 잠긴 상태에서 죽지 않고 30초 버티기",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "ice_bridge",
+    "name": "얼음 다리",
+    "field": "condition",
+    "before": "차가운 바다에서 보트 없이 누적 300블록 헤엄치기.",
+    "after": "차가운 바다에 방문하기",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "water_mirror",
+    "name": "수면의 거울",
+    "field": "description",
+    "before": "바라보는 관측 수반과 연결된 다른 수반 주변의 모습을 10초 동안 확인합니다.",
+    "after": "물 속의 숨겨진 통로를 발견해낸다.",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "spring_unseal",
+    "name": "수맥 개방",
+    "field": "description",
+    "before": "바라보는 수원 장치에 60초간 물을 공급합니다. 연결된 수로와 수차가 작동합니다.",
+    "after": "바라보는 곳에 물을 설치한다.",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "spring_unseal",
+    "name": "수맥 개방",
+    "field": "mana",
+    "before": 100,
+    "after": 30,
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "water_elemental",
+    "name": "운디네",
+    "field": "condition",
+    "before": "물속에서 물방울 탄환으로 드라운드 50마리 처치하기.",
+    "after": "'정령계약서 - 수' 도서 읽기",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "water_elemental",
+    "name": "운디네",
+    "field": "research",
+    "before": "물은 흩어지지만 약속은 흩어지지 않는다.",
+    "after": "자유로운 물의 정령 운디네와 계약을 맺는다.\n물은 흩어지지만 약속은 흩어지지 않는다.",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "water_elemental",
+    "name": "운디네",
+    "field": "name",
+    "before": "물의 정령 소환",
+    "after": "운디네",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "water_elemental",
+    "name": "운디네",
+    "field": "command",
+    "before": "마법 물의정령소환",
+    "after": "마법 운디네",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "cauldron_fill",
+    "name": "가마솥 채우기",
+    "field": "condition",
+    "before": "빈 가마솥을 물 양동이로 5번 채우기.",
+    "after": "도서관에서 '화학 기초' 책 읽기",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "cauldron_fill",
+    "name": "가마솥 채우기",
+    "field": "research",
+    "before": "기숙사의 물 당번이 처음으로 웃으며 출근한 날이었다.",
+    "after": "물이 없는 곳에서 물을 만들어 내기 위해서는 마법 수련 뿐만 아니라 화학 공부도 동반 되어야 한다.",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "frost_rupture",
+    "name": "서리 파열",
+    "field": "research",
+    "before": "부드러운 눈송이 아래에 날카로운 겨울이 숨어 있다.",
+    "after": "눈싸움 중 눈덩이에 돌을 넣어 던지는 행위는 명백한 불법이다.",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "dampen_powder",
+    "name": "화약 적시기",
+    "field": "description",
+    "before": "가까이 있는 점화된 TNT를 최대 3개까지 소멸시킵니다. TNT 아이템은 반환하지 않습니다.",
+    "after": "가까이 있는 점화된 TNT를 최대 3개까지 소멸시킵니다.",
+    "applied_to_staged_yaml": false
+  },
+  {
+    "id": "life_distribution",
+    "name": "생명의 분배",
+    "field": "description",
+    "before": "자신과 6블록 안에서 웅크린 동료 최대 3명의 현재 체력을 합쳐, 각자의 최대 체력에 비례해 나눕니다. 전체 체력은 늘어나지 않습니다.",
+    "after": "자신과 6블록 안에서 동료 최대 3명의 현재 체력을 합쳐, 각자의 최대 체력에 비례해 나눕니다. 전체 체력은 늘어나지 않습니다.",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "moist_farmland",
+    "name": "촉촉한 밭",
+    "field": "description",
+    "before": "주변의 마른 경작지 최대 9칸을 적십니다. 작물 성장 단계는 바꾸지 않습니다.",
+    "after": "주변의 마른 경작지 최대 9칸을 적십니다.",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "handful_of_snow",
+    "name": "눈 한 줌",
+    "field": "condition",
+    "before": "눈덩이로 눈 골렘을 10번 맞히기.",
+    "after": "눈을 제작대에서 눈덩이로 4회 분해",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "dew_gathering",
+    "name": "이슬 모으기",
+    "field": "condition",
+    "before": "비가 오는 동안 빈 병으로 물을 10번 뜨기.",
+    "after": "빈 병으로 물을 10번 뜨기.",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "quiet_mooring",
+    "name": "노아의 방주",
+    "field": "condition",
+    "before": "보트를 탄 채 이동하지 않고 60초 머무르기.",
+    "after": "보트 설치 5회.",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "quiet_mooring",
+    "name": "노아의 방주",
+    "field": "description",
+    "before": "자신이 타고 있는 보트를 멈추고, 내린 뒤에도 15초간 제자리에 고정합니다.",
+    "after": "현재 위치에 보트를 설치한다. 물이 아니라면 실패한다.",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "quiet_mooring",
+    "name": "노아의 방주",
+    "field": "name",
+    "before": "잔잔한 정박",
+    "after": "노아의 방주",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "quiet_mooring",
+    "name": "노아의 방주",
+    "field": "mana",
+    "before": 10,
+    "after": 100,
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "wet_footprints",
+    "name": "젖은 발자국",
+    "field": "condition",
+    "before": "비 오는 날 같은 몬스터를 30초간 10블록 안에서 따라가기.",
+    "after": "비가 오는 날 몬스터를 10회 처치",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "pressure_weight",
+    "name": "수압추",
+    "field": "condition",
+    "before": "물속에서 철 갑옷을 모두 입고 누적 60초 버티기.",
+    "after": "물에 잠긴 상태에서 누적 60초 버티기",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "cold_storage",
+    "name": "냉장 손길",
+    "field": "condition",
+    "before": "눈이 내리는 곳에 음식 아이템을 떨어뜨린 뒤 60초 후 다시 줍기.",
+    "after": "영하 10도 이하의 온도에 노출되기",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "cold_storage",
+    "name": "냉장 손길",
+    "field": "description",
+    "before": "바닥에 놓인 아이템 몇 개의 자연 소멸 시간을 2분간 멈춥니다. 다른 플레이어는 주울 수 있습니다.",
+    "after": "보유한 아이템을 열기로부터 지켜줍니다.",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "current_sorting",
+    "name": "사금 추출",
+    "field": "name",
+    "before": "물살 분류",
+    "after": "사금 추출",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "current_sorting",
+    "name": "사금 추출",
+    "field": "condition",
+    "before": "흐르는 물 위에 떨어진 서로 다른 아이템 5종을 줍기.",
+    "after": "물 속에 잠겨진 금 광석 캐기",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "current_sorting",
+    "name": "사금 추출",
+    "field": "mana",
+    "before": 35,
+    "after": 350,
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "current_sorting",
+    "name": "사금 추출",
+    "field": "cooldown",
+    "before": 10,
+    "after": 1200,
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "current_sorting",
+    "name": "사금 추출",
+    "field": "command",
+    "before": "마법 물살분류",
+    "after": "마법 사금추출",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "current_sorting",
+    "name": "사금 추출",
+    "field": "description",
+    "before": "지정한 종류의 바닥 아이템만 골라 가까운 한 지점으로 모읍니다. 다른 물건은 그대로 둡니다.",
+    "after": "물 속에서 사금을 찾아냅니다. 물이 없다면 실패합니다.",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "current_sorting",
+    "name": "사금 추출",
+    "field": "research",
+    "before": "홍수 뒤 뒤섞인 물건들을 정리하던 상인의 작은 발명.",
+    "after": "물 속에 숨겨진 금을 찾아내어 마법 연구비로 사용하도록 하자.",
+    "applied_to_staged_yaml": true
+  },
+  {
+    "id": "potion_mist",
+    "name": "약액 분무",
+    "field": "description",
+    "before": "소지한 일반 물약 하나를 소비해 가까운 동료들에게 짧은 지속시간으로 분무합니다.",
+    "after": "손에 든 물약 하나를 소비해 가까운 동료들에게 10초간 분무합니다.",
+    "applied_to_staged_yaml": true
+  }
+]

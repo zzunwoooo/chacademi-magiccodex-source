@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "bubble_brand"
+name: "수포 낙인"
+category: "water"
+description: "적에게 물방울 세 개를 붙여 후속 공격마다 하나씩 터뜨린다.\n\n물방울 탄환을 거듭 맞혀 본 손이 바로 터지지 않을 물방울도 붙잡아 둔다."
+icon: "magiccodex:textures/spells/expansion_3/bubble_brand.png"
+permission: "magic.learned.bubble_brand"
+discovery:
+  description: "물방울 탄환을 몬스터에게 누적 30회 명중하기."
+research: "적에게 남은 작은 거품마다 다음 타격을 기다리는 힘이 담겨 있다."
+cast:
+  command: "마법 수포낙인"
+  cooldown-seconds: 12
+  mana-cost: 40
+order: 2400

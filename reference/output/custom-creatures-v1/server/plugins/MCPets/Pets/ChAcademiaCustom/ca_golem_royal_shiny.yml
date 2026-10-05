@@ -1,0 +1,17 @@
+"Id": "ca_golem_royal_shiny"
+"MythicMob": "CA_Pet_golem_royal_shiny"
+"Permission": "chacademia.pet.ca_golem_royal_shiny"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e왕실 고대 골렘"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "특정 유적의 마력을 지키는 거대한 수호체. 왕실 행사 중에만 만날 수 있는 개체."
+    - "서식지: 벚꽃 계곡"
+    - "3성"

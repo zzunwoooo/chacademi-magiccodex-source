@@ -1,0 +1,14 @@
+id: drain_pocket
+name: 물 빼기
+category: water
+description: 작은 구역의 물을 제거해 수중 건축을 돕는다.
+icon: ''
+permission: magic.learned.drain_pocket
+discovery:
+  description: 스펀지로 물을 누적 10회 흡수하기.
+research: 수중 건축에서 가장 필요한 것은 더 많은 물이 아니라 잠깐의 빈자리다.
+cast:
+  command: ''
+  cooldown-seconds: 20
+  mana-cost: 45
+order: 232

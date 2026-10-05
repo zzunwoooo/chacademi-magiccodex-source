@@ -1,0 +1,17 @@
+"Id": "ca_lil_bird"
+"MythicMob": "CA_Pet_lil_bird"
+"Permission": "chacademia.pet.ca_lil_bird"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f꽃숲 작은새"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "꽃피는 계곡의 가지 위에 모이는 작은 새."
+    - "서식지: 꽃피는 계곡 / 벚꽃 숲"
+    - "1성"

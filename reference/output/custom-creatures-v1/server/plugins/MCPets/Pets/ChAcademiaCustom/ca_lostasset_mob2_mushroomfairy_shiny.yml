@@ -1,0 +1,17 @@
+"Id": "ca_lostasset_mob2_mushroomfairy_shiny"
+"MythicMob": "CA_Pet_lostasset_mob2_mushroomfairy_shiny"
+"Permission": "chacademia.pet.ca_lostasset_mob2_mushroomfairy_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e포자 요정"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "습한 숲과 버섯 동굴 사이에서 자라난 요정."
+    - "서식지: 균류 동굴 / 달빛 숲"
+    - "2성"

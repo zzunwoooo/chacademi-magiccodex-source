@@ -1,0 +1,14 @@
+id: ghost_tool
+name: 유령 도구
+category: dark
+description: 바라보는 먼 블록을 손에 든 도구로 한 번 캡니다. 채굴 시간과 도구 등급, 내구도 규칙은 유지합니다.
+icon: magiccodex:textures/spells/expansion_2/ghost_tool.png
+permission: magic.learned.ghost_tool
+discovery:
+  description: 곡괭이·도끼·삽·괭이로 각각 블록을 64개 부수기.
+research: 손은 짧지만 일해야 할 곳은 언제나 멀리 있었다.
+cast:
+  command: ''
+  cooldown-seconds: 10
+  mana-cost: 45
+order: 194

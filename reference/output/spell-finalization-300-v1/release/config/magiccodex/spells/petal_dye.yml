@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "petal_dye"
+name: "꽃잎 염색"
+category: "earth"
+description: "꽃을 소비해 가죽 장비를 해당 색으로 물들인다.\n\n여러 색의 꽃을 모은 눈은 꽃잎에 숨은 염색의 결을 읽는다."
+icon: "magiccodex:textures/spells/expansion_3/petal_dye.png"
+permission: "magic.learned.petal_dye"
+discovery:
+  description: "서로 다른 5가지 꽃을 획득하기."
+research: "꽃을 색으로 바꾸는 일에도 재료가 필요하다. 정원에는 다음 꽃을 남겨 두자."
+cast:
+  command: "마법 꽃잎염색"
+  cooldown-seconds: 5
+  mana-cost: 10
+order: 2460

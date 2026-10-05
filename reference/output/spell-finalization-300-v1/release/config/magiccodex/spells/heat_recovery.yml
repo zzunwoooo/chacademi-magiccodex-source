@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "heat_recovery"
+name: "열량 보존"
+category: "fire"
+description: "10칸 이내의 불타는 적 혹은 불타는 블럭에서 불을 추출하여\n자신을 회복한다.\n\n몸의 불을 거듭 끄다 보면 사라지는 열도 붙잡아 둘 수 없을지 궁금해진다."
+icon: "magiccodex:textures/spells/expansion_2/heat_recovery.png"
+permission: "magic.learned.heat_recovery"
+discovery:
+  description: "몸에 붙은 불을 누적 10회 끄기."
+research: "에너지는 갑자기 생겨나거나 사라지지 않는다."
+cast:
+  command: "마법 열량보존"
+  cooldown-seconds: 60
+  mana-cost: 500
+order: 590

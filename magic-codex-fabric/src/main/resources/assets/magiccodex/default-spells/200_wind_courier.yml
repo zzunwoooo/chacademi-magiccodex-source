@@ -1,0 +1,14 @@
+id: wind_courier
+name: 바람 우편
+category: wind
+description: 손에 든 아이템 한 개를 시야 안의 동료에게 날려 보낸다.
+icon: ''
+permission: magic.learned.wind_courier
+discovery:
+  description: 자신이 떨어뜨린 아이템을 친구가 누적 20개 줍기.
+research: 멀리 있는 동료에게 작은 물건을 보내는 우편이다. 받는 사람이 알아볼 수 있게 천천히 보내자.
+cast:
+  command: ''
+  cooldown-seconds: 5
+  mana-cost: 12
+order: 200

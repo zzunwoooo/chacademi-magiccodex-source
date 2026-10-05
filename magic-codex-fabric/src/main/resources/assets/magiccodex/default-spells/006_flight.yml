@@ -1,0 +1,14 @@
+id: flight
+name: 비행
+category: wind
+description: 빗자루에 탑승하여 자유롭게 하늘을 비행합니다. 빗자루가 없다면 10초간 비행할 수 있습니다.
+icon: magiccodex:textures/spells/intermediate/flight.png
+permission: magic.learned.flight
+discovery:
+  description: 비행 실습 참가하기.
+research: 몸을 바람에 맡기는 순간, 익숙한 균형이 하늘을 향한 날개가 된다.
+cast:
+  command: 마법 flight
+  cooldown-seconds: 30
+  mana-cost: 80
+order: 6

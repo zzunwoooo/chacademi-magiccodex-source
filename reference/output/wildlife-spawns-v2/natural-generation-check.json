@@ -1,0 +1,668 @@
+{
+  "testSeed": 93231001,
+  "savedTestChunks": 7786,
+  "starts": [
+    {
+      "id": "chacademia:wetland_small",
+      "chunk": [
+        -94,
+        -127
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_03_r08_c03"
+      ]
+    },
+    {
+      "id": "chacademia:wetland_small",
+      "chunk": [
+        -71,
+        -125
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_03_r08_c03"
+      ]
+    },
+    {
+      "id": "chacademia:wetland_medium",
+      "chunk": [
+        -79,
+        -123
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_03_r07_c04"
+      ]
+    },
+    {
+      "id": "chacademia:wetland_medium",
+      "chunk": [
+        -93,
+        -122
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_11_r02_c03"
+      ]
+    },
+    {
+      "id": "chacademia:wetland_small",
+      "chunk": [
+        -69,
+        -120
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_09_r05_c02"
+      ]
+    },
+    {
+      "id": "chacademia:wetland_small",
+      "chunk": [
+        -77,
+        -118
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_09_r04_c01"
+      ]
+    },
+    {
+      "id": "chacademia:forest_guardian",
+      "chunk": [
+        -87,
+        -115
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_19_r01_c01"
+      ]
+    },
+    {
+      "id": "chacademia:wetland_medium",
+      "chunk": [
+        -93,
+        -111
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_03_r07_c04"
+      ]
+    },
+    {
+      "id": "chacademia:wetland_small",
+      "chunk": [
+        -103,
+        -112
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_09_r05_c02"
+      ]
+    },
+    {
+      "id": "chacademia:wetland_small",
+      "chunk": [
+        -103,
+        -101
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_09_r05_c02"
+      ]
+    },
+    {
+      "id": "chacademia:woodland_small",
+      "chunk": [
+        24,
+        25
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_09_r25_c01"
+      ]
+    },
+    {
+      "id": "chacademia:mushroom_guardian",
+      "chunk": [
+        28,
+        28
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_20_r02_c02"
+      ]
+    },
+    {
+      "id": "chacademia:wetland_small",
+      "chunk": [
+        25,
+        43
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_09_r05_c02"
+      ]
+    },
+    {
+      "id": "chacademia:wetland_small",
+      "chunk": [
+        32,
+        25
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_09_r05_c02"
+      ]
+    },
+    {
+      "id": "chacademia:wetland_small",
+      "chunk": [
+        32,
+        32
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_09_r04_c01"
+      ]
+    },
+    {
+      "id": "chacademia:enchanted_medium",
+      "chunk": [
+        144,
+        64
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_14_r01_c03"
+      ]
+    },
+    {
+      "id": "chacademia:woodland_small",
+      "chunk": [
+        153,
+        67
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_10_r14_c01"
+      ]
+    },
+    {
+      "id": "chacademia:enchanted_small",
+      "chunk": [
+        138,
+        74
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_18_r02_c04"
+      ]
+    },
+    {
+      "id": "chacademia:ancient_ruins",
+      "chunk": [
+        153,
+        74
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_17_r02_c04"
+      ]
+    },
+    {
+      "id": "chacademia:enchanted_small",
+      "chunk": [
+        154,
+        74
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_15_r02_c06"
+      ]
+    },
+    {
+      "id": "chacademia:enchanted_small",
+      "chunk": [
+        146,
+        75
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_18_r02_c16"
+      ]
+    },
+    {
+      "id": "chacademia:enchanted_medium",
+      "chunk": [
+        151,
+        81
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_15_r01_c05"
+      ]
+    },
+    {
+      "id": "chacademia:enchanted_small",
+      "chunk": [
+        138,
+        83
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_15_r02_c03"
+      ]
+    },
+    {
+      "id": "chacademia:enchanted_small",
+      "chunk": [
+        138,
+        89
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_15_r02_c02"
+      ]
+    },
+    {
+      "id": "chacademia:enchanted_small",
+      "chunk": [
+        145,
+        91
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_18_r01_c03"
+      ]
+    },
+    {
+      "id": "chacademia:woodland_small",
+      "chunk": [
+        162,
+        57
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_03_r02_c01"
+      ]
+    },
+    {
+      "id": "chacademia:woodland_small",
+      "chunk": [
+        162,
+        64
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_08_r08_c03"
+      ]
+    },
+    {
+      "id": "chacademia:woodland_medium",
+      "chunk": [
+        161,
+        70
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_03_r02_c04"
+      ]
+    },
+    {
+      "id": "chacademia:woodland_small",
+      "chunk": [
+        170,
+        74
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_10_r03_c01"
+      ]
+    },
+    {
+      "id": "chacademia:woodland_small",
+      "chunk": [
+        163,
+        80
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_09_r27_c01"
+      ]
+    },
+    {
+      "id": "chacademia:woodland_medium",
+      "chunk": [
+        209,
+        37
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_12_r09_c02"
+      ]
+    },
+    {
+      "id": "chacademia:enchanted_small",
+      "chunk": [
+        216,
+        43
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_18_r02_c10"
+      ]
+    },
+    {
+      "id": "chacademia:enchanted_medium",
+      "chunk": [
+        208,
+        53
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_13_r02_c06"
+      ]
+    },
+    {
+      "id": "chacademia:colossal_guardian",
+      "chunk": [
+        221,
+        53
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_21_r06_c05"
+      ]
+    },
+    {
+      "id": "chacademia:enchanted_small",
+      "chunk": [
+        209,
+        58
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_18_r02_c11"
+      ]
+    },
+    {
+      "id": "chacademia:enchanted_small",
+      "chunk": [
+        218,
+        59
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_18_r02_c05"
+      ]
+    },
+    {
+      "id": "chacademia:woodland_medium",
+      "chunk": [
+        213,
+        64
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_10_r26_c02"
+      ]
+    },
+    {
+      "id": "chacademia:woodland_small",
+      "chunk": [
+        219,
+        66
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_09_r27_c01"
+      ]
+    },
+    {
+      "id": "chacademia:woodland_small",
+      "chunk": [
+        216,
+        97
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_09_r26_c01"
+      ]
+    },
+    {
+      "id": "chacademia:woodland_small",
+      "chunk": [
+        209,
+        107
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_10_r05_c02"
+      ]
+    },
+    {
+      "id": "chacademia:ruined_gate",
+      "chunk": [
+        219,
+        107
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_16_r10_c01"
+      ]
+    },
+    {
+      "id": "chacademia:woodland_medium",
+      "chunk": [
+        212,
+        114
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_11_r11_c03"
+      ]
+    },
+    {
+      "id": "chacademia:woodland_small",
+      "chunk": [
+        202,
+        123
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_10_r21_c02"
+      ]
+    },
+    {
+      "id": "chacademia:woodland_small",
+      "chunk": [
+        232,
+        43
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_09_r25_c01"
+      ]
+    },
+    {
+      "id": "chacademia:woodland_small",
+      "chunk": [
+        232,
+        49
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_09_r24_c01"
+      ]
+    },
+    {
+      "id": "chacademia:enchanted_medium",
+      "chunk": [
+        227,
+        53
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_13_r02_c07"
+      ]
+    },
+    {
+      "id": "chacademia:woodland_small",
+      "chunk": [
+        233,
+        57
+      ],
+      "pieces": 1,
+      "templates": [
+        "chacademia:natural/natural_09_r30_c02"
+      ]
+    }
+  ],
+  "placedBlockChecks": [
+    {
+      "structure": "chacademia:ruined_gate",
+      "template": "chacademia:natural/natural_16_r10_c01",
+      "rotation": "CLOCKWISE_90",
+      "checkedBlocks": 1108,
+      "matchingMaterialBlocks": 1108,
+      "examples": []
+    },
+    {
+      "structure": "chacademia:ancient_ruins",
+      "template": "chacademia:natural/natural_17_r02_c04",
+      "rotation": "COUNTERCLOCKWISE_90",
+      "checkedBlocks": 4513,
+      "matchingMaterialBlocks": 4510,
+      "examples": [
+        {
+          "at": [
+            2467,
+            188,
+            1179
+          ],
+          "want": "minecraft:cobblestone",
+          "got": "minecraft:oak_planks"
+        },
+        {
+          "at": [
+            2468,
+            188,
+            1181
+          ],
+          "want": "minecraft:coal_ore",
+          "got": "minecraft:oak_planks"
+        },
+        {
+          "at": [
+            2474,
+            189,
+            1162
+          ],
+          "want": "minecraft:stone",
+          "got": "minecraft:coal_ore"
+        }
+      ]
+    },
+    {
+      "structure": "chacademia:forest_guardian",
+      "template": "chacademia:natural/natural_19_r01_c01",
+      "rotation": "COUNTERCLOCKWISE_90",
+      "checkedBlocks": 17336,
+      "matchingMaterialBlocks": 17333,
+      "examples": [
+        {
+          "at": [
+            -1372,
+            76,
+            -1881
+          ],
+          "want": "minecraft:jungle_wood",
+          "got": "minecraft:azure_bluet"
+        },
+        {
+          "at": [
+            -1371,
+            76,
+            -1881
+          ],
+          "want": "minecraft:coarse_dirt",
+          "got": "minecraft:azure_bluet"
+        },
+        {
+          "at": [
+            -1353,
+            88,
+            -1865
+          ],
+          "want": "minecraft:coarse_dirt",
+          "got": "minecraft:dirt"
+        }
+      ]
+    },
+    {
+      "structure": "chacademia:mushroom_guardian",
+      "template": "chacademia:natural/natural_20_r02_c02",
+      "rotation": "CLOCKWISE_90",
+      "checkedBlocks": 444,
+      "matchingMaterialBlocks": 444,
+      "examples": []
+    },
+    {
+      "structure": "chacademia:colossal_guardian",
+      "template": "chacademia:natural/natural_21_r06_c05",
+      "rotation": "COUNTERCLOCKWISE_90",
+      "checkedBlocks": 21802,
+      "matchingMaterialBlocks": 21797,
+      "examples": [
+        {
+          "at": [
+            3546,
+            85,
+            813
+          ],
+          "want": "minecraft:granite",
+          "got": "minecraft:dirt"
+        },
+        {
+          "at": [
+            3546,
+            86,
+            813
+          ],
+          "want": "minecraft:granite",
+          "got": "minecraft:dirt"
+        },
+        {
+          "at": [
+            3546,
+            87,
+            813
+          ],
+          "want": "minecraft:granite",
+          "got": "minecraft:dirt"
+        },
+        {
+          "at": [
+            3547,
+            87,
+            813
+          ],
+          "want": "minecraft:granite",
+          "got": "minecraft:dirt"
+        },
+        {
+          "at": [
+            3559,
+            90,
+            825
+          ],
+          "want": "minecraft:brown_terracotta",
+          "got": "minecraft:bamboo"
+        }
+      ]
+    }
+  ],
+  "note": "585개 등록/상태 검증은 별도 audit. 자연 생성 다섯 유형의 실제 블록 재질을 위치·회전 반영해 확인. 전체 외형의 지형 충돌 검수와는 다름."
+}

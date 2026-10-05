@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "mountain_back"
+name: "산맥의 등"
+category: "earth"
+description: "커다란 바위를 앞으로 굴립니다. 적을 밀며 여러 번 공격하고 벽에 부딪히면 부서집니다.\n\n작은 조약돌로 적을 거듭 쓰러뜨린 손이 더 큰 바위를 굴릴 힘을 익힌다."
+icon: "magiccodex:textures/spells/expansion_2/mountain_back.png"
+permission: "magic.learned.mountain_back"
+discovery:
+  description: "조약돌 던지기로 몬스터 누적 30마리 처치하기."
+research: "작은 돌로 시작한 연습이 이제 바위를 움직인다. 뒤에서 밀어 주던 동료는 먼저 비켜 서야 한다."
+cast:
+  command: "마법 산맥의등"
+  cooldown-seconds: 40
+  mana-cost: 220
+order: 1290

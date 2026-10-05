@@ -1,0 +1,22 @@
+# UTF-8 / 들여쓰기는 공백 2칸입니다.
+# description: 도감에 보이는 효과 설명입니다. 자유롭게 수정하세요.
+# discovery.description: 획득 조건의 표시 문구입니다. 자동 판정 로직이 아닙니다.
+# circle: 1~9 정수. 서클을 미정으로 두려면 해당 줄을 삭제하세요.
+# cast.command: 서버 스킬 연결 후 / 없이 입력하세요. 현재는 미연결입니다.
+# cast.mana-cost: 표시용 소모량. 서버 마나 차감은 별도로 구현해야 합니다.
+id: "seed_row"
+name: "씨앗 줄심기"
+category: "earth"
+circle: 2
+rank: "초급"
+description: "소지한 씨앗을 소비해 앞쪽 경작지 최대 5칸에 일렬로 심습니다."
+icon: "magiccodex:textures/spells/expansion/seed_row.png"
+permission: "magic.learned.seed_row"
+discovery:
+  description: "경작지에 씨앗을 50개 심기."
+research: ""
+cast:
+  command: ""
+  cooldown-seconds: 25
+  mana-cost: 60
+order: 3100

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "crimson_heart"
+name: "홍련의 심장"
+category: "fire"
+description: "자신의 현재 체력을 절반 소모해 주변에 강한 폭발을 일으킵니다. 소모한 체력에 따라 위력이 증가하며 지형은 파괴하지 않습니다.\n\n체력이 거의 남지 않은 순간에도 화염으로 적을 쓰러뜨렸다면, 마지막 불씨가 심장에 남는다."
+icon: "magiccodex:textures/spells/expansion/crimson_heart.png"
+permission: "magic.learned.crimson_heart"
+discovery:
+  description: "체력이 하트 1칸 이하인 상태에서 화염 마법으로 몬스터 처치하기."
+research: "심장의 마지막 불씨까지 꺼내 쓰겠다는 각오가 필요하다."
+cast:
+  command: "마법 홍련의심장"
+  cooldown-seconds: 180
+  mana-cost: 400
+order: 480

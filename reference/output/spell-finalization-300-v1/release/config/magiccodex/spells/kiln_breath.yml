@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "kiln_breath"
+name: "가마 숨결"
+category: "fire"
+description: "대장간의 화로 하나가 20초간 빠르게 가공하도록 합니다. 재료와 연료는 정상적으로 소비합니다.\n\n대장간에서 몇 번의 제작을 마친 뒤에는 재료마다 필요한 열이 다르게 느껴진다."
+icon: "magiccodex:textures/spells/expansion_2/kiln_breath.png"
+permission: "magic.learned.kiln_breath"
+discovery:
+  description: "대장간에서 아이템 제작 3회"
+research: "화염 마법은 대장간 일과 연관 된 것이 많다.\n불꽃은 다양한 쓰임이 있기 때문이다."
+cast:
+  command: "마법 가마숨결"
+  cooldown-seconds: 60
+  mana-cost: 50
+order: 550

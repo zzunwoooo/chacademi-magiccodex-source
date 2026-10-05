@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "hearth_touch"
+name: "손끝의 화로"
+category: "fire"
+description: "손에 든 아이템을 구워낸다.\n구울 수 없는 아이템일 경우 실패한다.\n\n직접 구운 음식을 화로에서 거듭 꺼내다 보면 손끝에도 온기가 남는다."
+icon: "magiccodex:textures/spells/novice/hearth_touch.png"
+permission: "magic.learned.hearth_touch"
+discovery:
+  description: "화로에서 직접 구운 음식을 누적 16개 꺼내기."
+research: "커다란 불길보다 한 끼를 데우는 작은 온기가 필요할 때도 있습니다."
+cast:
+  command: "마법 손끝의화로"
+  cooldown-seconds: 5
+  mana-cost: 20
+order: 340

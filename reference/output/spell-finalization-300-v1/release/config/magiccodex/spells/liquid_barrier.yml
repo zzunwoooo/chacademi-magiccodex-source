@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "liquid_barrier"
+name: "액체 차단"
+category: "water"
+description: "작은 경계 안으로 물과 용암이 새로 흘러드는 것을 15초간 막습니다. 이미 있는 액체는 남깁니다.\n\n밀려드는 물과 용암을 직접 막아 본 손은 보이지 않는 경계의 위치도 알 수 있다."
+icon: "magiccodex:textures/spells/expansion_2/liquid_barrier.png"
+permission: "magic.learned.liquid_barrier"
+discovery:
+  description: "흐르는 물과 용암을 블록으로 각각 5회 막기."
+research: "잔에 물을 가득 채우고도 한 방울 흘리지 않는 실험에서 시작되었다."
+cast:
+  command: "마법 액체차단"
+  cooldown-seconds: 25
+  mana-cost: 100
+order: 930

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "eclipse_eye"
+name: "월식의 눈"
+category: "dark"
+description: "적에게 걸린 지정된 강화 효과 하나를 빼앗아 짧은 시간 자신에게 적용합니다.\n\n투명한 몸으로 마녀를 거듭 상대해 보면 숨은 강화의 흔적도 눈에 들어온다."
+icon: "magiccodex:textures/spells/expansion_2/eclipse_eye.png"
+permission: "magic.learned.eclipse_eye"
+discovery:
+  description: "투명화 물약을 마신 상태에서 마녀를 5마리 처치하기."
+research: "빛이 가려진 짧은 순간, 남의 힘이 제 것처럼 손에 잡혔다."
+cast:
+  command: "마법 월식의눈"
+  cooldown-seconds: 35
+  mana-cost: 160
+order: 1970

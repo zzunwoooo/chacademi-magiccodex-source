@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "flame_seam"
+name: "화염 봉합선"
+category: "fire"
+description: "지면의 불타는 선 양쪽이 가운데로 닫히며 적을 공격한다.\n\n땅에 불을 거듭 붙여 본 손은 떨어진 두 불길을 한 선으로 맞물리게 한다."
+icon: "magiccodex:textures/spells/expansion_3/flame_seam.png"
+permission: "magic.learned.flame_seam"
+discovery:
+  description: "블록 위의 불을 부싯돌과 부시로 누적 20회 붙이기."
+research: "타는 선의 양쪽이 닫히면 가운데에는 빠져나갈 틈이 적어진다."
+cast:
+  command: "마법 화염봉합선"
+  cooldown-seconds: 25
+  mana-cost: 85
+order: 2280

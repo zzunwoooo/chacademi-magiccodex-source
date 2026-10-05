@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "glaze_coating"
+name: "화염의 정복자"
+category: "fire"
+description: "마법을 습득한 경우 받는 모든 화염 도트 데미지에 면역이 된다.\n\n오랫동안 화염의 고통을 견딘 몸은 불을 상대하는 방식부터 달라진다."
+icon: "magiccodex:textures/spells/expansion_2/glaze_coating.png"
+permission: "magic.learned.glaze_coating"
+discovery:
+  description: "받은 화염 도트 데미지 100 달성"
+research: "자신이 시전하는 화염 마법에 상처입을 순 없는법이지"
+cast:
+  command: "마법 화염의정복자"
+  cooldown-seconds: 0
+  mana-cost: 0
+order: 560

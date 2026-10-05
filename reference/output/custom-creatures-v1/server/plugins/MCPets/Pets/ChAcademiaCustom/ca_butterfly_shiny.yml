@@ -1,0 +1,17 @@
+"Id": "ca_butterfly_shiny"
+"MythicMob": "CA_Pet_butterfly_shiny"
+"Permission": "chacademia.pet.ca_butterfly_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e라벤더 나비"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "라벤더와 계곡의 꽃을 따라 날아다닌다."
+    - "서식지: 라벤더 계곡 / 꽃피는 계곡"
+    - "1성"

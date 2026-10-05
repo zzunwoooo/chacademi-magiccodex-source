@@ -1,0 +1,17 @@
+# 설명·발견 조건·쿨타임은 수정 가능한 기획 초안입니다.
+# 발견 조건은 UI 표시용 문구이며 실제 판정 기능은 연결되지 않았습니다.
+# cast.command는 실제 시전 기능 연결 후 / 없이 입력하세요.
+id: "luminous_archive"
+name: "빛의 서고"
+category: "light"
+rank: "중급"
+description: "자신만 사용할 수 있는 마법 보관함을 엽니다."
+icon: "magiccodex:textures/spells/intermediate/luminous_archive.png"
+permission: "magic.learned.luminous_archive"
+discovery:
+  description: "도서관의 봉인된 보관함에서 소유자 각인 실습을 마치기."
+research: ""
+cast:
+  command: ""
+  cooldown-seconds: 15
+order: 1150

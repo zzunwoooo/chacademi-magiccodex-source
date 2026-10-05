@@ -1,0 +1,17 @@
+"Id": "ca_frog_shiny"
+"MythicMob": "CA_Pet_frog_shiny"
+"Permission": "chacademia.pet.ca_frog_shiny"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§e난초 개구리"
+  "Material": "GOLD_NUGGET"
+  "Description":
+    - "난초가 핀 늪의 얕은 물가에 숨어 산다."
+    - "서식지: 난초 늪 / 따뜻한 강"
+    - "1성"

@@ -1,0 +1,14 @@
+id: black_pulse
+name: 검은 박동
+category: dark
+description: 짧은 시간 받은 피해와 치유를 종료 시 한꺼번에 반영한다.
+icon: ''
+permission: magic.learned.black_pulse
+discovery:
+  description: 재생 효과를 받은 채 몬스터에게 누적 100 피해 받기.
+research: 상처와 치유를 함께 미루어 두었다가 한 번에 받아들이는 어두운 호흡이다.
+cast:
+  command: ''
+  cooldown-seconds: 40
+  mana-cost: 120
+order: 287

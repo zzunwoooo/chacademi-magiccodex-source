@@ -1,0 +1,14 @@
+id: glass_craft
+name: 유리 세공
+category: fire
+description: 유리를 소비해 장식용 색유리 조각을 만든다.
+icon: ''
+permission: magic.learned.glass_craft
+discovery:
+  description: 색유리를 서로 다른 3가지 색으로 제작하기.
+research: 유리의 색이 바뀌면 창문을 통과한 오후도 달라진다.
+cast:
+  command: ''
+  cooldown-seconds: 5
+  mana-cost: 15
+order: 218

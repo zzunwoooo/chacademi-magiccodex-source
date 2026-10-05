@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "glass_firing"
+name: "광석 재련"
+category: "fire"
+description: "마법 칸에 등록한 상태일 경우 채광 시 마나를 소모 하여\n재련 된 광물을 드랍한다.\n\n중급 화염 수업에서는 광석 속의 금속을 끌어낼 알맞은 열을 배운다."
+icon: "magiccodex:textures/spells/expansion_2/glass_firing.png"
+permission: "magic.learned.glass_firing"
+discovery:
+  description: "화염 마법 중급 수업을 통해 습득"
+research: "화염 입자가 광물에 스며들면 재련 된 광물의 드랍도 가능하지 않을까?"
+cast:
+  command: "마법 광석재련"
+  cooldown-seconds: 0
+  mana-cost: 3
+order: 500

@@ -1,0 +1,14 @@
+id: heated_hooves
+name: 뜨거운 발굽
+category: fire
+description: 탑승한 말의 다음 점프를 강화하고 착지 지점에 불꽃을 터뜨린다.
+icon: ''
+permission: magic.learned.heated_hooves
+discovery:
+  description: 말을 타고 누적 30회 점프하기.
+research: 발굽에 실린 열은 땅을 딛는 순간까지 모여 있다.
+cast:
+  command: ''
+  cooldown-seconds: 20
+  mana-cost: 55
+order: 219

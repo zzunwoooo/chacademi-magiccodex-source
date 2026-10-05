@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "healing_seal"
+name: "회복 봉인"
+category: "dark"
+description: "적 하나가 8초간 체력을 회복하지 못하게 합니다.\n\n물약을 마시려는 마녀를 여러 번 쓰러뜨리면 회복이 시작되는 틈을 막을 수 있다."
+icon: "magiccodex:textures/spells/expansion_2/healing_seal.png"
+permission: "magic.learned.healing_seal"
+discovery:
+  description: "물약을 마시는 중인 마녀를 10마리 처치하기."
+research: "회복할 틈을 주지 않는 것도 오래된 결투의 예법이었다."
+cast:
+  command: "마법 회복봉인"
+  cooldown-seconds: 25
+  mana-cost: 85
+order: 1890

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "wet_footprints"
+name: "젖은 발자국"
+category: "water"
+description: "바라보는 적 하나가 20초간 물방울 흔적을 남기게 합니다.\n\n비 오는 날 몬스터를 거듭 쓰러뜨리면 젖은 발자국이 남기는 흔적을 읽게 된다."
+icon: "magiccodex:textures/spells/expansion_2/wet_footprints.png"
+permission: "magic.learned.wet_footprints"
+discovery:
+  description: "비가 오는 날 몬스터를 10회 처치"
+research: "바닥에 남은 한 방울이 도망간 범인의 발걸음을 알려 주었다."
+cast:
+  command: "마법 젖은발자국"
+  cooldown-seconds: 20
+  mana-cost: 20
+order: 870

@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "starlit_nametag"
+name: "별빛 이름표"
+category: "light"
+description: "이름표를 소비해 자신의 동물에게 이름을 붙인다.\n\n자기 동물에게 이름을 거듭 지어 주면 부르는 말에도 별빛이 담긴다."
+icon: "magiccodex:textures/spells/expansion_3/starlit_nametag.png"
+permission: "magic.learned.starlit_nametag"
+discovery:
+  description: "이름표로 자신의 동물에게 이름을 3회 붙이기."
+research: "무슨 이름을 붙일지는 주인의 몫이다. 이름표는 약속을 남길 재료가 된다."
+cast:
+  command: "마법 별빛이름표"
+  cooldown-seconds: 5
+  mana-cost: 8
+order: 2620

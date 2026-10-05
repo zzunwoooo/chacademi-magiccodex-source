@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "wind_message"
+name: "바람의 전언"
+category: "wind"
+description: "바람에 짧은 말을 실어 지정한 상대에게 전합니다.\n\n누군가와 친구가 된 순간, 바람에도 말을 전할 목적지가 생긴다."
+icon: "magiccodex:textures/spells/intermediate/wind_message.png"
+permission: "magic.learned.wind_message"
+discovery:
+  description: "1명과 친구가 되기."
+research: "바람아 부탁해, 이 마음이 그녀에게 닿을 수 있도록."
+cast:
+  command: "마법 바람의전언"
+  cooldown-seconds: 1
+  mana-cost: 1
+order: 90

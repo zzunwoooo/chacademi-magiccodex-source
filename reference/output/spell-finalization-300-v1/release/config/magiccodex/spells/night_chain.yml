@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "night_chain"
+name: "밤의 사슬"
+category: "dark"
+description: "몬스터 최대 3마리를 8초간 연결합니다. 한 대상에게 준 직접 공격 피해의 일부가 나머지에게 전달됩니다. 전달 피해는 다시 전파되지 않습니다.\n\n어둠 실전 수업에서는 서로 떨어진 적의 그림자를 하나의 사슬로 잇는다."
+icon: "magiccodex:textures/spells/expansion/night_chain.png"
+permission: "magic.learned.night_chain"
+discovery:
+  description: "어둠 마법 실전 수업을 통해 습득."
+research: "같은 밤을 나누는 이들은 상처마저 조금씩 나누게 된다."
+cast:
+  command: "마법 밤의사슬"
+  cooldown-seconds: 45
+  mana-cost: 200
+order: 1810

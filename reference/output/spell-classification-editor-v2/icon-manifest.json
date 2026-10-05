@@ -1,0 +1,1192 @@
+[
+  {
+    "id": "crimson_heart",
+    "source": "discovery-editor-v1\\icons\\crimson_heart.png",
+    "sha256": "36ead12bc8a85c8354d683ce6032ea687254dbc39b26d525e01c2c218d8a8b26"
+  },
+  {
+    "id": "blue_bonfire",
+    "source": "discovery-editor-v1\\icons\\blue_bonfire.png",
+    "sha256": "fe7cd4ffcb3b93bb1979b543d10c6ac0005f7b251424a0c5be415a5ed7bfa2df"
+  },
+  {
+    "id": "crimson_breath",
+    "source": "discovery-editor-v1\\icons\\crimson_breath.png",
+    "sha256": "ecbbde89df2f67d140c3d1aa90ef4bded75b606643cd235dbe2cf61e7863aeaa"
+  },
+  {
+    "id": "water_breath",
+    "source": "discovery-editor-v1\\icons\\water_breath.png",
+    "sha256": "329f3355f08bdf2100b9b173192176137a0b2806265495cc43a5b67163dee299"
+  },
+  {
+    "id": "tide_stride",
+    "source": "discovery-editor-v1\\icons\\tide_stride.png",
+    "sha256": "3c53c4a0c6f48de62744441f7c1974f4bb9af6a121ae96d987640a6279e80860"
+  },
+  {
+    "id": "water_bolt",
+    "source": "discovery-editor-v1\\icons\\water_bolt.png",
+    "sha256": "bd9556dc1737c179aea2f3c918186eb7a767da9026e37ff9ca10733ea88122d7"
+  },
+  {
+    "id": "quench",
+    "source": "discovery-editor-v1\\icons\\quench.png",
+    "sha256": "8d793df73eb15f67a2bb300d30184d4305f7a5cb40805137e6577c654edcff44"
+  },
+  {
+    "id": "purifying_wave",
+    "source": "discovery-editor-v1\\icons\\purifying_wave.png",
+    "sha256": "9b82f6135ba9b5a4df0e4099fa2ed1955cab4dd34fdcfba04d0f9147c3e8de9f"
+  },
+  {
+    "id": "ice_bridge",
+    "source": "discovery-editor-v1\\icons\\ice_bridge.png",
+    "sha256": "a3767f07f5a94566ec0a2d0e7d32801dfa84e9c7e34f66da0d32b5c62c07e017"
+  },
+  {
+    "id": "water_mirror",
+    "source": "discovery-editor-v1\\icons\\water_mirror.png",
+    "sha256": "94ac83a06a629503b730e6a63f987cd4e42bd8bf88c5a8fbc37d163c56b15196"
+  },
+  {
+    "id": "spring_unseal",
+    "source": "discovery-editor-v1\\icons\\spring_unseal.png",
+    "sha256": "0cdd87ee63fcd0bf5344101333352f133e969c039656400c39767890393e25e2"
+  },
+  {
+    "id": "water_elemental",
+    "source": "discovery-editor-v1\\icons\\water_elemental.png",
+    "sha256": "dd3cd1109ba3e901d2b64e80b6202a71df79de41174b078d5d0ce16847860afa"
+  },
+  {
+    "id": "eternal_ice_prison",
+    "source": "discovery-editor-v1\\icons\\eternal_ice_prison.png",
+    "sha256": "97834285de820612af2b6ac32df14ceb49fc3deda6b63c275e4211940a5c26b2"
+  },
+  {
+    "id": "cauldron_fill",
+    "source": "discovery-editor-v1\\icons\\cauldron_fill.png",
+    "sha256": "793911b04769f6077cbb9bfd54bb8684ffb037f52cb6fec9c27febdc851efefd"
+  },
+  {
+    "id": "dye_rinse",
+    "source": "discovery-editor-v1\\icons\\dye_rinse.png",
+    "sha256": "7fb7fa6e30907cd6ce201faa7e334fee8b8e3c518bcc49fb9edd1f62ff4888fd"
+  },
+  {
+    "id": "fish_lure",
+    "source": "discovery-editor-v1\\icons\\fish_lure.png",
+    "sha256": "2b18637621d84c5fbb8f22b6127961096ae72af35c2c29314f3e63e3b9c9baf5"
+  },
+  {
+    "id": "frost_rupture",
+    "source": "discovery-editor-v1\\icons\\frost_rupture.png",
+    "sha256": "eb6d3c087f9b2f010c5d34993b471edfe22fd22e04e3dc33aee702fbeae70df5"
+  },
+  {
+    "id": "dampen_powder",
+    "source": "discovery-editor-v1\\icons\\dampen_powder.png",
+    "sha256": "3491da7d9acf16406f213f4c04de74329196035d4d325295d3db3a666007ebe7"
+  },
+  {
+    "id": "life_distribution",
+    "source": "discovery-editor-v1\\icons\\life_distribution.png",
+    "sha256": "47e98ad2f814b44eb9b46fd5ce48995b376279064c1b9a2a9c77653d0104e90a"
+  },
+  {
+    "id": "moist_farmland",
+    "source": "discovery-editor-v1\\icons\\moist_farmland.png",
+    "sha256": "8c5e64d1b4dd393efd64bd27bf33f7345f91c619f4fc97d77d7aad4d32a082ce"
+  },
+  {
+    "id": "wash_letters",
+    "source": "discovery-editor-v1\\icons\\wash_letters.png",
+    "sha256": "86071e721da044f9251e3afc04fcd660762a0f3e3699cdefc2860abbefcdb519"
+  },
+  {
+    "id": "handful_of_snow",
+    "source": "discovery-editor-v1\\icons\\handful_of_snow.png",
+    "sha256": "4c7d1b1da4c54afb534f818820766bf3b4668404ae68dcbd9aea86ae260174a6"
+  },
+  {
+    "id": "dew_gathering",
+    "source": "discovery-editor-v1\\icons\\dew_gathering.png",
+    "sha256": "c38749fa9c491587a6c7aa56c9952807ef527feb6fdaa8e3d86e50a3ac52ede0"
+  },
+  {
+    "id": "quiet_mooring",
+    "source": "discovery-editor-v1\\icons\\quiet_mooring.png",
+    "sha256": "65d03120c7b5c9f041b5dc224172fd26f614cbffff10614aae6c4087400c98b0"
+  },
+  {
+    "id": "wet_footprints",
+    "source": "discovery-editor-v1\\icons\\wet_footprints.png",
+    "sha256": "6278f10841be365e4f24510e8aeb35d5e3ef7ba2b67652149c02b85bf6d15c0b"
+  },
+  {
+    "id": "pressure_weight",
+    "source": "discovery-editor-v1\\icons\\pressure_weight.png",
+    "sha256": "4fa09eb1d7fc420204dd68be94c97dc50f6527e8e5cb13dc8bc36fbdff31e4cf"
+  },
+  {
+    "id": "cold_storage",
+    "source": "discovery-editor-v1\\icons\\cold_storage.png",
+    "sha256": "9d2ec22eb30b448b35ed3f4c2ffebe5492416eeca8f608b3fa58df658cce9236"
+  },
+  {
+    "id": "current_sorting",
+    "source": "discovery-editor-v1\\icons\\current_sorting.png",
+    "sha256": "5a138b70f382b70c41d1d68fff74b7d2fba35a0616c8c5666a5cc3019f0c1a69"
+  },
+  {
+    "id": "potion_mist",
+    "source": "discovery-editor-v1\\icons\\potion_mist.png",
+    "sha256": "66595a833a044864f3b8c218b455cb4bf939fde4805486dde30e66ff3a94bcca"
+  },
+  {
+    "id": "waterwheel_shield",
+    "source": "discovery-editor-v1\\icons\\waterwheel_shield.png",
+    "sha256": "40abce304143527d101bed2a8f01780ba560bffbfe5376e7d9fa3343d042072a"
+  },
+  {
+    "id": "liquid_barrier",
+    "source": "discovery-editor-v1\\icons\\liquid_barrier.png",
+    "sha256": "94ff44ac8f05666a400256ebbbc78971a3d6d61431cca444de850019fd12b286"
+  },
+  {
+    "id": "water_rebound",
+    "source": "discovery-editor-v1\\icons\\water_rebound.png",
+    "sha256": "1a0db67ba5de0a41db709080a4bb64ece79ec64a239a7f558e2293add0f3c8d2"
+  },
+  {
+    "id": "tidal_wave",
+    "source": "discovery-editor-v1\\icons\\tidal_wave.png",
+    "sha256": "6765992e035738578ae634dee3563e4a188647e407fca24c4c1c30fca436bb31"
+  },
+  {
+    "id": "thaw_pulse",
+    "source": "discovery-editor-v1\\icons\\thaw_pulse.png",
+    "sha256": "0c137efd34202d79fb79a1d93c9e5db40dd064708c74f663e6c151a44ad9cc77"
+  },
+  {
+    "id": "abyssal_pressure",
+    "source": "discovery-editor-v1\\icons\\abyssal_pressure.png",
+    "sha256": "6c85771cc5fed4f4598fab7b43b4d0e80a13ba2b4656081630bd38961c0036cd"
+  },
+  {
+    "id": "verdant_touch",
+    "source": "discovery-editor-v1\\icons\\verdant_touch.png",
+    "sha256": "8a5f4cc3130394c8053387ad8db59c3148278da0494e6ac7c0db7a10a8377aee"
+  },
+  {
+    "id": "ore_whisper",
+    "source": "discovery-editor-v1\\icons\\ore_whisper.png",
+    "sha256": "f6d7dfa51a5b13cbc0ae92cd0bbed3af7e633ea1152add819a8233f8c18213f4"
+  },
+  {
+    "id": "pebble_toss",
+    "source": "discovery-editor-v1\\icons\\pebble_toss.png",
+    "sha256": "a83c2d5c9b8151a13819ba34bfcff25567ae840363670da190ef978a3752791d"
+  },
+  {
+    "id": "miners_rhythm",
+    "source": "discovery-editor-v1\\icons\\miners_rhythm.png",
+    "sha256": "29d5a87be707a19194a4c86ae0bb3904c8dfbfb37f619d6316dab935c579d83a"
+  },
+  {
+    "id": "earth_shaping",
+    "source": "discovery-editor-v1\\icons\\earth_shaping.png",
+    "sha256": "3955116eaa883fcecf3c3dfe37ec0ae68a9ad65cb2940324b05b146f9c10f555"
+  },
+  {
+    "id": "stone_wall",
+    "source": "discovery-editor-v1\\icons\\stone_wall.png",
+    "sha256": "d1d1cd78cf165cc20221fc28bfba800df4a05349b3d5762314085f025973b45f"
+  },
+  {
+    "id": "vine_ladder",
+    "source": "discovery-editor-v1\\icons\\vine_ladder.png",
+    "sha256": "799dbb06383b83171c9be873c23bec14c7d66c2febf4b27eb280016e173a300f"
+  },
+  {
+    "id": "earth_elemental",
+    "source": "discovery-editor-v1\\icons\\earth_elemental.png",
+    "sha256": "dcbdc1f766151d44586c36e552c2d77ad4f23011f41abcf0db69fe8c27e11467"
+  },
+  {
+    "id": "earthquake",
+    "source": "discovery-editor-v1\\icons\\earthquake.png",
+    "sha256": "79d8ed8867aa4c20c6a96b5bdc5d0ed140a55da326e0df3f83040d53b4bc0f10"
+  },
+  {
+    "id": "climate_control",
+    "source": "discovery-editor-v1\\icons\\climate_control.png",
+    "sha256": "38fdf83e98e076bafefc6490deab8eb2a150a7b3db3bce99d6a7a662d6381b42"
+  },
+  {
+    "id": "seed_row",
+    "source": "discovery-editor-v1\\icons\\seed_row.png",
+    "sha256": "bbc8f78a641af3c4f82a7d59af028cdc5542e05acb24f11b73b5d903993114f2"
+  },
+  {
+    "id": "bee_calm",
+    "source": "discovery-editor-v1\\icons\\bee_calm.png",
+    "sha256": "a2c7de6ac0af218e3766389435ee4c60e913d743e777ecd3829decb82eecb2ba"
+  },
+  {
+    "id": "thorn_armor",
+    "source": "discovery-editor-v1\\icons\\thorn_armor.png",
+    "sha256": "c0e59f1b0732a20f1b4ca0d77d8eb0a586dc00bac1db3c5fe50a3159526cf1a7"
+  },
+  {
+    "id": "vein_fracture",
+    "source": "discovery-editor-v1\\icons\\vein_fracture.png",
+    "sha256": "bb6ba03a35d417be53335977587b7e71a356b09fe40324ed91600fb519364af7"
+  },
+  {
+    "id": "earth_anchor",
+    "source": "discovery-editor-v1\\icons\\earth_anchor.png",
+    "sha256": "ce64a4c399a10d7f30b933062c5df2b91a16c930a99ab8dd32f9fe47349bfcd0"
+  },
+  {
+    "id": "weathering_touch",
+    "source": "discovery-editor-v1\\icons\\weathering_touch.png",
+    "sha256": "739240d1474849c00fb55fea82969df1a5c0ab74d5badff1913fe683bf38bbad"
+  },
+  {
+    "id": "iron_carapace",
+    "source": "discovery-editor-v1\\icons\\iron_carapace.png",
+    "sha256": "ca9ce9d682c1d0dcc4236f678829f954b960d6ce47c75cdea971928381a1c6be"
+  },
+  {
+    "id": "moss_coating",
+    "source": "discovery-editor-v1\\icons\\moss_coating.png",
+    "sha256": "6ceb45df63ebf670215734e3f99197773605d06cbcb5951d01eae0d5f1f9620f"
+  },
+  {
+    "id": "grass_sprouting",
+    "source": "discovery-editor-v1\\icons\\grass_sprouting.png",
+    "sha256": "4a0c1ba61a48c315ae5281d212872d70e6a353b93c2361b14ca36443f85ec106"
+  },
+  {
+    "id": "flint_sorting",
+    "source": "discovery-editor-v1\\icons\\flint_sorting.png",
+    "sha256": "9f1758c78e3bb85e91da358c78d317101c2b29f627e3b7af37c00fd93d8be128"
+  },
+  {
+    "id": "bark_peeling",
+    "source": "discovery-editor-v1\\icons\\bark_peeling.png",
+    "sha256": "f0e03c68c849508921b3e605bb6ae9fdf2304c091848127cd4ca17220eb80408"
+  },
+  {
+    "id": "compost_return",
+    "source": "discovery-editor-v1\\icons\\compost_return.png",
+    "sha256": "f88ab2618da7c4bb4d97e1cdb884b67867ac224c6dd425594deb521306f01f13"
+  },
+  {
+    "id": "thorn_seeds",
+    "source": "discovery-editor-v1\\icons\\thorn_seeds.png",
+    "sha256": "c062265023729c3e28a1a2ae332fb6167f2adfacb5a63663a55ca55397ed38fe"
+  },
+  {
+    "id": "pollen_matchmaking",
+    "source": "discovery-editor-v1\\icons\\pollen_matchmaking.png",
+    "sha256": "41341cfe88e4986bb0fa1ced2dc6788e89d64c12050bee4ff3e854663a8c9316"
+  },
+  {
+    "id": "automatic_supply",
+    "source": "discovery-editor-v1\\icons\\automatic_supply.png",
+    "sha256": "7d5998bcf11c85fda5d73228fadf2d43e7260f451e52c2b4530e5b457a08f50b"
+  },
+  {
+    "id": "dormant_seed",
+    "source": "discovery-editor-v1\\icons\\dormant_seed.png",
+    "sha256": "f3cee330aca1438b22d08b2f566b99704d8f0c944ca07e58038d72c184d6d5fc"
+  },
+  {
+    "id": "counterweight",
+    "source": "discovery-editor-v1\\icons\\counterweight.png",
+    "sha256": "aadb220c2538c7bdfde3c7ee33ca61159acca5d763b94befd61f9cdd47d74a35"
+  },
+  {
+    "id": "material_exchange",
+    "source": "discovery-editor-v1\\icons\\material_exchange.png",
+    "sha256": "f3ffe38e1649c6420fff9dc717e68ea7f443750d708c1ec4f0cea7e90c8d2c5d"
+  },
+  {
+    "id": "remembering_field",
+    "source": "discovery-editor-v1\\icons\\remembering_field.png",
+    "sha256": "8fcb3344d0de1e81dce0c4ccbaeb794c1489e1823e01b6309aeee42006decd0a"
+  },
+  {
+    "id": "little_giant",
+    "source": "discovery-editor-v1\\icons\\little_giant.png",
+    "sha256": "be8eacd51f5df4103dcde37f246fe31e6fc0c4543dccaf71282d4e8f80dcc214"
+  },
+  {
+    "id": "spring_ground",
+    "source": "discovery-editor-v1\\icons\\spring_ground.png",
+    "sha256": "ddf6d72522a6ccd4c25bd907807cb1cfa491f7ed11d8b76ee5bccae812efbe81"
+  },
+  {
+    "id": "mountain_back",
+    "source": "discovery-editor-v1\\icons\\mountain_back.png",
+    "sha256": "90077dbf0a4363b404b9ff21fa4dd80be34b240b0b0723271d96d913002864a0"
+  },
+  {
+    "id": "earth_embrace",
+    "source": "discovery-editor-v1\\icons\\earth_embrace.png",
+    "sha256": "64309f848ea1fb9e6d5b549a9d1d7acc0bd23e3eccf0ac05e244b41a15301635"
+  },
+  {
+    "id": "forest_throne",
+    "source": "discovery-editor-v1\\icons\\forest_throne.png",
+    "sha256": "eb3d4f47e7701beffabe8e5fb718240691bf6b173ae83901c4593b50f7ad70eb"
+  },
+  {
+    "id": "primordial_stone",
+    "source": "discovery-editor-v1\\icons\\primordial_stone.png",
+    "sha256": "715f87fb3636b2c6f0911bf56b5970214b88ff5f63de5522e726b7d6fc9b467b"
+  },
+  {
+    "id": "guiding_star",
+    "source": "discovery-editor-v1\\icons\\guiding_star.png",
+    "sha256": "cd60435c057b4f2d554ee7824126bd36a80e7c683d09b7d500e4ee05564401ce"
+  },
+  {
+    "id": "minor_heal",
+    "source": "discovery-editor-v1\\icons\\minor_heal.png",
+    "sha256": "37a7bfbb98f56cc2f0bed677e42a1275f1b7ad17488903c8a2988c22a8f45af9"
+  },
+  {
+    "id": "light_mark",
+    "source": "discovery-editor-v1\\icons\\light_mark.png",
+    "sha256": "dda60b9301227f0ed96ded344391dda46d8501ea2bd5c8007cb0b72d6001387a"
+  },
+  {
+    "id": "spatial_leap",
+    "source": "discovery-editor-v1\\icons\\spatial_leap.png",
+    "sha256": "0631f0c0a022a5c56bb9bd05476c22aad746084a6004972dce5ef33197804364"
+  },
+  {
+    "id": "luminous_archive",
+    "source": "discovery-editor-v1\\icons\\luminous_archive.png",
+    "sha256": "019c7dde69d92c1db3e68941bcadf9d2b0d9002fa92e08f5043b5a495f942785"
+  },
+  {
+    "id": "true_sight",
+    "source": "discovery-editor-v1\\icons\\true_sight.png",
+    "sha256": "16bb9656220068dca53fff0815a08ed631292f95a436638070676f3978cdcfbd"
+  },
+  {
+    "id": "protective_ward",
+    "source": "discovery-editor-v1\\icons\\protective_ward.png",
+    "sha256": "d886c7182cef6385fb7a0b200200edce43544e432e3fc81781a8b5b564ee556f"
+  },
+  {
+    "id": "constellation_blessing",
+    "source": "discovery-editor-v1\\icons\\constellation_blessing.png",
+    "sha256": "18eee64546f99e58585f26984f90d704e7aca260df890d4e1f233b95831bcf2d"
+  },
+  {
+    "id": "arcane_imprint",
+    "source": "discovery-editor-v1\\icons\\arcane_imprint.png",
+    "sha256": "63719c14f499ab027eada6ef22db6e4fcb1943008bd42da51cd0eec3ba70ff3a"
+  },
+  {
+    "id": "dawn_ritual",
+    "source": "discovery-editor-v1\\icons\\dawn_ritual.png",
+    "sha256": "61bd22f9aa6a6e5cbd9f25575635295eb67810a867dc7be7e4cd1c9e21ce3007"
+  },
+  {
+    "id": "comforting_light",
+    "source": "discovery-editor-v1\\icons\\comforting_light.png",
+    "sha256": "1288d274430498da8bb1ca8f27d518fedf4fd57e8270a4d70e361cd53cacad49"
+  },
+  {
+    "id": "exorcism_flash",
+    "source": "discovery-editor-v1\\icons\\exorcism_flash.png",
+    "sha256": "fc477c87ac5009aed0955c11d6205bdd7282318d6d01dc4d883341eda8c1521b"
+  },
+  {
+    "id": "arcane_mending",
+    "source": "discovery-editor-v1\\icons\\arcane_mending.png",
+    "sha256": "256448ccd68e1f6288f6b9e7e8a7cdb95c9056c24bf7d6b2918ba206fa29df99"
+  },
+  {
+    "id": "companion_return",
+    "source": "discovery-editor-v1\\icons\\companion_return.png",
+    "sha256": "1f41c8bba164585f15cd7984c6a92afd3b085711729710d0ae9db9a0c9c77865"
+  },
+  {
+    "id": "flawless_moment",
+    "source": "discovery-editor-v1\\icons\\flawless_moment.png",
+    "sha256": "901f3ac79c7401117071db6c9d681bb7563a599a0d258765d2f7a76d92835429"
+  },
+  {
+    "id": "solar_judgment",
+    "source": "discovery-editor-v1\\icons\\solar_judgment.png",
+    "sha256": "1d8c6f528f897026e0ae9a0237796aae3328dfa4cc95bbd07e5f26d62705887b"
+  },
+  {
+    "id": "firefly_mark",
+    "source": "discovery-editor-v1\\icons\\firefly_mark.png",
+    "sha256": "d7192102f2b8aafc590c9a110be384ca69bb28b8b076ccb18a6677da0ad39fd1"
+  },
+  {
+    "id": "rainbow_collar",
+    "source": "discovery-editor-v1\\icons\\rainbow_collar.png",
+    "sha256": "1e7bae81615bf94a159d77e3b6145602bff1fe5e2790d4ebcad0593994548398"
+  },
+  {
+    "id": "sun_drying",
+    "source": "discovery-editor-v1\\icons\\sun_drying.png",
+    "sha256": "6e8216e22bc3eed09d78983dfd7db375ec60ce4769002bd3a231b7996bf06705"
+  },
+  {
+    "id": "luminous_copy",
+    "source": "discovery-editor-v1\\icons\\luminous_copy.png",
+    "sha256": "0518e171ef57fc1d16a1300d46e8504456a84ea3b27f4eeec2c125ff7bfe7902"
+  },
+  {
+    "id": "guiding_fletching",
+    "source": "discovery-editor-v1\\icons\\guiding_fletching.png",
+    "sha256": "40b2a710c1e1d205db409c96479665f0096596c8fb6f79f40b04088ec553f519"
+  },
+  {
+    "id": "sharing_table",
+    "source": "discovery-editor-v1\\icons\\sharing_table.png",
+    "sha256": "0e07a5579eed8a0fe51acd75b6e261f3bbac99e76a208c3c970f292adda6920c"
+  },
+  {
+    "id": "summons_letter",
+    "source": "discovery-editor-v1\\icons\\summons_letter.png",
+    "sha256": "27b181bd10edbdefd4e6ed56dc8b8e1d83216a50bde5b05f946c203a289c3722"
+  },
+  {
+    "id": "starlight_survey",
+    "source": "discovery-editor-v1\\icons\\starlight_survey.png",
+    "sha256": "2e5120b45c7a86c1f194142d89000a4ff60b1766bd495631ed1035640d98b325"
+  },
+  {
+    "id": "luminous_handover",
+    "source": "discovery-editor-v1\\icons\\luminous_handover.png",
+    "sha256": "1576ec07135d0ae9db84b726175cd61f1c7933c4baeed0bbf6327e819c96073c"
+  },
+  {
+    "id": "mana_conduit",
+    "source": "discovery-editor-v1\\icons\\mana_conduit.png",
+    "sha256": "f2b68e41ce69bbb84e039ac4a0fe969225226888495574eb6cf2720f59671b64"
+  },
+  {
+    "id": "merciful_arrow",
+    "source": "discovery-editor-v1\\icons\\merciful_arrow.png",
+    "sha256": "7dab08502dd8b06e1aca3f736c21c5415871ae0301fdd2f4ec1fc0a294f4083d"
+  },
+  {
+    "id": "mana_deposit",
+    "source": "discovery-editor-v1\\icons\\mana_deposit.png",
+    "sha256": "8c34326206e0b63f82d9a2ef991f3a8cd1c062f9687e9779b5a6c3df000cc369"
+  },
+  {
+    "id": "guardian_oath",
+    "source": "discovery-editor-v1\\icons\\guardian_oath.png",
+    "sha256": "2d73bd63d65dc8d26edabe1795ba0c938fd14ca1f85042b11b2da7070e395f44"
+  },
+  {
+    "id": "experience_exchange",
+    "source": "discovery-editor-v1\\icons\\experience_exchange.png",
+    "sha256": "5afbc72db9ba1be37ee29e5eaf4d72724a6693a2d5081eb3e6248b6d8a9cc798"
+  },
+  {
+    "id": "white_night_sanctuary",
+    "source": "discovery-editor-v1\\icons\\white_night_sanctuary.png",
+    "sha256": "682a50304a613a570d0aa5d9fa8026288a55a41d4bd73c35c21c301a9b97f23b"
+  },
+  {
+    "id": "starlight_reprise",
+    "source": "discovery-editor-v1\\icons\\starlight_reprise.png",
+    "sha256": "0d008ad49578a91f8f2cb7a9a542718d914fc854156c64c243d93df3cc89878d"
+  },
+  {
+    "id": "constellation_emissary",
+    "source": "discovery-editor-v1\\icons\\constellation_emissary.png",
+    "sha256": "28e09ecd5cc317e54454af69d0412e6893d005e0920c5364d9dd536b73e1d913"
+  },
+  {
+    "id": "night_sight",
+    "source": "discovery-editor-v1\\icons\\night_sight.png",
+    "sha256": "271d5afc8195241c68c3236da84b3d30b65437e9066c09873335792f8716382c"
+  },
+  {
+    "id": "shadow_bind",
+    "source": "discovery-editor-v1\\icons\\shadow_bind.png",
+    "sha256": "e1784a90dee08750acb6d99ec9ebe77b4ecf5f9d5bc21d7cba33489e66288e7e"
+  },
+  {
+    "id": "faint_veil",
+    "source": "discovery-editor-v1\\icons\\faint_veil.png",
+    "sha256": "6bdc0a88162b728f44ac8d4103d36fc4090c5bf04456cf3b373b0eb5f59bdb83"
+  },
+  {
+    "id": "shadow_double",
+    "source": "discovery-editor-v1\\icons\\shadow_double.png",
+    "sha256": "a68a3ca3fd74db4fa9e5fea8b3ab389a901a0a323d7cc5ddf9d03226bf0c0986"
+  },
+  {
+    "id": "echo_reading",
+    "source": "discovery-editor-v1\\icons\\echo_reading.png",
+    "sha256": "e60f72ce8680e287f79939303607e33ecd622bc0bb34742c935541314680ac7f"
+  },
+  {
+    "id": "sealing_thread",
+    "source": "discovery-editor-v1\\icons\\sealing_thread.png",
+    "sha256": "2a59160cc6adab71c49d1fa09a30bc579c4c5d9694e5a01b3ff4abd98a7b2791"
+  },
+  {
+    "id": "afterlife_gate",
+    "source": "discovery-editor-v1\\icons\\afterlife_gate.png",
+    "sha256": "c974c255dcd3fbaf130bac81d3c4b0e354eacd62a1d9859b4822f726ff5c92f6"
+  },
+  {
+    "id": "shadow_exchange",
+    "source": "discovery-editor-v1\\icons\\shadow_exchange.png",
+    "sha256": "a1be9cf8ff83b58dfaadf16582932cd90fcb059ce4c91cedca7852a26771f583"
+  },
+  {
+    "id": "forbidden_contract",
+    "source": "discovery-editor-v1\\icons\\forbidden_contract.png",
+    "sha256": "6b2e424a6accf7c3caefa99d330b8ead05f3836d85c962aa472ee5774e373cf4"
+  },
+  {
+    "id": "life_siphon",
+    "source": "discovery-editor-v1\\icons\\life_siphon.png",
+    "sha256": "5ff9c756feb75eca480a605130e3f2a581f5a826ff76f6d0fa74cd7fde3c89bb"
+  },
+  {
+    "id": "drowsiness",
+    "source": "discovery-editor-v1\\icons\\drowsiness.png",
+    "sha256": "23ef18374b536494c8c106d9a59fb31cda28002af521fedc4a8093cd489bfcc2"
+  },
+  {
+    "id": "misfortune_whisper",
+    "source": "discovery-editor-v1\\icons\\misfortune_whisper.png",
+    "sha256": "5f96161b55669323375c259e16c826a40b07e1292ee00efcb553499685819431"
+  },
+  {
+    "id": "hungry_shadow",
+    "source": "discovery-editor-v1\\icons\\hungry_shadow.png",
+    "sha256": "b0c58bfd3b46e9cd87a547a183ecd92398d01494907281b078297d284a7788f7"
+  },
+  {
+    "id": "curse_transfer",
+    "source": "discovery-editor-v1\\icons\\curse_transfer.png",
+    "sha256": "159d255ac14cb82dd3e44860a143d3370345fcf723cedc82a5bd32171d8436c3"
+  },
+  {
+    "id": "discord",
+    "source": "discovery-editor-v1\\icons\\discord.png",
+    "sha256": "00f5d14400a68d6f1ace45289a960eddfc662d38d160f725888424cd1973905b"
+  },
+  {
+    "id": "night_chain",
+    "source": "discovery-editor-v1\\icons\\night_chain.png",
+    "sha256": "2652bc441285b4ac19546277b5a63b7e100b7fce8d729dc7225150a03e361c41"
+  },
+  {
+    "id": "pain_deferral",
+    "source": "discovery-editor-v1\\icons\\pain_deferral.png",
+    "sha256": "a70a048cf337888ca87618b11c154402b456c03840ebb55a8b34824147a6bec2"
+  },
+  {
+    "id": "black_harvest",
+    "source": "discovery-editor-v1\\icons\\black_harvest.png",
+    "sha256": "93669176b314155902d1e1a7ef8cc55bf44ebbea0a713e29f4901517cb17fdca"
+  },
+  {
+    "id": "ink_fingertip",
+    "source": "discovery-editor-v1\\icons\\ink_fingertip.png",
+    "sha256": "35e92c06e09c344f296192b1599afea2748d93956ebac8f51f746a67a5538c5e"
+  },
+  {
+    "id": "shadow_nail",
+    "source": "discovery-editor-v1\\icons\\shadow_nail.png",
+    "sha256": "3d21e00478d06148c8d9989f751b562dc47335ca87c91b6404276c6fb5733653"
+  },
+  {
+    "id": "night_lullaby",
+    "source": "discovery-editor-v1\\icons\\night_lullaby.png",
+    "sha256": "0f4c16c52333c3de09173dae0b92c722e942fbc8e99d55137567f8a989fae0eb"
+  },
+  {
+    "id": "loosen_grasp",
+    "source": "discovery-editor-v1\\icons\\loosen_grasp.png",
+    "sha256": "3d0a47b790a9d22620e6dc645195782098b2c1e1af1eabac22a9ee2d2736e5ac"
+  },
+  {
+    "id": "shadow_tracking",
+    "source": "discovery-editor-v1\\icons\\shadow_tracking.png",
+    "sha256": "0813544abe8b0facecef15451c45da2c9f8f805c4880a071aa947b89ceb8fe6a"
+  },
+  {
+    "id": "healing_seal",
+    "source": "discovery-editor-v1\\icons\\healing_seal.png",
+    "sha256": "973e15799de9dfe5c9ab21abd174f1dc6ee0db5a9bd8ea43e76a36a3a9b13a50"
+  },
+  {
+    "id": "shadow_scales",
+    "source": "discovery-editor-v1\\icons\\shadow_scales.png",
+    "sha256": "73e0de552d227a65703ce95aaee39ca9bece8b1f76eec8af6c0bb571021458e8"
+  },
+  {
+    "id": "warning_thread",
+    "source": "discovery-editor-v1\\icons\\warning_thread.png",
+    "sha256": "b264f811ace8fd7f38e5c2d833cbb2d23fc87018b7ca839caad0561ac14ea983"
+  },
+  {
+    "id": "final_knot",
+    "source": "discovery-editor-v1\\icons\\final_knot.png",
+    "sha256": "9ce5e6f813980549c00b1fb0c7326479294472c62ff7dd5ba5472896dc1c4de7"
+  },
+  {
+    "id": "wound_accounting",
+    "source": "discovery-editor-v1\\icons\\wound_accounting.png",
+    "sha256": "bc5e1368c22d32c2687e0c629873fc7a3da80cd1a4ea9193441fcb46fde2b698"
+  },
+  {
+    "id": "inverted_offering",
+    "source": "discovery-editor-v1\\icons\\inverted_offering.png",
+    "sha256": "601fa566963937a7d225df7b076d259dffedc59b2992bc899beafffaf971c184"
+  },
+  {
+    "id": "ghost_tool",
+    "source": "discovery-editor-v1\\icons\\ghost_tool.png",
+    "sha256": "495c22c6bc0ebe7c57149baf601a9408eea52d1d8ecab72bacf7a3bb0c1c37bc"
+  },
+  {
+    "id": "bell_of_fear",
+    "source": "discovery-editor-v1\\icons\\bell_of_fear.png",
+    "sha256": "393f68266263d8bdc497962ec9182da7b08fdfab3bea80490df494e9aa91da3b"
+  },
+  {
+    "id": "eclipse_eye",
+    "source": "discovery-editor-v1\\icons\\eclipse_eye.png",
+    "sha256": "66ce67322d0f8181ad3f75da837d118cca0a7e83f520cdc29f39a77713444be9"
+  },
+  {
+    "id": "death_ledger",
+    "source": "discovery-editor-v1\\icons\\death_ledger.png",
+    "sha256": "e6d95de9a8cd49fad2119accf77d2a1960cb8aa5d8d8f53ad7c29a07ff56bffd"
+  },
+  {
+    "id": "void_maw",
+    "source": "discovery-editor-v1\\icons\\void_maw.png",
+    "sha256": "6cc9bc183783732ec153f094a621796b4efa4f5e74418ad7d1182d5d7a753530"
+  },
+  {
+    "id": "twilight_bargain",
+    "source": "discovery-editor-v1\\icons\\twilight_bargain.png",
+    "sha256": "f57cb451ae6135ab7f3fa990ef2e09ced59afe285ad6350696defeedeba573ca"
+  },
+  {
+    "id": "wind_courier",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\wind_courier.png",
+    "sha256": "fcc1db656066a3ce8a2f4134bd4e190bfde3e1afc1363def8763ee239ce651a6"
+  },
+  {
+    "id": "air_display",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\air_display.png",
+    "sha256": "67d8eeaa9b76a1a0bd74b909f9bb9c4c04032531c1d2d971bd03ce5eb886fc81"
+  },
+  {
+    "id": "sail_breeze",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\sail_breeze.png",
+    "sha256": "2519deb1d376e1a69e199d223c6e12464dd856c591a6e1b76ad134ed29f60fdf"
+  },
+  {
+    "id": "air_brake",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\air_brake.png",
+    "sha256": "fdf74cf73815519e33dd0d2792a7c64ae8c58b4b9f8281a45215af02c846f2b0"
+  },
+  {
+    "id": "headwind_field",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\headwind_field.png",
+    "sha256": "d016c466ac12d0b1afaf8e33d6797df7b7be7b4aa094d99ed12e508b4d5ee495"
+  },
+  {
+    "id": "vortex_center",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\vortex_center.png",
+    "sha256": "28a2af27c91ab17d0f3dc2e74a91ec1dabba2a2ea274e2f546b217396a0aebe9"
+  },
+  {
+    "id": "wall_echo_burst",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\wall_echo_burst.png",
+    "sha256": "0cd740c44894d1f2e74c8425e114d0f008150d8c00cec7f5bd502ae0e00ab756"
+  },
+  {
+    "id": "blindside_turn",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\blindside_turn.png",
+    "sha256": "7f277d99231b06b7dffeed13c26a0b33e916eddf1d066aa4715d978ab7780b2a"
+  },
+  {
+    "id": "wind_tailoring",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\wind_tailoring.png",
+    "sha256": "fb54580ac7fa91d1a05fcb3626c2e276339a84bed3433dffada216f314f5e0b8"
+  },
+  {
+    "id": "whistle_procession",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\whistle_procession.png",
+    "sha256": "b98992845b62f03108be1dbd2dafc195421933de3133a080d34bf5d283055209"
+  },
+  {
+    "id": "wind_performance",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\wind_performance.png",
+    "sha256": "d2b4b229be8147d97740caac44dfaff3579fcea29b79ecb396df1e02e582614a"
+  },
+  {
+    "id": "draft_closer",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\draft_closer.png",
+    "sha256": "43960e064c067cb11fcda54b364de5bc396ecfee199da51e42a07e94472d364d"
+  },
+  {
+    "id": "air_compass",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\air_compass.png",
+    "sha256": "654e48b5dfdf7ed1ce7d53b47314e15f5a2b1c6cd5e5667774b8c73b833d50d1"
+  },
+  {
+    "id": "experience_confluence",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\experience_confluence.png",
+    "sha256": "8b84500cde64a4a9785c339c6d12fc65ed9ce1befd76865a280839b98e7f5295"
+  },
+  {
+    "id": "melody_bottle",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\melody_bottle.png",
+    "sha256": "e8977aff662b5df2ab3677e377c01eef858af986be4474c6a38e00a7d1148401"
+  },
+  {
+    "id": "copper_polish",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\copper_polish.png",
+    "sha256": "76183f19873c06d4e1318f7817d307d1c76a3417c770e2aae7c2b5058183f8df"
+  },
+  {
+    "id": "wax_melting",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\wax_melting.png",
+    "sha256": "dcb871f3824ecf8914a69b2032f46d68932dcae86304f41347501020a9503321"
+  },
+  {
+    "id": "charcoal_scent",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\charcoal_scent.png",
+    "sha256": "e0545b9e372da1fa0a7a9ce6de7c467eb38cbaa51d2f6b70ed1d28e3e96024d9"
+  },
+  {
+    "id": "glass_craft",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\glass_craft.png",
+    "sha256": "85e68ab6ace27eb462b2380518819789085370c0466cf6e051198105284ede92"
+  },
+  {
+    "id": "heated_hooves",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\heated_hooves.png",
+    "sha256": "4a227baa8d01914c731284f241e19cf1474cf6a1551cb46bbab2e5b5e5dacdec"
+  },
+  {
+    "id": "residual_heat",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\residual_heat.png",
+    "sha256": "d7428803c3a05ccc93cbc4acd0af24694856d66ef0b483651543d1c1054ce38d"
+  },
+  {
+    "id": "searing_edge",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\searing_edge.png",
+    "sha256": "9192061834a59ea730f68a320bb8f0370a7d983de38b611443d587f9d6f323ea"
+  },
+  {
+    "id": "fuse_bond",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\fuse_bond.png",
+    "sha256": "49527c1052c77cf89161cf14e51ea4242c464c68047eaf31c2ef43078f8dcd1d"
+  },
+  {
+    "id": "ember_transfer",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\ember_transfer.png",
+    "sha256": "e19d68554f74fd6ef7ad235c0f9df88c388240c4448adca46fc1874ed173835a"
+  },
+  {
+    "id": "flame_boundary",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\flame_boundary.png",
+    "sha256": "df14a6280cedd329462282f84614c21fed3ee47a525e84ca8113fa595c0d3456"
+  },
+  {
+    "id": "heat_accumulation",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\heat_accumulation.png",
+    "sha256": "72f6bb4c8f44b671f3ad2298af858bb67868cc398f5ed0917402d676891ed826"
+  },
+  {
+    "id": "sulfur_cloud",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\sulfur_cloud.png",
+    "sha256": "16e3af5161e4ce48558655e666cdcb0a36d9d6d037210f2da796d5e2594e6ffd"
+  },
+  {
+    "id": "flame_seam",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\flame_seam.png",
+    "sha256": "22d32bd6610c23068904dea58b114f6047d7f0ed2ac8ecbc2f19ea0248ad44b1"
+  },
+  {
+    "id": "flame_clap",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\flame_clap.png",
+    "sha256": "89d25a61240741d5b405c166ca91060d1ef026a7260c01f9699e178c65465638"
+  },
+  {
+    "id": "ashen_farewell",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\ashen_farewell.png",
+    "sha256": "a4e3ed00fb349555ed13e292566f1614411a6fa24b5a23c0833c3efd5bf38eff"
+  },
+  {
+    "id": "bubble_plate",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\bubble_plate.png",
+    "sha256": "5d900884c83cac3624663aebf799a7884f762df1bdb6708a4a2e9eb20d3903b0"
+  },
+  {
+    "id": "waterweed_trim",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\waterweed_trim.png",
+    "sha256": "af7285b8be785296ce1a3b3b64454a541d5963b5cdb98fe61d70815bcfdf8685"
+  },
+  {
+    "id": "drain_pocket",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\drain_pocket.png",
+    "sha256": "7817c8368d925cc4308d60b5a94d154ba2d59102e15ca672e70add879bf9eabd"
+  },
+  {
+    "id": "mud_kneading",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\mud_kneading.png",
+    "sha256": "1d142192d01e0bf08b68020be9227329f0f2822b0fa17f77e63a8b38fd96d290"
+  },
+  {
+    "id": "sloshing_pail",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\sloshing_pail.png",
+    "sha256": "4e0d77b9688eba2269ee0d6f781646b5457c3f71272262f133f637322a81ca97"
+  },
+  {
+    "id": "surface_walk",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\surface_walk.png",
+    "sha256": "d4f7f53d8ae436652e58824142ecf28f3c44d88751d1a90496c7c9e002ac289e"
+  },
+  {
+    "id": "diving_bell",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\diving_bell.png",
+    "sha256": "8b56fa68700b3fabc17b7c2ae25e1fecb71ef9bf80800438079e7a99e9c7996f"
+  },
+  {
+    "id": "droplet_lens",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\droplet_lens.png",
+    "sha256": "60a4f218d44f07aaad1d12e96c4f59b8d8e80eda36d1055f96b49d1c4c0760b0"
+  },
+  {
+    "id": "cold_compress",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\cold_compress.png",
+    "sha256": "1fafd82b33099c4c2fc4cb6668ee67ef62509725873e3e2f2f66d75cf0328cda"
+  },
+  {
+    "id": "bubble_brand",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\bubble_brand.png",
+    "sha256": "1979e19a330cb081a7e087167cc498f772f8b95edb3b2241011d0cdeb793c419"
+  },
+  {
+    "id": "ice_wedge",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\ice_wedge.png",
+    "sha256": "8a8468186e7839869540e9d5acc7545d1f31a53e6e99973e332d18aa7860b7ea"
+  },
+  {
+    "id": "slippery_floor",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\slippery_floor.png",
+    "sha256": "ceea4d8dbc83bc14845e35c9130ce73c903077f68d7a962874f54a0eddb600b8"
+  },
+  {
+    "id": "chain_droplet",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\chain_droplet.png",
+    "sha256": "2570247c1f11f0f20f7921fffe74ba67be9fc71513132d51012b6b8e72ebe7ed"
+  },
+  {
+    "id": "splitting_lance",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\splitting_lance.png",
+    "sha256": "7976211f39487ed4ea8ac08fb9bf66d0277759cbc3ae803e4cf230e35e21b2dc"
+  },
+  {
+    "id": "healing_reserve",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\healing_reserve.png",
+    "sha256": "0a3906911cd0bd2471555b9f77c64347f8d1921a8091a0095ddb697583d3ab9b"
+  },
+  {
+    "id": "petal_dye",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\petal_dye.png",
+    "sha256": "b26531935f93a8bfb9c1852fc9fb88ecbc35072fe53de6b42de9a272c7c6012c"
+  },
+  {
+    "id": "mushroom_picking",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\mushroom_picking.png",
+    "sha256": "ed0e4084e5bfb7920a229523889821162b1c5f8f7b700b3316ff01a873b0aabe"
+  },
+  {
+    "id": "hive_inspection",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\hive_inspection.png",
+    "sha256": "967ced91ef04bc91ce88c51118600a9149f71f3d05d948dc77d99fd8c4f52915"
+  },
+  {
+    "id": "honey_tapping",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\honey_tapping.png",
+    "sha256": "caf7c0e35f0ae0ebc43d5e1a2a8ae1bbb66bd9f3f6c9550bbb4e5f2ea0d667ff"
+  },
+  {
+    "id": "sapling_move",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\sapling_move.png",
+    "sha256": "95f0e438a58ce8ba5f41f05db9054fc1bc05655d2ec8445250081c9979da0504"
+  },
+  {
+    "id": "path_tamping",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\path_tamping.png",
+    "sha256": "bbdc698b4a530ab59f042b0446a75bc07707ec037148a9fc45b1d2b5ae3490b7"
+  },
+  {
+    "id": "soil_tilling",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\soil_tilling.png",
+    "sha256": "8489e231e74c99d0a23c10fc75c5c6b4f6bc6708f1d64ee516c3882f44b15215"
+  },
+  {
+    "id": "gravel_sifting",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\gravel_sifting.png",
+    "sha256": "250c72e130961a604ea0b8475e44fe33975dfef76edf8283438ba00ff2601865"
+  },
+  {
+    "id": "stone_joinery",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\stone_joinery.png",
+    "sha256": "ffb91621bd4673da4e52caedb98740521cd2ed7dc088abec2afdea70f3b06f4d"
+  },
+  {
+    "id": "buried_cache",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\buried_cache.png",
+    "sha256": "a42307af512b71a46907260221eedd4784f78da2d0e93b3a64e75a110dd1ef94"
+  },
+  {
+    "id": "root_trip",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\root_trip.png",
+    "sha256": "d07b340d10fc635532080027be6c613cb3b684a51beae51b1cfb9e6d13a8c7c3"
+  },
+  {
+    "id": "crystal_resonance",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\crystal_resonance.png",
+    "sha256": "d9ea1d00e29172fcb531d27a8f4d75c96a70e470a995f0d139e7ddd7d5ad5877"
+  },
+  {
+    "id": "sand_blind",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\sand_blind.png",
+    "sha256": "957a8af1006c1511d6006cc76fbba84e65989c8e17d7692ee2b8e9586e6e45e5"
+  },
+  {
+    "id": "lodestone_trace",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\lodestone_trace.png",
+    "sha256": "d2b54f92411c561642041232f280d632caa7c23abac5560a68cb0ab5cf2bc4c2"
+  },
+  {
+    "id": "crumbling_foothold",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\crumbling_foothold.png",
+    "sha256": "f80ceff234af28697a0c534137c4149ba533a33d37a25f0f95e310871def7c3a"
+  },
+  {
+    "id": "luminous_signature",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\luminous_signature.png",
+    "sha256": "0b09b0c4f0d77d42806ee7ecc6fe35776bd34bb02e17385f98ae66cd37c53a8e"
+  },
+  {
+    "id": "starlit_nametag",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\starlit_nametag.png",
+    "sha256": "70e3acd4b87928ff6eb24cb9346ffccf681832dd07bb226a3d2a5d3477061d6c"
+  },
+  {
+    "id": "color_finder",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\color_finder.png",
+    "sha256": "fcc5435731aa69df225996cadf54e8b4708957ba47a7c5e1e4baf17aa9b3f9e0"
+  },
+  {
+    "id": "luminous_frame",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\luminous_frame.png",
+    "sha256": "93f048fbc582399334459fb9e1f28a0afe8ddc51bcff5b3541bbba5cd3428581"
+  },
+  {
+    "id": "exhibit_anchor",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\exhibit_anchor.png",
+    "sha256": "318054aa5cc673aeeda018cb37ae4e7723f0acb197d66dbc8fda6c2cd499f178"
+  },
+  {
+    "id": "light_portrait",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\light_portrait.png",
+    "sha256": "459e552f8242f27f14f557067e80fccad3f7f6415c361a8c276b4078a54cad55"
+  },
+  {
+    "id": "promise_star",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\promise_star.png",
+    "sha256": "871813f197c3a33ad384f5fff64a88d1fae51ba5f245b6f4ee4293970101cfa9"
+  },
+  {
+    "id": "home_check",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\home_check.png",
+    "sha256": "fec562da072dce520a5c059d192750d4871c1e6e917b433fb0565796c55e5518"
+  },
+  {
+    "id": "clear_eyes",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\clear_eyes.png",
+    "sha256": "0f5488152a404afc174fffa2e67ffbcfa064980b66c1703ab7f71384a7627ed5"
+  },
+  {
+    "id": "light_rhythm",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\light_rhythm.png",
+    "sha256": "37986d70554ec64c102e3f468805d7fdb6244f93744e7ded828db599cf8feed1"
+  },
+  {
+    "id": "frontal_duel",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\frontal_duel.png",
+    "sha256": "045d7595dc2aea76d9536094b81f8320cb69ae4999dc52d8cd8cdf5689ea71c0"
+  },
+  {
+    "id": "last_lantern",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\last_lantern.png",
+    "sha256": "d0b040c507c683437d662d1e4cd4d6435a74cca8f8b9ae58e9a9194759dd5bf2"
+  },
+  {
+    "id": "star_farewell",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\star_farewell.png",
+    "sha256": "3def3659e16a3f4a2a86fc9c97eb6d0ec1f41a2052986a1b0bd402bbf6c68b02"
+  },
+  {
+    "id": "light_severance",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\light_severance.png",
+    "sha256": "23863aa18c65ec55a21ab8f771eb17ad6afd0fc190eec97a445ea1ea1d22e2fa"
+  },
+  {
+    "id": "dawn_promise",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\dawn_promise.png",
+    "sha256": "0019b315e59cc85470b7e34efab8366b0404adf1f8e0aab4bad4d7399cb9c764"
+  },
+  {
+    "id": "silent_steps",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\silent_steps.png",
+    "sha256": "a96ed44cdc16c28ad94580f341ea4f3b3fe85f6679d91e628a7b4c4c0154f2b1"
+  },
+  {
+    "id": "forgotten_name",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\forgotten_name.png",
+    "sha256": "cbebe721e780c1d89dac8c5920be21000b138c6850e8c02b66cc0338c49163d5"
+  },
+  {
+    "id": "empty_page",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\empty_page.png",
+    "sha256": "4c1c6ea735653b100f36c1cd73e8e0ecf3f3e6105e7b27a252076fbaa06ec7ef"
+  },
+  {
+    "id": "night_cover",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\night_cover.png",
+    "sha256": "954a38fd21d99405da7e5dde9d1d25c61221094f5a997ad692c25376d4c2e540"
+  },
+  {
+    "id": "shadow_pouch",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\shadow_pouch.png",
+    "sha256": "d207363c58ba821d08b9001d1dafb5979d4bf5bc58ce78c6554a637cbad6513a"
+  },
+  {
+    "id": "ghost_palm",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\ghost_palm.png",
+    "sha256": "52a7de8ef6640a62cecd33bdf1f0173cb5be40ae11422b2d663b957a6fb0770d"
+  },
+  {
+    "id": "black_silence",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\black_silence.png",
+    "sha256": "d6480f0ac241cba777041c54df7c86553246b7e355c0cd356f9dc237a711feb6"
+  },
+  {
+    "id": "oblivion_mark",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\oblivion_mark.png",
+    "sha256": "59bfb04e89424e6c791c5a2de9bcf9227cc543fcc362875689edffe815daed29"
+  },
+  {
+    "id": "delayed_fear",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\delayed_fear.png",
+    "sha256": "1a6d02405f4db6905570fe1b9bef7dbb5a3c4e6cebb99e3bc46b1b506e9dd560"
+  },
+  {
+    "id": "fugitive_toll",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\fugitive_toll.png",
+    "sha256": "60911452ffa3ea157dc386ac9cf5f64af4d8ecde2c406dfa163600d970c3e8ab"
+  },
+  {
+    "id": "hungry_edge",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\hungry_edge.png",
+    "sha256": "5af3664f75fe30ef21f63d75bba8e82067a8d6b29c7bd9d8533b556b8fcf1156"
+  },
+  {
+    "id": "shadow_retrace",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\shadow_retrace.png",
+    "sha256": "a69342f813f75d76a36e1611a29814c7265170b177ef9cab60fd30bcf2faf752"
+  },
+  {
+    "id": "black_pulse",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\black_pulse.png",
+    "sha256": "71178b673df6648c45fc8d010f0f7517042e2df774b330baf0a3dcd198b599c1"
+  },
+  {
+    "id": "empty_grave",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\empty_grave.png",
+    "sha256": "cf266c2dfd705bc53d534be1d625a661b6ee7f1972ef3d2c47af5cb6067bc757"
+  },
+  {
+    "id": "ill_choice",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\ill_choice.png",
+    "sha256": "c91384e34909a45f2aabb9e02585b605c1cac69c07306910ff375cebc5f1689b"
+  },
+  {
+    "id": "resonance_tuning",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\resonance_tuning.png",
+    "sha256": "42ae315a4e2903e7ba4c07e0d39584d308006c99f9eee9d793fa2600b573fc85"
+  },
+  {
+    "id": "breath_reversal",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\breath_reversal.png",
+    "sha256": "49c126e3dec51ea6fe48bd136dd5bb8e1d730ca3c80e5b4f8f0592d6d6f0423d"
+  },
+  {
+    "id": "heat_script",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\heat_script.png",
+    "sha256": "00cd064cbfd666f5a547e48b30f5e2d22612c1101ae0007dbd69a6da9de745cf"
+  },
+  {
+    "id": "heat_transfer",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\heat_transfer.png",
+    "sha256": "43ce5586b673298af0a7b14b254116c6c1d0f414f1e55bd960b55b603c8d4176"
+  },
+  {
+    "id": "level_balance",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\level_balance.png",
+    "sha256": "0e8b10aad236e16de94c421aaf9a219a09b769269e1d34ffee08727cf9c90b90"
+  },
+  {
+    "id": "ice_cog",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\ice_cog.png",
+    "sha256": "1efb832fb134122414c9fc41957eebc834522d9d143197a842f1c2dcee27ef3e"
+  },
+  {
+    "id": "weight_sigil",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\weight_sigil.png",
+    "sha256": "4712d12382919df0d32ffa37ed13fce0f8dc6e74ce0613c79df8f01e9a67c1e7"
+  },
+  {
+    "id": "prism_split",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\prism_split.png",
+    "sha256": "191d921a82404e7dc7e4e6e42d9072c3dc292ceee83a135244f4a3c8054c6144"
+  },
+  {
+    "id": "light_afterimage",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\light_afterimage.png",
+    "sha256": "7ebce3a3938e8badcaf0c3327a77cdfbbed8a0fdb995dbd61fdfc6df5c629816"
+  },
+  {
+    "id": "shadow_passage",
+    "source": "spells-expansion-3-icons-v1\\release\\resourcepacks\\chacademia-spells-expansion-3\\assets\\magiccodex\\textures\\spells\\expansion_3\\shadow_passage.png",
+    "sha256": "8f975f9f10754531631d873bb3a6f6d46a217570d72cd44392a5706a41800843"
+  }
+]

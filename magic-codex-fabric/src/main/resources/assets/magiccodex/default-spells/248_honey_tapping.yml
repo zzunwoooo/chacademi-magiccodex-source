@@ -1,0 +1,14 @@
+id: honey_tapping
+name: 꿀 뜨기
+category: earth
+description: 빈 병을 사용해 꿀이 찬 벌집에서 꿀을 채집한다.
+icon: ''
+permission: magic.learned.honey_tapping
+discovery:
+  description: 유리병으로 꿀을 누적 10회 채집하기.
+research: 꿀이 찬 때를 기다려야 한다. 채집의 마법도 기다리는 순서를 지킨다.
+cast:
+  command: ''
+  cooldown-seconds: 8
+  mana-cost: 12
+order: 248

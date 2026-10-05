@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>차카데미 마법 수정안</title><link rel="stylesheet" href="review.css"><script src="../discovery-editor-v1/icon-preview.js"></script></head>
+<body>
+<header><div><span class="eyebrow">차카데미 · 마법 정리</span><h1>마법 수정안</h1><p>직접 수정한 내용은 그대로, 나머지는 같은 방향의 검토안으로.</p></div><button id="export">수정본 내보내기</button></header>
+<div class="summary"><span><b>29</b> 직접 수정</span><span><b>41</b> 추가 제안</span><span><b>28</b> 직접 검토 완료</span><span>최신 설정과 충돌 없음</span></div>
+<nav id="tabs"><button data-scope="user">직접 수정 29</button><button data-scope="proposal" class="active">스타일 반영 제안 41</button><button data-scope="unchanged">나머지 168</button><button data-scope="all">전체 238</button></nav>
+<div class="tools"><input id="search" placeholder="이름·효과·획득 조건 검색" aria-label="마법 검색"><select id="category" aria-label="원소"><option value="">모든 원소</option value="fire">화염</option><option value="water">물</option><option value="earth">대지</option><option value="wind">바람</option><option value="light">빛</option><option value="dark">어둠</option></select><span id="count"></span></div>
+<main><aside id="list" aria-label="마법 목록"></aside><section id="detail"></section></main>
+<footer><span id="save-state">검토안 준비됨</span><span>게임 효과·획득 판정은 별도 구현 단계입니다. 이 화면은 런처·서버를 변경하지 않습니다.</span></footer>
+<script src="review-data.js"></script><script src="review.js"></script>
+</body></html>

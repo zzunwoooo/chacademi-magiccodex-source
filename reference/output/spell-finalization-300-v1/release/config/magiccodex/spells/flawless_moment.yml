@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "flawless_moment"
+name: "무결의 순간"
+category: "light"
+description: "2초 동안 피해를 받지 않습니다. 유지 중에는 자신도 이동하거나 공격할 수 없습니다.\n\n피해를 받지 않고 방패로 공격을 연달아 막으면 방어가 완성되는 짧은 순간이 보인다."
+icon: "magiccodex:textures/spells/expansion/flawless_moment.png"
+permission: "magic.learned.flawless_moment"
+discovery:
+  description: "방패로 공격을 10번 연속 막고 그동안 피해를 받지 않기."
+research: "아무것도 다치지 않는 순간에는 아무것도 움직여서는 안 된다."
+cast:
+  command: "마법 무결의순간"
+  cooldown-seconds: 90
+  mana-cost: 220
+order: 1470

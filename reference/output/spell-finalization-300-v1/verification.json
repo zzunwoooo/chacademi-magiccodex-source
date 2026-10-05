@@ -1,0 +1,118 @@
+{
+  "total": 300,
+  "existing": 200,
+  "newlyCompleted": 100,
+  "descriptionsWithClues": 300,
+  "missingFields": [],
+  "bookAcquisition": 8,
+  "bookSpells": [
+    {
+      "id": "blue_bonfire",
+      "name": "푸른 화톳불",
+      "condition": "학교 도서관에서 '불꽃의 색과 마력' 책 읽기."
+    },
+    {
+      "id": "water_mirror",
+      "name": "수면의 거울",
+      "condition": "학교 도서관에서 '수면에 비친 먼 풍경' 책 읽기."
+    },
+    {
+      "id": "water_elemental",
+      "name": "운디네",
+      "condition": "'정령계약서 - 수' 도서 읽기"
+    },
+    {
+      "id": "cauldron_fill",
+      "name": "가마솥 채우기",
+      "condition": "도서관에서 '화학 기초' 책 읽기"
+    },
+    {
+      "id": "earth_elemental",
+      "name": "그놈",
+      "condition": "도서관에서 '정령계약서 - 지' 책 읽기."
+    },
+    {
+      "id": "forest_throne",
+      "name": "숲의 왕좌",
+      "condition": "도서관에서 '움직이지 않는 숲의 왕' 책 읽기."
+    },
+    {
+      "id": "forbidden_contract",
+      "name": "금서의 계약",
+      "condition": "학교 금서고에서 '대가 없는 기적은 없다' 책 읽기."
+    },
+    {
+      "id": "void_maw",
+      "name": "공허의 입",
+      "condition": "학교 도서관에서 숨겨진 '텅 빈 것의 식욕' 책 읽기."
+    }
+  ],
+  "replacedBookConditions": [
+    {
+      "id": "flight",
+      "name": "비행",
+      "before": "학교 도서관에서 비행 연구 기록을 읽기.",
+      "after": "바람 마법 비행 실습 수업을 완료하기."
+    },
+    {
+      "id": "far_touch",
+      "name": "손길 너머",
+      "before": "학교 도서관에서 '기계에 대한 이해' 책을 읽기",
+      "after": "레버·버튼·압력판을 각각 10회 작동시키기."
+    },
+    {
+      "id": "aerial_haul",
+      "name": "부유",
+      "before": "학교 도서관에서 '부유물의 무게와 균형' 책을 읽은 뒤 손길 너머 50회 사용하기.",
+      "after": "손길 너머를 누적 50회 사용하기."
+    },
+    {
+      "id": "flame_leap",
+      "name": "블레이즈 킥",
+      "before": "학교 도서관에서 숨겨진 '체술 강화' 책 읽기.",
+      "after": "달리며 몬스터에게 근접 공격을 30회 명중하기."
+    },
+    {
+      "id": "heat_recovery",
+      "name": "열량 보존",
+      "before": "학교 도서관에서 '에너지에 관하여' 책 읽기.",
+      "after": "몸에 붙은 불을 누적 10회 끄기."
+    },
+    {
+      "id": "firebird_hunt",
+      "name": "불새",
+      "before": "학교 도서관에서 '불사조, 주작, 가루다' 책 읽기.",
+      "after": "불새 관측 실습을 완료하기."
+    },
+    {
+      "id": "true_sight",
+      "name": "진실의 눈",
+      "before": "학교 도서관에서 '보이는 것과 존재하는 것' 책 읽기.",
+      "after": "투명화 상태의 몬스터를 5회 처치하기."
+    },
+    {
+      "id": "mana_conduit",
+      "name": "마력 전선",
+      "before": "학교 도서관에서 '마력을 나누는 회로' 책 읽기.",
+      "after": "위로의 빛을 동료에게 누적 20회 사용하기."
+    },
+    {
+      "id": "afterlife_gate",
+      "name": "사후세계의 문",
+      "before": "서로 다른 원인으로 5번 사망한 뒤 학교 도서관에서 '경계의 여행자' 책 읽기.",
+      "after": "서로 다른 원인으로 5회 사망하기."
+    }
+  ],
+  "categories": {
+    "wind": 50,
+    "fire": 49,
+    "water": 49,
+    "earth": 51,
+    "light": 50,
+    "dark": 51
+  },
+  "explicitUserEntriesPreserved": 29,
+  "maximumSupported": 512,
+  "deployed": false,
+  "runtimeEffectsComplete": false
+}

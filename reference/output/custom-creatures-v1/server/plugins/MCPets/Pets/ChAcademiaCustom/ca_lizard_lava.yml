@@ -1,0 +1,17 @@
+"Id": "ca_lizard_lava"
+"MythicMob": "CA_Pet_lizard_lava"
+"Permission": "chacademia.pet.ca_lizard_lava"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f용암 왕도마뱀"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "거친 환경에 적응한 커다란 도마뱀. 용암 계열의 변이 개체."
+    - "서식지: 화산 분화구 / 열수 동굴"
+    - "2성"

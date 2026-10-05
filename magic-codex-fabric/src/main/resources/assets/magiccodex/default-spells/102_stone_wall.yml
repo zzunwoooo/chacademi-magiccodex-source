@@ -1,0 +1,14 @@
+id: stone_wall
+name: 석벽
+category: earth
+description: 정면에 10초간 유지되는 작은 돌벽을 세워 적의 이동과 투사체를 막습니다.
+icon: magiccodex:textures/spells/intermediate/stone_wall.png
+permission: magic.learned.stone_wall
+discovery:
+  description: 대지 마법 방어 수업을 통해 습득.
+research: 시험지 앞에 세워도 감독 교수의 시선을 막아 주지는 않는다.
+cast:
+  command: ''
+  cooldown-seconds: 20
+  mana-cost: 60
+order: 102

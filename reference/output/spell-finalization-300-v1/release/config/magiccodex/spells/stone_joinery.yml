@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "stone_joinery"
+name: "반듯한 모서리"
+category: "earth"
+description: "석재를 같은 재료의 계단이나 반 블록으로 가공한다.\n\n계단과 반 블록을 거듭 만든 손이 돌을 나눌 각도와 두께를 기억한다."
+icon: "magiccodex:textures/spells/expansion_3/stone_joinery.png"
+permission: "magic.learned.stone_joinery"
+discovery:
+  description: "석재 계단과 반 블록을 각각 16개 제작하기."
+research: "같은 돌이라도 모서리 하나에 건물의 인상이 달라진다."
+cast:
+  command: "마법 반듯한모서리"
+  cooldown-seconds: 5
+  mana-cost: 12
+order: 2540

@@ -1,0 +1,90 @@
+{
+  "seasonalSpecies": 26,
+  "yearRoundSpecies": 112,
+  "rules": {
+    "lil_bird": [
+      "spring"
+    ],
+    "lostasset_mob1_rabbit": [
+      "spring"
+    ],
+    "lostasset_mob2_flowersprite": [
+      "spring"
+    ],
+    "nocsy_cat2": [
+      "spring"
+    ],
+    "horse_unicorn": [
+      "spring"
+    ],
+    "stag_heavenly": [
+      "spring"
+    ],
+    "butterfly": [
+      "spring",
+      "summer"
+    ],
+    "frog": [
+      "spring",
+      "summer"
+    ],
+    "bulb_dripleaf": [
+      "spring",
+      "summer"
+    ],
+    "bulb_lilypad": [
+      "spring",
+      "summer"
+    ],
+    "lostasset_mob2_lakefairy": [
+      "spring",
+      "summer"
+    ],
+    "phoenix_flame": [
+      "summer"
+    ],
+    "phoenix_thunder": [
+      "summer"
+    ],
+    "sky_serpent_solar": [
+      "summer"
+    ],
+    "frog_green": [
+      "summer"
+    ],
+    "hedgehog": [
+      "autumn"
+    ],
+    "lostasset_mob2_leaffairy": [
+      "autumn"
+    ],
+    "lostasset_mob2_mushroomfairy": [
+      "autumn"
+    ],
+    "stag_rune": [
+      "autumn"
+    ],
+    "tusker_dreamlight": [
+      "autumn"
+    ],
+    "baby_yeti": [
+      "winter"
+    ],
+    "frost_ferret": [
+      "winter"
+    ],
+    "gangster_snowman": [
+      "winter"
+    ],
+    "ice_knight": [
+      "winter"
+    ],
+    "horse_glacial": [
+      "winter"
+    ],
+    "basilisk_snowstorm": [
+      "winter"
+    ]
+  },
+  "source": "MagicCodexBridge ClimateService; existing server season authority"
+}

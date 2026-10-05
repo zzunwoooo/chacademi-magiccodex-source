@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "black_silence"
+name: "검은 침묵"
+category: "dark"
+description: "적의 새 마법 시전을 잠시 막고 일반 공격은 허용한다.\n\n주문과 물약을 준비하던 마녀를 거듭 상대하면 마력이 시작되는 호흡을 끊을 수 있다."
+icon: "magiccodex:textures/spells/expansion_3/black_silence.png"
+permission: "magic.learned.black_silence"
+discovery:
+  description: "물약을 마시는 마녀를 누적 10마리 처치하기."
+research: "몸을 멈추기보다 다음 주문의 시작을 잠깐 가린다."
+cast:
+  command: "마법 검은침묵"
+  cooldown-seconds: 30
+  mana-cost: 95
+order: 2820

@@ -1,0 +1,17 @@
+"Id": "ca_stag_demonic"
+"MythicMob": "CA_Pet_stag_demonic"
+"Permission": "chacademia.pet.ca_stag_demonic"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f마성 영록"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "오래된 숲의 마력을 품은 신비한 사슴. 마성 계열의 변이 개체."
+    - "서식지: 뒤틀린 메사 / 맨틀 동굴"
+    - "3성"

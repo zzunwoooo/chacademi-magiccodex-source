@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "thorn_seeds"
+name: "가시 씨앗"
+category: "earth"
+description: "정면으로 씨앗 5개를 부채꼴로 발사합니다. 가까이서 여러 발을 맞히기 좋은 공격입니다.\n\n선인장을 여러 번 수확한 손은 작은 씨앗에도 가시의 힘을 실을 수 있다."
+icon: "magiccodex:textures/spells/expansion_2/thorn_seeds.png"
+permission: "magic.learned.thorn_seeds"
+discovery:
+  description: "선인장 누적 20개 수확하기."
+research: "씨앗을 심으라고 받은 것인지 발사하라고 받은 것인지, 실습 전에 확인하자."
+cast:
+  command: "마법 가시씨앗"
+  cooldown-seconds: 8
+  mana-cost: 35
+order: 1200

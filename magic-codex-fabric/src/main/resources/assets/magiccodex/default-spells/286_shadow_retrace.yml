@@ -1,0 +1,14 @@
+id: shadow_retrace
+name: 되짚는 그림자
+category: dark
+description: 현재 위치를 저장하고 시간 안에 다시 사용하면 돌아간다.
+icon: ''
+permission: magic.learned.shadow_retrace
+discovery:
+  description: 엔더 진주로 누적 15회 순간 이동하기.
+research: 멀리 가는 주문보다 돌아올 시간을 정하는 것이 중요하다.
+cast:
+  command: ''
+  cooldown-seconds: 25
+  mana-cost: 45
+order: 286

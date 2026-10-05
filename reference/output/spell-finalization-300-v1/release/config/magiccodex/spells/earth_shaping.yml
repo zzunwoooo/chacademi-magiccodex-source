@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "earth_shaping"
+name: "대지 성형"
+category: "earth"
+description: "자신의 건축 구역에서 바라보는 흙 지형 최대 9칸을 한 칸 높이거나 낮춥니다. 높일 때는 소지한 흙을 소비합니다.\n\n흙을 여러 번 쌓아 본 손은 땅의 높이를 바꿀 모양을 먼저 떠올린다."
+icon: "magiccodex:textures/spells/intermediate/earth_shaping.png"
+permission: "magic.learned.earth_shaping"
+discovery:
+  description: "흙 블록 누적 100개 설치하기."
+research: "길이 불편하면 길을 바꾸면 된다. 단, 다른 학생의 기숙사 바닥을 바꾸지는 말자."
+cast:
+  command: "마법 대지성형"
+  cooldown-seconds: 30
+  mana-cost: 70
+order: 1020

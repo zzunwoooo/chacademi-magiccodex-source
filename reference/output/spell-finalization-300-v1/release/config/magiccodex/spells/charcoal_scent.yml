@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "charcoal_scent"
+name: "숯내음"
+category: "fire"
+description: "원목을 소비해 숯으로 바꾼다.\n\n화로에서 숯을 거듭 꺼내면 원목이 검게 변할 때의 열과 냄새가 손에 익는다."
+icon: "magiccodex:textures/spells/expansion_3/charcoal_scent.png"
+permission: "magic.learned.charcoal_scent"
+discovery:
+  description: "화로에서 숯을 누적 32개 꺼내기."
+research: "나무의 모양은 사라져도 그 안의 온기는 다른 불을 지핀다."
+cast:
+  command: "마법 숯내음"
+  cooldown-seconds: 8
+  mana-cost: 18
+order: 2180

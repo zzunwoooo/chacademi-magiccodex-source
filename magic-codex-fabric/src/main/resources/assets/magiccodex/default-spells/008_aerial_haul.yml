@@ -1,0 +1,14 @@
+id: aerial_haul
+name: 부유
+category: wind
+description: 지정된 화물만 공중에 띄워 5초간 조종합니다. 몬스터는 대상에 포함하지 않습니다.
+icon: magiccodex:textures/spells/intermediate/aerial_haul.png
+permission: magic.learned.aerial_haul
+discovery:
+  description: 화물 대상 시스템과 획득 조건을 추후 연결합니다.
+research: 6서클 바람 마법의 기본, 사람에게 사용은 금지되어있다.
+cast:
+  command: ''
+  cooldown-seconds: 120
+  mana-cost: 250
+order: 8

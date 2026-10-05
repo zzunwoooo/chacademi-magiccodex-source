@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "ill_choice"
+name: "불길한 선택"
+category: "dark"
+description: "대상의 다음 행동에 따라 공격력 또는 이동 속도를 낮춘다.\n\n어둠 응용 수업에서는 상대의 선택에 맞춰 다른 약화를 남기는 법을 배운다."
+icon: "magiccodex:textures/spells/expansion_3/ill_choice.png"
+permission: "magic.learned.ill_choice"
+discovery:
+  description: "어둠 마법 응용 수업의 약화 실습을 완료하기."
+research: "움직이든 공격하든 어느 쪽에도 작은 대가가 기다리는 표식이다."
+cast:
+  command: "마법 불길한선택"
+  cooldown-seconds: 25
+  mana-cost: 70
+order: 2900

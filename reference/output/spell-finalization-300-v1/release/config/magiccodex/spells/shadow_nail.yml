@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "shadow_nail"
+name: "그림자 못"
+category: "dark"
+description: "일반 몬스터 하나의 순간 이동을 5초간 막습니다. 엔더맨을 붙잡는 데 유용합니다.\n\n자꾸 자리를 옮기는 엔더맨을 거듭 상대해 보면 그 도주를 붙잡을 위치를 읽게 된다."
+icon: "magiccodex:textures/spells/expansion_2/shadow_nail.png"
+permission: "magic.learned.shadow_nail"
+discovery:
+  description: "엔더맨을 누적 10마리 처치하기."
+research: "잠깐만, 아직 이야기가 끝나지 않았어."
+cast:
+  command: "마법 그림자못"
+  cooldown-seconds: 15
+  mana-cost: 45
+order: 1850

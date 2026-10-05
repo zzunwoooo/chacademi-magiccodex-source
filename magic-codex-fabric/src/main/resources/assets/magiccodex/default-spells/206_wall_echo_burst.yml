@@ -1,0 +1,14 @@
+id: wall_echo_burst
+name: 벽울림 탄
+category: wind
+description: 벽에 맞으면 벽면을 따라 충격이 퍼져 벽 가까이 붙은 적을 공격한다.
+icon: ''
+permission: magic.learned.wall_echo_burst
+discovery:
+  description: 벽에 화살을 누적 30회 명중하기.
+research: 정면을 피했다고 벽 곁까지 안전한 것은 아니다.
+cast:
+  command: ''
+  cooldown-seconds: 15
+  mana-cost: 55
+order: 206

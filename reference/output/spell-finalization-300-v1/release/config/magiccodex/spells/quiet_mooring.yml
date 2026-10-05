@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "quiet_mooring"
+name: "노아의 방주"
+category: "water"
+description: "현재 위치에 보트를 설치한다. 물이 아니라면 실패한다.\n\n물 위에 보트를 몇 번 띄워 본 경험이 마력으로 부를 작은 배의 형태를 알려 준다."
+icon: "magiccodex:textures/spells/expansion_2/quiet_mooring.png"
+permission: "magic.learned.quiet_mooring"
+discovery:
+  description: "보트 설치 5회."
+research: "노를 내려놓고 책을 읽으려면 먼저 배부터 멈춰야 한다."
+cast:
+  command: "마법 잔잔한정박"
+  cooldown-seconds: 15
+  mana-cost: 100
+order: 860

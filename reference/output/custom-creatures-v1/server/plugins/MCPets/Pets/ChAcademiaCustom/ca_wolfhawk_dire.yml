@@ -1,0 +1,17 @@
+"Id": "ca_wolfhawk_dire"
+"MythicMob": "CA_Pet_wolfhawk_dire"
+"Permission": "chacademia.pet.ca_wolfhawk_dire"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f거친 울프호크"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "산악 둥지 주변에서 영역을 지키는 날렵한 생물. 거친 계열의 변이 개체."
+    - "서식지: 바람 깎인 첨탑 / 바위 산맥"
+    - "3성"

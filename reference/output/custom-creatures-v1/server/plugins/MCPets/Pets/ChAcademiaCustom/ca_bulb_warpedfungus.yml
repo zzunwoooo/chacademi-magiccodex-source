@@ -1,0 +1,17 @@
+"Id": "ca_bulb_warpedfungus"
+"MythicMob": "CA_Pet_bulb_warpedfungus"
+"Permission": "chacademia.pet.ca_bulb_warpedfungus"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f뒤틀린 균새싹"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "기묘한 지형의 마력을 흡수한 푸른 균 정령."
+    - "서식지: 뒤틀린 메사 / 균류 동굴"
+    - "2성"

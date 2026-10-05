@@ -1,0 +1,14 @@
+id: wax_melting
+name: 밀랍 녹이기
+category: fire
+description: 구리 블록의 밀랍을 제거한다.
+icon: ''
+permission: magic.learned.wax_melting
+discovery:
+  description: 밀랍칠한 구리에서 도끼로 밀랍을 8회 제거하기.
+research: 밀랍을 태우기보다 녹여 거두는 편이 금속을 상하게 하지 않는다.
+cast:
+  command: ''
+  cooldown-seconds: 5
+  mana-cost: 12
+order: 216

@@ -1,0 +1,22 @@
+{
+  "total": 200,
+  "preservedUserEntries": 62,
+  "authoredEntries": 138,
+  "categories": {
+    "wind": 33,
+    "fire": 32,
+    "water": 32,
+    "earth": 35,
+    "light": 33,
+    "dark": 35
+  },
+  "javaTests": {
+    "tests": 133,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "editorTests": 13,
+  "jarSha256": "30aac77ea80063490df7224ede13cc56fc0d433a849a8f62e03b4b80cbeb54d6",
+  "jarBytes": 100007568
+}

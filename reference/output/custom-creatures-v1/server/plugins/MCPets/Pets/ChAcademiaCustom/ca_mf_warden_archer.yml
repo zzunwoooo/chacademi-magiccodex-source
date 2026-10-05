@@ -1,0 +1,17 @@
+"Id": "ca_mf_warden_archer"
+"MythicMob": "CA_Pet_mf_warden_archer"
+"Permission": "chacademia.pet.ca_mf_warden_archer"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f봉인의 궁수"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "봉인 유적 외곽을 감시하는 궁수."
+    - "서식지: 깊은 동굴"
+    - "3성"

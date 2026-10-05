@@ -1,0 +1,17 @@
+"Id": "ca_elk"
+"MythicMob": "CA_Pet_elk"
+"Permission": "chacademia.pet.ca_elk"
+"CheckPermission": true
+"Mountable": true
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f고산 엘크"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "고산 숲의 넓은 공터를 무리 지어 걷는 사슴."
+    - "서식지: 고산 숲 / 고산 고지"
+    - "2성"

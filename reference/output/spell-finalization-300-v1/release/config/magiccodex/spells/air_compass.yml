@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "air_compass"
+name: "허공 나침반"
+category: "wind"
+description: "눈앞에 동서남북을 표시하는 작은 바람개비를 띄운다.\n\n나침반과 함께 길을 찾아 본 경험이 허공에도 방향의 바늘을 세운다."
+icon: "magiccodex:textures/spells/expansion_3/air_compass.png"
+permission: "magic.learned.air_compass"
+discovery:
+  description: "나침반을 든 채 누적 300블록 이동하기."
+research: "바람은 늘 같은 쪽으로 불지 않는다. 방향을 아는 것과 바람을 믿는 것은 다르다."
+cast:
+  command: "마법 허공나침반"
+  cooldown-seconds: 3
+  mana-cost: 5
+order: 2130

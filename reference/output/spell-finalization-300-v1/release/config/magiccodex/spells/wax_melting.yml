@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "wax_melting"
+name: "밀랍 녹이기"
+category: "fire"
+description: "구리 블록의 밀랍을 제거한다.\n\n구리의 밀랍을 거듭 걷어 낸 손은 금속과 코팅이 갈라지는 틈을 안다."
+icon: "magiccodex:textures/spells/expansion_3/wax_melting.png"
+permission: "magic.learned.wax_melting"
+discovery:
+  description: "밀랍칠한 구리에서 도끼로 밀랍을 8회 제거하기."
+research: "밀랍을 태우기보다 녹여 거두는 편이 금속을 상하게 하지 않는다."
+cast:
+  command: "마법 밀랍녹이기"
+  cooldown-seconds: 5
+  mana-cost: 12
+order: 2170

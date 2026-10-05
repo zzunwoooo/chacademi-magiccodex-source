@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "wall_echo_burst"
+name: "벽울림 탄"
+category: "wind"
+description: "벽에 맞으면 벽면을 따라 충격이 퍼져 벽 가까이 붙은 적을 공격한다.\n\n벽에 닿아 되울리는 화살 소리를 거듭 듣다 보면 충격이 옆으로 흐르는 길이 보인다."
+icon: "magiccodex:textures/spells/expansion_3/wall_echo_burst.png"
+permission: "magic.learned.wall_echo_burst"
+discovery:
+  description: "벽에 화살을 누적 30회 명중하기."
+research: "정면을 피했다고 벽 곁까지 안전한 것은 아니다."
+cast:
+  command: "마법 벽울림탄"
+  cooldown-seconds: 15
+  mana-cost: 55
+order: 2070

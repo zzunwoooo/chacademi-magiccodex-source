@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "silent_steps"
+name: "조용한 발걸음"
+category: "dark"
+description: "발소리와 이동으로 발생하는 진동을 잠시 숨긴다.\n\n몸을 낮추고 긴 길을 지나온 발걸음은 소리 없이 힘을 나누는 법을 기억한다."
+icon: "magiccodex:textures/spells/expansion_3/silent_steps.png"
+permission: "magic.learned.silent_steps"
+discovery:
+  description: "웅크린 채 누적 300블록 이동하기."
+research: "조용히 걸으면 소리뿐 아니라 발밑의 떨림도 줄일 수 있다."
+cast:
+  command: "마법 조용한발걸음"
+  cooldown-seconds: 15
+  mana-cost: 20
+order: 2760

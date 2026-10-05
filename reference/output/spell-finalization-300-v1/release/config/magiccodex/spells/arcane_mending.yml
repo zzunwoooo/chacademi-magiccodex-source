@@ -1,0 +1,15 @@
+# 300종 정리안. 획득 설명은 문구이며 실제 이벤트 연결은 별도입니다.
+id: "arcane_mending"
+name: "마력 봉합"
+category: "light"
+description: "손에 든 일반 도구의 내구도를 최대치의 5%만큼 복구합니다.\n\n모루에서 닳은 도구를 여러 번 수리한 손은 부서진 마력의 틈도 이어 붙인다."
+icon: "magiccodex:textures/spells/expansion/arcane_mending.png"
+permission: "magic.learned.arcane_mending"
+discovery:
+  description: "모루에서 내구도가 닳은 도구를 10번 수리하기."
+research: "오래 쥔 도구에는 손의 모양뿐 아니라 마력의 결도 남는다."
+cast:
+  command: "마법 마력봉합"
+  cooldown-seconds: 30
+  mana-cost: 80
+order: 1450

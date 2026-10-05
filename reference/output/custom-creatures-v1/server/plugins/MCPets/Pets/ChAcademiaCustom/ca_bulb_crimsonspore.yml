@@ -1,0 +1,17 @@
+"Id": "ca_bulb_crimsonspore"
+"MythicMob": "CA_Pet_bulb_crimsonspore"
+"Permission": "chacademia.pet.ca_bulb_crimsonspore"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f진홍 포자"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "붉은 지형과 뜨거운 동굴에서 자란 포자 정령."
+    - "서식지: 뒤틀린 메사 / 열수 동굴"
+    - "2성"

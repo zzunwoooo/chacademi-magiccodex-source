@@ -1,0 +1,17 @@
+"Id": "ca_bulb_amethyst"
+"MythicMob": "CA_Pet_bulb_amethyst"
+"Permission": "chacademia.pet.ca_bulb_amethyst"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f자수정 새싹"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "자수정 지형의 마력을 머금은 작은 정령."
+    - "서식지: 자수정 협곡 / 자수정 우림"
+    - "2성"

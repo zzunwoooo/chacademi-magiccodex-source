@@ -1,0 +1,17 @@
+"Id": "ca_crocodile"
+"MythicMob": "CA_Pet_crocodile"
+"Permission": "chacademia.pet.ca_crocodile"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f난초늪 악어"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "따뜻한 늪의 물가에서 조용히 먹잇감을 기다린다."
+    - "서식지: 난초 늪 / 따뜻한 강"
+    - "2성"

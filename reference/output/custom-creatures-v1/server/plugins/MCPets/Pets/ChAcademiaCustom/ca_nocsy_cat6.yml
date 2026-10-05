@@ -1,0 +1,17 @@
+"Id": "ca_nocsy_cat6"
+"MythicMob": "CA_Pet_nocsy_cat6"
+"Permission": "chacademia.pet.ca_nocsy_cat6"
+"CheckPermission": true
+"Mountable": false
+"AutoRide": false
+"FollowOwner": true
+"Distance": 8
+"SpawnRange": 2
+"ComingBackRange": 3
+"Icon":
+  "Name": "§f산들 고양이"
+  "Material": "AMETHYST_SHARD"
+  "Description":
+    - "잔잔한 계곡의 바람을 즐기는 고양이."
+    - "서식지: 벚꽃 숲 / 꽃피는 계곡"
+    - "1성"
