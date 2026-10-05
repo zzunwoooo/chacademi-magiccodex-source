@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.messaging.PluginMessageListener;
-import school.magiccodex.database.DatabaseSettings;
+
 import school.magiccodex.protocol.MailboxProtocol;
 import school.magiccodex.protocol.MailboxProtocol.*;
 
@@ -25,7 +25,7 @@ final class MailboxBridge implements MailService,PluginMessageListener,Listener,
   this.plugin=plugin;Path dir=plugin.getDataFolder().toPath(),identity=dir.resolve("mailbox-origin.txt");
   if(!Files.exists(identity))Files.writeString(identity,UUID.randomUUID().toString(),StandardOpenOption.CREATE_NEW);
   origin=UUID.fromString(Files.readString(identity).strip()).toString();
-  try{store=io.submit(()->new MailboxStore(DatabaseSettings.load(dir.resolve("database.properties")),dir.resolve("mailbox.db"))).get(15,TimeUnit.SECONDS);}catch(Exception e){io.shutdownNow();throw e;}
+  try{store=io.submit(()->new MailboxStore(ShopMailboxDatabaseSettings.load(dir),dir.resolve("mailbox.db"))).get(15,TimeUnit.SECONDS);}catch(Exception e){io.shutdownNow();throw e;}
   Bukkit.getMessenger().registerIncomingPluginChannel(plugin,MailboxProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,MailboxProtocol.RESPONSE);
   Bukkit.getPluginManager().registerEvents(this,plugin);Bukkit.getServicesManager().register(MailService.class,this,plugin,ServicePriority.Normal);
  }

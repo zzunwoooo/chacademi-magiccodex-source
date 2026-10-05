@@ -41,4 +41,8 @@ Redis는 Ubuntu VM GRUB 이후 사용자 설치 진행 단계이며 가동·동�
 [작업 원칙](AGENTS.md), [기존 서버 인수인계](docs/handoff/SERVER_HANDOFF.md), [자료 안내](reference/MATERIALS.md)를 함께 참고하세요. 과거 기록과 현재 운영/staged 상태를 구분하세요.
 ## 상점·우편함
 
-일반 관리자 상점, 구매 시스템 우편, 첨부 수령과 soft delete 복구 API를 추가했습니다. 운영 배포 전 공유 DB·경제 정합성·실게임 검증과 승인된 배경 자산 반영이 필요합니다. 명령/API/복구 경계는 [SHOP-MAILBOX](docs/SHOP-MAILBOX.md)를 확인하세요.
+일반 관리자 상점, 구매 시스템 우편, 첨부 수령과 soft delete 복구 API를 추가했습니다. 승인된 배경과 ChacaNPC 통합 빌드가 준비됐으며, 운영 배포 전 공유 DB·경제 정합성·실게임 검증이 필요합니다. 명령/API/복구 경계는 [SHOP-MAILBOX](docs/SHOP-MAILBOX.md)를 확인하세요.
+
+최종 통합 JAR·해시·356개 전체 테스트·운영 준비 사항은 [최종 통합 기록](docs/handoff/FINAL_INTEGRATION_20261005.md)을 확인하세요.
+
+상점·우편함만 외부 `plugins/MagicCodexBridge/shop-mailbox-database.properties`를 읽습니다. school/wild의 이 설정만 같은 MariaDB를 지정할 수 있으며 다른 기능의 `database.properties`와 기존 SQLite 자료는 유지됩니다. 계정·비밀번호 설정, 실데이터 이관, 운영 배포·재시작은 별도 작업입니다.

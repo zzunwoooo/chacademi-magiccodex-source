@@ -28,7 +28,7 @@ Permission: `magiccodex.shop.admin` (default op). Player shop/mailbox access def
 
 Hold the original item in the main hand to register it. A cloned one-item template preserves all serialized components, PDC and custom NBT; registration does not consume the held item. `off` disables purchase or sale independently. The product UUID is returned after registration. Prices are nonnegative, at most 1e12 with at most six decimal places; transactions additionally respect the Vault provider's fractional-digit contract. No economic balance is inferred from client/UI caches.
 
-Citizens remains optional. Existing `elena-neutral.png` is reused; no replacement NPC illustration is invented. Entity-tag and Citizens bindings are scoped to the server's persistent mailbox origin ID so equal NPC numbers on different servers do not collide. ChacaNPC is not modified.
+Citizens remains optional. Existing `elena-neutral.png` is reused; no replacement NPC illustration is invented. Entity-tag and Citizens bindings are scoped to the server's persistent mailbox origin ID so equal NPC numbers on different servers do not collide. ChacaNPC source/JAR is preserved. For NPCs claimed by ChacaNPC, the existing gift-first single entry calls the Bridge facade; an explicitly bound shop then opens through that facade and the separate shop event hook skips the claimed NPC, preventing two windows. Unbound NPCs retain fixed-story/AI behavior.
 
 ## Trusted integration API
 
@@ -41,7 +41,7 @@ Citizens remains optional. Existing `elena-neutral.png` is reused; no replacemen
 
 ## Persistence and recovery boundaries
 
-Existing `DatabaseSettings` / `ConnectionHolder` are reused. MariaDB uses `codex_mail*` and `codex_shop*` tables, InnoDB and utf8mb4. SQLite uses `mailbox.db` / `shops.db` with the existing WAL/FULL settings. SQLite files are local to one server; they do not provide cross-server sharing. Use the same existing MariaDB configuration for school/wild to share definitions, mail and ledgers. No credentials or live DB configuration are committed or changed by this task. Schema initialization occurs only when the new module is enabled; tests create temporary isolated SQLite databases.
+Existing `DatabaseSettings` / `ConnectionHolder` are reused. MariaDB uses `codex_mail*` and `codex_shop*` tables, InnoDB and utf8mb4. SQLite uses `mailbox.db` / `shops.db` with the existing WAL/FULL settings. SQLite files are local to one server; they do not provide cross-server sharing. Only shop/mailbox read `plugins/MagicCodexBridge/shop-mailbox-database.properties`. Set this dedicated file to the same MariaDB schema on school/wild to share definitions, mail and ledgers. Other features continue reading their existing `database.properties`. A missing dedicated file keeps the existing local `mailbox.db` / `shops.db`; it never falls back to the common configuration or migrates data. Invalid dedicated configuration fails module initialization instead of silently switching storage. No credentials or live DB configuration are committed or changed by this task. Schema initialization occurs only when the new module is enabled; tests create temporary isolated SQLite databases.
 
 `mailbox-origin.txt` is a stable random server identity created at first enable. Keep each server's own value through restarts. Do not copy the same identity to another server.
 
@@ -53,7 +53,7 @@ Purchase ledger: `prepared -> paid -> done`. Vault is called once for a prepared
 
 **The DB, Vault and inventory are not one distributed transaction.** Durable receipts reduce ambiguity; they do not replace provider-specific payment receipts or another plugin's cross-server inventory synchronization. This implementation does not alter an inventory-sync provider or enforce global exclusivity on unrelated economy plugins. A provider returning stale balances must be fixed at that provider, not hidden with a MagicCodex cache.
 
-The inspected school/wild configuration currently has no MagicCodex `database.properties` (SQLite default). Both have Vault/XConomy JARs; XConomy points to matching MySQL settings but `SyncData.enable` is false. Shared-money correctness and live provider registration remain deployment prerequisites, not a result claimed by offline tests. Citizens was not installed in the inspected server plugin lists.
+The initial inspection found no MagicCodex `database.properties` (SQLite default). Both have Vault/XConomy JARs and matching MySQL target settings. The earlier `SyncData.enable=false` observation was superseded: the DB coordinator reports authentication/PING verified and Redis synchronization enabled on both servers at 09:50:43 UTC, awaiting restart. This task does not overwrite those operational settings or claim restarted runtime correctness. Shared MagicCodex MariaDB configuration and migration of existing SQLite records remain a separate prerequisite. Citizens build 3725 is provided and used for the approved NPC dependency; operational installation is coordinated separately.
 
 ## Validation and visual status
 
@@ -61,9 +61,18 @@ Focused tests cover owner isolation, source-key replay, actual two-connection cl
 
 Builds and tests run on hosting staging only. Latest nickname/pet/shiny/equipment assets and code are retained. No production JAR replacement, server restart, credential change or live database migration has been performed.
 
-Approved production backgrounds are awaiting authorized file handoff:
+Approved production backgrounds were found in the user's Downloads, visually inspected and copied byte-for-byte:
 
 - `shop-panel.png`: 1672x941 RGBA, full image; divider x737, header y118, transaction y709, list inner x770/y211/w821/h467. Runtime NPC/text/items/buttons stay separate.
 - `mailbox_panel_background.png`: 1672x940 RGBA; no baked text/buttons. Intended partial opacity should be preserved without extra opacity filters.
 
-The current screens use existing style assets as their fallback. Compile/tests are not in-game visual QA, an ItemsAdder/PDC round-trip gameplay test, live MariaDB contention testing, or an abrupt real-server crash test. Those checks remain required before production use. Mailbox production-background layout integration remains pending the approved PNG.
+Both approved backgrounds are integrated at their original aspect ratio with white tint (0xFFFFFFFF), preserving source alpha without added opacity filtering. Shop source SHA256: 522476959BB672B94E31075157EE727EA72318D04C4EBB81E89D0B3F5E132653. Mailbox source SHA256: 082A74423CD6200A96F37494CAED3EB694C90FC0FD00C2BD42396A1671402821. Center alpha is 252/246; the existing nickname panel center is 253. Existing style assets remain fallback only. Compile/tests are not in-game visual QA, an ItemsAdder/PDC round-trip gameplay test, live MariaDB contention testing, or an abrupt real-server crash test. Those checks remain required before production use.
+
+
+## Dedicated DB setup contract (operator action remains pending)
+
+Create the external dedicated file separately on school and wild using the same target, with properties `mode=mariadb`, `host`, `port`, `database`, `user`, `password`, and optional `ssl-mode` (`disable`, `trust`, `verify-ca`, `verify-full`). Environment variables are not substituted. Do not commit actual values; the runtime filename is ignored by Git. Setting `mode=sqlite` explicitly retains local storage.
+
+Use one InnoDB/utf8mb4 schema. Tables: `codex_mail`, `codex_mail_items`, `codex_mail_owners`, `codex_shops`, `codex_shop_products`, `codex_shop_orders`, `codex_shop_bindings`, `codex_shop_version`. Required privileges: SELECT, INSERT, UPDATE and CREATE for initialization, plus DELETE on `codex_shop_bindings` for NPC rebinding. Keep each server distinct `mailbox-origin.txt`.
+
+This source change creates no account, sets no real password, writes no operational connection file, and migrates no SQLite records. Live MariaDB contention and in-game checks remain pending; isolated tests verify school/wild target equivalence, common-setting isolation, unchanged SQLite files and invalid-setting failure.

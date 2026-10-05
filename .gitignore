@@ -48,3 +48,6 @@ backups/
 
 # Nested standalone project Gradle wrappers
 !**/gradle/wrapper/gradle-wrapper.jar
+
+# Private shop/mailbox connection settings
+shop-mailbox-database.properties

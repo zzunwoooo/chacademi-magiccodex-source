@@ -29,7 +29,7 @@ final class DialogueBridge implements Listener,CommandExecutor,TabCompleter,Plug
     /** 외부 플러그인(ChacaNPC)이 클릭을 직접 처리하는 Citizens NPC id. 그 NPC는 아래 Citizens 처리에서 제외한다. */
     private volatile java.util.function.IntPredicate claimed=id->false;
     void claim(java.util.function.IntPredicate predicate){claimed=predicate==null?id->false:predicate;}
-    private boolean claimed(int id){try{return claimed.test(id);}catch(RuntimeException e){return false;}}
+    boolean claimed(int id){try{return claimed.test(id);}catch(RuntimeException e){return false;}}
     private static final class Session {
         final String token=UUID.randomUUID().toString();final DialogueDefinition definition;final boolean preview;final Entity anchor;boolean journal;
         DialogueStore.State state;String node;int sequence;long expires=System.currentTimeMillis()+300000;
@@ -77,6 +77,8 @@ final class DialogueBridge implements Listener,CommandExecutor,TabCompleter,Plug
      * 권한·공개 여부·시작 노드 조건·진행 상태 검사는 open()과 같다. 처리 중(busy)이면 NONE이 아니라 BUSY.
      */
     java.util.concurrent.CompletableFuture<String> openBoundStory(Player p,int npcId,Entity anchor){
+        var shop=Bukkit.getServicesManager().load(ShopBridge.class);
+        if(shop!=null){String status=shop.openBound(p,npcId,anchor);if(!status.equals("NONE"))return java.util.concurrent.CompletableFuture.completedFuture(status);}
         var f=new java.util.concurrent.CompletableFuture<String>();
         var candidates=bindings.getOrDefault("citizens:"+npcId,List.of()).stream().map(catalog::get)
                 .filter(d->d!=null&&d.enabled()&&(d.permission().isEmpty()||p.hasPermission(d.permission()))).toList();

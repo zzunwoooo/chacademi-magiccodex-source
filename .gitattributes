@@ -14,3 +14,6 @@
 *.cmd text eol=crlf
 *.png binary
 *.jar binary
+
+# Preserve approved packaged asset bytes, including intentional mixed line endings.
+magic-codex-fabric/src/main/resources/assets/** -text whitespace=cr-at-eol

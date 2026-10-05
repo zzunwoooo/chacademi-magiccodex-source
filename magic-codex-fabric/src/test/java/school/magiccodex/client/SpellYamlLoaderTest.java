@@ -70,7 +70,7 @@ class SpellYamlLoaderTest {
     }
 
     @Test void finalCatalogLoads299WithUniqueOrderAndPreservedIdentity() {
-        var result=loader.load(Path.of("../../spell-integration-audit/catalog-staging/hud/spells"));
+        var result=loader.load(Path.of("src/main/resources/assets/magiccodex/default-spells"));
         assertTrue(result.success(),result.errors().toString());
         assertEquals(299,result.spells().size());
         for(int i=0;i<299;i++) {
