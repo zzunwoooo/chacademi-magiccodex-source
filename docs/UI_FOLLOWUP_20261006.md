@@ -6,7 +6,7 @@ Preserves f3335bfca6406d01e2b3e1564d3519c5bc12797f and its pet integration. No d
 - My Info replaces Stats in screen/key labels. Nickname, equipment and titles actions share gold-outline styling using existing menu assets. Equipment/titles removed from the top menu.
 - Title preview and full/full_colored placeholders use prefix, suffix, nickname order. Ownership, selected IDs/sides and persistence unchanged.
 - Class 1-9 labels replace circle labels. Internal player_circle PDC, APIs, assets and ascension commands remain compatible. Numeric circle research text changes only at display time.
-- Held item name retains native rich Text, rarity/custom-name formatting and fade; renders 20 percent larger above hunger/armor chips. Long names are elided while retaining styled segments. Texture filtering is unchanged.
+- Held item name retains native rich Text, rarity/custom-name formatting and fade; renders 20 percent larger above hunger/armor chips. Long names are elided while retaining styled segments. UI/font texture smoothing is preserved; only the approved pet/shiny paths are exempted.
 - Quest Journal replaces School Request Board. Paper state colors differ; remaining subquest slots are separate from per-quest completion quota.
 
 Optional quest fields: main defaults false; requires defaults empty, contains at most 16 completed QuestDefinition IDs. Self/duplicate/invalid IDs are rejected. Absent fields preserve legacy behavior and byte encoding. Existing quest contents and main assignments were NOT changed. The existing Dialogue story journal remains separate; no speculative migration.
@@ -19,7 +19,9 @@ Deferred:
 - Title close X: actual Library pixels unavailable; geometry unchanged.
 - NPC address policy: current per-NPC nickname > ChacaNPC nickname > account name conflicts with always using configured MagicCodex nickname. No override applied. Decision needed: preserve explicit addresses and use configured nickname as fallback, or force configured nickname?
 - Actual visual checks for menu style, title slots, item name clarity and paper colors remain pending.
-- CodexTextureFilterMixin belongs to the pet worker and is untouched. Pet diagnostic/filter patch and separate ShopAdmin work await final integration.
+- Approved pet filter patch is integrated: only pet_model/ and textures/vanilla_shiny/ retain their requested filtering; UI/font smoothing stays enabled. Reviewed optional diagnostic patch (JVM opt-in, one GPU snapshot, 90-second timeout) is NOT integrated. No diagnostic activation or production instrumentation. Separate ShopAdmin work awaits later integration.
 - Command policy remains pending approval; no overhaul.
 
 Minimum tests: Paper QuestStoreTest (7), QuestRevisionTest (6), QuestPrerequisiteTest (5), TitleTest (5); Fabric TopMenuTest (4), PlayerHudTest (5), StatsTest (4), TitleLayoutTest (3). Final results/hashes are recorded in sibling FOLLOWUP-VERIFICATION.json and provisional JARs in followup-ready. Full regression is reserved for final integration with pending patches.
+
+Pet filter validation: CodexTextureFilterTest (3), PetPreviewRegressionTest (4), PetTest (7); actual in-game quality remains unverified.
