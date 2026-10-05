@@ -1,0 +1,33 @@
+name: ChacaNPC
+version: '${version}'
+main: kr.chacademy.npc.ChacaNpcPlugin
+api-version: '1.21'
+description: 차카데미 AI NPC (school 전용 — GPT 대화, 일과표 이동, 소문, 분위기 노트)
+authors: [Chacademy]
+depend: [Citizens]
+softdepend: [MagicCodexBridge, MagicDiscovery]
+commands:
+  cnpc:
+    description: ChacaNPC 관리자 명령어
+    usage: /cnpc help
+    permission: chacanpc.admin
+  t:
+    description: 근처 NPC와 대화 (임시 방식)
+    usage: /t <할 말>  |  /t 그만
+    aliases: [talk]
+    permission: chacanpc.talk
+  nickname:
+    description: NPC가 나를 부를 호칭
+    usage: /호칭 <이름>  |  /호칭 초기화
+    aliases: [호칭]
+    permission: chacanpc.talk
+  chacanpc-ui:
+    description: 대화 버튼 클릭용 (직접 쓰지 않음)
+    permission: chacanpc.talk
+permissions:
+  chacanpc.admin:
+    description: /cnpc 관리자 명령어
+    default: op
+  chacanpc.talk:
+    description: NPC와 대화
+    default: true

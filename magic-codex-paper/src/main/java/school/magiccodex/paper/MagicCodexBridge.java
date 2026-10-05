@@ -53,6 +53,9 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private TamingBridge taming;
     private QuestBridge quests;
     private DialogueBridge dialogues;
+    private NpcSocialService npcSocial;
+    DialogueBridge dialogueBridge(){return dialogues;}
+    QuestBridge questBridge(){return quests;}
     private TitleBridge titles;
     /** Trusted server-thread API; the callback runs after database commit. */
     public void grantTitle(UUID player,String id,java.util.function.Consumer<Boolean> result){if(titles==null)result.accept(false);else titles.grant(player,id,false,result);}
@@ -106,6 +109,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         try{taming=new TamingBridge(this,mana.mana,pets);}catch(Exception error){getLogger().severe("교화 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
         try{quests=new QuestBridge(this);}catch(Exception error){getLogger().severe("의뢰 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
         try{dialogues=new DialogueBridge(this);}catch(Exception error){getLogger().severe("대화 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
+        try{npcSocial=new NpcSocialService(this);}catch(Exception error){npcSocial=null;getLogger().warning("NPC 호감도 초기화 실패 (AI NPC 연결 없이 계속): "+error.getMessage());}
         try{titles=new TitleBridge(this);}catch(Exception error){getLogger().severe("칭호 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
         if(!mana.isCatalogMode()&&getServer().getPluginManager().isPluginEnabled("MythicMobs"))try{spellRuntime=new SpellRuntime(this);}catch(Exception error){getLogger().severe("마법 실행 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
         mana.bindSpellCommand();
@@ -169,6 +173,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(shops!=null)shops.close(); if(mailbox!=null)mailbox.close();
         if(spellRuntime!=null){spellRuntime.close();spellRuntime=null;}
         if(titles!=null){titles.close();titles=null;}
+        if(npcSocial!=null){npcSocial.close();npcSocial=null;}
         if(dialogues!=null){dialogues.close();dialogues=null;}
         if(quests!=null){quests.close();quests=null;}
         if(taming!=null){taming.close();taming=null;}

@@ -1,0 +1,20 @@
+# 마법 힌트 목록. NPC 캐릭터 파일의 hint_topics 에 topic 이 맞는 힌트만 그 NPC가 줍니다.
+# difficulty: 1 = 꽤 구체적 / 2 = 적당히 돌려서 / 3 = 아주 막연하게
+# 호감도가 높을수록 구체적인 힌트(낮은 difficulty)까지 허락됩니다.
+# 같은 힌트는 플레이어당 한 번만, 하루 최대 hints.daily-per-player 개.
+hints:
+  moon_water:
+    spell: moonlight_bolt
+    topic: light
+    materials: "보름달, 호숫가, 밤에 물에 비친 달"
+    difficulty: 3
+  morning_dew:
+    spell: dawn_shield
+    topic: light
+    materials: "새벽, 이슬, 해가 뜨기 직전의 정원"
+    difficulty: 2
+  rain_song:
+    spell: water_veil
+    topic: water
+    materials: "비 오는 날, 분수대, 노래"
+    difficulty: 2

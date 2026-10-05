@@ -1,0 +1,246 @@
+package kr.chacademy.npc.budget;
+
+import kr.chacademy.npc.ai.OpenAiClient;
+import kr.chacademy.npc.config.Settings;
+import kr.chacademy.npc.core.BudgetMath;
+import kr.chacademy.npc.data.Storage;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
+
+/**
+ * 3주 총예산·하루 한도 관리. 모든 AI 호출(플레이어 대화, 버튼 미리 생성, NPC끼리 잡담, 분위기 요약)은
+ * 요청 전에 최대 비용을 예약하고, 끝나면 실제 사용량으로 정산한다.
+ * 사용량을 모르는 경우(스트림 끊김)는 예약 금액 그대로 정산해 누락을 막는다.
+ *
+ * <p>OpenAI 프로젝트 지출 한도는 별개의 마지막 안전장치다 (반영 지연으로 소폭 초과할 수 있음).
+ */
+public final class BudgetService {
+
+    public static final String SYSTEM = "*system*";
+
+    /** 예약 한 건. settle()은 한 번만 효과가 있다. */
+    public final class Reservation {
+        private final String player;
+        private final double amount;
+        private final String day;
+        private boolean settled;
+
+        private Reservation(String player, double amount, String day) {
+            this.player = player;
+            this.amount = amount;
+            this.day = day;
+        }
+
+        public double amount() {
+            return amount;
+        }
+    }
+
+    private final Supplier<Settings> settings;
+    private final Storage storage;
+
+    private volatile String today = "";
+    private double spentBeforeToday;
+    private double spentToday;
+    private double reserved;          // 아직 정산 안 된 예약 합계 (전체)
+    private final Map<String, Integer> callsToday = new ConcurrentHashMap<>();
+    private volatile boolean aiEnabled = true;
+    private volatile boolean loaded;
+
+    private long latencyCount;
+    private long firstChunkSum;
+    private long totalSum;
+    private long slowCount;
+
+    public BudgetService(Supplier<Settings> settings, Storage storage) {
+        this.settings = settings;
+        this.storage = storage;
+    }
+
+    /** 시작할 때 DB에서 사용량을 읽는다 (DB 스레드). 읽기 전에는 AI를 부르지 않는다. */
+    public void loadFromDb() {
+        String day = settings.get().today().toString();
+        Storage.UsageSnapshot snap = storage.usageSnapshot(day);
+        synchronized (this) {
+            today = day;
+            spentBeforeToday = snap.spentBeforeToday();
+            spentToday = snap.spentToday();
+            callsToday.clear();
+            callsToday.putAll(snap.callsToday());
+            loaded = true;
+        }
+    }
+
+    public boolean isLoaded() {
+        return loaded;
+    }
+
+    private synchronized void rollDay() {
+        String now = settings.get().today().toString();
+        if (!now.equals(today)) {
+            spentBeforeToday += spentToday;
+            spentToday = 0;
+            callsToday.clear();
+            latencyCount = firstChunkSum = totalSum = slowCount = 0;
+            today = now;
+        }
+    }
+
+    public boolean isAiEnabled() {
+        return aiEnabled;
+    }
+
+    public void setAiEnabled(boolean enabled) {
+        this.aiEnabled = enabled;
+    }
+
+    public synchronized double allowance() {
+        rollDay();
+        Settings s = settings.get();
+        return BudgetMath.dailyAllowance(s.budgetTotalUsd, spentBeforeToday, s.budgetDays,
+                s.dayIndex(s.today()), s.testDailyUsd);
+    }
+
+    /** 예약 포함 상태. */
+    public synchronized BudgetMath.Status status() {
+        double a = allowance();
+        return BudgetMath.status(spentToday + reserved, a, settings.get().reduceAtPercent);
+    }
+
+    /** 요청 전 비용 계산용 예상치 (캐시 할인 없이 보수적으로). */
+    public double estimate(int inputChars, int maxOutputTokens) {
+        Settings s = settings.get();
+        long inTokens = (long) (inputChars * 1.1) + 64;
+        return BudgetMath.cost(inTokens, 0, maxOutputTokens, s.priceInput, s.priceCached, s.priceOutput);
+    }
+
+    /**
+     * 예약. 오늘 한도와 총예산 모두에 여유가 있어야 한다. 실패하면 null (AI를 부르지 말 것).
+     */
+    public synchronized Reservation reserve(String player, double amount) {
+        if (!loaded || !aiEnabled) {
+            return null;
+        }
+        rollDay();
+        Settings s = settings.get();
+        double total = spentBeforeToday + spentToday + reserved;
+        if (total + amount > s.budgetTotalUsd) {
+            return null;
+        }
+        if (spentToday + reserved + amount > allowance()) {
+            return null;
+        }
+        reserved += amount;
+        return new Reservation(player, amount, today);
+    }
+
+    /**
+     * 정산. usageKnown=false 거나 usage가 없으면 예약 금액으로 정산한다. 반환 = 기록한 비용.
+     */
+    public double settle(Reservation r, OpenAiClient.Usage usage, boolean usageKnown) {
+        if (r == null) {
+            return 0;
+        }
+        Settings s = settings.get();
+        double cost;
+        String day;
+        synchronized (this) {
+            if (r.settled) {
+                return 0;
+            }
+            r.settled = true;
+            reserved = Math.max(0, reserved - r.amount);
+            cost = usageKnown && usage != null
+                    ? BudgetMath.cost(usage.input(), usage.cached(), usage.output(), s.priceInput, s.priceCached, s.priceOutput)
+                    : r.amount;
+            rollDay();
+            // 예약한 날과 정산하는 날이 다르면 (자정을 넘김) 오늘 사용으로 기록
+            spentToday += cost;
+            day = today;
+        }
+        long in = usage == null ? 0 : usage.input();
+        long cached = usage == null ? 0 : usage.cached();
+        long out = usage == null ? 0 : usage.output();
+        storage.db().run(() -> storage.addUsage(day, r.player, SYSTEM.equals(r.player) ? 1 : 0, in, cached, out, cost));
+        return cost;
+    }
+
+    /** 이 플레이어가 오늘 더 부를 수 있는지. 부를 수 있으면 횟수를 1 올린다. */
+    public boolean tryUseCall(String player) {
+        rollDay();
+        int limit = settings.get().perPlayerDailyCalls;
+        boolean[] ok = {false};
+        callsToday.compute(player, (k, v) -> {
+            int n = v == null ? 0 : v;
+            if (n >= limit) {
+                return n;
+            }
+            ok[0] = true;
+            return n + 1;
+        });
+        if (ok[0]) {
+            String day = today;
+            storage.db().run(() -> storage.addUsage(day, player, 1, 0, 0, 0, 0));
+        }
+        return ok[0];
+    }
+
+    /** AI를 부르지 못한 호출 되돌리기 (예약 실패·대화가 그새 닫힘). */
+    public void refundCall(String player) {
+        callsToday.computeIfPresent(player, (k, v) -> Math.max(0, v - 1));
+        String day = today;
+        storage.db().run(() -> storage.addUsage(day, player, -1, 0, 0, 0, 0));
+    }
+
+    public int callsToday(String player) {
+        rollDay();
+        return callsToday.getOrDefault(player, 0);
+    }
+
+    public synchronized void recordLatency(long firstChunkMs, long totalMs) {
+        if (firstChunkMs < 0) {
+            return;
+        }
+        latencyCount++;
+        firstChunkSum += firstChunkMs;
+        totalSum += totalMs;
+        if (firstChunkMs > 3000) {
+            slowCount++;
+        }
+    }
+
+    public synchronized double spentToday() {
+        rollDay();
+        return spentToday;
+    }
+
+    public synchronized double spentTotal() {
+        rollDay();
+        return spentBeforeToday + spentToday;
+    }
+
+    public synchronized double reserved() {
+        return reserved;
+    }
+
+    public synchronized String latencySummary() {
+        if (latencyCount == 0) {
+            return "기록 없음";
+        }
+        return String.format("첫 글자 평균 %.2f초, 전체 평균 %.2f초, 3초 초과 %d/%d회",
+                firstChunkSum / 1000.0 / latencyCount, totalSum / 1000.0 / latencyCount, slowCount, latencyCount);
+    }
+
+    public int totalCallsToday() {
+        rollDay();
+        int sum = 0;
+        for (Map.Entry<String, Integer> e : callsToday.entrySet()) {
+            if (!SYSTEM.equals(e.getKey())) {
+                sum += e.getValue();
+            }
+        }
+        return sum;
+    }
+}

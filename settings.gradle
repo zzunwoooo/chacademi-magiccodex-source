@@ -1,2 +1,2 @@
 rootProject.name = 'chacademi-server-workspace'
-include 'magic-codex-paper', 'magic-discovery-paper', 'creature-spawns-paper', 'tornado-event-paper'
+include 'magic-codex-paper', 'magic-discovery-paper', 'creature-spawns-paper', 'tornado-event-paper', 'chaca-npc-paper'

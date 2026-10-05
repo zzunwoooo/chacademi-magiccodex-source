@@ -26,6 +26,10 @@ final class DialogueBridge implements Listener,CommandExecutor,TabCompleter,Plug
     private final Map<String,BiPredicate<Player,String>> conditions=new HashMap<>();
     void registerCondition(String id,BiPredicate<Player,String> predicate){if(!Bukkit.isPrimaryThread())throw new IllegalStateException("server thread required");DialogueDefinition.id(id);conditions.put(id,Objects.requireNonNull(predicate));}
     private boolean closing,refreshing;private int pending;
+    /** 외부 플러그인(ChacaNPC)이 클릭을 직접 처리하는 Citizens NPC id. 그 NPC는 아래 Citizens 처리에서 제외한다. */
+    private volatile java.util.function.IntPredicate claimed=id->false;
+    void claim(java.util.function.IntPredicate predicate){claimed=predicate==null?id->false:predicate;}
+    private boolean claimed(int id){try{return claimed.test(id);}catch(RuntimeException e){return false;}}
     private static final class Session {
         final String token=UUID.randomUUID().toString();final DialogueDefinition definition;final boolean preview;final Entity anchor;boolean journal;
         DialogueStore.State state;String node;int sequence;long expires=System.currentTimeMillis()+300000;
@@ -53,7 +57,7 @@ final class DialogueBridge implements Listener,CommandExecutor,TabCompleter,Plug
     private void install(Map<String,DialogueDefinition> definitions){catalog=definitions;var index=new HashMap<String,List<String>>();definitions.values().stream().sorted(Comparator.comparing(DialogueDefinition::id)).filter(DialogueDefinition::enabled).forEach(d->d.npcs().forEach(n->index.computeIfAbsent(n,k->new ArrayList<>()).add(d.id())));bindings=Map.copyOf(index);}
     private DialogueDefinition read(String id)throws Exception{DialogueDefinition.id(id);return DialogueDefinition.decode(id,Files.readString(directory.resolve(id+".yml")));}
     private void export(DialogueDefinition d)throws Exception{Path file=directory.resolve(d.id()+".yml"),tmp=directory.resolve(d.id()+".yml.tmp");if(Files.exists(file))Files.copy(file,directory.resolve(d.id()+".yml.bak"),StandardCopyOption.REPLACE_EXISTING);Files.writeString(tmp,d.encode());try{Files.move(tmp,file,StandardCopyOption.ATOMIC_MOVE,StandardCopyOption.REPLACE_EXISTING);}catch(AtomicMoveNotSupportedException e){Files.move(tmp,file,StandardCopyOption.REPLACE_EXISTING);}}
-    @SuppressWarnings("unchecked") private void citizens(){var dep=Bukkit.getPluginManager().getPlugin("Citizens");if(dep==null)return;try{Class<? extends Event> type=(Class<? extends Event>)Class.forName("net.citizensnpcs.api.event.NPCRightClickEvent",true,dep.getClass().getClassLoader());Bukkit.getPluginManager().registerEvent(type,this,EventPriority.MONITOR,(l,event)->{try{Player p=(Player)event.getClass().getMethod("getClicker").invoke(event);Object npc=event.getClass().getMethod("getNPC").invoke(event);Entity e=(Entity)npc.getClass().getMethod("getEntity").invoke(npc);String id="citizens:"+npc.getClass().getMethod("getId").invoke(npc);bound(p,id,e);}catch(Exception ex){plugin.getLogger().warning("Dialogue NPC hook: "+ex.getClass().getSimpleName());}},plugin,true);}catch(Exception e){plugin.getLogger().warning("Dialogue Citizens hook unavailable: "+e.getClass().getSimpleName());}}
+    @SuppressWarnings("unchecked") private void citizens(){var dep=Bukkit.getPluginManager().getPlugin("Citizens");if(dep==null)return;try{Class<? extends Event> type=(Class<? extends Event>)Class.forName("net.citizensnpcs.api.event.NPCRightClickEvent",true,dep.getClass().getClassLoader());Bukkit.getPluginManager().registerEvent(type,this,EventPriority.MONITOR,(l,event)->{try{Player p=(Player)event.getClass().getMethod("getClicker").invoke(event);Object npc=event.getClass().getMethod("getNPC").invoke(event);Entity e=(Entity)npc.getClass().getMethod("getEntity").invoke(npc);int nid=((Number)npc.getClass().getMethod("getId").invoke(npc)).intValue();if(claimed(nid))return;String id="citizens:"+nid;bound(p,id,e);}catch(Exception ex){plugin.getLogger().warning("Dialogue NPC hook: "+ex.getClass().getSimpleName());}},plugin,true);}catch(Exception e){plugin.getLogger().warning("Dialogue Citizens hook unavailable: "+e.getClass().getSimpleName());}}
     @EventHandler(ignoreCancelled=true) public void interact(PlayerInteractEntityEvent e){if(e.getHand()!=org.bukkit.inventory.EquipmentSlot.HAND||e.getRightClicked().hasMetadata("NPC"))return;for(String tag:e.getRightClicked().getScoreboardTags())if(bindings.containsKey("tag:"+tag)){bound(e.getPlayer(),"tag:"+tag,e.getRightClicked());break;}}
     private void bound(Player p,String key,Entity anchor){if(!near(p,anchor))return;for(String id:bindings.getOrDefault(key,List.of())){var d=catalog.get(id);if(d!=null&&(d.permission().isEmpty()||p.hasPermission(d.permission()))){open(p,d,false,anchor);return;}}}
     @EventHandler public void quit(PlayerQuitEvent e){sessions.remove(e.getPlayer().getUniqueId());limits.remove(e.getPlayer().getUniqueId());/* busy remains until queued work finishes */}
@@ -67,6 +71,42 @@ final class DialogueBridge implements Listener,CommandExecutor,TabCompleter,Plug
         if(!preview&&(!d.enabled()||(!d.permission().isEmpty()&&!p.hasPermission(d.permission()))))return;
         UUID id=p.getUniqueId();busy.add(id);sessions.remove(id);
         work(()->{if(!preview&&!store.audit(id).isEmpty())throw new IllegalStateException("대화 실행 기록은 관리자 확인이 필요합니다.");return store.state(id);},state->{busy.remove(id);if(!current(p)||!ready(p)||!near(p,anchor))return;var s=new Session(d,state,preview,anchor);if(!allowed(p,s,d.nodes().get(s.node).conditions())){p.sendMessage("아직 이 대화를 시작할 수 없습니다.");return;}sessions.put(id,s);send(p,s,"");},m->{busy.remove(id);if(current(p))p.sendMessage(m);});
+    }
+    /**
+     * 외부 진입점(ChacaNPC)용: 이 Citizens NPC에 묶인 고정 대화 중 지금 열 수 있는 첫 대화를 연다.
+     * 권한·공개 여부·시작 노드 조건·진행 상태 검사는 open()과 같다. 처리 중(busy)이면 NONE이 아니라 BUSY.
+     */
+    java.util.concurrent.CompletableFuture<String> openBoundStory(Player p,int npcId,Entity anchor){
+        var f=new java.util.concurrent.CompletableFuture<String>();
+        var candidates=bindings.getOrDefault("citizens:"+npcId,List.of()).stream().map(catalog::get)
+                .filter(d->d!=null&&d.enabled()&&(d.permission().isEmpty()||p.hasPermission(d.permission()))).toList();
+        if(candidates.isEmpty()||!p.hasPermission("magiccodex.dialogue")){f.complete("NONE");return f;}
+        UUID id=p.getUniqueId();
+        if(closing||!ready(p)||busy.contains(id)||!near(p,anchor)){f.complete("BUSY");return f;}
+        if(!p.getListeningPluginChannels().contains(DialogueProtocol.RESPONSE)){p.sendMessage("대화 모드를 업데이트해 주세요.");f.complete("BLOCKED");return f;}
+        if(!gate(p)){f.complete("BUSY");return f;}
+        busy.add(id);sessions.remove(id);
+        work(()->{if(!store.audit(id).isEmpty())throw new IllegalStateException("대화 실행 기록은 관리자 확인이 필요합니다.");return store.state(id);},state->{
+            busy.remove(id);
+            if(!current(p)||!ready(p)||!near(p,anchor)){f.complete("BUSY");return;}
+            for(var d:candidates){var s=new Session(d,state,false,anchor);if(allowed(p,s,d.nodes().get(s.node).conditions())){sessions.put(id,s);send(p,s,"");f.complete("OPENED");return;}}
+            f.complete("NONE");
+        },m->{busy.remove(id);if(current(p))p.sendMessage(m);f.complete("BLOCKED");});
+        return f;
+    }
+    /** 메인 퀘스트 진행 요약 (story.* 상태 값). */
+    java.util.concurrent.CompletableFuture<String> storySummary(UUID uid){
+        var f=new java.util.concurrent.CompletableFuture<String>();
+        work(()->store.state(uid),state->{
+            var parts=new ArrayList<String>();
+            state.values().entrySet().stream().filter(e->e.getKey().startsWith("story.")).sorted(Map.Entry.comparingByKey()).forEach(e->{
+                String sid=e.getKey().substring(6);
+                var d=catalog.values().stream().filter(v->v.storyId().equals(sid)).sorted(Comparator.comparing(DialogueDefinition::id)).findFirst().orElse(null);
+                parts.add((d==null?sid:d.storyTitle())+": "+(d!=null&&d.stages().containsKey(e.getValue())?d.stages().get(e.getValue()):e.getValue()));
+            });
+            f.complete(String.join(", ",parts));
+        },m->f.complete(""));
+        return f;
     }
     private boolean allowed(Player p,Session s,List<String> conditions){return s.preview||DialogueDefinition.matches(conditions,s.state.values(),p::hasPermission,(key,arg)->{if(key.startsWith("quest:"))return plugin.dialogueQuestCondition(p,key.substring(6),arg);var handler=this.conditions.get(key.substring(7));try{return handler!=null&&handler.test(p,arg);}catch(Exception e){return false;}});}
     private void send(Player p,Session s,String message){if(!current(p))return;var n=s.definition.nodes().get(s.node);var cs=n.choices().stream().filter(c->allowed(p,s,c.conditions())).map(c->new DialogueProtocol.Choice(c.id(),c.text())).toList();p.sendPluginMessage(plugin,DialogueProtocol.RESPONSE,DialogueProtocol.encode(new DialogueProtocol.Response(s.token,s.sequence,false,s.preview,(s.definition.storyId().isEmpty()?"":"[메인 퀘스트] ")+s.definition.title(),n.speaker(),n.portrait(),n.text(),cs,message)));}

@@ -38,6 +38,14 @@ final class QuestBridge implements Listener,CommandExecutor,TabCompleter,PluginM
         for(Player p:Bukkit.getOnlinePlayers())load(p,false,"");
     }
     boolean dialogueCondition(Player p,String id,String status){return cache.getOrDefault(p.getUniqueId(),List.of()).stream().anyMatch(e->e.quest().id().equals(id)&&e.current(System.currentTimeMillis())&&(status.equals("completed")?e.completions()>0:e.status().equals("active")));}
+    /** 외부(ChacaNPC) 제안 가능 여부: 존재·공개·권한, 그리고 진행 중이 아니고 일회성 의뢰는 완료 전. 캐시만 본다(메인 스레드). */
+    boolean npcOfferable(Player p,String id){
+        var q=catalog.get(id);long now=System.currentTimeMillis();
+        if(q==null||!q.available(now)||(!q.permission().isEmpty()&&!p.hasPermission(q.permission()))||!p.hasPermission("magiccodex.quests"))return false;
+        return cache.getOrDefault(p.getUniqueId(),List.of()).stream().noneMatch(e->e.quest().id().equals(id)&&e.current(now)&&(e.status().equals("active")||(!q.daily()&&e.completions()>0)));
+    }
+    int activeCount(Player p){long now=System.currentTimeMillis();return (int)cache.getOrDefault(p.getUniqueId(),List.of()).stream().filter(e->e.current(now)&&e.status().equals("active")).count();}
+    String title(String id){var q=catalog.get(id);return q==null?"":q.title();}
     void acceptFromDialogue(Player p,String id,Consumer<Boolean> done){
         var q=catalog.get(id);UUID uid=p.getUniqueId();long now=System.currentTimeMillis();
         if(q==null||!q.available(now)||(!q.permission().isEmpty()&&!p.hasPermission(q.permission()))||!p.hasPermission("magiccodex.quests")){done.accept(false);return;}

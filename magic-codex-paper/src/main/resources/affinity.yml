@@ -1,0 +1,26 @@
+# NPC 호감도 (ChacaNPC 연동). 점수의 주인은 MagicCodexBridge.
+# 저장: database.properties 가 mariadb 면 codex_affinity / codex_affinity_daily / codex_affinity_gift (school·wild 공유)
+#       sqlite 면 이 폴더의 affinity.db
+timezone: "Asia/Seoul"
+
+# 출처별 하루 상승 한도 (NPC 하나당). 0 = 한도 없음. 음수 변화(장난·질투)는 한도 없이 적용
+daily-caps:
+  chat: 3        # AI 대화로 오르는 양
+  quest: 10      # 부탁(퀘스트) 관련
+  dialogue: 0    # 고정 대화 동작 custom affinity
+  nickname: 2    # 호칭 이벤트
+# 위에 없는 출처의 하루 한도
+default-daily-cap: 5
+
+# NPC 하나에게 하루 선물 횟수
+gift-daily-count: 1
+
+# 서버가 선물 처리 도중 꺼진 경우, 이 시간(분)보다 오래된 미확정 선물은 다음 시작 때 확정 처리
+recover-pending-gift-minutes: 10
+
+# 점수 상한: 하트 이벤트 단계 h 를 보기 전에는 20×(h+1) 점에서 멈춤 (h 0 → 20, 1 → 40, 2 → 60, 3 → 80, 4 이상 → 100)
+# 고정 대화에서 쓰는 방법:
+#   조건  custom affinity ella>=20   /   custom affinity ella heart<1
+#   동작  custom heart ella 1      (하트 이벤트 1 완료 → 상한 해제, ChacaNPC 소문)
+#   동작  custom affinity ella +5
+#   동작  custom nickname ella 책벌레
