@@ -22,6 +22,7 @@ Permission: `magiccodex.shop.admin` (default op). Player shop/mailbox access def
 /상점관리 NPC general tag:general_shop
 /상점관리 초상 general elena-neutral
 /상점관리 목록
+/상점관리 목록 general
 /상점관리 기록 <player-UUID>
 ```
 
