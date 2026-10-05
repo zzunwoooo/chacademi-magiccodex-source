@@ -1,0 +1,38 @@
+package school.magiccodex.client;
+import java.io.ByteArrayInputStream;import java.math.*;import java.util.*;
+import net.minecraft.client.gui.DrawContext;import net.minecraft.item.ItemStack;import net.minecraft.nbt.*;import net.minecraft.util.*;
+import school.magiccodex.protocol.ShopProtocol;import school.magiccodex.protocol.ShopProtocol.*;
+public final class ShopScreen extends SocialScreen {
+ private Response data;private Input search,quantity;private String selected="",sentSearch="";private boolean selling;private int scroll;private long searchAt;private Map<String,ItemStack>icons=Map.of();
+ private static final Identifier PANEL=Identifier.of("magiccodex","textures/gui/shop/shop-panel.png");
+ ShopScreen(){super("상점");}
+ @Override SocialLayout.Fit fit(){float s=Math.min(width*.92f/1672,height*.90f/941);return new SocialLayout.Fit((width-1672*s)/2,(height-941*s)/2,s);}
+ @Override protected void init(){super.init();search=new Input("상품 검색",80,search==null?"":search.text());quantity=new Input("수량",9,quantity==null?"1":quantity.text());}
+ void receive(Response r){data=r;busy=false;notice(r.message());var map=new HashMap<String,ItemStack>();for(var p:r.products())map.put(p.id(),decode(p.preview()));icons=Map.copyOf(map);if(visible().stream().noneMatch(p->p.id().equals(selected)))selected=visible().isEmpty()?"":visible().getFirst().id();scroll=Math.clamp(scroll,0,Math.max(0,visible().size()-7));}
+ void failed(String m){busy=false;notice(m);}
+ private ItemStack decode(byte[] b){if(b.length==0||client.world==null)return ItemStack.EMPTY;try{return ItemStack.fromNbt(client.world.getRegistryManager(),NbtIo.readCompressed(new ByteArrayInputStream(b),NbtSizeTracker.of(262144))).orElse(ItemStack.EMPTY);}catch(Exception e){return ItemStack.EMPTY;}}
+ private List<Product>visible(){if(data==null)return List.of();String q=search==null?"":search.text().toLowerCase(Locale.ROOT);return data.products().stream().filter(p->!(selling?p.sell():p.buy()).isEmpty()&&p.name().toLowerCase(Locale.ROOT).contains(q)).toList();}
+ private Product selected(){return data==null?null:data.products().stream().filter(p->p.id().equals(selected)).findFirst().orElse(null);}
+ private int number(){try{return ShopProtocol.quantity(quantity.text());}catch(Exception e){return 0;}}
+ private BigDecimal total(){var p=selected();if(p==null||number()==0)return null;try{return new BigDecimal(selling?p.sell():p.buy()).multiply(BigDecimal.valueOf(number()));}catch(Exception e){return null;}}
+ private int possible(){var p=selected();if(p==null)return 0;var icon=icons.getOrDefault(p.id(),ItemStack.EMPTY);int max=Math.min(576,(icon.isEmpty()?64:icon.getMaxCount())*9);if(selling)return Math.min(max,p.owned());try{var price=new BigDecimal(p.buy());if(price.signum()==0)return max;if(data.balance().isEmpty())return 0;return Math.min(max,new BigDecimal(data.balance()).divide(price,0,RoundingMode.DOWN).min(BigDecimal.valueOf(max)).intValue());}catch(Exception e){return 0;}}
+ private void request(int action){if(data==null||busy)return;var p=selected();if((action==ShopProtocol.BUY||action==ShopProtocol.SELL)&&(p==null||number()==0||number()>possible())){notice("가능 수량 안에서 숫자를 입력해 주세요.");return;}busy=ShopClient.request(this,new Request(action,1,data.session(),data.shop(),data.revision(),p==null?"":p.id(),quantity.text(),UUID.randomUUID().toString(),search.text()));}
+ @Override public void tick(){super.tick();if(search!=null&&!search.text().equals(sentSearch)&&!busy&&data!=null){long now=Util.getMeasuringTimeMs();if(searchAt==0)searchAt=now+450;if(now>=searchAt){sentSearch=search.text();searchAt=0;request(ShopProtocol.OPEN);}}}
+ @Override public void render(DrawContext c,int x,int y,float delta){var f=fit();double mx=f.x(x),my=f.y(y);start(c);try{
+  if(client.getResourceManager().getResource(PANEL).isPresent())images.drawTexture(c,PANEL,0,0,0,0,1672,941,1672,941,1672,941,0xFFFFFFFF);else asset(c,"friends_panel",0,0,1672,941,0,0,1340,1174,0xFFFFFFFF);
+  label(c,data==null?"상점":data.title(),70,66,39,GOLD,true);FriendsScreen.cross(c,1598,64,in(mx,my,1576,42,44,44)?CYAN:WHITE);
+  String portrait=data==null?"elena-neutral":data.portrait();var npc=Identifier.of("magiccodex","textures/gui/dialogue/"+portrait+".png");if(client.getResourceManager().getResource(npc).isPresent())images.drawTexture(c,npc,104,125,0,0,500,750,1024,1536,1024,1536,0xFFFFFFFF);center(c,"상점 주인",359,880,25,GOLD);
+  button(c,"구매",770,145,160,48,!selling||in(mx,my,770,145,160,48));button(c,"판매",946,145,160,48,selling||in(mx,my,946,145,160,48));box(c,1122,145,469,48,search.focus());search.draw(c,1128,147,457,44,"상품 검색");
+  var list=visible();for(int i=0;i<7&&i+scroll<list.size();i++){var p=list.get(i+scroll);int ry=211+i*65;box(c,770,ry,821,59,p.id().equals(selected)||in(mx,my,770,ry,821,59));var icon=icons.getOrDefault(p.id(),ItemStack.EMPTY);if(!icon.isEmpty()){c.getMatrices().push();c.getMatrices().translate(786,ry+10,0);c.getMatrices().scale(2f,2f,1);c.drawItem(icon,0,0);c.getMatrices().pop();}fitted(c,p.name(),837,ry+24,24,490,WHITE,true);label(c,selling?"보유 "+p.owned():"우편함 지급",837,ry+47,16,MUTED,false);label(c,(selling?p.sell():p.buy())+" 원",1377,ry+31,23,GOLD,false);}
+  if(list.isEmpty())center(c,"검색 결과가 없습니다",1180,418,25,MUTED);
+  var chosen=selected();fitted(c,chosen==null?"상품을 선택해 주세요":chosen.name(),785,733,26,780,GOLD,true);label(c,(selling?"판매":"구매")+" 가능 수량: "+possible(),785,772,22,MUTED,false);
+  button(c,"−",1110,749,57,47,!busy&&in(mx,my,1110,749,57,47));box(c,1180,749,126,47,quantity.focus());quantity.draw(c,1186,751,114,43,"수량");button(c,"+",1320,749,57,47,!busy&&in(mx,my,1320,749,57,47));
+  BigDecimal total=total();label(c,"합계: "+(total==null?"—":total.stripTrailingZeros().toPlainString()+" 원"),785,827,28,WHITE,true);button(c,busy?"처리 중…":selling?"판매하기":"구매하기",1310,807,281,61,!busy&&number()>0&&number()<=possible()&&in(mx,my,1310,807,281,61));
+  label(c,"보유 금액: "+(data==null||data.balance().isEmpty()?"확인 필요":data.balance()+" 원"),785,897,22,MUTED,false);toast(c,780,638,807);
+ }finally{end(c);}}
+ @Override public boolean mouseClicked(double x,double y,int button){if(button!=0)return super.mouseClicked(x,y,button);var f=fit();double mx=f.x(x),my=f.y(y);if(in(mx,my,1576,42,44,44)){close();return true;}if(busy)return true;if(in(mx,my,770,145,160,48)||in(mx,my,946,145,160,48)){selling=in(mx,my,946,145,160,48);scroll=0;selected=visible().isEmpty()?"":visible().getFirst().id();quantity.widget.setText("1");return true;}var list=visible();for(int i=0;i<7&&i+scroll<list.size();i++)if(in(mx,my,770,211+i*65,821,59)){selected=list.get(i+scroll).id();quantity.widget.setText("1");return true;}if(in(mx,my,1110,749,57,47))quantity.widget.setText(Integer.toString(Math.max(1,number()-1)));else if(in(mx,my,1320,749,57,47))quantity.widget.setText(Integer.toString(Math.max(1,Math.min(possible(),number()+1))));else if(in(mx,my,1310,807,281,61))request(selling?ShopProtocol.SELL:ShopProtocol.BUY);else{search.click(mx,my);quantity.click(mx,my);}return true;}
+ @Override public boolean mouseScrolled(double x,double y,double horizontal,double vertical){scroll=Math.clamp(scroll-(int)Math.signum(vertical),0,Math.max(0,visible().size()-7));return true;}
+ @Override public boolean keyPressed(int key,int scan,int mods){if(search.focus()&&search.key(key,scan,mods)||quantity.focus()&&quantity.key(key,scan,mods))return true;return super.keyPressed(key,scan,mods);}
+ @Override public boolean charTyped(char c,int mods){return search.focus()&&search.typed(c,mods)||quantity.focus()&&quantity.typed(c,mods)||super.charTyped(c,mods);}
+ @Override public void close(){if(data!=null&&!busy)request(ShopProtocol.CLOSE);ShopClient.detach(this);client.setScreen(null);}
+}

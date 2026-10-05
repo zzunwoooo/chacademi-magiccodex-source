@@ -5,6 +5,12 @@ api-version: '1.21.4'
 description: Permission, balance, server-authoritative mana and spell casting for Magic Codex.
 softdepend: [LuckPerms, Vault, PlaceholderAPI, MCPets, MythicMobs, ModelEngine, Citizens]
 commands:
+  상점:
+    aliases: [codexshop]
+    permission: magiccodex.shop
+  상점관리:
+    aliases: [codexshopadmin]
+    permission: magiccodex.shop.admin
   마법:
     description: 발견한 마법을 마나와 마법 가속을 적용해 시전합니다.
     aliases: [codexcast]
@@ -178,4 +184,11 @@ permissions:
   magiccodex.stats.view:
     default: true
   magiccodex.mana.admin:
+    default: op
+
+  magiccodex.mailbox:
+    default: true
+  magiccodex.shop:
+    default: true
+  magiccodex.shop.admin:
     default: op

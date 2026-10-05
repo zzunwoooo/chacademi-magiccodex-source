@@ -1,0 +1,24 @@
+package school.magiccodex.paper;
+import static org.junit.jupiter.api.Assertions.*;
+import java.nio.file.*;
+import java.util.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.io.TempDir;
+import school.magiccodex.database.DatabaseSettings;
+import school.magiccodex.protocol.MailboxProtocol;
+
+class MailboxStoreTest {
+ @TempDir Path dir;private MailboxStore store;private UUID owner;
+ @BeforeEach void setup()throws Exception{store=new MailboxStore(DatabaseSettings.load(dir.resolve("absent.properties")),dir.resolve("test.db"));owner=UUID.randomUUID();}
+ @AfterEach void close()throws Exception{store.close();}
+ private UUID mail(String source)throws Exception{return store.create(source,owner,"상점 구매","첨부 아이템",List.of(new MailboxStore.Item(0,"커스텀 아이템",3,new byte[]{1,2,3},"ready","","")));}
+ @Test void sourceKeyIsIdempotentAndOwnerCannotChange()throws Exception{UUID id=mail("purchase-1");assertEquals(id,mail("purchase-1"));assertEquals(1,store.list(owner,0).entries().size());assertThrows(Exception.class,()->store.create("purchase-1",UUID.randomUUID(),"x","",List.of()));}
+ @Test void foreignOwnerCannotSeeClaimOrDeleteMail()throws Exception{UUID id=mail("purchase-2");UUID foreign=UUID.randomUUID();assertNull(store.detail(foreign,id.toString()));assertTrue(store.ready(foreign,id.toString()).isEmpty());assertThrows(Exception.class,()->store.reserve(foreign,store.ready(owner,id.toString()),"claim", "server-a"));assertEquals(0,store.deleteClaimed(foreign));assertEquals(1,store.ready(owner,id.toString()).size());}
+ @Test void pendingIsNotDeletableOrAutomaticallyReplayableAcrossConnections()throws Exception{UUID id=mail("purchase-3");var refs=store.ready(owner,id.toString());store.reserve(owner,refs,"receipt-a","server-a");try(var other=new MailboxStore(DatabaseSettings.load(dir.resolve("absent.properties")),dir.resolve("test.db"))){assertThrows(Exception.class,()->other.reserve(owner,refs,"receipt-b","server-b"));assertEquals(1,other.pending(owner).size());assertEquals(0,other.deleteClaimed(owner));}store.settle(owner,"receipt-a",true);assertTrue(store.ready(owner,id.toString()).isEmpty());assertEquals(1,store.deleteClaimed(owner));assertNull(store.detail(owner,id.toString()));assertEquals(0,store.deleteClaimed(owner));}
+ @Test void cancellationBeforeInventoryMutationRestoresAttachment()throws Exception{UUID id=mail("purchase-4");store.reserve(owner,store.ready(owner,id.toString()),"cancel","server-a");store.settle(owner,"cancel",false);assertEquals(1,store.ready(owner,id.toString()).size());assertEquals(0,store.deleteClaimed(owner));}
+ @Test void claimedMailIsSoftDeletedAndSourceRetryCannotDuplicate()throws Exception{UUID id=mail("purchase-5");store.reserve(owner,store.ready(owner,id.toString()),"receipt","server-a");store.settle(owner,"receipt",true);store.deleteClaimed(owner);assertEquals(id,mail("purchase-5"));assertTrue(store.list(owner,0).entries().isEmpty());}
+ @Test void restoringDeletedMailKeepsClaimStateAndChecksOwner()throws Exception{UUID id=mail("restore");store.reserve(owner,store.ready(owner,id.toString()),"receipt","server-a");store.settle(owner,"receipt",true);store.deleteClaimed(owner);assertFalse(store.restore(UUID.randomUUID(),id));assertTrue(store.restore(owner,id));assertNotNull(store.detail(owner,id.toString()));assertTrue(store.ready(owner,id.toString()).isEmpty());}
+ @Test void attachmentsPreserveExactBytes()throws Exception{UUID id=mail("purchase-6");assertArrayEquals(new byte[]{1,2,3},store.detail(owner,id.toString()).items().getFirst().bytes());}
+ @Test void simultaneousServersHaveExactlyOneReservationWinner()throws Exception{UUID id=mail("purchase-race");var refs=store.ready(owner,id.toString());try(var other=new MailboxStore(DatabaseSettings.load(dir.resolve("absent.properties")),dir.resolve("test.db"))){var start=new java.util.concurrent.CountDownLatch(1);var executor=java.util.concurrent.Executors.newFixedThreadPool(2);try{var a=executor.submit(()->{start.await();try{store.reserve(owner,refs,"race-a","server-a");return true;}catch(Exception e){return false;}});var b=executor.submit(()->{start.await();try{other.reserve(owner,refs,"race-b","server-b");return true;}catch(Exception e){return false;}});start.countDown();assertEquals(1,(a.get()?1:0)+(b.get()?1:0));assertEquals(1,store.pending(owner).size());}finally{executor.shutdownNow();}}}
+ @Test void protocolRejectsOverflowInvalidActionAndTrailingBytes(){assertThrows(IllegalArgumentException.class,()->MailboxProtocol.request(MailboxProtocol.encode(new MailboxProtocol.Request(99,1,0,"",0))));assertThrows(IllegalArgumentException.class,()->MailboxProtocol.request(MailboxProtocol.encode(new MailboxProtocol.Request(0,1,0,"",-1))));byte[] valid=MailboxProtocol.encode(new MailboxProtocol.Request(0,1,0,"",0));assertThrows(IllegalArgumentException.class,()->MailboxProtocol.request(Arrays.copyOf(valid,valid.length+1)));}
+}

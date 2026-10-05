@@ -38,3 +38,6 @@ Redis는 Ubuntu VM GRUB 이후 사용자 설치 진행 단계이며 가동·동�
 이 공개 저장소는 공유 제한 출처의 참고 모델 데이터와 원본 설정을 제외한 최신 소스입니다. 기존 chacademi-server 저장소의 브랜치·태그·이력·PRIVATE 상태는 유지했습니다. [공개 점검 기록](docs/handoff/PUBLICATION_REVIEW_20261005.md)을 확인하세요. GitHub 캐시·다른 clone까지 완전히 삭제됐다는 뜻은 아닙니다. 일부 참고 모델 미리보기는 제외됩니다.
 
 [작업 원칙](AGENTS.md), [기존 서버 인수인계](docs/handoff/SERVER_HANDOFF.md), [자료 안내](reference/MATERIALS.md)를 함께 참고하세요. 과거 기록과 현재 운영/staged 상태를 구분하세요.
+## 상점·우편함
+
+일반 관리자 상점, 구매 시스템 우편, 첨부 수령과 soft delete 복구 API를 추가했습니다. 운영 배포 전 공유 DB·경제 정합성·실게임 검증과 승인된 배경 자산 반영이 필요합니다. 명령/API/복구 경계는 [SHOP-MAILBOX](docs/SHOP-MAILBOX.md)를 확인하세요.
