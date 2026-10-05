@@ -25,7 +25,7 @@ public final class AscensionScreen extends Screen {
     private String notice="";
     private double visualTime=-1;
     private float scale,left,top;
-    public AscensionScreen(Response response,boolean preview){super(Text.literal("서클 승급"));this.offer=response;this.preview=preview;playing=preview||response.action()==AscensionProtocol.SUCCESS;}
+    public AscensionScreen(Response response,boolean preview){super(Text.literal("클래스 승급"));this.offer=response;this.preview=preview;playing=preview||response.action()==AscensionProtocol.SUCCESS;}
     public static AscensionScreen preview(int to){if(to<2||to>9)throw new IllegalArgumentException();return new AscensionScreen(new Response(AscensionProtocol.OFFER,0,to-1,to,true,""),true);}
     public long token(){return offer.token();}
     public void receive(Response r){
@@ -76,11 +76,11 @@ public final class AscensionScreen extends Screen {
                 if(age>3.2&&age<4.8){float p=AscensionMotion.smooth((age-3.2)/1.6);HudMesh.arc(c,470,351,80+p*190,1.8f,0,(float)(Math.PI*2),alpha(0xA7EAEC,(1-p)*.65f*fade));}
             }
             layer(c,1);
-            label(c,"서클 승급",1070,260,27,0xE1CCA2,fade,BODY);
+            label(c,"클래스 승급",1070,260,27,0xE1CCA2,fade,BODY);
             boolean completed=playing&&age>=AscensionMotion.COMPLETE;
-            label(c,offer.from()==9?"9서클":offer.from()+"서클  →  "+offer.to()+"서클",1070,350,55,0xF1D79D,fade,FONT);
+            label(c,offer.from()==9?"클래스 9":"클래스 "+offer.from()+"  →  클래스 "+offer.to(),1070,350,55,0xF1D79D,fade,FONT);
             HudMesh.line(c,892,406,1248,406,1,alpha(0xB49C6C,.45f*fade));
-            String subtitle=playing?(completed?"새로운 별이 마나 서클에 합류했습니다.":age<1.25?"마력이 심장부로 모이고 있습니다.":"새로운 별이 깨어나고 있습니다."):offer.message();
+            String subtitle=playing?(completed?"새로운 별이 마나 클래스에 합류했습니다.":age<1.25?"마력이 심장부로 모이고 있습니다.":"새로운 별이 깨어나고 있습니다."):offer.message();
             label(c,subtitle,1070,445,22,0xBDCDDC,fade,BODY);
             double mx=(mouseX-left)/scale,my=(mouseY-top)/scale;
             boolean buttonVisible=!playing||completed;
@@ -92,7 +92,7 @@ public final class AscensionScreen extends Screen {
                 label(c,waitingAt>=0?"확인 중…":playing?"확인":offer.allowed()&&notice.isEmpty()?"승급하기":"닫기",1070,550,25,0xECF0EE,fade,FONT);
             }
             if(!notice.isEmpty())drawNotice(c,notice,fade);
-            label(c,preview?"연출 미리보기 · 실제 서클은 변경되지 않습니다":"ESC 닫기",1070,650,18,0x839BAE,fade,BODY);
+            label(c,preview?"연출 미리보기 · 실제 클래스는 변경되지 않습니다":"ESC 닫기",1070,650,18,0x839BAE,fade,BODY);
             c.draw();
         }finally{c.getMatrices().pop();images.endFrame();}
         entrance.draw(c,width,height);

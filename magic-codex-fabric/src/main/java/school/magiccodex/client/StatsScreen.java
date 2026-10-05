@@ -39,7 +39,7 @@ public final class StatsScreen extends Screen {
     public net.minecraft.entity.player.PlayerEntity portraitPlayer(){return remote==null?client.player:remote.avatar();}
     public void showNotice(String message){notice=message;noticeAt=Util.getMeasuringTimeMs();}
     /** Preview fixture shares production rendering, but never subscribes to permissions. */
-    public StatsScreen(Supplier<StatsValues> source,boolean live){super(Text.literal("스테이터스"));this.source=source;this.live=live;}
+    public StatsScreen(Supplier<StatsValues> source,boolean live){super(Text.literal("내 정보"));this.source=source;this.live=live;}
     public boolean isLive(){return live;}
     @Override protected void init(){
         text=UiResources.text();images=UiResources.images();resourceGeneration=UiResources.generation();
@@ -75,19 +75,16 @@ public final class StatsScreen extends Screen {
             socialButton(ctx,StatsLayout.FRIEND,remote==null?"친구 목록":"친구 추가",true,socialHover==1);
             socialButton(ctx,StatsLayout.POPULARITY,"인기도 상승",false,socialHover==2);
             drawNotice(ctx,now);
-            label(ctx,"스테이터스",220,107,43,WHITE,true);
+            label(ctx,"내 정보",220,107,43,WHITE,true);
             label(ctx,"차카데미아",223,150,22,GOLD,false);
             label(ctx,"능력치",708,218,27,GOLD,true);
             if(remote==null&&live){
-                boolean eh=mx>=1090&&mx<1265&&my>=85&&my<140;
-                HudMesh.capsule(ctx,1090,85,175,55,eh?0xA0377390:0x80213B4C,eh?0xA0377390:0x80213B4C);
-                text.draw(ctx,"장비",1177,112,26,GOLD,BOLD,true);
-                boolean nh=mx>=890&&mx<1075&&my>=85&&my<140;
-                HudMesh.capsule(ctx,890,85,185,55,nh?0xA0377390:0x80213B4C,nh?0xA0377390:0x80213B4C);
-                text.draw(ctx,"닉네임",982,112,26,GOLD,BOLD,true);
+                infoAction(ctx,790,85,"닉네임",0,mx,my);
+                infoAction(ctx,956,85,"장비",1,mx,my);
+                infoAction(ctx,1122,85,"칭호",2,mx,my);
             }
             centered(ctx,v.nickname(),377,784,33,WHITE,BOLD,378);
-            centered(ctx,v.circle()==0?"서클 미정":ROMAN[v.circle()-1]+"   "+v.circle()+"서클",377,844,31,GOLD,BOLD,274);
+            centered(ctx,v.circle()==0?"클래스 미정":"클래스 "+v.circle(),377,844,31,GOLD,BOLD,274);
             label(ctx,"기숙사",128,871,24,GOLD,false);
             centered(ctx,v.dormitory(),377,918,28,WHITE,BODY,465);
             // Full-height rows: consistent text baseline, optical icon size and value alignment.
@@ -116,6 +113,16 @@ public final class StatsScreen extends Screen {
             ctx.getMatrices().pop();
         }finally{ctx.getMatrices().pop();images.endFrame();}
         entrance.draw(ctx,width,height);
+    }
+    private void infoAction(DrawContext c,int x,int y,String name,int icon,double mx,double my){
+        boolean hover=mx>=x&&mx<x+154&&my>=y&&my<y+55;
+        HudMesh.capsule(c,x,y,154,55,hover?0xC895DDDF:0xA091927B,hover?0xC895DDDF:0xA091927B);
+        HudMesh.capsule(c,x+1,y+1,152,53,0xEF101E2C,0xEF101E2C);
+        Identifier asset=Identifier.of("magiccodex",icon==1?"textures/hud/equipment-menu.png":icon==2?"textures/hud/titles-menu.png":"textures/hud/top-menu.png");
+        if(icon==0)images.drawTexture(c,asset,x+14,y+15,1470,438,22,25,165,191,1774,887,0xFFF0E4C5);
+        else if(icon==1)images.drawTexture(c,asset,x+14,y+13,384,298,26,29,546,608,1312,1199,0xFFF0E4C5);
+        else images.drawTexture(c,asset,x+14,y+13,431,243,26,29,539,602,1402,1122,0xFFF0E4C5);
+        text.draw(c,name,x+91,y+27.5f,23,hover?0xFF96E4EC:GOLD,BOLD,true);
     }
     private void gaugeTrack(DrawContext c,int y){HudMesh.capsule(c,799,y-9,544,18,0xFF6A8293,0xFF6A8293);HudMesh.capsule(c,801,y-7,540,14,0xFF0C2031,0xFF0C2031);}
     private void row(DrawContext c,String name,String value,float y){
@@ -194,8 +201,12 @@ public final class StatsScreen extends Screen {
     }
     @Override public boolean mouseClicked(double x,double y,int button){
         var l=StatsLayout.fit(width,height);
-        if(button==0&&remote==null&&live&&l.localX(x)>=1090&&l.localX(x)<1265&&l.localY(y)>=85&&l.localY(y)<140){EquipmentClient.open();sound(1.12f,.2f);return true;}
-        if(button==0&&remote==null&&live&&l.localX(x)>=890&&l.localX(x)<1075&&l.localY(y)>=85&&l.localY(y)<140){NicknameClient.open(this);return true;}
+        if(button==0&&remote==null&&live&&l.localY(y)>=85&&l.localY(y)<140){
+            double mx=l.localX(x);
+            if(mx>=790&&mx<944){NicknameClient.open(this);sound(1.12f,.2f);return true;}
+            if(mx>=956&&mx<1110){EquipmentClient.open();sound(1.12f,.2f);return true;}
+            if(mx>=1122&&mx<1276){TitleClient.open();sound(1.12f,.2f);return true;}
+        }
         if(button==0&&StatsLayout.CLOSE.contains(l.localX(x),l.localY(y))){close();return true;}
         if(button==0&&remote==null&&live&&l.localX(x)>=188&&l.localX(x)<566&&l.localY(y)>=758&&l.localY(y)<810){NicknameClient.open(this);return true;}
         if(button==0){
@@ -206,7 +217,7 @@ public final class StatsScreen extends Screen {
                 if(now-lastSocialClick<400)return true;
                 lastSocialClick=now;sound(1.12f,.2f);
                 if(client.player!=null){
-                    try{if(remote==null&&action==StatsSocialActions.Action.FRIEND){SocialClient.open();notice="";}else notice=remote==null?"다른 플레이어의 스테이터스에서 사용할 수 있습니다.":remote.action(action);}
+                    try{if(remote==null&&action==StatsSocialActions.Action.FRIEND){SocialClient.open();notice="";}else notice=remote==null?"다른 플레이어의 내 정보에서 사용할 수 있습니다.":remote.action(action);}
                     catch(RuntimeException error){notice="요청을 처리하지 못했습니다.";org.slf4j.LoggerFactory.getLogger("magiccodex").warn("Stats social action failed",error);}
                     noticeAt=now;
                 }

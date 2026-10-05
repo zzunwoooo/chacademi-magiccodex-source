@@ -24,6 +24,11 @@ public abstract class PlayerHudMixin {
     private void magiccodex$npcChat(DrawContext ctx,RenderTickCounter ticks,CallbackInfo ci){
         if(net.minecraft.client.MinecraftClient.getInstance().currentScreen instanceof school.magiccodex.client.NpcTalkScreen)ci.cancel();
     }
+    @Redirect(method="renderHeldItemTooltip",at=@At(value="INVOKE",target="Lnet/minecraft/client/gui/DrawContext;drawTextWithBackground(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;IIII)I"))
+    private int magiccodex$itemName(DrawContext context,net.minecraft.client.font.TextRenderer renderer,net.minecraft.text.Text name,int x,int y,int width,int color){
+        if(!PlayerHudClient.active())return context.drawTextWithBackground(renderer,name,x,y,width,color);
+        return school.magiccodex.client.HeldItemNameHud.draw(context,renderer,name,color);
+    }
     // Air, mount health and status effects remain available. HUD off restores all vanilla bars.
     @Inject(method={"renderHealthBar","renderFood","renderExperienceBar","renderExperienceLevel"},at=@At("HEAD"),cancellable=true)
     private void magiccodex$replaceVitals(CallbackInfo ci){

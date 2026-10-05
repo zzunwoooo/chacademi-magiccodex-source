@@ -355,7 +355,7 @@ public final class CodexScreen extends Screen {
                 label(context, "습득 후 확인할 수 있습니다.", 1076, 608, 20, MUTED, BODY_FONT);
             }
             spriteCentered(context, CodexSprites.emblem(7), 1088, 692, 26, 26, 0xFF978568);
-            detailParagraph(context,"연구 기록",spell.research(),1112,692,392,20,24,2);
+            detailParagraph(context,"연구 기록",spell.research().replaceAll("([1-9])서클","클래스 $1"),1112,692,392,20,24,2);
         } else {
             label(context, "선택한 마법의 발견 조건이 표시됩니다.", 1076, 620, 19, MUTED, BODY_FONT);
             label(context, "선택한 마법의 연구 기록이 표시됩니다.", 1076, 708, 19, MUTED, BODY_FONT);

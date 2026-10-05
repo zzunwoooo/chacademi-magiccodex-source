@@ -43,7 +43,7 @@ final class AscensionBridge implements Listener,PluginMessageListener,CommandExe
         if(!p.getListeningPluginChannels().contains(AscensionProtocol.RESPONSE)){p.sendMessage("Magic Codex 0.18.0 이상 모드가 필요합니다.");return true;}
         if(p.isDead()||!limit(p))return true;
         int from=current(p);var offer=gate.open(p.getUniqueId(),from,now());
-        send(p,new Response(AscensionProtocol.OFFER,offer.token(),from,Math.min(9,from+1),allowed(p,from),from==9?"이미 최고 서클에 도달했습니다.":allowed(p,from)?"새로운 서클로 나아갈 준비가 되었습니다.":"아직 승급 조건을 충족하지 못했습니다."));
+        send(p,new Response(AscensionProtocol.OFFER,offer.token(),from,Math.min(9,from+1),allowed(p,from),from==9?"이미 최고 클래스에 도달했습니다.":allowed(p,from)?"새로운 클래스로 나아갈 준비가 되었습니다.":"아직 승급 조건을 충족하지 못했습니다."));
         return true;
     }
     @Override public void onPluginMessageReceived(String channel,Player p,byte[] bytes){

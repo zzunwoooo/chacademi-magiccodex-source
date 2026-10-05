@@ -51,7 +51,7 @@ public final class TitleScreen extends Screen {
         }finally{c.getMatrices().pop();images.endFrame();}entrance.draw(c,width,height);
     }
     private void composed(DrawContext c){var p=value(0);var s=value(1);String a=p.id().isEmpty()?"":TitleLayout.elide(p.name(),300,v->UiResources.text().width(v,34,BODY)),b=s.id().isEmpty()?"":TitleLayout.elide(s.name(),240,v->UiResources.text().width(v,34,BODY)),name=NicknameClient.display(data.nickname());float wa=UiResources.text().width(a,34,BODY),wn=UiResources.text().width(name,44,BODY),wb=UiResources.text().width(b,34,BODY),gaps=(a.isEmpty()?0:18)+(b.isEmpty()?0:18),total=wa+wn+wb+gaps,scale=Math.min(1,900/Math.max(1,total)),x=540-total*scale/2;
-        if(!a.isEmpty()){label(c,a,x+wa*scale/2,185,34*scale,0xff000000|p.color(),true,900);x+=(wa+18)*scale;}label(c,name,x+wn*scale/2,185,44*scale,WHITE,true,900);x+=wn*scale;if(!b.isEmpty())label(c,b,x+(18+wb/2)*scale,185,34*scale,0xff000000|s.color(),true,900);
+        if(!a.isEmpty()){label(c,a,x+wa*scale/2,185,34*scale,0xff000000|p.color(),true,900);x+=(wa+18)*scale;}if(!b.isEmpty()){label(c,b,x+wb*scale/2,185,34*scale,0xff000000|s.color(),true,900);x+=(wb+18)*scale;}label(c,name,x+wn*scale/2,185,44*scale,WHITE,true,900);
     }
     private void sound(){client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK.value(),1.12f,.23f));}
     private void pick(int side,int index){if(data==null||TitleClient.waiting()||index<0||index>=lists.get(side).size())return;selected[side]=lists.get(side).get(index).id();sound();}

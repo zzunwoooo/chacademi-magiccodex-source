@@ -35,10 +35,19 @@ final class QuestStore implements AutoCloseable {
     void seed(Map<String,QuestDefinition> definitions)throws Exception{transaction("catalog",()->{if(catalog().isEmpty()){try(var s=db().prepareStatement("INSERT INTO codex_quest_catalog(id,definition) VALUES(?,?)")){for(var q:definitions.values()){s.setString(1,q.id());s.setString(2,q.encode());s.addBatch();}s.executeBatch();}}return null;});}
     List<Entry> entries(UUID player)throws SQLException{return entries(player,System.currentTimeMillis());}
     private List<Entry> entries(UUID player,long now)throws SQLException{var out=new ArrayList<Entry>();try(var s=db().prepareStatement("SELECT definition,cycle,status,progress,token,completions FROM codex_quest_progress WHERE player=? AND (cycle='once' OR cycle=? OR status='paying')")){s.setString(1,player.toString());s.setString(2,java.time.Instant.ofEpochMilli(now).atZone(java.time.ZoneId.of("Asia/Seoul")).toLocalDate().toString());try(var r=s.executeQuery()){while(r.next()){var q=QuestDefinition.decode(r.getString(1));int[] p=Arrays.stream(r.getString(4).split(",")).mapToInt(Integer::parseInt).toArray();if(p.length!=q.objectives().size())throw new SQLException("Quest progress mismatch");out.add(new Entry(q,r.getString(2),r.getString(3),p,r.getString(5),r.getInt(6)));}}}return out;}
+    Set<String> completed(UUID player)throws SQLException{
+        var result=new HashSet<String>();
+        try(var s=db().prepareStatement("SELECT DISTINCT quest FROM codex_quest_progress WHERE player=? AND completions>0")){
+            s.setString(1,player.toString());try(var rows=s.executeQuery()){while(rows.next())result.add(rows.getString(1));}
+        }
+        return Set.copyOf(result);
+    }
+    static boolean unlocked(QuestDefinition q,Set<String> completed){return completed.containsAll(q.requires());}
+    static int activeSubquests(List<Entry> entries,long now){return (int)entries.stream().filter(e->!e.quest().main()&&(e.status().equals("paying")||(e.current(now)&&e.status().equals("active")))).count();}
     boolean accept(UUID player,QuestDefinition q,long now)throws Exception{return transaction(player.toString(),()->{
-        if(!q.available(now))return false;
+        if(!q.available(now)||!unlocked(q,completed(player)))return false;
         var all=entries(player,now);var previous=all.stream().filter(e->e.quest.id().equals(q.id())&&e.cycle.equals(q.cycle(now))).findFirst().orElse(null);
-        if(all.stream().anyMatch(e->e.quest.id().equals(q.id())&&(e.status.equals("paying")||(e.current(now)&&e.status.equals("active"))))||all.stream().filter(e->e.status.equals("paying")||(e.current(now)&&e.status.equals("active"))).count()>=3)return false;
+        if(all.stream().anyMatch(e->e.quest.id().equals(q.id())&&(e.status.equals("paying")||(e.current(now)&&e.status.equals("active"))))||(!q.main()&&activeSubquests(all,now)>=3))return false;
         int completed=previous==null?0:previous.completions;if(completed>=q.completionLimit())return false;
         if(previous!=null)try(var s=db().prepareStatement("DELETE FROM codex_quest_progress WHERE player=? AND quest=? AND cycle=?")){s.setString(1,player.toString());s.setString(2,q.id());s.setString(3,q.cycle(now));s.executeUpdate();}
         try(var s=db().prepareStatement("INSERT INTO codex_quest_progress(player,quest,cycle,definition,status,progress,token,updated,completions) VALUES(?,?,?,?,?,?,?,?,?)")){s.setString(1,player.toString());s.setString(2,q.id());s.setString(3,q.cycle(now));s.setString(4,q.encode());s.setString(5,"active");s.setString(6,counts(new int[q.objectives().size()]));s.setString(7,"");s.setLong(8,now);s.setInt(9,completed);s.executeUpdate();}return true;
