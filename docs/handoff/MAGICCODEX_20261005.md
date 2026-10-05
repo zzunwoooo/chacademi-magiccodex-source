@@ -4,12 +4,12 @@
 
 PNG SHA256: 4D84CD5341E5BE54A7B3372A4C7F064E18107D73AA71F6D6E1CEEB18DEEAD575
 
-staged 최종 산출물(운영 미배포):
+최종 산출물(클라이언트 및 school/wild 파일 복사 완료, 실게임 미검증):
 
 - Client SHA256: A832BB20DB2C1B4E035D41EA9B598597E8AB848A91F15406EDCEADC1ECD01CC1
 - Bridge SHA256: 0E731DF857DB7EAA620B121A0E2689B1153ED1CD79467B6686DCAA0B1C421999
 - 호스트: C:\Chacademi\staging\nickname-friends-20261005-task7\artifacts
-- 운영 school/wild Bridge는 8BAB8AB1D20CB47126C3FBBA75103628F3E88FEE1BE846EE449565BB7AA1ED2D 기준 유지. 이번 작업에서 운영 JAR 교체나 서버 재시작 없음.
+- school/wild에 설치된 Bridge SHA256은 위 0E731DF8…와 일치함을 직접 확인했습니다. 클라이언트 A832BB20… 복사는 담당 인수인계 기준입니다. 이번 Git 작업에서 JAR 교체나 서버 재시작을 수행한 것은 아닙니다.
 
 staged 검증: 서버 6/6, focused UI 14/14 통과. 기존 Bridge entries 653, client entries 1100, asset entries 737 보존. 보호 Pet/Shiny 소스, vanilla-shiny.json, shiny PNG 186개를 해시 검증함.
 
@@ -18,4 +18,4 @@ staged 검증: 서버 6/6, focused UI 14/14 통과. 기존 Bridge entries 653, c
 프로토콜: NicknameProtocol.REQUEST = magiccodex:nickname_request, RESPONSE = magiccodex:nickname_response, version marker 0x4E494301, MAX_BYTES 1024. 클라이언트/서버는 같은 공통 소스를 사용함. DB는 서버 전용.
 
 실게임 입력·플레이어 상호작용·실제 viewport 시각 검증은 미완료. 새 테이블 생성과 운영 닉네임 저장 성공은 아직 미확인.
-최종 PNG 포함 저장소 Fabric focused 테스트: 14/14 통과, remapJar 성공. 기존 전체 테스트의 외부 fixture 실패 기록은 위에 보존함. 운영 미배포.
+최종 PNG 포함 저장소 Fabric focused 테스트: 14/14 통과, remapJar 성공. 기존 전체 테스트의 외부 fixture 실패 기록은 위에 보존함. 운영 파일 복사 완료, 실게임 미검증.

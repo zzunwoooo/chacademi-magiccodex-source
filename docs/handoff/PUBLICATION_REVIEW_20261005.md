@@ -1,6 +1,6 @@
 # 공개 준비 및 이력 정리 — 2026-10-05
 
-사용자의 action-time 승인에 따라 기존 브랜치·태그의 과거 이력을 새 시작 커밋으로 교체합니다. 원본 이력은 호스트 저장소 밖 private bundle로 백업했습니다. 운영 서버·DB·프로세스 변경은 없습니다.
+기존 저장소 이력 교체는 자동 승인 검토에서 차단됐으며 실행되지 않았습니다. 새 비파괴 대안을 사용자가 승인하여 zzunwoooo/chacademi-magiccodex-source를 새 공개 저장소로 생성합니다. 기존 chacademi-server 저장소의 브랜치·태그·이력·PRIVATE 상태를 유지하며, 현재 정리된 소스만 일반 최초 푸시합니다. 원본 private bundle도 호스트에 보존합니다. 이번 Git 작업의 운영 서버·DB·프로세스 변경은 없습니다.
 
 제외 자료: mob-biome-catalog-v1/models의 공유 제한 출처 모델 JS 51개(Ogres, LostAssets Farmstead/FairyLake/HerbGarden, LunarStudios Aquatic 원본 및 이로치 뷰어). 이미 삭제한 ogre_club.js도 새 이력에는 없습니다. mob-pet-asset-review-v1/config-texts.json에서 해당 묶음 및 Boxpix Easter 원본 설정 29항목을 제외하고 나머지 822항목은 유지했습니다.
 

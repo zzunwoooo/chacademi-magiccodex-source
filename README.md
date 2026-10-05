@@ -27,7 +27,7 @@
 
 MariaDB 11.4.13 / `Chacademi-MariaDB` / 로컬 3306 설치는 인수인계 기록 기준입니다. 이번 SSH 일반 계정은 서비스 관리자 조회 권한이 없어 현재 실행 상태를 재확인하지 못했습니다. XConomy 2.26.3 / Vault 경제를 사용합니다. school/wild MySQL 기본키 누락에 대한 `plugins/XConomy/database.yml`의 `table-suffix` 수정은 적용됐으나 최신 런타임 성공은 미확인입니다. 돈 API는 Vault provider를 사용하며 클라이언트는 DB에 직접 연결하지 않습니다.
 
-Redis는 Ubuntu VM GRUB 이후 사용자 설치 진행 단계이며 가동·동기화 완료가 아닙니다. HuskSync 배포나 다른 플러그인 DB 연결 전체 완료를 전제로 하지 마세요. Bridge SQLite `friends.db`와 LuckPerms H2 (`luckperms-h2-v2.mv.db`)는 유지되며 기존 자료의 전체 DB 이관은 미완료입니다. 과거 SQLite 충돌 2건이 발견됐습니다. 닉네임 테이블은 staged Bridge 배포·활성화 시 생성됩니다.
+Redis는 Ubuntu VM GRUB 이후 사용자 설치 진행 단계이며 가동·동기화 완료가 아닙니다. HuskSync 배포나 다른 플러그인 DB 연결 전체 완료를 전제로 하지 마세요. Bridge SQLite `friends.db`와 LuckPerms H2 (`luckperms-h2-v2.mv.db`)는 유지되며 기존 자료의 전체 DB 이관은 미완료입니다. 과거 SQLite 충돌 2건이 발견됐습니다. 닉네임 테이블은 Bridge 활성화 시 생성됩니다. 닉네임 Client A832BB20… 및 Bridge 0E731DF8… 파일 복사가 완료됐습니다. school/wild의 Bridge는 해당 해시로 직접 확인했으며 클라이언트 복사는 인수인계 기록 기준입니다. 실제 게임·플러그인 활성화·테이블 생성·운영 저장 성공은 아직 검증하지 않았습니다.
 
 `DatabaseSettings`는 외부 `database.properties`의 mode / host / port / database / user / password를 읽습니다. 실제 연결 값은 저장소 밖에서 관리하세요. 코드는 환경변수를 자동 치환하지 않습니다. 예시에는 `DB_HOST`, `DB_USER`, `DB_PASSWORD` 같은 플레이스홀더만 사용하세요.
 
@@ -35,6 +35,6 @@ Redis는 Ubuntu VM GRUB 이후 사용자 설치 진행 단계이며 가동·동�
 
 [통합 검증 기록](docs/handoff/MAGICCODEX_20261005.md)에 staged 결과와 이번 저장소 빌드 결과를 구분해 기록합니다. 초기 전체 클라이언트 테스트는 175/176이며 외부 spells fixture 부재로 1건 실패했습니다. 실제 게임 상호작용은 미확인입니다.
 
-공유 제한 출처의 참고 모델 데이터와 원본 설정을 제외하고 사용자 승인에 따라 새 시작 이력으로 정리했습니다. [공개 점검 기록](docs/handoff/PUBLICATION_REVIEW_20261005.md)을 확인하세요. GitHub 캐시·다른 clone까지 완전히 삭제됐다는 뜻은 아닙니다. 일부 참고 모델 미리보기는 제외됩니다.
+이 공개 저장소는 공유 제한 출처의 참고 모델 데이터와 원본 설정을 제외한 최신 소스입니다. 기존 chacademi-server 저장소의 브랜치·태그·이력·PRIVATE 상태는 유지했습니다. [공개 점검 기록](docs/handoff/PUBLICATION_REVIEW_20261005.md)을 확인하세요. GitHub 캐시·다른 clone까지 완전히 삭제됐다는 뜻은 아닙니다. 일부 참고 모델 미리보기는 제외됩니다.
 
 [작업 원칙](AGENTS.md), [기존 서버 인수인계](docs/handoff/SERVER_HANDOFF.md), [자료 안내](reference/MATERIALS.md)를 함께 참고하세요. 과거 기록과 현재 운영/staged 상태를 구분하세요.
