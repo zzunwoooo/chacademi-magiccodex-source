@@ -4,7 +4,7 @@ import org.bukkit.*;import org.bukkit.command.*;import org.bukkit.entity.*;impor
 import school.magiccodex.protocol.ShopProtocol;import school.magiccodex.protocol.ShopProtocol.*;
 
 /** Admin shops only. Money and inventory effects are journalled, never retried blindly after ambiguity. */
-final class ShopBridge implements PluginMessageListener,Listener,CommandExecutor,AutoCloseable {
+final class ShopBridge implements PluginMessageListener,Listener,CommandExecutor,TabCompleter,AutoCloseable {
  private final MagicCodexBridge plugin;private final ShopStore store;private final String origin;
  private final ThreadPoolExecutor io=new ThreadPoolExecutor(1,1,0,TimeUnit.MILLISECONDS,new ArrayBlockingQueue<>(64),r->{var t=new Thread(r,"MagicCodex-shop-io");t.setDaemon(true);return t;});
  private Map<String,ShopStore.Shop> catalog=Map.of();private Map<String,String> bindings=Map.of();private long version=-1;private boolean refreshing,closing;
@@ -12,12 +12,12 @@ final class ShopBridge implements PluginMessageListener,Listener,CommandExecutor
  private final Map<UUID,Session> sessions=new HashMap<>();private final Set<UUID>busy=new HashSet<>();private final Map<UUID,Long>limits=new HashMap<>();
  ShopBridge(MagicCodexBridge plugin)throws Exception{this.plugin=plugin;var dir=plugin.getDataFolder().toPath();origin=Files.readString(dir.resolve("mailbox-origin.txt")).strip();try{store=io.submit(()->new ShopStore(ShopMailboxDatabaseSettings.load(dir),dir.resolve("shops.db"))).get(15,TimeUnit.SECONDS);}catch(Exception e){io.shutdownNow();throw e;}
   catalog=io.submit(store::catalog).get(10,TimeUnit.SECONDS);bindings=io.submit(()->store.bindings(origin)).get(10,TimeUnit.SECONDS);version=io.submit(store::version).get(10,TimeUnit.SECONDS);
-  Bukkit.getMessenger().registerIncomingPluginChannel(plugin,ShopProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,ShopProtocol.RESPONSE);Bukkit.getPluginManager().registerEvents(this,plugin);Bukkit.getServicesManager().register(ShopBridge.class,this,plugin,org.bukkit.plugin.ServicePriority.Normal);plugin.getCommand("상점").setExecutor(this);plugin.getCommand("상점관리").setExecutor(this);citizens();Bukkit.getScheduler().runTaskTimer(plugin,this::refresh,100,100);
+  Bukkit.getMessenger().registerIncomingPluginChannel(plugin,ShopProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,ShopProtocol.RESPONSE);Bukkit.getPluginManager().registerEvents(this,plugin);Bukkit.getServicesManager().register(ShopBridge.class,this,plugin,org.bukkit.plugin.ServicePriority.Normal);plugin.getCommand("상점").setExecutor(this);plugin.getCommand("상점관리").setExecutor(this);plugin.getCommand("상점").setTabCompleter(this);plugin.getCommand("상점관리").setTabCompleter(this);citizens();refreshCompletionKeys();Bukkit.getScheduler().runTaskTimer(plugin,this::refresh,100,100);
  }
  private void main(Runnable r){if(!closing&&plugin.isEnabled())Bukkit.getScheduler().runTask(plugin,r);}
  private <T>void work(Callable<T>task,Consumer<T>success,Consumer<String>fail){try{io.execute(()->{try{T v=task.call();main(()->success.accept(v));}catch(Exception e){plugin.getLogger().warning("Shop operation held: "+e.getClass().getSimpleName());main(()->fail.accept(e instanceof IllegalArgumentException||e instanceof IllegalStateException?e.getMessage():"거래 기록 확인이 필요합니다. 자동으로 재처리하지 않습니다."));}});}catch(RejectedExecutionException e){fail.accept("상점이 바쁩니다. 잠시 뒤 다시 시도해 주세요.");}}
  private record Catalog(long version,Map<String,ShopStore.Shop> shops,Map<String,String> bindings){}
- private void refresh(){if(refreshing||closing)return;refreshing=true;work(()->{long v=store.version();return v==version?null:new Catalog(v,store.catalog(),store.bindings(origin));},c->{refreshing=false;if(c!=null){version=c.version;catalog=c.shops;bindings=c.bindings;}},m->refreshing=false);}
+ private void refresh(){if(refreshing||closing)return;refreshing=true;work(()->{long v=store.version();return v==version?null:new Catalog(v,store.catalog(),store.bindings(origin));},c->{refreshing=false;if(c!=null){version=c.version;catalog=c.shops;bindings=c.bindings;}refreshCompletionKeys();},m->refreshing=false);}
  private boolean current(Player p){return !closing&&p.isOnline()&&Bukkit.getPlayer(p.getUniqueId())==p;}
  private boolean ready(Player p){return current(p)&&p.hasPermission("magiccodex.shop")&&!p.isDead()&&p.getGameMode()!=GameMode.SPECTATOR&&plugin.playerStateReady(p);}
  private boolean near(Player p,Entity anchor){return anchor==null||anchor.isValid()&&p.getWorld()==anchor.getWorld()&&p.getLocation().distanceSquared(anchor.getLocation())<=64;}
@@ -43,6 +43,32 @@ final class ShopBridge implements PluginMessageListener,Listener,CommandExecutor
  private void done(Player p,Session s,Request r,String message){busy.remove(p.getUniqueId());var latest=sessions.get(p.getUniqueId());if(current(p)&&latest!=null&&latest.token==s.token&&latest.sequence==r.sequence())send(p,latest,r.sequence(),message,r.search());}
  @SuppressWarnings("unchecked")private void citizens(){var dep=Bukkit.getPluginManager().getPlugin("Citizens");if(dep==null)return;try{Class<? extends Event>type=(Class<? extends Event>)Class.forName("net.citizensnpcs.api.event.NPCRightClickEvent",true,dep.getClass().getClassLoader());Bukkit.getPluginManager().registerEvent(type,this,EventPriority.HIGH,(l,event)->{try{var npc=event.getClass().getMethod("getNPC").invoke(event);int npcId=((Number)npc.getClass().getMethod("getId").invoke(npc)).intValue();if(plugin.dialogueBridge()!=null&&plugin.dialogueBridge().claimed(npcId))return;String id="citizens:"+npcId;String shop=bindings.get(id);if(shop!=null){var p=(Player)event.getClass().getMethod("getClicker").invoke(event);var anchor=(Entity)npc.getClass().getMethod("getEntity").invoke(npc);if(event instanceof Cancellable c)c.setCancelled(true);open(p,shop,anchor);}}catch(Exception e){plugin.getLogger().warning("Shop NPC event unavailable");}},plugin,true);}catch(Exception e){plugin.getLogger().warning("Shop Citizens hook unavailable");}}
  @EventHandler(priority=EventPriority.HIGH,ignoreCancelled=true)public void interact(PlayerInteractEntityEvent e){if(e.getHand()!=org.bukkit.inventory.EquipmentSlot.HAND||e.getRightClicked().hasMetadata("NPC"))return;for(String tag:e.getRightClicked().getScoreboardTags()){String shop=bindings.get("tag:"+tag);if(shop!=null){e.setCancelled(true);open(e.getPlayer(),shop,e.getRightClicked());break;}}}
+
+ private List<String> completionNpcKeys=List.of();
+ private void refreshCompletionKeys(){
+  var keys=new TreeSet<String>(bindings.keySet());
+  var dep=Bukkit.getPluginManager().getPlugin("Citizens");
+  if(dep!=null&&dep.isEnabled())try{
+   ClassLoader loader=dep.getClass().getClassLoader();
+   Object registry=Class.forName("net.citizensnpcs.api.CitizensAPI",true,loader).getMethod("getNPCRegistry").invoke(null);
+   var idMethod=Class.forName("net.citizensnpcs.api.npc.NPC",true,loader).getMethod("getId");
+   if(registry instanceof Iterable<?> npcs)for(Object npc:npcs){
+    if(keys.size()>=4096)break;
+    int id=((Number)idMethod.invoke(npc)).intValue();
+    if(id>=0&&id<=999999999)keys.add("citizens:"+id);
+   }
+  }catch(Exception|LinkageError ignored){}
+  completionNpcKeys=List.copyOf(keys);
+ }
+ @Override public List<String> onTabComplete(CommandSender sender,Command command,String alias,String[] args){
+  if(closing)return List.of();
+  boolean admin=sender.hasPermission("magiccodex.shop.admin");
+  var onlineIds=admin&&args!=null&&args.length==2&&"기록".equals(args[0])
+    ? Bukkit.getOnlinePlayers().stream().map(p->p.getUniqueId().toString()).toList():List.<String>of();
+  return ShopCommandCompletion.complete(command.getName(),args,sender instanceof Player,
+    sender.hasPermission("magiccodex.shop"),admin,catalog,completionNpcKeys,onlineIds);
+ }
+
  @Override public boolean onCommand(CommandSender sender,Command command,String label,String[] args){if(command.getName().equals("상점")){if(sender instanceof Player p&&args.length==1)open(p,args[0],null);else sender.sendMessage("/상점 <상점ID>");return true;}if(!sender.hasPermission("magiccodex.shop.admin"))return true;try{if(args.length==0){sender.sendMessage("/상점관리 생성 <ID> <이름> | 아이템추가 <상점> <구매가/off> <매입가/off> | 가격 <상점> <상품UUID> <구매가/off> <매입가/off> | NPC <상점> <citizens:ID/tag:태그> | 초상 <상점> <초상ID> | 목록");return true;}Callable<String> task;
   switch(args[0]){case "기록"->{if(args.length!=2)throw new IllegalArgumentException("기록 플레이어UUID");UUID id=UUID.fromString(args[1]);task=()->String.join("\n",store.audit(id));}case "목록"->{if(args.length==2){var shop=catalog.get(args[1]);if(shop==null)throw new IllegalArgumentException("상점 없음");for(var product:shop.products())sender.sendMessage(product.id()+" "+product.name()+" 구매="+(product.buy().isEmpty()?"off":product.buy())+" 매입="+(product.sell().isEmpty()?"off":product.sell()));}else sender.sendMessage(String.join(", ",catalog.keySet()));return true;}case "생성"->{if(args.length!=3)throw new IllegalArgumentException("생성 ID 이름");task=()->{store.create(args[1],args[2]);return "상점을 생성했습니다.";};}case "아이템추가"->{if(!(sender instanceof Player p)||args.length!=4)throw new IllegalArgumentException("손에 아이템을 들고 아이템추가 상점 구매가/off 매입가/off");var item=p.getInventory().getItemInMainHand().clone();if(item.getType().isAir())throw new IllegalArgumentException("손에 아이템을 들어 주세요.");item.setAmount(1);byte[] bytes=item.serializeAsBytes();if(bytes.length>32768)throw new IllegalArgumentException("아이템 데이터가 너무 큽니다.");String name=net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(item.displayName());if(name.length()>120)name=name.substring(0,120);String finalName=name,buy=ShopStore.price(args[2]),sell=ShopStore.price(args[3]);task=()->"상품 ID: "+store.add(args[1],finalName,bytes,buy,sell);}case "가격"->{if(args.length!=5)throw new IllegalArgumentException("가격 상점 상품UUID 구매가/off 매입가/off");String buy=ShopStore.price(args[3]),sell=ShopStore.price(args[4]);task=()->{store.prices(args[1],args[2],buy,sell);return "가격/구매·매입 허용을 변경했습니다.";};}case "NPC"->{if(args.length!=3)throw new IllegalArgumentException("NPC 상점 citizens:ID/tag:태그");task=()->{store.bind(origin,args[2],args[1]);return "이 서버 NPC와 상점을 연결했습니다.";};}case "초상"->{if(args.length!=3)throw new IllegalArgumentException("초상 상점 초상ID");task=()->{store.portrait(args[1],args[2]);return "초상을 변경했습니다.";};}default->throw new IllegalArgumentException("지원하지 않는 관리 명령");}work(task,m->{sender.sendMessage(m);refresh();},sender::sendMessage);
  }catch(Exception e){sender.sendMessage(e.getMessage()==null?"설정을 확인하세요.":e.getMessage());}return true;}
