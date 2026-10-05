@@ -21,6 +21,12 @@ public final class TopMenuClient {
             c.mouse.getX()*w.getScaledWidth()/w.getWidth(),c.mouse.getY()*w.getScaledHeight()/w.getHeight(),
             c.currentScreen instanceof HudCursorScreen,now);
     }
+    public static void renderTooltip(DrawContext ctx){
+        var c=MinecraftClient.getInstance();var w=c.getWindow();
+        renderer().renderTooltip(ctx,w.getScaledWidth(),w.getScaledHeight(),
+            c.mouse.getX()*w.getScaledWidth()/w.getWidth(),c.mouse.getY()*w.getScaledHeight()/w.getHeight(),
+            c.currentScreen instanceof HudCursorScreen);
+    }
     public static boolean click(double x,double y,int button){
         var c=MinecraftClient.getInstance();
         if(button!=0 || !PlayerHudClient.active() || c.options.hudHidden || !(c.currentScreen instanceof HudCursorScreen))return false;
@@ -30,7 +36,7 @@ public final class TopMenuClient {
         if(hit==-2)return false;
         c.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK.value(),1.15f,.23f));
         if(hit==-1){state.toggle(Util.getMeasuringTimeMs());return true;}
-        if(hit==1){MagicCodexClient.openFromMenu();return true;}
+        if(hit==0){MailboxClient.open(null);return true;}if(hit==1){MagicCodexClient.openFromMenu();return true;}
         if(hit==2){PetClient.open();return true;}
         if(hit==4){SocialClient.open();return true;}
         if(hit==5){QuestClient.open();return true;}

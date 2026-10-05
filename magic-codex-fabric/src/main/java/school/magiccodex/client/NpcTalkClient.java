@@ -76,6 +76,7 @@ public final class NpcTalkClient {
     }
 
     private static void receive(MinecraftClient client, NpcTalkProtocol.Response r) {
+        NpcUiTrace.event("reply-op-"+r.op()+"-ready-"+ready+"-session-match-"+(client.currentScreen instanceof NpcTalkScreen active && active.session().equals(r.session())),r.seq(),false,0,false);
         if (r.op() == NpcTalkProtocol.S_HELLO_ACK) {
             ready = r.seq() == NpcTalkProtocol.VERSION;
             return;
@@ -100,11 +101,11 @@ public final class NpcTalkClient {
     }
 
     static boolean send(String session, int op, int seq, String text, boolean accept) {
-        if (MinecraftClient.getInstance().getNetworkHandler() == null || !ClientPlayNetworking.canSend(Query.ID)) return false;
+        if (!ready || MinecraftClient.getInstance().getNetworkHandler() == null || !ClientPlayNetworking.canSend(Query.ID)) { NpcUiTrace.event("send-blocked-ready-"+ready+"-connected-"+(MinecraftClient.getInstance().getNetworkHandler()!=null)+"-channel-"+ClientPlayNetworking.canSend(Query.ID),seq,false,0,false);return false; }
         try {
             ClientPlayNetworking.send(new Query(NpcTalkProtocol.encode(new NpcTalkProtocol.Request(op, session, seq, text, accept))));
             return true;
-        } catch (IllegalArgumentException e) {
+        } catch (RuntimeException e) { NpcUiTrace.event("encode-or-send-failed",seq,false,0,false);
             return false;
         }
     }

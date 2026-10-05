@@ -34,6 +34,7 @@ public final class NicknameClient {
         public void encode(RegistryByteBuf b,T value){if(value.bytes().length>NicknameProtocol.MAX_BYTES)throw new IllegalArgumentException("nickname size");b.writeBytes(value.bytes());}
     };}
     public static void initialize(){
+        DeferredScreens.initialize();
         PayloadTypeRegistry.playC2S().register(Query.ID,Query.CODEC);PayloadTypeRegistry.playS2C().register(Reply.ID,Reply.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(Reply.ID,(p,c)->{try{var r=NicknameProtocol.response(p.bytes());c.client().execute(()->receive(r));}catch(IllegalArgumentException ignored){}});
         ClientPlayConnectionEvents.JOIN.register((h,s,c)->reset());ClientPlayConnectionEvents.DISCONNECT.register((h,c)->reset());
@@ -48,7 +49,7 @@ public final class NicknameClient {
     private static void reset(){sequence=waiting=deadline=identityAt=0;owner=null;identity=null;}
     public static boolean supported(){return MinecraftClient.getInstance().getNetworkHandler()!=null&&ClientPlayNetworking.canSend(Query.ID);}
     public static String display(String fallback){return identity==null?fallback:identity.nickname();}
-    public static void open(Screen parent){var c=MinecraftClient.getInstance();if(c.player==null||c.world==null)return;MagicCodexClient.dismiss();c.setScreen(new NicknameScreen(parent));}
+    public static void open(Screen parent){DeferredScreens.open(()->new NicknameScreen(parent));}
     static boolean waiting(NicknameScreen screen){return waiting!=0&&owner==screen;}
     static boolean request(NicknameScreen screen,int action,long session,long revision,String value){
         if(!supported()){if(screen!=null)screen.failed("닉네임 서버 연결이 필요합니다.");return false;}

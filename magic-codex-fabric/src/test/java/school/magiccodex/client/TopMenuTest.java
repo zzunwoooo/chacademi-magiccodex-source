@@ -37,7 +37,7 @@ class TopMenuTest {
             assertEquals(base+TopMenuState.LABELS.length*TopMenuState.STEP,state.width(base));
             assertTrue(state.arrowCenter(base)-state.iconCenter(base,TopMenuState.LABELS.length-1)>29);
         }
-        assertEquals("메일함",TopMenuState.command(0));assertEquals("",TopMenuState.command(1));
+        assertEquals("우편함",TopMenuState.command(0));assertEquals("",TopMenuState.command(1));
         assertEquals("펫도감",TopMenuState.command(2));assertEquals("캐시샵",TopMenuState.command(3));
         assertEquals("친구",TopMenuState.command(4));assertEquals("퀘스트",TopMenuState.command(5));
     }

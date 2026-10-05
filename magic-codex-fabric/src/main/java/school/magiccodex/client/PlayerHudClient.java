@@ -4,7 +4,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.fabricmc.fabric.api.client.command.v2.*;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
 import net.fabricmc.fabric.api.resource.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -66,12 +66,13 @@ public final class PlayerHudClient {
             public Identifier getFabricId(){return Identifier.of("magiccodex","player_hud");}
             public void reload(ResourceManager manager){close();}
         });
-        HudRenderCallback.EVENT.register((context,ticks)->{
+        HudLayerRegistrationCallback.EVENT.register(drawer->drawer.attachLayerAfter(IdentifiedLayer.SUBTITLES,Identifier.of("magiccodex","player_ui"),(context,ticks)->{
             var c=MinecraftClient.getInstance();
             if(!active() || c.options.hudHidden || (c.currentScreen!=null && !(c.currentScreen instanceof HudCursorScreen)))return;
             renderer().renderStatus(context,c.player,frame,(float)ManaClient.current(),(float)ManaClient.maximum(),c.currentScreen instanceof HudCursorScreen,Util.getMeasuringTimeMs());
             TopMenuClient.render(context,Util.getMeasuringTimeMs());
-        });
+            TopMenuClient.renderTooltip(context);
+        }));
     }
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<FabricClientCommandSource> seasonCommand(){
         var command=ClientCommandManager.literal("season");

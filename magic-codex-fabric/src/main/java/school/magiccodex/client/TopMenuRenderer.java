@@ -54,7 +54,7 @@ public final class TopMenuRenderer implements AutoCloseable {
         if(minute!=clockMinute){clockMinute=minute;clock=LocalTime.now().format(CLOCK);}
         text.beginFrame();images.beginFrame();seasons.beginFrame();ctx.getMatrices().push();
         try{
-            ctx.getMatrices().scale(scale,scale,1);ctx.getMatrices().translate(6,3,150);
+            ctx.getMatrices().scale(scale,scale,1);ctx.getMatrices().translate(6,3,0);
             int barWidth=Math.round(state.width(base));
             // Three slices keep the diamond and the pointed end undistorted during expansion.
             region(ctx,0,0,24,36,54,70,100,150,0xDFFFFFFF);
@@ -89,6 +89,16 @@ public final class TopMenuRenderer implements AutoCloseable {
             }
             float arrow=state.arrowCenter(base);
             glow(ctx,arrow,hover[0]);icon(ctx,state.expanded()?9:8,arrow,18,14,1);
+        }finally{ctx.getMatrices().pop();images.endFrame();seasons.endFrame();}
+    }
+    public void renderTooltip(DrawContext ctx,int width,int height,double mouseX,double mouseY,boolean cursor){
+        if(!cursor)return;
+        float scale=PlayerHudLayout.of(width,height).scale(),base=baseWidth();
+        int hit=state.hit((float)mouseX/scale-6,(float)mouseY/scale-3,base);
+        float arrow=state.arrowCenter(base);
+        ctx.getMatrices().push();
+        try{
+            ctx.getMatrices().scale(scale,scale,1);ctx.getMatrices().translate(6,3,300);
             if(hit>=0){
                 String label=TopMenuState.LABELS[hit];float tw=text.width(label,11,FONT)+18;
                 float x=state.iconCenter(base,hit);
@@ -111,7 +121,8 @@ public final class TopMenuRenderer implements AutoCloseable {
                 HudMesh.capsule(ctx,x-tw/2,41,tw,23,0xE6101E2C,0xE6101E2C);
                 text.draw(ctx,label,x,52.5f,11,0xFFF1ECE0,FONT,true);
             }
-        }finally{ctx.getMatrices().pop();images.endFrame();seasons.endFrame();}
+
+        }finally{ctx.getMatrices().pop();}
     }
     private void season(DrawContext ctx){
         var season=state.season();var r=season.crop();float scale=22f/Math.max(r.width(),r.height());

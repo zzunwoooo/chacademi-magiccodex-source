@@ -76,3 +76,8 @@ Create the external dedicated file separately on school and wild using the same 
 Use one InnoDB/utf8mb4 schema. Tables: `codex_mail`, `codex_mail_items`, `codex_mail_owners`, `codex_shops`, `codex_shop_products`, `codex_shop_orders`, `codex_shop_bindings`, `codex_shop_version`. Required privileges: SELECT, INSERT, UPDATE and CREATE for initialization, plus DELETE on `codex_shop_bindings` for NPC rebinding. Keep each server distinct `mailbox-origin.txt`.
 
 This source change creates no account, sets no real password, writes no operational connection file, and migrates no SQLite records. Live MariaDB contention and in-game checks remain pending; isolated tests verify school/wild target equivalence, common-setting isolation, unchanged SQLite files and invalid-setting failure.
+
+
+## UI follow-up (2026-10-06)
+
+See [UI_FOLLOWUP_20261006](UI_FOLLOWUP_20261006.md) for the 70% shop layout, full original item previews (32KiB each / 60KB packet budget), explicit completed-operation sound receipts, deferred command/menu opening and permission-aware completion. The Bridge/UI use the paired SHP2 contract; no operational deployment has been performed.

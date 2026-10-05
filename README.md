@@ -46,3 +46,8 @@ Redis는 Ubuntu VM GRUB 이후 사용자 설치 진행 단계이며 가동·동�
 최종 통합 JAR·해시·356개 전체 테스트·운영 준비 사항은 [최종 통합 기록](docs/handoff/FINAL_INTEGRATION_20261005.md)을 확인하세요.
 
 상점·우편함만 외부 `plugins/MagicCodexBridge/shop-mailbox-database.properties`를 읽습니다. school/wild의 이 설정만 같은 MariaDB를 지정할 수 있으며 다른 기능의 `database.properties`와 기존 SQLite 자료는 유지됩니다. 계정·비밀번호 설정, 실데이터 이관, 운영 배포·재시작은 별도 작업입니다.
+
+
+## UI 후속 통합 (2026-10-06)
+
+상점·우편함/닉네임 열기·NPC 직접 입력/기록·HUD tooltip·상점 자동완성 후속 통합은 [변경·설정·검증 기록](docs/UI_FOLLOWUP_20261006.md)을 확인하세요. 호스팅 테스트 381개 통과, 기존 자산 895개와 보호 Bridge 클래스 48개 보존 확인. 이번 Bridge/UI는 SHP2 계약을 함께 사용하며 운영 배포와 임시 런처 반영은 대기 상태입니다.
