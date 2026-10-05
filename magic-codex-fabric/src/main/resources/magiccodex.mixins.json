@@ -14,7 +14,8 @@
     "TamingNameMixin",
     "ItemTooltipMixin",
     "TooltipScrollMixin",
-    "HandledItemTooltipMixin"
+    "HandledItemTooltipMixin",
+    "ItemIconMixin"
   ],
   "injectors": {
     "defaultRequire": 1

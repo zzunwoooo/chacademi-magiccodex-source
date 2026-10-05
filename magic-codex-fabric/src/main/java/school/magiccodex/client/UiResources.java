@@ -20,8 +20,9 @@ public final class UiResources {
     public static HudTextureCache images(){if(images==null)images=new HudTextureCache(MinecraftClient.getInstance(),true);return images;}
     public static CodexTypography text(){if(text==null)text=new CodexTypography(MinecraftClient.getInstance());return text;}
     public static int generation(){return generation;}
-    public static void reset(){generation++;ItemTooltipRenderer.reset();if(images!=null)images.close();if(text!=null)text.close();images=null;text=null;}
+    public static void reset(){generation++;ItemTooltipRenderer.reset();ItemIconTextures.reset();if(images!=null)images.close();if(text!=null)text.close();images=null;text=null;}
     static void initialize(){
+        ItemIconTextures.initialize();
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleResourceReloadListener<Map<String,Font>>(){
             public Identifier getFabricId(){return Identifier.of("magiccodex","screen_resources");}
             public CompletableFuture<Map<String,Font>> load(ResourceManager manager,Executor executor){return CompletableFuture.supplyAsync(()->CodexTypography.loadFonts(manager),executor);}

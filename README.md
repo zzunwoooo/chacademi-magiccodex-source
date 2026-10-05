@@ -51,3 +51,7 @@ Redis는 Ubuntu VM GRUB 이후 사용자 설치 진행 단계이며 가동·동�
 ## UI 후속 통합 (2026-10-06)
 
 상점·우편함/닉네임 열기·NPC 직접 입력/기록·HUD tooltip·상점 자동완성 후속 통합은 [변경·설정·검증 기록](docs/UI_FOLLOWUP_20261006.md)을 확인하세요. 호스팅 테스트 381개 통과, 기존 자산 895개와 보호 Bridge 클래스 48개 보존 확인. 이번 Bridge/UI는 SHP2 계약을 함께 사용하며 운영 배포와 임시 런처 반영은 대기 상태입니다.
+
+## 고해상도 아이템 아이콘 (2026-10-06)
+
+32px를 넘는 평면 아이템 텍스처를 GUI에서 외곽선 보존 밉맵으로 그립니다. 조건·동작·검증 상태는 [ITEM_ICONS_HIRES](docs/ITEM_ICONS_HIRES.md), 빌드 지시는 [HIRES_ITEM_ICONS_BUILD](docs/handoff/HIRES_ITEM_ICONS_BUILD.md)를 확인하세요. 호스팅 빌드·실게임 확인 전입니다.
