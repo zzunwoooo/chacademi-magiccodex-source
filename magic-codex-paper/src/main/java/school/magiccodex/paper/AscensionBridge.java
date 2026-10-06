@@ -23,7 +23,7 @@ final class AscensionBridge implements Listener,PluginMessageListener,CommandExe
         Bukkit.getPluginManager().registerEvents(this,plugin);
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin,AscensionProtocol.REQUEST,this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,AscensionProtocol.RESPONSE);
-        Objects.requireNonNull(plugin.getCommand("서클승급")).setExecutor(this);
+        Objects.requireNonNull(plugin.getCommand("클래스승급")).setExecutor(this);plugin.getCommand("클래스승급").setTabCompleter((sender,command,label,args)->java.util.List.of());
     }
     int current(Player p){
         Integer stored=p.getPersistentDataContainer().get(key,PersistentDataType.INTEGER);
@@ -36,8 +36,8 @@ final class AscensionBridge implements Listener,PluginMessageListener,CommandExe
     private boolean limit(Player p){long n=now();if(next.getOrDefault(p.getUniqueId(),0L)>n)return false;next.put(p.getUniqueId(),n+500);return true;}
     private void send(Player p,Response r){if(p.getListeningPluginChannels().contains(AscensionProtocol.RESPONSE))p.sendPluginMessage(plugin,AscensionProtocol.RESPONSE,AscensionProtocol.encodeResponse(r));}
     @Override public boolean onCommand(CommandSender sender,Command command,String label,String[] args){
-        if(!(sender instanceof Player p)){sender.sendMessage("게임 안에서 /서클승급을 사용해 주세요.");return true;}
-        if(args.length!=0){p.sendMessage("/서클승급");return true;}
+        if(!(sender instanceof Player p)){sender.sendMessage("게임 안에서 /클래스승급을 사용해 주세요.");return true;}
+        if(args.length!=0){p.sendMessage("/클래스승급");return true;}
         if(!p.hasPermission("magiccodex.ascend"))return true;
         if(!plugin.playerStateReady(p)){p.sendMessage("캐릭터 정보를 불러오는 중입니다.");return true;}
         if(!p.getListeningPluginChannels().contains(AscensionProtocol.RESPONSE)){p.sendMessage("Magic Codex 0.18.0 이상 모드가 필요합니다.");return true;}
@@ -53,7 +53,7 @@ final class AscensionBridge implements Listener,PluginMessageListener,CommandExe
         if(r.action()==AscensionProtocol.HELLO){if(limit(p))send(p,new Response(AscensionProtocol.SNAPSHOT,0,from,from,false,""));return;}
         long n=now();if(nextClaim.getOrDefault(p.getUniqueId(),0L)>n)return;nextClaim.put(p.getUniqueId(),n+500);
         if(!gate.consume(p.getUniqueId(),r.token(),from,!p.isDead()&&allowed(p,from),now())){
-            send(p,new Response(AscensionProtocol.DENIED,r.token(),from,from,false,"승급 요청이 만료됐거나 조건이 변경됐습니다. /서클승급으로 다시 확인해 주세요."));return;
+            send(p,new Response(AscensionProtocol.DENIED,r.token(),from,from,false,"승급 요청이 만료됐거나 조건이 변경됐습니다. /클래스승급으로 다시 확인해 주세요."));return;
         }
         int to=from+1;
         // Persist the authoritative rank before notifying the client. UI closing cannot undo/duplicate it.

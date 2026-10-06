@@ -48,7 +48,7 @@ public final class SocialClient {
         PayloadTypeRegistry.playC2S().register(Query.ID,Query.CODEC);PayloadTypeRegistry.playS2C().register(Reply.ID,Reply.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(Reply.ID,(p,c)->{try{var r=SocialProtocol.response(p.bytes());c.client().execute(()->receive(r));}catch(IllegalArgumentException ignored){}});
         ClientPlayConnectionEvents.JOIN.register((h,s,c)->reset());ClientPlayConnectionEvents.DISCONNECT.register((h,c)->reset());
-        ClientCommandRegistrationCallback.EVENT.register((d,a)->{for(String alias:new String[]{"친구","친구창","codexfriends"})d.register(ClientCommandManager.literal(alias).executes(c->{open();return 1;}));});
+        ClientCommandRegistrationCallback.EVENT.register((d,a)->{for(String alias:new String[]{"친구","친구창"})d.register(ClientCommandManager.literal(alias).executes(c->{open();return 1;}));});
         ClientTickEvents.END_CLIENT_TICK.register(c->{
             if(c.player==null||c.world==null){reset();return;}
             if(pendingOpen!=null&&c.getOverlay()==null){String message=pendingOpen;pendingOpen=null;MagicCodexClient.dismiss();var screen=new FriendsScreen();c.setScreen(screen);screen.notice(message);}

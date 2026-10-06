@@ -1,11 +1,13 @@
 # 작업 지시: 고해상도 아이템 아이콘 빌드·검증 (magic-codex-fabric)
 
+> **이 문서는 1차 빌드 지시 기록이다.** 현재 렌더 방식(3차: 32px 초과 아이콘을 부드럽게 그림, `OutlineMipmaps` 삭제)은 `docs/ITEM_ICONS_HIRES.md`를 따른다.
+
 ## 배경
 
 차카데미 magiccodex Fabric UI 모드(MC 1.21.4, Java 21, yarn 1.21.4+build.8)에 기능을 추가하는 패치다. 기능 내용: 32px를 넘는 평면 아이템 텍스처를 GUI에서 "외곽선 보존 밉맵"으로 그린다.
 
 이 변경은 Gradle 컴파일을 한 번도 거치지 않았다. 작성 환경에서 Maven/Fabric 저장소 접근이 막혀 있었기 때문이다. 다음 두 가지만 확인된 상태다.
-- 순수 Java 클래스 `OutlineMipmaps`와 그 테스트 7개는 대체 러너로 통과했다.
+- 렌더 방식은 WebGL2에서 같은 처리로 확인했다.
 - 마인크래프트 API 이름은 yarn 1.21.4 매핑 파일과 대조했다.
 
 **너의 일은 호스팅에서 빌드·테스트를 통과시키고 결과를 보고하는 것이다.** 기능 설계나 알고리즘은 바꾸지 않는다.
@@ -53,7 +55,7 @@
 .\magic-codex-fabric\gradlew.bat -p magic-codex-fabric test remapJar
 ```
 
-- 기대: `OutlineMipmapsTest` 7개 통과.
+- 기대: 새 테스트 없음(OutlineMipmaps 삭제). 기존 테스트에 새 실패가 없어야 함.
 - 기존 알려진 실패 1건(외부 spells fixture 부재)은 이 패치와 무관하다. 그 외 새 실패가 있으면 원인을 적는다.
 - 산출물: `magic-codex-fabric/build/libs/magic-codex-ui-*.jar`. 파일명과 SHA256을 보고한다.
 

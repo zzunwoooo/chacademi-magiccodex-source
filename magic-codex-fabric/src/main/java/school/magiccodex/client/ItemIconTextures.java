@@ -6,7 +6,6 @@ import com.google.gson.JsonParser;
 import com.mojang.blaze3d.systems.RenderSystem;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -26,16 +25,15 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.system.MemoryUtil;
 
 /**
- * GUI-only renderer for flat item icons whose texture is larger than 32px (for example 128x128
- * pixel art from the resource pack). Vanilla shrinks those with nearest sampling, so 1px outlines
- * break and gradients alias. Matching items are drawn from a private GPU copy with an
- * {@link OutlineMipmaps outline-preserving} mip chain and trilinear filtering, like other
- * magiccodex UI images. Hand-held, dropped and framed items keep the vanilla renderer.
+ * GUI-only renderer for flat item icons whose texture is larger than 32px (the 128x128 icons of
+ * the resource pack). Vanilla shrinks those with nearest sampling, so edges break into stray
+ * pixels and gradients alias. Matching items are instead drawn smoothly, the same way as other
+ * magiccodex UI images: a private GPU copy with premultiplied alpha, a full mip chain and
+ * trilinear filtering, so the artwork looks like a scaled picture rather than a pixel grid.
+ * Hand-held, dropped and framed items keep the vanilla renderer.
  *
  * Only simple definitions qualify: {@code items/<id>.json} of type {@code minecraft:model}
  * without tints, whose model chain ends in {@code item/generated} with a single {@code layer0},
@@ -47,15 +45,13 @@ public final class ItemIconTextures {
 
     static final int MIN_SIZE = 33;
     private static final int MAX_SIZE = 1024, MAX_TEXTURES = 256, UPLOADS_PER_TICK = 4;
-    /** Slightly sharper than the exact level: keeps 48px (GUI scale 3) icons crisp, see docs. */
-    private static final float LOD_BIAS = -0.5f;
     private static final ShaderProgramKey PROGRAM = new ShaderProgramKey(
             Identifier.of("magiccodex", "core/item_icon"), VertexFormats.POSITION_TEXTURE_COLOR, Defines.EMPTY);
     private static final ExecutorService DECODER = Executors.newSingleThreadExecutor(r -> {
         var t = new Thread(r, "magiccodex-item-icons"); t.setDaemon(true); return t;
     });
 
-    record Decoded(Identifier texture, int width, int height, List<int[]> levels) {}
+    record Decoded(Identifier texture, int width, int height, int[] argb) {}
     private record Loaded(Identifier id, int width, int height, RenderLayer layer) {}
 
     /** Empty = this item model stays vanilla until the next resource reload. */
@@ -139,7 +135,7 @@ public final class ItemIconTextures {
         int w = image.getWidth(), h = image.getHeight();
         if (Math.max(w, h) < MIN_SIZE || Math.max(w, h) > MAX_SIZE) return Optional.empty();
         int[] argb = image.getRGB(0, 0, w, h, null, 0, w);
-        return Optional.of(new Decoded(png, w, h, OutlineMipmaps.build(argb, w, h)));
+        return Optional.of(new Decoded(png, w, h, argb));
     }
 
     /** items/&lt;id&gt;.json → model chain → layer0, only for flat single-layer icons. */
@@ -192,43 +188,27 @@ public final class ItemIconTextures {
 
     // ---------------------------------------------------------------- render thread
 
+    /** Same treatment as magiccodex UI images: premultiplied alpha, full GPU mip chain, trilinear. */
     private static Optional<Loaded> upload(Decoded d) {
         RenderSystem.assertOnRenderThread();
-        var levels = d.levels();
         NativeImage base = new NativeImage(d.width(), d.height(), false);
         NativeImageBackedTexture texture = null;
         try {
-            int[] l0 = levels.get(0);
+            int[] argb = d.argb();
             for (int y = 0; y < d.height(); y++) for (int x = 0; x < d.width(); x++)
-                base.setColorArgb(x, y, PremultipliedAlpha.pixel(l0[y * d.width() + x]));
+                base.setColorArgb(x, y, PremultipliedAlpha.pixel(argb[y * d.width() + x]));
             texture = new NativeImageBackedTexture(base); base = null;
-            int last = levels.size() - 1;
+            int levels = 31 - Integer.numberOfLeadingZeros(Math.max(d.width(), d.height()));
             texture.bindTexture();
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LEVEL, last);
+            // NativeImage's base allocation sets MAX_LEVEL and MAX_LOD to zero.
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LEVEL, levels);
             GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MIN_LOD, 0);
-            GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LOD, last);
-            // Allocates every level; the generated contents are replaced below.
+            GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LOD, levels);
+            // Averaging premultiplied texels keeps transparent edges free of dark fringes.
             GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
-            GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0);
-            GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, 0);
-            GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, 0);
-            GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 4);
-            int lw = d.width(), lh = d.height();
-            for (int level = 1; level <= last; level++) {
-                lw = Math.max(1, lw >> 1); lh = Math.max(1, lh >> 1);
-                ByteBuffer rgba = MemoryUtil.memAlloc(lw * lh * 4);
-                try {
-                    for (int p : levels.get(level)) {
-                        int q = PremultipliedAlpha.pixel(p);
-                        rgba.put((byte) (q >>> 16)).put((byte) (q >>> 8)).put((byte) q).put((byte) (q >>> 24));
-                    }
-                    rgba.flip();
-                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, level, 0, 0, lw, lh, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, rgba);
-                } finally { MemoryUtil.memFree(rgba); }
-            }
             texture.setClamp(true);
             applyFilter(texture);
-            if (GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, last, GL11.GL_TEXTURE_WIDTH) != 1)
+            if (GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, levels, GL11.GL_TEXTURE_WIDTH) != 1)
                 throw new IllegalStateException("Incomplete item icon mip chain");
             var id = Identifier.of("magiccodex", "runtime_item_icon/" + generation + "/" + serial++);
             MinecraftClient.getInstance().getTextureManager().registerTexture(id, texture);
@@ -242,12 +222,9 @@ public final class ItemIconTextures {
         }
     }
 
-    /** Trilinear when shrinking; nearest when enlarged so pixel art stays crisp in zoomed previews. */
+    /** Smooth like other UI images: trilinear when shrinking, bilinear when enlarged. */
     private static void applyFilter(net.minecraft.client.texture.AbstractTexture texture) {
         texture.setFilter(true, true);
-        texture.bindTexture();
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-        GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, LOD_BIAS);
     }
 
     private static final class IconLayer extends RenderLayer {

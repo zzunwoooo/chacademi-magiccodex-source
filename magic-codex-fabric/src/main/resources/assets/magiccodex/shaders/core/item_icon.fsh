@@ -8,8 +8,8 @@ out vec4 fragColor;
 
 void main() {
     vec4 texel = texture(Sampler0, texCoord0);
-    // Like vanilla GUI items: clear texels do not write depth, so later GUI layers sort the same way.
-    if (texel.a < 0.1) discard;
+    // Fully clear texels do not write depth, like vanilla GUI items; soft edges still blend.
+    if (texel.a < 0.02) discard;
     vec4 tint = vertexColor * ColorModulator;
     // RGB is premultiplied before mip generation. Do not multiply by texel.a again.
     fragColor = vec4(texel.rgb * tint.rgb * tint.a, texel.a * tint.a);

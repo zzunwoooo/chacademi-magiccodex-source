@@ -55,6 +55,16 @@ final class AppraisalBridge implements CommandExecutor,PluginMessageListener,Lis
   m.lore(List.of(net.kyori.adventure.text.Component.text("강화 재료"),net.kyori.adventure.text.Component.text(state==0?"아직 해독하지 못한 룬이 새겨져 있습니다.":state==2?"마력이 흩어져 더 이상 사용할 수 없습니다.":"해독된 룬이 마력 회로에 자리 잡았습니다.")));
   item.setItemMeta(m);return item;
  }
+ /** Creates one fully appraised core using the existing persistent item schema. */
+ ItemStack adminCore(int nodes,double successPercent,double bonusPercent,double statGain,int affinity){
+  AdminCommandRules.validateCore(nodes,successPercent,bonusPercent,statGain,affinity);
+  ItemStack item=update(make(),1,nodes);var meta=item.getItemMeta();var data=meta.getPersistentDataContainer();
+  data.set(key("core_base_success"),PersistentDataType.DOUBLE,successPercent/100d);
+  data.set(key("core_starcatch_bonus"),PersistentDataType.DOUBLE,bonusPercent/100d);
+  data.set(key("core_stat_gain"),PersistentDataType.DOUBLE,statGain);
+  data.set(key("core_affinity"),PersistentDataType.INTEGER,affinity);
+  item.setItemMeta(meta);return item;
+ }
  @Override public boolean onCommand(CommandSender sender,Command cmd,String label,String[] args){
   if(cmd.getName().equals("마력코어")){
    if(!sender.hasPermission("magiccodex.core.admin")){sender.sendMessage("권한이 없습니다.");return true;}

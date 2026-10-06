@@ -32,6 +32,10 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     }
     boolean requiresCatalogVisual(String id){return mana!=null&&mana.requiresCatalogVisual(id);}
     public boolean castMagic(Player player,String id){return mana!=null&&mana.castRegistered(player,id);}
+    /** Server-thread registered ID/name/permission snapshot, including disabled casting entries; no file I/O. */
+    public java.util.Map<String,java.util.Map<String,String>> registeredSpellCatalog(){
+        ManaService.main();return mana==null?java.util.Map.of():mana.registeredSpellCatalog();
+    }
     public double magicPower(Player player){
         refreshEquipment(player);
         Double base=stats==null?null:stats.service().get(player.getUniqueId()).power();
@@ -115,6 +119,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(!mana.isCatalogMode()&&getServer().getPluginManager().isPluginEnabled("MythicMobs"))try{spellRuntime=new SpellRuntime(this);}catch(Exception error){getLogger().severe("마법 실행 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
         mana.bindSpellCommand();
         try { mailbox=new MailboxBridge(this); shops=new ShopBridge(this); shopAdmin=new ShopAdminBridge(this); } catch(Exception e) { getLogger().severe("Mailbox initialization failed: "+e.getClass().getSimpleName()); getServer().getPluginManager().disablePlugin(this); return; }
+        new AdminCommandBridge(this,mana,school,enhancement,appraisal,titles,npcSocial);
         getLogger().info("권한 연동 준비 완료. 활성 도감만 조회, 작업당 최대 " + budget + "회, 보조 확인 " + refresh / 1000 + "초.");
     }
     private void markDirty(UUID player) {

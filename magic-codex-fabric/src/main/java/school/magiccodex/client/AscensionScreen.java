@@ -52,7 +52,7 @@ public final class AscensionScreen extends Screen {
         if(playing&&age>=AscensionMotion.ARRIVAL&&!arrivalSound&&entrance.ready()){arrivalSound=true;sound("spell_discovered",.55f,.9f);}
         float fade=closingAt<0?1:1-AscensionMotion.smooth((now-closingAt)/280.0);
         if(closingAt>=0&&now-closingAt>=280){super.close();return;}
-        if(waitingAt>=0&&now-waitingAt>8000){waitingAt=-1;notice="서버 응답이 지연되고 있습니다. 닫은 뒤 /서클승급으로 다시 확인해 주세요.";}
+        if(waitingAt>=0&&now-waitingAt>8000){waitingAt=-1;notice="서버 응답이 지연되고 있습니다. 닫은 뒤 /클래스승급으로 다시 확인해 주세요.";}
         c.fill(0,0,width,height,alpha(0x050C19,.83f*fade));
         c.getMatrices().push();
         try{

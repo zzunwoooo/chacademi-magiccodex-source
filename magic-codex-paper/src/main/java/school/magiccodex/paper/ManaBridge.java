@@ -36,8 +36,8 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
         plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin,ManaProtocol.RESPONSE);
         plugin.getServer().getPluginManager().registerEvents(this,plugin);
         plugin.getServer().getServicesManager().register(ManaService.class,mana,plugin,ServicePriority.Normal);
-        Objects.requireNonNull(plugin.getCommand("codexmana")).setExecutor(this);
-        plugin.getCommand("codexmana").setTabCompleter(this);
+        Objects.requireNonNull(plugin.getCommand("마나관리")).setExecutor(this);
+        plugin.getCommand("마나관리").setTabCompleter(this);
         for(Player p:Bukkit.getOnlinePlayers())mana.join(p);
         if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){expansion=new ManaExpansion(mana);expansion.register();}
         Bukkit.getScheduler().runTaskTimer(plugin,this::tick,20,20);
@@ -78,6 +78,7 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
     private Response cast(Player p,long sequence,ManaSpells.Spell spell){
         return cast(p,sequence,spell,null);
     }
+    Map<String,Map<String,String>> registeredSpellCatalog(){return spells.registeredCatalog;}
     boolean isCatalogMode(){return spells.catalogMode;}
     boolean requiresCatalogVisual(String id){return spells.catalogMode&&spells.byId.containsKey(id);}
     boolean castRegistered(Player player,String id){
@@ -139,6 +140,7 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
     void bindSpellCommand(){
         Objects.requireNonNull(plugin.getCommand("마법")).setExecutor(this);
         plugin.getCommand("마법").setTabCompleter(this);
+        if(isCatalogMode()){plugin.getCommand("마법관리").setExecutor(this);plugin.getCommand("마법관리").setTabCompleter(this);}
     }
     @Override public boolean onCommand(CommandSender sender,Command command,String label,String[] args){
         if(command.getName().equals("마법")){
@@ -150,26 +152,11 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
         }
         if(!sender.hasPermission("magiccodex.mana.admin")){sender.sendMessage("권한이 없습니다.");return true;}
         try{
-            if(args.length==1&&args[0].equalsIgnoreCase("reload")){
+            if(args.length==1&&(args[0].equals("새로고침")||args[0].equalsIgnoreCase("reload"))){
                 var next=ManaSpells.load(new File(plugin.getDataFolder(),"mana-spells.yml"));plugin.reloadConfig();spells=next;
                 sender.sendMessage("마나 설정과 마법 비용 "+spells.byId.size()+"종을 다시 불러왔습니다. 기존 플레이어 수치는 유지합니다.");return true;
             }
-            if(args.length<2||args.length>3)throw new IllegalArgumentException("사용법: /codexmana get|set|add|max|regen|haste|refill <플레이어> [수치] 또는 /codexmana reload");
-            Player p=Bukkit.getPlayerExact(args[1]);if(p==null)throw new IllegalArgumentException("접속 중인 플레이어를 지정하세요.");
-            if(!plugin.playerStateReady(p))throw new IllegalArgumentException("캐릭터 정보를 불러오는 중입니다.");
-            UUID id=p.getUniqueId();String action=args[0].toLowerCase(Locale.ROOT);
-            double value=args.length==3?Double.parseDouble(args[2]):0;
-            if(!Double.isFinite(value)||Math.abs(value)>1_000_000)throw new IllegalArgumentException("수치는 -1000000~1000000 범위입니다.");
-            if(Set.of("set","add","max","regen","haste").contains(action)&&args.length!=3)throw new IllegalArgumentException("수치를 입력하세요.");
-            switch(action){
-                case "get"->{} case "set"->mana.setCurrent(id,value);case "add"->mana.add(id,value);
-                case "max"->mana.setBaseMaximum(id,value);case "regen"->mana.setBaseRegeneration(id,value);
-                case "haste"->mana.setBaseHaste(id,value);
-                case "refill"->mana.setCurrent(id,mana.account(id).snapshot().maximum());default->throw new IllegalArgumentException("알 수 없는 하위 명령어입니다.");
-            }
-            var s=mana.account(id).snapshot();if(!action.equals("get")){mana.save(p);plugin.savePlayerState(p);}
-            send(p,new Response(0,ManaProtocol.SNAPSHOT,0,s));
-            sender.sendMessage(p.getName()+" 마나 "+number(s.current())+" / "+number(s.maximum())+" · 초당 "+number(s.regeneration())+" 회복 · 마법 가속 "+number(s.haste()));
+            sender.sendMessage("/마나관리 새로고침 · 유저 수치는 /유저관리 <유저> 스탯 <항목> 설정|추가|감소 <수치>로 관리합니다.");
         }catch(Exception error){sender.sendMessage("마나 설정 오류: "+error.getMessage());}return true;
     }
     private static String number(double v){return java.math.BigDecimal.valueOf(v).stripTrailingZeros().toPlainString();}
@@ -179,7 +166,7 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
             return spells.byId.values().stream().filter(x->s.hasPermission(x.permission())).map(ManaSpells.Spell::id).filter(x->x.startsWith(prefix)).sorted().toList();
         }
         if(!s.hasPermission("magiccodex.mana.admin"))return List.of();
-        var options=args.length==1?List.of("get","set","add","max","regen","haste","refill","reload"):args.length==2?Bukkit.getOnlinePlayers().stream().map(Player::getName).toList():List.<String>of();
+        var options=args.length==1?List.of("새로고침"):List.<String>of();
         return options.stream().filter(x->x.toLowerCase(Locale.ROOT).startsWith(args[args.length-1].toLowerCase(Locale.ROOT))).toList();
     }
     public void close(){if(expansion!=null)expansion.unregister();mana.close();Bukkit.getServicesManager().unregister(ManaService.class,mana);sessions.clear();}

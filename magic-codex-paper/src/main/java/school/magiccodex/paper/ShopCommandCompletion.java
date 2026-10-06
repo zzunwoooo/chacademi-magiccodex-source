@@ -13,9 +13,9 @@ final class ShopCommandCompletion {
         if (command == null || args == null || args.length == 0 || args.length > 5
                 || Arrays.stream(args).anyMatch(Objects::isNull)) return List.of();
         String prefix = args[args.length - 1];
-        if (command.equals("상점") || command.equals("codexshop"))
+        if (command.equals("상점"))
             return player && shopAllowed && args.length == 1 ? match(catalog.keySet(), prefix) : List.of();
-        if (!(command.equals("상점관리") || command.equals("codexshopadmin")) || !adminAllowed) return List.of();
+        if (!(command.equals("상점관리")) || !adminAllowed) return List.of();
         if (args.length == 1)
             return match(ADMIN.stream().filter(s -> player || !s.equals("아이템추가")).toList(), prefix);
         String sub = args[0];

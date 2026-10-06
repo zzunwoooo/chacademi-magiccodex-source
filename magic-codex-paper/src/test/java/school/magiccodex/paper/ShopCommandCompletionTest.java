@@ -26,9 +26,11 @@ final class ShopCommandCompletionTest {
         assertEquals(List.of(),complete("상점관리",true,true,false,""));
         assertEquals(List.of(),complete("상점관리",true,true,false,"가격","alpha",""));
     }
-    @Test void aliasesAndPrefixesResolveDeterministically() {
-        assertEquals(List.of("alpha"),complete("codexshop",true,true,false,"AL"));
-        assertEquals(List.of("NPC"),complete("codexshopadmin",true,false,true,"np"));
+    @Test void KoreanCommandsAndPrefixesResolveDeterministically() {
+        assertEquals(List.of("alpha"),complete("상점",true,true,false,"AL"));
+        assertEquals(List.of(),complete("codexshop",true,true,false,""));
+        assertEquals(List.of(),complete("codexshopadmin",true,true,true,""));
+        assertEquals(List.of("NPC"),complete("상점관리",true,false,true,"np"));
         assertEquals(List.of("beta"),complete("상점관리",true,true,true,"목록","b"));
     }
     @Test void consoleOnlyGetsUsableSubcommands() {

@@ -17,7 +17,7 @@ final class SpellRuntime implements CommandExecutor,TabCompleter,AutoCloseable {
         if(!new File(plugin.getDataFolder(),"spell-runtime.yml").exists())plugin.saveResource("spell-runtime.yml",false);
         reload();
         plugin.getCommand("마법").setExecutor(this);plugin.getCommand("마법").setTabCompleter(this);
-        plugin.getCommand("마법관리").setExecutor(this);
+        plugin.getCommand("마법관리").setExecutor(this);plugin.getCommand("마법관리").setTabCompleter(this);
     }
     private void reload()throws Exception{var next=SpellRules.load(new File(plugin.getDataFolder(),"spell-runtime.yml"));rules=next;utility.reloadRecipes();}
     private static boolean enemy(Entity entity){
@@ -59,7 +59,7 @@ final class SpellRuntime implements CommandExecutor,TabCompleter,AutoCloseable {
     public boolean onCommand(CommandSender sender,Command command,String label,String[] args){
         if(command.getName().equals("마법관리")){
             if(!sender.hasPermission("magiccodex.mana.admin"))return false;
-            try{if(args.length!=1||!args[0].equalsIgnoreCase("reload")){sender.sendMessage("/마법관리 reload");return true;}reload();sender.sendMessage("마법 실행 설정 "+rules.size()+"종을 불러왔습니다. 미씩몹 YAML 수정은 /mm reload도 실행해 주세요.");}catch(Exception e){sender.sendMessage("설정 오류: "+e.getMessage());}return true;
+            try{if(args.length!=1||!Set.of("새로고침","reload").contains(args[0])){sender.sendMessage("/마법관리 새로고침");return true;}reload();sender.sendMessage("마법 실행 설정 "+rules.size()+"종을 불러왔습니다. 미씩몹 YAML 수정은 /mm reload도 실행해 주세요.");}catch(Exception e){sender.sendMessage("설정 오류: "+e.getMessage());}return true;
         }
         if(!(sender instanceof Player p))return false;
         String name=String.join("",args).replace(" ","");
@@ -67,6 +67,6 @@ final class SpellRuntime implements CommandExecutor,TabCompleter,AutoCloseable {
         if(route==null){p.sendMessage("아직 구현되지 않았거나 이름이 다른 마법입니다.");return false;}
         return plugin.castMagic(p,route.id());
     }
-    public List<String> onTabComplete(CommandSender sender,Command command,String label,String[] args){return rules.values().stream().map(SpellRules.Rule::name).map(s->s.replace(" ","")).filter(s->s.startsWith(String.join("",args))).toList();}
+    public List<String> onTabComplete(CommandSender sender,Command command,String label,String[] args){if(command.getName().equals("마법관리"))return sender.hasPermission("magiccodex.mana.admin")&&args.length==1?AdminCommandRules.filter(List.of("새로고침"),args[0]):List.of();return rules.values().stream().map(SpellRules.Rule::name).map(s->s.replace(" ","")).filter(s->s.startsWith(String.join("",args))).toList();}
     public void close(){utility.close();rules=Map.of();}
 }

@@ -17,7 +17,7 @@ public final class ScreenVfxClient {
     private ScreenVfxClient() { }
     public static void initialize() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,access)->dispatcher.register(
-            ClientCommandManager.literal("codexsounddebug").then(ClientCommandManager.argument("spell",StringArgumentType.greedyString())
+            ClientCommandManager.literal("마법효과음테스트").then(ClientCommandManager.argument("spell",StringArgumentType.greedyString())
                 .suggests((ctx,builder)->{for(var cue:SpellCastSounds.values())if(cue.id().startsWith(builder.getRemaining()))builder.suggest(cue.id());return builder.buildFuture();})
                 .executes(ctx->{String name=StringArgumentType.getString(ctx,"spell");if(name.equals("stop")){stop();return 1;}
                     var cue=SpellCastSounds.find(name);if(cue==null){ctx.getSource().sendError(Text.literal("등록되지 않은 마법 효과음입니다."));return 0;}

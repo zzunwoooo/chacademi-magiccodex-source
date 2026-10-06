@@ -23,7 +23,7 @@ final class AffinityStore implements AutoCloseable {
 
     /** 하트 이벤트를 몇 단계 봤는지에 따른 점수 상한: heart 0 → 20, 1 → 40 ... 4 이상 → 100. */
     static int gate(int heart) {
-        return Math.min(100, 20 * (Math.max(0, heart) + 1));
+        return 20 * (Math.max(0, Math.min(4, heart)) + 1);
     }
 
     record Row(int score, int heart, String nickname) {
@@ -249,6 +249,42 @@ final class AffinityStore implements AutoCloseable {
                 }
             }
             return applyScore(db, owner, npc, delta, now);
+        });
+    }
+
+    /**
+     * 관리자 점수 변경. 행 잠금 안에서 최신 점수로 계산하며 하루 한도는 소비하거나 초기화하지 않는다.
+     * 하트 단계·호칭은 그대로 두고 점수만 현재 하트 상한 안으로 제한한다.
+     */
+    Row adminChange(UUID owner, String npc, String action, int value, long now) throws SQLException {
+        if (value < 0) {
+            throw new IllegalArgumentException("호감도 값은 0 이상이어야 합니다.");
+        }
+        if (!"set".equals(action) && !"add".equals(action) && !"remove".equals(action)) {
+            throw new IllegalArgumentException("지원하지 않는 호감도 변경입니다.");
+        }
+        return tx(db -> {
+            ensureRow(db, owner, npc);
+            Row current = lockRow(db, owner, npc);
+            long requested = switch (action) {
+                case "set" -> value;
+                case "add" -> (long) current.score() + value;
+                default -> (long) current.score() - value;
+            };
+            int score = (int) Math.max(0L, Math.min((long) gate(current.heart()), requested));
+            if (score != current.score()) {
+                try (PreparedStatement s = db.prepareStatement("UPDATE " + affinity
+                        + " SET score=?, updated=? WHERE owner=? AND npc=?")) {
+                    s.setInt(1, score);
+                    s.setLong(2, now);
+                    s.setString(3, owner.toString());
+                    s.setString(4, npc);
+                    if (s.executeUpdate() != 1) {
+                        throw new SQLException("affinity admin row missing");
+                    }
+                }
+            }
+            return new Row(score, current.heart(), current.nickname());
         });
     }
 

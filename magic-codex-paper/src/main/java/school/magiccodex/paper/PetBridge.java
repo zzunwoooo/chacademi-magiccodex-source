@@ -14,7 +14,7 @@ import school.magiccodex.protocol.PetProtocol;
 import school.magiccodex.protocol.PetProtocol.*;
 
 /** Optional MCPets 4.1.11 integration. No commands dispatched and no per-tick pet scanning. */
-final class PetBridge implements PluginMessageListener,Listener,CommandExecutor,AutoCloseable {
+final class PetBridge implements PluginMessageListener,Listener,CommandExecutor,TabCompleter,AutoCloseable {
     private final MagicCodexBridge plugin;
     private final Map<UUID,Long> requests=new HashMap<>(),actions=new HashMap<>();
     private final Path settings;
@@ -27,7 +27,7 @@ final class PetBridge implements PluginMessageListener,Listener,CommandExecutor,
         if(!Files.exists(settings))Files.writeString(settings,"# MCPets ID -> 1~3성. 등록하지 않은 펫은 default-stars 사용\ndefault-stars: 1\nstars: {}\n");
         reload();
         var m=plugin.getServer().getMessenger();m.registerIncomingPluginChannel(plugin,PetProtocol.REQUEST,this);m.registerOutgoingPluginChannel(plugin,PetProtocol.RESPONSE);
-        Bukkit.getPluginManager().registerEvents(this,plugin);Objects.requireNonNull(plugin.getCommand("codexpets")).setExecutor(this);
+        Bukkit.getPluginManager().registerEvents(this,plugin);Objects.requireNonNull(plugin.getCommand("펫관리")).setExecutor(this);plugin.getCommand("펫관리").setTabCompleter(this);
     }
     private void reload(){try{config=CreatureConfigFiles.load(plugin.getDataFolder(),"pets","stars");catalogAt=0;}catch(Exception e){throw new IllegalArgumentException("펫 등급 설정을 읽지 못했습니다",e);}}
     private static long now(){return System.nanoTime()/1_000_000;}
@@ -112,7 +112,11 @@ final class PetBridge implements PluginMessageListener,Listener,CommandExecutor,
     @EventHandler public void quit(PlayerQuitEvent e){requests.remove(e.getPlayer().getUniqueId());actions.remove(e.getPlayer().getUniqueId());}
     public boolean onCommand(CommandSender sender,Command command,String label,String[] args){
         if(!sender.hasPermission("magiccodex.pets.admin")){sender.sendMessage("권한이 없습니다.");return true;}
+        if(args.length>1||args.length==1&&!Set.of("새로고침","reload").contains(args[0])){sender.sendMessage("/펫관리 새로고침");return true;}
         reload();hook=null;retryAt=0;sender.sendMessage("펫 등급 설정을 다시 불러왔습니다. MCPets 연결: "+(connect()?"정상":"대기"));return true;
+    }
+    @Override public List<String> onTabComplete(CommandSender sender,Command command,String label,String[] args){
+        return sender.hasPermission("magiccodex.pets.admin")&&args.length==1?AdminCommandRules.filter(List.of("새로고침"),args[0]):List.of();
     }
     public void close(){catalog=List.of();objects=List.of();requests.clear();actions.clear();hook=null;}
     private static final class Hook{

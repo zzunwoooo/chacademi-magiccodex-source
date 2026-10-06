@@ -22,11 +22,22 @@ import org.bukkit.event.inventory.FurnaceExtractEvent;
 final class NativeConditions implements Listener,AutoCloseable {
     private final MagicDiscovery plugin;private final Map<UUID,Trace> traces=new HashMap<>();private final Map<BlockKey,Water> waters=new HashMap<>();private final NamespacedKey origin;
     private int tick;
-    private static class Trace {int sprint,burning,hotUntil;boolean fell,wasAirborne;float rotation,hotRotation;Location still;}
+    private static class Trace {int sprint,burning,hotUntil;boolean fell,wasAirborne,waitDecoyExit;float rotation,hotRotation;Location still;}
     private record BlockKey(UUID world,int x,int y,int z){static BlockKey of(Block b){return new BlockKey(b.getWorld().getUID(),b.getX(),b.getY(),b.getZ());}}
     private record Water(UUID player,int expires){}
     NativeConditions(MagicDiscovery plugin){this.plugin=plugin;origin=new NamespacedKey(plugin,"arrow_origin");Bukkit.getScheduler().runTaskTimer(plugin,this::tick,1,1);}
-    void join(Player p){var t=new Trace();t.sprint=p.getStatistic(Statistic.SPRINT_ONE_CM);var s=plugin.session(p);t.fell=s!=null&&s.progress.getOrDefault("trace.fell",0d)>0;traces.put(p.getUniqueId(),t);}
+    void join(Player p){var t=new Trace();t.sprint=p.getStatistic(Statistic.SPRINT_ONE_CM);var s=plugin.session(p);t.fell=s!=null&&!s.learned.retrying("feather_step")&&s.progress.getOrDefault("trace.fell",0d)>0;t.waitDecoyExit=s!=null&&s.learned.retrying("wind_decoy");traces.put(p.getUniqueId(),t);}
+    /** Discard transient pre-reset evidence as well as persistent retry counters. */
+    void restart(Player p,String spell){var t=traces.get(p.getUniqueId());if(t==null)return;
+        switch(spell){
+            case "flame_footprints" -> t.burning=0;
+            case "pressure_rupture" -> {t.rotation=0;t.still=null;}
+            case "storm_command" -> {t.hotUntil=0;t.hotRotation=0;t.wasAirborne=false;}
+            case "feather_step" -> fallState(p,false);
+            case "wind_decoy" -> t.waitDecoyExit=true;
+            default -> {}
+        }
+    }
     void quit(Player p){traces.remove(p.getUniqueId());}
     void armHotRotation(Player p){var t=traces.get(p.getUniqueId());if(t!=null){t.hotUntil=tick+200;t.hotRotation=0;t.wasAirborne=false;}}
     void add(Player p,String key,double amount){plugin.signal(p.getUniqueId(),key,amount);}
@@ -40,7 +51,8 @@ final class NativeConditions implements Listener,AutoCloseable {
             if(tick%20==0){int value=p.getStatistic(Statistic.SPRINT_ONE_CM);if(value>t.sprint)add(p,"sprint.centimeters",value-t.sprint);t.sprint=value;}
             int interval=Math.clamp(plugin.getConfig().getInt("nearby-check-ticks",40),20,200);
             if(tick%interval==Math.floorMod(p.getEntityId(),interval)&&plugin.needed(p,"wind_decoy")){
-                int count=0;for(var e:p.getNearbyEntities(7,7,7))if(e instanceof Monster&&!e.isDead()&&e.getLocation().distanceSquared(p.getLocation())<=49&&++count>=10){add(p,"nearby.ten_monsters",1);break;}
+                int count=0;for(var e:p.getNearbyEntities(7,7,7))if(e instanceof Monster&&!e.isDead()&&e.getLocation().distanceSquared(p.getLocation())<=49&&++count>=10)break;
+                if(count<10)t.waitDecoyExit=false;else if(!t.waitDecoyExit)add(p,"nearby.ten_monsters",1);
             }
         }
         if(tick%200==0)waters.values().removeIf(v->v.expires()<tick);

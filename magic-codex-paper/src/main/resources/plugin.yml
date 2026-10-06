@@ -9,20 +9,16 @@ commands:
     description: 운영자 상점 상품 관리 화면
     permission: magiccodex.shop.admin
   상점:
-    aliases: [codexshop]
     permission: magiccodex.shop
   상점관리:
-    aliases: [codexshopadmin]
     permission: magiccodex.shop.admin
   마법:
     description: 발견한 마법을 마나와 마법 가속을 적용해 시전합니다.
-    aliases: [codexcast]
   마법관리:
     description: 마법 실행 목록을 다시 불러옵니다.
     permission: magiccodex.mana.admin
   칭호:
     description: 보유한 접두사와 접미사를 선택합니다.
-    aliases: [codextitles]
     permission: magiccodex.titles
   칭호관리:
     description: 칭호 지급, 회수 및 설정 관리
@@ -45,15 +41,12 @@ commands:
     permission: magiccodex.quests.admin
   이로치관리:
     description: 바라보는 교화 대상의 이로치 설정
-    aliases: [codexshiny]
     permission: magiccodex.shiny.admin
   교화:
     description: 바라보는 대상을 교화합니다.
-    aliases: [codextame]
     permission: magiccodex.taming
   교화관리:
     description: 교화 설정과 예시 몹 관리
-    aliases: [codextaming]
     permission: magiccodex.taming.admin
   마력재구성:
     description: 강화 초기화, 실패 복구, 코어 성향 변경
@@ -83,30 +76,44 @@ commands:
   기증기록:
     description: Reset donation records or reload donation catalog.
     permission: magiccodex.school.admin
-  codexclimate:
-    description: Manage season progression and climate settings.
+  계절관리:
+    description: 계절과 자동 전환 설정을 관리합니다.
     permission: magiccodex.climate.admin
-  codexpets:
-    description: Reload pet codex grades and MCPets integration.
+  펫관리:
+    description: 펫 도감 등급 설정과 MCPets 연동을 다시 불러옵니다.
     permission: magiccodex.pets.admin
-  codextemp:
-    description: Set the temperature sent to a player's HUD.
+  온도관리:
+    description: 유저 HUD에 표시할 온도를 조회하거나 관리합니다.
     permission: magiccodex.temperature.admin
-  서클승급:
-    description: Open the permission-checked circle ascension screen.
-    aliases: [circleascend]
+  클래스승급:
+    description: 조건을 확인하고 클래스 승급 화면을 엽니다.
     permission: magiccodex.ascend
   친구:
     description: Open the friends list.
-    aliases: [친구창, codexfriends]
+    aliases: [친구창]
     permission: magiccodex.friends
   스텟창:
     description: Open a player's public stats in Magic Codex.
-    aliases: [스탯창, codexstats]
+    aliases: [스탯창]
     permission: magiccodex.stats.view
-  codexmana:
-    description: Manage player mana and reload server spell costs.
+  마나관리:
+    description: 마나 기본 설정과 등록 마법 비용을 다시 불러옵니다.
     permission: magiccodex.mana.admin
+  유저관리:
+    description: 접속 유저의 기본 스탯, 마법 습득, 기숙사, NPC 호감도 관리
+    permission: magiccodex.mana.admin;magicdiscovery.admin;magiccodex.school.admin;magiccodex.dialogue.admin
+  점수관리:
+    description: 기숙사 점수 조회, 추가, 감소, 설정
+    permission: magiccodex.school.admin
+  아이템관리:
+    description: 지정 능력치의 마법봉과 감정된 마력코어 지급
+    permission: magiccodex.enhance.admin;magiccodex.core.admin
+  칭호추가:
+    description: 등록되어 활성화된 칭호 지급
+    permission: magiccodex.titles.admin
+  칭호삭제:
+    description: 등록 칭호 회수
+    permission: magiccodex.titles.admin
 permissions:
   magiccodex.titles:
     default: true

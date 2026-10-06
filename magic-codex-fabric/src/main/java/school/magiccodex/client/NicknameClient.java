@@ -38,7 +38,7 @@ public final class NicknameClient {
         PayloadTypeRegistry.playC2S().register(Query.ID,Query.CODEC);PayloadTypeRegistry.playS2C().register(Reply.ID,Reply.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(Reply.ID,(p,c)->{try{var r=NicknameProtocol.response(p.bytes());c.client().execute(()->receive(r));}catch(IllegalArgumentException ignored){}});
         ClientPlayConnectionEvents.JOIN.register((h,s,c)->reset());ClientPlayConnectionEvents.DISCONNECT.register((h,c)->reset());
-        ClientCommandRegistrationCallback.EVENT.register((d,a)->{for(String name:new String[]{"닉네임","닉네임설정","codexnickname"})d.register(ClientCommandManager.literal(name).executes(c->{open(null);return 1;}));});
+        ClientCommandRegistrationCallback.EVENT.register((d,a)->{for(String name:new String[]{"닉네임","닉네임설정"})d.register(ClientCommandManager.literal(name).executes(c->{open(null);return 1;}));});
         ClientTickEvents.END_CLIENT_TICK.register(c->{
             if(c.player==null||c.world==null){reset();return;}long now=Util.getMeasuringTimeMs();
             if(waiting!=0&&now>deadline){waiting=0;if(owner!=null&&c.currentScreen==owner)owner.failed("응답이 늦습니다. 다시 불러온 뒤 저장해 주세요.");owner=null;}

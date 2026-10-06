@@ -58,7 +58,7 @@ public final class ClimateService implements Listener, CommandExecutor, TabCompl
         Bukkit.getServicesManager().register(ClimateService.class,this,plugin,ServicePriority.Normal);
         Bukkit.getPluginManager().registerEvents(this,plugin);
         var messenger=Bukkit.getMessenger();messenger.registerIncomingPluginChannel(plugin,SeasonProtocol.REQUEST,this);messenger.registerOutgoingPluginChannel(plugin,SeasonProtocol.RESPONSE);
-        Objects.requireNonNull(plugin.getCommand("codexclimate")).setExecutor(this);plugin.getCommand("codexclimate").setTabCompleter(this);
+        Objects.requireNonNull(plugin.getCommand("계절관리")).setExecutor(this);plugin.getCommand("계절관리").setTabCompleter(this);
         for(var p:Bukkit.getOnlinePlayers()){clearPenalty(p);enqueue(p);}
         expansion=Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")?new ClimateExpansion(this):null;
         if(expansion!=null)expansion.register();
@@ -163,15 +163,15 @@ public final class ClimateService implements Listener, CommandExecutor, TabCompl
     @Override public boolean onCommand(CommandSender sender,Command cmd,String label,String[] args){
         if(!sender.hasPermission("magiccodex.climate.admin"))return true;
         try{
-            if(args.length==2&&args[0].equalsIgnoreCase("season")){clock.set(Season.parse(args[1]).ordinal(),clockTime(),clock.automatic);updateClock();saveState();}
-            else if(args.length==2&&args[0].equalsIgnoreCase("auto")&&Set.of("on","off").contains(args[1])){clock.set(current.ordinal(),clockTime(),args[1].equals("on"));saveState();}
-            else if(args.length==1&&args[0].equalsIgnoreCase("reload")){
+            if(args.length==2&&(args[0].equals("계절")||args[0].equalsIgnoreCase("season"))){clock.set(Season.parse(args[1]).ordinal(),clockTime(),clock.automatic);updateClock();saveState();}
+            else if(args.length==2&&(args[0].equals("자동")||args[0].equalsIgnoreCase("auto"))&&Set.of("켜기","끄기","on","off").contains(args[1])){clock.set(current.ordinal(),clockTime(),(args[1].equals("켜기")||args[1].equals("on")));saveState();}
+            else if(args.length==1&&(args[0].equals("새로고침")||args[0].equalsIgnoreCase("reload"))){
                 var next=readConfig();int season=current.ordinal();boolean auto=clock.automatic;config=next;enabled=config.getBoolean("enabled",true);worlds=Set.copyOf(config.getStringList("worlds"));
                 clock=new SeasonClock(clockTime(),season,auto,config.getLong("days-per-season",7)*24000,clockTime());updateClock();saveState();
-            }else if(args.length!=0&&!(args.length==1&&args[0].equalsIgnoreCase("status")))throw new IllegalArgumentException("/codexclimate season 봄|여름|가을|겨울 · auto on|off · status · reload");
+            }else if(args.length!=0&&!(args.length==1&&(args[0].equals("조회")||args[0].equalsIgnoreCase("status"))))throw new IllegalArgumentException("/계절관리 계절 봄|여름|가을|겨울 · 자동 켜기|끄기 · 조회 · 새로고침");
             for(var p:Bukkit.getOnlinePlayers())enqueue(p);
             sendSeasons();
-            if(sender instanceof Player p && args.length==1 && args[0].equalsIgnoreCase("status")){
+            if(sender instanceof Player p && args.length==1 && (args[0].equals("조회")||args[0].equalsIgnoreCase("status"))){
                 var sub=subscribers.get(p.getUniqueId());
                 sender.sendMessage("계절 HUD 채널: "+p.getListeningPluginChannels().contains(SeasonProtocol.RESPONSE)+" · 전송 계절: "+(sub==null||sub.season<0?"대기":Season.values()[sub.season].label));
             }
@@ -180,7 +180,7 @@ public final class ClimateService implements Listener, CommandExecutor, TabCompl
     }
     @Override public List<String> onTabComplete(CommandSender s,Command c,String a,String[] args){
         if(!s.hasPermission("magiccodex.climate.admin"))return List.of();
-        var choices=args.length==1?List.of("status","season","auto","reload"):args.length==2&&args[0].equals("season")?List.of("봄","여름","가을","겨울"):args.length==2&&args[0].equals("auto")?List.of("on","off"):List.<String>of();
+        var choices=args.length==1?List.of("조회","계절","자동","새로고침"):args.length==2&&Set.of("계절","season").contains(args[0])?List.of("봄","여름","가을","겨울"):args.length==2&&Set.of("자동","auto").contains(args[0])?List.of("켜기","끄기"):List.<String>of();
         return choices.stream().filter(x->x.startsWith(args[args.length-1])).toList();
     }
     @Override public void close(){task.cancel();saveState();for(var p:Bukkit.getOnlinePlayers()){clearPenalty(p);temperature.clearComputed(p);}if(expansion!=null)expansion.unregister();Bukkit.getServicesManager().unregister(ClimateService.class,this);temperatures.clear();subscribers.clear();pending.clear();queued.clear();}

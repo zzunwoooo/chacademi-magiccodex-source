@@ -10,8 +10,9 @@ final class ManaSpells {
     final Map<String,Spell> byId,byCommand;
     final List<String> discoveryPermissions;
     final Map<String,String> aliases;
+    final Map<String,Map<String,String>> registeredCatalog;
     final boolean catalogMode;
-    private ManaSpells(Map<String,Spell> ids,Map<String,Spell> commands,List<String> permissions,Map<String,String> aliases,boolean catalogMode){this.catalogMode=catalogMode;this.aliases=Map.copyOf(aliases);byId=Map.copyOf(ids);byCommand=Map.copyOf(commands);discoveryPermissions=List.copyOf(permissions);}
+    private ManaSpells(Map<String,Spell> ids,Map<String,Spell> commands,List<String> permissions,Map<String,String> aliases,Map<String,Map<String,String>> registeredCatalog,boolean catalogMode){this.registeredCatalog=Map.copyOf(registeredCatalog);this.catalogMode=catalogMode;this.aliases=Map.copyOf(aliases);byId=Map.copyOf(ids);byCommand=Map.copyOf(commands);discoveryPermissions=List.copyOf(permissions);}
     String resolve(String input){String key=aliasKey(input);if(byId.containsKey(key))return key;return aliases.get(key);}
     private static String aliasKey(String input){return input.strip().replaceAll("\\s+", "").toLowerCase(Locale.ROOT);}
     static String normalize(String command){
@@ -25,11 +26,15 @@ final class ManaSpells {
         if(root==null||root.getKeys(false).size()>school.magiccodex.protocol.PermissionProtocol.MAX_PERMISSIONS)throw new IllegalArgumentException("Expected up to "+school.magiccodex.protocol.PermissionProtocol.MAX_PERMISSIONS+" spells");
         Map<String,Spell> ids=new HashMap<>(),commands=new HashMap<>();
         Map<String,String> aliases=new HashMap<>();Set<String> ambiguous=new HashSet<>();
+        Map<String,Map<String,String>> registeredCatalog=new LinkedHashMap<>();
         List<String> permissions=new ArrayList<>();
         for(String id:root.getKeys(false)){
             var s=root.getConfigurationSection(id);if(s==null)throw new IllegalArgumentException(id);
             String discovery=s.getString("permission","");
             if(discovery.matches("[a-z0-9_.-]{1,100}"))permissions.add(discovery);
+            String displayName=s.getString("name",id);
+            if(id.matches("[a-z0-9_-]{1,64}")&&discovery.matches("[a-z0-9_.-]{1,100}")&&!displayName.isBlank()&&displayName.length()<=100)
+                registeredCatalog.put(id,Map.of("name",displayName,"permission",discovery));
             if(!s.getBoolean("enabled",true))continue;
             String command=s.getString("command","").strip(),permission=s.getString("permission","");
             if(!id.matches("[a-z0-9_-]{1,64}")||command.isBlank()||command.length()>256||command.startsWith("/")
@@ -40,10 +45,10 @@ final class ManaSpells {
             if(!Double.isFinite(seconds)||seconds<0||seconds>86400)throw new IllegalArgumentException("Invalid cooldown: "+id);
             var spell=new Spell(id,command,permission,cost.doubleValue(),(int)Math.round(seconds*1000));
             if(ids.put(id,spell)!=null||commands.put(normalize(command),spell)!=null)throw new IllegalArgumentException("Duplicate command: "+id);
-            var names=new ArrayList<String>(s.getStringList("aliases"));names.add(s.getString("name",id));
+            var names=new ArrayList<String>(s.getStringList("aliases"));names.add(displayName);
             for(String name:names){String key=aliasKey(name);if(key.isEmpty())continue;String previous=aliases.putIfAbsent(key,id);if(previous!=null&&!previous.equals(id))ambiguous.add(key);}
         }
         ambiguous.forEach(aliases::remove);
-        return new ManaSpells(ids,commands,permissions,aliases,y.getBoolean("catalog-mode",false));
+        return new ManaSpells(ids,commands,permissions,aliases,registeredCatalog,y.getBoolean("catalog-mode",false));
     }
 }

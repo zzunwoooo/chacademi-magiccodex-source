@@ -15,11 +15,11 @@ import io.papermc.paper.event.player.PlayerTrackEntityEvent;
 import school.magiccodex.protocol.ShinyProtocol;
 
 /** Server-owned identity, persisted on the entity; no client-supplied rarity decisions. */
-final class ShinyBridge implements Listener,CommandExecutor,AutoCloseable {
+final class ShinyBridge implements Listener,CommandExecutor,TabCompleter,AutoCloseable {
  private final MagicCodexBridge plugin;private final TamingBridge taming;private final NamespacedKey key;
  private final Map<UUID,LivingEntity> loaded=new HashMap<>();private YamlConfiguration config;private int tick;private org.bukkit.scheduler.BukkitTask task;
  ShinyBridge(MagicCodexBridge p,TamingBridge t){plugin=p;taming=t;key=new NamespacedKey(p,"shiny");if(!new java.io.File(p.getDataFolder(),"shiny.yml").exists())p.saveResource("shiny.yml",false);reload();
-  p.getServer().getMessenger().registerOutgoingPluginChannel(p,ShinyProtocol.CHANNEL);Bukkit.getPluginManager().registerEvents(this,p);p.getCommand("이로치관리").setExecutor(this);
+  p.getServer().getMessenger().registerOutgoingPluginChannel(p,ShinyProtocol.CHANNEL);Bukkit.getPluginManager().registerEvents(this,p);p.getCommand("이로치관리").setExecutor(this);p.getCommand("이로치관리").setTabCompleter(this);
   for(var world:Bukkit.getWorlds())for(var e:world.getLivingEntities())remember(e);
   task=Bukkit.getScheduler().runTaskTimer(p,this::tick,10,10);
  }
@@ -78,11 +78,15 @@ final class ShinyBridge implements Listener,CommandExecutor,AutoCloseable {
  }
  public boolean onCommand(CommandSender sender,Command cmd,String label,String[] args){
   if(!sender.hasPermission("magiccodex.shiny.admin"))return true;
-  if(args.length==1&&args[0].equalsIgnoreCase("reload")){reload();sender.sendMessage("이로치 설정을 다시 불러왔습니다.");return true;}
-  if(!(sender instanceof Player p)||args.length!=1||!(args[0].equals("지정")||args[0].equals("해제"))){sender.sendMessage("/이로치관리 지정 | 해제 | reload");return true;}
+  if(args.length==1&&(args[0].equals("새로고침")||args[0].equalsIgnoreCase("reload"))){reload();sender.sendMessage("이로치 설정을 다시 불러왔습니다.");return true;}
+  if(!(sender instanceof Player p)||args.length!=1||!(args[0].equals("지정")||args[0].equals("해제"))){sender.sendMessage("/이로치관리 지정 | 해제 | 새로고침");return true;}
   LivingEntity e=taming.target(p,16);if(e==null||taming.profileId(e)==null){p.sendMessage("등록된 야생 교화 대상을 바라봐 주세요.");return true;}
   if(taming.captureLocked(e)){p.sendMessage("교화가 끝난 뒤 변경해 주세요.");return true;}
   try{mark(e,args[0].equals("지정"));p.sendMessage(args[0].equals("지정")?"이로치로 지정했습니다.":"일반 개체로 변경했습니다.");}catch(RuntimeException|LinkageError ex){p.sendMessage("이로치 전용 모델을 확인해 주세요.");plugin.getLogger().warning("이로치 모델 변경 실패: "+ex.getMessage());}return true;
+ }
+ public List<String> onTabComplete(CommandSender sender,Command command,String alias,String[] args){
+  if(!sender.hasPermission("magiccodex.shiny.admin")||args.length!=1)return List.of();
+  return (sender instanceof Player?List.of("지정","해제","새로고침"):List.of("새로고침")).stream().filter(v->v.startsWith(args[0])).toList();
  }
  public void close(){if(task!=null)task.cancel();loaded.clear();}
 }

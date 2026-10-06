@@ -96,6 +96,16 @@ final class SchoolBridge implements PluginMessageListener,Listener,CommandExecut
     }
     private void main(Runnable r){if(!closing&&plugin.isEnabled())Bukkit.getScheduler().runTask(plugin,()->{if(!closing)r.run();});}
     private void push(){for(UUID id:List.copyOf(viewers.keySet())){Player p=Bukkit.getPlayer(id);if(p!=null)reply(p,new Request(SchoolProtocol.IDENTITY,0,0,""),"");}}
+    void adminHouse(Player player,int house,Consumer<String> done){
+        if(house<0||house>=SchoolProtocol.HOUSES.size()){done.accept("등록된 기숙사를 선택해 주세요.");return;}
+        UUID id=player.getUniqueId();
+        work(()->{store.house(id,house);return true;},ok->{reply(player,new Request(SchoolProtocol.IDENTITY,0,0,""),"");done.accept(null);},done);
+    }
+    void adminScore(int house,String action,long amount,Consumer<String> done){
+        if(house<0||house>=SchoolProtocol.HOUSES.size())throw new IllegalArgumentException("등록된 기숙사를 선택해 주세요.");
+        long delta=AdminCommandRules.scoreValue(action,amount);
+        work(()->{if(!action.equals("조회"))store.change(house,delta,action.equals("설정"));return true;},ok->done.accept(SchoolProtocol.HOUSES.get(house)+" "+data.scores().get(house)+"점"),done);
+    }
     @Override public boolean onCommand(CommandSender sender,Command cmd,String label,String[] a){
         if(a.length==0){if(sender instanceof Player p){reply(p,new Request(SchoolProtocol.LIST,0,0,""),"open");}else sender.sendMessage("/기숙사점수 <추가|설정> <기숙사> <점수>");return true;}
         if(!sender.hasPermission("magiccodex.school.admin")){sender.sendMessage("관리 권한이 없습니다.");return true;}

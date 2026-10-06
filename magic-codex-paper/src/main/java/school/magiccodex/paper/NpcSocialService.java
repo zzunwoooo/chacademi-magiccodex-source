@@ -4,7 +4,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -46,6 +50,7 @@ final class NpcSocialService implements Listener, AutoCloseable {
     private final int giftDailyCount;
     private final ZoneId zone;
     private volatile boolean closing;
+    private boolean catalogFailureReported;
     private NpcSocialFacade facade;
 
     NpcSocialService(MagicCodexBridge plugin) throws Exception {
@@ -165,6 +170,79 @@ final class NpcSocialService implements Listener, AutoCloseable {
     }
 
     // ------------------------------------------------------------------ 호감도
+
+    /** 현재 켜진 ChacaNPC가 실제로 등록한 캐릭터 ID → 표시 이름. DB의 임의 NPC 키는 포함하지 않는다. */
+    Map<String, String> registeredNpcs() {
+        if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("server thread required");
+        var chaca = Bukkit.getPluginManager().getPlugin("ChacaNPC");
+        if (chaca == null || !chaca.isEnabled()) {
+            return Map.of();
+        }
+        try {
+            // ChacaNPC는 Bridge를 선택 의존하므로 반대 방향의 컴파일/로드 의존성을 만들지 않는다.
+            Object repository = chaca.getClass().getMethod("characters").invoke(chaca);
+            Object entries = repository.getClass().getMethod("all").invoke(repository);
+            if (!(entries instanceof Collection<?> characters)) {
+                throw new IllegalStateException("ChacaNPC character catalog is unavailable");
+            }
+            Map<String, String> names = new java.util.TreeMap<>();
+            for (Object character : characters) {
+                Object rawId = character.getClass().getMethod("id").invoke(character);
+                Object rawName = character.getClass().getMethod("name").invoke(character);
+                if (!(rawId instanceof String id) || id.isBlank() || id.codePointCount(0, id.length()) > 48) {
+                    continue;
+                }
+                String name = rawName instanceof String text && !text.isBlank() ? text : id;
+                names.put(id, name);
+            }
+            catalogFailureReported = false;
+            return Collections.unmodifiableMap(new LinkedHashMap<>(names));
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            if (!catalogFailureReported) {
+                plugin.getLogger().warning("NPC registered catalog unavailable: " + e.getClass().getSimpleName());
+                catalogFailureReported = true;
+            }
+            return Map.of();
+        }
+    }
+
+    /** 관리 명령 전용. 등록 ID 또는 유일한 표시 이름만 허용하며 완료 콜백은 메인 스레드에서 실행한다. */
+    CompletableFuture<AffinityStore.Row> adminChange(UUID player, String npc, String action, int nonnegativeValue) {
+        if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("server thread required");
+        if (player == null) throw new IllegalArgumentException("플레이어를 지정해 주세요.");
+        if (nonnegativeValue < 0) throw new IllegalArgumentException("호감도 값은 0 이상이어야 합니다.");
+        String operation = switch (action == null ? "" : action.toLowerCase(Locale.ROOT)) {
+            case "조회", "query" -> "query";
+            case "설정", "set" -> "set";
+            case "추가", "add" -> "add";
+            case "감소", "remove" -> "remove";
+            default -> throw new IllegalArgumentException("조회/설정/추가/감소 중 하나를 지정해 주세요.");
+        };
+        String id = registeredNpcId(registeredNpcs(), npc);
+        long now = System.currentTimeMillis();
+        return work(() -> operation.equals("query") ? store.load(player, id)
+                : store.adminChange(player, id, operation, nonnegativeValue, now)).thenApply(row -> {
+            // 오프라인 관리로 접속자 캐시가 무한히 늘어나지 않게 한다.
+            if (Bukkit.getPlayer(player) != null) remember(player, id, row);
+            return row;
+        });
+    }
+
+    static String registeredNpcId(Map<String, String> names, String input) {
+        String query = input == null ? "" : input.trim();
+        if (!query.isEmpty() && names.containsKey(query)) return query;
+        String found = null;
+        for (var entry : names.entrySet()) {
+            if (entry.getKey().equalsIgnoreCase(query) || entry.getValue().equalsIgnoreCase(query)) {
+                if (found != null && !found.equals(entry.getKey())) {
+                    throw new IllegalArgumentException("같은 이름의 NPC가 여러 명입니다. 등록 ID로 지정해 주세요.");
+                }
+                found = entry.getKey();
+            }
+        }
+        if (found == null) throw new IllegalArgumentException("등록된 NPC ID 또는 이름을 지정해 주세요.");
+        return found;
+    }
 
     CompletableFuture<AffinityStore.Row> affinity(UUID player, String npc) {
         return work(() -> store.load(player, npc)).thenApply(row -> {

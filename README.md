@@ -54,4 +54,4 @@ Redis는 Ubuntu VM GRUB 이후 사용자 설치 진행 단계이며 가동·동�
 
 ## 고해상도 아이템 아이콘 (2026-10-06)
 
-32px를 넘는 평면 아이템 텍스처를 GUI에서 외곽선 보존 밉맵으로 그립니다. 조건·동작·검증 상태는 [ITEM_ICONS_HIRES](docs/ITEM_ICONS_HIRES.md), 빌드 지시는 [HIRES_ITEM_ICONS_BUILD](docs/handoff/HIRES_ITEM_ICONS_BUILD.md)를 확인하세요. 호스팅 빌드·실게임 확인 전입니다.
+32px를 넘는 평면 아이템 텍스처를 GUI에서 픽셀 격자 없이 부드럽게 그립니다(바닐라 16px 아이템은 그대로). 조건·동작·검증 상태는 [ITEM_ICONS_HIRES](docs/ITEM_ICONS_HIRES.md), 빌드 지시는 [HIRES_ITEM_ICONS_BUILD](docs/handoff/HIRES_ITEM_ICONS_BUILD.md)를 확인하세요. 호스팅 빌드·실게임 확인 전입니다.
