@@ -108,7 +108,7 @@ public final class NpcTalkScreen extends Screen {
    label(c,sound?"♪ 소리 켜짐":"♪ 소리 꺼짐",1110,54,21,0xFFD8DFE7,false,false,175);label(c,"기록",1305,54,21,0xFFD8DFE7,false,false,90);label(c,log?"기록 닫기 ×":"닫기 ×",1430,54,21,0xFFD8DFE7,false,false,130);
    if(log){drawHistory(c);return;}
    if(directInput&&inputEnabled){c.draw();c.getMatrices().push();c.getMatrices().translate(0,0,400);
-    c.fill(0,0,1600,900,0xA0050A13);c.fill(420,300,1180,540,0xF3101D2C);c.drawBorder(420,300,760,240,0xFF647F96);label(c,"직접 말하기",454,338,28,0xFFE8D19B,true,false,560);FriendsScreen.cross(c,1130,334,hit(mx,my,1114,318,32,32)?0xFF92E7F2:0xFFF0F3F5);
+    var dim=f.viewportBounds(width,height);c.fill(dim.left(),dim.top(),dim.right(),dim.bottom(),0xA0050A13);c.fill(420,300,1180,540,0xF3101D2C);c.drawBorder(420,300,760,240,0xFF647F96);label(c,"직접 말하기",454,338,28,0xFFE8D19B,true,false,560);FriendsScreen.cross(c,1130,334,hit(mx,my,1114,318,32,32)?0xFF92E7F2:0xFFF0F3F5);
     images.drawTexture(c,CHOICE,454,390,73,270,570,60,1952,210,2098,749,input.isFocused()?0xFFFFFFFF:0xFFB8C4D0);
     drawInput(c,now);images.drawTexture(c,CHOICE,1038,390,73,270,128,60,1952,210,2098,749,hit(mx,my,1038,390,128,60)?0xFFFFFFFF:0xFFCBD5DD);label(c,"전송",1102,420,22,0xFFF0F3F5,false,true,90);label(c,"Enter 전송 · Esc 입력 닫기",454,500,19,0xFFB8C4D0,false,false,650);c.draw();c.getMatrices().pop();
    }

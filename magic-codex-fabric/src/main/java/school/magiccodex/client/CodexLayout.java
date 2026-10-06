@@ -8,6 +8,18 @@ public record CodexLayout(float x, float y, float scale) {
     public double localX(double mouseX) { return (mouseX - x) / scale; }
     public double localY(double mouseY) { return (mouseY - y) / scale; }
 
+    public record Bounds(int left, int top, int right, int bottom) {}
+
+    /** Full screen in this layout's local coordinates, including letterbox margins. */
+    public Bounds viewportBounds(int width, int height) {
+        if (width <= 0 || height <= 0 || !Float.isFinite(scale) || scale <= 0) {
+            return new Bounds(0, 0, 0, 0);
+        }
+        return new Bounds((int) Math.floor(localX(0)), (int) Math.floor(localY(0)),
+                (int) Math.ceil(localX(width)), (int) Math.ceil(localY(height)));
+    }
+
+
     public static CodexLayout fit(int viewportWidth, int viewportHeight) {
         return fit(viewportWidth, viewportHeight, 1f);
     }

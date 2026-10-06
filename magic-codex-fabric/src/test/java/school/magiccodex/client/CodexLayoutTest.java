@@ -69,4 +69,24 @@ class CodexLayoutTest {
         }
         assertTrue(layout.localX(0) < 0 && layout.localY(0) < 0);
     }
+
+    @ParameterizedTest
+    @CsvSource({"1920,1080", "1919,1004", "3440,1440", "1024,768", "1080,1920", "427,240", "320,240"})
+    void dialogueDimCoversFullViewportIncludingMargins(int width, int height) {
+        float scale = Math.min(width / 1600f, height / 900f);
+        var layout = new CodexLayout((width - 1600 * scale) / 2,
+                (height - 900 * scale) / 2, scale);
+        var bounds = layout.viewportBounds(width, height);
+        assertTrue(layout.x() + bounds.left() * scale <= 0.001f);
+        assertTrue(layout.y() + bounds.top() * scale <= 0.001f);
+        assertTrue(layout.x() + bounds.right() * scale >= width - 0.001f);
+        assertTrue(layout.y() + bounds.bottom() * scale >= height - 0.001f);
+        assertEquals(800, layout.localX(width / 2d), 0.001);
+        assertEquals(450, layout.localY(height / 2d), 0.001);
+    }
+
+    @Test
+    void minimizedViewportDoesNotProduceInvalidDimBounds() {
+        assertEquals(new CodexLayout.Bounds(0, 0, 0, 0), new CodexLayout(0, 0, 0).viewportBounds(0, 0));
+    }
 }
