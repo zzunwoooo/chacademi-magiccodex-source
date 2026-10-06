@@ -10,9 +10,10 @@ final class ShopAdminBridge implements CommandExecutor,TabCompleter,PluginMessag
  private final Map<UUID,Session> sessions=new HashMap<>();private final Set<UUID> busy=new HashSet<>();
  private List<String> shopIds=List.of();private boolean closing;
  ShopAdminBridge(MagicCodexBridge p)throws Exception{plugin=p;var dir=p.getDataFolder().toPath();try{store=io.submit(()->new ShopStore(ShopMailboxDatabaseSettings.load(dir),dir.resolve("shops.db"))).get(15,TimeUnit.SECONDS);}catch(Exception e){io.shutdownNow();throw e;}
-  var cmd=Objects.requireNonNull(p.getCommand("상점관리화면"));cmd.setExecutor(this);cmd.setTabCompleter(this);
+  var cmd=Objects.requireNonNull(p.getCommand("상점관리화면"));cmd.setExecutor(this);cmd.setTabCompleter(this);refreshShopIds();Bukkit.getScheduler().runTaskTimer(p,this::refreshShopIds,100,100);
   Bukkit.getMessenger().registerIncomingPluginChannel(p,ShopAdminProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(p,ShopAdminProtocol.RESPONSE);Bukkit.getPluginManager().registerEvents(this,p);
  }
+ private void refreshShopIds(){work(()->store.catalog().keySet().stream().sorted().toList(),ids->shopIds=List.copyOf(ids),ignored->{});}
  private boolean allowed(Player p){return !closing&&p.isOnline()&&Bukkit.getPlayer(p.getUniqueId())==p&&p.hasPermission("magiccodex.shop.admin");}
  private void main(Runnable r){if(!closing&&plugin.isEnabled())Bukkit.getScheduler().runTask(plugin,r);}
  private <T>void work(Callable<T> task,Consumer<T> done,Consumer<String> fail){try{io.execute(()->{try{T v=task.call();main(()->done.accept(v));}catch(Exception e){plugin.getLogger().warning("Shop admin: "+e.getClass().getSimpleName());main(()->fail.accept(e instanceof IllegalArgumentException||e instanceof IllegalStateException?e.getMessage():"저장 결과를 확인할 수 없습니다. 새로고침 후 확인하고 다시 저장하세요."));}});}catch(RejectedExecutionException e){fail.accept("관리 요청이 많습니다. 잠시 뒤 다시 시도하세요.");}}

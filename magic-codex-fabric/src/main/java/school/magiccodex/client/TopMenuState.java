@@ -2,8 +2,8 @@ package school.magiccodex.client;
 
 /** Layout and animation share one coordinate system, including all hit targets. */
 public final class TopMenuState {
-    public static final String[] LABELS={"캐시샵","우편함","마법도감","친구","내 정보","펫 도감","기숙사 점수"};
-    private static final String[] COMMANDS={"캐시샵","우편함","","친구","스텟창","펫도감","학교기증"};
+    public static final String[] LABELS={"캐시샵","우편함","마법도감","펫 도감","내정보","친구","퀘스트","기숙사 점수"};
+    private static final String[] COMMANDS={"캐시샵","우편함","","펫도감","스텟창","친구","의뢰게시판","학교기증"};
     public static final float STEP=38,HEIGHT=36;
     public static final float SEASON_SPACE=28,SEASON_CENTER=28;
     public static final float TEMPERATURE_SPACE=56;

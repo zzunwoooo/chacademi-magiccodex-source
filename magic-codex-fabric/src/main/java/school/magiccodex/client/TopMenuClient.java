@@ -38,10 +38,11 @@ public final class TopMenuClient {
         if(hit==-1){state.toggle(Util.getMeasuringTimeMs());return true;}
         if(hit==1){MailboxClient.open(null);return true;}
         if(hit==2){MagicCodexClient.openFromMenu();return true;}
-        if(hit==3){SocialClient.open();return true;}
+        if(hit==3){PetClient.open();return true;}
         if(hit==4){MagicCodexClient.dismiss();c.setScreen(new StatsScreen());return true;}
-        if(hit==5){PetClient.open();return true;}
-        if(hit==6){SchoolClient.open();return true;}
+        if(hit==5){SocialClient.open();return true;}
+        if(hit==6){QuestClient.open();return true;}
+        if(hit==7){SchoolClient.open();return true;}
         // Ordinary player command: the server retains permission checks and all side effects.
         if(c.getNetworkHandler()!=null){c.setScreen(null);c.getNetworkHandler().sendChatCommand(TopMenuState.command(hit));}
         return true;

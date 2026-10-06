@@ -30,7 +30,8 @@ abstract class SocialScreen extends Screen {
     void fitted(DrawContext c,String s,float x,float y,float size,float max,int color,boolean bold){var font=bold?BOLD:BODY;type.draw(c,s,x,y,Math.min(size,size*max/Math.max(1,type.width(s,size,font))),color,font,false);}
     void asset(DrawContext c,String file,int x,int y,int w,int h,int sx,int sy,int sw,int sh,int tint){images.drawTexture(c,Identifier.of("magiccodex","textures/gui/social/"+file+".png"),x,y,sx,sy,w,h,sw,sh,sw+sx,sh+sy,tint);}
     static boolean in(double x,double y,float rx,float ry,float w,float h){return x>=rx&&x<rx+w&&y>=ry&&y<ry+h;}
-    void box(DrawContext c,int x,int y,int w,int h,boolean hover){HudMesh.capsule(c,x,y,w,h,hover?0xB74BADC2:0x886A839A,hover?0xB74BADC2:0x886A839A);HudMesh.capsule(c,x+1,y+1,w-2,h-2,hover?0xEF16394B:0xE00C1F32,hover?0xEF16394B:0xE00C1F32);}
+    boolean refinedPanels(){return this instanceof ShopScreen||this instanceof MailboxScreen||this instanceof ShopAdminScreen;}
+    void box(DrawContext c,int x,int y,int w,int h,boolean hover){if(!refinedPanels()){HudMesh.capsule(c,x,y,w,h,hover?0xB74BADC2:0x886A839A,hover?0xB74BADC2:0x886A839A);HudMesh.capsule(c,x+1,y+1,w-2,h-2,hover?0xEF16394B:0xE00C1F32,hover?0xEF16394B:0xE00C1F32);return;}chamfer(c,x,y,w,h,Math.min(10,h/4f),hover?0xFFC3CBA9:0xFF758A9C);chamfer(c,x+2,y+2,w-4,h-4,Math.min(8,h/4f),hover?0xF01B3B50:0xF0112436);}
     void chamfer(DrawContext c,float x,float y,float w,float h,float r,int color){
         float[] xs={x+r,x+w-r,x+w,x+w,x+w-r,x+r,x,x},ys={y,y,y+r,y+h-r,y+h,y+h,y+h-r,y+r};var m=c.getMatrices().peek().getPositionMatrix();
         c.draw(p->{var v=p.getBuffer(net.minecraft.client.render.RenderLayer.getGui());for(int i=0;i<8;i++){int j=(i+1)%8;v.vertex(m,x+w/2,y+h/2,0).color(color);v.vertex(m,xs[j],ys[j],0).color(color);v.vertex(m,xs[i],ys[i],0).color(color);v.vertex(m,x+w/2,y+h/2,0).color(color);}});
@@ -38,7 +39,7 @@ abstract class SocialScreen extends Screen {
     void button(DrawContext c,String name,int x,int y,int w,int h,boolean hover){box(c,x,y,w,h,hover);center(c,name,x+w/2f,y+h/2f,21,hover?CYAN:GOLD);}
     void hover(int id){if(id!=0&&id!=lastHover)sound(1.4f,.07f);lastHover=id;}
     void sound(float pitch,float volume){client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK.value(),pitch,volume));}
-    void toast(DrawContext c,int x,int y,int w){long age=Util.getMeasuringTimeMs()-noticeAt;if(notice.isEmpty()||age>5000)return;box(c,x,y,w,42,false);fitted(c,notice,x+16,y+21,21,w-32,WHITE,false);}
+    void toast(DrawContext c,int x,int y,int w){long age=Util.getMeasuringTimeMs()-noticeAt;if(notice.isEmpty()||age>5000)return;int h=refinedPanels()?54:42;box(c,x,y,w,h,false);fitted(c,notice,x+18,y+h/2f,refinedPanels()?26:21,w-36,WHITE,refinedPanels());}
     TextFieldWidget field(String name,int max,String value){var f=new TextFieldWidget(textRenderer,0,0,800,30,Text.literal(name));f.setMaxLength(max);f.setText(value);return f;}
     /** Vanilla editing/clipboard, with Pretendard rendering and horizontal cursor tracking. */
     final class Input {
@@ -58,6 +59,13 @@ abstract class SocialScreen extends Screen {
                 label(c,s.substring(offset,end),x+12,y+h/2,23,WHITE,false);
             }
             if(focus()&&Util.getMeasuringTimeMs()/500%2==0){float cx=x+12+type.width(s.substring(offset,cursor),23,BODY);HudMesh.line(c,cx,y+10,cx,y+h-10,1.4f,CYAN);}
+        }
+        void drawCentered(DrawContext c,float x,float y,float w,float h,String hint,int color){
+            this.x=x;this.y=y;this.w=w;this.h=h;String value=text();offset=0;
+            float size=Math.min(29,29*(w-24)/Math.max(1,type.width(value,29,BOLD)));
+            float left=x+(w-type.width(value,size,BOLD))/2;
+            type.draw(c,value.isEmpty()?hint:value,x+w/2,y+h/2,size,color,BOLD,true);
+            if(focus()&&Util.getMeasuringTimeMs()/500%2==0){float cursor=left+type.width(value.substring(0,widget.getCursor()),size,BOLD);HudMesh.line(c,cursor,y+9,cursor,y+h-9,1.5f,CYAN);}
         }
         boolean click(double mx,double my){boolean hit=in(mx,my,x,y,w,h);focus(hit);if(hit){int at=offset;String s=text();while(at<s.length()&&type.width(s.substring(offset,at+1),23,BODY)<mx-x-12)at++;widget.setCursor(at,false);}return hit;}
         boolean key(int key,int scan,int mods){return widget.keyPressed(key,scan,mods);}

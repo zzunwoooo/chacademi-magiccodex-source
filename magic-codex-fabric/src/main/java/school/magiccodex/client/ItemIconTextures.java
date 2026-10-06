@@ -169,7 +169,9 @@ public final class ItemIconTextures {
                 || id.getPath().equals("item/handheld"));
     }
     private static Optional<Identifier> flatLayer(Map<String, String> textures) {
-        if (textures.containsKey("layer1")) return Optional.empty();
+        // A sparse layer2+ is still a multi-layer model and must remain vanilla.
+        if (textures.keySet().stream().anyMatch(key -> key.matches("layer[0-9]+") && !key.equals("layer0")))
+            return Optional.empty();
         String layer = textures.get("layer0");
         for (int i = 0; layer != null && layer.startsWith("#") && i < 8; i++) layer = textures.get(layer.substring(1));
         if (layer == null || layer.startsWith("#")) return Optional.empty();

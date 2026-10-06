@@ -58,9 +58,9 @@ public final class ItemTooltipRenderer {
                 // Match the full styled lore sequence, avoiding identical enchantment/attribute text.
                 int index=Collections.indexOfSubList(rest,lore.styledLines());
                 if(index>=0){
-                    itemType=lore.lines().getFirst();
+                    itemType=lore.styledLines().getFirst();
                     for(int i=0;i<lore.lines().size();i++){
-                        Text raw=lore.lines().get(i);rest.set(index+i,raw.copy().setStyle(raw.getStyle().withItalic(raw.getStyle().isItalic())));
+                        rest.set(index+i,lore.styledLines().get(i));
                     }
                     rest.remove(index);
                 }
@@ -182,16 +182,7 @@ public final class ItemTooltipRenderer {
             HudMesh.star(c,px,py,i%5==0?1.1f:.55f,(a<<24)|0xC7E6F1);
         }
     }
-    private static Text styled(Text text,String requested){
-        var result=Text.empty();
-        text.visit((style,value)->{
-            var face=style.getFont().equals(Style.DEFAULT_FONT_ID)?Identifier.of("magiccodex",requested):style.getFont();
-            int color=requested.equals("tooltip_name")||requested.equals("tooltip_section")?0xEBD19F:requested.equals("tooltip_type")?0x9DA5B2:0xB7BDC8;
-            result.append(Text.literal(value).setStyle(style.withFont(face).withBold(false).withItalic(false).withColor(color)));
-            return Optional.empty();
-        },Style.EMPTY);
-        return result;
-    }
+    static Text styled(Text text,String requested){return TooltipTextStyles.styled(text,requested);}
     private static void divider(DrawContext c,int x,int y,int width){
         int middle=x+width/2;
         HudMesh.line(c,x,y,middle-5,y,.5f,0xA0969081);

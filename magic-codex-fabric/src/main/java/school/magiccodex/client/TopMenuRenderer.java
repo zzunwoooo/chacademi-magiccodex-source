@@ -28,7 +28,7 @@ public final class TopMenuRenderer implements AutoCloseable {
     private static final int[][] ICONS={{125,433,199,195},{451,436,199,194},{785,458,210,150},
         {1110,415,233,211},{1470,438,165,191},{142,655,166,191},{461,680,180,155},
         {798,676,175,166},{1194,691,87,133},{1505,691,87,133}};
-    private static final int[] MENU_ATLAS_ICONS={5,2,3,6,0,4,0};
+    private static final int[] MENU_ATLAS_ICONS={5,2,3,4,0,6,7,0};
     private final CodexTypography text;
     private final HudTextureCache images;
     private final HudTextureCache seasons;
@@ -82,7 +82,7 @@ public final class TopMenuRenderer implements AutoCloseable {
                 if(alpha<=0)continue;
                 float x=state.iconCenter(base,i);
                 glow(ctx,x,hover[i+1]*alpha);
-                if(i==6){
+                if(i==7){
                     images.drawTexture(ctx,HOUSE,Math.round(x-11),8,440,454,22,20,374,344,1254,1254,tint(0xFFFFFFFF,alpha));
                 }else if(i==4){
                     menuSprite(ctx,NEW_ICONS[0],x,18,22,alpha);

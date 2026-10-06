@@ -13,8 +13,9 @@ public final class HeldItemNameHud {
     public static int draw(DrawContext c,TextRenderer renderer,Text name,int color){
         var window=MinecraftClient.getInstance().getWindow();
         var layout=PlayerHudLayout.of(window.getScaledWidth(),window.getScaledHeight());
-        float scale=layout.scale()*1.2f;
+        float scale=layout.scale()*1.65f;
         int max=Math.max(1,(int)Math.min(600,(window.getScaledWidth()-32)/scale));
+        name=name.copy().styled(style->style.withBold(true));
         Text display=name;
         if(renderer.getWidth(name)>max){
             var trimmed=renderer.trimToWidth(name,Math.max(1,max-renderer.getWidth("…")));

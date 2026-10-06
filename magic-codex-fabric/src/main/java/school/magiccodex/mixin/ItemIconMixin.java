@@ -20,6 +20,8 @@ public abstract class ItemIconMixin {
             at = @At("HEAD"), cancellable = true, require = 0)
     private void magiccodex$highResIcon(LivingEntity entity, World world, ItemStack stack,
                                         int x, int y, int seed, int z, CallbackInfo ci) {
+        // Preserve vanilla depth semantics for callers requesting a non-default GUI depth.
+        if (z != 0) return;
         if (ItemIconTextures.draw((DrawContext) (Object) this, stack, x, y)) ci.cancel();
     }
 }

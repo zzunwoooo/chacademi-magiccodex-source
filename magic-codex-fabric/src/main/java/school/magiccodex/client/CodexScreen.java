@@ -141,9 +141,6 @@ public final class CodexScreen extends Screen {
 
             label(context, "마법 도감", 239, 83, 40, IVORY, TITLE_FONT);
             label(context, "잊힌 마법의 기록", 255, 122, 20, GOLD, HEADING_FONT);
-            context.fill(655,74,858,122,hoverX>=655&&hoverX<858&&hoverY>=74&&hoverY<122?0xAA28534F:0xBB142B39);
-            context.drawBorder(655,74,203,48,0x998E815F);
-            centered(context,"기숙사 점수",756,98,22,IVORY,LABEL_FONT);
             Rect keys = KeySettingsLayout.ENTRY;
             context.fill(keys.x(), keys.y(), keys.x()+keys.width(), keys.y()+keys.height(), hovering(keys)?0xAA28534F:0xBB142B39);
             context.drawBorder(keys.x(), keys.y(), keys.width(), keys.height(), hovering(keys)?0xFF8AD7C9:0x998E815F);
@@ -519,7 +516,6 @@ public final class CodexScreen extends Screen {
         CodexLayout layout = CodexLayout.codexFit(width, height);
         double x = layout.localX(mouseX), y = layout.localY(mouseY);
         if (CodexHitboxes.CLOSE.contains(x, y)) { close(); return true; }
-        if(x>=655&&x<858&&y>=74&&y<122){playSound(SoundCue.BUTTON);SchoolClient.open();return true;}
         if (KeySettingsLayout.ENTRY.contains(x, y)) {
             playSound(SoundCue.BUTTON);
             client.setScreen(new KeySettingsScreen(this));

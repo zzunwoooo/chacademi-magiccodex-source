@@ -88,7 +88,7 @@ public final class PlayerHudRenderer implements AutoCloseable {
             portrait(ctx,player,cx,cy);
             ctx.getMatrices().push();ctx.getMatrices().translate(0,0,110);
             images.drawCentered(ctx,FRAMES[rank-1].toString(),cx,cy,PlayerHudLayout.FRAME_SIZE,0xDFFFFFFF);
-            text.draw(ctx,"클래스 "+rank,cx,cy+60,11,0xFFF0DEB4,FONT,true);
+            text.draw(ctx,ROMAN[Math.clamp(rank,1,9)-1],cx,cy+60,11,0xFFF0DEB4,FONT,true);
             int healthFrom=0xF2ED6B58,healthTo=0xFFFFA08B;
             if(player.hasStatusEffect(StatusEffects.POISON)){healthFrom=0xFF88AA53;healthTo=0xFFC5DF75;}
             else if(player.hasStatusEffect(StatusEffects.WITHER)){healthFrom=0xFF716B79;healthTo=0xFFAEA7B8;}

@@ -7,7 +7,7 @@ import school.magiccodex.protocol.ShopProtocol;import school.magiccodex.protocol
 public final class ShopScreen extends SocialScreen {
  private Response data;private Input search,quantity;private String selected="",sentSearch="";private boolean selling;private int scroll;private long searchAt;private Map<String,ItemStack> icons=Map.of();
  private static final Identifier PANEL=Identifier.of("magiccodex","textures/gui/shop/shop-panel.png");
- private static final int X=790,W=781,ROW_Y=221,ROW_H=65,ROWS=7;
+ private static final int X=790,W=781,ROW_Y=221,ROW_H=65,ROWS=6;
  ShopScreen(){super("상점");}
  @Override SocialLayout.Fit fit(){float s=.85f*Math.min(width*.92f/1672,height*.90f/941);return new SocialLayout.Fit((width-1672*s)/2,(height-941*s)/2,s);}
  @Override protected void init(){super.init();search=new Input("상품 검색",80,search==null?"":search.text());quantity=new Input("수량",9,quantity==null?"1":quantity.text());quantity.widget.setTextPredicate(v->v.matches("[0-9]{0,9}"));}
@@ -25,29 +25,36 @@ public final class ShopScreen extends SocialScreen {
  @Override public void tick(){super.tick();if(search!=null&&!search.text().equals(sentSearch)&&!busy&&data!=null){long now=Util.getMeasuringTimeMs();if(searchAt==0)searchAt=now+450;if(now>=searchAt){sentSearch=search.text();searchAt=0;scroll=0;selected=visible().isEmpty()?"":visible().getFirst().id();if(sentSearch.isEmpty()||visible().isEmpty())request(ShopProtocol.OPEN);}}}
  @Override public void render(DrawContext c,int mouseX,int mouseY,float delta){var f=fit();double mx=f.x(mouseX),my=f.y(mouseY);ItemStack hovered=ItemStack.EMPTY;start(c);try{
   if(client.getResourceManager().getResource(PANEL).isPresent())images.drawTexture(c,PANEL,0,0,0,0,1672,941,1672,941,1672,941,0xDBDEE5EF);else asset(c,"friends_panel",0,0,1672,941,0,0,1340,1174,0xDBDEE5EF);
-  label(c,data==null?"상점":data.title(),70,66,39,WHITE,true);FriendsScreen.cross(c,1598,64,in(mx,my,1576,42,44,44)?CYAN:WHITE);
+  label(c,data==null?"상점":data.title(),70,55,39,WHITE,true);FriendsScreen.cross(c,1598,64,in(mx,my,1576,42,44,44)?CYAN:WHITE);
   String portrait=data==null?"elena-neutral":data.portrait();var npc=Identifier.of("magiccodex","textures/gui/dialogue/"+portrait+".png");
   c.enableScissor(65,125,708,875);try{if(client.getResourceManager().getResource(npc).isPresent())images.drawTexture(c,npc,40,205,0,0,630,945,1024,1536,1024,1536,0xFFFFFFFF);}finally{c.disableScissor();}
-  images.drawTexture(c,Identifier.of("magiccodex","textures/hud/top-menu.png"),1193,50,451,436,30,30,199,194,1774,887,0xFFFFFFFF);fitted(c,(data==null||data.balance().isEmpty()?"—":data.balance())+" G",1234,66,30,310,GOLD,true);
-  button(c,"구매",X,159,150,46,!selling||in(mx,my,X,159,150,46));button(c,"판매",954,159,150,46,selling||in(mx,my,954,159,150,46));box(c,1122,159,449,46,search.focus());search.draw(c,1128,161,437,42,"상품 검색");
+  chamfer(c,110,824,525,60,10,0xC409192A);center(c,data==null||data.npcName().isBlank()?"상점":data.npcName(),372,854,30,GOLD);
+  images.drawTexture(c,Identifier.of("magiccodex","textures/hud/top-menu.png"),1185,40,451,436,44,44,199,194,1774,887,0xFFFFFFFF);fitted(c,(data==null||data.balance().isEmpty()?"—":data.balance())+" G",1245,62,36,310,GOLD,true);
+  button(c,"구매",X,139,150,50,!selling||in(mx,my,X,139,150,50));button(c,"판매",954,139,150,50,selling||in(mx,my,954,139,150,50));box(c,1122,139,449,50,search.focus());search.draw(c,1128,143,437,42,"상품 검색");
   var list=visible();for(int i=0;i<ROWS&&i+scroll<list.size();i++){var p=list.get(i+scroll);int ry=ROW_Y+i*ROW_H;boolean hover=in(mx,my,X,ry,W,59);box(c,X,ry,W,59,p.id().equals(selected)||hover);var icon=icons.getOrDefault(p.id(),ItemStack.EMPTY);
    if(!icon.isEmpty()){c.getMatrices().push();c.getMatrices().translate(802,ry+4,0);c.getMatrices().scale(3.15f,3.15f,1);c.drawItem(icon,0,0);c.getMatrices().pop();if(hover)hovered=icon;}
-   fitted(c,name(p),865,ry+(selling?22:30),28,447,WHITE,true);if(selling)label(c,"보유 "+p.owned(),865,ry+45,17,MUTED,false);fitted(c,(selling?p.sell():p.buy())+" G",1330,ry+31,25,220,GOLD,false);
+   fitted(c,name(p),865,ry+(selling?22:30),28,447,WHITE,true);if(selling)label(c,"보유 "+p.owned(),865,ry+45,17,MUTED,false);coin(c,1418,ry+15,27);fitted(c,(selling?p.sell():p.buy())+" G",1454,ry+30,25,105,GOLD,true);
   }
   if(list.isEmpty())center(c,"검색 결과가 없습니다",1180,418,25,MUTED);
-  var chosen=selected();fitted(c,chosen==null?"상품을 선택해 주세요":name(chosen),X,748,29,510,WHITE,true);
-  label(c,(selling?"판매":"구매")+" 가능 수량 "+possible(),X,786,18,MUTED,false);
-  center(c,"수량",1002,790,18,MUTED);button(c,"−",852,815,58,56,!busy&&number()>1&&in(mx,my,852,815,58,56));box(c,922,815,160,56,quantity.focus());float qw=Math.min(148,type.width(quantity.text().isEmpty()?"1":quantity.text(),23,BODY)+24);quantity.draw(c,928+(148-qw)/2,819,qw,48,"수량");button(c,"+",1094,815,58,56,!busy&&number()<possible()&&in(mx,my,1094,815,58,56));
-  BigDecimal sum=total();label(c,"합계",1290,743,18,MUTED,false);fitted(c,sum==null?"—":sum.stripTrailingZeros().toPlainString()+" G",1290,782,40,281,WHITE,true);
-  button(c,busy?"처리 중…":selling?"판매하기":"구매하기",1285,815,286,56,!busy&&number()>0&&number()<=possible()&&in(mx,my,1285,815,286,56));toast(c,X,674,W);
+  var chosen=selected();var chosenIcon=chosen==null?ItemStack.EMPTY:icons.getOrDefault(chosen.id(),ItemStack.EMPTY);
+  box(c,802,739,88,88,false);if(!chosenIcon.isEmpty()){c.getMatrices().push();c.getMatrices().translate(810,747,0);c.getMatrices().scale(4.5f,4.5f,1);c.drawItem(chosenIcon,0,0);c.getMatrices().pop();if(in(mx,my,802,739,88,88))hovered=chosenIcon;}
+  fitted(c,chosen==null?"상품을 선택해 주세요":name(chosen),909,758,32,275,WHITE,true);
+  label(c,(selling?"판매":"구매")+" 가능 수량 "+possible(),909,802,19,MUTED,false);
+  button(c,"+",1200,731,70,38,!busy&&number()<possible()&&in(mx,my,1200,731,70,38));
+  box(c,1185,781,100,54,quantity.focus());quantity.drawCentered(c,1189,785,92,46,"수량",GOLD);
+  button(c,"−",1200,847,70,38,!busy&&number()>1&&in(mx,my,1200,847,70,38));
+  BigDecimal sum=total();label(c,"합계",1320,744,18,MUTED,false);coin(c,1320,768,33);fitted(c,sum==null?"—":sum.stripTrailingZeros().toPlainString()+" G",1368,790,43,203,GOLD,true);
+  button(c,busy?"처리 중…":selling?"판매하기":"구매하기",1303,838,268,56,!busy&&number()>0&&number()<=possible()&&in(mx,my,1303,838,268,56));toast(c,790,654,781);
+
  }finally{end(c);}
  // Native item-tooltip entrypoint uses the existing rich MagicCodex renderer and Shift+wheel scrolling.
  if(!hovered.isEmpty()&&entrance.ready())c.drawItemTooltip(textRenderer,hovered,mouseX,mouseY);
  }
+ private void coin(DrawContext c,int x,int y,int size){images.drawTexture(c,Identifier.of("magiccodex","textures/hud/top-menu.png"),x,y,451,436,size,size,199,194,1774,887,0xFFFFFFFF);}
  @Override public boolean mouseClicked(double x,double y,int button){if(button!=0)return super.mouseClicked(x,y,button);var f=fit();double mx=f.x(x),my=f.y(y);if(in(mx,my,1576,42,44,44)){sound(1.1f,.16f);close();return true;}if(busy)return true;
-  if(in(mx,my,X,159,150,46)||in(mx,my,954,159,150,46)){selling=in(mx,my,954,159,150,46);scroll=0;selected=visible().isEmpty()?"":visible().getFirst().id();quantity.widget.setText("1");sound(1.1f,.16f);return true;}
+  if(in(mx,my,X,139,150,50)||in(mx,my,954,139,150,50)){selling=in(mx,my,954,139,150,50);scroll=0;selected=visible().isEmpty()?"":visible().getFirst().id();quantity.widget.setText("1");sound(1.1f,.16f);return true;}
   var list=visible();for(int i=0;i<ROWS&&i+scroll<list.size();i++)if(in(mx,my,X,ROW_Y+i*ROW_H,W,59)){selected=list.get(i+scroll).id();quantity.widget.setText("1");sound(1.1f,.14f);return true;}
-  if(in(mx,my,852,815,58,56)){if(number()>1){quantity.widget.setText(Integer.toString(number()-1));sound(1.1f,.14f);}}else if(in(mx,my,1094,815,58,56)){if(number()<possible()){quantity.widget.setText(Integer.toString(Math.max(1,number()+1)));sound(1.1f,.14f);}}else if(in(mx,my,1285,815,286,56)){if(number()>0&&number()<=possible()){sound(1.1f,.16f);request(selling?ShopProtocol.SELL:ShopProtocol.BUY);}}else{search.click(mx,my);if(in(mx,my,922,815,160,56))quantity.click(Math.clamp(mx,quantity.x,quantity.x+quantity.w-.1),Math.clamp(my,quantity.y,quantity.y+quantity.h-.1));else quantity.focus(false);}return true;
+  if(in(mx,my,1200,847,70,38)){if(number()>1){quantity.widget.setText(Integer.toString(number()-1));sound(1.1f,.14f);}}else if(in(mx,my,1200,731,70,38)){if(number()<possible()){quantity.widget.setText(Integer.toString(Math.max(1,number()+1)));sound(1.1f,.14f);}}else if(in(mx,my,1303,838,268,56)){if(number()>0&&number()<=possible()){sound(1.1f,.16f);request(selling?ShopProtocol.SELL:ShopProtocol.BUY);}}else{search.click(mx,my);if(in(mx,my,1185,781,100,54))quantity.click(Math.clamp(mx,quantity.x,quantity.x+quantity.w-.1),Math.clamp(my,quantity.y,quantity.y+quantity.h-.1));else quantity.focus(false);}return true;
  }
  @Override public boolean mouseScrolled(double x,double y,double horizontal,double vertical){scroll=Math.clamp(scroll-(int)Math.signum(vertical),0,Math.max(0,visible().size()-ROWS));return true;}
  @Override public boolean keyPressed(int key,int scan,int mods){if(search.focus()&&search.key(key,scan,mods)||quantity.focus()&&quantity.key(key,scan,mods))return true;return super.keyPressed(key,scan,mods);}

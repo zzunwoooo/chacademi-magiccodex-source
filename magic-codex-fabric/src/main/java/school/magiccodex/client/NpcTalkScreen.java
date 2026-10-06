@@ -102,9 +102,9 @@ public final class NpcTalkScreen extends Screen {
   var f=fit();double mx=f.localX(mouseX),my=f.localY(mouseY);var images=UiResources.images();images.beginFrame();UiResources.text().beginFrame();c.fill(0,0,width,height,0x30030A12);c.getMatrices().push();
   try{
    c.getMatrices().translate(f.x(),f.y(),0);c.getMatrices().scale(f.scale(),f.scale(),1);
-   c.enableScissor(65,75,765,639);try{if(portraitPresent)images.drawTexture(c,portrait,65,15,0,0,700,1050,1024,1536,1024,1536);}finally{c.disableScissor();}
+   c.enableScissor(65,75,765,639);try{if(portraitPresent)images.drawTexture(c,portrait,65,75,0,0,700,1050,1024,1536,1024,1536);}finally{c.disableScissor();}
    // The lower nameplate is the only NPC name. Vector hearts avoid font/placeholder glyphs.
-   for(int i=0;i<NpcTalkProtocol.MAX_HEARTS;i++)heart(c,810+i*38,97,i<Math.clamp(hearts,0,NpcTalkProtocol.MAX_HEARTS)?0xFFE8A0BF:0xFF71849A);
+
    label(c,sound?"♪ 소리 켜짐":"♪ 소리 꺼짐",1110,54,21,0xFFD8DFE7,false,false,175);label(c,"기록",1305,54,21,0xFFD8DFE7,false,false,90);label(c,log?"기록 닫기 ×":"닫기 ×",1430,54,21,0xFFD8DFE7,false,false,130);
    if(log){drawHistory(c);return;}
    if(directInput&&inputEnabled){c.draw();c.getMatrices().push();c.getMatrices().translate(0,0,400);
@@ -112,10 +112,10 @@ public final class NpcTalkScreen extends Screen {
     images.drawTexture(c,CHOICE,454,390,73,270,570,60,1952,210,2098,749,input.isFocused()?0xFFFFFFFF:0xFFB8C4D0);
     drawInput(c,now);images.drawTexture(c,CHOICE,1038,390,73,270,128,60,1952,210,2098,749,hit(mx,my,1038,390,128,60)?0xFFFFFFFF:0xFFCBD5DD);label(c,"전송",1102,420,22,0xFFF0F3F5,false,true,90);label(c,"Enter 전송 · Esc 입력 닫기",454,500,19,0xFFB8C4D0,false,false,650);c.draw();c.getMatrices().pop();
    }
-   images.drawTexture(c,PANEL,60,639,44,199,1480,220,2085,316,2172,724);images.drawTexture(c,NAME,86,615,200,244,255,54,1810,235,2172,724);label(c,speaker,131,642,23,0xFFE8D19B,true,false,193);
+   images.drawTexture(c,PANEL,60,639,44,199,1480,220,2085,316,2172,724);images.drawTexture(c,NAME,86,615,200,244,470,54,1810,235,2172,724);label(c,speaker,131,642,23,0xFFE8D19B,true,false,225);c.draw();c.getMatrices().push();c.getMatrices().translate(0,0,300);for(int i=0;i<NpcTalkProtocol.MAX_HEARTS;i++)heart(c,376+i*27,632,i<Math.clamp(hearts,0,NpcTalkProtocol.MAX_HEARTS)?0xFFF19BBE:0xFF92979F);c.draw();c.getMatrices().pop();
    if(flow.waiting()&&!closed)label(c,stallText.isEmpty()?".".repeat((int)(now/350%3)+1):stallText,120,704,29,0xFFB8C4D0,false,false,1330);
    else{int remaining=shown;for(int i=page*3;i<Math.min(page*3+3,lines.size());i++){var row=lines.get(i);int n=Math.min(remaining,row.ends.length-1);remaining-=n;if(n>0){int y=704+(i-page*3)*43;boolean partial=n<row.ends.length-1;if(partial)c.enableScissor(115,y-24,120+(int)Math.ceil(row.ends[n])+1,y+26);label(c,row.text,120,y,29,0xFFF0F1F4,false,false,1330);if(partial)c.disableScissor();}}}
-   var opts=options();for(int i=0;i<opts.size();i++){int y=590-opts.size()*75+i*75;boolean hovered=hit(mx,my,962,y,545,67);String option=opts.get(i).number()+". "+opts.get(i).label();label(c,option,1006,y+34,24,0xE8000000,false,false,465);label(c,option,1005,y+33,24,hovered?0xFF92E7F2:0xFFEEF1F5,false,false,465);if(hovered)HudMesh.line(c,1005,y+53,1490,y+53,1,0x8092E7F2);}
+   var opts=options();for(int i=0;i<opts.size();i++){int y=590-opts.size()*75+i*75;boolean hovered=hit(mx,my,962,y,545,67);images.drawTexture(c,CHOICE,962,y,73,270,545,67,1952,210,2098,749,hovered?0xFFFFFFFF:0xE8D5E1EE);String option=opts.get(i).number()+". "+opts.get(i).label();label(c,option,1006,y+34,24,0xE8000000,false,false,465);label(c,option,1005,y+33,24,hovered?0xFF92E7F2:0xFFEEF1F5,false,false,465);if(hovered)HudMesh.line(c,1005,y+53,1490,y+53,1,0x8092E7F2);}
    String hint=closed||directInput?"":flow.waiting()?"처리 중…":!complete()?"Enter  바로 보기":!lastPage()?"Enter  다음":"4  직접 말하기 · Esc  닫기";
    label(c,hint,800,825,20,0xFFC1CEDD,false,true,520);if(!message.isEmpty()&&now-messageAt<7000)label(c,message,800,874,19,0xFFE8D19B,false,true,1300);
   }finally{c.getMatrices().pop();images.endFrame();}
