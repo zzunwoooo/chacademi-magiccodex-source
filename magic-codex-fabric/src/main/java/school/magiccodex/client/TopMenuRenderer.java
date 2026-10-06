@@ -74,7 +74,7 @@ public final class TopMenuRenderer implements AutoCloseable {
             icon(ctx,1,101+offset,18,17,1);
             String money=WalletClient.label();
             float size=Math.min(12,12*138/Math.max(1,text.width(money,12,FONT)));
-            text.draw(ctx,money,115+offset,18,size,0xFFF0EDE3,FONT,false);
+            text.draw(ctx,money,115+offset,20,size,0xFFF0EDE3,FONT,false);
             float p=state.progress();
             for(int i=0;i<TopMenuState.LABELS.length;i++){
                 // Reveal each icon only after there is room inside the moving right edge.
