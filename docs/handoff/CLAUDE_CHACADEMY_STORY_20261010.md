@@ -128,3 +128,19 @@
   - private-font mod: 60ac2c7e3c05f5a60f29482874b52c74eb58febe3c284ef9ec361cd17bfbce17
 - 경로: C:\Chacademi\staging\chacademy-story-20261010-task5\final-ready-personal-fonts.
 - 실제 배포 결과는 다음 기록에서 별도로 확인한다. ch1-2 미존재 및 실게임 미검증 상태는 유지한다.
+
+
+## 7. 기존 글꼴 배포 완료 (2026-10-10)
+
+- 빌드 소스 커밋: 47f804aaea6e80560d8b3abd4e332dd10d156997. 이 절 기록 커밋은 문서만 변경한다.
+- school/wild의 chacademy-story-plugin-0.1.0.jar를 6절 plugin SHA로 교체했다.
+- 개인 .zzunwoo\instances\launcher_v2-1.21.4\mods\chacademy-story-0.1.0.jar를 6절 private-font mod SHA로 교체했다. 교체 직전 읽기 가능한 Java 명령줄 검사에서 게임 프로세스가 없음을 확인했다.
+- 개인 모드의 fabric.mod.json ID 검사: chaca_story 1개, 예전 chaca_cutscene 없음. 각 서버 Story JAR 1개. 배치 해시 일치.
+- Bridge/UI는 그대로 유지했다: Bridge 52e350de404cc19323ad0735238d59b098fc3f4c62ede2e1b032e852212ddf21, UI fee99eed783e2959be42d3e8cdcc4b8a1699d3d8674358487fc0c53726461fcb.
+- 개별 정상 종료 경로를 먼저 읽어 확인한 뒤 Stop-Network.ps1 -Server school 및 -Server wild만 사용했다. 두 대상 alive=false를 확인한 후 교체하고 Control.ps1 -Action Start -Server school/wild로 시작했다. Control.ps1 -Action Stop은 사용하지 않았다.
+- school PID 5736, wild PID 10372. 각각 Done 48.907초 / 47.227초와 Story 활성화를 확인했다.
+- 양쪽 새 부팅 로그에서 ChacademyStory의 'MagicCodexBridge 연결 완료'를 확인했다. 이전 AffinityProvider 클래스 누락 경고 및 Story 활성화 오류는 발견하지 못했다.
+- Velocity는 배포 전후 PID 3740, alive=true를 유지했다. Velocity/DB에 시작·종료·변경 명령을 보내지 않았다.
+- 운영 설정, 기존 대화/컷신 데이터, 다른 모드/리소스를 수정하지 않았다. ch1-2는 생성하지 않았다.
+- 실제 게임의 글꼴 렌더·대화·초상화 동작은 미검증이며 유료 API 호출을 실행하지 않았다.
+- 개인 폰트 산출물과 배포 영수증은 final-ready-personal-fonts에만 있고 공개 Git에 폰트/JAR를 추가하지 않았다.
