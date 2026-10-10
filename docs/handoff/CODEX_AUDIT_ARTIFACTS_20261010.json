@@ -1,0 +1,56 @@
+[
+  {
+    "project": "magic-codex-paper",
+    "name": "magic-codex-bridge-0.30.0-catalog.alpha.1-chat.1.jar",
+    "sha256": "b28b3b74d4bd3ada4f6d6faca4f4e824a5a3c4406bcb00ce43c03f2f6893f20c",
+    "bytes": 1647236
+  },
+  {
+    "project": "magic-discovery-paper",
+    "name": "magic-discovery-0.2.0.jar",
+    "sha256": "112c512d918fade6cef44b930aedd2c50ebb5311326cb3c8eb0b26c8d10593aa",
+    "bytes": 1042325
+  },
+  {
+    "project": "creature-spawns-paper",
+    "name": "chacademia-wildlife-0.3.0.jar",
+    "sha256": "3f305adb5b266aa3648e003389c6344d520579bb34711df1f3cf15588684074e",
+    "bytes": 37760
+  },
+  {
+    "project": "chaca-npc-paper",
+    "name": "chaca-npc-0.2.0.jar",
+    "sha256": "cd79b82a9922839d4199adf8322ba7f6235a4479d08d473070fc8f3b46c033a2",
+    "bytes": 1053507
+  },
+  {
+    "project": "chaca-portrait-paper",
+    "name": "chaca-portrait-0.1.0.jar",
+    "sha256": "9119af356033e128c88285fdef0494fa53746278b0bb6b4bad7975196863d9cb",
+    "bytes": 89660889
+  },
+  {
+    "project": "portable-vfx-runtime/paper",
+    "name": "portable-vfx-paper-3.2.0-catalog.alpha.4.jar",
+    "sha256": "503230d038130a625255a2a134e77aac2adbb506d2c41eb904e1454bc47107b0",
+    "bytes": 182845
+  },
+  {
+    "project": "magic-codex-fabric",
+    "name": "magic-codex-ui-0.39.0-catalog.alpha.2-chat.1+mc1.21.4.jar",
+    "sha256": "75a29df1bac5d18a3e8c3906bc6473c373f4e45379c2f2972b9e7308fa91d21c",
+    "bytes": 103002641
+  },
+  {
+    "project": "chacademy-story/plugin",
+    "name": "chacademy-story-plugin-0.1.0.jar",
+    "sha256": "e736f50fd6be13c02d1b4bfab06b349f5e48196c2549020da0ff3ec60d050804",
+    "bytes": 109227
+  },
+  {
+    "project": "chacademy-story/mod",
+    "name": "chacademy-story-0.1.0.jar",
+    "sha256": "8eb2b4e66e7fc03b8a3ade2327aaf67e86ac75e9bbf8889a99bfffeccc952808",
+    "bytes": 4869713
+  }
+]

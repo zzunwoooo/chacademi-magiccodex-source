@@ -1,6 +1,6 @@
 # Audit fixes host verification — 2026-10-10
 
-Status: BUILD VERIFIED; DEPLOYMENT BLOCKED. No production server stop/restart, installed JAR replacement, database modification, or paid API call occurred in this audit integration stage.
+Current status: VERIFIED AND DEPLOYED. Host JUnit 790 and isolated MariaDB checks passed; 11 existing server JARs and two personal launcher mods replaced and hash verified. Both target servers completed startup. Earlier blocker notes below are historical checkpoints, superseded by the final sections. Story content remains user-deferred; gameplay/paid API tests were not run.
 
 ## Source
 - Integration branch: codex/audit-fixes-20261010-task5
@@ -80,3 +80,35 @@ Read-only deployment preparation confirms:
 - Local Java/game processes: none at check time. Recheck immediately before replacing launcher JARs.
 - ChacaNPC is installed on school only. Wildlife matching plugin JAR is absent on both servers; do not silently add previously absent plugins as a replacement. Bridge, Portrait, Story, PortableVFX installed on both; Discovery matching JAR exists on both.
 - All installed runtime JARs remain unchanged; no server/Velocity/DB process control occurred. Shared integration branch remains unchanged.
+
+## Isolated MariaDB validation and deployment execution
+
+The user explicitly approved the exact shop-mailbox profile, then exact schema-scoped privileges, and personally completed administrator authentication. Verification did not rely on that report: connection to chaca_audit_20261010_task5 succeeded, SELECT DATABASE() matched, and a synthetic table verified SELECT/INSERT/UPDATE/DELETE/CREATE/ALTER/INDEX. No production tables were used for these tests.
+
+Actual compiled Bridge/NPC storage classes on MariaDB passed 24 checks: nickname legacy columns/key migration and NFKC duplicate prevention across connections; first_done once; friend request/accept/mutual removal; shop paying/refunding compare-and-swap; mail source idempotence/pending/cancellation; quest migration/reservation/stage recovery/completion; required performance indexes; rumor duplicate failure preserves all rows and unique index succeeds/repeats after synthetic keys are made distinct.
+
+Portrait passed 11 checks with actual compiled PortraitStorage and a test-only Database fixture whose sole source change injects the isolated settings instead of reading a runtime profile. Production source/JAR was not changed by that fixture. Checks cover repeated schema init, PREPARED/PENDING/STARTED, duplicate STARTED rejection, school-scoped consumption preserving wild, pre-start refund, no consumed refund, once-only notices. ClimateStateStore passed 2 cross-connection seed/write checks. Total explicit application checks: 37, plus seven privilege operations. Expected duplicate-column/index/migration-probe warnings were present; all audit programs exited 0. No real money, item delivery, paid AI, or game client was exercised.
+
+Read-only production SQLite preflight found zero cnpc_rumors duplicate groups/excess rows. It used mode=ro plus PRAGMA query_only. Existing production routing is retained: general Bridge profile absent (SQLite), shop/mail profile MariaDB, Portrait existing profile. This rollout does not convert SQLite stores into shared MariaDB or establish cross-server guarantees for stores still configured as SQLite.
+
+Binary deployment:
+- Prepared artifacts matched the recorded manifest; private CNM fonts unchanged.
+- Stopped school/wild individually using Stop-Network.ps1 -Server. Velocity PID 10704 remained alive at the pre-copy guard.
+- Backed up existing JARs plus stopped local SQLite/YAML files under C:/Chacademi/staging/audit-fixes-20261010-task5/deployment-backup.
+- Replaced/verified 11 existing server JARs: school Bridge, Discovery, NPC, Portrait, PortableVFX, Story; wild Bridge, Discovery, Portrait, PortableVFX, Story. Wildlife was built/tested but absent in runtime and was not newly installed; NPC remains school-only.
+- Replaced/verified personal UI and Story mod while no Java/game process was running. Local rollback JARs are in the task workspace audit-launcher-backup. Story private fonts stay out of public Git.
+- No Story graph/command/identifier files were modified or installed. Known missing/ambiguous content awaits the user's later bulk content installation.
+- Started school/wild only. Startup verification is recorded below after completion; do not infer success solely from start requests.
+
+## Final startup verification
+
+Both target servers completed startup: school PID 8432 (Done 63.519s), wild PID 10092 (Done 62.243s). Supervisor 1644 and Velocity PID 10704 remained unchanged. Bridge, Discovery, PortableVFX, Story protocol 2, Portrait and school NPC enabled. Story connected to MagicCodexBridge; school NPC API connected. Portrait model gpt-image-2.5-sunburst and NPC model gpt-6-luna preserved. No audit-plugin startup exception was observed.
+
+Expected retained settings/limitations:
+- Story contains zero installed definitions, per user instruction to install content later. Existing finish-if-missing-mod=true remains, with its existing bypass warning. In-game story, portrait rendering and ESC behavior were not exercised.
+- PortableVFX recognized old default limits and used documented runtime defaults 4096/8192/1024; 299 spells, 95 bindings, zero skipped. Config files were not rewritten.
+- Wild ItemsAdder reports missing output/generated.zip. The same FileNotFoundException appears twice in each of archived logs 2026-10-10-10, -9 and -8, proving it predates this deployment. It is outside this audit patch and was not modified.
+- General Bridge/Discovery and school NPC retain existing SQLite routing, while shop/mail and Portrait retain MariaDB. No claim is made that server-local data became shared by this binary update.
+- No paid API calls or manual production recovery/refund commands were executed. Test data remains only in the approved isolated schema for evidence; no DROP or production permanent-delete operation was used.
+
+Final installed binaries match CODEX_AUDIT_ARTIFACTS_20261010.json, except Wildlife is deliberately not installed (it was absent before). Server backup and local launcher backup paths are recorded above. Source safety fix is 36b2b3579ae0f234883a1e79e9a57814024e291b; later commits are documentation only. Shared branch is advanced by normal fast-forward after this verification.
