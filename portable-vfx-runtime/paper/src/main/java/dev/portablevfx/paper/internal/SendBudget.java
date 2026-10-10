@@ -5,13 +5,17 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Global and per-viewer packet budgets. Every per-viewer class budget is a strict subset of the
+ * Global and per-viewer packet budgets. The global per-tick budget is split by class: POSE/ORIENT
+ * streams may use at most RelayLimits.streamPacketsPerTick() of it, so the remainder is always
+ * available to PLAY/IMPACT/FINISH/STOP/CLEAR even though poses are sent first each tick. Every per-viewer class budget is a strict subset of the
  * client's PacketAdmission bucket for the same class (see RelayLimits viewer constants), so a
  * compliant relay never makes a client drop PLAY/IMPACT because poses used the shared budget.
  */
 final class SendBudget {
     private long tick = Long.MIN_VALUE;
     private int packets;
+    /** 이번 tick 에 보낸 POSE/LINK_POSE/ORIENT 수. RelayLimits.streamPacketsPerTick() 을 넘지 못한다. */
+    private int streamPackets;
     private int plays;
     private final Map<UUID, Integer> perPlayer = new HashMap<>();
     private final Map<UUID, Integer> streams = new HashMap<>();
@@ -23,6 +27,7 @@ final class SendBudget {
         if (tick != now) {
             tick = now;
             packets = 0;
+            streamPackets = 0;
             plays = 0;
             perPlayer.clear();
             streams.clear();
@@ -67,12 +72,15 @@ final class SendBudget {
     int streamRemaining(UUID player, RelayLimits limits) {
         int left = Math.min(RelayLimits.VIEWER_STREAM_PER_TICK - streams.getOrDefault(player, 0),
                 limits.maxPacketsPerPlayerPerTick() - perPlayer.getOrDefault(player, 0));
+        // 전역 예산은 종류별로 나뉜다: 스트림은 자기 몫(기본 50%)까지만 쓰고 PLAY/제어 몫을 침범하지 못한다.
+        left = Math.min(left, limits.streamPacketsPerTick() - streamPackets);
         return Math.max(0, Math.min(left, limits.maxPacketsPerTick() - packets));
     }
 
     boolean takeStream(UUID player, RelayLimits limits) {
         if (streamRemaining(player, limits) < 1 || !takePacket(player, limits)) return false;
         streams.merge(player, 1, Integer::sum);
+        streamPackets++;
         return true;
     }
 
@@ -85,5 +93,6 @@ final class SendBudget {
     void forget(UUID player) { playTokens.remove(player); }
 
     int packets() { return packets; }
+    int streamPackets() { return streamPackets; }
     int plays() { return plays; }
 }

@@ -21,11 +21,11 @@ import org.bukkit.event.inventory.FurnaceExtractEvent;
 /** Event listeners inspect only the affected player/block. Nearby searches run only for players still missing the spell. */
 final class NativeConditions implements Listener,AutoCloseable {
     private final MagicDiscovery plugin;private final Map<UUID,Trace> traces=new HashMap<>();private final Map<BlockKey,Water> waters=new HashMap<>();private final NamespacedKey origin;
-    private int tick;
+    private int tick;private final int nearbyInterval;
     private static class Trace {int sprint,burning,hotUntil;boolean fell,wasAirborne,waitDecoyExit;float rotation,hotRotation;Location still;}
     private record BlockKey(UUID world,int x,int y,int z){static BlockKey of(Block b){return new BlockKey(b.getWorld().getUID(),b.getX(),b.getY(),b.getZ());}}
     private record Water(UUID player,int expires){}
-    NativeConditions(MagicDiscovery plugin){this.plugin=plugin;origin=new NamespacedKey(plugin,"arrow_origin");Bukkit.getScheduler().runTaskTimer(plugin,this::tick,1,1);}
+    NativeConditions(MagicDiscovery plugin){this.plugin=plugin;origin=new NamespacedKey(plugin,"arrow_origin");nearbyInterval=Math.clamp(plugin.getConfig().getInt("nearby-check-ticks",40),20,200);Bukkit.getScheduler().runTaskTimer(plugin,this::tick,1,1);}
     void join(Player p){var t=new Trace();t.sprint=p.getStatistic(Statistic.SPRINT_ONE_CM);var s=plugin.session(p);t.fell=s!=null&&!s.learned.retrying("feather_step")&&s.progress.getOrDefault("trace.fell",0d)>0;t.waitDecoyExit=s!=null&&s.learned.retrying("wind_decoy");traces.put(p.getUniqueId(),t);}
     /** Discard transient pre-reset evidence as well as persistent retry counters. */
     void restart(Player p,String spell){var t=traces.get(p.getUniqueId());if(t==null)return;
@@ -41,7 +41,7 @@ final class NativeConditions implements Listener,AutoCloseable {
     void quit(Player p){traces.remove(p.getUniqueId());}
     void armHotRotation(Player p){var t=traces.get(p.getUniqueId());if(t!=null){t.hotUntil=tick+200;t.hotRotation=0;t.wasAirborne=false;}}
     void add(Player p,String key,double amount){plugin.signal(p.getUniqueId(),key,amount);}
-    void fallState(Player p,boolean fell){var t=traces.get(p.getUniqueId());if(t!=null)t.fell=fell;var s=plugin.session(p);if(s!=null){double value=fell?1:0;if(s.progress.getOrDefault("trace.fell",0d)!=value){s.progress.put("trace.fell",value);s.dirty=true;}}}
+    void fallState(Player p,boolean fell){var t=traces.get(p.getUniqueId());if(t!=null)t.fell=fell;var s=plugin.session(p);if(s!=null){double value=fell?1:0;if(s.progress.getOrDefault("trace.fell",0d)!=value){s.progress.put("trace.fell",value);s.dirtyKeys.add("trace.fell");}}}
     private void tick(){
         tick++;for(var p:Bukkit.getOnlinePlayers()){
             var t=traces.get(p.getUniqueId());if(t==null)continue;
@@ -49,7 +49,7 @@ final class NativeConditions implements Listener,AutoCloseable {
             if(plugin.needed(p,"flame_footprints")){if(p.getFireTicks()>0){if(++t.burning>=600)add(p,"burn.survive_thirty",1);}else t.burning=0;}
             if(t.hotUntil>0){if(!p.isOnGround())t.wasAirborne=true;if(tick>t.hotUntil&&!t.wasAirborne||t.wasAirborne&&p.isOnGround())t.hotUntil=0;}
             if(tick%20==0){int value=p.getStatistic(Statistic.SPRINT_ONE_CM);if(value>t.sprint)add(p,"sprint.centimeters",value-t.sprint);t.sprint=value;}
-            int interval=Math.clamp(plugin.getConfig().getInt("nearby-check-ticks",40),20,200);
+            int interval=nearbyInterval;
             if(tick%interval==Math.floorMod(p.getEntityId(),interval)&&plugin.needed(p,"wind_decoy")){
                 int count=0;for(var e:p.getNearbyEntities(7,7,7))if(e instanceof Monster&&!e.isDead()&&e.getLocation().distanceSquared(p.getLocation())<=49&&++count>=10)break;
                 if(count<10)t.waitDecoyExit=false;else if(!t.waitDecoyExit)add(p,"nearby.ten_monsters",1);
@@ -90,7 +90,7 @@ final class NativeConditions implements Listener,AutoCloseable {
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void teleport(PlayerTeleportEvent e){var t=traces.get(e.getPlayer().getUniqueId());if(t!=null){t.rotation=0;t.hotUntil=0;t.still=null;}}
     private Player attacker(Entity e){if(e instanceof Player p)return p;if(e instanceof Projectile proj&&proj.getShooter() instanceof Player p)return p;return null;}
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void launch(ProjectileLaunchEvent e){if(e.getEntity().getShooter() instanceof Player p){if(e.getEntity() instanceof Firework)add(p,"firework.launched",1);if(e.getEntity() instanceof AbstractArrow){var l=e.getEntity().getLocation();e.getEntity().getPersistentDataContainer().set(origin,PersistentDataType.LONG_ARRAY,new long[]{Double.doubleToLongBits(l.getX()),Double.doubleToLongBits(l.getY()),Double.doubleToLongBits(l.getZ())});}}}
-    @EventHandler(priority=EventPriority.MONITOR) public void kill(EntityDeathEvent e){
+    @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void kill(EntityDeathEvent e){
         if(!(e.getEntity() instanceof Monster mob)||mob.getKiller()==null)return;Player p=mob.getKiller();boolean burning=mob.getFireTicks()>0;
         if(burning)add(p,"kill.burning_monster",1);var cause=mob.getLastDamageCause();boolean melee=cause instanceof EntityDamageByEntityEvent damage&&damage.getDamager().equals(p)&&damage.getCause()==EntityDamageEvent.DamageCause.ENTITY_ATTACK;
         if(melee&&burning)add(p,"kill.burning_melee",1);var sword=p.getInventory().getItemInMainHand();if(melee&&Tag.ITEMS_SWORDS.isTagged(sword.getType())&&sword.getEnchantmentLevel(Enchantment.FIRE_ASPECT)>0)add(p,"kill.fire_aspect_sword",1);
@@ -99,7 +99,7 @@ final class NativeConditions implements Listener,AutoCloseable {
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void armor(PlayerItemDamageEvent e){var item=e.getItem();if(!(item.getItemMeta() instanceof Damageable d)||d.getDamage()+e.getDamage()<item.getType().getMaxDurability()||item.getType().getMaxDurability()<=0)return;for(var worn:e.getPlayer().getInventory().getArmorContents())if(worn!=null&&worn.equals(item)){add(e.getPlayer(),"armor.broken",1);break;}}
     @EventHandler(priority=EventPriority.MONITOR) public void furnace(FurnaceExtractEvent e){if(e.getItemType().isEdible())add(e.getPlayer(),"furnace.food_taken",e.getItemAmount());if(e.getItemType()==Material.WET_SPONGE)add(e.getPlayer(),"obtain.wet_sponge",1);}
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void inventory(InventoryClickEvent e){if(!(e.getWhoClicked() instanceof Player p)||e.getCurrentItem()==null||e.getCurrentItem().getType()!=Material.WET_SPONGE)return;Bukkit.getScheduler().runTask(plugin,()->{if(p.isOnline()&&p.getInventory().contains(Material.WET_SPONGE))add(p,"obtain.wet_sponge",1);});}
-    @EventHandler(priority=EventPriority.MONITOR) public void candle(PlayerInteractEvent e){
+    @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void candle(PlayerInteractEvent e){
         if(e.getAction()!=org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK||e.useInteractedBlock()==Event.Result.DENY||e.useItemInHand()==Event.Result.DENY)return;Block block=e.getClickedBlock();if(block==null||!Tag.CANDLES.isTagged(block.getType())&& !Tag.CANDLE_CAKES.isTagged(block.getType())||!(block.getBlockData() instanceof Lightable light))return;
         boolean before=light.isLit();Material held=e.getPlayer().getInventory().getItem(e.getHand()).getType();var p=e.getPlayer();
         Bukkit.getScheduler().runTask(plugin,()->{if(!(block.getBlockData() instanceof Lightable after)||!p.isOnline())return;if(!before&&after.isLit()&&held==Material.FLINT_AND_STEEL)add(p,"candle.lit",1);else if(before&&!after.isLit()&&held==Material.AIR)add(p,"candle.extinguished",1);});

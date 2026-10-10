@@ -16,6 +16,7 @@ import kr.chacademy.npc.core.PromptBuilder;
 import kr.chacademy.npc.core.ReplyParser;
 import kr.chacademy.npc.core.StrikeTracker;
 import kr.chacademy.npc.core.TextFilter;
+import kr.chacademy.npc.core.TextSanitizer;
 import kr.chacademy.npc.core.TimeText;
 import kr.chacademy.npc.data.Storage;
 import kr.chacademy.npc.integration.MagicCodexLink;
@@ -53,6 +54,34 @@ public final class DialogueService {
     private final SecureRandom tokens = new SecureRandom();
     private final ChatDialogueView chatView = new ChatDialogueView();
     private volatile StrikeTracker strikes;
+    private final Map<String, Long> warmupAt = new ConcurrentHashMap<>();
+    private long lastPruneAt;
+
+    /** 정보 불러오기(DB·MagicCodex)가 늦을 때 timeout-seconds 에 더 얹어 주는 여유(초). */
+    private static final int LOAD_ALLOWANCE_SECONDS = 3;
+    /** 같은 NPC·일과표 칸의 버튼 대답 미리 만들기를 다시 시도하기까지 최소 간격. */
+    private static final long WARMUP_RETRY_MS = 10 * 60_000L;
+
+    /**
+     * 요청 한 번(플레이어 한마디)의 상태. 메인 스레드에서만 바꾼다.
+     * charged = 하루 횟수를 차감했는지, aiSent = AI 대기열에 넘겼는지, offeredHint = 이번 프롬프트에 서버가 넣은 힌트 id.
+     */
+    static final class TurnState {
+        final int seq;
+        final String pid;
+        final boolean charged;
+        boolean refunded;
+        boolean aiSent;
+        /** 이 요청에 대한 대사(AI 또는 고정)를 화면에 보냈는지. */
+        boolean answered;
+        String offeredHint;
+
+        TurnState(int seq, String pid, boolean charged) {
+            this.seq = seq;
+            this.pid = pid;
+            this.charged = charged;
+        }
+    }
 
     /** 수락 토큰: 플레이어·NPC·퀘스트·만료 시각에 묶이고 한 번만 처리된다. */
     private record PendingQuest(UUID player, String npcId, String sessionToken, String questId, long expiresAt) {
@@ -67,7 +96,13 @@ public final class DialogueService {
 
     public void reloadSettings() {
         Settings s = plugin.settings();
-        strikes = new StrikeTracker(s.strikeWindowMinutes * 60_000L, s.strikeMax, s.strikeLockMinutes * 60_000L);
+        // 다시 읽어도 쌓인 장난 기록·잠금은 유지한다 (reload 로 잠금이 풀리지 않게)
+        StrikeTracker cur = strikes;
+        if (cur == null) {
+            strikes = new StrikeTracker(s.strikeWindowMinutes * 60_000L, s.strikeMax, s.strikeLockMinutes * 60_000L);
+        } else {
+            cur.reconfigure(s.strikeWindowMinutes * 60_000L, s.strikeMax, s.strikeLockMinutes * 60_000L);
+        }
     }
 
     public ButtonCache buttonCache() {
@@ -129,6 +164,9 @@ public final class DialogueService {
             Bukkit.getScheduler().cancelTask(timeoutTask);
             showOpen(p, s, greeting);
         }));
+        if (!adminTest) {
+            warmup(c, plugin.npcs().currentSlot(c)); // 누군가 말을 걸었으니 버튼 대답을 채워 둔다 (이미 했으면 건너뜀)
+        }
     }
 
     private void showOpen(Player p, DialogueSession s, String greeting) {
@@ -154,13 +192,24 @@ public final class DialogueService {
         long now = System.currentTimeMillis();
         long dayStart = st.today().atStartOfDay(st.zone).toInstant().toEpochMilli();
         Storage storage = plugin.storage();
+        Map<String, String> npcNames = new java.util.HashMap<>();
+        for (CharacterSheet other : plugin.characters().all()) {
+            npcNames.put(other.id(), other.name());
+        }
         CompletableFuture<Void> db = plugin.database().async(() -> {
             s.memos = storage.memos(pid, npc);
             Storage.LastChat lc = storage.lastChat(pid, npc);
             if (lc != null && now - lc.endedAt() <= st.lastChatExpireDays * 86_400_000L) {
                 s.lastChat = lc;
             }
-            s.rumors = storage.rumorsFor(npc, pid, now, Math.max(1, st.rumorMaxInPrompt) * 2);
+            // 소문: 자유 글이 섞인 사건(약속·별명 등)은 원문 대신 서버가 만든 문장만 프롬프트에 넣는다
+            List<RumorView> heard = new ArrayList<>();
+            for (Storage.HeardRumor h : storage.rumorsFor(npc, pid, now, Math.max(1, st.rumorMaxInPrompt) * 2)) {
+                RumorView v = h.view();
+                String who = h.sourceNpc() == null ? null : npcNames.getOrDefault(h.sourceNpc(), h.sourceNpc());
+                heard.add(new RumorView(v.id(), TextSanitizer.privateRumor(v.type(), who, v.text()), v.type(), v.eventCreatedAt()));
+            }
+            s.rumors = heard;
             s.promises = storage.promises(pid, npc, 3);
             s.nickname = storage.nickname(pid, npc);
             s.hints = storage.hintState(pid, dayStart);
@@ -208,6 +257,7 @@ public final class DialogueService {
         }
         cancelTimers(s);
         s.busy = false;
+        abandonTurn(s);
         saveLastChat(s);
         String farewell = byPlayer ? s.character().fallback("farewell", plugin.settings().defaultFallbacks, random) : null;
         s.view.close(p, s, farewell);
@@ -218,7 +268,18 @@ public final class DialogueService {
         DialogueSession s = sessions.remove(player);
         if (s != null) {
             cancelTimers(s);
+            s.busy = false;
+            abandonTurn(s);
             saveLastChat(s);
+        }
+    }
+
+    /** 대화가 닫힐 때 처리 중이던 요청: 아직 AI에 보내지 않았으면 하루 횟수를 돌려준다 (보낸 뒤라면 결과가 왔을 때 판단). */
+    private void abandonTurn(DialogueSession s) {
+        TurnState t = s.turn;
+        // 플러그인이 꺼지는 중이면 아직 대답을 기다리던 요청의 결과를 처리할 수 없으므로(sync 가 무시됨) 지금 돌려준다
+        if (t != null && (!t.aiSent || (!plugin.isEnabled() && !t.answered && s.activeSeq == t.seq))) {
+            refund(t);
         }
     }
 
@@ -261,6 +322,15 @@ public final class DialogueService {
         Settings st = plugin.settings();
         long now = System.currentTimeMillis();
         pendingQuests.values().removeIf(q -> now > q.expiresAt());
+        long maxBusyMs = (Math.max(2, st.timeoutSeconds) + LOAD_ALLOWANCE_SECONDS + 2) * 1000L;
+        if (now - lastPruneAt > 60_000L) {
+            // 접속을 끊은 플레이어의 기록이 계속 쌓이지 않게 가끔 정리
+            lastPruneAt = now;
+            String today = st.today().toString();
+            jealousToday.values().removeIf(day -> !today.equals(day));
+            warmupAt.values().removeIf(at -> now - at > WARMUP_RETRY_MS);
+            strikes.prune(now);
+        }
         for (DialogueSession s : new ArrayList<>(sessions.values())) {
             Player p = Bukkit.getPlayer(s.player());
             if (p == null || !p.isOnline()) {
@@ -268,7 +338,20 @@ public final class DialogueService {
                 continue;
             }
             if (s.busy) {
-                continue;
+                if (now - s.busySince <= maxBusyMs) {
+                    continue;
+                }
+                // 타이머가 사라졌거나 처리 중 오류로 "생각 중"에 갇힌 대화: 강제로 넘기고 아래 거리·시간 검사를 그대로 한다
+                plugin.getLogger().warning("[ChacaNPC] " + s.character().id() + " 대답이 " + (now - s.busySince) / 1000
+                        + "초 넘게 끝나지 않아 고정 대사로 넘겼습니다.");
+                TurnState stuck = s.turn;
+                if (stuck != null) {
+                    failTurn(p, s, stuck, "busy");
+                } else {
+                    cancelTimers(s);
+                    s.busy = false;
+                    s.activeSeq = -1;
+                }
             }
             if (now - s.lastActivity > st.idleTimeoutSeconds * 1000L) {
                 close(p, false);
@@ -379,9 +462,81 @@ public final class DialogueService {
         }
 
         s.busy = true;
+        s.busySince = now;
+        TurnState turn = new TurnState(seq, pid, !s.adminTest());
+        s.turn = turn;
         s.view.thinking(p, s, seq);
         final String finalText = text;
-        s.loading.whenComplete((v, ex) -> plugin.sync(() -> proceed(p, s, seq, finalText, buttonId, slot)));
+        // 기한은 지금부터 잰다: 정보 불러오기(DB·MagicCodex)가 늦거나 끝나지 않아도 "생각 중"에 갇히지 않는다.
+        // stall-seconds 동안 대답이 없으면 "잠깐만...", 기한이 지나면 고정 대사로 넘기고 이 요청 결과는 화면에 안 보냄
+        cancelTimers(s);
+        s.stallTaskId = Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            s.stallTaskId = -1;
+            if (s.busy && s.activeSeq == seq && p.isOnline() && sessions.get(s.player()) == s) {
+                s.view.stall(p, s, seq, c.fallback("stall", st.defaultFallbacks, random));
+            }
+        }, Math.max(1, st.stallSeconds) * 20L).getTaskId();
+        armTimeout(p, s, turn, (Math.max(2, st.timeoutSeconds) + LOAD_ALLOWANCE_SECONDS) * 1000L);
+        s.loading.whenComplete((v, ex) -> plugin.sync(() -> proceedSafely(p, s, turn, finalText, buttonId, slot)));
+    }
+
+    /** 이 요청의 화면 기한. 지나면 고정 대사로 넘기고 늦게 온 결과는 버린다 (비용 정산은 그대로). */
+    private void armTimeout(Player p, DialogueSession s, TurnState turn, long delayMs) {
+        if (s.timeoutTaskId >= 0) {
+            Bukkit.getScheduler().cancelTask(s.timeoutTaskId);
+        }
+        s.timeoutTaskId = Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            s.timeoutTaskId = -1;
+            if (s.busy && s.activeSeq == turn.seq && sessions.get(s.player()) == s) {
+                failTurn(p, s, turn, "busy");
+            }
+        }, Math.max(1L, delayMs / 50L)).getTaskId();
+    }
+
+    /** 하루 횟수 되돌리기 (요청당 한 번만). */
+    private void refund(TurnState turn) {
+        if (turn != null && turn.charged && !turn.refunded) {
+            turn.refunded = true;
+            plugin.budget().refundCall(turn.pid);
+        }
+    }
+
+    /**
+     * AI 대답 없이 이 요청을 끝낸다: "생각 중" 해제, 늦게 오는 결과는 버림(activeSeq), 고정 대사 표시.
+     * AI에 아직 보내지 않았으면 하루 횟수를 바로 돌려준다 (보낸 뒤라면 결과가 왔을 때 과금 여부를 보고 돌려준다).
+     */
+    private void failTurn(Player p, DialogueSession s, TurnState turn, String fallbackKey) {
+        cancelTimers(s);
+        s.busy = false;
+        s.activeSeq = -1;
+        if (!turn.aiSent) {
+            refund(turn);
+        }
+        if (p.isOnline() && sessions.get(s.player()) == s) {
+            s.view.line(p, s, turn.seq, s.character().fallback(fallbackKey, plugin.settings().defaultFallbacks, random));
+        }
+    }
+
+    /** AI를 부르기 전에 고정 대사로 끝낸다 (예약 실패·AI 쉬는 중). 하루 횟수는 돌려준다. */
+    private void endWithoutAi(Player p, DialogueSession s, TurnState turn, String text, String fallbackKey) {
+        cancelTimers(s);
+        s.busy = false;
+        refund(turn);
+        say(p, s, turn.seq, text, s.character().fallback(fallbackKey, plugin.settings().defaultFallbacks, random), false);
+    }
+
+    /** proceed 가 어디서 실패해도 "생각 중"에 갇히지 않게 감싼다. */
+    private void proceedSafely(Player p, DialogueSession s, TurnState turn, String text, String buttonId, int slot) {
+        try {
+            proceed(p, s, turn, text, buttonId, slot);
+        } catch (RuntimeException ex) {
+            plugin.getLogger().log(java.util.logging.Level.WARNING, "[ChacaNPC] 대화 준비 중 오류 (" + s.character().id() + ")", ex);
+            if (s.busy && s.activeSeq == turn.seq && sessions.get(s.player()) == s) {
+                failTurn(p, s, turn, "busy");
+            } else if (!turn.aiSent) {
+                refund(turn);
+            }
+        }
     }
 
     /** 고정 대사로 대답 (AI 없음). */
@@ -419,18 +574,28 @@ public final class DialogueService {
 
     // =================================================================== AI 호출
 
-    private void proceed(Player p, DialogueSession s, int seq, String text, String buttonId, int slot) {
+    private void proceed(Player p, DialogueSession s, TurnState turn, String text, String buttonId, int slot) {
+        int seq = turn.seq;
         String pid = p.getUniqueId().toString();
         if (!p.isOnline() || sessions.get(p.getUniqueId()) != s || s.activeSeq != seq) {
-            s.busy = false;
-            if (!s.adminTest()) {
-                plugin.budget().refundCall(pid);
-            }
+            // 그새 닫혔거나 기한이 지나 이미 고정 대사로 넘어간 요청 (busy 는 그쪽에서 정리했다)
+            refund(turn);
             return;
         }
         Settings st = plugin.settings();
         CharacterSheet c = s.character();
         long now = System.currentTimeMillis();
+        if (plugin.ai().isCircuitBlocked()) {
+            // AI가 연속으로 실패해 쉬는 중: 부르지 않고 바로 고정 대사
+            endWithoutAi(p, s, turn, text, "busy");
+            return;
+        }
+        long deadlineAt = Math.min(now + Math.max(2, st.timeoutSeconds) * 1000L,
+                s.busySince + (Math.max(2, st.timeoutSeconds) + LOAD_ALLOWANCE_SECONDS) * 1000L);
+        if (deadlineAt - now < 500L) {
+            endWithoutAi(p, s, turn, text, "busy"); // 불러오기에 기한을 거의 다 썼다
+            return;
+        }
         BudgetMath.Status status = plugin.budget().status();
 
         AffinityStage stage = stage(s);
@@ -447,6 +612,8 @@ public final class DialogueService {
         HintDef hint = pickHint(p, s, stage, text, buttonId);
         if (hint != null) {
             x.allowedHints.add(hint);
+            // 힌트를 프롬프트에 넣는 순간 서버가 기록한다. 대사가 플레이어에게 나가면 AI의 hint 값과 상관없이 횟수에 넣는다
+            turn.offeredHint = hint.id();
         }
         List<RumorView> rumors = new ArrayList<>();
         for (RumorView r : s.rumors) {
@@ -489,64 +656,73 @@ public final class DialogueService {
         BudgetService.Reservation res = plugin.budget().reserve(s.adminTest() ? BudgetService.SYSTEM : pid,
                 plugin.budget().estimate(chars, maxTokens));
         if (res == null) {
-            s.busy = false;
-            if (!s.adminTest()) {
-                plugin.budget().refundCall(pid);
-            }
-            say(p, s, seq, text, c.fallback("tired", st.defaultFallbacks, random), false);
+            endWithoutAi(p, s, turn, text, "tired");
             return;
         }
-        OpenAiClient.Request req = new OpenAiClient.Request(instructions, input, PromptBuilder.replySchema(),
-                "npc_reply", maxTokens, "chacanpc:" + c.id() + ":" + stage.ordinal());
+        boolean submitted = false;
+        try {
+            OpenAiClient.Request req = new OpenAiClient.Request(instructions, input, PromptBuilder.replySchema(),
+                    "npc_reply", maxTokens, "chacanpc:" + c.id() + ":" + stage.ordinal());
 
-        Set<String> questIds = new HashSet<>();
-        for (QuestDef q : quests) {
-            questIds.add(q.id());
-        }
-        Set<String> hintIds = hint == null ? Set.of() : Set.of(hint.id());
-        Set<Long> rumorIds = new HashSet<>();
-        for (RumorView r : x.rumors) {
-            rumorIds.add(r.id());
-        }
-        ReplyParser.Limits limits = new ReplyParser.Limits(st.lineMaxLength, st.memoMaxLength, questIds, hintIds, rumorIds);
-
-        // 3초 동안 대답이 없으면 "잠깐만...", timeout-seconds 가 지나면 고정 대사로 넘기고 이 요청 결과는 화면에 안 보냄
-        cancelTimers(s);
-        s.stallTaskId = Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            s.stallTaskId = -1;
-            if (s.busy && s.activeSeq == seq && p.isOnline() && sessions.get(s.player()) == s) {
-                s.view.stall(p, s, seq, c.fallback("stall", st.defaultFallbacks, random));
+            Set<String> questIds = new HashSet<>();
+            for (QuestDef q : quests) {
+                questIds.add(q.id());
             }
-        }, Math.max(1, st.stallSeconds) * 20L).getTaskId();
-        s.timeoutTaskId = Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            s.timeoutTaskId = -1;
-            if (s.busy && s.activeSeq == seq && sessions.get(s.player()) == s) {
-                s.busy = false;
-                s.activeSeq = -1; // 늦게 온 결과는 버린다 (비용 정산은 그대로)
-                if (p.isOnline()) {
-                    s.view.line(p, s, seq, c.fallback("busy", st.defaultFallbacks, random));
-                }
+            Set<String> hintIds = hint == null ? Set.of() : Set.of(hint.id());
+            Set<Long> rumorIds = new HashSet<>();
+            for (RumorView r : x.rumors) {
+                rumorIds.add(r.id());
             }
-        }, Math.max(2, st.timeoutSeconds) * 20L).getTaskId();
+            ReplyParser.Limits limits = new ReplyParser.Limits(st.lineMaxLength, st.memoMaxLength, questIds, hintIds, rumorIds);
 
-        CompletableFuture<Boolean> moderation = st.moderationEnabled && buttonId == null
-                ? plugin.ai().moderate(text) : CompletableFuture.completedFuture(false);
-        plugin.ai().stream(req, null)
-                .thenCombine(moderation, (r, flagged) -> new Object[]{r, flagged})
-                .whenComplete((pair, ex) -> {
-                    OpenAiClient.Result r = pair == null ? null : (OpenAiClient.Result) pair[0];
-                    // 화면과 무관하게 비용은 반드시 정산 (늦은 응답·실패 포함)
-                    plugin.budget().settle(res, r == null ? null : r.usage(), r != null && r.usageKnown());
-                    if (r != null) {
-                        plugin.budget().recordLatency(r.firstChunkMs(), r.totalMs());
-                    }
-                    boolean flagged = pair != null && Boolean.TRUE.equals(pair[1]);
-                    plugin.sync(() -> finish(p, s, seq, text, buttonId, slot, generic, r, flagged, limits));
-                });
+            // 화면 기한을 AI 요청 기준으로 다시 맞춘다 (입력 때 건 전체 기한보다 늦어지지는 않는다)
+            armTimeout(p, s, turn, deadlineAt - now);
+
+            UUID uuid = s.player();
+            CompletableFuture<Boolean> moderation = st.moderationEnabled && buttonId == null
+                    ? plugin.ai().moderate(text) : CompletableFuture.completedFuture(false);
+            turn.aiSent = true;
+            // 대기열에서 기한이 지났거나 그새 창을 닫았으면 보내지 않는다 (AI 스레드에서 확인)
+            CompletableFuture<OpenAiClient.Result> call = plugin.ai().player(req, deadlineAt,
+                    () -> sessions.get(uuid) == s && s.activeSeq == seq);
+            submitted = true;
+            call.thenCombine(moderation, (r, flagged) -> new Object[]{r, flagged})
+                    .whenComplete((pair, ex) -> {
+                        OpenAiClient.Result r = pair == null ? null : (OpenAiClient.Result) pair[0];
+                        // 화면과 무관하게 비용은 반드시 정산 (늦은 응답·실패 포함)
+                        plugin.budget().settle(res, r == null ? null : r.usage(), r != null && r.usageKnown());
+                        if (r != null) {
+                            plugin.budget().recordLatency(r.firstChunkMs(), r.totalMs());
+                        }
+                        boolean flagged = pair != null && Boolean.TRUE.equals(pair[1]);
+                        plugin.sync(() -> {
+                            if (r != null && r.notBilled()) {
+                                refund(turn); // 보내지 않았거나 과금 전에 실패: 하루 횟수를 돌려준다
+                            }
+                            try {
+                                finish(p, s, turn, text, buttonId, slot, generic, r, flagged, limits);
+                            } catch (RuntimeException fex) {
+                                plugin.getLogger().log(java.util.logging.Level.WARNING,
+                                        "[ChacaNPC] 대답 처리 중 오류 (" + c.id() + ")", fex);
+                                // finish 는 시작하자마자 busy 를 풀기 때문에 busy 로는 판단할 수 없다:
+                                // 아직 아무 대사도 못 보냈으면 고정 대사로 끝낸다
+                                if (!turn.answered && s.activeSeq == seq && sessions.get(uuid) == s) {
+                                    failTurn(p, s, turn, "busy");
+                                }
+                            }
+                        });
+                    });
+        } finally {
+            if (!submitted) {
+                turn.aiSent = false; // 대기열에 넣지 못했다: 하루 횟수를 돌려줄 수 있게
+                plugin.budget().settle(res, OpenAiClient.Usage.ZERO, true); // 보내기 전에 실패: 예약을 풀어 준다
+            }
+        }
     }
 
-    private void finish(Player p, DialogueSession s, int seq, String text, String buttonId, int slot, boolean generic,
+    private void finish(Player p, DialogueSession s, TurnState turn, String text, String buttonId, int slot, boolean generic,
                         OpenAiClient.Result r, boolean flagged, ReplyParser.Limits limits) {
+        int seq = turn.seq;
         UUID uuid = s.player();
         // 창을 닫았거나·재접속했거나·다른 NPC로 바꿨거나·시간 초과로 넘긴 요청이면 화면에 보내지 않는다
         if (!p.isOnline() || sessions.get(uuid) != s || s.activeSeq != seq) {
@@ -558,20 +734,22 @@ public final class DialogueService {
         CharacterSheet c = s.character();
         String pid = uuid.toString();
         if (flagged) {
+            turn.answered = true;
             strike(p, s, seq, text);
             return;
         }
         if (r == null || !r.ok()) {
-            if (r != null && r.status() == OpenAiClient.Status.NO_KEY) {
-                plugin.getLogger().warning("[ChacaNPC] OpenAI API 키가 없습니다. 환경변수 CHACANPC_OPENAI_KEY 를 설정하세요.");
-            } else if (r != null && st.debug) {
-                plugin.getLogger().info("[ChacaNPC] AI 실패 " + r.status() + ": " + r.error());
+            // 실패 종류별 집계·경고 로그는 OpenAiClient 가 항상 남긴다 (debug 와 무관). 여기서는 자세한 내용만.
+            if (r != null && st.debug) {
+                plugin.getLogger().info("[ChacaNPC] AI 실패 " + r.category() + ": " + r.error());
             }
+            turn.answered = true;
             say(p, s, seq, text, c.fallback("busy", st.defaultFallbacks, random), false);
             return;
         }
         ReplyParser.AiReply reply = ReplyParser.parse(r.text(), limits);
         if (reply == null) {
+            turn.answered = true;
             say(p, s, seq, text, c.fallback("busy", st.defaultFallbacks, random), false);
             return;
         }
@@ -580,6 +758,7 @@ public final class DialogueService {
             if (st.debug) {
                 plugin.getLogger().info("[ChacaNPC] 대사 차단(" + out + "): " + reply.line());
             }
+            turn.answered = true;
             s.view.line(p, s, seq, c.fallback("confused", st.defaultFallbacks, random));
             logChat(s, text, "[차단:" + out + "] " + reply.line(), true);
             return;
@@ -590,18 +769,24 @@ public final class DialogueService {
             if (!generic) {
                 addAffinity(s, "chat", reply.mood());
             }
-            if (reply.memo() != null) {
-                s.memos.add(reply.memo());
-                String memo = reply.memo();
+            // 메모·약속은 플레이어가 내용을 유도할 수 있는 글이다: 정리 + 금지어 검사를 통과한 것만 저장한다.
+            // 버튼 캐시용(generic) 대답은 특정 플레이어 이야기가 아니므로 저장하지 않는다.
+            TextFilter filter = plugin.content().filter();
+            String memo = generic ? null : filter.storable(reply.memo(), st.memoMaxLength);
+            String promise = generic ? null : filter.storable(reply.promise(), st.memoMaxLength);
+            if (memo != null) {
+                s.memos.add(memo);
                 plugin.database().run(() -> plugin.storage().addMemo(pid, c.id(), memo, st.memoMaxLines, now));
             }
-            if (reply.promise() != null) {
-                String promise = reply.promise();
+            if (promise != null) {
                 s.promises.add(0, promise);
                 plugin.social().recordEvent(uuid, link().playerName(p), c.id(), "promise", promise);
             }
-            if (reply.hint() != null) {
-                String h = reply.hint();
+            // 힌트: AI가 hint 를 적었는지와 상관없이, 서버가 이번 프롬프트에 넣었고 대사가 나가면 준 것으로 센다
+            // (출력이 잘리거나 hint 를 null 로 유도해도 하루 횟수·1회 제한을 피할 수 없다)
+            if (turn.offeredHint != null) {
+                String h = turn.offeredHint;
+                turn.offeredHint = null;
                 if (s.hints != null) {
                     Set<String> given = new HashSet<>(s.hints.given());
                     given.add(h);
@@ -615,6 +800,7 @@ public final class DialogueService {
                 plugin.database().run(() -> plugin.storage().markRumorMentioned(rid));
             }
         }
+        turn.answered = true;
         s.view.line(p, s, seq, reply.line());
         addTurns(s, text, reply.line());
         logChat(s, text, reply.line(), false);
@@ -633,7 +819,8 @@ public final class DialogueService {
             s.view.info(p, s, String.format(Locale.ROOT, "(테스트) 입력 %d (캐시 %d) / 출력 %d 토큰, 첫 글자 %dms, 전체 %dms, 기분 %+d%s%s%s",
                     r.usage().input(), r.usage().cached(), r.usage().output(), r.firstChunkMs(), r.totalMs(), reply.mood(),
                     reply.quest() == null ? "" : ", 퀘스트 " + reply.quest(),
-                    reply.hint() == null ? "" : ", 힌트 " + reply.hint(),
+                    limits.allowedHints().isEmpty() ? "" : ", 힌트 제공 " + limits.allowedHints()
+                            + (reply.hint() == null ? " (AI 표시 없음)" : ""),
                     reply.memo() == null ? "" : ", 메모 \"" + reply.memo() + "\""));
         }
         if (reply.end()) {
@@ -874,7 +1061,7 @@ public final class DialogueService {
 
     // =================================================================== 버튼 대답 미리 만들기
 
-    /** 일과표 칸이 바뀔 때 버튼 대답을 백그라운드에서 채운다 (예산 예약 포함). */
+    /** 근처에 플레이어가 있는 NPC의 일과표 칸, 또는 누군가 말을 건 NPC의 버튼 대답을 백그라운드에서 채운다 (예산 예약 포함). */
     public void warmup(CharacterSheet c, int slot) {
         Settings st = plugin.settings();
         if (!st.buttonCacheEnabled || !st.buttonCacheWarmup || !plugin.budget().isAiEnabled()
@@ -882,6 +1069,14 @@ public final class DialogueService {
             return;
         }
         String today = st.today().toString();
+        // 같은 NPC·칸을 짧은 시간에 여러 번 채우지 않는다 (이동 틱·대화 열기 양쪽에서 불린다)
+        long now = System.currentTimeMillis();
+        String key = today + "|" + c.id() + "|" + slot;
+        Long last = warmupAt.get(key);
+        if (last != null && now - last < WARMUP_RETRY_MS) {
+            return;
+        }
+        warmupAt.put(key, now);
         int delay = 0;
         for (Button b : st.buttons) {
             int have = buttonCache.size(today, c.id(), slot, b.id());
@@ -918,7 +1113,8 @@ public final class DialogueService {
         OpenAiClient.Request req = new OpenAiClient.Request(instructions, input, PromptBuilder.replySchema(),
                 "npc_reply", st.maxOutputTokens, "chacanpc:" + c.id() + ":" + stage.ordinal());
         ReplyParser.Limits limits = new ReplyParser.Limits(st.lineMaxLength, st.memoMaxLength, Set.of(), Set.of(), Set.of());
-        plugin.ai().stream(req, null).whenComplete((r, ex) -> {
+        // 백그라운드 요청: 플레이어 대화가 붐비면 받지 않는다 (그때는 그냥 건너뜀)
+        plugin.ai().background(req).whenComplete((r, ex) -> {
             plugin.budget().settle(res, r == null ? null : r.usage(), r != null && r.usageKnown());
             plugin.sync(() -> {
                 if (r == null || !r.ok()) {

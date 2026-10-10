@@ -31,8 +31,12 @@ public final class DialogueSession {
     long lastActivity;
     long lastInputAt;
     volatile boolean busy;
-    /** 지금 처리 중(또는 마지막) 요청 순번. 이 값과 다른 순번의 AI 결과는 화면에 보내지 않는다. */
-    int activeSeq = -1;
+    /** busy 가 켜진 시각. 이때부터 정해진 시간 안에 대답(또는 고정 대사)이 반드시 나간다. */
+    long busySince;
+    /** 지금 처리 중(또는 마지막) 요청 순번. 이 값과 다른 순번의 AI 결과는 화면에 보내지 않는다. AI 스레드도 읽는다. */
+    volatile int activeSeq = -1;
+    /** 지금 처리 중인 요청의 하루 횟수 차감·환불 상태 (DialogueService 가 관리). */
+    DialogueService.TurnState turn;
     /** HUD가 보낸 마지막 요청 순번 (이보다 작거나 같은 요청은 버림). */
     int lastClientSeq = 0;
     /** 채팅 방식일 때 서버가 매기는 요청 순번. */
@@ -101,23 +105,11 @@ public final class DialogueSession {
         return token;
     }
 
-    public boolean isBusy() {
-        return busy;
-    }
-
     public int lastClientSeq() {
         return lastClientSeq;
     }
 
     public void setLastClientSeq(int seq) {
         this.lastClientSeq = seq;
-    }
-
-    public int score() {
-        return score;
-    }
-
-    public int heart() {
-        return heart;
     }
 }

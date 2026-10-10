@@ -82,23 +82,59 @@ public final class SpellCatalog {
         Object raw = root.get("spells");
         if (!(raw instanceof Map<?, ?> entries)) throw new IllegalArgumentException("Missing spells map");
         List<Spell> result = new ArrayList<>();
+        for (var entry : entries.entrySet()) result.add(parseSpell(String.valueOf(entry.getKey()), entry.getValue()));
+        return new SpellCatalog(result);
+    }
+
+    /**
+     * 마법별 검증. 파일 구조(schema-version, spells 맵)가 잘못되면 fromMap 과 같이 예외를 던지지만,
+     * 개별 마법이 잘못됐거나 번호/별칭이 앞선 마법과 겹치면 그 마법만 건너뛰고 problems 에 "ID -> 사유"를 남긴다.
+     */
+    public static SpellCatalog fromMapLenient(Map<String, ?> root, Map<String, String> problems) {
+        if (!(root.get("schema-version") instanceof Number version) || version.doubleValue() != 1)
+            throw new IllegalArgumentException("spell-catalog schema-version must be 1");
+        Object raw = root.get("spells");
+        if (!(raw instanceof Map<?, ?> entries)) throw new IllegalArgumentException("Missing spells map");
+        List<Spell> accepted = new ArrayList<>();
+        Set<Integer> numbers = new HashSet<>();
+        Map<String, String> owners = new HashMap<>();
         for (var entry : entries.entrySet()) {
             String id = String.valueOf(entry.getKey());
-            Map<?, ?> s = map(entry.getValue(), id);
-            List<String> aliases = strings(s.get("aliases"));
-            List<Phase> phases = new ArrayList<>();
-            Object rawPhases = s.get("phases");
-            if (rawPhases != null && !(rawPhases instanceof List<?>)) throw new IllegalArgumentException("phases must be a list");
-            if (rawPhases instanceof List<?> list) for (Object value : list) {
-                Map<?, ?> p = map(value, "phase");
-                phases.add(new Phase(string(p,"trigger"), string(p,"effect"), string(p,"anchor"),
-                        integer(p,"delay-ticks",0), integer(p,"duration-ticks",-1)));
+            try {
+                Spell spell = parseSpell(id, entry.getValue());
+                if (numbers.contains(spell.number())) throw new IllegalArgumentException("Duplicate spell number: " + spell.number());
+                List<String> keys = new ArrayList<>();
+                keys.add(normalize(spell.id()));
+                for (String alias : spell.aliases()) keys.add(normalize(alias));
+                for (String key : keys) {
+                    if (key.isEmpty()) throw new IllegalArgumentException("Empty alias");
+                    String owner = owners.get(key);
+                    if (owner != null && !owner.equals(spell.id())) throw new IllegalArgumentException("Name or alias '" + key + "' already belongs to " + owner);
+                }
+                numbers.add(spell.number());
+                for (String key : keys) owners.put(key, spell.id());
+                accepted.add(spell);
+            } catch (RuntimeException invalid) {
+                problems.put(id, invalid.getClass().getSimpleName() + ": " + invalid.getMessage());
             }
-            result.add(new Spell(integer(s,"number",-1), id, string(s,"name"), string(s,"permission"),
-                    optionalString(s,"icon",""), decimal(s,"mana-cost"), decimal(s,"cooldown-seconds"),
-                    bool(s,"reviewed"), bool(s,"enabled"), aliases, phases));
         }
-        return new SpellCatalog(result);
+        return new SpellCatalog(accepted);
+    }
+
+    private static Spell parseSpell(String id, Object value) {
+        Map<?, ?> s = map(value, id);
+        List<String> aliases = strings(s.get("aliases"));
+        List<Phase> phases = new ArrayList<>();
+        Object rawPhases = s.get("phases");
+        if (rawPhases != null && !(rawPhases instanceof List<?>)) throw new IllegalArgumentException("phases must be a list");
+        if (rawPhases instanceof List<?> list) for (Object item : list) {
+            Map<?, ?> p = map(item, "phase");
+            phases.add(new Phase(string(p,"trigger"), string(p,"effect"), string(p,"anchor"),
+                    integer(p,"delay-ticks",0), integer(p,"duration-ticks",-1)));
+        }
+        return new Spell(integer(s,"number",-1), id, string(s,"name"), string(s,"permission"),
+                optionalString(s,"icon",""), decimal(s,"mana-cost"), decimal(s,"cooldown-seconds"),
+                bool(s,"reviewed"), bool(s,"enabled"), aliases, phases);
     }
     private static Map<?, ?> map(Object value,String field) {
         if (!(value instanceof Map<?, ?> m)) throw new IllegalArgumentException(field + " must be a map");

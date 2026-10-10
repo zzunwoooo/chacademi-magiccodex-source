@@ -5,7 +5,6 @@ import kr.chacademy.npc.core.CharacterSheet;
 import kr.chacademy.npc.core.TextFilter;
 import kr.chacademy.npc.dialogue.DialogueSession;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -130,10 +129,5 @@ public final class PlayerCommands implements CommandExecutor, TabCompleter {
             return List.of("그만");
         }
         return List.of();
-    }
-
-    @SuppressWarnings("unused")
-    private static void sync(Runnable r) {
-        Bukkit.getScheduler().runTask(ChacaNpcPlugin.instance(), r);
     }
 }

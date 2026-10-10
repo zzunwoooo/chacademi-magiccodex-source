@@ -47,7 +47,12 @@ public final class BudgetService {
     private double reserved;          // 아직 정산 안 된 예약 합계 (전체)
     private final Map<String, Integer> callsToday = new ConcurrentHashMap<>();
     private volatile boolean aiEnabled = true;
+    private volatile boolean aiSwitchTouched; // 불러오기 전에 관리자가 /cnpc ai 를 썼으면 그 값을 따른다
     private volatile boolean loaded;
+    private volatile String loadError;
+
+    /** cnpc_meta 키: /cnpc ai off 상태를 재시작 뒤에도 유지한다. 값 "0" = 꺼짐. */
+    private static final String META_AI = "ai_enabled";
 
     private long latencyCount;
     private long firstChunkSum;
@@ -63,6 +68,10 @@ public final class BudgetService {
     public void loadFromDb() {
         String day = settings.get().today().toString();
         Storage.UsageSnapshot snap = storage.usageSnapshot(day);
+        String aiSwitch = storage.meta(META_AI);
+        if (!aiSwitchTouched && "0".equals(aiSwitch)) {
+            aiEnabled = false;
+        }
         synchronized (this) {
             today = day;
             spentBeforeToday = snap.spentBeforeToday();
@@ -70,7 +79,18 @@ public final class BudgetService {
             callsToday.clear();
             callsToday.putAll(snap.callsToday());
             loaded = true;
+            loadError = null;
         }
+    }
+
+    /** 테이블 준비·사용량 불러오기가 실패했다: AI는 계속 꺼진 상태(예약 불가)이고 /cnpc budget 에 이유를 보여준다. */
+    public void markLoadFailed(String reason) {
+        loadError = reason == null || reason.isBlank() ? "알 수 없는 오류" : reason;
+    }
+
+    /** 불러오기 실패 이유, 정상이면 null. */
+    public String loadError() {
+        return loadError;
     }
 
     public boolean isLoaded() {
@@ -92,8 +112,11 @@ public final class BudgetService {
         return aiEnabled;
     }
 
+    /** /cnpc ai on|off. DB에 저장해서 재시작해도 유지된다. */
     public void setAiEnabled(boolean enabled) {
+        this.aiSwitchTouched = true;
         this.aiEnabled = enabled;
+        storage.db().run(() -> storage.setMeta(META_AI, enabled ? "1" : "0"));
     }
 
     public synchronized double allowance() {
@@ -187,9 +210,19 @@ public final class BudgetService {
         return ok[0];
     }
 
-    /** AI를 부르지 못한 호출 되돌리기 (예약 실패·대화가 그새 닫힘). */
+    /** AI를 부르지 못했거나 과금 없이 실패한 호출 되돌리기 (예약 실패·대화가 그새 닫힘·대기열 가득·API 오류). */
     public void refundCall(String player) {
-        callsToday.computeIfPresent(player, (k, v) -> Math.max(0, v - 1));
+        boolean[] done = {false};
+        callsToday.computeIfPresent(player, (k, v) -> {
+            if (v <= 0) {
+                return v;
+            }
+            done[0] = true;
+            return v - 1;
+        });
+        if (!done[0]) {
+            return; // 날짜가 바뀌었거나 이미 0: DB에 음수 줄이 생기지 않게 한다
+        }
         String day = today;
         storage.db().run(() -> storage.addUsage(day, player, -1, 0, 0, 0, 0));
     }

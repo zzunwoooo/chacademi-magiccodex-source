@@ -18,7 +18,8 @@ final class ShopCommandCompletionTest {
             List.of("citizens:12","tag:merchant","citizens:12"),List.of(USER));
     }
     @Test void shopIdsRequirePlayerAndPermission() {
-        assertEquals(List.of("alpha","beta"),complete("상점",true,true,false,""));
+        assertEquals(List.of("alpha","beta"),complete("상점",true,true,true,""));
+        assertEquals(List.of(),complete("상점",true,true,false,"")); // D-10: /상점 <ID> 는 관리자 전용
         assertEquals(List.of(),complete("상점",true,false,true,""));
         assertEquals(List.of(),complete("상점",false,true,true,""));
     }
@@ -27,7 +28,7 @@ final class ShopCommandCompletionTest {
         assertEquals(List.of(),complete("상점관리",true,true,false,"가격","alpha",""));
     }
     @Test void KoreanCommandsAndPrefixesResolveDeterministically() {
-        assertEquals(List.of("alpha"),complete("상점",true,true,false,"AL"));
+        assertEquals(List.of("alpha"),complete("상점",true,true,true,"AL"));
         assertEquals(List.of(),complete("codexshop",true,true,false,""));
         assertEquals(List.of(),complete("codexshopadmin",true,true,true,""));
         assertEquals(List.of("NPC"),complete("상점관리",true,false,true,"np"));
@@ -66,6 +67,14 @@ final class ShopCommandCompletionTest {
         assertEquals(List.of(),complete("상점관리",true,true,true,"생성",""));
         assertEquals(List.of(),complete("상점관리",true,true,true,"생성","new_id",""));
     }
+    @Test void resolveCompletesListedOrdersThenActions() {
+        String order="44444444-4444-4444-4444-444444444444";
+        var listed=ShopCommandCompletion.complete("상점관리",new String[]{"처리",""},false,false,true,shops,List.of(),List.of(),List.of(order));
+        assertEquals(List.of(order),listed);
+        assertEquals(List.of("완료","취소","환불"),complete("상점관리",false,false,true,"처리",order,""));
+        assertEquals(List.of(),complete("상점관리",false,false,true,"처리",order,"완료",""));
+        assertEquals(List.of(),ShopCommandCompletion.complete("상점관리",new String[]{"처리",""},true,true,false,shops,List.of(),List.of(),List.of(order)));
+    }
     @Test void malformedUnknownAndExtraArgumentsReturnEmptyNeverNull() {
         assertEquals(List.of(),complete("상점관리",true,true,true,"가격","missing",""));
         assertEquals(List.of(),complete("상점관리",true,true,true,"bogus",""));
@@ -79,6 +88,6 @@ final class ShopCommandCompletionTest {
     @Test void suggestionsAreBounded() {
         var many=new HashMap<String,ShopStore.Shop>();
         for(int i=0;i<300;i++)many.put("shop"+i,shops.get("alpha"));
-        assertEquals(256,ShopCommandCompletion.complete("상점",new String[]{""},true,true,false,many,List.of(),List.of()).size());
+        assertEquals(256,ShopCommandCompletion.complete("상점",new String[]{""},true,true,true,many,List.of(),List.of()).size());
     }
 }

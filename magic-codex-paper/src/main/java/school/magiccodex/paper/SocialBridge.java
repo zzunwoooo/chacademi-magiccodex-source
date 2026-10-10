@@ -28,9 +28,14 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
     private final WhisperTickets tickets=new WhisperTickets();
     private final WhisperPeers conversations=new WhisperPeers();
     private volatile boolean closing;
-    private static class Book {List<Entry> entries=List.of();boolean ready,busy,checkingSignal;long sequence,nextAction,nextList,window;int requests;
+    private boolean polling;
+    /** incoming/outgoing: 대기 중인 친구 신청(받은/보낸). notified: 이번 접속에서 이미 알림을 보낸 신청자. */
+    private static class Book {List<Entry> entries=List.of(),incoming=List.of(),outgoing=List.of();final Set<UUID> notified=new HashSet<>();boolean ready,busy,checkingSignal,loading,stale,warned;long sequence,nextAction,nextList,window;int requests;
         boolean allow(long n){if(n-window>=1000){window=n;requests=0;}return ++requests<=10;}}
     private static long now(){return System.nanoTime()/1_000_000;}
+    /** DB에 기록되는 시각(신청 만료·거절 대기)은 서버 간에 공유되므로 벽시계를 쓴다. */
+    private static long wall(){return System.currentTimeMillis();}
+    private record Outcome(FriendStore.Result result,FriendStore.Snapshot book){}
     SocialBridge(MagicCodexBridge plugin,ManaBridge mana,StatsService stats)throws Exception{
         this.plugin=plugin;this.mana=mana;this.stats=stats;
         try{var settings=DatabaseSettings.load(plugin.getDataFolder().toPath().resolve("database.properties"));shared=settings.mariaDb();store=io.submit(()->new FriendStore(plugin.getDataFolder().toPath().resolve("friends.db"),settings)).get(10,TimeUnit.SECONDS);}
@@ -42,6 +47,8 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
         mana.windCast=this::castOpened;
         for(Player p:Bukkit.getOnlinePlayers())load(p);
         Bukkit.getScheduler().runTaskTimer(plugin,()->tickets.expire(now()),200,200);
+        Bukkit.getScheduler().runTaskTimer(plugin,this::pulse,160,160);
+        Bukkit.getScheduler().runTaskTimer(plugin,()->work(()->{store.purge(wall());return true;},v->{},e->{}),100,12000);
     }
     private interface Job<T>{T run()throws Exception;}
     private <T> void work(Job<T> task,Consumer<T> done,Consumer<Exception> fail){
@@ -49,7 +56,76 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
         io.execute(()->{try{T value=task.run();main(()->done.accept(value));}catch(Exception e){plugin.getLogger().warning("친구 저장 처리 실패: "+e);main(()->fail.accept(e));}});
     }
     private void main(Runnable r){if(!closing&&plugin.isEnabled())Bukkit.getScheduler().runTask(plugin,()->{if(!closing)r.run();});}
-    private void load(Player p){UUID id=p.getUniqueId();var b=new Book();books.put(id,b);work(()->store.load(id),list->{if(books.get(id)==b){b.entries=list;b.ready=true;deliverFirstFriend(p,b,0);}},e->{});}
+    private void load(Player p){var b=new Book();books.put(p.getUniqueId(),b);reload(p,b,0);}
+    /** 첫 로드. 실패하면 2·4·8·16·32초 뒤 다시 시도하고, 그래도 안 되면 다음 LIST 요청이 다시 불러온다. */
+    private void reload(Player p,Book b,int attempt){
+        UUID id=p.getUniqueId();if(b.loading||b.ready||books.get(id)!=b)return;b.loading=true;
+        work(()->store.snapshot(id,wall()),s->{if(books.get(id)==b)loaded(p,b,s,"");},
+            e->{if(books.get(id)!=b)return;b.loading=false;if(attempt<5)Bukkit.getScheduler().runTaskLater(plugin,()->reload(p,b,attempt+1),40L<<attempt);});
+    }
+    /** DB에서 다시 읽어 클라이언트에 반영한다. message==null이면 새로 생긴 친구를 알려 준다. */
+    private void refresh(Player p,Book b,String message){
+        UUID id=p.getUniqueId();if(b.loading){b.stale=true;return;}b.loading=true;
+        work(()->store.snapshot(id,wall()),s->{if(books.get(id)==b)loaded(p,b,s,message);},e->{if(books.get(id)==b)b.loading=false;});
+    }
+    private void loaded(Player p,Book b,FriendStore.Snapshot s,String message){
+        boolean first=!b.ready;var before=ids(b.entries);b.loading=false;apply(b,s);b.ready=true;String text=message==null?"":message;
+        if(message==null&&!first)for(var e:b.entries)if(!before.contains(e.id())){text=shown(p,e).name()+"님과 친구가 되었습니다.";break;}
+        if(!first)snapshot(p,0,text);
+        lists(p,b);deliverFirstFriend(p,b,0);
+        if(b.stale){b.stale=false;refresh(p,b,"");}
+    }
+    private static Set<UUID> ids(List<Entry> list){var set=new HashSet<UUID>();for(var e:list)set.add(e.id());return set;}
+    private void apply(Book b,FriendStore.Snapshot s){b.entries=s.friends();b.incoming=s.incoming();b.outgoing=s.outgoing();b.notified.retainAll(ids(b.incoming));}
+    /** 접속 중이면 현재 닉네임·기숙사, 아니면 저장된 값. */
+    private Entry shown(Player viewer,Entry e){var target=Bukkit.getPlayer(e.id());return visible(viewer,target)?new Entry(e.id(),plugin.names().name(target),dorm(target),true):new Entry(e.id(),plugin.names().name(Bukkit.getOfflinePlayer(e.id()),e.name()),e.dormitory(),false);}
+    private List<Entry> shown(Player viewer,List<Entry> list){var out=new ArrayList<Entry>(list.size());for(var e:list)out.add(shown(viewer,e));return out;}
+    /** 받은/보낸 신청 목록 전체를 보내고, 아직 알리지 않은 신청은 팝업 알림으로 보낸다. */
+    private void lists(Player p,Book b){
+        packet(p,new Response(SocialProtocol.INCOMING,0,SocialProtocol.NONE,0,"","","",0,shown(p,b.incoming)));
+        packet(p,new Response(SocialProtocol.OUTGOING,0,SocialProtocol.NONE,0,"","","",0,shown(p,b.outgoing)));
+        announce(p,b);
+    }
+    /** 신청마다 접속당 한 번만 알린다. 클라이언트 채널이 아직 준비되지 않았으면 다음 pulse에서 다시 시도한다. */
+    private void announce(Player p,Book b){
+        if(!b.ready||b.incoming.isEmpty()||!p.isOnline()||!p.getListeningPluginChannels().contains(SocialProtocol.RESPONSE)||!p.hasPermission("magiccodex.friends"))return;
+        for(var e:b.incoming)if(b.notified.add(e.id())){var s=shown(p,e);packet(p,new Response(SocialProtocol.FRIEND_REQUEST,0,e.id(),0,s.name().isBlank()?"알 수 없음":s.name(),s.dormitory(),"",0,List.of()));}
+    }
+    /** 8초마다: 미전달 알림 재시도 + (공유 DB 모드) 다른 서버에서 생긴 신청·친구 변화를 묶음 조회로 감지. */
+    private void pulse(){
+        if(closing)return;
+        for(Player p:Bukkit.getOnlinePlayers()){var b=books.get(p.getUniqueId());if(b!=null)announce(p,b);}
+        if(!shared||polling)return;
+        var online=new ArrayList<UUID>();books.forEach((id,b)->{if(b.ready)online.add(id);});if(online.isEmpty())return;
+        polling=true;
+        work(()->store.poll(online,wall()),polled->{polling=false;
+            for(UUID id:online){
+                var b=books.get(id);Player p=Bukkit.getPlayer(id);if(b==null||p==null||!b.ready||b.busy||b.loading)continue;
+                var in=polled.incoming().getOrDefault(id,List.of());
+                if(!ids(in).equals(ids(b.incoming))){b.incoming=List.copyOf(in);b.notified.retainAll(ids(b.incoming));lists(p,b);}
+                if(polled.friends().getOrDefault(id,0)!=b.entries.size())refresh(p,b,null);
+            }
+        },e->polling=false);
+    }
+    /** 같은 서버에 접속 중인 상대의 목록도 즉시 갱신한다. (다른 서버라면 pulse가 감지) */
+    private void peer(UUID other,String message){Player t=Bukkit.getPlayer(other);var tb=books.get(other);if(t!=null&&tb!=null)refresh(t,tb,message);}
+    private static String message(FriendStore.Result r){return switch(r){
+        case SELF->"자신에게는 친구 신청을 보낼 수 없습니다.";
+        case ALREADY_FRIENDS->"이미 친구입니다.";
+        case DUPLICATE->"이미 친구 신청을 보냈습니다. 상대방의 수락을 기다려 주세요.";
+        case COOLDOWN->"같은 상대에게는 잠시 후 다시 신청할 수 있습니다.";
+        case LIMIT->"보낸 친구 신청이 너무 많습니다. 대기 중인 신청을 취소한 뒤 다시 시도해 주세요. (최대 "+FriendStore.REQUEST_LIMIT+"건)";
+        case FRIEND_LIMIT->"친구는 최대 50명까지 등록할 수 있습니다.";
+        case TARGET_FRIEND_LIMIT->"상대방의 친구 목록이 가득 찼습니다.";
+        case MISSING->"이미 처리되었거나 만료된 친구 신청입니다.";
+        default->"처리하지 못했습니다.";
+    };}
+    /** 친구 관계를 바꾸는 작업 공통 처리: 결과와 함께 최신 목록을 다시 읽어 반영한다. */
+    private void mutate(Player p,Book b,long seq,Job<FriendStore.Result> job,Consumer<FriendStore.Result> done){
+        UUID id=p.getUniqueId();b.busy=true;
+        work(()->new Outcome(job.run(),store.snapshot(id,wall())),o->{if(books.get(id)!=b)return;b.busy=false;apply(b,o.book());done.accept(o.result());lists(p,b);},
+            e->{if(books.get(id)==b){b.busy=false;notice(p,seq,"저장하지 못했습니다. 잠시 후 다시 시도해 주세요.");}});
+    }
     private void deliverFirstFriend(Player p,Book book,int retry){
         if(book.checkingSignal)return;book.checkingSignal=true;
         UUID id=p.getUniqueId();work(()->store.pendingSignal(id),pending->{
@@ -65,21 +141,25 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
     private void snapshot(Player p,long seq,String message){
         var b=books.get(p.getUniqueId());if(b==null||!b.ready){notice(p,seq,"친구 목록을 불러오는 중입니다. 잠시 후 다시 시도해 주세요.");return;}
         var current=new ArrayList<Entry>();
-        for(var e:b.entries){var target=Bukkit.getPlayer(e.id());boolean online=visible(p,target);current.add(online?new Entry(e.id(),plugin.names().name(target),dorm(target),true):new Entry(e.id(),plugin.names().name(Bukkit.getOfflinePlayer(e.id()),e.name()),e.dormitory(),false));}
+        for(var e:b.entries)current.add(shown(p,e));
         packet(p,new Response(SocialProtocol.SNAPSHOT,seq,SocialProtocol.NONE,0,"","",message,0,current));
     }
     @Override public void onPluginMessageReceived(String channel,Player p,byte[] data){
         if(!channel.equals(SocialProtocol.REQUEST))return;
         var b=books.get(p.getUniqueId());if(b==null||!b.allow(now()))return;
-        Request r;try{r=SocialProtocol.request(data);}catch(IllegalArgumentException e){return;}
+        Request r;try{r=SocialProtocol.request(data);}catch(IllegalArgumentException e){
+            // 이전 버전 모드는 새 프로토콜을 해석하지 못한다: 접속당 한 번만 안내한다.
+            if(!b.warned&&SocialProtocol.legacy(data)){b.warned=true;p.sendMessage(Component.text("친구 기능을 사용하려면 최신 Magic Codex 모드로 업데이트해 주세요.",NamedTextColor.YELLOW));}
+            return;}
         if(r.sequence()<=b.sequence)return;b.sequence=r.sequence();
         long n=now();
         if(r.action()==SocialProtocol.CLOSE)return;
         if(r.action()==SocialProtocol.CANCEL){tickets.cancel(p.getUniqueId(),r.ticket());return;}
         if(!p.hasPermission("magiccodex.friends")){notice(p,r.sequence(),"친구 기능을 사용할 권한이 없습니다.");return;}
         if(r.action()==SocialProtocol.LIST){if(n<b.nextList){notice(p,r.sequence(),"잠시 후 다시 시도해 주세요.");return;}b.nextList=n+1000;
-            if(shared)work(()->store.load(p.getUniqueId()),list->{if(books.get(p.getUniqueId())==b){b.entries=list;b.ready=true;snapshot(p,r.sequence(),"");}},e->notice(p,r.sequence(),"친구 목록을 불러오지 못했습니다."));
-            else snapshot(p,r.sequence(),"");return;}
+            if(shared||!b.ready){if(b.busy||b.loading){snapshot(p,r.sequence(),"");return;}b.loading=true;
+                work(()->store.snapshot(p.getUniqueId(),wall()),s->{if(books.get(p.getUniqueId())==b){b.loading=false;apply(b,s);b.ready=true;snapshot(p,r.sequence(),"");lists(p,b);deliverFirstFriend(p,b,0);if(b.stale){b.stale=false;refresh(p,b,"");}}},e->{if(books.get(p.getUniqueId())==b)b.loading=false;notice(p,r.sequence(),"친구 목록을 불러오지 못했습니다.");});}
+            else{snapshot(p,r.sequence(),"");lists(p,b);}return;}
         if(r.action()!=SocialProtocol.SEND&&r.action()!=SocialProtocol.WHISPER&&n<b.nextAction){notice(p,r.sequence(),"잠시 후 다시 시도해 주세요.");return;}b.nextAction=n+400;
         if(!b.ready||b.busy){notice(p,r.sequence(),"친구 목록을 처리하고 있습니다. 잠시 후 다시 시도해 주세요.");return;}
         switch(r.action()){
@@ -87,34 +167,66 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
             case SocialProtocol.REMOVE->remove(p,r.target(),r.sequence());
             case SocialProtocol.WHISPER->whisper(p,r.target(),r.sequence());
             case SocialProtocol.SEND->sendMessage(p,r);
+            case SocialProtocol.ACCEPT->accept(p,b,r.target(),r.sequence());
+            case SocialProtocol.DECLINE->decline(p,b,r.target(),r.sequence());
+            case SocialProtocol.WITHDRAW->withdraw(p,b,r.target(),r.sequence());
             default->{}
         }
     }
+    /** 친구 추가는 신청으로 시작한다. 상대가 수락해야 서로의 목록에 등록된다. */
     private void add(Player owner,Player target,long seq){
         var b=books.get(owner.getUniqueId());
         if(b==null||!b.ready||b.busy){notice(owner,seq,"친구 목록을 처리하고 있습니다.");return;}
         if(!visible(owner,target)){notice(owner,seq,"접속 중인 플레이어를 찾을 수 없습니다.");return;}
-        UUID id=owner.getUniqueId();
-        if(id.equals(target.getUniqueId())){notice(owner,seq,"자신을 친구로 추가할 수 없습니다.");return;}
-        if(b.entries.stream().anyMatch(e->e.id().equals(target.getUniqueId()))){notice(owner,seq,"이미 친구 목록에 있습니다.");return;}
-        if(b.entries.size()>=SocialProtocol.LIMIT){notice(owner,seq,"친구는 최대 50명까지 등록할 수 있습니다.");return;}
-        var entry=new Entry(target.getUniqueId(),plugin.names().name(target),dorm(target),false);b.busy=true;
-        work(()->store.add(id,entry),added->{
-            if(books.get(id)!=b)return;b.busy=false;
-            if(!added){notice(owner,seq,"이미 등록되었거나 친구 목록이 가득 찼습니다.");return;}
-            var next=new ArrayList<>(b.entries);next.add(entry);b.entries=List.copyOf(next);
-            snapshot(owner,seq,entry.name()+"님을 친구로 추가했습니다.");
-            deliverFirstFriend(owner,b,0);
-        },e->{if(books.get(id)==b){b.busy=false;notice(owner,seq,"저장하지 못했습니다. 잠시 후 다시 시도해 주세요.");}});
+        UUID id=owner.getUniqueId(),other=target.getUniqueId();
+        if(id.equals(other)){notice(owner,seq,message(FriendStore.Result.SELF));return;}
+        if(isFriend(owner,other)&&isFriend(target,id)){notice(owner,seq,message(FriendStore.Result.ALREADY_FRIENDS));return;}
+        if(b.outgoing.stream().anyMatch(e->e.id().equals(other))){notice(owner,seq,message(FriendStore.Result.DUPLICATE));return;}
+        var entry=new Entry(other,plugin.names().name(target),dorm(target),false);String name=plugin.names().name(owner),dorm=dorm(owner);long at=wall();
+        mutate(owner,b,seq,()->store.request(id,name,dorm,entry,at),result->{
+            switch(result){
+                case SENT->{snapshot(owner,seq,entry.name()+"님에게 친구 신청을 보냈습니다.");peer(other,"");}
+                case ACCEPTED->{snapshot(owner,seq,entry.name()+"님과 친구가 되었습니다.");deliverFirstFriend(owner,b,0);peer(other,name+"님과 친구가 되었습니다.");}
+                default->notice(owner,seq,message(result));
+            }
+        });
     }
+    private String requester(Player p,List<Entry> list,UUID other){for(var e:list)if(e.id().equals(other))return shown(p,e).name();return "상대방";}
+    private void accept(Player p,Book b,UUID other,long seq){
+        UUID id=p.getUniqueId();String name=plugin.names().name(p),dorm=dorm(p),from=requester(p,b.incoming,other);long at=wall();
+        mutate(p,b,seq,()->store.accept(id,name,dorm,other,at),result->{
+            if(result!=FriendStore.Result.ACCEPTED){notice(p,seq,message(result));return;}
+            snapshot(p,seq,from+"님과 친구가 되었습니다.");deliverFirstFriend(p,b,0);peer(other,name+"님이 친구 신청을 수락했습니다.");
+        });
+    }
+    private void decline(Player p,Book b,UUID other,long seq){
+        UUID id=p.getUniqueId();long at=wall();
+        mutate(p,b,seq,()->store.decline(id,other,at)?FriendStore.Result.DONE:FriendStore.Result.MISSING,result->{
+            notice(p,seq,result==FriendStore.Result.DONE?"친구 신청을 거절했습니다.":message(result));if(result==FriendStore.Result.DONE)peer(other,"");
+        });
+    }
+    private void withdraw(Player p,Book b,UUID other,long seq){
+        UUID id=p.getUniqueId();long at=wall();
+        mutate(p,b,seq,()->store.withdraw(id,other,at)?FriendStore.Result.DONE:FriendStore.Result.MISSING,result->{
+            notice(p,seq,result==FriendStore.Result.DONE?"친구 신청을 취소했습니다.":message(result));if(result==FriendStore.Result.DONE)peer(other,"");
+        });
+    }
+    /** 삭제는 양쪽 목록에서 함께 지운다. 이번 접속의 답장 권한도 회수한다. */
     private void remove(Player owner,UUID target,long seq){
-        var b=books.get(owner.getUniqueId());if(b.entries.stream().noneMatch(e->e.id().equals(target))){notice(owner,seq,"친구 목록에 없는 플레이어입니다.");return;}b.busy=true;
-        work(()->store.remove(owner.getUniqueId(),target),removed->{if(books.get(owner.getUniqueId())!=b)return;b.busy=false;b.entries=b.entries.stream().filter(e->!e.id().equals(target)).toList();tickets.remove(owner.getUniqueId());snapshot(owner,seq,"친구 목록에서 삭제했습니다.");},e->{if(books.get(owner.getUniqueId())==b){b.busy=false;notice(owner,seq,"삭제 내용을 저장하지 못했습니다.");}});
+        var b=books.get(owner.getUniqueId());if(b.entries.stream().noneMatch(e->e.id().equals(target))){notice(owner,seq,"친구 목록에 없는 플레이어입니다.");return;}
+        UUID id=owner.getUniqueId();
+        mutate(owner,b,seq,()->store.unfriend(id,target)?FriendStore.Result.DONE:FriendStore.Result.MISSING,result->{
+            tickets.remove(id);conversations.forget(id,target);snapshot(owner,seq,"친구 목록에서 삭제했습니다.");peer(target,"");
+        });
     }
     private boolean isFriend(Player p,UUID target){var b=books.get(p.getUniqueId());return b!=null&&b.ready&&b.entries.stream().anyMatch(e->e.id().equals(target));}
+    /** 전언은 서로 친구일 때만 가능하다 (예전 방식의 한쪽 등록만으로는 불가). 이번 접속에서 전언을 주고받은 상대에게는 답장할 수 있다. */
+    private boolean mutual(Player p,Player target){return conversations.contains(p.getUniqueId(),target.getUniqueId())||(isFriend(p,target.getUniqueId())&&isFriend(target,p.getUniqueId()));}
+    private static final String NOT_MUTUAL="서로 친구인 상대에게만 전언을 보낼 수 있습니다. 상대방이 친구 신청을 수락해야 합니다.";
     private void whisper(Player p,UUID id,long seq){
         Player target=Bukkit.getPlayer(id);
         if((!isFriend(p,id)&&!conversations.contains(p.getUniqueId(),id))||!visible(p,target)){notice(p,seq,"접속 중인 친구에게만 전언을 보낼 수 있습니다.");return;}
+        if(!mutual(p,target)){notice(p,seq,NOT_MUTUAL);return;}
         var ticket=tickets.bind(p.getUniqueId(),id,now());int cooldown=0;boolean fresh=ticket==null;
         if(ticket==null){
             var cast=mana.castWindForFriend(p);
@@ -127,6 +239,7 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
         String text;try{text=SocialProtocol.cleanMessage(r.text());}catch(IllegalArgumentException e){notice(sender,r.sequence(),"전언은 1~240자의 일반 글자로 입력해 주세요.");return;}
         var target=Bukkit.getPlayer(r.target());
         if(sender.isDead()||(!isFriend(sender,r.target())&&!conversations.contains(sender.getUniqueId(),r.target()))||!visible(sender,target)){notice(sender,r.sequence(),"상대방이 접속 중인지 확인해 주세요.");return;}
+        if(!mutual(sender,target)){notice(sender,r.sequence(),NOT_MUTUAL);return;}
         if(!tickets.consume(sender.getUniqueId(),r.target(),r.ticket(),now())){notice(sender,r.sequence(),"전언 시간이 만료되었습니다. 마법을 다시 사용해 주세요.");return;}
         // Literal text only: never dispatch a chat command or parse markup from the message.
         var line=Component.text("\uE101").font(net.kyori.adventure.key.Key.key("magiccodex","whisper"))
@@ -143,7 +256,7 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
         Player p=e.getViewer();var b=books.get(p.getUniqueId());
         if(!p.hasPermission("magiccodex.friends")){e.setResponse("친구 기능을 사용할 권한이 없습니다.");return;}
         if(b==null||now()<b.nextAction){e.setResponse("잠시 후 다시 시도해 주세요.");return;}b.nextAction=now()+400;
-        Player target=e.getTarget();Bukkit.getScheduler().runTask(plugin,()->{if(p.isOnline())add(p,target,0);});e.setResponse("친구 추가 요청을 확인하고 있습니다.");
+        Player target=e.getTarget();Bukkit.getScheduler().runTask(plugin,()->{if(p.isOnline())add(p,target,0);});e.setResponse("친구 신청을 보내고 있습니다.");
     }
     @Override public boolean onCommand(CommandSender s,Command command,String label,String[] args){
         if(!(s instanceof Player p)){s.sendMessage("게임 안에서 사용해 주세요.");return true;}

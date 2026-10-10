@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpConnectTimeoutException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpTimeoutException;
@@ -23,7 +24,8 @@ import java.util.UUID;
 /**
  * OpenAI 호출 (이미지 편집·외형 정리·문장 검사). 블로킹 호출이므로 반드시 작업 스레드에서만 부른다.
  * 키는 헤더로만 보내고 로그·예외 메시지에 넣지 않는다.
- * 이미지 요청은 과금될 수 있으므로 "요청이 서버에 닿기 전" 연결 실패일 때만 1회 다시 시도한다.
+ * 이미지 요청은 과금될 수 있으므로 "요청이 서버에 닿기 전" 연결 실패일 때만 여기서 바로 1회 다시 시도한다.
+ * 그 밖의 재시도(429·5xx·시간 초과)는 {@link ApiException#type}을 보고 호출 측(작업 대기열)이 결정한다.
  */
 public final class OpenAiImageClient {
 
@@ -34,16 +36,83 @@ public final class OpenAiImageClient {
     public record TextResult(String text, long inputTokens, long outputTokens) {
     }
 
-    /** 실패. billedUnknown = 요청이 서버에 닿았을 수 있음 (예약액으로 정산해야 함). */
+    /**
+     * 실패 분류.
+     * RETRYABLE = 일시적 (연결 실패·시간 초과·429·5xx) → 잠시 뒤 다시 시도할 가치가 있음.
+     * CONFIG = 키·권한·주소·요청 형식 문제 (401/403/404, 안전 거부가 아닌 400) → 다시 해도 같음, 플레이어 탓 아님.
+     * TERMINAL = 요청 내용이 거부됨 (안전·검열 거부) 또는 응답을 쓸 수 없음 → 다시 하지 않음.
+     */
+    public enum Type { RETRYABLE, CONFIG, TERMINAL }
+
+    /** 실패. billedUnknown = 요청이 서버에 닿았을 수 있음 (예약액으로 정산해야 함). false면 과금되지 않은 것이 확실. */
     public static final class ApiException extends IOException {
         public final int status;
         public final boolean billedUnknown;
+        public final Type type;
 
         public ApiException(String message, int status, boolean billedUnknown) {
+            this(message, status, billedUnknown, Type.TERMINAL);
+        }
+
+        public ApiException(String message, int status, boolean billedUnknown, Type type) {
             super(message);
             this.status = status;
             this.billedUnknown = billedUnknown;
+            this.type = type;
         }
+
+        public boolean retryable() {
+            return type == Type.RETRYABLE;
+        }
+    }
+
+    /**
+     * 전송 단계 예외 분류. 연결 전 실패(연결 거부·연결 시간 초과·DNS·TLS 협상)는 요청이 나가지 않았으므로 과금 없음.
+     * 요청을 보낸 뒤의 시간 초과·끊김은 과금 여부를 알 수 없다 (예약액 정산). 모두 일시적 실패로 본다.
+     */
+    static ApiException classify(Throwable error) {
+        Throwable e = error;
+        while ((e instanceof java.util.concurrent.CompletionException || e instanceof java.util.concurrent.ExecutionException)
+                && e.getCause() != null) {
+            e = e.getCause();
+        }
+        if (e instanceof ApiException api) {
+            return api;
+        }
+        if (e instanceof HttpConnectTimeoutException) {
+            return new ApiException("OpenAI 연결 시간 초과", 0, false, Type.RETRYABLE);
+        }
+        if (e instanceof ConnectException || e instanceof java.net.UnknownHostException
+                || e instanceof java.nio.channels.UnresolvedAddressException
+                || e instanceof javax.net.ssl.SSLHandshakeException) {
+            return new ApiException("OpenAI 연결 실패", 0, false, Type.RETRYABLE);
+        }
+        if (e instanceof HttpTimeoutException || e instanceof java.util.concurrent.TimeoutException) {
+            return new ApiException("OpenAI 응답 시간 초과", 0, true, Type.RETRYABLE);
+        }
+        return new ApiException("OpenAI 통신 오류: " + e.getClass().getSimpleName(), 0, true, Type.RETRYABLE);
+    }
+
+    /**
+     * HTTP 오류 응답 분류. 4xx는 생성 전에 거부된 것이라 과금 없음, 5xx는 알 수 없음.
+     * 408/409/425/429·5xx = 일시적, 401/403/404 = 설정 문제, 그 밖의 4xx는 안전 거부면 내용 문제, 아니면(400 검증 등) 설정 문제.
+     */
+    static ApiException httpError(int code, String message) {
+        String text = "OpenAI " + code + ": " + (message == null ? "" : message);
+        if (code >= 500) {
+            return new ApiException(text, code, true, Type.RETRYABLE);
+        }
+        if (code == 429 || code == 408 || code == 409 || code == 425) {
+            return new ApiException(text, code, false, Type.RETRYABLE);
+        }
+        if (code == 401 || code == 403 || code == 404) {
+            return new ApiException(text, code, false, Type.CONFIG);
+        }
+        // 그 밖의 4xx: 안전·검열 거부면 내용 문제(같은 입력은 또 거부됨), 아니면 요청 형식·설정 문제로 본다 (플레이어 탓이 아니므로 자동 횟수에 넣지 않음)
+        String lower = text.toLowerCase(java.util.Locale.ROOT);
+        boolean refused = lower.contains("moderation") || lower.contains("safety") || lower.contains("content_policy")
+                || lower.contains("content policy") || lower.contains("policy_violation");
+        return new ApiException(text, code, false, refused ? Type.TERMINAL : Type.CONFIG);
     }
 
     private final HttpClient http = HttpClient.newBuilder()
@@ -57,10 +126,10 @@ public final class OpenAiImageClient {
     public ImageResult edit(PortraitSettings s, String model, List<byte[]> images, String prompt, String userHash)
             throws IOException, InterruptedException {
         if (!s.hasKey()) {
-            throw new ApiException("API 키 없음", 0, false);
+            throw new ApiException("API 키 없음", 0, false, Type.CONFIG);
         }
         if (images.isEmpty() || images.size() > 16) {
-            throw new ApiException("이미지 수 오류", 0, false);
+            throw new ApiException("이미지 수 오류", 0, false, Type.CONFIG);
         }
         try {
             try {
@@ -148,28 +217,53 @@ public final class OpenAiImageClient {
     private String send(PortraitSettings s, HttpRequest req) throws IOException, InterruptedException {
         HttpResponse<String> res;
         try {
-            res = http.send(req, LimitedResponseBody.handler(12 * 1024 * 1024));
-        } catch (ConnectException e) {
-            // 연결 자체가 안 됨 → 서버에 닿지 않았으므로 과금 없음. 한 번만 다시.
-            try {
-                res = http.send(req, LimitedResponseBody.handler(12 * 1024 * 1024));
-            } catch (ConnectException e2) {
-                throw new ApiException("OpenAI 연결 실패", 0, false);
-            } catch (HttpTimeoutException e2) {
-                throw new ApiException("OpenAI 응답 시간 초과", 0, true);
+            res = exchange(req);
+        } catch (ApiException e) {
+            // 연결 자체가 안 됨 → 서버에 닿지 않았으므로 과금 없음. 바로 한 번만 다시.
+            if (e.status != 0 || e.billedUnknown) {
+                throw e;
             }
-        } catch (HttpTimeoutException e) {
-            throw new ApiException("OpenAI 응답 시간 초과", 0, true);
-        } catch (IOException e) {
-            throw new ApiException("OpenAI 통신 오류: " + e.getClass().getSimpleName(), 0, true);
+            res = exchange(req);
         }
         int code = res.statusCode();
         if (code / 100 != 2) {
-            String msg = errorMessage(res.body());
-            // 4xx 요청 오류는 생성 전 거부라 과금 없음으로 본다. 5xx는 알 수 없음.
-            throw new ApiException("OpenAI " + code + ": " + msg, code, code >= 500);
+            throw httpError(code, errorMessage(res.body()));
         }
         return res.body();
+    }
+
+    /**
+     * 요청 하나. HttpRequest.timeout 은 응답 헤더까지만 보므로, 본문 수신까지 포함한 전체 제한 시간을 따로 둔다
+     * (요청 제한 + 60초). 넘으면 교환을 취소하고 "시간 초과(과금 여부 모름)"로 처리한다.
+     */
+    private HttpResponse<String> exchange(HttpRequest req) throws ApiException, InterruptedException {
+        long deadline = req.timeout().orElse(Duration.ofSeconds(240)).toSeconds() + 60;
+        java.util.concurrent.CompletableFuture<HttpResponse<String>> f;
+        try {
+            f = http.sendAsync(req, LimitedResponseBody.handler(12 * 1024 * 1024));
+        } catch (RuntimeException e) {
+            throw classify(e);
+        }
+        try {
+            return f.get(deadline, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (java.util.concurrent.TimeoutException e) {
+            f.cancel(true);
+            throw classify(e);
+        } catch (java.util.concurrent.ExecutionException e) {
+            throw classify(e);
+        } catch (InterruptedException e) {
+            f.cancel(true);
+            throw e;
+        }
+    }
+
+    /** 플러그인 종료 시: 연결·내부 스레드 정리 (진행 중 요청은 중단). */
+    public void close() {
+        try {
+            http.shutdownNow();
+        } catch (RuntimeException ignored) {
+            // 무시
+        }
     }
 
     private static String errorMessage(String body) {
@@ -227,7 +321,7 @@ public final class OpenAiImageClient {
     /** 스킨 그림을 보고 외형을 짧게 정리 (Responses API, 이미지 입력). */
     public TextResult describe(PortraitSettings s, byte[] png, String userHash, String playerRequest) throws IOException, InterruptedException {
         if (!s.hasKey()) {
-            throw new ApiException("API 키 없음", 0, false);
+            throw new ApiException("API 키 없음", 0, false, Type.CONFIG);
         }
         Map<String,Object> body = describeBody(s, png, playerRequest);
         if (userHash != null && !userHash.isEmpty()) {
@@ -282,7 +376,7 @@ public final class OpenAiImageClient {
     /** true = 문제 있음(flagged). 검사 서버 오류면 예외 (호출 측에서 거부로 처리). */
     public boolean flagged(PortraitSettings s, String text) throws IOException, InterruptedException {
         if (!s.hasKey()) {
-            throw new ApiException("API 키 없음", 0, false);
+            throw new ApiException("API 키 없음", 0, false, Type.CONFIG);
         }
         Map<String, Object> body = Json.map("model", s.moderationModel, "input", text);
         HttpRequest req = base(s, "/moderations").timeout(Duration.ofSeconds(20)).header("Content-Type", "application/json")

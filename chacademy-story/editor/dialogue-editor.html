@@ -128,6 +128,12 @@ details.adv[open]>summary{margin-bottom:8px}
 .toast.show{opacity:1}
 .guide{font-size:13px;color:var(--muted);padding:10px 12px;margin:0;line-height:1.6}
 .guide b{color:var(--fg);font-weight:600}
+.offline{background:var(--warn-soft);color:var(--warn);padding:8px 14px;font-size:13px;border-bottom:1px solid var(--line)}
+.askback{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
+.askbox{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:8px;max-width:560px;width:100%;max-height:80vh;overflow:auto;padding:16px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.askbox p{margin:0 0 14px;white-space:pre-wrap;font-size:13.5px;line-height:1.6;word-break:break-word}
+.askbtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.face .img.none{display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--danger);border-color:var(--danger);text-align:center}
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
 </style>
 
@@ -138,6 +144,7 @@ details.adv[open]>summary{margin-bottom:8px}
     <span class="sp"></span>
     <label class="btn" title="편집기에서 내보낸 zip, 또는 dialogue.yml과 그림들을 함께 선택">불러오기
       <input type="file" id="importInput" accept=".zip,.yml,.yaml,image/png,image/*" multiple></label>
+    <button id="prevBtn" title="불러오기 · 새 대화를 누르기 직전에 편집하던 대화로 되돌려요">이전 초안 복구</button>
     <button id="newBtn">새 대화</button>
     <button class="primary" id="exportBtn">zip으로 내보내기</button>
   </header>
@@ -148,6 +155,7 @@ details.adv[open]>summary{margin-bottom:8px}
     <label for="m_speed">글자 속도(초) <input type="number" id="m_speed" min="0" max="0.5" step="0.01" style="width:80px"></label>
     <label for="m_dim">배경 어둡게 <input type="number" id="m_dim" min="0" max="0.9" step="0.05" style="width:80px"></label>
     <label for="m_sound">타자기 소리 <select id="m_sound" style="width:auto"><option value="default">켜기</option><option value="none">끄기</option></select></label>
+    <span class="tip" style="flex-basis:100%">글자 속도 · 배경 어둡게 · 타자기 소리: <b>게임에서는 MagicCodex 대화창 설정을 따릅니다.</b> 여기 값은 이 편집기의 미리보기에만 쓰이고 파일에는 그대로 보관돼요.</span>
   </div>
 
   <div class="work">
@@ -196,8 +204,17 @@ details.adv[open]>summary{margin-bottom:8px}
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+<div class="offline" id="offlineNote" hidden>zip · yml 라이브러리(JSZip, js-yaml)를 인터넷에서 받지 못했어요. 편집과 임시 저장은 되지만 <b>불러오기 · zip 내보내기는 인터넷에 연결한 뒤 새로고침</b>해야 쓸 수 있어요.</div>
+<!--
+  바깥에서 받는 스크립트 (이 두 개뿐). 버전을 고정해 두었고, 배포 전에 아래 주소의 파일로 SRI 해시를 계산해
+  integrity="sha384-..." 를 붙일 것 (여기서는 네트워크가 없어 해시를 적지 않았다 — 지어내지 말 것):
+    https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js       (JSZip 3.10.1)
+    https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js    (js-yaml 4.1.0)
+  예) curl -s <주소> | openssl dgst -sha384 -binary | openssl base64 -A
+  인터넷 없이 쓰려면 두 파일을 editor/ 폴더에 받아 두고 src 를 상대 경로로 바꾸면 된다.
+-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 "use strict";
 /* ================================================================ 상태 */
@@ -209,24 +226,33 @@ let D = null, selScene = null;
 
 function blankDialogue() {
   return {
-    meta: { id: "new_dialogue", title: "새 대화", dim: 0.35, type_speed: 0.03, type_sound: "default", end_cmds: "", end_aff: [] },
+    meta: { id: "new_dialogue", title: "새 대화", dim: 0.35, type_speed: 0.03, type_sound: "default", type_sound_volume: 0.5, end_cmds: "", end_aff: [] },
     people: [{ key: "me", name: "{player}", npc: "", faces: [] }],
-    scenes: [newScene("첫 장면")]
+    scenes: [newScene("첫 장면")],
+    extra: {}, srvExtra: {}, srvNpcs: [], orphans: { endings: {}, events: {}, affEvents: {}, affEndings: {} }, noServer: false
   };
 }
 function newScene(name) {
   return { key: nextKey("s"), name: name || "새 장면", lines: [{ who: "me", face: "", text: "" }], mode: "end", next: "",
-    choices: [], redirects: [], end_cmds: "", enter_aff: [], end_aff: [] };
+    choices: [], redirects: [], end_cmds: "", enter_aff: [], end_aff: [], enterEv: "" };
 }
 /* 예전 형식(선택지 하나에 호감도 하나)이나 빠진 칸을 지금 형식으로 */
 function normalize(d) {
   d.meta.end_aff = d.meta.end_aff || [];
+  if (d.meta.type_sound_volume === undefined) d.meta.type_sound_volume = 0.5;
+  d.extra = d.extra || {}; d.srvExtra = d.srvExtra || {}; d.srvNpcs = d.srvNpcs || [];
+  d.orphans = d.orphans || { endings: {}, events: {}, affEvents: {}, affEndings: {} };
+  // 이벤트 이름이 없던 예전 초안: 그때 내보내던 이름 (c_장면_번호, e_장면) 을 그대로 붙여 준다
+  const legacy = d.scenes.some(s => s.enterEv === undefined);
   d.scenes.forEach(s => {
     s.enter_aff = s.enter_aff || []; s.end_aff = s.end_aff || [];
-    s.choices.forEach(c => {
+    s.choices.forEach((c, ci) => {
       if (!c.aff) { c.aff = c.addNpc && c.addValue ? [{ npc: c.addNpc, add: c.addValue }] : []; }
       delete c.addNpc; delete c.addValue;
+      if (c.ev === undefined) c.ev = legacy && ((c.cmds || "").trim() || c.aff.some(x => x.npc && x.add)) ? `c_${s.key}_${ci + 1}` : "";
+      if (c.needMax === undefined) c.needMax = null;
     });
+    if (s.enterEv === undefined) s.enterEv = s.enter_aff.some(x => x.npc && x.add) ? `e_${s.key}` : "";
   });
   return d;
 }
@@ -305,7 +331,8 @@ function renderPeople() {
     }
     const faces = el("div", { class: "faces" });
     p.faces.forEach((f, i) => {
-      const img = el("div", { class: "img", title: f.name }); img.style.backgroundImage = `url("${f.url}")`;
+      const img = el("div", { class: "img" + (f.missing ? " none" : ""), title: f.missing ? "그림 파일이 없어요: " + f.file : f.name });
+      if (f.missing) img.textContent = "파일 없음"; else img.style.backgroundImage = `url("${f.url}")`;
       faces.append(el("div", { class: "face" }, img,
         input(f.name, v => { f.name = v.trim() || "표정" + (i + 1); refreshSelects(); changed(); }, { "aria-label": "표정 이름" }),
         el("button", { class: "ghost danger", text: "✕", title: "표정 지우기", onclick: () => { p.faces.splice(i, 1); render(); scheduleSave(); } })));
@@ -433,7 +460,7 @@ function sceneCard(s, si) {
   card.append(head, body);
   return card;
 }
-function blankChoice() { return { text: "", to: "", aff: [], needNpc: "", needMin: 0, cmds: "", open: false }; }
+function blankChoice() { return { text: "", to: "", aff: [], needNpc: "", needMin: 0, needMax: null, cmds: "", ev: "", open: false }; }
 function choiceBox(s, c, ci) {
   const box = el("div", { class: "choice" });
   const t = input(c.text, v => { c.text = v; changed(); }, { placeholder: "선택지 글 (예: 괜찮아요)", "aria-label": "선택지 글" });
@@ -470,6 +497,7 @@ function addLineAfter(s, li) {
 function moveScene(i, d) { const j = i + d; if (j < 0 || j >= D.scenes.length) return; [D.scenes[i], D.scenes[j]] = [D.scenes[j], D.scenes[i]]; render(); scheduleSave(); }
 function dupScene(s) {
   const c = JSON.parse(JSON.stringify(s)); c.key = nextKey("s"); c.name = s.name + " 복사";
+  c.enterEv = ""; c.choices.forEach(x => x.ev = ""); // 이벤트 이름은 장면마다 따로 (내보낼 때 새로 붙음)
   D.scenes.splice(D.scenes.indexOf(s) + 1, 0, c); render(); scheduleSave();
 }
 function delScene(s) {
@@ -515,7 +543,11 @@ function problems() {
     if (allAff.some(a => !a.npc || !a.add)) w.push([s.key, `${n}: 인물이나 변화량이 빈 호감도 줄이 있어요 (무시돼요).`]);
     if (!linked.has(s.key)) w.push([s.key, `${n}: 어디서도 이 장면으로 오지 않아요.`]);
   });
-  if (!ID_RE.test(D.meta.id)) w.unshift(["", "대화 id는 영어 소문자, 숫자, _, - 만 쓸 수 있어요."]);
+  exportBlockers().forEach(b => w.unshift(b));
+  const lost = D.people.flatMap(p => p.faces.filter(f => f.missing).map(f => f.file));
+  if (lost.length) w.unshift(["", `그림 파일이 없어요 (내보낸 zip 에도 빠져요): ${lost.slice(0, 6).join(", ")}${lost.length > 6 ? ` 외 ${lost.length - 6}개` : ""}`]);
+  if (D.noServer) w.unshift(["", "server_commands.yml 없이 불러온 대화예요. 서버 명령어 · 결말/끝 호감도가 비어 있을 수 있어요 (내보낼 때 물어봐요)."]);
+  if (!ID_RE.test(D.meta.id)) w.unshift(["", "대화 id는 영어 소문자, 숫자, _, - 만 쓸 수 있어요 (1~64자)."]);
   return w;
 }
 function renderWarnings() {
@@ -560,7 +592,7 @@ function pvStart(key) {
 function pvEnter(key, hops) {
   const s = scene(key);
   if (!s || hops > 20) { pvEnd(PV.scene ? PV.scene.key : key); return; }
-  for (const r of s.redirects) if (r.npc && r.to && aff(r.npc) >= r.min && r.to !== key) { pvLog(`↪ 호감도 ${r.npc} ${aff(r.npc)} ≥ ${r.min} → "${scene(r.to)?.name}"`); pvEnter(r.to, hops + 1); return; }
+  for (const r of s.redirects) if (r.npc && r.to && needOk(r.npc, r.min, r.max) && r.to !== key) { pvLog(`↪ 호감도 ${r.npc} ${aff(r.npc)} ≥ ${r.min} → "${scene(r.to)?.name}"`); pvEnter(r.to, hops + 1); return; }
   PV.scene = s; PV.line = 0;
   if (affOn(s.enter_aff).length && !PV.firedEnter.has(s.key)) { PV.firedEnter.add(s.key); pvAff(s.enter_aff, "들어옴"); }
   pvLine();
@@ -582,7 +614,8 @@ const pvNick = () => document.getElementById("pvName").value || "플레이어";
 const pvAcc = () => document.getElementById("pvAcc").value || "player";
 const fill = t => t.replaceAll("{player}", pvNick()).replaceAll("{account}", pvAcc());
 function pvComplete() { const l = PV.scene?.lines[PV.line]; return !l || PV.shown >= Array.from(fill(l.text)).length; }
-function pvVisibleChoices() { return PV.scene.mode !== "choices" ? [] : PV.scene.choices.filter(c => !c.needNpc || aff(c.needNpc) >= c.needMin); }
+const needOk = (npc, min, max) => aff(npc) >= min && (!hasMax(max) || aff(npc) <= max);
+function pvVisibleChoices() { return PV.scene.mode !== "choices" ? [] : PV.scene.choices.filter(c => !c.needNpc || needOk(c.needNpc, c.needMin, c.needMax)); }
 function pvAdvance() {
   if (!PV.scene || PV.ended) return;
   if (!pvComplete()) { clearInterval(PV.timer); PV.shown = 1e9; renderVN(); return; }
@@ -642,6 +675,10 @@ document.getElementById("pvHere").onclick = () => { pvStart(selScene && scene(se
 /* ================================================================ 대화 정보 */
 function renderMeta() {
   const m = D.meta, set = (id, v) => { const e = document.getElementById(id); if (document.activeElement !== e) e.value = v; };
+  const snd = document.getElementById("m_sound");
+  // 편집기에 없는 소리 값 (마인크래프트 소리 id 등) 도 지우지 않고 그대로 둔다
+  snd.querySelectorAll("option[data-custom]").forEach(o => o.remove());
+  if (m.type_sound !== "default" && m.type_sound !== "none") snd.append(el("option", { value: m.type_sound, text: "그대로 두기: " + m.type_sound, "data-custom": "1" }));
   set("m_id", m.id); set("m_title", m.title); set("m_speed", m.type_speed); set("m_dim", m.dim); set("m_sound", m.type_sound); set("m_endcmds", m.end_cmds);
   document.getElementById("m_id").style.borderColor = ID_RE.test(m.id) ? "" : "var(--danger)";
 }
@@ -654,140 +691,304 @@ function renderEndAff() { const b = document.getElementById("m_endaff"); b.textC
 function render() { renderMeta(); renderPeople(); renderScenes(); renderEndAff(); renderWarnings(); renderAffSliders(); renderVN(); }
 
 /* ================================================================ yml 만들기 / 읽기 */
-const q = s => JSON.stringify(String(s));
+/* 이름 규칙 (FORMAT.md "이름 규칙"): 대화 id · 장면 id · 이벤트 이름 = ID_RE. 서버·모드와 같은 정규식. */
+const LINE_MAX = 1500, CHOICE_MAX = 6;
+const escU = s => s.replace(/[\u0085\u2028\u2029]/g, c => "\\u" + c.charCodeAt(0).toString(16).padStart(4, "0"));
+/* 모든 글자 값은 따옴표로 감싼다 (yml 로 읽힐 때 다른 뜻이 되거나 줄을 깨지 못하게) */
+const q = s => escU(JSON.stringify(String(s ?? "")));
+/* 주석에 넣는 글자: 줄바꿈을 지운다 (주석 밖으로 나와 yml 키가 되지 못하게) */
+const cmt = s => String(s ?? "").replace(/[\r\n\u0085\u2028\u2029]+/g, " ").slice(0, 120);
+/* 숫자는 반드시 유한한 값으로 (NaN / Infinity 를 파일에 쓰지 않는다) */
+const fin = (v, def) => { const n = typeof v === "number" ? v : parseFloat(v); return Number.isFinite(n) ? n : def; };
+const int = (v, def) => Math.round(fin(v, def));
+const clampN = (v, lo, hi, def) => Math.max(lo, Math.min(hi, fin(v, def)));
+const hasMax = v => v !== null && v !== undefined && v !== "" && Number.isFinite(fin(v, NaN));
+const safeFile = s => (String(s).replace(/[^A-Za-z0-9_\-]/g, "_").slice(0, 40) || "x");
+const okImageName = n => typeof n === "string" && /^[^\/\\:*?"<>|\u0000-\u001f]{1,120}\.png$/i.test(n) && !n.includes("..");
+/* 편집기가 모르는 키는 그대로 보관했다가 다시 내보낸다 (JSON 은 yml 로도 읽힌다) */
+const yj = v => escU(JSON.stringify(v === undefined ? null : v));
+const extraPairs = x => Object.entries(x || {}).map(([k, v]) => `${q(k)}: ${yj(v)}`);
+const pickExtra = (o, known) => { const x = {}; if (o && typeof o === "object") for (const [k, v] of Object.entries(o)) if (!known.includes(k)) x[k] = v; return x; };
+const asList = v => Array.isArray(v) ? v : [];
+const asObj = v => v && typeof v === "object" && !Array.isArray(v) ? v : {};
+const cmdList = v => (typeof v === "string" ? [v] : asList(v)).map(x => String(x ?? "").replace(/[\r\n]+/g, " ").trim()).filter(Boolean);
+
 function imageNames() {
-  const map = new Map();
-  D.people.forEach(p => p.faces.forEach((f, i) => map.set(f, `${p.key}_${i + 1}.png`)));
+  const map = new Map(), used = new Set();
+  D.people.forEach(p => p.faces.forEach(f => { if (f.missing) used.add(f.file); }));
+  D.people.forEach(p => p.faces.forEach((f, i) => {
+    if (f.missing) { map.set(f, f.file); return; }
+    let n = `${safeFile(p.key)}_${i + 1}.png`, k = 2;
+    while (used.has(n)) n = `${safeFile(p.key)}_${i + 1}_${k++}.png`;
+    used.add(n); map.set(f, n);
+  }));
   return map;
 }
-const eventName = (s, ci) => `c_${s.key}_${ci + 1}`;
-const enterEvent = s => `e_${s.key}`;
+/* 이벤트 이름: 한 번 정해지면 선택지에 붙어 다닌다. 순서를 바꾸거나 다른 선택지를 지워도 이름이 바뀌지 않아서
+   서버의 "이미 실행함" 기록 (progress.yml) 과 어긋나지 않는다. 불러온 파일에 있던 이름은 그대로 쓴다. */
+function usedEvents() {
+  const u = new Set();
+  D.scenes.forEach(s => { if (s.enterEv) u.add(s.enterEv); s.choices.forEach(c => c.ev && u.add(c.ev)); });
+  const o = D.orphans || {};
+  [o.events, o.affEvents].forEach(m => Object.keys(m || {}).forEach(k => u.add(k)));
+  return u;
+}
+function freshEvent(prefix, key, u) {
+  const base = `${prefix}_${key}`.slice(0, 56);
+  for (let n = 1; ; n++) { const name = `${base}_${n}`; if (!u.has(name)) { u.add(name); return name; } }
+}
+const choiceNeedsEvent = c => lines(c.cmds).length > 0 || affOn(c.aff).length > 0;
+function ensureEvents() {
+  const u = usedEvents();
+  D.scenes.forEach(s => {
+    if (affOn(s.enter_aff).length && !s.enterEv) { const plain = `e_${s.key}`; if (plain.length <= 64 && !u.has(plain)) { u.add(plain); s.enterEv = plain; } else s.enterEv = freshEvent("e", s.key, u); }
+    s.choices.forEach(c => { if (choiceNeedsEvent(c) && !c.ev) c.ev = freshEvent("c", s.key, u); });
+  });
+}
+function affYaml(a) { return `[${affOn(a).map(x => `{npc: ${q(x.npc)}, add: ${int(x.add, 0)}}`).join(", ")}]`; }
 function toYaml() {
+  ensureEvents();
   const m = D.meta, names = imageNames(), L = [];
-  L.push("# 차카데미 대화 — 대화 편집기에서 만듦", "format: 1", `id: ${q(m.id)}`, `title: ${q(m.title)}`, `start: ${D.scenes[0].key}`,
-    `dim: ${m.dim}`, `type_speed: ${m.type_speed}`, `type_sound: ${m.type_sound}`, "type_sound_volume: 0.5", "speakers:");
+  L.push("# 차카데미 대화 — 대화 편집기에서 만듦", "format: 1", `id: ${q(m.id)}`, `title: ${q(m.title)}`, `start: ${q(D.scenes[0].key)}`,
+    "# dim / type_speed / type_sound / type_sound_volume: 게임에서는 MagicCodex 대화창 설정을 따릅니다 (값은 보관만 함)",
+    `dim: ${clampN(m.dim, 0, 0.9, 0.35)}`, `type_speed: ${clampN(m.type_speed, 0, 0.5, 0.03)}`, `type_sound: ${q(m.type_sound || "default")}`,
+    `type_sound_volume: ${clampN(m.type_sound_volume, 0, 1, 0.5)}`);
+  extraPairs(D.extra).forEach(x => L.push(x));
+  L.push("speakers:");
   for (const p of D.people) {
-    L.push(`  ${p.key}:`, `    name: ${q(p.name)}`);
+    L.push(`  ${q(p.key)}:`, `    name: ${q(p.name)}`);
     if (p.npc) L.push(`    npc: ${q(p.npc)}`);
+    extraPairs(p.extra).forEach(x => L.push("    " + x));
     if (p.faces.length) { L.push("    portraits:"); p.faces.forEach(f => L.push(`      ${q(f.name)}: ${q(names.get(f))}`)); }
   }
   L.push("scenes:");
+  const ex = x => { const e = extraPairs(x); return e.length ? ", " + e.join(", ") : ""; };
   for (const s of D.scenes) {
-    L.push(`  ${s.key}:`, `    name: ${q(s.name)}`);
+    L.push(`  ${q(s.key)}:`, `    name: ${q(s.name)}`);
+    extraPairs(s.extra).forEach(x => L.push("    " + x));
     const rs = s.redirects.filter(r => r.npc && r.to);
-    if (rs.length) { L.push("    redirect:"); rs.forEach(r => L.push(`      - {npc: ${q(r.npc)}, min: ${r.min}, to: ${r.to}}`)); }
-    if (affOn(s.enter_aff).length) { L.push(`    affinity: [${affOn(s.enter_aff).map(a => `{npc: ${q(a.npc)}, add: ${a.add}}`).join(", ")}]`, `    event: ${enterEvent(s)}`); }
-    if (s.lines.length) { L.push("    lines:"); s.lines.forEach(l => L.push(`      - {who: ${l.who}, face: ${q(l.face)}, text: ${q(l.text)}}`)); }
+    if (rs.length) { L.push("    redirect:"); rs.forEach(r => L.push(`      - {npc: ${q(r.npc)}, min: ${int(r.min, 0)}${hasMax(r.max) ? `, max: ${int(r.max, 100)}` : ""}, to: ${q(r.to)}${ex(r.extra)}}`)); }
+    if (affOn(s.enter_aff).length) L.push(`    affinity: ${affYaml(s.enter_aff)}`);
+    if (s.enterEv) L.push(`    event: ${q(s.enterEv)}`);
+    if (s.lines.length) { L.push("    lines:"); s.lines.forEach(l => L.push(`      - {who: ${q(l.who)}, face: ${q(l.face)}, text: ${q(l.text)}${ex(l.extra)}}`)); }
     else L.push("    lines: []");
     if (s.mode === "choices" && s.choices.length) {
       L.push("    choices:");
-      s.choices.forEach((c, ci) => {
+      s.choices.forEach(c => {
         const parts = [`text: ${q(c.text)}`, `to: ${q(c.to)}`];
-        if (affOn(c.aff).length) parts.push(`affinity: [${affOn(c.aff).map(a => `{npc: ${q(a.npc)}, add: ${a.add}}`).join(", ")}]`);
-        if (c.needNpc) parts.push(`need: {npc: ${q(c.needNpc)}, min: ${c.needMin}}`);
-        if (lines(c.cmds).length || affOn(c.aff).length) parts.push(`event: ${eventName(s, ci)}`);
-        L.push(`      - {${parts.join(", ")}}`);
+        if (affOn(c.aff).length) parts.push(`affinity: ${affYaml(c.aff)}`);
+        if (c.needNpc) parts.push(`need: {npc: ${q(c.needNpc)}, min: ${int(c.needMin, 0)}${hasMax(c.needMax) ? `, max: ${int(c.needMax, 100)}` : ""}}`);
+        if (c.ev) parts.push(`event: ${q(c.ev)}`);
+        L.push(`      - {${parts.join(", ")}${ex(c.extra)}}`);
       });
     }
-    if (s.mode === "next" && s.next) L.push(`    next: ${s.next}`);
+    if (s.mode === "next" && s.next) L.push(`    next: ${q(s.next)}`);
   }
   return L.join("\n") + "\n";
 }
 function toServerYaml() {
-  const L = [`# 서버 plugins/ChacademyStory/dialogues/${D.meta.id}.yml 로 넣으세요 (이름을 대화 id로)`, "# 클라이언트에는 없어도 돼요.",
+  ensureEvents();
+  const L = [`# 서버용. zip 의 이 폴더(${cmt(D.meta.id)})를 통째로 서버 plugins/ChacademyStory/dialogues/ 안에 복사하세요`,
+    "# (dialogue.yml 로 서버가 선택지·결말을 검증하고, 이 파일의 명령어·호감도를 실행합니다. 바꾼 뒤에는 /cutscene reload)",
     "# 명령어 안의 {player} = 마인크래프트 닉네임, {nickname} = 한글 닉네임"];
+  const o = D.orphans || {};
   const npcSet = new Set();
   D.people.forEach(p => p.npc && npcSet.add(p.npc));
   D.scenes.forEach(s => { s.redirects.forEach(r => r.npc && npcSet.add(r.npc)); [...s.enter_aff, ...s.end_aff].forEach(a => a.npc && npcSet.add(a.npc)); s.choices.forEach(c => { c.aff.forEach(a => a.npc && npcSet.add(a.npc)); c.needNpc && npcSet.add(c.needNpc); }); });
   D.meta.end_aff.forEach(a => a.npc && npcSet.add(a.npc));
-  L.push(`npcs: [${[...npcSet].map(q).join(", ")}]   # 대화를 열 때 이 NPC들의 호감도를 MagicCodex에서 가져와요`);
-  const list = arr => arr.length ? arr.map(c => `  - ${q(c)}`) : null;
+  (D.srvNpcs || []).forEach(n => n && npcSet.add(n));
+  L.push(`npcs: [${[...npcSet].map(q).join(", ")}]   # 대화를 열 때 이 NPC들의 호감도를 가져와요`);
+  extraPairs(D.srvExtra).forEach(x => L.push(x));
   const end = lines(D.meta.end_cmds);
-  L.push(end.length ? "end:" : "end: []"); if (end.length) L.push(...list(end));
-  const endings = D.scenes.filter(s => lines(s.end_cmds).length);
+  L.push(end.length ? "end:" : "end: []"); end.forEach(c => L.push(`  - ${q(c)}`));
+  const endings = D.scenes.filter(s => lines(s.end_cmds).length).map(s => [s.key, lines(s.end_cmds), s.name]);
+  Object.entries(o.endings || {}).forEach(([k, v]) => endings.push([k, cmdList(v), "편집기에 없는 장면 (그대로 보관)"]));
   L.push(endings.length ? "endings:" : "endings: {}");
-  endings.forEach(s => { L.push(`  ${s.key}:   # ${s.name}`); lines(s.end_cmds).forEach(c => L.push(`    - ${q(c)}`)); });
-  const ev = []; D.scenes.forEach(s => s.mode === "choices" && s.choices.forEach((c, ci) => { if (lines(c.cmds).length) ev.push([eventName(s, ci), s, c]); }));
+  endings.forEach(([k, cmds, why]) => { L.push(`  ${q(k)}:   # ${cmt(why)}`); cmds.forEach(c => L.push(`    - ${q(c)}`)); });
+  const ev = []; D.scenes.forEach(s => s.mode === "choices" && s.choices.forEach(c => { if (lines(c.cmds).length) ev.push([c.ev, lines(c.cmds), `${s.name} → ${c.text}`]); }));
+  Object.entries(o.events || {}).forEach(([k, v]) => ev.push([k, cmdList(v), "편집기 선택지에 없는 이벤트 (그대로 보관)"]));
   L.push(ev.length ? "events:" : "events: {}");
-  ev.forEach(([n, s, c]) => { L.push(`  ${n}:   # ${s.name} → ${c.text}`); lines(c.cmds).forEach(x => L.push(`    - ${q(x)}`)); });
-  // 호감도: 서버가 이 값만 믿고 적용한다 (클라 yml 을 고쳐도 바뀌지 않음)
-  const map = a => `{${affOn(a).map(x => `${q(x.npc)}: ${x.add}`).join(", ")}}`;
+  ev.forEach(([n, cmds, why]) => { L.push(`  ${q(n)}:   # ${cmt(why)}`); cmds.forEach(x => L.push(`    - ${q(x)}`)); });
+  // 호감도: 서버가 이 값만 믿고 적용한다 (클라 yml 을 고쳐도 바뀌지 않음). 한 항목 한도: 이벤트 ±20, 결말·끝 ±50
+  const map = (a, lim) => `{${affOn(a).map(x => `${q(x.npc)}: ${Math.max(-lim, Math.min(lim, int(x.add, 0)))}`).join(", ")}}`;
   const aEv = [];
   D.scenes.forEach(s => {
-    if (affOn(s.enter_aff).length) aEv.push([enterEvent(s), s.enter_aff, `${s.name} 들어옴`]);
-    if (s.mode === "choices") s.choices.forEach((c, ci) => affOn(c.aff).length && aEv.push([eventName(s, ci), c.aff, `${s.name} → ${c.text}`]));
+    if (affOn(s.enter_aff).length) aEv.push([s.enterEv, map(s.enter_aff, 20), `${s.name} 들어옴`]);
+    if (s.mode === "choices") s.choices.forEach(c => affOn(c.aff).length && aEv.push([c.ev, map(c.aff, 20), `${s.name} → ${c.text}`]));
   });
-  const aEnd = D.scenes.filter(s => affOn(s.end_aff).length);
+  Object.entries(o.affEvents || {}).forEach(([k, v]) => aEv.push([k, yj(v), "그대로 보관"]));
+  const aEnd = D.scenes.filter(s => affOn(s.end_aff).length).map(s => [s.key, map(s.end_aff, 50), s.name]);
+  Object.entries(o.affEndings || {}).forEach(([k, v]) => aEnd.push([k, yj(v), "그대로 보관"]));
   if (aEv.length || aEnd.length || affOn(D.meta.end_aff).length) {
     L.push("affinity:            # 호감도 변화 (서버가 적용)");
-    L.push(`  end: ${map(D.meta.end_aff)}   # 대화가 끝나면 항상`);
+    L.push(`  end: ${map(D.meta.end_aff, 50)}   # 대화가 끝나면 항상`);
     L.push(aEnd.length ? "  endings:            # 이 장면에서 끝났을 때만" : "  endings: {}");
-    aEnd.forEach(s => L.push(`    ${s.key}: ${map(s.end_aff)}   # ${s.name}`));
+    aEnd.forEach(([k, v, why]) => L.push(`    ${q(k)}: ${v}   # ${cmt(why)}`));
     L.push(aEv.length ? "  events:             # 선택지를 고르거나 장면에 들어오면 (대화마다 한 번)" : "  events: {}");
-    aEv.forEach(([n, a, why]) => L.push(`    ${n}: ${map(a)}   # ${why}`));
+    aEv.forEach(([n, v, why]) => L.push(`    ${q(n)}: ${v}   # ${cmt(why)}`));
   }
   return L.join("\n") + "\n";
 }
-function fromYaml(o, server, getBlob) {
-  if (!o || typeof o !== "object" || !o.scenes) throw new Error("대화 파일이 아니에요");
+/* 규칙에 맞는 새 이름 (겹치지 않게) */
+function slug(raw, used, prefix) {
+  let s = String(raw).toLowerCase().replace(/[^a-z0-9_\-]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 56) || prefix;
+  if (/^[0-9]+$/.test(s)) s = `${prefix}_${s}`; // 숫자만 남으면 앞에 글자를 붙인다
+  let n = s, k = 2; while (used.has(n)) n = `${s}_${k++}`;
+  used.add(n); return n;
+}
+/* 불러올 파일에서 규칙에 안 맞는 장면 id · 이벤트 이름을 찾는다 */
+function badKeys(o) {
+  const scenes = [], events = [];
+  for (const [k, v] of Object.entries(asObj(o.scenes))) {
+    if (!ID_RE.test(k)) scenes.push(k);
+    const sv = asObj(v);
+    if (sv.event != null && String(sv.event).trim() && !ID_RE.test(String(sv.event).trim())) events.push(String(sv.event).trim());
+    asList(sv.choices).forEach(c => { const e = c && c.event != null ? String(c.event).trim() : ""; if (e && !ID_RE.test(e)) events.push(e); });
+  }
+  return { scenes: [...new Set(scenes)], events: [...new Set(events)] };
+}
+/* fix = true 면 규칙에 안 맞는 키를 새 이름으로 바꾸고 (참조도 같이) renamed 에 [예전, 새] 를 적는다 */
+function fromYaml(o, server, getBlob, fix) {
+  if (!o || typeof o !== "object" || !o.scenes || typeof o.scenes !== "object") throw new Error("대화 파일이 아니에요");
+  const bad = badKeys(o), renamed = [];
+  if ((bad.scenes.length || bad.events.length) && !fix) { const e = new Error("이름 규칙에 맞지 않는 키가 있어요"); e.badKeys = bad; throw e; }
+  const sceneKeys = Object.keys(o.scenes);
+  const usedS = new Set(sceneKeys.filter(k => ID_RE.test(k))), sMap = new Map();
+  bad.scenes.forEach(k => { const n = slug(k, usedS, "s"); sMap.set(k, n); renamed.push(["장면 " + k, n]); });
+  const sk = k => { k = String(k ?? ""); return sMap.get(k) ?? k; };
+  const usedE = new Set(), eMap = new Map();
+  Object.values(o.scenes).forEach(v => { const sv = asObj(v); [sv.event, ...asList(sv.choices).map(c => c && c.event)].forEach(e => { e = e == null ? "" : String(e).trim(); if (e && ID_RE.test(e)) usedE.add(e); }); });
+  bad.events.forEach(k => { const n = slug(k, usedE, "ev"); eMap.set(k, n); renamed.push(["이벤트 " + k, n]); });
+  const ek = e => { e = e == null ? "" : String(e).trim(); return eMap.get(e) ?? e; };
+
   const d = blankDialogue(); d.people = []; d.scenes = [];
   d.meta.id = String(o.id ?? "new_dialogue"); d.meta.title = String(o.title ?? d.meta.id);
-  d.meta.dim = +o.dim || 0.35; d.meta.type_speed = o.type_speed === undefined ? 0.03 : +o.type_speed; d.meta.type_sound = o.type_sound === "none" ? "none" : "default";
-  server = server || {};
-  d.meta.end_cmds = (server.end || []).join("\n");
-  const sa = server.affinity || {};
-  const fromMap = m => Object.entries(m || {}).map(([npc, add]) => ({ npc: String(npc), add: +add || 0 })).filter(a => a.add);
-  const fromList = v => Array.isArray(v) ? v.map(a => ({ npc: String(a?.npc ?? ""), add: +a?.add || 0 })) : v && typeof v === "object" && v.npc ? [{ npc: String(v.npc), add: +v.add || 0 }] : [];
+  d.meta.dim = clampN(o.dim, 0, 0.9, 0.35); d.meta.type_speed = clampN(o.type_speed, 0, 0.5, 0.03);
+  d.meta.type_sound = o.type_sound == null || String(o.type_sound).trim() === "" ? "default" : String(o.type_sound).trim();
+  d.meta.type_sound_volume = clampN(o.type_sound_volume, 0, 1, 0.5);
+  d.extra = pickExtra(o, ["format", "id", "title", "start", "dim", "type_speed", "type_sound", "type_sound_volume", "speakers", "scenes"]);
+  d.noServer = !server;
+  server = asObj(server);
+  d.srvExtra = pickExtra(server, ["npcs", "end", "endings", "events", "affinity"]);
+  d.srvNpcs = asList(server.npcs).map(String);
+  d.meta.end_cmds = cmdList(server.end).join("\n");
+  const sa = asObj(server.affinity);
+  const fromMap = m => Object.entries(asObj(m)).map(([npc, add]) => ({ npc: String(npc), add: int(add, 0) })).filter(a => a.add);
+  const fromList = v => Array.isArray(v) ? v.map(a => ({ npc: String(a?.npc ?? ""), add: int(a?.add, 0) })) : v && typeof v === "object" && v.npc ? [{ npc: String(v.npc), add: int(v.add, 0) }] : fromMap(v);
   d.meta.end_aff = fromMap(sa.end);
   const missing = [];
-  const sp = o.speakers || {};
+  const sp = asObj(o.speakers);
   if (!sp.me) d.people.push({ key: "me", name: "{player}", npc: "", faces: [] });
-  for (const [k, v] of Object.entries(sp)) {
-    const p = { key: k, name: String(v?.name ?? k), npc: String(v?.npc ?? ""), faces: [] };
-    for (const [face, file] of Object.entries(v?.portraits || {})) { const b = getBlob(String(file)); if (b) p.faces.push(newFace(b, String(face))); else missing.push(file); }
+  for (const [k, v0] of Object.entries(sp)) {
+    const v = asObj(v0);
+    const p = { key: k, name: String(v.name ?? k), npc: String(v.npc ?? ""), faces: [], extra: pickExtra(v, ["name", "npc", "portraits"]) };
+    for (const [face, file0] of Object.entries(asObj(v.portraits))) {
+      const file = String(file0), b = getBlob(file);
+      if (b) p.faces.push(newFace(b, String(face)));
+      else { missing.push(file); if (okImageName(file)) p.faces.push({ name: String(face), blob: null, url: "", file, missing: true }); }
+    }
     d.people.push(p);
   }
-  const ends = server.endings || {}, evs = server.events || {};
-  const order = Object.keys(o.scenes); const start = o.start && o.scenes[o.start] ? o.start : order[0];
+  // 서버 파일의 항목 가운데 편집기 화면에 자리가 있는 것은 가져오고, 없는 것은 그대로 보관한다 (orphans)
+  const ends = Object.assign({}, asObj(server.endings)), evs = Object.assign({}, asObj(server.events));
+  const aEvs = Object.assign({}, asObj(sa.events)), aEnds = Object.assign({}, asObj(sa.endings));
+  const takeKey = (m, k) => { if (!Object.prototype.hasOwnProperty.call(m, k)) return undefined; const v = m[k]; delete m[k]; return v; };
+  const order = sceneKeys.slice(); const start = o.start != null && Object.prototype.hasOwnProperty.call(o.scenes, String(o.start)) ? String(o.start) : order[0];
   order.sort((a, b) => (a === start ? -1 : b === start ? 1 : 0));
-  for (const k of order) {
-    const v = o.scenes[k] || {};
-    const s = { key: k, name: String(v.name ?? k), lines: (v.lines || []).map(l => ({ who: String(l.who ?? "me"), face: String(l.face ?? ""), text: String(l.text ?? "") })),
-      mode: (v.choices || []).length ? "choices" : v.next ? "next" : "end", next: String(v.next ?? ""), redirects: (v.redirect || []).map(r => ({ npc: String(r.npc ?? ""), min: +r.min || 0, to: String(r.to ?? "") })),
-      end_cmds: (ends[k] || []).join("\n"), choices: [],
-      enter_aff: v.affinity ? fromList(v.affinity) : fromMap((sa.events || {})[v.event]), end_aff: fromMap((sa.endings || {})[k]) };
-    s.choices = (v.choices || []).map(c => ({ text: String(c.text ?? ""), to: String(c.to ?? ""), aff: c.affinity ? fromList(c.affinity) : fromMap((sa.events || {})[c.event]),
-      needNpc: String(c.need?.npc ?? ""), needMin: +c.need?.min || 0, cmds: (c.event && evs[c.event] ? evs[c.event] : []).join("\n"), open: false }));
+  for (const k0 of order) {
+    const v = asObj(o.scenes[k0]), k = sk(k0);
+    const enterEv = ek(v.event);
+    const srvEnter = enterEv ? takeKey(aEvs, v.event == null ? "" : String(v.event).trim()) : undefined;
+    const s = { key: k, name: String(v.name ?? k0), extra: pickExtra(v, ["name", "redirect", "lines", "choices", "next", "event", "affinity"]),
+      lines: asList(v.lines).filter(l => l && typeof l === "object").map(l => ({ who: String(l.who ?? "me"), face: String(l.face ?? ""), text: String(l.text ?? "").replace(/[\r\n]+/g, " "), extra: pickExtra(l, ["who", "face", "text"]) })),
+      mode: asList(v.choices).length ? "choices" : v.next ? "next" : "end", next: v.next ? sk(v.next) : "",
+      redirects: asList(v.redirect).filter(r => r && typeof r === "object").map(r => ({ npc: String(r.npc ?? ""), min: int(r.min, 0), max: hasMax(r.max) ? int(r.max, 100) : null, to: sk(r.to), extra: pickExtra(r, ["npc", "min", "max", "to"]) })),
+      end_cmds: cmdList(takeKey(ends, k0)).join("\n"), choices: [], enterEv,
+      // 실제로 적용되는 것은 서버 값이므로 서버 파일에 있으면 그 값을 쓴다
+      enter_aff: srvEnter !== undefined ? fromMap(srvEnter) : fromList(v.affinity), end_aff: fromMap(takeKey(aEnds, k0)) };
+    s.choices = asList(v.choices).filter(c => c && typeof c === "object").slice(0, CHOICE_MAX).map(c => {
+      const raw = c.event == null ? "" : String(c.event).trim(), ev = ek(c.event);
+      const srvAff = raw ? takeKey(aEvs, raw) : undefined, srvCmds = raw ? takeKey(evs, raw) : undefined;
+      const need = asObj(c.need);
+      return { text: String(c.text ?? ""), to: c.to ? sk(c.to) : "", aff: srvAff !== undefined ? fromMap(srvAff) : fromList(c.affinity),
+        needNpc: String(need.npc ?? ""), needMin: int(need.min, 0), needMax: hasMax(need.max) ? int(need.max, 100) : null,
+        cmds: cmdList(srvCmds).join("\n"), ev, open: false, extra: pickExtra(c, ["text", "to", "affinity", "need", "event"]) };
+    });
+    if (asList(v.choices).length > CHOICE_MAX) missing.unshift(`(선택지 ${asList(v.choices).length}개 중 ${CHOICE_MAX}개만 불러옴: ${k0})`);
     d.scenes.push(s);
   }
+  if (!d.scenes.length) throw new Error("장면이 없어요");
+  d.orphans = { endings: ends, events: evs, affEvents: aEvs, affEndings: aEnds };
   // 키 번호가 겹치지 않게
-  const nums = [...d.people.map(p => p.key), ...d.scenes.map(s => s.key)].map(k => parseInt(k.replace(/\D/g, ""), 10)).filter(n => !isNaN(n));
+  const nums = [...d.people.map(p => p.key), ...d.scenes.map(s => s.key)].map(k => parseInt(String(k).replace(/\D/g, ""), 10)).filter(n => !isNaN(n) && n < 1e9);
   uid = Math.max(uid, ...nums, 0) + 1;
-  return { d, missing };
+  return { d, missing, renamed };
 }
 
+/* ================================================================ 물어보기 창 (confirm 을 쓸 수 없는 화면에서도 동작) */
+function ask(message, buttons) {
+  return new Promise(res => {
+    const done = v => { back.remove(); res(v); };
+    const box = el("div", { class: "askbox", role: "dialog", "aria-modal": "true" }, el("p", { text: message }),
+      el("div", { class: "askbtns" }, buttons.map(([v, t, cls]) => el("button", { class: cls || "", text: t, onclick: () => done(v) }))));
+    const back = el("div", { class: "askback" }, box);
+    back.addEventListener("keydown", e => { if (e.key === "Escape") done(null); });
+    document.body.append(back);
+    box.querySelector("button")?.focus();
+  });
+}
+const libsReady = () => typeof JSZip !== "undefined" && typeof jsyaml !== "undefined";
+
 /* ================================================================ 불러오기 · 내보내기 */
+const ZIP_MAX = 80 * 1024 * 1024, ZIP_ENTRIES = 300, YML_MAX = 2 * 1024 * 1024, IMG_MAX = 20 * 1024 * 1024, TOTAL_MAX = 300 * 1024 * 1024;
 async function importFiles(files) {
   try {
-    let yml = null, srv = null; const blobs = new Map();
+    if (!libsReady()) { toast("zip · yml 을 읽는 라이브러리를 받지 못했어요 (인터넷 연결 확인 후 새로고침)"); return; }
+    let yml = null, srv = null, total = 0; const blobs = new Map();
+    const size = e => (e && e._data && Number.isFinite(e._data.uncompressedSize)) ? e._data.uncompressedSize : 0;
     for (const f of files) {
       const n = f.name.toLowerCase();
       if (n.endsWith(".zip")) {
+        if (f.size > ZIP_MAX) throw new Error("zip 이 너무 커요 (80MB 까지)");
         const zip = await JSZip.loadAsync(f);
-        for (const [path, e] of Object.entries(zip.files)) {
-          if (e.dir) continue; const base = path.split("/").pop();
-          if (base === "dialogue.yml") yml = await e.async("string");
-          else if (base === "server_commands.yml") srv = await e.async("string");
-          else if (/\.(png|jpe?g|webp)$/i.test(base)) blobs.set(base, await e.async("blob"));
+        const entries = Object.entries(zip.files).filter(([, e]) => !e.dir);
+        if (entries.length > ZIP_ENTRIES) throw new Error(`zip 안의 파일이 너무 많아요 (${ZIP_ENTRIES}개까지)`);
+        // 같은 이름이 여러 폴더에 있으면 경로가 가장 얕고 이름순으로 앞선 것 하나만 쓴다
+        entries.sort(([a], [b]) => a.split("/").length - b.split("/").length || (a < b ? -1 : a > b ? 1 : 0));
+        for (const [path, e] of entries) {
+          const base = path.split("/").pop(), isYml = base === "dialogue.yml" || base === "server_commands.yml", isImg = /\.(png|jpe?g|webp)$/i.test(base);
+          if (!isYml && !isImg) continue;
+          if (size(e) > (isYml ? YML_MAX : IMG_MAX)) throw new Error("zip 안의 파일이 너무 커요: " + base);
+          total += size(e); if (total > TOTAL_MAX) throw new Error("zip 을 풀면 너무 커요");
+          if (base === "dialogue.yml") { if (yml === null) yml = await e.async("string"); }
+          else if (base === "server_commands.yml") { if (srv === null) srv = await e.async("string"); }
+          else if (!blobs.has(base)) blobs.set(base, await e.async("blob"));
         }
-      } else if (n === "server_commands.yml" || n.endsWith(".server.yml")) srv = await f.text();
-      else if (/\.ya?ml$/.test(n)) yml = await f.text();
-      else if (f.type.startsWith("image/")) blobs.set(f.name, f);
+      } else if (n === "server_commands.yml" || n.endsWith(".server.yml")) { if (f.size > YML_MAX) throw new Error("yml 이 너무 커요"); srv = await f.text(); }
+      else if (/\.ya?ml$/.test(n)) { if (f.size > YML_MAX) throw new Error("yml 이 너무 커요"); yml = await f.text(); }
+      else if (f.type.startsWith("image/")) { if (f.size <= IMG_MAX) blobs.set(f.name, f); }
     }
     if (!yml) { toast("dialogue.yml을 찾지 못했어요"); return; }
-    const r = fromYaml(jsyaml.load(yml), srv ? jsyaml.load(srv) : null, nm => blobs.get(nm));
+    if (yml.length > YML_MAX || (srv && srv.length > YML_MAX)) throw new Error("yml 이 너무 커요");
+    const doc = jsyaml.load(yml), server = srv ? jsyaml.load(srv) : null;
+    let r;
+    try { r = fromYaml(doc, server, nm => blobs.get(nm), false); }
+    catch (e) {
+      if (!e.badKeys) throw e;
+      const list = [...e.badKeys.scenes.map(k => "장면 id: " + k), ...e.badKeys.events.map(k => "이벤트 이름: " + k)];
+      const a = await ask("이름 규칙에 맞지 않는 키가 있어요 (소문자 · 숫자 · _ · - 로 1~64자).\n\n" + list.slice(0, 12).map(cmt).join("\n") + (list.length > 12 ? `\n… 외 ${list.length - 12}개` : "")
+        + "\n\n자동으로 고쳐서 불러올까요? (이어지는 장면 · 서버 명령어의 이름도 같이 바꿔요)", [["fix", "자동으로 고쳐서 불러오기", "primary"], [null, "취소"]]);
+      if (a !== "fix") return;
+      r = fromYaml(doc, server, nm => blobs.get(nm), true);
+    }
+    if (!(await replaceProject(`"${cmt(r.d.meta.title)}" 대화를 불러오면 지금 편집 중인 대화가 바뀌어요.`))) return;
     D = r.d; selScene = D.scenes[0].key; PV.scene = null; PV.aff = {}; render(); scheduleSave();
-    toast(r.missing.length ? `불러왔어요. 없는 그림 ${r.missing.length}개` : `"${D.meta.title}" 대화를 불러왔어요`);
+    const notes = [];
+    if (r.renamed.length) notes.push("바꾼 이름:\n" + r.renamed.slice(0, 20).map(([a, b]) => `${cmt(a)} → ${b}`).join("\n") + (r.renamed.length > 20 ? `\n… 외 ${r.renamed.length - 20}개` : "") + "\n(이미 서버에 넣은 파일이 있다면 이 대화를 다시 내보내서 같이 바꿔 주세요)");
+    if (r.missing.length) notes.push("찾지 못한 그림 파일:\n" + r.missing.slice(0, 20).map(cmt).join("\n") + "\n(그림과 함께 다시 불러오거나, 인물의 표정을 새로 넣어 주세요. 그대로 내보내면 이 그림은 zip 에 없어요)");
+    if (D.noServer) notes.push("server_commands.yml 없이 불러왔어요. 서버 명령어 · 결말/끝 호감도는 비어 있어요.\n(내보낼 때 server_commands.yml 을 넣을지 물어봐요. 서버의 기존 파일을 빈 파일로 덮어쓰지 않게 조심하세요)");
+    if (notes.length) await ask(notes.join("\n\n"), [["ok", "확인", "primary"]]);
+    else toast(`"${D.meta.title}" 대화를 불러왔어요`);
   } catch (e) { toast("불러오지 못했어요: " + e.message); }
 }
 document.getElementById("importInput").onchange = e => { importFiles([...e.target.files]); e.target.value = ""; };
@@ -801,41 +1002,93 @@ async function saveFile(name, blob) {
   if (window.claude) { toast("이 화면에서는 저장을 쓸 수 없어요. PC의 편집기 파일을 열어 주세요."); return false; }
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); return true;
 }
+/* 내보낼 수 없는 문제 (어느 키가 문제인지 알려 준다) */
+function exportBlockers() {
+  const b = [], seen = new Set();
+  D.scenes.forEach(s => {
+    if (!ID_RE.test(s.key)) b.push([s.key, `장면 "${s.name}" 의 id "${s.key}" 가 이름 규칙에 맞지 않아요 (소문자 · 숫자 · _ · -, 1~64자)`]);
+    if (seen.has(s.key)) b.push([s.key, `장면 id 가 겹쳐요: ${s.key}`]); seen.add(s.key);
+    [s.enterEv, ...s.choices.map(c => c.ev)].forEach(e => { if (e && !ID_RE.test(e)) b.push([s.key, `장면 "${s.name}" 의 이벤트 이름 "${e}" 가 이름 규칙에 맞지 않아요`]); });
+    if (s.lines.some(l => l.text.length > LINE_MAX)) b.push([s.key, `장면 "${s.name}": ${LINE_MAX}자를 넘는 대사가 있어요 (게임이 열지 못해요. 나눠 주세요)`]);
+  });
+  return b;
+}
 document.getElementById("exportBtn").onclick = async () => {
+  if (!libsReady()) { toast("zip 을 만드는 라이브러리를 받지 못했어요 (인터넷 연결 확인 후 새로고침)"); return; }
   if (!ID_RE.test(D.meta.id)) { toast("대화 id는 영어 소문자, 숫자, _, - 만 쓸 수 있어요"); document.getElementById("m_id").focus(); return; }
+  ensureEvents();
+  const blockers = exportBlockers();
+  if (blockers.length) { toast(blockers[0][1]); scrollToScene(blockers[0][0]); return; }
   try {
+    let withServer = true;
+    if (D.noServer) {
+      const a = await ask("이 대화는 server_commands.yml 없이 불러왔어요.\n그대로 만들면 서버 명령어 · 결말/끝 호감도가 (편집기에 다시 적지 않았다면) 빈 파일이 되고, 서버의 기존 파일을 덮어쓰면 명령어가 사라져요.",
+        [["omit", "server_commands.yml 빼고 내보내기", "primary"], ["include", "지금 편집기 내용으로 만들어 넣기"], [null, "취소"]]);
+      if (!a) return;
+      withServer = a === "include";
+      if (withServer) { D.noServer = false; scheduleSave(); renderWarnings(); }
+    }
     const zip = new JSZip(), dir = zip.folder(D.meta.id), names = imageNames();
-    dir.file("dialogue.yml", toYaml()); dir.file("server_commands.yml", toServerYaml());
-    for (const [f, n] of names) dir.file(n, await toPng(f));
-    dir.file("넣는 곳.txt", `1) 이 폴더(${D.meta.id})를 통째로 .minecraft/config/chaca_dialogue/ 안에 넣으세요.\n2) server_commands.yml 은 서버 plugins/ChacademyStory/dialogues/${D.meta.id}.yml 로 넣으세요.\n3) 서버에서 대화 열기: storydialogue <플레이어> ${D.meta.id}\n   혼자 테스트: /story dialogue ${D.meta.id}\n`);
+    dir.file("dialogue.yml", toYaml()); if (withServer) dir.file("server_commands.yml", toServerYaml());
+    const lost = [];
+    for (const [f, n] of names) { if (f.missing) lost.push(n); else dir.file(n, await toPng(f)); }
+    dir.file("넣는 곳.txt", `1) 클라: 이 폴더(${D.meta.id})를 통째로 .minecraft/config/chaca_dialogue/ 안에 넣으세요.\n2) 서버: 같은 폴더를 통째로 plugins/ChacademyStory/dialogues/ 안에 넣으세요 (그림은 없어도 돼요).\n   서버는 dialogue.yml 로 선택지·결말을 검증하고 server_commands.yml 의 명령어·호감도를 실행해요. 넣은 뒤 /cutscene reload\n3) 서버에서 대화 열기: storydialogue <플레이어> ${D.meta.id}\n   혼자 테스트: /story dialogue ${D.meta.id}\n`);
     const blob = await zip.generateAsync({ type: "blob" });
-    if (await saveFile(`${D.meta.id}.zip`, blob)) toast(`${D.meta.id}.zip 저장. config/chaca_dialogue 안에 풀면 돼요`);
+    if (await saveFile(`${D.meta.id}.zip`, blob)) toast(lost.length ? `${D.meta.id}.zip 저장. 그림 ${lost.length}개는 파일이 없어 빠졌어요: ${lost.slice(0, 3).join(", ")}` : `${D.meta.id}.zip 저장. 클라 config/chaca_dialogue 와 서버 dialogues 폴더에 풀면 돼요`);
   } catch (e) { toast("내보내지 못했어요: " + e.message); }
 };
-document.getElementById("newBtn").onclick = () => {
-  if (!confirmInline("지금 대화를 지우고 새로 만들려면 한 번 더 누르세요", "new")) return;
+/* 지금 대화를 다른 것으로 바꾸기 전에: 물어보고, 지금 것을 "이전 초안" 칸에 넣어 둔다 */
+async function replaceProject(message) {
+  const a = await ask(message + "\n지금 것은 [이전 초안 복구] 로 되돌릴 수 있어요.", [["go", "바꾸기", "primary"], [null, "취소"]]);
+  if (a !== "go") return false;
+  clearTimeout(saveT);
+  try { await writeSlot("prev"); }
+  catch { if ((await ask("지금 대화를 이 브라우저에 보관하지 못했어요. 그래도 바꿀까요? (되돌릴 수 없어요)", [["go", "그래도 바꾸기"], [null, "취소", "primary"]])) !== "go") return false; }
+  return true;
+}
+document.getElementById("newBtn").onclick = async () => {
+  if (!(await replaceProject("지금 대화를 지우고 새 대화를 만들어요."))) return;
   D = blankDialogue(); selScene = D.scenes[0].key; PV.scene = null; render(); scheduleSave();
 };
+document.getElementById("prevBtn").onclick = async () => {
+  const prev = await readSlot("prev");
+  if (!prev?.D) { toast("복구할 이전 초안이 없어요"); return; }
+  const a = await ask("불러오기 · 새 대화 직전에 편집하던 대화로 되돌려요. (지금 것은 다시 [이전 초안 복구] 로 돌아올 수 있어요)", [["go", "되돌리기", "primary"], [null, "취소"]]);
+  if (a !== "go") return;
+  clearTimeout(saveT);
+  try { await writeSlot("prev"); } catch {}
+  adopt(prev); selScene = D.scenes[0].key; PV.scene = null; PV.aff = {}; render(); scheduleSave();
+  toast("이전 초안으로 되돌렸어요");
+};
 
-/* ================================================================ 임시 저장 (이 브라우저에만) */
+/* ================================================================ 임시 저장 (이 브라우저에만: 지금 것 "draft", 바꾸기 직전 것 "prev") */
 let saveT;
 function scheduleSave() { clearTimeout(saveT); saveT = setTimeout(saveDraft, 700); }
 function idb() { return new Promise((res, rej) => { const r = indexedDB.open("chaca-dialogue-editor", 1); r.onupgradeneeded = () => r.result.createObjectStore("kv"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); }
-async function saveDraft() {
+async function writeSlot(slot) {
+  const db = await idb();
+  const data = { uid, D: { ...D, people: D.people.map(p => ({ ...p, faces: p.faces.map(f => ({ name: f.name, blob: f.blob, file: f.file, missing: !!f.missing })) })) } };
+  await new Promise((res, rej) => { const tx = db.transaction("kv", "readwrite"); tx.objectStore("kv").put(data, slot); tx.oncomplete = res; tx.onerror = () => rej(tx.error); });
+}
+async function readSlot(slot) {
   try {
     const db = await idb();
-    const data = { uid, D: { ...D, people: D.people.map(p => ({ ...p, faces: p.faces.map(f => ({ name: f.name, blob: f.blob })) })) } };
-    await new Promise((res, rej) => { const tx = db.transaction("kv", "readwrite"); tx.objectStore("kv").put(data, "draft"); tx.oncomplete = res; tx.onerror = () => rej(tx.error); });
-    document.getElementById("saveStatus").textContent = "이 브라우저에 임시 저장됨";
-  } catch { document.getElementById("saveStatus").textContent = "임시 저장 안 됨 · zip으로 보관하세요"; }
+    return await new Promise((res, rej) => { const tx = db.transaction("kv", "readonly"); const r = tx.objectStore("kv").get(slot); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+  } catch { return null; }
+}
+async function saveDraft() {
+  try { await writeSlot("draft"); document.getElementById("saveStatus").textContent = "이 브라우저에 임시 저장됨"; }
+  catch { document.getElementById("saveStatus").textContent = "임시 저장 안 됨 · zip으로 보관하세요"; }
+}
+function adopt(data) {
+  D = normalize(data.D); uid = Math.max(uid, data.uid || 100);
+  D.people.forEach(p => p.faces = p.faces.map(f => f.blob ? newFace(f.blob, f.name) : { name: f.name, blob: null, url: "", file: f.file || "", missing: true }).filter(f => !f.missing || okImageName(f.file)));
 }
 async function loadDraft() {
   try {
-    const db = await idb();
-    const data = await new Promise((res, rej) => { const tx = db.transaction("kv", "readonly"); const r = tx.objectStore("kv").get("draft"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+    const data = await readSlot("draft");
     if (!data?.D) return false;
-    D = normalize(data.D); uid = data.uid || 100;
-    D.people.forEach(p => p.faces = p.faces.map(f => newFace(f.blob, f.name)));
+    adopt(data);
     return true;
   } catch { return false; }
 }
@@ -867,6 +1120,7 @@ let toastT;
 function toast(m) { const t = document.getElementById("toast"); t.textContent = m; t.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 3200); }
 
 (async () => {
+  if (!libsReady()) document.getElementById("offlineNote").hidden = false;
   D = blankDialogue();
   if (!(await loadDraft())) await loadSample();
   selScene = D.scenes[0].key;

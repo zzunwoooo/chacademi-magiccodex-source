@@ -12,7 +12,7 @@ public final class ReplyParser {
     private ReplyParser() {
     }
 
-    /** 검사를 통과한 NPC 대답. */
+    /** 검사를 통과한 NPC 대답. hint 는 참고용이다 (힌트 횟수는 서버가 프롬프트에 넣은 시점 기준으로 센다). */
     public record AiReply(String line, int mood, String quest, String hint, String memo,
                           String promise, Long rumorId, boolean end) {
     }
@@ -70,12 +70,12 @@ public final class ReplyParser {
         return new AiReply(line, mood, quest, hint, memo, promise, rumorId, end);
     }
 
-    /** 대사 정리: 공백 정리, 길이 제한(가능하면 문장 끝에서 자름). */
+    /** 대사 정리: 제어문자·§ 색 코드 제거, 공백 정리, 길이 제한(가능하면 문장 끝에서 자름). */
     public static String cleanLine(String line, int max) {
         if (line == null) {
             return null;
         }
-        String s = line.replace('\n', ' ').replaceAll("\\s+", " ").trim();
+        String s = TextSanitizer.stripUnsafe(line).replaceAll("\\s+", " ").trim();
         if (s.length() >= 2 && s.startsWith("\"") && s.endsWith("\"")) {
             s = s.substring(1, s.length() - 1).trim();
         }
@@ -99,14 +99,8 @@ public final class ReplyParser {
         return cut.trim() + "…";
     }
 
+    /** 메모·약속: 제어문자·색 코드·URL 제거 + 길이 제한. 금지어 검사는 저장 직전에 한다 (TextFilter.isPublicSafe). */
     private static String shortText(String s, int max) {
-        if (s == null) {
-            return null;
-        }
-        s = s.replace('\n', ' ').trim();
-        if (s.isEmpty() || s.equalsIgnoreCase("null")) {
-            return null;
-        }
-        return s.length() > max ? s.substring(0, max) : s;
+        return s == null ? null : TextSanitizer.clean(s, max);
     }
 }

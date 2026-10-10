@@ -4,7 +4,7 @@ package kr.chacademy.cutscene.client;
  * 잉크 번짐 전환용 "언제 칠해지는지" 지도.
  * 값이 작은 칸부터 먼저 새 그림이 드러난다. 줌 중심에서 퍼져 나가고, 노이즈로 가장자리가 번진다.
  *
- * <p>편집기(editor/index.html)의 inkMask() 와 같은 계산이라 미리보기와 게임이 똑같이 보인다.
+ * <p>편집기(editor/cutscene-editor.html)의 inkMask() 와 같은 계산이라 미리보기와 게임이 똑같이 보인다.
  * 한쪽을 고치면 다른 쪽도 같이 고칠 것.
  */
 public final class InkMask {

@@ -1,6 +1,9 @@
 enabled: true
 worlds: [world]
 clock-world: world
+# 계절 길이(마인크래프트 일). SQLite(단독) 모드: clock-world 의 월드 시간 기준.
+# MariaDB 모드: 학교·야생 서버가 DB의 같은 계절 상태를 보며 실제 시간으로 진행한다 (1일 = 실제 20분, 7일 = 2시간 20분).
+# 이때 clock-world 와 잠자기(시간 건너뛰기)는 계절에 영향을 주지 않고, 길이는 마지막으로 /계절관리 를 실행한 서버의 값을 두 서버가 함께 쓴다.
 days-per-season: 7
 automatic: true
 initial-season: spring

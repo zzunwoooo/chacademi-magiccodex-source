@@ -11,56 +11,106 @@ import org.bukkit.util.Vector;
 
 /** Bounded server-owned visual choreography. No damage, inventory, block or mana mutation. */
 public final class CatalogVisualEngine {
-    private static final int MAX_CASTS=128,MAX_PER_PLAYER=8,MAX_PENDING=256;
+    private static final int MAX_PHASES_PER_SPELL=256,MAX_REMEMBERED_FAILURES=512;
+    /** 이 플러그인이 만든 가상 앵커(ArmorStand) 표시. 조준/투사체 판정에서 제외한다. */
+    public static final String ANCHOR_TAG="portablevfx_virtual_anchor";
+    /**
+     * config.yml limits.* 로 조절하는 시전 상한. maxPending 은 시전 하나의 대기 단계 수 상한이고,
+     * finishDrainTicks 는 끝난(FINISH) 단계를 hard STOP 대상으로 더 붙잡아 두는 시간(RelayLimits 와 같은 값)이다.
+     */
+    public record Limits(int maxCasts,int maxPerPlayer,int maxPending,int finishDrainTicks){
+        public static final Limits DEFAULT=new Limits(512,12,256,100);
+        public Limits{
+            maxCasts=Math.max(1,Math.min(8192,maxCasts));maxPerPlayer=Math.max(1,Math.min(64,maxPerPlayer));
+            maxPending=Math.max(16,Math.min(4096,maxPending));finishDrainTicks=Math.max(0,Math.min(1200,finishDrainTicks));
+        }
+    }
     private final PortableVfxService service;
     private final Map<String,Plan> plans;
     private final Map<UUID,Cast> casts=new LinkedHashMap<>();
+    /** 플레이어별 진행 중 시전 수(O(1) 상한 검사용). */
+    private final Map<UUID,Integer> ownerCasts=new HashMap<>();
+    private Limits limits;
     private long tick;
     private String lastFailure="";
+    /** 플레이어별 최근 거부 사유(최근 사용 순, 최대 MAX_REMEMBERED_FAILURES 명). */
+    private final Map<UUID,String> failures=new LinkedHashMap<>(16,.75f,true){
+        @Override protected boolean removeEldestEntry(Map.Entry<UUID,String> eldest){return size()>MAX_REMEMBERED_FAILURES;}
+    };
+    private long tickFailures,phaseFailures,noViewerPhases;
+    private String lastTickFailure="";
+    /** 서버 전체에서 가장 최근에 거부된 시전의 사유(어느 플레이어 것인지는 구분하지 않는다). */
     public String lastFailure(){return lastFailure;}
-    private Boolean rejected(String reason){lastFailure=reason;return false;}
+    /** 이 플레이어의 가장 최근 거부 사유. 없으면 빈 문자열. */
+    public String lastFailure(UUID player){return failures.getOrDefault(player,"");}
+    private Boolean rejected(UUID player,String reason){lastFailure=reason;failures.put(player,reason);return false;}
+    public Limits limits(){return limits;}
+    /** 실행 중인 시전은 그대로 두고 상한만 바꾼다. */
+    public void limits(Limits next){limits=Objects.requireNonNull(next,"limits");}
+    public int activeCasts(){return casts.size();}
+    /** tick 경로에서 예외로 취소된 시전 수(누적). */
+    public long tickFailures(){return tickFailures;}
+    /** 시전은 유지한 채 건너뛴 후속 단계 수(누적). */
+    public long phaseFailures(){return phaseFailures;}
+    /** 받을 수 있는 시청자가 한 명도 없던 후속 단계 수(누적, 시전은 계속된다). */
+    public long noViewerPhases(){return noViewerPhases;}
+    /** 가장 최근 tick 경로/후속 단계 실패 표본. */
+    public String lastTickFailure(){return lastTickFailure;}
+    private void noteFailure(Cast c,String where,RuntimeException failure){lastTickFailure=c.plan.id()+" "+where+": "+failure.getClass().getSimpleName()+": "+failure.getMessage();}
     public record Phase(String trigger,String effect,String anchor,int delay,int ttl,int finishAfter,
                         Vector offset,List<String> stopEffects,double width,double scaleInput,double linkLength,String role,int motionDelay,String impactEffect,String linkSource,String linkTarget,Vector targetOffset,boolean clearStoppedLocal,Vector localAim,String projectileOrigin) {}
     public record Plan(String id,double range,double speed,int maxTicks,int expireTick,String trajectory,List<Phase> phases,List<Map<?,?>> shots,int salvoStart,int salvoInterval,Vector virtualOffset,int virtualLifetime,int maxTargets,int attackInterval,double attackRange,String attackEvent) {}
     private record Pending(long at,long serial,Phase phase) {}
     private static final class Active {
-        UUID handle;Phase phase;Location position;Vector direction;long finishAt,expires,motionAt;double travelled;boolean finished,following;String impactEffect;Vector arcStart,arcEnd;int arcTick,arcTicks;boolean returning;Set<UUID> hitEntities=new HashSet<>();
+        UUID handle;Phase phase;Location position;Vector direction;long finishAt,expires,motionAt;double travelled;boolean finished,following;String impactEffect;Vector arcStart,arcEnd;int arcTick,arcTicks,returnTicks;boolean returning;Set<UUID> hitEntities=new HashSet<>();
     }
     private static final class Cast {
         UUID id,owner,world,target,virtual;Plan plan;Location origin,aim,impact;Vector direction,normal=new Vector(0,1,0);
-        long expires,serial,expireAt,nextAttack;boolean impacted,expired;Set<UUID> chainTargets=new HashSet<>();
+        long expires,serial,expireAt,nextAttack;boolean impacted,expired,starting;int started,seen;Set<UUID> chainTargets=new HashSet<>();
         PriorityQueue<Pending> pending=new PriorityQueue<>(Comparator.comparingLong(Pending::at).thenComparingLong(Pending::serial));
         List<Active> active=new ArrayList<>();
     }
-    public CatalogVisualEngine(PortableVfxService service,Map<String,Plan> plans){this.service=Objects.requireNonNull(service);this.plans=Map.copyOf(plans);}
+    public CatalogVisualEngine(PortableVfxService service,Map<String,Plan> plans){this(service,plans,Limits.DEFAULT);}
+    public CatalogVisualEngine(PortableVfxService service,Map<String,Plan> plans,Limits limits){this.service=Objects.requireNonNull(service);this.plans=Map.copyOf(plans);this.limits=Objects.requireNonNull(limits,"limits");}
     public Set<String> spellIds(){return plans.keySet();}
+    /** 엄격 모드: 잘못된 마법이 하나라도 있으면 전체를 거부한다. */
     public static Map<String,Plan> read(ConfigurationSection root){
         Map<String,Plan> out=new LinkedHashMap<>();
+        for(String id:root.getKeys(false))out.put(id,readPlan(id,root.getConfigurationSection(id)));
+        return out;
+    }
+    /** 마법별 검증: 잘못된 마법만 건너뛰고 problems 에 "ID -> 사유"를 남긴다. 나머지는 정상 로드한다. */
+    public static Map<String,Plan> readLenient(ConfigurationSection root,Map<String,String> problems){
+        Map<String,Plan> out=new LinkedHashMap<>();
         for(String id:root.getKeys(false)){
-            ConfigurationSection s=root.getConfigurationSection(id);if(s==null)throw new IllegalArgumentException("binding must be a map: "+id);
-            double range=finite(s.getDouble("range",15),.1,128,"range"),speed=finite(s.getDouble("speed",1),.01,8,"speed");
-            int maxTicks=s.getInt("max-ticks",VfxProtocol.MAX_DURATION_TICKS);
-            if(maxTicks<1||maxTicks>VfxProtocol.MAX_DURATION_TICKS)throw new IllegalArgumentException("binding duration "+id);
-            List<Phase> phases=new ArrayList<>();
-            for(Map<?,?> p:s.getMapList("phases")){
-                String trigger=text(p,"trigger","cast"),effect=text(p,"effect",""),anchor=text(p,"anchor","target");
-                int delay=integer(p,"delay-ticks",0),ttl=integer(p,"duration-ticks",40),finish=integer(p,"finish-after-ticks",-1);
-                VfxProtocol.validateId(effect);if(!effect.startsWith("claude:"))throw new IllegalArgumentException("Not a Claude effect "+effect);
-                if(!Set.of("caster","target","projectile","impact","external","link").contains(anchor)||delay<0||delay>maxTicks||ttl<1||ttl>VfxProtocol.MAX_DURATION_TICKS||finish< -1||finish>ttl)throw new IllegalArgumentException("Invalid phase "+effect);
-                List<String> stops=new ArrayList<>();Object raw=p.get("stop-effects");if(raw instanceof List<?> list)for(Object x:list)stops.add(x.toString());
-                Vector offset=new Vector();Object vec=p.get("offset");if(vec instanceof List<?> v){if(v.size()!=3)throw new IllegalArgumentException("offset must contain3numbers");offset=new Vector(((Number)v.get(0)).doubleValue(),((Number)v.get(1)).doubleValue(),((Number)v.get(2)).doubleValue());if(!Double.isFinite(offset.lengthSquared())||offset.length()>128)throw new IllegalArgumentException("offset out of bounds");}
-                double linkLength=numeric(p,"link-length",-1,-1,256);
-                if(linkLength<0&&linkLength!=-1)throw new IllegalArgumentException("link-length must be -1 (unset) or nonnegative");
-                phases.add(new Phase(trigger,effect,anchor,delay,ttl,finish,offset,List.copyOf(stops),numeric(p,"width",0,0,VfxProtocol.MAX_EFFECT_WIDTH),numeric(p,"scale-input",0,0,128),linkLength,text(p,"role",anchor.equals("caster")?"attached":"static"),integer(p,"motion-delay-ticks",0),text(p,"impact-effect",""),text(p,"link-source","caster"),text(p,"link-target","target"),vector(p.get("target-offset")),Boolean.TRUE.equals(p.get("clear-stopped-local")),null,text(p,"projectile-origin","caster")));
-            }
-            if(phases.isEmpty()||phases.size()>MAX_PENDING)throw new IllegalArgumentException("No/bloated phases "+id);
-            int expireTick=-1;
-            if(s.isConfigurationSection("sequence"))expireTick=(int)Math.ceil(s.getDouble("sequence.sustainStart",0)*20)+s.getInt("holdTicks",100);
-            List<Map<?,?>> shots=s.getString("salvo-mode","").startsWith("external")?List.of():s.getMapList("salvo.shots");
-            int salvoStart=(int)Math.ceil(s.getDouble("salvo.fireStart.default",1)*20),salvoInterval=(int)Math.ceil(s.getDouble("salvo.interval.default",.2)*20);
-            out.put(id,new Plan(id,range,speed,maxTicks,expireTick,s.getString("trajectory","linear"),List.copyOf(phases),List.copyOf(shots),salvoStart,salvoInterval,s.isConfigurationSection("virtual-anchor")?vector(s.getList("virtual-anchor.offset")):null,s.getInt("virtual-anchor.lifetime-ticks",600),s.getInt("max-targets",s.getInt("target-limit",3)),s.getInt("virtual-anchor.attack-interval-ticks",40),s.getDouble("virtual-anchor.attack-range",15),s.getString("virtual-anchor.attack-event","")));
+            try{out.put(id,readPlan(id,root.getConfigurationSection(id)));}
+            catch(RuntimeException invalid){problems.put(id,invalid.getClass().getSimpleName()+": "+invalid.getMessage());}
         }
         return out;
+    }
+    private static Plan readPlan(String id,ConfigurationSection s){
+        if(s==null)throw new IllegalArgumentException("binding must be a map: "+id);
+        double range=finite(s.getDouble("range",15),.1,128,"range"),speed=finite(s.getDouble("speed",1),.01,8,"speed");
+        int maxTicks=s.getInt("max-ticks",VfxProtocol.MAX_DURATION_TICKS);
+        if(maxTicks<1||maxTicks>VfxProtocol.MAX_DURATION_TICKS)throw new IllegalArgumentException("binding duration "+id);
+        List<Phase> phases=new ArrayList<>();
+        for(Map<?,?> p:s.getMapList("phases")){
+            String trigger=text(p,"trigger","cast"),effect=text(p,"effect",""),anchor=text(p,"anchor","target");
+            int delay=integer(p,"delay-ticks",0),ttl=integer(p,"duration-ticks",40),finish=integer(p,"finish-after-ticks",-1);
+            VfxProtocol.validateId(effect);if(!effect.startsWith("claude:"))throw new IllegalArgumentException("Not a Claude effect "+effect);
+            if(!Set.of("caster","target","projectile","impact","external","link").contains(anchor)||delay<0||delay>maxTicks||ttl<1||ttl>VfxProtocol.MAX_DURATION_TICKS||finish< -1||finish>ttl)throw new IllegalArgumentException("Invalid phase "+effect);
+            List<String> stops=new ArrayList<>();Object raw=p.get("stop-effects");if(raw instanceof List<?> list)for(Object x:list)stops.add(x.toString());
+            Vector offset=new Vector();Object vec=p.get("offset");if(vec instanceof List<?> v){if(v.size()!=3)throw new IllegalArgumentException("offset must contain3numbers");offset=new Vector(((Number)v.get(0)).doubleValue(),((Number)v.get(1)).doubleValue(),((Number)v.get(2)).doubleValue());if(!Double.isFinite(offset.lengthSquared())||offset.length()>128)throw new IllegalArgumentException("offset out of bounds");}
+            double linkLength=numeric(p,"link-length",-1,-1,256);
+            if(linkLength<0&&linkLength!=-1)throw new IllegalArgumentException("link-length must be -1 (unset) or nonnegative");
+            phases.add(new Phase(trigger,effect,anchor,delay,ttl,finish,offset,List.copyOf(stops),numeric(p,"width",0,0,VfxProtocol.MAX_EFFECT_WIDTH),numeric(p,"scale-input",0,0,128),linkLength,text(p,"role",anchor.equals("caster")?"attached":"static"),integer(p,"motion-delay-ticks",0),text(p,"impact-effect",""),text(p,"link-source","caster"),text(p,"link-target","target"),vector(p.get("target-offset")),Boolean.TRUE.equals(p.get("clear-stopped-local")),null,text(p,"projectile-origin","caster")));
+        }
+        if(phases.isEmpty()||phases.size()>MAX_PHASES_PER_SPELL)throw new IllegalArgumentException("No/bloated phases "+id);
+        int expireTick=-1;
+        if(s.isConfigurationSection("sequence"))expireTick=(int)Math.ceil(s.getDouble("sequence.sustainStart",0)*20)+s.getInt("holdTicks",100);
+        List<Map<?,?>> shots=s.getString("salvo-mode","").startsWith("external")?List.of():s.getMapList("salvo.shots");
+        int salvoStart=(int)Math.ceil(s.getDouble("salvo.fireStart.default",1)*20),salvoInterval=(int)Math.ceil(s.getDouble("salvo.interval.default",.2)*20);
+        return new Plan(id,range,speed,maxTicks,expireTick,s.getString("trajectory","linear"),List.copyOf(phases),List.copyOf(shots),salvoStart,salvoInterval,s.isConfigurationSection("virtual-anchor")?vector(s.getList("virtual-anchor.offset")):null,s.getInt("virtual-anchor.lifetime-ticks",600),s.getInt("max-targets",s.getInt("target-limit",3)),s.getInt("virtual-anchor.attack-interval-ticks",40),s.getDouble("virtual-anchor.attack-range",15),s.getString("virtual-anchor.attack-event",""));
     }
     /** null means this catalogue does not own the ID; false means owned but unavailable. */
     public Boolean cast(Player player,String id){return castEvent(player,id,"cast");}
@@ -70,31 +120,39 @@ public final class CatalogVisualEngine {
         lastFailure="";
         if(!Bukkit.isPrimaryThread())throw new IllegalStateException("Catalog casts require the server thread");
         Plan plan=plans.get(id);if(plan==null){lastFailure="no visual plan";return null;}
-        if(!service.supportsCatalogCast(player.getUniqueId()))return rejected("readiness withdrawn");
-        if(player.isDead()||!player.isOnline())return rejected("player dead/offline");
-        if(casts.size()>=MAX_CASTS||casts.values().stream().filter(c->c.owner.equals(player.getUniqueId())).count()>=MAX_PER_PLAYER)return rejected("active cast capacity");
+        UUID pid=player.getUniqueId();
+        if(!service.supportsCatalogCast(pid))return rejected(pid,"readiness withdrawn");
+        if(player.isDead()||!player.isOnline())return rejected(pid,"player dead/offline");
+        if(casts.size()>=limits.maxCasts())return rejected(pid,"server active cast capacity ("+limits.maxCasts()+")");
+        if(ownerCasts.getOrDefault(pid,0)>=limits.maxPerPlayer())return rejected(pid,"player active cast capacity ("+limits.maxPerPlayer()+")");
         Cast c=new Cast();c.id=UUID.randomUUID();c.owner=player.getUniqueId();c.world=player.getWorld().getUID();c.plan=plan;c.origin=player.getLocation();c.direction=player.getEyeLocation().getDirection().normalize();
-        double safeRange=safeRange(player.getEyeLocation(),c.direction,plan.range());if(safeRange<.1)return rejected("safe aim range below0.1");
-        RayTraceResult hit=player.getWorld().rayTrace(player.getEyeLocation(),c.direction,safeRange,FluidCollisionMode.NEVER,true,.3,e->e instanceof LivingEntity&&!e.equals(player));
+        double safeRange=safeRange(player.getEyeLocation(),c.direction,plan.range());if(safeRange<.1)return rejected(pid,"safe aim range below0.1");
+        RayTraceResult hit=player.getWorld().rayTrace(player.getEyeLocation(),c.direction,safeRange,FluidCollisionMode.NEVER,true,.3,e->targetable(player,e));
         c.aim=hit==null?player.getEyeLocation().add(c.direction.clone().multiply(safeRange)):hit.getHitPosition().toLocation(player.getWorld());
         if(plan.trajectory().equals("targeted-meteor")) {
             // The aim ray selects X/Z; this spell always fixes a ground point, even when looking at air or a wall.
             Location ground=TargetedMeteorPath.groundBelow(c.aim);
-            if(ground==null)return rejected("no loaded ground below meteor target");
+            if(ground==null)return rejected(pid,"no loaded ground below meteor target");
             c.aim=ground;c.normal=new Vector(0,1,0);
         } else if(hit!=null&&hit.getHitEntity()!=null)c.target=hit.getHitEntity().getUniqueId();
-        if(c.target==null&&plan.phases().stream().anyMatch(ph->ph.trigger().equals(initialEvent)&&ph.anchor().equals("target")&&ph.role().equals("attached")))return rejected("requires living target");
+        if(c.target==null&&plan.phases().stream().anyMatch(ph->ph.trigger().equals(initialEvent)&&ph.anchor().equals("target")&&ph.role().equals("attached")))return rejected(pid,"requires living target");
         if(!plan.trajectory().equals("targeted-meteor")&&hit!=null&&hit.getHitBlockFace()!=null)c.normal=hit.getHitBlockFace().getDirection();
-        if(!loaded(c.aim))return rejected("aim chunk not loaded");c.expires=tick+plan.maxTicks();c.expireAt=plan.expireTick()<0?-1:tick+plan.expireTick();
-        enqueue(c,initialEvent);if(initialEvent.equals("cast"))enqueueSalvo(c);if(c.pending.isEmpty())return rejected("no phases for event "+initialEvent);
+        if(!loaded(c.aim))return rejected(pid,"aim chunk not loaded");c.expires=tick+plan.maxTicks();c.expireAt=plan.expireTick()<0?-1:tick+plan.expireTick();
+        enqueue(c,initialEvent);if(initialEvent.equals("cast"))enqueueSalvo(c);if(c.pending.isEmpty())return rejected(pid,"no phases for event "+initialEvent);
         if(plan.virtualOffset()!=null){
-            Location spawn=player.getLocation().add(localOffset(plan.virtualOffset(),c.direction));if(!loaded(spawn))return rejected("virtual anchor chunk not loaded");
-            ArmorStand anchor=player.getWorld().spawn(spawn,ArmorStand.class,e->{e.setVisible(false);e.setMarker(true);e.setGravity(false);e.setInvulnerable(true);e.setSilent(true);e.setPersistent(false);e.setCollidable(false);});
+            Location spawn=player.getLocation().add(localOffset(plan.virtualOffset(),c.direction));if(!loaded(spawn))return rejected(pid,"virtual anchor chunk not loaded");
+            ArmorStand anchor=player.getWorld().spawn(spawn,ArmorStand.class,e->{e.setVisible(false);e.setMarker(true);e.setGravity(false);e.setInvulnerable(true);e.setSilent(true);e.setPersistent(false);e.setCollidable(false);e.addScoreboardTag(ANCHOR_TAG);});
             c.virtual=anchor.getUniqueId();c.expireAt=tick+plan.virtualLifetime();c.nextAttack=tick+Math.max(20,plan.attackInterval());
         }
 
-        casts.put(c.id,c);
-        try{runPending(c);return true;}catch(RuntimeException failure){cancel(c.id);return rejected("phase exception "+failure.getClass().getSimpleName()+": "+failure.getMessage());}
+        casts.put(c.id,c);ownerCasts.merge(c.owner,1,Integer::sum);
+        // 시전 직후 단계만 실패를 시전 실패로 돌린다. 이후 단계의 실패/무시청자는 시전을 취소하지 않는다.
+        c.starting=true;
+        try{runPending(c);}catch(RuntimeException failure){cancel(c.id);return rejected(pid,"phase exception "+failure.getClass().getSimpleName()+": "+failure.getMessage());}
+        finally{c.starting=false;}
+        // 예산 때문에 밀린 시청자(deferred/skipped)가 있으면 성공이다. 받을 수 있는 시청자가 아예 없을 때만 거부한다.
+        if(c.started>0&&c.seen==0){cancel(c.id);return rejected(pid,"no eligible viewer in range");}
+        return true;
     }
     public void tick(){
         tick++;
@@ -103,30 +161,47 @@ public final class CatalogVisualEngine {
             if(p==null||!p.isOnline()||p.isDead()||!p.getWorld().getUID().equals(c.world)){cancel(c.id);continue;}
             try{
                 if(tick>=c.expires){cancel(c.id);continue;}
-                if(c.virtual!=null){Entity v=Bukkit.getEntity(c.virtual);if(v==null){cancel(c.id);continue;}Location desired=p.getLocation().add(localOffset(c.plan.virtualOffset(),p.getLocation().getDirection()));Location current=v.getLocation();Vector change=desired.toVector().subtract(current.toVector()).multiply(.25);current.add(change);current.setYaw(p.getLocation().getYaw());current.setPitch(0);if(loaded(current))v.teleport(current);}
+                if(c.virtual!=null){
+                    Entity v=Bukkit.getEntity(c.virtual);if(v==null){cancel(c.id);continue;}
+                    Location base=p.getLocation(),desired=base.clone().add(localOffset(c.plan.virtualOffset(),base.getDirection())),current=v.getLocation();
+                    Vector change=desired.toVector().subtract(current.toVector()).multiply(.25);
+                    float turn=Math.abs(current.getYaw()-base.getYaw())%360;if(turn>180)turn=360-turn;
+                    // 움직였거나 돌았을 때만 teleport: 가만히 선 시전자의 앵커를 매 tick 다시 보내지 않는다.
+                    if(change.lengthSquared()>1e-6||turn>.5f){current.add(change);current.setYaw(base.getYaw());current.setPitch(0);if(loaded(current))v.teleport(current);}
+                }
                 if(c.virtual!=null&&!c.expired&&!c.plan.attackEvent().isEmpty()&&tick>=c.nextAttack){
                     c.nextAttack=tick+Math.max(20,c.plan.attackInterval());Entity anchor=Bukkit.getEntity(c.virtual);
-                    if(anchor!=null){double range=Math.min(64,Math.max(1,c.plan.attackRange()));Entity target=anchor.getNearbyEntities(range,range,range).stream().filter(e->e instanceof Monster&&!e.isDead()).min(Comparator.comparingDouble(e->e.getLocation().distanceSquared(anchor.getLocation()))).orElse(null);
+                    if(anchor!=null){double range=Math.min(64,Math.max(1,c.plan.attackRange()));Entity target=anchor.getNearbyEntities(range,range,range).stream().filter(e->e instanceof Monster&&targetable(p,e)).min(Comparator.comparingDouble(e->e.getLocation().distanceSquared(anchor.getLocation()))).orElse(null);
                         if(target!=null){c.target=target.getUniqueId();c.aim=((LivingEntity)target).getEyeLocation();Location facing=anchor.getLocation();facing.setDirection(c.aim.toVector().subtract(facing.toVector()));facing.setPitch(0);anchor.teleport(facing);enqueue(c,c.plan.attackEvent());}
                     }
                 }
                 if(!c.expired&&c.expireAt>=0&&tick>=c.expireAt){c.expired=true;enqueue(c,"expire");}
                 runPending(c);
                 for(Active a:List.copyOf(c.active)){
+                    // 자연 만료: 릴레이 핸들은 같은 TTL 로 스스로 만료돼 풀린다. 여기서 hard STOP 을 보내면 시전이 이 tick 의
+                    // 엔진 tick 보다 먼저 시작된 경우(다른 플러그인의 예약 작업 등) 1 tick 일찍 도착해 클라이언트의 잔여 입자를 잘라낸다.
                     if(tick>=a.expires){c.active.remove(a);continue;}
-                    if(!a.finished&&a.finishAt>=0&&tick>=a.finishAt){service.finishCast(a.handle);a.finished=true;}
+                    if(!a.finished&&a.finishAt>=0&&tick>=a.finishAt)finish(a,false);
                     if(!a.finished&&a.phase.anchor().equals("projectile")&&tick>=a.motionAt)moveProjectile(c,a);
                     else if(!a.finished&&a.phase.role().equals("link"))updateLink(c,a);
                 }
-                if(c.pending.isEmpty()&&c.active.isEmpty())cancel(c.id);
-            }catch(RuntimeException failure){cancel(c.id);}
+                // 예약된 expire 이벤트가 남아 있으면 그때까지는 시전을 유지한다.
+                if(c.pending.isEmpty()&&c.active.isEmpty()&&(c.expired||c.expireAt<0))cancel(c.id);
+            }catch(RuntimeException failure){tickFailures++;noteFailure(c,"tick",failure);cancel(c.id);}
         }
     }
     private void enqueue(Cast c,String trigger){
-        for(Phase phase:c.plan.phases())if(phase.trigger().equals(trigger)){
-            if(c.pending.size()>=MAX_PENDING)throw new IllegalStateException("Too many queued visual phases");
-            c.pending.add(new Pending(tick+phase.delay(),c.serial++,phase));
-        }
+        for(Phase phase:c.plan.phases())if(phase.trigger().equals(trigger))pend(c,tick+phase.delay(),phase);
+    }
+    /** 모든 대기 단계는 여기로 들어온다: 시전당 limits.maxPending 상한을 한 곳에서 지킨다. */
+    private void pend(Cast c,long at,Phase phase){
+        if(c.pending.size()>=limits.maxPending())throw new IllegalStateException("Too many queued visual phases");
+        c.pending.add(new Pending(at,c.serial++,phase));
+    }
+    /** FINISH 를 보내고, 끝난 단계는 min(원래 만료, 지금 + drain) 까지만 hard STOP 대상으로 남긴다. */
+    private void finish(Active a,boolean clearLocal){
+        if(clearLocal)service.finishCast(a.handle,true);else service.finishCast(a.handle);
+        a.finished=true;a.expires=Math.min(a.expires,tick+limits.finishDrainTicks());
     }
     private void enqueueSalvo(Cast c){
         if(c.plan.shots().isEmpty())return;
@@ -141,12 +216,19 @@ public final class CatalogVisualEngine {
             List<String> stops=new ArrayList<>();raw=shot.get("stopSystems");if(raw instanceof List<?> list)for(Object stop:list)stops.add(prefix+stop.toString().toLowerCase(Locale.ROOT));
             Vector localAim=new Vector(0,0,1);Object aimRaw=shot.get("aim");if(aimRaw instanceof List<?> av&&av.size()==2){double pitch=((Number)av.get(0)).doubleValue(),yaw=((Number)av.get(1)).doubleValue();localAim=new Vector(Math.cos(pitch)*Math.sin(yaw),-Math.sin(pitch),Math.cos(pitch)*Math.cos(yaw));}
             Phase firing=new Phase("cast",p.effect(),"projectile",0,p.ttl(),p.finishAfter(),offset,stops,p.width(),p.scaleInput(),p.linkLength(),p.role(),p.motionDelay(),impact.isEmpty()?"":prefix+impact,p.linkSource(),p.linkTarget(),p.targetOffset(),true,localAim,p.projectileOrigin());
-            c.pending.add(new Pending(tick+c.plan.salvoStart()+(long)index*c.plan.salvoInterval(),c.serial++,firing));
+            pend(c,tick+c.plan.salvoStart()+(long)index*c.plan.salvoInterval(),firing);
         }
     }
-    private void runPending(Cast c){while(!c.pending.isEmpty()&&c.pending.peek().at()<=tick)start(c,c.pending.remove().phase());}
+    private void runPending(Cast c){
+        while(!c.pending.isEmpty()&&c.pending.peek().at()<=tick){
+            Phase phase=c.pending.remove().phase();
+            try{start(c,phase);}
+            // 시전 직후가 아니면 그 단계만 건너뛴다(예: 대상 사망, 예산 초과). 시전 전체를 취소하지 않는다.
+            catch(RuntimeException failure){if(c.starting)throw failure;phaseFailures++;noteFailure(c,"phase "+phase.effect(),failure);}
+        }
+    }
     private void start(Cast c,Phase phase){
-        for(Active old:c.active)if(!old.finished&&phase.stopEffects().contains(old.phase.effect())){service.finishCast(old.handle,phase.clearStoppedLocal());old.finished=true;}
+        for(Active old:c.active)if(!old.finished&&phase.stopEffects().contains(old.phase.effect()))finish(old,phase.clearStoppedLocal());
         Player player=Bukkit.getPlayer(c.owner);if(player==null)throw new IllegalStateException("Owner left");
         Entity target=c.target==null?null:Bukkit.getEntity(c.target);
         Entity virtual=c.virtual==null?null:Bukkit.getEntity(c.virtual);
@@ -170,7 +252,9 @@ public final class CatalogVisualEngine {
         boolean follow=phase.role().equals("attached")&&(phase.anchor().equals("caster")||phase.anchor().equals("target")&&target!=null||phase.anchor().equals("external")&&virtual!=null)&&phase.offset().lengthSquared()==0;
         if(follow)result=service.startFollowCast(request,phase.anchor().equals("target")?target.getUniqueId():phase.anchor().equals("external")?virtual.getUniqueId():c.owner,c.id.getLeastSignificantBits()+c.serial++,phase.width(),phase.scaleInput());
         else result=service.startCast(request,basis,c.id.getLeastSignificantBits()+c.serial++,phase.width(),phase.scaleInput(),link);
-        if(result.recipients()==0)throw new IllegalStateException("No compatible recipients");
+        // 받은 시청자가 없어도 단계는 추적한다: 투사체 이동과 이후 단계(충돌 등)는 계속 진행돼야 한다.
+        boolean reachable=result.recipients()+result.deferred()+result.skippedRateLimited()>0;
+        if(c.starting){c.started++;if(reachable)c.seen++;}else if(!reachable)noViewerPhases++;
         Active a=new Active();a.handle=result.handle();a.phase=phase;a.position=at;a.direction=dir;a.following=follow;a.finishAt=phase.anchor().equals("projectile")||phase.finishAfter()<0?-1:tick+phase.finishAfter();a.expires=tick+phase.ttl();a.motionAt=tick+phase.motionDelay();a.impactEffect=phase.impactEffect();
         if(phase.anchor().equals("projectile")&&c.plan.trajectory().equals("chain-distinct-targets")){
             a.arcStart=at.toVector();a.arcEnd=(target instanceof LivingEntity living?living.getEyeLocation():c.aim).toVector();a.arcTicks=Math.max(2,(int)Math.ceil(a.arcStart.distance(a.arcEnd)/c.plan.speed()));
@@ -179,31 +263,42 @@ public final class CatalogVisualEngine {
     }
     private void moveProjectile(Cast c,Active a){
         String trajectory=c.plan.trajectory();if(trajectory.equals("targeted-meteor")){moveMeteor(c,a);return;}if(trajectory.equals("chain-distinct-targets")){moveChain(c,a);return;}Player owner=Bukkit.getPlayer(c.owner);
-        if(trajectory.equals("out-and-back")&&a.returning&&owner!=null){
-            Vector home=owner.getEyeLocation().toVector().subtract(a.position.toVector());
-            if(home.length()<=c.plan.speed()){service.finishCast(a.handle,true);a.finished=true;c.impact=owner.getEyeLocation();enqueue(c,"external:return_to_caster");runPending(c);return;}
-            a.direction=home.normalize();
+        if(trajectory.equals("out-and-back")&&a.returning){
+            /*
+             * 귀환 구간: 블록은 통과해서 시전자에게 돌아온다(예전에는 블록에 닿으면 TTL 이 끝날 때까지 제자리에 멈췄다).
+             * 시전자가 계속 달아나 따라잡지 못하거나 경로가 로드되지 않았으면 귀환을 그 자리에서 끝내고
+             * external:return_to_caster 를 시전자 위치에서 발생시킨다. 귀환 중에도 엔티티 접촉(external:contact)은 그대로 처리한다.
+             */
+            Location home=owner==null?null:owner.getEyeLocation();
+            Vector toHome=home==null?null:home.toVector().subtract(a.position.toVector());
+            int limit=(int)Math.ceil(c.plan.range()/c.plan.speed())*2+40;
+            if(toHome==null||toHome.length()<=c.plan.speed()||++a.returnTicks>limit){returned(c,a,home);return;}
+            a.direction=toHome.normalize();
         }
         double step=a.returning?c.plan.speed():Math.min(c.plan.speed(),Math.max(0,c.plan.range()-a.travelled));
         if(step<=0){
             if(trajectory.equals("out-and-back")){a.returning=true;return;}
-            service.finishCast(a.handle,true);a.finished=true;c.impact=a.position;c.normal=a.direction.clone().multiply(-1);
+            finish(a,true);c.impact=a.position;c.normal=a.direction.clone().multiply(-1);
             if(c.plan.phases().stream().anyMatch(p->p.trigger().equals("expire")))enqueue(c,"expire");else enqueueImpact(c,a);runPending(c);return;
         }
-        Location next=a.position.clone().add(a.direction.clone().multiply(step));if(!loadedSegment(a.position,next)){service.finishCast(a.handle,true);a.finished=true;return;}
-        RayTraceResult hit=a.position.getWorld().rayTrace(a.position,a.direction,step,FluidCollisionMode.NEVER,true,.25,e->e instanceof LivingEntity&&!e.getUniqueId().equals(c.owner)&&!e.getUniqueId().equals(c.virtual)&&!a.hitEntities.contains(e.getUniqueId()));
+        Location next=a.position.clone().add(a.direction.clone().multiply(step));if(!loadedSegment(a.position,next)){if(a.returning)returned(c,a,owner==null?null:owner.getEyeLocation());else finish(a,true);return;}
+        RayTraceResult hit=a.position.getWorld().rayTrace(a.position,a.direction,step,FluidCollisionMode.NEVER,true,.25,e->targetable(owner,e)&&!e.getUniqueId().equals(c.owner)&&!e.getUniqueId().equals(c.virtual)&&!a.hitEntities.contains(e.getUniqueId()));
+        if(a.returning&&hit!=null&&hit.getHitEntity()==null)hit=null; // 귀환 중에는 블록 충돌을 무시한다
         if(hit!=null){
             Entity entity=hit.getHitEntity();Vector normal=hit.getHitBlockFace()==null?a.direction.clone().multiply(-1):hit.getHitBlockFace().getDirection();
             Location point=hit.getHitPosition().toLocation(a.position.getWorld());
             if(entity!=null&&(trajectory.equals("piercing")||trajectory.equals("ground")||trajectory.equals("out-and-back"))){
                 a.hitEntities.add(entity.getUniqueId());c.impact=point;c.normal=normal;
                 enqueue(c,trajectory.equals("piercing")?"external:pierce_enemy":trajectory.equals("ground")?"external:wave_touches_enemy":"external:contact");runPending(c);
-                if(trajectory.equals("piercing")&&a.hitEntities.size()>=c.plan.maxTargets()){service.finishCast(a.handle,true);a.finished=true;enqueue(c,"expire");runPending(c);return;}
+                if(trajectory.equals("piercing")&&a.hitEntities.size()>=c.plan.maxTargets()){finish(a,true);enqueue(c,"expire");runPending(c);return;}
             }else if(trajectory.equals("out-and-back")){a.returning=true;a.hitEntities.clear();return;}
-            else if(trajectory.equals("piercing")){service.finishCast(a.handle,true);a.finished=true;c.impact=point;c.normal=normal;enqueue(c,"external:block_contact");enqueue(c,"expire");runPending(c);return;}
+            else if(trajectory.equals("piercing")){finish(a,true);c.impact=point;c.normal=normal;enqueue(c,"external:block_contact");enqueue(c,"expire");runPending(c);return;}
             else{impact(c,a,point,normal);return;}
         }
         a.position=next;a.travelled+=step;service.updateCast(a.handle,next.getX(),next.getY(),next.getZ(),EffectBasis.projectile(a.direction.getX(),a.direction.getY(),a.direction.getZ()));
+    }
+    private void returned(Cast c,Active a,Location home){
+        finish(a,true);c.impact=home==null?a.position:home;enqueue(c,"external:return_to_caster");runPending(c);
     }
     private void moveMeteor(Cast c,Active a){
         // Targeting range is not flight distance: the authored sky offset is over 30 blocks long.
@@ -211,7 +306,7 @@ public final class CatalogVisualEngine {
         if(remaining<1e-6){impact(c,a,c.aim,new Vector(0,1,0));return;}
         a.direction=delta.clone().normalize();double step=Math.min(c.plan.speed(),remaining);
         Location next=a.position.clone().add(a.direction.clone().multiply(step));
-        if(!loadedSegment(a.position,next)){service.finishCast(a.handle,true);a.finished=true;return;}
+        if(!loadedSegment(a.position,next)){finish(a,true);return;}
         RayTraceResult hit=a.position.getWorld().rayTraceBlocks(a.position,a.direction,step,FluidCollisionMode.NEVER,true);
         if(hit!=null){impact(c,a,hit.getHitPosition().toLocation(a.position.getWorld()),hit.getHitBlockFace()==null?new Vector(0,1,0):hit.getHitBlockFace().getDirection());return;}
         if(step>=remaining-1e-6){impact(c,a,c.aim,new Vector(0,1,0));return;}
@@ -223,39 +318,46 @@ public final class CatalogVisualEngine {
         Vector nextPoint=a.arcStart.clone().multiply(1-t).add(a.arcEnd.clone().multiply(t)).add(new Vector(0,Math.sin(Math.PI*t),0));
         Location next=nextPoint.toLocation(a.position.getWorld());if(!loadedSegment(a.position,next)){finishChain(c,a,a.position,null);return;}
         Vector delta=next.toVector().subtract(a.position.toVector());double distance=delta.length();
-        RayTraceResult hit=distance<1e-6?null:a.position.getWorld().rayTrace(a.position,delta.clone().normalize(),distance,FluidCollisionMode.NEVER,true,.3,e->e instanceof LivingEntity&&!e.getUniqueId().equals(c.owner)&&!e.getUniqueId().equals(c.virtual)&&!c.chainTargets.contains(e.getUniqueId()));
+        Player owner=Bukkit.getPlayer(c.owner);
+        RayTraceResult hit=distance<1e-6?null:a.position.getWorld().rayTrace(a.position,delta.clone().normalize(),distance,FluidCollisionMode.NEVER,true,.3,e->targetable(owner,e)&&!e.getUniqueId().equals(c.owner)&&!e.getUniqueId().equals(c.virtual)&&!c.chainTargets.contains(e.getUniqueId()));
         if(hit!=null){finishChain(c,a,hit.getHitPosition().toLocation(a.position.getWorld()),hit.getHitEntity());return;}
         a.position=next;if(distance>1e-6)a.direction=delta.normalize();
         service.updateCast(a.handle,next.getX(),next.getY(),next.getZ(),EffectBasis.projectile(a.direction.getX(),a.direction.getY(),a.direction.getZ()));
         if(t>=1){Entity target=c.target==null?null:Bukkit.getEntity(c.target);finishChain(c,a,next,target!=null&&target.getLocation().distanceSquared(next)<4?target:null);}
     }
     private void finishChain(Cast c,Active a,Location at,Entity hit){
-        service.finishCast(a.handle,true);a.finished=true;c.impact=at;c.normal=a.direction.clone().multiply(-1);
+        finish(a,true);c.impact=at;c.normal=a.direction.clone().multiply(-1);
         if(hit!=null)c.chainTargets.add(hit.getUniqueId());
-        Entity next=null;
-        if(hit!=null&&c.chainTargets.size()<c.plan.maxTargets())next=at.getWorld().getNearbyEntities(at,c.plan.range(),c.plan.range(),c.plan.range()).stream().filter(e->e instanceof Monster&&!e.isDead()&&!c.chainTargets.contains(e.getUniqueId())&&e.getLocation().distanceSquared(at)<=c.plan.range()*c.plan.range()).min(Comparator.comparingDouble(e->e.getLocation().distanceSquared(at))).orElse(null);
+        Entity next=null;Player owner=Bukkit.getPlayer(c.owner);
+        if(hit!=null&&c.chainTargets.size()<c.plan.maxTargets())next=at.getWorld().getNearbyEntities(at,c.plan.range(),c.plan.range(),c.plan.range()).stream().filter(e->e instanceof Monster&&targetable(owner,e)&&!c.chainTargets.contains(e.getUniqueId())&&e.getLocation().distanceSquared(at)<=c.plan.range()*c.plan.range()).min(Comparator.comparingDouble(e->e.getLocation().distanceSquared(at))).orElse(null);
         if(next!=null){c.target=next.getUniqueId();enqueue(c,"external:nonfinal_hit");}
         else enqueue(c,"external:final_hit");
         runPending(c);
     }
     private void impact(Cast c,Active a,Location at,Vector normal){
         // Impact termination must kill local projectile particles while world-space trails retain their tails.
-        service.finishCast(a.handle,true);a.finished=true;c.impact=at;c.normal=normal;
+        finish(a,true);c.impact=at;c.normal=normal;
         enqueueImpact(c,a);runPending(c);
     }
     private void enqueueImpact(Cast c,Active a){
         if(a.impactEffect.isEmpty())enqueue(c,"impact");
-        else for(Phase p:c.plan.phases())if(p.trigger().equals("impact")&&p.effect().equals(a.impactEffect))c.pending.add(new Pending(tick+p.delay(),c.serial++,p));
+        else for(Phase p:c.plan.phases())if(p.trigger().equals("impact")&&p.effect().equals(a.impactEffect))pend(c,tick+p.delay(),p);
     }
     private void updateLink(Cast c,Active a){
         Player p=Bukkit.getPlayer(c.owner);Entity target=c.target==null?null:Bukkit.getEntity(c.target);if(p==null)return;
         Location at=(a.phase.linkSource().equals("target")?c.aim.clone():p.getLocation()).add(localOffset(a.phase.offset(),p.getLocation().getDirection()));Location end=(a.phase.linkTarget().equals("caster")?p.getLocation():target==null?c.aim.clone():target.getLocation()).add(localOffset(a.phase.targetOffset(),p.getLocation().getDirection()));
-        if(!at.getWorld().equals(end.getWorld())){service.finishCast(a.handle);a.finished=true;return;}
+        if(!at.getWorld().equals(end.getWorld())){finish(a,false);return;}
         Vector d=end.toVector().subtract(at.toVector());double len=d.length();if(len<1e-5)d=new Vector(0,0,1);else d.normalize();
         service.updateCast(a.handle,at.getX(),at.getY(),at.getZ(),EffectBasis.projectile(d.getX(),d.getY(),d.getZ()),len);
     }
     /** External server events may activate named branches; clients cannot supply this input. */
-    public boolean trigger(UUID castId,String event){Cast c=casts.get(castId);if(c==null||c.plan.phases().stream().noneMatch(p->p.trigger().equals(event)))return false;if(event.equals("external:trigger")){if(c.expired)return false;c.expired=true;}enqueue(c,event);runPending(c);return true;}
+    public boolean trigger(UUID castId,String event){
+        Cast c=casts.get(castId);if(c==null||c.plan.phases().stream().noneMatch(p->p.trigger().equals(event)))return false;
+        if(event.equals("external:trigger")){if(c.expired)return false;c.expired=true;}
+        // 호출자(게임플레이 어댑터)에게 예외를 던지지 않는다: 대기열 초과 같은 실패는 그 시전만 정리한다.
+        try{enqueue(c,event);runPending(c);return true;}
+        catch(RuntimeException failure){tickFailures++;noteFailure(c,"event "+event,failure);cancel(c.id);return false;}
+    }
     public int trigger(UUID owner,String spellId,String event,Location point,UUID target){
         if(!Bukkit.isPrimaryThread())throw new IllegalStateException("Visual events require server thread");
         int delivered=0;
@@ -269,7 +371,35 @@ public final class CatalogVisualEngine {
     public void removePlayer(UUID player){for(Cast c:List.copyOf(casts.values()))if(c.owner.equals(player))cancel(c.id);}
     public void removeWorld(UUID world){for(Cast c:List.copyOf(casts.values()))if(c.world.equals(world))cancel(c.id);}
     public void clear(){for(UUID id:List.copyOf(casts.keySet()))cancel(id);}
-    private void cancel(UUID id){Cast c=casts.remove(id);if(c!=null){for(Active a:c.active)service.stop(a.handle);if(c.virtual!=null){Entity e=Bukkit.getEntity(c.virtual);if(e!=null)e.remove();}}}
+    /**
+     * 플러그인 비활성화 전용. 서비스(활성 상태/메인 스레드 검사)를 거치지 않고 가상 엔티티만 지운다.
+     * 릴레이 핸들과 클라이언트 정리는 RelayEngine.shutdown() 과 클라이언트 TTL 이 맡는다. 실패한 엔티티 수를 돌려준다.
+     */
+    public int shutdown(){
+        int failed=0;
+        for(Cast c:List.copyOf(casts.values())){try{removeVirtual(c);}catch(RuntimeException failure){failed++;}}
+        casts.clear();ownerCasts.clear();
+        return failed;
+    }
+    /** 가상 엔티티를 먼저 지우고, 핸들 정리는 하나가 실패해도 나머지를 계속한다. */
+    private void cancel(UUID id){
+        Cast c=casts.remove(id);if(c==null)return;
+        ownerCasts.computeIfPresent(c.owner,(owner,count)->count>1?count-1:null);
+        try{removeVirtual(c);}catch(RuntimeException failure){noteFailure(c,"anchor removal",failure);}
+        for(Active a:c.active){try{service.stop(a.handle);}catch(RuntimeException failure){noteFailure(c,"stop",failure);}}
+    }
+    private static void removeVirtual(Cast c){if(c.virtual!=null){Entity e=Bukkit.getEntity(c.virtual);if(e!=null)e.remove();}}
+    /**
+     * 조준/투사체/연쇄 대상 판정. 시전자가 볼 수 없는(숨김·vanish) 엔티티, 관전자, marker ArmorStand,
+     * 이 플러그인의 가상 앵커, 죽었거나 무효인 엔티티는 대상이 아니다.
+     */
+    private static boolean targetable(Player caster,Entity e){
+        if(!(e instanceof LivingEntity)||e.isDead()||!e.isValid())return false;
+        if(e instanceof ArmorStand stand&&stand.isMarker())return false;
+        if(e.getScoreboardTags().contains(ANCHOR_TAG))return false;
+        if(e instanceof Player other&&other.getGameMode()==GameMode.SPECTATOR)return false;
+        return caster==null||!e.getUniqueId().equals(caster.getUniqueId())&&caster.canSee(e);
+    }
     private static double safeRange(Location from,Vector direction,double requested){double last=0;for(double d=0;d<=requested;d+=.5){if(!loaded(from.clone().add(direction.clone().multiply(d))))break;last=d;}return last;}
     private static boolean loadedSegment(Location from,Location to){Vector delta=to.toVector().subtract(from.toVector());double length=delta.length();return length<1e-8||safeRange(from,delta.normalize(),length)+.5>=length&&loaded(to);}
     private static boolean loaded(Location at){return at.getWorld()!=null&&at.getWorld().isChunkLoaded(at.getBlockX()>>4,at.getBlockZ()>>4);}

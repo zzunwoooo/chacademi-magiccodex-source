@@ -35,6 +35,35 @@ public record DatabaseSettings(boolean mariaDb, String url, String user, String 
                         + (sslMode.isEmpty() ? "" : "&sslMode=" + sslMode), user, password);
     }
 
+    /** Human-readable active mode: {@code "MariaDB"} or {@code "SQLite"}. Never touches the database. */
+    public String modeName() {
+        return mariaDb ? "MariaDB" : "SQLite";
+    }
+
+    /** {@code host:port/database} of the MariaDB target (no credentials, no options); empty for SQLite. */
+    public String target() {
+        if (!mariaDb) return "";
+        String text = url.startsWith("jdbc:mariadb://") ? url.substring("jdbc:mariadb://".length()) : url;
+        int query = text.indexOf('?');
+        return query < 0 ? text : text.substring(0, query);
+    }
+
+    /**
+     * One startup log line for a settings file: file name, whether it exists and the mode that results.
+     * A missing file silently means SQLite in {@link #load(Path)}; callers log this line so that is visible.
+     * Credentials are never included.
+     */
+    public static String describe(Path file, DatabaseSettings settings) {
+        boolean exists = Files.exists(file);
+        return "DB 설정 " + file.getFileName() + ": " + (exists ? "파일 있음" : "파일 없음 → SQLite 기본값")
+                + ", 모드=" + settings.modeName() + (settings.mariaDb() ? " (" + settings.target() + ")" : "");
+    }
+
+    /** Loads the file and returns it together with its {@link #describe} line. */
+    public static String describe(Path file) throws IOException {
+        return describe(file, load(file));
+    }
+
     public Connection connect(Path sqliteFile) throws Exception {
         if (mariaDb) {
             Class.forName("org.mariadb.jdbc.Driver");

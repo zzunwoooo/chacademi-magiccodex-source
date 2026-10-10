@@ -16,6 +16,21 @@ class ClimateTest {
         var c=new SeasonClock(0,0,true,168000,0);c.observe(200000);assertEquals(1,c.season());c.observe(1000);assertEquals(1,c.season());assertEquals(2,c.day());
         c.set(2,1000,false);c.observe(9999999);assertEquals(2,c.season());
     }
+    @Test void sharedSeasonUsesWallClockAndAgreesAcrossServers(){
+        long day=24000*SeasonClock.MILLIS_PER_TICK;assertEquals(20*60*1000L,day); // 마인크래프트 하루 = 실제 20분
+        long anchor=1_800_000_000_000L;var shared=new SeasonClock.Shared(3,anchor,true,7*24000);
+        assertEquals(shared,SeasonClock.Shared.decode(shared.encode()));
+        // 두 서버가 같은 상태를 같은 시각에 읽으면 월드 시간과 무관하게 같은 계절·날짜가 나온다.
+        var school=shared.clock(anchor+7*day-50);var wild=SeasonClock.Shared.decode(shared.encode()).clock(anchor+7*day-50);
+        assertEquals(3,school.season());assertEquals(7,school.day());assertEquals(school.season(),wild.season());assertEquals(school.day(),wild.day());
+        assertEquals(0,shared.clock(anchor+7*day).season());assertEquals(1,shared.clock(anchor+7*day).day());
+        assertEquals(3,shared.clock(anchor-60_000).season()); // 시계가 조금 어긋난 서버: 기준 시각 이전은 시작 계절
+        assertEquals(2,new SeasonClock.Shared(2,anchor,false,7*24000).clock(anchor+100*day).season());
+        // 로컬 시계(틱) → 공유 상태 → 다시 시계: 계절과 진행도가 유지된다.
+        var local=shared.clock(anchor+3*day);var round=SeasonClock.Shared.of(local);assertEquals(shared,round);
+        for(String bad:new String[]{"","v1;4;0;1;168000","v1;0;-1;1;168000","v1;0;0;2;168000","v1;0;0;1;100","v2;0;0;1;168000","v1;x;0;1;168000"})assertThrows(IllegalArgumentException.class,()->SeasonClock.Shared.decode(bad));
+        assertThrows(IllegalArgumentException.class,()->SeasonClock.Shared.decode(null));
+    }
     @Test void extremesAndNamespacedBiomeOffsetFormula(){
         assertEquals(36,ClimateMath.temperature(22,36,6000,0,false,2));
         assertEquals(22,ClimateMath.temperature(22,36,18000,0,false,2));

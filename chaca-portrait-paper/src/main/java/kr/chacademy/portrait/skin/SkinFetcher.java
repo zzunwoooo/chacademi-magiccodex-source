@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.profile.PlayerTextures;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.net.http.HttpClient;
@@ -61,16 +60,34 @@ public final class SkinFetcher {
         }
         URI https = URI.create("https://textures.minecraft.net" + uri.getRawPath());
         HttpRequest req = HttpRequest.newBuilder(https).timeout(Duration.ofSeconds(12)).GET().build();
-        HttpResponse<InputStream> res = http.send(req, HttpResponse.BodyHandlers.ofInputStream());
-        try (InputStream in = res.body()) {
-            if (res.statusCode() != 200) {
-                throw new IOException("스킨 다운로드 실패 " + res.statusCode());
-            }
-            byte[] bytes = in.readNBytes(MAX_BYTES + 1);
-            if (bytes.length > MAX_BYTES) {
-                throw new IOException("스킨 파일이 너무 큼");
-            }
-            return bytes;
+        // HttpRequest.timeout 은 응답 헤더까지만 본다 → 본문 수신까지 포함해 전체 20초 제한 (넘으면 취소).
+        java.util.concurrent.CompletableFuture<HttpResponse<byte[]>> f =
+                http.sendAsync(req, kr.chacademy.portrait.ai.LimitedResponseBody.bytes(MAX_BYTES));
+        HttpResponse<byte[]> res;
+        try {
+            res = f.get(20, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (java.util.concurrent.TimeoutException e) {
+            f.cancel(true);
+            throw new IOException("스킨 다운로드 시간 초과");
+        } catch (java.util.concurrent.ExecutionException e) {
+            Throwable c = e.getCause();
+            throw new IOException("스킨 다운로드 실패: " + (c == null ? e : c).getClass().getSimpleName());
+        } catch (InterruptedException e) {
+            f.cancel(true);
+            throw e;
+        }
+        if (res.statusCode() != 200) {
+            throw new IOException("스킨 다운로드 실패 " + res.statusCode());
+        }
+        return res.body();
+    }
+
+    /** 플러그인 종료 시: 연결·내부 스레드 정리. */
+    public void close() {
+        try {
+            http.shutdownNow();
+        } catch (RuntimeException ignored) {
+            // 무시
         }
     }
 }

@@ -29,7 +29,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerUnregisterChannelEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.plugin.ServicePriority;
@@ -46,6 +48,25 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
     private dev.portablevfx.paper.internal.spell.CatalogVisualEngine catalogVisuals;
     private long lastTransportWarningTick = Long.MIN_VALUE;
     private boolean bindingDriftChecked;
+    /** effect 채널을 등록한 플레이어. 등록/해제 이벤트로 유지하고 주기적으로 대조한다(패킷마다 채널 목록을 복사하지 않는다). */
+    private final java.util.Set<UUID> effectChannel = new java.util.HashSet<>();
+    /** 월드 UID -> namespaced key 문자열(스냅샷마다 문자열을 새로 만들지 않는다). */
+    private final java.util.Map<UUID, String> worldKeys = new java.util.HashMap<>();
+    private int housekeepingTick;
+    /** 시전 거부 집계: 사유별 횟수와 표본 1건을 모아 REFUSAL_LOG_INTERVAL_MS 마다 한 줄로 남긴다. */
+    private static final long REFUSAL_LOG_INTERVAL_MS = 10_000L;
+    private static final int CHANNEL_RESYNC_TICKS = 100, MAX_REFUSAL_REASONS = 32;
+    private final java.util.Map<String, int[]> refusals = new java.util.LinkedHashMap<>();
+    private int refusalTotal;
+    private UUID refusalPlayer;
+    private String refusalPlayerName = "", refusalSpell = "", refusalReason = "";
+    private RuntimeException refusalStack;
+    private long lastRefusalLog, reportedTickFailures, reportedPhaseFailures, tickerFailures, reportedTickerFailures;
+    private String tickerFailureSample = "";
+    private Object reportedVisuals;
+
+    /** 카탈로그 (재)로딩 결과. applied=false 면 이전 카탈로그가 그대로다. */
+    private record CatalogReload(boolean applied, int spells, int bindings, java.util.Map<String, String> skipped, String error) {}
 
     @Override
     public void onEnable() {
@@ -60,33 +81,102 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
         getServer().getMessenger().registerIncomingPluginChannel(this, dev.portablevfx.protocol.CatalogReadiness.CHANNEL, this);
         getServer().getMessenger().registerOutgoingPluginChannel(this, VfxProtocol.EFFECT_CHANNEL);
         getServer().getPluginManager().registerEvents(this, this);
+        // 플러그인 재활성화: 이미 접속한 플레이어의 채널 등록 상태를 한 번 읽어 둔다.
+        effectChannel.clear();
+        for (Player player : getServer().getOnlinePlayers()) syncEffectChannel(player);
         service = new ServerService();
-        reloadSpellCatalog();
+        reloadSpellCatalog(true, engine.limits().maxDurationTicks());
         getServer().getServicesManager().register(PortableVfxService.class, service, this, ServicePriority.Normal);
         PluginCommand command = Objects.requireNonNull(getCommand("pvfxserverdebug"), "pvfxserverdebug missing from plugin.yml");
         command.setExecutor(this);
         command.setTabCompleter(this);
-        ticker = getServer().getScheduler().runTaskTimer(this, () -> { engine.tick(); if(catalogVisuals!=null)catalogVisuals.tick(); }, 1L, 1L);
+        ticker = getServer().getScheduler().runTaskTimer(this, this::tickRuntime, 1L, 1L);
         // After all channels are registered: ask already-connected clients to hello again.
         getServer().getScheduler().runTask(this, this::requestClientHellos);
         getLogger().info("PortableVFX relay enabled; protocol " + VfxProtocol.VERSION + ", no gameplay hooks.");
     }
 
-    /** Called only by the existing MagicCodex mana transaction; this method never charges mana. */
+    /** tick 작업 하나가 실패해도 다음 작업과 다음 tick 은 계속 돈다. 실패는 집계 로그로만 남긴다. */
+    private void tickRuntime() {
+        try { engine.tick(); } catch (RuntimeException failure) { tickerFailed("relay", failure); }
+        try { if (catalogVisuals != null) catalogVisuals.tick(); } catch (RuntimeException failure) { tickerFailed("catalog", failure); }
+        if (++housekeepingTick >= CHANNEL_RESYNC_TICKS) { housekeepingTick = 0; resyncEffectChannels(); }
+        flushRefusalLog();
+    }
+
+    private void tickerFailed(String where, RuntimeException failure) {
+        tickerFailures++;
+        tickerFailureSample = where + ": " + failure;
+        if (refusalStack == null) refusalStack = failure;
+    }
+
+    /**
+     * Called only by the existing MagicCodex mana transaction; this method never charges mana.
+     * null: 이 카탈로그의 마법이 아님. false: 연출을 시작하지 못함(호출자가 마나를 환불하고 시전을 실패 처리한다).
+     * 거부는 건별 로그 대신 사유별로 집계해 약 10초에 한 줄만 남긴다.
+     */
     public Boolean castAuthorizedSpell(Player player,String id) {
-        if(spellCatalog==null||spellCatalog.resolve(id).isEmpty())return null;
-        if(catalogVisuals==null||!spellCatalog.resolve(id).orElseThrow().enabled()){
-            getLogger().warning("Catalog cast refused "+id+": visuals="+(catalogVisuals!=null)+", enabled="+spellCatalog.resolve(id).orElseThrow().enabled());return false;
-        }
+        if(spellCatalog==null)return null;
+        var spell=spellCatalog.resolve(id).orElse(null);
+        if(spell==null)return null;
+        if(catalogVisuals==null)return refuse(player,id,"visual engine unavailable",null);
+        if(!spell.enabled())return refuse(player,id,"spell disabled in catalogue",null);
         if(!engine.supportsCatalogCast(player.getUniqueId())){
-            getLogger().warning("Catalog cast refused "+id+": "+engine.catalogDiagnostic(player.getUniqueId()));
-            player.sendActionBar(net.kyori.adventure.text.Component.text("마법 이펙트가 아직 준비되지 않았습니다. 로딩 완료 후 다시 시도하세요."));return false;
+            player.sendActionBar(net.kyori.adventure.text.Component.text("마법 이펙트가 아직 준비되지 않았습니다. 로딩 완료 후 다시 시도하세요."));
+            return refuse(player,id,"client not ready",null);
         }
         Boolean result;
         try{result=catalogVisuals.cast(player,id);}
-        catch(RuntimeException failure){getLogger().log(java.util.logging.Level.WARNING,"Catalog visual dispatch exception "+id,failure);throw failure;}
-        if(!Boolean.TRUE.equals(result))getLogger().warning("Catalog visual dispatch refused "+id+": "+catalogVisuals.lastFailure()+" / "+engine.catalogDiagnostic(player.getUniqueId()));
-        return result==null?Boolean.FALSE:result;
+        catch(RuntimeException failure){return refuse(player,id,"dispatch exception "+failure.getClass().getSimpleName()+": "+failure.getMessage(),failure);}
+        if(Boolean.TRUE.equals(result))return Boolean.TRUE;
+        return refuse(player,id,result==null?"no visual plan":catalogVisuals.lastFailure(player.getUniqueId()),null);
+    }
+
+    private Boolean refuse(Player player,String spellId,String reason,RuntimeException failure) {
+        // 사유 키: 괄호 안 숫자와 예외 메시지를 떼어 종류 수를 작게 유지한다.
+        String key=reason==null||reason.isBlank()?"unknown":reason;
+        int cut=key.indexOf(':');if(cut>0)key=key.substring(0,cut);
+        cut=key.indexOf(" (");if(cut>0)key=key.substring(0,cut);
+        if(!refusals.containsKey(key)&&refusals.size()>=MAX_REFUSAL_REASONS)key="other";
+        refusals.computeIfAbsent(key,ignored->new int[1])[0]++;
+        refusalTotal++;
+        refusalPlayer=player.getUniqueId();refusalPlayerName=player.getName();refusalSpell=spellId;refusalReason=String.valueOf(reason);
+        if(failure!=null&&refusalStack==null)refusalStack=failure;
+        flushRefusalLog();
+        return Boolean.FALSE;
+    }
+
+    /** 약 10초에 최대 한 번: 사유별 횟수 + 표본 1건(진단 문자열은 이때만 계산) + tick 경로 실패 수. */
+    private void flushRefusalLog() {
+        var visuals=catalogVisuals;
+        if(visuals!=reportedVisuals){reportedVisuals=visuals;reportedTickFailures=0;reportedPhaseFailures=0;}
+        long tickFailed=visuals==null?0:visuals.tickFailures()-reportedTickFailures;
+        long phaseFailed=visuals==null?0:visuals.phaseFailures()-reportedPhaseFailures;
+        long tickerFailed=tickerFailures-reportedTickerFailures;
+        if(refusalTotal==0&&tickFailed<=0&&phaseFailed<=0&&tickerFailed<=0)return;
+        long now=System.currentTimeMillis();
+        if(now-lastRefusalLog<REFUSAL_LOG_INTERVAL_MS&&now>=lastRefusalLog)return;
+        long seconds=lastRefusalLog==0?0:Math.min(3600,(now-lastRefusalLog)/1000);
+        lastRefusalLog=now;
+        StringBuilder line=new StringBuilder("Catalog VFX");
+        if(seconds>0)line.append(" (since last report ").append(seconds).append("s ago)");
+        line.append(':');
+        if(refusalTotal>0){
+            line.append(" refused casts=").append(refusalTotal).append(" {");
+            boolean first=true;
+            for(var entry:refusals.entrySet()){if(!first)line.append(", ");first=false;line.append(entry.getKey()).append('=').append(entry.getValue()[0]);}
+            line.append("}; sample: player=").append(refusalPlayerName).append(", spell=").append(refusalSpell).append(", reason=").append(refusalReason);
+            if(refusalPlayer!=null)line.append(", client=[").append(engine.catalogDiagnostic(refusalPlayer)).append(']');
+            line.append(';');
+        }
+        if(tickFailed>0||phaseFailed>0)line.append(" running casts cancelled by errors=").append(Math.max(0,tickFailed)).append(", skipped phases=").append(Math.max(0,phaseFailed))
+                .append(", sample: ").append(visuals.lastTickFailure()).append(';');
+        if(tickerFailed>0)line.append(" tick task errors=").append(tickerFailed).append(", sample: ").append(tickerFailureSample).append(';');
+        if(refusalStack!=null)getLogger().log(java.util.logging.Level.WARNING,line.toString(),refusalStack);
+        else getLogger().warning(line.toString());
+        refusals.clear();refusalTotal=0;refusalStack=null;refusalPlayer=null;
+        if(visuals!=null){reportedTickFailures=visuals.tickFailures();reportedPhaseFailures=visuals.phaseFailures();}
+        reportedTickerFailures=tickerFailures;
     }
 
     /** Optional server gameplay adapters feed confirmed events; no client event channel exists. */
@@ -149,34 +239,98 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
         return value;
     }
 
-    private void reloadSpellCatalog() {
+    /**
+     * 마법별로 검증해 잘못된 마법만 건너뛴다(ID 와 사유를 로그에 남긴다). 파일을 읽을 수 없거나 구조가 잘못되면
+     * 이전 카탈로그와 실행 중인 연출을 그대로 두고 applied=false 를 돌려준다.
+     */
+    private CatalogReload reloadSpellCatalog(boolean startup, int maxDuration) {
+        java.util.Map<String,String> skipped=new java.util.LinkedHashMap<>();
         try {
             for(String name:List.of("spell-catalog.yml","spell-bindings.yml"))if(!new java.io.File(getDataFolder(),name).exists())saveResource(name,false);
             var catalogYaml=new org.bukkit.configuration.file.YamlConfiguration();catalogYaml.load(new java.io.File(getDataFolder(),"spell-catalog.yml"));
             var bindingYaml=new org.bukkit.configuration.file.YamlConfiguration();bindingYaml.load(new java.io.File(getDataFolder(),"spell-bindings.yml"));
             if(!bindingDriftChecked){bindingDriftChecked=true;warnBindingDrift(bindingYaml);}
-            var next=dev.portablevfx.paper.internal.spell.SpellCatalogYaml.read(catalogYaml);
+            java.util.Map<String,String> catalogProblems=new java.util.LinkedHashMap<>(),bindingProblems=new java.util.LinkedHashMap<>();
+            var next=dev.portablevfx.paper.internal.spell.SpellCatalogYaml.readLenient(catalogYaml,catalogProblems);
+            if(next.entries().isEmpty()&&!catalogProblems.isEmpty())throw new IllegalArgumentException("every spell in spell-catalog.yml is invalid, e.g. "+catalogProblems.entrySet().iterator().next());
             var section=bindingYaml.getConfigurationSection("bindings");
-            var bindings=section==null?java.util.Map.<String,dev.portablevfx.paper.internal.spell.CatalogVisualEngine.Plan>of():dev.portablevfx.paper.internal.spell.CatalogVisualEngine.read(section);
-            for(String id:bindings.keySet())if(next.resolve(id).isEmpty())throw new IllegalArgumentException("Binding has no catalogue ID: "+id);
-            var visuals=new dev.portablevfx.paper.internal.spell.CatalogVisualEngine(service,bindings);
+            java.util.Map<String,dev.portablevfx.paper.internal.spell.CatalogVisualEngine.Plan> bindings=new java.util.LinkedHashMap<>();
+            if(section!=null)bindings.putAll(dev.portablevfx.paper.internal.spell.CatalogVisualEngine.readLenient(section,bindingProblems));
+            for(var ids=bindings.keySet().iterator();ids.hasNext();){
+                String id=ids.next();
+                if(next.resolve(id).isEmpty()){ids.remove();bindingProblems.put(id,"binding has no (valid) catalogue ID");}
+            }
+            catalogProblems.forEach((id,reason)->skipped.put("spell-catalog.yml/"+id,reason));
+            bindingProblems.forEach((id,reason)->skipped.put("spell-bindings.yml/"+id,reason));
+            int logged=0;
+            for(var problem:skipped.entrySet()){
+                if(logged++>=50){getLogger().warning("... and "+(skipped.size()-50)+" more skipped spell(s)");break;}
+                getLogger().warning("Skipped broken spell "+problem.getKey()+": "+problem.getValue());
+            }
+            for(var plan:bindings.values()){
+                int longest=plan.phases().stream().mapToInt(phase->phase.ttl()).max().orElse(0);
+                if(longest>maxDuration)getLogger().warning("Spell "+plan.id()+" has a phase of "+longest+" ticks, longer than limits.max-duration-ticks="+maxDuration
+                        +"; that phase will be refused when cast. Raise the limit or shorten duration-ticks.");
+            }
+            var visuals=new dev.portablevfx.paper.internal.spell.CatalogVisualEngine(service,bindings,readCastLimits());
             if(catalogVisuals!=null)catalogVisuals.clear();spellCatalog=next;catalogVisuals=visuals;
             engine.catalogRequirements(bindings.values().stream().flatMap(p->p.phases().stream()).map(p->p.effect()).collect(java.util.stream.Collectors.toUnmodifiableSet()));
+            getLogger().info("Spell catalogue loaded: "+next.entries().size()+" spell(s), "+bindings.size()+" visual binding(s), "+skipped.size()+" skipped.");
+            return new CatalogReload(true,next.entries().size(),bindings.size(),skipped,"");
         } catch(Exception error) {
-            getLogger().warning("Spell catalog reload rejected; retaining previous catalog: "+error.getMessage());
+            String reason=error.getClass().getSimpleName()+": "+error.getMessage();
+            if(startup||spellCatalog==null)getLogger().severe("Spell catalogue could NOT be loaded ("+reason+"). No catalogue is active: every catalog cast is refused until spell-catalog.yml / spell-bindings.yml are fixed and /pvfxserverdebug reload succeeds.");
+            else getLogger().warning("Spell catalog reload rejected; retaining previous catalog and running effects: "+reason);
+            return new CatalogReload(false,spellCatalog==null?0:spellCatalog.entries().size(),0,skipped,reason);
         }
     }
 
+    /**
+     * Bukkit 은 onDisable 전에 isEnabled()=false 로 만든다. 그래서 공개 서비스 경로(requireMainThread)를 쓰지 않고,
+     * 단계마다 예외를 격리한다: 가상 엔티티 제거 -> 릴레이 상태 정리 -> 등록 해제. 비활성 상태에서는 플러그인
+     * 메시지를 보낼 수 없으므로 남은 클라이언트 효과는 각자의 TTL/월드 변경으로 끝난다.
+     */
     @Override
     public void onDisable() {
-        if (ticker != null) ticker.cancel();
-        if (catalogVisuals != null) catalogVisuals.clear();
-        if (engine != null) engine.shutdown();
-        getServer().getServicesManager().unregisterAll(this);
-        getServer().getMessenger().unregisterIncomingPluginChannel(this);
-        getServer().getMessenger().unregisterOutgoingPluginChannel(this);
-        HandlerList.unregisterAll((org.bukkit.plugin.Plugin) this);
+        try { if (ticker != null) ticker.cancel(); } catch (RuntimeException failure) { disableFailed("ticker", failure); }
+        try {
+            if (catalogVisuals != null) {
+                int failed = catalogVisuals.shutdown();
+                if (failed > 0) getLogger().warning(failed + " virtual anchor entity(ies) could not be removed; they are non-persistent and vanish on chunk unload/restart.");
+            }
+        } catch (RuntimeException failure) { disableFailed("catalog visuals", failure); }
+        try { if (engine != null) engine.shutdown(); } catch (RuntimeException failure) { disableFailed("relay engine", failure); }
+        try { getServer().getServicesManager().unregisterAll(this); } catch (RuntimeException failure) { disableFailed("services", failure); }
+        try {
+            getServer().getMessenger().unregisterIncomingPluginChannel(this);
+            getServer().getMessenger().unregisterOutgoingPluginChannel(this);
+        } catch (RuntimeException failure) { disableFailed("channels", failure); }
+        try { HandlerList.unregisterAll((org.bukkit.plugin.Plugin) this); } catch (RuntimeException failure) { disableFailed("listeners", failure); }
+        effectChannel.clear();
+        worldKeys.clear();
+        catalogVisuals = null;
         service = null;
+    }
+
+    private void disableFailed(String step, RuntimeException failure) {
+        getLogger().log(java.util.logging.Level.WARNING, "PortableVFX disable step failed: " + step, failure);
+    }
+
+    private void syncEffectChannel(Player player) {
+        UUID id = player.getUniqueId();
+        boolean registered = player.getListeningPluginChannels().contains(VfxProtocol.EFFECT_CHANNEL);
+        if (registered ? effectChannel.add(id) : effectChannel.remove(id)) engine.viewerChanged(id);
+    }
+
+    /** 이벤트 순서/누락에 대비한 저빈도 대조(플레이어당 CHANNEL_RESYNC_TICKS 마다 한 번). */
+    private void resyncEffectChannels() {
+        java.util.Set<UUID> online = new java.util.HashSet<>();
+        for (Player player : getServer().getOnlinePlayers()) { online.add(player.getUniqueId()); syncEffectChannel(player); }
+        effectChannel.retainAll(online);
+    }
+
+    private String worldKey(World world) {
+        return worldKeys.computeIfAbsent(world.getUID(), ignored -> world.getKey().toString());
     }
 
     @Override
@@ -195,8 +349,21 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
+    public void onJoin(PlayerJoinEvent event) {
+        // 채널 등록이 접속 이벤트보다 먼저 끝난 경우를 대비해 한 번 읽는다. 이후는 등록/해제 이벤트가 유지한다.
+        syncEffectChannel(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onRegister(PlayerRegisterChannelEvent event) {
+        if (VfxProtocol.EFFECT_CHANNEL.equals(event.getChannel()) && effectChannel.add(event.getPlayer().getUniqueId()))
+            engine.viewerChanged(event.getPlayer().getUniqueId());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onQuit(PlayerQuitEvent event) {
         if(catalogVisuals!=null)catalogVisuals.removePlayer(event.getPlayer().getUniqueId());
+        effectChannel.remove(event.getPlayer().getUniqueId());
         engine.forget(event.getPlayer().getUniqueId());
     }
 
@@ -209,6 +376,7 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
     @EventHandler(priority = EventPriority.MONITOR)
     public void onUnregister(PlayerUnregisterChannelEvent event) {
         if (VfxProtocol.EFFECT_CHANNEL.equals(event.getChannel())) {
+            effectChannel.remove(event.getPlayer().getUniqueId());
             if(catalogVisuals!=null)catalogVisuals.removePlayer(event.getPlayer().getUniqueId());
             engine.forget(event.getPlayer().getUniqueId());
         }
@@ -217,8 +385,9 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onWorldUnload(WorldUnloadEvent event) {
         if(catalogVisuals!=null)catalogVisuals.removeWorld(event.getWorld().getUID());
-        engine.worldUnloaded(event.getWorld().getKey().toString());
+        engine.worldUnloaded(worldKey(event.getWorld()));
         for (Player player : event.getWorld().getPlayers()) engine.worldChanged(player.getUniqueId());
+        worldKeys.remove(event.getWorld().getUID());
     }
 
     @Override
@@ -270,17 +439,41 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
                             + ", 잘못된 hello=" + status.rejectedHellos());
                     sender.sendMessage("[PortableVFX] authority 호환=" + engine.authoritativeClients()
                             + ", width 호환=" + engine.widthPlayClients() + ", 카탈로그=" + (spellCatalog==null?0:spellCatalog.entries().size()) + " (리소스 존재/렌더링 확인 아님)");
+                    sender.sendMessage("[PortableVFX] 종료 추적 핸들=" + engine.drainingHandles() + ", PLAY 재시도 대기=" + engine.deferredPlayViewers()
+                            + "명(기한 초과 누적 " + engine.deferredPlayDrops() + "), hello 제한=" + engine.throttledHellos() + ", 중복 readiness=" + engine.duplicateReadyPackets());
+                    if(catalogVisuals!=null)sender.sendMessage("[PortableVFX] 진행 중 시전=" + catalogVisuals.activeCasts() + "/" + catalogVisuals.limits().maxCasts()
+                            + " (플레이어당 " + catalogVisuals.limits().maxPerPlayer() + "), 오류로 취소=" + catalogVisuals.tickFailures()
+                            + ", 건너뛴 단계=" + catalogVisuals.phaseFailures() + ", 시청자 없던 단계=" + catalogVisuals.noViewerPhases());
                     if(sender instanceof Player player)sender.sendMessage("[VFX 진단] "+engine.catalogDiagnostic(player.getUniqueId()));
-                    if(catalogVisuals!=null&&!catalogVisuals.lastFailure().isEmpty())sender.sendMessage("[VFX 진단] 최근 시전 거부="+catalogVisuals.lastFailure());
+                    if(catalogVisuals!=null){
+                        if(sender instanceof Player player&&!catalogVisuals.lastFailure(player.getUniqueId()).isEmpty())sender.sendMessage("[VFX 진단] 내 최근 시전 거부="+catalogVisuals.lastFailure(player.getUniqueId()));
+                        if(!catalogVisuals.lastFailure().isEmpty())sender.sendMessage("[VFX 진단] 서버 전체 최근 시전 거부(다른 플레이어일 수 있음)="+catalogVisuals.lastFailure());
+                        if(!catalogVisuals.lastTickFailure().isEmpty())sender.sendMessage("[VFX 진단] 최근 실행 중 오류="+catalogVisuals.lastTickFailure());
+                    }
                 }
                 case "reload" -> {
                     expectArgs(args, 1, "reload");
                     requireMainThread();
                     reloadConfig();
-                    reloadSpellCatalog();
-                    if(catalogVisuals!=null)catalogVisuals.clear();
-                    engine.reload(readLimits());
-                    sender.sendMessage("[PortableVFX] 설정을 다시 읽고 기존 효과 정리를 요청했습니다.");
+                    RelayLimits limits = readLimits();
+                    CatalogReload outcome = reloadSpellCatalog(false, limits.maxDurationTicks());
+                    if (outcome.applied()) {
+                        // 새 카탈로그가 적용됐다: 이전 연출은 reloadSpellCatalog 가 정리했고, 릴레이 핸들도 비운다.
+                        engine.reload(limits);
+                        sender.sendMessage("[PortableVFX] 설정과 마법 카탈로그를 다시 읽었습니다: 마법 " + outcome.spells() + "개, 연출 " + outcome.bindings()
+                                + "개, 건너뜀 " + outcome.skipped().size() + "개. 기존 효과 정리를 요청했습니다.");
+                    } else {
+                        // 카탈로그가 거부됐다: 이전 카탈로그와 실행 중인 효과는 그대로 두고 config.yml 한도만 적용한다.
+                        engine.applyLimits(limits);
+                        if (catalogVisuals != null) catalogVisuals.limits(readCastLimits());
+                        sender.sendMessage("[PortableVFX] 마법 카탈로그 reload 실패: " + outcome.error());
+                        sender.sendMessage("[PortableVFX] 이전 카탈로그(마법 " + outcome.spells() + "개)를 유지하고 실행 중인 효과는 건드리지 않았습니다. config.yml 한도만 적용했습니다.");
+                    }
+                    int shown = 0;
+                    for (var problem : outcome.skipped().entrySet()) {
+                        if (shown++ >= 5) { sender.sendMessage("[PortableVFX] ... 외 " + (outcome.skipped().size() - 5) + "개 (서버 로그 참고)"); break; }
+                        sender.sendMessage("[PortableVFX] 건너뛴 마법 " + problem.getKey() + ": " + problem.getValue());
+                    }
                 }
                 default -> usage(sender);
             }
@@ -322,8 +515,8 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
                 number(args, 12, 1), args.length > 13 ? Double.parseDouble(args[13]) : engine.limits().defaultRadius());
         PlayResult result = service.play(request);
         sender.sendMessage("[PortableVFX] handle=" + result.handle() + ", 전송=" + result.recipients()
-                + ", 예산 제외=" + result.skippedRateLimited() + ", 반경=" + result.effectiveRadius());
-        if (result.recipients() == 0) {
+                + ", 다음 tick 재시도=" + result.deferred() + ", 예산 제외=" + result.skippedRateLimited() + ", 반경=" + result.effectiveRadius());
+        if (result.recipients() == 0 && result.deferred() == 0) {
             sender.sendMessage("[PortableVFX] 활성 핸들이 생성되지 않았습니다. 같은 월드·반경 내 호환 클라이언트와 채널 등록을 확인하세요.");
         }
     }
@@ -373,13 +566,40 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
         RelayLimits result = new RelayLimits(
                 config.getDouble("view.max-radius", defaults.maxRadius()),
                 config.getDouble("view.default-radius", defaults.defaultRadius()),
-                config.getInt("limits.max-active-handles", defaults.maxActiveHandles()),
-                config.getInt("limits.packets-per-tick", defaults.maxPacketsPerTick()),
+                raisedDefault(config, "limits.max-active-handles", 512, defaults.maxActiveHandles()),
+                raisedDefault(config, "limits.packets-per-tick", 1024, defaults.maxPacketsPerTick()),
                 config.getInt("limits.packets-per-player-per-tick", defaults.maxPacketsPerPlayerPerTick()),
-                config.getInt("limits.play-requests-per-tick", defaults.maxPlaysPerTick()),
-                config.getInt("limits.max-duration-ticks", defaults.maxDurationTicks()));
-        getLogger().info("Relay limits: " + result);
+                raisedDefault(config, "limits.play-requests-per-tick", 128, defaults.maxPlaysPerTick()),
+                config.getInt("limits.max-duration-ticks", defaults.maxDurationTicks()),
+                config.getInt("limits.finish-drain-ticks", defaults.finishDrainTicks()),
+                config.getInt("limits.play-retry-ticks", defaults.playRetryTicks()));
+        getLogger().info("Relay limits: " + result + ", cast limits: " + readCastLimits());
         return result;
+    }
+
+    /**
+     * 서버에 이미 있는 config.yml 은 덮어쓰지 않는다. config-version 이 없는(2 미만) 예전 파일에 예전 기본값이
+     * 그대로 적혀 있으면 새 기본값을 쓴다(예전 기본값은 100명 규모에서 시전 실패를 일으켰다).
+     * 예전 값을 일부러 유지하려면 config.yml 에 config-version: 2 를 적는다.
+     */
+    private int raisedDefault(FileConfiguration config, String path, int oldDefault, int newDefault) {
+        int value = config.getInt(path, newDefault);
+        if (value == oldDefault && config.getInt("config-version", 1) < 2) {
+            getLogger().warning("config.yml " + path + "=" + oldDefault + " is the old default; using the new default " + newDefault
+                    + ". Update config.yml (see the bundled default) or add 'config-version: 2' to keep " + oldDefault + ".");
+            return newDefault;
+        }
+        return value;
+    }
+
+    private dev.portablevfx.paper.internal.spell.CatalogVisualEngine.Limits readCastLimits() {
+        FileConfiguration config = getConfig();
+        var defaults = dev.portablevfx.paper.internal.spell.CatalogVisualEngine.Limits.DEFAULT;
+        return new dev.portablevfx.paper.internal.spell.CatalogVisualEngine.Limits(
+                config.getInt("limits.max-active-casts", defaults.maxCasts()),
+                config.getInt("limits.max-casts-per-player", defaults.maxPerPlayer()),
+                config.getInt("limits.max-pending-phases", defaults.maxPending()),
+                config.getInt("limits.finish-drain-ticks", defaults.finishDrainTicks()));
     }
 
     private void requireMainThread() {
@@ -492,14 +712,14 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
         @Override public long currentTick() { return Integer.toUnsignedLong(Bukkit.getCurrentTick()); }
 
         @Override public long worldTick(String dimensionId) {
-            for (World world : getServer().getWorlds()) if (world.getKey().toString().equals(dimensionId)) return world.getGameTime();
+            for (World world : getServer().getWorlds()) if (worldKey(world).equals(dimensionId)) return world.getGameTime();
             return -1;
         }
 
         @Override public Collection<RelayEngine.Viewer> viewers(String dimensionId) {
             List<RelayEngine.Viewer> viewers = new ArrayList<>();
             for (World world : getServer().getWorlds()) {
-                if (!world.getKey().toString().equals(dimensionId)) continue;
+                if (!worldKey(world).equals(dimensionId)) continue;
                 for (Player player : world.getPlayers()) viewers.add(snapshot(player));
                 break;
             }
@@ -511,17 +731,19 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
             return player == null || !player.isOnline() ? null : snapshot(player);
         }
 
+        /** RelayEngine 이 tick 당 플레이어별 한 번만 부른다. 채널 여부는 캐시한 플래그를 쓴다. */
         private RelayEngine.Viewer snapshot(Player player) {
             Location location = player.getLocation();
-            return new RelayEngine.Viewer(player.getUniqueId(), player.getWorld().getKey().toString(),
-                    location.getX(), location.getY(), location.getZ(),
-                    player.getListeningPluginChannels().contains(VfxProtocol.EFFECT_CHANNEL));
+            UUID id = player.getUniqueId();
+            return new RelayEngine.Viewer(id, worldKey(player.getWorld()),
+                    location.getX(), location.getY(), location.getZ(), effectChannel.contains(id));
         }
 
         @Override public boolean send(UUID playerId, byte[] payload) {
+            // 비활성화 중에는 플러그인 메시지를 보낼 수 없다(Messenger 가 거부한다): 시도하지 않는다.
+            if (!isEnabled() || !effectChannel.contains(playerId)) return false;
             Player player = getServer().getPlayer(playerId);
-            if (player == null || !player.isOnline()
-                    || !player.getListeningPluginChannels().contains(VfxProtocol.EFFECT_CHANNEL)) return false;
+            if (player == null || !player.isOnline()) return false;
             try {
                 player.sendPluginMessage(PortableVfxPlugin.this, VfxProtocol.EFFECT_CHANNEL, payload);
                 return true;

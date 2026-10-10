@@ -9,6 +9,10 @@ public final class SpellCatalogYaml {
     public static SpellCatalog read(ConfigurationSection root) {
         return SpellCatalog.fromMap(convert(root));
     }
+    /** 마법별 검증: 잘못된 마법만 건너뛰고 problems 에 사유를 남긴다. 파일 구조 오류는 예외. */
+    public static SpellCatalog readLenient(ConfigurationSection root,Map<String,String> problems) {
+        return SpellCatalog.fromMapLenient(convert(root),problems);
+    }
     private static Map<String,Object> convert(ConfigurationSection section) {
         Map<String,Object> out=new LinkedHashMap<>();
         for(String key:section.getKeys(false))out.put(key,convertValue(section.get(key)));

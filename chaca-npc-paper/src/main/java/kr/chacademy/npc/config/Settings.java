@@ -26,6 +26,9 @@ public final class Settings {
     public final int timeoutSeconds;
     public final int stallSeconds;
     public final int maxConcurrent;
+    public final int maxQueue;
+    public final int circuitFailures;
+    public final int circuitCooloffSeconds;
     public final double priceInput;
     public final double priceCached;
     public final double priceOutput;
@@ -100,6 +103,8 @@ public final class Settings {
     public final int rumorDelayMinHours;
     public final int rumorDelayMaxHours;
     public final int rumorMaxInPrompt;
+    /** false 면 NPC끼리 잡담에 소문을 넣지 않는다 (잡담 자체는 ambient.enabled). */
+    public final boolean publicRumors;
     public final int jealousyMinScore;
     public final double jealousyChance;
     public final double jealousyPromiseChance;
@@ -137,6 +142,9 @@ public final class Settings {
         timeoutSeconds = c.getInt("openai.timeout-seconds", 8);
         stallSeconds = c.getInt("openai.stall-seconds", 3);
         maxConcurrent = Math.max(1, c.getInt("openai.max-concurrent", 20));
+        maxQueue = Math.max(1, c.getInt("openai.max-queue", maxConcurrent * 2));
+        circuitFailures = Math.max(0, c.getInt("openai.circuit.failures", 5));
+        circuitCooloffSeconds = Math.max(5, c.getInt("openai.circuit.cooloff-seconds", 30));
         priceInput = c.getDouble("openai.price.input-per-million", 0.10);
         priceCached = c.getDouble("openai.price.cached-input-per-million", 0.01);
         priceOutput = c.getDouble("openai.price.output-per-million", 0.50);
@@ -155,7 +163,7 @@ public final class Settings {
         budgetTotalUsd = c.getDouble("budget.total-usd", 170);
         LocalDate start;
         try {
-            start = LocalDate.parse(c.getString("budget.start-date", "2026-12-31"));
+            start = LocalDate.parse(c.getString("budget.start-date", "2026-12-01"));
         } catch (Exception ex) {
             start = LocalDate.now(zone).plusDays(30);
         }
@@ -220,6 +228,7 @@ public final class Settings {
         rumorDelayMinHours = c.getInt("rumors.delay-min-hours", 12);
         rumorDelayMaxHours = Math.max(rumorDelayMinHours, c.getInt("rumors.delay-max-hours", 24));
         rumorMaxInPrompt = c.getInt("rumors.max-in-prompt", 2);
+        publicRumors = c.getBoolean("social.public-rumors", true);
         jealousyMinScore = c.getInt("rumors.jealousy-min-score", 60);
         jealousyChance = c.getDouble("rumors.jealousy-chance", 0.4);
         jealousyPromiseChance = c.getDouble("rumors.jealousy-promise-chance", 0.8);

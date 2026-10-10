@@ -13,7 +13,9 @@ final class ShopAdminBridge implements CommandExecutor,TabCompleter,PluginMessag
   var cmd=Objects.requireNonNull(p.getCommand("상점관리화면"));cmd.setExecutor(this);cmd.setTabCompleter(this);refreshShopIds();Bukkit.getScheduler().runTaskTimer(p,this::refreshShopIds,100,100);
   Bukkit.getMessenger().registerIncomingPluginChannel(p,ShopAdminProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(p,ShopAdminProtocol.RESPONSE);Bukkit.getPluginManager().registerEvents(this,p);
  }
- private void refreshShopIds(){work(()->store.catalog().keySet().stream().sorted().toList(),ids->shopIds=List.copyOf(ids),ignored->{});}
+ private long idsVersion=-1; // IO 스레드에서만 읽고 쓴다
+ /** 탭 완성용 상점 ID: 카탈로그 버전이 바뀐 때에만, 상품 payload 없이 ID만 읽는다. */
+ private void refreshShopIds(){if(closing)return;work(()->{long v=store.version();if(v==idsVersion)return null;List<String> ids=store.shopIds();idsVersion=v;return ids;},ids->{if(ids!=null)shopIds=ids;},ignored->{});}
  private boolean allowed(Player p){return !closing&&p.isOnline()&&Bukkit.getPlayer(p.getUniqueId())==p&&p.hasPermission("magiccodex.shop.admin");}
  private void main(Runnable r){if(!closing&&plugin.isEnabled())Bukkit.getScheduler().runTask(plugin,r);}
  private <T>void work(Callable<T> task,Consumer<T> done,Consumer<String> fail){try{io.execute(()->{try{T v=task.call();main(()->done.accept(v));}catch(Exception e){plugin.getLogger().warning("Shop admin: "+e.getClass().getSimpleName());main(()->fail.accept(e instanceof IllegalArgumentException||e instanceof IllegalStateException?e.getMessage():"저장 결과를 확인할 수 없습니다. 새로고침 후 확인하고 다시 저장하세요."));}});}catch(RejectedExecutionException e){fail.accept("관리 요청이 많습니다. 잠시 뒤 다시 시도하세요.");}}

@@ -65,6 +65,25 @@ public final class Database {
         return fn.apply(holder.get());
     }
 
+    /** 한 트랜잭션으로 실행 (DB 스레드 안에서만 호출). 실패하면 전부 되돌리고 예외를 다시 던진다. */
+    public <T> T tx(SqlFunction<T> fn) throws SQLException {
+        Connection c = holder.begin();
+        try {
+            T out = fn.apply(c);
+            c.commit();
+            return out;
+        } catch (SQLException | RuntimeException ex) {
+            try {
+                holder.rollback();
+            } catch (SQLException ignored) {
+                // 연결이 끊긴 경우: 다음 사용 때 새로 연결된다
+            }
+            throw ex;
+        } finally {
+            holder.end();
+        }
+    }
+
     @FunctionalInterface
     public interface SqlFunction<T> {
         T apply(Connection c) throws SQLException;
@@ -84,6 +103,11 @@ public final class Database {
         } catch (java.util.concurrent.RejectedExecutionException ex) {
             return CompletableFuture.completedFuture(null);
         }
+    }
+
+    /** Storage 가 치명적이지 않은 문제를 알릴 때 쓴다. */
+    void logWarning(String message) {
+        log.warning(message);
     }
 
     public CompletableFuture<Void> run(Runnable task) {

@@ -113,6 +113,11 @@ details[open]>summary{border-bottom:1px solid var(--line)}
 .toast.show{opacity:1}
 .yml{font-family:var(--mono);font-size:11.5px;background:var(--sunk);border:1px solid var(--line);border-radius:6px;padding:10px;max-height:260px;overflow:auto;white-space:pre;margin:0}
 .empty{padding:16px;color:var(--muted);font-size:13px}
+.offline{background:var(--warn-soft,#f6e7cc);color:var(--warn,#9a5b00);padding:8px 14px;font-size:13px}
+.askback{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
+.askbox{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:8px;max-width:560px;width:100%;max-height:80vh;overflow:auto;padding:16px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.askbox p{margin:0 0 14px;white-space:pre-wrap;font-size:13.5px;line-height:1.6;word-break:break-word}
+.askbtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
 </style>
 
@@ -125,6 +130,7 @@ details[open]>summary{border-bottom:1px solid var(--line)}
     <label class="btn" title="zip, 또는 cutscene.yml과 이미지 파일들을 함께 선택">불러오기
       <input type="file" id="importInput" accept=".zip,.yml,.yaml,image/*" multiple>
     </label>
+    <button id="prevBtn" title="불러오기 · 새 컷신을 누르기 직전에 편집하던 컷신으로 되돌려요">이전 초안 복구</button>
     <button id="newBtn">새 컷신</button>
     <button id="copyYmlBtn">yml 복사</button>
     <button class="primary" id="exportBtn">zip으로 내보내기</button>
@@ -220,8 +226,17 @@ details[open]>summary{border-bottom:1px solid var(--line)}
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+<div class="offline" id="offlineNote" hidden>zip · yml 라이브러리(JSZip, js-yaml)를 인터넷에서 받지 못했어요. 편집과 임시 저장은 되지만 <b>zip · yml 불러오기와 zip 내보내기는 인터넷에 연결한 뒤 새로고침</b>해야 쓸 수 있어요.</div>
+<!--
+  바깥에서 받는 스크립트 (이 두 개뿐). 버전을 고정해 두었고, 배포 전에 아래 주소의 파일로 SRI 해시를 계산해
+  integrity="sha384-..." 를 붙일 것 (여기서는 네트워크가 없어 해시를 적지 않았다 — 지어내지 말 것):
+    https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js       (JSZip 3.10.1)
+    https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js    (js-yaml 4.1.0)
+  예) curl -s <주소> | openssl dgst -sha384 -binary | openssl base64 -A
+  인터넷 없이 쓰려면 두 파일을 editor/ 폴더에 받아 두고 src 를 상대 경로로 바꾸면 된다.
+-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 "use strict";
 /* ============================================================ 상태 */
@@ -750,7 +765,11 @@ function renderMeta() {
   set("m_yauto", m.text_y == null ? "auto" : "manual");
   const yv = m.text_y == null ? +(1 - m.letterbox / 2).toFixed(2) : m.text_y; set("m_y", yv); set("m_y_n", yv);
   document.getElementById("m_y_row").hidden = m.text_y == null;
-  set("m_ts", m.type_sound === "none" ? "none" : "default"); set("m_tsv", m.type_sound_volume); set("m_tsv_n", m.type_sound_volume);
+  { // 편집기에서 고를 수 없는 소리 값 (마인크래프트 소리 id) 도 지우지 않고 그대로 둔다
+    const ts = document.getElementById("m_ts"); ts.querySelectorAll("option[data-custom]").forEach(o => o.remove());
+    if (m.type_sound !== "none" && m.type_sound !== "default") { const o = document.createElement("option"); o.value = m.type_sound; o.textContent = "그대로 두기: " + m.type_sound; o.dataset.custom = "1"; ts.append(o); }
+  }
+  set("m_ts", m.type_sound); set("m_tsv", m.type_sound_volume); set("m_tsv_n", m.type_sound_volume);
   set("m_bst", m.bgm_start);
   document.getElementById("bgmLen").textContent = bgmBuffer ? `곡 길이 ${bgmBuffer.duration.toFixed(1)}초 · 컷신 ${totalDur().toFixed(1)}초` : "";
   set("m_bv", m.bgm_volume); set("m_bv_n", m.bgm_volume); set("m_bfi", m.bgm_fade_in); set("m_bfo", m.bgm_fade_out);
@@ -874,22 +893,24 @@ document.getElementById("delScene").onclick = e => {
   if (delArmed !== S.sel) { delArmed = S.sel; b.textContent = "정말 삭제?"; setTimeout(() => { delArmed = null; b.textContent = "삭제"; }, 2500); return; }
   S.scenes.splice(S.sel, 1); delArmed = null; b.textContent = "삭제"; renderAll(); scheduleSave(); toast("장면을 지웠어요");
 };
-let newArmed = false;
-document.getElementById("newBtn").onclick = e => {
-  const b = e.currentTarget;
-  if (!newArmed) { newArmed = true; b.textContent = "지우고 새로 만들까요?"; setTimeout(() => { newArmed = false; b.textContent = "새 컷신"; }, 2500); return; }
-  newArmed = false; b.textContent = "새 컷신";
-  S.meta = defMeta(); S.scenes = []; S.sel = 0; setMode("edit"); renderAll(); scheduleSave();
-};
-
 const wrap = document.getElementById("stageWrap");
 ["dragenter", "dragover"].forEach(ev => wrap.addEventListener(ev, e => { e.preventDefault(); wrap.classList.add("dragging"); }));
 ["dragleave", "drop"].forEach(ev => wrap.addEventListener(ev, e => { e.preventDefault(); wrap.classList.remove("dragging"); }));
 wrap.addEventListener("drop", e => addScenesFromFiles(e.dataTransfer.files));
 
 /* ============================================================ yml 만들기 / 읽기 */
-const q = s => JSON.stringify(String(s)); // JSON 문자열 = 올바른 YAML 큰따옴표 문자열
-const n = v => String(+(+v).toFixed(3));
+const escU = s => s.replace(/[\x85\u{2028}\u{2029}]/gu, c => "\\u" + c.charCodeAt(0).toString(16).padStart(4, "0"));
+/* 모든 글자 값은 따옴표로 감싼다. JSON 문자열 = 올바른 YAML 큰따옴표 문자열 */
+const q = s => escU(JSON.stringify(String(s ?? "")));
+/* 숫자는 반드시 유한한 값으로 (NaN / Infinity 를 파일에 쓰지 않는다: 게임에서 끝나지 않는 컷신이 된다) */
+const fin = (v, d) => { const x = typeof v === "number" ? v : parseFloat(v); return Number.isFinite(x) ? x : d; };
+const n = (v, d = 0) => String(+fin(v, d).toFixed(3));
+/* 편집기가 모르는 키는 그대로 보관했다가 다시 내보낸다 (JSON 은 yml 로도 읽힌다) */
+const yj = v => escU(JSON.stringify(v === undefined ? null : v));
+const extraPairs = x => Object.entries(x || {}).map(([k, v]) => `${q(k)}: ${yj(v)}`);
+const pickExtra = (o, known) => { const x = {}; if (o && typeof o === "object") for (const [k, v] of Object.entries(o)) if (!known.includes(k)) x[k] = v; return x; };
+const META_KEYS = ["format", "id", "title", "font", "font_size", "text_color", "text_x", "text_y", "text_shadow", "italic", "prefix", "type_speed", "letterbox", "letterbox_time", "end_fade",
+  "type_sound", "type_sound_volume", "bgm", "bgm_volume", "bgm_start", "bgm_fade_in", "bgm_fade_out", "scenes"];
 function exportNames() {
   // 장면 i, 컷 k → s{i+1}_{k+1}.png. 같은 이미지를 여러 장면이 쓰면 처음 이름을 재사용
   const names = new Map(); const out = [];
@@ -901,84 +922,139 @@ function exportNames() {
 }
 function toYaml(names) {
   const m = S.meta; const L = [];
-  L.push("# 차카데미 컷신 — 편집기에서 만듦", "format: 1", `id: ${q(m.id)}`, `title: ${q(m.title)}`, `font: ${m.font}`, `font_size: ${n(m.font_size)}`, `text_color: ${q(m.text_color)}`, `text_x: ${n(m.text_x)}`,
-    `text_y: ${m.text_y == null ? "auto" : n(m.text_y)}`, `text_shadow: ${m.text_shadow}`, `italic: ${m.italic}`,
-    `prefix: ${q(m.prefix)}`, `type_speed: ${n(m.type_speed)}`, `letterbox: ${n(m.letterbox)}`, `letterbox_time: ${n(m.letterbox_time)}`, `end_fade: ${n(m.end_fade)}`,
-    `type_sound: ${m.type_sound === "none" ? "none" : "default"}`, `type_sound_volume: ${n(m.type_sound_volume)}`,
-    `bgm: ${m.bgm ? q("bgm.ogg") : q("")}`, `bgm_volume: ${n(m.bgm_volume)}`, `bgm_start: ${n(m.bgm_start)}`, `bgm_fade_in: ${n(m.bgm_fade_in)}`, `bgm_fade_out: ${n(m.bgm_fade_out)}`, "scenes:");
-  if (!S.scenes.length) L[L.length - 1] = "scenes: []";
+  L.push("# 차카데미 컷신 — 편집기에서 만듦", "format: 1", `id: ${q(m.id)}`, `title: ${q(m.title)}`, `font: ${q(m.font)}`, `font_size: ${n(m.font_size, 1)}`, `text_color: ${q(m.text_color)}`, `text_x: ${n(m.text_x, 0.5)}`,
+    `text_y: ${m.text_y == null ? "auto" : n(m.text_y, 0.93)}`, `text_shadow: ${!!m.text_shadow}`, `italic: ${!!m.italic}`,
+    `prefix: ${q(m.prefix)}`, `type_speed: ${n(m.type_speed, 0.06)}`, `letterbox: ${n(m.letterbox, 0.14)}`, `letterbox_time: ${n(m.letterbox_time, 1.6)}`, `end_fade: ${n(m.end_fade, 1.2)}`,
+    `type_sound: ${q(m.type_sound || "default")}`, `type_sound_volume: ${n(m.type_sound_volume, 0.5)}`,
+    `bgm: ${m.bgm ? q("bgm.ogg") : q("")}`, `bgm_volume: ${n(m.bgm_volume, 0.6)}`, `bgm_start: ${n(m.bgm_start, 0)}`, `bgm_fade_in: ${n(m.bgm_fade_in, 3)}`, `bgm_fade_out: ${n(m.bgm_fade_out, 4)}`);
+  extraPairs(m.extra).forEach(x => L.push(x));
+  L.push(S.scenes.length ? "scenes:" : "scenes: []");
   S.scenes.forEach((s, i) => {
-    L.push(`  - images: [${names[i].map(q).join(", ")}]`, `    fps: ${n(s.fps)}`, `    duration: ${n(s.duration)}`,
-      `    zoom: {x: ${n(s.zoom.x)}, y: ${n(s.zoom.y)}, from: ${n(s.zoom.from)}, to: ${n(s.zoom.to)}}`,
-      `    transition: ${s.transition}`, `    transition_time: ${n(s.transition_time)}`);
+    L.push(`  - images: [${names[i].map(q).join(", ")}]`, `    fps: ${n(s.fps, 6)}`, `    duration: ${n(s.duration, 5)}`,
+      `    zoom: {x: ${n(s.zoom.x, 0.5)}, y: ${n(s.zoom.y, 0.5)}, from: ${n(s.zoom.from, 1)}, to: ${n(s.zoom.to, 1)}}`,
+      `    transition: ${q(s.transition)}`, `    transition_time: ${n(s.transition_time, 1.2)}`);
+    extraPairs(s.extra).forEach(x => L.push("    " + x));
     if (!s.lines.length) L.push("    lines: []");
-    else { L.push("    lines:"); for (const l of s.lines) L.push(`      - {text: ${q(l.text)}, start: ${n(l.start)}, end: ${n(l.end)}}`); }
+    else { L.push("    lines:"); for (const l of s.lines) { const e = extraPairs(l.extra); L.push(`      - {text: ${q(l.text)}, start: ${n(l.start, 0)}, end: ${n(l.end, 3)}${e.length ? ", " + e.join(", ") : ""}}`); } }
   });
   return L.join("\n") + "\n";
 }
 function fromYamlObj(o, getBlob) {
-  if (!o || typeof o !== "object") throw new Error("yml 내용이 비어 있어요");
-  const num = (v, d) => (typeof v === "number" ? v : isNaN(parseFloat(v)) ? d : parseFloat(v));
+  if (!o || typeof o !== "object" || Array.isArray(o)) throw new Error("yml 내용이 비어 있어요");
+  // 숫자가 아니거나 NaN / Infinity 면 기본값. 범위는 게임(모드)과 같게 자른다
+  const num = (v, d, lo, hi) => clamp(fin(v, d), lo, hi);
   const meta = defMeta();
   meta.id = String(o.id ?? meta.id); meta.title = String(o.title ?? meta.id); meta.font = ["light", "medium", "bold"].includes(o.font) ? o.font : "medium";
   meta.italic = o.italic === undefined ? true : !!o.italic; meta.prefix = o.prefix === undefined ? "- " : String(o.prefix);
-  meta.font_size = clamp(num(o.font_size, 1), 0.4, 2.5);
+  meta.font_size = num(o.font_size, 1, 0.4, 2.5);
   { const c = String(o.text_color ?? "").trim().replace(/^#?/, "#"); meta.text_color = /^#[0-9a-f]{6}$/i.test(c) ? c.toLowerCase() : "#efe3c8"; }
-  meta.text_x = clamp(num(o.text_x, 0.5), 0, 1);
-  meta.text_y = o.text_y == null || String(o.text_y).trim().toLowerCase() === "auto" ? null : clamp(num(o.text_y, 0.93), 0, 1);
+  meta.text_x = num(o.text_x, 0.5, 0, 1);
+  meta.text_y = o.text_y == null || String(o.text_y).trim() === "" || String(o.text_y).trim().toLowerCase() === "auto" ? null : num(o.text_y, 0.93, 0, 1);
   meta.text_shadow = !!o.text_shadow;
-  meta.type_sound = String(o.type_sound ?? "default").trim().toLowerCase() === "none" ? "none" : "default";
-  meta.type_sound_volume = clamp(num(o.type_sound_volume, 0.5), 0, 1);
-  meta.bgm_volume = clamp(num(o.bgm_volume, 0.6), 0, 1); meta.bgm_start = clamp(num(o.bgm_start, 0), 0, 3600); meta.bgm_fade_in = clamp(num(o.bgm_fade_in, 3), 0, 30); meta.bgm_fade_out = clamp(num(o.bgm_fade_out, 4), 0, 30);
-  if (o.bgm && String(o.bgm).trim()) { const b = getBlob(String(o.bgm).trim()); if (b) meta.bgm = { blob: b, name: String(o.bgm).trim() }; }
-  meta.type_speed = num(o.type_speed, 0.06); meta.letterbox = num(o.letterbox, 0.14); meta.letterbox_time = num(o.letterbox_time, 1.6); meta.end_fade = num(o.end_fade, 1.2);
+  // none | default | 마인크래프트 소리 id (편집기에서 고를 수는 없지만 지우지 않고 그대로 둔다)
+  { const t = String(o.type_sound ?? "default").trim(); meta.type_sound = !t ? "default" : ["none", "default"].includes(t.toLowerCase()) ? t.toLowerCase() : t.slice(0, 120); }
+  meta.type_sound_volume = num(o.type_sound_volume, 0.5, 0, 1);
+  meta.bgm_volume = num(o.bgm_volume, 0.6, 0, 1); meta.bgm_start = num(o.bgm_start, 0, 0, 3600); meta.bgm_fade_in = num(o.bgm_fade_in, 3, 0, 30); meta.bgm_fade_out = num(o.bgm_fade_out, 4, 0, 30);
   const missing = [];
-  const scenes = (o.scenes || []).map(so => {
+  if (o.bgm && String(o.bgm).trim() && String(o.bgm).trim().toLowerCase() !== "none") { const b = getBlob(String(o.bgm).trim()); if (b) meta.bgm = { blob: b, name: String(o.bgm).trim() }; else missing.push(String(o.bgm).trim()); }
+  meta.type_speed = num(o.type_speed, 0.06, 0, 1); meta.letterbox = num(o.letterbox, 0.14, 0, 0.3); meta.letterbox_time = num(o.letterbox_time, 1.6, 0, 10); meta.end_fade = num(o.end_fade, 1.2, 0, 10);
+  meta.extra = pickExtra(o, META_KEYS);
+  const scenes = (Array.isArray(o.scenes) ? o.scenes : []).filter(so => so && typeof so === "object").slice(0, 200).map(so => {
     const s = newScene([]);
     const imgs = Array.isArray(so.images) ? so.images : so.image ? [so.image] : [];
     for (const name of imgs) { const b = getBlob(String(name)); if (b) s.frames.push(newFrame(b, String(name))); else missing.push(String(name)); }
-    s.fps = num(so.fps, 6); s.duration = num(so.duration, 5);
-    const z = so.zoom || {}; s.zoom = { x: num(z.x, 0.5), y: num(z.y, 0.5), from: num(z.from, 1), to: num(z.to, 1) };
-    s.transition = ["ink", "fade", "cut"].includes(so.transition) ? so.transition : "ink"; s.transition_time = num(so.transition_time, 1.2);
-    s.lines = (so.lines || []).map(l => ({ text: String(l.text ?? ""), start: num(l.start, 0), end: num(l.end, num(l.start, 0) + 3) }));
+    s.fps = num(so.fps, 6, 0.5, 30); s.duration = num(so.duration, 5, 0.2, 600);
+    const z = so.zoom && typeof so.zoom === "object" ? so.zoom : {}; s.zoom = { x: num(z.x, 0.5, 0, 1), y: num(z.y, 0.5, 0, 1), from: num(z.from, 1, 1, 4), to: num(z.to, 1, 1, 4) };
+    s.transition = ["ink", "fade", "cut"].includes(so.transition) ? so.transition : "ink"; s.transition_time = num(so.transition_time, 1.2, 0, 10);
+    s.lines = (Array.isArray(so.lines) ? so.lines : []).filter(l => l && typeof l === "object").map(l => { const start = num(l.start, 0, 0, 600); return { text: String(l.text ?? "").replace(/[\r\n]+/g, " "), start, end: Math.max(start + 0.1, num(l.end, start + 3, 0, 600)), extra: pickExtra(l, ["text", "start", "end"]) }; });
+    s.extra = pickExtra(so, ["images", "image", "fps", "duration", "zoom", "transition", "transition_time", "lines"]);
     return s;
   });
   return { meta, scenes, missing };
 }
 
+/* ============================================================ 물어보기 창 (confirm 을 쓸 수 없는 화면에서도 동작) */
+function ask(message, buttons) {
+  return new Promise(res => {
+    const back = document.createElement("div"); back.className = "askback";
+    const box = document.createElement("div"); box.className = "askbox"; box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true");
+    const p = document.createElement("p"); p.textContent = message;
+    const row = document.createElement("div"); row.className = "askbtns";
+    const done = v => { back.remove(); res(v); };
+    for (const [v, t, cls] of buttons) { const b = document.createElement("button"); if (cls) b.className = cls; b.textContent = t; b.onclick = () => done(v); row.append(b); }
+    back.addEventListener("keydown", e => { if (e.key === "Escape") done(null); });
+    box.append(p, row); back.append(box); document.body.append(back);
+    const first = row.querySelector("button"); if (first) first.focus();
+  });
+}
+const libsReady = () => typeof JSZip !== "undefined" && typeof jsyaml !== "undefined";
+const oneLine = s => String(s ?? "").replace(/[\r\n]+/g, " ").slice(0, 120);
+
+/* ============================================================ 불러오기 */
+const ZIP_MAX = 300 * 1024 * 1024, ZIP_ENTRIES = 400, YML_MAX = 2 * 1024 * 1024, FILE_MAX = 64 * 1024 * 1024, TOTAL_MAX = 800 * 1024 * 1024;
 async function importFiles(files) {
   files = [...files];
   try {
     let ymlText = null; const blobs = new Map();
+    const hasPack = files.some(f => /\.(zip|ya?ml)$/i.test(f.name));
+    if (hasPack && !libsReady()) { toast("zip · yml 을 읽는 라이브러리를 받지 못했어요 (인터넷 연결 확인 후 새로고침)"); return; }
+    const size = e => (e && e._data && Number.isFinite(e._data.uncompressedSize)) ? e._data.uncompressedSize : 0;
     for (const f of files) {
       const lower = f.name.toLowerCase();
       if (lower.endsWith(".zip")) {
+        if (f.size > ZIP_MAX) throw new Error("zip 이 너무 커요 (300MB 까지)");
         const zip = await JSZip.loadAsync(f);
-        for (const [path, entry] of Object.entries(zip.files)) {
-          if (entry.dir) continue;
+        const entries = Object.entries(zip.files).filter(([, e]) => !e.dir);
+        if (entries.length > ZIP_ENTRIES) throw new Error(`zip 안의 파일이 너무 많아요 (${ZIP_ENTRIES}개까지)`);
+        // 어느 yml 을 쓸지 정해진 순서로 고른다: cutscene.yml (경로가 얕은 것, 이름순) → 없으면 yml 이 하나뿐일 때만 그것
+        const depth = p => p.split("/").length, byPath = ([a], [b]) => depth(a) - depth(b) || (a < b ? -1 : a > b ? 1 : 0);
+        const ymls = entries.filter(([p]) => /\.ya?ml$/i.test(p.split("/").pop())).sort(byPath);
+        const named = ymls.filter(([p]) => p.split("/").pop().toLowerCase() === "cutscene.yml");
+        if (!named.length && ymls.length > 1) throw new Error("zip 안에 cutscene.yml 이 없고 yml 이 여러 개예요: " + ymls.slice(0, 4).map(([p]) => oneLine(p)).join(", "));
+        const pick = named[0] || ymls[0];
+        if (pick) { if (size(pick[1]) > YML_MAX) throw new Error("yml 이 너무 커요"); ymlText = await pick[1].async("string"); }
+        // 그림·소리는 고른 yml 과 같은 폴더의 것을 먼저, 이름이 같으면 처음 것 하나만
+        const home = pick ? pick[0].split("/").slice(0, -1).join("/") : "";
+        const media = entries.filter(([p]) => /\.(png|jpe?g|webp|gif|ogg)$/i.test(p)).sort((a, b) => {
+          const ha = a[0].split("/").slice(0, -1).join("/") === home ? 0 : 1, hb = b[0].split("/").slice(0, -1).join("/") === home ? 0 : 1;
+          return ha - hb || byPath(a, b);
+        });
+        let total = 0;
+        for (const [path, entry] of media) {
           const base = path.split("/").pop();
-          if (/\.ya?ml$/i.test(base)) ymlText = await entry.async("string");
-          else if (/\.(png|jpe?g|webp|gif|ogg)$/i.test(base)) blobs.set(base, await entry.async("blob"));
+          if (blobs.has(base)) continue;
+          if (size(entry) > FILE_MAX) throw new Error("zip 안의 파일이 너무 커요: " + oneLine(base));
+          total += size(entry); if (total > TOTAL_MAX) throw new Error("zip 을 풀면 너무 커요");
+          blobs.set(base, await entry.async("blob"));
         }
-      } else if (/\.ya?ml$/.test(lower)) ymlText = await f.text();
-      else if (f.type.startsWith("image/") || /\.ogg$/i.test(f.name)) blobs.set(f.name, f);
+      } else if (/\.ya?ml$/.test(lower)) { if (f.size > YML_MAX) throw new Error("yml 이 너무 커요"); ymlText = await f.text(); }
+      else if (f.type.startsWith("image/") || /\.ogg$/i.test(f.name)) { if (f.size <= FILE_MAX) blobs.set(f.name, f); }
     }
     if (!ymlText) { addScenesFromFiles(files); return; }
-    const r = fromYamlObj(jsyaml.load(ymlText), name => blobs.get(name));
-    S.meta = r.meta; S.scenes = r.scenes; S.sel = 0; setMode("edit"); renderAll(); scheduleSave();
-    toast(r.missing.length ? `불러왔어요. 없는 이미지 ${r.missing.length}개: ${r.missing.slice(0, 3).join(", ")}` : `"${S.meta.id}" 컷신을 불러왔어요`);
+    if (ymlText.length > YML_MAX) throw new Error("yml 이 너무 커요");
+    const doc = jsyaml.load(ymlText);
+    if (!doc || typeof doc !== "object") throw new Error("yml 내용이 비어 있어요");
+    if (!(await replaceProject(`"${oneLine(doc.title ?? doc.id ?? "컷신")}" 컷신을 불러오면 지금 편집 중인 컷신이 바뀌어요.`))) return;
+    const r = fromYamlObj(doc, name => blobs.get(name));
+    S.meta = r.meta; S.scenes = r.scenes; S.sel = 0; bgmBuffer = null; setMode("edit"); renderAll(); scheduleSave();
+    if (r.missing.length) await ask("불러왔어요. 아래 파일은 찾지 못했어요 (같이 선택해서 다시 불러오거나, 장면에 이미지를 새로 넣어 주세요):\n\n" + r.missing.slice(0, 30).map(oneLine).join("\n") + (r.missing.length > 30 ? `\n… 외 ${r.missing.length - 30}개` : ""), [["ok", "확인", "primary"]]);
+    else toast(`"${S.meta.id}" 컷신을 불러왔어요`);
   } catch (err) { toast("불러오지 못했어요: " + err.message); }
 }
 document.getElementById("importInput").onchange = e => { importFiles(e.target.files); e.target.value = ""; };
 
 /* ============================================================ 내보내기 */
+const EXPORT_MAX_SIDE = 1600; // 게임이 쓰는 최대 크기. 더 큰 그림은 여기서 줄여서 넣는다 (게임에서 읽는 시간·메모리 절약)
 function toPng(frame) {
-  if (/\.png$/i.test(frame.name) && frame.blob.type === "image/png") return Promise.resolve(frame.blob);
   const im = imgCache.get(frame.key);
+  const big = im && Math.max(im.naturalWidth, im.naturalHeight) > EXPORT_MAX_SIDE;
+  if (!big && /\.png$/i.test(frame.name) && frame.blob.type === "image/png") return Promise.resolve(frame.blob);
   return new Promise((res, rej) => {
     if (!im) return rej(new Error("이미지가 아직 안 열렸어요: " + frame.name));
-    const c = document.createElement("canvas"); c.width = im.naturalWidth; c.height = im.naturalHeight;
-    c.getContext("2d").drawImage(im, 0, 0); c.toBlob(b => b ? res(b) : rej(new Error("PNG 변환 실패")), "image/png");
+    const k = big ? EXPORT_MAX_SIDE / Math.max(im.naturalWidth, im.naturalHeight) : 1;
+    const c = document.createElement("canvas"); c.width = Math.max(1, Math.round(im.naturalWidth * k)); c.height = Math.max(1, Math.round(im.naturalHeight * k));
+    const g = c.getContext("2d"); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = "high";
+    g.drawImage(im, 0, 0, c.width, c.height); c.toBlob(b => b ? res(b) : rej(new Error("PNG 변환 실패")), "image/png");
   });
 }
 async function saveFile(filename, blob) {
@@ -994,7 +1070,8 @@ async function saveFile(filename, blob) {
 }
 document.getElementById("exportBtn").onclick = async () => {
   const m = S.meta;
-  if (!ID_RE.test(m.id)) { toast("id는 소문자, 숫자, _, - 만 쓸 수 있어요"); document.getElementById("metaPanel").open = true; document.getElementById("m_id").focus(); return; }
+  if (!libsReady()) { toast("zip 을 만드는 라이브러리를 받지 못했어요 (인터넷 연결 확인 후 새로고침)"); return; }
+  if (!ID_RE.test(m.id)) { toast("id는 소문자, 숫자, _, - 만 쓸 수 있어요 (1~64자)"); document.getElementById("metaPanel").open = true; document.getElementById("m_id").focus(); return; }
   if (!S.scenes.length) { toast("장면이 하나도 없어요"); return; }
   if (S.scenes.some(s => !s.frames.length)) { toast("이미지가 없는 장면이 있어요"); return; }
   try {
@@ -1015,7 +1092,7 @@ document.getElementById("copyYmlBtn").onclick = async () => {
   catch { document.querySelector("#ymlView").closest("details").open = true; const r = document.createRange(); r.selectNodeContents(document.getElementById("ymlView")); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); toast("복사가 막혀 있어요. 선택된 yml을 Ctrl+C 하세요"); }
 };
 
-/* ============================================================ 임시 저장 (이 브라우저에만) */
+/* ============================================================ 임시 저장 (이 브라우저에만: 지금 것 "draft", 바꾸기 직전 것 "prev") */
 let saveTimer = null;
 function scheduleSave() {
   document.getElementById("ymlView").textContent = toYaml(exportNames());
@@ -1024,25 +1101,55 @@ function scheduleSave() {
 function idb() {
   return new Promise((res, rej) => { const r = indexedDB.open("chaca-cutscene-editor", 1); r.onupgradeneeded = () => r.result.createObjectStore("kv"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
 }
-async function saveDraft() {
+async function writeSlot(slot) {
+  const db = await idb();
+  const data = { meta: S.meta, scenes: S.scenes.map(s => ({ ...s, frames: s.frames.map(f => ({ blob: f.blob, name: f.name, key: f.key })) })) };
+  await new Promise((res, rej) => { const tx = db.transaction("kv", "readwrite"); tx.objectStore("kv").put(data, slot); tx.oncomplete = res; tx.onerror = () => rej(tx.error); });
+}
+async function readSlot(slot) {
   try {
     const db = await idb();
-    const data = { meta: S.meta, scenes: S.scenes.map(s => ({ ...s, frames: s.frames.map(f => ({ blob: f.blob, name: f.name, key: f.key })) })) };
-    await new Promise((res, rej) => { const tx = db.transaction("kv", "readwrite"); tx.objectStore("kv").put(data, "draft"); tx.oncomplete = res; tx.onerror = () => rej(tx.error); });
-    document.getElementById("saveStatus").textContent = "이 브라우저에 임시 저장됨";
-  } catch { document.getElementById("saveStatus").textContent = "임시 저장 안 됨 · zip으로 내보내 보관하세요"; }
+    return await new Promise((res, rej) => { const tx = db.transaction("kv", "readonly"); const r = tx.objectStore("kv").get(slot); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+  } catch { return null; }
+}
+async function saveDraft() {
+  try { await writeSlot("draft"); document.getElementById("saveStatus").textContent = "이 브라우저에 임시 저장됨"; }
+  catch { document.getElementById("saveStatus").textContent = "임시 저장 안 됨 · zip으로 내보내 보관하세요"; }
+}
+function adoptDraft(data) {
+  S.meta = { ...defMeta(), ...data.meta };
+  const shared = new Map();
+  S.scenes = (data.scenes || []).map(s => ({ ...s, key: uid++, frames: s.frames.map(f => { if (!shared.has(f.key)) shared.set(f.key, newFrame(f.blob, f.name)); return shared.get(f.key); }) }));
 }
 async function loadDraft() {
   try {
-    const db = await idb();
-    const data = await new Promise((res, rej) => { const tx = db.transaction("kv", "readonly"); const r = tx.objectStore("kv").get("draft"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+    const data = await readSlot("draft");
     if (!data || !data.meta) return false;
-    S.meta = { ...defMeta(), ...data.meta };
-    const shared = new Map();
-    S.scenes = data.scenes.map(s => ({ ...s, key: uid++, frames: s.frames.map(f => { if (!shared.has(f.key)) shared.set(f.key, newFrame(f.blob, f.name)); return shared.get(f.key); }) }));
+    adoptDraft(data);
     return true;
   } catch { return false; }
 }
+/* 지금 컷신을 다른 것으로 바꾸기 전에: 물어보고, 지금 것을 "이전 초안" 칸에 넣어 둔다 */
+async function replaceProject(message) {
+  const a = await ask(message + "\n지금 것은 [이전 초안 복구] 로 되돌릴 수 있어요.", [["go", "바꾸기", "primary"], [null, "취소"]]);
+  if (a !== "go") return false;
+  clearTimeout(saveTimer);
+  try { await writeSlot("prev"); } catch { if ((await ask("지금 컷신을 이 브라우저에 보관하지 못했어요. 그래도 바꿀까요? (되돌릴 수 없어요)", [["go", "그래도 바꾸기"], [null, "취소", "primary"]])) !== "go") return false; }
+  return true;
+}
+document.getElementById("newBtn").onclick = async () => {
+  if (!(await replaceProject("지금 컷신을 지우고 새 컷신을 만들어요."))) return;
+  S.meta = defMeta(); S.scenes = []; S.sel = 0; bgmBuffer = null; setMode("edit"); renderAll(); scheduleSave();
+};
+document.getElementById("prevBtn").onclick = async () => {
+  const prev = await readSlot("prev");
+  if (!prev || !prev.meta) { toast("복구할 이전 초안이 없어요"); return; }
+  if ((await ask("불러오기 · 새 컷신 직전에 편집하던 컷신으로 되돌려요. (지금 것은 다시 [이전 초안 복구] 로 돌아올 수 있어요)", [["go", "되돌리기", "primary"], [null, "취소"]])) !== "go") return;
+  clearTimeout(saveTimer);
+  try { await writeSlot("prev"); } catch {}
+  adoptDraft(prev); S.sel = 0; bgmBuffer = null; setMode("edit"); renderAll(); scheduleSave();
+  toast("이전 초안으로 되돌렸어요");
+};
 async function loadSample() {
   const names = ["s1_1.png", "s1_2.png", "s1_3.png", "s2_1.png", "bgm.ogg"]; const blobs = new Map();
   await Promise.all(names.map(async nm => { try { const r = await fetch("example/" + nm); if (r.ok) blobs.set(nm, await r.blob()); } catch {} }));
@@ -1067,6 +1174,7 @@ document.addEventListener("keydown", e => {
 });
 
 (async () => {
+  if (!libsReady()) document.getElementById("offlineNote").hidden = false;
   S.meta = defMeta();
   renderAll();
   if (!(await loadDraft())) await loadSample();

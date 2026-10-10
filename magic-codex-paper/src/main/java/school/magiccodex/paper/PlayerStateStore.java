@@ -20,6 +20,10 @@ final class PlayerStateStore implements AutoCloseable {
         }
         private static boolean valid(double n){return Double.isFinite(n)&&n>=0&&n<=1_000_000;}
     }
+    /** UPDATE가 0행: 다른 서버가 임대를 가져갔다는 확정 신호. 일시적인 SQL/연결 오류와 구분한다. */
+    static final class LeaseLostException extends SQLException {
+        LeaseLostException(UUID id){super("Player state lease lost: "+id);}
+    }
     private static final String COLUMNS="player,circle,mana_current,mana_maximum,mana_regeneration,magic_haste,mana_cooldowns,accessory_0,accessory_1,accessory_2,accessory_3,reconfig_credit_0,reconfig_credit_1,reconfig_credit_2";
     private final ConnectionHolder holder;
     private Connection db()throws SQLException{return holder.get();}
@@ -57,6 +61,7 @@ final class PlayerStateStore implements AutoCloseable {
             s.setString(1,id.toString());s.setString(2,token);s.executeUpdate();
         }
     }
+    /** @throws LeaseLostException 이 토큰이 더 이상 행을 소유하지 않을 때만. 그 밖의 SQLException은 일시 오류로 다시 시도할 수 있다. */
     void save(UUID id,State state,String token,boolean release)throws SQLException {
         String updates="circle=?,mana_current=?,mana_maximum=?,mana_regeneration=?,magic_haste=?,mana_cooldowns=?,"
                 +"accessory_0=?,accessory_1=?,accessory_2=?,accessory_3=?,reconfig_credit_0=?,reconfig_credit_1=?,reconfig_credit_2=?,";
@@ -68,7 +73,7 @@ final class PlayerStateStore implements AutoCloseable {
             for(int i=0;i<3;i++)s.setInt(11+i,state.reconfigurationCredits()[i]);
             int index=14;if(!release)s.setLong(index++,System.currentTimeMillis()+60_000);
             s.setString(index++,id.toString());s.setString(index,token);
-            if(s.executeUpdate()!=1)throw new SQLException("Player state lease lost: "+id);
+            if(s.executeUpdate()!=1)throw new LeaseLostException(id);
         }
     }
     private static void bind(PreparedStatement s,UUID id,State state)throws SQLException {

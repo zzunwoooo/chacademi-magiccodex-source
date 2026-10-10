@@ -18,4 +18,27 @@ class StoryCodecTest {
         var b=new ByteArrayOutputStream();StoryCodec.writeString(b,"ch1_wakeup");StoryCodec.writeString(b,"wake");StoryCodec.writeVarInt(b,12);
         assertEquals(new StoryCodec.DialogueProgress("ch1_wakeup","wake",12),StoryCodec.dialogueProgress(b.toByteArray()));
     }
+    @Test void failAndAbortPacketsDecode(){
+        var b=new ByteArrayOutputStream();StoryCodec.writeVarInt(b,StoryCodec.KIND_DIALOGUE);StoryCodec.writeString(b,"ch1_wakeup");StoryCodec.writeString(b,"missing");
+        assertEquals(new StoryCodec.StoryFail(1,"ch1_wakeup","missing"),StoryCodec.storyFail(b.toByteArray()));
+        assertThrows(IllegalArgumentException.class,()->StoryCodec.storyFail(Arrays.copyOf(b.toByteArray(),b.size()-1)));
+        var a=new ByteArrayOutputStream();StoryCodec.writeString(a,"ch1_ashen_night");
+        assertEquals(new StoryCodec.CutsceneAbort("ch1_ashen_night"),StoryCodec.cutsceneAbort(a.toByteArray()));
+        assertThrows(IllegalArgumentException.class,()->StoryCodec.cutsceneAbort(Arrays.copyOf(a.toByteArray(),a.size()+1)));
+    }
+    @Test void clientProtocolIsReadFromListeningChannels(){
+        assertEquals(0,StoryCodec.clientProtocol(java.util.List.of("minecraft:brand","other:channel")));
+        assertEquals(1,StoryCodec.clientProtocol(java.util.List.of(StoryCodec.CUTSCENE_PLAY,StoryCodec.DIALOGUE_OPEN)));   // 버전 채널이 없던 예전 모드
+        assertEquals(2,StoryCodec.clientProtocol(java.util.List.of(StoryCodec.CUTSCENE_PLAY,"chacademy:story_v2")));
+        assertEquals(3,StoryCodec.clientProtocol(java.util.List.of("chacademy:story_v2","chacademy:story_v3")));
+        assertEquals(0,StoryCodec.clientProtocol(java.util.List.of("chacademy:story_vX","chacademy:story_v","chacademy:story_v99999999999")));
+        assertEquals("chacademy:story_v"+StoryCodec.PROTOCOL,StoryCodec.STORY_HELLO);
+        assertArrayEquals(new byte[]{(byte)StoryCodec.PROTOCOL},StoryCodec.hello(StoryCodec.PROTOCOL));
+    }
+    @Test void clientStringsFollowMinecraftStringUtf8Limit256(){
+        var ok=new ByteArrayOutputStream();StoryCodec.writeString(ok,"가".repeat(256));   // 256자 = 768바이트까지 허용
+        assertEquals("가".repeat(256),StoryCodec.cutsceneAbort(ok.toByteArray()).id());
+        var tooLong=new ByteArrayOutputStream();StoryCodec.writeString(tooLong,"가".repeat(257));
+        assertThrows(IllegalArgumentException.class,()->StoryCodec.cutsceneAbort(tooLong.toByteArray()));
+    }
 }

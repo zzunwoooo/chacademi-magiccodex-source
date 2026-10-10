@@ -12,6 +12,8 @@ import java.util.Map;
 public final class PortraitSettings {
 
     public final String serverId;
+    /** config.yml에 server-id가 직접 적혀 있는지. 비어 있으면 serverId는 "school"로 대신한다 (SQLite 단독 서버용; 공유 DB에서는 생성 차단). */
+    public final boolean serverIdSet;
     public final boolean enabled;
     public final String apiKey;
     public final String baseUrl;
@@ -68,12 +70,22 @@ public final class PortraitSettings {
 
     private final Map<String, String> messages = new HashMap<>();
 
+    /** 나중에 추가된 안내문의 기본값. 운영 중인 config.yml에 키가 없어도 빈 메시지가 나가지 않게 한다. */
+    private static final Map<String, String> DEFAULT_MESSAGES = Map.of(
+            "reroll-consumed", "§b[일러스트] §7그림을 완성하지 못했어요. 리롤 아이템은 사용 처리되었습니다. 문의는 관리자에게 해 주세요.",
+            "reroll-notice", "§b[일러스트] §e생성 시도가 실패할 경우에도 아이템은 사라집니다. 관련 문의 사항은 관리자를 찾아주세요.",
+            "reroll-unavailable", "§b[일러스트] §7지금은 요청을 확인할 수 없어요. 잠시 후 다시 시도해 주세요. (아이템은 그대로예요)",
+            "reroll-queued", "§b[일러스트] §f다시 그리기 대기 {position}번째예요. 약 {minutes}분 뒤에 완성돼요. 다 되면 알려드릴게요.",
+            "budget", "§b[일러스트] §7이번 시즌 일러스트 예산이 모두 사용됐어요.");
+
     public PortraitSettings(FileConfiguration c) {
         this(c, System::getenv);
     }
 
     PortraitSettings(FileConfiguration c, java.util.function.Function<String, String> environment) {
-        serverId = safeId(c.getString("server-id", "school"));
+        String rawId = c.getString("server-id", "");
+        serverIdSet = rawId != null && !rawId.isBlank();
+        serverId = serverIdSet ? safeId(rawId.trim()) : "school";
         enabled = c.getBoolean("enabled", true);
         String key = c.getString("openai.api-key", "");
         String env = environment.apply("CHACAPORTRAIT_OPENAI_KEY");
@@ -173,7 +185,10 @@ public final class PortraitSettings {
     }
 
     public String message(String key, Object... kv) {
-        String m = messages.getOrDefault(key, "");
+        String m = messages.get(key);
+        if (m == null || m.isEmpty()) {
+            m = DEFAULT_MESSAGES.getOrDefault(key, "");
+        }
         for (int i = 0; i + 1 < kv.length; i += 2) {
             m = m.replace("{" + kv[i] + "}", String.valueOf(kv[i + 1]));
         }

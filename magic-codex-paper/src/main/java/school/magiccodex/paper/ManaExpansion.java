@@ -6,12 +6,16 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
 final class ManaExpansion extends PlaceholderExpansion {
     private final ManaService mana;
+    /** 이 확장이 "magiccodex" 식별자를 직접 등록했을 때 nickname/account를 대신 답해 주는 함수 (닉네임 확장이 등록되지 못한 경우). */
+    private volatile java.util.function.BiFunction<OfflinePlayer,String,String> fallback;
     ManaExpansion(ManaService mana){this.mana=mana;}
+    void fallback(java.util.function.BiFunction<OfflinePlayer,String,String> next){fallback=next;}
     public String getIdentifier(){return "magiccodex";}
     public String getAuthor(){return "Chacademia";}
     public String getVersion(){return "0.6.0";}
     public boolean persist(){return true;}
     public String onRequest(OfflinePlayer player,String params){
+        var other=fallback;if(other!=null&&(params.equals("nickname")||params.equals("account")))return other.apply(player,params);
         if(player==null)return "";
         var s=mana.snapshot(player.getUniqueId()).orElse(null);if(s==null)return "";
         return switch(params){

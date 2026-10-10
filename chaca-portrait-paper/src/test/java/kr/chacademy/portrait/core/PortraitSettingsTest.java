@@ -72,4 +72,36 @@ class PortraitSettingsTest {
         c.set("server-id", "school"); c.set("auto.first-join", true); c.set("enabled", false);
         assertFalse(new PortraitSettings(c, name -> null).automaticGenerationAllowed());
     }
+    @Test void blankServerIdFallsBackToSchoolButIsReportedAsUnset() {
+        var c = new YamlConfiguration();
+        var unset = new PortraitSettings(c, name -> null);
+        assertFalse(unset.serverIdSet);
+        assertEquals("school", unset.serverId);
+        c.set("server-id", "  ");
+        assertFalse(new PortraitSettings(c, name -> null).serverIdSet);
+        c.set("server-id", " wild ");
+        var wild = new PortraitSettings(c, name -> null);
+        assertTrue(wild.serverIdSet);
+        assertEquals("wild", wild.serverId);
+    }
+    @Test void packagedConfigShipsEmptyServerIdAndRerollPolicyMessages() throws Exception {
+        var config = new YamlConfiguration();
+        try (var reader = new java.io.InputStreamReader(
+                getClass().getResourceAsStream("/config.yml"), java.nio.charset.StandardCharsets.UTF_8)) {
+            config.load(reader);
+        }
+        var settings = new PortraitSettings(config, name -> null);
+        assertFalse(settings.serverIdSet);
+        String notice = "생성 시도가 실패할 경우에도 아이템은 사라집니다. 관련 문의 사항은 관리자를 찾아주세요.";
+        assertTrue(settings.message("reroll-notice").contains(notice));
+        assertTrue(settings.message("reroll-consumed").contains("리롤 아이템은 사용 처리되었습니다"));
+        assertEquals("§b[일러스트] §f다시 그리기 대기 3번째예요. 약 5분 뒤에 완성돼요. 다 되면 알려드릴게요.",
+                settings.message("reroll-queued", "position", 3, "minutes", 5));
+        // 운영 중인 옛 config.yml(새 키 없음)에서도 빈 안내가 나가지 않는다
+        var old = new PortraitSettings(new YamlConfiguration(), name -> null);
+        assertTrue(old.message("reroll-notice").contains(notice));
+        assertFalse(old.message("reroll-consumed").isEmpty());
+        assertFalse(old.message("reroll-unavailable").isEmpty());
+        assertFalse(old.message("budget").isEmpty());
+    }
 }

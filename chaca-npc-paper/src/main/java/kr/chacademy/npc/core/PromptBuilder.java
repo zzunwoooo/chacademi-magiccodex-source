@@ -139,11 +139,9 @@ public final class PromptBuilder {
         if (x.allowedHints.isEmpty()) {
             sb.append("- 마법 힌트: 이번에는 주지 않는다. hint는 null.\n");
         } else {
-            sb.append("- 마법 힌트를 줘도 된다. 정답을 직접 말하지 말고 목격담·소문·수수께끼처럼 돌려 말한다. 줬다면 hint에 id.\n");
+            sb.append("- 마법 힌트를 줘도 된다. 정답을 직접 말하지 말고 목격담·소문·수수께끼처럼 돌려 말한다. 줬다면 hint에 id. 목록에 없는 재료는 지어내지 않는다.\n");
             for (HintDef h : x.allowedHints) {
-                sb.append("  - ").append(h.id()).append(": 재료 = ").append(h.materials());
-                sb.append(h.difficulty() <= 1 ? " (꽤 구체적으로)" : h.difficulty() >= 3 ? " (아주 막연하게)" : " (적당히 돌려서)");
-                sb.append('\n');
+                sb.append("  - ").append(h.id()).append(": ").append(hintText(h, x.stage)).append('\n');
             }
         }
 
@@ -186,6 +184,23 @@ public final class PromptBuilder {
             }
         }
         return sb.toString().trim();
+    }
+
+    /** 호감도가 낮을 때(모르는 사이·아는 사이) 재료 원문 대신 쓰는 기본 문장. */
+    public static final String VAGUE_HINT_FALLBACK = "아직 아무도 제대로 찾지 못한 마법이 학교 어딘가에 숨어 있다는 소문";
+
+    /**
+     * 힌트 한 줄. 호감도 단계가 낮으면(STRANGER·ACQUAINTANCE) 재료 원문을 AI에게 주지 않고
+     * hints.yml 의 vague(없으면 기본 문장)만 준다 — AI가 모르는 것은 새어 나갈 수 없다.
+     */
+    public static String hintText(HintDef h, AffinityStage stage) {
+        boolean low = stage == null || stage.ordinal() <= AffinityStage.ACQUAINTANCE.ordinal();
+        if (low) {
+            String v = h.vague() == null || h.vague().isBlank() ? VAGUE_HINT_FALLBACK : h.vague().trim();
+            return "막연한 소문 = " + v + " (이 이상은 너도 모른다. 재료·장소·방법을 지어내지 말고 아주 막연하게)";
+        }
+        return "재료 = " + h.materials()
+                + (h.difficulty() <= 1 ? " (꽤 구체적으로)" : h.difficulty() >= 3 ? " (아주 막연하게)" : " (적당히 돌려서)");
     }
 
     /** 응답 JSON 스키마 (구조화 출력). line을 맨 앞에 둬야 스트리밍 때 대사가 먼저 나온다. */
