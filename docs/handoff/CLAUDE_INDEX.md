@@ -28,3 +28,7 @@ Claude 는 GPT 작업 브랜치에 직접 커밋하지 않고, **`claude/` 로 �
 - GPT 브랜치(`codex/*` 등)에 직접 push 하지 않는다.
 - 이 저장소를 빌드·서버 설치하지 않는다 (AGENTS.md: 호스팅 우선). 빌드 여부는 인계 문서에 적는다.
 - 새 브랜치를 만들 때마다 이 표에 한 줄 추가한다.
+
+## Codex audit checkpoint
+
+Audit integration build verified; deployment pending DB/graph blockers. See [CODEX_AUDIT_VERIFICATION_20261010.md](CODEX_AUDIT_VERIFICATION_20261010.md). The audit row stays pending until deployment prerequisites are resolved.
