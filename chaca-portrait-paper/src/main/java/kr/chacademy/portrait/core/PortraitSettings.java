@@ -58,12 +58,16 @@ public final class PortraitSettings {
     private final Map<String, String> messages = new HashMap<>();
 
     public PortraitSettings(FileConfiguration c) {
+        this(c, System::getenv);
+    }
+
+    PortraitSettings(FileConfiguration c, java.util.function.Function<String, String> environment) {
         serverId = safeId(c.getString("server-id", "school"));
         enabled = c.getBoolean("enabled", true);
-        String key = c.getString("openai.api-key", "");
-        String env = System.getenv("CHACAPORTRAIT_OPENAI_KEY");
+        String key = "";
+        String env = environment.apply("CHACAPORTRAIT_OPENAI_KEY");
         if (env == null || env.isBlank()) {
-            env = System.getenv("CHACANPC_OPENAI_KEY");
+            env = environment.apply("CHACANPC_OPENAI_KEY");
         }
         if (env != null && !env.isBlank()) {
             key = env;
@@ -108,9 +112,9 @@ public final class PortraitSettings {
         Map<String, CostModel.Prices> p = new HashMap<>();
         ConfigurationSection ps = c.getConfigurationSection("prices");
         if (ps != null) {
-            for (String model : ps.getKeys(false)) {
+            for (String model : ps.getKeys(true)) {
                 ConfigurationSection m = ps.getConfigurationSection(model);
-                if (m == null) {
+                if (m == null || !m.isSet("text-input")) {
                     continue;
                 }
                 p.put(model, new CostModel.Prices(m.getDouble("text-input", 0), m.getDouble("image-input", 0),
