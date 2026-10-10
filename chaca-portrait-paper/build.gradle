@@ -10,7 +10,7 @@ repositories {
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
     // ItemsAdder는 리플렉션으로만 호출한다 (컴파일 의존성 없음).
-    implementation files('../magic-codex-database/lib/mariadb-java-client-3.5.10.jar')
+    implementation('org.mariadb.jdbc:mariadb-java-client:3.5.10') { transitive = false }
     testImplementation 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
     testImplementation platform('org.junit:junit-bom:5.11.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -21,7 +21,7 @@ sourceSets.main.java.srcDir '../chaca-portrait-protocol/src/main/java'
 sourceSets.main.java.srcDir '../magic-codex-database/src/main/java'
 sourceSets.test.java.srcDir '../chaca-portrait-protocol/src/test/java'
 jar {
-    from { zipTree('../magic-codex-database/lib/mariadb-java-client-3.5.10.jar') }
+    from { configurations.runtimeClasspath.collect { zipTree(it) } }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 java { toolchain.languageVersion = JavaLanguageVersion.of(21) }
