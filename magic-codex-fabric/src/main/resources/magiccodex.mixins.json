@@ -15,7 +15,8 @@
     "ItemTooltipMixin",
     "TooltipScrollMixin",
     "HandledItemTooltipMixin",
-    "ItemIconMixin"
+    "ItemIconMixin",
+    "WhisperGlyphMixin"
   ],
   "injectors": {
     "defaultRequire": 1

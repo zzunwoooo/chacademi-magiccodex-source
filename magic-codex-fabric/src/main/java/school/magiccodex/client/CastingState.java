@@ -41,6 +41,7 @@ public final class CastingState {
     public void reset() { enabled=false; captured.clear(); cooldowns.clear(); pending.clear(); }
     public void serverResult(String id,int remaining,long now) {
         pending.remove(id);
+        if(id.equals("wind_message")&&remaining==0)cooldowns.remove(id);
         if(remaining>0)cooldowns.put(id,new Cooldown(now+remaining,remaining));
     }
 
@@ -69,7 +70,7 @@ public final class CastingState {
         if(remaining(id,now)>0) return result(Kind.COOLDOWN,id);
         send.accept(s);
         cooldowns.entrySet().removeIf(e -> e.getValue().until()<=now);
-        long duration=school.magiccodex.protocol.MagicHaste.cooldown((int)Math.round(s.cooldown()*1000),ManaClient.haste());
+        long duration=id.equals("wind_message")?0:school.magiccodex.protocol.MagicHaste.cooldown((int)Math.round(s.cooldown()*1000),ManaClient.haste());
         if(duration>0) cooldowns.put(id,new Cooldown(now+duration,duration));
         return result(Kind.CAST,id);
     }

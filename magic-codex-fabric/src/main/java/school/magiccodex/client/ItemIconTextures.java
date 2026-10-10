@@ -84,6 +84,20 @@ public final class ItemIconTextures {
         return true;
     }
 
+    private static final Identifier WHISPER=Identifier.of("magiccodex","whisper_envelope");
+    private static net.minecraft.client.font.BakedGlyph whisperGlyph;
+    /** Uses the same premultiplied mip chain as high-resolution item icons, within normal text layout. */
+    public static net.minecraft.client.font.BakedGlyph whisperGlyph(){
+        if(whisperGlyph!=null)return whisperGlyph;
+        var known=ICONS.get(WHISPER);
+        if(known==null){request(WHISPER);return null;}
+        if(known.isEmpty())return null;
+        var t=known.get();
+        var layers=new net.minecraft.client.font.TextRenderLayerSet(t.layer(),t.layer(),t.layer());
+        whisperGlyph=new net.minecraft.client.font.BakedGlyph(layers,0,1,0,1,0,8f*t.width()/t.height(),0,8);
+        return whisperGlyph;
+    }
+
     private static void request(Identifier model) {
         if (pending == null) {
             ResourceManager manager = MinecraftClient.getInstance().getResourceManager();
@@ -117,7 +131,7 @@ public final class ItemIconTextures {
     private static void clearIcons() {
         var textures = MinecraftClient.getInstance().getTextureManager();
         for (var icon : ICONS.values()) icon.ifPresent(t -> textures.destroyTexture(t.id()));
-        ICONS.clear();
+        ICONS.clear();whisperGlyph=null;
     }
 
     // ---------------------------------------------------------------- worker thread

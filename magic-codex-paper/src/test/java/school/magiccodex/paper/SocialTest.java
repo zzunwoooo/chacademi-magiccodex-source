@@ -43,12 +43,12 @@ class SocialTest {
         t=tickets.issue(owner,target,0);tickets.cancel(owner,t.token());assertNull(tickets.get(owner,1));
         tickets.issue(owner,target,0);tickets.remove(owner);assertNull(tickets.get(owner,1));
     }
-    @Test void successfulSocialCastChargesExactlyOnceAndRejectsLockedEmptyCooldown(){
+    @Test void successfulSocialCastChargesEachMessageWithoutCooldownAndRejectsLockedEmpty(){
         var spell=new ManaSpells.Spell("wind_message","마법 바람의전언","magic.learned.wind_message",1,1000);var a=new ManaAccount(3,100,0);int[] opens={0};
         assertEquals(ManaProtocol.LOCKED,ManaCasting.attempt(a,spell,false,0,()->{opens[0]++;return true;}).status());
         assertEquals(ManaProtocol.OK,ManaCasting.attempt(a,spell,true,0,()->{opens[0]++;return true;}).status());assertEquals(2,a.current);
-        assertEquals(ManaProtocol.COOLDOWN,ManaCasting.attempt(a,spell,true,10,()->{opens[0]++;return true;}).status());assertEquals(1,opens[0]);
-        assertEquals(ManaProtocol.FAILED,ManaCasting.attempt(a,spell,true,1001,()->false).status());assertEquals(2,a.current);
+        assertEquals(ManaProtocol.OK,ManaCasting.attempt(a,spell,true,10,()->{opens[0]++;return true;}).status());assertEquals(2,opens[0]);assertEquals(1,a.current);
+        assertEquals(ManaProtocol.FAILED,ManaCasting.attempt(a,spell,true,1001,()->false).status());assertEquals(1,a.current);
         a.current=0;assertEquals(ManaProtocol.EMPTY,ManaCasting.attempt(a,spell,true,1002,()->true).status());
     }
     @Test void koreanMessagesAndFullListRoundTripAndStaySmall(){

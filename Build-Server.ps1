@@ -3,7 +3,7 @@ $ErrorActionPreference='Stop'
 $env:JAVA_HOME='C:\Program Files\Java\jdk-21.0.10'
 $env:Path=$env:JAVA_HOME+'\bin;'+$env:Path
 $env:GRADLE_USER_HOME='C:\Chacademi\tools\gradle-cache'
-Set-Location -LiteralPath 'C:\Chacademi\build-workspace'
+Set-Location -LiteralPath $PSScriptRoot
 $tasks=if($Verify){@('verifyServer','assembleServer')}else{@('assembleServer')}
 & '.\gradlew.bat' --no-daemon --console=plain @tasks
 if($LASTEXITCODE -ne 0){throw 'Remote server plugin build failed'}

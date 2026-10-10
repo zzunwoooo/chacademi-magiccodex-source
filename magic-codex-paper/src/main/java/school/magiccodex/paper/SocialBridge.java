@@ -26,6 +26,7 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
     private final boolean shared;
     private final Map<UUID,Book> books=new HashMap<>();
     private final WhisperTickets tickets=new WhisperTickets();
+    private final WhisperPeers conversations=new WhisperPeers();
     private volatile boolean closing;
     private static class Book {List<Entry> entries=List.of();boolean ready,busy,checkingSignal;long sequence,nextAction,nextList,window;int requests;
         boolean allow(long n){if(n-window>=1000){window=n;requests=0;}return ++requests<=10;}}
@@ -79,7 +80,7 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
         if(r.action()==SocialProtocol.LIST){if(n<b.nextList){notice(p,r.sequence(),"잠시 후 다시 시도해 주세요.");return;}b.nextList=n+1000;
             if(shared)work(()->store.load(p.getUniqueId()),list->{if(books.get(p.getUniqueId())==b){b.entries=list;b.ready=true;snapshot(p,r.sequence(),"");}},e->notice(p,r.sequence(),"친구 목록을 불러오지 못했습니다."));
             else snapshot(p,r.sequence(),"");return;}
-        if(r.action()!=SocialProtocol.SEND&&n<b.nextAction){notice(p,r.sequence(),"잠시 후 다시 시도해 주세요.");return;}b.nextAction=n+400;
+        if(r.action()!=SocialProtocol.SEND&&r.action()!=SocialProtocol.WHISPER&&n<b.nextAction){notice(p,r.sequence(),"잠시 후 다시 시도해 주세요.");return;}b.nextAction=n+400;
         if(!b.ready||b.busy){notice(p,r.sequence(),"친구 목록을 처리하고 있습니다. 잠시 후 다시 시도해 주세요.");return;}
         switch(r.action()){
             case SocialProtocol.ADD->{if(r.text().isBlank()||r.text().length()>16){notice(p,r.sequence(),"정확한 닉네임을 입력해 주세요.");return;}Player target=plugin.names().resolve(r.text());add(p,target,r.sequence());}
@@ -113,7 +114,7 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
     private boolean isFriend(Player p,UUID target){var b=books.get(p.getUniqueId());return b!=null&&b.ready&&b.entries.stream().anyMatch(e->e.id().equals(target));}
     private void whisper(Player p,UUID id,long seq){
         Player target=Bukkit.getPlayer(id);
-        if(!isFriend(p,id)||!visible(p,target)){notice(p,seq,"접속 중인 친구에게만 전언을 보낼 수 있습니다.");return;}
+        if((!isFriend(p,id)&&!conversations.contains(p.getUniqueId(),id))||!visible(p,target)){notice(p,seq,"접속 중인 친구에게만 전언을 보낼 수 있습니다.");return;}
         var ticket=tickets.bind(p.getUniqueId(),id,now());int cooldown=0;boolean fresh=ticket==null;
         if(ticket==null){
             var cast=mana.castWindForFriend(p);
@@ -125,11 +126,14 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
     private void sendMessage(Player sender,Request r){
         String text;try{text=SocialProtocol.cleanMessage(r.text());}catch(IllegalArgumentException e){notice(sender,r.sequence(),"전언은 1~240자의 일반 글자로 입력해 주세요.");return;}
         var target=Bukkit.getPlayer(r.target());
-        if(sender.isDead()||!isFriend(sender,r.target())||!visible(sender,target)){notice(sender,r.sequence(),"상대방이 접속 중인지 확인해 주세요.");return;}
+        if(sender.isDead()||(!isFriend(sender,r.target())&&!conversations.contains(sender.getUniqueId(),r.target()))||!visible(sender,target)){notice(sender,r.sequence(),"상대방이 접속 중인지 확인해 주세요.");return;}
         if(!tickets.consume(sender.getUniqueId(),r.target(),r.ticket(),now())){notice(sender,r.sequence(),"전언 시간이 만료되었습니다. 마법을 다시 사용해 주세요.");return;}
         // Literal text only: never dispatch a chat command or parse markup from the message.
-        target.sendMessage(Component.text("[바람의 전언] ",NamedTextColor.AQUA).append(Component.text(plugin.names().name(sender)+" → 나: ",NamedTextColor.WHITE)).append(Component.text(text,NamedTextColor.WHITE)));
-        sender.sendMessage(Component.text("[바람의 전언] ",NamedTextColor.AQUA).append(Component.text("나 → "+plugin.names().name(target)+": "+text,NamedTextColor.WHITE)));
+        var line=Component.text("\uE101").font(net.kyori.adventure.key.Key.key("magiccodex","whisper"))
+            .append(Component.text(" "+plugin.names().name(sender)+" : "+text,NamedTextColor.WHITE).font(net.kyori.adventure.key.Key.key("minecraft","default")));
+        conversations.delivered(sender.getUniqueId(),target.getUniqueId());
+        target.sendMessage(line);
+        sender.sendMessage(line);
         packet(target,new Response(SocialProtocol.RECEIVED,0,sender.getUniqueId(),0,plugin.names().name(sender),dorm(sender),text,0,List.of()));
         packet(sender,new Response(SocialProtocol.SENT,r.sequence(),target.getUniqueId(),r.ticket(),plugin.names().name(target),dorm(target),"전언을 보냈습니다.",0,List.of()));
     }
@@ -149,11 +153,11 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
     }
     @EventHandler public void join(PlayerJoinEvent e){load(e.getPlayer());}
     @EventHandler(priority=EventPriority.LOWEST) public void quit(PlayerQuitEvent e){
-        Player p=e.getPlayer();UUID id=p.getUniqueId();String name=plugin.names().name(p),dorm=dorm(p);books.remove(id);tickets.remove(id);
+        Player p=e.getPlayer();UUID id=p.getUniqueId();String name=plugin.names().name(p),dorm=dorm(p);books.remove(id);tickets.remove(id);conversations.remove(id);
         work(()->{store.profile(id,name,dorm);return true;},v->{for(var b:books.values())b.entries=b.entries.stream().map(f->f.id().equals(id)?new Entry(id,name,dorm,false):f).toList();},error->{});
     }
     @Override public void close(){
-        closing=true;mana.windCast=null;books.clear();tickets.clear();
+        closing=true;mana.windCast=null;books.clear();tickets.clear();conversations.clear();
         io.submit(()->{try{store.close();}catch(Exception e){plugin.getLogger().warning(e.toString());}});io.shutdown();
         try{if(!io.awaitTermination(20,TimeUnit.SECONDS))plugin.getLogger().severe("친구 저장 작업 종료 대기시간을 초과했습니다.");}catch(InterruptedException e){Thread.currentThread().interrupt();}
     }

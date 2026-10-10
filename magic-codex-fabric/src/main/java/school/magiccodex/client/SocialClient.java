@@ -22,7 +22,49 @@ import school.magiccodex.protocol.SocialProtocol.*;
 public final class SocialClient {
     private static long sequence;
     private static String pendingOpen;
-    private record Pending(Screen screen,int action,long until){}
+    private record Pending(Screen screen,int action,long until,UUID target,String text){}
+    private record ChatReply(UUID target,String text,long ticket){}
+    private static final Map<Long,ChatReply> chatReplies=new HashMap<>();
+    private static java.util.function.Consumer<Response> chatListener=r->{};
+    /** Optional ChatPlus integration; caller never handles packet encoding or request sequences. */
+    public static void installChatListener(java.util.function.Consumer<Response> listener){chatListener=Objects.requireNonNull(listener);}
+    private static void chatEvent(Response r){try{chatListener.accept(r);}catch(RuntimeException ignored){}}
+    public static boolean replyFromChat(UUID target,String text){
+        text=SocialProtocol.cleanMessage(text);
+        if(!chatReplies.isEmpty())return false;
+        if(!request(null,SocialProtocol.WHISPER,target,0,""))return false;
+        chatReplies.put(sequence,new ChatReply(target,text,0));return true;
+    }
+    public static void cancelChatReply(UUID target){
+        var remove=new ArrayList<Long>();
+        chatReplies.forEach((seq,r)->{if(r.target().equals(target))remove.add(seq);});
+        for(long seq:remove){
+            var draft=chatReplies.remove(seq);pending.remove(seq);
+            if(draft.ticket()!=0)request(null,SocialProtocol.CANCEL,target,draft.ticket(),"");
+        }
+    }
+    private static boolean receiveChatReply(Response r){
+        var draft=chatReplies.remove(r.sequence());
+        if(draft==null)return false;
+        pending.remove(r.sequence());
+        if(ChatReplyPolicy.compose(draft.target(),draft.ticket(),r)){
+            if(r.text().equals("cast")){
+                CastingClient.state().serverResult("wind_message",0,Util.getMeasuringTimeMs());
+                ScreenVfxClient.onCast("wind_message");
+            }
+            if(request(null,SocialProtocol.SEND,draft.target(),r.ticket(),draft.text()))
+                chatReplies.put(sequence,new ChatReply(draft.target(),draft.text(),r.ticket()));
+            else{
+                request(null,SocialProtocol.CANCEL,draft.target(),r.ticket(),"");
+                chatEvent(new Response(SocialProtocol.NOTICE,0,draft.target(),0,"","","전언을 보내지 못했습니다. 다시 입력해 주세요.",0,List.of()));
+            }
+        }else if(ChatReplyPolicy.sent(draft.target(),draft.ticket(),r)){
+            chatEvent(new Response(SocialProtocol.SENT,r.sequence(),draft.target(),r.ticket(),r.name(),r.dormitory(),draft.text(),0,List.of()));
+        }else{
+            chatEvent(new Response(SocialProtocol.NOTICE,0,draft.target(),0,"","",r.text().isBlank()?"전언을 보내지 못했습니다.":r.text(),0,List.of()));
+        }
+        return true;
+    }
     private static final Map<Long,Pending> pending=new HashMap<>();
     private static List<Entry> cached=List.of();
     private static boolean cacheKnown;
@@ -53,7 +95,10 @@ public final class SocialClient {
             if(c.player==null||c.world==null){reset();return;}
             if(pendingOpen!=null&&c.getOverlay()==null){String message=pendingOpen;pendingOpen=null;MagicCodexClient.dismiss();var screen=new FriendsScreen();c.setScreen(screen);screen.notice(message);}
             long now=Util.getMeasuringTimeMs();var it=pending.entrySet().iterator();
-            while(it.hasNext()){var e=it.next();if(e.getValue().until()<now){var request=e.getValue();it.remove();if(c.currentScreen==request.screen()&&request.screen() instanceof SocialScreen s){s.busy=false;s.notice("서버 응답이 늦습니다. 잠시 후 다시 시도해 주세요.");}}}
+            while(it.hasNext()){var e=it.next();if(e.getValue().until()<now){var request=e.getValue();it.remove();
+                var draft=chatReplies.remove(e.getKey());
+                if(draft!=null)chatEvent(new Response(SocialProtocol.NOTICE,0,draft.target(),0,"","","전송 결과를 확인하지 못했습니다. 중복 전송을 피하려면 상대에게 먼저 확인해 주세요.",0,List.of()));
+                if(c.currentScreen==request.screen()&&request.screen() instanceof SocialScreen s){s.busy=false;s.notice("서버 응답이 늦습니다. 잠시 후 다시 시도해 주세요.");}}}
             if(prefetchAt==0)prefetchAt=now+1500;
             if(!cacheKnown && prefetchAttempts<3 && now>=prefetchAt && supported()
                     && !(c.currentScreen instanceof SocialScreen) && !waiting(null,SocialProtocol.LIST)){
@@ -61,7 +106,7 @@ public final class SocialClient {
             }
         });
     }
-    private static void reset(){sequence=0;cached=List.of();cacheKnown=false;prefetchAt=nextListRequest=0;prefetchAttempts=0;pending.clear();pendingOpen=null;}
+    private static void reset(){chatReplies.clear();chatEvent(null);sequence=0;cached=List.of();cacheKnown=false;prefetchAt=nextListRequest=0;prefetchAttempts=0;pending.clear();pendingOpen=null;}
     public static boolean supported(){return MinecraftClient.getInstance().getNetworkHandler()!=null&&ClientPlayNetworking.canSend(Query.ID);}
     public static void open(){pendingOpen="";}
     static List<Entry> entries(){return cached;}
@@ -72,14 +117,17 @@ public final class SocialClient {
         if(action==SocialProtocol.LIST && (Util.getMeasuringTimeMs()<nextListRequest || pending.values().stream().anyMatch(p->p.action()==SocialProtocol.LIST)))return false;
         if(pending.size()>=8)return false;long seq=++sequence;
         if(action==SocialProtocol.LIST)nextListRequest=Util.getMeasuringTimeMs()+1100;
-        if(action!=SocialProtocol.CANCEL&&action!=SocialProtocol.CLOSE)pending.put(seq,new Pending(s,action,Util.getMeasuringTimeMs()+7000));
+        if(action!=SocialProtocol.CANCEL&&action!=SocialProtocol.CLOSE)pending.put(seq,new Pending(s,action,Util.getMeasuringTimeMs()+7000,target,text));
         ClientPlayNetworking.send(new Query(SocialProtocol.encode(new Request(action,seq,target,ticket,text))));return true;
     }
     private static void receive(Response r){
         var c=MinecraftClient.getInstance();
+        if(receiveChatReply(r))return;
         if(r.kind()==SocialProtocol.OPEN){pendingOpen=r.text();return;}
-        if(r.kind()==SocialProtocol.RECEIVED){c.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME,1.35f,.35f));return;}
+        if(r.kind()==SocialProtocol.RECEIVED){chatEvent(r);c.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME,1.35f,.35f));return;}
         var p=pending.remove(r.sequence());
+        if(r.kind()==SocialProtocol.SENT&&p!=null&&p.action()==SocialProtocol.SEND)
+            chatEvent(new Response(r.kind(),r.sequence(),r.target(),r.ticket(),r.name(),r.dormitory(),p.text(),0,List.of()));
         if(r.kind()==SocialProtocol.SNAPSHOT){cached=r.entries();cacheKnown=true;}
         if(r.sequence()==0){if(!r.text().isEmpty()){if(c.currentScreen instanceof StatsScreen stats)stats.showNotice(r.text());else if(c.currentScreen instanceof SocialScreen social)social.notice(r.text());else if(c.player!=null)c.player.sendMessage(Text.literal(r.text()),true);}return;}
         if(p==null||c.currentScreen!=p.screen()){
