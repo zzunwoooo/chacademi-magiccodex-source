@@ -26,6 +26,8 @@ public final class NpcTalkScreen extends Screen {
  private long start,lastSound,messageAt,closeAt;private String offerTitle,offerToken;
  private final NpcTalkFlow flow=new NpcTalkFlow();private final ConversationHistory history=new ConversationHistory();
  private char suppressedShortcut;private TextFieldWidget input;private Identifier portrait;private boolean portraitPresent;private int resourceGeneration=-1;
+ // 내 차례 (버튼·직접 말하기 직후 내 일러스트 + 내 문장). 그동안 도착한 NPC 대사는 끝난 뒤 처음부터 타이핑, 작별(닫기)은 끝난 뒤 처리.
+ private PlayerTurn turn;private boolean lineDuringTurn,heldClose;private String heldFarewell="";
  public NpcTalkScreen(NpcTalkProtocol.Response open,Screen parent){super(Text.literal("NPC 대화"));this.parent=parent;session=open.session();apply(open);}
  private static Identifier asset(String name){return Identifier.of("magiccodex","textures/gui/dialogue/"+name+".png");}
  String session(){return session;}
@@ -42,10 +44,10 @@ public final class NpcTalkScreen extends Screen {
   switch(r.op()){
    case NpcTalkProtocol.S_THINKING->{if(flow.matches(r.seq()))stallText="";}
    case NpcTalkProtocol.S_STALL->{if(flow.matches(r.seq()))stallText=r.text();}
-   case NpcTalkProtocol.S_LINE->{if(!flow.line(r.seq()))return;offerTitle=offerToken=null;history.add("npc:"+r.seq(),speaker,r.text());setText(r.text());}
+   case NpcTalkProtocol.S_LINE->{if(!flow.line(r.seq()))return;offerTitle=offerToken=null;history.add("npc:"+r.seq(),speaker,r.text());setText(r.text());if(turn!=null)lineDuringTurn=true;}
    case NpcTalkProtocol.S_QUEST_OFFER->{if(!flow.current(r.seq()))return;offerTitle=r.text();offerToken=r.token();directInput=false;if(input!=null)input.setFocused(false);}
    case NpcTalkProtocol.S_INFO->{if(r.seq()!=0&&!flow.current(r.seq()))return;flow.rejected(r.seq());stallText="";note(r.text());}
-   case NpcTalkProtocol.S_CLOSE->serverClose(r.text());
+   case NpcTalkProtocol.S_CLOSE->{if(turn!=null){heldClose=true;heldFarewell=r.text()==null?"":r.text();}else serverClose(r.text());}
    default->{}
   }
  }
@@ -67,16 +69,18 @@ public final class NpcTalkScreen extends Screen {
   if(!directInput||!inputEnabled||input==null||closed||log||flow.waiting())return;
   String value=input.getText().strip();trace("submit",flow.pending());
   if(!NpcTalkProtocol.validInput(value)){note(value.isEmpty()?"할 말을 입력해 주세요.":"100자 이내의 문장으로 입력해 주세요.");return;}
-  if(dispatch(NpcTalkProtocol.C_SAY,value,false)){history.add("player:"+flow.pending(),"나",value);input.setText("");directInput=false;input.setFocused(false);click();}
+  if(dispatch(NpcTalkProtocol.C_SAY,value,false)){history.add("player:"+flow.pending(),"나",value);input.setText("");directInput=false;input.setFocused(false);click();beginTurn(value);}
  }
- private void pressButton(NpcTalkProtocol.Button button){if(dispatch(NpcTalkProtocol.C_BUTTON,button.id(),false)){history.add("player:"+flow.pending(),"나",button.label());click();}}
- private void answerQuest(boolean accept){if(offerToken!=null&&dispatch(NpcTalkProtocol.C_QUEST,offerToken,accept)){history.add("player:"+flow.pending(),"나",accept?"부탁을 수락했어요.":"부탁을 거절했어요.");offerTitle=offerToken=null;click();}}
+ private void pressButton(NpcTalkProtocol.Button button){if(dispatch(NpcTalkProtocol.C_BUTTON,button.id(),false)){history.add("player:"+flow.pending(),"나",button.label());click();beginTurn(button.label());}}
+ private void beginTurn(String said){turn=PlayerTurn.start(said,sound);lineDuringTurn=heldClose=false;heldFarewell="";}
+ private void finishTurn(){turn=null;if(heldClose){heldClose=false;serverClose(heldFarewell);return;}if(lineDuringTurn){lineDuringTurn=false;page=shown=0;start=Util.getMeasuringTimeMs();}}
+ private void answerQuest(boolean accept){if(offerToken!=null&&dispatch(NpcTalkProtocol.C_QUEST,offerToken,accept)){history.add("player:"+flow.pending(),"나",accept?"부탁을 수락했어요.":"부탁을 거절했어요.");offerTitle=offerToken=null;click();beginTurn(accept?"부탁, 제가 해 볼게요.":"이번에는 어려울 것 같아요.");}}
  private void openInput(){
   if(!inputEnabled||closed||log||flow.waiting())return;
   shown=count();while(!lastPage()){page++;}shown=count();directInput=true;input.setFocused(true);trace("input-open",0);click();
  }
  private List<Option> options(){
-  if(log||directInput||closed||flow.waiting())return List.of();
+  if(log||directInput||closed||turn!=null||flow.waiting())return List.of();
   if(offerToken!=null)return List.of(new Option(1,"부탁 수락: "+offerTitle,()->answerQuest(true)),new Option(2,"거절",()->answerQuest(false)));
   if(!complete()||!lastPage())return List.of();
   var out=new ArrayList<Option>();int n=1;
@@ -96,13 +100,13 @@ public final class NpcTalkScreen extends Screen {
  @Override public void renderBackground(DrawContext c,int x,int y,float delta){}
  @Override public void tick(){suppressedShortcut=0;long now=Util.getMeasuringTimeMs();if(closeAt>0&&now>closeAt){client.setScreen(parent);return;}if(flow.timeout(now)){stallText="";note("응답이 늦습니다. 연결 상태를 확인하고 다시 말을 걸어 주세요.");trace("response-timeout",0);}if(client!=null&&(client.player==null||client.world==null))close();}
  @Override public void render(DrawContext c,int mouseX,int mouseY,float delta){
-  long now=Util.getMeasuringTimeMs();int next=(int)Math.min(count(),Math.max(shown,(now-start)/23));
+  long now=Util.getMeasuringTimeMs();if(turn!=null){turn.tick(log);start=now-(long)shown*23;}int next=(int)Math.min(count(),Math.max(shown,(now-start)/23));
   if(!log&&next>shown){if(sound&&now-lastSound>=45){client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK.value(),1.8f,.07f));lastSound=now;}shown=next;}
   if(resourceGeneration!=UiResources.generation()){resourceGeneration=UiResources.generation();portraitPresent=portrait!=null&&client.getResourceManager().getResource(portrait).isPresent();}
   var f=fit();double mx=f.localX(mouseX),my=f.localY(mouseY);var images=UiResources.images();images.beginFrame();UiResources.text().beginFrame();c.fill(0,0,width,height,0x30030A12);c.getMatrices().push();
   try{
    c.getMatrices().translate(f.x(),f.y(),0);c.getMatrices().scale(f.scale(),f.scale(),1);
-   c.enableScissor(65,75,765,639);try{if(portraitPresent)images.drawTexture(c,portrait,65,75,0,0,700,1050,1024,1536,1024,1536);}finally{c.disableScissor();}
+   if(turn!=null)turn.drawPortrait(c,65,75,true);else{c.enableScissor(65,75,765,639);try{if(portraitPresent)images.drawTexture(c,portrait,65,75,0,0,700,1050,1024,1536,1024,1536);}finally{c.disableScissor();}}
    // The lower nameplate is the only NPC name. Vector hearts avoid font/placeholder glyphs.
 
    label(c,sound?"♪ 소리 켜짐":"♪ 소리 꺼짐",1110,54,21,0xFFD8DFE7,false,false,175);label(c,"기록",1305,54,21,0xFFD8DFE7,false,false,90);label(c,log?"기록 닫기 ×":"닫기 ×",1430,54,21,0xFFD8DFE7,false,false,130);
@@ -112,11 +116,13 @@ public final class NpcTalkScreen extends Screen {
     images.drawTexture(c,CHOICE,454,390,73,270,570,60,1952,210,2098,749,input.isFocused()?0xFFFFFFFF:0xFFB8C4D0);
     drawInput(c,now);images.drawTexture(c,CHOICE,1038,390,73,270,128,60,1952,210,2098,749,hit(mx,my,1038,390,128,60)?0xFFFFFFFF:0xFFCBD5DD);label(c,"전송",1102,420,22,0xFFF0F3F5,false,true,90);label(c,"Enter 전송 · Esc 입력 닫기",454,500,19,0xFFB8C4D0,false,false,650);c.draw();c.getMatrices().pop();
    }
+   if(turn!=null)turn.drawPanel(c,images,470,225);else{
    images.drawTexture(c,PANEL,60,639,44,199,1480,220,2085,316,2172,724);images.drawTexture(c,NAME,86,615,200,244,470,54,1810,235,2172,724);label(c,speaker,131,642,23,0xFFE8D19B,true,false,225);c.draw();c.getMatrices().push();c.getMatrices().translate(0,0,300);for(int i=0;i<NpcTalkProtocol.MAX_HEARTS;i++)heart(c,376+i*27,632,i<Math.clamp(hearts,0,NpcTalkProtocol.MAX_HEARTS)?0xFFF19BBE:0xFF92979F);c.draw();c.getMatrices().pop();
    if(flow.waiting()&&!closed)label(c,stallText.isEmpty()?".".repeat((int)(now/350%3)+1):stallText,120,704,29,0xFFB8C4D0,false,false,1330);
    else{int remaining=shown;for(int i=page*3;i<Math.min(page*3+3,lines.size());i++){var row=lines.get(i);int n=Math.min(remaining,row.ends.length-1);remaining-=n;if(n>0){int y=704+(i-page*3)*43;boolean partial=n<row.ends.length-1;if(partial)c.enableScissor(115,y-24,120+(int)Math.ceil(row.ends[n])+1,y+26);label(c,row.text,120,y,29,0xFFF0F1F4,false,false,1330);if(partial)c.disableScissor();}}}
+   }
    var opts=options();for(int i=0;i<opts.size();i++){int y=590-opts.size()*75+i*75;boolean hovered=hit(mx,my,962,y,545,67);images.drawTexture(c,CHOICE,962,y,73,270,545,67,1952,210,2098,749,hovered?0xFFFFFFFF:0xE8D5E1EE);String option=opts.get(i).number()+". "+opts.get(i).label();label(c,option,1006,y+34,24,0xE8000000,false,false,465);label(c,option,1005,y+33,24,hovered?0xFF92E7F2:0xFFEEF1F5,false,false,465);if(hovered)HudMesh.line(c,1005,y+53,1490,y+53,1,0x8092E7F2);}
-   String hint=closed||directInput?"":flow.waiting()?"처리 중…":!complete()?"Enter  바로 보기":!lastPage()?"Enter  다음":"4  직접 말하기 · Esc  닫기";
+   String hint=turn!=null?turn.hint("Enter"):closed||directInput?"":flow.waiting()?"처리 중…":!complete()?"Enter  바로 보기":!lastPage()?"Enter  다음":"4  직접 말하기 · Esc  닫기";
    label(c,hint,800,825,20,0xFFC1CEDD,false,true,520);if(!message.isEmpty()&&now-messageAt<7000)label(c,message,800,874,19,0xFFE8D19B,false,true,1300);
   }finally{c.getMatrices().pop();images.endFrame();}
  }
@@ -144,7 +150,7 @@ public final class NpcTalkScreen extends Screen {
  private void label(DrawContext c,String value,float x,float y,float size,int color,boolean bold,boolean centered,float max){var font=bold?BOLD:FONT;float actual=Math.min(size,size*max/Math.max(max,UiResources.text().width(value,size,font)));UiResources.text().draw(c,value,x,y,actual,color,font,centered);}
  private static boolean hit(double x,double y,int a,int b,int w,int h){return x>=a&&x<a+w&&y>=b&&y<b+h;}
  private void click(){if(client!=null)client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK.value(),1.2f,.12f));}
- private void advanceText(){if(closed)return;if(!complete()){shown=count();return;}if(!lastPage()){page++;start=Util.getMeasuringTimeMs();shown=0;}}
+ private void advanceText(){if(turn!=null){if(turn.advance())finishTurn();return;}if(closed)return;if(!complete()){shown=count();return;}if(!lastPage()){page++;start=Util.getMeasuringTimeMs();shown=0;}}
  @Override public boolean keyPressed(int key,int scan,int mods){
   if(log){if(key==GLFW.GLFW_KEY_ESCAPE){log=false;input.setFocused(directInput);}return true;}
   if(key==GLFW.GLFW_KEY_ESCAPE){if(directInput){directInput=false;input.setFocused(false);}else close();return true;}

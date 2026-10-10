@@ -1,0 +1,23 @@
+name: ChacaPortrait
+version: '${version}'
+main: kr.chacademy.portrait.ChacaPortraitPlugin
+api-version: '1.21'
+description: 차카데미 플레이어 일러스트 (스킨 → AI 일러스트, 대화창 "내 차례" 초상화)
+authors: [Chacademy]
+softdepend: [ItemsAdder, SkinsRestorer]
+commands:
+  portrait:
+    description: ChacaPortrait 관리자 명령어
+    usage: /portrait help
+    aliases: [초상화]
+    permission: chacaportrait.admin
+permissions:
+  chacaportrait.admin:
+    description: /portrait 관리자 명령어 (시험 생성·재생성·초기화·예산)
+    default: op
+  chacaportrait.auto:
+    description: 최초 접속 시 일러스트 자동 생성 대상
+    default: true
+  chacaportrait.reroll:
+    description: 다시 그리기 아이템 사용
+    default: true

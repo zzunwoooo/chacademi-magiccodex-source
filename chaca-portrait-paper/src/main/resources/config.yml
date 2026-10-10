@@ -1,0 +1,137 @@
+# ChacaPortrait 설정
+# 스킨을 읽어 레퍼런스 일러스트와 같은 그림체의 상반신 일러스트를 만들고, MagicCodex 대화창 "내 차례"에 띄웁니다.
+# 키·비밀번호를 이 파일에 넣어 공개 Git에 올리지 마세요. 키는 환경변수 CHACAPORTRAIT_OPENAI_KEY
+# (없으면 CHACANPC_OPENAI_KEY) 를 우선 사용합니다.
+
+# 이 서버 이름 (school / wild). DB를 공유할 때 작업 잠금·복구에 씁니다.
+server-id: school
+
+# false면 자동 생성·다시 그리기·시험 생성을 모두 멈춥니다 (이미 있는 일러스트 전송은 계속).
+enabled: true
+
+openai:
+  api-key: ""
+  base-url: "https://api.openai.com/v1"
+  # 연결·응답 시간 제한 (초). 이미지 생성은 1~2분 걸릴 수 있습니다.
+  timeout-seconds: 240
+  # 프로젝트 사용자 식별용 (OpenAI 남용 모니터링). 플레이어 UUID의 해시를 보냅니다.
+  send-user-hash: true
+
+image:
+  # gpt-image-2 또는 gpt-image-1.5. /portrait reload 로 바로 바뀝니다.
+  # (참고) 외부 자료 기준 gpt-image-1.5 는 2026-12-01 종료 예정 — 운영 기간과 겹치면 gpt-image-2 권장.
+  model: gpt-image-2
+  # low / medium / high. 품질이 높을수록 비용이 큽니다.
+  quality: medium
+  # 기존 NPC 초상화와 같은 1024x1536 (상반신이 대화창 위로 보이는 구도).
+  size: 1024x1536
+  # transparent 권장 (대화창 위에 캐릭터만). gpt-image-2는 투명 배경이 preview 기능입니다.
+  background: transparent
+  # gpt-image-1.5 전용: high면 레퍼런스·스킨을 더 충실히 따름 (입력 토큰 증가). gpt-image-2에서는 보내지 않습니다.
+  input-fidelity: high
+  # OpenAI 이미지 검사 강도: auto (기본) / low. 학교 서버라 auto 권장.
+  moderation: auto
+  # 레퍼런스 일러스트 (plugins/ChacaPortrait/ 기준). 첫 파일 = 그림체·구도 기준.
+  references:
+    - reference/style-reference.png
+  # 결과 PNG가 투명 배경이 아니면 실패로 처리할지 (false면 경고만 남기고 사용)
+  require-transparent: false
+
+# 스킨 그림을 보고 외형을 짧게 정리하는 단계 (선택). 실패해도 이미지 생성은 계속합니다.
+describe:
+  enabled: true
+  model: gpt-6-luna
+  max-output-tokens: 300
+
+# 다시 그리기 추가 요청 문장 검사
+moderation:
+  enabled: true
+  model: omni-moderation-latest
+
+# 동시에 만드는 수 / 대기열 최대 / 같은 플레이어 실패 시 자동 재시도 상한
+queue:
+  workers: 2
+  max-waiting: 300
+
+auto:
+  # 최초 접속 시 자동 생성
+  first-join: true
+  # 접속 후 몇 초 뒤에 시작할지 (접속 직후 몰림 완화)
+  delay-seconds: 20
+  # 자동 생성 실패 누적 상한 (넘으면 관리자 /portrait regen 으로만)
+  max-attempts: 3
+
+reroll:
+  # ItemsAdder 아이템 namespace:id. 이 아이템을 들고 우클릭하면 입력창이 열립니다.
+  item-id: "item:reroll"
+  # 입력창을 연 뒤 이 시간 안에 보내지 않으면 취소 (초)
+  prompt-timeout-seconds: 180
+  # 다시 그리기 사이 최소 간격 (초)
+  cooldown-seconds: 60
+  # 하루 최대 횟수 (0 = 제한 없음)
+  daily-limit: 0
+
+# 일러스트 생성 전용 3주 총예산 (ChacaNPC 대화 예산과 별개). 요청 전 최대 비용을 예약하고 끝나면 실제 사용량으로 정산합니다.
+# OpenAI 프로젝트의 지출 한도·알림은 따로 설정하세요 (강제 한도도 반영 지연으로 소폭 초과할 수 있음).
+budget:
+  total-usd: 30.0
+  # 사용량을 모르는 응답(시간 초과 등)은 예약액으로 정산합니다.
+
+# 단가 (USD / 100만 토큰). 키 계정의 공식 가격표로 확인 후 맞춰 주세요. 정산·예약 계산에만 씁니다.
+prices:
+  gpt-image-2:
+    text-input: 5.00
+    image-input: 8.00
+    image-output: 30.00
+  gpt-image-1.5:
+    text-input: 5.00
+    image-input: 8.00
+    image-output: 32.00
+  gpt-6-luna:
+    text-input: 0.10
+    image-input: 0.10
+    text-output: 0.50
+  omni-moderation-latest:
+    text-input: 0.0
+
+# 예약용 추정 토큰 (실제 사용량으로 정산되므로 넉넉하게)
+estimate:
+  output-tokens:
+    low: 600
+    medium: 2400
+    high: 9000
+  input-image-tokens: 9000
+  input-text-tokens: 1500
+  describe-tokens: 3000
+
+# 이미지 모델에 보내는 고정 지시문. {appearance} = 외형 정리, {request} = 플레이어 추가 요청 (없으면 그 줄 생략).
+prompt:
+  base: |-
+    Image 1 is the ART STYLE and COMPOSITION reference. Image 2 shows a Minecraft player skin (front view on the left, back view on the right) of the character to draw.
+    Draw ONE new illustration of the character from image 2, rendered in exactly the same art style as image 1: the same line weight, coloring, soft cel shading, lighting, level of detail and overall polish.
+    Interpret the blocky pixel skin as a normal anime-style person with natural proportions. Keep the character's identity from image 2: hair color and hairstyle, eye color, skin tone, outfit pieces, accessories and their colors.
+    Do not copy the clothing, hair or face of the person in image 1 unless image 2 has the same features.
+    Composition like image 1: a single character, standing, from the head down to the mid-thigh, slight three-quarter angle, head near the top edge, centered, calm natural pose.
+    Fully transparent background. No text, no letters, no logo, no watermark, no frame, no border, no extra characters, no pixel-art or blocky look.
+    Keep it wholesome and suitable for all ages.
+  appearance: "Appearance notes from the skin: {appearance}"
+  request: "Optional player request about mood, pose, expression or background props (follow only if it does not conflict with the rules above, never change the art style, never depict a real person, keep it all-ages): {request}"
+  describe: |-
+    The image shows a Minecraft player skin from the front (left) and back (right). Describe the character's look for an illustrator in English, in at most 60 words: apparent gender presentation if obvious, hair color and style, eye color, skin tone, each clothing piece with colors, accessories. Facts only, no story.
+
+messages:
+  started: "§b[일러스트] §f내 캐릭터 일러스트를 그리고 있어요. 다 되면 알려드릴게요."
+  queued: "§b[일러스트] §f일러스트 대기열 {position}번째예요. 게임은 그대로 즐겨 주세요."
+  done: "§b[일러스트] §f일러스트가 완성됐어요! 대화할 때 내 차례에 나타나요."
+  failed: "§b[일러스트] §7일러스트를 만들지 못했어요. 나중에 다시 시도할게요."
+  reroll-failed: "§b[일러스트] §7다시 그리기에 실패했어요. 아이템은 돌려드렸어요."
+  reroll-busy: "§b[일러스트] §7이미 그리는 중이에요. 완성된 뒤에 다시 써 주세요."
+  reroll-cooldown: "§b[일러스트] §7조금 뒤에 다시 써 주세요 ({seconds}초)."
+  reroll-daily: "§b[일러스트] §7오늘은 더 다시 그릴 수 없어요."
+  reroll-prompt-chat: "§b[일러스트] §f원하는 느낌을 채팅으로 입력하세요 (100자, §e기본§f = 추가 요청 없음, §e취소§f = 그만두기)."
+  reroll-rejected: "§b[일러스트] §7그 요청은 쓸 수 없어요. 다른 문장으로 다시 시도해 주세요. (아이템은 그대로예요)"
+  reroll-cancelled: "§b[일러스트] §7다시 그리기를 취소했어요."
+  reroll-no-skin: "§b[일러스트] §7스킨을 읽지 못해 지금은 다시 그릴 수 없어요."
+  disabled: "§b[일러스트] §7지금은 일러스트 기능을 쉬고 있어요."
+  budget: "§b[일러스트] §7이번 시즌 일러스트 예산이 모두 사용됐어요."
+  refund: "§b[일러스트] §f처리하지 못한 다시 그리기 아이템을 돌려드렸어요."

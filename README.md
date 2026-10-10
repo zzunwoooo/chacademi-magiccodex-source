@@ -12,6 +12,7 @@
 | portable-vfx-runtime | common / paper / client 별도 프로젝트. Paper 3.2.0-catalog.alpha.4: `.\portable-vfx-runtime\gradlew.bat -p portable-vfx-runtime -PskipClient :paper:test :paper:jar` |
 | magic-discovery-paper / creature-spawns-paper / tornado-event-paper | 기존 서버 모듈. 이번 작업에서 기능 변경하지 않음 |
 | chaca-npc-paper (+ chaca-npc-protocol) | ChacaNPC 0.2.0 — school 전용 AI NPC 플러그인 (Citizens 필수). `.\gradlew.bat :chaca-npc-paper:test :chaca-npc-paper:jar`. [모듈 안내](chaca-npc-paper/README.md), [작업 기록](docs/handoff/CHACANPC_20261005.md) |
+| chaca-portrait-paper (+ chaca-portrait-protocol) | ChacaPortrait 0.1.0 — 스킨 → AI 상반신 일러스트, 대화창 "내 차례" 초상화, ItemsAdder `item:reroll` 다시 그리기. `.\gradlew.bat :chaca-portrait-paper:test :chaca-portrait-paper:jar`. [모듈 안내](chaca-portrait-paper/README.md), [작업 기록](docs/handoff/CHACAPORTRAIT_20261010.md) |
 
 호스트의 `Build-Server.ps1 -Verify`는 기존 서버 모듈 전체를 빌드합니다. Fabric/Portable VFX는 별도 명령을 사용하세요. [의존 목록](build-support/dependencies.json)에 따라 적법하게 확보한 외부 라이브러리가 필요합니다. ModelEngine/MythicMobs 등 유료 JAR, DB 실데이터, 비밀 설정, 빌드 산출물은 Git에서 제외합니다.
 
