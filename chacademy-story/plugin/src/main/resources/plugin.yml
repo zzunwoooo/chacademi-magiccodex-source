@@ -1,0 +1,26 @@
+name: ChacademyStory
+version: '${version}'
+main: kr.chacademy.storyplugin.StoryPlugin
+api-version: '1.21'
+description: 차카데미 메인 스토리 (컷신, 대화, 호감도). 스토리 모드에 재생 신호를 보내고 끝나면 명령어를 실행합니다.
+authors: [Chacademy]
+softdepend: [MagicCodexBridge, PlaceholderAPI, ChacaNPC]
+commands:
+  cutscene:
+    description: 컷신 재생 / 멈춤 / 설정 다시 불러오기
+    usage: /cutscene play <플레이어|@a> <컷신id> [auto|skip|noskip] | /cutscene stop <플레이어|@a> | /cutscene reload
+    permission: chacademy.story.admin
+  storydialogue:
+    description: 메인 스토리 대화 열기 / 닫기
+    usage: /storydialogue <플레이어|@a> <대화id> | /storydialogue stop <플레이어|@a>
+    aliases: [스토리대화]
+    permission: chacademy.story.admin
+  affinity:
+    description: 호감도 보기 / 바꾸기
+    usage: /affinity <플레이어> [npc] [set|add] [값]
+    aliases: [호감도]
+    permission: chacademy.story.admin
+permissions:
+  chacademy.story.admin:
+    description: 스토리 명령어 사용
+    default: op

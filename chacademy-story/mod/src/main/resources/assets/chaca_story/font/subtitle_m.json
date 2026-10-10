@@ -1,0 +1,11 @@
+{
+  "providers": [
+    {
+      "type": "ttf",
+      "file": "chaca_story:cnm_m.ttf",
+      "size": 11.0,
+      "oversample": 8.0,
+      "shift": [0.0, 1.0]
+    }
+  ]
+}

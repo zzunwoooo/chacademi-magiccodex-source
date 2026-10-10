@@ -1,0 +1,56 @@
+# 차카데미 스토리 플러그인 설정
+
+# 스토리 모드가 없는 유저에게 재생 명령이 왔을 때 보낼 메시지 (비우면 안 보냄)
+missing-mod-message: "&7(차카데미 스토리 모드가 없어서 건너뜁니다)"
+
+# 모드가 없는 유저도 끝난 것으로 쳐서 다음 명령을 실행할지
+finish-if-missing-mod: true
+
+# ---------------------------------------------------------------- 컷신
+# 컷신이 끝나면 콘솔로 실행할 명령어. {player} {id} {skipped}
+on-finish:
+  ch1_ashen_night:
+    - "say {player} 님이 잿빛 밤 컷신을 다 봤습니다"
+#   - "storydialogue {player} ch1_wakeup"     # 컷신이 끝나면 바로 대화로
+
+# 탭 자동완성용 컷신 id (선택)
+cutscenes:
+  - ch1_ashen_night
+
+# ---------------------------------------------------------------- 대화
+# 대화별 명령어는 plugins/ChacademyStory/dialogues/<대화id>.yml 에 넣는다.
+# (편집기에서 내보낸 zip 안의 server_commands.yml 을 이름만 바꿔서 넣으면 됨)
+# 명령어 안의 {player} 는 마인크래프트 닉네임, {nickname} 은 MagicCodex 한글 닉네임.
+
+# 대사 속 글자 바꾸기
+#   {player}  = MagicCodex 한글 닉네임 (MagicCodexBridge 가 없으면 %user_nickname%, 그것도 없으면 마인크래프트 닉네임)
+#   {account} = 마인크래프트 닉네임
+#   아래 목록의 PlaceholderAPI 값도 대사에 그대로 쓸 수 있다 (예: "%chacademiatitle_full% 학생, 어서 와요")
+#   대화를 열 때 서버가 계산해서 보내므로, 대사에 쓰고 싶은 것을 여기에 적어 둔다.
+dialogue-placeholders:
+  - "%user_nickname%"
+  - "%user_account%"
+  - "%chacademiatitle_full%"
+  - "%chacademiatitle_prefix%"
+  - "%chacademiatitle_suffix%"
+
+# ---------------------------------------------------------------- 호감도
+# MagicCodexBridge 가 켜져 있으면 호감도는 MagicCodex 가 저장한다 (ChacaNPC 와 같은 점수, 하트 단계 상한 적용).
+#   스토리 대화로 바뀐 점수는 출처 "dialogue" 로 기록 (MagicCodex affinity.yml 의 daily-caps.dialogue).
+#   대화를 열 때는 서버 dialogues/<id>.yml 의 npcs 목록에 있는 NPC 점수만 보낸다 (편집기가 자동으로 적어 줌).
+# MagicCodexBridge 가 없을 때만 아래 값과 이 폴더의 affinity.yml 을 쓴다.
+# 기록이 없을 때 점수
+affinity-default: 25
+affinity-min: -100
+affinity-max: 100
+# 대화 한 번에 바뀔 수 있는 최대치 — 서버 dialogues/<id>.yml 에 affinity 가 없는 예전 형식 대화에만 적용
+# (편집기로 만든 대화는 서버 파일의 affinity 값을 그대로 쓴다. 클라 yml 을 고쳐도 바뀌지 않음)
+affinity-max-per-dialogue: 30
+# 호감도가 바뀔 때마다 콘솔에 기록
+affinity-log: false
+
+# ---------------------------------------------------------------- 이어서 보기
+# 스토리 대화는 끝날 때까지 닫을 수 없다 (ESC 무시, 다른 화면이 덮어도 다시 열림).
+# 보고 있던 장면·대사 번호를 progress.yml 에 저장해서, 접속이 끊기거나 서버가 재시작돼도
+# 다시 접속하면 3초 뒤 그 대사부터 이어서 연다. 이미 실행된 선택지 명령·호감도는 다시 실행되지 않는다.
+# 관리자가 강제로 끝내려면: /storydialogue stop <플레이어>
