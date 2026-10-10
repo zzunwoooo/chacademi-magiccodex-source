@@ -48,7 +48,7 @@ public final class ChacaPortraitPlugin extends JavaPlugin implements Listener {
             getLogger().warning("[ChacaPortrait] image.model 값이 지원 목록(gpt-image-2, gpt-image-1.5)에 없습니다: " + settings.imageModel);
         }
         if (!settings.hasKey()) {
-            getLogger().warning("[ChacaPortrait] OpenAI 키가 없습니다. 환경변수 CHACAPORTRAIT_OPENAI_KEY (또는 CHACANPC_OPENAI_KEY) 를 설정하세요. "
+            getLogger().warning("[ChacaPortrait] OpenAI 키가 없습니다. 환경변수 CHACAPORTRAIT_OPENAI_KEY (또는 CHACANPC_OPENAI_KEY), 혹은 이 플러그인의 openai.api-key를 설정하세요. "
                     + "그 전까지 일러스트 생성은 쉬고, 이미 있는 일러스트 전송만 합니다.");
         }
         try {

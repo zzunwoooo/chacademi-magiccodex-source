@@ -8,11 +8,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class PortraitSettingsTest {
     private PortraitSettings settings(Map<String, String> environment) {
         var config = new YamlConfiguration();
-        config.set("openai.api-key", "ignored-config-value");
+        config.set("openai.api-key", "config-test");
         return new PortraitSettings(config, environment::get);
     }
-    @Test void configKeyIsIgnoredWithoutEnvironmentKeys() {
-        assertFalse(settings(Map.of()).hasKey());
+    @Test void configKeyIsUsedWithoutEnvironmentKeys() {
+        assertEquals("config-test", settings(Map.of()).apiKey);
     }
     @Test void portraitEnvironmentKeyTakesPriority() {
         assertEquals("portrait-test", settings(Map.of(
@@ -23,7 +23,18 @@ class PortraitSettingsTest {
         assertEquals("npc-test", settings(Map.of(
                 "CHACAPORTRAIT_OPENAI_KEY", " ",
                 "CHACANPC_OPENAI_KEY", " npc-test ")).apiKey);
-        assertFalse(settings(Map.of("CHACANPC_OPENAI_KEY", " ")).hasKey());
+        assertEquals("config-test", settings(Map.of("CHACANPC_OPENAI_KEY", " ")).apiKey);
+    }
+    @Test void missingAndBlankConfigKeysRemainDisabled() {
+        var config = new YamlConfiguration();
+        assertFalse(new PortraitSettings(config, name -> null).hasKey());
+        config.set("openai.api-key", "  ");
+        assertFalse(new PortraitSettings(config, name -> " ").hasKey());
+    }
+    @Test void configKeyIsTrimmed() {
+        var config = new YamlConfiguration();
+        config.set("openai.api-key", " config-test ");
+        assertEquals("config-test", new PortraitSettings(config, name -> null).apiKey);
     }
     @Test void packagedConfigLoadsBothModelPrices() throws Exception {
         var config = new YamlConfiguration();

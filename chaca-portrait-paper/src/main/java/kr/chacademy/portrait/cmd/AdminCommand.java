@@ -91,7 +91,7 @@ public final class AdminCommand implements TabExecutor, TabCompleter {
             return false;
         }
         if (!st.hasKey()) {
-            s.sendMessage("§cOpenAI 키가 없습니다 (환경변수 CHACAPORTRAIT_OPENAI_KEY 또는 CHACANPC_OPENAI_KEY).");
+            s.sendMessage("§cOpenAI 키가 없습니다 (환경변수 CHACAPORTRAIT_OPENAI_KEY 또는 CHACANPC_OPENAI_KEY, 혹은 이 플러그인의 openai.api-key).");
             return false;
         }
         if (plugin.service().referenceError() != null) {

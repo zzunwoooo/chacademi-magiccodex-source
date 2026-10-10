@@ -3,7 +3,7 @@
 - 자동 생성 기본값은 `auto.first-join: false`입니다. 관리자 수동 생성과 별개입니다.
 - 자동 생성을 켜도 `server-id: school`에서만 생성합니다. wild는 자동 생성하지 않습니다.
 - 전역 `enabled: false`는 모든 유료 생성(관리자 포함)을 막습니다.
-- 키는 `CHACAPORTRAIT_OPENAI_KEY`, 없으면 `CHACANPC_OPENAI_KEY` 환경변수만 사용합니다.
+- 키 우선순위: `CHACAPORTRAIT_OPENAI_KEY` → `CHACANPC_OPENAI_KEY` 환경변수 → 이 플러그인 `config.yml`의 `openai.api-key`입니다. 기본값은 빈 문자열이며 운영자가 직접 입력합니다. NPC 설정 파일은 읽지 않습니다. 실제 키는 공개 Git에 넣지 마세요. 저장 후 해당 서버에서 `/portrait reload`로 반영합니다(콘솔: `portrait reload`). 재시작은 필요하지 않습니다.
 - 공유 DB에서 서버마다 고유 server-id가 필요합니다. 재시작 복구가 다른 서버 작업에 영향을 주면 안 됩니다.
 
 ## 명령

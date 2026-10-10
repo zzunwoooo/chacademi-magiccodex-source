@@ -64,7 +64,7 @@ public final class PortraitSettings {
     PortraitSettings(FileConfiguration c, java.util.function.Function<String, String> environment) {
         serverId = safeId(c.getString("server-id", "school"));
         enabled = c.getBoolean("enabled", true);
-        String key = "";
+        String key = c.getString("openai.api-key", "");
         String env = environment.apply("CHACAPORTRAIT_OPENAI_KEY");
         if (env == null || env.isBlank()) {
             env = environment.apply("CHACANPC_OPENAI_KEY");

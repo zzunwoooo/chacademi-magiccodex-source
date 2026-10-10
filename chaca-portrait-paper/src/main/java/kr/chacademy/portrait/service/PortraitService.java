@@ -300,7 +300,7 @@ public final class PortraitService {
             throw new JobFailure("기능 꺼짐", false, true);
         }
         if (!s.hasKey()) {
-            throw new JobFailure("OpenAI 키 없음 (환경변수 CHACAPORTRAIT_OPENAI_KEY 또는 CHACANPC_OPENAI_KEY)", false, true);
+            throw new JobFailure("OpenAI 키 없음 (환경변수 CHACAPORTRAIT_OPENAI_KEY 또는 CHACANPC_OPENAI_KEY, 혹은 이 플러그인의 openai.api-key)", false, true);
         }
         List<byte[]> refs = references;
         if (refs.isEmpty()) {

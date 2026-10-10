@@ -1,7 +1,7 @@
 # ChacaPortrait 설정
 # 스킨을 읽어 레퍼런스 일러스트와 같은 그림체의 상반신 일러스트를 만들고, MagicCodex 대화창 "내 차례"에 띄웁니다.
 # 키·비밀번호를 이 파일에 넣어 공개 Git에 올리지 마세요. 키는 환경변수 CHACAPORTRAIT_OPENAI_KEY
-# (없으면 CHACANPC_OPENAI_KEY) 만 사용합니다.
+# (없으면 CHACANPC_OPENAI_KEY)가 우선이며, 둘 다 없으면 이 플러그인의 openai.api-key를 사용합니다.
 
 # 이 서버 이름 (school / wild). DB를 공유할 때 작업 잠금·복구에 씁니다.
 server-id: school
@@ -10,6 +10,9 @@ server-id: school
 enabled: true
 
 openai:
+  # Priority: CHACAPORTRAIT_OPENAI_KEY > CHACANPC_OPENAI_KEY > this plugin's api-key.
+  # Enter manually on the server only. Never commit a real key.
+  api-key: ""
   base-url: "https://api.openai.com/v1"
   # 연결·응답 시간 제한 (초). 이미지 생성은 1~2분 걸릴 수 있습니다.
   timeout-seconds: 240
