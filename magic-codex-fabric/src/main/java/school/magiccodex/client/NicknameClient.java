@@ -52,7 +52,7 @@ public final class NicknameClient {
     }
     private static void reset(){sequence=waiting=deadline=identityAt=firstReopenAt=0;owner=null;identity=null;firstRequired=false;}
     static boolean firstRequired(){return firstRequired;}
-    private static void openFirst(){DeferredScreens.open(()->new NicknameScreen(null,true));}
+    private static void openFirst(){DeferredScreens.openWhenIdle(()->new NicknameScreen(null,true));}
     public static boolean supported(){return MinecraftClient.getInstance().getNetworkHandler()!=null&&ClientPlayNetworking.canSend(Query.ID);}
     public static String display(String fallback){return identity==null?fallback:identity.nickname();}
     public static void open(Screen parent){DeferredScreens.open(()->new NicknameScreen(parent));}

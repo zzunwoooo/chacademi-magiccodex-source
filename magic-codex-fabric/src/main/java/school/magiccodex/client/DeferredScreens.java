@@ -15,11 +15,13 @@ final class DeferredScreens {
         ClientPlayConnectionEvents.JOIN.register((h,s,c)->queue.cancel());
         ClientPlayConnectionEvents.DISCONNECT.register((h,c)->queue.cancel());
     }
-    static void open(Supplier<Screen> screen){
+    static void open(Supplier<Screen> screen){open(screen,false);}
+    static void openWhenIdle(Supplier<Screen> screen){open(screen,true);}
+    private static void open(Supplier<Screen> screen,boolean onlyWhenIdle){
         var c=MinecraftClient.getInstance();
         if(c.player==null||c.world==null||c.getNetworkHandler()==null)return;
         queue.schedule(c.getNetworkHandler(),c.world,()->{
-            if(c.player==null||!c.player.isAlive())return;
+            if(c.player==null||!c.player.isAlive()||(onlyWhenIdle&&c.currentScreen!=null))return;
             MagicCodexClient.dismiss();c.setScreen(screen.get());
         });
     }

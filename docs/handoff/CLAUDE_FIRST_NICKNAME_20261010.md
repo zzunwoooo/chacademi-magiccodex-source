@@ -58,3 +58,37 @@
 
 - 클라: `school.magiccodex.client.NicknameClient.display(String)` (한글 닉네임), `PortraitClient.ready()` / `drawTurn(DrawContext)` (스토리 대화의 "나" 일러스트). 리플렉션, 없으면 조용히 건너뜀.
 - 서버: `NpcSocialFacade.playerName / affinity / addAffinity` (출처 `dialogue`). 호감도의 주인은 계속 MagicCodexBridge.
+
+
+## 7. Codex 통합 검증 (2026-10-10)
+
+- 통합 기준: 9a6263aeab7e3aacfbe942b5778c021c6c5aa883.
+- Claude f940d8b를 독립 호스팅 staging에서 --no-ff 병합: 1a42349.
+- 경로: C:\Chacademi\staging\first-nickname-20261010-task5\source.
+- 기존 build-workspace에는 미커밋 작업이 있으므로 이 패치에 사용하지 않았다.
+- 위 3절의 최초 구현과 달리, 저장 성공 후 10틱 뒤에도 **같은 온라인 접속/닉네임 세션**일 때만 대기 상태를 제거한다. 로그아웃, 재접속, 교체된 세션의 콜백은 대기를 유지하며 다음 접속에서 다시 설정한다.
+- 대기 YAML을 성공적으로 저장한 뒤에만 상태를 변경한다. 기존 nickname I/O executor에서 임시 파일을 쓰고 원자적 교체한다. 저장 실패 시 대기는 유지되며 FIRST_DONE/스토리 명령을 보내지 않는다. 시작 상태 저장 실패 시 창도 열지 않는다.
+- 상태 제거와 FIRST_DONE 및 스토리 명령 전달은 같은 메인 스레드 실행 안에서 순서대로 수행한다. 메인 스레드는 작은 YAML I/O 완료를 기다린다. I/O executor가 지연되면 이 처리도 지연될 수 있다.
+- 스토리 명령과 YAML은 하나의 트랜잭션이 아니다. 상태 제거 직후 프로세스가 비정상 종료되면 스토리 전달을 잃을 수 있으며, 여러 완료 명령 중 일부만 실행되고 예외가 나는 경우도 자동 재실행하지 않는다. 정상 실행 중 반복 완료 콜백은 한 번만 처리한다.
+- 최초 창 열기는 예약 실행 시점에도 빈 화면인지 확인한다. 컷신 등 다른 화면이 있으면 유지하고, 빈 화면이 된 뒤 다시 시도한다.
+- 기존 공개 생성자, display/Portrait API, 자동완성, 일반 닉네임 흐름과 DB 스키마는 유지했다.
+- 실제 파일에 손상된 YAML/UUID가 있으면 조용히 대기 상태를 버리지 않고 초기화를 실패시킨다.
+
+### 실행한 검증
+
+- Java 21.0.10, 호스팅 staging Build-Server.ps1 -Verify: 성공.
+- 서버 테스트 326개: Bridge 239 (신규 상태 전이 5개 포함), ChacaNPC 15, ChacaPortrait 53, Discovery 17, Tornado 2. 실패/오류/스킵 0.
+- Fabric test remapJar: 214개, 실패/오류/스킵 0, JAR 성공.
+- 최초 전체 빌드는 staging의 tornado-event-paper/lib 의존성 누락으로 실패했다. 기존 호스팅 빌드 의존성 JAR만 복사한 후 전체 검증 성공. 빌드 코드/타 기능 변경 없음.
+- 신규 상태 테스트: 정상 시작/저장, 중복 시작/완료, 시작·완료 영속화 실패, 오래된/끊긴 세션과 재접속 재구성, 일반 닉네임 저장의 스토리 미실행.
+- 기존 프로토콜·세션 및 전체 관련 회귀 테스트 통과. 실서버 결합 테스트를 실행했다는 뜻은 아니다.
+- 빌드 스크립트는 공용 artifacts/server에 산출물을 복사하지만 운영 plugins나 클라이언트에는 설치하지 않는다. 공용 폴더의 다른 버전 JAR를 새 결과로 오인하지 않는다.
+
+### 배포 전 남은 실게임 확인
+
+- X/취소 숨김, ESC 차단, 컷신 유지 후 창 재개, 일반 닉네임 취소/닫기.
+- 저장 도중 접속 종료·재접속, 서버 재시작 후 대기 복원, 실제 디스크 쓰기 실패 안내.
+- ChacademyStory 설치 및 ch1-2 존재, 저장 뒤 실제 스토리 시작, 두 JAR 동시 배포.
+- school/wild 대기는 파일 단위이며 공유되지 않는다.
+- 실게임/운영 배포/재시작/런처 교체/운영 DB/키/실제 유료 API 호출 미실행.
+- HolyTaming은 이번 범위에 포함하지 않았다.

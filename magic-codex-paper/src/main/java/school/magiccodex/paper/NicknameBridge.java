@@ -24,12 +24,12 @@ final class NicknameBridge implements Listener,PluginMessageListener,org.bukkit.
     private final Set<UUID> busy=new HashSet<>();
     private final List<NicknameExpansion> expansions=new ArrayList<>();
     private final NicknameStore store;private long serial;private volatile boolean closed;
-    private final Set<UUID> firstPending=new HashSet<>();private final java.io.File firstFile;
+    private final FirstNicknameState firstState;private final java.io.File firstFile;
     
     NicknameBridge(MagicCodexBridge plugin,DisplayNames names)throws Exception{
         this.plugin=plugin;this.names=names;
         try{var settings=DatabaseSettings.load(plugin.getDataFolder().toPath().resolve("database.properties"));store=io.submit(()->new NicknameStore(plugin.getDataFolder().toPath().resolve("friends.db"),settings)).get(10,TimeUnit.SECONDS);profiles.putAll(io.submit(store::all).get(10,TimeUnit.SECONDS));}catch(Exception e){io.shutdownNow();throw e;}
-        firstFile=new java.io.File(plugin.getDataFolder(),"first-nickname.yml");loadFirst();
+        firstFile=new java.io.File(plugin.getDataFolder(),"first-nickname.yml");firstState=new FirstNicknameState(io.submit(this::loadFirst).get(),next->io.submit(()->{saveFirst(next);return null;}).get());
         var firstCommand=plugin.getCommand("최초닉네임설정");if(firstCommand!=null){firstCommand.setExecutor(this);firstCommand.setTabCompleter(this);}
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin,NicknameProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,NicknameProtocol.RESPONSE);Bukkit.getPluginManager().registerEvents(this,plugin);
         if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){var manager=me.clip.placeholderapi.PlaceholderAPIPlugin.getInstance().getLocalExpansionManager();for(String id:List.of("magiccodex","user")){if(manager.getExpansion(id)!=null)continue;var expansion=new NicknameExpansion(this,id,plugin.getDescription().getVersion());if(expansion.register())expansions.add(expansion);}}
@@ -53,26 +53,36 @@ final class NicknameBridge implements Listener,PluginMessageListener,org.bukkit.
         try{NicknameProtocol.validate(r.nickname());}catch(IllegalArgumentException e){reply(p,s,r.sequence(),NicknameProtocol.NOTICE,e.getMessage());return;}
         var before=profiles.get(id);long revision=before==null?0:before.revision();if(revision!=r.revision()){reply(p,s,r.sequence(),NicknameProtocol.SNAPSHOT,"닉네임 정보가 바뀌었습니다. 확인 후 다시 저장해 주세요.");return;}
         busy.add(id);String account=p.getName();
-        io.execute(()->{try{var state=store.save(id,account,r.nickname(),revision);main(()->{busy.remove(id);if(state!=null)profiles.put(id,state);names.invalidate(id);boolean saved=state!=null&&state.revision()==revision+1&&state.nickname().equals(r.nickname());if(current(p,s))reply(p,s,r.sequence(),NicknameProtocol.SNAPSHOT,saved?"닉네임을 저장했습니다.":"닉네임 정보가 바뀌었습니다. 확인 후 다시 저장해 주세요.");if(saved)firstSaved(p);});}catch(Exception e){main(()->{busy.remove(id);if(current(p,s))reply(p,s,r.sequence(),NicknameProtocol.NOTICE,"저장하지 못했습니다. 다시 시도해 주세요.");});}});
+        io.execute(()->{try{var state=store.save(id,account,r.nickname(),revision);main(()->{busy.remove(id);if(state!=null)profiles.put(id,state);names.invalidate(id);boolean saved=state!=null&&state.revision()==revision+1&&state.nickname().equals(r.nickname());if(current(p,s))reply(p,s,r.sequence(),NicknameProtocol.SNAPSHOT,saved?"닉네임을 저장했습니다.":"닉네임 정보가 바뀌었습니다. 확인 후 다시 저장해 주세요.");if(saved&&current(p,s))firstSaved(p,s);});}catch(Exception e){main(()->{busy.remove(id);if(current(p,s))reply(p,s,r.sequence(),NicknameProtocol.NOTICE,"저장하지 못했습니다. 다시 시도해 주세요.");});}});
     }
     @EventHandler public void quit(PlayerQuitEvent e){sessions.remove(e.getPlayer().getUniqueId());}
 
     // ------------------------------------------------------------------ 최초 닉네임
-    private void loadFirst(){
-        firstPending.clear();if(!firstFile.isFile())return;
-        for(String raw:org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(firstFile).getStringList("pending"))try{firstPending.add(UUID.fromString(raw));}catch(IllegalArgumentException ignored){}
+    private Set<UUID> loadFirst() throws Exception {
+        Set<UUID> pending=new HashSet<>();if(!firstFile.isFile())return pending;
+        var y=new org.bukkit.configuration.file.YamlConfiguration();y.load(firstFile);
+        for(String raw:y.getStringList("pending"))pending.add(UUID.fromString(raw));
+        return pending;
     }
-    private void saveFirst(){
-        var y=new org.bukkit.configuration.file.YamlConfiguration();y.options().setHeader(List.of("/최초닉네임설정 후 아직 닉네임을 저장하지 않은 플레이어 (접속하면 창이 다시 열림)"));
-        y.set("pending",firstPending.stream().map(UUID::toString).sorted().toList());
-        try{y.save(firstFile);}catch(java.io.IOException e){plugin.getLogger().warning("first-nickname.yml 저장 실패: "+e.getMessage());}
+    private void saveFirst(Set<UUID> pending) throws Exception {
+        var y=new org.bukkit.configuration.file.YamlConfiguration();
+        y.set("pending",pending.stream().map(UUID::toString).sorted().toList());
+        var target=firstFile.toPath();java.nio.file.Files.createDirectories(target.getParent());
+        var temporary=java.nio.file.Files.createTempFile(target.getParent(),"first-nickname-",".tmp");
+        try {
+            java.nio.file.Files.writeString(temporary,y.saveToString(),java.nio.charset.StandardCharsets.UTF_8);
+            java.nio.file.Files.move(temporary,target,java.nio.file.StandardCopyOption.ATOMIC_MOVE,java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        } finally {java.nio.file.Files.deleteIfExists(temporary);}
     }
-    boolean firstPending(UUID id){return firstPending.contains(id);}
-    /** Mark and open. Safe to call again (re-sends the screen). */
-    void startFirst(Player p){if(firstPending.add(p.getUniqueId()))saveFirst();pushFirst(p,0);}
+    boolean firstPending(UUID id){return firstState.pending(id);}
+    /** Persist before opening; repeated commands do not create multiple pending entries. */
+    void startFirst(Player p){
+        try{firstState.start(p.getUniqueId());pushFirst(p,0);}
+        catch(Exception e){plugin.getLogger().warning("Could not persist first nickname state.");p.sendMessage("§c닉네임 설정 상태를 저장하지 못했습니다. 다시 시도해 주세요.");}
+    }
     /** The client registers its channels a moment after join; retry for ~15 s. */
     private void pushFirst(Player p,int attempt){
-        if(closed||!p.isOnline()||!firstPending.contains(p.getUniqueId()))return;
+        if(closed||!p.isOnline()||!firstState.pending(p.getUniqueId()))return;
         if(p.getListeningPluginChannels().contains(NicknameProtocol.RESPONSE)){push(p,NicknameProtocol.FIRST);return;}
         if(attempt<15)Bukkit.getScheduler().runTaskLater(plugin,()->pushFirst(p,attempt+1),20L);
         else p.sendMessage("§c닉네임 설정 창을 열지 못했습니다. MagicCodex UI 모드가 필요합니다.");
@@ -82,16 +92,29 @@ final class NicknameBridge implements Listener,PluginMessageListener,org.bukkit.
         var r=new Response(kind,0,0,state==null?0:state.revision(),p.getUniqueId(),p.getName(),names.name(p),"","","");
         if(p.getListeningPluginChannels().contains(NicknameProtocol.RESPONSE))p.sendPluginMessage(plugin,NicknameProtocol.RESPONSE,NicknameProtocol.encode(r));
     }
-    private void firstSaved(Player p){
-        if(!firstPending.remove(p.getUniqueId()))return;saveFirst();
-        if(p.isOnline())push(p,NicknameProtocol.FIRST_DONE);
-        var config=plugin.getConfig();
-        List<String> commands=config.isSet("first-nickname.on-complete")?config.getStringList("first-nickname.on-complete"):List.of("storydialogue {player} ch1-2");
-        String nickname=names.name(p);
-        // 한 틱 뒤: 클라가 닉네임 창을 닫은 다음 스토리 대화가 열리도록
-        Bukkit.getScheduler().runTaskLater(plugin,()->{for(String raw:commands){String c=raw.replace("{player}",p.getName()).replace("{uuid}",p.getUniqueId().toString()).replace("{nickname}",nickname);if(c.startsWith("/"))c=c.substring(1);if(!c.isBlank())Bukkit.dispatchCommand(Bukkit.getConsoleSender(),c);}},10L);
+    private void firstSaved(Player p,NicknameSession session){
+        if(!firstState.pending(p.getUniqueId()))return;
+        // Keep pending through logout or replacement sessions. Never run story for a stale save callback.
+        Bukkit.getScheduler().runTaskLater(plugin,()->{
+            try {
+                firstState.complete(p.getUniqueId(),()->current(p,session),()->{
+                    push(p,NicknameProtocol.FIRST_DONE);
+                    var config=plugin.getConfig();
+                    List<String> commands=config.isSet("first-nickname.on-complete")?config.getStringList("first-nickname.on-complete"):List.of("storydialogue {player} ch1-2");
+                    String nickname=names.name(p);
+                    for(String raw:commands){
+                        String c=raw.replace("{player}",p.getName()).replace("{uuid}",p.getUniqueId().toString()).replace("{nickname}",nickname);
+                        if(c.startsWith("/"))c=c.substring(1);
+                        if(!c.isBlank())Bukkit.dispatchCommand(Bukkit.getConsoleSender(),c);
+                    }
+                });
+            } catch(Exception e){
+                plugin.getLogger().warning("Could not complete first nickname state.");
+                if(current(p,session))reply(p,session,session.sequence(),NicknameProtocol.NOTICE,"닉네임 설정 완료 상태를 저장하지 못했습니다. 다시 저장해 주세요.");
+            }
+        },10L);
     }
-    @EventHandler public void joinFirst(PlayerJoinEvent e){Player p=e.getPlayer();if(firstPending.contains(p.getUniqueId()))Bukkit.getScheduler().runTaskLater(plugin,()->pushFirst(p,0),40L);}
+    @EventHandler public void joinFirst(PlayerJoinEvent e){Player p=e.getPlayer();if(firstState.pending(p.getUniqueId()))Bukkit.getScheduler().runTaskLater(plugin,()->pushFirst(p,0),40L);}
     @Override public boolean onCommand(org.bukkit.command.CommandSender sender,org.bukkit.command.Command command,String label,String[] args){
         boolean admin=sender.hasPermission("magiccodex.nickname.admin");
         Player target;
@@ -101,7 +124,7 @@ final class NicknameBridge implements Listener,PluginMessageListener,org.bukkit.
             if(target==null){sender.sendMessage("§c접속 중인 플레이어가 아닙니다: "+args[0]);return true;}
         }else if(sender instanceof Player self){
             // 본인은 아직 닉네임이 없을 때만 (이미 정한 사람이 스토리를 다시 여는 것을 막음)
-            if(!admin&&!stored(self.getUniqueId()).isEmpty()&&!firstPending.contains(self.getUniqueId())){sender.sendMessage("§7이미 닉네임을 정했습니다. 바꾸려면 /닉네임설정 을 써 주세요.");return true;}
+            if(!admin&&!stored(self.getUniqueId()).isEmpty()&&!firstState.pending(self.getUniqueId())){sender.sendMessage("§7이미 닉네임을 정했습니다. 바꾸려면 /닉네임설정 을 써 주세요.");return true;}
             target=self;
         }else{sender.sendMessage("사용법: /최초닉네임설정 <플레이어>");return true;}
         startFirst(target);
