@@ -20,3 +20,10 @@
 
 자세한 관리 명령은 호스팅의 `C:\Chacademi\network\OPERATIONS.txt`에 있다.
 - 반드시 필요한 최초 파일 전송에는 인위적인 속도 제한을 적용하지 않는다. 최소 자료만 전송한다는 원칙은 유지한다.
+
+# Claude 작업분 받기
+
+Claude 는 이 저장소에서 `claude/` 로 시작하는 별도 브랜치에만 작업한다 (GPT/Codex 브랜치와 분리).
+사용자가 "클로드 작업분 확인하고 주의사항 보고 다음 패치 진행해" 처럼 말하면 `docs/handoff/CLAUDE_INDEX.md` 의 순서를 따른다.
+이 파일이 지금 브랜치에 없으면 `git fetch origin` 후 `git show origin/claude/first-nickname-20261010:docs/handoff/CLAUDE_INDEX.md` 또는
+가장 최근 `origin/claude/*` 브랜치의 같은 파일을 읽는다.
