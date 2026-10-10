@@ -57,3 +57,26 @@ Permitted independent locations checked by filename: C:/Chacademi/tools/db-reado
 Minimum remaining DB question: can the owner provide the path of an already-authorized host-local test helper/profile that connects to an isolated MariaDB schema? If none exists, the owner must prepare an isolated schema and approved access mechanism before validation can resume; do not request passwords in chat or broaden current credentials/permissions automatically.
 
 Runtime deployment remains blocked pending MariaDB migration verification and the graph ambiguity decision. No runtime modifications in this follow-up. Shared codex/hires-item-icons-20261006 remains unchanged.
+
+## Scope update and schema-preparation approval block
+
+User subsequently approved isolated MariaDB validation and explicitly deferred Story content for later bulk installation. Therefore do not edit or deploy Story graphs/identifiers in this binary deployment, and do not treat missing ch1-2 or the existing ch1_wakeup ambiguity as binary-deployment prerequisites. They remain untested content limitations.
+
+Attempted preparation design: use DatabaseSettings.load/connect through the existing school MagicCodexBridge profile (without logging/transmitting its credentials), then create ONLY chaca_audit_20261010_task5 and switch the connection catalog with a SELECT DATABASE() guard before any test tables. No production rows, accounts, grants, ACLs or service controls were targeted.
+
+Automatic approval review rejected the command BEFORE execution: CREATE DATABASE through the production plugin profile could mutate shared production infrastructure, and the endpoint was not verified as a separate test server. No helper was written by that command and no database connection/statement ran. Do not retry indirectly or bypass this denial. The pending clarification asks explicit approval for creating the isolated schema on the same existing MariaDB instance, or an existing separately authorized test connection path. No password should be sent in chat.
+
+Minimal preparation sequence after approval is resolved:
+1. Use the existing normal connection API, with credentials confined to host process memory. No privileged service-directory access.
+2. Create only chaca_audit_20261010_task5, without IF NOT EXISTS; a collision must stop instead of reusing unknown data. Do not create users or change grants. If CREATE is denied, stop and request owner preparation of that exact isolated schema and the required schema-scoped privileges.
+3. On every validation connection, require SELECT DATABASE() to equal the dedicated schema before any DDL/DML. Use synthetic rows only. Do not qualify any operation with production schema names.
+4. Validate actual pre/post migration DDL, nickname uniqueness, rumors preservation, commerce/mail/quest and Portrait states. Keep test schema for evidence; no destructive cleanup without authorization.
+5. Only after validation succeeds, perform the previously approved binary deployment. Runtime migration may add required columns/indexes; never permanently delete existing production rows.
+
+Read-only deployment preparation confirms:
+- Code HEAD 36b2b3579ae0f234883a1e79e9a57814024e291b was clean; binary hashes saved privately on host in audit-fixes-20261010-task5/binary-manifest.json.
+- Personal CNM l/m/b hashes still match originals exactly.
+- Portrait server-id school/wild correct. Existing Story finish-if-missing-mod remains true. PortableVFX config-version absent. No configuration modified.
+- Local Java/game processes: none at check time. Recheck immediately before replacing launcher JARs.
+- ChacaNPC is installed on school only. Wildlife matching plugin JAR is absent on both servers; do not silently add previously absent plugins as a replacement. Bridge, Portrait, Story, PortableVFX installed on both; Discovery matching JAR exists on both.
+- All installed runtime JARs remain unchanged; no server/Velocity/DB process control occurred. Shared integration branch remains unchanged.
