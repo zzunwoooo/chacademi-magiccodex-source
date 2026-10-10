@@ -32,7 +32,7 @@ class OpenAiImageClientTest {
 
     @Test
     void parsesResponseText() throws Exception {
-        String body = "{\"output\":[{\"type\":\"reasoning\"},{\"type\":\"message\",\"content\":[{\"type\":\"output_text\",\"text\":\"silver hair, blue tie\"}]}],"
+        String body = "{\"status\":\"completed\",\"output\":[{\"type\":\"reasoning\"},{\"type\":\"message\",\"content\":[{\"type\":\"output_text\",\"text\":\"silver hair, blue tie\"}]}],"
                 + "\"usage\":{\"input_tokens\":900,\"output_tokens\":40}}";
         var t = OpenAiImageClient.parseResponseText(body);
         assertEquals("silver hair, blue tie", t.text());

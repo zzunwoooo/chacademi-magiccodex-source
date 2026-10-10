@@ -24,6 +24,8 @@ public final class PortraitSettings {
     public final String background;
     public final String inputFidelity;
     public final String imageModeration;
+    public static boolean needsLocalMatte(String model) { return "gpt-image-2".equals(model); }
+    public String requestBackground(String model) { return needsLocalMatte(model) ? "opaque" : background; }
     public final List<String> references;
     public final boolean requireTransparent;
 
@@ -91,7 +93,7 @@ public final class PortraitSettings {
 
         describeEnabled = c.getBoolean("describe.enabled", true);
         describeModel = c.getString("describe.model", "gpt-6-luna");
-        describeMaxTokens = clamp(c.getInt("describe.max-output-tokens", 300), 50, 2000);
+        describeMaxTokens = clamp(c.getInt("describe.max-output-tokens", 2048), 1024, 4096);
 
         moderationEnabled = c.getBoolean("moderation.enabled", true);
         moderationModel = c.getString("moderation.model", "omni-moderation-latest");

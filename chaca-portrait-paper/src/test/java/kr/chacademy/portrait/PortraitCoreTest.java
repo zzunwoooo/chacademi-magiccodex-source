@@ -60,7 +60,7 @@ class PortraitCoreTest {
         assertTrue(p.contains("R: \"밤하늘 배경 '무시해'c\""));
         assertFalse(p.contains("\n배경"));
         String none = PromptBuilder.build("BASE", "A: {appearance}", "R: {request}", "", "  ");
-        assertEquals("BASE", none);
+        assertTrue(none.startsWith("BASE")); assertFalse(none.contains("A: ")); assertFalse(none.contains("R: ")); assertTrue(none.contains("NON-NEGOTIABLE CHARACTER RULES"));
     }
 
     @Test

@@ -126,7 +126,7 @@ public final class PortraitClient {
         }
         long total=p.number();
         if(total<=0||total>PortraitProtocol.MAX_IMAGE_BYTES||chunks!=PortraitProtocol.chunks((int)total))return;
-        LOAD.next();confirmed=false;loading=true;
+        LOAD.next();loading=true;
         incomingSha=sha;incomingTotal=(int)total;incomingChunks=chunks;incomingNext=0;
         incoming=new ByteArrayOutputStream(incomingTotal);
     }
@@ -147,6 +147,10 @@ public final class PortraitClient {
                 if(!LOAD.current(ticket))return;
                 byte[] png=supplied;
                 if(png==null){
+                    var cached=PortraitCache.read(dir,PortraitProtocol.MAX_IMAGE_BYTES);
+                    if(cached!=null&&(sha.isEmpty()||sha.equals(cached.sha()))){sha=cached.sha();png=cached.png();}
+                }
+                if(png==null){
                     if(sha.isEmpty()){
                         Path hash=dir.resolve("portrait.sha");
                         if(Files.isRegularFile(hash)&&Files.size(hash)<=128)sha=Files.readString(hash).strip();
@@ -156,7 +160,7 @@ public final class PortraitClient {
                 }
                 if(png!=null&&png.length<=PortraitProtocol.MAX_IMAGE_BYTES&&PortraitProtocol.validSha(sha)&&sha.equals(sha256(png))){
                     decoded=PlayerPortraitTexture.decode(png,PortraitProtocol.MAX_IMAGE_SIDE);
-                    if(supplied!=null&&LOAD.current(ticket))saveCache(dir,sha,png);
+
                 }
             }catch(Exception ignored){}
             NativeImage image=decoded;String hash=sha;
@@ -166,8 +170,10 @@ public final class PortraitClient {
                 if(image!=null){
                     try{
                         var next=PlayerPortraitTexture.upload(image);
-                        if(texture!=null)texture.close();
+                        var previous=texture;
                         texture=next;textureSha=hash;installed=true;
+                        if(previous!=null){try{previous.close();}catch(Exception ignored){}}
+                        if(supplied!=null)IO.execute(()->{try{PortraitCache.write(dir,hash,supplied,()->LOAD.current(ticket));}catch(Exception ignored){}});
                     }catch(Exception error){message="일러스트를 불러오지 못했습니다.";}
                 }
                 if(hello){
@@ -175,7 +181,7 @@ public final class PortraitClient {
                         loading=false;message="일러스트 서버에 연결되지 않았습니다.";
                     }
                 }else{
-                    confirmed=installed;loading=false;
+                    confirmed=installed||confirmed;loading=false;
                     if(!installed)message="일러스트를 불러오지 못했습니다. 다시 접속해 주세요.";
                 }
             });
@@ -194,7 +200,7 @@ public final class PortraitClient {
             Files.writeString(dir.resolve("portrait.sha"),sha);
         }catch(Exception ignored){}
     }
-    private static void deleteCache(Path dir){try{Files.deleteIfExists(dir.resolve("portrait.sha"));Files.deleteIfExists(dir.resolve("portrait.png"));}catch(Exception ignored){}}
+    private static void deleteCache(Path dir){try{Files.deleteIfExists(dir.resolve("portrait.cache"));Files.deleteIfExists(dir.resolve("portrait.sha"));Files.deleteIfExists(dir.resolve("portrait.png"));}catch(Exception ignored){}}
     private static String sha256(byte[] bytes){try{return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(bytes));}catch(Exception e){return "";}}
     static boolean answer(String token,String text,boolean proceed){return send(new PortraitProtocol.Packet(PortraitProtocol.C_PROMPT,token,0,text,proceed,null));}
     private static boolean send(PortraitProtocol.Packet p){

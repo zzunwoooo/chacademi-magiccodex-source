@@ -48,3 +48,19 @@ reference/style-reference.png 및 reference/style-reference-full.png는 공개 G
 ```
 단위 테스트는 가짜 계정/저장본과 HTTP subscriber를 사용하며 운영 DB/API를 호출하지 않습니다.
 실제 Paper 저장·강제 종료·인벤토리 플러그인 동기화, GPU 화면과 인게임 대화 및 유료 생성은 별도 검증이 필요합니다.
+
+## 스킨 우선 준비와 로컬 투명 처리 (2026-10-10)
+
+정상 생성은 GPT-6 Luna 준비 1회 → 이미지 생성 1회 → 로컬 배경 제거 순서입니다. /portrait test both는 준비 1회와 이미지 모델별 1회입니다. 기존 요청 형식 거부/전송 전 연결 실패 재시도 외에 유료 재생성을 자동 반복하지 않습니다.
+
+- Luna: `gpt-6-luna`, `reasoning.effort=low`, 기본 `max_output_tokens=2048`(reasoning 포함), strict JSON schema. 도구 실행은 없습니다. 스킨 관찰 사실, 가상 캐릭터 유형/표현, 사용자 요청, 불확실성을 분리합니다. 원본 스킨 앞뒤 합성 이미지도 이미지 생성 요청에 직접 첨부합니다.
+- 동물/로봇 등 비인간형은 인간화하지 않습니다. 실제 사용자의 성별/나이를 추정하지 않으며 머리만으로 표현을 단정하지 않습니다. 명시된 가상 캐릭터 표현 요청을 반영하고 불명확하면 중립 유지. 고정 외형·스타일 규칙은 코드가 붙이며 Luna 출력은 데이터만 됩니다.
+- 준비 비활성/예산 부족/빈 응답/거절/잘림/잘못된 JSON/통신 실패는 이미지 호출 전에 중단합니다. 자동 fallback이나 유료 재시도는 없습니다. 전용 출력 토큰 상한이 너무 작으면 최소 1024로 제한합니다.
+- Luna 추가 예약 비용 예시: 입력 3000 추정 토큰 × $0.10/1M + 출력 상한 2048 × $0.50/1M = **$0.001324**. 이는 예상 예약액이며 실제 이미지 비용은 별도입니다. 정상 응답은 반환 input/output usage(출력의 reasoning 포함)와 설정 단가로 정산합니다. 캐시 할인 등 청구서와 차이가 있을 수 있습니다. usage를 확정할 수 없는 실패는 예약액으로 보수적으로 정산합니다.
+- GPT Image 2에는 `background=opaque`와 균일한 밝은 회색 배경을 요청합니다. GPT Image 1.5는 설정의 네이티브 배경 모드를 유지합니다. 모델 2 결과는 서버 작업 스레드에서 CPU GrabCut → 외부 배경 알파 마스크 → 경계 완화 → PNG 크기/투명 검사 후에만 저장합니다. 라이브러리 준비 실패는 API 요청 전에 차단합니다.
+- 공식 Maven Central: `org.bytedeco:opencv:4.14.0-1.5.14`, `javacpp:1.5.14`, `openblas:0.3.34-1.5.14`. Windows x64 네이티브 포함. OpenCV/JavaCPP는 Apache 2.0 선택, OpenBLAS는 BSD 3-Clause, 번들 Microsoft 런타임은 해당 배포 라이선스를 따릅니다. 학습 모델이나 외부 제거 서비스가 없고 이미지가 다른 서비스로 전송되지 않습니다. OS 전역 설치 없이 공식 JavaCPP 번들 런타임을 로드합니다.
+- 처리 제한: 서버 JVM별 1건, OpenCV 스레드 1개, 분리 마스크 긴 변 512px, 입력 최대 2048px, 결과 PNG 최대 8MiB. 두 서버가 수동 요청을 동시에 받으면 호스트 전체 최대 2건입니다. 네이티브 메모리는 Java 힙 한도 밖에도 존재하므로 서버별 수백 MiB의 여유가 필요합니다(정확한 운영 최대 사용량은 미측정).
+- 한계: 학습된 의미 분할이 아닌 GrabCut입니다. 단순 색상 전체 삭제는 하지 않고 내부의 배경색 의상 구멍을 채워 보존하지만, 팔 사이처럼 완전히 둘러싸인 배경이 남을 수 있습니다. 가는 머리카락/배경과 비슷한 윤곽은 완전 보장하지 않습니다. 균일 배경/마스크 면적 검사를 통과하지 못하면 기존 그림을 유지합니다. 합성 테스트 성공이 실제 생성 이미지 품질 보장은 아닙니다.
+- 현재 슬롯만 성공 트랜잭션에서 교체합니다. 기존 `running_since`를 단조 증가하는 세대 토큰으로 사용해 오래된 결과의 저장/잠금 해제를 차단합니다. 스키마 추가 없음. 실패/취소는 이전 정상 이미지 유지. 클라이언트는 성공 업로드 후 이전 텍스처를 닫고 단일 원자적 생성 캐시를 교체합니다. tests/ 비교 결과나 사용자 파일은 삭제하지 않습니다.
+
+공식 근거: https://developers.openai.com/api/docs/models/gpt-6-luna · https://developers.openai.com/api/docs/guides/reasoning · https://docs.opencv.org/4.13.0/dd/dfc/tutorial_js_grabcut.html · https://opencv.org/license/ · https://github.com/bytedeco/javacpp-presets

@@ -235,11 +235,11 @@ public final class PortraitService {
         PortraitSettings s = plugin.settings();
         PortraitStorage st = plugin.storage();
         String server = s.serverId;
-        boolean locked = false;
+        long generation = 0;
         try {
             if (job.kind() != Kind.TEST) {
-                locked = await(plugin.db().call(() -> st.claim(job.player(), server, LOCK_STALE_MS)));
-                if (!locked) {
+                generation = await(plugin.db().call(() -> st.claimGeneration(job.player(), server, LOCK_STALE_MS)));
+                if (generation == 0) {
                     throw new JobFailure("다른 서버에서 이미 그리는 중", false, true);
                 }
             }
@@ -247,7 +247,7 @@ public final class PortraitService {
             if (job.kind() == Kind.AUTO && (!s.automaticGenerationAllowed()
                     || await(plugin.db().call(() -> st.sha(job.player()) != null
                         || st.autoAttempts(job.player()) >= s.autoMaxAttempts)))) return;
-            Committed done = produce(job, s, st);
+            Committed done = produce(job, s, st, generation);
             if (done == null) {
                 return; // TEST
             }
@@ -273,10 +273,11 @@ public final class PortraitService {
         } catch (DiscardedResult d) {
             plugin.getLogger().info("[ChacaPortrait] " + job.name() + " 결과 폐기 (다시 그리기 기록이 이미 다른 상태)");
         } finally {
-            if (locked) {
+            if (generation != 0) {
+                final long ownedGeneration = generation;
                 try {
                     await(plugin.db().call(() -> {
-                        st.release(job.player(), server);
+                        st.releaseGeneration(job.player(), server, ownedGeneration);
                         return null;
                     }));
                 } catch (Exception e) {
@@ -293,7 +294,7 @@ public final class PortraitService {
     }
 
     /** 생성부터 확정까지. TEST면 null. 실패는 JobFailure, 확정 전 내부 오류는 그대로 던짐(→ 반환 처리). */
-    private Committed produce(Job job, PortraitSettings s, PortraitStorage st) throws Exception {
+    private Committed produce(Job job, PortraitSettings s, PortraitStorage st, long generation) throws Exception {
         String server = s.serverId;
         if (!gate.running() || Thread.currentThread().isInterrupted()) throw new InterruptedException("Portrait generation stopped");
         if (!s.enabled) {
@@ -315,6 +316,10 @@ public final class PortraitService {
         CostModel cost = new CostModel(s.prices, s.estimate);
 
         // 1) 스킨
+        if (models.stream().anyMatch(PortraitSettings::needsLocalMatte)) {
+            try { BackgroundMatte.ensureAvailable(); }
+            catch (IOException unavailable) { throw new JobFailure("Local background removal unavailable; no API request sent", false, true); }
+        }
         byte[] render;
         try {
             byte[] skinPng = skins.download(job.skin());
@@ -325,6 +330,9 @@ public final class PortraitService {
         String user = s.sendUserHash ? userHash(job.player()) : null;
 
         // 2) 외형 정리 (선택, 실패해도 계속)
+        if (!s.describeEnabled || s.describeModel == null || s.describeModel.isBlank())
+            throw new JobFailure("Skin preparation is required; enable describe", false, true);
+        if (!cost.hasPrices(s.describeModel)) throw new JobFailure("Skin preparation price missing", false, true);
         String appearance = "";
         if (s.describeEnabled && s.describeModel != null && !s.describeModel.isBlank()) {
             String rid = newId();
@@ -335,23 +343,27 @@ public final class PortraitService {
                 boolean ok = false;
                 try {
                     if (!gate.running() || Thread.currentThread().isInterrupted()) throw new InterruptedException("Generation stopped");
-                    OpenAiImageClient.TextResult r = ai.describe(s, render, user);
-                    appearance = PromptBuilder.clean(r.text(), 600);
+                    OpenAiImageClient.TextResult r = ai.describe(s, render, user, job.request());
+
                     in = r.inputTokens();
                     out = r.outputTokens();
                     settle = cost.settleDescribe(s.describeModel, in, out, reserve);
+                    try { appearance = kr.chacademy.portrait.core.SkinAnalysis.validatedNotes(r.text()); }
+                    catch (RuntimeException invalid) { throw new JobFailure("Invalid skin preparation; image generation blocked", false, true); }
                     ok = true;
                 } catch (OpenAiImageClient.ApiException e) {
                     settle = e.billedUnknown ? reserve : 0;
-                    plugin.getLogger().info("[ChacaPortrait] 외형 정리 생략 (" + e.getMessage() + ")");
+                    throw new JobFailure("Skin preparation failed; image generation blocked", false, true);
                 } finally {
                     settleQuietly(job, rid, settle, "describe", s.describeModel, 0, Math.max(0, in), Math.max(0, out), ok);
                 }
             }
         }
-        String prompt = PromptBuilder.build(s.promptBase, s.promptAppearance, s.promptRequest, appearance, job.request());
-        List<byte[]> inputs = new ArrayList<>(refs);
-        inputs.add(render);
+        if (appearance.isBlank()) throw new JobFailure("Skin preparation budget unavailable; image generation blocked", false, true);
+        PromptBuilder.ImageRequest imageRequest = PromptBuilder.imageRequest(refs, render,
+                s.promptBase, s.promptAppearance, s.promptRequest, appearance, job.request());
+        String prompt = imageRequest.prompt();
+        List<byte[]> inputs = imageRequest.images();
 
         // 3) 이미지 (TEST는 모델별로, 저장 안 함)
         if (job.kind() == Kind.TEST) {
@@ -364,7 +376,7 @@ public final class PortraitService {
         String source = job.kind() == Kind.REROLL ? "reroll" : job.kind() == Kind.ADMIN ? "admin" : "auto";
         String day = LocalDate.now(ZONE).toString();
         boolean committed = await(plugin.db().call(() -> gate.commit(() -> st.commitResult(job.player(), job.rerollToken(), sha, g.png, model,
-                source, job.request(), g.cost, day))));
+                source, job.request(), g.cost, day, server, generation))));
         if (!committed) {
             throw new DiscardedResult();
         }
@@ -395,14 +407,22 @@ public final class PortraitService {
         String error = null;
         try {
             if (!gate.running() || Thread.currentThread().isInterrupted()) throw new InterruptedException("Generation stopped");
-            OpenAiImageClient.ImageResult r = ai.edit(s, model, inputs, prompt, user);
+            OpenAiImageClient.ImageResult r = ai.edit(s, model, inputs,
+                    kr.chacademy.portrait.core.PromptBuilder.forModel(prompt, model), user);
             usage = r.usage();
             settle = cost.settleImage(model, usage, reserve);
-            String invalid = validateResult(r.png(), s.requireTransparent);
+            String invalid = validateResult(r.png(), false);
+            byte[] processed = null;
+            if (invalid == null) {
+                try {
+                    processed = PortraitSettings.needsLocalMatte(model) ? BackgroundMatte.remove(r.png()) : r.png();
+                    invalid = validateResult(processed, s.requireTransparent || PortraitSettings.needsLocalMatte(model));
+                } catch (java.io.IOException failure) { invalid = "Background segmentation failed; previous portrait retained"; }
+            }
             if (invalid != null) {
                 error = invalid;
             } else {
-                png = r.png();
+                png = processed;
             }
         } catch (OpenAiImageClient.ApiException e) {
             settle = e.billedUnknown ? reserve : 0;

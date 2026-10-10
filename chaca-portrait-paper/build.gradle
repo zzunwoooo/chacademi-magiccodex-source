@@ -12,6 +12,12 @@ dependencies {
     // ItemsAdder는 리플렉션으로만 호출한다 (컴파일 의존성 없음).
     implementation('org.mariadb.jdbc:mariadb-java-client:3.5.10') { transitive = false }
     testImplementation 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
+    // Official JavaCPP/OpenCV distributions from Maven Central; CPU-only Windows hosting.
+    implementation 'org.bytedeco:opencv:4.14.0-1.5.14'
+    runtimeOnly 'org.bytedeco:opencv:4.14.0-1.5.14:windows-x86_64'
+    runtimeOnly 'org.bytedeco:openblas:0.3.34-1.5.14:windows-x86_64'
+    runtimeOnly 'org.bytedeco:javacpp:1.5.14:windows-x86_64'
+    testRuntimeOnly 'org.xerial:sqlite-jdbc:3.49.1.0'
     testImplementation platform('org.junit:junit-bom:5.11.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

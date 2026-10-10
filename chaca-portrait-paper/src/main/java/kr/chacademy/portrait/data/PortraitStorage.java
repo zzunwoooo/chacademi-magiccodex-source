@@ -127,11 +127,20 @@ public final class PortraitStorage {
      * 아무것도 저장하지 않고 false. 성공하면 일러스트 저장·자동 시도 초기화·다시 그리기 횟수 기록까지 함께 커밋한다.
      */
     public boolean commitResult(UUID id, String rerollToken, String sha, byte[] png, String model, String source,
-                                String prompt, long cost, String day) throws SQLException {
+                                String prompt, long cost, String day, String owner, long generation) throws SQLException {
         return db.with(c -> {
             boolean auto = c.getAutoCommit();
             c.setAutoCommit(false);
             try {
+                // Lock the ownership row in the same transaction as the portrait overwrite.
+                try (PreparedStatement ps = c.prepareStatement("SELECT running_server, running_since FROM cport_state WHERE uuid=?" + (db.isMariaDb() ? " FOR UPDATE" : ""))) {
+                    ps.setString(1, id.toString());
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (!rs.next() || !owner.equals(rs.getString(1)) || generation != rs.getLong(2)) {
+                            c.rollback(); return false;
+                        }
+                    }
+                }
                 if (rerollToken != null) {
                     try (PreparedStatement ps = c.prepareStatement("UPDATE cport_reroll SET state=?, updated_at=? WHERE token=? AND state=?")) {
                         ps.setString(1, R_DONE);
@@ -208,6 +217,31 @@ public final class PortraitStorage {
     }
 
     /** 작업 잠금. 다른 서버·작업이 잡고 있으면 false. staleMs보다 오래된 잠금은 죽은 것으로 보고 가져온다. */
+    public long claimGeneration(UUID id, String server, long staleMs) throws SQLException {
+        return db.with(c -> {
+            ensureState(c, id);
+            boolean auto=c.getAutoCommit();c.setAutoCommit(false);
+            try {
+                long now=System.currentTimeMillis();
+                try (PreparedStatement ps=c.prepareStatement("UPDATE cport_state SET running_server=?, running_since=CASE WHEN running_since>=? THEN running_since+1 ELSE ? END WHERE uuid=? AND (running_server IS NULL OR running_since<?)")) {
+                    ps.setString(1,server);ps.setLong(2,now);ps.setLong(3,now);ps.setString(4,id.toString());ps.setLong(5,now-staleMs);
+                    if(ps.executeUpdate()!=1){c.rollback();return 0L;}
+                }
+                long token;
+                try(PreparedStatement ps=c.prepareStatement("SELECT running_since FROM cport_state WHERE uuid=?")) {
+                    ps.setString(1,id.toString());try(ResultSet rs=ps.executeQuery()){rs.next();token=rs.getLong(1);}
+                }
+                c.commit();return token;
+            } catch(SQLException e){c.rollback();throw e;} finally {c.setAutoCommit(auto);}
+        });
+    }
+
+    public void releaseGeneration(UUID id, String server, long generation) throws SQLException {
+        db.with(c -> {try(PreparedStatement ps=c.prepareStatement("UPDATE cport_state SET running_server=NULL WHERE uuid=? AND running_server=? AND running_since=?")) {
+            ps.setString(1,id.toString());ps.setString(2,server);ps.setLong(3,generation);ps.executeUpdate();
+        }return null;});
+    }
+
     public boolean claim(UUID id, String server, long staleMs) throws SQLException {
         return db.with(c -> {
             ensureState(c, id);

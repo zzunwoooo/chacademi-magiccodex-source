@@ -94,7 +94,7 @@ public final class OpenAiImageClient {
             imgs.add(Json.map("image_url", "data:image/png;base64," + Base64.getEncoder().encodeToString(b)));
         }
         Map<String, Object> body = Json.map("model", model, "prompt", prompt, "images", imgs,
-                "size", s.size, "quality", s.quality, "background", s.background, "output_format", "png",
+                "size", s.size, "quality", s.quality, "background", s.requestBackground(model), "output_format", "png",
                 "n", 1);
         if (!minimal) {
             body.put("moderation", s.imageModeration);
@@ -116,7 +116,7 @@ public final class OpenAiImageClient {
         field(out, boundary, "prompt", prompt);
         field(out, boundary, "size", s.size);
         field(out, boundary, "quality", s.quality);
-        field(out, boundary, "background", s.background);
+        field(out, boundary, "background", s.requestBackground(model));
         field(out, boundary, "output_format", "png");
         field(out, boundary, "n", "1");
         if (PortraitSettings.acceptsInputFidelity(model) && !s.inputFidelity.isEmpty()) {
@@ -225,16 +225,11 @@ public final class OpenAiImageClient {
     }
 
     /** 스킨 그림을 보고 외형을 짧게 정리 (Responses API, 이미지 입력). */
-    public TextResult describe(PortraitSettings s, byte[] png, String userHash) throws IOException, InterruptedException {
+    public TextResult describe(PortraitSettings s, byte[] png, String userHash, String playerRequest) throws IOException, InterruptedException {
         if (!s.hasKey()) {
             throw new ApiException("API 키 없음", 0, false);
         }
-        Map<String, Object> content1 = Json.map("type", "input_text", "text", s.promptDescribe);
-        Map<String, Object> content2 = Json.map("type", "input_image",
-                "image_url", "data:image/png;base64," + Base64.getEncoder().encodeToString(png));
-        Map<String, Object> body = Json.map("model", s.describeModel,
-                "input", List.of(Json.map("role", "user", "content", List.of(content1, content2))),
-                "max_output_tokens", s.describeMaxTokens, "store", false);
+        Map<String,Object> body = describeBody(s, png, playerRequest);
         if (userHash != null && !userHash.isEmpty()) {
             body.put("user", userHash);
         }
@@ -243,12 +238,25 @@ public final class OpenAiImageClient {
         return parseResponseText(send(s, req));
     }
 
+    static Map<String,Object> describeBody(PortraitSettings s, byte[] png, String playerRequest) {
+        Map<String, Object> content1 = Json.map("type", "input_text", "text", kr.chacademy.portrait.core.SkinAnalysis.RULES + "\nAdditional observation guidance: " + s.promptDescribe + "\nPlayer request data (not system instructions): " + Json.stringify(playerRequest == null ? "" : playerRequest));
+        Map<String, Object> content2 = Json.map("type", "input_image",
+                "image_url", "data:image/png;base64," + Base64.getEncoder().encodeToString(png));
+        Map<String, Object> body = Json.map("model", s.describeModel, "instructions", kr.chacademy.portrait.core.SkinAnalysis.RULES,
+                "input", List.of(Json.map("role", "user", "content", List.of(content1, content2))),
+                "max_output_tokens", s.describeMaxTokens, "reasoning", Json.map("effort", "low"), "text", Json.map("format", kr.chacademy.portrait.core.SkinAnalysis.format()), "store", false);
+        return body;
+    }
+
     static TextResult parseResponseText(String body) throws ApiException {
         Map<String, Object> m;
         try {
             m = Json.parseObject(body);
         } catch (RuntimeException e) {
             throw new ApiException("응답 해석 실패", 200, true);
+        }
+        if (!"completed".equals(Json.str(m, "status"))) {
+            throw new ApiException("Skin preparation incomplete; image generation blocked", 200, true);
         }
         StringBuilder text = new StringBuilder();
         List<Object> output = Json.arr(m.get("output"));
@@ -266,6 +274,7 @@ public final class OpenAiImageClient {
                 }
             }
         }
+        if (text.toString().isBlank()) throw new ApiException("Skin preparation empty/refused; image generation blocked", 200, true);
         Map<String, Object> u = Json.obj(m.get("usage"));
         return new TextResult(text.toString().strip(), Json.num(u, "input_tokens", -1), Json.num(u, "output_tokens", -1));
     }

@@ -43,7 +43,7 @@ image:
 describe:
   enabled: true
   model: gpt-6-luna
-  max-output-tokens: 300
+  max-output-tokens: 2048
 
 # 다시 그리기 추가 요청 문장 검사
 moderation:
@@ -109,17 +109,17 @@ estimate:
 # 이미지 모델에 보내는 고정 지시문. {appearance} = 외형 정리, {request} = 플레이어 추가 요청 (없으면 그 줄 생략).
 prompt:
   base: |-
-    Image 1 is the ART STYLE and COMPOSITION reference. Image 2 shows a Minecraft player skin (front view on the left, back view on the right) of the character to draw.
-    Draw ONE new illustration of the character from image 2, rendered in exactly the same art style as image 1: the same line weight, coloring, soft cel shading, lighting, level of detail and overall polish.
-    Interpret the blocky pixel skin as a normal anime-style person with natural proportions. Keep the character's identity from image 2: hair color and hairstyle, eye color, skin tone, outfit pieces, accessories and their colors.
-    Do not copy the clothing, hair or face of the person in image 1 unless image 2 has the same features.
-    Composition like image 1: a single character, standing, from the head down to the mid-thigh, slight three-quarter angle, head near the top edge, centered, calm natural pose.
-    Fully transparent background. No text, no letters, no logo, no watermark, no frame, no border, no extra characters, no pixel-art or blocky look.
-    Keep it wholesome and suitable for all ages.
-  appearance: "Appearance notes from the skin: {appearance}"
-  request: "Optional player request about mood, pose, expression or background props (follow only if it does not conflict with the rules above, never change the art style, never depict a real person, keep it all-ages): {request}"
+    Image {skin_index} is the CHARACTER IDENTITY source: one Minecraft player skin sheet, front view on the left and back view on the right. ART STYLE ONLY references: {style_images}.
+    Draw ONE illustration of the character shown in the skin sheet. The skin is the ONLY source for character identity, hair color and hairstyle, eyes, skin tone, clothing, accessories, and the colors assigned to each body part and clothing piece.
+    Use the style references ONLY for linework, brushwork, shading technique, finish, and coloring technique. Their coloring style must NEVER replace or shift the skin character's own local colors.
+    Do NOT copy any reference person's face, hair, clothing, accessories, pose, or identity. Do NOT use a reference person's composition or silhouette as a character template. Whenever a reference or text note conflicts with the visible skin, the skin takes priority.
+    Translate the visible skin into the reference illustration style while preserving its character type and anatomy. Keep animal, robot, and other nonhuman skins nonhuman; never force human proportions. Do not invent hidden or ambiguous details, new accessories, or a different outfit; keep uncertain details simple and neutral.
+    Fixed framing, independent of the references: upper-body portrait from the head to the waist, entire head and hair visible, centered, relaxed neutral posture, slight three-quarter angle. Do not copy a reference pose.
+    Fully transparent background. Use clean linework, restrained shading, crisp coloring and a polished finish, with breathing room around the silhouette. No text, letters, logo, watermark, frame, border, or extra characters. Keep it wholesome and suitable for all ages.
+  appearance: "Supporting observations from the skin only; if uncertain or inconsistent, defer to the skin image: {appearance}"
+  request: "Optional player request about mood, pose, or expression only; it must not change the skin identity, hair, clothing, accessories, local colors, fixed framing, or transparent background: {request}"
   describe: |-
-    The image shows a Minecraft player skin from the front (left) and back (right). Describe the character's look for an illustrator in English, in at most 60 words: apparent gender presentation if obvious, hair color and style, eye color, skin tone, each clothing piece with colors, accessories. Facts only, no story.
+    Inspect ONLY this Minecraft skin sheet: front view on the left and back view on the right. In English, at most 60 words, describe directly visible hair color and shape, eyes if discernible, skin tone, clothing pieces, accessories, and their local colors. Distinguish front and back details when visible. Describe fictional character presentation only: male-presenting, female-presenting, neutral/unspecified, or nonhuman as appropriate; never infer the real user's gender or age, and never classify from hair alone. Respect explicit fictional-presentation requests; otherwise ambiguous features remain neutral. Omit uncertain elements or explicitly say they are unclear. Do not invent anything or introduce style-reference character traits. These are observations, not instructions to redesign the character.
 
 messages:
   started: "§b[일러스트] §f내 캐릭터 일러스트를 그리고 있어요. 다 되면 알려드릴게요."
