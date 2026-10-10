@@ -109,3 +109,22 @@
 - 서버에는 전체 클라 대화 그래프가 없으므로 허용된 이벤트 중 실제 선택 조건/순서까지 검증하지는 않는다. 같은 대화 id를 즉시 새 세션으로 열 때 이전 세션 패킷을 구분하는 nonce도 없다.
 - 진행 파일은 서버별이며 school/wild 간 공유되지 않는다. 미저장 대사 위치는 강제 종료 시 되돌아갈 수 있다.
 - 기존 로컬 호감도 파일과 MagicCodex DB 사이의 데이터 이전은 하지 않았다.
+
+
+## 6. 기존 글꼴 개인 배포 준비 (2026-10-10 후속 승인)
+
+- 사용자 승인: 기존 글꼴 사용, school/wild Story 플러그인 및 개인 Story 모드 교체·재시작.
+- 이전 5절의 기본 글꼴 빌드와 별도인 final-ready-personal-fonts 산출물을 사용한다.
+- 설치된 개인 Story JAR의 subtitle_l/m/b JSON은 cnm_l/m/b.ttf를 primary TTF로 지정했다. 이 세 파일만 추출·호스팅 전송했으며 원본과 빌드 JAR의 해시 일치를 확인했다.
+- private-fonts는 Git 저장소 밖에 있다. 공개 변경은 빌드의 storyFontDir 입력 처리와 문서뿐이며 폰트 파일은 커밋하지 않는다.
+- Java21 plugin test build 및 private-font mod test remapJar 성공. 기존 18개 회귀테스트 결과 모두 통과. 이후 공개 processResources 전환에서 사설 TTF가 남지 않는 것도 검증했다.
+- TTF primary provider 설정: size 11.0, oversample 8.0, shift [0.0,1.0]. minecraft:default는 후순위 폴백이다.
+- 폰트 SHA256:
+  - light: dd228889895d946c2d93608bd8174216b00ee12b834929cbc3975d3ae09a2d96
+  - medium: 58a865ab94d245fdf5624fbb2906502e2ae7a5d055bae51c530f9b223318b2a8
+  - bold: b3497c9e851fc18fd8f342980d8e5ebaf8977aae244c8a8907f147dba6c229be
+- 배포 준비 JAR:
+  - plugin: 88f578f657c858ddf07a63b98395be4da8595614209741c9dcb3c3d24a92f6f9
+  - private-font mod: 60ac2c7e3c05f5a60f29482874b52c74eb58febe3c284ef9ec361cd17bfbce17
+- 경로: C:\Chacademi\staging\chacademy-story-20261010-task5\final-ready-personal-fonts.
+- 실제 배포 결과는 다음 기록에서 별도로 확인한다. ch1-2 미존재 및 실게임 미검증 상태는 유지한다.
