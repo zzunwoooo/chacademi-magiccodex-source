@@ -92,3 +92,42 @@
 - school/wild 대기는 파일 단위이며 공유되지 않는다.
 - 실게임/운영 배포/재시작/런처 교체/운영 DB/키/실제 유료 API 호출 미실행.
 - HolyTaming은 이번 범위에 포함하지 않았다.
+
+
+## 8. 배포 및 운영 제어 사고 기록 (2026-10-10)
+
+- 사용자 승인으로 school/wild Bridge와 개인 런처 UI를 교체했다. 두 서버의 새 Bridge 활성화 및 Done, 각 대상 JAR 1개와 배치 SHA256 일치를 확인했다.
+- Bridge: 52e350de404cc19323ad0735238d59b098fc3f4c62ede2e1b032e852212ddf21
+- UI: fee99eed783e2959be42d3e8cdcc4b8a1699d3d8674358487fc0c53726461fcb
+- 배포 코드 기준은 2ea204cc3e0ca8f1ed6d3f8b26e3497ed5ae9f42이며 이후 이 절 추가는 문서 변경뿐이다.
+
+### 잘못 사용한 경로와 영향
+
+Codex가 아래 Control.ps1 경로에 개별 Server 인자를 지정하면 개별 종료할 것으로 잘못 판단했다.
+
+    & 'C:\Program Files\PowerShell\7\pwsh.exe' -NoProfile -File 'C:\Chacademi\network\scripts\Control.ps1' -Action Stop -Server school
+    & 'C:\Program Files\PowerShell\7\pwsh.exe' -NoProfile -File 'C:\Chacademi\network\scripts\Control.ps1' -Action Stop -Server wild
+
+실제로 이 Stop 경로는 전체 종료로 처리되어 school/wild뿐 아니라 Velocity도 종료됐다. 작업자의 제어 경로 선택 오류다. 개별 종료에는 위 명령을 사용하지 않는다. DB 프로세스를 제어하지 않았다.
+
+### 올바른 개별 정상 종료
+
+    & 'C:\Program Files\PowerShell\7\pwsh.exe' -NoProfile -File 'C:\Chacademi\network\scripts\Stop-Network.ps1' -Server school
+    & 'C:\Program Files\PowerShell\7\pwsh.exe' -NoProfile -File 'C:\Chacademi\network\scripts\Stop-Network.ps1' -Server wild
+
+Stop-Network.ps1은 개별 대상에 대해 Control.ps1의 Console 액션으로 stop 명령을 전달하고 해당 대상 종료를 기다린다. all은 전체 종료이므로 개별 작업에서 사용하지 않는다.
+
+### 복구 및 마지막 확인의 구분
+
+- Codex는 school/wild의 교체와 재시작을 완료했고, 두 서버가 새 Bridge로 부팅 완료된 것을 도구로 확인했다.
+- Velocity 복구 시작은 기존 'Velocity는 건드리지 마세요' 범위와 충돌한다는 자동 승인 검토로 차단됐다. Codex가 Velocity 복구 시작을 실행한 것은 아니다.
+- 이후 사용자가 '내가 켰어'라고 직접 기동을 알렸다. 이는 사용자 보고이며, 그 뒤 Codex가 실행 상태를 다시 검증한 것은 아니다.
+- 사용자 요청에 따라 추가 시작/종료/재시작 및 복구 승인 요청을 중단했다.
+
+### 부팅에서 별도로 관찰한 경고
+
+- school ChacademyStory: kr.chacademy.npc.integration.Providers$AffinityProvider 클래스 누락 경고.
+- wild ItemsAdder: generated.zip 누락.
+- 양쪽 MythicMobs: SkeletalKnight 로딩 경고.
+- 새 Bridge 활성화 오류는 발견하지 못했다. 양쪽 ChacademyStory 활성화와 JAR의 storydialogue 명령 선언은 확인했지만 실제 대화 실행은 미검증이다.
+- 이 기록 작업에서는 해당 경고나 다른 기능을 수정하지 않았다.
