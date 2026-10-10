@@ -27,3 +27,10 @@ temperature:
 
 # Skript nameset.sk display name; UUID remains the internal identity.
 display-name-placeholder: "%user_nickname%"
+
+# /최초닉네임설정 [플레이어] 로 연 닉네임 창은 취소·닫기가 안 되고, 저장 전에 접속이 끊기거나 서버가 꺼지면
+# 다음 접속 때 다시 열린다 (대기 목록: first-nickname.yml). 저장이 끝나면 아래 명령을 콘솔로 실행.
+# {player} = 마인크래프트 닉네임, {nickname} = 방금 정한 닉네임, {uuid}
+first-nickname:
+  on-complete:
+    - "storydialogue {player} ch1-2"

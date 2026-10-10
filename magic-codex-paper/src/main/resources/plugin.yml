@@ -5,6 +5,9 @@ api-version: '1.21.4'
 description: Permission, balance, server-authoritative mana and spell casting for Magic Codex.
 softdepend: [LuckPerms, Vault, PlaceholderAPI, MCPets, MythicMobs, ModelEngine, Citizens]
 commands:
+  최초닉네임설정:
+    description: 처음 닉네임 정하기 (닫을 수 없는 창, 저장하면 first-nickname.on-complete 실행)
+    usage: /최초닉네임설정 [플레이어]
   상점관리화면:
     description: 운영자 상점 상품 관리 화면
     permission: magiccodex.shop.admin
@@ -115,6 +118,9 @@ commands:
     description: 등록 칭호 회수
     permission: magiccodex.titles.admin
 permissions:
+  magiccodex.nickname.admin:
+    description: 다른 플레이어에게 /최초닉네임설정 열기
+    default: op
   magiccodex.titles:
     default: true
   magiccodex.titles.admin:

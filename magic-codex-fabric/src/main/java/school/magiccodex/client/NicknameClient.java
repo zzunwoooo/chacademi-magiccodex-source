@@ -15,7 +15,9 @@ import school.magiccodex.protocol.NicknameProtocol;
 import school.magiccodex.protocol.NicknameProtocol.*;
 
 public final class NicknameClient {
-    private static long sequence,waiting,deadline,identityAt;
+    private static long sequence,waiting,deadline,identityAt,firstReopenAt;
+    /** /최초닉네임설정: server says a first nickname is required. Cleared by FIRST_DONE or on disconnect (server re-sends on join). */
+    private static boolean firstRequired;
     private static NicknameScreen owner;
     private static Response identity;
     private interface Bytes{byte[] bytes();}
@@ -44,9 +46,13 @@ public final class NicknameClient {
             if(waiting!=0&&now>deadline){waiting=0;if(owner!=null&&c.currentScreen==owner)owner.failed("응답이 늦습니다. 다시 불러온 뒤 저장해 주세요.");owner=null;}
             if(identityAt==0)identityAt=now+1500;
             if(identity==null&&waiting==0&&now>=identityAt&&supported()){identityAt=now+10000;request(null,NicknameProtocol.OPEN,0,0,"");}
+            // The first-nickname screen cannot be dismissed; if anything else cleared the screen, bring it back.
+            if(firstRequired&&c.currentScreen==null&&now>=firstReopenAt){firstReopenAt=now+1000;openFirst();}
         });
     }
-    private static void reset(){sequence=waiting=deadline=identityAt=0;owner=null;identity=null;}
+    private static void reset(){sequence=waiting=deadline=identityAt=firstReopenAt=0;owner=null;identity=null;firstRequired=false;}
+    static boolean firstRequired(){return firstRequired;}
+    private static void openFirst(){DeferredScreens.open(()->new NicknameScreen(null,true));}
     public static boolean supported(){return MinecraftClient.getInstance().getNetworkHandler()!=null&&ClientPlayNetworking.canSend(Query.ID);}
     public static String display(String fallback){return identity==null?fallback:identity.nickname();}
     public static void open(Screen parent){DeferredScreens.open(()->new NicknameScreen(parent));}
@@ -58,7 +64,17 @@ public final class NicknameClient {
         ClientPlayNetworking.send(new Query(NicknameProtocol.encode(new Request(action,seq,session,revision,value))));return true;
     }
     private static void receive(Response r){
-        var c=MinecraftClient.getInstance();if(c.player==null||!c.player.getUuid().equals(r.owner())||r.sequence()!=waiting)return;
+        var c=MinecraftClient.getInstance();if(c.player==null||!c.player.getUuid().equals(r.owner()))return;
+        if(r.kind()==NicknameProtocol.FIRST){
+            if(!firstRequired){firstRequired=true;firstReopenAt=Util.getMeasuringTimeMs()+1000;if(!(c.currentScreen instanceof NicknameScreen s&&s.first()))openFirst();}
+            return;
+        }
+        if(r.kind()==NicknameProtocol.FIRST_DONE){
+            firstRequired=false;identity=r;
+            if(c.currentScreen instanceof NicknameScreen s&&s.first())s.finishFirst();
+            return;
+        }
+        if(r.sequence()!=waiting)return;
         var screen=owner;waiting=0;owner=null;identity=r;
         if(screen!=null&&c.currentScreen==screen)screen.receive(r);
         else if(r.session()!=0&&supported())request(null,NicknameProtocol.CLOSE,r.session(),r.revision(),"");
