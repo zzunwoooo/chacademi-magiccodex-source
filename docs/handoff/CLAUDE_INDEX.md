@@ -20,7 +20,7 @@ Claude 는 GPT 작업 브랜치에 직접 커밋하지 않고, **`claude/` 로 �
 | 브랜치 | 기준 | 인계 문서 | 내용 | 상태 |
 | --- | --- | --- | --- | --- |
 | `claude/first-nickname-20261010` | `codex/hires-item-icons-20261006` @ `9a6263a` | `CLAUDE_FIRST_NICKNAME_20261010.md` | `/최초닉네임설정` (닫을 수 없는 창, 재접속 시 다시 열기, 저장 후 `storydialogue {player} ch1-2`) | 받음 (1a42349, 2026-10-10; 호스팅 검증 완료, 배포 전) |
-| `claude/chacademy-story-20261010` | `claude/first-nickname-20261010` (위 브랜치 포함) | `CLAUDE_CHACADEMY_STORY_20261010.md` | `chacademy-story/` 스토리 컷신·대화 모드+플러그인+편집기. 한글 닉네임, 내 일러스트, 호감도, 닫기 금지, 이어서 보기 | 받기 전 |
+| `claude/chacademy-story-20261010` | `claude/first-nickname-20261010` (위 브랜치 포함) | `CLAUDE_CHACADEMY_STORY_20261010.md` | `chacademy-story/` 스토리 컷신·대화 모드+플러그인+편집기. 한글 닉네임, 내 일러스트, 호감도, 닫기 금지, 이어서 보기 | 받음 (3779d57, 2026-10-10; 호스팅 검증 완료, 미배포) |
 
 ## Claude 가 지키는 규칙
 

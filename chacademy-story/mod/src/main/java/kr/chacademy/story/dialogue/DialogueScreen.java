@@ -82,12 +82,13 @@ public class DialogueScreen extends Screen {
         this.listener = listener;
         this.vars = vars;
         boolean resume = startScene != null && dialogue.scenes().containsKey(startScene);
-        enter(resume ? startScene : dialogue.start(), 0);
-        if (resume && !ended && scene != null && scene.id().equals(startScene) && startLine > 0 && !scene.lines().isEmpty()) {
-            lineIndex = Math.min(startLine, scene.lines().size() - 1);
+        if (resume) {
+            scene = dialogue.scenes().get(startScene);
+            enteredAffinity.add(startScene);
+            lineIndex = Math.max(0, Math.min(startLine, Math.max(0, scene.lines().size() - 1)));
             startLine();
             report();
-        }
+        } else enter(dialogue.start(), 0);
     }
 
     private void report() {
@@ -174,7 +175,7 @@ public class DialogueScreen extends Screen {
         playClick();
         for (Dialogue.AffinityChange a : c.affinity()) affinity.merge(a.npc(), a.add(), Integer::sum);
         if (!c.event().isEmpty()) {
-            // 호감도 값은 서버가 자기 파일(affinity.events)로 정한다. 서버 파일에 없을 때만 아래 값을 참고 (±20, 대화당 상한)
+            // 실제 호감도 값은 서버 affinity.events만 사용한다. npc/add는 구형 패킷 형식 호환용이다.
             Dialogue.AffinityChange first = c.affinity().isEmpty() ? null : c.affinity().get(0);
             listener.event(dialogue.id(), c.event(), first == null ? "" : first.npc(), first == null ? 0 : first.add());
         } else if (!c.affinity().isEmpty()) {

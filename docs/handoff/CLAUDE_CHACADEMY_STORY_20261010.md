@@ -52,3 +52,60 @@
 - [ ] 선택지 호감도 → `/affinity <나> teacher` 로 값 확인 (MagicCodex 점수)
 - [ ] 대화 도중 접속 종료 → 재접속 시 같은 대사부터, 이미 고른 선택지 명령이 다시 실행되지 않음
 - [ ] 대화 도중 서버 재시작 → 같은 결과
+
+
+## 5. Codex 통합·검증 (2026-10-10, 현재 결과)
+
+- 기준: 947ec46a4f5fccc2967c48b90c8f1e7ae5d27b73.
+- Claude 원격: a1938b526f08e44e055ca9682ec0938f9138d3d5.
+- no-ff 병합: 3779d577db1b2d7b61a7223e38f9d35ae386ecdc.
+- 호스팅 staging: C:\Chacademi\staging\chacademy-story-20261010-task5\source.
+- 충돌은 CLAUDE_INDEX 한 파일. 최초닉네임 받음 상태를 보존하고 Story 행을 추가했다. 최초닉네임 안전수정 2ea204c와 운영주의 8절은 그대로 유지했다.
+- 하위 AGENTS.md는 없었으며 루트 호스팅 우선 지침을 적용했다. Story는 루트 Gradle에 추가하지 않았다.
+
+### 실제 결함과 최소 수정
+
+1. 구형 fallback이 클라 npc/add 값을 실제 점수에 반영하던 문제: 제거. 서버 events/affinity.events에 선언한 유효 이벤트만 처리한다.
+2. 실행 이벤트를 최대 5초 뒤 기록하던 문제: fired를 먼저 원자적 저장하고 성공 후 효과 실행. 저장 실패 시 claim을 되돌리고 실행하지 않는다. 시작/완료/관리자 중단도 영속화 성공을 확인한다.
+3. 누락된 클라 대화 파일을 정상 완료로 보고하던 문제: 완료를 보내지 않고 서버 pending 유지. 서버는 현재 보고된 장면과 일치하는 유효 완료만 인정한다.
+4. 이어보기 시 장면 진입 redirect/호감도/이벤트를 재실행하던 문제: 저장 지점 직접 복원.
+5. 폰트가 없는데 JSON에서 해당 TTF만 참조하던 문제: 기본 글꼴 reference를 제공하고 실제 로컬 TTF가 있을 때만 빌드에서 선택적으로 추가한다.
+6. 서버 명령 executor/자동완성에 명시적인 admin 권한 검사, 비정상 패킷 trailing bytes 거절, 오래된 접속으로 비동기 열기 전달 방지.
+
+### 연동 확인
+
+- NpcSocialFacade API 1의 실제 기존 Bridge JAR 공개 메서드와 새 link의 정확한 시그니처가 일치한다. nickname, affinity, addAffinity(source=dialogue) 회귀테스트 통과.
+- 새 Story JAR에는 과거 Providers$AffinityProvider 참조가 없다. 이전 클래스 누락 경고의 원인 참조가 제거된 것은 확인했으나 운영 서버의 새 JAR 로딩은 아직 실행하지 않았다.
+- 클라 public NicknameClient.display와 package-private PortraitClient.ready/drawTurn reflection 테스트 통과. 기존 배포 UI의 drawTurn 인자는 intermediary net.minecraft.class_332이며 Story remap과 대응한다.
+- me 그림은 1600x900 좌표 변환 뒤 기존 텍스처 drawTurn만 호출한다. 새 생성·유료 API 호출은 하지 않는다. 실제 화면의 크기/가림/렌더 품질은 실게임 미검증이다.
+- 기존 개인 Story JAR에 KoreanCNM 3종 존재 및 로컬 원본 존재만 확인. 새 공개 소스/산출물에 TTF/WOFF를 복사하지 않았다.
+- ch1-2는 school/wild 서버 정의와 개인 클라 config 모두 없음(파일 존재 여부 확인). 샘플 생성/복사로 대체하지 않았다.
+
+### 테스트와 산출물
+
+- 호스팅 Java 21.0.10, 각 프로젝트 Gradle wrapper 8.14.3.
+- plugin: test build 성공, JUnit 13개 (실패/오류/스킵 0).
+- mod: test remapJar 성공, JUnit 5개 (실패/오류/스킵 0).
+- 실제 디스크 원자적 교체/저장 실패, 재로드 중복 방지, 서버 API1, 관리자 권한 선언, 패킷 유효성 및 양쪽 호환, 한글닉네임, 실제 이어보기 화면 생성, 클라 reflection을 확인했다.
+- 초기 빌드와 추가 회귀테스트 후 최종 빌드 모두 성공. deprecated API/Gradle 및 SnakeYAML semver 경고는 있으나 실패 없음.
+- 기존 MagicCodex/Portrait 및 최초닉네임 문서는 기준과 동일함을 diff로 확인했다. 이번에는 변경 없는 루트의 기존 540개 테스트를 재실행하지 않았다.
+- final-ready: C:\Chacademi\staging\chacademy-story-20261010-task5\final-ready
+- 정확한 파일 해시/크기/소스 SHA는 해당 폴더 manifest.json. 테스트 가짜 클래스와 KoreanCNM이 배포 JAR에 없음을 확인했다.
+- HTML 편집기 코드는 수정하지 않았으며 브라우저 상호작용 테스트는 미실행.
+
+### 별도 배포 승인 후 교체 대상 (이번에는 미배포)
+
+- school: C:\Chacademi\network\school\plugins\chacademy-story-plugin-0.1.0.jar
+- wild: C:\Chacademi\network\wild\plugins\chacademy-story-plugin-0.1.0.jar
+- 개인 클라: C:\Users\matil\AppData\Roaming\.zzunwoo\instances\launcher_v2-1.21.4\mods\chacademy-story-0.1.0.jar
+- 기존 Bridge/UI 쌍은 변경하지 않는다. 예전 ChacademyCutscene 플러그인/chaca_cutscene 모드가 실제 있으면 중복 여부를 별도로 확인한다.
+- 이 두 Story 산출물은 기본 글꼴 빌드이며 기존 개인 JAR의 KoreanCNM 외형과 다를 수 있다.
+- ch1-2 작성 전 최초닉네임→해당 후속대화 종단 테스트 불가. ch1_wakeup 예시도 이번에 운영 config로 설치하지 않았다.
+- 서버/런처 교체, 시작/종료/재시작, 운영 DB/키/실제 API 호출은 하지 않았다. Control.ps1 Stop 사용 금지(정확한 사고 경위는 최초닉네임 인계 8절).
+
+### 남은 한계
+
+- fired 선저장은 중복 방지를 위한 at-most-once 방식이다. 기록과 외부 명령/비동기 호감도 적용 사이의 프로세스 중단·효과 실패에 대한 완전한 트랜잭션/자동 재실행은 제공하지 않는다.
+- 서버에는 전체 클라 대화 그래프가 없으므로 허용된 이벤트 중 실제 선택 조건/순서까지 검증하지는 않는다. 같은 대화 id를 즉시 새 세션으로 열 때 이전 세션 패킷을 구분하는 nonce도 없다.
+- 진행 파일은 서버별이며 school/wild 간 공유되지 않는다. 미저장 대사 위치는 강제 종료 시 되돌아갈 수 있다.
+- 기존 로컬 호감도 파일과 MagicCodex DB 사이의 데이터 이전은 하지 않았다.

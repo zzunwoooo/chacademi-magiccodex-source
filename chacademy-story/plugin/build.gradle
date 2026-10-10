@@ -30,3 +30,11 @@ processResources {
         expand 'version': project.version
     }
 }
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+test { useJUnitPlatform() }
+dependencies { testImplementation 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT' }

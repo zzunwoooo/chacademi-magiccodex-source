@@ -224,9 +224,6 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
         } catch (Exception e) {
             LOGGER.warn("대화 {} 불러오기 실패", id, e);
             error("대화를 찾을 수 없어요: " + id + " (" + e.getMessage() + ")");
-            if (fromServer && ClientPlayNetworking.canSend(CutscenePackets.DialogueDoneC2S.TYPE)) {
-                ClientPlayNetworking.send(new CutscenePackets.DialogueDoneC2S(id, ""));
-            }
             return;
         }
         LOGGER.info("대화 시작: {} (장면 {}개)", id, dialogue.scenes().size());

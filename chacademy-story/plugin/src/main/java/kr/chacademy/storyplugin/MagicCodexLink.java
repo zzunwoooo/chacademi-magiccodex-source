@@ -44,14 +44,10 @@ public final class MagicCodexLink {
             RegisteredServiceProvider reg = Bukkit.getServicesManager().getRegistration((Class) type);
             if (reg == null) continue;
             try {
-                for (Method m : type.getMethods()) methods.put(m.getName(), m);
-                int v = ((Number) methods.get("apiVersion").invoke(reg.getProvider())).intValue();
-                if (v != 1) {
-                    log.warning("MagicCodexBridge NPC API 버전이 달라요 (" + v + ") — 호감도는 이 플러그인 파일에 따로 저장");
-                    methods.clear();
+                if (!bind(type, reg.getProvider())) {
+                    log.warning("MagicCodexBridge NPC API version mismatch; using local affinity.");
                     return false;
                 }
-                facade = reg.getProvider();
                 log.info("MagicCodexBridge 연결 완료 (한글 닉네임, 호감도를 ChacaNPC 와 같이 씀)");
                 return true;
             } catch (ReflectiveOperationException | RuntimeException e) {
@@ -60,6 +56,18 @@ public final class MagicCodexLink {
             }
         }
         return false;
+    }
+
+    /** Exact API-1 signatures, independently testable without a running server. */
+    boolean bind(Class<?> type, Object provider) throws ReflectiveOperationException {
+        facade = null; methods.clear();
+        Method version = type.getMethod("apiVersion");
+        if (((Number)version.invoke(provider)).intValue() != 1) return false;
+        methods.put("playerName", type.getMethod("playerName", Player.class));
+        methods.put("affinity", type.getMethod("affinity", UUID.class, String.class));
+        methods.put("addAffinity", type.getMethod("addAffinity", UUID.class, String.class, String.class, int.class));
+        facade = provider;
+        return true;
     }
 
     public boolean available() {
@@ -122,7 +130,7 @@ public final class MagicCodexLink {
     @SuppressWarnings("unchecked")
     public CompletableFuture<Integer> affinity(UUID player, String npc) {
         try {
-            return ((CompletableFuture<int[]>) call("affinity", player, npc)).handle((r, e) -> e != null || r == null ? null : r[0]);
+            return ((CompletableFuture<int[]>) call("affinity", player, npc)).handle((r, e) -> e != null || r == null || r.length == 0 ? null : r[0]);
         } catch (ReflectiveOperationException | RuntimeException e) {
             return CompletableFuture.completedFuture(null);
         }
@@ -133,7 +141,7 @@ public final class MagicCodexLink {
     public CompletableFuture<Integer> addAffinity(UUID player, String npc, int amount) {
         try {
             return ((CompletableFuture<int[]>) call("addAffinity", player, npc, SOURCE, amount))
-                    .handle((r, e) -> e != null || r == null ? null : r[0]);
+                    .handle((r, e) -> e != null || r == null || r.length == 0 ? null : r[0]);
         } catch (ReflectiveOperationException | RuntimeException e) {
             return CompletableFuture.completedFuture(null);
         }

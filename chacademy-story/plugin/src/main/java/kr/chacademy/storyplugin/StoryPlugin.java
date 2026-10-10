@@ -63,6 +63,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
 
     private File progressFile;
     private volatile boolean progressDirty = false;
+    private boolean progressReady;
 
     @Override
     public void onEnable() {
@@ -73,6 +74,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         affinity.load();
         progressFile = new File(getDataFolder(), "progress.yml");
         loadProgress();
+        progressReady = true;
 
         Messenger m = getServer().getMessenger();
         for (String out : List.of(StoryCodec.CUTSCENE_PLAY, StoryCodec.CUTSCENE_STOP, StoryCodec.DIALOGUE_OPEN, StoryCodec.DIALOGUE_STOP)) {
@@ -164,8 +166,14 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
             return;
         }
         DialogueSession session = new DialogueSession(id);
-        dialoguePlaying.put(p.getUniqueId(), session);
+        DialogueSession previous = dialoguePlaying.put(p.getUniqueId(), session);
         progressDirty = true;
+        if (!saveProgressIfDirty()) {
+            if (previous == null) dialoguePlaying.remove(p.getUniqueId()); else dialoguePlaying.put(p.getUniqueId(), previous);
+            progressDirty = true;
+            p.sendMessage(ChatColor.RED + "스토리 진행을 저장하지 못했습니다. 다시 시도해 주세요.");
+            return;
+        }
         sendOpen(p, session);
     }
 
@@ -186,7 +194,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
                 .thenAccept(v -> { if (v != null) scores.put(n, v); })).toArray(CompletableFuture[]::new);
         CompletableFuture.allOf(all).orTimeout(3, TimeUnit.SECONDS).handle((r, e) -> {
             Bukkit.getScheduler().runTask(this, () -> {
-                if (!p.isOnline() || dialoguePlaying.get(p.getUniqueId()) != session) return;
+                if (!isEnabled() || !p.isOnline() || Bukkit.getPlayer(p.getUniqueId()) != p || dialoguePlaying.get(p.getUniqueId()) != session) return;
                 StringBuilder sb = new StringBuilder();
                 scores.forEach((k, v) -> sb.append(sb.length() > 0 ? "," : "").append(k).append('=').append(v));
                 p.sendPluginMessage(this, StoryCodec.DIALOGUE_OPEN, StoryCodec.dialogueOpen(id, sb.toString(), vars, session.scene, session.line));
@@ -217,7 +225,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
     /** 접속하면 끝나지 않은 대화를 저장된 곳부터 다시 연다. 모드 채널이 늦게 잡히므로 몇 번 기다린다. */
     private void resumeLater(Player p, int attempt) {
         DialogueSession s = dialoguePlaying.get(p.getUniqueId());
-        if (s == null || !p.isOnline()) return;
+        if (s == null || !p.isOnline() || Bukkit.getPlayer(p.getUniqueId()) != p) return;
         if (hasMod(p)) {
             getLogger().info(p.getName() + " 대화 이어서 열기: " + s.id + " (" + (s.scene.isEmpty() ? "처음" : s.scene + " #" + s.line) + ")");
             sendOpen(p, s);
@@ -235,7 +243,8 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
     private void loadProgress() {
         dialoguePlaying.clear();
         if (!progressFile.isFile()) return;
-        YamlConfiguration y = YamlConfiguration.loadConfiguration(progressFile);
+        YamlConfiguration y = new YamlConfiguration();
+        try { y.load(progressFile); } catch (Exception e) { throw new IllegalStateException("Cannot read story progress; preserving the existing file", e); }
         for (String key : y.getKeys(false)) {
             try {
                 UUID uuid = UUID.fromString(key);
@@ -253,8 +262,9 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         if (!dialoguePlaying.isEmpty()) getLogger().info("끝나지 않은 대화 " + dialoguePlaying.size() + "개 (접속하면 이어서 열림)");
     }
 
-    private void saveProgressIfDirty() {
-        if (!progressDirty || progressFile == null) return;
+    private boolean saveProgressIfDirty() {
+        if (!progressReady || progressFile == null) return false;
+        if (!progressDirty) return true;
         progressDirty = false;
         YamlConfiguration y = new YamlConfiguration();
         y.options().setHeader(List.of("끝나지 않은 스토리 대화 (접속하면 여기서부터 다시 열림). 직접 고치지 마세요."));
@@ -268,10 +278,12 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
             y.set(k + ".fired", new ArrayList<>(new java.util.TreeSet<>(s.fired)));
         }
         try {
-            y.save(progressFile);
+            StorySafety.atomicWrite(progressFile.toPath(), y.saveToString());
+            return true;
         } catch (java.io.IOException ex) {
             progressDirty = true;
-            getLogger().warning("progress.yml 저장 실패: " + ex.getMessage());
+            getLogger().warning("progress.yml 저장 실패; 스토리 효과를 실행하지 않습니다.");
+            return false;
         }
     }
 
@@ -290,8 +302,13 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
     }
 
     public void stopDialogue(Player p) {
-        dialoguePlaying.remove(p.getUniqueId());
+        DialogueSession previous = dialoguePlaying.remove(p.getUniqueId());
         progressDirty = true;
+        if (!saveProgressIfDirty()) {
+            if (previous != null) dialoguePlaying.put(p.getUniqueId(), previous);
+            progressDirty = true;
+            return;
+        }
         if (hasMod(p)) p.sendPluginMessage(this, StoryCodec.DIALOGUE_STOP, new byte[0]);
     }
 
@@ -315,6 +332,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
 
     @Override
     public void onPluginMessageReceived(@NotNull String channel, @NotNull Player p, byte @NotNull [] message) {
+        if (!p.isOnline() || Bukkit.getPlayer(p.getUniqueId()) != p) return;
         try {
             switch (channel) {
                 case StoryCodec.CUTSCENE_DONE -> {
@@ -328,28 +346,20 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
                     var e = StoryCodec.dialogueEvent(message);
                     DialogueSession s = dialoguePlaying.get(p.getUniqueId());
                     if (s == null || !s.id.equals(e.id())) return;
-                    // 이벤트는 대화마다 한 번 (이어서 볼 때 같은 장면 이벤트가 다시 와도 무시)
-                    if (!e.event().isEmpty() && !s.fired.add(e.event())) return;
-                    progressDirty = true;
                     YamlConfiguration y = dialogueCommands(e.id());
-                    var defined = e.event().isEmpty() ? null : y.getConfigurationSection("affinity.events." + e.event());
-                    if (defined != null) {
-                        applyAffinity(p, defined, e.id() + " " + e.event());
-                    } else if (!e.npc().isEmpty() && e.add() != 0) {
-                        // 서버 파일에 없는 예전 형식: 클라가 보낸 값을 ±20, 대화당 상한으로 잘라서
-                        int cap = getConfig().getInt("affinity-max-per-dialogue", 30);
-                        int allowed = Math.max(-cap - s.affinityChanged, Math.min(cap - s.affinityChanged,
-                                Math.max(-20, Math.min(20, e.add()))));
-                        if (allowed != 0 && e.npc().matches("[^\\s,=]{1,48}")) {
-                            s.affinityChanged += allowed;
-                            if (codex.available()) codex.addAffinity(p.getUniqueId(), e.npc(), allowed);
-                            else affinity.add(p.getUniqueId(), e.npc(), allowed);
-                        }
-                    }
-                    if (!e.event().isEmpty()) {
+                    var commands = y.getConfigurationSection("events");
+                    var affinityEvents = y.getConfigurationSection("affinity.events");
+                    if (!StorySafety.declaredEvent(e.event(), commands == null ? Set.of() : commands.getKeys(false),
+                            affinityEvents == null ? Set.of() : affinityEvents.getKeys(false))) return;
+                    // Never trust client npc/add fields. Persist before any side effect.
+                    StorySafety.once(s.fired, e.event(), () -> {
+                        progressDirty = true;
+                        return saveProgressIfDirty();
+                    }, () -> {
+                        applyAffinity(p, y.getConfigurationSection("affinity.events." + e.event()), e.id() + " " + e.event());
                         Bukkit.getPluginManager().callEvent(new StoryEvents.DialogueChoice(p, e.id(), e.event()));
                         run(y.getStringList("events." + e.event()), p, Map.of("{id}", e.id(), "{event}", e.event()));
-                    }
+                    });
                 }
                 case StoryCodec.DIALOGUE_PROGRESS -> {
                     var g = StoryCodec.dialogueProgress(message);
@@ -363,8 +373,14 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
                     var d = StoryCodec.dialogueDone(message);
                     DialogueSession s = dialoguePlaying.get(p.getUniqueId());
                     if (s == null || !s.id.equals(d.id())) return;
+                    if (!ID.matcher(d.lastScene()).matches() || !d.lastScene().equals(s.scene)) return;
                     dialoguePlaying.remove(p.getUniqueId());
                     progressDirty = true;
+                    if (!saveProgressIfDirty()) {
+                        dialoguePlaying.put(p.getUniqueId(), s);
+                        progressDirty = true;
+                        return;
+                    }
                     dialogueFinished(p, d.id(), d.lastScene(), false);
                 }
                 default -> {
@@ -397,6 +413,9 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
 
     @Override
     public boolean onCommand(@NotNull CommandSender s, @NotNull Command cmd, @NotNull String label, @NotNull String[] a) {
+        if (!s.hasPermission("chacademy.story.admin")) {
+            s.sendMessage(ChatColor.RED + "스토리 관리자 권한이 필요합니다."); return true;
+        }
         return switch (cmd.getName()) {
             case "cutscene" -> cutsceneCommand(s, a);
             case "storydialogue" -> dialogueCommand(s, a);
@@ -529,6 +548,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender s, @NotNull Command cmd, @NotNull String alias, @NotNull String[] a) {
+        if (!s.hasPermission("chacademy.story.admin") || a.length == 0) return List.of();
         List<String> o = new ArrayList<>();
         List<String> players = new ArrayList<>(List.of("@a", "@p"));
         Bukkit.getOnlinePlayers().forEach(p -> players.add(p.getName()));

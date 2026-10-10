@@ -40,3 +40,30 @@ java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
 }
+
+// Public builds use Minecraft fonts. Never fetch unlicensed KoreanCNM files.
+processResources.doLast {
+    ['l', 'm', 'b'].each { weight ->
+        def fontFile = new File(destinationDir, 'assets/chaca_story/font/cnm_' + weight + '.ttf')
+        if (fontFile.isFile()) {
+            def jsonFile = new File(destinationDir, 'assets/chaca_story/font/subtitle_' + weight + '.json')
+            jsonFile.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson([
+                providers: [[type:'ttf', file:'chaca_story:cnm_' + weight + '.ttf', size:11.0,
+                             oversample:8.0, shift:[0.0,1.0]],
+                            [type:'reference', id:'minecraft:default']]
+            ]))
+        }
+    }
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+test { useJUnitPlatform() }
+
+sourceSets.test.java {
+    srcDir '../plugin/src/main/java'
+    include '**/StoryCodec.java', '**/*Test.java', 'school/magiccodex/client/*.java'
+}

@@ -43,8 +43,8 @@ dialogue-placeholders:
 affinity-default: 25
 affinity-min: -100
 affinity-max: 100
-# 대화 한 번에 바뀔 수 있는 최대치 — 서버 dialogues/<id>.yml 에 affinity 가 없는 예전 형식 대화에만 적용
-# (편집기로 만든 대화는 서버 파일의 affinity 값을 그대로 쓴다. 클라 yml 을 고쳐도 바뀌지 않음)
+# 구형 설정 호환용 (현재 사용하지 않음). 클라가 보낸 호감도 값은 무시한다.
+# 실제 값은 서버 dialogues/<id>.yml만 사용하고 항목당 ±100, MagicCodex 자체 한도를 적용한다.
 affinity-max-per-dialogue: 30
 # 호감도가 바뀔 때마다 콘솔에 기록
 affinity-log: false

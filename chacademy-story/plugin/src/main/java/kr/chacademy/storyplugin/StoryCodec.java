@@ -50,7 +50,7 @@ public final class StoryCodec {
     public static DialogueProgress dialogueProgress(byte[] data) {
         ByteBuffer b = ByteBuffer.wrap(data);
         try {
-            return new DialogueProgress(readString(b), readString(b), readVarInt(b));
+            return complete(b, new DialogueProgress(readString(b), readString(b), readVarInt(b)));
         } catch (BufferUnderflowException e) {
             throw new IllegalArgumentException("패킷이 너무 짧음");
         }
@@ -79,7 +79,7 @@ public final class StoryCodec {
     public static CutsceneDone cutsceneDone(byte[] data) {
         ByteBuffer b = ByteBuffer.wrap(data);
         try {
-            return new CutsceneDone(readString(b), b.get() != 0);
+            return complete(b, new CutsceneDone(readString(b), b.get() != 0));
         } catch (BufferUnderflowException e) {
             throw new IllegalArgumentException("패킷이 너무 짧음");
         }
@@ -88,7 +88,7 @@ public final class StoryCodec {
     public static DialogueEvent dialogueEvent(byte[] data) {
         ByteBuffer b = ByteBuffer.wrap(data);
         try {
-            return new DialogueEvent(readString(b), readString(b), readString(b), b.getInt());
+            return complete(b, new DialogueEvent(readString(b), readString(b), readString(b), b.getInt()));
         } catch (BufferUnderflowException e) {
             throw new IllegalArgumentException("패킷이 너무 짧음");
         }
@@ -97,10 +97,15 @@ public final class StoryCodec {
     public static DialogueDone dialogueDone(byte[] data) {
         ByteBuffer b = ByteBuffer.wrap(data);
         try {
-            return new DialogueDone(readString(b), readString(b));
+            return complete(b, new DialogueDone(readString(b), readString(b)));
         } catch (BufferUnderflowException e) {
             throw new IllegalArgumentException("패킷이 너무 짧음");
         }
+    }
+
+    private static <T> T complete(ByteBuffer b, T value) {
+        if (b.hasRemaining()) throw new IllegalArgumentException("Trailing story packet data");
+        return value;
     }
 
     static void writeVarInt(ByteArrayOutputStream out, int value) {
