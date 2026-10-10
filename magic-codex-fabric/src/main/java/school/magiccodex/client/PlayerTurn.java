@@ -63,10 +63,10 @@ final class PlayerTurn {
         if(paused)start=now-(long)shown*23;
     }
 
-    /** NPC 초상화와 같은 자리·크기 (가로 700). clip이면 패널 위까지만 (AI 대화창 방식). */
-    void drawPortrait(DrawContext c,int x,int y,boolean clip){
-        if(clip){c.enableScissor(65,75,765,639);try{PortraitClient.draw(c,x,y,700);}finally{c.disableScissor();}}
-        else PortraitClient.draw(c,x,y,700);
+    /** Both dialogue screens use the same body scale and alpha-aware top anchor. */
+    void drawPortrait(DrawContext c){
+        c.enableScissor(0,0,1600,PlayerTurnPortraitLayout.PANEL_TOP);
+        try{PortraitClient.drawTurn(c);}finally{c.disableScissor();}
     }
 
     /** 패널 + 이름표 + 문장 (선택지 없음). nameWidth/nameMax는 각 대화창의 이름표 크기. */

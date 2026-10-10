@@ -106,7 +106,7 @@ public final class NpcTalkScreen extends Screen {
   var f=fit();double mx=f.localX(mouseX),my=f.localY(mouseY);var images=UiResources.images();images.beginFrame();UiResources.text().beginFrame();c.fill(0,0,width,height,0x30030A12);c.getMatrices().push();
   try{
    c.getMatrices().translate(f.x(),f.y(),0);c.getMatrices().scale(f.scale(),f.scale(),1);
-   if(turn!=null)turn.drawPortrait(c,65,75,true);else{c.enableScissor(65,75,765,639);try{if(portraitPresent)images.drawTexture(c,portrait,65,75,0,0,700,1050,1024,1536,1024,1536);}finally{c.disableScissor();}}
+   if(turn!=null)turn.drawPortrait(c);else{c.enableScissor(65,75,765,639);try{if(portraitPresent)images.drawTexture(c,portrait,65,75,0,0,700,1050,1024,1536,1024,1536);}finally{c.disableScissor();}}
    // The lower nameplate is the only NPC name. Vector hearts avoid font/placeholder glyphs.
 
    label(c,sound?"♪ 소리 켜짐":"♪ 소리 꺼짐",1110,54,21,0xFFD8DFE7,false,false,175);label(c,"기록",1305,54,21,0xFFD8DFE7,false,false,90);label(c,log?"기록 닫기 ×":"닫기 ×",1430,54,21,0xFFD8DFE7,false,false,130);

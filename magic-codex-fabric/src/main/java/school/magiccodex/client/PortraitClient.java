@@ -65,6 +65,7 @@ public final class PortraitClient {
     static int imageWidth(){return texture==null?1:texture.width();}
     static int imageHeight(){return texture==null?1:texture.height();}
     static void draw(DrawContext c,int x,int y,int width){if(texture!=null)texture.draw(c,x,y,width);}
+    static void drawTurn(DrawContext c){if(texture!=null)texture.drawTurn(c);}
     private static void reset(){
         LOAD.next();IO.getQueue().clear();helloSent=ready=confirmed=loading=false;dropIncoming();
         if(texture!=null){texture.close();texture=null;}textureSha="";message="아직 저장된 일러스트가 없습니다.";
@@ -142,7 +143,7 @@ public final class PortraitClient {
     private static void queueLoad(MinecraftClient c,Path dir,String expected,byte[] supplied,boolean hello){
         long ticket=LOAD.next();Object connection=c.getNetworkHandler();loading=true;
         IO.execute(()->{
-            NativeImage decoded=null;String sha=expected;
+            NativeImage decoded=null;PlayerTurnPortraitLayout.Bounds bounds=null;String sha=expected;
             try{
                 if(!LOAD.current(ticket))return;
                 byte[] png=supplied;
@@ -160,16 +161,18 @@ public final class PortraitClient {
                 }
                 if(png!=null&&png.length<=PortraitProtocol.MAX_IMAGE_BYTES&&PortraitProtocol.validSha(sha)&&sha.equals(sha256(png))){
                     decoded=PlayerPortraitTexture.decode(png,PortraitProtocol.MAX_IMAGE_SIDE);
+                    NativeImage scan=decoded;
+                    bounds=PlayerTurnPortraitLayout.bounds(scan.getWidth(),scan.getHeight(),(x,y)->scan.getColorArgb(x,y)>>>24);
 
                 }
             }catch(Exception ignored){}
-            NativeImage image=decoded;String hash=sha;
+            NativeImage image=decoded;var imageBounds=bounds;String hash=sha;
             c.execute(()->{
                 if(!LOAD.current(ticket)||connection!=c.getNetworkHandler()||c.player==null){if(image!=null)image.close();return;}
                 boolean installed=false;
                 if(image!=null){
                     try{
-                        var next=PlayerPortraitTexture.upload(image);
+                        var next=PlayerPortraitTexture.upload(image,imageBounds);
                         var previous=texture;
                         texture=next;textureSha=hash;installed=true;
                         if(previous!=null){try{previous.close();}catch(Exception ignored){}}

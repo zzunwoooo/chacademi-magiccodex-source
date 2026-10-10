@@ -27,9 +27,11 @@ final class PlayerPortraitTexture implements AutoCloseable {
     private final Identifier id;
     private final RenderLayer layer;
     private final int width,height;
+    private final PlayerTurnPortraitLayout.Bounds bounds;
     private boolean closed;
 
-    private PlayerPortraitTexture(Identifier id,int width,int height){
+    private PlayerPortraitTexture(Identifier id,int width,int height,PlayerTurnPortraitLayout.Bounds bounds){
+        this.bounds=bounds;
         this.id=id;this.width=width;this.height=height;this.layer=new PortraitLayer(MinecraftClient.getInstance(),id);
     }
 
@@ -43,7 +45,7 @@ final class PlayerPortraitTexture implements AutoCloseable {
     }
 
     /** Takes ownership of the decoded image. GPU work is render-thread only. */
-    static PlayerPortraitTexture upload(NativeImage image)throws Exception{
+    static PlayerPortraitTexture upload(NativeImage image,PlayerTurnPortraitLayout.Bounds bounds)throws Exception{
         RenderSystem.assertOnRenderThread();
         NativeImageBackedTexture texture=null;
         try{
@@ -60,7 +62,7 @@ final class PlayerPortraitTexture implements AutoCloseable {
             var id=Identifier.of("magiccodex","player_portrait/"+(serial++));
             MinecraftClient.getInstance().getTextureManager().registerTexture(id,texture);
             texture=null;
-            return new PlayerPortraitTexture(id,w,h);
+            return new PlayerPortraitTexture(id,w,h,bounds);
         }finally{
             if(texture!=null)texture.close();
             if(image!=null)image.close();
@@ -83,6 +85,11 @@ final class PlayerPortraitTexture implements AutoCloseable {
         if(closed)return;
         int h=Math.round(w*(float)height/width);
         c.drawTexture(any->layer,id,x,y,0,0,w,h,width,height,width,height,0xFFFFFFFF);
+    }
+
+    void drawTurn(DrawContext c){
+        var p=PlayerTurnPortraitLayout.place(width,height,bounds);
+        draw(c,p.x(),p.y(),p.width());
     }
 
     @Override public void close(){

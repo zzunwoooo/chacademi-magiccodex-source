@@ -53,3 +53,14 @@ loom {
         }
     }
 }
+
+// Keep this renderer independent of unrelated optional VFX fixtures.
+if (project.hasProperty('playerTurnCheck')) {
+    sourceSets.visualTest.java.setIncludes(['**/PlayerTurnVisualCheck.java'])
+    tasks.named('processVisualTestResources') {
+        filesMatching('fabric.mod.json') {
+            filter { line -> line.replace('school.magiccodex.visualtest.CodexVisualCheck',
+                                          'school.magiccodex.client.PlayerTurnVisualCheck') }
+        }
+    }
+}

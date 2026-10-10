@@ -41,7 +41,7 @@ public final class DialogueScreen extends Screen {
         var fit=layoutFit();double mx=fit.localX(mouseX),my=fit.localY(mouseY);var images=UiResources.images();images.beginFrame();UiResources.text().beginFrame();
         c.fill(0,0,width,height,0x30030A12);c.getMatrices().push();try{
             c.getMatrices().translate(fit.x(),fit.y(),0);c.getMatrices().scale(fit.scale(),fit.scale(),1);
-            if(turn!=null)turn.drawPortrait(c,65,-5,false);else if(portraitPresent)images.drawTexture(c,portrait,65,-5,0,0,700,1050,1024,1536,1024,1536);
+            if(turn!=null)turn.drawPortrait(c);else if(portraitPresent)images.drawTexture(c,portrait,65,-5,0,0,700,1050,1024,1536,1024,1536);
             c.fill(28,28,610,112,0xCB101D2C);label(c,(data.preview()?"[미리보기] ":"")+data.title(),47,69,25,0xFFE3C48C,true,false,540);
             label(c,sound?"♪ 소리 켜짐":"♪ 소리 꺼짐",1110,54,21,0xFFD8DFE7,false,false,175);label(c,"기록",1305,54,21,0xFFD8DFE7,false,false,90);label(c,"닫기 ×",1445,54,21,0xFFD8DFE7,false,false,100);
             if(turn!=null)turn.drawPanel(c,images,255,193);else{

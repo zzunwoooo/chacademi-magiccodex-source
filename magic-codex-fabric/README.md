@@ -287,3 +287,9 @@ order: 10
 MagicCodexBridge 0.6.0에서 현재·최대 마나·초당 회복량을 받아 표시합니다. 서버가 시전을 승인한 뒤에만 해당 VFX·사운드·쿨타임을 시작합니다.
 연동이 없는 서버에서는 마나가 `— / —`로 표시되고 기존 클라이언트 시전 방식으로 동작합니다.
 마나 65/100이라는 이전 버전 설명은 이제 적용되지 않습니다. 사용 안내는 [마나 연동](../output/mana-system-v1/사용안내.md)을 참고하세요.
+
+## Player-turn portrait framing
+
+Both dialogue screens use PlayerTurnPortraitLayout: visible alpha bounds are centered at x=415, top y=75, and fitted to height 660 (maximum width 700) in the existing 1600x900 UI space. A full 1024x1536 portrait draws at width 440, 62.9% of the previous 700. Only pixels below panel y=639 are clipped. Alpha bounds are measured once on Portrait-IO; preview sizing and NPC artwork are unchanged. This can reveal an existing waist but cannot create body parts missing from a source image.
+
+Validation: Gradle test remapJar; isolated real-screen fixture: -PvisualCheck -PplayerTurnCheck runVisualTest (synthetic image, window/fullscreen, GUI 2/3, transparent padding, both turn transitions).
