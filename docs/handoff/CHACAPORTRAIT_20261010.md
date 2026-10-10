@@ -1,3 +1,5 @@
+현재 운영 안내는 chaca-portrait-paper/README.md를 따르세요. 아래는 최초 패치 인계 기록이며, 비교 생성 경로는 제거되었습니다.
+
 # ChacaPortrait + 대화창 "내 차례" 작업 기록 (2026-10-10)
 
 - **기준**: 공개 저장소 `zzunwoooo/chacademi-magiccodex-source` 브랜치 `codex/hires-item-icons-20261006`, 커밋 `fab36c1`
@@ -26,7 +28,6 @@
 - **그림체:** 사용자가 준 레퍼런스(GPT가 만든 캐릭터 일러스트)와 같은 그림체입니다.
 - **구도:** 대화창에는 상반신만 보입니다. 기존 NPC 초상화와 같은 1024×1536 비율에, 머리부터 허벅지 중간까지입니다.
 - **모델:** `gpt-image-2`와 `gpt-image-1.5`를 플러그인에서 바꿀 수 있습니다 (`image.model`, `/portrait model`).
-- **시험 생성:** 두 모델을 한 번씩 돌려보는 `/portrait test <플레이어> both`가 있습니다.
 - **"내 차례" 화면:**
   - 고정 대화와 AI 대화 **둘 다**에 들어갑니다.
   - 선택지/입력 직후 같은 양식에서 선택지만 숨기고, 내 일러스트·내 이름·내 문장을 타자기로 보여줍니다.
@@ -73,7 +74,6 @@
   - 다를 때는 192KB 조각을 틱당 1개씩 보냅니다.
 - **키:** 환경변수 `CHACAPORTRAIT_OPENAI_KEY`를 쓰고, 없으면 `CHACANPC_OPENAI_KEY`를 씁니다. config 기본값은 빈 칸이고, 로그·예외에 넣지 않습니다.
 
-## 4. 비용 (추정, 실제는 `/portrait test`로 확인)
 
 단가는 config 기본값입니다. 공개 자료 중 높은 쪽(USD/100만 토큰)이며, 공식 가격표로 확인이 필요합니다.
 
@@ -97,7 +97,6 @@
 | --- | --- |
 | 실행한 것 | Claude 클라우드 환경에서 실행했습니다 (Maven 저장소 접근 불가).<br>- 새 서버 모듈 전체를 Paper **수기 스텁**에 대고 컴파일<br>- 단위 테스트 11개 통과: 프로토콜 3, 스킨 그림·지시문·비용 4, 응답 해석 3, 결과 검사 1. JUnit 대체 러너 사용<br>- SQLite 문장(upsert, 잠금, 예산 조건부 갱신, 횟수)은 Python sqlite3로 확인<br>- OpenAI 클라이언트는 로컬 목 서버로 확인: JSON 본문 키, 모델별 input_fidelity 유무, `moderation` 거부 시 재시도, Responses·moderation 해석<br>- 클라이언트 새 클래스 4개를 MC/Fabric **수기 스텁**에 대고 컴파일. 대화창 수정은 문법만 확인<br>- 별도 검토 에이전트 리뷰 후 지적 11건 중 10건 수정. 남은 1건은 위 "남은 위험" |
 | 실행하지 못한 것 | `:chaca-portrait-paper:test :chaca-portrait-paper:jar`, Fabric `test remapJar`. **호스팅 빌드가 필요**합니다. |
-| 실제 API | 유료 호출을 **하지 않았습니다**. gpt-image-2 / 1.5의 실제 파라미터 수용 여부, 투명 배경 품질, 비용은 `/portrait test`로 확인해야 합니다. |
 | 실제 게임 | **미실시**: 최초 접속 생성, 전송·캐시, "내 차례"(고정·AI 대화), 아이템 우클릭 입력창, 반환 |
 
 ### 호스팅 권장 확인
@@ -114,5 +113,4 @@
   - 공개 Git에는 넣지 않았습니다. 별도로 전달합니다.
   - 전신 원본에서 머리부터 허벅지 중간까지 잘라 1024×1536으로 맞춘 버전입니다.
 - 공유 DB 여부와 `server-id`
-- `image.model`, `image.quality` 최종값: `/portrait test both` 결과를 보고 결정
 - gpt-image-2 투명 배경(preview)의 결과 품질. 배경이 남으면 `require-transparent: true`로 실패 처리할지

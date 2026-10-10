@@ -88,7 +88,7 @@ public final class OpenAiImageClient {
                 .header("Authorization", "Bearer " + s.apiKey);
     }
 
-    private HttpRequest jsonEditRequest(PortraitSettings s, String model, List<byte[]> images, String prompt, String user, boolean minimal) {
+    HttpRequest jsonEditRequest(PortraitSettings s, String model, List<byte[]> images, String prompt, String user, boolean minimal) {
         List<Object> imgs = new ArrayList<>();
         for (byte[] b : images) {
             imgs.add(Json.map("image_url", "data:image/png;base64," + Base64.getEncoder().encodeToString(b)));
@@ -109,7 +109,7 @@ public final class OpenAiImageClient {
                 .POST(HttpRequest.BodyPublishers.ofString(Json.stringify(body), StandardCharsets.UTF_8)).build();
     }
 
-    private HttpRequest multipartEditRequest(PortraitSettings s, String model, List<byte[]> images, String prompt, String user) {
+    HttpRequest multipartEditRequest(PortraitSettings s, String model, List<byte[]> images, String prompt, String user) {
         String boundary = "----chacaportrait" + UUID.randomUUID().toString().replace("-", "");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         field(out, boundary, "model", model);

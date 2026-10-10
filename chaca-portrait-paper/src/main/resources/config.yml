@@ -6,7 +6,7 @@
 # 이 서버 이름 (school / wild). DB를 공유할 때 작업 잠금·복구에 씁니다.
 server-id: school
 
-# false면 자동 생성·다시 그리기·시험 생성을 모두 멈춥니다 (이미 있는 일러스트 전송은 계속).
+# false면 자동 생성·다시 그리기·관리자 생성을 모두 멈춥니다 (이미 있는 일러스트 전송은 계속).
 enabled: true
 
 openai:
@@ -20,14 +20,13 @@ openai:
   send-user-hash: true
 
 image:
-  # gpt-image-2 또는 gpt-image-1.5. /portrait reload 로 바로 바뀝니다.
-  # (참고) 외부 자료 기준 gpt-image-1.5 는 2026-12-01 종료 예정 — 운영 기간과 겹치면 gpt-image-2 권장.
-  model: gpt-image-2
-  # low / medium / high. 품질이 높을수록 비용이 큽니다.
+  # gpt-image-2.5-sunburst / gpt-image-2.5-flare / gpt-image-2 / gpt-image-1.5. /portrait reload 로 바로 바뀝니다.
+  model: gpt-image-2.5-sunburst
+  # low / medium / high / auto; 2.5만 xhigh / max도 지원. 기존 medium 유지.
   quality: medium
   # 기존 NPC 초상화와 같은 1024x1536 (상반신이 대화창 위로 보이는 구도).
   size: 1024x1536
-  # transparent 권장 (대화창 위에 캐릭터만). gpt-image-2는 투명 배경이 preview 기능입니다.
+  # 2.5: native transparent PNG 강제. gpt-image-2: opaque 요청 뒤 CPU GrabCut.
   background: transparent
   # gpt-image-1.5 전용: high면 레퍼런스·스킨을 더 충실히 따름 (입력 토큰 증가). gpt-image-2에서는 보내지 않습니다.
   input-fidelity: high
@@ -39,7 +38,7 @@ image:
   # 결과 PNG가 투명 배경이 아니면 실패로 처리할지 (false면 경고만 남기고 사용)
   require-transparent: false
 
-# 스킨 그림을 보고 외형을 짧게 정리하는 단계 (선택). 실패해도 이미지 생성은 계속합니다.
+# 필수 스킨 준비 단계. 실패·불완전 JSON이면 이미지 API 호출을 차단합니다.
 describe:
   enabled: true
   model: gpt-6-luna
@@ -73,7 +72,7 @@ reroll:
   # 하루 최대 횟수 (0 = 제한 없음)
   daily-limit: 0
 
-# 일러스트 생성 전용 3주 총예산 (ChacaNPC 대화 예산과 별개). 요청 전 최대 비용을 예약하고 끝나면 실제 사용량으로 정산합니다.
+# 일러스트 생성 전용 3주 총예산 (ChacaNPC 대화 예산과 별개). 요청 전 추정 비용을 예약하고 끝나면 실제 사용량으로 정산합니다.
 # OpenAI 프로젝트의 지출 한도·알림은 따로 설정하세요 (강제 한도도 반영 지연으로 소폭 초과할 수 있음).
 budget:
   total-usd: 30.0
@@ -81,6 +80,16 @@ budget:
 
 # 단가 (USD / 100만 토큰). 키 계정의 공식 가격표로 확인 후 맞춰 주세요. 정산·예약 계산에만 씁니다.
 prices:
+  gpt-image-2_5-sunburst:
+    text-input: 5.00
+    image-input: 8.00
+    cached-image-input: 2.00
+    image-output: 30.00
+  gpt-image-2_5-flare:
+    text-input: 5.00
+    image-input: 8.00
+    cached-image-input: 2.00
+    image-output: 30.00
   gpt-image-2:
     text-input: 5.00
     image-input: 8.00
@@ -97,7 +106,17 @@ prices:
     text-input: 0.0
 
 # 예약용 추정 토큰 (실제 사용량으로 정산되므로 넉넉하게)
+# 2.5는 별도 미보정 예약 추정치. GPT Image 2 계산기 값이나 청구 상한이 아닙니다.
+# xhigh = high 추정의 2배, max/auto = 4배 예약; 요청 quality 자체는 변경하지 않습니다.
+# usage에 캐시 이미지 세부가 없으면 할인은 추측하지 않고 일반 입력 단가로 보수 정산합니다.
 estimate:
+  image-2-5:
+    output-tokens:
+      low: 3000
+      medium: 9000
+      high: 18000
+    input-image-tokens: 18000
+    input-text-tokens: 3000
   output-tokens:
     low: 600
     medium: 2400

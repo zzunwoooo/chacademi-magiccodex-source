@@ -24,9 +24,7 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HexFormat;
 import java.util.Iterator;
@@ -48,9 +46,9 @@ import java.util.logging.Level;
  */
 public final class PortraitService {
 
-    public enum Kind { AUTO, REROLL, ADMIN, TEST }
+    public enum Kind { AUTO, REROLL, ADMIN }
 
-    /** 작업 하나. TEST는 저장하지 않고 결과 파일만 남긴다 (models 여러 개 가능). */
+    /** 작업 하나. 모델은 기본값 또는 명시한 한 개만 사용한다. */
     public record Job(Kind kind, UUID player, String name, SkinFetcher.SkinRef skin, String request,
                       String rerollToken, List<String> models, CommandSender reporter) {
     }
@@ -165,7 +163,7 @@ public final class PortraitService {
     }
 
     /**
-     * 작업 넣기 (메인 스레드). 같은 플레이어 작업이 이미 있으면 false (TEST 제외).
+     * 작업 넣기 (메인 스레드). 같은 플레이어 작업이 이미 있으면 false.
      * @param onRejected 대기열이 가득 차는 등으로 못 넣었을 때 (메인 스레드에서 호출)
      */
     public boolean submit(Job job, Runnable onRejected) {
@@ -173,13 +171,11 @@ public final class PortraitService {
         if (!gate.running() || p == null || p.isShutdown()) {
             return false;
         }
-        if (job.kind() != Kind.TEST && !active.add(job.player())) {
+        if (!active.add(job.player())) {
             return false;
         }
         if (waiting.size() >= plugin.settings().maxWaiting) {
-            if (job.kind() != Kind.TEST) {
-                active.remove(job.player());
-            }
+            active.remove(job.player());
             return false;
         }
         try {
@@ -190,15 +186,11 @@ public final class PortraitService {
                     plugin.getLogger().log(Level.WARNING, "[ChacaPortrait] 작업 오류: " + t, t);
                     finishFailure(job, "내부 오류: " + t.getClass().getSimpleName(), true, false);
                 } finally {
-                    if (job.kind() != Kind.TEST) {
-                        active.remove(job.player());
-                    }
+                    active.remove(job.player());
                 }
             });
         } catch (java.util.concurrent.RejectedExecutionException e) {
-            if (job.kind() != Kind.TEST) {
-                active.remove(job.player());
-            }
+            active.remove(job.player());
             if (onRejected != null) {
                 onRejected.run();
             }
@@ -237,20 +229,15 @@ public final class PortraitService {
         String server = s.serverId;
         long generation = 0;
         try {
-            if (job.kind() != Kind.TEST) {
-                generation = await(plugin.db().call(() -> st.claimGeneration(job.player(), server, LOCK_STALE_MS)));
-                if (generation == 0) {
-                    throw new JobFailure("다른 서버에서 이미 그리는 중", false, true);
-                }
+            generation = await(plugin.db().call(() -> st.claimGeneration(job.player(), server, LOCK_STALE_MS)));
+            if (generation == 0) {
+                throw new JobFailure("다른 서버에서 이미 그리는 중", false, true);
             }
             if (!gate.running()) return;
             if (job.kind() == Kind.AUTO && (!s.automaticGenerationAllowed()
                     || await(plugin.db().call(() -> st.sha(job.player()) != null
                         || st.autoAttempts(job.player()) >= s.autoMaxAttempts)))) return;
             Committed done = produce(job, s, st, generation);
-            if (done == null) {
-                return; // TEST
-            }
             // ---- 여기부터는 이미 확정됨: 실패해도 반환·재시도하지 않는다 ----
             try {
                 plugin.getLogger().info("[ChacaPortrait] " + job.name() + " 일러스트 완료 (" + done.model + ", "
@@ -293,7 +280,7 @@ public final class PortraitService {
     private record Committed(String sha, byte[] png, String model, long cost, long millis) {
     }
 
-    /** 생성부터 확정까지. TEST면 null. 실패는 JobFailure, 확정 전 내부 오류는 그대로 던짐(→ 반환 처리). */
+    /** 생성부터 확정까지. 실패는 JobFailure, 확정 전 내부 오류는 그대로 던짐(→ 반환 처리). */
     private Committed produce(Job job, PortraitSettings s, PortraitStorage st, long generation) throws Exception {
         String server = s.serverId;
         if (!gate.running() || Thread.currentThread().isInterrupted()) throw new InterruptedException("Portrait generation stopped");
@@ -308,12 +295,15 @@ public final class PortraitService {
             throw new JobFailure(String.valueOf(referenceError), false, true);
         }
         List<String> models = job.models() == null || job.models().isEmpty() ? List.of(s.imageModel) : job.models();
+        if (models.size() != 1) throw new JobFailure("Exactly one image model is required", false, true);
         for (String m : models) {
+            if (!PortraitSettings.supportsQuality(m, s.quality)) throw new JobFailure("Unsupported model quality", false, true);
             if (!PortraitSettings.supportedImageModel(m)) {
                 throw new JobFailure("지원하지 않는 이미지 모델: " + m, false, true);
             }
         }
-        CostModel cost = new CostModel(s.prices, s.estimate);
+        CostModel cost = new CostModel(s.prices, s.estimate, s.estimate25);
+        if (!cost.hasPrices(models.get(0))) throw new JobFailure("Image model price missing; no API request sent", false, true);
 
         // 1) 스킨
         if (models.stream().anyMatch(PortraitSettings::needsLocalMatte)) {
@@ -329,7 +319,7 @@ public final class PortraitService {
         }
         String user = s.sendUserHash ? userHash(job.player()) : null;
 
-        // 2) 외형 정리 (선택, 실패해도 계속)
+        // 2) 외형 정리 (필수, 실패하면 이미지 호출 중단)
         if (!s.describeEnabled || s.describeModel == null || s.describeModel.isBlank())
             throw new JobFailure("Skin preparation is required; enable describe", false, true);
         if (!cost.hasPrices(s.describeModel)) throw new JobFailure("Skin preparation price missing", false, true);
@@ -365,11 +355,6 @@ public final class PortraitService {
         String prompt = imageRequest.prompt();
         List<byte[]> inputs = imageRequest.images();
 
-        // 3) 이미지 (TEST는 모델별로, 저장 안 함)
-        if (job.kind() == Kind.TEST) {
-            runTest(job, s, cost, models, inputs, prompt, render, user);
-            return null;
-        }
         String model = models.get(0);
         Generated g = generate(job, s, cost, model, inputs, prompt, user);
         String sha = sha256(g.png);
@@ -416,7 +401,7 @@ public final class PortraitService {
             if (invalid == null) {
                 try {
                     processed = PortraitSettings.needsLocalMatte(model) ? BackgroundMatte.remove(r.png()) : r.png();
-                    invalid = validateResult(processed, s.requireTransparent || PortraitSettings.needsLocalMatte(model));
+                    invalid = validateResult(processed, s.requireTransparent || PortraitSettings.needsLocalMatte(model) || PortraitSettings.nativeTransparent(model));
                 } catch (java.io.IOException failure) { invalid = "Background segmentation failed; previous portrait retained"; }
             }
             if (invalid != null) {
@@ -456,41 +441,6 @@ public final class PortraitService {
         }
     }
 
-    private void runTest(Job job, PortraitSettings s, CostModel cost, List<String> models, List<byte[]> inputs,
-                         String prompt, byte[] render, String user) throws Exception {
-        Path dir = plugin.getDataFolder().toPath().resolve("tests");
-        Files.createDirectories(dir);
-        String stamp = LocalDateTime.now(ZONE).format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
-        String base = job.name().replaceAll("[^A-Za-z0-9_]", "_") + "_" + stamp;
-        Files.write(dir.resolve(base + "_skin.png"), render);
-        Files.writeString(dir.resolve(base + "_prompt.txt"), prompt, StandardCharsets.UTF_8);
-        List<String> lines = new ArrayList<>();
-        for (String model : models) {
-            String line;
-            try {
-                Generated g = generate(job, s, cost, model, inputs, prompt, user);
-                Path out = dir.resolve(base + "_" + model.replaceAll("[^A-Za-z0-9.-]", "_") + ".png");
-                Files.write(out, g.png);
-                CostModel.ImageUsage u = g.usage;
-                line = "§a" + model + "§f " + CostModel.usd(g.cost) + " (" + g.millis / 1000 + "초"
-                        + (u != null && u.known() ? ", 입력 텍스트 " + u.textInput() + " / 이미지 " + u.imageInput()
-                        + " / 출력 " + u.output() + " 토큰" : ", 사용량 미표시 → 예약액으로 계산") + ") → tests/" + out.getFileName();
-            } catch (JobFailure f) {
-                line = "§c" + model + " 실패: " + f.getMessage();
-            }
-            lines.add(line);
-            plugin.getLogger().info("[ChacaPortrait] 시험 " + job.name() + ": " + line.replaceAll("§.", ""));
-        }
-        plugin.main(() -> {
-            CommandSender r = job.reporter();
-            if (r != null) {
-                r.sendMessage("§b[ChacaPortrait] 시험 생성 결과 (" + job.name() + ", 품질 " + s.quality + ")");
-                lines.forEach(r::sendMessage);
-                r.sendMessage("§7스킨 그림·지시문: tests/" + base + "_skin.png, _prompt.txt");
-            }
-        });
-    }
-
     private long budgetCap(PortraitSettings s) {
         return (long) Math.floor(s.budgetUsd * 1_000_000L);
     }
@@ -510,12 +460,10 @@ public final class PortraitService {
     private void finishFailure(Job job, String error, boolean quiet, boolean countAttempt) {
         PortraitSettings s = plugin.settings();
         plugin.getLogger().info("[ChacaPortrait] " + job.name() + " " + job.kind() + " 실패: " + error);
-        if (job.kind() != Kind.TEST) {
-            plugin.db().call(() -> {
-                plugin.storage().recordAttempt(job.player(), job.kind() == Kind.AUTO && countAttempt, error);
-                return null;
-            });
-        }
+        plugin.db().call(() -> {
+            plugin.storage().recordAttempt(job.player(), job.kind() == Kind.AUTO && countAttempt, error);
+            return null;
+        });
         if (job.rerollToken() != null) {
             plugin.rerolls().failed(job.player(), job.rerollToken());
         }

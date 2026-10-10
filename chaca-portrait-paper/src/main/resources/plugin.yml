@@ -13,7 +13,7 @@ commands:
     permission: chacaportrait.admin
 permissions:
   chacaportrait.admin:
-    description: /portrait 관리자 명령어 (시험 생성·재생성·초기화·예산)
+    description: /portrait 관리자 명령어 (재생성·초기화·예산)
     default: op
   chacaportrait.auto:
     description: 최초 접속 시 일러스트 자동 생성 대상

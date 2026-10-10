@@ -8,8 +8,7 @@
 
 ## 명령
 관리자 권한 `chacaportrait.admin`(기본 OP):
-- `/portrait regen <온라인 플레이어> [gpt-image-2|gpt-image-1.5]`: 유료 생성 후 저장하고 본인 클라이언트에 전달합니다. 다른 NPC와 대화하거나 /내일러스트로 볼 수 있습니다.
-- `/portrait test <온라인 플레이어> both`: 유료 모델 비교. tests/ 폴더에 파일을 쓰며 플레이어의 저장 초상화는 교체하지 않습니다. 예산 예약·정산·사용 내역은 DB에 기록됩니다.
+- `/portrait regen <온라인 플레이어> [모델]`: 유료 생성 후 저장하고 본인 클라이언트에 전달합니다. 다른 NPC와 대화하거나 /내일러스트로 볼 수 있습니다.
 - `/portrait model <모델>`, `/portrait status [플레이어]`, `/portrait budget`, `/portrait reload`
 - `/portrait reset <플레이어>`: 저장된 초상화 삭제. 자동 OFF면 다시 자동 생성하지 않습니다.
 - 생성 명령은 키·레퍼런스·DB 준비 후 실행합니다. 이번 빌드 검증에서는 실행하지 않았습니다.
@@ -51,7 +50,7 @@ reference/style-reference.png 및 reference/style-reference-full.png는 공개 G
 
 ## 스킨 우선 준비와 로컬 투명 처리 (2026-10-10)
 
-정상 생성은 GPT-6 Luna 준비 1회 → 이미지 생성 1회 → 로컬 배경 제거 순서입니다. /portrait test both는 준비 1회와 이미지 모델별 1회입니다. 기존 요청 형식 거부/전송 전 연결 실패 재시도 외에 유료 재생성을 자동 반복하지 않습니다.
+정상 생성은 GPT-6 Luna 준비 1회 → 이미지 생성 1회입니다. GPT Image 2 선택 시에만 로컬 배경 제거를 추가합니다. 기존 요청 형식 거부/전송 전 연결 실패 재시도 외에 유료 재생성을 자동 반복하지 않습니다.
 
 - Luna: `gpt-6-luna`, `reasoning.effort=low`, 기본 `max_output_tokens=2048`(reasoning 포함), strict JSON schema. 도구 실행은 없습니다. 스킨 관찰 사실, 가상 캐릭터 유형/표현, 사용자 요청, 불확실성을 분리합니다. 원본 스킨 앞뒤 합성 이미지도 이미지 생성 요청에 직접 첨부합니다.
 - 동물/로봇 등 비인간형은 인간화하지 않습니다. 실제 사용자의 성별/나이를 추정하지 않으며 머리만으로 표현을 단정하지 않습니다. 명시된 가상 캐릭터 표현 요청을 반영하고 불명확하면 중립 유지. 고정 외형·스타일 규칙은 코드가 붙이며 Luna 출력은 데이터만 됩니다.
@@ -64,3 +63,29 @@ reference/style-reference.png 및 reference/style-reference-full.png는 공개 G
 - 현재 슬롯만 성공 트랜잭션에서 교체합니다. 기존 `running_since`를 단조 증가하는 세대 토큰으로 사용해 오래된 결과의 저장/잠금 해제를 차단합니다. 스키마 추가 없음. 실패/취소는 이전 정상 이미지 유지. 클라이언트는 성공 업로드 후 이전 텍스처를 닫고 단일 원자적 생성 캐시를 교체합니다. tests/ 비교 결과나 사용자 파일은 삭제하지 않습니다.
 
 공식 근거: https://developers.openai.com/api/docs/models/gpt-6-luna · https://developers.openai.com/api/docs/guides/reasoning · https://docs.opencv.org/4.13.0/dd/dfc/tutorial_js_grabcut.html · https://opencv.org/license/ · https://github.com/bytedeco/javacpp-presets
+
+## GPT Image 2.5 운영
+
+기본 모델은 `gpt-image-2.5-sunburst`, 기존 품질 `medium`, 크기 `1024x1536`입니다.
+`/portrait model gpt-image-2.5-flare`도 지원하며 GPT Image 2 / 1.5 선택은 유지합니다.
+`/portrait model <모델>` → `/portrait regen <온라인 플레이어>` → `내일러스트` 순서로 확인합니다.
+비교 전용 관리자 명령과 작업 경로는 제거했습니다. 이전 tests/ 결과 파일은 삭제하지 않습니다.
+
+2.5에는 `background=transparent`, `output_format=png`, `n=1`을 보내며 input_fidelity를 생략합니다.
+네 귀퉁이 알파까지 검사하고 불투명 결과는 실패 처리합니다. 2.5에는 GrabCut이나 회색 배경 지시를 적용하지 않습니다.
+2.5는 low/medium/high/auto/xhigh/max를 지원하지만 기본 품질을 자동으로 높이지 않습니다.
+기존 모델로 전환할 때 지원하지 않는 품질은 호출 전에 거부합니다.
+
+Standard USD/100만 토큰 단가는 두 2.5 모델 모두 텍스트 입력 5, 이미지 입력 8, 캐시 이미지 입력 2, 이미지 출력 30입니다.
+단가가 같아도 장당 토큰 수와 비용이 같다는 뜻은 아닙니다. GPT Image 2 토큰 계산기를 2.5 비용 근거로 쓰지 않습니다.
+`estimate.image-2-5`는 별도로 조정하는 보수적 예약 휴리스틱이며 실제 비용 상한이 아닙니다.
+기본 medium 이미지 예약은 $0.4290이며 Luna 준비 비용은 별도입니다. 실제 응답 usage로 정산합니다.
+현재 Images usage 스키마는 캐시 이미지 토큰을 분리하지 않으므로, 캐시 단가는 기록하되 할인 토큰을 추정하지 않습니다.
+따라서 플러그인 장부는 캐시 할인된 실제 청구액보다 높을 수 있습니다. usage 누락·시간 초과도 예약액으로 보수 정산합니다.
+
+공식 자료: [요청 옵션](https://developers.openai.com/api/reference/resources/images/methods/edit),
+[모델별 품질·투명 배경](https://developers.openai.com/api/docs/guides/image-prompting),
+[Sunburst 가격](https://developers.openai.com/api/docs/models/gpt-image-2.5-sunburst),
+[Flare 가격](https://developers.openai.com/api/docs/models/gpt-image-2.5-flare).
+실제 유료 생성, API 계정 접근성, 인게임 표시 품질은 별도 검증 대상입니다.
+가격표 YAML 키는 Bukkit 경로 구분자 충돌을 피하려고 gpt-image-2_5-sunburst / gpt-image-2_5-flare로 저장합니다. 실제 API 모델 ID는 점이 들어간 2.5입니다.

@@ -43,7 +43,16 @@ class PortraitSettingsTest {
             config.load(reader);
         }
         var settings = new PortraitSettings(config, name -> null);
-        var cost = new CostModel(settings.prices, settings.estimate);
+        var cost = new CostModel(settings.prices, settings.estimate, settings.estimate25);
+        assertEquals("gpt-image-2.5-sunburst", settings.imageModel);
+        for (String model : java.util.List.of("gpt-image-2.5-sunburst", "gpt-image-2.5-flare")) {
+            assertTrue(cost.hasPrices(model));
+            assertEquals(5, cost.prices(model).textInput());
+            assertEquals(8, cost.prices(model).imageInput());
+            assertEquals(2, cost.prices(model).cachedImageInput());
+            assertEquals(30, cost.prices(model).imageOutput());
+            assertEquals(429000, cost.reserveImage(model, "medium"));
+        }
         assertTrue(cost.hasPrices("gpt-image-2"));
         assertTrue(cost.hasPrices("gpt-image-1.5"));
         assertEquals(156_300, cost.reserveImage("gpt-image-1.5", "medium"));

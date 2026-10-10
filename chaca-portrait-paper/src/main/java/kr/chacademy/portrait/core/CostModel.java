@@ -9,7 +9,10 @@ import java.util.Map;
 public final class CostModel {
 
     /** USD / 100만 토큰. imageOutput은 이미지 모델 출력, textOutput은 텍스트 모델 출력. */
-    public record Prices(double textInput, double imageInput, double imageOutput, double textOutput) {
+    public record Prices(double textInput, double imageInput, double imageOutput, double textOutput, double cachedImageInput) {
+        public Prices(double textInput, double imageInput, double imageOutput, double textOutput) {
+            this(textInput, imageInput, imageOutput, textOutput, imageInput);
+        }
     }
 
     public record Estimate(int outLow, int outMedium, int outHigh, int inputImage, int inputText, int describe) {
@@ -17,6 +20,8 @@ public final class CostModel {
             return switch (quality) {
                 case "low" -> outLow;
                 case "high", "auto" -> outHigh;
+                case "xhigh" -> Math.multiplyExact(outHigh, 2);
+                case "max" -> Math.multiplyExact(outHigh, 4);
                 default -> outMedium;
             };
         }
@@ -32,9 +37,14 @@ public final class CostModel {
     private final Map<String, Prices> prices;
     private final Estimate estimate;
 
+    private final Estimate estimate25;
     public CostModel(Map<String, Prices> prices, Estimate estimate) {
+        this(prices, estimate, new Estimate(3000, 9000, 18000, 18000, 3000, 3000));
+    }
+    public CostModel(Map<String, Prices> prices, Estimate estimate, Estimate estimate25) {
         this.prices = prices;
         this.estimate = estimate;
+        this.estimate25 = estimate25;
     }
 
     public boolean hasPrices(String model) {
@@ -60,8 +70,11 @@ public final class CostModel {
     /** 이미지 한 장 예약액 (micro-USD). */
     public long reserveImage(String model, String quality) {
         Prices p = prices(model);
-        double micro = estimate.inputText() * p.textInput() + estimate.inputImage() * p.imageInput()
-                + estimate.output(quality) * p.imageOutput();
+        Estimate e = PortraitSettings.nativeTransparent(model) ? estimate25 : estimate;
+        // Auto may select a higher quality. Reserve the max heuristic for 2.5, without changing the request.
+        String reservedQuality = PortraitSettings.nativeTransparent(model) && "auto".equals(quality) ? "max" : quality;
+        double micro = e.inputText() * p.textInput() + e.inputImage() * p.imageInput()
+                + e.output(reservedQuality) * p.imageOutput();
         return Math.max(1, (long) Math.ceil(micro));
     }
 

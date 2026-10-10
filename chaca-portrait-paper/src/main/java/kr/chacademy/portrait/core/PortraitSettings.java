@@ -24,8 +24,16 @@ public final class PortraitSettings {
     public final String background;
     public final String inputFidelity;
     public final String imageModeration;
+    public static final List<String> IMAGE_MODELS = List.of("gpt-image-2.5-sunburst", "gpt-image-2.5-flare", "gpt-image-2", "gpt-image-1.5");
+    public static boolean nativeTransparent(String model) {
+        return "gpt-image-2.5-sunburst".equals(model) || "gpt-image-2.5-flare".equals(model);
+    }
     public static boolean needsLocalMatte(String model) { return "gpt-image-2".equals(model); }
-    public String requestBackground(String model) { return needsLocalMatte(model) ? "opaque" : background; }
+    public static boolean supportsQuality(String model, String quality) {
+        return List.of("low", "medium", "high", "auto").contains(quality)
+                || nativeTransparent(model) && List.of("xhigh", "max").contains(quality);
+    }
+    public String requestBackground(String model) { return nativeTransparent(model) ? "transparent" : needsLocalMatte(model) ? "opaque" : background; }
     public final List<String> references;
     public final boolean requireTransparent;
 
@@ -51,6 +59,7 @@ public final class PortraitSettings {
     public final double budgetUsd;
     public final Map<String, CostModel.Prices> prices;
     public final CostModel.Estimate estimate;
+    public final CostModel.Estimate estimate25;
 
     public final String promptBase;
     public final String promptAppearance;
@@ -80,8 +89,8 @@ public final class PortraitSettings {
         timeoutSeconds = clamp(c.getInt("openai.timeout-seconds", 240), 30, 600);
         sendUserHash = c.getBoolean("openai.send-user-hash", true);
 
-        imageModel = c.getString("image.model", "gpt-image-2").trim();
-        quality = oneOf(c.getString("image.quality", "medium"), "medium", "low", "medium", "high", "auto");
+        imageModel = c.getString("image.model", "gpt-image-2.5-sunburst").trim();
+        quality = oneOf(c.getString("image.quality", "medium"), "medium", "low", "medium", "high", "xhigh", "max", "auto");
         String sz = c.getString("image.size", "1024x1536");
         size = sz != null && sz.matches("\\d{3,4}x\\d{3,4}") ? sz : "1024x1536";
         background = oneOf(c.getString("image.background", "transparent"), "transparent", "transparent", "opaque", "auto");
@@ -119,8 +128,8 @@ public final class PortraitSettings {
                 if (m == null || !m.isSet("text-input")) {
                     continue;
                 }
-                p.put(model, new CostModel.Prices(m.getDouble("text-input", 0), m.getDouble("image-input", 0),
-                        m.getDouble("image-output", 0), m.getDouble("text-output", 0)));
+                p.put(model.replace("gpt-image-2_5-", "gpt-image-2.5-"), new CostModel.Prices(m.getDouble("text-input", 0), m.getDouble("image-input", 0),
+                        m.getDouble("image-output", 0), m.getDouble("text-output", 0), m.getDouble("cached-image-input", m.getDouble("image-input", 0))));
             }
         }
         prices = Map.copyOf(p);
@@ -131,6 +140,14 @@ public final class PortraitSettings {
                 c.getInt("estimate.input-image-tokens", 9000),
                 c.getInt("estimate.input-text-tokens", 1500),
                 c.getInt("estimate.describe-tokens", 3000));
+
+        // Independent, uncalibrated 2.5 reservation estimates: never an API price quote or hard cap.
+        estimate25 = new CostModel.Estimate(
+                c.getInt("estimate.image-2-5.output-tokens.low", 3000),
+                c.getInt("estimate.image-2-5.output-tokens.medium", 9000),
+                c.getInt("estimate.image-2-5.output-tokens.high", 18000),
+                c.getInt("estimate.image-2-5.input-image-tokens", 18000),
+                c.getInt("estimate.image-2-5.input-text-tokens", 3000), 3000);
 
         promptBase = c.getString("prompt.base", "");
         promptAppearance = c.getString("prompt.appearance", "Appearance notes from the skin: {appearance}");
@@ -147,8 +164,7 @@ public final class PortraitSettings {
 
     /** 이 모델이 지원되는 이미지 모델인지 (config 오타 방지). */
     public static boolean supportedImageModel(String model) {
-        return model != null && (model.equals("gpt-image-2") || model.startsWith("gpt-image-2-")
-                || model.equals("gpt-image-1.5"));
+        return IMAGE_MODELS.contains(model == null ? "" : model);
     }
 
     /** gpt-image-1.5 처럼 input_fidelity를 받는 모델인지. gpt-image-2 는 보내면 안 된다. */
