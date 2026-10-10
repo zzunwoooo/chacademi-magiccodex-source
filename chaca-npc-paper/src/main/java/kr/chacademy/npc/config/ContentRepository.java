@@ -61,7 +61,8 @@ public final class ContentRepository {
                     continue;
                 }
                 h.put(id, new HintDef(id, s.getString("spell", id), s.getString("topic", ""),
-                        s.getString("materials", ""), Math.max(1, Math.min(3, s.getInt("difficulty", 2)))));
+                        s.getString("materials", ""), Math.max(1, Math.min(3, s.getInt("difficulty", 2))),
+                        s.getString("vague", "")));
             }
         }
         hints = h;
@@ -69,7 +70,9 @@ public final class ContentRepository {
         YamlConfiguration fy = YamlConfiguration.loadConfiguration(new File(dataFolder, "filter.yml"));
         filter = new TextFilter(fy.getStringList("banned-words"), fy.getStringList("jailbreak-phrases"),
                 fy.getStringList("jailbreak-regex"), fy.getStringList("meta-words"),
-                fy.getStringList("romance-banned"));
+                fy.getStringList("romance-banned"),
+                // 예전 filter.yml 에는 이 목록이 없다 → null 이면 코드의 기본 목록을 쓴다
+                fy.contains("chatter-banned") ? fy.getStringList("chatter-banned") : null);
 
         commonPrompt = readText("prompts/common.txt");
         ambientPrompt = readText("prompts/ambient.txt");
@@ -93,10 +96,6 @@ public final class ContentRepository {
 
     public Collection<HintDef> hints() {
         return hints.values();
-    }
-
-    public HintDef hint(String id) {
-        return hints.get(id);
     }
 
     public TextFilter filter() {

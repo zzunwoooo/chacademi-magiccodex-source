@@ -3,15 +3,14 @@ package kr.chacademy.story.dialogue;
 import java.util.List;
 import java.util.Map;
 
-/** dialogue.yml 한 개. 형식은 FORMAT.md 의 "대화" 부분 참고. */
+/**
+ * dialogue.yml 한 개. 형식은 FORMAT.md 의 "대화" 부분 참고.
+ * 화면 모양(어둡게·타자기 속도·글자 소리·글꼴)은 MagicCodex 대화창이 정하므로 여기에는 내용과 흐름만 있다.
+ */
 public record Dialogue(
         String id,
         String title,
         String start,
-        double dim,
-        double typeSpeed,
-        String typeSound,
-        double typeSoundVolume,
         Map<String, Speaker> speakers,
         Map<String, Scene> scenes) {
 

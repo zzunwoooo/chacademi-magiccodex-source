@@ -18,6 +18,9 @@ final class PermissionWriteQueue {
         return next;
     }
 
+    /** 아직 끝나지 않은 쓰기가 있으면 true: 캐시만 보고 쓰기를 생략하면 안 된다. */
+    synchronized boolean busy(UUID player) { return pending.containsKey(player); }
+
     private synchronized void remove(UUID player, CompletableFuture<Void> completed) {
         pending.remove(player, completed);
     }

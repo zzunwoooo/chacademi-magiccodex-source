@@ -10,8 +10,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -56,10 +54,6 @@ public final class Database {
         return isMariaDb() ? "TEXT CHARACTER SET utf8mb4" : "TEXT";
     }
 
-    public String keyType(int len) {
-        return "VARCHAR(" + len + ")";
-    }
-
     /** 커넥션 사용 (DB 스레드 안에서만 호출). */
     public <T> T with(SqlFunction<T> fn) throws SQLException {
         return fn.apply(holder.get());
@@ -90,29 +84,6 @@ public final class Database {
             f.completeExceptionally(ex);
         }
         return f;
-    }
-
-    /** DB 스레드에서 실행. 실패하면 로그 남기고 null. */
-    public <T> CompletableFuture<T> async(Supplier<T> task) {
-        try {
-            return CompletableFuture.supplyAsync(() -> {
-                try {
-                    return task.get();
-                } catch (RuntimeException ex) {
-                    log.log(Level.WARNING, "[ChacaPortrait] DB 작업 실패: " + ex.getMessage(), ex);
-                    return null;
-                }
-            }, executor);
-        } catch (java.util.concurrent.RejectedExecutionException ex) {
-            return CompletableFuture.completedFuture(null);
-        }
-    }
-
-    public CompletableFuture<Void> run(Runnable task) {
-        return async(() -> {
-            task.run();
-            return null;
-        });
     }
 
     public void close() {

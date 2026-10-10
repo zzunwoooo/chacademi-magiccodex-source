@@ -14,8 +14,11 @@ public final class Defs {
     public record QuestDef(String id, String title, String summary, int minScore, List<String> acceptCommands) {
     }
 
-    /** 마법 힌트 (hints.yml). difficulty 1 = 구체적(쉬움) ~ 3 = 막연함(어려움) */
-    public record HintDef(String id, String spell, String topic, String materials, int difficulty) {
+    /**
+     * 마법 힌트 (hints.yml). difficulty 1 = 구체적(쉬움) ~ 3 = 막연함(어려움).
+     * vague = 호감도가 낮을 때 재료 대신 AI에게 주는 막연한 설명 (없으면 "" → 서버가 만든 기본 문장).
+     */
+    public record HintDef(String id, String spell, String topic, String materials, int difficulty, String vague) {
     }
 
     /** 대화 한 턴. speaker = "player" 또는 "npc" */

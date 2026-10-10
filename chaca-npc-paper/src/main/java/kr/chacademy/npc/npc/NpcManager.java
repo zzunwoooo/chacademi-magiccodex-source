@@ -45,12 +45,45 @@ public final class NpcManager implements Listener {
             if (npc.data().has(DATA_KEY)) {
                 Object id = npc.data().get(DATA_KEY);
                 if (id != null) {
-                    register(npc.getId(), id.toString());
-                    count++;
+                    String charId = id.toString();
+                    Integer cur = npcByChar.get(charId);
+                    if (cur != null && cur != npc.getId()) {
+                        // 같은 캐릭터가 NPC 둘에 연결됨: Citizens id 가 가장 작은 쪽만 쓴다 (클릭할 때마다 바뀌지 않게)
+                        int keep = Math.min(cur, npc.getId());
+                        int drop = Math.max(cur, npc.getId());
+                        plugin.getLogger().warning("[ChacaNPC] 캐릭터 '" + charId + "'가 Citizens NPC #" + keep + " 와 #" + drop
+                                + " 둘에 연결돼 있습니다. #" + keep + " 만 사용합니다 — #" + drop
+                                + " 옆에서 /cnpc unlink 하거나 다른 캐릭터로 /cnpc link 하세요.");
+                        if (keep == cur) {
+                            continue;
+                        }
+                    } else if (cur == null) {
+                        count++;
+                    }
+                    register(npc.getId(), charId);
                 }
             }
         }
         plugin.getLogger().info("[ChacaNPC] 연결된 NPC " + count + "명");
+    }
+
+    /** 이 캐릭터가 이미 다른(아직 존재하고 같은 캐릭터로 표시된) NPC에 연결돼 있는지. */
+    private boolean ownedByOther(String charId, int npcId) {
+        Integer owner = npcByChar.get(charId);
+        if (owner == null || owner == npcId) {
+            return false;
+        }
+        NPC other = CitizensAPI.getNPCRegistry().getById(owner);
+        if (other == null || !other.data().has(DATA_KEY)) {
+            return false;
+        }
+        Object id = other.data().get(DATA_KEY);
+        return id != null && charId.equals(id.toString());
+    }
+
+    @EventHandler
+    public void onQuit(org.bukkit.event.player.PlayerQuitEvent e) {
+        clickGate.remove(e.getPlayer().getUniqueId());
     }
 
     private void register(int npcId, String charId) {
@@ -82,6 +115,9 @@ public final class NpcManager implements Listener {
             Object id = npc.data().get(DATA_KEY);
             if (id != null) {
                 charId = id.toString();
+                if (ownedByOther(charId, npc.getId())) {
+                    return; // 같은 캐릭터가 다른 NPC에 이미 연결됨(중복): 이 NPC로 연결을 뒤집지 않는다
+                }
                 register(npc.getId(), charId);
             }
         }
@@ -163,9 +199,32 @@ public final class NpcManager implements Listener {
         }
     }
 
-    public void link(NPC npc, CharacterSheet c) {
+    /**
+     * NPC를 캐릭터와 연결한다. 캐릭터 하나는 NPC 하나에만 연결되므로, 같은 캐릭터로 표시돼 있던 다른 NPC의 연결은 지운다.
+     *
+     * @return 연결이 지워진 다른 NPC 수
+     */
+    public int link(NPC npc, CharacterSheet c) {
+        int cleared = 0;
+        for (NPC other : CitizensAPI.getNPCRegistry()) {
+            if (other.getId() == npc.getId() || !other.data().has(DATA_KEY)) {
+                continue;
+            }
+            Object id = other.data().get(DATA_KEY);
+            if (id != null && c.id().equals(id.toString())) {
+                other.data().remove(DATA_KEY);
+                charByNpc.remove(other.getId());
+                cleared++;
+            }
+        }
+        // 이 NPC가 다른 캐릭터에 연결돼 있었다면 그 연결도 정리
+        String before = charByNpc.get(npc.getId());
+        if (before != null && !before.equals(c.id())) {
+            npcByChar.remove(before, npc.getId());
+        }
         npc.data().setPersistent(DATA_KEY, c.id());
         register(npc.getId(), c.id());
+        return cleared;
     }
 
     public boolean unlink(NPC npc) {

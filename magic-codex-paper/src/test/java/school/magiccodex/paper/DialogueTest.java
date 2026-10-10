@@ -45,4 +45,35 @@ class DialogueTest {
         try(var store=new DialogueStore(new DatabaseSettings(false,"","",""),dir.resolve("catalog.db"))){var d=sample();assertTrue(store.edit(d.id(),"",d));assertFalse(store.edit(d.id(),"",d));var f=new HashMap<>(d.fields());f.put("title","새 제목");var edit=DialogueDefinition.fromFields(d.id(),f);assertTrue(store.edit(d.id(),DialogueDefinition.revision(d),edit));assertFalse(store.edit(d.id(),DialogueDefinition.revision(d),d));assertFalse(store.edit(d.id(),DialogueDefinition.revision(d),null));assertEquals("새 제목",store.catalog().get(d.id()).title());}
     }
     @Test void sampleDocumentsFitNetworkEnvelope()throws Exception{var d=sample();var r=new DialogueAdminProtocol.Response("",List.of(),d.id(),DialogueDefinition.revision(d),d.fields());assertEquals(r,DialogueAdminProtocol.response(DialogueAdminProtocol.encode(r)));}
+    @Test void effectStatesBlockOnlyTheirDialogueAndResumeExactly()throws Exception{
+        var settings=new DatabaseSettings(false,"","","");UUID player=UUID.randomUUID();
+        try(var store=new DialogueStore(settings,dir.resolve("effects.db"))){
+            // running 으로 시작한 기록: 실행 뒤 남은 동작만 기록하고, 다시 대기(queued)로 둘 수 있다.
+            var first=store.transition(player,store.state(player),"elena:start:c0",List.of("story clue active","command give {player} diamond 1","quest patrol","custom gift 3"),true);
+            assertEquals(List.of("command give {player} diamond 1","quest patrol","custom gift 3"),first.external());
+            var effect=store.effects(player).getFirst();assertEquals("running",effect.status());assertEquals("elena",effect.dialogue());assertEquals(first.receipt(),effect.token());assertEquals(first.external(),effect.actions());
+            assertFalse(store.move(player,first.receipt(),List.of("queued"),"running",null));
+            assertTrue(store.move(player,first.receipt(),List.of("queued","running"),"queued",List.of("quest patrol","custom gift 3")));
+            assertEquals(List.of("quest patrol","custom gift 3"),store.effects(player).getFirst().actions());assertEquals("queued",store.effects(player).getFirst().status());
+            // 같은 대화의 다른 선택지는 막고, 다른 대화는 계속 진행한다.
+            assertThrows(IllegalStateException.class,()->store.transition(player,store.state(player),"elena:next:c1",List.of("flag met yes")));
+            var other=store.transition(player,store.state(player),"arden:start:c0",List.of("flag met yes","quest hunt"));assertFalse(other.receipt().isEmpty());assertEquals("yes",store.state(player).values().get("flag.met"));assertEquals(2,store.effects(player).size());assertEquals(2,store.audit(player).size());
+            // 실패한 동작은 review 로 남고, 관리자가 다시 대기로 돌리거나 실행 없이 닫는다.
+            assertTrue(store.move(player,first.receipt(),List.of("queued"),"running",List.of("custom gift 3")));assertTrue(store.move(player,first.receipt(),List.of("queued","running"),"review",List.of("custom gift 3")));
+            assertFalse(store.move(player,first.receipt(),List.of("queued","running"),"done",List.of()));assertTrue(store.move(player,first.receipt(),List.of("review","running","pending"),"queued",null));assertEquals(List.of("custom gift 3"),store.effects(player).stream().filter(e->e.token().equals(first.receipt())).findFirst().orElseThrow().actions());
+            store.finish(player,first.receipt());store.finish(player,other.receipt());assertTrue(store.effects(player).isEmpty());assertThrows(java.sql.SQLException.class,()->store.finish(player,other.receipt()));
+            // 끝난 선택지는 다시 눌러도 외부 동작을 반복하지 않는다.
+            assertTrue(store.transition(player,store.state(player),"elena:start:c0",List.of("command give {player} diamond 1"),true).external().isEmpty());
+            // 종료 시 되돌리기: running 으로 기록만 하고 실행을 시작하지 못한 선택.
+            var armed=store.transition(player,store.state(player),"elena:next:c1",List.of("command say hi"),true);assertTrue(store.requeue(player,"elena:next:c1"));assertFalse(store.requeue(player,"elena:next:c1"));assertEquals("queued",store.effects(player).getFirst().status());store.finish(player,armed.receipt());
+        }
+    }
+    @Test void catalogSnapshotIsSkippedUntilARevisionChanges()throws Exception{
+        try(var store=new DialogueStore(new DatabaseSettings(false,"","",""),dir.resolve("snapshot.db"))){
+            var d=sample();assertTrue(store.edit(d.id(),"",d));var first=store.snapshot(null);assertNotNull(first);assertEquals(d,first.definitions().get(d.id()));assertEquals(DialogueDefinition.revision(d),first.revisions().get(d.id()));
+            assertNull(store.snapshot(first.signature()));
+            var f=new HashMap<>(d.fields());f.put("title","바뀐 제목");var edited=DialogueDefinition.fromFields(d.id(),f);assertTrue(store.edit(d.id(),first.revisions().get(d.id()),edited));
+            var second=store.snapshot(first.signature());assertNotNull(second);assertNotEquals(first.signature(),second.signature());assertEquals("바뀐 제목",second.definitions().get(d.id()).title());assertEquals(DialogueDefinition.revision(edited),second.revisions().get(d.id()));assertNull(store.snapshot(second.signature()));
+        }
+    }
 }

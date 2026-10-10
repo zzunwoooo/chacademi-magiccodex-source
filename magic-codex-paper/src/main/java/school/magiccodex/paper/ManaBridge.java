@@ -19,7 +19,7 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
     java.util.function.Consumer<Player> windCast;
     Response castWindForFriend(Player p){var result=cast(p,0,spells.byId.get("wind_message"),()->true);send(p,result);return result;}
     List<String> discoveryPermissions(){var result=new ArrayList<>(spells.discoveryPermissions);if(!result.contains("magiccodex.taming"))result.add("magiccodex.taming");return List.copyOf(result);}
-    private ManaExpansion expansion;
+    private ManaExpansion expansion;private boolean expansionRegistered;
     private final Map<UUID,Session> sessions=new HashMap<>();
     private final Set<UUID> casting=new HashSet<>();
     private int ticks;
@@ -39,7 +39,15 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
         Objects.requireNonNull(plugin.getCommand("마나관리")).setExecutor(this);
         plugin.getCommand("마나관리").setTabCompleter(this);
         for(Player p:Bukkit.getOnlinePlayers())mana.join(p);
-        if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){expansion=new ManaExpansion(mana);expansion.register();}
+        if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){
+            // 닉네임 확장이 이미 "magiccodex" 식별자를 소유하면 그쪽에 위임한다. 같은 식별자를 다시 등록하면 PlaceholderAPI가 기존 확장을 내린다.
+            expansion=new ManaExpansion(mana);
+            if(plugin.names()==null||!plugin.names().delegatePlaceholders(expansion::onRequest)){
+                // 닉네임 확장이 식별자를 갖지 못한 경우: 이 확장이 등록하고 nickname/account도 대신 답한다.
+                if(plugin.names()!=null)expansion.fallback(plugin.names()::placeholder);
+                expansionRegistered=expansion.register();
+            }
+        }
         Bukkit.getScheduler().runTaskTimer(plugin,this::tick,20,20);
     }
     private void tick(){
@@ -113,7 +121,7 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
             result=new ManaCasting.Result(ManaProtocol.FAILED,0);
         }finally{casting.remove(id);}
         mana.publish(id);
-        if(result.status()==ManaProtocol.OK){mana.save(p);plugin.savePlayerState(p);DiscoveryLink.cast(p.getUniqueId(),spell.id(),spell.cost());}
+        if(result.status()==ManaProtocol.OK){mana.save(p);plugin.markPlayerStateDirty(p);DiscoveryLink.cast(p.getUniqueId(),spell.id(),spell.cost());}
         return new Response(sequence,result.status(),result.cooldownMillis(),a.snapshot());
     }
     /** The same exact configured command typed into chat also goes through the mana guard. */
@@ -159,7 +167,6 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
             sender.sendMessage("/마나관리 새로고침 · 유저 수치는 /유저관리 <유저> 스탯 <항목> 설정|추가|감소 <수치>로 관리합니다.");
         }catch(Exception error){sender.sendMessage("마나 설정 오류: "+error.getMessage());}return true;
     }
-    private static String number(double v){return java.math.BigDecimal.valueOf(v).stripTrailingZeros().toPlainString();}
     public List<String> onTabComplete(CommandSender s,Command c,String a,String[] args){
         if(c.getName().equals("마법")){
             String prefix=String.join("",args).toLowerCase(Locale.ROOT);
@@ -169,5 +176,5 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
         var options=args.length==1?List.of("새로고침"):List.<String>of();
         return options.stream().filter(x->x.toLowerCase(Locale.ROOT).startsWith(args[args.length-1].toLowerCase(Locale.ROOT))).toList();
     }
-    public void close(){if(expansion!=null)expansion.unregister();mana.close();Bukkit.getServicesManager().unregister(ManaService.class,mana);sessions.clear();}
+    public void close(){if(expansion!=null){if(expansionRegistered)expansion.unregister();else if(plugin.names()!=null)plugin.names().delegatePlaceholders(null);}mana.close();Bukkit.getServicesManager().unregister(ManaService.class,mana);sessions.clear();}
 }

@@ -7,14 +7,19 @@ softdepend: [LuckPerms, Vault, PlaceholderAPI, MCPets, MythicMobs, ModelEngine, 
 commands:
   최초닉네임설정:
     description: 처음 닉네임 정하기 (닫을 수 없는 창, 저장하면 first-nickname.on-complete 실행)
-    usage: /최초닉네임설정 [플레이어]
+    usage: /최초닉네임설정 [플레이어] [강제]
   상점관리화면:
     description: 운영자 상점 상품 관리 화면
     permission: magiccodex.shop.admin
   상점:
-    permission: magiccodex.shop
-  상점관리:
+    description: 관리자용 상점 열기 (/상점 <상점ID>). 유저는 상인 NPC를 눌러 연다.
     permission: magiccodex.shop.admin
+  상점관리:
+    description: 상점 설정, 미완료 거래 조회·처리 (기록 <유저>, 처리 <거래ID> 완료|환불|취소)
+    permission: magiccodex.shop.admin
+  우편관리:
+    description: 수령 도중 멈춘 우편 첨부 조회·처리 (기록 <유저>, 처리 <유저> <수령번호> 완료|반환)
+    permission: magiccodex.mailbox.admin
   마법:
     description: 발견한 마법을 마나와 마법 가속을 적용해 시전합니다.
   마법관리:
@@ -204,6 +209,9 @@ permissions:
 
   magiccodex.mailbox:
     default: true
+  magiccodex.mailbox.admin:
+    description: /우편관리 (수령 도중 멈춘 첨부 처리)
+    default: op
   magiccodex.shop:
     default: true
   magiccodex.shop.admin:

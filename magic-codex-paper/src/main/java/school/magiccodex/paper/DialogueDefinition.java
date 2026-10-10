@@ -7,7 +7,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 record DialogueDefinition(String id,String title,String start,boolean enabled,String permission,List<String> npcs,Map<String,Node> nodes,String storyId,String storyTitle,Map<String,String> stages) {
     record Choice(String id,String text,String next,List<String> conditions,List<String> actions){}
     record Node(String speaker,String portrait,String text,List<String> conditions,List<Choice> choices){}
-    static void id(String value){if(value==null||!value.matches("[a-z0-9_-]{1,48}"))throw new IllegalArgumentException("ID: 영문 소문자·숫자·밑줄·하이픈 1~48자");}
+    private static final java.util.regex.Pattern ID=java.util.regex.Pattern.compile("[a-z0-9_-]{1,48}");
+    static void id(String value){if(value==null||!ID.matcher(value).matches())throw new IllegalArgumentException("ID: 영문 소문자·숫자·밑줄·하이픈 1~48자");}
     private static String str(Map<String,String> f,String k,String def,int max){String v=f.getOrDefault(k,def);if(v.length()>max)throw new IllegalArgumentException(k+" 길이 초과");return v;}
     private static List<String> lines(String value){return value.lines().map(String::trim).filter(s->!s.isEmpty()).toList();}
     static DialogueDefinition fromFields(String id,Map<String,String> f){

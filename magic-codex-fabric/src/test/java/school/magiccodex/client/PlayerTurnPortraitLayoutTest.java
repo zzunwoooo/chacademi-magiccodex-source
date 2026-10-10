@@ -40,4 +40,16 @@ class PlayerTurnPortraitLayoutTest {
                 assertEquals(564*scale,panel-head,1e-6);
             }
     }
+    @Test void externalPortraitsFitTheNpcPortraitBoxKeepingAspectRatio(){
+        // 서버 NPC 초상화와 같은 크기면 정확히 같은 자리 (65,-5 에 700x1050)
+        assertEquals(new PlayerTurnPortraitLayout.Placement(65,-5,700),PlayerTurnPortraitLayout.fit(1024,1536));
+        for(int[] size:new int[][]{{2048,2048},{512,2048},{2048,512},{700,1050},{1,1},{333,777}}){
+            var p=PlayerTurnPortraitLayout.fit(size[0],size[1]);
+            int height=Math.round(p.width()*(float)size[1]/size[0]);
+            assertTrue(p.x()>=65&&p.x()+p.width()<=765,"가로가 칸 안");
+            assertTrue(p.y()>=-5&&p.y()+height<=1045+1,"세로가 칸 안");
+            assertEquals(415,p.x()+p.width()/2.0,1,"가운데 정렬");
+        }
+        assertEquals(new PlayerTurnPortraitLayout.Placement(65,-5,700),PlayerTurnPortraitLayout.fit(0,0));
+    }
 }

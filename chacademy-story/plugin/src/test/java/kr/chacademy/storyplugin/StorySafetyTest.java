@@ -45,4 +45,27 @@ class StorySafetyTest {
         assertTrue(fired.contains("e_wake"));
         assertFalse(StorySafety.once(fired,"e_wake",()->true,()->fail("must not replay")));
     }
+    @Test void nicknameForConsoleCommandsKeepsOnlyLettersDigitsUnderscoreHyphen() {
+        assertEquals("별빛_01-a",StorySafety.safeNickname("별빛_01-a","Steve"));
+        assertEquals("atypeplayerop",StorySafety.safeNickname("@a[type=player] \"; op\n","Steve"));
+        assertEquals("Steve",StorySafety.safeNickname(" @[]{}\n","Steve"));
+        assertEquals("Steve",StorySafety.safeNickname(null,"Steve"));
+        assertEquals(StorySafety.NICKNAME_MAX,StorySafety.safeNickname("가".repeat(200),"Steve").length());
+        for(String bad:List.of("a b","a\nb","a;b","a\"b","{player}","%x%"))
+            assertTrue(StorySafety.safeNickname(bad,"Steve").matches("[\\p{L}\\p{N}_-]+"),bad);
+    }
+    @Test void tokenBucketAllowsBurstThenRefillsAtRate() {
+        var b=new StorySafety.TokenBucket(20,40);long t=1_000_000_000L;int ok=0;
+        for(int i=0;i<1000;i++)if(b.tryTake(t))ok++;
+        assertEquals(40,ok);assertEquals(960,b.dropped);                // 한꺼번에 와도 40개까지만
+        ok=0;for(int i=0;i<1000;i++)if(b.tryTake(t+500_000_000L))ok++;
+        assertEquals(10,ok);                                            // 0.5초 뒤 10개
+        ok=0;for(int i=0;i<1000;i++)if(b.tryTake(t+3_600_000_000_000L))ok++;
+        assertEquals(40,ok);                                            // 오래 쉬어도 40개를 넘지 않음
+    }
+    @Test void sharedIdRuleMatchesFormatDocument() {
+        for(String ok:List.of("a","ch1_wakeup","c_wake_1","e-2","x".repeat(64)))assertTrue(StorySafety.validId(ok),ok);
+        for(String bad:List.of("","Wake","장면","a b","a.b","a/b","x".repeat(65)))assertFalse(StorySafety.validId(bad),bad);
+        assertFalse(StorySafety.validId(null));
+    }
 }

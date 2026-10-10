@@ -39,6 +39,7 @@ class RelayEngineTest {
         engine.catalogReady(viewer,dev.portablevfx.protocol.CatalogReadiness.encode(required));
         assertTrue(engine.catalogDiagnostic(viewer).contains("received=2, required=2, missing=0, ready=true"));
         assertFalse(engine.catalogDiagnostic(viewer).contains("rejected="));
+        transport.tick+=RelayEngine.READY_INTERVAL_TICKS; // readiness 는 플레이어별 속도 제한이 있다
         engine.catalogReady(viewer,new byte[]{1});assertTrue(engine.catalogDiagnostic(viewer).contains("rejected=Invalid readiness size"));
         engine.forget(viewer);assertFalse(engine.catalogDiagnostic(viewer).contains("rejected="));
     }
@@ -55,7 +56,10 @@ class RelayEngineTest {
         assertEquals(1,engine.startCatalogCast(effect,64,EffectBasis.identity()).recipients());
         engine.catalogReady(viewer,dev.portablevfx.protocol.CatalogReadiness.encode(java.util.Set.of()));
         assertFalse(engine.supportsCatalogCast(viewer),"reload revokes readiness");
+        transport.tick+=RelayEngine.READY_INTERVAL_TICKS;
         engine.catalogReady(viewer,dev.portablevfx.protocol.CatalogReadiness.encode(required));
+        assertTrue(engine.supportsCatalogCast(viewer));
+        transport.tick+=RelayEngine.READY_INTERVAL_TICKS;
         engine.catalogReady(viewer,new byte[]{1});assertFalse(engine.supportsCatalogCast(viewer),"malformed inventory fails closed");
     }
 
@@ -304,10 +308,17 @@ class RelayEngineTest {
                 Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
         assertEquals(128, config.maxRadius());
         assertEquals(64, config.defaultRadius());
-        assertEquals(4096, config.maxActiveHandles());
-        assertEquals(8192, config.maxPacketsPerTick());
+        assertEquals(16384, config.maxActiveHandles());
+        assertEquals(32768, config.maxPacketsPerTick());
         assertEquals(128, config.maxPacketsPerPlayerPerTick());
-        assertEquals(1024, config.maxPlaysPerTick());
+        assertEquals(4096, config.maxPlaysPerTick());
+        assertEquals(RelayLimits.DEFAULT_FINISH_DRAIN_TICKS, config.finishDrainTicks());
+        RelayLimits extremes = new RelayLimits(128, 64, 1, 1, 1, 1, 1, Integer.MAX_VALUE, Integer.MAX_VALUE);
+        assertEquals(1200, extremes.finishDrainTicks());
+        assertEquals(40, extremes.playRetryTicks());
+        assertEquals(4096, RelayLimits.DEFAULT.maxActiveHandles());
+        assertEquals(8192, RelayLimits.DEFAULT.maxPacketsPerTick());
+        assertEquals(32, RelayLimits.DEFAULT.maxPacketsPerPlayerPerTick(), "per-viewer budget is unchanged");
         assertEquals(VfxProtocol.MAX_DURATION_TICKS, config.maxDurationTicks());
         RelayLimits minimum = new RelayLimits(-1, -1, 0, 0, 0, 0, 0);
         assertEquals(1, minimum.maxRadius());
@@ -471,7 +482,8 @@ class RelayEngineTest {
         assertEquals(capable,transport.sent.getLast().player()); assertEquals(impact,event.impact());
         assertEquals(basis,event.basis()); assertEquals(1,event.sequence());
         assertFalse(engine.isCastActive(flight.instanceId()));
-        assertEquals(2,engine.status().activeHandles());
+        assertEquals(1,engine.status().activeHandles(),"only the impact is live; the finished flight is draining");
+        assertEquals(1,engine.drainingHandles());
         assertEquals(0,engine.updateCast(flight.instanceId(),1,0,0,basis));
         assertEquals(0,engine.impactCast(flight.instanceId(),castPlay(40),basis).recipients());
         assertTrue(engine.stop(flight.instanceId())); assertTrue(engine.stop(impact.instanceId()));
@@ -526,12 +538,46 @@ class RelayEngineTest {
         assertInstanceOf(ClearEffects.class,transport.sent.getLast().message());
     }
 
-    @Test void gracefulResidualOwnershipHasAnIndependentFiniteTrackingDeadline() {
-        authorityJoined(WORLD,0);var flight=castPlay(2);engine.startCast(flight,64,EffectBasis.identity());
-        transport.tick=1;assertTrue(engine.finishCast(flight.instanceId()));
-        transport.tick=2;engine.tick();assertEquals(1,engine.status().activeHandles());
-        transport.tick=1+RelayEngine.MAX_FINISH_TRACK_TICKS;engine.tick();
-        assertEquals(0,engine.status().activeHandles());assertFalse(engine.stop(flight.instanceId()));
+    @Test void finishedHandleIsTrackedOnlyForTheDrainWindowAndNeverPastItsOriginalExpiry() {
+        authorityJoined(WORLD,0);
+        // 원래 만료(2 tick)가 drain 창보다 이르면 원래 만료를 넘겨 추적하지 않는다.
+        var brief=castPlay(2);engine.startCast(brief,64,EffectBasis.identity());
+        transport.tick=1;assertTrue(engine.finishCast(brief.instanceId()));
+        assertEquals(0,engine.status().activeHandles(),"finished handles leave the active cap immediately");
+        assertEquals(1,engine.drainingHandles());
+        transport.tick=2;engine.tick();assertEquals(0,engine.drainingHandles());assertFalse(engine.stop(brief.instanceId()));
+        // 긴 단계는 finish 뒤 drain 창(기본 100 tick) 동안만 hard STOP 대상으로 남는다.
+        var flight=castPlay(1200);engine.startCast(flight,64,EffectBasis.identity());
+        transport.tick=10;assertTrue(engine.finishCast(flight.instanceId()));
+        transport.tick=10+RelayLimits.DEFAULT_FINISH_DRAIN_TICKS-1;engine.tick();assertEquals(1,engine.drainingHandles());
+        transport.tick=10+RelayLimits.DEFAULT_FINISH_DRAIN_TICKS;engine.tick();
+        assertEquals(0,engine.drainingHandles());assertFalse(engine.stop(flight.instanceId()));
+    }
+
+    @Test void drainingHandlesDoNotCountAgainstTheActiveCap() {
+        engine.reload(limits(2,64,32,64));authorityJoined(WORLD,0);
+        // 예전에는 끝난 단계가 60초 동안 상한을 차지해 새 단계 PLAY 가 거부됐다.
+        for(int i=0;i<40;i++){
+            transport.tick++;
+            var phase=castPlay(1200);
+            assertEquals(1,engine.startCast(phase,64,EffectBasis.identity()).recipients(),"phase "+i);
+            assertTrue(engine.finishCast(phase.instanceId()));
+        }
+        assertEquals(0,engine.status().activeHandles());
+        assertTrue(engine.drainingHandles()>2,"drain tracking is bounded separately from the active cap");
+        assertTrue(engine.drainingHandles()<=engine.limits().maxDrainingHandles());
+        var a=castPlay(40);var b=castPlay(40);transport.tick++;
+        engine.startCast(a,64,EffectBasis.identity());engine.startCast(b,64,EffectBasis.identity());
+        assertThrows(RejectedExecutionException.class,()->engine.startCast(castPlay(40),64,EffectBasis.identity()));
+    }
+
+    @Test void drainWindowZeroReleasesFinishedHandlesImmediatelyButStillDeliversFinish() {
+        engine.reload(new RelayLimits(128,64,4,64,32,64,1200,0,0));authorityJoined(WORLD,0);
+        var flight=castPlay(40);engine.startCast(flight,64,EffectBasis.identity());
+        assertTrue(engine.finishCast(flight.instanceId()));
+        assertEquals(0,engine.drainingHandles());
+        assertInstanceOf(FinishEffect.class,transport.sent.getLast().message());
+        assertFalse(engine.stop(flight.instanceId()));
     }
 
     @Test void exhaustedPoseBudgetDropsSampleWithoutReplayAndReloadClearsBothPhases() {
@@ -703,6 +749,273 @@ class RelayEngineTest {
         assertEquals(1,reEnabled.startCatalogCast(castPlay(100),64,EffectBasis.identity()).recipients());
     }
 
+    @Test void posesCannotConsumeTheGlobalShareReservedForPlayAndControl() {
+        // 전역 8패킷/tick: POSE 는 절반(4)까지만 쓸 수 있고 나머지는 PLAY/IMPACT/FINISH/STOP 몫이다.
+        engine.reload(new RelayLimits(128,64,64,8,32,64,1200));
+        for(int i=0;i<4;i++)authorityJoined(WORLD,0);
+        var a=castPlay(400);assertEquals(4,engine.startCast(a,64,EffectBasis.identity()).recipients());
+        transport.tick++;var b=castPlay(400);assertEquals(4,engine.startCast(b,64,EffectBasis.identity()).recipients());
+        transport.tick++;transport.sent.clear();
+        assertEquals(4,engine.updateCast(a.instanceId(),1,0,0,EffectBasis.identity()));
+        assertEquals(0,engine.updateCast(b.instanceId(),1,0,0,EffectBasis.identity()),"stream share exhausted");
+        assertEquals(4,engine.play(play(40),64).recipients(),"the reserved half is still available to a new PLAY");
+        assertEquals(8,engine.status().packetsThisTick());
+        transport.tick++;transport.sent.clear();
+        // 굶은 시전이 다음 tick 에 먼저 나간다.
+        assertEquals(4,engine.updateCast(b.instanceId(),2,0,0,EffectBasis.identity()));
+        assertTrue(engine.finishCast(a.instanceId()));
+        assertEquals(4,transport.sent.stream().filter(sent->sent.message() instanceof FinishEffect).count(),"FINISH uses the reserved share");
+    }
+
+    @Test void throttledViewerGetsThePlayOnTheNextTickWithItsOriginalStartTick() {
+        engine.reload(new RelayLimits(128,64,64,64,2,64,1200));
+        UUID viewer=authorityJoined(WORLD,0);transport.worldTick=5000;
+        var first=castPlay(100);assertEquals(1,engine.startCast(first,64,EffectBasis.identity()).recipients());
+        var second=castPlay(100);
+        PlayResult queued=engine.startCast(second,64,EffectBasis.projectile(1,0,0));
+        assertEquals(0,queued.recipients());assertEquals(1,queued.deferred());assertEquals(0,queued.skippedRateLimited());
+        assertTrue(engine.isCastActive(second.instanceId()),"a queued PLAY keeps the handle alive");
+        assertEquals(2,transport.sent.size());
+        transport.tick++;transport.worldTick=5001;engine.tick();
+        assertEquals(4,transport.sent.size());
+        PlayEffect late=assertInstanceOf(PlayEffect.class,transport.sent.get(2).message());
+        assertEquals(second.instanceId(),late.instanceId());assertEquals(5000,late.startTick(),"client catches up from the original start tick");
+        assertInstanceOf(PoseEffect.class,transport.sent.get(3).message());
+        assertEquals(viewer,transport.sent.get(3).player());
+        assertEquals(0,engine.deferredPlayViewers());
+        // 전달된 뒤에는 일반 recipient 와 같다: FINISH 를 받는다.
+        transport.tick++;assertTrue(engine.finishCast(second.instanceId()));
+        assertInstanceOf(FinishEffect.class,transport.sent.getLast().message());
+    }
+
+    @Test void queuedPlayIsDroppedAtItsDeadlineOrWhenThePhaseEndsFirst() {
+        engine.reload(new RelayLimits(128,64,64,64,2,64,1200,100,3));
+        authorityJoined(WORLD,0);transport.worldTick=100;
+        engine.startCast(castPlay(100),64,EffectBasis.identity());
+        var late=castPlay(100);assertEquals(1,engine.startCast(late,64,EffectBasis.identity()).deferred());
+        var ended=castPlay(100);assertEquals(1,engine.startCast(ended,64,EffectBasis.identity()).deferred());
+        assertTrue(engine.finishCast(ended.instanceId()));
+        assertEquals(2,transport.sent.size(),"a phase that ended before delivery sends neither PLAY nor FINISH");
+        transport.tick+=4;engine.tick(); // 기한(3 tick) 초과
+        assertEquals(2,transport.sent.size());
+        assertFalse(engine.isCastActive(late.instanceId()),"an undelivered handle is released");
+        assertEquals(1,engine.status().activeHandles(),"only the delivered first cast remains");assertEquals(2,engine.deferredPlayDrops());
+        assertEquals(0,engine.deferredPlayViewers());
+    }
+
+    @Test void noEligibleViewerIsDistinguishableFromThrottledViewers() {
+        engine.reload(new RelayLimits(128,64,64,64,2,64,1200));
+        transport.worldTick=100;
+        PlayResult nobody=engine.startCast(castPlay(100),64,EffectBasis.identity());
+        assertEquals(0,nobody.recipients()+nobody.deferred()+nobody.skippedRateLimited());
+        authorityJoined(WORLD,0);
+        engine.startCast(castPlay(100),64,EffectBasis.identity());
+        PlayResult throttled=engine.startCast(castPlay(100),64,EffectBasis.identity());
+        assertEquals(0,throttled.recipients());assertEquals(1,throttled.deferred()+throttled.skippedRateLimited());
+    }
+
+    @Test void readinessIsRateLimitedPerPlayerWithoutLosingTheLatestPayload() {
+        UUID viewer=authorityJoined(WORLD,0);engine.stopIntentHello(viewer,VfxProtocol.encodeHello());
+        var required=java.util.Set.of("claude:fireball/projectile");engine.catalogRequirements(required);
+        byte[] ready=dev.portablevfx.protocol.CatalogReadiness.encode(required);
+        byte[] empty=dev.portablevfx.protocol.CatalogReadiness.encode(java.util.Set.of());
+        // 버스트(3) 소진: ready, empty, ready
+        engine.catalogReady(viewer,ready);engine.catalogReady(viewer,empty);engine.catalogReady(viewer,ready);
+        assertTrue(engine.supportsCatalogCast(viewer));
+        engine.catalogReady(viewer,ready);assertEquals(1,engine.duplicateReadyPackets(),"identical payload is ignored without decoding");
+        engine.catalogReady(viewer,new byte[]{1});engine.catalogReady(viewer,empty);
+        assertTrue(engine.supportsCatalogCast(viewer),"throttled payloads are not applied yet");
+        assertEquals(1,engine.queuedReadyPlayers());
+        transport.tick+=RelayEngine.READY_INTERVAL_TICKS-1;engine.tick();assertTrue(engine.supportsCatalogCast(viewer));
+        transport.tick++;engine.tick();
+        assertFalse(engine.supportsCatalogCast(viewer),"the latest throttled payload (withdrawal) is applied once a token refills");
+        assertEquals(0,engine.queuedReadyPlayers());
+    }
+
+    @Test void readinessDeclaringFarMoreIdsThanTheCatalogueIsRejectedBeforeDecoding() {
+        UUID viewer=authorityJoined(WORLD,0);engine.stopIntentHello(viewer,VfxProtocol.encodeHello());
+        engine.catalogRequirements(java.util.Set.of("claude:fireball/projectile"));
+        java.util.Set<String> many=new java.util.TreeSet<>();
+        for(int i=0;i<=1+RelayEngine.READY_COUNT_MARGIN;i++)many.add("claude:pack/e"+i);
+        many.add("claude:fireball/projectile");
+        engine.catalogReady(viewer,dev.portablevfx.protocol.CatalogReadiness.encode(many));
+        assertFalse(engine.supportsCatalogCast(viewer));
+        assertTrue(engine.catalogDiagnostic(viewer).contains("rejected=Too many ready effects for this catalogue"));
+        java.util.Set<String> margin=new java.util.TreeSet<>(many);margin.remove("claude:pack/e0");margin.remove("claude:pack/e1");
+        engine.catalogReady(viewer,dev.portablevfx.protocol.CatalogReadiness.encode(margin));
+        assertTrue(engine.supportsCatalogCast(viewer),"extra installed packs within the margin are fine");
+    }
+
+    @Test void unknownPlayersCannotGrowReadinessOrDeferredHelloState() {
+        UUID ghost=UUID.randomUUID();
+        engine.catalogReady(ghost,new byte[]{1});
+        assertFalse(engine.catalogDiagnostic(ghost).contains("rejected="),"no rejection text is stored for unresolvable players");
+        assertEquals(0,engine.queuedReadyPlayers());
+        engine.hello(ghost,new byte[5]);engine.hello(ghost,new byte[32760]);
+        assertEquals(0,engine.deferredHelloPlayers(),"only exact 4-byte hellos are deferred");
+        engine.hello(ghost,VfxProtocol.encodeHello());assertEquals(1,engine.deferredHelloPlayers());
+    }
+
+    @Test void helloFloodIsThrottledPerPlayer() {
+        UUID viewer=joined(WORLD,0);UUID other=joined(WORLD,0);
+        for(int i=0;i<100;i++)engine.orientationHello(viewer,VfxProtocol.encodeHello());
+        assertEquals(100-(RelayEngine.HELLO_BURST-1),engine.throttledHellos());
+        engine.extendedPlayHello(other,VfxProtocol.encodeHello());
+        assertEquals(1,engine.play(play(40).withStartTick(0),64).recipients(),"another player's bucket is unaffected");
+        transport.tick+=5;engine.hello(viewer,new byte[]{0});
+        assertEquals(1,engine.status().rejectedHellos(),"tokens refill one per tick");
+    }
+
+    @Test void viewerSnapshotsAreTakenOncePerPlayerPerTick() {
+        UUID viewer=authorityJoined(WORLD,0);
+        List<PlayEffect> casts=new ArrayList<>();
+        for(int i=0;i<12;i++){transport.tick++;var c=castPlay(400);engine.startCast(c,64,EffectBasis.identity());casts.add(c);}
+        transport.tick++;transport.viewerCalls=0;transport.viewersCalls=0;
+        engine.tick();
+        for(var c:casts)assertEquals(1,engine.updateCast(c.instanceId(),1,0,0,EffectBasis.identity()));
+        engine.finishCast(casts.getFirst().instanceId());engine.stop(casts.getLast().instanceId());
+        engine.startCast(castPlay(40),64,EffectBasis.identity());engine.startCast(castPlay(40),64,EffectBasis.identity());
+        assertTrue(transport.viewerCalls+transport.viewersCalls<=2,"snapshots this tick: "+transport.viewerCalls+"+"+transport.viewersCalls);
+        assertEquals(viewer,transport.sent.getLast().player());
+    }
+
+    /** 시청자 한 명이 실제로 받은 패킷 순서를 따라가는 모델(클라이언트 수신 예산 포함). */
+    private static final class Watcher {
+        final java.util.Set<UUID> known=new java.util.HashSet<>(),finished=new java.util.HashSet<>(),forbidden=new java.util.HashSet<>();
+        boolean clearExpected;
+        // client/network/PacketAdmission: PLAY 64 burst 10/tick, STREAM 128 burst 32/tick, CONTROL 256 burst 12.8/tick
+        double plays=64,streams=128,controls=256;
+        void refill(){plays=Math.min(64,plays+10);streams=Math.min(128,streams+32);controls=Math.min(256,controls+12.8);}
+    }
+
+    /**
+     * 무작위 부하(시청자 100명, tick 당 수십 시전, pose·finish·stop·impact·월드 이동·재접속)에서
+     * 순서/누수/예산 불변식을 확인한다. 예전 테스트는 개별 경로만 봤다.
+     */
+    private void stress(RelayLimits limits,long seed,int castsPerTick,boolean expectDeferred) throws Exception {
+        engine.reload(limits);
+        java.util.Random random=new java.util.Random(seed);
+        Map<UUID,Watcher> watchers=new LinkedHashMap<>();
+        for(int i=0;i<100;i++){UUID id=authorityJoined(WORLD,i%10);engine.stopIntentHello(id,VfxProtocol.encodeHello());watchers.put(id,new Watcher());}
+        List<UUID> ids=new ArrayList<>(watchers.keySet());
+        Map<UUID,Long> startTicks=new java.util.HashMap<>();
+        java.util.Set<UUID> ended=new java.util.HashSet<>();
+        List<UUID> live=new ArrayList<>();
+        var queues=RelayEngine.class.getDeclaredField("deferredPlays");queues.setAccessible(true);
+        int[] cursor={0};long[] counts=new long[4]; // deferred, deliveredLate, rejected, maxActive
+        Runnable drain=()->{
+            for(;cursor[0]<transport.sent.size();cursor[0]++){
+                Sent sent=transport.sent.get(cursor[0]);Watcher w=watchers.get(sent.player());String at="tick "+transport.tick+" "+sent.message();
+                switch(sent.message()){
+                    case PlayEffect play -> {
+                        assertTrue(--w.plays>=0,"client PLAY bucket exceeded: "+at);
+                        assertFalse(w.clearExpected,"PLAY overtook a pending CLEAR: "+at);
+                        assertFalse(ended.contains(play.instanceId()),"PLAY after the phase ended: "+at);
+                        assertTrue(w.known.add(play.instanceId()),"duplicate PLAY: "+at);
+                        assertFalse(w.forbidden.contains(play.instanceId()),at);
+                        assertEquals(startTicks.get(play.instanceId()).longValue(),play.startTick(),"start tick must be preserved: "+at);
+                        if(play.startTick()!=transport.worldTick)counts[1]++;
+                    }
+                    case PoseEffect pose -> {
+                        assertTrue(--w.streams>=0,"client STREAM bucket exceeded: "+at);
+                        assertTrue(w.known.contains(pose.instanceId()),"POSE before PLAY: "+at);
+                        assertFalse(w.forbidden.contains(pose.instanceId())||w.finished.contains(pose.instanceId())||ended.contains(pose.instanceId()),"POSE after end: "+at);
+                    }
+                    case FinishEffect finish -> {
+                        assertTrue(--w.controls>=0,"client CONTROL bucket exceeded: "+at);
+                        assertTrue(w.known.contains(finish.instanceId()),"FINISH before PLAY: "+at);
+                        assertFalse(w.forbidden.contains(finish.instanceId()),"FINISH after STOP/CLEAR: "+at);
+                        w.finished.add(finish.instanceId());
+                    }
+                    case StopEffect stop -> {
+                        assertTrue(--w.controls>=0,"client CONTROL bucket exceeded: "+at);
+                        assertTrue(w.known.contains(stop.instanceId()),"STOP before PLAY: "+at);
+                        assertTrue(w.forbidden.add(stop.instanceId()),"packet after STOP/CLEAR: "+at);
+                    }
+                    case ImpactEffect impact -> {
+                        assertTrue(--w.plays>=0,"client PLAY bucket exceeded: "+at);
+                        assertFalse(w.clearExpected,at);
+                        assertTrue(w.known.contains(impact.instanceId()),"IMPACT before PLAY: "+at);
+                        assertFalse(w.forbidden.contains(impact.instanceId())||w.finished.contains(impact.instanceId()),"IMPACT after end: "+at);
+                        w.finished.add(impact.instanceId());w.known.add(impact.impact().instanceId());
+                    }
+                    case ClearEffects clear -> {
+                        assertTrue(--w.controls>=0,at);
+                        assertTrue(w.clearExpected,"unexpected CLEAR: "+at);w.clearExpected=false;
+                    }
+                    default -> fail(at);
+                }
+            }
+            transport.sent.clear();cursor[0]=0; // 확인한 패킷은 버린다(수십만 개를 쌓아 두지 않는다)
+        };
+        for(int step=0;step<260;step++){
+            transport.tick++;transport.worldTick=5000+transport.tick;
+            for(Watcher w:watchers.values())w.refill();
+            engine.tick();drain.run();
+            boolean busy=step<200;
+            for(UUID handle:new ArrayList<>(live)){
+                if(!engine.isCastActive(handle)){live.remove(handle);ended.add(handle);continue;}
+                int roll=random.nextInt(400); // 시청자당 제어 예산(10/tick) 안쪽의 종료 빈도: 256개 초과 시의 CLEAR 축약은 별도 테스트가 본다
+                if(roll==0){engine.stop(handle);ended.add(handle);live.remove(handle);}
+                else if(roll==1){engine.finishCast(handle,random.nextBoolean());ended.add(handle);live.remove(handle);}
+                else if(roll==2){
+                    try{
+                        var impact=castPlay(20).withStartTick(transport.worldTick);startTicks.put(impact.instanceId(),transport.worldTick);
+                        engine.impactCast(handle,impact,EffectBasis.identity());ended.add(handle);live.remove(handle);
+                    }catch(RejectedExecutionException full){counts[2]++;}
+                }
+                else engine.updateCast(handle,random.nextInt(8),0,0,EffectBasis.identity());
+                drain.run();
+            }
+            if(busy)for(int i=0;i<castsPerTick;i++){
+                var cast=castPlay(20+random.nextInt(180)).withStartTick(transport.worldTick);startTicks.put(cast.instanceId(),transport.worldTick);
+                try{
+                    PlayResult result=engine.startCast(cast,64,EffectBasis.identity());
+                    counts[0]+=result.deferred();
+                    if(result.recipients()+result.deferred()>0)live.add(cast.instanceId());else ended.add(cast.instanceId());
+                }catch(RejectedExecutionException full){counts[2]++;ended.add(cast.instanceId());}
+                drain.run();
+            }
+            if(busy&&step%7==3){
+                UUID moved=ids.get(random.nextInt(ids.size()));Watcher w=watchers.get(moved);
+                engine.worldChanged(moved);w.forbidden.addAll(w.known);w.clearExpected=true;drain.run();
+            }
+            if(busy&&step%11==5){
+                UUID quit=ids.get(random.nextInt(ids.size()));Watcher w=watchers.get(quit);
+                engine.forget(quit);drain.run();
+                w.forbidden.addAll(w.known);w.clearExpected=false;w.plays=64;w.streams=128;w.controls=256;
+                engine.hello(quit,VfxProtocol.encodeHello());engine.extendedPlayHello(quit,VfxProtocol.encodeHello());
+                engine.authoritativeHello(quit,VfxProtocol.encodeHello());engine.stopIntentHello(quit,VfxProtocol.encodeHello());
+            }
+            counts[3]=Math.max(counts[3],engine.status().activeHandles());
+            for(var queue:((Map<?,?>)queues.get(engine)).values())
+                assertTrue(((java.util.Collection<?>)queue).size()<=RelayEngine.MAX_DEFERRED_PLAYS_PER_VIEWER,"per-viewer retry queue is bounded");
+            assertTrue(((Map<?,?>)queues.get(engine)).size()<=ids.size());
+            assertTrue(engine.status().activeHandles()<=limits.maxActiveHandles());
+            assertTrue(engine.drainingHandles()<=limits.maxDrainingHandles());
+            assertTrue(engine.status().packetsThisTick()<=limits.maxPacketsPerTick());
+        }
+        if(expectDeferred){assertTrue(counts[0]>0,"the load must exercise the retry queue");assertTrue(counts[1]>0,"some PLAYs must be delivered late");}
+        // 부하가 끝나면 모든 상태가 비워진다: 재시도 큐, 활성/종료 추적 핸들, 제어 대기, pose 기아 표시.
+        for(int i=0;i<1400;i++){transport.tick++;transport.worldTick++;for(Watcher w:watchers.values())w.refill();engine.tick();drain.run();}
+        assertEquals(0,engine.deferredPlayViewers());
+        assertEquals(0,engine.status().activeHandles());
+        assertEquals(0,engine.drainingHandles());
+        assertEquals(0,engine.status().pendingControlRecipients());
+        assertEquals(0,engine.starvedPoseViewers());
+        for(Watcher w:watchers.values())assertFalse(w.clearExpected,"a queued CLEAR is always delivered");
+    }
+
+    @Test void stressOrderingBudgetsAndCleanupWithDefaultLimits() throws Exception {
+        stress(RelayLimits.DEFAULT,20261011L,12,true);
+    }
+
+    @Test void stressOrderingBudgetsAndCleanupWithTightGlobalAndViewerBudgets() throws Exception {
+        stress(new RelayLimits(128,64,512,300,6,64,1200,40,5),7L,6,true);
+        RelayEngineTest other=new RelayEngineTest();
+        other.stress(new RelayLimits(128,64,4096,8192,128,1024,12000,100,40),99L,30,true);
+    }
+
     /** Mirrors client/network/PacketAdmission PLAY bucket: 64 burst, 200/s. */
     private static final int PLAY_CLIENT_BURST = 64, PLAY_CLIENT_PER_TICK = 10;
 
@@ -737,6 +1050,7 @@ class RelayEngineTest {
         long tick;
         long worldTick=-1;
         boolean failSends;
+        int viewerCalls, viewersCalls;
         final Map<UUID, RelayEngine.Viewer> players = new LinkedHashMap<>();
         final List<Sent> sent = new ArrayList<>();
 
@@ -756,8 +1070,8 @@ class RelayEngineTest {
 
         @Override public long currentTick() { return tick; }
         @Override public long worldTick(String dimensionId) { return worldTick; }
-        @Override public Collection<RelayEngine.Viewer> viewers(String dimensionId) { return players.values(); }
-        @Override public RelayEngine.Viewer viewer(UUID id) { return players.get(id); }
+        @Override public Collection<RelayEngine.Viewer> viewers(String dimensionId) { viewersCalls++; return players.values(); }
+        @Override public RelayEngine.Viewer viewer(UUID id) { viewerCalls++; return players.get(id); }
         @Override public boolean send(UUID id, byte[] payload) {
             if (failSends) return false;
             try {

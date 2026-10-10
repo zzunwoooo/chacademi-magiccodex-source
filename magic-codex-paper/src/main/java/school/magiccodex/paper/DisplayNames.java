@@ -12,6 +12,10 @@ final class DisplayNames {
     private final Map<UUID,Cached> cache=new HashMap<>();
     DisplayNames(MagicCodexBridge plugin){this.plugin=plugin;try{nicknames=new NicknameBridge(plugin,this);}catch(Exception e){throw new IllegalStateException("닉네임 저장소 초기화 실패",e);}}
     void invalidate(UUID id){cache.remove(id);}
+    /** "magiccodex" 식별자를 가진 닉네임 확장이 마나 등 다른 키를 넘겨줄 대상. 닉네임 확장이 그 식별자를 갖지 못했으면 false. */
+    boolean delegatePlaceholders(java.util.function.BiFunction<OfflinePlayer,String,String> delegate){return nicknames.delegatePlaceholders(delegate);}
+    /** %..._nickname% / %..._account% 값 (다른 키는 null). */
+    String placeholder(OfflinePlayer player,String params){return nicknames.answer(player,params);}
     String name(OfflinePlayer player,String fallback){
         String saved=nicknames.stored(player.getUniqueId());if(!saved.isEmpty())return saved;
         long now=System.currentTimeMillis();var old=cache.get(player.getUniqueId());if(old!=null&&old.until()>now)return old.name();

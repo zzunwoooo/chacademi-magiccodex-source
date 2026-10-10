@@ -4,7 +4,6 @@ import kr.chacademy.npc.core.Defs.RumorView;
 import kr.chacademy.npc.core.Defs.Turn;
 import kr.chacademy.npc.core.Json;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -89,9 +88,36 @@ public final class Storage {
                         // 일부 MariaDB 버전은 IF NOT EXISTS 인덱스를 지원하지 않음 — 이미 있으면 무시
                     }
                 }
+                uniqueRumorIndex(st);
             }
             return null;
         });
+    }
+
+    /**
+     * 같은 사건이 같은 NPC에게 두 번 소문나지 않게 하는 UNIQUE 인덱스 (나중에 추가됨 — 이미 있으면 그대로 둔다).
+     * 예전 버전이 남긴 중복 줄이 있어 만들 수 없으면 중복(같은 사건·같은 NPC, 나중 id)만 지우고 한 번 더 시도한다.
+     * 그래도 안 되면 인덱스 없이 계속한다 (INSERT 는 그대로 동작).
+     */
+    private void uniqueRumorIndex(Statement st) {
+        String create = "CREATE UNIQUE INDEX IF NOT EXISTS uq_cnpc_rumor_event ON cnpc_rumors (event_id, heard_by)";
+        try {
+            st.execute(create);
+            return;
+        } catch (SQLException first) {
+            String m = String.valueOf(first.getMessage()).toLowerCase(java.util.Locale.ROOT);
+            if (m.contains("duplicate key name") || m.contains("already exists")) {
+                return; // IF NOT EXISTS 를 모르는 DB에서 이미 만들어져 있는 경우
+            }
+        }
+        try {
+            st.executeUpdate("DELETE FROM cnpc_rumors WHERE id NOT IN (SELECT id FROM"
+                    + " (SELECT MIN(id) AS id FROM cnpc_rumors GROUP BY event_id, heard_by) keep_rows)");
+            st.execute(create);
+        } catch (SQLException second) {
+            db.logWarning("[ChacaNPC] cnpc_rumors UNIQUE 인덱스를 만들지 못했습니다 (소문 중복 방지는 트랜잭션으로만 동작): "
+                    + second.getMessage());
+        }
     }
 
     // ------------------------------------------------------------------ memory
@@ -386,47 +412,63 @@ public final class Storage {
         });
     }
 
-    public void markPropagated(long eventId) {
-        exec(c -> {
-            try (PreparedStatement ps = c.prepareStatement("UPDATE cnpc_events SET propagated=1 WHERE id=?")) {
-                ps.setLong(1, eventId);
-                ps.executeUpdate();
-            }
-            return null;
-        });
+    /**
+     * 사건 하나를 소문으로 퍼뜨리기: 소문 줄 추가 + "퍼뜨림" 표시를 한 트랜잭션으로 한다.
+     * 중간에 실패하면 전부 되돌아가므로 다음 번에 다시 해도 소문이 두 번 생기지 않는다
+     * (UNIQUE (event_id, heard_by) 가 있으면 한 번 더 막힌다).
+     *
+     * @param heardAt 소문을 듣는 NPC id → 듣게 되는 시각
+     */
+    public void propagateEvent(EventRow e, Map<String, Long> heardAt) {
+        String insert = (db.isMariaDb() ? "INSERT IGNORE INTO" : "INSERT OR IGNORE INTO")
+                + " cnpc_rumors (event_id, heard_by, player_uuid, text, type, event_created_at, heard_at, mentioned)"
+                + " VALUES (?,?,?,?,?,?,?,0)";
+        try {
+            db.tx(c -> {
+                if (!heardAt.isEmpty()) {
+                    try (PreparedStatement ps = c.prepareStatement(insert)) {
+                        for (Map.Entry<String, Long> h : heardAt.entrySet()) {
+                            ps.setLong(1, e.id());
+                            ps.setString(2, h.getKey());
+                            ps.setString(3, e.player());
+                            ps.setString(4, e.text());
+                            ps.setString(5, e.type());
+                            ps.setLong(6, e.createdAt());
+                            ps.setLong(7, h.getValue());
+                            ps.executeUpdate();
+                        }
+                    }
+                }
+                try (PreparedStatement ps = c.prepareStatement("UPDATE cnpc_events SET propagated=1 WHERE id=?")) {
+                    ps.setLong(1, e.id());
+                    ps.executeUpdate();
+                }
+                return null;
+            });
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex.getMessage(), ex);
+        }
     }
 
-    public void addRumor(EventRow e, String heardBy, long heardAt) {
-        exec(c -> {
-            try (PreparedStatement ps = c.prepareStatement(
-                    "INSERT INTO cnpc_rumors (event_id, heard_by, player_uuid, text, type, event_created_at, heard_at, mentioned)"
-                            + " VALUES (?,?,?,?,?,?,?,0)")) {
-                ps.setLong(1, e.id());
-                ps.setString(2, heardBy);
-                ps.setString(3, e.player());
-                ps.setString(4, e.text());
-                ps.setString(5, e.type());
-                ps.setLong(6, e.createdAt());
-                ps.setLong(7, heardAt);
-                ps.executeUpdate();
-            }
-            return null;
-        });
+    /** 1:1 대화용 소문 한 줄 + 그 사건의 NPC (원문을 서버 문장으로 바꿀 때 쓴다. 사건이 지워졌으면 null). */
+    public record HeardRumor(RumorView view, String sourceNpc) {
     }
 
-    public List<RumorView> rumorsFor(String npc, String player, long now, int limit) {
+    public List<HeardRumor> rumorsFor(String npc, String player, long now, int limit) {
         return exec(c -> {
-            List<RumorView> out = new ArrayList<>();
+            List<HeardRumor> out = new ArrayList<>();
             try (PreparedStatement ps = c.prepareStatement(
-                    "SELECT id, text, type, event_created_at FROM cnpc_rumors WHERE heard_by=? AND player_uuid=?"
-                            + " AND heard_at<=? AND mentioned=0 ORDER BY event_created_at DESC LIMIT ?")) {
+                    "SELECT r.id, r.text, r.type, r.event_created_at, e.npc_id FROM cnpc_rumors r"
+                            + " LEFT JOIN cnpc_events e ON e.id=r.event_id WHERE r.heard_by=? AND r.player_uuid=?"
+                            + " AND r.heard_at<=? AND r.mentioned=0 ORDER BY r.event_created_at DESC LIMIT ?")) {
                 ps.setString(1, npc);
                 ps.setString(2, player);
                 ps.setLong(3, now);
                 ps.setInt(4, limit);
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        out.add(new RumorView(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getLong(4)));
+                        out.add(new HeardRumor(new RumorView(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getLong(4)),
+                                rs.getString(5)));
                     }
                 }
             }
@@ -434,20 +476,25 @@ public final class Storage {
         });
     }
 
-    /** 잡담 연출용: 이 NPC가 들은 소문 중 아무거나 (플레이어 무관). */
-    public List<RumorView> anyRumorsHeardBy(String npc, Set<String> players, long now, int limit) {
+    /** 공개 잡담용 소문: 사건 종류와 그 사건의 NPC만 (원문·플레이어 정보는 꺼내지 않는다). */
+    public record PublicRumor(String type, String sourceNpc) {
+    }
+
+    /** 잡담 연출용: 이 NPC가 들은 소문 중 근처 플레이어에 관한 최근 것. 원문은 읽지 않는다. */
+    public List<PublicRumor> publicRumorsHeardBy(String npc, Set<String> players, long now, int limit) {
         if (players.isEmpty()) {
             return List.of();
         }
         return exec(c -> {
-            List<RumorView> out = new ArrayList<>();
+            List<PublicRumor> out = new ArrayList<>();
             StringBuilder in = new StringBuilder();
             for (int i = 0; i < players.size(); i++) {
                 in.append(i == 0 ? "?" : ",?");
             }
             try (PreparedStatement ps = c.prepareStatement(
-                    "SELECT id, text, type, event_created_at FROM cnpc_rumors WHERE heard_by=? AND heard_at<=?"
-                            + " AND player_uuid IN (" + in + ") ORDER BY event_created_at DESC LIMIT ?")) {
+                    "SELECT r.type, e.npc_id FROM cnpc_rumors r LEFT JOIN cnpc_events e ON e.id=r.event_id"
+                            + " WHERE r.heard_by=? AND r.heard_at<=? AND r.player_uuid IN (" + in + ")"
+                            + " ORDER BY r.event_created_at DESC LIMIT ?")) {
                 int i = 1;
                 ps.setString(i++, npc);
                 ps.setLong(i++, now);
@@ -457,7 +504,7 @@ public final class Storage {
                 ps.setInt(i, limit);
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        out.add(new RumorView(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getLong(4)));
+                        out.add(new PublicRumor(rs.getString(1), rs.getString(2)));
                     }
                 }
             }
@@ -698,9 +745,5 @@ public final class Storage {
         } catch (SQLException ex) {
             throw new RuntimeException(ex.getMessage(), ex);
         }
-    }
-
-    @SuppressWarnings("unused")
-    private static void noop(Connection c) {
     }
 }

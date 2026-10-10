@@ -88,8 +88,17 @@ public final class ChacaNpcPlugin extends JavaPlugin implements Listener {
         storage = new Storage(database);
         budget = new BudgetService(() -> settings, storage);
         database.run(() -> {
-            storage.createTables();
-            budget.loadFromDb();
+            try {
+                storage.createTables();
+                budget.loadFromDb();
+                getLogger().info("[ChacaNPC] AI 스위치: " + (budget.isAiEnabled() ? "켜짐"
+                        : "꺼짐 — 모든 NPC가 고정 대사로 대답합니다 (/cnpc ai on 으로 켜기)"));
+            } catch (RuntimeException ex) {
+                // 여기서 실패하면 예산을 알 수 없어 AI를 부르지 않는다 (고정 대사만). 조용히 넘어가지 않게 크게 남긴다.
+                budget.markLoadFailed(ex.getMessage());
+                getLogger().log(Level.SEVERE, "[ChacaNPC] DB 테이블 준비 또는 사용량 불러오기 실패 — AI 대화가 꺼진 상태로 유지됩니다"
+                        + " (NPC는 고정 대사만 합니다). DB 권한·연결을 확인한 뒤 서버를 다시 시작하세요.", ex);
+            }
         });
 
         ai = new OpenAiClient(aiConfig(), getLogger());
@@ -199,6 +208,9 @@ public final class ChacaNpcPlugin extends JavaPlugin implements Listener {
         c.reasoningEffort = settings.reasoningEffort;
         c.hardTimeoutSeconds = settings.hardTimeoutSeconds;
         c.maxConcurrent = settings.maxConcurrent;
+        c.maxQueue = settings.maxQueue;
+        c.circuitFailures = settings.circuitFailures;
+        c.circuitCooloffSeconds = settings.circuitCooloffSeconds;
         c.moderationModel = settings.moderationModel;
         return c;
     }

@@ -24,7 +24,7 @@ scenes:
       - {who: teacher, face: 기본, text: "아, 여기 있었구먼! 혹시 {player} 씨 맞소?"}
       - {who: teacher, face: 걱정, text: "…근데 안색이 영 안 좋구먼. 어디 아픈 거 아니오?"}
     choices:
-      - {text: "괜찮아요, 잠깐 어지러웠어요.", to: fine, affinity: {npc: teacher, add: 2}}
+      - {text: "괜찮아요, 잠깐 어지러웠어요.", to: fine, affinity: [{npc: teacher, add: 2}], event: c_wake_1}
       - {text: "이상한 꿈을 꿨어요.", to: dream, event: told_dream}
       - text: "선생님 덕분에 살았어요!"
         to: close

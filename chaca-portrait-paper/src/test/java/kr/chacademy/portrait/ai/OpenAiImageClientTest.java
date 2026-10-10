@@ -39,4 +39,68 @@ class OpenAiImageClientTest {
         assertEquals(900, t.inputTokens());
         assertEquals(40, t.outputTokens());
     }
+
+    @Test
+    void connectionFailuresAreRetryableAndNotBilled() {
+        for (Throwable t : new Throwable[]{
+                new java.net.http.HttpConnectTimeoutException("connect"),
+                new java.net.ConnectException("refused"),
+                new java.net.UnknownHostException("dns"),
+                new java.util.concurrent.ExecutionException(new java.net.ConnectException("refused")),
+                new java.util.concurrent.CompletionException(new java.net.http.HttpConnectTimeoutException("connect"))}) {
+            var e = OpenAiImageClient.classify(t);
+            assertEquals(OpenAiImageClient.Type.RETRYABLE, e.type, String.valueOf(t));
+            assertFalse(e.billedUnknown, String.valueOf(t));
+            assertTrue(e.retryable());
+            assertEquals(0, e.status);
+        }
+    }
+
+    @Test
+    void timeoutsAfterSendAreRetryableButMayBeBilled() {
+        for (Throwable t : new Throwable[]{
+                new java.net.http.HttpTimeoutException("read"),
+                new java.util.concurrent.TimeoutException(),
+                new java.io.IOException("connection reset"),
+                new java.util.concurrent.ExecutionException(new java.io.IOException("Response exceeds byte limit"))}) {
+            var e = OpenAiImageClient.classify(t);
+            assertEquals(OpenAiImageClient.Type.RETRYABLE, e.type, String.valueOf(t));
+            assertTrue(e.billedUnknown, String.valueOf(t));
+        }
+        var same = new OpenAiImageClient.ApiException("x", 400, false, OpenAiImageClient.Type.TERMINAL);
+        assertSame(same, OpenAiImageClient.classify(new java.util.concurrent.ExecutionException(same)));
+    }
+
+    @Test
+    void httpStatusClassification() {
+        for (int code : new int[]{500, 502, 503, 504}) {
+            var e = OpenAiImageClient.httpError(code, "server");
+            assertEquals(OpenAiImageClient.Type.RETRYABLE, e.type);
+            assertTrue(e.billedUnknown, "5xx는 과금 여부를 모름");
+            assertEquals(code, e.status);
+        }
+        for (int code : new int[]{429, 408, 409}) {
+            var e = OpenAiImageClient.httpError(code, "slow down");
+            assertEquals(OpenAiImageClient.Type.RETRYABLE, e.type);
+            assertFalse(e.billedUnknown, "429 등은 과금 없음");
+        }
+        for (int code : new int[]{401, 403, 404}) {
+            var e = OpenAiImageClient.httpError(code, "nope");
+            assertEquals(OpenAiImageClient.Type.CONFIG, e.type);
+            assertFalse(e.billedUnknown);
+            assertFalse(e.retryable());
+        }
+        var refused = OpenAiImageClient.httpError(400, "moderation_blocked — Your request was rejected by the safety system.");
+        assertEquals(OpenAiImageClient.Type.TERMINAL, refused.type);
+        assertFalse(refused.billedUnknown);
+        var invalid = OpenAiImageClient.httpError(400, "invalid_value — Invalid value: 'huge'. Supported values are: '1024x1536'.");
+        assertEquals(OpenAiImageClient.Type.CONFIG, invalid.type);
+        assertFalse(invalid.billedUnknown);
+        assertFalse(OpenAiImageClient.httpError(400, null).retryable());
+    }
+
+    @Test
+    void legacyConstructorIsTerminal() {
+        assertEquals(OpenAiImageClient.Type.TERMINAL, new OpenAiImageClient.ApiException("x", 200, true).type);
+    }
 }

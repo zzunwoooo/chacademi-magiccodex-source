@@ -6,9 +6,10 @@ import kr.chacademy.npc.budget.BudgetService;
 import kr.chacademy.npc.config.Settings;
 import kr.chacademy.npc.core.BudgetMath;
 import kr.chacademy.npc.core.CharacterSheet;
-import kr.chacademy.npc.core.Defs.RumorView;
 import kr.chacademy.npc.core.Json;
+import kr.chacademy.npc.core.ReplyParser;
 import kr.chacademy.npc.core.TextFilter;
+import kr.chacademy.npc.core.TextSanitizer;
 import kr.chacademy.npc.data.Storage;
 import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
@@ -20,6 +21,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -41,10 +43,31 @@ public final class SocialService {
 
     /** 사건 기록. Bridge도 ChacaNpcApi.recordEvent로 선물·하트 이벤트 등을 넣을 수 있다. */
     public void recordEvent(UUID player, String playerName, String npcId, String type, String text) {
+        if (player == null || npcId == null || npcId.isBlank() || type == null || type.isBlank()) {
+            return;
+        }
         long now = System.currentTimeMillis();
         String pid = player.toString();
-        plugin.database().run(() -> plugin.storage().addEvent(pid, playerName, npcId, type, text, now));
+        String kind = type.trim();
+        if (kind.length() > 32) {
+            kind = kind.substring(0, 32);
+        }
+        // 저장 전에 정리: 제어문자·색 코드·URL 제거, 길이 제한. 자유 글이 섞인 사건(약속·별명·모르는 종류)은 금지어 검사도 한다.
+        // 걸리거나 비면 원문 대신 서버가 만든 문장(이름·원문 없음)을 저장한다 — 사건 자체(종류)는 남긴다.
+        CharacterSheet c = plugin.characters().get(npcId);
+        String canned = TextSanitizer.publicRumor(kind, c == null ? null : c.name());
+        String clean = TextSanitizer.clean(text, EVENT_TEXT_MAX);
+        if (clean == null || (!TextSanitizer.isStructuredType(kind) && !plugin.content().filter().isPublicSafe(clean))) {
+            clean = canned;
+        }
+        String name = TextSanitizer.clean(playerName, 32);
+        String finalKind = kind;
+        String finalText = clean;
+        plugin.database().run(() -> plugin.storage().addEvent(pid, name == null ? "학생" : name, npcId, finalKind, finalText, now));
     }
+
+    /** 사건 글 최대 길이(코드포인트). */
+    private static final int EVENT_TEXT_MAX = 200;
 
     // ------------------------------------------------------------ 소문 퍼뜨리기 (10분마다)
 
@@ -75,14 +98,20 @@ public final class SocialService {
                         }
                     }
                 }
+                Map<String, Long> heardAt = new LinkedHashMap<>();
                 for (String npc : told) {
                     long delayH = st.rumorDelayMinHours
                             + (st.rumorDelayMaxHours > st.rumorDelayMinHours
                             ? random.nextInt(st.rumorDelayMaxHours - st.rumorDelayMinHours + 1) : 0);
-                    long heardAt = e.createdAt() + delayH * 3_600_000L + random.nextInt(3_600_000);
-                    storage.addRumor(e, npc, heardAt);
+                    heardAt.put(npc, e.createdAt() + delayH * 3_600_000L + random.nextInt(3_600_000));
                 }
-                storage.markPropagated(e.id());
+                try {
+                    // 소문 줄 추가 + "퍼뜨림" 표시를 한 트랜잭션으로 (중간에 실패해도 다음 번에 소문이 두 번 생기지 않는다)
+                    storage.propagateEvent(e, heardAt);
+                } catch (RuntimeException ex) {
+                    // 사건 하나가 실패해도 나머지는 계속 퍼뜨린다 (이 사건은 다음 주기에 다시 시도)
+                    plugin.getLogger().warning("[ChacaNPC] 소문 퍼뜨리기 실패 (사건 #" + e.id() + "): " + ex.getMessage());
+                }
             }
         });
     }
@@ -187,9 +216,15 @@ public final class SocialService {
             pids.add(p.getUniqueId().toString());
         }
         long now = System.currentTimeMillis();
+        // 공개 잡담(근처 모두가 봄)에는 소문의 "종류"만 쓴다: 원문·플레이어 이름은 DB에서 꺼내지도 않는다.
+        // social.public-rumors: false 면 잡담에 소문을 아예 넣지 않는다.
+        boolean withRumors = st.publicRumors;
         plugin.database().async(() -> {
-            List<RumorView> r = new ArrayList<>(plugin.storage().anyRumorsHeardBy(a.id(), pids, now, 1));
-            r.addAll(plugin.storage().anyRumorsHeardBy(b.id(), pids, now, 1));
+            List<Storage.PublicRumor> r = new ArrayList<>();
+            if (withRumors) {
+                r.addAll(plugin.storage().publicRumorsHeardBy(a.id(), pids, now, 1));
+                r.addAll(plugin.storage().publicRumorsHeardBy(b.id(), pids, now, 1));
+            }
             return r;
         }).thenAccept(rumors -> plugin.sync(() -> {
             var place = plugin.places().get(placeName);
@@ -203,8 +238,14 @@ public final class SocialService {
             }
             if (rumors != null && !rumors.isEmpty()) {
                 ctx.append("[둘이 아는 학교 소문 — 가볍게 하나만 섞어도 됨]\n");
-                for (RumorView rv : rumors) {
-                    ctx.append("- ").append(rv.text()).append('\n');
+                Set<String> seen = new HashSet<>();
+                for (Storage.PublicRumor rv : rumors) {
+                    // 서버가 만든 문장: 사건 종류 + NPC 이름만 (플레이어 이름·AI/플레이어가 쓴 글 없음)
+                    CharacterSheet src = rv.sourceNpc() == null ? null : plugin.characters().get(rv.sourceNpc());
+                    String line = TextSanitizer.publicRumor(rv.type(), src == null ? null : src.name());
+                    if (seen.add(line)) {
+                        ctx.append("- ").append(line).append('\n');
+                    }
                 }
             }
             names.put(a.id(), a.name());
@@ -233,7 +274,8 @@ public final class SocialService {
             if (reservation == null) {
                 return;
             }
-            plugin.ai().stream(req, null).whenComplete((res, ex) -> {
+            // 백그라운드 요청: 플레이어 대화가 붐비면 받지 않는다 (그때는 이번 잡담을 건너뜀)
+            plugin.ai().background(req).whenComplete((res, ex) -> {
                 plugin.budget().settle(reservation, res == null ? null : res.usage(), res != null && res.usageKnown());
                 plugin.sync(() -> {
                     if (res != null && res.ok()) {
@@ -268,6 +310,11 @@ public final class SocialService {
             return;
         }
         TextFilter filter = plugin.content().filter();
+        // 잡담은 근처 모든 플레이어에게 보인다: 접속 중인 플레이어 이름이 들어간 줄도 내보내지 않는다
+        List<String> playerNames = new ArrayList<>();
+        for (Player online : Bukkit.getOnlinePlayers()) {
+            playerNames.add(online.getName());
+        }
         List<String[]> ok = new ArrayList<>();
         for (Object o : lines) {
             Map<String, Object> m = Json.obj(o);
@@ -276,8 +323,13 @@ public final class SocialService {
             if (speaker == null || text == null || !names.containsKey(speaker) || ok.size() >= 4) {
                 continue;
             }
-            String clean = kr.chacademy.npc.core.ReplyParser.cleanLine(text, plugin.settings().lineMaxLength);
-            if (clean == null || filter.checkOutput(clean) != TextFilter.Verdict.OK) {
+            // 정리(제어문자·색 코드·URL 제거, 길이 제한) → 대사 검사 + 공개용 금지어 검사
+            String clean = ReplyParser.cleanLine(TextSanitizer.strip(text), plugin.settings().lineMaxLength);
+            if (clean == null) {
+                continue;
+            }
+            if (filter.checkOutput(clean) != TextFilter.Verdict.OK || !filter.isPublicSafe(clean)
+                    || TextSanitizer.mentionsAny(clean, playerNames)) {
                 return; // 하나라도 이상하면 전부 버린다
             }
             ok.add(new String[]{names.get(speaker), clean});

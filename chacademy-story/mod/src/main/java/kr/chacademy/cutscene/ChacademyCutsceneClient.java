@@ -3,16 +3,15 @@ package kr.chacademy.cutscene;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import kr.chacademy.cutscene.client.BgmPlayer;
-import kr.chacademy.cutscene.client.CutsceneScreen;
-import kr.chacademy.cutscene.client.CutsceneTextures;
+import kr.chacademy.cutscene.client.CutscenePlayback;
 import kr.chacademy.cutscene.client.SeenStore;
-import kr.chacademy.cutscene.data.Cutscene;
 import kr.chacademy.cutscene.data.CutsceneLoader;
 import kr.chacademy.cutscene.net.CutscenePackets;
 import kr.chacademy.story.dialogue.Affinity;
 import kr.chacademy.story.dialogue.Dialogue;
 import kr.chacademy.story.dialogue.DialogueLoader;
-import kr.chacademy.story.dialogue.DialogueScreen;
+import kr.chacademy.story.dialogue.DialoguePresenter;
+import kr.chacademy.story.dialogue.DialogueRunner;
 import kr.chacademy.story.dialogue.TextVars;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -37,6 +36,7 @@ import java.util.Map;
  * [플러그인] /cutscene play 준우 ch1_intro     → 컷신 재생 → 끝나면 cutscene_done
  * [플러그인] /storydialogue 준우 ch1_wakeup    → 대화 열기 → 선택지마다 dialogue_event, 끝나면 dialogue_done
  * </pre>
+ * 대화창은 이 모드가 그리지 않는다: 대화 내용·흐름(DialogueRunner)만 갖고, 화면은 MagicCodex 대화창이 그린다 (DialoguePresenter).
  * 혼자 테스트: /story cutscene &lt;id&gt;, /story dialogue &lt;id&gt; (서버 명령어는 실행되지 않음).
  */
 public class ChacademyCutsceneClient implements ClientModInitializer {
@@ -45,9 +45,6 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
 
     /** 채팅 명령으로 요청된 재생. 채팅창이 닫힌 다음 틱에 연다 (바로 열면 채팅창이 닫히면서 같이 닫힘). */
     private static Runnable pendingLocal = null;
-    /** 진행 중인 스토리 대화. 끝나기 전에는 화면이 비면 다시 연다 (강제로 닫을 수 없음). */
-    private static DialogueScreen activeDialogue = null;
-    private static long reopenAt = 0;
 
     @Override
     public void onInitializeClient() {
@@ -59,6 +56,12 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
         PayloadTypeRegistry.playC2S().register(CutscenePackets.DialogueEventC2S.TYPE, CutscenePackets.DialogueEventC2S.CODEC);
         PayloadTypeRegistry.playC2S().register(CutscenePackets.DialogueDoneC2S.TYPE, CutscenePackets.DialogueDoneC2S.CODEC);
         PayloadTypeRegistry.playC2S().register(CutscenePackets.DialogueProgressC2S.TYPE, CutscenePackets.DialogueProgressC2S.CODEC);
+        // 프로토콜 2: 버전 알림 (이 채널을 듣는 것이 서버에게 "새 모드" 라는 표시), 컷신 중단, 스토리 파일 없음
+        PayloadTypeRegistry.playS2C().register(CutscenePackets.HelloS2C.TYPE, CutscenePackets.HelloS2C.CODEC);
+        PayloadTypeRegistry.playC2S().register(CutscenePackets.AbortC2S.TYPE, CutscenePackets.AbortC2S.CODEC);
+        PayloadTypeRegistry.playC2S().register(CutscenePackets.StoryFailC2S.TYPE, CutscenePackets.StoryFailC2S.CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(CutscenePackets.HelloS2C.TYPE,
+                (payload, context) -> CutscenePlayback.serverHello(payload.protocol()));
 
         ClientPlayNetworking.registerGlobalReceiver(CutscenePackets.PlayS2C.TYPE,
                 (payload, context) -> play(payload.id(), payload.mode(), true));
@@ -71,18 +74,17 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
                 (payload, context) -> stopDialogue());
         // 접속이 끊기면 대화 화면 정리 (다시 접속하면 서버가 저장된 곳부터 다시 연다)
         net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.DISCONNECT.register(
-                (handler, client) -> client.execute(ChacademyCutsceneClient::stopDialogue));
+                (handler, client) -> client.execute(() -> {
+                    stopDialogue();
+                    CutscenePlayback.disconnect();
+                }));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             BgmPlayer.tick();
-            DialogueScreen d = activeDialogue;
-            if (d != null) {
-                if (d.isEnded()) activeDialogue = null;
-                else if (client.screen == null && client.player != null && System.currentTimeMillis() >= reopenAt) {
-                    reopenAt = System.currentTimeMillis() + 500;
-                    client.setScreen(d);
-                }
-            }
+            // 게임 메뉴(ESC) 때문에 내려간 컷신을 다시 띄우고, 보여 줄 수 있게 된 재생 요청을 시작한다
+            CutscenePlayback.tick(client);
+            // 진행 중인 스토리 대화: 끝나기 전에는 화면이 비면 MagicCodex 대화창을 다시 띄운다 (강제로 닫을 수 없음)
+            DialoguePresenter.tick(client);
             if (pendingLocal != null && !(client.screen instanceof ChatScreen)) {
                 Runnable r = pendingLocal;
                 pendingLocal = null;
@@ -155,79 +157,51 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
 
     // ---------------------------------------------------------------- 컷신
 
-    /** 컷신 재생. 렌더 스레드에서 호출할 것. */
+    /**
+     * 컷신 재생. 렌더 스레드에서 호출할 것. 파일 읽기는 작업 스레드에서 하고 화면은 바로 뜬다 (CutscenePlayback / CutsceneScreen).
+     * 끝나면 cutscene_done, 화면이 중간에 사라지면 cutscene_abort, 파일이 없거나 깨졌으면 story_fail 을 서버로 보낸다.
+     */
     public static void play(String id, int mode, boolean fromServer) {
-        Minecraft mc = Minecraft.getInstance();
-        stopCurrent();
-        Cutscene cutscene;
-        CutsceneTextures textures;
-        try {
-            cutscene = CutsceneLoader.load(id);
-            textures = new CutsceneTextures(cutscene);
-        } catch (Exception e) {
-            LOGGER.warn("컷신 {} 불러오기 실패", id, e);
-            error(Component.translatable("chaca_story.not_found", id).getString() + " (" + e.getMessage() + ")");
-            if (fromServer) sendDone(id, true);
-            return;
-        }
-
-        if (!cutscene.bgm().isEmpty()) {
-            try {
-                BgmPlayer.start(CutsceneLoader.folder(id).resolve(cutscene.bgm()), cutscene.bgmVolume(), cutscene.bgmStart());
-            } catch (Exception e) {
-                LOGGER.warn("컷신 {} 배경음을 재생하지 못함", id, e);
-            }
-        }
-
-        LOGGER.info("컷신 재생: {} (장면 {}개, {}초)", id, cutscene.scenes().size(), cutscene.totalDuration());
-        boolean skippable = switch (mode) {
-            case CutscenePackets.MODE_SKIP -> true;
-            case CutscenePackets.MODE_NOSKIP -> false;
-            default -> SeenStore.hasSeen(id);
-        };
-
-        mc.setScreen(new CutsceneScreen(cutscene, textures, skippable, result -> {
-            if (result.completed()) SeenStore.markSeen(result.id());
-            if (fromServer) sendDone(result.id(), result.skipped());
-        }));
+        CutscenePlayback.play(id, mode, fromServer);
     }
 
     public static void stopCurrent() {
-        if (Minecraft.getInstance().screen instanceof CutsceneScreen screen) screen.stop();
-    }
-
-    private static void sendDone(String id, boolean skipped) {
-        if (ClientPlayNetworking.canSend(CutscenePackets.DoneC2S.TYPE)) {
-            ClientPlayNetworking.send(new CutscenePackets.DoneC2S(id, skipped));
-        }
+        CutscenePlayback.stop();
     }
 
     // ---------------------------------------------------------------- 대화
 
     /** 대화 열기. fromServer 면 선택지 이벤트와 끝을 서버로 알린다 (서버가 명령어 실행). */
     private static void stopDialogue() {
-        DialogueScreen d = activeDialogue;
-        activeDialogue = null;
-        if (d != null) d.stop();
-        if (Minecraft.getInstance().screen instanceof DialogueScreen s) s.stop();
+        DialoguePresenter.stop();
     }
 
     public static void openDialogue(String id, Map<String, Integer> affinity, Map<String, String> vars, boolean fromServer,
                                     String startScene, int startLine) {
-        Minecraft mc = Minecraft.getInstance();
         stopDialogue();
+        if (!DialoguePresenter.available()) {
+            // MagicCodex 대화창이 없으면 열지 않는다 (자체 창으로 대신하지 않음). 대화 파일이 없을 때처럼 끝 신호도 보내지 않는다
+            LOGGER.warn("대화 {} 를 열 수 없음: MagicCodex 모드가 없거나 대화창 창구 버전이 낮음", id);
+            DialoguePresenter.warnUnavailable();
+            // 서버에는 "보여 줄 수 없음" 을 알린다 (끝난 것으로 치지 않고, 콘솔에 남아 운영자가 알 수 있게)
+            if (fromServer) reportDialogueFailure(id, CutscenePackets.FAIL_MAGICCODEX);
+            return;
+        }
         Dialogue dialogue;
-        CutsceneTextures textures;
         try {
             dialogue = DialogueLoader.load(id);
-            textures = new CutsceneTextures("dialogue/" + id, DialogueLoader.folder(id), dialogue.imageNames(), true);
         } catch (Exception e) {
             LOGGER.warn("대화 {} 불러오기 실패", id, e);
             error("대화를 찾을 수 없어요: " + id + " (" + e.getMessage() + ")");
+            if (fromServer) {
+                boolean missing = !Files.isRegularFile(DialogueLoader.folder(id).resolve("dialogue.yml"));
+                reportDialogueFailure(id, missing ? CutscenePackets.FAIL_MISSING : CutscenePackets.FAIL_BROKEN);
+            }
             return;
         }
         LOGGER.info("대화 시작: {} (장면 {}개)", id, dialogue.scenes().size());
-        DialogueScreen screen = new DialogueScreen(dialogue, textures, affinity, TextVars.withLocal(vars), new DialogueScreen.Listener() {
+        // 표정 그림은 MagicCodex 대화창이 폴더에서 직접 (렌더 스레드 밖에서) 읽는다
+        DialogueRunner runner = new DialogueRunner(dialogue, DialogueLoader.folder(id), affinity, TextVars.withLocal(vars), new DialogueRunner.Listener() {
             @Override
             public void event(String dialogueId, String event, String npc, int add) {
                 if (fromServer && ClientPlayNetworking.canSend(CutscenePackets.DialogueEventC2S.TYPE)) {
@@ -249,9 +223,15 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
                 }
             }
         }, startScene, startLine);
-        if (!screen.isEnded()) {
-            activeDialogue = screen;
-            mc.setScreen(screen);
+        DialoguePresenter.start(runner);
+    }
+
+    /** 서버가 연 대화를 보여 줄 수 없을 때 (파일 없음·깨짐, MagicCodex 없음). 컷신과 같은 story_fail 신호를 쓴다. */
+    private static void reportDialogueFailure(String id, String reason) {
+        try {
+            CutscenePackets.sendContentMissing(CutscenePackets.KIND_DIALOGUE, id, reason);
+        } catch (RuntimeException e) {
+            LOGGER.warn("대화 실패를 서버에 알리지 못함", e);
         }
     }
 

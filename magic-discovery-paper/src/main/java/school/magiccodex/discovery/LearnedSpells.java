@@ -21,6 +21,7 @@ final class LearnedSpells {
 
     boolean learned(String spell, boolean acquired) { return overrides.getOrDefault(spell, acquired); }
     boolean retrying(String spell) { return Boolean.FALSE.equals(overrides.get(spell)); }
+    Map<String, Double> retryBaseline(String spell) { return retries.getOrDefault(spell, Map.of()); }
 
     double baseline(String spell, String key) {
         return retrying(spell) ? retries.getOrDefault(spell, Map.of()).getOrDefault(key, 0d) : 0d;

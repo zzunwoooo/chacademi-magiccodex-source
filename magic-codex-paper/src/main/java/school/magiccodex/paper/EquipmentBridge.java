@@ -57,14 +57,18 @@ final class EquipmentBridge implements PluginMessageListener,Listener,CommandExe
         for(int i=0;i<5;i++){Double v=item.getItemMeta().getPersistentDataContainer().get(bonuses[i],PersistentDataType.DOUBLE);if(v!=null&&Double.isFinite(v)&&v>=0&&v<=(i==1?200:100000))values[i]=v;}return values;
     }
     private void apply(Player p){
-        double[] sum=new double[5];for(int i=0;i<4;i++){ItemStack item=accessory(p,i);if(!empty(item)&&slot(item)==i+4){double[] b=bonuses(item);for(int j=0;j<5;j++)sum[j]+=b[j];}}
+        double[] sum=new double[5];boolean ready=plugin.playerStateReady(p);
+        // 서버 간 공유 상태를 적용하기 전의 로컬 장신구(PDC)는 다른 서버에서 이미 뺀 예전 값일 수 있다: 능력치에 넣지 않는다 (적용 직후 refresh가 다시 계산).
+        if(ready)for(int i=0;i<4;i++){ItemStack item=accessory(p,i);if(!empty(item)&&slot(item)==i+4){double[] b=bonuses(item);for(int j=0;j<5;j++)sum[j]+=b[j];}}
         ItemStack hand=p.getInventory().getItemInMainHand();hands.put(p.getUniqueId(),hand.clone());
         if(!empty(hand)&&hand.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(plugin,"wand_id"),PersistentDataType.STRING)){
             String[] keys={"wand_power","wand_mana","wand_haste"};int[] indexes={0,2,4};
             for(int i=0;i<3;i++){double v=hand.getItemMeta().getPersistentDataContainer().getOrDefault(new NamespacedKey(plugin,keys[i]),PersistentDataType.DOUBLE,0d);if(Double.isFinite(v)&&v>=0&&v<=100000)sum[indexes[i]]+=v;}
         }
         totals.put(p.getUniqueId(),sum);
-        var health=p.getAttribute(Attribute.MAX_HEALTH);if(health!=null){health.removeModifier(hpModifier);if(sum[1]>0)health.addTransientModifier(new AttributeModifier(hpModifier,sum[1],AttributeModifier.Operation.ADD_NUMBER));if(p.getHealth()>health.getValue())p.setHealth(health.getValue());}
+        // 준비 전에는 최대 체력 보정과 현재 체력을 건드리지 않는다: 여기서 체력을 기본 최대치로 깎으면 잠시 뒤 보정이 돌아와도 복구되지 않는다.
+        // 준비되면(PlayerStateBridge가 ready 표시 직후 refresh 호출) 공유 상태 기준으로 다시 계산하므로 예전 보정이 남지 않는다. 준비 실패는 강제 퇴장이다.
+        var health=ready?p.getAttribute(Attribute.MAX_HEALTH):null;if(health!=null){health.removeModifier(hpModifier);if(sum[1]>0)health.addTransientModifier(new AttributeModifier(hpModifier,sum[1],AttributeModifier.Operation.ADD_NUMBER));if(p.getHealth()>health.getValue())p.setHealth(health.getValue());}
         if(mana.snapshot(p.getUniqueId()).isPresent()){mana.setModifier(p.getUniqueId(),"magiccodex:equipment",sum[2],sum[3]);mana.setHasteModifier(p.getUniqueId(),"magiccodex:equipment",sum[4]);}
     }
     @Override public void onPluginMessageReceived(String channel,Player p,byte[] bytes){
@@ -129,7 +133,9 @@ final class EquipmentBridge implements PluginMessageListener,Listener,CommandExe
     }
     @EventHandler(priority=EventPriority.MONITOR) public void join(PlayerJoinEvent e){apply(e.getPlayer());}
     @EventHandler public void quit(PlayerQuitEvent e){sessions.remove(e.getPlayer().getUniqueId());limits.remove(e.getPlayer().getUniqueId());totals.remove(e.getPlayer().getUniqueId());hands.remove(e.getPlayer().getUniqueId());}
-    @EventHandler(priority=EventPriority.HIGHEST) public void death(PlayerDeathEvent e){if(e.getKeepInventory())return;Player p=e.getEntity();for(int i=0;i<4;i++){ItemStack item=accessory(p,i);if(!empty(item)&&!item.containsEnchantment(Enchantment.VANISHING_CURSE))e.getDrops().add(item);accessory(p,i,null);}plugin.savePlayerState(p);sessions.remove(p.getUniqueId());}
+    // 취소된 사망·keepInventory는 건드리지 않는다. 공유 상태 적용 전(!ready)의 로컬 장신구는 예전 값일 수 있어 떨어뜨리면 복사가 된다:
+    // 그대로 두면 불러오기가 끝날 때 DB 값으로 덮어쓰인다 (그 짧은 구간의 사망에서는 장신구를 잃지 않는다).
+    @EventHandler(priority=EventPriority.HIGHEST,ignoreCancelled=true) public void death(PlayerDeathEvent e){if(e.getKeepInventory())return;Player p=e.getEntity();if(!plugin.playerStateReady(p)){sessions.remove(p.getUniqueId());return;}for(int i=0;i<4;i++){ItemStack item=accessory(p,i);if(!empty(item)&&!item.containsEnchantment(Enchantment.VANISHING_CURSE))e.getDrops().add(item);accessory(p,i,null);}plugin.savePlayerState(p);sessions.remove(p.getUniqueId());}
     @EventHandler public void respawn(PlayerRespawnEvent e){Bukkit.getScheduler().runTask(plugin,()->{if(e.getPlayer().isOnline())apply(e.getPlayer());});}
     @Override public void close(){for(Player p:Bukkit.getOnlinePlayers()){var hp=p.getAttribute(Attribute.MAX_HEALTH);if(hp!=null){hp.removeModifier(hpModifier);if(p.getHealth()>hp.getValue())p.setHealth(hp.getValue());}if(mana.snapshot(p.getUniqueId()).isPresent()){mana.removeModifier(p.getUniqueId(),"magiccodex:equipment");mana.setHasteModifier(p.getUniqueId(),"magiccodex:equipment",0);}}sessions.clear();totals.clear();limits.clear();hands.clear();}
 }

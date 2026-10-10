@@ -81,6 +81,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private PlayerStateBridge playerState;
     boolean playerStateReady(Player p){return playerState==null||playerState.ready(p);}
     void savePlayerState(Player p){if(playerState!=null)playerState.save(p);}
+    /** 잦은 변경(마법 시전)용: 표시만 하고 다음 주기 저장에 묶는다. 종료·서버 이동 시에는 항상 저장된다. */
+    void markPlayerStateDirty(Player p){if(playerState!=null)playerState.markDirty(p);}
     Double equipmentPower(UUID id,Double base){return equipment==null?base:equipment.power(id,base);}
     DisplayNames names(){return names;}
     int questHouse(Player p){return school==null?-1:school.house(p);}
@@ -90,8 +92,25 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private boolean immediateScheduled;
     private static long now() { return System.nanoTime() / 1_000_000L; }
 
+    /** 시작 시 DB 설정 파일마다 한 줄(파일 유무·모드)을 남긴다. database.require-mariadb: true면 SQLite로 동작할 파일이 하나라도 있을 때 시작을 거부한다. */
+    private boolean databaseModeAccepted() {
+        boolean require = getConfig().getBoolean("database.require-mariadb", false), accepted = true;
+        for (String name : java.util.List.of("database.properties", ShopMailboxDatabaseSettings.FILE_NAME)) {
+            var file = getDataFolder().toPath().resolve(name);
+            try {
+                var settings = DatabaseSettings.load(file);
+                getLogger().info(DatabaseSettings.describe(file, settings));
+                if (!settings.mariaDb()) accepted = false;
+            } catch (IOException error) { getLogger().severe("DB 설정 " + name + " 오류: " + error.getMessage()); accepted = false; }
+        }
+        if (!require || accepted) return true;
+        getLogger().severe("database.require-mariadb=true 인데 MariaDB가 아닌(SQLite 기본값 또는 잘못된) DB 설정 파일이 있습니다. 서버 간 데이터가 갈라지지 않도록 플러그인을 시작하지 않습니다. 위 'DB 설정' 줄을 확인하세요.");
+        getServer().getPluginManager().disablePlugin(this);
+        return false;
+    }
     @Override public void onEnable() {
         saveDefaultConfig();
+        if (!databaseModeAccepted()) return;
         names=new DisplayNames(this);
         wallet=new WalletBridge(this);
         long refresh = Math.clamp(getConfig().getLong("refresh-interval-ticks", 200), 20, 1200) * 50;

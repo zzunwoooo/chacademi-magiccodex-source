@@ -34,7 +34,12 @@ public final class MovementController {
         final Deque<Location> route = new ArrayDeque<>();
         long legStartedAt;
         long nextWanderAt;
+        long nextWarmCheckAt;
     }
+
+    /** 이 거리(칸) 안에 플레이어가 있는 NPC만 버튼 대답을 미리 만든다 (아무도 없는 곳의 NPC에 AI 비용을 쓰지 않는다). */
+    private static final double WARMUP_RADIUS = 48;
+    private static final long WARMUP_CHECK_MS = 30_000L;
 
     private final ChacaNpcPlugin plugin;
     private final Map<String, State> states = new HashMap<>();
@@ -68,6 +73,13 @@ public final class MovementController {
                 continue;
             }
             int slot = plugin.npcs().currentSlot(c);
+            if (slot >= 0 && now >= s.nextWarmCheckAt) {
+                // 근처에 플레이어가 있을 때만 버튼 대답을 채운다 (같은 NPC·칸은 DialogueService 가 10분에 한 번만 실제로 만든다)
+                s.nextWarmCheckAt = now + WARMUP_CHECK_MS;
+                if (playerNear(currentLocation(npc), WARMUP_RADIUS)) {
+                    plugin.dialogue().warmup(c, slot);
+                }
+            }
             if (slot != s.slot) {
                 boolean first = s.slot == Integer.MIN_VALUE;
                 s.slot = slot;
@@ -80,7 +92,6 @@ public final class MovementController {
                 }
                 s.mode = Mode.WAITING;
                 s.departAt = first ? now : now + random.nextInt(Math.max(1, st.staggerSeconds * 1000));
-                plugin.dialogue().warmup(c, slot);
             }
             switch (s.mode) {
                 case WAITING -> {

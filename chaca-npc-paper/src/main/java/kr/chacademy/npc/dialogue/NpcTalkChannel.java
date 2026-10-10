@@ -64,8 +64,8 @@ public final class NpcTalkChannel implements PluginMessageListener, Listener, Di
 
     /** 클라이언트 검사 한도에 맞게 잘라서 보낸다 (긴 이름·버튼·대사 때문에 창이 안 열리는 일 방지). */
     private void send(Player p, NpcTalkProtocol.Response r) {
-        if (!p.isOnline()) {
-            return;
+        if (!p.isOnline() || !plugin.isEnabled()) {
+            return; // 꺼지는 중(onDisable 의 closeAll)에는 패킷을 보낼 수 없다 — 경고 없이 건너뜀
         }
         List<NpcTalkProtocol.Button> bs = new ArrayList<>();
         for (NpcTalkProtocol.Button b : r.buttons()) {

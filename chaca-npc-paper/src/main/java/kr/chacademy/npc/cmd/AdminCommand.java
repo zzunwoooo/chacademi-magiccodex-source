@@ -134,8 +134,9 @@ public final class AdminCommand implements CommandExecutor, TabCompleter {
             msg(s, "5칸 안에 Citizens NPC가 없어요.");
             return;
         }
-        plugin.npcs().link(npc, c);
-        msg(s, "Citizens NPC #" + npc.getId() + " (" + npc.getName() + ") ↔ " + c.id() + " 연결 완료.");
+        int cleared = plugin.npcs().link(npc, c);
+        msg(s, "Citizens NPC #" + npc.getId() + " (" + npc.getName() + ") ↔ " + c.id() + " 연결 완료."
+                + (cleared > 0 ? " (같은 캐릭터에 연결돼 있던 다른 NPC " + cleared + "개의 연결은 해제했어요)" : ""));
         plugin.movement().reset();
     }
 
@@ -179,7 +180,10 @@ public final class AdminCommand implements CommandExecutor, TabCompleter {
                 return;
             }
         }
-        plugin.places().setPlace(a[1], p.getLocation(), radius);
+        if (!plugin.places().setPlace(a[1], p.getLocation(), radius)) {
+            msg(s, "장소 이름에는 마침표(.)나 빈칸을 쓸 수 없어요.");
+            return;
+        }
         if (a.length >= 4) {
             PlaceRepository.Place place = plugin.places().get(a[1]);
             if (place != null) {
@@ -240,7 +244,15 @@ public final class AdminCommand implements CommandExecutor, TabCompleter {
         s.sendMessage("§7오늘 플레이어 대화 호출: §f" + b.totalCallsToday() + "회  §7(1인 한도 " + st.perPlayerDailyCalls + ")");
         s.sendMessage("§7응답 속도: §f" + b.latencySummary());
         s.sendMessage("§7AI 대기열: §f" + plugin.ai().queueSize() + " §7/ 처리 중 " + plugin.ai().runningCount()
-                + "  §7AI: " + (b.isAiEnabled() ? "§a켜짐" : "§c꺼짐"));
+                + "  §7AI: " + (b.isAiEnabled() ? "§a켜짐" : "§c꺼짐 (/cnpc ai on — 재시작해도 유지됨)"));
+        s.sendMessage("§7최근 1시간 AI 실패: §f" + plugin.ai().failureSummary());
+        s.sendMessage("§7AI 차단기: §f" + plugin.ai().circuitSummary());
+        if (b.loadError() != null) {
+            s.sendMessage("§c사용량을 불러오지 못해 AI 대화가 꺼져 있습니다 (고정 대사만): " + b.loadError()
+                    + " — DB를 확인한 뒤 서버를 다시 시작하세요.");
+        } else if (!b.isLoaded()) {
+            s.sendMessage("§e사용량을 아직 불러오는 중입니다 (그동안은 고정 대사).");
+        }
     }
 
     private void ai(CommandSender s, String[] a) {
@@ -249,8 +261,13 @@ public final class AdminCommand implements CommandExecutor, TabCompleter {
             return;
         }
         boolean on = a[1].equalsIgnoreCase("on");
+        if (!on && !a[1].equalsIgnoreCase("off")) {
+            msg(s, "사용법: /cnpc ai on|off");
+            return;
+        }
         plugin.budget().setAiEnabled(on);
-        msg(s, on ? "AI를 켰어요." : "AI를 껐어요. 모든 NPC가 고정 대사로 대답합니다.");
+        msg(s, on ? "AI를 켰어요. (재시작해도 유지돼요)" : "AI를 껐어요. 모든 NPC가 고정 대사로 대답합니다. (재시작해도 유지돼요)");
+        plugin.getLogger().info("[ChacaNPC] " + s.getName() + " 이(가) AI를 " + (on ? "켰습니다" : "껐습니다") + ".");
     }
 
     private void vibe(CommandSender s, String[] a) {

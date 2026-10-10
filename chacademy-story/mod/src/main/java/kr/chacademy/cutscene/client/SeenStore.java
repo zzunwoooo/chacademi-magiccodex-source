@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-/** 끝까지 본 컷신 목록. config/chaca_cutscene/_seen.txt 에 한 줄에 하나씩. */
+/** 끝까지 본 컷신 목록. config/chaca_cutscene/_seen.txt 에 한 줄에 하나씩. 불러오기 작업 스레드에서도 읽으므로 synchronized. */
 public final class SeenStore {
     private static Set<String> cache;
 
@@ -34,15 +34,15 @@ public final class SeenStore {
         return cache;
     }
 
-    public static boolean hasSeen(String id) {
+    public static synchronized boolean hasSeen(String id) {
         return ids().contains(id);
     }
 
-    public static void markSeen(String id) {
+    public static synchronized void markSeen(String id) {
         if (ids().add(id)) save();
     }
 
-    public static void reset() {
+    public static synchronized void reset() {
         ids().clear();
         save();
     }

@@ -2,6 +2,7 @@ package school.magiccodex.discovery;
 import java.io.*;
 import java.util.*;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -34,6 +35,30 @@ final class TitleRewards {
             plugin.store.delivered(s.id,a.token()).whenComplete((ok,e)->plugin.later(()->{busy.remove(s.id);if(e!=null){plugin.failure(e);return;}
                 var latest=s.acquired.get(a.spell());s.acquired.put(a.spell(),new DiscoveryStore.Acquisition(a.token(),a.spell(),a.first(),3,latest.notified()));claim(p,s,false);
             }));
+        }));
+    }
+    /** 관리자: 지급 확인 대기(예약, reward=2)로 멈춘 보상 목록. */
+    void adminReserved(CommandSender sender,UUID id,String name){
+        plugin.store.reserved(id).whenComplete((list,error)->plugin.later(()->{
+            if(error!=null){plugin.failure(error);sender.sendMessage("보상 정보를 읽지 못했습니다. 서버 로그를 확인해 주세요.");return;}
+            if(list.isEmpty()){sender.sendMessage(name+": 지급 확인 대기 상태인 칭호 보상이 없습니다.");return;}
+            sender.sendMessage(name+": 지급 확인 대기 보상 "+list.size()+"건");
+            for(var a:list)sender.sendMessage(" - 번호 "+a.token()+" / "+a.spell()+(a.first()?" (최초 발견)":""));
+            sender.sendMessage("복구: /마법발견관리 보상 "+name+" <번호> 재수령|완료 (재수령=다시 받을 수 있게, 완료=이미 받은 것으로 처리)");
+        }));
+    }
+    /** 관리자: 예약 상태 보상을 수령 가능(재수령) 또는 지급 완료로 되돌린다. 지급 처리 중에는 중복 지급을 막기 위해 거절한다. */
+    void adminResolve(CommandSender sender,UUID id,String name,long token,boolean claimable){
+        if(busy.contains(id)){sender.sendMessage("지금 지급 처리 중인 플레이어입니다. 잠시 뒤 다시 시도해 주세요.");return;}
+        busy.add(id);
+        plugin.store.resolveReserved(id,token,claimable).whenComplete((changed,error)->plugin.later(()->{
+            busy.remove(id);
+            if(error!=null){plugin.failure(error);sender.sendMessage("보상 상태를 바꾸지 못했습니다. 서버 로그를 확인해 주세요.");return;}
+            if(!changed){sender.sendMessage("해당 번호의 지급 확인 대기 보상이 없습니다: "+token);return;}
+            var s=plugin.sessions.get(id);
+            if(s!=null)for(var a:List.copyOf(s.acquired.values()))if(a.token()==token)s.acquired.put(a.spell(),new DiscoveryStore.Acquisition(a.token(),a.spell(),a.first(),claimable?1:3,a.notified()));
+            plugin.getLogger().info("칭호 보상 복구: "+sender.getName()+" → "+name+"("+id+") 번호 "+token+" "+(claimable?"수령 가능으로 되돌림":"지급 완료 처리"));
+            sender.sendMessage(claimable?"번호 "+token+" 보상을 다시 수령할 수 있게 되돌렸습니다. (/칭호수령)":"번호 "+token+" 보상을 지급 완료로 처리했습니다.");
         }));
     }
 }

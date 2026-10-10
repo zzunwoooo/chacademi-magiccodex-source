@@ -61,6 +61,21 @@ ChacaNPC 하나가 처리하고, MagicCodexBridge의 Citizens 클릭 처리에�
   ([OpenAI 안내](https://developers.openai.com/api/docs/guides/spend-limits)).
 - `gpt-6-luna` 는 공식 API 모델이지만, 사용할 OpenAI 프로젝트의 접근 권한은 따로 확인해야 합니다.
 
+## AI 호출 보호 장치
+
+- 플레이어 대화와 백그라운드 작업(버튼 미리 생성·NPC 잡담·분위기 요약)은 스레드·대기열이 따로이고, 플레이어 쪽이 붐비면 백그라운드부터 버립니다.
+- 플레이어 대기열(`openai.max-queue`)이 가득 차면 바로 고정 대사 + 하루 횟수 환불. 대기 중 기한이 지났거나 창을 닫은 요청은 OpenAI에 보내지 않습니다(과금 없음).
+- 429·5xx·연결 실패만 한 번 다시 보냅니다. 연속 실패가 `openai.circuit.failures` 번이면 `cooloff-seconds` 동안 AI를 부르지 않습니다(차단기).
+- 실패는 `debug` 와 무관하게 종류별로 집계해 1분에 한 번 WARNING 으로 남기고, `/cnpc budget` 에 최근 1시간 집계·차단기 상태가 나옵니다.
+- 과금 없이 실패한 호출은 플레이어 하루 횟수를 돌려줍니다. "생각 중"은 입력 시점부터 `timeout-seconds`+3초 안에 반드시 끝납니다.
+
+## 저장·공개되는 글 검사
+
+- AI 대사: 제어문자·`§` 색 코드 제거 후 전송. 메모·약속·분위기 노트: 추가로 `&` 색 코드·URL 제거 + 금지어 검사(`filter.yml`), 걸리면 그 항목만 버림.
+- NPC끼리 잡담(근처 모두에게 보임)에 들어가는 소문은 서버가 만든 문장뿐입니다(플레이어 이름·플레이어/AI가 쓴 글 없음). `social.public-rumors: false` 로 끌 수 있습니다.
+  잡담 출력도 `filter.yml` 의 `chatter-banned` 로 한 번 더 검사하고, 접속 중인 플레이어 이름이 들어가면 내보내지 않습니다.
+- 마법 힌트는 서버가 대화에 넣어 준 시점 기준으로 횟수를 셉니다. 호감도가 낮으면 재료 대신 `hints.yml` 의 `vague` 문장만 AI에게 줍니다.
+
 ## 관리자 명령어
 
 `/cnpc test <id> <말>` · `/cnpc budget` · `/cnpc ai off` · `/cnpc list` · `/cnpc vibe review|approve|remove|clear|run` · `/cnpc reload` · `/cnpc place` · `/cnpc waypoint add|clear` · `/cnpc spawn|link|unlink`

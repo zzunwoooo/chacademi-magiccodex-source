@@ -3,7 +3,6 @@ package school.magiccodex.client;
 import java.io.ByteArrayOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.util.HexFormat;
 import java.util.function.Function;
@@ -50,7 +49,10 @@ public final class PortraitClient {
             new ArrayBlockingQueue<>(2),r->{Thread t=new Thread(r,"Portrait-IO");t.setDaemon(true);return t;},
             new ThreadPoolExecutor.DiscardOldestPolicy());
     private static final PortraitLoadFence LOAD=new PortraitLoadFence();
-    private static boolean helloSent,ready,confirmed,loading;
+    private static boolean helloSent,ready,confirmed,loading,helloRetried;
+    /** 불러오기가 시작된(또는 마지막으로 진행된) 시각. 0 = 불러오는 중 아님. 서버 응답이 없거나 작업이 밀려 사라지면 15초 뒤 정리한다. */
+    private static long loadingSince;
+    private static final long LOAD_TIMEOUT_MS=15_000L;
     private static String message="아직 저장된 일러스트가 없습니다.";
     private static PlayerPortraitTexture texture;
     private static String textureSha="";
@@ -67,7 +69,7 @@ public final class PortraitClient {
     static void draw(DrawContext c,int x,int y,int width){if(texture!=null)texture.draw(c,x,y,width);}
     static void drawTurn(DrawContext c){if(texture!=null)texture.drawTurn(c);}
     private static void reset(){
-        LOAD.next();IO.getQueue().clear();helloSent=ready=confirmed=loading=false;dropIncoming();
+        LOAD.next();IO.getQueue().clear();helloSent=ready=confirmed=loading=helloRetried=false;loadingSince=0;dropIncoming();
         if(texture!=null){texture.close();texture=null;}textureSha="";message="아직 저장된 일러스트가 없습니다.";
     }
     private static void dropIncoming(){incomingSha=null;incoming=null;incomingTotal=incomingChunks=incomingNext=0;}
@@ -88,6 +90,7 @@ public final class PortraitClient {
             if(!helloSent&&c.getNetworkHandler()!=null&&c.player!=null&&ClientPlayNetworking.canSend(Query.ID)){
                 helloSent=true;queueLoad(c,cacheDir(c),"",null,true);
             }
+            watchLoading(c);
         });
         ClientPlayNetworking.registerGlobalReceiver(Reply.ID,(payload,context)->{
             PortraitProtocol.Packet p;
@@ -110,6 +113,19 @@ public final class PortraitClient {
             case PortraitProtocol.S_STATUS->{if(ready&&client.player!=null&&!p.extra().isEmpty())client.player.sendMessage(Text.literal(p.extra().substring(0,Math.min(200,p.extra().length()))),false);}
             default->{}
         }
+    }
+    /** 클라이언트 틱마다: 불러오기가 15초 넘게 멈춰 있으면 HELLO를 한 번 다시 보내고, 그래도 안 되면 그만둔다. */
+    private static void watchLoading(MinecraftClient c){
+        if(!loading){loadingSince=0;return;}
+        long now=System.currentTimeMillis();
+        if(loadingSince==0){loadingSince=now;return;}
+        if(now-loadingSince<LOAD_TIMEOUT_MS)return;
+        LOAD.next();dropIncoming();
+        if(!helloRetried&&helloSent&&c.getNetworkHandler()!=null&&c.player!=null
+                &&send(PortraitProtocol.Packet.of(PortraitProtocol.C_HELLO,texture!=null?textureSha:"",PortraitProtocol.VERSION,"magic-codex-ui"))){
+            helloRetried=true;loadingSince=now;return;
+        }
+        loading=false;loadingSince=0;message="초상화를 불러오지 못했어요";
     }
     private static void meta(MinecraftClient c,PortraitProtocol.Packet p){
         String sha=p.text();
@@ -135,7 +151,7 @@ public final class PortraitClient {
         if(incoming==null||!p.text().equals(incomingSha)||p.number()!=incomingNext)return;
         int expected=incomingNext==incomingChunks-1?incomingTotal-incomingNext*PortraitProtocol.CHUNK_BYTES:PortraitProtocol.CHUNK_BYTES;
         if(p.data().length!=expected){dropIncoming();loading=false;message="일러스트 전송을 확인하지 못했습니다.";return;}
-        incoming.writeBytes(p.data());incomingNext++;
+        incoming.writeBytes(p.data());incomingNext++;if(loadingSince!=0)loadingSince=System.currentTimeMillis();
         if(incomingNext<incomingChunks)return;
         byte[] png=incoming.toByteArray();String sha=incomingSha;dropIncoming();
         queueLoad(c,cacheDir(c),sha,png,false);
@@ -182,7 +198,7 @@ public final class PortraitClient {
                 if(hello){
                     if(!send(PortraitProtocol.Packet.of(PortraitProtocol.C_HELLO,installed?hash:"",PortraitProtocol.VERSION,"magic-codex-ui"))){
                         loading=false;message="일러스트 서버에 연결되지 않았습니다.";
-                    }
+                    }else if(loadingSince!=0)loadingSince=System.currentTimeMillis();
                 }else{
                     confirmed=installed||confirmed;loading=false;
                     if(!installed)message="일러스트를 불러오지 못했습니다. 다시 접속해 주세요.";
@@ -195,13 +211,6 @@ public final class PortraitClient {
         String server=entry==null?"local":entry.address.toLowerCase(java.util.Locale.ROOT).replaceAll("[^a-z0-9._-]","_");
         if(server.length()>80)server=server.substring(0,80);
         return ROOT.resolve(server).resolve(c.player==null?"unknown":c.player.getUuidAsString());
-    }
-    private static void saveCache(Path dir,String sha,byte[] png){
-        try{
-            Files.createDirectories(dir);Path tmp=dir.resolve("portrait.png.tmp");Files.write(tmp,png);
-            Files.move(tmp,dir.resolve("portrait.png"),StandardCopyOption.REPLACE_EXISTING);
-            Files.writeString(dir.resolve("portrait.sha"),sha);
-        }catch(Exception ignored){}
     }
     private static void deleteCache(Path dir){try{Files.deleteIfExists(dir.resolve("portrait.cache"));Files.deleteIfExists(dir.resolve("portrait.sha"));Files.deleteIfExists(dir.resolve("portrait.png"));}catch(Exception ignored){}}
     private static String sha256(byte[] bytes){try{return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(bytes));}catch(Exception e){return "";}}
