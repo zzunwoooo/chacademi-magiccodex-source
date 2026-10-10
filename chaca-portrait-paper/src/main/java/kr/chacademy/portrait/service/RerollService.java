@@ -218,129 +218,169 @@ public final class RerollService implements Listener {
         }
     }
 
-    /** 메인 스레드: 같은 칸에 같은 아이템이 있으면 1개 차감 → 기록 → 작업. */
+    /** Durable DB intent precedes the inventory debit. Bukkit changes stay on main. */
     private void take(Player p, Pending pd, String request) {
-        PortraitSettings s = plugin.settings();
         UUID uuid = p.getUniqueId();
-        if (!p.isOnline()) {
-            checking.remove(uuid);
-            return;
-        }
-        if (plugin.service().busy(uuid)) {
-            checking.remove(uuid);
-            p.sendMessage(s.message("reroll-busy"));
-            return;
-        }
-        ItemStack cur = p.getInventory().getItem(pd.slot());
-        if (cur == null || !cur.isSimilar(pd.snapshot()) || cur.getAmount() < 1) {
-            checking.remove(uuid);
-            p.sendMessage(s.message("reroll-cancelled"));
-            return;
-        }
+        if (!current(p) || plugin.service().busy(uuid)) { checking.remove(uuid, pd.token()); return; }
         PortraitService.Job job = PortraitService.jobFor(PortraitService.Kind.REROLL, p, request, pd.token(), List.of(), null);
-        if (job.skin().url() == null) {
-            checking.remove(uuid);
-            p.sendMessage(s.message("reroll-no-skin"));
-            return;
-        }
-        if (cur.getAmount() == 1) {
-            p.getInventory().setItem(pd.slot(), null);
-        } else {
-            cur.setAmount(cur.getAmount() - 1);
-            p.getInventory().setItem(pd.slot(), cur);
-        }
-        byte[] itemBytes = pd.snapshot().serializeAsBytes();
-        // 차감한 인벤토리를 바로 저장: 생성 중 서버가 비정상 종료돼도 옛 저장본(아이템 있음) + 반환으로 복제되지 않게
-        try {
-            p.saveData();
-        } catch (RuntimeException ex) {
-            plugin.getLogger().warning("[ChacaPortrait] 플레이어 데이터 저장 실패: " + ex.getMessage());
-        }
+        if (job.skin().url() == null) { checking.remove(uuid, pd.token()); return; }
+        byte[] item = pd.snapshot().serializeAsBytes();
+        String server = plugin.settings().serverId;
         plugin.service().then(plugin.db().call(() -> {
-            plugin.storage().insertReroll(pd.token(), uuid, s.serverId, itemBytes, request);
-            return Boolean.TRUE;
-        }), ok -> {
-            checking.remove(uuid);
-            boolean submitted = plugin.service().submit(job, null);
-            if (!submitted) {
-                failed(uuid, pd.token());
-                if (p.isOnline()) {
-                    p.sendMessage(s.message("reroll-busy"));
+            plugin.storage().insertReroll(pd.token(), uuid, server, item, request);
+            return true;
+        }), ignored -> {
+            if (!current(p)) { checking.remove(uuid, pd.token()); return; }
+            try {
+                if (!kr.chacademy.portrait.core.InventoryReceipt.debit(new Account(p, pd.token(), pd.slot(), pd.snapshot()))) {
+                    checking.remove(uuid, pd.token());
+                    plugin.db().call(() -> plugin.storage().moveReroll(pd.token(), PortraitStorage.R_PREPARED, PortraitStorage.R_CANCELLED));
+                    p.sendMessage(plugin.settings().message("reroll-cancelled"));
+                    return;
                 }
-                return;
+            } catch (RuntimeException error) {
+                // Keep PREPARED: after an ambiguous save only the next loaded player-data
+                // snapshot can determine whether the debit was persisted. Do not mint a refund.
+                p.sendMessage("§c아이템 저장을 확인하지 못했습니다. 재접속하면 기록을 확인합니다.");
+                plugin.getLogger().warning("[ChacaPortrait] Debit save uncertain; recover on next login: " + pd.token());
+                return; // keep checking gate until quit
             }
-            if (p.isOnline()) {
-                int pos = plugin.service().waitingCount();
-                p.sendMessage(pos > 0 ? s.message("queued", "position", pos) : s.message("started"));
-            }
-        }, ex -> {
-            // 기록 실패 → 아이템 즉시 반환 (작업은 시작하지 않음)
-            checking.remove(uuid);
-            plugin.getLogger().warning("[ChacaPortrait] 다시 그리기 기록 실패: " + ex.getMessage());
-            give(p, pd.snapshot());
-            if (p.isOnline()) {
-                p.sendMessage(s.message("reroll-failed"));
-            }
+            plugin.service().then(plugin.db().call(() ->
+                    plugin.storage().moveReroll(pd.token(), PortraitStorage.R_PREPARED, PortraitStorage.R_PENDING)), promoted -> {
+                checking.remove(uuid, pd.token());
+                if (!Boolean.TRUE.equals(promoted) || !plugin.service().submit(job, null)) {
+                    failed(uuid, pd.token());
+                    return;
+                }
+                if (current(p)) p.sendMessage(plugin.settings().message("started"));
+            }, error -> { checking.remove(uuid, pd.token()); failed(uuid, pd.token()); });
+        }, error -> {
+            // No inventory mutation has happened yet. An uncertain committed intent
+            // is cancelled/recovered from the player's absent receipt on next login.
+            checking.remove(uuid, pd.token());
+            if (current(p)) p.sendMessage("§c요청을 기록하지 못했습니다. 아이템은 사용하지 않았습니다.");
         });
     }
 
-    /** 생성 실패 (어느 스레드든): PENDING → REFUND_DUE 후, 접속 중이면 돌려준다. */
-    public void failed(UUID uuid, String token) {
-        plugin.service().then(plugin.db().call(() ->
-                plugin.storage().moveReroll(token, PortraitStorage.R_PENDING, PortraitStorage.R_REFUND)), moved -> {
-            Player p = Bukkit.getPlayer(uuid);
-            if (p != null) {
-                deliverRefunds(p, true);
-            }
-        }, ex -> plugin.getLogger().warning("[ChacaPortrait] 반환 표시 실패 (" + token + "): " + ex.getMessage()));
+    private boolean current(Player p) {
+        return p.isOnline() && Bukkit.getPlayer(p.getUniqueId()) == p;
     }
 
-    /** 접속·실패 시: 돌려줄 아이템 지급 (메인 스레드에서 호출). REFUND_DUE → REFUNDED 전이가 성공한 것만 지급. */
+    public void failed(UUID uuid, String token) {
+        plugin.service().then(plugin.db().call(() -> {
+            plugin.storage().moveReroll(token, PortraitStorage.R_PREPARED, PortraitStorage.R_REFUND);
+            return plugin.storage().moveReroll(token, PortraitStorage.R_PENDING, PortraitStorage.R_REFUND);
+        }), moved -> {
+            Player p = Bukkit.getPlayer(uuid);
+            if (p != null) deliverRefunds(p, true);
+        }, error -> plugin.getLogger().warning("[ChacaPortrait] Refund remains recoverable on restart: " + token));
+    }
+
+    private final java.util.Set<String> delivering = ConcurrentHashMap.newKeySet();
+    private final java.util.Set<UUID> retryRefunds = ConcurrentHashMap.newKeySet();
+
+    /** Only the server that debited the player owns the refund. Receipts are retained. */
     public void deliverRefunds(Player p, boolean failureMessage) {
         UUID uuid = p.getUniqueId();
-        plugin.service().then(plugin.db().call(() -> plugin.storage().refundsDue(uuid)), list -> {
-            for (PortraitStorage.Reroll r : list) {
+        if (!current(p) || checking.containsKey(uuid)) return;
+        plugin.service().then(plugin.db().call(() -> plugin.storage().refundsDue(uuid, plugin.settings().serverId)), rows -> {
+            if (!current(p)) return;
+            for (PortraitStorage.Reroll row : rows) {
+                if (!delivering.add(row.token())) continue;
+                Account account = new Account(p, row.token(), -1, ItemStack.deserializeBytes(row.item()));
+                String marker = account.marker();
+                if (PortraitStorage.R_PREPARED.equals(row.state())) {
+                    // A prepared row with no saved debit receipt consumed nothing.
+                    String next = marker == null ? PortraitStorage.R_CANCELLED : PortraitStorage.R_REFUND;
+                    plugin.service().then(plugin.db().call(() ->
+                            plugin.storage().moveReroll(row.token(), PortraitStorage.R_PREPARED, next)), moved -> {
+                        delivering.remove(row.token());
+                        if (current(p) && Boolean.TRUE.equals(moved) && PortraitStorage.R_REFUND.equals(next)) deliverRefunds(p, failureMessage);
+                    }, error -> delivering.remove(row.token()));
+                    continue;
+                }
+                try {
+                    if (!kr.chacademy.portrait.core.InventoryReceipt.refund(account)) {
+                        if (marker != null) retryRefunds.add(uuid);
+                        else plugin.getLogger().warning("[ChacaPortrait] Missing debit receipt; manual audit required: " + row.token());
+                        delivering.remove(row.token());
+                        continue;
+                    }
+                } catch (RuntimeException error) {
+                    retryRefunds.add(uuid);
+                    delivering.remove(row.token());
+                    plugin.getLogger().warning("[ChacaPortrait] Refund save deferred: " + row.token());
+                    continue;
+                }
+                // Persisted receipt + inventory now agree. Even if this DB write fails,
+                // the retained receipt prevents a second item on next login.
                 plugin.service().then(plugin.db().call(() ->
-                        plugin.storage().moveReroll(r.token(), PortraitStorage.R_REFUND, PortraitStorage.R_REFUNDED)), moved -> {
-                    if (!Boolean.TRUE.equals(moved)) {
-                        return;
-                    }
-                    Player now = Bukkit.getPlayer(uuid);
-                    if (now == null) {
-                        // 그 사이 나감 → 다시 돌려줄 대상으로
-                        plugin.db().call(() -> plugin.storage().moveReroll(r.token(), PortraitStorage.R_REFUNDED, PortraitStorage.R_REFUND));
-                        return;
-                    }
-                    try {
-                        give(now, ItemStack.deserializeBytes(r.item()));
-                        now.sendMessage(plugin.settings().message(failureMessage ? "reroll-failed" : "refund"));
-                    } catch (RuntimeException ex) {
-                        plugin.getLogger().severe("[ChacaPortrait] 아이템 반환 실패 " + now.getName() + " (토큰 " + r.token()
-                                + ") — 관리자 확인 필요: " + ex.getMessage());
-                    }
-                }, ex -> plugin.getLogger().warning("[ChacaPortrait] 반환 처리 실패: " + ex.getMessage()));
+                        plugin.storage().moveReroll(row.token(), PortraitStorage.R_REFUND, PortraitStorage.R_REFUNDED)), moved -> {
+                    delivering.remove(row.token());
+                    retryRefunds.remove(uuid);
+                    if (current(p) && Boolean.TRUE.equals(moved)) p.sendMessage(plugin.settings().message(failureMessage ? "reroll-failed" : "refund"));
+                }, error -> { delivering.remove(row.token()); retryRefunds.add(uuid); });
             }
-        }, ex -> plugin.getLogger().warning("[ChacaPortrait] 반환 목록 조회 실패: " + ex.getMessage()));
+        }, error -> plugin.getLogger().warning("[ChacaPortrait] Refund lookup deferred until next login."));
     }
 
-    private void give(Player p, ItemStack item) {
-        if (!p.isOnline()) {
-            plugin.getLogger().severe("[ChacaPortrait] 아이템 반환 불가 (접속 종료): " + p.getName() + " " + item.getType());
-            return;
+    /** Receipt and inventory are part of one player-data save, never a separate file. */
+    private final class Account implements kr.chacademy.portrait.core.InventoryReceipt.Account {
+        private final Player player;
+        private final org.bukkit.NamespacedKey key;
+        private final int slot;
+        private final ItemStack item;
+        private record Snapshot(ItemStack[] contents, String receipt) {}
+        Account(Player p, String token, int slot, ItemStack item) {
+            this.player=p; this.key=new org.bukkit.NamespacedKey(plugin,"receipt_"+token);
+            this.slot=slot; this.item=item.clone(); this.item.setAmount(1);
         }
-        for (ItemStack left : p.getInventory().addItem(item).values()) {
-            p.getWorld().dropItemNaturally(p.getLocation(), left);
+        public String marker() { return player.getPersistentDataContainer().get(key, org.bukkit.persistence.PersistentDataType.STRING); }
+        public void marker(String value) {
+            if (value == null) player.getPersistentDataContainer().remove(key);
+            else player.getPersistentDataContainer().set(key, org.bukkit.persistence.PersistentDataType.STRING, value);
+        }
+        public Object snapshot() {
+            ItemStack[] items=player.getInventory().getStorageContents();
+            for(int i=0;i<items.length;i++) if(items[i]!=null) items[i]=items[i].clone();
+            return new Snapshot(items,marker());
+        }
+        public void restore(Object value) {
+            Snapshot s=(Snapshot)value; player.getInventory().setStorageContents(s.contents()); marker(s.receipt());
+        }
+        public boolean take() {
+            if(!current(player) || slot<0) return false;
+            ItemStack current=player.getInventory().getItem(slot);
+            if(current==null || !current.isSimilar(item) || current.getAmount()<1) return false;
+            ItemStack after=current.clone(); after.setAmount(current.getAmount()-1);
+            player.getInventory().setItem(slot,after.getAmount()==0?null:after); return true;
+        }
+        public boolean give() {
+            if(!current(player)) return false;
+            ItemStack[] items=player.getInventory().getStorageContents();
+            for(int i=0;i<items.length;i++) if(items[i]==null || items[i].getType().isAir()) {
+                player.getInventory().setItem(i,item.clone()); return true;
+            }
+            player.sendMessage("§e일러스트 아이템 반환 대기 중: 인벤토리에 빈 칸을 만들어 주세요.");
+            return false;
+        }
+        public void save() {
+            if(!Bukkit.isPrimaryThread() || !current(player)) throw new IllegalStateException("Player session changed");
+            player.saveData();
         }
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         pending.remove(e.getPlayer().getUniqueId());
+        checking.remove(e.getPlayer().getUniqueId());
+        retryRefunds.remove(e.getPlayer().getUniqueId());
         clickGate.remove(e.getPlayer().getUniqueId());
     }
 
     /** 만료된 입력 대기 정리 (주기 호출). */
     public void sweep() {
+        for (UUID id : retryRefunds) { Player p=Bukkit.getPlayer(id); if(p!=null) deliverRefunds(p, false); }
         long now = System.currentTimeMillis();
         pending.entrySet().removeIf(en -> {
             if (now <= en.getValue().expiresAt()) {

@@ -66,6 +66,7 @@ public final class PortraitService {
     private final LinkedBlockingQueue<Runnable> waiting = new LinkedBlockingQueue<>();
     private final AtomicInteger threadNo = new AtomicInteger();
     private volatile ThreadPoolExecutor pool;
+    private final kr.chacademy.portrait.core.GenerationGate gate = new kr.chacademy.portrait.core.GenerationGate();
     private volatile List<byte[]> references = List.of();
     private volatile String referenceError = "레퍼런스를 아직 읽지 않았습니다";
 
@@ -80,7 +81,7 @@ public final class PortraitService {
             t.setDaemon(true);
             return t;
         });
-        loadReferences();
+        CompletableFuture.runAsync(this::loadReferences);
     }
 
     /** /portrait reload: 작업 수·레퍼런스 다시 읽기. */
@@ -96,10 +97,11 @@ public final class PortraitService {
                 p.setMaximumPoolSize(s.workers);
             }
         }
-        loadReferences();
+        CompletableFuture.runAsync(this::loadReferences);
     }
 
     public void stop() {
+        gate.stop();
         ThreadPoolExecutor p = pool;
         if (p != null) {
             p.shutdownNow();
@@ -168,7 +170,7 @@ public final class PortraitService {
      */
     public boolean submit(Job job, Runnable onRejected) {
         ThreadPoolExecutor p = pool;
-        if (p == null || p.isShutdown()) {
+        if (!gate.running() || p == null || p.isShutdown()) {
             return false;
         }
         if (job.kind() != Kind.TEST && !active.add(job.player())) {
@@ -241,6 +243,10 @@ public final class PortraitService {
                     throw new JobFailure("다른 서버에서 이미 그리는 중", false, true);
                 }
             }
+            if (!gate.running()) return;
+            if (job.kind() == Kind.AUTO && (!s.automaticGenerationAllowed()
+                    || await(plugin.db().call(() -> st.sha(job.player()) != null
+                        || st.autoAttempts(job.player()) >= s.autoMaxAttempts)))) return;
             Committed done = produce(job, s, st);
             if (done == null) {
                 return; // TEST
@@ -289,6 +295,7 @@ public final class PortraitService {
     /** 생성부터 확정까지. TEST면 null. 실패는 JobFailure, 확정 전 내부 오류는 그대로 던짐(→ 반환 처리). */
     private Committed produce(Job job, PortraitSettings s, PortraitStorage st) throws Exception {
         String server = s.serverId;
+        if (!gate.running() || Thread.currentThread().isInterrupted()) throw new InterruptedException("Portrait generation stopped");
         if (!s.enabled) {
             throw new JobFailure("기능 꺼짐", false, true);
         }
@@ -327,6 +334,7 @@ public final class PortraitService {
                 long in = -1, out = -1;
                 boolean ok = false;
                 try {
+                    if (!gate.running() || Thread.currentThread().isInterrupted()) throw new InterruptedException("Generation stopped");
                     OpenAiImageClient.TextResult r = ai.describe(s, render, user);
                     appearance = PromptBuilder.clean(r.text(), 600);
                     in = r.inputTokens();
@@ -355,8 +363,8 @@ public final class PortraitService {
         String sha = sha256(g.png);
         String source = job.kind() == Kind.REROLL ? "reroll" : job.kind() == Kind.ADMIN ? "admin" : "auto";
         String day = LocalDate.now(ZONE).toString();
-        boolean committed = await(plugin.db().call(() -> st.commitResult(job.player(), job.rerollToken(), sha, g.png, model,
-                source, job.request(), g.cost, day)));
+        boolean committed = await(plugin.db().call(() -> gate.commit(() -> st.commitResult(job.player(), job.rerollToken(), sha, g.png, model,
+                source, job.request(), g.cost, day))));
         if (!committed) {
             throw new DiscardedResult();
         }
@@ -369,6 +377,7 @@ public final class PortraitService {
     /** 예약 → 호출 → 검사 → 정산 (정산은 어떤 경우에도 한 번). 실패는 JobFailure. */
     private Generated generate(Job job, PortraitSettings s, CostModel cost, String model, List<byte[]> inputs,
                                String prompt, String user) throws Exception {
+        if (!gate.running() || Thread.currentThread().isInterrupted()) throw new InterruptedException("Generation stopped");
         PortraitStorage st = plugin.storage();
         if (!cost.hasPrices(model)) {
             throw new JobFailure("단가표(prices)에 " + model + " 없음 — 예산을 지킬 수 없어 중단", false, true);
@@ -385,6 +394,7 @@ public final class PortraitService {
         byte[] png = null;
         String error = null;
         try {
+            if (!gate.running() || Thread.currentThread().isInterrupted()) throw new InterruptedException("Generation stopped");
             OpenAiImageClient.ImageResult r = ai.edit(s, model, inputs, prompt, user);
             usage = r.usage();
             settle = cost.settleImage(model, usage, reserve);

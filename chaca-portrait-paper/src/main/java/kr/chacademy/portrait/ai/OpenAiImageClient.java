@@ -148,11 +148,11 @@ public final class OpenAiImageClient {
     private String send(PortraitSettings s, HttpRequest req) throws IOException, InterruptedException {
         HttpResponse<String> res;
         try {
-            res = http.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            res = http.send(req, LimitedResponseBody.handler(12 * 1024 * 1024));
         } catch (ConnectException e) {
             // 연결 자체가 안 됨 → 서버에 닿지 않았으므로 과금 없음. 한 번만 다시.
             try {
-                res = http.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+                res = http.send(req, LimitedResponseBody.handler(12 * 1024 * 1024));
             } catch (ConnectException e2) {
                 throw new ApiException("OpenAI 연결 실패", 0, false);
             } catch (HttpTimeoutException e2) {

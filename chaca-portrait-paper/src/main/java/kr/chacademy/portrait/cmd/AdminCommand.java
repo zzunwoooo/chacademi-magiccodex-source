@@ -63,9 +63,9 @@ public final class AdminCommand implements TabExecutor, TabCompleter {
 
     private void help(CommandSender s) {
         s.sendMessage("§b[ChacaPortrait] 관리자 명령어");
-        s.sendMessage("§f/portrait test <플레이어> [gpt-image-2|gpt-image-1.5|both] §7시험 생성 (저장 안 함, 비용 보고)");
-        s.sendMessage("§f/portrait regen <플레이어> [모델] §7강제 다시 생성");
-        s.sendMessage("§f/portrait reset <플레이어> §7일러스트 삭제·자동 시도 초기화 (다음 접속 때 다시 자동 생성)");
+        s.sendMessage("§f/portrait test <플레이어> [gpt-image-2|gpt-image-1.5|both] §7모델 비교 파일만 생성 (유료·예산 DB 기록, 초상화 미적용)");
+        s.sendMessage("§f/portrait regen <플레이어> [모델] §7유료 생성·저장·본인에게 전달 (자동 OFF에서도 가능)");
+        s.sendMessage("§f/portrait reset <플레이어> §7일러스트 삭제·자동 시도 초기화 (자동 OFF면 재생성하지 않음)");
         s.sendMessage("§f/portrait model [gpt-image-2|gpt-image-1.5] §7사용 모델 보기/바꾸기");
         s.sendMessage("§f/portrait status [플레이어] §7대기열·플레이어 상태");
         s.sendMessage("§f/portrait budget §7일러스트 예산");
@@ -177,7 +177,7 @@ public final class AdminCommand implements TabExecutor, TabCompleter {
             plugin.storage().resetState(id);
             return had;
         }), had -> {
-            s.sendMessage(had ? "§a[ChacaPortrait] " + args[1] + " 일러스트를 지웠습니다. 다음 접속 때 자동으로 다시 그립니다."
+            s.sendMessage(had ? "§a[ChacaPortrait] " + args[1] + " 일러스트를 지웠습니다. 자동생성이 켜진 학교 서버에서만 다음 접속 때 다시 그립니다."
                     : "§e[ChacaPortrait] " + args[1] + " 일러스트가 없습니다 (자동 시도 횟수만 초기화).");
             Player p = op.getPlayer();
             if (p != null) {
@@ -242,7 +242,7 @@ public final class AdminCommand implements TabExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> out = new ArrayList<>();
         if (!sender.hasPermission("chacaportrait.admin")) {
-            return out;
+            return out.stream().filter(value -> value.toLowerCase(Locale.ROOT).startsWith(args.length == 0 ? "" : args[args.length - 1].toLowerCase(Locale.ROOT))).toList();
         }
         if (args.length == 1) {
             for (String o : List.of("test", "regen", "reset", "model", "status", "budget", "reload")) {
@@ -263,6 +263,6 @@ public final class AdminCommand implements TabExecutor, TabCompleter {
         } else if (args.length == 3 && args[0].equalsIgnoreCase("regen")) {
             out.addAll(MODELS);
         }
-        return out;
+        return out.stream().filter(value -> value.toLowerCase(Locale.ROOT).startsWith(args.length == 0 ? "" : args[args.length - 1].toLowerCase(Locale.ROOT))).toList();
     }
 }

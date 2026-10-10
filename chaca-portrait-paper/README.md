@@ -1,82 +1,50 @@
-# ChacaPortrait (chaca-portrait-paper)
+# ChacaPortrait 사용법과 검증 경계
 
-플레이어 스킨을 읽어 **레퍼런스 일러스트와 같은 그림체의 상반신 일러스트**를 만들고, MagicCodex 대화창의 **"내 차례"** 화면에 띄우는 Paper 플러그인입니다.
+- 자동 생성 기본값은 `auto.first-join: false`입니다. 관리자 수동 생성과 별개입니다.
+- 자동 생성을 켜도 `server-id: school`에서만 생성합니다. wild는 자동 생성하지 않습니다.
+- 전역 `enabled: false`는 모든 유료 생성(관리자 포함)을 막습니다.
+- 키는 `CHACAPORTRAIT_OPENAI_KEY`, 없으면 `CHACANPC_OPENAI_KEY` 환경변수만 사용합니다.
+- 공유 DB에서 서버마다 고유 server-id가 필요합니다. 재시작 복구가 다른 서버 작업에 영향을 주면 안 됩니다.
 
-- 최초 접속 시 1회 자동 생성. 실패하면 다음 접속 때 다시 시도하며 `auto.max-attempts`회까지만 시도.
-- ItemsAdder 아이템 `item:reroll`을 들고 **우클릭**하면 입력창이 열립니다.
-  - 추가 요청을 적어 다시 그릴 수 있습니다 (예: "밤하늘 배경, 웃는 얼굴").
-  - 아이템은 성공했을 때만 소모되고, 실패하면 돌려줍니다.
-- 이미지 모델은 `gpt-image-2` / `gpt-image-1.5` 중에서 config 또는 `/portrait model`로 고릅니다.
-- 클라이언트(MagicCodex UI)는 받은 PNG를 SHA-256으로 확인한 뒤 `config/magiccodex/portraits/`에 캐시합니다.
-  - 그래서 재접속할 때 다시 받지 않습니다.
+## 명령
+관리자 권한 `chacaportrait.admin`(기본 OP):
+- `/portrait regen <온라인 플레이어> [gpt-image-2|gpt-image-1.5]`: 유료 생성 후 저장하고 본인 클라이언트에 전달합니다. 다른 NPC와 대화하거나 /내일러스트로 볼 수 있습니다.
+- `/portrait test <온라인 플레이어> both`: 유료 모델 비교. tests/ 폴더에 파일을 쓰며 플레이어의 저장 초상화는 교체하지 않습니다. 예산 예약·정산·사용 내역은 DB에 기록됩니다.
+- `/portrait model <모델>`, `/portrait status [플레이어]`, `/portrait budget`, `/portrait reload`
+- `/portrait reset <플레이어>`: 저장된 초상화 삭제. 자동 OFF면 다시 자동 생성하지 않습니다.
+- 생성 명령은 키·레퍼런스·DB 준비 후 실행합니다. 이번 빌드 검증에서는 실행하지 않았습니다.
 
-## 처리 순서
+일반 사용자:
+- `/내일러스트`: MagicCodex Fabric 클라이언트 명령. 현재 서버·현재 로그인 계정의 저장된 일러스트만 표시합니다. API/재생성/아이템 소모가 없습니다. ESC 또는 닫기로 나옵니다.
+- ItemsAdder `item:reroll` 우클릭: 입력 후 재생성합니다. 아이템 정의는 별도 설치가 필요합니다.
 
-1. **스킨 읽기:** 서버가 플레이어 프로필의 스킨을 읽습니다. 받는 주소는 `textures.minecraft.net`만 허용합니다.
-2. **앞·뒤 그림 만들기:** 스킨을 앞·뒤 전신 그림(1024×768)으로 펼칩니다. AI를 쓰지 않습니다.
-3. **외형 정리 (선택):** `gpt-6-luna`가 그림을 보고 외형을 영어 60단어 이내로 정리합니다. 실패해도 계속 진행합니다.
-4. **이미지 생성:** `/v1/images/edits`에 [레퍼런스 일러스트, 스킨 그림]과 고정 지시문을 보냅니다.
-   - 플레이어의 추가 요청은 지시문의 "추가 요청" 칸에만 따옴표로 감싸 넣습니다.
-   - 요청 문장은 미리 moderation 검사를 거칩니다.
-5. **결과 확인·전송:**
-   - PNG 형식과 최대 2048px 크기를 확인합니다. `require-transparent`가 켜져 있으면 투명 배경인지도 봅니다.
-   - 확인이 끝나면 DB에 저장하고, 접속 중이면 클라이언트로 보냅니다 (192KB 조각, 틱당 1개).
+## 중단·환급
+DB PREPARED 의도를 먼저 기록합니다. 아이템 차감과 D 영수증은 같은 플레이어 데이터 저장에 남긴 뒤 PENDING으로 전환합니다.
+성공 커밋은 DONE이며 환급하지 않습니다. 종료 시 진행 중 생성은 취소하고 재개하지 않습니다. PENDING은 다음 시작 때 REFUND_DUE로 전환합니다.
+원래 차감한 서버에 다음 접속하면 D 영수증을 확인하여 원래 아이템 1개와 R 영수증을 함께 저장한 뒤 DB를 REFUNDED로 바꿉니다. R이 이미 있으면 재지급하지 않습니다.
+빈 칸이 없으면 땅에 떨어뜨리지 않고 반환을 보류합니다. 영수증은 재처리 방지를 위해 보존합니다.
+접속 교체·중복 콜백과 늦은 API 완료를 차단합니다. 저장 오류나 출처 불명인 옛 영수증 없는 건은 임의 지급하지 않고 확인 대상으로 남깁니다.
 
-## 설치 (운영 반영은 통합 확인 후)
+**한계:** DB와 인벤토리가 하나의 트랜잭션은 아닙니다. 이 설계는 Paper가 인벤토리와 PDC를 같은 플레이어 저장본으로 보존한다는 전제입니다.
+디스크 손상·백업 불일치 복원·다른 플러그인이 인벤토리/PDC를 따로 동기화하거나 저장 실패를 숨기는 경우까지 exactly-once를 보장하지 않습니다.
+school/wild 간 외부 인벤토리 동기화가 있다면 해당 플러그인의 PDC 동기화·접속 직렬화 보장을 먼저 검증해야 합니다.
 
-1. `chaca-portrait-0.1.0.jar`를 `plugins/`에 넣습니다. ItemsAdder는 선택 사항이며, 없으면 다시 그리기만 꺼집니다.
-2. 레퍼런스 일러스트를 `plugins/ChacaPortrait/reference/style-reference.png`에 둡니다.
-   - 공개 Git에는 올리지 않습니다. 따로 전달합니다.
-   - 레퍼런스는 기존 NPC 초상화와 같은 1024×1536, 머리부터 허벅지 중간까지의 구도가 좋습니다.
-3. 키는 school 프로세스 환경변수 `CHACAPORTRAIT_OPENAI_KEY`로 넣습니다. 없으면 `CHACANPC_OPENAI_KEY`를 씁니다. config에는 넣지 않습니다.
-4. (선택) school/wild 두 서버에서 일러스트·예산·작업 잠금을 함께 쓰려면 `database.properties`를 둡니다.
-   - 같은 MariaDB의 전용 스키마를 권장합니다 (예: `chacademi_portrait`).
-   - 파일이 없으면 서버마다 따로 쓰는 SQLite(`plugins/ChacaPortrait/chaca-portrait.db`)가 됩니다.
-5. ItemsAdder에 `item:reroll` 아이템을 등록합니다. 아이템 정의는 운영 쪽에서 만듭니다.
-6. `/portrait test <플레이어> both`로 두 모델의 결과와 실제 비용을 확인합니다.
-   - 확인한 뒤 `/portrait model <모델>`로 사용할 모델을 고릅니다.
+## 스레드와 크기
+클라이언트 파일 IO, SHA 검증, PNG 디코딩·알파 처리는 작업 스레드에서, GPU 업로드·렌더·텍스처 해제는 렌더 스레드에서 합니다.
+이전 접속이나 이전 이미지의 작업 완료는 폐기합니다. HTTP 응답은 수신 중 12MiB를 넘으면 취소하며, 결과 PNG는 8MiB·2048px 제한을 따로 검사합니다.
 
-## 관리자 명령어 (`chacaportrait.admin`, 기본 OP)
+## 운영 승인
+자동 OFF도 onEnable에서 DB 연결, cport_* 테이블/인덱스 생성, 예산 기본 행 삽입과 잠금·미완료 요청·예약 복구를 합니다.
+운영 DB 변경 승인이 없으면 설치·활성화하지 않습니다. SQLite fallback도 DB 파일 생성이므로 승인 대상입니다.
+필요한 승인 범위: cport_portrait, cport_state, cport_reroll, cport_budget, cport_reservation, cport_usage 및 관련 인덱스, 초기화/복구 DML.
+실제 키 설정과 유료 API 테스트는 별도 승인입니다.
+reference/style-reference.png 및 reference/style-reference-full.png는 공개 Git/JAR에 넣지 않습니다.
 
-| 명령 | 설명 |
-| --- | --- |
-| `/portrait test <플레이어> [gpt-image-2\|gpt-image-1.5\|both]` | 시험 생성입니다. 플레이어 일러스트에는 적용하지 않습니다. `tests/`에 결과 PNG·스킨 그림·지시문이 남고, 채팅으로 모델별 토큰과 비용을 보고합니다. |
-| `/portrait regen <플레이어> [모델]` | 강제로 다시 생성해 적용합니다. |
-| `/portrait reset <플레이어>` | 일러스트를 지우고 자동 시도 횟수를 초기화합니다. 다음 접속 때 자동으로 다시 그립니다 (비용 발생). |
-| `/portrait model [모델]` | 사용 모델을 보거나 바꿉니다. config에 저장됩니다. |
-| `/portrait status [플레이어]` / `budget` / `reload` | 상태, 예산, 설정 다시 읽기입니다. |
-
-## 비용·예산
-
-- 일러스트 전용 총예산은 `budget.total-usd`(기본 $30)이며, ChacaNPC 대화 예산과 별개입니다.
-- 모든 호출(외형 정리, 이미지) 전에 넉넉한 추정치로 **예약**하고, 응답의 `usage`로 **정산**합니다.
-  - usage가 없는 응답, 시간 초과, 5xx는 예약액으로 정산합니다 (누락 방지).
-  - 서버가 꺼져 남은 예약은 다음 시작 때 예약액으로 정산합니다.
-  - 예산 행은 조건부 UPDATE로 갱신합니다 (`spent+reserved+예약 ≤ 한도`). 그래서 DB를 공유하면 서버 간에도 한도를 지킵니다.
-- 단가는 `prices:`의 값을 씁니다. 키 계정의 공식 가격표로 확인해 맞춰 주세요.
-  - 공개 자료끼리도 gpt-image-2 단가가 다르게 나옵니다. 기본값은 높은 쪽입니다.
-- OpenAI 프로젝트의 지출 한도·알림은 따로 설정해야 합니다. 강제 한도도 반영 지연 때문에 소폭 넘을 수 있습니다.
-
-## 다시 그리기 아이템 처리 (중복 지급 방지)
-
-1. 우클릭 → 입력창(HUD)을 엽니다. MagicCodex UI가 없는 클라이언트는 채팅으로 입력합니다 ("기본" / "취소").
-2. 문장 검사를 통과하면, 같은 칸에 같은 아이템이 그대로 있을 때만 1개 차감합니다. 그 뒤 `cport_reroll`에 `PENDING`으로 기록합니다.
-   - 기록이 실패하면 아이템을 즉시 돌려주고 작업은 시작하지 않습니다.
-3. 결과에 따라 상태가 바뀝니다.
-   - 성공: `DONE` (아이템 소모)
-   - 실패: `REFUND_DUE`로 바꾼 뒤, 접속 중이면 바로 돌려주고 아니면 다음 접속 때 돌려줍니다.
-   - `REFUND_DUE → REFUNDED` 조건부 전이가 성공한 쪽만 지급합니다.
-4. 생성 중에 서버가 꺼지면, 다음 시작 때 이 서버(`server-id`)의 `PENDING`을 `REFUND_DUE`로 바꿉니다.
-5. 차감한 직후 기록하기 전에 서버가 꺼지는 아주 짧은 구간은 돌려주지 않습니다. 복제를 막기 위해서이며, 로그를 보고 관리자가 지급합니다.
-
-## 클라이언트 "내 차례"
-
-`magic-codex-fabric`의 `PlayerTurn`이 고정 대화(`DialogueScreen`)와 AI 대화(`NpcTalkScreen`) 모두에서 같은 방식으로 동작합니다.
-
-- 선택지를 고르거나 직접 말하면, 같은 대화창 양식에서 선택지만 숨깁니다.
-  - 그 자리에 내 일러스트, 내 이름(닉네임), 내가 고른/쓴 문장을 한 글자씩 보여줍니다.
-- 넘기기는 클릭 또는 SPACE/Enter입니다. 첫 번째는 문장을 바로 다 보여주고, 두 번째에 NPC 차례로 넘어갑니다.
-  - 그동안 도착한 NPC 대사나 대화 종료는 넘긴 뒤 처음부터 타이핑합니다.
-  - AI 대답이 아직 오지 않았으면 기존 "생각 중" 표시가 나옵니다.
-- 일러스트가 없는 유저나 서버에서는 띄우지 않습니다.
-- 고정 대화에서 선택지가 1개뿐인 진행 버튼("계속" 등)도 띄우지 않습니다.
+## 검증
+허용된 호스팅 명령:
+```powershell
+.\gradlew.bat :chaca-portrait-paper:test :chaca-portrait-paper:jar
+.\magic-codex-fabric\gradlew.bat -p magic-codex-fabric test remapJar
+```
+단위 테스트는 가짜 계정/저장본과 HTTP subscriber를 사용하며 운영 DB/API를 호출하지 않습니다.
+실제 Paper 저장·강제 종료·인벤토리 플러그인 동기화, GPU 화면과 인게임 대화 및 유료 생성은 별도 검증이 필요합니다.

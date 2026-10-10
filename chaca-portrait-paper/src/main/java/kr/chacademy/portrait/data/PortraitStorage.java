@@ -24,6 +24,8 @@ public final class PortraitStorage {
     public record BudgetState(long spent, long reserved) {
     }
 
+    public static final String R_PREPARED = "PREPARED"; // durable intent before inventory debit
+    public static final String R_CANCELLED = "CANCELLED"; // intent never debited
     public static final String R_PENDING = "PENDING";   // 아이템 차감됨, 생성 중
     public static final String R_DONE = "DONE";         // 성공 (아이템 소모)
     public static final String R_REFUND = "REFUND_DUE"; // 실패 → 아이템 돌려줘야 함
@@ -335,7 +337,7 @@ public final class PortraitStorage {
                 ps.setString(3, server);
                 ps.setBytes(4, item);
                 ps.setString(5, prompt);
-                ps.setString(6, R_PENDING);
+                ps.setString(6, R_PREPARED);
                 ps.setLong(7, now);
                 ps.setLong(8, now);
                 ps.executeUpdate();
@@ -370,13 +372,15 @@ public final class PortraitStorage {
         });
     }
 
-    public List<Reroll> refundsDue(UUID id) throws SQLException {
+    public List<Reroll> refundsDue(UUID id, String server) throws SQLException {
         return db.with(c -> {
             List<Reroll> out = new ArrayList<>();
             try (PreparedStatement ps = c.prepareStatement("SELECT token, uuid, server, item, prompt, state, created_at FROM cport_reroll "
-                    + "WHERE uuid=? AND state=?")) {
+                    + "WHERE uuid=? AND server=? AND state IN (?,?)")) {
                 ps.setString(1, id.toString());
-                ps.setString(2, R_REFUND);
+                ps.setString(2, server);
+                ps.setString(3, R_REFUND);
+                ps.setString(4, R_PREPARED);
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         out.add(new Reroll(rs.getString(1), UUID.fromString(rs.getString(2)), rs.getString(3), rs.getBytes(4),

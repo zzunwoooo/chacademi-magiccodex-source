@@ -51,3 +51,7 @@ backups/
 
 # Private shop/mailbox connection settings
 shop-mailbox-database.properties
+
+# Private portrait reference assets must never enter public Git.
+**/style-reference.png
+**/style-reference-full.png

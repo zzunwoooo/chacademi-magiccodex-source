@@ -104,7 +104,9 @@ public final class ChacaPortraitPlugin extends JavaPlugin implements Listener {
             service.stop();
         }
         if (db != null) {
-            // 진행 중이던 작업의 잠금·예약은 다음 시작 때 정리된다
+            try { db.call(() -> storage.failPendingRerolls(settings.serverId)).get(15, java.util.concurrent.TimeUnit.SECONDS); }
+            catch (Exception e) { getLogger().warning("Reroll cancellation will recover on next startup."); }
+            // Remaining reservations are settled at the next startup.
             db.close();
         }
     }
@@ -144,7 +146,7 @@ public final class ChacaPortraitPlugin extends JavaPlugin implements Listener {
         UUID id = p.getUniqueId();
         rerolls.deliverRefunds(p, false);
         PortraitSettings s = settings;
-        if (!s.enabled || !s.autoFirstJoin || !s.hasKey() || !p.hasPermission("chacaportrait.auto")) {
+        if (!s.automaticGenerationAllowed() || !s.hasKey() || !p.hasPermission("chacaportrait.auto")) {
             return;
         }
         Bukkit.getScheduler().runTaskLater(this, () -> {

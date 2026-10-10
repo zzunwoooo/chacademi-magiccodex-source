@@ -99,7 +99,7 @@ public final class PortraitSettings {
         workers = clamp(c.getInt("queue.workers", 2), 1, 8);
         maxWaiting = clamp(c.getInt("queue.max-waiting", 300), 1, 5000);
 
-        autoFirstJoin = c.getBoolean("auto.first-join", true);
+        autoFirstJoin = c.getBoolean("auto.first-join", false);
         autoDelaySeconds = clamp(c.getInt("auto.delay-seconds", 20), 0, 600);
         autoMaxAttempts = clamp(c.getInt("auto.max-attempts", 3), 1, 50);
 
@@ -160,6 +160,10 @@ public final class PortraitSettings {
             m = m.replace("{" + kv[i] + "}", String.valueOf(kv[i + 1]));
         }
         return m;
+    }
+
+    public boolean automaticGenerationAllowed() {
+        return enabled && autoFirstJoin && "school".equals(serverId);
     }
 
     public boolean hasKey() {

@@ -37,4 +37,19 @@ class PortraitSettingsTest {
         assertTrue(cost.hasPrices("gpt-image-1.5"));
         assertEquals(156_300, cost.reserveImage("gpt-image-1.5", "medium"));
     }
+    @Test void automaticGenerationIsOffByDefaultAndSchoolOnly() {
+        var c = new YamlConfiguration();
+        var initial = new PortraitSettings(c, name -> null);
+        assertTrue(initial.enabled);
+        assertFalse(initial.automaticGenerationAllowed());
+        c.set("auto.first-join", true);
+        c.set("server-id", "school");
+        assertTrue(new PortraitSettings(c, name -> null).automaticGenerationAllowed());
+        c.set("server-id", "wild");
+        assertFalse(new PortraitSettings(c, name -> null).automaticGenerationAllowed());
+        c.set("auto.first-join", false);
+        assertTrue(new PortraitSettings(c, name -> null).enabled); // manual generation remains available
+        c.set("server-id", "school"); c.set("auto.first-join", true); c.set("enabled", false);
+        assertFalse(new PortraitSettings(c, name -> null).automaticGenerationAllowed());
+    }
 }

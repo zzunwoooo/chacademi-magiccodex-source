@@ -54,7 +54,7 @@ queue:
 
 auto:
   # 최초 접속 시 자동 생성
-  first-join: true
+  first-join: false
   # 접속 후 몇 초 뒤에 시작할지 (접속 직후 몰림 완화)
   delay-seconds: 20
   # 자동 생성 실패 누적 상한 (넘으면 관리자 /portrait regen 으로만)

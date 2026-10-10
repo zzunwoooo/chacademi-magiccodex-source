@@ -7,6 +7,9 @@ import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.util.HexFormat;
 import java.util.function.Function;
+import java.util.concurrent.*;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -14,6 +17,7 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.texture.NativeImage;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
@@ -21,235 +25,181 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import school.magiccodex.portrait.PortraitProtocol;
 
-/**
- * 내 일러스트 (ChacaPortrait 서버 플러그인). 서버 채널이 열리면 HELLO(버전 + 캐시 SHA-256)를 보내고,
- * 서버가 보낸 PNG 조각을 모아 SHA-256을 확인한 뒤 디스크에 캐시하고 텍스처로 올린다.
- * 대화창의 "내 차례" 연출은 {@link #ready()}일 때만 쓴다 (일러스트가 없으면 띄우지 않음).
- */
+/** Own portrait only. Disk IO, hashing, PNG decode and premultiplication run on IO;
+ * texture upload/destruction and all Minecraft state run on the client thread. */
 public final class PortraitClient {
     private interface Bytes { byte[] bytes(); }
-
     public record Query(byte[] bytes) implements CustomPayload, Bytes {
-        static final Id<Query> ID = new Id<>(Identifier.of(PortraitProtocol.REQUEST));
-        static final PacketCodec<RegistryByteBuf, Query> CODEC = codec(Query::new);
-        public Id<Query> getId() { return ID; }
+        static final Id<Query> ID=new Id<>(Identifier.of(PortraitProtocol.REQUEST));
+        static final PacketCodec<RegistryByteBuf,Query> CODEC=codec(Query::new);
+        public Id<Query> getId(){return ID;}
     }
-
     public record Reply(byte[] bytes) implements CustomPayload, Bytes {
-        static final Id<Reply> ID = new Id<>(Identifier.of(PortraitProtocol.RESPONSE));
-        static final PacketCodec<RegistryByteBuf, Reply> CODEC = codec(Reply::new);
-        public Id<Reply> getId() { return ID; }
+        static final Id<Reply> ID=new Id<>(Identifier.of(PortraitProtocol.RESPONSE));
+        static final PacketCodec<RegistryByteBuf,Reply> CODEC=codec(Reply::new);
+        public Id<Reply> getId(){return ID;}
     }
-
-    private static <T extends Bytes> PacketCodec<RegistryByteBuf, T> codec(Function<byte[], T> f) {
-        return new PacketCodec<>() {
-            public T decode(RegistryByteBuf b) {
-                int n = b.readableBytes();
-                if (n < 4 || n > PortraitProtocol.MAX_PACKET_BYTES) { b.skipBytes(n); return f.apply(new byte[0]); }
-                byte[] bytes = new byte[n];
-                b.readBytes(bytes);
-                return f.apply(bytes);
-            }
-            public void encode(RegistryByteBuf b, T p) { b.writeBytes(p.bytes()); }
+    private static <T extends Bytes> PacketCodec<RegistryByteBuf,T> codec(Function<byte[],T> f){
+        return new PacketCodec<>(){
+            public T decode(RegistryByteBuf b){int n=b.readableBytes();if(n<4||n>PortraitProtocol.MAX_PACKET_BYTES){b.skipBytes(n);return f.apply(new byte[0]);}byte[] bytes=new byte[n];b.readBytes(bytes);return f.apply(bytes);}
+            public void encode(RegistryByteBuf b,T p){b.writeBytes(p.bytes());}
         };
     }
-
-    private static final Path ROOT = FabricLoader.getInstance().getConfigDir().resolve("magiccodex/portraits");
-    private static boolean helloSent, ready;
+    private static final Path ROOT=FabricLoader.getInstance().getConfigDir().resolve("magiccodex/portraits");
+    private static final ThreadPoolExecutor IO=new ThreadPoolExecutor(1,1,0,TimeUnit.SECONDS,
+            new ArrayBlockingQueue<>(2),r->{Thread t=new Thread(r,"Portrait-IO");t.setDaemon(true);return t;},
+            new ThreadPoolExecutor.DiscardOldestPolicy());
+    private static final PortraitLoadFence LOAD=new PortraitLoadFence();
+    private static boolean helloSent,ready,confirmed,loading;
+    private static String message="아직 저장된 일러스트가 없습니다.";
     private static PlayerPortraitTexture texture;
-    private static String textureSha = "";
-    // 받는 중인 전송
+    private static String textureSha="";
     private static String incomingSha;
-    private static int incomingTotal, incomingChunks, incomingNext;
+    private static int incomingTotal,incomingChunks,incomingNext;
     private static ByteArrayOutputStream incoming;
-
-    private PortraitClient() {}
-
-    /** 일러스트가 올라와 있으면 true ("내 차례" 화면 사용 조건). */
-    static boolean ready() { return ready && texture != null; }
-
-    /** 대화창 이름표에 쓸 내 이름 (닉네임이 있으면 닉네임). */
-    static String displayName() {
-        var c = MinecraftClient.getInstance();
-        String fallback = c.player == null ? "나" : c.player.getName().getString();
-        return NicknameClient.display(fallback);
+    private PortraitClient(){}
+    static boolean ready(){return ready&&confirmed&&texture!=null;}
+    static boolean loading(){return loading;}
+    static String status(){return loading?"일러스트를 불러오는 중…":!helloSent?"일러스트 서버에 연결되지 않았습니다.":message;}
+    static String displayName(){var c=MinecraftClient.getInstance();return NicknameClient.display(c.player==null?"나":c.player.getName().getString());}
+    static int imageWidth(){return texture==null?1:texture.width();}
+    static int imageHeight(){return texture==null?1:texture.height();}
+    static void draw(DrawContext c,int x,int y,int width){if(texture!=null)texture.draw(c,x,y,width);}
+    private static void reset(){
+        LOAD.next();IO.getQueue().clear();helloSent=ready=confirmed=loading=false;dropIncoming();
+        if(texture!=null){texture.close();texture=null;}textureSha="";message="아직 저장된 일러스트가 없습니다.";
     }
-
-    /** NPC 초상화 자리에 같은 크기로 그린다. */
-    static void draw(DrawContext c, int x, int y, int width) { if (texture != null) texture.draw(c, x, y, width); }
-
-    private static void reset() {
-        helloSent = false; ready = false; dropIncoming();
-        if (texture != null) { texture.close(); texture = null; }
-        textureSha = "";
-    }
-
-    private static void dropIncoming() { incomingSha = null; incoming = null; incomingTotal = incomingChunks = incomingNext = 0; }
-
-    public static void initialize() {
-        PayloadTypeRegistry.playC2S().register(Query.ID, Query.CODEC);
-        PayloadTypeRegistry.playS2C().register(Reply.ID, Reply.CODEC);
-        ClientPlayConnectionEvents.JOIN.register((h, s, c) -> c.execute(PortraitClient::reset));
-        ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> c.execute(() -> {
+    private static void dropIncoming(){incomingSha=null;incoming=null;incomingTotal=incomingChunks=incomingNext=0;}
+    public static void initialize(){
+        PayloadTypeRegistry.playC2S().register(Query.ID,Query.CODEC);
+        PayloadTypeRegistry.playS2C().register(Reply.ID,Reply.CODEC);
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher,access)->
+            dispatcher.register(ClientCommandManager.literal("내일러스트").executes(context->{
+                DeferredScreens.open(PortraitPreviewScreen::new);return 1;
+            })));
+        ClientPlayConnectionEvents.JOIN.register((h,s,c)->c.execute(PortraitClient::reset));
+        ClientPlayConnectionEvents.DISCONNECT.register((h,c)->c.execute(()->{
             reset();
-            if (c.currentScreen instanceof PortraitPromptScreen screen) screen.serverClosed();
+            if(c.currentScreen instanceof PortraitPromptScreen screen)screen.serverClosed();
+            if(c.currentScreen instanceof PortraitPreviewScreen)c.setScreen(null);
         }));
-        ClientTickEvents.END_CLIENT_TICK.register(c -> {
-            if (!helloSent && c.getNetworkHandler() != null && c.player != null && ClientPlayNetworking.canSend(Query.ID)) {
-                helloSent = true;
-                String cached = cachedSha(c);
-                // 캐시가 있으면 서버 응답 전에 먼저 올려 둔다 (서버가 다른 SHA를 보내면 교체).
-                // 캐시 파일이 깨져 못 올렸으면 SHA를 보내지 않아 서버가 다시 보내게 한다.
-                if (!cached.isEmpty()) loadCached(c, cached);
-                if (!cached.equals(textureSha)) cached = "";
-                send(PortraitProtocol.Packet.of(PortraitProtocol.C_HELLO, cached, PortraitProtocol.VERSION, "magic-codex-ui"));
+        ClientTickEvents.END_CLIENT_TICK.register(c->{
+            if(!helloSent&&c.getNetworkHandler()!=null&&c.player!=null&&ClientPlayNetworking.canSend(Query.ID)){
+                helloSent=true;queueLoad(c,cacheDir(c),"",null,true);
             }
         });
-        ClientPlayNetworking.registerGlobalReceiver(Reply.ID, (payload, context) -> {
+        ClientPlayNetworking.registerGlobalReceiver(Reply.ID,(payload,context)->{
             PortraitProtocol.Packet p;
-            try { p = PortraitProtocol.decode(payload.bytes()); } catch (IllegalArgumentException ignored) { return; }
-            context.client().execute(() -> receive(context.client(), p));
+            try{p=PortraitProtocol.decode(payload.bytes());}catch(IllegalArgumentException ignored){return;}
+            var connection=context.client().getNetworkHandler();
+            context.client().execute(()->{if(connection==context.client().getNetworkHandler())receive(context.client(),p);});
         });
     }
-
-    private static void receive(MinecraftClient client, PortraitProtocol.Packet p) {
-        switch (p.op()) {
-            case PortraitProtocol.S_HELLO_ACK -> ready = p.number() == PortraitProtocol.VERSION;
-            case PortraitProtocol.S_META -> { if (ready) meta(client, p); }
-            case PortraitProtocol.S_CHUNK -> { if (ready) chunk(client, p); }
-            case PortraitProtocol.S_PROMPT_OPEN -> {
-                if (!ready || !PortraitProtocol.validToken(p.text()) || client.player == null) return;
-                String hint = p.extra().length() > 200 ? p.extra().substring(0, 200) : p.extra();
-                String token = p.text();
-                DeferredScreens.open(() -> new PortraitPromptScreen(token, hint));
+    private static void receive(MinecraftClient client,PortraitProtocol.Packet p){
+        switch(p.op()){
+            case PortraitProtocol.S_HELLO_ACK->ready=p.number()==PortraitProtocol.VERSION;
+            case PortraitProtocol.S_META->{if(ready)meta(client,p);}
+            case PortraitProtocol.S_CHUNK->{if(ready)chunk(client,p);}
+            case PortraitProtocol.S_PROMPT_OPEN->{
+                if(!ready||!PortraitProtocol.validToken(p.text())||client.player==null)return;
+                String hint=p.extra().length()>200?p.extra().substring(0,200):p.extra();
+                DeferredScreens.open(()->new PortraitPromptScreen(p.text(),hint));
             }
-            case PortraitProtocol.S_PROMPT_CLOSE -> {
-                if (client.currentScreen instanceof PortraitPromptScreen screen) screen.serverClosed();
-            }
-            case PortraitProtocol.S_STATUS -> {
-                if (ready && client.player != null && !p.extra().isEmpty())
-                    client.player.sendMessage(Text.literal(p.extra().length() > 200 ? p.extra().substring(0, 200) : p.extra()), false);
-            }
-            default -> {}
+            case PortraitProtocol.S_PROMPT_CLOSE->{if(client.currentScreen instanceof PortraitPromptScreen screen)screen.serverClosed();}
+            case PortraitProtocol.S_STATUS->{if(ready&&client.player!=null&&!p.extra().isEmpty())client.player.sendMessage(Text.literal(p.extra().substring(0,Math.min(200,p.extra().length()))),false);}
+            default->{}
         }
     }
-
-    private static void meta(MinecraftClient client, PortraitProtocol.Packet p) {
-        String sha = p.text();
-        if (sha.isEmpty()) {
-            // 서버에 일러스트 없음 (또는 관리자가 지움)
-            dropIncoming();
-            if (texture != null) { texture.close(); texture = null; }
-            textureSha = "";
-            deleteCache(client);
+    private static void meta(MinecraftClient c,PortraitProtocol.Packet p){
+        String sha=p.text();
+        if(sha.isEmpty()){
+            LOAD.next();dropIncoming();loading=confirmed=false;message="아직 저장된 일러스트가 없습니다.";
+            if(texture!=null){texture.close();texture=null;}textureSha="";
+            Path dir=cacheDir(c);IO.execute(()->deleteCache(dir));return;
+        }
+        if(!PortraitProtocol.validSha(sha))return;
+        int chunks;try{chunks=Integer.parseInt(p.extra());}catch(NumberFormatException e){return;}
+        if(chunks==0){
+            if(sha.equals(textureSha)){confirmed=true;loading=false;}
+            else queueLoad(c,cacheDir(c),sha,null,false);
             return;
         }
-        if (!PortraitProtocol.validSha(sha)) return;
-        int chunks;
-        try { chunks = Integer.parseInt(p.extra()); } catch (NumberFormatException e) { return; }
-        if (chunks == 0) {
-            // 서버와 캐시가 같음
-            if (!sha.equals(textureSha)) loadCached(client, sha);
-            return;
-        }
-        long total = p.number();
-        if (total <= 0 || total > PortraitProtocol.MAX_IMAGE_BYTES || chunks != PortraitProtocol.chunks((int) total)) return;
-        incomingSha = sha; incomingTotal = (int) total; incomingChunks = chunks; incomingNext = 0;
-        incoming = new ByteArrayOutputStream(incomingTotal);
+        long total=p.number();
+        if(total<=0||total>PortraitProtocol.MAX_IMAGE_BYTES||chunks!=PortraitProtocol.chunks((int)total))return;
+        LOAD.next();confirmed=false;loading=true;
+        incomingSha=sha;incomingTotal=(int)total;incomingChunks=chunks;incomingNext=0;
+        incoming=new ByteArrayOutputStream(incomingTotal);
     }
-
-    private static void chunk(MinecraftClient client, PortraitProtocol.Packet p) {
-        if (incoming == null || !p.text().equals(incomingSha) || p.number() != incomingNext) { return; }
-        byte[] data = p.data();
-        int expected = incomingNext == incomingChunks - 1 ? incomingTotal - incomingNext * PortraitProtocol.CHUNK_BYTES : PortraitProtocol.CHUNK_BYTES;
-        if (data.length != expected) { dropIncoming(); return; }
-        incoming.writeBytes(data);
-        incomingNext++;
-        if (incomingNext < incomingChunks) return;
-        byte[] png = incoming.toByteArray();
-        String sha = incomingSha;
-        dropIncoming();
-        if (!sha.equals(sha256(png))) return;
-        if (install(png, sha)) saveCache(client, sha, png);
+    private static void chunk(MinecraftClient c,PortraitProtocol.Packet p){
+        if(incoming==null||!p.text().equals(incomingSha)||p.number()!=incomingNext)return;
+        int expected=incomingNext==incomingChunks-1?incomingTotal-incomingNext*PortraitProtocol.CHUNK_BYTES:PortraitProtocol.CHUNK_BYTES;
+        if(p.data().length!=expected){dropIncoming();loading=false;message="일러스트 전송을 확인하지 못했습니다.";return;}
+        incoming.writeBytes(p.data());incomingNext++;
+        if(incomingNext<incomingChunks)return;
+        byte[] png=incoming.toByteArray();String sha=incomingSha;dropIncoming();
+        queueLoad(c,cacheDir(c),sha,png,false);
     }
-
-    private static boolean install(byte[] png, String sha) {
-        try {
-            var loaded = PlayerPortraitTexture.load(png, PortraitProtocol.MAX_IMAGE_SIDE);
-            if (texture != null) texture.close();
-            texture = loaded; textureSha = sha;
-            return true;
-        } catch (Exception e) {
-            org.slf4j.LoggerFactory.getLogger("magiccodex").warn("Player portrait failed: {}", e.toString());
-            return false;
-        }
+    private static void queueLoad(MinecraftClient c,Path dir,String expected,byte[] supplied,boolean hello){
+        long ticket=LOAD.next();Object connection=c.getNetworkHandler();loading=true;
+        IO.execute(()->{
+            NativeImage decoded=null;String sha=expected;
+            try{
+                if(!LOAD.current(ticket))return;
+                byte[] png=supplied;
+                if(png==null){
+                    if(sha.isEmpty()){
+                        Path hash=dir.resolve("portrait.sha");
+                        if(Files.isRegularFile(hash)&&Files.size(hash)<=128)sha=Files.readString(hash).strip();
+                    }
+                    Path file=dir.resolve("portrait.png");
+                    if(PortraitProtocol.validSha(sha)&&Files.isRegularFile(file)&&Files.size(file)<=PortraitProtocol.MAX_IMAGE_BYTES)png=Files.readAllBytes(file);
+                }
+                if(png!=null&&png.length<=PortraitProtocol.MAX_IMAGE_BYTES&&PortraitProtocol.validSha(sha)&&sha.equals(sha256(png))){
+                    decoded=PlayerPortraitTexture.decode(png,PortraitProtocol.MAX_IMAGE_SIDE);
+                    if(supplied!=null&&LOAD.current(ticket))saveCache(dir,sha,png);
+                }
+            }catch(Exception ignored){}
+            NativeImage image=decoded;String hash=sha;
+            c.execute(()->{
+                if(!LOAD.current(ticket)||connection!=c.getNetworkHandler()||c.player==null){if(image!=null)image.close();return;}
+                boolean installed=false;
+                if(image!=null){
+                    try{
+                        var next=PlayerPortraitTexture.upload(image);
+                        if(texture!=null)texture.close();
+                        texture=next;textureSha=hash;installed=true;
+                    }catch(Exception error){message="일러스트를 불러오지 못했습니다.";}
+                }
+                if(hello){
+                    if(!send(PortraitProtocol.Packet.of(PortraitProtocol.C_HELLO,installed?hash:"",PortraitProtocol.VERSION,"magic-codex-ui"))){
+                        loading=false;message="일러스트 서버에 연결되지 않았습니다.";
+                    }
+                }else{
+                    confirmed=installed;loading=false;
+                    if(!installed)message="일러스트를 불러오지 못했습니다. 다시 접속해 주세요.";
+                }
+            });
+        });
     }
-
-    // ------------------------------------------------------------------ 디스크 캐시 (서버 주소 + 내 UUID 별)
-
-    private static Path cacheDir(MinecraftClient c) {
-        var entry = c.getCurrentServerEntry();
-        String server = entry == null ? "local" : entry.address.toLowerCase(java.util.Locale.ROOT).replaceAll("[^a-z0-9._-]", "_");
-        if (server.length() > 80) server = server.substring(0, 80);
-        String player = c.player == null ? "unknown" : c.player.getUuidAsString();
-        return ROOT.resolve(server).resolve(player);
+    private static Path cacheDir(MinecraftClient c){
+        var entry=c.getCurrentServerEntry();
+        String server=entry==null?"local":entry.address.toLowerCase(java.util.Locale.ROOT).replaceAll("[^a-z0-9._-]","_");
+        if(server.length()>80)server=server.substring(0,80);
+        return ROOT.resolve(server).resolve(c.player==null?"unknown":c.player.getUuidAsString());
     }
-
-    private static String cachedSha(MinecraftClient c) {
-        try {
-            Path f = cacheDir(c).resolve("portrait.sha");
-            if (!Files.exists(f)) return "";
-            String s = Files.readString(f).strip();
-            return PortraitProtocol.validSha(s) ? s : "";
-        } catch (Exception e) { return ""; }
+    private static void saveCache(Path dir,String sha,byte[] png){
+        try{
+            Files.createDirectories(dir);Path tmp=dir.resolve("portrait.png.tmp");Files.write(tmp,png);
+            Files.move(tmp,dir.resolve("portrait.png"),StandardCopyOption.REPLACE_EXISTING);
+            Files.writeString(dir.resolve("portrait.sha"),sha);
+        }catch(Exception ignored){}
     }
-
-    private static void loadCached(MinecraftClient c, String sha) {
-        try {
-            Path f = cacheDir(c).resolve("portrait.png");
-            if (!Files.exists(f) || Files.size(f) > PortraitProtocol.MAX_IMAGE_BYTES) return;
-            byte[] png = Files.readAllBytes(f);
-            if (sha.equals(sha256(png))) install(png, sha);
-        } catch (Exception ignored) {}
-    }
-
-    private static void saveCache(MinecraftClient c, String sha, byte[] png) {
-        try {
-            Path dir = cacheDir(c);
-            Files.createDirectories(dir);
-            Path tmp = dir.resolve("portrait.png.tmp");
-            Files.write(tmp, png);
-            Files.move(tmp, dir.resolve("portrait.png"), StandardCopyOption.REPLACE_EXISTING);
-            Files.writeString(dir.resolve("portrait.sha"), sha);
-        } catch (Exception e) {
-            org.slf4j.LoggerFactory.getLogger("magiccodex").warn("Player portrait cache failed: {}", e.toString());
-        }
-    }
-
-    private static void deleteCache(MinecraftClient c) {
-        try {
-            Path dir = cacheDir(c);
-            Files.deleteIfExists(dir.resolve("portrait.sha"));
-            Files.deleteIfExists(dir.resolve("portrait.png"));
-        } catch (Exception ignored) {}
-    }
-
-    private static String sha256(byte[] b) {
-        try { return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(b)); }
-        catch (Exception e) { return ""; }
-    }
-
-    // ------------------------------------------------------------------ 다시 그리기 입력
-
-    /** 입력창 결과 전송. proceed=false면 취소. */
-    static boolean answer(String token, String text, boolean proceed) {
-        return send(new PortraitProtocol.Packet(PortraitProtocol.C_PROMPT, token, 0, text, proceed, null));
-    }
-
-    private static boolean send(PortraitProtocol.Packet p) {
-        var c = MinecraftClient.getInstance();
-        if (c.getNetworkHandler() == null || !ClientPlayNetworking.canSend(Query.ID)) return false;
-        try { ClientPlayNetworking.send(new Query(PortraitProtocol.encode(p))); return true; }
-        catch (RuntimeException e) { return false; }
+    private static void deleteCache(Path dir){try{Files.deleteIfExists(dir.resolve("portrait.sha"));Files.deleteIfExists(dir.resolve("portrait.png"));}catch(Exception ignored){}}
+    private static String sha256(byte[] bytes){try{return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(bytes));}catch(Exception e){return "";}}
+    static boolean answer(String token,String text,boolean proceed){return send(new PortraitProtocol.Packet(PortraitProtocol.C_PROMPT,token,0,text,proceed,null));}
+    private static boolean send(PortraitProtocol.Packet p){
+        var c=MinecraftClient.getInstance();
+        if(c.getNetworkHandler()==null||!ClientPlayNetworking.canSend(Query.ID))return false;
+        try{ClientPlayNetworking.send(new Query(PortraitProtocol.encode(p)));return true;}catch(RuntimeException e){return false;}
     }
 }

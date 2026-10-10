@@ -33,14 +33,20 @@ final class PlayerPortraitTexture implements AutoCloseable {
         this.id=id;this.width=width;this.height=height;this.layer=new PortraitLayer(MinecraftClient.getInstance(),id);
     }
 
-    /** PNG → 텍스처. 크기 상한을 넘거나 깨진 이미지면 예외. */
-    static PlayerPortraitTexture load(byte[] png,int maxSide)throws Exception{
+    /** CPU decode and premultiplication: worker thread, no OpenGL. */
+    static NativeImage decode(byte[] png,int maxSide)throws Exception{
         int[] size=pngSize(png);
-        if(size[0]<=0||size[1]<=0||size[0]>maxSide||size[1]>maxSide)throw new IllegalArgumentException("portrait size "+size[0]+"x"+size[1]);
+        if(size[0]<=0||size[1]<=0||size[0]>maxSide||size[1]>maxSide)throw new IllegalArgumentException("portrait size");
         NativeImage image=NativeImage.read(new ByteArrayInputStream(png));
+        try{image.apply(PremultipliedAlpha::pixel);return image;}
+        catch(Throwable error){image.close();throw error;}
+    }
+
+    /** Takes ownership of the decoded image. GPU work is render-thread only. */
+    static PlayerPortraitTexture upload(NativeImage image)throws Exception{
+        RenderSystem.assertOnRenderThread();
         NativeImageBackedTexture texture=null;
         try{
-            image.apply(PremultipliedAlpha::pixel);
             int w=image.getWidth(),h=image.getHeight();
             texture=new NativeImageBackedTexture(image);image=null;
             int levels=31-Integer.numberOfLeadingZeros(Math.max(w,h));
@@ -80,6 +86,7 @@ final class PlayerPortraitTexture implements AutoCloseable {
     }
 
     @Override public void close(){
+        RenderSystem.assertOnRenderThread();
         if(closed)return;closed=true;
         MinecraftClient.getInstance().getTextureManager().destroyTexture(id);
     }
