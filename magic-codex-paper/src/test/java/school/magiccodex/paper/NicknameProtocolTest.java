@@ -18,5 +18,7 @@ class NicknameProtocolTest {
         assertThrows(IllegalArgumentException.class,()->NicknameProtocol.request(new byte[NicknameProtocol.MAX_BYTES+1]));
         assertThrows(IllegalArgumentException.class,()->NicknameProtocol.encode(new NicknameProtocol.Request(4,1,0,0,"")));
     }
+    @Test void firstNicknamePushRoundTrip(){for(int kind:new int[]{NicknameProtocol.FIRST,NicknameProtocol.FIRST_DONE}){var r=new NicknameProtocol.Response(kind,0,0,0,UUID.randomUUID(),"Account","Account","","","");assertEquals(r,NicknameProtocol.response(NicknameProtocol.encode(r)));}
+        assertThrows(IllegalArgumentException.class,()->NicknameProtocol.encode(new NicknameProtocol.Response(5,0,0,0,UUID.randomUUID(),"a","a","","","")));}
     @Test void identityAndPreviewRoundTrip(){var r=new NicknameProtocol.Response(1,2,3,4,UUID.randomUUID(),"Account","별빛","수습","연구가","");assertEquals(r,NicknameProtocol.response(NicknameProtocol.encode(r)));}
 }
