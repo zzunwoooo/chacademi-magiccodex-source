@@ -94,29 +94,31 @@ public final class Storage {
         });
     }
 
-    /**
-     * 같은 사건이 같은 NPC에게 두 번 소문나지 않게 하는 UNIQUE 인덱스 (나중에 추가됨 — 이미 있으면 그대로 둔다).
-     * 예전 버전이 남긴 중복 줄이 있어 만들 수 없으면 중복(같은 사건·같은 NPC, 나중 id)만 지우고 한 번 더 시도한다.
-     * 그래도 안 되면 인덱스 없이 계속한다 (INSERT 는 그대로 동작).
-     */
-    private void uniqueRumorIndex(Statement st) {
-        String create = "CREATE UNIQUE INDEX IF NOT EXISTS uq_cnpc_rumor_event ON cnpc_rumors (event_id, heard_by)";
+    /** Fail closed without modifying existing rumors; diagnostics never include row values. */
+    static void uniqueRumorIndex(Statement st) throws SQLException {
         try {
-            st.execute(create);
-            return;
-        } catch (SQLException first) {
-            String m = String.valueOf(first.getMessage()).toLowerCase(java.util.Locale.ROOT);
-            if (m.contains("duplicate key name") || m.contains("already exists")) {
-                return; // IF NOT EXISTS 를 모르는 DB에서 이미 만들어져 있는 경우
+            st.execute("CREATE UNIQUE INDEX IF NOT EXISTS uq_cnpc_rumor_event ON cnpc_rumors (event_id, heard_by)");
+        } catch (SQLException failure) {
+            String kind = switch (failure.getErrorCode()) {
+                case 1062, 19, 2067 -> "constraint/duplicate";
+                case 1044, 1045, 1142, 1143, 1227 -> "permission";
+                case 1064 -> "syntax";
+                default -> "database";
+            };
+            String duplicates;
+            try (ResultSet rs = st.executeQuery("SELECT COUNT(*), COALESCE(SUM(n - 1), 0) FROM"
+                    + " (SELECT COUNT(*) AS n FROM cnpc_rumors GROUP BY event_id, heard_by HAVING COUNT(*) > 1) duplicate_groups")) {
+                if (!rs.next()) throw new SQLException("Missing aggregate result");
+                duplicates = "duplicateGroups=" + rs.getLong(1) + ", excessRows=" + rs.getLong(2);
+            } catch (SQLException diagnosticFailure) {
+                duplicates = "duplicate counts unavailable (code=" + diagnosticFailure.getErrorCode() + ")";
             }
-        }
-        try {
-            st.executeUpdate("DELETE FROM cnpc_rumors WHERE id NOT IN (SELECT id FROM"
-                    + " (SELECT MIN(id) AS id FROM cnpc_rumors GROUP BY event_id, heard_by) keep_rows)");
-            st.execute(create);
-        } catch (SQLException second) {
-            db.logWarning("[ChacaNPC] cnpc_rumors UNIQUE 인덱스를 만들지 못했습니다 (소문 중복 방지는 트랜잭션으로만 동작): "
-                    + second.getMessage());
+            // Do not attach the driver's message/cause: duplicate-key messages can contain player/NPC data.
+            throw new SQLException("[ChacaNPC] Required cnpc_rumors UNIQUE index setup failed: " + kind
+                    + " (code=" + failure.getErrorCode() + "); " + duplicates
+                    + ". Existing rows were preserved; no automatic cleanup was performed."
+                    + " Review database permissions/schema and resolve duplicates only with explicit approval."
+                    + " Database initialization has not succeeded.", failure.getSQLState(), failure.getErrorCode());
         }
     }
 

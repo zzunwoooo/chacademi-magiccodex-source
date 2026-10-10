@@ -35,3 +35,25 @@ All builds ran on hosting Java 21 with real dependencies, not handwritten API st
 - Compatible UI+Bridge and Story mod+plugin must be installed together with changed server artifacts only after blockers resolved and manifests compared.
 - Check local game state before launcher replacement. Stop school/wild only with Stop-Network.ps1 -Server target. Never Control.ps1 -Action Stop (stops all). Do not stop Velocity or DB.
 - After deployment, check startup/API connection/schema warnings and selected safe settings; update CLAUDE_INDEX to received only after remaining validation/deployment status is accurately recorded.
+
+## Safe-index and original-graph follow-up
+
+The earlier automatic-delete blocker is now removed in source. Storage.uniqueRumorIndex performs no DELETE and never treats a thrown index-creation error as success. It classifies duplicate/constraint, permission, syntax and other SQL failures, queries aggregate duplicate counts only, and throws a sanitized SQLException. Driver row-value messages/causes are not retained. The existing plugin initialization catch marks budget loading failed and leaves AI disabled, rather than continuing as if initialization succeeded. Existing rows remain untouched.
+
+Six new RumorIndexTest cases passed: real in-memory SQLite successful/repeated initialization and duplicate preservation; injected MariaDB permission, syntax, duplicate-index-name and duplicate-data failures with diagnostic access denied. The latter verify no cleanup or unexpected database operation and no raw row values in errors. MariaDB itself is still untested. Build-Server.ps1 -Verify passed again (4 executed tasks; 24 unchanged up-to-date). NPC now has 27 tests; aggregate available JUnit results total 790. Updated NPC SHA256: cd79b82a9922839d4199adf8322ba7f6235a4479d08d473070fc8f3b46c033a2.
+
+Original client graphs were copied unchanged to C:/Chacademi/staging/audit-fixes-20261010-task5/story-graphs, outside Git and outside runtime directories. Actual built StoryGraph.parse with SnakeYAML validated them:
+- ch1-3: 9 scenes, 0 events, no errors/warnings. SHA256 c40b72c31a278491d70afdc6af9389eb9cedecb325882adb4bc1924bf165ea5f.
+- ch1-4: 3 scenes, 0 events, no errors/warnings. SHA256 3f56db42eb1f666973996d7d258898fe8403b743096e9c127aa7b92e7b7f0921.
+- ch1-5: 8 scenes, 0 events, no errors/warnings. SHA256 5cd0f37e7c9cf82f52fc20f2fea0f14f30bcb905b67f25bbdb522e61a5470140.
+- ch1_wakeup: 6 scenes, 1 event, no parse errors; warning: scene wake choices 1 and 3 have different affinity effects and lack distinct event identifiers. Server may not distinguish the chosen branch, causing later need checks to diverge. Per audit handoff, treat this ambiguity as a deployment concern. Original remains unchanged; do not silently invent events or rewards.
+- ch1-2 remains absent as the acknowledged limitation; no sample generated.
+- Both school/wild dialogues directories contain no files, so neither server_commands.yml nor legacy <id>.yml command definitions exist there. No commands/rewards were added or overwritten.
+
+Exact MariaDB access issue: host SSH account running C:/Chacademi/tools/python/python.exe attempted pathlib.Path('C:/Chacademi/services/mariadb').iterdir(); Windows returned PermissionError [WinError 5] Access is denied. This is an OS filesystem denial, not evidence of a rejected SQL login and not an automatic tool-approval rejection. The exact ACL cause was not inspected. No retry, alternative route into that directory, administrator escalation, credential reading/transmission or grant/account change occurred.
+
+Permitted independent locations checked by filename: C:/Chacademi/tools/db-readonly-inspection contains only ReadonlyMergeAudit.java and ReadonlySqlCounts.java (both SQLite-only); C:/Chacademi/tools/plugin-builds contains HuskSync-3.8.7 and mcpets-api-check-20261005. No existing MariaDB test helper was found in these locations. This does not assert that none exists elsewhere.
+
+Minimum remaining DB question: can the owner provide the path of an already-authorized host-local test helper/profile that connects to an isolated MariaDB schema? If none exists, the owner must prepare an isolated schema and approved access mechanism before validation can resume; do not request passwords in chat or broaden current credentials/permissions automatically.
+
+Runtime deployment remains blocked pending MariaDB migration verification and the graph ambiguity decision. No runtime modifications in this follow-up. Shared codex/hires-item-icons-20261006 remains unchanged.

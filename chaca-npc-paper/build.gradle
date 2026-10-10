@@ -35,3 +35,5 @@ processResources {
     inputs.property 'version', project.version
     filesMatching('plugin.yml') { expand version: project.version }
 }
+
+dependencies { testRuntimeOnly files('../libraries/org/xerial/sqlite-jdbc/3.47.2.0/sqlite-jdbc-3.47.2.0.jar') }
