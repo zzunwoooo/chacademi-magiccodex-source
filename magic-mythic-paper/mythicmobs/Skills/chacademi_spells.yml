@@ -1,0 +1,560 @@
+# 차카데미 마법 미몹 스킬 (자동 생성: magic-mythic-paper/tools/spells.py) - 이펙트는 PortableVFX 담당, 여기는 게임 효과만
+# 피해량 <skill.var.damage> 는 MagicCodexBridge spell-runtime.yml 의 base-damage + power-ratio x 마력 으로 전달됩니다.
+# cha* 메커닉은 ChAcademiaMagicMythic 플러그인이 제공합니다.
+
+# 1 feather fall - 5초 천천히 낙하
+CHA_feather_step:
+  Cooldown: 0
+  Skills:
+  - potion{type=SLOW_FALLING;duration=100;level=0} @self
+
+# 2 바람바구니 - MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸)
+CHA_wind_basket:
+  Cooldown: 0
+  Skills:
+  - delay 1
+
+# 3 수확의 바람 - MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸)
+CHA_harvest_wind:
+  Cooldown: 0
+  Skills:
+  - delay 1
+
+# 4 윈드 푸쉬 - 정면 몬스터 1체 약 4블록 밀기
+CHA_wind_push:
+  Cooldown: 0
+  Skills:
+  - chahit{knock=1.6;up=0.35}
+
+# 5 상승기류 - 위로 약 7블록, 착지 피해 완화
+CHA_light_leap:
+  Cooldown: 0
+  Skills:
+  - velocity{m=set;x=0;y=1.2;z=0} @self
+  - delay 14
+  - potion{type=SLOW_FALLING;duration=40;level=0} @self
+
+# 6 비행 - 10초 비행 (빗자루 탑승형은 추후 연동)
+CHA_flight:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=flight;ticks=200} @self
+
+# 7 손길 너머 - MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸)
+CHA_far_touch:
+  Cooldown: 0
+  Skills:
+  - delay 1
+
+# 10 폭풍의 지휘 - 영창 1.5초 후 반경 4블록 4회 타격
+CHA_storm_command:
+  Cooldown: 0
+  Skills:
+  - delay 30
+  - chazone{r=4;ticks=40;period=10;mult=0.5;suck=0.15}
+
+# 11 윈드 커터 - 관통 칼날, 사슬 블록 파괴
+CHA_vacuum_cleave:
+  Cooldown: 0
+  Skills:
+  - chabolt{speed=2.2;range=24;radius=0.6;pierce=99;breaks=CHAIN}
+
+# 12 바람 걸음 - MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸)
+CHA_gale_dash:
+  Cooldown: 0
+  Skills:
+  - delay 1
+
+# 13 되받는 바람 - 0.5초 투사체 반사
+CHA_returning_wind:
+  Cooldown: 0
+  Skills:
+  - chaguard{type=reflect;ticks=10;r=4} @self
+
+# 14 바람 털빗 - MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸)
+CHA_wind_grooming:
+  Cooldown: 0
+  Skills:
+  - delay 1
+
+# 15 중력지대 - 반경 5블록 3초 끌어당김
+CHA_weightless_zone:
+  Cooldown: 0
+  Skills:
+  - chazone{r=5;ticks=60;period=5;mult=0;suck=0.45}
+
+# 18 클린 - MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸)
+CHA_dust_duster:
+  Cooldown: 0
+  Skills:
+  - delay 1
+
+# 19 잎새 청소 - MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸)
+CHA_leaf_cleanup:
+  Cooldown: 0
+  Skills:
+  - delay 1
+
+# 20 깃털 털기 - MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸)
+CHA_feather_rustle:
+  Cooldown: 0
+  Skills:
+  - delay 1
+
+# 21 바람 화살 - 2초 충전 후 강한 화살
+CHA_cross_breeze:
+  Cooldown: 0
+  Skills:
+  - delay 40
+  - chabolt{speed=2.5;range=30;radius=0.7;pierce=1;aoe=2;aoemult=0.5}
+
+# 22 되돌이 칼날 - 갔다가 돌아오며 각 1회씩 타격
+CHA_returning_blade:
+  Cooldown: 0
+  Skills:
+  - chabolt{speed=1.1;range=14;radius=1.2;pierce=99;returns=true}
+
+# 23 윈드 프레스 - 공중 대상을 내리꽂음 (낙하 피해는 바닐라)
+CHA_pressure_press:
+  Cooldown: 0
+  Skills:
+  - chahit{slam=2.2}
+
+# 24 바람 미끼 - 반경 10블록 일반 몬스터 유인 5초
+CHA_wind_decoy:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=decoy;r=10;ticks=100}
+
+# 25 허공 디딤 - 발밑 3x3 임시 발판 20초 (보이는 건 VFX)
+CHA_air_step:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=platform;ticks=400} @self
+
+# 26 라이트닝 쇼크 - 지정 위치 낙뢰 피해
+CHA_lightning_needle:
+  Cooldown: 0
+  Skills:
+  - chahit{r=1.5;max=3}
+
+# 27 허공 쌓기 - 손에 든 블록 최대 6칸 일렬 설치
+CHA_air_stacking:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=line;max=6}
+
+# 28 퍼붓는 화살 - 화살 5발 순차 발사
+CHA_arrested_orbit:
+  Cooldown: 0
+  Skills:
+  - chabolt{speed=1.8;range=25;radius=0.5;homing=true;spread=-8}
+  - delay 4
+  - chabolt{speed=1.8;range=25;radius=0.5;homing=true;spread=8}
+  - delay 4
+  - chabolt{speed=1.8;range=25;radius=0.5;homing=true;spread=-4}
+  - delay 4
+  - chabolt{speed=1.8;range=25;radius=0.5;homing=true;spread=4}
+  - delay 4
+  - chabolt{speed=1.8;range=25;radius=0.5;homing=true}
+
+# 29 크로스 애로우 - 일반 몬스터 처형, 플레이어·보스는 체력 20% 미만일 때만
+CHA_crossfire:
+  Cooldown: 0
+  Skills:
+  - delay 10
+  - chahit{execute=0.2}
+
+# 31 토네이도 스핀 - 주변 3블록 밀치며 피해
+CHA_pressure_rupture:
+  Cooldown: 0
+  Skills:
+  - chahit{center=caster;r=3;knock=1.2;up=0.3} @self
+
+# 32 삼중 탄환 - 3발 모두 같은 대상 적중 시 3초 신속 III
+CHA_storm_crown:
+  Cooldown: 0
+  Skills:
+  - chabolt{speed=2;range=15;radius=0.5;homing=true;combo=storm_crown;combocount=3;combobuff=SPEED:60:2}
+  - delay 6
+  - chabolt{speed=2;range=15;radius=0.5;homing=true;combo=storm_crown;combocount=3;combobuff=SPEED:60:2}
+  - delay 6
+  - chabolt{speed=2;range=15;radius=0.5;homing=true;combo=storm_crown;combocount=3;combobuff=SPEED:60:2}
+
+# 33 손끝의 화로 - MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸)
+CHA_hearth_touch:
+  Cooldown: 0
+  Skills:
+  - delay 1
+
+# 34 파이어 볼 - 약한 불씨 탄
+CHA_ember_bolt:
+  Cooldown: 0
+  Skills:
+  - chabolt{speed=1.6;range=24;radius=0.5;ignite=40}
+
+# 35 다시 타오르는 불 - MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸)
+CHA_rekindle:
+  Cooldown: 0
+  Skills:
+  - delay 1
+
+# 37 잿불 덫 - 60초 덫, 최대 2개, 밟으면 폭발
+CHA_ember_trap:
+  Cooldown: 0
+  Skills:
+  - chazone{r=1.5;ticks=1200;trap=true;trapr=3;key=ember_trap;limit=2;ignite=60}
+
+# 38 플레어 월 - 폭 6블록 화염벽 5초
+CHA_fire_curtain:
+  Cooldown: 0
+  Skills:
+  - chazone{wall=6;r=1.5;ticks=100;period=10;ignite=40}
+
+# 39 불사조의 서약 - 300초 동안 치명상 1회 무효
+CHA_phoenix_oath:
+  Cooldown: 0
+  Skills:
+  - chaguard{type=lethal;ticks=6000;heal=6} @self
+
+# 40 살아 있는 화로 - MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸)
+CHA_living_furnace:
+  Cooldown: 0
+  Skills:
+  - delay 1
+
+# 41 메테오 스트라이크 - 운석 낙하 반경 4블록
+CHA_falling_star:
+  Cooldown: 0
+  Skills:
+  - delay 25
+  - chahit{r=4;max=12;knock=0.8;up=0.4;ignite=60}
+
+# 42 화염 채찍 - 끌어당기며 피해
+CHA_flame_lash:
+  Cooldown: 0
+  Skills:
+  - chahit{pull=1.4;ignite=40}
+
+# 43 스타 퓨리 - (기존 라우트 유지) 불타는 대상 폭발
+CHA_cinder_detonation:
+  Cooldown: 0
+  Skills:
+  - chahit{r=3;max=6;ignite=60}
+
+# 44 손바닥 폭죽 - 장식 마법, 게임 효과 없음
+CHA_palm_fireworks:
+  Cooldown: 0
+  Skills:
+  - delay 1
+
+# 45 재의 낙인 - 3초 뒤 폭발, 맞은 적에게 전이
+CHA_ash_brand:
+  Cooldown: 0
+  Skills:
+  - chamark{type=ash_brand;ticks=60;r=3;cooldown=200}
+
+# 46 블레이즈 킥 - 회전 발차기 근접 범위
+CHA_flame_leap:
+  Cooldown: 0
+  Skills:
+  - chahit{center=caster;r=2.5;knock=0.8;ignite=40} @self
+
+# 47 홍련의 심장 - 현재 체력 절반 소모, 소모량 비례 폭발
+CHA_crimson_heart:
+  Cooldown: 0
+  Skills:
+  - chahit{center=caster;r=5;max=12;mult=0;hpcost=0.5;hpscale=2.5;knock=1} @self
+
+# 48 심지 줄이기 - MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸)
+CHA_wick_trimming:
+  Cooldown: 0
+  Skills:
+  - delay 1
+
+# 50 발화 - 10초 발화
+CHA_charcoal_conversion:
+  Cooldown: 0
+  Skills:
+  - chahit{mult=0;ignite=200}
+
+# 51 스펀지 말리기 - MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸)
+CHA_sponge_drying:
+  Cooldown: 0
+  Skills:
+  - delay 1
+
+# 53 끓는 갑주 - MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸)
+CHA_boiling_armor:
+  Cooldown: 0
+  Skills:
+  - delay 1
+
+# 54 가마 숨결 - 주변 화로 20초 가공 2배속
+CHA_kiln_breath:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=kiln;r=6;ticks=400} @self
+
+# 56 폭발 쐐기 - 근접 피격 시 폭발 (시간 경과로는 안 터짐)
+CHA_explosive_wedge:
+  Cooldown: 0
+  Skills:
+  - chamark{type=wedge;ticks=600;r=2.5}
+
+# 58 열량 보존 - 주변 불·용암 개수만큼 회복
+CHA_heat_recovery:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=heat;r=10} @self
+
+# 59 불새 - 넓게 관통하는 불새
+CHA_firebird_hunt:
+  Cooldown: 0
+  Skills:
+  - chabolt{speed=1.2;range=12;radius=1.6;pierce=99;ignite=60}
+
+# 60 용암 봉합 - MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸)
+CHA_lava_suture:
+  Cooldown: 0
+  Skills:
+  - delay 1
+
+# 61 화염 검무 - 근접 공격마다 검 1자루 소모 추가 피해
+CHA_flame_sword_dance:
+  Cooldown: 0
+  Skills:
+  - chamark{type=swords;count=3;ticks=600} @self
+
+# 62 파이어 스트라이크 - 짧은 레이저, 방패 5초 무력화
+CHA_incandescent_break:
+  Cooldown: 0
+  Skills:
+  - chabolt{speed=4;range=15;radius=0.6;pierce=99;shield=100}
+
+# 64 드래곤 브레스 - 1.5초 영창 후 부채꼴 브레스 5회
+CHA_crimson_breath:
+  Cooldown: 0
+  Skills:
+  - delay 30
+  - chahit{center=caster;cone=50;r=9;mult=0.4;ignite=40} @self
+  - delay 6
+  - chahit{center=caster;cone=50;r=9;mult=0.4;ignite=40} @self
+  - delay 6
+  - chahit{center=caster;cone=50;r=9;mult=0.4;ignite=40} @self
+  - delay 6
+  - chahit{center=caster;cone=50;r=9;mult=0.4;ignite=40} @self
+  - delay 6
+  - chahit{center=caster;cone=50;r=9;mult=0.4;ignite=40} @self
+
+# 65 물결 숨결 - 30초 수중 호흡
+CHA_water_breath:
+  Cooldown: 0
+  Skills:
+  - potion{type=WATER_BREATHING;duration=600;level=0} @self
+
+# 66 물살 타기 - 15초 수영 속도
+CHA_tide_stride:
+  Cooldown: 0
+  Skills:
+  - potion{type=DOLPHINS_GRACE;duration=300;level=0} @self
+
+# 67 물방울 탄환 - 약 1블록 밀치는 물 탄환
+CHA_water_bolt:
+  Cooldown: 0
+  Skills:
+  - chabolt{speed=1.6;range=15;radius=0.5;knock=0.45}
+
+# 68 불길 씻기 - 자신의 불 끄기
+CHA_quench:
+  Cooldown: 0
+  Skills:
+  - chaally{type=quench} @self
+
+# 69 정화의 물결 - 자신·아군 독/나약함/구속 해제
+CHA_purifying_wave:
+  Cooldown: 0
+  Skills:
+  - chaally{type=cleanse;r=5} @self
+
+# 70 얼음 다리 - 15초 차가운 걸음
+CHA_ice_bridge:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=frostwalk;ticks=300;r=2} @self
+
+# 72 수맥 개방 - 바라보는 위치에 물 설치
+CHA_spring_unseal:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=water}
+
+# 73 운디네 - 30초 동안 1.5초마다 근처 적 공격
+CHA_water_elemental:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=companion;ticks=600;period=30;range=10;knock=0.3} @self
+
+# 74 만년빙옥 - 일반 적 5초 봉쇄, 보스는 감속
+CHA_eternal_ice_prison:
+  Cooldown: 0
+  Skills:
+  - chamark{type=prison;ticks=100}
+
+# 75 가마솥 채우기 - 가마솥 물 한 단계
+CHA_cauldron_fill:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=cauldron}
+
+# 76 염색 씻기 - 손에 든 가죽 장비 염색 제거
+CHA_dye_rinse:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=dye} @self
+
+# 77 물고기 유인 - 던진 낚싯바늘 입질 시간 단축
+CHA_fish_lure:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=lure;min=20;max=60} @self
+
+# 78 서리 파열 - 1초 뒤 얼음 가시 범위
+CHA_frost_rupture:
+  Cooldown: 0
+  Skills:
+  - delay 20
+  - chahit{r=2.5;max=8;up=0.5;effect=SLOWNESS:40:1}
+
+# 79 수압창 - 최대 3체 관통, 뒤일수록 약함
+CHA_pressure_lance:
+  Cooldown: 0
+  Skills:
+  - chabolt{speed=2.5;range=15;radius=0.6;pierce=3;falloff=0.7}
+
+# 80 생명의 분배 - 자신+아군 최대 3명 체력 비율 분배
+CHA_life_distribution:
+  Cooldown: 0
+  Skills:
+  - chaally{type=share;r=6;max=3} @self
+
+# 81 촉촉한 밭 - 경작지 최대 9칸 적시기
+CHA_moist_farmland:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=wetfarm;r=2;max=9}
+
+# 82 글씨 씻기 - 표지판 한 면 글씨 지우기
+CHA_wash_letters:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=sign}
+
+# 83 치유의 비 - 5초 동안 아군 1초마다 하트 1칸 회복
+CHA_healing_rain:
+  Cooldown: 0
+  Skills:
+  - chazone{r=5;ticks=100;period=20;mult=0;heal=2}
+
+# 84 이슬 모으기 - 빈 병 최대 3개 물병으로
+CHA_dew_gathering:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=dew;max=3} @self
+
+# 85 노아의 방주 - 물 위에서 보트 생성
+CHA_quiet_mooring:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=boat} @self
+
+# 86 물거품 아리아 - 명중 지점 반경 4블록 광역
+CHA_bubble_aria:
+  Cooldown: 0
+  Skills:
+  - chabolt{speed=1.3;range=15;radius=0.6;mult=0;aoe=4;aoemult=1}
+
+# 87 수압해머 - 반경 3블록 강타 + 짧은 경직
+CHA_pressure_hammer:
+  Cooldown: 0
+  Skills:
+  - delay 15
+  - chahit{r=3;max=10;effect=SLOWNESS:20:4}
+
+# 88 용오름 - 3초 용오름, 띄우며 지속 피해
+CHA_waterspout:
+  Cooldown: 0
+  Skills:
+  - chazone{r=2.5;ticks=60;period=10;mult=0.35;lift=0.55}
+
+# 89 사금 추출 - 물 속에서 사금(금 조각) 1~3개
+CHA_current_sorting:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=sapgeum;min=1;max=3;item=GOLD_NUGGET} @self
+
+# 90 약액 분무 - 손의 물약 소비, 반경 5블록 동료 10초 적용
+CHA_potion_mist:
+  Cooldown: 0
+  Skills:
+  - chaally{type=potion;r=5;ticks=200} @self
+
+# 91 물레 방패 - 다음 근접 피해 절반 + 공격자 밀침 (10초)
+CHA_waterwheel_shield:
+  Cooldown: 0
+  Skills:
+  - chaguard{type=deflect;ticks=200;reduce=0.5;push=1.2} @self
+
+# 92 콘크리트 양생 - 연결된 콘크리트 가루 최대 16개 굳히기
+CHA_concrete_curing:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=concrete;max=16}
+
+# 93 파문방벽 - 2초 정면 투사체 소멸
+CHA_ripple_guard:
+  Cooldown: 0
+  Skills:
+  - chaguard{type=block;ticks=40} @self
+
+# 94 해일 - 전방 해일, 3블록 밀침
+CHA_tidal_wave:
+  Cooldown: 0
+  Skills:
+  - chabolt{speed=0.9;range=12;radius=2.2;pierce=99;knock=1.3;up=0.3;from=caster}
+
+# 95 도약하는 물방울 - 서로 다른 적 최대 4명 튕김
+CHA_bouncing_droplet:
+  Cooldown: 0
+  Skills:
+  - chabolt{speed=1.4;range=15;radius=0.5;bounce=3;bouncer=6}
+
+# 96 심해의 압력 - 6초 수압 지대, 감속·지속 피해
+CHA_abyssal_pressure:
+  Cooldown: 0
+  Skills:
+  - chazone{r=2.5;ticks=120;period=20;mult=0.3;effect=SLOWNESS:30:2,MINING_FATIGUE:30:1}
+
+# 97 풍요의 손길 - 주변 밀·당근·감자 최대 8개 한 단계 성장
+CHA_verdant_touch:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=grow;r=5;max=8} @self
+
+# 98 땅의 속삭임 - 광석 최대 3곳 5초 발광 표시 (시전자만 보임)
+CHA_ore_whisper:
+  Cooldown: 0
+  Skills:
+  - chaworld{type=ore;r=10;max=3;ticks=100} @self
+
+# 99 조약돌 던지기 - 약한 조약돌 탄
+CHA_pebble_toss:
+  Cooldown: 0
+  Skills:
+  - chabolt{speed=1.6;range=15;radius=0.5}
+
+# 100 광부의 박자 - 15초 성급함
+CHA_miners_rhythm:
+  Cooldown: 0
+  Skills:
+  - potion{type=HASTE;duration=300;level=0} @self
