@@ -4,7 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
-/** Draws a bbmodel on an entity. Implementations: ItemsAdder custom entity, ModelEngine 4. */
+/** Draws a bbmodel on an entity. Main: ModelEngine 4. Alternative: ItemsAdder custom entity. */
 interface Renderer {
     String name();
     boolean available();
@@ -17,7 +17,11 @@ interface Renderer {
 
     interface Handle {
         Entity base();
+        /** Main state animation (replaces the previous main one). */
         boolean play(String animation);
+        /** Extra layer kept on top of the main animation (e.g. inserted fragments). Same as play() where layering is unsupported. */
+        default boolean overlay(String animation) { return play(animation); }
+        /** Stop everything, overlays included. */
         void stop();
         void teleport(Location loc);
         void scale(double scale);

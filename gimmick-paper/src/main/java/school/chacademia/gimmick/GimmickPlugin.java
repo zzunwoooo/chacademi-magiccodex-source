@@ -7,8 +7,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * ChacaGimmick - dungeon gimmick models and puzzles, independent of MythicMobs.
- * Models are drawn by ItemsAdder custom entities (default) or ModelEngine; this plugin only places, saves,
- * animates and wires them into puzzles. Spell hits arrive from ChAcademiaMagicMythic when it is installed.
+ * Models are implemented by ModelEngine 4 (ItemsAdder only ships the merged resource pack); this plugin places,
+ * saves, animates and wires them into puzzles. An ItemsAdder custom-entity renderer remains as an alternative. Spell hits arrive from ChAcademiaMagicMythic when it is installed.
  */
 public final class GimmickPlugin extends JavaPlugin {
     private final ModelCatalog catalog = new ModelCatalog();
@@ -44,7 +44,7 @@ public final class GimmickPlugin extends JavaPlugin {
         var cmd = getCommand("기믹");
         if (cmd != null) { var c = new GimmickCommand(this); cmd.setExecutor(c); cmd.setTabCompleter(c); }
 
-        // Renderers register their models a moment after start; spawn on the next tick.
+        // ModelEngine loads blueprints a moment after start; spawn a little later.
         Bukkit.getScheduler().runTaskLater(this, () -> world.spawnLoaded(), 40);
         getLogger().info("기믹 " + world.all().size() + "개, 퍼즐 " + puzzles.ids().size() + "개, 렌더러 " + renderer.name()
             + (renderer.available() ? "" : " (사용 불가 - 플러그인 설치 확인)"));
@@ -56,12 +56,13 @@ public final class GimmickPlugin extends JavaPlugin {
     }
 
     private Renderer pickRenderer() {
-        String want = getConfig().getString("renderer", "itemsadder").toLowerCase(Locale.ROOT);
-        if (want.equals("modelengine")) {
-            try { return new ModelEngineRenderer(getLogger()); }
-            catch (LinkageError e) { getLogger().warning("ModelEngine 을 불러오지 못해 ItemsAdder 로 대신합니다: " + e); }
+        String want = getConfig().getString("renderer", "modelengine").toLowerCase(Locale.ROOT);
+        if (want.equals("itemsadder")) return new ItemsAdderRenderer(getLogger());
+        try { return new ModelEngineRenderer(getLogger()); }
+        catch (LinkageError e) {
+            getLogger().severe("ModelEngine 을 불러오지 못했습니다. ModelEngine 4 설치를 확인하세요: " + e);
+            return new ItemsAdderRenderer(getLogger());
         }
-        return new ItemsAdderRenderer(getLogger());
     }
 
     /** config/models/puzzles reload; live models are rebuilt so renderer or prefix changes apply. */

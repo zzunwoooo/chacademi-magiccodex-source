@@ -1,16 +1,17 @@
 # ChacaGimmick — 던전 기믹 플러그인
 
 던전 수수께끼용 기믹 모델(`dungeon-gimmicks/` 의 bbmodel)을 **MythicMobs 없이** 직접 소환하고, 퍼즐로 연결한다.
-모델 리소스는 ItemsAdder(기본) 또는 ModelEngine 이 보내고, 이 플러그인은 위치·방향·크기 저장, 애니메이션 재생, 클릭·밟기·마법 판정, 퍼즐 상태만 맡는다.
+모델·애니메이션·크기는 **ModelEngine 4** 가 구현하고, ItemsAdder 는 ModelEngine 이 만든 리소스팩을 합쳐서 보내는 역할만 한다.
+이 플러그인은 소환·저장·애니메이션 지시·클릭/밟기/마법 판정·퍼즐 상태를 맡는다.
 
 ## 설치
 
 1. `chaca-gimmick-<버전>.jar` → `plugins/`
-2. 모델 등록 (둘 중 하나)
-   - **ItemsAdder (기본, `renderer: itemsadder`)**: 각 bbmodel 을 Blockbench ItemsAdder 확장으로 "ItemsAdder Entity Model" 변환 후 내보내기.
-     네임스페이스를 `chacademi`, 엔티티 id 를 bbmodel 이름(`gm_fire_brazier` 등)과 같게 한다 → `model-prefix: "chacademi:"`.
-     3블록보다 큰 모델(봉인문 대형, 텔레포트 게이트, 천칭, 시간차 문)은 Scaling Mode 를 "Max Model size" 로.
-   - **ModelEngine (`renderer: modelengine`, `model-prefix: ""`)**: bbmodel 을 `plugins/ModelEngine/blueprints/` 에 넣고 `/meg reload`. 팩은 ItemsAdder 에 병합해서 보낼 수 있다.
+2. 모델 등록 (ModelEngine)
+   - `dungeon-gimmicks/models/<id>/<id>.bbmodel` 을 `plugins/ModelEngine/blueprints/` 에 넣고 `/meg reload` (blueprint 이름 = 모델 id).
+   - ModelEngine 이 만든 리소스팩(`plugins/ModelEngine/resource pack`)을 ItemsAdder 리소스팩에 합쳐서 보낸다
+     (ItemsAdder 설정의 다른 플러그인 리소스팩 병합 목록에 ModelEngine 폴더 추가 → `/iazip`).
+   - `config.yml` 기본값 `renderer: modelengine`, `model-prefix: ""` 그대로.
 3. 마법 연동을 쓰려면 `ChAcademiaMagicMythic`(magic-mythic-paper) 도 설치. 없으면 클릭·밟기·아이템만 동작.
 4. 서버 시작 → `plugins/ChacaGimmick/` 에 `config.yml`, `models.yml`, `puzzles.yml` 생성.
 
@@ -63,7 +64,9 @@
 
 ## 알아둘 것
 
-- ItemsAdder API 에는 크기 조절이 없어 **기반 엔티티의 `minecraft:scale` 속성**으로 크기를 바꾼다. 뼈대가 따라 커지는지 게임에서 확인 필요. 안 되면 `renderer: modelengine` 을 쓰거나 크기 1로 쓴다.
-- ItemsAdder 는 애니메이션을 한 번에 하나만 재생한다. 조각 제단의 `insert_*` 처럼 겹쳐야 하는 연출은 ModelEngine 이 더 자연스럽다.
+- 애니메이션: 상태 애니메이션(`idle`/`activate`→`active`/`deactivate`)은 하나씩 바꿔 재생하고, 조각 제단 `insert_*` 처럼 쌓이는 연출은 ModelEngine 레이어로 겹쳐 재생한다. 재시작 후에도 넣은 조각 연출이 다시 깔린다.
+- 크기는 ModelEngine `setScale` 로 바뀐다.
 - 클릭 판정은 모델 크기(`models.yml` 의 width/height × 크기)의 Interaction 엔티티로 한다. 방향을 돌려도 판정 상자는 회전하지 않는다.
 - 마법 판정: 투사체(chabolt)는 이동 경로마다, 즉시 타격(chahit)은 맞은 지점에서, 지대(chazone)는 매 주기마다 주변 기믹에 신호를 준다. 투사체는 기믹에 닿으면 멈춘다 (`magic-blocks-bolts`).
+- 대안: ItemsAdder 커스텀 엔티티로 그리는 렌더러(`renderer: itemsadder`)도 남겨 두었지만, 크기 조절·애니메이션 겹치기가 안 되고 bbmodel 변환 작업이 필요해 기본으로 쓰지 않는다.
+- 아이템 넣기(`collect`)의 아이템 id 는 ItemsAdder 아이템이면 `네임스페이스:id` 로 인식한다.

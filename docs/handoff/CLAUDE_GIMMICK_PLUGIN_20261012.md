@@ -12,13 +12,13 @@
 2. `magic-mythic-paper` 변경: `MagicImpactEvent`(공개 이벤트) 추가, `chahit`/`chabolt`/`chazone` 이 맞은 위치·속성으로 이벤트를 쏜다. `tools/spells.py` 가 각 줄에 `element=<카탈로그 속성>` 을 넣도록 바뀌었고 스킬 YAML 을 다시 생성했다. 듣는 플러그인이 없으면 이벤트를 만들지 않는다.
 3. 마법 미몹 스킬이 실제로 돌려면 여전히 Bridge 수정안(`docs/handoff/proposals/BRIDGE_CATALOG_GAMEPLAY_20261011.patch`, GPT 승인 필요)이 필요하다. 그 전에는 기믹이 마법에 반응하지 않고, 클릭·밟기·아이템 퍼즐만 동작한다.
 4. 새 모듈 `gimmick-paper` 를 `settings.gradle`, `Build-Server.ps1` 에 추가했다. `compileOnly project(':magic-mythic-paper')` 와 ModelEngine jar(`../plugins/ModelEngine-4.0.8.jar`) 를 쓴다. ItemsAdder 는 리플렉션 (chaca-portrait 와 같은 방식).
-5. ItemsAdder 렌더러로 쓰려면 각 bbmodel 을 Blockbench ItemsAdder 확장으로 변환·내보내기 해야 한다 (사용자 작업). 자세한 건 `gimmick-paper/README.md`.
+5. **소유자 결정 (2026-10-12): 모델 구현은 ModelEngine, ItemsAdder 는 리소스팩 전달만.** 기본 `renderer: modelengine`, `model-prefix: ""`. bbmodel 은 ModelEngine blueprints 에 넣고, ModelEngine 리소스팩을 ItemsAdder 팩에 병합한다. ItemsAdder 커스텀 엔티티 렌더러는 대안으로만 남겼다.
 
 ## 1. 구성
 
 | 파일 | 역할 |
 | --- | --- |
-| `GimmickPlugin` | 시작/종료, 렌더러 선택(`renderer: itemsadder|modelengine`), 리로드 |
+| `GimmickPlugin` | 시작/종료, 렌더러 선택(기본 `modelengine`, 대안 `itemsadder`), 리로드 |
 | `ItemsAdderRenderer` | `CustomEntity.spawn/convert/playAnimation/stopAnimation/teleport/destroy` (리플렉션, API 4.x 문서 기준) |
 | `ModelEngineRenderer` | `ModelEngineAPI.createActiveModel/createModeledEntity` 등 (Bridge TamingModelFx 와 같은 호출) |
 | `GimmickWorld` | `gimmicks.yml` 저장, 청크 로드/언로드 때 엔티티 생성/제거(비영구 엔티티), 몹에 씌우기(PDC), 클릭용 Interaction, 바라보는 기믹 찾기, 애니메이션 전환 |
@@ -39,8 +39,8 @@
 
 ## 3. 확인할 것 (실기)
 
-1. ItemsAdder 로 변환한 모델 하나(`gm_fire_brazier`)를 `/기믹 소환` → 보이는지, `/기믹 도구` 애니메이션 모드로 `activate`·`active` 재생되는지.
-2. 크기 모드: ItemsAdder 에서 `minecraft:scale` 로 뼈대가 같이 커지는지 (안 되면 README 의 대안).
+1. ModelEngine blueprints 에 넣은 `gm_fire_brazier` 를 `/기믹 소환` → ItemsAdder 로 받은 팩에서 보이는지, `/기믹 도구` 애니메이션 모드로 `activate`·`active` 재생되는지.
+2. 크기 모드로 `setScale` 이 적용되는지, 조각 제단에 조각 2개를 넣었을 때 두 연출이 겹쳐 보이는지.
 3. 청크를 벗어났다 돌아왔을 때 모델이 하나만 있는지 (중복 생성 없음), 재시작 후 위치·방향·크기 유지.
 4. `example_fire_gate`: 화로 두 개 연결 → `/기믹 신호` 로 켜서 문 방벽이 사라지는지 (마법 연동은 Bridge 수정안 적용 후).
 5. `/기믹 씌우기` 한 몹이 재접속·청크 재로드 후에도 모델을 다시 쓰는지.
