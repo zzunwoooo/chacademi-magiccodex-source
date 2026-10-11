@@ -10,7 +10,7 @@ if($LASTEXITCODE -ne 0){throw 'Remote server plugin build failed'}
 $dest='C:\Chacademi\artifacts\server'
 New-Item -ItemType Directory -Path $dest -Force|Out-Null
 # Every server plugin module in settings.gradle; this one list drives both the copy and the hash listing.
-$projects=@('magic-codex-paper','magic-discovery-paper','creature-spawns-paper','tornado-event-paper','chaca-npc-paper','chaca-portrait-paper','magic-mythic-paper','chacademi-party-velocity')
+$projects=@('magic-codex-paper','magic-discovery-paper','creature-spawns-paper','tornado-event-paper','chaca-npc-paper','chaca-portrait-paper','magic-mythic-paper','gimmick-paper','chacademi-party-velocity')
 $built=foreach($project in $projects){
     $jars=@(Get-ChildItem -LiteralPath "$project\build\libs" -File -Filter '*.jar'|Where-Object {$_.Name -notmatch '-sources|-javadoc'})
     if($jars.Count -eq 0){throw "No plugin jar was built for $project"}

@@ -101,3 +101,7 @@ MythicMobs 5.9.0 / Paper 1.21.4 기준으로 아래 이름이 맞는지 확인�
 | 조건 `chaenemy` | 마법 피해 대상인지 (기믹·몹 스킬 작성용) |
 
 대상 규칙(모든 메커닉 공통, `Targets.enemy`): 바닐라 적대 몹 + MythicMobs 몹(단 `CHA_`/`GM_` 접두사 제외), 제외 태그·Citizens NPC·길들인 동물·갑옷 거치대 제외, 플레이어는 `pvp-worlds` 에서만. 블록 변경은 Bridge `SpellUtility` 와 같은 가짜 부수기/설치 이벤트로 보호구역을 확인한다.
+
+## 추가 (2026-10-12, `claude/gimmick-plugin-20261012`)
+
+`MagicImpactEvent` 를 추가했다. `chahit`/`chabolt`/`chazone` 이 맞은 위치·반경·속성(`element=`)으로 이벤트를 쏘고, 던전 기믹 플러그인이 받는다. 투사체 이벤트가 취소되면 투사체가 멈춘다. 자세한 건 `CLAUDE_GIMMICK_PLUGIN_20261012.md`.

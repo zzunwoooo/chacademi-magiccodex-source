@@ -135,6 +135,9 @@ def main():
           '# 피해 수치는 밸런스 검토 전 임시값입니다.', 'spells:']
     for (i, sk, tgt, rng, base, ratio, util, lines, note) in S:
         d = D.get(i, {}); name = d.get('name', i)
+        cat = d.get('category', '')
+        # every cha* mechanic learns the spell element (MagicImpactEvent -> dungeon gimmicks)
+        lines = [l.replace('}', f';element={cat}}}', 1) if l.startswith(('chahit{', 'chabolt{', 'chazone{')) and cat else l for l in lines]
         assert sk.startswith('CHA_') and sk[4:].replace('_','').isalnum() and sk[4:] == sk[4:].lower(), sk
         assert tgt in ('SELF','AIM','ENTITY','AIR_ENTITY','BURNING_ENTITY','BLOCK') and 1 <= rng <= 48
         out.append(f'# {d.get("order", "")} {name} - {note}')

@@ -50,6 +50,7 @@ final class ZoneMech extends Mech {
             if (follow) { var l = c.caster().getLocation(); center.setX(l.getX()); center.setY(l.getY()); center.setZ(l.getZ()); }
             if (trap) return tickTrap();
             if ((age - 1) % period != 0) return true;
+            MagicImpactEvent.fire(c.caster(), p.s("element", ""), center, wall > 0 ? Math.max(wall / 2, r) : r, MagicImpactEvent.Kind.ZONE);
             var targets = plugin.targets();
             double heal = p.d("heal", 0);
             if (heal > 0) for (Player ally : targets.alliesNear(c.caster(), center, r, 16)) {

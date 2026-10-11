@@ -34,7 +34,9 @@ final class HitMech extends Mech {
         if (cone > 0) hits = inCone(c, r, cone, p.i("max", 16));
         else if (r <= 0) hits = c.target() != null && targets.enemy(c.caster(), c.target()) ? List.of((LivingEntity) c.target()) : List.of();
         else hits = targets.enemiesNear(c.caster(), center, r, p.i("max", 16));
-        if (hits.isEmpty()) return false;
+        Location impactAt = cone > 0 ? c.caster().getEyeLocation().add(c.caster().getEyeLocation().getDirection().multiply(r / 2)) : center;
+        boolean gimmick = MagicImpactEvent.fire(c.caster(), p.s("element", ""), impactAt, Math.max(cone > 0 ? r / 2 : r, 0.8), MagicImpactEvent.Kind.HIT);
+        if (hits.isEmpty()) return !gimmick; // a cancelled impact (gimmick took it) still counts as a successful hit
         for (LivingEntity t : hits) apply(c, t, center, dmg);
         return true;
     }
