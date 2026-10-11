@@ -2,6 +2,9 @@ package school.chacademia.magicmythic;
 
 import java.util.*;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
+import org.bukkit.event.world.EntitiesLoadEvent;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
 import org.bukkit.event.entity.*;
@@ -12,7 +15,9 @@ import org.bukkit.potion.PotionEffectType;
  * Marks that wait for something to happen.
  *  ash_brand - bursts after `ticks`, the burst brands the enemies it hits (each enemy rebrandable after `cooldown`)
  *  wedge     - bursts when the marked enemy takes a melee hit from a player, or never (no timed burst)
- *  prison    - normal mobs stop acting until `ticks` end or they take enough damage; bosses are only slowed
+ *  prison    - normal mobs stop acting until `ticks` end or they take enough damage; bosses are only slowed.
+ *              The mob's own awareness is saved on the mob (PDC) and put back on release, on plugin stop and,
+ *              after a crash, when the mob loads again.
  *  swords    - on the caster: each melee hit on an enemy spends one sword for extra damage
  */
 final class Marks implements Listener {
@@ -28,6 +33,7 @@ final class Marks implements Listener {
     }
 
     private final MagicMythicPlugin plugin;
+    private final NamespacedKey prisonKey;
     private final List<Mark> marks = new ArrayList<>();
     private final Map<UUID, Long> brandCooldown = new HashMap<>();
     private long now = 0;
@@ -35,7 +41,10 @@ final class Marks implements Listener {
 
     Marks(MagicMythicPlugin plugin) {
         this.plugin = plugin;
+        this.prisonKey = new NamespacedKey(plugin, "prison_was_aware");
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 1, 1);
+        // Mobs left frozen by a crash in already-loaded chunks.
+        for (var w : Bukkit.getWorlds()) for (var e : w.getEntitiesByClass(Mob.class)) recover(e);
     }
     int count() { return marks.size(); }
 
@@ -56,7 +65,11 @@ final class Marks implements Listener {
                     holder.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) ticks, 2));
                     return true;
                 }
-                ((Mob) holder).setAware(false);
+                Mob mob = (Mob) holder;
+                // Remember the mob's own awareness (some mobs are intentionally unaware) before freezing it.
+                if (!mob.getPersistentDataContainer().has(prisonKey, PersistentDataType.BYTE))
+                    mob.getPersistentDataContainer().set(prisonKey, PersistentDataType.BYTE, (byte) (mob.isAware() ? 1 : 0));
+                mob.setAware(false);
             }
             case SWORDS -> marks.removeIf(m -> m.type == Type.SWORDS && m.holder.equals(holder));
             default -> {}
@@ -95,7 +108,24 @@ final class Marks implements Listener {
         }
     }
 
-    private void release(Mark m) { if (m.holder instanceof Mob mob && mob.isValid()) mob.setAware(true); }
+    private void release(Mark m) { if (m.holder instanceof Mob mob) recover(mob); }
+
+    /** Put back the awareness saved when the prison started, and forget it. */
+    private void recover(Mob mob) {
+        var pdc = mob.getPersistentDataContainer();
+        Byte was = pdc.get(prisonKey, PersistentDataType.BYTE);
+        if (was == null) return;
+        mob.setAware(was != 0);
+        pdc.remove(prisonKey);
+    }
+
+    @EventHandler public void entitiesLoad(EntitiesLoadEvent e) {
+        for (var en : e.getEntities()) {
+            if (!(en instanceof Mob mob)) continue;
+            boolean stillHeld = marks.stream().anyMatch(m -> m.type == Type.PRISON && !m.done && m.holder.getUniqueId().equals(mob.getUniqueId()));
+            if (!stillHeld) recover(mob); // frozen by a crash or by a prison that ended while unloaded
+        }
+    }
 
     void releaseAll() { for (Mark m : marks) if (m.type == Type.PRISON) release(m); marks.clear(); }
 
