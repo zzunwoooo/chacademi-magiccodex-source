@@ -17,6 +17,9 @@ public final class DialoguePresenter {
     private static DialogueRunner active = null;
     private static long reopenAt = 0;
     private static boolean warned = false;
+    private static boolean serverOwned;
+    public static boolean isLocal(String id) { return active!=null&&!serverOwned&&active.dialogueId().equals(id); }
+    public static boolean serverOwned() { return active != null && serverOwned; }
 
     private DialoguePresenter() {}
 
@@ -36,12 +39,15 @@ public final class DialoguePresenter {
     }
 
     /** 대화를 시작한다. 앞 대화가 있으면 멈춘다. 이미 끝난 진행기(빈 대화)는 띄우지 않는다. */
-    public static void start(DialogueRunner runner) {
+    public static boolean start(DialogueRunner runner, boolean fromServer) {
         stop();
-        if (runner.isEnded()) return;
+        if (runner.isEnded()) return false;
         active = runner;
+        serverOwned = fromServer;
         reopenAt = System.currentTimeMillis() + 500;
-        show(runner);
+        if (show(runner)) return true;
+        stop();
+        return false;
     }
 
     /** 서버가 멈추라고 할 때·접속이 끊길 때. 끝난 것으로 치지 않는다. */
@@ -71,8 +77,8 @@ public final class DialoguePresenter {
         }
     }
 
-    private static void show(DialogueRunner r) {
-        MagicCodexClientLink.showDialogue(r.frame(), (session, choice) -> onChoice(r, choice), session -> {
+    private static boolean show(DialogueRunner r) {
+        return MagicCodexClientLink.showDialogue(r.frame(), (session, choice) -> onChoice(r, choice), session -> {
             // 화면이 사라짐 (게임 메뉴 등). 닫을 수 없는 대화라 세션은 살아 있고, tick 이 화면이 빌 때 다시 띄운다
         });
     }

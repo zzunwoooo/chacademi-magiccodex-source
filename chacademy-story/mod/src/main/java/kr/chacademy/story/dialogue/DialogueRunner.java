@@ -27,6 +27,8 @@ public final class DialogueRunner {
         /** 선택지를 골랐거나 이벤트가 있는 장면에 들어감. 서버가 연 대화면 서버로 보낸다. */
         void event(String dialogueId, String event, String npc, int add);
 
+        default boolean affinity(String dialogueId,String key,List<Dialogue.AffinityChange> changes) { return true; }
+
         /** 대화가 끝남. lastScene = 마지막 장면 id. */
         void done(String dialogueId, String lastScene);
 
@@ -73,7 +75,7 @@ public final class DialogueRunner {
         this.affinity = new HashMap<>(affinity);
         this.listener = listener;
         this.vars = vars;
-        this.session = "story:" + dialogue.id();
+        this.session = "story:" + dialogue.id() + ":" + java.util.UUID.randomUUID();
         boolean resume = startScene != null && dialogue.scenes().containsKey(startScene);
         if (resume) {
             // 이어서 보기: 저장된 곳으로 바로 간다. 장면 들어옴 효과(redirect·호감도·이벤트)는 다시 실행하지 않는다
@@ -104,7 +106,7 @@ public final class DialogueRunner {
             }
         }
         scene = s;
-        if (!s.affinity().isEmpty() && enteredAffinity.add(s.id())) {
+        if (!s.affinity().isEmpty() && enteredAffinity.add(s.id()) && listener.affinity(dialogue.id(), "scene."+s.id(),s.affinity())) {
             for (Dialogue.AffinityChange a : s.affinity()) affinity.merge(a.npc(), a.add(), Integer::sum);
         }
         if (!s.event().isEmpty()) listener.event(dialogue.id(), s.event(), "", 0);
@@ -181,7 +183,8 @@ public final class DialogueRunner {
     private void pick(int index) {
         if (index < 0 || index >= visibleChoices.size()) return;
         Dialogue.Choice c = visibleChoices.get(index);
-        for (Dialogue.AffinityChange a : c.affinity()) affinity.merge(a.npc(), a.add(), Integer::sum);
+        if (!c.affinity().isEmpty() && listener.affinity(dialogue.id(), "choice."+scene.id()+"."+scene.choices().indexOf(c),c.affinity()))
+            for (Dialogue.AffinityChange a : c.affinity()) affinity.merge(a.npc(), a.add(), Integer::sum);
         if (!c.event().isEmpty()) {
             // 실제 호감도 값은 서버 affinity.events만 사용한다. npc/add는 구형 패킷 형식 호환용이다.
             Dialogue.AffinityChange first = c.affinity().isEmpty() ? null : c.affinity().get(0);

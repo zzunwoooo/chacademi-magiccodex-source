@@ -37,7 +37,7 @@ import java.util.Map;
  * [플러그인] /storydialogue 준우 ch1_wakeup    → 대화 열기 → 선택지마다 dialogue_event, 끝나면 dialogue_done
  * </pre>
  * 대화창은 이 모드가 그리지 않는다: 대화 내용·흐름(DialogueRunner)만 갖고, 화면은 MagicCodex 대화창이 그린다 (DialoguePresenter).
- * 혼자 테스트: /story cutscene &lt;id&gt;, /story dialogue &lt;id&gt; (서버 명령어는 실행되지 않음).
+ * /story dialogue 는 클라이언트 대화 파일과 로컬 기록만 사용한다.
  */
 public class ChacademyCutsceneClient implements ClientModInitializer {
     public static final String MOD_ID = "chaca_story";
@@ -52,6 +52,9 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
         PayloadTypeRegistry.playS2C().register(CutscenePackets.StopS2C.TYPE, CutscenePackets.StopS2C.CODEC);
         PayloadTypeRegistry.playC2S().register(CutscenePackets.DoneC2S.TYPE, CutscenePackets.DoneC2S.CODEC);
         PayloadTypeRegistry.playS2C().register(CutscenePackets.DialogueOpenS2C.TYPE, CutscenePackets.DialogueOpenS2C.CODEC);
+        PayloadTypeRegistry.playS2C().register(CutscenePackets.DialogueViewS2C.TYPE, CutscenePackets.DialogueViewS2C.CODEC);
+        PayloadTypeRegistry.playC2S().register(CutscenePackets.DialogueRewardC2S.TYPE, CutscenePackets.DialogueRewardC2S.CODEC);
+        PayloadTypeRegistry.playC2S().register(CutscenePackets.DialogueReadyC2S.TYPE, CutscenePackets.DialogueReadyC2S.CODEC);
         PayloadTypeRegistry.playS2C().register(CutscenePackets.DialogueStopS2C.TYPE, CutscenePackets.DialogueStopS2C.CODEC);
         PayloadTypeRegistry.playC2S().register(CutscenePackets.DialogueEventC2S.TYPE, CutscenePackets.DialogueEventC2S.CODEC);
         PayloadTypeRegistry.playC2S().register(CutscenePackets.DialogueDoneC2S.TYPE, CutscenePackets.DialogueDoneC2S.CODEC);
@@ -70,11 +73,14 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(CutscenePackets.DialogueOpenS2C.TYPE,
                 (payload, context) -> openDialogue(payload.id(), Affinity.decode(payload.affinity()), TextVars.decode(payload.vars()), true,
                         payload.startScene(), payload.startLine()));
+        ClientPlayNetworking.registerGlobalReceiver(CutscenePackets.DialogueViewS2C.TYPE,
+                (payload, context) -> { pendingLocal = () -> openLocalDialogue(payload.id(), TextVars.decode(payload.vars()), true); });
         ClientPlayNetworking.registerGlobalReceiver(CutscenePackets.DialogueStopS2C.TYPE,
                 (payload, context) -> stopDialogue());
         // 접속이 끊기면 대화 화면 정리 (다시 접속하면 서버가 저장된 곳부터 다시 연다)
         net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.DISCONNECT.register(
                 (handler, client) -> client.execute(() -> {
+                    pendingLocal = null;
                     stopDialogue();
                     CutscenePlayback.disconnect();
                 }));
@@ -109,7 +115,7 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
                                     })
                                     .executes(ctx -> {
                                         String id = StringArgumentType.getString(ctx, "id");
-                                        pendingLocal = () -> openDialogue(id, Map.of(), Map.of(), false, "", 0);
+                                        pendingLocal = () -> openLocalDialogue(id, Map.of(), false);
                                         return 1;
                                     })))
                     .then(ClientCommandManager.literal("list").executes(ctx -> {
@@ -176,9 +182,72 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
         DialoguePresenter.stop();
     }
 
+    /** Default path: client file, client records, ordinary player commands only. */
+    private static void openLocalDialogue(String id,Map<String,String> vars,boolean acknowledge) {
+        if(id==null||!DialogueLoader.ID_PATTERN.matcher(id).matches()) { error("대화 id 형식이 잘못되었습니다.");return; }
+        if(DialoguePresenter.isActive()) {
+            // Repeated requests never replace an active runner or issue its effects twice.
+            if(acknowledge && DialoguePresenter.isLocal(id)) sendLocalReady(id);
+            else if(acknowledge) reportDialogueFailure(id,"busy");
+            return;
+        }
+        if(!DialoguePresenter.available()) { DialoguePresenter.warnUnavailable();if(acknowledge)reportDialogueFailure(id,CutscenePackets.FAIL_MAGICCODEX);return; }
+        var client=Minecraft.getInstance();if(client.player==null)return;
+        try {
+            var dialogue=DialogueLoader.load(id);
+            var ledger=new kr.chacademy.story.dialogue.LocalDialogueStore(DialogueLoader.rootDir().resolve("_progress").resolve(client.player.getUUID()+".properties"));
+            var signals=new kr.chacademy.story.dialogue.DialogueOpenSignals();
+            var localVars=TextVars.withLocal(vars);
+            var queuedAffinity=new java.util.HashSet<String>();
+            var runner=new DialogueRunner(dialogue,DialogueLoader.folder(id),ledger.affinity(),localVars,new DialogueRunner.Listener(){
+                @Override public boolean affinity(String dialogueId,String key,java.util.List<Dialogue.AffinityChange> changes){
+                    // Defer writes until UI accepted; constructor-time changes still affect this frame's local branches.
+                    if(ledger.done(dialogueId)||ledger.hasAffinity(dialogueId,key)||!queuedAffinity.add(key))return false;
+                    signals.send(()->{try{ledger.claimAffinity(dialogueId,key,changes);}catch(java.io.IOException e){signals.reject();localRecordFailure(e);}});
+                    return true;
+                }
+                @Override public void event(String dialogueId,String event,String npc,int add){
+                    if(event.isEmpty())return;
+                    signals.send(()->{try{if(ledger.claimEvent(dialogueId,event))runPlayerCommands(dialogue.commands().events().getOrDefault(event,java.util.List.of()));}catch(java.io.IOException e){signals.reject();localRecordFailure(e);}});
+                }
+                @Override public void done(String dialogueId,String lastScene){
+                    signals.send(()->{try{if(ledger.complete(dialogueId)){
+                        runPlayerCommands(dialogue.commands().endings().getOrDefault(lastScene,java.util.List.of()));
+                        runPlayerCommands(dialogue.commands().end());
+                    }}catch(java.io.IOException e){signals.reject();localRecordFailure(e);}});
+                }
+            });
+            if(!DialoguePresenter.start(runner,false)){signals.reject();if(acknowledge)reportDialogueFailure(id,CutscenePackets.FAIL_MAGICCODEX);return;}
+            try{signals.accept();}catch(java.io.UncheckedIOException e){DialoguePresenter.stop();localRecordFailure(e);if(acknowledge)reportDialogueFailure(id,"local_record");return;}
+            if(signals.isRejected()){if(acknowledge)reportDialogueFailure(id,"local_record");return;}
+            if(acknowledge)sendLocalReady(id);
+        }catch(Exception e){LOGGER.warn("로컬 대화 열기 실패: {}",id,e);error("대화를 열지 못했습니다: "+id+" ("+e.getMessage()+")");if(acknowledge)reportDialogueFailure(id,CutscenePackets.FAIL_BROKEN);}
+    }
+    private static void sendLocalReady(String id){if(ClientPlayNetworking.canSend(CutscenePackets.DialogueReadyC2S.TYPE))ClientPlayNetworking.send(new CutscenePackets.DialogueReadyC2S(id));}
+    private static void localRecordFailure(Exception e){DialoguePresenter.stop();LOGGER.warn("로컬 대화 기록 저장 실패; 추가 명령을 실행하지 않습니다",e);error("대화 기록을 저장하지 못했습니다. 명령 실행을 중단했습니다.");}
+    private static void runPlayerCommands(java.util.List<String> commands){
+        var client=Minecraft.getInstance();if(client.player==null||client.getConnection()==null)return;
+        String account=client.player.getGameProfile().getName();
+        String nickname=kr.chacademy.story.compat.MagicCodexClientLink.nickname(account);
+        for(String raw:commands){String command=kr.chacademy.story.dialogue.DialogueCommands.expand(raw,account,nickname);
+            if(command.startsWith("chaca_reward ")) {
+                String key=command.substring("chaca_reward ".length());
+                if(!java.util.Set.of("ch1-2.e_s11","ch1-3.end").contains(key)){error("알 수 없는 스토리 보상입니다.");continue;}
+                if(ClientPlayNetworking.canSend(CutscenePackets.DialogueRewardC2S.TYPE))ClientPlayNetworking.send(new CutscenePackets.DialogueRewardC2S(key));
+                else error("스토리 보상 연결을 사용할 수 없습니다. 관리자에게 알려 주세요.");
+                continue;
+            }
+            // All other commands retain vanilla player permission checks.
+            client.getConnection().sendCommand(command);
+        }
+    }
+
     public static void openDialogue(String id, Map<String, Integer> affinity, Map<String, String> vars, boolean fromServer,
                                     String startScene, int startLine) {
-        stopDialogue();
+        id = id == null ? "" : id.strip();
+        if (!DialogueLoader.ID_PATTERN.matcher(id).matches()) { error("대화 id는 소문자, 숫자, _, - 1~64자입니다."); return; }
+        if (!fromServer && DialoguePresenter.serverOwned()) { error("서버 스토리가 끝난 뒤 로컬 대화를 열어 주세요."); return; }
+
         if (!DialoguePresenter.available()) {
             // MagicCodex 대화창이 없으면 열지 않는다 (자체 창으로 대신하지 않음). 대화 파일이 없을 때처럼 끝 신호도 보내지 않는다
             LOGGER.warn("대화 {} 를 열 수 없음: MagicCodex 모드가 없거나 대화창 창구 버전이 낮음", id);
@@ -199,31 +268,38 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
             }
             return;
         }
+        stopDialogue();
         LOGGER.info("대화 시작: {} (장면 {}개)", id, dialogue.scenes().size());
         // 표정 그림은 MagicCodex 대화창이 폴더에서 직접 (렌더 스레드 밖에서) 읽는다
+        var signals = new kr.chacademy.story.dialogue.DialogueOpenSignals();
         DialogueRunner runner = new DialogueRunner(dialogue, DialogueLoader.folder(id), affinity, TextVars.withLocal(vars), new DialogueRunner.Listener() {
             @Override
             public void event(String dialogueId, String event, String npc, int add) {
                 if (fromServer && ClientPlayNetworking.canSend(CutscenePackets.DialogueEventC2S.TYPE)) {
-                    ClientPlayNetworking.send(new CutscenePackets.DialogueEventC2S(dialogueId, event, npc, add));
+                    signals.send(() -> ClientPlayNetworking.send(new CutscenePackets.DialogueEventC2S(dialogueId, event, npc, add)));
                 }
             }
 
             @Override
             public void done(String dialogueId, String lastScene) {
                 if (fromServer && ClientPlayNetworking.canSend(CutscenePackets.DialogueDoneC2S.TYPE)) {
-                    ClientPlayNetworking.send(new CutscenePackets.DialogueDoneC2S(dialogueId, lastScene));
+                    signals.send(() -> ClientPlayNetworking.send(new CutscenePackets.DialogueDoneC2S(dialogueId, lastScene)));
                 }
             }
 
             @Override
             public void progress(String dialogueId, String scene, int line) {
                 if (fromServer && ClientPlayNetworking.canSend(CutscenePackets.DialogueProgressC2S.TYPE)) {
-                    ClientPlayNetworking.send(new CutscenePackets.DialogueProgressC2S(dialogueId, scene, line));
+                    signals.send(() -> ClientPlayNetworking.send(new CutscenePackets.DialogueProgressC2S(dialogueId, scene, line)));
                 }
             }
         }, startScene, startLine);
-        DialoguePresenter.start(runner);
+        if (!DialoguePresenter.start(runner, fromServer)) {
+            signals.reject();
+            if (fromServer) reportDialogueFailure(id, CutscenePackets.FAIL_MAGICCODEX);
+            return;
+        }
+        signals.accept();
     }
 
     /** 서버가 연 대화를 보여 줄 수 없을 때 (파일 없음·깨짐, MagicCodex 없음). 컷신과 같은 story_fail 신호를 쓴다. */

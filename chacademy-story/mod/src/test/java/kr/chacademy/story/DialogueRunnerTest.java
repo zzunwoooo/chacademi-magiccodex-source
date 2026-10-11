@@ -36,7 +36,7 @@ class DialogueRunnerTest {
         var d=dialogue(scene("wake",List.of(new Dialogue.Line("me","","으으… {player}?"),new Dialogue.Line("teacher","웃음","어서 오시오."),new Dialogue.Line("teacher","","앉으시오.")),List.of(),""));
         var r=run(d,Map.of());
         var f1=r.frame();
-        assertEquals("story:ch1",f1.get("session"));assertEquals("1장 · 별빛",f1.get("title"));assertEquals("별빛",f1.get("speaker"));assertEquals("으으… 별빛?",f1.get("text"));
+        assertTrue(((String)f1.get("session")).startsWith("story:ch1:"));assertEquals("1장 · 별빛",f1.get("title"));assertEquals("별빛",f1.get("speaker"));assertEquals("으으… 별빛?",f1.get("text"));
         assertEquals(true,f1.get("playerPortrait"));assertNull(f1.get("portraitFile")); // 나 = 내 일러스트, 그림 파일 없음
         assertEquals(false,f1.get("closable"));assertEquals(false,f1.get("last"));assertTrue(choices(f1).isEmpty());
         assertEquals(List.of(FOLDER.resolve("t2.png")),f1.get("preload"));

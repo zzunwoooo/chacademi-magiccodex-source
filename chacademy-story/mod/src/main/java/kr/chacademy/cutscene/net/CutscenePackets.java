@@ -170,6 +170,23 @@ public final class CutscenePackets {
      * 서버 → 클라: "이 대화를 열어". affinity = "npc=점수,npc=점수".
      * vars = 글자 바꾸기 목록 ("{player}" → 한글 닉네임 등). 항목은 \u001E, 키와 값은 \u001F 로 구분.
      */
+    public record DialogueViewS2C(String id, String vars) implements CustomPacketPayload {
+        public static final Type<DialogueViewS2C> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(NAMESPACE, "dialogue_view"));
+        public static final StreamCodec<RegistryFriendlyByteBuf, DialogueViewS2C> CODEC = StreamCodec.composite(
+                ByteBufCodecs.STRING_UTF8, DialogueViewS2C::id, ByteBufCodecs.STRING_UTF8, DialogueViewS2C::vars, DialogueViewS2C::new);
+        @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
+    }
+    public record DialogueRewardC2S(String key) implements CustomPacketPayload {
+        public static final Type<DialogueRewardC2S> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(NAMESPACE, "dialogue_reward"));
+        public static final StreamCodec<RegistryFriendlyByteBuf, DialogueRewardC2S> CODEC = StreamCodec.composite(SHORT_STRING, DialogueRewardC2S::key, DialogueRewardC2S::new);
+        @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
+    }
+    public record DialogueReadyC2S(String id) implements CustomPacketPayload {
+        public static final Type<DialogueReadyC2S> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(NAMESPACE, "dialogue_ready"));
+        public static final StreamCodec<RegistryFriendlyByteBuf, DialogueReadyC2S> CODEC = StreamCodec.composite(SHORT_STRING, DialogueReadyC2S::id, DialogueReadyC2S::new);
+        @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
+    }
+
     public record DialogueOpenS2C(String id, String affinity, String vars, String startScene, int startLine) implements CustomPacketPayload {
         public static final Type<DialogueOpenS2C> TYPE =
                 new Type<>(ResourceLocation.fromNamespaceAndPath(NAMESPACE, "dialogue_open"));

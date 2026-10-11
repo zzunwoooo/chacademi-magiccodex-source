@@ -32,3 +32,7 @@ Claude 는 GPT 작업 브랜치에 직접 커밋하지 않고, **`claude/` 로 �
 ## Codex audit checkpoint
 
 Audit integration verified and deployed; Story content intentionally deferred. See [CODEX_AUDIT_VERIFICATION_20261010.md](CODEX_AUDIT_VERIFICATION_20261010.md). See the final verification section for deployment evidence and remaining content/gameplay limitations.
+
+## Codex Story client-only checkpoint (2026-10-11)
+
+최신 기본 대화 흐름은 클라이언트 단일 실행·로컬 중복 기록으로 변경됐고, 두 고정 보상을 접속자 본인에게 적용하는 한정 API 연결을 포함한다. UI/닉네임 ACK/컷신 공개 완료 알림 제거와 사용법은 [CODEX_STORY_LOCAL_20261011.md](CODEX_STORY_LOCAL_20261011.md)를 먼저 읽는다. 앞선 인계의 서버 그래프 필수 설치·서버 ledger 설명은 새 기본 대화 경로에 적용하지 않는다. school/wild 및 개인 런처 배포는 완료됐으며 이번 공유 Git 동기화는 재배포가 아니다. 개인 폰트·콘텐츠·설정·JAR은 공개 소스에 넣지 않는다.

@@ -4,7 +4,7 @@ import java.util.function.IntBinaryOperator;
 
 /** Shared 1600x900 dialogue coordinates. Only the body below the panel is clipped. */
 final class PlayerTurnPortraitLayout {
-    static final int TOP=75, PANEL_TOP=639;
+    static final int TOP=75, PANEL_TOP=639, CLIP_BOTTOM=PANEL_TOP+32;
     private static final float CENTER_X=415, BODY_HEIGHT=660, MAX_WIDTH=700;
     record Bounds(int x,int y,int width,int height) {}
     record Placement(int x,int y,int width) {}
@@ -25,7 +25,7 @@ final class PlayerTurnPortraitLayout {
         float sx=width/(float)imageWidth;
         float sy=Math.round(width*(float)imageHeight/imageWidth)/(float)imageHeight;
         return new Placement(Math.round(CENTER_X-(b.x()+b.width()/2f)*sx),
-                (int)Math.ceil(TOP-b.y()*sy),width);
+                (int)Math.ceil(Math.max(TOP-b.y()*sy, CLIP_BOTTOM-(b.y()+b.height())*sy)),width);
     }
 
     /** 서버 NPC 초상화 칸 (1024x1536 그림을 65,-5 에 700x1050 으로 그리는 자리). */

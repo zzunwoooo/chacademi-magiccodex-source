@@ -21,6 +21,9 @@ public final class StoryCodec {
     public static final String CUTSCENE_STOP = "chacademy:cutscene_stop";
     public static final String CUTSCENE_DONE = "chacademy:cutscene_done";
     public static final String DIALOGUE_OPEN = "chacademy:dialogue_open";
+    public static final String DIALOGUE_VIEW = "chacademy:dialogue_view";
+    public static final String DIALOGUE_REWARD = "chacademy:dialogue_reward";
+    public static final String DIALOGUE_READY = "chacademy:dialogue_ready";
     public static final String DIALOGUE_STOP = "chacademy:dialogue_stop";
     public static final String DIALOGUE_EVENT = "chacademy:dialogue_event";
     public static final String DIALOGUE_DONE = "chacademy:dialogue_done";
@@ -96,6 +99,11 @@ public final class StoryCodec {
         return out.toByteArray();
     }
 
+    public static byte[] dialogueView(String id, String vars) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        writeString(out,id);writeString(out,vars);return out.toByteArray();
+    }
+    public static String dialogueId(byte[] data) { return cutsceneAbort(data).id(); }
     public record DialogueProgress(String id, String scene, int line) {}
 
     public static DialogueProgress dialogueProgress(byte[] data) {

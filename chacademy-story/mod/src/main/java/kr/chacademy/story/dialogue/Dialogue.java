@@ -12,7 +12,12 @@ public record Dialogue(
         String title,
         String start,
         Map<String, Speaker> speakers,
-        Map<String, Scene> scenes) {
+        Map<String, Scene> scenes,
+        DialogueCommands commands) {
+    public Dialogue(String id,String title,String start,Map<String,Speaker> speakers,Map<String,Scene> scenes){
+        this(id,title,start,speakers,scenes,DialogueCommands.EMPTY);
+    }
+
 
     /** 화자. portraits 는 표정 이름 → 그림 파일. 첫 번째가 기본 표정. */
     public record Speaker(String id, String name, String npc, Map<String, String> portraits) {

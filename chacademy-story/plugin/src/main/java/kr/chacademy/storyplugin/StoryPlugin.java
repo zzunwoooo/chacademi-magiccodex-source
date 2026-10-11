@@ -81,6 +81,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
     private Map<String, String> brokenDefs = Map.of();
     private final Map<UUID, StorySafety.TokenBucket> buckets = new HashMap<>();
     private final Map<UUID, Long> joinedAt = new HashMap<>();
+    private final DialogueAcks dialogueAcks = new DialogueAcks();
     private final Set<UUID> helloSent = new HashSet<>();
     private final Map<UUID, Long> lastPacketLog = new HashMap<>();
     private AffinityStore affinity;
@@ -113,12 +114,12 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         applyDefs(loadDefs(dialogues), null);
 
         Messenger m = getServer().getMessenger();
-        for (String out : List.of(StoryCodec.CUTSCENE_PLAY, StoryCodec.CUTSCENE_STOP, StoryCodec.DIALOGUE_OPEN, StoryCodec.DIALOGUE_STOP,
+        for (String out : List.of(StoryCodec.CUTSCENE_PLAY, StoryCodec.CUTSCENE_STOP, StoryCodec.DIALOGUE_OPEN, StoryCodec.DIALOGUE_VIEW, StoryCodec.DIALOGUE_STOP,
                 StoryCodec.STORY_HELLO)) {
             m.registerOutgoingPluginChannel(this, out);
         }
         for (String in : List.of(StoryCodec.CUTSCENE_DONE, StoryCodec.DIALOGUE_EVENT, StoryCodec.DIALOGUE_DONE, StoryCodec.DIALOGUE_PROGRESS,
-                StoryCodec.CUTSCENE_ABORT, StoryCodec.STORY_FAIL)) {
+                StoryCodec.CUTSCENE_ABORT, StoryCodec.STORY_FAIL, StoryCodec.DIALOGUE_READY, StoryCodec.DIALOGUE_REWARD)) {
             m.registerIncomingPluginChannel(this, in, this);
         }
         for (String c : List.of("cutscene", "storydialogue", "affinity")) {
@@ -147,6 +148,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
 
     @Override
     public void onDisable() {
+        dialogueAcks.clear();
         Messenger m = getServer().getMessenger();
         m.unregisterIncomingPluginChannel(this);
         m.unregisterOutgoingPluginChannel(this);
@@ -416,7 +418,44 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
 
     /** 대화 열기 요청 (다시 보기 아님). 이미 끝낸 대화면 아무 일도 하지 않는다. */
     public void openDialogue(Player p, String id) {
-        requestDialogue(null, p, id, false);
+        requestNicknameDialogue(p, id);
+    }
+
+    /** Client completion is trusted for these two fixed effects only; no server story file/ledger lookup. */
+    private void applyLocalReward(Player p,String key) {
+        var effect=LocalStoryRewards.resolve(key);
+        if(effect==null)return;
+        if(effect.affinityNpc()!=null) {
+            if(!codex.available()){p.sendMessage("§c스토리 호감도 연결을 사용할 수 없습니다. 관리자에게 알려 주세요.");return;}
+            codex.addAffinity(p.getUniqueId(),effect.affinityNpc(),effect.affinityDelta()).thenAccept(score->{
+                if(score==null)p.sendMessage("§c스토리 호감도 적용에 실패했습니다. 관리자에게 알려 주세요.");
+                else getLogger().info("[LocalStoryReward] "+p.getUniqueId()+" "+key+" applied score="+score);
+            });
+        } else {
+            var discovery=Bukkit.getPluginManager().getPlugin("MagicDiscovery");
+            try {
+                if(discovery==null||!discovery.isEnabled())throw new IllegalStateException("discovery unavailable");
+                boolean applied=Boolean.TRUE.equals(discovery.getClass().getMethod("signal",UUID.class,String.class,double.class)
+                        .invoke(discovery,p.getUniqueId(),effect.discoveryEvent(),effect.discoveryAmount()));
+                if(!applied)throw new IllegalStateException("discovery not ready");
+                getLogger().info("[LocalStoryReward] "+p.getUniqueId()+" "+key+" applied");
+            }catch(ReflectiveOperationException|RuntimeException e){p.sendMessage("§c스토리 마법 발견 적용에 실패했습니다. 관리자에게 알려 주세요.");getLogger().warning("Local story discovery effect unavailable: "+e.getClass().getSimpleName());}
+        }
+    }
+
+    /** Only requests local playback. Does not inspect server dialogue files or completion/reward state. */
+    public CompletableFuture<Boolean> requestNicknameDialogue(Player p, String id) {
+        if (!ready || !StorySafety.validId(id) || !p.isOnline() || !p.getListeningPluginChannels().contains(StoryCodec.DIALOGUE_VIEW))
+            return CompletableFuture.completedFuture(false);
+        UUID uuid=p.getUniqueId();
+        var existing=dialogueAcks.pending(uuid,id);
+        if(existing!=null)return existing;
+        var future=dialogueAcks.begin(uuid,id);
+        p.sendPluginMessage(this,StoryCodec.DIALOGUE_VIEW,StoryCodec.dialogueView(id,StoryCodec.encodeVars(textVars(p))));
+        Bukkit.getScheduler().runTaskLater(this,()->{
+            if(dialogueAcks.pending(uuid,id)==future)dialogueAcks.reject(uuid,id);
+        },400L);
+        return future;
     }
 
     private boolean requestDialogue(CommandSender who, Player p, String id, boolean replayArg) {
@@ -882,6 +921,13 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         PlayerStory ps = state.players.get(uuid);
         try {
             switch (channel) {
+                case StoryCodec.DIALOGUE_REWARD -> {
+                    applyLocalReward(p,StoryCodec.dialogueId(message));
+                }
+                case StoryCodec.DIALOGUE_READY -> {
+                    String id=StoryCodec.dialogueId(message);
+                    if(StorySafety.validId(id))dialogueAcks.accept(uuid,id);
+                }
                 case StoryCodec.CUTSCENE_DONE -> {
                     var d = StoryCodec.cutsceneDone(message);
                     // 서버가 재생시킨 것만 인정 (클라가 마음대로 퀘스트를 넘기지 못하게)
@@ -904,6 +950,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
                 }
                 case StoryCodec.STORY_FAIL -> {
                     var f = StoryCodec.storyFail(message);
+                    if(f.kind()==StoryCodec.KIND_DIALOGUE)dialogueAcks.reject(uuid,f.id());
                     Kind kind = f.kind() == StoryCodec.KIND_CUTSCENE ? Kind.CUTSCENE : Kind.DIALOGUE;
                     Request a = active(ps, kind, f.id());
                     if (a == null) return;
@@ -1019,6 +1066,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
+        dialogueAcks.disconnect(e.getPlayer().getUniqueId());
         UUID uuid = e.getPlayer().getUniqueId();
         joinedAt.remove(uuid);
         helloSent.remove(uuid);
@@ -1157,7 +1205,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
             return true;
         }
         int n = 0;
-        for (Player p : t) if (requestDialogue(s, p, id, replay)) n++;
+        for (Player p : t) if (p.getListeningPluginChannels().contains(StoryCodec.DIALOGUE_VIEW)) { requestNicknameDialogue(p, id); n++; }
         s.sendMessage(ChatColor.GRAY + "대화 " + id + " 열기 요청: " + n + "명" + (n < t.size() ? " (" + (t.size() - n) + "명 제외 — 이미 끝냈거나 진행 중이거나 파일 없음)" : ""));
         return true;
     }

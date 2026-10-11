@@ -26,7 +26,8 @@ class PlayerTurnPortraitLayoutTest {
         assertEquals(new PlayerTurnPortraitLayout.Bounds(0,0,30,40),PlayerTurnPortraitLayout.bounds(30,40,(x,y)->0));
         for(int[] size:new int[][]{{1024,1536},{1536,1024},{2048,2048},{256,2048}}){
             var p=PlayerTurnPortraitLayout.place(size[0],size[1],new PlayerTurnPortraitLayout.Bounds(0,0,size[0],size[1]));
-            assertTrue(p.x()>=65);assertTrue(p.x()+p.width()<=765);assertEquals(75,p.y());
+            assertTrue(p.x()>=65);assertTrue(p.x()+p.width()<=765);assertTrue(p.y()>=75);
+            assertTrue(p.y()+p.width()*(double)size[1]/size[0]>=PlayerTurnPortraitLayout.CLIP_BOTTOM-1);
             assertEquals(size[0]/(double)size[1],p.width()/(double)Math.round(p.width()*(float)size[1]/size[0]),.01);
         }
     }

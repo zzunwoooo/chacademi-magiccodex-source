@@ -157,41 +157,55 @@ final class NicknameBridge implements Listener,PluginMessageListener,org.bukkit.
         if(p.getListeningPluginChannels().contains(NicknameProtocol.RESPONSE))p.sendPluginMessage(plugin,NicknameProtocol.RESPONSE,NicknameProtocol.encode(r));
     }
     private void firstSaved(Player p,NicknameSession session){
-        if(!firstState.pending(p.getUniqueId()))return;
-        // Keep pending through logout or replacement sessions. Never run story for a stale save callback.
         UUID id=p.getUniqueId();
+        if(!firstState.pending(id))return;
         Bukkit.getScheduler().runTaskLater(plugin,()->{
             if(!current(p,session)||!firstState.pending(id)||!firstBusy.add(id))return;
-            // 완료 기록은 DB(first_done)가 기준: 0→1로 바꾼 서버만 스토리 명령을 실행한다. 메인 스레드는 기다리지 않는다.
-            try{io.execute(()->{
-                boolean transitioned;
-                try{transitioned=store.completeFirst(id);}
-                catch(Exception e){main(()->{firstBusy.remove(id);plugin.getLogger().warning("Could not complete first nickname state: "+e.getMessage());if(current(p,session))reply(p,session,session.sequence(),NicknameProtocol.NOTICE,"닉네임 설정 완료 상태를 저장하지 못했습니다. 다시 저장해 주세요.");});return;}
-                main(()->{
+            FirstNicknameCommands.Plan plan;
+            try {
+                var config=plugin.getConfig();
+                plan=FirstNicknameCommands.plan(config.isSet("first-nickname.on-complete")?config.getStringList("first-nickname.on-complete"):null,p.getName(),id,names.name(p));
+            } catch(IllegalArgumentException e) { firstBusy.remove(id);p.sendMessage("§c최초 닉네임 후속 설정에 오류가 있습니다. 관리자에게 문의해 주세요.");return; }
+            // Release the mandatory nickname screen so the dialogue can actually open.
+            // This UI message does NOT write database first_done.
+            push(p,NicknameProtocol.FIRST_DONE);
+            CompletableFuture<Boolean> opened=requestFirstDialogue(p,plan.dialogue());
+            var gate=new FirstNicknameAck();
+            opened.whenComplete((accepted,error)->main(()->{
+                if(!gate.accept(error==null&&Boolean.TRUE.equals(accepted),!closed&&p.isOnline()&&Bukkit.getPlayer(id)==p&&firstState.pending(id))){
                     firstBusy.remove(id);
-                    if(!current(p,session)){
-                        // 기록 직후 접속이 끊김: 스토리를 전달하지 못했으므로 되돌려 다음 접속에서 다시 진행한다 (대기 목록은 그대로).
-                        if(transitioned)try{io.execute(()->{try{store.reopenFirst(id);}catch(Exception e){plugin.getLogger().warning("Could not reopen first nickname state for "+id+": "+e.getMessage());}});}catch(RejectedExecutionException ignored){}
-                        return;
+                    if(p.isOnline()&&Bukkit.getPlayer(id)==p&&firstState.pending(id)){
+                        p.sendMessage("§c후속 대화를 열지 못했습니다. 파일과 모드를 확인한 뒤 닉네임을 다시 저장해 주세요.");
+                        pushFirst(p,0);
                     }
-                    var cached=profiles.get(id);if(cached!=null&&!cached.firstDone())profiles.put(id,new NicknameStore.State(cached.account(),cached.nickname(),cached.revision(),true));
-                    try{
-                        firstState.complete(id,()->true,()->{
-                            push(p,NicknameProtocol.FIRST_DONE);
-                            if(!transitioned){plugin.getLogger().info("First nickname already completed elsewhere for "+id+"; on-complete skipped.");return;}
-                            var config=plugin.getConfig();
-                            List<String> commands=config.isSet("first-nickname.on-complete")?config.getStringList("first-nickname.on-complete"):List.of("storydialogue {player} ch1-2");
-                            String nickname=names.name(p);
-                            for(String raw:commands){
-                                String c=raw.replace("{player}",p.getName()).replace("{uuid}",p.getUniqueId().toString()).replace("{nickname}",nickname);
-                                if(c.startsWith("/"))c=c.substring(1);
-                                if(!c.isBlank())Bukkit.dispatchCommand(Bukkit.getConsoleSender(),c);
-                            }
-                        });
-                    }catch(Exception e){plugin.getLogger().warning("Could not complete first nickname state.");}
-                });
-            });}catch(RejectedExecutionException e){firstBusy.remove(id);}
+                    return;
+                }
+                try{io.execute(()->{
+                    boolean transitioned;
+                    try{transitioned=store.completeFirst(id);}
+                    catch(Exception e){main(()->{firstBusy.remove(id);plugin.getLogger().warning("Could not complete first nickname state.");if(p.isOnline()&&Bukkit.getPlayer(id)==p)pushFirst(p,0);});return;}
+                    main(()->{
+                        firstBusy.remove(id);
+                        var cached=profiles.get(id);if(cached!=null&&!cached.firstDone())profiles.put(id,new NicknameStore.State(cached.account(),cached.nickname(),cached.revision(),true));
+                        try{firstState.complete(id,()->true,()->{
+                            if(transitioned&&p.isOnline()&&Bukkit.getPlayer(id)==p)
+                                plan.after().forEach(c->Bukkit.dispatchCommand(Bukkit.getConsoleSender(),c));
+                        });}catch(Exception e){plugin.getLogger().warning("Could not complete first nickname state.");}
+                    });
+                });}catch(RejectedExecutionException e){firstBusy.remove(id);}
+            }));
         },10L);
+    }
+    @SuppressWarnings("unchecked")
+    private CompletableFuture<Boolean> requestFirstDialogue(Player p,String id){
+        if(id==null)return CompletableFuture.completedFuture(true);
+        var story=Bukkit.getPluginManager().getPlugin("ChacademyStory");
+        if(story==null||!story.isEnabled())return CompletableFuture.completedFuture(false);
+        try {
+            Object result=story.getClass().getMethod("requestNicknameDialogue",Player.class,String.class).invoke(story,p,id);
+            if(result instanceof CompletableFuture<?> f)return (CompletableFuture<Boolean>)f;
+        }catch(ReflectiveOperationException|RuntimeException e){plugin.getLogger().warning("ChacademyStory opening acknowledgement unavailable; first nickname remains pending.");}
+        return CompletableFuture.completedFuture(false);
     }
     /** 접속 시 이 플레이어의 행을 DB에서 읽어 캐시에 반영한다 (다른 서버에서 정한 닉네임). 최초 설정 대기 중이면 그 뒤에 창을 연다. */
     @EventHandler public void joinFirst(PlayerJoinEvent e){

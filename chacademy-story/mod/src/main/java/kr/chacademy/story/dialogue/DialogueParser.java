@@ -100,7 +100,7 @@ public final class DialogueParser {
 
         // dim / type_speed / type_sound / type_sound_volume 은 예전 자체 대화창용 값이다.
         // 지금은 MagicCodex 대화창이 그리므로 읽지 않는다 (있어도 오류가 아니다).
-        return new Dialogue(id, str(m.get("title"), id), start, speakers, scenes);
+        return new Dialogue(id, str(m.get("title"), id), start, speakers, scenes, DialogueCommands.parse(m.get("commands")));
     }
 
     private static Dialogue.Need need(Map<?, ?> m, String at) throws IOException {

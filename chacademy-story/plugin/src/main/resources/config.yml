@@ -25,7 +25,6 @@ client-content-missing-message: "&c스토리 파일이 최신이 아닙니다. �
 on-finish: {}
 # on-finish:
 #   ch1_ashen_night:
-#     - "say {player} 님이 잿빛 밤 컷신을 다 봤습니다"
 #     - "storydialogue {player} ch1_wakeup"     # 컷신이 끝나면 바로 대화로
 
 # 탭 자동완성용 컷신 id (선택)
@@ -45,6 +44,9 @@ cutscene-resend-delay-seconds: 3
 cutscene-max-resends: 5
 
 # ---------------------------------------------------------------- 대화
+# 현재 기본 /story dialogue 및 /storydialogue는 클라이언트 파일·로컬 기록을 사용한다.
+# 아래 그래프/서버 ledger 관련 설정은 보존된 구형 서버 흐름에만 적용된다.
+# 최신 명령 절·보상 연결·리로드 설명: docs/handoff/CODEX_STORY_LOCAL_20261011.md
 # 대화마다 서버 폴더 plugins/ChacademyStory/dialogues/<대화id>/ 에 편집기 zip 의 두 파일을 그대로 넣는다:
 #   dialogue.yml          대화 흐름 (서버가 선택지·결말을 검증)
 #   server_commands.yml   명령어·호감도
