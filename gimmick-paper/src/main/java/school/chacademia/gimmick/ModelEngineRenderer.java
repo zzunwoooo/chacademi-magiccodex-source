@@ -56,7 +56,7 @@ final class ModelEngineRenderer implements Renderer {
     }
 
     private static final class MegHandle implements Handle {
-        final Entity base; final ModeledEntity modeled; final ActiveModel model; final String id; final boolean owned; String current = "";
+        final Entity base; final ModeledEntity modeled; final ActiveModel model; final String id; final boolean owned; String current = ""; final java.util.Set<String> overlays = new java.util.LinkedHashSet<>();
         MegHandle(Entity base, ModeledEntity modeled, ActiveModel model, String id, boolean owned) {
             this.base = base; this.modeled = modeled; this.model = model; this.id = id; this.owned = owned;
         }
@@ -68,7 +68,17 @@ final class ModelEngineRenderer implements Renderer {
             current = animation;
             return true;
         }
-        public void stop() { if (!current.isEmpty()) model.getAnimationHandler().stopAnimation(current); current = ""; }
+        public boolean overlay(String animation) {
+            model.getAnimationHandler().playAnimation(animation, 0.1, 0.1, 1, true);
+            overlays.add(animation);
+            return true;
+        }
+        public void stop() {
+            var h = model.getAnimationHandler();
+            if (!current.isEmpty()) h.stopAnimation(current);
+            for (String o : overlays) h.stopAnimation(o);
+            current = ""; overlays.clear();
+        }
         public void teleport(Location loc) { base.teleport(loc); }
         public void scale(double scale) { model.setScale(scale); }
         public void remove() {

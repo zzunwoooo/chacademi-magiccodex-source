@@ -88,6 +88,14 @@ final class Puzzles {
     Set<String> nodes(String id) { var e = engines.get(id); return e == null ? Set.of() : e.def().nodes().keySet(); }
     boolean isOn(String puzzle, String node) { var e = engines.get(puzzle); return e != null && e.on(node); }
     PuzzleDef.NodeDef node(String puzzle, String node) { var e = engines.get(puzzle); return e == null ? null : e.def().nodes().get(node); }
+    /** Animations of items already inserted (replayed as layers when the model respawns). */
+    List<String> collectedAnims(String puzzle, String node) {
+        var e = engines.get(puzzle); var d = node(puzzle, node);
+        if (e == null || d == null) return List.of();
+        var out = new ArrayList<String>();
+        for (String item : e.collected(node)) { String a = d.collect().get(item); if (a != null && !a.isBlank()) out.add(a); }
+        return out;
+    }
     PuzzleDef.Solid solid(String puzzle, String node) { var n = node(puzzle, node); return n == null ? null : n.solid(); }
 
     // ------------------------------------------------------------------ inputs
@@ -149,7 +157,7 @@ final class Puzzles {
         public void collected(String node, String item, String anim, String who) {
             dirty = true;
             if (anim == null || anim.isBlank()) return;
-            for (Gimmick g : plugin.world().inNode(puzzle, node)) if (g.live()) plugin.world().play(g, anim, null);
+            for (Gimmick g : plugin.world().inNode(puzzle, node)) if (g.live()) plugin.world().overlay(g, anim);
         }
 
         public void reset(String node) {

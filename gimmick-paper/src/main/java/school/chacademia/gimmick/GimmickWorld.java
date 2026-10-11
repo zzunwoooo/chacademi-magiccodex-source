@@ -301,11 +301,13 @@ final class GimmickWorld implements Listener {
     // ------------------------------------------------------------------ animation
     /** Show the puzzle state: on -> active (or activate held), off -> idle. `fresh` plays spawn first. */
     void playState(Gimmick g, boolean fresh) {
+        if (g.handle != null) g.handle.stop();
         boolean on = g.inPuzzle() && plugin.puzzles().isOn(g.puzzle, g.node);
         var info = plugin.catalog().get(g.model);
         String steady = on ? (info.has("active") ? "active" : "activate") : "idle";
         if (fresh && info.has("spawn")) play(g, "spawn", steady);
         else play(g, steady, null);
+        if (g.inPuzzle() && !on) for (String a : plugin.puzzles().collectedAnims(g.puzzle, g.node)) overlay(g, a);
     }
 
     /** Play `anim`, then `then` when it finishes (for hold/once animations). */
@@ -320,6 +322,11 @@ final class GimmickWorld implements Listener {
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (g.animToken == token && g.handle != null && (info.has(then) || !plugin.catalog().known(g.model))) { g.handle.play(then); g.lastAnim = then; }
         }, ticks);
+    }
+
+    /** Layered animation (kept while the main state animation changes). */
+    void overlay(Gimmick g, String anim) {
+        if (g.handle != null && anim != null) { g.handle.overlay(anim); g.lastAnim = anim; }
     }
 
     /** Node turned on/off. */
