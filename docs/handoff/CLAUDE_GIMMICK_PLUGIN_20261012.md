@@ -1,7 +1,9 @@
 # Claude 인계: 던전 기믹 플러그인 ChacaGimmick (2026-10-12)
 
-- 브랜치: `claude/gimmick-plugin-20261012`
-- 기준: `claude/dungeon-gimmick-models-20261011` @ `81de103` (마법 미몹 + 기믹 모델 브랜치 포함)
+- 브랜치: `claude/gimmick-plugin-20261012-rebase` (← 이것을 받는다)
+- 기준: `codex/chat-discovery-magic-protection-20261011` @ `e11af86` (GPT 의 마법 보호 통합본 위에 다시 얹음)
+- 이전 `claude/gimmick-plugin-20261012` 는 옛 기준(보호 통합 전)이라 받지 않는다.
+- **던전 bbmodel 자산(`dungeon-gimmicks/`)은 넣지 않았다** (사용자 보류 결정 유지). 플러그인에는 모델 크기·애니메이션 목록 `models.yml` 만 들어 있다.
 - **빌드·서버 설치·게임 실행은 하지 않았다.** Paper 1.21.4 API 소스 + adventure 4.18 소스 + (ModelEngine·MythicMobs 스텁)으로 javac 타입 검사만 통과. 퍼즐 엔진 단위 테스트 7개는 실행해서 통과.
 
 사용자 요청: 던전 기믹 연동 플러그인. bbmodel 을 MythicMobs 없이 직접 소환(독립 소환, 몹에 씌우기 포함), 클릭으로 크기·방향 조절하는 디버그 도구. 리소스는 ItemsAdder 가 보냄.
@@ -9,9 +11,9 @@
 ## 0. 주의사항
 
 1. **MagicCodex(Bridge) 코드는 건드리지 않았다.** 마법 연동은 우리 애드온 `magic-mythic-paper` 에 이벤트를 추가해서 했다.
-2. `magic-mythic-paper` 변경: `MagicImpactEvent`(공개 이벤트) 추가, `chahit`/`chabolt`/`chazone` 이 맞은 위치·속성으로 이벤트를 쏜다. `tools/spells.py` 가 각 줄에 `element=<카탈로그 속성>` 을 넣도록 바뀌었고 스킬 YAML 을 다시 생성했다. 듣는 플러그인이 없으면 이벤트를 만들지 않는다.
-3. 마법 미몹 스킬이 실제로 돌려면 여전히 Bridge 수정안(`docs/handoff/proposals/BRIDGE_CATALOG_GAMEPLAY_20261011.patch`, GPT 승인 필요)이 필요하다. 그 전에는 기믹이 마법에 반응하지 않고, 클릭·밟기·아이템 퍼즐만 동작한다.
-4. 새 모듈 `gimmick-paper` 를 `settings.gradle`, `Build-Server.ps1` 에 추가했다. `compileOnly project(':magic-mythic-paper')` 와 ModelEngine jar(`../plugins/ModelEngine-4.0.8.jar`) 를 쓴다. ItemsAdder 는 리플렉션 (chaca-portrait 와 같은 방식).
+2. `magic-mythic-paper` 변경 (GPT 보호 코드 유지): `MagicImpactEvent`(공개 이벤트) 추가, `chahit`/`chabolt`/`chazone` 이 **보호(`chacademi-magic` 플래그) 검사를 통과한 뒤** 맞은 위치·속성으로 이벤트를 쏜다. `tools/spells.py` 가 각 줄에 `element=<카탈로그 속성>` 을 넣도록 바뀌었고 스킬 YAML 을 다시 생성했다. 듣는 플러그인이 없으면 이벤트를 만들지 않는다.
+3. Bridge prepare/VFX/execute 연동은 GPT 통합본에 이미 들어 있다. 던전 지역에 `chacademi-magic deny` 를 걸면 마법 자체가 막혀 기믹도 마법에 반응하지 않으니, 마법 퍼즐 구역은 allow 로 둔다.
+4. 새 모듈 `gimmick-paper` 를 `settings.gradle` 에 추가했다 (`Build-Server.ps1` 배포 목록은 GPT 판단에 맡기고 건드리지 않음). `compileOnly project(':magic-mythic-paper')` 와 ModelEngine jar(`../plugins/ModelEngine-4.0.8.jar`) 를 쓴다. ItemsAdder 는 리플렉션 (chaca-portrait 와 같은 방식).
 5. **소유자 결정 (2026-10-12): 모델 구현은 ModelEngine, ItemsAdder 는 리소스팩 전달만.** 기본 `renderer: modelengine`, `model-prefix: ""`. bbmodel 은 ModelEngine blueprints 에 넣고, ModelEngine 리소스팩을 ItemsAdder 팩에 병합한다. ItemsAdder 커스텀 엔티티 렌더러는 대안으로만 남겼다.
 
 ## 1. 구성
