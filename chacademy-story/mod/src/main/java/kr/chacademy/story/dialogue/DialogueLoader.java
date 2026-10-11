@@ -44,7 +44,13 @@ public final class DialogueLoader {
 
     public static Dialogue load(String id) throws IOException {
         if (!ID_PATTERN.matcher(id).matches()) throw new IOException("잘못된 대화 id: " + id);
-        Path file = folder(id).resolve("dialogue.yml");
+        return load(rootDir(), id);
+    }
+
+    /** Same parser for read-only validation and playback; no progress or command execution. */
+    public static Dialogue load(Path rootDir, String id) throws IOException {
+        if (!ID_PATTERN.matcher(id).matches()) throw new IOException("잘못된 대화 id: " + id);
+        Path file = rootDir.resolve(id).resolve("dialogue.yml");
         if (!Files.isRegularFile(file)) throw new IOException("파일 없음: " + file);
         Object root;
         try (Reader r = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {

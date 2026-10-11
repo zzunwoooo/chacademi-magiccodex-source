@@ -99,6 +99,11 @@ final class NpcSocialService implements Listener, AutoCloseable {
         return plugin.names().name(player);
     }
 
+    Player resolvePlayer(String input) {
+        if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("server thread required");
+        return plugin.names().resolve(input);
+    }
+
     // ------------------------------------------------------------------ 공통
 
     private interface Job<T> {

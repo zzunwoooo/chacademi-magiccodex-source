@@ -1,67 +1,51 @@
-# 차카데미 스토리 (컷신 + 대화)
+# 차카데미 스토리
 
-| 폴더 | 내용 |
+## 설치와 기본 동작
+
+- 클라이언트에 최신 스토리 모드와 MagicCodex UI를 함께 설치한다. 기존 같은 모드의 중복 버전은 제거한다.
+- 컷신은 `config/chaca_cutscene/<id>/cutscene.yml`, 대화는 `config/chaca_dialogue/<id>/dialogue.yml`에 둔다.
+- 기본 대화 재생은 클라이언트 파일 한 벌을 사용한다. 서버에 대화 그래프나 종료 명령 파일을 복사할 필요가 없다.
+- 종료·이벤트 명령은 같은 `dialogue.yml`의 `commands.end`, `commands.endings`, `commands.events`에 둔다. 일반 명령은 플레이어 권한으로 실행한다. 기존 두 고정 보상 연결만 예외이며 임의 콘솔 실행 경로는 없다.
+- 완료·보상 중복 방지 기록은 클라이언트 `config/chaca_dialogue/_progress/<계정 UUID>.properties`에 저장된다. 재생·리로드로 초기화하지 않는다. 완료한 대화를 다시 볼 수 있지만 효과는 반복하지 않는다.
+- 닉네임 대상 해석에는 최신 MagicCodexBridge가 필요하다. 기존 Bridge에서는 영문 계정명을 사용한다.
+
+## 관리자 명령
+
+| 명령 | 동작 |
 |---|---|
-| `editor/cutscene-editor.html` | 컷신 편집기 (더블클릭해서 열기) |
-| `editor/dialogue-editor.html` | 대화 편집기 (더블클릭해서 열기) |
-| `mod/` | Fabric 1.21.4 클라이언트 모드 `chaca_story` (예전 `chaca_cutscene` 을 대신함) |
-| `plugin/` | Paper 1.21.4 서버 플러그인 `ChacademyStory` (예전 ChacademyCutscene 을 대신함) |
-| `example/` | 예시 컷신, 예시 대화 |
-| `out/` | 빌드된 jar |
-| `FORMAT.md` | 컷신·대화 파일 형식 |
+| `/컷신 재생 <유저> <식별자> [자동·건너뛰기허용·건너뛰기금지]` | 대상에게 컷신 재생 요청 |
+| `/스토리 재생 <유저> <식별자>` | 대상의 클라이언트 대화 파일 재생 요청 |
+| `/컷신 중지 <유저>` | 해당 컷신 중지 |
+| `/스토리 중지 <유저>` | 해당 대화 닫기 |
+| `/컷신 취소 <유저>` 또는 `/스토리 취소 <유저>` | 재생과 기존 대기열 취소, 완료 기록 유지 |
+| `/컷신 목록 [유저]` 또는 `/스토리 목록 [유저]` | 등록·접속 클라이언트의 식별자 목록 표시 |
+| `/컷신 리로드 [유저]` | 대상의 컷신 파일 문법 검사와 목록 갱신 |
+| `/스토리 리로드 [유저]` | 대상의 대화 파일과 종료·이벤트 명령 문법 검사, 목록 갱신 |
+| `/컷신 서버리로드` 또는 `/스토리 서버리로드` | 서버 설정과 호환용 서버 대화 정의 다시 읽기 |
 
-## 설치
+관리자 권한은 기존 `chacademy.story.admin` 그대로다. 유저는 접속 중인 영문 계정명 또는 정확한 한글 닉네임이며 공백이 있는 닉네임도 받는다. 닉네임 중복·미발견이면 실행하지 않고 영문 계정명을 안내한다. 기존 대상 선택자도 유지한다. 리로드·목록의 유저 생략은 실행자 자신이며 콘솔 리로드에는 대상을 지정해야 한다.
 
-1. 모드: `out/chacademy-story-0.1.0.jar` → 클라 `mods/` (예전 `chacademy-cutscene-*.jar` 는 지울 것. 같이 있으면 게임이 안 켜짐)
-   - **MagicCodex UI 모드(`magiccodex`)가 같이 있어야 한다** (없으면 게임이 켜질 때 알려 줌). 스토리 대화는 자체 창이 아니라 MagicCodex NPC 대화창으로 나온다. 대화창 창구(`ExternalDialogue`, API 1 이상)가 들어 있는 MagicCodex 빌드여야 하며, 두 모드는 같이 배포한다. 자세한 것은 `FORMAT.md` 의 "대화창".
-2. 플러그인: `out/chacademy-story-plugin-0.1.0.jar` → 서버 `plugins/` (예전 ChacademyCutscene 플러그인은 지울 것)
-3. 컷신 zip → `.minecraft/config/chaca_cutscene/` 에 풀기
-4. 대화 zip → 클라 `.minecraft/config/chaca_dialogue/` 에 풀기, **같은 zip 을 서버 `plugins/ChacademyStory/dialogues/` 에도 풀기** (`<대화id>/dialogue.yml` + `<대화id>/server_commands.yml`, 그림은 없어도 됨) → `/cutscene reload`
-   - 서버는 `dialogue.yml` 로 선택지·조건·결말을 검증한다. 서버에 `dialogue.yml` 이 없는 대화는 열리지 않는다 (config `require-server-graph`, 기본 `true`). 클라와 서버의 `dialogue.yml` 은 항상 같은 파일로.
-   - 예전 위치 `dialogues/<대화id>.yml` (명령어 파일) 도 계속 읽지만, 그것만으로는 대화가 열리지 않으니 `dialogue.yml` 을 넣어 줄 것.
-5. 모드와 플러그인은 같이 올린다 (프로토콜 2). 예전 모드로 접속하면 스토리를 보내지 않고 "모드를 업데이트해 주세요" 라고 알린다.
+재생 명령의 성공 안내는 요청을 전송했다는 뜻이다. 실제 파일 오류와 재생 가능 여부는 대상 클라이언트에서 확인한다. 리로드 결과도 대상 화면에 정상 개수와 파일별 오류로 표시된다.
 
-## 명령어
+## 내 클라이언트에서 사용하는 명령
 
-서버 (OP, 콘솔 가능):
-- `/cutscene play <플레이어|@a> <id> [auto|skip|noskip]`, `/cutscene stop <플레이어>`, `/cutscene clear <플레이어>` (재생 중·대기 중인 스토리 모두 취소), `/cutscene reload` (config + 대화 파일 다시 읽기)
-- `/storydialogue <플레이어|@a> <대화id> [replay]` (별칭 `/스토리대화`), `/storydialogue stop <플레이어>`
-- `/storydialogue ledger <플레이어> [대화id]` (진행·완료 기록 보기), `/storydialogue reset <플레이어> <대화id|all>` (완료 기록 지우기 — 다시 열면 보상도 다시 나감)
-- 모두 권한 `chacademy.story.admin` (기본 OP)
-- `/affinity <플레이어> [npc] [set|add] [값]` (별칭 `/호감도`)
+- `/스토리도구 재생 <식별자>`, `/스토리도구 목록`, `/스토리도구 리로드`
+- `/컷신도구 재생 <식별자>`, `/컷신도구 목록`, `/컷신도구 리로드`
 
-클라 (혼자 테스트, 서버 명령은 실행 안 됨):
-- `/story cutscene <id>`, `/story dialogue <id>`, `/story list`, `/story resetseen`
-- 예전 `/ccs play <id>` 도 그대로 됨
+클라이언트 도구는 서버 관리자 루트와 이름이 달라 서버 명령을 가리지 않는다. 일반 플레이어가 자신의 파일을 검사할 때는 도구 명령을 사용한다.
 
-## 이어 붙이기 예
+리로드는 파일을 다시 읽어 검사할 뿐 현재 대화를 중단·교체하지 않는다. 다음 재생은 원래처럼 파일을 새로 읽는다. 대화 리로드는 `dialogue.yml`과 그 안의 `commands`만 검사하며 그림·음악·컷신 파일·서버 설정은 다시 불러오지 않는다. 컷신 리로드도 이미지·음원 자체의 존재나 재생 품질까지 검증하지 않는다. 리로드는 명령·보상 실행, 완료 기록·호감도 기록 쓰기를 하지 않는다.
 
-컷신이 끝나면 대화로: 플러그인 `config.yml`
-```yaml
-on-finish:
-  ch1_ashen_night:
-    - "storydialogue {player} ch1_wakeup"
-```
-대화가 끝나면 퀘스트로: `plugins/ChacademyStory/dialogues/ch1_wakeup/server_commands.yml`
-```yaml
-end:
-  - "의뢰관리 event {player} ch1_wakeup_done"
-```
+자동완성은 접속 시와 리로드 시 수집한 목록을 메모리에서 읽는다. 새 폴더를 추가했다면 리로드한다. 서버에는 유효한 형식의 식별자만 종류별 최대 128개 전달하며 내용·명령·경로·진행 기록은 보내지 않는다. 이 목록은 추천용이며 권한이나 보상 근거로 사용하지 않는다. 서버 컷신 등록 목록도 함께 제안한다. 구형 클라이언트나 미접속자의 로컬 대화 목록은 서버가 알 수 없으며 식별자를 직접 입력할 수 있다. 선택자는 접속자 목록의 합집합을 제안하므로 모든 대상이 같은 파일을 보유한다는 보장은 없다. 자동완성 중 파일이나 데이터베이스를 읽지 않는다.
 
-## 알아 둘 동작
+## 기존 호출 호환성
 
-- 한 사람에게는 한 번에 하나만 재생된다. 보는 중에 온 컷신·대화는 순서대로 기다린다. 접속 직후에 온 명령도 모드 채널이 잡힐 때까지 (최대 15초) 기다렸다가 재생한다.
-- 컷신도 대화도 끝날 때까지 서버 `progress.yml` 에 남는다. 접속이 끊기거나 화면이 중간에 닫히면 다시 보여 주고, `on-finish` / `end` 명령은 끝까지 본 다음 한 번만 실행된다.
-- 이미 끝낸 대화를 다시 열라는 명령은 아무 일도 하지 않는다 (보상 중복 방지). 다시 보여 주려면 `replay`, 보상까지 다시 주려면 `reset`.
-- 모드가 없는 사람은 스토리가 넘어가지 않는다 (config `finish-if-missing-mod: false` 가 기본. 예전 config 에 `true` 로 남아 있으면 그대로 `true` 로 동작하니 확인할 것).
-- 보는 동안 플레이어는 서버에서 보호된다 (피해·몹·배고픔 없음, 제자리 고정. config `protect-during-story`).
-- `progress.yml`, `affinity.yml` 은 서버마다 따로다. 서버가 여러 대면 보상을 주는 스토리 명령은 한 서버에서만 실행되게 할 것.
-- 자세한 규칙과 config 항목: `FORMAT.md` 의 "서버 검증 · 기록 · 보호", 플러그인 `config.yml` 의 주석.
+기존 외부 콘텐츠용 `/cutscene play|stop|clear|reload`, `/storydialogue <유저> <id> [replay]`, `/스토리대화`, 클라이언트 `/story dialogue|cutscene|list|resetseen`, `/ccs`를 유지한다. `/story reload`는 `/스토리도구 리로드`와 같다. 기존 서버 `/cutscene reload`는 서버 설정 리로드이며 클라이언트 대화 리로드와 다르다. 기존 `replay` 인자는 받아 주지만 기본 클라이언트 대화는 항상 다시 볼 수 있고 완료 효과는 반복하지 않는다.
 
-## 다른 플러그인에서 듣기
+기존 서버 `/storydialogue ledger|reset`은 예전 서버 대화 기록만 다룬다. 새 기본 클라이언트 완료·보상 기록을 조회하거나 초기화하지 않는다. `/story resetseen`도 컷신 본 기록만 초기화한다. 혼동을 피하려고 새 한국어 관리자 루트에는 로컬 기록 초기화 명령을 추가하지 않았다.
 
-`kr.chacademy.storyplugin.StoryEvents` 의 `CutsceneFinish`, `DialogueChoice`, `DialogueFinish` 이벤트.
+컷신 완료 연결은 서버 설정의 기존 완료 이벤트를 사용한다. 서버 그래프 기반 예전 API는 호환용으로 남아 있다. 상세 형식은 `FORMAT.md`, 최신 운영 기준은 `docs/handoff/CODEX_STORY_LOCAL_20261011.md`를 본다.
 
 ## 빌드
 
-`build-auto.bat` 더블클릭 → `build-log.txt` 끝에 `ALL_DONE` 이면 성공 (모드·플러그인 테스트까지 통과하고 jar 두 개가 `out/` 에 복사됐을 때만 `ALL_DONE`).
+호스팅 Java 21에서 스토리 모드 `test remapJar`, 스토리 플러그인 `test jar`, Bridge `test jar`를 실행한다. 개인 배포 글꼴은 외부 경로의 기존 글꼴을 사용하며 공개 소스에 포함하지 않는다.

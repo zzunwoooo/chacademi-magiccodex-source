@@ -106,6 +106,8 @@ public final class MagicCodexLink {
         methods.put("playerName", type.getMethod("playerName", Player.class));
         methods.put("affinity", type.getMethod("affinity", UUID.class, String.class));
         methods.put("addAffinity", type.getMethod("addAffinity", UUID.class, String.class, String.class, int.class));
+        try { methods.put("resolvePlayer",type.getMethod("resolvePlayer",String.class)); }
+        catch(NoSuchMethodException ignored) { } // Older Bridge keeps account-name compatibility.
         facade = provider;
         return true;
     }
@@ -131,6 +133,12 @@ public final class MagicCodexLink {
     }
 
     // ---------------------------------------------------------------- 이름
+
+    public Player resolvePlayer(String input) {
+        if(facade==null||!methods.containsKey("resolvePlayer"))return Bukkit.getPlayerExact(input);
+        try {return (Player)call("resolvePlayer",input);}
+        catch(ReflectiveOperationException|RuntimeException e){return null;}
+    }
 
     /** MagicCodex 에서 정한 한글 닉네임 (칭호 없이). */
     public String nickname(Player p) {

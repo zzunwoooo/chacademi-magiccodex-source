@@ -35,6 +35,9 @@ public final class NpcSocialFacade {
         return service.playerName(player);
     }
 
+    /** Exact online account/UUID/nickname resolution; duplicate nicknames return null. */
+    public Player resolvePlayer(String input) { return service.resolvePlayer(input); }
+
     // ------------------------------------------------------------------ 호감도
 
     /** {score, heart} */

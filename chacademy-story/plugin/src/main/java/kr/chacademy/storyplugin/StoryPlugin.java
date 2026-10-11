@@ -80,6 +80,11 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
     /** 파일이 있지만 읽을 수 없는 대화 id → 이유. */
     private Map<String, String> brokenDefs = Map.of();
     private final Map<UUID, StorySafety.TokenBucket> buckets = new HashMap<>();
+    private final Map<UUID,StoryCatalog> clientCatalogs=new HashMap<>();
+    private final Map<UUID,Long> catalogUpdated=new HashMap<>();
+    private final Map<UUID,String> completionNames=new HashMap<>();
+    private final Map<UUID,Long> nameUpdated=new HashMap<>();
+    private List<String> registeredCutscenes=List.of();
     private final Map<UUID, Long> joinedAt = new HashMap<>();
     private final DialogueAcks dialogueAcks = new DialogueAcks();
     private final Set<UUID> helloSent = new HashSet<>();
@@ -112,17 +117,18 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
                 r -> Bukkit.getScheduler().runTask(this, r), getLogger());
         ready = true;
         applyDefs(loadDefs(dialogues), null);
+        registeredCutscenes=getConfig().getStringList("cutscenes").stream().filter(StorySafety::validId).toList();
 
         Messenger m = getServer().getMessenger();
         for (String out : List.of(StoryCodec.CUTSCENE_PLAY, StoryCodec.CUTSCENE_STOP, StoryCodec.DIALOGUE_OPEN, StoryCodec.DIALOGUE_VIEW, StoryCodec.DIALOGUE_STOP,
-                StoryCodec.STORY_HELLO)) {
+                StoryCodec.STORY_HELLO, StoryCodec.STORY_RELOAD)) {
             m.registerOutgoingPluginChannel(this, out);
         }
         for (String in : List.of(StoryCodec.CUTSCENE_DONE, StoryCodec.DIALOGUE_EVENT, StoryCodec.DIALOGUE_DONE, StoryCodec.DIALOGUE_PROGRESS,
-                StoryCodec.CUTSCENE_ABORT, StoryCodec.STORY_FAIL, StoryCodec.DIALOGUE_READY, StoryCodec.DIALOGUE_REWARD)) {
+                StoryCodec.CUTSCENE_ABORT, StoryCodec.STORY_FAIL, StoryCodec.DIALOGUE_READY, StoryCodec.DIALOGUE_REWARD, StoryCodec.STORY_CATALOG)) {
             m.registerIncomingPluginChannel(this, in, this);
         }
-        for (String c : List.of("cutscene", "storydialogue", "affinity")) {
+        for (String c : List.of("cutscene", "storydialogue", "affinity", "스토리")) {
             var cmd = getCommand(c);
             if (cmd != null) {
                 cmd.setExecutor(this);
@@ -149,6 +155,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
     @Override
     public void onDisable() {
         dialogueAcks.clear();
+        clientCatalogs.clear();catalogUpdated.clear();completionNames.clear();nameUpdated.clear();
         Messenger m = getServer().getMessenger();
         m.unregisterIncomingPluginChannel(this);
         m.unregisterOutgoingPluginChannel(this);
@@ -563,6 +570,10 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
 
     /** 1초마다: 채널을 기다리던 요청, 다시 보내기, 접속 뒤 밀린 효과, 보호 시간 한도, 대사 위치 저장. */
     private void heartbeat() {
+        long nameNow=System.currentTimeMillis();
+        for(Player online:Bukkit.getOnlinePlayers())if(nameNow-nameUpdated.getOrDefault(online.getUniqueId(),0L)>=2000){
+            completionNames.put(online.getUniqueId(),codex.nickname(online));nameUpdated.put(online.getUniqueId(),nameNow);
+        }
         long now = System.currentTimeMillis();
         for (Player p : Bukkit.getOnlinePlayers()) {
             UUID uuid = p.getUniqueId();
@@ -914,13 +925,18 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
             packetLog(p, p.getName() + " 의 스토리 패킷이 너무 많아 버립니다 (지금까지 " + bucket.dropped + "개)");
             return;
         }
-        if (message.length > StoryCodec.MAX_C2S_PACKET) {
+        if (message.length > (channel.equals(StoryCodec.STORY_CATALOG)?StoryCatalog.MAX_PACKET:StoryCodec.MAX_C2S_PACKET)) {
             packetLog(p, p.getName() + " 의 스토리 패킷이 너무 큼 (" + channel + ", " + message.length + " 바이트)");
             return;
         }
         PlayerStory ps = state.players.get(uuid);
         try {
             switch (channel) {
+                case StoryCodec.STORY_CATALOG -> {
+                    long now=System.currentTimeMillis();
+                    StoryCatalog catalog=StoryCodec.catalog(message);
+                    clientCatalogs.put(uuid,catalog);catalogUpdated.put(uuid,now);
+                }
                 case StoryCodec.DIALOGUE_REWARD -> {
                     applyLocalReward(p,StoryCodec.dialogueId(message));
                 }
@@ -1072,6 +1088,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         helloSent.remove(uuid);
         buckets.remove(uuid);
         lastPacketLog.remove(uuid);
+        clientCatalogs.remove(uuid);catalogUpdated.remove(uuid);completionNames.remove(uuid);nameUpdated.remove(uuid);
         // 컷신도 대화도 지우지 않는다: 다시 접속하면 컷신은 처음부터, 대화는 저장된 곳부터 이어서 연다
         PlayerStory ps = state.players.get(uuid);
         if (ps != null && ps.active != null) ps.active.resetTransient();
@@ -1098,11 +1115,50 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
             s.sendMessage(ChatColor.RED + "스토리 관리자 권한이 필요합니다."); return true;
         }
         return switch (cmd.getName()) {
-            case "cutscene" -> cutsceneCommand(s, a);
+            case "cutscene" -> label.equals("컷신") ? koreanCommand(s,false,a) : cutsceneCommand(s, a);
+            case "스토리" -> koreanCommand(s,true,a);
             case "storydialogue" -> dialogueCommand(s, a);
             case "affinity" -> affinityCommand(s, a);
             default -> false;
         };
+    }
+
+    private boolean koreanCommand(CommandSender s,boolean dialogue,String[] a) {
+        String root=dialogue?"스토리":"컷신";
+        if(a.length==0){koreanHelp(s,root);return true;}
+        String action=StoryCommandNames.action(a[0]);
+        if(action.equals("reload")) {
+            List<Player> players=a.length>1?targets(s,String.join(" ",java.util.Arrays.copyOfRange(a,1,a.length))):s instanceof Player p?List.of(p):List.of();
+            if(players.isEmpty()){s.sendMessage(ChatColor.RED+"접속 중인 유저를 지정해 주세요.");return true;}
+            for(Player p:players) {
+                if(!p.getListeningPluginChannels().contains(StoryCodec.STORY_RELOAD)){s.sendMessage(ChatColor.RED+p.getName()+": 최신 스토리 모드가 필요합니다.");continue;}
+                p.sendPluginMessage(this,StoryCodec.STORY_RELOAD,StoryCodec.reloadContent(dialogue?StoryCodec.KIND_DIALOGUE:StoryCodec.KIND_CUTSCENE));
+                s.sendMessage(ChatColor.GRAY+p.getName()+": 클라이언트 파일 검사를 요청했습니다. 결과는 대상 화면에 표시됩니다.");
+            }
+            return true;
+        }
+        if(action.equals("serverreload"))return cutsceneCommand(s,new String[]{"reload"});
+        if(action.equals("list")) {
+            List<String> ids=completionIds(dialogue,a.length>1?String.join(" ",java.util.Arrays.copyOfRange(a,1,a.length)):s instanceof Player player?player.getName():"@a");
+            s.sendMessage(ChatColor.GOLD+root+" 목록: "+String.join(", ",ids));return true;
+        }
+        if(action.equals("play")&&a.length>=3) {
+            try {
+                var play=StoryCommandNames.play(dialogue,a);
+                return dialogue?dialogueCommand(s,new String[]{play.target(),play.id()}):cutsceneCommand(s,new String[]{"play",play.target(),play.id(),play.mode()});
+            } catch(IllegalArgumentException e){s.sendMessage(ChatColor.RED+e.getMessage());return true;}
+        }
+        if(Set.of("stop","clear").contains(action)&&a.length>=2){
+            String target=String.join(" ",java.util.Arrays.copyOfRange(a,1,a.length));
+            return dialogue&&action.equals("stop")?dialogueCommand(s,new String[]{"stop",target}):cutsceneCommand(s,new String[]{action,target});
+        }
+        koreanHelp(s,root);return true;
+    }
+    private void koreanHelp(CommandSender s,String root) {
+        s.sendMessage(ChatColor.GOLD+"/"+root+" 재생 <유저·한글닉네임> <식별자>");
+        s.sendMessage(ChatColor.GRAY+"/"+root+" 중지 <유저> · /"+root+" 취소 <유저> · /"+root+" 목록 [유저]");
+        s.sendMessage(ChatColor.GRAY+"/"+root+" 리로드 [유저] — 클라이언트 파일 검사, 완료·보상 기록 유지");
+        s.sendMessage(ChatColor.GRAY+"/"+root+" 서버리로드 — 서버 설정·기존 서버 대화 파일 검사");
     }
 
     private boolean cutsceneCommand(CommandSender s, String[] a) {
@@ -1110,6 +1166,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         switch (a[0].toLowerCase(Locale.ROOT)) {
             case "reload" -> {
                 reloadConfig();
+                registeredCutscenes=getConfig().getStringList("cutscenes").stream().filter(StorySafety::validId).toList();
                 applyAffinityConfig();
                 codex.resetPlaceholderLookup();
                 if (!codex.available()) codex.connect();
@@ -1206,7 +1263,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         }
         int n = 0;
         for (Player p : t) if (p.getListeningPluginChannels().contains(StoryCodec.DIALOGUE_VIEW)) { requestNicknameDialogue(p, id); n++; }
-        s.sendMessage(ChatColor.GRAY + "대화 " + id + " 열기 요청: " + n + "명" + (n < t.size() ? " (" + (t.size() - n) + "명 제외 — 이미 끝냈거나 진행 중이거나 파일 없음)" : ""));
+        s.sendMessage(ChatColor.GRAY + "대화 " + id + " 열기 요청: " + n + "명" + (n < t.size() ? " (" + (t.size() - n) + "명 제외 — 최신 스토리 모드 연결 확인 필요)" : ""));
         return true;
     }
 
@@ -1357,28 +1414,62 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         return true;
     }
 
-    private List<Player> targets(CommandSender s, String arg) {
-        List<Player> out = new ArrayList<>();
-        try {
-            for (Entity e : Bukkit.selectEntities(s, arg)) if (e instanceof Player p) out.add(p);
-        } catch (IllegalArgumentException e) {
-            Player p = Bukkit.getPlayerExact(arg);
-            if (p != null) out.add(p);
+    private List<Player> targets(CommandSender s,String arg) {
+        List<Player> out=new ArrayList<>();
+        if(arg.startsWith("@")) {
+            try {for(Entity e:Bukkit.selectEntities(s,arg))if(e instanceof Player p)out.add(p);}
+            catch(IllegalArgumentException e){s.sendMessage(ChatColor.RED+"대상 선택자가 올바르지 않습니다.");}
+        } else {
+            Player p=codex.resolvePlayer(arg);
+            if(p!=null)out.add(p);
+            else s.sendMessage(ChatColor.RED+"접속 중인 유저를 찾을 수 없거나 닉네임이 중복됩니다. 정확한 영문 계정명을 사용해 주세요.");
         }
         return out;
+    }
+    private List<String> completionPlayers() {
+        var result=new TreeSet<String>();result.add("@a");result.add("@p");
+        for(Player p:Bukkit.getOnlinePlayers())result.add(p.getName());
+        var counts=new HashMap<String,Integer>();completionNames.values().forEach(n->counts.merge(n,1,Integer::sum));
+        completionNames.forEach((id,name)->{if(counts.get(name)==1&&!name.isBlank())result.add(name);});
+        return List.copyOf(result);
+    }
+    private List<String> completionIds(boolean dialogue,String target) {
+        var ids=new TreeSet<String>();
+        if(!dialogue)ids.addAll(registeredCutscenes);
+        if(target.startsWith("@"))clientCatalogs.values().forEach(c->ids.addAll(dialogue?c.dialogues():c.cutscenes()));
+        else {
+            Player exact=Bukkit.getPlayerExact(target);UUID uuid=exact==null?null:exact.getUniqueId();
+            if(uuid==null){for(var e:completionNames.entrySet())if(e.getValue().equals(target)){if(uuid!=null)return List.of();uuid=e.getKey();}}
+            StoryCatalog c=clientCatalogs.get(uuid);if(c!=null)ids.addAll(dialogue?c.dialogues():c.cutscenes());
+        }
+        return List.copyOf(ids);
     }
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender s, @NotNull Command cmd, @NotNull String alias, @NotNull String[] a) {
         if (!s.hasPermission("chacademy.story.admin") || a.length == 0) return List.of();
         List<String> o = new ArrayList<>();
-        List<String> players = new ArrayList<>(List.of("@a", "@p"));
-        Bukkit.getOnlinePlayers().forEach(p -> players.add(p.getName()));
+        List<String> players = completionPlayers();
+        boolean korean=cmd.getName().equals("스토리")||alias.equals("컷신");
+        if(korean) {
+            boolean dialogue=cmd.getName().equals("스토리");String action=StoryCommandNames.action(a[0]);
+            if(a.length==1)o.addAll(List.of("재생","중지","취소","리로드","서버리로드","목록"));
+            else if(!action.equals("serverreload")) {
+                String prefix=String.join(" ",java.util.Arrays.copyOfRange(a,1,a.length));
+                for(String name:players)if(name.startsWith(prefix)) {
+                    int used=String.join(" ",java.util.Arrays.copyOfRange(a,1,a.length-1)).length();
+                    if(used>0)used++;if(used<=name.length())o.add(name.substring(used));
+                }
+                if(action.equals("play")&&a.length>=3)o.addAll(completionIds(dialogue,String.join(" ",java.util.Arrays.copyOfRange(a,1,a.length-1))));
+                if(!dialogue&&action.equals("play")&&a.length>=4)o.addAll(List.of("자동","건너뛰기허용","건너뛰기금지"));
+            }
+            String last=a[a.length-1].toLowerCase(Locale.ROOT);return o.stream().filter(x->x.toLowerCase(Locale.ROOT).startsWith(last)).distinct().toList();
+        }
         switch (cmd.getName()) {
             case "cutscene" -> {
                 if (a.length == 1) o.addAll(List.of("play", "stop", "clear", "reload"));
                 else if (a.length == 2 && !a[0].equalsIgnoreCase("reload")) o.addAll(players);
-                else if (a.length == 3 && a[0].equalsIgnoreCase("play")) o.addAll(getConfig().getStringList("cutscenes"));
+                else if (a.length == 3 && a[0].equalsIgnoreCase("play")) o.addAll(completionIds(false,a[1]));
                 else if (a.length == 4 && a[0].equalsIgnoreCase("play")) o.addAll(List.of("auto", "skip", "noskip"));
             }
             case "storydialogue" -> {
@@ -1391,7 +1482,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
                     if (a[0].equalsIgnoreCase("stop")) o.addAll(List.of("@a", "@p"));
                 } else if (a.length == 2 || (a.length == 3 && admin)) {
                     // 파일을 뒤지지 않고 메모리에 읽어 둔 목록만 쓴다
-                    o.addAll(defs.keySet());
+                    o.addAll(admin?defs.keySet():completionIds(true,a[0]));
                     if (a.length == 3 && a[0].equalsIgnoreCase("reset")) o.add("all");
                 } else if (a.length == 3 && !a[0].equalsIgnoreCase("stop")) {
                     o.add("replay");

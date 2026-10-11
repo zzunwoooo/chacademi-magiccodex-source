@@ -40,3 +40,7 @@ Audit integration verified and deployed; Story content intentionally deferred. S
 ## Codex portrait clip follow-up (2026-10-11)
 
 [CODEX_PORTRAIT_CLIP_20261011.md](CODEX_PORTRAIT_CLIP_20261011.md): 앞선 Story UI 변경에서 빠진 공통 PlayerTurn 및 AI NPC 초상화 scissor 하단을 CLIP_BOTTOM으로 통일. 얼굴 위치/크기 불변, Fabric 226 테스트 및 remapJar 검증, UI 자산 901개 보존. 서버 변경 없음.
+
+## Codex 한국어 명령·리로드 통합 (배포 완료)
+
+4014a51 채팅·파티 기준의 한국어 명령, 클라이언트 리로드, ID 메타데이터 자동완성 및 배포 제한은 [CODEX_STORY_COMMANDS_20261011.md](CODEX_STORY_COMMANDS_20261011.md)를 확인한다. 사용자 승인으로 공유 소스에 반영. 개인 런처 및 school/wild 교체·재시작, 추가 승인된 Velocity 파티 설치·재시작 완료. 실사용 다계정 검증은 별도.

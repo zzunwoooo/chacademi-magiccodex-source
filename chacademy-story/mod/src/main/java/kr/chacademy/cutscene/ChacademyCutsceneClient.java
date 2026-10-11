@@ -45,9 +45,44 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
 
     /** 채팅 명령으로 요청된 재생. 채팅창이 닫힌 다음 틱에 연다 (바로 열면 채팅창이 닫히면서 같이 닫힘). */
     private static Runnable pendingLocal = null;
+    private static java.util.List<String> cutsceneIds=java.util.List.of(), dialogueIds=java.util.List.of();
+    private static boolean catalogSent;
+
+    private static void refreshIds() {
+        cutsceneIds=java.util.List.copyOf(CutsceneLoader.listIds());
+        dialogueIds=java.util.List.copyOf(DialogueLoader.listIds());
+    }
+    private static void sendCatalog() {
+        if (!ClientPlayNetworking.canSend(CutscenePackets.CatalogC2S.TYPE)) return;
+        ClientPlayNetworking.send(new CutscenePackets.CatalogC2S(
+                String.join("\n",cutsceneIds.stream().limit(128).toList()),
+                String.join("\n",dialogueIds.stream().limit(128).toList())));
+        catalogSent=true;
+    }
+    private static int reloadContent(int kind,java.util.function.Consumer<Component> feedback) {
+        boolean dialogue=kind==CutscenePackets.KIND_DIALOGUE;
+        var result=dialogue
+                ? kr.chacademy.cutscene.data.ContentReload.validate(DialogueLoader.rootDir(),"dialogue.yml",DialogueLoader::load)
+                : kr.chacademy.cutscene.data.ContentReload.validate(CutsceneLoader.rootDir(),"cutscene.yml",CutsceneLoader::load);
+        refreshIds();sendCatalog();
+        feedback.accept(Component.literal((dialogue?"스토리 대화":"컷신")+" 리로드: 정상 "+result.validIds().size()+"개, 오류 "+result.errors().size()+"개.")
+                .withStyle(result.errors().isEmpty()?ChatFormatting.GREEN:ChatFormatting.RED));
+        result.errors().forEach((id,reason)->feedback.accept(Component.literal(id+": "+reason).withStyle(ChatFormatting.RED)));
+        feedback.accept(Component.literal("현재 재생은 유지되며 변경은 다음 재생부터 적용됩니다. 완료·보상 기록은 유지됩니다."));
+        if(dialogue) feedback.accept(Component.literal("종료·이벤트 명령 설정도 검사했습니다. 리로드로 명령이나 보상을 실행하지 않습니다."));
+        return result.errors().isEmpty()?1:0;
+    }
+
 
     @Override
     public void onInitializeClient() {
+        PayloadTypeRegistry.playC2S().register(CutscenePackets.CatalogC2S.TYPE,CutscenePackets.CatalogC2S.CODEC);
+        PayloadTypeRegistry.playS2C().register(CutscenePackets.ReloadS2C.TYPE,CutscenePackets.ReloadS2C.CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(CutscenePackets.ReloadS2C.TYPE,(payload,context)->context.client().execute(()-> {
+            if(payload.kind()!=CutscenePackets.KIND_CUTSCENE && payload.kind()!=CutscenePackets.KIND_DIALOGUE)return;
+            reloadContent(payload.kind(),message->{if(context.client().player!=null)context.client().player.displayClientMessage(message,false);});
+        }));
+        net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.JOIN.register((handler,sender,client)->{refreshIds();catalogSent=false;});
         PayloadTypeRegistry.playS2C().register(CutscenePackets.PlayS2C.TYPE, CutscenePackets.PlayS2C.CODEC);
         PayloadTypeRegistry.playS2C().register(CutscenePackets.StopS2C.TYPE, CutscenePackets.StopS2C.CODEC);
         PayloadTypeRegistry.playC2S().register(CutscenePackets.DoneC2S.TYPE, CutscenePackets.DoneC2S.CODEC);
@@ -81,12 +116,14 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
         net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.DISCONNECT.register(
                 (handler, client) -> client.execute(() -> {
                     pendingLocal = null;
+                    catalogSent=false;
                     stopDialogue();
                     CutscenePlayback.disconnect();
                 }));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             BgmPlayer.tick();
+            if(client.player!=null && !catalogSent)sendCatalog();
             // 게임 메뉴(ESC) 때문에 내려간 컷신을 다시 띄우고, 보여 줄 수 있게 된 재생 요청을 시작한다
             CutscenePlayback.tick(client);
             // 진행 중인 스토리 대화: 끝나기 전에는 화면이 비면 MagicCodex 대화창을 다시 띄운다 (강제로 닫을 수 없음)
@@ -104,13 +141,15 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
         } catch (Exception ignored) {
         }
 
+        refreshIds();
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             dispatcher.register(ClientCommandManager.literal("story")
                     .then(cutsceneArg(ClientCommandManager.literal("cutscene")))
+                    .then(ClientCommandManager.literal("reload").executes(ctx->reloadContent(CutscenePackets.KIND_DIALOGUE,ctx.getSource()::sendFeedback)))
                     .then(ClientCommandManager.literal("dialogue")
                             .then(ClientCommandManager.argument("id", StringArgumentType.word())
                                     .suggests((ctx, b) -> {
-                                        DialogueLoader.listIds().forEach(b::suggest);
+                                        dialogueIds.forEach(b::suggest);
                                         return b.buildFuture();
                                     })
                                     .executes(ctx -> {
@@ -130,6 +169,17 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
                         ctx.getSource().sendFeedback(Component.literal("본 컷신 기록을 지웠어요."));
                         return 1;
                     })));
+            // Server /스토리 and /컷신 are intentionally not shadowed by client roots.
+            dispatcher.register(ClientCommandManager.literal("스토리도구")
+                    .then(ClientCommandManager.literal("리로드").executes(ctx->reloadContent(CutscenePackets.KIND_DIALOGUE,ctx.getSource()::sendFeedback)))
+                    .then(ClientCommandManager.literal("목록").executes(ctx->{ctx.getSource().sendFeedback(Component.literal("대화: "+String.join(", ",dialogueIds)));return 1;}))
+                    .then(ClientCommandManager.literal("재생").then(ClientCommandManager.argument("id",StringArgumentType.word())
+                            .suggests((ctx,b)->{dialogueIds.forEach(b::suggest);return b.buildFuture();})
+                            .executes(ctx->{String id=StringArgumentType.getString(ctx,"id");pendingLocal=()->openLocalDialogue(id,Map.of(),false);return 1;}))));
+            dispatcher.register(ClientCommandManager.literal("컷신도구")
+                    .then(cutsceneArg(ClientCommandManager.literal("재생")))
+                    .then(ClientCommandManager.literal("리로드").executes(ctx->reloadContent(CutscenePackets.KIND_CUTSCENE,ctx.getSource()::sendFeedback)))
+                    .then(ClientCommandManager.literal("목록").executes(ctx->{ctx.getSource().sendFeedback(Component.literal("컷신: "+String.join(", ",cutsceneIds)));return 1;})));
             // 예전 명령어도 그대로
             dispatcher.register(ClientCommandManager.literal("ccs")
                     .then(cutsceneArg(ClientCommandManager.literal("play")))
@@ -151,7 +201,7 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
             LiteralArgumentBuilder<FabricClientCommandSource> literal) {
         return literal.then(ClientCommandManager.argument("id", StringArgumentType.word())
                 .suggests((ctx, b) -> {
-                    CutsceneLoader.listIds().forEach(b::suggest);
+                    cutsceneIds.forEach(b::suggest);
                     return b.buildFuture();
                 })
                 .executes(ctx -> {

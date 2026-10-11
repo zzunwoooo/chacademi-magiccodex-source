@@ -164,6 +164,19 @@ public final class CutscenePackets {
         }
     }
 
+    /** Optional metadata channel: IDs only, never commands, paths, dialogue graphs or progress. */
+    public record CatalogC2S(String cutscenes,String dialogues) implements CustomPacketPayload {
+        public static final Type<CatalogC2S> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath(NAMESPACE,"story_catalog"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,CatalogC2S> CODEC=StreamCodec.composite(
+                ByteBufCodecs.stringUtf8(8320),CatalogC2S::cutscenes,ByteBufCodecs.stringUtf8(8320),CatalogC2S::dialogues,CatalogC2S::new);
+        @Override public Type<? extends CustomPacketPayload> type(){return TYPE;}
+    }
+    public record ReloadS2C(int kind) implements CustomPacketPayload {
+        public static final Type<ReloadS2C> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath(NAMESPACE,"story_reload"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,ReloadS2C> CODEC=StreamCodec.composite(ByteBufCodecs.VAR_INT,ReloadS2C::kind,ReloadS2C::new);
+        @Override public Type<? extends CustomPacketPayload> type(){return TYPE;}
+    }
+
     // ---------------------------------------------------------------- 대화
 
     /**

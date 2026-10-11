@@ -43,4 +43,14 @@ class StoryProtocol2Test {
         var e=buffer();CutscenePackets.DialogueDoneC2S.CODEC.encode(e,new CutscenePackets.DialogueDoneC2S("x".repeat(300),null));
         assertEquals(new StoryCodec.DialogueDone("x".repeat(256),""),StoryCodec.dialogueDone(bytes(e)));
     }
+    @Test void catalogAndReloadMatchAcrossClientAndServer() {
+        var b=buffer();CutscenePackets.CatalogC2S.CODEC.encode(b,new CutscenePackets.CatalogC2S("intro","ch1-1\nch1-2"));
+        var catalog=StoryCodec.catalog(bytes(b));assertEquals(List.of("intro"),catalog.cutscenes());assertEquals(List.of("ch1-1","ch1-2"),catalog.dialogues());
+        for(int kind:List.of(0,1)) {
+            var r=new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(StoryCodec.reloadContent(kind)),RegistryAccess.EMPTY);
+            try{assertEquals(kind,CutscenePackets.ReloadS2C.CODEC.decode(r).kind());assertEquals(0,r.readableBytes());}finally{r.release();}
+        }
+        assertEquals(StoryCodec.STORY_CATALOG,CutscenePackets.CatalogC2S.TYPE.id().toString());
+        assertEquals(StoryCodec.STORY_RELOAD,CutscenePackets.ReloadS2C.TYPE.id().toString());
+    }
 }

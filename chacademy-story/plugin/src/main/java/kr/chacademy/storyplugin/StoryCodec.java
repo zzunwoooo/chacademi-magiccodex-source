@@ -23,6 +23,7 @@ public final class StoryCodec {
     public static final String DIALOGUE_OPEN = "chacademy:dialogue_open";
     public static final String DIALOGUE_VIEW = "chacademy:dialogue_view";
     public static final String DIALOGUE_REWARD = "chacademy:dialogue_reward";
+    public static final String STORY_CATALOG="chacademy:story_catalog", STORY_RELOAD="chacademy:story_reload";
     public static final String DIALOGUE_READY = "chacademy:dialogue_ready";
     public static final String DIALOGUE_STOP = "chacademy:dialogue_stop";
     public static final String DIALOGUE_EVENT = "chacademy:dialogue_event";
@@ -102,6 +103,15 @@ public final class StoryCodec {
     public static byte[] dialogueView(String id, String vars) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         writeString(out,id);writeString(out,vars);return out.toByteArray();
+    }
+    public static byte[] reloadContent(int kind) {
+        ByteArrayOutputStream out=new ByteArrayOutputStream();writeVarInt(out,kind);return out.toByteArray();
+    }
+    public static StoryCatalog catalog(byte[] data) {
+        if(data.length>StoryCatalog.MAX_PACKET)throw new IllegalArgumentException("목록 패킷이 너무 큼");
+        ByteBuffer b=ByteBuffer.wrap(data);
+        try {return complete(b,new StoryCatalog(StoryCatalog.parseIds(readString(b,StoryCatalog.MAX_TEXT)),StoryCatalog.parseIds(readString(b,StoryCatalog.MAX_TEXT))));}
+        catch(BufferUnderflowException e){throw new IllegalArgumentException("목록 패킷이 너무 짧음");}
     }
     public static String dialogueId(byte[] data) { return cutsceneAbort(data).id(); }
     public record DialogueProgress(String id, String scene, int line) {}
@@ -220,12 +230,15 @@ public final class StoryCodec {
     }
 
     static String readString(ByteBuffer buf) {
+        return readString(buf,MAX_STRING);
+    }
+    private static String readString(ByteBuffer buf,int max) {
         int len = readVarInt(buf);
-        if (len < 0 || len > MAX_STRING_BYTES || len > buf.remaining()) throw new IllegalArgumentException("문자열 길이 이상: " + len);
+        if (len < 0 || len > max * 3 || len > buf.remaining()) throw new IllegalArgumentException("문자열 길이 이상: " + len);
         byte[] bytes = new byte[len];
         buf.get(bytes);
         String s = new String(bytes, StandardCharsets.UTF_8);
-        if (s.length() > MAX_STRING) throw new IllegalArgumentException("문자열이 너무 김: " + s.length());
+        if (s.length() > max) throw new IllegalArgumentException("문자열이 너무 김: " + s.length());
         return s;
     }
 }

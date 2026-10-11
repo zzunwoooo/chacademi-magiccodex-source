@@ -36,4 +36,14 @@ class MagicCodexLinkTest {
         assertNull(link.affinity(UUID.randomUUID(),"teacher").join());
         assertNull(link.addAffinity(UUID.randomUUID(),"teacher",2).join());
     }
+    public static class Resolver extends Facade {
+        String input;
+        public Player resolvePlayer(String input){this.input=input;return null;}
+    }
+    @Test void delegatesExactNicknameResolutionAndPreservesAmbiguousOrMissingResult()throws Exception {
+        var link=new MagicCodexLink(Logger.getAnonymousLogger());var resolver=new Resolver();link.bind(Resolver.class,resolver);
+        assertNull(link.resolvePlayer("한글 닉네임"));assertEquals("한글 닉네임",resolver.input);
+        assertNull(link.resolvePlayer("UnknownAccount"));assertEquals("UnknownAccount",resolver.input);
+        assertTrue(link.available());
+    }
 }
