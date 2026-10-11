@@ -53,4 +53,23 @@ class PlayerTurnPortraitLayoutTest {
         }
         assertEquals(new PlayerTurnPortraitLayout.Placement(65,-5,700),PlayerTurnPortraitLayout.fit(0,0));
     }
+    @Test void sharedClipReachesBehindVisiblePanelWithoutMovingPortraitAtEveryViewport(){
+        // Synthetic full-canvas and padded silhouettes; no private portrait bytes.
+        var full=PlayerTurnPortraitLayout.place(1024,1536,new PlayerTurnPortraitLayout.Bounds(0,0,1024,1536));
+        assertEquals(new PlayerTurnPortraitLayout.Placement(195,75,440),full);
+        double panelGoldTop=PlayerTurnPortraitLayout.PANEL_TOP+(214-199)*220.0/316;
+        assertTrue(PlayerTurnPortraitLayout.CLIP_BOTTOM>panelGoldTop);
+        for(int[] viewport:new int[][]{{1272,704},{1253,699},{1280,720},{1920,1080},{2560,1440},{800,600}})
+            for(int gui:new int[]{1,2,3,4}){
+                double w=Math.ceil(viewport[0]/(double)gui),h=Math.ceil(viewport[1]/(double)gui);
+                double scale=Math.min(w/1600,h/900),offset=(h-900*scale)/2;
+                double oldClip=offset+PlayerTurnPortraitLayout.PANEL_TOP*scale;
+                double gold=offset+panelGoldTop*scale;
+                double sharedClip=offset+PlayerTurnPortraitLayout.CLIP_BOTTOM*scale;
+                assertTrue(oldClip<gold,"old clip leaves a gap above the visible panel");
+                assertTrue(sharedClip>gold,"shared clip must overlap behind the visible panel");
+                assertTrue(offset+full.y()*scale<gold,"head position remains unchanged");
+                assertTrue(full.y()+660>PlayerTurnPortraitLayout.CLIP_BOTTOM);
+            }
+    }
 }

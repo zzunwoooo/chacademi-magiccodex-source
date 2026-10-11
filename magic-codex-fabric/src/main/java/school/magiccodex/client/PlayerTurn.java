@@ -65,7 +65,7 @@ final class PlayerTurn {
 
     /** Both dialogue screens use the same body scale and alpha-aware top anchor. */
     void drawPortrait(DrawContext c){
-        c.enableScissor(0,0,1600,PlayerTurnPortraitLayout.PANEL_TOP);
+        c.enableScissor(0,0,1600,PlayerTurnPortraitLayout.CLIP_BOTTOM);
         try{PortraitClient.drawTurn(c);}finally{c.disableScissor();}
     }
 
