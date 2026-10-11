@@ -50,6 +50,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private StatsBridge stats;
     private SocialBridge social;
     private PartyIdentityBridge partyIdentity;
+    private PartyVitalsBridge partyVitals;
     private AscensionBridge ascension;
     private AppraisalBridge appraisal;
     private EnhancementBridge enhancement;
@@ -130,7 +131,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
             catch (RuntimeException | LinkageError error) { getLogger().warning("LuckPerms 알림 연결 실패: 보조 권한 확인을 사용합니다."); }
         }
         getServer().getScheduler().runTaskTimer(this, this::process, 1L, 20L);
-        try { mana=new ManaBridge(this);stats=new StatsBridge(this,mana);school=new SchoolBridge(this,stats.service());social=new SocialBridge(this,mana,stats.service());partyIdentity=new PartyIdentityBridge(this);ascension=new AscensionBridge(this,stats.service());temperature=new TemperatureBridge(this);pets=new PetBridge(this);climate=new ClimateService(this,mana.mana,temperature.service());equipment=new EquipmentBridge(this,mana.mana);appraisal=new AppraisalBridge(this);enhancement=new EnhancementBridge(this);reconfiguration=new ReconfigurationBridge(this,enhancement);playerState=new PlayerStateBridge(this,mana.mana,DatabaseSettings.load(getDataFolder().toPath().resolve("database.properties"))); }
+        try { mana=new ManaBridge(this);stats=new StatsBridge(this,mana);school=new SchoolBridge(this,stats.service());social=new SocialBridge(this,mana,stats.service());partyIdentity=new PartyIdentityBridge(this);partyVitals=new PartyVitalsBridge(this,mana.mana);ascension=new AscensionBridge(this,stats.service());temperature=new TemperatureBridge(this);pets=new PetBridge(this);climate=new ClimateService(this,mana.mana,temperature.service());equipment=new EquipmentBridge(this,mana.mana);appraisal=new AppraisalBridge(this);enhancement=new EnhancementBridge(this);reconfiguration=new ReconfigurationBridge(this,enhancement);playerState=new PlayerStateBridge(this,mana.mana,DatabaseSettings.load(getDataFolder().toPath().resolve("database.properties"))); }
         catch(Exception error) {
             getLogger().severe("마나 초기화 실패: "+error.getMessage());
             getServer().getPluginManager().disablePlugin(this);return;
@@ -217,6 +218,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(temperature!=null){temperature.close();temperature=null;}
         if(ascension!=null){ascension.close();ascension=null;}
         if(partyIdentity!=null){partyIdentity.close();partyIdentity=null;}
+        if(partyVitals!=null){partyVitals.close();partyVitals=null;}
         if(social!=null){social.close();social=null;}
         if(school!=null){school.close();school=null;}
         if(stats!=null){stats.close();stats=null;}

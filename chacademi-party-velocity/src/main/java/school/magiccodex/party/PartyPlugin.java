@@ -6,6 +6,8 @@ import com.velocitypowered.api.permission.Tristate;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.*;
 import com.velocitypowered.api.event.proxy.*;
+import com.velocitypowered.api.event.player.ServerPostConnectEvent;
+import com.velocitypowered.api.network.ProtocolState;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.*;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
@@ -22,12 +24,15 @@ import java.util.concurrent.*;
 public final class PartyPlugin {
     private static final MinecraftChannelIdentifier IDENTITY=MinecraftChannelIdentifier.from("chacademi:party_identity");
     private static final MinecraftChannelIdentifier DISCOVERY=MinecraftChannelIdentifier.from("chacademi:party_discovery");
+    private static final MinecraftChannelIdentifier VITALS=MinecraftChannelIdentifier.from("chacademi:party_vitals");
+    private static final MinecraftChannelIdentifier HUD=MinecraftChannelIdentifier.from("chacademi:party_hud");
     private final ProxyServer proxy;
     private final Logger logger;
     private final Path directory;
     static ThreadPoolExecutor newWorker(){return new ThreadPoolExecutor(1,1,0,TimeUnit.MILLISECONDS,new ArrayBlockingQueue<>(256),r->{var t=new Thread(r,"Chacademi-party");t.setDaemon(true);return t;});}
     private final ThreadPoolExecutor worker=newWorker();
     private NetworkChat network;
+    private PartyHud hud;
     private final Map<UUID,Long> nextChat=new HashMap<>(),nextCommand=new HashMap<>();
     private final Set<String> trusted=new HashSet<>();
     private PartyBook book;
@@ -43,10 +48,12 @@ public final class PartyPlugin {
             else {properties.setProperty("max-members","8");properties.setProperty("trusted-servers","school,wild");try(var writer=Files.newBufferedWriter(path)){properties.store(writer,"Single Velocity authority; restart after editing.");}}
             int capacity=Integer.parseInt(properties.getProperty("max-members","8"));
             for(var s:properties.getProperty("trusted-servers","school,wild").split(","))if(!s.isBlank())trusted.add(s.strip());
-            network=new NetworkChat(trusted);
+            network=new NetworkChat(trusted);hud=new PartyHud(trusted);
             store=new PartyStore(directory.resolve("parties.json"));book=store.load(capacity);ready=true;
         }catch(Exception e){logger.error("Party initialization failed; commands remain unavailable. Stored state preserved.",e);}
-        proxy.getChannelRegistrar().register(IDENTITY,DISCOVERY);
+        proxy.getChannelRegistrar().register(IDENTITY,DISCOVERY,VITALS,HUD);
+        // 파티 위젯: 0.25초마다 바뀐 파티만 보낸다 (변화 없으면 3초마다 한 번).
+        proxy.getScheduler().buildTask(this,()->enqueue(this::flushHud)).repeat(250,TimeUnit.MILLISECONDS).schedule();
         var manager=proxy.getCommandManager();
         manager.register(manager.metaBuilder("party").aliases("파티").plugin(this).build(),new Commands());
         manager.register(manager.metaBuilder("chacachat").aliases("네트워크채팅").plugin(this).build(),new NetworkCommands());
@@ -55,7 +62,7 @@ public final class PartyPlugin {
         ready=false;worker.shutdown();try{if(!worker.awaitTermination(10,TimeUnit.SECONDS))logger.warn("Party worker still draining during shutdown");}catch(InterruptedException e){Thread.currentThread().interrupt();}
     }
     @Subscribe public void disconnect(DisconnectEvent event){
-        UUID id=event.getPlayer().getUniqueId();enqueue(()->{if(network!=null)network.disconnect(id);nextChat.remove(id);nextCommand.remove(id);});
+        UUID id=event.getPlayer().getUniqueId();enqueue(()->{if(network!=null)network.disconnect(id);if(hud!=null)hud.disconnect(id);nextChat.remove(id);nextCommand.remove(id);});
         // Disconnect/server transfer does not change durable membership.
     }
     @Subscribe public void identity(PluginMessageEvent event){
@@ -66,6 +73,49 @@ public final class PartyPlugin {
         byte[] data=event.getData();if(data.length>256)return;
         enqueue(()->{if(network!=null&&proxy.getPlayer(target.getUniqueId()).orElse(null)==target)
             network.accept(target.getUniqueId(),source,target.getCurrentServer().orElse(null),source.getServerInfo().getName(),true,data,System.currentTimeMillis());});
+    }
+    @Subscribe public void vitals(PluginMessageEvent event){
+        if(!event.getIdentifier().equals(VITALS))return;
+        event.setResult(PluginMessageEvent.ForwardResult.handled()); // 클라이언트가 보낸 값은 받지 않는다.
+        if(!(event.getSource() instanceof ServerConnection source)||!(event.getTarget() instanceof Player target))return;
+        if(!trusted.contains(source.getServerInfo().getName())||source.getPlayer()!=target||target.getCurrentServer().orElse(null)!=source)return;
+        byte[] data=event.getData().clone();if(data.length!=17)return;
+        enqueue(()->{if(hud!=null&&proxy.getPlayer(target.getUniqueId()).orElse(null)==target)
+            hud.accept(target.getUniqueId(),source,target.getCurrentServer().orElse(null),source.getServerInfo().getName(),true,data,System.currentTimeMillis());});
+    }
+    @Subscribe public void hudSpoof(PluginMessageEvent event){
+        // 위젯 채널은 프록시만 클라이언트에게 보낸다. 어느 쪽에서 온 것이든 전달하지 않는다.
+        if(event.getIdentifier().equals(HUD))event.setResult(PluginMessageEvent.ForwardResult.handled());
+    }
+    @Subscribe public void serverSwitched(ServerPostConnectEvent event){
+        UUID id=event.getPlayer().getUniqueId();long notBefore=System.currentTimeMillis()+1000;
+        enqueue(()->{if(hud!=null)hud.resend(id,notBefore);});
+    }
+    private void flushHud(){
+        if(!ready||hud==null)return;long now=System.currentTimeMillis();
+        var byParty=new HashMap<UUID,byte[]>();
+        for(Player player:proxy.getAllPlayers()){
+            // 서버 이동 중(구성 단계)에는 보내지 않는다. 다음 주기에 다시 판단한다.
+            if(player.getProtocolState()!=ProtocolState.PLAY||player.getCurrentServer().isEmpty())continue;
+            var party=book.party(player.getUniqueId());
+            byte[] payload=party==null?PartyHud.EMPTY:byParty.computeIfAbsent(party.id(),k->PartyHud.encode(hudMembers(party,now)));
+            var out=hud.due(player.getUniqueId(),payload,now);
+            if(out!=null)player.sendPluginMessage(HUD,out);
+        }
+    }
+    private List<PartyHud.Member> hudMembers(PartyBook.Party party,long now){
+        var list=new ArrayList<PartyHud.Member>();
+        for(UUID id:party.members()){
+            var online=proxy.getPlayer(id).orElse(null);
+            var server=online==null?null:online.getCurrentServer().orElse(null);
+            var identity=server==null||network==null?null:network.identity(id,server,now);
+            if(identity!=null)hud.remember(id,identity.nickname(),identity.house());
+            String remembered=hud.rememberedName(id);
+            String nickname=identity!=null?identity.nickname():remembered!=null?remembered:online!=null?online.getUsername():"오프라인 파티원";
+            int house=identity!=null?identity.house():hud.rememberedHouse(id);
+            list.add(new PartyHud.Member(id,nickname,house,online!=null,party.leader().equals(id),server==null?null:hud.vitals(id,server,now)));
+        }
+        return list;
     }
     @Subscribe public void discoveryParty(PluginMessageEvent event){
         if(!event.getIdentifier().equals(DISCOVERY))return;event.setResult(PluginMessageEvent.ForwardResult.handled());

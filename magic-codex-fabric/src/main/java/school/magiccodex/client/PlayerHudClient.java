@@ -41,9 +41,10 @@ public final class PlayerHudClient {
     public static void initialize(){
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,access)->{
             dispatcher.register(ClientCommandManager.literal("hud")
-                .executes(ctx->{ctx.getSource().sendFeedback(Text.literal("/hud frame 1~9 · /hud season 봄|여름|가을|겨울 · /hud on · /hud off"));return 1;})
+                .executes(ctx->{ctx.getSource().sendFeedback(Text.literal("/hud frame 1~9 · /hud season 봄|여름|가을|겨울 · /hud 파티 · /hud on · /hud off"));return 1;})
                 .then(seasonCommand())
                 .then(TemperatureClient.command())
+                .then(PartyHudClient.command())
                 .then(ClientCommandManager.literal("frame").then(ClientCommandManager.argument("number",IntegerArgumentType.integer(1,9))
                     .executes(ctx->{frame(IntegerArgumentType.getInteger(ctx,"number"));ctx.getSource().sendFeedback(Text.literal("HUD 프레임: "+frame+"번"));return 1;})))
                 .then(ClientCommandManager.literal("on").executes(ctx->{enabled=true;return 1;}))
