@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class ChatInputMixin {
     @Inject(method="handleChatInput",at=@At("HEAD"),cancellable=true,remap=false,require=1)
     private void chacademi$privateInput(ChatScreen screen,String text,CallbackInfoReturnable<Boolean> cir){
-        if(kr.chacademi.chatlayout.PrivateConversations.send(text))cir.setReturnValue(true);
+        if(kr.chacademi.chatlayout.PrivateConversations.send(text)||kr.chacademi.chatlayout.PartyChatInput.send(text))cir.setReturnValue(true);
     }
     @Inject(method="handleMouseDragged",at=@At("HEAD"),cancellable=true,remap=false,require=1)
     private void chacademi$drag(ChatScreen screen,double mx,double my,int button,double dx,double dy,CallbackInfo ci) {

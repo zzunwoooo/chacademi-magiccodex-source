@@ -22,6 +22,10 @@ public final class PrivateConversations {
   for(var tab:window.getTabSettings().getTabs()){
    if(peer(tab)!=null)continue;
    var settings=tab.getCurrentSettings();String old=settings.getPattern();
+   if(tab.getName().equals("파티")&&!old.contains("\\A\\[파티\\]")){
+    settings.setPattern("(?:\\A\\[파티\\].*)|(?:"+old+")");
+    settings.updateRegex();com.ebicep.chatplus.config.ConfigKt.setQueueUpdateConfig(true);continue;
+   }
    if(old.contains("\\x{E101}"))continue;
    if(tab.getName().equals("전체"))settings.setPattern("\\A(?!\\x{E101})(?:"+old+")");
    else if(tab.getName().equals("귓말"))settings.setPattern("(?:\\x{E101}.*)|(?:"+old+")");

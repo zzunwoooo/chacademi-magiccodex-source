@@ -1,4 +1,4 @@
-# Chacademi Chat Layout 1.3.9
+# Chacademi Chat Layout 1.4.0
 
 Fabric client addon for Minecraft 1.21.4 and ChatPlus 2.8.1 (Java 21). Compile dependency only; no Fabric API or MagicCodex hard dependency.
 
@@ -49,3 +49,4 @@ Requires the matching MagicCodex client and server chat.1 builds for private con
 Replies consume mana without a spell cooldown. Existing spell access and server validation still apply. A successfully delivered conversation allows the receiver to reply during that server session. Disconnect clears this permission. The smooth envelope glyph uses MagicCodex's high-resolution texture renderer. Whole-chat excludes envelope-prefixed messages; Whisper includes them.
 
 Build and automated tests passed on hosting. Alt scrolling, private-pane lifecycle, IME and the new glyph still require an in-game integration check. See docs/CHAT-WHISPER-INTEGRATION.md in the repository root.
+1.4.0: The existing 파티 tab routes ordinary input to /party chat. Slash commands retain normal handling. Missing membership/proxy support never falls back to public chat. Requires Chacademi Party 0.1.0 on Velocity; see ../../chacademi-party-velocity/README.md. Party UI is deferred.

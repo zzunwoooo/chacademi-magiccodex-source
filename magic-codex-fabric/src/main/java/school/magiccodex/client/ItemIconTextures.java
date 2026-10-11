@@ -84,6 +84,17 @@ public final class ItemIconTextures {
         return true;
     }
 
+    private static final java.util.Map<Integer,net.minecraft.client.font.BakedGlyph> CHAT_GLYPHS=new java.util.HashMap<>();
+    public static net.minecraft.client.font.BakedGlyph chatGlyph(int codepoint){
+        String name=switch(codepoint){case 0xE110->"global";case 0xE111->"dormitory";case 0xE112->"party";case 0xE113->"system";case 0xE114->"school";case 0xE115->"wild";default->null;};
+        if(name==null)return null;
+        var glyph=CHAT_GLYPHS.get(codepoint);if(glyph!=null)return glyph;
+        var model=Identifier.of("magiccodex","chat_"+name);var known=ICONS.get(model);
+        if(known==null){request(model);return null;}if(known.isEmpty())return null;
+        var t=known.get();var layers=new net.minecraft.client.font.TextRenderLayerSet(t.layer(),t.layer(),t.layer());
+        glyph=new net.minecraft.client.font.BakedGlyph(layers,0,1,0,1,0,8f*t.width()/t.height(),0,8);
+        CHAT_GLYPHS.put(codepoint,glyph);return glyph;
+    }
     private static final Identifier WHISPER=Identifier.of("magiccodex","whisper_envelope");
     private static net.minecraft.client.font.BakedGlyph whisperGlyph;
     /** Uses the same premultiplied mip chain as high-resolution item icons, within normal text layout. */
@@ -131,7 +142,7 @@ public final class ItemIconTextures {
     private static void clearIcons() {
         var textures = MinecraftClient.getInstance().getTextureManager();
         for (var icon : ICONS.values()) icon.ifPresent(t -> textures.destroyTexture(t.id()));
-        ICONS.clear();whisperGlyph=null;
+        ICONS.clear();whisperGlyph=null;CHAT_GLYPHS.clear();
     }
 
     // ---------------------------------------------------------------- worker thread

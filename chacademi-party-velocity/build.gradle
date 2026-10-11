@@ -1,0 +1,16 @@
+plugins { id 'java' }
+group = 'school.magiccodex'
+version = '0.1.0'
+repositories { mavenCentral() }
+def velocityJar = findProperty('velocityJar') ?: 'C:/Chacademi/tools/Velocity-source/proxy/build/libs/velocity-proxy-3.6.0-SNAPSHOT-all.jar'
+dependencies {
+    compileOnly files(velocityJar)
+    testImplementation files(velocityJar)
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+java { toolchain.languageVersion = JavaLanguageVersion.of(21) }
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8'; options.release = 21 }
+test { useJUnitPlatform() }
+processResources { inputs.property 'version', project.version; filesMatching('velocity-plugin.json') { expand version: project.version } }
