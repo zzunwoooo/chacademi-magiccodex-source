@@ -2,7 +2,7 @@
 
 - 브랜치: `claude/magic-mythic-20261011`
 - 기준: `codex/hires-item-icons-20261006` @ `f44666f`
-- **빌드·서버 설치·게임 실행은 하지 않았다.** 작업 환경에서 Paper/MythicMobs 의존성을 받을 수 없어 컴파일 확인을 못 했다. 4장 "빌드 때 확인할 API"를 먼저 본다.
+- **빌드·서버 설치·게임 실행은 하지 않았다.** Gradle 의존성을 받을 수 없어 Paper API 소스로 타입 검사만 했다(7장). MythicMobs API는 4장 "빌드 때 확인할 API"를 먼저 본다.
 
 사용자 지시: "VFX가 만들어진 마법 약 100개에 실제 MythicMobs 기능(단순 기능·피해 등)을 넣는다. 이펙트는 이미 있으니 필요 없다."
 
@@ -84,7 +84,8 @@ MythicMobs 5.9.0 / Paper 1.21.4 기준으로 아래 이름이 맞는지 확인�
 ## 7. 검증 수준
 
 - `tools/spells.py`: 카탈로그 95종이 모두 라우트 또는 보류 목록에 있는지, 스킬 이름이 Bridge 정규식(`CHA_[a-z0-9_]+`)을 지키는지, 대상·사거리 범위를 검사한다. 생성된 YAML 두 개는 YAML 파서로 읽힘을 확인했다.
-- Java: 컴파일·테스트 미실행. 순수 계산(`Geometry`)만 단위 테스트를 작성해 두었다.
+- Java: Gradle 빌드는 못 했다. 대신 Paper `ver/1.21.4` API 소스 + adventure 4.18 소스 + **MythicMobs 스텁(내가 가정한 API 모양)** 으로 javac 타입 검사를 돌려 이 모듈 파일의 오류 0건을 확인했다 (Bukkit/Paper 쪽 이름은 실제 소스로 검증됨, MythicMobs 쪽은 4장 표대로 빌드 때 확인 필요). `GeometryTest` 는 실행하지 못했다.
+- Bridge 수정안 patch: 문법 검사만 통과.
 
 ## 8. 메커닉 요약
 
