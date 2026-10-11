@@ -1,0 +1,8 @@
+{
+  "snapshot_commit": "7777bbdbbf03a794ab197499bba1059ecd70cba1",
+  "snapshot_tree": "0fbd9abe2a85729fb812c49900e4bb3e92590fc7",
+  "snapshot_repository": "C:\\Chacademi\\staging\\discovery-event-core-20261011-task3\\source",
+  "public_source_base": "f44666f689714d5292adfff6e36c8586d27760c0",
+  "snapshot_contains_active_host_uncommitted_chat_patch": true,
+  "integration": "Use current chat checkout plus 3-way merge against this snapshot. Do not overwrite files. Use either full patch OR paper-bridge + velocity pair, never both."
+}

@@ -105,6 +105,7 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
             result=ManaCasting.attempt(a,spell,permitted,System.currentTimeMillis(),()->{
                 mana.publish(id);
                 if(internal!=null)return internal.getAsBoolean();
+                if(!MagicProtectionLink.cast(p)){p.sendMessage("이 구역에서는 마법을 사용할 수 없습니다.");return false;}
                 if(spell.id().equals("wind_message")&&windCast!=null){
                     if(!p.hasPermission("magiccodex.friends")||!p.getListeningPluginChannels().contains(school.magiccodex.protocol.SocialProtocol.RESPONSE))return false;
                     Boolean visual=CatalogVfxLink.cast(plugin,p,spell.id());

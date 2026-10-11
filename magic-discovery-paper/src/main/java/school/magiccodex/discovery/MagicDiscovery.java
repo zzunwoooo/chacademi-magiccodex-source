@@ -39,6 +39,8 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,Command
         try{
             saveDefaultConfig();if(!new File(getDataFolder(),"discoveries.yml").exists())saveResource("discoveries.yml",false);
             definitions=new Definitions(new File(getDataFolder(),"discoveries.yml"));
+            if(!new File(getDataFolder(),"manual-conditions.yml").exists())saveResource("manual-conditions.yml",false);
+            definitions.manual(new File(getDataFolder(),"manual-conditions.yml"));
             var databaseFile=getDataFolder().toPath().resolve("database.properties");var settings=DatabaseSettings.load(databaseFile);
             // 설정 파일이 없으면 조용히 SQLite가 되므로 시작할 때 한 줄로 남긴다.
             getLogger().info("DB 설정 파일 "+databaseFile.toAbsolutePath()+" : "+(java.nio.file.Files.exists(databaseFile)?"있음":"없음 → SQLite 기본값")+", 저장 모드="+(settings.mariaDb()?"MariaDB":"SQLite(discoveries.db)"));
@@ -67,15 +69,29 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,Command
             }
             s.progress.putAll(data.progress());for(var a:data.acquired())s.acquired.put(a.spell(),a);s.learned.restore(data.learnedOverrides(),data.retryProgress());s.learnedSignature=data.learnedSignature();s.loaded=true;
             // Environmental states must be republished after reconnect; circle is persistent, temperature/regions are not.
-            s.progress.put("state.temperature",-100d);s.progress.put("state.flight_prohibited",0d);
+            s.progress.put("state.mana_maximum",0d);s.progress.put("state.temperature",-100d);s.progress.put("state.flight_prohibited",0d);
             // 접속마다 주문 수만큼 권한을 쓰지 않도록 한 번에 모아 필요한 것만 반영한다.
             refreshAdminCatalog();var wanted=new LinkedHashMap<String,Boolean>();
             for(var spell:adminCatalog.permissionEntries().values())if(s.learned.learned(spell.id(),s.acquired.containsKey(spell.id()))||s.learned.retrying(spell.id()))wanted.put(spell.permission(),s.learned.learned(spell.id(),s.acquired.containsKey(spell.id())));
+            for(String id:definitions.manual.keySet())wanted.put(Definitions.conditionPermission(id),s.progress.getOrDefault(Definitions.conditionKey(id),0d)>0);
             syncPermissions(s.id,wanted);
-            nativeConditions.join(p);checkMeta(s);if(s.noticeReady)sendPending(p,s);rewards.claim(p,s,false);
+            nativeConditions.join(p);restoreServerState(p,s,0);checkMeta(s);if(s.noticeReady)sendPending(p,s);rewards.claim(p,s,false);
             // 서버 이동 직후에는 이전 서버의 마지막 저장이 아직 안 끝났을 수 있다. 몇 초 뒤 한 번 더 읽어 큰 값으로 합친다.
             if(crossServer)Bukkit.getScheduler().runTaskLater(this,()->{if(sessions.get(s.id)==s)refresh(s);},60);
         }));
+    }
+    /** Read already-loaded server snapshots once after discovery load; never query a DB or scan other players here. */
+    private void restoreServerState(Player p,Session s,int attempt){
+        if(sessions.get(s.id)!=s||!p.isOnline())return;
+        var bridge=Bukkit.getPluginManager().getPlugin("MagicCodexBridge");if(bridge==null||!bridge.isEnabled())return;
+        boolean manaReady=false;
+        try{
+            Class<?> type=Class.forName("school.magiccodex.paper.ManaService",false,bridge.getClass().getClassLoader());Object service=Bukkit.getServicesManager().load(type);
+            if(service!=null){Object value=type.getMethod("snapshot",UUID.class).invoke(service,s.id);if(value instanceof Optional<?> optional&&optional.isPresent()){
+                Object snapshot=optional.get();double maximum=((Number)snapshot.getClass().getMethod("maximum").invoke(snapshot)).doubleValue();state(s.id,"state.mana_maximum",maximum);manaReady=true;
+            }}
+        }catch(ReflectiveOperationException|RuntimeException error){getLogger().warning("마나 상태 연결 실패: "+error.getClass().getSimpleName());return;}
+        if(!manaReady&&attempt<3)Bukkit.getScheduler().runTaskLater(this,()->restoreServerState(p,s,attempt+1),40);
     }
     private void refresh(Session s){
         store.load(s.id).whenComplete((data,error)->later(()->{
@@ -100,6 +116,11 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,Command
             s.learned.set(spell.id(),stored,baseline);changes.put(spell.permission(),stored);
             if(!stored&&p!=null)nativeConditions.restart(p,spell.id());
         }
+        for(String id:definitions.manual.keySet()){
+            if(adminPending.containsKey(new LearnedKey(s.id,id))){skipped=true;continue;}
+            String key=Definitions.conditionKey(id);double value=data.progress().getOrDefault(key,0d);
+            if(s.progress.getOrDefault(key,0d)!=value){s.progress.put(key,value);changes.put(Definitions.conditionPermission(id),value>0);}
+        }
         s.learnedSignature=skipped?null:data.learnedSignature();
         if(!changes.isEmpty()){syncPermissions(s.id,changes);checkMeta(s);}
     }
@@ -112,7 +133,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,Command
         recheckRunning=true;
         store.learnedSignatures(ids).whenComplete((signatures,error)->later(()->{
             recheckRunning=false;if(error!=null){storageFailure("습득 상태 재확인 실패",error);return;}
-            for(UUID id:ids){var s=sessions.get(id);if(s!=null&&s.loaded&&!signatures.getOrDefault(id,"").equals(s.learnedSignature))refresh(s);}
+            for(UUID id:ids){var s=sessions.get(id);if(s!=null&&s.loaded&&(!signatures.getOrDefault(id,"").equals(s.learnedSignature)||!definitions.manual.isEmpty()))refresh(s);}
         }));
     }
     void later(Runnable task){if(isEnabled())Bukkit.getScheduler().runTask(this,task);}
@@ -128,7 +149,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,Command
     }
     Session session(Player p){var s=sessions.get(p.getUniqueId());return s!=null&&s.loaded?s:null;}
     boolean eligible(Player p){return p!=null&&p.isOnline()&&!p.isDead()&&(p.getGameMode()==GameMode.SURVIVAL||p.getGameMode()==GameMode.ADVENTURE);}
-    boolean needed(Player p,String id){var s=session(p);var spell=definitions.spells.get(id);return s!=null&&spell!=null&&!s.learned.learned(id,s.acquired.containsKey(id))&&!s.pending.contains(id)&&!adminPending.containsKey(new LearnedKey(s.id,id))&&(s.learned.retrying(id)||!p.hasPermission(spell.permission()));}
+    boolean needed(Player p,String id){var s=session(p);var spell=definitions.spells.get(id);return s!=null&&spell!=null&&!Definitions.PENDING.contains(id)&&!definitions.manual.containsKey(id)&&!s.learned.learned(id,s.acquired.containsKey(id))&&!s.pending.contains(id)&&!adminPending.containsKey(new LearnedKey(s.id,id))&&(s.learned.retrying(id)||!p.hasPermission(spell.permission()));}
     Map<String,String> registeredSpells(){main();refreshAdminCatalog();return adminCatalog.names();}
     private void refreshAdminCatalog(){
         Map<?,?> casts=null;var bridge=Bukkit.getPluginManager().getPlugin("MagicCodexBridge");
@@ -172,6 +193,36 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,Command
             completion.accept("습득 상태를 저장하지 못했습니다. 서버 로그를 확인한 뒤 다시 시도해 주세요.");
         }));
     }
+    void adminCondition(UUID id,String spellId,String action,Consumer<String> done){
+        main();var spell=definitions.manual.get(spellId);var s=sessions.get(id);var p=Bukkit.getPlayer(id);
+        if(spell==null){done.accept("수동 대체 목록에 없는 마법입니다.");return;}
+        if(s==null||!s.loaded||p==null){done.accept("접속 중이며 데이터 로딩이 끝난 유저가 필요합니다.");return;}
+        String progressKey=Definitions.conditionKey(spellId),node=Definitions.conditionPermission(spellId);
+        if(action.equals("조건조회")){done.accept(node+" = "+(s.progress.getOrDefault(progressKey,0d)>0)+" / 습득="+s.learned.learned(spellId,s.acquired.containsKey(spellId)));return;}
+        if(!Set.of("조건지급","조건회수","조건초기화").contains(action)){done.accept("조건지급/조건회수/조건초기화/조건조회 중 선택하세요.");return;}
+        var key=new LearnedKey(id,spellId);
+        if(s.pending.contains(spellId)||adminPending.containsKey(key)){done.accept("해당 마법의 변경을 처리 중입니다.");return;}
+        long version=++nextLearnedVersion;learnedVersions.put(key,version);adminPending.put(key,version);
+        boolean grant=action.equals("조건지급"),reset=action.equals("조건초기화");
+        CompletableFuture<DiscoveryStore.Award> operation=grant
+            ?store.grantCondition(id,spellId,getConfig().getString("title-scope","server-first").equals("player-first"))
+            :store.revokeCondition(id,spellId,reset).thenApply(ignored->null);
+        operation.whenComplete((award,error)->later(()->{
+            if(!Objects.equals(learnedVersions.get(key),version)){done.accept("더 최근 관리자 변경이 우선합니다.");return;}
+            adminPending.remove(key,version);
+            if(error!=null){storageFailure("수동 조건 저장 실패",error);done.accept("저장 실패: 조건 지급으로 처리하지 않았습니다. 다시 시도하세요.");return;}
+            var current=sessions.get(id);var online=Bukkit.getPlayer(id);
+            if(current!=null){current.progress.put(progressKey,grant?1d:0d);if(grant){if(award.acquisition()!=null)current.acquired.putIfAbsent(spellId,award.acquisition());current.learned.set(spellId,true,Map.of());}else if(reset)current.learned.set(spellId,false,Map.of());}
+            var nodes=new LinkedHashMap<String,Boolean>();nodes.put(node,grant);if(grant||reset)nodes.put(spell.permission(),grant);
+            syncPermissions(id,nodes).whenComplete((ignored,permissionError)->later(()->{
+                if(permissionError!=null){done.accept("DB 저장 완료, 권한 동기화 실패. 재접속 또는 동일 명령으로 복구하세요.");return;}
+                if(!Objects.equals(learnedVersions.get(key),version)){done.accept("더 최근 관리자 변경이 우선합니다.");return;}
+                if(grant&&award.created()&&online!=null&&online.isOnline()&&current!=null){if(current.noticeReady)sendPending(online,current);else online.sendMessage("새로운 마법 발견: "+spell.name());rewards.claim(online,current,false);}
+                if(grant&&current!=null)checkMeta(current,true);
+                done.accept(action+" 완료: "+spell.name()+" ("+node+")"+(grant&&!award.created()?" · 기존 발견 기록 유지, 알림·최초보상 추가 없음":""));
+            }));
+        }));
+    }
     public boolean signal(UUID id,String key,double amount){
         main();if(!definitions.index.containsKey(key)||key.startsWith("state.")||!Double.isFinite(amount)||amount<=0||amount>1e9)return false;
         var s=sessions.get(id);var p=Bukkit.getPlayer(id);boolean death=key.startsWith("death.")&&p!=null&&p.isOnline()&&(p.getGameMode()==GameMode.SURVIVAL||p.getGameMode()==GameMode.ADVENTURE);if(s==null||!s.loaded||!eligible(p)&&!death)return false;
@@ -183,7 +234,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,Command
     }
     public boolean state(UUID id,String key,double value){return state(id,key,value,false);}
     boolean state(UUID id,String key,double value,boolean verifiedAction){
-        main();if(!Set.of("state.circle","state.temperature","state.flight_prohibited").contains(key)||!Double.isFinite(value)||Math.abs(value)>1e6)return false;
+        main();if(!Set.of("state.circle","state.temperature","state.flight_prohibited","state.mana_maximum").contains(key)||!Double.isFinite(value)||Math.abs(value)>1e6)return false;
         if(key.equals("state.circle")&&(value<1||value>9||value!=Math.floor(value)))return false;
         var s=sessions.get(id);if(s==null||!s.loaded)return false;Double previous=s.progress.put(key,value);if(key.equals("state.circle")){s.circleTouched=true;if(!Objects.equals(previous,value))s.dirtyKeys.add(key);}var p=Bukkit.getPlayer(id);
         if(p!=null)for(var spell:definitions.index.getOrDefault(key,List.of()))if(s.learned.meets(spell,s.progress,verifiedAction))acquire(p,s,spell);return true;
@@ -195,12 +246,12 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,Command
         if(spell.equals("flight")&&s.progress.getOrDefault("state.flight_prohibited",0d)>0)signal(id,"cast.flight.prohibited",1);
         if(spell.equals("light_leap")&&s.progress.getOrDefault("state.temperature",-100d)>=30)nativeConditions.armHotRotation(p);
         // A fresh verified action permits retrying already-satisfied state/meta conditions, even at circle 9.
-        for(var definition:definitions.spells.values())if(s.learned.retrying(definition.id())&&!definition.requirements().isEmpty()&&definition.requirements().keySet().stream().allMatch(key->key.startsWith("state."))&&s.learned.meets(definition,s.progress,true))acquire(p,s,definition);
+        for(var definition:definitions.stateOnly)if(s.learned.retrying(definition.id())&&s.learned.meets(definition,s.progress,true))acquire(p,s,definition);
         checkMeta(s,true);
     }
     private void checkMeta(Session s){checkMeta(s,false);}
     private void checkMeta(Session s,boolean verifiedAction){var p=Bukkit.getPlayer(s.id);if(!eligible(p))return;
-        for(var spell:definitions.spells.values())if(spell.requirements().isEmpty()&&!spell.prerequisites().isEmpty()&&s.learned.canCheckMeta(spell,verifiedAction)&&spell.prerequisites().stream().allMatch(p::hasPermission))acquire(p,s,spell);
+        for(var spell:definitions.meta)if(!spell.prerequisites().isEmpty()&&s.learned.canCheckMeta(spell,verifiedAction)&&spell.prerequisites().stream().allMatch(p::hasPermission))acquire(p,s,spell);
     }
     private void acquire(Player p,Session s,Definitions.Spell spell){
         if(!needed(p,spell.id())||!spell.prerequisites().stream().allMatch(p::hasPermission))return;s.pending.add(spell.id());var key=new LearnedKey(s.id,spell.id());long version=learnedVersions.getOrDefault(key,0L);
@@ -286,7 +337,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,Command
         if(args.length==1)choices=List.of("이벤트","상태","칭호","보상");
         else if(args.length==2&&args[0].equals("칭호"))choices=definitions.spells.keySet();
         else if(args.length==2&&Set.of("이벤트","상태","보상").contains(args[0]))choices=Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
-        else if(args.length==3&&args[0].equals("상태"))choices=List.of("state.circle","state.temperature","state.flight_prohibited");
+        else if(args.length==3&&args[0].equals("상태"))choices=List.of("state.circle","state.temperature","state.flight_prohibited","state.mana_maximum");
         else if(args.length==3&&args[0].equals("이벤트"))choices=definitions.index.keySet().stream().filter(key->!key.startsWith("state.")).toList();
         else if(args.length==4&&args[0].equals("이벤트"))choices=List.of("<이벤트수량>");
         else if(args.length==3&&args[0].equals("보상"))choices=List.of("<보상번호>");

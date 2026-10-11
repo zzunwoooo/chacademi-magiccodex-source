@@ -21,39 +21,75 @@ import org.bukkit.event.inventory.FurnaceExtractEvent;
 /** Event listeners inspect only the affected player/block. Nearby searches run only for players still missing the spell. */
 final class NativeConditions implements Listener,AutoCloseable {
     private final MagicDiscovery plugin;private final Map<UUID,Trace> traces=new HashMap<>();private final Map<BlockKey,Water> waters=new HashMap<>();private final NamespacedKey origin;
-    private int tick;private final int nearbyInterval;
-    private static class Trace {int sprint,burning,hotUntil;boolean fell,wasAirborne,waitDecoyExit;float rotation,hotRotation;Location still;}
+    private int tick;private final int nearbyInterval;private final PartyHealing partyHealing;
+    private final Set<UUID> burning=new HashSet<>(),hot=new HashSet<>(),moved=new HashSet<>(),submerged=new HashSet<>();
+    private final Map<Integer,Set<UUID>> nearby=new HashMap<>();
+    private static class Trace {int sprint,burning,hotUntil,underwater;boolean fell,wasAirborne,waitDecoyExit;float rotation,hotRotation;Location still;}
     private record BlockKey(UUID world,int x,int y,int z){static BlockKey of(Block b){return new BlockKey(b.getWorld().getUID(),b.getX(),b.getY(),b.getZ());}}
     private record Water(UUID player,int expires){}
-    NativeConditions(MagicDiscovery plugin){this.plugin=plugin;origin=new NamespacedKey(plugin,"arrow_origin");nearbyInterval=Math.clamp(plugin.getConfig().getInt("nearby-check-ticks",40),20,200);Bukkit.getScheduler().runTaskTimer(plugin,this::tick,1,1);}
-    void join(Player p){var t=new Trace();t.sprint=p.getStatistic(Statistic.SPRINT_ONE_CM);var s=plugin.session(p);t.fell=s!=null&&!s.learned.retrying("feather_step")&&s.progress.getOrDefault("trace.fell",0d)>0;t.waitDecoyExit=s!=null&&s.learned.retrying("wind_decoy");traces.put(p.getUniqueId(),t);}
+    NativeConditions(MagicDiscovery plugin){this.plugin=plugin;partyHealing=new PartyHealing(plugin);origin=new NamespacedKey(plugin,"arrow_origin");nearbyInterval=Math.clamp(plugin.getConfig().getInt("nearby-check-ticks",40),20,200);Bukkit.getScheduler().runTaskTimer(plugin,this::tick,1,1);}
+    void join(Player p){var t=new Trace();t.sprint=p.getStatistic(Statistic.SPRINT_ONE_CM);var s=plugin.session(p);t.fell=s!=null&&!s.learned.retrying("feather_step")&&s.progress.getOrDefault("trace.fell",0d)>0;t.waitDecoyExit=s!=null&&s.learned.retrying("wind_decoy");traces.put(p.getUniqueId(),t);watchNearby(p);environment(p);if(p.getFireTicks()>0)burning.add(p.getUniqueId());}
     /** Discard transient pre-reset evidence as well as persistent retry counters. */
     void restart(Player p,String spell){var t=traces.get(p.getUniqueId());if(t==null)return;
         switch(spell){
-            case "flame_footprints" -> t.burning=0;
+            case "flame_footprints" -> {t.burning=0;if(p.getFireTicks()>0)burning.add(p.getUniqueId());}
             case "pressure_rupture" -> {t.rotation=0;t.still=null;}
             case "storm_command" -> {t.hotUntil=0;t.hotRotation=0;t.wasAirborne=false;}
             case "feather_step" -> fallState(p,false);
-            case "wind_decoy" -> t.waitDecoyExit=true;
+            case "water_breath" -> {t.underwater=0;environment(p);}
+            case "wind_decoy" -> {t.waitDecoyExit=true;watchNearby(p);}
             default -> {}
         }
     }
-    void quit(Player p){traces.remove(p.getUniqueId());}
-    void armHotRotation(Player p){var t=traces.get(p.getUniqueId());if(t!=null){t.hotUntil=tick+200;t.hotRotation=0;t.wasAirborne=false;}}
+    void quit(Player p){UUID id=p.getUniqueId();traces.remove(id);burning.remove(id);hot.remove(id);moved.remove(id);submerged.remove(id);nearby.values().forEach(bucket->bucket.remove(id));}
+    void armHotRotation(Player p){var t=traces.get(p.getUniqueId());if(t!=null){t.hotUntil=tick+200;t.hotRotation=0;t.wasAirborne=false;hot.add(p.getUniqueId());}}
     void add(Player p,String key,double amount){plugin.signal(p.getUniqueId(),key,amount);}
     void fallState(Player p,boolean fell){var t=traces.get(p.getUniqueId());if(t!=null)t.fell=fell;var s=plugin.session(p);if(s!=null){double value=fell?1:0;if(s.progress.getOrDefault("trace.fell",0d)!=value){s.progress.put("trace.fell",value);s.dirtyKeys.add("trace.fell");}}}
+    private void watchNearby(Player p){
+        if(plugin.needed(p,"wind_decoy"))nearby.computeIfAbsent(Math.floorMod(p.getEntityId(),nearbyInterval),k->new HashSet<>()).add(p.getUniqueId());
+    }
+    @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void combust(EntityCombustEvent e){
+        if(e.getEntity() instanceof Player p&&plugin.needed(p,"flame_footprints"))burning.add(p.getUniqueId());
+    }
+    @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void air(EntityAirChangeEvent e){
+        // Also arms a stationary player when flowing water reaches their head.
+        if(e.getEntity() instanceof Player p&&e.getAmount()<p.getRemainingAir())environment(p);
+    }
+    private void environment(Player p){
+        if(plugin.needed(p,"water_breath")&&p.getEyeLocation().getBlock().getType()==Material.WATER)submerged.add(p.getUniqueId());
+        if(plugin.needed(p,"ice_bridge")){
+            var biome=p.getLocation().getBlock().getBiome();
+            if(biome==org.bukkit.block.Biome.COLD_OCEAN||biome==org.bukkit.block.Biome.DEEP_COLD_OCEAN)add(p,"visit.cold_ocean",1);
+        }
+    }
     private void tick(){
-        tick++;for(var p:Bukkit.getOnlinePlayers()){
-            var t=traces.get(p.getUniqueId());if(t==null)continue;
-            if(!plugin.eligible(p)){t.burning=0;t.hotUntil=0;t.rotation=0;continue;}
-            if(plugin.needed(p,"flame_footprints")){if(p.getFireTicks()>0){if(++t.burning>=600)add(p,"burn.survive_thirty",1);}else t.burning=0;}
-            if(t.hotUntil>0){if(!p.isOnGround())t.wasAirborne=true;if(tick>t.hotUntil&&!t.wasAirborne||t.wasAirborne&&p.isOnGround())t.hotUntil=0;}
-            if(tick%20==0){int value=p.getStatistic(Statistic.SPRINT_ONE_CM);if(value>t.sprint)add(p,"sprint.centimeters",value-t.sprint);t.sprint=value;}
-            int interval=nearbyInterval;
-            if(tick%interval==Math.floorMod(p.getEntityId(),interval)&&plugin.needed(p,"wind_decoy")){
-                int count=0;for(var e:p.getNearbyEntities(7,7,7))if(e instanceof Monster&&!e.isDead()&&e.getLocation().distanceSquared(p.getLocation())<=49&&++count>=10)break;
-                if(count<10)t.waitDecoyExit=false;else if(!t.waitDecoyExit)add(p,"nearby.ten_monsters",1);
-            }
+        tick++;
+        for(var it=submerged.iterator();it.hasNext();){var id=it.next();var p=Bukkit.getPlayer(id);var t=traces.get(id);
+            if(t==null||!plugin.eligible(p)||p.getEyeLocation().getBlock().getType()!=Material.WATER){if(t!=null)t.underwater=0;it.remove();continue;}
+            t.underwater=Math.min(600,t.underwater+1);if(t.underwater>=600&&plugin.needed(p,"water_breath"))add(p,"submerged.survive_thirty",1);
+            var session=plugin.session(p);if(session!=null&&session.learned.learned("water_breath",session.acquired.containsKey("water_breath")))it.remove();
+        }
+        // Only active continuous evidence is sampled each tick; no online-player or spell-catalog scan.
+        for(var it=burning.iterator();it.hasNext();){var id=it.next();var p=Bukkit.getPlayer(id);var t=traces.get(id);
+            if(t==null||!plugin.eligible(p)||p.getFireTicks()<=0){if(t!=null)t.burning=0;it.remove();continue;}
+            var session=plugin.session(p);if(session!=null&&session.learned.learned("flame_footprints",session.acquired.containsKey("flame_footprints"))){it.remove();continue;}
+            t.burning=Math.min(600,t.burning+1);if(t.burning>=600&&plugin.needed(p,"flame_footprints"))add(p,"burn.survive_thirty",1);
+        }
+        for(var it=hot.iterator();it.hasNext();){var id=it.next();var p=Bukkit.getPlayer(id);var t=traces.get(id);
+            if(t==null||!plugin.eligible(p)){if(t!=null)t.hotUntil=0;it.remove();continue;}
+            if(!p.isOnGround())t.wasAirborne=true;
+            if(t.hotUntil==0||tick>t.hotUntil&&!t.wasAirborne||t.wasAirborne&&p.isOnGround()){t.hotUntil=0;it.remove();}
+        }
+        if(tick%20==0){for(UUID id:moved){var p=Bukkit.getPlayer(id);var t=traces.get(id);if(p==null||t==null)continue;
+            int value=p.getStatistic(Statistic.SPRINT_ONE_CM);if(plugin.eligible(p)&&value>t.sprint)add(p,"sprint.centimeters",value-t.sprint);t.sprint=value;
+        }moved.clear();}
+        var bucket=nearby.get(tick%nearbyInterval);
+        if(bucket!=null)for(var it=bucket.iterator();it.hasNext();){var id=it.next();var p=Bukkit.getPlayer(id);var t=traces.get(id);
+            if(p==null||t==null){it.remove();continue;}var session=plugin.session(p);
+            if(session!=null&&session.learned.learned("wind_decoy",session.acquired.containsKey("wind_decoy"))){it.remove();continue;}
+            if(!plugin.eligible(p)||!plugin.needed(p,"wind_decoy"))continue;
+            int count=0;for(var e:p.getNearbyEntities(7,7,7))if(e instanceof Monster&&!e.isDead()&&e.getLocation().distanceSquared(p.getLocation())<=49&&++count>=10)break;
+            if(count<10)t.waitDecoyExit=false;else if(!t.waitDecoyExit)add(p,"nearby.ten_monsters",1);
         }
         if(tick%200==0)waters.values().removeIf(v->v.expires()<tick);
     }
@@ -62,6 +98,11 @@ final class NativeConditions implements Listener,AutoCloseable {
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void crop(BlockBreakEvent e){if(e.getBlock().getBlockData() instanceof Ageable age&&age.getAge()<age.getMaximumAge()){
         String key=switch(e.getBlock().getType()){case WHEAT->"break.young_wheat";case CARROTS->"break.young_carrots";case POTATOES->"break.young_potatoes";default->null;};if(key!=null)add(e.getPlayer(),key,1);
     }}
+    @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void submergedGold(BlockBreakEvent e){
+        if(!plugin.needed(e.getPlayer(),"current_sorting"))return;
+        var block=e.getBlock();var above=block.getRelative(org.bukkit.block.BlockFace.UP);
+        if(SubmergedGold.qualifies(block.getType(),above.getType(),above.getBlockData() instanceof org.bukkit.block.data.Levelled fluid?fluid.getLevel():-1))add(e.getPlayer(),"mine.submerged_gold",1);
+    }
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void plant(BlockPlaceEvent e){if(Tag.SAPLINGS.isTagged(e.getBlockPlaced().getType()))add(e.getPlayer(),"plant.sapling",1);}
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void jump(PlayerJumpEvent e){if(e.getPlayer().isSprinting())add(e.getPlayer(),"jump.sprinting",1);}
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void shear(PlayerShearEntityEvent e){if(e.getEntity() instanceof Sheep)add(e.getPlayer(),"shear.sheep",1);}
@@ -74,12 +115,15 @@ final class NativeConditions implements Listener,AutoCloseable {
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void damage(EntityDamageEvent e){
         if(e.getFinalDamage()<=0)return;if(e.getEntity() instanceof Player p){if(plugin.eligible(p)&&e.getCause()==EntityDamageEvent.DamageCause.FALL)fallState(p,true);if(e.getCause()==EntityDamageEvent.DamageCause.FIRE_TICK)add(p,"damage.fire_tick",e.getFinalDamage());}
         if(e instanceof EntityDamageByEntityEvent hit){Player p=attacker(hit.getDamager());if(p==null)return;if(e.getEntity() instanceof Parrot)add(p,"hit.parrot",1);
+            if(hit.getDamager() instanceof Player direct&&(e.getEntity() instanceof Monster||e.getEntity() instanceof Player)&&hit.getCause()==EntityDamageEvent.DamageCause.ENTITY_ATTACK&&direct.getInventory().getItemInMainHand().getType()==Material.MACE&&direct.getFallDistance()>=20)add(direct,"combat.mace_fall_twenty",1);
             if((e.getEntity() instanceof Monster||e.getEntity() instanceof Player)&&hit.getDamager() instanceof AbstractArrow arrow){long[] start=arrow.getPersistentDataContainer().get(origin,PersistentDataType.LONG_ARRAY);if(start!=null&&start.length==3){var l=e.getEntity().getLocation();double distance=Math.pow(l.getX()-Double.longBitsToDouble(start[0]),2)+Math.pow(l.getY()-Double.longBitsToDouble(start[1]),2)+Math.pow(l.getZ()-Double.longBitsToDouble(start[2]),2);if(distance>=4900)add(p,"arrow.distant_hit",1);}}
         }
     }
-    @EventHandler public void death(PlayerDeathEvent e){var p=e.getEntity();var t=traces.get(p.getUniqueId());if(t!=null){boolean fell=t.fell;fallState(p,false);if(fell)add(p,"death.after_fall",1);t.burning=0;t.rotation=0;t.hotUntil=0;}var cause=p.getLastDamageCause();if(cause!=null&&cause.getCause()==EntityDamageEvent.DamageCause.LIGHTNING)add(p,"death.lightning",1);}
+    @EventHandler public void death(PlayerDeathEvent e){var p=e.getEntity();var t=traces.get(p.getUniqueId());if(t!=null){boolean fell=t.fell;fallState(p,false);if(fell)add(p,"death.after_fall",1);t.burning=0;t.underwater=0;submerged.remove(p.getUniqueId());t.rotation=0;t.hotUntil=0;}var cause=p.getLastDamageCause();if(cause!=null&&cause.getCause()==EntityDamageEvent.DamageCause.LIGHTNING)add(p,"death.lightning",1);}
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void move(PlayerMoveEvent e){
-        var p=e.getPlayer();var t=traces.get(p.getUniqueId());if(t==null||e.getTo()==null||!plugin.eligible(p))return;
+        var p=e.getPlayer();var t=traces.get(p.getUniqueId());if(t==null||e.getTo()==null)return;
+        if(e.getFrom().getX()!=e.getTo().getX()||e.getFrom().getY()!=e.getTo().getY()||e.getFrom().getZ()!=e.getTo().getZ()){moved.add(p.getUniqueId());environment(p);}
+        if(!plugin.eligible(p)){t.rotation=0;return;}
         if(e.getFrom().getWorld()!=e.getTo().getWorld()||e.getFrom().distanceSquared(e.getTo())>0.0004){t.rotation=0;t.still=e.getTo().clone();}
         float delta=wrap(e.getTo().getYaw()-e.getFrom().getYaw());
         if(plugin.needed(p,"pressure_rupture")){if(t.still==null)t.still=e.getFrom().clone();if(t.still.getWorld()!=e.getTo().getWorld()||t.still.distanceSquared(e.getTo())>.0025){t.rotation=0;t.still=e.getTo().clone();}else{t.rotation=accumulate(t.rotation,delta);if(Math.abs(t.rotation)>=3600){add(p,"rotate.stationary_ten",1);t.rotation=0;}}}
@@ -87,7 +131,7 @@ final class NativeConditions implements Listener,AutoCloseable {
     }
     static float wrap(float angle){return (angle%360+540)%360-180;}
     static float accumulate(float sum,float delta){return Math.abs(delta)<.01f?sum:sum!=0&&Math.signum(sum)!=Math.signum(delta)?delta:sum+delta;}
-    @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void teleport(PlayerTeleportEvent e){var t=traces.get(e.getPlayer().getUniqueId());if(t!=null){t.rotation=0;t.hotUntil=0;t.still=null;}}
+    @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void teleport(PlayerTeleportEvent e){var t=traces.get(e.getPlayer().getUniqueId());if(t!=null){t.rotation=0;t.hotUntil=0;t.still=null;t.underwater=0;submerged.remove(e.getPlayer().getUniqueId());Bukkit.getScheduler().runTask(plugin,()->{if(e.getPlayer().isOnline())environment(e.getPlayer());});}}
     private Player attacker(Entity e){if(e instanceof Player p)return p;if(e instanceof Projectile proj&&proj.getShooter() instanceof Player p)return p;return null;}
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void launch(ProjectileLaunchEvent e){if(e.getEntity().getShooter() instanceof Player p){if(e.getEntity() instanceof Firework)add(p,"firework.launched",1);if(e.getEntity() instanceof AbstractArrow){var l=e.getEntity().getLocation();e.getEntity().getPersistentDataContainer().set(origin,PersistentDataType.LONG_ARRAY,new long[]{Double.doubleToLongBits(l.getX()),Double.doubleToLongBits(l.getY()),Double.doubleToLongBits(l.getZ())});}}}
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void kill(EntityDeathEvent e){
@@ -96,6 +140,16 @@ final class NativeConditions implements Listener,AutoCloseable {
         if(melee&&burning)add(p,"kill.burning_melee",1);var sword=p.getInventory().getItemInMainHand();if(melee&&Tag.ITEMS_SWORDS.isTagged(sword.getType())&&sword.getEnchantmentLevel(Enchantment.FIRE_ASPECT)>0)add(p,"kill.fire_aspect_sword",1);
     }
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void fish(PlayerFishEvent e){if(e.getState()==PlayerFishEvent.State.CAUGHT_ENTITY&&e.getCaught() instanceof Monster)add(e.getPlayer(),"fish.monster_pulled",1);}
+    @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void caughtFish(PlayerFishEvent e){
+        if(e.getState()==PlayerFishEvent.State.CAUGHT_FISH&&e.getCaught() instanceof Item item&&Set.of(Material.COD,Material.SALMON,Material.TROPICAL_FISH,Material.PUFFERFISH).contains(item.getItemStack().getType()))add(e.getPlayer(),"fish.caught_fish",item.getItemStack().getAmount());
+    }
+    @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void snowball(EntityDamageByEntityEvent e){
+        // Snowballs usually deal zero damage: count the accepted hit, not damage dealt.
+        if(e.getEntity() instanceof Monster&&e.getDamager() instanceof Snowball snow&&snow.getShooter() instanceof Player p)add(p,"hit.snowball_monster",1);
+    }
+    @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void boat(EntityPlaceEvent e){
+        if(e.getEntity() instanceof Boat&&e.getPlayer()!=null)add(e.getPlayer(),"place.boat",1);
+    }
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void armor(PlayerItemDamageEvent e){var item=e.getItem();if(!(item.getItemMeta() instanceof Damageable d)||d.getDamage()+e.getDamage()<item.getType().getMaxDurability()||item.getType().getMaxDurability()<=0)return;for(var worn:e.getPlayer().getInventory().getArmorContents())if(worn!=null&&worn.equals(item)){add(e.getPlayer(),"armor.broken",1);break;}}
     @EventHandler(priority=EventPriority.MONITOR) public void furnace(FurnaceExtractEvent e){if(e.getItemType().isEdible())add(e.getPlayer(),"furnace.food_taken",e.getItemAmount());if(e.getItemType()==Material.WET_SPONGE)add(e.getPlayer(),"obtain.wet_sponge",1);}
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void inventory(InventoryClickEvent e){if(!(e.getWhoClicked() instanceof Player p)||e.getCurrentItem()==null||e.getCurrentItem().getType()!=Material.WET_SPONGE)return;Bukkit.getScheduler().runTask(plugin,()->{if(p.isOnline()&&p.getInventory().contains(Material.WET_SPONGE))add(p,"obtain.wet_sponge",1);});}
@@ -110,5 +164,5 @@ final class NativeConditions implements Listener,AutoCloseable {
         Water best=null;for(var face:List.of(org.bukkit.block.BlockFace.UP,org.bukkit.block.BlockFace.DOWN,org.bukkit.block.BlockFace.NORTH,org.bukkit.block.BlockFace.SOUTH,org.bukkit.block.BlockFace.EAST,org.bukkit.block.BlockFace.WEST)){Block water=e.getBlock().getRelative(face);if(water.getType()!=Material.WATER)continue;var owner=waters.get(BlockKey.of(water));if(owner!=null&&owner.expires()>=tick&&(best==null||owner.expires()>best.expires()))best=owner;}
         if(best!=null)plugin.signal(best.player(),"water.obsidian_created",1);
     }
-    @Override public void close(){traces.clear();waters.clear();}
+    @Override public void close(){partyHealing.close();traces.clear();waters.clear();burning.clear();hot.clear();moved.clear();nearby.clear();submerged.clear();}
 }

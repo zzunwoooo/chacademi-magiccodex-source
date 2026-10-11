@@ -10,18 +10,22 @@ import school.magiccodex.database.DatabaseSettings;
 /** Single IO worker owns this database; record claim and house points commit together. */
 final class SchoolStore implements AutoCloseable {
     static final long MAX_SCORE=1_000_000_000L;
-    record Snapshot(List<Long> scores,List<Donation> records,Map<UUID,Integer> houses){
-        Snapshot{scores=List.copyOf(scores);records=List.copyOf(records);houses=Map.copyOf(houses);}
+    record Snapshot(List<Long> scores,List<Donation> records,Map<UUID,Integer> houses,Set<String> blocked){
+        Snapshot(List<Long> scores,List<Donation> records,Map<UUID,Integer> houses){this(scores,records,houses,Set.of());}
+        Snapshot{scores=List.copyOf(scores);records=List.copyOf(records);houses=Map.copyOf(houses);blocked=Set.copyOf(blocked);}
     }
     private final ConnectionHolder holder;
     private Connection db()throws SQLException{return holder.get();}
     private final boolean maria;
-    private final String points,donations,houses;
+    private final String points,donations,houses,policy;
+    static final class DonationBlocked extends SQLException {DonationBlocked(){super("Donation is blocked by administrator policy");}}
     SchoolStore(Path file)throws Exception{this(file,new DatabaseSettings(false,"","",""));}
     SchoolStore(Path file,DatabaseSettings settings)throws Exception{
         maria=settings.mariaDb();points=settings.table("house_points","house_points");donations=settings.table("donations","donations");houses=settings.table("houses","houses");
+        policy=settings.table("donation_policy","donation_policy");
         holder=settings.holder(file);
         try(var s=db().createStatement()){
+            s.execute("CREATE TABLE IF NOT EXISTS "+policy+"(spell VARCHAR(64) PRIMARY KEY,blocked INT NOT NULL DEFAULT 0)"+(maria?" ENGINE=InnoDB DEFAULT CHARSET=utf8mb4":""));
             if(maria){
                 s.execute("CREATE TABLE IF NOT EXISTS codex_house_points(house TINYINT PRIMARY KEY,points BIGINT NOT NULL DEFAULT 0) ENGINE=InnoDB");
                 s.execute("CREATE TABLE IF NOT EXISTS codex_donations(spell VARCHAR(64) PRIMARY KEY,spell_name VARCHAR(100) NOT NULL,donor CHAR(36) NOT NULL,nickname VARCHAR(64) NOT NULL,house TINYINT NOT NULL,created BIGINT NOT NULL,KEY ix_donations_order(created,spell)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
@@ -52,18 +56,32 @@ final class SchoolStore implements AutoCloseable {
                 }
             }
         }
-        return new Snapshot(scores,records,houses);
+        var blocked=new HashSet<String>();try(var q=db().createStatement();var r=q.executeQuery("SELECT spell FROM "+policy+" WHERE blocked<>0")){while(r.next())blocked.add(r.getString(1));}
+        return new Snapshot(scores,records,houses,blocked);
     }
     boolean donate(Donation e,long points)throws SQLException{
         if(e.house()<0||e.house()>3||points<0||points>MAX_SCORE)throw new IllegalArgumentException("Donation");
         holder.begin();
         try{
+            if(lockPolicy(e.spell()))throw new DonationBlocked();
             try(var s=db().prepareStatement((maria?"INSERT IGNORE INTO ":"INSERT OR IGNORE INTO ")+donations+" VALUES(?,?,?,?,?,?)")){
                 s.setString(1,e.spell());s.setString(2,e.spellName());s.setString(3,e.donor().toString());s.setString(4,e.nickname());s.setInt(5,e.house());s.setLong(6,e.time());
                 if(s.executeUpdate()==0){holder.rollback();return false;}
             }
             change(e.house(),points,false);db().commit();return true;
         }catch(SQLException|RuntimeException ex){holder.rollback();throw ex;}finally{holder.end();}
+    }
+    /** Serialize block/unblock and donation on the same per-spell row. Must run inside a transaction. */
+    private boolean lockPolicy(String spell)throws SQLException{
+        if(!spell.matches("[a-z0-9_-]{1,64}"))throw new IllegalArgumentException("Spell ID");
+        // MariaDB upsert takes an exclusive row lock immediately, avoiding concurrent INSERT IGNORE shared-lock upgrades.
+        // The insert is also the first SQLite write, so concurrent connections cannot read a stale policy then upgrade a read transaction.
+        try(var q=db().prepareStatement((maria?"INSERT INTO ":"INSERT OR IGNORE INTO ")+policy+"(spell,blocked) VALUES(?,0)"+(maria?" ON DUPLICATE KEY UPDATE spell=VALUES(spell)":""))){q.setString(1,spell);q.executeUpdate();}
+        try(var q=db().prepareStatement("SELECT blocked FROM "+policy+" WHERE spell=?"+(maria?" FOR UPDATE":""))){q.setString(1,spell);try(var r=q.executeQuery()){if(!r.next())throw new SQLException("Missing policy row");return r.getInt(1)!=0;}}
+    }
+    void setBlocked(String spell,boolean blocked)throws SQLException{
+        holder.begin();try{lockPolicy(spell);try(var q=db().prepareStatement("UPDATE "+policy+" SET blocked=? WHERE spell=?")){q.setInt(1,blocked?1:0);q.setString(2,spell);q.executeUpdate();}db().commit();}
+        catch(SQLException|RuntimeException error){holder.rollback();throw error;}finally{holder.end();}
     }
     boolean questReward(String token,int house,long value)throws SQLException{
         UUID.fromString(token);if(house<0||house>3||value<1||value>MAX_SCORE)throw new IllegalArgumentException("Quest house reward");holder.begin();

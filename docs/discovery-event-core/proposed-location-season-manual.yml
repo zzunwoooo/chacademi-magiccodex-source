@@ -1,0 +1,31 @@
+spells:
+  trajectory_acceleration:
+    name: "미라지 슈터"
+    permission: magic.learned.trajectory_acceleration
+    icon: magiccodex:textures/spells/expansion/trajectory_acceleration.png
+    category: wind
+    condition-text: "네 계절의 이상현상을 모두 마주하기."
+    requirements:
+      "trace.condition.trajectory_acceleration": 1
+    chance: 1.0
+    prerequisites: []
+  air_stacking:
+    name: "허공 쌓기"
+    permission: magic.learned.air_stacking
+    icon: magiccodex:textures/spells/expansion_2/air_stacking.png
+    category: wind
+    condition-text: "아카데미 건물의 모든 스팟 확인하기."
+    requirements:
+      "trace.condition.air_stacking": 1
+    chance: 1.0
+    prerequisites: []
+  flame_forging:
+    name: "불꽃 단조"
+    permission: magic.learned.flame_forging
+    icon: magiccodex:textures/spells/intermediate/flame_forging.png
+    category: fire
+    condition-text: "대장간의 모루를 살펴보기."
+    requirements:
+      "trace.condition.flame_forging": 1
+    chance: 1.0
+    prerequisites: []

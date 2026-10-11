@@ -167,13 +167,13 @@ public final class ClimateService implements Listener, CommandExecutor, TabCompl
     private void enqueue(Player player){if(queued.add(player.getUniqueId()))pending.addLast(player.getUniqueId());}
     private void sample(Player p){
         UUID id=p.getUniqueId();
-        if(!enabledIn(p.getWorld())){temperature.clearComputed(p);temperatures.remove(id);clearPenalty(p);return;}
+        if(!enabledIn(p.getWorld())){temperature.clearComputed(p);temperatures.remove(id);DiscoveryLink.state(id,"state.temperature",-100);clearPenalty(p);return;}
         var block=p.getLocation().getBlock();String biome=block.getBiome().getKey().toString();
         var offsets=config.getConfigurationSection("temperature.biome-offsets");Object explicit=offsets==null?null:offsets.getValues(false).get(biome);
         double offset=explicit instanceof Number n?n.doubleValue():Math.clamp((block.getTemperature()-0.8)*setting("temperature.biome-offset-scale",12),-25,25);
         String prefix="seasons."+current.id()+".";
         float computed=ClimateMath.temperature(setting(prefix+"minimum",8),setting(prefix+"maximum",24),p.getWorld().getTime(),offset,p.getWorld().hasStorm(),setting("temperature.rain-cooling",2));
-        temperature.computed(p,computed);float celsius=temperature.getTemperature(id);temperatures.put(id,celsius);
+        temperature.computed(p,computed);float celsius=temperature.getTemperature(id);temperatures.put(id,celsius);DiscoveryLink.state(id,"state.temperature",celsius);
         boolean survival=!p.isDead()&&(p.getGameMode()==GameMode.SURVIVAL||p.getGameMode()==GameMode.ADVENTURE);
         double speed=1,regen=setting(prefix+"mana-regeneration",1);
         if(survival&&celsius<setting("temperature.cold-below",0)){

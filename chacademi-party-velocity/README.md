@@ -1,4 +1,4 @@
-# 파티 0.1.0 / 채팅 모드 1.4.0
+# 파티·통합 채팅 0.2.0 / 채팅 모드 1.5.0
 
 기준: codex/hires-item-icons-20261006 최신 bdf0682 이후 추가.
 파티 UI는 추가하지 않았다. 기존 ChatPlus 파티 탭과 명령어를 사용한다.
@@ -26,9 +26,9 @@ Velocity는 파티원 UUID만 수신자로 선택한다. 서명된 전체 채팅
 MagicCodexBridge는 서버가 조회한 한글 닉네임을 2초마다 프록시에 전달한다. 프록시는 school/wild 중 현재 플레이어가 접속한 서버 연결에서 온 정보만 사용한다. 클라이언트가 보낸 같은 채널 데이터는 폐기한다. 이름 수신 전/만료 시 계정명으로 표시한다. 닉네임은 표시와 대상 검색에만 사용하며 소속은 UUID로 관리한다. 중복 닉네임은 계정명 또는 UUID로 구분한다.
 
 ## 설치 대상 (설치/재시작은 수행하지 않음)
-- Velocity plugins: chacademi-party-velocity-0.1.0.jar
-- 학교/야생 plugins: magic-codex-bridge-0.30.0-catalog.alpha.1-chat.2.jar로 기존 MagicCodexBridge 교체
-- Fabric 1.21.4: chacademi-chat-layout-1.4.0.jar와 magic-codex-ui-0.39.0-catalog.alpha.2-chat.2+mc1.21.4.jar로 해당 기존 모드 교체
+- Velocity plugins: chacademi-party-velocity-0.2.0.jar
+- 학교/야생 plugins: magic-codex-bridge-0.30.0-catalog.alpha.1-chat.3.jar로 기존 MagicCodexBridge 교체
+- Fabric 1.21.4: chacademi-chat-layout-1.5.0.jar와 magic-codex-ui-0.39.0-catalog.alpha.2-chat.2+mc1.21.4.jar로 해당 기존 모드 교체
 - ChatPlus 2.8.1 유지. 중복 버전 JAR를 함께 넣지 않는다.
 
 ## 아이콘
@@ -40,9 +40,24 @@ MagicCodexBridge는 서버가 조회한 한글 닉네임을 2초마다 프록시
 - E114 학교 서버: 마법 학교
 - E115 야생 서버: 나무와 산
 
-폰트는 magiccodex:chat. 기존 귓말 E101 / magiccodex:whisper는 유지한다. 기존 고화질 아이템 렌더러로 렌더링하며 읽는 동안 bitmap fallback을 사용한다. 파티 메시지와 파티 안내에 파티/시스템 아이콘을 연결했다. 전체·기숙사 통합 채팅과 학교·야생 접두 아이콘의 실제 메시지 연결은 별도 통합 채팅 단계에 남아 있다. 탭 이름은 필터 호환성을 위해 변경하지 않았다.
+폰트는 magiccodex:chat. 기존 귓말 E101 / magiccodex:whisper는 유지한다. 기존 고화질 아이템 렌더러로 렌더링하며 읽는 동안 bitmap fallback을 사용한다. 파티 메시지와 파티 안내에 파티/시스템 아이콘을 연결했다. 전체·기숙사 통합 채팅과 학교·야생 접두 아이콘은 아래 명시적 채널 송신 경로에 연결되어 있다. 탭 이름은 필터 호환성을 위해 변경하지 않았다.
 
 ## 검증
 호스팅에서 서버 전체 Verify, 채팅 모드 및 MagicCodex Fabric check/build 수행.
 파티 권한·초대 만료·동시 수락 시 정원·복수 소속 방지·강퇴 후 수신 제외·파티장 위임·탈퇴·해산·손상 파일 보존·파일 교체 및 재시작 복원 테스트 포함.
 실제 Velocity에 설치하거나 두 계정으로 게임 내 이동/채팅 검증은 하지 않았다.
+
+
+## 0.2.0 통합 채팅 (구현·빌드 단계, 운영 배포 전)
+
+- ChatPlus 전체 탭 일반 입력 → `chacachat g <내용>`, 기숙사 탭 → `chacachat h <내용>`. 서버 명령 별칭 `/네트워크채팅 전체|기숙사 <내용>`도 제공한다.
+- 시스템 탭의 일반 입력은 보내지 않고 안내한다. `/`로 시작하는 명령, 사용자 지정 탭, 기존 개인 귓말과 파티 경로는 유지한다. 전송 실패·프록시 미설치 시 다른 채널이나 전체로 재전송하지 않는다.
+- 전체는 현재 school/wild에 접속한 UUID별로 한 번만 전달한다. 기숙사는 현재 접속과 유효한 백엔드 신원이 있고 같은 0~3 house인 대상만 받는다. 미소속·기숙사 정보 없음·오프라인·만료·연결 변경은 제외한다.
+- 출력은 `[전체]` 또는 `[기숙사]`, E114/E115 서버 아이콘, E110/E111 채널 아이콘, 백엔드 한글 닉네임, 본문 순서다. 기존 ChatPlus 접두문자 필터와 호환한다. 본문은 Component.text이며 MiniMessage/색코드/클릭 이벤트로 해석하지 않는다.
+- 신원 채널은 기존 `chacademi:party_identity`. v2는 byte2 + writeUTF(nickname) + signed byte house(-1..3). v1도 수신하지만 house=-1로 취급한다. 256바이트, 닉네임32자, 제어문자 금지, 10초 TTL, 신뢰 school/wild의 현재 ServerConnection 검증을 유지한다. 클라이언트 직접 패킷은 handled 처리 후 버린다. Bridge는 기존 동기 40틱 스케줄에서 캐시 기반 questHouse를 읽는다.
+- 명시적 프록시 명령을 사용하므로 signed PlayerChatEvent를 수정·취소하지 않으며, 서버 로컬 일반 채팅 출력과 중복되는 원본 메시지를 만들지 않는다. 일반 Minecraft 입력/사용자 지정 탭은 기존 경로이며 자동 통합하지 않는다.
+- 기존 Velocity CommandExecuteEvent의 취소를 우회하지 않는다. 명령 실행 시 `chacademi.chat.send`, `chacademi.chat.global`, `chacademi.chat.house`의 명시적 false 및 `chacademi.chat.muted`의 true를 검사한다. 기본 허용이며 관리자 권한은 추가하지 않는다. Paper AsyncChatEvent만 감시하는 음소거 플러그인은 이 명령 경로를 자동 감시하지 않으므로, 사용한다면 위 프록시 권한/명령 취소와 연결해야 한다. 이 패치는 기존 음소거 설정을 변경하거나 무시하도록 설정하지 않는다.
+- 파티와 통합 채팅은 동일한 700ms 채팅 제한 및 150ms 명령 제한을 공유한다. 본문은 기존 PartyBook.message의 1~240자 검사를 사용한다. 기존 단일 worker/256개 대기열을 유지하며 넘치면 차단한다. 새 DB·Redis·별도 서버 플러그인은 없다.
+- 배포 조합: companion1.5.0 + 기존 UIchat.2 + Bridgechat.3 + proxy0.2.0. Story/HuskSync 및 개인 설정은 수정하지 않는다. 구형 Bridge v1 닉네임으로 전체는 가능하지만 기숙사 채팅은 허용하지 않는다. 새 Bridge와 구형 proxy 혼합 배포는 피한다.
+
+기존 파티 권한의 UNDEFINED를 asBoolean(false)로 오해하던 처리를 수정했다. 문서화된 기본 허용을 유지하고 명시적 FALSE만 거부하며, 권한 회귀 테스트에 포함한다.

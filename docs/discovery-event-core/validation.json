@@ -1,0 +1,45 @@
+{
+  "tests": {
+    "magic-discovery-paper": {
+      "tests": 34,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "magic-codex-paper": {
+      "tests": 278,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "chacademi-party-velocity": {
+      "tests": 30,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "jars": [
+    {
+      "path": "C:\\Chacademi\\staging\\discovery-event-core-20261011-task3\\source\\magic-discovery-paper\\build\\libs\\magic-discovery-0.2.1-event-core.4.jar",
+      "sha256": "98523a385c8f3baf6c5e385c50bd0814a789ffff9c757626f69c536900a4cc7b"
+    },
+    {
+      "path": "C:\\Chacademi\\staging\\discovery-event-core-20261011-task3\\source\\magic-codex-paper\\build\\libs\\magic-codex-bridge-0.30.0-catalog.alpha.1-chat.3-discovery.2.jar",
+      "sha256": "60847d02b1695f7eb6a2f9d10e8c9607bdf51ae2160e87655ec6a7125887f9bf"
+    },
+    {
+      "path": "C:\\Chacademi\\staging\\discovery-event-core-20261011-task3\\source\\chacademi-party-velocity\\build\\libs\\chacademi-party-velocity-0.2.1-discovery.1.jar",
+      "sha256": "d130b03ae3f255ce72c0808d1e9c0f313b4c0502f005627df63d5fa4f6267d6d"
+    }
+  ],
+  "scope": "Hosting unit/integration tests; public server potion bytecode order verified; guarded synthetic MariaDB policy audit passed; live Paper gameplay not run",
+  "deployment": "not performed",
+  "production_schema": "not touched",
+  "current_reviewed_routes": {
+    "manual_condition_command": 77,
+    "natural_source_wired": 18,
+    "pending": 2
+  },
+  "mariadb_policy": "PASS: unique synthetic zero-score test records only"
+}

@@ -1,4 +1,4 @@
-# Chacademi Chat Layout 1.4.0
+# Chacademi Chat Layout 1.5.0
 
 Fabric client addon for Minecraft 1.21.4 and ChatPlus 2.8.1 (Java 21). Compile dependency only; no Fabric API or MagicCodex hard dependency.
 
@@ -50,3 +50,16 @@ Replies consume mana without a spell cooldown. Existing spell access and server 
 
 Build and automated tests passed on hosting. Alt scrolling, private-pane lifecycle, IME and the new glyph still require an in-game integration check. See docs/CHAT-WHISPER-INTEGRATION.md in the repository root.
 1.4.0: The existing 파티 tab routes ordinary input to /party chat. Slash commands retain normal handling. Missing membership/proxy support never falls back to public chat. Requires Chacademi Party 0.1.0 on Velocity; see ../../chacademi-party-velocity/README.md. Party UI is deferred.
+
+1.5.0: Exact 전체 and 기숙사 tabs send explicit `chacachat g`/`chacachat h` commands to Chacademi Party 0.2.0; 시스템 ordinary input is blocked with local feedback. Slash commands and other tabs retain previous handling. PrivateConversations and PartyChatInput still run first. Requires Bridge chat.3 identity snapshots for house routing; UI chat.2 provides all existing icons. Failed channel sends never fall back to another channel. See ../../chacademi-party-velocity/README.md for scope, signed-chat and mute integration boundaries. No deployment performed in this patch.
+
+
+## 1.5.1 채팅 이미지 표시
+
+UI chat.3과 함께 사용한다. ChatPlus의 수신 분류와 원본 이력은 그대로 두고 addNewDisplayMessage의 표시 사본에서 시작 분류 태그만 제거한다. 전체/기숙사는 중복 채널 아이콘을 숨기고 서버 이미지를 남긴다. 본문, 닉네임, 스타일 메타데이터는 유지한다. glyph 색을 흰색으로 고정한다.
+
+UI는 192x192 RGBA 원본의 캐시된 독립 텍스처를 ChatImageGlyph 사각형으로 직접 그린다. 글꼴 atlas로 복사하지 않는다. 기존 premultiplied-alpha/mipmap/trilinear 업로드를 재사용하며 이미지 RGB에 글자색을 곱하지 않고 채팅 alpha만 유지한다. 이미지 12 GUI px, advance 13, top -2/bottom10. ChatPlus 원래 줄간격 getter에 최소0.5를 적용해 13px 이상의 행을 확보한다. 더 큰 사용자 줄간격은 유지한다. 따라서 native wrapping/scroll/scissor/hit testing이 같은 치수를 사용한다.
+
+개인 기본 필터의 전체/시스템 pattern 두 값만 갱신해 정확한 [ItemsAdder] UPDATE available 알림을 시스템 탭으로 보낸다. ItemsAdder 오류나 경고 전체를 숨기지 않는다. 서버 설정 및 relay 프로토콜 변경/재시작은 없다.
+
+자동 테스트는 원문/본문 보존, RGB tint 제거 및 alpha 유지, scale별 이미지/advance/행 간격 불변식, 실제 저장 필터의8개 Java regex 사례를 확인한다. 실제 GUI resize/scroll/hover 시각 검증은 게임 실행 후 별도 확인해야 한다.

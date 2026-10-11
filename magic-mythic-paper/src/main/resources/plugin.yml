@@ -1,0 +1,14 @@
+name: ChAcademiaMagicMythic
+version: '${version}'
+main: school.chacademia.magicmythic.MagicMythicPlugin
+api-version: '1.21.4'
+depend: [MythicMobs, WorldGuard]
+softdepend: [MagicCodexBridge]
+commands:
+  마법미몹:
+    description: Reload or inspect magic MythicMobs mechanics
+    usage: /마법미몹 <새로고침|상태>
+    permission: chacademia.magicmythic.admin
+permissions:
+  chacademia.magicmythic.admin:
+    default: op

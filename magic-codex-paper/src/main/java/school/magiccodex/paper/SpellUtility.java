@@ -25,7 +25,7 @@ final class SpellUtility implements AutoCloseable {
     private record Pull(Player player,List<Item> items,long expires){}
     SpellUtility(MagicCodexBridge plugin){this.plugin=plugin;}
     void reloadRecipes(){var list=new ArrayList<FurnaceRecipe>();Bukkit.recipeIterator().forEachRemaining(r->{if(r instanceof FurnaceRecipe f)list.add(f);});recipes=List.copyOf(list);}
-    boolean apply(Player p,String id){return switch(id){
+    boolean apply(Player p,String id){if(!MagicProtectionLink.cast(p))return false;return switch(id){
         case "wind_basket"->gather(p);
         case "harvest_wind"->breakAround(p,p.getLocation().getBlock(),4,1,64,true);
         case "dust_duster"->breakAround(p,p.getLocation().getBlock(),3,2,3,false);
@@ -54,8 +54,8 @@ final class SpellUtility implements AutoCloseable {
         long now=System.currentTimeMillis();var iterator=pulls.values().iterator();
         while(iterator.hasNext()){
             var pull=iterator.next();var p=pull.player();
-            if(now>pull.expires()||!p.isOnline()||p.isDead()){iterator.remove();continue;}
-            for(Item item:pull.items())if(item.isValid()&&item.getWorld().equals(p.getWorld())&&item.getPickupDelay()<=0&&(item.getOwner()==null||item.getOwner().equals(p.getUniqueId()))){
+            if(!MagicProtectionLink.cast(p)||now>pull.expires()||!p.isOnline()||p.isDead()){iterator.remove();continue;}
+            for(Item item:pull.items())if(MagicProtectionLink.at(p,item.getLocation())&&item.isValid()&&item.getWorld().equals(p.getWorld())&&item.getPickupDelay()<=0&&(item.getOwner()==null||item.getOwner().equals(p.getUniqueId()))){
                 Vector delta=p.getLocation().add(0,.35,0).toVector().subtract(item.getLocation().toVector());
                 if(delta.lengthSquared()<=144&&delta.lengthSquared()>.08)item.setVelocity(delta.normalize().multiply(.65));
             }
@@ -68,14 +68,17 @@ final class SpellUtility implements AutoCloseable {
         Vector right=new Vector(-Math.cos(yaw),0,-Math.sin(yaw));Vector move=ahead.clone().multiply(forward).add(right.multiply(side));
         if(move.lengthSquared()<.1)move=ahead;
         move.normalize().multiply(1.15).setY(Math.max(.08,Math.min(.35,p.getVelocity().getY())));
+        if(!MagicProtectionLink.at(p,p.getLocation().add(move)))return false;
         p.setVelocity(move);return true;
     }
     private boolean allowed(Player p,Block b){
+        if(!MagicProtectionLink.at(p,b.getLocation()))return false;
         var original=b.getBlockData().clone();
         var event=new PlayerInteractEvent(p,Action.RIGHT_CLICK_BLOCK,p.getInventory().getItemInMainHand(),b,BlockFace.UP,EquipmentSlot.HAND);
         Bukkit.getPluginManager().callEvent(event);return event.useInteractedBlock()!=Event.Result.DENY&&b.getBlockData().equals(original);
     }
     private boolean remove(Player p,Block b){
+        if(!MagicProtectionLink.at(p,b.getLocation()))return false;
         Material original=b.getType();var event=new BlockBreakEvent(b,p);Bukkit.getPluginManager().callEvent(event);
         if(event.isCancelled()||b.getType()!=original)return false;
         var drops=event.isDropItems()?b.getDrops(p.getInventory().getItemInMainHand(),p):List.<ItemStack>of();
@@ -99,7 +102,7 @@ final class SpellUtility implements AutoCloseable {
         }return count>0;
     }
     private boolean shear(Player p){
-        int count=0;for(Entity e:p.getNearbyEntities(6,3,6))if(e instanceof Sheep sheep&&!sheep.isSheared()&&sheep.isAdult()){
+        int count=0;for(Entity e:p.getNearbyEntities(6,3,6))if(MagicProtectionLink.touch(p,e)&&e instanceof Sheep sheep&&!sheep.isSheared()&&sheep.isAdult()){
             var drops=List.of(new ItemStack(Material.valueOf(sheep.getColor().name()+"_WOOL"),1+java.util.concurrent.ThreadLocalRandom.current().nextInt(3)));
             var event=new PlayerShearEntityEvent(p,sheep,new ItemStack(Material.SHEARS),EquipmentSlot.HAND,drops);Bukkit.getPluginManager().callEvent(event);
             if(event.isCancelled()||!sheep.isValid()||sheep.isSheared())continue;
@@ -108,7 +111,7 @@ final class SpellUtility implements AutoCloseable {
         }return count>0;
     }
     private boolean feather(Player p){
-        var ray=p.getWorld().rayTrace(p.getEyeLocation(),p.getEyeLocation().getDirection(),8,FluidCollisionMode.NEVER,true,.5,e->e instanceof Chicken c&&c.isAdult());
+        var ray=p.getWorld().rayTrace(p.getEyeLocation(),p.getEyeLocation().getDirection(),8,FluidCollisionMode.NEVER,true,.5,e->e instanceof Chicken c&&c.isAdult()&&MagicProtectionLink.touch(p,e));
         if(ray==null||!(ray.getHitEntity() instanceof Chicken chicken))return false;
         var event=new PlayerInteractEntityEvent(p,chicken,EquipmentSlot.HAND);Bukkit.getPluginManager().callEvent(event);if(event.isCancelled())return false;
         give(p,new ItemStack(Material.FEATHER));return true;
@@ -152,6 +155,6 @@ final class SpellUtility implements AutoCloseable {
         if(data.isPowered())return false;var original=b.getBlockData().clone();data.setPowered(true);b.setBlockData(data);buttons.put(b,original);
         var applied=data.clone();Bukkit.getScheduler().runTaskLater(plugin,()->{var restore=buttons.remove(b);if(restore!=null&&b.getBlockData().equals(applied))b.setBlockData(restore);},20);return true;
     }
-    private boolean canChange(Player p,Block b){var before=b.getBlockData().clone();var event=new BlockBreakEvent(b,p);event.setDropItems(false);Bukkit.getPluginManager().callEvent(event);return !event.isCancelled()&&b.getBlockData().equals(before);}
+    private boolean canChange(Player p,Block b){if(!MagicProtectionLink.at(p,b.getLocation()))return false;var before=b.getBlockData().clone();var event=new BlockBreakEvent(b,p);event.setDropItems(false);Bukkit.getPluginManager().callEvent(event);return !event.isCancelled()&&b.getBlockData().equals(before);}
     public void close(){if(pullTask!=null){pullTask.cancel();pullTask=null;}pulls.clear();for(var e:buttons.entrySet()){var powered=e.getValue().clone();((Powerable)powered).setPowered(true);if(e.getKey().getBlockData().equals(powered))e.getKey().setBlockData(e.getValue());}buttons.clear();}
 }

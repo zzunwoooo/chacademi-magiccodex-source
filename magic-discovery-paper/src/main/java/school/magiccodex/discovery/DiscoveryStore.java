@@ -96,15 +96,28 @@ final class DiscoveryStore implements AutoCloseable {
         putLearned(id,spell,learned);return Map.copyOf(baseline);
     }));}
     /** 넘겨받은 키만 한 트랜잭션·배치로 기록한다. 호출 쪽은 바뀐 키만 넘긴다. */
+    CompletableFuture<Void> revokeCondition(UUID id,String spell,boolean reset){return task(()->tx(()->{
+        putProgress(id,Map.of(Definitions.conditionKey(spell),0d));
+        if(reset){putLearned(id,spell,false);try(var q=db().prepareStatement("DELETE FROM "+retryProgress+" WHERE player=? AND spell=?")){q.setString(1,id.toString());q.setString(2,spell);q.executeUpdate();}}
+        return null;
+    }));}
     CompletableFuture<Void> save(UUID id,Map<String,Double> values){return task(()->{if(!values.isEmpty())tx(()->{putProgress(id,values);return null;});return null;});}
-    CompletableFuture<Award> acquire(UUID id,String spell,Map<String,Double> values,boolean everyPlayer){return task(()->tx(()->{
+    CompletableFuture<Award> acquire(UUID id,String spell,Map<String,Double> values,boolean everyPlayer){return task(()->tx(()->acquireNow(id,spell,values,everyPlayer)));}
+    CompletableFuture<Award> grantCondition(UUID id,String spell,boolean everyPlayer){return task(()->tx(()->{
+        var values=Map.of(Definitions.conditionKey(spell),1d);
+        // An earlier administrator learned grant is not a new first discovery either.
+        try(var q=db().prepareStatement("SELECT learned FROM "+learnedOverrides+" WHERE player=? AND spell=?")){q.setString(1,id.toString());q.setString(2,spell);try(var r=q.executeQuery()){if(r.next()&&r.getBoolean(1)){putProgress(id,values);return new Award(false,null);}}}
+        return acquireNow(id,spell,values,everyPlayer);
+    }));}
+    private Award acquireNow(UUID id,String spell,Map<String,Double> values,boolean everyPlayer)throws Exception{
         Acquisition old=null;
         try(var q=db().prepareStatement("SELECT token,spell,"+(maria?"first_discovery":"first")+",reward,notified FROM "+acquisitions+" WHERE player=? AND spell=?")){q.setString(1,id.toString());q.setString(2,spell);try(var r=q.executeQuery()){if(r.next())old=row(r);}}
         if(old!=null){putProgress(id,values);putLearned(id,spell,true);return new Award(false,old);}
         boolean first;try(var q=db().prepareStatement((maria?"INSERT IGNORE INTO ":"INSERT OR IGNORE INTO ")+firsts+" VALUES(?,?,?)")){q.setString(1,spell);q.setString(2,id.toString());q.setLong(3,System.currentTimeMillis());first=q.executeUpdate()==1;}
         long token;try(var q=db().prepareStatement("INSERT INTO "+acquisitions+"(player,spell,"+(maria?"first_discovery":"first")+",reward) VALUES(?,?,?,?)",Statement.RETURN_GENERATED_KEYS)){q.setString(1,id.toString());q.setString(2,spell);q.setBoolean(3,first);q.setInt(4,first||everyPlayer?1:0);q.executeUpdate();try(var keys=q.getGeneratedKeys()){keys.next();token=keys.getLong(1);}}
         putProgress(id,values);putLearned(id,spell,true);return new Award(true,new Acquisition(token,spell,first,first||everyPlayer?1:0,false));
-    }));}
+    }
+
     CompletableFuture<Void> acknowledge(UUID id,long token){return task(()->{try(var p=db().prepareStatement("UPDATE "+acquisitions+" SET notified=1 WHERE player=? AND token=?")){p.setString(1,id.toString());p.setLong(2,token);p.executeUpdate();}return null;});}
     CompletableFuture<Boolean> reserve(UUID id,long token){return task(()->{try(var p=db().prepareStatement("UPDATE "+acquisitions+" SET reward=2 WHERE player=? AND token=? AND reward=1")){p.setString(1,id.toString());p.setLong(2,token);return p.executeUpdate()==1;}});}
     CompletableFuture<Void> delivered(UUID id,long token){return task(()->{try(var p=db().prepareStatement("UPDATE "+acquisitions+" SET reward=3 WHERE player=? AND token=? AND reward=2")){p.setString(1,id.toString());p.setLong(2,token);p.executeUpdate();}return null;});}

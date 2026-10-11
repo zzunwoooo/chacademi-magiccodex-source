@@ -1,4 +1,4 @@
-# 작성 완료 62종. condition-text는 표시용 원문, requirements는 서버 판정용입니다.
+# 기존 작성 완료 62종 + 원본 검수와 최신 문구가 일치하는 3종. condition-text는 표시용 원문, requirements는 서버 판정용입니다.
 spells:
   wind_basket:
     name: "바람 바구니"
@@ -424,37 +424,54 @@ spells:
     requirements: {}
     chance: 1.0
     prerequisites:
-      - "magic.learned.hearth_touch"
-      - "magic.learned.ember_bolt"
-      - "magic.learned.rekindle"
-      - "magic.learned.flame_forging"
-      - "magic.learned.ember_trap"
-      - "magic.learned.fire_curtain"
-      - "magic.learned.phoenix_oath"
-      - "magic.learned.living_furnace"
-      - "magic.learned.flame_lash"
-      - "magic.learned.cinder_detonation"
-      - "magic.learned.palm_fireworks"
       - "magic.learned.ash_brand"
-      - "magic.learned.flame_leap"
-      - "magic.learned.crimson_heart"
-      - "magic.learned.wick_trimming"
-      - "magic.learned.glass_firing"
-      - "magic.learned.charcoal_conversion"
-      - "magic.learned.sponge_drying"
-      - "magic.learned.flame_footprints"
-      - "magic.learned.boiling_armor"
-      - "magic.learned.kiln_breath"
-      - "magic.learned.glaze_coating"
-      - "magic.learned.explosive_wedge"
-      - "magic.learned.fireproof_film"
-      - "magic.learned.heat_recovery"
-      - "magic.learned.firebird_hunt"
-      - "magic.learned.lava_suture"
-      - "magic.learned.flame_sword_dance"
-      - "magic.learned.incandescent_break"
+      - "magic.learned.ashen_farewell"
       - "magic.learned.blue_bonfire"
+      - "magic.learned.boiling_armor"
+      - "magic.learned.charcoal_conversion"
+      - "magic.learned.charcoal_scent"
+      - "magic.learned.cinder_detonation"
+      - "magic.learned.copper_polish"
       - "magic.learned.crimson_breath"
+      - "magic.learned.crimson_heart"
+      - "magic.learned.ember_bolt"
+      - "magic.learned.ember_transfer"
+      - "magic.learned.ember_trap"
+      - "magic.learned.explosive_wedge"
+      - "magic.learned.fire_curtain"
+      - "magic.learned.firebird_hunt"
+      - "magic.learned.fireproof_film"
+      - "magic.learned.flame_boundary"
+      - "magic.learned.flame_clap"
+      - "magic.learned.flame_footprints"
+      - "magic.learned.flame_forging"
+      - "magic.learned.flame_lash"
+      - "magic.learned.flame_leap"
+      - "magic.learned.flame_seam"
+      - "magic.learned.flame_sword_dance"
+      - "magic.learned.fuse_bond"
+      - "magic.learned.glass_craft"
+      - "magic.learned.glass_firing"
+      - "magic.learned.glaze_coating"
+      - "magic.learned.hearth_touch"
+      - "magic.learned.heat_accumulation"
+      - "magic.learned.heat_recovery"
+      - "magic.learned.heat_script"
+      - "magic.learned.heat_transfer"
+      - "magic.learned.heated_hooves"
+      - "magic.learned.incandescent_break"
+      - "magic.learned.kiln_breath"
+      - "magic.learned.lava_suture"
+      - "magic.learned.living_furnace"
+      - "magic.learned.palm_fireworks"
+      - "magic.learned.phoenix_oath"
+      - "magic.learned.rekindle"
+      - "magic.learned.residual_heat"
+      - "magic.learned.searing_edge"
+      - "magic.learned.sponge_drying"
+      - "magic.learned.sulfur_cloud"
+      - "magic.learned.wax_melting"
+      - "magic.learned.wick_trimming"
   palm_fireworks:
     name: "손바닥 폭죽"
     permission: "magic.learned.palm_fireworks"
@@ -653,5 +670,111 @@ spells:
     condition-text: "방패를 사용하는 적과의 실습 전투를 완료하기."
     requirements:
       "practice.shield_completed": 1
+    chance: 1.0
+    prerequisites: []
+
+  fish_lure:
+    name: "물고기 유인"
+    permission: "magic.learned.fish_lure"
+    icon: "magiccodex:textures/spells/expansion/fish_lure.png"
+    category: "water"
+    condition-text: "낚시로 물고기를 누적 30마리 낚기."
+    requirements:
+      "fish.caught_fish": 30
+    chance: 1.0
+    prerequisites: []
+
+  frost_rupture:
+    name: "서리 파열"
+    permission: "magic.learned.frost_rupture"
+    icon: "magiccodex:textures/spells/expansion/frost_rupture.png"
+    category: "water"
+    condition-text: "눈덩이를 몬스터에게 누적 50번 명중하기."
+    requirements:
+      "hit.snowball_monster": 50
+    chance: 1.0
+    prerequisites: []
+
+  quiet_mooring:
+    name: "노아의 방주"
+    permission: "magic.learned.quiet_mooring"
+    icon: "magiccodex:textures/spells/expansion_2/quiet_mooring.png"
+    category: "water"
+    condition-text: "보트 설치 5회."
+    requirements:
+      "place.boat": 5
+    chance: 1.0
+    prerequisites: []
+
+  water_breath:
+    name: "물결 숨결"
+    permission: "magic.learned.water_breath"
+    icon: "magiccodex:textures/spells/novice/water_breath.png"
+    category: "water"
+    condition-text: "물에 잠긴 상태에서 죽지 않고 30초 버티기"
+    requirements:
+      "submerged.survive_thirty": 1
+    chance: 1.0
+    prerequisites: []
+
+  ice_bridge:
+    name: "얼음 다리"
+    permission: "magic.learned.ice_bridge"
+    icon: "magiccodex:textures/spells/intermediate/ice_bridge.png"
+    category: "water"
+    condition-text: "차가운 바다에 방문하기"
+    requirements:
+      "visit.cold_ocean": 1
+    chance: 1.0
+    prerequisites: []
+
+  crimson_breath:
+    name: "드래곤 브레스"
+    permission: "magic.learned.crimson_breath"
+    icon: "magiccodex:textures/spells/expansion_2/crimson_breath.png"
+    category: "fire"
+    condition-text: "최대 마나량 2500 달성"
+    requirements:
+      "state.mana_maximum": 2500
+    chance: 1.0
+    prerequisites: []
+  current_sorting:
+    name: "사금 추출"
+    permission: "magic.learned.current_sorting"
+    icon: "magiccodex:textures/spells/expansion_2/current_sorting.png"
+    category: "water"
+    condition-text: "물 속에 잠겨진 금 광석 캐기"
+    requirements:
+      "mine.submerged_gold": 1
+    chance: 1.0
+    prerequisites: []
+  life_distribution:
+    name: "생명의 분배"
+    permission: magic.learned.life_distribution
+    icon: magiccodex:textures/spells/expansion/life_distribution.png
+    category: water
+    condition-text: "투척용 치유 물약 한 병으로 자신과 같은 파티원 2명을 실제 회복하기"
+    requirements:
+      "heal.self_and_two_party": 1
+    chance: 1.0
+    prerequisites: []
+  pressure_hammer:
+    name: "수압해머"
+    permission: magic.learned.pressure_hammer
+    icon: minecraft:textures/item/book.png
+    category: water
+    condition-text: "20블록 이상 높이에서 뛰어내려 철퇴로 적을 타격하기."
+    requirements:
+      "combat.mace_fall_twenty": 1
+    chance: 1.0
+    prerequisites: []
+  waterspout:
+    name: "용오름"
+    permission: magic.learned.waterspout
+    icon: minecraft:textures/item/book.png
+    category: water
+    condition-text: "여름의 바다 바이옴(커스텀 바다 포함)에서 상승 기류를 사용하기."
+    requirements:
+      "cast.updraft_summer_ocean": 1
     chance: 1.0
     prerequisites: []

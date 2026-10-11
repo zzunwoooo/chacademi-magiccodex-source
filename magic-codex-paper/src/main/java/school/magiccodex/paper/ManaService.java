@@ -34,7 +34,10 @@ public final class ManaService {
         a.baseHaste=value(player,hasteKey,setting("mana.default-haste",0));
         accounts.put(id,a);publish(id);
     }
-    void publish(UUID id){snapshots.put(id,account(id).snapshot());dirty.add(id);}
+    private final Map<UUID,Double> discoveryMaximum=new HashMap<>();
+    void publish(UUID id){var snapshot=account(id).snapshot();snapshots.put(id,snapshot);dirty.add(id);
+        if(!Objects.equals(discoveryMaximum.get(id),snapshot.maximum())&&DiscoveryLink.state(id,"state.mana_maximum",snapshot.maximum()))discoveryMaximum.put(id,snapshot.maximum());
+    }
     public void setCurrent(UUID id,double value){ManaAccount.valid(value);var a=account(id);a.current=Math.min(value,a.snapshot().maximum());publish(id);}
     public void add(UUID id,double amount){account(id).add(amount);publish(id);}
     public boolean tryConsume(UUID id,double amount){boolean ok=account(id).consume(amount);if(ok)publish(id);return ok;}
@@ -66,6 +69,6 @@ public final class ManaService {
         data.set(cooldownKey,PersistentDataType.STRING,text.toString());dirty.remove(id);
     }
     void saveDirty(){for(UUID id:List.copyOf(dirty)){var p=Bukkit.getPlayer(id);if(p!=null)save(p);}}
-    void quit(Player p){save(p);UUID id=p.getUniqueId();accounts.remove(id);snapshots.remove(id);dirty.remove(id);}
+    void quit(Player p){save(p);UUID id=p.getUniqueId();accounts.remove(id);discoveryMaximum.remove(id);snapshots.remove(id);dirty.remove(id);}
     void close(){for(UUID id:List.copyOf(accounts.keySet())){var p=Bukkit.getPlayer(id);if(p!=null)save(p);}accounts.clear();snapshots.clear();dirty.clear();}
 }

@@ -1,0 +1,2451 @@
+{
+  "source_root": "C:\\Chacademi\\staging\\discovery-event-core-20261011-task3\\source\\magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells",
+  "spell_count": 299,
+  "fire_count_including_meteor": 49,
+  "meteor_prerequisite_count": 48,
+  "fire_ids": [
+    "ash_brand",
+    "ashen_farewell",
+    "blue_bonfire",
+    "boiling_armor",
+    "charcoal_conversion",
+    "charcoal_scent",
+    "cinder_detonation",
+    "copper_polish",
+    "crimson_breath",
+    "crimson_heart",
+    "ember_bolt",
+    "ember_transfer",
+    "ember_trap",
+    "explosive_wedge",
+    "falling_star",
+    "fire_curtain",
+    "firebird_hunt",
+    "fireproof_film",
+    "flame_boundary",
+    "flame_clap",
+    "flame_footprints",
+    "flame_forging",
+    "flame_lash",
+    "flame_leap",
+    "flame_seam",
+    "flame_sword_dance",
+    "fuse_bond",
+    "glass_craft",
+    "glass_firing",
+    "glaze_coating",
+    "hearth_touch",
+    "heat_accumulation",
+    "heat_recovery",
+    "heat_script",
+    "heat_transfer",
+    "heated_hooves",
+    "incandescent_break",
+    "kiln_breath",
+    "lava_suture",
+    "living_furnace",
+    "palm_fireworks",
+    "phoenix_oath",
+    "rekindle",
+    "residual_heat",
+    "searing_edge",
+    "sponge_drying",
+    "sulfur_cloud",
+    "wax_melting",
+    "wick_trimming"
+  ],
+  "spells": {
+    "feather_fall": {
+      "id": "feather_fall",
+      "name": "feather fall",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/novice/feather_step.png",
+      "condition": "낙하 피해를 받은 뒤 1회 사망하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\001_feather_fall.yml"
+    },
+    "wind_basket": {
+      "id": "wind_basket",
+      "name": "바람바구니",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/novice/wind_basket.png",
+      "condition": "아이템 1,000개 줍기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\002_wind_basket.yml"
+    },
+    "harvest_wind": {
+      "id": "harvest_wind",
+      "name": "수확의 바람",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/novice/harvest_wind.png",
+      "condition": "자라지 않은 밀·당근·감자를 각각 12개씩 잘라내기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\003_harvest_wind.yml"
+    },
+    "wind_push": {
+      "id": "wind_push",
+      "name": "윈드 푸쉬",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/novice_extra/wind_push.png",
+      "condition": "바람 마법 기초 수업을 통해 습득.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\004_wind_push.yml"
+    },
+    "light_leap": {
+      "id": "light_leap",
+      "name": "상승기류",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/novice_extra/light_leap.png",
+      "condition": "달리면서 점프한 횟수를 30번 채우기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\005_light_leap.yml"
+    },
+    "flight": {
+      "id": "flight",
+      "name": "비행",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/intermediate/flight.png",
+      "condition": "비행 실습 참가하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\006_flight.yml"
+    },
+    "far_touch": {
+      "id": "far_touch",
+      "name": "손길 너머",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/intermediate/far_touch.png",
+      "condition": "학교 도서관에서 '기계에 대한 이해' 책을 읽기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\007_far_touch.yml"
+    },
+    "aerial_haul": {
+      "id": "aerial_haul",
+      "name": "부유",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/intermediate/aerial_haul.png",
+      "condition": "화물 대상 시스템과 획득 조건을 추후 연결합니다.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\008_aerial_haul.yml"
+    },
+    "wind_message": {
+      "id": "wind_message",
+      "name": "바람의 전언",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/intermediate/wind_message.png",
+      "condition": "1명과 친구가 되기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\009_wind_message.yml"
+    },
+    "storm_command": {
+      "id": "storm_command",
+      "name": "폭풍의 지휘",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/advanced/storm_command.png",
+      "condition": "30도 이상의 기온을 가진 공간에서, 상승기류 마법 사용 후 떨어지기 전에 한 바퀴 회전하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\010_storm_command.yml"
+    },
+    "vacuum_cleave": {
+      "id": "vacuum_cleave",
+      "name": "윈드 커터",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/advanced/vacuum_cleave.png",
+      "condition": "바람 마법 중급 수업을 통해 습득.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\011_vacuum_cleave.yml"
+    },
+    "gale_dash": {
+      "id": "gale_dash",
+      "name": "바람 걸음",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion/gale_dash.png",
+      "condition": "달리기로 누적 1,000블록 이동하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\012_gale_dash.yml"
+    },
+    "returning_wind": {
+      "id": "returning_wind",
+      "name": "되받는 바람",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion/returning_wind.png",
+      "condition": "바람 마법 중급 수업을 통해 낮은 확률로 습득.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\013_returning_wind.yml"
+    },
+    "wind_grooming": {
+      "id": "wind_grooming",
+      "name": "바람 털빗",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion/wind_grooming.png",
+      "condition": "가위로 양털을 10번 깎기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\014_wind_grooming.yml"
+    },
+    "weightless_zone": {
+      "id": "weightless_zone",
+      "name": "중력지대",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion/weightless_zone.png",
+      "condition": "엔더 드래곤 격파",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\015_weightless_zone.yml"
+    },
+    "descent_command": {
+      "id": "descent_command",
+      "name": "낙하 명령",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion/descent_command.png",
+      "condition": "윈드 프레스 10번 사용하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\016_descent_command.yml"
+    },
+    "trajectory_acceleration": {
+      "id": "trajectory_acceleration",
+      "name": "미라지 슈터",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion/trajectory_acceleration.png",
+      "condition": "네 계절의 이상현상을 모두 마주하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\017_trajectory_acceleration.yml"
+    },
+    "dust_duster": {
+      "id": "dust_duster",
+      "name": "클린",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion_2/dust_duster.png",
+      "condition": "기숙사 배정받기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\018_dust_duster.yml"
+    },
+    "leaf_cleanup": {
+      "id": "leaf_cleanup",
+      "name": "잎새 청소",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion_2/leaf_cleanup.png",
+      "condition": "종류와 관계없이 묘목 20개 심기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\019_leaf_cleanup.yml"
+    },
+    "feather_rustle": {
+      "id": "feather_rustle",
+      "name": "깃털 털기",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion_2/feather_rustle.png",
+      "condition": "닭에게 씨앗을 누적 16번 먹이기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\020_feather_rustle.yml"
+    },
+    "cross_breeze": {
+      "id": "cross_breeze",
+      "name": "바람 화살",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion_2/cross_breeze.png",
+      "condition": "바람 마법 기초 수업을 통해 낮은 확률로 습득.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\021_cross_breeze.yml"
+    },
+    "returning_blade": {
+      "id": "returning_blade",
+      "name": "되돌이 칼날",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion_2/returning_blade.png",
+      "condition": "윈드 커터 50회 사용.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\022_returning_blade.yml"
+    },
+    "pressure_press": {
+      "id": "pressure_press",
+      "name": "윈드 프레스",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion_2/pressure_press.png",
+      "condition": "앵무새를 1회 공격하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\023_pressure_press.yml"
+    },
+    "wind_decoy": {
+      "id": "wind_decoy",
+      "name": "바람 미끼",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion_2/wind_decoy.png",
+      "condition": "반경 7블록 안에 몬스터 10마리와 함께 있기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\024_wind_decoy.yml"
+    },
+    "air_step": {
+      "id": "air_step",
+      "name": "허공 디딤",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion_2/air_step.png",
+      "condition": "비행 금지 구역에서 비행 마법 25회 사용.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\025_air_step.yml"
+    },
+    "lightning_needle": {
+      "id": "lightning_needle",
+      "name": "라이트닝 쇼크",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion_2/lightning_needle.png",
+      "condition": "번개에 맞아 사망하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\026_lightning_needle.yml"
+    },
+    "air_stacking": {
+      "id": "air_stacking",
+      "name": "허공 쌓기",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion_2/air_stacking.png",
+      "condition": "아카데미 건물의 모든 스팟 확인하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\027_air_stacking.yml"
+    },
+    "arrested_orbit": {
+      "id": "arrested_orbit",
+      "name": "퍼붓는 화살",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion_2/arrested_orbit.png",
+      "condition": "바람 마법 고급 수업을 통해 낮은 확률로 습득.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\028_arrested_orbit.yml"
+    },
+    "crossfire": {
+      "id": "crossfire",
+      "name": "크로스 애로우",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion_2/crossfire.png",
+      "condition": "바람 마법으로 몬스터를 일격에 100회 처치.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\029_crossfire.yml"
+    },
+    "resonant_arrow": {
+      "id": "resonant_arrow",
+      "name": "미스틱 슈터",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion_2/resonant_arrow.png",
+      "condition": "미라지 슈터로 누적 마나 10,000 소모.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\030_resonant_arrow.yml"
+    },
+    "pressure_rupture": {
+      "id": "pressure_rupture",
+      "name": "토네이도 스핀",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion_2/pressure_rupture.png",
+      "condition": "움직이지 않은 상태에서 시선을 돌려 10바퀴 회전하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\031_pressure_rupture.yml"
+    },
+    "storm_crown": {
+      "id": "storm_crown",
+      "name": "삼중 탄환",
+      "category": "wind",
+      "icon": "magiccodex:textures/spells/expansion_2/storm_crown.png",
+      "condition": "70블록 밖의 적에게 화살 명중.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\032_storm_crown.yml"
+    },
+    "hearth_touch": {
+      "id": "hearth_touch",
+      "name": "손끝의 화로",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/novice/hearth_touch.png",
+      "condition": "화로에서 직접 구운 음식을 누적 16개 꺼내기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\033_hearth_touch.yml"
+    },
+    "ember_bolt": {
+      "id": "ember_bolt",
+      "name": "파이어 볼",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/novice_extra/ember_bolt.png",
+      "condition": "화염 마법 기초 수업을 통해 습득.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\034_ember_bolt.yml"
+    },
+    "rekindle": {
+      "id": "rekindle",
+      "name": "다시 타오르는 불",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/novice_extra/rekindle.png",
+      "condition": "촛불에 라이터로 불 붙이기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\035_rekindle.yml"
+    },
+    "flame_forging": {
+      "id": "flame_forging",
+      "name": "불꽃 단조",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/intermediate/flame_forging.png",
+      "condition": "대장간의 모루를 살펴보기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\036_flame_forging.yml"
+    },
+    "ember_trap": {
+      "id": "ember_trap",
+      "name": "잿불 덫",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/intermediate/ember_trap.png",
+      "condition": "화염 마법 기초 수업을 통해 낮은 확률로 습득",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\037_ember_trap.yml"
+    },
+    "fire_curtain": {
+      "id": "fire_curtain",
+      "name": "플레어 월",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/intermediate/fire_curtain.png",
+      "condition": "화염 마법 중급 수업을 통해 습득",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\038_fire_curtain.yml"
+    },
+    "phoenix_oath": {
+      "id": "phoenix_oath",
+      "name": "불사조의 서약",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/advanced/phoenix_oath.png",
+      "condition": "펫 '불사조' 획득",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\039_phoenix_oath.yml"
+    },
+    "living_furnace": {
+      "id": "living_furnace",
+      "name": "살아 있는 화로",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/advanced/living_furnace.png",
+      "condition": "손끝의 화로 마법으로 64번 구워내기",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\040_living_furnace.yml"
+    },
+    "falling_star": {
+      "id": "falling_star",
+      "name": "메테오 스트라이크",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/advanced/falling_star.png",
+      "condition": "모든 화염 마법 습득",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\041_falling_star.yml"
+    },
+    "flame_lash": {
+      "id": "flame_lash",
+      "name": "화염 채찍",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion/flame_lash.png",
+      "condition": "낚싯대로 몬스터를 5번 끌어당기기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\042_flame_lash.yml"
+    },
+    "cinder_detonation": {
+      "id": "cinder_detonation",
+      "name": "스타 퓨리",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion/cinder_detonation.png",
+      "condition": "불타는 몬스터를 30회 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\043_cinder_detonation.yml"
+    },
+    "palm_fireworks": {
+      "id": "palm_fireworks",
+      "name": "손바닥 폭죽",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion/palm_fireworks.png",
+      "condition": "폭죽 로켓을 10번 발사하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\044_palm_fireworks.yml"
+    },
+    "ash_brand": {
+      "id": "ash_brand",
+      "name": "재의 낙인",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion/ash_brand.png",
+      "condition": "불 마법으로 몬스터를 30마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\045_ash_brand.yml"
+    },
+    "flame_leap": {
+      "id": "flame_leap",
+      "name": "블레이즈 킥",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion/flame_leap.png",
+      "condition": "도서관에서 '체술강화' 책을 읽기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\046_flame_leap.yml"
+    },
+    "crimson_heart": {
+      "id": "crimson_heart",
+      "name": "홍련의 심장",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion/crimson_heart.png",
+      "condition": "체력이 하트 1칸 이하인 상태에서 화염 마법으로 몬스터 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\047_crimson_heart.yml"
+    },
+    "wick_trimming": {
+      "id": "wick_trimming",
+      "name": "심지 줄이기",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion_2/wick_trimming.png",
+      "condition": "촛불 10회 소화",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\048_wick_trimming.yml"
+    },
+    "glass_firing": {
+      "id": "glass_firing",
+      "name": "광석 재련",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion_2/glass_firing.png",
+      "condition": "불 마법 중급 수업을 통해 습득하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\049_glass_firing.yml"
+    },
+    "charcoal_conversion": {
+      "id": "charcoal_conversion",
+      "name": "발화",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion_2/charcoal_conversion.png",
+      "condition": "화염 마법 중급 수업을 통해 낮은 확률로 습득",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\050_charcoal_conversion.yml"
+    },
+    "sponge_drying": {
+      "id": "sponge_drying",
+      "name": "스펀지 말리기",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion_2/sponge_drying.png",
+      "condition": "젖은 스펀지 획득",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\051_sponge_drying.yml"
+    },
+    "flame_footprints": {
+      "id": "flame_footprints",
+      "name": "불꽃 걸음",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion_2/flame_footprints.png",
+      "condition": "불이 붙은 상태에서 30초간 살아남기",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\052_flame_footprints.yml"
+    },
+    "boiling_armor": {
+      "id": "boiling_armor",
+      "name": "끓는 갑주",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion_2/boiling_armor.png",
+      "condition": "입고있는 갑옷 2회 파괴",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\053_boiling_armor.yml"
+    },
+    "kiln_breath": {
+      "id": "kiln_breath",
+      "name": "가마 숨결",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion_2/kiln_breath.png",
+      "condition": "대장간에서 아이템 제작 3회",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\054_kiln_breath.yml"
+    },
+    "glaze_coating": {
+      "id": "glaze_coating",
+      "name": "화염의 정복자",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion_2/glaze_coating.png",
+      "condition": "화염 지속 피해를 100회 받기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\055_glaze_coating.yml"
+    },
+    "explosive_wedge": {
+      "id": "explosive_wedge",
+      "name": "폭발 쐐기",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion_2/explosive_wedge.png",
+      "condition": "불붙은 몬스터를 근접 공격으로 20번 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\056_explosive_wedge.yml"
+    },
+    "fireproof_film": {
+      "id": "fireproof_film",
+      "name": "내연성",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion_2/fireproof_film.png",
+      "condition": "여름의 더위에 사라진 아이템 3회",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\057_fireproof_film.yml"
+    },
+    "heat_recovery": {
+      "id": "heat_recovery",
+      "name": "열량 보존",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion_2/heat_recovery.png",
+      "condition": "도서관에서 '에너지에 관하여' 책을 읽기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\058_heat_recovery.yml"
+    },
+    "firebird_hunt": {
+      "id": "firebird_hunt",
+      "name": "불새",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion_2/firebird_hunt.png",
+      "condition": "불사조·주작·가루다 관련 책을 읽기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\059_firebird_hunt.yml"
+    },
+    "lava_suture": {
+      "id": "lava_suture",
+      "name": "용암 봉합",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion_2/lava_suture.png",
+      "condition": "용암에 물을 부어 흑요석을 누적 32개 만들기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\060_lava_suture.yml"
+    },
+    "flame_sword_dance": {
+      "id": "flame_sword_dance",
+      "name": "화염 검무",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion_2/flame_sword_dance.png",
+      "condition": "발화가 인첸트 된 검으로 몬스터 50회 처치",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\061_flame_sword_dance.yml"
+    },
+    "incandescent_break": {
+      "id": "incandescent_break",
+      "name": "파이어 스트라이크",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion_2/incandescent_break.png",
+      "condition": "방패를 사용하는 적과의 실습 전투를 완료하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\062_incandescent_break.yml"
+    },
+    "blue_bonfire": {
+      "id": "blue_bonfire",
+      "name": "푸른 화톳불",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion_2/blue_bonfire.png",
+      "condition": "도서관에서 '불꽃의 색과 마력' 책을 읽기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\063_blue_bonfire.yml"
+    },
+    "crimson_breath": {
+      "id": "crimson_breath",
+      "name": "드래곤 브레스",
+      "category": "fire",
+      "icon": "magiccodex:textures/spells/expansion_2/crimson_breath.png",
+      "condition": "최대 마나를 2500까지 늘리기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\064_crimson_breath.yml"
+    },
+    "water_breath": {
+      "id": "water_breath",
+      "name": "물결 숨결",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/novice/water_breath.png",
+      "condition": "물에 잠긴 상태에서 죽지 않고 30초 버티기",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\065_water_breath.yml"
+    },
+    "tide_stride": {
+      "id": "tide_stride",
+      "name": "물살 타기",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/novice/tide_stride.png",
+      "condition": "수영으로 누적 500블록 이동하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\066_tide_stride.yml"
+    },
+    "water_bolt": {
+      "id": "water_bolt",
+      "name": "물방울 탄환",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/novice_extra/water_bolt.png",
+      "condition": "물 마법 기초 수업을 통해 습득.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\067_water_bolt.yml"
+    },
+    "quench": {
+      "id": "quench",
+      "name": "불길 씻기",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/novice_extra/quench.png",
+      "condition": "불이 붙은 상태에서 물에 들어가 불 끄기 5회.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\068_quench.yml"
+    },
+    "purifying_wave": {
+      "id": "purifying_wave",
+      "name": "정화의 물결",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/intermediate/purifying_wave.png",
+      "condition": "독에 걸린 상태에서 우유를 마시기 3회.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\069_purifying_wave.yml"
+    },
+    "ice_bridge": {
+      "id": "ice_bridge",
+      "name": "얼음 다리",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/intermediate/ice_bridge.png",
+      "condition": "차가운 바다에 방문하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\070_ice_bridge.yml"
+    },
+    "water_mirror": {
+      "id": "water_mirror",
+      "name": "수면의 거울",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/intermediate/water_mirror.png",
+      "condition": "학교 도서관에서 '수면에 비친 먼 풍경' 책 읽기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\071_water_mirror.yml"
+    },
+    "spring_unseal": {
+      "id": "spring_unseal",
+      "name": "수맥 개방",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/intermediate/spring_unseal.png",
+      "condition": "가마솥을 30회 채우기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\072_spring_unseal.yml"
+    },
+    "water_elemental": {
+      "id": "water_elemental",
+      "name": "운디네",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/advanced/water_elemental.png",
+      "condition": "'''정령계약서-수'' 책을 읽기.'",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\073_water_elemental.yml"
+    },
+    "eternal_ice_prison": {
+      "id": "eternal_ice_prison",
+      "name": "만년빙옥",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/advanced/eternal_ice_prison.png",
+      "condition": "물 마법 응용 수업을 통해 낮은 확률로 습득.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\074_eternal_ice_prison.yml"
+    },
+    "cauldron_fill": {
+      "id": "cauldron_fill",
+      "name": "가마솥 채우기",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/expansion/cauldron_fill.png",
+      "condition": "도서관에서 '화학기초' 책을 읽기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\075_cauldron_fill.yml"
+    },
+    "dye_rinse": {
+      "id": "dye_rinse",
+      "name": "염색 씻기",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/expansion/dye_rinse.png",
+      "condition": "가마솥으로 가죽 장비의 염색을 3번 지우기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\076_dye_rinse.yml"
+    },
+    "fish_lure": {
+      "id": "fish_lure",
+      "name": "물고기 유인",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/expansion/fish_lure.png",
+      "condition": "낚시로 물고기를 누적 30마리 낚기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\077_fish_lure.yml"
+    },
+    "frost_rupture": {
+      "id": "frost_rupture",
+      "name": "서리 파열",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/expansion/frost_rupture.png",
+      "condition": "눈덩이를 몬스터에게 누적 50번 명중하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\078_frost_rupture.yml"
+    },
+    "pressure_lance": {
+      "id": "pressure_lance",
+      "name": "수압창",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "물방울 탄환으로 몬스터를 30마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\079_pressure_lance.yml"
+    },
+    "life_distribution": {
+      "id": "life_distribution",
+      "name": "생명의 분배",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/expansion/life_distribution.png",
+      "condition": "투척용 치유 물약 한 병으로 자신과 동료 2명을 함께 회복하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\080_life_distribution.yml"
+    },
+    "moist_farmland": {
+      "id": "moist_farmland",
+      "name": "촉촉한 밭",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/expansion_2/moist_farmland.png",
+      "condition": "물에서 떨어진 마른 경작지에 씨앗을 20번 심기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\081_moist_farmland.yml"
+    },
+    "wash_letters": {
+      "id": "wash_letters",
+      "name": "글씨 씻기",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/expansion_2/wash_letters.png",
+      "condition": "같은 표지판의 글씨를 10번 고쳐 쓰기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\082_wash_letters.yml"
+    },
+    "healing_rain": {
+      "id": "healing_rain",
+      "name": "치유의 비",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "치유 포션을 10회 마시기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\083_healing_rain.yml"
+    },
+    "dew_gathering": {
+      "id": "dew_gathering",
+      "name": "이슬 모으기",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/expansion_2/dew_gathering.png",
+      "condition": "병을 10회 채우기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\084_dew_gathering.yml"
+    },
+    "quiet_mooring": {
+      "id": "quiet_mooring",
+      "name": "노아의 방주",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/expansion_2/quiet_mooring.png",
+      "condition": "보트를 5회 설치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\085_quiet_mooring.yml"
+    },
+    "bubble_aria": {
+      "id": "bubble_aria",
+      "name": "물거품 아리아",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "비 오는 날 몬스터를 10마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\086_bubble_aria.yml"
+    },
+    "pressure_hammer": {
+      "id": "pressure_hammer",
+      "name": "수압해머",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "20블록 이상 높이에서 뛰어내려 철퇴로 적을 타격하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\087_pressure_hammer.yml"
+    },
+    "waterspout": {
+      "id": "waterspout",
+      "name": "용오름",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "여름의 바다 바이옴(커스텀 바다 포함)에서 상승 기류를 사용하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\088_waterspout.yml"
+    },
+    "current_sorting": {
+      "id": "current_sorting",
+      "name": "사금 추출",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/expansion_2/current_sorting.png",
+      "condition": "물 속에 잠겨진 금 광석 캐기",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\089_current_sorting.yml"
+    },
+    "potion_mist": {
+      "id": "potion_mist",
+      "name": "약액 분무",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/expansion_2/potion_mist.png",
+      "condition": "서로 다른 종류의 물약 5종을 직접 양조하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\090_potion_mist.yml"
+    },
+    "waterwheel_shield": {
+      "id": "waterwheel_shield",
+      "name": "물레 방패",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/expansion_2/waterwheel_shield.png",
+      "condition": "물속에서 몬스터의 공격을 방패로 10회 막기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\091_waterwheel_shield.yml"
+    },
+    "concrete_curing": {
+      "id": "concrete_curing",
+      "name": "콘크리트 양생",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "물로 콘크리트 가루를 32개 굳히기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\092_concrete_curing.yml"
+    },
+    "ripple_guard": {
+      "id": "ripple_guard",
+      "name": "파문방벽",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "방패로 해골의 화살을 20회 막기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\093_ripple_guard.yml"
+    },
+    "tidal_wave": {
+      "id": "tidal_wave",
+      "name": "해일",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/expansion_2/tidal_wave.png",
+      "condition": "물 마법 실전 수업을 통해 습득.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\094_tidal_wave.yml"
+    },
+    "bouncing_droplet": {
+      "id": "bouncing_droplet",
+      "name": "도약하는 물방울",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "획득 조건은 추후 검토합니다.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\095_bouncing_droplet.yml"
+    },
+    "abyssal_pressure": {
+      "id": "abyssal_pressure",
+      "name": "심해의 압력",
+      "category": "water",
+      "icon": "magiccodex:textures/spells/expansion_2/abyssal_pressure.png",
+      "condition": "물결 숨결을 사용한 상태에서 깊은 바다에 누적 60초 머무르기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\096_abyssal_pressure.yml"
+    },
+    "verdant_touch": {
+      "id": "verdant_touch",
+      "name": "풍요의 손길",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/novice/verdant_touch.png",
+      "condition": "다 자란 밀·당근·감자를 각각 20개 수확하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\097_verdant_touch.yml"
+    },
+    "ore_whisper": {
+      "id": "ore_whisper",
+      "name": "땅의 속삭임",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/novice/ore_whisper.png",
+      "condition": "석탄 광석 32개와 철 광석 16개 직접 채굴하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\098_ore_whisper.yml"
+    },
+    "pebble_toss": {
+      "id": "pebble_toss",
+      "name": "조약돌 던지기",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/novice_extra/pebble_toss.png",
+      "condition": "대지 마법 기초 수업을 통해 습득.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\099_pebble_toss.yml"
+    },
+    "miners_rhythm": {
+      "id": "miners_rhythm",
+      "name": "광부의 박자",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/novice_extra/miners_rhythm.png",
+      "condition": "곡괭이로 돌과 심층암을 합쳐 누적 300개 채굴하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\100_miners_rhythm.yml"
+    },
+    "earth_shaping": {
+      "id": "earth_shaping",
+      "name": "대지 성형",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/intermediate/earth_shaping.png",
+      "condition": "흙 블록 누적 100개 설치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\101_earth_shaping.yml"
+    },
+    "stone_wall": {
+      "id": "stone_wall",
+      "name": "석벽",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/intermediate/stone_wall.png",
+      "condition": "대지 마법 방어 수업을 통해 습득.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\102_stone_wall.yml"
+    },
+    "vine_ladder": {
+      "id": "vine_ladder",
+      "name": "덩굴 사다리",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/intermediate/vine_ladder.png",
+      "condition": "덩굴을 타고 누적 50블록 이동하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\103_vine_ladder.yml"
+    },
+    "earth_elemental": {
+      "id": "earth_elemental",
+      "name": "그놈",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/advanced/earth_elemental.png",
+      "condition": "도서관에서 '정령계약서 - 지' 책 읽기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\104_earth_elemental.yml"
+    },
+    "earthquake": {
+      "id": "earthquake",
+      "name": "지진",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/advanced/earthquake.png",
+      "condition": "대지 마법 실전 수업을 통해 습득.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\105_earthquake.yml"
+    },
+    "climate_control": {
+      "id": "climate_control",
+      "name": "기후 통제",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/advanced/climate_control.png",
+      "condition": "봄·여름·가을·겨울의 기상 관측 수업을 각각 1회 마치기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\106_climate_control.yml"
+    },
+    "seed_row": {
+      "id": "seed_row",
+      "name": "씨앗 줄심기",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion/seed_row.png",
+      "condition": "경작지에 씨앗 누적 50개 심기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\107_seed_row.yml"
+    },
+    "bee_calm": {
+      "id": "bee_calm",
+      "name": "벌떼 달래기",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion/bee_calm.png",
+      "condition": "꽃을 든 상태에서 벌을 5회 번식시키기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\108_bee_calm.yml"
+    },
+    "thorn_armor": {
+      "id": "thorn_armor",
+      "name": "가시 갑옷",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion/thorn_armor.png",
+      "condition": "달콤한 열매 덤불에 누적 10회 찔리기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\109_thorn_armor.yml"
+    },
+    "vein_fracture": {
+      "id": "vein_fracture",
+      "name": "광맥 파쇄",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion/vein_fracture.png",
+      "condition": "다이아몬드 광석 누적 20개 직접 채굴하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\110_vein_fracture.yml"
+    },
+    "earth_anchor": {
+      "id": "earth_anchor",
+      "name": "대지의 닻",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion/earth_anchor.png",
+      "condition": "방패로 몬스터의 공격 누적 30회 막기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\111_earth_anchor.yml"
+    },
+    "weathering_touch": {
+      "id": "weathering_touch",
+      "name": "풍화의 손길",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion/weathering_touch.png",
+      "condition": "석재 벽돌을 누적 30개 설치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\112_weathering_touch.yml"
+    },
+    "iron_carapace": {
+      "id": "iron_carapace",
+      "name": "철의 외피",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion/iron_carapace.png",
+      "condition": "철 갑옷을 입은 상태에서 몬스터에게 누적 100 피해 받기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\113_iron_carapace.yml"
+    },
+    "moss_coating": {
+      "id": "moss_coating",
+      "name": "이끼 입히기",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion_2/moss_coating.png",
+      "condition": "덩굴과 석재 벽돌을 함께 소지한 채 비 맞기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\114_moss_coating.yml"
+    },
+    "grass_sprouting": {
+      "id": "grass_sprouting",
+      "name": "잔디 돋우기",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion_2/grass_sprouting.png",
+      "condition": "흙 위에 꽃 누적 10개 심기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\115_grass_sprouting.yml"
+    },
+    "flint_sorting": {
+      "id": "flint_sorting",
+      "name": "돌 고르기",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion_2/flint_sorting.png",
+      "condition": "자갈을 캐서 부싯돌 누적 16개 얻기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\116_flint_sorting.yml"
+    },
+    "bark_peeling": {
+      "id": "bark_peeling",
+      "name": "껍질 벗기기",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion_2/bark_peeling.png",
+      "condition": "도끼로 원목 껍질 누적 32회 벗기기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\117_bark_peeling.yml"
+    },
+    "compost_return": {
+      "id": "compost_return",
+      "name": "퇴비 환원",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion_2/compost_return.png",
+      "condition": "퇴비통에서 뼛가루 누적 16개 꺼내기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\118_compost_return.yml"
+    },
+    "thorn_seeds": {
+      "id": "thorn_seeds",
+      "name": "가시 씨앗",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion_2/thorn_seeds.png",
+      "condition": "선인장 누적 20개 수확하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\119_thorn_seeds.yml"
+    },
+    "pollen_matchmaking": {
+      "id": "pollen_matchmaking",
+      "name": "꽃가루 중매",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion_2/pollen_matchmaking.png",
+      "condition": "소·양·돼지를 각각 3회 번식시키기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\120_pollen_matchmaking.yml"
+    },
+    "automatic_supply": {
+      "id": "automatic_supply",
+      "name": "자동 보급",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion_2/automatic_supply.png",
+      "condition": "같은 종류의 건축 블록 누적 100개 설치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\121_automatic_supply.yml"
+    },
+    "dormant_seed": {
+      "id": "dormant_seed",
+      "name": "동면의 씨앗",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion_2/dormant_seed.png",
+      "condition": "밀·당근·감자의 씨앗 또는 작물을 각각 16개 함께 소지하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\122_dormant_seed.yml"
+    },
+    "counterweight": {
+      "id": "counterweight",
+      "name": "반격의 무게추",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion_2/counterweight.png",
+      "condition": "방패로 공격을 막은 뒤 같은 몬스터 반격하기 10회.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\123_counterweight.yml"
+    },
+    "material_exchange": {
+      "id": "material_exchange",
+      "name": "자재 치환",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion_2/material_exchange.png",
+      "condition": "서로 다른 건축 블록 5종을 각각 10개 설치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\124_material_exchange.yml"
+    },
+    "remembering_field": {
+      "id": "remembering_field",
+      "name": "기억하는 밭",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion_2/remembering_field.png",
+      "condition": "작물을 수확한 경작지에 씨앗 다시 심기 10회.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\125_remembering_field.yml"
+    },
+    "little_giant": {
+      "id": "little_giant",
+      "name": "작은 거인",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion_2/little_giant.png",
+      "condition": "철 골렘에게 받은 피해를 누적 50 달성하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\126_little_giant.yml"
+    },
+    "spring_ground": {
+      "id": "spring_ground",
+      "name": "용수철 지반",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion_2/spring_ground.png",
+      "condition": "슬라임 블록 위에서 5회 연속 튀어 오르기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\127_spring_ground.yml"
+    },
+    "mountain_back": {
+      "id": "mountain_back",
+      "name": "산맥의 등",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion_2/mountain_back.png",
+      "condition": "조약돌 던지기로 몬스터 누적 30마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\128_mountain_back.yml"
+    },
+    "earth_embrace": {
+      "id": "earth_embrace",
+      "name": "대지의 품",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion_2/earth_embrace.png",
+      "condition": "크리퍼 폭발로 생긴 구덩이에 흙 32개 메우기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\129_earth_embrace.yml"
+    },
+    "forest_throne": {
+      "id": "forest_throne",
+      "name": "숲의 왕좌",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion_2/forest_throne.png",
+      "condition": "도서관에서 '움직이지 않는 숲의 왕' 책 읽기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\130_forest_throne.yml"
+    },
+    "primordial_stone": {
+      "id": "primordial_stone",
+      "name": "원초의 돌",
+      "category": "earth",
+      "icon": "magiccodex:textures/spells/expansion_2/primordial_stone.png",
+      "condition": "대지 마법 응용 수업을 통해 낮은 확률로 습득.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\131_primordial_stone.yml"
+    },
+    "guiding_star": {
+      "id": "guiding_star",
+      "name": "길잡이 별",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/novice/guiding_star.png",
+      "condition": "나침반을 들고 누적 1000블록 걸어가기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\132_guiding_star.yml"
+    },
+    "minor_heal": {
+      "id": "minor_heal",
+      "name": "작은 치유",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/novice_extra/minor_heal.png",
+      "condition": "빛 마법 기초 수업을 통해 습득.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\133_minor_heal.yml"
+    },
+    "light_mark": {
+      "id": "light_mark",
+      "name": "빛의 낙인",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/novice_extra/light_mark.png",
+      "condition": "분광 화살을 몬스터에게 5번 명중하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\134_light_mark.yml"
+    },
+    "spatial_leap": {
+      "id": "spatial_leap",
+      "name": "공간 도약",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/intermediate/spatial_leap.png",
+      "condition": "서로 다른 전이석 3곳에 처음 방문하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\135_spatial_leap.yml"
+    },
+    "luminous_archive": {
+      "id": "luminous_archive",
+      "name": "빛의 서고",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/intermediate/luminous_archive.png",
+      "condition": "엔더 상자에 서로 다른 아이템 20종 넣기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\136_luminous_archive.yml"
+    },
+    "true_sight": {
+      "id": "true_sight",
+      "name": "진실의 눈",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/intermediate/true_sight.png",
+      "condition": "투명화 상태의 몬스터를 5회 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\137_true_sight.yml"
+    },
+    "protective_ward": {
+      "id": "protective_ward",
+      "name": "보호 결계",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/intermediate/protective_ward.png",
+      "condition": "빛 마법 방어 수업을 통해 습득.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\138_protective_ward.yml"
+    },
+    "constellation_blessing": {
+      "id": "constellation_blessing",
+      "name": "성좌의 가호",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/advanced/constellation_blessing.png",
+      "condition": "천문대에서 서로 다른 별자리의 관측 수업을 3회 마치기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\139_constellation_blessing.yml"
+    },
+    "arcane_imprint": {
+      "id": "arcane_imprint",
+      "name": "마력 각인",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/advanced/arcane_imprint.png",
+      "condition": "모루로 도구에 이름을 10번 붙이기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\140_arcane_imprint.yml"
+    },
+    "dawn_ritual": {
+      "id": "dawn_ritual",
+      "name": "여명의 의식",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/advanced/dawn_ritual.png",
+      "condition": "독·나약함·구속 상태에서 정화의 물결로 회복한 횟수를 각각 1회 달성하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\141_dawn_ritual.yml"
+    },
+    "comforting_light": {
+      "id": "comforting_light",
+      "name": "위로의 빛",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion/comforting_light.png",
+      "condition": "다른 플레이어에게 투척용 치유 물약을 10번 맞히기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\142_comforting_light.yml"
+    },
+    "exorcism_flash": {
+      "id": "exorcism_flash",
+      "name": "퇴마의 섬광",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion/exorcism_flash.png",
+      "condition": "햇빛에 불타는 좀비와 스켈레톤을 합쳐 50마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\143_exorcism_flash.yml"
+    },
+    "arcane_mending": {
+      "id": "arcane_mending",
+      "name": "마력 봉합",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion/arcane_mending.png",
+      "condition": "모루에서 내구도가 닳은 도구를 10번 수리하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\144_arcane_mending.yml"
+    },
+    "companion_return": {
+      "id": "companion_return",
+      "name": "동행 귀환",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion/companion_return.png",
+      "condition": "침대에서 1500블록 이상 멀어졌다가 같은 침대에 돌아와 잠들기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\145_companion_return.yml"
+    },
+    "flawless_moment": {
+      "id": "flawless_moment",
+      "name": "무결의 순간",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion/flawless_moment.png",
+      "condition": "방패로 공격을 10번 연속 막고 그동안 피해를 받지 않기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\146_flawless_moment.yml"
+    },
+    "solar_judgment": {
+      "id": "solar_judgment",
+      "name": "태양의 심판",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion/solar_judgment.png",
+      "condition": "퇴마의 섬광으로 언데드를 누적 150마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\147_solar_judgment.yml"
+    },
+    "firefly_mark": {
+      "id": "firefly_mark",
+      "name": "반딧불 표식",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion_2/firefly_mark.png",
+      "condition": "밤에 횃불을 누적 30개 설치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\148_firefly_mark.yml"
+    },
+    "rainbow_collar": {
+      "id": "rainbow_collar",
+      "name": "무지개 목줄",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion_2/rainbow_collar.png",
+      "condition": "길들인 동물의 목줄을 서로 다른 5가지 색으로 염색하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\149_rainbow_collar.yml"
+    },
+    "sun_drying": {
+      "id": "sun_drying",
+      "name": "햇살 말림",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion_2/sun_drying.png",
+      "condition": "낮에 썩은 살점을 5번 먹고 허기 효과가 끝날 때까지 살아남기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\150_sun_drying.yml"
+    },
+    "luminous_copy": {
+      "id": "luminous_copy",
+      "name": "빛의 필사",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion_2/luminous_copy.png",
+      "condition": "책과 깃펜으로 책을 작성한 뒤 서명하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\151_luminous_copy.yml"
+    },
+    "guiding_fletching": {
+      "id": "guiding_fletching",
+      "name": "유도 깃",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion_2/guiding_fletching.png",
+      "condition": "달리는 몬스터에게 활을 20번 명중하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\152_guiding_fletching.yml"
+    },
+    "sharing_table": {
+      "id": "sharing_table",
+      "name": "나눔 식탁",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion_2/sharing_table.png",
+      "condition": "자신이 떨어뜨린 음식 아이템을 다른 플레이어가 누적 64개 줍게 하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\153_sharing_table.yml"
+    },
+    "summons_letter": {
+      "id": "summons_letter",
+      "name": "소환장",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion_2/summons_letter.png",
+      "condition": "길들인 늑대나 고양이와 함께 누적 2000블록 이동하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\154_summons_letter.yml"
+    },
+    "starlight_survey": {
+      "id": "starlight_survey",
+      "name": "별빛 측량",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion_2/starlight_survey.png",
+      "condition": "학교 건축 수업을 1회 마치기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\155_starlight_survey.yml"
+    },
+    "luminous_handover": {
+      "id": "luminous_handover",
+      "name": "빛의 교대",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion_2/luminous_handover.png",
+      "condition": "다른 플레이어를 공격 중인 몬스터를 직접 20마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\156_luminous_handover.yml"
+    },
+    "mana_conduit": {
+      "id": "mana_conduit",
+      "name": "마력 전선",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion_2/mana_conduit.png",
+      "condition": "위로의 빛을 동료에게 누적 20회 사용하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\157_mana_conduit.yml"
+    },
+    "merciful_arrow": {
+      "id": "merciful_arrow",
+      "name": "자비의 화살",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion_2/merciful_arrow.png",
+      "condition": "빛 마법 응용 수업을 통해 낮은 확률로 습득.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\158_merciful_arrow.yml"
+    },
+    "mana_deposit": {
+      "id": "mana_deposit",
+      "name": "마력 예금",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion_2/mana_deposit.png",
+      "condition": "빈 마력석을 손에 든 채 마나를 최대치까지 5번 회복하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\159_mana_deposit.yml"
+    },
+    "guardian_oath": {
+      "id": "guardian_oath",
+      "name": "수호자의 서약",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion_2/guardian_oath.png",
+      "condition": "체력이 하트 2칸 이하인 동료에게 위로의 빛을 10번 사용하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\160_guardian_oath.yml"
+    },
+    "experience_exchange": {
+      "id": "experience_exchange",
+      "name": "경험의 환전",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion_2/experience_exchange.png",
+      "condition": "경험치 30레벨을 보유한 채 마나를 5 이하까지 소모하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\161_experience_exchange.yml"
+    },
+    "white_night_sanctuary": {
+      "id": "white_night_sanctuary",
+      "name": "백야의 성역",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion_2/white_night_sanctuary.png",
+      "condition": "침대에서 자지 않고 모닥불 8블록 안에서 밤부터 해 뜰 때까지 생존하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\162_white_night_sanctuary.yml"
+    },
+    "starlight_reprise": {
+      "id": "starlight_reprise",
+      "name": "별빛 재현",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion_2/starlight_reprise.png",
+      "condition": "서로 다른 원소의 마법 6개를 30초 안에 사용하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\163_starlight_reprise.yml"
+    },
+    "constellation_emissary": {
+      "id": "constellation_emissary",
+      "name": "성좌의 대리인",
+      "category": "light",
+      "icon": "magiccodex:textures/spells/expansion_2/constellation_emissary.png",
+      "condition": "성좌의 가호를 동료 3명에게 동시에 적용하기 10회.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\164_constellation_emissary.yml"
+    },
+    "night_sight": {
+      "id": "night_sight",
+      "name": "밤눈",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/novice/night_sight.png",
+      "condition": "빛이 없는 동굴에서 횃불을 놓지 않고 120초 머무르기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\165_night_sight.yml"
+    },
+    "shadow_bind": {
+      "id": "shadow_bind",
+      "name": "그림자 매듭",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/novice_extra/shadow_bind.png",
+      "condition": "어둠 마법 기초 수업을 통해 습득.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\166_shadow_bind.yml"
+    },
+    "faint_veil": {
+      "id": "faint_veil",
+      "name": "옅은 은신",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/novice_extra/faint_veil.png",
+      "condition": "밤에 웅크린 채 누적 200블록 이동하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\167_faint_veil.yml"
+    },
+    "shadow_double": {
+      "id": "shadow_double",
+      "name": "그림자 분신",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/intermediate/shadow_double.png",
+      "condition": "몬스터의 근접 공격을 방패로 10회 막기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\168_shadow_double.yml"
+    },
+    "echo_reading": {
+      "id": "echo_reading",
+      "name": "잔향 읽기",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/intermediate/echo_reading.png",
+      "condition": "분실물 보관소에서 서로 다른 분실물 5개 조사하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\169_echo_reading.yml"
+    },
+    "sealing_thread": {
+      "id": "sealing_thread",
+      "name": "봉인의 실",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/intermediate/sealing_thread.png",
+      "condition": "자신의 상자를 누적 100번 열고 닫기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\170_sealing_thread.yml"
+    },
+    "afterlife_gate": {
+      "id": "afterlife_gate",
+      "name": "사후세계의 문",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/advanced/afterlife_gate.png",
+      "condition": "서로 다른 원인으로 5회 사망하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\171_afterlife_gate.yml"
+    },
+    "shadow_exchange": {
+      "id": "shadow_exchange",
+      "name": "그림자 교환",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/advanced/shadow_exchange.png",
+      "condition": "엔더 진주로 순간 이동한 횟수 30회 달성하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\172_shadow_exchange.yml"
+    },
+    "forbidden_contract": {
+      "id": "forbidden_contract",
+      "name": "금서의 계약",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/advanced/forbidden_contract.png",
+      "condition": "학교 금서고에서 '대가 없는 기적은 없다' 책 읽기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\173_forbidden_contract.yml"
+    },
+    "life_siphon": {
+      "id": "life_siphon",
+      "name": "생명 갈취",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion/life_siphon.png",
+      "condition": "체력이 하트 3칸 이하인 상태에서 몬스터를 누적 20마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\174_life_siphon.yml"
+    },
+    "drowsiness": {
+      "id": "drowsiness",
+      "name": "졸음",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion/drowsiness.png",
+      "condition": "침대에서 누적 10번 잠들기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\175_drowsiness.yml"
+    },
+    "misfortune_whisper": {
+      "id": "misfortune_whisper",
+      "name": "불운의 속삭임",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion/misfortune_whisper.png",
+      "condition": "나약함 효과에 걸린 상태로 몬스터를 5마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\176_misfortune_whisper.yml"
+    },
+    "hungry_shadow": {
+      "id": "hungry_shadow",
+      "name": "굶주린 그림자",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion/hungry_shadow.png",
+      "condition": "배고픔이 2칸 이하인 상태에서 몬스터를 누적 10마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\177_hungry_shadow.yml"
+    },
+    "curse_transfer": {
+      "id": "curse_transfer",
+      "name": "저주의 전가",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion/curse_transfer.png",
+      "condition": "독·나약함·구속 효과를 각각 3번 겪기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\178_curse_transfer.yml"
+    },
+    "discord": {
+      "id": "discord",
+      "name": "불화",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion/discord.png",
+      "condition": "스켈레톤의 화살에 맞은 다른 몬스터가 스켈레톤을 공격하는 상황을 10번 만들기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\179_discord.yml"
+    },
+    "night_chain": {
+      "id": "night_chain",
+      "name": "밤의 사슬",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion/night_chain.png",
+      "condition": "어둠 마법 실전 수업을 통해 습득.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\180_night_chain.yml"
+    },
+    "pain_deferral": {
+      "id": "pain_deferral",
+      "name": "고통 유예",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion/pain_deferral.png",
+      "condition": "재생 효과를 받는 동안 몬스터에게 누적 100 피해 받기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\181_pain_deferral.yml"
+    },
+    "black_harvest": {
+      "id": "black_harvest",
+      "name": "검은 수확",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion/black_harvest.png",
+      "condition": "생명 갈취로 일반 몬스터를 누적 100마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\182_black_harvest.yml"
+    },
+    "ink_fingertip": {
+      "id": "ink_fingertip",
+      "name": "먹물 손끝",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion_2/ink_fingertip.png",
+      "condition": "먹물 주머니와 숯을 각각 16개씩 함께 소지하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\183_ink_fingertip.yml"
+    },
+    "shadow_nail": {
+      "id": "shadow_nail",
+      "name": "그림자 못",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion_2/shadow_nail.png",
+      "condition": "엔더맨을 누적 10마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\184_shadow_nail.yml"
+    },
+    "night_lullaby": {
+      "id": "night_lullaby",
+      "name": "밤의 자장가",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion_2/night_lullaby.png",
+      "condition": "팬텀에게 공격받은 뒤 잠들지 않고 날이 밝을 때까지 생존하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\185_night_lullaby.yml"
+    },
+    "loosen_grasp": {
+      "id": "loosen_grasp",
+      "name": "손아귀 풀기",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion_2/loosen_grasp.png",
+      "condition": "무기를 든 몬스터의 공격을 방패로 30번 막기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\186_loosen_grasp.yml"
+    },
+    "shadow_tracking": {
+      "id": "shadow_tracking",
+      "name": "그림자 추적",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion_2/shadow_tracking.png",
+      "condition": "밤에 몬스터를 누적 20마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\187_shadow_tracking.yml"
+    },
+    "healing_seal": {
+      "id": "healing_seal",
+      "name": "회복 봉인",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion_2/healing_seal.png",
+      "condition": "물약을 마시는 중인 마녀를 10마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\188_healing_seal.yml"
+    },
+    "shadow_scales": {
+      "id": "shadow_scales",
+      "name": "어둠의 저울",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion_2/shadow_scales.png",
+      "condition": "체력이 하트 1칸 이하일 때 체력이 절반 이상 남은 몬스터 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\189_shadow_scales.yml"
+    },
+    "warning_thread": {
+      "id": "warning_thread",
+      "name": "경고의 실",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion_2/warning_thread.png",
+      "condition": "자신이 설치한 철사 덫을 몬스터가 10번 작동시키기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\190_warning_thread.yml"
+    },
+    "final_knot": {
+      "id": "final_knot",
+      "name": "끝매듭",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion_2/final_knot.png",
+      "condition": "몬스터를 처치한 뒤 떨어진 아이템을 누적 256개 줍기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\191_final_knot.yml"
+    },
+    "wound_accounting": {
+      "id": "wound_accounting",
+      "name": "상처 회계",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion_2/wound_accounting.png",
+      "condition": "한 몬스터를 10번 이상 직접 공격한 뒤 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\192_wound_accounting.yml"
+    },
+    "inverted_offering": {
+      "id": "inverted_offering",
+      "name": "뒤집힌 공물",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion_2/inverted_offering.png",
+      "condition": "마나가 절반 이하일 때 경험치 구슬을 누적 300개 줍기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\193_inverted_offering.yml"
+    },
+    "ghost_tool": {
+      "id": "ghost_tool",
+      "name": "유령 도구",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion_2/ghost_tool.png",
+      "condition": "곡괭이·도끼·삽·괭이로 각각 블록을 64개 부수기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\194_ghost_tool.yml"
+    },
+    "bell_of_fear": {
+      "id": "bell_of_fear",
+      "name": "공포의 종",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion_2/bell_of_fear.png",
+      "condition": "밤에 종을 울린 뒤 30초 안에 몬스터 5마리를 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\195_bell_of_fear.yml"
+    },
+    "eclipse_eye": {
+      "id": "eclipse_eye",
+      "name": "월식의 눈",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion_2/eclipse_eye.png",
+      "condition": "투명화 물약을 마신 상태에서 마녀를 5마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\196_eclipse_eye.yml"
+    },
+    "death_ledger": {
+      "id": "death_ledger",
+      "name": "죽음의 장부",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion_2/death_ledger.png",
+      "condition": "10초 안에 일반 몬스터 5마리를 직접 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\197_death_ledger.yml"
+    },
+    "void_maw": {
+      "id": "void_maw",
+      "name": "공허의 입",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion_2/void_maw.png",
+      "condition": "학교 도서관에서 숨겨진 '텅 빈 것의 식욕' 책 읽기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\198_void_maw.yml"
+    },
+    "twilight_bargain": {
+      "id": "twilight_bargain",
+      "name": "황혼의 거래",
+      "category": "dark",
+      "icon": "magiccodex:textures/spells/expansion_2/twilight_bargain.png",
+      "condition": "마나가 5 이하이고 체력이 하트 3칸 이하인 상태에서 몬스터를 처치하고 살아남기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\199_twilight_bargain.yml"
+    },
+    "wind_courier": {
+      "id": "wind_courier",
+      "name": "바람 우편",
+      "category": "wind",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "자신이 떨어뜨린 아이템을 친구가 누적 20개 줍기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\200_wind_courier.yml"
+    },
+    "air_display": {
+      "id": "air_display",
+      "name": "허공 진열",
+      "category": "wind",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "아이템 액자에 물건을 누적 10회 넣기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\201_air_display.yml"
+    },
+    "sail_breeze": {
+      "id": "sail_breeze",
+      "name": "돛바람",
+      "category": "wind",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "보트를 타고 누적 500블록 이동하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\202_sail_breeze.yml"
+    },
+    "air_brake": {
+      "id": "air_brake",
+      "name": "급제동",
+      "category": "wind",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "상승 기류를 누적 20회 사용하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\203_air_brake.yml"
+    },
+    "headwind_field": {
+      "id": "headwind_field",
+      "name": "역풍 지대",
+      "category": "wind",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "방패로 스켈레톤의 화살을 20회 막기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\204_headwind_field.yml"
+    },
+    "vortex_center": {
+      "id": "vortex_center",
+      "name": "소용돌이 중심",
+      "category": "wind",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "바람 마법 실전 수업을 완료하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\205_vortex_center.yml"
+    },
+    "wall_echo_burst": {
+      "id": "wall_echo_burst",
+      "name": "벽울림 탄",
+      "category": "wind",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "벽에 화살을 누적 30회 명중하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\206_wall_echo_burst.yml"
+    },
+    "blindside_turn": {
+      "id": "blindside_turn",
+      "name": "빈틈 돌리기",
+      "category": "wind",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "몬스터의 근접 공격을 방패로 15회 막기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\207_blindside_turn.yml"
+    },
+    "wind_tailoring": {
+      "id": "wind_tailoring",
+      "name": "바람 재단",
+      "category": "wind",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "양털로 카펫을 누적 32개 제작하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\208_wind_tailoring.yml"
+    },
+    "whistle_procession": {
+      "id": "whistle_procession",
+      "name": "휘파람 행진",
+      "category": "wind",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "먹이를 들고 소·양·돼지를 각각 50블록 이상 이끌기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\209_whistle_procession.yml"
+    },
+    "wind_performance": {
+      "id": "wind_performance",
+      "name": "바람 연주",
+      "category": "wind",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "소리 블록을 누적 20회 연주하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\210_wind_performance.yml"
+    },
+    "draft_closer": {
+      "id": "draft_closer",
+      "name": "문풍지",
+      "category": "wind",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "자신이 설치한 문을 누적 30회 닫기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\211_draft_closer.yml"
+    },
+    "air_compass": {
+      "id": "air_compass",
+      "name": "허공 나침반",
+      "category": "wind",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "나침반을 든 채 누적 300블록 이동하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\212_air_compass.yml"
+    },
+    "experience_confluence": {
+      "id": "experience_confluence",
+      "name": "흩어진 경험",
+      "category": "wind",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "경험치 구슬을 누적 200개 획득하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\213_experience_confluence.yml"
+    },
+    "melody_bottle": {
+      "id": "melody_bottle",
+      "name": "선율 담기",
+      "category": "wind",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "바람 연주를 누적 10회 사용하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\214_melody_bottle.yml"
+    },
+    "copper_polish": {
+      "id": "copper_polish",
+      "name": "구리 광내기",
+      "category": "fire",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "도끼로 산화된 구리를 누적 16회 긁기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\215_copper_polish.yml"
+    },
+    "wax_melting": {
+      "id": "wax_melting",
+      "name": "밀랍 녹이기",
+      "category": "fire",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "밀랍칠한 구리에서 도끼로 밀랍을 8회 제거하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\216_wax_melting.yml"
+    },
+    "charcoal_scent": {
+      "id": "charcoal_scent",
+      "name": "숯내음",
+      "category": "fire",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "화로에서 숯을 누적 32개 꺼내기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\217_charcoal_scent.yml"
+    },
+    "glass_craft": {
+      "id": "glass_craft",
+      "name": "유리 세공",
+      "category": "fire",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "색유리를 서로 다른 3가지 색으로 제작하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\218_glass_craft.yml"
+    },
+    "heated_hooves": {
+      "id": "heated_hooves",
+      "name": "뜨거운 발굽",
+      "category": "fire",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "말을 타고 누적 30회 점프하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\219_heated_hooves.yml"
+    },
+    "residual_heat": {
+      "id": "residual_heat",
+      "name": "잔열 회수",
+      "category": "fire",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "화염 마법으로 몬스터를 누적 40마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\220_residual_heat.yml"
+    },
+    "searing_edge": {
+      "id": "searing_edge",
+      "name": "달궈진 칼끝",
+      "category": "fire",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "발화가 부여된 검으로 몬스터를 누적 20마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\221_searing_edge.yml"
+    },
+    "fuse_bond": {
+      "id": "fuse_bond",
+      "name": "도화선",
+      "category": "fire",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "서로 다른 몬스터 2마리에 불을 붙이는 실습을 5회 완료하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\222_fuse_bond.yml"
+    },
+    "ember_transfer": {
+      "id": "ember_transfer",
+      "name": "불씨 옮기기",
+      "category": "fire",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "발화를 누적 20회 사용하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\223_ember_transfer.yml"
+    },
+    "flame_boundary": {
+      "id": "flame_boundary",
+      "name": "화염 고리",
+      "category": "fire",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "화염 마법 방어 실습을 완료하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\224_flame_boundary.yml"
+    },
+    "heat_accumulation": {
+      "id": "heat_accumulation",
+      "name": "열기 축적",
+      "category": "fire",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "불이 붙은 상태에서 누적 60초 생존하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\225_heat_accumulation.yml"
+    },
+    "sulfur_cloud": {
+      "id": "sulfur_cloud",
+      "name": "유황 구름",
+      "category": "fire",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "화약을 누적 32개 획득하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\226_sulfur_cloud.yml"
+    },
+    "flame_seam": {
+      "id": "flame_seam",
+      "name": "화염 봉합선",
+      "category": "fire",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "블록 위의 불을 부싯돌과 부시로 누적 20회 붙이기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\227_flame_seam.yml"
+    },
+    "flame_clap": {
+      "id": "flame_clap",
+      "name": "불꽃 박수",
+      "category": "fire",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "화염 마법 기초 수업의 섬광 실습을 완료하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\228_flame_clap.yml"
+    },
+    "ashen_farewell": {
+      "id": "ashen_farewell",
+      "name": "잿빛 작별",
+      "category": "fire",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "자신이 소환한 마법 소환물을 누적 10회 해제하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\229_ashen_farewell.yml"
+    },
+    "bubble_plate": {
+      "id": "bubble_plate",
+      "name": "거품 접시",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "자신이 떨어뜨린 음식 아이템을 동료가 누적 16개 줍기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\230_bubble_plate.yml"
+    },
+    "waterweed_trim": {
+      "id": "waterweed_trim",
+      "name": "수초 손질",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "해초와 켈프를 합쳐 누적 64개 수확하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\231_waterweed_trim.yml"
+    },
+    "drain_pocket": {
+      "id": "drain_pocket",
+      "name": "물 빼기",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "스펀지로 물을 누적 10회 흡수하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\232_drain_pocket.yml"
+    },
+    "mud_kneading": {
+      "id": "mud_kneading",
+      "name": "진흙 반죽",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "물병으로 흙을 진흙으로 누적 20회 바꾸기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\233_mud_kneading.yml"
+    },
+    "sloshing_pail": {
+      "id": "sloshing_pail",
+      "name": "찰랑이는 통",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "양동이로 우유를 누적 10회 받기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\234_sloshing_pail.yml"
+    },
+    "surface_walk": {
+      "id": "surface_walk",
+      "name": "수면 산책",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "보트 없이 수영으로 누적 300블록 이동하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\235_surface_walk.yml"
+    },
+    "diving_bell": {
+      "id": "diving_bell",
+      "name": "잠수 종",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "물결 숨결을 누적 15회 사용하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\236_diving_bell.yml"
+    },
+    "droplet_lens": {
+      "id": "droplet_lens",
+      "name": "물방울 렌즈",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "망원경으로 먼 곳을 누적 10회 관측하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\237_droplet_lens.yml"
+    },
+    "cold_compress": {
+      "id": "cold_compress",
+      "name": "차가운 찜질",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "체력이 감소한 상태에서 물속에 누적 30초 머무르기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\238_cold_compress.yml"
+    },
+    "bubble_brand": {
+      "id": "bubble_brand",
+      "name": "수포 낙인",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "물방울 탄환을 몬스터에게 누적 30회 명중하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\239_bubble_brand.yml"
+    },
+    "ice_wedge": {
+      "id": "ice_wedge",
+      "name": "얼음 쐐기",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "눈덩이를 몬스터에게 누적 30회 명중하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\240_ice_wedge.yml"
+    },
+    "slippery_floor": {
+      "id": "slippery_floor",
+      "name": "미끄러운 바닥",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "얼음 위에서 누적 200블록 이동하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\241_slippery_floor.yml"
+    },
+    "chain_droplet": {
+      "id": "chain_droplet",
+      "name": "연쇄 물방울",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "물방울 탄환으로 몬스터를 누적 30마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\242_chain_droplet.yml"
+    },
+    "splitting_lance": {
+      "id": "splitting_lance",
+      "name": "갈라지는 창",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "물 마법 실전 수업의 얼음 투사체 실습을 완료하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\243_splitting_lance.yml"
+    },
+    "healing_reserve": {
+      "id": "healing_reserve",
+      "name": "물결 저금",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "체력이 하트 1칸 이하인 상태에서 투척용 치유 물약으로 5회 회복하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\244_healing_reserve.yml"
+    },
+    "petal_dye": {
+      "id": "petal_dye",
+      "name": "꽃잎 염색",
+      "category": "earth",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "서로 다른 5가지 꽃을 획득하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\245_petal_dye.yml"
+    },
+    "mushroom_picking": {
+      "id": "mushroom_picking",
+      "name": "버섯 따기",
+      "category": "earth",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "작은 버섯을 누적 32개 수확하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\246_mushroom_picking.yml"
+    },
+    "hive_inspection": {
+      "id": "hive_inspection",
+      "name": "벌집 살피기",
+      "category": "earth",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "벌집을 누적 10회 조사하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\247_hive_inspection.yml"
+    },
+    "honey_tapping": {
+      "id": "honey_tapping",
+      "name": "꿀 뜨기",
+      "category": "earth",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "유리병으로 꿀을 누적 10회 채집하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\248_honey_tapping.yml"
+    },
+    "sapling_move": {
+      "id": "sapling_move",
+      "name": "묘목 이사",
+      "category": "earth",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "묘목을 심은 뒤 다시 회수하기 10회.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\249_sapling_move.yml"
+    },
+    "path_tamping": {
+      "id": "path_tamping",
+      "name": "돌길 다지기",
+      "category": "earth",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "삽으로 길 블록을 누적 32개 만들기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\250_path_tamping.yml"
+    },
+    "soil_tilling": {
+      "id": "soil_tilling",
+      "name": "밭 갈기",
+      "category": "earth",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "괭이로 경작지를 누적 50칸 만들기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\251_soil_tilling.yml"
+    },
+    "gravel_sifting": {
+      "id": "gravel_sifting",
+      "name": "자갈 체질",
+      "category": "earth",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "자갈을 누적 64개 채굴하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\252_gravel_sifting.yml"
+    },
+    "stone_joinery": {
+      "id": "stone_joinery",
+      "name": "반듯한 모서리",
+      "category": "earth",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "석재 계단과 반 블록을 각각 16개 제작하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\253_stone_joinery.yml"
+    },
+    "buried_cache": {
+      "id": "buried_cache",
+      "name": "땅속 보관",
+      "category": "earth",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "땅에 떨어뜨린 아이템을 누적 30개 다시 줍기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\254_buried_cache.yml"
+    },
+    "root_trip": {
+      "id": "root_trip",
+      "name": "뿌리 걸림",
+      "category": "earth",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "덩굴 사다리를 누적 15회 사용하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\255_root_trip.yml"
+    },
+    "crystal_resonance": {
+      "id": "crystal_resonance",
+      "name": "수정 공명",
+      "category": "earth",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "동료와 함께 같은 몬스터를 누적 20마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\256_crystal_resonance.yml"
+    },
+    "sand_blind": {
+      "id": "sand_blind",
+      "name": "모래 눈속임",
+      "category": "earth",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "모래를 누적 64개 채굴하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\257_sand_blind.yml"
+    },
+    "lodestone_trace": {
+      "id": "lodestone_trace",
+      "name": "자철석 손길",
+      "category": "earth",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "삼지창을 누적 10회 던지고 회수하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\258_lodestone_trace.yml"
+    },
+    "crumbling_foothold": {
+      "id": "crumbling_foothold",
+      "name": "무너지는 발판",
+      "category": "earth",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "모래나 자갈이 아래로 떨어지는 상황을 20회 만들기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\259_crumbling_foothold.yml"
+    },
+    "luminous_signature": {
+      "id": "luminous_signature",
+      "name": "빛의 서명",
+      "category": "light",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "책과 깃펜으로 서로 다른 책 3권에 서명하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\260_luminous_signature.yml"
+    },
+    "starlit_nametag": {
+      "id": "starlit_nametag",
+      "name": "별빛 이름표",
+      "category": "light",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "이름표로 자신의 동물에게 이름을 3회 붙이기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\261_starlit_nametag.yml"
+    },
+    "color_finder": {
+      "id": "color_finder",
+      "name": "색 찾기",
+      "category": "light",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "서로 다른 색의 양털 8종 획득하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\262_color_finder.yml"
+    },
+    "luminous_frame": {
+      "id": "luminous_frame",
+      "name": "별빛 액자",
+      "category": "light",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "발광 아이템 액자를 4개 제작하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\263_luminous_frame.yml"
+    },
+    "exhibit_anchor": {
+      "id": "exhibit_anchor",
+      "name": "전시 고정",
+      "category": "light",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "자신의 아이템 액자 속 물건을 누적 20회 회전시키기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\264_exhibit_anchor.yml"
+    },
+    "light_portrait": {
+      "id": "light_portrait",
+      "name": "빛의 초상",
+      "category": "light",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "친구와 함께 같은 장소에서 모임 활동을 3회 완료하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\265_light_portrait.yml"
+    },
+    "promise_star": {
+      "id": "promise_star",
+      "name": "약속의 별",
+      "category": "light",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "친구와 함께 누적 500블록 이동하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\266_promise_star.yml"
+    },
+    "home_check": {
+      "id": "home_check",
+      "name": "귀가 확인",
+      "category": "light",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "같은 침대에서 누적 5회 잠들기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\267_home_check.yml"
+    },
+    "clear_eyes": {
+      "id": "clear_eyes",
+      "name": "맑은 눈",
+      "category": "light",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "실명과 어둠 효과를 각각 3회 겪기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\268_clear_eyes.yml"
+    },
+    "light_rhythm": {
+      "id": "light_rhythm",
+      "name": "빛의 박자",
+      "category": "light",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "빛 마법 전투 실습의 연속 타격 과정을 완료하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\269_light_rhythm.yml"
+    },
+    "frontal_duel": {
+      "id": "frontal_duel",
+      "name": "정면 승부",
+      "category": "light",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "방패를 들고 몬스터를 누적 30마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\270_frontal_duel.yml"
+    },
+    "last_lantern": {
+      "id": "last_lantern",
+      "name": "마지막 등불",
+      "category": "light",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "체력이 하트 2칸 이하인 동료를 작은 치유로 10회 회복하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\271_last_lantern.yml"
+    },
+    "star_farewell": {
+      "id": "star_farewell",
+      "name": "별의 배웅",
+      "category": "light",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "동료를 공격하던 몬스터를 누적 20마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\272_star_farewell.yml"
+    },
+    "light_severance": {
+      "id": "light_severance",
+      "name": "빛의 단절",
+      "category": "light",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "빛 마법 응용 수업의 결계 해제 실습을 완료하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\273_light_severance.yml"
+    },
+    "dawn_promise": {
+      "id": "dawn_promise",
+      "name": "새벽의 약속",
+      "category": "light",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "동료에게 위로의 빛을 누적 20회 사용하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\274_dawn_promise.yml"
+    },
+    "silent_steps": {
+      "id": "silent_steps",
+      "name": "조용한 발걸음",
+      "category": "dark",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "웅크린 채 누적 300블록 이동하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\275_silent_steps.yml"
+    },
+    "forgotten_name": {
+      "id": "forgotten_name",
+      "name": "잊힌 이름",
+      "category": "dark",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "모루에서 아이템 이름을 누적 10회 변경하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\276_forgotten_name.yml"
+    },
+    "empty_page": {
+      "id": "empty_page",
+      "name": "빈 페이지",
+      "category": "dark",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "책과 깃펜으로 작성 중인 글을 10회 수정하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\277_empty_page.yml"
+    },
+    "night_cover": {
+      "id": "night_cover",
+      "name": "밤의 덮개",
+      "category": "dark",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "촛불을 누적 20회 끄기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\278_night_cover.yml"
+    },
+    "shadow_pouch": {
+      "id": "shadow_pouch",
+      "name": "그림자 주머니",
+      "category": "dark",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "사망 후 떨어진 자신의 아이템을 누적 3회 회수하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\279_shadow_pouch.yml"
+    },
+    "ghost_palm": {
+      "id": "ghost_palm",
+      "name": "유령 손바닥",
+      "category": "dark",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "빈손으로 문·레버·버튼을 합쳐 누적 30회 작동시키기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\280_ghost_palm.yml"
+    },
+    "black_silence": {
+      "id": "black_silence",
+      "name": "검은 침묵",
+      "category": "dark",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "물약을 마시는 마녀를 누적 10마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\281_black_silence.yml"
+    },
+    "oblivion_mark": {
+      "id": "oblivion_mark",
+      "name": "망각의 표식",
+      "category": "dark",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "옅은 은신을 누적 15회 사용하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\282_oblivion_mark.yml"
+    },
+    "delayed_fear": {
+      "id": "delayed_fear",
+      "name": "뒤늦은 공포",
+      "category": "dark",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "밤에 종을 울린 뒤 몬스터를 누적 10마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\283_delayed_fear.yml"
+    },
+    "fugitive_toll": {
+      "id": "fugitive_toll",
+      "name": "도망자의 대가",
+      "category": "dark",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "활로 도망가는 몬스터를 누적 15마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\284_fugitive_toll.yml"
+    },
+    "hungry_edge": {
+      "id": "hungry_edge",
+      "name": "굶주린 칼끝",
+      "category": "dark",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "방패를 든 몬스터를 누적 15마리 처치하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\285_hungry_edge.yml"
+    },
+    "shadow_retrace": {
+      "id": "shadow_retrace",
+      "name": "되짚는 그림자",
+      "category": "dark",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "엔더 진주로 누적 15회 순간 이동하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\286_shadow_retrace.yml"
+    },
+    "black_pulse": {
+      "id": "black_pulse",
+      "name": "검은 박동",
+      "category": "dark",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "재생 효과를 받은 채 몬스터에게 누적 100 피해 받기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\287_black_pulse.yml"
+    },
+    "empty_grave": {
+      "id": "empty_grave",
+      "name": "빈 무덤",
+      "category": "dark",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "서로 다른 사망 위치 3곳에 다시 방문하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\288_empty_grave.yml"
+    },
+    "ill_choice": {
+      "id": "ill_choice",
+      "name": "불길한 선택",
+      "category": "dark",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "어둠 마법 응용 수업의 약화 실습을 완료하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\289_ill_choice.yml"
+    },
+    "resonance_tuning": {
+      "id": "resonance_tuning",
+      "name": "공명 맞추기",
+      "category": "wind",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "소리 블록을 서로 다른 높낮이로 5회 조율하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\290_resonance_tuning.yml"
+    },
+    "breath_reversal": {
+      "id": "breath_reversal",
+      "name": "숨결 반전",
+      "category": "wind",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "바람 마법 응용 수업의 송풍 실습을 완료하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\291_breath_reversal.yml"
+    },
+    "heat_script": {
+      "id": "heat_script",
+      "name": "열문자",
+      "category": "fire",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "고대 유적의 열에 반응하는 석판을 조사하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\292_heat_script.yml"
+    },
+    "heat_transfer": {
+      "id": "heat_transfer",
+      "name": "열의 이동",
+      "category": "fire",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "화염 마법 응용 수업의 열전달 실습을 완료하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\293_heat_transfer.yml"
+    },
+    "level_balance": {
+      "id": "level_balance",
+      "name": "수평 맞추기",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "물 양동이로 가마솥을 채운 뒤 다시 비우기 10회.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\294_level_balance.yml"
+    },
+    "ice_cog": {
+      "id": "ice_cog",
+      "name": "얼음 톱니",
+      "category": "water",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "물 마법 응용 수업의 얼음 성형 실습을 완료하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\295_ice_cog.yml"
+    },
+    "weight_sigil": {
+      "id": "weight_sigil",
+      "name": "무게의 인장",
+      "category": "earth",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "무게 압력판을 서로 다른 아이템 수량으로 5회 작동시키기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\296_weight_sigil.yml"
+    },
+    "prism_split": {
+      "id": "prism_split",
+      "name": "프리즘 분광",
+      "category": "light",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "빛 마법 응용 수업의 분광 실습을 완료하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\297_prism_split.yml"
+    },
+    "light_afterimage": {
+      "id": "light_afterimage",
+      "name": "빛의 잔상",
+      "category": "light",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "고대 유적의 빛 감응판을 누적 5회 작동시키기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\298_light_afterimage.yml"
+    },
+    "shadow_passage": {
+      "id": "shadow_passage",
+      "name": "그림자 통행",
+      "category": "dark",
+      "icon": "minecraft:textures/item/book.png",
+      "condition": "어둠 마법 응용 수업의 그림자 이동 실습을 완료하기.",
+      "source": "magic-codex-fabric\\src\\main\\resources\\assets\\magiccodex\\default-spells\\299_shadow_passage.yml"
+    }
+  }
+}

@@ -1,0 +1,86 @@
+package school.chacademia.magicmythic;
+
+import java.util.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.*;
+import org.bukkit.util.Vector;
+
+/**
+ * chahit - instant hit.
+ *  center=target|caster  r=0 (0: only the given target)  max=16  cone=0 (degrees, in front of caster, r = length)
+ *  mult/flat (x Bridge damage)  knock up pull(toward caster) slam(downward speed)  ignite(ticks)
+ *  effect=TYPE:ticks:amp,...  execute=0.2 (normal mobs die, players/bosses only below this health ratio)
+ *  hpcost=0.5 hpscale=2.5 (spend own current health, add spent x scale to damage)  shield=ticks (disable shields)
+ */
+final class HitMech extends Mech {
+    HitMech(MagicMythicPlugin plugin, Params p) { super(plugin, p); }
+
+    @Override boolean run(Ctx c) {
+        var targets = plugin.targets();
+        if(!plugin.protection().pair(c.caster(),c.at()))return false;
+        double dmg = c.dmg(p);
+        double hpCost = p.d("hpcost", 0);
+        if (hpCost > 0) {
+            double hp = c.caster().getHealth();
+            double spend = Math.max(0, hp * Math.clamp(hpCost, 0, 0.95));
+            if (spend < 1) return false;
+            c.caster().setHealth(Math.max(1, hp - spend));
+            dmg += spend * p.d("hpscale", 1);
+        }
+        Location center = center(c);
+        double r = p.d("r", 0);
+        double cone = p.d("cone", 0);
+        List<LivingEntity> hits;
+        if (cone > 0) hits = inCone(c, r, cone, p.i("max", 16));
+        else if (r <= 0) hits = c.target() != null && targets.enemy(c.caster(), c.target()) ? List.of((LivingEntity) c.target()) : List.of();
+        else hits = targets.enemiesNear(c.caster(), center, r, p.i("max", 16));
+        if (hits.isEmpty()) return false;
+        for (LivingEntity t : hits) apply(c, t, center, dmg);
+        return true;
+    }
+
+    private List<LivingEntity> inCone(Ctx c, double length, double angle, int max) {
+        Location eye = c.caster().getEyeLocation();
+        Vector dir = eye.getDirection().setY(0).normalize();
+        var out = new ArrayList<LivingEntity>();
+        for (LivingEntity t : plugin.targets().enemiesNear(c.caster(), c.caster().getLocation(), length, 64)) {
+            Vector to = t.getLocation().toVector().subtract(c.caster().getLocation().toVector()).setY(0);
+            if (Geometry.inCone(dir, to, angle)) out.add(t);
+            if (out.size() >= max) break;
+        }
+        return out;
+    }
+
+    void apply(Ctx c, LivingEntity t, Location center, double dmg) {
+        var targets = plugin.targets();
+        double execute = p.d("execute", 0);
+        if (execute > 0) {
+            boolean protectedTarget = t instanceof Player || targets.boss(t);
+            double ratio = t.getHealth() / Targets.maxHealth(t);
+            if (!protectedTarget || ratio < execute) {
+                targets.hurt(c.caster(), t, Math.max(dmg, t.getHealth() + 1));
+                // Never bypass a cancelled or reduced damage event with setHealth.
+                return;
+            }
+        }
+        if(!targets.hurt(c.caster(), t, dmg))return;
+        targets.effects(t, p.effects("effect"));
+        int ignite = p.i("ignite", 0);
+        if (ignite > 0) t.setFireTicks(Math.max(t.getFireTicks(), ignite));
+        int shield = p.i("shield", 0);
+        if (shield > 0 && t instanceof Player pl && pl.isBlocking()) pl.setCooldown(Material.SHIELD, shield);
+        Vector facing = c.caster().getLocation().getDirection();
+        double pull = p.d("pull", 0), slam = p.d("slam", 0);
+        if (pull > 0) {
+            Vector v = c.caster().getLocation().toVector().subtract(t.getLocation().toVector());
+            double dist = v.length();
+            if (dist > 1.2) t.setVelocity(v.setY(0).normalize().multiply(Math.min(pull, dist * 0.35)).setY(0.25));
+        } else if (slam > 0) {
+            t.setVelocity(new Vector(0, -slam, 0));
+        } else {
+            Location from = p.s("center", "target").equalsIgnoreCase("caster") || p.d("r", 0) <= 0 ? c.caster().getLocation() : center;
+            targets.knock(t, from, facing, p.d("knock", 0), p.d("up", 0));
+        }
+    }
+}

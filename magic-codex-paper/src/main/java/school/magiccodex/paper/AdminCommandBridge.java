@@ -61,10 +61,11 @@ final class AdminCommandBridge implements CommandExecutor,TabCompleter {
                 sender.sendMessage(plugin.names().name(target)+" "+args[0]+" = "+AdminCommandRules.number(actual)+(args[0].equals("현재마나")?"":" (장비·버프 제외 기본값)"));
             }
             case "마법"->{
-                if(args.length<2||!List.of("습득","미습득").contains(args[0]))throw new IllegalArgumentException("/유저관리 <유저> 마법 습득|미습득 <등록된 마법명·ID>");
-                Map<String,String> catalog=DiscoveryLink.registeredSpells();String id=AdminCommandRules.resolve(catalog,joined(args,1,args.length));
+                if(args.length<2||!List.of("습득","미습득","조건지급","조건회수","조건초기화","조건조회").contains(args[0]))throw new IllegalArgumentException("/유저관리 <유저> 마법 습득|미습득|조건지급|조건회수|조건초기화|조건조회 <등록된 마법명·ID>");
+                Map<String,String> catalog=args[0].startsWith("조건")?DiscoveryLink.manualConditions():DiscoveryLink.registeredSpells();String id=AdminCommandRules.resolve(catalog,joined(args,1,args.length));
                 if(id==null)throw new IllegalArgumentException("등록된 마법이 없거나 이름이 중복됩니다. 마법 ID를 선택해 주세요. 발견 플러그인 활성 상태도 확인해 주세요.");
                 String name=plugin.names().name(target);
+                if(args[0].startsWith("조건")){DiscoveryLink.adminCondition(target.getUniqueId(),id,args[0],sender::sendMessage);return;}
                 DiscoveryLink.adminSetLearned(target.getUniqueId(),id,args[0].equals("습득"),error->sender.sendMessage(error==null?name+" · "+catalog.get(id)+" "+args[0]+" 처리 완료":error));
             }
             case "기숙사"->{
@@ -143,7 +144,7 @@ final class AdminCommandBridge implements CommandExecutor,TabCompleter {
                         choices=switch(action){
                             case "스탯"->AdminCommandRules.statOptions(position);
                             case "기숙사"->position==1?SchoolProtocol.HOUSES:List.of();
-                            case "마법"->position==1?List.of("습득","미습득"):position>=2?AdminCommandRules.tailChoices(AdminCommandRules.catalogChoices(DiscoveryLink.registeredSpells()),args,branch+2):List.of();
+                            case "마법"->position==1?List.of("습득","미습득","조건지급","조건회수","조건초기화","조건조회"):position>=2?AdminCommandRules.tailChoices(AdminCommandRules.catalogChoices(args[branch+1].startsWith("조건")?DiscoveryLink.manualConditions():DiscoveryLink.registeredSpells()),args,branch+2):List.of();
                             case "호감도"->{
                                 if(social==null)yield List.of();
                                 int operation=-1;for(int i=branch+2;i<args.length-1;i++)if(AdminCommandRules.QUERIES.contains(args[i]))operation=i;

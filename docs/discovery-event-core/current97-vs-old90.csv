@@ -1,0 +1,107 @@
+﻿id,korean_name,set,current_reviewed,old_reviewed,current_catalog,current_condition,old_approved_condition,condition_source,route
+abyssal_pressure,심해의 압력,current_only,True,False,True,물결 숨결을 사용한 상태에서 깊은 바다에 누적 60초 머무르기.,,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\096_abyssal_pressure.yml,manual_condition_command
+aerial_haul,부유,old_only,False,True,True,화물 대상 시스템과 획득 조건을 추후 연결합니다.,학교 도서관에서 '부유물의 무게와 균형' 책을 읽은 뒤 손길 너머 50회 사용하기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\008_aerial_haul.yml,out_of_current_review_scope
+air_stacking,허공 쌓기,intersection,True,True,True,아카데미 건물의 모든 스팟 확인하기.,아카데미 건물의 모든 스팟 확인하기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\027_air_stacking.yml,manual_condition_command
+air_step,허공 디딤,intersection,True,True,True,비행 금지 구역에서 비행 마법 25회 사용.,비행 금지 구역에서 비행 마법 25번 사용,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\025_air_step.yml,manual_condition_command
+arrested_orbit,퍼붓는 화살,intersection,True,True,True,바람 마법 고급 수업을 통해 낮은 확률로 습득.,바람 마법 고급 수업을 통해 낮은 확률로 습득,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\028_arrested_orbit.yml,manual_condition_command
+ash_brand,재의 낙인,intersection,True,True,True,불 마법으로 몬스터를 30마리 처치하기.,화염 마법으로 적 30회 처치,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\045_ash_brand.yml,manual_condition_command
+blue_bonfire,푸른 화톳불,intersection,True,True,True,도서관에서 '불꽃의 색과 마력' 책을 읽기.,학교 도서관에서 '불꽃의 색과 마력' 책 읽기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\063_blue_bonfire.yml,manual_condition_command
+boiling_armor,끓는 갑주,intersection,True,True,True,입고있는 갑옷 2회 파괴,입고있는 갑옷 2회 파괴,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\053_boiling_armor.yml,manual_condition_command
+bouncing_droplet,도약하는 물방울,current_only,True,False,True,획득 조건은 추후 검토합니다.,,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\095_bouncing_droplet.yml,pending
+bubble_aria,물거품 아리아,current_only,True,False,True,비 오는 날 몬스터를 10마리 처치하기.,,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\086_bubble_aria.yml,manual_condition_command
+cauldron_fill,가마솥 채우기,intersection,True,True,True,도서관에서 '화학기초' 책을 읽기.,도서관에서 '화학 기초' 책 읽기,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\075_cauldron_fill.yml,manual_condition_command
+charcoal_conversion,발화,intersection,True,True,True,화염 마법 중급 수업을 통해 낮은 확률로 습득,화염 마법 중급 수업을 통해 낮은 확률로 습득,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\050_charcoal_conversion.yml,manual_condition_command
+cinder_detonation,스타 퓨리,intersection,True,True,True,불타는 몬스터를 30회 처치하기.,불타는 몬스터를 30회 처치하기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\043_cinder_detonation.yml,manual_condition_command
+cold_storage,냉장 손길,old_only,False,True,False,,영하 10도 이하의 온도에 노출되기,review-evidence.json,out_of_current_review_scope
+concrete_curing,콘크리트 양생,current_only,True,False,True,물로 콘크리트 가루를 32개 굳히기.,,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\092_concrete_curing.yml,manual_condition_command
+crimson_breath,드래곤 브레스,intersection,True,True,True,최대 마나를 2500까지 늘리기.,최대 마나량 2500 달성,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\064_crimson_breath.yml,natural_source_wired
+crimson_heart,홍련의 심장,intersection,True,True,True,체력이 하트 1칸 이하인 상태에서 화염 마법으로 몬스터 처치하기.,체력이 하트 1칸 이하인 상태에서 화염 마법으로 몬스터 처치하기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\047_crimson_heart.yml,pending
+cross_breeze,바람 화살,intersection,True,True,True,바람 마법 기초 수업을 통해 낮은 확률로 습득.,바람 마법 기초 수업을 통해 낮은 확률로 습득,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\021_cross_breeze.yml,manual_condition_command
+crossfire,크로스 애로우,intersection,True,True,True,바람 마법으로 몬스터를 일격에 100회 처치.,바람 마법으로 몬스터를 일격에 100회 처치.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\029_crossfire.yml,manual_condition_command
+current_sorting,사금 추출,intersection,True,True,True,물 속에 잠겨진 금 광석 캐기,물 속에 잠겨진 금 광석 캐기,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\089_current_sorting.yml,natural_source_wired
+descent_command,낙하 명령,intersection,True,True,True,윈드 프레스 10번 사용하기.,공중에 떠 있는 몬스터에게 윈드 프레스 50회 사용하기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\016_descent_command.yml,manual_condition_command
+dew_gathering,이슬 모으기,intersection,True,True,True,병을 10회 채우기.,빈 병으로 물을 10번 뜨기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\084_dew_gathering.yml,manual_condition_command
+dust_duster,클린,intersection,True,True,True,기숙사 배정받기.,기숙사 배정,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\018_dust_duster.yml,natural_source_wired
+dye_rinse,염색 씻기,intersection,True,True,True,가마솥으로 가죽 장비의 염색을 3번 지우기.,가마솥으로 가죽 장비의 염색을 3번 지우기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\076_dye_rinse.yml,manual_condition_command
+ember_bolt,파이어 볼,intersection,True,True,True,화염 마법 기초 수업을 통해 습득.,화염 마법 기초 수업을 통해 습득,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\034_ember_bolt.yml,manual_condition_command
+ember_trap,잿불 덫,intersection,True,True,True,화염 마법 기초 수업을 통해 낮은 확률로 습득,화염 마법 기초 수업을 통해 낮은 확률로 습득,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\037_ember_trap.yml,manual_condition_command
+eternal_ice_prison,만년빙옥,intersection,True,True,True,물 마법 응용 수업을 통해 낮은 확률로 습득.,물 마법 응용 수업을 통해 낮은 확률로 습득.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\074_eternal_ice_prison.yml,manual_condition_command
+explosive_wedge,폭발 쐐기,intersection,True,True,True,불붙은 몬스터를 근접 공격으로 20번 처치하기.,불붙은 몬스터를 근접 공격으로 20번 처치하기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\056_explosive_wedge.yml,manual_condition_command
+falling_star,메테오 스트라이크,intersection,True,True,True,모든 화염 마법 습득,모든 화염 마법 습득,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\041_falling_star.yml,natural_source_wired
+far_touch,손길 너머,intersection,True,True,True,학교 도서관에서 '기계에 대한 이해' 책을 읽기.,학교 도서관에서 '기계에 대한 이해' 책을 읽기,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\007_far_touch.yml,manual_condition_command
+feather_fall,feather fall,current_only,True,False,True,낙하 피해를 받은 뒤 1회 사망하기.,,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\001_feather_fall.yml,manual_condition_command
+feather_rustle,깃털 털기,intersection,True,True,True,닭에게 씨앗을 누적 16번 먹이기.,닭에게 씨앗을 누적 16번 먹이기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\020_feather_rustle.yml,manual_condition_command
+feather_step,페더 폴,old_only,False,True,False,,낙하 피해를 받은 뒤 1회 사망하기.,review-evidence.json,out_of_current_review_scope
+fire_curtain,플레어 월,intersection,True,True,True,화염 마법 중급 수업을 통해 습득,화염 마법 중급 수업을 통해 습득,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\038_fire_curtain.yml,manual_condition_command
+firebird_hunt,불새,intersection,True,True,True,불사조·주작·가루다 관련 책을 읽기.,"학교 도서관에서 '불사조, 주작, 가루다' 책 읽기.",magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\059_firebird_hunt.yml,manual_condition_command
+fireproof_film,내연성,old_only,False,True,True,여름의 더위에 사라진 아이템 3회,여름의 더위에 사라진 아이템 3회,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\057_fireproof_film.yml,out_of_current_review_scope
+fish_lure,물고기 유인,intersection,True,True,True,낚시로 물고기를 누적 30마리 낚기.,낚시로 물고기를 누적 30마리 낚기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\077_fish_lure.yml,manual_condition_command
+flame_footprints,불꽃 걸음,intersection,True,True,True,불이 붙은 상태에서 30초간 살아남기,불이 붙은 상태에서 30초간 살아남기,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\052_flame_footprints.yml,natural_source_wired
+flame_forging,불꽃 단조,intersection,True,True,True,대장간의 모루를 살펴보기.,대장간의 모루를 살펴보기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\036_flame_forging.yml,manual_condition_command
+flame_lash,화염 채찍,intersection,True,True,True,낚싯대로 몬스터를 5번 끌어당기기.,낚싯대로 몬스터를 5번 끌어당기기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\042_flame_lash.yml,manual_condition_command
+flame_leap,블레이즈 킥,intersection,True,True,True,도서관에서 '체술강화' 책을 읽기.,학교 도서관에서 숨겨진 '체술 강화' 책 읽기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\046_flame_leap.yml,manual_condition_command
+flame_sword_dance,화염 검무,intersection,True,True,True,발화가 인첸트 된 검으로 몬스터 50회 처치,발화가 인첸트 된 검으로 몬스터 50회 처치,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\061_flame_sword_dance.yml,manual_condition_command
+flight,비행,intersection,True,True,True,비행 실습 참가하기.,학교 도서관에서 비행 연구 기록을 읽기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\006_flight.yml,manual_condition_command
+frost_rupture,서리 파열,intersection,True,True,True,눈덩이를 몬스터에게 누적 50번 명중하기.,눈덩이를 몬스터에게 누적 50번 명중하기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\078_frost_rupture.yml,manual_condition_command
+gale_dash,바람 걸음,intersection,True,True,True,"달리기로 누적 1,000블록 이동하기.","달리기로 누적 1,000블록 이동하기.",magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\012_gale_dash.yml,manual_condition_command
+glass_firing,광석 재련,intersection,True,True,True,불 마법 중급 수업을 통해 습득하기.,화염 마법 중급 수업을 통해 습득,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\049_glass_firing.yml,manual_condition_command
+glaze_coating,화염의 정복자,intersection,True,True,True,화염 지속 피해를 100회 받기.,받은 화염 도트 데미지 100 달성,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\055_glaze_coating.yml,manual_condition_command
+handful_of_snow,눈 한 줌,old_only,False,True,False,,눈을 제작대에서 눈덩이로 4회 분해,review-evidence.json,out_of_current_review_scope
+harvest_wind,수확의 바람,intersection,True,True,True,자라지 않은 밀·당근·감자를 각각 12개씩 잘라내기.,자라지 않은 밀·당근·감자를 각각 12개씩 잘라내기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\003_harvest_wind.yml,manual_condition_command
+healing_rain,치유의 비,current_only,True,False,True,치유 포션을 10회 마시기.,,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\083_healing_rain.yml,manual_condition_command
+hearth_touch,손끝의 화로,intersection,True,True,True,화로에서 직접 구운 음식을 누적 16개 꺼내기.,화로에서 직접 구운 음식을 누적 16개 꺼내기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\033_hearth_touch.yml,manual_condition_command
+heat_recovery,열량 보존,intersection,True,True,True,도서관에서 '에너지에 관하여' 책을 읽기.,학교 도서관에서 '에너지에 관하여' 책 읽기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\058_heat_recovery.yml,manual_condition_command
+ice_bridge,얼음 다리,intersection,True,True,True,차가운 바다에 방문하기.,차가운 바다에 방문하기,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\070_ice_bridge.yml,natural_source_wired
+incandescent_break,파이어 스트라이크,intersection,True,True,True,방패를 사용하는 적과의 실습 전투를 완료하기.,방패를 사용하는 적과의 실습 전투를 완료하기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\062_incandescent_break.yml,manual_condition_command
+kiln_breath,가마 숨결,intersection,True,True,True,대장간에서 아이템 제작 3회,대장간에서 아이템 제작 3회,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\054_kiln_breath.yml,manual_condition_command
+lava_suture,용암 봉합,intersection,True,True,True,용암에 물을 부어 흑요석을 누적 32개 만들기.,용암에 물을 부어 흑요석을 누적 32개 만들기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\060_lava_suture.yml,manual_condition_command
+leaf_cleanup,잎새 청소,intersection,True,True,True,종류와 관계없이 묘목 20개 심기.,종류에 상관없이 묘묙을 20개 심기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\019_leaf_cleanup.yml,manual_condition_command
+life_distribution,생명의 분배,intersection,True,True,True,투척용 치유 물약 한 병으로 자신과 동료 2명을 함께 회복하기.,투척용 치유 물약 한 병으로 자신과 동료 2명을 함께 회복하기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\080_life_distribution.yml,natural_source_wired
+light_leap,상승기류,intersection,True,True,True,달리면서 점프한 횟수를 30번 채우기.,달리면서 점프한 횟수를 30번 채우기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\005_light_leap.yml,manual_condition_command
+lightning_needle,라이트닝 쇼크,intersection,True,True,True,번개에 맞아 사망하기.,번개에 맞아 사망하기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\026_lightning_needle.yml,natural_source_wired
+living_furnace,살아 있는 화로,intersection,True,True,True,손끝의 화로 마법으로 64번 구워내기,손끝의 화로 마법으로 64번 구워내기,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\040_living_furnace.yml,manual_condition_command
+miners_rhythm,광부의 박자,current_only,True,False,True,곡괭이로 돌과 심층암을 합쳐 누적 300개 채굴하기.,,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\100_miners_rhythm.yml,manual_condition_command
+moist_farmland,촉촉한 밭,intersection,True,True,True,물에서 떨어진 마른 경작지에 씨앗을 20번 심기.,물에서 떨어진 마른 경작지에 씨앗을 20번 심기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\081_moist_farmland.yml,manual_condition_command
+ore_whisper,땅의 속삭임,current_only,True,False,True,석탄 광석 32개와 철 광석 16개 직접 채굴하기.,,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\098_ore_whisper.yml,manual_condition_command
+palm_fireworks,손바닥 폭죽,intersection,True,True,True,폭죽 로켓을 10번 발사하기.,폭죽 로켓을 10번 발사하기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\044_palm_fireworks.yml,manual_condition_command
+pebble_toss,조약돌 던지기,current_only,True,False,True,대지 마법 기초 수업을 통해 습득.,,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\099_pebble_toss.yml,manual_condition_command
+phoenix_oath,불사조의 서약,intersection,True,True,True,펫 '불사조' 획득,펫 '불사조' 획득,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\039_phoenix_oath.yml,natural_source_wired
+potion_mist,약액 분무,intersection,True,True,True,서로 다른 종류의 물약 5종을 직접 양조하기.,서로 다른 종류의 물약 5종을 직접 양조하기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\090_potion_mist.yml,manual_condition_command
+pressure_hammer,수압해머,current_only,True,False,True,20블록 이상 높이에서 뛰어내려 철퇴로 적을 타격하기.,,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\087_pressure_hammer.yml,natural_source_wired
+pressure_lance,수압창,current_only,True,False,True,물방울 탄환으로 몬스터를 30마리 처치하기.,,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\079_pressure_lance.yml,manual_condition_command
+pressure_press,윈드 프레스,intersection,True,True,True,앵무새를 1회 공격하기.,앵무새를 1회 공격하기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\023_pressure_press.yml,manual_condition_command
+pressure_rupture,토네이도 스핀,intersection,True,True,True,움직이지 않은 상태에서 시선을 돌려 10바퀴 회전하기.,움직이지 않는 상태에서 시선을 돌려 10바퀴 회전,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\031_pressure_rupture.yml,manual_condition_command
+pressure_weight,수압추,old_only,False,True,False,,물에 잠긴 상태에서 누적 60초 버티기,review-evidence.json,out_of_current_review_scope
+purifying_wave,정화의 물결,intersection,True,True,True,독에 걸린 상태에서 우유를 마시기 3회.,독에 걸린 상태에서 우유를 마시기 3회.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\069_purifying_wave.yml,manual_condition_command
+quench,불길 씻기,intersection,True,True,True,불이 붙은 상태에서 물에 들어가 불 끄기 5회.,불이 붙은 상태에서 물에 들어가 불 끄기 5회.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\068_quench.yml,manual_condition_command
+quiet_mooring,노아의 방주,intersection,True,True,True,보트를 5회 설치하기.,보트 설치 5회.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\085_quiet_mooring.yml,manual_condition_command
+rekindle,다시 타오르는 불,intersection,True,True,True,촛불에 라이터로 불 붙이기.,촛불에 라이터로 불 붙이기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\035_rekindle.yml,natural_source_wired
+resonant_arrow,미스틱 슈터,intersection,True,True,True,"미라지 슈터로 누적 마나 10,000 소모.",미라지 슈터로 소모한 마나 10000 달성,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\030_resonant_arrow.yml,manual_condition_command
+returning_blade,되돌이 칼날,intersection,True,True,True,윈드 커터 50회 사용.,윈드커터 50회 사용,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\022_returning_blade.yml,manual_condition_command
+returning_wind,되받는 바람,intersection,True,True,True,바람 마법 중급 수업을 통해 낮은 확률로 습득.,바람 마법 중급 수업을 통해 낮은 확률로 습득,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\013_returning_wind.yml,manual_condition_command
+ripple_guard,파문방벽,current_only,True,False,True,방패로 해골의 화살을 20회 막기.,,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\093_ripple_guard.yml,manual_condition_command
+sponge_drying,스펀지 말리기,intersection,True,True,True,젖은 스펀지 획득,젖은 스펀지 획득,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\051_sponge_drying.yml,natural_source_wired
+spring_unseal,수맥 개방,intersection,True,True,True,가마솥을 30회 채우기.,물 양동이로 가마솥을 누적 30번 채우기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\072_spring_unseal.yml,manual_condition_command
+storm_command,폭풍의 지휘,intersection,True,True,True,"30도 이상의 기온을 가진 공간에서, 상승기류 마법 사용 후 떨어지기 전에 한 바퀴 회전하기.","30도 이상의 기온을 가진 공간에서, 상승기류 마법 사용 후 떨어지기 전에 한 바퀴 회전하기.",magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\010_storm_command.yml,natural_source_wired
+storm_crown,삼중 탄환,intersection,True,True,True,70블록 밖의 적에게 화살 명중.,70블럭 밖의 적을 화살로 명중하기,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\032_storm_crown.yml,natural_source_wired
+tidal_wave,해일,current_only,True,False,True,물 마법 실전 수업을 통해 습득.,,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\094_tidal_wave.yml,manual_condition_command
+tide_stride,물살 타기,intersection,True,True,True,수영으로 누적 500블록 이동하기.,수영으로 누적 500블록 이동하기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\066_tide_stride.yml,manual_condition_command
+trajectory_acceleration,미라지 슈터,intersection,True,True,True,네 계절의 이상현상을 모두 마주하기.,4가지 계절의 이상현상을 모두 마주하기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\017_trajectory_acceleration.yml,manual_condition_command
+vacuum_cleave,윈드 커터,intersection,True,True,True,바람 마법 중급 수업을 통해 습득.,바람 마법 중급 수업을 통해 습득,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\011_vacuum_cleave.yml,manual_condition_command
+verdant_touch,풍요의 손길,current_only,True,False,True,다 자란 밀·당근·감자를 각각 20개 수확하기.,,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\097_verdant_touch.yml,manual_condition_command
+wash_letters,글씨 씻기,intersection,True,True,True,같은 표지판의 글씨를 10번 고쳐 쓰기.,같은 표지판의 글씨를 10번 고쳐 쓰기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\082_wash_letters.yml,manual_condition_command
+water_bolt,물방울 탄환,intersection,True,True,True,물 마법 기초 수업을 통해 습득.,물 마법 기초 수업을 통해 습득.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\067_water_bolt.yml,manual_condition_command
+water_breath,물결 숨결,intersection,True,True,True,물에 잠긴 상태에서 죽지 않고 30초 버티기,물에 잠긴 상태에서 죽지 않고 30초 버티기,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\065_water_breath.yml,natural_source_wired
+water_elemental,운디네,intersection,True,True,True,'''정령계약서-수'' 책을 읽기.','정령계약서 - 수' 도서 읽기,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\073_water_elemental.yml,manual_condition_command
+water_mirror,수면의 거울,old_only,False,True,True,학교 도서관에서 '수면에 비친 먼 풍경' 책 읽기.,학교 도서관에서 '수면에 비친 먼 풍경' 책 읽기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\071_water_mirror.yml,out_of_current_review_scope
+waterspout,용오름,current_only,True,False,True,여름의 바다 바이옴(커스텀 바다 포함)에서 상승 기류를 사용하기.,,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\088_waterspout.yml,natural_source_wired
+waterwheel_shield,물레 방패,current_only,True,False,True,물속에서 몬스터의 공격을 방패로 10회 막기.,,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\091_waterwheel_shield.yml,manual_condition_command
+weightless_zone,중력지대,intersection,True,True,True,엔더 드래곤 격파,바람 마법 고급 수업을 통해 습득,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\015_weightless_zone.yml,manual_condition_command
+wet_footprints,젖은 발자국,old_only,False,True,False,,비가 오는 날 몬스터를 10회 처치,review-evidence.json,out_of_current_review_scope
+wick_trimming,심지 줄이기,intersection,True,True,True,촛불 10회 소화,촛불 10회 소화,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\048_wick_trimming.yml,manual_condition_command
+wind_basket,바람바구니,intersection,True,True,True,"아이템 1,000개 줍기.",떨어진 아이템을 누적 1000개 줍기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\002_wind_basket.yml,manual_condition_command
+wind_decoy,바람 미끼,intersection,True,True,True,반경 7블록 안에 몬스터 10마리와 함께 있기.,반경 7블럭 안에 10마리의 몬스터와 함께 있기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\024_wind_decoy.yml,natural_source_wired
+wind_grooming,바람 털빗,intersection,True,True,True,가위로 양털을 10번 깎기.,가위로 양털을 10번 깎기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\014_wind_grooming.yml,manual_condition_command
+wind_message,바람의 전언,intersection,True,True,True,1명과 친구가 되기.,1명과 친구가 되기.,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\009_wind_message.yml,natural_source_wired
+wind_push,윈드 푸쉬,intersection,True,True,True,바람 마법 기초 수업을 통해 습득.,바람 마법 기초 수업을 통해 습득,magic-codex-fabric\src\main\resources\assets\magiccodex\default-spells\004_wind_push.yml,manual_condition_command
+wind_vault,바람의 금고,old_only,False,True,False,,인벤토리에 공간이 없을 때 아이템 획득하기.,review-evidence.json,out_of_current_review_scope

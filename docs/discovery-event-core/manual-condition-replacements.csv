@@ -1,0 +1,81 @@
+﻿id,name,approved_original,condition_permission,command
+wind_basket,바람 바구니,떨어진 아이템을 누적 1000개 줍기.,magic.condition.wind_basket,/유저관리 <유저> 마법 조건지급 wind_basket
+harvest_wind,수확의 바람,자라지 않은 밀·당근·감자를 각각 12개씩 잘라내기.,magic.condition.harvest_wind,/유저관리 <유저> 마법 조건지급 harvest_wind
+wind_push,윈드 푸쉬,바람 마법 기초 수업을 통해 습득,magic.condition.wind_push,/유저관리 <유저> 마법 조건지급 wind_push
+light_leap,상승 기류,달리면서 점프한 횟수를 30번 채우기.,magic.condition.light_leap,/유저관리 <유저> 마법 조건지급 light_leap
+flight,비행,학교 도서관에서 비행 연구 기록을 읽기.,magic.condition.flight,/유저관리 <유저> 마법 조건지급 flight
+far_touch,손길 너머,학교 도서관에서 '기계에 대한 이해' 책을 읽기,magic.condition.far_touch,/유저관리 <유저> 마법 조건지급 far_touch
+aerial_haul,부유,학교 도서관에서 '부유물의 무게와 균형' 책을 읽은 뒤 손길 너머 50회 사용하기.,magic.condition.aerial_haul,/유저관리 <유저> 마법 조건지급 aerial_haul
+vacuum_cleave,윈드 커터,바람 마법 중급 수업을 통해 습득,magic.condition.vacuum_cleave,/유저관리 <유저> 마법 조건지급 vacuum_cleave
+gale_dash,바람 걸음,"달리기로 누적 1,000블록 이동하기.",magic.condition.gale_dash,/유저관리 <유저> 마법 조건지급 gale_dash
+returning_wind,되받는 바람,바람 마법 중급 수업을 통해 낮은 확률로 습득,magic.condition.returning_wind,/유저관리 <유저> 마법 조건지급 returning_wind
+wind_grooming,바람 털빗,가위로 양털을 10번 깎기.,magic.condition.wind_grooming,/유저관리 <유저> 마법 조건지급 wind_grooming
+weightless_zone,무중력 지대,바람 마법 고급 수업을 통해 습득,magic.condition.weightless_zone,/유저관리 <유저> 마법 조건지급 weightless_zone
+descent_command,낙하 명령,공중에 떠 있는 몬스터에게 윈드 프레스 50회 사용하기.,magic.condition.descent_command,/유저관리 <유저> 마법 조건지급 descent_command
+leaf_cleanup,잎새 청소,종류에 상관없이 묘묙을 20개 심기.,magic.condition.leaf_cleanup,/유저관리 <유저> 마법 조건지급 leaf_cleanup
+feather_rustle,깃털 털기,닭에게 씨앗을 누적 16번 먹이기.,magic.condition.feather_rustle,/유저관리 <유저> 마법 조건지급 feather_rustle
+cross_breeze,바람 화살,바람 마법 기초 수업을 통해 낮은 확률로 습득,magic.condition.cross_breeze,/유저관리 <유저> 마법 조건지급 cross_breeze
+returning_blade,되돌이 칼날,윈드커터 50회 사용,magic.condition.returning_blade,/유저관리 <유저> 마법 조건지급 returning_blade
+pressure_press,윈드 프레스,앵무새를 1회 공격하기.,magic.condition.pressure_press,/유저관리 <유저> 마법 조건지급 pressure_press
+air_step,허공 디딤,비행 금지 구역에서 비행 마법 25번 사용,magic.condition.air_step,/유저관리 <유저> 마법 조건지급 air_step
+arrested_orbit,퍼붓는 화살,바람 마법 고급 수업을 통해 낮은 확률로 습득,magic.condition.arrested_orbit,/유저관리 <유저> 마법 조건지급 arrested_orbit
+crossfire,크로스 애로우,바람 마법으로 몬스터를 일격에 100회 처치.,magic.condition.crossfire,/유저관리 <유저> 마법 조건지급 crossfire
+resonant_arrow,미스틱 슈터,미라지 슈터로 소모한 마나 10000 달성,magic.condition.resonant_arrow,/유저관리 <유저> 마법 조건지급 resonant_arrow
+pressure_rupture,토네이도 스핀,움직이지 않는 상태에서 시선을 돌려 10바퀴 회전,magic.condition.pressure_rupture,/유저관리 <유저> 마법 조건지급 pressure_rupture
+hearth_touch,손끝의 화로,화로에서 직접 구운 음식을 누적 16개 꺼내기.,magic.condition.hearth_touch,/유저관리 <유저> 마법 조건지급 hearth_touch
+ember_bolt,파이어 볼,화염 마법 기초 수업을 통해 습득,magic.condition.ember_bolt,/유저관리 <유저> 마법 조건지급 ember_bolt
+ember_trap,잿불 덫,화염 마법 기초 수업을 통해 낮은 확률로 습득,magic.condition.ember_trap,/유저관리 <유저> 마법 조건지급 ember_trap
+fire_curtain,플레어 월,화염 마법 중급 수업을 통해 습득,magic.condition.fire_curtain,/유저관리 <유저> 마법 조건지급 fire_curtain
+living_furnace,살아 있는 화로,손끝의 화로 마법으로 64번 구워내기,magic.condition.living_furnace,/유저관리 <유저> 마법 조건지급 living_furnace
+flame_lash,화염 채찍,낚싯대로 몬스터를 5번 끌어당기기.,magic.condition.flame_lash,/유저관리 <유저> 마법 조건지급 flame_lash
+cinder_detonation,스타 퓨리,불타는 몬스터를 30회 처치하기.,magic.condition.cinder_detonation,/유저관리 <유저> 마법 조건지급 cinder_detonation
+palm_fireworks,손바닥 폭죽,폭죽 로켓을 10번 발사하기.,magic.condition.palm_fireworks,/유저관리 <유저> 마법 조건지급 palm_fireworks
+ash_brand,재의 낙인,화염 마법으로 적 30회 처치,magic.condition.ash_brand,/유저관리 <유저> 마법 조건지급 ash_brand
+flame_leap,블레이즈 킥,학교 도서관에서 숨겨진 '체술 강화' 책 읽기.,magic.condition.flame_leap,/유저관리 <유저> 마법 조건지급 flame_leap
+wick_trimming,심지 줄이기,촛불 10회 소화,magic.condition.wick_trimming,/유저관리 <유저> 마법 조건지급 wick_trimming
+glass_firing,광석 재련,화염 마법 중급 수업을 통해 습득,magic.condition.glass_firing,/유저관리 <유저> 마법 조건지급 glass_firing
+charcoal_conversion,발화,화염 마법 중급 수업을 통해 낮은 확률로 습득,magic.condition.charcoal_conversion,/유저관리 <유저> 마법 조건지급 charcoal_conversion
+boiling_armor,끓는 갑주,입고있는 갑옷 2회 파괴,magic.condition.boiling_armor,/유저관리 <유저> 마법 조건지급 boiling_armor
+kiln_breath,가마 숨결,대장간에서 아이템 제작 3회,magic.condition.kiln_breath,/유저관리 <유저> 마법 조건지급 kiln_breath
+glaze_coating,화염의 정복자,받은 화염 도트 데미지 100 달성,magic.condition.glaze_coating,/유저관리 <유저> 마법 조건지급 glaze_coating
+explosive_wedge,폭발 쐐기,불붙은 몬스터를 근접 공격으로 20번 처치하기.,magic.condition.explosive_wedge,/유저관리 <유저> 마법 조건지급 explosive_wedge
+fireproof_film,내연성,여름의 더위에 사라진 아이템 3회,magic.condition.fireproof_film,/유저관리 <유저> 마법 조건지급 fireproof_film
+heat_recovery,열량 보존,학교 도서관에서 '에너지에 관하여' 책 읽기.,magic.condition.heat_recovery,/유저관리 <유저> 마법 조건지급 heat_recovery
+firebird_hunt,불새,"학교 도서관에서 '불사조, 주작, 가루다' 책 읽기.",magic.condition.firebird_hunt,/유저관리 <유저> 마법 조건지급 firebird_hunt
+lava_suture,용암 봉합,용암에 물을 부어 흑요석을 누적 32개 만들기.,magic.condition.lava_suture,/유저관리 <유저> 마법 조건지급 lava_suture
+flame_sword_dance,화염 검무,발화가 인첸트 된 검으로 몬스터 50회 처치,magic.condition.flame_sword_dance,/유저관리 <유저> 마법 조건지급 flame_sword_dance
+incandescent_break,파이어 스트라이크,방패를 사용하는 적과의 실습 전투를 완료하기.,magic.condition.incandescent_break,/유저관리 <유저> 마법 조건지급 incandescent_break
+blue_bonfire,푸른 화톳불,학교 도서관에서 '불꽃의 색과 마력' 책 읽기.,magic.condition.blue_bonfire,/유저관리 <유저> 마법 조건지급 blue_bonfire
+tide_stride,물살 타기,수영으로 누적 500블록 이동하기.,magic.condition.tide_stride,/유저관리 <유저> 마법 조건지급 tide_stride
+water_bolt,물방울 탄환,물 마법 기초 수업을 통해 습득.,magic.condition.water_bolt,/유저관리 <유저> 마법 조건지급 water_bolt
+quench,불길 씻기,불이 붙은 상태에서 물에 들어가 불 끄기 5회.,magic.condition.quench,/유저관리 <유저> 마법 조건지급 quench
+purifying_wave,정화의 물결,독에 걸린 상태에서 우유를 마시기 3회.,magic.condition.purifying_wave,/유저관리 <유저> 마법 조건지급 purifying_wave
+water_mirror,수면의 거울,학교 도서관에서 '수면에 비친 먼 풍경' 책 읽기.,magic.condition.water_mirror,/유저관리 <유저> 마법 조건지급 water_mirror
+spring_unseal,수맥 개방,물 양동이로 가마솥을 누적 30번 채우기.,magic.condition.spring_unseal,/유저관리 <유저> 마법 조건지급 spring_unseal
+water_elemental,운디네,'정령계약서 - 수' 도서 읽기,magic.condition.water_elemental,/유저관리 <유저> 마법 조건지급 water_elemental
+eternal_ice_prison,만년빙옥,물 마법 응용 수업을 통해 낮은 확률로 습득.,magic.condition.eternal_ice_prison,/유저관리 <유저> 마법 조건지급 eternal_ice_prison
+cauldron_fill,가마솥 채우기,도서관에서 '화학 기초' 책 읽기,magic.condition.cauldron_fill,/유저관리 <유저> 마법 조건지급 cauldron_fill
+dye_rinse,염색 씻기,가마솥으로 가죽 장비의 염색을 3번 지우기.,magic.condition.dye_rinse,/유저관리 <유저> 마법 조건지급 dye_rinse
+fish_lure,물고기 유인,낚시로 물고기를 누적 30마리 낚기.,magic.condition.fish_lure,/유저관리 <유저> 마법 조건지급 fish_lure
+frost_rupture,서리 파열,눈덩이를 몬스터에게 누적 50번 명중하기.,magic.condition.frost_rupture,/유저관리 <유저> 마법 조건지급 frost_rupture
+moist_farmland,촉촉한 밭,물에서 떨어진 마른 경작지에 씨앗을 20번 심기.,magic.condition.moist_farmland,/유저관리 <유저> 마법 조건지급 moist_farmland
+wash_letters,글씨 씻기,같은 표지판의 글씨를 10번 고쳐 쓰기.,magic.condition.wash_letters,/유저관리 <유저> 마법 조건지급 wash_letters
+dew_gathering,이슬 모으기,빈 병으로 물을 10번 뜨기.,magic.condition.dew_gathering,/유저관리 <유저> 마법 조건지급 dew_gathering
+quiet_mooring,노아의 방주,보트 설치 5회.,magic.condition.quiet_mooring,/유저관리 <유저> 마법 조건지급 quiet_mooring
+potion_mist,약액 분무,서로 다른 종류의 물약 5종을 직접 양조하기.,magic.condition.potion_mist,/유저관리 <유저> 마법 조건지급 potion_mist
+abyssal_pressure,심해의 압력,물결 숨결을 사용한 상태에서 깊은 바다에 누적 60초 머무르기.,magic.condition.abyssal_pressure,/유저관리 <유저> 마법 조건지급 abyssal_pressure
+bubble_aria,물거품 아리아,비 오는 날 몬스터를 10마리 처치하기.,magic.condition.bubble_aria,/유저관리 <유저> 마법 조건지급 bubble_aria
+concrete_curing,콘크리트 양생,물로 콘크리트 가루를 32개 굳히기.,magic.condition.concrete_curing,/유저관리 <유저> 마법 조건지급 concrete_curing
+feather_fall,feather fall,낙하 피해를 받은 뒤 1회 사망하기.,magic.condition.feather_fall,/유저관리 <유저> 마법 조건지급 feather_fall
+healing_rain,치유의 비,치유 포션을 10회 마시기.,magic.condition.healing_rain,/유저관리 <유저> 마법 조건지급 healing_rain
+miners_rhythm,광부의 박자,곡괭이로 돌과 심층암을 합쳐 누적 300개 채굴하기.,magic.condition.miners_rhythm,/유저관리 <유저> 마법 조건지급 miners_rhythm
+ore_whisper,땅의 속삭임,석탄 광석 32개와 철 광석 16개 직접 채굴하기.,magic.condition.ore_whisper,/유저관리 <유저> 마법 조건지급 ore_whisper
+pebble_toss,조약돌 던지기,대지 마법 기초 수업을 통해 습득.,magic.condition.pebble_toss,/유저관리 <유저> 마법 조건지급 pebble_toss
+pressure_lance,수압창,물방울 탄환으로 몬스터를 30마리 처치하기.,magic.condition.pressure_lance,/유저관리 <유저> 마법 조건지급 pressure_lance
+ripple_guard,파문방벽,방패로 해골의 화살을 20회 막기.,magic.condition.ripple_guard,/유저관리 <유저> 마법 조건지급 ripple_guard
+tidal_wave,해일,물 마법 실전 수업을 통해 습득.,magic.condition.tidal_wave,/유저관리 <유저> 마법 조건지급 tidal_wave
+verdant_touch,풍요의 손길,다 자란 밀·당근·감자를 각각 20개 수확하기.,magic.condition.verdant_touch,/유저관리 <유저> 마법 조건지급 verdant_touch
+waterwheel_shield,물레 방패,물속에서 몬스터의 공격을 방패로 10회 막기.,magic.condition.waterwheel_shield,/유저관리 <유저> 마법 조건지급 waterwheel_shield
+air_stacking,허공 쌓기,아카데미 건물의 모든 스팟 확인하기.,magic.condition.air_stacking,/유저관리 <유저> 마법 조건지급 air_stacking
+flame_forging,불꽃 단조,대장간의 모루를 살펴보기.,magic.condition.flame_forging,/유저관리 <유저> 마법 조건지급 flame_forging
+trajectory_acceleration,미라지 슈터,네 계절의 이상현상을 모두 마주하기.,magic.condition.trajectory_acceleration,/유저관리 <유저> 마법 조건지급 trajectory_acceleration

@@ -92,7 +92,7 @@ public final class ItemIconTextures {
         var model=Identifier.of("magiccodex","chat_"+name);var known=ICONS.get(model);
         if(known==null){request(model);return null;}if(known.isEmpty())return null;
         var t=known.get();var layers=new net.minecraft.client.font.TextRenderLayerSet(t.layer(),t.layer(),t.layer());
-        glyph=new net.minecraft.client.font.BakedGlyph(layers,0,1,0,1,0,8f*t.width()/t.height(),0,8);
+        glyph=new ChatImageGlyph(layers);
         CHAT_GLYPHS.put(codepoint,glyph);return glyph;
     }
     private static final Identifier WHISPER=Identifier.of("magiccodex","whisper_envelope");

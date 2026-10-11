@@ -1,5 +1,20 @@
 # 차카데미 MagicCodex 작업 저장소
 
+## 2026-10-11 shared source integration
+
+This checkpoint is based on public `codex/hires-item-icons-20261006` commit `f44666f689714d5292adfff6e36c8586d27760c0`, preserving the chat/discovery integration working tree and adding Claude magic source from `d4c0859fe11e96291c874dd0cef7ea71ac17e8d5` plus Codex protection fixes. Integration branch: `codex/chat-discovery-magic-protection-20261011`.
+
+Included: Velocity network chat relay and client presentation; discovery event core, donation policy administration and Velocity party conditions; `magic-mythic-paper` source, generated public skill configuration, generator, tests and WorldGuard protection; Bridge prepare/VFX/execute integration. Existing portrait Sunburst/Flare, Luna analysis/transparency, personal UI sizing, pets/shiny and Story source remain preserved. The 97-entry discovery catalog has 95 connected entries and 2 pending (`crimson_heart`, `bouncing_droplet`); it is distinct from the 95-entry magic gameplay/VFX set (generated routes have their own count).
+
+Verification: hosting Java 21.0.10; final targeted test run passed **293 tests** (magic-mythic-paper 11, magic-codex-paper 282), zero failures. These are unit tests, including real WorldGuard classes used in memory and mocked Bukkit entities/events. They are not whole-repository or live-server acceptance tests. Actual dependencies: MythicMobs 5.9.0 (`C:/Chacademi/network/school/plugins/MythicMobs-5.9.0.jar`, staging hardlink), WorldGuard 7.0.13 (`worldguard-bukkit-7.0.13-dist.jar`), FAWE 2.13.1-SNAPSHOT-1119 in the same hosting plugins directory; Paper API 1.21.4. Paid/external JARs are not published. See [protection handoff](docs/handoff/CODEX_MAGIC_PROTECTION_20261011.md) and [discovery handoff](docs/discovery-event-core/HANDOFF.md).
+
+Deployment: earlier chat changes were applied to personal client/server. New discovery and magic-protection changes are **NOT deployed**. This Git synchronization performs no deployment, restart, launcher replacement/release update or DB operation. Discovery donation-policy table creation on future activation requires separate operational/DB authorization. No live tests of initial Mythic mechanic registration, WorldGuard boundaries/OP behavior, projectile/tick scheduling or actual pet integration have been performed.
+
+Remaining: temporary-block recovery journal can lose recovery data (write ordering/save failure/unloaded-world handling); prison release does not preserve original AI awareness. Dungeon 63-model assets/generators/viewer/registration are withheld by user request. Newly observed `claude/gimmick-plugin-20261012` is not reviewed or integrated here. HolyTaming remains separately pending; existing TamingBridge discovery hooks do not authorize that separate feature. Secrets, runtime configuration, real databases, login material, paid JARs, restricted fonts and private reference images are excluded.
+
+Older sections below are historical checkpoints; use this section for the current integration scope and deployment status.
+
+
 기준일: 2026-10-05. Minecraft 1.21.4 / Java 21. 호스트 소스: `C:\Chacademi\build-workspace`. 운영: `C:\Chacademi\network`. 소스 커밋은 운영 배포나 서버 재시작을 의미하지 않습니다.
 
 ## 모듈과 빌드

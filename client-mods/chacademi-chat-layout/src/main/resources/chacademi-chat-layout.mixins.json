@@ -18,7 +18,9 @@
     "HudScreenLifecycleMixin",
     "HudChatKeyboardMixin",
     "MinecraftChatInvoker",
-    "MagicHudChatMixin"
+    "MagicHudChatMixin",
+    "ChatPresentationMixin",
+    "ChatImageSpacingMixin"
   ],
   "injectors": {
     "defaultRequire": 1

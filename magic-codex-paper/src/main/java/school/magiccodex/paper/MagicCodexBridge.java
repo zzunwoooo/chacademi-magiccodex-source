@@ -27,8 +27,12 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private ManaBridge mana;
     private SpellRuntime spellRuntime;
     Boolean runtimeCast(Player player,String id){
-        Boolean visual=CatalogVfxLink.cast(this,player,id);
-        return visual!=null?visual:(spellRuntime==null?null:spellRuntime.cast(player,id));
+        if(!MagicProtectionLink.cast(player)){player.sendMessage("이 구역에서는 마법을 사용할 수 없습니다.");return false;}
+        // Gameplay route first: a refused target must not show a visual or keep the charge.
+        SpellRuntime.Plan plan=spellRuntime==null?null:spellRuntime.prepare(player,id);
+        return CatalogGameplayFlow.cast(plan==null||plan.ok(),plan!=null,
+            ()->CatalogVfxLink.cast(this,player,id),()->spellRuntime.execute(player,plan),
+            failure->getLogger().warning("마법 실행 실패: "+id+" / "+failure.getClass().getSimpleName()));
     }
     boolean requiresCatalogVisual(String id){return mana!=null&&mana.requiresCatalogVisual(id);}
     public boolean castMagic(Player player,String id){return mana!=null&&mana.castRegistered(player,id);}

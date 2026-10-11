@@ -8,13 +8,13 @@ import school.magiccodex.protocol.DiscoveryProtocol;
 import static org.junit.jupiter.api.Assertions.*;
 class DiscoveryTest {
     @TempDir Path dir;
-    @Test void all62DefinitionsLoadWithDottedKeysAndExactCropConjunction()throws Exception{
-        var d=new Definitions(Path.of("src/main/resources/discoveries.yml").toFile());assertEquals(62,d.spells.size());
+    @Test void approvedDefinitionsLoadWithDottedKeysAndExactCropConjunction()throws Exception{
+        var d=new Definitions(Path.of("src/main/resources/discoveries.yml").toFile());assertEquals(72,d.spells.size());
         var crop=d.spells.get("harvest_wind");assertEquals(3,crop.requirements().size());assertEquals(12,crop.requirements().get("break.young_wheat"));
         assertFalse(Definitions.meets(crop,Map.of("break.young_wheat",36d)));
         assertTrue(Definitions.meets(crop,Map.of("break.young_wheat",12d,"break.young_carrots",12d,"break.young_potatoes",12d)));
         assertEquals(.1,d.spells.get("cross_breeze").chance());assertEquals(1,d.spells.get("wind_push").chance());
-        assertFalse(d.spells.get("falling_star").prerequisites().contains("magic.learned.falling_star"));assertEquals(31,d.spells.get("falling_star").prerequisites().size());
+        assertFalse(d.spells.get("falling_star").prerequisites().contains("magic.learned.falling_star"));assertEquals(48,d.spells.get("falling_star").prerequisites().size());
         assertEquals(4,d.spells.get("trajectory_acceleration").requirements().size());
     }
     @Test void invalidDefinitionCannotGrantUnconditionally()throws Exception{

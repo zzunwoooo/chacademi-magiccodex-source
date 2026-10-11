@@ -1,0 +1,1 @@
+ISOLATED_MARIADB_POLICY_AUDIT_PASS: block across connections; reset preserves policy; unblock; concurrent single claim; reopen persistence. Synthetic row retained; zero points awarded.

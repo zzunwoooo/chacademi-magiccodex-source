@@ -18,6 +18,9 @@ public final class DiscoveryService {
     public void cast(UUID player,String spell,double spentMana){plugin.cast(player,spell,spentMana);}
     /** Immutable ID -> display name map: all registered Bridge spells, or standalone discovery definitions. Must be called on the server thread. */
     public Map<String,String> registeredSpells(){return plugin.registeredSpells();}
+    /** Only explicitly configured manual replacements; command facade performs administrator checks. */
+    public void adminCondition(UUID player,String spell,String action,Consumer<String> done){plugin.adminCondition(player,spell,action,done);}
+    public Map<String,String> manualConditions(){var out=new java.util.LinkedHashMap<String,String>();plugin.definitions.manual.forEach((id,spell)->out.put(id,spell.name()));return Map.copyOf(out);}
     /**
      * Persist current knowledge for an online or offline player without minting first-discovery rewards.
      * Unlearning retains historical acquisitions and starts fresh, spell-specific retry progress.

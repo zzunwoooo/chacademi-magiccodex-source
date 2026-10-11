@@ -69,6 +69,7 @@ final class SchoolBridge implements PluginMessageListener,Listener,CommandExecut
         viewers.put(p.getUniqueId(),now+45000);
         if(r.action()!=SchoolProtocol.DONATE){reply(p,r,"");return;}
         if(!p.hasPermission("magiccodex.donate")){reply(p,r,"기증할 권한이 없습니다.");return;}
+        if(data.blocked().contains(r.spell())){reply(p,r,"관리자가 기증을 금지한 마법입니다.");return;}
         // Duplicate status takes precedence so every later donor gets the same clear response.
         if(data.records().stream().anyMatch(e->e.spell().equals(r.spell()))){reply(p,r,"누군가 이미 기증한 마법입니다.");return;}
         Spell spell=spells.get(r.spell());if(spell==null||!p.hasPermission(spell.permission())){reply(p,r,"배운 마법만 기증할 수 있습니다.");return;}
@@ -92,14 +93,14 @@ final class SchoolBridge implements PluginMessageListener,Listener,CommandExecut
         if(closing||pending>=64){fail.accept("다른 요청을 처리 중입니다. 잠시 후 다시 시도해 주세요.");return;}pending++;
         var active=shared?activePlayers():null;
         io.execute(()->{try{T value=task.run();var snapshot=store.snapshot(active);main(()->{pending--;data=snapshot;revision++;done.accept(value);push();});}
-            catch(Exception e){plugin.getLogger().warning("학교 기록 저장 실패: "+e);main(()->{pending--;fail.accept("저장하지 못했습니다. 점수 범위 또는 서버 로그를 확인해 주세요.");});}});
+            catch(Exception e){plugin.getLogger().warning("학교 기록 저장 실패: "+e);main(()->{pending--;fail.accept(e instanceof SchoolStore.DonationBlocked?"관리자가 기증을 금지한 마법입니다.":"저장하지 못했습니다. 점수 범위 또는 서버 로그를 확인해 주세요.");});}});
     }
     private void main(Runnable r){if(!closing&&plugin.isEnabled())Bukkit.getScheduler().runTask(plugin,()->{if(!closing)r.run();});}
     private void push(){for(UUID id:List.copyOf(viewers.keySet())){Player p=Bukkit.getPlayer(id);if(p!=null)reply(p,new Request(SchoolProtocol.IDENTITY,0,0,""),"");}}
     void adminHouse(Player player,int house,Consumer<String> done){
         if(house<0||house>=SchoolProtocol.HOUSES.size()){done.accept("등록된 기숙사를 선택해 주세요.");return;}
         UUID id=player.getUniqueId();
-        work(()->{store.house(id,house);return true;},ok->{reply(player,new Request(SchoolProtocol.IDENTITY,0,0,""),"");done.accept(null);},done);
+        work(()->{store.house(id,house);return true;},ok->{DiscoveryLink.signal(id,"dormitory.assigned",1);reply(player,new Request(SchoolProtocol.IDENTITY,0,0,""),"");done.accept(null);},done);
     }
     void adminScore(int house,String action,long amount,Consumer<String> done){
         if(house<0||house>=SchoolProtocol.HOUSES.size())throw new IllegalArgumentException("등록된 기숙사를 선택해 주세요.");
@@ -111,18 +112,41 @@ final class SchoolBridge implements PluginMessageListener,Listener,CommandExecut
         if(!sender.hasPermission("magiccodex.school.admin")){sender.sendMessage("관리 권한이 없습니다.");return true;}
         try{
             if(cmd.getName().equals("기증기록")){
-                if(a.length==3&&a[0].equals("초기화")&&a[2].equals("확인")){if(!a[1].equals("all")&&!a[1].matches("[a-z0-9_-]{1,64}"))throw new IllegalArgumentException();work(()->{store.reset(a[1]);return true;},v->sender.sendMessage("기증 기록을 초기화했습니다. 기숙사 점수는 유지됩니다."),sender::sendMessage);return true;}
+                if(a.length>=3&&a[0].equals("초기화")&&a[a.length-1].equals("확인")){String input=String.join(" ",Arrays.copyOfRange(a,1,a.length-1));String id=input.equals("all")?"all":resolveDonation(input);work(()->{store.reset(id);return true;},v->sender.sendMessage("기증 기록을 초기화했습니다. 기숙사 점수는 유지됩니다."),sender::sendMessage);return true;}
+                if(a.length>=2&&Set.of("상태","금지","해제").contains(a[0])){
+                    String id=resolveDonation(String.join(" ",Arrays.copyOfRange(a,1,a.length)));
+                    if(a[0].equals("상태")){work(()->true,ok->sender.sendMessage(spells.get(id).name()+" ("+id+"): "+(data.records().stream().anyMatch(record->record.spell().equals(id))?"기증 완료":"기증 기록 없음")+" · 기증 "+(data.blocked().contains(id)?"금지":"허용")),sender::sendMessage);}
+                    else work(()->{store.setBlocked(id,a[0].equals("금지"));return true;},ok->sender.sendMessage(spells.get(id).name()+" 기증 "+a[0]+" 완료. 기존 기록과 점수는 유지됩니다."),sender::sendMessage);
+                    return true;
+                }
                 if(a.length==1&&a[0].equals("reload")){loadCatalog();sender.sendMessage("기증 마법 설정을 다시 읽었습니다.");return true;}
-                sender.sendMessage("/기증기록 초기화 <all|마법ID> 확인 · /기증기록 reload");return true;
+                sender.sendMessage("/기증기록 초기화 <all|마법ID|한글명> 확인 · /기증기록 상태|금지|해제 <마법ID|한글명> · /기증기록 reload");return true;
             }
             if(a.length==2&&a[0].equals("초기화")&&a[1].equals("확인")){work(()->{store.resetPoints();return true;},v->sender.sendMessage("기숙사 점수만 초기화했습니다."),sender::sendMessage);return true;}
-            if(a.length==3&&a[0].equals("소속")){Player p=plugin.names().resolve(a[1]);int h=parseHouse(a[2]);if(p==null||h<0)throw new IllegalArgumentException();UUID id=p.getUniqueId();work(()->{store.house(id,h);return true;},v->{sender.sendMessage("소속 기숙사를 저장했습니다.");reply(p,new Request(SchoolProtocol.IDENTITY,0,0,""),"");},sender::sendMessage);return true;}
+            if(a.length==3&&a[0].equals("소속")){Player p=plugin.names().resolve(a[1]);int h=parseHouse(a[2]);if(p==null||h<0)throw new IllegalArgumentException();UUID id=p.getUniqueId();work(()->{store.house(id,h);return true;},v->{DiscoveryLink.signal(id,"dormitory.assigned",1);sender.sendMessage("소속 기숙사를 저장했습니다.");reply(p,new Request(SchoolProtocol.IDENTITY,0,0,""),"");},sender::sendMessage);return true;}
             if(a.length==3&&(a[0].equals("추가")||a[0].equals("설정"))){int h=parseHouse(a[1]);long value=Long.parseLong(a[2]);if(h<0||value < -SchoolStore.MAX_SCORE||value>SchoolStore.MAX_SCORE)throw new IllegalArgumentException();boolean set=a[0].equals("설정");work(()->{store.change(h,value,set);return true;},v->sender.sendMessage(SchoolProtocol.HOUSES.get(h)+" "+data.scores().get(h)+"점"),sender::sendMessage);return true;}
         }catch(Exception e){sender.sendMessage("입력값을 확인해 주세요. "+e.getMessage());return true;}
         sender.sendMessage("/기숙사점수 <추가|설정> <기숙사> <점수> · /기숙사점수 소속 <유저> <기숙사> · /기숙사점수 초기화 확인");return true;
     }
+    private String resolveDonation(String input){
+        if(spells.containsKey(input))return input;
+        var matches=spells.entrySet().stream().filter(e->e.getValue().name().replace(" ","").equals(input.replace(" ",""))).map(Map.Entry::getKey).toList();
+        if(matches.size()!=1)throw new IllegalArgumentException(matches.isEmpty()?"등록된 마법 이름 또는 ID를 입력해 주세요.":"이름이 중복됩니다. 마법 ID를 입력해 주세요.");
+        return matches.getFirst();
+    }
     static int parseHouse(String value){int h=SchoolProtocol.HOUSES.indexOf(value);return h>=0?h:List.of("arkeon","lumina","bestiaz","noxer").indexOf(value.toLowerCase(Locale.ROOT));}
-    public List<String> onTabComplete(CommandSender s,Command c,String label,String[] a){if(!s.hasPermission("magiccodex.school.admin"))return List.of();if(a.length==1)return c.getName().equals("기증기록")?List.of("초기화","reload"):List.of("추가","설정","소속","초기화");if(a.length==2&&(a[0].equals("추가")||a[0].equals("설정"))||a.length==3&&a[0].equals("소속"))return SchoolProtocol.HOUSES;return List.of();}
+    public List<String> onTabComplete(CommandSender s,Command c,String label,String[] a){
+        if(!s.hasPermission("magiccodex.school.admin")||a.length==0)return List.of();
+        if(c.getName().equals("기증기록")){
+            Collection<String> choices=List.of();
+            if(a.length==1)choices=List.of("초기화","상태","금지","해제","reload");
+            else if(a.length==2&&Set.of("초기화","상태","금지","해제").contains(a[0])){var names=new TreeSet<String>(spells.keySet());spells.values().forEach(v->names.add(v.name().replace(" ","")));if(a[0].equals("초기화"))names.add("all");choices=names;}
+            else if(a.length>=3&&a[0].equals("초기화"))choices=List.of("확인");
+            String prefix=a[a.length-1];return choices.stream().filter(v->v.startsWith(prefix)).sorted().toList();
+        }
+        if(a.length==1)return List.of("추가","설정","소속","초기화");
+        if(a.length==2&&(a[0].equals("추가")||a[0].equals("설정"))||a.length==3&&a[0].equals("소속"))return SchoolProtocol.HOUSES;return List.of();
+    }
     @EventHandler public void quit(PlayerQuitEvent e){limits.remove(e.getPlayer().getUniqueId());viewers.remove(e.getPlayer().getUniqueId());}
     @EventHandler public void join(PlayerJoinEvent e){if(shared)refreshShared();}
     public void close(){closing=true;if(expansion!=null)expansion.unregister();io.submit(()->{try{store.close();}catch(Exception e){plugin.getLogger().warning(e.toString());}});io.shutdown();try{if(!io.awaitTermination(20,TimeUnit.SECONDS))plugin.getLogger().severe("학교 DB 종료 대기시간 초과");}catch(InterruptedException e){Thread.currentThread().interrupt();}}
