@@ -2,11 +2,11 @@
 
 | # | id | 이름 | 대상 | 처리 | 내용 |
 |---|---|---|---|---|---|
-| 1 | feather_fall | feather fall | SELF | 미몹 기본 | 5초 천천히 낙하 |
+| 1 | feather_fall | feather fall | SELF | 미몹+애드온 | 5초 천천히 낙하 |
 | 2 | wind_basket | 바람바구니 | SELF | Bridge 유틸 | MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸) |
 | 3 | harvest_wind | 수확의 바람 | SELF | Bridge 유틸 | MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸) |
 | 4 | wind_push | 윈드 푸쉬 | ENTITY | 미몹+애드온 | 정면 몬스터 1체 약 4블록 밀기 |
-| 5 | light_leap | 상승기류 | SELF | 미몹 기본 | 위로 약 7블록, 착지 피해 완화 |
+| 5 | light_leap | 상승기류 | SELF | 미몹+애드온 | 위로 약 7블록, 착지 피해 완화 |
 | 6 | flight | 비행 | SELF | 미몹+애드온 | 10초 비행 (빗자루 탑승형은 추후 연동) |
 | 7 | far_touch | 손길 너머 | SELF | Bridge 유틸 | MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸) |
 | 9 | wind_message | 바람의 전언 | - | 보류 | Bridge가 직접 처리하는 귓속말 마법 |
@@ -63,8 +63,8 @@
 | 62 | incandescent_break | 파이어 스트라이크 | AIM | 미몹+애드온 | 짧은 레이저, 방패 5초 무력화 |
 | 63 | blue_bonfire | 푸른 화톳불 | - | 보류 | 마나 회복량 증가는 Bridge 마나 API 연동 필요 |
 | 64 | crimson_breath | 드래곤 브레스 | AIM | 미몹+애드온 | 1.5초 영창 후 부채꼴 브레스 5회 |
-| 65 | water_breath | 물결 숨결 | SELF | 미몹 기본 | 30초 수중 호흡 |
-| 66 | tide_stride | 물살 타기 | SELF | 미몹 기본 | 15초 수영 속도 |
+| 65 | water_breath | 물결 숨결 | SELF | 미몹+애드온 | 30초 수중 호흡 |
+| 66 | tide_stride | 물살 타기 | SELF | 미몹+애드온 | 15초 수영 속도 |
 | 67 | water_bolt | 물방울 탄환 | AIM | 미몹+애드온 | 약 1블록 밀치는 물 탄환 |
 | 68 | quench | 불길 씻기 | SELF | 미몹+애드온 | 자신의 불 끄기 |
 | 69 | purifying_wave | 정화의 물결 | SELF | 미몹+애드온 | 자신·아군 독/나약함/구속 해제 |
@@ -97,4 +97,4 @@
 | 97 | verdant_touch | 풍요의 손길 | SELF | 미몹+애드온 | 주변 밀·당근·감자 최대 8개 한 단계 성장 |
 | 98 | ore_whisper | 땅의 속삭임 | SELF | 미몹+애드온 | 광석 최대 3곳 5초 발광 표시 (시전자만 보임) |
 | 99 | pebble_toss | 조약돌 던지기 | AIM | 미몹+애드온 | 약한 조약돌 탄 |
-| 100 | miners_rhythm | 광부의 박자 | SELF | 미몹 기본 | 15초 성급함 |
+| 100 | miners_rhythm | 광부의 박자 | SELF | 미몹+애드온 | 15초 성급함 |
