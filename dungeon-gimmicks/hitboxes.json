@@ -1,0 +1,380 @@
+{
+  "gm_fire_brazier": {
+    "width": 0.8,
+    "height": 2.0,
+    "eye_height": 1.2,
+    "java": "EntityType.Builder.of(GmFireBrazierEntity::new, MobCategory.MONSTER).sized(0.8f, 2.0f).eyeHeight(1.2f)"
+  },
+  "gm_ice_seal": {
+    "width": 1.0,
+    "height": 1.6,
+    "eye_height": 1.0,
+    "java": "EntityType.Builder.of(GmIceSealEntity::new, MobCategory.MONSTER).sized(1.0f, 1.6f).eyeHeight(1.0f)"
+  },
+  "gm_wind_turbine": {
+    "width": 0.8,
+    "height": 2.6,
+    "eye_height": 2.0,
+    "java": "EntityType.Builder.of(GmWindTurbineEntity::new, MobCategory.MONSTER).sized(0.8f, 2.6f).eyeHeight(2.0f)"
+  },
+  "gm_wind_bell": {
+    "width": 1.2,
+    "height": 2.0,
+    "eye_height": 1.5,
+    "java": "EntityType.Builder.of(GmWindBellEntity::new, MobCategory.MONSTER).sized(1.2f, 2.0f).eyeHeight(1.5f)"
+  },
+  "gm_water_wheel": {
+    "width": 1.6,
+    "height": 1.8,
+    "eye_height": 1.0,
+    "java": "EntityType.Builder.of(GmWaterWheelEntity::new, MobCategory.MONSTER).sized(1.6f, 1.8f).eyeHeight(1.0f)"
+  },
+  "gm_water_pillar": {
+    "width": 0.8,
+    "height": 2.0,
+    "eye_height": 1.6,
+    "java": "EntityType.Builder.of(GmWaterPillarEntity::new, MobCategory.MONSTER).sized(0.8f, 2.0f).eyeHeight(1.6f)"
+  },
+  "gm_vine_pot": {
+    "width": 0.8,
+    "height": 2.8,
+    "eye_height": 0.9,
+    "java": "EntityType.Builder.of(GmVinePotEntity::new, MobCategory.MONSTER).sized(0.8f, 2.8f).eyeHeight(0.9f)"
+  },
+  "gm_pressure_plate": {
+    "width": 1.0,
+    "height": 0.2,
+    "eye_height": 0.1,
+    "java": "EntityType.Builder.of(GmPressurePlateEntity::new, MobCategory.MONSTER).sized(1.0f, 0.2f).eyeHeight(0.1f)"
+  },
+  "gm_light_receiver": {
+    "width": 0.8,
+    "height": 1.8,
+    "eye_height": 1.4,
+    "java": "EntityType.Builder.of(GmLightReceiverEntity::new, MobCategory.MONSTER).sized(0.8f, 1.8f).eyeHeight(1.4f)"
+  },
+  "gm_sundial": {
+    "width": 1.0,
+    "height": 0.6,
+    "eye_height": 0.4,
+    "java": "EntityType.Builder.of(GmSundialEntity::new, MobCategory.MONSTER).sized(1.0f, 0.6f).eyeHeight(0.4f)"
+  },
+  "gm_shadow_candelabra": {
+    "width": 0.8,
+    "height": 1.9,
+    "eye_height": 1.5,
+    "java": "EntityType.Builder.of(GmShadowCandelabraEntity::new, MobCategory.MONSTER).sized(0.8f, 1.9f).eyeHeight(1.5f)"
+  },
+  "gm_sleeping_statue": {
+    "width": 0.9,
+    "height": 1.8,
+    "eye_height": 1.5,
+    "java": "EntityType.Builder.of(GmSleepingStatueEntity::new, MobCategory.MONSTER).sized(0.9f, 1.8f).eyeHeight(1.5f)"
+  },
+  "gm_element_monument_fire": {
+    "width": 0.8,
+    "height": 2.4,
+    "eye_height": 1.6,
+    "java": "EntityType.Builder.of(GmElementMonumentFireEntity::new, MobCategory.MONSTER).sized(0.8f, 2.4f).eyeHeight(1.6f)"
+  },
+  "gm_element_monument_wind": {
+    "width": 0.8,
+    "height": 2.4,
+    "eye_height": 1.6,
+    "java": "EntityType.Builder.of(GmElementMonumentWindEntity::new, MobCategory.MONSTER).sized(0.8f, 2.4f).eyeHeight(1.6f)"
+  },
+  "gm_element_monument_water": {
+    "width": 0.8,
+    "height": 2.4,
+    "eye_height": 1.6,
+    "java": "EntityType.Builder.of(GmElementMonumentWaterEntity::new, MobCategory.MONSTER).sized(0.8f, 2.4f).eyeHeight(1.6f)"
+  },
+  "gm_element_monument_earth": {
+    "width": 0.8,
+    "height": 2.4,
+    "eye_height": 1.6,
+    "java": "EntityType.Builder.of(GmElementMonumentEarthEntity::new, MobCategory.MONSTER).sized(0.8f, 2.4f).eyeHeight(1.6f)"
+  },
+  "gm_element_monument_light": {
+    "width": 0.8,
+    "height": 2.4,
+    "eye_height": 1.6,
+    "java": "EntityType.Builder.of(GmElementMonumentLightEntity::new, MobCategory.MONSTER).sized(0.8f, 2.4f).eyeHeight(1.6f)"
+  },
+  "gm_element_monument_dark": {
+    "width": 0.8,
+    "height": 2.4,
+    "eye_height": 1.6,
+    "java": "EntityType.Builder.of(GmElementMonumentDarkEntity::new, MobCategory.MONSTER).sized(0.8f, 2.4f).eyeHeight(1.6f)"
+  },
+  "gm_switch_lever": {
+    "width": 0.7,
+    "height": 1.1,
+    "eye_height": 0.6,
+    "java": "EntityType.Builder.of(GmSwitchLeverEntity::new, MobCategory.MONSTER).sized(0.7f, 1.1f).eyeHeight(0.6f)"
+  },
+  "gm_rotary_dial": {
+    "width": 1.0,
+    "height": 1.0,
+    "eye_height": 0.5,
+    "java": "EntityType.Builder.of(GmRotaryDialEntity::new, MobCategory.MONSTER).sized(1.0f, 1.0f).eyeHeight(0.5f)"
+  },
+  "gm_conduit_straight": {
+    "width": 0.5,
+    "height": 0.4,
+    "eye_height": 0.2,
+    "java": "EntityType.Builder.of(GmConduitStraightEntity::new, MobCategory.MONSTER).sized(0.5f, 0.4f).eyeHeight(0.2f)"
+  },
+  "gm_conduit_corner": {
+    "width": 0.5,
+    "height": 0.4,
+    "eye_height": 0.2,
+    "java": "EntityType.Builder.of(GmConduitCornerEntity::new, MobCategory.MONSTER).sized(0.5f, 0.4f).eyeHeight(0.2f)"
+  },
+  "gm_conduit_tee": {
+    "width": 0.5,
+    "height": 0.4,
+    "eye_height": 0.2,
+    "java": "EntityType.Builder.of(GmConduitTeeEntity::new, MobCategory.MONSTER).sized(0.5f, 0.4f).eyeHeight(0.2f)"
+  },
+  "gm_mana_capacitor": {
+    "width": 0.9,
+    "height": 1.9,
+    "eye_height": 1.4,
+    "java": "EntityType.Builder.of(GmManaCapacitorEntity::new, MobCategory.MONSTER).sized(0.9f, 1.9f).eyeHeight(1.4f)"
+  },
+  "gm_logic_altar": {
+    "width": 1.0,
+    "height": 1.6,
+    "eye_height": 1.2,
+    "java": "EntityType.Builder.of(GmLogicAltarEntity::new, MobCategory.MONSTER).sized(1.0f, 1.6f).eyeHeight(1.2f)"
+  },
+  "gm_splitter_crystal": {
+    "width": 0.9,
+    "height": 1.7,
+    "eye_height": 1.2,
+    "java": "EntityType.Builder.of(GmSplitterCrystalEntity::new, MobCategory.MONSTER).sized(0.9f, 1.7f).eyeHeight(1.2f)"
+  },
+  "gm_rotating_mirror": {
+    "width": 0.9,
+    "height": 1.5,
+    "eye_height": 1.0,
+    "java": "EntityType.Builder.of(GmRotatingMirrorEntity::new, MobCategory.MONSTER).sized(0.9f, 1.5f).eyeHeight(1.0f)"
+  },
+  "gm_prism": {
+    "width": 0.8,
+    "height": 1.5,
+    "eye_height": 1.0,
+    "java": "EntityType.Builder.of(GmPrismEntity::new, MobCategory.MONSTER).sized(0.8f, 1.5f).eyeHeight(1.0f)"
+  },
+  "gm_teleport_gate": {
+    "width": 2.0,
+    "height": 3.2,
+    "eye_height": 1.6,
+    "java": "EntityType.Builder.of(GmTeleportGateEntity::new, MobCategory.MONSTER).sized(2.0f, 3.2f).eyeHeight(1.6f)"
+  },
+  "gm_seal_door": {
+    "width": 3.0,
+    "height": 4.0,
+    "eye_height": 2.0,
+    "java": "EntityType.Builder.of(GmSealDoorEntity::new, MobCategory.MONSTER).sized(3.0f, 4.0f).eyeHeight(2.0f)"
+  },
+  "gm_seal_door_small": {
+    "width": 2.0,
+    "height": 3.0,
+    "eye_height": 1.5,
+    "java": "EntityType.Builder.of(GmSealDoorSmallEntity::new, MobCategory.MONSTER).sized(2.0f, 3.0f).eyeHeight(1.5f)"
+  },
+  "gm_floating_platform": {
+    "width": 1.8,
+    "height": 0.6,
+    "eye_height": 0.4,
+    "java": "EntityType.Builder.of(GmFloatingPlatformEntity::new, MobCategory.MONSTER).sized(1.8f, 0.6f).eyeHeight(0.4f)"
+  },
+  "gm_rising_pillar": {
+    "width": 0.9,
+    "height": 3.0,
+    "eye_height": 2.8,
+    "java": "EntityType.Builder.of(GmRisingPillarEntity::new, MobCategory.MONSTER).sized(0.9f, 3.0f).eyeHeight(2.8f)"
+  },
+  "gm_sealed_chest_fire": {
+    "width": 0.9,
+    "height": 0.9,
+    "eye_height": 0.6,
+    "java": "EntityType.Builder.of(GmSealedChestFireEntity::new, MobCategory.MONSTER).sized(0.9f, 0.9f).eyeHeight(0.6f)"
+  },
+  "gm_sealed_chest_wind": {
+    "width": 0.9,
+    "height": 0.9,
+    "eye_height": 0.6,
+    "java": "EntityType.Builder.of(GmSealedChestWindEntity::new, MobCategory.MONSTER).sized(0.9f, 0.9f).eyeHeight(0.6f)"
+  },
+  "gm_sealed_chest_water": {
+    "width": 0.9,
+    "height": 0.9,
+    "eye_height": 0.6,
+    "java": "EntityType.Builder.of(GmSealedChestWaterEntity::new, MobCategory.MONSTER).sized(0.9f, 0.9f).eyeHeight(0.6f)"
+  },
+  "gm_sealed_chest_earth": {
+    "width": 0.9,
+    "height": 0.9,
+    "eye_height": 0.6,
+    "java": "EntityType.Builder.of(GmSealedChestEarthEntity::new, MobCategory.MONSTER).sized(0.9f, 0.9f).eyeHeight(0.6f)"
+  },
+  "gm_sealed_chest_light": {
+    "width": 0.9,
+    "height": 0.9,
+    "eye_height": 0.6,
+    "java": "EntityType.Builder.of(GmSealedChestLightEntity::new, MobCategory.MONSTER).sized(0.9f, 0.9f).eyeHeight(0.6f)"
+  },
+  "gm_sealed_chest_dark": {
+    "width": 0.9,
+    "height": 0.9,
+    "eye_height": 0.6,
+    "java": "EntityType.Builder.of(GmSealedChestDarkEntity::new, MobCategory.MONSTER).sized(0.9f, 0.9f).eyeHeight(0.6f)"
+  },
+  "gm_wind_vent": {
+    "width": 1.0,
+    "height": 0.3,
+    "eye_height": 0.2,
+    "java": "EntityType.Builder.of(GmWindVentEntity::new, MobCategory.MONSTER).sized(1.0f, 0.3f).eyeHeight(0.2f)"
+  },
+  "gm_sluice_gate": {
+    "width": 1.2,
+    "height": 1.6,
+    "eye_height": 1.0,
+    "java": "EntityType.Builder.of(GmSluiceGateEntity::new, MobCategory.MONSTER).sized(1.2f, 1.6f).eyeHeight(1.0f)"
+  },
+  "gm_light_bridge": {
+    "width": 1.0,
+    "height": 0.4,
+    "eye_height": 0.2,
+    "java": "EntityType.Builder.of(GmLightBridgeEntity::new, MobCategory.MONSTER).sized(1.0f, 0.4f).eyeHeight(0.2f)"
+  },
+  "gm_element_fragment_fire": {
+    "width": 0.5,
+    "height": 0.8,
+    "eye_height": 0.5,
+    "java": "EntityType.Builder.of(GmElementFragmentFireEntity::new, MobCategory.MONSTER).sized(0.5f, 0.8f).eyeHeight(0.5f)"
+  },
+  "gm_element_fragment_wind": {
+    "width": 0.5,
+    "height": 0.8,
+    "eye_height": 0.5,
+    "java": "EntityType.Builder.of(GmElementFragmentWindEntity::new, MobCategory.MONSTER).sized(0.5f, 0.8f).eyeHeight(0.5f)"
+  },
+  "gm_element_fragment_water": {
+    "width": 0.5,
+    "height": 0.8,
+    "eye_height": 0.5,
+    "java": "EntityType.Builder.of(GmElementFragmentWaterEntity::new, MobCategory.MONSTER).sized(0.5f, 0.8f).eyeHeight(0.5f)"
+  },
+  "gm_element_fragment_earth": {
+    "width": 0.5,
+    "height": 0.8,
+    "eye_height": 0.5,
+    "java": "EntityType.Builder.of(GmElementFragmentEarthEntity::new, MobCategory.MONSTER).sized(0.5f, 0.8f).eyeHeight(0.5f)"
+  },
+  "gm_element_fragment_light": {
+    "width": 0.5,
+    "height": 0.8,
+    "eye_height": 0.5,
+    "java": "EntityType.Builder.of(GmElementFragmentLightEntity::new, MobCategory.MONSTER).sized(0.5f, 0.8f).eyeHeight(0.5f)"
+  },
+  "gm_element_fragment_dark": {
+    "width": 0.5,
+    "height": 0.8,
+    "eye_height": 0.5,
+    "java": "EntityType.Builder.of(GmElementFragmentDarkEntity::new, MobCategory.MONSTER).sized(0.5f, 0.8f).eyeHeight(0.5f)"
+  },
+  "gm_fragment_altar": {
+    "width": 1.4,
+    "height": 1.4,
+    "eye_height": 1.0,
+    "java": "EntityType.Builder.of(GmFragmentAltarEntity::new, MobCategory.MONSTER).sized(1.4f, 1.4f).eyeHeight(1.0f)"
+  },
+  "gm_fragment_cache_fire": {
+    "width": 0.8,
+    "height": 0.9,
+    "eye_height": 0.6,
+    "java": "EntityType.Builder.of(GmFragmentCacheFireEntity::new, MobCategory.MONSTER).sized(0.8f, 0.9f).eyeHeight(0.6f)"
+  },
+  "gm_fragment_cache_wind": {
+    "width": 0.8,
+    "height": 0.9,
+    "eye_height": 0.6,
+    "java": "EntityType.Builder.of(GmFragmentCacheWindEntity::new, MobCategory.MONSTER).sized(0.8f, 0.9f).eyeHeight(0.6f)"
+  },
+  "gm_fragment_cache_water": {
+    "width": 0.8,
+    "height": 0.9,
+    "eye_height": 0.6,
+    "java": "EntityType.Builder.of(GmFragmentCacheWaterEntity::new, MobCategory.MONSTER).sized(0.8f, 0.9f).eyeHeight(0.6f)"
+  },
+  "gm_fragment_cache_earth": {
+    "width": 0.8,
+    "height": 0.9,
+    "eye_height": 0.6,
+    "java": "EntityType.Builder.of(GmFragmentCacheEarthEntity::new, MobCategory.MONSTER).sized(0.8f, 0.9f).eyeHeight(0.6f)"
+  },
+  "gm_fragment_cache_light": {
+    "width": 0.8,
+    "height": 0.9,
+    "eye_height": 0.6,
+    "java": "EntityType.Builder.of(GmFragmentCacheLightEntity::new, MobCategory.MONSTER).sized(0.8f, 0.9f).eyeHeight(0.6f)"
+  },
+  "gm_fragment_cache_dark": {
+    "width": 0.8,
+    "height": 0.9,
+    "eye_height": 0.6,
+    "java": "EntityType.Builder.of(GmFragmentCacheDarkEntity::new, MobCategory.MONSTER).sized(0.8f, 0.9f).eyeHeight(0.6f)"
+  },
+  "gm_broken_tablet": {
+    "width": 1.0,
+    "height": 1.6,
+    "eye_height": 1.2,
+    "java": "EntityType.Builder.of(GmBrokenTabletEntity::new, MobCategory.MONSTER).sized(1.0f, 1.6f).eyeHeight(1.2f)"
+  },
+  "gm_spirit_lantern": {
+    "width": 0.5,
+    "height": 0.9,
+    "eye_height": 0.6,
+    "java": "EntityType.Builder.of(GmSpiritLanternEntity::new, MobCategory.MONSTER).sized(0.5f, 0.9f).eyeHeight(0.6f)"
+  },
+  "gm_twin_resonance": {
+    "width": 0.8,
+    "height": 2.0,
+    "eye_height": 1.5,
+    "java": "EntityType.Builder.of(GmTwinResonanceEntity::new, MobCategory.MONSTER).sized(0.8f, 2.0f).eyeHeight(1.5f)"
+  },
+  "gm_steam_valve": {
+    "width": 1.0,
+    "height": 2.0,
+    "eye_height": 1.4,
+    "java": "EntityType.Builder.of(GmSteamValveEntity::new, MobCategory.MONSTER).sized(1.0f, 2.0f).eyeHeight(1.4f)"
+  },
+  "gm_balance_scale": {
+    "width": 1.0,
+    "height": 3.0,
+    "eye_height": 2.6,
+    "java": "EntityType.Builder.of(GmBalanceScaleEntity::new, MobCategory.MONSTER).sized(1.0f, 3.0f).eyeHeight(2.6f)"
+  },
+  "gm_chain_pillar": {
+    "width": 0.8,
+    "height": 1.8,
+    "eye_height": 1.3,
+    "java": "EntityType.Builder.of(GmChainPillarEntity::new, MobCategory.MONSTER).sized(0.8f, 1.8f).eyeHeight(1.3f)"
+  },
+  "gm_mirror_cage": {
+    "width": 1.2,
+    "height": 2.2,
+    "eye_height": 1.6,
+    "java": "EntityType.Builder.of(GmMirrorCageEntity::new, MobCategory.MONSTER).sized(1.2f, 2.2f).eyeHeight(1.6f)"
+  },
+  "gm_timed_door": {
+    "width": 2.0,
+    "height": 3.2,
+    "eye_height": 2.0,
+    "java": "EntityType.Builder.of(GmTimedDoorEntity::new, MobCategory.MONSTER).sized(2.0f, 3.2f).eyeHeight(2.0f)"
+  }
+}

@@ -1,0 +1,370 @@
+<title>차카데미 던전 기믹 도감</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: ruin-catalogue workbench — header strip, viewer + spec card side by side, category shelves of thumbnails below. Single dark theme by choice (models read best on dark stone). */
+:root{
+  --bg:#16171b; --stone:#202227; --stone-2:#2a2c33; --line:#3a3c45; --fg:#e9e4d8; --muted:#9d9789;
+  --brass:#d6aa50; --brass-dim:#8a6c33; --focus:#f0cf80;
+  --fire:#ff7a3c; --wind:#58d6b4; --water:#4b8fe8; --earth:#9fc04a; --light:#f6d66e; --dark:#a874e0; --mana:#6eaaff;
+  --display:"Gowun Batang", "Noto Serif KR", Georgia, serif;
+  --body:"IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Consolas, monospace;
+  color-scheme: dark;
+}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body);font-size:14px;line-height:1.55;padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;padding-block:28px 4px;border-bottom:1px solid var(--line)}
+header h1{font-family:var(--display);font-weight:700;font-size:clamp(26px,3.4vw,38px);line-height:1.15;margin:0;text-wrap:balance;letter-spacing:-.01em}
+header h1 small{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--brass);font-weight:400;margin-bottom:6px;text-transform:uppercase}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted);padding-bottom:6px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:9px;height:9px;border-radius:2px;transform:rotate(45deg);display:inline-block;flex:none}
+
+.bench{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){.bench{grid-template-columns:minmax(0,1fr)}}
+.stage{position:relative;background:radial-gradient(120% 90% at 50% 20%,#2b2d35 0%,#1b1c21 70%);border:1px solid var(--line);border-radius:6px;overflow:hidden;aspect-ratio:4/3;max-width:100%;touch-action:none}
+.stage canvas{display:block;width:100%;height:100%;cursor:grab}
+.stage canvas:active{cursor:grabbing}
+.stage-tools{position:absolute;left:10px;right:10px;bottom:10px;display:flex;flex-wrap:wrap;gap:6px;justify-content:space-between;pointer-events:none}
+.stage-tools>div{display:flex;gap:6px;pointer-events:auto;flex-wrap:wrap}
+.hint{position:absolute;top:10px;left:12px;font-size:11px;color:var(--muted);font-family:var(--mono);pointer-events:none}
+.toggle{font:500 12px var(--body);color:var(--fg);background:rgba(22,23,27,.82);border:1px solid var(--line);border-radius:4px;padding:5px 10px;cursor:pointer}
+.toggle[aria-pressed="true"]{border-color:var(--brass);color:var(--brass)}
+.toggle:focus-visible,.chip:focus-visible,.anim:focus-visible,.thumb:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+.spec{background:var(--stone);border:1px solid var(--line);border-radius:6px;padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.spec .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px}
+.spec h2{font-family:var(--display);font-size:26px;line-height:1.2;margin:0;text-wrap:balance}
+.spec p{margin:0;max-width:62ch}
+.idline{font-family:var(--mono);font-size:12px;color:var(--brass);display:flex;gap:8px;align-items:center;flex-wrap:wrap;word-break:break-all}
+.copy{font:500 11px var(--body);background:none;border:1px solid var(--line);color:var(--muted);border-radius:3px;padding:2px 7px;cursor:pointer}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.facts div{background:var(--stone-2);padding:8px 10px}
+.facts dt{font-size:11px;color:var(--muted)}
+.facts dd{margin:0;font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums}
+.sec-label{font-size:12px;color:var(--muted);margin-bottom:8px}
+.anims,.chips{display:flex;flex-wrap:wrap;gap:6px}
+.anim{font:500 13px var(--body);color:var(--fg);background:var(--stone-2);border:1px solid var(--line);border-radius:4px;padding:6px 11px;cursor:pointer;display:inline-flex;gap:6px;align-items:baseline}
+.anim small{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.anim[aria-pressed="true"]{background:var(--brass);border-color:var(--brass);color:#1a1408}
+.anim[aria-pressed="true"] small{color:#4a3a15}
+.chip{font:500 12px var(--body);color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:999px;padding:4px 11px 4px 9px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.chip[aria-pressed="true"]{border-color:var(--fg)}
+.animnote{font-size:12px;color:var(--muted);border-left:2px solid var(--brass-dim);padding-left:10px}
+
+.shelves{display:flex;flex-direction:column;gap:30px;width:100%}
+.shelf{display:flex;flex-direction:column;gap:12px}
+.shelf h3{font-family:var(--display);font-size:20px;margin:0;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.shelf h3 .tag{font-family:var(--mono);font-size:12px;color:var(--brass);letter-spacing:.08em}
+.shelf h3 .sub{font-family:var(--body);font-size:13px;color:var(--muted);font-weight:400}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.thumb{background:var(--stone);border:1px solid var(--line);border-radius:5px;padding:0;cursor:pointer;color:var(--fg);text-align:left;display:flex;flex-direction:column;overflow:hidden;font:inherit}
+.thumb:hover{border-color:var(--brass-dim)}
+.thumb[aria-current="true"]{border-color:var(--brass);box-shadow:0 0 0 1px var(--brass) inset}
+.thumb .pic{aspect-ratio:1/1;width:100%;background:radial-gradient(90% 80% at 50% 35%,#2b2d35,#1d1e23);display:grid;place-items:center}
+.thumb .pic img{width:100%;height:100%;object-fit:contain;image-rendering:auto}
+.thumb .cap{padding:7px 9px 9px;display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--line)}
+.thumb .cap b{font-weight:600;font-size:13px;display:flex;gap:6px;align-items:center}
+.thumb .cap span{font-family:var(--mono);font-size:10px;color:var(--muted);word-break:break-all}
+footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;max-width:80ch}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1><small>Chacademi · Dungeon gimmicks · bbmodel</small>차카데미 던전 기믹 도감</h1>
+    <div class="legend" id="legend"></div>
+  </header>
+
+  <section class="bench" aria-label="모델 뷰어">
+    <div class="stage" id="stage">
+      <canvas id="cv" aria-label="3D 모델 미리보기"></canvas>
+      <div class="hint">드래그 회전 · 휠/핀치 확대 · 격자 1칸 = 1블록</div>
+      <div class="stage-tools">
+        <div><button class="toggle" id="tSpin" aria-pressed="true">자동 회전</button><button class="toggle" id="tHit" aria-pressed="false">히트박스</button></div>
+        <div><button class="toggle" id="tReplay">다시 재생</button></div>
+      </div>
+    </div>
+    <aside class="spec" id="spec" aria-live="polite"></aside>
+  </section>
+
+  <div id="shelves" class="shelves"></div>
+
+  <footer>Blockbench Modded Entity(Box UV) 파일 미리보기입니다. 애니메이션은 이 페이지에서 근사 재생한 것이라 Blockbench나 게임 안과 보간이 조금 다를 수 있습니다. 히트박스는 파일 안에 숨김(눈 아이콘 꺼짐) 상태로 들어 있습니다.</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const DATA = __DATA__;
+const ELEMC = {fire:'#ff7a3c',wind:'#58d6b4',water:'#4b8fe8',earth:'#9fc04a',light:'#f6d66e',dark:'#a874e0',mana:'#6eaaff'};
+const ELEMK = {fire:'화염',wind:'바람',water:'물',earth:'대지',light:'빛',dark:'어둠',mana:'마력(무속성)'};
+const CATS = {A:['입력 장치','원소가 닿으면 켜진다'],B:['연결 장치','마력 회로로 장치를 잇는다'],C:['출력 장치','작동 결과가 나타난다'],D:['조각 · 수집형','모으고 끼워서 푼다'],E:['협동 전용','둘이 함께해야 풀린다']};
+const ANIMK = {spawn:'등장',idle:'대기',activate:'작동',active:'작동 중',deactivate:'해제',pickup:'획득',extinguish:'꺼짐',relight:'재점화',turn:'한 칸 회전',hit:'한쪽만 맞음',fire_in:'불 투입',water_in:'물 투입',tilt_left:'왼쪽 기울기',tilt_right:'오른쪽 기울기',
+  point_n:'북 가리킴',point_e:'동 가리킴',point_s:'남 가리킴',point_w:'서 가리킴'};
+function animLabel(n){ if(ANIMK[n]) return ANIMK[n];
+  let m; if((m=n.match(/^level_(\d)$/))) return `수위 ${m[1]}단계`; if((m=n.match(/^(pos|rot)_(\d)$/))) return `방향 ${m[2]}`;
+  if((m=n.match(/^in_(\d)$/))) return `입력 ${m[1]} 점등`; if((m=n.match(/^place_(\d)$/))) return `조각 ${m[1]} 끼움`;
+  if((m=n.match(/^insert_(\w+)$/))) return `${ELEMK[m[1]]} 조각 장착`; return n; }
+
+// group index by base
+const groups = []; const byBase = {};
+for (const it of DATA.index){ if(!byBase[it.base]){ byBase[it.base]={base:it.base,cat:it.cat,items:[]}; groups.push(byBase[it.base]); } byBase[it.base].items.push(it); }
+
+// ---------- three.js scene ----------
+const cv = document.getElementById('cv');
+const renderer = new THREE.WebGLRenderer({canvas:cv, antialias:true, alpha:true, preserveDrawingBuffer:true});
+renderer.setPixelRatio(Math.min(2, window.devicePixelRatio||1));
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(32, 4/3, 0.5, 2000);
+const world = new THREE.Group(); scene.add(world);
+// floor grid: 1 block = 16px
+function makeGrid(n){
+  const g=new THREE.Group(); const mat=new THREE.LineBasicMaterial({color:0x4a4c56,transparent:true,opacity:.55});
+  const pts=[]; const h=n*16/2;
+  for(let i=-n/2;i<=n/2;i++){ pts.push(i*16,0,-h, i*16,0,h, -h,0,i*16, h,0,i*16); }
+  const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.Float32BufferAttribute(pts,3));
+  g.add(new THREE.LineSegments(geo,mat)); return g;
+}
+let grid = makeGrid(6); scene.add(grid);
+
+const FACE_SHADE={north:1,south:.78,east:.88,west:.88,up:1.08,down:.62};
+const texCache = {};
+function loadTex(id){
+  if(texCache[id]) return texCache[id];
+  const m=DATA.models[id]; const img=new Image();
+  const p=new Promise(res=>{ img.onload=()=>{
+      const c=document.createElement('canvas'); c.width=m.W; c.height=m.H; const x=c.getContext('2d'); x.drawImage(img,0,0);
+      const t=new THREE.CanvasTexture(c); t.magFilter=THREE.NearestFilter; t.minFilter=THREE.NearestFilter; t.flipY=false; t.generateMipmaps=false;
+      res({tex:t, px:x.getImageData(0,0,m.W,m.H).data, W:m.W, H:m.H}); };
+    img.src=m.tex; });
+  texCache[id]=p; return p;
+}
+function faceAlpha(T,x1,y1,x2,y2){ // 0 = fully transparent, 1 = opaque, 2 = translucent
+  let op=false,tr=false;
+  for(let y=y1;y<y2;y++) for(let x=x1;x<x2;x++){ const a=T.px[(y*T.W+x)*4+3]; if(a>=250) op=true; else if(a>=10) tr=true; }
+  return tr?2:(op?1:0);
+}
+function buildModel(id, T){
+  const m=DATA.models[id];
+  const buckets={1:{p:[],u:[],c:[],i:[]},2:{p:[],u:[],c:[],i:[]}};
+  const bones={}; // name -> {obj, pos, rot}
+  function cube(e, parent, pOrigin){
+    const [frm,to,rot,org,inf,faces]=e;
+    const o=new THREE.Object3D(); o.position.set(org[0]-pOrigin[0],org[1]-pOrigin[1],org[2]-pOrigin[2]);
+    o.rotation.set(...rot.map(v=>v*Math.PI/180),'ZYX'); parent.add(o);
+    const X0=frm[0]-inf-org[0],Y0=frm[1]-inf-org[1],Z0=frm[2]-inf-org[2],X1=to[0]+inf-org[0],Y1=to[1]+inf-org[1],Z1=to[2]+inf-org[2];
+    const P={north:[[X1,Y1,Z0],[X0,Y1,Z0],[X1,Y0,Z0]],south:[[X0,Y1,Z1],[X1,Y1,Z1],[X0,Y0,Z1]],east:[[X1,Y1,Z1],[X1,Y1,Z0],[X1,Y0,Z1]],
+             west:[[X0,Y1,Z0],[X0,Y1,Z1],[X0,Y0,Z0]],up:[[X1,Y1,Z1],[X0,Y1,Z1],[X1,Y1,Z0]],down:[[X1,Y0,Z0],[X0,Y0,Z0],[X1,Y0,Z1]]};
+    const local={1:{p:[],u:[],c:[],i:[]},2:{p:[],u:[],c:[],i:[]}};
+    for(const f in faces){
+      const uv=faces[f]; const x1=Math.min(uv[0],uv[2]),x2=Math.max(uv[0],uv[2]),y1=Math.min(uv[1],uv[3]),y2=Math.max(uv[1],uv[3]);
+      if(x2<=x1||y2<=y1) continue;
+      const k=faceAlpha(T,x1,y1,x2,y2); if(!k) continue;
+      const [c0,cu,cv_]=P[f]; const c3=[cu[0]+cv_[0]-c0[0],cu[1]+cv_[1]-c0[1],cu[2]+cv_[2]-c0[2]];
+      const B=local[k]; const base=B.p.length/3;
+      B.p.push(...c0,...cu,...c3,...cv_);
+      B.u.push(x1/T.W,y1/T.H, x2/T.W,y1/T.H, x2/T.W,y2/T.H, x1/T.W,y2/T.H);
+      const s=FACE_SHADE[f]; for(let q=0;q<4;q++) B.c.push(s,s,s);
+      B.i.push(base,base+1,base+2, base,base+2,base+3);
+    }
+    for(const k of [1,2]){ const B=local[k]; if(!B.i.length) continue;
+      const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(B.p,3));
+      g.setAttribute('uv',new THREE.Float32BufferAttribute(B.u,2)); g.setAttribute('color',new THREE.Float32BufferAttribute(B.c,3)); g.setIndex(B.i);
+      const mesh=new THREE.Mesh(g,k===1?T.matO:T.matT); if(k===2) mesh.renderOrder=2; o.add(mesh); }
+  }
+  function group(node,parent,pOrigin){
+    const [name,org,rot,kids]=node;
+    const o=new THREE.Object3D(); const pos=[org[0]-pOrigin[0],org[1]-pOrigin[1],org[2]-pOrigin[2]];
+    o.position.set(...pos); o.rotation.set(...rot.map(v=>v*Math.PI/180),'ZYX'); parent.add(o);
+    bones[name]={obj:o,pos,rot};
+    for(const c of kids){ if(typeof c[0]==='string') group(c,o,org); else cube(c,o,org); }
+  }
+  const root=new THREE.Group();
+  group(m.root,root,[0,0,0]);
+  return {root,bones};
+}
+function mats(T){
+  if(!T.matO){
+    T.matO=new THREE.MeshBasicMaterial({map:T.tex,vertexColors:true,side:THREE.DoubleSide,alphaTest:.05,transparent:false});
+    T.matT=new THREE.MeshBasicMaterial({map:T.tex,vertexColors:true,side:THREE.DoubleSide,transparent:true,depthWrite:false,alphaTest:.02});
+  }
+  return T;
+}
+// ---------- animation sampling ----------
+function sample(keys,t){
+  if(!keys.length) return null;
+  if(t<=keys[0][1]) return keys[0].slice(2,5);
+  for(let i=0;i<keys.length-1;i++){
+    const a=keys[i],b=keys[i+1];
+    if(t<=b[1]){
+      const f=(t-a[1])/Math.max(1e-6,b[1]-a[1]);
+      if(b[5]==='c'||a[5]==='c'){ const p0=keys[Math.max(0,i-1)],p3=keys[Math.min(keys.length-1,i+2)]; const out=[];
+        for(let j=2;j<5;j++){ const P0=p0[j],P1=a[j],P2=b[j],P3=p3[j]; const t2=f*f,t3=t2*f;
+          out.push(.5*((2*P1)+(-P0+P2)*f+(2*P0-5*P1+4*P2-P3)*t2+(-P0+3*P1-3*P2+P3)*t3)); } return out; }
+      if(b[5]==='s') return a.slice(2,5);
+      return [a[2]+(b[2]-a[2])*f,a[3]+(b[3]-a[3])*f,a[4]+(b[4]-a[4])*f];
+    }
+  }
+  return keys[keys.length-1].slice(2,5);
+}
+function applyAnim(M,anim,t){
+  const D=Math.PI/180;
+  for(const n in M.bones){ const b=M.bones[n]; b.obj.position.set(...b.pos); b.obj.rotation.set(b.rot[0]*D,b.rot[1]*D,b.rot[2]*D,'ZYX'); b.obj.scale.set(1,1,1); }
+  if(!anim) return;
+  const tracks=anim[3];
+  for(const n in tracks){ const b=M.bones[n]; if(!b) continue;
+    const ks=tracks[n]; const R=ks.filter(k=>k[0]==='r'),P=ks.filter(k=>k[0]==='p'),S=ks.filter(k=>k[0]==='s');
+    const r=sample(R,t), p=sample(P,t), s=sample(S,t);
+    if(r) b.obj.rotation.set((b.rot[0]-r[0])*D,(b.rot[1]-r[1])*D,(b.rot[2]+r[2])*D,'ZYX');
+    if(p) b.obj.position.set(b.pos[0]-p[0],b.pos[1]+p[1],b.pos[2]+p[2]);
+    if(s) b.obj.scale.set(Math.max(1e-4,s[0]),Math.max(1e-4,s[1]),Math.max(1e-4,s[2]));
+  }
+}
+function bboxOf(obj){ obj.updateMatrixWorld(true); return new THREE.Box3().setFromObject(obj); }
+
+// ---------- viewer state ----------
+const state={id:null, M:null, anim:null, t0:0, spin:true, yaw:-0.6, pitch:0.42, dist:1, auto:true, hit:false, hitObj:null};
+function frame(box){
+  const size=new THREE.Vector3(); box.getSize(size); const c=new THREE.Vector3(); box.getCenter(c);
+  const r=Math.max(size.x,size.y*1.05,size.z,14)*0.5;
+  state.target=c; state.baseDist=r/Math.tan(camera.fov*Math.PI/360)*1.55; state.dist=state.baseDist;
+}
+function placeCamera(){
+  const t=state.target||new THREE.Vector3(0,8,0); const d=state.dist;
+  camera.position.set(t.x+d*Math.cos(state.pitch)*Math.sin(state.yaw), t.y+d*Math.sin(state.pitch), t.z-d*Math.cos(state.pitch)*Math.cos(state.yaw));
+  camera.lookAt(t);
+}
+function resize(){ const r=cv.getBoundingClientRect(); renderer.setSize(r.width,r.height,false); camera.aspect=r.width/Math.max(1,r.height); camera.updateProjectionMatrix(); }
+new ResizeObserver(resize).observe(cv);
+
+function hitboxLines(id){
+  const hb=DATA.models[id].hb; if(!hb) return null;
+  const g=new THREE.BoxGeometry(hb[1][0]-hb[0][0],hb[1][1]-hb[0][1],hb[1][2]-hb[0][2]);
+  const l=new THREE.LineSegments(new THREE.EdgesGeometry(g),new THREE.LineBasicMaterial({color:0xff5a4a}));
+  l.position.set((hb[0][0]+hb[1][0])/2,(hb[0][1]+hb[1][1])/2,(hb[0][2]+hb[1][2])/2); return l;
+}
+
+async function show(id, keepView){
+  const T=mats(await loadTex(id));
+  const M=buildModel(id,T);
+  world.clear(); world.add(M.root); state.M=M; state.id=id;
+  const m=DATA.models[id];
+  applyAnim(M,null,0);
+  if(!keepView){ frame(bboxOf(M.root)); }
+  scene.remove(grid); const span=Math.ceil(Math.max(4,(bboxOf(M.root).getSize(new THREE.Vector3()).x)/16+3)); grid=makeGrid(span%2?span+1:span); scene.add(grid);
+  if(state.hitObj) world.remove(state.hitObj); state.hitObj=hitboxLines(id); if(state.hitObj){ state.hitObj.visible=state.hit; world.add(state.hitObj); }
+  const pref=['active','idle'];
+  const a=m.anims.find(a=>a[0]==='activate')||m.anims.find(a=>a[0]==='idle');
+  playAnim(a?a[0]:null);
+  renderSpec(id);
+  document.querySelectorAll('.thumb').forEach(b=>b.setAttribute('aria-current', b.dataset.base===byId[id].base?'true':'false'));
+  try{ localStorage.setItem('gm_last',id); }catch(e){}
+}
+function playAnim(name){
+  const m=DATA.models[state.id]; state.anim=m.anims.find(a=>a[0]===name)||null; state.t0=performance.now();
+  document.querySelectorAll('.anim').forEach(b=>b.setAttribute('aria-pressed',b.dataset.a===name?'true':'false'));
+}
+// chain: once/hold anims that end in a state roll into the matching loop after a pause
+const NEXT={activate:'active',deactivate:'idle',spawn:'idle'};
+function tick(now){
+  if(state.M){
+    let t=0;
+    if(state.anim){ const L=state.anim[1]; const el=(now-state.t0)/1000;
+      if(state.anim[2]==='loop') t=el%L; else { t=Math.min(el,L);
+        if(el>L+1.2 && NEXT[state.anim[0]] && DATA.models[state.id].anims.find(a=>a[0]===NEXT[state.anim[0]])) playAnim(NEXT[state.anim[0]]); } }
+    applyAnim(state.M,state.anim,t);
+  }
+  if(state.spin && !drag) state.yaw+=0.004;
+  placeCamera(); renderer.render(scene,camera); requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+// pointer orbit
+let drag=null; const pts=new Map();
+cv.addEventListener('pointerdown',e=>{ cv.setPointerCapture(e.pointerId); pts.set(e.pointerId,[e.clientX,e.clientY]); drag={x:e.clientX,y:e.clientY}; });
+cv.addEventListener('pointermove',e=>{ if(!pts.has(e.pointerId)) return; const prev=pts.get(e.pointerId); pts.set(e.pointerId,[e.clientX,e.clientY]);
+  if(pts.size===2){ const [a,b]=[...pts.values()]; const d=Math.hypot(a[0]-b[0],a[1]-b[1]); if(drag.pd) zoom(drag.pd/d); drag.pd=d; return; }
+  state.yaw+=(e.clientX-prev[0])*0.01; state.pitch=Math.max(-0.2,Math.min(1.35,state.pitch+(e.clientY-prev[1])*0.01)); });
+const end=e=>{ pts.delete(e.pointerId); if(!pts.size) drag=null; else if(drag) drag.pd=null; };
+cv.addEventListener('pointerup',end); cv.addEventListener('pointercancel',end);
+function zoom(f){ state.dist=Math.max(state.baseDist*.35,Math.min(state.baseDist*3,state.dist*f)); }
+cv.addEventListener('wheel',e=>{ e.preventDefault(); zoom(e.deltaY>0?1.1:0.9); },{passive:false});
+
+const tSpin=document.getElementById('tSpin'), tHit=document.getElementById('tHit');
+tSpin.onclick=()=>{ state.spin=!state.spin; tSpin.setAttribute('aria-pressed',state.spin); };
+tHit.onclick=()=>{ state.hit=!state.hit; tHit.setAttribute('aria-pressed',state.hit); if(state.hitObj) state.hitObj.visible=state.hit; };
+document.getElementById('tReplay').onclick=()=>{ if(state.anim) playAnim(state.anim[0]); };
+
+// ---------- spec panel ----------
+const byId={}; DATA.index.forEach(it=>byId[it.id]=it);
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function renderSpec(id){
+  const it=byId[id], m=DATA.models[id], g=byBase[it.base];
+  const box=bboxOf(state.M.root); const s=box.getSize(new THREE.Vector3());
+  const hb=m.hb?`${((m.hb[1][0]-m.hb[0][0])/16).toFixed(1)} × ${((m.hb[1][1]-m.hb[0][1])/16).toFixed(1)}`:'–';
+  const name=g.items.length>1?it.ko.replace(/\s*\(.+?\)$/,''):it.ko;
+  const spec=document.getElementById('spec');
+  spec.innerHTML=`
+    <div class="eyebrow"><span class="dot" style="background:${ELEMC[it.elem]}"></span>${it.cat} · ${CATS[it.cat][0]} · ${ELEMK[it.elem]}</div>
+    <h2>${esc(name)}</h2>
+    <div class="idline"><span id="idtxt">${id}.bbmodel</span><button class="copy" id="cp">복사</button></div>
+    <p>${esc(it.desc)}</p>
+    <dl class="facts">
+      <div><dt>크기 (블록)</dt><dd>${(s.x/16).toFixed(1)} × ${(s.y/16).toFixed(1)} × ${(s.z/16).toFixed(1)}</dd></div>
+      <div><dt>히트박스 폭×높이</dt><dd>${hb}</dd></div>
+      <div><dt>큐브 / 텍스처</dt><dd>${m.n} / ${m.W}×${m.H}</dd></div>
+    </dl>
+    ${g.items.length>1?`<div><div class="sec-label">속성 변형 (모양 동일, 텍스처만 다름)</div><div class="chips">${g.items.map(v=>`<button class="chip" data-id="${v.id}" aria-pressed="${v.id===id}"><span class="dot" style="background:${ELEMC[v.elem]}"></span>${ELEMK[v.elem]}</button>`).join('')}</div></div>`:''}
+    <div><div class="sec-label">애니메이션</div><div class="anims">${m.anims.map(a=>`<button class="anim" data-a="${a[0]}"><span>${animLabel(a[0])}</span><small>${a[0]}</small></button>`).join('')}</div></div>
+    <div class="animnote">${esc(it.anims)}</div>`;
+  spec.querySelectorAll('.anim').forEach(b=>b.onclick=()=>playAnim(b.dataset.a));
+  spec.querySelectorAll('.chip').forEach(b=>b.onclick=()=>show(b.dataset.id,true));
+  document.querySelectorAll('.anim').forEach(b=>b.setAttribute('aria-pressed',state.anim&&b.dataset.a===state.anim[0]?'true':'false'));
+  document.getElementById('cp').onclick=async()=>{ const t=`${id}.bbmodel`; try{ await navigator.clipboard.writeText(t); document.getElementById('cp').textContent='복사됨'; }
+    catch(e){ const r=document.createRange(); r.selectNodeContents(document.getElementById('idtxt')); const s=getSelection(); s.removeAllRanges(); s.addRange(r); } };
+}
+
+// ---------- legend & shelves ----------
+document.getElementById('legend').innerHTML=Object.keys(ELEMK).map(k=>`<span><i class="dot" style="background:${ELEMC[k]}"></i>${ELEMK[k]}</span>`).join('');
+const shelves=document.getElementById('shelves');
+for(const c of Object.keys(CATS)){
+  const gs=groups.filter(g=>g.cat===c); if(!gs.length) continue;
+  const sec=document.createElement('section'); sec.className='shelf';
+  sec.innerHTML=`<h3><span class="tag">${c}</span>${CATS[c][0]}<span class="sub">${CATS[c][1]} · ${gs.length}종</span></h3><div class="grid"></div>`;
+  const grid_=sec.querySelector('.grid');
+  for(const g of gs){
+    const it=g.items[0]; const b=document.createElement('button'); b.className='thumb'; b.dataset.base=g.base; b.dataset.id=it.id;
+    const nm=g.items.length>1?it.ko.replace(/\s*\(.+?\)$/,''):it.ko;
+    const el=g.items.length>1?g.items.map(v=>`<i class="dot" style="background:${ELEMC[v.elem]};width:7px;height:7px"></i>`).join(''):`<i class="dot" style="background:${ELEMC[it.elem]}"></i>`;
+    b.innerHTML=`<div class="pic"><img alt="${esc(nm)}" data-thumb="${it.id}"></div><div class="cap"><b>${esc(nm)}</b><span>${g.base}${g.items.length>1?' · 6속성':''}</span><span style="display:flex;gap:4px">${el}</span></div>`;
+    b.onclick=()=>{ show(it.id); document.getElementById('stage').scrollIntoView({behavior:'smooth',block:'nearest'}); };
+    grid_.appendChild(b);
+  }
+  shelves.appendChild(sec);
+}
+
+// ---------- thumbnails (offscreen render) ----------
+async function makeThumbs(){
+  const c=document.createElement('canvas'); c.width=300; c.height=300;
+  const r=new THREE.WebGLRenderer({canvas:c,antialias:true,alpha:true,preserveDrawingBuffer:true});
+  const sc=new THREE.Scene(); const cam=new THREE.PerspectiveCamera(30,1,.5,2000);
+  for(const img of document.querySelectorAll('img[data-thumb]')){
+    const id=img.dataset.thumb; const T=mats(await loadTex(id)); const M=buildModel(id,T);
+    const m=DATA.models[id]; const a=m.anims.find(a=>a[0]==='active')||m.anims.find(a=>a[0]==='idle');
+    applyAnim(M,null,0);
+    sc.clear(); sc.add(M.root);
+    const box=bboxOf(M.root); const s=box.getSize(new THREE.Vector3()), ctr=box.getCenter(new THREE.Vector3());
+    const rad=Math.max(s.x,s.y,s.z)*0.62; const d=rad/Math.tan(15*Math.PI/180);
+    cam.position.set(ctr.x+d*Math.cos(.42)*Math.sin(-.6),ctr.y+d*Math.sin(.42),ctr.z-d*Math.cos(.42)*Math.cos(-.6)); cam.lookAt(ctr);
+    r.render(sc,cam); img.src=c.toDataURL('image/png');
+    await new Promise(res=>setTimeout(res,0));
+  }
+  r.dispose();
+}
+
+let start='gm_fire_brazier'; try{ const s=localStorage.getItem('gm_last'); if(s&&DATA.models[s]) start=s; }catch(e){}
+resize(); show(start).then(makeThumbs);
+</script>

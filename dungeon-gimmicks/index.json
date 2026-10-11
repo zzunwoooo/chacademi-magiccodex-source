@@ -1,0 +1,569 @@
+[
+ {
+  "id": "gm_fire_brazier",
+  "base": "gm_fire_brazier",
+  "ko": "원소 화로",
+  "cat": "A",
+  "elem": "fire",
+  "desc": "불 속성이 닿으면 점화되어 회로에 마력을 보낸다. 물·바람이 닿으면 꺼진다.",
+  "anims": "idle=꺼짐 / activate=점화 / active=타오름 / deactivate=소화"
+ },
+ {
+  "id": "gm_ice_seal",
+  "base": "gm_ice_seal",
+  "ko": "얼음 봉인 결정",
+  "cat": "A",
+  "elem": "fire",
+  "desc": "불로 얼음을 녹이면 안에 봉인된 원소 조각이 드러나 떠오른다.",
+  "anims": "idle=봉인 / activate=녹으며 개방 / active=조각 부유"
+ },
+ {
+  "id": "gm_wind_turbine",
+  "base": "gm_wind_turbine",
+  "ko": "풍차 터빈",
+  "cat": "A",
+  "elem": "wind",
+  "desc": "바람이 닿으면 날개가 돌고, 도는 동안만 회로에 마력을 공급한다.",
+  "anims": "idle=멈춤(흔들림) / activate=가동 / active=회전 / deactivate=감속"
+ },
+ {
+  "id": "gm_wind_bell",
+  "base": "gm_wind_bell",
+  "ko": "바람 종",
+  "cat": "A",
+  "elem": "wind",
+  "desc": "바람으로 울리면 음 하나가 남는다. 여러 개를 두고 정해진 순서대로 울리는 퍼즐용.",
+  "anims": "idle=정지 / activate=울림(흔들림) / active=잔향 흔들림"
+ },
+ {
+  "id": "gm_water_wheel",
+  "base": "gm_water_wheel",
+  "ko": "물레방아",
+  "cat": "A",
+  "elem": "water",
+  "desc": "물이 닿거나 흐르면 바퀴가 돌며 마력을 만든다. 물길 수문과 연쇄 가능.",
+  "anims": "idle=정지 / activate=돌기 시작 / active=회전 / deactivate=멈춤"
+ },
+ {
+  "id": "gm_water_pillar",
+  "base": "gm_water_pillar",
+  "ko": "수위 기둥",
+  "cat": "A",
+  "elem": "water",
+  "desc": "물을 넣을 때마다 수위가 한 칸씩 오른다. 정해진 높이에서 작동.",
+  "anims": "idle=비어 있음 / level_1~3=단계 수위 / activate=가득 참 / active=출렁임"
+ },
+ {
+  "id": "gm_vine_pot",
+  "base": "gm_vine_pot",
+  "ko": "씨앗 화분",
+  "cat": "A",
+  "elem": "earth",
+  "desc": "대지 속성이 닿으면 덩굴이 위로 자라 사다리가 된다.",
+  "anims": "idle=새싹 / activate=덩굴 성장 / active=잎 흔들림 / deactivate=시듦"
+ },
+ {
+  "id": "gm_pressure_plate",
+  "base": "gm_pressure_plate",
+  "ko": "대지 압력판",
+  "cat": "A",
+  "elem": "earth",
+  "desc": "무거운 물체나 대지 속성이 올라가 있는 동안만 작동한다.",
+  "anims": "idle=올라옴 / activate=눌림 / active=눌린 상태 / deactivate=복귀"
+ },
+ {
+  "id": "gm_light_receiver",
+  "base": "gm_light_receiver",
+  "ko": "빛 수신 수정",
+  "cat": "A",
+  "elem": "light",
+  "desc": "빛이 닿으면 발톱 받침이 열리고 수정이 떠올라 회전한다. 색 지정 퍼즐용.",
+  "anims": "idle=잠듦 / activate=개방 / active=회전 / deactivate=닫힘"
+ },
+ {
+  "id": "gm_sundial",
+  "base": "gm_sundial",
+  "ko": "해시계 석판",
+  "cat": "A",
+  "elem": "light",
+  "desc": "빛 방향에 따라 바늘이 다른 문양을 가리킨다. 다른 퍼즐의 힌트 장치.",
+  "anims": "idle=정지 / point_n·e·s·w=방향 가리키기 / activate=정답 발광"
+ },
+ {
+  "id": "gm_shadow_candelabra",
+  "base": "gm_shadow_candelabra",
+  "ko": "그림자 촛대",
+  "cat": "A",
+  "elem": "dark",
+  "desc": "어둠이 닿으면 불이 꺼지면서 작동한다(불 퍼즐의 반대). 중앙의 눈이 열린다.",
+  "anims": "idle=촛불 켜짐 / activate=소등·눈 발광 / active=눈 맥동 / deactivate=재점화"
+ },
+ {
+  "id": "gm_sleeping_statue",
+  "base": "gm_sleeping_statue",
+  "ko": "잠든 석상",
+  "cat": "A",
+  "elem": "dark",
+  "desc": "어둠을 먹이면 눈을 뜨고 고개를 돌려 숨겨진 길을 바라본다(힌트 장치).",
+  "anims": "idle=잠듦 / activate=눈 뜨고 고개 돌림 / active=눈 맥동 / deactivate=다시 잠듦"
+ },
+ {
+  "id": "gm_element_monument_fire",
+  "base": "gm_element_monument",
+  "ko": "원소 비석 (화염)",
+  "cat": "A",
+  "elem": "fire",
+  "desc": "같은 속성이 닿아야 작동하는 오벨리스크. 6속성 텍스처 변형(모양 동일).",
+  "anims": "idle=문양 부유 / activate=문양 각성 / active=빠른 회전 / deactivate=잠잠해짐"
+ },
+ {
+  "id": "gm_element_monument_wind",
+  "base": "gm_element_monument",
+  "ko": "원소 비석 (바람)",
+  "cat": "A",
+  "elem": "wind",
+  "desc": "같은 속성이 닿아야 작동하는 오벨리스크. 6속성 텍스처 변형(모양 동일).",
+  "anims": "idle=문양 부유 / activate=문양 각성 / active=빠른 회전 / deactivate=잠잠해짐"
+ },
+ {
+  "id": "gm_element_monument_water",
+  "base": "gm_element_monument",
+  "ko": "원소 비석 (물)",
+  "cat": "A",
+  "elem": "water",
+  "desc": "같은 속성이 닿아야 작동하는 오벨리스크. 6속성 텍스처 변형(모양 동일).",
+  "anims": "idle=문양 부유 / activate=문양 각성 / active=빠른 회전 / deactivate=잠잠해짐"
+ },
+ {
+  "id": "gm_element_monument_earth",
+  "base": "gm_element_monument",
+  "ko": "원소 비석 (대지)",
+  "cat": "A",
+  "elem": "earth",
+  "desc": "같은 속성이 닿아야 작동하는 오벨리스크. 6속성 텍스처 변형(모양 동일).",
+  "anims": "idle=문양 부유 / activate=문양 각성 / active=빠른 회전 / deactivate=잠잠해짐"
+ },
+ {
+  "id": "gm_element_monument_light",
+  "base": "gm_element_monument",
+  "ko": "원소 비석 (빛)",
+  "cat": "A",
+  "elem": "light",
+  "desc": "같은 속성이 닿아야 작동하는 오벨리스크. 6속성 텍스처 변형(모양 동일).",
+  "anims": "idle=문양 부유 / activate=문양 각성 / active=빠른 회전 / deactivate=잠잠해짐"
+ },
+ {
+  "id": "gm_element_monument_dark",
+  "base": "gm_element_monument",
+  "ko": "원소 비석 (어둠)",
+  "cat": "A",
+  "elem": "dark",
+  "desc": "같은 속성이 닿아야 작동하는 오벨리스크. 6속성 텍스처 변형(모양 동일).",
+  "anims": "idle=문양 부유 / activate=문양 각성 / active=빠른 회전 / deactivate=잠잠해짐"
+ },
+ {
+  "id": "gm_switch_lever",
+  "base": "gm_switch_lever",
+  "ko": "스위치 레버",
+  "cat": "A",
+  "elem": "mana",
+  "desc": "직접 당기거나 원거리 마법으로 당기는 스위치. 켜지면 전면 표시등이 밝아진다.",
+  "anims": "idle=꺼짐(뒤로) / activate=당김 / active=켜짐 / deactivate=되돌림"
+ },
+ {
+  "id": "gm_rotary_dial",
+  "base": "gm_rotary_dial",
+  "ko": "회전 다이얼",
+  "cat": "A",
+  "elem": "mana",
+  "desc": "벽에 거는 다이얼. 칠 때마다 90도씩 돌아가며, 문양을 맞추면 테두리가 빛난다.",
+  "anims": "pos_0~3=각 방향 고정 / turn=한 칸 회전 / activate=정답 발광"
+ },
+ {
+  "id": "gm_conduit_straight",
+  "base": "gm_conduit_straight",
+  "ko": "마력 도관 (직선)",
+  "cat": "B",
+  "elem": "mana",
+  "desc": "장치 사이에 마력을 전달하는 도관. 마력이 흐르면 내부 코어가 빛나며 맥동한다.",
+  "anims": "idle=비활성 / activate=충전 / active=맥동 / deactivate=소멸"
+ },
+ {
+  "id": "gm_conduit_corner",
+  "base": "gm_conduit_corner",
+  "ko": "마력 도관 (코너)",
+  "cat": "B",
+  "elem": "mana",
+  "desc": "장치 사이에 마력을 전달하는 도관. 마력이 흐르면 내부 코어가 빛나며 맥동한다.",
+  "anims": "idle=비활성 / activate=충전 / active=맥동 / deactivate=소멸"
+ },
+ {
+  "id": "gm_conduit_tee",
+  "base": "gm_conduit_tee",
+  "ko": "마력 도관 (분기)",
+  "cat": "B",
+  "elem": "mana",
+  "desc": "장치 사이에 마력을 전달하는 도관. 마력이 흐르면 내부 코어가 빛나며 맥동한다.",
+  "anims": "idle=비활성 / activate=충전 / active=맥동 / deactivate=소멸"
+ },
+ {
+  "id": "gm_mana_capacitor",
+  "base": "gm_mana_capacitor",
+  "ko": "마력 축전기",
+  "cat": "B",
+  "elem": "mana",
+  "desc": "마력을 받으면 일정 시간 충전 상태를 유지한다. 시간차 퍼즐용.",
+  "anims": "idle=방전 / activate=충전 / active=충전 유지(맥동) / deactivate=서서히 방전"
+ },
+ {
+  "id": "gm_logic_altar",
+  "base": "gm_logic_altar",
+  "ko": "논리 받침대 (AND)",
+  "cat": "B",
+  "elem": "mana",
+  "desc": "연결된 입력 3개가 모두 켜져야 중앙 수정이 깨어나 출력한다. 협동 퍼즐의 핵심.",
+  "anims": "in_1~in_3=각 입력 점등 / activate=전부 켜짐→출력 / active=출력 유지 / deactivate=소등"
+ },
+ {
+  "id": "gm_splitter_crystal",
+  "base": "gm_splitter_crystal",
+  "ko": "분배 수정",
+  "cat": "B",
+  "elem": "mana",
+  "desc": "들어온 마력을 세 갈래로 나누어 보낸다.",
+  "anims": "idle=정지 / activate=분배 시작 / active=회전 분배 / deactivate=정지"
+ },
+ {
+  "id": "gm_rotating_mirror",
+  "base": "gm_rotating_mirror",
+  "ko": "회전 반사 거울",
+  "cat": "B",
+  "elem": "light",
+  "desc": "빛줄기의 방향을 꺾는 거울. 칠 때마다 90도씩 돌아간다.",
+  "anims": "rot_0~3=방향 고정 / turn=90도 회전 / activate=빛 받음(테두리 발광)"
+ },
+ {
+  "id": "gm_prism",
+  "base": "gm_prism",
+  "ko": "프리즘",
+  "cat": "B",
+  "elem": "light",
+  "desc": "흰빛을 원소 색으로 나눈다. 색 지정 빛 수신 수정과 세트.",
+  "anims": "idle=정지 / activate=빛 받음 / active=회전 분광"
+ },
+ {
+  "id": "gm_teleport_gate",
+  "base": "gm_teleport_gate",
+  "ko": "원소 텔레포트 게이트",
+  "cat": "C",
+  "elem": "mana",
+  "desc": "마력이 연결되면 포탈 면이 열린다. 두 개를 쌍으로 배치해 이동.",
+  "anims": "idle=닫힘 / activate=개방 / active=포탈 유지 / deactivate=닫힘"
+ },
+ {
+  "id": "gm_seal_door",
+  "base": "gm_seal_door",
+  "ko": "봉인문 (대형 3x4)",
+  "cat": "C",
+  "elem": "mana",
+  "desc": "문양 봉인이 풀리면 양쪽으로 열리는 봉인문.",
+  "anims": "idle=잠김 / activate=봉인 해제→개방 / active=열린 상태 / deactivate=닫힘"
+ },
+ {
+  "id": "gm_seal_door_small",
+  "base": "gm_seal_door_small",
+  "ko": "봉인문 (소형 2x3)",
+  "cat": "C",
+  "elem": "mana",
+  "desc": "문양 봉인이 풀리면 양쪽으로 열리는 봉인문.",
+  "anims": "idle=잠김 / activate=봉인 해제→개방 / active=열린 상태 / deactivate=닫힘"
+ },
+ {
+  "id": "gm_floating_platform",
+  "base": "gm_floating_platform",
+  "ko": "부유 발판",
+  "cat": "C",
+  "elem": "wind",
+  "desc": "작동하면 떠오르거나 정해진 경로를 왕복하는 발판(경로 이동은 게임 쪽).",
+  "anims": "idle=가라앉음 / activate=떠오름 / active=부유 / deactivate=하강"
+ },
+ {
+  "id": "gm_rising_pillar",
+  "base": "gm_rising_pillar",
+  "ko": "승강 석주",
+  "cat": "C",
+  "elem": "earth",
+  "desc": "바닥에서 기둥이 솟아올라 계단·발판이 된다. 평소엔 땅속(바닥 고리만 보임).",
+  "anims": "idle=땅속 / activate=솟아오름 / active=올라온 상태 / deactivate=가라앉음"
+ },
+ {
+  "id": "gm_sealed_chest_fire",
+  "base": "gm_sealed_chest",
+  "ko": "봉인 보물상자 (화염)",
+  "cat": "C",
+  "elem": "fire",
+  "desc": "퍼즐 보상 상자. 원소 자물쇠가 풀리면 뚜껑이 열린다. 6속성 텍스처 변형.",
+  "anims": "idle=잠김 / activate=자물쇠 해제→개봉 / active=열린 상태"
+ },
+ {
+  "id": "gm_sealed_chest_wind",
+  "base": "gm_sealed_chest",
+  "ko": "봉인 보물상자 (바람)",
+  "cat": "C",
+  "elem": "wind",
+  "desc": "퍼즐 보상 상자. 원소 자물쇠가 풀리면 뚜껑이 열린다. 6속성 텍스처 변형.",
+  "anims": "idle=잠김 / activate=자물쇠 해제→개봉 / active=열린 상태"
+ },
+ {
+  "id": "gm_sealed_chest_water",
+  "base": "gm_sealed_chest",
+  "ko": "봉인 보물상자 (물)",
+  "cat": "C",
+  "elem": "water",
+  "desc": "퍼즐 보상 상자. 원소 자물쇠가 풀리면 뚜껑이 열린다. 6속성 텍스처 변형.",
+  "anims": "idle=잠김 / activate=자물쇠 해제→개봉 / active=열린 상태"
+ },
+ {
+  "id": "gm_sealed_chest_earth",
+  "base": "gm_sealed_chest",
+  "ko": "봉인 보물상자 (대지)",
+  "cat": "C",
+  "elem": "earth",
+  "desc": "퍼즐 보상 상자. 원소 자물쇠가 풀리면 뚜껑이 열린다. 6속성 텍스처 변형.",
+  "anims": "idle=잠김 / activate=자물쇠 해제→개봉 / active=열린 상태"
+ },
+ {
+  "id": "gm_sealed_chest_light",
+  "base": "gm_sealed_chest",
+  "ko": "봉인 보물상자 (빛)",
+  "cat": "C",
+  "elem": "light",
+  "desc": "퍼즐 보상 상자. 원소 자물쇠가 풀리면 뚜껑이 열린다. 6속성 텍스처 변형.",
+  "anims": "idle=잠김 / activate=자물쇠 해제→개봉 / active=열린 상태"
+ },
+ {
+  "id": "gm_sealed_chest_dark",
+  "base": "gm_sealed_chest",
+  "ko": "봉인 보물상자 (어둠)",
+  "cat": "C",
+  "elem": "dark",
+  "desc": "퍼즐 보상 상자. 원소 자물쇠가 풀리면 뚜껑이 열린다. 6속성 텍스처 변형.",
+  "anims": "idle=잠김 / activate=자물쇠 해제→개봉 / active=열린 상태"
+ },
+ {
+  "id": "gm_wind_vent",
+  "base": "gm_wind_vent",
+  "ko": "바람 분출구",
+  "cat": "C",
+  "elem": "wind",
+  "desc": "작동하면 위로 날려 주는 상승기류를 뿜는 바닥 송풍구(기류 효과는 게임 쪽).",
+  "anims": "idle=멈춤 / activate=가동 / active=고속 회전 / deactivate=감속"
+ },
+ {
+  "id": "gm_sluice_gate",
+  "base": "gm_sluice_gate",
+  "ko": "물길 수문",
+  "cat": "C",
+  "elem": "water",
+  "desc": "열리면 물이 흘러 물레방아·수위 기둥 같은 다른 장치를 연쇄 작동시킨다.",
+  "anims": "idle=닫힘 / activate=수문 상승 / active=열림 / deactivate=하강"
+ },
+ {
+  "id": "gm_light_bridge",
+  "base": "gm_light_bridge",
+  "ko": "빛의 다리",
+  "cat": "C",
+  "elem": "light",
+  "desc": "마력이 흐르는 동안만 실체화되는 다리 한 칸(2블록 길이). 이어 붙여 사용.",
+  "anims": "idle=꺼짐 / activate=발판 순차 생성 / active=유지 / deactivate=소멸"
+ },
+ {
+  "id": "gm_element_fragment_fire",
+  "base": "gm_element_fragment",
+  "ko": "원소 조각 (화염)",
+  "cat": "D",
+  "elem": "fire",
+  "desc": "던전 곳곳에 숨겨진 수집품. 떠서 회전하며, 주우면 사라진다. 6속성 텍스처 변형.",
+  "anims": "idle=부유 회전 / pickup=흡수되며 사라짐"
+ },
+ {
+  "id": "gm_element_fragment_wind",
+  "base": "gm_element_fragment",
+  "ko": "원소 조각 (바람)",
+  "cat": "D",
+  "elem": "wind",
+  "desc": "던전 곳곳에 숨겨진 수집품. 떠서 회전하며, 주우면 사라진다. 6속성 텍스처 변형.",
+  "anims": "idle=부유 회전 / pickup=흡수되며 사라짐"
+ },
+ {
+  "id": "gm_element_fragment_water",
+  "base": "gm_element_fragment",
+  "ko": "원소 조각 (물)",
+  "cat": "D",
+  "elem": "water",
+  "desc": "던전 곳곳에 숨겨진 수집품. 떠서 회전하며, 주우면 사라진다. 6속성 텍스처 변형.",
+  "anims": "idle=부유 회전 / pickup=흡수되며 사라짐"
+ },
+ {
+  "id": "gm_element_fragment_earth",
+  "base": "gm_element_fragment",
+  "ko": "원소 조각 (대지)",
+  "cat": "D",
+  "elem": "earth",
+  "desc": "던전 곳곳에 숨겨진 수집품. 떠서 회전하며, 주우면 사라진다. 6속성 텍스처 변형.",
+  "anims": "idle=부유 회전 / pickup=흡수되며 사라짐"
+ },
+ {
+  "id": "gm_element_fragment_light",
+  "base": "gm_element_fragment",
+  "ko": "원소 조각 (빛)",
+  "cat": "D",
+  "elem": "light",
+  "desc": "던전 곳곳에 숨겨진 수집품. 떠서 회전하며, 주우면 사라진다. 6속성 텍스처 변형.",
+  "anims": "idle=부유 회전 / pickup=흡수되며 사라짐"
+ },
+ {
+  "id": "gm_element_fragment_dark",
+  "base": "gm_element_fragment",
+  "ko": "원소 조각 (어둠)",
+  "cat": "D",
+  "elem": "dark",
+  "desc": "던전 곳곳에 숨겨진 수집품. 떠서 회전하며, 주우면 사라진다. 6속성 텍스처 변형.",
+  "anims": "idle=부유 회전 / pickup=흡수되며 사라짐"
+ },
+ {
+  "id": "gm_fragment_altar",
+  "base": "gm_fragment_altar",
+  "ko": "조각 받침 제단",
+  "cat": "D",
+  "elem": "mana",
+  "desc": "조각을 끼우면 해당 속성 홈이 점등된다. 6개가 모두 모이면 중앙 열쇠석이 깨어난다.",
+  "anims": "insert_fire~insert_dark=각 조각 장착 / activate=완성 / active=열쇠석 회전"
+ },
+ {
+  "id": "gm_fragment_cache_fire",
+  "base": "gm_fragment_cache",
+  "ko": "숨겨진 조각 보관함 (화염)",
+  "cat": "D",
+  "elem": "fire",
+  "desc": "특정 원소로만 열리는 작은 성물함. 안에 원소 조각이 들어 있다. 6속성 변형.",
+  "anims": "idle=봉인 / activate=개방 / active=열림"
+ },
+ {
+  "id": "gm_fragment_cache_wind",
+  "base": "gm_fragment_cache",
+  "ko": "숨겨진 조각 보관함 (바람)",
+  "cat": "D",
+  "elem": "wind",
+  "desc": "특정 원소로만 열리는 작은 성물함. 안에 원소 조각이 들어 있다. 6속성 변형.",
+  "anims": "idle=봉인 / activate=개방 / active=열림"
+ },
+ {
+  "id": "gm_fragment_cache_water",
+  "base": "gm_fragment_cache",
+  "ko": "숨겨진 조각 보관함 (물)",
+  "cat": "D",
+  "elem": "water",
+  "desc": "특정 원소로만 열리는 작은 성물함. 안에 원소 조각이 들어 있다. 6속성 변형.",
+  "anims": "idle=봉인 / activate=개방 / active=열림"
+ },
+ {
+  "id": "gm_fragment_cache_earth",
+  "base": "gm_fragment_cache",
+  "ko": "숨겨진 조각 보관함 (대지)",
+  "cat": "D",
+  "elem": "earth",
+  "desc": "특정 원소로만 열리는 작은 성물함. 안에 원소 조각이 들어 있다. 6속성 변형.",
+  "anims": "idle=봉인 / activate=개방 / active=열림"
+ },
+ {
+  "id": "gm_fragment_cache_light",
+  "base": "gm_fragment_cache",
+  "ko": "숨겨진 조각 보관함 (빛)",
+  "cat": "D",
+  "elem": "light",
+  "desc": "특정 원소로만 열리는 작은 성물함. 안에 원소 조각이 들어 있다. 6속성 변형.",
+  "anims": "idle=봉인 / activate=개방 / active=열림"
+ },
+ {
+  "id": "gm_fragment_cache_dark",
+  "base": "gm_fragment_cache",
+  "ko": "숨겨진 조각 보관함 (어둠)",
+  "cat": "D",
+  "elem": "dark",
+  "desc": "특정 원소로만 열리는 작은 성물함. 안에 원소 조각이 들어 있다. 6속성 변형.",
+  "anims": "idle=봉인 / activate=개방 / active=열림"
+ },
+ {
+  "id": "gm_broken_tablet",
+  "base": "gm_broken_tablet",
+  "ko": "부서진 석판",
+  "cat": "D",
+  "elem": "mana",
+  "desc": "흩어진 석판 조각 4개를 모아 맞추면 다음 퍼즐의 힌트 문양이 드러난다.",
+  "anims": "place_1~4=조각 끼움 / activate=완성 발광 / active=문양 유지"
+ },
+ {
+  "id": "gm_spirit_lantern",
+  "base": "gm_spirit_lantern",
+  "ko": "영혼 등불",
+  "cat": "D",
+  "elem": "fire",
+  "desc": "들고 옮겨야 하는 불씨. 물에 닿거나 시간이 지나면 꺼진다(손에 드는 아이템 겸용).",
+  "anims": "idle=타오름 / extinguish=꺼짐 / relight=재점화"
+ },
+ {
+  "id": "gm_twin_resonance",
+  "base": "gm_twin_resonance",
+  "ko": "쌍둥이 공명석",
+  "cat": "E",
+  "elem": "mana",
+  "desc": "멀리 떨어진 두 개를 거의 동시에(1초 안) 쳐야 작동한다. 한 개만 맞으면 잠깐 떨리다 멈춘다.",
+  "anims": "idle=잠잠 / hit=한쪽만 맞음(떨림) / activate=공명 성공 / active=공명 유지"
+ },
+ {
+  "id": "gm_steam_valve",
+  "base": "gm_steam_valve",
+  "ko": "증기 밸브",
+  "cat": "E",
+  "elem": "mana",
+  "desc": "불(왼쪽)과 물(오른쪽)이 동시에 들어가야 증기 압력이 차서 작동한다. 두 속성 협동.",
+  "anims": "fire_in / water_in=각 입력 점등 / activate=압력 최대·밸브 회전 / active=압력 유지 / deactivate=배출"
+ },
+ {
+  "id": "gm_balance_scale",
+  "base": "gm_balance_scale",
+  "ko": "천칭 저울",
+  "cat": "E",
+  "elem": "earth",
+  "desc": "양쪽 접시에 한 명씩 올라가 균형을 맞춰야 작동한다. 접시는 3블록 간격.",
+  "anims": "idle=균형(빈 상태) / tilt_left·tilt_right=한쪽으로 기울어짐 / activate=균형 성공 발광"
+ },
+ {
+  "id": "gm_chain_pillar",
+  "base": "gm_chain_pillar",
+  "ko": "연결 사슬 기둥",
+  "cat": "E",
+  "elem": "mana",
+  "desc": "두 플레이어가 각자 기둥의 손잡이를 잡고 있는 동안만 둘 사이에 빛의 다리가 생긴다(쌍 배치).",
+  "anims": "idle=대기 / activate=잡음 / active=연결 유지 / deactivate=놓음"
+ },
+ {
+  "id": "gm_mirror_cage",
+  "base": "gm_mirror_cage",
+  "ko": "거울 감옥",
+  "cat": "E",
+  "elem": "light",
+  "desc": "한 명이 갇히고, 위의 광원 수정을 밖의 동료가 거울로 받아 맞혀 주면 문이 열린다.",
+  "anims": "idle=잠김 / activate=빛 받음→문 개방 / active=열림 / deactivate=다시 잠김"
+ },
+ {
+  "id": "gm_timed_door",
+  "base": "gm_timed_door",
+  "ko": "시간차 문 (내리닫이)",
+  "cat": "E",
+  "elem": "mana",
+  "desc": "한 명이 압력판을 누르는 동안만 열리고(창살이 바닥으로 내려감), 떼면 모래시계가 뒤집히며 천천히 닫힌다.",
+  "anims": "idle=닫힘 / activate=창살 하강·모래시계 뒤집힘 / active=열림 / deactivate=천천히 닫힘"
+ }
+]
