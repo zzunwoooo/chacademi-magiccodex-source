@@ -177,6 +177,27 @@ final class StoryState {
             return false;
         }
 
+        /** A failed client cutscene is cancelled, never completed or rewarded. */
+        boolean cancelFailedCutscene(String id) {
+            if (active == null || active.kind != Kind.CUTSCENE || !active.sent || !active.id.equals(id)) return false;
+            return cancelCutscene(active);
+        }
+
+        boolean cancelCutscene(Request expected) {
+            if (expected == null || active != expected || expected.kind != Kind.CUTSCENE) return false;
+            active = null;
+            return true;
+        }
+
+        /** Same queue transition used by the live pump and completion regression tests. */
+        Request activateNext() {
+            if (active == null) {
+                active = queue.pollFirst();
+                if (active != null) active.resetTransient();
+            }
+            return active;
+        }
+
         /**
          * 대화를 열라는 요청을 어떻게 할지. 이미 끝낸 대화는 replay 인자나 allow-replay 가 있을 때만 "다시 보기" 로 열린다.
          * dialogueAllowReplay = 그 대화 server_commands.yml 의 allow-replay (없으면 null → config 값).

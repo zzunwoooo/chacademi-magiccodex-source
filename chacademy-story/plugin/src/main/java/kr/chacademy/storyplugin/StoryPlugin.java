@@ -423,6 +423,8 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         Request r = new Request(Kind.CUTSCENE, id, ps.nextSeq());
         r.mode = mode;
         ps.queue.add(r);
+        if (ps.active != null) note(who, "[Story cutscene] " + id + " queued behind " + ps.active.id
+                + (ps.active.parked ? " (failed/parked; use /cutscene stop <player> to cancel only that request)" : ""));
         saveSoon(null);
         pump(p);
         return true;
@@ -548,13 +550,10 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         // 앞 스토리의 끝 명령이 먼저 실행된 다음에 다음 스토리를 시작한다
         if (!ps.effects.isEmpty() || ps.running) return;
         if (ps.active == null) {
-            Request next = ps.queue.pollFirst();
-            if (next == null) {
+            if (ps.activateNext() == null) {
                 prune(uuid, ps);
                 return;
             }
-            next.resetTransient();
-            ps.active = next;
             saveSoon(null);
         }
         Request a = ps.active;
@@ -628,8 +627,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
     /** 지금 재생 중인 컷신을 멈춘다 (on-finish 는 실행하지 않음). 대기 중인 다음 요청이 있으면 이어서 시작한다. */
     public void stopCutscene(Player p) {
         PlayerStory ps = state.players.get(p.getUniqueId());
-        if (ps != null && ps.active != null && ps.active.kind == Kind.CUTSCENE) {
-            ps.active = null;
+        if (ps != null && ps.cancelCutscene(ps.active)) {
             protection.release(p);
             saveSoon(null);
         }
@@ -638,22 +636,26 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
     }
 
     private void finishCutscene(Player p, PlayerStory ps, Request a, boolean skipped, boolean missing) {
-        if (ps.active != a) return;
-        ps.active = null;
+        if (!ps.cancelCutscene(a)) return;
         protection.release(p);
         Effect e = new Effect(ps.nextSeq(), Effect.CUTSCENE_END, a.id, "", skipped, missing);
         queueEffect(p.getUniqueId(), ps, e);
     }
 
-    /** 컷신을 잠시 뒤 다시 보낸다 (화면이 중간에 사라졌거나 너무 빨리 끝났다고 한 경우). 한도를 넘으면 다음 접속까지 둔다. */
+    /** Retry an interrupted cutscene; cancel without effects at the retry limit so the queue can continue. */
     private void resendLater(Player p, Request a, String why) {
         a.sent = false;
         protection.release(p);
         a.resends++;
         int max = Math.max(0, getConfig().getInt("cutscene-max-resends", 5));
         if (a.resends > max) {
-            a.parked = true;
-            getLogger().warning(p.getName() + ": 컷신 " + a.id + " 을(를) " + max + "번 다시 보냈지만 끝나지 않았습니다 (" + why + "). 다음 접속 때 다시 재생합니다.");
+            PlayerStory ps = state.players.get(p.getUniqueId());
+            if (ps != null && ps.cancelCutscene(a)) {
+                saveSoon(null);
+                getLogger().warning("[Story cutscene] " + p.getName() + ": " + a.id
+                        + " cancelled after retry limit; no completion/rewards. Continuing queued requests.");
+                pump(p);
+            }
             return;
         }
         a.retryAtMs = System.currentTimeMillis() + (long) (Math.max(0.5, getConfig().getDouble("cutscene-resend-delay-seconds", 3)) * 1000);
@@ -997,6 +999,18 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
                     if (a == null) return;
                     String reason = f.reason().replaceAll("[^A-Za-z0-9_\\-]", "");
                     if (reason.length() > 32) reason = reason.substring(0, 32);
+                    if (kind == Kind.CUTSCENE && !getConfig().getBoolean("finish-if-client-content-missing", false)) {
+                        if (ps.cancelFailedCutscene(f.id())) {
+                            protection.release(p);
+                            saveSoon(null);
+                            getLogger().warning("[Story cutscene] " + p.getName() + ": " + f.id() + " failed (" + reason
+                                    + "); cancelled this request without completion/rewards. Continuing queued requests.");
+                            p.sendMessage(ChatColor.RED + "[Story cutscene] " + f.id() + " failed (" + reason
+                                    + "). Request cancelled; fix the content and play again. Progress/rewards preserved.");
+                            pump(p);
+                        }
+                        break;
+                    }
                     getLogger().warning(p.getName() + ": 클라에 " + (kind == Kind.CUTSCENE ? "컷신 " : "대화 ") + a.id + " 을(를) 보여 줄 수 없습니다 (" + reason
                             + ") — 끝난 것으로 치지 않습니다. 스토리 파일(또는 모드)을 맞춘 뒤 다시 접속하면 이어집니다.");
                     if (!reason.startsWith("magiccodex")) {

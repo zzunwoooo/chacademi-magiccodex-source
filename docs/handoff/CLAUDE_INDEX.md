@@ -1,3 +1,5 @@
+> Latest follow-up (tested, NOT deployed): [Story failed-cutscene queue fix](CODEX_STORY_QUEUE_FIX_20261012.md). Server-only0.1.3 candidate; live remains0.1.2.
+
 > Latest deployed integration: [Taming, single-file Story and gimmicks](CODEX_TAMING_STORY_20261012.md). 673 hosting tests passed; school/wild and personal UI/Story applied. This latest entry supersedes historical pending statuses below. Dungeon models and launcher/feed remain excluded.
 
 # Current deployment: wild reset and HUD server fixes, 2026-10-12
