@@ -1,0 +1,67 @@
+{
+  "baseCommit": "c4545ea23ef4b85f8f6192718e6c9aa19f6ce660",
+  "deployed": false,
+  "tests": {
+    "bridge": {
+      "tests": 297,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "ui": {
+      "tests": 245,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "story-plugin": {
+      "tests": 54,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "story-mod": {
+      "tests": 40,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "artifacts": [
+    {
+      "file": "chacademy-story-plugin-0.1.1.jar",
+      "bytes": 129587,
+      "sha256": "5c70db1be6e97cd9fa9d698e398a2291b3b33e2cb6bfd7ead57b44447a91a1fa",
+      "private": false
+    },
+    {
+      "file": "magic-codex-bridge-0.30.0-catalog.alpha.1-chat.3-discovery.2-holytaming.1-partyhud.3-taming.1.jar",
+      "bytes": 1682330,
+      "sha256": "b5d6addca2039bcd26d68c981867bdf17c1ea0079ffffb2215bf6a79bd28a30b",
+      "private": false
+    },
+    {
+      "file": "magic-codex-ui-0.39.0-catalog.alpha.2-chat.3-holytaming.1-partyhud.4-taming.1+mc1.21.4.jar",
+      "bytes": 103466336,
+      "sha256": "5221027e57e15d9c39f7bd01d03fd4121487be3e54b7c367150105bbfb46cfd2",
+      "private": false
+    },
+    {
+      "file": "private/chacademy-story-0.1.1.jar",
+      "bytes": 4900798,
+      "sha256": "82f8fdbb32082b1f90093b4210813ea5463692c7a450fb24174501a88fcdda7b",
+      "private": true
+    },
+    {
+      "file": "public/chacademy-story-0.1.1.jar",
+      "bytes": 448022,
+      "sha256": "216eef70c7cfd80161e1ff9d036182491c69914da5d7b3daf2945c7fc217cb8d",
+      "private": false
+    }
+  ],
+  "assetsPreserved": {
+    "ui": true,
+    "privateStory": true
+  },
+  "gameVisualTested": false
+}

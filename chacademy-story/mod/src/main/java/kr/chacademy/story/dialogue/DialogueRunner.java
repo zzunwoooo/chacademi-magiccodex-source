@@ -31,6 +31,7 @@ public final class DialogueRunner {
 
         /** 대화가 끝남. lastScene = 마지막 장면 id. */
         void done(String dialogueId, String lastScene);
+        default void aborted(String dialogueId) {}
 
         /** 지금 보고 있는 곳 (장면, 대사 번호). 서버가 저장해 두었다가 다시 접속하면 여기서부터 연다. */
         default void progress(String dialogueId, String scene, int line) {
@@ -219,7 +220,7 @@ public final class DialogueRunner {
 
     /** 서버가 멈추라고 할 때·접속이 끊길 때. 끝난 것으로 치지 않음 (done 을 알리지 않는다). */
     public void stop() {
-        ended = true;
+        if(ended)return;ended = true;listener.aborted(dialogue.id());
     }
 
     // ---------------------------------------------------------------- 프레임

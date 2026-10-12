@@ -86,6 +86,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
     private final Map<UUID,Long> nameUpdated=new HashMap<>();
     private List<String> registeredCutscenes=List.of();
     private final Map<UUID, Long> joinedAt = new HashMap<>();
+    private final LocalEndingSessions endingSessions=new LocalEndingSessions();
     private final DialogueAcks dialogueAcks = new DialogueAcks();
     private final Set<UUID> helloSent = new HashSet<>();
     private final Map<UUID, Long> lastPacketLog = new HashMap<>();
@@ -121,11 +122,11 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
 
         Messenger m = getServer().getMessenger();
         for (String out : List.of(StoryCodec.CUTSCENE_PLAY, StoryCodec.CUTSCENE_STOP, StoryCodec.DIALOGUE_OPEN, StoryCodec.DIALOGUE_VIEW, StoryCodec.DIALOGUE_STOP,
-                StoryCodec.STORY_HELLO, StoryCodec.STORY_RELOAD)) {
+                StoryCodec.STORY_HELLO, StoryCodec.STORY_RELOAD, StoryCodec.DIALOGUE_SESSION)) {
             m.registerOutgoingPluginChannel(this, out);
         }
         for (String in : List.of(StoryCodec.CUTSCENE_DONE, StoryCodec.DIALOGUE_EVENT, StoryCodec.DIALOGUE_DONE, StoryCodec.DIALOGUE_PROGRESS,
-                StoryCodec.CUTSCENE_ABORT, StoryCodec.STORY_FAIL, StoryCodec.DIALOGUE_READY, StoryCodec.DIALOGUE_REWARD, StoryCodec.STORY_CATALOG)) {
+                StoryCodec.CUTSCENE_ABORT, StoryCodec.STORY_FAIL, StoryCodec.DIALOGUE_READY, StoryCodec.DIALOGUE_REWARD, StoryCodec.STORY_CATALOG, StoryCodec.DIALOGUE_SESSION_SIGNAL)) {
             m.registerIncomingPluginChannel(this, in, this);
         }
         for (String c : List.of("cutscene", "storydialogue", "affinity", "스토리")) {
@@ -154,7 +155,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
 
     @Override
     public void onDisable() {
-        dialogueAcks.clear();
+        dialogueAcks.clear();endingSessions.clear();
         clientCatalogs.clear();catalogUpdated.clear();completionNames.clear();nameUpdated.clear();
         Messenger m = getServer().getMessenger();
         m.unregisterIncomingPluginChannel(this);
@@ -356,6 +357,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
     }
 
     private void applyDefs(DefLoad load, CommandSender tell) {
+        endingSessions.clear();dialogueAcks.clear();
         defs = load.defs();
         brokenDefs = load.broken();
         boolean require = getConfig().getBoolean("require-server-graph", true);
@@ -455,12 +457,21 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         if (!ready || !StorySafety.validId(id) || !p.isOnline() || !p.getListeningPluginChannels().contains(StoryCodec.DIALOGUE_VIEW))
             return CompletableFuture.completedFuture(false);
         UUID uuid=p.getUniqueId();
+        var running=endingSessions.current(uuid,System.currentTimeMillis());
+        if(running!=null){
+            if(!running.id().equals(id))return CompletableFuture.completedFuture(false);
+            var pending=dialogueAcks.pending(uuid,id);return pending!=null?pending:CompletableFuture.completedFuture(running.ready());
+        }
         var existing=dialogueAcks.pending(uuid,id);
         if(existing!=null)return existing;
         var future=dialogueAcks.begin(uuid,id);
-        p.sendPluginMessage(this,StoryCodec.DIALOGUE_VIEW,StoryCodec.dialogueView(id,StoryCodec.encodeVars(textVars(p))));
+        var definition=brokenDefs.containsKey(id)?null:defs.get(id);
+        var session=p.getListeningPluginChannels().contains(StoryCodec.DIALOGUE_SESSION)
+                ?endingSessions.begin(uuid,definition,System.currentTimeMillis()):null;
+        if(session!=null)p.sendPluginMessage(this,StoryCodec.DIALOGUE_SESSION,StoryCodec.dialogueSession(id,StoryCodec.encodeVars(textVars(p)),session.token()));
+        else p.sendPluginMessage(this,StoryCodec.DIALOGUE_VIEW,StoryCodec.dialogueView(id,StoryCodec.encodeVars(textVars(p))));
         Bukkit.getScheduler().runTaskLater(this,()->{
-            if(dialogueAcks.pending(uuid,id)==future)dialogueAcks.reject(uuid,id);
+            if(dialogueAcks.pending(uuid,id)==future){dialogueAcks.reject(uuid,id);if(session!=null)endingSessions.abort(uuid,id,session.token(),System.currentTimeMillis());}
         },400L);
         return future;
     }
@@ -720,6 +731,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
 
     /** 지금 진행 중인 대화를 닫는다 (끝 명령은 실행하지 않음, 완료로 기록하지 않음). 대기 중인 다음 요청이 있으면 이어서 시작한다. */
     public void stopDialogue(Player p) {
+        endingSessions.cancel(p.getUniqueId());dialogueAcks.disconnect(p.getUniqueId());
         PlayerStory ps = state.players.get(p.getUniqueId());
         if (ps != null && ps.active != null && ps.active.kind == Kind.DIALOGUE) {
             ps.active = null;
@@ -937,12 +949,18 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
                     StoryCatalog catalog=StoryCodec.catalog(message);
                     clientCatalogs.put(uuid,catalog);catalogUpdated.put(uuid,now);
                 }
+                case StoryCodec.DIALOGUE_SESSION_SIGNAL -> {
+                    var signal=StoryCodec.sessionSignal(message);long now=System.currentTimeMillis();
+                    if(signal.action()==0){if(endingSessions.ready(uuid,signal.id(),signal.token(),now))dialogueAcks.accept(uuid,signal.id());}
+                    else if(signal.action()==1)run(endingSessions.finish(uuid,signal.id(),signal.token(),signal.ending(),now),p,Map.of());
+                    else if(endingSessions.abort(uuid,signal.id(),signal.token(),now))dialogueAcks.reject(uuid,signal.id());
+                }
                 case StoryCodec.DIALOGUE_REWARD -> {
                     applyLocalReward(p,StoryCodec.dialogueId(message));
                 }
                 case StoryCodec.DIALOGUE_READY -> {
                     String id=StoryCodec.dialogueId(message);
-                    if(StorySafety.validId(id))dialogueAcks.accept(uuid,id);
+                    if(StorySafety.validId(id)&&endingSessions.current(uuid,System.currentTimeMillis())==null)dialogueAcks.accept(uuid,id);
                 }
                 case StoryCodec.CUTSCENE_DONE -> {
                     var d = StoryCodec.cutsceneDone(message);
@@ -1082,7 +1100,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        dialogueAcks.disconnect(e.getPlayer().getUniqueId());
+        dialogueAcks.disconnect(e.getPlayer().getUniqueId());endingSessions.cancel(e.getPlayer().getUniqueId());
         UUID uuid = e.getPlayer().getUniqueId();
         joinedAt.remove(uuid);
         helloSent.remove(uuid);
@@ -1226,6 +1244,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
 
     /** 재생 중인 것과 대기열을 모두 버린다 (막힌 플레이어를 풀 때). 완료 기록과 실행 대기 효과는 건드리지 않는다. */
     private void clearStory(Player p) {
+        endingSessions.cancel(p.getUniqueId());dialogueAcks.disconnect(p.getUniqueId());
         PlayerStory ps = state.players.get(p.getUniqueId());
         if (ps != null) {
             ps.active = null;

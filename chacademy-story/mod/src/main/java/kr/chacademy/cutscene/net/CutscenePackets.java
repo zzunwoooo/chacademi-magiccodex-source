@@ -183,6 +183,22 @@ public final class CutscenePackets {
      * 서버 → 클라: "이 대화를 열어". affinity = "npc=점수,npc=점수".
      * vars = 글자 바꾸기 목록 ("{player}" → 한글 닉네임 등). 항목은 \u001E, 키와 값은 \u001F 로 구분.
      */
+    /** Server-authorized local playback; token is opaque and bound to the authenticated player. */
+    public record DialogueSessionS2C(String id,String vars,String token) implements CustomPacketPayload {
+        public static final Type<DialogueSessionS2C> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath(NAMESPACE,"dialogue_session"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,DialogueSessionS2C> CODEC=StreamCodec.composite(
+                ByteBufCodecs.STRING_UTF8,DialogueSessionS2C::id,ByteBufCodecs.STRING_UTF8,DialogueSessionS2C::vars,
+                SHORT_STRING,DialogueSessionS2C::token,DialogueSessionS2C::new);
+        @Override public Type<? extends CustomPacketPayload> type(){return TYPE;}
+    }
+    /** action 0=ready, 1=normal completion, 2=abort. No command text or player target. */
+    public record DialogueSessionSignalC2S(int action,String id,String token,String ending) implements CustomPacketPayload {
+        public static final Type<DialogueSessionSignalC2S> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath(NAMESPACE,"dialogue_session_signal"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,DialogueSessionSignalC2S> CODEC=StreamCodec.composite(
+                ByteBufCodecs.VAR_INT,DialogueSessionSignalC2S::action,SHORT_STRING,DialogueSessionSignalC2S::id,
+                SHORT_STRING,DialogueSessionSignalC2S::token,SHORT_STRING,DialogueSessionSignalC2S::ending,DialogueSessionSignalC2S::new);
+        @Override public Type<? extends CustomPacketPayload> type(){return TYPE;}
+    }
     public record DialogueViewS2C(String id, String vars) implements CustomPacketPayload {
         public static final Type<DialogueViewS2C> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(NAMESPACE, "dialogue_view"));
         public static final StreamCodec<RegistryFriendlyByteBuf, DialogueViewS2C> CODEC = StreamCodec.composite(

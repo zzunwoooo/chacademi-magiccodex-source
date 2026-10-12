@@ -1,3 +1,5 @@
+> Latest staged patch (not deployed): [Taming hidden-base UI and Story ending commands](CODEX_TAMING_STORY_20261012.md). 636 hosting tests passed; requires coordinated Bridge/Story server + UI/Story client update. Preserve existing runtime and user records.
+
 # Current deployment: wild reset and HUD server fixes, 2026-10-12
 
 See [completed operation and rollback boundary](CODEX_WILD_RESET_20261012.md). Wild overworld reset with verified backup; Wildlife installed; Bridge updated on school/wild. Launcher remains explicitly held. This supersedes the earlier staging/approval-pending status below.

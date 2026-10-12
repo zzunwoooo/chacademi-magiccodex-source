@@ -46,7 +46,7 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
     TamingBridge(MagicCodexBridge p,ManaService mana,PetBridge pets)throws Exception{
         plugin=p;this.mana=mana;this.pets=pets;graceKey=new NamespacedKey(p,"taming_grace");
         if(!new File(p.getDataFolder(),"taming.yml").exists())p.saveResource("taming.yml",false);reload();
-        var m=p.getServer().getMessenger();m.registerIncomingPluginChannel(p,TamingProtocol.REQUEST,this);m.registerOutgoingPluginChannel(p,TamingProtocol.RESPONSE);
+        var m=p.getServer().getMessenger();m.registerIncomingPluginChannel(p,TamingProtocol.REQUEST,this);m.registerOutgoingPluginChannel(p,TamingProtocol.RESPONSE);m.registerOutgoingPluginChannel(p,TamingProtocol.ANCHORED_RESPONSE);
         Bukkit.getPluginManager().registerEvents(this,p);Bukkit.getPluginManager().registerEvents(new CosmeticPetSafety(),p);p.getCommand("교화").setExecutor(this);p.getCommand("교화관리").setExecutor(this);
         Bukkit.getScheduler().runTaskTimer(p,this::tick,4,4);
         shiny=new ShinyBridge(p,this);
@@ -82,7 +82,7 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
         return new Profile(p.id,p.mythic,p.vanilla,p.pet+"_shiny","§e"+ChatColor.stripColor(p.name),p.boss,p.base,p.bonus,p.scale);
     }
     private Profile baseProfile(LivingEntity e){
-        if(e instanceof Player||e instanceof ArmorStand||e instanceof Tameable t&&t.isTamed()||e instanceof AbstractHorse h&&h.isTamed()||e.getScoreboardTags().contains("chacademia_pet")||pets.activePet(e))return null;
+        if(TamingTargetPolicy.excluded(e,false)||pets.activePet(e))return null;
         if(mobManager!=null)try{
             var a=(Optional<?>)activeMob.invoke(mobManager,e.getUniqueId());if(a.isPresent()){
                 Object type=a.get().getClass().getMethod("getType").invoke(a.get());String id=(String)type.getClass().getMethod("getInternalName").invoke(type);
@@ -162,6 +162,13 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
     private double chance(LivingEntity e,Profile p){var a=e.getAttribute(Attribute.MAX_HEALTH);return TamingRules.chance(p.base,p.bonus,e.getHealth(),a==null?20:a.getValue(),p.boss);}
     private int graceMs(LivingEntity e){var g=graces.get(e.getUniqueId());return g==null?0:(int)Math.max(0,g.until-now());}
     private void send(Player p,State s){if(p.isOnline()&&p.getListeningPluginChannels().contains(TamingProtocol.RESPONSE))p.sendPluginMessage(plugin,TamingProtocol.RESPONSE,TamingProtocol.encode(s));}
+    private void sendTarget(Player p,State s,LivingEntity target){
+        if(p.isOnline()&&p.getListeningPluginChannels().contains(TamingProtocol.ANCHORED_RESPONSE)){
+            var at=target.getLocation();
+            var anchor=new TamingProtocol.Anchor(target.getUniqueId(),at.getX(),at.getY(),at.getZ(),Math.clamp(target.getHeight(),0,64));
+            p.sendPluginMessage(plugin,TamingProtocol.ANCHORED_RESPONSE,TamingProtocol.encode(new TamingProtocol.AnchoredState(s,anchor)));
+        }else send(p,s); // Existing clients continue to receive the unchanged v1 state.
+    }
     private void message(Player p,String text){send(p,new State(++token,TamingProtocol.ERROR,-1,"",false,0,0,0,0,text));p.sendMessage(text);}
     private boolean permitted(Player p){return TamingSpell.permitted(plugin.tamingSpell(),p::hasPermission);}
     private ManaCasting.Result rejected(Player p,int status,String text){message(p,text);return new ManaCasting.Result(status,0);}
@@ -170,7 +177,7 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
         if(e==null||!TamingQueryPolicy.matches(claimed,e.getUniqueId())||f==null||!permitted(p)){send(p,new State(0,0,-1,"",false,0,0,0,0,""));return;}
         String hint=f.boss&&!graces.containsKey(e.getUniqueId())?"처치 후 교화 가능":"/교화 · 시전";
         if(locked.contains(e.getUniqueId()))hint="다른 플레이어가 교화 중";
-        send(p,new State(0,TamingProtocol.TARGET,e.getEntityId(),f.name,f.boss,chance(e,f),graceMs(e),0,0,hint));
+        sendTarget(p,new State(0,TamingProtocol.TARGET,e.getEntityId(),f.name,f.boss,chance(e,f),graceMs(e),0,0,hint),e);
     }
     @Override public void onPluginMessageReceived(String channel,Player p,byte[] data){
         if(!channel.equals(TamingProtocol.REQUEST))return;TamingProtocol.Request r;try{r=TamingProtocol.request(data);}catch(IllegalArgumentException ex){return;}
@@ -214,7 +221,7 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
         else message(p,result.status()==ManaProtocol.EMPTY?"마나가 부족합니다.":result.status()==ManaProtocol.COOLDOWN?"교화 재사용 대기 중입니다.":"교화를 시작하지 못했습니다. 마나는 차감하지 않았습니다.");
         return result;
     }
-    private void emit(Cast c,int status,String message){send(c.player,new State(c.token,status,c.entity.getEntityId(),c.profile.name,c.profile.boss,c.chance,graceMs(c.entity),Math.max(0,(int)(duration-(now()-c.start))),duration,message));}
+    private void emit(Cast c,int status,String message){sendTarget(c.player,new State(c.token,status,c.entity.getEntityId(),c.profile.name,c.profile.boss,c.chance,graceMs(c.entity),Math.max(0,(int)(duration-(now()-c.start))),duration,message),c.entity);}
     private TamingModelFx effect(LivingEntity e,boolean boss,double scale){
         if(!models)return null;
         try{var fx=new TamingModelFx(e,boss,scale);effects.add(fx);return fx;}

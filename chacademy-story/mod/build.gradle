@@ -85,5 +85,5 @@ test { useJUnitPlatform() }
 
 sourceSets.test.java {
     srcDir '../plugin/src/main/java'
-    include '**/StoryCatalog.java', '**/StorySafety.java', '**/StoryCodec.java', '**/*Test.java', 'school/magiccodex/client/*.java'
+    include '**/LocalEndingSessions.java', '**/StoryDef.java', '**/StoryGraph.java', '**/StoryCatalog.java', '**/StorySafety.java', '**/StoryCodec.java', '**/*Test.java', 'school/magiccodex/client/*.java'
 }

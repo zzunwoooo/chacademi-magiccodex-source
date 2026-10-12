@@ -21,6 +21,7 @@ public final class StoryCodec {
     public static final String CUTSCENE_STOP = "chacademy:cutscene_stop";
     public static final String CUTSCENE_DONE = "chacademy:cutscene_done";
     public static final String DIALOGUE_OPEN = "chacademy:dialogue_open";
+    public static final String DIALOGUE_SESSION="chacademy:dialogue_session", DIALOGUE_SESSION_SIGNAL="chacademy:dialogue_session_signal";
     public static final String DIALOGUE_VIEW = "chacademy:dialogue_view";
     public static final String DIALOGUE_REWARD = "chacademy:dialogue_reward";
     public static final String STORY_CATALOG="chacademy:story_catalog", STORY_RELOAD="chacademy:story_reload";
@@ -100,6 +101,19 @@ public final class StoryCodec {
         return out.toByteArray();
     }
 
+    public static byte[] dialogueSession(String id,String vars,String token){
+        ByteArrayOutputStream out=new ByteArrayOutputStream();writeString(out,id);writeString(out,vars);writeString(out,token);return out.toByteArray();
+    }
+    public record SessionSignal(int action,String id,String token,String ending) {}
+    public static SessionSignal sessionSignal(byte[] data){
+        if(data.length>MAX_C2S_PACKET)throw new IllegalArgumentException("Session packet too large");
+        ByteBuffer b=ByteBuffer.wrap(data);
+        try{var value=complete(b,new SessionSignal(readVarInt(b),readString(b),readString(b),readString(b)));
+            if(value.action()<0||value.action()>2||!StorySafety.validId(value.id())||value.token().length()!=36
+                    ||(value.action()==1&&!StorySafety.validId(value.ending())))throw new IllegalArgumentException("Invalid session signal");
+            java.util.UUID.fromString(value.token());return value;
+        }catch(BufferUnderflowException e){throw new IllegalArgumentException("Truncated session signal",e);}
+    }
     public static byte[] dialogueView(String id, String vars) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         writeString(out,id);writeString(out,vars);return out.toByteArray();

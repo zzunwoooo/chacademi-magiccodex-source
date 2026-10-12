@@ -53,4 +53,20 @@ class StoryProtocol2Test {
         assertEquals(StoryCodec.STORY_CATALOG,CutscenePackets.CatalogC2S.TYPE.id().toString());
         assertEquals(StoryCodec.STORY_RELOAD,CutscenePackets.ReloadS2C.TYPE.id().toString());
     }
+    @Test void authorizedSessionAndIdOnlySignalsMatchAndRejectExtraBytes(){
+        String token=java.util.UUID.randomUUID().toString();
+        var incoming=new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(StoryCodec.dialogueSession("ch1-3","",token)),RegistryAccess.EMPTY);
+        try{assertEquals(new CutscenePackets.DialogueSessionS2C("ch1-3","",token),CutscenePackets.DialogueSessionS2C.CODEC.decode(incoming));assertEquals(0,incoming.readableBytes());}finally{incoming.release();}
+        for(int action:List.of(0,1,2)){
+            var buffer=buffer();String ending=action==1?"s20":"";
+            CutscenePackets.DialogueSessionSignalC2S.CODEC.encode(buffer,new CutscenePackets.DialogueSessionSignalC2S(action,"ch1-3",token,ending));
+            byte[] raw=bytes(buffer);assertEquals(new StoryCodec.SessionSignal(action,"ch1-3",token,ending),StoryCodec.sessionSignal(raw));
+            assertThrows(IllegalArgumentException.class,()->StoryCodec.sessionSignal(java.util.Arrays.copyOf(raw,raw.length+1)));
+            assertThrows(IllegalArgumentException.class,()->StoryCodec.sessionSignal(java.util.Arrays.copyOf(raw,raw.length-1)));
+        }
+        var invalid=buffer();CutscenePackets.DialogueSessionSignalC2S.CODEC.encode(invalid,new CutscenePackets.DialogueSessionSignalC2S(1,"ch1-3",token,"op somebody"));
+        assertThrows(IllegalArgumentException.class,()->StoryCodec.sessionSignal(bytes(invalid)));
+        assertEquals(StoryCodec.DIALOGUE_SESSION,CutscenePackets.DialogueSessionS2C.TYPE.id().toString());
+        assertEquals(StoryCodec.DIALOGUE_SESSION_SIGNAL,CutscenePackets.DialogueSessionSignalC2S.TYPE.id().toString());
+    }
 }

@@ -76,6 +76,11 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        PayloadTypeRegistry.playS2C().register(CutscenePackets.DialogueSessionS2C.TYPE,CutscenePackets.DialogueSessionS2C.CODEC);
+        PayloadTypeRegistry.playC2S().register(CutscenePackets.DialogueSessionSignalC2S.TYPE,CutscenePackets.DialogueSessionSignalC2S.CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(CutscenePackets.DialogueSessionS2C.TYPE,(payload,context)->{
+            pendingLocal=()->openLocalDialogue(payload.id(),TextVars.decode(payload.vars()),true,payload.token());
+        });
         PayloadTypeRegistry.playC2S().register(CutscenePackets.CatalogC2S.TYPE,CutscenePackets.CatalogC2S.CODEC);
         PayloadTypeRegistry.playS2C().register(CutscenePackets.ReloadS2C.TYPE,CutscenePackets.ReloadS2C.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(CutscenePackets.ReloadS2C.TYPE,(payload,context)->context.client().execute(()-> {
@@ -229,19 +234,27 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
 
     /** 대화 열기. fromServer 면 선택지 이벤트와 끝을 서버로 알린다 (서버가 명령어 실행). */
     private static void stopDialogue() {
-        DialoguePresenter.stop();
+        pendingLocal=null;DialoguePresenter.stop();activeLocalToken="";
     }
 
     /** Default path: client file, client records, ordinary player commands only. */
-    private static void openLocalDialogue(String id,Map<String,String> vars,boolean acknowledge) {
+    private static String activeLocalToken="";
+    private static void sessionSignal(int action,String id,String token,String ending){
+        if(!token.isEmpty()&&ClientPlayNetworking.canSend(CutscenePackets.DialogueSessionSignalC2S.TYPE))
+            ClientPlayNetworking.send(new CutscenePackets.DialogueSessionSignalC2S(action,id,token,ending));
+    }
+    private static void openLocalDialogue(String id,Map<String,String> vars,boolean acknowledge){openLocalDialogue(id,vars,acknowledge,"");}
+    private static void openLocalDialogue(String id,Map<String,String> vars,boolean acknowledge,String token) {
         if(id==null||!DialogueLoader.ID_PATTERN.matcher(id).matches()) { error("대화 id 형식이 잘못되었습니다.");return; }
         if(DialoguePresenter.isActive()) {
             // Repeated requests never replace an active runner or issue its effects twice.
-            if(acknowledge && DialoguePresenter.isLocal(id)) sendLocalReady(id);
-            else if(acknowledge) reportDialogueFailure(id,"busy");
+            if(acknowledge && DialoguePresenter.isLocal(id)&&token.equals(activeLocalToken)) {
+                if(token.isEmpty())sendLocalReady(id);else sessionSignal(0,id,token,"");
+            }
+            else if(acknowledge){sessionSignal(2,id,token,"");reportDialogueFailure(id,"busy");}
             return;
         }
-        if(!DialoguePresenter.available()) { DialoguePresenter.warnUnavailable();if(acknowledge)reportDialogueFailure(id,CutscenePackets.FAIL_MAGICCODEX);return; }
+        if(!DialoguePresenter.available()) { sessionSignal(2,id,token,"");DialoguePresenter.warnUnavailable();if(acknowledge)reportDialogueFailure(id,CutscenePackets.FAIL_MAGICCODEX);return; }
         var client=Minecraft.getInstance();if(client.player==null)return;
         try {
             var dialogue=DialogueLoader.load(id);
@@ -260,21 +273,30 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
                     if(event.isEmpty())return;
                     signals.send(()->{try{if(ledger.claimEvent(dialogueId,event))runPlayerCommands(dialogue.commands().events().getOrDefault(event,java.util.List.of()));}catch(java.io.IOException e){signals.reject();localRecordFailure(e);}});
                 }
+                @Override public void aborted(String dialogueId){signals.reject();sessionSignal(2,dialogueId,token,"");activeLocalToken="";}
                 @Override public void done(String dialogueId,String lastScene){
-                    signals.send(()->{try{if(ledger.complete(dialogueId)){
-                        runPlayerCommands(dialogue.commands().endings().getOrDefault(lastScene,java.util.List.of()));
-                        runPlayerCommands(dialogue.commands().end());
-                    }}catch(java.io.IOException e){signals.reject();localRecordFailure(e);}});
+                    signals.send(()->{
+                        // Console ending commands are per authorized playback, independent of lifetime reward records.
+                        sessionSignal(1,dialogueId,token,lastScene);activeLocalToken="";
+                        try{if(ledger.complete(dialogueId)){
+                            runFirstRewards(dialogue.commands().endings().getOrDefault(lastScene,java.util.List.of()));
+                            runFirstRewards(dialogue.commands().end());
+                        }}catch(java.io.IOException e){signals.reject();localRecordFailure(e);}
+                    });
                 }
             });
-            if(!DialoguePresenter.start(runner,false)){signals.reject();if(acknowledge)reportDialogueFailure(id,CutscenePackets.FAIL_MAGICCODEX);return;}
+            if(!DialoguePresenter.start(runner,false)){signals.reject();sessionSignal(2,id,token,"");if(acknowledge)reportDialogueFailure(id,CutscenePackets.FAIL_MAGICCODEX);return;}
+            activeLocalToken=token;
             try{signals.accept();}catch(java.io.UncheckedIOException e){DialoguePresenter.stop();localRecordFailure(e);if(acknowledge)reportDialogueFailure(id,"local_record");return;}
             if(signals.isRejected()){if(acknowledge)reportDialogueFailure(id,"local_record");return;}
-            if(acknowledge)sendLocalReady(id);
-        }catch(Exception e){LOGGER.warn("로컬 대화 열기 실패: {}",id,e);error("대화를 열지 못했습니다: "+id+" ("+e.getMessage()+")");if(acknowledge)reportDialogueFailure(id,CutscenePackets.FAIL_BROKEN);}
+            if(acknowledge){if(token.isEmpty())sendLocalReady(id);else sessionSignal(0,id,token,"");}
+        }catch(Exception e){sessionSignal(2,id,token,"");LOGGER.warn("로컬 대화 열기 실패: {}",id,e);error("대화를 열지 못했습니다: "+id+" ("+e.getMessage()+")");if(acknowledge)reportDialogueFailure(id,CutscenePackets.FAIL_BROKEN);}
     }
     private static void sendLocalReady(String id){if(ClientPlayNetworking.canSend(CutscenePackets.DialogueReadyC2S.TYPE))ClientPlayNetworking.send(new CutscenePackets.DialogueReadyC2S(id));}
     private static void localRecordFailure(Exception e){DialoguePresenter.stop();LOGGER.warn("로컬 대화 기록 저장 실패; 추가 명령을 실행하지 않습니다",e);error("대화 기록을 저장하지 못했습니다. 명령 실행을 중단했습니다.");}
+    private static void runFirstRewards(java.util.List<String> commands){
+        runPlayerCommands(commands.stream().filter(c->c.startsWith("chaca_reward ")).toList());
+    }
     private static void runPlayerCommands(java.util.List<String> commands){
         var client=Minecraft.getInstance();if(client.player==null||client.getConnection()==null)return;
         String account=client.player.getGameProfile().getName();
