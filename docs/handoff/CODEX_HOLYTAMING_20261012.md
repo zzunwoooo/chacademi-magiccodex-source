@@ -20,7 +20,7 @@ School and wild normal restart completed with no players; Velocity restarted nor
 
 Deployment JAR hashes are in CODEX_HOLYTAMING_ARTIFACTS_20261012.json. Hosting backups are retained outside this repository. Config changes merge only relevant IDs and retain unrelated settings. Both discovery donation stores remain existing SQLite databases: no shared MariaDB migration or credential/grant changes. Cross-server donation consistency is not established by this deployment. No real paid API calls were made.
 
-Public launcher v0.1.3 is the follow-on delivery target. Only authorized client artifacts, public effects and Chat Layout corresponding GPL source belong in that release. Private fonts/images, server JARs, runtime databases and secrets are excluded. Personal client update must preserve private Story fonts and settings and must not replace files while Java is running.
+Public launcher v0.1.3 is published and its main distribution feed is updated. Launcher commit: 03480ef13153e01a015016075d4ef5301e1e7518; game build source: 4ad93132baebaf77441845449635b5dabb4b836f. All 11 GitHub asset digests match local files; public distribution/latest.yml/checksum downloads and main feed match. Release: https://github.com/zzunwoooo/chacademi-launcher/releases/tag/v0.1.3 . Only authorized client artifacts, public effects and Chat Layout corresponding GPL source belong in that release. Private fonts/images, server JARs, runtime databases and secrets are excluded. Personal client update completed after verifying no java/javaw process was running. Final UI and all 15 HolyTaming files match; the previous UI/catalog were backed up. Private Story font, ChatPlus and Chat Layout hashes remain unchanged.
 
 ## Manual acceptance
 
@@ -31,3 +31,5 @@ Verify protected-region refusal before effects, target protection during channel
 Client upgrade: only the exact previous bundled 149 default (normalized line endings) is backed up and migrated; customized catalog files remain untouched. Fresh installations still install the complete catalog. Two regression tests cover these paths.
 
 Console status commands in Korean could not be verified through the current supervisor input encoding; startup logs and English Mythic reload are verified instead.
+
+Release installer SHA256: 10b9a517dfee3293fd496127827a77761fcfe50fbe0c22a7b1ff25ab3d5d75fb. Final UI SHA256: b32f9d2d99091639adf1ff06a6b69b37dac64ced5af4ba8095aedd88db5035ee. Client assets SHA256: e3d68c65a58cebf8e967a38bd840a4e72173248e955b9acfdd96d2410b74c12e. Installed server JARs rechecked against deployment manifest; TCP 25565/25566/25567 respond.
