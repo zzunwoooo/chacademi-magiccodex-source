@@ -43,7 +43,7 @@ public final class PartyHudClient {
     private static Bar bar(String name,int width){return new Bar(Identifier.of("magiccodex","textures/gui/party/"+name+".png"),width,36);}
 
     /** 저장되는 배치. */
-    static final class Settings { float x=DEFAULT_X,y=DEFAULT_Y,scale=DEFAULT_SCALE;boolean enabled=true; }
+    static final class Settings { float x=DEFAULT_X,y=DEFAULT_Y,scale=DEFAULT_SCALE;boolean enabled=true;boolean defaultAnchor=true; }
     private static Settings settings;
     private static List<Member> members=List.of();
     private static long received;
@@ -87,7 +87,7 @@ public final class PartyHudClient {
     static Settings settings(){
         if(settings==null){
             settings=new Settings();
-            try{if(Files.exists(FILE)){var loaded=JSON.fromJson(Files.readString(FILE,StandardCharsets.UTF_8),Settings.class);if(loaded!=null)settings=loaded;}}
+            try{if(Files.exists(FILE)){var loaded=JSON.fromJson(Files.readString(FILE,StandardCharsets.UTF_8),Settings.class);if(loaded!=null){settings=loaded;var raw=JsonParser.parseString(Files.readString(FILE,StandardCharsets.UTF_8)).getAsJsonObject();if(!raw.has("defaultAnchor"))settings.defaultAnchor=false;}}}
             catch(Exception malformed){settings=new Settings();}
             settings.scale=clampScale(settings.scale);
             if(!Float.isFinite(settings.x)||settings.x<0||settings.x>1)settings.x=DEFAULT_X;
@@ -113,7 +113,7 @@ public final class PartyHudClient {
         root.then(ClientCommandManager.literal("초기화").executes(ctx->{resetLayout();ctx.getSource().sendFeedback(Text.literal("파티 창 위치와 크기를 처음대로 돌렸습니다."));return 1;}));
         return root;
     }
-    private static void resetLayout(){var s=settings();s.x=DEFAULT_X;s.y=DEFAULT_Y;s.scale=DEFAULT_SCALE;gesture=null;save();}
+    private static void resetLayout(){var s=settings();s.x=DEFAULT_X;s.y=DEFAULT_Y;s.scale=DEFAULT_SCALE;s.defaultAnchor=true;gesture=null;save();}
 
     // ---------- 화면 계산 ----------
     private record Frame(float screenW,float screenH,float scale,float ox,float oy,int count){
@@ -128,7 +128,7 @@ public final class PartyHudClient {
     private static Frame frame(MinecraftClient c){
         var w=c.getWindow();float sw=w.getScaledWidth(),sh=w.getScaledHeight();var s=settings();
         float scale=PartyHudLayout.fittedScale(sw,sh,s.scale,members.size());int count=members.size();
-        return new Frame(sw,sh,scale,originX(s.x,sw,scale),originY(s.y,sh,scale,count),count);
+        return new Frame(sw,sh,scale,s.defaultAnchor?defaultOriginX(sw,scale):originX(s.x,sw,scale),s.defaultAnchor?defaultOriginY(sh,scale,count):originY(s.y,sh,scale,count),count);
     }
     private static double mouseX(MinecraftClient c){var w=c.getWindow();return c.mouse.getX()*w.getScaledWidth()/w.getWidth();}
     private static double mouseY(MinecraftClient c){var w=c.getWindow();return c.mouse.getY()*w.getScaledHeight()/w.getHeight();}
@@ -141,6 +141,7 @@ public final class PartyHudClient {
         if(hit==NONE)return false;
         if(button==1){resetLayout();sound(c);return true;}
         if(button!=0)return true;
+        settings().x=f.ox()/f.screenW();settings().y=f.oy()/f.screenH();settings().defaultAnchor=false;
         gesture=new Gesture(hit==GRIP_HIT,x,y,settings().x,settings().y,settings().scale,f.ox(),f.oy());
         return true;
     }

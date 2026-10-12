@@ -3,6 +3,7 @@ import java.io.ByteArrayInputStream;
 import java.util.*;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.entity.EntityType;
@@ -24,12 +25,18 @@ public final class PetScreen extends Screen {
     private record Icon(Entry source,ItemStack stack){}
     private final Map<String,LivingEntity> previewEntities=new HashMap<>();
     private String hover="",previous="";
+    private TextFieldWidget search;
     private static final float DEFAULT_YAW=170; // Ten degrees off the original front view.
     private float yaw=DEFAULT_YAW,zoom=1;private boolean dragging;private double dragX;
     public PetScreen(){super(Text.literal("펫 도감"));}
     public record Fit(float x,float y,float scale){double mx(double x){return (x-this.x)/scale;}double my(double y){return (y-this.y)/scale;}}
     public static Fit fit(int width,int height){float s=Math.max(.1f,Math.min((width-16)/1280f,(height-16)/720f));return new Fit((width-1280*s)/2,(height-720*s)/2,s);}
-    @Override protected void init(){super.init();}
+    @Override protected void init(){
+        super.init();var f=fit(width,height);
+        search=new TextFieldWidget(textRenderer,Math.round(f.x()+400*f.scale()),Math.round(f.y()+166*f.scale()),Math.max(80,Math.round(480*f.scale())),Math.max(16,Math.round(22*f.scale())),Text.literal("펫 이름 또는 ID 검색"));
+        search.setMaxLength(96);search.setPlaceholder(Text.literal("펫 이름 또는 ID 검색"));search.setText(PetClient.STATE.query());
+        search.setChangedListener(PetClient.STATE::search);addDrawableChild(search);
+    }
     private static boolean in(double x,double y,double rx,double ry,double w,double h){return x>=rx&&x<rx+w&&y>=ry&&y<ry+h;}
     private String hit(double x,double y){
         if(in(x,y,1171,28,66,60))return "close";
@@ -64,7 +71,7 @@ public final class PetScreen extends Screen {
             round(c,"prev",207,340,86,80,"chevron_left",false);
             round(c,"next",987,340,86,80,"chevron_left",true);
             if(entry==null){
-                label(c,PetClient.STATE.filter()!=0&&!PetClient.busy()?"해당 등급의 펫이 없습니다.":PetClient.status(),640,359,24,0xFFD1DFE8,false);
+                label(c,!PetClient.STATE.query().isEmpty()?"검색 결과가 없습니다.":PetClient.STATE.filter()!=0&&!PetClient.busy()?"해당 등급의 펫이 없습니다.":PetClient.status(),640,359,24,0xFFD1DFE8,false);
                 label(c,PetClient.busy()?"잠시만 기다려 주세요":"우측 아래에서 새로고침할 수 있습니다",640,396,17,0xFFAFBECF,false);
             }else{
                 boolean drawn=false;
@@ -93,6 +100,7 @@ public final class PetScreen extends Screen {
             if(PetClient.previewing())label(c,"미리보기",143,62,16,0xFFBBD0DE,false);
             String notice=PetClient.notice();if(!notice.isEmpty())tooltip(c,notice,640,474);
         }finally{c.getMatrices().pop();images.endFrame();}
+        if(search!=null)search.render(c,mouseX,mouseY,delta);
         entrance.draw(c,width,height);
     }
     private boolean preview(DrawContext c,String id,double mx,double my){
@@ -124,6 +132,8 @@ public final class PetScreen extends Screen {
     private void tooltip(DrawContext c,String s,float x,float y){float w=Math.min(790,UiResources.text().width(s,17,BODY)+30);HudMesh.capsule(c,x-w/2,y-18,w,36,0xED0A1C2A,0xED0A1C2A);label(c,s,x,y,17,0xFFE4EDF0,false);}
     private void sound(float pitch,float volume){client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK.value(),pitch,volume));}
     @Override public boolean mouseClicked(double x,double y,int button){
+        if(search!=null&&search.mouseClicked(x,y,button)){setFocused(search);return true;}
+        if(search!=null)search.setFocused(false);
         if(button!=0)return false;var f=fit(width,height);String h=hit(f.mx(x),f.my(y));var e=PetClient.STATE.selected();
         if(h.equals("close")){close();return true;}
         if(h.equals("model")){dragging=true;dragX=x;return true;}
@@ -141,7 +151,7 @@ public final class PetScreen extends Screen {
     @Override public boolean mouseDragged(double x,double y,int button,double dx,double dy){if(button==0&&dragging){yaw+=(x-dragX)/fit(width,height).scale()*.6f;dragX=x;return true;}return false;}
     @Override public boolean mouseReleased(double x,double y,int button){dragging=false;return super.mouseReleased(x,y,button);}
     @Override public boolean mouseScrolled(double x,double y,double horizontal,double vertical){var f=fit(width,height);if(hit(f.mx(x),f.my(y)).equals("model")){zoom=(float)Math.clamp(zoom+vertical*.08,.65,1.45);return true;}PetClient.STATE.step(vertical>0?-1:1);return true;}
-    @Override public boolean keyPressed(int key,int scan,int mods){if(key==GLFW.GLFW_KEY_LEFT){PetClient.STATE.step(-1);sound(1.1f,.15f);return true;}if(key==GLFW.GLFW_KEY_RIGHT){PetClient.STATE.step(1);sound(1.1f,.15f);return true;}return super.keyPressed(key,scan,mods);}
+    @Override public boolean keyPressed(int key,int scan,int mods){if(search!=null&&search.isFocused())return super.keyPressed(key,scan,mods);if(key==GLFW.GLFW_KEY_LEFT){PetClient.STATE.step(-1);sound(1.1f,.15f);return true;}if(key==GLFW.GLFW_KEY_RIGHT){PetClient.STATE.step(1);sound(1.1f,.15f);return true;}return super.keyPressed(key,scan,mods);}
     @Override public void tick(){if(client.player==null||client.world==null||!client.player.isAlive())close();}
     @Override public boolean shouldPause(){return false;}
     public void verifyRenderer(){UiResources.images().verifyGpuState();}

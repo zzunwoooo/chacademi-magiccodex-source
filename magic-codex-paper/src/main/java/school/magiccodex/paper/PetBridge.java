@@ -104,7 +104,8 @@ final class PetBridge implements PluginMessageListener,Listener,CommandExecutor,
         for(var p:catalog){
             Object configured=stars==null?null:stars.getValues(false).get(p.id);
             int grade=configured instanceof Number n?Math.clamp(n.intValue(),1,3):fallback;
-            result.add(new Entry(p.id,p.name,grade,!p.checked||(p.permission!=null&&player.hasPermission(p.permission)),active.contains(p.id),p.icon));
+            boolean owned=!p.checked||(p.permission!=null&&player.hasPermission(p.permission));
+            if(owned)result.add(new Entry(p.id,p.name,grade,true,active.contains(p.id),p.icon));
         }
         return result;
     }

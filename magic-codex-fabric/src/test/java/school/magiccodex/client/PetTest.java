@@ -22,7 +22,7 @@ class PetTest {
             byte[] wire=PetProtocol.encode(parts.get(i));assertTrue(wire.length<=24000);
             assertEquals(i==parts.size()-1,state.accept(PetProtocol.response(wire)));
         }
-        assertEquals(512,state.visible().size());assertEquals(8192,state.visible().getFirst().icon().length);
+        assertEquals(256,state.visible().size());assertEquals(8192,state.visible().getFirst().icon().length);
     }
     @Test void favoritesLeadWithoutChangingSelectionAndFiltersWrap(){
         var s=new PetCatalogState();apply(s,1,List.of(pet("a",1),pet("b",2),pet("c",2)));
@@ -48,6 +48,18 @@ class PetTest {
         assertThrows(IllegalArgumentException.class,()->PetProtocol.response(new byte[24001]));
         assertThrows(IllegalArgumentException.class,()->PetProtocol.encode(new Request(1,4,"fox")));
         assertThrows(IllegalArgumentException.class,()->new Entry("fox","fox",4,true,false,new byte[0]));
+    }
+    @Test void searchIsOwnedOnlyAndCombinesNameIdStarsAndSelection(){
+        var s=new PetCatalogState();apply(s,1,List.of(
+            new Entry("fox_red","\uBD89\uC740 \uC5EC\uC6B0",3,true,false,new byte[0]),
+            new Entry("fox_blue","Blue Fox",2,true,false,new byte[0]),
+            new Entry("fox_secret","Secret Fox",3,false,false,new byte[0])));
+        s.search(" FOX ");assertEquals(2,s.visible().size());
+        s.search("\uC5EC\uC6B0");assertEquals("fox_red",s.selected().id());
+        s.search("\uFF46\uFF4F\uFF58");s.filter(2);assertEquals("fox_blue",s.selected().id());
+        s.search("secret");assertTrue(s.visible().isEmpty());assertNull(s.selected());
+        s.search("");s.filter(0);assertEquals(2,s.visible().size());
+        s.reset();assertEquals("",s.query());assertTrue(s.visible().isEmpty());
     }
     private JsonObject fixture(String version){
         var o=JsonParser.parseString("""

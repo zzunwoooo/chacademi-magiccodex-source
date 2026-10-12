@@ -97,7 +97,6 @@ public final class ChatLayout {
         boolean dirty=false;
         for(int index=0;index<windows.size();index++){
             ChatWindow window=windows.get(index);
-            PrivateConversations.filters(window);
             String signature=LayoutState.signature(names(window));
             WindowState saved=states.get(window);
             if(saved==null){
@@ -112,6 +111,8 @@ public final class ChatLayout {
                 }
                 states.put(window,saved);claimed.add(saved.id);dirty=true;
             }
+            if(migrateGeneralTab(window,windows))signature=LayoutState.signature(names(window));
+            PrivateConversations.filters(window);
             if(!signature.equals(saved.signature)){saved.signature=signature;dirty=true;}
             if(window.getTabSettings().getHideTabs()){
                 window.getTabSettings().setHideTabs(false);ConfigKt.setQueueUpdateConfig(true);
@@ -162,6 +163,28 @@ public final class ChatLayout {
         }
         if(dirty)save();
         return !panels.isEmpty();
+    }
+
+    /** Preserve tab objects, selected tab and window geometry while adding the new default once. */
+    private static boolean migrateGeneralTab(ChatWindow window,List<ChatWindow> windows){
+        for(var w:windows)for(var t:w.getTabSettings().getTabs())
+            if(t.getName().equals("일반"))return false;
+        var tabs=window.getTabSettings().getTabs();
+        for(int i=0;i<tabs.size();i++){
+            var all=tabs.get(i);
+            if(!all.getName().equals("전체")||PrivateConversations.peer(all)!=null)continue;
+            var selected=window.getTabSettings().getSelectedTab();
+            var settings=all.getCurrentSettings().clone();
+            settings.setName("일반");
+            settings.setPattern("\\A(?:\\[전체\\]|\\[일반\\]|\uE110).*");
+            settings.setAutoPrefix("");settings.setAlwaysAdd(false);settings.setSkipOthers(false);settings.updateRegex();
+            var general=new ChatTab(window,settings);general.setCurrentSettings(settings);settings.setChatTab(general);
+            tabs.add(i+1,general);
+            window.getTabSettings().setSelectedTabIndex(TabTransfer.identityIndex(tabs,selected));
+            window.updateWindowReference();window.getTabSettings().resetSortedChatTabs(false);
+            ChatManager.INSTANCE.resetGlobalSortedTabs();ConfigKt.setQueueUpdateConfig(true);return true;
+        }
+        return false;
     }
 
     private static LayoutMath.Panel calculate(ChatWindow window,WindowState saved){

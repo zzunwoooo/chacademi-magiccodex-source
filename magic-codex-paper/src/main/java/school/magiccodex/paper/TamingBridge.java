@@ -167,7 +167,7 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
     private ManaCasting.Result rejected(Player p,int status,String text){message(p,text);return new ManaCasting.Result(status,0);}
     private void query(Player p,UUID claimed){
         if(casts.containsKey(p.getUniqueId()))return;LivingEntity e=target(p);Profile f=e==null?null:profile(e);
-        if(e==null||!e.getUniqueId().equals(claimed)||f==null||!permitted(p)){send(p,new State(0,0,-1,"",false,0,0,0,0,""));return;}
+        if(e==null||!TamingQueryPolicy.matches(claimed,e.getUniqueId())||f==null||!permitted(p)){send(p,new State(0,0,-1,"",false,0,0,0,0,""));return;}
         String hint=f.boss&&!graces.containsKey(e.getUniqueId())?"처치 후 교화 가능":"/교화 · 시전";
         if(locked.contains(e.getUniqueId()))hint="다른 플레이어가 교화 중";
         send(p,new State(0,TamingProtocol.TARGET,e.getEntityId(),f.name,f.boss,chance(e,f),graceMs(e),0,0,hint));

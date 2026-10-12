@@ -37,7 +37,7 @@ class PartyHudTest {
     }
     @Test void staysOnScreenAndFormatsNumbers(){
         float s=scale(1920,1080,1);
-        assertEquals(1920-WIDTH*s,originX(.99f,1920,s),1e-3);assertEquals(0,originX(Float.NaN,1920,s)-DEFAULT_X*1920,1e-3);
+        assertEquals(1920-WIDTH*s,originX(.99f,1920,s),1e-3);assertEquals(1920-WIDTH*s,originX(Float.NaN,1920,s),1e-3);
         assertEquals(1080-height(4)*s,originY(1,1080,s,4),1e-3);
         assertEquals("15.5",number(15.5f));assertEquals("20",number(20f));
         assertEquals(0,fraction(5,0));assertEquals(1,fraction(25,20));assertEquals(.5f,fraction(10,20));
@@ -60,6 +60,15 @@ class PartyHudTest {
         for(int count:new int[]{8,16})for(int[] size:new int[][]{{1920,1080},{640,360},{480,270}}){
             float s=fittedScale(size[0],size[1],MAX_SCALE,count);
             assertTrue(WIDTH*s<=size[0]+.01f);assertTrue(height(count)*s<=size[1]+.01f);
+        }
+    }
+    @Test void defaultRightCenterFitsWithoutChangingManualFractions(){
+        for(int n:new int[]{1,4,16})for(int[] size:new int[][]{{1920,1080},{640,360},{320,180}}){
+            float s=fittedScale(size[0],size[1],DEFAULT_SCALE,n);
+            float x=defaultOriginX(size[0],s),y=defaultOriginY(size[1],s,n);
+            assertTrue(x>=0&&x+WIDTH*s<=size[0]+.01f);
+            assertEquals(size[1]/2f,y+height(n)*s/2,.01f);
+            assertEquals(Math.min(size[0]*.2f,size[0]-WIDTH*s),originX(.2f,size[0],s),.01f);
         }
     }
 }

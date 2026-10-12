@@ -1,0 +1,61 @@
+{
+  "baseCommit": "91212d9ef9949abc29fa2ea3c9ef63b543b4aa53",
+  "tests": [
+    {
+      "module": "paper",
+      "exitCode": 0,
+      "tests": 292,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "fabric",
+      "exitCode": 0,
+      "tests": 239,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "chat",
+      "exitCode": 0,
+      "tests": 136,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "magic-codex-bridge-0.30.0-catalog.alpha.1-chat.3-discovery.2-holytaming.1-partyhud.2.jar",
+      "kind": "server",
+      "bytes": 1679871,
+      "sha256": "cfab563cb112bd779684842e10a49b6cfc6632153e065c4d6f9ccfa4b0caaf2b",
+      "deployment": "pending"
+    },
+    {
+      "file": "magic-codex-ui-0.39.0-catalog.alpha.2-chat.3-holytaming.1-partyhud.2+mc1.21.4.jar",
+      "kind": "client",
+      "bytes": 103479499,
+      "sha256": "1989b82bd6356db1a5da3c18ce5aa88053574a6f98c2d2f1e11d96d7a2f75f54",
+      "deployment": "pending"
+    },
+    {
+      "file": "chacademi-chat-layout-1.6.0.jar",
+      "kind": "client",
+      "bytes": 116733,
+      "sha256": "b9d614a5026127cbf1d08444e478458b3e696121eacf48edf9032fc5665b8b5a",
+      "deployment": "pending"
+    },
+    {
+      "file": "chacademia-wildlife-0.3.0.jar",
+      "kind": "server-new-plugin",
+      "bytes": 37760,
+      "sha256": "dde86b1c8c08e59d1a49e0530fac16cfd5a8c25f25c56d9e97420c02948d33bb",
+      "deployment": "requires approval; build succeeded, no test sources"
+    }
+  ],
+  "launcher": "held; no personal client replacement or release/feed changes",
+  "server": "held until all six items are resolved"
+}

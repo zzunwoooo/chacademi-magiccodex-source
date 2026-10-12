@@ -9,7 +9,7 @@ public final class PetCatalogState {
     private List<Entry> visible=List.of();
     private final Set<String> favorites=new HashSet<>();
     private final Map<Integer,List<Entry>> pending=new HashMap<>();
-    private int parts,filter;private String selected="";
+    private int parts,filter;private String selected="",query="";
     private long expected;
     public void expect(long seq){expected=seq;pending.clear();parts=0;}
     public boolean accept(Response r){
@@ -22,10 +22,13 @@ public final class PetCatalogState {
         for(int i=0;i<parts;i++)for(var e:pending.get(i)){if(!ids.add(e.id()))throw new IllegalArgumentException("Duplicate");next.add(e);}
         entries=List.copyOf(next);expected=0;pending.clear();rebuild();return true;
     }
-    public void reset(){clearCatalog();favorites.clear();filter=0;}
+    public void reset(){clearCatalog();favorites.clear();filter=0;query="";}
     public void clearCatalog(){entries=List.of();visible=List.of();pending.clear();expected=0;parts=0;selected="";}
     public List<Entry> visible(){return visible;}
-    private void rebuild(){visible=entries.stream().filter(e->filter==0||e.stars()==filter).sorted(Comparator.<Entry,Boolean>comparing(e->!favorites.contains(e.id())).thenComparing(Entry::name,String.CASE_INSENSITIVE_ORDER).thenComparing(Entry::id)).toList();ensureSelection();}
+    private void rebuild(){visible=entries.stream().filter(Entry::owned).filter(e->query.isEmpty()||searchable(e.name()).contains(query)||searchable(e.id()).contains(query)).filter(e->filter==0||e.stars()==filter).sorted(Comparator.<Entry,Boolean>comparing(e->!favorites.contains(e.id())).thenComparing(Entry::name,String.CASE_INSENSITIVE_ORDER).thenComparing(Entry::id)).toList();ensureSelection();}
+    private static String searchable(String value){return java.text.Normalizer.normalize(value,java.text.Normalizer.Form.NFKC).toLowerCase(Locale.ROOT);}
+    public void search(String value){query=searchable(value.strip());rebuild();}
+    public String query(){return query;}
     public void favorites(Collection<String> values){favorites.clear();values.stream().filter(PetProtocol::validId).limit(PetProtocol.MAX_PETS).forEach(favorites::add);rebuild();}
     public Set<String> favorites(){return Set.copyOf(favorites);}
     public boolean favorite(String id){return favorites.contains(id);}

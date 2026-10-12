@@ -6,7 +6,7 @@ package school.magiccodex.client;
  */
 public final class PartyHudLayout {
     public static final float WIDTH=330,HEADER=44,ROW=72,ICON=52,BAR_X=66,HEALTH_Y=27,HEALTH_H=16,MANA_Y=49,MANA_H=13,GRIP=22;
-    public static final float MIN_SCALE=.5f,MAX_SCALE=2.5f,DEFAULT_X=.012f,DEFAULT_Y=.30f,DEFAULT_SCALE=.85f;
+    public static final float MIN_SCALE=.5f,MAX_SCALE=2.5f,DEFAULT_X=.988f,DEFAULT_Y=.50f,DEFAULT_SCALE=.85f;
     public static final int NONE=0,BODY=1,GRIP_HIT=2,HEALTH=3,MANA=4;
     private PartyHudLayout(){}
 
@@ -22,6 +22,8 @@ public final class PartyHudLayout {
     /** 위젯이 화면 밖으로 나가지 않게 왼쪽 위 좌표를 맞춘다 (저장 값은 바꾸지 않음). */
     public static float originX(float fraction,float screenW,float scale){return Math.clamp(fin(fraction,DEFAULT_X)*screenW,0,Math.max(0,screenW-WIDTH*scale));}
     public static float originY(float fraction,float screenH,float scale,int members){return Math.clamp(fin(fraction,DEFAULT_Y)*screenH,0,Math.max(0,screenH-height(members)*scale));}
+    public static float defaultOriginX(float screenW,float scale){return Math.max(0,screenW-WIDTH*scale-screenW*.012f);}
+    public static float defaultOriginY(float screenH,float scale,int members){return Math.max(0,(screenH-height(members)*scale)/2);}
     private static float fin(float v,float fallback){return Float.isFinite(v)?v:fallback;}
 
     /** 위젯 안 좌표(디자인 단위)의 무엇을 가리키는지. 행 번호는 {@link #row}. */

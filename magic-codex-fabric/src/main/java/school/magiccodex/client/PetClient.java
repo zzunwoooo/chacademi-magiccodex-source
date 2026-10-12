@@ -7,7 +7,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Function;
 import com.google.gson.*;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.fabric.api.client.command.v2.*;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.*;
@@ -52,7 +51,7 @@ public final class PetClient {
     public static void initialize(){
         IO.execute(()->{try{
             Files.createDirectories(modelRoot().resolve("textures"));
-            Path readme=ROOT.resolve("모델-넣는법.txt");if(!Files.exists(readme))Files.writeString(readme,"models/<MCPets의 펫ID>.bbmodel\n텍스처는 bbmodel에 포함해 저장하거나 models/textures/에 PNG를 넣으세요.\n/petcodex reload : 모델 다시 읽기\n/petcodex model <펫ID> : 서버 등록 전 모델 미리보기\n큐브 모델, 그룹, 면 UV, 숫자 position/rotation/scale 키프레임을 지원합니다.\nidle 이름의 애니메이션 우선, 없으면 첫 애니메이션. Molang과 메시(mesh)는 지원하지 않습니다.\n");
+            Path readme=ROOT.resolve("모델-넣는법.txt");if(!Files.exists(readme))Files.writeString(readme,"models/<MCPets의 펫ID>.bbmodel\n텍스처는 bbmodel에 포함해 저장하거나 models/textures/에 PNG를 넣으세요.\n/petcodex reload : 모델 다시 읽기\n큐브 모델, 그룹, 면 UV, 숫자 position/rotation/scale 키프레임을 지원합니다.\nidle 이름의 애니메이션 우선, 없으면 첫 애니메이션. Molang과 메시(mesh)는 지원하지 않습니다.\n");
         }catch(Exception e){log(e);}});
         PayloadTypeRegistry.playC2S().register(RequestPayload.ID,RequestPayload.CODEC);PayloadTypeRegistry.playS2C().register(ResponsePayload.ID,ResponsePayload.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(ResponsePayload.ID,(p,ctx)->{
@@ -64,11 +63,7 @@ public final class PetClient {
             for(String alias:new String[]{"펫도감","petcodex"})d.register(ClientCommandManager.literal(alias)
                 .executes(c->{open();return 1;})
                 .then(ClientCommandManager.literal("reload").executes(c->{reload();c.getSource().sendFeedback(Text.literal("펫 모델과 도감 정보를 다시 불러옵니다."));return 1;}))
-                .then(ClientCommandManager.literal("preview").executes(c->{preview();pendingOpen=true;return 1;}))
-                .then(ClientCommandManager.literal("model").then(ClientCommandManager.argument("id",StringArgumentType.word()).executes(c->{
-                    String id=StringArgumentType.getString(c,"id");if(!PetProtocol.validId(id)){c.getSource().sendError(Text.literal("펫 ID 형식을 확인하세요."));return 0;}
-                    fixture(List.of(new Entry(id,id,1,true,false,new byte[0])));pendingOpen=true;return 1;
-                }))));
+            );
         });
         ClientPlayConnectionEvents.JOIN.register((h,s,c)->{reset();loadFavorites(c);});
         ClientPlayConnectionEvents.DISCONNECT.register((h,c)->reset());
@@ -86,7 +81,7 @@ public final class PetClient {
     static boolean previewing(){return preview;}
     public static void invalidateCatalog(){known=false;lastRefresh=0;}
     static boolean busy(){return waiting!=0;}
-    static String status(){if(waiting!=0)return "펫 정보를 불러오는 중…";if(!known&&!preview)return "서버의 펫 도감 연동을 기다리고 있습니다.";return "등록된 펫이 없습니다.";}
+    static String status(){if(waiting!=0)return "펫 정보를 불러오는 중…";if(!known&&!preview)return "서버의 펫 도감 연동을 기다리고 있습니다.";return "보유한 펫이 없습니다.";}
     static String notice(){return Util.getMeasuringTimeMs()-noticeAt<5000?notice:"";}
     static void notice(String message){notice=message;noticeAt=Util.getMeasuringTimeMs();}
     static boolean request(int action,String id,boolean force){

@@ -66,20 +66,12 @@ public final class TamingClient {
         if(state!=null&&state.status()==TamingProtocol.CHANNEL&&n-received<1800){if(n>=nextLoop){stopLoop();looping=PositionedSoundInstance.master(SoundEvent.of(Identifier.of("magiccodex","taming.channel_loop")),1,.3f);c.getSoundManager().play(looping);nextLoop=n+2400;}}
         else stopLoop();
         if(!targetRegistered()){if(state!=null&&state.status()==TamingProtocol.TARGET)state=null;nextQuery=0;return;}
-        if(!ClientPlayNetworking.canSend(Request.ID)||n<nextQuery)return;nextQuery=n+500;
+        if(c.currentScreen!=null||!ClientPlayNetworking.canSend(Request.ID)||n<nextQuery)return;nextQuery=n+500;
         if(state!=null&&(state.status()==TamingProtocol.CHANNEL||state.status()==TamingProtocol.PENDING)&&n-received<15000)return;
         if(state!=null&&(state.status()==TamingProtocol.SUCCESS||state.status()==TamingProtocol.FAIL||state.status()==TamingProtocol.ERROR)&&n-received<2400)return;
-        UUID id=NONE;
-        if(c.currentScreen==null&&c.crosshairTarget instanceof EntityHitResult hit&&hit.getEntity() instanceof LivingEntity)id=hit.getEntity().getUuid();
-        // A bounded 12-block client ray extends vanilla's interaction targeting; server independently re-traces it.
-        if(id.equals(NONE)&&c.currentScreen==null){var from=c.player.getEyePos();var dir=c.player.getRotationVec(1);var end=from.add(dir.multiply(12));double nearest=144;
-            var block=c.world.raycast(new net.minecraft.world.RaycastContext(from,end,net.minecraft.world.RaycastContext.ShapeType.COLLIDER,net.minecraft.world.RaycastContext.FluidHandling.NONE,c.player));
-            if(block.getType()!=net.minecraft.util.hit.HitResult.Type.MISS)nearest=from.squaredDistanceTo(block.getPos());
-            for(var e:c.world.getOtherEntities(c.player,c.player.getBoundingBox().stretch(dir.multiply(12)).expand(1),e->e instanceof LivingEntity&&e.isAlive())){
-                var h=e.getBoundingBox().expand(.25).raycast(from,end);if(h.isPresent()){double d=from.squaredDistanceTo(h.get());if(d<nearest){nearest=d;id=e.getUuid();}}
-            }
-        }
-        ClientPlayNetworking.send(new Request(TamingProtocol.encode(new TamingProtocol.Request(TamingProtocol.QUERY,id))));
+        // ModelEngine visuals can hide the living base or expose a different hitbox UUID.
+        // The server already performs the bounded, obstruction-aware authoritative ray.
+        ClientPlayNetworking.send(new Request(TamingProtocol.encode(new TamingProtocol.Request(TamingProtocol.QUERY,NONE))));
     }
     private static void sound(String name,float volume){MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvent.of(Identifier.of("magiccodex","taming."+name)),1,volume));}
     private static void stopLoop(){if(looping!=null){MinecraftClient.getInstance().getSoundManager().stop(looping);looping=null;}}
@@ -97,7 +89,7 @@ public final class TamingClient {
         if(!targetRegistered()||state==null||stateWorld!=c.world||c.world==null||c.player==null
                 ||c.currentScreen!=null||c.options.hudHidden||!TamingChanceLabel.visible(state,Util.getMeasuringTimeMs()-received))return;
         var entity=c.world.getEntityById(state.entityId());
-        if(!(entity instanceof LivingEntity)||!entity.isAlive()||entity.isInvisibleTo(c.player))return;
+        if(!(entity instanceof LivingEntity)||!entity.isAlive())return;
         var pos=entity.getLerpedPos(context.tickCounter().getTickDelta(false))
                 .add(0,entity.getHeight()+.7,0).subtract(context.camera().getPos());
         if(pos.lengthSquared()>16*16)return;

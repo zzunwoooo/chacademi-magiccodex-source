@@ -1,3 +1,7 @@
+## 1.6.0 staging update
+
+Aggregate displays locally received messages, including party/private deliveries. General is added adjacent to aggregate without duplicating an existing general tab; both send through the existing public route. House, party, private and slash-command routing remain unchanged. Client deployment is held by user request.
+
 # Chacademi Chat Layout 1.5.0
 
 Fabric client addon for Minecraft 1.21.4 and ChatPlus 2.8.1 (Java 21). Compile dependency only; no Fabric API or MagicCodex hard dependency.

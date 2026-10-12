@@ -26,9 +26,15 @@ public final class PrivateConversations {
     settings.setPattern("(?:\\A\\[파티\\].*)|(?:"+old+")");
     settings.updateRegex();com.ebicep.chatplus.config.ConfigKt.setQueueUpdateConfig(true);continue;
    }
+   if(tab.getName().equals("전체")){
+    if(!old.equals("(?s).*")||!settings.getAlwaysAdd()||settings.getSkipOthers()){
+     settings.setPattern("(?s).*");settings.setAlwaysAdd(true);settings.setSkipOthers(false);
+     settings.updateRegex();com.ebicep.chatplus.config.ConfigKt.setQueueUpdateConfig(true);
+    }
+    continue;
+   }
    if(old.contains("\\x{E101}"))continue;
-   if(tab.getName().equals("전체"))settings.setPattern("\\A(?!\\x{E101})(?:"+old+")");
-   else if(tab.getName().equals("귓말"))settings.setPattern("(?:\\x{E101}.*)|(?:"+old+")");
+   if(tab.getName().equals("귓말"))settings.setPattern("(?:\\x{E101}.*)|(?:"+old+")");
    else continue;
    settings.updateRegex();com.ebicep.chatplus.config.ConfigKt.setQueueUpdateConfig(true);
   }
@@ -66,6 +72,10 @@ public final class PrivateConversations {
   var icon=Component.literal("\uE101").withStyle(Style.EMPTY.withFont(ResourceLocation.fromNamespaceAndPath("magiccodex","whisper")));
   var line=icon.append(Component.literal(" "+sender+" : "+text).withStyle(Style.EMPTY.withFont(ResourceLocation.withDefaultNamespace("default"))));
   tab.addNewMessage(new AddNewMessageEvent(line,line,id,null,Minecraft.getInstance().gui.getGuiTicks(),null,false));
+  // These payloads bypass vanilla chat: mirror only this client's delivered private message.
+  for(var window:Config.INSTANCE.getValues().getChatWindows())for(var aggregate:window.getTabSettings().getTabs())
+   if(aggregate!=tab&&peer(aggregate)==null&&aggregate.getName().equals("전체"))
+    aggregate.addNewMessage(new AddNewMessageEvent(line,line,id,null,Minecraft.getInstance().gui.getGuiTicks(),null,false));
  }
  private static void notice(ChatTab tab,String text){
   var line=Component.literal(text).withStyle(net.minecraft.ChatFormatting.YELLOW);
