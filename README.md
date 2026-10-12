@@ -1,3 +1,7 @@
+# Current update: party HUD, 2026-10-12
+
+See [party HUD handoff](docs/handoff/CODEX_PARTY_HUD_20261012.md) for the latest deployment and test scope. Prior HolyTaming/protection features are preserved.
+
 # Current integration: 2026-10-12
 
 HolyTaming, recovery fixes and discovery/protection deployment supersede the historical pending status below. See [current handoff](docs/handoff/CODEX_HOLYTAMING_20261012.md). Gimmick module and dungeon models remain excluded; shared donation database remains pending.

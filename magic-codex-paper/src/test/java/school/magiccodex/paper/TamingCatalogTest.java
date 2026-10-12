@@ -79,7 +79,7 @@ class TamingCatalogTest {
         assertEquals(TamingSpell.ID,client.getString("id"));assertEquals("교화",client.getString("name"));
         assertEquals(149,client.getInt("order"));assertEquals(TamingSpell.PERMISSION,client.getString("permission"));
         assertEquals("교화",client.getString("cast.command"));assertEquals(150,client.getInt("cast.mana-cost"));assertEquals(60,client.getInt("cast.cooldown-seconds"));
-        assertEquals("관리자가 마법 조건지급 명령으로 습득 조건을 부여합니다.",client.getString("discovery.description"));
+        assertEquals("몬스터 교화 실습 수행하기",client.getString("discovery.description"));
         assertEquals("빛의 고리가 닫히자, 낯선 숨결이 내 이름에 답했다. 처음 만난 짐승의 눈동자에서 오래된 약속의 흔적이 잠깐 빛났다.",client.getString("research"));
         var encounter=yaml(Path.of("src/main/resources/taming.yml"));
         assertEquals(12,encounter.getInt("range"));assertEquals(4000,encounter.getInt("cast-milliseconds"));

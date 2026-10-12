@@ -54,6 +54,7 @@ public final class MagicCodexClient implements ClientModInitializer {
         ShinyClient.initialize();
         CastingClient.initialize();
         PlayerHudClient.initialize();
+        PartyHudClient.initialize();
         ScreenVfxClient.initialize();
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             for (String alias : new String[]{"UI", "ui"}) {

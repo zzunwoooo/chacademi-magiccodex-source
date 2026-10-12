@@ -805,7 +805,7 @@ spells:
     permission: "magic.learned.rainbow_collar"
     icon: "magiccodex:textures/spells/expansion_2/rainbow_collar.png"
     category: "light"
-    condition-text: "관리자가 마법 조건지급 명령으로 습득 조건을 부여합니다."
+    condition-text: "몬스터 교화 실습 수행하기"
     requirements:
       "trace.condition.rainbow_collar": 1
     chance: 1.0

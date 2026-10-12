@@ -21,4 +21,10 @@ class HolyTamingDefaultMigrationTest {
   try(var files=Files.list(fresh)){assertTrue(files.count()>149);}
   assertTrue(loader.load(fresh).success());
  }
+ @Test void updatesPreviousHolyTamingDefaultWithoutChangingCosts() throws Exception {
+  Path dir=Files.createDirectory(root.resolve("previous"));Path file=dir.resolve("149_rainbow_collar.yml");
+  Files.write(file,getClass().getResourceAsStream("/previous-holytaming.yml").readAllBytes());
+  new SpellYamlLoader().installDefaults(dir);String updated=Files.readString(file);
+  assertTrue(updated.contains("몬스터 교화 실습 수행하기"));assertTrue(updated.contains("mana-cost: 150"));assertTrue(updated.contains("cooldown-seconds: 60"));
+ }
 }

@@ -1,0 +1,31 @@
+[
+  {
+    "server": "school",
+    "file": "plugins/magic-codex-bridge-0.30.0-catalog.alpha.1-chat.3-discovery.2-holytaming.1-partyhud.1.jar",
+    "sha256": "a7d2a6d4cd48031b92c32137a378b83d2ec52bef6d68d133543ba0d659bdce7b"
+  },
+  {
+    "server": "wild",
+    "file": "plugins/magic-codex-bridge-0.30.0-catalog.alpha.1-chat.3-discovery.2-holytaming.1-partyhud.1.jar",
+    "sha256": "a7d2a6d4cd48031b92c32137a378b83d2ec52bef6d68d133543ba0d659bdce7b"
+  },
+  {
+    "server": "school",
+    "file": "plugins/magic-discovery-0.2.1-event-core.6.jar",
+    "sha256": "82fc842cb94687653003f0dfb0fcec9251e81bd6948b68d961c464ebf6d8acbc"
+  },
+  {
+    "server": "wild",
+    "file": "plugins/magic-discovery-0.2.1-event-core.6.jar",
+    "sha256": "82fc842cb94687653003f0dfb0fcec9251e81bd6948b68d961c464ebf6d8acbc"
+  },
+  {
+    "server": "velocity",
+    "file": "plugins/chacademi-party-velocity-0.2.1-discovery.1-partyhud.1.jar",
+    "sha256": "5ad2dd7fd722a6b2a75c879c7ca41afa8af83d9cefb86fd885f1718f8e446fbf"
+  },
+  {
+    "file": "magic-codex-ui-0.39.0-catalog.alpha.2-chat.3-holytaming.1-partyhud.1+mc1.21.4.jar",
+    "sha256": "8e6855f0848b2ffa3f2c0f780c375dde71eb4dcb1c206eee1590bec413463218"
+  }
+]
