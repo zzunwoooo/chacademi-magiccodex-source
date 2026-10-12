@@ -48,8 +48,8 @@ public final class PartyHudLayout {
     public static String number(float v){
         float r=Math.round(v*10)/10f;return r==(int)r?Integer.toString((int)r):String.format(java.util.Locale.ROOT,"%.1f",r);
     }
-    /** 기숙사 번호(SchoolProtocol.HOUSES 순서: 아르케온, 루미나, 베스티아즈, 노크세르) -> 아이콘 파일. */
+    /** 기숙사 번호(SchoolProtocol.HOUSES 순서) -> 아이콘: 아르케온=나침반 별, 루미나=초승달, 베스티아즈=나뭇가지·잎, 노크세르=태양 (사용자 확정). */
     public static String icon(int house){
-        return switch(house){case 0->"house_star";case 1->"house_sun";case 2->"house_leaf";case 3->"house_moon";default->null;};
+        return switch(house){case 0->"house_star";case 1->"house_moon";case 2->"house_leaf";case 3->"house_sun";default->null;};
     }
 }

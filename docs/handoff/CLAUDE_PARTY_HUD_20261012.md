@@ -43,7 +43,9 @@ Paper(MagicCodexBridge) --chacademi:party_vitals--> Velocity(chacademi-party) --
 
 ## 3. 주의사항
 
-1. **기숙사 → 아이콘 매핑은 Claude 추측**입니다 (`PartyHudLayout.icon`): 0 아르케온=별, 1 루미나=해, 2 베스티아즈=잎, 3 노크세르=달. 사용자에게 확인 후 바꾸면 그 switch 한 곳만 고치면 됨. 기숙사 미정(-1)은 금색 별 도형.
+1. 기숙사 → 아이콘 (사용자 확정, `PartyHudLayout.icon`): 0 아르케온=나침반 별, 1 루미나=초승달, 2 베스티아즈=나뭇가지·잎, 3 노크세르=태양. 기숙사 미정(-1)은 금색 별 도형.
+   달 아이콘은 다른 아이콘보다 커 보여서 PNG 안에서 약 82% 크기로 줄였다 (그리는 칸 크기는 모두 같음).
+   글씨체는 기존 HUD와 같은 `magiccodex:hud_bold`(Pretendard Bold, 이름·제목) / `magiccodex:label`(Pretendard Medium, 팝업·안내).
 2. Velocity/Fabric 바이트 형식은 두 테스트의 `GOLDEN` 상수로 고정. 한쪽을 바꾸면 양쪽 다 바꿀 것.
 3. `chacademi-chat-layout` 의 `MagicHudChatMixin` 은 `PlayerHudClient.lambda$initialize$7` 을 대상으로 한다. 이번 변경은 그 클래스에 **람다를 추가하지 않았다** (`.then(PartyHudClient.command())` 는 메서드 호출) — 람다 번호 변화 없음을 빌드 후 한 번 확인해 주세요 (`javap -p`).
 4. 클릭 순서: chat-layout 이 먼저 자기 창을 처리하고, 아니면 `HudCursorScreen.mouseClicked` → TopMenu → 파티 위젯. 위젯과 채팅창이 겹치면 채팅창이 우선.
