@@ -1,3 +1,5 @@
+> Deployed 2026-10-12: [Catalog gameplay runtime + Story queue fix](CODEX_CATALOG_RUNTIME_FIX_20261012.md). School/wild Bridge runtime.1 and Story0.1.3 verified; client and Velocity unchanged. This supersedes candidate-only notices below.
+
 > Latest combined candidate (tested, NOT deployed): [Catalog gameplay startup + Story queue](CODEX_CATALOG_RUNTIME_FIX_20261012.md). Bridge300 + Story109 tests passed; server-only replacements pending normal maintenance.
 
 > Latest follow-up (tested, NOT deployed): [Story failed-cutscene queue fix](CODEX_STORY_QUEUE_FIX_20261012.md). Server-only0.1.3 candidate; live remains0.1.2.

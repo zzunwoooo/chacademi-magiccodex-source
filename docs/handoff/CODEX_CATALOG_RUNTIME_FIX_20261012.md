@@ -1,6 +1,6 @@
 # Catalog gameplay startup fix with Story queue candidate - 2026-10-12
 
-Status: hosting Java21 tests/build passed; NOT deployed. Based on c52245f50a82122ae2c61a7de77eab836c22b764 (includes Story queue fix). No runtime YAML/JAR replacement, restart, forced client close, world effects, DB/key changes or paid calls.
+Status: deployed to school/wild after explicit user restart approval on 2026-10-12. Source/build revision 5f1ab33e84a7687cf41059c2c1cb51efcf2d2774. Hosting Java21 tests/build passed. Earlier candidate-only statements below describe preparation; see deployment verification at the end. Based on c52245f50a82122ae2c61a7de77eab836c22b764 (includes Story queue fix). No runtime YAML/JAR replacement, restart, forced client close, world effects, DB/key changes or paid calls.
 
 ## Proven common gameplay failure
 
@@ -30,3 +30,11 @@ Directory on hosting: C:/Chacademi/staging/magic-protection-20261011-task5/catal
 - `chacademy-story-plugin-0.1.3.jar` SHA256 `870d48d3227ef655e0c2e62db78712c36a4ad9a45df972d431c70c2ac7c6e7e6`
 
 On a separately authorized normal maintenance restart with fresh zero-player checks, replace only these two server JARs on school/wild after verified backup. Preserve current server_command.yml, spell-runtime.yml, mana-spells.yml and all progress/reward/user data. No client UI/Story replacement, launcher/feed, MagicMythic or model pack replacement is required. Config reload alone cannot install these Java changes. Runtime remains the previous Bridge + Story0.1.2 until that operation is authorized.
+
+## Deployment verification (2026-10-12, host time20:20-20:23)
+
+User explicitly approved school/wild restart. School had1 player, wild0; a30-second game notice preceded exact Stop-Network.ps1 -Server school and -Server wild calls. Both completed normal save/I/O shutdown. Control -Action Stop/all was not used. Backup: C:/Chacademi/backups/catalog-story-fix-20261012-task5 (verified original twoJARs, runtime/cost/Story command YAML; post-stop latest Story progress copied). Replaced only the two candidate JARs listed above; SHA256 matches on both backends. User YAML files matched backup hashes exactly. No client/launcher/Velocity replacement.
+
+Both servers logged at20:21:46: Spell gameplay runtime ready:89 routes; catalog=true. Story0.1.3 enabled at20:21:48, commands loaded successfully. Mythic loaded375 skills again at20:21:54 after addon enable. Done:school20:21:51,wild20:21:50. SchoolPID7600/25566,wildPID7224/25567; unchanged VelocityPID7552/25565. No Bridge/Story/MagicMythic enable error observed. Existing wild ItemsAdder output/generated.zip missing error remains unrelated.
+
+Cutscene failed-request cancellation code is now installed. No deliberate missing-cutscene or damage cast was run against a live player/NPC/pet; runtime init and skill loading are live verification, while gameplay/queue regression evidence remains the409 tests and prior user's stop-recovery observation. No claim of full live mechanics acceptance.
