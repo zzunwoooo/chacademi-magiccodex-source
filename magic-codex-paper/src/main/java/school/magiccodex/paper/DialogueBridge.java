@@ -68,7 +68,7 @@ final class DialogueBridge implements Listener,CommandExecutor,TabCompleter,Plug
             var initial=io.submit(()->{var map=store.catalog();if(map.isEmpty()){for(String id:List.of("elena","arden"))store.edit(id,"",read(id));}return store.snapshot(null);}).get(15,TimeUnit.SECONDS);install(initial);
         }catch(Exception e){io.shutdownNow();throw e;}
         for(String channel:List.of(DialogueProtocol.REQUEST,DialogueAdminProtocol.REQUEST))Bukkit.getMessenger().registerIncomingPluginChannel(plugin,channel,this);
-        for(String channel:List.of(DialogueProtocol.RESPONSE,DialogueAdminProtocol.RESPONSE))Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,channel);
+        for(String channel:List.of(DialogueProtocol.RESPONSE))Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,channel);
         Bukkit.getPluginManager().registerEvents(this,plugin);
         for(String c:List.of("대화","대화관리","메인퀘스트")){plugin.getCommand(c).setExecutor(this);plugin.getCommand(c).setTabCompleter(this);}
         citizens();
@@ -156,7 +156,7 @@ final class DialogueBridge implements Listener,CommandExecutor,TabCompleter,Plug
     private void send(Player p,Session s,String message){if(!current(p))return;var n=s.definition.nodes().get(s.node);var cs=n.choices().stream().filter(c->allowed(p,s,c.conditions())).map(c->new DialogueProtocol.Choice(c.id(),c.text())).toList();p.sendPluginMessage(plugin,DialogueProtocol.RESPONSE,DialogueProtocol.encode(new DialogueProtocol.Response(s.token,s.sequence,false,s.preview,(s.definition.storyId().isEmpty()?"":"[메인 퀘스트] ")+s.definition.title(),n.speaker(),n.portrait(),n.text(),cs,message)));}
     private void end(Player p,Session s,String message){sessions.remove(p.getUniqueId(),s);if(current(p))p.sendPluginMessage(plugin,DialogueProtocol.RESPONSE,DialogueProtocol.encode(new DialogueProtocol.Response(s.token,s.sequence,true,s.preview,"","","","",List.of(),message)));}
     @Override public void onPluginMessageReceived(String channel,Player p,byte[] bytes){
-        if(channel.equals(DialogueAdminProtocol.REQUEST)){admin(p,bytes);return;}
+        if(channel.equals(DialogueAdminProtocol.REQUEST)){if(p.hasPermission("magiccodex.dialogue.admin"))p.sendMessage("Legacy editor removed; use /\uB300\uD654\uAD00\uB9AC preview|reload|pull <ID>.");return;}
         if(!channel.equals(DialogueProtocol.REQUEST)||!p.hasPermission("magiccodex.dialogue"))return;
         try{var r=DialogueProtocol.request(bytes);var s=sessions.get(p.getUniqueId());if(s==null||!s.token.equals(r.session())||s.sequence!=r.sequence())return;
             if(r.close()){sessions.remove(p.getUniqueId(),s);return;}
@@ -263,16 +263,10 @@ final class DialogueBridge implements Listener,CommandExecutor,TabCompleter,Plug
     }
     @EventHandler public void join(PlayerJoinEvent e){resumeLater(e.getPlayer(),0);}
     private void advance(Player p,Session s,DialogueDefinition.Choice c){if(c.next().isEmpty()){end(p,s,"");return;}s.node=c.next();s.sequence++;s.expires=System.currentTimeMillis()+300000;if(!allowed(p,s,s.definition.nodes().get(s.node).conditions())){end(p,s,"");return;}send(p,s,"");}
-    private void admin(Player p,byte[] bytes){if(!p.hasPermission("magiccodex.dialogue.admin")||!gate(p))return;try{var r=DialogueAdminProtocol.request(bytes);if(r.action()==4){var d=DialogueDefinition.fromFields(r.id(),r.fields());limits.remove(p.getUniqueId());open(p,d,true,null);return;}
-        if(r.action()<2){adminReply(p,"",r.action()==1?r.id():"");return;}
-        var d=r.action()==2?DialogueDefinition.fromFields(r.id(),r.fields()):null;UUID uid=p.getUniqueId();busy.add(uid);
-        work(()->{if(!store.edit(r.id(),r.revision(),d))return false;if(d!=null)export(d);return true;},ok->{busy.remove(uid);adminReply(p,ok?(d==null?"대화를 삭제했습니다.":"저장했습니다."):"다른 관리자가 수정했습니다. 다시 불러와 주세요.",ok&&d!=null?r.id():"");},m->{busy.remove(uid);adminReply(p,m,"");});
-    }catch(Exception e){adminReply(p,"입력 확인: "+e.getMessage(),"");}}
-    private void adminReply(Player p,String message,String id){work(()->store.snapshot(null),snapshot->{install(snapshot);var map=snapshot.definitions();if(!current(p)||!p.hasPermission("magiccodex.dialogue.admin"))return;var list=map.values().stream().sorted(Comparator.comparing(DialogueDefinition::id)).limit(DialogueAdminProtocol.MAX_ENTRIES).map(d->new DialogueAdminProtocol.Summary(d.id(),d.title(),"",d.enabled()?"공개":"비공개")).toList();var d=map.get(id);String note=map.size()>list.size()&&message.isEmpty()?"목록은 앞의 "+list.size()+"개만 표시합니다. 나머지는 /대화관리 preview|reload|pull <ID>로 다뤄 주세요.":message;try{p.sendPluginMessage(plugin,DialogueAdminProtocol.RESPONSE,DialogueAdminProtocol.encode(new DialogueAdminProtocol.Response(note,list,d==null?"":d.id(),d==null?"":snapshot.revisions().getOrDefault(d.id(),""),d==null?Map.of():d.fields())));}catch(Exception e){p.sendMessage("대화 목록/문서가 너무 큽니다. YAML 파일로 편집해 주세요.");}},p::sendMessage);}
     @Override public boolean onCommand(CommandSender sender,Command command,String label,String[] args){try{
         if(command.getName().equals("메인퀘스트")){if(sender instanceof Player p)journal(p);return true;}
         if(!sender.hasPermission("magiccodex.dialogue.admin"))return true;
-        if(args.length==0&&sender instanceof Player p){if(gate(p))adminReply(p,"","");return true;}
+        if(args.length==0){sender.sendMessage("/\uB300\uD654\uAD00\uB9AC preview|reload|pull <ID> | audit <player> | resolve <player> <token> rerun|done");return true;}
         if(command.getName().equals("대화")&&args.length==1&&sender instanceof Player p){var d=catalog.get(args[0]);if(d!=null)open(p,d,false,null);return true;}
         if(args.length==2&&args[0].equals("preview")&&sender instanceof Player p){var d=catalog.get(args[1]);if(d!=null)open(p,d,true,null);return true;}
         if(args.length==2&&args[0].equals("reload")){String id=args[1];DialogueDefinition.id(id);String expected=revisions.getOrDefault(id,"");work(()->store.edit(id,expected,read(id)),ok->{sender.sendMessage(ok?"대화 파일 반영 완료":"다른 곳에서 변경되었습니다. pull로 확인하세요.");refresh();},sender::sendMessage);return true;}

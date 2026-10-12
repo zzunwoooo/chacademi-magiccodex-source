@@ -28,17 +28,17 @@
   ],
   "artifacts": [
     {
-      "file": "magic-codex-bridge-0.30.0-catalog.alpha.1-chat.3-discovery.2-holytaming.1-partyhud.2.jar",
+      "file": "magic-codex-bridge-0.30.0-catalog.alpha.1-chat.3-discovery.2-holytaming.1-partyhud.3.jar",
       "kind": "server",
-      "bytes": 1679871,
-      "sha256": "cfab563cb112bd779684842e10a49b6cfc6632153e065c4d6f9ccfa4b0caaf2b",
-      "deployment": "pending"
+      "bytes": 1678291,
+      "sha256": "61f29ee3f779f6b204edac62481ba3d09cdb20e104db81fb855ef45fb3ce0a8f",
+      "deployment": "installed on school and wild"
     },
     {
-      "file": "magic-codex-ui-0.39.0-catalog.alpha.2-chat.3-holytaming.1-partyhud.3+mc1.21.4.jar",
+      "file": "magic-codex-ui-0.39.0-catalog.alpha.2-chat.3-holytaming.1-partyhud.4+mc1.21.4.jar",
       "kind": "client",
-      "bytes": 103479497,
-      "sha256": "45694319bf410a3085235e9276b5a10027885d64f9f239f763da38a820ac1455",
+      "bytes": 103460450,
+      "sha256": "15c87c55845c33ff5ee78839aa6d1f4aaa72c0e50c6cb54a4f1c3442d9197b95",
       "deployment": "pending"
     },
     {
@@ -53,9 +53,29 @@
       "kind": "server-new-plugin",
       "bytes": 37760,
       "sha256": "dde86b1c8c08e59d1a49e0530fac16cfd5a8c25f25c56d9e97420c02948d33bb",
-      "deployment": "requires approval; build succeeded, no test sources"
+      "deployment": "installed on wild only"
     }
   ],
   "launcher": "held; no personal client replacement or release/feed changes",
-  "server": "held until all six items are resolved"
+  "server": "Bridge partyhud.3 installed on school/wild; Wildlife 0.3.0 installed on wild; normal restart verified",
+  "worldReset": {
+    "target": "C:/Chacademi/network/wild/world",
+    "backup": "C:\\Chacademi\\backups\\wild-reset-20261012-task5\\world",
+    "backupFiles": 29,
+    "backupBytes": 17385857,
+    "backupHashesVerified": true,
+    "worldUuidPreserved": true,
+    "netherEndUuidsAndSeedsPreserved": true,
+    "playerFilesRelocated": 1,
+    "nonLocationNbtFieldsByteIdentical": true,
+    "spawn": [
+      0.5,
+      68,
+      0.5
+    ],
+    "datapack": "Chacademia-Terralith-1.21.4-v3.zip",
+    "datapackSha256": "680033737bd06a5287f5f3f6a13b426d62d474539bd2637a6d2897141ab4a78e",
+    "generatedChunksInspected": 954,
+    "locatedStructure": "chacademia:ruined_gate at -1808,80; distance 1809"
+  }
 }

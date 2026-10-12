@@ -1,3 +1,5 @@
+> Superseded operational status: [wild reset/deployment](CODEX_WILD_RESET_20261012.md). Wildlife/world reset are approved and completed; temporary dialogue editor is removed. Launcher remains held. The staging history below is retained as evidence.
+
 # HUD fixes and wildlife review - 2026-10-12 (STAGED, NOT DEPLOYED)
 
 Base: `91212d9ef9949abc29fa2ea3c9ef63b543b4aa53` on `codex/chat-discovery-magic-protection-20261011`.

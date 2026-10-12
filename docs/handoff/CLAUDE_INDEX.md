@@ -1,3 +1,7 @@
+# Current deployment: wild reset and HUD server fixes, 2026-10-12
+
+See [completed operation and rollback boundary](CODEX_WILD_RESET_20261012.md). Wild overworld reset with verified backup; Wildlife installed; Bridge updated on school/wild. Launcher remains explicitly held. This supersedes the earlier staging/approval-pending status below.
+
 # Current staging: HUD fixes and wildlife review, 2026-10-12
 
 See [staged fixes and blockers](CODEX_HUD_FIXES_20261012.md). Nothing in this staging patch is deployed. Launcher changes are explicitly held. Icon baseline is corrected using parent-verified pixel evidence; live visual acceptance and worldgen/new-plugin approval remain pending.

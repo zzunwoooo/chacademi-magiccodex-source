@@ -10,8 +10,8 @@ public final class DialogueLiveCheck {
         if(phase[0]==0&&c.currentScreen!=null&&c.world==null){c.options.pauseOnLostFocus=false;ConnectScreen.connect(new TitleScreen(),c,ServerAddress.parse("127.0.0.1:25995"),new ServerInfo("Dialogue test","127.0.0.1:25995",ServerInfo.ServerType.OTHER),false,null);phase[0]=1;return;}
         if(c.player==null||c.world==null)return;if(++ticks[0]<45)return;ticks[0]=0;
         switch(phase[0]++){
-            case 1->DialogueAdminClient.send(2,"reward_test","",fields());
-            case 2->{if(!(c.currentScreen instanceof DialogueAdminScreen))throw new AssertionError("admin save");DialogueAdminClient.send(4,"reward_test","",fields());}
+            case 1->c.getNetworkHandler().sendChatCommand("\uB300\uD654\uAD00\uB9AC reload reward_test"); // Fixture YAML must be staged on the test server.
+            case 2->c.getNetworkHandler().sendChatCommand("\uB300\uD654\uAD00\uB9AC preview reward_test");
             case 3->{if(!response(c).preview())throw new AssertionError("preview flag");choose(c);}
             case 4->c.getNetworkHandler().sendChatCommand("대화 elena");
             case 5->choose(c);

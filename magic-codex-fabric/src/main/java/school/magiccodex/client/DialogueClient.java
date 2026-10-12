@@ -27,7 +27,7 @@ public final class DialogueClient {
         });}catch(IllegalArgumentException ignored){}});
     }
     private static DialogueProtocol.Response held;
-    private static void open(MinecraftClient client,DialogueProtocol.Response r){var parent=r.preview()&&client.currentScreen instanceof DialogueAdminScreen?client.currentScreen:null;if(parent instanceof DialogueAdminScreen admin)admin.previewOpened();MagicCodexClient.dismiss();client.setScreen(new DialogueScreen(r,parent));}
+    private static void open(MinecraftClient client,DialogueProtocol.Response r){MagicCodexClient.dismiss();client.setScreen(new DialogueScreen(r,null));}
     /** 외부 대화가 끝난 뒤 미뤄 둔 서버 대화를 연다 (클라이언트 스레드). 서버 세션이 그사이 만료됐다면 서버가 닫기 응답으로 정리한다. */
     static void releaseHeld(MinecraftClient client){var r=held;if(r==null)return;held=null;if(client.player==null||client.world==null)return;open(client,r);}
     static void dropHeld(){held=null;}
