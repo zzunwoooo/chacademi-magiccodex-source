@@ -1,3 +1,5 @@
+> Content follow-up: [Six Story descriptions and Claude editor contract](STORY_DESCRIPTION_CONTRACT_20261012.md). Personal dialogue files updated with backups; only description metadata is published. No restart required.
+
 > Deployed 2026-10-12: [Unified journal, shared notices, mouse keys and target/wildlife release](CODEX_JOURNAL_INPUT_RELEASE_20261012.md). Source938256b; hosting630 tests passed; school/wild and personal mods verified. Real game visual acceptance remains pending because hosting graphics initialization failed. This supersedes earlier preparation-only notices below.
 
 > 2026-10-12 prepared, not deployed: [attack targets / grounded rare wildlife](CODEX_TARGETS_WILDLIFE_20261012.md). UI/input work is separate.
