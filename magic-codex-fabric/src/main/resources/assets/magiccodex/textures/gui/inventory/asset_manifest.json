@@ -1,0 +1,58 @@
+{
+  "crafting_orb": {
+    "file": "crafting_orb.png",
+    "size": [
+      582,
+      640
+    ],
+    "source_sha256": "949185484033b69cdaa97654901c7ca194f7f4e2552c9e798ac2ab83561653c9",
+    "source_crop": [
+      173,
+      104,
+      1081,
+      1103
+    ]
+  },
+  "recipe_book": {
+    "file": "recipe_book.png",
+    "size": [
+      320,
+      321
+    ],
+    "source_sha256": "1b4d61d06bd355724811486177bb5e4b8b04d30a69461fad1f03596c1368664d",
+    "source_crop": [
+      181,
+      61,
+      1211,
+      1093
+    ]
+  },
+  "crafting_crystal": {
+    "file": "crafting_crystal.png",
+    "size": [
+      284,
+      640
+    ],
+    "source_sha256": "dcecaa098b198af15318ed1da417f3058437b63dcdb25829f8179418c79925da",
+    "source_crop": [
+      219,
+      95,
+      807,
+      1419
+    ]
+  },
+  "inventory_pedestal": {
+    "file": "inventory_pedestal.png",
+    "size": [
+      640,
+      115
+    ],
+    "source_sha256": "fa08cba30aeddb865bb7d115b0b6a1eb51fd68ac0ea0357bb1a15d51ba143400",
+    "source_crop": [
+      110,
+      196,
+      2068,
+      549
+    ]
+  }
+}

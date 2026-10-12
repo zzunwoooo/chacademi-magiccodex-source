@@ -37,8 +37,8 @@ import org.lwjgl.opengl.GL30;
  *
  * Only simple definitions qualify: {@code items/<id>.json} of type {@code minecraft:model}
  * without tints, whose model chain ends in {@code item/generated} with a single {@code layer0},
- * no custom GUI display transform and no animation. Anything else, enchantment glint, and icons
- * still loading fall back to vanilla for that frame.
+ * no custom GUI display transform and no animation. Anything else and icons still loading fall
+ * back to vanilla for that frame. Enchanted icons get the vanilla glint layer over the icon pixels.
  */
 public final class ItemIconTextures {
     private ItemIconTextures() {}
@@ -66,7 +66,7 @@ public final class ItemIconTextures {
 
     /** Called from the DrawContext mixin. @return true when the vanilla item draw must be skipped. */
     public static boolean draw(DrawContext ctx, ItemStack stack, int x, int y) {
-        if (stack.isEmpty() || stack.hasGlint()) return false;
+        if (stack.isEmpty()) return false;
         Identifier model = stack.get(DataComponentTypes.ITEM_MODEL);
         if (model == null) return false;
         var known = ICONS.get(model);
@@ -79,9 +79,36 @@ public final class ItemIconTextures {
             m.translate(x, y, 150);
             ctx.drawTexture(id -> t.layer(), t.id(), 0, 0, 0, 0, 16, 16, t.width(), t.height(), t.width(), t.height(), 0xFFFFFFFF);
             ctx.draw(); // vanilla flushes each GUI item too; keeps painter's order with later slot overlays
+            if (stack.hasGlint()) drawGlint(ctx, m.peek().getPositionMatrix());
         } finally { m.pop(); }
         if (!announced) { announced = true; org.slf4j.LoggerFactory.getLogger("magiccodex").info("High-res item icons active ({})", model); }
         return true;
+    }
+
+    /** Glint texture span per icon; the vanilla glint texturing multiplies UVs by 8. */
+    static final float GLINT_UV = 0.03f;
+    private static boolean glintFailed;
+
+    /**
+     * Vanilla enchantment shimmer on top of the high-resolution icon. The icon pass writes depth only
+     * where its texels are visible (item_icon.fsh discards clear texels), and the vanilla glint layer
+     * tests depth EQUAL, so the shimmer follows the icon's own silhouette like on a vanilla item.
+     */
+    private static void drawGlint(DrawContext ctx, org.joml.Matrix4f matrix) {
+        if (glintFailed) return;
+        try {
+            ctx.draw(provider -> {
+                var v = provider.getBuffer(RenderLayer.getGlint());
+                v.vertex(matrix, 0, 0, 0).texture(0, 0);
+                v.vertex(matrix, 0, 16, 0).texture(0, GLINT_UV);
+                v.vertex(matrix, 16, 16, 0).texture(GLINT_UV, GLINT_UV);
+                v.vertex(matrix, 16, 0, 0).texture(GLINT_UV, 0);
+            });
+            ctx.draw();
+        } catch (RuntimeException error) {
+            glintFailed = true; // keep icons; only the shimmer is lost
+            org.slf4j.LoggerFactory.getLogger("magiccodex").warn("High-res item glint disabled", error);
+        }
     }
 
     private static final java.util.Map<Integer,net.minecraft.client.font.BakedGlyph> CHAT_GLYPHS=new java.util.HashMap<>();
