@@ -7,7 +7,7 @@
 | 3 | harvest_wind | 수확의 바람 | SELF | Bridge 유틸 | MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸) |
 | 4 | wind_push | 윈드 푸쉬 | ENTITY | 미몹+애드온 | 정면 몬스터 1체 약 4블록 밀기 |
 | 5 | light_leap | 상승기류 | SELF | 미몹+애드온 | 위로 약 7블록, 착지 피해 완화 |
-| 6 | flight | 비행 | SELF | 미몹+애드온 | 10초 비행 (빗자루 탑승형은 추후 연동) |
+| 6 | flight | 비행 | SELF | 미몹+애드온 | 빗자루 비행(ChacademyMotion): 빗자루가 있으면 무제한, 없으면 연습용 빗자루 10초. 모드가 없으면 예전 10초 비행 |
 | 7 | far_touch | 손길 너머 | SELF | Bridge 유틸 | MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸) |
 | 9 | wind_message | 바람의 전언 | - | 보류 | Bridge가 직접 처리하는 귓속말 마법 |
 | 10 | storm_command | 폭풍의 지휘 | AIM | 미몹+애드온 | 영창 1.5초 후 반경 4블록 4회 타격 |

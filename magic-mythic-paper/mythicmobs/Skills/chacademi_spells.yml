@@ -34,7 +34,7 @@ CHA_light_leap:
   - delay 14
   - chaselfpotion{type=SLOW_FALLING;duration=40;level=0} @self
 
-# 6 비행 - 10초 비행 (빗자루 탑승형은 추후 연동)
+# 6 비행 - 빗자루 비행 (ChacademyMotion). 빗자루 없으면 ticks 동안 연습용 빗자루, 모드 없으면 ticks 동안 바닐라 비행
 CHA_flight:
   Cooldown: 0
   Skills:

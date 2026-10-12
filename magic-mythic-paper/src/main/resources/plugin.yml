@@ -3,7 +3,7 @@ version: '${version}'
 main: school.chacademia.magicmythic.MagicMythicPlugin
 api-version: '1.21.4'
 depend: [MythicMobs, WorldGuard]
-softdepend: [MagicCodexBridge]
+softdepend: [MagicCodexBridge, ChacademyMotion]
 commands:
   마법미몹:
     description: Reload or inspect magic MythicMobs mechanics
