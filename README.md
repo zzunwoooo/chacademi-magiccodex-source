@@ -1,3 +1,7 @@
+# Current integration: 2026-10-12
+
+HolyTaming, recovery fixes and discovery/protection deployment supersede the historical pending status below. See [current handoff](docs/handoff/CODEX_HOLYTAMING_20261012.md). Gimmick module and dungeon models remain excluded; shared donation database remains pending.
+
 # 차카데미 MagicCodex 작업 저장소
 
 ## 2026-10-11 shared source integration

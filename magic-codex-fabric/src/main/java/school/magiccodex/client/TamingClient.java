@@ -87,7 +87,7 @@ public final class TamingClient {
     private static void reset(){state=null;stateWorld=observedWorld=null;received=nextQuery=nextLoop=lastToken=0;lastStatus=-1;stopLoop();close();}
     // Keep the normal entity name; the chance label sits above it rather than replacing it.
     public static boolean hidesVanillaName(int entityId){return false;}
-    private static boolean targetRegistered(){return CastingClient.state().registered("taming");}
+    private static boolean targetRegistered(){return CastingClient.state().registered("rainbow_collar")||CastingClient.state().registered("taming");}
     public static void bindingsChanged(){
         if(!targetRegistered()&&state!=null&&state.status()==TamingProtocol.TARGET)state=null;
         nextQuery=0;

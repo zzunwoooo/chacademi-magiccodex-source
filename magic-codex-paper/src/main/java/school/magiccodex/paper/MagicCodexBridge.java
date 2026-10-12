@@ -1,4 +1,5 @@
 package school.magiccodex.paper;
+import school.magiccodex.protocol.ManaProtocol;
 
 import java.io.IOException;
 import java.util.Set;
@@ -78,7 +79,9 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     /** Trusted server integrations only; not a client-authoritative progress endpoint. */
     public void questEvent(Player player,String eventId,int amount){if(quests!=null)quests.event(player,QuestDefinition.Type.EVENT,eventId,amount);}
     /** Server-thread API for a spell/NPC integration. Server validates aim, mana, cooldown and permission. */
-    public boolean castTaming(Player player){return taming!=null&&taming.cast(player);}
+    public boolean castTaming(Player player){return castTamingResult(player).status()==ManaProtocol.OK;}
+    ManaSpells.Spell tamingSpell(){return mana==null?null:mana.tamingSpell();}
+    ManaCasting.Result castTamingResult(Player player){return taming==null?new ManaCasting.Result(ManaProtocol.FAILED,0):taming.castResult(player);}
     private ClimateService climate;
     private DisplayNames names;
     private SchoolBridge school;

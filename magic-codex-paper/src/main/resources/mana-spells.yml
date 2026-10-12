@@ -1037,12 +1037,13 @@ spells:
     mana-cost: 3
     cooldown-seconds: 2
   rainbow_collar:
-    name: 무지개 목줄
-    enabled: false
-    command: 마법 rainbow_collar
+    name: 교화
+    aliases: [taming, 무지개 목줄]
+    enabled: true
+    command: 교화
     permission: magic.learned.rainbow_collar
-    mana-cost: 2
-    cooldown-seconds: 2
+    mana-cost: 150
+    cooldown-seconds: 60
   sun_drying:
     name: 햇살 말림
     enabled: false

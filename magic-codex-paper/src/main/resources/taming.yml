@@ -1,6 +1,5 @@
+# Cost/cooldown are owned by mana-spells.yml -> spells.rainbow_collar (150 mana / 60 s).
 range: 12
-mana-cost: 15
-cooldown-seconds: 8
 cast-milliseconds: 4000
 boss-grace-seconds: 30
 max-active: 64

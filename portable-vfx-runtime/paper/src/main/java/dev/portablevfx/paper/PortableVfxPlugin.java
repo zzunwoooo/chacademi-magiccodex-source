@@ -24,6 +24,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
@@ -116,6 +117,40 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
      * 거부는 건별 로그 대신 사유별로 집계해 약 10초에 한 줄만 남긴다.
      */
     public Boolean castAuthorizedSpell(Player player,String id) {
+        Boolean admitted=catalogAdmission(player,id);if(!Boolean.TRUE.equals(admitted))return admitted;
+        Boolean result;
+        try{result=catalogVisuals.cast(player,id);}
+        catch(RuntimeException failure){return refuse(player,id,"dispatch exception "+failure.getClass().getSimpleName()+": "+failure.getMessage(),failure);}
+        if(Boolean.TRUE.equals(result))return Boolean.TRUE;
+        return refuse(player,id,result==null?"no visual plan":catalogVisuals.lastFailure(player.getUniqueId()),null);
+    }
+
+    public UUID startAuthorizedTargetedSpell(Player player,String id,LivingEntity target) {
+        requireMainThread();
+        if(player==null)return null;
+        if(!Boolean.TRUE.equals(catalogAdmission(player,id)))return null;
+        UUID handle=catalogVisuals.startTargeted(player,id,target);
+        if(handle==null)refuse(player,id,catalogVisuals.lastFailure(player.getUniqueId()),null);
+        return handle;
+    }
+
+    /**
+     * Delivers exactly one server-confirmed outcome: external:trigger (success) or expire (failure).
+     * Last target position may survive entity removal; null uses the last valid sampled position.
+     * Wrong-owner, stale, already-finished and wrong-world handles return false.
+     */
+    public boolean finishAuthorizedTargetedSpell(Player player,UUID castHandle,String event,Location lastTargetLocation) {
+        requireMainThread();
+        return catalogVisuals!=null&&catalogVisuals.finishTargeted(player,castHandle,event,lastTargetLocation);
+    }
+
+    /** Hard-cancels this owner's targeted visuals, for example if the gameplay transaction fails. */
+    public boolean cancelAuthorizedTargetedSpell(Player player,UUID castHandle) {
+        requireMainThread();
+        return catalogVisuals!=null&&catalogVisuals.cancelTargeted(player,castHandle);
+    }
+
+    private Boolean catalogAdmission(Player player,String id) {
         if(spellCatalog==null)return null;
         var spell=spellCatalog.resolve(id).orElse(null);
         if(spell==null)return null;
@@ -125,11 +160,7 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
             player.sendActionBar(net.kyori.adventure.text.Component.text("마법 이펙트가 아직 준비되지 않았습니다. 로딩 완료 후 다시 시도하세요."));
             return refuse(player,id,"client not ready",null);
         }
-        Boolean result;
-        try{result=catalogVisuals.cast(player,id);}
-        catch(RuntimeException failure){return refuse(player,id,"dispatch exception "+failure.getClass().getSimpleName()+": "+failure.getMessage(),failure);}
-        if(Boolean.TRUE.equals(result))return Boolean.TRUE;
-        return refuse(player,id,result==null?"no visual plan":catalogVisuals.lastFailure(player.getUniqueId()),null);
+        return true;
     }
 
     private Boolean refuse(Player player,String spellId,String reason,RuntimeException failure) {

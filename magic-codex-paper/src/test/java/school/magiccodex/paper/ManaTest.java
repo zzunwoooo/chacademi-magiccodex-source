@@ -59,7 +59,7 @@ class ManaTest {
     }
     @Test void catalogContainsReviewedCommandsFromTheRetained299SpellPack()throws Exception{
         var spells=ManaSpells.load(Path.of("src/main/resources/mana-spells.yml").toFile());
-        assertEquals(94,spells.byId.size());assertEquals(299,spells.discoveryPermissions.size());
+        assertEquals(95,spells.byId.size());assertEquals(299,spells.discoveryPermissions.size());
         assertEquals(spells.byId.size(),spells.byCommand.size());
         assertFalse(spells.byCommand.containsKey("패시브"));assertFalse(spells.byCommand.containsKey(""));
     }

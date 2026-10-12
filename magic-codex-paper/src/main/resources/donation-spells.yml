@@ -598,7 +598,7 @@ spells:
     permission: "magic.learned.firefly_mark"
     points: 1
   rainbow_collar:
-    name: "무지개 목줄"
+    name: "교화"
     permission: "magic.learned.rainbow_collar"
     points: 1
   sun_drying:

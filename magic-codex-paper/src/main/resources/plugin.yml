@@ -52,7 +52,7 @@ commands:
     permission: magiccodex.shiny.admin
   교화:
     description: 바라보는 대상을 교화합니다.
-    permission: magiccodex.taming
+    permission: magic.learned.rainbow_collar
   교화관리:
     description: 교화 설정과 예시 몹 관리
     permission: magiccodex.taming.admin

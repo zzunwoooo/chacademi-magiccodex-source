@@ -1,3 +1,7 @@
+# Current integration: 2026-10-12
+
+HolyTaming, recovery fixes and discovery/protection deployment supersede the historical pending status below. See [current handoff](CODEX_HOLYTAMING_20261012.md). Gimmick module and dungeon models remain excluded; shared donation database remains pending.
+
 # Claude 작업분 목록 (GPT/Codex 인계용)
 
 ## 2026-10-11 shared source integration

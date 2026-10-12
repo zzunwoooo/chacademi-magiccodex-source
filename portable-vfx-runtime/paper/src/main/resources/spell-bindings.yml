@@ -3896,3 +3896,119 @@ bindings:
       onCancel: jumpToEnd
       triggerInput: null
       onTrigger: null
+  rainbow_collar:
+    folder: HolyTaming
+    number: 149
+    range: 12
+    speed: 0.6
+    max-ticks: 400
+    holdTicks: 75
+    sequence:
+      sustainStart: 0.45
+    phases:
+    - role: attached
+      trigger: cast
+      effect: claude:holytaming/open
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 35
+      finish-after-ticks: -1
+      scale-input: -1
+      follow-entity: true
+    - role: link
+      trigger: cast
+      effect: claude:holytaming/connect
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 25
+      finish-after-ticks: -1
+      scale-input: -1
+      link-source: caster-hand
+      link-target: target-chest
+    - role: attached
+      trigger: cast
+      effect: claude:holytaming/channel
+      anchor: target
+      delay-ticks: 9
+      duration-ticks: 400
+      finish-after-ticks: -1
+      scale-input: -1
+      follow-entity: true
+    - role: link
+      trigger: cast
+      effect: claude:holytaming/tether
+      anchor: caster
+      delay-ticks: 9
+      duration-ticks: 400
+      finish-after-ticks: -1
+      scale-input: -1
+      link-source: caster-hand
+      link-target: target-chest
+    - role: attached
+      trigger: external:trigger
+      effect: claude:holytaming/bless
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 100
+      finish-after-ticks: -1
+      scale-input: -1
+      follow-entity: true
+      stop-effects:
+      - claude:holytaming/open
+      - claude:holytaming/connect
+      - claude:holytaming/channel
+      - claude:holytaming/tether
+      clear-stopped-local: false
+    - role: link
+      trigger: external:trigger
+      effect: claude:holytaming/release
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 22
+      finish-after-ticks: -1
+      scale-input: -1
+      link-source: caster-hand
+      link-target: target-chest
+      stop-effects:
+      - claude:holytaming/open
+      - claude:holytaming/connect
+      - claude:holytaming/channel
+      - claude:holytaming/tether
+      clear-stopped-local: false
+    - role: attached
+      trigger: expire
+      effect: claude:holytaming/fizzle
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 100
+      finish-after-ticks: -1
+      scale-input: -1
+      follow-entity: true
+      stop-effects:
+      - claude:holytaming/open
+      - claude:holytaming/connect
+      - claude:holytaming/channel
+      - claude:holytaming/tether
+      clear-stopped-local: false
+    - role: link
+      trigger: expire
+      effect: claude:holytaming/snap
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 20
+      finish-after-ticks: -1
+      scale-input: -1
+      link-source: caster-hand
+      link-target: target-chest
+      stop-effects:
+      - claude:holytaming/open
+      - claude:holytaming/connect
+      - claude:holytaming/channel
+      - claude:holytaming/tether
+      clear-stopped-local: false
+    external-events:
+    - external:trigger
+    - expire
+    review: Targeted API suppresses automatic hold expiry; real ownership-save result
+      selects one terminal branch. -1 scale uses target height. Authored stopTail is
+      preserved.

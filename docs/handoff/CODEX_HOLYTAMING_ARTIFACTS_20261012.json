@@ -1,0 +1,51 @@
+[
+  {
+    "server": "school",
+    "file": "plugins/magic-codex-bridge-0.30.0-catalog.alpha.1-chat.3-discovery.2-holytaming.1.jar",
+    "sha256": "1901881ce973ee7a32abefbdd0e951cd39ce4063bfd1c386aa4695418e29e4f5"
+  },
+  {
+    "server": "school",
+    "file": "plugins/magic-discovery-0.2.1-event-core.5.jar",
+    "sha256": "b0b0da37ece2cb8f9975e68581ef8cf067e15c79fa57e04e2b4384246146b60c"
+  },
+  {
+    "server": "school",
+    "file": "plugins/chacademia-magic-mythic-0.1.2-recovery.1.jar",
+    "sha256": "b415fd1c63997daa57138df16a6e7f8ce0f68e5a831c2a184792f2770380b711"
+  },
+  {
+    "server": "school",
+    "file": "plugins/portable-vfx-paper-3.2.0-catalog.alpha.4-holytaming.1.jar",
+    "sha256": "72534d54b1b6a2a10409c3fe9853e72bb2f76b955de8790b8da947645f3d5726"
+  },
+  {
+    "server": "wild",
+    "file": "plugins/magic-codex-bridge-0.30.0-catalog.alpha.1-chat.3-discovery.2-holytaming.1.jar",
+    "sha256": "1901881ce973ee7a32abefbdd0e951cd39ce4063bfd1c386aa4695418e29e4f5"
+  },
+  {
+    "server": "wild",
+    "file": "plugins/magic-discovery-0.2.1-event-core.5.jar",
+    "sha256": "b0b0da37ece2cb8f9975e68581ef8cf067e15c79fa57e04e2b4384246146b60c"
+  },
+  {
+    "server": "wild",
+    "file": "plugins/chacademia-magic-mythic-0.1.2-recovery.1.jar",
+    "sha256": "b415fd1c63997daa57138df16a6e7f8ce0f68e5a831c2a184792f2770380b711"
+  },
+  {
+    "server": "wild",
+    "file": "plugins/portable-vfx-paper-3.2.0-catalog.alpha.4-holytaming.1.jar",
+    "sha256": "72534d54b1b6a2a10409c3fe9853e72bb2f76b955de8790b8da947645f3d5726"
+  },
+  {
+    "server": "velocity",
+    "file": "plugins/chacademi-party-velocity-0.2.1-discovery.1.jar",
+    "sha256": "08d077881ddf0bdb4a88105eaf37b220c6418195bea267426494b3e3490916b5"
+  },
+  {
+    "file": "magic-codex-ui-0.39.0-catalog.alpha.2-chat.3-holytaming.1+mc1.21.4.jar",
+    "sha256": "4ae1bbd989dfdd8457ff69daf1f9939d5fc7b472fb8ab0dff424be9d29cadd62"
+  }
+]

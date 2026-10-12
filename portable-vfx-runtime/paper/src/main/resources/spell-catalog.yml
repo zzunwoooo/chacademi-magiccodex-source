@@ -4155,18 +4155,119 @@ spells:
     baseline-icon: magiccodex:textures/spells/expansion_2/firefly_mark.png
   rainbow_collar:
     number: 149
-    name: 무지개 목줄
+    name: 교화
     permission: magic.learned.rainbow_collar
     icon: magiccodex:textures/spells/expansion_2/rainbow_collar.png
-    mana-cost: 2
-    cooldown-seconds: 2
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_2/rainbow_collar.png
+    mana-cost: 150
+    cooldown-seconds: 60
+    reviewed: true
+    enabled: true
+    aliases:
+    - 교화
+    - taming
+    phases:
+    - role: attached
+      trigger: cast
+      effect: claude:holytaming/open
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 35
+      finish-after-ticks: -1
+      scale-input: -1
+      follow-entity: true
+    - role: link
+      trigger: cast
+      effect: claude:holytaming/connect
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 25
+      finish-after-ticks: -1
+      scale-input: -1
+      link-source: caster-hand
+      link-target: target-chest
+    - role: attached
+      trigger: cast
+      effect: claude:holytaming/channel
+      anchor: target
+      delay-ticks: 9
+      duration-ticks: 400
+      finish-after-ticks: -1
+      scale-input: -1
+      follow-entity: true
+    - role: link
+      trigger: cast
+      effect: claude:holytaming/tether
+      anchor: caster
+      delay-ticks: 9
+      duration-ticks: 400
+      finish-after-ticks: -1
+      scale-input: -1
+      link-source: caster-hand
+      link-target: target-chest
+    - role: attached
+      trigger: external:trigger
+      effect: claude:holytaming/bless
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 100
+      finish-after-ticks: -1
+      scale-input: -1
+      follow-entity: true
+      stop-effects:
+      - claude:holytaming/open
+      - claude:holytaming/connect
+      - claude:holytaming/channel
+      - claude:holytaming/tether
+      clear-stopped-local: false
+    - role: link
+      trigger: external:trigger
+      effect: claude:holytaming/release
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 22
+      finish-after-ticks: -1
+      scale-input: -1
+      link-source: caster-hand
+      link-target: target-chest
+      stop-effects:
+      - claude:holytaming/open
+      - claude:holytaming/connect
+      - claude:holytaming/channel
+      - claude:holytaming/tether
+      clear-stopped-local: false
+    - role: attached
+      trigger: expire
+      effect: claude:holytaming/fizzle
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 100
+      finish-after-ticks: -1
+      scale-input: -1
+      follow-entity: true
+      stop-effects:
+      - claude:holytaming/open
+      - claude:holytaming/connect
+      - claude:holytaming/channel
+      - claude:holytaming/tether
+      clear-stopped-local: false
+    - role: link
+      trigger: expire
+      effect: claude:holytaming/snap
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 20
+      finish-after-ticks: -1
+      scale-input: -1
+      link-source: caster-hand
+      link-target: target-chest
+      stop-effects:
+      - claude:holytaming/open
+      - claude:holytaming/connect
+      - claude:holytaming/channel
+      - claude:holytaming/tether
+      clear-stopped-local: false
+    preparation-status: server-owned-taming-channel-and-result
+    numeric-source: user-approved-2026-10-06
   sun_drying:
     number: 150
     name: 햇살 말림

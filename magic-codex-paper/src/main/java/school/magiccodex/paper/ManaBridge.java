@@ -72,10 +72,7 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
             send(p,new Response(0,ManaProtocol.SNAPSHOT,0,mana.account(p.getUniqueId()).snapshot()));
         }else{
             if(r.sequence()<=session.lastSequence)return;session.lastSequence=r.sequence();session.expires=time+65000;
-            if(r.spell().equals("taming")){
-                boolean okay=plugin.castTaming(p);var a=mana.account(p.getUniqueId());
-                send(p,new Response(r.sequence(),okay?ManaProtocol.OK:ManaProtocol.FAILED,(int)Math.min(86400000,a.remaining("taming",System.currentTimeMillis())),a.snapshot()));
-            }else send(p,cast(p,r.sequence(),spells.byId.get(r.spell())));
+            send(p,cast(p,r.sequence(),spells.forCast(r.spell())));
         }
     }
     private void send(Player p,Response response){
@@ -88,16 +85,23 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
     }
     Map<String,Map<String,String>> registeredSpellCatalog(){return spells.registeredCatalog;}
     boolean isCatalogMode(){return spells.catalogMode;}
-    boolean requiresCatalogVisual(String id){return spells.catalogMode&&spells.byId.containsKey(id);}
+    boolean requiresCatalogVisual(String id){return spells.catalogMode&&!TamingSpell.matches(id)&&spells.byId.containsKey(id);}
+    ManaSpells.Spell tamingSpell(){return spells.forCast(TamingSpell.ID);}
     boolean castRegistered(Player player,String id){
-        var response=cast(player,0,spells.byId.get(id));send(player,response);
-        if(response.status()!=ManaProtocol.OK)player.sendMessage(message(response.status()));
+        var spell=spells.forCast(id);var response=cast(player,0,spell);send(player,response);
+        if(response.status()!=ManaProtocol.OK&&!TamingSpell.matches(id))player.sendMessage(message(response.status()));
         return response.status()==ManaProtocol.OK;
     }
     private Response cast(Player p,long sequence,ManaSpells.Spell spell,java.util.function.BooleanSupplier internal){
         UUID id=p.getUniqueId();var a=mana.account(id);
         if(!plugin.playerStateReady(p))return new Response(sequence,ManaProtocol.FAILED,0,a.snapshot());
         if(casting.contains(id))return new Response(sequence,ManaProtocol.FAILED,0,a.snapshot());
+        // Taming owns target validation, locks, the one mana transaction and persisted result.
+        // Never wrap this route in ManaCasting.attempt or the same cast would be charged twice.
+        if(spell!=null&&TamingSpell.matches(spell.id())){
+            var result=plugin.castTamingResult(p);
+            return new Response(sequence,result.status(),result.cooldownMillis(),a.snapshot());
+        }
         casting.add(id);
         ManaCasting.Result result;
         try {
@@ -139,7 +143,7 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
         e.setCancelled(true);
         if(!sessions.computeIfAbsent(e.getPlayer().getUniqueId(),id->new Session()).allow(now()))return;
         var r=cast(e.getPlayer(),0,spell);send(e.getPlayer(),r);
-        if(r.status()!=ManaProtocol.OK)e.getPlayer().sendMessage(message(r.status()));
+        if(r.status()!=ManaProtocol.OK&&!TamingSpell.matches(spell.id()))e.getPlayer().sendMessage(message(r.status()));
     }
     static String message(int status){return switch(status){
         case ManaProtocol.EMPTY->"마나가 부족합니다.";case ManaProtocol.COOLDOWN->"아직 재사용 대기 중입니다.";

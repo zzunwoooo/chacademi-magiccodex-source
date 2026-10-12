@@ -17,6 +17,7 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.bukkit.util.Vector;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.node.Node;
+import school.magiccodex.protocol.ManaProtocol;
 import school.magiccodex.protocol.TamingProtocol;
 import school.magiccodex.protocol.TamingProtocol.State;
 
@@ -30,7 +31,7 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
     private final Map<UUID,long[]> requests=new HashMap<>();private final Set<UUID> locked=new HashSet<>();private final Set<UUID> casting=new HashSet<>();
     private final Set<TamingModelFx> effects=new HashSet<>();
     private final NamespacedKey graceKey;
-    private double range,cost;private int duration,cooldown,graceSeconds,maxActive;private long token;private boolean closed;
+    private double range;private int duration,graceSeconds,maxActive;private long token;private boolean closed;
     private boolean models;private Object mobManager;private java.lang.reflect.Method activeMob;
     private record Profile(String id,String mythic,String vanilla,String pet,String name,boolean boss,double base,double bonus,double scale){}
     private static final class Grace {
@@ -39,7 +40,7 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
     }
     private static final class Cast {
         final Player player;final LivingEntity entity;final Profile profile;final String permission;final long token,start;final double chance;final TamingModelFx fx;
-        boolean pending;long nextSend;
+        boolean pending;long nextSend;TamingVfxLink.Session visual;
         Cast(Player p,LivingEntity e,Profile profile,String permission,long token,double chance,TamingModelFx fx){player=p;entity=e;this.profile=profile;this.permission=permission;this.token=token;start=now();this.chance=chance;this.fx=fx;}
     }
     TamingBridge(MagicCodexBridge p,ManaService mana,PetBridge pets)throws Exception{
@@ -64,8 +65,8 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
             loaded.put(id,new Profile(id,mythic,vanilla,pet,name,s.getBoolean("boss"),base,bonus,scale));
             if(!s.getBoolean("roll-shiny",true))rollDisabled.add(id);
         }
-        double r=y.getDouble("range",12),c=y.getDouble("mana-cost",15);if(!Double.isFinite(r)||r<2||r>32||!Double.isFinite(c)||c<0||c>1000000)throw new IllegalArgumentException("교화 범위/마나 설정");
-        profiles.clear();profiles.putAll(loaded);noShinyRoll.clear();noShinyRoll.addAll(rollDisabled);range=r;cost=c;duration=Math.clamp(y.getInt("cast-milliseconds",4000),1000,30000);cooldown=Math.clamp(y.getInt("cooldown-seconds",8),0,3600)*1000;graceSeconds=Math.clamp(y.getInt("boss-grace-seconds",30),5,300);maxActive=Math.clamp(y.getInt("max-active",64),1,256);
+        double r=y.getDouble("range",12);if(!Double.isFinite(r)||r<2||r>32)throw new IllegalArgumentException("교화 범위 설정");
+        profiles.clear();profiles.putAll(loaded);noShinyRoll.clear();noShinyRoll.addAll(rollDisabled);range=r;duration=Math.clamp(y.getInt("cast-milliseconds",4000),1000,30000);graceSeconds=Math.clamp(y.getInt("boss-grace-seconds",30),5,300);maxActive=Math.clamp(y.getInt("max-active",64),1,256);
         models=y.getBoolean("modelengine",true)&&Bukkit.getPluginManager().isPluginEnabled("ModelEngine");
         mobManager=null;activeMob=null;
         var mm=Bukkit.getPluginManager().getPlugin("MythicMobs");if(mm!=null&&mm.isEnabled()){
@@ -162,9 +163,11 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
     private int graceMs(LivingEntity e){var g=graces.get(e.getUniqueId());return g==null?0:(int)Math.max(0,g.until-now());}
     private void send(Player p,State s){if(p.isOnline()&&p.getListeningPluginChannels().contains(TamingProtocol.RESPONSE))p.sendPluginMessage(plugin,TamingProtocol.RESPONSE,TamingProtocol.encode(s));}
     private void message(Player p,String text){send(p,new State(++token,TamingProtocol.ERROR,-1,"",false,0,0,0,0,text));p.sendMessage(text);}
+    private boolean permitted(Player p){return TamingSpell.permitted(plugin.tamingSpell(),p::hasPermission);}
+    private ManaCasting.Result rejected(Player p,int status,String text){message(p,text);return new ManaCasting.Result(status,0);}
     private void query(Player p,UUID claimed){
         if(casts.containsKey(p.getUniqueId()))return;LivingEntity e=target(p);Profile f=e==null?null:profile(e);
-        if(e==null||!e.getUniqueId().equals(claimed)||f==null||!p.hasPermission("magiccodex.taming")){send(p,new State(0,0,-1,"",false,0,0,0,0,""));return;}
+        if(e==null||!e.getUniqueId().equals(claimed)||f==null||!permitted(p)){send(p,new State(0,0,-1,"",false,0,0,0,0,""));return;}
         String hint=f.boss&&!graces.containsKey(e.getUniqueId())?"처치 후 교화 가능":"/교화 · 시전";
         if(locked.contains(e.getUniqueId()))hint="다른 플레이어가 교화 중";
         send(p,new State(0,TamingProtocol.TARGET,e.getEntityId(),f.name,f.boss,chance(e,f),graceMs(e),0,0,hint));
@@ -175,31 +178,41 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
         if(r.action()<0||r.action()>2)return;long n=now();long[] last=requests.computeIfAbsent(p.getUniqueId(),k->new long[3]);if(n-last[r.action()]<200)return;last[r.action()]=n;
         if(r.action()==TamingProtocol.QUERY)query(p,r.target());else if(r.action()==TamingProtocol.CANCEL){var c=casts.get(p.getUniqueId());if(c!=null&&!c.pending)finish(c,false,"교화를 취소했습니다.");}else cast(p);
     }
-    boolean cast(Player p){
-        if(!p.isOnline()||p.isDead()||p.getGameMode()==GameMode.SPECTATOR)return false;
-        // Same reentrancy guard as ManaBridge: messages/saves below may re-enter through commands or events.
-        if(!casting.add(p.getUniqueId()))return false;
+    boolean cast(Player p){return castResult(p).status()==ManaProtocol.OK;}
+    ManaCasting.Result castResult(Player p){
+        if(!p.isOnline()||p.isDead()||p.getGameMode()==GameMode.SPECTATOR)return new ManaCasting.Result(ManaProtocol.FAILED,0);
+        // Every command and packet alias reaches this same guard and one canonical transaction.
+        if(!casting.add(p.getUniqueId()))return new ManaCasting.Result(ManaProtocol.FAILED,0);
         try{return castGuarded(p);}finally{casting.remove(p.getUniqueId());}
     }
-    private boolean castGuarded(Player p){
-        if(!p.hasPermission("magiccodex.taming")||!plugin.playerStateReady(p)){message(p,"지금은 교화를 사용할 수 없습니다.");return false;}
-        if(casts.containsKey(p.getUniqueId()))return false;
+    private ManaCasting.Result castGuarded(Player p){
+        var spell=plugin.tamingSpell();
+        if(!TamingSpell.permitted(spell,p::hasPermission))return rejected(p,ManaProtocol.LOCKED,"아직 배우지 않았거나 사용할 수 없는 마법입니다.");
+        if(!plugin.playerStateReady(p))return rejected(p,ManaProtocol.FAILED,"지금은 교화를 사용할 수 없습니다.");
+        if(casts.containsKey(p.getUniqueId()))return new ManaCasting.Result(ManaProtocol.FAILED,0);
         var e=target(p);var f=e==null?null:profile(e);
-        if(f==null||!reachable(p,e)){message(p,"교화할 대상을 바라봐 주세요.");return false;}
-        if(f.boss&&!graces.containsKey(e.getUniqueId())){message(p,"이 대상은 처치한 뒤 교화할 수 있습니다.");return false;}
-        if(f.boss&&graceMs(e)<duration){message(p,"교화할 시간이 부족합니다.");return false;}
-        if(locked.contains(e.getUniqueId())||casts.size()>=maxActive){message(p,"지금은 이 대상을 교화할 수 없습니다.");return false;}
+        if(f==null||!reachable(p,e)||!MagicProtectionLink.touch(p,e))return rejected(p,ManaProtocol.FAILED,"교화할 대상을 바라봐 주세요.");
+        if(f.boss&&!graces.containsKey(e.getUniqueId()))return rejected(p,ManaProtocol.FAILED,"이 대상은 처치한 뒤 교화할 수 있습니다.");
+        if(f.boss&&graceMs(e)<duration)return rejected(p,ManaProtocol.FAILED,"교화할 시간이 부족합니다.");
+        if(locked.contains(e.getUniqueId())||casts.size()>=maxActive)return rejected(p,ManaProtocol.FAILED,"지금은 이 대상을 교화할 수 없습니다.");
         final String permission;
         try{permission=pets.capturePermission(f.pet);if(!Bukkit.getPluginManager().isPluginEnabled("LuckPerms"))throw new IllegalStateException("LuckPerms 연결이 필요합니다.");}
-        catch(Exception ex){message(p,ex.getMessage()==null?"펫 연결 설정을 확인해 주세요.":ex.getMessage());return false;}
-        if(p.hasPermission(permission)){message(p,"이미 도감에 등록된 펫입니다.");return false;}
-        var account=mana.account(p.getUniqueId());var spell=new ManaSpells.Spell("taming","교화","magiccodex.taming",cost,cooldown);
+        catch(Exception ex){return rejected(p,ManaProtocol.FAILED,ex.getMessage()==null?"펫 연결 설정을 확인해 주세요.":ex.getMessage());}
+        if(p.hasPermission(permission))return rejected(p,ManaProtocol.FAILED,"이미 도감에 등록된 펫입니다.");
+        // mana-spells.yml owns cost/cooldown; taming.yml owns encounter settings only.
+        var account=mana.account(p.getUniqueId());
         var result=ManaCasting.attempt(account,spell,true,System.currentTimeMillis(),()->{
-            var g=graces.get(e.getUniqueId());var fx=g==null?effect(e,false,f.scale):g.fx;
-            var c=new Cast(p,e,f,permission,++token,chance(e,f),fx);casts.put(p.getUniqueId(),c);locked.add(e.getUniqueId());if(fx!=null)fx.play("channel");emit(c,TamingProtocol.CHANNEL,"교화 중…");return true;
+            var visual=TamingVfxLink.start(plugin,p,e);if(visual==null)return false;
+            // HolyTaming replaces only the ordinary circle; preserve an existing boss seal.
+            var g=graces.get(e.getUniqueId());var fx=g==null?null:g.fx;
+            var c=new Cast(p,e,f,permission,++token,chance(e,f),fx);c.visual=visual;
+            try{casts.put(p.getUniqueId(),c);locked.add(e.getUniqueId());if(fx!=null)fx.play("channel");emit(c,TamingProtocol.CHANNEL,"교화 중…");return true;}
+            catch(RuntimeException failure){casts.remove(p.getUniqueId(),c);locked.remove(e.getUniqueId());TamingVfxLink.cancel(plugin,visual,p);plugin.getLogger().warning("교화 VFX 시작 이후 채널 실패: "+failure.getClass().getSimpleName());return true;}
         });
-        mana.publish(p.getUniqueId());mana.save(p);plugin.savePlayerState(p);
-        if(result.status()!=school.magiccodex.protocol.ManaProtocol.OK){message(p,result.status()==school.magiccodex.protocol.ManaProtocol.EMPTY?"마나가 부족합니다.":"교화 재사용 대기 중입니다.");return false;}return true;
+        mana.publish(p.getUniqueId());
+        if(result.status()==ManaProtocol.OK){mana.save(p);plugin.savePlayerState(p);DiscoveryLink.cast(p.getUniqueId(),spell.id(),spell.cost());}
+        else message(p,result.status()==ManaProtocol.EMPTY?"마나가 부족합니다.":result.status()==ManaProtocol.COOLDOWN?"교화 재사용 대기 중입니다.":"교화를 시작하지 못했습니다. 마나는 차감하지 않았습니다.");
+        return result;
     }
     private void emit(Cast c,int status,String message){send(c.player,new State(c.token,status,c.entity.getEntityId(),c.profile.name,c.profile.boss,c.chance,graceMs(c.entity),Math.max(0,(int)(duration-(now()-c.start))),duration,message));}
     private TamingModelFx effect(LivingEntity e,boolean boss,double scale){
@@ -217,7 +230,7 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
         }
         for(var c:List.copyOf(casts.values())){
             if(c.pending)continue;
-            if(!reachable(c.player,c.entity)||!c.player.hasPermission("magiccodex.taming")){finish(c,false,"대상에서 멀어져 교화가 중단되었습니다.");continue;}
+            if(!reachable(c.player,c.entity)||!permitted(c.player)||!MagicProtectionLink.touch(c.player,c.entity)){finish(c,false,"대상에서 멀어져 교화가 중단되었습니다.");continue;}
             if(c.fx!=null)c.fx.follow(c.entity);
             if(n-c.start>=duration){if(TamingRules.succeeds(c.chance,ThreadLocalRandom.current().nextDouble()))grant(c);else finish(c,false,"교화에 실패했습니다.");}
             else if(n>=c.nextSend){c.nextSend=n+500;emit(c,TamingProtocol.CHANNEL,"교화 중…");}
@@ -237,6 +250,8 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
     }
     private void finish(Cast c,boolean success,String text){
         if(!casts.remove(c.player.getUniqueId(),c))return;locked.remove(c.entity.getUniqueId());
+        // Result VFX is selected only after RNG and (on success) the real ownership save.
+        TamingVfxLink.finish(plugin,c.visual,c.player,success,c.entity.getLocation().clone());
         emit(c,success?TamingProtocol.SUCCESS:TamingProtocol.FAIL,text);
         if(success){graces.remove(c.entity.getUniqueId());c.entity.remove();if(c.fx!=null)c.fx.play("success");Bukkit.getScheduler().runTaskLater(plugin,()->removeEffect(c.fx),22);}
         else{if(c.fx!=null)c.fx.play("fail");var grace=graces.get(c.entity.getUniqueId());if(grace!=null)grace.idleAfter=now()+800;Bukkit.getScheduler().runTaskLater(plugin,()->{if(grace!=null&&graces.containsKey(c.entity.getUniqueId())){if(c.fx!=null&&!locked.contains(c.entity.getUniqueId()))c.fx.play("idle");}else removeEffect(c.fx);},16);}
@@ -248,7 +263,7 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
         if(event.getFinalDamage()<e.getHealth())return;var f=profile(e);if(f==null||!f.boss)return;
         // Require a real player attack; environmental deaths must not create orphan capture encounters.
         Player attacker=null;if(event instanceof EntityDamageByEntityEvent by){if(by.getDamager() instanceof Player p)attacker=p;else if(by.getDamager() instanceof Projectile pr&&pr.getShooter() instanceof Player p)attacker=p;}
-        if(attacker==null||!attacker.hasPermission("magiccodex.taming")||graces.size()>=maxActive)return;
+        if(attacker==null||!permitted(attacker)||graces.size()>=maxActive)return;
         try{pets.capturePermission(f.pet);}catch(Exception ex){return;}
         event.setCancelled(true);seal(e,f);
         attacker.playSound(e.getLocation(),"magiccodex:taming.seal_spawn",.7f,1);
@@ -270,5 +285,5 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
         }
         sender.sendMessage("/교화관리 reload | /교화관리 spawn <"+String.join("|",profiles.keySet())+">");return true;
     }
-    public void close(){closed=true;if(shiny!=null)shiny.close();for(var c:List.copyOf(casts.values()))if(!c.profile.boss&&c.fx!=null)removeEffect(c.fx);casts.clear();locked.clear();for(var g:graces.values())g.entity.remove();graces.clear();for(var fx:List.copyOf(effects))removeEffect(fx);requests.clear();}
+    public void close(){closed=true;if(shiny!=null)shiny.close();for(var c:List.copyOf(casts.values())){TamingVfxLink.cancel(plugin,c.visual,c.player);if(!c.profile.boss&&c.fx!=null)removeEffect(c.fx);}casts.clear();locked.clear();for(var g:graces.values())g.entity.remove();graces.clear();for(var fx:List.copyOf(effects))removeEffect(fx);requests.clear();}
 }

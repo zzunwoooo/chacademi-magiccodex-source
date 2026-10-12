@@ -43,6 +43,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(guards, this);
         getServer().getPluginManager().registerEvents(marks, this);
+        getServer().getPluginManager().registerEvents(tempBlocks, this);
         var command = getCommand("마법미몹");
         if (command != null) command.setExecutor(this);
         getLogger().info("마법 미몹 메커닉 준비 완료 (MythicMobs 다시 불러오기 시 등록됩니다)");

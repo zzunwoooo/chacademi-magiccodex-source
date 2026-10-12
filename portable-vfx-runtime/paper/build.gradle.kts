@@ -1,6 +1,6 @@
 plugins { java }
 
-version = "3.2.0-catalog.alpha.4"
+version = "3.2.0-catalog.alpha.4-holytaming.1"
 
 // Optional local mirror for reproducible offline builds; never packaged in the plugin.
 providers.gradleProperty("localDependencyRepo").orNull?.let { localRepo ->

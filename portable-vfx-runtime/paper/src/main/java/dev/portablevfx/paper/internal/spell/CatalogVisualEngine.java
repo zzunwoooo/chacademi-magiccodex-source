@@ -43,7 +43,7 @@ public final class CatalogVisualEngine {
     public String lastFailure(){return lastFailure;}
     /** 이 플레이어의 가장 최근 거부 사유. 없으면 빈 문자열. */
     public String lastFailure(UUID player){return failures.getOrDefault(player,"");}
-    private Boolean rejected(UUID player,String reason){lastFailure=reason;failures.put(player,reason);return false;}
+    private Cast rejected(UUID player,String reason){lastFailure=reason;failures.put(player,reason);return null;}
     public Limits limits(){return limits;}
     /** 실행 중인 시전은 그대로 두고 상한만 바꾼다. */
     public void limits(Limits next){limits=Objects.requireNonNull(next,"limits");}
@@ -66,7 +66,8 @@ public final class CatalogVisualEngine {
     }
     private static final class Cast {
         UUID id,owner,world,target,virtual;Plan plan;Location origin,aim,impact;Vector direction,normal=new Vector(0,1,0);
-        long expires,serial,expireAt,nextAttack;boolean impacted,expired,starting;int started,seen;Set<UUID> chainTargets=new HashSet<>();
+        double scaleTargetHeight,lastTargetHeight;
+        long expires,serial,expireAt,nextAttack;boolean impacted,expired,starting,serverControlled;String terminalEvent;int started,seen;Set<UUID> chainTargets=new HashSet<>();
         PriorityQueue<Pending> pending=new PriorityQueue<>(Comparator.comparingLong(Pending::at).thenComparingLong(Pending::serial));
         List<Active> active=new ArrayList<>();
     }
@@ -103,7 +104,9 @@ public final class CatalogVisualEngine {
             Vector offset=new Vector();Object vec=p.get("offset");if(vec instanceof List<?> v){if(v.size()!=3)throw new IllegalArgumentException("offset must contain3numbers");offset=new Vector(((Number)v.get(0)).doubleValue(),((Number)v.get(1)).doubleValue(),((Number)v.get(2)).doubleValue());if(!Double.isFinite(offset.lengthSquared())||offset.length()>128)throw new IllegalArgumentException("offset out of bounds");}
             double linkLength=numeric(p,"link-length",-1,-1,256);
             if(linkLength<0&&linkLength!=-1)throw new IllegalArgumentException("link-length must be -1 (unset) or nonnegative");
-            phases.add(new Phase(trigger,effect,anchor,delay,ttl,finish,offset,List.copyOf(stops),numeric(p,"width",0,0,VfxProtocol.MAX_EFFECT_WIDTH),numeric(p,"scale-input",0,0,128),linkLength,text(p,"role",anchor.equals("caster")?"attached":"static"),integer(p,"motion-delay-ticks",0),text(p,"impact-effect",""),text(p,"link-source","caster"),text(p,"link-target","target"),vector(p.get("target-offset")),Boolean.TRUE.equals(p.get("clear-stopped-local")),null,text(p,"projectile-origin","caster")));
+        double scaleInput=numeric(p,"scale-input",0,-1,128);
+        if(scaleInput<0&&scaleInput!=-1)throw new IllegalArgumentException("scale-input must be -1 or nonnegative");
+            phases.add(new Phase(trigger,effect,anchor,delay,ttl,finish,offset,List.copyOf(stops),numeric(p,"width",0,0,VfxProtocol.MAX_EFFECT_WIDTH),scaleInput,linkLength,text(p,"role",anchor.equals("caster")?"attached":"static"),integer(p,"motion-delay-ticks",0),text(p,"impact-effect",""),linkAnchor(p,"link-source","caster"),linkAnchor(p,"link-target","target"),vector(p.get("target-offset")),Boolean.TRUE.equals(p.get("clear-stopped-local")),null,text(p,"projectile-origin","caster")));
         }
         if(phases.isEmpty()||phases.size()>MAX_PHASES_PER_SPELL)throw new IllegalArgumentException("No/bloated phases "+id);
         int expireTick=-1;
@@ -117,32 +120,57 @@ public final class CatalogVisualEngine {
     /** Operator preview only; normal gameplay must use cast() and the mana owner. */
     public Boolean previewEvent(Player player,String id,String event){return castEvent(player,id,event);}
     private Boolean castEvent(Player player,String id,String initialEvent){
+        Cast c=beginCast(player,id,initialEvent,null,false);
+        return c!=null?Boolean.TRUE:plans.containsKey(id)?Boolean.FALSE:null;
+    }
+    /** Exact server-validated target; no independent aim ray or client event authorization. */
+    public UUID startTargeted(Player player,String id,LivingEntity target){
+        Cast c=beginCast(player,id,"cast",target,true);
+        return c==null?null:c.id;
+    }
+    private Cast beginCast(Player player,String id,String initialEvent,LivingEntity validatedTarget,boolean serverControlled){
         lastFailure="";
         if(!Bukkit.isPrimaryThread())throw new IllegalStateException("Catalog casts require the server thread");
-        Plan plan=plans.get(id);if(plan==null){lastFailure="no visual plan";return null;}
+        if(player==null)return null;
         UUID pid=player.getUniqueId();
-        if(!service.supportsCatalogCast(pid))return rejected(pid,"readiness withdrawn");
+        Plan plan=plans.get(id);if(plan==null)return rejected(pid,"no visual plan");
+        if(player==null)return rejected(pid,"no player");
+        if(!service.supportsCatalogCast(player.getUniqueId()))return rejected(pid,"readiness withdrawn");
         if(player.isDead()||!player.isOnline())return rejected(pid,"player dead/offline");
-        if(casts.size()>=limits.maxCasts())return rejected(pid,"server active cast capacity ("+limits.maxCasts()+")");
-        if(ownerCasts.getOrDefault(pid,0)>=limits.maxPerPlayer())return rejected(pid,"player active cast capacity ("+limits.maxPerPlayer()+")");
-        Cast c=new Cast();c.id=UUID.randomUUID();c.owner=player.getUniqueId();c.world=player.getWorld().getUID();c.plan=plan;c.origin=player.getLocation();c.direction=player.getEyeLocation().getDirection().normalize();
-        double safeRange=safeRange(player.getEyeLocation(),c.direction,plan.range());if(safeRange<.1)return rejected(pid,"safe aim range below0.1");
-        RayTraceResult hit=player.getWorld().rayTrace(player.getEyeLocation(),c.direction,safeRange,FluidCollisionMode.NEVER,true,.3,e->targetable(player,e));
-        c.aim=hit==null?player.getEyeLocation().add(c.direction.clone().multiply(safeRange)):hit.getHitPosition().toLocation(player.getWorld());
-        if(plan.trajectory().equals("targeted-meteor")) {
-            // The aim ray selects X/Z; this spell always fixes a ground point, even when looking at air or a wall.
-            Location ground=TargetedMeteorPath.groundBelow(c.aim);
-            if(ground==null)return rejected(pid,"no loaded ground below meteor target");
-            c.aim=ground;c.normal=new Vector(0,1,0);
-        } else if(hit!=null&&hit.getHitEntity()!=null)c.target=hit.getHitEntity().getUniqueId();
-        if(c.target==null&&plan.phases().stream().anyMatch(ph->ph.trigger().equals(initialEvent)&&ph.anchor().equals("target")&&ph.role().equals("attached")))return rejected(pid,"requires living target");
-        if(!plan.trajectory().equals("targeted-meteor")&&hit!=null&&hit.getHitBlockFace()!=null)c.normal=hit.getHitBlockFace().getDirection();
-        if(!loaded(c.aim))return rejected(pid,"aim chunk not loaded");c.expires=tick+plan.maxTicks();c.expireAt=plan.expireTick()<0?-1:tick+plan.expireTick();
+        if(casts.size()>=limits.maxCasts())return rejected(pid,"server active cast capacity");
+        if(ownerCasts.getOrDefault(pid,0)>=limits.maxPerPlayer())return rejected(pid,"player active cast capacity");
+        Cast c=new Cast();c.id=UUID.randomUUID();c.owner=player.getUniqueId();c.world=player.getWorld().getUID();c.plan=plan;c.origin=player.getLocation();c.direction=player.getEyeLocation().getDirection().normalize();c.serverControlled=serverControlled;
+        if(serverControlled){
+            if(validatedTarget==null||!validatedTarget.isValid()||validatedTarget.isDead()||validatedTarget.getUniqueId().equals(c.owner))return rejected(pid,"target unavailable");
+            if(!validatedTarget.getWorld().getUID().equals(c.world))return rejected(pid,"target world mismatch");
+            c.aim=validatedTarget.getLocation().clone();
+            if(!validPoint(c,c.aim)||c.aim.distanceSquared(c.origin)>plan.range()*plan.range())return rejected(pid,"target out of range or unloaded");
+            c.target=validatedTarget.getUniqueId();
+            Vector towards=c.aim.toVector().subtract(player.getEyeLocation().toVector());
+            if(towards.lengthSquared()>1e-8)c.direction=towards.normalize();
+        }else{
+            double safeRange=safeRange(player.getEyeLocation(),c.direction,plan.range());if(safeRange<.1)return rejected(pid,"safe aim range below0.1");
+            RayTraceResult hit=player.getWorld().rayTrace(player.getEyeLocation(),c.direction,safeRange,FluidCollisionMode.NEVER,true,.3,e->targetable(player,e));
+            c.aim=hit==null?player.getEyeLocation().add(c.direction.clone().multiply(safeRange)):hit.getHitPosition().toLocation(player.getWorld());
+            if(plan.trajectory().equals("targeted-meteor")) {
+                // The aim ray selects X/Z; this spell always fixes a ground point, even when looking at air or a wall.
+                Location ground=TargetedMeteorPath.groundBelow(c.aim);
+                if(ground==null)return rejected(pid,"no loaded ground below meteor target");
+                c.aim=ground;c.normal=new Vector(0,1,0);
+            } else if(hit!=null&&hit.getHitEntity()!=null)c.target=hit.getHitEntity().getUniqueId();
+            if(c.target==null&&plan.phases().stream().anyMatch(ph->ph.trigger().equals(initialEvent)&&ph.anchor().equals("target")&&ph.role().equals("attached")))return rejected(pid,"requires living target");
+            if(!plan.trajectory().equals("targeted-meteor")&&hit!=null&&hit.getHitBlockFace()!=null)c.normal=hit.getHitBlockFace().getDirection();
+        }
+        if(plan.phases().stream().anyMatch(p->p.scaleInput()==-1||p.linkSource().equals("target-chest")||p.linkTarget().equals("target-chest"))){
+            try{c.scaleTargetHeight=c.lastTargetHeight=measureTargetHeight(targetEntity(c));}
+            catch(RuntimeException failure){return rejected(pid,"target height unavailable: "+failure.getMessage());}
+        }
+        if(!loaded(c.aim))return rejected(pid,"aim chunk not loaded");c.expires=tick+plan.maxTicks();c.expireAt=serverControlled||plan.expireTick()<0?-1:tick+plan.expireTick();
         enqueue(c,initialEvent);if(initialEvent.equals("cast"))enqueueSalvo(c);if(c.pending.isEmpty())return rejected(pid,"no phases for event "+initialEvent);
         if(plan.virtualOffset()!=null){
             Location spawn=player.getLocation().add(localOffset(plan.virtualOffset(),c.direction));if(!loaded(spawn))return rejected(pid,"virtual anchor chunk not loaded");
             ArmorStand anchor=player.getWorld().spawn(spawn,ArmorStand.class,e->{e.setVisible(false);e.setMarker(true);e.setGravity(false);e.setInvulnerable(true);e.setSilent(true);e.setPersistent(false);e.setCollidable(false);e.addScoreboardTag(ANCHOR_TAG);});
-            c.virtual=anchor.getUniqueId();c.expireAt=tick+plan.virtualLifetime();c.nextAttack=tick+Math.max(20,plan.attackInterval());
+            c.virtual=anchor.getUniqueId();c.expireAt=serverControlled?-1:tick+plan.virtualLifetime();c.nextAttack=tick+Math.max(20,plan.attackInterval());
         }
 
         casts.put(c.id,c);ownerCasts.merge(c.owner,1,Integer::sum);
@@ -152,7 +180,7 @@ public final class CatalogVisualEngine {
         finally{c.starting=false;}
         // 예산 때문에 밀린 시청자(deferred/skipped)가 있으면 성공이다. 받을 수 있는 시청자가 아예 없을 때만 거부한다.
         if(c.started>0&&c.seen==0){cancel(c.id);return rejected(pid,"no eligible viewer in range");}
-        return true;
+        return c;
     }
     public void tick(){
         tick++;
@@ -169,13 +197,20 @@ public final class CatalogVisualEngine {
                     // 움직였거나 돌았을 때만 teleport: 가만히 선 시전자의 앵커를 매 tick 다시 보내지 않는다.
                     if(change.lengthSquared()>1e-6||turn>.5f){current.add(change);current.setYaw(base.getYaw());current.setPitch(0);if(loaded(current))v.teleport(current);}
                 }
-                if(c.virtual!=null&&!c.expired&&!c.plan.attackEvent().isEmpty()&&tick>=c.nextAttack){
+                if(!c.serverControlled&&c.virtual!=null&&!c.expired&&!c.plan.attackEvent().isEmpty()&&tick>=c.nextAttack){
                     c.nextAttack=tick+Math.max(20,c.plan.attackInterval());Entity anchor=Bukkit.getEntity(c.virtual);
                     if(anchor!=null){double range=Math.min(64,Math.max(1,c.plan.attackRange()));Entity target=anchor.getNearbyEntities(range,range,range).stream().filter(e->e instanceof Monster&&targetable(p,e)).min(Comparator.comparingDouble(e->e.getLocation().distanceSquared(anchor.getLocation()))).orElse(null);
                         if(target!=null){c.target=target.getUniqueId();c.aim=((LivingEntity)target).getEyeLocation();Location facing=anchor.getLocation();facing.setDirection(c.aim.toVector().subtract(facing.toVector()));facing.setPitch(0);anchor.teleport(facing);enqueue(c,c.plan.attackEvent());}
                     }
                 }
-                if(!c.expired&&c.expireAt>=0&&tick>=c.expireAt){c.expired=true;enqueue(c,"expire");}
+                if(!c.serverControlled&&!c.expired&&c.expireAt>=0&&tick>=c.expireAt){c.expired=true;enqueue(c,"expire");}
+                if(c.serverControlled&&c.terminalEvent==null){
+                    Entity target=targetEntity(c);
+                    if(target!=null&&validPoint(c,target.getLocation())){
+                        if(c.scaleTargetHeight>0)c.lastTargetHeight=measureTargetHeight(target);
+                        c.aim=target.getLocation().clone();
+                    }
+                }
                 runPending(c);
                 for(Active a:List.copyOf(c.active)){
                     // 자연 만료: 릴레이 핸들은 같은 TTL 로 스스로 만료돼 풀린다. 여기서 hard STOP 을 보내면 시전이 이 tick 의
@@ -184,13 +219,15 @@ public final class CatalogVisualEngine {
                     if(!a.finished&&a.finishAt>=0&&tick>=a.finishAt)finish(a,false);
                     if(!a.finished&&a.phase.anchor().equals("projectile")&&tick>=a.motionAt)moveProjectile(c,a);
                     else if(!a.finished&&a.phase.role().equals("link"))updateLink(c,a);
+                    else if(!a.finished&&c.serverControlled&&c.terminalEvent==null&&a.phase.anchor().equals("target")&&a.phase.role().equals("attached")&&!a.following)updateAttachedTarget(c,a);
                 }
                 // 예약된 expire 이벤트가 남아 있으면 그때까지는 시전을 유지한다.
-                if(c.pending.isEmpty()&&c.active.isEmpty()&&(c.expired||c.expireAt<0))cancel(c.id);
+                if(c.pending.isEmpty()&&c.active.isEmpty()&&(!c.serverControlled||c.terminalEvent!=null)&&(c.expired||c.expireAt<0))cancel(c.id);
             }catch(RuntimeException failure){tickFailures++;noteFailure(c,"tick",failure);cancel(c.id);}
         }
     }
     private void enqueue(Cast c,String trigger){
+        if(c.serverControlled&&terminalEvent(trigger)&&!trigger.equals(c.terminalEvent))return;
         for(Phase phase:c.plan.phases())if(phase.trigger().equals(trigger))pend(c,tick+phase.delay(),phase);
     }
     /** 모든 대기 단계는 여기로 들어온다: 시전당 limits.maxPending 상한을 한 곳에서 지킨다. */
@@ -230,28 +267,34 @@ public final class CatalogVisualEngine {
     private void start(Cast c,Phase phase){
         for(Active old:c.active)if(!old.finished&&phase.stopEffects().contains(old.phase.effect()))finish(old,phase.clearStoppedLocal());
         Player player=Bukkit.getPlayer(c.owner);if(player==null)throw new IllegalStateException("Owner left");
-        Entity target=c.target==null?null:Bukkit.getEntity(c.target);
+        Entity target=targetEntity(c);
         Entity virtual=c.virtual==null?null:Bukkit.getEntity(c.virtual);
         boolean linked=phase.role().equals("link");
+        boolean terminalAttached=c.serverControlled&&c.terminalEvent!=null&&phase.role().equals("attached")&&phase.anchor().equals("target");
         Location at=switch(phase.anchor()){
             case "caster","link"->player.getLocation();case "external"->virtual!=null?virtual.getLocation():c.aim;case "projectile"->c.plan.trajectory().equals("ground")||phase.offset().lengthSquared()>0?player.getLocation():player.getEyeLocation();case "impact"->c.impact==null?c.aim:c.impact;default->target!=null&&phase.role().equals("attached")?target.getLocation():c.aim;
         };
         if(phase.anchor().equals("projectile")&&phase.projectileOrigin().equals("virtual")&&virtual!=null)at=virtual.getLocation();
         if(phase.anchor().equals("projectile")&&c.plan.trajectory().equals("chain-distinct-targets")&&c.impact!=null)at=c.impact;
-        if(linked)at=phase.linkSource().equals("target")?c.aim:player.getLocation();
+        if(linked)at=linkPoint(c,player,target,phase.linkSource(),true);
         Vector frameDirection=phase.projectileOrigin().equals("virtual")&&virtual!=null?virtual.getLocation().getDirection():phase.localAim()!=null?player.getLocation().getDirection():c.direction;
+        // A captured entity no longer supplies the normal follow transform. Preserve its last
+        // horizontal facing, rather than freezing the caster's pitched aim into a floor effect.
+        if(terminalAttached)frameDirection=horizontalFacing(c.aim);
         if(phase.anchor().equals("projectile")&&c.plan.trajectory().equals("targeted-meteor"))at=c.aim;
         at=at.clone().add(localOffset(phase.offset(),frameDirection));if(!loaded(at))throw new IllegalStateException("Unloaded phase position");
         Vector dir=phase.projectileOrigin().equals("virtual")?c.aim.toVector().subtract(at.toVector()).normalize():phase.localAim()!=null?localOffset(phase.localAim(),frameDirection).normalize():c.direction.clone();if(c.plan.trajectory().equals("ground")){dir.setY(0);if(dir.lengthSquared()<1e-8)dir=new Vector(0,0,1);dir.normalize();}double link=phase.linkLength();
+        if(terminalAttached)dir=frameDirection.clone();
         if(phase.anchor().equals("projectile")&&c.plan.trajectory().equals("targeted-meteor"))dir=TargetedMeteorPath.direction(at,c.aim);
-        if(linked){Location endpoint=phase.linkTarget().equals("caster")?player.getLocation():target==null?c.aim:target.getLocation();endpoint=endpoint.clone().add(localOffset(phase.targetOffset(),c.direction));Vector delta=endpoint.toVector().subtract(at.toVector());link=delta.length();dir=link<1e-5?new Vector(0,0,1):delta.normalize();}
+        if(linked){Location endpoint=linkPoint(c,player,target,phase.linkTarget(),false).add(localOffset(phase.targetOffset(),c.direction));Vector delta=endpoint.toVector().subtract(at.toVector());link=delta.length();dir=link<1e-5?new Vector(0,0,1):delta.normalize();}
         if(phase.role().equals("static")){dir.setY(0);if(dir.lengthSquared()<1e-8)dir=new Vector(0,0,1);dir.normalize();}
         EffectBasis basis=phase.anchor().equals("impact")||phase.role().equals("impact")?EffectBasis.impact(c.normal.getX(),c.normal.getY(),c.normal.getZ(),dir.getX(),dir.getY(),dir.getZ()):EffectBasis.projectile(dir.getX(),dir.getY(),dir.getZ());
         EffectRequest request=new EffectRequest(phase.effect(),at.getWorld().getKey().toString(),at.getX(),at.getY(),at.getZ(),1,phase.ttl(),0,0,0,0xffffff,1,64);
         PlayResult result;
+        double scaleInput=phase.scaleInput()==-1?c.scaleTargetHeight:phase.scaleInput();
         boolean follow=phase.role().equals("attached")&&(phase.anchor().equals("caster")||phase.anchor().equals("target")&&target!=null||phase.anchor().equals("external")&&virtual!=null)&&phase.offset().lengthSquared()==0;
-        if(follow)result=service.startFollowCast(request,phase.anchor().equals("target")?target.getUniqueId():phase.anchor().equals("external")?virtual.getUniqueId():c.owner,c.id.getLeastSignificantBits()+c.serial++,phase.width(),phase.scaleInput());
-        else result=service.startCast(request,basis,c.id.getLeastSignificantBits()+c.serial++,phase.width(),phase.scaleInput(),link);
+        if(follow)result=service.startFollowCast(request,phase.anchor().equals("target")?target.getUniqueId():phase.anchor().equals("external")?virtual.getUniqueId():c.owner,c.id.getLeastSignificantBits()+c.serial++,phase.width(),scaleInput);
+        else result=service.startCast(request,basis,c.id.getLeastSignificantBits()+c.serial++,phase.width(),scaleInput,link);
         // 받은 시청자가 없어도 단계는 추적한다: 투사체 이동과 이후 단계(충돌 등)는 계속 진행돼야 한다.
         boolean reachable=result.recipients()+result.deferred()+result.skippedRateLimited()>0;
         if(c.starting){c.started++;if(reachable)c.seen++;}else if(!reachable)noViewerPhases++;
@@ -344,15 +387,102 @@ public final class CatalogVisualEngine {
         else for(Phase p:c.plan.phases())if(p.trigger().equals("impact")&&p.effect().equals(a.impactEffect))pend(c,tick+p.delay(),p);
     }
     private void updateLink(Cast c,Active a){
-        Player p=Bukkit.getPlayer(c.owner);Entity target=c.target==null?null:Bukkit.getEntity(c.target);if(p==null)return;
-        Location at=(a.phase.linkSource().equals("target")?c.aim.clone():p.getLocation()).add(localOffset(a.phase.offset(),p.getLocation().getDirection()));Location end=(a.phase.linkTarget().equals("caster")?p.getLocation():target==null?c.aim.clone():target.getLocation()).add(localOffset(a.phase.targetOffset(),p.getLocation().getDirection()));
+        Player p=Bukkit.getPlayer(c.owner);Entity target=targetEntity(c);if(p==null)return;
+        Location at=linkPoint(c,p,target,a.phase.linkSource(),true).add(localOffset(a.phase.offset(),p.getLocation().getDirection()));Location end=linkPoint(c,p,target,a.phase.linkTarget(),false).add(localOffset(a.phase.targetOffset(),p.getLocation().getDirection()));
         if(!at.getWorld().equals(end.getWorld())){finish(a,false);return;}
         Vector d=end.toVector().subtract(at.toVector());double len=d.length();if(len<1e-5)d=new Vector(0,0,1);else d.normalize();
         service.updateCast(a.handle,at.getX(),at.getY(),at.getZ(),EffectBasis.projectile(d.getX(),d.getY(),d.getZ()),len);
     }
+    private static Location linkPoint(Cast c,Player player,Entity target,String anchor,boolean source){
+        return switch(anchor){
+            case "caster"->player.getLocation();
+            // Preserve legacy source=aim versus endpoint=entity-base semantics.
+            case "target"->source||target==null?c.aim.clone():target.getLocation();
+            case "caster-hand"->{
+                // Server-side right-hand approximation: eye-relative, with stable yaw at vertical aim.
+                Location eye=player.getEyeLocation();Vector look=eye.getDirection();
+                Vector right=new Vector(Math.cos(Math.toRadians(eye.getYaw())),0,Math.sin(Math.toRadians(eye.getYaw())));
+                yield eye.add(look.multiply(.4)).add(right.multiply(.3)).add(0,-.25,0);
+            }
+            case "target-chest"->{
+                Location feet=target==null?c.aim.clone():target.getLocation();
+                if(target!=null)c.lastTargetHeight=measureTargetHeight(target);
+                if(!(c.lastTargetHeight>0))throw new IllegalStateException("Target height not prepared");
+                yield feet.add(0,.55*c.lastTargetHeight,0);
+            }
+            default->throw new IllegalArgumentException("Unknown link anchor: "+anchor);
+        };
+    }
+    private static double measureTargetHeight(Entity target){
+        if(!(target instanceof LivingEntity)||!target.isValid()||target.isDead())throw new IllegalArgumentException("Living target unavailable");
+        double height=target.getHeight();
+        if(!Double.isFinite(height)||height<=0||height>128)throw new IllegalArgumentException("Target height outside (0,128] metres");
+        return height;
+    }
+    private static Vector horizontalFacing(Location location){
+        Vector facing=location.getDirection().setY(0);
+        return !Double.isFinite(facing.lengthSquared())||facing.lengthSquared()<1e-8?new Vector(0,0,1):facing.normalize();
+    }
+    private void updateAttachedTarget(Cast c,Active a){
+        Entity target=targetEntity(c);if(target==null)return;
+        Location at=target.getLocation().add(localOffset(a.phase.offset(),c.direction));
+        if(!validPoint(c,at))return;
+        a.position=at;
+        service.updateCast(a.handle,at.getX(),at.getY(),at.getZ(),EffectBasis.projectile(a.direction.getX(),a.direction.getY(),a.direction.getZ()));
+    }
+    /**
+     * Accepts one server-confirmed outcome on an owner-scoped targeted cast. Removes queued channel
+     * phases before scheduling the chosen terminal branch, whose authored stop-effects/clear-local
+     * settings finish the existing effects. The terminal pose survives removal of the captured mob.
+     */
+    public boolean finishTargeted(Player player,UUID castId,String event,Location lastTargetLocation){
+        if(!Bukkit.isPrimaryThread())throw new IllegalStateException("Visual events require server thread");
+        if(!terminalEvent(event))return false;
+        Cast c=ownedTargeted(player,castId);if(c==null||c.terminalEvent!=null)return false;
+        if(c.plan.phases().stream().noneMatch(p->p.trigger().equals(event)))return false;
+        Location point=lastTargetLocation==null?c.aim:lastTargetLocation;
+        if(!validPoint(c,point))return false;
+        Entity target=targetEntity(c);
+        if(c.scaleTargetHeight>0&&target!=null){
+            try{c.lastTargetHeight=measureTargetHeight(target);}
+            catch(RuntimeException failure){cancel(c.id);lastFailure="target height unavailable: "+failure.getMessage();return false;}
+        }
+        c.terminalEvent=event;c.expired=true;c.expireAt=-1;c.pending.clear();
+        c.aim=point.clone();c.impact=point.clone();c.target=null;
+        // Long channel TTLs must not keep the scoped cast or its stopped relay handles alive after
+        // the selected terminal sequence has drained. Never extend the original hard deadline.
+        int terminalTicks=c.plan.phases().stream().filter(p->p.trigger().equals(event)).mapToInt(p->p.delay()+p.ttl()).max().orElse(1);
+        c.expires=Math.min(c.expires,tick+terminalTicks);
+        try{enqueue(c,event);runPending(c);return true;}
+        catch(RuntimeException failure){cancel(c.id);lastFailure="terminal phase exception "+failure.getClass().getSimpleName()+": "+failure.getMessage();return false;}
+    }
+    /** Early rollback is visual-only and cannot cancel another owner's or a generic cast. */
+    public boolean cancelTargeted(Player player,UUID castId){
+        if(!Bukkit.isPrimaryThread())throw new IllegalStateException("Visual events require server thread");
+        Cast c=casts.get(castId);
+        if(player==null||c==null||!c.serverControlled||!c.owner.equals(player.getUniqueId()))return false;
+        cancel(c.id);return true;
+    }
+    private Cast ownedTargeted(Player player,UUID castId){
+        Cast c=casts.get(castId);
+        if(player==null||c==null||!c.serverControlled||!c.owner.equals(player.getUniqueId()))return null;
+        if(tick>=c.expires||!player.isOnline()||player.isDead()||!player.getWorld().getUID().equals(c.world)){cancel(c.id);return null;}
+        return c;
+    }
+    private static boolean terminalEvent(String event){return "external:trigger".equals(event)||"expire".equals(event);}
+    private static boolean validPoint(Cast c,Location point){
+        return point!=null&&point.getWorld()!=null&&point.getWorld().getUID().equals(c.world)
+                &&Double.isFinite(point.getX())&&Double.isFinite(point.getY())&&Double.isFinite(point.getZ())
+                &&loaded(point)&&point.distanceSquared(c.origin)<=256*256;
+    }
+    private static Entity targetEntity(Cast c){
+        Entity target=c.target==null?null:Bukkit.getEntity(c.target);
+        if(c.serverControlled&&target!=null&&(!target.isValid()||target.isDead()||!target.getWorld().getUID().equals(c.world)))return null;
+        return target;
+    }
     /** External server events may activate named branches; clients cannot supply this input. */
     public boolean trigger(UUID castId,String event){
-        Cast c=casts.get(castId);if(c==null||c.plan.phases().stream().noneMatch(p->p.trigger().equals(event)))return false;
+        Cast c=casts.get(castId);if(c==null||c.serverControlled||c.plan.phases().stream().noneMatch(p->p.trigger().equals(event)))return false;
         if(event.equals("external:trigger")){if(c.expired)return false;c.expired=true;}
         // 호출자(게임플레이 어댑터)에게 예외를 던지지 않는다: 대기열 초과 같은 실패는 그 시전만 정리한다.
         try{enqueue(c,event);runPending(c);return true;}
@@ -361,7 +491,7 @@ public final class CatalogVisualEngine {
     public int trigger(UUID owner,String spellId,String event,Location point,UUID target){
         if(!Bukkit.isPrimaryThread())throw new IllegalStateException("Visual events require server thread");
         int delivered=0;
-        for(Cast c:List.copyOf(casts.values()))if(c.owner.equals(owner)&&c.plan.id().equals(spellId)){
+        for(Cast c:List.copyOf(casts.values()))if(!c.serverControlled&&c.owner.equals(owner)&&c.plan.id().equals(spellId)){
             if(point!=null){if(!point.getWorld().getUID().equals(c.world)||!loaded(point)||point.distanceSquared(c.origin)>256*256)continue;c.impact=point.clone();}
             if(target!=null){Entity e=Bukkit.getEntity(target);if(e==null||!e.getWorld().getUID().equals(c.world))continue;c.target=target;}
             if(trigger(c.id,event))delivered++;
@@ -406,6 +536,7 @@ public final class CatalogVisualEngine {
     private static Vector localOffset(Vector v,Vector dir){Vector horizontal=dir.clone().setY(0);if(horizontal.lengthSquared()<1e-8)horizontal=new Vector(0,0,1);horizontal.normalize();Vector right=new Vector(horizontal.getZ(),0,-horizontal.getX());return right.multiply(v.getX()).add(new Vector(0,v.getY(),0)).add(horizontal.multiply(v.getZ()));}
     private static Vector vector(Object raw){if(raw==null)return new Vector();if(!(raw instanceof List<?> v)||v.size()!=3)throw new IllegalArgumentException("Expected 3D vector");Vector out=new Vector(((Number)v.get(0)).doubleValue(),((Number)v.get(1)).doubleValue(),((Number)v.get(2)).doubleValue());if(!Double.isFinite(out.lengthSquared())||out.length()>128)throw new IllegalArgumentException("Invalid vector");return out;}
     private static String text(Map<?,?> p,String k,String d){Object v=p.get(k);return v==null?d:v.toString();}
+    private static String linkAnchor(Map<?,?> p,String key,String fallback){String value=text(p,key,fallback);if(!Set.of("caster","target","caster-hand","target-chest").contains(value))throw new IllegalArgumentException("Unknown "+key+": "+value);return value;}
     private static int integer(Map<?,?> p,String k,int d){Object v=p.get(k);if(v==null)return d;if(!(v instanceof Number n)||!Double.isFinite(n.doubleValue())||n.doubleValue()!=Math.rint(n.doubleValue()))throw new IllegalArgumentException(k);return n.intValue();}
     private static double numeric(Map<?,?> p,String k,double d,double min,double max){Object v=p.get(k);return finite(v==null?d:((Number)v).doubleValue(),min,max,k);}
     private static double finite(double v,double min,double max,String name){if(!Double.isFinite(v)||v<min||v>max)throw new IllegalArgumentException(name);return v;}
