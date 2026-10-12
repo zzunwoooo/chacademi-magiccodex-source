@@ -2,6 +2,7 @@ package kr.chacademy.motion;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import kr.chacademy.motion.anim.MotionPlayer;
+import kr.chacademy.motion.api.BroomApi;
 import kr.chacademy.motion.broom.BroomFlight;
 import kr.chacademy.motion.broom.BroomHud;
 import kr.chacademy.motion.broom.BroomModels;
@@ -52,6 +53,8 @@ public class ChacademyMotionClient implements ClientModInitializer {
         PayloadTypeRegistry.playS2C().register(BroomPackets.RideS2C.TYPE, BroomPackets.RideS2C.CODEC);
         PayloadTypeRegistry.playS2C().register(BroomPackets.StateS2C.TYPE, BroomPackets.StateS2C.CODEC);
         PayloadTypeRegistry.playC2S().register(BroomPackets.EventC2S.TYPE, BroomPackets.EventC2S.CODEC);
+        PayloadTypeRegistry.playS2C().register(BroomPackets.ListS2C.TYPE, BroomPackets.ListS2C.CODEC);
+        PayloadTypeRegistry.playC2S().register(BroomPackets.RequestC2S.TYPE, BroomPackets.RequestC2S.CODEC);
 
         MotionPlayer.init();
         BroomPose.init();
@@ -60,10 +63,12 @@ public class ChacademyMotionClient implements ClientModInitializer {
         // 빗자루: 서버가 "타라"(나만) / "누가 탔다·내렸다"(나와 주변)를 알려줌. 둘 다 클라 스레드에서 실행됨.
         ClientPlayNetworking.registerGlobalReceiver(BroomPackets.RideS2C.TYPE, (payload, context) -> BroomFlight.onRide(payload));
         ClientPlayNetworking.registerGlobalReceiver(BroomPackets.StateS2C.TYPE, (payload, context) -> BroomRiders.onState(payload));
+        ClientPlayNetworking.registerGlobalReceiver(BroomPackets.ListS2C.TYPE, (payload, context) -> BroomApi.onList(payload));
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> client.execute(() -> {
             BroomFlight.reset();
             BroomRiders.clear();
             BroomPose.clear();
+            BroomApi.clear();
         }));
         WorldRenderEvents.AFTER_ENTITIES.register(BroomRenderer::render);
         HudRenderCallback.EVENT.register(BroomHud::render);

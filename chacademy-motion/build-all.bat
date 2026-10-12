@@ -10,8 +10,8 @@ cd /d "%ROOT%chacademy-motion-plugin"
 call gradlew.bat build -x test
 if errorlevel 1 goto fail
 if not exist "%ROOT%out" mkdir "%ROOT%out"
-copy /y "%ROOT%chacademy-motion-mod\build\libs\chacademy-motion-0.2.0.jar" "%ROOT%out\" >nul
-copy /y "%ROOT%chacademy-motion-plugin\build\libs\chacademy-motion-plugin-0.2.0.jar" "%ROOT%out\" >nul
+copy /y "%ROOT%chacademy-motion-mod\build\libs\chacademy-motion-0.3.0.jar" "%ROOT%out\" >nul
+copy /y "%ROOT%chacademy-motion-plugin\build\libs\chacademy-motion-plugin-0.3.0.jar" "%ROOT%out\" >nul
 echo.
 echo DONE: two jar files are in the "out" folder.
 pause

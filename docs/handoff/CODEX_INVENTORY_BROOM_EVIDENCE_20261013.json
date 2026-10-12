@@ -1,0 +1,47 @@
+﻿{
+    "deployment":  "Prepared, pending targeted maintenance",
+    "tests":  {
+                  "total":  633,
+                  "motionPlugin":  21,
+                  "ui":  278,
+                  "bridge":  309,
+                  "failures":  0,
+                  "errors":  0,
+                  "magicMythic":  22,
+                  "motionClient":  3,
+                  "skipped":  0
+              },
+    "artifacts":  [
+                      {
+                          "sha256":  "F01DD05C2C5C4C27B9FB442A8C1E3EAB3C02BFEA75DC47194D8BAF7664FCB52C",
+                          "file":  "magic-codex-bridge-0.30.0-catalog.alpha.1-chat.3-discovery.2-holytaming.1-partyhud.3-taming.1-runtime.1-journal.1-broom.1.jar",
+                          "bytes":  1705152
+                      },
+                      {
+                          "sha256":  "FE55F92223AF8094CB475431F26B1A91CEDC81D72ED0BAE58EC46B4A342FF58D",
+                          "file":  "chacademia-magic-mythic-0.1.2-recovery.1-gimmick.1-targets.1-broom.2.jar",
+                          "bytes":  100891
+                      },
+                      {
+                          "sha256":  "6E0CFD7C7F60DAAC9CB35A712BA5A46088F0EEB064ADF861192DAEEE49BFE8E6",
+                          "file":  "magic-codex-ui-0.39.0-catalog.alpha.2-chat.3-holytaming.1-partyhud.4-taming.1-input.1-journal.1-inventory.2-broom.1+mc1.21.4.jar",
+                          "bytes":  111708304
+                      },
+                      {
+                          "sha256":  "75ECF3FB6B95CA5421646D4834C747033125A5E5927DBB798A30D797636C8274",
+                          "file":  "chacademy-motion-plugin-0.3.0-codex.1.jar",
+                          "bytes":  52294
+                      },
+                      {
+                          "sha256":  "7124D7E5DECCB3ADAE687ED74171E9CECBA2B7BFEBD73C3926F2FC8DF8D17928",
+                          "file":  "chacademy-motion-0.3.0-codex.1.jar",
+                          "bytes":  128278
+                      }
+                  ],
+    "oldAssetsIdentical":  370,
+    "oldAssetsChanged":  [
+
+                         ],
+    "utc":  "2026-10-12T15:28:02.8368194Z",
+    "gameQA":  "Not performed"
+}

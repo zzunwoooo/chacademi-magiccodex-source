@@ -287,7 +287,7 @@ public final class ChacaInventoryScreen extends RecipeBookScreen<PlayerScreenHan
             if (effects.size() > panel.rows())
                 c.drawText(textRenderer,(effectOffset+1)+"–"+(effectOffset+panel.rows())+" / "+effects.size()+" ↕",panel.x()+3,panel.y()+panel.rows()*InventoryEffectLayout.ROW,CREAM,false);
         } finally { matrices.pop(); }
-        if (tooltip != null) c.drawTooltip(textRenderer,tooltip,java.util.Optional.empty(),mouseX,mouseY);
+        if (tooltip != null) { matrices.push(); try { matrices.translate(0,0,600); c.drawTooltip(textRenderer,tooltip,java.util.Optional.empty(),mouseX,mouseY); } finally { matrices.pop(); } }
     }
 
     /** Replaces vanilla's grey in-game darkening; drawBackground lays the navy veil instead. */

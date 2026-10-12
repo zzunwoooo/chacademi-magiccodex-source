@@ -27,16 +27,16 @@ chacademy-motion-plugin/   Paper 1.21.4 플러그인 (모션 전달)
 둘 다 JDK 21 이 필요합니다.
 
 ```bash
-cd chacademy-motion-mod    && ./gradlew build   # build/libs/chacademy-motion-0.2.0.jar
-cd chacademy-motion-plugin && ./gradlew build   # build/libs/chacademy-motion-plugin-0.2.0.jar
+cd chacademy-motion-mod    && ./gradlew build   # build/libs/chacademy-motion-0.3.0.jar
+cd chacademy-motion-plugin && ./gradlew build   # build/libs/chacademy-motion-plugin-0.3.0.jar
 ```
 
 ## 설치
 
 | 위치 | 넣을 파일 |
 |---|---|
-| 클라이언트 `mods/` | `chacademy-motion-0.2.0.jar`, Fabric API (1.21.4), playerAnimator `2.0.5+1.21.4-fabric` |
-| 서버 `plugins/` | `chacademy-motion-plugin-0.2.0.jar` |
+| 클라이언트 `mods/` | `chacademy-motion-0.3.0.jar`, Fabric API (1.21.4), playerAnimator `2.0.5+1.21.4-fabric` |
+| 서버 `plugins/` | `chacademy-motion-plugin-0.3.0.jar` |
 
 ## 테스트 방법
 
@@ -107,8 +107,9 @@ ChacademyMotionPlugin.get().playMotion(player, "wand_cast", true);
 |---|---|---|
 | `/빗자루` | 모두 | 내 빗자루·숙련도 |
 | `/빗자루 목록` | 모두 | 10종 수치 |
-| `/빗자루 선택 <ID> [플레이어]` | 관리자 | 빗자루 지급·교체 (가진 빗자루 = 시간 제한 없이 비행) |
-| `/빗자루 해제 [플레이어]` | 관리자 | 회수 (비행 마법 = 연습용 빗자루 10초) |
+| `/빗자루 장착 <ID>` | 모두 | 가진 빗자루 장착 |
+| `/빗자루 선택 <ID> [플레이어]` | 관리자 | 다른 사람의 장착 빗자루 변경 (보유 권한이 있어야 적용) |
+| `/빗자루 해제 [플레이어]` | 관리자 | 장착 해제 (가진 것 중 가장 좋은 빗자루, 없으면 연습용 10초) |
 | `/빗자루 타기 [플레이어]` | 관리자 | 마법 없이 타기/내리기 (테스트) |
 | `/빗자루 숙련도 <플레이어> <0~100>` | 관리자 | 숙련도 설정 |
 | `/빗자루 새로고침` | 관리자 | brooms.yml 다시 읽기 |
@@ -125,3 +126,9 @@ bbmodel 은 Generic(free) 형식, 텍스처 내장, `p_pilot` 본(좌석)이 있
 
 `broom_ride`(반복), `broom_boost`(반복), `broom_wobble`(반복, 균형 25% 이하), `broom_fall`(낙마).
 선회·급강하·배럴롤 기울기는 모션 위에 실시간으로 더합니다(BroomPose). 타는 중에 시전 모션이 나오면 팔·상체만 시전 모션을 씁니다.
+
+### 보유와 장비창 (0.3.0)
+
+- 보유 = 권한 `chacademy.broom.own.<ID>` (LuckPerms 등으로 지급), `chacademy.broom.own.*` = 전부. OP 는 전부 보유.
+- 가진 빗자루는 시간 제한 없이 비행. 장착이 없으면 가진 것 중 가장 좋은 빗자루, 하나도 없으면 연습용 10초.
+- MagicCodex 장비창은 `kr.chacademy.motion.api.BroomApi`(리플렉션)로 보유 목록·능력치 게이지·장착·3D 모델 렌더를 쓴다.

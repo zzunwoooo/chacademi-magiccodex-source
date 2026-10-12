@@ -24,7 +24,17 @@ public final class BroomCodec {
     /** 모드 → 서버: 내리기, 낙마, 다시 잡기 같은 사건. */
     public static final String CHANNEL_EVENT = "chacademy:broom_evt";
 
+    /** 서버 → 본인: 가진 빗자루 목록과 장착 중인 빗자루 (장비창용). */
+    public static final String CHANNEL_LIST = "chacademy:broom_list";
+    /** 모드 → 서버: 목록 다시 보내 줘(0) / 이 빗자루 장착(1). */
+    public static final String CHANNEL_REQUEST = "chacademy:broom_req";
+
     public static final int MAX_ID_BYTES = 64;
+    public static final int MAX_TEXT_BYTES = 256;
+    public static final int MAX_LIST = 64;
+
+    public static final byte REQ_REFRESH = 0;
+    public static final byte REQ_EQUIP = 1;
 
     // broom_state 의 reason
     public static final byte STATE_NORMAL = 0;
@@ -52,6 +62,71 @@ public final class BroomCodec {
     public record State(UUID player, String broom, byte reason) {}
 
     public record Event(byte type, float value) {}
+
+    /** 장비창에 보일 빗자루 하나. */
+    public record Owned(String id, String name, String grade, float maxSpeed, float accel, float turn, float brake,
+                        float stability, float climb) {}
+
+    /** equipped 가 빈 문자열이면 장착 없음. */
+    public record ListMsg(String equipped, float mastery, java.util.List<Owned> brooms) {}
+
+    public record Request(byte kind, String broom) {}
+
+    public static byte[] encodeList(ListMsg m) {
+        var out = new ByteArrayOutputStream(64 + m.brooms().size() * 64);
+        writeString(out, m.equipped());
+        writeFloat(out, m.mastery());
+        writeVarInt(out, m.brooms().size());
+        for (var b : m.brooms()) {
+            writeString(out, b.id());
+            writeString(out, b.name());
+            writeString(out, b.grade());
+            writeFloat(out, b.maxSpeed());
+            writeFloat(out, b.accel());
+            writeFloat(out, b.turn());
+            writeFloat(out, b.brake());
+            writeFloat(out, b.stability());
+            writeFloat(out, b.climb());
+        }
+        return out.toByteArray();
+    }
+
+    public static ListMsg decodeList(byte[] data) throws MalformedException {
+        var buf = ByteBuffer.wrap(data);
+        try {
+            String eq = readString(buf, MAX_ID_BYTES);
+            float mastery = buf.getFloat();
+            int n = readVarInt(buf);
+            if (n < 0 || n > MAX_LIST) throw new MalformedException("목록 크기 " + n);
+            var list = new java.util.ArrayList<Owned>(n);
+            for (int i = 0; i < n; i++) {
+                list.add(new Owned(readString(buf, MAX_ID_BYTES), readString(buf, MAX_TEXT_BYTES), readString(buf, MAX_TEXT_BYTES),
+                        buf.getFloat(), buf.getFloat(), buf.getFloat(), buf.getFloat(), buf.getFloat(), buf.getFloat()));
+            }
+            if (buf.hasRemaining()) throw new MalformedException("남는 바이트 " + buf.remaining());
+            return new ListMsg(eq, mastery, list);
+        } catch (BufferUnderflowException e) {
+            throw new MalformedException("패킷이 너무 짧음");
+        }
+    }
+
+    public static byte[] encodeRequest(Request r) {
+        var out = new ByteArrayOutputStream(16);
+        out.write(r.kind());
+        writeString(out, r.broom());
+        return out.toByteArray();
+    }
+
+    public static Request decodeRequest(byte[] data) throws MalformedException {
+        var buf = ByteBuffer.wrap(data);
+        try {
+            var r = new Request(buf.get(), readString(buf, MAX_ID_BYTES));
+            if (buf.hasRemaining()) throw new MalformedException("남는 바이트 " + buf.remaining());
+            return r;
+        } catch (BufferUnderflowException e) {
+            throw new MalformedException("패킷이 너무 짧음");
+        }
+    }
 
     public static byte[] encodeRide(Ride r) {
         var out = new ByteArrayOutputStream(64);

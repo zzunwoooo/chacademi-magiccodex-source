@@ -1,3 +1,9 @@
+## Inventory and broom integration — 2026-10-13
+
+SurvivalInventoryUI is a feature of magic-codex-fabric (not a separate mod): vanilla-authoritative 27+9 inventory/crafting, visible offhand, guarded armor Shift, status effects and high-resolution glint. Motion 0.3.0-codex.1 supplies permission-owned broom flight and equipment APIs; MagicCodex provides the five-card equipment UI, precharge movement-spell refusal, shared notice and rebound sneak dismount.
+
+See [combined release and complete regression commands](docs/handoff/CODEX_INVENTORY_BROOM_RELEASE_20261013.md). Hosting verification: 633 tests, zero failures/errors/skips. In-game GPU/control acceptance is still pending.
+
 # Current update: party HUD, 2026-10-12
 
 See [party HUD handoff](docs/handoff/CODEX_PARTY_HUD_20261012.md) for the latest deployment and test scope. Prior HolyTaming/protection features are preserved.

@@ -18,25 +18,39 @@ public final class EquipmentScreen extends Screen {
     private final StatsStars stars=new StatsStars();
     private final UiResources.Entrance entrance=new UiResources.Entrance();
     private int selected=-1;
+    private boolean broomLayout;
+    private static final Identifier BROOM_SLOT=Identifier.of("magiccodex","textures/gui/equipment/broom_equip_slot.png");
     public EquipmentScreen(){super(Text.literal("장비"));}
-    @Override protected void init(){sound();}
+    @Override protected void init(){sound();broomLayout=BroomUiLink.available();if(broomLayout)BroomUiLink.refresh();}
+    private CodexLayout layout(){return BroomSelectionLayout.equipmentFit(width,height,broomLayout);}
+    private float stretch(){return BroomSelectionLayout.equipmentStretch(broomLayout);}
     private void sound(){if(client!=null)client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK.value(),1.1f,.2f));}
     private static int x(int i){return i<4?307:1208;}
     private static int y(int i){return 156+(i%4)*158;}
     private static boolean hit(double mx,double my,int x,int y,int w,int h){return mx>=x&&mx<x+w&&my>=y&&my<y+h;}
     private List<Integer> choices(){List<Integer> list=new ArrayList<>();if(EquipmentClient.data!=null)for(int i=0;i<EquipmentClient.data.candidates().size();i++)if(EquipmentClient.data.candidates().get(i).slot()==selected)list.add(i);return list;}
     @Override public void render(DrawContext c,int mouseX,int mouseY,float delta){
-        var l=CodexLayout.codexFit(width,height);double mx=l.localX(mouseX),my=l.localY(mouseY);var text=UiResources.text();var images=UiResources.images();text.beginFrame();images.beginFrame();c.fill(0,0,width,height,0x48040911);
+        var l=layout();double mx=l.localX(mouseX),my=l.localY(mouseY)/stretch();var text=UiResources.text();var images=UiResources.images();text.beginFrame();images.beginFrame();c.fill(0,0,width,height,0x48040911);
         int hovered=-1;for(int i=0;i<8;i++)if(hit(mx,my,x(i),y(i),151,137))hovered=i;
         c.getMatrices().push();
         try{
-            c.getMatrices().translate(l.x(),l.y(),0);c.getMatrices().scale(l.scale(),l.scale(),1);
+            c.getMatrices().translate(l.x(),l.y(),0);c.getMatrices().scale(l.scale(),l.scale()*stretch(),1);
             images.drawTexture(c,PANEL,0,0,0,0,1672,941,1672,941);
             int circle=EquipmentClient.data==null?StatsClient.values().circle():EquipmentClient.data.circle();double time=Util.getMeasuringTimeMs()/1000.0;
             c.getMatrices().push();c.getMatrices().translate(490,-22,0);c.getMatrices().scale(.92f,.92f,1);StatsBackdrop.draw(c,circle,time);c.getMatrices().pop();
             stars.update(circle,time);drawStars(c,false);
-            var p=client.player;if(p!=null){float body=p.bodyYaw,yaw=p.getYaw(),pitch=p.getPitch(),head=p.headYaw,prev=p.prevHeadYaw;try{InventoryScreen.drawEntity(c,574,174,1100,632,211,0,836+(float)Math.clamp((mx-836)*.08,-15,15),407+(float)Math.clamp((my-407)*.06,-10,10),p);}finally{p.bodyYaw=body;p.setYaw(yaw);p.setPitch(pitch);p.headYaw=head;p.prevHeadYaw=prev;}}
+            var p=client.player;if(p!=null){float body=p.bodyYaw,yaw=p.getYaw(),pitch=p.getPitch(),head=p.headYaw,prev=p.prevHeadYaw;try{InventoryScreen.drawEntity(c,574,174,1100,broomLayout?528:632,broomLayout?164:211,0,836+(float)Math.clamp((mx-836)*.08,-15,15),(broomLayout?351:407)+(float)Math.clamp((my-407)*.06,-10,10),p);}finally{p.bodyYaw=body;p.setYaw(yaw);p.setPitch(pitch);p.headYaw=head;p.prevHeadYaw=prev;}}
             c.getMatrices().push();c.getMatrices().translate(0,0,300);drawStars(c,true);
+            if(broomLayout&&BroomUiLink.available()){
+                images.drawTexture(c,BROOM_SLOT,544,540,72,186,584,90,2029,312,2172,724);
+                var id=BroomUiLink.equipped();label(c,"빗자루",590,570,21,0xFFE7D7B2);
+                if(!id.isBlank()){
+                    c.enableScissor(666,545,1098,598);
+                    try{BroomUiLink.render(c,id,874,570,290,90,14,0);}finally{c.disableScissor();}
+                    label(c,BroomUiLink.text("name",id),860,610,23,0xFFEDE3CE);
+                }else label(c,"연습용 빗자루 (10초)",877,594,23,0xFFC0CDD9);
+                if(selected<0&&hit(mx,my,544,540,584,90))HudMesh.line(c,563,624,1109,624,1,0xFF8DDDF3);
+            }
             String name=NicknameClient.display(EquipmentClient.data==null?StatsClient.values().nickname():EquipmentClient.data.name());label(c,name,836,690,27,0xFFF3E9D3);
             if(selected<0&&hit(mx,my,591,664,490,50)){HudMesh.line(c,686,711,986,711,1,0xFF92E7F2);tooltip(c,"닉네임 설정",836,659);}
             double[] values=EquipmentClient.data==null?null:new double[]{EquipmentClient.data.power(),EquipmentClient.data.health(),EquipmentClient.data.mana(),EquipmentClient.data.regen(),EquipmentClient.data.haste()};
@@ -64,7 +78,7 @@ public final class EquipmentScreen extends Screen {
         }finally{c.getMatrices().pop();images.endFrame();}
         entrance.draw(c,width,height);
     }
-    private void drawStars(DrawContext c,boolean front){for(int i=0;i<stars.count();i++)if(stars.foreground(i)==front){float x=836+stars.x(i)*242,y=408+stars.y(i)*210,size=4+(stars.depth(i)+1)*2;HudMesh.star(c,x,y,size*1.8f,0x225CD6EF);HudMesh.star(c,x,y,size,0xDDE5D5A7);}}
+    private void drawStars(DrawContext c,boolean front){for(int i=0;i<stars.count();i++)if(stars.foreground(i)==front){float x=836+stars.x(i)*242,y=(broomLayout?351:408)+stars.y(i)*(broomLayout?165:210),size=4+(stars.depth(i)+1)*2;HudMesh.star(c,x,y,size*1.8f,0x225CD6EF);HudMesh.star(c,x,y,size,0xDDE5D5A7);}}
     private void picker(DrawContext c,double mx,double my){
         c.fill(548,172,1125,640,0xF5101E30);HudMesh.line(c,564,174,1109,174,1.5f,0xFFD8C28C);label(c,NAMES[selected]+" 선택",836,207,27,0xFFE9D5A1);label(c,"×",1090,206,29,0xFFDAE3EA);
         var list=choices();if(list.isEmpty())label(c,"장착 가능한 아이템이 없습니다.",836,392,23,0xFFB7C6D1);
@@ -76,9 +90,10 @@ public final class EquipmentScreen extends Screen {
     private void label(DrawContext c,String s,float x,float y,float size,int color){var t=UiResources.text();float fit=Math.min(size,size*490/Math.max(1,t.width(s,size,FONT)));t.draw(c,s,x,y,fit,color,FONT,true);}
     private void tooltip(DrawContext c,String s,float x,float y){var t=UiResources.text();float w=Math.min(610,t.width(s,20,FONT)+24),cx=Math.clamp(x,w/2+100,1570-w/2),cy=Math.max(185,y-35);c.getMatrices().push();c.getMatrices().translate(0,0,400);HudMesh.capsule(c,cx-w/2,cy-19,w,38,0xF5102437,0xF5102437);label(c,s,cx,cy,20,0xFFEAF3F5);c.getMatrices().pop();}
     @Override public boolean mouseClicked(double x,double y,int button){
-        var l=CodexLayout.codexFit(width,height);double mx=l.localX(x),my=l.localY(y);
+        var l=layout();double mx=l.localX(x),my=l.localY(y)/stretch();
         if(button==0&&hit(mx,my,1440,60,90,88)){close();return true;}
         if(button==0&&selected<0&&hit(mx,my,591,664,490,50)){NicknameClient.open(this);return true;}
+        if(button==0&&selected<0&&broomLayout&&BroomUiLink.available()&&hit(mx,my,544,540,584,90)){client.setScreen(new BroomSelectionScreen(this));return true;}
         if(selected>=0){if(button==1||hit(mx,my,1065,184,50,46)){selected=-1;sound();return true;}if(button==0){var list=choices();for(int n=0;n<list.size();n++)if(hit(mx,my,568+n%6*89,240+n/6*60,80,55)){if(EquipmentClient.request(EquipmentProtocol.EQUIP,selected,EquipmentClient.data.candidates().get(list.get(n)).inventory())){selected=-1;sound();}return true;}}return true;}
         for(int i=0;i<8;i++)if(hit(mx,my,EquipmentScreen.x(i),EquipmentScreen.y(i),151,137)){
             if(button==0){selected=i;sound();}else if(button==1){EquipmentClient.request(EquipmentProtocol.REMOVE,i,0);sound();}return true;

@@ -25,7 +25,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     // 런처에서 따로 설치하므로 jar 에 넣지 않음 (include 없음)
-    modImplementation "dev.kosmx.player-anim:player-animation-lib-fabric:${project.player_anim_version}"
+    modImplementation (findProperty("playerAnimatorJar") ? files(property("playerAnimatorJar")) : "dev.kosmx.player-anim:player-animation-lib-fabric:${project.player_anim_version}")
 }
 
 processResources {
