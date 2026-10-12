@@ -13,7 +13,7 @@ S = [
  U('wind_basket'), U('harvest_wind'),
  ('wind_push','CHA_wind_push','ENTITY',10,0,0,False,['chahit{knock=1.6;up=0.35}'],'정면 몬스터 1체 약 4블록 밀기'),
  ('light_leap','CHA_light_leap','SELF',12,0,0,False,['chaselfvelocity{m=set;x=0;y=1.2;z=0} @self','delay 14','chaselfpotion{type=SLOW_FALLING;duration=40;level=0} @self'],'위로 약 7블록, 착지 피해 완화'),
- ('flight','CHA_flight','SELF',12,0,0,False,['chaworld{type=flight;ticks=200} @self'],'10초 비행 (빗자루 탑승형은 추후 연동)'),
+ ('flight','CHA_flight','SELF',12,0,0,False,['chaworld{type=flight;ticks=200} @self'],'빗자루 비행 (ChacademyMotion). 빗자루 없으면 ticks 동안 연습용 빗자루, 모드 없으면 ticks 동안 바닐라 비행'),
  U('far_touch'),
  ('storm_command','CHA_storm_command','AIM',10,6,0.45,False,['delay 30','chazone{r=4;ticks=40;period=10;mult=0.5;suck=0.15}'],'영창 1.5초 후 반경 4블록 4회 타격'),
  ('vacuum_cleave','CHA_vacuum_cleave','AIM',24,4,0.35,False,['chabolt{speed=2.2;range=24;radius=0.6;pierce=99;breaks=CHAIN}'],'관통 칼날, 사슬 블록 파괴'),

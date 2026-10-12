@@ -1,7 +1,7 @@
 id: flight
 name: 비행
 category: wind
-description: 빗자루에 탑승하여 자유롭게 하늘을 비행합니다. 빗자루가 없다면 10초간 비행할 수 있습니다.
+description: 빗자루에 탑승하여 자유롭게 하늘을 비행합니다. 소유한 빗자루가 없다면 연습용 빗자루로 10초간 비행합니다. 앉기 키로 내릴 수 있습니다.
 icon: magiccodex:textures/spells/intermediate/flight.png
 permission: magic.learned.flight
 discovery:

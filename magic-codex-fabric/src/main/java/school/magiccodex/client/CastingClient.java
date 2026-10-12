@@ -65,10 +65,12 @@ public final class CastingClient {
                 && client.currentScreen==null && client.getOverlay()==null && client.isWindowFocused();
     }
     public static boolean handleMouse(MinecraftClient client,int button,int action){
+        if(BroomClientLink.reserve(client,client.options.sneakKey.matchesMouse(button),action)){STATE.releaseInputs();return false;}
         int code=KeySettingsLayout.mouseCode(button);
         return code>=0 && handleKey(client,code,0,action);
     }
     public static boolean handleKey(MinecraftClient client,int key,int scan,int action) {
+        if(BroomClientLink.reserve(client,client.options.sneakKey.matchesKey(key,scan),action)){STATE.releaseInputs();return false;}
         state();
         boolean toggle=toggleKey!=null && toggleKey.matchesKey(key,scan);
         CastingState.Result result;
@@ -108,6 +110,7 @@ public final class CastingClient {
     }
     /** Covers vanilla continuous inputs and queued actions, including focus/GUI-close key resampling. */
     public static boolean suppressed(KeyBinding key) {
+        if(key==MinecraftClient.getInstance().options.sneakKey&&BroomClientLink.reserved())return false;
         if(!STATE.enabled() || !gameplay(MinecraftClient.getInstance()) || key==toggleKey) return false;
         if(key.getTranslationKey().startsWith("key.magiccodex.")) return false;
         for(var binding:STATE.bindings()) if(!binding.empty() && KeySettingsLayout.allowed(binding.keyCode()) && (KeySettingsLayout.mouse(binding.keyCode())?key.matchesMouse(KeySettingsLayout.mouseButton(binding.keyCode())):key.matchesKey(binding.keyCode(),0))) return true;
@@ -115,7 +118,8 @@ public final class CastingClient {
     }
     public static void tick(MinecraftClient client) {
         if(toggleKey!=null) while(toggleKey.wasPressed()) { }
-        if(!client.isWindowFocused()) STATE.releaseInputs();
+        if(!client.isWindowFocused()){STATE.releaseInputs();BroomClientLink.clear();}
+        if(client.world==null||client.player==null)BroomClientLink.clear();
         if(client.world==null || client.player==null) STATE.reset();
         else if(!client.player.isAlive() || client.player.isSpectator()) STATE.disable();
     }

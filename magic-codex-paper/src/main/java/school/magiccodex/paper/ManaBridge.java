@@ -89,7 +89,7 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
     ManaSpells.Spell tamingSpell(){return spells.forCast(TamingSpell.ID);}
     boolean castRegistered(Player player,String id){
         var spell=spells.forCast(id);var response=cast(player,0,spell);send(player,response);
-        if(response.status()!=ManaProtocol.OK&&!TamingSpell.matches(id))player.sendMessage(message(response.status()));
+        if(response.status()!=ManaProtocol.OK&&response.status()!=ManaProtocol.UNAVAILABLE&&!TamingSpell.matches(id))player.sendMessage(message(response.status()));
         return response.status()==ManaProtocol.OK;
     }
     private Response cast(Player p,long sequence,ManaSpells.Spell spell,java.util.function.BooleanSupplier internal){
@@ -106,7 +106,7 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
         ManaCasting.Result result;
         try {
             boolean permitted=spell!=null&&!p.isDead()&&p.getGameMode()!=org.bukkit.GameMode.SPECTATOR&&p.hasPermission(spell.permission());
-            result=ManaCasting.attempt(a,spell,permitted,System.currentTimeMillis(),()->{
+            result=ManaCasting.attempt(a,spell,permitted,System.currentTimeMillis(),spell!=null&&BroomCastGuard.blocked(p,spell.id()),()->{
                 mana.publish(id);
                 if(internal!=null)return internal.getAsBoolean();
                 if(!MagicProtectionLink.cast(p)){p.sendMessage("이 구역에서는 마법을 사용할 수 없습니다.");return false;}
@@ -143,7 +143,7 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
         e.setCancelled(true);
         if(!sessions.computeIfAbsent(e.getPlayer().getUniqueId(),id->new Session()).allow(now()))return;
         var r=cast(e.getPlayer(),0,spell);send(e.getPlayer(),r);
-        if(r.status()!=ManaProtocol.OK&&!TamingSpell.matches(spell.id()))e.getPlayer().sendMessage(message(r.status()));
+        if(r.status()!=ManaProtocol.OK&&r.status()!=ManaProtocol.UNAVAILABLE&&!TamingSpell.matches(spell.id()))e.getPlayer().sendMessage(message(r.status()));
     }
     static String message(int status){return switch(status){
         case ManaProtocol.EMPTY->"마나가 부족합니다.";case ManaProtocol.COOLDOWN->"아직 재사용 대기 중입니다.";

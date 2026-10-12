@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 public final class ManaProtocol {
     public static final String REQUEST="magiccodex:mana_request", RESPONSE="magiccodex:mana_response";
     private static final int VERSION=0x4D414E01;
-    public static final int SNAPSHOT=0, OK=1, UNKNOWN=2, LOCKED=3, EMPTY=4, COOLDOWN=5, FAILED=6;
+    public static final int SNAPSHOT=0, OK=1, UNKNOWN=2, LOCKED=3, EMPTY=4, COOLDOWN=5, FAILED=6, UNAVAILABLE=7;
     public record Snapshot(double current,double maximum,double regeneration,double haste) {
         public Snapshot(double current,double maximum,double regeneration){this(current,maximum,regeneration,0);}
         public Snapshot {
@@ -36,7 +36,7 @@ public final class ManaProtocol {
         return new Request(seq,id);
     }
     public static byte[] encode(Response r){
-        if(r.sequence()<0||r.status()<0||r.status()>6||r.cooldownMillis()<0||r.cooldownMillis()>86_400_000)
+        if(r.sequence()<0||r.status()<0||r.status()>UNAVAILABLE||r.cooldownMillis()<0||r.cooldownMillis()>86_400_000)
             throw new IllegalArgumentException("Invalid response");
         return ByteBuffer.allocate(49).putInt(0x4D414E02).putLong(r.sequence()).put((byte)r.status()).putInt(r.cooldownMillis())
                 .putDouble(r.mana().current()).putDouble(r.mana().maximum()).putDouble(r.mana().regeneration()).putDouble(r.mana().haste()).array();

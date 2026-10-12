@@ -42,7 +42,7 @@ final class WorldMech extends Mech {
             case "companion" -> companion(c);
             case "heat" -> heat(c);
             case "platform" -> pl != null && plugin.worldState().platform(pl, p);
-            case "flight" -> pl != null && plugin.worldState().flight(pl, Math.clamp(p.i("ticks", 200), 20, 20 * 120));
+            case "flight" -> pl != null && plugin.worldState().broomOrFlight(pl, Math.clamp(p.i("ticks", 200), 20, 20 * 120));
             case "frostwalk" -> pl != null && frostwalk(pl);
             case "kiln" -> pl != null && kiln(pl);
             case "ore" -> pl != null && ore(pl);
@@ -380,6 +380,8 @@ final class WorldMech extends Mech {
         private final MagicMythicPlugin plugin;
         private final Map<UUID, List<Block>> platforms = new HashMap<>();
         private final Map<UUID, Integer> flights = new HashMap<>();
+        /** 비행 마법으로 빗자루에 태운 사람. 보호 구역에 들어가면 내리게 하려고 기억해 둠. */
+        private final Set<UUID> brooms = new HashSet<>();
         private final List<Entity> displays = new ArrayList<>();
         private final Map<String, int[]> combos = new HashMap<>(); // key -> {count, expiresTick}
         private int tick = 0;
@@ -390,6 +392,9 @@ final class WorldMech extends Mech {
                 tick++;
                 for(UUID id:new ArrayList<>(platforms.keySet()))if(platforms.get(id).stream().anyMatch(b->!plugin.protection().at(b.getLocation())))clearPlatform(id);
                 for(UUID id:new ArrayList<>(flights.keySet())){Player player=Bukkit.getPlayer(id);if(player!=null&&!plugin.protection().at(player.getLocation()))endFlight(id);}
+                if((tick % 5)==0&&!brooms.isEmpty())for(UUID id:new ArrayList<>(brooms)){Player player=Bukkit.getPlayer(id);
+                    if(player==null||!BroomLink.riding(player)){brooms.remove(id);continue;}
+                    if(!plugin.protection().at(player.getLocation())){BroomLink.stop(player);brooms.remove(id);}}
                 if ((tick & 63) == 0) { combos.values().removeIf(v -> v[1] < tick); displays.removeIf(e -> !e.isValid()); }
             }, 1, 1);
         }
@@ -430,6 +435,21 @@ final class WorldMech extends Mech {
             if (old != null) old.forEach(plugin.tempBlocks()::remove);
         }
 
+        /**
+         * 비행 마법: ChacademyMotion 빗자루 비행으로 처리(빗자루가 있으면 무제한, 없으면 연습용 빗자루로 ticks 동안).
+         * 그 플레이어에게 차카데미 모션 모드가 없거나 ChacademyMotion 이 꺼져 있으면 예전 바닐라 비행(ticks 동안)으로 대신한다.
+         */
+        boolean broomOrFlight(Player pl, int ticks) {
+            if (flights.containsKey(pl.getUniqueId())) return flight(pl, ticks); // 예전 비행 중이면 그대로 연장
+            Boolean handled = BroomLink.flight(pl, ticks);
+            if (handled != null) {
+                if (!handled) return false; // A denied broom request must not bypass policy via vanilla flight.
+                if (BroomLink.riding(pl)) brooms.add(pl.getUniqueId()); else brooms.remove(pl.getUniqueId());
+                return true;
+            }
+            return flight(pl, ticks);
+        }
+
         boolean flight(Player pl, int ticks) {
             if (pl.getGameMode() != GameMode.SURVIVAL && pl.getGameMode() != GameMode.ADVENTURE) return false;
             if (pl.getAllowFlight() && !flights.containsKey(pl.getUniqueId())) return false; // flight granted by something else
@@ -450,6 +470,8 @@ final class WorldMech extends Mech {
         }
 
         void closeAll() {
+            for (UUID id : new ArrayList<>(brooms)) { Player p = Bukkit.getPlayer(id); if (p != null) BroomLink.stop(p); }
+            brooms.clear();
             for (UUID id : new ArrayList<>(platforms.keySet())) clearPlatform(id);
             for (UUID id : new ArrayList<>(flights.keySet())) endFlight(id);
             displays.forEach(Entity::remove);

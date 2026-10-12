@@ -1,0 +1,123 @@
+# 빗자루 비행 설정 (비행 마법에서 사용)
+# 수치를 바꾼 뒤 /빗자루 새로고침 → 다음 탑승부터 적용됩니다.
+#
+# 빗자루가 있는 플레이어(/빗자루 선택 으로 지급)는 시간 제한 없이 날고,
+# 없는 플레이어는 practice-broom 으로 비행 마법의 지속 시간(기본 10초)만큼 납니다.
+
+practice-broom: broom_1
+
+# 숙련도 100% 까지 필요한 누적 비행 시간(시간). 숙련도가 낮을수록 균형이 쉽게 깨져서 잘 떨어집니다.
+mastery-full-hours: 3
+
+boost-cooldown-ticks: 120   # 부스트(달리기 키) 재사용 대기 (20틱 = 1초)
+roll-cooldown-ticks: 60     # 배럴롤(A/D 두 번) 재사용 대기
+catch-window-ticks: 40      # 떨어진 뒤 공중에서 빗자루를 다시 잡을 수 있는 시간
+
+# 빗자루를 탈 수 없는 월드 이름
+blocked-worlds: []
+
+debug: false
+
+# 각 항목
+#   name       표시 이름
+#   grade      표시용 등급
+#   max-speed  최고 속도 (블록/틱, 1.0 = 초당 20블록. 참고: 크리에이티브 비행 0.55, 달리며 비행 1.08)
+#   accel      W 를 누를 때 틱마다 붙는 속도
+#   turn       느릴 때 틱마다 돌 수 있는 각도(도). 최고 속도에서는 이 값의 40% 로 줄어듦
+#   brake      S 를 누를 때 틱마다 줄어드는 속도 비율 (급정거가 어렵도록 작게)
+#   stability  균형 게이지가 깎이는 양을 나누는 값. 클수록 잘 안 떨어짐
+#   climb      스페이스/Shift 로 오르내리는 힘
+#
+# 모델은 모드의 assets/chacademy_motion/brooms/<ID>.bbmodel 입니다.
+# ItemsAdder 리소스팩에 같은 경로로 넣으면 모드를 다시 배포하지 않고 모델을 바꾸거나 새 빗자루를 추가할 수 있습니다.
+brooms:
+  broom_1:
+    name: "견습생 빗자루"
+    grade: "기본"
+    max-speed: 0.80
+    accel: 0.028
+    turn: 8.0
+    brake: 0.030
+    stability: 1.30
+    climb: 0.045
+  broom_6:
+    name: "꼬마 빗자루"
+    grade: "기본"
+    max-speed: 0.82
+    accel: 0.034
+    turn: 11.0
+    brake: 0.040
+    stability: 1.05
+    climb: 0.050
+  broom_4:
+    name: "들꽃 빗자루"
+    grade: "일반"
+    max-speed: 0.90
+    accel: 0.032
+    turn: 9.0
+    brake: 0.034
+    stability: 1.15
+    climb: 0.048
+  broom_9:
+    name: "겹띠 빗자루"
+    grade: "일반"
+    max-speed: 0.95
+    accel: 0.030
+    turn: 8.0
+    brake: 0.045
+    stability: 1.45
+    climb: 0.050
+  broom_2:
+    name: "매듭 빗자루"
+    grade: "고급"
+    max-speed: 1.00
+    accel: 0.036
+    turn: 10.0
+    brake: 0.036
+    stability: 1.05
+    climb: 0.052
+  broom_8:
+    name: "깃꼬리 빗자루"
+    grade: "고급"
+    max-speed: 1.05
+    accel: 0.040
+    turn: 11.0
+    brake: 0.038
+    stability: 1.00
+    climb: 0.055
+  broom_5:
+    name: "은테 빗자루"
+    grade: "희귀"
+    max-speed: 1.10
+    accel: 0.042
+    turn: 11.5
+    brake: 0.040
+    stability: 0.95
+    climb: 0.056
+  broom_3:
+    name: "지느러미 레이서"
+    grade: "희귀"
+    max-speed: 1.15
+    accel: 0.046
+    turn: 13.0
+    brake: 0.044
+    stability: 0.80
+    climb: 0.060
+  broom_10:
+    name: "장인의 빗자루"
+    grade: "전설"
+    max-speed: 1.25
+    accel: 0.046
+    turn: 11.5
+    brake: 0.042
+    stability: 0.95
+    climb: 0.058
+  broom_7:
+    name: "발걸이 경주용 빗자루"
+    grade: "전설"
+    max-speed: 1.35
+    accel: 0.050
+    turn: 10.5
+    brake: 0.040
+    stability: 0.82
+    climb: 0.060

@@ -61,6 +61,11 @@ public final class ManaClient {
     }
     private static void receive(ManaProtocol.Response response){
         snapshot=response.mana();received=Util.getMeasuringTimeMs();
+        if(response.status()==ManaProtocol.UNAVAILABLE){
+            if(response.sequence()!=0)pending.remove(response.sequence());
+            SharedNotifications.unavailable();
+            return; // Preserve the client's existing cooldown; no error/actionbar duplicate.
+        }
         if(response.sequence()==0)return;
         var request=pending.remove(response.sequence());if(request==null)return;
         CastingClient.state().serverResult(request.spell(),response.cooldownMillis(),received);
