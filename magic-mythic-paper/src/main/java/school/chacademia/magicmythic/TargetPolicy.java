@@ -1,7 +1,8 @@
 package school.chacademia.magicmythic;
-import java.util.*;
+import java.util.Set;
+/** Ownership, tame state, mythic names and old configurable deny lists are not combat exclusions. */
 final class TargetPolicy {
- static boolean excluded(boolean armor,boolean npc,boolean tamed,Set<String> tags,Set<String> deniedTags,String mythic,List<String> prefixes){
-  return armor||npc||tamed||tags.stream().anyMatch(deniedTags::contains)||(mythic!=null&&prefixes.stream().anyMatch(mythic::startsWith));
+ static boolean excluded(boolean armor,boolean npc,Set<String> tags){
+  return armor || npc || tags.contains("chacademia_npc");
  }
 }

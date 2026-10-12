@@ -113,7 +113,7 @@
     - "clear"
     - "lookatplayers"
 "CA_Wild_owl":
-  "Type": "PARROT"
+  "Type": "HUSK"
   "Display": "§f밤눈 올빼미"
   "Health": 20
   "Damage": 0
@@ -136,6 +136,10 @@
     - "skill{s=CA_Hurt_owl} @self ~onDamaged"
   "AITargetSelectors":
     - "clear"
+  "AIGoalSelectors":
+    - "clear"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_owl":
   "Type": "PARROT"
   "Display": "§f밤눈 올빼미"
@@ -162,7 +166,7 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_owl_shiny":
-  "Type": "PARROT"
+  "Type": "HUSK"
   "Display": "§e밤눈 올빼미"
   "Health": 20
   "Damage": 0
@@ -186,6 +190,10 @@
     - "skill{s=CA_Hurt_owl_shiny} @self ~onDamaged"
   "AITargetSelectors":
     - "clear"
+  "AIGoalSelectors":
+    - "clear"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_owl_shiny":
   "Type": "PARROT"
   "Display": "§e밤눈 올빼미"
@@ -555,7 +563,7 @@
     - "clear"
     - "lookatplayers"
 "CA_Wild_lil_bird":
-  "Type": "PARROT"
+  "Type": "HUSK"
   "Display": "§f꽃숲 작은새"
   "Health": 20
   "Damage": 0
@@ -578,6 +586,10 @@
     - "skill{s=CA_Hurt_lil_bird} @self ~onDamaged"
   "AITargetSelectors":
     - "clear"
+  "AIGoalSelectors":
+    - "clear"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_lil_bird":
   "Type": "PARROT"
   "Display": "§f꽃숲 작은새"
@@ -604,7 +616,7 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_lil_bird_shiny":
-  "Type": "PARROT"
+  "Type": "HUSK"
   "Display": "§e꽃숲 작은새"
   "Health": 20
   "Damage": 0
@@ -628,6 +640,10 @@
     - "skill{s=CA_Hurt_lil_bird_shiny} @self ~onDamaged"
   "AITargetSelectors":
     - "clear"
+  "AIGoalSelectors":
+    - "clear"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_lil_bird_shiny":
   "Type": "PARROT"
   "Display": "§e꽃숲 작은새"
@@ -1577,7 +1593,7 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_butterfly":
-  "Type": "PARROT"
+  "Type": "HUSK"
   "Display": "§f라벤더 나비"
   "Health": 20
   "Damage": 0
@@ -1600,6 +1616,10 @@
     - "skill{s=CA_Hurt_butterfly} @self ~onDamaged"
   "AITargetSelectors":
     - "clear"
+  "AIGoalSelectors":
+    - "clear"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_butterfly":
   "Type": "PARROT"
   "Display": "§f라벤더 나비"
@@ -1626,7 +1646,7 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_butterfly_shiny":
-  "Type": "PARROT"
+  "Type": "HUSK"
   "Display": "§e라벤더 나비"
   "Health": 20
   "Damage": 0
@@ -1650,6 +1670,10 @@
     - "skill{s=CA_Hurt_butterfly_shiny} @self ~onDamaged"
   "AITargetSelectors":
     - "clear"
+  "AIGoalSelectors":
+    - "clear"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_butterfly_shiny":
   "Type": "PARROT"
   "Display": "§e라벤더 나비"
@@ -3211,8 +3235,8 @@
 "CA_Wild_lostasset_mob3_herbgolem":
   "Type": "HUSK"
   "Display": "§f약초 수호골렘"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -3222,7 +3246,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -3270,8 +3294,8 @@
 "CA_Wild_lostasset_mob3_herbgolem_shiny":
   "Type": "HUSK"
   "Display": "§e약초 수호골렘"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -3281,7 +3305,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -5617,8 +5641,8 @@
 "CA_Wild_ogre_hammer":
   "Type": "HUSK"
   "Display": "§f산울림 오우거"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5628,7 +5652,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -5677,8 +5701,8 @@
 "CA_Wild_ogre_hammer_shiny":
   "Type": "HUSK"
   "Display": "§e산울림 오우거"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5688,7 +5712,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -6105,8 +6129,8 @@
 "CA_Wild_ncr_mage_skeleton":
   "Type": "HUSK"
   "Display": "§f망각의 해골술사"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6116,7 +6140,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -6165,8 +6189,8 @@
 "CA_Wild_ncr_mage_skeleton_shiny":
   "Type": "HUSK"
   "Display": "§e망각의 해골술사"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6176,7 +6200,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -6227,8 +6251,8 @@
 "CA_Wild_mf_warden_knight":
   "Type": "HUSK"
   "Display": "§f봉인의 기사"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6238,7 +6262,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -6287,8 +6311,8 @@
 "CA_Wild_mf_warden_knight_shiny":
   "Type": "HUSK"
   "Display": "§e봉인의 기사"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6298,7 +6322,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -6349,8 +6373,8 @@
 "CA_Wild_mf_warden_archer":
   "Type": "HUSK"
   "Display": "§f봉인의 궁수"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6360,7 +6384,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -6409,8 +6433,8 @@
 "CA_Wild_mf_warden_archer_shiny":
   "Type": "HUSK"
   "Display": "§e봉인의 궁수"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6420,7 +6444,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -6471,8 +6495,8 @@
 "CA_Wild_mf_warden_tank":
   "Type": "HUSK"
   "Display": "§f봉인의 거벽"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6482,7 +6506,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -6531,8 +6555,8 @@
 "CA_Wild_mf_warden_tank_shiny":
   "Type": "HUSK"
   "Display": "§e봉인의 거벽"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6542,7 +6566,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -6593,8 +6617,8 @@
 "CA_Wild_mf_warden_mage":
   "Type": "HUSK"
   "Display": "§f봉인의 술사"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6604,7 +6628,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -6653,8 +6677,8 @@
 "CA_Wild_mf_warden_mage_shiny":
   "Type": "HUSK"
   "Display": "§e봉인의 술사"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6664,7 +6688,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -6715,8 +6739,8 @@
 "CA_Wild_glacialcore":
   "Type": "HUSK"
   "Display": "§f빙핵의 수호자"
-  "Health": 700
-  "Damage": 14
+  "Health": 1050
+  "Damage": 18.9
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6726,7 +6750,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -6775,8 +6799,8 @@
 "CA_Wild_glacialcore_shiny":
   "Type": "HUSK"
   "Display": "§e빙핵의 수호자"
-  "Health": 700
-  "Damage": 14
+  "Health": 1050
+  "Damage": 18.9
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6786,7 +6810,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -7521,7 +7545,7 @@
 "CA_Wild_nocsy_cat_fallen":
   "Type": "HUSK"
   "Display": "§f달그늘 고양이"
-  "Health": 130
+  "Health": 195
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -7532,7 +7556,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -7577,7 +7601,7 @@
 "CA_Wild_nocsy_cat_fallen_shiny":
   "Type": "HUSK"
   "Display": "§e달그늘 고양이"
-  "Health": 130
+  "Health": 195
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -7588,7 +7612,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -8217,8 +8241,8 @@
 "CA_Wild_ice_knight":
   "Type": "HUSK"
   "Display": "§f서리 기사"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8228,7 +8252,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -8276,8 +8300,8 @@
 "CA_Wild_ice_knight_shiny":
   "Type": "HUSK"
   "Display": "§e서리 기사"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8287,7 +8311,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -8335,10 +8359,10 @@
     - "clear"
     - "lookatplayers"
 "CA_Wild_dragon_desert":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f사막 드래곤"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8348,7 +8372,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -8361,6 +8385,11 @@
     - "clear"
     - "players"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_dragon_desert":
   "Type": "PARROT"
   "Display": "§f사막 드래곤"
@@ -8387,10 +8416,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_dragon_desert_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e사막 드래곤"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8400,7 +8429,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -8414,6 +8443,11 @@
     - "clear"
     - "players"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_dragon_desert_shiny":
   "Type": "PARROT"
   "Display": "§e사막 드래곤"
@@ -8441,10 +8475,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_dragon_glacial":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f빙하 드래곤"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8454,7 +8488,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -8467,6 +8501,11 @@
     - "clear"
     - "players"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_dragon_glacial":
   "Type": "PARROT"
   "Display": "§f빙하 드래곤"
@@ -8493,10 +8532,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_dragon_glacial_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e빙하 드래곤"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8506,7 +8545,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -8520,6 +8559,11 @@
     - "clear"
     - "players"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_dragon_glacial_shiny":
   "Type": "PARROT"
   "Display": "§e빙하 드래곤"
@@ -8547,10 +8591,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_dragon_nether":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f화산 드래곤"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8560,7 +8604,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -8573,6 +8617,11 @@
     - "clear"
     - "players"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_dragon_nether":
   "Type": "PARROT"
   "Display": "§f화산 드래곤"
@@ -8599,10 +8648,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_dragon_nether_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e화산 드래곤"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8612,7 +8661,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -8626,6 +8675,11 @@
     - "clear"
     - "players"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_dragon_nether_shiny":
   "Type": "PARROT"
   "Display": "§e화산 드래곤"
@@ -8653,10 +8707,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_dragon_sculk":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f스컬크 드래곤"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8666,7 +8720,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -8679,6 +8733,11 @@
     - "clear"
     - "players"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_dragon_sculk":
   "Type": "PARROT"
   "Display": "§f스컬크 드래곤"
@@ -8705,10 +8764,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_dragon_sculk_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e스컬크 드래곤"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8718,7 +8777,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -8732,6 +8791,11 @@
     - "clear"
     - "players"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_dragon_sculk_shiny":
   "Type": "PARROT"
   "Display": "§e스컬크 드래곤"
@@ -9001,8 +9065,8 @@
 "CA_Wild_manticore_aether":
   "Type": "HUSK"
   "Display": "§f창공 만티코어"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -9012,7 +9076,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -9061,8 +9125,8 @@
 "CA_Wild_manticore_aether_shiny":
   "Type": "HUSK"
   "Display": "§e창공 만티코어"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -9072,7 +9136,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -9123,8 +9187,8 @@
 "CA_Wild_manticore_dusk":
   "Type": "HUSK"
   "Display": "§f황혼 만티코어"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -9134,7 +9198,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -9183,8 +9247,8 @@
 "CA_Wild_manticore_dusk_shiny":
   "Type": "HUSK"
   "Display": "§e황혼 만티코어"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -9194,7 +9258,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -9245,8 +9309,8 @@
 "CA_Wild_manticore_soul":
   "Type": "HUSK"
   "Display": "§f혼령 만티코어"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -9256,7 +9320,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -9305,8 +9369,8 @@
 "CA_Wild_manticore_soul_shiny":
   "Type": "HUSK"
   "Display": "§e혼령 만티코어"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -9316,7 +9380,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -9367,8 +9431,8 @@
 "CA_Wild_manticore_venom":
   "Type": "HUSK"
   "Display": "§f맹독 만티코어"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -9378,7 +9442,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -9427,8 +9491,8 @@
 "CA_Wild_manticore_venom_shiny":
   "Type": "HUSK"
   "Display": "§e맹독 만티코어"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -9438,7 +9502,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -10315,10 +10379,10 @@
     - "clear"
     - "lookatplayers"
 "CA_Wild_horse_pegasus":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f페가수스"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -10328,7 +10392,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -10340,6 +10404,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_horse_pegasus":
   "Type": "PARROT"
   "Display": "§f페가수스"
@@ -10366,10 +10435,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_horse_pegasus_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e페가수스"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -10379,7 +10448,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -10392,6 +10461,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_horse_pegasus_shiny":
   "Type": "PARROT"
   "Display": "§e페가수스"
@@ -10541,8 +10615,8 @@
 "CA_Wild_horse_unicorn":
   "Type": "HUSK"
   "Display": "§f유니콘"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -10552,7 +10626,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -10600,8 +10674,8 @@
 "CA_Wild_horse_unicorn_shiny":
   "Type": "HUSK"
   "Display": "§e유니콘"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -10611,7 +10685,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -10661,8 +10735,8 @@
 "CA_Wild_kitsune_demonic":
   "Type": "HUSK"
   "Display": "§f마성 키츠네"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -10672,7 +10746,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -10720,8 +10794,8 @@
 "CA_Wild_kitsune_demonic_shiny":
   "Type": "HUSK"
   "Display": "§e마성 키츠네"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -10731,7 +10805,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -10781,8 +10855,8 @@
 "CA_Wild_kitsune_inferno":
   "Type": "HUSK"
   "Display": "§f업화 키츠네"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -10792,7 +10866,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -10840,8 +10914,8 @@
 "CA_Wild_kitsune_inferno_shiny":
   "Type": "HUSK"
   "Display": "§e업화 키츠네"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -10851,7 +10925,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -10901,8 +10975,8 @@
 "CA_Wild_kitsune_normal":
   "Type": "HUSK"
   "Display": "§f키츠네"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -10912,7 +10986,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -10960,8 +11034,8 @@
 "CA_Wild_kitsune_normal_shiny":
   "Type": "HUSK"
   "Display": "§e키츠네"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -10971,7 +11045,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -11019,10 +11093,10 @@
     - "clear"
     - "lookatplayers"
 "CA_Wild_phantom_ender":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f공허 팬텀"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -11032,7 +11106,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -11044,6 +11118,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_phantom_ender":
   "Type": "PARROT"
   "Display": "§f공허 팬텀"
@@ -11070,10 +11149,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_phantom_ender_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e공허 팬텀"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -11083,7 +11162,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -11096,6 +11175,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_phantom_ender_shiny":
   "Type": "PARROT"
   "Display": "§e공허 팬텀"
@@ -11123,10 +11207,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_phantom_ghost":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f망령 팬텀"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -11136,7 +11220,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -11148,6 +11232,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_phantom_ghost":
   "Type": "PARROT"
   "Display": "§f망령 팬텀"
@@ -11174,10 +11263,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_phantom_ghost_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e망령 팬텀"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -11187,7 +11276,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -11200,6 +11289,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_phantom_ghost_shiny":
   "Type": "PARROT"
   "Display": "§e망령 팬텀"
@@ -11227,10 +11321,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_phoenix_darkflame":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f흑염 피닉스"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -11240,7 +11334,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -11252,6 +11346,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_phoenix_darkflame":
   "Type": "PARROT"
   "Display": "§f흑염 피닉스"
@@ -11278,10 +11377,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_phoenix_darkflame_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e흑염 피닉스"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -11291,7 +11390,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -11304,6 +11403,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_phoenix_darkflame_shiny":
   "Type": "PARROT"
   "Display": "§e흑염 피닉스"
@@ -11331,10 +11435,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_phoenix_flame":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f불꽃 피닉스"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -11344,7 +11448,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -11356,6 +11460,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_phoenix_flame":
   "Type": "PARROT"
   "Display": "§f불꽃 피닉스"
@@ -11382,10 +11491,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_phoenix_flame_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e불꽃 피닉스"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -11395,7 +11504,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -11408,6 +11517,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_phoenix_flame_shiny":
   "Type": "PARROT"
   "Display": "§e불꽃 피닉스"
@@ -11435,10 +11549,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_phoenix_light":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f광휘 피닉스"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -11448,7 +11562,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -11460,6 +11574,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_phoenix_light":
   "Type": "PARROT"
   "Display": "§f광휘 피닉스"
@@ -11486,10 +11605,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_phoenix_light_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e광휘 피닉스"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -11499,7 +11618,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -11512,6 +11631,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_phoenix_light_shiny":
   "Type": "PARROT"
   "Display": "§e광휘 피닉스"
@@ -11539,10 +11663,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_phoenix_thunder":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f뇌광 피닉스"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -11552,7 +11676,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -11564,6 +11688,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_phoenix_thunder":
   "Type": "PARROT"
   "Display": "§f뇌광 피닉스"
@@ -11590,10 +11719,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_phoenix_thunder_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e뇌광 피닉스"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -11603,7 +11732,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -11616,6 +11745,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_phoenix_thunder_shiny":
   "Type": "PARROT"
   "Display": "§e뇌광 피닉스"
@@ -11645,8 +11779,8 @@
 "CA_Wild_basilisk_obsidian":
   "Type": "HUSK"
   "Display": "§f흑요 바실리스크"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -11656,7 +11790,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -11705,8 +11839,8 @@
 "CA_Wild_basilisk_obsidian_shiny":
   "Type": "HUSK"
   "Display": "§e흑요 바실리스크"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -11716,7 +11850,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -11767,8 +11901,8 @@
 "CA_Wild_basilisk_snowstorm":
   "Type": "HUSK"
   "Display": "§f눈보라 바실리스크"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -11778,7 +11912,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -11827,8 +11961,8 @@
 "CA_Wild_basilisk_snowstorm_shiny":
   "Type": "HUSK"
   "Display": "§e눈보라 바실리스크"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -11838,7 +11972,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -11889,8 +12023,8 @@
 "CA_Wild_basilisk_wild":
   "Type": "HUSK"
   "Display": "§f야생 바실리스크"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -11900,7 +12034,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -11949,8 +12083,8 @@
 "CA_Wild_basilisk_wild_shiny":
   "Type": "HUSK"
   "Display": "§e야생 바실리스크"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -11960,7 +12094,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -12009,10 +12143,10 @@
     - "clear"
     - "lookatplayers"
 "CA_Wild_hippogryph_common":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f산악 히포그리프"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -12022,7 +12156,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -12034,6 +12168,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_hippogryph_common":
   "Type": "PARROT"
   "Display": "§f산악 히포그리프"
@@ -12060,10 +12199,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_hippogryph_common_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e산악 히포그리프"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -12073,7 +12212,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -12086,6 +12225,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_hippogryph_common_shiny":
   "Type": "PARROT"
   "Display": "§e산악 히포그리프"
@@ -12113,10 +12257,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_hippogryph_crystal":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f수정 히포그리프"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -12126,7 +12270,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -12138,6 +12282,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_hippogryph_crystal":
   "Type": "PARROT"
   "Display": "§f수정 히포그리프"
@@ -12164,10 +12313,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_hippogryph_crystal_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e수정 히포그리프"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -12177,7 +12326,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -12190,6 +12339,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_hippogryph_crystal_shiny":
   "Type": "PARROT"
   "Display": "§e수정 히포그리프"
@@ -12217,10 +12371,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_hippogryph_fallen":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f타락 히포그리프"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -12230,7 +12384,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -12242,6 +12396,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_hippogryph_fallen":
   "Type": "PARROT"
   "Display": "§f타락 히포그리프"
@@ -12268,10 +12427,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_hippogryph_fallen_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e타락 히포그리프"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -12281,7 +12440,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -12294,6 +12453,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_hippogryph_fallen_shiny":
   "Type": "PARROT"
   "Display": "§e타락 히포그리프"
@@ -12321,10 +12485,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_hippogryph_royal":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f왕실 히포그리프"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -12334,7 +12498,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -12346,6 +12510,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_hippogryph_royal":
   "Type": "PARROT"
   "Display": "§f왕실 히포그리프"
@@ -12372,10 +12541,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_hippogryph_royal_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e왕실 히포그리프"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -12385,7 +12554,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -12398,6 +12567,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_hippogryph_royal_shiny":
   "Type": "PARROT"
   "Display": "§e왕실 히포그리프"
@@ -12427,8 +12601,8 @@
 "CA_Wild_raptor_nightmare":
   "Type": "HUSK"
   "Display": "§f악몽 랩터"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -12438,7 +12612,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -12487,8 +12661,8 @@
 "CA_Wild_raptor_nightmare_shiny":
   "Type": "HUSK"
   "Display": "§e악몽 랩터"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -12498,7 +12672,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -12671,8 +12845,8 @@
 "CA_Wild_raptor_undead":
   "Type": "HUSK"
   "Display": "§f불사 랩터"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -12682,7 +12856,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -12731,8 +12905,8 @@
 "CA_Wild_raptor_undead_shiny":
   "Type": "HUSK"
   "Display": "§e불사 랩터"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -12742,7 +12916,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -12791,10 +12965,10 @@
     - "clear"
     - "lookatplayers"
 "CA_Wild_sky_serpent_jade":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f비취 하늘뱀"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -12804,7 +12978,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -12816,6 +12990,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_sky_serpent_jade":
   "Type": "PARROT"
   "Display": "§f비취 하늘뱀"
@@ -12842,10 +13021,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_sky_serpent_jade_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e비취 하늘뱀"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -12855,7 +13034,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -12868,6 +13047,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_sky_serpent_jade_shiny":
   "Type": "PARROT"
   "Display": "§e비취 하늘뱀"
@@ -12895,10 +13079,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_sky_serpent_magma":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f마그마 하늘뱀"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -12908,7 +13092,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -12920,6 +13104,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_sky_serpent_magma":
   "Type": "PARROT"
   "Display": "§f마그마 하늘뱀"
@@ -12946,10 +13135,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_sky_serpent_magma_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e마그마 하늘뱀"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -12959,7 +13148,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -12972,6 +13161,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_sky_serpent_magma_shiny":
   "Type": "PARROT"
   "Display": "§e마그마 하늘뱀"
@@ -12999,10 +13193,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_sky_serpent_solar":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f태양 하늘뱀"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -13012,7 +13206,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -13024,6 +13218,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_sky_serpent_solar":
   "Type": "PARROT"
   "Display": "§f태양 하늘뱀"
@@ -13050,10 +13249,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_sky_serpent_solar_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e태양 하늘뱀"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -13063,7 +13262,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -13076,6 +13275,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_sky_serpent_solar_shiny":
   "Type": "PARROT"
   "Display": "§e태양 하늘뱀"
@@ -13103,10 +13307,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_sky_serpent_spectral":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f영체 하늘뱀"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -13116,7 +13320,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -13128,6 +13332,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_sky_serpent_spectral":
   "Type": "PARROT"
   "Display": "§f영체 하늘뱀"
@@ -13154,10 +13363,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_sky_serpent_spectral_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e영체 하늘뱀"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -13167,7 +13376,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -13180,6 +13389,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_sky_serpent_spectral_shiny":
   "Type": "PARROT"
   "Display": "§e영체 하늘뱀"
@@ -13209,8 +13423,8 @@
 "CA_Wild_stag_demonic":
   "Type": "HUSK"
   "Display": "§f마성 영록"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -13220,7 +13434,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -13268,8 +13482,8 @@
 "CA_Wild_stag_demonic_shiny":
   "Type": "HUSK"
   "Display": "§e마성 영록"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -13279,7 +13493,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -13329,8 +13543,8 @@
 "CA_Wild_stag_heavenly":
   "Type": "HUSK"
   "Display": "§f천상 영록"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -13340,7 +13554,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -13388,8 +13602,8 @@
 "CA_Wild_stag_heavenly_shiny":
   "Type": "HUSK"
   "Display": "§e천상 영록"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -13399,7 +13613,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -13449,8 +13663,8 @@
 "CA_Wild_stag_rune":
   "Type": "HUSK"
   "Display": "§f룬 영록"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -13460,7 +13674,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -13508,8 +13722,8 @@
 "CA_Wild_stag_rune_shiny":
   "Type": "HUSK"
   "Display": "§e룬 영록"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -13519,7 +13733,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -13569,8 +13783,8 @@
 "CA_Wild_stag_void":
   "Type": "HUSK"
   "Display": "§f심연 영록"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -13580,7 +13794,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -13628,8 +13842,8 @@
 "CA_Wild_stag_void_shiny":
   "Type": "HUSK"
   "Display": "§e심연 영록"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -13639,7 +13853,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -13929,8 +14143,8 @@
 "CA_Wild_frog_royal":
   "Type": "HUSK"
   "Display": "§f왕실 왕개구리"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -13940,7 +14154,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -13988,8 +14202,8 @@
 "CA_Wild_frog_royal_shiny":
   "Type": "HUSK"
   "Display": "§e왕실 왕개구리"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -13999,7 +14213,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -14049,8 +14263,8 @@
 "CA_Wild_golem_arcane":
   "Type": "HUSK"
   "Display": "§f비전 고대 골렘"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -14060,7 +14274,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -14108,8 +14322,8 @@
 "CA_Wild_golem_arcane_shiny":
   "Type": "HUSK"
   "Display": "§e비전 고대 골렘"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -14119,7 +14333,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -14169,8 +14383,8 @@
 "CA_Wild_golem_corrupted":
   "Type": "HUSK"
   "Display": "§f오염 고대 골렘"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -14180,7 +14394,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -14228,8 +14442,8 @@
 "CA_Wild_golem_corrupted_shiny":
   "Type": "HUSK"
   "Display": "§e오염 고대 골렘"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -14239,7 +14453,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -14289,8 +14503,8 @@
 "CA_Wild_golem_magma":
   "Type": "HUSK"
   "Display": "§f마그마 고대 골렘"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -14300,7 +14514,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -14348,8 +14562,8 @@
 "CA_Wild_golem_magma_shiny":
   "Type": "HUSK"
   "Display": "§e마그마 고대 골렘"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -14359,7 +14573,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -14409,8 +14623,8 @@
 "CA_Wild_golem_royal":
   "Type": "HUSK"
   "Display": "§f왕실 고대 골렘"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -14420,7 +14634,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -14468,8 +14682,8 @@
 "CA_Wild_golem_royal_shiny":
   "Type": "HUSK"
   "Display": "§e왕실 고대 골렘"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -14479,7 +14693,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -14529,8 +14743,8 @@
 "CA_Wild_tusker_demonic":
   "Type": "HUSK"
   "Display": "§f마성 터스커"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -14540,7 +14754,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -14588,8 +14802,8 @@
 "CA_Wild_tusker_demonic_shiny":
   "Type": "HUSK"
   "Display": "§e마성 터스커"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -14599,7 +14813,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -14887,10 +15101,10 @@
     - "clear"
     - "lookatplayers"
 "CA_Wild_wolfhawk_dire":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f거친 울프호크"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -14900,7 +15114,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -14912,6 +15126,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_wolfhawk_dire":
   "Type": "PARROT"
   "Display": "§f거친 울프호크"
@@ -14938,10 +15157,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_wolfhawk_dire_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e거친 울프호크"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -14951,7 +15170,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -14964,6 +15183,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_wolfhawk_dire_shiny":
   "Type": "PARROT"
   "Display": "§e거친 울프호크"
@@ -14991,10 +15215,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_wolfhawk_fallen":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f타락 울프호크"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -15004,7 +15228,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -15016,6 +15240,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_wolfhawk_fallen":
   "Type": "PARROT"
   "Display": "§f타락 울프호크"
@@ -15042,10 +15271,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_wolfhawk_fallen_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e타락 울프호크"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -15055,7 +15284,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -15068,6 +15297,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_wolfhawk_fallen_shiny":
   "Type": "PARROT"
   "Display": "§e타락 울프호크"
@@ -15095,10 +15329,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_wolfhawk_fullmoon":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f만월 울프호크"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -15108,7 +15342,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -15120,6 +15354,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_wolfhawk_fullmoon":
   "Type": "PARROT"
   "Display": "§f만월 울프호크"
@@ -15146,10 +15385,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_wolfhawk_fullmoon_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e만월 울프호크"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -15159,7 +15398,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -15172,6 +15411,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_wolfhawk_fullmoon_shiny":
   "Type": "PARROT"
   "Display": "§e만월 울프호크"
@@ -15199,10 +15443,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_wolfhawk_stormcloud":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f먹구름 울프호크"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -15212,7 +15456,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -15224,6 +15468,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_wolfhawk_stormcloud":
   "Type": "PARROT"
   "Display": "§f먹구름 울프호크"
@@ -15250,10 +15499,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_wolfhawk_stormcloud_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e먹구름 울프호크"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -15263,7 +15512,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -15276,6 +15525,11 @@
   "AITargetSelectors":
     - "clear"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_wolfhawk_stormcloud_shiny":
   "Type": "PARROT"
   "Display": "§e먹구름 울프호크"
@@ -15303,10 +15557,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_wyvern_ender":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f공허 와이번"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -15316,7 +15570,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -15329,6 +15583,11 @@
     - "clear"
     - "players"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_wyvern_ender":
   "Type": "PARROT"
   "Display": "§f공허 와이번"
@@ -15355,10 +15614,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_wyvern_ender_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e공허 와이번"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -15368,7 +15627,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -15382,6 +15641,11 @@
     - "clear"
     - "players"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_wyvern_ender_shiny":
   "Type": "PARROT"
   "Display": "§e공허 와이번"
@@ -15409,10 +15673,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_wyvern_green":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f녹빛 와이번"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -15422,7 +15686,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -15435,6 +15699,11 @@
     - "clear"
     - "players"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_wyvern_green":
   "Type": "PARROT"
   "Display": "§f녹빛 와이번"
@@ -15461,10 +15730,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_wyvern_green_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e녹빛 와이번"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -15474,7 +15743,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -15488,6 +15757,11 @@
     - "clear"
     - "players"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_wyvern_green_shiny":
   "Type": "PARROT"
   "Display": "§e녹빛 와이번"
@@ -15515,10 +15789,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_wyvern_inferno":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f업화 와이번"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -15528,7 +15802,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -15541,6 +15815,11 @@
     - "clear"
     - "players"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_wyvern_inferno":
   "Type": "PARROT"
   "Display": "§f업화 와이번"
@@ -15567,10 +15846,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_wyvern_inferno_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e업화 와이번"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -15580,7 +15859,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -15594,6 +15873,11 @@
     - "clear"
     - "players"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_wyvern_inferno_shiny":
   "Type": "PARROT"
   "Display": "§e업화 와이번"
@@ -15621,10 +15905,10 @@
     - "addtag{t=chacademia_shiny} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_wyvern_undead":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§f불사 와이번"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -15634,7 +15918,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -15647,6 +15931,11 @@
     - "clear"
     - "players"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_wyvern_undead":
   "Type": "PARROT"
   "Display": "§f불사 와이번"
@@ -15673,10 +15962,10 @@
     - "addtag{t=chacademia_custom} @self ~onSpawn"
     - "addtag{t=chacademia_pet} @self ~onSpawn"
 "CA_Wild_wyvern_undead_shiny":
-  "Type": "VEX"
+  "Type": "HUSK"
   "Display": "§e불사 와이번"
-  "Health": 130
-  "Damage": 9
+  "Health": 195
+  "Damage": 12.15
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -15686,7 +15975,7 @@
     "PreventRenaming": true
     "Silent": true
     "FollowRange": 20
-    "MovementSpeed": 0.24
+    "MovementSpeed": 0.288
     "AlwaysShowName": false
     "Despawn": true
   "Drops": []
@@ -15700,6 +15989,11 @@
     - "clear"
     - "players"
     - "hurtbytarget"
+  "AIGoalSelectors":
+    - "clear"
+    - "meleeattack"
+    - "randomstroll"
+    - "lookatplayers"
 "CA_Pet_wyvern_undead_shiny":
   "Type": "PARROT"
   "Display": "§e불사 와이번"

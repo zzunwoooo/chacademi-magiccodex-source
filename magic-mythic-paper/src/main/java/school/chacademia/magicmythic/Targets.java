@@ -18,18 +18,15 @@ import org.bukkit.util.Vector;
 /** One place that decides who a spell may hurt or help, and how damage/knockback is applied. */
 final class Targets {
     private final MagicMythicPlugin plugin;
-    private Set<String> pvpWorlds = Set.of(), excludedTags = Set.of(), bossTags = Set.of();
-    private List<String> excludedPrefixes = List.of(), bossPrefixes = List.of();
+    private Set<String> bossTags = Set.of();
+    private List<String> bossPrefixes = List.of();
     private double bossKnock = 0.3;
 
     Targets(MagicMythicPlugin plugin) { this.plugin = plugin; reload(); }
 
     void reload() {
         var c = plugin.getConfig();
-        pvpWorlds = Set.copyOf(c.getStringList("pvp-worlds"));
-        excludedTags = Set.copyOf(c.getStringList("excluded-tags"));
         bossTags = Set.copyOf(c.getStringList("boss-tags"));
-        excludedPrefixes = List.copyOf(c.getStringList("excluded-mythic-prefixes"));
         bossPrefixes = List.copyOf(c.getStringList("boss-mythic-prefixes"));
         bossKnock = Math.clamp(c.getDouble("boss-knockback-multiplier", 0.3), 0, 1);
     }
@@ -45,37 +42,13 @@ final class Targets {
     boolean enemy(LivingEntity caster, Entity e) {
         if (!(e instanceof LivingEntity le) || e.equals(caster) || !le.isValid() || le.isDead()) return false;
         if (excluded(e)||!plugin.protection().harm(caster,le)) return false;
-        if (!(caster instanceof Player)) {
-            // Mob or boss casters (future boss skills) only aim at players.
-            return e instanceof Player p && playable(p);
-        }
-        if (e instanceof Player p) return playable(p) && pvpWorlds.contains(p.getWorld().getName());
-        if (e instanceof Tameable t && t.isTamed()) return false;
-        String mythic = mythicType(e);
-        if (mythic != null) {
-            for (String prefix : excludedPrefixes) if (mythic.startsWith(prefix)) return false;
-            return true;
-        }
-        return e instanceof Enemy;
+        // Animals, owned pets, summons and custom mobs are valid attack targets.
+        // Creative/spectator players remain outside gameplay combat; WG handles region PvP.
+        return !(e instanceof Player p) || playable(p);
     }
 
-    private ClassLoader petLoader; private java.lang.reflect.Method petLookup; private boolean petHookFailed;
-    private boolean activePet(Entity e){
-        var pets=Bukkit.getPluginManager().getPlugin("MCPets");if(pets==null)return false;
-        var loader=pets.getClass().getClassLoader();
-        if(loader!=petLoader){petLoader=loader;petLookup=null;petHookFailed=false;
-            try{petLookup=Class.forName("fr.nocsy.mcpets.data.Pet",false,loader).getMethod("getFromEntity",Entity.class);}
-            catch(ReflectiveOperationException|LinkageError failure){petHookFailed=true;}
-        }
-        if(petHookFailed||petLookup==null)return true;
-        try{return petLookup.invoke(null,e)!=null;}catch(ReflectiveOperationException|RuntimeException failure){return true;}
-    }
     boolean excluded(Entity e){
-        if(activePet(e))return true;
-        String mythic;
-        try { var active=MythicBukkit.inst().getMobManager().getActiveMob(e.getUniqueId());if(active.isPresent()&&active.get().getOwnerUUID().isPresent())return true;mythic=active.map(m->m.getType().getInternalName()).orElse(null); }
-        catch(RuntimeException|LinkageError failure){return true;}
-        return TargetPolicy.excluded(e instanceof ArmorStand,e.hasMetadata("NPC"),e instanceof Tameable t&&t.isTamed(),e.getScoreboardTags(),excludedTags,mythic,excludedPrefixes);
+        return TargetPolicy.excluded(e instanceof ArmorStand, e.hasMetadata("NPC"), e.getScoreboardTags());
     }
 
     boolean ally(LivingEntity caster, Entity e) {

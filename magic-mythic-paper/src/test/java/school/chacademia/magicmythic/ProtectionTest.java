@@ -34,12 +34,12 @@ class ProtectionTest {
   victim[0]=player(new Location[]{new Location(world,1,64,0)},(m,a)->{if(m.equals("setHealth"))throw new AssertionError("Never force death");if(m.equals("damage")){calls[0]++;var e=new EntityDamageByEntityEvent(caster,victim[0],EntityDamageEvent.DamageCause.MAGIC,source,(Double)a[0]);e.setCancelled(cancel[0]);gate.observe(e);}return null;});
   assertFalse(gate.damage(caster,victim[0],999));assertEquals(1,calls[0]);cancel[0]=false;assertTrue(gate.damage(caster,victim[0],999));
  }
- @Test void petsNpcsTamedAndSummonsShareOneExclusionPolicy(){
-  Set<String> tags=Set.of("chacademia_pet","chacademia_npc","chacademia_taming_fx");var prefixes=List.of("CHA_","GM_");
-  assertTrue(TargetPolicy.excluded(false,true,false,Set.of(),tags,null,prefixes));assertTrue(TargetPolicy.excluded(false,false,true,Set.of(),tags,null,prefixes));
-  for(String tag:tags)assertTrue(TargetPolicy.excluded(false,false,false,Set.of(tag),tags,null,prefixes));
-  for(String id:List.of("CHA_pet","GM_gate"))assertTrue(TargetPolicy.excluded(false,false,false,Set.of(),tags,id,prefixes));
-  assertFalse(TargetPolicy.excluded(false,false,false,Set.of(),tags,"BOSS_foo",prefixes));
+ @Test void onlyNpcsAndNonLivingDecorationsAreExcluded(){
+  assertTrue(TargetPolicy.excluded(true,false,Set.of()));
+  assertTrue(TargetPolicy.excluded(false,true,Set.of()));
+  assertTrue(TargetPolicy.excluded(false,false,Set.of("chacademia_npc")));
+  for(String tag:List.of("chacademia_pet","chacademia_taming_fx","owned","CHA_pet","GM_gate"))
+   assertFalse(TargetPolicy.excluded(false,false,Set.of(tag)));
  }
  @Test void poisonCannotUseSupportPathToBypassPvpButSupportAudienceUnchanged(){
   for(String type:List.of("poison","instant_damage","wither","unknown")){assertFalse(SupportPolicy.beneficial(type));assertFalse(SupportPolicy.permits(false,false,false));assertTrue(SupportPolicy.permits(false,false,true));}

@@ -1,0 +1,2270 @@
+[
+  {
+    "id": "CA_Wild_owl",
+    "species": "owl",
+    "stars": 1,
+    "baseCaptureChance": 35.0,
+    "beforeType": "PARROT",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 20.0,
+      "Damage": 0.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 20.0,
+      "Damage": 0.0,
+      "MovementSpeed": 0.24
+    }
+  },
+  {
+    "id": "CA_Wild_owl_shiny",
+    "species": "owl",
+    "stars": 1,
+    "baseCaptureChance": 35.0,
+    "beforeType": "PARROT",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 20.0,
+      "Damage": 0.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 20.0,
+      "Damage": 0.0,
+      "MovementSpeed": 0.24
+    }
+  },
+  {
+    "id": "CA_Wild_lil_bird",
+    "species": "lil_bird",
+    "stars": 1,
+    "baseCaptureChance": 55.0,
+    "beforeType": "PARROT",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 20.0,
+      "Damage": 0.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 20.0,
+      "Damage": 0.0,
+      "MovementSpeed": 0.24
+    }
+  },
+  {
+    "id": "CA_Wild_lil_bird_shiny",
+    "species": "lil_bird",
+    "stars": 1,
+    "baseCaptureChance": 55.0,
+    "beforeType": "PARROT",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 20.0,
+      "Damage": 0.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 20.0,
+      "Damage": 0.0,
+      "MovementSpeed": 0.24
+    }
+  },
+  {
+    "id": "CA_Wild_butterfly",
+    "species": "butterfly",
+    "stars": 1,
+    "baseCaptureChance": 60.0,
+    "beforeType": "PARROT",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 20.0,
+      "Damage": 0.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 20.0,
+      "Damage": 0.0,
+      "MovementSpeed": 0.24
+    }
+  },
+  {
+    "id": "CA_Wild_butterfly_shiny",
+    "species": "butterfly",
+    "stars": 1,
+    "baseCaptureChance": 60.0,
+    "beforeType": "PARROT",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 20.0,
+      "Damage": 0.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 20.0,
+      "Damage": 0.0,
+      "MovementSpeed": 0.24
+    }
+  },
+  {
+    "id": "CA_Wild_lostasset_mob3_herbgolem",
+    "species": "lostasset_mob3_herbgolem",
+    "stars": 3,
+    "baseCaptureChance": 3.0,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_lostasset_mob3_herbgolem_shiny",
+    "species": "lostasset_mob3_herbgolem",
+    "stars": 3,
+    "baseCaptureChance": 3.0,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_ogre_hammer",
+    "species": "ogre_hammer",
+    "stars": 3,
+    "baseCaptureChance": 2.0,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_ogre_hammer_shiny",
+    "species": "ogre_hammer",
+    "stars": 3,
+    "baseCaptureChance": 2.0,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_ncr_mage_skeleton",
+    "species": "ncr_mage_skeleton",
+    "stars": 3,
+    "baseCaptureChance": 2.0,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_ncr_mage_skeleton_shiny",
+    "species": "ncr_mage_skeleton",
+    "stars": 3,
+    "baseCaptureChance": 2.0,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_mf_warden_knight",
+    "species": "mf_warden_knight",
+    "stars": 3,
+    "baseCaptureChance": 1.0,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_mf_warden_knight_shiny",
+    "species": "mf_warden_knight",
+    "stars": 3,
+    "baseCaptureChance": 1.0,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_mf_warden_archer",
+    "species": "mf_warden_archer",
+    "stars": 3,
+    "baseCaptureChance": 1.2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_mf_warden_archer_shiny",
+    "species": "mf_warden_archer",
+    "stars": 3,
+    "baseCaptureChance": 1.2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_mf_warden_tank",
+    "species": "mf_warden_tank",
+    "stars": 3,
+    "baseCaptureChance": 0.8,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_mf_warden_tank_shiny",
+    "species": "mf_warden_tank",
+    "stars": 3,
+    "baseCaptureChance": 0.8,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_mf_warden_mage",
+    "species": "mf_warden_mage",
+    "stars": 3,
+    "baseCaptureChance": 0.8,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_mf_warden_mage_shiny",
+    "species": "mf_warden_mage",
+    "stars": 3,
+    "baseCaptureChance": 0.8,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_glacialcore",
+    "species": "glacialcore",
+    "stars": 3,
+    "baseCaptureChance": 0.4,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 700.0,
+      "Damage": 14.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 1050.0,
+      "Damage": 18.9,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_glacialcore_shiny",
+    "species": "glacialcore",
+    "stars": 3,
+    "baseCaptureChance": 0.4,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 700.0,
+      "Damage": 14.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 1050.0,
+      "Damage": 18.9,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_nocsy_cat_fallen",
+    "species": "nocsy_cat_fallen",
+    "stars": 3,
+    "baseCaptureChance": 3.0,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 0.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 0.0,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_nocsy_cat_fallen_shiny",
+    "species": "nocsy_cat_fallen",
+    "stars": 3,
+    "baseCaptureChance": 3.0,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 0.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 0.0,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_ice_knight",
+    "species": "ice_knight",
+    "stars": 3,
+    "baseCaptureChance": 3.0,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_ice_knight_shiny",
+    "species": "ice_knight",
+    "stars": 3,
+    "baseCaptureChance": 3.0,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_dragon_desert",
+    "species": "dragon_desert",
+    "stars": 3,
+    "baseCaptureChance": 0.8,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_dragon_desert_shiny",
+    "species": "dragon_desert",
+    "stars": 3,
+    "baseCaptureChance": 0.8,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_dragon_glacial",
+    "species": "dragon_glacial",
+    "stars": 3,
+    "baseCaptureChance": 0.8,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_dragon_glacial_shiny",
+    "species": "dragon_glacial",
+    "stars": 3,
+    "baseCaptureChance": 0.8,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_dragon_nether",
+    "species": "dragon_nether",
+    "stars": 3,
+    "baseCaptureChance": 0.8,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_dragon_nether_shiny",
+    "species": "dragon_nether",
+    "stars": 3,
+    "baseCaptureChance": 0.8,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_dragon_sculk",
+    "species": "dragon_sculk",
+    "stars": 3,
+    "baseCaptureChance": 0.8,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_dragon_sculk_shiny",
+    "species": "dragon_sculk",
+    "stars": 3,
+    "baseCaptureChance": 0.8,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_manticore_aether",
+    "species": "manticore_aether",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_manticore_aether_shiny",
+    "species": "manticore_aether",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_manticore_dusk",
+    "species": "manticore_dusk",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_manticore_dusk_shiny",
+    "species": "manticore_dusk",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_manticore_soul",
+    "species": "manticore_soul",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_manticore_soul_shiny",
+    "species": "manticore_soul",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_manticore_venom",
+    "species": "manticore_venom",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_manticore_venom_shiny",
+    "species": "manticore_venom",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_horse_pegasus",
+    "species": "horse_pegasus",
+    "stars": 3,
+    "baseCaptureChance": 4,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_horse_pegasus_shiny",
+    "species": "horse_pegasus",
+    "stars": 3,
+    "baseCaptureChance": 4,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_horse_unicorn",
+    "species": "horse_unicorn",
+    "stars": 3,
+    "baseCaptureChance": 4,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_horse_unicorn_shiny",
+    "species": "horse_unicorn",
+    "stars": 3,
+    "baseCaptureChance": 4,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_kitsune_demonic",
+    "species": "kitsune_demonic",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_kitsune_demonic_shiny",
+    "species": "kitsune_demonic",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_kitsune_inferno",
+    "species": "kitsune_inferno",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_kitsune_inferno_shiny",
+    "species": "kitsune_inferno",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_kitsune_normal",
+    "species": "kitsune_normal",
+    "stars": 3,
+    "baseCaptureChance": 3,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_kitsune_normal_shiny",
+    "species": "kitsune_normal",
+    "stars": 3,
+    "baseCaptureChance": 3,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_phantom_ender",
+    "species": "phantom_ender",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_phantom_ender_shiny",
+    "species": "phantom_ender",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_phantom_ghost",
+    "species": "phantom_ghost",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_phantom_ghost_shiny",
+    "species": "phantom_ghost",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_phoenix_darkflame",
+    "species": "phoenix_darkflame",
+    "stars": 3,
+    "baseCaptureChance": 1,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_phoenix_darkflame_shiny",
+    "species": "phoenix_darkflame",
+    "stars": 3,
+    "baseCaptureChance": 1,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_phoenix_flame",
+    "species": "phoenix_flame",
+    "stars": 3,
+    "baseCaptureChance": 1,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_phoenix_flame_shiny",
+    "species": "phoenix_flame",
+    "stars": 3,
+    "baseCaptureChance": 1,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_phoenix_light",
+    "species": "phoenix_light",
+    "stars": 3,
+    "baseCaptureChance": 1,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_phoenix_light_shiny",
+    "species": "phoenix_light",
+    "stars": 3,
+    "baseCaptureChance": 1,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_phoenix_thunder",
+    "species": "phoenix_thunder",
+    "stars": 3,
+    "baseCaptureChance": 1,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_phoenix_thunder_shiny",
+    "species": "phoenix_thunder",
+    "stars": 3,
+    "baseCaptureChance": 1,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_basilisk_obsidian",
+    "species": "basilisk_obsidian",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_basilisk_obsidian_shiny",
+    "species": "basilisk_obsidian",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_basilisk_snowstorm",
+    "species": "basilisk_snowstorm",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_basilisk_snowstorm_shiny",
+    "species": "basilisk_snowstorm",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_basilisk_wild",
+    "species": "basilisk_wild",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_basilisk_wild_shiny",
+    "species": "basilisk_wild",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_hippogryph_common",
+    "species": "hippogryph_common",
+    "stars": 3,
+    "baseCaptureChance": 3,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_hippogryph_common_shiny",
+    "species": "hippogryph_common",
+    "stars": 3,
+    "baseCaptureChance": 3,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_hippogryph_crystal",
+    "species": "hippogryph_crystal",
+    "stars": 3,
+    "baseCaptureChance": 3,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_hippogryph_crystal_shiny",
+    "species": "hippogryph_crystal",
+    "stars": 3,
+    "baseCaptureChance": 3,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_hippogryph_fallen",
+    "species": "hippogryph_fallen",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_hippogryph_fallen_shiny",
+    "species": "hippogryph_fallen",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_hippogryph_royal",
+    "species": "hippogryph_royal",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_hippogryph_royal_shiny",
+    "species": "hippogryph_royal",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_raptor_nightmare",
+    "species": "raptor_nightmare",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_raptor_nightmare_shiny",
+    "species": "raptor_nightmare",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_raptor_undead",
+    "species": "raptor_undead",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_raptor_undead_shiny",
+    "species": "raptor_undead",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_sky_serpent_jade",
+    "species": "sky_serpent_jade",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_sky_serpent_jade_shiny",
+    "species": "sky_serpent_jade",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_sky_serpent_magma",
+    "species": "sky_serpent_magma",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_sky_serpent_magma_shiny",
+    "species": "sky_serpent_magma",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_sky_serpent_solar",
+    "species": "sky_serpent_solar",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_sky_serpent_solar_shiny",
+    "species": "sky_serpent_solar",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_sky_serpent_spectral",
+    "species": "sky_serpent_spectral",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_sky_serpent_spectral_shiny",
+    "species": "sky_serpent_spectral",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_stag_demonic",
+    "species": "stag_demonic",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_stag_demonic_shiny",
+    "species": "stag_demonic",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_stag_heavenly",
+    "species": "stag_heavenly",
+    "stars": 3,
+    "baseCaptureChance": 3,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_stag_heavenly_shiny",
+    "species": "stag_heavenly",
+    "stars": 3,
+    "baseCaptureChance": 3,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_stag_rune",
+    "species": "stag_rune",
+    "stars": 3,
+    "baseCaptureChance": 3,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_stag_rune_shiny",
+    "species": "stag_rune",
+    "stars": 3,
+    "baseCaptureChance": 3,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_stag_void",
+    "species": "stag_void",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_stag_void_shiny",
+    "species": "stag_void",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_frog_royal",
+    "species": "frog_royal",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_frog_royal_shiny",
+    "species": "frog_royal",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_golem_arcane",
+    "species": "golem_arcane",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_golem_arcane_shiny",
+    "species": "golem_arcane",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_golem_corrupted",
+    "species": "golem_corrupted",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_golem_corrupted_shiny",
+    "species": "golem_corrupted",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_golem_magma",
+    "species": "golem_magma",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_golem_magma_shiny",
+    "species": "golem_magma",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_golem_royal",
+    "species": "golem_royal",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_golem_royal_shiny",
+    "species": "golem_royal",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_tusker_demonic",
+    "species": "tusker_demonic",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_tusker_demonic_shiny",
+    "species": "tusker_demonic",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "HUSK",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_wolfhawk_dire",
+    "species": "wolfhawk_dire",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_wolfhawk_dire_shiny",
+    "species": "wolfhawk_dire",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_wolfhawk_fallen",
+    "species": "wolfhawk_fallen",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_wolfhawk_fallen_shiny",
+    "species": "wolfhawk_fallen",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_wolfhawk_fullmoon",
+    "species": "wolfhawk_fullmoon",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_wolfhawk_fullmoon_shiny",
+    "species": "wolfhawk_fullmoon",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_wolfhawk_stormcloud",
+    "species": "wolfhawk_stormcloud",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_wolfhawk_stormcloud_shiny",
+    "species": "wolfhawk_stormcloud",
+    "stars": 3,
+    "baseCaptureChance": 2,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_wyvern_ender",
+    "species": "wyvern_ender",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_wyvern_ender_shiny",
+    "species": "wyvern_ender",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_wyvern_green",
+    "species": "wyvern_green",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_wyvern_green_shiny",
+    "species": "wyvern_green",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_wyvern_inferno",
+    "species": "wyvern_inferno",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_wyvern_inferno_shiny",
+    "species": "wyvern_inferno",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_wyvern_undead",
+    "species": "wyvern_undead",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  },
+  {
+    "id": "CA_Wild_wyvern_undead_shiny",
+    "species": "wyvern_undead",
+    "stars": 3,
+    "baseCaptureChance": 1.5,
+    "beforeType": "VEX",
+    "afterType": "HUSK",
+    "before": {
+      "Health": 130.0,
+      "Damage": 9.0,
+      "MovementSpeed": 0.24
+    },
+    "after": {
+      "Health": 195.0,
+      "Damage": 12.15,
+      "MovementSpeed": 0.288
+    }
+  }
+]

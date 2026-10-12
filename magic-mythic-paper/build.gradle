@@ -1,6 +1,6 @@
 plugins { id 'java' }
 group = 'school.chacademia'
-version = '0.1.2-recovery.1-gimmick.1'
+version = '0.1.2-recovery.1-gimmick.1-targets.1'
 base { archivesName = 'chacademia-magic-mythic' }
 repositories {
     if (findProperty('localDependencyRepo')) maven { url = uri(property('localDependencyRepo')) }
@@ -13,6 +13,7 @@ dependencies {
     compileOnly files('../plugins/MythicMobs-5.9.0.jar')
     compileOnly 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
     testImplementation 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
+    testImplementation 'org.mockito:mockito-core:5.14.2'
     testImplementation platform('org.junit:junit-bom:5.11.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
