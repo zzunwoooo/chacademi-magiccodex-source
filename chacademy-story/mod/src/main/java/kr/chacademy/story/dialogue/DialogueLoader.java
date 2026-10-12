@@ -60,4 +60,11 @@ public final class DialogueLoader {
         }
         return DialogueParser.parse(id, root);
     }
+    public static List<String> warnings(Path rootDir,String id) throws IOException {
+        if(!ID_PATTERN.matcher(id).matches())throw new IOException("Invalid dialogue ID");
+        try(Reader reader=Files.newBufferedReader(rootDir.resolve(id).resolve("dialogue.yml"),StandardCharsets.UTF_8)){
+            Object root=new Yaml(new SafeConstructor(new LoaderOptions())).load(reader);
+            return root instanceof java.util.Map<?,?> map?DialogueCommands.warnings(map.get("commands")):List.of();
+        }catch(RuntimeException e){throw new IOException("Invalid dialogue YAML",e);}
+    }
 }

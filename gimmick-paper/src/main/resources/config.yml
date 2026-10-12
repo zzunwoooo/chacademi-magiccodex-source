@@ -1,0 +1,21 @@
+# 차카데미 던전 기믹 설정
+# 모델 구현: modelengine (기본. 모델·애니메이션·크기 모두 ModelEngine 4, 리소스팩은 ItemsAdder 가 함께 보냄)
+#           itemsadder  (대안. ItemsAdder 커스텀 엔티티로 변환한 경우만)
+renderer: modelengine
+# 모델 id 앞에 붙는 글자. ModelEngine 은 blueprint 이름 그대로라 "" (ItemsAdder 대안일 때만 "네임스페이스:")
+model-prefix: ""
+# 마법 투사체(chabolt)가 기믹에 닿으면 멈출지
+magic-blocks-bolts: true
+# 같은 기믹에 마법이 연속으로 닿을 때 무시하는 간격(틱). 투사체 한 발이 여러 번 맞는 것 방지
+magic-hit-gap-ticks: 10
+# 밟기/포탈 검사 주기(틱)
+stand-check-ticks: 4
+# 텔레포트 후 다시 텔레포트되지 않는 시간(틱)
+teleport-cooldown-ticks: 60
+# 디버그 도구
+tool:
+  material: BLAZE_ROD
+  rotate-degrees: 15
+  scale-step: 0.1
+  move-step: 0.25
+  height-step: 0.125

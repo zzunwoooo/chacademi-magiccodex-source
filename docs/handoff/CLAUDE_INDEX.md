@@ -1,4 +1,4 @@
-> Latest staged patch (not deployed): [Taming hidden-base UI and Story ending commands](CODEX_TAMING_STORY_20261012.md). 636 hosting tests passed; requires coordinated Bridge/Story server + UI/Story client update. Preserve existing runtime and user records.
+> Latest deployed integration: [Taming, single-file Story and gimmicks](CODEX_TAMING_STORY_20261012.md). 673 hosting tests passed; school/wild and personal UI/Story applied. This latest entry supersedes historical pending statuses below. Dungeon models and launcher/feed remain excluded.
 
 # Current deployment: wild reset and HUD server fixes, 2026-10-12
 

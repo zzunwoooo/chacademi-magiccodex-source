@@ -9,11 +9,11 @@ class RepeatedEndingRewardTest {
  @TempDir Path temp;
  @Test void twoNormalPlaysRunTwoEndCommandsButAffinityAndFirstRewardOnlyOnce() throws Exception {
   var ledger=new LocalDialogueStore(temp.resolve("progress.properties"));var sessions=new LocalEndingSessions();UUID player=UUID.randomUUID();
-  var def=StoryDef.parse("ch1-3",Map.of("endings",Map.of("s20",List.of("cutscene play {player} magic_tutorial"))),null,new ArrayList<>());
+  var registry=new ServerCommandRegistry();registry.replace(Map.of("commands",Map.of("ch1-3",List.of("cutscene play {player} test"))));
   var dialogue=DialogueParser.parse("ch1-3",Map.of("scenes",Map.of("s20",Map.of("lines",List.of(Map.of("text","Finish")),"affinity",List.of(Map.of("npc","teacher","add",5))))));
   int[] counts={0,0};
   for(int play=0;play<2;play++){
-   var session=sessions.begin(player,def,0);sessions.ready(player,session.id(),session.token(),0);
+   var session=sessions.begin(player,"ch1-3",registry.commands("ch1-3"),0);sessions.ready(player,session.id(),session.token(),0);
    var runner=new DialogueRunner(dialogue,null,ledger.affinity(),Map.of(),new DialogueRunner.Listener(){
     public boolean affinity(String id,String key,List<Dialogue.AffinityChange> changes){try{return ledger.claimAffinity(id,key,changes);}catch(Exception e){throw new RuntimeException(e);}}
     public void event(String id,String event,String npc,int add){}

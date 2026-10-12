@@ -69,4 +69,10 @@ class StoryProtocol2Test {
         assertEquals(StoryCodec.DIALOGUE_SESSION,CutscenePackets.DialogueSessionS2C.TYPE.id().toString());
         assertEquals(StoryCodec.DIALOGUE_SESSION_SIGNAL,CutscenePackets.DialogueSessionSignalC2S.TYPE.id().toString());
     }
+    @Test void combinedReloadSuccessAndFailureMatchAcrossWire(){
+        String token=java.util.UUID.randomUUID().toString();var incoming=new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(StoryCodec.reloadRequest(token)),RegistryAccess.EMPTY);
+        try{assertEquals(token,CutscenePackets.ReloadRequestS2C.CODEC.decode(incoming).token());assertEquals(0,incoming.readableBytes());}finally{incoming.release();}
+        for(int failures:List.of(0,1,2)){var out=buffer();CutscenePackets.ReloadResultC2S.CODEC.encode(out,new CutscenePackets.ReloadResultC2S(token,failures));assertEquals(new StoryCodec.ReloadResult(token,failures),StoryCodec.reloadResult(bytes(out)));}
+        var bad=buffer();CutscenePackets.ReloadResultC2S.CODEC.encode(bad,new CutscenePackets.ReloadResultC2S(token,3));assertThrows(IllegalArgumentException.class,()->StoryCodec.reloadResult(bytes(bad)));
+    }
 }

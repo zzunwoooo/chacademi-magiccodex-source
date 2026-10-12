@@ -21,6 +21,7 @@ public final class StoryCodec {
     public static final String CUTSCENE_STOP = "chacademy:cutscene_stop";
     public static final String CUTSCENE_DONE = "chacademy:cutscene_done";
     public static final String DIALOGUE_OPEN = "chacademy:dialogue_open";
+    public static final String RELOAD_REQUEST="chacademy:story_reload_request", RELOAD_RESULT="chacademy:story_reload_result";
     public static final String DIALOGUE_SESSION="chacademy:dialogue_session", DIALOGUE_SESSION_SIGNAL="chacademy:dialogue_session_signal";
     public static final String DIALOGUE_VIEW = "chacademy:dialogue_view";
     public static final String DIALOGUE_REWARD = "chacademy:dialogue_reward";
@@ -101,6 +102,13 @@ public final class StoryCodec {
         return out.toByteArray();
     }
 
+    public static byte[] reloadRequest(String token){ByteArrayOutputStream out=new ByteArrayOutputStream();writeString(out,token);return out.toByteArray();}
+    public record ReloadResult(String token,int failures){}
+    public static ReloadResult reloadResult(byte[] data){try{
+        ByteBuffer b=ByteBuffer.wrap(data);var result=complete(b,new ReloadResult(readString(b),readVarInt(b)));
+        if(result.failures()<0||result.failures()>2||result.token().length()!=36)throw new IllegalArgumentException("Invalid reload result");
+        java.util.UUID.fromString(result.token());return result;
+    }catch(BufferUnderflowException e){throw new IllegalArgumentException("Truncated reload result",e);}}
     public static byte[] dialogueSession(String id,String vars,String token){
         ByteArrayOutputStream out=new ByteArrayOutputStream();writeString(out,id);writeString(out,vars);writeString(out,token);return out.toByteArray();
     }

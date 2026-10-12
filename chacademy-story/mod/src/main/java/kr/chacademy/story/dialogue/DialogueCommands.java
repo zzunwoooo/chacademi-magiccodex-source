@@ -4,6 +4,14 @@ import java.util.*;
 /** Commands in the local dialogue file, executed only as the connected player. */
 public record DialogueCommands(List<String> end,Map<String,List<String>> endings,Map<String,List<String>> events) {
     public static final DialogueCommands EMPTY=new DialogueCommands(List.of(),Map.of(),Map.of());
+    public static List<String> warnings(Object root){
+        if(!(root instanceof Map<?,?> m))return List.of();
+        var out=new ArrayList<String>();
+        for(Object key:m.keySet())if(!Set.of("end","endings","events").contains(String.valueOf(key)))
+            out.add("commands."+key+": unsupported key; put ordinary ending commands in server dialogues/server_command.yml under commands.<dialogue-id>.");
+        if(m.containsKey("end")||m.containsKey("endings"))out.add("Local end/endings commands do not execute ordinary commands. Use server dialogues/server_command.yml; chaca_reward first-reward markers are preserved.");
+        return List.copyOf(out);
+    }
     public static DialogueCommands parse(Object root)throws IOException {
         if(root==null)return EMPTY;
         if(!(root instanceof Map<?,?> m))throw new IOException("commands must be a map");

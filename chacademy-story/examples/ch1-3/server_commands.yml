@@ -1,8 +1,0 @@
-# Server administrator allowlist only. No dialogue text or artwork is needed here.
-# Deploy to plugins/ChacademyStory/dialogues/ch1-3/server_commands.yml
-# Every authorized normal completion runs the matched ending once.
-endings:
-  s20:
-    - "컷신 재생 {player} magic_tutorial"
-  s21:
-    - "컷신 재생 {player} magic_tutorial"

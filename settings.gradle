@@ -3,3 +3,5 @@ include 'magic-codex-paper', 'magic-discovery-paper', 'creature-spawns-paper', '
 include 'chacademi-party-velocity'
 
 include 'magic-mythic-paper'
+
+include "gimmick-paper"

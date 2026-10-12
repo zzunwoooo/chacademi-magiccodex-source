@@ -86,6 +86,8 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
     private final Map<UUID,Long> nameUpdated=new HashMap<>();
     private List<String> registeredCutscenes=List.of();
     private final Map<UUID, Long> joinedAt = new HashMap<>();
+    private final ReloadTickets<CommandSender> reloadTickets=new ReloadTickets<>();
+    private final ServerCommandRegistry endingCommands=new ServerCommandRegistry();
     private final LocalEndingSessions endingSessions=new LocalEndingSessions();
     private final DialogueAcks dialogueAcks = new DialogueAcks();
     private final Set<UUID> helloSent = new HashSet<>();
@@ -118,15 +120,16 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
                 r -> Bukkit.getScheduler().runTask(this, r), getLogger());
         ready = true;
         applyDefs(loadDefs(dialogues), null);
+        reloadServerSettings(Bukkit.getConsoleSender());
         registeredCutscenes=getConfig().getStringList("cutscenes").stream().filter(StorySafety::validId).toList();
 
         Messenger m = getServer().getMessenger();
         for (String out : List.of(StoryCodec.CUTSCENE_PLAY, StoryCodec.CUTSCENE_STOP, StoryCodec.DIALOGUE_OPEN, StoryCodec.DIALOGUE_VIEW, StoryCodec.DIALOGUE_STOP,
-                StoryCodec.STORY_HELLO, StoryCodec.STORY_RELOAD, StoryCodec.DIALOGUE_SESSION)) {
+                StoryCodec.STORY_HELLO, StoryCodec.STORY_RELOAD, StoryCodec.DIALOGUE_SESSION, StoryCodec.RELOAD_REQUEST)) {
             m.registerOutgoingPluginChannel(this, out);
         }
         for (String in : List.of(StoryCodec.CUTSCENE_DONE, StoryCodec.DIALOGUE_EVENT, StoryCodec.DIALOGUE_DONE, StoryCodec.DIALOGUE_PROGRESS,
-                StoryCodec.CUTSCENE_ABORT, StoryCodec.STORY_FAIL, StoryCodec.DIALOGUE_READY, StoryCodec.DIALOGUE_REWARD, StoryCodec.STORY_CATALOG, StoryCodec.DIALOGUE_SESSION_SIGNAL)) {
+                StoryCodec.CUTSCENE_ABORT, StoryCodec.STORY_FAIL, StoryCodec.DIALOGUE_READY, StoryCodec.DIALOGUE_REWARD, StoryCodec.STORY_CATALOG, StoryCodec.DIALOGUE_SESSION_SIGNAL, StoryCodec.RELOAD_RESULT)) {
             m.registerIncomingPluginChannel(this, in, this);
         }
         for (String c : List.of("cutscene", "storydialogue", "affinity", "스토리")) {
@@ -155,7 +158,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
 
     @Override
     public void onDisable() {
-        dialogueAcks.clear();endingSessions.clear();
+        dialogueAcks.clear();endingSessions.clear();reloadTickets.clear();
         clientCatalogs.clear();catalogUpdated.clear();completionNames.clear();nameUpdated.clear();
         Messenger m = getServer().getMessenger();
         m.unregisterIncomingPluginChannel(this);
@@ -309,7 +312,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
                         if (StorySafety.validId(n)) ids.add(n);
                         else warnings.add("대화 폴더 이름은 소문자·숫자·_·- 1~64자 (무시됨): " + n);
                     }
-                } else if (n.endsWith(".yml")) {
+                } else if (n.endsWith(".yml")&&!n.equals("server_command.yml")) {
                     String id = n.substring(0, n.length() - 4);
                     if (StorySafety.validId(id)) ids.add(id);
                     else warnings.add("대화 파일 이름은 소문자·숫자·_·- 1~64자 (무시됨): " + n);
@@ -465,9 +468,9 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         var existing=dialogueAcks.pending(uuid,id);
         if(existing!=null)return existing;
         var future=dialogueAcks.begin(uuid,id);
-        var definition=brokenDefs.containsKey(id)?null:defs.get(id);
+        var commands=endingCommands.commands(id);
         var session=p.getListeningPluginChannels().contains(StoryCodec.DIALOGUE_SESSION)
-                ?endingSessions.begin(uuid,definition,System.currentTimeMillis()):null;
+                ?endingSessions.begin(uuid,id,commands,System.currentTimeMillis()):null;
         if(session!=null)p.sendPluginMessage(this,StoryCodec.DIALOGUE_SESSION,StoryCodec.dialogueSession(id,StoryCodec.encodeVars(textVars(p)),session.token()));
         else p.sendPluginMessage(this,StoryCodec.DIALOGUE_VIEW,StoryCodec.dialogueView(id,StoryCodec.encodeVars(textVars(p))));
         Bukkit.getScheduler().runTaskLater(this,()->{
@@ -949,6 +952,10 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
                     StoryCatalog catalog=StoryCodec.catalog(message);
                     clientCatalogs.put(uuid,catalog);catalogUpdated.put(uuid,now);
                 }
+                case StoryCodec.RELOAD_RESULT -> {
+                    var result=StoryCodec.reloadResult(message);CommandSender requester=reloadTickets.finish(uuid,result.token());
+                    if(requester!=null)requester.sendMessage((result.failures()==0?ChatColor.GREEN:ChatColor.RED)+"[Story client] "+p.getName()+": "+(result.failures()==0?"Reload OK (dialogues + cutscenes)":"Reload FAILED in "+result.failures()+" content categories; details on the target client.")+" Records preserved.");
+                }
                 case StoryCodec.DIALOGUE_SESSION_SIGNAL -> {
                     var signal=StoryCodec.sessionSignal(message);long now=System.currentTimeMillis();
                     if(signal.action()==0){if(endingSessions.ready(uuid,signal.id(),signal.token(),now))dialogueAcks.accept(uuid,signal.id());}
@@ -1100,7 +1107,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        dialogueAcks.disconnect(e.getPlayer().getUniqueId());endingSessions.cancel(e.getPlayer().getUniqueId());
+        dialogueAcks.disconnect(e.getPlayer().getUniqueId());endingSessions.cancel(e.getPlayer().getUniqueId());reloadTickets.cancel(e.getPlayer().getUniqueId());
         UUID uuid = e.getPlayer().getUniqueId();
         joinedAt.remove(uuid);
         helloSent.remove(uuid);
@@ -1141,14 +1148,36 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         };
     }
 
+    private boolean reloadServerSettings(CommandSender sender){
+        try{
+            File commandsFile=new File(getDataFolder(),"dialogues/server_command.yml");
+            if(commandsFile.length()>1_048_576)throw new IllegalArgumentException("server_command.yml exceeds 1 MiB");
+            Object candidate=commandsFile.isFile()?readYaml(commandsFile):Map.of("commands",Map.of());
+            ServerCommandRegistry.parse(candidate);
+            // Strict parsing before JavaPlugin.reloadConfig, which otherwise logs and falls back silently.
+            var checked=new YamlConfiguration();checked.load(new File(getDataFolder(),"config.yml"));
+            reloadConfig();endingCommands.replace(candidate);endingSessions.clear();dialogueAcks.clear();
+            registeredCutscenes=getConfig().getStringList("cutscenes").stream().filter(StorySafety::validId).toList();
+            applyAffinityConfig();codex.resetPlaceholderLookup();if(!codex.available())codex.connect();
+            sender.sendMessage(ChatColor.GREEN+"[Story server] Reload OK: config.yml + dialogues/server_command.yml ("+endingCommands.size()+" dialogue IDs). Progress/rewards preserved.");return true;
+        }catch(Exception e){sender.sendMessage(ChatColor.RED+"[Story server] Reload FAILED; previous command list retained: "+e.getMessage());return false;}
+    }
     private boolean koreanCommand(CommandSender s,boolean dialogue,String[] a) {
         String root=dialogue?"스토리":"컷신";
         if(a.length==0){koreanHelp(s,root);return true;}
         String action=StoryCommandNames.action(a[0]);
         if(action.equals("reload")) {
+            if(dialogue)reloadServerSettings(s);
             List<Player> players=a.length>1?targets(s,String.join(" ",java.util.Arrays.copyOfRange(a,1,a.length))):s instanceof Player p?List.of(p):List.of();
-            if(players.isEmpty()){s.sendMessage(ChatColor.RED+"접속 중인 유저를 지정해 주세요.");return true;}
+            if(players.isEmpty()){s.sendMessage(ChatColor.YELLOW+"[Story client] Not reloaded: specify an online player from console, e.g. /storydialogue or /\uC2A4\uD1A0\uB9AC \uB9AC\uB85C\uB4DC <player>.");return true;}
             for(Player p:players) {
+                if(dialogue&&p.getListeningPluginChannels().contains(StoryCodec.RELOAD_REQUEST)){
+                    var ticket=reloadTickets.begin(p.getUniqueId(),s);
+                    p.sendPluginMessage(this,StoryCodec.RELOAD_REQUEST,StoryCodec.reloadRequest(ticket.token()));
+                    s.sendMessage(ChatColor.GRAY+"[Story client] "+p.getName()+": reload requested; awaiting result.");
+                    Bukkit.getScheduler().runTaskLater(this,()->{var requester=reloadTickets.finish(p.getUniqueId(),ticket.token());if(requester!=null)requester.sendMessage(ChatColor.RED+"[Story client] "+p.getName()+": no reload result received (timeout).");},200L);
+                    continue;
+                }
                 if(!p.getListeningPluginChannels().contains(StoryCodec.STORY_RELOAD)){s.sendMessage(ChatColor.RED+p.getName()+": 최신 스토리 모드가 필요합니다.");continue;}
                 p.sendPluginMessage(this,StoryCodec.STORY_RELOAD,StoryCodec.reloadContent(dialogue?StoryCodec.KIND_DIALOGUE:StoryCodec.KIND_CUTSCENE));
                 s.sendMessage(ChatColor.GRAY+p.getName()+": 클라이언트 파일 검사를 요청했습니다. 결과는 대상 화면에 표시됩니다.");
@@ -1175,38 +1204,14 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
     private void koreanHelp(CommandSender s,String root) {
         s.sendMessage(ChatColor.GOLD+"/"+root+" 재생 <유저·한글닉네임> <식별자>");
         s.sendMessage(ChatColor.GRAY+"/"+root+" 중지 <유저> · /"+root+" 취소 <유저> · /"+root+" 목록 [유저]");
-        s.sendMessage(ChatColor.GRAY+"/"+root+" 리로드 [유저] — 클라이언트 파일 검사, 완료·보상 기록 유지");
+        s.sendMessage(ChatColor.GRAY+"/"+root+" 리로드 [유저] — 서버 설정 + 대상 클라이언트 파일 검사, 기록 유지");
         s.sendMessage(ChatColor.GRAY+"/"+root+" 서버리로드 — 서버 설정·기존 서버 대화 파일 검사");
     }
 
     private boolean cutsceneCommand(CommandSender s, String[] a) {
         if (a.length == 0) return false;
         switch (a[0].toLowerCase(Locale.ROOT)) {
-            case "reload" -> {
-                reloadConfig();
-                registeredCutscenes=getConfig().getStringList("cutscenes").stream().filter(StorySafety::validId).toList();
-                applyAffinityConfig();
-                codex.resetPlaceholderLookup();
-                if (!codex.available()) codex.connect();
-                s.sendMessage(ChatColor.GREEN + "스토리 설정을 다시 불러왔어요. 대화 파일을 읽는 중…");
-                // 파일은 메인 스레드 밖에서 읽고, 다 읽으면 한 번에 바꾼다
-                File dialogues = new File(getDataFolder(), "dialogues");
-                Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-                    DefLoad load = loadDefs(dialogues);
-                    if (affinity.readFailed()) affinity.load();
-                    if (!isEnabled()) return;
-                    Bukkit.getScheduler().runTask(this, () -> {
-                        applyDefs(load, s);
-                        // 파일이 없어 멈춰 있던 요청을 다시 시도
-                        for (PlayerStory ps : state.players.values()) {
-                            if (ps.active != null && ps.active.parked) {
-                                ps.active.parked = false;
-                                ps.active.resends = 0;
-                            }
-                        }
-                    });
-                });
-            }
+            case "reload" -> { reloadServerSettings(s); }
             case "play" -> {
                 if (a.length < 3) return false;
                 if (!ID.matcher(a[2]).matches()) {

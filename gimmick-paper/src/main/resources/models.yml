@@ -1,0 +1,1388 @@
+# 기믹 모델 목록 (dungeon-gimmicks 에서 자동 생성). 렌더러 모델 id = prefix + 이 키
+models:
+  gm_balance_scale:
+    name: 천칭 저울
+    category: E
+    element: earth
+    width: 1.0
+    height: 3.0
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 3.0
+        loop: loop
+      activate:
+        length: 1.0
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      tilt_right:
+        length: 1.0
+        loop: hold
+      tilt_left:
+        length: 1.0
+        loop: hold
+  gm_broken_tablet:
+    name: 부서진 석판
+    category: D
+    element: mana
+    width: 1.0
+    height: 1.6
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.0
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      place_1:
+        length: 0.6
+        loop: hold
+      place_2:
+        length: 0.6
+        loop: hold
+      place_3:
+        length: 0.6
+        loop: hold
+      place_4:
+        length: 0.6
+        loop: hold
+  gm_chain_pillar:
+    name: 연결 사슬 기둥
+    category: E
+    element: mana
+    width: 0.8
+    height: 1.8
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 0.6
+        loop: hold
+      active:
+        length: 1.0
+        loop: loop
+      deactivate:
+        length: 0.6
+        loop: hold
+  gm_conduit_corner:
+    name: 마력 도관 (코너)
+    category: B
+    element: mana
+    width: 0.5
+    height: 0.4
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 0.6
+        loop: hold
+      active:
+        length: 1.0
+        loop: loop
+      deactivate:
+        length: 0.5
+        loop: hold
+  gm_conduit_straight:
+    name: 마력 도관 (직선)
+    category: B
+    element: mana
+    width: 0.5
+    height: 0.4
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 0.6
+        loop: hold
+      active:
+        length: 1.0
+        loop: loop
+      deactivate:
+        length: 0.5
+        loop: hold
+  gm_conduit_tee:
+    name: 마력 도관 (분기)
+    category: B
+    element: mana
+    width: 0.5
+    height: 0.4
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 0.6
+        loop: hold
+      active:
+        length: 1.0
+        loop: loop
+      deactivate:
+        length: 0.5
+        loop: hold
+  gm_element_fragment_dark:
+    name: 원소 조각 (어둠)
+    category: D
+    element: dark
+    width: 0.5
+    height: 0.8
+    animations:
+      spawn:
+        length: 1.0
+        loop: once
+      idle:
+        length: 3.0
+        loop: loop
+      pickup:
+        length: 0.8
+        loop: hold
+  gm_element_fragment_earth:
+    name: 원소 조각 (대지)
+    category: D
+    element: earth
+    width: 0.5
+    height: 0.8
+    animations:
+      spawn:
+        length: 1.0
+        loop: once
+      idle:
+        length: 3.0
+        loop: loop
+      pickup:
+        length: 0.8
+        loop: hold
+  gm_element_fragment_fire:
+    name: 원소 조각 (화염)
+    category: D
+    element: fire
+    width: 0.5
+    height: 0.8
+    animations:
+      spawn:
+        length: 1.0
+        loop: once
+      idle:
+        length: 3.0
+        loop: loop
+      pickup:
+        length: 0.8
+        loop: hold
+  gm_element_fragment_light:
+    name: 원소 조각 (빛)
+    category: D
+    element: light
+    width: 0.5
+    height: 0.8
+    animations:
+      spawn:
+        length: 1.0
+        loop: once
+      idle:
+        length: 3.0
+        loop: loop
+      pickup:
+        length: 0.8
+        loop: hold
+  gm_element_fragment_water:
+    name: 원소 조각 (물)
+    category: D
+    element: water
+    width: 0.5
+    height: 0.8
+    animations:
+      spawn:
+        length: 1.0
+        loop: once
+      idle:
+        length: 3.0
+        loop: loop
+      pickup:
+        length: 0.8
+        loop: hold
+  gm_element_fragment_wind:
+    name: 원소 조각 (바람)
+    category: D
+    element: wind
+    width: 0.5
+    height: 0.8
+    animations:
+      spawn:
+        length: 1.0
+        loop: once
+      idle:
+        length: 3.0
+        loop: loop
+      pickup:
+        length: 0.8
+        loop: hold
+  gm_element_monument_dark:
+    name: 원소 비석 (어둠)
+    category: A
+    element: dark
+    width: 0.8
+    height: 2.4
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 3.0
+        loop: loop
+      activate:
+        length: 1.2
+        loop: hold
+      active:
+        length: 1.5
+        loop: loop
+      deactivate:
+        length: 1.0
+        loop: hold
+  gm_element_monument_earth:
+    name: 원소 비석 (대지)
+    category: A
+    element: earth
+    width: 0.8
+    height: 2.4
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 3.0
+        loop: loop
+      activate:
+        length: 1.2
+        loop: hold
+      active:
+        length: 1.5
+        loop: loop
+      deactivate:
+        length: 1.0
+        loop: hold
+  gm_element_monument_fire:
+    name: 원소 비석 (화염)
+    category: A
+    element: fire
+    width: 0.8
+    height: 2.4
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 3.0
+        loop: loop
+      activate:
+        length: 1.2
+        loop: hold
+      active:
+        length: 1.5
+        loop: loop
+      deactivate:
+        length: 1.0
+        loop: hold
+  gm_element_monument_light:
+    name: 원소 비석 (빛)
+    category: A
+    element: light
+    width: 0.8
+    height: 2.4
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 3.0
+        loop: loop
+      activate:
+        length: 1.2
+        loop: hold
+      active:
+        length: 1.5
+        loop: loop
+      deactivate:
+        length: 1.0
+        loop: hold
+  gm_element_monument_water:
+    name: 원소 비석 (물)
+    category: A
+    element: water
+    width: 0.8
+    height: 2.4
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 3.0
+        loop: loop
+      activate:
+        length: 1.2
+        loop: hold
+      active:
+        length: 1.5
+        loop: loop
+      deactivate:
+        length: 1.0
+        loop: hold
+  gm_element_monument_wind:
+    name: 원소 비석 (바람)
+    category: A
+    element: wind
+    width: 0.8
+    height: 2.4
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 3.0
+        loop: loop
+      activate:
+        length: 1.2
+        loop: hold
+      active:
+        length: 1.5
+        loop: loop
+      deactivate:
+        length: 1.0
+        loop: hold
+  gm_fire_brazier:
+    name: 원소 화로
+    category: A
+    element: fire
+    width: 0.8
+    height: 2.0
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.0
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      deactivate:
+        length: 1.0
+        loop: hold
+  gm_floating_platform:
+    name: 부유 발판
+    category: C
+    element: wind
+    width: 1.8
+    height: 0.6
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.5
+        loop: hold
+      active:
+        length: 3.0
+        loop: loop
+      deactivate:
+        length: 1.5
+        loop: hold
+  gm_fragment_altar:
+    name: 조각 받침 제단
+    category: D
+    element: mana
+    width: 1.4
+    height: 1.4
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.6
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      insert_fire:
+        length: 0.6
+        loop: hold
+      insert_wind:
+        length: 0.6
+        loop: hold
+      insert_water:
+        length: 0.6
+        loop: hold
+      insert_earth:
+        length: 0.6
+        loop: hold
+      insert_light:
+        length: 0.6
+        loop: hold
+      insert_dark:
+        length: 0.6
+        loop: hold
+  gm_fragment_cache_dark:
+    name: 숨겨진 조각 보관함 (어둠)
+    category: D
+    element: dark
+    width: 0.8
+    height: 0.9
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.6
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+  gm_fragment_cache_earth:
+    name: 숨겨진 조각 보관함 (대지)
+    category: D
+    element: earth
+    width: 0.8
+    height: 0.9
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.6
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+  gm_fragment_cache_fire:
+    name: 숨겨진 조각 보관함 (화염)
+    category: D
+    element: fire
+    width: 0.8
+    height: 0.9
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.6
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+  gm_fragment_cache_light:
+    name: 숨겨진 조각 보관함 (빛)
+    category: D
+    element: light
+    width: 0.8
+    height: 0.9
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.6
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+  gm_fragment_cache_water:
+    name: 숨겨진 조각 보관함 (물)
+    category: D
+    element: water
+    width: 0.8
+    height: 0.9
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.6
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+  gm_fragment_cache_wind:
+    name: 숨겨진 조각 보관함 (바람)
+    category: D
+    element: wind
+    width: 0.8
+    height: 0.9
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.6
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+  gm_ice_seal:
+    name: 얼음 봉인 결정
+    category: A
+    element: fire
+    width: 1.0
+    height: 1.6
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.6
+        loop: hold
+      active:
+        length: 3.0
+        loop: loop
+  gm_light_bridge:
+    name: 빛의 다리
+    category: C
+    element: light
+    width: 1.0
+    height: 0.4
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.2
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      deactivate:
+        length: 0.9
+        loop: hold
+  gm_light_receiver:
+    name: 빛 수신 수정
+    category: A
+    element: light
+    width: 0.8
+    height: 1.8
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.0
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      deactivate:
+        length: 1.0
+        loop: hold
+  gm_logic_altar:
+    name: 논리 받침대 (AND)
+    category: B
+    element: mana
+    width: 1.0
+    height: 1.6
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.2
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      deactivate:
+        length: 1.0
+        loop: hold
+      in_1:
+        length: 0.4
+        loop: hold
+      in_2:
+        length: 0.4
+        loop: hold
+      in_3:
+        length: 0.4
+        loop: hold
+  gm_mana_capacitor:
+    name: 마력 축전기
+    category: B
+    element: mana
+    width: 0.9
+    height: 1.9
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.2
+        loop: hold
+      active:
+        length: 1.5
+        loop: loop
+      deactivate:
+        length: 3.0
+        loop: hold
+  gm_mirror_cage:
+    name: 거울 감옥
+    category: E
+    element: light
+    width: 1.2
+    height: 2.2
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.6
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      deactivate:
+        length: 1.0
+        loop: hold
+  gm_pressure_plate:
+    name: 대지 압력판
+    category: A
+    element: earth
+    width: 1.0
+    height: 0.2
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 0.4
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      deactivate:
+        length: 0.6
+        loop: hold
+  gm_prism:
+    name: 프리즘
+    category: B
+    element: light
+    width: 0.8
+    height: 1.5
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.0
+        loop: hold
+      active:
+        length: 4.0
+        loop: loop
+  gm_rising_pillar:
+    name: 승강 석주
+    category: C
+    element: earth
+    width: 0.9
+    height: 3.0
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 2.0
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      deactivate:
+        length: 2.0
+        loop: hold
+  gm_rotary_dial:
+    name: 회전 다이얼
+    category: A
+    element: mana
+    width: 1.0
+    height: 1.0
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 0.8
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      turn:
+        length: 0.5
+        loop: once
+      pos_0:
+        length: 0.5
+        loop: hold
+      pos_1:
+        length: 0.5
+        loop: hold
+      pos_2:
+        length: 0.5
+        loop: hold
+      pos_3:
+        length: 0.5
+        loop: hold
+  gm_rotating_mirror:
+    name: 회전 반사 거울
+    category: B
+    element: light
+    width: 0.9
+    height: 1.5
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 0.5
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      turn:
+        length: 0.5
+        loop: once
+      rot_0:
+        length: 0.5
+        loop: hold
+      rot_1:
+        length: 0.5
+        loop: hold
+      rot_2:
+        length: 0.5
+        loop: hold
+      rot_3:
+        length: 0.5
+        loop: hold
+  gm_seal_door:
+    name: 봉인문 (대형 3x4)
+    category: C
+    element: mana
+    width: 3.0
+    height: 4.0
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 2.2
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      deactivate:
+        length: 1.2
+        loop: hold
+  gm_seal_door_small:
+    name: 봉인문 (소형 2x3)
+    category: C
+    element: mana
+    width: 2.0
+    height: 3.0
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 2.2
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      deactivate:
+        length: 1.2
+        loop: hold
+  gm_sealed_chest_dark:
+    name: 봉인 보물상자 (어둠)
+    category: C
+    element: dark
+    width: 0.9
+    height: 0.9
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.6
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+  gm_sealed_chest_earth:
+    name: 봉인 보물상자 (대지)
+    category: C
+    element: earth
+    width: 0.9
+    height: 0.9
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.6
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+  gm_sealed_chest_fire:
+    name: 봉인 보물상자 (화염)
+    category: C
+    element: fire
+    width: 0.9
+    height: 0.9
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.6
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+  gm_sealed_chest_light:
+    name: 봉인 보물상자 (빛)
+    category: C
+    element: light
+    width: 0.9
+    height: 0.9
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.6
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+  gm_sealed_chest_water:
+    name: 봉인 보물상자 (물)
+    category: C
+    element: water
+    width: 0.9
+    height: 0.9
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.6
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+  gm_sealed_chest_wind:
+    name: 봉인 보물상자 (바람)
+    category: C
+    element: wind
+    width: 0.9
+    height: 0.9
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.6
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+  gm_shadow_candelabra:
+    name: 그림자 촛대
+    category: A
+    element: dark
+    width: 0.8
+    height: 1.9
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 1.5
+        loop: loop
+      activate:
+        length: 1.2
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      deactivate:
+        length: 1.0
+        loop: hold
+  gm_sleeping_statue:
+    name: 잠든 석상
+    category: A
+    element: dark
+    width: 0.9
+    height: 1.8
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.6
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      deactivate:
+        length: 1.2
+        loop: hold
+  gm_sluice_gate:
+    name: 물길 수문
+    category: C
+    element: water
+    width: 1.2
+    height: 1.6
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.8
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      deactivate:
+        length: 1.5
+        loop: hold
+  gm_spirit_lantern:
+    name: 영혼 등불
+    category: D
+    element: fire
+    width: 0.5
+    height: 0.9
+    animations:
+      spawn:
+        length: 0.8
+        loop: once
+      idle:
+        length: 1.2
+        loop: loop
+      extinguish:
+        length: 0.8
+        loop: hold
+      relight:
+        length: 0.8
+        loop: hold
+  gm_splitter_crystal:
+    name: 분배 수정
+    category: B
+    element: mana
+    width: 0.9
+    height: 1.7
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 0.8
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      deactivate:
+        length: 1.0
+        loop: hold
+  gm_steam_valve:
+    name: 증기 밸브
+    category: E
+    element: mana
+    width: 1.0
+    height: 2.0
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.5
+        loop: hold
+      active:
+        length: 0.6
+        loop: loop
+      deactivate:
+        length: 1.5
+        loop: hold
+      fire_in:
+        length: 0.6
+        loop: hold
+      water_in:
+        length: 0.6
+        loop: hold
+  gm_sundial:
+    name: 해시계 석판
+    category: A
+    element: light
+    width: 1.0
+    height: 0.6
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 0.8
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      point_n:
+        length: 0.8
+        loop: hold
+      point_e:
+        length: 0.8
+        loop: hold
+      point_s:
+        length: 0.8
+        loop: hold
+      point_w:
+        length: 0.8
+        loop: hold
+  gm_switch_lever:
+    name: 스위치 레버
+    category: A
+    element: mana
+    width: 0.7
+    height: 1.1
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 0.45
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      deactivate:
+        length: 0.45
+        loop: hold
+  gm_teleport_gate:
+    name: 원소 텔레포트 게이트
+    category: C
+    element: mana
+    width: 2.0
+    height: 3.2
+    animations:
+      spawn:
+        length: 1.6
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.4
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      deactivate:
+        length: 0.8
+        loop: hold
+  gm_timed_door:
+    name: 시간차 문 (내리닫이)
+    category: E
+    element: mana
+    width: 2.0
+    height: 3.2
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.2
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      deactivate:
+        length: 4.0
+        loop: hold
+  gm_twin_resonance:
+    name: 쌍둥이 공명석
+    category: E
+    element: mana
+    width: 0.8
+    height: 2.0
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.2
+        loop: hold
+      active:
+        length: 0.6
+        loop: loop
+      hit:
+        length: 0.8
+        loop: once
+  gm_vine_pot:
+    name: 씨앗 화분
+    category: A
+    element: earth
+    width: 0.8
+    height: 2.8
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 2.0
+        loop: hold
+      active:
+        length: 3.0
+        loop: loop
+      deactivate:
+        length: 1.2
+        loop: hold
+  gm_water_pillar:
+    name: 수위 기둥
+    category: A
+    element: water
+    width: 0.8
+    height: 2.0
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.0
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+      deactivate:
+        length: 1.0
+        loop: hold
+      level_1:
+        length: 0.8
+        loop: hold
+      level_2:
+        length: 0.8
+        loop: hold
+      level_3:
+        length: 0.8
+        loop: hold
+  gm_water_wheel:
+    name: 물레방아
+    category: A
+    element: water
+    width: 1.6
+    height: 1.8
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.5
+        loop: hold
+      active:
+        length: 3.0
+        loop: loop
+      deactivate:
+        length: 2.0
+        loop: hold
+  gm_wind_bell:
+    name: 바람 종
+    category: A
+    element: wind
+    width: 1.2
+    height: 2.0
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.6
+        loop: hold
+      active:
+        length: 2.0
+        loop: loop
+  gm_wind_turbine:
+    name: 풍차 터빈
+    category: A
+    element: wind
+    width: 0.8
+    height: 2.6
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.5
+        loop: hold
+      active:
+        length: 1.0
+        loop: loop
+      deactivate:
+        length: 2.0
+        loop: hold
+  gm_wind_vent:
+    name: 바람 분출구
+    category: C
+    element: wind
+    width: 1.0
+    height: 0.3
+    animations:
+      spawn:
+        length: 1.2
+        loop: once
+      idle:
+        length: 2.0
+        loop: loop
+      activate:
+        length: 1.0
+        loop: hold
+      active:
+        length: 0.5
+        loop: loop
+      deactivate:
+        length: 1.5
+        loop: hold

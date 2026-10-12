@@ -1,0 +1,79 @@
+# 차카데미 던전 퍼즐 설정
+# 기믹을 소환한 뒤 "/기믹 노드 <퍼즐> <노드>" 로 연결한다. 한 노드에 기믹 여러 개를 연결해도 된다.
+# 파일을 고친 뒤 /기믹 리로드. 이 파일 외에 plugins/ChacaGimmick/puzzles/*.yml 도 읽는다.
+#
+# ── 노드 옵션 ─────────────────────────────────────────────────────────────
+#  turn-on: [트리거..]   켜는 트리거        turn-off: [트리거..]   끄는 트리거
+#  toggle:  [트리거..]   누를 때마다 켜기/끄기
+#  while:   [stand]      누군가 밟고 있는 동안만 켜짐
+#    트리거: magic:fire  magic:wind  magic:water  magic:earth  magic:light  magic:dark  magic:any
+#            interact(우클릭)  attack(좌클릭)  stand(밟기 시작)
+#    (주의) on: / off: 는 YAML 에서 참/거짓으로 읽히므로 키 이름은 turn-on / turn-off 를 쓴다.
+#  hold: 초        켜진 뒤 이 시간이 지나면 저절로 꺼짐 (0 = 계속)
+#  cooldown: 초    같은 노드에 트리거가 연달아 들어올 때 무시하는 시간 (기본 0.5)
+#  latch: true     한 번 켜지면 초기화 전까지 계속 켜짐 (문, 보상)
+#  when: "식"      다른 노드들로 켜짐이 결정되는 출력 노드. 식은 꼭 따옴표로 감싼다
+#      all(a,b,..)  any(a,b,..)  not(a)  count(2,a,b,c)
+#      seq(a,b,c)        이 순서대로 켜야 함 (틀리면 a,b,c 모두 꺼짐)
+#      sync(1.0,a,b)     a,b 가 1초 안에 모두 켜져야 함 (협동)
+#  collect: {아이템id: 애니메이션}  아이템을 들고 우클릭해 넣음. 전부 넣으면 켜짐.
+#      아이템 id 는 ItemsAdder 면 "네임스페이스:id", 일반 아이템이면 "minecraft:diamond"
+#  anim-on / anim-off: 켜질 때/꺼질 때 재생할 애니메이션 (기본 activate→active / deactivate→idle)
+#  solid: {width: 3, height: 4, depth: 1, up: 0, forward: 0, when: off}
+#      그 상태일 때 기믹 자리에 투명 방벽 블록을 세움 (문은 when: off, 다리·석주는 when: on)
+#  teleport: 노드이름   켜져 있을 때 들어가거나 우클릭하면 그 노드의 기믹 앞으로 이동
+#  command-on / command-off: ["콘솔 명령 {player}"]   message: "켜질 때 주변에 보일 문구"
+#  퍼즐 옵션 persist: false  면 서버 재시작 때 상태를 저장하지 않음 (기본 저장)
+
+puzzles:
+
+  # 예시 1: 화로 두 개에 불을 붙이면 문이 열린다 (물·바람이 닿으면 화로가 꺼짐)
+  example_fire_gate:
+    nodes:
+      brazier_left:
+        turn-on: [magic:fire]
+        turn-off: [magic:water, magic:wind]
+      brazier_right:
+        turn-on: [magic:fire]
+        turn-off: [magic:water, magic:wind]
+      door:
+        when: "all(brazier_left, brazier_right)"
+        latch: true
+        solid: {width: 3, height: 4, depth: 1, when: off}
+        message: "봉인문이 열렸다!"
+
+  # 예시 2: 바람 종 세 개를 정해진 순서로 울리기 (10초 안에)
+  example_bells:
+    nodes:
+      bell_1: {turn-on: [magic:wind], hold: 10}
+      bell_2: {turn-on: [magic:wind], hold: 10}
+      bell_3: {turn-on: [magic:wind], hold: 10}
+      chest: {when: "seq(bell_1, bell_2, bell_3)", latch: true}
+
+  # 예시 3: 협동 - 쌍둥이 공명석 두 개를 1초 안에 동시에 맞히면 다리가 생긴다
+  example_twin:
+    nodes:
+      stone_a: {turn-on: [magic:any], hold: 1, anim-on: hit}
+      stone_b: {turn-on: [magic:any], hold: 1, anim-on: hit}
+      bridge:
+        when: "sync(1.0, stone_a, stone_b)"
+        latch: true
+        solid: {width: 1, height: 1, depth: 2, when: on}
+
+  # 예시 4: 레버 + 압력판 (한 명은 밟고 있고, 한 명이 레버를 당겨야 열림)
+  example_lever_plate:
+    nodes:
+      lever: {toggle: [interact, magic:any]}
+      plate: {while: [stand]}
+      gate: {when: "all(lever, plate)", solid: {width: 3, height: 3, depth: 1, when: off}}
+
+  # 예시 5: 원소 조각 모으기 → 텔레포트 게이트
+  example_fragments:
+    nodes:
+      altar:
+        collect:
+          "chacademi:fragment_fire": insert_fire
+          "chacademi:fragment_water": insert_water
+          "chacademi:fragment_wind": insert_wind
+      gate_in: {when: "altar", teleport: gate_out}
+      gate_out: {when: "altar"}

@@ -1,0 +1,6 @@
+commands:
+  ch1-3:
+    - "컷신 재생 {player} test"
+    - "say hello"
+  ch1-1:
+    - "say test"

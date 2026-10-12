@@ -64,6 +64,9 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
         var result=dialogue
                 ? kr.chacademy.cutscene.data.ContentReload.validate(DialogueLoader.rootDir(),"dialogue.yml",DialogueLoader::load)
                 : kr.chacademy.cutscene.data.ContentReload.validate(CutsceneLoader.rootDir(),"cutscene.yml",CutsceneLoader::load);
+        if(dialogue)for(String id:result.validIds())try{
+            for(String warning:DialogueLoader.warnings(DialogueLoader.rootDir(),id))feedback.accept(Component.literal(id+": "+warning).withStyle(ChatFormatting.YELLOW));
+        }catch(java.io.IOException e){feedback.accept(Component.literal(id+": "+e.getMessage()).withStyle(ChatFormatting.RED));}
         refreshIds();sendCatalog();
         feedback.accept(Component.literal((dialogue?"스토리 대화":"컷신")+" 리로드: 정상 "+result.validIds().size()+"개, 오류 "+result.errors().size()+"개.")
                 .withStyle(result.errors().isEmpty()?ChatFormatting.GREEN:ChatFormatting.RED));
@@ -76,6 +79,15 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        PayloadTypeRegistry.playS2C().register(CutscenePackets.ReloadRequestS2C.TYPE,CutscenePackets.ReloadRequestS2C.CODEC);
+        PayloadTypeRegistry.playC2S().register(CutscenePackets.ReloadResultC2S.TYPE,CutscenePackets.ReloadResultC2S.CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(CutscenePackets.ReloadRequestS2C.TYPE,(payload,context)->context.client().execute(()->{
+            java.util.function.Consumer<Component> feedback=message->{if(context.client().player!=null)context.client().player.displayClientMessage(message,false);};
+            int failures=0;
+            if(reloadContent(CutscenePackets.KIND_DIALOGUE,feedback)==0)failures++;
+            if(reloadContent(CutscenePackets.KIND_CUTSCENE,feedback)==0)failures++;
+            if(ClientPlayNetworking.canSend(CutscenePackets.ReloadResultC2S.TYPE))ClientPlayNetworking.send(new CutscenePackets.ReloadResultC2S(payload.token(),failures));
+        }));
         PayloadTypeRegistry.playS2C().register(CutscenePackets.DialogueSessionS2C.TYPE,CutscenePackets.DialogueSessionS2C.CODEC);
         PayloadTypeRegistry.playC2S().register(CutscenePackets.DialogueSessionSignalC2S.TYPE,CutscenePackets.DialogueSessionSignalC2S.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(CutscenePackets.DialogueSessionS2C.TYPE,(payload,context)->{
@@ -258,6 +270,7 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
         var client=Minecraft.getInstance();if(client.player==null)return;
         try {
             var dialogue=DialogueLoader.load(id);
+            for(String warning:DialogueLoader.warnings(DialogueLoader.rootDir(),id))client.player.displayClientMessage(Component.literal(id+": "+warning).withStyle(ChatFormatting.YELLOW),false);
             var ledger=new kr.chacademy.story.dialogue.LocalDialogueStore(DialogueLoader.rootDir().resolve("_progress").resolve(client.player.getUUID()+".properties"));
             var signals=new kr.chacademy.story.dialogue.DialogueOpenSignals();
             var localVars=TextVars.withLocal(vars);

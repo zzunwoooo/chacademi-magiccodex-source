@@ -77,6 +77,7 @@ final class BoltMech extends Mech {
                         b.breakNaturally();
                     } else if (!turnBack()) { burst(); return false; } else continue;
                 }
+                if (!MagicImpactEvent.fire(c.caster(), p.s("element", ""), pos, radius, MagicImpactEvent.Kind.BOLT)) { burst(); return false; }
                 for (Entity e : pos.getWorld().getNearbyEntities(pos, radius + 1, radius + 1, radius + 1)) {
                     if (hit.contains(e.getUniqueId()) || !plugin.targets().enemy(c.caster(), e)) continue;
                     if (Targets.closestDistance(e, pos) > radius) continue;

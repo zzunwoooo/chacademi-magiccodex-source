@@ -171,6 +171,16 @@ public final class CutscenePackets {
                 ByteBufCodecs.stringUtf8(8320),CatalogC2S::cutscenes,ByteBufCodecs.stringUtf8(8320),CatalogC2S::dialogues,CatalogC2S::new);
         @Override public Type<? extends CustomPacketPayload> type(){return TYPE;}
     }
+    public record ReloadRequestS2C(String token) implements CustomPacketPayload {
+        public static final Type<ReloadRequestS2C> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath(NAMESPACE,"story_reload_request"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,ReloadRequestS2C> CODEC=StreamCodec.composite(SHORT_STRING,ReloadRequestS2C::token,ReloadRequestS2C::new);
+        @Override public Type<? extends CustomPacketPayload> type(){return TYPE;}
+    }
+    public record ReloadResultC2S(String token,int failures) implements CustomPacketPayload {
+        public static final Type<ReloadResultC2S> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath(NAMESPACE,"story_reload_result"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,ReloadResultC2S> CODEC=StreamCodec.composite(SHORT_STRING,ReloadResultC2S::token,ByteBufCodecs.VAR_INT,ReloadResultC2S::failures,ReloadResultC2S::new);
+        @Override public Type<? extends CustomPacketPayload> type(){return TYPE;}
+    }
     public record ReloadS2C(int kind) implements CustomPacketPayload {
         public static final Type<ReloadS2C> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath(NAMESPACE,"story_reload"));
         public static final StreamCodec<RegistryFriendlyByteBuf,ReloadS2C> CODEC=StreamCodec.composite(ByteBufCodecs.VAR_INT,ReloadS2C::kind,ReloadS2C::new);
