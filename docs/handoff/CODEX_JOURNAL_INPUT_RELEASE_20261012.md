@@ -1,6 +1,6 @@
 # Journal, shared notices, mouse keys and target/wildlife release - 2026-10-12
 
-Status: final source and hosting builds ready; combined deployment recorded below when complete. Built on c3736109c8d4456e8562e83d470401df571d1e69 without discarding its working changes. This supersedes CODEX_UI_PREPARATION_20261012.md and its missing-asset blocker.
+Status: deployed together to school/wild and personal UI/Story on 2026-10-12. Source release938256b57cd542890009336fa11c54d6e83b8c6f. Built on c3736109c8d4456e8562e83d470401df571d1e69 without discarding its working changes. This supersedes CODEX_UI_PREPARATION_20261012.md and its missing-asset blocker.
 
 ## Behavior
 
@@ -49,3 +49,13 @@ IMPORTANT visual limitation: the isolated hosting Minecraft run compiled, but ex
 - Use existing permitted combat spells against animal/custom mob/survival player, and NPC/protected-region refusal. Existing pet damage protection is still expected. Compare newly spawned ground wildlife and rare stats; riding pets still fly. Do not bulk-kill existing creatures to validate.
 
 No launcher application/feed/release, inventory UI, broom code, dungeon models, paid API calls or key changes are included. Server and personal mod replacements require fresh process checks and normal targeted maintenance; no forced stop. Runtime progress and all existing config/DB files must be preserved during rollback.
+
+## Deployment verification
+
+User-authorized combined maintenance completed on2026-10-12. Fresh list results at host21:53:43 showed0 players on both backends. Exact Stop-Network.ps1 -Server school/wild completed normal shutdown; no forced kill, all-network Stop or Velocity restart. Verified backups: C:/Chacademi/backups/journal-input-targets-20261012-task5 (old Bridge/MagicMythic JARs and wild YAML for each backend; backup-manifest.json). Replaced only those two JARs and mobs/chacademia_custom_wild.yml per backend. skills, pets, player/progress data and other runtime settings were not replaced. Pet YAML SHA256 before/after is identical: fe2c89ad2f0074baf6ab0e124761941f74d7acd8403611c2a884351f54a7dc22.
+
+Both backends logged new Bridge runtime.1-journal.1 and MagicMythic targets.1 enable, plus Spell gameplay runtime ready:89 routes; catalog=true at21:59:50. Story server0.1.3 remained unchanged and enabled at21:59:52. Done: school21:59:56, wild21:59:54. SchoolPID10504/listening127.0.0.1:25566; wildPID12740/listening127.0.0.1:25567. VelocityPID7552/listening25565 unchanged. No new related plugin-enable error observed. Startup is not full player gameplay validation.
+
+Personal Minecraft/Java and launcher window/process checks were empty immediately before replacement. Installed exactly the UI input.1-journal.1 and personal Story0.1.3-journal.1 JARs listed in the artifact manifest; installed hashes match. Old two JARs preserved at task-5/journal-integrated-personal-backup-20261012 with manifest.json. Client game and launcher were not started or closed. Existing private Story source hash256b703b3ec5293f701c901ab9ebde8e6eb1970dfb3fffce60c12617fbb4b6e8 matched the prior host private artifact; all8 assets were preserved byte-for-byte. No launcher/feed change: future launcher FullRepair may restore its older distributed mods.
+
+Rollback: after fresh process/player checks and authorized normal maintenance, restore the two backed-up backend JARs and exact wild YAML, remove only this release's new JAR filenames, and restore the two personal JARs while the game is closed. Do not restore old player/DB/progress files or erase new journal values. Keep runtime-generated progress when reverting binaries. The new local journal.* metadata requires a journal-aware Story build: reverting to the pre-journal mod blindly can reject the extended progress file; export/preserve current records and prepare compatible code before such a downgrade. No automatic rollback of user records is authorized.

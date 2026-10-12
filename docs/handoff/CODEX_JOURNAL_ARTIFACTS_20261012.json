@@ -59,5 +59,7 @@
       "errors": 0,
       "skipped": 0
     }
-  }
+  },
+  "release_source": "938256b57cd542890009336fa11c54d6e83b8c6f",
+  "deployed": true
 }

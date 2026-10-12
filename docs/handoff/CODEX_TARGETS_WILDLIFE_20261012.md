@@ -1,6 +1,6 @@
 # Attack targets and grounded rare wildlife - 2026-10-12
 
-Status: built and tested; NOT deployed. Base deployed commit: 0673e80.
+Status: deployed with the [combined journal/input release](CODEX_JOURNAL_INPUT_RELEASE_20261012.md) on2026-10-12. Original preparation base:0673e80.
 
 ## Attack targets
 Targets.enemy now accepts all valid living gameplay entities, including animals, custom mobs, tamed animals and MCPets. Self, dead/invalid entities, NPC metadata/tag, armor stands and creative/spectator players are excluded. Legacy pvp-worlds and configurable pet/prefix deny lists no longer gate combat. WorldGuard chacademi-magic, region PvP deny, invincibility and damage event cancellation remain authoritative.

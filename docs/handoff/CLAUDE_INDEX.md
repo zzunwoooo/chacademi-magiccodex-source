@@ -1,4 +1,4 @@
-> Latest combined release preparation: [Journal, shared notices, mouse keys and target/wildlife](CODEX_JOURNAL_INPUT_RELEASE_20261012.md). Hosting630 tests passed; real game render blocked by hosting graphics startup. Deployment status is recorded in that handoff. This supersedes old UI asset/preparation blockers.
+> Deployed 2026-10-12: [Unified journal, shared notices, mouse keys and target/wildlife release](CODEX_JOURNAL_INPUT_RELEASE_20261012.md). Source938256b; hosting630 tests passed; school/wild and personal mods verified. Real game visual acceptance remains pending because hosting graphics initialization failed. This supersedes earlier preparation-only notices below.
 
 > 2026-10-12 prepared, not deployed: [attack targets / grounded rare wildlife](CODEX_TARGETS_WILDLIFE_20261012.md). UI/input work is separate.
 
