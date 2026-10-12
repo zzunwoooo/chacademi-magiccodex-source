@@ -27,10 +27,12 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private ShopAdminBridge shopAdmin;
     private ManaBridge mana;
     private SpellRuntime spellRuntime;
+    private final Set<String> missingRuntimeRoutes = new java.util.HashSet<>();
     Boolean runtimeCast(Player player,String id){
         if(!MagicProtectionLink.cast(player)){player.sendMessage("이 구역에서는 마법을 사용할 수 없습니다.");return false;}
         // Gameplay route first: a refused target must not show a visual or keep the charge.
         SpellRuntime.Plan plan=spellRuntime==null?null:spellRuntime.prepare(player,id);
+        if(plan==null&&missingRuntimeRoutes.add(id))getLogger().warning("No gameplay runtime route for "+id+"; using existing VFX/command fallback.");
         return CatalogGameplayFlow.cast(plan==null||plan.ok(),plan!=null,
             ()->CatalogVfxLink.cast(this,player,id),()->spellRuntime.execute(player,plan),
             failure->getLogger().warning("마법 실행 실패: "+id+" / "+failure.getClass().getSimpleName()));
@@ -144,7 +146,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         try{dialogues=new DialogueBridge(this);}catch(Exception error){getLogger().severe("대화 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
         try{npcSocial=new NpcSocialService(this);}catch(Exception error){npcSocial=null;getLogger().warning("NPC 호감도 초기화 실패 (AI NPC 연결 없이 계속): "+error.getMessage());}
         try{titles=new TitleBridge(this);}catch(Exception error){getLogger().severe("칭호 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
-        if(!mana.isCatalogMode()&&getServer().getPluginManager().isPluginEnabled("MythicMobs"))try{spellRuntime=new SpellRuntime(this);}catch(Exception error){getLogger().severe("마법 실행 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
+        if(getServer().getPluginManager().isPluginEnabled("MythicMobs"))try{spellRuntime=new SpellRuntime(this);getLogger().info("Spell gameplay runtime ready: "+spellRuntime.routeCount()+" routes; catalog="+mana.isCatalogMode());}catch(Exception error){getLogger().severe("마법 실행 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
+        if(spellRuntime==null)getLogger().warning("Spell gameplay runtime unavailable: MythicMobs is not enabled; existing fallback routes remain active.");
         mana.bindSpellCommand();
         try { mailbox=new MailboxBridge(this); shops=new ShopBridge(this); shopAdmin=new ShopAdminBridge(this); } catch(Exception e) { getLogger().severe("Mailbox initialization failed: "+e.getClass().getSimpleName()); getServer().getPluginManager().disablePlugin(this); return; }
         new AdminCommandBridge(this,mana,school,enhancement,appraisal,titles,npcSocial);

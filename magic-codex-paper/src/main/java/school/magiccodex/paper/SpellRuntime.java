@@ -19,6 +19,7 @@ final class SpellRuntime implements CommandExecutor,TabCompleter,AutoCloseable {
         plugin.getCommand("마법").setExecutor(this);plugin.getCommand("마법").setTabCompleter(this);
         plugin.getCommand("마법관리").setExecutor(this);plugin.getCommand("마법관리").setTabCompleter(this);
     }
+    int routeCount(){return rules.size();}
     private void reload()throws Exception{var next=SpellRules.load(new File(plugin.getDataFolder(),"spell-runtime.yml"));rules=next;utility.reloadRecipes();}
     private static boolean enemy(Entity entity){
         return entity instanceof Monster||entity instanceof Slime||entity instanceof Ghast||entity instanceof Phantom||entity instanceof Shulker||entity instanceof EnderDragon;

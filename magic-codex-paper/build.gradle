@@ -1,6 +1,6 @@
 plugins { id 'java' }
 group = 'school.magiccodex'
-version = '0.30.0-catalog.alpha.1-chat.3-discovery.2-holytaming.1-partyhud.3-taming.1'
+version = '0.30.0-catalog.alpha.1-chat.3-discovery.2-holytaming.1-partyhud.3-taming.1-runtime.1'
 base { archivesName = 'magic-codex-bridge' }
 repositories {
     if (findProperty('localDependencyRepo')) maven { url = uri(property('localDependencyRepo')) }
@@ -16,6 +16,8 @@ dependencies {
     implementation files('../magic-codex-database/lib/mariadb-java-client-3.5.10.jar')
     testImplementation 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
     testImplementation files('../libraries/org/xerial/sqlite-jdbc/3.47.2.0/sqlite-jdbc-3.47.2.0.jar')
+    testImplementation 'org.mockito:mockito-core:5.14.2'
+    testImplementation files('../plugins/MythicMobs-5.9.0.jar','../plugins/ModelEngine-4.0.8.jar','../plugins/PlaceholderAPI-2.11.6.jar')
     testImplementation platform('org.junit:junit-bom:5.11.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
