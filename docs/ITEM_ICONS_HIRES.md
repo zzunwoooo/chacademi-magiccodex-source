@@ -14,7 +14,6 @@
   - 모델 parent 체인이 `minecraft:item/generated`(또는 `item/handheld`, `builtin/generated`)로 끝남, `elements`·`display.gui` 없음
   - `layer0`만 있음, `.png.mcmeta`(애니메이션) 없음
   - 텍스처 한 변이 33~1024px
-  - 인챈트 반짝임(glint)이 없음
 - 처음 보이는 아이템 모델은 그 프레임만 바닐라로 그리고, 별도 스레드(`magiccodex-item-icons`)에서 JSON/PNG를 읽어 밉맵을 만든다. 업로드는 클라이언트 틱마다 최대 4개.
 - 리소스 리로드, 접속 해제, 종료 시 `UiResources.reset()`에서 함께 비운다.
 
@@ -41,3 +40,11 @@
   `.\magic-codex-fabric\gradlew.bat -p magic-codex-fabric test remapJar`
 - 실게임에서 볼 것: 인벤토리·핫바에서 128px 아이콘이 픽셀 격자 없이 매끈하게 보이는지, 바닐라 아이템은 그대로 픽셀인지, GUI 배율 2/3/4, 슬롯 하이라이트·개수 숫자가 아이콘 위에 오는지, 펫 화면 확대 아이템이 선명한지, 로그 `High-res item icons active`.
 - 믹스인은 `require = 0`: 매핑이 달라 주입이 안 되면 크래시 없이 바닐라로 남는다(로그 문구가 안 나오면 이 경우).
+
+## 반짝임(마법 부여) — 2026-10-12 추가
+
+- 이전에는 반짝임 아이템을 바닐라 16px 경로로 돌렸다. 이제 고해상도 아이콘을 그린 뒤 바닐라 `RenderLayer.getGlint()` 사각형을 같은 행렬, 같은 깊이로 덮는다.
+- 아이콘 셰이더는 알파 0.02 미만에서 discard하므로 깊이는 보이는 픽셀에만 기록된다. 반짝임 레이어는 깊이 EQUAL 테스트라, 반짝임이 아이콘 모양을 따라간다.
+- 반짝임 UV 폭은 `GLINT_UV = 0.03`이다. 바닐라 GLINT 텍스처링이 UV에 8을 곱한다.
+- 예외가 나면 반짝임만 끄고(`High-res item glint disabled` 로그) 아이콘은 유지한다.
+- Chacademi 서바이벌 인벤토리는 GUI 행렬만 키워서 `drawItem`을 호출한다. 그래서 같은 경로로 원본 128px 텍스처를 최종 크기에서 한 번만 샘플링한다(`docs/handoff/CLAUDE_SURVIVAL_INVENTORY_20261012.md`).

@@ -42,6 +42,10 @@ public final class UiResources {
             ItemTooltipRenderer.warm(cache);
             cache.prepareRegion(Identifier.of("magiccodex","textures/gui/school/house_points.png"),0,0,1672,941);
             cache.prepareRegion(Identifier.of("magiccodex","textures/gui/equipment/panel.png"),0,0,1672,941);
+            cache.prepareRegion(ChacaInventoryScreen.ORB,0,0,ChacaInventoryScreen.ORB_W,ChacaInventoryScreen.ORB_H);
+            cache.prepareRegion(ChacaInventoryScreen.CRYSTAL,0,0,ChacaInventoryScreen.CRYSTAL_W,ChacaInventoryScreen.CRYSTAL_H);
+            cache.prepareRegion(ChacaInventoryScreen.PEDESTAL,0,0,ChacaInventoryScreen.PEDESTAL_W,ChacaInventoryScreen.PEDESTAL_H);
+            cache.prepareRegion(ChacaInventoryScreen.BOOK,0,0,ChacaInventoryScreen.BOOK_W,ChacaInventoryScreen.BOOK_H);
             cache.endFrame();
         });
     }
