@@ -18,7 +18,7 @@ public final class SpellYamlLoader {
         public boolean success() { return errors.isEmpty(); }
     }
     public void installDefaults(Path directory) throws IOException {
-        if (Files.exists(directory)) return;
+        if (Files.exists(directory)) { migrateHolyTamingDefault(directory); return; }
         Files.createDirectories(directory);
         try (var stream = SpellYamlLoader.class.getResourceAsStream("/assets/magiccodex/default-spells/index.txt")) {
             if (stream == null) throw new IOException("기본 마법 목록을 찾지 못했습니다.");
@@ -28,6 +28,30 @@ public final class SpellYamlLoader {
                     Files.copy(file, directory.resolve(id + ".yml"));
                 }
             }
+        }
+    }
+    private void migrateHolyTamingDefault(Path directory) throws IOException {
+        Path file = directory.resolve("149_rainbow_collar.yml");
+        if (!Files.isRegularFile(file, LinkOption.NOFOLLOW_LINKS) || Files.size(file) > 65536) return;
+        String old = Files.readString(file, StandardCharsets.UTF_8).replace("\r\n", "\n");
+        String hash;
+        try { hash = HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256")
+                .digest(old.getBytes(StandardCharsets.UTF_8))); }
+        catch (java.security.NoSuchAlgorithmException impossible) { throw new AssertionError(impossible); }
+        if (!hash.equals("18e5cd85e558d04c239ec8eb86c2d589236d996fd77d9786c793076a7417ac47")) return;
+        try (var stream = SpellYamlLoader.class.getResourceAsStream("/assets/magiccodex/default-spells/149_rainbow_collar.yml")) {
+            if (stream == null) throw new IOException("Missing HolyTaming default");
+            byte[] updated = stream.readAllBytes();
+            Path backup = directory.resolve("149_rainbow_collar.yml.pre-holytaming.bak");
+            if (!Files.exists(backup)) Files.copy(file, backup);
+            Path temporary = Files.createTempFile(directory, "holytaming-", ".tmp");
+            try {
+                Files.write(temporary, updated);
+                try { Files.move(temporary, file, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING); }
+                catch (AtomicMoveNotSupportedException unsupported) {
+                    Files.move(temporary, file, StandardCopyOption.REPLACE_EXISTING);
+                }
+            } finally { Files.deleteIfExists(temporary); }
         }
     }
     public Result load(Path directory) {

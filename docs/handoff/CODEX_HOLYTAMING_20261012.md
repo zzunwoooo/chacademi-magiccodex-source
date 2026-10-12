@@ -12,7 +12,7 @@ Existing portrait Sunburst/Flare, Luna analysis/transparency, personal UI sizing
 
 ## Verification
 
-Hosting Java 21.0.10 only. 821 tests: 818 passed, 3 skipped, zero failures/errors. Module counts: mythic 15, bridge 289, discovery 34, Velocity party 30, Fabric UI 228, VFX Paper 128, VFX client 97 (3 skipped). HolyTaming fixture validates 8 systems, 146 layers and 14 textures. Nine missing pre-existing public sample textures were restored to enable the VFX client suite.
+Hosting Java 21.0.10 only. 823 tests: 820 passed, 3 skipped, zero failures/errors. Module counts: mythic 15, bridge 289, discovery 34, Velocity party 30, Fabric UI 230, VFX Paper 128, VFX client 97 (3 skipped). HolyTaming fixture validates 8 systems, 146 layers and 14 textures. Nine missing pre-existing public sample textures were restored to enable the VFX client suite.
 
 School and wild normal restart completed with no players; Velocity restarted normally. New bridge, discovery, mythic addon and VFX Paper plugins enabled; 96 VFX bindings, zero skipped; Mythic reload reports 375 skills. Existing SkeletalKnight warning remains; wild ItemsAdder output/generated.zip is missing. These are recorded separately from integration tests. Live player taming, WorldGuard boundary/OP/projectile scenarios and crash recovery remain acceptance tests to perform.
 
@@ -27,3 +27,7 @@ Public launcher v0.1.3 is the follow-on delivery target. Only authorized client 
 Administrator: /유저관리 <닉네임> 마법 조건지급 rainbow_collar. Verify one learned entry, mana 150, cooldown 60, successful pet persistence and failure behavior. Do not grant to a real account automatically.
 
 Verify protected-region refusal before effects, target protection during channel, normal success/failure VFX, owner disconnect cleanup, and original mob awareness/block state recovery. No quest 2-2 grant should occur.
+
+Client upgrade: only the exact previous bundled 149 default (normalized line endings) is backed up and migrated; customized catalog files remain untouched. Fresh installations still install the complete catalog. Two regression tests cover these paths.
+
+Console status commands in Korean could not be verified through the current supervisor input encoding; startup logs and English Mythic reload are verified instead.
