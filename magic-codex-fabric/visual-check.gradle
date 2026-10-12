@@ -64,3 +64,12 @@ if (project.hasProperty('playerTurnCheck')) {
         }
     }
 }
+
+if (project.hasProperty('journalCheck')) {
+    sourceSets.visualTest.java.setIncludes(['**/JournalVisualCheck.java'])
+    tasks.named('processVisualTestResources') {
+        filesMatching('fabric.mod.json') {
+            filter { line -> line.replace('school.magiccodex.visualtest.CodexVisualCheck', 'school.magiccodex.client.JournalVisualCheck') }
+        }
+    }
+}

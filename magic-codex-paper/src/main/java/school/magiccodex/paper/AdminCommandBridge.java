@@ -11,7 +11,7 @@ import school.magiccodex.protocol.SchoolProtocol;
 
 /** Administrator-only facade; every mutation delegates to the subsystem that owns its state. */
 final class AdminCommandBridge implements CommandExecutor,TabCompleter {
-    private static final List<String> USER_ACTIONS=List.of("스탯","마법","기숙사","호감도");
+    private static final List<String> USER_ACTIONS=List.of("스탯","마법","기숙사","호감도","퀘스트기록편집");
     private final MagicCodexBridge plugin;
     private final ManaBridge mana;
     private final SchoolBridge school;
@@ -43,11 +43,17 @@ final class AdminCommandBridge implements CommandExecutor,TabCompleter {
         return true;
     }
     private void user(CommandSender sender,String[] input){
+        if(input.length>0&&input[0].equals("\ud018\uc2a4\ud2b8\uae30\ub85d\ud3b8\uc9d1")){
+            for(int i=2;i<input.length;i++)if(JournalBridge.OPERATIONS.contains(input[i])){Player target=player(joined(input,1,i));plugin.journalBridge().command(sender,target,Arrays.copyOfRange(input,i,input.length));return;}
+            throw new IllegalArgumentException("/\uc720\uc800\uad00\ub9ac \ud018\uc2a4\ud2b8\uae30\ub85d\ud3b8\uc9d1 <\uc720\uc800> \uc870\ud68c|\ubd80\uc5ec|\uc9c4\ud589|\uc644\ub8cc|\ucd08\uae30\ud654 [source:id]");
+        }
+
         int index=userAction(input);
         if(input.length<=index)throw new IllegalArgumentException("/유저관리 <닉네임·영문계정> 스탯|마법|기숙사|호감도 ...");
         String action=input[index];allowed(sender,permission(action));Player target=player(joined(input,0,index));
         String[] args=Arrays.copyOfRange(input,index+1,input.length);
         switch(action){
+            case "퀘스트기록편집"->plugin.journalBridge().command(sender,target,args);
             case "스탯"->{
                 if(args.length!=3||!AdminCommandRules.STATS.contains(args[0]))throw new IllegalArgumentException("/유저관리 <유저> 스탯 현재마나|마나|마나회복|마법가속 설정|추가|감소 <수치>");
                 if(!plugin.playerStateReady(target))throw new IllegalArgumentException("캐릭터 정보를 불러오는 중입니다.");
@@ -89,7 +95,7 @@ final class AdminCommandBridge implements CommandExecutor,TabCompleter {
             default->throw new IllegalArgumentException("스탯, 마법, 기숙사, 호감도 중 선택해 주세요.");
         }
     }
-    private static String permission(String branch){return switch(branch){case "스탯"->"magiccodex.mana.admin";case "마법"->"magicdiscovery.admin";case "기숙사"->"magiccodex.school.admin";case "호감도"->"magiccodex.dialogue.admin";default->throw new IllegalArgumentException("스탯, 마법, 기숙사, 호감도 중 선택해 주세요.");};}
+    private static String permission(String branch){return switch(branch){case "퀘스트기록편집"->"magiccodex.quests.admin";case "스탯"->"magiccodex.mana.admin";case "마법"->"magicdiscovery.admin";case "기숙사"->"magiccodex.school.admin";case "호감도"->"magiccodex.dialogue.admin";default->throw new IllegalArgumentException("스탯, 마법, 기숙사, 호감도 중 선택해 주세요.");};}
     private void score(CommandSender sender,String[] args){
         allowed(sender,"magiccodex.school.admin");
         if(args.length<2||args.length>3||!AdminCommandRules.QUERIES.contains(args[1])||args[1].equals("조회")&&args.length!=2||!args[1].equals("조회")&&args.length!=3)throw new IllegalArgumentException("/점수관리 <기숙사> 조회 또는 추가|감소|설정 <점수>");
@@ -132,16 +138,24 @@ final class AdminCommandBridge implements CommandExecutor,TabCompleter {
     }
     private List<String> complete(CommandSender sender,String command,String[] args){
         String part=args[args.length-1];Collection<String> choices=List.of();
+        if(command.equals("\uc720\uc800\uad00\ub9ac")&&args[0].equals("\ud018\uc2a4\ud2b8\uae30\ub85d\ud3b8\uc9d1")){
+            allowed(sender,"magiccodex.quests.admin");int op=-1;for(int i=2;i<args.length-1;i++)if(JournalBridge.OPERATIONS.contains(args[i])){op=i;break;}
+            if(op>=0){Player target=player(joined(args,1,op));return AdminCommandRules.tailChoices(AdminCommandRules.catalogChoices(plugin.journalBridge().catalog(target)),args,op+1);}
+            for(int i=2;i<args.length;i++)if(plugin.names().resolve(joined(args,1,i))!=null)return AdminCommandRules.filter(JournalBridge.OPERATIONS,part);
+            return AdminCommandRules.tailChoices(players(),args,1);
+        }
+
         switch(command){
             case "유저관리"->{
                 List<String> branches=USER_ACTIONS.stream().filter(a->sender.hasPermission(permission(a))).toList();if(branches.isEmpty())return List.of();
-                if(args.length==1)choices=players();
+                if(args.length==1){var first=new ArrayList<>(players());if(sender.hasPermission("magiccodex.quests.admin"))first.add("\ud018\uc2a4\ud2b8\uae30\ub85d\ud3b8\uc9d1");choices=first;}
                 else{
                     int branch=userAction(args);if(plugin.names().resolve(joined(args,0,branch))==null)choices=AdminCommandRules.tailChoices(players(),args,0);
                     else if(args.length==branch+1)choices=branches;
                     else if(branch<args.length&&branches.contains(args[branch])){
                         int position=args.length-branch-1;String action=args[branch];
                         choices=switch(action){
+                            case "퀘스트기록편집"->position==1?JournalBridge.OPERATIONS:AdminCommandRules.tailChoices(AdminCommandRules.catalogChoices(plugin.journalBridge().catalog(player(joined(args,0,branch)))),args,branch+2);
                             case "스탯"->AdminCommandRules.statOptions(position);
                             case "기숙사"->position==1?SchoolProtocol.HOUSES:List.of();
                             case "마법"->position==1?List.of("습득","미습득","조건지급","조건회수","조건초기화","조건조회"):position>=2?AdminCommandRules.tailChoices(AdminCommandRules.catalogChoices(args[branch+1].startsWith("조건")?DiscoveryLink.manualConditions():DiscoveryLink.registeredSpells()),args,branch+2):List.of();

@@ -1,3 +1,5 @@
+> Latest combined release preparation: [Journal, shared notices, mouse keys and target/wildlife](CODEX_JOURNAL_INPUT_RELEASE_20261012.md). Hosting630 tests passed; real game render blocked by hosting graphics startup. Deployment status is recorded in that handoff. This supersedes old UI asset/preparation blockers.
+
 > 2026-10-12 prepared, not deployed: [attack targets / grounded rare wildlife](CODEX_TARGETS_WILDLIFE_20261012.md). UI/input work is separate.
 
 > Deployed 2026-10-12: [Catalog gameplay runtime + Story queue fix](CODEX_CATALOG_RUNTIME_FIX_20261012.md). School/wild Bridge runtime.1 and Story0.1.3 verified; client and Velocity unchanged. This supersedes candidate-only notices below.

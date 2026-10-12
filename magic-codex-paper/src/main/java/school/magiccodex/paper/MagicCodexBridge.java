@@ -66,6 +66,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private PetBridge pets;
     private TamingBridge taming;
     private QuestBridge quests;
+    private JournalBridge journal;
+    JournalBridge journalBridge(){return journal;}
     private DialogueBridge dialogues;
     private NpcSocialService npcSocial;
     DialogueBridge dialogueBridge(){return dialogues;}
@@ -150,6 +152,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(spellRuntime==null)getLogger().warning("Spell gameplay runtime unavailable: MythicMobs is not enabled; existing fallback routes remain active.");
         mana.bindSpellCommand();
         try { mailbox=new MailboxBridge(this); shops=new ShopBridge(this); shopAdmin=new ShopAdminBridge(this); } catch(Exception e) { getLogger().severe("Mailbox initialization failed: "+e.getClass().getSimpleName()); getServer().getPluginManager().disablePlugin(this); return; }
+        journal=new JournalBridge(this);
         new AdminCommandBridge(this,mana,school,enhancement,appraisal,titles,npcSocial);
         getLogger().info("권한 연동 준비 완료. 활성 도감만 조회, 작업당 최대 " + budget + "회, 보조 확인 " + refresh / 1000 + "초.");
     }

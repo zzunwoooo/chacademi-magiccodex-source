@@ -78,7 +78,7 @@ final class QuestBridge implements Listener,CommandExecutor,TabCompleter,PluginM
         var q=catalog.get(id);UUID uid=p.getUniqueId();long now=System.currentTimeMillis();
         if(q==null||!q.available(now)||(!q.permission().isEmpty()&&!p.hasPermission(q.permission()))||!p.hasPermission("magiccodex.quests")){done.accept(false);return;}
         flush(uid,true);/* 수락 전에 모인 진행도가 새 의뢰에 들어가지 않게 먼저 기록한다 */
-        work(()->{var all=store.entries(uid);if(all.stream().anyMatch(e->e.quest().id().equals(id)&&e.current(now)&&e.status().equals("active")))return true;return store.accept(uid,q,now);},ok->{if(current(p))load(p,false,"");done.accept(ok);},m->done.accept(false));
+        work(()->{var all=store.entries(uid);if(all.stream().anyMatch(e->e.quest().id().equals(id)&&e.current(now)&&e.status().equals("active")))return 1;return store.accept(uid,q,now)?2:0;},result->{if(current(p)){load(p,false,"");if(result==2)JournalBridge.notify(plugin,p,q.title(),q.description());}done.accept(result>0);},m->done.accept(false));
     }
     void eventFromDialogue(Player p,String id,Consumer<Boolean> done){
         UUID uid=p.getUniqueId();String world=p.getWorld().getName(),sid=server;long now=System.currentTimeMillis();
@@ -146,7 +146,7 @@ final class QuestBridge implements Listener,CommandExecutor,TabCompleter,PluginM
         UUID uid=p.getUniqueId();long now=System.currentTimeMillis();if(!p.hasPermission("magiccodex.quests")||now<limits.getOrDefault(uid,0L)||busy.contains(uid))return;
         limits.put(uid,now+250);pages.put(uid,page);viewers.put(uid,now+15000);
         if(action==0){load(p,open,"");return;}if(p.isDead()||p.getGameMode()==GameMode.SPECTATOR||!plugin.playerStateReady(p)){reply(p,false,"지금은 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.");return;}
-        if(action==1){var q=catalog.get(id);if(q==null||!q.available(now)||(!q.permission().isEmpty()&&!p.hasPermission(q.permission()))){reply(p,false,"수락 조건을 충족하지 않습니다.");return;}busy.add(uid);flush(uid,true);work(uid,()->store.accept(uid,q,now),ok->{busy.remove(uid);load(p,false,ok?"의뢰를 수락했습니다.":"수락 한도 또는 클리어 가능 횟수를 확인해 주세요.");},m->{busy.remove(uid);reply(p,false,m);});}
+        if(action==1){var q=catalog.get(id);if(q==null||!q.available(now)||(!q.permission().isEmpty()&&!p.hasPermission(q.permission()))){reply(p,false,"수락 조건을 충족하지 않습니다.");return;}busy.add(uid);flush(uid,true);work(uid,()->store.accept(uid,q,now),ok->{busy.remove(uid);if(ok)JournalBridge.notify(plugin,p,q.title(),q.description());load(p,false,ok?"의뢰를 수락했습니다.":"수락 한도 또는 클리어 가능 횟수를 확인해 주세요.");},m->{busy.remove(uid);reply(p,false,m);});}
         if(action==3){busy.add(uid);flush(uid,true);work(uid,()->store.abandon(uid,id,now),ok->{busy.remove(uid);load(p,false,ok?"의뢰를 포기했습니다.":"포기할 수 없는 의뢰입니다.");},m->{busy.remove(uid);reply(p,false,m);});}
         if(action==2)claim(p,id);
     }
@@ -214,6 +214,20 @@ final class QuestBridge implements Listener,CommandExecutor,TabCompleter,PluginM
         return slots;
     }
     static ItemStack submissionItem(String target){ItemStack item=target.startsWith("stack:")?ItemStack.deserializeBytes(Base64.getDecoder().decode(target.substring(6))):new ItemStack(Objects.requireNonNull(Material.matchMaterial(target),"제출 아이템 종류 오류"));if(item.isEmpty())throw new IllegalArgumentException("빈 아이템");item.setAmount(1);return item;}
+    Map<String,String> journalCatalog(){var map=new TreeMap<String,String>();catalog.values().forEach(q->map.put("quest:"+q.id(),q.title()));return map;}
+    void journalRows(Player player,java.util.function.Consumer<List<school.magiccodex.protocol.JournalProtocol.Entry>> callback){
+        flush(player.getUniqueId(),true);work(()->store.journalEntries(player.getUniqueId()),entries->{var rows=new ArrayList<school.magiccodex.protocol.JournalProtocol.Entry>();
+            for(var e:entries){if(e.status().equals("ready")||(!e.current(System.currentTimeMillis())&&e.status().equals("active")))continue;var q=e.quest();String details=java.util.stream.IntStream.range(0,q.objectives().size()).mapToObj(i->q.objectives().get(i).label()+" "+e.progress()[i]+" / "+q.objectives().get(i).amount()).collect(java.util.stream.Collectors.joining("\n"));
+                rows.add(new school.magiccodex.protocol.JournalProtocol.Entry("quest",q.id(),q.title(),q.description(),e.status(),q.main(),school.magiccodex.protocol.JournalProtocol.cut(details,1200),school.magiccodex.protocol.JournalProtocol.cut(rewardText(q),500)));}
+            callback.accept(List.copyOf(rows));},m->{player.sendMessage(m);callback.accept(List.of());});
+    }
+    void journalEdit(CommandSender sender,Player target,String id,String operation){
+        var q=catalog.get(id);for(var e:cache.getOrDefault(target.getUniqueId(),List.of()))if(e.quest().id().equals(id)&&e.current(System.currentTimeMillis()))q=e.quest();
+        if(q==null)throw new IllegalArgumentException("Unknown quest ID");final var definition=q;
+        if(operation.equals("query")){journalRows(target,rows->rows.stream().filter(e->e.id().equals(id)).forEach(e->sender.sendMessage(e.key()+" / "+e.title()+" / "+e.state()+" / "+e.details())));return;}
+        if(busy.contains(target.getUniqueId()))throw new IllegalArgumentException("Quest payout in progress");flush(target.getUniqueId(),true);
+        work(()->{store.adminRecord(target.getUniqueId(),definition,operation,System.currentTimeMillis());return true;},ok->{load(target,false,"");sender.sendMessage("Journal record updated; rewards were not issued or reset.");if(operation.equals("grant"))JournalBridge.notify(plugin,target,definition.title(),definition.description());plugin.getLogger().info("QUEST JOURNAL admin="+sender.getName()+" player="+target.getUniqueId()+" id="+id+" operation="+operation);},sender::sendMessage);
+    }
     private record Journal(List<QuestStore.Entry> entries,Set<String> completed){}
     private void load(Player p,boolean open,String message){UUID id=p.getUniqueId();flush(id,true);work(()->new Journal(store.entries(id),store.completed(id)),v->{if(current(p)){var later=deltas.get(id);if(later!=null)for(var e:later.counts.entrySet())apply(v.entries(),e.getKey().type(),e.getKey().target(),e.getKey().world(),e.getValue(),System.currentTimeMillis());cache.put(id,v.entries());completed.put(id,v.completed());if(open)viewers.put(id,System.currentTimeMillis()+15000);reply(p,open,message);}},m->{if(current(p))p.sendMessage(m);});}
     private void reply(Player p,boolean open,String message){if(!current(p))return;if(!p.getListeningPluginChannels().contains(QuestProtocol.RESPONSE)){if(open)p.sendMessage("의뢰 게시판 모드를 업데이트해 주세요.");else if(!message.isEmpty())p.sendMessage(message);return;}

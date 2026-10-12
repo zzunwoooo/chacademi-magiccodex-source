@@ -45,7 +45,7 @@ public final class MagicCodexClient implements ClientModInitializer {
         SchoolClient.initialize();
         NicknameClient.initialize();MailboxClient.initialize();ShopClient.initialize();ShopAdminClient.initialize();
         TitleClient.initialize();
-        QuestClient.initialize();QuestAdminClient.initialize();
+        QuestClient.initialize();QuestAdminClient.initialize();JournalClient.initialize();
         DialogueClient.initialize();
         NpcTalkClient.initialize();PortraitClient.initialize();
         EquipmentClient.initialize();

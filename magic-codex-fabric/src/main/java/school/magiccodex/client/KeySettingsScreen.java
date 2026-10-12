@@ -81,6 +81,7 @@ public final class KeySettingsScreen extends Screen {
             text(ctx,"키보드의 키를 클릭하거나 직접 눌러 마법을 등록하세요 · 최대 6개",836,140,19,GOLD,BODY);
             for(var key:KeySettingsLayout.KEYS) drawKey(ctx,key);
             for(int i=0;i<6;i++) drawSlot(ctx,i);
+            drawMouse(ctx);
             text(ctx,waiting()?"서버에서 배운 마법을 확인하고 있습니다…":!notice.isEmpty()?notice:
                     selected>=0?"순서를 바꿀 다른 칸을 클릭하세요 · 같은 칸을 다시 누르면 취소":
                     "우클릭으로 등록 해제 · 아래 칸을 끌거나 두 칸을 차례로 클릭해 순서 변경",836,789,17,GOLD,BODY);
@@ -154,6 +155,14 @@ public final class KeySettingsScreen extends Screen {
             if(blocked) text(ctx,"지정 불가",r.centerX(),r.y()+r.height()-13,12,0xFFF0A4A8,BODY);
         }
         if(hot) overlay(ctx,r,blocked?0x337F3540:allowed?0x224FC5AF:0x22717B89,blocked?0xFFFFA4A8:allowed?0xFFA2DACE:0x998E949A,6);
+    }
+    private void drawMouse(DrawContext ctx){
+        images.drawTexture(ctx,id("textures/gui/keybinding_mouse_v2.png"),(int)MouseBindingLayout.X,(int)MouseBindingLayout.Y,0,0,(int)MouseBindingLayout.W,(int)MouseBindingLayout.H,1024,1536,1024,1536,0xFFFFFFFF);
+        for(int code:new int[]{KeySettingsLayout.THUMB_1,KeySettingsLayout.THUMB_2}){
+            boolean hot=!pickerOpen()&&!confirmDiscard&&MouseBindingLayout.hit(mx,my)==code;boolean assigned=draft.slotOfKey(code)>=0;int color=hot?TEAL:assigned?GOLD:0x7794A7B6;
+            var points=MouseBindingLayout.polygon(code);for(int i=0;i<points.length;i++){var a=points[i];var b=points[(i+1)%points.length];HudMesh.line(ctx,MouseBindingLayout.X+(float)a[0]*MouseBindingLayout.S,MouseBindingLayout.Y+(float)a[1]*MouseBindingLayout.S,MouseBindingLayout.X+(float)b[0]*MouseBindingLayout.S,MouseBindingLayout.Y+(float)b[1]*MouseBindingLayout.S,hot?2:1,color);}
+            float y=code==KeySettingsLayout.THUMB_1?695:740;HudMesh.line(ctx,code==KeySettingsLayout.THUMB_1?213:224,y,270,y,1,color);label(ctx,KeySettingsLayout.name(code),278,y,17,hot?TEAL:assigned?GOLD:IVORY);
+        }
     }
     private boolean dragging() { return dragSlot>=0 && dragMoved; }
     private int slotAt() {
@@ -288,6 +297,8 @@ public final class KeySettingsScreen extends Screen {
         if(button==0 && hover(KeySettingsLayout.CLOSE)) { close(); return true; }
         if(button==0 && hover(KeySettingsLayout.SAVE)) { save(); return true; }
         if(button==0 && hover(KeySettingsLayout.RESET)) { draft.clear(); selected=-1; notice=""; sound(false); return true; }
+        int mouseKey=MouseBindingLayout.hit(mx,my);
+        if(mouseKey>=0){if(button==1){draft.clearKey(mouseKey);sound(false);}else openPicker(mouseKey);return true;}
         int slot=slotAt();
         if(slot>=0) {
             if(button==1) {

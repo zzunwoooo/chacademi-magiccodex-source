@@ -79,6 +79,7 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        kr.chacademy.story.dialogue.StoryJournal.install();
         PayloadTypeRegistry.playS2C().register(CutscenePackets.ReloadRequestS2C.TYPE,CutscenePackets.ReloadRequestS2C.CODEC);
         PayloadTypeRegistry.playC2S().register(CutscenePackets.ReloadResultC2S.TYPE,CutscenePackets.ReloadResultC2S.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(CutscenePackets.ReloadRequestS2C.TYPE,(payload,context)->context.client().execute(()->{
@@ -299,6 +300,8 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
                 }
             });
             if(!DialoguePresenter.start(runner,false)){signals.reject();sessionSignal(2,id,token,"");if(acknowledge)reportDialogueFailure(id,CutscenePackets.FAIL_MAGICCODEX);return;}
+            boolean firstJournal=ledger.journalState(id).equals("available");
+            try{ledger.journalSeen(dialogue);if(firstJournal)kr.chacademy.story.dialogue.StoryJournal.granted(dialogue); }catch(java.io.IOException e){signals.reject();DialoguePresenter.stop();throw e;}
             activeLocalToken=token;
             try{signals.accept();}catch(java.io.UncheckedIOException e){DialoguePresenter.stop();localRecordFailure(e);if(acknowledge)reportDialogueFailure(id,"local_record");return;}
             if(signals.isRejected()){if(acknowledge)reportDialogueFailure(id,"local_record");return;}

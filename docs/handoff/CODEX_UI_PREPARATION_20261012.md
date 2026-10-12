@@ -1,3 +1,5 @@
+> Superseded by [final integrated handoff](CODEX_JOURNAL_INPUT_RELEASE_20261012.md); approved PNGs acquired and installed.
+
 # UI/input preparation and Library blocker - 2026-10-12
 
 Status: preparation only, NOT deployed; the requested complete quest UI is not implemented yet.

@@ -1,0 +1,63 @@
+{
+  "source_base": "c3736109c8d4456e8562e83d470401df571d1e69",
+  "private_story_preserved_assets": 8,
+  "private_story_original_sha256": "256b703b3ec5293f701c901ab9ebde8e6eb1970dfb3fffce60c12617fbb4b6e8",
+  "artifacts": [
+    {
+      "name": "magic-codex-ui-0.39.0-catalog.alpha.2-chat.3-holytaming.1-partyhud.4-taming.1-input.1-journal.1+mc1.21.4.jar",
+      "size": 106370853,
+      "sha256": "6267cbacf6645c8e2ede10ed2f2937a38e77b9ba322073b233110721997b910d"
+    },
+    {
+      "name": "magic-codex-bridge-0.30.0-catalog.alpha.1-chat.3-discovery.2-holytaming.1-partyhud.3-taming.1-runtime.1-journal.1.jar",
+      "size": 1703727,
+      "sha256": "1526b9d02e7ef11a0384cf5796efdff542c7dd9717214aace39f4f4c2a9a870a"
+    },
+    {
+      "name": "chacademia-magic-mythic-0.1.2-recovery.1-gimmick.1-targets.1.jar",
+      "size": 98755,
+      "sha256": "114b867690ba687130135256cea6492e02430c51452d5846e64acf2254eed9cf"
+    },
+    {
+      "name": "chacademy-story-0.1.3-journal.1.jar",
+      "size": 458176,
+      "sha256": "cfcb382c9b84f29b2f3d2469c0c5569926d67c304c65f68900933f2ff41e91d8"
+    },
+    {
+      "name": "personal/chacademy-story-0.1.3-journal.1.jar",
+      "size": 4909464,
+      "sha256": "a2453e65fb351d15f7e148d9ef7da0bf51db0c9293657145f1e7bf95cdc89e67"
+    },
+    {
+      "name": "chacademia_custom_wild.yml",
+      "size": 236587,
+      "sha256": "d3ed659e6f52f363da05f7ee75a5e04cd501649604c65186e3b438e36c3d56c1"
+    }
+  ],
+  "tests": {
+    "magic-codex-paper": {
+      "tests": 306,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "magic-codex-fabric": {
+      "tests": 254,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "chacademy-story/mod": {
+      "tests": 50,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "magic-mythic-paper": {
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  }
+}

@@ -68,7 +68,7 @@ final class QuestStore implements AutoCloseable {
     void advance(UUID player,QuestDefinition.Type type,String target,String server,String world,int amount,long now)throws Exception{advanceAll(player,List.of(new Delta(type,target,world,amount)),server,now);}
     /** 모아 둔 진행도 여러 건을 한 트랜잭션으로 반영한다. 목표 수치를 넘지 않게 자르고, 바뀐 의뢰만 한 번씩 기록한다. */
     void advanceAll(UUID player,List<Delta> deltas,String server,long now)throws Exception{if(deltas.isEmpty())return;transaction(player.toString(),()->{for(var e:entries(player)){if(!e.status.equals("active")||!e.current(now))continue;boolean dirty=false;for(var d:deltas){if(d.type()==QuestDefinition.Type.SUBMIT||d.amount()<1)continue;for(int i=0;i<e.progress.length;i++){var g=e.quest.objectives().get(i);if(g.matches(d.type(),d.target(),server,d.world())){int v=(int)Math.min(g.amount(),(long)e.progress[i]+d.amount());if(v!=e.progress[i]){e.progress[i]=v;dirty=true;}}}}if(dirty)try(var s=db().prepareStatement("UPDATE codex_quest_progress SET progress=?,updated=? WHERE player=? AND quest=? AND cycle=? AND status='active'")){s.setString(1,counts(e.progress));s.setLong(2,now);s.setString(3,player.toString());s.setString(4,e.quest.id());s.setString(5,e.cycle);s.executeUpdate();}}return null;});}
-    Entry reserve(UUID player,String id,String expectedCycle,long now)throws Exception{return transaction(player.toString(),()->{for(var e:entries(player))if(e.quest.id().equals(id)&&e.cycle.equals(expectedCycle)&&e.current(now)&&e.status.equals("active")&&e.complete()){String token=UUID.randomUUID().toString();try(var s=db().prepareStatement("UPDATE codex_quest_progress SET status='paying',token=?,updated=?,stage=0 WHERE player=? AND quest=? AND cycle=? AND status='active'")){s.setString(1,token);s.setLong(2,now);s.setString(3,player.toString());s.setString(4,id);s.setString(5,e.cycle);if(s.executeUpdate()==1)return new Entry(e.quest,e.cycle,"paying",e.progress,token,e.completions,0);}}return null;});}
+    Entry reserve(UUID player,String id,String expectedCycle,long now)throws Exception{return transaction(player.toString(),()->{for(var e:entries(player))if(e.quest.id().equals(id)&&e.cycle.equals(expectedCycle)&&e.current(now)&&e.status.equals("active")&&e.completions<e.quest.completionLimit()&&e.complete()){String token=UUID.randomUUID().toString();try(var s=db().prepareStatement("UPDATE codex_quest_progress SET status='paying',token=?,updated=?,stage=0 WHERE player=? AND quest=? AND cycle=? AND status='active'")){s.setString(1,token);s.setLong(2,now);s.setString(3,player.toString());s.setString(4,id);s.setString(5,e.cycle);if(s.executeUpdate()==1)return new Entry(e.quest,e.cycle,"paying",e.progress,token,e.completions,0);}}return null;});}
     /** 지급이 중간에 멈췄을 때 어디까지 줬는지 기록한다 (paying 유지). 관리자 retry 는 이 기록에 없는 단계만 실행한다. */
     void stage(UUID player,Entry e,int stage)throws SQLException{try(var s=db().prepareStatement("UPDATE codex_quest_progress SET stage=?,updated=? WHERE player=? AND quest=? AND cycle=? AND status='paying' AND token=?")){s.setInt(1,stage);s.setLong(2,System.currentTimeMillis());s.setString(3,player.toString());s.setString(4,e.quest.id());s.setString(5,e.cycle);s.setString(6,e.token);if(s.executeUpdate()!=1)throw new SQLException("Claim reservation changed");}}
     /** 검토 대기(paying) 기록 한 건. 없으면 null. */
@@ -85,6 +85,36 @@ final class QuestStore implements AutoCloseable {
     Map<String,QuestDefinition> release(List<String> ids,long start,long spacing,boolean enabled)throws Exception{return transaction("catalog",()->{var all=new TreeMap<>(catalog());if(ids.size()>QuestAdminProtocol.MAX_ENTRIES||new HashSet<>(ids).size()!=ids.size()||ids.stream().anyMatch(id->!all.containsKey(id)))throw new IllegalArgumentException("의뢰 ID를 확인하세요");int n=0;for(String id:ids){var q=all.get(id).release(start+spacing*n++,enabled);try(var s=db().prepareStatement("UPDATE codex_quest_catalog SET definition=? WHERE id=?")){s.setString(1,q.encode());s.setString(2,id);s.executeUpdate();}all.put(id,q);}return Map.copyOf(all);});}
     static String fingerprint(QuestDefinition q){try{return HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256").digest(q.encode().getBytes(java.nio.charset.StandardCharsets.UTF_8)));}catch(Exception e){throw new IllegalStateException(e);}}
     void resolve(UUID p,String id,String cycle,boolean delivered)throws Exception{transaction(p.toString(),()->{for(var e:entries(p))if(e.quest.id().equals(id)&&e.cycle.equals(cycle)&&e.status.equals("paying")){finish(p,e,delivered);return null;}throw new IllegalArgumentException("검토 대기 기록 없음");});}
+    /** Display history from the existing ledger, including expired daily cycles. No reward writes. */
+    List<Entry> journalEntries(UUID player)throws SQLException {
+        var latest=new LinkedHashMap<String,Entry>();
+        try(var q=db().prepareStatement("SELECT definition,cycle,status,progress,token,completions,stage FROM codex_quest_progress WHERE player=? ORDER BY updated DESC LIMIT 2000")){
+            q.setString(1,player.toString());try(var rs=q.executeQuery()){while(rs.next()){
+                var definition=QuestDefinition.decode(rs.getString(1));int[] progress=Arrays.stream(rs.getString(4).split(",")).mapToInt(Integer::parseInt).toArray();
+                var e=new Entry(definition,rs.getString(2),rs.getString(3),progress,rs.getString(5),rs.getInt(6),rs.getInt(7));
+                if(progress.length!=definition.objectives().size())throw new SQLException("Quest progress mismatch");
+                var previous=latest.get(definition.id());if(previous==null||(e.current(System.currentTimeMillis())&&Set.of("active","paying").contains(e.status())))latest.put(definition.id(),e);
+            }}
+        }
+        return latest.values().stream().limit(600).toList();
+    }
+    /** Operator journal edits never invoke a payout and never erase reward completion history. */
+    void adminRecord(UUID player,QuestDefinition definition,String operation,long now)throws Exception {
+        transaction(player.toString(),()->{
+            var all=entries(player,now);if(all.stream().anyMatch(e->e.quest().id().equals(definition.id())&&e.status().equals("paying")))throw new IllegalStateException("Resolve pending reward before editing this record");
+            var old=all.stream().filter(e->e.quest().id().equals(definition.id())&&e.cycle().equals(definition.cycle(now))).findFirst().orElse(null);
+            if(old!=null)definitionSnapshotCheck(old,definition);
+            int count=old==null?0:old.completions();int[] progress=old==null?new int[definition.objectives().size()]:old.progress().clone();
+            String status=switch(operation){case "grant","progress"->"active";case "complete"->"claimed";case "reset"->"ready";default->throw new IllegalArgumentException("Journal operation");};
+            if(operation.equals("complete")){count=Math.max(count,definition.completionLimit());for(int i=0;i<progress.length;i++)progress[i]=definition.objectives().get(i).amount();}
+            if(operation.equals("reset"))Arrays.fill(progress,0);
+            try(var q=db().prepareStatement("DELETE FROM codex_quest_progress WHERE player=? AND quest=? AND cycle=?")){q.setString(1,player.toString());q.setString(2,definition.id());q.setString(3,definition.cycle(now));q.executeUpdate();}
+            try(var q=db().prepareStatement("INSERT INTO codex_quest_progress(player,quest,cycle,definition,status,progress,token,updated,completions,stage) VALUES(?,?,?,?,?,?,?,?,?,0)")){
+                q.setString(1,player.toString());q.setString(2,definition.id());q.setString(3,definition.cycle(now));q.setString(4,definition.encode());q.setString(5,status);q.setString(6,counts(progress));q.setString(7,"");q.setLong(8,now);q.setInt(9,count);q.executeUpdate();
+            }return null;
+        });
+    }
+    private static void definitionSnapshotCheck(Entry old,QuestDefinition next){if(!old.quest().encode().equals(next.encode()))throw new IllegalStateException("Use the accepted quest definition when editing history");}
     private static String counts(int[] p){return String.join(",",Arrays.stream(p).mapToObj(Integer::toString).toList());}
     private interface Tx<T>{T run()throws Exception;}
     private <T>T transaction(String player,Tx<T> action)throws Exception{

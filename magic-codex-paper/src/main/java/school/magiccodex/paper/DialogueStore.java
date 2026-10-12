@@ -74,6 +74,12 @@ final class DialogueStore implements AutoCloseable {
             db().commit();return new Transition(new State(before.revision+1,Map.copyOf(values)),token,List.copyOf(external));
         }catch(Exception e){holder.rollback();throw e;}finally{holder.end();}
     }
+    void journalEdit(UUID player,String id,String operation)throws Exception{
+        if(!id.matches("[a-z0-9_-]{1,64}"))throw new IllegalArgumentException("Story ID");
+        String status=switch(operation){case "grant","progress"->"active";case "complete"->"claimed";case "reset"->"hidden";default->throw new IllegalArgumentException("Journal operation");};
+        State before=state(player);var values=new TreeMap<>(before.values());values.put("journal."+id,status);if(values.size()>512)throw new IllegalArgumentException("Story state limit");
+        try(var q=db().prepareStatement("UPDATE codex_story_state SET revision=revision+1,content=? WHERE player=? AND revision=?")){q.setString(1,encode(values));q.setString(2,player.toString());q.setLong(3,before.revision());if(q.executeUpdate()!=1)throw new IllegalStateException("Story state changed; retry");}
+    }
     /** 끝나지 않은 외부 동작 기록 전부 (오래된 것부터 정해진 순서). */
     List<Effect> effects(UUID player)throws SQLException{var out=new ArrayList<Effect>();try(var s=db().prepareStatement("SELECT effect_key,token,status,actions FROM codex_dialogue_effect WHERE player=? AND status<>'done' ORDER BY effect_key")){s.setString(1,player.toString());try(var r=s.executeQuery()){while(r.next())out.add(new Effect(r.getString(1),r.getString(2),r.getString(3),r.getString(4).lines().filter(l->!l.isEmpty()).toList()));}}return out;}
     /** 상태 비교-교체. from 중 하나일 때만 next 로 바꾸며, remaining 이 null 이 아니면 남은 동작도 함께 기록한다. 바뀌었으면 true. */
