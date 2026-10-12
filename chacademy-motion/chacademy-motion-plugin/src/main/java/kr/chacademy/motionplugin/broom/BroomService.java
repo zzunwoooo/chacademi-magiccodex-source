@@ -14,6 +14,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -121,7 +122,9 @@ public final class BroomService implements Listener, PluginMessageListener {
         var messenger = plugin.getServer().getMessenger();
         messenger.registerOutgoingPluginChannel(plugin, BroomCodec.CHANNEL_RIDE);
         messenger.registerOutgoingPluginChannel(plugin, BroomCodec.CHANNEL_STATE);
+        messenger.registerOutgoingPluginChannel(plugin, BroomCodec.CHANNEL_LIST);
         messenger.registerIncomingPluginChannel(plugin, BroomCodec.CHANNEL_EVENT, this);
+        messenger.registerIncomingPluginChannel(plugin, BroomCodec.CHANNEL_REQUEST, this);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         // 기록은 5분마다 저장 (바뀐 게 있을 때만)
         Bukkit.getScheduler().runTaskTimer(plugin, store::saveIfDirty, 6000, 6000);
@@ -143,9 +146,54 @@ public final class BroomService implements Listener, PluginMessageListener {
         return sessions.containsKey(p.getUniqueId());
     }
 
-    /** 고른(가진) 빗자루. 없으면 null. */
+    /** 빗자루 보유 권한: chacademy.broom.own.<ID> (또는 chacademy.broom.own.*). OP 는 전부 보유. */
+    public boolean owns(Player p, BroomType type) {
+        return p.hasPermission("chacademy.broom.own." + type.id()) || p.hasPermission("chacademy.broom.own.*");
+    }
+
+    /** 가진 빗자루 목록 (brooms.yml 순서 = 기본 → 전설). */
+    public java.util.List<BroomType> ownedBrooms(Player p) {
+        var list = new ArrayList<BroomType>();
+        for (var t : brooms.values()) if (owns(p, t)) list.add(t);
+        return list;
+    }
+
+    /**
+     * 비행 마법에 쓸 빗자루. 장착한 빗자루를 아직 가지고 있으면 그것,
+     * 장착이 없거나 권한이 빠졌으면 가진 것 중 가장 좋은 것(목록 맨 뒤), 하나도 없으면 null (연습용 빗자루).
+     */
     public BroomType ownedBroom(Player p) {
-        return brooms.get(store.broom(p.getUniqueId()));
+        BroomType eq = brooms.get(store.broom(p.getUniqueId()));
+        if (eq != null && owns(p, eq)) return eq;
+        var owned = ownedBrooms(p);
+        return owned.isEmpty() ? null : owned.get(owned.size() - 1);
+    }
+
+    /** 장착. 가지고 있지 않으면 false. 타는 중이면 바로 갈아탐. */
+    public boolean equip(Player p, BroomType type) {
+        if (!owns(p, type)) return false;
+        store.setBroom(p.getUniqueId(), type.id());
+        if (isRiding(p)) {
+            var s = sessions.get(p.getUniqueId());
+            if (s != null && !s.type.id().equals(type.id()) && !s.limited) {
+                stop(p.getUniqueId(), BroomCodec.STATE_NORMAL, false);
+                start(p, type, 0);
+            }
+        }
+        sendList(p);
+        return true;
+    }
+
+    /** 장비창용 목록을 보냄 (모드가 있을 때만). */
+    public void sendList(Player p) {
+        if (!p.getListeningPluginChannels().contains(BroomCodec.CHANNEL_LIST)) return;
+        var eq = ownedBroom(p);
+        var owned = new ArrayList<BroomCodec.Owned>();
+        for (var t : ownedBrooms(p)) {
+            owned.add(new BroomCodec.Owned(t.id(), t.name(), t.grade(), t.maxSpeed(), t.accel(), t.turn(), t.brake(), t.stability(), t.climb()));
+        }
+        var msg = new BroomCodec.ListMsg(eq == null ? "" : eq.id(), mastery(p.getUniqueId()), owned);
+        p.sendPluginMessage(plugin, BroomCodec.CHANNEL_LIST, BroomCodec.encodeList(msg));
     }
 
     public float mastery(UUID id) {
@@ -289,6 +337,10 @@ public final class BroomService implements Listener, PluginMessageListener {
 
     @Override
     public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte @NotNull [] message) {
+        if (BroomCodec.CHANNEL_REQUEST.equals(channel)) {
+            onRequest(player, message);
+            return;
+        }
         if (!BroomCodec.CHANNEL_EVENT.equals(channel)) return;
         BroomCodec.Event e;
         try {
@@ -322,6 +374,37 @@ public final class BroomService implements Listener, PluginMessageListener {
                 // BOOST, CRASH 는 지금은 기록만 (마나 소모 등은 나중에 연결)
                 if (debug) plugin.getLogger().info(player.getName() + " 빗자루 이벤트 " + e.type() + " " + e.value());
             }
+        }
+    }
+
+    private final Map<UUID, Long> lastRequest = new HashMap<>();
+
+    private void onRequest(Player player, byte[] message) {
+        BroomCodec.Request r;
+        try {
+            r = BroomCodec.decodeRequest(message);
+        } catch (BroomCodec.MalformedException ex) {
+            return;
+        }
+        long now = System.currentTimeMillis();
+        Long last = lastRequest.get(player.getUniqueId());
+        if (last != null && now - last < 150) return; // 연타 방지
+        lastRequest.put(player.getUniqueId(), now);
+        if (r.kind() == BroomCodec.REQ_EQUIP) {
+            var type = brooms.get(r.broom());
+            if (type == null || !equip(player, type)) sendList(player);
+        } else {
+            sendList(player);
+        }
+    }
+
+    /** 모드가 채널을 등록하면(접속 직후) 장비창 목록을 한 번 보냄. */
+    @EventHandler
+    public void onRegister(PlayerRegisterChannelEvent e) {
+        if (BroomCodec.CHANNEL_LIST.equals(e.getChannel())) {
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                if (e.getPlayer().isOnline()) sendList(e.getPlayer());
+            }, 20);
         }
     }
 
@@ -371,6 +454,7 @@ public final class BroomService implements Listener, PluginMessageListener {
         }
         catches.remove(id);
         lastRoll.remove(id);
+        lastRequest.remove(id);
         store.saveIfDirty();
     }
 

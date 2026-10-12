@@ -11,7 +11,7 @@ commands:
     permission: chacademy.motion.admin
   빗자루:
     description: 빗자루 정보 / 관리
-    usage: /빗자루 [목록|선택|해제|타기|숙련도|새로고침]
+    usage: /빗자루 [목록|장착|선택|해제|타기|숙련도|새로고침]
     aliases: [broom]
 permissions:
   chacademy.motion.cast:
@@ -23,6 +23,9 @@ permissions:
   chacademy.broom.use:
     description: 비행 마법으로 빗자루 타기
     default: true
+  chacademy.broom.own.*:
+    description: 빗자루 10종 전부 보유 (하나씩은 chacademy.broom.own.<ID>, 예 chacademy.broom.own.broom_7)
+    default: op
   chacademy.broom.admin:
     description: 빗자루 지급·회수·테스트 탑승·숙련도 설정
     default: op

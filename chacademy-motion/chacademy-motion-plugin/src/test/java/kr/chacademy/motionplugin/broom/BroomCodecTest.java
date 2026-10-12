@@ -75,4 +75,17 @@ class BroomCodecTest {
         assertEquals("마스터", BroomMastery.level(1f));
         assertEquals(1800, BroomMastery.secondsForPercent(50, 3600));
     }
+
+    @Test
+    void listAndRequestRoundTrip() throws Exception {
+        var m = new BroomCodec.ListMsg("broom_7", 0.4f, java.util.List.of(
+                new BroomCodec.Owned("broom_1", "견습생 빗자루", "기본", 0.8f, 0.028f, 8f, 0.03f, 1.3f, 0.045f),
+                new BroomCodec.Owned("broom_7", "발걸이 경주용 빗자루", "전설", 1.35f, 0.05f, 10.5f, 0.04f, 0.82f, 0.06f)));
+        assertEquals(m, BroomCodec.decodeList(BroomCodec.encodeList(m)));
+        var empty = new BroomCodec.ListMsg("", 0f, java.util.List.of());
+        assertEquals(empty, BroomCodec.decodeList(BroomCodec.encodeList(empty)));
+        var r = new BroomCodec.Request(BroomCodec.REQ_EQUIP, "broom_3");
+        assertEquals(r, BroomCodec.decodeRequest(BroomCodec.encodeRequest(r)));
+        assertThrows(BroomCodec.MalformedException.class, () -> BroomCodec.decodeRequest(new byte[]{1, 50}));
+    }
 }

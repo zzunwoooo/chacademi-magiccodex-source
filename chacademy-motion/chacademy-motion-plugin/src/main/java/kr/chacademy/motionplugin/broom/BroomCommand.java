@@ -17,8 +17,10 @@ import java.util.Locale;
  * <pre>
  *   /빗자루                     내 빗자루·숙련도 보기
  *   /빗자루 목록                 빗자루 10종과 수치
- *   /빗자루 선택 &lt;ID&gt; [플레이어] (관리자) 빗자루 지급·교체 — 가진 빗자루는 시간 제한 없이 탄다
- *   /빗자루 해제 [플레이어]       (관리자) 빗자루 회수 — 비행 마법이 연습용 빗자루(10초)로 바뀐다
+ *   /빗자루 장착 &lt;ID&gt;            가진 빗자루 장착 (장비창에서도 가능)
+ *   /빗자루 선택 &lt;ID&gt; [플레이어] (관리자) 다른 플레이어의 장착 빗자루 변경 (보유 권한이 있어야 적용)
+ *   /빗자루 해제 [플레이어]       (관리자) 장착 해제 — 가진 빗자루 중 가장 좋은 것, 없으면 연습용 빗자루(10초)
+ * 보유 = 권한 chacademy.broom.own.&lt;ID&gt; (LuckPerms 등으로 지급, chacademy.broom.own.* = 전부)
  *   /빗자루 타기 [플레이어]       (관리자) 마법 없이 바로 타기/내리기 (테스트용)
  *   /빗자루 숙련도 &lt;플레이어&gt; &lt;0~100&gt; (관리자)
  *   /빗자루 새로고침             (관리자) brooms.yml 다시 읽기
@@ -38,6 +40,19 @@ public final class BroomCommand implements TabExecutor {
         switch (sub) {
             case "정보", "info" -> info(sender, args.length >= 2 && sender.hasPermission(ADMIN) ? Bukkit.getPlayerExact(args[1]) : sender instanceof Player p ? p : null);
             case "목록", "list" -> list(sender);
+            case "장착", "equip" -> {
+                if (!(sender instanceof Player p) || args.length < 2) {
+                    sender.sendMessage("§e/빗자루 장착 <ID>");
+                    return true;
+                }
+                var type = service.brooms().get(args[1].toLowerCase(Locale.ROOT));
+                if (type == null || !service.owns(p, type)) {
+                    sender.sendMessage("§c가지고 있지 않은 빗자루예요.");
+                    return true;
+                }
+                service.equip(p, type);
+                sender.sendMessage("§a장착: " + type.name());
+            }
             case "선택", "select", "set" -> {
                 if (!admin(sender)) return true;
                 if (args.length < 2) {
@@ -51,21 +66,24 @@ public final class BroomCommand implements TabExecutor {
                 }
                 Player target = target(sender, args, 2);
                 if (target == null) return true;
-                service.store().setBroom(target.getUniqueId(), type.id());
-                // 타는 중이면 새 빗자루로 바로 갈아탐
-                if (service.isRiding(target)) {
-                    service.stop(target);
-                    service.start(target, type, 0);
+                if (!service.owns(target, type)) {
+                    service.store().setBroom(target.getUniqueId(), type.id());
+                    sender.sendMessage("§e" + target.getName() + " 은(는) 이 빗자루 보유 권한이 없어요. 권한 chacademy.broom.own." + type.id()
+                            + " 을 주면 그때부터 적용됩니다 (장착만 미리 해 둠).");
+                    return true;
                 }
-                sender.sendMessage("§a" + target.getName() + " 의 빗자루: " + type.name() + " §7(" + type.id() + ")");
-                if (!sender.equals(target)) target.sendMessage("§a빗자루를 받았습니다: " + type.name());
+                service.equip(target, type);
+                sender.sendMessage("§a" + target.getName() + " 장착 빗자루: " + type.name() + " §7(" + type.id() + ")");
             }
             case "해제", "clear" -> {
                 if (!admin(sender)) return true;
                 Player target = target(sender, args, 1);
                 if (target == null) return true;
                 service.store().setBroom(target.getUniqueId(), "");
-                sender.sendMessage("§a" + target.getName() + " 의 빗자루를 회수했어요. 이제 비행 마법은 연습용 빗자루로 탑니다.");
+                service.sendList(target);
+                var fallback = service.ownedBroom(target);
+                sender.sendMessage("§a" + target.getName() + " 장착 해제. 이제 비행 마법: "
+                        + (fallback == null ? "연습용 빗자루(10초)" : fallback.name() + " (가진 것 중 가장 좋은 빗자루)"));
             }
             case "타기", "ride" -> {
                 if (!admin(sender)) return true;
@@ -128,7 +146,9 @@ public final class BroomCommand implements TabExecutor {
         var owned = service.ownedBroom(p);
         float m = service.mastery(p.getUniqueId());
         sender.sendMessage("§6[빗자루] §f" + p.getName());
-        sender.sendMessage("§7 가진 빗자루: §f" + (owned == null ? "없음 (비행 마법 = 연습용 빗자루 10초)" : owned.name() + " §7(" + owned.id() + ")"));
+        sender.sendMessage("§7 장착 빗자루: §f" + (owned == null ? "없음 (비행 마법 = 연습용 빗자루 10초)" : owned.name() + " §7(" + owned.id() + ")"));
+        var all = service.ownedBrooms(p);
+        sender.sendMessage("§7 보유: §f" + (all.isEmpty() ? "없음" : String.join(", ", all.stream().map(BroomType::name).toList())));
         sender.sendMessage("§7 비행 숙련도: §f" + Math.round(m * 100) + "% (" + BroomMastery.level(m) + ")");
         var riding = service.ridingType(p);
         if (riding != null) sender.sendMessage("§7 지금 타는 중: §f" + riding.name());
@@ -143,7 +163,7 @@ public final class BroomCommand implements TabExecutor {
     }
 
     private void help(CommandSender sender) {
-        sender.sendMessage("§e/빗자루 §7- 내 빗자루·숙련도   §e/빗자루 목록");
+        sender.sendMessage("§e/빗자루 §7- 내 빗자루·숙련도   §e/빗자루 목록   §e/빗자루 장착 <ID>");
         if (sender.hasPermission(ADMIN)) {
             sender.sendMessage("§e/빗자루 선택 <ID> [플레이어] §7| §e해제 [플레이어] §7| §e타기 [플레이어]");
             sender.sendMessage("§e/빗자루 숙련도 <플레이어> <0~100> §7| §e새로고침");
@@ -171,12 +191,15 @@ public final class BroomCommand implements TabExecutor {
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String @NotNull [] args) {
         boolean admin = sender.hasPermission(ADMIN);
         if (args.length == 1) {
-            List<String> subs = new ArrayList<>(List.of("정보", "목록"));
+            List<String> subs = new ArrayList<>(List.of("정보", "목록", "장착"));
             if (admin) subs.addAll(List.of("선택", "해제", "타기", "숙련도", "새로고침"));
             return filter(subs, args[0]);
         }
-        if (!admin) return List.of();
         String sub = args[0];
+        if (args.length == 2 && (sub.equals("장착") || sub.equals("equip")) && sender instanceof Player p) {
+            return filter(service.ownedBrooms(p).stream().map(BroomType::id).toList(), args[1]);
+        }
+        if (!admin) return List.of();
         if (args.length == 2 && (sub.equals("선택") || sub.equals("select") || sub.equals("set"))) {
             return filter(new ArrayList<>(service.brooms().keySet()), args[1]);
         }

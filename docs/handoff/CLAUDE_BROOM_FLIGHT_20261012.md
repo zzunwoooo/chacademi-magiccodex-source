@@ -8,19 +8,19 @@
 ## 0. 먼저 읽을 것 (주의사항)
 
 1. **원본 위치**: `chacademy-motion/` 은 사용자 PC `Desktop\차카데미model_claude\setting\chacademy-motion\` 의 사본이다(이 커밋 시점 동기화).
-   모드·플러그인 jar 는 사용자 PC(Windows)에서 이미 빌드 성공했다: `chacademy-motion-0.2.0.jar`(클라이언트 모드), `chacademy-motion-plugin-0.2.0.jar`(Paper).
+   모드·플러그인 jar 는 사용자 PC(Windows)에서 빌드한다: `chacademy-motion-0.3.0.jar`(클라이언트 모드), `chacademy-motion-plugin-0.3.0.jar`(Paper).
    이 저장소의 settings.gradle 에는 넣지 않았다(독립 Gradle 프로젝트 2개, 모드는 Fabric Loom).
 2. **magic-mythic-paper 변경은 빌드하지 않았다**. 리플렉션만 쓰므로 새 컴파일 의존은 없다. 호스팅에서 `magic-mythic-paper` 빌드·테스트 필요.
 3. **MagicCodex(magic-codex-paper/fabric)는 손대지 않았다.** 아래 5장의 제안은 GPT 검토·승인 후에만 적용한다(사용자 규칙).
 4. 게임 안 실행 테스트는 아직 없다. 조작감 수치(BroomPhysics 상수, brooms.yml)는 실기 후 조정 대상이다.
-5. 배포 안 함. 서버에는 `ChacademyMotion` 플러그인(0.2.0)이, 클라이언트에는 모드 0.2.0 + playerAnimator 2.0.5 + Fabric API 가 있어야 빗자루 비행이 켜진다.
+5. 배포 안 함. 서버에는 `ChacademyMotion` 플러그인(0.3.0)이, 클라이언트에는 모드 0.3.0 + playerAnimator 2.0.5 + Fabric API 가 있어야 빗자루 비행이 켜진다.
    어느 하나라도 없으면 비행 마법은 **예전처럼 10초 바닐라 비행**으로 동작한다(자동 대체).
 
 ## 1. 동작 요약
 
 | 항목 | 내용 |
 |---|---|
-| 빗자루 있음 | `/빗자루 선택 <ID> <플레이어>` 로 지급된 빗자루로 시간 제한 없이 비행 (획득 경로는 나중, 지금은 명령어) |
+| 빗자루 있음 | 보유 = 권한 `chacademy.broom.own.<ID>` (0.3.0). 장착 빗자루(없으면 가진 것 중 최고)로 시간 제한 없이 비행. 장비창 연동은 `CLAUDE_BROOM_EQUIP_UI_20261012.md` |
 | 빗자루 없음 | 연습용 빗자루(`broom_1`)로 마법의 ticks(200 = 10초) 동안 |
 | 다시 비행 마법 | 내림 |
 | 조작 | W 가속 / S 약한 브레이크 / 마우스 방향(빗자루가 늦게 따라옴) / A·D 드리프트 / A·A·D·D 배럴롤 / 스페이스·Shift 오르내리기 / 달리기 키 부스트 / 땅에서 Shift 내리기 / 공중 Shift 두 번 뛰어내리기 |

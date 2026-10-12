@@ -70,7 +70,7 @@ Claude 는 GPT 작업 브랜치에 직접 커밋하지 않고, **`claude/` 로 �
 | `claude/chacademy-story-20261010` | `claude/first-nickname-20261010` (위 브랜치 포함) | `CLAUDE_CHACADEMY_STORY_20261010.md` | `chacademy-story/` 스토리 컷신·대화 모드+플러그인+편집기. 한글 닉네임, 내 일러스트, 호감도, 닫기 금지, 이어서 보기 | 받음 (3779d57, 2026-10-10; 검증·기존 한국어 글꼴 개인 배포 완료) |
 | `claude/audit-fixes-20261010` | `codex/hires-item-icons-20261006` @ `310512b` | `CLAUDE_AUDIT_FIXES_20261010.md` | 스토리 대화창을 MagicCodex 기존 대화 UI로 통합 + 전체 코드 점검 수정 (상태 저장 추방, VFX 한도, 닉네임 중복 금지, 친구 신청제, 리롤 소모 규칙, 스토리 서버 검증 등). **빌드·실행 안 함 — 문서 0장·4장 먼저** | 받음 (36b2b35 안전 수정, 호스팅 790 테스트·MariaDB 격리 검증·서버/개인 런처 배포 완료; Story 콘텐츠 별도) |
 | `claude/party-hud-20261012` | `codex/chat-discovery-magic-protection-20261011` @ `e11af86` | `CLAUDE_PARTY_HUD_20261012.md` | 파티 위젯: 기숙사 아이콘·한글 닉네임·실시간 체력/마나 막대, Alt 이동·크기 조절, 마우스 올리면 수치 팝업 (Paper vitals → Velocity → 클라이언트). **MC 의존 코드 빌드 안 함 — 문서 3·5장 먼저** | 받음 (0dcd626, 2026-10-12; hosting tests and deployment verified) |
-| `claude/broom-flight-20261012` | `codex/chat-discovery-magic-protection-20261011` @ `c373610` | `CLAUDE_BROOM_FLIGHT_20261012.md` | 비행 마법 → 빗자루 비행 (클라이언트 물리·균형/낙마·숙련도·빗자루 10종·`/빗자루`). `chacademy-motion/` 0.2.0 사본 추가(PC 빌드 성공) + magic-mythic 연결(빌드 안 함). MagicCodex 제안은 문서 5장(미적용) | 받기 전 |
+| `claude/broom-flight-20261012` | `codex/chat-discovery-magic-protection-20261011` @ `c373610` | `CLAUDE_BROOM_FLIGHT_20261012.md` | 비행 마법 → 빗자루 비행 (클라이언트 물리·균형/낙마·숙련도·빗자루 10종·`/빗자루`). `chacademy-motion/` 0.2.0 사본 추가(PC 빌드 성공) + magic-mythic 연결(빌드 안 함). MagicCodex 제안은 문서 5장(미적용). **0.3.0 추가: 빗자루 보유=권한, 장비창 빗자루 칸·선택창 제안 `CLAUDE_BROOM_EQUIP_UI_20261012.md` (GPT 검토 후 적용, 자료 `broom-ui/`)** | 받기 전 |
 
 ## Claude 가 지키는 규칙
 

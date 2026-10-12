@@ -28,12 +28,24 @@ public final class BroomModel {
     public final float[] seat;
     /** 내장 텍스처 PNG 바이트 (없으면 null). */
     public final byte[] texturePng;
+    /** 전체 크기 min x,y,z, max x,y,z (픽셀). 장비창에서 화면에 맞출 때 씀. */
+    public final float[] bounds;
 
     private BroomModel(String name, List<Quad> quads, float[] seat, byte[] texturePng) {
         this.name = name;
         this.quads = quads;
         this.seat = seat;
         this.texturePng = texturePng;
+        float[] b = {Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE};
+        for (var q : quads) {
+            for (int i = 0; i < 12; i++) {
+                int axis = i % 3;
+                b[axis] = Math.min(b[axis], q.pos()[i]);
+                b[axis + 3] = Math.max(b[axis + 3], q.pos()[i]);
+            }
+        }
+        if (quads.isEmpty()) b = new float[]{0, 0, 0, 1, 1, 1};
+        this.bounds = b;
     }
 
     public static BroomModel parse(String name, String json) {

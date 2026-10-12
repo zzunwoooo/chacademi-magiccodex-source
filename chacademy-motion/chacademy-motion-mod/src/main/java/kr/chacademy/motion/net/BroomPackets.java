@@ -7,6 +7,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -91,6 +92,69 @@ public final class BroomPackets {
                     buf.writeFloat(e.value);
                 },
                 buf -> new EventC2S(buf.readByte(), buf.readFloat()));
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
+
+    /** 장비창에 보일 빗자루 하나 (서버 brooms.yml 수치). */
+    public record Owned(String id, String name, String grade, float maxSpeed, float accel, float turn, float brake,
+                        float stability, float climb) {}
+
+    /** 서버 → 나: 가진 빗자루와 장착 중인 빗자루. equipped 가 빈 문자열이면 없음. */
+    public record ListS2C(String equipped, float mastery, java.util.List<Owned> brooms) implements CustomPacketPayload {
+        public static final Type<ListS2C> TYPE = typeOf("broom_list");
+        public static final StreamCodec<RegistryFriendlyByteBuf, ListS2C> CODEC = StreamCodec.of(
+                (buf, m) -> {
+                    ByteBufCodecs.STRING_UTF8.encode(buf, m.equipped);
+                    buf.writeFloat(m.mastery);
+                    ByteBufCodecs.VAR_INT.encode(buf, m.brooms.size());
+                    for (var b : m.brooms) {
+                        ByteBufCodecs.STRING_UTF8.encode(buf, b.id());
+                        ByteBufCodecs.STRING_UTF8.encode(buf, b.name());
+                        ByteBufCodecs.STRING_UTF8.encode(buf, b.grade());
+                        buf.writeFloat(b.maxSpeed());
+                        buf.writeFloat(b.accel());
+                        buf.writeFloat(b.turn());
+                        buf.writeFloat(b.brake());
+                        buf.writeFloat(b.stability());
+                        buf.writeFloat(b.climb());
+                    }
+                },
+                buf -> {
+                    String eq = ByteBufCodecs.STRING_UTF8.decode(buf);
+                    float mastery = buf.readFloat();
+                    int n = ByteBufCodecs.VAR_INT.decode(buf);
+                    if (n < 0 || n > 64) throw new IllegalArgumentException("broom list size " + n);
+                    var list = new java.util.ArrayList<Owned>(n);
+                    for (int i = 0; i < n; i++) {
+                        list.add(new Owned(ByteBufCodecs.STRING_UTF8.decode(buf), ByteBufCodecs.STRING_UTF8.decode(buf),
+                                ByteBufCodecs.STRING_UTF8.decode(buf), buf.readFloat(), buf.readFloat(), buf.readFloat(),
+                                buf.readFloat(), buf.readFloat(), buf.readFloat()));
+                    }
+                    return new ListS2C(eq, mastery, List.copyOf(list));
+                });
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
+
+    public static final byte REQ_REFRESH = 0;
+    public static final byte REQ_EQUIP = 1;
+
+    /** 나 → 서버: 목록 다시 보내 줘 / 이 빗자루 장착. */
+    public record RequestC2S(byte kind, String broom) implements CustomPacketPayload {
+        public static final Type<RequestC2S> TYPE = typeOf("broom_req");
+        public static final StreamCodec<RegistryFriendlyByteBuf, RequestC2S> CODEC = StreamCodec.of(
+                (buf, r) -> {
+                    buf.writeByte(r.kind);
+                    ByteBufCodecs.STRING_UTF8.encode(buf, r.broom);
+                },
+                buf -> new RequestC2S(buf.readByte(), ByteBufCodecs.STRING_UTF8.decode(buf)));
 
         @Override
         public Type<? extends CustomPacketPayload> type() {
