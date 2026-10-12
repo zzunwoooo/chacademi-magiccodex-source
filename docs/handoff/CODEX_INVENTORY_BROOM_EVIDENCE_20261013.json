@@ -1,5 +1,5 @@
-﻿{
-    "deployment":  "Prepared, pending targeted maintenance",
+{
+    "deployment":  "Completed: school/wild plugins and personal UI/Motion; Velocity unchanged",
     "tests":  {
                   "total":  633,
                   "motionPlugin":  21,
@@ -43,5 +43,42 @@
 
                          ],
     "utc":  "2026-10-12T15:28:02.8368194Z",
-    "gameQA":  "Not performed"
+    "gameQA":  "Not performed",
+    "sourceCommit":  "0a3b188c419c7ed1e17bd308453231f464ad2056",
+    "serverVerification":  {
+                               "statusPacketResponses":  3,
+                               "wild":  {
+                                            "port":  25567,
+                                            "pid":  5724,
+                                            "unrelatedPluginsPreserved":  28,
+                                            "done":  "2026-10-13 00:32:05 KST"
+                                        },
+                               "velocity":  {
+                                                "port":  25565,
+                                                "pid":  7552,
+                                                "unchanged":  true
+                                            },
+                               "backup":  "C:/Chacademi/backups/inventory-broom-20261013-resume",
+                               "school":  {
+                                              "port":  25566,
+                                              "pid":  3688,
+                                              "unrelatedPluginsPreserved":  29,
+                                              "done":  "2026-10-13 00:32:08 KST"
+                                          }
+                           },
+    "personalVerification":  {
+                                 "minecraftRunning":  false,
+                                 "installed":  2,
+                                 "existingGradleProcessesUntouched":  2,
+                                 "configFilesPreserved":  1807,
+                                 "backup":  "C:/Users/matil/Documents/Codex/2026-10-13/task/personal-backup-20261013",
+                                 "storyDescriptionsPreserved":  6,
+                                 "unrelatedFilesPreserved":  14
+                             },
+    "warnings":  [
+                     "Existing SkeletalKnight and DB duplicate-key warnings observed.",
+                     "Wild ItemsAdder output/generated.zip missing at startup; no pack/config change performed.",
+                     "In-game GUI, input, multi-client flight and GPU QA not performed."
+                 ],
+    "artifactDirectory":  "C:/Chacademi/staging/survival-inventory-20261012-task5/release-20261013"
 }
