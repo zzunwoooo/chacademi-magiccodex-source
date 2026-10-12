@@ -64,6 +64,10 @@ public final class CastingClient {
         return client.world!=null && client.player!=null && client.player.isAlive() && !client.player.isSpectator()
                 && client.currentScreen==null && client.getOverlay()==null && client.isWindowFocused();
     }
+    public static boolean handleMouse(MinecraftClient client,int button,int action){
+        int code=KeySettingsLayout.mouseCode(button);
+        return code>=0 && handleKey(client,code,0,action);
+    }
     public static boolean handleKey(MinecraftClient client,int key,int scan,int action) {
         state();
         boolean toggle=toggleKey!=null && toggleKey.matchesKey(key,scan);
@@ -106,7 +110,7 @@ public final class CastingClient {
     public static boolean suppressed(KeyBinding key) {
         if(!STATE.enabled() || !gameplay(MinecraftClient.getInstance()) || key==toggleKey) return false;
         if(key.getTranslationKey().startsWith("key.magiccodex.")) return false;
-        for(var binding:STATE.bindings()) if(!binding.empty() && KeySettingsLayout.allowed(binding.keyCode()) && key.matchesKey(binding.keyCode(),0)) return true;
+        for(var binding:STATE.bindings()) if(!binding.empty() && KeySettingsLayout.allowed(binding.keyCode()) && (KeySettingsLayout.mouse(binding.keyCode())?key.matchesMouse(KeySettingsLayout.mouseButton(binding.keyCode())):key.matchesKey(binding.keyCode(),0))) return true;
         return false;
     }
     public static void tick(MinecraftClient client) {

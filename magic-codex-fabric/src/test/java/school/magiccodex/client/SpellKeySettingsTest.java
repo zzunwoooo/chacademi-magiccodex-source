@@ -21,7 +21,7 @@ class SpellKeySettingsTest {
     }
     @Test void reservedAndUnknownKeysAreRejected() {
         var s=new SpellKeySettings(); s.select(0,"flame");
-        for(int code:new int[]{87,65,83,68,73,90,80,79,256,340,343,999,-1})
+        for(int code:new int[]{87,65,83,68,73,90,80,79,256,342,343,999,-1})
             assertThrows(IllegalArgumentException.class,()->s.bind(0,code));
         assertFalse(s.complete());
     }

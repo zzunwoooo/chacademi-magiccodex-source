@@ -17,7 +17,8 @@
     "HandledItemTooltipMixin",
     "ItemIconMixin",
     "WhisperGlyphMixin",
-    "ChatIconGlyphMixin"
+    "ChatIconGlyphMixin",
+    "CodexMouseMixin"
   ],
   "injectors": {
     "defaultRequire": 1

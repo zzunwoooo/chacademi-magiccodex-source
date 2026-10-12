@@ -207,6 +207,14 @@ public final class KeySettingsScreen extends Screen {
             label(ctx,shorten(s.name(),165,21),r.x()+102,r.centerY()-12,21,blocked?MUTED:IVORY);
             label(ctx,state.isEmpty()?s.category().label:state,r.x()+102,r.centerY()+20,16,current?GOLD:MUTED);
         }
+        for(int i=0;i<9;i++)if(hover(KeySettingsLayout.choice(i))&&page*9+i<all.size()){
+            String description=all.get(page*9+i).description();
+            if(description!=null&&!description.isBlank()){
+                overlay(ctx,new Rect(386,695,900,36),0xF0112230,0xAA998A6E,6);
+                label(ctx,shorten(description.replace('\n',' '),870,17),401,713,17,IVORY);
+            }
+            break;
+        }
         if(all.isEmpty()) text(ctx,waiting()?"잠시만 기다려 주세요":"등록할 수 있는 배운 마법이 없습니다",836,469,23,MUTED,BODY);
         button(ctx,KeySettingsLayout.PREVIOUS,"이전",false); button(ctx,KeySettingsLayout.NEXT,"다음",false);
         text(ctx,(page+1)+" / "+Math.max(1,(all.size()+8)/9)+"    ·    ESC 취소",836,762,18,GOLD,BODY);
@@ -255,6 +263,10 @@ public final class KeySettingsScreen extends Screen {
     }
     @Override public boolean mouseClicked(double x,double y,int button) {
         var layout=CodexLayout.fit(width,height); mx=layout.localX(x); my=layout.localY(y);
+        if(KeySettingsLayout.mouseCode(button)>=0){
+            if(!confirmDiscard&&!pickerOpen()&&dragSlot<0)openPicker(KeySettingsLayout.mouseCode(button));
+            return true;
+        }
         if(button!=0 && button!=1) return false;
         if(confirmDiscard) {
             if(button==0 && hover(KeySettingsLayout.CONTINUE)) { confirmDiscard=false; sound(false); }
@@ -318,7 +330,7 @@ public final class KeySettingsScreen extends Screen {
     }
     /** Opens the spell picker for a keyboard key; reserved keys explain why they are refused. */
     private boolean openPicker(int code) {
-        if(!KeySettingsLayout.KEYS.stream().anyMatch(k->k.code()==code)) return false;
+        if(!KeySettingsLayout.mouse(code)&&!KeySettingsLayout.KEYS.stream().anyMatch(k->k.code()==code)) return false;
         if(!KeySettingsLayout.allowed(code)) {
             notice=KeySettingsLayout.reservedShortcut(code)?"WASD · I · O · P · Z 키는 지정할 수 없습니다.":"이 키는 지정할 수 없습니다.";
             sound(true); return false;

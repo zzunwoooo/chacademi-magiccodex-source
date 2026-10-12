@@ -20,15 +20,22 @@ public final class KeySettingsLayout {
     public static final Rect CONTINUE = new Rect(605, 510, 220, 50);
     public static final List<Key> KEYS = keys();
     private static final Set<Integer> RESERVED = Set.of(87, 65, 83, 68, 73, 90, 80, 79,
-            340, 344, 341, 345, 342, 346, 343, 347, 348, 280);
+            344, 345, 342, 346, 343, 347, 348, 280);
     private static java.util.function.IntPredicate equipmentKey=code->false;
     static void equipmentKey(java.util.function.IntPredicate predicate){equipmentKey=predicate;}
     static boolean equipmentReserved(int code){return code==79||equipmentKey.test(code);}
     public static boolean reservedShortcut(int code){return code==87||code==65||code==83||code==68||code==73||code==90||code==80||code==79||equipmentKey.test(code);}
+    // Positive values outside GLFW keyboard range preserve version-1 integer storage.
+    public static final int THUMB_1=1003, THUMB_2=1004;
+    public static boolean mouse(int code){return code==THUMB_1||code==THUMB_2;}
+    public static int mouseCode(int button){return button==3?THUMB_1:button==4?THUMB_2:-1;}
+    public static int mouseButton(int code){return mouse(code)?code-1000:-1;}
     public static boolean allowed(int code) {
+        if(mouse(code))return true;
         return !RESERVED.contains(code) && !equipmentKey.test(code) && KEYS.stream().anyMatch(k -> k.code() == code);
     }
     public static String name(int code) {
+        if(mouse(code))return code==THUMB_1?"\uc5c4\uc9c0 1":"\uc5c4\uc9c0 2";
         return KEYS.stream().filter(k -> k.code() == code).map(Key::label).findFirst().orElse("미지정");
     }
     public static Rect slot(int index) { return new Rect(375 + index * 166,622,92,88); }
