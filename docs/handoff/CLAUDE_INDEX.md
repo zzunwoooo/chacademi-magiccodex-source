@@ -1,6 +1,6 @@
 # Current staging: HUD fixes and wildlife review, 2026-10-12
 
-See [staged fixes and blockers](CODEX_HUD_FIXES_20261012.md). Nothing in this staging patch is deployed. Launcher changes are explicitly held. Image evidence and worldgen/new-plugin approval remain pending.
+See [staged fixes and blockers](CODEX_HUD_FIXES_20261012.md). Nothing in this staging patch is deployed. Launcher changes are explicitly held. Icon baseline is corrected using parent-verified pixel evidence; live visual acceptance and worldgen/new-plugin approval remain pending.
 
 # Current update: party HUD, 2026-10-12
 

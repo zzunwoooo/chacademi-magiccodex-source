@@ -6,7 +6,7 @@
       "chars": [
         ""
       ],
-      "ascent": 9,
+      "ascent": 12,
       "file": "magiccodex:font/chat_global.png"
     },
     {
@@ -15,7 +15,7 @@
       "chars": [
         ""
       ],
-      "ascent": 9,
+      "ascent": 12,
       "file": "magiccodex:font/chat_dormitory.png"
     },
     {
@@ -24,7 +24,7 @@
       "chars": [
         ""
       ],
-      "ascent": 9,
+      "ascent": 12,
       "file": "magiccodex:font/chat_party.png"
     },
     {
@@ -33,7 +33,7 @@
       "chars": [
         ""
       ],
-      "ascent": 9,
+      "ascent": 12,
       "file": "magiccodex:font/chat_system.png"
     },
     {
@@ -42,7 +42,7 @@
       "chars": [
         ""
       ],
-      "ascent": 9,
+      "ascent": 12,
       "file": "magiccodex:font/chat_school.png"
     },
     {
@@ -51,7 +51,7 @@
       "chars": [
         ""
       ],
-      "ascent": 9,
+      "ascent": 12,
       "file": "magiccodex:font/chat_wild.png"
     }
   ]
