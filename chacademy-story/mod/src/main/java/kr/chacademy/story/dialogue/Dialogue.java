@@ -13,7 +13,11 @@ public record Dialogue(
         String start,
         Map<String, Speaker> speakers,
         Map<String, Scene> scenes,
-        DialogueCommands commands) {
+        DialogueCommands commands,
+        String description) {
+    public Dialogue(String id,String title,String start,Map<String,Speaker> speakers,Map<String,Scene> scenes,DialogueCommands commands){
+        this(id,title,start,speakers,scenes,commands,"");
+    }
     public Dialogue(String id,String title,String start,Map<String,Speaker> speakers,Map<String,Scene> scenes){
         this(id,title,start,speakers,scenes,DialogueCommands.EMPTY);
     }

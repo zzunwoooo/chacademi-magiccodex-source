@@ -10,6 +10,13 @@ class DialogueParserTest {
     private static Map<String,Object> line(String text){return map("who","me","text",text);}
     private static String error(String id,Object root){return assertThrows(IOException.class,()->DialogueParser.parse(id,root)).getMessage();}
 
+    @Test void optionalJournalDescriptionUsesUserMetadataWithoutExampleFallback() throws IOException {
+        var r=root("start",map("lines",List.of(line("hello"))));
+        assertEquals("",DialogueParser.parse("chapter",r).description());
+        r.put("description","User-authored journal details");
+        var d=DialogueParser.parse("chapter",r);
+        assertEquals("t",d.title());assertEquals("User-authored journal details",d.description());
+    }
     @Test void readsScenesChoicesAndIgnoresOldWindowStyleKeys() throws IOException {
         var r=root("wake",map("lines",List.of(line("안녕")),"event","e_wake","choices",List.of(map("text","네","to","wake","event","c_wake_1","need",map("npc","teacher","min",10,"max",""),"affinity",List.of(map("npc","teacher","add",99))))));
         // 예전 자체 대화창용 값: 이상한 값이어도 오류가 아니다 (읽지 않는다)
