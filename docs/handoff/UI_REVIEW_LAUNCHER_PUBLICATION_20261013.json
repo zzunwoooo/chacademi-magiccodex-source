@@ -1,0 +1,80 @@
+{
+  "launcherCommit": "dbb59e721d40ba1bc31fd586c6031886bde9df0e",
+  "gameBuildCommit": "bd6d6e001c38512569c11fb4db07d069bff110f3",
+  "tag": "v0.1.5",
+  "published": true,
+  "latest": true,
+  "releaseUrl": "https://github.com/zzunwoooo/chacademi-launcher/releases/tag/v0.1.5",
+  "artifacts": [
+    {
+      "name": "Chacademi-Launcher-setup-0.1.5.exe",
+      "bytes": 98762869,
+      "sha256": "1287e585f06cb03b4869a07e9f5035c3b0607ba878d42d708105bac40fd4c456"
+    },
+    {
+      "name": "Chacademi-Launcher-setup-0.1.5.exe.blockmap",
+      "bytes": 103623,
+      "sha256": "ea76ddd3fb83dad94f37e2aa369af084b5c71cc260cbb77f87ef3bec19b37cb2"
+    },
+    {
+      "name": "Chacademi-Launcher-setup-0.1.5.zip",
+      "bytes": 136810035,
+      "sha256": "db412c8d725a87e57d3044822a6c2459ae3605b5285e70e83f45acd4c54fbb42"
+    },
+    {
+      "name": "chacademy-motion-0.3.0-codex.2.jar",
+      "bytes": 1426559,
+      "sha256": "2561be0b7cbc6ad1c6803d6e851ec31595ee3b1bcf8ac5d1da7d578944faa11c"
+    },
+    {
+      "name": "chacademy-story-0.1.3-journal.2.jar",
+      "bytes": 458358,
+      "sha256": "304444a2e753c717c536de68aa574099cacc31ba330cc86a71c94203038e457f"
+    },
+    {
+      "name": "distribution.json",
+      "bytes": 26590,
+      "sha256": "ff263b5b8dfd522dc14e2dd31286d4a8d698124c86f8b04d2fe9b0cc1b3c7b11"
+    },
+    {
+      "name": "latest.yml",
+      "bytes": 364,
+      "sha256": "4f29d3d2042377f0d0b5997189b68bdde8e62e1b2625c1c2dc4c4505f2e3c1b3"
+    },
+    {
+      "name": "magic-codex-ui-0.39.0-catalog.alpha.2-chat.3-holytaming.1-partyhud.4-taming.1-input.1-journal.1-inventory.2-broom.1-aim.1-review.1+mc1.21.4.jar",
+      "bytes": 115234881,
+      "sha256": "4e9f8206b676e0f19485ca292b64c664c42f8f213d44bdbce3d48a524af6c54d"
+    },
+    {
+      "name": "payload-sha256.json",
+      "bytes": 14355,
+      "sha256": "41b0a935a18257a133dee3af02bb3456396e22e3ad3b3876bb3ec57ff60ac7c3"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "bytes": 981,
+      "sha256": "93b3757e504e0c6ab75e4e1d8f6bfb707eac9d508546b5c06e171fc97e793639"
+    }
+  ],
+  "githubDigestsVerified": 10,
+  "publicDownloadsVerified": [
+    "distribution.json",
+    "payload-sha256.json",
+    "latest.yml",
+    "SHA256SUMS.txt",
+    "main/distribution.json (Git-normalized newlines)"
+  ],
+  "gameTests": 710,
+  "launcherNamedScenarios": 16,
+  "additionalChecks": [
+    "settings-policy script",
+    "offline seed script",
+    "eslint",
+    "updater SHA512/size/blockmap",
+    "ASAR exact manifests and camera helper"
+  ],
+  "gameplayQA": "not performed",
+  "installedApplicationUpdateQA": "not performed",
+  "cameraMigration": "Only Fabric mod ID shouldersurfing in instance mods is SHA256-backed-up and removed; configs/other IDs preserved. Stale feed cache not included in regenerated fabric.addMods list."
+}
