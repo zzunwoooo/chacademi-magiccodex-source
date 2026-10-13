@@ -66,6 +66,10 @@ Use a test account; do not claim reward or gameplay outcomes from unit tests alo
 | Wild transfer, target pets/players/NPCs, grounded wild mobs | Previous targeting exclusions and surface placement unchanged; no unintended attack/taming |
 | Story ch1-1…ch1-6, portraits, chat, party HUD, mouse, pet/shiny, quest receipt replay | Existing features and private description-only edits preserved |
 
+## Verified deployment
+
+School PID 12044 and wild PID 11764 reached `Done`; installed plugin hashes matched. Velocity PID 7552 was preserved. Hosting backups: `C:/Chacademi/backups/ui-review-20261013`. Personal UI/Motion/Story matched the same build hashes; SSR was backed up and removed. All 12 other mod files and 1,807 configuration files retained identical hashes, including private Story descriptions. No Minecraft process was forcibly stopped. Existing SkeletalKnight/DB initialization warnings and wild ItemsAdder generated.zip absence remain. See [deployment evidence](UI_REVIEW_DEPLOYMENT_20261013.json) and [26 atlas source rectangles](UI_REVIEW_ATLAS_SLICES_20261013.json). Actual game QA remains unperformed.
+
 ## Deployment record
 
 Build artifacts: hosting C:/Chacademi/staging/survival-inventory-20261012-task5/release-ui-review-20261013. Deployment and public launcher publication are tracked separately after hash-verified backups. Shoulder Surfing is removed from the personal client and public feed because the approved camera is inside Magic Codex. Do not touch private Story content/options, other personal mods or Velocity. Stop each backend only through Stop-Network.ps1 -Server school|wild.

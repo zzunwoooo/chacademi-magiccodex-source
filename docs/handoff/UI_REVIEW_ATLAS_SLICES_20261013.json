@@ -1,0 +1,211 @@
+{
+  "method": "Original approved PNGs are preserved; renderer source rectangles select atlas regions without re-encoding. Bounds verified against actual PNG IHDR. Pixel visual inspection succeeded before integration. No GPU/game appearance claim.",
+  "atlases": [
+    {
+      "file": "broom_atlas.png",
+      "sha256": "0f91a58967ae50be45a33f9f5a9b6673544bfe2033ddbfdad41aabf8a7b55493",
+      "width": 1536,
+      "height": 1024,
+      "renderSlices": [
+        {
+          "name": "panel-top",
+          "x": 25,
+          "y": 16,
+          "width": 1485,
+          "height": 113
+        },
+        {
+          "name": "panel-middle",
+          "x": 25,
+          "y": 129,
+          "width": 1485,
+          "height": 166
+        },
+        {
+          "name": "panel-bottom",
+          "x": 25,
+          "y": 295,
+          "width": 1485,
+          "height": 76
+        },
+        {
+          "name": "card-normal",
+          "x": 30,
+          "y": 390,
+          "width": 197,
+          "height": 361
+        },
+        {
+          "name": "card-hover",
+          "x": 230,
+          "y": 390,
+          "width": 197,
+          "height": 361
+        },
+        {
+          "name": "card-selected",
+          "x": 432,
+          "y": 390,
+          "width": 209,
+          "height": 361
+        },
+        {
+          "name": "grade-0",
+          "x": 657,
+          "y": 474,
+          "width": 232,
+          "height": 244
+        },
+        {
+          "name": "grade-1",
+          "x": 869,
+          "y": 474,
+          "width": 232,
+          "height": 244
+        },
+        {
+          "name": "grade-2",
+          "x": 1081,
+          "y": 474,
+          "width": 232,
+          "height": 244
+        },
+        {
+          "name": "grade-3",
+          "x": 1293,
+          "y": 474,
+          "width": 232,
+          "height": 244
+        },
+        {
+          "name": "equipped",
+          "x": 1015,
+          "y": 806,
+          "width": 174,
+          "height": 59
+        },
+        {
+          "name": "stats",
+          "x": 26,
+          "y": 757,
+          "width": 610,
+          "height": 224
+        },
+        {
+          "name": "button",
+          "x": 645,
+          "y": 790,
+          "width": 352,
+          "height": 84
+        },
+        {
+          "name": "button-hover",
+          "x": 645,
+          "y": 879,
+          "width": 352,
+          "height": 84
+        }
+      ]
+    },
+    {
+      "file": "flight_atlas.png",
+      "sha256": "8e845f9acdf9e6ad99b3a0933bdbc3bdbbcc43c04b9f15841e2e1d471abf3294",
+      "width": 1774,
+      "height": 887,
+      "renderSlices": [
+        {
+          "name": "arc-empty",
+          "x": 26,
+          "y": 33,
+          "width": 560,
+          "height": 126
+        },
+        {
+          "name": "arc-full",
+          "x": 608,
+          "y": 33,
+          "width": 560,
+          "height": 126
+        },
+        {
+          "name": "arc-low",
+          "x": 1190,
+          "y": 33,
+          "width": 560,
+          "height": 126
+        },
+        {
+          "name": "boost",
+          "x": 70,
+          "y": 181,
+          "width": 230,
+          "height": 239
+        },
+        {
+          "name": "key-empty",
+          "x": 1181,
+          "y": 428,
+          "width": 281,
+          "height": 277
+        },
+        {
+          "name": "key-done",
+          "x": 1465,
+          "y": 428,
+          "width": 281,
+          "height": 277
+        },
+        {
+          "name": "time-empty",
+          "x": 40,
+          "y": 709,
+          "width": 960,
+          "height": 65
+        },
+        {
+          "name": "time-full",
+          "x": 40,
+          "y": 778,
+          "width": 960,
+          "height": 65
+        }
+      ]
+    },
+    {
+      "file": "monster_atlas.png",
+      "sha256": "6ce0ad2dcf84599b3e15f49b662cc0a49b7c3826b63c71d98f0e92db90dace52",
+      "width": 1671,
+      "height": 941,
+      "renderSlices": [
+        {
+          "name": "normal-frame",
+          "x": 0,
+          "y": 35,
+          "width": 1671,
+          "height": 320
+        },
+        {
+          "name": "shiny-frame",
+          "x": 0,
+          "y": 325,
+          "width": 1671,
+          "height": 320
+        },
+        {
+          "name": "normal-emblem",
+          "x": 72,
+          "y": 625,
+          "width": 292,
+          "height": 295
+        },
+        {
+          "name": "shiny-emblem",
+          "x": 361,
+          "y": 625,
+          "width": 292,
+          "height": 295
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "sourceCommit": "bd6d6e001c38512569c11fb4db07d069bff110f3",
+  "servers": [
+    {
+      "server": "school",
+      "pid": 12044,
+      "alive": true,
+      "done": "[13:23:48] [Server thread/INFO]: Done (89.774s)! For help, type \"help\"",
+      "enabled": [
+        "[13:23:40] [Server thread/INFO]: [MagicCodexBridge] Enabling MagicCodexBridge v0.30.0-catalog.alpha.1-chat.3-discovery.2-holytaming.1-partyhud.3-taming.1-runtime.1-journal.1-broom.1-review.1",
+        "[13:23:41] [Server thread/INFO]: [ChacademyMotion] Enabling ChacademyMotion v0.3.0-codex.2",
+        "[13:23:41] [Server thread/INFO]: [ChAcademiaMagicMythic] Enabling ChAcademiaMagicMythic v0.1.2-recovery.1-gimmick.1-targets.1-broom.2"
+      ],
+      "artifacts": [
+        {
+          "sha256": "373749F31E76E1479E05BF512AFD607C736B69824DAA8785DF6DA86864980446",
+          "file": "magic-codex-bridge-0.30.0-catalog.alpha.1-chat.3-discovery.2-holytaming.1-partyhud.3-taming.1-runtime.1-journal.1-broom.1-review.1.jar"
+        },
+        {
+          "sha256": "FE55F92223AF8094CB475431F26B1A91CEDC81D72ED0BAE58EC46B4A342FF58D",
+          "file": "chacademia-magic-mythic-0.1.2-recovery.1-gimmick.1-targets.1-broom.2.jar"
+        },
+        {
+          "sha256": "17CB1AD7054E07613658F29E2033727458DFE994253CE81BFF80CF1618C051C3",
+          "file": "chacademy-motion-plugin-0.3.0-codex.2.jar"
+        }
+      ],
+      "otherPluginHashesPreserved": 29
+    },
+    {
+      "server": "wild",
+      "pid": 11764,
+      "alive": true,
+      "done": "[13:23:47] [Server thread/INFO]: Done (85.642s)! For help, type \"help\"",
+      "enabled": [
+        "[13:23:41] [Server thread/INFO]: [ChacademyMotion] Enabling ChacademyMotion v0.3.0-codex.2",
+        "[13:23:41] [Server thread/INFO]: [MagicCodexBridge] Enabling MagicCodexBridge v0.30.0-catalog.alpha.1-chat.3-discovery.2-holytaming.1-partyhud.3-taming.1-runtime.1-journal.1-broom.1-review.1",
+        "[13:23:42] [Server thread/INFO]: [ChAcademiaMagicMythic] Enabling ChAcademiaMagicMythic v0.1.2-recovery.1-gimmick.1-targets.1-broom.2"
+      ],
+      "artifacts": [
+        {
+          "sha256": "373749F31E76E1479E05BF512AFD607C736B69824DAA8785DF6DA86864980446",
+          "file": "magic-codex-bridge-0.30.0-catalog.alpha.1-chat.3-discovery.2-holytaming.1-partyhud.3-taming.1-runtime.1-journal.1-broom.1-review.1.jar"
+        },
+        {
+          "sha256": "FE55F92223AF8094CB475431F26B1A91CEDC81D72ED0BAE58EC46B4A342FF58D",
+          "file": "chacademia-magic-mythic-0.1.2-recovery.1-gimmick.1-targets.1-broom.2.jar"
+        },
+        {
+          "sha256": "17CB1AD7054E07613658F29E2033727458DFE994253CE81BFF80CF1618C051C3",
+          "file": "chacademy-motion-plugin-0.3.0-codex.2.jar"
+        }
+      ],
+      "otherPluginHashesPreserved": 28
+    }
+  ],
+  "velocity": {
+    "pid": 7552,
+    "preserved": true
+  },
+  "hostingBackup": "C:/Chacademi/backups/ui-review-20261013",
+  "personal": {
+    "modsReplaced": 3,
+    "shoulderSurfingBackedUpAndRemoved": true,
+    "otherModFilesUnchanged": 12,
+    "configFilesUnchanged": 1807,
+    "gameWasNotRunningAtReplacement": true,
+    "gameplayQA": "not performed"
+  },
+  "knownPreviousWarnings": [
+    "SkeletalKnight MythicMobs configuration",
+    "Duplicate existing DB initialization keys/columns",
+    "wild ItemsAdder output/generated.zip missing"
+  ],
+  "seasonFollowup": "User deferred real 72-hour cycle with undecided epoch to next patch; current monthly calendar is not final intent."
+}
