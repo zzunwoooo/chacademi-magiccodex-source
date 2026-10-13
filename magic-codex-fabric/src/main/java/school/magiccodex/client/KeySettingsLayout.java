@@ -11,8 +11,8 @@ public final class KeySettingsLayout {
     public record Key(int code, String label, Rect box) {}
     public static final Rect ENTRY = new Rect(865, 74, 200, 48);
     public static final Rect CLOSE = new Rect(1478, 65, 54, 50);
-    public static final Rect SAVE = new Rect(1206, 831, 150, 52);
-    public static final Rect RESET = new Rect(1370, 831, 143, 52);
+    public static final Rect SAVE = new Rect(1206, 613, 150, 52);
+    public static final Rect RESET = new Rect(1370, 613, 143, 52);
     public static final Rect PREVIOUS = new Rect(388, 742, 95, 40);
     public static final Rect NEXT = new Rect(1190, 742, 95, 40);
     public static final Rect PICKER_CLOSE = new Rect(1248, 170, 48, 48);

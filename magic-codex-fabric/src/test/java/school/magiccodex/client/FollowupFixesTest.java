@@ -22,7 +22,8 @@ class FollowupFixesTest {
     @Test void mouseSitsRightOfTheOriginalKeyboardInsideThePanel() {
         for (var key : KeySettingsLayout.KEYS) assertTrue(key.box().x() + key.box().width() + 40 < MouseBindingLayout.X, key.label());
         assertTrue(MouseBindingLayout.X + MouseBindingLayout.W < 1535, "inside the panel border");
-        assertTrue(MouseBindingLayout.Y + MouseBindingLayout.H < KeySettingsLayout.slot(0).y(), "above the slot row");
+        assertTrue(MouseBindingLayout.Y + MouseBindingLayout.H < KeySettingsLayout.SAVE.y(), "above the button row");
+        assertTrue(KeySettingsLayout.SAVE.y() + KeySettingsLayout.SAVE.height() < KeySettingsScreen.HEIGHT - 20, "buttons inside the compact panel");
     }
     @Test void monsterCardKeepsEqualMarginsInsideTheFrame() {
         for (boolean shiny : new boolean[]{false, true}) {

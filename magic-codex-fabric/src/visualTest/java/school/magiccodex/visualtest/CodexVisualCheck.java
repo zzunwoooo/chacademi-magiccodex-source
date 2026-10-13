@@ -315,13 +315,13 @@ public final class CodexVisualCheck implements ClientModInitializer {
     /** Press and release without moving: a click on a reorderable slot. */
     private static void tap(MinecraftClient client, Rect box) {
         click(client, box);
-        var screen = client.currentScreen; var layout = CodexLayout.fit(screen.width, screen.height);
+        var screen = client.currentScreen; var layout = screen instanceof KeySettingsScreen ? KeySettingsScreen.layoutFor(screen.width, screen.height) : CodexLayout.fit(screen.width, screen.height);
         screen.mouseReleased(layout.x() + box.centerX() * layout.scale(), layout.y() + box.centerY() * layout.scale(), GLFW.GLFW_MOUSE_BUTTON_LEFT);
     }
     private static void click(MinecraftClient client, Rect box) {
         var screen = client.currentScreen;
         var layout = screen instanceof CodexScreen ? CodexLayout.codexFit(screen.width, screen.height)
-                : CodexLayout.fit(screen.width, screen.height);
+                : screen instanceof KeySettingsScreen ? KeySettingsScreen.layoutFor(screen.width, screen.height) : CodexLayout.fit(screen.width, screen.height);
         check(screen.mouseClicked(layout.x() + box.centerX() * layout.scale(),
                 layout.y() + box.centerY() * layout.scale(), GLFW.GLFW_MOUSE_BUTTON_LEFT), "Click was handled");
     }
