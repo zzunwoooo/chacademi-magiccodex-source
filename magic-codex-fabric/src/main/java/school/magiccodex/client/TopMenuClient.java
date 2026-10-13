@@ -17,19 +17,15 @@ public final class TopMenuClient {
     }
     public static void render(DrawContext ctx,long now){
         var c=MinecraftClient.getInstance();var w=c.getWindow();
-        renderer().render(ctx,w.getScaledWidth(),w.getScaledHeight(),
-            c.mouse.getX()*w.getScaledWidth()/w.getWidth(),c.mouse.getY()*w.getScaledHeight()/w.getHeight(),
-            c.currentScreen instanceof HudCursorScreen,now);
+        renderer().render(ctx,w.getScaledWidth(),w.getScaledHeight(),HudPointer.x(),HudPointer.y(),HudPointer.active(),now);
     }
     public static void renderTooltip(DrawContext ctx){
         var c=MinecraftClient.getInstance();var w=c.getWindow();
-        renderer().renderTooltip(ctx,w.getScaledWidth(),w.getScaledHeight(),
-            c.mouse.getX()*w.getScaledWidth()/w.getWidth(),c.mouse.getY()*w.getScaledHeight()/w.getHeight(),
-            c.currentScreen instanceof HudCursorScreen);
+        renderer().renderTooltip(ctx,w.getScaledWidth(),w.getScaledHeight(),HudPointer.x(),HudPointer.y(),HudPointer.active());
     }
     public static boolean click(double x,double y,int button){
         var c=MinecraftClient.getInstance();
-        if(button!=0 || !PlayerHudClient.active() || c.options.hudHidden || !(c.currentScreen instanceof HudCursorScreen))return false;
+        if(button!=0 || !PlayerHudClient.active() || c.options.hudHidden || !HudPointer.active())return false;
         float scale=PlayerHudLayout.of(c.getWindow().getScaledWidth(),c.getWindow().getScaledHeight()).scale();
         state.update(Util.getMeasuringTimeMs());
         int hit=state.hit((float)x/scale-6,(float)y/scale-3,renderer().baseWidth());

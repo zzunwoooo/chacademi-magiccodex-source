@@ -76,19 +76,38 @@ public final class CastingClient {
         CastingState.Result result;
         try {
             result=STATE.input(key,action,toggle,gameplay(client) && client.getNetworkHandler()!=null,Util.getMeasuringTimeMs(),
-                    ManaClient.supported(),spell->{
-                        if(ManaClient.supported())ManaClient.cast(spell);
-                        else client.getNetworkHandler().sendChatCommand(spell.command());
-                    });
+                    ManaClient.supported(),AimTargeting::begin,sender(client));
         } catch(RuntimeException error) {
             org.slf4j.LoggerFactory.getLogger("magiccodex").warn("마법 명령 전송 실패",error);
             if(client.player!=null) client.player.sendMessage(Text.literal("마법 명령을 전송하지 못했습니다."),true);
             return true;
         }
+        report(client,result);
+        return result.consumed();
+    }
+    /** Cast confirmed from the aim preview (left click). Same checks and messages as a key press. */
+    public static void fire(CodexData.Spell spell) {
+        var client=MinecraftClient.getInstance();
+        if(spell==null || !gameplay(client) || client.getNetworkHandler()==null) return;
+        state();
+        try { report(client,STATE.fire(spell.id(),Util.getMeasuringTimeMs(),ManaClient.supported(),sender(client))); }
+        catch(RuntimeException error) {
+            org.slf4j.LoggerFactory.getLogger("magiccodex").warn("마법 명령 전송 실패",error);
+            if(client.player!=null) client.player.sendMessage(Text.literal("마법 명령을 전송하지 못했습니다."),true);
+        }
+    }
+    private static java.util.function.Consumer<CodexData.Spell> sender(MinecraftClient client) {
+        return spell->{
+            if(ManaClient.supported())ManaClient.cast(spell);
+            else client.getNetworkHandler().sendChatCommand(spell.command());
+        };
+    }
+    private static void report(MinecraftClient client,CastingState.Result result) {
         if(result.kind()==CastingState.Kind.CAST || result.kind()==CastingState.Kind.LOCAL_EFFECT)
             ScreenVfxClient.onCast(result.spellId());
         if(result.kind()==CastingState.Kind.MODE) {
             client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK.value(),STATE.enabled()?1.2f:0.85f,0.22f));
+            if(!STATE.enabled()) AimTargeting.cancel(false);
             // Remove queued vanilla actions for the newly captured keys without interrupting WASD.
             if(STATE.enabled()) for(var binding:client.options.allKeys) if(suppressed(binding)) {
                 binding.setPressed(false); while(binding.wasPressed()) { }
@@ -106,7 +125,6 @@ public final class CastingClient {
                 client.player.sendMessage(Text.literal(message),true); lastNotice=now;
             }
         }
-        return result.consumed();
     }
     /** Covers vanilla continuous inputs and queued actions, including focus/GUI-close key resampling. */
     public static boolean suppressed(KeyBinding key) {
@@ -122,5 +140,6 @@ public final class CastingClient {
         if(client.world==null||client.player==null)BroomClientLink.clear();
         if(client.world==null || client.player==null) STATE.reset();
         else if(!client.player.isAlive() || client.player.isSpectator()) STATE.disable();
+        if(!STATE.enabled()) AimTargeting.cancel(false);
     }
 }

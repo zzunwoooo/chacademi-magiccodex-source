@@ -24,7 +24,9 @@
     "HandledScreenAccessor",
     "RecipeBookWidgetAccessor",
     "GhostRecipeAccessor",
-    "GhostCyclingItemMixin"
+    "GhostCyclingItemMixin",
+    "ShoulderCameraMixin",
+    "AimMouseMixin"
   ],
   "injectors": {
     "defaultRequire": 1
