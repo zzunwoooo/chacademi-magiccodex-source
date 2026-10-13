@@ -31,6 +31,8 @@ public final class PlayerHudClient {
     public static boolean handleAlt(MinecraftClient c,int key,int action){
         if(key!=GLFW.GLFW_KEY_LEFT_ALT && key!=GLFW.GLFW_KEY_RIGHT_ALT)return false;
         if(c.currentScreen instanceof HudCursorScreen)return true;
+        // Magic mode cursor (third person): Alt turns the view instead; the aim cursor already clicks the HUD.
+        if(AimCursor.capturesAlt())return false;
         if(action==GLFW.GLFW_PRESS && active() && c.currentScreen==null && c.getOverlay()==null
                 && c.isWindowFocused() && c.player.isAlive()){
             c.setScreen(new HudCursorScreen());

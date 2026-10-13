@@ -28,8 +28,8 @@ public final class KeySettingsLayout {
     // Positive values outside GLFW keyboard range preserve version-1 integer storage.
     public static final int THUMB_1=1003, THUMB_2=1004;
     public static boolean mouse(int code){return code==THUMB_1||code==THUMB_2;}
-    public static int mouseCode(int button){return button==3?THUMB_1:button==4?THUMB_2:-1;}
-    public static int mouseButton(int code){return mouse(code)?code-1000:-1;}
+    public static int mouseCode(int button){return button==3?THUMB_2:button==4?THUMB_1:-1;}
+    public static int mouseButton(int code){return code==THUMB_1?4:code==THUMB_2?3:-1;}
     public static boolean allowed(int code) {
         if(mouse(code))return true;
         return !RESERVED.contains(code) && !equipmentKey.test(code) && KEYS.stream().anyMatch(k -> k.code() == code);
@@ -66,6 +66,6 @@ public final class KeySettingsLayout {
         return List.copyOf(keys);
     }
     private static void row(List<Key> keys,int y,int h,int[] xs,int[] ws,String[] labels,int[] codes) {
-        for(int i=0;i<xs.length;i++) keys.add(new Key(codes[i],labels[i],new Rect(xs[i],y,ws[i],h)));
+        for(int i=0;i<xs.length;i++) keys.add(new Key(codes[i],labels[i],new Rect(Math.round(180+(xs[i]-210)*.82f),Math.round(200+(y-160)*.82f),Math.round(ws[i]*.82f),Math.round(h*.82f))));
     }
 }

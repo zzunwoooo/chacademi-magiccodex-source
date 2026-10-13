@@ -85,7 +85,8 @@ public final class ClimateService implements Listener, CommandExecutor, TabCompl
         expansion=Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")?new ClimateExpansion(this):null;
         if(expansion!=null)expansion.register();
         task=Bukkit.getScheduler().runTaskTimer(plugin,this::tick,5,5);
-        if(shared){plugin.getLogger().info("계절: MariaDB 공유 모드 (두 서버가 같은 계절, 실제 시간 기준 "+config.getLong("days-per-season",7)*20+"분마다 전환).");syncSeason();}
+        if(calendarMode())plugin.getLogger().info("계절: 실제 달력 / "+calendarZone()+" / "+current.label);
+        else if(shared){plugin.getLogger().info("계절: MariaDB 공유 모드 (두 서버가 같은 계절, 실제 시간 기준 "+config.getLong("days-per-season",7)*20+"분마다 전환).");syncSeason();}
     }
     public Season season(){return current;}
     public boolean enabledIn(World world){return enabled&&world!=null&&worlds.contains(world.getName());}
@@ -93,20 +94,22 @@ public final class ClimateService implements Listener, CommandExecutor, TabCompl
     public double powerMultiplier(String element){return switch(element.toLowerCase(Locale.ROOT)){case "fire","flame","화염"->firePower;case "water","물"->waterPower;default->1;};}
     private long worldTime(){var w=Bukkit.getWorld(config.getString("clock-world","world"));return w==null?0:w.getFullTime();}
     /** 계절 시계의 현재 값: 단독 모드는 월드 시간(틱), 공유 모드는 실제 시각을 틱으로 환산한 값. */
+    private boolean calendarMode(){return config.getString("season-clock","calendar").equalsIgnoreCase("calendar");}
+    private java.time.ZoneId calendarZone(){return java.time.ZoneId.of(config.getString("calendar-timezone","Asia/Seoul"));}
     private long clockTime(){return shared?System.currentTimeMillis()/SeasonClock.MILLIS_PER_TICK:worldTime();}
     private void updateClock(){
         // 공유 모드는 기준 시각이 DB 값이므로 시계가 뒤로 가도 로컬에서 보정(anchor 이동)하지 않는다.
         if(shared)clock.last=clockTime();else clock.observe(clockTime());
-        current=Season.values()[clock.season()];
+        current=Season.values()[calendarMode()&&clock.automatic?CalendarSeason.at(java.time.Instant.now(),calendarZone()):clock.season()];
         firePower=enabled?setting("seasons."+current.id()+".fire-power",1):1;
         waterPower=enabled?setting("seasons."+current.id()+".water-power",1):1;
     }
     private double setting(String key,double fallback){return config.getDouble(key,fallback);}
     /** 관리자 변경을 DB에 올린다 (비동기). 쓰기가 끝날 때까지 로컬 상태를 DB 값으로 덮어쓰지 않는다. */
-    private void publishSeason(){if(!shared)return;pendingValue=SeasonClock.Shared.of(clock).encode();syncSeason();}
+    private void publishSeason(){if(calendarMode()||!shared)return;pendingValue=SeasonClock.Shared.of(clock).encode();syncSeason();}
     /** DB와 맞추기: 쓸 것이 있으면 쓰고, 없으면(값이 아직 없을 때만) 현재 상태를 넣은 뒤 읽어서 반영한다. 메인 스레드는 기다리지 않는다. */
     private void syncSeason(){
-        if(!shared||seasonBusy||closed)return;seasonBusy=true;
+        if(calendarMode()||!shared||seasonBusy||closed)return;seasonBusy=true;
         final String write=pendingValue,seed=SeasonClock.Shared.of(clock).encode();
         try{seasonIo.execute(()->{
             String value=null,failure=null;
@@ -225,14 +228,14 @@ public final class ClimateService implements Listener, CommandExecutor, TabCompl
     }
     private void saveState(){
         // 공유 모드의 시계는 실제 시각 기준이라 월드 틱 기준인 로컬 파일에 쓰지 않는다 (파일은 단독 모드로 돌아갈 때를 위해 그대로 둔다).
-        if(shared)return;
+        if(shared&&!calendarMode())return;
         var state=new YamlConfiguration();state.set("season",Season.values()[clock.start].id());state.set("anchor",clock.anchor);state.set("automatic",clock.automatic);
         try{state.save(new File(plugin.getDataFolder(),"climate-state.yml"));}catch(IOException e){plugin.getLogger().severe("계절 저장 실패: "+e.getMessage());}
     }
     @Override public boolean onCommand(CommandSender sender,Command cmd,String label,String[] args){
         if(!sender.hasPermission("magiccodex.climate.admin"))return true;
         try{
-            if(args.length==2&&(args[0].equals("계절")||args[0].equalsIgnoreCase("season"))){clock.set(Season.parse(args[1]).ordinal(),clockTime(),clock.automatic);updateClock();saveState();publishSeason();}
+            if(args.length==2&&(args[0].equals("계절")||args[0].equalsIgnoreCase("season"))){clock.set(Season.parse(args[1]).ordinal(),clockTime(),calendarMode()?false:clock.automatic);updateClock();saveState();publishSeason();}
             else if(args.length==2&&(args[0].equals("자동")||args[0].equalsIgnoreCase("auto"))&&Set.of("켜기","끄기","on","off").contains(args[1])){clock.set(current.ordinal(),clockTime(),(args[1].equals("켜기")||args[1].equals("on")));saveState();publishSeason();}
             else if(args.length==1&&(args[0].equals("새로고침")||args[0].equalsIgnoreCase("reload"))){
                 var next=readConfig();int season=current.ordinal();boolean auto=clock.automatic;config=next;enabled=config.getBoolean("enabled",true);worlds=Set.copyOf(config.getStringList("worlds"));
@@ -247,7 +250,7 @@ public final class ClimateService implements Listener, CommandExecutor, TabCompl
                 var sub=subscribers.get(p.getUniqueId());
                 sender.sendMessage("계절 HUD 채널: "+p.getListeningPluginChannels().contains(SeasonProtocol.RESPONSE)+" · 전송 계절: "+(sub==null||sub.season<0?"대기":Season.values()[sub.season].label));
             }
-            sender.sendMessage("계절: "+current.label+" · "+clock.day()+"/"+(clock.length/24000)+"일 · 자동 전환 "+(clock.automatic?"ON":"OFF")+(shared?" · 두 서버 공유(실제 시간 기준, 1일=20분)":""));
+            if(calendarMode())sender.sendMessage("계절: "+current.label+" · 실제 날짜 "+java.time.LocalDate.now(calendarZone())+" · "+calendarZone()+" · "+(clock.automatic?"달력 자동":"관리자 고정"));else sender.sendMessage("계절: "+current.label+" · "+clock.day()+"/"+(clock.length/24000)+"일 · 자동 전환 "+(clock.automatic?"ON":"OFF")+(shared?" · 두 서버 공유(실제 시간 기준, 1일=20분)":""));
         }catch(Exception e){sender.sendMessage("계절 설정 오류: "+e.getMessage());}return true;
     }
     @Override public List<String> onTabComplete(CommandSender s,Command c,String a,String[] args){

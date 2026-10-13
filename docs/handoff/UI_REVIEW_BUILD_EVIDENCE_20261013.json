@@ -1,0 +1,105 @@
+{
+  "tests": [
+    {
+      "module": "magic-codex-paper",
+      "tests": 314,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "magic-mythic-paper",
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "magic-codex-fabric",
+      "tests": 294,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "chacademy-motion/chacademy-motion-plugin",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "chacademy-motion/chacademy-motion-mod",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "chacademy-story/mod",
+      "tests": 50,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "magic-codex-bridge-0.30.0-catalog.alpha.1-chat.3-discovery.2-holytaming.1-partyhud.3-taming.1-runtime.1-journal.1-broom.1-review.1.jar",
+      "sha256": "373749f31e76e1479e05bf512afd607c736b69824daa8785df6da86864980446",
+      "bytes": 1714424,
+      "module": "magic-codex-paper"
+    },
+    {
+      "file": "chacademia-magic-mythic-0.1.2-recovery.1-gimmick.1-targets.1-broom.2.jar",
+      "sha256": "fe55f92223af8094cb475431f26b1a91cedc81d72ed0bae58ec46b4a342ff58d",
+      "bytes": 100891,
+      "module": "magic-mythic-paper"
+    },
+    {
+      "file": "magic-codex-ui-0.39.0-catalog.alpha.2-chat.3-holytaming.1-partyhud.4-taming.1-input.1-journal.1-inventory.2-broom.1-aim.1-review.1+mc1.21.4.jar",
+      "sha256": "4e9f8206b676e0f19485ca292b64c664c42f8f213d44bdbce3d48a524af6c54d",
+      "bytes": 115234881,
+      "module": "magic-codex-fabric"
+    },
+    {
+      "file": "chacademy-motion-plugin-0.3.0-codex.2.jar",
+      "sha256": "17cb1ad7054e07613658f29e2033727458dfe994253ce81bff80cf1618c051c3",
+      "bytes": 52602,
+      "module": "chacademy-motion/chacademy-motion-plugin"
+    },
+    {
+      "file": "chacademy-motion-0.3.0-codex.2.jar",
+      "sha256": "2561be0b7cbc6ad1c6803d6e851ec31595ee3b1bcf8ac5d1da7d578944faa11c",
+      "bytes": 1426559,
+      "module": "chacademy-motion/chacademy-motion-mod"
+    },
+    {
+      "file": "chacademy-story-0.1.3-journal.2.jar",
+      "sha256": "304444a2e753c717c536de68aa574099cacc31ba330cc86a71c94203038e457f",
+      "bytes": 458358,
+      "module": "chacademy-story/mod"
+    }
+  ],
+  "approvedAssets": [
+    {
+      "file": "broom_atlas.png",
+      "sha256": "0f91a58967ae50be45a33f9f5a9b6673544bfe2033ddbfdad41aabf8a7b55493",
+      "bytes": 1618511
+    },
+    {
+      "file": "monster_atlas.png",
+      "sha256": "6ce0ad2dcf84599b3e15f49b662cc0a49b7c3826b63c71d98f0e92db90dace52",
+      "bytes": 1742184
+    },
+    {
+      "file": "flight_atlas.png",
+      "sha256": "8e845f9acdf9e6ad99b3a0933bdbc3bdbbcc43c04b9f15841e2e1d471abf3294",
+      "bytes": 1421910
+    }
+  ],
+  "cameraSource": "659b70b7ccb276c265076d2cecb54dc9d0f49f4b",
+  "inputZipSha256": "497a4828bf115c49eef86857008a9688fb141f93fb4a8be440534682f960ed25",
+  "gameQA": "not performed",
+  "deployment": "pending"
+}

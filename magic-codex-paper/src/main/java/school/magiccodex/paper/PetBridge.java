@@ -31,6 +31,7 @@ final class PetBridge implements PluginMessageListener,Listener,CommandExecutor,
     }
     private void reload(){try{config=CreatureConfigFiles.load(plugin.getDataFolder(),"pets","stars");catalogAt=0;}catch(Exception e){throw new IllegalArgumentException("펫 등급 설정을 읽지 못했습니다",e);}}
     private static long now(){return System.nanoTime()/1_000_000;}
+    boolean capturable(String id){try{capturePermission(id);return true;}catch(Exception|LinkageError ignored){return false;}}
     String capturePermission(String petId)throws Exception{
         if(!connect())throw new IllegalStateException("MCPets 연결이 필요합니다.");
         Object pet=hook.object.invoke(null,petId);

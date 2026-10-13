@@ -53,7 +53,7 @@ public final class FriendRequestToast {
     /** @return 클릭을 소비했으면 true */
     static boolean click(double x,double y,int button){
         var c=MinecraftClient.getInstance();
-        if(button!=0||current==null||!visible(c)||!(c.currentScreen instanceof HudCursorScreen))return false;
+        if(button!=0||current==null||!visible(c)||!HudPointer.active())return false;
         float lx=localX(c,x),ly=localY(c,y);
         if(lx<0||lx>=W||ly<0||ly>=H)return false;
         int hit=hit(lx,ly);if(hit==0)return true;
@@ -71,9 +71,9 @@ public final class FriendRequestToast {
         // 시간이 지나면 거절하지 않고 닫는다. 신청은 친구창의 받은 신청 목록에 남는다.
         if(age>=SHOW_MILLIS){current=null;return;}
         if(text==null)text=new CodexTypography(c);
-        boolean cursor=c.currentScreen instanceof HudCursorScreen;var w=c.getWindow();
+        boolean cursor=HudPointer.active();var w=c.getWindow();
         float s=scale(c),alpha=Math.min(1,Math.min(age/220f,(SHOW_MILLIS-age)/500f));
-        int hot=cursor?hitInside(localX(c,c.mouse.getX()*w.getScaledWidth()/w.getWidth()),localY(c,c.mouse.getY()*w.getScaledHeight()/w.getHeight())):0;
+        int hot=cursor?hitInside(localX(c,HudPointer.x()),localY(c,HudPointer.y())):0;
         text.beginFrame();ctx.getMatrices().push();
         try{
             ctx.getMatrices().translate(w.getScaledWidth()-(1920-X)*s+(1-alpha)*24*s,Y*s,340);ctx.getMatrices().scale(s,s,1);

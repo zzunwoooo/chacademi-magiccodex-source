@@ -307,3 +307,7 @@ allow-replay: false  # (선택) 이미 끝낸 사람에게 다시 보여 줄지.
 - 문자열 길이: 클라→서버는 256자 (UTF-8 768바이트) 까지 — 모드가 보내기 전에 자르고 서버는 넘으면 패킷을 버린다. 서버→클라는 32767자까지. 클라→서버 패킷 하나는 2048바이트까지.
 - 모드가 지켜야 하는 순서: 장면에 들어가면 (이벤트가 있으면 `dialogue_event` →) `dialogue_progress(장면, 0)`, 줄이 넘어가면 `dialogue_progress(장면, 줄)`, 선택지를 고르면 그 선택지의 `dialogue_event` 를 보낸 다음 들어간 장면을 알린다. 이어서 볼 때는 redirect·진입 이벤트 없이 `dialogue_progress(시작 장면, 시작 줄)` 부터.
 - 서버는 `dialogue_open` 을 보낼 때의 호감도에서 시작해 모드와 같은 규칙 (redirect, 장면 진입 `affinity` 는 장면마다 한 번, 대사도 선택지도 없는 장면은 `next` 로 통과, 20번 넘게 이어지면 끝) 으로 따라간다. 모드의 진행 규칙을 바꾸면 플러그인 `StoryGraph.Walk` 도 같이 바꿀 것.
+
+## Optional journal chapter
+
+Top-level `chapter: "제1장"` groups a story journal entry below its category. Omit it to keep the previous flat journal behavior. `title` and `description` retain their existing meanings; chapter does not alter scene IDs, progression, rewards or affinity receipts.

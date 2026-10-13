@@ -98,7 +98,7 @@ public final class ChacaInventoryScreen extends RecipeBookScreen<PlayerScreenHan
 
     @Override
     protected void init() {
-        super.init();
+        super.init(); book.initialize(width,height,client,true); if(book.isOpen())book.toggleOpen();
         // The vanilla green recipe button is replaced by recipe_book.png; both toggle the same widget.
         for (var child : List.copyOf(children()))
             if (child instanceof TexturedButtonWidget button && button.getX() == HIDDEN && button.getY() == HIDDEN) remove(button);
@@ -270,17 +270,17 @@ public final class ChacaInventoryScreen extends RecipeBookScreen<PlayerScreenHan
                     c.fill(x,y,x+w,y+26,0xBB081324);
                     c.fill(x,y,x+w,y+1,0xAABAA477); c.fill(x,y+25,x+w,y+26,0x66BAA477);
                 }
-                c.drawSpriteStretched(RenderLayer::getGuiTextured, client.getStatusEffectSpriteManager().getSprite(effect.getEffectType()), x+4,y+5,16,16);
+                c.drawSpriteStretched(RenderLayer::getGuiTextured, client.getStatusEffectSpriteManager().getSprite(effect.getEffectType()), x+8,y+5,16,16);
                 String level = effect.getAmplifier() < 10 ? Text.translatable("enchantment.level." + (effect.getAmplifier()+1)).getString() : Integer.toString(effect.getAmplifier()+1);
                 String name = effect.getEffectType().value().getName().getString();
                 Text duration = StatusEffectUtil.getDurationText(effect,1f,client.world == null ? 20f : client.world.getTickManager().getTickRate());
                 String label = name + " " + level;
-                int available = Math.max(10,w-28);
+                int available = Math.max(10,w-32);
                 String clipped = textRenderer.getWidth(label) <= available ? label : textRenderer.trimToWidth(label,Math.max(0,available-textRenderer.getWidth("…")))+"…";
-                c.enableScissor(x+23,y+2,x+w-3,y+24);
+                c.enableScissor(x+27,y+2,x+w-3,y+24);
                 try {
-                    c.drawText(textRenderer,clipped,x+24,y+4,CREAM,false);
-                    c.drawText(textRenderer,duration,x+24,y+14,GOLD,false);
+                    c.drawText(textRenderer,clipped,x+28,y+4,CREAM,false);
+                    c.drawText(textRenderer,duration,x+28,y+14,GOLD,false);
                 } finally { c.disableScissor(); }
                 if (mouseX >= x && mouseX < x+w && mouseY >= y && mouseY < y+26) tooltip = List.of(Text.literal(label),duration);
             }
@@ -336,12 +336,12 @@ public final class ChacaInventoryScreen extends RecipeBookScreen<PlayerScreenHan
 
         // Result orb: crystal stays behind the item and fades when there is a result to read.
         Slot resultSlot = handler.getSlot(ChacaInventoryLayout.RESULT);
-        boolean hasResult = resultSlot.hasStack();
+        boolean hasResult = resultSlot.hasStack() || ghostResultPresent();
         float orb = ChacaInventoryLayout.RESULT_ORB_SIZE;
         image(c, ORB, cx, centerY, orb * ORB_W / ORB_H * 1.0f, orb, ORB_W, ORB_H, 0xFFFFFFFF);
         float crystalH = ChacaInventoryLayout.CRYSTAL_HEIGHT;
-        image(c, CRYSTAL, cx, centerY - 4, crystalH * CRYSTAL_W / CRYSTAL_H, crystalH, CRYSTAL_W, CRYSTAL_H, hasResult ? 0x52FFFFFF : 0xF2FFFFFF);
-        if (hasResult) HudMesh.disk(c, cx, centerY, 58, 0x5A050B1C);
+        if(!hasResult) image(c, CRYSTAL, cx, centerY - 4, crystalH * CRYSTAL_W / CRYSTAL_H, crystalH, CRYSTAL_W, CRYSTAL_H, 0xF2FFFFFF);
+
         if (hoveredId == ChacaInventoryLayout.RESULT) HudMesh.arc(c, cx, centerY, ChacaInventoryLayout.RESULT_HIT_RADIUS + 6, 1.6f, 0, (float) (Math.PI * 2), HOVER);
 
         for (int i = 0; i < ChacaInventoryLayout.INPUT_COUNT; i++) {
@@ -366,6 +366,7 @@ public final class ChacaInventoryScreen extends RecipeBookScreen<PlayerScreenHan
             if (e.kind() != Kind.MAIN && e.kind() != Kind.HOTBAR && e.kind() != Kind.OFFHAND) continue;
             boolean hotbar = e.kind() == Kind.HOTBAR;
             float w = hotbar ? ChacaInventoryLayout.HOTBAR_PEDESTAL_W : ChacaInventoryLayout.PEDESTAL_W, py = e.pedestalY();
+            for(int glow=4;glow>0;glow--) HudMesh.disk(c,e.cx(),e.cy(),28+glow*6,0x087EDFEA);
             image(c, PEDESTAL, e.cx(), py, w, w * PEDESTAL_H / PEDESTAL_W, PEDESTAL_W, PEDESTAL_H, 0xFFFFFFFF);
             boolean hovered = hoveredId == e.slotId();
             boolean dragged = cursorDragging && cursorDragSlots.contains(handler.getSlot(e.slotId()));
@@ -427,6 +428,7 @@ public final class ChacaInventoryScreen extends RecipeBookScreen<PlayerScreenHan
      * so the same data is drawn faded at the orb positions instead. Empty orbs only, like vanilla.
      */
     @SuppressWarnings("unchecked")
+    private boolean ghostResultPresent(){if(!book.isOpen())return false;var ghost=((school.magiccodex.mixin.RecipeBookWidgetAccessor)(Object)book).magiccodex$ghostRecipe();Map<Slot,Object> items=((school.magiccodex.mixin.GhostRecipeAccessor)(Object)ghost).magiccodex$items();return items!=null&&items.entrySet().stream().anyMatch(e->e.getKey().id==ChacaInventoryLayout.RESULT&&e.getValue() instanceof GhostItemView v&&!v.magiccodex$stacks().isEmpty());}
     private void drawGhostRecipe(DrawContext c) {
         if (!book.isOpen()) return;
         Map<Slot, Object> items;
@@ -454,7 +456,7 @@ public final class ChacaInventoryScreen extends RecipeBookScreen<PlayerScreenHan
             try {
                 m.translate(0, 0, 210);
                 // Faded "not placed yet" look; red tint as in vanilla for the missing ingredients.
-                HudMesh.disk(c, e.cx(), cy, size * 0.62f, view.magiccodex$isResult() ? 0x8C0A1426 : 0x8C2A0E18);
+                if(!view.magiccodex$isResult()) HudMesh.disk(c, e.cx(), cy, size * 0.62f, 0x8C2A0E18);
             } finally { m.pop(); }
         }
     }

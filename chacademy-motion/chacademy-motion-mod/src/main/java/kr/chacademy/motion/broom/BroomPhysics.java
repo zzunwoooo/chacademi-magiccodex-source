@@ -111,7 +111,7 @@ public final class BroomPhysics {
 
         // 1) 빗자루 방향이 시선을 늦게 따라감
         float diff = wrap(in.camYaw() - heading);
-        float maxTurn = stats.turn * (1f - 0.6f * sf);
+        float maxTurn = stats.turn * (1f - 0.4f * sf);
         if (boostTicks > 0) maxTurn *= 0.6f;
         float turn = clamp(diff, -maxTurn, maxTurn);
         heading = wrap(heading + turn);
@@ -132,11 +132,13 @@ public final class BroomPhysics {
         // 3) 앞뒤
         if (in.forward() || boostTicks > 0) {
             vf += accel * Math.cos(pr);
-            up -= Math.sin(pr) * accel * 0.9; // 아래를 보며 W = 급강하
+            double pitchLift=-Math.sin(pr)*stats.maxSpeed*Math.max(.2f,sf)*.65;
+            up+=(pitchLift-up)*(.08+accel); // Pitch steers vertical velocity as speed rises.
         }
         if (in.back()) {
             vf *= 1 - stats.brake;
             vr *= 1 - stats.brake;
+            up *= 1 - stats.brake;
             if (sf > 0.65f) stress += 1.1f * sf; // 빠를 때 급제동은 균형을 깎음
         } else if (!in.forward() && boostTicks == 0) {
             vf *= GLIDE_DRAG;
@@ -270,8 +272,8 @@ public final class BroomPhysics {
 
     /** 공중에서 다시 잡았을 때 균형을 절반쯤에서 시작. */
     public void caught() {
-        balance = 45;
-        prevBalance = 45;
+        balance = 18;
+        prevBalance = 18;
         fellOff = false;
     }
 

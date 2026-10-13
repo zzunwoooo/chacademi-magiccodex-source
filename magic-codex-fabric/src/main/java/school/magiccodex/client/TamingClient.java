@@ -29,6 +29,7 @@ public final class TamingClient {
     private TamingClient(){}
     private static ClientWorld stateWorld, observedWorld;
     private static TamingProtocol.Anchor serverAnchor;
+    private static school.magiccodex.protocol.MonsterTargetProtocol.Target monster;
     private static State state;private static long received,nextQuery,nextLoop,lastToken;private static int lastStatus=-1,generation=-1;
     private static HudTextureCache images;private static CodexTypography text;private static PositionedSoundInstance looping;
     private static final UUID NONE=new UUID(0,0);
@@ -45,11 +46,15 @@ public final class TamingClient {
         static final PacketCodec<RegistryByteBuf,AnchoredResponse> CODEC=codec(AnchoredResponse::new);
         public Id<AnchoredResponse> getId(){return ID;}
     }
+    public record MonsterResponse(byte[] bytes)implements CustomPayload,Bytes{static final Id<MonsterResponse>ID=new Id<>(Identifier.of(school.magiccodex.protocol.MonsterTargetProtocol.CHANNEL));static final PacketCodec<RegistryByteBuf,MonsterResponse>CODEC=codec(MonsterResponse::new);public Id<MonsterResponse>getId(){return ID;}}
     private static <T extends Bytes> PacketCodec<RegistryByteBuf,T> codec(Function<byte[],T> f){return new PacketCodec<>(){
         public T decode(RegistryByteBuf b){if(b.readableBytes()>TamingProtocol.MAX_BYTES){b.skipBytes(b.readableBytes());return f.apply(new byte[0]);}byte[] a=new byte[b.readableBytes()];b.readBytes(a);return f.apply(a);}
         public void encode(RegistryByteBuf b,T value){b.writeBytes(value.bytes());}
     };}
     public static void initialize(){
+        PayloadTypeRegistry.playS2C().register(MonsterResponse.ID,MonsterResponse.CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(MonsterResponse.ID,(payload,context)->{try{var value=school.magiccodex.protocol.MonsterTargetProtocol.decode(payload.bytes());var world=context.client().world;context.client().execute(()->{if(world!=null&&world==context.client().world){accept(value.target().state(),value.target().anchor());monster=value;}});}catch(IllegalArgumentException ignored){}});
+
         PayloadTypeRegistry.playC2S().register(Request.ID,Request.CODEC);PayloadTypeRegistry.playS2C().register(Response.ID,Response.CODEC);
         PayloadTypeRegistry.playS2C().register(AnchoredResponse.ID,AnchoredResponse.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(Response.ID,(payload,context)->{try{var s=TamingProtocol.state(payload.bytes());var world=context.client().world;context.client().execute(()->{if(world!=null&&world==context.client().world)accept(s);});}catch(IllegalArgumentException ignored){}});
@@ -59,12 +64,12 @@ public final class TamingClient {
         }catch(IllegalArgumentException ignored){}});
         ClientPlayConnectionEvents.JOIN.register((h,s,c)->reset());ClientPlayConnectionEvents.DISCONNECT.register((h,c)->reset());
         ClientTickEvents.END_CLIENT_TICK.register(TamingClient::tick);HudRenderCallback.EVENT.register((ctx,t)->render(ctx));
-        WorldRenderEvents.AFTER_ENTITIES.register(TamingClient::renderChance);
+        HudRenderCallback.EVENT.register((ctx,t)->renderMonster(ctx));
     }
     private static void accept(State s){accept(s,null);}
     private static void accept(State s,TamingProtocol.Anchor anchor){
         long n=Util.getMeasuringTimeMs();boolean changed=s.token()!=lastToken||s.status()!=lastStatus;
-        if(s.status()==TamingProtocol.TARGET&&!targetRegistered())return;
+        monster=null;
         state=s;serverAnchor=anchor;stateWorld=MinecraftClient.getInstance().world;received=n;
         if(changed){stopLoop();if(s.status()==TamingProtocol.CHANNEL){sound("channel_start",.65f);nextLoop=n+450;}
             else if(s.status()==TamingProtocol.SUCCESS){sound("capture_success",.75f);PetClient.invalidateCatalog();}
@@ -77,7 +82,7 @@ public final class TamingClient {
         if(observedWorld!=c.world){reset();observedWorld=c.world;}
         if(state!=null&&state.status()==TamingProtocol.CHANNEL&&n-received<1800){if(n>=nextLoop){stopLoop();looping=PositionedSoundInstance.master(SoundEvent.of(Identifier.of("magiccodex","taming.channel_loop")),1,.3f);c.getSoundManager().play(looping);nextLoop=n+2400;}}
         else stopLoop();
-        if(!targetRegistered()){if(state!=null&&state.status()==TamingProtocol.TARGET)state=null;nextQuery=0;return;}
+
         if(c.currentScreen!=null||!ClientPlayNetworking.canSend(Request.ID)||n<nextQuery)return;nextQuery=n+500;
         if(state!=null&&(state.status()==TamingProtocol.CHANNEL||state.status()==TamingProtocol.PENDING)&&n-received<15000)return;
         if(state!=null&&(state.status()==TamingProtocol.SUCCESS||state.status()==TamingProtocol.FAIL||state.status()==TamingProtocol.ERROR)&&n-received<2400)return;
@@ -88,12 +93,12 @@ public final class TamingClient {
     private static void sound(String name,float volume){MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvent.of(Identifier.of("magiccodex","taming."+name)),1,volume));}
     private static void stopLoop(){if(looping!=null){MinecraftClient.getInstance().getSoundManager().stop(looping);looping=null;}}
     private static void close(){if(images!=null){images.close();images=null;}if(text!=null){text.close();text=null;}}
-    private static void reset(){state=null;serverAnchor=null;stateWorld=observedWorld=null;received=nextQuery=nextLoop=lastToken=0;lastStatus=-1;stopLoop();close();}
+    private static void reset(){monster=null;state=null;serverAnchor=null;stateWorld=observedWorld=null;received=nextQuery=nextLoop=lastToken=0;lastStatus=-1;stopLoop();close();}
     // Keep the normal entity name; the chance label sits above it rather than replacing it.
-    public static boolean hidesVanillaName(int entityId){return false;}
+    public static boolean hidesVanillaName(int entityId){var c=MinecraftClient.getInstance();return monster!=null&&monster.custom()&&state!=null&&state.entityId()==entityId&&stateWorld==c.world&&c.world!=null&&c.world.getEntityById(entityId)!=null&&c.world.getEntityById(entityId).getUuid().equals(monster.target().anchor().entityUuid())&&c.currentScreen==null&&!c.options.hudHidden&&Util.getMeasuringTimeMs()-received<1200;}
     private static boolean targetRegistered(){return CastingClient.state().registered("rainbow_collar")||CastingClient.state().registered("taming");}
     public static void bindingsChanged(){
-        if(!targetRegistered()&&state!=null&&state.status()==TamingProtocol.TARGET)state=null;
+
         nextQuery=0;
     }
     private static void renderChance(WorldRenderContext context){
@@ -127,6 +132,24 @@ public final class TamingClient {
                     matrices.peek().getPositionMatrix(),consumers,TextRenderer.TextLayerType.NORMAL,
                     0,LightmapTextureManager.MAX_LIGHT_COORDINATE);
         }finally{matrices.pop();}
+    }
+    private static void renderMonster(DrawContext ctx){
+        var c=MinecraftClient.getInstance();if(monster==null||state==null||stateWorld!=c.world||c.player==null||c.world==null||c.currentScreen!=null||c.options.hudHidden||Util.getMeasuringTimeMs()-received>1200)return;
+        var a=monster.target().anchor();var point=new Vec3d(a.x(),a.y()+a.height()+.5,a.z());var entity=c.world.getEntityById(state.entityId());
+        if(entity!=null){if(!entity.isAlive()||!entity.getUuid().equals(a.entityUuid()))return;point=entity.getLerpedPos(c.getRenderTickCounter().getTickDelta(false)).add(0,entity.getHeight()+.5,0);}
+        var screen=AimView.toScreen(point);if(screen==null)return;
+        var obstruction=c.world.raycast(new net.minecraft.world.RaycastContext(AimView.camera(),point,net.minecraft.world.RaycastContext.ShapeType.COLLIDER,net.minecraft.world.RaycastContext.FluidHandling.NONE,c.player));
+        if(obstruction.getType()!=net.minecraft.util.hit.HitResult.Type.MISS&&obstruction.getPos().squaredDistanceTo(AimView.camera())+.1<point.squaredDistanceTo(AimView.camera()))return;
+        if(generation!=UiResources.generation()){close();generation=UiResources.generation();}if(images==null)images=new HudTextureCache(c,true);if(text==null)text=new CodexTypography(c);
+        images.beginFrame();text.beginFrame();var m=ctx.getMatrices();m.push();try{
+            float scale=Math.clamp(Math.min(c.getWindow().getScaledWidth()/1400f,c.getWindow().getScaledHeight()/800f),.25f,.7f);m.translate(screen[0]-300*scale,screen[1]-110*scale,350);m.scale(scale,scale,1);
+            var atlas=Identifier.of("magiccodex","textures/gui/review/monster_atlas.png");boolean shiny=monster.shiny();images.drawTexture(ctx,atlas,0,0,0,shiny?325:35,600,110,1671,320,1671,941,0xFFFFFFFF);
+            String name=state.name().replaceAll("§[0-9a-fk-orA-FK-OR]","");float size=Math.min(27,27*285/Math.max(1,text.width(name,27,FONT)));text.draw(ctx,name,42,34,size,shiny?0xFFE9D5FF:0xFFFFE3A7,FONT,false);
+            ctx.fill(43,56,313,66,0xFF203653);ctx.fill(43,56,43+(int)(270*Math.clamp(monster.health()/monster.maximum(),0,1)),66,shiny?0xFFADAFFF:0xFF4EE4EB);
+            text.draw(ctx,Math.round(monster.health())+" / "+Math.round(monster.maximum()),43,84,18,0xFFCFDFEC,BODY,false);
+            images.drawTexture(ctx,atlas,369,24,shiny?361:72,625,62,67,292,295,1671,941,0xFFFFFFFF);
+            text.draw(ctx,monster.tameable()?"교화 "+Math.round(state.chance()*100)+"%":"교화 불가",486,57,25,shiny?0xFFE4CDFF:0xFFFFDFB0,FONT,true);
+        }finally{m.pop();images.endFrame();}
     }
     private static void panel(DrawContext ctx,String file,int x,int y,int w,int h,int sw,int sh){images.drawTexture(ctx,Identifier.of("magiccodex","textures/gui/taming/"+file+".png"),x,y,0,0,w,h,sw,sh,sw,sh,0xffffffff);}
     private static void label(DrawContext ctx,String value,float x,float y,float size,int color,boolean bold){text.draw(ctx,value.replaceAll("§[0-9a-fk-orA-FK-OR]",""),x,y,size,value.startsWith("§e")?0xffffff55:color,bold?FONT:BODY,true);}

@@ -16,11 +16,11 @@ final class InventoryEffectLayout {
         int y = Math.max(4, Math.round(inventory.screenY(120)));
         int bottom = Math.min(height - 4, Math.round(inventory.screenY(486)));
         if (bookOpen) {
-            x = 4; y = 4; right = Math.min(width - 4, 184);
-            bottom = Math.max(ROW + FOOTER + 4, ChacaInventoryLayout.bookTop(height) - 4);
+            x = 4; y = 4; right = Math.min(width - 4, ChacaInventoryLayout.bookLeft(width,true)-4);
+            bottom = height-4;
         }
         int w = Math.max(64, Math.min(190, right - x));
-        w = Math.min(w, width - x - 4);
+        w = Math.min(w, width - 8); x=Math.max(4,right-w);
         int rows = Math.max(1, Math.min(count, (bottom - y - FOOTER) / ROW));
         rows = Math.min(rows, Math.max(1, (height - y - FOOTER - 4) / ROW));
         return new Panel(x, y, w, rows, count);

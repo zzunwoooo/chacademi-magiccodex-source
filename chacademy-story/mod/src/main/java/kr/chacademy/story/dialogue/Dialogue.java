@@ -14,7 +14,8 @@ public record Dialogue(
         Map<String, Speaker> speakers,
         Map<String, Scene> scenes,
         DialogueCommands commands,
-        String description) {
+        String description, String chapter) {
+    public Dialogue(String id,String title,String start,Map<String,Speaker> speakers,Map<String,Scene> scenes,DialogueCommands commands,String description){this(id,title,start,speakers,scenes,commands,description,"");}
     public Dialogue(String id,String title,String start,Map<String,Speaker> speakers,Map<String,Scene> scenes,DialogueCommands commands){
         this(id,title,start,speakers,scenes,commands,"");
     }

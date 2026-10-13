@@ -7,3 +7,7 @@
 | chacademy-motion 0.3.0-codex.1 | Client flight/animation/models and Object-based BroomApi; playerAnimator 2.0.5 and Fabric API 0.119.4+1.21.4. Companion Paper plugin owns permission checks, equipment/mastery and lifecycle. |
 
 Existing Story, journal, pet/shiny, portrait, chat, mouse and quest features remain in their original modules. See [combined regression/release](handoff/CODEX_INVENTORY_BROOM_RELEASE_20261013.md).
+
+## 2026-10-13 review
+
+Magic Codex now includes the approved shoulder/aim camera, chapter journal, revised notification/inventory/equipment UI and server-owned combined monster HUD. Motion 0.3.0-codex.2 adds arc HUD and six-key recatch; Story 0.1.3-journal.2 supports optional chapter. [Full requirements, tests and pending QA](handoff/CODEX_UI_REVIEW_RELEASE_20261013.md). Monthly season behavior is not final: 72-hour real-time cycling is deferred to the next patch.

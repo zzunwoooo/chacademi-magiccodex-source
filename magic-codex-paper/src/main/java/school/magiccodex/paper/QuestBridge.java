@@ -214,6 +214,7 @@ final class QuestBridge implements Listener,CommandExecutor,TabCompleter,PluginM
         return slots;
     }
     static ItemStack submissionItem(String target){ItemStack item=target.startsWith("stack:")?ItemStack.deserializeBytes(Base64.getDecoder().decode(target.substring(6))):new ItemStack(Objects.requireNonNull(Material.matchMaterial(target),"제출 아이템 종류 오류"));if(item.isEmpty())throw new IllegalArgumentException("빈 아이템");item.setAmount(1);return item;}
+    List<school.magiccodex.protocol.JournalProtocol.Entry> journalDefinitions(){return catalog.values().stream().map(q->new school.magiccodex.protocol.JournalProtocol.Entry("quest",q.id(),q.title(),q.description(),"available",q.main(),"","")).toList();}
     Map<String,String> journalCatalog(){var map=new TreeMap<String,String>();catalog.values().forEach(q->map.put("quest:"+q.id(),q.title()));return map;}
     void journalRows(Player player,java.util.function.Consumer<List<school.magiccodex.protocol.JournalProtocol.Entry>> callback){
         flush(player.getUniqueId(),true);work(()->store.journalEntries(player.getUniqueId()),entries->{var rows=new ArrayList<school.magiccodex.protocol.JournalProtocol.Entry>();
@@ -223,10 +224,10 @@ final class QuestBridge implements Listener,CommandExecutor,TabCompleter,PluginM
     }
     void journalEdit(CommandSender sender,Player target,String id,String operation){
         var q=catalog.get(id);for(var e:cache.getOrDefault(target.getUniqueId(),List.of()))if(e.quest().id().equals(id)&&e.current(System.currentTimeMillis()))q=e.quest();
-        if(q==null)throw new IllegalArgumentException("Unknown quest ID");final var definition=q;
+        if(q==null)throw new IllegalArgumentException("등록된 퀘스트를 찾을 수 없습니다.");final var definition=q;
         if(operation.equals("query")){journalRows(target,rows->rows.stream().filter(e->e.id().equals(id)).forEach(e->sender.sendMessage(e.key()+" / "+e.title()+" / "+e.state()+" / "+e.details())));return;}
-        if(busy.contains(target.getUniqueId()))throw new IllegalArgumentException("Quest payout in progress");flush(target.getUniqueId(),true);
-        work(()->{store.adminRecord(target.getUniqueId(),definition,operation,System.currentTimeMillis());return true;},ok->{load(target,false,"");sender.sendMessage("Journal record updated; rewards were not issued or reset.");if(operation.equals("grant"))JournalBridge.notify(plugin,target,definition.title(),definition.description());plugin.getLogger().info("QUEST JOURNAL admin="+sender.getName()+" player="+target.getUniqueId()+" id="+id+" operation="+operation);},sender::sendMessage);
+        if(busy.contains(target.getUniqueId()))throw new IllegalArgumentException("보상 처리가 진행 중입니다. 잠시 후 다시 시도해 주세요.");flush(target.getUniqueId(),true);
+        work(()->{store.adminRecord(target.getUniqueId(),definition,operation,System.currentTimeMillis());return true;},ok->{load(target,false,"");sender.sendMessage("퀘스트 기록을 변경했습니다. 보상을 지급하거나 수령 기록을 초기화하지 않았습니다.");if(operation.equals("grant"))JournalBridge.notify(plugin,target,definition.title(),definition.description());plugin.getLogger().info("QUEST JOURNAL admin="+sender.getName()+" player="+target.getUniqueId()+" id="+id+" operation="+operation);},sender::sendMessage);
     }
     private record Journal(List<QuestStore.Entry> entries,Set<String> completed){}
     private void load(Player p,boolean open,String message){UUID id=p.getUniqueId();flush(id,true);work(()->new Journal(store.entries(id),store.completed(id)),v->{if(current(p)){var later=deltas.get(id);if(later!=null)for(var e:later.counts.entrySet())apply(v.entries(),e.getKey().type(),e.getKey().target(),e.getKey().world(),e.getValue(),System.currentTimeMillis());cache.put(id,v.entries());completed.put(id,v.completed());if(open)viewers.put(id,System.currentTimeMillis()+15000);reply(p,open,message);}},m->{if(current(p))p.sendMessage(m);});}

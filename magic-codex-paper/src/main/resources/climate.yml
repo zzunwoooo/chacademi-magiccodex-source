@@ -1,3 +1,8 @@
+# Actual calendar seasons, independent of game day/night and sleeping.
+season-clock: calendar
+calendar-timezone: Asia/Seoul
+# Spring Mar-May, summer Jun-Aug, autumn Sep-Nov, winter Dec-Feb.
+# Use season-clock: elapsed only to restore the previous tick/elapsed-time mode.
 enabled: true
 worlds: [world]
 clock-world: world

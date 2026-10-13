@@ -19,7 +19,7 @@ import school.magiccodex.client.CodexHitboxes.Rect;
 
 /**
  * Editing is local and transactional: changes take effect only after Save.
- * Keyboard-first: click or press a key to pick its spell (max 6), right-click a key or slot to clear,
+ * Click a rendered key to pick its spell (max 6), right-click a key or slot to clear,
  * and drag (or click two) of the six bottom slots to reorder the HUD bar.
  */
 public final class KeySettingsScreen extends Screen {
@@ -78,7 +78,7 @@ public final class KeySettingsScreen extends Screen {
             ctx.getMatrices().translate(layout.x(),layout.y(),0); ctx.getMatrices().scale(layout.scale(),layout.scale(),1);
             drawBackground(ctx);
             text(ctx,"마법 키 설정",836,102,38,IVORY,TITLE);
-            text(ctx,"키보드의 키를 클릭하거나 직접 눌러 마법을 등록하세요 · 최대 6개",836,140,19,GOLD,BODY);
+            text(ctx,"화면의 키를 클릭해 마법을 등록하세요 · 최대 6개",836,140,19,GOLD,BODY);
             for(var key:KeySettingsLayout.KEYS) drawKey(ctx,key);
             for(int i=0;i<6;i++) drawSlot(ctx,i);
             drawMouse(ctx);
@@ -106,6 +106,8 @@ public final class KeySettingsScreen extends Screen {
     /** Reuse the approved PNG frame at a smaller size without leaving its old large slots behind. */
     private void drawBackground(DrawContext ctx) {
         slice(ctx,new Rect(0,0,1672,600),new Rect(0,0,1672,600));
+        slice(ctx,new Rect(140,260,50,150),new Rect(200,165,1260,395));
+        slice(ctx,new Rect(210,160,1250,410),new Rect(180,200,1025,336));
         slice(ctx,new Rect(0,600,140,208),new Rect(0,600,140,208));
         slice(ctx,new Rect(1535,600,137,208),new Rect(1535,600,137,208));
         slice(ctx,new Rect(140,260,50,150),new Rect(140,600,1395,208));
@@ -140,7 +142,7 @@ public final class KeySettingsScreen extends Screen {
     private static int fade(int color,float alpha) { return (Math.round((color>>>24)*alpha)<<24)|(color&0xFFFFFF); }
     private void drawKey(DrawContext ctx,KeySettingsLayout.Key key) {
         Rect r=key.box(); boolean allowed=KeySettingsLayout.allowed(key.code());
-        boolean blocked=KeySettingsLayout.reservedShortcut(key.code());
+        boolean blocked=KeySettingsLayout.reservedShortcut(key.code()) || key.code()==GLFW.GLFW_KEY_LEFT_ALT;
         int slot=-1;
         for(int i=0;i<6;i++) if(!draft.get(i).empty() && draft.get(i).keyCode()==key.code()) slot=i;
         boolean hot=hover(r) && !pickerOpen() && !confirmDiscard;
@@ -161,7 +163,7 @@ public final class KeySettingsScreen extends Screen {
         for(int code:new int[]{KeySettingsLayout.THUMB_1,KeySettingsLayout.THUMB_2}){
             boolean hot=!pickerOpen()&&!confirmDiscard&&MouseBindingLayout.hit(mx,my)==code;boolean assigned=draft.slotOfKey(code)>=0;int color=hot?TEAL:assigned?GOLD:0x7794A7B6;
             var points=MouseBindingLayout.polygon(code);for(int i=0;i<points.length;i++){var a=points[i];var b=points[(i+1)%points.length];HudMesh.line(ctx,MouseBindingLayout.X+(float)a[0]*MouseBindingLayout.S,MouseBindingLayout.Y+(float)a[1]*MouseBindingLayout.S,MouseBindingLayout.X+(float)b[0]*MouseBindingLayout.S,MouseBindingLayout.Y+(float)b[1]*MouseBindingLayout.S,hot?2:1,color);}
-            float y=code==KeySettingsLayout.THUMB_1?695:740;HudMesh.line(ctx,code==KeySettingsLayout.THUMB_1?213:224,y,270,y,1,color);label(ctx,KeySettingsLayout.name(code),278,y,17,hot?TEAL:assigned?GOLD:IVORY);
+            float y=code==KeySettingsLayout.THUMB_1?485:515;label(ctx,KeySettingsLayout.name(code),1310,y,17,hot?TEAL:assigned?GOLD:IVORY);
         }
     }
     private boolean dragging() { return dragSlot>=0 && dragMoved; }
@@ -333,7 +335,7 @@ public final class KeySettingsScreen extends Screen {
         if(moved) { if(to>=0 && to!=from) { draft.swap(from,to); notice=""; } sound(false); return true; }
         if(to!=from) return true;
         if(selected<0) {
-            if(draft.get(from).empty()) { notice="키보드의 키를 클릭하거나 눌러 마법을 등록하세요."; sound(true); }
+            if(draft.get(from).empty()) { notice="화면의 키를 클릭해 마법을 등록하세요."; sound(true); }
             else { selected=from; notice=""; sound(false); }
         } else if(selected==from) { selected=-1; sound(false); }
         else { draft.swap(selected,from); selected=-1; notice=""; sound(false); }
@@ -375,8 +377,8 @@ public final class KeySettingsScreen extends Screen {
         }
         if(confirmDiscard || dragSlot>=0) return true;
         if(pickerOpen()) { if(code==GLFW.GLFW_KEY_BACKSPACE && !query.isEmpty()) { query=query.substring(0,query.offsetByCodePoints(query.length(),-1)); page=0; } return true; }
-        // The same press also produces a typed character; keep it out of the new picker's search box.
-        if(openPicker(code)) swallowChar=true;
+        // Keep Escape and text search handling above, without selecting a binding here.
+        // Physical keys never open the editor; rendered-key mouse clicks select it.
         return true;
     }
     @Override public boolean charTyped(char chr,int modifiers) {

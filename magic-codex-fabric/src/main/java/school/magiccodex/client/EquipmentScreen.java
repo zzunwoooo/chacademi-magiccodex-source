@@ -26,7 +26,8 @@ public final class EquipmentScreen extends Screen {
     private float stretch(){return BroomSelectionLayout.equipmentStretch(broomLayout);}
     private void sound(){if(client!=null)client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK.value(),1.1f,.2f));}
     private static int x(int i){return i<4?307:1208;}
-    private static int y(int i){return 156+(i%4)*158;}
+    private int y(int i){return 156+(i%4)*(broomLayout?192:158);}
+    private int extra(){return broomLayout?120:0;}
     private static boolean hit(double mx,double my,int x,int y,int w,int h){return mx>=x&&mx<x+w&&my>=y&&my<y+h;}
     private List<Integer> choices(){List<Integer> list=new ArrayList<>();if(EquipmentClient.data!=null)for(int i=0;i<EquipmentClient.data.candidates().size();i++)if(EquipmentClient.data.candidates().get(i).slot()==selected)list.add(i);return list;}
     @Override public void render(DrawContext c,int mouseX,int mouseY,float delta){
@@ -35,33 +36,39 @@ public final class EquipmentScreen extends Screen {
         c.getMatrices().push();
         try{
             c.getMatrices().translate(l.x(),l.y(),0);c.getMatrices().scale(l.scale(),l.scale()*stretch(),1);
-            images.drawTexture(c,PANEL,0,0,0,0,1672,941,1672,941);
+            if(broomLayout){
+                images.drawTexture(c,PANEL,0,0,0,0,1672,130,1672,130,1672,941);
+                images.drawTexture(c,PANEL,0,130,0,130,1672,750,1672,630,1672,941);
+                images.drawTexture(c,PANEL,0,880,0,760,1672,181,1672,181,1672,941);
+                c.fill(297,145,472,880,0xFF122236);c.fill(1198,145,1373,880,0xFF122236);
+                for(int i=0;i<8;i++)images.drawTexture(c,PANEL,x(i),y(i),x(i),156+(i%4)*158,151,137,151,137,1672,941);
+            }else images.drawTexture(c,PANEL,0,0,0,0,1672,941,1672,941);
             int circle=EquipmentClient.data==null?StatsClient.values().circle():EquipmentClient.data.circle();double time=Util.getMeasuringTimeMs()/1000.0;
             c.getMatrices().push();c.getMatrices().translate(490,-22,0);c.getMatrices().scale(.92f,.92f,1);StatsBackdrop.draw(c,circle,time);c.getMatrices().pop();
             stars.update(circle,time);drawStars(c,false);
-            var p=client.player;if(p!=null){float body=p.bodyYaw,yaw=p.getYaw(),pitch=p.getPitch(),head=p.headYaw,prev=p.prevHeadYaw;try{InventoryScreen.drawEntity(c,574,174,1100,broomLayout?528:632,broomLayout?164:211,0,836+(float)Math.clamp((mx-836)*.08,-15,15),(broomLayout?351:407)+(float)Math.clamp((my-407)*.06,-10,10),p);}finally{p.bodyYaw=body;p.setYaw(yaw);p.setPitch(pitch);p.headYaw=head;p.prevHeadYaw=prev;}}
+            var p=client.player;if(p!=null){float body=p.bodyYaw,yaw=p.getYaw(),pitch=p.getPitch(),head=p.headYaw,prev=p.prevHeadYaw;try{InventoryScreen.drawEntity(c,574,174,1100,632,211,0,836+(float)Math.clamp((mx-836)*.08,-15,15),407+(float)Math.clamp((my-407)*.06,-10,10),p);}finally{p.bodyYaw=body;p.setYaw(yaw);p.setPitch(pitch);p.headYaw=head;p.prevHeadYaw=prev;}}
             c.getMatrices().push();c.getMatrices().translate(0,0,300);drawStars(c,true);
             if(broomLayout&&BroomUiLink.available()){
-                images.drawTexture(c,BROOM_SLOT,544,540,72,186,584,90,2029,312,2172,724);
-                var id=BroomUiLink.equipped();label(c,"빗자루",590,570,21,0xFFE7D7B2);
+                images.drawTexture(c,BROOM_SLOT,544,650,72,186,584,90,2029,312,2172,724);
+                var id=BroomUiLink.equipped();label(c,"빗자루",606,695,21,0xFFA9C8DA);
                 if(!id.isBlank()){
-                    c.enableScissor(666,545,1098,598);
-                    try{BroomUiLink.render(c,id,874,570,290,90,14,0);}finally{c.disableScissor();}
-                    label(c,BroomUiLink.text("name",id),860,610,23,0xFFEDE3CE);
-                }else label(c,"연습용 빗자루 (10초)",877,594,23,0xFFC0CDD9);
-                if(selected<0&&hit(mx,my,544,540,584,90))HudMesh.line(c,563,624,1109,624,1,0xFF8DDDF3);
+                    c.enableScissor(690,659,1108,729);
+                    try{BroomUiLink.render(c,id,892,694,330,90,14,0);}finally{c.disableScissor();}
+
+                }else label(c,"연습용 빗자루 (10초)",877,695,23,0xFFC0CDD9);
+                if(selected<0&&hit(mx,my,544,650,584,90))HudMesh.line(c,563,734,1109,734,1,0xFF8DDDF3);
             }
-            String name=NicknameClient.display(EquipmentClient.data==null?StatsClient.values().nickname():EquipmentClient.data.name());label(c,name,836,690,27,0xFFF3E9D3);
-            if(selected<0&&hit(mx,my,591,664,490,50)){HudMesh.line(c,686,711,986,711,1,0xFF92E7F2);tooltip(c,"닉네임 설정",836,659);}
+            String name=NicknameClient.display(EquipmentClient.data==null?StatsClient.values().nickname():EquipmentClient.data.name());label(c,name,836,690+extra(),27,0xFFF3E9D3);
+            if(selected<0&&hit(mx,my,591,664+extra(),490,50)){HudMesh.line(c,686,711+extra(),986,711+extra(),1,0xFF92E7F2);tooltip(c,"닉네임 설정",836,659+extra());}
             double[] values=EquipmentClient.data==null?null:new double[]{EquipmentClient.data.power(),EquipmentClient.data.health(),EquipmentClient.data.mana(),EquipmentClient.data.regen(),EquipmentClient.data.haste()};
-            c.fill(145,778,1527,853,0xFF122236);
+            c.fill(145,778+extra(),1527,853+extra(),0xFF122236);
             int[][] icons={{188,784,61,60},{551,784,61,60},{899,784,50,60},{1238,783,74,62}};
             for(int i=0;i<5;i++){
                 int left=185+i*275;
-                if(i>0)HudMesh.line(c,left-25,789,left-25,839,1,0x88758896);
-                if(i<4){int[] r=icons[i];images.drawTexture(c,PANEL,left,791,r[0],r[1],48,48,r[2],r[3],1672,941);}
-                else MagicHasteIcon.draw(c,left+24,815,23);
-                label(c,values==null?"—":"+"+StatsValues.number(values[i]),left+139,817,29,0xFFF1EDDF);
+                if(i>0)HudMesh.line(c,left-25,789+extra(),left-25,839+extra(),1,0x88758896);
+                if(i<4){int[] r=icons[i];images.drawTexture(c,PANEL,left,791+extra(),r[0],r[1],48,48,r[2],r[3],1672,941);}
+                else MagicHasteIcon.draw(c,left+24,815+extra(),23);
+                label(c,values==null?"—":"+"+StatsValues.number(values[i]),left+139,817+extra(),29,0xFFF1EDDF);
             }
             for(int i=0;i<8;i++){
                 ItemStack item=i<EquipmentClient.equipped.size()?EquipmentClient.equipped.get(i):ItemStack.EMPTY;
@@ -70,15 +77,15 @@ public final class EquipmentScreen extends Screen {
             }
             String notice=EquipmentClient.notice;
             if(EquipmentClient.data==null&&EquipmentClient.supported())notice="장비 정보를 불러오는 중입니다.";
-            if(!notice.isBlank())label(c,notice,836,737,19,0xFFD2DDE3);
+            if(!notice.isBlank())label(c,notice,836,737+extra(),19,0xFFD2DDE3);
             if(selected>=0)picker(c,mx,my);
             else if(hovered>=0){ItemStack item=hovered<EquipmentClient.equipped.size()?EquipmentClient.equipped.get(hovered):ItemStack.EMPTY;tooltip(c,item.isEmpty()?NAMES[hovered]+" · 클릭하여 장착":item.getName().getString()+" · 클릭 교체 / 우클릭 해제",(float)mx,(float)my);}
-            else if(hit(mx,my,176,781,1290,75))tooltip(c,"추가 장비 효과 · 마력 / 체력 / 최대 마나 / 마나 회복 / 마법 가속",836,770);
+            else if(hit(mx,my,176,781+extra(),1290,75))tooltip(c,"추가 장비 효과 · 마력 / 체력 / 최대 마나 / 마나 회복 / 마법 가속",836,770+extra());
             c.getMatrices().pop();
         }finally{c.getMatrices().pop();images.endFrame();}
         entrance.draw(c,width,height);
     }
-    private void drawStars(DrawContext c,boolean front){for(int i=0;i<stars.count();i++)if(stars.foreground(i)==front){float x=836+stars.x(i)*242,y=(broomLayout?351:408)+stars.y(i)*(broomLayout?165:210),size=4+(stars.depth(i)+1)*2;HudMesh.star(c,x,y,size*1.8f,0x225CD6EF);HudMesh.star(c,x,y,size,0xDDE5D5A7);}}
+    private void drawStars(DrawContext c,boolean front){for(int i=0;i<stars.count();i++)if(stars.foreground(i)==front){float x=836+stars.x(i)*242,y=408+stars.y(i)*210,size=4+(stars.depth(i)+1)*2;HudMesh.star(c,x,y,size*1.8f,0x225CD6EF);HudMesh.star(c,x,y,size,0xDDE5D5A7);}}
     private void picker(DrawContext c,double mx,double my){
         c.fill(548,172,1125,640,0xF5101E30);HudMesh.line(c,564,174,1109,174,1.5f,0xFFD8C28C);label(c,NAMES[selected]+" 선택",836,207,27,0xFFE9D5A1);label(c,"×",1090,206,29,0xFFDAE3EA);
         var list=choices();if(list.isEmpty())label(c,"장착 가능한 아이템이 없습니다.",836,392,23,0xFFB7C6D1);
@@ -92,10 +99,10 @@ public final class EquipmentScreen extends Screen {
     @Override public boolean mouseClicked(double x,double y,int button){
         var l=layout();double mx=l.localX(x),my=l.localY(y)/stretch();
         if(button==0&&hit(mx,my,1440,60,90,88)){close();return true;}
-        if(button==0&&selected<0&&hit(mx,my,591,664,490,50)){NicknameClient.open(this);return true;}
-        if(button==0&&selected<0&&broomLayout&&BroomUiLink.available()&&hit(mx,my,544,540,584,90)){client.setScreen(new BroomSelectionScreen(this));return true;}
+        if(button==0&&selected<0&&hit(mx,my,591,664+extra(),490,50)){NicknameClient.open(this);return true;}
+        if(button==0&&selected<0&&broomLayout&&BroomUiLink.available()&&hit(mx,my,544,650,584,90)){client.setScreen(new BroomSelectionScreen(this));return true;}
         if(selected>=0){if(button==1||hit(mx,my,1065,184,50,46)){selected=-1;sound();return true;}if(button==0){var list=choices();for(int n=0;n<list.size();n++)if(hit(mx,my,568+n%6*89,240+n/6*60,80,55)){if(EquipmentClient.request(EquipmentProtocol.EQUIP,selected,EquipmentClient.data.candidates().get(list.get(n)).inventory())){selected=-1;sound();}return true;}}return true;}
-        for(int i=0;i<8;i++)if(hit(mx,my,EquipmentScreen.x(i),EquipmentScreen.y(i),151,137)){
+        for(int i=0;i<8;i++)if(hit(mx,my,EquipmentScreen.x(i),y(i),151,137)){
             if(button==0){selected=i;sound();}else if(button==1){EquipmentClient.request(EquipmentProtocol.REMOVE,i,0);sound();}return true;
         }
         return super.mouseClicked(x,y,button);

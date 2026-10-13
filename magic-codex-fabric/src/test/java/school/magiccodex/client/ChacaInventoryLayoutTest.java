@@ -100,7 +100,7 @@ class ChacaInventoryLayoutTest {
         assertFalse(ChacaInventoryLayout.insideContent(40, 40), "empty corner throws like outside the vanilla panel");
     }
 
-    @Test void layoutFitsCommonGuiSizesWithItemsAtLeastVanillaSize() {
+    @Test void layoutFitsApprovedSmallerBoundsAcrossGuiSizes() {
         // Scaled GUI sizes: 1920x1080 at GUI 2/3/4, 2560x1440, 1366x768, 1280x720, 854x480, 4K, 16:10, 4:3.
         int[][] sizes = {{960, 540}, {640, 360}, {480, 270}, {640, 360}, {683, 384}, {426, 240}, {427, 240}, {960, 540}, {720, 450}, {512, 384}, {1920, 1080}};
         for (int[] s : sizes) {
@@ -108,7 +108,7 @@ class ChacaInventoryLayoutTest {
             assertEquals(Mode.FULL, fit.mode());
             assertTrue(fit.x() >= 0 && fit.y() >= 0, Arrays.toString(s));
             assertTrue(fit.screenX(ChacaInventoryLayout.WIDTH) <= s[0] + 0.01 && fit.screenY(ChacaInventoryLayout.HEIGHT) <= s[1] + 0.01, Arrays.toString(s));
-            assertTrue(ChacaInventoryLayout.MAIN_ITEM * fit.scale() >= 16, "pocket item below 16 GUI px at " + Arrays.toString(s));
+            assertTrue(ChacaInventoryLayout.MAIN_ITEM * fit.scale() >= 10, "pocket item below 10 GUI px at " + Arrays.toString(s));
             assertEquals(200, fit.localX(fit.screenX(200)), 1e-3);
         }
     }
@@ -123,7 +123,7 @@ class ChacaInventoryLayoutTest {
             float[] r = ChacaInventoryLayout.CRAFT_RECT;
             assertTrue(side.screenX(r[0]) >= bookRight, "crafting must start right of the vanilla book " + Arrays.toString(s));
             assertTrue(side.screenX(r[2]) <= s[0] + 0.01 && side.screenY(r[1]) >= -0.01 && side.screenY(r[3]) <= s[1] + 0.01, Arrays.toString(s));
-            assertTrue(ChacaInventoryLayout.ORB_ITEM * side.scale() >= 16, "orb items stay at least vanilla size " + Arrays.toString(s));
+            assertTrue(ChacaInventoryLayout.ORB_ITEM * side.scale() >= 10, "orb items remain readable beside centered book " + Arrays.toString(s));
         }
         assertEquals(Mode.BOOK_ONLY, ChacaInventoryLayout.fit(370, 240, true).mode(), "vanilla narrow mode");
     }

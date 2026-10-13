@@ -174,7 +174,7 @@ public final class BroomApi {
         Lighting.setupForEntityInInventory();
         var last = pose.last();
         g.drawSpecial(buffers -> {
-            var vc = buffers.getBuffer(RenderType.entityCutout(tex));
+            var vc = buffers.getBuffer(RenderType.entityTranslucentEmissive(tex));
             for (var q : model.quads) {
                 float[] p = q.pos(), uv = q.uv(), n = q.normal();
                 for (int i = 0; i < 4; i++) {

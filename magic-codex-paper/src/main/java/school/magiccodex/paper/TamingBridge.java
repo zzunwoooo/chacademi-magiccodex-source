@@ -46,7 +46,7 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
     TamingBridge(MagicCodexBridge p,ManaService mana,PetBridge pets)throws Exception{
         plugin=p;this.mana=mana;this.pets=pets;graceKey=new NamespacedKey(p,"taming_grace");
         if(!new File(p.getDataFolder(),"taming.yml").exists())p.saveResource("taming.yml",false);reload();
-        var m=p.getServer().getMessenger();m.registerIncomingPluginChannel(p,TamingProtocol.REQUEST,this);m.registerOutgoingPluginChannel(p,TamingProtocol.RESPONSE);m.registerOutgoingPluginChannel(p,TamingProtocol.ANCHORED_RESPONSE);
+        var m=p.getServer().getMessenger();m.registerIncomingPluginChannel(p,TamingProtocol.REQUEST,this);m.registerOutgoingPluginChannel(p,TamingProtocol.RESPONSE);m.registerOutgoingPluginChannel(p,TamingProtocol.ANCHORED_RESPONSE);m.registerOutgoingPluginChannel(p,school.magiccodex.protocol.MonsterTargetProtocol.CHANNEL);
         Bukkit.getPluginManager().registerEvents(this,p);Bukkit.getPluginManager().registerEvents(new CosmeticPetSafety(),p);p.getCommand("교화").setExecutor(this);p.getCommand("교화관리").setExecutor(this);
         Bukkit.getScheduler().runTaskTimer(p,this::tick,4,4);
         shiny=new ShinyBridge(p,this);
@@ -163,7 +163,11 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
     private int graceMs(LivingEntity e){var g=graces.get(e.getUniqueId());return g==null?0:(int)Math.max(0,g.until-now());}
     private void send(Player p,State s){if(p.isOnline()&&p.getListeningPluginChannels().contains(TamingProtocol.RESPONSE))p.sendPluginMessage(plugin,TamingProtocol.RESPONSE,TamingProtocol.encode(s));}
     private void sendTarget(Player p,State s,LivingEntity target){
-        if(p.isOnline()&&p.getListeningPluginChannels().contains(TamingProtocol.ANCHORED_RESPONSE)){
+        if(p.isOnline()&&p.getListeningPluginChannels().contains(school.magiccodex.protocol.MonsterTargetProtocol.CHANNEL)){
+            var at=target.getLocation();var anchor=new TamingProtocol.Anchor(target.getUniqueId(),at.getX(),at.getY(),at.getZ(),Math.clamp(target.getHeight(),0,64));var max=target.getAttribute(Attribute.MAX_HEALTH);var profile=profile(target);
+            var value=new school.magiccodex.protocol.MonsterTargetProtocol.Target(new TamingProtocol.AnchoredState(s,anchor),target.getHealth(),Math.max(target.getHealth(),max==null?20:max.getValue()),shiny!=null&&shiny.isShiny(target),profile!=null&&pets.capturable(profile.pet),configuredMythic(target));
+            p.sendPluginMessage(plugin,school.magiccodex.protocol.MonsterTargetProtocol.CHANNEL,school.magiccodex.protocol.MonsterTargetProtocol.encode(value));
+        }else if(p.isOnline()&&p.getListeningPluginChannels().contains(TamingProtocol.ANCHORED_RESPONSE)){
             var at=target.getLocation();
             var anchor=new TamingProtocol.Anchor(target.getUniqueId(),at.getX(),at.getY(),at.getZ(),Math.clamp(target.getHeight(),0,64));
             p.sendPluginMessage(plugin,TamingProtocol.ANCHORED_RESPONSE,TamingProtocol.encode(new TamingProtocol.AnchoredState(s,anchor)));
@@ -174,7 +178,10 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
     private ManaCasting.Result rejected(Player p,int status,String text){message(p,text);return new ManaCasting.Result(status,0);}
     private void query(Player p,UUID claimed){
         if(casts.containsKey(p.getUniqueId()))return;LivingEntity e=target(p);Profile f=e==null?null:profile(e);
-        if(e==null||!TamingQueryPolicy.matches(claimed,e.getUniqueId())||f==null||!permitted(p)){send(p,new State(0,0,-1,"",false,0,0,0,0,""));return;}
+        if(e==null||TamingTargetPolicy.excluded(e,false)||pets.activePet(e)||!TamingQueryPolicy.matches(claimed,e.getUniqueId())){send(p,new State(0,0,-1,"",false,0,0,0,0,""));return;}
+        if(f==null||!pets.capturable(f.pet)){
+            if(p.getListeningPluginChannels().contains(school.magiccodex.protocol.MonsterTargetProtocol.CHANNEL))sendTarget(p,new State(0,TamingProtocol.TARGET,e.getEntityId(),f==null?ChatColor.stripColor(e.getName()):f.name,false,0,0,0,0,"교화 불가"),e);else send(p,new State(0,0,-1,"",false,0,0,0,0,""));return;
+        }
         String hint=f.boss&&!graces.containsKey(e.getUniqueId())?"처치 후 교화 가능":"/교화 · 시전";
         if(locked.contains(e.getUniqueId()))hint="다른 플레이어가 교화 중";
         sendTarget(p,new State(0,TamingProtocol.TARGET,e.getEntityId(),f.name,f.boss,chance(e,f),graceMs(e),0,0,hint),e);
@@ -198,13 +205,14 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
         if(!plugin.playerStateReady(p))return rejected(p,ManaProtocol.FAILED,"지금은 교화를 사용할 수 없습니다.");
         if(casts.containsKey(p.getUniqueId()))return new ManaCasting.Result(ManaProtocol.FAILED,0);
         var e=target(p);var f=e==null?null:profile(e);
-        if(f==null||!reachable(p,e)||!MagicProtectionLink.touch(p,e))return rejected(p,ManaProtocol.FAILED,"교화할 대상을 바라봐 주세요.");
+        if(f==null||!pets.capturable(f.pet))return rejected(p,ManaProtocol.FAILED,"교화가 불가능한 대상입니다");
+        if(!reachable(p,e)||!MagicProtectionLink.touch(p,e))return rejected(p,ManaProtocol.FAILED,"교화할 대상을 바라봐 주세요.");
         if(f.boss&&!graces.containsKey(e.getUniqueId()))return rejected(p,ManaProtocol.FAILED,"이 대상은 처치한 뒤 교화할 수 있습니다.");
         if(f.boss&&graceMs(e)<duration)return rejected(p,ManaProtocol.FAILED,"교화할 시간이 부족합니다.");
         if(locked.contains(e.getUniqueId())||casts.size()>=maxActive)return rejected(p,ManaProtocol.FAILED,"지금은 이 대상을 교화할 수 없습니다.");
         final String permission;
         try{permission=pets.capturePermission(f.pet);if(!Bukkit.getPluginManager().isPluginEnabled("LuckPerms"))throw new IllegalStateException("LuckPerms 연결이 필요합니다.");}
-        catch(Exception ex){return rejected(p,ManaProtocol.FAILED,ex.getMessage()==null?"펫 연결 설정을 확인해 주세요.":ex.getMessage());}
+        catch(Exception ex){return rejected(p,ManaProtocol.FAILED,"교화가 불가능한 대상입니다");}
         if(p.hasPermission(permission))return rejected(p,ManaProtocol.FAILED,"이미 도감에 등록된 펫입니다.");
         // mana-spells.yml owns cost/cooldown; taming.yml owns encounter settings only.
         var account=mana.account(p.getUniqueId());

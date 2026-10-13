@@ -53,6 +53,7 @@ public final class MagicCodexClient implements ClientModInitializer {
         TamingClient.initialize();
         ShinyClient.initialize();
         CastingClient.initialize();
+        AimClient.initialize();
         PlayerHudClient.initialize();
         PartyHudClient.initialize();
         ScreenVfxClient.initialize();

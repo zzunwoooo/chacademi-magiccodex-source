@@ -27,7 +27,7 @@ import net.minecraft.world.phys.Vec3;
  *  W 가속(아래를 보며 W = 급강하) · S 약한 브레이크 · 마우스 방향(빗자루가 늦게 따라옴)
  *  A/D 드리프트 · A/D 두 번 배럴롤 · 스페이스 상승 · 아래를 보며 W 하강 · 달리기 키 부스트
  *  앉기 키 한 번 = 지상/공중 모두 내리기 (키 재지정 지원)
- *  낙마 후 떨어지는 빗자루 근처에서 스페이스 = 다시 잡기
+ *  낙마 후 이동 키 6개를 순서대로 빠르게 입력 = 다시 잡기
  * </pre>
  */
 public final class BroomFlight {
@@ -48,7 +48,9 @@ public final class BroomFlight {
     private static int catchTicks;
     private static BroomRiders.Drop drop;
     private static int awaitingCatch;
-    private static boolean prevJumpCatch;
+    private static BroomCatchSequence catchSequence;
+    public static BroomCatchSequence catchSequence(){return catchSequence;}
+    private static int movementMask(Minecraft mc){return (mc.options.keyUp.isDown()?1:0)|(mc.options.keyLeft.isDown()?2:0)|(mc.options.keyDown.isDown()?4:0)|(mc.options.keyRight.isDown()?8:0);}
 
     private BroomFlight() {}
 
@@ -96,6 +98,7 @@ public final class BroomFlight {
         }
         drop = null;
         catchTicks = 0;
+        catchSequence = null;
         awaitingCatch = 0;
         lastHurtTime = p.hurtTime;
         prevShift = mc.options.keyShift.isDown(); // Ignore an already-held mount key until released.
@@ -122,6 +125,7 @@ public final class BroomFlight {
         ride = null;
         rider = null;
         catchTicks = 0;
+        catchSequence = null;
         drop = null;
         awaitingCatch = 0;
         if (wind != null) wind.finish();
@@ -146,7 +150,7 @@ public final class BroomFlight {
             var drops = BroomRiders.drops();
             drop = drops.isEmpty() ? null : drops.get(drops.size() - 1);
             catchTicks = CATCH_TICKS;
-            prevJumpCatch = true; // 이미 누르고 있던 스페이스는 무시
+            catchSequence=new BroomCatchSequence(p.getRandom().nextLong(),movementMask(mc));
         }
     }
 
@@ -154,7 +158,7 @@ public final class BroomFlight {
         send(BroomPackets.EVT_FALL, (float) (physics == null ? 0 : physics.horizontalSpeed()));
         play(SoundEvents.WOOD_BREAK, 0.7f, 1.0f);
         end(true, false);
-        Minecraft.getInstance().gui.setOverlayMessage(Component.literal("균형을 잃었습니다! 스페이스로 빗자루를 잡으세요"), false);
+        Minecraft.getInstance().gui.setOverlayMessage(Component.literal("균형을 잃었습니다! 표시된 이동 키를 빠르게 입력하세요"), false);
     }
 
     private static void setFlying(LocalPlayer p, boolean flying) {
@@ -264,15 +268,15 @@ public final class BroomFlight {
         if (awaitingCatch > 0) awaitingCatch--;
         if (catchTicks > 0) {
             catchTicks--;
-            boolean jump = p.input.keyPresses.jump();
-            if (jump && !prevJumpCatch && drop != null && awaitingCatch == 0 && !p.onGround()) {
+            boolean completed=catchSequence!=null&&catchSequence.input(movementMask(mc));
+            if (completed && drop != null && awaitingCatch == 0 && !p.onGround()) {
                 Vec3 hip = p.position().add(0, BroomRenderer.SEAT_Y, 0);
                 if (hip.distanceTo(drop.pos(1f)) < 3.0) {
                     send(BroomPackets.EVT_CATCH, 0);
                     awaitingCatch = 10;
                 }
             }
-            prevJumpCatch = jump;
+
             if (catchTicks == 0 || p.onGround()) {
                 catchTicks = 0;
                 drop = null;

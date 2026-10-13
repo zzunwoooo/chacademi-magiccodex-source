@@ -9,6 +9,7 @@ import net.minecraft.util.Util;
 
 /** Five-card selector using the server's Motion snapshot and the existing equipment font/cache. */
 final class BroomSelectionScreen extends Screen {
+    private static final Identifier ATLAS=Identifier.of("magiccodex","textures/gui/review/broom_atlas.png");
     private static final Identifier FONT=Identifier.of("magiccodex","hud_bold");
     private static final Identifier PANEL=Identifier.of("magiccodex","textures/gui/equipment/broom_selection_panel.png");
     private static final Identifier CARD=Identifier.of("magiccodex","textures/gui/equipment/broom_selection_card.png");
@@ -33,61 +34,58 @@ final class BroomSelectionScreen extends Screen {
         c.fill(0,0,width,height,0x65040911);var m=c.getMatrices();m.push();
         try{
             m.translate(l.x(),l.y(),0);m.scale(l.scale(),l.scale(),1);
-            images.drawTexture(c,PANEL,0,0,0,0,1672,941,1672,941);
-            label(c,"빗자루 선택",836,88,42,0xFFF0D69D,440);
+            atlas(c,20,18,1632,125,25,16,1485,113); atlas(c,20,143,1632,680,25,129,1485,166); atlas(c,20,823,1632,110,25,295,1485,76);
+            label(c,"빗자루",836,72,42,0xFFF0D69D,440);
             label(c,"×",1547,95,48,0xFFE9D7AB,54);
             int hover=-1;
             for(int slot=0;slot<5;slot++){
                 int index=page*5+slot;if(index>=owned.length)break;
                 String id=owned[index];var r=BroomSelectionLayout.card(slot);boolean over=r.contains(mx,my);
                 if(over)hover=slot;
-                // Actual alpha bounds, verified from source bytes; transparent margins do not shift the cards.
-                images.drawTexture(c,CARD,r.x(),r.y(),57,89,r.w(),r.h(),731,1652,845,1860);
-                if(id.equals(selected)||id.equals(equipped)){
-                    int color=id.equals(equipped)?0xCCA9DCE2:0x99D6C48F;
-                    HudMesh.line(c,r.x()+22,r.y()+r.h()-13,r.x()+r.w()-22,r.y()+r.h()-13,2,color);
-                }
-                c.enableScissor(r.x()+20,r.y()+22,r.x()+r.w()-20,r.y()+r.h()-80);
+                int sx=id.equals(selected)?432:over?230:30;
+                atlas(c,r.x(),r.y(),r.w(),r.h(),sx,390,id.equals(selected)?209:197,361);
+                int grade=grade(BroomUiLink.text("grade",id));int[] colors={0xFFCDDAE5,0xFF71E5F2,0xFFD2A8FF,0xFFFFD582};
+                atlas(c,r.x()+19,r.y()+119,r.w()-38,245,657+grade*212,474,232,244);
+                label(c,BroomUiLink.text("name",id),r.x()+r.w()/2f,r.y()+39,25,0xFFF0E8D7,r.w()-40);
+                label(c,BroomUiLink.text("grade",id),r.x()+r.w()/2f,r.y()+76,20,colors[grade],r.w()-50);
+                c.enableScissor(r.x()+14,r.y()+95,r.x()+r.w()-14,r.y()+r.h()-44);
                 try{
-                    boolean rendered=BroomUiLink.render(c,id,r.x()+r.w()/2f,r.y()+r.h()*.43f,r.h()*.65f,0,90,over?(float)(Util.getMeasuringTimeMs()%12000)*.03f:0);
-                    if(!rendered)label(c,"모델 준비 중",r.x()+r.w()/2f,r.y()+r.h()*.45f,21,0xFF9AB0C4,r.w()-48);
+                    boolean rendered=BroomUiLink.render(c,id,r.x()+r.w()/2f,r.y()+260,282,0,70,over?(float)(Util.getMeasuringTimeMs()%12000)*.03f:0);
+                    if(!rendered)label(c,"모델 준비 중",r.x()+r.w()/2f,r.y()+250,21,0xFF9AB0C4,r.w()-48);
                 }finally{c.disableScissor();}
-                label(c,BroomUiLink.text("name",id),r.x()+r.w()/2f,r.y()+r.h()-33,26,0xFFEEE6D3,r.w()-56);
-                if(id.equals(equipped))label(c,"장착 중",r.x()+r.w()/2f,r.y()+r.h()-90,23,0xFFABDCE3,r.w()-50);
+                if(id.equals(equipped)){atlas(c,r.x()+43,r.y()+r.h()-65,r.w()-86,40,1015,806,174,59);label(c,"장착 중",r.x()+r.w()/2f,r.y()+r.h()-46,21,0xFFC2F4FA,r.w()-70);}
             }
             if(owned.length==0)label(c,BroomUiLink.available()?"보유한 빗자루가 없습니다. 비행 마법은 연습용 빗자루로 10초간 탑승합니다.":"빗자루 정보를 연결할 수 없습니다.",836,444,26,0xFFD3DEE7,1160);
             if(BroomSelectionLayout.pages(owned.length)>1){label(c,"‹",101,463,55,page>0?0xFFEAD5A2:0xFF586779,50);label(c,"›",1567,463,55,page+1<BroomSelectionLayout.pages(owned.length)?0xFFEAD5A2:0xFF586779,50);}
             button(c,BroomSelectionLayout.EQUIP,pending.isBlank()?"장착":"확인 중…",!selected.isBlank()&&pending.isBlank(),mx,my);
             button(c,BroomSelectionLayout.BACK,"뒤로",true,mx,my);
-            label(c,notice.isBlank()?"비행 숙련도 "+Math.round(BroomUiLink.mastery()*100)+"%   ·   "+(page+1)+" / "+BroomSelectionLayout.pages(owned.length):notice,836,888,21,0xFFB4C7D7,1000);
-            if(hover>=0)tooltip(c,owned[page*5+hover],hover,equipped);
+            label(c,notice.isBlank()?"비행 숙련도 "+Math.round(BroomUiLink.mastery()*100)+"%   ·   "+(page+1)+" / "+BroomSelectionLayout.pages(owned.length):notice,836,934,16,0xFFB4C7D7,1000);
+            String inspect=hover>=0?owned[page*5+hover]:!selected.isBlank()?selected:owned.length>0?owned[page*5]:""; if(!inspect.isBlank())tooltip(c,inspect,Math.max(0,hover),equipped);
         }finally{m.pop();images.endFrame();}
     }
+    private static int grade(String text){return text.contains("전설")?3:text.contains("유일")||text.contains("영웅")?2:text.contains("고급")||text.contains("희귀")?1:0;}
+    private static int score(float value){return Float.isFinite(value)?Math.clamp(Math.round(value*10),1,10):1;}
+    private static void atlas(DrawContext c,int x,int y,int w,int h,int sx,int sy,int sw,int sh){UiResources.images().drawTexture(c,ATLAS,x,y,sx,sy,w,h,sw,sh,1536,1024,0xFFFFFFFF);}
     private void tooltip(DrawContext c,String id,int slot,String equipped){
-        var r=BroomSelectionLayout.tooltip(slot);var values=BroomUiLink.gauges(id);var compare=BroomUiLink.gauges(equipped);var labels=BroomUiLink.labels();var actual=BroomUiLink.gaugeTexts(id);
+        var values=BroomUiLink.gauges(id);var compare=BroomUiLink.gauges(equipped);var labels=BroomUiLink.labels();
         var m=c.getMatrices();m.push();try{
-            m.translate(0,0,600);c.fill(r.x(),r.y(),r.x()+r.w(),r.y()+r.h(),0xF5101E30);
-            HudMesh.line(c,r.x()+12,r.y()+2,r.x()+r.w()-12,r.y()+2,1,0xAAD8C28C);
-            label(c,BroomUiLink.text("name",id),r.x()+r.w()/2f,r.y()+26,23,0xFFF0DFC0,r.w()-30);
-            label(c,BroomUiLink.text("grade",id),r.x()+r.w()/2f,r.y()+53,18,0xFFABC1D2,r.w()-30);
-            for(int i=0;i<Math.min(5,Math.min(values.length,Math.min(labels.length,actual.length)));i++){
-                int y=r.y()+84+i*33;label(c,labels[i],r.x()+59,y,18,0xFFD4E1E9,94);
-                float v=Float.isFinite(values[i])?Math.clamp(values[i],0,1):0;
-                c.fill(r.x()+116,y-5,r.x()+238,y+5,0xFF283B4C);c.fill(r.x()+116,y-5,r.x()+116+Math.round(122*v),y+5,v>=.75f?0xFF86BBA2:v>=.5f?0xFF83ADCA:0xFFC9AD7A);
-                if(!equipped.isBlank()&&i<compare.length&&Float.isFinite(compare[i])){int x=r.x()+116+Math.round(122*Math.clamp(compare[i],0,1));c.fill(x,y-8,x+1,y+8,0xCCEEE5CF);}
-                label(c,actual[i]==null?"":actual[i],r.x()+287,y,18,0xFFE8E0D0,95);
+            m.translate(0,0,600);atlas(c,415,580,842,248,26,757,610,224);
+            label(c,BroomUiLink.text("name",id),836,605,25,0xFFF0DFC0,610);
+            for(int i=0;i<Math.min(5,Math.min(values.length,labels.length));i++){
+                int y=637+i*35;int v=score(values[i]);label(c,labels[i],521,y+3,19,0xFFD4E1E9,160);
+                c.fill(630,y-5,1090,y+5,0xFF23364D);c.fill(630,y-5,630+46*v,y+5,0xFF39D9ED);label(c,Integer.toString(v),1155,y,20,0xFF65EAFF,60);
+                c.fill(630,y+8,1090,y+16,0xFF23364D);
+                if(!equipped.isBlank()&&i<compare.length){int old=score(compare[i]);c.fill(630,y+8,630+46*old,y+16,0xFF9EB6CC);label(c,Integer.toString(old),1155,y+14,15,0xFFCAD6E2,60);}
             }
-            label(c,"가는 선: 현재 장착",r.x()+r.w()/2f,r.y()+251,15,0xFF9AAEC0,r.w()-30);
         }finally{m.pop();}
     }
     private static void label(DrawContext c,String value,float x,float y,float size,int color,float max){
         var t=UiResources.text();String s=value==null?"":value.replace('\n',' ');
-        if(t.width(s,size,FONT)>max){while(s.length()>1&&t.width(s+"…",size,FONT)>max)s=s.substring(0,s.offsetByCodePoints(s.length(),-1));s+="…";}
+        size=Math.max(12,Math.min(size,size*max/Math.max(max,t.width(s,size,FONT)))); if(t.width(s,size,FONT)>max){while(s.length()>1&&t.width(s+"…",size,FONT)>max)s=s.substring(0,s.offsetByCodePoints(s.length(),-1));s+="…";}
         t.draw(c,s,x,y,size,color,FONT,true);
     }
     private static void button(DrawContext c,BroomSelectionLayout.Rect r,String title,boolean enabled,double mx,double my){
-        c.fill(r.x(),r.y(),r.x()+r.w(),r.y()+r.h(),enabled&&r.contains(mx,my)?0xBB284456:0xBB132438);
-        HudMesh.line(c,r.x()+14,r.y()+r.h()-2,r.x()+r.w()-14,r.y()+r.h()-2,1,enabled?0xBBD2C094:0x555D7184);
+        atlas(c,r.x(),r.y(),r.w(),r.h(),645,enabled&&r.contains(mx,my)?879:790,352,84);
         label(c,title,r.x()+r.w()/2f,r.y()+r.h()/2f,29,enabled?0xFFE7D8B6:0xFF788B9D,r.w()-32);
     }
     @Override public boolean mouseClicked(double x,double y,int button){
@@ -101,6 +99,7 @@ final class BroomSelectionScreen extends Screen {
         for(int i=0;i<5;i++)if(page*5+i<owned.length&&BroomSelectionLayout.card(i).contains(mx,my)){selected=owned[page*5+i];notice="";return true;}
         return true;
     }
+    @Override public boolean mouseScrolled(double x,double y,double horizontal,double vertical){if(vertical!=0)page=BroomSelectionLayout.page(page+(vertical<0?1:-1),BroomUiLink.owned().length);return true;}
     @Override public void close(){if(client!=null)client.setScreen(client.player==null?null:parent);}
     @Override public boolean shouldPause(){return false;}
 }

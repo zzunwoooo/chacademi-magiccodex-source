@@ -12,10 +12,10 @@ class DialogueParserTest {
 
     @Test void optionalJournalDescriptionUsesUserMetadataWithoutExampleFallback() throws IOException {
         var r=root("start",map("lines",List.of(line("hello"))));
-        assertEquals("",DialogueParser.parse("chapter",r).description());
+        assertEquals("",DialogueParser.parse("chapter",r).description()); assertEquals("",DialogueParser.parse("chapter",r).chapter()); r.put("chapter","제1장");
         r.put("description","User-authored journal details");
         var d=DialogueParser.parse("chapter",r);
-        assertEquals("t",d.title());assertEquals("User-authored journal details",d.description());
+        assertEquals("제1장",d.chapter()); assertEquals("t",d.title());assertEquals("User-authored journal details",d.description());
     }
     @Test void readsScenesChoicesAndIgnoresOldWindowStyleKeys() throws IOException {
         var r=root("wake",map("lines",List.of(line("안녕")),"event","e_wake","choices",List.of(map("text","네","to","wake","event","c_wake_1","need",map("npc","teacher","min",10,"max",""),"affinity",List.of(map("npc","teacher","add",99))))));
