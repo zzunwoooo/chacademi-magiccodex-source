@@ -90,11 +90,14 @@ public final class CastingClient {
         var client=MinecraftClient.getInstance();
         if(spell==null || !gameplay(client) || client.getNetworkHandler()==null) return;
         state();
+        // Taming traces the creature on the server from the eyes; aim that ray at the shoulder crosshair's creature.
+        boolean aimed=(spell.id().equals("taming")||spell.id().equals("rainbow_collar"))&&CrosshairAim.aim(client,25);
         try { report(client,STATE.fire(spell.id(),Util.getMeasuringTimeMs(),ManaClient.supported(),sender(client))); }
         catch(RuntimeException error) {
             org.slf4j.LoggerFactory.getLogger("magiccodex").warn("마법 명령 전송 실패",error);
             if(client.player!=null) client.player.sendMessage(Text.literal("마법 명령을 전송하지 못했습니다."),true);
         }
+        finally { if(aimed) CrosshairAim.restore(client); }
     }
     private static java.util.function.Consumer<CodexData.Spell> sender(MinecraftClient client) {
         return spell->{

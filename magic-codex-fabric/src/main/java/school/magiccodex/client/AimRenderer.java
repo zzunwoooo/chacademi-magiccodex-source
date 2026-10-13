@@ -81,9 +81,7 @@ public final class AimRenderer {
                 }
                 case WALL -> {
                     if (p.point() == null) break;
-                    Vec3d along = horizontal(p.point().subtract(feet)).rotateY((float) Math.PI / 2);
-                    var points = line(p.point().subtract(along.multiply(shape.width() / 2)), along, shape.width());
-                    strip(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(BAND)), m, w, points, p.point().y, shape.depth(), argb(main, .85f), false);
+                    wallHologram(consumers, m, p.point(), horizontal(p.point().subtract(feet)), shape.width(), shape.depth(), main, pulse);
                     decal(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TARGET)), m, w, p.point(), .7, argb(main, 1f));
                 }
                 case LINE -> lineHologram(consumers, m, p, shape, main, feet);
@@ -152,6 +150,41 @@ public final class AimRenderer {
             chevronQuad(chevron, m, start, basis, d, size, argb(color, .75f * a));
         }
         chevronQuad(chevron, m, start, basis, length - size * .55, size * 1.35, argb(color, 1f));
+    }
+    /**
+     * Wall footprint: a lane (bright edges, translucent inside) across the aim with rounded ends that also fade out,
+     * over a soft bloom of the same outline, so neither end is a flat cut.
+     */
+    private static void wallHologram(VertexConsumerProvider consumers, Matrix4f m, Vec3d center, Vec3d forward, double length, double depth, int color, float pulse) {
+        Vec3d along = forward.rotateY((float) Math.PI / 2);
+        Vec3d c = center.add(0, LIFT + .01, 0);
+        double half = Math.max(.15, depth / 2), cap = Math.min(half, length / 2);
+        var lane = consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(LANE));
+        var glow = consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(GLOW));
+        int n = Math.max(12, (int) Math.ceil(length / .15));
+        for (int i = 0; i < n; i++) {
+            double t0 = -length / 2 + length * i / n, t1 = -length / 2 + length * (i + 1) / n;
+            double[] w0 = AimMath.capsuleEnd(length / 2 - Math.abs(t0), cap), w1 = AimMath.capsuleEnd(length / 2 - Math.abs(t1), cap);
+            band(lane, m, c, along, forward, t0, t1, half * w0[0], half * w1[0], argb(color, .9f * (float) w0[1]), argb(color, .9f * (float) w1[1]));
+            double g = 1.3 + .1 * pulse;
+            band(glow, m, c, along, forward, t0, t1, (half * g + .2) * w0[0], (half * g + .2) * w1[0], argb(color, .3f * (float) w0[1]), argb(color, .3f * (float) w1[1]));
+        }
+    }
+    /** One slice of a band: v runs across it (0 = one edge, 1 = the other), colours set per end of the slice. */
+    private static void band(VertexConsumer vc, Matrix4f m, Vec3d c, Vec3d along, Vec3d across, double t0, double t1, double h0, double h1, int c0, int c1) {
+        Vec3d a = c.add(along.multiply(t0)), b = c.add(along.multiply(t1));
+        float y = (float) c.y;
+        float[][] q = {
+            {(float) (a.x + across.x * h0), y, (float) (a.z + across.z * h0), 0, 0},
+            {(float) (a.x - across.x * h0), y, (float) (a.z - across.z * h0), 0, 1},
+            {(float) (b.x - across.x * h1), y, (float) (b.z - across.z * h1), 1, 1},
+            {(float) (b.x + across.x * h1), y, (float) (b.z + across.z * h1), 1, 0}};
+        int[] colors = {c0, c0, c1, c1};
+        float cross = (q[1][0] - q[0][0]) * (q[2][2] - q[0][2]) - (q[1][2] - q[0][2]) * (q[2][0] - q[0][0]);
+        int[] order = cross <= 0 ? new int[]{0, 1, 2, 3} : new int[]{3, 2, 1, 0};
+        for (int i : order)
+            vc.vertex(m, q[i][0], q[i][1], q[i][2]).color(colors[i]).texture(q[i][3], q[i][4]).overlay(OverlayTexture.DEFAULT_UV)
+              .light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(0, 1, 0);
     }
     private static void chevronQuad(VertexConsumer vc, Matrix4f m, Vec3d origin, AimPlane.Frame f, double at, double size, int color) {
         double h = size / 2;

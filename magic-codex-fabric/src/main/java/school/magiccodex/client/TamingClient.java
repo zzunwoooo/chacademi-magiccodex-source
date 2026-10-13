@@ -91,7 +91,10 @@ public final class TamingClient {
         if(state!=null&&(state.status()==TamingProtocol.SUCCESS||state.status()==TamingProtocol.FAIL||state.status()==TamingProtocol.ERROR)&&n-received<2400)return;
         // ModelEngine visuals can hide the living base or expose a different hitbox UUID.
         // The server already performs the bounded, obstruction-aware authoritative ray.
+        // Shoulder view: point the server's eye ray at the creature under the crosshair for this one query.
+        boolean aimed=CrosshairAim.aim(c,25);
         ClientPlayNetworking.send(new Request(TamingProtocol.encode(new TamingProtocol.Request(TamingProtocol.QUERY,NONE))));
+        if(aimed)CrosshairAim.restore(c);
     }
     private static void sound(String name,float volume){MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvent.of(Identifier.of("magiccodex","taming."+name)),1,volume));}
     private static void stopLoop(){if(looping!=null){MinecraftClient.getInstance().getSoundManager().stop(looping);looping=null;}}

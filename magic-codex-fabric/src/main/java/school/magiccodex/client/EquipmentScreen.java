@@ -58,7 +58,6 @@ public final class EquipmentScreen extends Screen {
                 if(selected<0&&hit(mx,my,544,650,584,90))HudMesh.line(c,563,734,1109,734,1,0xFF8DDDF3);
             }
             // Nickname: centred between the bar's gold lines (normal 662/717, broom 764/829).
-            if(broomLayout)HudMesh.capsule(c,591,769,490,55,0xDA122236,0xDA122236);
             String name=NicknameClient.display(EquipmentClient.data==null?StatsClient.values().nickname():EquipmentClient.data.name());label(c,name,836,broomLayout?796.5f:690,27,0xFFF3E9D3);
             if(selected<0&&hit(mx,my,591,664+(broomLayout?100:0),490,50)){HudMesh.line(c,686,711+(broomLayout?100:0),986,711+(broomLayout?100:0),1,0xFF92E7F2);tooltip(c,"닉네임 설정",836,659+(broomLayout?100:0));}
             double[] values=EquipmentClient.data==null?null:new double[]{EquipmentClient.data.power(),EquipmentClient.data.health(),EquipmentClient.data.mana(),EquipmentClient.data.regen(),EquipmentClient.data.haste()};

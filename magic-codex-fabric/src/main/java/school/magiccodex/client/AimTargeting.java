@@ -133,7 +133,13 @@ public final class AimTargeting {
             var living=(LivingEntity)entity;var intersection=living.getBoundingBox().expand(.55).raycast(eye,castPoint);
             if(intersection.isPresent()&&eye.squaredDistanceTo(intersection.get())<closest){target=living;castPoint=intersection.get();closest=eye.squaredDistanceTo(castPoint);}
         }
-        String reason=null;
+        String reason=null;boolean snapped=false;
+        if(grounded(shape.mode())&&target==null&&hit.getType()==HitResult.Type.MISS){
+            // Zones and walls belong on the ground: a ray into the air is moved down onto the ground under the aim
+            // (pulled in toward the caster until it is within range and in sight), never left floating.
+            Vec3d ground=groundUnder(world,player,eye,end,reach);
+            if(ground==null)reason="바닥을 조준해 주세요.";else{castPoint=ground;snapped=true;}
+        }
         if(shape.mode()==Mode.UNIT){
             if(target==null)reason="사거리 안의 대상을 조준해 주세요.";
             else if(shape.filter()==SpellTargets.Filter.AIR&&target.isOnGround())reason="공중에 있는 대상에게 사용해 주세요.";
@@ -150,7 +156,27 @@ public final class AimTargeting {
             var wall=world.raycast(new RaycastContext(origin,full,RaycastContext.ShapeType.COLLIDER,RaycastContext.FluidHandling.NONE,player));
             point=wall.getType()==HitResult.Type.MISS?full:wall.getPos();
         }
-        return new Preview(shape,feet,eye,point,target,candidates,reason==null,reason,hit.getType()!=HitResult.Type.MISS,castPoint,origin);
+        return new Preview(shape,feet,eye,point,target,candidates,reason==null,reason,snapped||hit.getType()!=HitResult.Type.MISS,castPoint,origin);
+    }
+
+    /** Area, point and wall spells are placed on the ground; lines, cones and unit spells are not. */
+    static boolean grounded(Mode mode){return mode==Mode.AREA||mode==Mode.POINT||mode==Mode.WALL;}
+
+    /**
+     * Ground point for an aim that hit nothing: straight down from the end of the ray, pulled back toward the caster
+     * in small steps until the point is inside the server ray length and nothing blocks the eyes' line to it.
+     */
+    private static Vec3d groundUnder(World world,Entity player,Vec3d eye,Vec3d end,double range){
+        double dx=end.x-eye.x,dz=end.z-eye.z,top=Math.max(end.y,eye.y)+.5;
+        for(int i=0;i<=16;i++){
+            double f=1-i*.05;if(f<.15)break;
+            double x=eye.x+dx*f,z=eye.z+dz*f;
+            Double y=Ground.top(world,x,top,z,48);
+            if(y==null)continue;
+            Vec3d p=new Vec3d(x,y,z);
+            if(eye.squaredDistanceTo(p)<=(range-.1)*(range-.1)&&sight(world,player,eye,p))return p;
+        }
+        return null;
     }
 
     static boolean targetable(Entity e) {

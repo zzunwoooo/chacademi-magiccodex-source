@@ -70,4 +70,15 @@ public final class AimMath {
         double pixelsPerDegree = framebufferHeight / Math.max(1, fovDegrees);
         return lookUnits * .15 * pixelsPerDegree * speed;
     }
+
+    /**
+     * Rounded, fading end of a band. {@code fromEnd} = distance from the nearer end, {@code cap} = half the band width.
+     * @return {width factor (semicircle: 0 at the tip, 1 from one cap length in), alpha factor (smooth fade-in)}
+     */
+    public static double[] capsuleEnd(double fromEnd, double cap) {
+        double e = Math.max(0, fromEnd), c = Math.max(1e-6, cap);
+        double width = e >= c ? 1 : Math.sqrt(Math.max(0, 1 - (1 - e / c) * (1 - e / c)));
+        double t = Math.min(1, e / (c * 1.6 + .2));
+        return new double[]{width, t * t * (3 - 2 * t)};
+    }
 }

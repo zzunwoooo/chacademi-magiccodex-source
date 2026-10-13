@@ -37,4 +37,21 @@ class FollowupFixesTest {
         assertEquals(MonsterPanel.scale(1920, 1080), MonsterPanel.scale(1920, 1080));
         assertEquals(9, MonsterPanel.fit(18, 236, 118), 1e-6);
     }
+    @Test void wallEndsAreRoundedAndFadeOut() {
+        double[] tip = AimMath.capsuleEnd(0, 1.5), mid = AimMath.capsuleEnd(3, 1.5), half = AimMath.capsuleEnd(.75, 1.5);
+        assertEquals(0, tip[0], 1e-9, "zero width at the very end: no flat cut");
+        assertEquals(0, tip[1], 1e-9, "fully transparent at the very end");
+        assertEquals(1, mid[0], 1e-9); assertEquals(1, mid[1], 1e-9);
+        assertTrue(half[0] > .8 && half[0] < 1, "semicircular cap");
+        double previous = -1;
+        for (double e = 0; e <= 3; e += .1) { double a = AimMath.capsuleEnd(e, 1.5)[1]; assertTrue(a >= previous - 1e-12); previous = a; }
+    }
+    @Test void onlyZonesAndWallsNeedGround() {
+        assertTrue(AimTargeting.grounded(SpellTargets.Mode.WALL));
+        assertTrue(AimTargeting.grounded(SpellTargets.Mode.AREA));
+        assertTrue(AimTargeting.grounded(SpellTargets.Mode.POINT));
+        assertFalse(AimTargeting.grounded(SpellTargets.Mode.LINE));
+        assertFalse(AimTargeting.grounded(SpellTargets.Mode.CONE));
+        assertFalse(AimTargeting.grounded(SpellTargets.Mode.UNIT));
+    }
 }
