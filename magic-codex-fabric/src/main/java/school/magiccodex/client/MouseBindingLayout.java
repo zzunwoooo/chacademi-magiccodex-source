@@ -1,7 +1,7 @@
 package school.magiccodex.client;
 /** Full 280x497 PNG coordinates: draw and hit tests share the exact same transform. */
 public final class MouseBindingLayout {
- public static final float X=1285,Y=225,W=190,H=337.25f,S=W/280f;
+ public static final float X=1318,Y=196,W=190,H=337.25f,S=W/280f;
  private static final double[][] ONE={{16,190},{26,187},{39,229},{38,260},{25,249},{17,217}};
  private static final double[][] TWO={{26,269},{38,276},{45,313},{42,338},{32,329},{25,298}};
  public static double[][] polygon(int code){return code==KeySettingsLayout.THUMB_1?ONE:TWO;}

@@ -19,6 +19,8 @@ public final class EquipmentScreen extends Screen {
     private final UiResources.Entrance entrance=new UiResources.Entrance();
     private int selected=-1;
     private boolean broomLayout;
+    private static final Identifier PANEL_BROOM=Identifier.of("magiccodex","textures/gui/equipment/panel_broom.png"),SLOT_LABEL_FONT=Identifier.of("magiccodex","title");
+    private static void slotLabel(DrawContext c,String s,float x,float y){UiResources.text().draw(c,s,x,y,25,0xFFDCE4FA,SLOT_LABEL_FONT,true);}
     private static final Identifier BROOM_SLOT=Identifier.of("magiccodex","textures/gui/equipment/broom_equip_slot.png");
     public EquipmentScreen(){super(Text.literal("장비"));}
     @Override protected void init(){sound();broomLayout=BroomUiLink.available();if(broomLayout)BroomUiLink.refresh();}
@@ -36,13 +38,9 @@ public final class EquipmentScreen extends Screen {
         c.getMatrices().push();
         try{
             c.getMatrices().translate(l.x(),l.y(),0);c.getMatrices().scale(l.scale(),l.scale()*stretch(),1);
-            if(broomLayout){
-                images.drawTexture(c,PANEL,0,0,0,0,1672,130,1672,130,1672,941);
-                images.drawTexture(c,PANEL,0,130,0,130,1672,750,1672,630,1672,941);
-                images.drawTexture(c,PANEL,0,880,0,760,1672,181,1672,181,1672,941);
-                c.fill(297,145,472,880,0xFF122236);c.fill(1198,145,1373,880,0xFF122236);
-                for(int i=0;i<8;i++)images.drawTexture(c,PANEL,x(i),y(i),x(i),156+(i%4)*158,151,137,151,137,1672,941);
-            }else images.drawTexture(c,PANEL,0,0,0,0,1672,941,1672,941);
+            // Broom layout: a pre-built taller panel (slots re-spaced on clean background, no seams or stray lines).
+            if(broomLayout)images.drawTexture(c,PANEL_BROOM,0,0,0,0,1672,1061,1672,1061,1672,1061);
+            else images.drawTexture(c,PANEL,0,0,0,0,1672,941,1672,941);
             int circle=EquipmentClient.data==null?StatsClient.values().circle():EquipmentClient.data.circle();double time=Util.getMeasuringTimeMs()/1000.0;
             c.getMatrices().push();c.getMatrices().translate(490,-22,0);c.getMatrices().scale(.92f,.92f,1);StatsBackdrop.draw(c,circle,time);c.getMatrices().pop();
             stars.update(circle,time);drawStars(c,false);
@@ -50,7 +48,8 @@ public final class EquipmentScreen extends Screen {
             c.getMatrices().push();c.getMatrices().translate(0,0,300);drawStars(c,true);
             if(broomLayout&&BroomUiLink.available()){
                 images.drawTexture(c,BROOM_SLOT,544,650,72,186,584,90,2029,312,2172,724);
-                var id=BroomUiLink.equipped();label(c,"빗자루",836,659,19,0xFFA9C8DA);
+                // Same look as the baked slot labels (머리, 상의…): serif semibold, pale blue-white, left of the content.
+                var id=BroomUiLink.equipped();slotLabel(c,"빗자루",617,695);HudMesh.line(c,688,676,688,714,1,0x88D8B970);
                 if(!id.isBlank()){
                     c.enableScissor(690,659,1108,729);
                     try{BroomUiLink.render(c,id,892,694,330,90,14,0);}finally{c.disableScissor();}
@@ -58,8 +57,9 @@ public final class EquipmentScreen extends Screen {
                 }else label(c,"연습용 빗자루 (10초)",877,695,23,0xFFC0CDD9);
                 if(selected<0&&hit(mx,my,544,650,584,90))HudMesh.line(c,563,734,1109,734,1,0xFF8DDDF3);
             }
-            if(broomLayout)HudMesh.capsule(c,591,761,490,58,0xDA122236,0xDA122236);
-            String name=NicknameClient.display(EquipmentClient.data==null?StatsClient.values().nickname():EquipmentClient.data.name());label(c,name,836,690+(broomLayout?100:0),27,0xFFF3E9D3);
+            // Nickname: centred between the bar's gold lines (normal 662/717, broom 764/829).
+            if(broomLayout)HudMesh.capsule(c,591,769,490,55,0xDA122236,0xDA122236);
+            String name=NicknameClient.display(EquipmentClient.data==null?StatsClient.values().nickname():EquipmentClient.data.name());label(c,name,836,broomLayout?796.5f:690,27,0xFFF3E9D3);
             if(selected<0&&hit(mx,my,591,664+(broomLayout?100:0),490,50)){HudMesh.line(c,686,711+(broomLayout?100:0),986,711+(broomLayout?100:0),1,0xFF92E7F2);tooltip(c,"닉네임 설정",836,659+(broomLayout?100:0));}
             double[] values=EquipmentClient.data==null?null:new double[]{EquipmentClient.data.power(),EquipmentClient.data.health(),EquipmentClient.data.mana(),EquipmentClient.data.regen(),EquipmentClient.data.haste()};
             c.fill(145,778+extra(),1527,853+extra(),0xFF122236);

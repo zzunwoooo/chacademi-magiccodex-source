@@ -11,7 +11,12 @@ public final class HudPointer {
 
     public static boolean active() {
         var c = MinecraftClient.getInstance();
-        return c.currentScreen instanceof HudCursorScreen;
+        return c.currentScreen instanceof HudCursorScreen || c.currentScreen instanceof net.minecraft.client.gui.screen.ChatScreen;
+    }
+
+    /** HUD stays drawn under these screens: none, the Alt cursor screen and chat. */
+    public static boolean hudVisibleUnder(net.minecraft.client.gui.screen.Screen screen) {
+        return screen == null || screen instanceof HudCursorScreen || screen instanceof net.minecraft.client.gui.screen.ChatScreen;
     }
 
     public static double x() {

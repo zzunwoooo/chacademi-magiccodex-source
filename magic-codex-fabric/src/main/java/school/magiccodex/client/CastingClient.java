@@ -48,7 +48,7 @@ public final class CastingClient {
         HudRenderCallback.EVENT.register((ctx,tickCounter)->{
             var client=MinecraftClient.getInstance();
             if(client.world==null || client.player==null || client.options.hudHidden
-                    || (client.currentScreen!=null && !(client.currentScreen instanceof HudCursorScreen))) return;
+                    || !HudPointer.hudVisibleUnder(client.currentScreen)) return;
             if(hud==null) hud=new SkillHudRenderer(client);
             hud.render(ctx,state(),client.getWindow().getScaledWidth(),client.getWindow().getScaledHeight(),Util.getMeasuringTimeMs(),toggleLabel());
         });

@@ -18,6 +18,9 @@ public final class KeySettingsLayout {
     public static final Rect PICKER_CLOSE = new Rect(1248, 170, 48, 48);
     public static final Rect DISCARD = new Rect(845, 510, 220, 50);
     public static final Rect CONTINUE = new Rect(605, 510, 220, 50);
+    /** Keyboard area of key_settings_base.png and where/how big it is drawn (keys are baked into that art). */
+    static final Rect KEYBOARD_SRC = new Rect(212, 158, 1248, 415);
+    static final float KEYBOARD_SCALE = .84f, KEYBOARD_X = 212, KEYBOARD_Y = 191;
     public static final List<Key> KEYS = keys();
     private static final Set<Integer> RESERVED = Set.of(87, 65, 83, 68, 73, 90, 80, 79,
             344, 345, 342, 346, 343, 347, 348, 280);
@@ -66,6 +69,7 @@ public final class KeySettingsLayout {
         return List.copyOf(keys);
     }
     private static void row(List<Key> keys,int y,int h,int[] xs,int[] ws,String[] labels,int[] codes) {
-        for(int i=0;i<xs.length;i++) keys.add(new Key(codes[i],labels[i],new Rect(Math.round(180+(xs[i]-210)*.82f),Math.round(200+(y-160)*.82f),Math.round(ws[i]*.82f),Math.round(h*.82f))));
+        // Original key_settings_base.png keyboard, drawn at KEYBOARD_SCALE so the mouse fits on its right.
+        for(int i=0;i<xs.length;i++) keys.add(new Key(codes[i],labels[i],new Rect(Math.round(KEYBOARD_X+(xs[i]-KEYBOARD_SRC.x())*KEYBOARD_SCALE),Math.round(KEYBOARD_Y+(y-KEYBOARD_SRC.y())*KEYBOARD_SCALE),Math.round(ws[i]*KEYBOARD_SCALE),Math.round(h*KEYBOARD_SCALE))));
     }
 }

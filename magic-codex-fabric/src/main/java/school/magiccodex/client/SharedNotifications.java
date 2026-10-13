@@ -12,14 +12,14 @@ static boolean click(double x,double y,int button){if(button!=0)return false;for
  public static void offer(String id,String kind,String title,String body){enqueue(new NotificationQueue.Notice(id,kind,school.magiccodex.protocol.JournalProtocol.cut(title,140),school.magiccodex.protocol.JournalProtocol.cut(body,500),3500));}
  public static void unavailable(){enqueue(new NotificationQueue.Notice("broom:unavailable","warning","사용할 수 없는 마법","빗자루에서 내린 뒤 사용할 수 있어요.",2800));}
  private static void enqueue(NotificationQueue.Notice notice){MinecraftClient.getInstance().execute(()->QUEUE.offerIfAbsent(notice));}
- private static NotificationPresentation.Surface surface(MinecraftClient c){return c.currentScreen==null?NotificationPresentation.Surface.WORLD:c.currentScreen instanceof HudCursorScreen?NotificationPresentation.Surface.CURSOR:dialogue(c.currentScreen)?NotificationPresentation.Surface.DIALOGUE:NotificationPresentation.Surface.HIDDEN;}
+ private static NotificationPresentation.Surface surface(MinecraftClient c){return c.currentScreen==null?NotificationPresentation.Surface.WORLD:c.currentScreen instanceof HudCursorScreen||c.currentScreen instanceof net.minecraft.client.gui.screen.ChatScreen?NotificationPresentation.Surface.CURSOR:dialogue(c.currentScreen)?NotificationPresentation.Surface.DIALOGUE:NotificationPresentation.Surface.HIDDEN;}
  private static boolean visible(MinecraftClient c){return c.world!=null&&c.player!=null&&c.player.isAlive()&&!c.options.hudHidden&&c.getOverlay()==null&&surface(c)!=NotificationPresentation.Surface.HIDDEN;}
  private static void closeResources(){if(images!=null)images.close();if(text!=null)text.close();images=null;text=null;resourceGeneration=-1;}
  private static void prepare(MinecraftClient c){if(resourceGeneration!=UiResources.generation()){closeResources();resourceGeneration=UiResources.generation();}if(images==null)images=new HudTextureCache(c);if(text==null)text=new CodexTypography(c);}
  public static void initialize(){
   if(initialized)return;initialized=true;
   ScreenEvents.AFTER_INIT.register((client,screen,width,height)->{
-   if(dialogue(screen)||screen instanceof HudCursorScreen){
+   if(dialogue(screen)||screen instanceof HudCursorScreen||screen instanceof net.minecraft.client.gui.screen.ChatScreen){
     ScreenEvents.afterRender(screen).register((s,ctx,x,y,delta)->{if(client.currentScreen==s&&PRESENTATION.owns(ctx,true,surface(client)))render(ctx,client,visible(client),Util.getMeasuringTimeMs());});
     ScreenMouseEvents.allowMouseClick(screen).register((s,x,y,b)->!click(x,y,b));
    }
@@ -32,7 +32,7 @@ static boolean click(double x,double y,int button){if(button!=0)return false;for
  static void render(net.minecraft.client.gui.DrawContext ctx,MinecraftClient c,boolean show,long now){
   hits.clear(); int sw=c.getWindow().getScaledWidth(),sh=c.getWindow().getScaledHeight();float scale=Math.min(sw/1920f,sh/1080f)*.9f;float w=560*scale,h=116*scale,gap=12*scale,bottom=230*scale;int capacity=(int)((sh-bottom-24*scale)/(h+gap));
   var notices=QUEUE.frame(now,show,capacity);if(notices.isEmpty())return;ctx.draw();prepare(c);images.beginFrame();text.beginFrame();
-  try{for(var v:notices){if(v.announce())c.getSoundManager().play(net.minecraft.client.sound.PositionedSoundInstance.master(net.minecraft.sound.SoundEvent.of(Identifier.of("minecraft",NotificationPresentation.SOUND)),1f,NotificationPresentation.SOUND_VOLUME));float enter=Math.min(1,v.age()/260f),alpha=NotificationPresentation.alpha(v.age(),v.notice().duration());float x=sw-24*scale-w+(1-enter)*(w+24*scale),y=sh-bottom-h-(float)v.slot()*(h+gap);
+  try{for(var v:notices){if(v.announce())NotificationPresentation.playSound(c);float enter=Math.min(1,v.age()/260f),alpha=NotificationPresentation.alpha(v.age(),v.notice().duration());float x=sw-24*scale-w+(1-enter)*(w+24*scale),y=sh-bottom-h-(float)v.slot()*(h+gap);
    if(alpha>.1f)hits.add(new Hit(v.notice().id(),x,y,w,h)); int tint=((int)(alpha*255)<<24)|0xFFFFFF;ctx.getMatrices().push();ctx.getMatrices().translate(x,y,400);ctx.getMatrices().scale(scale,scale,1);
    // Crop to authoritative nontransparent bounds; no transparent-margin hit/anchor offset.
    if(c.getResourceManager().getResource(PANEL).isPresent())images.drawTexture(ctx,PANEL,0,0,53,160,560,116,2011,416,2117,743,tint);

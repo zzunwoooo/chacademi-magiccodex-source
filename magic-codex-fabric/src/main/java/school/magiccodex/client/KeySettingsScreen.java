@@ -81,6 +81,7 @@ public final class KeySettingsScreen extends Screen {
             text(ctx,"화면의 키를 클릭해 마법을 등록하세요 · 최대 6개",836,140,19,GOLD,BODY);
             for(var key:KeySettingsLayout.KEYS) drawKey(ctx,key);
             drawMouse(ctx);
+            drawSlots(ctx);
             text(ctx,waiting()?"서버에서 배운 마법을 확인하고 있습니다…":!notice.isEmpty()?notice:
                     "우클릭으로 등록 해제 · 처음 등록한 마법부터 왼쪽에 표시됩니다",836,789,17,GOLD,BODY);
             label(ctx,"WASD 이동   I 도감   P 스테이터스   Z 마법 모드",171,857,16,MUTED);
@@ -103,8 +104,24 @@ public final class KeySettingsScreen extends Screen {
     /** Reuse the approved PNG frame at a smaller size without leaving its old large slots behind. */
     private void sprite(DrawContext ctx,String name,int x,int y,int w,int h,int sw,int sh){images.drawTexture(ctx,id("textures/gui/followup/"+name+".png"),x,y,0,0,w,h,sw,sh,sw,sh,0xFFFFFFFF);}
     private void drawBackground(DrawContext ctx) {
-        sprite(ctx,"settings_panel",100,25,1470,890,1162,846);
-        sprite(ctx,"keyboard_panel",160,158,1068,421,1595,349);
+        // Original pre-mouse design (key_settings_base.png); the keyboard is drawn a little smaller so the mouse fits on its right.
+        slice(ctx,new Rect(0,0,1672,158),new Rect(0,0,1672,158));
+        slice(ctx,new Rect(0,158,140,442),new Rect(0,158,140,442));
+        slice(ctx,new Rect(1535,158,137,442),new Rect(1535,158,137,442));
+        slice(ctx,new Rect(140,260,50,150),new Rect(140,158,1395,442));
+        slice(ctx,new Rect(140,572,1395,28),new Rect(140,572,1395,28));
+        var k=KeySettingsLayout.KEYBOARD_SRC;
+        slice(ctx,k,new Rect(Math.round(KeySettingsLayout.KEYBOARD_X),Math.round(KeySettingsLayout.KEYBOARD_Y),Math.round(k.width()*KeySettingsLayout.KEYBOARD_SCALE),Math.round(k.height()*KeySettingsLayout.KEYBOARD_SCALE)));
+        slice(ctx,new Rect(0,600,140,208),new Rect(0,600,140,208));
+        slice(ctx,new Rect(1535,600,137,208),new Rect(1535,600,137,208));
+        slice(ctx,new Rect(140,260,50,150),new Rect(140,600,1395,208));
+        slice(ctx,new Rect(0,808,1672,133),new Rect(0,808,1672,133));
+        for(int i=0;i<6;i++) {
+            Rect r=KeySettingsLayout.slot(i);
+            slice(ctx,new Rect(309,616,126,120),new Rect(r.x()-2,r.y()-2,r.width()+4,r.height()+4));
+            overlay(ctx,KeySettingsLayout.slotKey(i),0x77314353,0xAA8D9BA5,5);
+        }
+
     }
     private void slice(DrawContext ctx,Rect source,Rect target) {
         images.drawTexture(ctx,BACKGROUND,target.x(),target.y(),source.x(),source.y(),
@@ -133,7 +150,6 @@ public final class KeySettingsScreen extends Screen {
         int slot=-1;
         for(int i=0;i<6;i++) if(!draft.get(i).empty() && draft.get(i).keyCode()==key.code()) slot=i;
         boolean hot=hover(r) && !pickerOpen() && !confirmDiscard;
-        sprite(ctx,blocked?"key_blocked":hot?"key_hover":"key",r.x(),r.y(),r.width(),r.height(),hot&&!blocked?118:100,blocked?91:hot?103:96);
         if(!allowed) overlay(ctx,r,blocked?0xA06A303B:0x294C5661,blocked?0xFFE38A90:0x446B7781,6);
         if(slot>=0) {
             overlay(ctx,r,slot==selected?0x44499084:0x22277569,slot==selected?0xFF8AD7C9:0x9974A59B,6);
@@ -146,12 +162,34 @@ public final class KeySettingsScreen extends Screen {
         }
         if(hot) overlay(ctx,r,blocked?0x337F3540:allowed?0x224FC5AF:0x22717B89,blocked?0xFFFFA4A8:allowed?0xFFA2DACE:0x998E949A,6);
     }
+    /** The six bottom slots of the original design show the HUD order (registration order); right-click clears one. */
+    private void drawSlots(DrawContext ctx){
+        var ordered=draft.orderedSlots();boolean idle=!pickerOpen()&&!confirmDiscard;
+        for(int i=0;i<6;i++){
+            Rect r=KeySettingsLayout.slot(i),key=KeySettingsLayout.slotKey(i);
+            var binding=i<ordered.size()?ordered.get(i):null;Spell spell=binding==null?null:spell(binding.spellId());
+            if(spell!=null){art(ctx,spell,r.centerX(),r.centerY(),70);if(!spell.permissionKnown()||!spell.discovered()){overlay(ctx,r,0xAA07121C,0x7777868A,7);text(ctx,"사용 불가",r.centerX(),r.centerY(),16,MUTED,BODY);}}
+            else if(binding!=null)text(ctx,"?",r.centerX(),r.centerY(),28,0x99CBB88D,BODY);
+            String keyName=binding==null?Integer.toString(i+1):KeySettingsLayout.name(binding.keyCode());
+            text(ctx,keyName,key.centerX(),key.centerY(),keyName.length()>5?15:18,binding==null?0x88A4ADB5:GOLD,BODY);
+            if(idle&&binding!=null&&(hover(r)||hover(key))){
+                overlay(ctx,r,0x225AAB9C,0xFFD8C398,9);
+                ctx.getMatrices().push();ctx.getMatrices().translate(0,0,10);
+                overlay(ctx,new Rect(Math.round(r.centerX()-122),575,244,37),0xF0112230,0xAA998A6E,6);
+                text(ctx,shorten(spell==null?"없는 마법":spell.name(),218,18),r.centerX(),593,18,IVORY,BODY);
+                ctx.getMatrices().pop();
+            }
+        }
+    }
+    private int slotAt(){for(int i=0;i<6;i++)if(hover(KeySettingsLayout.slot(i))||hover(KeySettingsLayout.slotKey(i)))return i;return -1;}
     private void drawMouse(DrawContext ctx){
         images.drawTexture(ctx,id("textures/gui/followup/mouse.png"),(int)MouseBindingLayout.X,(int)MouseBindingLayout.Y,0,0,(int)MouseBindingLayout.W,(int)MouseBindingLayout.H,280,497,280,497,0xFFFFFFFF);
         for(int code:new int[]{KeySettingsLayout.THUMB_1,KeySettingsLayout.THUMB_2}){
             boolean hot=!pickerOpen()&&!confirmDiscard&&MouseBindingLayout.hit(mx,my)==code;boolean assigned=draft.slotOfKey(code)>=0;int color=hot?TEAL:assigned?GOLD:0x7794A7B6;
             var points=MouseBindingLayout.polygon(code);for(int i=0;i<points.length;i++){var a=points[i];var b=points[(i+1)%points.length];HudMesh.line(ctx,MouseBindingLayout.X+(float)a[0]*MouseBindingLayout.S,MouseBindingLayout.Y+(float)a[1]*MouseBindingLayout.S,MouseBindingLayout.X+(float)b[0]*MouseBindingLayout.S,MouseBindingLayout.Y+(float)b[1]*MouseBindingLayout.S,hot?2:1,color);}
-            float y=code==KeySettingsLayout.THUMB_1?375:431;label(ctx,KeySettingsLayout.name(code),1490,y,17,hot?TEAL:assigned?GOLD:IVORY);
+            // Label right next to its thumb button (left of the mouse), vertically centred on it.
+            float minX=Float.MAX_VALUE,sumY=0;for(var p:points){minX=Math.min(minX,MouseBindingLayout.X+(float)p[0]*MouseBindingLayout.S);sumY+=MouseBindingLayout.Y+(float)p[1]*MouseBindingLayout.S;}
+            String name=KeySettingsLayout.name(code);label(ctx,name,minX-8-type.width(name,17,BODY),sumY/points.length,17,hot?TEAL:assigned?GOLD:IVORY);
         }
     }
     private void drawPicker(DrawContext ctx) {
@@ -249,6 +287,8 @@ public final class KeySettingsScreen extends Screen {
         if(button==0 && hover(KeySettingsLayout.CLOSE)) { close(); return true; }
         if(button==0 && hover(KeySettingsLayout.SAVE)) { save(); return true; }
         if(button==0 && hover(KeySettingsLayout.RESET)) { draft.clear(); selected=-1; notice=""; sound(false); return true; }
+        int slot=slotAt();var ordered=draft.orderedSlots();
+        if(slot>=0){if(button==1&&slot<ordered.size()){draft.clearKey(ordered.get(slot).keyCode());notice="";sound(false);}return true;}
         int mouseKey=MouseBindingLayout.hit(mx,my);
         if(mouseKey>=0){if(button==1){draft.clearKey(mouseKey);sound(false);}else openPicker(mouseKey);return true;}
         for(var key:KeySettingsLayout.KEYS) if(hover(key.box())) {

@@ -144,13 +144,24 @@ public final class TamingClient {
         if(c.player.getEyePos().squaredDistanceTo(new Vec3d(a.x(),a.y(),a.z()))>25*25)return;
         if(generation!=UiResources.generation()){close();generation=UiResources.generation();}if(images==null)images=new HudTextureCache(c,true);if(text==null)text=new CodexTypography(c);
         images.beginFrame();text.beginFrame();var m=ctx.getMatrices();m.push();try{
-            float scale=Math.clamp(Math.min(c.getWindow().getScaledWidth()/1400f,c.getWindow().getScaledHeight()/800f),.19f,.48f);m.translate(screen[0]-300*scale,screen[1]-110*scale,350);m.scale(scale,scale,1);
+            // Fixed on-screen size (only the position follows the head): ~70% of the previous panel.
+            float scale=MonsterPanel.scale(c.getWindow().getScaledWidth(),c.getWindow().getScaledHeight());m.translate(screen[0]-300*scale,screen[1]-110*scale,350);m.scale(scale,scale,1);
             var atlas=Identifier.of("magiccodex","textures/gui/review/monster_atlas.png");boolean shiny=monster.shiny();images.drawTexture(ctx,atlas,0,0,0,shiny?345:35,600,110,1671,shiny?278:309,1671,941,0xFFFFFFFF);
-            String name=state.name().replaceAll("§[0-9a-fk-orA-FK-OR]","");float size=Math.min(27,27*285/Math.max(1,text.width(name,27,FONT)));text.draw(ctx,name,42,34,size,shiny?0xFFE9D5FF:0xFFFFE3A7,FONT,false);
-            HudMesh.capsule(ctx,43,56,270,10,0xFF203653,0xFF203653);float hp=(float)(270*Math.clamp(monster.health()/monster.maximum(),0,1));if(hp>0)HudMesh.capsule(ctx,43,56,hp,10,shiny?0xFFADAFFF:0xFF4EE4EB,shiny?0xFFADAFFF:0xFF4EE4EB);
-            text.draw(ctx,Math.round(monster.health())+" / "+Math.round(monster.maximum()),43,84,18,0xFFCFDFEC,BODY,false);
-            images.drawTexture(ctx,atlas,369,24,shiny?361:72,625,62,67,292,295,1671,941,0xFFFFFFFF);
-            text.draw(ctx,MonsterTargetLabel.text(monster.tameable(),state.chance(),state.message()),486,57,25,shiny?0xFFE4CDFF:0xFFFFDFB0,FONT,true);
+            // Inner box measured on monster_atlas (normal y 22..100, shiny y 11..96; corner diamonds end at x 58,
+            // divider star 330..354); the same 10-unit margin on every side of both halves.
+            var box=MonsterPanel.box(shiny);
+            String name=state.name().replaceAll("§[0-9a-fk-orA-FK-OR]","");
+            float nameSize=MonsterPanel.fit(MonsterPanel.NAME,text.width(name,MonsterPanel.NAME,FONT),box.leftWidth());
+            text.draw(ctx,name,box.left(),box.nameY(),nameSize,shiny?0xFFE9D5FF:0xFFFFE3A7,FONT,false);
+            HudMesh.capsule(ctx,box.left(),box.barY(),box.leftWidth(),MonsterPanel.BAR,0xFF203653,0xFF203653);
+            float hp=(float)(box.leftWidth()*Math.clamp(monster.health()/monster.maximum(),0,1));
+            if(hp>0)HudMesh.capsule(ctx,box.left(),box.barY(),hp,MonsterPanel.BAR,shiny?0xFFADAFFF:0xFF4EE4EB,shiny?0xFFADAFFF:0xFF4EE4EB);
+            text.draw(ctx,Math.round(monster.health())+" / "+Math.round(monster.maximum()),box.left(),box.hpY(),MonsterPanel.HP,0xFFCFDFEC,BODY,false);
+            float em=box.emblem();
+            images.drawTexture(ctx,atlas,Math.round(box.right()),Math.round(box.centerY()-em/2),shiny?361:72,625,Math.round(em),Math.round(em*67/62),292,295,1671,941,0xFFFFFFFF);
+            String status=MonsterTargetLabel.text(monster.tameable(),state.chance(),state.message());
+            float statusLeft=box.right()+em+10,statusWidth=box.rightEnd()-statusLeft;
+            text.draw(ctx,status,statusLeft+statusWidth/2,box.centerY(),MonsterPanel.fit(MonsterPanel.STATUS,text.width(status,MonsterPanel.STATUS,FONT),statusWidth),shiny?0xFFE4CDFF:0xFFFFDFB0,FONT,true);
         }finally{m.pop();images.endFrame();}
     }
     private static void panel(DrawContext ctx,String file,int x,int y,int w,int h,int sw,int sh){images.drawTexture(ctx,Identifier.of("magiccodex","textures/gui/taming/"+file+".png"),x,y,0,0,w,h,sw,sh,sw,sh,0xffffffff);}

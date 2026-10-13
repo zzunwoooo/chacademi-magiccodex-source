@@ -45,7 +45,8 @@ final class BroomSelectionScreen extends Screen {
                 int sx=id.equals(selected)?432:over?230:30;
                 atlas(c,r.x(),r.y(),r.w(),r.h(),sx,390,id.equals(selected)?209:197,361);
                 int grade=grade(BroomUiLink.text("grade",id));int[] colors={0xFFCDDAE5,0xFF71E5F2,0xFFD2A8FF,0xFFFFD582};
-                atlas(c,r.x()+19,r.y()+119,r.w()-38,245,657+grade*212,474,232,244);
+                // One isolated circle per grade (the atlas cells overlap, so neighbours used to bleed in).
+                int size=Math.min(r.w()-38,245);UiResources.images().drawTexture(c,Identifier.of("magiccodex","textures/gui/review/broom_circle_"+grade+".png"),r.x()+(r.w()-size)/2,r.y()+119+(245-size)/2,0,0,size,size,236,236,236,236,0xFFFFFFFF);
                 label(c,BroomUiLink.text("name",id),r.x()+r.w()/2f,r.y()+39,25,0xFFF0E8D7,r.w()-40);
                 label(c,BroomUiLink.text("grade",id),r.x()+r.w()/2f,r.y()+76,20,colors[grade],r.w()-50);
                 c.enableScissor(r.x()+14,r.y()+95,r.x()+r.w()-14,r.y()+r.h()-44);

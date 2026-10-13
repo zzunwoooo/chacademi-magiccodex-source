@@ -26,7 +26,16 @@ public final class AimRenderer {
     static final Identifier FILL = Identifier.of("magiccodex", "textures/aim/fill.png");
     static final Identifier TARGET = Identifier.of("magiccodex", "textures/aim/target.png");
     static final Identifier BAND = Identifier.of("magiccodex", "textures/aim/band.png");
-    private static final int INVALID = 0xFF5A4A;
+    /** Bloom pieces: soft halos drawn under the crisp lines (no post shader, so they cost nothing extra). */
+    static final Identifier GLOW = Identifier.of("magiccodex", "textures/aim/glow.png");
+    static final Identifier AREA_GLOW = Identifier.of("magiccodex", "textures/aim/area_glow.png");
+    static final Identifier TARGET_GLOW = Identifier.of("magiccodex", "textures/aim/target_glow.png");
+    static final Identifier RANGE_FILL = Identifier.of("magiccodex", "textures/aim/range_fill.png");
+    static final Identifier LANE = Identifier.of("magiccodex", "textures/aim/lane.png");
+    static final Identifier CHEVRON = Identifier.of("magiccodex", "textures/aim/chevron.png");
+    /** One colour for every spell (element colours were dropped for a unified look). */
+    public static final int COLOR = 0x86DFFF;
+    private static final int INVALID = 0xFF6B6B;
     /** Decal lift above the surface so it never z-fights with the block face. */
     private static final double LIFT = .025;
     /** Layers further than this from the reference height are another floor (cave roof, ledge below): skipped. */
@@ -49,19 +58,25 @@ public final class AimRenderer {
         try {
             matrices.translate(-cam.x, -cam.y, -cam.z);
             Matrix4f m = matrices.peek().getPositionMatrix();
-            int rgb = elementColor(spell.category());
+            int rgb = COLOR;
             int main = p.valid() ? rgb : INVALID;
             World w = c.world;
             float pulse = .5f + .5f * MathHelper.sin(Util.getMeasuringTimeMs() / 180f);
             var shape = p.shape();
             Vec3d feet = p.feet();
-            rangeRing(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(BAND)), m, w, feet,
-                        AimMath.horizontalReach(shape.mode()==Mode.LINE||shape.mode()==Mode.CONE?shape.length():shape.range(), p.eye().y - feet.y), argb(rgb, .78f), c.player.getYaw()+(Util.getMeasuringTimeMs()%36000)/100f);
+            double reach = AimMath.horizontalReach(shape.mode()==Mode.LINE||shape.mode()==Mode.CONE?shape.length():shape.range(), p.eye().y - feet.y);
+            // Max range: translucent disc so the whole reachable area reads at a glance, then bloom + crisp ring.
+            if (reach > .5) {
+                decal(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(RANGE_FILL)), m, w, feet, reach, argb(rgb, .42f));
+                rangeRing(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(GLOW)), m, w, feet, reach, .95, argb(rgb, .34f), Float.NaN);
+                rangeRing(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(BAND)), m, w, feet, reach, .2, argb(rgb, .95f), c.player.getYaw()+(Util.getMeasuringTimeMs()%36000)/100f);
+            }
             switch (shape.mode()) {
                 case AREA, POINT -> {
                     if (p.point() == null) break;
                     double r = Math.max(.6, shape.radius());
-                    decal(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(FILL)), m, w, p.point(), r, argb(main, .25f));
+                    decal(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(shape.mode() == Mode.POINT ? TARGET_GLOW : AREA_GLOW)), m, w, p.point(), r * 1.05, argb(main, .55f + .1f * pulse));
+                    decal(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(FILL)), m, w, p.point(), r, argb(main, .45f));
                     decal(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(shape.mode() == Mode.POINT ? TARGET : AREA)), m, w, p.point(), r, argb(main, 1f));
                 }
                 case WALL -> {
@@ -71,16 +86,7 @@ public final class AimRenderer {
                     strip(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(BAND)), m, w, points, p.point().y, shape.depth(), argb(main, .85f), false);
                     decal(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TARGET)), m, w, p.point(), .7, argb(main, 1f));
                 }
-                case LINE -> {
-                    Vec3d delta=p.point().subtract(p.origin());double length=delta.length();
-                    var basis=AimPlane.frame(delta.x,delta.y,delta.z);
-                    var band=consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(BAND));
-                    // The faint full-width rectangle marks the fixed mechanical envelope; the arrow sits inside it.
-                    planeQuad(band,m,p.origin(),new AimPlane.V[]{basis.at(0,shape.width()/2),basis.at(0,-shape.width()/2),basis.at(length,-shape.width()/2),basis.at(length,shape.width()/2)},argb(main,.12f));
-                    for(var quad:AimPlane.arrow(basis,length,shape.width()))planeQuad(band,m,p.origin(),quad,argb(main,.4f+.08f*pulse));
-                    planeEdge(band,m,p.origin(),basis.at(0,shape.width()/2),basis.at(length,shape.width()/2),basis.right(),.035,argb(main,.92f));
-                    planeEdge(band,m,p.origin(),basis.at(0,-shape.width()/2),basis.at(length,-shape.width()/2),basis.right(),.035,argb(main,.92f));
-                }
+                case LINE -> lineHologram(consumers, m, p, shape, main, feet);
                 case CONE -> {
                     Vec3d dir = horizontal(p.point().subtract(feet));
                     double half = Math.toRadians(shape.width() / 2), r = shape.length();
@@ -103,7 +109,8 @@ public final class AimRenderer {
                     }
                     if (p.target() != null) {
                         double r = ringRadius(p.target());
-                        ring(ring, m, w, p.target(), p.point(), r, argb(main, 1f));
+                        ring(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TARGET_GLOW)), m, w, p.target(), p.point(), r * 1.08, argb(main, .5f + .15f * pulse));
+                        ring(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TARGET)), m, w, p.target(), p.point(), r, argb(main, 1f));
                     }
                 }
             }
@@ -112,16 +119,51 @@ public final class AimRenderer {
         }
     }
 
-    static int elementColor(CodexData.Category category) {
-        return switch (category == null ? CodexData.Category.ALL : category) {
-            case FIRE -> 0xFF8A3D;
-            case WATER -> 0x4DA6FF;
-            case WIND -> 0x58E0A2;
-            case LIGHT -> 0xFFD65C;
-            case DARK -> 0xB27BFF;
-            case EARTH -> 0xD9A066;
-            default -> 0xEAD8A6;
-        };
+    /** Kept for callers; every element now uses the single aim colour. */
+    static int elementColor(CodexData.Category category) { return COLOR; }
+
+    /**
+     * Straight skill-shot hologram: starts at the caster's feet (slightly ahead), follows the aim direction to the
+     * aimed point, translucent lane with bright edges, chevrons drifting forward and a brighter arrowhead at the end.
+     */
+    private static void lineHologram(VertexConsumerProvider consumers, Matrix4f m, AimTargeting.Preview p, SpellTargets.Shape shape, int color, Vec3d feet) {
+        Vec3d flat = horizontal(p.point().subtract(feet));
+        Vec3d start = feet.add(flat.multiply(.35)).add(0, LIFT + .02, 0);
+        Vec3d delta = p.point().add(0, LIFT + .02, 0).subtract(start);
+        double length = Math.clamp(delta.length(), .6, Math.max(.6, shape.length()));
+        if (delta.lengthSquared() < 1e-6) delta = flat;
+        var basis = AimPlane.frame(delta.x, delta.y, delta.z);
+        double half = Math.max(.3, shape.width() / 2);
+        // Lane body: fades in from the feet.
+        var lane = consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(LANE));
+        planeUV(lane, m, start, new AimPlane.V[]{basis.at(0, half), basis.at(0, -half), basis.at(length, -half), basis.at(length, half)},
+                new float[][]{{0, 0}, {0, 1}, {1, 1}, {1, 0}}, new int[]{argb(color, .15f), argb(color, .15f), argb(color, .85f), argb(color, .85f)});
+        // Soft bloom under the whole lane.
+        var glow = consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(GLOW));
+        double bloom = half * 1.6;
+        planeUV(glow, m, start, new AimPlane.V[]{basis.at(0, bloom), basis.at(0, -bloom), basis.at(length, -bloom), basis.at(length, bloom)},
+                new float[][]{{0, 0}, {0, 1}, {1, 1}, {1, 0}}, new int[]{argb(color, 0), argb(color, 0), argb(color, .28f), argb(color, .28f)});
+        // Chevrons drifting toward the target.
+        var chevron = consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(CHEVRON));
+        double size = Math.clamp(half * 1.3, .45, 1.1), spacing = Math.max(1.1, size * 1.6);
+        double drift = (Util.getMeasuringTimeMs() % 1000L) / 1000.0 * spacing;
+        for (double d = .4 + drift; d < length - size * 1.2; d += spacing) {
+            float a = (float) Math.min(1, Math.min(d / 1.2, (length - d) / 1.5));
+            chevronQuad(chevron, m, start, basis, d, size, argb(color, .75f * a));
+        }
+        chevronQuad(chevron, m, start, basis, length - size * .55, size * 1.35, argb(color, 1f));
+    }
+    private static void chevronQuad(VertexConsumer vc, Matrix4f m, Vec3d origin, AimPlane.Frame f, double at, double size, int color) {
+        double h = size / 2;
+        planeUV(vc, m, origin, new AimPlane.V[]{f.at(at - h, -h), f.at(at - h, h), f.at(at + h, h), f.at(at + h, -h)},
+                new float[][]{{0, 0}, {0, 1}, {1, 1}, {1, 0}}, new int[]{color, color, color, color});
+    }
+    private static void planeUV(VertexConsumer vc, Matrix4f m, Vec3d origin, AimPlane.V[] q, float[][] uv, int[] colors) {
+        for (int i = 0; i < 4; i++) {
+            var p = q[i];
+            vc.vertex(m, (float) (origin.x + p.x()), (float) (origin.y + p.y()), (float) (origin.z + p.z())).color(colors[i]).texture(uv[i][0], uv[i][1])
+              .overlay(OverlayTexture.DEFAULT_UV).light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(0, 1, 0);
+        }
     }
 
     private static int argb(int rgb, float alpha) { return (Math.round(Math.clamp(alpha, 0, 1) * 255) << 24) | (rgb & 0xFFFFFF); }
@@ -150,7 +192,7 @@ public final class AimRenderer {
     }
 
     /** Glow ring that stays on the ground (stepped where the height changes), with four short ticks like the sprite. */
-    static void rangeRing(VertexConsumer vc, Matrix4f m, World w, Vec3d center, double radius, int color, float yaw) {
+    static void rangeRing(VertexConsumer vc, Matrix4f m, World w, Vec3d center, double radius, double width, int color, float yaw) {
         if (radius <= .5) return;
         int n = AimMath.ringSegments(radius);
         List<Vec3d> ring = new ArrayList<>(n + 1);
@@ -158,12 +200,13 @@ public final class AimRenderer {
             double a = Math.PI * 2 * i / n;
             ring.add(center.add(Math.cos(a) * radius, 0, Math.sin(a) * radius));
         }
-        strip(vc, m, w, ring, center.y, .16, color, true);
+        strip(vc, m, w, ring, center.y, width, color, true);
+        if (Float.isNaN(yaw)) return; // bloom pass: no ticks
         Vec3d facing = Vec3d.fromPolar(0, yaw);
         for (int k = 0; k < 4; k++) {
             Vec3d out = facing.rotateY((float) (Math.PI / 2 * k));
             Vec3d at = center.add(out.multiply(radius));
-            strip(vc, m, w, List.of(at.subtract(out.multiply(.45)), at.add(out.multiply(.45))), center.y, .12, color, false);
+            strip(vc, m, w, List.of(at.subtract(out.multiply(.45)), at.add(out.multiply(.45))), center.y, width * .8, color, false);
         }
     }
 

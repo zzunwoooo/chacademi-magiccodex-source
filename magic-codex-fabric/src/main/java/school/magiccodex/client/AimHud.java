@@ -15,7 +15,7 @@ import net.minecraft.util.math.Vec3d;
  * Text uses the HUD's own fonts (magiccodex:label / magiccodex:hud_bold) through CodexTypography.
  */
 public final class AimHud {
-    private static final Identifier BODY = Identifier.of("magiccodex", "label");
+    private static final Identifier BODY = Identifier.of("magiccodex", "label"), BOLD = Identifier.of("magiccodex", "hud_bold");
     private static final Identifier CROSSHAIR = Identifier.ofVanilla("hud/crosshair");
     private static final String MOUSE_LEFT = "magiccodex:textures/aim/mouse_left.png", MOUSE_RIGHT = "magiccodex:textures/aim/mouse_right.png";
     private static HudTextureCache images;
@@ -32,15 +32,19 @@ public final class AimHud {
     static void render(DrawContext ctx) {
         var c = MinecraftClient.getInstance();
         if (c.player == null || c.world == null || c.options.hudHidden) return;
-        if (c.currentScreen != null && !(c.currentScreen instanceof HudCursorScreen)) return;
+        if (!HudPointer.hudVisibleUnder(c.currentScreen)) return;
         int width = c.getWindow().getScaledWidth(), height = c.getWindow().getScaledHeight();
         boolean targeting = AimTargeting.targeting();
-        int color = targeting ? AimRenderer.elementColor(AimTargeting.spell().category()) : 0xF4ECD8;
+        int color = AimRenderer.COLOR;
         if (ShoulderCamera.active() && c.options.getPerspective() == Perspective.THIRD_PERSON_BACK && c.currentScreen == null && !c.player.isSpectator())
             ctx.drawGuiTexture(RenderLayer::getCrosshair,CROSSHAIR,width/2-7,height/2-7,15,15);
         if (targeting) hint(ctx, c, width, height, color);
     }
 
+    /**
+     * Small pill just above the hunger/armour chips (which sit above the hotbar): spell icon, left mouse = cast,
+     * right mouse = cancel. Same units, capsule and bold font as those chips so it reads as part of the HUD.
+     */
     private static void hint(DrawContext ctx, MinecraftClient c, int width, int height, int rgb) {
         var spell = AimTargeting.spell();
         var preview = AimTargeting.preview();
@@ -49,30 +53,39 @@ public final class AimHud {
         if (text == null) text = new CodexTypography(c);
         images.beginFrame();
         text.beginFrame();
-        float scale = Math.clamp(Math.min(width / 1100f, height / 750f), .4f, 1f);
-        float textSize = 17, icon = 26, mouse = 22, gap = 7;
+        float scale, centerY;
+        if (PlayerHudClient.active()) {
+            var l = PlayerHudLayout.of(width, height);
+            scale = l.scale();
+            // Chips: centre hotbarTop-25, 28 tall -> top at hotbarTop-39. Pill (24 tall) sits 7 units above that.
+            centerY = (l.hotbarTop() - 39 - 7 - 12) * scale;
+        } else {
+            scale = 1;
+            centerY = height - 22 - 30 - 12 - 14; // vanilla hotbar + hunger/armour rows
+        }
+        float textSize = 12.5f, icon = 18, mouse = 15, gap = 6;
         String cast = "발동", cancel = "취소";
-        float castW = text.width(cast, textSize, BODY), cancelW = text.width(cancel, textSize, BODY);
-        float total = icon + gap * 2 + mouse + 6 + castW + gap * 2 + mouse + 6 + cancelW;
+        float castW = text.width(cast, textSize, BOLD), cancelW = text.width(cancel, textSize, BOLD);
+        float total = icon + gap * 2 + mouse + 4 + castW + gap * 2 + mouse + 4 + cancelW;
         ctx.getMatrices().push();
         try {
-            ctx.getMatrices().translate(width/2f,Math.max(24,height-74),200);
+            ctx.getMatrices().translate(width / 2f, centerY, 200);
             ctx.getMatrices().scale(scale, scale, 1);
+            HudMesh.capsule(ctx, -total / 2 - 12, -12, total + 24, 24, 0x90101925, 0x90101925);
             float x = -total / 2;
             images.drawCentered(ctx, spell.icon(), x + icon / 2, 0, (int) icon, 0xFFFFFFFF);
             x += icon + gap * 2;
             images.drawCentered(ctx, MOUSE_LEFT, x + mouse / 2, 0, (int) mouse, 0xFF000000 | rgb);
-            x += mouse + 6;
-            text.draw(ctx, cast, x, 0, textSize, 0xFFF4ECD8, BODY, false);
+            x += mouse + 4;
+            text.draw(ctx, cast, x, 0, textSize, 0xFFF1F3F5, BOLD, false);
             x += castW + gap * 2;
             images.drawCentered(ctx, MOUSE_RIGHT, x + mouse / 2, 0, (int) mouse, 0xFFE6E0D2);
-            x += mouse + 6;
-            text.draw(ctx, cancel, x, 0, textSize, 0xFFF4ECD8, BODY, false);
-            if(preview!=null){double reach=preview.shape().mode()==SpellTargets.Mode.LINE||preview.shape().mode()==SpellTargets.Mode.CONE?preview.shape().length():preview.shape().range();text.draw(ctx,"최대 사거리 "+String.format(java.util.Locale.ROOT,"%.1f",reach)+"m",0,-25,15,0xFF000000|rgb,BODY,true);}
+            x += mouse + 4;
+            text.draw(ctx, cancel, x, 0, textSize, 0xFFF1F3F5, BOLD, false);
             if (preview != null && !preview.valid() && preview.reason() != null) {
                 float blink = .75f + .25f * (float) Math.sin(Util.getMeasuringTimeMs() / 160.0);
                 int alpha = Math.round(255 * blink) << 24;
-                text.drawOutline(ctx, preview.reason(), 0, 40, 17, alpha | 0xFFB4A8, BODY, true);
+                text.drawOutline(ctx, preview.reason(), 0, -24, 12, alpha | 0xFFB4A8, BOLD, true);
             }
         } finally {
             ctx.getMatrices().pop();

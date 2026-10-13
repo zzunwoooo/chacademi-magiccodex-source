@@ -28,6 +28,8 @@ public final class PlayerHudClient {
         return enabled && c.player!=null && c.world!=null && !c.player.isSpectator()
                 && c.getCameraEntity()==c.player;
     }
+    /** Read outside the HUD lambda (chat-layout's optional redirect targets that lambda; chat is now handled here). */
+    private static net.minecraft.client.gui.screen.Screen screenNow(){return MinecraftClient.getInstance().currentScreen;}
     public static boolean handleAlt(MinecraftClient c,int key,int action){
         if(key!=GLFW.GLFW_KEY_LEFT_ALT && key!=GLFW.GLFW_KEY_RIGHT_ALT)return false;
         if(c.currentScreen instanceof HudCursorScreen)return true;
@@ -69,8 +71,8 @@ public final class PlayerHudClient {
         });
         HudLayerRegistrationCallback.EVENT.register(drawer->drawer.attachLayerAfter(IdentifiedLayer.SUBTITLES,Identifier.of("magiccodex","player_ui"),(context,ticks)->{
             var c=MinecraftClient.getInstance();
-            if(!active() || c.options.hudHidden || (c.currentScreen!=null && !(c.currentScreen instanceof HudCursorScreen)))return;
-            renderer().renderStatus(context,c.player,frame,(float)ManaClient.current(),(float)ManaClient.maximum(),c.currentScreen instanceof HudCursorScreen,Util.getMeasuringTimeMs());
+            if(!active() || c.options.hudHidden || !HudPointer.hudVisibleUnder(screenNow()))return;
+            renderer().renderStatus(context,c.player,frame,(float)ManaClient.current(),(float)ManaClient.maximum(),HudPointer.active(),Util.getMeasuringTimeMs());
             TopMenuClient.render(context,Util.getMeasuringTimeMs());
             TopMenuClient.renderTooltip(context);
         }));

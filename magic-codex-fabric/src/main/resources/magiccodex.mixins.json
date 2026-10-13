@@ -19,14 +19,7 @@
     "WhisperGlyphMixin",
     "ChatIconGlyphMixin",
     "CodexMouseMixin",
-    "ChacaInventorySwapMixin",
-    "HandledScreenHooksMixin",
-    "HandledScreenAccessor",
-    "RecipeBookWidgetAccessor",
-    "GhostRecipeAccessor",
-    "GhostCyclingItemMixin",
-    "ShoulderCameraMixin",
-    "RecipeBookScreenAccessor"
+    "ShoulderCameraMixin"
   ],
   "injectors": {
     "defaultRequire": 1
