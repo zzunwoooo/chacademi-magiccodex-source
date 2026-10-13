@@ -16,19 +16,32 @@ public final class SpellKeySettings {
     }
     private static final Binding EMPTY = new Binding("", -1);
     private final List<Binding> slots = new ArrayList<>(Collections.nCopies(LIMIT, EMPTY));
+    private final List<String> registrationOrder = new ArrayList<>();
+    private void reconcileOrder() {
+        registrationOrder.removeIf(id -> slotOfSpell(id)<0);
+        for(var binding:slots) if(!binding.empty() && !registrationOrder.contains(binding.spellId()))
+            registrationOrder.add(binding.spellId());
+    }
+    public List<Binding> orderedSlots() {
+        reconcileOrder();
+        var result=new ArrayList<Binding>();
+        for(String id:registrationOrder) result.add(get(slotOfSpell(id)));
+        while(result.size()<LIMIT) result.add(EMPTY);
+        return List.copyOf(result);
+    }
     public List<Binding> slots() { return List.copyOf(slots); }
     public Binding get(int slot) { return slots.get(slot); }
     public SpellKeySettings copy() {
-        var copy = new SpellKeySettings(); copy.slots.clear(); copy.slots.addAll(slots); return copy;
+        var copy = new SpellKeySettings(); copy.slots.clear(); copy.slots.addAll(slots); copy.registrationOrder.addAll(registrationOrder); return copy;
     }
-    public boolean sameAs(SpellKeySettings other) { return slots.equals(other.slots); }
-    public void clear(int slot) { slots.set(slot, EMPTY); }
-    public void clear() { Collections.fill(slots, EMPTY); }
+    public boolean sameAs(SpellKeySettings other) { return slots.equals(other.slots) && orderedSlots().equals(other.orderedSlots()); }
+    public void clear(int slot) { slots.set(slot, EMPTY); reconcileOrder(); }
+    public void clear() { Collections.fill(slots, EMPTY); registrationOrder.clear(); }
     public void select(int slot, String id) {
         if (id == null || !id.matches("[a-z0-9_-]{1,64}")) throw new IllegalArgumentException("올바르지 않은 마법 ID입니다.");
         for (int i=0;i<LIMIT;i++) if(i!=slot && get(i).spellId().equals(id))
             throw new IllegalArgumentException("이미 다른 슬롯에 등록한 마법입니다.");
-        slots.set(slot,new Binding(id,get(slot).keyCode()));
+        slots.set(slot,new Binding(id,get(slot).keyCode())); reconcileOrder();
     }
     public void bind(int slot,int code) {
         if(get(slot).empty()) throw new IllegalArgumentException("먼저 마법을 선택해 주세요.");
@@ -61,7 +74,7 @@ public final class SpellKeySettings {
         if(target<0) for(int i=0;i<LIMIT && target<0;i++) if(get(i).empty()) target=i;
         if(target<0) throw new IllegalArgumentException("마법은 최대 "+LIMIT+"개까지 등록할 수 있습니다. 우클릭으로 하나를 해제해 주세요.");
         if(spellSlot>=0 && spellSlot!=target) slots.set(spellSlot,EMPTY);
-        slots.set(target,new Binding(id,code));
+        slots.set(target,new Binding(id,code)); reconcileOrder();
         return target;
     }
     /** Right-click on the keyboard. Returns the cleared slot, or -1 when the key was free. */
@@ -94,6 +107,16 @@ public final class SpellKeySettings {
                 // slots, leaving only its key unassigned until the user chooses another.
                 if(code!=80&&!KeySettingsLayout.equipmentReserved(code)&&code!=-1)result.bind(i,code);
             }
+            if(map.get("registration-order") instanceof List<?> order) {
+                var verified=new ArrayList<String>();
+                for(Object value:order) {
+                    if(!(value instanceof String id) || result.slotOfSpell(id)<0 || verified.contains(id))
+                        throw new IllegalArgumentException("Invalid registration order");
+                    verified.add(id);
+                }
+                result.registrationOrder.clear(); result.registrationOrder.addAll(verified);
+            }
+            result.reconcileOrder();
             return result;
         } catch(RuntimeException error) { throw new IOException("키 설정 파일을 읽지 못했습니다: " + error.getMessage(),error); }
     }
@@ -107,6 +130,7 @@ public final class SpellKeySettings {
             else { var m=new LinkedHashMap<String,Object>(); m.put("spell",b.spellId()); m.put("key",b.keyCode()); values.add(m); }
         }
         root.put("slots",values);
+        reconcileOrder(); root.put("registration-order",List.copyOf(registrationOrder));
         var options=new DumperOptions(); options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         Path target=path.toAbsolutePath(); Files.createDirectories(target.getParent());
         Path temp=Files.createTempFile(target.getParent(),"key-settings-",".tmp");

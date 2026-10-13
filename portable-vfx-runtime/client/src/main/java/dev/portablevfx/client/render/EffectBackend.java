@@ -8,6 +8,7 @@ public interface EffectBackend extends AutoCloseable {
     interface Asset extends AutoCloseable { @Override void close(); }
     interface Instance {
         boolean exists();
+        default void opacity(float value) {}
         void transform(float x,float y,float z,float rx,float ry,float rz,float scale);
         /** Absolute elapsed scene seconds; replay uses a new instance. */
         void seek(float seconds);

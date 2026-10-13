@@ -44,6 +44,10 @@ public final class BroomRenderer {
             Player p = mc.level.getPlayerByUUID(r.id);
             if (p == null || p.isInvisible()) continue;
             Vec3 pos = p.getPosition(pt);
+            if(r.approachFrom!=null){
+                float t=Mth.clamp((r.age+pt)/10f,0,1);t=t*t*(3-2*t);
+                pos=r.approachFrom.add(0,-SEAT_Y,0).lerp(pos,t);
+            }
             if (pos.distanceToSqr(cam) > MAX_DIST_SQ) continue;
             BroomModel model = BroomModels.get(r.broom);
             if (model == null) continue;

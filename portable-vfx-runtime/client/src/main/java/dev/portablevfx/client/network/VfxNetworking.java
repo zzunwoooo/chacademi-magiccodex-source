@@ -35,6 +35,11 @@ public final class VfxNetworking {
 
     public void register(EffectRuntime runtime) {
         active=this;
+        PayloadTypeRegistry.playS2C().register(OwnerPayload.ID,OwnerPayload.CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(OwnerPayload.ID,(payload,context)->{
+            try{var value=dev.portablevfx.protocol.EffectOwner.decode(payload.bytes());runtime.owner(value.instance(),value.owner());}
+            catch(IllegalArgumentException ignored){}
+        });
         PayloadTypeRegistry.playC2S().register(HelloPayload.ID, HelloPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(OrientationHelloPayload.ID, OrientationHelloPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(ExtendedPlayHelloPayload.ID, ExtendedPlayHelloPayload.CODEC);
@@ -259,4 +264,12 @@ public final class VfxNetworking {
         };
     }
 
+    private record OwnerPayload(byte[] bytes) implements CustomPayload {
+        static final Id<OwnerPayload> ID=new Id<>(Identifier.of(dev.portablevfx.protocol.EffectOwner.CHANNEL));
+        static final PacketCodec<RegistryByteBuf,OwnerPayload> CODEC=new PacketCodec<>(){
+            public OwnerPayload decode(RegistryByteBuf b){if(b.readableBytes()!=33){b.skipBytes(b.readableBytes());return new OwnerPayload(new byte[0]);}byte[] bytes=new byte[33];b.readBytes(bytes);return new OwnerPayload(bytes);}
+            public void encode(RegistryByteBuf b,OwnerPayload p){b.writeBytes(p.bytes);}
+        };
+        public Id<? extends CustomPayload> getId(){return ID;}
+    }
 }

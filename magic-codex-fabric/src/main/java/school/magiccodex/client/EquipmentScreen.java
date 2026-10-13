@@ -50,7 +50,7 @@ public final class EquipmentScreen extends Screen {
             c.getMatrices().push();c.getMatrices().translate(0,0,300);drawStars(c,true);
             if(broomLayout&&BroomUiLink.available()){
                 images.drawTexture(c,BROOM_SLOT,544,650,72,186,584,90,2029,312,2172,724);
-                var id=BroomUiLink.equipped();label(c,"빗자루",606,695,21,0xFFA9C8DA);
+                var id=BroomUiLink.equipped();label(c,"빗자루",836,659,19,0xFFA9C8DA);
                 if(!id.isBlank()){
                     c.enableScissor(690,659,1108,729);
                     try{BroomUiLink.render(c,id,892,694,330,90,14,0);}finally{c.disableScissor();}
@@ -58,8 +58,9 @@ public final class EquipmentScreen extends Screen {
                 }else label(c,"연습용 빗자루 (10초)",877,695,23,0xFFC0CDD9);
                 if(selected<0&&hit(mx,my,544,650,584,90))HudMesh.line(c,563,734,1109,734,1,0xFF8DDDF3);
             }
-            String name=NicknameClient.display(EquipmentClient.data==null?StatsClient.values().nickname():EquipmentClient.data.name());label(c,name,836,690+extra(),27,0xFFF3E9D3);
-            if(selected<0&&hit(mx,my,591,664+extra(),490,50)){HudMesh.line(c,686,711+extra(),986,711+extra(),1,0xFF92E7F2);tooltip(c,"닉네임 설정",836,659+extra());}
+            if(broomLayout)HudMesh.capsule(c,591,761,490,58,0xDA122236,0xDA122236);
+            String name=NicknameClient.display(EquipmentClient.data==null?StatsClient.values().nickname():EquipmentClient.data.name());label(c,name,836,690+(broomLayout?100:0),27,0xFFF3E9D3);
+            if(selected<0&&hit(mx,my,591,664+(broomLayout?100:0),490,50)){HudMesh.line(c,686,711+(broomLayout?100:0),986,711+(broomLayout?100:0),1,0xFF92E7F2);tooltip(c,"닉네임 설정",836,659+(broomLayout?100:0));}
             double[] values=EquipmentClient.data==null?null:new double[]{EquipmentClient.data.power(),EquipmentClient.data.health(),EquipmentClient.data.mana(),EquipmentClient.data.regen(),EquipmentClient.data.haste()};
             c.fill(145,778+extra(),1527,853+extra(),0xFF122236);
             int[][] icons={{188,784,61,60},{551,784,61,60},{899,784,50,60},{1238,783,74,62}};
@@ -99,7 +100,7 @@ public final class EquipmentScreen extends Screen {
     @Override public boolean mouseClicked(double x,double y,int button){
         var l=layout();double mx=l.localX(x),my=l.localY(y)/stretch();
         if(button==0&&hit(mx,my,1440,60,90,88)){close();return true;}
-        if(button==0&&selected<0&&hit(mx,my,591,664+extra(),490,50)){NicknameClient.open(this);return true;}
+        if(button==0&&selected<0&&hit(mx,my,591,664+(broomLayout?100:0),490,50)){NicknameClient.open(this);return true;}
         if(button==0&&selected<0&&broomLayout&&BroomUiLink.available()&&hit(mx,my,544,650,584,90)){client.setScreen(new BroomSelectionScreen(this));return true;}
         if(selected>=0){if(button==1||hit(mx,my,1065,184,50,46)){selected=-1;sound();return true;}if(button==0){var list=choices();for(int n=0;n<list.size();n++)if(hit(mx,my,568+n%6*89,240+n/6*60,80,55)){if(EquipmentClient.request(EquipmentProtocol.EQUIP,selected,EquipmentClient.data.candidates().get(list.get(n)).inventory())){selected=-1;sound();}return true;}}return true;}
         for(int i=0;i<8;i++)if(hit(mx,my,EquipmentScreen.x(i),y(i),151,137)){

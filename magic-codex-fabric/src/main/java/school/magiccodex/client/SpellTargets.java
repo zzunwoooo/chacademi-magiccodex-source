@@ -24,7 +24,7 @@ public final class SpellTargets {
      * @param width  LINE width, WALL width, CONE angle (degrees)
      * @param depth  WALL thickness
      */
-    public record Shape(Mode mode, double range, double radius, double length, double width, double depth, Filter filter) {
+    public record Shape(Mode mode, double range, double radius, double length, double width, double depth, Filter filter, boolean casterOrigin) {
         public boolean needsPoint() { return mode != Mode.UNIT; }
     }
 
@@ -60,11 +60,10 @@ public final class SpellTargets {
             Filter filter = switch (str(o, "filter", "")) { case "air" -> Filter.AIR; case "burning" -> Filter.BURNING; default -> Filter.NONE; };
             double range = clamp(num(o, "range", 15), 1, 48);
             double radius = clamp(num(o, "radius", mode == Mode.UNIT ? 0 : .6), 0, 16);
-            double length = clamp(num(o, mode == Mode.CONE ? "range" : "length", range), .5, 48);
+            double length = clamp(num(o, "length", range), .5, 48);
             double width = clamp(num(o, mode == Mode.CONE ? "angle" : "width", 1), .2, mode == Mode.CONE ? 180 : 16);
             double depth = clamp(num(o, "depth", 1), .2, 8);
-            if (mode == Mode.CONE) range = length;
-            out.put(e.getKey(), new Shape(mode, range, radius, length, width, depth, filter));
+            out.put(e.getKey(), new Shape(mode, range, radius, length, width, depth, filter, str(o,"origin","eye").equals("caster")));
         }
         return Collections.unmodifiableMap(out);
     }

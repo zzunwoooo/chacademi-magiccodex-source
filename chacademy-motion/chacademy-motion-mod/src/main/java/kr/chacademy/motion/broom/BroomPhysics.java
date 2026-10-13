@@ -32,7 +32,7 @@ public final class BroomPhysics {
     static final float BOOST_MULT = 1.45f;
     static final int BOOST_TICKS = 30;
     static final int ROLL_TICKS = 14;
-    static final float ROLL_IMPULSE = 0.55f;
+    static final float ROLL_IMPULSE = 0.66f;
     static final float GRIP = 0.10f;          // 옆미끄러짐이 틱마다 사라지는 비율
     static final float GRIP_DRIFT = 0.035f;   // A/D 드리프트 중
     static final float GLIDE_DRAG = 0.987f;   // 손 뗐을 때
@@ -59,6 +59,13 @@ public final class BroomPhysics {
     public float stress;
     private float lastCamYaw = Float.NaN;
     private boolean fellOff;
+    private long ridingTicks;
+    public long ridingTicks(){return ridingTicks;}
+    /** Gradual fatigue, not an expiry timer. Smooth flight can continue beyond one minute. */
+    public float maximumBalance(){
+        double timeScale=45+15*clamp(stats.mastery,0,1)+3*(clamp(stats.stability,.3f,3)-1);
+        return (float)Math.max(5,100*Math.exp(-(ridingTicks/20.0)/timeScale));
+    }
 
     public BroomPhysics(Stats stats, float heading, double vx, double vy, double vz, long seed) {
         this.stats = stats;
@@ -93,6 +100,7 @@ public final class BroomPhysics {
      * 그다음 실제 이동(충돌 포함) 결과를 {@link #afterMove} 로 알려줘야 한다.
      */
     public void step(Input in) {
+        ridingTicks++;
         prevHeading = heading;
         prevBalance = balance;
         stress = 0;
@@ -218,7 +226,7 @@ public final class BroomPhysics {
     private void applyStress() {
         if (stress > 0) balance -= stress * stressMultiplier();
         else balance += 1.5f * stats.stability;
-        balance = clamp(balance, 0, 100);
+        balance = clamp(balance, 0, maximumBalance());
         if (balance <= 0) fellOff = true;
     }
 
@@ -234,7 +242,7 @@ public final class BroomPhysics {
             double after = Math.sqrt(ax * ax + az * az);
             impact = Math.max(0, before - after);
             if (impact > 0.08) {
-                balance = clamp(balance - (float) impact * 55f * stressMultiplier(), 0, 100);
+                balance = clamp(balance - (float) impact * 55f * stressMultiplier(), 0, maximumBalance());
                 stress += (float) impact * 55f;
                 if (impact > CRASH_FALL_IMPACT || balance <= 0) fellOff = true;
                 // 살짝 튕겨 나옴
@@ -247,7 +255,7 @@ public final class BroomPhysics {
         // 급강하하다 땅에 처박으면 균형이 크게 깎이고, 너무 빠르면 바로 낙마
         if (onGround && vy < -0.6) {
             float hard = (float) (-vy - 0.6);
-            balance = clamp(balance - hard * 70f * stressMultiplier(), 0, 100);
+            balance = clamp(balance - hard * 70f * stressMultiplier(), 0, maximumBalance());
             stress += hard * 70f;
             impact = Math.max(impact, hard);
             if (-vy > 1.0 || balance <= 0) fellOff = true;
@@ -265,15 +273,15 @@ public final class BroomPhysics {
 
     /** 맞았을 때. */
     public void hurt() {
-        balance = clamp(balance - 15f * stressMultiplier(), 0, 100);
+        balance = clamp(balance - 15f * stressMultiplier(), 0, maximumBalance());
         stress += 15f;
         if (balance <= 0) fellOff = true;
     }
 
-    /** 공중에서 다시 잡았을 때 균형을 절반쯤에서 시작. */
+    /** 공중 재탑승: 현재 최대치 이하의 낮은 균형, 경과 시간과 쿨다운은 보존. */
     public void caught() {
-        balance = 18;
-        prevBalance = 18;
+        balance = Math.min(18,maximumBalance());
+        prevBalance = balance;
         fellOff = false;
     }
 

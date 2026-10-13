@@ -170,6 +170,7 @@ public final class EffectRenderer implements AutoCloseable, EffectLibrary.Warmup
                 if(position==null && a.attached) { runtime.finish(entry.getKey());position=runtime.position(a,tickDelta); }
                 if(position==null){handle.stop();runtime.stop(entry.getKey());iterator.remove();continue;}
                 try {
+                handle.opacity(runtime.opacity(a));
                 handle.worldOrigin(origin.x,origin.y,origin.z);
                 handle.sceneTime((runtime.simulationTicks()+tickDelta)/20.0);
                 handle.transform((float)(position.x-origin.x),(float)(position.y-origin.y),(float)(position.z-origin.z),a.orientation.nativePitch(),a.orientation.nativeYaw(),a.orientation.nativeRoll(),r.scale());

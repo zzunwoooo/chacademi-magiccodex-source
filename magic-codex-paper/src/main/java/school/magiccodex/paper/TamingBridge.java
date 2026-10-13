@@ -93,10 +93,11 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
     }
     private LivingEntity target(Player p){return target(p,range);}
     /** Shared server-authoritative ray for taming and rarity commands. Never picks by proximity. */
-    LivingEntity target(Player p,double maxRange){
+    LivingEntity target(Player p,double maxRange){return target(p,maxRange,false);}
+    private LivingEntity target(Player p,double maxRange,boolean informationOnly){
         if(!p.isOnline()||p.isDead()||p.getGameMode()==GameMode.SPECTATOR)return null;
         var eye=p.getEyeLocation();var origin=eye.toVector();var direction=eye.getDirection();
-        var block=p.getWorld().rayTraceBlocks(eye,direction,maxRange,FluidCollisionMode.NEVER,true);
+        var block=informationOnly?null:p.getWorld().rayTraceBlocks(eye,direction,maxRange,FluidCollisionMode.NEVER,true);
         double limit=block==null?maxRange:Math.min(maxRange,block.getHitPosition().distance(origin));
         if(limit<=0)return null;
         var hit=p.getWorld().rayTraceEntities(eye,direction,limit,.25,e->e!=p&&e.isValid()&&!e.isDead()
@@ -177,11 +178,14 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
     private boolean permitted(Player p){return TamingSpell.permitted(plugin.tamingSpell(),p::hasPermission);}
     private ManaCasting.Result rejected(Player p,int status,String text){message(p,text);return new ManaCasting.Result(status,0);}
     private void query(Player p,UUID claimed){
-        if(casts.containsKey(p.getUniqueId()))return;LivingEntity e=target(p);Profile f=e==null?null:profile(e);
-        if(e==null||TamingTargetPolicy.excluded(e,false)||pets.activePet(e)||!TamingQueryPolicy.matches(claimed,e.getUniqueId())){send(p,new State(0,0,-1,"",false,0,0,0,0,""));return;}
+        if(casts.containsKey(p.getUniqueId()))return;boolean information=p.getListeningPluginChannels().contains(school.magiccodex.protocol.MonsterTargetProtocol.CHANNEL);LivingEntity e=information?target(p,25,true):target(p);Profile f=e==null?null:profile(e);
+        if(e==null||!p.canSee(e)||(!e.getTrackedBy().contains(p)&&!configuredMythic(e))||TamingTargetPolicy.excluded(e,false)||pets.activePet(e)||!TamingQueryPolicy.matches(claimed,e.getUniqueId())){send(p,new State(0,0,-1,"",false,0,0,0,0,""));return;}
         if(f==null||!pets.capturable(f.pet)){
             if(p.getListeningPluginChannels().contains(school.magiccodex.protocol.MonsterTargetProtocol.CHANNEL))sendTarget(p,new State(0,TamingProtocol.TARGET,e.getEntityId(),f==null?ChatColor.stripColor(e.getName()):f.name,false,0,0,0,0,"교화 불가"),e);else send(p,new State(0,0,-1,"",false,0,0,0,0,""));return;
         }
+        boolean owned=false;
+        try{owned=p.hasPermission(pets.capturePermission(f.pet));}catch(Exception|LinkageError ignored){}
+        if(owned){sendTarget(p,new State(0,TamingProtocol.TARGET,e.getEntityId(),f.name,f.boss,0,graceMs(e),0,0,"보유중"),e);return;}
         String hint=f.boss&&!graces.containsKey(e.getUniqueId())?"처치 후 교화 가능":"/교화 · 시전";
         if(locked.contains(e.getUniqueId()))hint="다른 플레이어가 교화 중";
         sendTarget(p,new State(0,TamingProtocol.TARGET,e.getEntityId(),f.name,f.boss,chance(e,f),graceMs(e),0,0,hint),e);

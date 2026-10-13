@@ -69,6 +69,7 @@ class CatalogCastBehaviourTest {
             default -> throw new AssertionError(method);
         });
         final PortableVfxService service=proxy(PortableVfxService.class,(method,args)->switch(method){
+            case "owner" -> {assertNotNull(args[0]);assertNotNull(args[1]);yield null;}
             case "supportsCatalogCast" -> true;
             case "startCast","startFollowCast" -> {
                 String effect=((EffectRequest)args[0]).effectId();

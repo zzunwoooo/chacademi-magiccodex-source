@@ -20,26 +20,26 @@ final class ChacaInventoryLayout {
     /** One slot in reference coordinates. (cx, cy) is the resting item centre. */
     record Element(int slotId, Kind kind, float cx, float cy, float itemSize, float hitW, float hitH, boolean round) {
         /** Pedestal centre (below the item) for main/hotbar slots. */
-        float pedestalY() { return cy + (kind == Kind.HOTBAR ? HOTBAR_ITEM_LIFT : MAIN_ITEM_LIFT); }
+        float pedestalY() { return cy + (kind == Kind.HOTBAR || kind == Kind.OFFHAND ? HOTBAR_ITEM_LIFT : MAIN_ITEM_LIFT); }
     }
 
     /** Pixel sizes of the shipped PNGs (cropped to their visible art); checked by a test. */
     static final int[] ORB_PNG = {582, 640}, CRYSTAL_PNG = {284, 640}, PEDESTAL_PNG = {640, 115}, BOOK_PNG = {320, 321};
 
     // ------------------------------------------------------------------ reference geometry
-    static final float TITLE_Y = 42, CRAFT_LABEL_Y = 106, BOOK_X = 836, BOOK_Y = 438, BOOK_LABEL_Y = 486, DIVIDER_Y = 796;
+    static final float TITLE_Y = 42, CRAFT_LABEL_Y = 106, BOOK_X = 836, BOOK_Y = 438, BOOK_LABEL_Y = 486, DIVIDER_Y = 824;
     static final float CENTER_X = 836, CENTER_Y = 290;
     /** Input orbs: TL, TR, BL, BR (= crafting slots 1..4). */
     static final float[][] ORBS = {{586, 181}, {1086, 181}, {551, 337}, {1121, 337}};
-    static final float ORB_SIZE = 150, ORB_HIT_RADIUS = 66, ORB_ITEM = 72;
-    static final float RESULT_ORB_SIZE = 214, RESULT_HIT_RADIUS = 90, RESULT_ITEM = 96;
+    static final float ORB_SIZE = 128, ORB_HIT_RADIUS = 57, ORB_ITEM = 64;
+    static final float RESULT_ORB_SIZE = 186, RESULT_HIT_RADIUS = 79, RESULT_ITEM = 84;
     static final float CRYSTAL_HEIGHT = 150;
-    static final float BOOK_WIDTH = 72, BOOK_HIT_W = 88, BOOK_HIT_H = 64;
+    static final float BOOK_WIDTH = 56, BOOK_HIT_W = 68, BOOK_HIT_H = 56;
 
-    static final float MAIN_COL0 = 176, MAIN_COL_STEP = 165, MAIN_ROW0 = 586, MAIN_ROW_STEP = 82;
+    static final float MAIN_COL0 = 176, MAIN_COL_STEP = 165, MAIN_ROW0 = 615, MAIN_ROW_STEP = 82;
     static final float MAIN_ITEM = 70, MAIN_ITEM_LIFT = 36, PEDESTAL_W = 138;
-    static final float HOTBAR_COL0 = MAIN_COL0, HOTBAR_COL_STEP = MAIN_COL_STEP, HOTBAR_ROW = 864, HOTBAR_NUMBER_Y = 910;
-    static final float HOTBAR_ITEM = 66, HOTBAR_ITEM_LIFT = 34, HOTBAR_PEDESTAL_W = 118;
+    static final float HOTBAR_COL0 = 160, HOTBAR_COL_STEP = 150, HOTBAR_ROW = 892, HOTBAR_NUMBER_Y = 930;
+    static final float HOTBAR_ITEM = 60, HOTBAR_ITEM_LIFT = 34, HOTBAR_PEDESTAL_W = 118;
 
     /** Click with a held stack here counts as "outside", like clicking past the vanilla panel. */
     static final float[][] CONTENT = {{430, 18, 1242, 488}, {60, 494, 1718, 934}};
@@ -59,8 +59,8 @@ final class ChacaInventoryLayout {
         }
         for (int col = 0; col < 9; col++)
             list[n++] = new Element(HOTBAR_START + col, Kind.HOTBAR, HOTBAR_COL0 + col * HOTBAR_COL_STEP,
-                    HOTBAR_ROW - HOTBAR_ITEM_LIFT, HOTBAR_ITEM, 128, 82, false);
-        list[n] = new Element(OFFHAND, Kind.OFFHAND, 1648, HOTBAR_ROW - MAIN_ITEM_LIFT, HOTBAR_ITEM, 128, 82, false);
+                    HOTBAR_ROW - HOTBAR_ITEM_LIFT, HOTBAR_ITEM, 118, 76, false);
+        list[n] = new Element(OFFHAND, Kind.OFFHAND, HOTBAR_COL0 + 9 * HOTBAR_COL_STEP, HOTBAR_ROW - HOTBAR_ITEM_LIFT, HOTBAR_ITEM, 118, 76, false);
         return list;
     }
 
@@ -143,7 +143,7 @@ final class ChacaInventoryLayout {
     /** Crafting cluster (orbs, result, recipe button and labels) in reference coordinates. */
     static final float[] CRAFT_RECT = {430, 18, 1242, 488};
     /** Below this the 72px reference orb items would be smaller than a vanilla 16px item. */
-    static final float MIN_SIDE_SCALE = 0.14f;
+    static final float MIN_SIDE_SCALE = 0.06f;
     static final int BOOK_W = 147, BOOK_H = 166, BOOK_WIDE_OFFSET = 86, NARROW_WIDTH = 379;
 
     /** Same placement as vanilla {@code RecipeBookWidget#getLeft}. */
@@ -157,7 +157,6 @@ final class ChacaInventoryLayout {
             float scale = Math.min(width * .61f / 1718f, height * .65f / HEIGHT);
             return new Fit(Mode.FULL, width * .478f - 859 * scale, height * .414f - HEIGHT * scale / 2, scale);
         }
-        if (narrow(width)) return new Fit(Mode.BOOK_ONLY, 0, 0, 1);
         float left = bookLeft(width, false) + BOOK_W + 4, w = width - left - 4;
         float cw = CRAFT_RECT[2] - CRAFT_RECT[0], ch = CRAFT_RECT[3] - CRAFT_RECT[1];
         float scale = Math.min(w / cw, (float) height / ch) * FILL;

@@ -1045,6 +1045,12 @@ class RelayEngineTest {
         return new RelayLimits(128, 64, active, packets, playerPackets, plays, 1200);
     }
 
+    @Test void ownerMetadataIsImmutableAndOnlyReachesActualRecipients(){
+        UUID viewer=joined(WORLD,0);joined(WORLD,300);UUID caster=UUID.randomUUID();var effect=play(40);
+        engine.play(effect,64);engine.owner(effect.instanceId(),caster);engine.owner(effect.instanceId(),UUID.randomUUID());engine.owner(UUID.randomUUID(),caster);
+        assertEquals(List.of(new OwnerSent(viewer,effect.instanceId(),caster)),transport.owners);
+    }
+    private record OwnerSent(UUID viewer,UUID handle,UUID owner){}
     private record Sent(UUID player, EffectMessage message) {}
     private static final class FakeTransport implements RelayEngine.Transport {
         long tick;
@@ -1053,6 +1059,8 @@ class RelayEngineTest {
         int viewerCalls, viewersCalls;
         final Map<UUID, RelayEngine.Viewer> players = new LinkedHashMap<>();
         final List<Sent> sent = new ArrayList<>();
+        final List<OwnerSent> owners=new ArrayList<>();
+        @Override public void sendOwner(UUID viewer,UUID handle,UUID owner){owners.add(new OwnerSent(viewer,handle,owner));}
 
         UUID add(String dimension, double x, boolean registered) {
             UUID id = UUID.randomUUID();

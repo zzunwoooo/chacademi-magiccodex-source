@@ -73,9 +73,9 @@ final class BroomSelectionScreen extends Screen {
             label(c,BroomUiLink.text("name",id),836,605,25,0xFFF0DFC0,610);
             for(int i=0;i<Math.min(5,Math.min(values.length,labels.length));i++){
                 int y=637+i*35;int v=score(values[i]);label(c,labels[i],521,y+3,19,0xFFD4E1E9,160);
-                c.fill(630,y-5,1090,y+5,0xFF23364D);c.fill(630,y-5,630+46*v,y+5,0xFF39D9ED);label(c,Integer.toString(v),1155,y,20,0xFF65EAFF,60);
-                c.fill(630,y+8,1090,y+16,0xFF23364D);
-                if(!equipped.isBlank()&&i<compare.length){int old=score(compare[i]);c.fill(630,y+8,630+46*old,y+16,0xFF9EB6CC);label(c,Integer.toString(old),1155,y+14,15,0xFFCAD6E2,60);}
+                for(int unit=0;unit<10;unit++)HudMesh.capsule(c,630+46*unit,y-5,42,10,unit<v?0xFF39D9ED:0xFF23364D,unit<v?0xFF39D9ED:0xFF23364D);label(c,Integer.toString(v),1155,y,20,0xFF65EAFF,60);
+                for(int unit=0;unit<10;unit++)HudMesh.capsule(c,630+46*unit,y+8,42,8,0xFF23364D,0xFF23364D);
+                if(!equipped.isBlank()&&i<compare.length){int old=score(compare[i]);for(int unit=0;unit<old;unit++)HudMesh.capsule(c,630+46*unit,y+8,42,8,0xFF9EB6CC,0xFF9EB6CC);label(c,Integer.toString(old),1155,y+14,15,0xFFCAD6E2,60);}
             }
         }finally{m.pop();}
     }

@@ -31,44 +31,14 @@ public final class AimHud {
 
     static void render(DrawContext ctx) {
         var c = MinecraftClient.getInstance();
-        AimCursor.update();
         if (c.player == null || c.world == null || c.options.hudHidden) return;
         if (c.currentScreen != null && !(c.currentScreen instanceof HudCursorScreen)) return;
         int width = c.getWindow().getScaledWidth(), height = c.getWindow().getScaledHeight();
         boolean targeting = AimTargeting.targeting();
         int color = targeting ? AimRenderer.elementColor(AimTargeting.spell().category()) : 0xF4ECD8;
-        if (AimCursor.aiming() && !(c.currentScreen instanceof HudCursorScreen)) {
-            cursor(ctx, AimCursor.screenX(), AimCursor.screenY(), color, targeting);
-        } else if (ShoulderCamera.active() && c.options.getPerspective() == Perspective.THIRD_PERSON_BACK && c.currentScreen == null && !c.player.isSpectator()) {
-            shoulderCrosshair(ctx, c);
-        }
+        if (ShoulderCamera.active() && c.options.getPerspective() == Perspective.THIRD_PERSON_BACK && c.currentScreen == null && !c.player.isSpectator())
+            ctx.drawGuiTexture(RenderLayer::getCrosshair,CROSSHAIR,width/2-7,height/2-7,15,15);
         if (targeting) hint(ctx, c, width, height, color);
-    }
-
-    /** Thin "+" with a dark outline, matching the reference cursor. */
-    private static void cursor(DrawContext ctx, float x, float y, int rgb, boolean targeting) {
-        float arm = targeting ? 6.5f : 5.5f, gap = 1.6f;
-        int shade = 0xA0000000, ink = 0xFF000000 | rgb;
-        for (int pass = 0; pass < 2; pass++) {
-            float t = pass == 0 ? 2.6f : 1.1f;
-            int col = pass == 0 ? shade : ink;
-            HudMesh.line(ctx, x - arm, y, x - gap, y, t, col);
-            HudMesh.line(ctx, x + gap, y, x + arm, y, t, col);
-            HudMesh.line(ctx, x, y - arm, x, y - gap, t, col);
-            HudMesh.line(ctx, x, y + gap, x, y + arm, t, col);
-        }
-    }
-
-    /** Over-the-shoulder: draw the vanilla crosshair where the character's own look ray really lands. */
-    private static void shoulderCrosshair(DrawContext ctx, MinecraftClient c) {
-        HitResult hit = c.crosshairTarget;
-        float tickDelta = c.getRenderTickCounter().getTickDelta(true);
-        Vec3d point = hit != null && hit.getType() != HitResult.Type.MISS ? hit.getPos()
-                : c.player.getCameraPosVec(tickDelta).add(c.player.getRotationVec(tickDelta).multiply(48));
-        float[] s = AimView.toScreen(point);
-        if (s == null) return;
-        int x = Math.round(s[0]), y = Math.round(s[1]);
-        ctx.drawGuiTexture(RenderLayer::getCrosshair, CROSSHAIR, x - 7, y - 7, 15, 15);
     }
 
     private static void hint(DrawContext ctx, MinecraftClient c, int width, int height, int rgb) {
@@ -80,27 +50,25 @@ public final class AimHud {
         images.beginFrame();
         text.beginFrame();
         float scale = Math.clamp(Math.min(width / 1100f, height / 750f), .4f, 1f);
-        float textSize = 20, icon = 34, mouse = 30, gap = 10;
+        float textSize = 17, icon = 26, mouse = 22, gap = 7;
         String cast = "발동", cancel = "취소";
         float castW = text.width(cast, textSize, BODY), cancelW = text.width(cancel, textSize, BODY);
         float total = icon + gap * 2 + mouse + 6 + castW + gap * 2 + mouse + 6 + cancelW;
         ctx.getMatrices().push();
         try {
-            float anchorX=AimCursor.aiming()?AimCursor.screenX():width/2f,anchorY=AimCursor.aiming()?AimCursor.screenY():height/2f;
-            float half=(total/2+16)*scale;
-            ctx.getMatrices().translate(Math.clamp(anchorX,half,width-half),Math.clamp(anchorY+36*scale,30*scale,height-70*scale),200);
+            ctx.getMatrices().translate(width/2f,Math.max(24,height-74),200);
             ctx.getMatrices().scale(scale, scale, 1);
-            HudMesh.quad(ctx, -total / 2 - 14, -24, total + 28, 48, 0x880B1220, 0x880B1220);
             float x = -total / 2;
             images.drawCentered(ctx, spell.icon(), x + icon / 2, 0, (int) icon, 0xFFFFFFFF);
             x += icon + gap * 2;
             images.drawCentered(ctx, MOUSE_LEFT, x + mouse / 2, 0, (int) mouse, 0xFF000000 | rgb);
             x += mouse + 6;
-            text.drawOutline(ctx, cast, x, 0, textSize, 0xFFF4ECD8, BODY, false);
+            text.draw(ctx, cast, x, 0, textSize, 0xFFF4ECD8, BODY, false);
             x += castW + gap * 2;
             images.drawCentered(ctx, MOUSE_RIGHT, x + mouse / 2, 0, (int) mouse, 0xFFE6E0D2);
             x += mouse + 6;
-            text.drawOutline(ctx, cancel, x, 0, textSize, 0xFFF4ECD8, BODY, false);
+            text.draw(ctx, cancel, x, 0, textSize, 0xFFF4ECD8, BODY, false);
+            if(preview!=null){double reach=preview.shape().mode()==SpellTargets.Mode.LINE||preview.shape().mode()==SpellTargets.Mode.CONE?preview.shape().length():preview.shape().range();text.draw(ctx,"최대 사거리 "+String.format(java.util.Locale.ROOT,"%.1f",reach)+"m",0,-25,15,0xFF000000|rgb,BODY,true);}
             if (preview != null && !preview.valid() && preview.reason() != null) {
                 float blink = .75f + .25f * (float) Math.sin(Util.getMeasuringTimeMs() / 160.0);
                 int alpha = Math.round(255 * blink) << 24;

@@ -479,6 +479,7 @@ public final class BroomService implements Listener, PluginMessageListener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onWorld(PlayerChangedWorldEvent e) {
+        catches.remove(e.getPlayer().getUniqueId());
         var s = sessions.get(e.getPlayer().getUniqueId());
         if (s != null) {
             s.guard.reset();

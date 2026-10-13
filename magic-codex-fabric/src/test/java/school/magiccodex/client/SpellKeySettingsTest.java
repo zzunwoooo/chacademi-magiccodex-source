@@ -137,4 +137,21 @@ class SpellKeySettingsTest {
             assertFalse(key.box().contains(other.box().centerX(),other.box().centerY()));
         for(int i=0;i<6;i++) assertFalse(KeySettingsLayout.slot(i).contains(KeySettingsLayout.slotKey(i).centerX(),KeySettingsLayout.slotKey(i).centerY()));
     }
+
+    @Test void registrationOrderSurvivesRemovalReplacementAndRestart() throws Exception {
+        var s=new SpellKeySettings(); s.assign(49,"first"); s.assign(50,"second"); s.assign(51,"third");
+        s.clearKey(50); s.assign(52,"fourth"); s.assign(49,"replacement");
+        assertEquals(java.util.List.of("third","fourth","replacement"),s.orderedSlots().stream().filter(b->!b.empty()).map(SpellKeySettings.Binding::spellId).toList());
+        s.assign(53,"third"); s.assign(54,"second");
+        var file=directory.resolve("registration.yml"); s.save(file);
+        var restored=SpellKeySettings.load(file);
+        assertEquals(s.orderedSlots(),restored.orderedSlots());
+        var casting=new CastingState(); casting.setBindings(restored);
+        assertEquals("third",casting.bindings().getFirst().spellId());
+        assertEquals(53,casting.bindings().getFirst().keyCode());
+    }
+    @Test void bothAltsReservedLeftShiftAndControlAllowed() {
+        assertFalse(KeySettingsLayout.allowed(342)); assertFalse(KeySettingsLayout.allowed(346));
+        assertTrue(KeySettingsLayout.allowed(340)); assertTrue(KeySettingsLayout.allowed(341));
+    }
 }

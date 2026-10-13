@@ -20,7 +20,7 @@ import school.magiccodex.client.CodexHitboxes.Rect;
 /**
  * Editing is local and transactional: changes take effect only after Save.
  * Click a rendered key to pick its spell (max 6), right-click a key or slot to clear,
- * and drag (or click two) of the six bottom slots to reorder the HUD bar.
+ * HUD order follows persistent registration order.
  */
 public final class KeySettingsScreen extends Screen {
     private static final Identifier BACKGROUND=id("textures/gui/key_settings_base.png");
@@ -80,11 +80,9 @@ public final class KeySettingsScreen extends Screen {
             text(ctx,"마법 키 설정",836,102,38,IVORY,TITLE);
             text(ctx,"화면의 키를 클릭해 마법을 등록하세요 · 최대 6개",836,140,19,GOLD,BODY);
             for(var key:KeySettingsLayout.KEYS) drawKey(ctx,key);
-            for(int i=0;i<6;i++) drawSlot(ctx,i);
             drawMouse(ctx);
             text(ctx,waiting()?"서버에서 배운 마법을 확인하고 있습니다…":!notice.isEmpty()?notice:
-                    selected>=0?"순서를 바꿀 다른 칸을 클릭하세요 · 같은 칸을 다시 누르면 취소":
-                    "우클릭으로 등록 해제 · 아래 칸을 끌거나 두 칸을 차례로 클릭해 순서 변경",836,789,17,GOLD,BODY);
+                    "우클릭으로 등록 해제 · 처음 등록한 마법부터 왼쪽에 표시됩니다",836,789,17,GOLD,BODY);
             label(ctx,"WASD 이동   I 도감   P 스테이터스   Z 마법 모드",171,857,16,MUTED);
             text(ctx,"등록 " + draft.slots().stream().filter(b->!b.empty()).count()+" / 6",1116,857,18,GOLD,BODY);
             button(ctx,KeySettingsLayout.SAVE,draft.sameAs(saved)?"저장":"저장 *",true);
@@ -99,25 +97,14 @@ public final class KeySettingsScreen extends Screen {
                 ctx.getMatrices().pop();
             }
             if(!pickerOpen() && !confirmDiscard) drawSavedPopup(ctx);
-            if(dragging()) drawDragGhost(ctx);
         } finally { ctx.getMatrices().pop(); images.endFrame(); }
         entrance.draw(ctx,width,height);
     }
     /** Reuse the approved PNG frame at a smaller size without leaving its old large slots behind. */
+    private void sprite(DrawContext ctx,String name,int x,int y,int w,int h,int sw,int sh){images.drawTexture(ctx,id("textures/gui/followup/"+name+".png"),x,y,0,0,w,h,sw,sh,sw,sh,0xFFFFFFFF);}
     private void drawBackground(DrawContext ctx) {
-        slice(ctx,new Rect(0,0,1672,600),new Rect(0,0,1672,600));
-        slice(ctx,new Rect(140,260,50,150),new Rect(200,165,1260,395));
-        slice(ctx,new Rect(210,160,1250,410),new Rect(180,200,1025,336));
-        slice(ctx,new Rect(0,600,140,208),new Rect(0,600,140,208));
-        slice(ctx,new Rect(1535,600,137,208),new Rect(1535,600,137,208));
-        slice(ctx,new Rect(140,260,50,150),new Rect(140,600,1395,208));
-        slice(ctx,new Rect(0,808,1672,133),new Rect(0,808,1672,133));
-        for(int i=0;i<6;i++) {
-            Rect r=KeySettingsLayout.slot(i);
-            slice(ctx,new Rect(309,616,126,120),new Rect(r.x()-2,r.y()-2,r.width()+4,r.height()+4));
-            Rect k=KeySettingsLayout.slotKey(i);
-            overlay(ctx,k,0x77314353,0xAA8D9BA5,5);
-        }
+        sprite(ctx,"settings_panel",100,25,1470,890,1162,846);
+        sprite(ctx,"keyboard_panel",160,158,1068,421,1595,349);
     }
     private void slice(DrawContext ctx,Rect source,Rect target) {
         images.drawTexture(ctx,BACKGROUND,target.x(),target.y(),source.x(),source.y(),
@@ -142,10 +129,11 @@ public final class KeySettingsScreen extends Screen {
     private static int fade(int color,float alpha) { return (Math.round((color>>>24)*alpha)<<24)|(color&0xFFFFFF); }
     private void drawKey(DrawContext ctx,KeySettingsLayout.Key key) {
         Rect r=key.box(); boolean allowed=KeySettingsLayout.allowed(key.code());
-        boolean blocked=KeySettingsLayout.reservedShortcut(key.code()) || key.code()==GLFW.GLFW_KEY_LEFT_ALT;
+        boolean blocked=KeySettingsLayout.reservedShortcut(key.code()) || (key.code()==GLFW.GLFW_KEY_LEFT_ALT || key.code()==GLFW.GLFW_KEY_RIGHT_ALT);
         int slot=-1;
         for(int i=0;i<6;i++) if(!draft.get(i).empty() && draft.get(i).keyCode()==key.code()) slot=i;
         boolean hot=hover(r) && !pickerOpen() && !confirmDiscard;
+        sprite(ctx,blocked?"key_blocked":hot?"key_hover":"key",r.x(),r.y(),r.width(),r.height(),hot&&!blocked?118:100,blocked?91:hot?103:96);
         if(!allowed) overlay(ctx,r,blocked?0xA06A303B:0x294C5661,blocked?0xFFE38A90:0x446B7781,6);
         if(slot>=0) {
             overlay(ctx,r,slot==selected?0x44499084:0x22277569,slot==selected?0xFF8AD7C9:0x9974A59B,6);
@@ -159,47 +147,12 @@ public final class KeySettingsScreen extends Screen {
         if(hot) overlay(ctx,r,blocked?0x337F3540:allowed?0x224FC5AF:0x22717B89,blocked?0xFFFFA4A8:allowed?0xFFA2DACE:0x998E949A,6);
     }
     private void drawMouse(DrawContext ctx){
-        images.drawTexture(ctx,id("textures/gui/keybinding_mouse_v2.png"),(int)MouseBindingLayout.X,(int)MouseBindingLayout.Y,0,0,(int)MouseBindingLayout.W,(int)MouseBindingLayout.H,1024,1536,1024,1536,0xFFFFFFFF);
+        images.drawTexture(ctx,id("textures/gui/followup/mouse.png"),(int)MouseBindingLayout.X,(int)MouseBindingLayout.Y,0,0,(int)MouseBindingLayout.W,(int)MouseBindingLayout.H,280,497,280,497,0xFFFFFFFF);
         for(int code:new int[]{KeySettingsLayout.THUMB_1,KeySettingsLayout.THUMB_2}){
             boolean hot=!pickerOpen()&&!confirmDiscard&&MouseBindingLayout.hit(mx,my)==code;boolean assigned=draft.slotOfKey(code)>=0;int color=hot?TEAL:assigned?GOLD:0x7794A7B6;
             var points=MouseBindingLayout.polygon(code);for(int i=0;i<points.length;i++){var a=points[i];var b=points[(i+1)%points.length];HudMesh.line(ctx,MouseBindingLayout.X+(float)a[0]*MouseBindingLayout.S,MouseBindingLayout.Y+(float)a[1]*MouseBindingLayout.S,MouseBindingLayout.X+(float)b[0]*MouseBindingLayout.S,MouseBindingLayout.Y+(float)b[1]*MouseBindingLayout.S,hot?2:1,color);}
-            float y=code==KeySettingsLayout.THUMB_1?485:515;label(ctx,KeySettingsLayout.name(code),1310,y,17,hot?TEAL:assigned?GOLD:IVORY);
+            float y=code==KeySettingsLayout.THUMB_1?375:431;label(ctx,KeySettingsLayout.name(code),1490,y,17,hot?TEAL:assigned?GOLD:IVORY);
         }
-    }
-    private boolean dragging() { return dragSlot>=0 && dragMoved; }
-    private int slotAt() {
-        for(int i=0;i<6;i++) if(hover(KeySettingsLayout.slot(i)) || hover(KeySettingsLayout.slotKey(i))) return i;
-        return -1;
-    }
-    private void drawSlot(DrawContext ctx,int i) {
-        Rect r=KeySettingsLayout.slot(i); var binding=draft.get(i); Spell spell=spell(binding.spellId());
-        boolean idle=!pickerOpen() && !confirmDiscard;
-        boolean source=dragging() && dragSlot==i, target=dragging() && dragSlot!=i && slotAt()==i;
-        if(i==selected) overlay(ctx,r,0x15339988,TEAL,9);
-        if(target) overlay(ctx,r,0x334FC5AF,TEAL,9);
-        else if(hover(r) && idle && !dragging()) overlay(ctx,r,0x225AAB9C,0xFFD8C398,9);
-        if(!binding.empty() && spell!=null) {
-            art(ctx,spell,r.centerX(),r.centerY(),70);
-            if(!spell.permissionKnown() || !spell.discovered()) {
-                overlay(ctx,r,0xAA07121C,0x7777868A,7); text(ctx,"사용 불가",r.centerX(),r.centerY(),16,MUTED,BODY);
-            }
-        } else if(!binding.empty()) text(ctx,"?",r.centerX(),r.centerY(),28,0x99CBB88D,BODY);
-        if(source) overlay(ctx,r,0xB007121C,0x7777868A,7);
-        Rect key=KeySettingsLayout.slotKey(i);
-        String keyName=binding.empty()?Integer.toString(i+1):KeySettingsLayout.allowed(binding.keyCode())?KeySettingsLayout.name(binding.keyCode()):"키 없음";
-        text(ctx,keyName,key.centerX(),key.centerY(),keyName.length()>5?15:18,binding.empty()?0x88A4ADB5:GOLD,BODY);
-        if((hover(r) || hover(key)) && idle && !dragging() && !binding.empty()) {
-            ctx.getMatrices().push(); ctx.getMatrices().translate(0,0,10);
-            overlay(ctx,new Rect(Math.round(r.centerX()-122),575,244,37),0xF0112230,0xAA998A6E,6);
-            text(ctx,shorten(spell==null?"없는 마법":spell.name(),218,18),r.centerX(),593,18,IVORY,BODY);
-            ctx.getMatrices().pop();
-        }
-    }
-    private void drawDragGhost(DrawContext ctx) {
-        Spell spell=spell(draft.get(dragSlot).spellId()); if(spell==null) return;
-        ctx.getMatrices().push(); ctx.getMatrices().translate(0,0,30);
-        art(ctx,spell,(float)mx,(float)my,64);
-        ctx.getMatrices().pop();
     }
     private void drawPicker(DrawContext ctx) {
         ctx.fill(124,48,1549,899,0xC507111B);
@@ -274,10 +227,7 @@ public final class KeySettingsScreen extends Screen {
     }
     @Override public boolean mouseClicked(double x,double y,int button) {
         var layout=CodexLayout.fit(width,height); mx=layout.localX(x); my=layout.localY(y);
-        if(KeySettingsLayout.mouseCode(button)>=0){
-            if(!confirmDiscard&&!pickerOpen()&&dragSlot<0)openPicker(KeySettingsLayout.mouseCode(button));
-            return true;
-        }
+        // Physical side buttons never open the editor. Click the drawn controls.
         if(button!=0 && button!=1) return false;
         if(confirmDiscard) {
             if(button==0 && hover(KeySettingsLayout.CONTINUE)) { confirmDiscard=false; sound(false); }
@@ -301,16 +251,6 @@ public final class KeySettingsScreen extends Screen {
         if(button==0 && hover(KeySettingsLayout.RESET)) { draft.clear(); selected=-1; notice=""; sound(false); return true; }
         int mouseKey=MouseBindingLayout.hit(mx,my);
         if(mouseKey>=0){if(button==1){draft.clearKey(mouseKey);sound(false);}else openPicker(mouseKey);return true;}
-        int slot=slotAt();
-        if(slot>=0) {
-            if(button==1) {
-                if(!draft.get(slot).empty()) { draft.clear(slot); notice=""; sound(false); }
-                selected=-1; return true;
-            }
-            // Order changes on release so a press can become either a drag or a click.
-            dragSlot=slot; pressX=mx; pressY=my; dragMoved=false;
-            return true;
-        }
         for(var key:KeySettingsLayout.KEYS) if(hover(key.box())) {
             if(button==1) {
                 if(draft.clearKey(key.code())>=0) { notice=""; sound(false); }
@@ -318,27 +258,6 @@ public final class KeySettingsScreen extends Screen {
             } else openPicker(key.code());
             return true;
         }
-        return true;
-    }
-    @Override public boolean mouseDragged(double x,double y,int button,double dx,double dy) {
-        if(dragSlot<0) return super.mouseDragged(x,y,button,dx,dy);
-        var layout=CodexLayout.fit(width,height); mx=layout.localX(x); my=layout.localY(y);
-        if(!dragMoved && !draft.get(dragSlot).empty() && Math.hypot(mx-pressX,my-pressY)>6) { dragMoved=true; selected=-1; }
-        return true;
-    }
-    @Override public boolean mouseReleased(double x,double y,int button) {
-        if(button!=0 || dragSlot<0) return super.mouseReleased(x,y,button);
-        var layout=CodexLayout.fit(width,height); mx=layout.localX(x); my=layout.localY(y);
-        int from=dragSlot, to=slotAt(); boolean moved=dragMoved;
-        dragSlot=-1; dragMoved=false;
-        if(pickerOpen() || confirmDiscard) return true;
-        if(moved) { if(to>=0 && to!=from) { draft.swap(from,to); notice=""; } sound(false); return true; }
-        if(to!=from) return true;
-        if(selected<0) {
-            if(draft.get(from).empty()) { notice="화면의 키를 클릭해 마법을 등록하세요."; sound(true); }
-            else { selected=from; notice=""; sound(false); }
-        } else if(selected==from) { selected=-1; sound(false); }
-        else { draft.swap(selected,from); selected=-1; notice=""; sound(false); }
         return true;
     }
     /** Opens the spell picker for a keyboard key; reserved keys explain why they are refused. */

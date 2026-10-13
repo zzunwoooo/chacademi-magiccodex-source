@@ -40,8 +40,8 @@ class TopMenuTest {
         assertEquals("캐시샵",TopMenuState.command(0));assertEquals("우편함",TopMenuState.command(1));
         assertEquals("",TopMenuState.command(2));assertEquals("펫도감",TopMenuState.command(3));
         assertEquals("스텟창",TopMenuState.command(4));assertEquals("친구",TopMenuState.command(5));
-        assertEquals("의뢰게시판",TopMenuState.command(6));assertEquals("학교기증",TopMenuState.command(7));
-        assertArrayEquals(new String[]{"캐시샵","우편함","마법도감","펫 도감","내정보","친구","퀘스트","기숙사 점수"},TopMenuState.LABELS);
+        assertEquals("의뢰게시판",TopMenuState.command(6));assertEquals("학교기증",TopMenuState.command(7));assertEquals("",TopMenuState.command(8));
+        assertArrayEquals(new String[]{"캐시샵","우편함","마법도감","펫 도감","내정보","친구","퀘스트","기숙사 점수","설정"},TopMenuState.LABELS);
     }
     @Test void walletProtocolIsFixedSizeAndRejectsInvalidValues(){
         var snapshot=new WalletProtocol.Snapshot(true,12450.25);

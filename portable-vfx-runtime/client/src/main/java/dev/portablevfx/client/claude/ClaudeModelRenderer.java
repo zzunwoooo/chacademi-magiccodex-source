@@ -112,12 +112,13 @@ final class ClaudeModelRenderer implements AutoCloseable {
         }catch(RuntimeException|Error e){gpu.close();throw e;}
     }
     /** Returns actual submitted index count including depth and outline passes; 0 (skipped this frame) when over the remaining frame budget. */
-    int draw(Asset asset,ClaudeEffect.Model descriptor,ParticleView particle,Vec3 tint,Matrix4f vp,Vec3 origin,Vec3 camera,int remaining){
-        if(particle.size()<=0||particle.alpha()<=0)return 0;
+    int draw(Asset asset,ClaudeEffect.Model descriptor,ParticleView particle,Vec3 tint,Matrix4f vp,Vec3 origin,Vec3 camera,int remaining){return draw(asset,descriptor,particle,tint,vp,origin,camera,remaining,1);}
+    int draw(Asset asset,ClaudeEffect.Model descriptor,ParticleView particle,Vec3 tint,Matrix4f vp,Vec3 origin,Vec3 camera,int remaining,float opacity){
+        if(particle.size()<=0||particle.alpha()<=0||opacity<=0)return 0;
         var animation=particle.layer().animation();String clip=animation==null?null:animation.clip();
         double time=animation==null?0:particle.age()*animation.speed();boolean loop=animation!=null&&animation.loop();
         var pose=ClaudeModelAnimator.sample(asset.source,clip,time,loop);var shading=descriptor.shading();
-        long cost=0;boolean faded=particle.alpha()<1;
+        long cost=0;boolean faded=particle.alpha()*opacity<1;
         for(int node:asset.source.sceneOrder())if(asset.source.nodes().get(node).mesh()>=0)
             for(var p:asset.source.meshes().get(asset.source.nodes().get(node).mesh()).primitives()) {
                 var material=asset.source.materials().get(p.material());boolean opaque=material.alphaMode()!=ClaudeModel.AlphaMode.BLEND;
@@ -126,14 +127,14 @@ final class ClaudeModelRenderer implements AutoCloseable {
         if(cost>remaining)return 0;
         while(!prewarmStep(asset)) { /* cold-load fallback is bounded by validated primitive/image counts */ }
         Matrix4f placement=placement(particle,origin);
-        glUseProgram(program);matrix("viewProjection",vp);vec("cameraPosition",camera);vec("particleColor",particle.color());f("particleAlpha",particle.alpha());vec("tint",tint);
+        glUseProgram(program);matrix("viewProjection",vp);vec("cameraPosition",camera);vec("particleColor",particle.color());f("particleAlpha",particle.alpha()*opacity);vec("tint",tint);
         glUniform1i(location("baseTexture"),0);glActiveTexture(GL_TEXTURE0);
         vec("lightDirection",shading.lightDirection());f("ambient",shading.ambient());f("diffuse",shading.diffuse());f("wrap",shading.wrap());
         vec("shadowTint",shading.shadowTint());f("threshold",shading.threshold());f("softness",shading.softness());i("shadingMode",shading.mode().equals("toon")?1:0);
         vec("rimColor",shading.rimColor());f("rimPower",shading.rimPower());f("rimStrength",shading.rimStrength());f("fresnelMin",shading.translucentFresnelMin());vec("outlineColor",shading.outline().color());
         glEnable(GL_DEPTH_TEST);glDepthFunc(GL_LEQUAL);glFrontFace(GL_CCW);glEnable(GL_BLEND);
         glBlendEquationSeparate(GL_FUNC_ADD,GL_FUNC_ADD);glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
-        if(faded){glColorMask(false,false,false,false);glDepthMask(true);pass(asset,pose,placement,descriptor,false,false);glColorMask(true,true,true,true);}
+        if(faded&&opacity>=1){glColorMask(false,false,false,false);glDepthMask(true);pass(asset,pose,placement,descriptor,false,false);glColorMask(true,true,true,true);}
         glDepthMask(!faded);pass(asset,pose,placement,descriptor,false,false);
         if(shading.outline().width()>0){glDepthMask(!faded);pass(asset,pose,placement,descriptor,false,true);}
         glDepthMask(false);pass(asset,pose,placement,descriptor,true,false);

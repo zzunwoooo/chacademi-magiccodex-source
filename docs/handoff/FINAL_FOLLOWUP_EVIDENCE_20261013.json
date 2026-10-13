@@ -1,0 +1,165 @@
+{
+  "utc": "2026-10-13T07:14:26.429516+00:00",
+  "baseCommit": "6a3c64853bc71385492a2802f2846ff7d0605bc4",
+  "tests": [
+    {
+      "module": "magic-codex-paper",
+      "tests": 318,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 318,
+      "skippedCases": []
+    },
+    {
+      "module": "magic-mythic-paper",
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 22,
+      "skippedCases": []
+    },
+    {
+      "module": "magic-codex-fabric",
+      "tests": 320,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 320,
+      "skippedCases": []
+    },
+    {
+      "module": "chacademy-motion/chacademy-motion-plugin",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 21,
+      "skippedCases": []
+    },
+    {
+      "module": "chacademy-motion/chacademy-motion-mod",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 13,
+      "skippedCases": []
+    },
+    {
+      "module": "chacademy-story/mod",
+      "tests": 50,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 50,
+      "skippedCases": []
+    },
+    {
+      "module": "portable-vfx-runtime/client",
+      "tests": 100,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 3,
+      "passed": 97,
+      "skippedCases": [
+        "dev.portablevfx.client.claude.ClaudeModelBackendCacheTest.mismatchedAuthoredClipRejectsAndDoesNotLeakModelLease()",
+        "dev.portablevfx.client.claude.ClaudeModelBackendCacheTest.sixSystemsShareModelsAndReleaseEveryLeaseWithoutGl()",
+        "dev.portablevfx.client.claude.ClaudeModelLoaderTest.authenticWaterModelsKeepAllPrimitivesImagesAndClips()"
+      ]
+    },
+    {
+      "module": "portable-vfx-runtime/paper",
+      "tests": 129,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 129,
+      "skippedCases": []
+    }
+  ],
+  "totals": {
+    "tests": 973,
+    "passed": 970,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 3
+  },
+  "protocolAssertions": 31753,
+  "ownerProtocolAdditionalChecks": 5,
+  "artifacts": [
+    {
+      "module": "magic-codex-paper",
+      "file": "magic-codex-bridge-0.30.0-catalog.alpha.1-chat.3-discovery.2-holytaming.1-partyhud.3-taming.1-runtime.1-journal.1-broom.1-review.2.jar",
+      "bytes": 1717351,
+      "sha256": "88f4b83198686307b622f00497107d7aae62d88a48a80ee858232b052103b35f",
+      "path": "C:\\Chacademi\\staging\\aim-straight-20261013\\release-final-followup-20261013\\magic-codex-bridge-0.30.0-catalog.alpha.1-chat.3-discovery.2-holytaming.1-partyhud.3-taming.1-runtime.1-journal.1-broom.1-review.2.jar",
+      "deploy": true
+    },
+    {
+      "module": "magic-mythic-paper",
+      "file": "chacademia-magic-mythic-0.1.2-recovery.1-gimmick.1-targets.1-broom.2.jar",
+      "bytes": 100891,
+      "sha256": "05fa9761db54c85ccde0e9a3cd942cd24a9e2fa53570c900ed2b44969017ff4e",
+      "path": "C:\\Chacademi\\staging\\aim-straight-20261013\\release-final-followup-20261013\\chacademia-magic-mythic-0.1.2-recovery.1-gimmick.1-targets.1-broom.2.jar",
+      "deploy": false
+    },
+    {
+      "module": "magic-codex-fabric",
+      "file": "magic-codex-ui-0.39.0-catalog.alpha.2-chat.3-holytaming.1-partyhud.4-taming.1-input.1-journal.1-inventory.2-broom.1-aim.1-review.2+mc1.21.4.jar",
+      "bytes": 127835512,
+      "sha256": "ce56dab63cdf00f91eaff7ed8e1d61c5bc61534f576c775d023894e477649707",
+      "path": "C:\\Chacademi\\staging\\aim-straight-20261013\\release-final-followup-20261013\\magic-codex-ui-0.39.0-catalog.alpha.2-chat.3-holytaming.1-partyhud.4-taming.1-input.1-journal.1-inventory.2-broom.1-aim.1-review.2+mc1.21.4.jar",
+      "deploy": true
+    },
+    {
+      "module": "chacademy-motion/chacademy-motion-plugin",
+      "file": "chacademy-motion-plugin-0.3.0-codex.3.jar",
+      "bytes": 52657,
+      "sha256": "73b3bb491232dd4787cb89b0e521037c8a76643161c9d622d6a45fe586e347e7",
+      "path": "C:\\Chacademi\\staging\\aim-straight-20261013\\release-final-followup-20261013\\chacademy-motion-plugin-0.3.0-codex.3.jar",
+      "deploy": true
+    },
+    {
+      "module": "chacademy-motion/chacademy-motion-mod",
+      "file": "chacademy-motion-0.3.0-codex.3.jar",
+      "bytes": 2846546,
+      "sha256": "201ea605cfcaf2d981db80d6bbba6d78b26fa268e46084571895961e054128d5",
+      "path": "C:\\Chacademi\\staging\\aim-straight-20261013\\release-final-followup-20261013\\chacademy-motion-0.3.0-codex.3.jar",
+      "deploy": true
+    },
+    {
+      "module": "chacademy-story/mod",
+      "file": "chacademy-story-0.1.3-journal.2.jar",
+      "bytes": 458358,
+      "sha256": "304444a2e753c717c536de68aa574099cacc31ba330cc86a71c94203038e457f",
+      "path": "C:\\Chacademi\\staging\\aim-straight-20261013\\release-final-followup-20261013\\chacademy-story-0.1.3-journal.2.jar",
+      "deploy": false
+    },
+    {
+      "module": "portable-vfx-runtime/client",
+      "file": "portable-vfx-client-3.2.0-catalog.alpha.4-opacity.1.jar",
+      "bytes": 370833,
+      "sha256": "f880a9e86a1419ca7e27dd6c97ade65f67b4be20175e3e2c4cb9260f70fd3625",
+      "path": "C:\\Chacademi\\staging\\aim-straight-20261013\\release-final-followup-20261013\\portable-vfx-client-3.2.0-catalog.alpha.4-opacity.1.jar",
+      "deploy": true
+    },
+    {
+      "module": "portable-vfx-runtime/paper",
+      "file": "portable-vfx-paper-3.2.0-catalog.alpha.4-holytaming.1-opacity.1.jar",
+      "bytes": 189207,
+      "sha256": "ee9ce700d2ff66187ef9bb4e482786efa79341200e8ef80b200e4fe47b2d3319",
+      "path": "C:\\Chacademi\\staging\\aim-straight-20261013\\release-final-followup-20261013\\portable-vfx-paper-3.2.0-catalog.alpha.4-holytaming.1-opacity.1.jar",
+      "deploy": true
+    }
+  ],
+  "visual": {
+    "status": "blocked before fixture",
+    "stage": "LWJGL initialization",
+    "exitCode": -532265403,
+    "casesPassed": 0
+  },
+  "seasonActivation": "awaiting user epoch/start-season/time-zone",
+  "publicLauncher": "out of scope; unchanged"
+}

@@ -40,6 +40,11 @@ public final class EffectRuntime {
         this.library = library;
     }
 
+    public void owner(UUID instance,UUID owner){requireMainThread();var effect=active.get(instance);if(effect!=null&&effect.serverOrigin&&effect.owner==null)effect.owner=owner;}
+    public float opacity(ActiveEffect effect){
+        boolean own=!effect.serverOrigin || effect.owner!=null&&client.player!=null&&effect.owner.equals(client.player.getUuid());
+        return dev.portablevfx.client.api.VfxPreferences.get().opacity(own);
+    }
     public boolean play(PlayEffect request) { return play(request, false); }
 
     /** Called only by the registered S2C receiver; distinguishes network instances from local previews. */
@@ -289,6 +294,7 @@ public final class EffectRuntime {
     }
 
     public static final class ActiveEffect {
+        private UUID owner;
         public final PlayEffect request;
         public final EffectDefinition definition;
         public int age;

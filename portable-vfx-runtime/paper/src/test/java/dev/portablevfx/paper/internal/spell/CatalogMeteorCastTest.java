@@ -42,6 +42,7 @@ class CatalogMeteorCastTest {
         List<EffectRequest> played=new ArrayList<>();Map<String,UUID> handles=new HashMap<>();
         List<EffectBasis> bases=new ArrayList<>();List<UUID> cleared=new ArrayList<>();
         PortableVfxService service=proxy(PortableVfxService.class,(method,args)->switch(method){
+            case "owner" -> {assertNotNull(args[0]);assertNotNull(args[1]);yield null;}
             case "supportsCatalogCast" -> true;
             case "startCast","startFollowCast" -> {EffectRequest r=(EffectRequest)args[0];played.add(r);UUID handle=UUID.randomUUID();handles.put(r.effectId(),handle);if(args[1] instanceof EffectBasis b)bases.add(b);yield new PlayResult(handle,1,0,0);}
             case "updateCast" -> 1;

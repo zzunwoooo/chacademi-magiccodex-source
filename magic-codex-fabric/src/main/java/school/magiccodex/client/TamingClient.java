@@ -77,13 +77,16 @@ public final class TamingClient {
         }
         lastToken=s.token();lastStatus=s.status();
     }
+    private static boolean informationScreen(MinecraftClient c){
+        return c.currentScreen==null || c.currentScreen instanceof net.minecraft.client.gui.screen.ChatScreen || c.currentScreen instanceof HudCursorScreen;
+    }
     private static void tick(MinecraftClient c){
         long n=Util.getMeasuringTimeMs();if(c.player==null||c.world==null){reset();return;}
         if(observedWorld!=c.world){reset();observedWorld=c.world;}
         if(state!=null&&state.status()==TamingProtocol.CHANNEL&&n-received<1800){if(n>=nextLoop){stopLoop();looping=PositionedSoundInstance.master(SoundEvent.of(Identifier.of("magiccodex","taming.channel_loop")),1,.3f);c.getSoundManager().play(looping);nextLoop=n+2400;}}
         else stopLoop();
 
-        if(c.currentScreen!=null||!ClientPlayNetworking.canSend(Request.ID)||n<nextQuery)return;nextQuery=n+500;
+        if(!informationScreen(c)||!ClientPlayNetworking.canSend(Request.ID)||n<nextQuery)return;nextQuery=n+500;
         if(state!=null&&(state.status()==TamingProtocol.CHANNEL||state.status()==TamingProtocol.PENDING)&&n-received<15000)return;
         if(state!=null&&(state.status()==TamingProtocol.SUCCESS||state.status()==TamingProtocol.FAIL||state.status()==TamingProtocol.ERROR)&&n-received<2400)return;
         // ModelEngine visuals can hide the living base or expose a different hitbox UUID.
@@ -95,7 +98,7 @@ public final class TamingClient {
     private static void close(){if(images!=null){images.close();images=null;}if(text!=null){text.close();text=null;}}
     private static void reset(){monster=null;state=null;serverAnchor=null;stateWorld=observedWorld=null;received=nextQuery=nextLoop=lastToken=0;lastStatus=-1;stopLoop();close();}
     // Keep the normal entity name; the chance label sits above it rather than replacing it.
-    public static boolean hidesVanillaName(int entityId){var c=MinecraftClient.getInstance();return monster!=null&&monster.custom()&&state!=null&&state.entityId()==entityId&&stateWorld==c.world&&c.world!=null&&c.world.getEntityById(entityId)!=null&&c.world.getEntityById(entityId).getUuid().equals(monster.target().anchor().entityUuid())&&c.currentScreen==null&&!c.options.hudHidden&&Util.getMeasuringTimeMs()-received<1200;}
+    public static boolean hidesVanillaName(int entityId){var c=MinecraftClient.getInstance();return monster!=null&&monster.custom()&&state!=null&&state.entityId()==entityId&&stateWorld==c.world&&c.world!=null&&c.world.getEntityById(entityId)!=null&&c.world.getEntityById(entityId).getUuid().equals(monster.target().anchor().entityUuid())&&informationScreen(c)&&!c.options.hudHidden&&Util.getMeasuringTimeMs()-received<1200;}
     private static boolean targetRegistered(){return CastingClient.state().registered("rainbow_collar")||CastingClient.state().registered("taming");}
     public static void bindingsChanged(){
 
@@ -134,21 +137,20 @@ public final class TamingClient {
         }finally{matrices.pop();}
     }
     private static void renderMonster(DrawContext ctx){
-        var c=MinecraftClient.getInstance();if(monster==null||state==null||stateWorld!=c.world||c.player==null||c.world==null||c.currentScreen!=null||c.options.hudHidden||Util.getMeasuringTimeMs()-received>1200)return;
+        var c=MinecraftClient.getInstance();if(monster==null||state==null||stateWorld!=c.world||c.player==null||c.world==null||!informationScreen(c)||c.options.hudHidden||Util.getMeasuringTimeMs()-received>1200)return;
         var a=monster.target().anchor();var point=new Vec3d(a.x(),a.y()+a.height()+.5,a.z());var entity=c.world.getEntityById(state.entityId());
         if(entity!=null){if(!entity.isAlive()||!entity.getUuid().equals(a.entityUuid()))return;point=entity.getLerpedPos(c.getRenderTickCounter().getTickDelta(false)).add(0,entity.getHeight()+.5,0);}
         var screen=AimView.toScreen(point);if(screen==null)return;
-        var obstruction=c.world.raycast(new net.minecraft.world.RaycastContext(AimView.camera(),point,net.minecraft.world.RaycastContext.ShapeType.COLLIDER,net.minecraft.world.RaycastContext.FluidHandling.NONE,c.player));
-        if(obstruction.getType()!=net.minecraft.util.hit.HitResult.Type.MISS&&obstruction.getPos().squaredDistanceTo(AimView.camera())+.1<point.squaredDistanceTo(AimView.camera()))return;
+        if(c.player.getEyePos().squaredDistanceTo(new Vec3d(a.x(),a.y(),a.z()))>25*25)return;
         if(generation!=UiResources.generation()){close();generation=UiResources.generation();}if(images==null)images=new HudTextureCache(c,true);if(text==null)text=new CodexTypography(c);
         images.beginFrame();text.beginFrame();var m=ctx.getMatrices();m.push();try{
-            float scale=Math.clamp(Math.min(c.getWindow().getScaledWidth()/1400f,c.getWindow().getScaledHeight()/800f),.25f,.7f);m.translate(screen[0]-300*scale,screen[1]-110*scale,350);m.scale(scale,scale,1);
-            var atlas=Identifier.of("magiccodex","textures/gui/review/monster_atlas.png");boolean shiny=monster.shiny();images.drawTexture(ctx,atlas,0,0,0,shiny?325:35,600,110,1671,320,1671,941,0xFFFFFFFF);
+            float scale=Math.clamp(Math.min(c.getWindow().getScaledWidth()/1400f,c.getWindow().getScaledHeight()/800f),.19f,.48f);m.translate(screen[0]-300*scale,screen[1]-110*scale,350);m.scale(scale,scale,1);
+            var atlas=Identifier.of("magiccodex","textures/gui/review/monster_atlas.png");boolean shiny=monster.shiny();images.drawTexture(ctx,atlas,0,0,0,shiny?345:35,600,110,1671,shiny?278:309,1671,941,0xFFFFFFFF);
             String name=state.name().replaceAll("§[0-9a-fk-orA-FK-OR]","");float size=Math.min(27,27*285/Math.max(1,text.width(name,27,FONT)));text.draw(ctx,name,42,34,size,shiny?0xFFE9D5FF:0xFFFFE3A7,FONT,false);
-            ctx.fill(43,56,313,66,0xFF203653);ctx.fill(43,56,43+(int)(270*Math.clamp(monster.health()/monster.maximum(),0,1)),66,shiny?0xFFADAFFF:0xFF4EE4EB);
+            HudMesh.capsule(ctx,43,56,270,10,0xFF203653,0xFF203653);float hp=(float)(270*Math.clamp(monster.health()/monster.maximum(),0,1));if(hp>0)HudMesh.capsule(ctx,43,56,hp,10,shiny?0xFFADAFFF:0xFF4EE4EB,shiny?0xFFADAFFF:0xFF4EE4EB);
             text.draw(ctx,Math.round(monster.health())+" / "+Math.round(monster.maximum()),43,84,18,0xFFCFDFEC,BODY,false);
             images.drawTexture(ctx,atlas,369,24,shiny?361:72,625,62,67,292,295,1671,941,0xFFFFFFFF);
-            text.draw(ctx,monster.tameable()?"교화 "+Math.round(state.chance()*100)+"%":"교화 불가",486,57,25,shiny?0xFFE4CDFF:0xFFFFDFB0,FONT,true);
+            text.draw(ctx,MonsterTargetLabel.text(monster.tameable(),state.chance(),state.message()),486,57,25,shiny?0xFFE4CDFF:0xFFFFDFB0,FONT,true);
         }finally{m.pop();images.endFrame();}
     }
     private static void panel(DrawContext ctx,String file,int x,int y,int w,int h,int sw,int sh){images.drawTexture(ctx,Identifier.of("magiccodex","textures/gui/taming/"+file+".png"),x,y,0,0,w,h,sw,sh,sw,sh,0xffffffff);}
@@ -160,7 +162,7 @@ public final class TamingClient {
         if(generation!=UiResources.generation()){close();generation=UiResources.generation();}if(images==null)images=new HudTextureCache(c,true);if(text==null)text=new CodexTypography(c);
         images.beginFrame();text.beginFrame();ctx.getMatrices().push();
         try{
-            int width=c.getWindow().getScaledWidth(),height=c.getWindow().getScaledHeight();float scale=Math.min(1f,Math.min(width/1100f,height/750f));scale=Math.max(.28f,scale);
+            int width=c.getWindow().getScaledWidth(),height=c.getWindow().getScaledHeight();float scale=Math.min(1f,Math.min(width/1100f,height/750f));scale=Math.max(.20f,scale*.78f);
             if(!target){ctx.getMatrices().translate(width/2f-240*scale,height*.68f,270);ctx.getMatrices().scale(scale,scale,1);panel(ctx,"channel_panel",0,0,480,88,480,88);images.drawCentered(ctx,"magiccodex:textures/gui/taming/taming_icon.png",45,44,50,0xffffffff);
                 String message=state.message();float size=Math.min(21,21*360/Math.max(1,text.width(message,21,FONT)));label(ctx,message,270,27,size,0xffe2eef4,true);
                 float progress=state.status()==TamingProtocol.CHANNEL?Math.clamp(1-(state.remainingMs()-age)/(float)Math.max(1,state.durationMs()),0,1):state.status()==TamingProtocol.SUCCESS||state.status()==TamingProtocol.PENDING?1:0;

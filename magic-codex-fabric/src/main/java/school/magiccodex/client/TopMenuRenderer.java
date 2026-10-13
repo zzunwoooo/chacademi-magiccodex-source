@@ -82,10 +82,11 @@ public final class TopMenuRenderer implements AutoCloseable {
                 if(alpha<=0)continue;
                 float x=state.iconCenter(base,i);
                 glow(ctx,x,hover[i+1]*alpha);
-                if(i==7){
+                if(i==8){images.drawTexture(ctx,Identifier.of("magiccodex","textures/gui/followup/settings_icon.png"),Math.round(x-9),9,0,0,18,18,676,650,676,650,tint(0xFFFFFFFF,alpha));
+                }else if(i==7){
                     images.drawTexture(ctx,HOUSE,Math.round(x-11),8,440,454,22,20,374,344,1254,1254,tint(0xFFFFFFFF,alpha));
                 }else if(i==4){
-                    menuSprite(ctx,NEW_ICONS[0],x,18,22,alpha);
+                    menuSprite(ctx,NEW_ICONS[0],x,18,19,alpha);
                 }else icon(ctx,MENU_ATLAS_ICONS[i],x,18,22,alpha);
             }
             float arrow=state.arrowCenter(base);

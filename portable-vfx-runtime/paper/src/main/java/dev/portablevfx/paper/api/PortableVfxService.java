@@ -84,5 +84,8 @@ public interface PortableVfxService {
         throw new UnsupportedOperationException("Link pose unavailable");
     }
 
+    /** Associate a visual with its actual caster; never changes simulation or gameplay. */
+    default void owner(UUID handle,UUID caster) {}
+
     VfxStatus status();
 }

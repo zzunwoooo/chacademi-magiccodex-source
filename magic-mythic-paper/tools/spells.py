@@ -189,10 +189,10 @@ def aim_shape(spec):
     if first is None: return {'mode': 'point', 'range': rng, 'radius': 0.6}
     p = _params(first)
     if p.get('center') == 'caster':
-        if 'cone' in p: return {'mode': 'cone', 'range': float(p.get('r', rng)), 'angle': float(p['cone'])}
+        if 'cone' in p: return {'mode': 'cone', 'range': rng, 'length': float(p.get('r', rng)), 'angle': float(p['cone'])}
         return None
     if first.startswith('chabolt{'):
-        return {'mode': 'line', 'range': rng, 'length': float(p.get('range', rng)), 'width': round(max(0.6, 2 * float(p.get('radius', 0.5))), 2)}
+        return {'mode': 'line', 'range': rng, 'length': float(p.get('range', rng)), 'width': round(max(0.2, 2 * float(p.get('radius', 0.6))), 2), 'origin': p.get('from', 'eye')}
     if 'wall' in p:
         return {'mode': 'wall', 'range': rng, 'width': float(p['wall']), 'depth': round(2 * float(p.get('r', 0.5)), 2)}
     if 'r' in p:

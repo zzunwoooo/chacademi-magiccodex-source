@@ -98,7 +98,7 @@ public final class ChacaInventoryScreen extends RecipeBookScreen<PlayerScreenHan
 
     @Override
     protected void init() {
-        super.init(); book.initialize(width,height,client,true); if(book.isOpen())book.toggleOpen();
+        super.init(); ((school.magiccodex.mixin.RecipeBookScreenAccessor)(Object)this).magiccodex$setNarrow(false); book.initialize(width,height,client,true); if(book.isOpen())book.toggleOpen();
         // The vanilla green recipe button is replaced by recipe_book.png; both toggle the same widget.
         for (var child : List.copyOf(children()))
             if (child instanceof TexturedButtonWidget button && button.getX() == HIDDEN && button.getY() == HIDDEN) remove(button);
@@ -299,7 +299,7 @@ public final class ChacaInventoryScreen extends RecipeBookScreen<PlayerScreenHan
     @Override
     protected void drawBackground(DrawContext c, float delta, int mouseX, int mouseY) {
         // Dark navy veil over the world keeps the floating elements readable.
-        c.fillGradient(0, 0, width, height, 0x84050A18, 0xB4030611);
+        // Keep the world visible; approved slot art supplies its own contrast.
         if (fit.mode() == Mode.BOOK_ONLY) { drawCompactBookButton(c, mouseX, mouseY); return; }
         var m = c.getMatrices();
         m.push();
@@ -364,13 +364,14 @@ public final class ChacaInventoryScreen extends RecipeBookScreen<PlayerScreenHan
         int selected = client != null && client.player != null ? client.player.getInventory().selectedSlot : -1;
         for (Element e : ChacaInventoryLayout.elements()) {
             if (e.kind() != Kind.MAIN && e.kind() != Kind.HOTBAR && e.kind() != Kind.OFFHAND) continue;
-            boolean hotbar = e.kind() == Kind.HOTBAR;
+            boolean hotbar = e.kind() == Kind.HOTBAR || e.kind() == Kind.OFFHAND;
             float w = hotbar ? ChacaInventoryLayout.HOTBAR_PEDESTAL_W : ChacaInventoryLayout.PEDESTAL_W, py = e.pedestalY();
-            for(int glow=4;glow>0;glow--) HudMesh.disk(c,e.cx(),e.cy(),28+glow*6,0x087EDFEA);
-            image(c, PEDESTAL, e.cx(), py, w, w * PEDESTAL_H / PEDESTAL_W, PEDESTAL_W, PEDESTAL_H, 0xFFFFFFFF);
+            boolean active=hoveredId==e.slotId() || e.kind()==Kind.HOTBAR && e.slotId()-ChacaInventoryLayout.HOTBAR_START==selected;
+            Identifier slotArt=Identifier.of("magiccodex","textures/gui/followup/"+(hotbar?"inventory_small":"inventory_slot")+(active?"_hover":"")+".png");
+            image(c,slotArt,e.cx(),e.cy()+1,hotbar?110:142,hotbar?72:78,hotbar?(active?192:190):(active?292:290),hotbar?183:268,0xCEFFFFFF);
             boolean hovered = hoveredId == e.slotId();
             boolean dragged = cursorDragging && cursorDragSlots.contains(handler.getSlot(e.slotId()));
-            if (hotbar && e.slotId() - ChacaInventoryLayout.HOTBAR_START == selected) {
+            if (e.kind()==Kind.HOTBAR && e.slotId() - ChacaInventoryLayout.HOTBAR_START == selected) {
                 ellipse(c, e.cx(), py - 2, w * 0.52f, 14, 2.2f, CYAN);
                 ellipse(c, e.cx(), py - 2, w * 0.47f, 11, 5f, CYAN_FAINT);
             }

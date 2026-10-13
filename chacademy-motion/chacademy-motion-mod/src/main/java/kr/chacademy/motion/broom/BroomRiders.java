@@ -36,6 +36,7 @@ public final class BroomRiders {
         public boolean boosting;
         public boolean wobbling;
         Vec3 lastPos;
+        Vec3 approachFrom;
         boolean hasYaw;
         int missing;
 
@@ -62,7 +63,7 @@ public final class BroomRiders {
 
         /** 0→1 소환 크기 */
         public float summonScale(float pt) {
-            return Mth.clamp((age + pt) / 6f, 0f, 1f);
+            return approachFrom!=null?1f:Mth.clamp((age + pt) / 6f, 0f, 1f);
         }
 
         void startRoll(int dir) {

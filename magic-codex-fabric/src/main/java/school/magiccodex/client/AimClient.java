@@ -53,9 +53,7 @@ public final class AimClient {
         }
         if (action != GLFW.GLFW_PRESS || c.currentScreen != null || c.player == null) return false;
         boolean used = false;
-        if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT && AimCursor.aiming()
-                && (SharedNotifications.click(HudPointer.x(), HudPointer.y(), 0) || TopMenuClient.click(HudPointer.x(), HudPointer.y(), 0) || FriendRequestToast.click(HudPointer.x(), HudPointer.y(), 0))) used = true;
-        else if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT && AimTargeting.targeting()) used = AimTargeting.confirm();
+        if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT && AimTargeting.targeting()) used = AimTargeting.confirm();
         else if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT && AimTargeting.targeting()) { AimTargeting.cancel(true); used = true; }
         if (used) swallowRelease[button] = true;
         return used;
@@ -68,11 +66,8 @@ public final class AimClient {
                 .then(ClientCommandManager.literal("스마트")
                     .then(ClientCommandManager.literal("켜기").executes(ctx -> set(ctx.getSource(), s -> s.smartCast = true)))
                     .then(ClientCommandManager.literal("끄기").executes(ctx -> set(ctx.getSource(), s -> s.smartCast = false))))
-                .then(ClientCommandManager.literal("커서")
-                    .then(ClientCommandManager.literal("켜기").executes(ctx -> set(ctx.getSource(), s -> s.aimCursor = true)))
-                    .then(ClientCommandManager.literal("끄기").executes(ctx -> set(ctx.getSource(), s -> s.aimCursor = false))))
-                .then(ClientCommandManager.literal("감도").then(ClientCommandManager.argument("배율", FloatArgumentType.floatArg(AimSettings.MIN_SPEED, AimSettings.MAX_SPEED))
-                    .executes(ctx -> { float v = FloatArgumentType.getFloat(ctx, "배율"); return set(ctx.getSource(), s -> s.cursorSpeed = v); })))));
+));
+
     }
 
     private static int set(FabricClientCommandSource source, java.util.function.Consumer<AimSettings> change) {
@@ -85,7 +80,7 @@ public final class AimClient {
 
     static String status() {
         var s = AimSettings.get();
-        return "조준: 커서 " + (s.aimCursor ? "켜짐" : "꺼짐") + " · 스마트 시전 " + (s.smartCast ? "켜짐" : "꺼짐")
-            + String.format(" · 감도 %.1f", s.cursorSpeed) + "  /조준 커서 켜기|끄기 · 스마트 켜기|끄기 · 감도 n";
+        return "조준: 일반 마우스 시점 · 스마트 시전 " + (s.smartCast ? "켜짐" : "꺼짐")
+            + "  /조준 스마트 켜기|끄기";
     }
 }

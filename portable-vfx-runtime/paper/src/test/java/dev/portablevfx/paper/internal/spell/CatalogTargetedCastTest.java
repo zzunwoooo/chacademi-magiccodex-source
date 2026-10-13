@@ -363,7 +363,8 @@ class CatalogTargetedCastTest {
                 default -> throw new AssertionError(method);
             });
             PortableVfxService service=proxy(PortableVfxService.class,(method,args)->switch(method){
-                case "supportsCatalogCast" -> ready;
+                case "owner" -> {assertNotNull(args[0]);assertNotNull(args[1]);yield null;}
+            case "supportsCatalogCast" -> ready;
                 case "startCast","startFollowCast" -> {
                     EffectRequest r=(EffectRequest)args[0];
                     if(r.effectId().equals(PREFIX+rejectEffect))throw new RejectedExecutionException("test play budget");

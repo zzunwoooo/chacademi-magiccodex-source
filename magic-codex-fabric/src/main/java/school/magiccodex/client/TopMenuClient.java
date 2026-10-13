@@ -38,6 +38,7 @@ public final class TopMenuClient {
         if(hit==4){MagicCodexClient.dismiss();c.setScreen(new StatsScreen());return true;}
         if(hit==5){SocialClient.open();return true;}
         if(hit==6){QuestClient.open();return true;}
+        if(hit==8){MagicCodexClient.dismiss();c.setScreen(new SettingsScreen(null));return true;}
         if(hit==7){SchoolClient.open();return true;}
         // Ordinary player command: the server retains permission checks and all side effects.
         if(c.getNetworkHandler()!=null){c.setScreen(null);c.getNetworkHandler().sendChatCommand(TopMenuState.command(hit));}

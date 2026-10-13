@@ -125,7 +125,7 @@ class ChacaInventoryLayoutTest {
             assertTrue(side.screenX(r[2]) <= s[0] + 0.01 && side.screenY(r[1]) >= -0.01 && side.screenY(r[3]) <= s[1] + 0.01, Arrays.toString(s));
             assertTrue(ChacaInventoryLayout.ORB_ITEM * side.scale() >= 10, "orb items remain readable beside centered book " + Arrays.toString(s));
         }
-        assertEquals(Mode.BOOK_ONLY, ChacaInventoryLayout.fit(370, 240, true).mode(), "vanilla narrow mode");
+        for(int width:new int[]{320,370}){var fit=ChacaInventoryLayout.fit(width,240,true);assertEquals(Mode.SIDE,fit.mode());assertTrue(fit.screenX(ChacaInventoryLayout.CRAFT_RECT[0])>ChacaInventoryLayout.bookLeft(width,true)+ChacaInventoryLayout.BOOK_W);assertTrue(fit.screenX(ChacaInventoryLayout.CRAFT_RECT[2])<=width);}
     }
 
     @Test void recipeBookModeShowsOnlyCraftingSlots() {

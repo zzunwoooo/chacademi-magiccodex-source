@@ -89,3 +89,7 @@ Redis는 Ubuntu VM GRUB 이후 사용자 설치 진행 단계이며 가동·동�
 ### UI review integration (2026-10-13)
 
 [Release checklist and verification](docs/handoff/CODEX_UI_REVIEW_RELEASE_20261013.md) covers the built-in camera, SurvivalInventoryUI, journal/admin, notices, equipment, Motion and monster HUD. [Developed modules](docs/DEVELOPED_MODS.md).
+
+## 2026-10-13 final follow-up
+
+SurvivalInventoryUI remains inside Magic Codex: 27 inventory slots and nine hotbar slots plus real offhand, revised approved artwork, shared notices, persistent key registration order, settings/camera/local VFX opacity, straight aim preview, broom equipment and four-key recatch. Motion is 0.3.0-codex.3. Real-time 72-hour season support awaits an explicit user-selected epoch before activation. [Combined implementation and regression checklist](docs/handoff/CODEX_FINAL_FOLLOWUP_20261013.md). Public launcher feed is outside this follow-up.

@@ -73,3 +73,12 @@ if (project.hasProperty('journalCheck')) {
         }
     }
 }
+
+if (project.hasProperty('followupCheck')) {
+    sourceSets.visualTest.java.setIncludes(['**/FollowupVisualCheck.java'])
+    tasks.named('processVisualTestResources') {
+        filesMatching('fabric.mod.json') {
+            filter { line -> line.replace('school.magiccodex.visualtest.CodexVisualCheck', 'school.magiccodex.client.FollowupVisualCheck') }
+        }
+    }
+}

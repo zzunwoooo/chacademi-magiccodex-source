@@ -15,6 +15,11 @@ public final class ProtocolTests {
     }
 
     public static void main(String[] arguments) throws Exception {
+        EffectOwner owner=new EffectOwner(ID,UUID.randomUUID());
+        if(!owner.equals(EffectOwner.decode(owner.encode())))throw new AssertionError("owner roundtrip");
+        for(byte[] bad:new byte[][]{new byte[0],new byte[32],new byte[34],new byte[33]}){
+            try{EffectOwner.decode(bad);throw new AssertionError("invalid owner accepted");}catch(IllegalArgumentException expected){}
+        }
         readiness();
         parameterizedPlay();
         finishIntent();

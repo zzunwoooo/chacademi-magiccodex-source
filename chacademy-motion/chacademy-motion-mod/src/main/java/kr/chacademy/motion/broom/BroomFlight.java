@@ -27,7 +27,7 @@ import net.minecraft.world.phys.Vec3;
  *  W 가속(아래를 보며 W = 급강하) · S 약한 브레이크 · 마우스 방향(빗자루가 늦게 따라옴)
  *  A/D 드리프트 · A/D 두 번 배럴롤 · 스페이스 상승 · 아래를 보며 W 하강 · 달리기 키 부스트
  *  앉기 키 한 번 = 지상/공중 모두 내리기 (키 재지정 지원)
- *  낙마 후 이동 키 6개를 순서대로 빠르게 입력 = 다시 잡기
+ *  낙마 후 이동 키 4개를 순서대로 빠르게 입력 = 다시 잡기
  * </pre>
  */
 public final class BroomFlight {
@@ -48,6 +48,9 @@ public final class BroomFlight {
     private static int catchTicks;
     private static BroomRiders.Drop drop;
     private static int awaitingCatch;
+    private static boolean catchRequested;
+    private static BroomPhysics fallenPhysics;
+    private static net.minecraft.client.multiplayer.ClientLevel catchLevel;
     private static BroomCatchSequence catchSequence;
     public static BroomCatchSequence catchSequence(){return catchSequence;}
     private static int movementMask(Minecraft mc){return (mc.options.keyUp.isDown()?1:0)|(mc.options.keyLeft.isDown()?2:0)|(mc.options.keyDown.isDown()?4:0)|(mc.options.keyRight.isDown()?8:0);}
@@ -81,13 +84,15 @@ public final class BroomFlight {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer p = mc.player;
         if (p == null) return;
-        boolean resumed = awaitingCatch > 0 || catchTicks > 0;
+        boolean resumed = catchRequested && fallenPhysics!=null && catchLevel==mc.level && ride!=null && ride.broom().equals(r.broom());
+        Vec3 approach=resumed && drop!=null?drop.pos(1f):null;
         if (physics != null) end(false, false); // 갈아타기
         ride = r;
         var stats = new BroomPhysics.Stats(r.maxSpeed(), r.accel(), r.turn(), r.brake(), r.stability(), r.climb(),
                 r.mastery(), r.boostCooldown(), r.rollCooldown());
         Vec3 v = p.getDeltaMovement();
-        physics = new BroomPhysics(stats, p.getYRot(), v.x, v.y, v.z, p.getRandom().nextLong());
+        physics = resumed?fallenPhysics:new BroomPhysics(stats, p.getYRot(), v.x, v.y, v.z, p.getRandom().nextLong());
+        physics.vx=v.x;physics.vy=v.y;physics.vz=v.z;
         limitLeft = r.limitTicks();
         if (resumed) {
             physics.caught();
@@ -103,6 +108,8 @@ public final class BroomFlight {
         lastHurtTime = p.hurtTime;
         prevShift = mc.options.keyShift.isDown(); // Ignore an already-held mount key until released.
         rider = BroomRiders.addSelf(p, r.broom(), resumed);
+        if(approach!=null){rider.approachFrom=approach;rider.age=0;}
+        fallenPhysics=null;catchRequested=false;catchLevel=null;
         setFlying(p, true);
         if (wind == null || wind.isStopped()) {
             wind = new WindSound(p);
@@ -112,6 +119,7 @@ public final class BroomFlight {
 
     /** 서버가 내리게 함 (시간 끝, 금지 구역, 명령어, 다시 마법). */
     static void serverStopped(byte reason) {
+        if(reason!=BroomPackets.STATE_FALL){catchTicks=0;catchSequence=null;drop=null;fallenPhysics=null;catchRequested=false;catchLevel=null;}
         if (physics == null) return;
         end(false, false);
         if (reason == BroomPackets.STATE_TIMEOUT) {
@@ -128,6 +136,7 @@ public final class BroomFlight {
         catchSequence = null;
         drop = null;
         awaitingCatch = 0;
+        fallenPhysics=null;catchRequested=false;catchLevel=null;
         if (wind != null) wind.finish();
         wind = null;
     }
@@ -147,6 +156,7 @@ public final class BroomFlight {
         if (sendDismount) send(BroomPackets.EVT_DISMOUNT, 0);
         BroomRiders.remove(p.getUUID(), fell);
         if (fell) {
+            fallenPhysics=ph;catchRequested=false;catchLevel=mc.level;
             var drops = BroomRiders.drops();
             drop = drops.isEmpty() ? null : drops.get(drops.size() - 1);
             catchTicks = CATCH_TICKS;
@@ -257,7 +267,7 @@ public final class BroomFlight {
     public static void tick(Minecraft mc) {
         LocalPlayer p = mc.player;
         if (p == null) {
-            if (physics != null || catchTicks > 0) reset();
+            if (physics != null || catchTicks > 0 || catchRequested) reset();
             return;
         }
         if (physics != null) {
@@ -266,20 +276,25 @@ public final class BroomFlight {
             if (!p.onGround()) setFlying(p, true);
         }
         if (awaitingCatch > 0) awaitingCatch--;
-        if (catchTicks > 0) {
-            catchTicks--;
+        if (catchTicks > 0 || catchRequested) {
+            if(p.isDeadOrDying() || catchLevel!=mc.level || p.isSpectator() || p.isPassenger()){
+                catchTicks=0;catchSequence=null;drop=null;fallenPhysics=null;catchRequested=false;return;
+            }
+            if(catchTicks>0)catchTicks--;
+            if(fallenPhysics!=null){
+                if(fallenPhysics.boostCooldown>0)fallenPhysics.boostCooldown--;
+                if(fallenPhysics.rollCooldown>0)fallenPhysics.rollCooldown--;
+            }
             boolean completed=catchSequence!=null&&catchSequence.input(movementMask(mc));
-            if (completed && drop != null && awaitingCatch == 0 && !p.onGround()) {
-                Vec3 hip = p.position().add(0, BroomRenderer.SEAT_Y, 0);
-                if (hip.distanceTo(drop.pos(1f)) < 3.0) {
-                    send(BroomPackets.EVT_CATCH, 0);
-                    awaitingCatch = 10;
-                }
+            // The drop is a visual effect, never an authority/distance gate.
+            // The server consumes a valid pending catch exactly once and rechecks permission.
+            if(completed && !catchRequested && !p.onGround()){
+                catchRequested=true;send(BroomPackets.EVT_CATCH,0);awaitingCatch=60;
             }
 
-            if (catchTicks == 0 || p.onGround()) {
+            if ((catchTicks == 0 && (!catchRequested || awaitingCatch == 0)) || p.onGround()) {
                 catchTicks = 0;
-                drop = null;
+                drop = null;catchSequence=null;fallenPhysics=null;catchRequested=false;catchLevel=null;
             }
         }
     }

@@ -295,6 +295,7 @@ public final class CatalogVisualEngine {
         boolean follow=phase.role().equals("attached")&&(phase.anchor().equals("caster")||phase.anchor().equals("target")&&target!=null||phase.anchor().equals("external")&&virtual!=null)&&phase.offset().lengthSquared()==0;
         if(follow)result=service.startFollowCast(request,phase.anchor().equals("target")?target.getUniqueId():phase.anchor().equals("external")?virtual.getUniqueId():c.owner,c.id.getLeastSignificantBits()+c.serial++,phase.width(),scaleInput);
         else result=service.startCast(request,basis,c.id.getLeastSignificantBits()+c.serial++,phase.width(),scaleInput,link);
+        service.owner(result.handle(),c.owner);
         // 받은 시청자가 없어도 단계는 추적한다: 투사체 이동과 이후 단계(충돌 등)는 계속 진행돼야 한다.
         boolean reachable=result.recipients()+result.deferred()+result.skippedRateLimited()>0;
         if(c.starting){c.started++;if(reachable)c.seen++;}else if(!reachable)noViewerPhases++;

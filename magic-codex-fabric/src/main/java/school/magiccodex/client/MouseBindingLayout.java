@@ -1,9 +1,9 @@
 package school.magiccodex.client;
-/** Full 1024x1536 PNG coordinates: draw and hit tests share the exact same transform. */
+/** Full 280x497 PNG coordinates: draw and hit tests share the exact same transform. */
 public final class MouseBindingLayout {
- public static final float X=1285,Y=225,W=160,H=240,S=W/1024f;
- private static final double[][] ONE={{244,645},{260,632},{279,642},{357,764},{369,807},{361,826},{319,829},{302,815},{251,719}};
- private static final double[][] TWO={{329,862},{338,848},{369,844},{390,853},{405,922},{416,989},{409,1018},{396,1030},{372,1023},{353,1005},{335,932}};
+ public static final float X=1285,Y=225,W=190,H=337.25f,S=W/280f;
+ private static final double[][] ONE={{16,190},{26,187},{39,229},{38,260},{25,249},{17,217}};
+ private static final double[][] TWO={{26,269},{38,276},{45,313},{42,338},{32,329},{25,298}};
  public static double[][] polygon(int code){return code==KeySettingsLayout.THUMB_1?ONE:TWO;}
  public static int hit(double x,double y){double px=(x-X)/S,py=(y-Y)/S;return inside(ONE,px,py)?KeySettingsLayout.THUMB_1:inside(TWO,px,py)?KeySettingsLayout.THUMB_2:-1;}
  private static boolean inside(double[][] p,double x,double y){boolean hit=false;for(int i=0,j=p.length-1;i<p.length;j=i++){if((p[i][1]>y)!=(p[j][1]>y)&&x<(p[j][0]-p[i][0])*(y-p[i][1])/(p[j][1]-p[i][1])+p[i][0])hit=!hit;}return hit;}

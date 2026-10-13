@@ -37,12 +37,14 @@ public final class RelayEngine {
         Collection<Viewer> viewers(String dimensionId);
         Viewer viewer(UUID id);
         boolean send(UUID playerId, byte[] payload);
+        default void sendOwner(UUID playerId,UUID handle,UUID owner) {}
     }
 
     public record Viewer(UUID id, String dimensionId, double x, double y, double z,
                          boolean registeredChannel) {}
 
     private static final class Active {
+        UUID owner;
         long expiresAt; final Set<UUID> recipients;
         /** 예산 때문에 PLAY 가 아직 전달되지 않은(재시도 큐에 있는) 시청자. 전달되면 recipients 로 옮긴다. */
         Set<UUID> awaiting;
@@ -123,6 +125,11 @@ public final class RelayEngine {
     }
 
     public RelayLimits limits() { return limits; }
+    public void owner(UUID handle,UUID caster){
+        if(caster==null)return;var effect=active.get(handle);if(effect==null)return;
+        if(effect.owner!=null)return;effect.owner=caster;
+        for(UUID recipient:effect.recipients)transport.sendOwner(recipient,handle,caster);
+    }
 
     /*
      * 공개 hello 진입점은 플레이어별 토큰 버킷(HELLO_BURST, tick 당 +1)을 통과해야 한다. 초과분은 조용히
@@ -403,6 +410,7 @@ public final class RelayEngine {
         retire(handle, effect);
         if (!recipients.isEmpty()) active.put(impact.instanceId(), new Active(
                 transport.currentTick() + impact.durationTicks(), recipients, impact, effect.radius, false));
+        owner(impact.instanceId(),effect.owner);
         flushControls();
         return new PlayResult(impact.instanceId(), recipients.size(), skipped, effect.radius);
     }
@@ -733,6 +741,7 @@ public final class RelayEngine {
                 effect.awaiting.remove(player);
                 if (transport.send(player, next.play())) {
                     effect.recipients.add(player);
+                    if(effect.owner!=null)transport.sendOwner(player,next.handle(),effect.owner);
                     packetsSent++;
                     if (next.pose() != null && transport.send(player, next.pose())) packetsSent++;
                 } else dropAwaiting(next.handle(), effect, player);

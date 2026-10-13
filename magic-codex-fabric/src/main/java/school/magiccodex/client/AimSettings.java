@@ -18,13 +18,13 @@ public final class AimSettings {
     /** 1 = camera over the right shoulder (character on the left of the screen), -1 = left shoulder. */
     public int side = 1;
     /** Blocks behind the eyes (vanilla third person is 4). */
-    public float distance = 3.4f;
+    public float distance = 5f;
     /** Blocks to the side of the eyes. */
-    public float sideOffset = 0.85f;
+    public float sideOffset = 1.5f;
     /** Blocks above the eyes. */
-    public float height = 0.2f;
+    public float height = 1f;
     /** Magic mode in third person: freeze the view and aim with a separate cursor. */
-    public boolean aimCursor = true;
+    public boolean aimCursor = false; // Legacy config value is intentionally ignored.
     /** Aim cursor speed multiplier (1 = the cursor moves as far as the view would have turned). */
     public float cursorSpeed = 1f;
     /** LoL "smart cast": cast at the cursor on key press instead of showing the preview first. */
@@ -55,28 +55,43 @@ public final class AimSettings {
         s.distance = num(p, "distance", s.distance, MIN_DISTANCE, MAX_DISTANCE);
         s.sideOffset = num(p, "side-offset", s.sideOffset, 0, MAX_SIDE);
         s.height = num(p, "height", s.height, -.5f, 1.5f);
-        s.aimCursor = bool(p, "aim-cursor", s.aimCursor);
+        s.aimCursor = false;
         s.cursorSpeed = num(p, "cursor-speed", s.cursorSpeed, MIN_SPEED, MAX_SPEED);
         s.smartCast = bool(p, "smart-cast", s.smartCast);
         return s;
     }
 
-    public void save() {
-        if (path == null) return;
+    public void save() { if(path!=null) save(path); }
+    public AimSettings copy(){var c=new AimSettings();c.shoulder=shoulder;c.side=side;c.distance=distance;c.sideOffset=sideOffset;c.height=height;c.smartCast=smartCast;c.cursorSpeed=cursorSpeed;return c;}
+    public boolean commit(){if(path==null||!persist(path))return false;current=copy();return true;}
+    public void save(Path destination){persist(destination);}
+    public boolean persist(Path destination) {
         var p = new Properties();
+        // Preserve unrelated user properties, including future extensions.
+        if(Files.isRegularFile(destination)) {
+            try(Reader in=Files.newBufferedReader(destination,StandardCharsets.UTF_8)){p.load(in);}
+            catch(IOException | IllegalArgumentException error){
+                org.slf4j.LoggerFactory.getLogger("magiccodex").warn("aim settings preserved: cannot read existing file",error);return false;
+            }
+        }
         p.setProperty("shoulder", Boolean.toString(shoulder));
         p.setProperty("side", side < 0 ? "left" : "right");
         p.setProperty("distance", Float.toString(distance));
         p.setProperty("side-offset", Float.toString(sideOffset));
         p.setProperty("height", Float.toString(height));
-        p.setProperty("aim-cursor", Boolean.toString(aimCursor));
+        p.setProperty("aim-cursor", "false");
         p.setProperty("cursor-speed", Float.toString(cursorSpeed));
         p.setProperty("smart-cast", Boolean.toString(smartCast));
         try {
-            Files.createDirectories(path.getParent());
-            try (Writer out = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) { p.store(out, "Chacademi camera / aim (client only)"); }
+            Path target=destination.toAbsolutePath(); Files.createDirectories(target.getParent());
+            Path temp=Files.createTempFile(target.getParent(),"aim-",".tmp");
+            try {
+                try(Writer out=Files.newBufferedWriter(temp,StandardCharsets.UTF_8)){p.store(out,"Chacademi camera / aim (client only)");}
+                Files.move(temp,target,java.nio.file.StandardCopyOption.ATOMIC_MOVE,java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            } finally {Files.deleteIfExists(temp);}
+            return true;
         } catch (IOException error) {
-            org.slf4j.LoggerFactory.getLogger("magiccodex").warn("aim settings save failed", error);
+            org.slf4j.LoggerFactory.getLogger("magiccodex").warn("aim settings save failed", error);return false;
         }
     }
 

@@ -18,7 +18,7 @@ import org.joml.Matrix4f;
 import school.magiccodex.client.SpellTargets.Mode;
 
 /**
- * Ground indicators for the aim preview, drawn as flat decals that follow the terrain block by block.
+ * Planar holograms for aiming. Line geometry is never projected onto terrain.
  * Cost: one column lookup per covered block (area r=6 ~ 110, range ring <= 192 points); nothing when not aiming.
  */
 public final class AimRenderer {
@@ -55,14 +55,13 @@ public final class AimRenderer {
             float pulse = .5f + .5f * MathHelper.sin(Util.getMeasuringTimeMs() / 180f);
             var shape = p.shape();
             Vec3d feet = p.feet();
-            if (shape.mode() != Mode.LINE && shape.mode() != Mode.CONE)
-                rangeRing(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(BAND)), m, w, feet,
-                        AimMath.horizontalReach(shape.range(), p.eye().y - feet.y), argb(rgb, .78f), c.player.getYaw());
+            rangeRing(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(BAND)), m, w, feet,
+                        AimMath.horizontalReach(shape.mode()==Mode.LINE||shape.mode()==Mode.CONE?shape.length():shape.range(), p.eye().y - feet.y), argb(rgb, .78f), c.player.getYaw()+(Util.getMeasuringTimeMs()%36000)/100f);
             switch (shape.mode()) {
                 case AREA, POINT -> {
                     if (p.point() == null) break;
                     double r = Math.max(.6, shape.radius());
-                    decal(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(FILL)), m, w, p.point(), r, argb(main, .9f));
+                    decal(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(FILL)), m, w, p.point(), r, argb(main, .25f));
                     decal(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(shape.mode() == Mode.POINT ? TARGET : AREA)), m, w, p.point(), r, argb(main, 1f));
                 }
                 case WALL -> {
@@ -73,13 +72,14 @@ public final class AimRenderer {
                     decal(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TARGET)), m, w, p.point(), .7, argb(main, 1f));
                 }
                 case LINE -> {
-                    Vec3d dir = horizontal(p.point().subtract(feet));
-                    var points = line(feet.add(dir.multiply(.6)), dir, Math.max(.5, shape.length() - .6));
-                    var band = consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(BAND));
-                    strip(band, m, w, points, feet.y, shape.width(), argb(rgb, .55f), false);
-                    strip(band, m, w, points, feet.y, .14, argb(rgb, 1f), false);
-                    Vec3d tip = points.get(points.size() - 1);
-                    decal(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TARGET)), m, w, tip, Math.max(.5, shape.width() * .6), argb(rgb, 1f));
+                    Vec3d delta=p.point().subtract(p.origin());double length=delta.length();
+                    var basis=AimPlane.frame(delta.x,delta.y,delta.z);
+                    var band=consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(BAND));
+                    // The faint full-width rectangle marks the fixed mechanical envelope; the arrow sits inside it.
+                    planeQuad(band,m,p.origin(),new AimPlane.V[]{basis.at(0,shape.width()/2),basis.at(0,-shape.width()/2),basis.at(length,-shape.width()/2),basis.at(length,shape.width()/2)},argb(main,.12f));
+                    for(var quad:AimPlane.arrow(basis,length,shape.width()))planeQuad(band,m,p.origin(),quad,argb(main,.4f+.08f*pulse));
+                    planeEdge(band,m,p.origin(),basis.at(0,shape.width()/2),basis.at(length,shape.width()/2),basis.right(),.035,argb(main,.92f));
+                    planeEdge(band,m,p.origin(),basis.at(0,-shape.width()/2),basis.at(length,-shape.width()/2),basis.right(),.035,argb(main,.92f));
                 }
                 case CONE -> {
                     Vec3d dir = horizontal(p.point().subtract(feet));
@@ -87,6 +87,9 @@ public final class AimRenderer {
                     var band = consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(BAND));
                     strip(band, m, w, line(feet, dir.rotateY((float) half), r), feet.y, .16, argb(rgb, 1f), false);
                     strip(band, m, w, line(feet, dir.rotateY((float) -half), r), feet.y, .16, argb(rgb, 1f), false);
+                    var coneBasis=AimPlane.frame(dir.x,0,dir.z);
+                    int pieces=Math.max(8,(int)Math.ceil(shape.width()/4));
+                    for(int i=0;i<pieces;i++){double a=-half+2*half*i/pieces,b=-half+2*half*(i+1)/pieces;var zero=new AimPlane.V(0,0,0);planeQuad(band,m,feet.add(0,LIFT,0),new AimPlane.V[]{zero,coneBasis.at(Math.cos(a)*r,Math.sin(a)*r),coneBasis.at(Math.cos(b)*r,Math.sin(b)*r),zero},argb(main,.16f));}
                     List<Vec3d> arc = new ArrayList<>();
                     int n = Math.max(8, (int) Math.round(shape.width() / 4));
                     for (int i = 0; i <= n; i++) arc.add(feet.add(dir.rotateY((float) (-half + 2 * half * i / n)).multiply(r)));
@@ -99,7 +102,7 @@ public final class AimRenderer {
                         ring(ring, m, w, e, e.getLerpedPos(tickDelta), ringRadius(e), argb(rgb, .42f));
                     }
                     if (p.target() != null) {
-                        double r = ringRadius(p.target()) * (1.05 + .06 * pulse);
+                        double r = ringRadius(p.target());
                         ring(ring, m, w, p.target(), p.point(), r, argb(main, 1f));
                     }
                 }
@@ -143,20 +146,7 @@ public final class AimRenderer {
 
     /** Flat sprite of half-size r centred on (point.x, point.z), split per block column and laid on each column's top. */
     static void decal(VertexConsumer vc, Matrix4f m, World w, Vec3d point, double r, int color) {
-        double minX = point.x - r, maxX = point.x + r, minZ = point.z - r, maxZ = point.z + r, size = 2 * r;
-        for (int bx = MathHelper.floor(minX); bx <= MathHelper.floor(maxX); bx++) {
-            for (int bz = MathHelper.floor(minZ); bz <= MathHelper.floor(maxZ); bz++) {
-                double ax = Math.max(bx, minX), cx = Math.min(bx + 1, maxX), az = Math.max(bz, minZ), cz = Math.min(bz + 1, maxZ);
-                if (ax >= cx || az >= cz) continue;
-                double nx = Math.clamp(point.x, ax, cx) - point.x, nz = Math.clamp(point.z, az, cz) - point.z;
-                if (nx * nx + nz * nz > r * r) continue; // the cell is outside the circle
-                Double top = AimTargeting.Ground.top(w, (ax + cx) / 2, point.y + 1.6, (az + cz) / 2, 6);
-                if (top == null || Math.abs(top - point.y) > MAX_STEP) continue;
-                float y = (float) (top + LIFT);
-                quadUp(vc, m, ax, az, cx, cz, y,
-                        (float) ((ax - minX) / size), (float) ((az - minZ) / size), (float) ((cx - minX) / size), (float) ((cz - minZ) / size), color);
-            }
-        }
+        quadUp(vc,m,point.x-r,point.z-r,point.x+r,point.z+r,(float)(point.y+LIFT),0,0,1,1,color);
     }
 
     /** Glow ring that stays on the ground (stepped where the height changes), with four short ticks like the sprite. */
@@ -182,33 +172,17 @@ public final class AimRenderer {
      * 0.6 block is drawn as two flat halves (a step) instead of a slanted quad through the block.
      */
     static void strip(VertexConsumer vc, Matrix4f m, World w, List<Vec3d> points, double referenceY, double width, int color, boolean closed) {
-        int n = points.size();
-        if (n < 2) return;
-        double[] ys = new double[n];
-        boolean[] ok = new boolean[n];
-        for (int i = 0; i < n; i++) {
-            var p = points.get(i);
-            Double top = AimTargeting.Ground.top(w, p.x, referenceY + 1.6, p.z, 6);
-            ok[i] = top != null && Math.abs(top - referenceY) <= MAX_STEP;
-            ys[i] = ok[i] ? top + LIFT + .002 * (i & 1) : referenceY;
-        }
-        double half = width / 2;
-        for (int i = 0; i < n - 1; i++) {
-            if (!ok[i] || !ok[i + 1]) continue;
-            Vec3d a = points.get(i), b = points.get(i + 1);
-            Vec3d t = new Vec3d(b.x - a.x, 0, b.z - a.z);
-            if (t.lengthSquared() < 1e-8) continue;
-            t = t.normalize();
-            Vec3d side = new Vec3d(-t.z, 0, t.x).multiply(half);
-            if (Math.abs(ys[i] - ys[i + 1]) > .6) {
-                Vec3d mid = a.add(b).multiply(.5);
-                ribbon(vc, m, a, mid, side, (float) ys[i], (float) ys[i], color);
-                ribbon(vc, m, mid, b, side, (float) ys[i + 1], (float) ys[i + 1], color);
-            } else {
-                ribbon(vc, m, a, b, side, (float) ys[i], (float) ys[i + 1], color);
-            }
+        for(int i=0;i+1<points.size();i++){
+            Vec3d a=points.get(i),b=points.get(i+1),tangent=new Vec3d(b.x-a.x,0,b.z-a.z);
+            if(tangent.lengthSquared()<1e-8)continue;var side=new Vec3d(-tangent.z,0,tangent.x).normalize().multiply(width/2);
+            ribbon(vc,m,a,b,side,(float)(referenceY+LIFT),(float)(referenceY+LIFT),color);
         }
     }
+
+    private static void planeQuad(VertexConsumer vc,Matrix4f m,Vec3d origin,AimPlane.V[] q,int color){
+        for(var p:q)vc.vertex(m,(float)(origin.x+p.x()),(float)(origin.y+p.y()),(float)(origin.z+p.z())).color(color).texture(.5f,.5f).overlay(OverlayTexture.DEFAULT_UV).light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(0,1,0);
+    }
+    private static void planeEdge(VertexConsumer vc,Matrix4f m,Vec3d origin,AimPlane.V a,AimPlane.V b,AimPlane.V right,double width,int color){var s=right.mul(width/2);planeQuad(vc,m,origin,new AimPlane.V[]{a.add(s),a.add(s.mul(-1)),b.add(s.mul(-1)),b.add(s)},color);}
 
     private static void ribbon(VertexConsumer vc, Matrix4f m, Vec3d a, Vec3d b, Vec3d side, float ya, float yb, int color) {
         // u runs along the band (uniform), v across it: 0 at one edge, 1 at the other.

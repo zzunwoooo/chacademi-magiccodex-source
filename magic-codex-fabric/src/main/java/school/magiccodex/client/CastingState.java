@@ -18,7 +18,7 @@ public final class CastingState {
     private boolean enabled;
 
     public boolean enabled() { return enabled; }
-    public void setBindings(SpellKeySettings value) { bindings = value.slots(); }
+    public void setBindings(SpellKeySettings value) { bindings = value.orderedSlots(); }
     public List<SpellKeySettings.Binding> bindings() { return bindings; }
     /** A saved slot with a usable key, independent of magic-mode and catalog discovery. */
     public boolean registered(String id) {

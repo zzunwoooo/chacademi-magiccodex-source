@@ -293,3 +293,7 @@ MagicCodexBridge 0.6.0에서 현재·최대 마나·초당 회복량을 받아 �
 Both dialogue screens use PlayerTurnPortraitLayout: visible alpha bounds are centered at x=415, top y=75, and fitted to height 660 (maximum width 700) in the existing 1600x900 UI space. A full 1024x1536 portrait draws at width 440, 62.9% of the previous 700. Only pixels below panel y=639 are clipped. Alpha bounds are measured once on Portrait-IO; preview sizing and NPC artwork are unchanged. This can reveal an existing waist but cannot create body parts missing from a source image.
 
 Validation: Gradle test remapJar; isolated real-screen fixture: -PvisualCheck -PplayerTurnCheck runVisualTest (synthetic image, window/fullscreen, GUI 2/3, transparent padding, both turn transitions).
+
+## 2026-10-13 final follow-up
+
+SurvivalInventoryUI remains inside Magic Codex: 27 inventory slots and nine hotbar slots plus real offhand, revised approved artwork, shared notices, persistent key registration order, settings/camera/local VFX opacity, straight aim preview, broom equipment and four-key recatch. Motion is 0.3.0-codex.3. Real-time 72-hour season support awaits an explicit user-selected epoch before activation. [Combined implementation and regression checklist](../docs/handoff/CODEX_FINAL_FOLLOWUP_20261013.md). Public launcher feed is outside this follow-up.

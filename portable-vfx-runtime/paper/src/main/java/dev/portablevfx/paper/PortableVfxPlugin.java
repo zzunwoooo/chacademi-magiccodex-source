@@ -81,6 +81,7 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
         getServer().getMessenger().registerIncomingPluginChannel(this, VfxProtocol.STOP_INTENT_HELLO_CHANNEL, this);
         getServer().getMessenger().registerIncomingPluginChannel(this, dev.portablevfx.protocol.CatalogReadiness.CHANNEL, this);
         getServer().getMessenger().registerOutgoingPluginChannel(this, VfxProtocol.EFFECT_CHANNEL);
+        getServer().getMessenger().registerOutgoingPluginChannel(this, dev.portablevfx.protocol.EffectOwner.CHANNEL);
         getServer().getPluginManager().registerEvents(this, this);
         // 플러그인 재활성화: 이미 접속한 플레이어의 채널 등록 상태를 한 번 읽어 둔다.
         effectChannel.clear();
@@ -639,6 +640,7 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
     }
 
     private final class ServerService implements PortableVfxService {
+        @Override public void owner(UUID handle,UUID caster){requireMainThread();engine.owner(handle,caster);}
         @Override public PlayResult play(EffectRequest request) {
             requireMainThread();
             Objects.requireNonNull(request, "request");
@@ -770,6 +772,12 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
                     location.getX(), location.getY(), location.getZ(), effectChannel.contains(id));
         }
 
+        @Override public void sendOwner(UUID playerId,UUID handle,UUID owner){
+            if(!isEnabled())return;Player player=getServer().getPlayer(playerId);
+            if(player==null||!player.isOnline()||!player.getListeningPluginChannels().contains(dev.portablevfx.protocol.EffectOwner.CHANNEL))return;
+            try{player.sendPluginMessage(PortableVfxPlugin.this,dev.portablevfx.protocol.EffectOwner.CHANNEL,new dev.portablevfx.protocol.EffectOwner(handle,owner).encode());}
+            catch(IllegalArgumentException|IllegalStateException ignored){} // optional UI metadata cannot fail the cast.
+        }
         @Override public boolean send(UUID playerId, byte[] payload) {
             // 비활성화 중에는 플러그인 메시지를 보낼 수 없다(Messenger 가 거부한다): 시도하지 않는다.
             if (!isEnabled() || !effectChannel.contains(playerId)) return false;

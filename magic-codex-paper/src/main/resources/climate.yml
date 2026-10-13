@@ -3,6 +3,15 @@ season-clock: calendar
 calendar-timezone: Asia/Seoul
 # Spring Mar-May, summer Jun-Aug, autumn Sep-Nov, winter Dec-Feb.
 # Use season-clock: elapsed only to restore the previous tick/elapsed-time mode.
+# Configure the SAME epoch on school and wild, then switch season-clock to realtime.
+# No start date is fabricated. An empty epoch rejects realtime mode and leaves reload unchanged.
+# Each season lasts 72 real hours; a complete four-season cycle lasts 288 hours.
+real-time-season:
+  epoch: ''
+  timezone: Asia/Seoul
+  initial-season: spring
+  hours-per-season: 72
+
 enabled: true
 worlds: [world]
 clock-world: world

@@ -168,7 +168,7 @@ public final class ClaudeBackend implements EffectBackend {
         """;
     private static final String FRAGMENT="""
         #version 330 core
-        in vec2 texcoord;in vec3 srgbColor;in float alpha;
+        in vec2 texcoord;in vec3 srgbColor;in float alpha;uniform float localOpacity;
         flat in vec2 cellOrigin;flat in vec2 nextCellOrigin;flat in float frameFraction;
         uniform sampler2D colorTexture;uniform vec3 tint;uniform vec2 flipbookGrid;
         uniform bool interpolateFlipbooks;uniform bool additiveMaterial;
@@ -192,7 +192,7 @@ public final class ClaudeBackend implements EffectBackend {
                 rgb=mix(rgb*texel.a,nextRgb*nextTexel.a,frameFraction)/max(mixedAlpha,1e-20);
                 texel.a=mixedAlpha;
             }
-            float a=texel.a*alpha;if(a<=0.0)discard;
+            float a=texel.a*alpha*localOpacity;if(a<=0.0)discard;
             rgb=rgb*tint*pow(max(srgbColor,vec3(0)),vec3(2.2));
             color=vec4(additiveMaterial?vec3(0):rgb,a);
             light=vec4(additiveMaterial?rgb:vec3(0),a);}
@@ -259,6 +259,8 @@ public final class ClaudeBackend implements EffectBackend {
     }
     private final class ClaudeInstance implements Instance {
         final ClaudeAsset asset;final long seed;
+        float localOpacity=1;
+        @Override public void opacity(float value){checkThread();localOpacity=dev.portablevfx.client.api.VfxPreferences.bounded(value);}
         Double effectWidth;double scaleInput,linkLength=-1;
         ClaudeSimulation simulation;Vec3 worldOrigin=Vec3.ZERO;Transform transform;double seconds,synchronizedSeconds,sceneSeconds=Double.NaN;boolean stopped,finishing,seekPending,finishClearLocal=true;
         ClaudeInstance(ClaudeAsset asset,long seed){this.asset=asset;this.seed=seed;transform=new Transform(new Vec3(0,0,0),identityBasis());}
@@ -475,7 +477,7 @@ public final class ClaudeBackend implements EffectBackend {
             Vec3 right=direction(inverse,1,0,0),up=direction(inverse,0,1,0),camera=new Vec3(cx,cy,cz);
             var groups=new LinkedHashMap<ClaudePostPass.Settings,List<Draw>>();
             for(var instance:instances){
-                if(instance.simulation==null||!instance.exists())continue;
+                if(instance.simulation==null||!instance.exists()||instance.localOpacity<=0)continue;
                 Map<Layer,List<ParticleView>> particles=new IdentityHashMap<>();
                 for(var particle:instance.simulation.renderSnapshot())particles.computeIfAbsent(particle.layer(),k->new ArrayList<>()).add(particle);
                 for(var layer:instance.asset.system.layers())if(particles.containsKey(layer))
@@ -496,17 +498,17 @@ public final class ClaudeBackend implements EffectBackend {
                             var descriptor=draw.instance.asset.effect.models().get(draw.layer.render().model());var model=draw.instance.asset.models.get(draw.layer.render().model());
                             if(model==null)throw new IllegalStateException("Missing prepared model: "+draw.layer.render().model());
                             var tint=draw.instance.asset.effect.materials().get(draw.layer.material()).tint();
-                            for(var particle:draw.particles)remaining[0]-=modelRenderer.draw(model.gpu,descriptor,particle,tint,vp,draw.instance.worldOrigin,camera,remaining[0]);
+                            for(var particle:draw.particles)remaining[0]-=modelRenderer.draw(model.gpu,descriptor,particle,tint,vp,draw.instance.worldOrigin,camera,remaining[0],draw.instance.localOpacity);
                             prepareGeometry(vp);
                         }else{
                             float[] vertices=ClaudeGeometry.particles(draw.instance.asset.effect,draw.particles,right,up,ClaudeGeometry.add(camera,draw.instance.worldOrigin),draw.instance.worldOrigin,remaining[0]);
                             remaining[0]-=vertices.length/ClaudeGeometry.STRIDE;
-                            drawVertices(draw.instance.asset,draw.layer.material(),draw.layer.flipbook(),vertices);
+                            drawVertices(draw.instance.asset,draw.layer.material(),draw.layer.flipbook(),vertices,draw.instance.localOpacity);
                         }
                         if(draw.layer.trail()!=null){
                             float[] trail=ClaudeGeometry.trails(draw.particles,ClaudeGeometry.add(camera,draw.instance.worldOrigin),right,draw.instance.worldOrigin,remaining[0]);
                             remaining[0]-=trail.length/ClaudeGeometry.STRIDE;
-                            drawVertices(draw.instance.asset,draw.layer.trail().material(),null,trail);
+                            drawVertices(draw.instance.asset,draw.layer.trail().material(),null,trail,draw.instance.localOpacity);
                         }
                     }
                 });
@@ -521,10 +523,11 @@ public final class ClaudeBackend implements EffectBackend {
         glEnable(GL_DEPTH_TEST);glDepthFunc(GL_LEQUAL);glDepthMask(false);glDisable(GL_CULL_FACE);
         glEnable(GL_BLEND);glBlendEquationSeparate(GL_FUNC_ADD,GL_FUNC_ADD);glColorMask(true,true,true,true);
     }
-    private void drawVertices(ClaudeAsset asset,String materialName,Flipbook flipbook,float[] vertices){
+    private void drawVertices(ClaudeAsset asset,String materialName,Flipbook flipbook,float[] vertices,float opacity){
         if(vertices.length==0)return;var material=asset.effect.materials().get(materialName);var tint=material.tint();
         boolean additive=material.blend().equals("additive");
-        glDepthMask(material.depthWrite());
+        glDepthMask(material.depthWrite()&&opacity>=1);
+        glUniform1f(glGetUniformLocation(program,"localOpacity"),opacity);
         glUniform1i(glGetUniformLocation(program,"additiveMaterial"),additive?1:0);
         glBlendFuncSeparate(GL_SRC_ALPHA,additive?GL_ONE:GL_ONE_MINUS_SRC_ALPHA,additive?GL_ZERO:GL_ONE,additive?GL_ONE:GL_ONE_MINUS_SRC_ALPHA);
         glUniform3f(glGetUniformLocation(program,"tint"),(float)tint.x(),(float)tint.y(),(float)tint.z());
