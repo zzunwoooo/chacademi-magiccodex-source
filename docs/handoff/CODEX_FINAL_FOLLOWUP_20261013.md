@@ -79,3 +79,11 @@ JUnit: 973 discovered, 970 passed, 0 failures, 0 errors, 3 skipped. Protocol har
 The isolated GPU fixture compiled and launched but terminated during LWJGL initialization with exit code -532265403 before any of nine cases completed. No live-game or GPU visual PASS is claimed.
 
 Deterministic simulation: 270 runs, 30 seeds per profile/mastery. Middle mastery (0.5), stability 1.3, ordinary scheduled 65–85° turns: mean 64.26 seconds, range 51.50–75.15. Novice mean 39.37, expert 102.04. Smooth flight remained mounted at the 180-second observation cap in all 90 cases. These are synthetic input results, not a measured human-play average. Source and CSV are included; rain is harsher and remains live-feel QA.
+
+## Verified deployment
+
+Source code commit `b912fcf7f003e0533b0f624b4b4236c541ffb358` was confirmed on both public integration branches. Hosting artifacts: `C:/Chacademi/staging/aim-straight-20261013/release-final-followup-20261013`; backup: `C:/Chacademi/backups/final-followup-20261013`. School PID 3640 and wild PID 6456 reached `Done`; both loaded the new Bridge/Motion/VFX versions, 89 gameplay routes and 299 spells/96 visual bindings with zero skipped bindings. Velocity remained PID 7552. Installed six server JAR hashes match the release manifest; unrelated plugin hashes are unchanged.
+
+Personal UI/Motion/VFX replacement completed with matching hashes. Twelve unrelated files (including Story) and all 1,808 configuration files retained identical hashes, preserving the private chapter descriptions. No Minecraft process was forcibly closed. Backup receipt remains private in the local task workspace.
+
+Startup warnings are recorded and compared with the archived pre-deployment logs in [deployment evidence](FINAL_FOLLOWUP_DEPLOYMENT_20261013.json). Existing Mythic sample, database duplicate/migration and wild ItemsAdder generated-pack warnings are outside this patch; no unrelated DB/schema/resource-pack change was made. GPU/live game QA and the season epoch remain outstanding as listed above.
