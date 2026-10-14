@@ -9,15 +9,18 @@ import school.magiccodex.protocol.ElementProtocol.Reaction;
  * Nothing is scheduled: expiry is checked lazily on the next hit, and {@link #sweep} drops stale rows.
  *
  * Rules: a hit leaves its element for markTicks. A hit of another element while the mark is alive reacts once and
- * consumes the mark; the same target then cannot react again for cooldownTicks (a hit during the cooldown just
- * replaces the mark). The same element only refreshes the timer.
+ * consumes the mark. After a reaction the target is immune for cooldownTicks (owner: 3 s internal cooldown): hits
+ * during that time leave no mark at all and spreads skip it. The same element only refreshes the timer.
  */
 final class ReactionBook {
-    sealed interface Outcome permits Marked, Reacted {}
+    sealed interface Outcome permits Marked, Reacted, Immune {}
     /** Icon should show `element` for `ticks`. */
     record Marked(Element element, int ticks) implements Outcome {}
     /** Reaction fired; the mark is gone. `markCaster` is who left the first element (may equal the trigger). */
     record Reacted(Reaction reaction, UUID markCaster) implements Outcome {}
+
+    /** Target is in its post-reaction cooldown: nothing recorded, no icon. */
+    record Immune() implements Outcome {}
 
     private record Mark(Element element, long until, UUID caster) {}
 
@@ -36,8 +39,9 @@ final class ReactionBook {
 
     Outcome hit(UUID target, UUID caster, Element element, long now) {
         Objects.requireNonNull(target); Objects.requireNonNull(element);
+        if (coolingDown(target, now)) return new Immune();
         Mark old = marks.get(target);
-        if (old != null && old.until() > now && old.element() != element && !coolingDown(target, now)) {
+        if (old != null && old.until() > now && old.element() != element) {
             marks.remove(target);
             if (cooldownTicks > 0) cooldown.put(target, now + cooldownTicks);
             return new Reacted(Reaction.of(old.element(), element), old.caster());
@@ -51,6 +55,7 @@ final class ReactionBook {
      * so a spread never overwrites or consumes someone else's element. @return true when placed
      */
     boolean spread(UUID target, UUID caster, Element element, long now) {
+        if (coolingDown(target, now)) return false;
         Mark old = marks.get(target);
         if (old != null && old.until() > now) return false;
         marks.put(target, new Mark(element, now + markTicks, caster));

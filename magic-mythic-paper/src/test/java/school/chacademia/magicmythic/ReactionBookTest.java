@@ -38,14 +38,16 @@ class ReactionBookTest {
         assertEquals(Element.FIRE, book.element(mob, 100));
     }
 
-    @Test void cooldownBlocksImmediateSecondReaction() {
+    @Test void reactedTargetIsImmuneForCooldown() {
         var book = new ReactionBook(60, 60);
         book.hit(mob, a, Element.FIRE, 0);
         assertInstanceOf(ReactionBook.Reacted.class, book.hit(mob, a, Element.WATER, 10));
-        book.hit(mob, a, Element.LIGHT, 20);                       // during cooldown: just marks
-        assertInstanceOf(ReactionBook.Marked.class, book.hit(mob, a, Element.DARK, 30));
-        assertEquals(Element.DARK, book.element(mob, 31));
-        assertInstanceOf(ReactionBook.Reacted.class, book.hit(mob, a, Element.LIGHT, 71)); // cooldown over (10+60)
+        assertInstanceOf(ReactionBook.Immune.class, book.hit(mob, a, Element.LIGHT, 20)); // no mark during 3 s
+        assertNull(book.element(mob, 21));
+        assertFalse(book.spread(mob, b, Element.FIRE, 30));
+        assertInstanceOf(ReactionBook.Immune.class, book.hit(mob, a, Element.DARK, 69));
+        assertInstanceOf(ReactionBook.Marked.class, book.hit(mob, a, Element.LIGHT, 70));  // cooldown over (10+60)
+        assertInstanceOf(ReactionBook.Reacted.class, book.hit(mob, a, Element.DARK, 80));
     }
 
     @Test void spreadOnlyOnUnmarkedTargets() {

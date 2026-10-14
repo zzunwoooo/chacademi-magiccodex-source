@@ -22,7 +22,7 @@ limits:
 reactions:
   enabled: true
   mark-ticks: 60          # 표식 유지 시간 (20틱 = 1초)
-  cooldown-ticks: 60      # 같은 대상이 다시 반응할 수 있기까지
+  cooldown-ticks: 60      # 반응이 일어난 대상의 내부 쿨다운 (이 동안은 표식도 안 생김)
   damage-floor: 2         # 피해 반응(증기 폭발·연쇄 번개·일식) 기준값의 최소치
   damage-scale: 1.0       # 피해 반응 배율 (밸런스 조절용)
   icon-range: 48          # 이 거리 안의 플레이어에게만 아이콘 패킷 전송

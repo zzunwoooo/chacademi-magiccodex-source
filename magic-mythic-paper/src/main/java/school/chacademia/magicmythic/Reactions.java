@@ -64,6 +64,7 @@ final class Reactions implements Listener, AutoCloseable {
         if (element == null) return;
         long now = Bukkit.getCurrentTick();
         switch (book.hit(target.getUniqueId(), caster.getUniqueId(), element, now)) {
+            case ReactionBook.Immune ignored -> {}
             case ReactionBook.Marked m -> send(target, new ElementProtocol.Mark(target.getEntityId(), m.element(), m.ticks()));
             case ReactionBook.Reacted r -> {
                 send(target, new ElementProtocol.Clear(target.getEntityId()));
