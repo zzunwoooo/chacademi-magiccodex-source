@@ -145,4 +145,5 @@ VFX 묶음: 사용자 PC `Desktop\차카데미 vfx_Claude` 의 62개 zip(vfx.jso
   나머지 35팩은 값이 비어 있던 필드 표기만 정리(연출 변화 없음).
 - **남은 막힘 — 텍스처 메모리**: 클라이언트는 모든 팩을 1 GiB RGBA 예산에 상주시키며 기존 97팩이 약 926 MiB, 이번 62팩이 약 440 MiB.
   둘 다 켜면 예산 초과라 클라이언트 쪽 변경(지연 로딩 또는 상한 상향 — 상한 설정 최대값도 1024) 또는 텍스처 축소 결정이 필요. 그래서 바인딩은 여전히 `docs/pending` 초안.
+  → **해결 패치**: [CLAUDE_VFX_BC7_20261014.md](CLAUDE_VFX_BC7_20261014.md) — 클라이언트 BC7 압축으로 신규 62팩 430→119 MiB. 이 패치 배포 후 바인딩을 합칠 수 있다.
 - 툴킷/스킬: Anime VFX Toolkit 에 `tools/client_compat.py`(check/fix) + `tools/client_caps.json` 추가, make_bundle 끝에 자동 검사. anime-vfx-maker 스킬 갱신 제안.

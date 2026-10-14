@@ -8,8 +8,9 @@ Status (2026-10-14): the 62 bundles in the user's VFX folder were converted to t
 loader (271 systems). Still pending because:
   - a binding puts its effects into the catalogue "ready" set: the packs must reach every client (launcher) in the
     same release, or every catalogue spell is blocked;
-  - texture memory: the client keeps all packs resident in a 1 GiB RGBA budget; the first 97 packs use ~926 MiB and
-    these 62 add ~443 MiB -> client change (lazy loading / higher cap) or texture reduction is needed first.
+  - texture memory: the client keeps all packs resident in a 1 GiB budget; the first 97 packs use ~926 MiB RGBA and
+    these 62 add ~430 MiB -> solved by the client BC7 patch (docs/handoff/CLAUDE_VFX_BC7_20261014.md: 62 packs -> ~119 MiB),
+    which must be deployed first.
 
 Trigger guesses (the converter/GPT confirms each one against the bundle NOTES.md):
   first begin/main system -> cast | sustain -> cast after sequence.sustainStart | end -> expire

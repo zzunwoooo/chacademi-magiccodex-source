@@ -49,7 +49,7 @@ public final class ClaudePreloadGlTest {
                 }).get());
                 long prepare=System.nanoTime()-start;
                 for(var item:prepared){assets.add(backend.installPrepared(item));item.close();}prepared.clear();cache.close();
-                check(backend.diagnostics().retainedTextureBytes()==58_195_968L,"All sample data fits shared64MiB cap");
+                check(backend.diagnostics().retainedTextureBytes()==("off".equals(System.getProperty("portablevfx.claude.textureCompression"))?58_195_968L:16_318_464L),"All sample data fits shared64MiB cap (BC7 16.3 MB, RGBA 58.2 MB)");
                 check(backend.diagnostics().pendingTextures()==30&&backend.diagnostics().textureUploads()==0,"CPU install has no texture uploads");
                 // A loading screen has no retained world depth. Also exercise inherited hostile state.
                 glBindFramebuffer(GL_FRAMEBUFFER,0);glViewport(11,13,7,9);glActiveTexture(GL_TEXTURE7);

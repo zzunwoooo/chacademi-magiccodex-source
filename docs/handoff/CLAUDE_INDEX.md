@@ -79,6 +79,7 @@ Claude 는 GPT 작업 브랜치에 직접 커밋하지 않고, **`claude/` 로 �
 | `claude/aim-camera-20261013` | `codex/chat-discovery-magic-protection-20261011` @ `59f10f8` | `CLAUDE_AIM_CAMERA_20261013.md` | 어깨 시점(SSR 대체, F5 3인칭 뒤만), 마법 모드 에임 커서(시선 고정·Alt 꾹=시점 회전), 롤식 조준 시전(키→지형 맞춤 범위/사거리/대상 표시→좌클릭 발동·우클릭 취소). **클라이언트만, 서버·프로토콜 변경 없음**(발동 직전 시선 패킷). javac 타입검사·JUnit만, **빌드·실게임 전 — 문서 0장 먼저, SSR 런처에서 제거** | 받기 전 |
 | `claude/followup-fixes-20261013` | `126fcea` | `CLAUDE_FOLLOWUP_FIXES_20261013.md` | 수정 요청서 1~7: 채팅 중 알림·스킬HUD·좌상단 메뉴, 알림 소리, 커스텀 인벤토리 제거, 설정(50%·슬라이더·직접 입력·소리), 키세팅 원래 디자인+마우스(아래 6칸 제거, 창 높이 축소), 사거리 표시(단색·채움·블룸·직선 홀로그램·힌트 위치), 장비창, 비행 HUD(시안·기능), 교화 UI. **javac·JUnit만, 빌드·실게임 전 — 문서 0장 먼저, 비행 HUD 사용자 승인됨** | 받기 전 |
 | `claude/magic-71-gameplay-20261014` | `claude/followup-fixes-20261013` @ `41ee355` | `CLAUDE_MAGIC_71_20261014.md` | 미구현 마법 71종(이전 7 + 101~167 신규 64) 게임플레이: 애드온 새 메커닉 6종·패시브(슬롯 장착)·획득 조건(수동 9·자연 47)·VFX 바인딩 초안(미사용). 64종은 VFX 클라이언트 지원 전까지 시전 비활성 유지, `/마법미몹 시험` 으로 기능 확인. MagicCodex 코드는 제안만(Bridge 쿨타임 API 패치·클라이언트 슬롯 채널). **javac 타입검사만, JUnit·빌드·실게임 전 — 문서 0장 먼저** | 받기 전 |
+| `claude/magic-71-gameplay-20261014` | 같은 브랜치 이어서 | `CLAUDE_VFX_BC7_20261014.md` | PortableVFX 클라이언트 텍스처 BC7 압축(순수 Java 인코더, 디스크 캐시, 화질 38 dB 미만은 RGBA 유지). 신규 62팩 430→119 MiB, 예산 문제 해소. `-Dportablevfx.claude.textureCompression=off` 로 예전 경로. **스텁 javac + 일부 테스트만, Gradle·GL 스모크·실게임 전 — 문서 0장 먼저** | 받기 전 |
 
 ## Claude 가 지키는 규칙
 
