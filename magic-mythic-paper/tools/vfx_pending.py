@@ -3,11 +3,13 @@ Run: python3 tools/vfx_pending.py  (from magic-mythic-paper/)
 In:  portable-vfx-runtime/docs/pending/vfx-101-167-systems.json  (systems read from the delivered vfx.json bundles)
 Out: portable-vfx-runtime/docs/pending/spell-bindings-101-167.yml
 
-Why pending: the delivered bundles are vfx.json schema 1.13-1.21 and use features the current PortableVFX client
-does not load yet (top-level height/depth, staticFacing, heightScale, pointLight, salvoFlight ...). A binding
-makes its effects part of the catalogue "ready" set, so adding these before the client can load them would block
-every catalogue spell for every player. Merge each entry into spell-bindings.yml / spell-catalog.yml only after the
-client supports that bundle.
+Status (2026-10-14): the 62 bundles in the user's VFX folder were converted to the current PortableVFX client
+(Anime VFX Toolkit tools/client_compat.py fix; originals kept in <Name>/_original) and all load in the real client
+loader (271 systems). Still pending because:
+  - a binding puts its effects into the catalogue "ready" set: the packs must reach every client (launcher) in the
+    same release, or every catalogue spell is blocked;
+  - texture memory: the client keeps all packs resident in a 1 GiB RGBA budget; the first 97 packs use ~926 MiB and
+    these 62 add ~443 MiB -> client change (lazy loading / higher cap) or texture reduction is needed first.
 
 Trigger guesses (the converter/GPT confirms each one against the bundle NOTES.md):
   first begin/main system -> cast | sustain -> cast after sequence.sustainStart | end -> expire
@@ -75,7 +77,7 @@ def main():
         begin_ids = [s['id'] for s in sys_ if s['phase'] in ('begin', 'sustain')]
         rng = spec[sid][3] if sid in spec else 15
         lines += [f'  {sid}:', f'    folder: {folder}', f'    number: {v["number"]}', f'    schema: "{v["schema"]}"', f'    range: {rng}',
-                  f'    client-features-missing: {json.dumps([f for f in v["required"] if f in ("staticFacing","heightScale","depthScale","pointLight","salvoFlight","salvoCount","followSmoothed","travelRoll","headAttach")])}',
+                  f'    client-compatible: true', f'    texture-rgba-mib: {v.get("rgbaMiB")}',
                   '    phases:']
         first_done = False
         for s in sys_:

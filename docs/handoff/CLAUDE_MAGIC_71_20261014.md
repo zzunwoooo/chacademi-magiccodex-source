@@ -12,7 +12,7 @@ VFX 묶음: 사용자 PC `Desktop\차카데미 vfx_Claude` 의 62개 zip(vfx.jso
    신규 VFX 62개는 vfx.json **1.13~1.21** 이고 현재 PortableVFX 클라이언트가 못 읽는 항목을 쓴다(최상위 `height`/`depth`, `staticFacing`,
    `heightScale`, `depthScale`, `pointLight`, `salvoFlight`, `salvoCount`, `followSmoothed`, `travelRoll`, `headAttach`).
    이런 바인딩을 `spell-bindings.yml` 에 넣으면 그 이펙트가 "준비 완료" 필수 목록에 들어가 **모든 플레이어의 모든 카탈로그 마법이 막힌다.**
-   그래서 바인딩은 `portable-vfx-runtime/docs/pending/spell-bindings-101-167.yml` 초안으로만 두었다(코드가 읽지 않음).
+   그래서 바인딩은 `portable-vfx-runtime/docs/pending/spell-bindings-101-167.yml` 초안으로만 두었다(코드가 읽지 않음). → 8장: 묶음 자체는 호환판으로 고침, 텍스처 메모리 문제가 남음.
    마법별로 켜는 순서: 클라이언트가 그 묶음을 읽을 수 있게 됨 → 바인딩 병합 + `spell-catalog.yml` reviewed/enabled/phases → `mana-spells.yml` enabled:true.
 3. **VFX 없이 기능 시험:** `/마법미몹 시험 <마법ID>` (op) — 마나·쿨타임·권한·카탈로그 VFX 를 건너뛰고 그 마법의 CHA_ 스킬만 실행
    (`plugins/MagicCodexBridge/spell-runtime.yml` 라우트를 읽음). 패시브는 `/마법미몹 장착 <플레이어> <id...>`.
@@ -132,3 +132,17 @@ VFX 묶음: 사용자 PC `Desktop\차카데미 vfx_Claude` 의 62개 zip(vfx.jso
 - 영창 등록 실패 시 영구 잠김, 빙옥·기절 겹침 시 조기 해제, 위/아래를 볼 때 골렘·도약판 방향 NaN, 소환 동물 사망 메시지, 만료된 필사 대기 중 채팅 삼킴,
   플러그인 종료 시 임시 하트 수정자 잔존, 모루 획득 카운터 중복 집계를 고침.
 - 남김: 광맥 파쇄·마력 각인으로 캔 광석은 `BlockDropItemEvent` 가 없어 광석 재련(049) 대상이 아님. 원목 껍질 벗기기는 축이 다른 가지 원목도 포함.
+
+
+## 8. VFX 묶음 클라이언트 호환 변환 (2026-10-14 추가)
+
+- 사용자 요청으로 PC `차카데미 vfx_Claude` 의 62개 묶음을 **현재 PortableVFX 클라이언트가 읽는 형태로 고쳐 덮어씀**. 원본은 각 폴더 `_original\<Name>.zip`.
+  각 zip 의 NOTES.md 끝에 바뀐 점, preview.html 은 고친 vfx.json 을 재생.
+- 검증: `portable-vfx-runtime/client` 의 실제 `ClaudeConfigLoader.load` 를 컴파일해 62팩 전부 로드 성공(시스템 271개, 오류 0).
+- 바뀐 것(27팩): 최상위 height/depth 와 heightScale/depthScale(기준 크기로 고정), staticFacing 표기(서버가 static 기준 방향을 이미 시전자 수평 방향으로 보내므로 방향은 유지),
+  pointLight·followSmoothed·headAttach·travelRoll(동적 조명·스무딩 추적·머리 부착·구르기 없음 — NightSight 는 머리 예상 위치로 레이어 이동),
+  salvoFlight/salvoCount(발 수 고정, 속도·사거리는 서버 바인딩), scale objectSize/keepPosition/systems, 60초 넘는 유지 입자 수명 60초로, HDR 색 키 1로 제한 2곳.
+  나머지 35팩은 값이 비어 있던 필드 표기만 정리(연출 변화 없음).
+- **남은 막힘 — 텍스처 메모리**: 클라이언트는 모든 팩을 1 GiB RGBA 예산에 상주시키며 기존 97팩이 약 926 MiB, 이번 62팩이 약 440 MiB.
+  둘 다 켜면 예산 초과라 클라이언트 쪽 변경(지연 로딩 또는 상한 상향 — 상한 설정 최대값도 1024) 또는 텍스처 축소 결정이 필요. 그래서 바인딩은 여전히 `docs/pending` 초안.
+- 툴킷/스킬: Anime VFX Toolkit 에 `tools/client_compat.py`(check/fix) + `tools/client_caps.json` 추가, make_bundle 끝에 자동 검사. anime-vfx-maker 스킬 갱신 제안.

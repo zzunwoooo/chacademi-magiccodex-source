@@ -6,7 +6,8 @@ bindings:
     number: 101
     schema: "1.13.0"
     range: 7
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 15.1
     phases:
     - role: impact
       trigger: external:wave
@@ -27,7 +28,8 @@ bindings:
     number: 102
     schema: "1.14.0"
     range: 8
-    client-features-missing: ["heightScale", "staticFacing"]
+    client-compatible: true
+    texture-rgba-mib: 8.0
     phases:
     - role: static
       trigger: cast
@@ -61,7 +63,8 @@ bindings:
     number: 104
     schema: "1.13.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 7.4
     phases:
     - role: attached
       trigger: cast
@@ -106,7 +109,8 @@ bindings:
     number: 105
     schema: "1.13.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 28.3
     phases:
     - role: static
       trigger: cast
@@ -134,7 +138,8 @@ bindings:
     number: 106
     schema: "1.14.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 3.1
     phases:
     - role: attached
       trigger: cast
@@ -161,7 +166,8 @@ bindings:
     number: 107
     schema: "1.14.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 2.0
     phases:
     - role: attached
       trigger: cast
@@ -224,7 +230,8 @@ bindings:
     number: 108
     schema: "1.15.0"
     range: 12
-    client-features-missing: ["staticFacing"]
+    client-compatible: true
+    texture-rgba-mib: 1.2
     phases:
     - role: attached
       trigger: cast
@@ -251,7 +258,8 @@ bindings:
     number: 109
     schema: "1.14.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 5.1
     phases:
     - role: attached
       trigger: cast
@@ -285,7 +293,8 @@ bindings:
     number: 110
     schema: "1.15.0"
     range: 6
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 8.9
     phases:
     - role: impact
       trigger: external:mark
@@ -306,7 +315,8 @@ bindings:
     number: 111
     schema: "1.14.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 6.6
     phases:
     - role: attached
       trigger: cast
@@ -340,7 +350,8 @@ bindings:
     number: 112
     schema: "1.15.0"
     range: 6
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 40.3
     phases:
     - role: link
       trigger: cast
@@ -373,7 +384,8 @@ bindings:
     number: 113
     schema: "1.15.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 12.8
     phases:
     - role: attached
       trigger: cast
@@ -407,7 +419,8 @@ bindings:
     number: 114
     schema: "1.15.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 4.4
     phases:
     - role: static
       trigger: cast
@@ -434,7 +447,8 @@ bindings:
     number: 115
     schema: "1.15.0"
     range: 8
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 4.9
     phases:
     - role: static
       trigger: cast
@@ -449,7 +463,8 @@ bindings:
     number: 116
     schema: "1.16.0"
     range: 15
-    client-features-missing: ["salvoCount", "salvoFlight"]
+    client-compatible: true
+    texture-rgba-mib: 0.8
     phases:
     - role: attached
       trigger: cast
@@ -512,7 +527,8 @@ bindings:
     number: 117
     schema: "1.15.0"
     range: 6
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 6.1
     phases:
     - role: impact
       trigger: external:peel
@@ -527,7 +543,8 @@ bindings:
     number: 118
     schema: "1.15.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 2.2
     phases:
     - role: attached
       trigger: cast
@@ -542,7 +559,8 @@ bindings:
     number: 119
     schema: "1.16.0"
     range: 15
-    client-features-missing: ["salvoCount", "salvoFlight"]
+    client-compatible: true
+    texture-rgba-mib: 2.6
     phases:
     - role: attached
       trigger: cast
@@ -611,7 +629,8 @@ bindings:
     number: 120
     schema: "1.16.0"
     range: 10
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 2.2
     phases:
     - role: attached
       trigger: cast
@@ -644,7 +663,8 @@ bindings:
     number: 121
     schema: "1.16.0"
     range: 15
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 2.8
     phases:
     - role: attached
       trigger: cast
@@ -659,7 +679,8 @@ bindings:
     number: 122
     schema: "1.16.0"
     range: 12
-    client-features-missing: ["staticFacing"]
+    client-compatible: true
+    texture-rgba-mib: 0.9
     phases:
     - role: static
       trigger: cast
@@ -680,7 +701,8 @@ bindings:
     number: 123
     schema: "1.16.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 17.6
     phases:
     - role: attached
       trigger: cast
@@ -719,7 +741,8 @@ bindings:
     number: 124
     schema: "1.16.0"
     range: 15
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 10.8
     phases:
     - role: static
       trigger: cast
@@ -747,7 +770,8 @@ bindings:
     number: 125
     schema: "1.16.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 1.7
     phases:
     - role: link
       trigger: cast
@@ -768,7 +792,8 @@ bindings:
     number: 126
     schema: "1.16.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 13.7
     phases:
     - role: attached
       trigger: cast
@@ -796,7 +821,8 @@ bindings:
     number: 127
     schema: "1.16.0"
     range: 10
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 13.8
     phases:
     - role: static
       trigger: cast
@@ -809,7 +835,7 @@ bindings:
       effect: claude:springground/padrest
       anchor: impact
       delay-ticks: 0
-      duration-ticks: 2618
+      duration-ticks: 1218
     - role: static
       trigger: cast
       effect: claude:springground/idle
@@ -828,13 +854,13 @@ bindings:
       effect: claude:springground/press
       anchor: impact
       delay-ticks: 0
-      duration-ticks: 2604
+      duration-ticks: 1204
     - role: impact
       trigger: external:bounce
       effect: claude:springground/bounce
       anchor: impact
       delay-ticks: 0
-      duration-ticks: 2614
+      duration-ticks: 1214
     - role: impact
       trigger: external:launch
       effect: claude:springground/launch
@@ -848,7 +874,8 @@ bindings:
     number: 128
     schema: "1.17.0"
     range: 16
-    client-features-missing: ["travelRoll"]
+    client-compatible: true
+    texture-rgba-mib: 8.3
     phases:
     - role: projectile
       trigger: cast
@@ -887,7 +914,8 @@ bindings:
     number: 129
     schema: "1.16.0"
     range: 12
-    client-features-missing: ["staticFacing"]
+    client-compatible: true
+    texture-rgba-mib: 0.5
     phases:
     - role: static
       trigger: cast
@@ -908,7 +936,8 @@ bindings:
     number: 130
     schema: "1.16.0"
     range: 12
-    client-features-missing: ["staticFacing"]
+    client-compatible: true
+    texture-rgba-mib: 14.8
     phases:
     - role: static
       trigger: cast
@@ -942,7 +971,8 @@ bindings:
     number: 131
     schema: "1.18.0"
     range: 22
-    client-features-missing: ["salvoFlight"]
+    client-compatible: true
+    texture-rgba-mib: 4.7
     phases:
     - role: attached
       trigger: cast
@@ -993,7 +1023,8 @@ bindings:
     number: 132
     schema: "1.20.0"
     range: 12
-    client-features-missing: ["staticFacing"]
+    client-compatible: true
+    texture-rgba-mib: 1.5
     phases:
     - role: static
       trigger: cast
@@ -1027,7 +1058,8 @@ bindings:
     number: 133
     schema: "1.16.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 1.5
     phases:
     - role: attached
       trigger: cast
@@ -1054,7 +1086,8 @@ bindings:
     number: 136
     schema: "1.17.0"
     range: 15
-    client-features-missing: ["heightScale", "staticFacing"]
+    client-compatible: true
+    texture-rgba-mib: 6.1
     phases:
     - role: link
       trigger: cast
@@ -1093,7 +1126,8 @@ bindings:
     number: 137
     schema: "1.17.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 1.2
     phases:
     - role: attached
       trigger: cast
@@ -1165,7 +1199,8 @@ bindings:
     number: 138
     schema: "1.18.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 10.4
     phases:
     - role: attached
       trigger: cast
@@ -1222,7 +1257,8 @@ bindings:
     number: 139
     schema: "1.18.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 2.1
     phases:
     - role: attached
       trigger: cast
@@ -1255,7 +1291,8 @@ bindings:
     number: 140
     schema: "1.18.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 51.4
     phases:
     - role: attached
       trigger: cast
@@ -1295,7 +1332,8 @@ bindings:
     number: 141
     schema: "1.18.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 6.3
     phases:
     - role: attached
       trigger: cast
@@ -1340,7 +1378,8 @@ bindings:
     number: 142
     schema: "1.18.0"
     range: 15
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 1.5
     phases:
     - role: attached
       trigger: cast
@@ -1379,7 +1418,8 @@ bindings:
     number: 143
     schema: "1.18.0"
     range: 12
-    client-features-missing: ["staticFacing"]
+    client-compatible: true
+    texture-rgba-mib: 11.3
     phases:
     - role: attached
       trigger: cast
@@ -1412,7 +1452,8 @@ bindings:
     number: 144
     schema: "1.18.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 2.2
     phases:
     - role: link
       trigger: cast
@@ -1445,7 +1486,8 @@ bindings:
     number: 145
     schema: "1.18.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 10.6
     phases:
     - role: attached
       trigger: cast
@@ -1478,7 +1520,8 @@ bindings:
     number: 146
     schema: "1.18.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 5.6
     phases:
     - role: attached
       trigger: cast
@@ -1512,7 +1555,8 @@ bindings:
     number: 147
     schema: "1.18.0"
     range: 30
-    client-features-missing: ["heightScale"]
+    client-compatible: true
+    texture-rgba-mib: 18.5
     phases:
     - role: static
       trigger: cast
@@ -1599,7 +1643,8 @@ bindings:
     number: 148
     schema: "1.19.0"
     range: 12
-    client-features-missing: ["followSmoothed", "pointLight"]
+    client-compatible: true
+    texture-rgba-mib: 1.0
     phases:
     - role: attached
       trigger: cast
@@ -1627,7 +1672,8 @@ bindings:
     number: 150
     schema: "1.18.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 5.2
     phases:
     - role: attached
       trigger: cast
@@ -1660,7 +1706,8 @@ bindings:
     number: 151
     schema: "1.18.0"
     range: 12
-    client-features-missing: ["staticFacing"]
+    client-compatible: true
+    texture-rgba-mib: 1.3
     phases:
     - role: attached
       trigger: cast
@@ -1693,7 +1740,8 @@ bindings:
     number: 152
     schema: "1.18.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 9.4
     phases:
     - role: attached
       trigger: cast
@@ -1733,7 +1781,8 @@ bindings:
     number: 153
     schema: "1.19.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 0.8
     phases:
     - role: attached
       trigger: cast
@@ -1766,7 +1815,8 @@ bindings:
     number: 154
     schema: "1.19.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 6.4
     phases:
     - role: attached
       trigger: cast
@@ -1817,7 +1867,8 @@ bindings:
     number: 155
     schema: "1.20.0"
     range: 48
-    client-features-missing: ["depthScale", "heightScale"]
+    client-compatible: true
+    texture-rgba-mib: 0.8
     phases:
     - role: static
       trigger: cast
@@ -1845,7 +1896,8 @@ bindings:
     number: 156
     schema: "1.19.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 3.3
     phases:
     - role: attached
       trigger: cast
@@ -1872,7 +1924,8 @@ bindings:
     number: 157
     schema: "1.19.0"
     range: 12
-    client-features-missing: ["pointLight"]
+    client-compatible: true
+    texture-rgba-mib: 4.1
     phases:
     - role: static
       trigger: cast
@@ -1919,7 +1972,8 @@ bindings:
     number: 158
     schema: "1.19.0"
     range: 25
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 10.4
     phases:
     - role: attached
       trigger: cast
@@ -1964,7 +2018,8 @@ bindings:
     number: 159
     schema: "1.20.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 5.9
     phases:
     - role: attached
       trigger: cast
@@ -1983,7 +2038,7 @@ bindings:
       effect: claude:manadeposit/complete
       anchor: caster
       delay-ticks: 0
-      duration-ticks: 6012
+      duration-ticks: 1212
     - role: attached
       trigger: external:finish
       effect: claude:manadeposit/finish
@@ -1997,7 +2052,8 @@ bindings:
     number: 160
     schema: "1.20.0"
     range: 10
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 1.4
     phases:
     - role: link
       trigger: cast
@@ -2031,7 +2087,8 @@ bindings:
     number: 161
     schema: "1.20.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 3.6
     phases:
     - role: attached
       trigger: cast
@@ -2064,7 +2121,8 @@ bindings:
     number: 163
     schema: "1.20.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 10.1
     phases:
     - role: attached
       trigger: cast
@@ -2109,7 +2167,8 @@ bindings:
     number: 164
     schema: "1.20.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 3.5
     phases:
     - role: attached
       trigger: cast
@@ -2148,7 +2207,8 @@ bindings:
     number: 165
     schema: "1.21.0"
     range: 12
-    client-features-missing: ["headAttach"]
+    client-compatible: true
+    texture-rgba-mib: 4.4
     phases:
     - role: attached
       trigger: cast
@@ -2163,7 +2223,8 @@ bindings:
     number: 166
     schema: "1.20.0"
     range: 10
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 1.9
     phases:
     - role: attached
       trigger: cast
@@ -2191,7 +2252,8 @@ bindings:
     number: 167
     schema: "1.20.0"
     range: 12
-    client-features-missing: []
+    client-compatible: true
+    texture-rgba-mib: 18.0
     phases:
     - role: attached
       trigger: cast
