@@ -64,7 +64,7 @@ final class ZoneMech extends Mech {
                 if (wall > 0 && !Geometry.inWall(center.toVector(), facing, t.getLocation().toVector(), wall, Math.max(1, r), 3)) continue;
                 if (wall <= 0 && Targets.closestDistance(t, center) > r) continue;
                 if(!targets.hurt(c.caster(), t, dmg))continue;
-                plugin.reactions().hit(c.caster(), t, p.s("element", ""));
+                plugin.reactions().hit(c.caster(), t, p.s("element", ""), dmg);
                 targets.effects(t, p.effects("effect"));
                 if (ignite > 0) t.setFireTicks(Math.max(t.getFireTicks(), ignite));
                 if (suck > 0) {
@@ -83,7 +83,7 @@ final class ZoneMech extends Mech {
             double dmg = c.damage() * p.d("trapmult", p.d("mult", 1)) + p.d("flat", 0);
             for (LivingEntity t : targets.enemiesNear(c.caster(), center, p.d("trapr", 3), p.i("max", 16))) {
                 if(!targets.hurt(c.caster(), t, dmg))continue;
-                plugin.reactions().hit(c.caster(), t, p.s("element", ""));
+                plugin.reactions().hit(c.caster(), t, p.s("element", ""), dmg);
                 targets.effects(t, p.effects("effect"));
                 int ignite = p.i("ignite", 0);
                 if (ignite > 0) t.setFireTicks(Math.max(t.getFireTicks(), ignite));

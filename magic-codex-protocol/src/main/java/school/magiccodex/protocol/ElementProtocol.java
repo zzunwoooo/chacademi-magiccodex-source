@@ -33,19 +33,19 @@ public final class ElementProtocol {
     /** One per unordered element pair. Order is part of the wire format. */
     public enum Reaction {
         STEAM(Element.FIRE, Element.WATER, "증기 폭발"),
-        WILDFIRE(Element.FIRE, Element.WIND, "불꽃 회오리"),
-        MAGMA(Element.FIRE, Element.EARTH, "용암화"),
+        WILDFIRE(Element.FIRE, Element.WIND, "불씨 확산"),
+        MAGMA(Element.FIRE, Element.EARTH, "용암 분출"),
         FLARE(Element.FIRE, Element.LIGHT, "태양 플레어"),
         EMBER_CURSE(Element.FIRE, Element.DARK, "잿불 낙인"),
-        SHOCK(Element.WATER, Element.WIND, "감전"),
+        SHOCK(Element.WATER, Element.WIND, "연쇄 번개"),
         MUD(Element.WATER, Element.EARTH, "진흙"),
         RAINBOW(Element.WATER, Element.LIGHT, "무지개"),
         ABYSS(Element.WATER, Element.DARK, "심연"),
-        SANDSTORM(Element.WIND, Element.EARTH, "모래바람"),
+        SANDSTORM(Element.WIND, Element.EARTH, "모래 회오리"),
         FLASH(Element.WIND, Element.LIGHT, "섬광"),
-        VOID_GUST(Element.WIND, Element.DARK, "공허 돌풍"),
-        CRYSTAL(Element.EARTH, Element.LIGHT, "수정 방패"),
-        BIND(Element.EARTH, Element.DARK, "발 묶기"),
+        VOID_GUST(Element.WIND, Element.DARK, "공허 균열"),
+        CRYSTAL(Element.EARTH, Element.LIGHT, "수정화"),
+        BIND(Element.EARTH, Element.DARK, "매장"),
         ECLIPSE(Element.LIGHT, Element.DARK, "일식");
         public final Element a, b;
         public final String label;

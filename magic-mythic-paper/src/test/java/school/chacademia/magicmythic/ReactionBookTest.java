@@ -48,6 +48,16 @@ class ReactionBookTest {
         assertInstanceOf(ReactionBook.Reacted.class, book.hit(mob, a, Element.LIGHT, 71)); // cooldown over (10+60)
     }
 
+    @Test void spreadOnlyOnUnmarkedTargets() {
+        var book = new ReactionBook(60, 60);
+        UUID other = UUID.randomUUID();
+        book.hit(other, b, Element.WATER, 0);
+        assertFalse(book.spread(other, a, Element.FIRE, 10));     // keeps the existing water mark
+        assertEquals(Element.WATER, book.element(other, 11));
+        assertTrue(book.spread(mob, a, Element.FIRE, 10));
+        assertEquals(new ReactionBook.Reacted(Reaction.STEAM, a), book.hit(mob, b, Element.WATER, 20)); // spread mark reacts later
+    }
+
     @Test void sweepDropsStale() {
         var book = new ReactionBook(60, 60);
         book.hit(mob, a, Element.FIRE, 0);

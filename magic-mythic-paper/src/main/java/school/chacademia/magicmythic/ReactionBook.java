@@ -46,6 +46,17 @@ final class ReactionBook {
         return new Marked(element, markTicks);
     }
 
+    /**
+     * Spread reactions (불씨 확산): put a mark on a neighbour without reacting. Only on targets with no live mark,
+     * so a spread never overwrites or consumes someone else's element. @return true when placed
+     */
+    boolean spread(UUID target, UUID caster, Element element, long now) {
+        Mark old = marks.get(target);
+        if (old != null && old.until() > now) return false;
+        marks.put(target, new Mark(element, now + markTicks, caster));
+        return true;
+    }
+
     boolean coolingDown(UUID target, long now) {
         Long until = cooldown.get(target);
         return until != null && until > now;
