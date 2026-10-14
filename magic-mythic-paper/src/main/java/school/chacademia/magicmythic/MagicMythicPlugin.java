@@ -28,6 +28,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
     private Guards guards;
     private Marks marks;
     private WorldMech.State worldState;
+    private Reactions reactions;
 
     @Override public void onEnable() {
         if(!protectionReady){getServer().getPluginManager().disablePlugin(this);return;}
@@ -40,16 +41,19 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
         guards = new Guards(this);
         marks = new Marks(this);
         worldState = new WorldMech.State(this);
+        reactions = new Reactions(this);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(guards, this);
         getServer().getPluginManager().registerEvents(marks, this);
         getServer().getPluginManager().registerEvents(tempBlocks, this);
+        getServer().getPluginManager().registerEvents(reactions, this);
         var command = getCommand("마법미몹");
         if (command != null) command.setExecutor(this);
         getLogger().info("마법 미몹 메커닉 준비 완료 (MythicMobs 다시 불러오기 시 등록됩니다)");
     }
 
     @Override public void onDisable() {
+        if (reactions != null) reactions.close();
         if (marks != null) marks.releaseAll();
         if (worldState != null) worldState.closeAll();
         if (ticker != null) ticker.close();
@@ -83,13 +87,13 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
         if (!sender.hasPermission("chacademia.magicmythic.admin")) return false;
         String sub = args.length == 0 ? "" : args[0];
         if (Set.of("새로고침", "reload").contains(sub)) {
-            reloadConfig(); targets.reload();
+            reloadConfig(); targets.reload(); reactions.reload();
             sender.sendMessage("마법 미몹 설정을 다시 불러왔습니다. 스킬 YAML을 고쳤다면 /mm reload 도 실행하세요.");
             return true;
         }
         if (Set.of("상태", "status").contains(sub)) {
             sender.sendMessage("진행 중: " + ticker.summary() + ", 보호막 " + guards.count() + ", 표식 " + marks.count()
-                + ", 임시 블록 " + tempBlocks.count());
+                + ", 임시 블록 " + tempBlocks.count() + ", " + reactions.summary());
             return true;
         }
         sender.sendMessage("/마법미몹 <새로고침|상태>");
@@ -102,5 +106,6 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
     Guards guards() { return guards; }
     Marks marks() { return marks; }
     WorldMech.State worldState() { return worldState; }
+    Reactions reactions() { return reactions; }
     boolean debug() { return getConfig().getBoolean("debug", false); }
 }

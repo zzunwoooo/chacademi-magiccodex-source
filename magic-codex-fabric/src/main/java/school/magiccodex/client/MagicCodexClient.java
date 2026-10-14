@@ -54,6 +54,7 @@ public final class MagicCodexClient implements ClientModInitializer {
         ShinyClient.initialize();
         CastingClient.initialize();
         AimClient.initialize();
+        ElementMarkClient.initialize();
         PlayerHudClient.initialize();
         HudChatClicks.initialize();
         PartyHudClient.initialize();

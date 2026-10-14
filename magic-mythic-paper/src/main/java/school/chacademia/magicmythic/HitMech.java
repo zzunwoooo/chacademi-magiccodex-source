@@ -67,6 +67,7 @@ final class HitMech extends Mech {
             }
         }
         if(!targets.hurt(c.caster(), t, dmg))return;
+        plugin.reactions().hit(c.caster(), t, p.s("element", ""));
         targets.effects(t, p.effects("effect"));
         int ignite = p.i("ignite", 0);
         if (ignite > 0) t.setFireTicks(Math.max(t.getFireTicks(), ignite));

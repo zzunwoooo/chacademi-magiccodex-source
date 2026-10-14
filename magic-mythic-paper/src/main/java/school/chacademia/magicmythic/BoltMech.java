@@ -114,6 +114,7 @@ final class BoltMech extends Mech {
             hitCount++;
             var targets = plugin.targets();
             if(!targets.hurt(c.caster(), t, dmg))return;
+            plugin.reactions().hit(c.caster(), t, p.s("element", ""));
             targets.effects(t, p.effects("effect"));
             int ignite = p.i("ignite", 0);
             if (ignite > 0) t.setFireTicks(Math.max(t.getFireTicks(), ignite));
@@ -132,6 +133,7 @@ final class BoltMech extends Mech {
             double dmg = c.damage() * p.d("aoemult", 1);
             for (LivingEntity t : plugin.targets().enemiesNear(c.caster(), pos, aoe, p.i("max", 16))) {
                 if(!plugin.targets().hurt(c.caster(), t, dmg))continue;
+                plugin.reactions().hit(c.caster(), t, p.s("element", ""));
                 plugin.targets().effects(t, p.effects("effect"));
                 plugin.targets().knock(t, pos, dir, p.d("aoeknock", 0), p.d("aoeup", 0));
             }

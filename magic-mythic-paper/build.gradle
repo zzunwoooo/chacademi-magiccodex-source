@@ -1,6 +1,6 @@
 plugins { id 'java' }
 group = 'school.chacademia'
-version = '0.1.2-recovery.1-gimmick.1-targets.1-broom.2'
+version = '0.1.2-recovery.1-gimmick.1-targets.1-broom.2-reaction.1'
 base { archivesName = 'chacademia-magic-mythic' }
 repositories {
     if (findProperty('localDependencyRepo')) maven { url = uri(property('localDependencyRepo')) }
@@ -21,6 +21,8 @@ dependencies {
 java { toolchain.languageVersion = JavaLanguageVersion.of(21) }
 tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8'; options.release = 21 }
 test { useJUnitPlatform() }
+// Element reaction wire format is shared with the MagicCodex client; only that one protocol class is compiled in.
+sourceSets.main.java { srcDir '../magic-codex-protocol/src/main/java'; include 'school/chacademia/**', 'school/magiccodex/protocol/ElementProtocol.java' }
 processResources {
     filteringCharset = 'UTF-8'
     inputs.property 'version', project.version
