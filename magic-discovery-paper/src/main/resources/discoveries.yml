@@ -778,3 +778,484 @@ spells:
       "cast.updraft_summer_ocean": 1
     chance: 1.0
     prerequisites: []
+
+# 2026-10-14 101~167 자연 조건 (서버 검증 행동만). 카운터 위치: magic-discovery-paper ExpansionConditions,
+# kill.spell.* / kill.light_undead / cleanse.* / heal.magic* / mana.exactly_zero / cast.six_elements 는 ChAcademiaMagicMythic,
+# friend.made 는 MagicCodexBridge 제안 패치(BRIDGE_SPELL_COOLDOWN_API_20261014.patch)가 보냅니다. lesson.*.applied 는 관리자 이벤트 명령(낮은 확률 0.1).
+  earth_shaping:
+    name: "대지 성형"
+    permission: "magic.learned.earth_shaping"
+    icon: "magiccodex:textures/spells/intermediate/earth_shaping.png"
+    category: "earth"
+    condition-text: "흙, 잔디, 거친 흙 등 흙 계열 블록을 누적 100개 설치합니다."
+    requirements:
+      "place.dirt_family": 100
+    chance: 1.0
+    prerequisites: []
+  vine_ladder:
+    name: "덩굴 사다리"
+    permission: "magic.learned.vine_ladder"
+    icon: "magiccodex:textures/spells/intermediate/vine_ladder.png"
+    category: "earth"
+    condition-text: "덩굴을 타고 누적 50블록 이동합니다."
+    requirements:
+      "climb.vine": 50
+    chance: 1.0
+    prerequisites: []
+  climate_control:
+    name: "기후 통제"
+    permission: "magic.learned.climate_control"
+    icon: "magiccodex:textures/spells/advanced/climate_control.png"
+    category: "earth"
+    condition-text: "봄, 여름, 가을, 겨울을 모두 경험합니다."
+    requirements:
+      "season.spring": 1
+      "season.summer": 1
+      "season.autumn": 1
+      "season.winter": 1
+    chance: 1.0
+    prerequisites: []
+  seed_row:
+    name: "씨앗 줄심기"
+    permission: "magic.learned.seed_row"
+    icon: "magiccodex:textures/spells/expansion/seed_row.png"
+    category: "earth"
+    condition-text: "씨앗을 누적 50회 심습니다."
+    requirements:
+      "plant.seeds": 50
+    chance: 1.0
+    prerequisites: []
+  bee_calm:
+    name: "벌떼 달래기"
+    permission: "magic.learned.bee_calm"
+    icon: "magiccodex:textures/spells/expansion/bee_calm.png"
+    category: "earth"
+    condition-text: "꽃을 든 상태에서 벌을 5회 번식시킵니다."
+    requirements:
+      "breed.bee": 5
+    chance: 1.0
+    prerequisites: []
+  thorn_armor:
+    name: "가시 갑옷"
+    permission: "magic.learned.thorn_armor"
+    icon: "magiccodex:textures/spells/expansion/thorn_armor.png"
+    category: "earth"
+    condition-text: "달콤한 열매 덤불에 누적 10회 찔립니다."
+    requirements:
+      "hurt.sweet_berry_bush": 10
+    chance: 1.0
+    prerequisites: []
+  vein_fracture:
+    name: "광맥 파쇄"
+    permission: "magic.learned.vein_fracture"
+    icon: "magiccodex:textures/spells/expansion/vein_fracture.png"
+    category: "earth"
+    condition-text: "다이아몬드 광석을 누적 20개 직접 채굴합니다."
+    requirements:
+      "mine.diamond_ore": 20
+    chance: 1.0
+    prerequisites: []
+  earth_anchor:
+    name: "대지의 닻"
+    permission: "magic.learned.earth_anchor"
+    icon: "magiccodex:textures/spells/expansion/earth_anchor.png"
+    category: "earth"
+    condition-text: "방패로 몬스터의 공격 누적 30회 막기."
+    requirements:
+      "shield.block_monster": 30
+    chance: 1.0
+    prerequisites: []
+  weathering_touch:
+    name: "풍화의 손길"
+    permission: "magic.learned.weathering_touch"
+    icon: "magiccodex:textures/spells/expansion/weathering_touch.png"
+    category: "earth"
+    condition-text: "석재 벽돌을 누적 30개 설치합니다."
+    requirements:
+      "place.stone_bricks": 30
+    chance: 1.0
+    prerequisites: []
+  iron_carapace:
+    name: "철의 외피"
+    permission: "magic.learned.iron_carapace"
+    icon: "magiccodex:textures/spells/expansion/iron_carapace.png"
+    category: "earth"
+    condition-text: "철 갑옷을 입은 상태에서 몬스터에게 누적 100의 피해를 받습니다."
+    requirements:
+      "damage.monster_iron_armor": 100
+    chance: 1.0
+    prerequisites: []
+  grass_sprouting:
+    name: "잔디 돋우기"
+    permission: "magic.learned.grass_sprouting"
+    icon: "magiccodex:textures/spells/expansion_2/grass_sprouting.png"
+    category: "earth"
+    condition-text: "꽃을 누적 10개 심습니다."
+    requirements:
+      "plant.flower": 10
+    chance: 1.0
+    prerequisites: []
+  bark_peeling:
+    name: "껍질 벗기기"
+    permission: "magic.learned.bark_peeling"
+    icon: "magiccodex:textures/spells/expansion_2/bark_peeling.png"
+    category: "earth"
+    condition-text: "도끼로 원목 껍질을 누적 32회 벗깁니다."
+    requirements:
+      "strip.log": 32
+    chance: 1.0
+    prerequisites: []
+  thorn_seeds:
+    name: "가시 씨앗"
+    permission: "magic.learned.thorn_seeds"
+    icon: "magiccodex:textures/spells/expansion_2/thorn_seeds.png"
+    category: "earth"
+    condition-text: "선인장을 누적 100개 수확합니다."
+    requirements:
+      "harvest.cactus": 100
+    chance: 1.0
+    prerequisites: []
+  pollen_matchmaking:
+    name: "꽃가루 중매"
+    permission: "magic.learned.pollen_matchmaking"
+    icon: "magiccodex:textures/spells/expansion_2/pollen_matchmaking.png"
+    category: "earth"
+    condition-text: "소, 양, 돼지를 각각 3회 번식시킵니다."
+    requirements:
+      "breed.cow": 3
+      "breed.sheep": 3
+      "breed.pig": 3
+    chance: 1.0
+    prerequisites: []
+  automatic_supply:
+    name: "자동 보급"
+    permission: "magic.learned.automatic_supply"
+    icon: "magiccodex:textures/spells/expansion_2/automatic_supply.png"
+    category: "earth"
+    condition-text: "같은 종류의 건축 블록을 누적 100개 설치합니다."
+    requirements:
+      "place.same_block": 100
+    chance: 1.0
+    prerequisites: []
+  counterweight:
+    name: "반격의 무게추"
+    permission: "magic.learned.counterweight"
+    icon: "magiccodex:textures/spells/expansion_2/counterweight.png"
+    category: "earth"
+    condition-text: "방패로 공격을 막은 뒤 같은 적에게 반격하는 행동을 10회 수행합니다."
+    requirements:
+      "shield.counter": 10
+    chance: 1.0
+    prerequisites: []
+  remembering_field:
+    name: "기억하는 밭"
+    permission: "magic.learned.remembering_field"
+    icon: "magiccodex:textures/spells/expansion_2/remembering_field.png"
+    category: "earth"
+    condition-text: "작물을 누적 300개 수확합니다."
+    requirements:
+      "harvest.crops": 300
+    chance: 1.0
+    prerequisites: []
+  little_giant:
+    name: "작은 거인"
+    permission: "magic.learned.little_giant"
+    icon: "magiccodex:textures/spells/expansion_2/little_giant.png"
+    category: "earth"
+    condition-text: "철 블록 4개와 조각된 호박으로 철 골렘을 직접 만듭니다."
+    requirements:
+      "build.iron_golem": 1
+    chance: 1.0
+    prerequisites: []
+  spring_ground:
+    name: "용수철 지반"
+    permission: "magic.learned.spring_ground"
+    icon: "magiccodex:textures/spells/expansion_2/spring_ground.png"
+    category: "earth"
+    condition-text: "슬라임 블록 위에서 연속 3회 반동합니다. 매번 슬라임 블록 윗면에서 도약 정점까지 높이 5블록 이상을 충족해야 합니다."
+    requirements:
+      "slime.bounce_chain": 1
+    chance: 1.0
+    prerequisites: []
+  mountain_back:
+    name: "산맥의 등"
+    permission: "magic.learned.mountain_back"
+    icon: "magiccodex:textures/spells/expansion_2/mountain_back.png"
+    category: "earth"
+    condition-text: "조약돌 던지기(pebble_toss)로 몬스터를 누적 30마리 처치합니다."
+    requirements:
+      "kill.spell.pebble_toss": 30
+    chance: 1.0
+    prerequisites: []
+  earth_embrace:
+    name: "대지의 품"
+    permission: "magic.learned.earth_embrace"
+    icon: "magiccodex:textures/spells/expansion_2/earth_embrace.png"
+    category: "earth"
+    condition-text: "작물을 누적 100회 수확합니다."
+    requirements:
+      "harvest.crops": 100
+    chance: 1.0
+    prerequisites: []
+  primordial_stone:
+    name: "원초의 돌"
+    permission: "magic.learned.primordial_stone"
+    icon: "magiccodex:textures/spells/expansion_2/primordial_stone.png"
+    category: "earth"
+    condition-text: "대지 마법 응용 수업에서 낮은 확률로 습득합니다."
+    requirements:
+      "lesson.earth.applied": 1
+    chance: 0.1
+    prerequisites: []
+  guiding_star:
+    name: "길잡이 별"
+    permission: "magic.learned.guiding_star"
+    icon: "magiccodex:textures/spells/novice/guiding_star.png"
+    category: "light"
+    condition-text: "나침반을 들고 누적 1,000블록 걷습니다."
+    requirements:
+      "walk.compass": 1000
+    chance: 1.0
+    prerequisites: []
+  light_mark:
+    name: "빛의 낙인"
+    permission: "magic.learned.light_mark"
+    icon: "magiccodex:textures/spells/novice_extra/light_mark.png"
+    category: "light"
+    condition-text: "분광 화살을 몬스터에게 5번 명중하기."
+    requirements:
+      "hit.spectral_monster": 5
+    chance: 1.0
+    prerequisites: []
+  true_sight:
+    name: "진실의 눈"
+    permission: "magic.learned.true_sight"
+    icon: "magiccodex:textures/spells/intermediate/true_sight.png"
+    category: "light"
+    condition-text: "투명화 상태의 몬스터를 5마리 처치합니다."
+    requirements:
+      "kill.invisible_monster": 5
+    chance: 1.0
+    prerequisites: []
+  arcane_imprint:
+    name: "마력 각인"
+    permission: "magic.learned.arcane_imprint"
+    icon: "magiccodex:textures/spells/advanced/arcane_imprint.png"
+    category: "light"
+    condition-text: "모루로 도구에 이름을 누적 10회 붙입니다."
+    requirements:
+      "anvil.rename_tool": 10
+    chance: 1.0
+    prerequisites: []
+  dawn_ritual:
+    name: "여명의 의식"
+    permission: "magic.learned.dawn_ritual"
+    icon: "magiccodex:textures/spells/advanced/dawn_ritual.png"
+    category: "light"
+    condition-text: "독, 나약함, 구속을 정화의 물결로 각각 1회 정화합니다."
+    requirements:
+      "cleanse.poison": 1
+      "cleanse.weakness": 1
+      "cleanse.slowness": 1
+    chance: 1.0
+    prerequisites: []
+  comforting_light:
+    name: "위로의 빛"
+    permission: "magic.learned.comforting_light"
+    icon: "magiccodex:textures/spells/expansion/comforting_light.png"
+    category: "light"
+    condition-text: "다른 플레이어에게 투척용 치유 물약을 10번 맞히기."
+    requirements:
+      "splash.heal_player": 10
+    chance: 1.0
+    prerequisites: []
+  exorcism_flash:
+    name: "퇴마의 섬광"
+    permission: "magic.learned.exorcism_flash"
+    icon: "magiccodex:textures/spells/expansion/exorcism_flash.png"
+    category: "light"
+    condition-text: "좀비와 스켈레톤을 합쳐 50마리 처치합니다."
+    requirements:
+      "kill.zombie_skeleton": 50
+    chance: 1.0
+    prerequisites: []
+  arcane_mending:
+    name: "마력 봉합"
+    permission: "magic.learned.arcane_mending"
+    icon: "magiccodex:textures/spells/expansion/arcane_mending.png"
+    category: "light"
+    condition-text: "모루에서 도구를 누적 10회 수리합니다."
+    requirements:
+      "anvil.repair_tool": 10
+    chance: 1.0
+    prerequisites: []
+  flawless_moment:
+    name: "무결의 순간"
+    permission: "magic.learned.flawless_moment"
+    icon: "magiccodex:textures/spells/expansion/flawless_moment.png"
+    category: "light"
+    condition-text: "방패로 공격을 누적 30회 막습니다."
+    requirements:
+      "shield.block": 30
+    chance: 1.0
+    prerequisites: []
+  solar_judgment:
+    name: "태양의 심판"
+    permission: "magic.learned.solar_judgment"
+    icon: "magiccodex:textures/spells/expansion/solar_judgment.png"
+    category: "light"
+    condition-text: "빛 마법으로 언데드를 누적 300마리 처치합니다."
+    requirements:
+      "kill.light_undead": 300
+    chance: 1.0
+    prerequisites: []
+  firefly_mark:
+    name: "반딧불 표식"
+    permission: "magic.learned.firefly_mark"
+    icon: "magiccodex:textures/spells/expansion_2/firefly_mark.png"
+    category: "light"
+    condition-text: "밤에 횃불을 누적 30개 설치합니다."
+    requirements:
+      "place.torch_night": 30
+    chance: 1.0
+    prerequisites: []
+  sun_drying:
+    name: "햇살 말림"
+    permission: "magic.learned.sun_drying"
+    icon: "magiccodex:textures/spells/expansion_2/sun_drying.png"
+    category: "light"
+    condition-text: "썩은 살점을 5회 먹습니다."
+    requirements:
+      "eat.rotten_flesh": 5
+    chance: 1.0
+    prerequisites: []
+  luminous_copy:
+    name: "빛의 필사"
+    permission: "magic.learned.luminous_copy"
+    icon: "magiccodex:textures/spells/expansion_2/luminous_copy.png"
+    category: "light"
+    condition-text: "책과 깃펜으로 책을 작성한 뒤 서명하기."
+    requirements:
+      "book.signed": 1
+    chance: 1.0
+    prerequisites: []
+  guiding_fletching:
+    name: "유도 깃"
+    permission: "magic.learned.guiding_fletching"
+    icon: "magiccodex:textures/spells/expansion_2/guiding_fletching.png"
+    category: "light"
+    condition-text: "달리는 몬스터에게 활을 누적 20회 명중시킵니다."
+    requirements:
+      "hit.running_monster": 20
+    chance: 1.0
+    prerequisites: []
+  sharing_table:
+    name: "나눔 식탁"
+    permission: "magic.learned.sharing_table"
+    icon: "magiccodex:textures/spells/expansion_2/sharing_table.png"
+    category: "light"
+    condition-text: "자신이 떨어뜨린 음식 아이템을 다른 플레이어가 누적 64개 줍게 합니다."
+    requirements:
+      "food.shared": 64
+    chance: 1.0
+    prerequisites: []
+  summons_letter:
+    name: "소환장"
+    permission: "magic.learned.summons_letter"
+    icon: "magiccodex:textures/spells/expansion_2/summons_letter.png"
+    category: "light"
+    condition-text: "길들인 늑대나 고양이와 함께 누적 2000블록 이동하기."
+    requirements:
+      "travel.with_pet": 2000
+    chance: 1.0
+    prerequisites: []
+  luminous_handover:
+    name: "빛의 교대"
+    permission: "magic.learned.luminous_handover"
+    icon: "magiccodex:textures/spells/expansion_2/luminous_handover.png"
+    category: "light"
+    condition-text: "다른 플레이어를 공격 중인 몬스터를 직접 20마리 처치하기."
+    requirements:
+      "kill.mob_attacking_player": 20
+    chance: 1.0
+    prerequisites: []
+  mana_conduit:
+    name: "마력 전선"
+    permission: "magic.learned.mana_conduit"
+    icon: "magiccodex:textures/spells/expansion_2/mana_conduit.png"
+    category: "light"
+    condition-text: "다른 플레이어의 실제 체력을 누적 100 회복시킵니다."
+    requirements:
+      "heal.magic_other": 100
+    chance: 1.0
+    prerequisites: []
+  merciful_arrow:
+    name: "자비의 화살"
+    permission: "magic.learned.merciful_arrow"
+    icon: "magiccodex:textures/spells/expansion_2/merciful_arrow.png"
+    category: "light"
+    condition-text: "빛 마법 응용 수업을 통해 낮은 확률로 습득."
+    requirements:
+      "lesson.light.applied": 1
+    chance: 0.1
+    prerequisites: []
+  guardian_oath:
+    name: "수호자의 서약"
+    permission: "magic.learned.guardian_oath"
+    icon: "magiccodex:textures/spells/expansion_2/guardian_oath.png"
+    category: "light"
+    condition-text: "친구 20명을 만듭니다."
+    requirements:
+      "friend.made": 20
+    chance: 1.0
+    prerequisites: []
+  experience_exchange:
+    name: "경험의 환전"
+    permission: "magic.learned.experience_exchange"
+    icon: "magiccodex:textures/spells/expansion_2/experience_exchange.png"
+    category: "light"
+    condition-text: "마나가 정확히 0이 됩니다."
+    requirements:
+      "mana.exactly_zero": 1
+    chance: 1.0
+    prerequisites: []
+  starlight_reprise:
+    name: "별빛 재현"
+    permission: "magic.learned.starlight_reprise"
+    icon: "magiccodex:textures/spells/expansion_2/starlight_reprise.png"
+    category: "light"
+    condition-text: "30초 안에 서로 다른 6원소의 마법을 사용합니다."
+    requirements:
+      "cast.six_elements": 1
+    chance: 1.0
+    prerequisites: []
+  constellation_emissary:
+    name: "성좌의 대리인"
+    permission: "magic.learned.constellation_emissary"
+    icon: "magiccodex:textures/spells/expansion_2/constellation_emissary.png"
+    category: "light"
+    condition-text: "마법으로 체력을 누적 600 치유합니다."
+    requirements:
+      "heal.magic": 600
+    chance: 1.0
+    prerequisites: []
+  night_sight:
+    name: "밤눈"
+    permission: "magic.learned.night_sight"
+    icon: "magiccodex:textures/spells/novice/night_sight.png"
+    category: "dark"
+    condition-text: "빛이 없는 동굴에서 횃불을 놓지 않고 120초 동안 머무릅니다."
+    requirements:
+      "dark.cave_120": 1
+    chance: 1.0
+    prerequisites: []
+  faint_veil:
+    name: "옅은 은신"
+    permission: "magic.learned.faint_veil"
+    icon: "magiccodex:textures/spells/novice_extra/faint_veil.png"
+    category: "dark"
+    condition-text: "밤에 웅크린 상태로 누적 200블록 이동합니다."
+    requirements:
+      "sneak.night": 200
+    chance: 1.0
+    prerequisites: []

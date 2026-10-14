@@ -705,8 +705,8 @@ spells:
     enabled: false
     command: 마법 earth_shaping
     permission: magic.learned.earth_shaping
-    mana-cost: 70
-    cooldown-seconds: 30
+    mana-cost: 120
+    cooldown-seconds: 25
   stone_wall:
     name: 석벽
     enabled: false
@@ -740,8 +740,8 @@ spells:
     enabled: false
     command: 마법 climate_control
     permission: magic.learned.climate_control
-    mana-cost: 450
-    cooldown-seconds: 300
+    mana-cost: 500
+    cooldown-seconds: 1000
   seed_row:
     name: 씨앗 줄심기
     enabled: false
@@ -768,8 +768,8 @@ spells:
     enabled: false
     command: 마법 vein_fracture
     permission: magic.learned.vein_fracture
-    mana-cost: 90
-    cooldown-seconds: 20
+    mana-cost: 35
+    cooldown-seconds: 15
   earth_anchor:
     name: 대지의 닻
     enabled: false
@@ -782,15 +782,15 @@ spells:
     enabled: false
     command: 마법 weathering_touch
     permission: magic.learned.weathering_touch
-    mana-cost: 20
-    cooldown-seconds: 8
+    mana-cost: 10
+    cooldown-seconds: 3
   iron_carapace:
     name: 철의 외피
     enabled: false
     command: 마법 iron_carapace
     permission: magic.learned.iron_carapace
-    mana-cost: 100
-    cooldown-seconds: 35
+    mana-cost: 150
+    cooldown-seconds: 30
   moss_coating:
     name: 이끼 입히기
     enabled: false
@@ -810,8 +810,8 @@ spells:
     enabled: false
     command: 마법 flint_sorting
     permission: magic.learned.flint_sorting
-    mana-cost: 8
-    cooldown-seconds: 3
+    mana-cost: 35
+    cooldown-seconds: 5
   bark_peeling:
     name: 껍질 벗기기
     enabled: false
@@ -831,8 +831,8 @@ spells:
     enabled: false
     command: 마법 thorn_seeds
     permission: magic.learned.thorn_seeds
-    mana-cost: 35
-    cooldown-seconds: 8
+    mana-cost: 350
+    cooldown-seconds: 80
   pollen_matchmaking:
     name: 꽃가루 중매
     enabled: false
@@ -845,15 +845,15 @@ spells:
     enabled: false
     command: 마법 automatic_supply
     permission: magic.learned.automatic_supply
-    mana-cost: 20
-    cooldown-seconds: 30
+    mana-cost: 0
+    cooldown-seconds: 0
   dormant_seed:
     name: 동면의 씨앗
     enabled: false
     command: 마법 dormant_seed
     permission: magic.learned.dormant_seed
-    mana-cost: 10
-    cooldown-seconds: 5
+    mana-cost: 15
+    cooldown-seconds: 3
   counterweight:
     name: 반격의 무게추
     enabled: false
@@ -866,21 +866,21 @@ spells:
     enabled: false
     command: 마법 material_exchange
     permission: magic.learned.material_exchange
-    mana-cost: 60
-    cooldown-seconds: 15
+    mana-cost: 100
+    cooldown-seconds: 60
   remembering_field:
     name: 기억하는 밭
     enabled: false
     command: 마법 remembering_field
     permission: magic.learned.remembering_field
-    mana-cost: 45
+    mana-cost: 100
     cooldown-seconds: 30
   little_giant:
     name: 작은 거인
     enabled: false
     command: 마법 little_giant
     permission: magic.learned.little_giant
-    mana-cost: 180
+    mana-cost: 80
     cooldown-seconds: 60
   spring_ground:
     name: 용수철 지반
@@ -901,8 +901,8 @@ spells:
     enabled: false
     command: 마법 earth_embrace
     permission: magic.learned.earth_embrace
-    mana-cost: 160
-    cooldown-seconds: 45
+    mana-cost: 60
+    cooldown-seconds: 15
   forest_throne:
     name: 숲의 왕좌
     enabled: false
@@ -937,7 +937,7 @@ spells:
     command: 마법 light_mark
     permission: magic.learned.light_mark
     mana-cost: 10
-    cooldown-seconds: 8
+    cooldown-seconds: 5
   spatial_leap:
     name: 공간 도약
     enabled: false
@@ -979,7 +979,7 @@ spells:
     command: 마법 arcane_imprint
     permission: magic.learned.arcane_imprint
     mana-cost: 180
-    cooldown-seconds: 60
+    cooldown-seconds: 30
   dawn_ritual:
     name: 여명의 의식
     enabled: false
@@ -993,7 +993,7 @@ spells:
     command: 마법 comforting_light
     permission: magic.learned.comforting_light
     mana-cost: 35
-    cooldown-seconds: 15
+    cooldown-seconds: 5
   exorcism_flash:
     name: 퇴마의 섬광
     enabled: false
@@ -1006,15 +1006,15 @@ spells:
     enabled: false
     command: 마법 arcane_mending
     permission: magic.learned.arcane_mending
-    mana-cost: 80
-    cooldown-seconds: 30
+    mana-cost: 300
+    cooldown-seconds: 100
   companion_return:
     name: 동행 귀환
     enabled: false
     command: 마법 companion_return
     permission: magic.learned.companion_return
-    mana-cost: 160
-    cooldown-seconds: 90
+    mana-cost: 10
+    cooldown-seconds: 5
   flawless_moment:
     name: 무결의 순간
     enabled: false
@@ -1027,15 +1027,15 @@ spells:
     enabled: false
     command: 마법 solar_judgment
     permission: magic.learned.solar_judgment
-    mana-cost: 400
-    cooldown-seconds: 90
+    mana-cost: 800
+    cooldown-seconds: 300
   firefly_mark:
     name: 반딧불 표식
     enabled: false
     command: 마법 firefly_mark
     permission: magic.learned.firefly_mark
-    mana-cost: 3
-    cooldown-seconds: 2
+    mana-cost: 30
+    cooldown-seconds: 60
   rainbow_collar:
     name: 교화
     aliases: [taming, 무지개 목줄]
@@ -1070,15 +1070,15 @@ spells:
     enabled: false
     command: 마법 sharing_table
     permission: magic.learned.sharing_table
-    mana-cost: 15
+    mana-cost: 150
     cooldown-seconds: 15
   summons_letter:
     name: 소환장
     enabled: false
     command: 마법 summons_letter
     permission: magic.learned.summons_letter
-    mana-cost: 35
-    cooldown-seconds: 20
+    mana-cost: 100
+    cooldown-seconds: 30
   starlight_survey:
     name: 별빛 측량
     enabled: false
@@ -1098,8 +1098,8 @@ spells:
     enabled: false
     command: 마법 mana_conduit
     permission: magic.learned.mana_conduit
-    mana-cost: 10
-    cooldown-seconds: 10
+    mana-cost: 300
+    cooldown-seconds: 30
   merciful_arrow:
     name: 자비의 화살
     enabled: false
@@ -1112,8 +1112,8 @@ spells:
     enabled: false
     command: 마법 mana_deposit
     permission: magic.learned.mana_deposit
-    mana-cost: 10
-    cooldown-seconds: 5
+    mana-cost: 100
+    cooldown-seconds: 60
   guardian_oath:
     name: 수호자의 서약
     enabled: false
@@ -1127,7 +1127,7 @@ spells:
     command: 마법 experience_exchange
     permission: magic.learned.experience_exchange
     mana-cost: 0
-    cooldown-seconds: 60
+    cooldown-seconds: 600
   white_night_sanctuary:
     name: 백야의 성역
     enabled: false
@@ -1140,8 +1140,8 @@ spells:
     enabled: false
     command: 마법 starlight_reprise
     permission: magic.learned.starlight_reprise
-    mana-cost: 350
-    cooldown-seconds: 60
+    mana-cost: 600
+    cooldown-seconds: 600
   constellation_emissary:
     name: 성좌의 대리인
     enabled: false

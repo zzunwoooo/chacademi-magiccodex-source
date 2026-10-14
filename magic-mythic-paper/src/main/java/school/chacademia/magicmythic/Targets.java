@@ -104,6 +104,32 @@ final class Targets {
     boolean hurt(LivingEntity caster, LivingEntity target, double amount) {
         return enemy(caster,target)&&plugin.protection().damage(caster,target,Math.max(0,amount));
     }
+    /** Same as hurt, but marked as a passive's extra hit so it never re-triggers a passive. */
+    boolean hurtProc(LivingEntity caster, LivingEntity target, double amount) {
+        return enemy(caster,target)&&plugin.protection().procDamage(caster,target,Math.max(0,amount));
+    }
+
+    /** Undead (vanilla tag sensitive_to_smite: zombies, skeletons, phantoms, withers ...). */
+    static boolean undead(Entity e) {
+        try { return org.bukkit.Tag.ENTITY_TYPES_SENSITIVE_TO_SMITE.isTagged(e.getType()); }
+        catch (RuntimeException | LinkageError ignored) { return e instanceof Zombie || e instanceof AbstractSkeleton || e instanceof Phantom || e instanceof Wither; }
+    }
+
+    /** Spell healing by `caster` (counted for acquisition conditions). */
+    static double heal(LivingEntity caster, LivingEntity e, double amount) {
+        double healed = heal(e, amount);
+        DiscoveryHooks.healed(caster, e, healed);
+        return healed;
+    }
+
+    /** Heal without going over max health. Returns the amount actually healed. */
+    static double heal(LivingEntity e, double amount) {
+        if (amount <= 0 || !e.isValid() || e.isDead()) return 0;
+        double before = e.getHealth(), after = Math.min(maxHealth(e), before + amount);
+        if (after <= before) return 0;
+        e.setHealth(after);
+        return after - before;
+    }
 
     void effects(LivingEntity target, List<PotionEffect> effects) {
         for (PotionEffect e : effects) target.addPotionEffect(e);
@@ -126,12 +152,15 @@ final class Targets {
     }
 
     // ---------- block protection, same pattern as MagicCodexBridge SpellUtility ----------
+    /** True while canBreak fires its fake BlockBreakEvent (listeners must not treat it as a real break). */
+    static boolean probing = false;
     static boolean canBreak(Player p, Block b) {
         if(!MagicMythicAccess.at(p,b.getLocation()))return false;
         BlockData before = b.getBlockData().clone();
         var event = new BlockBreakEvent(b, p);
         event.setDropItems(false);
-        Bukkit.getPluginManager().callEvent(event);
+        probing = true;
+        try { Bukkit.getPluginManager().callEvent(event); } finally { probing = false; }
         return !event.isCancelled() && b.getBlockData().equals(before);
     }
 

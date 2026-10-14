@@ -17,7 +17,7 @@ import school.magiccodex.protocol.DiscoveryProtocol;
 import school.magiccodex.database.DatabaseSettings;
 
 public final class MagicDiscovery extends JavaPlugin implements Listener,CommandExecutor,TabCompleter,PluginMessageListener {
-    Definitions definitions;DiscoveryStore store;NativeConditions nativeConditions;TitleRewards rewards;
+    Definitions definitions;DiscoveryStore store;NativeConditions nativeConditions;ExpansionConditions expansionConditions;TitleRewards rewards;
     final Map<UUID,Session> sessions=new HashMap<>();private DiscoveryService api;
     private record LearnedKey(UUID player,String spell){}
     private final Map<LearnedKey,Long> learnedVersions=new HashMap<>(),adminPending=new HashMap<>();
@@ -45,9 +45,9 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,Command
             // 설정 파일이 없으면 조용히 SQLite가 되므로 시작할 때 한 줄로 남긴다.
             getLogger().info("DB 설정 파일 "+databaseFile.toAbsolutePath()+" : "+(java.nio.file.Files.exists(databaseFile)?"있음":"없음 → SQLite 기본값")+", 저장 모드="+(settings.mariaDb()?"MariaDB":"SQLite(discoveries.db)"));
             store=new DiscoveryStore(getDataFolder().toPath().resolve("discoveries.db"),settings);crossServer=settings.mariaDb();
-            refreshAdminCatalog();rewards=new TitleRewards(this);nativeConditions=new NativeConditions(this);api=new DiscoveryService(this);
+            refreshAdminCatalog();rewards=new TitleRewards(this);nativeConditions=new NativeConditions(this);expansionConditions=new ExpansionConditions(this);api=new DiscoveryService(this);
             Bukkit.getServicesManager().register(DiscoveryService.class,api,this,ServicePriority.Normal);
-            Bukkit.getPluginManager().registerEvents(this,this);Bukkit.getPluginManager().registerEvents(nativeConditions,this);
+            Bukkit.getPluginManager().registerEvents(this,this);Bukkit.getPluginManager().registerEvents(nativeConditions,this);Bukkit.getPluginManager().registerEvents(expansionConditions,this);
             Bukkit.getMessenger().registerIncomingPluginChannel(this,DiscoveryProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(this,DiscoveryProtocol.RESPONSE);
             Objects.requireNonNull(getCommand("마법발견관리")).setExecutor(this);getCommand("마법발견관리").setTabCompleter(this);Objects.requireNonNull(getCommand("칭호수령")).setExecutor(this);
             for(var p:Bukkit.getOnlinePlayers())load(p);
@@ -312,7 +312,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,Command
     }
     @EventHandler public void join(PlayerJoinEvent e){load(e.getPlayer());}
     @EventHandler public void respawn(PlayerRespawnEvent e){later(()->{var p=e.getPlayer();var s=session(p);if(s!=null)rewards.claim(p,s,false);});}
-    @EventHandler public void quit(PlayerQuitEvent e){var s=sessions.remove(e.getPlayer().getUniqueId());if(s!=null&&s.loaded)finalSave(s.id,takeFinal(s),0);nativeConditions.quit(e.getPlayer());}
+    @EventHandler public void quit(PlayerQuitEvent e){var s=sessions.remove(e.getPlayer().getUniqueId());if(s!=null&&s.loaded)finalSave(s.id,takeFinal(s),0);nativeConditions.quit(e.getPlayer());if(expansionConditions!=null)expansionConditions.quit(e.getPlayer());}
     @Override public boolean onCommand(CommandSender sender,Command cmd,String label,String[] args){
         if(cmd.getName().equals("칭호수령")){if(sender instanceof Player p){var s=session(p);if(s!=null)rewards.claim(p,s,true);}return true;}
         if(!sender.hasPermission("magicdiscovery.admin"))return true;
@@ -347,7 +347,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,Command
         String part=args[args.length-1];return choices.stream().filter(value->value.startsWith(part)).sorted().toList();
     }
     @Override public void onDisable(){
-        if(nativeConditions!=null)nativeConditions.close();Bukkit.getScheduler().cancelTasks(this);Bukkit.getServicesManager().unregisterAll(this);
+        if(nativeConditions!=null)nativeConditions.close();if(expansionConditions!=null)expansionConditions.close();Bukkit.getScheduler().cancelTasks(this);Bukkit.getServicesManager().unregisterAll(this);
         for(var s:sessions.values()){if(store!=null&&s.loaded)store.save(s.id,takeFinal(s)).exceptionally(error->{storageFailure("종료 시 진행도 저장 실패",error);return null;});if(s.attachment!=null){var p=Bukkit.getPlayer(s.id);if(p!=null)p.removeAttachment(s.attachment);}}
         sessions.clear();if(store!=null)try{store.close();}catch(Exception e){failure(e);}
     }

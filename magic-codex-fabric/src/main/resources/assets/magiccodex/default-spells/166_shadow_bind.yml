@@ -1,11 +1,11 @@
 id: shadow_bind
 name: 그림자 매듭
 category: dark
-description: 가까운 몬스터 하나의 발밑에 그림자를 묶어 3초 동안 느리게 만듭니다.
+description: 가까운 몬스터 한 마리를 3초 동안 느리게 만듭니다.
 icon: magiccodex:textures/spells/novice_extra/shadow_bind.png
 permission: magic.learned.shadow_bind
 discovery:
-  description: 어둠 마법 기초 수업을 통해 습득.
+  description: 어둠 마법 기초 수업에서 습득합니다.
 research: 그림자의 발목을 붙잡으면 주인도 멀리 달아나지 못한다.
 cast:
   command: ''

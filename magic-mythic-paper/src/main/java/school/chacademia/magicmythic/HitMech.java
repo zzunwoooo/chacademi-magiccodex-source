@@ -12,6 +12,7 @@ import org.bukkit.util.Vector;
  *  mult/flat (x Bridge damage)  knock up pull(toward caster) slam(downward speed)  ignite(ticks)
  *  effect=TYPE:ticks:amp,...  execute=0.2 (normal mobs die, players/bosses only below this health ratio)
  *  hpcost=0.5 hpscale=2.5 (spend own current health, add spent x scale to damage)  shield=ticks (disable shields)
+ *  undead=true (only undead are hit: zombies, skeletons ...)  spell=id (VFX event external:hit on each target)
  */
 final class HitMech extends Mech {
     HitMech(MagicMythicPlugin plugin, Params p) { super(plugin, p); }
@@ -35,10 +36,15 @@ final class HitMech extends Mech {
         if (cone > 0) hits = inCone(c, r, cone, p.i("max", 16));
         else if (r <= 0) hits = c.target() != null && targets.enemy(c.caster(), c.target()) ? List.of((LivingEntity) c.target()) : List.of();
         else hits = targets.enemiesNear(c.caster(), center, r, p.i("max", 16));
+        if (p.b("undead", false)) hits = hits.stream().filter(Targets::undead).toList();
         Location impactAt = cone > 0 ? c.caster().getEyeLocation().add(c.caster().getEyeLocation().getDirection().multiply(r / 2)) : center;
         boolean gimmick = MagicImpactEvent.fire(c.caster(), p.s("element", ""), impactAt, Math.max(cone > 0 ? r / 2 : r, 0.8), MagicImpactEvent.Kind.HIT);
         if (hits.isEmpty()) return !gimmick; // a cancelled impact (gimmick took it) still counts as a successful hit
-        for (LivingEntity t : hits) apply(c, t, center, dmg);
+        String spell = p.s("spell", "");
+        for (LivingEntity t : hits) {
+            apply(c, t, center, dmg);
+            if (!spell.isBlank() && c.caster() instanceof Player pl) Links.vfx(pl, spell, p.s("hitevent", "external:hit"), t.getLocation(), t.getUniqueId());
+        }
         return true;
     }
 

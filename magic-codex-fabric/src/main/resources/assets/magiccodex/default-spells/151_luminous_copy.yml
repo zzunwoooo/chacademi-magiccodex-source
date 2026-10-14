@@ -1,7 +1,7 @@
 id: luminous_copy
 name: 빛의 필사
 category: light
-description: 빈 책과 깃펜을 소비해 손에 든 복제 가능한 책을 한 권 필사합니다.
+description: 사용자가 글씨를 직접 입력하면 빛으로 된 글씨를 배치해 5초 동안 표시합니다. 입력 중에는 몸에 빛이 모이고, 완료하면 그 빛이 글씨 배치 위치로 이동합니다.
 icon: magiccodex:textures/spells/expansion_2/luminous_copy.png
 permission: magic.learned.luminous_copy
 discovery:

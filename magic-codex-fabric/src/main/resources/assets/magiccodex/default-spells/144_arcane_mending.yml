@@ -1,14 +1,14 @@
 id: arcane_mending
 name: 마력 봉합
 category: light
-description: 손에 든 일반 도구의 내구도를 최대치의 5%만큼 복구합니다.
+description: 손에 든 일반 도구의 내구도를 완전히 수리합니다.
 icon: magiccodex:textures/spells/expansion/arcane_mending.png
 permission: magic.learned.arcane_mending
 discovery:
-  description: 모루에서 내구도가 닳은 도구를 10번 수리하기.
+  description: 모루에서 도구를 누적 10회 수리합니다.
 research: 오래 쥔 도구에는 손의 모양뿐 아니라 마력의 결도 남는다.
 cast:
   command: ''
-  cooldown-seconds: 30
-  mana-cost: 80
+  cooldown-seconds: 100
+  mana-cost: 300
 order: 144

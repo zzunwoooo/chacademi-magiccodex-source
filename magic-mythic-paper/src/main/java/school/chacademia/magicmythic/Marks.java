@@ -19,9 +19,12 @@ import org.bukkit.potion.PotionEffectType;
  *              The mob's own awareness is saved on the mob (PDC) and put back on release, on plugin stop and,
  *              after a crash, when the mob loads again.
  *  swords    - on the caster: each melee hit on an enemy spends one sword for extra damage
+ *  root      - movement only is held for `ticks` (attacks and skills still work); bosses are immune (material_exchange)
+ *  stun      - all actions stop for `ticks`: mobs lose AI (same saved-awareness rule as prison), players are slowed,
+ *              weakened and cannot dig; bosses are only slowed (counterweight)
  */
 final class Marks implements Listener {
-    enum Type { ASH_BRAND, WEDGE, PRISON, SWORDS }
+    enum Type { ASH_BRAND, WEDGE, PRISON, SWORDS, ROOT, STUN }
 
     final class Mark {
         final Type type; final LivingEntity caster; final LivingEntity holder; final double damage; final Params p;
@@ -70,6 +73,21 @@ final class Marks implements Listener {
                 freezeMob(mob, prisonKey);
             }
             case SWORDS -> marks.removeIf(m -> m.type == Type.SWORDS && m.holder.equals(holder));
+            case ROOT -> {
+                if (plugin.targets().boss(holder)) return false;
+                marks.removeIf(m -> m.type == Type.ROOT && m.holder.equals(holder));
+                holder.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) ticks, 9, false, false, true));
+            }
+            case STUN -> {
+                if (marks.stream().anyMatch(m -> (m.type == Type.STUN || m.type == Type.PRISON) && m.holder.equals(holder) && !m.done)) return false;
+                if (plugin.targets().boss(holder)) { holder.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) ticks, 2)); return true; }
+                if (holder instanceof Mob mob) freezeMob(mob, prisonKey);
+                else {
+                    holder.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) ticks, 9, false, false, true));
+                    holder.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, (int) ticks, 9, false, false, true));
+                    holder.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, (int) ticks, 9, false, false, true));
+                }
+            }
             default -> {}
         }
         marks.add(new Mark(type, caster, holder, damage, p, ticks));
@@ -82,10 +100,18 @@ final class Marks implements Listener {
         if (marks.isEmpty()) return;
         for (Mark m : new ArrayList<>(marks)) {
             if (m.done) continue;
+            var traceBefore = SpellTrace.set(SpellTrace.of(m.p));
+            try {
             boolean gone = !m.holder.isValid() || m.holder.isDead() || !plugin.protection().pair(m.caster,m.holder.getLocation());
             if (m.type == Type.ASH_BRAND && !gone && now >= m.until) { burstBrand(m); m.done = true; }
             else if (gone || now >= m.until) m.done = true;
-            if (m.done && m.type == Type.PRISON) release(m);
+            if (m.done && (m.type == Type.PRISON || m.type == Type.STUN)) release(m);
+            if (!m.done && m.type == Type.ROOT) {
+                if (m.holder instanceof Mob mob) mob.getPathfinder().stopPathfinding();
+                var v = m.holder.getVelocity();
+                m.holder.setVelocity(new org.bukkit.util.Vector(0, Math.min(0, v.getY()), 0));
+            }
+            } finally { SpellTrace.set(traceBefore); }
         }
         marks.removeIf(m -> m.done);
     }
@@ -106,7 +132,11 @@ final class Marks implements Listener {
         }
     }
 
-    private void release(Mark m) { if (m.holder instanceof Mob mob) recover(mob); }
+    private void release(Mark m) {
+        if (!(m.holder instanceof Mob mob)) return;
+        boolean other = marks.stream().anyMatch(x -> x != m && !x.done && (x.type == Type.PRISON || x.type == Type.STUN) && x.holder.equals(mob));
+        if (!other) recover(mob);
+    }
 
     /** Put back the awareness saved when the prison started, and forget it. */
     private void recover(Mob mob) { recoverMob(mob, prisonKey); }
@@ -126,12 +156,18 @@ final class Marks implements Listener {
     @EventHandler public void entitiesLoad(EntitiesLoadEvent e) {
         for (var en : e.getEntities()) {
             if (!(en instanceof Mob mob)) continue;
-            boolean stillHeld = marks.stream().anyMatch(m -> m.type == Type.PRISON && !m.done && m.holder.getUniqueId().equals(mob.getUniqueId()));
+            boolean stillHeld = marks.stream().anyMatch(m -> (m.type == Type.PRISON || m.type == Type.STUN) && !m.done && m.holder.getUniqueId().equals(mob.getUniqueId()));
             if (!stillHeld) recover(mob); // frozen by a crash or by a prison that ended while unloaded
         }
     }
 
-    void releaseAll() { for (Mark m : marks) if (m.type == Type.PRISON) release(m); marks.clear(); }
+    void releaseAll() { for (Mark m : marks) if (m.type == Type.PRISON || m.type == Type.STUN) release(m); marks.clear(); }
+
+    /** counterweight: stop the attacker for `ticks` (no damage dealt). */
+    boolean stun(LivingEntity caster, LivingEntity target, int ticks) {
+        var p = new Params(Map.of("ticks", String.valueOf(ticks)));
+        return add(Type.STUN, caster, target, 0, p);
+    }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void damaged(EntityDamageEvent e) {

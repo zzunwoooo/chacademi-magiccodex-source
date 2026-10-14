@@ -31,7 +31,7 @@ abstract class Mech implements ITargetedEntitySkill, ITargetedLocationSkill {
         LivingEntity caster = caster(data);
         Entity e = target == null ? null : target.getBukkitEntity();
         if (caster == null || e == null || !e.isValid() || plugin.targets().excluded(e) || !plugin.protection().pair(caster,e.getLocation())) return SkillResult.INVALID_TARGET;
-        return run(new Ctx(data, caster, e, e.getLocation(), variable(data, "damage", 0))) ? SkillResult.SUCCESS : SkillResult.INVALID_TARGET;
+        return traced(new Ctx(data, caster, e, e.getLocation(), variable(data, "damage", 0))) ? SkillResult.SUCCESS : SkillResult.INVALID_TARGET;
     }
 
     @Override public SkillResult castAtLocation(SkillMetadata data, AbstractLocation location) {
@@ -40,10 +40,20 @@ abstract class Mech implements ITargetedEntitySkill, ITargetedLocationSkill {
         if (hasEntityTargets(data)) return SkillResult.SUCCESS; // the entity call handles this cast
         Location at = BukkitAdapter.adapt(location);
         if (at.getWorld() == null || !plugin.protection().pair(caster,at)) return SkillResult.INVALID_TARGET;
-        return run(new Ctx(data, caster, null, at, variable(data, "damage", 0))) ? SkillResult.SUCCESS : SkillResult.INVALID_TARGET;
+        return traced(new Ctx(data, caster, null, at, variable(data, "damage", 0))) ? SkillResult.SUCCESS : SkillResult.INVALID_TARGET;
     }
 
     abstract boolean run(Ctx c);
+
+    /** run() with the spell trace set (attribution for damage/heal hooks) and the cast noted for acquisition checks. */
+    final boolean traced(Ctx c) {
+        var now = SpellTrace.of(p);
+        var before = SpellTrace.set(now);
+        try {
+            if (c.caster() instanceof org.bukkit.entity.Player pl) DiscoveryHooks.cast(pl, now);
+            return run(c);
+        } finally { SpellTrace.set(before); }
+    }
 
     static LivingEntity caster(SkillMetadata data) {
         try {

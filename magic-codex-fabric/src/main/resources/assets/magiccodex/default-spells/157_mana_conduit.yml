@@ -1,14 +1,14 @@
 id: mana_conduit
 name: 마력 전선
 category: light
-description: 5초 동안 가까운 동료 한 명에게 매초 자신의 마나 20을 전달합니다. 서로 10블록 이상 떨어지면 끊깁니다.
+description: 빛의 사슬에 연결된 마나석 5개를 주변 무작위 위치에 생성합니다. 가까이 접근한 사용자가 획득하면 마나 50에 마력 계수에 따른 값을 더해 회복합니다.
 icon: magiccodex:textures/spells/expansion_2/mana_conduit.png
 permission: magic.learned.mana_conduit
 discovery:
-  description: 위로의 빛을 동료에게 누적 20회 사용하기.
-research: 서로를 믿는 두 마법사 사이에는 보이지 않는 길이 놓인다.
+  description: 다른 플레이어의 실제 체력을 누적 100 회복시킵니다.
+research: 누군가의 상처를 돌보던 마력이 작은 돌에 맺혔다. 빛의 사슬을 풀면, 다시 싸울 힘이 흘러나온다.
 cast:
   command: ''
-  cooldown-seconds: 10
-  mana-cost: 10
+  cooldown-seconds: 30
+  mana-cost: 300
 order: 157

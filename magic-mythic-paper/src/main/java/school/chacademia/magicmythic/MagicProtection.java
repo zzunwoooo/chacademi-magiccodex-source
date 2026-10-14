@@ -50,10 +50,19 @@ public final class MagicProtection implements Listener {
   Hit h=hits.peek();if(h!=null&&event.getEntity().equals(h.target)&&event.getDamager().equals(h.caster))h.event=event;
  }
  static boolean accepted(EntityDamageEvent event){return event!=null&&!event.isCancelled();}
+ private int procDepth;
+ /** True while a magic hit from this plugin is being applied (lets passives tell spell damage from weapon hits). */
+ boolean magicDamaging(){return !hits.isEmpty();}
+ /** True while a passive's extra hit (미라지/미스틱 슈터 화살 등) is applied, so it cannot trigger passives again. */
+ boolean inProc(){return procDepth>0;}
+ boolean procDamage(LivingEntity caster,LivingEntity target,double amount){procDepth++;try{return damage(caster,target,amount);}finally{procDepth--;}}
  boolean damage(LivingEntity caster,LivingEntity target,double amount){
   if(!harm(caster,target))return false;
   if(amount<=0){var probe=new EntityDamageByEntityEvent(caster,target,EntityDamageEvent.DamageCause.MAGIC,0);Bukkit.getPluginManager().callEvent(probe);return accepted(probe);}
   Hit h=new Hit(caster,target);hits.push(h);
-  try{target.damage(amount,caster);return accepted(h.event);}finally{hits.pop();}
+  boolean ok;
+  try{target.damage(amount,caster);ok=accepted(h.event);}finally{hits.pop();}
+  if(ok&&caster instanceof Player pl)DiscoveryHooks.hit(pl,target,SpellTrace.current());
+  return ok;
  }
 }

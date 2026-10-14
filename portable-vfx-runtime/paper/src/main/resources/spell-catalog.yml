@@ -3486,8 +3486,8 @@ spells:
     name: 대지 성형
     permission: magic.learned.earth_shaping
     icon: magiccodex:textures/spells/intermediate/earth_shaping.png
-    mana-cost: 70
-    cooldown-seconds: 30
+    mana-cost: 120
+    cooldown-seconds: 25
     reviewed: false
     enabled: false
     aliases: []
@@ -3556,8 +3556,8 @@ spells:
     name: 기후 통제
     permission: magic.learned.climate_control
     icon: magiccodex:textures/spells/advanced/climate_control.png
-    mana-cost: 450
-    cooldown-seconds: 300
+    mana-cost: 500
+    cooldown-seconds: 1000
     reviewed: false
     enabled: false
     aliases: []
@@ -3612,8 +3612,8 @@ spells:
     name: 광맥 파쇄
     permission: magic.learned.vein_fracture
     icon: magiccodex:textures/spells/expansion/vein_fracture.png
-    mana-cost: 90
-    cooldown-seconds: 20
+    mana-cost: 35
+    cooldown-seconds: 15
     reviewed: false
     enabled: false
     aliases: []
@@ -3640,8 +3640,8 @@ spells:
     name: 풍화의 손길
     permission: magic.learned.weathering_touch
     icon: magiccodex:textures/spells/expansion/weathering_touch.png
-    mana-cost: 20
-    cooldown-seconds: 8
+    mana-cost: 10
+    cooldown-seconds: 3
     reviewed: false
     enabled: false
     aliases: []
@@ -3654,8 +3654,8 @@ spells:
     name: 철의 외피
     permission: magic.learned.iron_carapace
     icon: magiccodex:textures/spells/expansion/iron_carapace.png
-    mana-cost: 100
-    cooldown-seconds: 35
+    mana-cost: 150
+    cooldown-seconds: 30
     reviewed: false
     enabled: false
     aliases: []
@@ -3696,8 +3696,8 @@ spells:
     name: 돌 고르기
     permission: magic.learned.flint_sorting
     icon: magiccodex:textures/spells/expansion_2/flint_sorting.png
-    mana-cost: 8
-    cooldown-seconds: 3
+    mana-cost: 35
+    cooldown-seconds: 5
     reviewed: false
     enabled: false
     aliases: []
@@ -3738,8 +3738,8 @@ spells:
     name: 가시 씨앗
     permission: magic.learned.thorn_seeds
     icon: magiccodex:textures/spells/expansion_2/thorn_seeds.png
-    mana-cost: 35
-    cooldown-seconds: 8
+    mana-cost: 350
+    cooldown-seconds: 80
     reviewed: false
     enabled: false
     aliases: []
@@ -3766,8 +3766,8 @@ spells:
     name: 자동 보급
     permission: magic.learned.automatic_supply
     icon: magiccodex:textures/spells/expansion_2/automatic_supply.png
-    mana-cost: 20
-    cooldown-seconds: 30
+    mana-cost: 0
+    cooldown-seconds: 0
     reviewed: false
     enabled: false
     aliases: []
@@ -3780,8 +3780,8 @@ spells:
     name: 동면의 씨앗
     permission: magic.learned.dormant_seed
     icon: magiccodex:textures/spells/expansion_2/dormant_seed.png
-    mana-cost: 10
-    cooldown-seconds: 5
+    mana-cost: 15
+    cooldown-seconds: 3
     reviewed: false
     enabled: false
     aliases: []
@@ -3808,8 +3808,8 @@ spells:
     name: 자재 치환
     permission: magic.learned.material_exchange
     icon: magiccodex:textures/spells/expansion_2/material_exchange.png
-    mana-cost: 60
-    cooldown-seconds: 15
+    mana-cost: 100
+    cooldown-seconds: 60
     reviewed: false
     enabled: false
     aliases: []
@@ -3822,7 +3822,7 @@ spells:
     name: 기억하는 밭
     permission: magic.learned.remembering_field
     icon: magiccodex:textures/spells/expansion_2/remembering_field.png
-    mana-cost: 45
+    mana-cost: 100
     cooldown-seconds: 30
     reviewed: false
     enabled: false
@@ -3836,7 +3836,7 @@ spells:
     name: 작은 거인
     permission: magic.learned.little_giant
     icon: magiccodex:textures/spells/expansion_2/little_giant.png
-    mana-cost: 180
+    mana-cost: 80
     cooldown-seconds: 60
     reviewed: false
     enabled: false
@@ -3878,8 +3878,8 @@ spells:
     name: 대지의 품
     permission: magic.learned.earth_embrace
     icon: magiccodex:textures/spells/expansion_2/earth_embrace.png
-    mana-cost: 160
-    cooldown-seconds: 45
+    mana-cost: 60
+    cooldown-seconds: 15
     reviewed: false
     enabled: false
     aliases: []
@@ -3949,7 +3949,7 @@ spells:
     permission: magic.learned.light_mark
     icon: magiccodex:textures/spells/novice_extra/light_mark.png
     mana-cost: 10
-    cooldown-seconds: 8
+    cooldown-seconds: 5
     reviewed: false
     enabled: false
     aliases: []
@@ -4033,7 +4033,7 @@ spells:
     permission: magic.learned.arcane_imprint
     icon: magiccodex:textures/spells/advanced/arcane_imprint.png
     mana-cost: 180
-    cooldown-seconds: 60
+    cooldown-seconds: 30
     reviewed: false
     enabled: false
     aliases: []
@@ -4061,7 +4061,7 @@ spells:
     permission: magic.learned.comforting_light
     icon: magiccodex:textures/spells/expansion/comforting_light.png
     mana-cost: 35
-    cooldown-seconds: 15
+    cooldown-seconds: 5
     reviewed: false
     enabled: false
     aliases: []
@@ -4088,8 +4088,8 @@ spells:
     name: 마력 봉합
     permission: magic.learned.arcane_mending
     icon: magiccodex:textures/spells/expansion/arcane_mending.png
-    mana-cost: 80
-    cooldown-seconds: 30
+    mana-cost: 300
+    cooldown-seconds: 100
     reviewed: false
     enabled: false
     aliases: []
@@ -4102,8 +4102,8 @@ spells:
     name: 동행 귀환
     permission: magic.learned.companion_return
     icon: magiccodex:textures/spells/expansion/companion_return.png
-    mana-cost: 160
-    cooldown-seconds: 90
+    mana-cost: 10
+    cooldown-seconds: 5
     reviewed: false
     enabled: false
     aliases: []
@@ -4130,8 +4130,8 @@ spells:
     name: 태양의 심판
     permission: magic.learned.solar_judgment
     icon: magiccodex:textures/spells/expansion/solar_judgment.png
-    mana-cost: 400
-    cooldown-seconds: 90
+    mana-cost: 800
+    cooldown-seconds: 300
     reviewed: false
     enabled: false
     aliases: []
@@ -4144,8 +4144,8 @@ spells:
     name: 반딧불 표식
     permission: magic.learned.firefly_mark
     icon: magiccodex:textures/spells/expansion_2/firefly_mark.png
-    mana-cost: 3
-    cooldown-seconds: 2
+    mana-cost: 30
+    cooldown-seconds: 60
     reviewed: false
     enabled: false
     aliases: []
@@ -4315,7 +4315,7 @@ spells:
     name: 나눔 식탁
     permission: magic.learned.sharing_table
     icon: magiccodex:textures/spells/expansion_2/sharing_table.png
-    mana-cost: 15
+    mana-cost: 150
     cooldown-seconds: 15
     reviewed: false
     enabled: false
@@ -4329,8 +4329,8 @@ spells:
     name: 소환장
     permission: magic.learned.summons_letter
     icon: magiccodex:textures/spells/expansion_2/summons_letter.png
-    mana-cost: 35
-    cooldown-seconds: 20
+    mana-cost: 100
+    cooldown-seconds: 30
     reviewed: false
     enabled: false
     aliases: []
@@ -4371,8 +4371,8 @@ spells:
     name: 마력 전선
     permission: magic.learned.mana_conduit
     icon: magiccodex:textures/spells/expansion_2/mana_conduit.png
-    mana-cost: 10
-    cooldown-seconds: 10
+    mana-cost: 300
+    cooldown-seconds: 30
     reviewed: false
     enabled: false
     aliases: []
@@ -4399,8 +4399,8 @@ spells:
     name: 마력 예금
     permission: magic.learned.mana_deposit
     icon: magiccodex:textures/spells/expansion_2/mana_deposit.png
-    mana-cost: 10
-    cooldown-seconds: 5
+    mana-cost: 100
+    cooldown-seconds: 60
     reviewed: false
     enabled: false
     aliases: []
@@ -4428,7 +4428,7 @@ spells:
     permission: magic.learned.experience_exchange
     icon: magiccodex:textures/spells/expansion_2/experience_exchange.png
     mana-cost: 0
-    cooldown-seconds: 60
+    cooldown-seconds: 600
     reviewed: false
     enabled: false
     aliases: []
@@ -4455,8 +4455,8 @@ spells:
     name: 별빛 재현
     permission: magic.learned.starlight_reprise
     icon: magiccodex:textures/spells/expansion_2/starlight_reprise.png
-    mana-cost: 350
-    cooldown-seconds: 60
+    mana-cost: 600
+    cooldown-seconds: 600
     reviewed: false
     enabled: false
     aliases: []

@@ -810,3 +810,95 @@ spells:
       "trace.condition.rainbow_collar": 1
     chance: 1.0
     prerequisites: []
+
+# 2026-10-14 101~167 수업·도서관 책 조건 (수동 지급 명령)
+  stone_wall:
+    name: "석벽"
+    permission: "magic.learned.stone_wall"
+    icon: "magiccodex:textures/spells/intermediate/stone_wall.png"
+    category: "earth"
+    condition-text: "기초 땅 마법 수업을 통해 습득합니다."
+    requirements:
+      "trace.condition.stone_wall": 1
+    chance: 1.0
+    prerequisites: []
+  earth_elemental:
+    name: "그놈"
+    permission: "magic.learned.earth_elemental"
+    icon: "magiccodex:textures/spells/advanced/earth_elemental.png"
+    category: "earth"
+    condition-text: "도서관에서 '정령계약서 - 지' 책을 읽습니다."
+    requirements:
+      "trace.condition.earth_elemental": 1
+    chance: 1.0
+    prerequisites: []
+  earthquake:
+    name: "지진"
+    permission: "magic.learned.earthquake"
+    icon: "magiccodex:textures/spells/advanced/earthquake.png"
+    category: "earth"
+    condition-text: "대지 마법 실전 수업"
+    requirements:
+      "trace.condition.earthquake": 1
+    chance: 1.0
+    prerequisites: []
+  forest_throne:
+    name: "숲의 왕좌"
+    permission: "magic.learned.forest_throne"
+    icon: "magiccodex:textures/spells/expansion_2/forest_throne.png"
+    category: "earth"
+    condition-text: "도서관에서 '움직이지 않는 숲의 왕' 책을 읽습니다."
+    requirements:
+      "trace.condition.forest_throne": 1
+    chance: 1.0
+    prerequisites: []
+  minor_heal:
+    name: "작은 치유"
+    permission: "magic.learned.minor_heal"
+    icon: "magiccodex:textures/spells/novice_extra/minor_heal.png"
+    category: "light"
+    condition-text: "빛 마법 기초 수업에서 습득합니다."
+    requirements:
+      "trace.condition.minor_heal": 1
+    chance: 1.0
+    prerequisites: []
+  protective_ward:
+    name: "보호 결계"
+    permission: "magic.learned.protective_ward"
+    icon: "magiccodex:textures/spells/intermediate/protective_ward.png"
+    category: "light"
+    condition-text: "빛 마법 방어 수업을 통해 습득."
+    requirements:
+      "trace.condition.protective_ward": 1
+    chance: 1.0
+    prerequisites: []
+  companion_return:
+    name: "동행 귀환"
+    permission: "magic.learned.companion_return"
+    icon: "magiccodex:textures/spells/expansion/companion_return.png"
+    category: "light"
+    condition-text: "마법 기초 수업에서 습득합니다."
+    requirements:
+      "trace.condition.companion_return": 1
+    chance: 1.0
+    prerequisites: []
+  starlight_survey:
+    name: "별빛 측량"
+    permission: "magic.learned.starlight_survey"
+    icon: "magiccodex:textures/spells/expansion_2/starlight_survey.png"
+    category: "light"
+    condition-text: "학교 건축 수업을 1회 마칩니다."
+    requirements:
+      "trace.condition.starlight_survey": 1
+    chance: 1.0
+    prerequisites: []
+  shadow_bind:
+    name: "그림자 매듭"
+    permission: "magic.learned.shadow_bind"
+    icon: "magiccodex:textures/spells/novice_extra/shadow_bind.png"
+    category: "dark"
+    condition-text: "어둠 마법 기초 수업에서 습득합니다."
+    requirements:
+      "trace.condition.shadow_bind": 1
+    chance: 1.0
+    prerequisites: []

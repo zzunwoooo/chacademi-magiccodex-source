@@ -9,7 +9,7 @@ class ManualConditionsTest {
     @Test void manualOverlayDisablesOriginalCountersAndChanceButRetainsNaturalState()throws Exception{
         var d=new Definitions(Path.of("src/main/resources/discoveries.yml").toFile());
         d.manual(Path.of("src/main/resources/manual-conditions.yml").toFile());
-        assertEquals(81,d.manual.size());assertEquals("magic.condition.flight",Definitions.conditionPermission("flight"));assertFalse(d.index.containsKey("fish.caught_fish"));assertFalse(d.index.containsKey("lesson.wind.basic"));assertFalse(d.index.containsKey("cast.pressure_press.circle6"));
+        assertEquals(90,d.manual.size());assertEquals("magic.condition.flight",Definitions.conditionPermission("flight"));assertFalse(d.index.containsKey("fish.caught_fish"));assertFalse(d.index.containsKey("lesson.wind.basic"));assertFalse(d.index.containsKey("cast.pressure_press.circle6"));
         assertFalse(d.index.containsKey(Definitions.conditionKey("wind_basket")));
         assertEquals(1d,d.manual.get("cross_breeze").chance());assertTrue(d.index.containsKey("submerged.survive_thirty"));
         assertTrue(d.manual.values().stream().allMatch(s->s.requirements().equals(Map.of(Definitions.conditionKey(s.id()),1d))));

@@ -6,7 +6,7 @@ HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
 REPO = os.path.dirname(ROOT)
 
 # (id, skill, target, range, base, ratio, utility, [mythic lines], note)
-U = lambda i, sk=None, rng=24: (i, sk or 'CHA_' + i, 'SELF', rng, 0, 0, True, ['delay 1'], 'MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸)')
+U = lambda i, sk=None, rng=24: (i, sk or 'CHA_' + i, 'SELF', rng, 0, 0, True, ['chanote{n=1} @self'], 'MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸)')
 S = [
  # ---------------- wind ----------------
  ('feather_fall','CHA_feather_step','SELF',12,0,0,False,['chaselfpotion{type=SLOW_FALLING;duration=100;level=0} @self'],'5초 천천히 낙하'),
@@ -50,7 +50,7 @@ S = [
  ('falling_star','CHA_falling_star','AIM',20,14,0.9,False,['delay 25','chahit{r=4;max=12;knock=0.8;up=0.4;ignite=60}'],'운석 낙하 반경 4블록'),
  ('flame_lash','CHA_flame_lash','ENTITY',8,6,0.5,False,['chahit{pull=1.4;ignite=40}'],'끌어당기며 피해'),
  ('cinder_detonation','CHA_cinder_detonation','BURNING_ENTITY',18,8,0.6,False,['chahit{r=3;max=6;ignite=60}'],'(기존 라우트 유지) 불타는 대상 폭발'),
- ('palm_fireworks','CHA_palm_fireworks','SELF',12,0,0,False,['delay 1'],'장식 마법, 게임 효과 없음'),
+ ('palm_fireworks','CHA_palm_fireworks','SELF',12,0,0,False,['chanote{n=1} @self'],'장식 마법, 게임 효과 없음'),
  ('ash_brand','CHA_ash_brand','ENTITY',15,5,0.4,False,['chamark{type=ash_brand;ticks=60;r=3;cooldown=200}'],'3초 뒤 폭발, 맞은 적에게 전이'),
  ('flame_leap','CHA_flame_leap','SELF',12,5,0.4,False,['chahit{center=caster;r=2.5;knock=0.8;ignite=40} @self'],'회전 발차기 근접 범위'),
  ('crimson_heart','CHA_crimson_heart','SELF',12,0,0,False,['chahit{center=caster;r=5;max=12;mult=0;hpcost=0.5;hpscale=2.5;knock=1} @self'],'현재 체력 절반 소모, 소모량 비례 폭발'),
@@ -103,16 +103,92 @@ S = [
  ('ore_whisper','CHA_ore_whisper','SELF',12,0,0,False,['chaworld{type=ore;r=10;max=3;ticks=100} @self'],'광석 최대 3곳 5초 발광 표시 (시전자만 보임)'),
  ('pebble_toss','CHA_pebble_toss','AIM',15,2,0.2,False,['chabolt{speed=1.6;range=15;radius=0.5}'],'약한 조약돌 탄'),
  ('miners_rhythm','CHA_miners_rhythm','SELF',12,0,0,False,['chaselfpotion{type=HASTE;duration=300;level=0} @self'],'15초 성급함'),
+ # ---------------- 2026-10-14: 미구현 71종 (이전 7 + 101~167 신규 64) ----------------
+ # 피해·범위 등 "미정" 표시된 값은 모두 임시값 (handoff 미정 목록 참고)
+ ('flame_forging','CHA_flame_forging','SELF',12,0,0,False,['chautil{type=forge} @self'],'손에 든 재료를 단조표대로 변환 (재료표 미정: config flame-forging.recipes)'),
+ ('blue_bonfire','CHA_blue_bonfire','SELF',12,0,0,False,['chazone{center=caster;r=10;ticks=1200;period=20;mult=0;manaregen=1.1} @self'],'60초 화톳불, 반경 10블록 마나 회복 +10% (같은 마법끼리 미중첩)'),
+ # earth
+ ('earth_shaping','CHA_earth_shaping','AIM',7,4,0.3,False,['chahit{center=caster;cone=60;r=7;up=0.45;knock=0.2;hitevent=external:hitBurst} @self'],'정면 7블록 부채꼴 충격파, 약하게 띄움 (피해·각도 임시)'),
+ ('stone_wall','CHA_stone_wall','AIM',8,0,0,False,['chazone{wall=4;r=0.6;height=3;ticks=200;period=20;mult=0;solid=true}'],'10초 돌벽: 적 이동·투사체 차단, 실제 블록 없음 (크기 4x3 = VFX 기준, 미정)'),
+ ('vine_ladder','CHA_vine_ladder','SELF',5,0,0,False,['chasummon{type=ladder;h=8;ticks=600;range=5} @self'],'바라보는 벽 최대 8블록 30초 사다리, 실제 덩굴 없음 (VFX 없음)'),
+ ('earth_elemental','CHA_earth_elemental','SELF',12,5,0.4,False,['chasummon{type=golem;ticks=1200;range=8;reach=2.2;period=36;windup=12;hitr=1.5;knock=0.6} @self'],'60초 흙 골렘(가상) 동행·근접 공격 (공격력 임시)'),
+ ('earthquake','CHA_earthquake','SELF',12,6,0.45,False,['chazone{center=caster;r=6;ticks=60;period=20;mult=0.5;effect=SLOWNESS:20:0} @self'],'주변 6블록 지면 흔들기 (지속 3초·피해 임시)'),
+ ('climate_control','CHA_climate_control','SELF',12,0,0,False,['chafarm{type=weather} @self'],'맑음<->비 전환, 이후 자연 변화'),
+ ('seed_row','CHA_seed_row','SELF',12,0,0,False,['chafarm{type=seedrow;max=6} @self'],'소지 씨앗으로 전방 6칸 농지 파종'),
+ ('bee_calm','CHA_bee_calm','SELF',12,0,0,False,['chafarm{type=bees;r=8} @self'],'주변 화난 벌 진정 (반경 8 임시)'),
+ ('thorn_armor','CHA_thorn_armor','SELF',12,2,0.15,False,['chaguard{type=thorns;ticks=160} @self'],'8초 근접 공격자 반격 피해 (피해 임시)'),
+ ('vein_fracture','CHA_vein_fracture','AIM',6,0,0,False,['chautil{type=vein;max=8}'],'연결된 같은 광석 최대 8개 채굴, 도구 규칙·내구도, 맨손 드롭 없음'),
+ ('earth_anchor','CHA_earth_anchor','SELF',12,0,0,False,['chaguard{type=anchor;ticks=200} @self'],'10초 공격 넉백 무시 (폭발 제외), 이동 가능'),
+ ('weathering_touch','CHA_weathering_touch','AIM',6,0,0,False,['chautil{type=age}'],'석재를 이끼·금 간 변종으로'),
+ ('iron_carapace','CHA_iron_carapace','SELF',12,0,0,False,['chaselfpotion{type=RESISTANCE;duration=400;level=0} @self'],'20초 저항 (레벨 미정: I 임시)'),
+ ('moss_coating','CHA_moss_coating','SELF',12,0,0,False,['chautil{type=deepdark;depth=64} @self'],'발아래 Deep Dark 탐지, 결과는 VFX로만 (범위·마나·쿨 미정)'),
+ ('grass_sprouting','CHA_grass_sprouting','AIM',8,0,0,False,['chafarm{type=grass;size=2}'],'조준한 2x2 흙만 잔디로'),
+ ('flint_sorting','CHA_flint_sorting','AIM',15,2,0.2,False,['chabolt{speed=1.8;range=15;radius=0.4;count=3;countmax=5;interval=3}'],'돌 파편 3~5발 순차 발사 (사거리·피해 임시)'),
+ ('bark_peeling','CHA_bark_peeling','AIM',6,0,0,False,['chafarm{type=strip;max=6}'],'연결된 원목 최대 6개 껍질 벗기기'),
+ ('compost_return','CHA_compost_return','SELF',12,0,0,False,['chafarm{type=compost} @self'],'손의 식물 재료 -> 뼛가루 (바닐라 퇴비통 기대값 임시, 재료·비율 미정)'),
+ ('thorn_seeds','CHA_thorn_seeds','AIM',15,5,0.35,False,[f'chabolt{{speed=2;range=15;radius=0.5;spread={a}}}' for a in (-20,-10,0,10,20)],'선인장 가시 5발 부채꼴 동시 발사 (사거리·피해 임시)'),
+ ('pollen_matchmaking','CHA_pollen_matchmaking','AIM',10,0,0,False,['chafarm{type=breed;r=8}'],'번식 가능한 동물 한 쌍 번식 (먹이 불필요, 대기시간 준수)'),
+ ('dormant_seed','CHA_dormant_seed','SELF',12,0,0,False,['chafarm{type=harvest;len=5} @self'],'전방 5칸 다 자란 작물만 수확, 재파종 없음'),
+ ('counterweight','CHA_counterweight','SELF',12,0,0,False,['chaguard{type=counter;ticks=20;extra=40} @self'],'1초 안에 방패로 막으면 공격자 2초 행동 정지'),
+ ('material_exchange','CHA_material_exchange','ENTITY',15,0,0,False,['chamark{type=root;ticks=40}'],'대상 이동만 2초 정지, 보스 면역'),
+ ('remembering_field','CHA_remembering_field','SELF',12,0,0,False,['chafarm{type=ripen;len=5} @self'],'전방 5칸 작물 즉시 성숙'),
+ ('little_giant','CHA_little_giant','SELF',12,0,0,False,['chabuff{type=giant;ticks=300;scale=0.5;reach=1;damage=0.3} @self'],'15초 몸집·근접 거리·근접 피해 증가 (증가량 임시)'),
+ ('spring_ground','CHA_spring_ground','AIM',10,0,0,False,['chasummon{type=spring;uses=3;ticks=600;up=1.1;forward=0.5}'],'임시 도약판 (3회·30초·높이 임시)'),
+ ('mountain_back','CHA_mountain_back','AIM',16,8,0.5,False,['delay 10','chabolt{speed=0.5;range=16;radius=1.4;pierce=99;rehit=8;knock=0.9;up=0.2;from=caster;mult=0.4;missevent=external:wallBreak}'],'굴러가는 바위가 밀며 여러 번 타격 (크기·사거리·피해 임시)'),
+ ('earth_embrace','CHA_earth_embrace','SELF',12,0,0,False,['chafarm{type=revive;len=5} @self'],'전방 5칸, 완전히 마른 농지 위 작물 되살리기 (더위 건조 시스템 없음, 해석 확인 필요)'),
+ ('forest_throne','CHA_forest_throne','SELF',12,6,0.4,False,['chabuff{type=root;ticks=160} @self','chazone{center=caster;r=6;ticks=160;period=10;max=2;pick=random;mult=0.35;knock=0.8;up=0.3} @self'],'8초 제자리, 주변 6블록 뿌리 순차 공격·넉백'),
+ ('primordial_stone','CHA_primordial_stone','SELF',22,20,1.0,False,['chautil{type=core;ticks=6000;speed=0.7;range=22;radius=0.8;aoe=2.5;aoemult=0.5;mana=500} @self'],'돌핵 생성 -> 다시 사용 시 발사 (Bridge 쿨타임 API 없으면 자동 발사, 확률·피해 미정)'),
+ # light
+ ('guiding_star','CHA_guiding_star','SELF',12,0,0,False,['chautil{type=star;ticks=200} @self'],'웅크려 시전 = 위치 저장, 일반 시전 = 10초 방향 표시'),
+ ('minor_heal','CHA_minor_heal','SELF',12,0,0,False,['chaally{type=heal;amount=2} @self'],'자신 체력 하트 1칸 회복'),
+ ('light_mark','CHA_light_mark','ENTITY',20,2,0.25,False,['chabolt{speed=1.2;range=20;radius=0.5;homing=true}'],'조준한 적에게 유도 빛 탄 (피해·사거리 임시, VFX 없음)'),
+ ('true_sight','CHA_true_sight','SELF',12,0,0,False,['chautil{type=truesight;r=16;ticks=300} @self'],'15초 근처 투명한 적 윤곽 + 숨은 단서 이벤트 (범위 임시)'),
+ ('protective_ward','CHA_protective_ward','SELF',12,0,0,False,['chaguard{type=ward;ticks=200;r=2.5;per=2;reduce=10;extra=200} @self'],'10초 투사체 흡수 -> 보호막 (전환량·상한 임시)'),
+ ('constellation_blessing','CHA_constellation_blessing','SELF',12,0,0,False,['chaally{type=buff;r=6;effect=SPEED:600:0,RESISTANCE:600:0} @self'],'자신+6블록 동료 30초 신속·저항 (레벨 임시)'),
+ ('arcane_imprint','CHA_arcane_imprint','SELF',12,0,0,False,['chautil{type=mine;ticks=400} @self'],'곡괭이 20초 3x3 채굴'),
+ ('dawn_ritual','CHA_dawn_ritual','SELF',12,0,0,False,['chaally{type=dawn;r=8;ticks=400} @self'],'8블록 해로운 효과 해제 + 20초 재적용 방지'),
+ ('comforting_light','CHA_comforting_light','SELF',15,0,0,False,['chaally{type=comfort;range=15;amount=10;ticks=100} @self'],'바라보는 동료 임시 하트 5칸 5초, 미중첩'),
+ ('exorcism_flash','CHA_exorcism_flash','SELF',12,8,0.5,False,['chahit{center=caster;r=8;max=16;undead=true} @self'],'주변 언데드만 범위 피해 (반경·피해 임시)'),
+ ('arcane_mending','CHA_arcane_mending','SELF',12,0,0,False,['chautil{type=mend} @self'],'손에 든 일반 도구 완전 수리'),
+ ('companion_return','CHA_companion_return','SELF',12,0,0,False,['chautil{type=return} @self'],'시전자 혼자 마을 귀환 지점으로 (config return-point)'),
+ ('flawless_moment','CHA_flawless_moment','SELF',12,0,0,False,['chaguard{type=invuln;ticks=60} @self'],'3초 무적, 이동·공격 가능'),
+ ('solar_judgment','CHA_solar_judgment','AIM',30,10,0.6,False,['chachannel{ticks=240;move=0.3;then=CHA_solar_judgment_fire}'],'12초 영창(이동·피격 시 실패) 후 3초 레이저 (피해·사거리 임시)'),
+ ('firefly_mark','CHA_firefly_mark','SELF',12,0,0,False,['chasummon{type=light;ticks=1200;level=15} @self'],'60초 따라다니는 실제 빛'),
+ ('sun_drying','CHA_sun_drying','SELF',12,0,0,False,['chafarm{type=craft;in=ROTTEN_FLESH:4;out=LEATHER:1} @self'],'썩은 살점 4 -> 가죽 1'),
+ ('luminous_copy','CHA_luminous_copy','AIM',12,0,0,False,['chautil{type=text;range=12;ticks=100;wait=600}'],'채팅으로 입력한 글씨를 조준 위치에 5초 표시 (입력창은 클라이언트 제안)'),
+ ('guiding_fletching','CHA_guiding_fletching','SELF',12,0,0,False,['chaguard{type=homing;ticks=100} @self'],'5초 동안 쏘는 화살이 조준한 적에게 유도, 벽 우회 없음'),
+ ('sharing_table','CHA_sharing_table','SELF',12,0,0,False,['chaally{type=feed;r=8} @self'],'자신 제외 근처 아군 허기 전부 회복 (반경 임시)'),
+ ('summons_letter','CHA_summons_letter','SELF',12,0,0,False,['chasummon{type=pets;ticks=600} @self'],'길들인 늑대·고양이 새로 소환, 30초 뒤 사망'),
+ ('starlight_survey','CHA_starlight_survey','SELF',48,0,0,False,['chautil{type=survey;range=48} @self'],'바라보는 블록 좌표·거리 표시'),
+ ('luminous_handover','CHA_luminous_handover','SELF',12,0,0,False,['chautil{type=taunt;r=10;ticks=100} @self'],'주변 몬스터 도발 (보스 포함, 범위·지속 임시)'),
+ ('mana_conduit','CHA_mana_conduit','SELF',12,0,0,False,['chasummon{type=conduit;count=5;r=6;ticks=400;amount=50;ratio=0.5} @self'],'마나석 5개, 획득 시 마나 50+계수x마력 (계수·반경·유지 임시)'),
+ ('merciful_arrow','CHA_merciful_arrow','AIM',25,4,0.3,False,['chabolt{speed=3;range=25;radius=0.6;ally=true;pierce=1;hitevent=external:heal}'],'매우 빠른 치유 화살, 맞은 아군 회복 (치유량 임시)'),
+ ('mana_deposit','CHA_mana_deposit','SELF',12,0,0,False,['chautil{type=potion} @self'],'마나 포션(item:mana_potion) 1개 생성, 사용 시 마나 50'),
+ ('guardian_oath','CHA_guardian_oath','SELF',10,0,0,False,['chaally{type=oath;range=10;r=10;ratio=0.3;ticks=200} @self'],'바라보는 동료 피해 일부 대신 받기 (거리·지속·비율 임시)'),
+ ('experience_exchange','CHA_experience_exchange','SELF',12,0,0,False,['chautil{type=exp;ratio=0.5} @self'],'현재 마나 전부 -> 경험치 (비율 임시)'),
+ ('starlight_reprise','CHA_starlight_reprise','SELF',12,0,0,False,['chautil{type=reprise} @self'],'다른 장착 마법 1개 쿨타임 초기화 (Bridge 쿨타임 API + 슬롯 보고 필요)'),
+ ('constellation_emissary','CHA_constellation_emissary','SELF',12,0,0,False,['chasummon{type=emissary;ticks=600;r=8;amount=6;period=40} @self'],'30초 별 사역마: 체력 낮은 동료 하트 3칸, 2초 간격'),
+ ('night_sight','CHA_night_sight','SELF',12,0,0,False,['chaselfpotion{type=NIGHT_VISION;duration=1200;level=0} @self'],'60초 야간 투시'),
+ ('shadow_bind','CHA_shadow_bind','ENTITY',10,0,0,False,['chahit{mult=0;effect=SLOWNESS:60:1}'],'가까운 몬스터 3초 둔화 (사거리·둔화 임시)'),
+ ('faint_veil','CHA_faint_veil','SELF',12,0,0,False,['chaselfpotion{type=INVISIBILITY;duration=160;level=0} @self'],'8초 투명 (갑옷·손 아이템은 보임)'),
 ]
+# 한 마법이 쓰는 추가 스킬 (Bridge 라우트 없음)
+EXTRA = {
+ 'CHA_solar_judgment_fire': ('solar_judgment', ['chazone{r=4;ticks=60;period=5;mult=0.15}'], '태양의 심판 영창 완료 후 3초 레이저 (chachannel then=)'),
+}
 SKIP = {
  'wind_message':'Bridge가 직접 처리하는 귓속말 마법',
- 'trajectory_acceleration':'슬롯 장착형 상시 효과: Bridge 장착 상태 연동 필요',
- 'resonant_arrow':'슬롯 장착형 상시 효과: Bridge 장착 상태 연동 필요',
- 'glass_firing':'슬롯 장착형 상시 효과(광석 자동 재련): Bridge 장착 상태 연동 필요',
- 'flame_footprints':'슬롯 장착형 상시 효과: Bridge 장착 상태 연동 필요',
- 'glaze_coating':'슬롯 장착형 상시 효과(화염 면역): Bridge 장착 상태 연동 필요',
- 'flame_forging':'특수 단조 재료표가 아직 없음',
- 'blue_bonfire':'마나 회복량 증가는 Bridge 마나 API 연동 필요',
+ 'rainbow_collar':'교화(HolyTaming): TamingBridge가 별도 처리',
+ 'luminous_archive':'잠긴 상자 시스템 자체가 아직 없음 (실패 확률·내용물 처리·획득 조건 미정)',
+}
+# 슬롯 장착형 패시브: 미몹 라우트 없이 애드온 Passives 가 장착 상태(SpellSlots)로 처리. 시전 키는 VFX만 재생.
+PASSIVE = {
+ 'trajectory_acceleration':'장착 중 내가 피해를 준 대상에게 유도 바람 화살 (발동당 마나 10)',
+ 'resonant_arrow':'장착 중 직접 공격 적중 시 추가 바람 화살 (발동당 마나 50), 미라지와 동시 발동',
+ 'glass_firing':'장착 중 광석 드롭 자동 재련 (광석당 마나 3)',
+ 'flame_footprints':'장착 중 매초 마나 10, 발자국이 잠시 뒤 폭발 (서버 mana-spells enabled:false 유지)',
+ 'glaze_coating':'장착 중 화염 지속 피해(FIRE_TICK) 면역',
+ 'automatic_supply':'장착 중 손의 건축 블록이 떨어지면 인벤토리에서 보충',
 }
 
 def catalog():
@@ -126,7 +202,7 @@ def main():
     B = yaml.safe_load(open(os.path.join(REPO,'portable-vfx-runtime/paper/src/main/resources/spell-bindings.yml'), encoding='utf-8'))['bindings']
     ids = [s[0] for s in S]
     assert len(ids) == len(set(ids)), 'duplicate id'
-    missing = [k for k in B if k not in ids and k not in SKIP]
+    missing = [k for k in B if k not in ids and k not in SKIP and k not in PASSIVE]
     assert not missing, missing
     out = ['# 차카데미 마법 미몹 스킬 (자동 생성: magic-mythic-paper/tools/spells.py) - 이펙트는 PortableVFX 담당, 여기는 게임 효과만',
            '# 피해량 <skill.var.damage> 는 MagicCodexBridge spell-runtime.yml 의 base-damage + power-ratio x 마력 으로 전달됩니다.',
@@ -137,7 +213,9 @@ def main():
         d = D.get(i, {}); name = d.get('name', i)
         cat = d.get('category', '')
         # every cha* mechanic learns the spell element (MagicImpactEvent -> dungeon gimmicks)
-        lines = [l.replace('}', f';element={cat}}}', 1) if l.startswith(('chahit{', 'chabolt{', 'chazone{')) and cat else l for l in lines]
+        lines = [l.replace('}', f';element={cat}}}', 1) if l.startswith('cha') and '{' in l and cat else l for l in lines]
+        # every cha* mechanic learns its spell id (VFX external:* events go to that spell's running cast)
+        lines = [l.replace('}', f';spell={i}}}', 1) if l.startswith('cha') and '{' in l else l for l in lines]
         assert sk.startswith('CHA_') and sk[4:].replace('_','').isalnum() and sk[4:] == sk[4:].lower(), sk
         assert tgt in ('SELF','AIM','ENTITY','AIR_ENTITY','BURNING_ENTITY','BLOCK') and 1 <= rng <= 48
         out.append(f'# {d.get("order", "")} {name} - {note}')
@@ -148,22 +226,27 @@ def main():
         out.append('')
         rt += [f'  {i}:', f'    name: "{name}"', f'    skill: "{sk}"', f'    target: "{tgt}"', f'    range: {rng}',
                f'    utility: {"true" if util else "false"}', f'    base-damage: {base}', f'    power-ratio: {ratio}']
+    for sk, (owner, lines, note) in EXTRA.items():
+        cat = D.get(owner, {}).get('category', '')
+        lines = [l.replace('}', f';element={cat};spell={owner}}}', 1) if l.startswith(('chahit{', 'chabolt{', 'chazone{')) else l for l in lines]
+        out += [f'# (추가 스킬) {note}', f'{sk}:', '  Cooldown: 0', '  Skills:'] + [f'  - {l}' for l in lines] + ['']
     os.makedirs(os.path.join(ROOT,'mythicmobs/Skills'), exist_ok=True); os.makedirs(os.path.join(ROOT,'server-config'), exist_ok=True)
     open(os.path.join(ROOT,'mythicmobs/Skills/chacademi_spells.yml'),'w',encoding='utf-8').write('\n'.join(out))
     open(os.path.join(ROOT,'server-config/spell-runtime.yml'),'w',encoding='utf-8').write('\n'.join(rt)+'\n')
     # summary table for docs
     rows = ['| # | id | 이름 | 대상 | 처리 | 내용 |','|---|---|---|---|---|---|']
     order = {k: v.get('order', 0) for k, v in D.items()}
-    allids = sorted(set(ids) | set(SKIP), key=lambda k: order.get(k, 999))
+    allids = sorted(set(ids) | set(SKIP) | set(PASSIVE), key=lambda k: order.get(k, 999))
     spec = {s[0]: s for s in S}
     for k in allids:
         nm = D.get(k, {}).get('name', k)
         if k in SKIP: rows.append(f'| {order.get(k,"")} | {k} | {nm} | - | 보류 | {SKIP[k]} |')
+        elif k in PASSIVE: rows.append(f'| {order.get(k,"")} | {k} | {nm} | 장착 | 애드온 패시브 | {PASSIVE[k]} |')
         else:
-            s = spec[k]; how = 'Bridge 유틸' if s[6] else ('미몹+애드온' if any(l.startswith('cha') for l in s[7]) else '미몹 기본')
+            s = spec[k]; how = 'Bridge 유틸' if s[6] else ('미몹+애드온' if any(l.startswith('cha') and not l.startswith('chanote') for l in s[7]) else '미몹 기본')
             rows.append(f'| {order.get(k,"")} | {k} | {nm} | {s[2]} | {how} | {s[8]} |')
     open(os.path.join(ROOT,'SPELLS.md'),'w',encoding='utf-8').write('# 마법별 미몹 구현표 (자동 생성)\n\n' + '\n'.join(rows) + '\n')
-    print(len(S), 'routes,', len(SKIP), 'skipped')
+    print(len(S), 'routes,', len(PASSIVE), 'passives,', len(SKIP), 'skipped')
 # ---- client aiming preview (MagicCodex client, display only; the server re-checks range/sight) ----
 def _params(line):
     body = line[line.index('{')+1:line.index('}')]
@@ -185,7 +268,7 @@ def aim_shape(spec):
         if first and 'r' in _params(first): d['radius'] = float(_params(first)['r'])
         return d
     if tgt == 'BLOCK': return {'mode': 'point', 'range': rng, 'radius': 0.6}
-    first = next((l for l in lines if l.startswith(('chahit{', 'chabolt{', 'chazone{', 'chaworld{'))), None)
+    first = next((l for l in lines if l.startswith(('chahit{', 'chabolt{', 'chazone{', 'chaworld{', 'chafarm{', 'chautil{', 'chasummon{', 'chachannel{'))), None)
     if first is None: return {'mode': 'point', 'range': rng, 'radius': 0.6}
     p = _params(first)
     if p.get('center') == 'caster':

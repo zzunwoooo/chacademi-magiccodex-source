@@ -12,7 +12,71 @@ prison-break-damage-ratio: 0.2
 platform-material: BARRIER
 # 동시에 존재할 수 있는 개수 상한 (서버 보호)
 limits:
+  channels: 64
+  summons: 256
   bolts: 512
   zones: 256
   marks: 512
 debug: false
+
+# 2026-10-14 추가 (71종) --------------------------------------------------------
+# 아래 수치는 모두 밸런스 검토 전 임시값입니다 (소유자 결정: 마법 수치 최종 검토 전).
+
+# 슬롯 장착형 패시브가 "장착됨"을 아는 방법
+#  slots   : MagicCodex 클라이언트가 chacademia:spell_slots 채널로 키 슬롯을 보고 (클라이언트 수정 필요, 제안서 참고)
+#  learned : 배운 마법은 모두 장착된 것으로 취급 (클라이언트 수정 전 임시 운영용)
+passive-slots:
+  mode: slots
+
+passives:
+  trajectory_acceleration:   # 017 미라지 슈터: 내가 피해를 준 대상에게 바람 화살 1발
+    mana: 10                 # 발동당 (카탈로그 값)
+    base-damage: 3
+    power-ratio: 0.25
+    delay-ticks: 10          # 소환·대기 후 발사
+    internal-cooldown-ticks: 10
+    speed: 1.4
+    range: 20
+  resonant_arrow:            # 030 미스틱 슈터: 직접 공격 적중 시 추가 바람 화살
+    mana: 50
+    base-damage: 6
+    power-ratio: 0.4
+    delay-ticks: 0
+    internal-cooldown-ticks: 0
+    speed: 2.0
+    range: 24
+  glass_firing:              # 049 광석 재련
+    mana: 3                  # 광석 블록당
+  flame_footprints:          # 052 불꽃 걸음 (mana-spells.yml 에서 아직 enabled:false)
+    mana-per-second: 10
+    spacing: 1.5             # 발자국 간격 (블록)
+    fuse-ticks: 30           # 폭발 지연
+    radius: 1.5
+    base-damage: 3
+    power-ratio: 0.2
+    ignite-ticks: 0
+    max-active: 12
+  glaze_coating: {}          # 055 화염의 정복자: 수치 없음
+  automatic_supply: {}       # 121 자동 보급: 수치 없음
+
+# 036 불꽃 단조 재료표: "입력재료: 결과[:개수[:필요개수]]" (결과는 바닐라 이름 또는 ItemsAdder id)
+# 비어 있으면 시전이 항상 실패합니다 (재료표 미정).
+flame-forging:
+  recipes: {}
+  # 예) IRON_INGOT: "item:enchanted_iron:1:1"
+
+# 145 동행 귀환 지점. world 를 비워 두면 첫 번째 월드의 스폰으로 갑니다 (임시).
+return-point: {}
+  # world: world
+  # x: 0.5
+  # y: 64
+  # z: 0.5
+  # yaw: 0
+  # pitch: 0
+
+# 159 마력 예금: 마나 포션(item:mana_potion) 사용 시 회복량
+mana-potion:
+  restore: 50
+
+# 132 길잡이 별: VFX 화살표가 준비되기 전까지 액션바로 방향·거리 안내
+guiding-star-text: true
