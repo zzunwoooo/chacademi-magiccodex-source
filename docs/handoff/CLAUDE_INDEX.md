@@ -84,7 +84,7 @@ Claude 는 GPT 작업 브랜치에 직접 커밋하지 않고, **`claude/` 로 �
 | `claude/magic-71-gameplay-20261014` | 같은 브랜치 이어서 | `CLAUDE_VFX_BC7_20261014.md` | PortableVFX 클라이언트 텍스처 BC7 압축(순수 Java 인코더, 디스크 캐시, 화질 38 dB 미만은 RGBA 유지). 신규 62팩 430→119 MiB, 예산 문제 해소. `-Dportablevfx.claude.textureCompression=off` 로 예전 경로. **스텁 javac + 일부 테스트만, Gradle·GL 스모크·실게임 전 — 문서 0장 먼저** | 받기 전 |
 | `claude/magic-71-gameplay-20261014` | 같은 브랜치 `da851b7` | `CLAUDE_DEPLOY_101_167_20261015.md` | **101~167 배포 전달 사항**: 070ceae 와 통합, 서버·클라이언트·런처에 무엇을 배포할지, 기존 PC 도감 폴더 미갱신 문제, VFX 연결 미반영(시전 거부 원인), 켜지 않는 마법 목록 | 받기 전 |
 | `claude/reaction-vfx-20261015` | `claude/artifact-codex-20261015` @ `10c7e42` (위 브랜치 포함) | `CLAUDE_REACTION_VFX_20261015.md` | 원소 반응 VFX 15종: PortableVFX 팩 `ElementReactions`(client_compat OK, 텍스처 RGBA 2.5 MiB) + magic-mythic `ReactionVfx`(리플렉션, softdepend PortableVFX)로 반응 시 재생. **클라 팩 배포 필요. javac 스텁 검사만, Gradle·실게임 전** | 받기 전 |
-| `claude/artifact-catalog-20261015` | `claude/reaction-vfx-20261015` @ `b07c62c` (위 브랜치 포함) | `CLAUDE_ARTIFACT_CATALOG_20261015.md` | 검수 완료 아티팩트 150항목 yml(보류 2 숨김, 사용형 20), 아이콘 71장, 아티팩트 사용 키 X(프로토콜 v2 `USE`·대기 시간·`ArtifactUseEvent`), 마법 키세팅에서 X 금지. **능력 미구현, 서버·모드 같이 배포. Fabric 화면 코드 컴파일 미확인** | 받기 전 |
+| `claude/artifact-catalog-20261015` | `claude/reaction-vfx-20261015` @ `b07c62c` (위 브랜치 포함) | `CLAUDE_ARTIFACT_CATALOG_20261015.md` | 검수 완료 아티팩트 150항목 yml(보류 2 숨김, 사용형 20), 아이콘 71장, 아티팩트 사용 키 X(프로토콜 v2 `USE`·대기 시간·`ArtifactUseEvent`), 마법 키세팅에서 X 금지. **능력 미구현, 서버·모드 같이 배포. Fabric 화면 코드 컴파일 미확인** | 받음 (Codex integration; 637 hosting tests passed; deployment pending client exit) |
 
 ## Claude 가 지키는 규칙
 
@@ -111,3 +111,5 @@ Audit integration verified and deployed; Story content intentionally deferred. S
 ## Unit target ring integration
 
 [CLAUDE_UNIT_TARGET_RING_20261015.md](CLAUDE_UNIT_TARGET_RING_20261015.md): selected client-only ring patch 09186da; unrelated broom-projectile ancestor excluded.
+
+See [artifact catalogue and unit ring integration](CODEX_ARTIFACT_CATALOG_UNITRING_20261015.md) for versions, validation and deployment boundary.
