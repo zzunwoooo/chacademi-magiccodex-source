@@ -283,7 +283,8 @@ final class ArtifactCodexScreen extends Screen {
     private void tooltip(DrawContext c, Entry e) {
         float width = ArtifactCodexLayout.TOOLTIP_WIDTH, pad = 24, size = 20, line = 30;
         var lines = wrap(e.effect(), width - pad * 2, size, BODY);
-        float height = 24 + 30 + lines.size() * line + 22;
+        String use = e.usable() ? "사용 키 [" + ArtifactClient.useKeyLabel() + "] · " + (e.cooldown() == 0 ? "재사용 대기 없음" : "재사용 대기 " + duration(e.cooldown())) : null;
+        float height = 24 + 30 + lines.size() * line + (use == null ? 0 : line + 6) + 22;
         int x = Math.round(ArtifactCodexLayout.TOOLTIP_RIGHT - width), y = Math.round(ArtifactCodexLayout.TOOLTIP_TOP);
         var m = c.getMatrices(); m.push();
         try {
@@ -291,7 +292,18 @@ final class ArtifactCodexScreen extends Screen {
             nine(c, TOOLTIP, 992, 396, 9, 93, 981, 294, 45, new Rect(x, y, Math.round(width), Math.round(height)), 0xFFFFFFFF);
             text(c, "상세 효과", x + pad, y + 24 + 13, 21, GOLD, BOLD, Align.LEFT);
             for (int i = 0; i < lines.size(); i++) text(c, lines.get(i), x + pad, y + 24 + 30 + line / 2f + i * line, size, 0xFFE4E9EF, BODY, Align.LEFT);
+            if (use != null) text(c, use, x + pad, y + 24 + 30 + 6 + line / 2f + lines.size() * line, 19, 0xFF71E5F2, LABEL, Align.LEFT);
         } finally { m.pop(); }
+    }
+
+    /** 90 -> "1분 30초", 1800 -> "30분". */
+    static String duration(int seconds) {
+        int h = seconds / 3600, mnt = seconds % 3600 / 60, sec = seconds % 60;
+        var b = new StringBuilder();
+        if (h > 0) b.append(h).append("시간");
+        if (mnt > 0) b.append(b.isEmpty() ? "" : " ").append(mnt).append("분");
+        if (sec > 0 || b.isEmpty()) b.append(b.isEmpty() ? "" : " ").append(sec).append("초");
+        return b.toString();
     }
 
     // ------------------------------------------------------------------ pieces

@@ -24,7 +24,10 @@ import school.magiccodex.protocol.ArtifactProtocol.Entry;
  * Ownership: permission magiccodex.artifact.own.<id> (LuckPerms, shared across the school/wild servers like brooms).
  * Equipped list: player PDC key "artifact_equipped". NOTE: PDC is per server; cross-server sync belongs in
  * PlayerStateStore (left for the owner/GPT because the DB schema is being reworked).
- * Abilities are NOT implemented yet - this only records what is equipped.
+ * Use key (2026-10-15): artifacts with `use: true` can be used with the client's artifact key (default X). The server
+ * checks ownership, equipment and the per-player cooldown, then fires {@link ArtifactUseEvent}; the cooldown starts
+ * only when a listener reports the effect happened. Abilities themselves are NOT implemented yet.
+ * Cooldowns live in memory per server (kept across relogs on the same server, not across servers).
  */
 final class ArtifactBridge implements PluginMessageListener, Listener, CommandExecutor, TabCompleter {
     private final MagicCodexBridge plugin;
@@ -36,6 +39,8 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
     /** Players whose client has asked at least once (only they get pushes after a reload). */
     private final Set<UUID> listening = new HashSet<>();
     private final Map<UUID, Long> limits = new HashMap<>();
+    /** player -> artifact id -> System.currentTimeMillis() when it is ready again. Expired entries are dropped lazily. */
+    private final Map<UUID, Map<String, Long>> readyAt = new HashMap<>();
 
     ArtifactBridge(MagicCodexBridge plugin) throws Exception {
         this.plugin = plugin;
@@ -72,7 +77,12 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
             String effect = clip(s.getString("effect", ""), ArtifactProtocol.MAX_EFFECT, id + ".effect");
             String icon = clip(s.getString("icon", ""), ArtifactProtocol.MAX_ICON, id + ".icon");
             if (!icon.isBlank() && !icon.matches("[a-z0-9_.-]+:[a-z0-9_./-]+\\.png")) throw new IllegalArgumentException(id + ".icon 은 네임스페이스:경로.png 형식");
-            rows.add(new Row(new Entry(id, name, grade, description, effect, icon), s.getInt("order", 0)));
+            int cooldown = ArtifactProtocol.PASSIVE;
+            if (s.getBoolean("use", false)) {
+                cooldown = s.getInt("cooldown", 0);
+                if (cooldown < 0 || cooldown > ArtifactProtocol.MAX_COOLDOWN) throw new IllegalArgumentException(id + ".cooldown 은 0~" + ArtifactProtocol.MAX_COOLDOWN + "초");
+            }
+            rows.add(new Row(new Entry(id, name, grade, description, effect, icon, cooldown), s.getInt("order", 0)));
         }
         if (rows.size() > ArtifactProtocol.MAX_ARTIFACTS) throw new IllegalArgumentException("아티팩트는 최대 " + ArtifactProtocol.MAX_ARTIFACTS + "개");
         rows.sort(Comparator.comparingInt((Row r) -> r.entry().grade()).thenComparingInt(Row::order).thenComparing(r -> r.entry().id()));
@@ -149,8 +159,35 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
                     if (list.remove(r.id())) { store(p, list); notice = "해제했습니다."; } else notice = "장착 중이 아닙니다.";
                 }
             }
+        } else if (r.action() == ArtifactProtocol.USE) {
+            notice = use(p, r.id(), now);
         }
         send(p, r.knownCatalog() != revision, notice);
+    }
+
+    private Entry entry(String id) { for (Entry e : catalog) if (e.id().equals(id)) return e; return null; }
+
+    private long remaining(UUID player, String id, long now) {
+        var map = readyAt.get(player);
+        if (map == null) return 0;
+        map.values().removeIf(t -> t <= now);
+        if (map.isEmpty()) { readyAt.remove(player); return 0; }
+        return Math.max(0, map.getOrDefault(id, 0L) - now);
+    }
+
+    /** Artifact use key. Returns the action-bar notice. */
+    private String use(Player p, String id, long now) {
+        if (!plugin.playerStateReady(p)) return "캐릭터 정보를 불러오는 중입니다.";
+        Entry e = entry(id);
+        if (e == null || !owns(p, id) || !equipped(p).contains(id)) return "장착한 아티팩트가 없습니다.";
+        if (!e.usable()) return e.name() + "은(는) 사용하는 아티팩트가 아닙니다.";
+        long left = remaining(p.getUniqueId(), id, now);
+        if (left > 0) return e.name() + " 재사용 대기 " + ((left + 999) / 1000) + "초";
+        var event = new ArtifactUseEvent(p, id, e.cooldown());
+        Bukkit.getPluginManager().callEvent(event);
+        if (!event.isUsed()) return event.getResponse() != null ? event.getResponse() : e.name() + "의 효과는 아직 준비 중입니다.";
+        if (e.cooldown() > 0) readyAt.computeIfAbsent(p.getUniqueId(), k -> new HashMap<>()).put(id, now + e.cooldown() * 1000L);
+        return event.getResponse() != null ? event.getResponse() : "";
     }
 
     private void send(Player p, boolean withCatalog, String notice) {
@@ -160,8 +197,13 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
         boolean[] owned = new boolean[snapshot.size()];
         for (int i = 0; i < owned.length; i++) owned[i] = owns(p, snapshot.get(i).id());
         String n = notice.length() > ArtifactProtocol.MAX_NOTICE ? notice.substring(0, ArtifactProtocol.MAX_NOTICE) : notice;
+        var equipped = equipped(p);
+        long now = System.currentTimeMillis();
+        int[] cooldown = new int[equipped.size()];
+        for (int i = 0; i < cooldown.length; i++)
+            cooldown[i] = (int) Math.min(remaining(p.getUniqueId(), equipped.get(i), now), ArtifactProtocol.MAX_COOLDOWN * 1000L);
         p.sendPluginMessage(plugin, ArtifactProtocol.RESPONSE,
-                ArtifactProtocol.encode(new ArtifactProtocol.State(rev, maxEquipped, owned, equipped(p), n)));
+                ArtifactProtocol.encode(new ArtifactProtocol.State(rev, maxEquipped, owned, equipped, n, cooldown)));
     }
 
     @EventHandler public void quit(PlayerQuitEvent e) { listening.remove(e.getPlayer().getUniqueId()); limits.remove(e.getPlayer().getUniqueId()); }
@@ -177,7 +219,8 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
                 sender.sendMessage("§a아티팩트 " + catalog.size() + "개를 다시 불러왔습니다. (장착 최대 " + maxEquipped + "개" + (ownsAll ? ", 전원 보유 테스트 모드" : "") + ")");
             }
             case "목록", "list" -> {
-                for (Entry e : catalog) sender.sendMessage("§7[" + ArtifactProtocol.GRADE_LABELS[e.grade()] + "] §f" + e.name() + " §8" + e.id());
+                for (Entry e : catalog) sender.sendMessage("§7[" + ArtifactProtocol.GRADE_LABELS[e.grade()] + "] §f" + e.name() + " §8" + e.id()
+                        + (e.usable() ? " §b(사용형" + (e.cooldown() > 0 ? " " + e.cooldown() + "초" : "") + ")" : ""));
                 sender.sendMessage("§7총 " + catalog.size() + "개");
             }
             case "확인", "check" -> {

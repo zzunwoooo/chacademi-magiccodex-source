@@ -280,7 +280,7 @@ public final class KeySettingsScreen extends Screen {
     private boolean openPicker(int code) {
         if(!KeySettingsLayout.mouse(code)&&!KeySettingsLayout.KEYS.stream().anyMatch(k->k.code()==code)) return false;
         if(!KeySettingsLayout.allowed(code)) {
-            notice=KeySettingsLayout.reservedShortcut(code)?"WASD · I · O · P · Z 키는 지정할 수 없습니다.":"이 키는 지정할 수 없습니다.";
+            notice=KeySettingsLayout.reservedShortcut(code)?"WASD · I · O · P · X · Z 키는 지정할 수 없습니다.":"이 키는 지정할 수 없습니다.";
             sound(true); return false;
         }
         if(waiting()) { notice="서버에서 배운 마법을 확인하고 있습니다…"; sound(true); return false; }

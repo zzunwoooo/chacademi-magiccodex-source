@@ -22,12 +22,19 @@ public final class KeySettingsLayout {
     static final Rect KEYBOARD_SRC = new Rect(212, 158, 1248, 415);
     static final float KEYBOARD_SCALE = .84f, KEYBOARD_X = 212, KEYBOARD_Y = 191;
     public static final List<Key> KEYS = keys();
-    private static final Set<Integer> RESERVED = Set.of(87, 65, 83, 68, 73, 90, 80, 79,
+    // 88 = X: artifact use key (2026-10-15 owner decision: never a spell key, even if the artifact key is rebound).
+    private static final Set<Integer> RESERVED = Set.of(87, 65, 83, 68, 73, 90, 80, 79, 88,
             344, 345, 342, 346, 343, 347, 348, 280);
     private static java.util.function.IntPredicate equipmentKey=code->false;
     static void equipmentKey(java.util.function.IntPredicate predicate){equipmentKey=predicate;}
+    private static java.util.function.IntPredicate artifactKey=code->false;
+    static void artifactKey(java.util.function.IntPredicate predicate){artifactKey=predicate;}
     static boolean equipmentReserved(int code){return code==79||equipmentKey.test(code);}
-    public static boolean reservedShortcut(int code){return code==87||code==65||code==83||code==68||code==73||code==90||code==80||code==79||equipmentKey.test(code);}
+    /** X and the (possibly rebound) artifact use key. */
+    static boolean artifactReserved(int code){return code==88||artifactKey.test(code);}
+    public static boolean reservedShortcut(int code){return code==87||code==65||code==83||code==68||code==73||code==90||code==80||code==79||equipmentKey.test(code)||artifactReserved(code);}
+    /** Shown when a reserved key is refused. */
+    public static final String RESERVED_MESSAGE="WASD · I · O · P · X · Z와 보조 키는 지정할 수 없습니다.";
     // Positive values outside GLFW keyboard range preserve version-1 integer storage.
     public static final int THUMB_1=1003, THUMB_2=1004;
     public static boolean mouse(int code){return code==THUMB_1||code==THUMB_2;}
@@ -35,7 +42,7 @@ public final class KeySettingsLayout {
     public static int mouseButton(int code){return code==THUMB_1?4:code==THUMB_2?3:-1;}
     public static boolean allowed(int code) {
         if(mouse(code))return true;
-        return !RESERVED.contains(code) && !equipmentKey.test(code) && KEYS.stream().anyMatch(k -> k.code() == code);
+        return !RESERVED.contains(code) && !equipmentKey.test(code) && !artifactKey.test(code) && KEYS.stream().anyMatch(k -> k.code() == code);
     }
     public static String name(int code) {
         if(mouse(code))return code==THUMB_1?"\uc5c4\uc9c0 1":"\uc5c4\uc9c0 2";

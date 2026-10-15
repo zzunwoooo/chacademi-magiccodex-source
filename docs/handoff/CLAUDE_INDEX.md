@@ -81,6 +81,7 @@ Claude 는 GPT 작업 브랜치에 직접 커밋하지 않고, **`claude/` 로 �
 | `claude/element-reaction-20261014` | `claude/followup-fixes-20261013` @ `41ee355` | `CLAUDE_ELEMENT_REACTION_20261014.md` | 원소 반응 정규 시스템: 표식 3초·반응 15종(적 대상 간단 효과, 제어 1.5초 이하)·반응 후 3초 내부 쿨, 몹 머리 위 원소 아이콘(HUD 이미지)·반응 이름 팝업. magic-mythic `Reactions` + 클라이언트 `ElementMarkClient` + `ElementProtocol`. VFX 나중. **순수 로직 javac만, Gradle·실게임 전** | 받기 전 |
 | `claude/artifact-codex-20261015` | `claude/element-reaction-20261014` @ `1a0fe6f` (위 브랜치 포함) | `CLAUDE_ARTIFACT_CODEX_20261015.md` | 아티팩트 도감 UI(승인 PNG + MagicCodex 폰트), 서버 `artifacts.yml`(언제든 수정 → `/아티팩트관리 새로고침`), 보유=권한, 장착 기록(PDC), 장비창 아티팩트 칸 → 도감. 예시 4개(등급별 1개). **능력 미구현. 프로토콜 javac만, Gradle·실게임 전** | 받기 전 |
 | `claude/reaction-vfx-20261015` | `claude/artifact-codex-20261015` @ `10c7e42` (위 브랜치 포함) | `CLAUDE_REACTION_VFX_20261015.md` | 원소 반응 VFX 15종: PortableVFX 팩 `ElementReactions`(client_compat OK, 텍스처 RGBA 2.5 MiB) + magic-mythic `ReactionVfx`(리플렉션, softdepend PortableVFX)로 반응 시 재생. **클라 팩 배포 필요. javac 스텁 검사만, Gradle·실게임 전** | 받기 전 |
+| `claude/artifact-catalog-20261015` | `claude/reaction-vfx-20261015` @ `b07c62c` (위 브랜치 포함) | `CLAUDE_ARTIFACT_CATALOG_20261015.md` | 검수 완료 아티팩트 150항목 yml(보류 2 숨김, 사용형 20), 아이콘 71장, 아티팩트 사용 키 X(프로토콜 v2 `USE`·대기 시간·`ArtifactUseEvent`), 마법 키세팅에서 X 금지. **능력 미구현, 서버·모드 같이 배포. Fabric 화면 코드 컴파일 미확인** | 받기 전 |
 
 ## Claude 가 지키는 규칙
 
