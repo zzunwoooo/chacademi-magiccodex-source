@@ -106,9 +106,11 @@ public final class AimRenderer {
                         ring(ring, m, w, e, e.getLerpedPos(tickDelta), ringRadius(e), argb(rgb, .42f));
                     }
                     if (p.target() != null) {
+                        // Under the creature's feet, not at the aimed point on its hitbox (that is body height).
+                        Vec3d at = p.target().getLerpedPos(tickDelta);
                         double r = ringRadius(p.target());
-                        ring(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TARGET_GLOW)), m, w, p.target(), p.point(), r * 1.08, argb(main, .5f + .15f * pulse));
-                        ring(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TARGET)), m, w, p.target(), p.point(), r, argb(main, 1f));
+                        ring(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TARGET_GLOW)), m, w, p.target(), at, r * 1.08, argb(main, .5f + .15f * pulse));
+                        ring(consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TARGET)), m, w, p.target(), at, r, argb(main, 1f));
                     }
                 }
             }
@@ -212,11 +214,13 @@ public final class AimRenderer {
         return out;
     }
 
-    /** Target ring under a creature: on the ground, or flat at its feet when it flies above it. */
+    /** Target ring flat on the ground straight under a creature's feet (also under flying ones); at the feet only over a deep drop. */
     private static void ring(VertexConsumer vc, Matrix4f m, World w, net.minecraft.entity.LivingEntity e, Vec3d feet, double r, int color) {
-        Double top = AimTargeting.Ground.top(w, feet.x, feet.y + .5, feet.z, 2);
-        if (top != null && feet.y - top < .4) { decal(vc, m, w, feet, r, color); return; }
-        quadUp(vc, m, feet.x - r, feet.z - r, feet.x + r, feet.z + r, (float) (feet.y + LIFT), 0, 0, 1, 1, color);
+        decal(vc, m, w, groundUnder(w, feet), r, color);
+    }
+    static Vec3d groundUnder(World w, Vec3d feet) {
+        Double top = AimTargeting.Ground.top(w, feet.x, feet.y + .5, feet.z, 16);
+        return top == null ? feet : new Vec3d(feet.x, top, feet.z);
     }
 
     /** Flat sprite of half-size r centred on (point.x, point.z), split per block column and laid on each column's top. */

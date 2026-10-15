@@ -107,3 +107,7 @@ Audit integration verified and deployed; Story content intentionally deferred. S
 ## Claude 빗자루 투사체 보정 (2026-10-15, 미빌드)
 
 [CLAUDE_BROOM_PROJECTILE_20261015.md](CLAUDE_BROOM_PROJECTILE_20261015.md): `claude/broom-projectile-20261015`. 빗자루 비행 중 직선 투사체가 뒤에서 나오는 문제 — 비행 속도 상속 + 핑 지연만큼 출발점 앞당김 (chabolt 판정·PortableVFX 연출 동일 공식). ChacademyMotion·magic-mythic·PortableVFX paper 3개 jar. magic-71 라인 BoltMech 와 머지 충돌 주의.
+
+## Claude 대상 지정 마법 링 위치 (2026-10-15, 미빌드)
+
+[CLAUDE_UNIT_TARGET_RING_20261015.md](CLAUDE_UNIT_TARGET_RING_20261015.md): `claude/unit-target-ring-20261015`. 빛의 낙인 같은 대상 지정 마법의 링을 히트박스 조준점(몸통 높이)이 아니라 몹 발밑 바닥에 붙인다. MagicCodex `AimRenderer` 한 파일이며 magic-71 라인에도 그대로 cherry-pick 가능하다.
