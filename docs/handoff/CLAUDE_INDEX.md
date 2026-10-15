@@ -107,3 +107,7 @@ Audit integration verified and deployed; Story content intentionally deferred. S
 ## Codex 한국어 명령·리로드 통합 (배포 완료)
 
 4014a51 채팅·파티 기준의 한국어 명령, 클라이언트 리로드, ID 메타데이터 자동완성 및 배포 제한은 [CODEX_STORY_COMMANDS_20261011.md](CODEX_STORY_COMMANDS_20261011.md)를 확인한다. 사용자 승인으로 공유 소스에 반영. 개인 런처 및 school/wild 교체·재시작, 추가 승인된 Velocity 파티 설치·재시작 완료. 실사용 다계정 검증은 별도.
+
+## Unit target ring integration
+
+[CLAUDE_UNIT_TARGET_RING_20261015.md](CLAUDE_UNIT_TARGET_RING_20261015.md): selected client-only ring patch 09186da; unrelated broom-projectile ancestor excluded.
