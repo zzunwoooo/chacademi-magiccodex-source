@@ -22,12 +22,12 @@ import school.magiccodex.protocol.ArtifactProtocol.Entry;
  * any time (/아티팩트관리 새로고침); clients receive the catalogue from here, so the mod never needs a rebuild for content.
  *
  * Ownership: permission magiccodex.artifact.own.<id> (LuckPerms, shared across the school/wild servers like brooms).
- * Equipped list: player PDC key "artifact_equipped". NOTE: PDC is per server; cross-server sync belongs in
- * PlayerStateStore (left for the owner/GPT because the DB schema is being reworked).
+ * Equipped list: player PDC key "artifact_equipped", shared between school/wild through PlayerStateStore
+ * (MariaDB codex_player_state.artifact_equipped, same lease as mana/accessories; 2026-10-15).
  * Use key (2026-10-15): artifacts with `use: true` can be used with the client's artifact key (default X). The server
  * checks ownership, equipment and the per-player cooldown, then fires {@link ArtifactUseEvent}; the cooldown starts
  * only when a listener reports the effect happened. Abilities: {@link ArtifactEffects} (2026-10-15).
- * Cooldowns live in memory per server (kept across relogs on the same server, not across servers).
+ * Use cooldowns live in memory and travel with the shared player state (artifact_cooldowns) to the other server.
  *
  * Summon (유물함 소환, 2026-10-15): /아티팩트소환 opens the client window. [소환하기] spends one ItemsAdder key item
  * (artifacts.yml summon.item, default item:random_artifact), rolls a grade by summon.weights and then a uniform
@@ -232,6 +232,31 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
         return Math.max(0, map.getOrDefault(id, 0L) - now);
     }
 
+    /** Use cooldowns as "id=readyAtMillis;" for the shared player state (school/wild). */
+    String cooldownText(UUID player) {
+        var map = readyAt.get(player);
+        if (map == null) return "";
+        long now = System.currentTimeMillis();
+        var out = new StringBuilder();
+        for (var e : map.entrySet()) if (e.getValue() > now && out.length() < 4000) out.append(e.getKey()).append('=').append(e.getValue()).append(';');
+        return out.toString();
+    }
+
+    /** Replaces this player's cooldowns with the shared state's. */
+    void restoreCooldowns(UUID player, String text) {
+        readyAt.remove(player);
+        if (text == null || text.isBlank()) return;
+        long now = System.currentTimeMillis();
+        var map = new HashMap<String, Long>();
+        for (String part : text.split(";")) {
+            String[] pair = part.split("=", 2);
+            if (pair.length != 2 || !ArtifactProtocol.validId(pair[0])) continue;
+            try { long until = Long.parseLong(pair[1]); if (until > now && until - now <= ArtifactProtocol.MAX_COOLDOWN * 1000L) map.put(pair[0], until); }
+            catch (NumberFormatException ignored) {}
+        }
+        if (!map.isEmpty()) readyAt.put(player, map);
+    }
+
     /** Artifact use key. Returns the action-bar notice. */
     private String use(Player p, String id, long now) {
         if (!plugin.playerStateReady(p)) return "캐릭터 정보를 불러오는 중입니다.";
@@ -243,7 +268,7 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
         var event = new ArtifactUseEvent(p, id, e.cooldown());
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isUsed()) return event.getResponse() != null ? event.getResponse() : e.name() + "의 효과는 아직 준비 중입니다.";
-        if (e.cooldown() > 0) readyAt.computeIfAbsent(p.getUniqueId(), k -> new HashMap<>()).put(id, now + e.cooldown() * 1000L);
+        if (e.cooldown() > 0) { readyAt.computeIfAbsent(p.getUniqueId(), k -> new HashMap<>()).put(id, now + e.cooldown() * 1000L); plugin.markPlayerStateDirty(p); }
         return event.getResponse() != null ? event.getResponse() : "";
     }
 

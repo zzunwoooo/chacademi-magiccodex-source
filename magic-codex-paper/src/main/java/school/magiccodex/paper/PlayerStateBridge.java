@@ -53,7 +53,9 @@ final class PlayerStateBridge implements Listener,AutoCloseable {
         int circle=Math.clamp(data.getOrDefault(key("player_circle"),PersistentDataType.INTEGER,1),1,9);
         var cooldowns=new StringBuilder();long now=System.currentTimeMillis();
         account.cooldowns.forEach((spell,until)->{if(until>now&&until-now<=86_400_000&&spell.matches("[a-z0-9_-]{1,64}")&&cooldowns.length()<32000)cooldowns.append(spell).append('=').append(until).append(';');});
-        return new PlayerStateStore.State(circle,account.current,account.baseMaximum,account.baseRegen,account.baseHaste,cooldowns.toString(),slots,credits);
+        var artifacts=new PlayerStateStore.Artifacts(data.getOrDefault(key("artifact_equipped"),PersistentDataType.STRING,""),
+                plugin.artifactCooldowns(id),data.getOrDefault(key("artifact_biomes"),PersistentDataType.STRING,""),data.get(key("artifact_kept_item"),PersistentDataType.BYTE_ARRAY));
+        return new PlayerStateStore.State(circle,account.current,account.baseMaximum,account.baseRegen,account.baseHaste,cooldowns.toString(),slots,credits,artifacts);
     }
     private void apply(Player p,PlayerStateStore.State state){
         var data=p.getPersistentDataContainer();
@@ -65,6 +67,11 @@ final class PlayerStateBridge implements Listener,AutoCloseable {
         data.set(key("mana_cooldowns"),PersistentDataType.STRING,state.cooldowns());
         for(int i=0;i<4;i++){if(state.accessories()[i]==null)data.remove(key("accessory_slot_"+i));else data.set(key("accessory_slot_"+i),PersistentDataType.BYTE_ARRAY,state.accessories()[i]);}
         for(int i=0;i<3;i++)data.set(key("reconfig_credit_"+i),PersistentDataType.INTEGER,state.reconfigurationCredits()[i]);
+        var artifacts=state.artifacts();
+        if(artifacts.equipped().isEmpty())data.remove(key("artifact_equipped"));else data.set(key("artifact_equipped"),PersistentDataType.STRING,artifacts.equipped());
+        if(artifacts.biomes().isEmpty())data.remove(key("artifact_biomes"));else data.set(key("artifact_biomes"),PersistentDataType.STRING,artifacts.biomes());
+        if(artifacts.kept()==null)data.remove(key("artifact_kept_item"));else data.set(key("artifact_kept_item"),PersistentDataType.BYTE_ARRAY,artifacts.kept());
+        plugin.restoreArtifactCooldowns(p.getUniqueId(),artifacts.cooldowns());
         var account=mana.account(p.getUniqueId());account.baseMaximum=state.manaMaximum();account.baseRegen=state.manaRegeneration();account.baseHaste=state.magicHaste();account.current=state.manaCurrent();account.cooldowns.clear();
         long now=System.currentTimeMillis();for(String part:state.cooldowns().split(";")){
             String[] pair=part.split("=",2);if(pair.length!=2||!pair[0].matches("[a-z0-9_-]{1,64}")||account.cooldowns.size()>=256)continue;
@@ -94,7 +101,7 @@ final class PlayerStateBridge implements Listener,AutoCloseable {
                 onMain(()->{
                     if(closing||!session.equals(sessions.get(id))||!p.isOnline())return;
                     // ready 표시 뒤에 장비를 다시 계산해야 장신구(공유 상태)가 반영된다.
-                    try{apply(p,loaded);ready.add(id);plugin.refreshEquipment(p);}catch(Exception error){ready.remove(id);failure(p,error);}
+                    try{apply(p,loaded);ready.add(id);plugin.refreshEquipment(p);plugin.artifactStateLoaded(p);}catch(Exception error){ready.remove(id);failure(p,error);}
                 });
             }catch(Exception error){onMain(()->{if(session.equals(sessions.get(id))&&p.isOnline())failure(p,error);});}
         });

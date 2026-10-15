@@ -120,6 +120,12 @@ final class ArtifactEffects implements Listener {
         apply(p);
     }
 
+    /** The shared player state (school/wild) was applied: recompute and hand back a kept item. */
+    void stateLoaded(Player p) {
+        refresh(p);
+        life.returnKept(p);
+    }
+
     /** One internal cooldown per player and key. @return true when ready (and starts the cooldown) */
     boolean ready(Player p, String key, long ms) {
         var r = run(p); long now = System.currentTimeMillis();

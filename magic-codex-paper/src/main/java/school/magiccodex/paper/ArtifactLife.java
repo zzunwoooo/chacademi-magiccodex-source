@@ -64,6 +64,7 @@ final class ArtifactLife implements Listener {
         if (set.contains(biome) || set.size() > 400) return;
         set.add(biome); set.remove("");
         data.set(biomesKey, PersistentDataType.STRING, String.join(",", set));
+        fx.plugin.markPlayerStateDirty(p); // shared with the other server (codex_player_state.artifact_biomes)
         p.giveExp(30);
         p.sendActionBar(Component.text("여행자의 수첩: 처음 와 보는 곳! (경험치 +30)", NamedTextColor.GREEN));
         p.playSound(p.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, .8f, 1.2f);
@@ -262,6 +263,7 @@ final class ArtifactLife implements Listener {
         var pick = e.getDrops().get(fx.random.nextInt(e.getDrops().size()));
         e.getDrops().remove(pick);
         p.getPersistentDataContainer().set(keptKey, PersistentDataType.BYTE_ARRAY, pick.serializeAsBytes());
+        fx.plugin.savePlayerState(p); // shared state: the item must not be lost or duplicated by a server switch
     }
 
     @EventHandler public void respawn(PlayerRespawnEvent e) {
@@ -273,12 +275,17 @@ final class ArtifactLife implements Listener {
         }, 2);
     }
 
-    @EventHandler public void joined(PlayerJoinEvent e) { Bukkit.getScheduler().runTaskLater(fx.plugin, () -> { if (!e.getPlayer().isDead()) returnKept(e.getPlayer()); }, 40); }
+    /** On join the shared state may still be loading: the item is returned from {@link ArtifactEffects#stateLoaded} instead. */
+    @EventHandler public void joined(PlayerJoinEvent e) {
+        Bukkit.getScheduler().runTaskLater(fx.plugin, () -> { if (e.getPlayer().isOnline() && fx.plugin.playerStateReady(e.getPlayer())) returnKept(e.getPlayer()); }, 40);
+    }
 
-    private void returnKept(Player p) {
+    void returnKept(Player p) {
+        if (p.isDead() || !fx.plugin.playerStateReady(p)) return;
         byte[] bytes = p.getPersistentDataContainer().get(keptKey, PersistentDataType.BYTE_ARRAY);
         if (bytes == null) return;
         p.getPersistentDataContainer().remove(keptKey);
+        fx.plugin.savePlayerState(p);
         try {
             ArtifactActions.give(p, ItemStack.deserializeBytes(bytes));
             p.sendActionBar(Component.text("튼튼한 끈이 아이템 하나를 지켜 주었습니다.", NamedTextColor.GOLD));

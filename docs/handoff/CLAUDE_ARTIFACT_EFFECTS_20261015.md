@@ -22,6 +22,30 @@
   - 파티 조회 기능을 이번에 만들어 두었습니다. 마법 쪽에서도 쓸 수 있도록 공개 서비스로 등록했습니다.
   - "전투 중" = 최근 5초 안에 적(몬스터 `Enemy` 또는 플레이어)에게 피해를 주거나 받음.
 
+## 0-1. 스쿨·야생 공유 (DB, 10-15 추가)
+
+오너: "야생에서도 되어야 한다, 스쿨이랑." 아티팩트 상태를 기존 공유 플레이어 상태 행에 넣었습니다(`PlayerStateStore`, MariaDB `codex_player_state`). 마나·장신구와 같은 임대(lease)·저장 주기를 따르고, 서버를 옮기면 이전 서버가 저장·해제한 뒤에 넘어갑니다.
+
+| 열 (새로 추가) | 내용 | 저장 시점 |
+|---|---|---|
+| `artifact_equipped` VARCHAR(512) | 장착 목록(PDC `artifact_equipped`) | 장착/해제 즉시 |
+| `artifact_cooldowns` TEXT | 사용 키 대기 시간 `id=끝나는시각ms;` | 사용 후 다음 주기(5초) |
+| `artifact_biomes` TEXT | 여행자의 수첩 방문 바이옴 | 새 바이옴 후 다음 주기 |
+| `artifact_kept` BLOB | 튼튼한 끈이 지키는 아이템 | 쓰러질 때·돌려줄 때 즉시 |
+
+- **테이블 변경:** 시작할 때 `ALTER TABLE … ADD COLUMN IF NOT EXISTS`로 자동으로 붙습니다. MariaDB 10.0.2 이상이면 다시 실행해도 안전합니다. 기존 행은 빈 값입니다.
+  - 참고용 `reference/output/mariadb-migration/schema.sql`에도 열을 추가했습니다.
+- **불러오기 전 동작:** 공유 상태를 불러오기 전에는 장착·사용·효과·끈 아이템 반환이 모두 막혀 있습니다(`playerStateReady`).
+  - 불러온 직후 `artifactStateLoaded`가 효과를 다시 계산하고, 지켜 둔 아이템을 돌려줍니다.
+  - 그래서 서버를 옮겨도 아이템이 복제되거나 사라지지 않습니다.
+- **원래부터 공유되던 것:** 보유(LuckPerms 권한), 파티(Velocity가 두 서버 모두에 명단을 보냄. 신뢰 서버 `school,wild`).
+- **서버를 옮기면 초기화되는 것:** 메모리에만 있는 짧은 상태라 그대로 두었습니다.
+  - 시간제 버프, 음유시인 음표, 되감기 기록, 전투 상태
+- **배포:** `artifacts.yml`은 두 서버에 같은 파일을 두어야 합니다.
+  - 장착 목록 중 카탈로그에 없는 아이디는 조용히 빠지고, 그 상태로 저장되면 목록에서 사라집니다.
+- **MariaDB를 쓰지 않는 서버**(SQLite 설정)는 예전처럼 PDC에만 남습니다.
+- **컴파일:** `PlayerStateStore`·`PlayerStateBridge`도 Paper API 소스로 javac 확인했습니다. 기존 8인자 `State` 생성자(DatabaseSmoke)도 그대로 쓸 수 있습니다. 실제 DB에서는 확인하지 못했습니다.
+
 ## 1. 구조
 
 | 위치 | 파일 | 내용 |

@@ -97,7 +97,11 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     /** Party membership pushed by Velocity (also a Bukkit service). Null before enable. */
     public PartyRoster partyRoster(){return partyRoster;}
     /** Equipped artifacts changed (equip/unequip, ownership): recompute their effects now. */
-    void artifactsChanged(Player p){if(artifactEffects!=null)artifactEffects.refresh(p);}
+    void artifactsChanged(Player p){if(artifactEffects!=null)artifactEffects.refresh(p);savePlayerState(p);}
+    /** Shared state (school/wild) was applied: equipped artifacts and the strap's kept item are now current. */
+    void artifactStateLoaded(Player p){if(artifactEffects!=null)artifactEffects.stateLoaded(p);}
+    String artifactCooldowns(UUID player){return artifacts==null?"":artifacts.cooldownText(player);}
+    void restoreArtifactCooldowns(UUID player,String text){if(artifacts!=null)artifacts.restoreCooldowns(player,text);}
     /** A spell was cast successfully (after mana and cooldown). */
     void artifactCast(Player p,String spell,double cost){if(artifactEffects!=null)artifactEffects.cast(p,spell,cost);}
     private PlayerStateBridge playerState;
