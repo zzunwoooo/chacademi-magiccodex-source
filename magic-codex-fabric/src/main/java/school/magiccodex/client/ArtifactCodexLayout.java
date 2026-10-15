@@ -18,9 +18,11 @@ final class ArtifactCodexLayout {
     static final int COLUMNS = 5, ROWS = 3, PAGE_SIZE = COLUMNS * ROWS;
 
     // Header
-    static final float TITLE_X = 836, TITLE_Y = 76;
-    static final Rect COMPASS = new Rect(68, 42, 72, 72);
-    static final Rect CLOSE = new Rect(1535, 45, 66, 66);
+    // Header band of main_panel.png: inner border line at y=39, header divider at y=137 -> centre y=88.
+    // Compass and X sit on that centre line, mirrored 100 px in from the panel edges.
+    static final float TITLE_X = 836, TITLE_Y = 88;
+    static final Rect COMPASS = new Rect(64, 52, 72, 72);
+    static final Rect CLOSE = new Rect(1539, 55, 66, 66);
 
     // Filter row (just under the header line at y=137)
     static final Rect SEARCH = new Rect(62, 152, 446, 46);
