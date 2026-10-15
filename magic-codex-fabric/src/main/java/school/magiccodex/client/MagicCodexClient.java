@@ -49,6 +49,7 @@ public final class MagicCodexClient implements ClientModInitializer {
         DialogueClient.initialize();
         NpcTalkClient.initialize();PortraitClient.initialize();
         EquipmentClient.initialize();
+        ArtifactClient.initialize();
         PetClient.initialize();
         TamingClient.initialize();
         ShinyClient.initialize();

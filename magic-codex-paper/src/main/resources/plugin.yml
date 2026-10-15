@@ -77,6 +77,9 @@ commands:
   장비설정:
     description: Tag the held accessory and its equipment bonuses.
     permission: magiccodex.equipment.admin
+  아티팩트관리:
+    description: Reload artifacts.yml, list artifacts, check a player's artifacts.
+    permission: magiccodex.artifact.admin
   기숙사점수:
     description: School house standings and administrator point adjustments.
     aliases: [학교기증, 학교점수]
@@ -123,6 +126,10 @@ commands:
     description: 등록 칭호 회수
     permission: magiccodex.titles.admin
 permissions:
+  magiccodex.artifact.admin:
+    default: op
+  magiccodex.artifact.own.*:
+    default: false
   magiccodex.nickname.admin:
     description: 다른 플레이어에게 /최초닉네임설정 열기
     default: op

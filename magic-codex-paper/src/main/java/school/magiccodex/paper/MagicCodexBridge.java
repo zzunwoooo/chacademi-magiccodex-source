@@ -91,6 +91,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private DisplayNames names;
     private SchoolBridge school;
     private EquipmentBridge equipment;
+    private ArtifactBridge artifacts;
     private PlayerStateBridge playerState;
     boolean playerStateReady(Player p){return playerState==null||playerState.ready(p);}
     void savePlayerState(Player p){if(playerState!=null)playerState.save(p);}
@@ -153,6 +154,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         mana.bindSpellCommand();
         try { mailbox=new MailboxBridge(this); shops=new ShopBridge(this); shopAdmin=new ShopAdminBridge(this); } catch(Exception e) { getLogger().severe("Mailbox initialization failed: "+e.getClass().getSimpleName()); getServer().getPluginManager().disablePlugin(this); return; }
         journal=new JournalBridge(this);
+        try{artifacts=new ArtifactBridge(this);}catch(Exception error){getLogger().severe("아티팩트 도감 초기화 실패 (artifacts.yml 확인): "+error.getMessage());}
         new AdminCommandBridge(this,mana,school,enhancement,appraisal,titles,npcSocial);
         getLogger().info("권한 연동 준비 완료. 활성 도감만 조회, 작업당 최대 " + budget + "회, 보조 확인 " + refresh / 1000 + "초.");
     }

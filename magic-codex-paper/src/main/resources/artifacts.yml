@@ -1,0 +1,55 @@
+# 차카데미 아티팩트 도감 정의
+#
+# 이 파일만 고치면 도감 내용이 바뀝니다. 고친 뒤 /아티팩트관리 새로고침 (접속 중인 플레이어 도감도 바로 갱신).
+# 모드(클라이언트)는 다시 배포할 필요 없습니다. 서버가 이 내용을 접속자에게 보내 줍니다.
+#
+# 보유: 권한 magiccodex.artifact.own.<아이디>  (전부: magiccodex.artifact.own.*)
+#   예) /lp user 닉네임 permission set magiccodex.artifact.own.sturdy_vest true
+# 장착: 도감에서 [장착]/[해제]. 장착 개수는 settings.max-equipped.
+# 실제 능력(효과)은 아직 구현 전입니다. 지금은 도감 표시와 장착 기록만 합니다.
+
+settings:
+  max-equipped: 1          # 동시에 장착할 수 있는 아티팩트 수 (1~8)
+  test-owns-all: false     # true면 모든 플레이어가 전부 보유한 것으로 표시 (UI 확인용, 운영 중에는 false)
+
+# 항목 형식
+#   아이디(영문 소문자·숫자·_):
+#     name: 도감에 보이는 이름 (최대 40자)
+#     grade: common(일반) / rare(고급) / unique(유일) / legendary(전설)
+#     description: 한두 줄 소개 (상세 패널 위쪽, 최대 200자)
+#     effect: 상세 효과 설명 (상세 패널 아래쪽, 마우스를 올리면 전체가 툴팁으로 보임, 최대 600자)
+#     icon: 아이콘 이미지 경로. 비워 두면 빈칸으로 표시 (예: magiccodex:textures/artifact/sturdy_vest.png)
+#     order: 같은 등급 안에서의 정렬 순서 (작을수록 앞)
+#     enabled: false로 두면 도감에서 숨김
+artifacts:
+  sturdy_vest:
+    name: 튼튼한 조끼
+    grade: common
+    description: 견습생에게 처음 지급되는 두툼한 가죽 조끼.
+    effect: 최대 체력 +2 (하트 1칸)
+    icon: ""
+    order: 1
+
+  tap_dance_shoes:
+    name: 탭댄스 구두
+    grade: rare
+    description: 맞을 때마다 발이 저절로 박자를 탄다.
+    effect: 피격 시 20% 확률로 1초 동안 탭댄스 모션을 취하며, 그동안 받는 피해가 30% 줄어듭니다.
+    icon: ""
+    order: 1
+
+  giant_heart:
+    name: 거인의 심장
+    grade: unique
+    description: 거인의 박동이 아직 남아 있는 붉은 결정.
+    effect: 최대 체력 +8, 대신 이동 속도 -5%
+    icon: ""
+    order: 1
+
+  rainbow_prism:
+    name: 무지개 프리즘
+    grade: legendary
+    description: 여러 원소의 빛을 품은 프리즘.
+    effect: 키세팅 6칸이 화염·물·바람·대지·빛·어둠 하나씩으로 채워져 있으면, 내가 일으킨 원소 반응의 효과가 2배가 됩니다.
+    icon: ""
+    order: 1
