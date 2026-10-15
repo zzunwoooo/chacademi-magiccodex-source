@@ -46,16 +46,17 @@ final class ArtifactCodexLayout {
 
     // Detail panel
     static final Rect DETAIL = new Rect(1176, 205, 446, 671);
-    static final float ICON_X = 1399, ICON_Y = 345;
-    static final int ICON_SIZE = 190;
+    static final float ICON_X = 1399, ICON_Y = 388;
+    static final int ICON_SIZE = 270;
     static final float TEXT_LEFT = 1206, TEXT_RIGHT = 1594, TEXT_WIDTH = TEXT_RIGHT - TEXT_LEFT;
-    static final float NAME_Y = 478, DIVIDER1_Y = 517, DESCRIPTION_Y = 553, DIVIDER2_Y = 606, EFFECT_TITLE_Y = 636, EFFECT_Y = 674;
-    static final float DESCRIPTION_LINE = 30, EFFECT_LINE = 33;
-    static final int DESCRIPTION_LINES = 2, EFFECT_LINES = 2;
-    static final Rect EFFECT_HOVER = new Rect(1196, 616, 410, 128);
+    // Simplified panel (2026-10-15 reference): name + grade, one divider, description; the full effect is a hover tooltip.
+    static final float NAME_Y = 570, DIVIDER_Y = 609, DESCRIPTION_Y = 651;
+    static final float DESCRIPTION_LINE = 34;
+    static final int DESCRIPTION_LINES = 3;
+    static final Rect DESCRIPTION_HOVER = new Rect(1196, 626, 410, 118);
     static final Rect EQUIP = new Rect(1199, 772, 193, 62), UNEQUIP = new Rect(1407, 772, 191, 62);
     static final float NOTICE_Y = 856;
 
     // Tooltip (left of the detail panel, over the grid's right edge)
-    static final float TOOLTIP_RIGHT = 1244, TOOLTIP_TOP = 600, TOOLTIP_WIDTH = 380;
+    static final float TOOLTIP_RIGHT = 1244, TOOLTIP_TOP = 618, TOOLTIP_WIDTH = 380;
 }

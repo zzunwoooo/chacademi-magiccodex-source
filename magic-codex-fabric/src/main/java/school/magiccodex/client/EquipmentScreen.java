@@ -24,7 +24,7 @@ public final class EquipmentScreen extends Screen {
     private static final Identifier BROOM_SLOT=Identifier.of("magiccodex","textures/gui/equipment/broom_equip_slot.png");
     public EquipmentScreen(){super(Text.literal("장비"));}
     @Override protected void init(){sound();broomLayout=BroomUiLink.available();if(broomLayout)BroomUiLink.refresh();ArtifactClient.query();}
-    /** Artifact slot (index 4) opens the artifact codex when the server provides it; otherwise the old item picker. */
+    /** Artifact slot (index 4): always opens the artifact codex and shows what was equipped there (owner decision 2026-10-15). */
     private static final int ARTIFACT_SLOT=4;
     private CodexLayout layout(){return BroomSelectionLayout.equipmentFit(width,height,broomLayout);}
     private float stretch(){return BroomSelectionLayout.equipmentStretch(broomLayout);}
@@ -74,20 +74,28 @@ public final class EquipmentScreen extends Screen {
             }
             for(int i=0;i<8;i++){
                 ItemStack item=i<EquipmentClient.equipped.size()?EquipmentClient.equipped.get(i):ItemStack.EMPTY;
-                if(!item.isEmpty()){c.fill(x(i)+9,y(i)+9,x(i)+143,y(i)+129,0xFF132237);drawItem(c,item,x(i)+28,y(i)+21,94);}
-                else if(i==ARTIFACT_SLOT&&ArtifactClient.supported()&&!ArtifactClient.equipped().isEmpty()){var a=ArtifactClient.find(ArtifactClient.equipped().get(0));if(a!=null){c.fill(x(i)+9,y(i)+9,x(i)+143,y(i)+129,0xFF132237);UiResources.text().draw(c,a.name(),x(i)+76,y(i)+69,Math.min(19f,19f*126/Math.max(1,UiResources.text().width(a.name(),19,FONT))),ArtifactCodexScreen.GRADE_COLORS[a.grade()],FONT,true);}}
+                if(i==ARTIFACT_SLOT){if(!ArtifactClient.equipped().isEmpty())artifactSlot(c,i);}
+                else if(!item.isEmpty()){c.fill(x(i)+9,y(i)+9,x(i)+143,y(i)+129,0xFF132237);drawItem(c,item,x(i)+28,y(i)+21,94);}
                 if(i==hovered||i==selected){c.fill(x(i)+7,y(i)+7,x(i)+145,y(i)+131,0x253BC2EA);HudMesh.line(c,x(i)+15,y(i)+129,x(i)+136,y(i)+129,2,0xFF8DDDF3);}
             }
             String notice=EquipmentClient.notice;
             if(EquipmentClient.data==null&&EquipmentClient.supported())notice="장비 정보를 불러오는 중입니다.";
             if(!notice.isBlank())label(c,notice,836,737+extra(),19,0xFFD2DDE3);
             if(selected>=0)picker(c,mx,my);
-            else if(hovered==ARTIFACT_SLOT&&ArtifactClient.supported())tooltip(c,"아티팩트 · 클릭하여 도감 열기",(float)mx,(float)my);
+            else if(hovered==ARTIFACT_SLOT){var a=ArtifactClient.equipped().isEmpty()?null:ArtifactClient.find(ArtifactClient.equipped().get(0));tooltip(c,a==null?"아티팩트 · 클릭하여 도감 열기":a.name()+" · 클릭하여 도감 열기",(float)mx,(float)my);}
             else if(hovered>=0){ItemStack item=hovered<EquipmentClient.equipped.size()?EquipmentClient.equipped.get(hovered):ItemStack.EMPTY;tooltip(c,item.isEmpty()?NAMES[hovered]+" · 클릭하여 장착":item.getName().getString()+" · 클릭 교체 / 우클릭 해제",(float)mx,(float)my);}
             else if(hit(mx,my,176,781+extra(),1290,75))tooltip(c,"추가 장비 효과 · 마력 / 체력 / 최대 마나 / 마나 회복 / 마법 가속",836,770+extra());
             c.getMatrices().pop();
         }finally{c.getMatrices().pop();images.endFrame();}
         entrance.draw(c,width,height);
+    }
+    /** Equipped artifact in the equipment window: icon when the artifact has one, otherwise its name in the grade colour. */
+    private void artifactSlot(DrawContext c,int i){
+        var a=ArtifactClient.find(ArtifactClient.equipped().get(0));if(a==null)return;
+        c.fill(x(i)+9,y(i)+9,x(i)+143,y(i)+129,0xFF132237);
+        if(!a.icon().isBlank()&&UiResources.images().drawCentered(c,a.icon(),x(i)+76,y(i)+69,96,0xFFFFFFFF))return;
+        var t=UiResources.text();float size=Math.min(19f,19f*126/Math.max(1,t.width(a.name(),19,FONT)));
+        t.draw(c,a.name(),x(i)+76,y(i)+69,size,ArtifactCodexScreen.GRADE_COLORS[a.grade()],FONT,true);
     }
     private void drawStars(DrawContext c,boolean front){for(int i=0;i<stars.count();i++)if(stars.foreground(i)==front){float x=836+stars.x(i)*242,y=408+stars.y(i)*210,size=4+(stars.depth(i)+1)*2;HudMesh.star(c,x,y,size*1.8f,0x225CD6EF);HudMesh.star(c,x,y,size,0xDDE5D5A7);}}
     private void picker(DrawContext c,double mx,double my){
@@ -106,7 +114,7 @@ public final class EquipmentScreen extends Screen {
         if(button==0&&selected<0&&hit(mx,my,591,664+(broomLayout?100:0),490,50)){NicknameClient.open(this);return true;}
         if(button==0&&selected<0&&broomLayout&&BroomUiLink.available()&&hit(mx,my,544,650,584,90)){client.setScreen(new BroomSelectionScreen(this));return true;}
         if(selected>=0){if(button==1||hit(mx,my,1065,184,50,46)){selected=-1;sound();return true;}if(button==0){var list=choices();for(int n=0;n<list.size();n++)if(hit(mx,my,568+n%6*89,240+n/6*60,80,55)){if(EquipmentClient.request(EquipmentProtocol.EQUIP,selected,EquipmentClient.data.candidates().get(list.get(n)).inventory())){selected=-1;sound();}return true;}}return true;}
-        if(button==0&&ArtifactClient.supported()&&hit(mx,my,EquipmentScreen.x(ARTIFACT_SLOT),y(ARTIFACT_SLOT),151,137)){sound();client.setScreen(new ArtifactCodexScreen(this));return true;}
+        if(hit(mx,my,EquipmentScreen.x(ARTIFACT_SLOT),y(ARTIFACT_SLOT),151,137)){if(button==0){sound();client.setScreen(new ArtifactCodexScreen(this));}return true;}
         for(int i=0;i<8;i++)if(hit(mx,my,EquipmentScreen.x(i),y(i),151,137)){
             if(button==0){selected=i;sound();}else if(button==1){EquipmentClient.request(EquipmentProtocol.REMOVE,i,0);sound();}return true;
         }

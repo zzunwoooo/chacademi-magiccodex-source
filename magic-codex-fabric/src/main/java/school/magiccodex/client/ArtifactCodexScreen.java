@@ -130,7 +130,7 @@ final class ArtifactCodexScreen extends Screen {
             Item sel = selectedItem(items);
             detail(c, mx, my, sel);
             if (sortOpen) sortMenu(c, mx, my);
-            if (sel != null && sel.owned() && ArtifactCodexLayout.EFFECT_HOVER.contains(mx, my) && !sortOpen) tooltip(c, sel.entry());
+            if (sel != null && sel.owned() && !sel.entry().effect().isBlank() && ArtifactCodexLayout.DESCRIPTION_HOVER.contains(mx, my) && !sortOpen) tooltip(c, sel.entry());
         } finally { m.pop(); images.endFrame(); }
     }
 
@@ -249,18 +249,16 @@ final class ArtifactCodexScreen extends Screen {
         Entry e = sel.entry();
         int gradeColor = GRADE_COLORS[e.grade()];
         if (sel.owned()) icon(c, e, ArtifactCodexLayout.ICON_X, ArtifactCodexLayout.ICON_Y, ArtifactCodexLayout.ICON_SIZE, 0xFFFFFFFF);
-        else UiResources.images().drawTexture(c, LOCK, Math.round(ArtifactCodexLayout.ICON_X - 55), Math.round(ArtifactCodexLayout.ICON_Y - 55), 0, 0, 110, 110, 256, 256, 256, 256);
+        else UiResources.images().drawTexture(c, LOCK, Math.round(ArtifactCodexLayout.ICON_X - 60), Math.round(ArtifactCodexLayout.ICON_Y - 60), 0, 0, 120, 120, 256, 256, 256, 256);
         String grade = ArtifactProtocol.GRADE_LABELS[e.grade()];
         float gradeSize = 27, gradeWidth = UiResources.text().width(grade, gradeSize, BOLD);
         text(c, grade, ArtifactCodexLayout.TEXT_RIGHT, ArtifactCodexLayout.NAME_Y, gradeSize, gradeColor, BOLD, Align.RIGHT);
         String name = sel.owned() ? e.name() : "???";
         text(c, fit(name, 34, TITLE, ArtifactCodexLayout.TEXT_WIDTH - gradeWidth - 20), ArtifactCodexLayout.TEXT_LEFT, ArtifactCodexLayout.NAME_Y, 34, IVORY, TITLE, Align.LEFT);
-        divider(c, ArtifactCodexLayout.DIVIDER1_Y);
+        divider(c, ArtifactCodexLayout.DIVIDER_Y);
+        // Description only; hovering it shows the full effect (tooltip).
         String description = sel.owned() ? e.description() : "아직 발견하지 못한 아티팩트입니다.";
-        paragraph(c, description, ArtifactCodexLayout.DESCRIPTION_Y, 20, ArtifactCodexLayout.DESCRIPTION_LINE, ArtifactCodexLayout.DESCRIPTION_LINES, 0xFFDCE2EA, BODY);
-        divider(c, ArtifactCodexLayout.DIVIDER2_Y);
-        text(c, "상세 효과", ArtifactCodexLayout.TEXT_LEFT, ArtifactCodexLayout.EFFECT_TITLE_Y, 21, GOLD, BOLD, Align.LEFT);
-        paragraph(c, sel.owned() ? e.effect() : "???", ArtifactCodexLayout.EFFECT_Y, 20, ArtifactCodexLayout.EFFECT_LINE, ArtifactCodexLayout.EFFECT_LINES, 0xFFE4E9EF, BODY);
+        paragraph(c, description, ArtifactCodexLayout.DESCRIPTION_Y, 22, ArtifactCodexLayout.DESCRIPTION_LINE, ArtifactCodexLayout.DESCRIPTION_LINES, 0xFFE4E9EF, BODY);
         boolean busy = !pending.isEmpty();
         button(c, ArtifactCodexLayout.EQUIP, busy && !sel.equipped() ? "확인 중…" : sel.equipped() ? "장착 중" : "장착", sel.owned() && !sel.equipped() && !busy, mx, my);
         button(c, ArtifactCodexLayout.UNEQUIP, busy && sel.equipped() ? "확인 중…" : "해제", sel.equipped() && !busy, mx, my);
