@@ -143,7 +143,7 @@ final class ArtifactCodexScreen extends Screen {
         text(c, title, cx, cy, size, 0xFFF2D9A0, TITLE, Align.CENTER);
         for (int side = -1; side <= 1; side += 2) {
             float inner = cx + side * (tw / 2 + 26), outer = cx + side * (tw / 2 + 150);
-            HudMesh.line(c, Math.min(inner, outer), cy, Math.max(inner, outer), cy, 1.5f, 0xAAC9A55C);
+            HudMesh.line(c, Math.min(inner, outer), cy, Math.max(inner, outer), cy, 2f, 0xCCC9A55C);
             HudMesh.star(c, inner, cy, 6, GOLD);
         }
         var x = ArtifactCodexLayout.CLOSE;
@@ -307,8 +307,9 @@ final class ArtifactCodexScreen extends Screen {
 
     private void divider(DrawContext c, float y) {
         float left = ArtifactCodexLayout.TEXT_LEFT, right = ArtifactCodexLayout.TEXT_RIGHT, mid = (left + right) / 2;
-        HudMesh.line(c, left, y, mid - 12, y, 1.2f, 0xAAC9A55C);
-        HudMesh.line(c, mid + 12, y, right, y, 1.2f, 0xAAC9A55C);
+        // 2 units (~1.3 px at the usual GUI scale): thinner lines fall between pixel centres and vanish in game.
+        HudMesh.line(c, left, y, mid - 12, y, 2f, 0xCCC9A55C);
+        HudMesh.line(c, mid + 12, y, right, y, 2f, 0xCCC9A55C);
         HudMesh.star(c, mid, y, 6, GOLD);
         HudMesh.star(c, left, y, 3.5f, GOLD_LINE);
         HudMesh.star(c, right, y, 3.5f, GOLD_LINE);
@@ -324,7 +325,7 @@ final class ArtifactCodexScreen extends Screen {
     private void chip(DrawContext c, float x, float y, String label) {
         float size = 13, w = UiResources.text().width(label, size, BOLD) + 18;
         HudMesh.capsule(c, x, y, w, 22, 0xE6182A45, 0xE6182A45);
-        HudMesh.line(c, x + 10, y + 21, x + w - 10, y + 21, 1, 0xAAE7C77E);
+        HudMesh.line(c, x + 10, y + 21, x + w - 10, y + 21, 2, 0xAAE7C77E);
         text(c, label, x + w / 2, y + 11, size, 0xFFF2D9A0, BOLD, Align.CENTER);
     }
 
