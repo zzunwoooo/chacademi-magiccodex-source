@@ -23,6 +23,11 @@
    "radius": 3.0,
    "range": 15
   },
+  "bark_peeling": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 6
+  },
   "bouncing_droplet": {
    "length": 15.0,
    "mode": "line",
@@ -59,7 +64,7 @@
   },
   "crimson_breath": {
    "angle": 50.0,
-   "length": 9,
+   "length": 9.0,
    "mode": "cone",
    "range": 15
   },
@@ -73,6 +78,12 @@
   "crossfire": {
    "mode": "unit",
    "range": 15
+  },
+  "earth_shaping": {
+   "angle": 60.0,
+   "length": 7.0,
+   "mode": "cone",
+   "range": 7
   },
   "ember_bolt": {
    "length": 24.0,
@@ -117,10 +128,22 @@
    "mode": "unit",
    "range": 8
   },
+  "flint_sorting": {
+   "length": 15.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 15,
+   "width": 0.8
+  },
   "frost_rupture": {
    "mode": "area",
    "radius": 2.5,
    "range": 15
+  },
+  "grass_sprouting": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 8
   },
   "healing_rain": {
    "mode": "area",
@@ -134,15 +157,42 @@
    "range": 15,
    "width": 1.2
   },
+  "light_mark": {
+   "mode": "unit",
+   "range": 20
+  },
   "lightning_needle": {
    "mode": "area",
    "radius": 1.5,
    "range": 20
   },
+  "luminous_copy": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 12
+  },
+  "material_exchange": {
+   "mode": "unit",
+   "range": 15
+  },
+  "merciful_arrow": {
+   "length": 25.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 25,
+   "width": 1.2
+  },
   "moist_farmland": {
    "mode": "area",
    "radius": 2.0,
    "range": 15
+  },
+  "mountain_back": {
+   "length": 16.0,
+   "mode": "line",
+   "origin": "caster",
+   "range": 16,
+   "width": 2.8
   },
   "pebble_toss": {
    "length": 15.0,
@@ -150,6 +200,11 @@
    "origin": "eye",
    "range": 15,
    "width": 1.0
+  },
+  "pollen_matchmaking": {
+   "mode": "area",
+   "radius": 8.0,
+   "range": 10
   },
   "pressure_hammer": {
    "mode": "area",
@@ -175,10 +230,30 @@
    "range": 18,
    "width": 2.4
   },
+  "shadow_bind": {
+   "mode": "unit",
+   "range": 10
+  },
+  "solar_judgment": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 30
+  },
+  "spring_ground": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 10
+  },
   "spring_unseal": {
    "mode": "point",
    "radius": 0.6,
    "range": 20
+  },
+  "stone_wall": {
+   "depth": 1.2,
+   "mode": "wall",
+   "range": 8,
+   "width": 4.0
   },
   "storm_command": {
    "mode": "area",
@@ -186,6 +261,13 @@
    "range": 10
   },
   "storm_crown": {
+   "length": 15.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 15,
+   "width": 1.0
+  },
+  "thorn_seeds": {
    "length": 15.0,
    "mode": "line",
    "origin": "eye",
@@ -206,6 +288,11 @@
    "range": 24,
    "width": 1.2
   },
+  "vein_fracture": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 6
+  },
   "wash_letters": {
    "mode": "point",
    "radius": 0.6,
@@ -222,6 +309,11 @@
    "mode": "area",
    "radius": 2.5,
    "range": 15
+  },
+  "weathering_touch": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 6
   },
   "weightless_zone": {
    "mode": "area",

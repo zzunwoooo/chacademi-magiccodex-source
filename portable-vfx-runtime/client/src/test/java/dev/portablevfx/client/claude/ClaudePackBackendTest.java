@@ -9,7 +9,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /** Exercises every original delivered PNG in one backend's real decoded allocation budget. */
 class ClaudePackBackendTest {
-    @Test void allSixSystemsLoadAndSimulateTogetherWithinExistingBudget() throws Exception {
+    /** BC7 (default): 27 of the 30 PNGs compress faithfully, 3 stay RGBA8. */
+    @Test void allSixSystemsLoadAndSimulateTogetherWithinExistingBudget() throws Exception { loadAll(16_318_464L); }
+    /** Legacy uncompressed path ({@code -Dportablevfx.claude.textureCompression=off}). */
+    @Test void uncompressedTexturesKeepTheOriginalRgbaBudget() throws Exception {
+        String previous=System.getProperty("portablevfx.claude.textureCompression");
+        System.setProperty("portablevfx.claude.textureCompression","off");
+        try{loadAll(58_195_968L);}
+        finally{if(previous==null)System.clearProperty("portablevfx.claude.textureCompression");else System.setProperty("portablevfx.claude.textureCompression",previous);}
+    }
+    private void loadAll(long expectedTextureBytes) throws Exception {
         try(var cache=new ClaudeBackend.PreparationCache(64L*1024*1024);var backend=new ClaudeBackend()) {
             List<EffectBackend.Instance> instances=new ArrayList<>();
             for(String name:List.of("Fireball","FeatherFall","TidalWave")) {
@@ -27,7 +36,7 @@ class ClaudePackBackendTest {
                 }
             }
             var bytes=ClaudeBackend.class.getDeclaredField("retainedTextureBytes");bytes.setAccessible(true);
-            assertEquals(58_195_968L,bytes.getLong(backend));assertTrue(bytes.getLong(backend)<64L*1024*1024);
+            assertEquals(expectedTextureBytes,bytes.getLong(backend));assertTrue(bytes.getLong(backend)<64L*1024*1024);
             assertEquals(30,backend.diagnostics().textureCount());assertEquals(30,cache.diagnostics().decodeCount());
             assertEquals(3,cache.diagnostics().parseCount());assertTrue(cache.diagnostics().cacheHits()>0);
             backend.update(.8f);assertEquals(6,instances.size());

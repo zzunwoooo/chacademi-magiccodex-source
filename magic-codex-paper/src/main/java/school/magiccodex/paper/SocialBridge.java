@@ -126,6 +126,8 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
         work(()->new Outcome(job.run(),store.snapshot(id,wall())),o->{if(books.get(id)!=b)return;b.busy=false;apply(b,o.book());done.accept(o.result());lists(p,b);},
             e->{if(books.get(id)==b){b.busy=false;notice(p,seq,"저장하지 못했습니다. 잠시 후 다시 시도해 주세요.");}});
     }
+    /** 수호자의 서약(guardian_oath) 획득 조건 "친구 20명": 새 친구 관계마다 두 사람 모두 friend.made +1 (온라인일 때만). */
+    private void friendMade(UUID a,UUID b){DiscoveryLink.signal(a,"friend.made",1);if(Bukkit.getPlayer(b)!=null)DiscoveryLink.signal(b,"friend.made",1);}
     private void deliverFirstFriend(Player p,Book book,int retry){
         if(book.checkingSignal)return;book.checkingSignal=true;
         UUID id=p.getUniqueId();work(()->store.pendingSignal(id),pending->{
@@ -186,7 +188,7 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
         mutate(owner,b,seq,()->store.request(id,name,dorm,entry,at),result->{
             switch(result){
                 case SENT->{snapshot(owner,seq,entry.name()+"님에게 친구 신청을 보냈습니다.");peer(other,"");}
-                case ACCEPTED->{snapshot(owner,seq,entry.name()+"님과 친구가 되었습니다.");deliverFirstFriend(owner,b,0);peer(other,name+"님과 친구가 되었습니다.");}
+                case ACCEPTED->{snapshot(owner,seq,entry.name()+"님과 친구가 되었습니다.");deliverFirstFriend(owner,b,0);peer(other,name+"님과 친구가 되었습니다.");friendMade(id,other);}
                 default->notice(owner,seq,message(result));
             }
         });
@@ -196,7 +198,7 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
         UUID id=p.getUniqueId();String name=plugin.names().name(p),dorm=dorm(p),from=requester(p,b.incoming,other);long at=wall();
         mutate(p,b,seq,()->store.accept(id,name,dorm,other,at),result->{
             if(result!=FriendStore.Result.ACCEPTED){notice(p,seq,message(result));return;}
-            snapshot(p,seq,from+"님과 친구가 되었습니다.");deliverFirstFriend(p,b,0);peer(other,name+"님이 친구 신청을 수락했습니다.");
+            snapshot(p,seq,from+"님과 친구가 되었습니다.");deliverFirstFriend(p,b,0);peer(other,name+"님이 친구 신청을 수락했습니다.");friendMade(id,other);
         });
     }
     private void decline(Player p,Book b,UUID other,long seq){

@@ -14,6 +14,12 @@ import org.bukkit.potion.PotionEffectType;
  *  cleanse r=5      - remove poison, weakness, slowness from caster and allies
  *  share r=6 max=3  - pool current health of caster + allies, split by max health (no health is created)
  *  potion r=5 ticks=200 - spend the potion in hand; its effects go to caster and allies for `ticks`
+ *  heal amount=2        - heal the caster only (minor_heal)
+ *  buff r=6 effect=..   - effects on caster and allies (constellation_blessing)
+ *  feed r=8             - fill the hunger of allies around, never the caster (sharing_table)
+ *  comfort range=15 amount=10 ticks=100 - temporary hearts on the ally looked at; refreshes, never stacks (comforting_light)
+ *  dawn r=8 ticks=400   - remove harmful effects from caster + allies, then block new harmful ones (dawn_ritual)
+ *  oath range=10 r=10 ratio=0.3 ticks=200 - the ally looked at: part of every hit goes to the caster (guardian_oath)
  */
 final class AllyMech extends Mech {
     private static final List<PotionEffectType> CLEANSE = List.of(PotionEffectType.POISON, PotionEffectType.WEAKNESS, PotionEffectType.SLOWNESS);
@@ -33,7 +39,7 @@ final class AllyMech extends Mech {
             case "cleanse" -> {
                 boolean any = false;
                 for (LivingEntity e : group(caster, p.d("r", 5), 32))
-                    for (var t : CLEANSE) if (e.hasPotionEffect(t)) { e.removePotionEffect(t); any = true; }
+                    for (var t : CLEANSE) if (e.hasPotionEffect(t)) { e.removePotionEffect(t); any = true; DiscoveryHooks.cleansed(caster, p.s("spell", ""), t.getKey().getKey()); }
                 return any;
             }
             case "share" -> {
@@ -71,8 +77,72 @@ final class AllyMech extends Mech {
                     }
                 return true;
             }
+            case "heal" -> {
+                if (!plugin.protection().pair(caster, caster.getLocation())) return false;
+                return Targets.heal(caster, caster, p.d("amount", 2)) > 0;
+            }
+            case "buff" -> {
+                var effects = p.effects("effect");
+                if (effects.isEmpty()) return false;
+                for (LivingEntity e : group(caster, p.d("r", 6), 64)) for (PotionEffect fx : effects) e.addPotionEffect(fx);
+                return true;
+            }
+            case "feed" -> {
+                boolean any = false;
+                for (Player ally : targets.alliesNear(caster, caster.getLocation(), p.d("r", 8), 64)) {
+                    if (ally.equals(caster) || ally.getFoodLevel() >= 20) continue;
+                    ally.setFoodLevel(20);
+                    ally.setSaturation(Math.max(ally.getSaturation(), 5f));
+                    vfx(caster, "external:deliver", ally);
+                    any = true;
+                }
+                return any;
+            }
+            case "comfort" -> {
+                Player ally = aimedAlly(caster, p.d("range", 15));
+                if (ally == null) return false;
+                TempAbsorb.give(plugin, ally, "comforting_light", p.d("amount", 10), Math.clamp(p.i("ticks", 100), 1, 20 * 60));
+                vfx(caster, "external:arrive", ally);
+                return true;
+            }
+            case "dawn" -> {
+                int ticks = Math.clamp(p.i("ticks", 400), 1, 20 * 600);
+                var guards = plugin.guards();
+                for (LivingEntity e : group(caster, p.d("r", 8), 64)) {
+                    for (PotionEffect fx : new ArrayList<>(e.getActivePotionEffects()))
+                        if (fx.getType().getEffectCategory() == PotionEffectType.Category.HARMFUL) e.removePotionEffect(fx.getType());
+                    guards.add(e, new Guards.Guard(Guards.Type.IMMUNE, guards.now() + ticks, 0, 0, 0, 0, 0, 0, caster.getUniqueId(), p.s("spell", "")));
+                    if (!e.equals(caster)) vfx(caster, "external:cleanse", e);
+                }
+                return true;
+            }
+            case "oath" -> {
+                Player ally = aimedAlly(caster, p.d("range", 10));
+                if (ally == null) return false;
+                var guards = plugin.guards();
+                guards.add(ally, new Guards.Guard(Guards.Type.OATH, guards.now() + Math.clamp(p.i("ticks", 200), 1, 20 * 600),
+                    p.d("r", 10), Math.clamp(p.d("ratio", 0.3), 0, 1), 0, 0, 0, 0, caster.getUniqueId(), p.s("spell", "")));
+                vfx(caster, "external:form", ally);
+                return true;
+            }
             default -> { return false; }
         }
+    }
+
+    private void vfx(LivingEntity caster, String event, Entity at) {
+        String spell = p.s("spell", "");
+        if (!spell.isBlank() && caster instanceof Player pl) Links.vfx(pl, spell, event, at.getLocation(), at.getUniqueId());
+    }
+
+    /** The allied player the caster looks at (blocks stop the look). */
+    Player aimedAlly(LivingEntity caster, double range) {
+        var eye = caster.getEyeLocation();
+        var hit = caster.getWorld().rayTraceEntities(eye, eye.getDirection(), range, 0.8,
+            e -> e instanceof Player && !e.equals(caster) && plugin.targets().ally(caster, e));
+        if (hit == null || !(hit.getHitEntity() instanceof Player ally)) return null;
+        var block = caster.getWorld().rayTraceBlocks(eye, eye.getDirection(), range, org.bukkit.FluidCollisionMode.NEVER, true);
+        if (block != null && block.getHitPosition().distanceSquared(eye.toVector()) < hit.getHitPosition().distanceSquared(eye.toVector())) return null;
+        return ally;
     }
 
     /** Caster first, then nearest allies. */

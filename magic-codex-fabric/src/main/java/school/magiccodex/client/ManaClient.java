@@ -36,6 +36,24 @@ public final class ManaClient {
         public static final PacketCodec<RegistryByteBuf,Response> CODEC=codec(Response::new,41,49);
         public Id<Response> getId(){return ID;}
     }
+    public record Reset(byte[] bytes) implements CustomPayload,Bytes {
+        public static final Id<Reset> ID=new Id<>(Identifier.of(ManaProtocol.COOLDOWN_RESET));
+        public static final PacketCodec<RegistryByteBuf,Reset> CODEC=codec(Reset::new,1,64);
+        public Id<Reset> getId(){return ID;}
+    }
+    public record Slots(byte[] bytes) implements CustomPayload,Bytes {
+        public static final Id<Slots> ID=new Id<>(Identifier.of("chacademia:spell_slots"));
+        public static final PacketCodec<RegistryByteBuf,Slots> CODEC=codec(Slots::new,0,1024);
+        public Id<Slots> getId(){return ID;}
+    }
+    private static String sentSlots;
+    private static long nextSlots;
+    private static void reportSlots(long now) {
+        if(now<nextSlots||!ClientPlayNetworking.canSend(Slots.ID))return;
+        nextSlots=now+1000;
+        String value=String.join(",",CastingClient.state().bindings().stream().filter(b->!b.empty()).map(SpellKeySettings.Binding::spellId).distinct().limit(6).toList());
+        if(!value.equals(sentSlots)){ClientPlayNetworking.send(new Slots(value.getBytes(java.nio.charset.StandardCharsets.UTF_8)));sentSlots=value;}
+    }
     private static <T extends Bytes> PacketCodec<RegistryByteBuf,T> codec(Function<byte[],T> factory,int min,int max){
         return new PacketCodec<>(){
             public T decode(RegistryByteBuf b){int size=b.readableBytes();if(size<min||size>max){b.skipBytes(size);return factory.apply(new byte[0]);}byte[] data=new byte[size];b.readBytes(data);return factory.apply(data);}
@@ -44,6 +62,12 @@ public final class ManaClient {
     }
     public static void initialize(){
         PayloadTypeRegistry.playC2S().register(Request.ID,Request.CODEC);
+        PayloadTypeRegistry.playC2S().register(Slots.ID,Slots.CODEC);
+        PayloadTypeRegistry.playS2C().register(Reset.ID,Reset.CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(Reset.ID,(payload,context)->{
+            try{String id=ManaProtocol.decodeCooldownReset(payload.bytes());context.client().execute(()->CastingClient.state().clearCooldown(id));}
+            catch(IllegalArgumentException ignored){}
+        });
         PayloadTypeRegistry.playS2C().register(Response.ID,Response.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(Response.ID,(payload,context)->{
             try{var response=ManaProtocol.decode(payload.bytes());context.client().execute(()->receive(response));}
@@ -52,7 +76,7 @@ public final class ManaClient {
         ClientPlayConnectionEvents.JOIN.register((handler,sender,client)->reset());
         ClientPlayConnectionEvents.DISCONNECT.register((handler,client)->reset());
     }
-    private static void reset(){snapshot=null;nextRequest=received=sequence=0;pending.clear();}
+    private static void reset(){sentSlots=null;nextSlots=0;snapshot=null;nextRequest=received=sequence=0;pending.clear();}
     public static void cast(CodexData.Spell spell){
         if(!supported())throw new IllegalStateException("Mana service unavailable");
         if(pending.size()>=6)return;
@@ -82,7 +106,7 @@ public final class ManaClient {
     }
     public static void tick(MinecraftClient client){
         if(client.player==null||client.world==null)return;
-        long now=Util.getMeasuringTimeMs();pending.entrySet().removeIf(e->e.getValue().until()<now);
+        long now=Util.getMeasuringTimeMs();reportSlots(now);pending.entrySet().removeIf(e->e.getValue().until()<now);
         if(!supported()){snapshot=null;nextRequest=received=0;pending.clear();return;}
         if(received!=0&&now-received>65000){snapshot=null;received=0;}
         if(now>=nextRequest){ClientPlayNetworking.send(new Request(ManaProtocol.subscribe()));nextRequest=now+20000;}

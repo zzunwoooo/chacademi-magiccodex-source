@@ -13,6 +13,11 @@ import org.bukkit.util.Vector;
  *  homing=false  returns=false (comes back to caster, hitting again)  bounce=0 bouncer=6 (jump to next enemy)
  *  breaks=CHAIN,... (blocks it breaks on contact)  from=eye|caster  spread=0 (degrees, sideways offset)
  *  combo=key combocount=3 combobuff=SPEED:60:2 (buff caster when the same target is hit N times within 3s)
+ *  count=1 countmax=count interval=4 (fire a random count of bolts, one every interval ticks, same aim)
+ *  rehit=0 (ticks; >0 lets the same enemy be hit again after that many ticks - a rolling boulder)
+ *  ally=false (hits allied players instead of enemies and heals them by the damage value; caster never)
+ *  proc=false (passive extra hit: cannot trigger passives again)
+ *  spell=id (VFX events: external:contact on each hit, external:block_contact where it stops on a block)
  */
 final class BoltMech extends Mech {
     BoltMech(MagicMythicPlugin plugin, Params p) { super(plugin, p); }
@@ -25,8 +30,27 @@ final class BoltMech extends Mech {
         dir.normalize();
         double spread = p.d("spread", 0);
         if (spread != 0) dir.rotateAroundY(Math.toRadians(spread));
-        var bolt = new Bolt(c, start, dir);
-        return plugin.ticker().add(bolt);
+        int count = Math.max(1, p.i("count", 1)), countMax = Math.max(count, p.i("countmax", count));
+        if (countMax > count) count += java.util.concurrent.ThreadLocalRandom.current().nextInt(countMax - count + 1);
+        if (count == 1) return plugin.ticker().add(new Bolt(c, start, dir));
+        int interval = Math.clamp(p.i("interval", 4), 0, 40);
+        final Vector first = dir.clone();
+        final int total = Math.min(count, 16);
+        return plugin.ticker().add(new Ticker.Tick() {
+            int age = 0, fired = 0;
+            public boolean tick() {
+                if (!c.caster().isValid()) return false;
+                while (fired < total && age >= fired * interval) {
+                    Location from = p.s("from", "eye").equalsIgnoreCase("caster") ? c.caster().getLocation().add(0, 1, 0) : c.caster().getEyeLocation();
+                    Vector d = first.clone();
+                    if (fired > 0 && interval > 0) d.rotateAroundY(Math.toRadians((fired % 2 == 0 ? 1 : -1) * 2.5 * ((fired + 1) / 2)));
+                    plugin.ticker().add(new Bolt(c, from, d));
+                    fired++;
+                }
+                age++;
+                return fired < total;
+            }
+        });
     }
 
     private final class Bolt implements Ticker.Tick {
@@ -41,6 +65,9 @@ final class BoltMech extends Mech {
         final boolean bouncing = bouncesLeft > 0;
         final Set<String> breaks = new HashSet<>();
         Set<UUID> hit = new HashSet<>();
+        final Map<UUID, Integer> lastHit = new HashMap<>();
+        final int rehit = Math.max(0, p.i("rehit", 0));
+        final boolean ally = p.b("ally", false);
         Entity homeTarget;
         double travelled = 0;
         int hitCount = 0;
@@ -75,12 +102,26 @@ final class BoltMech extends Mech {
                 if (!b.isPassable()) {
                     if (breaks.contains(b.getType().name()) && c.caster() instanceof Player pl && Targets.canBreak(pl, b)) {
                         b.breakNaturally();
-                    } else if (!turnBack()) { burst(); return false; } else continue;
+                    } else if (!turnBack()) { vfx(p.s("missevent", "external:block_contact"), pos, null); burst(); return false; } else continue;
                 }
                 if (!MagicImpactEvent.fire(c.caster(), p.s("element", ""), pos, radius, MagicImpactEvent.Kind.BOLT)) { burst(); return false; }
                 for (Entity e : pos.getWorld().getNearbyEntities(pos, radius + 1, radius + 1, radius + 1)) {
-                    if (hit.contains(e.getUniqueId()) || !plugin.targets().enemy(c.caster(), e)) continue;
+                    if (ally) {
+                        if (hit.contains(e.getUniqueId()) || e.equals(c.caster()) || !plugin.targets().ally(c.caster(), e)) continue;
+                        if (Targets.closestDistance(e, pos) > radius) continue;
+                        hit.add(e.getUniqueId()); hitCount++;
+                        Targets.heal(c.caster(), (LivingEntity) e, c.dmg(p));
+                        vfx(p.s("hitevent", "external:contact"), e.getLocation(), e.getUniqueId());
+                        if (hitCount >= pierce) return false;
+                        continue;
+                    }
+                    if (!plugin.targets().enemy(c.caster(), e)) continue;
+                    if (hit.contains(e.getUniqueId())) {
+                        Integer last = lastHit.get(e.getUniqueId());
+                        if (rehit <= 0 || last == null || life - last < rehit) continue;
+                    }
                     if (Targets.closestDistance(e, pos) > radius) continue;
+                    lastHit.put(e.getUniqueId(), life);
                     strike((LivingEntity) e);
                     if (bouncesLeft > 0) {
                         bouncesLeft--;
@@ -113,8 +154,9 @@ final class BoltMech extends Mech {
             double dmg = c.dmg(p) * Geometry.falloff(p.d("falloff", 1), hitCount);
             hitCount++;
             var targets = plugin.targets();
-            if(!targets.hurt(c.caster(), t, dmg))return;
+            if(!(p.b("proc", false) ? targets.hurtProc(c.caster(), t, dmg) : targets.hurt(c.caster(), t, dmg)))return;
             plugin.reactions().hit(c.caster(), t, p.s("element", ""), dmg);
+            vfx(p.s("hitevent", "external:contact"), t.getLocation(), t.getUniqueId());
             targets.effects(t, p.effects("effect"));
             int ignite = p.i("ignite", 0);
             if (ignite > 0) t.setFireTicks(Math.max(t.getFireTicks(), ignite));
@@ -125,6 +167,11 @@ final class BoltMech extends Mech {
             String combo = p.s("combo", "");
             if (!combo.isBlank() && plugin.worldState().combo(c.caster(), combo, t, p.i("combocount", 3)))
                 targets.effects(c.caster(), p.effects("combobuff"));
+        }
+
+        private void vfx(String event, Location at, UUID target) {
+            String spell = p.s("spell", "");
+            if (!spell.isBlank() && c.caster() instanceof Player pl) Links.vfx(pl, spell, event, at, target);
         }
 
         private void burst() {

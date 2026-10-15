@@ -52,6 +52,20 @@ public final class ManaService {
     public void setRegenerationMultiplier(UUID id,String key,double multiplier){
         var a=account(id);var before=a.snapshot();a.regenerationMultiplier(key,multiplier);if(!before.equals(a.snapshot()))publish(id);
     }
+    /** Remaining cooldown of a spell in milliseconds (0 when ready). Server thread. */
+    public long cooldownRemaining(UUID id,String spell){main();return account(id).remaining(spell,System.currentTimeMillis());}
+    /**
+     * Make a spell ready again (별빛 재현, 원초의 돌 2단계). Returns true when a cooldown was cleared.
+     * The client keeps its own cooldown display, so the listener pushes magiccodex:cooldown_reset to it.
+     */
+    public boolean clearCooldown(UUID id,String spell){
+        main();
+        if(spell==null||!spell.matches("[a-z0-9_-]{1,64}"))return false;
+        var a=account(id);boolean had=a.cooldowns.remove(spell)!=null;
+        if(had){dirty.add(id);if(cooldownCleared!=null)cooldownCleared.accept(id,spell);}
+        return had;
+    }
+    java.util.function.BiConsumer<UUID,String> cooldownCleared;
     void tick(){
         main();for(var e:accounts.entrySet()){
             var p=Bukkit.getPlayer(e.getKey());if(p==null||p.isDead())continue;

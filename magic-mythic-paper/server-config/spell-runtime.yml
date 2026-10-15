@@ -705,3 +705,515 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+  flame_forging:
+    name: "불꽃 단조"
+    skill: "CHA_flame_forging"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  blue_bonfire:
+    name: "푸른 화톳불"
+    skill: "CHA_blue_bonfire"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  earth_shaping:
+    name: "대지 성형"
+    skill: "CHA_earth_shaping"
+    target: "AIM"
+    range: 7
+    utility: false
+    base-damage: 4
+    power-ratio: 0.3
+  stone_wall:
+    name: "석벽"
+    skill: "CHA_stone_wall"
+    target: "AIM"
+    range: 8
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  vine_ladder:
+    name: "덩굴 사다리"
+    skill: "CHA_vine_ladder"
+    target: "SELF"
+    range: 5
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  earth_elemental:
+    name: "그놈"
+    skill: "CHA_earth_elemental"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 5
+    power-ratio: 0.4
+  earthquake:
+    name: "지진"
+    skill: "CHA_earthquake"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 6
+    power-ratio: 0.45
+  climate_control:
+    name: "기후 통제"
+    skill: "CHA_climate_control"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  seed_row:
+    name: "씨앗 줄심기"
+    skill: "CHA_seed_row"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  bee_calm:
+    name: "벌떼 달래기"
+    skill: "CHA_bee_calm"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  thorn_armor:
+    name: "가시 갑옷"
+    skill: "CHA_thorn_armor"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 2
+    power-ratio: 0.15
+  vein_fracture:
+    name: "광맥 파쇄"
+    skill: "CHA_vein_fracture"
+    target: "AIM"
+    range: 6
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  earth_anchor:
+    name: "대지의 닻"
+    skill: "CHA_earth_anchor"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  weathering_touch:
+    name: "풍화의 손길"
+    skill: "CHA_weathering_touch"
+    target: "AIM"
+    range: 6
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  iron_carapace:
+    name: "철의 외피"
+    skill: "CHA_iron_carapace"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  moss_coating:
+    name: "이끼 입히기"
+    skill: "CHA_moss_coating"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  grass_sprouting:
+    name: "잔디 돋우기"
+    skill: "CHA_grass_sprouting"
+    target: "AIM"
+    range: 8
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  flint_sorting:
+    name: "돌 고르기"
+    skill: "CHA_flint_sorting"
+    target: "AIM"
+    range: 15
+    utility: false
+    base-damage: 2
+    power-ratio: 0.2
+  bark_peeling:
+    name: "껍질 벗기기"
+    skill: "CHA_bark_peeling"
+    target: "AIM"
+    range: 6
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  compost_return:
+    name: "퇴비 환원"
+    skill: "CHA_compost_return"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  thorn_seeds:
+    name: "가시 씨앗"
+    skill: "CHA_thorn_seeds"
+    target: "AIM"
+    range: 15
+    utility: false
+    base-damage: 5
+    power-ratio: 0.35
+  pollen_matchmaking:
+    name: "꽃가루 중매"
+    skill: "CHA_pollen_matchmaking"
+    target: "AIM"
+    range: 10
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  dormant_seed:
+    name: "동면의 씨앗"
+    skill: "CHA_dormant_seed"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  counterweight:
+    name: "반격의 무게추"
+    skill: "CHA_counterweight"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  material_exchange:
+    name: "자재 치환"
+    skill: "CHA_material_exchange"
+    target: "ENTITY"
+    range: 15
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  remembering_field:
+    name: "기억하는 밭"
+    skill: "CHA_remembering_field"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  little_giant:
+    name: "작은 거인"
+    skill: "CHA_little_giant"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  spring_ground:
+    name: "용수철 지반"
+    skill: "CHA_spring_ground"
+    target: "AIM"
+    range: 10
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  mountain_back:
+    name: "산맥의 등"
+    skill: "CHA_mountain_back"
+    target: "AIM"
+    range: 16
+    utility: false
+    base-damage: 8
+    power-ratio: 0.5
+  earth_embrace:
+    name: "대지의 품"
+    skill: "CHA_earth_embrace"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  forest_throne:
+    name: "숲의 왕좌"
+    skill: "CHA_forest_throne"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 6
+    power-ratio: 0.4
+  primordial_stone:
+    name: "원초의 돌"
+    skill: "CHA_primordial_stone"
+    target: "SELF"
+    range: 22
+    utility: false
+    base-damage: 20
+    power-ratio: 1.0
+  guiding_star:
+    name: "길잡이 별"
+    skill: "CHA_guiding_star"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  minor_heal:
+    name: "작은 치유"
+    skill: "CHA_minor_heal"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  light_mark:
+    name: "빛의 낙인"
+    skill: "CHA_light_mark"
+    target: "ENTITY"
+    range: 20
+    utility: false
+    base-damage: 2
+    power-ratio: 0.25
+  true_sight:
+    name: "진실의 눈"
+    skill: "CHA_true_sight"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  protective_ward:
+    name: "보호 결계"
+    skill: "CHA_protective_ward"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  constellation_blessing:
+    name: "성좌의 가호"
+    skill: "CHA_constellation_blessing"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  arcane_imprint:
+    name: "마력 각인"
+    skill: "CHA_arcane_imprint"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  dawn_ritual:
+    name: "여명의 의식"
+    skill: "CHA_dawn_ritual"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  comforting_light:
+    name: "위로의 빛"
+    skill: "CHA_comforting_light"
+    target: "SELF"
+    range: 15
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  exorcism_flash:
+    name: "퇴마의 섬광"
+    skill: "CHA_exorcism_flash"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 8
+    power-ratio: 0.5
+  arcane_mending:
+    name: "마력 봉합"
+    skill: "CHA_arcane_mending"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  companion_return:
+    name: "동행 귀환"
+    skill: "CHA_companion_return"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  flawless_moment:
+    name: "무결의 순간"
+    skill: "CHA_flawless_moment"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  solar_judgment:
+    name: "태양의 심판"
+    skill: "CHA_solar_judgment"
+    target: "AIM"
+    range: 30
+    utility: false
+    base-damage: 10
+    power-ratio: 0.6
+  firefly_mark:
+    name: "반딧불 표식"
+    skill: "CHA_firefly_mark"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  sun_drying:
+    name: "햇살 말림"
+    skill: "CHA_sun_drying"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  luminous_copy:
+    name: "빛의 필사"
+    skill: "CHA_luminous_copy"
+    target: "AIM"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  guiding_fletching:
+    name: "유도 깃"
+    skill: "CHA_guiding_fletching"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  sharing_table:
+    name: "나눔 식탁"
+    skill: "CHA_sharing_table"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  summons_letter:
+    name: "소환장"
+    skill: "CHA_summons_letter"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  starlight_survey:
+    name: "별빛 측량"
+    skill: "CHA_starlight_survey"
+    target: "SELF"
+    range: 48
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  luminous_handover:
+    name: "빛의 교대"
+    skill: "CHA_luminous_handover"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  mana_conduit:
+    name: "마력 전선"
+    skill: "CHA_mana_conduit"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  merciful_arrow:
+    name: "자비의 화살"
+    skill: "CHA_merciful_arrow"
+    target: "AIM"
+    range: 25
+    utility: false
+    base-damage: 4
+    power-ratio: 0.3
+  mana_deposit:
+    name: "마력 예금"
+    skill: "CHA_mana_deposit"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  guardian_oath:
+    name: "수호자의 서약"
+    skill: "CHA_guardian_oath"
+    target: "SELF"
+    range: 10
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  experience_exchange:
+    name: "경험의 환전"
+    skill: "CHA_experience_exchange"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  starlight_reprise:
+    name: "별빛 재현"
+    skill: "CHA_starlight_reprise"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  constellation_emissary:
+    name: "성좌의 대리인"
+    skill: "CHA_constellation_emissary"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  night_sight:
+    name: "밤눈"
+    skill: "CHA_night_sight"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  shadow_bind:
+    name: "그림자 매듭"
+    skill: "CHA_shadow_bind"
+    target: "ENTITY"
+    range: 10
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  faint_veil:
+    name: "옅은 은신"
+    skill: "CHA_faint_veil"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0

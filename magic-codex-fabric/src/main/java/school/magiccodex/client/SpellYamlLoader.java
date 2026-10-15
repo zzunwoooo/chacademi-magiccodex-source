@@ -18,17 +18,8 @@ public final class SpellYamlLoader {
         public boolean success() { return errors.isEmpty(); }
     }
     public void installDefaults(Path directory) throws IOException {
-        if (Files.exists(directory)) { migrateHolyTamingDefault(directory); return; }
-        Files.createDirectories(directory);
-        try (var stream = SpellYamlLoader.class.getResourceAsStream("/assets/magiccodex/default-spells/index.txt")) {
-            if (stream == null) throw new IOException("기본 마법 목록을 찾지 못했습니다.");
-            for (String id : new String(stream.readAllBytes(), StandardCharsets.UTF_8).lines().filter(s -> !s.isBlank()).toList()) {
-                try (var file = SpellYamlLoader.class.getResourceAsStream("/assets/magiccodex/default-spells/" + id + ".yml")) {
-                    if (file == null) throw new IOException("기본 마법 파일 누락: " + id);
-                    Files.copy(file, directory.resolve(id + ".yml"));
-                }
-            }
-        }
+        if(Files.exists(directory)) migrateHolyTamingDefault(directory);
+        DefaultSpellMigration.install(directory);
     }
     private void migrateHolyTamingDefault(Path directory) throws IOException {
         Path file = directory.resolve("149_rainbow_collar.yml");

@@ -1,0 +1,83 @@
+diff --git a/magic-codex-paper/src/main/java/school/magiccodex/paper/ManaBridge.java b/magic-codex-paper/src/main/java/school/magiccodex/paper/ManaBridge.java
+index cb1a072..6b1c8bb 100644
+--- a/magic-codex-paper/src/main/java/school/magiccodex/paper/ManaBridge.java
++++ b/magic-codex-paper/src/main/java/school/magiccodex/paper/ManaBridge.java
+@@ -34,6 +34,8 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
+         spells=ManaSpells.load(new File(plugin.getDataFolder(),"mana-spells.yml"));
+         plugin.getServer().getMessenger().registerIncomingPluginChannel(plugin,ManaProtocol.REQUEST,this);
+         plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin,ManaProtocol.RESPONSE);
++        plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin,ManaProtocol.COOLDOWN_RESET);
++        mana.cooldownCleared=(id,spell)->{var p=Bukkit.getPlayer(id);if(p!=null)p.sendPluginMessage(plugin,ManaProtocol.COOLDOWN_RESET,ManaProtocol.cooldownReset(spell));};
+         plugin.getServer().getPluginManager().registerEvents(this,plugin);
+         plugin.getServer().getServicesManager().register(ManaService.class,mana,plugin,ServicePriority.Normal);
+         Objects.requireNonNull(plugin.getCommand("마나관리")).setExecutor(this);
+diff --git a/magic-codex-paper/src/main/java/school/magiccodex/paper/ManaService.java b/magic-codex-paper/src/main/java/school/magiccodex/paper/ManaService.java
+index 0800aaf..c91a5d4 100644
+--- a/magic-codex-paper/src/main/java/school/magiccodex/paper/ManaService.java
++++ b/magic-codex-paper/src/main/java/school/magiccodex/paper/ManaService.java
+@@ -52,6 +52,19 @@ public final class ManaService {
+     public void setRegenerationMultiplier(UUID id,String key,double multiplier){
+         var a=account(id);var before=a.snapshot();a.regenerationMultiplier(key,multiplier);if(!before.equals(a.snapshot()))publish(id);
+     }
++    /** Remaining cooldown of a spell in milliseconds (0 when ready). Server thread. */
++    public long cooldownRemaining(UUID id,String spell){return account(id).remaining(spell,System.currentTimeMillis());}
++    /**
++     * Make a spell ready again (별빛 재현, 원초의 돌 2단계). Returns true when a cooldown was cleared.
++     * The client keeps its own cooldown display, so the listener pushes magiccodex:cooldown_reset to it.
++     */
++    public boolean clearCooldown(UUID id,String spell){
++        if(spell==null||!spell.matches("[a-z0-9_-]{1,64}"))return false;
++        var a=account(id);boolean had=a.cooldowns.remove(spell)!=null;
++        if(had){dirty.add(id);if(cooldownCleared!=null)cooldownCleared.accept(id,spell);}
++        return had;
++    }
++    java.util.function.BiConsumer<UUID,String> cooldownCleared;
+     void tick(){
+         main();for(var e:accounts.entrySet()){
+             var p=Bukkit.getPlayer(e.getKey());if(p==null||p.isDead())continue;
+diff --git a/magic-codex-paper/src/main/java/school/magiccodex/paper/SocialBridge.java b/magic-codex-paper/src/main/java/school/magiccodex/paper/SocialBridge.java
+index afad35d..6353257 100644
+--- a/magic-codex-paper/src/main/java/school/magiccodex/paper/SocialBridge.java
++++ b/magic-codex-paper/src/main/java/school/magiccodex/paper/SocialBridge.java
+@@ -126,6 +126,8 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
+         work(()->new Outcome(job.run(),store.snapshot(id,wall())),o->{if(books.get(id)!=b)return;b.busy=false;apply(b,o.book());done.accept(o.result());lists(p,b);},
+             e->{if(books.get(id)==b){b.busy=false;notice(p,seq,"저장하지 못했습니다. 잠시 후 다시 시도해 주세요.");}});
+     }
++    /** 수호자의 서약(guardian_oath) 획득 조건 "친구 20명": 새 친구 관계마다 두 사람 모두 friend.made +1 (온라인일 때만). */
++    private void friendMade(UUID a,UUID b){DiscoveryLink.signal(a,"friend.made",1);if(Bukkit.getPlayer(b)!=null)DiscoveryLink.signal(b,"friend.made",1);}
+     private void deliverFirstFriend(Player p,Book book,int retry){
+         if(book.checkingSignal)return;book.checkingSignal=true;
+         UUID id=p.getUniqueId();work(()->store.pendingSignal(id),pending->{
+@@ -186,7 +188,7 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
+         mutate(owner,b,seq,()->store.request(id,name,dorm,entry,at),result->{
+             switch(result){
+                 case SENT->{snapshot(owner,seq,entry.name()+"님에게 친구 신청을 보냈습니다.");peer(other,"");}
+-                case ACCEPTED->{snapshot(owner,seq,entry.name()+"님과 친구가 되었습니다.");deliverFirstFriend(owner,b,0);peer(other,name+"님과 친구가 되었습니다.");}
++                case ACCEPTED->{snapshot(owner,seq,entry.name()+"님과 친구가 되었습니다.");deliverFirstFriend(owner,b,0);peer(other,name+"님과 친구가 되었습니다.");friendMade(id,other);}
+                 default->notice(owner,seq,message(result));
+             }
+         });
+@@ -196,7 +198,7 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
+         UUID id=p.getUniqueId();String name=plugin.names().name(p),dorm=dorm(p),from=requester(p,b.incoming,other);long at=wall();
+         mutate(p,b,seq,()->store.accept(id,name,dorm,other,at),result->{
+             if(result!=FriendStore.Result.ACCEPTED){notice(p,seq,message(result));return;}
+-            snapshot(p,seq,from+"님과 친구가 되었습니다.");deliverFirstFriend(p,b,0);peer(other,name+"님이 친구 신청을 수락했습니다.");
++            snapshot(p,seq,from+"님과 친구가 되었습니다.");deliverFirstFriend(p,b,0);peer(other,name+"님이 친구 신청을 수락했습니다.");friendMade(id,other);
+         });
+     }
+     private void decline(Player p,Book b,UUID other,long seq){
+diff --git a/magic-codex-protocol/src/main/java/school/magiccodex/protocol/ManaProtocol.java b/magic-codex-protocol/src/main/java/school/magiccodex/protocol/ManaProtocol.java
+index db7cd78..ea32fe9 100644
+--- a/magic-codex-protocol/src/main/java/school/magiccodex/protocol/ManaProtocol.java
++++ b/magic-codex-protocol/src/main/java/school/magiccodex/protocol/ManaProtocol.java
+@@ -6,6 +6,10 @@ import java.nio.charset.StandardCharsets;
+ /** Clients send only a spell ID, never costs, commands, permissions or mana values. */
+ public final class ManaProtocol {
+     public static final String REQUEST="magiccodex:mana_request", RESPONSE="magiccodex:mana_response";
++    /** Server -> client: this spell's cooldown was cleared on the server (payload: US-ASCII spell id). */
++    public static final String COOLDOWN_RESET="magiccodex:cooldown_reset";
++    public static byte[] cooldownReset(String id){if(!id.matches("[a-z0-9_-]{1,64}"))throw new IllegalArgumentException("Invalid spell");return id.getBytes(StandardCharsets.US_ASCII);}
++    public static String decodeCooldownReset(byte[] bytes){String id=new String(bytes,StandardCharsets.US_ASCII);if(!id.matches("[a-z0-9_-]{1,64}"))throw new IllegalArgumentException("Invalid spell");return id;}
+     private static final int VERSION=0x4D414E01;
+     public static final int SNAPSHOT=0, OK=1, UNKNOWN=2, LOCKED=3, EMPTY=4, COOLDOWN=5, FAILED=6, UNAVAILABLE=7;
+     public record Snapshot(double current,double maximum,double regeneration,double haste) {

@@ -14,6 +14,7 @@ final class Ticker implements AutoCloseable {
     }
     private final MagicMythicPlugin plugin;
     private final List<Tick> running = new ArrayList<>();
+    private final Map<Tick, SpellTrace.Now> traces = new IdentityHashMap<>();
     private final BukkitTask task;
 
     Ticker(MagicMythicPlugin plugin) {
@@ -26,6 +27,7 @@ final class Ticker implements AutoCloseable {
         long same = running.stream().filter(r -> r.kind().equals(t.kind())).count();
         if (same >= limit) return false;
         running.add(t);
+        traces.put(t, SpellTrace.current());
         return true;
     }
 
@@ -34,18 +36,19 @@ final class Ticker implements AutoCloseable {
         var copy = new ArrayList<>(running);
         for (Tick t : copy) {
             boolean alive;
+            var before = SpellTrace.set(traces.get(t));
             try { alive = t.tick(); }
             catch (RuntimeException e) {
                 plugin.getLogger().warning("마법 진행 중 오류: " + e.getClass().getSimpleName() + " " + e.getMessage());
                 alive = false;
-            }
-            if (!alive) { running.remove(t); safeStop(t); }
+            } finally { SpellTrace.set(before); }
+            if (!alive) { running.remove(t); traces.remove(t); safeStop(t); }
         }
     }
 
     void removeIf(java.util.function.Predicate<Tick> filter) {
         var it = running.iterator();
-        while (it.hasNext()) { var t = it.next(); if (filter.test(t)) { it.remove(); safeStop(t); } }
+        while (it.hasNext()) { var t = it.next(); if (filter.test(t)) { it.remove(); traces.remove(t); safeStop(t); } }
     }
 
     private void safeStop(Tick t) { try { t.stop(); } catch (RuntimeException ignored) {} }
@@ -60,5 +63,6 @@ final class Ticker implements AutoCloseable {
         task.cancel();
         for (Tick t : new ArrayList<>(running)) safeStop(t);
         running.clear();
+        traces.clear();
     }
 }

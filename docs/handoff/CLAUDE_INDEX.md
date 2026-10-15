@@ -80,6 +80,9 @@ Claude 는 GPT 작업 브랜치에 직접 커밋하지 않고, **`claude/` 로 �
 | `claude/followup-fixes-20261013` | `126fcea` | `CLAUDE_FOLLOWUP_FIXES_20261013.md` | 수정 요청서 1~7: 채팅 중 알림·스킬HUD·좌상단 메뉴, 알림 소리, 커스텀 인벤토리 제거, 설정(50%·슬라이더·직접 입력·소리), 키세팅 원래 디자인+마우스(아래 6칸 제거, 창 높이 축소), 사거리 표시(단색·채움·블룸·직선 홀로그램·힌트 위치), 장비창, 비행 HUD(시안·기능), 교화 UI. **javac·JUnit만, 빌드·실게임 전 — 문서 0장 먼저, 비행 HUD 사용자 승인됨** | 받기 전 |
 | `claude/element-reaction-20261014` | `claude/followup-fixes-20261013` @ `41ee355` | `CLAUDE_ELEMENT_REACTION_20261014.md` | 원소 반응 정규 시스템: 표식 3초·반응 15종(적 대상 간단 효과, 제어 1.5초 이하)·반응 후 3초 내부 쿨, 몹 머리 위 원소 아이콘(HUD 이미지)·반응 이름 팝업. magic-mythic `Reactions` + 클라이언트 `ElementMarkClient` + `ElementProtocol`. VFX 나중. **순수 로직 javac만, Gradle·실게임 전** | 받기 전 |
 | `claude/artifact-codex-20261015` | `claude/element-reaction-20261014` @ `1a0fe6f` (위 브랜치 포함) | `CLAUDE_ARTIFACT_CODEX_20261015.md` | 아티팩트 도감 UI(승인 PNG + MagicCodex 폰트), 서버 `artifacts.yml`(언제든 수정 → `/아티팩트관리 새로고침`), 보유=권한, 장착 기록(PDC), 장비창 아티팩트 칸 → 도감. 예시 4개(등급별 1개). **능력 미구현. 프로토콜 javac만, Gradle·실게임 전** | 받기 전 |
+| `claude/magic-71-gameplay-20261014` | `claude/followup-fixes-20261013` @ `41ee355` | `CLAUDE_MAGIC_71_20261014.md` | 미구현 마법 71종(이전 7 + 101~167 신규 64) 게임플레이: 애드온 새 메커닉 6종·패시브(슬롯 장착)·획득 조건(수동 9·자연 47)·VFX 바인딩 초안(미사용). 64종은 VFX 클라이언트 지원 전까지 시전 비활성 유지, `/마법미몹 시험` 으로 기능 확인. MagicCodex 코드는 제안만(Bridge 쿨타임 API 패치·클라이언트 슬롯 채널). **javac 타입검사만, JUnit·빌드·실게임 전 — 문서 0장 먼저** | 받기 전 |
+| `claude/magic-71-gameplay-20261014` | 같은 브랜치 이어서 | `CLAUDE_VFX_BC7_20261014.md` | PortableVFX 클라이언트 텍스처 BC7 압축(순수 Java 인코더, 디스크 캐시, 화질 38 dB 미만은 RGBA 유지). 신규 62팩 430→119 MiB, 예산 문제 해소. `-Dportablevfx.claude.textureCompression=off` 로 예전 경로. **스텁 javac + 일부 테스트만, Gradle·GL 스모크·실게임 전 — 문서 0장 먼저** | 받기 전 |
+| `claude/magic-71-gameplay-20261014` | 같은 브랜치 `da851b7` | `CLAUDE_DEPLOY_101_167_20261015.md` | **101~167 배포 전달 사항**: 070ceae 와 통합, 서버·클라이언트·런처에 무엇을 배포할지, 기존 PC 도감 폴더 미갱신 문제, VFX 연결 미반영(시전 거부 원인), 켜지 않는 마법 목록 | 받기 전 |
 
 ## Claude 가 지키는 규칙
 

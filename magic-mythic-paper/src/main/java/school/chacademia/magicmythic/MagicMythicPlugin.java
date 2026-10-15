@@ -29,6 +29,9 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
     private Marks marks;
     private WorldMech.State worldState;
     private Reactions reactions;
+    private SpellSlots slots;
+    private Passives passives;
+    private UtilMech.State utilState;
 
     @Override public void onEnable() {
         if(!protectionReady){getServer().getPluginManager().disablePlugin(this);return;}
@@ -47,6 +50,16 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
         getServer().getPluginManager().registerEvents(marks, this);
         getServer().getPluginManager().registerEvents(tempBlocks, this);
         getServer().getPluginManager().registerEvents(reactions, this);
+        slots = new SpellSlots(this);
+        slots.register();
+        getServer().getPluginManager().registerEvents(slots, this);
+        passives = new Passives(this);
+        getServer().getPluginManager().registerEvents(passives, this);
+        utilState = new UtilMech.State(this);
+        getServer().getPluginManager().registerEvents(utilState, this);
+        getServer().getPluginManager().registerEvents(new ChannelMech.Hooks(), this);
+        getServer().getPluginManager().registerEvents(new SummonMech.Hooks(this), this);
+        getServer().getPluginManager().registerEvents(new DiscoveryHooks(this), this);
         var command = getCommand("마법미몹");
         if (command != null) command.setExecutor(this);
         getLogger().info("마법 미몹 메커닉 준비 완료 (MythicMobs 다시 불러오기 시 등록됩니다)");
@@ -54,6 +67,14 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
 
     @Override public void onDisable() {
         if (reactions != null) reactions.close();
+        if (slots != null) slots.unregister();
+        if (utilState != null) utilState.closeAll();
+        if (guards != null) guards.closeAll();
+        BuffMech.clearAll();
+        TempAbsorb.clearAll();
+        SummonMech.removeAll();
+        Links.resetMana();
+        DiscoveryHooks.reset();
         if (marks != null) marks.releaseAll();
         if (worldState != null) worldState.closeAll();
         if (ticker != null) ticker.close();
@@ -73,6 +94,12 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
             case "chamark" -> new MarkMech(this, p);
             case "chaally" -> new AllyMech(this, p);
             case "chaworld" -> new WorldMech(this, p);
+            case "chafarm" -> new FarmMech(this, p);
+            case "chautil" -> new UtilMech(this, p);
+            case "chasummon" -> new SummonMech(this, p);
+            case "chabuff" -> new BuffMech(this, p);
+            case "chachannel" -> new ChannelMech(this, p);
+            case "chanote" -> new NoteMech(this, p);
             default -> null;
         };
         if (mechanic != null) event.register(mechanic);
@@ -96,7 +123,20 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
                 + ", 임시 블록 " + tempBlocks.count() + ", " + reactions.summary());
             return true;
         }
-        sender.sendMessage("/마법미몹 <새로고침|상태>");
+        if (Set.of("장착", "slots").contains(sub) && args.length >= 2) {
+            var target = getServer().getPlayerExact(args[1]);
+            if (target == null) { sender.sendMessage("접속 중인 플레이어가 아닙니다."); return true; }
+            if (args.length == 2) { sender.sendMessage(target.getName() + " 장착: " + slots.list(target) + " (모드 " + slots.mode() + ", 보고 " + (slots.known(target) ? "있음" : "없음") + ")"); return true; }
+            var ids = Arrays.asList(args).subList(2, args.length);
+            slots.force(target, ids.contains("비우기") || ids.contains("clear") ? List.of() : SpellSlots.parse(String.join(",", ids)));
+            sender.sendMessage(target.getName() + " 장착(강제): " + slots.list(target));
+            return true;
+        }
+        if (Set.of("시험", "test").contains(sub) && args.length >= 2 && sender instanceof org.bukkit.entity.Player player) {
+            sender.sendMessage(TestCast.cast(this, player, args[1]));
+            return true;
+        }
+        sender.sendMessage("/마법미몹 <새로고침|상태|장착 <플레이어> [id...|비우기]|시험 <마법ID>>");
         return true;
     }
 
@@ -107,5 +147,6 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
     Marks marks() { return marks; }
     WorldMech.State worldState() { return worldState; }
     Reactions reactions() { return reactions; }
+    SpellSlots slots() { return slots; }
     boolean debug() { return getConfig().getBoolean("debug", false); }
 }

@@ -36,6 +36,7 @@ public final class CastingState {
     public boolean bound(int key) { return bindings.stream().anyMatch(b -> !b.empty() && KeySettingsLayout.allowed(key) && b.keyCode() == key); }
     public long remaining(String id, long now) { var c=cooldowns.get(id); return c==null?0:Math.max(0,c.until()-now); }
     public float fraction(String id,long now) { var c=cooldowns.get(id); return c==null?0:Math.clamp((float)remaining(id,now)/c.duration(),0,1); }
+    public void clearCooldown(String id) { cooldowns.remove(id); pending.remove(id); }
     public void releaseInputs() { captured.clear(); }
     public void disable() { enabled=false; }
     public void reset() { enabled=false; captured.clear(); cooldowns.clear(); pending.clear(); }

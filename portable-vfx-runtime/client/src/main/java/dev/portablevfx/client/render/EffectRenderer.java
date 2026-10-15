@@ -57,6 +57,12 @@ public final class EffectRenderer implements AutoCloseable, EffectLibrary.Warmup
         long epoch=warmupEpoch.incrementAndGet();gpuReadyIds=Set.of();prewarmStatus="Claude preload: decoding resources";
         var limits=library.limits();
         long started=System.nanoTime();
+        // BC7 encodings are cached per PNG digest; only the first launch after a pack change encodes.
+        java.nio.file.Path textureCache=null;
+        try{textureCache=FabricLoader.getInstance().getGameDir().resolve("portablevfx/texture-cache");}
+        catch(RuntimeException|LinkageError noLoader){/* unit tests / tools: encode without a disk cache */}
+        dev.portablevfx.client.claude.ClaudeBackend.textureCacheDirectory(textureCache);
+        dev.portablevfx.client.claude.ClaudeBackend.beginTexturePreparation(30);
         var cache=new dev.portablevfx.client.claude.ClaudeBackend.PreparationCache(limits.prewarmRgbaBytes());
         List<PreparedEntry> entries=new ArrayList<>();Map<Identifier,String> errors=new LinkedHashMap<>();int attempted=0,deferred=0;
         for(var entry:snapshot.definitions().entrySet().stream().sorted(Map.Entry.comparingByKey()).toList()){
@@ -102,7 +108,7 @@ public final class EffectRenderer implements AutoCloseable, EffectLibrary.Warmup
                     gpuReadyIds=Set.copyOf(loaded.keySet());
                     boolean complete=loaded.size()==library.ids().size()&&failedAssets.isEmpty()&&library.configErrors().isEmpty()&&prewarmDeferred==0;
                     prewarmStatus=(complete?"Claude preload ready: ":"Claude preload incomplete: ")+loaded.size()+" systems / "+failedAssets.size()+" errors / "+prewarmDeferred+" deferred; cold loading disabled";
-                    PortableVfxClient.LOG.info("{} / CPU {} ms / GPU apply {} ms / {}",prewarmStatus,batch.cpuNanos()/1_000_000,(System.nanoTime()-gpuPrewarmStarted)/1_000_000,backend.diagnostics());}
+                    PortableVfxClient.LOG.info("{} / CPU {} ms / GPU apply {} ms / {} / {}",prewarmStatus,batch.cpuNanos()/1_000_000,(System.nanoTime()-gpuPrewarmStarted)/1_000_000,backend.diagnostics(),dev.portablevfx.client.claude.ClaudeBackend.textureSummary());}
                 return ready;
             }catch(RuntimeException|LinkageError error){failedBackends.add("claude");prewarmStatus="Claude preload failed: "+error.getMessage();PortableVfxClient.LOG.error(prewarmStatus,error);releaseFailedPreload();return true;}
         },executor,()->batch.epoch()==warmupEpoch.get());

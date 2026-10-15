@@ -5,7 +5,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 
-/** Operator-tunable limits with hard safety bounds; pack metadata cannot increase them. */
+/**
+ * Operator-tunable limits with hard safety bounds; pack metadata cannot increase them.
+ * The "rgba" byte limits count actual GPU texture bytes: BC7-compressed textures cost 1 byte/pixel, RGBA8 4.
+ */
 public record LoadLimits(int maxPacks, long encodedBytes, long residentRgbaBytes,
                          long prewarmRgbaBytes, int residentSystems, int prewarmSystems) {
     public static final long MIB = 1024L * 1024;

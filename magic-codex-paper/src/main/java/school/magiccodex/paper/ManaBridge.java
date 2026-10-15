@@ -34,6 +34,8 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
         spells=ManaSpells.load(new File(plugin.getDataFolder(),"mana-spells.yml"));
         plugin.getServer().getMessenger().registerIncomingPluginChannel(plugin,ManaProtocol.REQUEST,this);
         plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin,ManaProtocol.RESPONSE);
+        plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin,ManaProtocol.COOLDOWN_RESET);
+        mana.cooldownCleared=(id,spell)->{var p=Bukkit.getPlayer(id);if(p!=null)p.sendPluginMessage(plugin,ManaProtocol.COOLDOWN_RESET,ManaProtocol.cooldownReset(spell));};
         plugin.getServer().getPluginManager().registerEvents(this,plugin);
         plugin.getServer().getServicesManager().register(ManaService.class,mana,plugin,ServicePriority.Normal);
         Objects.requireNonNull(plugin.getCommand("마나관리")).setExecutor(this);

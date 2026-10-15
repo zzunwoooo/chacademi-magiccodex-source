@@ -24,7 +24,16 @@
 
 - `/마법미몹 새로고침` — config.yml 다시 읽기
 - `/마법미몹 상태` — 진행 중인 투사체·지대·보호막·표식·임시 블록 개수
+- `/마법미몹 장착 <플레이어> [id...|비우기]` — 슬롯 장착 상태 보기/강제 지정 (패시브 시험용)
+- `/마법미몹 시험 <마법ID>` — 마나·쿨타임·권한·카탈로그 VFX 없이 그 마법의 CHA_ 스킬만 실행 (VFX 준비 전 기능 시험)
+
+## 슬롯 장착형 패시브
+
+017 미라지 슈터, 030 미스틱 슈터, 049 광석 재련, 052 불꽃 걸음, 055 화염의 정복자, 121 자동 보급은 미몹 라우트가 없고 `Passives` 가 처리한다.
+장착 여부는 `SpellSlots`: 클라이언트가 `chacademia:spell_slots` 로 보고(제안) 하거나, `config.yml passive-slots.mode: learned` 로 배운 마법 전체를 장착 취급.
 
 ## 메커닉 옵션
 
-각 클래스 상단 주석에 전체 옵션이 있다 (`HitMech`, `BoltMech`, `ZoneMech`, `GuardMech`, `MarkMech`, `AllyMech`, `WorldMech`).
+각 클래스 상단 주석에 전체 옵션이 있다 (`HitMech`, `BoltMech`, `ZoneMech`, `GuardMech`, `MarkMech`, `AllyMech`, `WorldMech`,
+`FarmMech`(chafarm), `UtilMech`(chautil), `SummonMech`(chasummon), `BuffMech`(chabuff), `ChannelMech`(chachannel), `NoteMech`(chanote)).
+모든 `cha*` 줄에는 생성기가 `element=`·`spell=` 을 넣는다. `spell=` 로 그 마법의 진행 중 PortableVFX 연출에 `external:*` 이벤트를 보낸다.

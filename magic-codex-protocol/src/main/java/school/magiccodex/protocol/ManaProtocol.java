@@ -6,6 +6,10 @@ import java.nio.charset.StandardCharsets;
 /** Clients send only a spell ID, never costs, commands, permissions or mana values. */
 public final class ManaProtocol {
     public static final String REQUEST="magiccodex:mana_request", RESPONSE="magiccodex:mana_response";
+    /** Server -> client: this spell's cooldown was cleared on the server (payload: US-ASCII spell id). */
+    public static final String COOLDOWN_RESET="magiccodex:cooldown_reset";
+    public static byte[] cooldownReset(String id){if(!id.matches("[a-z0-9_-]{1,64}"))throw new IllegalArgumentException("Invalid spell");return id.getBytes(StandardCharsets.US_ASCII);}
+    public static String decodeCooldownReset(byte[] bytes){String id=new String(bytes,StandardCharsets.US_ASCII);if(!id.matches("[a-z0-9_-]{1,64}"))throw new IllegalArgumentException("Invalid spell");return id;}
     private static final int VERSION=0x4D414E01;
     public static final int SNAPSHOT=0, OK=1, UNKNOWN=2, LOCKED=3, EMPTY=4, COOLDOWN=5, FAILED=6, UNAVAILABLE=7;
     public record Snapshot(double current,double maximum,double regeneration,double haste) {

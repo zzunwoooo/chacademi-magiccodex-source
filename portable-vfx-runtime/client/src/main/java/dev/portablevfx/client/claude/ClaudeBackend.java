@@ -73,13 +73,14 @@ public final class ClaudeBackend implements EffectBackend {
             long bytes=(long)width*height*4;
             makeRoom(bytes);
             if(retainedBytes+bytes>maxBytes)throw new CapacityException("Claude shared decoded PNG cache byte budget exceeded");
-            var decoded=ClaudeTexture.decode(png,maxBytes-retainedBytes);decodeCount++;
-            var entry=new DecodedEntry(this,key,decoded);entry.references=1;textures.put(key,entry);retainedBytes+=decoded.rgba().length;return entry;
+            // The reservation covers the transient RGBA decode; only the (usually BC7) GPU bytes stay retained.
+            var decoded=ClaudeTexture.prepare(png,key,maxBytes-retainedBytes);decodeCount++;
+            var entry=new DecodedEntry(this,key,decoded);entry.references=1;textures.put(key,entry);retainedBytes+=entry.bytes();return entry;
         }
         private void makeRoom(long bytes){
             var texturesIterator=textures.entrySet().iterator();
             while(retainedBytes+bytes>maxBytes&&texturesIterator.hasNext()){
-                var entry=texturesIterator.next().getValue();if(entry.references==0){retainedBytes-=entry.decoded.rgba().length;texturesIterator.remove();}
+                var entry=texturesIterator.next().getValue();if(entry.references==0){retainedBytes-=entry.bytes();texturesIterator.remove();}
             }
             var modelsIterator=models.entrySet().iterator();
             while(retainedBytes+bytes>maxBytes&&modelsIterator.hasNext()){
@@ -105,7 +106,7 @@ public final class ClaudeBackend implements EffectBackend {
         }
         private synchronized void release(DecodedEntry entry){
             if(entry.references<=0)throw new IllegalStateException("Unbalanced Claude texture preparation");
-            if(--entry.references==0&&closed){textures.remove(entry.digest);retainedBytes-=entry.decoded.rgba().length;}
+            if(--entry.references==0&&closed){textures.remove(entry.digest);retainedBytes-=entry.bytes();}
         }
         private void ensureOpen()throws IOException{if(closed)throw new IOException("Claude preparation cache is closed");}
         public synchronized PreparationDiagnostics diagnostics(){
@@ -114,7 +115,7 @@ public final class ClaudeBackend implements EffectBackend {
         /** Live Prepared/Asset leases stay valid; the last lease promptly releases their bytes. */
         @Override public synchronized void close(){
             closed=true;effects.clear();var iterator=textures.entrySet().iterator();
-            while(iterator.hasNext()){var entry=iterator.next().getValue();if(entry.references==0){retainedBytes-=entry.decoded.rgba().length;iterator.remove();}}
+            while(iterator.hasNext()){var entry=iterator.next().getValue();if(entry.references==0){retainedBytes-=entry.bytes();iterator.remove();}}
             var modelIterator=models.entrySet().iterator();while(modelIterator.hasNext()){var entry=modelIterator.next().getValue();if(entry.references==0){retainedBytes-=entry.model.retainedBytes();modelIterator.remove();}}
         }
     }
@@ -122,8 +123,9 @@ public final class ClaudeBackend implements EffectBackend {
     public record Diagnostics(long decodeCount,long cacheHits,long parseCount,long textureUploads,long shaderLinks,long targetAllocations,
                               long retainedTextureBytes,int textureCount,int pendingTextures,int assetCount) { }
     private static final class DecodedEntry {
-        final PreparationCache cache;final String digest;final ClaudeTexture.Decoded decoded;int references;
-        DecodedEntry(PreparationCache cache,String digest,ClaudeTexture.Decoded decoded){this.cache=cache;this.digest=digest;this.decoded=decoded;}
+        final PreparationCache cache;final String digest;final ClaudeTexture.Gpu decoded;int references;
+        DecodedEntry(PreparationCache cache,String digest,ClaudeTexture.Gpu decoded){this.cache=cache;this.digest=digest;this.decoded=decoded;}
+        long bytes(){return decoded.data().length;}
     }
     private static final class ModelEntry {
         final PreparationCache cache;final String digest;final ClaudeModel model;int references;
@@ -207,6 +209,11 @@ public final class ClaudeBackend implements EffectBackend {
         this.fallbackPreparationCache=new PreparationCache(residentRgbaLimit);
     }
     @Override public String id(){return "claude";}
+    /** Where BC7 encodings are cached between launches (null disables the disk cache). */
+    public static void textureCacheDirectory(java.nio.file.Path directory){ClaudeTexture.cacheDirectory(directory);}
+    /** Drops cached encodings unused for {@code days} and resets the per-reload texture counters. */
+    public static void beginTexturePreparation(int pruneDays){ClaudeTexture.resetSummary();ClaudeTexture.pruneCache(pruneDays);}
+    public static String textureSummary(){return ClaudeTexture.summary();}
 
     private final class ClaudeAsset implements Asset {
         final ClaudeEffect effect;final SystemDef system;final float magnification;
@@ -232,27 +239,44 @@ public final class ClaudeBackend implements EffectBackend {
     private void releaseTexture(Texture texture){
         if(--texture.references!=0)return;
         if(texture.id!=0){glDeleteTextures(texture.id);texture.id=0;}
-        sharedTextures.remove(texture.digest);retainedTextureBytes-=texture.bytes;
+        sharedTextures.remove(texture.digest);retainedTextureBytes-=texture.bytes+texture.extraBytes;
         texture.releasePixels();
     }
-    /** GPU texture is the cache: decoded RGBA is leased only until upload; bytes stay counted for the resident budget. */
+    private static final int GL_COMPRESSED_RGBA_BPTC_UNORM=0x8E8C,GL_COMPRESSED_RGBA_S3TC_DXT5_EXT=0x83F3;
+    private Boolean bptc,s3tc;
+    /** BPTC is core since GL 4.2; macOS (GL 4.1) lacks it and gets a decoded upload, driver-compressed to DXT5 when offered. */
+    private boolean bptcSupported(){
+        if(bptc==null){var caps=GL.getCapabilities();bptc=caps.OpenGL42||caps.GL_ARB_texture_compression_bptc;s3tc=caps.GL_EXT_texture_compression_s3tc;
+            if(!bptc)LOG.warn("PortableVFX: GPU lacks BPTC (BC7); BC7 textures are decoded at upload{}",s3tc?" and driver-compressed to DXT5":"");}
+        return bptc;
+    }
+    /** GPU texture is the cache: prepared pixels are leased only until upload; bytes stay counted for the resident budget. */
     private final class Texture {
-        final String digest;final long bytes;DecodedEntry entry;int id,references;
-        Texture(DecodedEntry entry){this.entry=entry;this.digest=entry.digest;this.bytes=entry.decoded.rgba().length;}
+        final String digest;final long bytes;DecodedEntry entry;int id,references;long extraBytes;
+        Texture(DecodedEntry entry){this.entry=entry;this.digest=entry.digest;this.bytes=entry.bytes();}
         void releasePixels(){var leased=entry;if(leased==null)return;entry=null;leased.cache.release(leased);}
         int upload(){
             if(id!=0)return id;if(entry==null)throw new IllegalStateException("Claude texture pixels released before upload");
-            int created=glGenTextures();ByteBuffer staging=null;
+            int created=glGenTextures();ByteBuffer staging=null;long uploadedExtra=0;
             try{
                 var decoded=entry.decoded;
                 glBindTexture(GL_TEXTURE_2D,created);
                 glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
                 glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
                 glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAX_LEVEL,0);
-                staging=MemoryUtil.memAlloc(decoded.rgba().length);staging.put(decoded.rgba()).flip();
-                glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,decoded.width(),decoded.height(),0,GL_RGBA,GL_UNSIGNED_BYTE,staging);
+                if(decoded.format()==ClaudeTexture.BC7&&bptcSupported()){
+                    staging=MemoryUtil.memAlloc(decoded.data().length);staging.put(decoded.data()).flip();
+                    glCompressedTexImage2D(GL_TEXTURE_2D,0,GL_COMPRESSED_RGBA_BPTC_UNORM,decoded.width(),decoded.height(),0,staging);
+                }else{
+                    byte[] rgba=decoded.format()==ClaudeTexture.BC7?ClaudeTextureCodec.decode(decoded.data(),decoded.width(),decoded.height()):decoded.data();
+                    staging=MemoryUtil.memAlloc(rgba.length);staging.put(rgba).flip();
+                    int internal=decoded.format()==ClaudeTexture.BC7&&Boolean.TRUE.equals(s3tc)?GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:GL_RGBA8;
+                    // BC7 admitted at 1 byte/pixel but uploaded as RGBA8 (no BPTC, no S3TC): charge the real size so later admissions see it.
+                    if(decoded.format()==ClaudeTexture.BC7&&internal==GL_RGBA8)uploadedExtra=decoded.rawBytes()-bytes;
+                    glTexImage2D(GL_TEXTURE_2D,0,internal,decoded.width(),decoded.height(),0,GL_RGBA,GL_UNSIGNED_BYTE,staging);
+                }
                 if(glGetTexLevelParameteri(GL_TEXTURE_2D,0,GL_TEXTURE_WIDTH)!=decoded.width())throw new GpuFailureException("Claude PNG texture upload failed");
-                id=created;textureUploads++;
+                id=created;textureUploads++;extraBytes=uploadedExtra;retainedTextureBytes+=extraBytes;
             }finally{if(staging!=null)MemoryUtil.memFree(staging);if(id==0)glDeleteTextures(created);}
             releasePixels();return id;
         }
@@ -347,7 +371,7 @@ public final class ClaudeBackend implements EffectBackend {
                 if(png==null)throw new IOException("Missing Claude texture: "+reference);pngBytes+=png.length;
                 if(pngBytes>ClaudeTexture.MAX_ASSET_PNG_BYTES)throw new IOException("Claude encoded PNG budget exceeded");
                 var entry=cache.acquire(png);textures.put(reference,entry);
-                if(digests.add(entry.digest))rgbaBytes+=entry.decoded.rgba().length;
+                if(digests.add(entry.digest))rgbaBytes+=entry.decoded.rawBytes();
                 if(rgbaBytes>ClaudeTexture.MAX_ASSET_RGBA_BYTES)throw new IOException("Claude decoded asset PNG budget exceeded");
             }
             Set<String> modelReferences=new LinkedHashSet<>();
@@ -384,8 +408,8 @@ public final class ClaudeBackend implements EffectBackend {
                 for(var reference:prepared.textures.entrySet()){
                     var entry=reference.getValue();var texture=sharedTextures.get(entry.digest);
                     if(texture==null){
-                        long bytes=entry.decoded.rgba().length;// pixels are dropped after upload; bytes stay budgeted
-                        if(retainedTextureBytes+bytes>residentRgbaLimit)throw new CapacityException("Claude backend decoded PNG byte budget exceeded");
+                        long bytes=entry.bytes();// GPU bytes (BC7 = 1 byte/pixel); pixels are dropped after upload, bytes stay budgeted
+                        if(retainedTextureBytes+bytes>residentRgbaLimit)throw new CapacityException("Claude backend texture byte budget exceeded");
                         entry.cache.retain(entry);texture=new Texture(entry);sharedTextures.put(entry.digest,texture);retainedTextureBytes+=bytes;
                     }
                     texture.references++;textures.put(reference.getKey(),texture);preparationCaches.add(entry.cache);

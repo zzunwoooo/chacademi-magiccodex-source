@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DiscoveryTest {
     @TempDir Path dir;
     @Test void approvedDefinitionsLoadWithDottedKeysAndExactCropConjunction()throws Exception{
-        var d=new Definitions(Path.of("src/main/resources/discoveries.yml").toFile());assertEquals(72,d.spells.size());
+        var d=new Definitions(Path.of("src/main/resources/discoveries.yml").toFile());assertEquals(119,d.spells.size());
         var crop=d.spells.get("harvest_wind");assertEquals(3,crop.requirements().size());assertEquals(12,crop.requirements().get("break.young_wheat"));
         assertFalse(Definitions.meets(crop,Map.of("break.young_wheat",36d)));
         assertTrue(Definitions.meets(crop,Map.of("break.young_wheat",12d,"break.young_carrots",12d,"break.young_potatoes",12d)));

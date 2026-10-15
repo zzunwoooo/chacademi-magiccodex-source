@@ -3,11 +3,11 @@ version: '${version}'
 main: school.chacademia.magicmythic.MagicMythicPlugin
 api-version: '1.21.4'
 depend: [MythicMobs, WorldGuard]
-softdepend: [MagicCodexBridge, ChacademyMotion]
+softdepend: [MagicCodexBridge, ChacademyMotion, PortableVFX, ItemsAdder]
 commands:
   마법미몹:
     description: Reload or inspect magic MythicMobs mechanics
-    usage: /마법미몹 <새로고침|상태>
+    usage: /마법미몹 <새로고침|상태|장착|시험>
     permission: chacademia.magicmythic.admin
 permissions:
   chacademia.magicmythic.admin:
