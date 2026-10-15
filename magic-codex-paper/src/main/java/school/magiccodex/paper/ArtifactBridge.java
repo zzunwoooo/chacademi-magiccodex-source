@@ -390,6 +390,9 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
         return true;
     }
 
+    /** After the shared state (school/wild) loaded: send equipped + cooldowns so the client's X-key HUD and codex match. */
+    void push(Player p) { send(p, true, ""); listening.add(p.getUniqueId()); }
+
     private void send(Player p, boolean withCatalog, String notice) {
         if (!p.getListeningPluginChannels().contains(ArtifactProtocol.RESPONSE)) return;
         var snapshot = catalog; long rev = revision;

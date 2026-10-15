@@ -116,14 +116,89 @@ final class ArtifactEffects implements Listener {
     /** Called after equip/unequip and on join. */
     void refresh(Player p) {
         if (!p.isOnline()) return;
-        worn.put(p.getUniqueId(), new HashSet<>(artifacts.equipped(p)));
+        worn.put(p.getUniqueId(), wornNow(p));
         apply(p);
+    }
+
+    /** Nothing counts as equipped until the shared state (school/wild) is loaded: the local PDC may be stale. */
+    private Set<String> wornNow(Player p) {
+        return plugin.playerStateReady(p) ? new HashSet<>(artifacts.equipped(p)) : Set.of();
     }
 
     /** The shared player state (school/wild) was applied: recompute and hand back a kept item. */
     void stateLoaded(Player p) {
         refresh(p);
+        // Max health bonuses were missing while the player arrived, so the game may have cut health down to the
+        // base maximum. Give back what they had on the previous server (never more than the new maximum).
+        Double health = arrivalHealth.remove(p.getUniqueId());
+        var max = p.getAttribute(Attribute.MAX_HEALTH);
+        Double joined = joinHealth.remove(p.getUniqueId());
+        boolean untouched = joined == null || p.getHealth() >= joined - 0.01; // not hurt while the state was loading
+        if (health != null && max != null && !p.isDead() && untouched && health > p.getHealth()) p.setHealth(Math.min(max.getValue(), health));
         life.returnKept(p);
+    }
+
+    // ------------------------------------------------------------------ shared runtime (school/wild)
+
+    /** Health carried over by the shared state, applied in {@link #stateLoaded}. */
+    private final Map<UUID, Double> arrivalHealth = new HashMap<>(), joinHealth = new HashMap<>();
+
+    /**
+     * Short-lived artifact state that must survive a server switch, stored in codex_player_state.artifact_runtime:
+     * internal cooldowns (r:), timed buffs (t:), comeback / mana-drop windows, armed flags, counters, current health.
+     * Times are wall-clock milliseconds (school and wild share the host clock).
+     */
+    String runtimeText(Player p) {
+        var r = runs.get(p.getUniqueId());
+        var out = new StringBuilder();
+        long now = System.currentTimeMillis();
+        if (r != null) {
+            r.ready.forEach((k, until) -> { if (until > now && k.matches("[a-z0-9_]{1,48}")) out.append("r:").append(k).append('=').append(until).append(';'); });
+            r.timed.forEach((k, t) -> { if (t.until() > now && k.matches("[a-z0-9_]{1,48}"))
+                out.append("t:").append(k).append('=').append(t.until()).append(',').append(t.speed()).append(',').append(t.haste()).append(';'); });
+            if (r.comebackUntil > now) out.append("c=").append(r.comebackUntil).append(';');
+            if (r.manaDropUntil > now) out.append("m=").append(r.manaDropUntil).append(';');
+            if (r.chantArmed) out.append("chant=1;");
+            if (r.cheerArmed) out.append("cheer=1;");
+            if (r.notes > 0) out.append("notes=").append(r.notes).append(';');
+            if (r.manaSpent > 0) out.append("spent=").append(Math.round(r.manaSpent * 100) / 100.0).append(';');
+            if (r.expCarry > 0) out.append("exp=").append(Math.round(r.expCarry * 1000) / 1000.0).append(';');
+        }
+        if (!p.isDead()) out.append("hp=").append(Math.round(p.getHealth() * 100) / 100.0).append(';');
+        return out.length() > 4000 ? out.substring(0, out.lastIndexOf(";", 4000) + 1) : out.toString();
+    }
+
+    void restoreRuntime(Player p, String text) {
+        var r = new Run();
+        runs.put(p.getUniqueId(), r);
+        arrivalHealth.remove(p.getUniqueId());
+        if (text == null || text.isBlank()) return;
+        long now = System.currentTimeMillis();
+        for (String part : text.split(";")) {
+            String[] kv = part.split("=", 2);
+            if (kv.length != 2) continue;
+            try {
+                String k = kv[0], v = kv[1];
+                if (k.startsWith("r:")) { long until = Long.parseLong(v); if (until > now && until - now <= 86_400_000) r.ready.put(k.substring(2), until); }
+                else if (k.startsWith("t:")) {
+                    String[] t = v.split(",");
+                    long until = Long.parseLong(t[0]);
+                    double speed = Math.clamp(Double.parseDouble(t[1]), -1, 2), haste = Math.clamp(Double.parseDouble(t[2]), -1000, 1000);
+                    if (until > now && until - now <= 3_600_000) r.timed.put(k.substring(2), new Timed(until, speed, haste));
+                }
+                else switch (k) {
+                    case "c" -> r.comebackUntil = Math.min(Long.parseLong(v), now + 10_000);
+                    case "m" -> r.manaDropUntil = Math.min(Long.parseLong(v), now + 3_000);
+                    case "chant" -> r.chantArmed = true;
+                    case "cheer" -> r.cheerArmed = true;
+                    case "notes" -> r.notes = Math.clamp(Integer.parseInt(v), 0, 9);
+                    case "spent" -> r.manaSpent = Math.clamp(Double.parseDouble(v), 0, 200);
+                    case "exp" -> r.expCarry = Math.clamp(Double.parseDouble(v), 0, 1);
+                    case "hp" -> { double hp = Double.parseDouble(v); if (Double.isFinite(hp) && hp > 0) arrivalHealth.put(p.getUniqueId(), hp); }
+                    default -> { }
+                }
+            } catch (RuntimeException ignored) { /* one bad entry never blocks the rest */ }
+        }
     }
 
     /** One internal cooldown per player and key. @return true when ready (and starts the cooldown) */
@@ -215,7 +290,7 @@ final class ArtifactEffects implements Listener {
     private void tick() {
         long now = System.currentTimeMillis();
         for (Player p : Bukkit.getOnlinePlayers()) {
-            worn.put(p.getUniqueId(), new HashSet<>(artifacts.equipped(p)));
+            worn.put(p.getUniqueId(), wornNow(p));
             var r = run(p);
             if (r.inCombat && !inCombat(r, now)) { r.inCombat = false; combatEnded(p); }
             if (has(p, "mana_drop_earring")) mana.snapshot(p.getUniqueId()).ifPresent(s -> {
@@ -614,11 +689,14 @@ final class ArtifactEffects implements Listener {
         Bukkit.getScheduler().runTaskLater(plugin, d::remove, ticks);
     }
 
-    @EventHandler public void join(PlayerJoinEvent e) { Bukkit.getScheduler().runTaskLater(plugin, () -> refresh(e.getPlayer()), 20); }
+    @EventHandler public void join(PlayerJoinEvent e) {
+        joinHealth.put(e.getPlayer().getUniqueId(), e.getPlayer().getHealth());
+        Bukkit.getScheduler().runTaskLater(plugin, () -> refresh(e.getPlayer()), 20);
+    }
     @EventHandler public void quit(PlayerQuitEvent e) {
         UUID id = e.getPlayer().getUniqueId();
         clear(e.getPlayer());
-        worn.remove(id); runs.remove(id);
+        worn.remove(id); runs.remove(id); arrivalHealth.remove(id); joinHealth.remove(id);
         actions.quit(id); life.quit(id);
     }
 
