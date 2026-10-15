@@ -113,7 +113,7 @@ final class BoltMech extends Mech {
             double dmg = c.dmg(p) * Geometry.falloff(p.d("falloff", 1), hitCount);
             hitCount++;
             var targets = plugin.targets();
-            if(!targets.hurt(c.caster(), t, dmg))return;
+            if(!targets.hurt(c.caster(), t, dmg, p.s("element", "")))return;
             plugin.reactions().hit(c.caster(), t, p.s("element", ""), dmg);
             targets.effects(t, p.effects("effect"));
             int ignite = p.i("ignite", 0);
@@ -132,7 +132,7 @@ final class BoltMech extends Mech {
             if (aoe <= 0) return;
             double dmg = c.damage() * p.d("aoemult", 1);
             for (LivingEntity t : plugin.targets().enemiesNear(c.caster(), pos, aoe, p.i("max", 16))) {
-                if(!plugin.targets().hurt(c.caster(), t, dmg))continue;
+                if(!plugin.targets().hurt(c.caster(), t, dmg, p.s("element", "")))continue;
                 plugin.reactions().hit(c.caster(), t, p.s("element", ""), dmg);
                 plugin.targets().effects(t, p.effects("effect"));
                 plugin.targets().knock(t, pos, dir, p.d("aoeknock", 0), p.d("aoeup", 0));

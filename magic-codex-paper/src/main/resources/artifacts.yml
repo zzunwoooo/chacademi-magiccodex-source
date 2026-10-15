@@ -7,7 +7,8 @@
 #   예) /lp user 닉네임 permission set magiccodex.artifact.own.sturdy_vest true
 # 장착: 도감에서 [장착]/[해제]. 장착 개수는 settings.max-equipped.
 # 사용: use: true 인 아티팩트는 장착한 채 아티팩트 사용 키(기본 X)로 씁니다. cooldown = 재사용 대기(초, 0 = 없음).
-# 실제 능력(효과)은 아직 구현 전입니다. 지금은 도감 표시, 장착 기록, 사용 키 → 서버 전달(대기 시간 관리)까지만 합니다.
+# 효과: 150개 중 120개 구현 (ArtifactEffects / ArtifactActions / ArtifactLife, 2026-10-15). 아이디가 효과와 묶여 있으니 아이디는 바꾸지 마세요.
+#   보류 30개(모션·키세팅·빗자루 연동이 필요한 것 등)는 장착해도 효과가 없고, 사용형은 '준비 중'으로 뜹니다. 목록은 docs/handoff/CLAUDE_ARTIFACT_EFFECTS_20261015.md
 
 settings:
   max-equipped: 1          # 동시에 장착할 수 있는 아티팩트 수 (1~8)

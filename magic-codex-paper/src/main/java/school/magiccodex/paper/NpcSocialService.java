@@ -256,11 +256,30 @@ final class NpcSocialService implements Listener, AutoCloseable {
         });
     }
 
+    /** Artifact hook (chatty_feather, village_friend): changes an affinity amount before it is stored. Server thread. */
+    private volatile java.util.function.ToIntBiFunction<UUID, Integer> affinityModifier;
+    void affinityModifier(java.util.function.ToIntBiFunction<UUID, Integer> modifier) { affinityModifier = modifier; }
+    private int modified(UUID player, int amount) {
+        var m = affinityModifier;
+        if (m == null || !Bukkit.isPrimaryThread()) return amount;
+        try { return m.applyAsInt(player, amount); } catch (RuntimeException e) { return amount; }
+    }
+
+    /** Artifact love_letter: NPCs whose affinity is maxed (score 100) for this player, from the join cache. */
+    int maxedCount(UUID player) {
+        var rows = cache.get(player);
+        if (rows == null) return 0;
+        int n = 0;
+        for (var row : rows.values()) if (row.score() >= AffinityStore.gate(4)) n++;
+        return n;
+    }
+
     CompletableFuture<AffinityStore.AddResult> add(UUID player, String npc, String source, int amount) {
+        final int value = modified(player, amount);
         String day = today();
         int cap = capFor(source);
         long now = System.currentTimeMillis();
-        return work(() -> store.add(player, npc, source, amount, cap, day, now)).thenApply(r -> {
+        return work(() -> store.add(player, npc, source, value, cap, day, now)).thenApply(r -> {
             remember(player, npc, r.row());
             return r;
         });
@@ -283,9 +302,10 @@ final class NpcSocialService implements Listener, AutoCloseable {
     }
 
     CompletableFuture<AffinityStore.GiftBegin> beginGift(UUID player, String npc, String token, int delta) {
+        final int value = modified(player, delta);
         String day = today();
         long now = System.currentTimeMillis();
-        return work(() -> store.beginGift(token, player, npc, delta, day, giftDailyCount, now));
+        return work(() -> store.beginGift(token, player, npc, value, day, giftDailyCount, now));
     }
 
     CompletableFuture<AffinityStore.AddResult> commitGift(UUID player, String npc, String token) {

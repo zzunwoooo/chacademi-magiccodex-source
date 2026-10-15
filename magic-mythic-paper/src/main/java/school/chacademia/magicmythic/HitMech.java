@@ -61,12 +61,12 @@ final class HitMech extends Mech {
             boolean protectedTarget = t instanceof Player || targets.boss(t);
             double ratio = t.getHealth() / Targets.maxHealth(t);
             if (!protectedTarget || ratio < execute) {
-                targets.hurt(c.caster(), t, Math.max(dmg, t.getHealth() + 1));
+                targets.hurt(c.caster(), t, Math.max(dmg, t.getHealth() + 1), p.s("element", ""));
                 // Never bypass a cancelled or reduced damage event with setHealth.
                 return;
             }
         }
-        if(!targets.hurt(c.caster(), t, dmg))return;
+        if(!targets.hurt(c.caster(), t, dmg, p.s("element", "")))return;
         plugin.reactions().hit(c.caster(), t, p.s("element", ""), dmg);
         targets.effects(t, p.effects("effect"));
         int ignite = p.i("ignite", 0);

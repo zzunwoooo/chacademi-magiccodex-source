@@ -26,6 +26,8 @@ public final class PartyPlugin {
     private static final MinecraftChannelIdentifier DISCOVERY=MinecraftChannelIdentifier.from("chacademi:party_discovery");
     private static final MinecraftChannelIdentifier VITALS=MinecraftChannelIdentifier.from("chacademi:party_vitals");
     private static final MinecraftChannelIdentifier HUD=MinecraftChannelIdentifier.from("chacademi:party_hud");
+    /** 파티 명단 → 게임 서버 (아티팩트·마법의 파티 판정). 프록시만 보낸다. */
+    private static final MinecraftChannelIdentifier ROSTER=MinecraftChannelIdentifier.from("chacademi:party_roster");
     private final ProxyServer proxy;
     private final Logger logger;
     private final Path directory;
@@ -33,6 +35,7 @@ public final class PartyPlugin {
     private final ThreadPoolExecutor worker=newWorker();
     private NetworkChat network;
     private PartyHud hud;
+    private final PartyRoster roster=new PartyRoster();
     private final Map<UUID,Long> nextChat=new HashMap<>(),nextCommand=new HashMap<>();
     private final Set<String> trusted=new HashSet<>();
     private PartyBook book;
@@ -51,7 +54,7 @@ public final class PartyPlugin {
             network=new NetworkChat(trusted);hud=new PartyHud(trusted);
             store=new PartyStore(directory.resolve("parties.json"));book=store.load(capacity);ready=true;
         }catch(Exception e){logger.error("Party initialization failed; commands remain unavailable. Stored state preserved.",e);}
-        proxy.getChannelRegistrar().register(IDENTITY,DISCOVERY,VITALS,HUD);
+        proxy.getChannelRegistrar().register(IDENTITY,DISCOVERY,VITALS,HUD,ROSTER);
         // 파티 위젯: 0.25초마다 바뀐 파티만 보낸다 (변화 없으면 3초마다 한 번).
         proxy.getScheduler().buildTask(this,()->enqueue(this::flushHud)).repeat(250,TimeUnit.MILLISECONDS).schedule();
         var manager=proxy.getCommandManager();
@@ -62,7 +65,7 @@ public final class PartyPlugin {
         ready=false;worker.shutdown();try{if(!worker.awaitTermination(10,TimeUnit.SECONDS))logger.warn("Party worker still draining during shutdown");}catch(InterruptedException e){Thread.currentThread().interrupt();}
     }
     @Subscribe public void disconnect(DisconnectEvent event){
-        UUID id=event.getPlayer().getUniqueId();enqueue(()->{if(network!=null)network.disconnect(id);if(hud!=null)hud.disconnect(id);nextChat.remove(id);nextCommand.remove(id);});
+        UUID id=event.getPlayer().getUniqueId();enqueue(()->{if(network!=null)network.disconnect(id);if(hud!=null)hud.disconnect(id);roster.disconnect(id);nextChat.remove(id);nextCommand.remove(id);});
         // Disconnect/server transfer does not change durable membership.
     }
     @Subscribe public void identity(PluginMessageEvent event){
@@ -85,11 +88,11 @@ public final class PartyPlugin {
     }
     @Subscribe public void hudSpoof(PluginMessageEvent event){
         // 위젯 채널은 프록시만 클라이언트에게 보낸다. 어느 쪽에서 온 것이든 전달하지 않는다.
-        if(event.getIdentifier().equals(HUD))event.setResult(PluginMessageEvent.ForwardResult.handled());
+        if(event.getIdentifier().equals(HUD)||event.getIdentifier().equals(ROSTER))event.setResult(PluginMessageEvent.ForwardResult.handled());
     }
     @Subscribe public void serverSwitched(ServerPostConnectEvent event){
         UUID id=event.getPlayer().getUniqueId();long notBefore=System.currentTimeMillis()+1000;
-        enqueue(()->{if(hud!=null)hud.resend(id,notBefore);});
+        enqueue(()->{if(hud!=null)hud.resend(id,notBefore);roster.resend(id,notBefore);});
     }
     private void flushHud(){
         if(!ready||hud==null)return;long now=System.currentTimeMillis();
@@ -101,6 +104,12 @@ public final class PartyPlugin {
             byte[] payload=party==null?PartyHud.EMPTY:byParty.computeIfAbsent(party.id(),k->PartyHud.encode(hudMembers(party,now)));
             var out=hud.due(player.getUniqueId(),payload,now);
             if(out!=null)player.sendPluginMessage(HUD,out);
+            // 같은 파티 명단을 플레이어가 있는 게임 서버에도 보낸다 (신뢰 서버만).
+            var server=player.getCurrentServer().get();
+            if(trusted.contains(server.getServerInfo().getName())){
+                var list=roster.due(player.getUniqueId(),PartyRoster.encode(party),now);
+                if(list!=null)server.sendPluginMessage(ROSTER,list);
+            }
         }
     }
     private List<PartyHud.Member> hudMembers(PartyBook.Party party,long now){

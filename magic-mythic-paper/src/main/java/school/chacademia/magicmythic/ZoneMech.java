@@ -55,7 +55,7 @@ final class ZoneMech extends Mech {
             var targets = plugin.targets();
             double heal = p.d("heal", 0);
             if (heal > 0) for (Player ally : targets.alliesNear(c.caster(), center, r, 16)) {
-                ally.setHealth(Math.min(Targets.maxHealth(ally), ally.getHealth() + heal));
+                targets.heal(c.caster(), ally, heal, "");
             }
             double dmg = c.dmg(p), suck = p.d("suck", 0), lift = p.d("lift", 0);
             int ignite = p.i("ignite", 0);
@@ -63,7 +63,7 @@ final class ZoneMech extends Mech {
             for (LivingEntity t : targets.enemiesNear(c.caster(), center, search + 1, p.i("max", 16))) {
                 if (wall > 0 && !Geometry.inWall(center.toVector(), facing, t.getLocation().toVector(), wall, Math.max(1, r), 3)) continue;
                 if (wall <= 0 && Targets.closestDistance(t, center) > r) continue;
-                if(!targets.hurt(c.caster(), t, dmg))continue;
+                if(!targets.hurt(c.caster(), t, dmg, p.s("element", "")))continue;
                 plugin.reactions().hit(c.caster(), t, p.s("element", ""), dmg);
                 targets.effects(t, p.effects("effect"));
                 if (ignite > 0) t.setFireTicks(Math.max(t.getFireTicks(), ignite));
@@ -82,7 +82,7 @@ final class ZoneMech extends Mech {
             if (near.isEmpty()) return true;
             double dmg = c.damage() * p.d("trapmult", p.d("mult", 1)) + p.d("flat", 0);
             for (LivingEntity t : targets.enemiesNear(c.caster(), center, p.d("trapr", 3), p.i("max", 16))) {
-                if(!targets.hurt(c.caster(), t, dmg))continue;
+                if(!targets.hurt(c.caster(), t, dmg, p.s("element", "")))continue;
                 plugin.reactions().hit(c.caster(), t, p.s("element", ""), dmg);
                 targets.effects(t, p.effects("effect"));
                 int ignite = p.i("ignite", 0);

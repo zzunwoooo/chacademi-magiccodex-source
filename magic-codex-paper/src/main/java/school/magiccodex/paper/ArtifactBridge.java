@@ -26,7 +26,7 @@ import school.magiccodex.protocol.ArtifactProtocol.Entry;
  * PlayerStateStore (left for the owner/GPT because the DB schema is being reworked).
  * Use key (2026-10-15): artifacts with `use: true` can be used with the client's artifact key (default X). The server
  * checks ownership, equipment and the per-player cooldown, then fires {@link ArtifactUseEvent}; the cooldown starts
- * only when a listener reports the effect happened. Abilities themselves are NOT implemented yet.
+ * only when a listener reports the effect happened. Abilities: {@link ArtifactEffects} (2026-10-15).
  * Cooldowns live in memory per server (kept across relogs on the same server, not across servers).
  *
  * Summon (유물함 소환, 2026-10-15): /아티팩트소환 opens the client window. [소환하기] spends one ItemsAdder key item
@@ -202,10 +202,10 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
                             if (maxEquipped == 1) list.clear();
                             else { notice = "장착 칸이 가득 찼습니다. 먼저 하나를 해제해 주세요."; }
                         }
-                        if (notice.isEmpty()) { list.add(r.id()); store(p, list); notice = "장착했습니다."; }
+                        if (notice.isEmpty()) { list.add(r.id()); store(p, list); notice = "장착했습니다."; plugin.artifactsChanged(p); }
                     }
                 } else {
-                    if (list.remove(r.id())) { store(p, list); notice = "해제했습니다."; } else notice = "장착 중이 아닙니다.";
+                    if (list.remove(r.id())) { store(p, list); notice = "해제했습니다."; plugin.artifactsChanged(p); } else notice = "장착 중이 아닙니다.";
                 }
             }
         } else if (r.action() == ArtifactProtocol.USE) {
