@@ -19,12 +19,13 @@ final class PlayerStateStore implements AutoCloseable {
         }
     }
     record State(int circle,double manaCurrent,double manaMaximum,double manaRegeneration,double magicHaste,
-                 String cooldowns,byte[][] accessories,int[] reconfigurationCredits,Artifacts artifacts) {
+                 String cooldowns,byte[][] accessories,int[] reconfigurationCredits,Artifacts artifacts,Double health) {
         State(int circle,double manaCurrent,double manaMaximum,double manaRegeneration,double magicHaste,String cooldowns,byte[][] accessories,int[] reconfigurationCredits){
-            this(circle,manaCurrent,manaMaximum,manaRegeneration,magicHaste,cooldowns,accessories,reconfigurationCredits,Artifacts.EMPTY);
+            this(circle,manaCurrent,manaMaximum,manaRegeneration,magicHaste,cooldowns,accessories,reconfigurationCredits,Artifacts.EMPTY,null);
         }
         State {
             if(artifacts==null)artifacts=Artifacts.EMPTY;
+            if(health!=null&&(!Double.isFinite(health)||health<=0||health>1_000_000))health=null; // current health for PlayerStats.arrived
             if(circle<1||circle>9||!valid(manaCurrent)||!valid(manaMaximum)||!valid(manaRegeneration)||!valid(magicHaste)
                     ||cooldowns==null||cooldowns.length()>32768||accessories==null||accessories.length!=4
                     ||reconfigurationCredits==null||reconfigurationCredits.length!=3)throw new IllegalArgumentException("Invalid player state");
@@ -39,7 +40,7 @@ final class PlayerStateStore implements AutoCloseable {
     static final class LeaseLostException extends SQLException {
         LeaseLostException(UUID id){super("Player state lease lost: "+id);}
     }
-    private static final String COLUMNS="player,circle,mana_current,mana_maximum,mana_regeneration,magic_haste,mana_cooldowns,accessory_0,accessory_1,accessory_2,accessory_3,reconfig_credit_0,reconfig_credit_1,reconfig_credit_2,artifact_equipped,artifact_cooldowns,artifact_biomes,artifact_kept,artifact_runtime";
+    private static final String COLUMNS="player,circle,mana_current,mana_maximum,mana_regeneration,magic_haste,mana_cooldowns,accessory_0,accessory_1,accessory_2,accessory_3,reconfig_credit_0,reconfig_credit_1,reconfig_credit_2,artifact_equipped,artifact_cooldowns,artifact_biomes,artifact_kept,artifact_runtime,health";
     private final ConnectionHolder holder;
     private Connection db()throws SQLException{return holder.get();}
     PlayerStateStore(DatabaseSettings settings)throws Exception {
@@ -50,7 +51,7 @@ final class PlayerStateStore implements AutoCloseable {
             // 2026-10-15 아티팩트 공유 상태: 기존 행은 빈 값으로 시작 (MariaDB ADD COLUMN IF NOT EXISTS, 다시 실행해도 안전)
             s.execute("ALTER TABLE codex_player_state ADD COLUMN IF NOT EXISTS artifact_equipped VARCHAR(512) NOT NULL DEFAULT '',"
                     +" ADD COLUMN IF NOT EXISTS artifact_cooldowns TEXT NULL, ADD COLUMN IF NOT EXISTS artifact_biomes TEXT NULL, ADD COLUMN IF NOT EXISTS artifact_kept BLOB NULL,"
-                    +" ADD COLUMN IF NOT EXISTS artifact_runtime TEXT NULL");
+                    +" ADD COLUMN IF NOT EXISTS artifact_runtime TEXT NULL, ADD COLUMN IF NOT EXISTS health DOUBLE NULL");
         }
     }
     Optional<State> load(UUID id)throws SQLException {
@@ -60,12 +61,13 @@ final class PlayerStateStore implements AutoCloseable {
                 var slots=new byte[4][];for(int i=0;i<4;i++)slots[i]=r.getBytes(8+i);
                 var credits=new int[3];for(int i=0;i<3;i++)credits[i]=r.getInt(12+i);
                 var artifacts=new Artifacts(r.getString(15),r.getString(16),r.getString(17),r.getBytes(18),r.getString(19));
-                return Optional.of(new State(r.getInt(2),r.getDouble(3),r.getDouble(4),r.getDouble(5),r.getDouble(6),r.getString(7),slots,credits,artifacts));
+                double hp=r.getDouble(20);Double health=r.wasNull()?null:hp;
+                return Optional.of(new State(r.getInt(2),r.getDouble(3),r.getDouble(4),r.getDouble(5),r.getDouble(6),r.getString(7),slots,credits,artifacts,health));
             }
         }
     }
     State firstOrCurrent(UUID id,State fallback)throws SQLException {
-        try(var s=db().prepareStatement("INSERT IGNORE INTO codex_player_state("+COLUMNS+") VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")){
+        try(var s=db().prepareStatement("INSERT IGNORE INTO codex_player_state("+COLUMNS+") VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")){
             bind(s,id,fallback);s.executeUpdate();
         }
         return load(id).orElseThrow(()->new SQLException("Player state insert failed"));
@@ -85,15 +87,15 @@ final class PlayerStateStore implements AutoCloseable {
     void save(UUID id,State state,String token,boolean release)throws SQLException {
         String updates="circle=?,mana_current=?,mana_maximum=?,mana_regeneration=?,magic_haste=?,mana_cooldowns=?,"
                 +"accessory_0=?,accessory_1=?,accessory_2=?,accessory_3=?,reconfig_credit_0=?,reconfig_credit_1=?,reconfig_credit_2=?,"
-                +"artifact_equipped=?,artifact_cooldowns=?,artifact_biomes=?,artifact_kept=?,artifact_runtime=?,";
+                +"artifact_equipped=?,artifact_cooldowns=?,artifact_biomes=?,artifact_kept=?,artifact_runtime=?,health=?,";
         String sql="UPDATE codex_player_state SET "+updates+(release?"lease_token=NULL,lease_until=0,":"lease_until=?,")
                 +"revision=revision+1 WHERE player=? AND lease_token=?";
         try(var s=db().prepareStatement(sql)){
             s.setInt(1,state.circle());s.setDouble(2,state.manaCurrent());s.setDouble(3,state.manaMaximum());s.setDouble(4,state.manaRegeneration());s.setDouble(5,state.magicHaste());s.setString(6,state.cooldowns());
             for(int i=0;i<4;i++)s.setBytes(7+i,state.accessories()[i]);
             for(int i=0;i<3;i++)s.setInt(11+i,state.reconfigurationCredits()[i]);
-            var a=state.artifacts();s.setString(14,a.equipped());s.setString(15,a.cooldowns());s.setString(16,a.biomes());s.setBytes(17,a.kept());s.setString(18,a.runtime());
-            int index=19;if(!release)s.setLong(index++,System.currentTimeMillis()+60_000);
+            var a=state.artifacts();s.setString(14,a.equipped());s.setString(15,a.cooldowns());s.setString(16,a.biomes());s.setBytes(17,a.kept());s.setString(18,a.runtime());setHealth(s,19,state.health());
+            int index=20;if(!release)s.setLong(index++,System.currentTimeMillis()+60_000);
             s.setString(index++,id.toString());s.setString(index,token);
             if(s.executeUpdate()!=1)throw new LeaseLostException(id);
         }
@@ -103,7 +105,8 @@ final class PlayerStateStore implements AutoCloseable {
         s.setDouble(5,state.manaRegeneration());s.setDouble(6,state.magicHaste());s.setString(7,state.cooldowns());
         for(int i=0;i<4;i++)s.setBytes(8+i,state.accessories()[i]);
         for(int i=0;i<3;i++)s.setInt(12+i,state.reconfigurationCredits()[i]);
-        var a=state.artifacts();s.setString(15,a.equipped());s.setString(16,a.cooldowns());s.setString(17,a.biomes());s.setBytes(18,a.kept());s.setString(19,a.runtime());
+        var a=state.artifacts();s.setString(15,a.equipped());s.setString(16,a.cooldowns());s.setString(17,a.biomes());s.setBytes(18,a.kept());s.setString(19,a.runtime());setHealth(s,20,state.health());
     }
+    private static void setHealth(PreparedStatement s,int index,Double health)throws SQLException{if(health==null)s.setNull(index,Types.DOUBLE);else s.setDouble(index,health);}
     @Override public void close()throws SQLException{holder.close();}
 }

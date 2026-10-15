@@ -56,7 +56,7 @@ final class PlayerStateBridge implements Listener,AutoCloseable {
         var artifacts=new PlayerStateStore.Artifacts(data.getOrDefault(key("artifact_equipped"),PersistentDataType.STRING,""),
                 plugin.artifactCooldowns(id),data.getOrDefault(key("artifact_biomes"),PersistentDataType.STRING,""),data.get(key("artifact_kept_item"),PersistentDataType.BYTE_ARRAY),
                 plugin.artifactRuntime(p));
-        return new PlayerStateStore.State(circle,account.current,account.baseMaximum,account.baseRegen,account.baseHaste,cooldowns.toString(),slots,credits,artifacts);
+        return new PlayerStateStore.State(circle,account.current,account.baseMaximum,account.baseRegen,account.baseHaste,cooldowns.toString(),slots,credits,artifacts,p.isDead()?null:p.getHealth());
     }
     private void apply(Player p,PlayerStateStore.State state){
         var data=p.getPersistentDataContainer();
@@ -103,12 +103,8 @@ final class PlayerStateBridge implements Listener,AutoCloseable {
                 onMain(()->{
                     if(closing||!session.equals(sessions.get(id))||!p.isOnline())return;
                     // ready 표시 뒤에 장비를 다시 계산해야 장신구(공유 상태)가 반영된다.
-                    try{
-                        apply(p,loaded);ready.add(id);plugin.refreshEquipment(p);plugin.artifactStateLoaded(p);
-                        // apply() clamps current mana to the base maximum before equipment/artifact bonuses exist again:
-                        // restore the saved value now that the bonuses are back (max mana from accessories/artifacts is kept).
-                        mana.snapshot(id).ifPresent(s->{if(loaded.manaCurrent()>s.current())mana.setCurrent(id,Math.min(loaded.manaCurrent(),s.maximum()));});
-                    }catch(Exception error){ready.remove(id);failure(p,error);}
+                    // ready 표시 뒤에 모든 능력치(장신구·아티팩트…)를 PlayerStats 한 곳에서 다시 계산하고 현재 마나·체력을 되돌린다.
+                    try{apply(p,loaded);ready.add(id);if(plugin.stats()!=null)plugin.stats().arrived(p,new PlayerStats.Arrival(loaded.manaCurrent(),loaded.health()));else plugin.refreshEquipment(p);}catch(Exception error){ready.remove(id);failure(p,error);}
                 });
             }catch(Exception error){onMain(()->{if(session.equals(sessions.get(id))&&p.isOnline())failure(p,error);});}
         });

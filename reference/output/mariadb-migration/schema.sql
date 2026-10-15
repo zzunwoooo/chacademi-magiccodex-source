@@ -84,6 +84,7 @@ CREATE TABLE IF NOT EXISTS codex_player_state (
   artifact_biomes TEXT NULL,
   artifact_kept BLOB NULL,
   artifact_runtime TEXT NULL,
+  health DOUBLE NULL,
   lease_token CHAR(36) NULL,
   lease_until BIGINT NOT NULL DEFAULT 0,
   revision BIGINT NOT NULL DEFAULT 0

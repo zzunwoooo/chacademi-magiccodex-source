@@ -125,27 +125,15 @@ final class ArtifactEffects implements Listener {
         return plugin.playerStateReady(p) ? new HashSet<>(artifacts.equipped(p)) : Set.of();
     }
 
-    /** The shared player state (school/wild) was applied: recompute and hand back a kept item. */
-    void stateLoaded(Player p) {
-        refresh(p);
-        // Max health bonuses were missing while the player arrived, so the game may have cut health down to the
-        // base maximum. Give back what they had on the previous server (never more than the new maximum).
-        Double health = arrivalHealth.remove(p.getUniqueId());
-        var max = p.getAttribute(Attribute.MAX_HEALTH);
-        Double joined = joinHealth.remove(p.getUniqueId());
-        boolean untouched = joined == null || p.getHealth() >= joined - 0.01; // not hurt while the state was loading
-        if (health != null && max != null && !p.isDead() && untouched && health > p.getHealth()) p.setHealth(Math.min(max.getValue(), health));
-        life.returnKept(p);
-    }
+    /** After-arrival hook (PlayerStats): stats and current health/mana are already back; hand back a kept item. */
+    void arrived(Player p) { life.returnKept(p); }
 
     // ------------------------------------------------------------------ shared runtime (school/wild)
 
-    /** Health carried over by the shared state, applied in {@link #stateLoaded}. */
-    private final Map<UUID, Double> arrivalHealth = new HashMap<>(), joinHealth = new HashMap<>();
-
     /**
      * Short-lived artifact state that must survive a server switch, stored in codex_player_state.artifact_runtime:
-     * internal cooldowns (r:), timed buffs (t:), comeback / mana-drop windows, armed flags, counters, current health.
+     * internal cooldowns (r:), timed buffs (t:), comeback / mana-drop windows, armed flags, counters.
+     * (Current health/mana are restored by PlayerStats for every stat source, not here.)
      * Times are wall-clock milliseconds (school and wild share the host clock).
      */
     String runtimeText(Player p) {
@@ -164,14 +152,12 @@ final class ArtifactEffects implements Listener {
             if (r.manaSpent > 0) out.append("spent=").append(Math.round(r.manaSpent * 100) / 100.0).append(';');
             if (r.expCarry > 0) out.append("exp=").append(Math.round(r.expCarry * 1000) / 1000.0).append(';');
         }
-        if (!p.isDead()) out.append("hp=").append(Math.round(p.getHealth() * 100) / 100.0).append(';');
         return out.length() > 4000 ? out.substring(0, out.lastIndexOf(";", 4000) + 1) : out.toString();
     }
 
     void restoreRuntime(Player p, String text) {
         var r = new Run();
         runs.put(p.getUniqueId(), r);
-        arrivalHealth.remove(p.getUniqueId());
         if (text == null || text.isBlank()) return;
         long now = System.currentTimeMillis();
         for (String part : text.split(";")) {
@@ -194,7 +180,6 @@ final class ArtifactEffects implements Listener {
                     case "notes" -> r.notes = Math.clamp(Integer.parseInt(v), 0, 9);
                     case "spent" -> r.manaSpent = Math.clamp(Double.parseDouble(v), 0, 200);
                     case "exp" -> r.expCarry = Math.clamp(Double.parseDouble(v), 0, 1);
-                    case "hp" -> { double hp = Double.parseDouble(v); if (Double.isFinite(hp) && hp > 0) arrivalHealth.put(p.getUniqueId(), hp); }
                     default -> { }
                 }
             } catch (RuntimeException ignored) { /* one bad entry never blocks the rest */ }
@@ -690,13 +675,12 @@ final class ArtifactEffects implements Listener {
     }
 
     @EventHandler public void join(PlayerJoinEvent e) {
-        joinHealth.put(e.getPlayer().getUniqueId(), e.getPlayer().getHealth());
         Bukkit.getScheduler().runTaskLater(plugin, () -> refresh(e.getPlayer()), 20);
     }
     @EventHandler public void quit(PlayerQuitEvent e) {
         UUID id = e.getPlayer().getUniqueId();
         clear(e.getPlayer());
-        worn.remove(id); runs.remove(id); arrivalHealth.remove(id); joinHealth.remove(id);
+        worn.remove(id); runs.remove(id);
         actions.quit(id); life.quit(id);
     }
 

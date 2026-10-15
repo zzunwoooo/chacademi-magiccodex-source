@@ -275,7 +275,7 @@ final class ArtifactLife implements Listener {
         }, 2);
     }
 
-    /** On join the shared state may still be loading: the item is returned from {@link ArtifactEffects#stateLoaded} instead. */
+    /** On join the shared state may still be loading: the item is returned from {@link ArtifactEffects#arrived} (PlayerStats after-arrival) instead. */
     @EventHandler public void joined(PlayerJoinEvent e) {
         Bukkit.getScheduler().runTaskLater(fx.plugin, () -> { if (e.getPlayer().isOnline() && fx.plugin.playerStateReady(e.getPlayer())) returnKept(e.getPlayer()); }, 40);
     }
