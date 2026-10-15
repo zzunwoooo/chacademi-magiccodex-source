@@ -274,8 +274,9 @@ final class FarmMech extends Mech {
         for (Animals a : List.of(first, second)) {
             a.setBreedCause(pl.getUniqueId());
             a.setLoveModeTicks(600);
+            if(!p.s("spell", "").isBlank())Links.vfx(pl,p.s("spell",""),"external:send",a.getLocation(),a.getUniqueId());
         }
-        if (!p.s("spell", "").isBlank()) Links.vfx(pl, p.s("spell", ""), "external:connect", second.getLocation(), second.getUniqueId());
+        if (!p.s("spell", "").isBlank()) Links.vfx(pl, p.s("spell", ""), "external:connect", first.getLocation(), second.getUniqueId());
         return true;
     }
     private Animals nearestBreedable(Player pl, Location at, double r, Animals pairWith) {

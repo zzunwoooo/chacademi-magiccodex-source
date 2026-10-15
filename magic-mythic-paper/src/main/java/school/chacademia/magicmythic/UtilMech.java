@@ -294,7 +294,8 @@ final class UtilMech extends Mech {
         World w = Bukkit.getWorld(f[0]);
         if (w == null || !w.equals(pl.getWorld())) { bar(pl, "길잡이 별: 기억한 위치가 다른 세계에 있습니다."); return false; }
         Location target = new Location(w, Double.parseDouble(f[1]), Double.parseDouble(f[2]), Double.parseDouble(f[3]));
-        vfx(pl, "external:form", target, null);
+        org.bukkit.util.Vector guide=target.toVector().subtract(pl.getLocation().toVector()).setY(0);if(guide.lengthSquared()<1e-8)guide=SummonMech.flat(pl.getLocation());
+        vfx(pl, "external:form", pl.getLocation().add(guide.normalize()).add(0,1.2,0), null);
         int ticks = Math.clamp(p.i("ticks", 200), 20, 20 * 60);
         plugin.ticker().add(new Ticker.Tick() {
             int age = 0;

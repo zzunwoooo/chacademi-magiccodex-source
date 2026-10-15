@@ -59,7 +59,7 @@ class ManaTest {
     }
     @Test void catalogContainsReviewedCommandsFromTheRetained299SpellPack()throws Exception{
         var spells=ManaSpells.load(Path.of("src/main/resources/mana-spells.yml").toFile());
-        assertEquals(158,spells.byId.size());assertEquals(299,spells.discoveryPermissions.size());
+        assertEquals(154,spells.byId.size());assertEquals(299,spells.discoveryPermissions.size());
         assertEquals(spells.byId.size(),spells.byCommand.size());
         assertEquals(800,spells.byId.get("solar_judgment").cost());
         assertEquals(300_000,spells.byId.get("solar_judgment").cooldown());

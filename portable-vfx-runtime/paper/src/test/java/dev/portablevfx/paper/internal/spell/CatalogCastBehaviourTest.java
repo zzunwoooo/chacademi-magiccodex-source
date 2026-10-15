@@ -31,7 +31,7 @@ class CatalogCastBehaviourTest {
     /** 평지 월드 하나, 시전자 한 명, 기록하는 가짜 PortableVfxService. */
     private static final class Scene {
         final UUID owner=UUID.randomUUID(),worldId=UUID.randomUUID();
-        final List<String> played=new ArrayList<>();final Map<String,UUID> handles=new HashMap<>();
+        final List<EffectRequest> requests=new ArrayList<>();final List<String> played=new ArrayList<>();final Map<String,UUID> handles=new HashMap<>();
         final List<UUID> finished=new ArrayList<>(),stopped=new ArrayList<>();
         final Map<UUID,Entity> entities=new HashMap<>();final List<UUID> removedEntities=new ArrayList<>();
         final Set<String> noViewer=new HashSet<>(),deferredOnly=new HashSet<>(),refused=new HashSet<>();
@@ -72,7 +72,7 @@ class CatalogCastBehaviourTest {
             case "owner" -> {assertNotNull(args[0]);assertNotNull(args[1]);yield null;}
             case "supportsCatalogCast" -> true;
             case "startCast","startFollowCast" -> {
-                String effect=((EffectRequest)args[0]).effectId();
+                requests.add((EffectRequest)args[0]);String effect=((EffectRequest)args[0]).effectId();
                 if(refused.contains(effect))throw new java.util.concurrent.RejectedExecutionException("per-tick play request limit reached");
                 played.add(effect);UUID handle=UUID.randomUUID();handles.put(effect,handle);
                 yield noViewer.contains(effect)?new PlayResult(handle,0,0,64):deferredOnly.contains(effect)?new PlayResult(handle,0,0,64,1):new PlayResult(handle,1,0,64);
@@ -361,5 +361,32 @@ class CatalogCastBehaviourTest {
         assertEquals(Set.of("good"),plans.keySet());
         assertEquals(Set.of("bad_effect","bad_range","bad_vector","not_a_map"),problems.keySet());
         assertThrows(RuntimeException.class,()->CatalogVisualEngine.read(root));
+    }
+
+    @Test void serverCancellationDiscardsDelayedFormationAndFinishesExistingHandles()throws Exception {
+        Scene scene=new Scene();var engine=scene.engine(spell("chant",30,null,List.of(
+            phase("effect","claude:test/first","anchor","caster","duration-ticks",200),
+            phase("effect","claude:test/later","anchor","caster","delay-ticks",40,"duration-ticks",100))),SMALL);
+        scene.run(()->{assertEquals(true,engine.cast(scene.player,"chant"));assertEquals(1,engine.trigger(scene.owner,"chant","external:cancel",null,null));for(int i=0;i<60;i++)engine.tick();});
+        assertEquals(List.of("claude:test/first"),scene.played);assertTrue(scene.finished.contains(scene.handles.get("claude:test/first")));
+    }
+    @Test void worldStaticStructureOffsetsIgnoreCasterFacingAndUseConfirmedAim()throws Exception {
+        Scene scene=new Scene();scene.yaw=90;var engine=scene.engine(spell("chant",30,null,List.of(
+            phase("effect","claude:test/structure","anchor","impact","role","world-static","delay-ticks",8,"duration-ticks",40,"offset",List.of(0,14,6)))),SMALL);
+        scene.run(()->{assertEquals(true,engine.cast(scene.player,"chant"));engine.trigger(scene.owner,"chant","external:aim",new Location(scene.world,10,64,20),null);for(int i=0;i<8;i++)engine.tick();});
+        assertEquals(1,scene.requests.size());var request=scene.requests.getFirst();assertEquals(10,request.x());assertEquals(78,request.y());assertEquals(26,request.z());
+    }
+
+    @Test void externalOnlyPlanWaitsForServerAndSnapshotsDelayedEventPositions()throws Exception {
+        Scene scene=new Scene();var binding=spell("harvest",15,"server-events",List.of(
+            phase("effect","claude:test/harvest","trigger","external:harvest","anchor","impact","delay-ticks",4,"duration-ticks",10)));
+        binding.set("harvest.sequence.sustainStart",0);binding.set("harvest.holdTicks",20);
+        var engine=scene.engine(binding,SMALL);
+        scene.run(()->{assertEquals(true,engine.cast(scene.player,"harvest"));assertTrue(scene.played.isEmpty());
+            assertEquals(1,engine.trigger(scene.owner,"harvest","external:harvest",new Location(scene.world,1,64,1),null));
+            assertEquals(1,engine.trigger(scene.owner,"harvest","external:harvest",new Location(scene.world,2,64,2),null));
+            for(int i=0;i<4;i++)engine.tick();assertEquals(2,scene.requests.size());assertEquals(1,scene.requests.get(0).x());assertEquals(2,scene.requests.get(1).x());
+            for(int i=0;i<30;i++)engine.tick();assertEquals(0,engine.activeCasts());
+        });
     }
 }

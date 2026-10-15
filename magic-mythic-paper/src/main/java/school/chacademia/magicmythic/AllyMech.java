@@ -84,7 +84,7 @@ final class AllyMech extends Mech {
             case "buff" -> {
                 var effects = p.effects("effect");
                 if (effects.isEmpty()) return false;
-                for (LivingEntity e : group(caster, p.d("r", 6), 64)) for (PotionEffect fx : effects) e.addPotionEffect(fx);
+                for (LivingEntity e : group(caster, p.d("r", 6), 64)){for (PotionEffect fx : effects) e.addPotionEffect(fx);if(p.s("spell", "").equals("constellation_blessing"))vfx(caster,"external:bless",e); }
                 return true;
             }
             case "feed" -> {
@@ -112,7 +112,7 @@ final class AllyMech extends Mech {
                     for (PotionEffect fx : new ArrayList<>(e.getActivePotionEffects()))
                         if (fx.getType().getEffectCategory() == PotionEffectType.Category.HARMFUL) e.removePotionEffect(fx.getType());
                     guards.add(e, new Guards.Guard(Guards.Type.IMMUNE, guards.now() + ticks, 0, 0, 0, 0, 0, 0, caster.getUniqueId(), p.s("spell", "")));
-                    if (!e.equals(caster)) vfx(caster, "external:cleanse", e);
+                    vfx(caster, "external:cleanse", e);
                 }
                 return true;
             }

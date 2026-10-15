@@ -22,7 +22,7 @@ final class DefaultSpellMigration {
     static void install(Path directory)throws IOException {
         Map<String,Set<String>> history=new HashMap<>();
         for(String line:new String(resource("known-hashes.tsv"),StandardCharsets.UTF_8).lines().toList()){
-            String[] parts=line.split("\t");if(parts.length==2)history.computeIfAbsent(parts[0],k->new HashSet<>()).add(parts[1]);
+            String[] parts=line.split("\t");if(parts.length==2 && parts[0].matches("(?:10[1-9]|1[1-5][0-9]|16[0-7])_.*\\.yml") && !parts[0].startsWith("149_"))history.computeIfAbsent(parts[0],k->new HashSet<>()).add(parts[1]);
         }
         Map<String,byte[]> defaults=new LinkedHashMap<>();
         for(String id:new String(resource("index.txt"),StandardCharsets.UTF_8).lines().filter(s->!s.isBlank()).toList())defaults.put(id+".yml",resource(id+".yml"));

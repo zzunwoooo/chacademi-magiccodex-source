@@ -65,12 +65,14 @@ final class SummonMech extends Mech {
         double range = p.d("range", 8), reach = p.d("reach", 2.2), hitR = p.d("hitr", 1.5), dmg = c.dmg(p), speed = Math.clamp(p.d("speed", 0.06), 0.01, 0.5);
         return plugin.ticker().add(new Ticker.Tick() {
             Location pos = pl.getLocation().add(flat(pl.getLocation()).multiply(2));
-            LivingEntity target; int age = 0, nextAttack = 0, impactAt = -1; Location hit;
+            LivingEntity target; int age = 0, nextAttack = 0, impactAt = -1; Location hit;boolean walking;
             public String kind() { return "summon"; }
             public void stop() { if (pl.isOnline()) vfx(pl, "external:dismiss", pos, null); }
             public boolean tick() {
                 if (!pl.isOnline() || pl.isDead() || age++ >= ticks || !pl.getWorld().equals(pos.getWorld())) return false;
                 if (!plugin.protection().pair(pl, pos)) return false;
+                if(age==1)vfx(pl,"external:summon",pos,null);
+                Location previous=pos.clone();
                 if (impactAt == age && hit != null) {
                     vfx(pl, "external:impact", hit, null);
                     for (LivingEntity t : plugin.targets().enemiesNear(pl, hit, hitR, 8))
@@ -101,6 +103,9 @@ final class SummonMech extends Mech {
                     if (!ground.isPassable()) pos.setY(ground.getY() + 1);
                     else if (ground.getRelative(BlockFace.DOWN).isPassable()) pos.setY(pos.getY() - 0.25);
                 }
+                boolean moving=previous.distanceSquared(pos)>0.00001;
+                if(moving!=walking){walking=moving;vfx(pl,moving?"external:walk":"external:idle",pos,null);}
+                vfx(pl,"external:pose",pos,null);
                 return true;
             }
         });

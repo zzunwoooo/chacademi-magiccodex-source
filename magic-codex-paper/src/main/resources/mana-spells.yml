@@ -716,7 +716,7 @@ spells:
     cooldown-seconds: 20
   vine_ladder:
     name: 덩굴 사다리
-    enabled: true
+    enabled: false
     command: 마법 vine_ladder
     permission: magic.learned.vine_ladder
     mana-cost: 35
@@ -933,7 +933,7 @@ spells:
     cooldown-seconds: 10
   light_mark:
     name: 빛의 낙인
-    enabled: true
+    enabled: false
     command: 마법 light_mark
     permission: magic.learned.light_mark
     mana-cost: 10
@@ -947,7 +947,7 @@ spells:
     cooldown-seconds: 60
   luminous_archive:
     name: 빛의 서고
-    enabled: true
+    enabled: false
     command: 마법 luminous_archive
     permission: magic.learned.luminous_archive
     mana-cost: 20
@@ -1038,7 +1038,9 @@ spells:
     cooldown-seconds: 60
   rainbow_collar:
     name: 교화
-    aliases: [taming, 무지개 목줄]
+    aliases:
+      - taming
+      - 무지개 목줄
     enabled: true
     command: 교화
     permission: magic.learned.rainbow_collar
@@ -1123,7 +1125,7 @@ spells:
     cooldown-seconds: 45
   experience_exchange:
     name: 경험의 환전
-    enabled: true
+    enabled: false
     command: 마법 experience_exchange
     permission: magic.learned.experience_exchange
     mana-cost: 0

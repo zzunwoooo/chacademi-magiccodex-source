@@ -149,7 +149,7 @@ class SpellYamlLoaderTest {
         assertTrue(result.errors().getFirst().contains("broken.yml"));
     }
 
-    @Test void firstRunInstalls299AndNeverOverwritesOrRecreatesUserFiles() throws Exception {
+    @Test void firstRunInstalls299PreservesUserEditsAndRestoresMissingDefaults() throws Exception {
         Path spells = directory.resolve("spells");
         loader.installDefaults(spells);
         var result = loader.load(spells);
@@ -160,7 +160,7 @@ class SpellYamlLoaderTest {
         Files.delete(spells.resolve("002_wind_basket.yml"));
         loader.installDefaults(spells);
         assertEquals("user contents", Files.readString(spells.resolve("001_feather_fall.yml")));
-        assertFalse(Files.exists(spells.resolve("002_wind_basket.yml")));
+        assertTrue(Files.exists(spells.resolve("002_wind_basket.yml")));
     }
 
     @Test void rejectsOversizedFiles() throws Exception {

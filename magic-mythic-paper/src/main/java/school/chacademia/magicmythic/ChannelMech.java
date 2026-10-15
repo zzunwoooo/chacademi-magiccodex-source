@@ -40,17 +40,30 @@ final class ChannelMech extends Mech {
         Location start = caster.getLocation().clone(), aim = c.at().clone();
         double move = p.d("move", 0.3), damage = c.damage();
         long began = now;
+        boolean solar = p.s("spell", "").equals("solar_judgment");
+        if(solar)vfx(caster,"external:aim",aim);
         HURT.remove(id);
         boolean added = plugin.ticker().add(new Ticker.Tick() {
             int age = 0;
             public String kind() { return "channel"; }
             public void stop() { CHANTING.remove(id); HURT.remove(id); }
             public boolean tick() {
-                boolean broken = !caster.isValid() || caster.isDead() || !caster.getWorld().equals(start.getWorld())
+                boolean interrupted = !caster.isValid() || caster.isDead() || !caster.getWorld().equals(start.getWorld())
                     || horizontal(caster.getLocation(), start) > move || HURT.getOrDefault(id, -1L) >= began
                     || !plugin.protection().pair(caster, aim);
-                if (broken) { vfx(caster, "external:struct_cancel", aim); return false; }
-                if (++age < ticks) return true;
+                boolean broken = !caster.isValid() || caster.isDead() || !caster.getWorld().equals(start.getWorld()) || age < ticks && interrupted;
+                if (broken) {
+                    if(solar)for(String event:SolarJudgmentSequence.cancel(age))vfx(caster,event,aim);
+                    else vfx(caster, "external:struct_cancel", aim);
+                    return false;
+                }
+                ++age;
+                if(solar){
+                    for(String event:SolarJudgmentSequence.events(age,ticks))vfx(caster,event,aim);
+                    if(age==ticks+SolarJudgmentSequence.FIRE_DELAY)cast(caster,then,aim,damage);
+                    return age<ticks+SolarJudgmentSequence.FINISH_DELAY;
+                }
+                if (age < ticks) return true;
                 vfx(caster, "external:laser_fire", aim);
                 cast(caster, then, aim, damage);
                 return false;

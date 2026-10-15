@@ -73,6 +73,7 @@ final class BoltMech extends Mech {
         int hitCount = 0;
         boolean coming = false;
         int life = 0;
+        GameplayVisual visual;boolean visualStarted,visualTerminal;
 
         Bolt(Ctx c, Location start, Vector dir) {
             this.c = c; this.pos = start.clone(); this.dir = dir;
@@ -81,7 +82,13 @@ final class BoltMech extends Mech {
         }
         @Override public String kind() { return "bolt"; }
 
-        @Override public boolean tick() {
+        @Override public void stop(){if(visual!=null){visual.close();visual=null;}if(visualStarted&&!visualTerminal){visualTerminal=true;vfx("external:miss",pos,null);}}
+        @Override public boolean tick(){
+            if(!GameplayVisual.PROJECTILES.containsKey(p.s("spell","")))return advance();
+            if(!visualStarted){visualStarted=true;if(c.caster() instanceof Player player)visual=GameplayVisual.projectile(player,p.s("spell",""),pos,dir);if(!p.s("spell","").equals("primordial_stone"))vfx("external:launch",pos,null);}
+            boolean alive=advance();if(visual!=null)visual.move(pos,dir);if(!alive)stop();return alive;
+        }
+        private boolean advance() {
             if (!plugin.protection().pair(c.caster(),pos))return false;
             if (++life > 400 || !c.caster().isValid() || pos.getWorld() == null) return false;
             if (coming) {
@@ -170,6 +177,7 @@ final class BoltMech extends Mech {
         }
 
         private void vfx(String event, Location at, UUID target) {
+            if(!event.equals("external:launch"))visualTerminal=true;
             String spell = p.s("spell", "");
             if (!spell.isBlank() && c.caster() instanceof Player pl) Links.vfx(pl, spell, event, at, target);
         }
