@@ -20,6 +20,14 @@ class ArtifactProtocolTest {
   b=new ByteArrayOutputStream();d=new DataOutputStream(b);
   d.writeInt(1);d.writeByte(ArtifactProtocol.STATE);d.writeLong(3);d.writeByte(1);d.writeShort(1);d.write(new byte[]{1});d.writeByte(1);d.writeUTF("old");d.writeUTF("");
   assertArrayEquals(new int[]{0},((State)ArtifactProtocol.decode(b.toByteArray())).cooldownMs());
-  assertThrows(IllegalArgumentException.class,()->new Request(4,0,"x"));
+  assertThrows(IllegalArgumentException.class,()->new Request(6,0,"x"));
   assertThrows(IllegalArgumentException.class,()->new Entry("x","x",0,"","","",ArtifactProtocol.MAX_COOLDOWN+1));}
+ @Test void summonFramesRoundTrip(){
+  var m=new Summon(ArtifactProtocol.SUMMON_RESULT,3,"rewind_hourglass",3,true,0,new int[]{0,1,2,0},"");
+  var back=(Summon)ArtifactProtocol.decode(ArtifactProtocol.encode(m));
+  assertEquals("rewind_hourglass",back.artifactId());assertEquals(3,back.grade());assertTrue(back.isNew());assertArrayEquals(new int[]{0,1,2,0},back.decoys());
+  var info=(Summon)ArtifactProtocol.decode(ArtifactProtocol.encode(Summon.simple(ArtifactProtocol.SUMMON_STATE,7,"")));assertEquals(7,info.keys());
+  assertEquals(ArtifactProtocol.SUMMON,ArtifactProtocol.request(ArtifactProtocol.request(new Request(ArtifactProtocol.SUMMON,0,""))).action());
+  assertThrows(IllegalArgumentException.class,()->new Summon(ArtifactProtocol.SUMMON_RESULT,0,"x",0,false,0,new int[]{0,0,4,0},""));
+  assertThrows(IllegalArgumentException.class,()->new Request(ArtifactProtocol.USE,0,""));}
 }

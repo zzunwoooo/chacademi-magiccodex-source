@@ -67,6 +67,8 @@ public final class ArtifactClient {
     private static final Map<String, Long> cooldownEnds = new HashMap<>();
     private static boolean awaitingUse;
     private static long lastUse;
+    private static int summonKeys;
+    private static String summonRates = "";
 
     public static void initialize() {
         useKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.magiccodex.artifact_use", GLFW.GLFW_KEY_X, "category.magiccodex"));
@@ -99,6 +101,14 @@ public final class ArtifactClient {
                 for (Entry[] p : parts) all.addAll(Arrays.asList(p));
                 catalog = List.copyOf(all); revision = building; building = -1; parts = new Entry[0][];
             }
+            case ArtifactProtocol.Summon m -> {
+                summonKeys = m.keys();
+                if (m.kind() == ArtifactProtocol.SUMMON_OPEN || m.kind() == ArtifactProtocol.SUMMON_STATE) summonRates = m.notice();
+                var client = MinecraftClient.getInstance();
+                if (m.kind() == ArtifactProtocol.SUMMON_OPEN) {
+                    if (!(client.currentScreen instanceof ArtifactSummonScreen)) client.setScreen(new ArtifactSummonScreen());
+                } else if (client.currentScreen instanceof ArtifactSummonScreen screen) screen.onSummon(m);
+            }
             case ArtifactProtocol.State s -> {
                 if (s.revision() != revision) return; // a newer catalogue is still arriving
                 owned = s.owned().length == catalog.size() ? s.owned().clone() : new boolean[catalog.size()];
@@ -118,6 +128,7 @@ public final class ArtifactClient {
     private static void reset() {
         catalog = List.of(); revision = 0; building = -1; parts = new Entry[0][]; owned = new boolean[0];
         equipped = List.of(); notice = ""; supported = false; version++; cooldownEnds.clear(); awaitingUse = false;
+        summonKeys = 0; summonRates = "";
     }
 
     private static boolean send(int action, String id) {
@@ -128,6 +139,12 @@ public final class ArtifactClient {
 
     /** Ask for the current state (and the catalogue when ours is out of date). */
     static boolean query() { return send(ArtifactProtocol.QUERY, ""); }
+    /** Summon window: key count + grade chances (answer: SUMMON_STATE). */
+    static boolean summonInfo() { return send(ArtifactProtocol.SUMMON_INFO, ""); }
+    /** [소환하기]: the server spends a key and answers SUMMON_RESULT or SUMMON_REFUSED. */
+    static boolean summon() { return send(ArtifactProtocol.SUMMON, ""); }
+    static int summonKeys() { return summonKeys; }
+    static String summonRates() { return summonRates; }
     static boolean equip(String id) { return send(ArtifactProtocol.EQUIP, id); }
     static boolean unequip(String id) { return send(ArtifactProtocol.UNEQUIP, id); }
 

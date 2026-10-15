@@ -14,6 +14,10 @@ import java.util.*;
  *            (v2: then one int per equipped id = remaining use cooldown in ms)
  * The client rebuilds the catalogue only when every part of one revision arrived, then applies STATE.
  *
+ * Summon (2026-10-15): C2S SUMMON_INFO (key count) / SUMMON (spend one key, roll); S2C SUMMON frame
+ *   byte kind (OPEN/INFO/RESULT/REFUSED), int keys, String artifactId, byte grade, bool isNew, short shards,
+ *   4 decoy grades, String notice. The server decides everything; decoys only colour the unpicked chests.
+ *
  * Version 2 (2026-10-15, artifact use key): writers always send 2, readers accept 1 and 2 (v1 = no use data).
  * A v1 client cannot read v2 frames, so the mod and MagicCodexBridge must be deployed together.
  */
@@ -21,10 +25,12 @@ public final class ArtifactProtocol {
     public static final String REQUEST = "magiccodex:artifact_request", RESPONSE = "magiccodex:artifact_response";
     public static final int MAX_BYTES = 30000, MAX_ARTIFACTS = 1024, MAX_EQUIPPED = 8, MAX_PARTS = 256;
     public static final int VERSION = 2;
-    public static final int QUERY = 0, EQUIP = 1, UNEQUIP = 2, USE = 3;
+    public static final int QUERY = 0, EQUIP = 1, UNEQUIP = 2, USE = 3, SUMMON_INFO = 4, SUMMON = 5;
+    /** Summon frame kinds. OPEN = the server asks the client to open the summon window (command). */
+    public static final int SUMMON_OPEN = 0, SUMMON_STATE = 1, SUMMON_RESULT = 2, SUMMON_REFUSED = 3, DECOYS = 4;
     /** Entry.cooldown for passive artifacts (no use key). Usable ones carry their cooldown in seconds (0 = none). */
     public static final int PASSIVE = -1, MAX_COOLDOWN = 86400;
-    public static final int CATALOG = 1, STATE = 2;
+    public static final int CATALOG = 1, STATE = 2, SUMMON_FRAME = 3;
     public static final int MAX_ID = 64, MAX_NAME = 40, MAX_DESCRIPTION = 200, MAX_EFFECT = 600, MAX_ICON = 200, MAX_NOTICE = 120;
     /** 0 일반, 1 고급, 2 유일, 3 전설. */
     public static final String[] GRADE_LABELS = {"일반", "고급", "유일", "전설"};
@@ -32,7 +38,8 @@ public final class ArtifactProtocol {
 
     public record Request(int action, long knownCatalog, String id) {
         public Request {
-            if (action < QUERY || action > USE || id == null || id.length() > MAX_ID || (action != QUERY && !validId(id)))
+            if (action < QUERY || action > SUMMON || id == null || id.length() > MAX_ID
+                    || ((action == EQUIP || action == UNEQUIP || action == USE) && !validId(id)))
                 throw new IllegalArgumentException("artifact request");
         }
     }
@@ -48,7 +55,18 @@ public final class ArtifactProtocol {
         }
         public boolean usable() { return cooldown >= 0; }
     }
-    public sealed interface Frame permits Catalog, State {}
+    public sealed interface Frame permits Catalog, State, Summon {}
+    /** artifactId/grade/isNew/shards/decoys are only meaningful for SUMMON_RESULT (else "", 0, false, 0, zeros). */
+    public record Summon(int kind, int keys, String artifactId, int grade, boolean isNew, int shards, int[] decoys, String notice) implements Frame {
+        public Summon {
+            if (kind < SUMMON_OPEN || kind > SUMMON_REFUSED || keys < 0 || artifactId == null || (!artifactId.isEmpty() && !validId(artifactId))
+                    || grade < 0 || grade > 3 || shards < 0 || shards > 32767 || decoys == null || decoys.length != DECOYS
+                    || notice == null || notice.length() > MAX_NOTICE) throw new IllegalArgumentException("summon");
+            for (int d : decoys) if (d < 0 || d > 3) throw new IllegalArgumentException("decoy");
+            decoys = decoys.clone();
+        }
+        public static Summon simple(int kind, int keys, String notice) { return new Summon(kind, keys, "", 0, false, 0, new int[DECOYS], notice); }
+    }
     public record Catalog(long revision, int part, int parts, List<Entry> entries) implements Frame {
         public Catalog { if (parts < 1 || parts > MAX_PARTS || part < 0 || part >= parts) throw new IllegalArgumentException("part"); entries = List.copyOf(entries); }
     }
@@ -114,6 +132,10 @@ public final class ArtifactProtocol {
                     d.writeUTF(s.notice());
                     for (int ms : s.cooldownMs()) d.writeInt(ms);
                 }
+                case Summon m -> {
+                    d.writeByte(SUMMON_FRAME); d.writeByte(m.kind()); d.writeInt(m.keys()); d.writeUTF(m.artifactId()); d.writeByte(m.grade());
+                    d.writeBoolean(m.isNew()); d.writeShort(m.shards()); for (int g : m.decoys()) d.writeByte(g); d.writeUTF(m.notice());
+                }
             }
         });
     }
@@ -141,6 +163,12 @@ public final class ArtifactProtocol {
                 String notice = d.readUTF();
                 int[] cooldown = new int[e]; if (version >= 2) for (int i = 0; i < e; i++) cooldown[i] = d.readInt();
                 return new State(revision, max, owned, equipped, notice, cooldown);
+            }
+            if (type == SUMMON_FRAME) {
+                int kind = d.readUnsignedByte(), keys = d.readInt(); String id = d.readUTF(); int grade = d.readUnsignedByte();
+                boolean isNew = d.readBoolean(); int shards = d.readUnsignedShort();
+                int[] decoys = new int[DECOYS]; for (int i = 0; i < DECOYS; i++) decoys[i] = d.readUnsignedByte();
+                return new Summon(kind, keys, id, grade, isNew, shards, decoys, d.readUTF());
             }
             throw new IOException("type");
         });

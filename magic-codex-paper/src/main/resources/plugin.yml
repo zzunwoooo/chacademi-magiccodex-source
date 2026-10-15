@@ -80,6 +80,10 @@ commands:
   아티팩트관리:
     description: Reload artifacts.yml, list artifacts, check a player's artifacts.
     permission: magiccodex.artifact.admin
+  아티팩트소환:
+    description: Open the artifact summon window (admins may open it for another player).
+    usage: /아티팩트소환 [플레이어]
+    permission: magiccodex.artifact.summon
   기숙사점수:
     description: School house standings and administrator point adjustments.
     aliases: [학교기증, 학교점수]
@@ -128,6 +132,8 @@ commands:
 permissions:
   magiccodex.artifact.admin:
     default: op
+  magiccodex.artifact.summon:
+    default: true
   magiccodex.artifact.own.*:
     default: false
   magiccodex.nickname.admin:

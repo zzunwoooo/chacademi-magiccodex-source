@@ -28,6 +28,11 @@ import school.magiccodex.protocol.ArtifactProtocol.Entry;
  * checks ownership, equipment and the per-player cooldown, then fires {@link ArtifactUseEvent}; the cooldown starts
  * only when a listener reports the effect happened. Abilities themselves are NOT implemented yet.
  * Cooldowns live in memory per server (kept across relogs on the same server, not across servers).
+ *
+ * Summon (유물함 소환, 2026-10-15): /아티팩트소환 opens the client window. [소환하기] spends one ItemsAdder key item
+ * (artifacts.yml summon.item, default item:random_artifact), rolls a grade by summon.weights and then a uniform
+ * artifact of that grade. New ones are granted as the ownership permission (LuckPerms); duplicates mail
+ * summon.duplicate.item (item:artifact_shard). The client only plays the reveal; the result is decided here.
  */
 final class ArtifactBridge implements PluginMessageListener, Listener, CommandExecutor, TabCompleter {
     private final MagicCodexBridge plugin;
@@ -41,10 +46,21 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
     private final Map<UUID, Long> limits = new HashMap<>();
     /** player -> artifact id -> System.currentTimeMillis() when it is ready again. Expired entries are dropped lazily. */
     private final Map<UUID, Map<String, Long>> readyAt = new HashMap<>();
+    // ---- summon settings (artifacts.yml summon:)
+    private String summonItem = "item:random_artifact", shardItem = "item:artifact_shard", summonItemName = "유물함 열쇠";
+    private int summonCost = 1;
+    private final double[] weights = {5, 3, 1, 0.1};
+    private final int[] shardAmount = {1, 1, 1, 1};
+    private String mailTitle = "아티팩트 조각", mailBody = "이미 가진 아티팩트가 나와 조각으로 바꿔 드렸습니다.";
+    private final ItemsAdderItems itemsAdder;
+    /** Grants sent to LuckPerms but maybe not visible as a permission yet (fast repeated summons). */
+    private final Map<UUID, Set<String>> pendingGrants = new HashMap<>();
+    private final java.util.Random random = new java.security.SecureRandom();
 
     ArtifactBridge(MagicCodexBridge plugin) throws Exception {
         this.plugin = plugin;
         equippedKey = new NamespacedKey(plugin, "artifact_equipped");
+        itemsAdder = new ItemsAdderItems(plugin.getLogger());
         if (!new File(plugin.getDataFolder(), "artifacts.yml").exists()) plugin.saveResource("artifacts.yml", false);
         reload();
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, ArtifactProtocol.REQUEST, this);
@@ -52,6 +68,8 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
         Bukkit.getPluginManager().registerEvents(this, plugin);
         var command = Objects.requireNonNull(plugin.getCommand("아티팩트관리"));
         command.setExecutor(this); command.setTabCompleter(this);
+        var summon = Objects.requireNonNull(plugin.getCommand("아티팩트소환"));
+        summon.setExecutor(this); summon.setTabCompleter(this);
     }
 
     // ------------------------------------------------------------------ catalogue
@@ -90,7 +108,31 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
         ArtifactProtocol.catalog(0, next); // fail now (not on send) if a part would be too large
         var crc = new CRC32();
         crc.update((max + "|" + next).getBytes(StandardCharsets.UTF_8));
+        // summon settings
+        var sm = yaml.getConfigurationSection("summon");
+        String item = sm == null ? "item:random_artifact" : sm.getString("item", "item:random_artifact").trim();
+        String shard = sm == null ? "item:artifact_shard" : sm.getString("duplicate.item", "item:artifact_shard").trim();
+        if (!item.matches("[a-z0-9_.-]+:[a-z0-9_./-]+") || !shard.matches("[a-z0-9_.-]+:[a-z0-9_./-]+"))
+            throw new IllegalArgumentException("summon.item / summon.duplicate.item 은 아이템애더 네임스페이스:아이디");
+        int cost = sm == null ? 1 : sm.getInt("cost", 1);
+        if (cost < 1 || cost > 64) throw new IllegalArgumentException("summon.cost 는 1~64");
+        double[] w = new double[4]; int[] shards = new int[4]; double total = 0;
+        for (int g = 0; g < 4; g++) {
+            String key = ArtifactProtocol.GRADE_KEYS[g];
+            w[g] = sm == null ? new double[]{5, 3, 1, 0.1}[g] : sm.getDouble("weights." + key, new double[]{5, 3, 1, 0.1}[g]);
+            shards[g] = sm == null ? 1 : sm.getInt("duplicate.amount." + key, 1);
+            if (w[g] < 0 || !Double.isFinite(w[g])) throw new IllegalArgumentException("summon.weights." + key + " 는 0 이상");
+            if (shards[g] < 0 || shards[g] > 64) throw new IllegalArgumentException("summon.duplicate.amount." + key + " 는 0~64");
+            total += w[g];
+        }
+        if (total <= 0) throw new IllegalArgumentException("summon.weights 합이 0");
         catalog = next; revision = crc.getValue() == 0 ? 1 : crc.getValue(); maxEquipped = max; ownsAll = all;
+        summonItem = item; shardItem = shard; summonCost = cost;
+        System.arraycopy(w, 0, weights, 0, 4); System.arraycopy(shards, 0, shardAmount, 0, 4);
+        if (sm != null) {
+            mailTitle = sm.getString("duplicate.mail-title", mailTitle); mailBody = sm.getString("duplicate.mail-body", mailBody);
+            summonItemName = clip(sm.getString("item-name", summonItemName), 30, "summon.item-name");
+        }
     }
 
     private static int grade(String raw) {
@@ -108,7 +150,8 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
     // ------------------------------------------------------------------ ownership / equipped
 
     boolean owns(Player p, String id) {
-        return ownsAll || p.hasPermission("magiccodex.artifact.own." + id) || p.hasPermission("magiccodex.artifact.own.*");
+        return ownsAll || p.hasPermission("magiccodex.artifact.own." + id) || p.hasPermission("magiccodex.artifact.own.*")
+                || pendingGrants.getOrDefault(p.getUniqueId(), Set.of()).contains(id);
     }
 
     /** Equipped ids that still exist and are still owned (stale ones are dropped silently). */
@@ -161,6 +204,14 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
             }
         } else if (r.action() == ArtifactProtocol.USE) {
             notice = use(p, r.id(), now);
+        } else if (r.action() == ArtifactProtocol.SUMMON_INFO || r.action() == ArtifactProtocol.SUMMON) {
+            if (r.knownCatalog() != revision) send(p, true, "");
+            if (r.action() == ArtifactProtocol.SUMMON) {
+                var result = summon(p);
+                send(p, false, ""); // owned bitset now includes the new artifact (codex + NEW badge stay in sync)
+                sendSummon(p, result);
+            } else sendSummon(p, ArtifactProtocol.Summon.simple(ArtifactProtocol.SUMMON_STATE, keys(p), summonInfoText()));
+            return;
         }
         send(p, r.knownCatalog() != revision, notice);
     }
@@ -190,6 +241,117 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
         return event.getResponse() != null ? event.getResponse() : "";
     }
 
+    // ------------------------------------------------------------------ summon
+
+    private int keys(Player p) {
+        if (!itemsAdder.available()) return 0;
+        int n = 0;
+        for (var item : p.getInventory().getStorageContents()) if (summonItem.equals(itemsAdder.idOf(item))) n += item.getAmount();
+        return n;
+    }
+
+    private boolean takeKeys(Player p, int amount) {
+        var inv = p.getInventory(); var contents = inv.getStorageContents();
+        int left = amount;
+        for (int i = 0; i < contents.length && left > 0; i++) {
+            var item = contents[i];
+            if (!summonItem.equals(itemsAdder.idOf(item))) continue;
+            int take = Math.min(left, item.getAmount());
+            if (take == item.getAmount()) inv.setItem(i, null); else item.setAmount(item.getAmount() - take);
+            left -= take;
+        }
+        return left == 0;
+    }
+
+    private int rollGrade() {
+        double total = 0; for (int g = 0; g < 4; g++) if (hasGrade(g)) total += weights[g];
+        double x = random.nextDouble() * total;
+        for (int g = 0; g < 4; g++) { if (!hasGrade(g)) continue; x -= weights[g]; if (x < 0) return g; }
+        for (int g = 3; g >= 0; g--) if (hasGrade(g) && weights[g] > 0) return g;
+        return 0;
+    }
+    private boolean hasGrade(int g) { if (weights[g] <= 0) return false; for (Entry e : catalog) if (e.grade() == g) return true; return false; }
+
+    /** Spends one key and rolls. Returns RESULT or REFUSED (keys untouched on refusal). */
+    private ArtifactProtocol.Summon summon(Player p) {
+        int have = keys(p);
+        java.util.function.Function<String, ArtifactProtocol.Summon> refuse = msg -> ArtifactProtocol.Summon.simple(ArtifactProtocol.SUMMON_REFUSED, have, msg);
+        if (!plugin.playerStateReady(p)) return refuse.apply("캐릭터 정보를 불러오는 중입니다.");
+        if (!itemsAdder.available()) return refuse.apply("소환 아이템을 확인할 수 없습니다. 관리자에게 문의해 주세요.");
+        if (!Bukkit.getPluginManager().isPluginEnabled("LuckPerms")) return refuse.apply("아티팩트를 지급할 수 없습니다. 관리자에게 문의해 주세요.");
+        boolean any = false; for (int g = 0; g < 4; g++) any |= hasGrade(g);
+        if (!any) return refuse.apply("소환할 수 있는 아티팩트가 없습니다.");
+        if (have < summonCost) return refuse.apply("유물함 열쇠가 부족합니다.");
+        if (!takeKeys(p, summonCost)) return refuse.apply("유물함 열쇠를 사용하지 못했습니다.");
+        int grade = rollGrade();
+        var pool = catalog.stream().filter(e -> e.grade() == grade).toList();
+        Entry won = pool.get(random.nextInt(pool.size()));
+        boolean duplicate = owns(p, won.id());
+        int shards = 0;
+        String summonId = UUID.randomUUID().toString();
+        if (!duplicate) {
+            pendingGrants.computeIfAbsent(p.getUniqueId(), k -> new HashSet<>()).add(won.id());
+            UUID uid = p.getUniqueId(); String id = won.id();
+            ArtifactGrants.grant(uid, "magiccodex.artifact.own." + id).whenComplete((ok, error) -> Bukkit.getScheduler().runTask(plugin, () -> {
+                var set = pendingGrants.get(uid); if (set != null) { set.remove(id); if (set.isEmpty()) pendingGrants.remove(uid); }
+                if (error != null) {
+                    plugin.getLogger().warning("ARTIFACT SUMMON GRANT FAILED player=" + uid + " artifact=" + id + " summon=" + summonId + ": " + error);
+                    refundKeys(uid, summonId);
+                }
+            }));
+        } else {
+            shards = shardAmount[grade];
+            if (shards > 0) mailShards(p.getUniqueId(), shards, won, summonId);
+        }
+        plugin.getLogger().info("ARTIFACT SUMMON player=" + p.getName() + " (" + p.getUniqueId() + ") artifact=" + won.id()
+                + " grade=" + ArtifactProtocol.GRADE_KEYS[grade] + (duplicate ? " duplicate shards=" + shards : " new") + " summon=" + summonId);
+        int[] decoys = new int[ArtifactProtocol.DECOYS];
+        for (int i = 0; i < decoys.length; i++) decoys[i] = rollGrade();
+        String notice = duplicate ? (shards > 0 ? "이미 가진 아티팩트입니다. 아티팩트 조각 " + shards + "개를 우편으로 보냈습니다." : "이미 가진 아티팩트입니다.") : "";
+        return new ArtifactProtocol.Summon(ArtifactProtocol.SUMMON_RESULT, keys(p), won.id(), grade, !duplicate, shards, decoys, notice);
+    }
+
+    private void mailShards(UUID player, int amount, Entry won, String summonId) {
+        var mail = Bukkit.getServicesManager().load(MailService.class);
+        var item = itemsAdder.create(shardItem, amount);
+        if (mail == null || item == null) {
+            plugin.getLogger().warning("ARTIFACT SHARD NOT SENT player=" + player + " amount=" + amount + " summon=" + summonId
+                    + (mail == null ? " (우편 기능 없음)" : " (아이템 " + shardItem + " 없음)"));
+            return;
+        }
+        mail.sendSystem("artifact-summon:" + summonId, player, mailTitle, mailBody + " (" + won.name() + ")", List.of(item))
+                .whenComplete((id, error) -> { if (error != null) plugin.getLogger().warning("ARTIFACT SHARD MAIL FAILED summon=" + summonId + ": " + error); });
+    }
+
+    /** Ownership could not be saved: give the key back by mail so nothing is lost. */
+    private void refundKeys(UUID player, String summonId) {
+        var mail = Bukkit.getServicesManager().load(MailService.class);
+        var item = itemsAdder.create(summonItem, summonCost);
+        if (mail == null || item == null) { plugin.getLogger().warning("ARTIFACT SUMMON REFUND NEEDED player=" + player + " keys=" + summonCost + " summon=" + summonId); return; }
+        mail.sendSystem("artifact-summon-refund:" + summonId, player, "유물함 열쇠 반환", "아티팩트 지급에 실패해 유물함 열쇠를 돌려 드립니다.", List.of(item));
+    }
+
+    private void sendSummon(Player p, ArtifactProtocol.Summon frame) {
+        if (!p.getListeningPluginChannels().contains(ArtifactProtocol.RESPONSE)) return;
+        p.sendPluginMessage(plugin, ArtifactProtocol.RESPONSE, ArtifactProtocol.encode(frame));
+    }
+
+    /** /아티팩트소환 [플레이어]: opens the client window. OPEN/STATE notices carry the grade chances for the window. */
+    private boolean openSummon(CommandSender sender, String[] args) {
+        Player target;
+        if (args.length > 0) {
+            if (!sender.hasPermission("magiccodex.artifact.admin")) { sender.sendMessage("§c다른 플레이어의 소환 창은 관리자만 열 수 있습니다."); return true; }
+            target = Bukkit.getPlayerExact(args[0]);
+            if (target == null) { sender.sendMessage("§c접속 중인 플레이어가 아닙니다: " + args[0]); return true; }
+        } else if (sender instanceof Player p) target = p;
+        else { sender.sendMessage("/아티팩트소환 <플레이어>"); return true; }
+        if (!target.getListeningPluginChannels().contains(ArtifactProtocol.RESPONSE)) { sender.sendMessage("§c차카데미 모드가 있어야 소환 창을 열 수 있습니다."); return true; }
+        listening.add(target.getUniqueId());
+        send(target, true, "");
+        sendSummon(target, ArtifactProtocol.Summon.simple(ArtifactProtocol.SUMMON_OPEN, keys(target), summonInfoText()));
+        return true;
+    }
+
     private void send(Player p, boolean withCatalog, String notice) {
         if (!p.getListeningPluginChannels().contains(ArtifactProtocol.RESPONSE)) return;
         var snapshot = catalog; long rev = revision;
@@ -206,17 +368,33 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
                 ArtifactProtocol.encode(new ArtifactProtocol.State(rev, maxEquipped, owned, equipped, n, cooldown)));
     }
 
+    /** OPEN/STATE notice: "<key item name>\u0001<cost>\u0001<grade chances>" for the window's guide text. */
+    private String summonInfoText() { return summonItemName + "\u0001" + summonCost + "\u0001" + rates(); }
+
+    /** Grade chances as shown to players, e.g. 일반 55.0% / 고급 33.0% / 유일 11.0% / 전설 1.1%. */
+    private String rates() {
+        double total = 0; for (int g = 0; g < 4; g++) if (hasGrade(g)) total += weights[g];
+        var b = new StringBuilder();
+        for (int g = 0; g < 4; g++) {
+            if (b.length() > 0) b.append(" / ");
+            b.append(ArtifactProtocol.GRADE_LABELS[g]).append(' ').append(total <= 0 || !hasGrade(g) ? "0" : String.format(java.util.Locale.ROOT, "%.1f", weights[g] * 100 / total)).append('%');
+        }
+        return b.toString();
+    }
+
     @EventHandler public void quit(PlayerQuitEvent e) { listening.remove(e.getPlayer().getUniqueId()); limits.remove(e.getPlayer().getUniqueId()); }
 
     // ------------------------------------------------------------------ admin
 
     @Override public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (command.getName().equals("아티팩트소환")) return openSummon(sender, args);
         String sub = args.length == 0 ? "" : args[0];
         switch (sub) {
             case "새로고침", "reload" -> {
                 try { reload(); } catch (Exception e) { sender.sendMessage("§cartifacts.yml 오류: " + e.getMessage()); return true; }
                 for (Player p : Bukkit.getOnlinePlayers()) if (listening.contains(p.getUniqueId())) send(p, true, "");
                 sender.sendMessage("§a아티팩트 " + catalog.size() + "개를 다시 불러왔습니다. (장착 최대 " + maxEquipped + "개" + (ownsAll ? ", 전원 보유 테스트 모드" : "") + ")");
+                sender.sendMessage("§7소환: " + summonItem + " " + summonCost + "개, 확률 " + rates() + ", 중복 → " + shardItem);
             }
             case "목록", "list" -> {
                 for (Entry e : catalog) sender.sendMessage("§7[" + ArtifactProtocol.GRADE_LABELS[e.grade()] + "] §f" + e.name() + " §8" + e.id()
@@ -235,6 +413,8 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
     }
 
     @Override public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        if (command.getName().equals("아티팩트소환"))
+            return args.length == 1 && sender.hasPermission("magiccodex.artifact.admin") ? Bukkit.getOnlinePlayers().stream().map(Player::getName).toList() : List.of();
         if (args.length == 1) return List.of("새로고침", "목록", "확인");
         if (args.length == 2 && args[0].equals("확인")) return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
         return List.of();

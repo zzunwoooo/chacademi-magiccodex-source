@@ -20,10 +20,13 @@ public final class HudTextureCache implements AutoCloseable {
     private static final AtomicLong NEXT=new AtomicLong();
     private static final ShaderProgramKey PROGRAM=new ShaderProgramKey(
             Identifier.of("magiccodex","core/hud_premultiplied"),VertexFormats.POSITION_TEXTURE_COLOR,Defines.EMPTY);
+    /** Same texture, output alpha 0: with the premultiplied blend (ONE, ONE_MINUS_SRC_ALPHA) this adds light. */
+    private static final ShaderProgramKey ADDITIVE=new ShaderProgramKey(
+            Identifier.of("magiccodex","core/hud_additive"),VertexFormats.POSITION_TEXTURE_COLOR,Defines.EMPTY);
     private final MinecraftClient client;
     private final long instance=NEXT.getAndIncrement();
     private int serial;
-    private record Texture(Identifier id,int width,int height,int levels,RenderLayer layer) {}
+    private record Texture(Identifier id,int width,int height,int levels,RenderLayer layer,RenderLayer additive) {}
     private record Region(String path,int x,int y,int width,int height) {}
     private final Map<Region,Optional<Texture>> textures=new HashMap<>();
     private final Map<Region,Long> lastUsed=new HashMap<>();
@@ -111,10 +114,10 @@ public final class HudTextureCache implements AutoCloseable {
             if(GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D,levels,GL11.GL_TEXTURE_WIDTH)!=1)
                 throw new IllegalStateException("Incomplete HUD mip chain");
             var id=Identifier.of("magiccodex","runtime_hud/"+instance+"/"+serial++);
-            var layer=new HudLayer(client,id);
+            var layer=new HudLayer(client,id,PROGRAM);
             client.getTextureManager().registerTexture(id,texture);
             texture=null;
-            var loaded=new Texture(id,width,height,levels,layer);textureBytes+=bytes(loaded);loads++;
+            var loaded=new Texture(id,width,height,levels,layer,new HudLayer(client,id,ADDITIVE));textureBytes+=bytes(loaded);loads++;
             return Optional.of(loaded);
         } catch(Exception error) {
             if(texture!=null) texture.close();
@@ -155,6 +158,11 @@ public final class HudTextureCache implements AutoCloseable {
         if(w<=0 || h<=0) return;
         get(new Region(path.toString(),u,v,sw,sh)).ifPresent(t->render(ctx,t,x,y,w,h,tint));
     }
+    /** Additive light (glows, rays, sparkles): adds tint.rgb * texel * tint.a to what is already drawn. */
+    public void drawTextureAdditive(DrawContext ctx,Identifier path,int x,int y,int u,int v,int w,int h,int sw,int sh,int tw,int th,int tint) {
+        if(w<=0 || h<=0) return;
+        get(new Region(path.toString(),u,v,sw,sh)).ifPresent(t->ctx.drawTexture(id->t.additive(),t.id(),x,y,0,0,w,h,t.width(),t.height(),t.width(),t.height(),tint));
+    }
     /** Call on the render thread during loading to keep decoding/uploads out of first use. */
     public void prepareRegion(Identifier path,int x,int y,int width,int height){
         get(new Region(path.toString(),x,y,width,height));
@@ -183,8 +191,8 @@ public final class HudTextureCache implements AutoCloseable {
         endFrame();
     }
     private static final class HudLayer extends RenderLayer {
-        HudLayer(MinecraftClient client,Identifier id) {
-            super("magiccodex_hud",VertexFormats.POSITION_TEXTURE_COLOR,VertexFormat.DrawMode.QUADS,1536,false,false,
+        HudLayer(MinecraftClient client,Identifier id,ShaderProgramKey program) {
+            super(program==ADDITIVE?"magiccodex_hud_additive":"magiccodex_hud",VertexFormats.POSITION_TEXTURE_COLOR,VertexFormat.DrawMode.QUADS,1536,false,false,
                     ()->{
                         RenderSystem.enableBlend();
                         RenderSystem.blendFuncSeparate(GL11.GL_ONE,GL11.GL_ONE_MINUS_SRC_ALPHA,GL11.GL_ONE,GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -192,7 +200,7 @@ public final class HudTextureCache implements AutoCloseable {
                         RenderSystem.enableDepthTest();
                         RenderSystem.depthFunc(GL11.GL_LEQUAL);
                         RenderSystem.depthMask(false);
-                        RenderSystem.setShader(PROGRAM);
+                        RenderSystem.setShader(program);
                         RenderSystem.setShaderTexture(0,id);
                         client.getTextureManager().getTexture(id).setFilter(true,true);
                     },()->{
