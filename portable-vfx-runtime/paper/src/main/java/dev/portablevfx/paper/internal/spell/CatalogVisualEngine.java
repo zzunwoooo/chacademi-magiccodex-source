@@ -62,7 +62,7 @@ public final class CatalogVisualEngine {
     public record Plan(String id,double range,double speed,int maxTicks,int expireTick,String trajectory,List<Phase> phases,List<Map<?,?>> shots,int salvoStart,int salvoInterval,Vector virtualOffset,int virtualLifetime,int maxTargets,int attackInterval,double attackRange,String attackEvent) {}
     private record Pending(long at,long serial,Phase phase) {}
     private static final class Active {
-        UUID handle;Phase phase;Location position;Vector direction;long finishAt,expires,motionAt;double travelled;boolean finished,following;String impactEffect;Vector arcStart,arcEnd;int arcTick,arcTicks,returnTicks;boolean returning;Set<UUID> hitEntities=new HashSet<>();
+        UUID handle;Phase phase;Location position;Vector direction;long finishAt,expires,motionAt;double travelled,speed;boolean finished,following;String impactEffect;Vector arcStart,arcEnd;int arcTick,arcTicks,returnTicks;boolean returning;Set<UUID> hitEntities=new HashSet<>();
     }
     private static final class Cast {
         UUID id,owner,world,target,virtual;Plan plan;Location origin,aim,impact;Vector direction,normal=new Vector(0,1,0);
@@ -282,7 +282,11 @@ public final class CatalogVisualEngine {
         // horizontal facing, rather than freezing the caster's pitched aim into a floor effect.
         if(terminalAttached)frameDirection=horizontalFacing(c.aim);
         if(phase.anchor().equals("projectile")&&c.plan.trajectory().equals("targeted-meteor"))at=c.aim;
-        at=at.clone().add(localOffset(phase.offset(),frameDirection));if(!loaded(at))throw new IllegalStateException("Unloaded phase position");
+        at=at.clone().add(localOffset(phase.offset(),frameDirection));
+        // 빗자루 위에서 쏜 직선 투사체: 지연만큼 앞에서 출발 (마법 미몹 chabolt 와 같은 공식)
+        Vector carrier=carrierShot(c,phase,player)?BroomCarrier.velocity(player):null;
+        if(carrier!=null){Location led=BroomCarrier.lead(at,carrier,player.getPing(),e->targetable(player,e)&&!e.getUniqueId().equals(c.owner)&&!e.getUniqueId().equals(c.virtual));if(loaded(led))at=led;}
+        if(!loaded(at))throw new IllegalStateException("Unloaded phase position");
         Vector dir=phase.projectileOrigin().equals("virtual")?c.aim.toVector().subtract(at.toVector()).normalize():phase.localAim()!=null?localOffset(phase.localAim(),frameDirection).normalize():c.direction.clone();if(c.plan.trajectory().equals("ground")){dir.setY(0);if(dir.lengthSquared()<1e-8)dir=new Vector(0,0,1);dir.normalize();}double link=phase.linkLength();
         if(terminalAttached)dir=frameDirection.clone();
         if(phase.anchor().equals("projectile")&&c.plan.trajectory().equals("targeted-meteor"))dir=TargetedMeteorPath.direction(at,c.aim);
@@ -299,11 +303,16 @@ public final class CatalogVisualEngine {
         // 받은 시청자가 없어도 단계는 추적한다: 투사체 이동과 이후 단계(충돌 등)는 계속 진행돼야 한다.
         boolean reachable=result.recipients()+result.deferred()+result.skippedRateLimited()>0;
         if(c.starting){c.started++;if(reachable)c.seen++;}else if(!reachable)noViewerPhases++;
-        Active a=new Active();a.handle=result.handle();a.phase=phase;a.position=at;a.direction=dir;a.following=follow;a.finishAt=phase.anchor().equals("projectile")||phase.finishAfter()<0?-1:tick+phase.finishAfter();a.expires=tick+phase.ttl();a.motionAt=tick+phase.motionDelay();a.impactEffect=phase.impactEffect();
+        Active a=new Active();a.handle=result.handle();a.phase=phase;a.position=at;a.direction=dir;a.speed=c.plan.speed()+(carrier==null?0:BroomCarrier.extraSpeed(carrier,dir));if(a.speed>8)a.speed=8;a.following=follow;a.finishAt=phase.anchor().equals("projectile")||phase.finishAfter()<0?-1:tick+phase.finishAfter();a.expires=tick+phase.ttl();a.motionAt=tick+phase.motionDelay();a.impactEffect=phase.impactEffect();
         if(phase.anchor().equals("projectile")&&c.plan.trajectory().equals("chain-distinct-targets")){
             a.arcStart=at.toVector();a.arcEnd=(target instanceof LivingEntity living?living.getEyeLocation():c.aim).toVector();a.arcTicks=Math.max(2,(int)Math.ceil(a.arcStart.distance(a.arcEnd)/c.plan.speed()));
         }
         c.active.add(a);
+    }
+    /** 빗자루 보정 대상: 시전자에게서 직선으로 나가는 투사체(메테오·연쇄·땅 파동·가상 앵커 출발 제외). */
+    private static boolean carrierShot(Cast c,Phase phase,Player player){
+        if(player==null||!phase.anchor().equals("projectile")||phase.projectileOrigin().equals("virtual"))return false;
+        String t=c.plan.trajectory();return !t.equals("targeted-meteor")&&!t.equals("chain-distinct-targets")&&!t.equals("ground");
     }
     private void moveProjectile(Cast c,Active a){
         String trajectory=c.plan.trajectory();if(trajectory.equals("targeted-meteor")){moveMeteor(c,a);return;}if(trajectory.equals("chain-distinct-targets")){moveChain(c,a);return;}Player owner=Bukkit.getPlayer(c.owner);
@@ -315,11 +324,11 @@ public final class CatalogVisualEngine {
              */
             Location home=owner==null?null:owner.getEyeLocation();
             Vector toHome=home==null?null:home.toVector().subtract(a.position.toVector());
-            int limit=(int)Math.ceil(c.plan.range()/c.plan.speed())*2+40;
-            if(toHome==null||toHome.length()<=c.plan.speed()||++a.returnTicks>limit){returned(c,a,home);return;}
+            int limit=(int)Math.ceil(c.plan.range()/a.speed)*2+40;
+            if(toHome==null||toHome.length()<=a.speed||++a.returnTicks>limit){returned(c,a,home);return;}
             a.direction=toHome.normalize();
         }
-        double step=a.returning?c.plan.speed():Math.min(c.plan.speed(),Math.max(0,c.plan.range()-a.travelled));
+        double step=a.returning?a.speed:Math.min(a.speed,Math.max(0,c.plan.range()-a.travelled));
         if(step<=0){
             if(trajectory.equals("out-and-back")){a.returning=true;return;}
             finish(a,true);c.impact=a.position;c.normal=a.direction.clone().multiply(-1);

@@ -13,19 +13,22 @@ import org.bukkit.util.Vector;
  *  homing=false  returns=false (comes back to caster, hitting again)  bounce=0 bouncer=6 (jump to next enemy)
  *  breaks=CHAIN,... (blocks it breaks on contact)  from=eye|caster  spread=0 (degrees, sideways offset)
  *  combo=key combocount=3 combobuff=SPEED:60:2 (buff caster when the same target is hit N times within 3s)
+ *  빗자루 위에서 쏘면 CarrierShot: 출발점을 지연만큼 앞당기고, 쏘는 방향의 비행 속도만큼 빨라진다.
  */
 final class BoltMech extends Mech {
     BoltMech(MagicMythicPlugin plugin, Params p) { super(plugin, p); }
 
     @Override boolean run(Ctx c) {
         Location start = p.s("from", "eye").equalsIgnoreCase("caster") ? c.caster().getLocation().add(0, 1, 0) : c.caster().getEyeLocation();
+        Vector lead = CarrierShot.lead(c.caster());
+        Location aimFrom = lead == null ? start : start.clone().add(lead); // 조준은 내 화면 위치 기준
         Location aim = c.target() instanceof LivingEntity le ? le.getEyeLocation().subtract(0, 0.3, 0) : c.at();
-        Vector dir = aim.toVector().subtract(start.toVector());
+        Vector dir = aim.toVector().subtract(aimFrom.toVector());
         if (dir.lengthSquared() < 1e-4) dir = start.getDirection();
         dir.normalize();
         double spread = p.d("spread", 0);
         if (spread != 0) dir.rotateAroundY(Math.toRadians(spread));
-        var bolt = new Bolt(c, start, dir);
+        var bolt = new Bolt(c, start, dir, CarrierShot.extra(c.caster(), dir), lead);
         return plugin.ticker().add(bolt);
     }
 
@@ -33,7 +36,7 @@ final class BoltMech extends Mech {
         final Ctx c;
         final Location pos;
         Vector dir;
-        final double speed = Math.clamp(p.d("speed", 1.5), 0.1, 6), range = Math.clamp(p.d("range", 24), 1, 64),
+        final double speed, range = Math.clamp(p.d("range", 24), 1, 64),
             radius = Math.clamp(p.d("radius", 0.6), 0.1, 4);
         final int pierce = Math.max(1, p.i("pierce", 1));
         final boolean homing = p.b("homing", false), returns = p.b("returns", false);
@@ -47,8 +50,12 @@ final class BoltMech extends Mech {
         boolean coming = false;
         int life = 0;
 
-        Bolt(Ctx c, Location start, Vector dir) {
-            this.c = c; this.pos = start.clone(); this.dir = dir;
+        /** 빗자루 지연 보정: 첫 틱에 이 구간을 판정하며 먼저 지나간다 (null = 없음). */
+        Vector leadLeft;
+
+        Bolt(Ctx c, Location start, Vector dir, double carrierSpeed, Vector lead) {
+            this.c = c; this.pos = start.clone(); this.dir = dir; this.leadLeft = lead;
+            this.speed = Math.min(Math.clamp(p.d("speed", 1.5), 0.1, 6) + carrierSpeed, 8);
             this.homeTarget = c.target();
             for (String m : p.s("breaks", "").split(",")) if (!m.isBlank()) breaks.add(m.trim().toUpperCase(Locale.ROOT));
         }
@@ -65,10 +72,21 @@ final class BoltMech extends Mech {
                 Vector to = ((LivingEntity) homeTarget).getEyeLocation().toVector().subtract(pos.toVector());
                 if (to.lengthSquared() > 1e-4) dir = homing ? dir.multiply(0.55).add(to.normalize().multiply(0.45)).normalize() : to.normalize();
             }
+            if (leadLeft != null) {
+                Vector lead = leadLeft;
+                leadLeft = null;
+                double len = lead.length();
+                if (!advance(lead.multiply(1 / len), len, false)) return false;
+            }
+            return advance(dir, speed, true);
+        }
+
+        /** along 방향으로 distance 만큼 0.4블록씩 나아가며 판정. false = 투사체 끝. */
+        private boolean advance(Vector along, double distance, boolean counts) {
             double step = 0.4;
-            for (double moved = 0; moved < speed; moved += step) {
-                pos.add(dir.clone().multiply(step));
-                travelled += step;
+            for (double moved = 0; moved < distance; moved += step) {
+                pos.add(along.clone().multiply(step));
+                if (counts) travelled += step;
                 if(!plugin.protection().pair(c.caster(),pos))return false;
                 if (!pos.getWorld().isChunkLoaded(pos.getBlockX() >> 4, pos.getBlockZ() >> 4)) return false;
                 Block b = pos.getBlock();
@@ -90,7 +108,7 @@ final class BoltMech extends Mech {
                         break;
                     } else if (hitCount >= pierce && !returns) { burst(); return false; }
                 }
-                if (travelled >= range && !turnBack()) { burst(); return false; }
+                if (counts && travelled >= range && !turnBack()) { burst(); return false; }
                 if (coming && travelled >= range * 2 + 4) return false;
             }
             return true;
