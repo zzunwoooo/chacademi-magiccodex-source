@@ -8,7 +8,7 @@ discovery:
   description: 덩굴을 타고 누적 50블록 이동합니다.
 research: 올라갈 곳을 정한 뒤 덩굴을 부르자. 나중에 내려올 길도 생각해 두도록 하자.
 cast:
-  command: ''
+  command: 마법 vine_ladder
   cooldown-seconds: 15
   mana-cost: 35
 order: 103

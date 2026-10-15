@@ -8,7 +8,7 @@ discovery:
   description: 학교 건축 수업을 1회 마칩니다.
 research: 한 칸만 어긋나도 탑은 기울어진다. 별은 그런 실수를 하지 않는다.
 cast:
-  command: ''
+  command: 마법 starlight_survey
   cooldown-seconds: 3
   mana-cost: 5
 order: 155

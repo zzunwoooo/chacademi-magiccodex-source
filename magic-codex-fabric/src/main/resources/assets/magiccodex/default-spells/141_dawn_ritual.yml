@@ -8,7 +8,7 @@ discovery:
   description: 독, 나약함, 구속을 정화의 물결로 각각 1회 정화합니다.
 research: 가장 어두운 밤이 끝날 때 첫 빛은 조용히 찾아온다.
 cast:
-  command: ''
+  command: 마법 dawn_ritual
   cooldown-seconds: 180
   mana-cost: 300
 order: 141

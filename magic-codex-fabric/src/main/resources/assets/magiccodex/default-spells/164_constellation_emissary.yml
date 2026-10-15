@@ -8,7 +8,7 @@ discovery:
   description: 마법으로 체력을 누적 600 치유합니다.
 research: 바쁜 별을 대신해 작은 사자가 아픈 이들을 찾아다닌다.
 cast:
-  command: ''
+  command: 마법 constellation_emissary
   cooldown-seconds: 120
   mana-cost: 280
 order: 164

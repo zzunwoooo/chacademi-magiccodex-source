@@ -8,7 +8,7 @@ discovery:
   description: 30초 안에 서로 다른 6원소의 마법을 사용합니다.
 research: 여섯 빛을 숨 돌릴 틈 없이 이어 보라. 마지막 빛이 닿으면, 저문 별 하나가 다시 떠오른다.
 cast:
-  command: ''
+  command: 마법 starlight_reprise
   cooldown-seconds: 600
   mana-cost: 600
 order: 163

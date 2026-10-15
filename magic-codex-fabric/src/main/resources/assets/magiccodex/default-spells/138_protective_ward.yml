@@ -8,7 +8,7 @@ discovery:
   description: 빛 마법 방어 수업을 통해 습득.
 research: 누군가의 앞을 가로막기 위해서가 아니라 뒤에 있는 이를 지키기 위한 빛.
 cast:
-  command: ''
+  command: 마법 protective_ward
   cooldown-seconds: 30
   mana-cost: 100
 order: 138

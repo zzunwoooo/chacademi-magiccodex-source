@@ -8,7 +8,7 @@ discovery:
   description: 획득 조건 미정
 research: 다 지은 벽의 색이 마음에 들지 않는 날이 있다. 설계도를 다시 그리기 전에 이 주문을 떠올려 보자.
 cast:
-  command: ''
+  command: 마법 material_exchange
   cooldown-seconds: 60
   mana-cost: 100
 order: 124

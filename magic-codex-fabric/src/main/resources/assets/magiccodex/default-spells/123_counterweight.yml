@@ -8,7 +8,7 @@ discovery:
   description: 방패로 공격을 막은 뒤 같은 적에게 반격하는 행동을 10회 수행합니다.
 research: 막아 낸 힘을 흘려보내지 않고 돌려준다. 방패 수업이 끝나도 팔이 저린 이유와는 관계없다.
 cast:
-  command: ''
+  command: 마법 counterweight
   cooldown-seconds: 20
   mana-cost: 65
 order: 123

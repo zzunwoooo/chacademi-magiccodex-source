@@ -8,7 +8,7 @@ discovery:
   description: 다른 플레이어에게 투척용 치유 물약을 10번 맞히기.
 research: 괜찮다는 한마디만으로도 조금 더 버틸 힘이 생긴다.
 cast:
-  command: ''
+  command: 마법 comforting_light
   cooldown-seconds: 5
   mana-cost: 35
 order: 142

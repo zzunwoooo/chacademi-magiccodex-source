@@ -8,7 +8,7 @@ discovery:
   description: 기초 땅 마법 수업을 통해 습득합니다.
 research: 시험지 앞에 세워도 감독 교수의 시선을 막아 주지는 않는다.
 cast:
-  command: ''
+  command: 마법 stone_wall
   cooldown-seconds: 20
   mana-cost: 60
 order: 102

@@ -8,7 +8,7 @@ discovery:
   description: 대지 마법 응용 수업에서 낮은 확률로 습득합니다.
 research: 모양도 이름도 없던 시절, 모든 돌은 하나였다고 한다. 그 시절의 무게를 잠시 되돌리는 고위급 마법이다.
 cast:
-  command: ''
+  command: 마법 primordial_stone
   cooldown-seconds: 120
   mana-cost: 500
 order: 131

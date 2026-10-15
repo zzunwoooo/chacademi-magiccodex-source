@@ -8,7 +8,7 @@ discovery:
   description: 도끼로 원목 껍질을 누적 32회 벗깁니다.
 research: 나무의 옷만 벗겨야 한다. 옆에서 작업하는 학생의 망토에는 적용되지 않는다.
 cast:
-  command: ''
+  command: 마법 bark_peeling
   cooldown-seconds: 8
   mana-cost: 18
 order: 117

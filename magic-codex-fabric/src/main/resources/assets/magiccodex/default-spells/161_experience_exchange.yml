@@ -8,7 +8,7 @@ discovery:
   description: 마나가 정확히 0이 됩니다.
 research: 몸에 흐르던 마력을 비워, 자신에게 남을 경험으로 새긴다.
 cast:
-  command: ''
+  command: 마법 experience_exchange
   cooldown-seconds: 600
   mana-cost: 0
 order: 161

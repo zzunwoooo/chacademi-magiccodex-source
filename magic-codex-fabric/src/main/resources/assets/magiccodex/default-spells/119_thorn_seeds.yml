@@ -8,7 +8,7 @@ discovery:
   description: 선인장을 누적 100개 수확합니다.
 research: 씨앗을 심으라고 받은 것인지 발사하라고 받은 것인지, 실습 전에 확인하자.
 cast:
-  command: ''
+  command: 마법 thorn_seeds
   cooldown-seconds: 80
   mana-cost: 350
 order: 119

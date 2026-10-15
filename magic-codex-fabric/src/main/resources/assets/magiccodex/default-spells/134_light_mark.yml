@@ -8,7 +8,7 @@ discovery:
   description: 분광 화살을 몬스터에게 5번 명중하기.
 research: 놓치지 않겠다는 시선이 빛의 표식으로 남는다.
 cast:
-  command: ''
+  command: 마법 light_mark
   cooldown-seconds: 5
   mana-cost: 10
 order: 134

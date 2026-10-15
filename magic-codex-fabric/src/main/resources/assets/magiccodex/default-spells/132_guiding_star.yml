@@ -8,7 +8,7 @@ discovery:
   description: 나침반을 들고 누적 1,000블록 걷습니다.
 research: 길을 잃은 아이에게 별 하나가 집으로 가는 방향을 알려 주었다.
 cast:
-  command: ''
+  command: 마법 guiding_star
   cooldown-seconds: 10
   mana-cost: 8
 order: 132

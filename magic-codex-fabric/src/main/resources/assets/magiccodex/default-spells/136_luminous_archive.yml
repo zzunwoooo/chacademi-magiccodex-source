@@ -8,7 +8,7 @@ discovery:
   description: 획득 조건 미정
 research: 아무에게도 빌려주고 싶지 않은 책을 위해 작은 서고를 만들었다.
 cast:
-  command: ''
+  command: 마법 luminous_archive
   cooldown-seconds: 5
   mana-cost: 20
 order: 136

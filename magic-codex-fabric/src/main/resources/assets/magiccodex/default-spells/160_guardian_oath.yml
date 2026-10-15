@@ -8,7 +8,7 @@ discovery:
   description: 친구 20명을 만듭니다.
 research: 네가 쓰러지기 전에 내가 먼저 손을 내밀겠다.
 cast:
-  command: ''
+  command: 마법 guardian_oath
   cooldown-seconds: 45
   mana-cost: 130
 order: 160

@@ -8,7 +8,7 @@ discovery:
   description: 썩은 살점을 5회 먹습니다.
 research: 먹을 수 없다면 다른 쓸모라도 찾아보자는 것이 연구자의 자세다.
 cast:
-  command: ''
+  command: 마법 sun_drying
   cooldown-seconds: 5
   mana-cost: 12
 order: 150

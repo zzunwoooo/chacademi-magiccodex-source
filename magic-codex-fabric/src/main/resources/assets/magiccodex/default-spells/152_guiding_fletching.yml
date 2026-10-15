@@ -8,7 +8,7 @@ discovery:
   description: 달리는 몬스터에게 활을 누적 20회 명중시킵니다.
 research: 조금 빗나간 화살에게 한 번 더 기회를 주었다.
 cast:
-  command: ''
+  command: 마법 guiding_fletching
   cooldown-seconds: 12
   mana-cost: 30
 order: 152

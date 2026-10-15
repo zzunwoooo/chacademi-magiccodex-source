@@ -8,7 +8,7 @@ discovery:
   description: 석재 벽돌을 누적 30개 설치합니다.
 research: 새 벽돌을 오래된 유적처럼 꾸미는 데 쓰인다. 오래된 유적을 새 건물처럼 만드는 주문은 따로 연구 중이다.
 cast:
-  command: ''
+  command: 마법 weathering_touch
   cooldown-seconds: 3
   mana-cost: 10
 order: 112

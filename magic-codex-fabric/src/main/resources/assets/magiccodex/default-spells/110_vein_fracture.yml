@@ -8,7 +8,7 @@ discovery:
   description: 다이아몬드 광석을 누적 20개 직접 채굴합니다.
 research: 한 광석을 발견했다면 주변에도 같은 광맥이 있을 수 있다. 운보다 지질학이 도움이 될 때도 있다.
 cast:
-  command: ''
+  command: 마법 vein_fracture
   cooldown-seconds: 15
   mana-cost: 35
 order: 110

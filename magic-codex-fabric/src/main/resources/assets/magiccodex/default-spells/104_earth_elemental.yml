@@ -10,7 +10,7 @@ research: '말수가 적은 땅의 정령 그놈과 계약을 맺는다.
 
   느리게 대답하지만 한 번 한 약속은 산처럼 무겁다.'
 cast:
-  command: ''
+  command: 마법 earth_elemental
   cooldown-seconds: 120
   mana-cost: 250
 order: 104

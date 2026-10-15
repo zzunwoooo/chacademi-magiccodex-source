@@ -8,7 +8,7 @@ discovery:
   description: 퇴비통에서 뼛가루를 누적 16개 꺼냅니다.
 research: 버린 잎도 다음 봄의 양분이 된다. 약초학 교수는 이것을 재활용보다 조금 더 멋진 이름으로 부른다.
 cast:
-  command: ''
+  command: 마법 compost_return
   cooldown-seconds: 10
   mana-cost: 20
 order: 118

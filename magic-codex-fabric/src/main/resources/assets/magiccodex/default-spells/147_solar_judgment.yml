@@ -8,7 +8,7 @@ discovery:
   description: 빛 마법으로 언데드를 누적 300마리 처치합니다.
 research: 여섯 빛이 하늘에 모이면, 심판을 피할 그림자는 없다.
 cast:
-  command: ''
+  command: 마법 solar_judgment
   cooldown-seconds: 300
   mana-cost: 800
 order: 147

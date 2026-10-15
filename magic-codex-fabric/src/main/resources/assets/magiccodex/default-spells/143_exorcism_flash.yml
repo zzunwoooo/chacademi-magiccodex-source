@@ -8,7 +8,7 @@ discovery:
   description: 좀비와 스켈레톤을 합쳐 50마리 처치합니다.
 research: 밤의 손님에게는 조금 눈부신 인사일지도 모른다.
 cast:
-  command: ''
+  command: 마법 exorcism_flash
   cooldown-seconds: 18
   mana-cost: 60
 order: 143

@@ -8,7 +8,7 @@ discovery:
   description: 대지 마법 실전 수업
 research: 발밑의 작은 떨림을 한곳에 모으면 바위도 견디지 못한다. 학교 안에서는 허가 없이 사용하지 말자.
 cast:
-  command: ''
+  command: 마법 earthquake
   cooldown-seconds: 45
   mana-cost: 200
 order: 105

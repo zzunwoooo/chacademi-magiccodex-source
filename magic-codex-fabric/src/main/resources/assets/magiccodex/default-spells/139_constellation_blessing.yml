@@ -8,7 +8,7 @@ discovery:
   description: 획득 조건 미정
 research: 멀리 있는 별도 자신을 올려다보는 사람을 기억할까?
 cast:
-  command: ''
+  command: 마법 constellation_blessing
   cooldown-seconds: 90
   mana-cost: 200
 order: 139

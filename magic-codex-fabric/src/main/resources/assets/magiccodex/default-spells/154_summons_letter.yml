@@ -8,7 +8,7 @@ discovery:
   description: 길들인 늑대나 고양이와 함께 누적 2000블록 이동하기.
 research: 멀리서도 제 이름을 알아듣는 친구에게 보내는 짧은 편지.
 cast:
-  command: ''
+  command: 마법 summons_letter
   cooldown-seconds: 30
   mana-cost: 100
 order: 154

@@ -8,7 +8,7 @@ discovery:
   description: 빛 마법 응용 수업을 통해 낮은 확률로 습득.
 research: 화살이 반드시 상처만 남겨야 한다는 법은 없다.
 cast:
-  command: ''
+  command: 마법 merciful_arrow
   cooldown-seconds: 15
   mana-cost: 45
 order: 158

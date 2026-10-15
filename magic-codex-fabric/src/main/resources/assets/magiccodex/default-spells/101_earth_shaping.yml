@@ -8,7 +8,7 @@ discovery:
   description: 흙, 잔디, 거친 흙 등 흙 계열 블록을 누적 100개 설치합니다.
 research: 길이 불편하면 길을 바꾸면 된다. 단, 다른 학생의 기숙사 바닥을 바꾸지는 말자.
 cast:
-  command: ''
+  command: 마법 earth_shaping
   cooldown-seconds: 25
   mana-cost: 120
 order: 101

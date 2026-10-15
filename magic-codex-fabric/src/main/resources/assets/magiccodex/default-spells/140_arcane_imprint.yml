@@ -8,7 +8,7 @@ discovery:
   description: 모루로 도구에 이름을 누적 10회 붙입니다.
 research: 이름을 새긴 도구에 마음까지 새겨 넣을 수 있다면.
 cast:
-  command: ''
+  command: 마법 arcane_imprint
   cooldown-seconds: 30
   mana-cost: 180
 order: 140

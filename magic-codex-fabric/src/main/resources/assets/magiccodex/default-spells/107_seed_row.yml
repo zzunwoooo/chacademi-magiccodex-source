@@ -8,7 +8,7 @@ discovery:
   description: 씨앗을 누적 50회 심습니다.
 research: 허리를 굽히지 않고 밭을 가꾸는 법. 농사 동아리에서 가장 인기가 많은 실습이다.
 cast:
-  command: ''
+  command: 마법 seed_row
   cooldown-seconds: 5
   mana-cost: 12
 order: 107

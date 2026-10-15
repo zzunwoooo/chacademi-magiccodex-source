@@ -8,7 +8,7 @@ discovery:
   description: 꽃을 누적 10개 심습니다.
 research: 황량한 마당에도 봄은 온다. 조금 재촉해 주는 정도라면 괜찮을 것이다.
 cast:
-  command: ''
+  command: 마법 grass_sprouting
   cooldown-seconds: 5
   mana-cost: 10
 order: 115

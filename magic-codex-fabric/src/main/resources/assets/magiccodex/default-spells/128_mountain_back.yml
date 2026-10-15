@@ -8,7 +8,7 @@ discovery:
   description: 조약돌 던지기(pebble_toss)로 몬스터를 누적 30마리 처치합니다.
 research: 작은 돌로 시작한 연습이 이제 바위를 움직인다. 뒤에서 밀어 주던 동료는 먼저 비켜 서야 한다.
 cast:
-  command: ''
+  command: 마법 mountain_back
   cooldown-seconds: 40
   mana-cost: 220
 order: 128
