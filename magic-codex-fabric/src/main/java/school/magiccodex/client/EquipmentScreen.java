@@ -93,9 +93,18 @@ public final class EquipmentScreen extends Screen {
     private void artifactSlot(DrawContext c,int i){
         var a=ArtifactClient.find(ArtifactClient.equipped().get(0));if(a==null)return;
         c.fill(x(i)+9,y(i)+9,x(i)+143,y(i)+129,0xFF132237);
-        if(!a.icon().isBlank()&&UiResources.images().drawCentered(c,a.icon(),x(i)+76,y(i)+69,96,0xFFFFFFFF))return;
-        var t=UiResources.text();float size=Math.min(19f,19f*126/Math.max(1,t.width(a.name(),19,FONT)));
-        t.draw(c,a.name(),x(i)+76,y(i)+69,size,ArtifactCodexScreen.GRADE_COLORS[a.grade()],FONT,true);
+        var t=UiResources.text();
+        if(a.icon().isBlank()||!UiResources.images().drawCentered(c,a.icon(),x(i)+76,y(i)+69,96,0xFFFFFFFF)){
+            float size=Math.min(19f,19f*126/Math.max(1,t.width(a.name(),19,FONT)));
+            t.draw(c,a.name(),x(i)+76,y(i)+69,size,ArtifactCodexScreen.GRADE_COLORS[a.grade()],FONT,true);
+        }
+        if(!a.usable())return;
+        // Usable artifact: key badge, and the remaining cooldown on a dark veil.
+        long left=ArtifactClient.cooldownLeft(a.id());
+        if(left>0){c.fill(x(i)+9,y(i)+9,x(i)+143,y(i)+129,0xA0060C14);t.draw(c,((left+999)/1000)+"초",x(i)+76,y(i)+69,26,0xFFEAF3F5,FONT,true);}
+        String key=ArtifactClient.useKeyLabel();float kw=Math.max(26,t.width(key,15,FONT)+12);
+        c.fill((int)(x(i)+139-kw),y(i)+105,x(i)+139,y(i)+125,0xE0102437);
+        t.draw(c,key,x(i)+139-kw/2,y(i)+115,15,0xFFE9D5A1,FONT,true);
     }
     private void drawStars(DrawContext c,boolean front){for(int i=0;i<stars.count();i++)if(stars.foreground(i)==front){float x=836+stars.x(i)*242,y=408+stars.y(i)*210,size=4+(stars.depth(i)+1)*2;HudMesh.star(c,x,y,size*1.8f,0x225CD6EF);HudMesh.star(c,x,y,size,0xDDE5D5A7);}}
     private void picker(DrawContext c,double mx,double my){

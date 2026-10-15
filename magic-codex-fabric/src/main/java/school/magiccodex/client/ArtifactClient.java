@@ -3,10 +3,16 @@ package school.magiccodex.client;
 import java.util.*;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.text.Text;
+import net.minecraft.util.Util;
+import org.lwjgl.glfw.GLFW;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
@@ -17,6 +23,9 @@ import school.magiccodex.protocol.ArtifactProtocol.Entry;
 /**
  * Artifact codex data from the server (MagicCodexBridge ArtifactBridge). The catalogue comes from the server's
  * artifacts.yml, so editing that file changes the codex without rebuilding this mod. Never fabricates ownership.
+ *
+ * Artifact use key (default X, rebindable in Controls; never assignable to spells, see KeySettingsLayout): uses the
+ * equipped usable artifact. The server checks everything and answers with the notice and the remaining cooldown.
  */
 public final class ArtifactClient {
     private ArtifactClient() {}
@@ -53,8 +62,16 @@ public final class ArtifactClient {
     private static String notice = "";
     private static long version;
     private static boolean supported;
+    private static KeyBinding useKey;
+    /** artifact id -> Util.getMeasuringTimeMs() when its use cooldown ends (from the server's last STATE). */
+    private static final Map<String, Long> cooldownEnds = new HashMap<>();
+    private static boolean awaitingUse;
+    private static long lastUse;
 
     public static void initialize() {
+        useKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.magiccodex.artifact_use", GLFW.GLFW_KEY_X, "category.magiccodex"));
+        KeySettingsLayout.artifactKey(code -> useKey.matchesKey(code, 0));
+        ClientTickEvents.END_CLIENT_TICK.register(client -> { while (useKey.wasPressed()) use(client); });
         PayloadTypeRegistry.playC2S().register(Request.ID, Request.CODEC);
         PayloadTypeRegistry.playS2C().register(Response.ID, Response.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(Response.ID, (payload, context) -> {
@@ -86,13 +103,21 @@ public final class ArtifactClient {
                 if (s.revision() != revision) return; // a newer catalogue is still arriving
                 owned = s.owned().length == catalog.size() ? s.owned().clone() : new boolean[catalog.size()];
                 equipped = s.equipped(); maxEquipped = s.maxEquipped(); notice = s.notice(); version++;
+                long now = Util.getMeasuringTimeMs();
+                cooldownEnds.clear();
+                for (int i = 0; i < s.equipped().size(); i++) if (s.cooldownMs()[i] > 0) cooldownEnds.put(s.equipped().get(i), now + s.cooldownMs()[i]);
+                if (awaitingUse) {
+                    awaitingUse = false;
+                    var player = MinecraftClient.getInstance().player;
+                    if (player != null && !s.notice().isBlank()) player.sendMessage(Text.literal(s.notice()), true);
+                }
             }
         }
     }
 
     private static void reset() {
         catalog = List.of(); revision = 0; building = -1; parts = new Entry[0][]; owned = new boolean[0];
-        equipped = List.of(); notice = ""; supported = false; version++;
+        equipped = List.of(); notice = ""; supported = false; version++; cooldownEnds.clear(); awaitingUse = false;
     }
 
     private static boolean send(int action, String id) {
@@ -105,6 +130,26 @@ public final class ArtifactClient {
     static boolean query() { return send(ArtifactProtocol.QUERY, ""); }
     static boolean equip(String id) { return send(ArtifactProtocol.EQUIP, id); }
     static boolean unequip(String id) { return send(ArtifactProtocol.UNEQUIP, id); }
+
+    /** Artifact use key pressed. Local checks only save a packet; the server decides. */
+    private static void use(MinecraftClient client) {
+        if (client.player == null || client.currentScreen != null || !client.player.isAlive()) return;
+        long now = Util.getMeasuringTimeMs();
+        if (now - lastUse < 250) return;
+        lastUse = now;
+        Entry e = equipped.isEmpty() ? null : find(equipped.get(0));
+        for (String id : equipped) { Entry x = find(id); if (x != null && x.usable()) { e = x; break; } }
+        String local = !supported ? "아티팩트 정보를 불러오는 중입니다."
+                : e == null ? "장착한 아티팩트가 없습니다."
+                : !e.usable() ? e.name() + "은(는) 사용하는 아티팩트가 아닙니다."
+                : cooldownLeft(e.id()) > 0 ? e.name() + " 재사용 대기 " + ((cooldownLeft(e.id()) + 999) / 1000) + "초" : null;
+        if (local != null) { client.player.sendMessage(Text.literal(local), true); return; }
+        if (send(ArtifactProtocol.USE, e.id())) awaitingUse = true;
+    }
+
+    /** Remaining use cooldown in ms (0 = ready), as last reported by the server. */
+    static long cooldownLeft(String id) { return Math.max(0, cooldownEnds.getOrDefault(id, 0L) - Util.getMeasuringTimeMs()); }
+    static String useKeyLabel() { return useKey == null ? "X" : useKey.getBoundKeyLocalizedText().getString(); }
 
     /** The server answered at least once on this connection. */
     static boolean supported() { return supported; }

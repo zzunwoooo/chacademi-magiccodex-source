@@ -45,7 +45,7 @@ public final class SpellKeySettings {
     }
     public void bind(int slot,int code) {
         if(get(slot).empty()) throw new IllegalArgumentException("먼저 마법을 선택해 주세요.");
-        if(!KeySettingsLayout.allowed(code)) throw new IllegalArgumentException("WASD · I · O · P · Z와 보조 키는 지정할 수 없습니다.");
+        if(!KeySettingsLayout.allowed(code)) throw new IllegalArgumentException(KeySettingsLayout.RESERVED_MESSAGE);
         for(int i=0;i<LIMIT;i++) if(i!=slot && !get(i).empty() && get(i).keyCode()==code)
             throw new IllegalArgumentException("이미 다른 마법에 지정한 키입니다.");
         slots.set(slot,new Binding(get(slot).spellId(),code));
@@ -68,7 +68,7 @@ public final class SpellKeySettings {
      */
     public int assign(int code,String id) {
         if(id==null || !id.matches("[a-z0-9_-]{1,64}")) throw new IllegalArgumentException("올바르지 않은 마법 ID입니다.");
-        if(!KeySettingsLayout.allowed(code)) throw new IllegalArgumentException("WASD · I · O · P · Z와 보조 키는 지정할 수 없습니다.");
+        if(!KeySettingsLayout.allowed(code)) throw new IllegalArgumentException(KeySettingsLayout.RESERVED_MESSAGE);
         int keySlot=slotOfKey(code), spellSlot=slotOfSpell(id);
         int target=keySlot>=0?keySlot:spellSlot;
         if(target<0) for(int i=0;i<LIMIT && target<0;i++) if(get(i).empty()) target=i;
@@ -103,9 +103,9 @@ public final class SpellKeySettings {
                 if(!(value instanceof Map<?,?> binding) || !(binding.get("spell") instanceof String id)
                         || !(binding.get("key") instanceof Integer code)) throw new IllegalArgumentException("올바르지 않은 키 설정입니다.");
                 result.select(i,id);
-                // P and O are UI shortcuts. Preserve those spells and all other
+                // P, O and X (artifact use, 2026-10-15) are shortcuts. Preserve those spells and all other
                 // slots, leaving only its key unassigned until the user chooses another.
-                if(code!=80&&!KeySettingsLayout.equipmentReserved(code)&&code!=-1)result.bind(i,code);
+                if(code!=80&&!KeySettingsLayout.equipmentReserved(code)&&!KeySettingsLayout.artifactReserved(code)&&code!=-1)result.bind(i,code);
             }
             if(map.get("registration-order") instanceof List<?> order) {
                 var verified=new ArrayList<String>();
