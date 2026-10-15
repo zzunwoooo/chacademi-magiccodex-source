@@ -25,9 +25,9 @@ final class SummonScene {
     static final float CLOSED_W = 250, CLOSED_H = 177, OPEN_W = 244, OPEN_H = 217;
     static final float SEAM = 0.47f;                     // lid seam, fraction of the closed chest height from its top
 
-    enum State { IDLE, WAITING, PICK, OPENING, CARD }
+    enum State { IDLE, WAITING, PICK, OPENING, CARD, MULTI }
     enum Face { TITLE, BOLD, LABEL, BODY }
-    enum Cue { GATHER, RING, SHIFT, BLACKOUT, METEOR, IMPACT, GRADE, DECOY, MOVE, BEAT, OPEN, STAR, CARD }
+    enum Cue { GATHER, RING, SHIFT, BLACKOUT, METEOR, IMPACT, GRADE, DECOY, MOVE, BEAT, OPEN, STAR, CARD, LAND, CHARGE }
 
     /** Drawing back end (Minecraft DrawContext in game, a software rasteriser for the offline preview). */
     interface Canvas {
@@ -46,6 +46,9 @@ final class SummonScene {
     int[] decoys = new int[4];
     String name = "", icon = "";
     boolean isNew;
+    /** Five-pull (소환하기 ×5): one entry per chest, left to right. */
+    record Multi(String name, String icon, int grade, boolean isNew) {}
+    Multi[] multi = new Multi[0];
     private final float[] lift = new float[5];
     private long lastDraw = -1;
     private double lastT = -1;
@@ -72,8 +75,19 @@ final class SummonScene {
     double settled() { return openAt() + 1.1 + .14 * rings(); }
     boolean continueReady(long now) { return state == State.OPENING && t(now) >= openAt() + 1.2; }
 
-    /** Click while opening: jump to the next stage (grade reveal → move, charge → open). */
+    // five-pull: chests drop in one by one (colour = grade), short charge, all open at once
+    double landAt(int i) { return .25 + .17 * i; }
+    double multiOpenAt() { return landAt(multi.length - 1) + .22 + .85; }
+    int multiBest() { int b = 0; for (Multi m : multi) b = Math.max(b, m.grade()); return b; }
+    boolean multiReady(long now) { return state == State.MULTI && t(now) >= multiOpenAt() + .9; }
+
+    /** Click while opening: jump to the next stage (grade reveal → move, charge → open; five-pull → open). */
     void skip(long now) {
+        if (state == State.MULTI) {
+            double to = multiOpenAt();
+            if (t(now) < to) { stateStart = now - (long) (to * 1000) - 1; lastT = to - 1e-3; }
+            return;
+        }
         if (state != State.OPENING) return;
         double t = t(now), to = t < moveAt() ? moveAt() : t < openAt() ? openAt() : -1;
         if (to > 0) { stateStart = now - (long) (to * 1000) - 1; lastT = to - 1e-3; }
@@ -95,6 +109,12 @@ final class SummonScene {
             cross(t, openAt(), Cue.OPEN, grade);
             for (int i = 0; i < rings(); i++) cross(t, openAt() + 1.0 + .14 * i, Cue.STAR, i);
         } else if (state == State.CARD) cross(t, 0, Cue.CARD, grade);
+        else if (state == State.MULTI) {
+            for (int i = 0; i < multi.length; i++) cross(t, landAt(i) + .22, Cue.LAND, multi[i].grade());
+            cross(t, multiOpenAt() - .6, Cue.CHARGE, multiBest());
+            cross(t, multiOpenAt(), Cue.OPEN, multiBest());
+            cross(t, multiOpenAt() + .35, Cue.CARD, multiBest());
+        }
         lastT = t;
         return fired;
     }
@@ -124,11 +144,20 @@ final class SummonScene {
             case IDLE, WAITING, PICK -> row(c, time, t, dt);
             case OPENING -> opening(c, raw, t, time);
             case CARD -> card(c, raw, t, time);
+            case MULTI -> multi(c, raw, t, time);
         }
     }
 
     /** zoom, dx, dy: slight push-in on the picked chest during the grade reveal, kick + shake at impacts. */
     private float[] camera(double t, double time) {
+        if (state == State.MULTI) {
+            float shake = decay(t - multiOpenAt(), .45f) * 10;
+            for (int i = 0; i < multi.length; i++) shake += decay(t - landAt(i) - .22, .18f) * (2 + 2 * multi[i].grade());
+            double charge = (t - (multiOpenAt() - .6)) / .6;
+            if (charge > 0 && charge < 1) shake += (float) (charge * charge) * 3;
+            float zoom = 1 + .04f * decay(t - multiOpenAt(), .6f);
+            return new float[]{zoom, (float) Math.sin(time * 61) * shake, (float) Math.cos(time * 53) * shake * .7f};
+        }
         if (state != State.OPENING || picked < 0) return new float[]{1, 0, 0};
         float push = smooth(clamp01((float) (t / .8))) * (1 - smooth(clamp01((float) ((t - moveAt()) / .6))));
         float zoom = 1 + .07f * push;
@@ -351,6 +380,76 @@ final class SummonScene {
                 c.text(isNew ? "새로운 아티팩트 획득" : "이미 가진 아티팩트", tx, 434, 21, rgba(isNew ? 0xFF9FE6B0 : 0xFFB7C6D1, ta), Face.BODY, true);
             }
             if (o > 1.2) c.text("클릭하여 계속", CX, 890, 20, rgba(0xFFD8E2EA, .45f + .35f * (float) Math.sin(time * 4)), Face.BODY, true);
+        }
+    }
+
+    /** Five-pull: chests fall into the row one after another, each lighting up in its grade colour, then all open together. */
+    private void multi(Canvas c, Canvas raw, double t, double time) {
+        double open = t - multiOpenAt();
+        raw.fillScreen(rgba(0xFF02050B, .35f * smooth(clamp01((float) t / .4f)) + (open > 0 ? .2f * clamp01((float) open / .3f) : 0)));
+        float charge = clamp01((float) ((t - (multiOpenAt() - .6)) / .6));
+        for (int i = 0; i < multi.length && i < CHEST_X.length; i++) {
+            var m = multi[i];
+            int color = GRADE[m.grade()];
+            float x = CHEST_X[i];
+            double d = t - landAt(i), landed = d - .22;
+            if (d < 0) continue;
+            if (open < 0) {
+                // fall in with a short trail, land with a grade-coloured shock
+                float u = clamp01((float) (d / .22)), y = BASE - 460 * (1 - u * u);
+                float lit = landed < 0 ? 0 : clamp01((float) (landed / .15));
+                float fresh = decay(landed, .45f);
+                if (landed < 0) for (int j = 1; j < 4; j++)
+                    c.sprite("fx_glint", x, y - CLOSED_H / 2 - j * 40, 60, 120, 90, 1, rgba(color, .35f * (1 - j / 4f)), true);
+                platform(c, x, BASE, 250, time + i, lit > 0 ? color : 0xFF8FC8FF, .35f + .45f * lit + .3f * charge);
+                if (lit > 0) {
+                    float pulse = .5f + .5f * (float) Math.sin(time * 5 + i);
+                    c.sprite("fx_glow_wide", x, BASE - CLOSED_H / 2, 360 + 140 * fresh + 120 * charge, 360 + 140 * fresh + 120 * charge, 0, 1,
+                            rgba(color, (.35f + .1f * pulse) * lit + .45f * fresh + .3f * charge), true);
+                    beam(c, x, BASE - CLOSED_H * SEAM, 80 + 60 * fresh + 40 * charge, (220 + 60 * m.grade()) * lit + 260 * fresh, rgba(color, (.3f + .1f * m.grade()) * lit + .5f * fresh), time + i);
+                    if (m.grade() >= 2) godRays(c, x, BASE - CLOSED_H / 2, 200 + 60 * m.grade() + 120 * charge, time + i, rgba(color, (.18f + .08f * m.grade()) * lit + .2f * charge), m.grade() == 3 ? 12 : 8);
+                    if (m.grade() == 3) c.sprite("fx_ring_rune", x, BASE + 6, 420, 420, (float) (-time * 20), .27f, rgba(color, .6f * lit), true);
+                    shockwave(c, x, BASE, landed, color, 260 + 80 * m.grade());
+                }
+                float shake = (float) Math.sin(time * 70 + i) * 5 * charge * charge;
+                closedChest(c, x + shake, y, 1 + .04f * fresh, 0xFFFFFFFF);
+                if (lit > 0) c.sprite("fx_glint", x + shake, BASE - CLOSED_H * SEAM, 240 * (.7f + .5f * charge), 70, 0, 1, rgba(color, .55f * lit + .4f * charge), true);
+            } else {
+                // opened: burst, then the result card in the chest's place (all at the same moment)
+                flash(c, x, BASE - CLOSED_H / 2, open, brighten(color), 520 + 120 * m.grade());
+                shockwave(c, x, BASE, open, color, 600);
+                for (int k = 0; k < 14; k++) {
+                    double life = open / (.7 + .4 * hash(i * 16 + k, 91));
+                    if (life >= 1) continue;
+                    double ang = -Math.PI / 2 + (hash(i * 16 + k, 92) - .5) * 2.8, sp = 260 + 300 * hash(i * 16 + k, 93);
+                    float px = x + (float) (Math.cos(ang) * sp * open), py = BASE - CLOSED_H / 2 + (float) (Math.sin(ang) * sp * open + 480 * open * open);
+                    c.sprite("fx_spark4", px, py, 22, 22, (float) (time * 120), 1, rgba(k % 3 == 0 ? 0xFFFFFFFF : color, (float) (1 - life)), true);
+                }
+                multiCard(c, m, x, 430, open, time);
+            }
+        }
+        if (open >= 0) raw.fillScreen(rgba(0xFFFFFFFF, .7f * decay(open, .35f)));
+        else c.text("클릭하여 넘기기", W - 120, H - 36, 16, 0x88D8E2EA, Face.LABEL, true);
+    }
+
+    private void multiCard(Canvas c, Multi m, float x, float y, double open, double time) {
+        float a = smooth(clamp01((float) (open - .05) / .3f)), flip = easeBack(clamp01((float) (open - .05) / .45f));
+        if (a <= 0) return;
+        float size = 220, w = size * Math.max(.02f, flip);
+        int color = GRADE[m.grade()];
+        if (m.grade() >= 2) godRays(c, x, y, 260 + 40 * m.grade(), time, rgba(color, (.12f + .08f * m.grade()) * a), m.grade() == 3 ? 12 : 8);
+        c.sprite("fx_glow_wide", x, y, 360, 360, 0, 1, rgba(color, (.25f + .08f * m.grade()) * a), true);
+        c.sprite(FRAME[m.grade()] + "_fill", x, y, w, size, 0, 1, rgba(0xFFFFFFFF, a), false);
+        if (flip > .5f) c.icon(m.icon(), x, y, 150 * (w / size), rgba(0xFFFFFFFF, a));
+        c.sprite(FRAME[m.grade()], x, y, w, size, 0, 1, rgba(0xFFFFFFFF, a), false);
+        float sweep = clamp01((float) ((open - .4) / .5));
+        if (sweep > 0 && sweep < 1) c.sprite("fx_glint", x - size / 2 + size * sweep, y, 90, size * .9f, 90, 1, rgba(0xFFFFFFFF, .35f * (1 - sweep)), true);
+        c.text(GRADE_NAME[m.grade()], x, y + size / 2 + 30, 26, rgba(brighten(color), a), Face.TITLE, true);
+        float nameSize = Math.min(24, 24 * 11f / Math.max(11, m.name().length()));
+        c.text(m.name(), x, y + size / 2 + 66, nameSize, rgba(0xFFF3E9D3, a), Face.BOLD, true);
+        if (m.isNew()) {
+            c.sprite("fx_spark_multi", x + size / 2 - 8, y - size / 2 + 10, 56, 56, (float) (time * 40), 1, rgba(0xFF9FE6B0, a), true);
+            c.text("NEW", x + size / 2 - 8, y - size / 2 + 10, 17, rgba(0xFFEFFFF2, a), Face.BOLD, true);
         }
     }
 

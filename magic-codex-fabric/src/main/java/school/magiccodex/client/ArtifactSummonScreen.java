@@ -46,7 +46,7 @@ final class ArtifactSummonScreen extends Screen {
         float cx() { return x + w / 2; }
         float cy() { return y + h / 2; }
     }
-    private static final Box SUMMON = new Box(736, 866, 200, 58), CLOSE = new Box(1572, 30, 60, 60);
+    private static final Box SUMMON = new Box(626, 866, 200, 58), SUMMON5 = new Box(846, 866, 200, 58), CLOSE = new Box(1572, 30, 60, 60);
     private static final Box AGAIN = new Box(631, 806, 200, 58), CONFIRM = new Box(841, 806, 200, 58), CONFIRM_ONLY = new Box(736, 806, 200, 58);
     private static final Box INFO = new Box(386, 694, 900, 156);
 
@@ -88,10 +88,26 @@ final class ArtifactSummonScreen extends Screen {
         }
     }
 
-    private void startSummon() {
+    /** Five-pull result: all five chests drop in and open together. */
+    void onSummonMulti(ArtifactProtocol.SummonMulti m) {
         long now = Util.getMeasuringTimeMs();
-        if (ArtifactClient.summonKeys() < cost()) { notice = itemName() + "이(가) 부족합니다."; sound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), .7f, .5f); return; }
-        if (!ArtifactClient.summon()) { notice = "서버에 연결되어 있지 않습니다."; return; }
+        var list = new SummonScene.Multi[m.pulls().size()];
+        for (int i = 0; i < list.length; i++) {
+            var x = m.pulls().get(i); var entry = ArtifactClient.find(x.artifactId());
+            list[i] = new SummonScene.Multi(entry == null ? x.artifactId() : entry.name(), entry == null ? "" : entry.icon(), x.grade(), x.isNew());
+        }
+        scene.multi = list;
+        resultNotice = m.notice(); notice = "";
+        scene.set(SummonScene.State.MULTI, now);
+    }
+
+    private void startSummon() { start(1); }
+
+    /** count 1 = 소환하기, 5 = 소환하기 ×5 (server decides everything; the client only checks the key count first). */
+    private void start(int count) {
+        long now = Util.getMeasuringTimeMs();
+        if (ArtifactClient.summonKeys() < cost() * count) { notice = itemName() + " " + cost() * count + "개가 필요합니다."; sound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), .7f, .5f); return; }
+        if (!(count == 1 ? ArtifactClient.summon() : ArtifactClient.summonMulti())) { notice = "서버에 연결되어 있지 않습니다."; return; }
         notice = "";
         deadline = now + 6000;
         scene.set(SummonScene.State.WAITING, now);
@@ -148,15 +164,23 @@ final class ArtifactSummonScreen extends Screen {
             if (s == SummonScene.State.IDLE) text(c, "다섯 유물함 가운데 하나를 열어 아티팩트를 얻습니다", 836, 112, 21, GOLD, BODY);
             nine(c, PANEL, 992, 396, 9, 93, 981, 294, 45, INFO, 0xF0FFFFFF);
             String[] info = info();
-            text(c, "[소환하기]를 누르면 " + info[0] + " " + info[1] + "개를 사용합니다", 836, 726, 23, GOLD, BOLD);
-            text(c, "무작위 아티팩트 1개를 얻습니다. 이미 가진 아티팩트가 나오면", 836, 764, 19, TEXT, BODY);
+            text(c, "[소환하기]는 " + info[0] + " " + info[1] + "개, [소환하기 ×5]는 " + cost() * 5 + "개를 사용합니다", 836, 726, 23, GOLD, BOLD);
+            text(c, "한 번에 무작위 아티팩트 1개(×5는 5개)를 얻습니다. 이미 가진 아티팩트가 나오면", 836, 764, 19, TEXT, BODY);
             text(c, "아티팩트 조각으로 바뀌어 우편으로 지급됩니다.", 836, 792, 19, TEXT, BODY);
             text(c, info[2].isEmpty() ? "" : "등급 확률  " + info[2], 836, 828, 17, MUTED, LABEL);
             boolean ready = s == SummonScene.State.IDLE && ArtifactClient.summonKeys() >= cost();
+            boolean ready5 = s == SummonScene.State.IDLE && ArtifactClient.summonKeys() >= cost() * 5;
             button(c, SUMMON, s == SummonScene.State.WAITING ? "소환 중…" : "소환하기", ready, mx, my);
-            textLeft(c, "보유 " + info[0] + "  " + ArtifactClient.summonKeys() + "개", SUMMON.x() + SUMMON.w() + 26, SUMMON.cy(), 20,
+            button(c, SUMMON5, "소환하기 ×5", ready5, mx, my);
+            textLeft(c, "보유 " + info[0] + "  " + ArtifactClient.summonKeys() + "개", SUMMON5.x() + SUMMON5.w() + 26, SUMMON5.cy(), 20,
                     ArtifactClient.summonKeys() >= cost() ? IVORY : WARN, BOLD);
             if (!notice.isEmpty()) text(c, notice, 836, 666, 20, WARN, BOLD);
+        } else if (s == SummonScene.State.MULTI && scene.multiReady(now)) {
+            if (!resultNotice.isEmpty()) text(c, resultNotice, 836, 766, 19, MUTED, BODY);
+            if (ArtifactClient.summonKeys() >= cost() * 5) {
+                button(c, AGAIN, "다시 ×5", true, mx, my);
+                button(c, CONFIRM, "확인", true, mx, my);
+            } else button(c, CONFIRM_ONLY, "확인", true, mx, my);
         } else if (s == SummonScene.State.CARD) {
             if (!resultNotice.isEmpty()) text(c, resultNotice, 836, 766, 19, MUTED, BODY);
             if (ArtifactClient.summonKeys() >= cost()) {
@@ -240,6 +264,16 @@ final class ArtifactSummonScreen extends Screen {
             }
             case STAR -> sound(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), 1f + .12f * index, .45f);
             case CARD -> sound(SoundEvents.ITEM_BOOK_PAGE_TURN, 1f, .8f);
+            case LAND -> {   // five-pull: one thump per chest, brighter for higher grades
+                sound(SoundEvents.BLOCK_WOOD_PLACE, .8f, .6f);
+                switch (index) {
+                    case 0 -> sound(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), .9f, .35f);
+                    case 1 -> sound(SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, 1.1f, .6f);
+                    case 2 -> { sound(SoundEvents.BLOCK_AMETHYST_CLUSTER_BREAK, 1.2f, .7f); sound(SoundEvents.BLOCK_RESPAWN_ANCHOR_SET_SPAWN, 1.3f, .35f); }
+                    default -> { sound(SoundEvents.ENTITY_FIREWORK_ROCKET_LARGE_BLAST, .9f, .6f); sound(SoundEvents.BLOCK_BEACON_POWER_SELECT, 1.4f, .5f); }
+                }
+            }
+            case CHARGE -> sound(SoundEvents.BLOCK_BEACON_ACTIVATE, 1.2f + .1f * index, .55f);
         }
     }
 
@@ -255,7 +289,13 @@ final class ArtifactSummonScreen extends Screen {
         long now = Util.getMeasuringTimeMs();
         if (CLOSE.contains(mx, my)) { click(); close(); return true; }
         switch (scene.state) {
-            case IDLE -> { if (SUMMON.contains(mx, my)) startSummon(); }
+            case IDLE -> { if (SUMMON.contains(mx, my)) startSummon(); else if (SUMMON5.contains(mx, my)) start(5); }
+            case MULTI -> {
+                if (!scene.multiReady(now)) { scene.skip(now); break; }
+                boolean again = ArtifactClient.summonKeys() >= cost() * 5;
+                if (again && AGAIN.contains(mx, my)) { click(); start(5); }
+                else if ((again ? CONFIRM : CONFIRM_ONLY).contains(mx, my)) { click(); scene.set(SummonScene.State.IDLE, now); ArtifactClient.summonInfo(); }
+            }
             case PICK -> {
                 int i = scene.chestAt(mx, my);
                 if (i >= 0) {

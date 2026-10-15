@@ -17,6 +17,9 @@ import java.util.*;
  * Summon (2026-10-15): C2S SUMMON_INFO (key count) / SUMMON (spend one key, roll); S2C SUMMON frame
  *   byte kind (OPEN/INFO/RESULT/REFUSED), int keys, String artifactId, byte grade, bool isNew, short shards,
  *   4 decoy grades, String notice. The server decides everything; decoys only colour the unpicked chests.
+ * Five-pull (2026-10-15): C2S SUMMON_MULTI (spend MULTI x cost keys, roll MULTI times); S2C SUMMON_MULTI_FRAME
+ *   int keys, byte n, n x (String artifactId, byte grade, bool isNew, short shards), String notice.
+ *   A refused five-pull answers with the normal SUMMON frame (kind REFUSED).
  *
  * Version 2 (2026-10-15, artifact use key): writers always send 2, readers accept 1 and 2 (v1 = no use data).
  * A v1 client cannot read v2 frames, so the mod and MagicCodexBridge must be deployed together.
@@ -25,12 +28,14 @@ public final class ArtifactProtocol {
     public static final String REQUEST = "magiccodex:artifact_request", RESPONSE = "magiccodex:artifact_response";
     public static final int MAX_BYTES = 30000, MAX_ARTIFACTS = 1024, MAX_EQUIPPED = 8, MAX_PARTS = 256;
     public static final int VERSION = 2;
-    public static final int QUERY = 0, EQUIP = 1, UNEQUIP = 2, USE = 3, SUMMON_INFO = 4, SUMMON = 5;
+    public static final int QUERY = 0, EQUIP = 1, UNEQUIP = 2, USE = 3, SUMMON_INFO = 4, SUMMON = 5, SUMMON_MULTI = 6;
+    /** Pulls in one five-pull. */
+    public static final int MULTI = 5;
     /** Summon frame kinds. OPEN = the server asks the client to open the summon window (command). */
     public static final int SUMMON_OPEN = 0, SUMMON_STATE = 1, SUMMON_RESULT = 2, SUMMON_REFUSED = 3, DECOYS = 4;
     /** Entry.cooldown for passive artifacts (no use key). Usable ones carry their cooldown in seconds (0 = none). */
     public static final int PASSIVE = -1, MAX_COOLDOWN = 86400;
-    public static final int CATALOG = 1, STATE = 2, SUMMON_FRAME = 3;
+    public static final int CATALOG = 1, STATE = 2, SUMMON_FRAME = 3, SUMMON_MULTI_FRAME = 4;
     public static final int MAX_ID = 64, MAX_NAME = 40, MAX_DESCRIPTION = 200, MAX_EFFECT = 600, MAX_ICON = 200, MAX_NOTICE = 120;
     /** 0 일반, 1 고급, 2 유일, 3 전설. */
     public static final String[] GRADE_LABELS = {"일반", "고급", "유일", "전설"};
@@ -38,7 +43,7 @@ public final class ArtifactProtocol {
 
     public record Request(int action, long knownCatalog, String id) {
         public Request {
-            if (action < QUERY || action > SUMMON || id == null || id.length() > MAX_ID
+            if (action < QUERY || action > SUMMON_MULTI || id == null || id.length() > MAX_ID
                     || ((action == EQUIP || action == UNEQUIP || action == USE) && !validId(id)))
                 throw new IllegalArgumentException("artifact request");
         }
@@ -55,7 +60,21 @@ public final class ArtifactProtocol {
         }
         public boolean usable() { return cooldown >= 0; }
     }
-    public sealed interface Frame permits Catalog, State, Summon {}
+    public sealed interface Frame permits Catalog, State, Summon, SummonMulti {}
+    /** One pull of a five-pull. */
+    public record Pull(String artifactId, int grade, boolean isNew, int shards) {
+        public Pull {
+            if (!validId(artifactId) || grade < 0 || grade > 3 || shards < 0 || shards > 32767) throw new IllegalArgumentException("pull");
+        }
+    }
+    /** Five-pull result (all pulls decided by the server, shown at once). */
+    public record SummonMulti(int keys, List<Pull> pulls, String notice) implements Frame {
+        public SummonMulti {
+            if (keys < 0 || pulls == null || pulls.isEmpty() || pulls.size() > 10 || notice == null || notice.length() > MAX_NOTICE)
+                throw new IllegalArgumentException("summon multi");
+            pulls = List.copyOf(pulls);
+        }
+    }
     /** artifactId/grade/isNew/shards/decoys are only meaningful for SUMMON_RESULT (else "", 0, false, 0, zeros). */
     public record Summon(int kind, int keys, String artifactId, int grade, boolean isNew, int shards, int[] decoys, String notice) implements Frame {
         public Summon {
@@ -136,6 +155,11 @@ public final class ArtifactProtocol {
                     d.writeByte(SUMMON_FRAME); d.writeByte(m.kind()); d.writeInt(m.keys()); d.writeUTF(m.artifactId()); d.writeByte(m.grade());
                     d.writeBoolean(m.isNew()); d.writeShort(m.shards()); for (int g : m.decoys()) d.writeByte(g); d.writeUTF(m.notice());
                 }
+                case SummonMulti m -> {
+                    d.writeByte(SUMMON_MULTI_FRAME); d.writeInt(m.keys()); d.writeByte(m.pulls().size());
+                    for (Pull x : m.pulls()) { d.writeUTF(x.artifactId()); d.writeByte(x.grade()); d.writeBoolean(x.isNew()); d.writeShort(x.shards()); }
+                    d.writeUTF(m.notice());
+                }
             }
         });
     }
@@ -169,6 +193,13 @@ public final class ArtifactProtocol {
                 boolean isNew = d.readBoolean(); int shards = d.readUnsignedShort();
                 int[] decoys = new int[DECOYS]; for (int i = 0; i < DECOYS; i++) decoys[i] = d.readUnsignedByte();
                 return new Summon(kind, keys, id, grade, isNew, shards, decoys, d.readUTF());
+            }
+            if (type == SUMMON_MULTI_FRAME) {
+                int keys = d.readInt(), n = d.readUnsignedByte();
+                if (n < 1 || n > 10) throw new IOException("pulls");
+                var pulls = new ArrayList<Pull>(n);
+                for (int i = 0; i < n; i++) pulls.add(new Pull(d.readUTF(), d.readUnsignedByte(), d.readBoolean(), d.readUnsignedShort()));
+                return new SummonMulti(keys, pulls, d.readUTF());
             }
             throw new IOException("type");
         });

@@ -210,9 +210,13 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
             }
         } else if (r.action() == ArtifactProtocol.USE) {
             notice = use(p, r.id(), now);
-        } else if (r.action() == ArtifactProtocol.SUMMON_INFO || r.action() == ArtifactProtocol.SUMMON) {
+        } else if (r.action() == ArtifactProtocol.SUMMON_INFO || r.action() == ArtifactProtocol.SUMMON || r.action() == ArtifactProtocol.SUMMON_MULTI) {
             if (r.knownCatalog() != revision) send(p, true, "");
-            if (r.action() == ArtifactProtocol.SUMMON) {
+            if (r.action() == ArtifactProtocol.SUMMON_MULTI) {
+                var result = summonMulti(p);
+                send(p, false, "");
+                if (p.getListeningPluginChannels().contains(ArtifactProtocol.RESPONSE)) p.sendPluginMessage(plugin, ArtifactProtocol.RESPONSE, ArtifactProtocol.encode(result));
+            } else if (r.action() == ArtifactProtocol.SUMMON) {
                 var result = summon(p);
                 send(p, false, ""); // owned bitset now includes the new artifact (codex + NEW badge stay in sync)
                 sendSummon(p, result);
@@ -321,12 +325,40 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
         if (!any) return refuse.apply("소환할 수 있는 아티팩트가 없습니다.");
         if (have < summonCost) return refuse.apply("유물함 열쇠가 부족합니다.");
         if (!takeKeys(p, summonCost)) return refuse.apply("유물함 열쇠를 사용하지 못했습니다.");
+        var x = pull(p, UUID.randomUUID().toString());
+        int[] decoys = new int[ArtifactProtocol.DECOYS];
+        for (int i = 0; i < decoys.length; i++) decoys[i] = rollDecoy();
+        String notice = x.isNew() ? "" : (x.shards() > 0 ? "이미 가진 아티팩트입니다. 아티팩트 조각 " + x.shards() + "개를 우편으로 보냈습니다." : "이미 가진 아티팩트입니다.");
+        return new ArtifactProtocol.Summon(ArtifactProtocol.SUMMON_RESULT, keys(p), x.artifactId(), x.grade(), x.isNew(), x.shards(), decoys, notice);
+    }
+
+    /** Five-pull (소환하기 ×5): spends MULTI × cost keys at once, then rolls MULTI times. Same rules as one pull each. */
+    private ArtifactProtocol.Frame summonMulti(Player p) {
+        int have = keys(p), cost = summonCost * ArtifactProtocol.MULTI;
+        java.util.function.Function<String, ArtifactProtocol.Frame> refuse = msg -> ArtifactProtocol.Summon.simple(ArtifactProtocol.SUMMON_REFUSED, have, msg);
+        if (!plugin.playerStateReady(p)) return refuse.apply("캐릭터 정보를 불러오는 중입니다.");
+        if (!itemsAdder.available()) return refuse.apply("소환 아이템을 확인할 수 없습니다. 관리자에게 문의해 주세요.");
+        if (!Bukkit.getPluginManager().isPluginEnabled("LuckPerms")) return refuse.apply("아티팩트를 지급할 수 없습니다. 관리자에게 문의해 주세요.");
+        boolean any = false; for (int g = 0; g < 4; g++) any |= hasGrade(g);
+        if (!any) return refuse.apply("소환할 수 있는 아티팩트가 없습니다.");
+        if (have < cost) return refuse.apply("5회 소환에는 " + summonItemName + " " + cost + "개가 필요합니다.");
+        if (!takeKeys(p, cost)) return refuse.apply("소환 아이템을 사용하지 못했습니다.");
+        String batch = UUID.randomUUID().toString();
+        var pulls = new ArrayList<ArtifactProtocol.Pull>();
+        int shards = 0;
+        for (int i = 0; i < ArtifactProtocol.MULTI; i++) { var x = pull(p, batch + "-" + i); pulls.add(x); shards += x.shards(); }
+        String notice = shards > 0 ? "중복 아티팩트는 조각 " + shards + "개로 바꿔 우편으로 보냈습니다." : "";
+        return new ArtifactProtocol.SummonMulti(keys(p), pulls, notice);
+    }
+
+    /** One roll (keys already spent): new = ownership grant (refund one pull's keys by mail if it fails), duplicate = shards by mail.
+     *  A second copy inside the same five-pull counts as a duplicate (the first one is already a pending grant). */
+    private ArtifactProtocol.Pull pull(Player p, String summonId) {
         int grade = rollGrade();
         var pool = catalog.stream().filter(e -> e.grade() == grade).toList();
         Entry won = pool.get(random.nextInt(pool.size()));
         boolean duplicate = owns(p, won.id());
         int shards = 0;
-        String summonId = UUID.randomUUID().toString();
         if (!duplicate) {
             pendingGrants.computeIfAbsent(p.getUniqueId(), k -> new HashSet<>()).add(won.id());
             UUID uid = p.getUniqueId(); String id = won.id();
@@ -343,10 +375,7 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
         }
         plugin.getLogger().info("ARTIFACT SUMMON player=" + p.getName() + " (" + p.getUniqueId() + ") artifact=" + won.id()
                 + " grade=" + ArtifactProtocol.GRADE_KEYS[grade] + (duplicate ? " duplicate shards=" + shards : " new") + " summon=" + summonId);
-        int[] decoys = new int[ArtifactProtocol.DECOYS];
-        for (int i = 0; i < decoys.length; i++) decoys[i] = rollDecoy();
-        String notice = duplicate ? (shards > 0 ? "이미 가진 아티팩트입니다. 아티팩트 조각 " + shards + "개를 우편으로 보냈습니다." : "이미 가진 아티팩트입니다.") : "";
-        return new ArtifactProtocol.Summon(ArtifactProtocol.SUMMON_RESULT, keys(p), won.id(), grade, !duplicate, shards, decoys, notice);
+        return new ArtifactProtocol.Pull(won.id(), grade, !duplicate, shards);
     }
 
     private void mailShards(UUID player, int amount, Entry won, String summonId) {

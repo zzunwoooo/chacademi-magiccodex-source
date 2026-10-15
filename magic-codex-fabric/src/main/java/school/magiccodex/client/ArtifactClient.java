@@ -109,6 +109,10 @@ public final class ArtifactClient {
                     if (!(client.currentScreen instanceof ArtifactSummonScreen)) client.setScreen(new ArtifactSummonScreen());
                 } else if (client.currentScreen instanceof ArtifactSummonScreen screen) screen.onSummon(m);
             }
+            case ArtifactProtocol.SummonMulti m -> {
+                summonKeys = m.keys();
+                if (MinecraftClient.getInstance().currentScreen instanceof ArtifactSummonScreen screen) screen.onSummonMulti(m);
+            }
             case ArtifactProtocol.State s -> {
                 if (s.revision() != revision) return; // a newer catalogue is still arriving
                 owned = s.owned().length == catalog.size() ? s.owned().clone() : new boolean[catalog.size()];
@@ -143,6 +147,8 @@ public final class ArtifactClient {
     static boolean summonInfo() { return send(ArtifactProtocol.SUMMON_INFO, ""); }
     /** [소환하기]: the server spends a key and answers SUMMON_RESULT or SUMMON_REFUSED. */
     static boolean summon() { return send(ArtifactProtocol.SUMMON, ""); }
+    /** Five-pull (소환하기 ×5): spends 5 x cost keys (answer: SUMMON_MULTI_FRAME, or SUMMON REFUSED). */
+    static boolean summonMulti() { return send(ArtifactProtocol.SUMMON_MULTI, ""); }
     static int summonKeys() { return summonKeys; }
     static String summonRates() { return summonRates; }
     static boolean equip(String id) { return send(ArtifactProtocol.EQUIP, id); }
