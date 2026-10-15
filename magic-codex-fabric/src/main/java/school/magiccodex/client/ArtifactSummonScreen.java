@@ -15,7 +15,8 @@ import school.magiccodex.protocol.ArtifactProtocol;
 /**
  * 유물함 소환 (artifact summon) window, opened by the server (/아티팩트소환). [소환하기] asks the server to spend a key
  * item and roll; the answer arrives before any chest is picked, so the pick is purely presentational (the approved
- * reference: five identical chests, only the picked one opens, the rest show a grade for a moment).
+ * reference: five identical chests; the picked chest's grade shows first in the row, the other four flash cosmetic
+ * decoy grades, then the picked chest moves to the centre and opens).
  * All animation lives in {@link SummonScene}; this class draws it with the MagicCodex UI texture cache (additive for
  * light) and fonts, handles input and maps the scene's sound cues to vanilla sounds.
  */
@@ -51,7 +52,6 @@ final class ArtifactSummonScreen extends Screen {
     private float scale = 1, ox, oy;
     private long deadline;
     private String notice = "", resultNotice = "";
-    private int ringCue, starCue;
 
     ArtifactSummonScreen() { super(Text.literal("유물함 소환")); }
 
@@ -108,7 +108,6 @@ final class ArtifactSummonScreen extends Screen {
             notice = "서버 응답이 늦습니다. 결과는 아티팩트 도감에서 확인해 주세요.";
             scene.set(SummonScene.State.IDLE, now); ArtifactClient.summonInfo();
         }
-        if (scene.state == SummonScene.State.REVEAL && scene.t(now) > 2.7) scene.set(SummonScene.State.CARD, now);
     }
 
     // ------------------------------------------------------------------ drawing
@@ -117,11 +116,9 @@ final class ArtifactSummonScreen extends Screen {
         long now = Util.getMeasuringTimeMs();
         var images = UiResources.images(); images.beginFrame(); UiResources.text().beginFrame();
         try {
-            // background covers the window; everything else lives in the 1672x941 reference space, fully visible
-            float cover = Math.max(width / SummonScene.W, height / SummonScene.H);
-            int bw = Math.round(SummonScene.W * cover), bh = Math.round(SummonScene.H * cover);
+            // background covers the window (drawn by the scene through Canvas.background so the camera moves it);
+            // everything else lives in the 1672x941 reference space, fully visible
             c.fill(0, 0, width, height, 0xFF03060C);
-            images.drawTexture(c, BACKGROUND, (width - bw) / 2, (height - bh) / 2, 0, 0, bw, bh, 1672, 941, 1672, 941);
             scale = Math.min(width / SummonScene.W, height / SummonScene.H);
             ox = (width - SummonScene.W * scale) / 2; oy = (height - SummonScene.H * scale) / 2;
             double mx = (mouseX - ox) / scale, my = (mouseY - oy) / scale;
@@ -134,7 +131,8 @@ final class ArtifactSummonScreen extends Screen {
                     scene.hover = over;
                 }
                 scene.draw(canvas(c), now, now);
-                for (var cue : scene.cues(now)) play(cue);
+                var cues = scene.cues(now);
+                for (int i = 0; i < cues.size(); i++) play(cues.get(i), scene.cueIndex(i));
                 overlay(c, mx, my, now);
             } finally { m.pop(); }
         } finally { images.endFrame(); }
@@ -163,14 +161,23 @@ final class ArtifactSummonScreen extends Screen {
                 button(c, AGAIN, "다시 소환", true, mx, my);
                 button(c, CONFIRM, "확인", true, mx, my);
             } else button(c, CONFIRM_ONLY, "확인", true, mx, my);
-        } else if (s == SummonScene.State.OPENING && scene.t(now) < scene.openAt()) {
-            text(c, "클릭하여 건너뛰기", 1560, 905, 16, 0x99D8E2EA, LABEL);
         }
     }
 
     private SummonScene.Canvas canvas(DrawContext c) {
         var images = UiResources.images();
         return new SummonScene.Canvas() {
+            @Override public void background(float zoom, float dx, float dy) {
+                // reference space is centred in the window, so cover-size the image about the reference centre
+                float cover = Math.max(width / SummonScene.W, height / SummonScene.H) / scale * zoom;
+                float bw = SummonScene.W * cover, bh = SummonScene.H * cover;
+                var m = c.getMatrices(); m.push();
+                try {
+                    m.translate(SummonScene.W / 2 + dx - bw / 2, SummonScene.H / 2 + dy - bh / 2, 0);
+                    m.scale(bw / 1672f, bh / 941f, 1);
+                    images.drawTexture(c, BACKGROUND, 0, 0, 0, 0, 1672, 941, 1672, 941, 1672, 941);
+                } finally { m.pop(); }
+            }
             @Override public void sprite(String name, float cx, float cy, float w, float h, float rot, float squash, int argb, boolean additive) {
                 int[] d = DIMS.get(name);
                 if (d == null || w < .5f || h < .5f || (argb >>> 24) == 0) return;
@@ -201,25 +208,35 @@ final class ArtifactSummonScreen extends Screen {
 
     // ------------------------------------------------------------------ sounds
 
-    private void play(SummonScene.Cue cue) {
+    private void play(SummonScene.Cue cue, int index) {
         switch (cue) {
-            case RING -> { sound(SoundEvents.BLOCK_NOTE_BLOCK_CHIME.value(), .8f + .2f * ringCue++, .5f); }
-            case LEAK -> sound(SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE, 1.2f, .45f);
+            case GATHER -> sound(SoundEvents.BLOCK_BEACON_ACTIVATE, 1.4f, .45f);
+            case RING -> sound(SoundEvents.BLOCK_NOTE_BLOCK_CHIME.value(), .8f + .2f * index, .5f);
             case SHIFT -> sound(SoundEvents.BLOCK_RESPAWN_ANCHOR_SET_SPAWN, 1.1f, .6f);
             case BLACKOUT -> sound(SoundEvents.BLOCK_BEACON_DEACTIVATE, .6f, .7f);
             case METEOR -> sound(SoundEvents.ENTITY_FIREWORK_ROCKET_LAUNCH, .6f, .8f);
             case IMPACT -> sound(SoundEvents.ENTITY_FIREWORK_ROCKET_LARGE_BLAST, .8f, .8f);
+            case GRADE -> {
+                switch (index) {
+                    case 0 -> sound(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), 1f, .5f);
+                    case 1 -> sound(SoundEvents.BLOCK_AMETHYST_CLUSTER_BREAK, 1.1f, .7f);
+                    case 2 -> sound(SoundEvents.ENTITY_PLAYER_LEVELUP, 1.2f, .5f);
+                    default -> sound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1.1f, .5f);
+                }
+            }
+            case DECOY -> sound(index == 3 ? SoundEvents.BLOCK_AMETHYST_CLUSTER_BREAK : SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, .9f + .2f * index, .35f + .07f * index);
+            case MOVE -> sound(SoundEvents.ENTITY_ILLUSIONER_PREPARE_MIRROR, 1.2f, .45f);
+            case BEAT -> sound(SoundEvents.BLOCK_NOTE_BLOCK_BASEDRUM.value(), .7f + .15f * index, .6f);
             case OPEN -> {
                 sound(SoundEvents.BLOCK_CHEST_OPEN, 1.1f, .6f);
-                switch (scene.grade) {
+                switch (index) {
                     case 0 -> sound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, .6f);
                     case 1 -> sound(SoundEvents.BLOCK_AMETHYST_CLUSTER_BREAK, 1.1f, .8f);
                     case 2 -> sound(SoundEvents.ENTITY_PLAYER_LEVELUP, 1f, .6f);
                     default -> { sound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1f, .6f); sound(SoundEvents.ITEM_TOTEM_USE, 1.2f, .35f); }
                 }
             }
-            case STAR -> sound(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), 1f + .12f * starCue++, .45f);
-            case REVEAL_CHEST -> sound(SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, 1.2f, .5f);
+            case STAR -> sound(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), 1f + .12f * index, .45f);
             case CARD -> sound(SoundEvents.ITEM_BOOK_PAGE_TURN, 1f, .8f);
         }
     }
@@ -240,17 +257,16 @@ final class ArtifactSummonScreen extends Screen {
             case PICK -> {
                 int i = scene.chestAt(mx, my);
                 if (i >= 0) {
-                    scene.picked = i; ringCue = 0; starCue = 0;
+                    scene.picked = i;
                     scene.set(SummonScene.State.OPENING, now);
                     sound(SoundEvents.UI_BUTTON_CLICK.value(), 1f, .4f);
                     sound(SoundEvents.BLOCK_BEACON_POWER_SELECT, 1.3f, .5f);
                 }
             }
             case OPENING -> {
-                if (scene.continueReady(now)) scene.set(SummonScene.State.REVEAL, now);
-                else if (scene.t(now) < scene.openAt()) { scene.skip(now); ringCue = scene.rings(); }
+                if (scene.continueReady(now)) scene.set(SummonScene.State.CARD, now);
+                else scene.skip(now);
             }
-            case REVEAL -> scene.set(SummonScene.State.CARD, now);
             case CARD -> {
                 boolean again = ArtifactClient.summonKeys() >= cost();
                 if (again && AGAIN.contains(mx, my)) { click(); startSummon(); }

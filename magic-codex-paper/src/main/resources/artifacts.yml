@@ -23,6 +23,11 @@ summon:
     rare: 3
     unique: 1
     legendary: 0.1
+  decoy-weights:                 # 고르지 않은 4상자에 잠깐 보이는 등급 (연출용, 실제 보상 없음). 4:3:2:1 = 전설 10%로 "아깝다" 느낌
+    common: 4
+    rare: 3
+    unique: 2
+    legendary: 1
   duplicate:                     # 이미 가진 아티팩트가 나오면 조각을 우편으로 보냄
     item: "item:artifact_shard"
     amount: {common: 1, rare: 1, unique: 1, legendary: 1}

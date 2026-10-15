@@ -50,6 +50,8 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
     private String summonItem = "item:random_artifact", shardItem = "item:artifact_shard", summonItemName = "유물함 열쇠";
     private int summonCost = 1;
     private final double[] weights = {5, 3, 1, 0.1};
+    /** Grades shown on the four unpicked chests: cosmetic only, tilted toward high grades for a near-miss feel. */
+    private final double[] decoyWeights = {4, 3, 2, 1};
     private final int[] shardAmount = {1, 1, 1, 1};
     private String mailTitle = "아티팩트 조각", mailBody = "이미 가진 아티팩트가 나와 조각으로 바꿔 드렸습니다.";
     private final ItemsAdderItems itemsAdder;
@@ -116,19 +118,23 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
             throw new IllegalArgumentException("summon.item / summon.duplicate.item 은 아이템애더 네임스페이스:아이디");
         int cost = sm == null ? 1 : sm.getInt("cost", 1);
         if (cost < 1 || cost > 64) throw new IllegalArgumentException("summon.cost 는 1~64");
-        double[] w = new double[4]; int[] shards = new int[4]; double total = 0;
+        double[] w = new double[4], dw = new double[4]; int[] shards = new int[4]; double total = 0, decoyTotal = 0;
         for (int g = 0; g < 4; g++) {
             String key = ArtifactProtocol.GRADE_KEYS[g];
             w[g] = sm == null ? new double[]{5, 3, 1, 0.1}[g] : sm.getDouble("weights." + key, new double[]{5, 3, 1, 0.1}[g]);
             shards[g] = sm == null ? 1 : sm.getInt("duplicate.amount." + key, 1);
+            dw[g] = sm == null ? new double[]{4, 3, 2, 1}[g] : sm.getDouble("decoy-weights." + key, new double[]{4, 3, 2, 1}[g]);
+            if (dw[g] < 0 || !Double.isFinite(dw[g])) throw new IllegalArgumentException("summon.decoy-weights." + key + " 는 0 이상");
+            decoyTotal += dw[g];
             if (w[g] < 0 || !Double.isFinite(w[g])) throw new IllegalArgumentException("summon.weights." + key + " 는 0 이상");
             if (shards[g] < 0 || shards[g] > 64) throw new IllegalArgumentException("summon.duplicate.amount." + key + " 는 0~64");
             total += w[g];
         }
         if (total <= 0) throw new IllegalArgumentException("summon.weights 합이 0");
+        if (decoyTotal <= 0) throw new IllegalArgumentException("summon.decoy-weights 합이 0");
         catalog = next; revision = crc.getValue() == 0 ? 1 : crc.getValue(); maxEquipped = max; ownsAll = all;
         summonItem = item; shardItem = shard; summonCost = cost;
-        System.arraycopy(w, 0, weights, 0, 4); System.arraycopy(shards, 0, shardAmount, 0, 4);
+        System.arraycopy(w, 0, weights, 0, 4); System.arraycopy(dw, 0, decoyWeights, 0, 4); System.arraycopy(shards, 0, shardAmount, 0, 4);
         if (sm != null) {
             mailTitle = sm.getString("duplicate.mail-title", mailTitle); mailBody = sm.getString("duplicate.mail-body", mailBody);
             summonItemName = clip(sm.getString("item-name", summonItemName), 30, "summon.item-name");
@@ -270,6 +276,13 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
         for (int g = 3; g >= 0; g--) if (hasGrade(g) && weights[g] > 0) return g;
         return 0;
     }
+    /** Cosmetic grade for an unpicked chest (no artifact behind it, so the catalogue does not limit it). */
+    private int rollDecoy() {
+        double total = 0; for (double w : decoyWeights) total += w;
+        double x = random.nextDouble() * total;
+        for (int g = 0; g < 4; g++) { x -= decoyWeights[g]; if (x < 0 && decoyWeights[g] > 0) return g; }
+        return 0;
+    }
     private boolean hasGrade(int g) { if (weights[g] <= 0) return false; for (Entry e : catalog) if (e.grade() == g) return true; return false; }
 
     /** Spends one key and rolls. Returns RESULT or REFUSED (keys untouched on refusal). */
@@ -306,7 +319,7 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
         plugin.getLogger().info("ARTIFACT SUMMON player=" + p.getName() + " (" + p.getUniqueId() + ") artifact=" + won.id()
                 + " grade=" + ArtifactProtocol.GRADE_KEYS[grade] + (duplicate ? " duplicate shards=" + shards : " new") + " summon=" + summonId);
         int[] decoys = new int[ArtifactProtocol.DECOYS];
-        for (int i = 0; i < decoys.length; i++) decoys[i] = rollGrade();
+        for (int i = 0; i < decoys.length; i++) decoys[i] = rollDecoy();
         String notice = duplicate ? (shards > 0 ? "이미 가진 아티팩트입니다. 아티팩트 조각 " + shards + "개를 우편으로 보냈습니다." : "이미 가진 아티팩트입니다.") : "";
         return new ArtifactProtocol.Summon(ArtifactProtocol.SUMMON_RESULT, keys(p), won.id(), grade, !duplicate, shards, decoys, notice);
     }
