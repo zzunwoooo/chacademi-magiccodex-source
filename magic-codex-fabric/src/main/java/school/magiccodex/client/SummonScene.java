@@ -222,7 +222,6 @@ final class SummonScene {
             if (on > 0) {
                 c.sprite("fx_glint", x, BASE - CLOSED_H * SEAM, 240, 64, 0, 1, rgba(GRADE[g], .8f * on), true);
                 if (fresh > 0) shockwave(c, x, BASE, d, GRADE[g], 380);
-                c.text(GRADE_NAME[g], x, BASE - CLOSED_H - 58, 32 * (1 + .3f * fresh), rgba(brighten(GRADE[g]), on), Face.TITLE, true);
             }
         }
 
@@ -355,13 +354,12 @@ final class SummonScene {
         }
     }
 
-    /** Grade name + stars above the picked chest once the grade is known (row stage). */
+    /** Grade stars above the picked chest once the grade is known (row stage; no grade text, the effects tell it). */
     private void gradeBanner(Canvas c, float x, float y, double t, float alpha) {
         double g = t - gradeAt();
         if (g < 0 || alpha <= 0) return;
         float pop = 1 + .45f * decay(g, .3f), a = clamp01((float) (g / .15)) * alpha;
         c.sprite("fx_glint", x, y, 360 * pop, 90, 0, 1, rgba(GRADE[grade], .7f * a), true);
-        c.text(GRADE_NAME[grade], x, y, 44 * pop, rgba(GRADE[grade], a), Face.TITLE, true);
         for (int s = 0; s < rings(); s++) {
             double st = g - (.12 + .1 * s);
             if (st < 0) continue;
