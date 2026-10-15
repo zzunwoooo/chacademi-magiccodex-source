@@ -1,6 +1,6 @@
 plugins { id 'java' }
 group = 'school.chacademia'
-version = '0.2.0-expansion71.1-reaction.1'
+version = '0.2.0-expansion71.1-reaction.2'
 base { archivesName = 'chacademia-magic-mythic' }
 repositories {
     if (findProperty('localDependencyRepo')) maven { url = uri(property('localDependencyRepo')) }
@@ -8,6 +8,7 @@ repositories {
     maven { url = 'https://repo.papermc.io/repository/maven-public/' }
 }
 dependencies {
+    testImplementation files('C:/Chacademi/network/school/plugins/portable-vfx-paper-3.2.0-catalog.alpha.4-holytaming.1-opacity.1.jar')
     compileOnly files('C:/Chacademi/network/school/plugins/worldguard-bukkit-7.0.13-dist.jar','C:/Chacademi/network/school/plugins/FastAsyncWorldEdit-Paper-2.13.1-SNAPSHOT-1119.jar')
     testImplementation files('../plugins/MythicMobs-5.9.0.jar','C:/Chacademi/network/school/plugins/worldguard-bukkit-7.0.13-dist.jar','C:/Chacademi/network/school/plugins/FastAsyncWorldEdit-Paper-2.13.1-SNAPSHOT-1119.jar')
     compileOnly files('../plugins/MythicMobs-5.9.0.jar')

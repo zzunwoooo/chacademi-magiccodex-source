@@ -28,6 +28,10 @@ reactions:
   damage-floor: 2         # 피해 반응(증기 폭발·연쇄 번개·일식) 기준값의 최소치
   damage-scale: 1.0       # 피해 반응 배율 (밸런스 조절용)
   icon-range: 48          # 이 거리 안의 플레이어에게만 아이콘 패킷 전송
+  vfx:                    # 반응 연출 (PortableVFX 팩 ElementReactions, 클라이언트에 팩 설치 필요)
+    enabled: true
+    pack: elementreactions  # 팩 폴더 이름(소문자) -> claude:elementreactions/<반응>
+    range: 48               # 이 거리 안의 플레이어에게만 재생
 debug: false
 
 # 2026-10-14 추가 (71종) --------------------------------------------------------

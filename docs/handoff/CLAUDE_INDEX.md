@@ -83,6 +83,7 @@ Claude 는 GPT 작업 브랜치에 직접 커밋하지 않고, **`claude/` 로 �
 | `claude/magic-71-gameplay-20261014` | `claude/followup-fixes-20261013` @ `41ee355` | `CLAUDE_MAGIC_71_20261014.md` | 미구현 마법 71종(이전 7 + 101~167 신규 64) 게임플레이: 애드온 새 메커닉 6종·패시브(슬롯 장착)·획득 조건(수동 9·자연 47)·VFX 바인딩 초안(미사용). 64종은 VFX 클라이언트 지원 전까지 시전 비활성 유지, `/마법미몹 시험` 으로 기능 확인. MagicCodex 코드는 제안만(Bridge 쿨타임 API 패치·클라이언트 슬롯 채널). **javac 타입검사만, JUnit·빌드·실게임 전 — 문서 0장 먼저** | 받기 전 |
 | `claude/magic-71-gameplay-20261014` | 같은 브랜치 이어서 | `CLAUDE_VFX_BC7_20261014.md` | PortableVFX 클라이언트 텍스처 BC7 압축(순수 Java 인코더, 디스크 캐시, 화질 38 dB 미만은 RGBA 유지). 신규 62팩 430→119 MiB, 예산 문제 해소. `-Dportablevfx.claude.textureCompression=off` 로 예전 경로. **스텁 javac + 일부 테스트만, Gradle·GL 스모크·실게임 전 — 문서 0장 먼저** | 받기 전 |
 | `claude/magic-71-gameplay-20261014` | 같은 브랜치 `da851b7` | `CLAUDE_DEPLOY_101_167_20261015.md` | **101~167 배포 전달 사항**: 070ceae 와 통합, 서버·클라이언트·런처에 무엇을 배포할지, 기존 PC 도감 폴더 미갱신 문제, VFX 연결 미반영(시전 거부 원인), 켜지 않는 마법 목록 | 받기 전 |
+| `claude/reaction-vfx-20261015` | `claude/artifact-codex-20261015` @ `10c7e42` (위 브랜치 포함) | `CLAUDE_REACTION_VFX_20261015.md` | 원소 반응 VFX 15종: PortableVFX 팩 `ElementReactions`(client_compat OK, 텍스처 RGBA 2.5 MiB) + magic-mythic `ReactionVfx`(리플렉션, softdepend PortableVFX)로 반응 시 재생. **클라 팩 배포 필요. javac 스텁 검사만, Gradle·실게임 전** | 받기 전 |
 
 ## Claude 가 지키는 규칙
 

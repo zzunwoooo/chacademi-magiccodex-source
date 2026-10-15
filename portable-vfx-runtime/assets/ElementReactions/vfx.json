@@ -1,0 +1,11337 @@
+{
+ "schemaVersion": "1.21.0",
+ "name": "ElementReactions",
+ "units": {
+  "length": "m (1 = 1 block)",
+  "time": "s",
+  "angle": "rad",
+  "angularVelocity": "rad/s",
+  "color": "sRGB 0..1",
+  "tint": "linear HDR multiplier"
+ },
+ "coordinateSystem": {
+  "handedness": "left",
+  "up": "+Y",
+  "forward": "+Z",
+  "eulerOrder": "Z, then X, then Y"
+ },
+ "simulation": {
+  "fixedTimeStep": 0.008333333333333333,
+  "gravity": 9.81
+ },
+ "post": {
+  "bloom": {
+   "threshold": 0.95,
+   "thresholdSpace": "gamma",
+   "softKnee": 0.5,
+   "intensity": 1.3,
+   "scatter": 0.65,
+   "tint": [
+    1,
+    0.95,
+    0.92
+   ]
+  },
+  "tonemapping": "neutral"
+ },
+ "materials": {
+  "glowWarm": {
+   "texture": "textures/T_Glow.png",
+   "blend": "additive",
+   "tint": [
+    2,
+    1.6,
+    1.2
+   ],
+   "depthWrite": false
+  },
+  "steam": {
+   "texture": "textures/T_Puff_Sheet.png",
+   "blend": "alpha",
+   "tint": [
+    0.95,
+    0.97,
+    1
+   ],
+   "depthWrite": false
+  },
+  "ringPale": {
+   "texture": "textures/T_Ring.png",
+   "blend": "additive",
+   "tint": [
+    1.6,
+    1.8,
+    2
+   ],
+   "depthWrite": false
+  },
+  "dotWater": {
+   "texture": "textures/T_Dot.png",
+   "blend": "additive",
+   "tint": [
+    1.2,
+    1.9,
+    2.6
+   ],
+   "depthWrite": false
+  },
+  "glowFire": {
+   "texture": "textures/T_Glow.png",
+   "blend": "additive",
+   "tint": [
+    2.2,
+    1,
+    0.35
+   ],
+   "depthWrite": false
+  },
+  "streakFire": {
+   "texture": "textures/T_Streak.png",
+   "blend": "additive",
+   "tint": [
+    2.6,
+    1.7,
+    0.8
+   ],
+   "depthWrite": false
+  },
+  "dotFire": {
+   "texture": "textures/T_Dot.png",
+   "blend": "additive",
+   "tint": [
+    2.4,
+    1.6,
+    0.9
+   ],
+   "depthWrite": false
+  },
+  "crackLava": {
+   "texture": "textures/T_Crack.png",
+   "blend": "additive",
+   "tint": [
+    2.4,
+    1.5,
+    0.9
+   ],
+   "depthWrite": false
+  },
+  "starSun": {
+   "texture": "textures/T_Star.png",
+   "blend": "additive",
+   "tint": [
+    2.8,
+    2.4,
+    1.4
+   ],
+   "depthWrite": false
+  },
+  "glowSun": {
+   "texture": "textures/T_Glow.png",
+   "blend": "additive",
+   "tint": [
+    2.4,
+    1.8,
+    0.7
+   ],
+   "depthWrite": false
+  },
+  "ringSun": {
+   "texture": "textures/T_Ring.png",
+   "blend": "additive",
+   "tint": [
+    2.4,
+    1.9,
+    1
+   ],
+   "depthWrite": false
+  },
+  "sigilEmber": {
+   "texture": "textures/T_Sigil.png",
+   "blend": "additive",
+   "tint": [
+    2.2,
+    1.6,
+    1.2
+   ],
+   "depthWrite": false
+  },
+  "mistDark": {
+   "texture": "textures/T_Puff_Sheet.png",
+   "blend": "alpha",
+   "tint": [
+    0.22,
+    0.1,
+    0.1
+   ],
+   "depthWrite": false
+  },
+  "bolt": {
+   "texture": "textures/T_Bolt_Sheet.png",
+   "blend": "additive",
+   "tint": [
+    1.7,
+    2.1,
+    3
+   ],
+   "depthWrite": false
+  },
+  "glowBolt": {
+   "texture": "textures/T_Glow.png",
+   "blend": "additive",
+   "tint": [
+    1.3,
+    1.8,
+    3
+   ],
+   "depthWrite": false
+  },
+  "streakBolt": {
+   "texture": "textures/T_Streak.png",
+   "blend": "additive",
+   "tint": [
+    1.8,
+    2.2,
+    3
+   ],
+   "depthWrite": false
+  },
+  "mud": {
+   "texture": "textures/T_Puff_Sheet.png",
+   "blend": "alpha",
+   "tint": [
+    0.42,
+    0.3,
+    0.2
+   ],
+   "depthWrite": false
+  },
+  "chunkMud": {
+   "texture": "textures/T_Chunk_Sheet.png",
+   "blend": "alpha",
+   "tint": [
+    0.55,
+    0.4,
+    0.27
+   ],
+   "depthWrite": false
+  },
+  "dotMud": {
+   "texture": "textures/T_Dot.png",
+   "blend": "alpha",
+   "tint": [
+    0.45,
+    0.33,
+    0.22
+   ],
+   "depthWrite": false
+  },
+  "ringSoft": {
+   "texture": "textures/T_Ring.png",
+   "blend": "additive",
+   "tint": [
+    1.7,
+    1.7,
+    1.7
+   ],
+   "depthWrite": false
+  },
+  "glowSoft": {
+   "texture": "textures/T_Glow.png",
+   "blend": "additive",
+   "tint": [
+    1.8,
+    1.8,
+    1.8
+   ],
+   "depthWrite": false
+  },
+  "dotSoft": {
+   "texture": "textures/T_Dot.png",
+   "blend": "additive",
+   "tint": [
+    2,
+    2,
+    2
+   ],
+   "depthWrite": false
+  },
+  "swirlAbyss": {
+   "texture": "textures/T_Swirl.png",
+   "blend": "additive",
+   "tint": [
+    1.6,
+    1.8,
+    2.6
+   ],
+   "depthWrite": false
+  },
+  "mistAbyss": {
+   "texture": "textures/T_Puff_Sheet.png",
+   "blend": "alpha",
+   "tint": [
+    0.1,
+    0.12,
+    0.25
+   ],
+   "depthWrite": false
+  },
+  "swirlSand": {
+   "texture": "textures/T_Swirl.png",
+   "blend": "additive",
+   "tint": [
+    1.5,
+    1.2,
+    0.75
+   ],
+   "depthWrite": false
+  },
+  "grain": {
+   "texture": "textures/T_Dot.png",
+   "blend": "alpha",
+   "tint": [
+    0.95,
+    0.78,
+    0.5
+   ],
+   "depthWrite": false
+  },
+  "dust": {
+   "texture": "textures/T_Puff_Sheet.png",
+   "blend": "alpha",
+   "tint": [
+    0.85,
+    0.72,
+    0.5
+   ],
+   "depthWrite": false
+  },
+  "glowWhite": {
+   "texture": "textures/T_Glow.png",
+   "blend": "additive",
+   "tint": [
+    2.4,
+    2.4,
+    2.3
+   ],
+   "depthWrite": false
+  },
+  "starWhite": {
+   "texture": "textures/T_Star.png",
+   "blend": "additive",
+   "tint": [
+    2.8,
+    2.8,
+    2.6
+   ],
+   "depthWrite": false
+  },
+  "ringWhite": {
+   "texture": "textures/T_Ring.png",
+   "blend": "additive",
+   "tint": [
+    2.2,
+    2.2,
+    2.1
+   ],
+   "depthWrite": false
+  },
+  "rift": {
+   "texture": "textures/T_Rift.png",
+   "blend": "additive",
+   "tint": [
+    2,
+    1.6,
+    2.8
+   ],
+   "depthWrite": false
+  },
+  "mistVoid": {
+   "texture": "textures/T_Puff_Sheet.png",
+   "blend": "alpha",
+   "tint": [
+    0.15,
+    0.06,
+    0.22
+   ],
+   "depthWrite": false
+  },
+  "dotVoid": {
+   "texture": "textures/T_Dot.png",
+   "blend": "additive",
+   "tint": [
+    1.8,
+    1.2,
+    2.6
+   ],
+   "depthWrite": false
+  },
+  "glowVoid": {
+   "texture": "textures/T_Glow.png",
+   "blend": "additive",
+   "tint": [
+    1.2,
+    0.6,
+    2
+   ],
+   "depthWrite": false
+  },
+  "shard": {
+   "texture": "textures/T_Shard.png",
+   "blend": "additive",
+   "tint": [
+    1.6,
+    2,
+    2.2
+   ],
+   "depthWrite": false
+  },
+  "starIce": {
+   "texture": "textures/T_Star.png",
+   "blend": "additive",
+   "tint": [
+    2.2,
+    2.6,
+    2.8
+   ],
+   "depthWrite": false
+  },
+  "glowIce": {
+   "texture": "textures/T_Glow.png",
+   "blend": "additive",
+   "tint": [
+    1.2,
+    1.8,
+    2.2
+   ],
+   "depthWrite": false
+  },
+  "chunkDark": {
+   "texture": "textures/T_Chunk_Sheet.png",
+   "blend": "alpha",
+   "tint": [
+    0.32,
+    0.25,
+    0.22
+   ],
+   "depthWrite": false
+  },
+  "dustDark": {
+   "texture": "textures/T_Puff_Sheet.png",
+   "blend": "alpha",
+   "tint": [
+    0.25,
+    0.2,
+    0.2
+   ],
+   "depthWrite": false
+  },
+  "crackDark": {
+   "texture": "textures/T_Crack.png",
+   "blend": "additive",
+   "tint": [
+    1.1,
+    0.6,
+    1.4
+   ],
+   "depthWrite": false
+  },
+  "disc": {
+   "texture": "textures/T_Disc.png",
+   "blend": "alpha",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "depthWrite": false
+  },
+  "ringEclipse": {
+   "texture": "textures/T_Ring.png",
+   "blend": "additive",
+   "tint": [
+    2.4,
+    2,
+    2.4
+   ],
+   "depthWrite": false
+  },
+  "glowEclipse": {
+   "texture": "textures/T_Glow.png",
+   "blend": "additive",
+   "tint": [
+    1.4,
+    0.8,
+    1.8
+   ],
+   "depthWrite": false
+  }
+ },
+ "meshes": {
+  "quad": {
+   "vertices": [
+    [
+     -0.5,
+     0,
+     -0.5
+    ],
+    [
+     0.5,
+     0,
+     -0.5
+    ],
+    [
+     0.5,
+     0,
+     0.5
+    ],
+    [
+     -0.5,
+     0,
+     0.5
+    ]
+   ],
+   "uvs": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     0,
+     1
+    ]
+   ],
+   "triangles": [
+    0,
+    1,
+    2,
+    0,
+    2,
+    3
+   ],
+   "doubleSided": true
+  },
+  "bolt": {
+   "vertices": [
+    [
+     -0.16,
+     0,
+     0
+    ],
+    [
+     0.16,
+     0,
+     0
+    ],
+    [
+     0.16,
+     0,
+     3
+    ],
+    [
+     -0.16,
+     0,
+     3
+    ],
+    [
+     0,
+     -0.16,
+     0
+    ],
+    [
+     0,
+     0.16,
+     0
+    ],
+    [
+     0,
+     0.16,
+     3
+    ],
+    [
+     0,
+     -0.16,
+     3
+    ]
+   ],
+   "uvs": [
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     1,
+     0
+    ]
+   ],
+   "triangles": [
+    0,
+    1,
+    2,
+    0,
+    2,
+    3,
+    4,
+    5,
+    6,
+    4,
+    6,
+    7
+   ],
+   "doubleSided": true
+  }
+ },
+ "models": {},
+ "features": {
+  "catalog": {
+   "billboard": {
+    "visualImpact": "high",
+    "description": "camera-facing quads"
+   },
+   "stretchedBillboard": {
+    "visualImpact": "medium",
+    "description": "quads stretched along velocity (streaks, sparks, flame tongues)"
+   },
+   "meshParticle": {
+    "visualImpact": "high",
+    "description": "each particle is a ribbon mesh (swirls, arcs, rings); defines the silhouette of strokes"
+   },
+   "flipbook": {
+    "visualImpact": "high",
+    "description": "texture sheet animation over lifetime (cel flame/smoke/stroke wipes)"
+   },
+   "additiveBlend": {
+    "visualImpact": "high",
+    "description": "additive blending for glows and strokes"
+   },
+   "alphaBlend": {
+    "visualImpact": "high",
+    "description": "straight alpha blending for cel flames, smoke, ink"
+   },
+   "hdrTint": {
+    "visualImpact": "medium",
+    "description": "material tint above 1.0; only visible as extra glow when bloom exists"
+   },
+   "bloom": {
+    "visualImpact": "high",
+    "description": "post bloom on HDR values; the anime glow look depends on it"
+   },
+   "tonemapNeutral": {
+    "visualImpact": "low",
+    "description": "Neutral tonemapping of the HDR image"
+   },
+   "worldSpace": {
+    "visualImpact": "medium",
+    "description": "particles stay where spawned while the emitter moves (trails)"
+   },
+   "rateOverDistance": {
+    "visualImpact": "medium",
+    "description": "emission proportional to emitter travel distance"
+   },
+   "rotation3D": {
+    "visualImpact": "medium",
+    "description": "per-particle 3D start rotation (mesh particles)"
+   },
+   "rotationOverLifetime": {
+    "visualImpact": "medium",
+    "description": "spinning particles (mesh spin is the swirl motion)"
+   },
+   "orbitalVelocity": {
+    "visualImpact": "high",
+    "description": "positions orbit the layer Y axis (vortex motion)"
+   },
+   "radialVelocity": {
+    "visualImpact": "low",
+    "description": "positions pushed away from the layer origin"
+   },
+   "linearVelocity": {
+    "visualImpact": "low",
+    "description": "velocity over lifetime (rising smoke/flames)"
+   },
+   "gravity": {
+    "visualImpact": "low",
+    "description": "gravity modifier"
+   },
+   "drag": {
+    "visualImpact": "low",
+    "description": "velocity damping"
+   },
+   "noise": {
+    "visualImpact": "low",
+    "description": "turbulent flutter of embers/sparkles (SCHEMA §4.3 function)"
+   },
+   "trails": {
+    "visualImpact": "medium",
+    "description": "per-particle ribbon trails"
+   },
+   "attachedFollow": {
+    "visualImpact": "high",
+    "description": "role \"attached\": the system transform follows a moving entity every frame (buffs/auras, SCHEMA §5)"
+   },
+   "linkTarget": {
+    "visualImpact": "high",
+    "description": "role \"link\": the system frame spans source → target (two runtime points, every frame) and exposes linkLength (SCHEMA §5)"
+   },
+   "pathFollow": {
+    "visualImpact": "high",
+    "description": "particle position follows a curved path from its spawn point to the link target over its lifetime (SCHEMA §4.8)"
+   },
+   "salvoSequence": {
+    "visualImpact": "high",
+    "description": "top-level salvo: N projectile instances fired one by one from caster-relative slots at fireStart + k·fireInterval (runtime inputs), each stopping its idle systems (SCHEMA §5.2)"
+   },
+   "instanceScale": {
+    "visualImpact": "medium",
+    "description": "whole cast scaled uniformly by clamp(input / reference, min, max) from a runtime input: targetHeight or (1.11.0) areaRadius; (1.15.0) only the systems in scale.systems when that list is given (SCHEMA §5.3)"
+   },
+   "phasedSequence": {
+    "visualImpact": "high",
+    "description": "systems with phase begin/sustain/end played on the sequence timeline with a runtime hold duration (SCHEMA §5.1)"
+   },
+   "depthWrite": {
+    "visualImpact": "high",
+    "description": "material writes depth (opaque alpha-blended solid mesh, e.g. a 3D rock): its own faces and later-drawn particles are depth-tested against it (SCHEMA §2 Material, 1.8.0)"
+   },
+   "flipbookCycles": {
+    "visualImpact": "medium",
+    "description": "flipbook.cycles > 1: the sheet loops several times per lifetime (flickering flames on long-lived particles, SCHEMA §4.5, 1.9.0)"
+   },
+   "stopTail": {
+    "visualImpact": "medium",
+    "description": "onStop.mode \"jumpToTail\": when the system stops emitting, live particles skip ahead so only `tail` s of life remain (they play their fade/break-up end at once, SCHEMA §4.9, 1.9.0)"
+   },
+   "modelParticle": {
+    "visualImpact": "high",
+    "description": "render.type \"model\": each particle is an animated 3D model (glTF binary, rigid node hierarchy, node TRS clips, vertex colors; 1.13.0: embedded baseColor textures, toon ramp, outline) shaded by models[].shading (SCHEMA §4.10)"
+   },
+   "widthScale": {
+    "visualImpact": "high",
+    "description": "top-level width: the listed systems are stretched along their right axis by clamp(effectWidth / reference, min, max) from a runtime input; listed layers scale their emission counts by the same factor (SCHEMA §5.4, 1.12.0)"
+   },
+   "triggeredEnd": {
+    "visualImpact": "high",
+    "description": "external trigger signal ends the phased sequence early with its own end branch (e.g. trap explosion) instead of the quiet expire end (SCHEMA §5.1, 1.7.0)"
+   }
+  },
+  "required": [
+   "additiveBlend",
+   "alphaBlend",
+   "billboard",
+   "bloom",
+   "drag",
+   "flipbook",
+   "flipbookCycles",
+   "gravity",
+   "hdrTint",
+   "linearVelocity",
+   "meshParticle",
+   "orbitalVelocity",
+   "radialVelocity",
+   "rotation3D",
+   "rotationOverLifetime",
+   "stretchedBillboard",
+   "tonemapNeutral"
+  ],
+  "byLayer": {
+   "steam/Flash": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "steam/Puffs": [
+    "alphaBlend",
+    "billboard",
+    "drag",
+    "flipbook",
+    "linearVelocity"
+   ],
+   "steam/Ring": [
+    "additiveBlend",
+    "hdrTint",
+    "meshParticle",
+    "rotation3D"
+   ],
+   "steam/Drops": [
+    "additiveBlend",
+    "billboard",
+    "drag",
+    "gravity",
+    "hdrTint"
+   ],
+   "wildfire/Glow": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "wildfire/Sparks": [
+    "additiveBlend",
+    "drag",
+    "gravity",
+    "hdrTint",
+    "stretchedBillboard"
+   ],
+   "wildfire/Embers": [
+    "additiveBlend",
+    "billboard",
+    "drag",
+    "gravity",
+    "hdrTint"
+   ],
+   "magma/Crack": [
+    "additiveBlend",
+    "hdrTint",
+    "meshParticle",
+    "rotation3D"
+   ],
+   "magma/Glow": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "magma/Lava": [
+    "additiveBlend",
+    "billboard",
+    "gravity",
+    "hdrTint",
+    "linearVelocity"
+   ],
+   "flare/Star": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "flare/Glow": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "flare/Ring": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "ember_curse/Sigil": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint",
+    "rotationOverLifetime"
+   ],
+   "ember_curse/Mist": [
+    "alphaBlend",
+    "billboard",
+    "flipbook"
+   ],
+   "ember_curse/Embers": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint",
+    "linearVelocity"
+   ],
+   "shock/Bolt": [
+    "additiveBlend",
+    "flipbook",
+    "flipbookCycles",
+    "hdrTint",
+    "meshParticle"
+   ],
+   "shock/SrcGlow": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "shock/HitGlow": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "shock/HitSparks": [
+    "additiveBlend",
+    "drag",
+    "hdrTint",
+    "stretchedBillboard"
+   ],
+   "mud/Splat": [
+    "alphaBlend",
+    "flipbook",
+    "meshParticle",
+    "rotation3D"
+   ],
+   "mud/Clods": [
+    "alphaBlend",
+    "billboard",
+    "gravity",
+    "linearVelocity"
+   ],
+   "mud/Drops": [
+    "alphaBlend",
+    "billboard",
+    "gravity",
+    "linearVelocity"
+   ],
+   "rainbow/Ring": [
+    "additiveBlend",
+    "hdrTint",
+    "meshParticle",
+    "rotation3D"
+   ],
+   "rainbow/Glow": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "rainbow/Motes1": [
+    "additiveBlend",
+    "billboard",
+    "drag",
+    "hdrTint",
+    "linearVelocity"
+   ],
+   "rainbow/Motes2": [
+    "additiveBlend",
+    "billboard",
+    "drag",
+    "hdrTint",
+    "linearVelocity"
+   ],
+   "rainbow/Motes3": [
+    "additiveBlend",
+    "billboard",
+    "drag",
+    "hdrTint",
+    "linearVelocity"
+   ],
+   "abyss/Swirl": [
+    "additiveBlend",
+    "hdrTint",
+    "meshParticle",
+    "rotation3D",
+    "rotationOverLifetime"
+   ],
+   "abyss/Mist": [
+    "alphaBlend",
+    "flipbook",
+    "meshParticle",
+    "rotation3D"
+   ],
+   "abyss/Bubbles": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint",
+    "linearVelocity",
+    "orbitalVelocity"
+   ],
+   "sandstorm/Swirl": [
+    "additiveBlend",
+    "hdrTint",
+    "meshParticle",
+    "rotation3D",
+    "rotationOverLifetime"
+   ],
+   "sandstorm/Grains": [
+    "alphaBlend",
+    "billboard",
+    "linearVelocity",
+    "orbitalVelocity",
+    "radialVelocity"
+   ],
+   "sandstorm/Dust": [
+    "alphaBlend",
+    "billboard",
+    "flipbook",
+    "linearVelocity"
+   ],
+   "flash/Glow": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "flash/Star": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "flash/Ring": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "void_gust/Rift": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "void_gust/Mist": [
+    "alphaBlend",
+    "billboard",
+    "flipbook"
+   ],
+   "void_gust/Motes": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint",
+    "orbitalVelocity",
+    "radialVelocity"
+   ],
+   "void_gust/Glow": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "crystal/Shards": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "crystal/Glints": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "crystal/Glow": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "bind/Clods": [
+    "alphaBlend",
+    "billboard",
+    "gravity",
+    "linearVelocity"
+   ],
+   "bind/Dust": [
+    "alphaBlend",
+    "flipbook",
+    "meshParticle",
+    "rotation3D"
+   ],
+   "bind/Seam": [
+    "additiveBlend",
+    "hdrTint",
+    "meshParticle",
+    "rotation3D"
+   ],
+   "eclipse/Disc": [
+    "alphaBlend",
+    "billboard"
+   ],
+   "eclipse/Corona": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint",
+    "rotationOverLifetime"
+   ],
+   "eclipse/Halo": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "eclipse/Burst": [
+    "additiveBlend",
+    "hdrTint",
+    "meshParticle",
+    "rotation3D"
+   ],
+   "eclipse/Pop": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ]
+  }
+ },
+ "sequence": null,
+ "salvo": null,
+ "scale": null,
+ "width": null,
+ "systems": [
+  {
+   "id": "steam",
+   "role": "impact",
+   "phase": "main",
+   "endBranch": "any",
+   "duration": 0.3,
+   "loop": false,
+   "layers": [
+    {
+     "id": "Flash",
+     "material": "glowWarm",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 0,
+     "space": "local",
+     "position": [
+      0,
+      0.8,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.14,
+       0.14
+      ],
+      "size": [
+       1,
+       1
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.5,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1.1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    },
+    {
+     "id": "Puffs",
+     "material": "steam",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 4,
+     "space": "local",
+     "position": [
+      0,
+      0.6,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 12,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "sphere",
+      "radius": 0.3,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.3,
+       0.42
+      ],
+      "size": [
+       0.55,
+       0.85
+      ],
+      "speed": [
+       2.5,
+       4
+      ],
+      "rotation": [
+       0,
+       6.28319
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "world",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0.4,
+        0.9
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 7,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.75
+       },
+       {
+        "t": 0.5,
+        "a": 0.5
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.6,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1.3,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": {
+      "columns": 4,
+      "rows": 4,
+      "frameOrder": "rowMajorFromTopLeft",
+      "playback": "oncePerLifetime",
+      "cycles": 1
+     },
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "alphaBlend",
+      "billboard",
+      "drag",
+      "flipbook",
+      "linearVelocity"
+     ]
+    },
+    {
+     "id": "Ring",
+     "material": "ringPale",
+     "render": {
+      "type": "mesh",
+      "mesh": "quad",
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 0,
+     "space": "local",
+     "position": [
+      0,
+      0.05,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.28,
+       0.28
+      ],
+      "size": [
+       4,
+       4
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        6.28319
+       ],
+       [
+        0,
+        0
+       ]
+      ]
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.7
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.2,
+       "inTangent": 0,
+       "outTangent": 2.5
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "hdrTint",
+      "meshParticle",
+      "rotation3D"
+     ]
+    },
+    {
+     "id": "Drops",
+     "material": "dotWater",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": -3,
+     "space": "local",
+     "position": [
+      0,
+      0.6,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 10,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "sphere",
+      "radius": 0.2,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.22,
+       0.32
+      ],
+      "size": [
+       0.04,
+       0.07
+      ],
+      "speed": [
+       3,
+       5
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 1.2,
+     "drag": 2,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 0.6,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "drag",
+      "gravity",
+      "hdrTint"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "wildfire",
+   "role": "impact",
+   "phase": "main",
+   "endBranch": "any",
+   "duration": 0.2,
+   "loop": false,
+   "layers": [
+    {
+     "id": "Glow",
+     "material": "glowFire",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 0,
+     "space": "local",
+     "position": [
+      0,
+      0.9,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.15,
+       0.15
+      ],
+      "size": [
+       0.7,
+       0.7
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.9
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.6,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    },
+    {
+     "id": "Sparks",
+     "material": "streakFire",
+     "render": {
+      "type": "stretched",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0.07,
+      "lengthScale": 1.4
+     },
+     "sortingFudge": -3,
+     "space": "local",
+     "position": [
+      0,
+      0.9,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 14,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "sphere",
+      "radius": 0.15,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.14,
+       0.24
+      ],
+      "size": [
+       0.04,
+       0.07
+      ],
+      "speed": [
+       4,
+       7
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0.4,
+     "drag": 4,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 0.6,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "drag",
+      "gravity",
+      "hdrTint",
+      "stretchedBillboard"
+     ]
+    },
+    {
+     "id": "Embers",
+     "material": "dotFire",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": -4,
+     "space": "local",
+     "position": [
+      0,
+      0.9,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 6,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "sphere",
+      "radius": 0.25,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.25,
+       0.32
+      ],
+      "size": [
+       0.03,
+       0.05
+      ],
+      "speed": [
+       0.6,
+       1.4
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": -0.2,
+     "drag": 2,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         0.85,
+         0.4
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         0.3,
+         0.08
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 0.6,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "drag",
+      "gravity",
+      "hdrTint"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "magma",
+   "role": "impact",
+   "phase": "main",
+   "endBranch": "any",
+   "duration": 0.4,
+   "loop": false,
+   "layers": [
+    {
+     "id": "Crack",
+     "material": "crackLava",
+     "render": {
+      "type": "mesh",
+      "mesh": "quad",
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 2,
+     "space": "local",
+     "position": [
+      0,
+      0.03,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.4,
+       0.4
+      ],
+      "size": [
+       1.5,
+       1.5
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        6.28319
+       ],
+       [
+        0,
+        0
+       ]
+      ]
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         0.9,
+         0.6
+        ]
+       },
+       {
+        "t": 0.4,
+        "rgb": [
+         1,
+         0.5,
+         0.15
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         0.7,
+         0.12,
+         0.05
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.08,
+        "a": 1
+       },
+       {
+        "t": 0.6,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.7,
+       "inTangent": 0,
+       "outTangent": 2
+      },
+      {
+       "t": 0.25,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "hdrTint",
+      "meshParticle",
+      "rotation3D"
+     ]
+    },
+    {
+     "id": "Glow",
+     "material": "glowFire",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 0,
+     "space": "local",
+     "position": [
+      0,
+      0.15,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.3,
+       0.3
+      ],
+      "size": [
+       1.1,
+       1.1
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.6
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.5,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    },
+    {
+     "id": "Lava",
+     "material": "dotFire",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": -3,
+     "space": "local",
+     "position": [
+      0,
+      0.1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.03,
+        "count": 8,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "circle",
+      "radius": 0.35,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.3,
+       0.38
+      ],
+      "size": [
+       0.05,
+       0.09
+      ],
+      "speed": [
+       0.3,
+       0.9
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "world",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        2.2,
+        3.4
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 1.4,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         0.85,
+         0.45
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         0.25,
+         0.06
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 0.6,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "gravity",
+      "hdrTint",
+      "linearVelocity"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "flare",
+   "role": "impact",
+   "phase": "main",
+   "endBranch": "any",
+   "duration": 0.2,
+   "loop": false,
+   "layers": [
+    {
+     "id": "Star",
+     "material": "starSun",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": -4,
+     "space": "local",
+     "position": [
+      0,
+      1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.2,
+       0.2
+      ],
+      "size": [
+       1.6,
+       1.6
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0.7854
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 1
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.2,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.25,
+       "value": 1.1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 0,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    },
+    {
+     "id": "Glow",
+     "material": "glowSun",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 0,
+     "space": "local",
+     "position": [
+      0,
+      1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.18,
+       0.18
+      ],
+      "size": [
+       1.2,
+       1.2
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.9
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.4,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.3,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 0.9,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    },
+    {
+     "id": "Ring",
+     "material": "ringSun",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 1,
+     "space": "local",
+     "position": [
+      0,
+      1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.2,
+       0.2
+      ],
+      "size": [
+       1.6,
+       1.6
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.9
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.25,
+       "inTangent": 0,
+       "outTangent": 2
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ember_curse",
+   "role": "impact",
+   "phase": "main",
+   "endBranch": "any",
+   "duration": 0.3,
+   "loop": false,
+   "layers": [
+    {
+     "id": "Sigil",
+     "material": "sigilEmber",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 0,
+     "space": "local",
+     "position": [
+      0,
+      1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.32,
+       0.32
+      ],
+      "size": [
+       0.7,
+       0.7
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       6.28319
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       2,
+       2
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         0.8,
+         0.45
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         0.9,
+         0.2,
+         0.08
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.12,
+        "a": 1
+       },
+       {
+        "t": 0.7,
+        "a": 0.7
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1.5,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.3,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 0.9,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint",
+      "rotationOverLifetime"
+     ]
+    },
+    {
+     "id": "Mist",
+     "material": "mistDark",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 6,
+     "space": "local",
+     "position": [
+      0,
+      1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 3,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "sphere",
+      "radius": 0.15,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.3,
+       0.36
+      ],
+      "size": [
+       0.5,
+       0.7
+      ],
+      "speed": [
+       0.2,
+       0.5
+      ],
+      "rotation": [
+       0,
+       6.28319
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.2,
+        "a": 0.45
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": {
+      "columns": 4,
+      "rows": 4,
+      "frameOrder": "rowMajorFromTopLeft",
+      "playback": "oncePerLifetime",
+      "cycles": 1
+     },
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "alphaBlend",
+      "billboard",
+      "flipbook"
+     ]
+    },
+    {
+     "id": "Embers",
+     "material": "dotFire",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": -3,
+     "space": "local",
+     "position": [
+      0,
+      1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.05,
+        "count": 6,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "sphere",
+      "radius": 0.3,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.25,
+       0.32
+      ],
+      "size": [
+       0.03,
+       0.05
+      ],
+      "speed": [
+       0.2,
+       0.6
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "world",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0.6,
+        1
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         0.7,
+         0.3
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         0.8,
+         0.15,
+         0.05
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 0.6,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint",
+      "linearVelocity"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "shock",
+   "role": "impact",
+   "phase": "main",
+   "endBranch": "any",
+   "duration": 0.2,
+   "loop": false,
+   "layers": [
+    {
+     "id": "Bolt",
+     "material": "bolt",
+     "render": {
+      "type": "mesh",
+      "mesh": "bolt",
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 0,
+     "space": "local",
+     "position": [
+      0,
+      0,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.2,
+       0.2
+      ],
+      "size": [
+       1,
+       1
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 0.6,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": {
+      "columns": 1,
+      "rows": 4,
+      "frameOrder": "rowMajorFromTopLeft",
+      "playback": "oncePerLifetime",
+      "cycles": 2
+     },
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "flipbook",
+      "flipbookCycles",
+      "hdrTint",
+      "meshParticle"
+     ]
+    },
+    {
+     "id": "SrcGlow",
+     "material": "glowBolt",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 0,
+     "space": "local",
+     "position": [
+      0,
+      0,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.12,
+       0.12
+      ],
+      "size": [
+       0.6,
+       0.6
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    },
+    {
+     "id": "HitGlow",
+     "material": "glowBolt",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 0,
+     "space": "local",
+     "position": [
+      0,
+      0,
+      3
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.16,
+       0.16
+      ],
+      "size": [
+       0.9,
+       0.9
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.5,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    },
+    {
+     "id": "HitSparks",
+     "material": "streakBolt",
+     "render": {
+      "type": "stretched",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0.06,
+      "lengthScale": 1.4
+     },
+     "sortingFudge": -3,
+     "space": "local",
+     "position": [
+      0,
+      0,
+      3
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 8,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "sphere",
+      "radius": 0.1,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.12,
+       0.2
+      ],
+      "size": [
+       0.03,
+       0.05
+      ],
+      "speed": [
+       3,
+       6
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 4,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 0.6,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "drag",
+      "hdrTint",
+      "stretchedBillboard"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mud",
+   "role": "impact",
+   "phase": "main",
+   "endBranch": "any",
+   "duration": 0.3,
+   "loop": false,
+   "layers": [
+    {
+     "id": "Splat",
+     "material": "mud",
+     "render": {
+      "type": "mesh",
+      "mesh": "quad",
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 6,
+     "space": "local",
+     "position": [
+      0,
+      0.03,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.32,
+       0.32
+      ],
+      "size": [
+       1.3,
+       1.3
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        6.28319
+       ],
+       [
+        0,
+        0
+       ]
+      ]
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.85
+       },
+       {
+        "t": 0.6,
+        "a": 0.7
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.4,
+       "inTangent": 0,
+       "outTangent": 3
+      },
+      {
+       "t": 0.3,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1.05,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": {
+      "columns": 4,
+      "rows": 4,
+      "frameOrder": "rowMajorFromTopLeft",
+      "playback": "oncePerLifetime",
+      "cycles": 1
+     },
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "alphaBlend",
+      "flipbook",
+      "meshParticle",
+      "rotation3D"
+     ]
+    },
+    {
+     "id": "Clods",
+     "material": "chunkMud",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 2,
+     "space": "local",
+     "position": [
+      0,
+      0.15,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 8,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "circle",
+      "radius": 0.3,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.26,
+       0.34
+      ],
+      "size": [
+       0.1,
+       0.18
+      ],
+      "speed": [
+       1,
+       2
+      ],
+      "rotation": [
+       0,
+       6.28319
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "world",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        1.6,
+        2.6
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 2.2,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 0.7,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "alphaBlend",
+      "billboard",
+      "gravity",
+      "linearVelocity"
+     ]
+    },
+    {
+     "id": "Drops",
+     "material": "dotMud",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 1,
+     "space": "local",
+     "position": [
+      0,
+      0.15,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 10,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "circle",
+      "radius": 0.25,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.24,
+       0.3
+      ],
+      "size": [
+       0.04,
+       0.07
+      ],
+      "speed": [
+       1.5,
+       3
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "world",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        1.2,
+        2.2
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 2.5,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 0.6,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "alphaBlend",
+      "billboard",
+      "gravity",
+      "linearVelocity"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "rainbow",
+   "role": "impact",
+   "phase": "main",
+   "endBranch": "any",
+   "duration": 0.5,
+   "loop": false,
+   "layers": [
+    {
+     "id": "Ring",
+     "material": "ringSoft",
+     "render": {
+      "type": "mesh",
+      "mesh": "quad",
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 0,
+     "space": "local",
+     "position": [
+      0,
+      0.05,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.5,
+       0.5
+      ],
+      "size": [
+       8,
+       8
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        6.28319
+       ],
+       [
+        0,
+        0
+       ]
+      ]
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         0.5,
+         0.5
+        ]
+       },
+       {
+        "t": 0.25,
+        "rgb": [
+         1,
+         0.9,
+         0.45
+        ]
+       },
+       {
+        "t": 0.5,
+        "rgb": [
+         0.5,
+         1,
+         0.6
+        ]
+       },
+       {
+        "t": 0.75,
+        "rgb": [
+         0.45,
+         0.75,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         0.75,
+         0.5,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.8
+       },
+       {
+        "t": 0.6,
+        "a": 0.5
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.15,
+       "inTangent": 0,
+       "outTangent": 2.2
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "hdrTint",
+      "meshParticle",
+      "rotation3D"
+     ]
+    },
+    {
+     "id": "Glow",
+     "material": "glowSoft",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 0,
+     "space": "local",
+     "position": [
+      0,
+      0.9,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.25,
+       0.25
+      ],
+      "size": [
+       0.9,
+       0.9
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.6
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    },
+    {
+     "id": "Motes1",
+     "material": "dotSoft",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": -2,
+     "space": "local",
+     "position": [
+      0,
+      0.2,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 8,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "circle",
+      "radius": 2.4,
+      "radiusThickness": 0.85,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.4,
+       0.5
+      ],
+      "size": [
+       0.06,
+       0.1
+      ],
+      "speed": [
+       0,
+       0.2
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "world",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0.8,
+        1.6
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 1,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         0.45,
+         0.45
+        ]
+       },
+       {
+        "t": 0.5,
+        "rgb": [
+         1,
+         0.85,
+         0.4
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         0.6,
+         1,
+         0.5
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.15,
+        "a": 1
+       },
+       {
+        "t": 0.7,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "drag",
+      "hdrTint",
+      "linearVelocity"
+     ]
+    },
+    {
+     "id": "Motes2",
+     "material": "dotSoft",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": -2,
+     "space": "local",
+     "position": [
+      0,
+      0.2,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.02,
+        "count": 8,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "circle",
+      "radius": 2.4,
+      "radiusThickness": 0.85,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.4,
+       0.5
+      ],
+      "size": [
+       0.06,
+       0.1
+      ],
+      "speed": [
+       0,
+       0.2
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "world",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0.8,
+        1.6
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 1,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         0.5,
+         1,
+         0.7
+        ]
+       },
+       {
+        "t": 0.5,
+        "rgb": [
+         0.45,
+         0.85,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         0.6,
+         0.55,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.15,
+        "a": 1
+       },
+       {
+        "t": 0.7,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "drag",
+      "hdrTint",
+      "linearVelocity"
+     ]
+    },
+    {
+     "id": "Motes3",
+     "material": "dotSoft",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": -2,
+     "space": "local",
+     "position": [
+      0,
+      0.2,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.04,
+        "count": 8,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "circle",
+      "radius": 2.4,
+      "radiusThickness": 0.85,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.4,
+       0.5
+      ],
+      "size": [
+       0.06,
+       0.1
+      ],
+      "speed": [
+       0,
+       0.2
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "world",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0.8,
+        1.6
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 1,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         0.75,
+         0.55,
+         1
+        ]
+       },
+       {
+        "t": 0.5,
+        "rgb": [
+         1,
+         0.5,
+         0.85
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         0.6,
+         0.5
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.15,
+        "a": 1
+       },
+       {
+        "t": 0.7,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "drag",
+      "hdrTint",
+      "linearVelocity"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "abyss",
+   "role": "impact",
+   "phase": "main",
+   "endBranch": "any",
+   "duration": 0.4,
+   "loop": false,
+   "layers": [
+    {
+     "id": "Swirl",
+     "material": "swirlAbyss",
+     "render": {
+      "type": "mesh",
+      "mesh": "quad",
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 0,
+     "space": "local",
+     "position": [
+      0,
+      0.04,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.4,
+       0.4
+      ],
+      "size": [
+       1.7,
+       1.7
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        6.28319
+       ],
+       [
+        0,
+        0
+       ]
+      ]
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       -9,
+       -9
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         0.55,
+         0.9,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         0.55,
+         0.3,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.15,
+        "a": 1
+       },
+       {
+        "t": 0.7,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1.3,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 0.7,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "hdrTint",
+      "meshParticle",
+      "rotation3D",
+      "rotationOverLifetime"
+     ]
+    },
+    {
+     "id": "Mist",
+     "material": "mistAbyss",
+     "render": {
+      "type": "mesh",
+      "mesh": "quad",
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 8,
+     "space": "local",
+     "position": [
+      0,
+      0.03,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.4,
+       0.4
+      ],
+      "size": [
+       1.4,
+       1.4
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        6.28319
+       ],
+       [
+        0,
+        0
+       ]
+      ]
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.2,
+        "a": 0.55
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": {
+      "columns": 4,
+      "rows": 4,
+      "frameOrder": "rowMajorFromTopLeft",
+      "playback": "oncePerLifetime",
+      "cycles": 1
+     },
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "alphaBlend",
+      "flipbook",
+      "meshParticle",
+      "rotation3D"
+     ]
+    },
+    {
+     "id": "Bubbles",
+     "material": "dotWater",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": -2,
+     "space": "local",
+     "position": [
+      0,
+      0.1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.04,
+        "count": 8,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "circle",
+      "radius": 0.5,
+      "radiusThickness": 0.6,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.3,
+       0.36
+      ],
+      "size": [
+       0.04,
+       0.07
+      ],
+      "speed": [
+       0,
+       0.2
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "world",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        1,
+        1.8
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       3,
+       3
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 0.6,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint",
+      "linearVelocity",
+      "orbitalVelocity"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sandstorm",
+   "role": "impact",
+   "phase": "main",
+   "endBranch": "any",
+   "duration": 0.5,
+   "loop": false,
+   "layers": [
+    {
+     "id": "Swirl",
+     "material": "swirlSand",
+     "render": {
+      "type": "mesh",
+      "mesh": "quad",
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 0,
+     "space": "local",
+     "position": [
+      0,
+      0.08,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.5,
+       0.5
+      ],
+      "size": [
+       6.4,
+       6.4
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        6.28319
+       ],
+       [
+        0,
+        0
+       ]
+      ]
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       -7,
+       -7
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.15,
+        "a": 0.8
+       },
+       {
+        "t": 0.7,
+        "a": 0.6
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 0.3,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "hdrTint",
+      "meshParticle",
+      "rotation3D",
+      "rotationOverLifetime"
+     ]
+    },
+    {
+     "id": "Grains",
+     "material": "grain",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": -1,
+     "space": "local",
+     "position": [
+      0,
+      0.25,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 26,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "circle",
+      "radius": 3,
+      "radiusThickness": 0.25,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.42,
+       0.5
+      ],
+      "size": [
+       0.05,
+       0.09
+      ],
+      "speed": [
+       0,
+       0.1
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "world",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0.1,
+        0.5
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       -5,
+       -5
+      ],
+      "radial": [
+       -5,
+       -5
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.15,
+        "a": 1
+       },
+       {
+        "t": 0.75,
+        "a": 0.9
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "alphaBlend",
+      "billboard",
+      "linearVelocity",
+      "orbitalVelocity",
+      "radialVelocity"
+     ]
+    },
+    {
+     "id": "Dust",
+     "material": "dust",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 6,
+     "space": "local",
+     "position": [
+      0,
+      0.3,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.25,
+        "count": 4,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "sphere",
+      "radius": 0.3,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.25,
+       0.3
+      ],
+      "size": [
+       0.5,
+       0.75
+      ],
+      "speed": [
+       0.3,
+       0.8
+      ],
+      "rotation": [
+       0,
+       6.28319
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "world",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0.2,
+        0.5
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.5
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": {
+      "columns": 4,
+      "rows": 4,
+      "frameOrder": "rowMajorFromTopLeft",
+      "playback": "oncePerLifetime",
+      "cycles": 1
+     },
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "alphaBlend",
+      "billboard",
+      "flipbook",
+      "linearVelocity"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "flash",
+   "role": "impact",
+   "phase": "main",
+   "endBranch": "any",
+   "duration": 0.2,
+   "loop": false,
+   "layers": [
+    {
+     "id": "Glow",
+     "material": "glowWhite",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 0,
+     "space": "local",
+     "position": [
+      0,
+      1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.15,
+       0.15
+      ],
+      "size": [
+       1.8,
+       1.8
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.9
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.5,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.2,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1.1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    },
+    {
+     "id": "Star",
+     "material": "starWhite",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": -4,
+     "space": "local",
+     "position": [
+      0,
+      1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.12,
+       0.12
+      ],
+      "size": [
+       2.2,
+       2.2
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 1
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.3,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.3,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 0,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    },
+    {
+     "id": "Ring",
+     "material": "ringWhite",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 1,
+     "space": "local",
+     "position": [
+      0,
+      1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.15,
+       0.15
+      ],
+      "size": [
+       2,
+       2
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.2,
+       "inTangent": 0,
+       "outTangent": 2.5
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "void_gust",
+   "role": "impact",
+   "phase": "main",
+   "endBranch": "any",
+   "duration": 1,
+   "loop": false,
+   "layers": [
+    {
+     "id": "Rift",
+     "material": "rift",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 0,
+     "space": "local",
+     "position": [
+      0,
+      1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       1,
+       1
+      ],
+      "size": [
+       1.5,
+       1.5
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         0.85,
+         0.7,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         0.55,
+         0.3,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.1,
+        "a": 1
+       },
+       {
+        "t": 0.8,
+        "a": 0.85
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.15,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.12,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.85,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 0.1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    },
+    {
+     "id": "Mist",
+     "material": "mistVoid",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 6,
+     "space": "local",
+     "position": [
+      0,
+      1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 2,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "sphere",
+      "radius": 0.1,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.95,
+       1
+      ],
+      "size": [
+       0.8,
+       1
+      ],
+      "speed": [
+       0,
+       0.1
+      ],
+      "rotation": [
+       0,
+       6.28319
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.2,
+        "a": 0.45
+       },
+       {
+        "t": 0.8,
+        "a": 0.35
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": {
+      "columns": 4,
+      "rows": 4,
+      "frameOrder": "rowMajorFromTopLeft",
+      "playback": "oncePerLifetime",
+      "cycles": 1
+     },
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "alphaBlend",
+      "billboard",
+      "flipbook"
+     ]
+    },
+    {
+     "id": "Motes",
+     "material": "dotVoid",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": -2,
+     "space": "local",
+     "position": [
+      0,
+      1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 10,
+      "rateOverDistance": 0,
+      "bursts": []
+     },
+     "shape": {
+      "type": "sphere",
+      "radius": 0.6,
+      "radiusThickness": 0.3,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.35,
+       0.45
+      ],
+      "size": [
+       0.03,
+       0.05
+      ],
+      "speed": [
+       0,
+       0.1
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       2,
+       2
+      ],
+      "radial": [
+       -1.2,
+       -1.2
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.3,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint",
+      "orbitalVelocity",
+      "radialVelocity"
+     ]
+    },
+    {
+     "id": "Glow",
+     "material": "glowVoid",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 3,
+     "space": "local",
+     "position": [
+      0,
+      1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       1,
+       1
+      ],
+      "size": [
+       1,
+       1
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.1,
+        "a": 0.5
+       },
+       {
+        "t": 0.8,
+        "a": 0.4
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.3,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.15,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.85,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 0.2,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "crystal",
+   "role": "impact",
+   "phase": "main",
+   "endBranch": "any",
+   "duration": 0.3,
+   "loop": false,
+   "layers": [
+    {
+     "id": "Shards",
+     "material": "shard",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 0,
+     "space": "local",
+     "position": [
+      0,
+      0.9,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 7,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "sphere",
+      "radius": 0.45,
+      "radiusThickness": 0.3,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.26,
+       0.32
+      ],
+      "size": [
+       0.22,
+       0.36
+      ],
+      "speed": [
+       0,
+       0.15
+      ],
+      "rotation": [
+       -0.4,
+       0.4
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         0.9,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         0.55,
+         0.85,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 1
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0,
+       "inTangent": 0,
+       "outTangent": 6
+      },
+      {
+       "t": 0.25,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.75,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 0,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    },
+    {
+     "id": "Glints",
+     "material": "starIce",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": -3,
+     "space": "local",
+     "position": [
+      0,
+      0.9,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.04,
+        "count": 3,
+        "cycles": 1,
+        "interval": 0
+       },
+       {
+        "time": 0.12,
+        "count": 2,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "sphere",
+      "radius": 0.5,
+      "radiusThickness": 0.4,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.14,
+       0.14
+      ],
+      "size": [
+       0.25,
+       0.4
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 1
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.2,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.35,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 0,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    },
+    {
+     "id": "Glow",
+     "material": "glowIce",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 2,
+     "space": "local",
+     "position": [
+      0,
+      0.9,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.25,
+       0.25
+      ],
+      "size": [
+       1.1,
+       1.1
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.5
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "bind",
+   "role": "impact",
+   "phase": "main",
+   "endBranch": "any",
+   "duration": 0.3,
+   "loop": false,
+   "layers": [
+    {
+     "id": "Clods",
+     "material": "chunkDark",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 2,
+     "space": "local",
+     "position": [
+      0,
+      0.1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 10,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "circle",
+      "radius": 0.35,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.26,
+       0.32
+      ],
+      "size": [
+       0.1,
+       0.2
+      ],
+      "speed": [
+       0.6,
+       1.4
+      ],
+      "rotation": [
+       0,
+       6.28319
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "world",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        1.6,
+        2.6
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 2.4,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 0.7,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "alphaBlend",
+      "billboard",
+      "gravity",
+      "linearVelocity"
+     ]
+    },
+    {
+     "id": "Dust",
+     "material": "dustDark",
+     "render": {
+      "type": "mesh",
+      "mesh": "quad",
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 6,
+     "space": "local",
+     "position": [
+      0,
+      0.03,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.3,
+       0.3
+      ],
+      "size": [
+       1.4,
+       1.4
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        6.28319
+       ],
+       [
+        0,
+        0
+       ]
+      ]
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.7
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.5,
+       "inTangent": 0,
+       "outTangent": 3
+      },
+      {
+       "t": 0.3,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1.05,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": {
+      "columns": 4,
+      "rows": 4,
+      "frameOrder": "rowMajorFromTopLeft",
+      "playback": "oncePerLifetime",
+      "cycles": 1
+     },
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "alphaBlend",
+      "flipbook",
+      "meshParticle",
+      "rotation3D"
+     ]
+    },
+    {
+     "id": "Seam",
+     "material": "crackDark",
+     "render": {
+      "type": "mesh",
+      "mesh": "quad",
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 3,
+     "space": "local",
+     "position": [
+      0,
+      0.04,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.3,
+       0.3
+      ],
+      "size": [
+       1.1,
+       1.1
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        6.28319
+       ],
+       [
+        0,
+        0
+       ]
+      ]
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.1,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "hdrTint",
+      "meshParticle",
+      "rotation3D"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "eclipse",
+   "role": "impact",
+   "phase": "main",
+   "endBranch": "any",
+   "duration": 0.5,
+   "loop": false,
+   "layers": [
+    {
+     "id": "Disc",
+     "material": "disc",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 2,
+     "space": "local",
+     "position": [
+      0,
+      1.1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.5,
+       0.5
+      ],
+      "size": [
+       0.55,
+       0.55
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 1
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.3,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.85,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 0,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "alphaBlend",
+      "billboard"
+     ]
+    },
+    {
+     "id": "Corona",
+     "material": "ringEclipse",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": -2,
+     "space": "local",
+     "position": [
+      0,
+      1.1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.5,
+       0.5
+      ],
+      "size": [
+       0.75,
+       0.75
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       6.28319
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       3,
+       3
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         0.85,
+         0.55
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         0.8,
+         0.5,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 1
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.3,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.85,
+       "value": 1.05,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 0,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint",
+      "rotationOverLifetime"
+     ]
+    },
+    {
+     "id": "Halo",
+     "material": "glowEclipse",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 4,
+     "space": "local",
+     "position": [
+      0,
+      1.1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.5,
+       0.5
+      ],
+      "size": [
+       1.3,
+       1.3
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.5
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.3,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 0.6,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    },
+    {
+     "id": "Burst",
+     "material": "ringEclipse",
+     "render": {
+      "type": "mesh",
+      "mesh": "quad",
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 0,
+     "space": "local",
+     "position": [
+      0,
+      0.05,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.45,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.25,
+       0.25
+      ],
+      "size": [
+       6,
+       6
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        6.28319
+       ],
+       [
+        0,
+        0
+       ]
+      ]
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         0.85,
+         0.6
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         0.7,
+         0.45,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.1,
+       "inTangent": 0,
+       "outTangent": 2.5
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "hdrTint",
+      "meshParticle",
+      "rotation3D"
+     ]
+    },
+    {
+     "id": "Pop",
+     "material": "starWhite",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": -4,
+     "space": "local",
+     "position": [
+      0,
+      1.1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.45,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.12,
+       0.12
+      ],
+      "size": [
+       1.2,
+       1.2
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 1
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.3,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.3,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 0,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    }
+   ]
+  }
+ ],
+ "demo": {
+  "note": "non-normative preview scene; not part of the effect",
+  "interval": 2,
+  "maxImpacts": 16,
+  "dummy": {
+   "height": 1.8
+  },
+  "bg": [
+   0.33,
+   0.34,
+   0.36
+  ],
+  "floor": [
+   0.42,
+   0.42,
+   0.43
+  ],
+  "grid": [
+   0.47,
+   0.47,
+   0.48
+  ],
+  "scenarios": {
+   "steam": {
+    "label": "증기 폭발",
+    "targets": [
+     [
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      2.2,
+      0,
+      1.2,
+      -120
+     ],
+     [
+      -2,
+      0,
+      1.6,
+      140
+     ],
+     [
+      0.6,
+      0,
+      -2.6,
+      10
+     ]
+    ],
+    "hits": [
+     {
+      "t": 0.3,
+      "point": [
+       0,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "steam"
+     }
+    ],
+    "camera": {
+     "target": [
+      0,
+      0.8,
+      0
+     ],
+     "dist": 8.5,
+     "yaw": -35,
+     "pitch": 34
+    }
+   },
+   "wildfire": {
+    "label": "불씨 확산",
+    "targets": [
+     [
+      0,
+      0,
+      0,
+      0
+     ]
+    ],
+    "hits": [
+     {
+      "t": 0.3,
+      "point": [
+       0,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "wildfire"
+     }
+    ],
+    "camera": {
+     "target": [
+      0,
+      0.8,
+      0
+     ],
+     "dist": 4.2,
+     "yaw": -35,
+     "pitch": 18
+    }
+   },
+   "magma": {
+    "label": "용암 분출",
+    "targets": [
+     [
+      0,
+      0,
+      0,
+      0
+     ]
+    ],
+    "hits": [
+     {
+      "t": 0.3,
+      "point": [
+       0,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "magma"
+     }
+    ],
+    "camera": {
+     "target": [
+      0,
+      0.8,
+      0
+     ],
+     "dist": 4.2,
+     "yaw": -35,
+     "pitch": 18
+    }
+   },
+   "flare": {
+    "label": "태양 플레어",
+    "targets": [
+     [
+      0,
+      0,
+      0,
+      0
+     ]
+    ],
+    "hits": [
+     {
+      "t": 0.3,
+      "point": [
+       0,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "flare"
+     }
+    ],
+    "camera": {
+     "target": [
+      0,
+      0.8,
+      0
+     ],
+     "dist": 4.2,
+     "yaw": -35,
+     "pitch": 18
+    }
+   },
+   "ember_curse": {
+    "label": "잿불 낙인",
+    "targets": [
+     [
+      0,
+      0,
+      0,
+      0
+     ]
+    ],
+    "hits": [
+     {
+      "t": 0.3,
+      "point": [
+       0,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "ember_curse"
+     }
+    ],
+    "camera": {
+     "target": [
+      0,
+      0.8,
+      0
+     ],
+     "dist": 4.2,
+     "yaw": -35,
+     "pitch": 18
+    }
+   },
+   "mud": {
+    "label": "진흙",
+    "targets": [
+     [
+      0,
+      0,
+      0,
+      0
+     ]
+    ],
+    "hits": [
+     {
+      "t": 0.3,
+      "point": [
+       0,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "mud"
+     }
+    ],
+    "camera": {
+     "target": [
+      0,
+      0.8,
+      0
+     ],
+     "dist": 4.2,
+     "yaw": -35,
+     "pitch": 18
+    }
+   },
+   "rainbow": {
+    "label": "무지개",
+    "targets": [
+     [
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      2.2,
+      0,
+      1.2,
+      -120
+     ],
+     [
+      -2,
+      0,
+      1.6,
+      140
+     ],
+     [
+      0.6,
+      0,
+      -2.6,
+      10
+     ]
+    ],
+    "hits": [
+     {
+      "t": 0.3,
+      "point": [
+       0,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "rainbow"
+     }
+    ],
+    "camera": {
+     "target": [
+      0,
+      0.8,
+      0
+     ],
+     "dist": 8.5,
+     "yaw": -35,
+     "pitch": 34
+    }
+   },
+   "abyss": {
+    "label": "심연",
+    "targets": [
+     [
+      0,
+      0,
+      0,
+      0
+     ]
+    ],
+    "hits": [
+     {
+      "t": 0.3,
+      "point": [
+       0,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "abyss"
+     }
+    ],
+    "camera": {
+     "target": [
+      0,
+      0.8,
+      0
+     ],
+     "dist": 4.2,
+     "yaw": -35,
+     "pitch": 18
+    }
+   },
+   "sandstorm": {
+    "label": "모래 회오리",
+    "targets": [
+     [
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      2.2,
+      0,
+      1.2,
+      -120
+     ],
+     [
+      -2,
+      0,
+      1.6,
+      140
+     ],
+     [
+      0.6,
+      0,
+      -2.6,
+      10
+     ]
+    ],
+    "hits": [
+     {
+      "t": 0.3,
+      "point": [
+       0,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "sandstorm"
+     }
+    ],
+    "camera": {
+     "target": [
+      0,
+      0.8,
+      0
+     ],
+     "dist": 8.5,
+     "yaw": -35,
+     "pitch": 34
+    }
+   },
+   "flash": {
+    "label": "섬광",
+    "targets": [
+     [
+      0,
+      0,
+      0,
+      0
+     ]
+    ],
+    "hits": [
+     {
+      "t": 0.3,
+      "point": [
+       0,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "flash"
+     }
+    ],
+    "camera": {
+     "target": [
+      0,
+      0.8,
+      0
+     ],
+     "dist": 4.2,
+     "yaw": -35,
+     "pitch": 18
+    }
+   },
+   "void_gust": {
+    "label": "공허 균열",
+    "targets": [
+     [
+      0,
+      0,
+      0,
+      0
+     ]
+    ],
+    "hits": [
+     {
+      "t": 0.3,
+      "point": [
+       0,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "void_gust"
+     }
+    ],
+    "camera": {
+     "target": [
+      0,
+      0.8,
+      0
+     ],
+     "dist": 4.2,
+     "yaw": -35,
+     "pitch": 18
+    }
+   },
+   "crystal": {
+    "label": "수정화",
+    "targets": [
+     [
+      0,
+      0,
+      0,
+      0
+     ]
+    ],
+    "hits": [
+     {
+      "t": 0.3,
+      "point": [
+       0,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "crystal"
+     }
+    ],
+    "camera": {
+     "target": [
+      0,
+      0.8,
+      0
+     ],
+     "dist": 4.2,
+     "yaw": -35,
+     "pitch": 18
+    }
+   },
+   "bind": {
+    "label": "매장",
+    "targets": [
+     [
+      0,
+      0,
+      0,
+      0
+     ]
+    ],
+    "hits": [
+     {
+      "t": 0.3,
+      "point": [
+       0,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "bind"
+     }
+    ],
+    "camera": {
+     "target": [
+      0,
+      0.8,
+      0
+     ],
+     "dist": 4.2,
+     "yaw": -35,
+     "pitch": 18
+    }
+   },
+   "eclipse": {
+    "label": "일식",
+    "targets": [
+     [
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      2.2,
+      0,
+      1.2,
+      -120
+     ],
+     [
+      -2,
+      0,
+      1.6,
+      140
+     ],
+     [
+      0.6,
+      0,
+      -2.6,
+      10
+     ]
+    ],
+    "hits": [
+     {
+      "t": 0.3,
+      "point": [
+       0,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "eclipse"
+     }
+    ],
+    "camera": {
+     "target": [
+      0,
+      0.8,
+      0
+     ],
+     "dist": 8.5,
+     "yaw": -35,
+     "pitch": 34
+    }
+   },
+   "shock": {
+    "label": "연쇄 번개",
+    "targets": [
+     [
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      3,
+      180
+     ],
+     [
+      0,
+      0,
+      6,
+      0
+     ],
+     [
+      0,
+      0,
+      9,
+      180
+     ]
+    ],
+    "hits": [
+     {
+      "t": 0.3,
+      "point": [
+       0,
+       1,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "shock"
+     },
+     {
+      "t": 0.5,
+      "point": [
+       0,
+       1,
+       3
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "shock"
+     },
+     {
+      "t": 0.7,
+      "point": [
+       0,
+       1,
+       6
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "shock"
+     }
+    ],
+    "camera": {
+     "target": [
+      0,
+      0.9,
+      4.5
+     ],
+     "dist": 9,
+     "yaw": -70,
+     "pitch": 16
+    }
+   },
+   "all": {
+    "label": "전체 15종",
+    "targets": [
+     [
+      -6,
+      0,
+      0,
+      0
+     ],
+     [
+      -3,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      3,
+      0,
+      0,
+      0
+     ],
+     [
+      6,
+      0,
+      0,
+      0
+     ],
+     [
+      -6,
+      0,
+      3.5,
+      0
+     ],
+     [
+      -3,
+      0,
+      3.5,
+      0
+     ],
+     [
+      0,
+      0,
+      3.5,
+      0
+     ],
+     [
+      3,
+      0,
+      3.5,
+      0
+     ],
+     [
+      6,
+      0,
+      3.5,
+      0
+     ],
+     [
+      -6,
+      0,
+      7,
+      0
+     ],
+     [
+      -3,
+      0,
+      7,
+      0
+     ],
+     [
+      0,
+      0,
+      7,
+      0
+     ],
+     [
+      3,
+      0,
+      7,
+      0
+     ],
+     [
+      6,
+      0,
+      7,
+      0
+     ]
+    ],
+    "hits": [
+     {
+      "t": 0.3,
+      "point": [
+       -6,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "steam"
+     },
+     {
+      "t": 0.3,
+      "point": [
+       -3,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "wildfire"
+     },
+     {
+      "t": 0.3,
+      "point": [
+       0,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "magma"
+     },
+     {
+      "t": 0.3,
+      "point": [
+       3,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "flare"
+     },
+     {
+      "t": 0.3,
+      "point": [
+       6,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "ember_curse"
+     },
+     {
+      "t": 0.3,
+      "point": [
+       -6,
+       1,
+       0.5
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "shock"
+     },
+     {
+      "t": 0.3,
+      "point": [
+       -3,
+       0,
+       3.5
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "mud"
+     },
+     {
+      "t": 0.3,
+      "point": [
+       0,
+       0,
+       3.5
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "rainbow"
+     },
+     {
+      "t": 0.3,
+      "point": [
+       3,
+       0,
+       3.5
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "abyss"
+     },
+     {
+      "t": 0.3,
+      "point": [
+       6,
+       0,
+       3.5
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "sandstorm"
+     },
+     {
+      "t": 0.3,
+      "point": [
+       -6,
+       0,
+       7
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "flash"
+     },
+     {
+      "t": 0.3,
+      "point": [
+       -3,
+       0,
+       7
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "void_gust"
+     },
+     {
+      "t": 0.3,
+      "point": [
+       0,
+       0,
+       7
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "crystal"
+     },
+     {
+      "t": 0.3,
+      "point": [
+       3,
+       0,
+       7
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "bind"
+     },
+     {
+      "t": 0.3,
+      "point": [
+       6,
+       0,
+       7
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       0,
+       1
+      ],
+      "system": "eclipse"
+     }
+    ],
+    "camera": {
+     "target": [
+      0,
+      0.6,
+      3.5
+     ],
+     "dist": 15,
+     "yaw": 0,
+     "pitch": 38
+    }
+   }
+  }
+ }
+}
