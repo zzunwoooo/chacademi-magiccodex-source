@@ -31,7 +31,9 @@ final class ArtifactSummonScreen extends Screen {
             Map.entry("fx_ring", new int[]{228, 226}), Map.entry("fx_glow_core", new int[]{172, 170}),
             Map.entry("chest_closed", new int[]{499, 354}), Map.entry("chest_open", new int[]{488, 434}),
             Map.entry("frame_common", new int[]{384, 384}), Map.entry("frame_rare", new int[]{384, 384}),
-            Map.entry("frame_unique", new int[]{384, 384}), Map.entry("frame_legendary", new int[]{384, 384}));
+            Map.entry("frame_unique", new int[]{384, 384}), Map.entry("frame_legendary", new int[]{384, 384}),
+            Map.entry("frame_common_fill", new int[]{384, 384}), Map.entry("frame_rare_fill", new int[]{384, 384}),
+            Map.entry("frame_unique_fill", new int[]{384, 384}), Map.entry("frame_legendary_fill", new int[]{384, 384}));
     private static final Identifier BACKGROUND = Identifier.of("magiccodex", "textures/gui/summon/background.png");
     private static final Identifier BUTTON = Identifier.of("magiccodex", "textures/gui/artifact/button.png");
     private static final Identifier PANEL = Identifier.of("magiccodex", "textures/gui/artifact/tooltip.png");

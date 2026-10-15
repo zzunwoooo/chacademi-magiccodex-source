@@ -452,8 +452,8 @@ final class SummonScene {
         godRays(c, CX, y, 640, time, rgba(color, .22f * a), grade == 3 ? 16 : 12);
         c.sprite("fx_glow_wide", CX, y, 660, 660, 0, 1, rgba(color, .4f * a), true);
         c.sprite("fx_ring_rune", CX, y, 540, 540, (float) (time * 10), 1, rgba(color, .3f * a), true);
-        c.rect(CX, y, w * .78f, size * .78f, rgba(0xF0101C2E, a));
-        if (flip > .5f) c.icon(icon, CX, y, 190 * (w / size), rgba(0xFFFFFFFF, a));
+        c.sprite(FRAME[grade] + "_fill", CX, y, w, size, 0, 1, rgba(0xFFFFFFFF, a), false);   // dark inner panel shaped to the frame hole
+        if (flip > .5f) c.icon(icon, CX, y, 220 * (w / size), rgba(0xFFFFFFFF, a));
         c.sprite(FRAME[grade], CX, y, w, size, 0, 1, rgba(0xFFFFFFFF, a), false);
         float sweep = clamp01((float) ((t - .35) / .5));
         if (sweep > 0 && sweep < 1) c.sprite("fx_glint", CX - size / 2 + size * sweep, y, 120, size * .9f, 90, 1, rgba(0xFFFFFFFF, .35f * (1 - sweep)), true);
