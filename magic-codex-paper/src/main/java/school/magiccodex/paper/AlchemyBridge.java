@@ -23,10 +23,12 @@ import school.magiccodex.protocol.AlchemyRules;
  *   a recipe is "which items, how many in total".
  * - The slot picker only offers items whose first lore line is a material category (settings.material-categories,
  *   default 재료) or that are listed in settings.material-items.
- * - Pressing 합성 with a recipe's exact ingredients discovers it (LuckPerms magiccodex.alchemy.recipe.&lt;id&gt;) and,
- *   with enough experience, crafts it: ingredients and experience are taken, the result goes to the inventory and
+ * - Pressing 합성 with a recipe's exact ingredients and enough experience crafts it: ingredients and experience are
+ *   taken, the result goes to the inventory and
  *   whatever does not fit is sent to the mailbox. A wrong mix costs nothing; if it is one ingredient away from a
  *   recipe (or has the right ingredients in the wrong amounts) the player gets a hint instead.
+ * - A recipe is discovered (LuckPerms magiccodex.alchemy.recipe.&lt;id&gt;) only by its first successful craft. Without
+ *   enough experience nothing happens: no discovery, nothing spent (owner decision 2026-10-16).
  * - Undiscovered recipes never reach the client (it only learns how many are still locked).
  * Everything runs on the main thread (plugin messages, commands, the refresh timer).
  */
@@ -87,7 +89,7 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
         for (String k : yaml.getStringList("settings.material-items")) items.add(key(k, "settings.material-items"));
         var msg = new HashMap<String, String>();
         var ms = yaml.getConfigurationSection("messages");
-        for (String k : List.of("near", "near-amount", "nothing", "crafted", "discovered", "mailed", "no-exp", "discovered-no-exp", "missing", "empty"))
+        for (String k : List.of("near", "near-amount", "nothing", "crafted", "discovered", "mailed", "no-exp", "no-exp-locked", "missing", "empty"))
             msg.put(k, ms == null ? "" : ms.getString(k, ""));
         var list = new ArrayList<Recipe>();
         var seen = new HashMap<Map<String, Integer>, String>();
@@ -142,6 +144,7 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
 
     private String message(String key, Recipe r, int amount, String item) {
         String m = messages.getOrDefault(key, "");
+        if (m.isEmpty() && key.equals("no-exp-locked")) m = "경험치가 부족해 마법진이 반응하지 않는다.";
         if (r != null) m = m.replace("{name}", r.name()).replace("{exp}", Integer.toString(r.exp()));
         m = m.replace("{amount}", Integer.toString(amount)).replace("{item}", item == null ? "" : item);
         return m.length() > AlchemyProtocol.MAX_NOTICE ? m.substring(0, AlchemyProtocol.MAX_NOTICE) : m;
@@ -332,11 +335,12 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
             result(p, seq, hint, null, 0, false, message(key, null, 0, "")); return;
         }
         boolean isNew = !discovered(p, match.id());
-        if (isNew) discover(p, match);
         long total = AlchemyRules.total(p.getLevel(), p.getExp());
+        // Not enough experience: nothing happens at all (no discovery, nothing spent). A recipe is discovered only by a
+        // successful craft. An undiscovered recipe's cost is not revealed.
         if (total < match.exp()) {
-            plugin.getLogger().info("ALCHEMY " + (isNew ? "DISCOVER" : "NO-EXP") + " player=" + p.getName() + " recipe=" + match.id() + " exp=" + total + "/" + match.exp());
-            result(p, seq, isNew ? AlchemyProtocol.DISCOVERED_NO_EXP : AlchemyProtocol.REFUSED, isNew ? match : null, 0, false, message(isNew ? "discovered-no-exp" : "no-exp", match, 0, ""));
+            plugin.getLogger().info("ALCHEMY NO-EXP player=" + p.getName() + " recipe=" + match.id() + " exp=" + total + "/" + match.exp() + (isNew ? " undiscovered" : ""));
+            result(p, seq, AlchemyProtocol.REFUSED, null, 0, false, message(isNew ? "no-exp-locked" : "no-exp", isNew ? null : match, 0, ""));
             send(p, AlchemyProtocol.KIND_STATE, ""); return;
         }
         // results first: an unknown result item must not eat the ingredients
@@ -370,6 +374,7 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
                 + (isNew ? " new" : "") + (mailed ? " mailed=" + leftover.stream().mapToInt(ItemStack::getAmount).sum() : "") + " craft=" + craftId);
         String notice = message(isNew ? "discovered" : "crafted", match, match.amount(), "");
         if (mailed) { String m = message("mailed", match, match.amount(), ""); notice = (notice + " " + m).strip(); if (notice.length() > AlchemyProtocol.MAX_NOTICE) notice = notice.substring(0, AlchemyProtocol.MAX_NOTICE); }
+        if (isNew) discover(p, match);
         result(p, seq, isNew ? AlchemyProtocol.DISCOVERED : AlchemyProtocol.CRAFTED, match, match.amount(), mailed, notice);
         send(p, AlchemyProtocol.KIND_STATE, "");
     }

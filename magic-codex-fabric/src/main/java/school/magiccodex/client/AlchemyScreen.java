@@ -156,6 +156,9 @@ final class AlchemyScreen extends Screen {
     private void synthesize() {
         if (pendingSeq != 0) return;
         if (filled() == 0) { say("재료를 넣어 주세요.", WARN); sound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), .7f, .4f); return; }
+        // A known recipe without enough experience cannot even be tried (the server refuses it too).
+        var known = match();
+        if (known != null && playerExp() < known.exp()) { say("경험치가 부족합니다. (필요 " + known.exp() + ")", WARN); sound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), .7f, .4f); return; }
         long seq = AlchemyClient.craft(stacks());
         if (seq == 0) { say("서버에 연결되어 있지 않습니다.", WARN); return; }
         pendingSeq = seq; pendingDeadline = Util.getMeasuringTimeMs() + 5000; fx = -1;
@@ -339,7 +342,7 @@ final class AlchemyScreen extends Screen {
         for (int i = 0; i < parts.length; i++) { text(c, parts[i], left, y, size, colors[i], faces[i], false); left += UiResources.text().width(parts[i], size, faces[i]); }
 
         var b = AlchemyLayout.SYNTH;
-        boolean enabled = pendingSeq == 0 && filled() > 0, over = enabled && b.contains(mx, my);
+        boolean enabled = pendingSeq == 0 && filled() > 0 && (match == null || have >= match.exp()), over = enabled && b.contains(mx, my);
         drawArt(c, over ? AlchemyLayout.BUTTON_HOVER : AlchemyLayout.BUTTON, b, enabled ? 0xFFFFFFFF : 0xFF8A93A3);
         text(c, pendingSeq != 0 ? "합성 중…" : "합성", b.cx(), b.cy() + 1, 31, enabled ? (over ? 0xFFFFF1CC : TITLE_GOLD) : 0xFF8A97A8, TITLE, true);
     }
