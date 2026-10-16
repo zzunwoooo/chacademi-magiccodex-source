@@ -385,8 +385,8 @@ public final class HousingScreen extends SocialScreen {
         String hint=held!=null?held.def().name()+" · R 회전 · 우클릭 취소 · Delete 보관함으로"
                 :"보관함에서 골라 방에 놓아요 · 놓인 가구를 누르면 옮기고, 우클릭하면 보관함으로 돌아가요";
         if(held!=null&&candidateWhy!=null)hint=candidateWhy;
-        type.draw(c,fit(hint,17,560,BODY),320,622,17,held!=null&&candidateWhy!=null?RED:MUTED,BODY,false);
-        Object[][] tools={{H_ROTATE,"회전",ICON_ROTATE,904f,92f},{H_RETRIEVE,"회수",ICON_RETRIEVE,1009f,90f},{H_UNDO,"되돌리기",ICON_UNDO,1112f,96f},{H_SAVE,"저장",ICON_SAVE,1221f,96f}};
+        type.draw(c,fit(hint,17,540,BODY),320,622,17,held!=null&&candidateWhy!=null?RED:MUTED,BODY,false);
+        Object[][] tools={{H_ROTATE,"회전",ICON_ROTATE,880f,92f},{H_RETRIEVE,"회수",ICON_RETRIEVE,982f,90f},{H_UNDO,"되돌리기",ICON_UNDO,1082f,124f},{H_SAVE,"저장",ICON_SAVE,1216f,100f}};
         for(var t:tools){
             int id=(int)t[0];float x=(float)t[3],w=(float)t[4];
             boolean over=!modal&&in(mx,my,x,600,w,44);if(over)hit=id;
