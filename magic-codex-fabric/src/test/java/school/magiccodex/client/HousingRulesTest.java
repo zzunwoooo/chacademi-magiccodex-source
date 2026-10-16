@@ -39,7 +39,7 @@ class HousingRulesTest {
 
     @Test void wallItems() {
         assertNull(HousingRules.fits(BANNER, new Placement("banner", 2, 1, 0, 0), 3, List.of(), DEFS::get));
-        assertNotNull(HousingRules.fits(BANNER, new Placement("banner", 2, 2, 0, 0), 3, List.of(), DEFS::get));
+        assertNotNull(HousingRules.fits(BANNER, new Placement("banner", 2, 3, 0, 0), 3, List.of(), DEFS::get));
         assertNotNull(HousingRules.fits(FRAME, new Placement("frame", 3, 0, 0, 1), 3, List.of(), DEFS::get));
         var frame = new Placement("frame", 1, 1, 0, 0);
         assertNotNull(HousingRules.fits(BANNER, new Placement("banner", 1, 0, 0, 0), 3, List.of(frame), DEFS::get));

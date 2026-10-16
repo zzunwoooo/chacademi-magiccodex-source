@@ -18,7 +18,7 @@ import java.util.function.Function;
 public final class HousingRules {
     public static final int CAT_FURNITURE=0,CAT_PROP=1,CAT_WALL=2,CAT_SURFACE=3;
     public static final int SURFACE_WALLPAPER=0,SURFACE_FLOOR=1;
-    public static final int WALL_HEIGHT=3,MIN_SIZE=1,MAX_SIZE=32,SLOTS=3,MAX_PLACEMENTS=200,MAX_FOOTPRINT=6;
+    public static final int WALL_HEIGHT=4,MIN_SIZE=1,MAX_SIZE=32,SLOTS=3,MAX_PLACEMENTS=200,MAX_FOOTPRINT=6;
     private HousingRules(){}
 
     /**

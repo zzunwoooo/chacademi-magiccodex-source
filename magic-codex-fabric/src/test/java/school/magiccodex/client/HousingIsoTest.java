@@ -26,7 +26,7 @@ class HousingIsoTest {
 
     @Test void roomFitsArea() {
         var iso = HousingIso.fit(8, 300, 90, 1300, 500, 1f, 0, 0);
-        float top = iso.sy(0, 3, 0), bottom = iso.sy(8, 0, 8), left = iso.sx(0, 0, 8), right = iso.sx(8, 0, 0);
+        float top = iso.sy(0, 4, 0), bottom = iso.sy(8, 0, 8), left = iso.sx(0, 0, 8), right = iso.sx(8, 0, 0);
         assertTrue(top >= 90 && bottom <= 590, "vertical " + top + ".." + bottom);
         assertTrue(left >= 300 && right <= 1600, "horizontal " + left + ".." + right);
     }
