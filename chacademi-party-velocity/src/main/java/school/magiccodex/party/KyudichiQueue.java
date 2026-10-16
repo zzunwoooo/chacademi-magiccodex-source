@@ -482,6 +482,8 @@ final class KyudichiQueue {
             String[] a = i.arguments().clone();
             if (!host.enqueue(() -> {
                 if (online(p.getUniqueId()) != p) return;
+                // No arguments: the MagicCodex client opens the dashboard (an unrequested DASH); others get the command list.
+                if (a.length == 0 && modded.contains(p.getUniqueId())) { dash(p); return; }
                 String sub = a.length == 0 ? "도움말" : a[0];
                 switch (sub) {
                     case "신청" -> join(p);

@@ -28,10 +28,8 @@ public final class SkillHudRenderer implements AutoCloseable {
     public void render(DrawContext ctx,CastingState state,int width,int height,long now,String modeKey) {
         type.beginFrame();
         textures.beginFrame();
-        float scale=(PlayerHudClient.active()?1f:1.25f)*Math.min(width/1672f,height/941f);
-        float left=width-402*scale,top=height-76*scale;
-        // Large Minecraft GUI scales leave less space beside its 182-unit vanilla hotbar.
-        if(!PlayerHudClient.active() && left<width/2f+98) top=Math.min(top,height-38-58*scale);
+        float[] o=origin(width,height);
+        float scale=o[2],left=o[0],top=o[1];
         ctx.getMatrices().push();
         try {
             ctx.getMatrices().translate(left,top,0); ctx.getMatrices().scale(scale,scale,1);
@@ -70,7 +68,38 @@ public final class SkillHudRenderer implements AutoCloseable {
                 keycap(ctx,x+56-keyWidth,44,keyWidth,20,state.enabled()?0xB8988B72:0x665F6D74);
                 text(ctx,key,x+56-keyWidth/2f,54,keySize,state.enabled()?0xFFF1EBDD:0xFFA3AFBA);
             }
+            drag(ctx,state,left,top,scale);
         } finally { ctx.getMatrices().pop(); }
+    }
+    /** {left, top, scale} of the six-slot bar in GUI pixels. */
+    static float[] origin(int width,int height) {
+        float scale=(PlayerHudClient.active()?1f:1.25f)*Math.min(width/1672f,height/941f);
+        float left=width-402*scale,top=height-76*scale;
+        // Large Minecraft GUI scales leave less space beside its 182-unit vanilla hotbar.
+        if(!PlayerHudClient.active() && left<width/2f+98) top=Math.min(top,height-38-58*scale);
+        return new float[]{left,top,scale};
+    }
+    /** Slot index under a GUI-pixel point, or -1. */
+    static int slotAt(double x,double y,int width,int height) {
+        float[] o=origin(width,height);
+        for(int i=0;i<6;i++) {
+            double cx=o[0]+(i*65+26)*o[2],cy=o[1]+26*o[2],r=29*o[2];
+            if((x-cx)*(x-cx)+(y-cy)*(y-cy)<=r*r) return i;
+        }
+        return -1;
+    }
+    /** Drag feedback (Alt / chat): rings on the picked and hovered slots, the picked icon under the pointer. */
+    private void drag(DrawContext ctx,CastingState state,float left,float top,float scale) {
+        int from=HudSlotDrag.from(); if(from<0) return;
+        var c=MinecraftClient.getInstance();
+        int over=slotAt(HudPointer.x(),HudPointer.y(),c.getWindow().getScaledWidth(),c.getWindow().getScaledHeight());
+        arc(ctx,from*65+26,26,27.6f,29.6f,0,1,0xF0E8C979);
+        if(over>=0 && over!=from) arc(ctx,over*65+26,26,27.6f,29.6f,0,1,0xF08FE3D2);
+        var b=state.bindings().get(from); var spell=state.spell(b.spellId());
+        if(spell!=null) {
+            float mx=(float)((HudPointer.x()-left)/scale),my=(float)((HudPointer.y()-top)/scale);
+            art(ctx,spell.icon(),Math.round(mx),Math.round(my),40,0xCCFFFFFF);
+        }
     }
     private void frame(DrawContext ctx,int x,boolean active,boolean empty) {
         // Raster detail is smaller than a screen pixel after reduction. Draw the structural

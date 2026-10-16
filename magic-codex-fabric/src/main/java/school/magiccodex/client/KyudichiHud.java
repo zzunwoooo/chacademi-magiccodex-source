@@ -36,9 +36,11 @@ final class KyudichiHud {
 
     private static HudTextureCache images; private static CodexTypography text; private static int generation = -1;
     private static float forfeitX, forfeitY, forfeitW, forfeitH; private static boolean forfeitShown;
+    private static float setupX, setupY, setupW, setupH; private static boolean setupShown;
 
     static void close() { if (images != null) { images.close(); images = null; } if (text != null) { text.close(); text = null; } }
 
+    static boolean setupHit(double x, double y) { return setupShown && x >= setupX && x <= setupX + setupW && y >= setupY && y <= setupY + setupH; }
     static boolean forfeitHit(double x, double y) { return forfeitShown && x >= forfeitX && x <= forfeitX + forfeitW && y >= forfeitY && y <= forfeitY + forfeitH; }
 
     static void render(DrawContext ctx, RenderTickCounter ticks) {
@@ -46,7 +48,7 @@ final class KyudichiHud {
         boolean active = KyudichiClient.active();
         long now = Util.getMeasuringTimeMs();
         boolean showResult = KyudichiClient.result != null && now - KyudichiClient.resultAt < 12_000;
-        if (!active && !showResult) { forfeitShown = false; return; }
+        if (!active && !showResult) { forfeitShown = setupShown = false; return; }
         if (c.player == null || c.options.hudHidden || !HudPointer.hudVisibleUnder(c.currentScreen)) return;
         if (generation != UiResources.generation()) { close(); generation = UiResources.generation(); }
         if (images == null) images = new HudTextureCache(c);
@@ -62,7 +64,7 @@ final class KyudichiHud {
                 feed(ctx, w, s, now);
                 if (!KyudichiClient.spectator()) keyIcon(ctx, w, h, now);
                 magnetAndWheel(ctx, c, s, now);
-            } else forfeitShown = false;
+            } else forfeitShown = setupShown = false;
             if (showResult) result(ctx, KyudichiClient.result, w, h, s, now);
         } finally { images.endFrame(); }
     }
@@ -90,6 +92,15 @@ final class KyudichiHud {
             float pulse = out ? 1 + .06f * (float) Math.sin(now / 160.0) : 1;
             atlas(ctx, HUD, BALL[2], 210 - sw * pulse / 2, bh + 2, sw * pulse, sh * pulse, HUD_W, HUD_H, out ? 0xFFFFFFFF : 0x99FFFFFF);
             if (!out) atlas(ctx, HUD, LOCK, 210 - 9, bh + 6, 18, 21, HUD_W, HUD_H, 0xFFFFFFFF);
+            // magic setup button during the preparation (Alt cursor / chat click opens the window again)
+            setupShown = m.phase() == 0 && mine != 2;
+            if (setupShown) {
+                float fw = 150, fh = 34, fx = bw + 12, fy = cy - fh / 2;
+                HudMesh.capsule(ctx, fx, fy, fw, fh, 0xFFE7CE91, 0xFFB08A45);
+                HudMesh.capsule(ctx, fx + 1.5f, fy + 1.5f, fw - 3, fh - 3, 0xF2132433, 0xF20C1F32);
+                outlined(ctx, HudPointer.active() ? "마법 세팅 열기" : "Alt: 마법 세팅", fx + fw / 2, fy + fh / 2, 14, GOLD, LABEL, true);
+                setupX = w / 2f - bw * s / 2f + fx * s; setupY = 8 * s + fy * s; setupW = fw * s; setupH = fh * s;
+            }
             // forfeit button: only with the Alt cursor, or while my team votes
             boolean vote = (m.flags() & 8) != 0;
             forfeitShown = (HudPointer.active() || vote) && mine != 2 && m.phase() == 2;

@@ -63,6 +63,7 @@ public final class KyudichiClient {
             context.client().execute(() -> receive(m));
         });
         ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> reset());
+        net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.END_CLIENT_TICK.register(KyudichiClient::tick);
         HudLayerRegistrationCallback.EVENT.register(drawer -> drawer.attachLayerAfter(IdentifiedLayer.CROSSHAIR,
                 Identifier.of("magiccodex", "kyudichi"), KyudichiHud::render));
     }
@@ -104,6 +105,29 @@ public final class KyudichiClient {
     static boolean active() { return match != null && match.phase() != 5 && Util.getMeasuringTimeMs() - matchAt < 4000; }
     static boolean live() { return active() && match.phase() == 2; }
     static boolean spectator() { return active() && match.myTeam() == 2; }
+    /** Playing (not spectating): the match loadout replaces the bottom-right six, and aimed spells may stay in the air. */
+    static boolean playing() { return active() && match.myTeam() != 2; }
+    public static boolean airAim() { return playing(); }
+
+    private static int lastPhase = -1;
+    /** Every client tick: switch the magic bar to the match loadout and open the setup window when a match's preparation starts. */
+    private static void tick(MinecraftClient c) {
+        boolean on = playing();
+        CastingClient.setMatchLoadout(on);
+        int phase = on ? match.phase() : -1;
+        if (phase == 0 && lastPhase != 0 && c.currentScreen == null && c.player != null) c.setScreen(new KyudichiPrepareScreen());
+        lastPhase = phase;
+    }
+    static void openSetup() {
+        var c = MinecraftClient.getInstance();
+        if (playing() && match.phase() == 0) c.setScreen(new KyudichiPrepareScreen());
+    }
+
+    /** Right before an aimed cast whose point is in the air: the server uses this point once (MagicAimPointEvent). */
+    static void sendAim(Vec3d p) {
+        if (p != null && ClientPlayNetworking.canSend(Payload.ID))
+            ClientPlayNetworking.send(new Payload(KyudichiProtocol.encode(new KyudichiProtocol.Aim((float) p.x, (float) p.y, (float) p.z))));
+    }
 
     /**
      * CodexKeyboardMixin: during a match the swap-hands key (F) belongs to 큐디치, so a spell bound to the same key must not
@@ -140,6 +164,7 @@ public final class KyudichiClient {
     /** HudCursorScreen.mouseClicked, after the other HUD widgets. */
     public static boolean cursorPress(double x, double y, int button) {
         if (!active() || spectator() || button != 0) return false;
+        if (KyudichiHud.setupHit(x, y)) { openSetup(); return true; }
         if (KyudichiHud.forfeitHit(x, y)) {
             if (ClientPlayNetworking.canSend(Payload.ID)) ClientPlayNetworking.send(new Payload(KyudichiProtocol.encode(new KyudichiProtocol.Forfeit(true))));
             return true;

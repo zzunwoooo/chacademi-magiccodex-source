@@ -26,6 +26,9 @@ public final class CastingClient {
     private static KeyBinding toggleKey;
     private static SkillHudRenderer hud;
     private static long lastNotice;
+    /** The saved normal six. During a 큐디치 match the HUD shows {@link KyudichiLoadout} on the same keys instead. */
+    private static SpellKeySettings base=new SpellKeySettings();
+    private static boolean matchLoadout;
     public static CastingState state() { STATE.catalog(CodexCatalog.spells()); return STATE; }
     public static boolean enabled() { return STATE.enabled(); }
     public static List<String> permissions() { return state().permissions(); }
@@ -55,10 +58,32 @@ public final class CastingClient {
     }
     private static void closeHud() { if(hud!=null) { hud.close(); hud=null; } }
     public static void reloadBindings() {
-        try { STATE.setBindings(SpellKeySettings.load(PATH)); TamingClient.bindingsChanged(); }
+        try { base=SpellKeySettings.load(PATH); refreshBindings(); TamingClient.bindingsChanged(); }
         catch(Exception error) { org.slf4j.LoggerFactory.getLogger("magiccodex").warn("마법 단축키 읽기 실패; 기존 배치 유지",error); }
     }
-    public static void saved(SpellKeySettings settings) { STATE.setBindings(settings); TamingClient.bindingsChanged(); }
+    public static void saved(SpellKeySettings settings) { base=settings.copy(); refreshBindings(); TamingClient.bindingsChanged(); }
+    public static SpellKeySettings base() { return base; }
+    public static boolean matchLoadout() { return matchLoadout; }
+    /** KyudichiClient: entering / leaving a match as a player. */
+    public static void setMatchLoadout(boolean on) { if(matchLoadout!=on){ matchLoadout=on; refreshBindings(); } }
+    public static void refreshBindings() {
+        if(matchLoadout) STATE.setBindingsDirect(KyudichiLoadout.get().bindings(base.orderedSlots()));
+        else STATE.setBindings(base);
+    }
+    /**
+     * Alt / chat: a HUD slot dragged onto another. Normal six: the two positions swap (spell and key together, saved).
+     * Match: the two match spells swap, keys stay with the positions (saved for the next match too).
+     */
+    public static void swapHudSlots(int a,int b) {
+        if(a==b) return;
+        if(matchLoadout) { var l=KyudichiLoadout.get(); l.swap(a,b); l.save(); refreshBindings(); return; }
+        var next=base.copy(); next.swapOrder(a,b);
+        try { next.save(PATH); base=next; refreshBindings(); }
+        catch(java.io.IOException error) {
+            var c=MinecraftClient.getInstance();
+            if(c.player!=null) c.player.sendMessage(Text.literal("순서를 저장하지 못했습니다: "+error.getMessage()),true);
+        }
+    }
     private static String toggleLabel() { return toggleKey==null?"Z":toggleKey.getBoundKeyLocalizedText().getString(); }
     public static boolean gameplay(MinecraftClient client) {
         return client.world!=null && client.player!=null && client.player.isAlive() && !client.player.isSpectator()

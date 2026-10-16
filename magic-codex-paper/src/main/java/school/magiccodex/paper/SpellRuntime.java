@@ -37,6 +37,12 @@ final class SpellRuntime implements CommandExecutor,TabCompleter,AutoCloseable {
         if(r.target()==SpellRules.Target.AIM||r.target()==SpellRules.Target.ENTITY||r.target()==SpellRules.Target.AIR_ENTITY||r.target()==SpellRules.Target.BURNING_ENTITY){
             var trace=p.getWorld().rayTrace(p.getEyeLocation(),p.getEyeLocation().getDirection(),r.range(),FluidCollisionMode.NEVER,true,.55,e->!e.equals(p)&&MagicProtectionLink.target(p,e));
             target=trace==null?null:trace.getHitEntity();location=trace==null?p.getEyeLocation().add(p.getEyeLocation().getDirection().multiply(r.range())):trace.getHitPosition().toLocation(p.getWorld());
+            // Nothing under the aim: a listener (큐디치 공중 조준) may move the point along the same ray to a chosen distance.
+            if(trace==null&&r.target()==SpellRules.Target.AIM){
+                var aim=new MagicAimPointEvent(p,id,r.range(),location.clone());Bukkit.getPluginManager().callEvent(aim);
+                var chosen=aim.getLocation();
+                if(chosen!=null&&chosen.getWorld()==p.getWorld()&&chosen.distanceSquared(p.getEyeLocation())<=(r.range()+.5)*(r.range()+.5))location=chosen;
+            }
             if(r.target()!=SpellRules.Target.AIM&&target==null){p.sendMessage("시야 안의 몬스터를 지정해 주세요.");return REFUSED;}
             if(r.target()==SpellRules.Target.AIR_ENTITY&&((LivingEntity)target).isOnGround()){p.sendMessage("공중에 있는 몬스터에게 사용해 주세요.");return REFUSED;}
             if(r.target()==SpellRules.Target.BURNING_ENTITY&&target.getFireTicks()<=0){p.sendMessage("불타는 몬스터에게 사용해 주세요.");return REFUSED;}

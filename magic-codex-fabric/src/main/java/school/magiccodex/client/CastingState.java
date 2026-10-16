@@ -19,6 +19,8 @@ public final class CastingState {
 
     public boolean enabled() { return enabled; }
     public void setBindings(SpellKeySettings value) { bindings = value.orderedSlots(); }
+    /** 큐디치 경기 중 세팅: already in HUD order. */
+    public void setBindingsDirect(List<SpellKeySettings.Binding> value) { bindings = List.copyOf(value); }
     public List<SpellKeySettings.Binding> bindings() { return bindings; }
     /** A saved slot with a usable key, independent of magic-mode and catalog discovery. */
     public boolean registered(String id) {

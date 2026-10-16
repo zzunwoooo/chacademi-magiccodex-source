@@ -186,10 +186,34 @@ final class GameListener implements Listener {
             else if (m.rules.bannedSpells.contains(id)) why = "큐디치에서 쓸 수 없는 마법이에요";
             if (why != null) cancel.accept(why);
         });
+        hookAimPoint(cl);
         register(cl, "school.magiccodex.paper.ArtifactUseAttemptEvent", "getArtifactId", (e, p, id, cancel) -> {
             Match m = match(p);
             if (m != null && m.phase != Match.Phase.ENDED && m.rules.bannedArtifacts.contains(id)) cancel.accept("큐디치에서 쓸 수 없는 아티팩트예요");
         });
+    }
+
+    /** 공중 조준: the client sent the wheel-chosen point just before the cast; use it once if it is fresh and inside the arena. */
+    private void hookAimPoint(ClassLoader cl) {
+        try {
+            @SuppressWarnings("unchecked")
+            Class<? extends Event> type = (Class<? extends Event>) Class.forName("school.magiccodex.paper.MagicAimPointEvent", true, cl);
+            Method player = type.getMethod("getPlayer"), set = type.getMethod("setLocation", org.bukkit.Location.class);
+            Bukkit.getPluginManager().registerEvent(type, this, EventPriority.NORMAL, (l, e) -> {
+                if (!type.isInstance(e)) return;
+                try {
+                    Player p = (Player) player.invoke(e);
+                    Match m = match(p); if (m == null || !m.live()) return;
+                    MatchPlayer mp = m.get(p.getUniqueId());
+                    if (mp == null || mp.aim == null || m.now - mp.aimAt > 20) return;
+                    var v = mp.aim; mp.aim = null;
+                    if (!m.arena.bounds.contains(v) || p.getWorld() != m.world) return;
+                    set.invoke(e, new org.bukkit.Location(m.world, v.getX(), v.getY(), v.getZ()));
+                } catch (ReflectiveOperationException ex) { plugin.getLogger().warning("MagicAimPointEvent 처리 실패: " + ex); }
+            }, plugin, true);
+        } catch (ReflectiveOperationException | LinkageError ex) {
+            plugin.getLogger().warning("MagicAimPointEvent 없음 (MagicCodexBridge 업데이트 필요): 공중 조준은 최대 사거리로만 됩니다");
+        }
     }
 
     private interface AttemptHandler { void handle(Event e, Player p, String id, java.util.function.Consumer<String> cancel); }

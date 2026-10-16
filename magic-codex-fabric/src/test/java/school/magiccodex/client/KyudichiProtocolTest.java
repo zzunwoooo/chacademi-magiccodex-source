@@ -23,7 +23,7 @@ class KyudichiProtocolTest {
 
     @Test void roundTrip() {
         for (Message m : SAMPLES) assertEquals(m, KyudichiProtocol.decode(KyudichiProtocol.encode(m)));
-        for (Request r : List.of(new PingRequest(2, 1f, 2f, 3f, null), new PingRequest(13, 0f, 0f, 0f, A), new Forfeit(true), new Ready(false)))
+        for (Request r : List.of(new PingRequest(2, 1f, 2f, 3f, null), new PingRequest(13, 0f, 0f, 0f, A), new Forfeit(true), new Ready(false), new Aim(1.5f, 70f, -2f)))
             assertEquals(r, KyudichiProtocol.decodeRequest(KyudichiProtocol.encode(r)));
     }
 

@@ -86,6 +86,19 @@ public final class SpellKeySettings {
         Objects.checkIndex(a,LIMIT); Objects.checkIndex(b,LIMIT);
         if(a!=b) Collections.swap(slots,a,b);
     }
+    /**
+     * Moves HUD positions a and b (the order of {@link #orderedSlots()}); spell and key travel together.
+     * An empty position counts as "after the last spell".
+     */
+    public void swapOrder(int a,int b) {
+        Objects.checkIndex(a,LIMIT); Objects.checkIndex(b,LIMIT);
+        reconcileOrder();
+        var ids=new ArrayList<String>(registrationOrder);
+        while(ids.size()<LIMIT) ids.add("");
+        Collections.swap(ids,a,b);
+        registrationOrder.clear();
+        for(String id:ids) if(!id.isEmpty()) registrationOrder.add(id);
+    }
     public boolean complete() { return slots.stream().allMatch(b -> b.empty() || KeySettingsLayout.allowed(b.keyCode())); }
     public static SpellKeySettings load(Path path) throws IOException {
         var result = new SpellKeySettings();

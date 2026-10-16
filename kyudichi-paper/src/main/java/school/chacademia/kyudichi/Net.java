@@ -37,6 +37,7 @@ final class Net implements PluginMessageListener {
             case KyudichiProtocol.PingRequest ping -> m.ping(p, ping);
             case KyudichiProtocol.Forfeit f -> p.sendMessage(m.forfeit(p, f.yes()));
             case KyudichiProtocol.Ready ready -> m.ready(p, ready.ready());
+            case KyudichiProtocol.Aim aim -> { MatchPlayer mp = m.get(p.getUniqueId()); if (mp != null) { mp.aim = new org.bukkit.util.Vector(aim.x(), aim.y(), aim.z()); mp.aimAt = m.now; } }
         }
     }
 }

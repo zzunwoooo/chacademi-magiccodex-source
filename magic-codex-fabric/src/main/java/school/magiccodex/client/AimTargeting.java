@@ -39,6 +39,8 @@ public final class AimTargeting {
     private static Shape shape;
     private static Preview preview;
     private static long lastNotice;
+    /** 큐디치 공중 조준: distance along the aim when nothing is under it (mouse wheel), and whether this frame's point is such an air point. */
+    private static double airDistance = -1; private static boolean airPoint;
 
     private AimTargeting() {}
 
@@ -55,7 +57,7 @@ public final class AimTargeting {
         Shape next = SpellTargets.get(s.id());
         if (next == null) return false; // self / utility spells keep the instant cast
         if (spell != null && spell.id().equals(s.id())) { cancel(true); return true; }
-        spell = s; shape = next; preview = null;
+        spell = s; shape = next; preview = null; airDistance = next.range();
         var c = MinecraftClient.getInstance();
         c.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK.value(), 1.5f, .16f));
         if (AimSettings.get().smartCast) {
@@ -92,9 +94,20 @@ public final class AimTargeting {
         float[] look = AimMath.yawPitch(aim.x - eye.x, aim.y - eye.y, aim.z - eye.z);
         // One rotation update for the server only; the local vanilla mouse view is not snapped.
         c.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(look[0], look[1], player.isOnGround(), player.horizontalCollision));
+        if (airPoint && KyudichiClient.airAim()) KyudichiClient.sendAim(aim);
         var chosen = spell;
         cancel(false);
         CastingClient.fire(chosen);
+        return true;
+    }
+
+    /** Mouse wheel while aiming in 큐디치: move the air point closer / farther. @return true when the scroll was used. */
+    public static boolean scroll(double vertical) {
+        if (spell == null || shape == null || vertical == 0 || !KyudichiClient.airAim()) return false;
+        double reach = shape.range();
+        airDistance = Math.clamp((airDistance > 0 ? airDistance : reach) + Math.signum(vertical) * Math.max(1, reach / 16), 2, reach);
+        var c = MinecraftClient.getInstance();
+        if (c.player != null) c.player.sendMessage(Text.literal("공중 조준 거리 " + Math.round(airDistance) + "m / " + Math.round(reach) + "m"), true);
         return true;
     }
 
@@ -133,8 +146,13 @@ public final class AimTargeting {
             var living=(LivingEntity)entity;var intersection=living.getBoundingBox().expand(.55).raycast(eye,castPoint);
             if(intersection.isPresent()&&eye.squaredDistanceTo(intersection.get())<closest){target=living;castPoint=intersection.get();closest=eye.squaredDistanceTo(castPoint);}
         }
-        String reason=null;boolean snapped=false;
-        if(grounded(shape.mode())&&target==null&&hit.getType()==HitResult.Type.MISS){
+        String reason=null;boolean snapped=false;airPoint=false;
+        if(KyudichiClient.airAim()&&target==null&&hit.getType()==HitResult.Type.MISS){
+            // 큐디치: nothing under the aim → the point stays in the air at the wheel distance (server: MagicAimPointEvent).
+            double d=airDistance>0?Math.min(airDistance,reach):reach;
+            castPoint=eye.add(end.subtract(eye).normalize().multiply(d));airPoint=true;
+        }
+        else if(grounded(shape.mode())&&target==null&&hit.getType()==HitResult.Type.MISS){
             // Zones and walls belong on the ground: a ray into the air is moved down onto the ground under the aim
             // (pulled in toward the caster until it is within range and in sight), never left floating.
             Vec3d ground=groundUnder(world,player,eye,end,reach);

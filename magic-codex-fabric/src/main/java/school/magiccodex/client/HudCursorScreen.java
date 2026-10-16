@@ -11,10 +11,10 @@ public final class HudCursorScreen extends Screen {
     @Override public void render(DrawContext context,int mouseX,int mouseY,float delta){}
     @Override public void renderBackground(DrawContext context,int mouseX,int mouseY,float delta){}
     @Override public boolean mouseClicked(double x,double y,int button){
-        return TopMenuClient.click(x,y,button) || PartyHudClient.click(x,y,button) || KyudichiClient.cursorPress(x,y,button) || super.mouseClicked(x,y,button);
+        return TopMenuClient.click(x,y,button) || PartyHudClient.click(x,y,button) || HudSlotDrag.press(x,y,button) || KyudichiQueueClient.click(x,y,button) || KyudichiClient.cursorPress(x,y,button) || super.mouseClicked(x,y,button);
     }
     @Override public boolean mouseReleased(double x,double y,int button){
-        return PartyHudClient.release(x,y,button) || KyudichiClient.cursorRelease(x,y,button) || super.mouseReleased(x,y,button);
+        return HudSlotDrag.release(x,y,button) || PartyHudClient.release(x,y,button) || KyudichiClient.cursorRelease(x,y,button) || super.mouseReleased(x,y,button);
     }
-    @Override public void removed(){PartyHudClient.cursorClosed();KyudichiClient.gesture=null;super.removed();}
+    @Override public void removed(){PartyHudClient.cursorClosed();HudSlotDrag.cancel();KyudichiClient.gesture=null;super.removed();}
 }

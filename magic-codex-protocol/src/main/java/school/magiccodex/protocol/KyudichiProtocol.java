@@ -28,6 +28,7 @@ import java.util.UUID;
  * C2S 1 PING    u8 kind · f32 x · f32 y · f32 z · u8 hasTarget [· UUID target]
  * C2S 2 FORFEIT u8 yes
  * C2S 3 READY   u8 ready
+ * C2S 4 AIM     f32 x · f32 y · f32 z   공중 조준점 (바로 뒤 시전 하나에만 쓰인다; 휠로 고른 거리)
  * </pre>
  * Ping kinds: 0 위치 1 아군 2 적 3 경고 4 가는 중 5 도움 6 힐 줘 7 퀘이플 8 블러저 9 스니치 10 체력 성소 11 마나 성소 12 안정성 성소 13 골대 14 가속 성소.
  */
@@ -35,7 +36,7 @@ public final class KyudichiProtocol {
     public static final String CHANNEL = "chacademi:kyudichi";
     public static final int VERSION = 1, MAX_BYTES = 8192;
     public static final int MATCH = 1, KEY = 2, BALLS = 3, FEED = 4, PING = 5, RESULT = 6, SHRINES = 7;
-    public static final int C_PING = 1, C_FORFEIT = 2, C_READY = 3;
+    public static final int C_PING = 1, C_FORFEIT = 2, C_READY = 3, C_AIM = 4;
     public static final int PING_KINDS = 15;
 
     private KyudichiProtocol() {}
@@ -54,10 +55,11 @@ public final class KyudichiProtocol {
     public record Shrines(List<Shrine> shrines) implements Message {}
 
     /** Client requests. */
-    public sealed interface Request permits PingRequest, Forfeit, Ready {}
+    public sealed interface Request permits PingRequest, Forfeit, Ready, Aim {}
     public record PingRequest(int kind, float x, float y, float z, UUID target) implements Request {}
     public record Forfeit(boolean yes) implements Request {}
     public record Ready(boolean ready) implements Request {}
+    public record Aim(float x, float y, float z) implements Request {}
 
     // ------------------------------------------------------------------ encode
     public static byte[] encode(Message m) {
@@ -106,6 +108,7 @@ public final class KyudichiProtocol {
                 }
                 case Forfeit x -> { o.writeByte(C_FORFEIT); o.writeByte(x.yes ? 1 : 0); }
                 case Ready x -> { o.writeByte(C_READY); o.writeByte(x.ready ? 1 : 0); }
+                case Aim x -> { o.writeByte(C_AIM); f(o, x.x); f(o, x.y); f(o, x.z); }
             }
         });
     }
@@ -160,6 +163,7 @@ public final class KyudichiProtocol {
                 }
                 case C_FORFEIT -> new Forfeit(rflag(i));
                 case C_READY -> new Ready(rflag(i));
+                case C_AIM -> new Aim(rf(i), rf(i), rf(i));
                 default -> throw new IllegalArgumentException("kind " + kind);
             };
         });

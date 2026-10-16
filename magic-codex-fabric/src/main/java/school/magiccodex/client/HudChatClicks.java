@@ -4,13 +4,18 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 import net.minecraft.client.gui.screen.ChatScreen;
 
-/** With chat open the HUD stays visible; a click on the top-left menu goes to the menu instead of the chat. */
+/** With chat open the HUD stays visible; clicks on the top-left menu, the magic slots (drag to swap) and the 큐디치 queue card go there instead of the chat. */
 final class HudChatClicks {
     private HudChatClicks() {}
     static void initialize() {
         ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
-            if (screen instanceof ChatScreen)
-                ScreenMouseEvents.allowMouseClick(screen).register((s, x, y, button) -> !TopMenuClient.click(x, y, button));
+            if (screen instanceof ChatScreen) {
+                ScreenMouseEvents.allowMouseClick(screen).register((s, x, y, button) -> !TopMenuClient.click(x, y, button) && !HudSlotDrag.press(x, y, button)
+                        && !KyudichiQueueClient.click(x, y, button));
+                // A slot dragged onto another swaps the two (bottom-right magic bar).
+                ScreenMouseEvents.allowMouseRelease(screen).register((s, x, y, button) -> !HudSlotDrag.release(x, y, button));
+                ScreenEvents.remove(screen).register(s -> HudSlotDrag.cancel());
+            }
         });
     }
 }
