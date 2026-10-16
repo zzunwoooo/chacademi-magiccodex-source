@@ -11,7 +11,7 @@ record Settings(String server, int startSize, TreeMap<Integer, Long> expansion, 
     static Settings from(ConfigurationSection c, Logger log) {
         String server = c.getString("server-name", "school").strip();
         if (!server.matches("[A-Za-z0-9_-]{1,32}")) { log.warning("server-name 은 영문·숫자 32자 이하: school 로 씁니다."); server = "school"; }
-        int start = Math.clamp(c.getInt("start-size", 3), HousingRules.MIN_SIZE, HousingRules.MAX_SIZE);
+        int start = Math.clamp(c.getInt("start-size", 15), HousingRules.MIN_SIZE, HousingRules.MAX_SIZE);
         var steps = new TreeMap<Integer, Long>();
         var section = c.getConfigurationSection("expansion");
         if (section != null) for (String key : section.getKeys(false)) {
