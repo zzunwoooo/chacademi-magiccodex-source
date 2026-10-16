@@ -1,3 +1,5 @@
+> Claude 2026-10-16 (not built): [파티 창 UI + 파티 초대 알림](CLAUDE_PARTY_UI_20261016.md). Branch claude/party-ui-20261016 on codex/operating-alchemy-carrier-20261016 @ 9cefa25. Velocity party plugin + magic-codex UI must be deployed together (new channel chacademi:party_ui).
+
 <!-- Latest operating artifact-only ownership integration: CODEX_SHARED_ARTIFACT_20261016.md -->
 > Operating integration 2026-10-16: alchemy dd34f25 + 43513c2 and broom projectile b69ea36 added to the deployed integrated baseline. See CODEX_OPERATING_ALCHEMY_CARRIER_20261016.md.
 

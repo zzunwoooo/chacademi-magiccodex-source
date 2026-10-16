@@ -60,6 +60,7 @@ public final class MagicCodexClient implements ClientModInitializer {
         PlayerHudClient.initialize();
         HudChatClicks.initialize();
         PartyHudClient.initialize();
+        PartyUiClient.initialize();
         ScreenVfxClient.initialize();
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             for (String alias : new String[]{"UI", "ui"}) {

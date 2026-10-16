@@ -28,6 +28,8 @@ public final class PartyPlugin {
     private static final MinecraftChannelIdentifier HUD=MinecraftChannelIdentifier.from("chacademi:party_hud");
     /** 파티 명단 → 게임 서버 (아티팩트·마법의 파티 판정). 프록시만 보낸다. */
     private static final MinecraftChannelIdentifier ROSTER=MinecraftChannelIdentifier.from("chacademi:party_roster");
+    /** 파티 창 ↔ 클라이언트 (PartyUi). 클라이언트가 보낸 요청은 이 프록시가 처리하고 게임 서버로 넘기지 않는다. */
+    private static final MinecraftChannelIdentifier UI=MinecraftChannelIdentifier.from("chacademi:party_ui");
     private final ProxyServer proxy;
     private final Logger logger;
     private final Path directory;
@@ -36,6 +38,9 @@ public final class PartyPlugin {
     private NetworkChat network;
     private PartyHud hud;
     private final PartyRoster roster=new PartyRoster();
+    private final PartyUi ui=new PartyUi();
+    /** 마지막으로 본 스킨 (오프라인 파티원 얼굴용). 작업 스레드 전용. */
+    private final Map<UUID,PartyUi.Skin> skins=new HashMap<>();
     private final Map<UUID,Long> nextChat=new HashMap<>(),nextCommand=new HashMap<>();
     private final Set<String> trusted=new HashSet<>();
     private PartyBook book;
@@ -54,7 +59,7 @@ public final class PartyPlugin {
             network=new NetworkChat(trusted);hud=new PartyHud(trusted);
             store=new PartyStore(directory.resolve("parties.json"));book=store.load(capacity);ready=true;
         }catch(Exception e){logger.error("Party initialization failed; commands remain unavailable. Stored state preserved.",e);}
-        proxy.getChannelRegistrar().register(IDENTITY,DISCOVERY,VITALS,HUD,ROSTER);
+        proxy.getChannelRegistrar().register(IDENTITY,DISCOVERY,VITALS,HUD,ROSTER,UI);
         // 파티 위젯: 0.25초마다 바뀐 파티만 보낸다 (변화 없으면 3초마다 한 번).
         proxy.getScheduler().buildTask(this,()->enqueue(this::flushHud)).repeat(250,TimeUnit.MILLISECONDS).schedule();
         var manager=proxy.getCommandManager();
@@ -65,7 +70,7 @@ public final class PartyPlugin {
         ready=false;worker.shutdown();try{if(!worker.awaitTermination(10,TimeUnit.SECONDS))logger.warn("Party worker still draining during shutdown");}catch(InterruptedException e){Thread.currentThread().interrupt();}
     }
     @Subscribe public void disconnect(DisconnectEvent event){
-        UUID id=event.getPlayer().getUniqueId();enqueue(()->{if(network!=null)network.disconnect(id);if(hud!=null)hud.disconnect(id);roster.disconnect(id);nextChat.remove(id);nextCommand.remove(id);});
+        UUID id=event.getPlayer().getUniqueId();enqueue(()->{if(network!=null)network.disconnect(id);if(hud!=null)hud.disconnect(id);roster.disconnect(id);ui.disconnect(id);nextChat.remove(id);nextCommand.remove(id);});
         // Disconnect/server transfer does not change durable membership.
     }
     @Subscribe public void identity(PluginMessageEvent event){
@@ -92,7 +97,7 @@ public final class PartyPlugin {
     }
     @Subscribe public void serverSwitched(ServerPostConnectEvent event){
         UUID id=event.getPlayer().getUniqueId();long notBefore=System.currentTimeMillis()+1000;
-        enqueue(()->{if(hud!=null)hud.resend(id,notBefore);roster.resend(id,notBefore);});
+        enqueue(()->{if(hud!=null)hud.resend(id,notBefore);roster.resend(id,notBefore);ui.resend(id,notBefore);});
     }
     private void flushHud(){
         if(!ready||hud==null)return;long now=System.currentTimeMillis();
@@ -105,6 +110,9 @@ public final class PartyPlugin {
             var out=hud.due(player.getUniqueId(),payload,now);
             if(out!=null)player.sendPluginMessage(HUD,out);
             // 같은 파티 명단을 플레이어가 있는 게임 서버에도 보낸다 (신뢰 서버만).
+            // 파티 창 상태: 바뀌었을 때만 보낸다.
+            var state=ui.stateDue(player.getUniqueId(),uiState(player.getUniqueId(),party,false,now),now);
+            if(state!=null)player.sendPluginMessage(UI,state);
             var server=player.getCurrentServer().get();
             if(trusted.contains(server.getServerInfo().getName())){
                 var list=roster.due(player.getUniqueId(),PartyRoster.encode(party),now);
@@ -165,7 +173,7 @@ public final class PartyPlugin {
         }
         @Override public List<String> suggest(Invocation invocation){
             String[] a=invocation.arguments();
-            if(a.length<=1){String prefix=a.length==0?"":a[0];return List.of("생성","초대","수락","거절","탈퇴","위임","강퇴","해산","목록","채팅").stream().filter(s->s.startsWith(prefix)).toList();}
+            if(a.length<=1){String prefix=a.length==0?"":a[0];return List.of("생성","초대","수락","거절","탈퇴","위임","강퇴","해산","목록","채팅","도움말").stream().filter(s->s.startsWith(prefix)).toList();}
             if(a.length==2&&!Set.of("chat","채팅").contains(a[0]))return proxy.getAllPlayers().stream().map(Player::getUsername).filter(n->n.toLowerCase(Locale.ROOT).startsWith(a[1].toLowerCase(Locale.ROOT))).sorted().limit(30).toList();
             return List.of();
         }
@@ -229,8 +237,10 @@ public final class PartyPlugin {
         UUID actor=p.getUniqueId();long now=System.currentTimeMillis();
         if(now<nextCommand.getOrDefault(actor,0L))throw new IllegalArgumentException("잠시 후 다시 시도해 주세요.");
         nextCommand.put(actor,now+150);
-        if(args.length==0){notice(p,"/파티 생성 | 초대 <이름> | 수락/거절 [초대한 사람] | 탈퇴 | 위임/강퇴 <이름 또는 UUID> | 해산 | 목록 | 채팅 <내용>");return;}
-        String action=switch(args[0].toLowerCase(Locale.ROOT)){case "생성"->"create";case "초대"->"invite";case "수락"->"accept";case "거절"->"deny";case "탈퇴"->"leave";case "위임"->"promote";case "강퇴"->"kick";case "해산"->"disband";case "목록"->"list";case "채팅"->"chat";default->args[0].toLowerCase(Locale.ROOT);};
+        // 인수 없이 /파티 → 파티 창을 연다 (명령어 하위 동작은 그대로 남겨 둔다).
+        if(args.length==0){openUi(p,now);return;}
+        String action=switch(args[0].toLowerCase(Locale.ROOT)){case "생성"->"create";case "초대"->"invite";case "수락"->"accept";case "거절"->"deny";case "탈퇴"->"leave";case "위임"->"promote";case "강퇴"->"kick";case "해산"->"disband";case "목록"->"list";case "채팅"->"chat";case "도움말"->"help";default->args[0].toLowerCase(Locale.ROOT);};
+        if(action.equals("help")){notice(p,"/파티 (창 열기) | 생성 | 초대 <이름> | 수락/거절 [초대한 사람] | 탈퇴 | 위임/강퇴 <이름 또는 UUID> | 해산 | 목록 | 채팅 <내용>");return;}
         if(action.equals("chat")){
             if(args.length<2)throw new IllegalArgumentException("/파티 채팅 <내용>");
             String text=PartyBook.message(String.join(" ",Arrays.copyOfRange(args,1,args.length)));
@@ -245,19 +255,118 @@ public final class PartyPlugin {
             var party=book.require(actor);notice(p,"파티원 "+party.members().size()+"/"+book.capacity);
             for(UUID id:party.members())notice(p,(party.leader().equals(id)?"★ ":"")+name(id)+(proxy.getPlayer(id).isPresent()?"":" (오프라인)"));return;
         }
-        var next=book.copy();
+        UUID target=null;
         switch(action){
-            case "create"->{arity(args,1);next.create(actor);commit(next);notice(p,"파티를 만들었습니다.");}
-            case "invite"->{arity(args,2);UUID target=resolve(args[1],true);next.invite(actor,target,now);book=next;notice(p,name(target)+" 님을 초대했습니다.");proxy.getPlayer(target).ifPresent(t->notice(t,name(actor)+" 님의 파티 초대 (2분). /파티 수락 "+p.getUsername()+" 또는 /파티 거절 "+p.getUsername()));}
-            case "accept"->{optional(args);UUID inviter=args.length==2?resolve(args[1],false):null;var party=next.accept(actor,inviter,now);commit(next);broadcast(party.members(),name(actor)+" 님이 파티에 참가했습니다.");}
-            case "deny"->{optional(args);UUID inviter=args.length==2?resolve(args[1],false):null;var invite=next.deny(actor,inviter,now);book=next;notice(p,"초대를 거절했습니다.");proxy.getPlayer(invite.inviter()).ifPresent(t->notice(t,name(actor)+" 님이 초대를 거절했습니다."));}
-            case "leave"->{arity(args,1);var old=next.leave(actor);commit(next);broadcast(old.members(),name(actor)+" 님이 파티에서 나갔습니다.");var after=book.parties.get(old.id());if(after!=null&&old.leader().equals(actor))broadcast(after.members(),name(after.leader())+" 님이 파티장이 되었습니다.");}
-            case "promote"->{arity(args,2);UUID target=resolve(args[1],false);var party=next.promote(actor,target);commit(next);broadcast(party.members(),name(target)+" 님에게 파티장을 위임했습니다.");}
-            case "kick"->{arity(args,2);UUID target=resolve(args[1],false);var old=next.kick(actor,target);commit(next);broadcast(old.members(),name(target)+" 님이 파티에서 제외되었습니다.");}
-            case "disband"->{arity(args,1);var old=next.disband(actor);commit(next);broadcast(old.members(),"파티가 해산되었습니다.");}
-            default->throw new IllegalArgumentException("알 수 없는 파티 명령입니다. /파티 로 사용법을 확인하세요.");
+            case "create","leave","disband"->arity(args,1);
+            case "invite"->{arity(args,2);target=resolve(args[1],true);}
+            case "promote","kick"->{arity(args,2);target=resolve(args[1],false);}
+            case "accept","deny"->{optional(args);target=args.length==2?resolve(args[1],false):null;}
+            default->throw new IllegalArgumentException("알 수 없는 파티 명령입니다. /파티 도움말 로 사용법을 확인하세요.");
+        }
+        notice(p,act(p,action,target,now,false));
+    }
+    /**
+     * 명령어와 파티 창이 함께 쓰는 실제 동작. 실패하면 IllegalArgumentException(사용자에게 보일 문구).
+     * @return 실행한 사람에게 보여 줄 문구
+     */
+    private String act(Player p,String action,UUID target,long now,boolean fromUi)throws IOException{
+        UUID actor=p.getUniqueId();var next=book.copy();
+        switch(action){
+            case "create"->{next.create(actor);commit(next);return "파티를 만들었습니다.";}
+            case "invite"->{
+                if(target==null||proxy.getPlayer(target).isEmpty())throw new IllegalArgumentException("접속 중인 플레이어만 초대할 수 있습니다.");
+                // 파티 창에서는 파티가 없어도 초대할 수 있다: 먼저 파티를 만들고(내가 파티장) 초대한다.
+                boolean created=false;
+                if(fromUi&&next.party(actor)==null){next.create(actor);created=true;}
+                next.invite(actor,target,now);
+                if(created)commit(next);else book=next;
+                var inviter=person(actor,0);
+                proxy.getPlayer(target).ifPresent(t->{
+                    notice(t,name(actor)+" 님이 파티에 초대했어요. 알림이나 /파티 창에서 수락할 수 있어요. (2분)");
+                    t.sendPluginMessage(UI,PartyUi.invite(inviter));
+                });
+                return (created?"파티를 만들고 ":"")+name(target)+" 님을 초대했어요.";
+            }
+            case "accept"->{var party=next.accept(actor,target,now);commit(next);broadcast(party.members(),name(actor)+" 님이 파티에 참가했습니다.");return "파티에 참가했어요.";}
+            case "deny"->{var invite=next.deny(actor,target,now);book=next;proxy.getPlayer(invite.inviter()).ifPresent(t->notice(t,name(actor)+" 님이 초대를 거절했습니다."));return "초대를 거절했어요.";}
+            case "leave"->{var old=next.leave(actor);commit(next);broadcast(old.members(),name(actor)+" 님이 파티에서 나갔습니다.");var after=book.parties.get(old.id());if(after!=null&&old.leader().equals(actor))broadcast(after.members(),name(after.leader())+" 님이 파티장이 되었습니다.");return "파티에서 나왔어요.";}
+            case "promote"->{var party=next.promote(actor,target);commit(next);broadcast(party.members(),name(target)+" 님에게 파티장을 위임했습니다.");return name(target)+" 님이 파티장이 되었어요.";}
+            case "kick"->{var old=next.kick(actor,target);commit(next);broadcast(old.members(),name(target)+" 님이 파티에서 제외되었습니다.");return name(target)+" 님을 내보냈어요.";}
+            case "disband"->{var old=next.disband(actor);commit(next);broadcast(old.members(),"파티가 해산되었습니다.");return "파티를 해산했어요.";}
+            default->throw new IllegalArgumentException("알 수 없는 파티 명령입니다.");
         }
     }
-    private static void arity(String[] args,int n){if(args.length!=n)throw new IllegalArgumentException("인수가 맞지 않습니다. /파티 로 사용법을 확인하세요.");}
+    private static void arity(String[] args,int n){if(args.length!=n)throw new IllegalArgumentException("인수가 맞지 않습니다. /파티 도움말 로 사용법을 확인하세요.");}
     private static void optional(String[] args){if(args.length>2)throw new IllegalArgumentException("초대한 사람 한 명만 지정해 주세요.");}
+
+    // ---------- 파티 창 ----------
+    @Subscribe public void uiRequest(PluginMessageEvent event){
+        if(!event.getIdentifier().equals(UI))return;
+        event.setResult(PluginMessageEvent.ForwardResult.handled()); // 어느 쪽에서 온 것이든 게임 서버·클라이언트로 넘기지 않는다.
+        if(!(event.getSource() instanceof Player p))return; // 클라이언트가 보낸 요청만 받는다.
+        byte[] data=event.getData().clone();
+        if(!enqueue(()->{
+            if(proxy.getPlayer(p.getUniqueId()).orElse(null)!=p)return;
+            long now=System.currentTimeMillis();
+            PartyUi.Request request;
+            try{request=PartyUi.decode(data);}catch(IOException malformed){return;}
+            if(!ready){p.sendPluginMessage(UI,PartyUi.result(false,"파티 서비스를 사용할 수 없습니다."));return;}
+            if(p.getPermissionValue("chacademi.party")==Tristate.FALSE){p.sendPluginMessage(UI,PartyUi.result(false,"파티 기능을 사용할 권한이 없습니다."));return;}
+            try{
+                switch(request.action()){
+                    case PartyUi.OPEN->{var payload=uiState(p.getUniqueId(),book.party(p.getUniqueId()),false,now);ui.sentNow(p.getUniqueId(),payload);p.sendPluginMessage(UI,payload);}
+                    case PartyUi.CANDIDATES->{if(ui.candidatesAllowed(p.getUniqueId(),now))p.sendPluginMessage(UI,PartyUi.candidates(candidates(p.getUniqueId(),now)));}
+                    default->{
+                        if(now<nextCommand.getOrDefault(p.getUniqueId(),0L))throw new IllegalArgumentException("잠시 후 다시 시도해 주세요.");
+                        nextCommand.put(p.getUniqueId(),now+150);
+                        String action=switch(request.action()){case PartyUi.INVITE->"invite";case PartyUi.ACCEPT->"accept";case PartyUi.DENY->"deny";case PartyUi.LEAVE->"leave";case PartyUi.PROMOTE->"promote";default->"kick";};
+                        String message=act(p,action,request.target(),now,true);
+                        // 바뀐 상태를 결과보다 먼저 보내 창이 바로 맞춰지게 한다.
+                        var payload=uiState(p.getUniqueId(),book.party(p.getUniqueId()),false,now);ui.sentNow(p.getUniqueId(),payload);p.sendPluginMessage(UI,payload);
+                        if(request.action()==PartyUi.INVITE)p.sendPluginMessage(UI,PartyUi.candidates(candidates(p.getUniqueId(),now)));
+                        p.sendPluginMessage(UI,PartyUi.result(true,message));
+                    }
+                }
+            }catch(IllegalArgumentException e){p.sendPluginMessage(UI,PartyUi.result(false,e.getMessage()));}
+            catch(Exception e){logger.error("Party UI operation failed; no success acknowledgment sent",e);p.sendPluginMessage(UI,PartyUi.result(false,"파티 정보를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요."));}
+        }))p.sendPluginMessage(UI,PartyUi.result(false,"파티 요청이 많습니다. 잠시 후 다시 시도해 주세요."));
+    }
+    private void openUi(Player p,long now){
+        var party=book.party(p.getUniqueId());
+        ui.sentNow(p.getUniqueId(),uiState(p.getUniqueId(),party,false,now));
+        p.sendPluginMessage(UI,uiState(p.getUniqueId(),party,true,now));
+    }
+    private byte[] uiState(UUID viewer,PartyBook.Party party,boolean open,long now){
+        var members=new ArrayList<PartyUi.Person>();
+        if(party!=null)for(UUID id:party.members())members.add(person(id,(proxy.getPlayer(id).isPresent()?PartyUi.P_ONLINE:0)|(party.leader().equals(id)?PartyUi.P_LEADER:0)));
+        var invites=new ArrayList<PartyUi.Person>();
+        book.expire(now);
+        for(var invite:book.invites)if(invite.target().equals(viewer))invites.add(person(invite.inviter(),0));
+        return PartyUi.state(open,book.capacity,members,invites);
+    }
+    /** 초대할 수 있는 사람: 학교·야생(신뢰 서버)에 접속 중이고 파티가 없는 다른 플레이어. */
+    private List<PartyUi.Person> candidates(UUID viewer,long now){
+        book.expire(now);var mine=book.party(viewer);var list=new ArrayList<PartyUi.Person>();
+        for(Player player:proxy.getAllPlayers()){
+            UUID id=player.getUniqueId();if(id.equals(viewer)||book.party(id)!=null)continue;
+            var server=player.getCurrentServer().orElse(null);if(server==null||!trusted.contains(server.getServerInfo().getName()))continue;
+            boolean invited=mine!=null&&book.invites.stream().anyMatch(i->i.party().equals(mine.id())&&i.target().equals(id));
+            list.add(person(id,invited?PartyUi.P_INVITED:0));
+        }
+        list.sort(Comparator.comparing(PartyUi.Person::nickname,String.CASE_INSENSITIVE_ORDER));
+        return list.size()>PartyUi.MAX_CANDIDATES?list.subList(0,PartyUi.MAX_CANDIDATES):list;
+    }
+    private PartyUi.Person person(UUID id,int flags){
+        var online=proxy.getPlayer(id).orElse(null);long now=System.currentTimeMillis();
+        var identity=online==null||network==null?null:network.identity(id,online.getCurrentServer().orElse(null),now);
+        if(identity!=null&&hud!=null)hud.remember(id,identity.nickname(),identity.house());
+        String remembered=hud==null?null:hud.rememberedName(id);
+        String nickname=identity!=null?identity.nickname():remembered!=null?remembered:online!=null?online.getUsername():"오프라인 파티원";
+        int house=identity!=null?identity.house():hud==null?-1:hud.rememberedHouse(id);
+        if(online!=null){
+            for(var property:online.getGameProfile().getProperties())
+                if(property.getName().equals("textures")){var skin=PartyUi.skin(property.getValue());if(!skin.hash().isEmpty())skins.put(id,skin);break;}
+        }
+        return new PartyUi.Person(id,nickname,house,skins.getOrDefault(id,PartyUi.Skin.NONE),flags);
+    }
 }
