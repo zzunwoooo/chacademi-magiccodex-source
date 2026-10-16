@@ -8,7 +8,7 @@ repositories {
     maven { url = 'https://repo.papermc.io/repository/maven-public/' }
 }
 dependencies {
-    testImplementation files('C:/Chacademi/network/school/plugins/portable-vfx-paper-3.2.1-expansion71.1.jar')
+    testImplementation files('C:/Chacademi/network/school/plugins/portable-vfx-paper-3.2.1-expansion71.1-carrier.1.jar')
     compileOnly files('C:/Chacademi/network/school/plugins/worldguard-bukkit-7.0.13-dist.jar','C:/Chacademi/network/school/plugins/FastAsyncWorldEdit-Paper-2.13.1-SNAPSHOT-1119.jar')
     testImplementation files('../plugins/MythicMobs-5.9.0.jar','C:/Chacademi/network/school/plugins/worldguard-bukkit-7.0.13-dist.jar','C:/Chacademi/network/school/plugins/FastAsyncWorldEdit-Paper-2.13.1-SNAPSHOT-1119.jar')
     compileOnly files('../plugins/MythicMobs-5.9.0.jar')

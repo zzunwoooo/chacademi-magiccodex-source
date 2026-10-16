@@ -1,3 +1,4 @@
+<!-- Latest operating artifact-only ownership integration: CODEX_SHARED_ARTIFACT_20261016.md -->
 > Operating integration 2026-10-16: alchemy dd34f25 + 43513c2 and broom projectile b69ea36 added to the deployed integrated baseline. See CODEX_OPERATING_ALCHEMY_CARRIER_20261016.md.
 
 > Content follow-up: [Six Story descriptions and Claude editor contract](STORY_DESCRIPTION_CONTRACT_20261012.md). Personal dialogue files updated with backups; only description metadata is published. No restart required.

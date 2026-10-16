@@ -3,9 +3,9 @@
   "versions": [
     {
       "module": "magic-codex-paper",
-      "file": "magic-codex-bridge-0.31.0-expansion71.1-artifact.1-summon.2-effects.2-multi.1-alchemy.1.jar",
-      "sha256": "ff86626e5ce8a92ee23deadc9257534f02592e20a618d3d4e802aedfe5ac39c6",
-      "bytes": 1903665
+      "file": "magic-codex-bridge-0.31.0-expansion71.1-artifact.1-summon.2-effects.2-multi.1-alchemy.1-shared.1.jar",
+      "sha256": "4993b1afee26466eb1a672cb41cbf6bb7352fc8b4bc9303d8ba2b1c56d7d2dfe",
+      "bytes": 1929697
     },
     {
       "module": "magic-mythic-paper",
@@ -36,7 +36,6 @@
   "baselinePreserved": true,
   "temporaryLauncherChanged": false,
   "realTimeSeasonApplied": true,
-  "sourceCommit": "506aa202a9bec05a2c7b14319f0a8e8fd7b7b4b1",
   "seasonEpoch": "2026-10-16T15:33:16+09:00",
   "hoursPerSeason": 72,
   "seasonReloadVerifiedBoth": true,
@@ -47,5 +46,7 @@
   "serverOtherBackupFilesUnchanged": 131,
   "serverForceKilled": false,
   "staleTask9TestWorkerStopped": 15072,
-  "firstAttemptRolledBackDueToStaleWorkerJarLock": true
+  "firstAttemptRolledBackDueToStaleWorkerJarLock": true,
+  "sourceCommitNote": "See the commit containing artifact-shared-deployment.json; source built and deployed from this integration branch.",
+  "artifactOwnershipShared": true
 }

@@ -1,0 +1,17 @@
+import:
+    java.net.URL
+    java.net.URLClassLoader
+    java.lang.reflect.Array
+    net.luckperms.api.LuckPermsProvider
+
+on load:
+    set {_lp} to LuckPermsProvider.get()
+    set {_url} to new URL("file:/C:/Chacademi/staging/alchemy-carrier-20261016-task10/ownership-audit.jar")
+    set {_urls} to Array.newInstance(URL, 1)
+    Array.set({_urls}, 0, {_url})
+    set {_loader} to new URLClassLoader({_urls}, {_lp}.getClass().getClassLoader())
+    set {_type} to {_loader}.loadClass("ArtifactOwnershipAudit")
+    set {_audit} to {_type}.getDeclaredConstructor().newInstance()
+    set {_result} to {_audit}.apply("C:/Chacademi/backups/artifact-shared-20261016-task10/SERVER-artifact-nodes-preflight.tsv")
+    send "%{_result}%" to console
+    {_loader}.close()

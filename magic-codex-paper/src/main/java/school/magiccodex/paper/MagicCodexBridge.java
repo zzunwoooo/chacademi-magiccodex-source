@@ -245,6 +245,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(taming!=null){taming.close();taming=null;}
         if(playerState!=null){playerState.close();playerState=null;}
         if(artifactEffects!=null){artifactEffects.close();artifactEffects=null;}
+        if(artifacts!=null)artifacts.close();
         if(reconfiguration!=null)reconfiguration.close();
         if(enhancement!=null)enhancement.close();
         if(appraisal!=null)appraisal.close();

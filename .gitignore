@@ -58,3 +58,7 @@ shop-mailbox-database.properties
 
 # Dedicated operating player-state connection is private.
 player-state-database.properties
+
+# Private artifact receipts and migration inputs
+artifact-purchase-receipts/
+*-artifact-nodes-*.tsv

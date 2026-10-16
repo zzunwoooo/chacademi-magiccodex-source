@@ -78,6 +78,7 @@ commands:
     description: Tag the held accessory and its equipment bonuses.
     permission: magiccodex.equipment.admin
   아티팩트관리:
+    aliases: [artifactadmin]
     description: Reload artifacts.yml, list artifacts, check a player's artifacts.
     permission: magiccodex.artifact.admin
   아티팩트소환:
