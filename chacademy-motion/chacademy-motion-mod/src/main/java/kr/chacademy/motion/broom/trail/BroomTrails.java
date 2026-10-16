@@ -317,7 +317,10 @@ public final class BroomTrails {
         return new Frame(tipW, vec(right), vec(up), vec(fwd));
     }
 
-    /** 모델 뒤끝(+Z 최대, 솔 끝) 면의 중심 (픽셀). */
+    /** 솔 끝 판정 띠 두께 (픽셀). 뒤로 비스듬히 뻗은 솔 장식(broom_2 등) 한쪽만 보지 않도록 띠 전체의 중심을 쓴다. */
+    static final float TIP_BAND_PX = 4f;
+
+    /** 솔 끝 (픽셀): x,y = 뒤끝(+Z 최대)에서 4px 안의 모든 꼭짓점 중심, z = 뒤끝 - 1px. */
     static float[] tipOf(BroomModel model) {
         float maxZ = model.bounds[5];
         double sx = 0, sy = 0;
@@ -325,7 +328,7 @@ public final class BroomTrails {
         for (var q : model.quads) {
             float[] pos = q.pos();
             for (int i = 0; i < 4; i++) {
-                if (pos[i * 3 + 2] >= maxZ - 0.5f) {
+                if (pos[i * 3 + 2] >= maxZ - TIP_BAND_PX) {
                     sx += pos[i * 3];
                     sy += pos[i * 3 + 1];
                     n++;
@@ -333,7 +336,7 @@ public final class BroomTrails {
             }
         }
         if (n == 0) return new float[]{model.seat[0], model.seat[1], maxZ};
-        return new float[]{(float) (sx / n), (float) (sy / n), maxZ};
+        return new float[]{(float) (sx / n), (float) (sy / n), maxZ - 1f};
     }
 
     private static Vec3 vec(Vector3f v) {

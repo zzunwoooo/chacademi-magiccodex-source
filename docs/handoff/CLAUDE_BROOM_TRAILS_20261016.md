@@ -14,7 +14,7 @@
 | 위치 | 내용 |
 |---|---|
 | `portable-vfx-runtime/assets/BroomTrails/` | 새 팩(`vfx.json` + 텍스처 5장, RGBA 0.23 MiB, `client_compat check` OK). 시스템 4개, 전부 `role static`, `loop`: `basic`, `basic_lite`, `legend`, `legend_lite` → 효과 ID `claude:broomtrails/<id>` |
-| `tools/vfx-src/BroomTrails/` | 원본 spec(`BroomTrails.js` = 배포 팩, `BroomTrailBasic.js`·`BroomTrailLegend.js` = 승인용 비행 미리보기), 텍스처 생성기 `gen_trail_tex.py`, 미리보기용 탑승자 모델 `gen_rider.py`, `build.sh`, 비교 페이지 |
+| `tools/vfx-src/BroomTrails/` | `gen_broom_glb.py`(실제 bbmodel → 미리보기 모델, BroomModel.java 와 같은 파싱·같은 솔 끝 규칙), 원본 spec(`BroomTrails.js` = 배포 팩, `BroomTrailBasic.js`·`BroomTrailLegend.js` = 승인용 비행 미리보기), 텍스처 생성기 `gen_trail_tex.py`, 미리보기용 탑승자 모델 `gen_rider.py`, `build.sh`, 비교 페이지 |
 | `chacademy-motion-mod/.../broom/trail/BroomTrails.java` | 본체. 생성·이동·종료·재시도·월드 변경 처리 |
 | `.../broom/trail/TrailPlanner.java` | 누구를 full/lite로 보여줄지 결정(히스테리시스·예산). MC 타입 없음 |
 | `.../broom/trail/RetryGate.java` | 실패 시 재시도 간격 |
@@ -36,7 +36,7 @@
    - `END_CLIENT_TICK`의 늦은 단계(`chacademy_motion:broom_trails_late`, 기본 단계 다음)에서 `move`/`basis`를 부른다.
    - PortableVFX는 틱 시작에 직전 위치를 저장하고, 렌더 때 직전 → 이번 위치를 같은 tickDelta로 보간한다. 그래서 방출점이 BroomRenderer의 빗자루와 같은 부분 틱으로 움직인다.
    - 이 순서가 바뀌면(우리가 먼저 move) 보간 없이 20Hz 계단이 된다. **실게임 확인 1순위**(4장).
-   - 솔 끝 = 모델 +Z 최대면의 중심이다. 이 점을 BroomRenderer.draw와 같은 변환으로 옮긴다: `SEAT_Y` + YP(180−yaw)·XP(−pitch)·ZP(bank+spin)·(1/16)·(−seat).
+   - 솔 끝 = 모델 뒤끝(+Z 최대)에서 4px 띠 안의 모든 꼭짓점 중심(x,y), z = 뒤끝 − 1px. broom_2처럼 솔 장식이 한쪽으로 더 길게 뻗은 모델에서 한쪽 끝을 잡지 않게 하려는 규칙이다(최대면만 보면 broom_2는 옆으로 0.47m 치우쳤음). 이 점을 BroomRenderer.draw와 같은 변환으로 옮긴다: `SEAT_Y` + YP(180−yaw)·XP(−pitch)·ZP(bank+spin)·(1/16)·(−seat).
    - 팩 원점이 솔 끝이라 위치 오프셋 오차가 없다. basis는 틱 단위로 바뀌고, 입자의 초기 속도 방향에만 쓰인다.
    - world 공간 입자는 생긴 자리에 남고 방출점만 따라간다. 로컬 레이어는 전설의 솔 끝 빛 1개뿐이다.
    - 소환 연출(`age < 10`) 동안은 궤적을 켜지 않는다.
