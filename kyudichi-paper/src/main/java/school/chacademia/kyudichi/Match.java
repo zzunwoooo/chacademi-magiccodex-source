@@ -78,6 +78,15 @@ final class Match {
         return mp;
     }
 
+    /** A matched player who has not arrived (network match): counts as disconnected from the first tick. */
+    MatchPlayer addAbsent(UUID id, String nick, Team team, double rating) {
+        int slot = (int) players.values().stream().filter(m -> m.team == team).count();
+        var mp = new MatchPlayer(id, nick, team, Math.min(2, slot), rating);
+        mp.online = false; mp.leftAt = 0;
+        players.put(id, mp);
+        return mp;
+    }
+
     Player online(MatchPlayer m) { Player p = Bukkit.getPlayer(m.id); return p != null && p.isOnline() && m.online && !m.left ? p : null; }
     List<Player> onlinePlayers() { var out = new ArrayList<Player>(); for (var m : players.values()) { Player p = online(m); if (p != null) out.add(p); } return out; }
     MatchPlayer get(UUID id) { return players.get(id); }
@@ -680,6 +689,7 @@ final class Match {
         p.hideBossBar(bar);
         restore(p, m);
         sendMatchAll();
+        plugin.link().done(p.getUniqueId());
     }
 
     private void reconnectTimeouts() {
@@ -740,6 +750,7 @@ final class Match {
         for (UUID s : List.copyOf(spectators)) { Player p = Bukkit.getPlayer(s); if (p != null) plugin.spectate().leave(p); }
         spectators.clear();
         plugin.matches().ended(this);
+        plugin.link().matchEnded(this);
     }
 
     void restore(Player p, MatchPlayer m) {

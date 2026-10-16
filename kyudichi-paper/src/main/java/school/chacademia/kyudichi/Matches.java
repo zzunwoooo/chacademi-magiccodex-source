@@ -50,7 +50,10 @@ final class Matches {
     Collection<Match> all() { return byArena.values(); }
 
     /** Starts a match. `teams` = players per team in slot order. Returns an error message or null. */
-    String start(Arena arena, Map<Team, List<Player>> teams, Match.Options opt) {
+    String start(Arena arena, Map<Team, List<Player>> teams, Match.Options opt) { return start(arena, teams, opt, Map.of()); }
+
+    /** `absent` = matched players who have not arrived yet: they join as disconnected (60 s reconnect window from the start). */
+    String start(Arena arena, Map<Team, List<Player>> teams, Match.Options opt, Map<Team, List<UUID>> absent) {
         if (byArena.containsKey(arena.name)) return "이미 경기 중인 경기장이에요.";
         var problems = arena.problems();
         if (!problems.isEmpty()) return "경기장 설정이 덜 됐어요: " + String.join(", ", problems);
@@ -66,10 +69,16 @@ final class Matches {
             var row = plugin.store().cached(p.getUniqueId(), p.getName());
             match.add(p, t, row.rating());
         }
+        for (Team t : Team.values()) for (UUID id : absent.getOrDefault(t, List.of())) {
+            var row = plugin.store().cached(id, nameOf(id));
+            match.addAbsent(id, row.name(), t, row.rating());
+        }
         byArena.put(arena.name, match);
         match.start();
         return null;
     }
+
+    private static String nameOf(UUID id) { String n = Bukkit.getOfflinePlayer(id).getName(); return n == null ? "플레이어" : n; }
 
     void ended(Match m) {
         byArena.remove(m.arena.name);

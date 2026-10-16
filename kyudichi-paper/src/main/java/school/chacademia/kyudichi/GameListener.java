@@ -148,6 +148,7 @@ final class GameListener implements Listener {
     public void join(PlayerJoinEvent e) {
         plugin.store().load(e.getPlayer().getUniqueId(), e.getPlayer().getName(), null);
         plugin.matches().joined(e.getPlayer());
+        plugin.link().joined(e.getPlayer());
     }
 
     @EventHandler
@@ -158,6 +159,7 @@ final class GameListener implements Listener {
         if (plugin.spectate().spectating(p.getUniqueId())) plugin.spectate().leave(p);
         plugin.pings().forget(p.getUniqueId());
         if (m == null) plugin.store().forget(p.getUniqueId());
+        plugin.link().quit(p);
     }
 
     // ------------------------------------------------------------------ spectator chat stays among spectators

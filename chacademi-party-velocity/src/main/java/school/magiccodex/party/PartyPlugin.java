@@ -47,6 +47,7 @@ public final class PartyPlugin {
     private long membershipChangedAt=System.currentTimeMillis();
     private PartyStore store;
     private volatile boolean ready;
+    private KyudichiQueue kyudichi;
 
     @Inject public PartyPlugin(ProxyServer proxy,Logger logger,@DataDirectory Path directory){this.proxy=proxy;this.logger=logger;this.directory=directory;}
     @Subscribe public void initialize(ProxyInitializeEvent event){
@@ -65,9 +66,18 @@ public final class PartyPlugin {
         var manager=proxy.getCommandManager();
         manager.register(manager.metaBuilder("party").aliases("파티").plugin(this).build(),new Commands());
         manager.register(manager.metaBuilder("chacachat").aliases("네트워크채팅").plugin(this).build(),new NetworkCommands());
+        // 큐디치 대기열: 같은 작업 스레드에서 파티 정보를 읽는다.
+        kyudichi=new KyudichiQueue(proxy,logger,new KyudichiQueue.Host(){
+            @Override public boolean enqueue(Runnable task){return PartyPlugin.this.enqueue(task);}
+            @Override public PartyBook.Party party(UUID member){return ready?book.party(member):null;}
+            @Override public String name(UUID id){return PartyPlugin.this.name(id);}
+            @Override public void notice(Player p,String text){PartyPlugin.this.notice(p,text);}
+            @Override public boolean trusted(String server){return trusted.contains(server);}
+        },this);
+        try{kyudichi.initialize(directory);}catch(RuntimeException e){logger.error("Kyudichi queue initialization failed; queue unavailable",e);}
     }
     @Subscribe public void shutdown(ProxyShutdownEvent event){
-        ready=false;worker.shutdown();try{if(!worker.awaitTermination(10,TimeUnit.SECONDS))logger.warn("Party worker still draining during shutdown");}catch(InterruptedException e){Thread.currentThread().interrupt();}
+        ready=false;if(kyudichi!=null)kyudichi.shutdown();worker.shutdown();try{if(!worker.awaitTermination(10,TimeUnit.SECONDS))logger.warn("Party worker still draining during shutdown");}catch(InterruptedException e){Thread.currentThread().interrupt();}
     }
     @Subscribe public void disconnect(DisconnectEvent event){
         UUID id=event.getPlayer().getUniqueId();enqueue(()->{if(network!=null)network.disconnect(id);if(hud!=null)hud.disconnect(id);roster.disconnect(id);ui.disconnect(id);nextChat.remove(id);nextCommand.remove(id);});

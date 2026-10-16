@@ -23,6 +23,7 @@ public final class KyudichiPlugin extends JavaPlugin {
     private Pings pings;
     private Spectate spectate;
     private Selections selections;
+    private Link link;
 
     @Override public void onEnable() {
         saveDefaultConfig();
@@ -36,6 +37,7 @@ public final class KyudichiPlugin extends JavaPlugin {
         matches = new Matches(this); results = new Results(this); net = new Net(this); pings = new Pings(); spectate = new Spectate(this);
         selections = new Selections(this);
         net.register();
+        link = new Link(this); link.register();
         var listener = new GameListener(this);
         Bukkit.getPluginManager().registerEvents(listener, this);
         Bukkit.getPluginManager().registerEvents(selections, this);
@@ -56,6 +58,7 @@ public final class KyudichiPlugin extends JavaPlugin {
     @Override public void onDisable() {
         if (matches != null) matches.stopAll("서버 종료/리로드");
         if (net != null) net.unregister();
+        if (link != null) link.unregister();
         if (store != null) store.close();
     }
 
@@ -100,4 +103,5 @@ public final class KyudichiPlugin extends JavaPlugin {
     Pings pings() { return pings; }
     Spectate spectate() { return spectate; }
     Selections selections() { return selections; }
+    Link link() { return link; }
 }

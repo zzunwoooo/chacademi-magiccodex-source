@@ -1,0 +1,198 @@
+package school.chacademia.kyudichi;
+
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.messaging.PluginMessageListener;
+import school.magiccodex.protocol.KyudichiQueueProtocol;
+import school.magiccodex.protocol.KyudichiQueueProtocol.*;
+
+/**
+ * Velocity 대기열과의 연결 ({@value KyudichiQueueProtocol#LINK}). 프록시가 보낸 사람만 "네트워크 참가자"로 기억하고,
+ * 그 사람의 경기·관전·연습이 끝나면 프록시에 RETURN 을 보내 원래 서버로 돌려보낸다.
+ * 이 서버에 직접 들어온 관리자(테스트)는 건드리지 않는다.
+ *
+ * 매칭 경기: 배정된 6명이 모두 오면 바로, 아니면 처음 도착 후 {@link #GATHER_TICKS} 뒤에 온 사람끼리 시작한다
+ * (안 온 사람은 접속 끊김으로 처리 → 60초 안에 들어오면 합류). 한 팀이 아무도 없으면 경기 무효.
+ */
+final class Link implements PluginMessageListener {
+    static final int GATHER_TICKS = 30 * 20, RETURN_DELAY_TICKS = 6 * 20, LIVE_EVERY_TICKS = 40;
+
+    private final KyudichiPlugin plugin;
+    private static final class Gather { final Assign assign; final long firstAt; Gather(Assign a, long t) { assign = a; firstAt = t; } }
+    private final Map<UUID, Gather> gathering = new LinkedHashMap<>();   // assign id → waiting room
+    private final Map<UUID, UUID> started = new HashMap<>();              // assign id → Match.id
+    private final Set<UUID> networked = new HashSet<>();
+    private final Set<UUID> keepOnLeave = new HashSet<>();               // spectate left because a match was assigned
+    private long tick;
+
+    Link(KyudichiPlugin plugin) { this.plugin = plugin; }
+
+    void register() {
+        Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, KyudichiQueueProtocol.LINK);
+        Bukkit.getMessenger().registerIncomingPluginChannel(plugin, KyudichiQueueProtocol.LINK, this);
+        Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 20, 20);
+    }
+    void unregister() {
+        Bukkit.getMessenger().unregisterOutgoingPluginChannel(plugin, KyudichiQueueProtocol.LINK);
+        Bukkit.getMessenger().unregisterIncomingPluginChannel(plugin, KyudichiQueueProtocol.LINK, this);
+    }
+
+    private void send(Player via, ToProxy m) {
+        if (via == null || !via.isOnline()) return;
+        try { via.sendPluginMessage(plugin, KyudichiQueueProtocol.LINK, KyudichiQueueProtocol.encode(m)); }
+        catch (IllegalArgumentException e) { plugin.getLogger().warning("큐디치 링크 인코딩 실패: " + e.getMessage()); }
+    }
+    private Player anyone() { for (Player p : Bukkit.getOnlinePlayers()) return p; return null; }
+
+    // ================================================================== join / quit
+    /** A second after joining (the proxy connection is ready by then) ask the proxy what this player is here for. */
+    void joined(Player p) {
+        Bukkit.getScheduler().runTaskLater(plugin, () -> { if (p.isOnline()) send(p, new Hello(p.getUniqueId())); }, 20);
+    }
+    void quit(Player p) {
+        if (plugin.matches().of(p.getUniqueId()) == null && !inGather(p.getUniqueId())) networked.remove(p.getUniqueId());
+    }
+    private boolean inGather(UUID id) {
+        for (var g : gathering.values()) if (g.assign.teamA().contains(id) || g.assign.teamB().contains(id)) return true;
+        return false;
+    }
+
+    // ================================================================== from the proxy
+    @Override public void onPluginMessageReceived(String channel, Player via, byte[] bytes) {
+        if (!KyudichiQueueProtocol.LINK.equals(channel)) return;
+        ToArena msg;
+        try { msg = KyudichiQueueProtocol.decodeToArena(bytes); } catch (IllegalArgumentException e) { return; }
+        switch (msg) {
+            case Assign a -> assign(a);
+            case KyudichiQueueProtocol.Spectate s -> spectate(s);
+            case Practice x -> practice(x);
+        }
+    }
+
+    private void assign(Assign a) {
+        if (started.containsKey(a.match())) return; // late arrival: Matches.joined() puts them back in
+        var all = new ArrayList<>(a.teamA()); all.addAll(a.teamB());
+        networked.addAll(all);
+        gathering.computeIfAbsent(a.match(), k -> new Gather(a, tick));
+        for (UUID id : all) {
+            plugin.store().load(id, Bukkit.getOfflinePlayer(id).getName() == null ? "플레이어" : Bukkit.getOfflinePlayer(id).getName(), null);
+            Player p = Bukkit.getPlayer(id);
+            if (p != null && plugin.spectate().spectating(id)) { keepOnLeave.add(id); plugin.spectate().leave(p); keepOnLeave.remove(id); }
+            if (p != null) p.sendMessage(Component.text("큐디치 경기 준비 중… 모두 모이면 시작해요.", NamedTextColor.GOLD));
+        }
+        tryStart(a.match(), false);
+    }
+
+    private void spectate(KyudichiQueueProtocol.Spectate s) {
+        Player p = Bukkit.getPlayer(s.player()); if (p == null) return;
+        networked.add(p.getUniqueId());
+        Match m = s.arena().isBlank() ? plugin.matches().all().stream().filter(x -> !x.opt.test()).findFirst().orElse(null) : plugin.matches().inArena(s.arena());
+        String err = m == null ? "관전할 경기가 없어요." : plugin.spectate().enter(p, m);
+        if (err != null) { p.sendMessage(Component.text(err, NamedTextColor.RED)); done(p.getUniqueId()); }
+    }
+
+    private void practice(Practice x) {
+        Player p = Bukkit.getPlayer(x.player()); if (p == null) return;
+        networked.add(p.getUniqueId());
+        Arena ar = plugin.arenas().all().stream().filter(a -> a.practice && a.problems().isEmpty() && plugin.matches().inArena(a.name) == null).findFirst().orElse(null);
+        String err;
+        if (ar == null) err = "비어 있는 연습장이 없어요.";
+        else {
+            var teams = new EnumMap<Team, List<Player>>(Team.class);
+            teams.put(Team.A, List.of(p)); teams.put(Team.B, List.of());
+            err = plugin.matches().start(ar, teams, new Match.Options(false, true, 0, plugin.rules().playTicks, 0, true, Set.of()));
+        }
+        if (err != null) { p.sendMessage(Component.text(err, NamedTextColor.RED)); done(p.getUniqueId()); }
+        else p.sendMessage(Component.text("연습 시작! F로 퀘이플 잡기·던지기, 블러저 쳐내기, 스니치 잡기를 해 보세요. 끝내려면 /큐디치 포기", NamedTextColor.GREEN));
+    }
+
+    // ================================================================== starting assigned matches
+    private void tryStart(UUID id, boolean timeUp) {
+        var g = gathering.get(id); if (g == null) return;
+        var present = new EnumMap<Team, List<Player>>(Team.class); var absent = new EnumMap<Team, List<UUID>>(Team.class);
+        int here = 0;
+        for (Team t : Team.values()) {
+            present.put(t, new ArrayList<>()); absent.put(t, new ArrayList<>());
+            for (UUID u : t == Team.A ? g.assign.teamA() : g.assign.teamB()) {
+                Player p = Bukkit.getPlayer(u);
+                if (p != null && p.isOnline() && plugin.matches().of(u) == null) { present.get(t).add(p); here++; } else absent.get(t).add(u);
+            }
+        }
+        int total = g.assign.teamA().size() + g.assign.teamB().size();
+        if (here < total && !timeUp) return;
+        gathering.remove(id);
+        if (present.get(Team.A).isEmpty() || present.get(Team.B).isEmpty()) {
+            plugin.getLogger().info("큐디치 매칭 경기 무효: 한 팀이 오지 않음");
+            for (var l : present.values()) for (Player p : l) { p.sendMessage(Component.text("상대가 오지 않아 경기가 취소됐어요.", NamedTextColor.RED)); done(p.getUniqueId()); }
+            send(anyone(), new Ended(id));
+            return;
+        }
+        Arena ar = plugin.arenas().all().stream().filter(a -> a.enabled && !a.practice && a.problems().isEmpty() && plugin.matches().inArena(a.name) == null).findFirst().orElse(null);
+        String err = ar == null ? "비어 있는 경기장이 없어요." : plugin.matches().start(ar, present, new Match.Options(g.assign.rated(), false,
+                plugin.rules().prepareTicks, plugin.rules().playTicks, plugin.rules().snitchAtTicks, true, Set.of()), absent);
+        if (err != null) {
+            plugin.getLogger().warning("큐디치 매칭 경기 시작 실패: " + err);
+            for (var l : present.values()) for (Player p : l) { p.sendMessage(Component.text("경기를 시작하지 못했어요 (" + err + "). 원래 서버로 돌아가요.", NamedTextColor.RED)); done(p.getUniqueId()); }
+            send(anyone(), new Ended(id));
+            return;
+        }
+        started.put(id, plugin.matches().inArena(ar.name).id);
+    }
+
+    // ================================================================== ends
+    /** A networked player has nothing more to do here: back to their own server shortly (result card stays readable). */
+    void done(UUID id) {
+        if (!networked.contains(id) || keepOnLeave.contains(id)) return;
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (plugin.matches().of(id) != null || plugin.spectate().spectating(id) || inGather(id)) return;
+            Player p = Bukkit.getPlayer(id);
+            if (p == null) { networked.remove(id); return; }
+            networked.remove(id);
+            send(p, new Return(List.of(id)));
+        }, RETURN_DELAY_TICKS);
+    }
+
+    void matchEnded(Match m) {
+        for (var e : started.entrySet()) if (e.getValue().equals(m.id)) { send(anyone(), new Ended(e.getKey())); started.remove(e.getKey()); break; }
+        for (UUID id : m.players.keySet()) done(id);
+    }
+
+    // ================================================================== periodic
+    private void tick() {
+        tick += 20;
+        for (UUID id : List.copyOf(gathering.keySet())) {
+            var g = gathering.get(id);
+            if (g != null) tryStart(id, tick - g.firstAt >= GATHER_TICKS);
+        }
+        if (tick % LIVE_EVERY_TICKS == 0) live();
+    }
+
+    private void live() {
+        Player via = anyone(); if (via == null) return;
+        int free = (int) plugin.arenas().all().stream().filter(a -> a.enabled && !a.practice && a.problems().isEmpty() && plugin.matches().inArena(a.name) == null).count();
+        free = Math.max(0, free - gathering.size());
+        var list = new ArrayList<LiveMatch>();
+        var byMatch = new HashMap<UUID, UUID>(); for (var e : started.entrySet()) byMatch.put(e.getValue(), e.getKey());
+        for (Match m : plugin.matches().all()) {
+            if (m.opt.test() || list.size() >= 16) continue;
+            var msg = m.matchMessage(2);
+            var a = new ArrayList<UUID>(); var b = new ArrayList<UUID>(); var na = new ArrayList<String>(); var nb = new ArrayList<String>();
+            for (var mp : m.players.values()) { if (mp.team == Team.A) { a.add(mp.id); na.add(mp.nick); } else { b.add(mp.id); nb.add(mp.nick); } }
+            UUID key = byMatch.getOrDefault(m.id, m.id);
+            list.add(new LiveMatch(key, new Live(m.arena.name, msg.phase(), msg.scoreA(), msg.scoreB(), msg.timeLeftMs(), m.spectators.size(),
+                    String.join(" · ", na), String.join(" · ", nb)), a.subList(0, Math.min(6, a.size())), b.subList(0, Math.min(6, b.size()))));
+        }
+        send(via, new LiveList(free, list));
+    }
+}

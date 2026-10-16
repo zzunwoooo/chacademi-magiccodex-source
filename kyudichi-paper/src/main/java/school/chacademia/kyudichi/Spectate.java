@@ -48,6 +48,7 @@ final class Spectate {
         p.setSpectatorTarget(null);
         p.setGameMode(b.mode() == null || b.mode() == GameMode.SPECTATOR ? GameMode.SURVIVAL : b.mode());
         if (b.to().getWorld() != null) p.teleport(b.to());
+        plugin.link().done(p.getUniqueId());
     }
 
     boolean spectating(UUID id) { return back.containsKey(id); }
