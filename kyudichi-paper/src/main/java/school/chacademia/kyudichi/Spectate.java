@@ -33,7 +33,7 @@ final class Spectate {
         p.setGameMode(GameMode.SPECTATOR);
         Vector c = m.arena.bounds.center();
         p.teleport(new Location(m.world, c.getX(), Math.min(m.arena.bounds.maxY() - 2, c.getY() + 8), c.getZ()));
-        m.bar.addViewer(p);
+        p.showBossBar(m.bar);
         plugin.net().send(p, m.matchMessage(2));
         m.sendShrines();
         p.sendMessage(Component.text("관전 중 · 선수를 좌클릭하면 그 사람 시점, Shift로 나오기 · /큐디치 관전 나가기", NamedTextColor.GRAY));
@@ -42,7 +42,7 @@ final class Spectate {
 
     void leave(Player p) {
         Match m = plugin.matches().spectating(p.getUniqueId());
-        if (m != null) { m.spectators.remove(p.getUniqueId()); m.bar.removeViewer(p); }
+        if (m != null) { m.spectators.remove(p.getUniqueId()); p.hideBossBar(m.bar); }
         var b = back.remove(p.getUniqueId());
         if (b == null) return;
         p.setSpectatorTarget(null);

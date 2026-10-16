@@ -29,6 +29,13 @@ public final class BroomCodec {
     /** 모드 → 서버: 목록 다시 보내 줘(0) / 이 빗자루 장착(1). */
     public static final String CHANNEL_REQUEST = "chacademy:broom_req";
 
+    /** 서버 → 본인: 빗자루 비행 효과 (큐디치 성소). 1바이트 kind. */
+    public static final String CHANNEL_FX = "chacademy:broom_fx";
+    /** 균형 게이지 가득 (안정성 성소). */
+    public static final byte FX_REFILL_BALANCE = 1;
+    /** 기본 가속과 같은 가속, 쿨타임은 쓰지도 시작하지도 않음 (가속 성소). */
+    public static final byte FX_FREE_BOOST = 2;
+
     public static final int MAX_ID_BYTES = 64;
     public static final int MAX_TEXT_BYTES = 256;
     public static final int MAX_LIST = 64;

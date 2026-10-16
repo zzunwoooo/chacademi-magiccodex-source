@@ -74,6 +74,16 @@ public final class ChacademyMotionPlugin extends JavaPlugin implements PluginMes
         if (brooms != null) brooms.stop(player);
     }
 
+    /** 균형(안정성) 게이지를 가득 채운다 (큐디치 안정성 성소). 타고 있지 않으면 false. */
+    public boolean refillBroomBalance(@NotNull Player player) {
+        return brooms != null && brooms.fx(player, kr.chacademy.motionplugin.broom.BroomCodec.FX_REFILL_BALANCE);
+    }
+
+    /** 기본 가속과 같은 가속을 바로 한 번. 가속 쿨타임은 쓰지도 시작하지도 않아 쿨타임 중에도 된다 (큐디치 가속 성소). */
+    public boolean freeBroomBoost(@NotNull Player player) {
+        return brooms != null && brooms.fx(player, kr.chacademy.motionplugin.broom.BroomCodec.FX_FREE_BOOST);
+    }
+
     public BroomService brooms() {
         return brooms;
     }

@@ -74,7 +74,7 @@ final class Match {
         var mp = new MatchPlayer(p.getUniqueId(), p.getName(), team, Math.min(2, slot), rating);
         mp.returnTo = p.getLocation(); mp.returnMode = p.getGameMode();
         players.put(p.getUniqueId(), mp);
-        bar.addViewer(p);
+        p.showBossBar(bar);
         return mp;
     }
 
@@ -648,7 +648,7 @@ final class Match {
         if (m == null) return;
         if (quaffle != null && m.id.equals(quaffle.holder)) dropQuaffle(null, null);
         m.online = false; m.leftAt = now;
-        bar.removeViewer(p);
+        p.hideBossBar(bar);
         sendMatchAll();
     }
 
@@ -656,7 +656,7 @@ final class Match {
         MatchPlayer m = players.get(p.getUniqueId());
         if (m == null || m.left || m.online) return false;
         m.online = true; m.leftAt = -1;
-        bar.addViewer(p);
+        p.showBossBar(bar);
         prepare(p, m);
         tp(p, (frozen() ? arena.starts.get(m.team)[m.slot] : arena.respawn(m.team, m.slot)).location());
         p.sendMessage(Component.text("큐디치 경기에 다시 들어왔어요.", NamedTextColor.GOLD));
@@ -677,7 +677,7 @@ final class Match {
         if (m == null) return;
         if (quaffle != null && m.id.equals(quaffle.holder)) dropQuaffle(null, null);
         players.remove(m.id);
-        bar.removeViewer(p);
+        p.hideBossBar(bar);
         restore(p, m);
         sendMatchAll();
     }
@@ -733,7 +733,7 @@ final class Match {
         for (var m : players.values()) {
             Player p = Bukkit.getPlayer(m.id);
             if (p == null || !p.isOnline()) continue;
-            bar.removeViewer(p);
+            p.hideBossBar(bar);
             if (!m.online && !m.left) continue;
             restore(p, m);
         }
@@ -783,6 +783,9 @@ final class Match {
         int total = phase == Phase.PLAY ? (overtime ? rules.overtimeTicks : opt.playTicks()) : Math.max(1, phase == Phase.PREPARE ? opt.prepareTicks() : rules.countdownTicks);
         bar.progress((float) Math.clamp(left / (double) Math.max(1, total), 0, 1));
         bar.color(overtime ? BossBar.Color.YELLOW : BossBar.Color.BLUE);
+        // the boss bar is the scoreboard for players WITHOUT the client mod (the mod draws its own)
+        for (Player p : onlinePlayers()) { if (plugin.net().hasMod(p)) p.hideBossBar(bar); else p.showBossBar(bar); }
+        for (UUID s : spectators) { Player p = Bukkit.getPlayer(s); if (p != null) { if (plugin.net().hasMod(p)) p.hideBossBar(bar); else p.showBossBar(bar); } }
     }
 
     private static String mmss(int ticks) { return String.format("%d:%02d", ticks / 1200, (ticks / 20) % 60); }

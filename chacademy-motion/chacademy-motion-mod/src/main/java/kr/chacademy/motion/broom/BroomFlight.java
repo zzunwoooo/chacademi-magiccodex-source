@@ -118,6 +118,13 @@ public final class BroomFlight {
     }
 
     /** 서버가 내리게 함 (시간 끝, 금지 구역, 명령어, 다시 마법). */
+    /** 큐디치 성소: 균형 가득 / 쿨타임과 상관없는 가속 한 번 (쿨타임은 그대로 둔다). */
+    public static void onFx(byte kind) {
+        if (physics == null) return;
+        if (kind == BroomPackets.FX_REFILL_BALANCE) { physics.balance = physics.maximumBalance(); physics.prevBalance = physics.balance; }
+        else if (kind == BroomPackets.FX_FREE_BOOST) physics.boostTicks = BroomPhysics.BOOST_TICKS;
+    }
+
     static void serverStopped(byte reason) {
         if(reason!=BroomPackets.STATE_FALL){catchTicks=0;catchSequence=null;drop=null;fallenPhysics=null;catchRequested=false;catchLevel=null;}
         if (physics == null) return;

@@ -83,6 +83,22 @@ public final class BroomPackets {
         }
     }
 
+    public static final byte FX_REFILL_BALANCE = 1;
+    public static final byte FX_FREE_BOOST = 2;
+
+    /** 서버 → 나: 비행 효과 (큐디치 성소). 1 균형 가득, 2 쿨타임 없는 가속. */
+    public record FxS2C(byte kind) implements CustomPacketPayload {
+        public static final Type<FxS2C> TYPE = typeOf("broom_fx");
+        public static final StreamCodec<RegistryFriendlyByteBuf, FxS2C> CODEC = StreamCodec.of(
+                (buf, f) -> buf.writeByte(f.kind),
+                buf -> new FxS2C(buf.readByte()));
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
+
     /** 나 → 서버: 내리기, 낙마, 다시 잡기 등. */
     public record EventC2S(byte kind, float value) implements CustomPacketPayload {
         public static final Type<EventC2S> TYPE = typeOf("broom_evt");

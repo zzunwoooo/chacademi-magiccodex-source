@@ -54,6 +54,7 @@ public class ChacademyMotionClient implements ClientModInitializer {
         PayloadTypeRegistry.playS2C().register(BroomPackets.StateS2C.TYPE, BroomPackets.StateS2C.CODEC);
         PayloadTypeRegistry.playC2S().register(BroomPackets.EventC2S.TYPE, BroomPackets.EventC2S.CODEC);
         PayloadTypeRegistry.playS2C().register(BroomPackets.ListS2C.TYPE, BroomPackets.ListS2C.CODEC);
+        PayloadTypeRegistry.playS2C().register(BroomPackets.FxS2C.TYPE, BroomPackets.FxS2C.CODEC);
         PayloadTypeRegistry.playC2S().register(BroomPackets.RequestC2S.TYPE, BroomPackets.RequestC2S.CODEC);
 
         MotionPlayer.init();
@@ -64,6 +65,7 @@ public class ChacademyMotionClient implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(BroomPackets.RideS2C.TYPE, (payload, context) -> BroomFlight.onRide(payload));
         ClientPlayNetworking.registerGlobalReceiver(BroomPackets.StateS2C.TYPE, (payload, context) -> BroomRiders.onState(payload));
         ClientPlayNetworking.registerGlobalReceiver(BroomPackets.ListS2C.TYPE, (payload, context) -> BroomApi.onList(payload));
+        ClientPlayNetworking.registerGlobalReceiver(BroomPackets.FxS2C.TYPE, (payload, context) -> context.client().execute(() -> BroomFlight.onFx(payload.kind())));
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> client.execute(() -> {
             BroomFlight.reset();
             BroomRiders.clear();

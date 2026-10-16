@@ -124,6 +124,7 @@ public final class BroomService implements Listener, PluginMessageListener {
         messenger.registerOutgoingPluginChannel(plugin, BroomCodec.CHANNEL_RIDE);
         messenger.registerOutgoingPluginChannel(plugin, BroomCodec.CHANNEL_STATE);
         messenger.registerOutgoingPluginChannel(plugin, BroomCodec.CHANNEL_LIST);
+        messenger.registerOutgoingPluginChannel(plugin, BroomCodec.CHANNEL_FX);
         messenger.registerIncomingPluginChannel(plugin, BroomCodec.CHANNEL_EVENT, this);
         messenger.registerIncomingPluginChannel(plugin, BroomCodec.CHANNEL_REQUEST, this);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -139,6 +140,13 @@ public final class BroomService implements Listener, PluginMessageListener {
     // ------------------------------------------------------------------ 공개 API
 
     /** 모드가 깔려 있어서 빗자루 비행을 할 수 있는 클라이언트인지. */
+    /** 타고 있는 사람의 모드에 비행 효과를 보낸다 (BroomCodec.FX_*). 타고 있지 않거나 모드가 없으면 false. */
+    public boolean fx(Player p, byte kind) {
+        if (!isRiding(p) || !p.getListeningPluginChannels().contains(BroomCodec.CHANNEL_FX)) return false;
+        p.sendPluginMessage(plugin, BroomCodec.CHANNEL_FX, new byte[]{kind});
+        return true;
+    }
+
     public boolean hasMod(Player p) {
         return p.getListeningPluginChannels().contains(BroomCodec.CHANNEL_RIDE);
     }
