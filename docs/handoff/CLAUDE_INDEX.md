@@ -1,3 +1,5 @@
+> Claude 2026-10-17 (not built): [큐디치 3:3 공중 PvP — 경기장 플러그인·매칭 대기열·클라 HUD/창](CLAUDE_KYUDICHI_20261017.md). Branch claude/kyudichi-20261017 on claude/party-ui-20261016 @ 8e9bbad. New arena server + ChacaKyudichi, Velocity party jar, Bridge (all servers), client mod and chacademy-motion must ship together.
+
 > Claude 2026-10-16 (not built): [파티 창 UI + 파티 초대 알림](CLAUDE_PARTY_UI_20261016.md). Branch claude/party-ui-20261016 on codex/operating-alchemy-carrier-20261016 @ 9cefa25. Velocity party plugin + magic-codex UI must be deployed together (new channel chacademi:party_ui).
 
 <!-- Latest operating artifact-only ownership integration: CODEX_SHARED_ARTIFACT_20261016.md -->
