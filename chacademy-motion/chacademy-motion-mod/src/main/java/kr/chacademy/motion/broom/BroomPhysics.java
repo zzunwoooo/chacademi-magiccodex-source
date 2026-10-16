@@ -183,9 +183,11 @@ public final class BroomPhysics {
         }
 
         // 5) 위아래 + 실속
-        // 상승 키는 없음 (2026-10-16). 오르내림은 시선 + 전진(위 3번), Shift 는 하차 전용.
+        // 스페이스 = 상승 (시선 + 전진 상승과 함께 쓰면 더 빨리 오른다). Shift 는 하차 전용.
+        float lift = clamp(0.35f + sf, 0.35f, 1f);
+        if (in.jump()) up += stats.climb * lift;
         up *= 0.88;
-        if (sf < STALL) up -= 0.03 * (1 - sf / STALL);
+        if (sf < STALL && !in.jump()) up -= 0.03 * (1 - sf / STALL);
         // 오르면 속도를 잃고, 내려꽂으면 속도가 붙음
         if (up > 0) vf -= up * 0.04;
         else if (in.forward()) vf += -up * 0.03;

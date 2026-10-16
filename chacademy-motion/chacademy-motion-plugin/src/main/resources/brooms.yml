@@ -12,6 +12,9 @@ practice-broom: broom_1
 # 숙련도 100% 까지 필요한 누적 비행 시간(시간). 숙련도가 낮을수록 균형이 쉽게 깨져서 잘 떨어집니다.
 mastery-full-hours: 3
 
+# 스페이스 상승 힘 (모든 빗자루 공통, 능력치 아님). 위를 보며 W 와 같이 누르면 더 빨리 오릅니다.
+climb-power: 0.055
+
 boost-cooldown-ticks: 120   # 부스트(달리기 키) 재사용 대기 (20틱 = 1초)
 roll-cooldown-ticks: 60     # 배럴롤(A/D 두 번) 재사용 대기
 catch-window-ticks: 40      # 떨어진 뒤 공중에서 빗자루를 다시 잡을 수 있는 시간
@@ -31,7 +34,7 @@ debug: false
 #   brake        S 를 누를 때 틱마다 줄어드는 속도 비율. 0.025 + 0.005×(단계-1)
 #   stability    균형 게이지가 깎이는 양을 나누는 값. 0.6 + 1.2×(단계-1)/9. 최대 균형 = 90 + 3×단계
 #   description  획득권 아이템 설명 (플러그인은 아직 쓰지 않음)
-# 상승 키(스페이스)는 없앴습니다. 위를 보고 W = 상승, 아래를 보고 W = 하강, Shift = 하차.
+# 오르내림: 스페이스 = 상승(공통 climb-power), 위를 보고 W = 상승(둘 다 하면 더 빠름), 아래를 보고 W = 하강, Shift = 하차.
 #
 # 모델은 모드의 assets/chacademy_motion/brooms/<ID>.bbmodel 입니다.
 # ItemsAdder 리소스팩에 같은 경로로 넣으면 모드를 다시 배포하지 않고 모델을 바꾸거나 새 빗자루를 추가할 수 있습니다.

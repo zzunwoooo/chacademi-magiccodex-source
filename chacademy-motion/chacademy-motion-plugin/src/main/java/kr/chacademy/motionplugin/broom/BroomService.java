@@ -103,11 +103,12 @@ public final class BroomService implements Listener, PluginMessageListener {
         var yml = YamlConfiguration.loadConfiguration(file);
         if (yml.getInt("config-version", 1) < CONFIG_VERSION) yml = upgrade(file, yml);
         brooms.clear();
+        double climbPower = yml.getDouble("climb-power", 0.055);
         var section = yml.getConfigurationSection("brooms");
         if (section != null) {
             for (String id : section.getKeys(false)) {
                 var s = section.getConfigurationSection(id);
-                if (s != null && id.matches("[a-z0-9_]{1,40}")) brooms.put(id, BroomType.read(id, s));
+                if (s != null && id.matches("[a-z0-9_]{1,40}")) brooms.put(id, BroomType.read(id, s, climbPower));
             }
         }
         practiceBroom = yml.getString("practice-broom", "broom_1");
@@ -135,7 +136,7 @@ public final class BroomService implements Listener, PluginMessageListener {
         }
         plugin.saveResource("brooms.yml", false);
         var fresh = YamlConfiguration.loadConfiguration(file);
-        for (String key : new String[]{"mastery-full-hours", "boost-cooldown-ticks", "roll-cooldown-ticks", "catch-window-ticks", "blocked-worlds", "debug"}) {
+        for (String key : new String[]{"climb-power", "mastery-full-hours", "boost-cooldown-ticks", "roll-cooldown-ticks", "catch-window-ticks", "blocked-worlds", "debug"}) {
             if (old.contains(key)) fresh.set(key, old.get(key));
         }
         try {
