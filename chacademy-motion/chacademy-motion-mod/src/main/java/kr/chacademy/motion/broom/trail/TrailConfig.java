@@ -16,7 +16,7 @@ import java.util.Map;
  *     "basic": { "full": "claude:broomtrails/basic", "lite": "claude:broomtrails/basic_lite",
  *                "cost": 6.1, "liteCost": 1.8, "constCost": 0 }
  *   },
- *   "brooms": { "broom_1": "basic", "broom_10": "legend" }
+  *   "brooms": { "broom_1": "basic", "broom_26": "l_dragon" }
  * }
  * </pre>
  * cost = 이동 1블록당 살아 있는 입자 수(입자·초/블록, Σ rateOverDistance × 평균 수명), constCost = 정지해도 있는 입자 수.

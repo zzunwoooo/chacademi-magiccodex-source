@@ -24,7 +24,7 @@ permissions:
     description: 비행 마법으로 빗자루 타기
     default: true
   chacademy.broom.own.*:
-    description: 빗자루 10종 전부 보유 (하나씩은 chacademy.broom.own.<ID>, 예 chacademy.broom.own.broom_7)
+    description: 빗자루 30종 전부 보유 (하나씩은 chacademy.broom.own.<ID>, 예 chacademy.broom.own.broom_7)
     default: op
   chacademy.broom.admin:
     description: 빗자루 지급·회수·테스트 탑승·숙련도 설정

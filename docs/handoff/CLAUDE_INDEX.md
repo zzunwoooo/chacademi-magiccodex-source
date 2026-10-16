@@ -111,3 +111,7 @@ Audit integration verified and deployed; Story content intentionally deferred. S
 ## Claude 빗자루 비행 궤적 (2026-10-16, 미빌드)
 
 [CLAUDE_BROOM_TRAILS_20261016.md](CLAUDE_BROOM_TRAILS_20261016.md): `claude/broom-trails-20261016` (기준 `claude/broom-projectile-20261015`). 빗자루별 비행 궤적 — 모션 모드가 PortableVFX 클라이언트 API(무수정)로 솔 끝에 궤적 효과를 켜고 매 틱 보간 위치·기울기를 넘김. 새 팩 `BroomTrails`(기본·전설 + lite) 클라 배포 필요. 서버·패킷 변경 없음. 재시도 간격·순간이동·월드 변경·경계 히스테리시스·입자 예산 2000 반영. 한계: 내/남 궤적 투명도 분리 불가, 덮어쓰기 hook 은 로컬 전용.
+
+## Claude 빗자루 30종 개편 (2026-10-16, 미빌드)
+
+[CLAUDE_BROOMS30_20261016.md](CLAUDE_BROOMS30_20261016.md): `claude/broom-30-20261016` (기준 `claude/broom-trails-20261016`). 빗자루 ID를 등급 순 broom_1~30으로 재번호(지급 이력 없음, 변환 없음), bbmodel 30종, brooms.yml 새 능력치(등급 배수 제거, config-version 2 자동 교체), Space 상승 제거·상하에도 선회 적용·최대 균형 90+3×안정 단계, 장비창 30칸·게이지=단계, 궤적 팩 BroomTrails 새 버전(희귀·유일·전설 26종 전용 궤적). 모션 모드·플러그인·magic-codex·PortableVFX 팩 같이 배포.

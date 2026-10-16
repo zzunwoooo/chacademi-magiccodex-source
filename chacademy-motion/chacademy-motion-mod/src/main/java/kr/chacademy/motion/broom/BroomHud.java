@@ -30,7 +30,7 @@ public final class BroomHud {
   long now=Util.getMillis();float seconds=lastFrame==0?0:Math.min(.25f,(now-lastFrame)/1000f);lastFrame=now;
   if(BroomFlight.catchTicks()>0){drawCatch(g,mc,now,dt.getGameTimeDeltaPartialTick(false));return;}
   var ph=BroomFlight.physics();if(ph==null){shownBalance=trailBalance=shownReady=-1;return;}
-  float pt=dt.getGameTimeDeltaPartialTick(false),balance=Mth.clamp(Mth.lerp(pt,ph.prevBalance,ph.balance)/100f,0,1);
+  float pt=dt.getGameTimeDeltaPartialTick(false),balance=Mth.clamp(Mth.lerp(pt,ph.prevBalance,ph.balance)/ph.balanceCap(),0,1);
   float ready=1-Mth.clamp(ph.boostCooldown/(float)Math.max(1,ph.stats.boostCooldown()),0,1);
   shownBalance=ease(shownBalance,balance,seconds,.08f);
   // The pale trail lingers where the balance was, then slides down to it (rises follow immediately).

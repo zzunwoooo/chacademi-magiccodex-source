@@ -94,10 +94,24 @@ public final class BroomService implements Listener, PluginMessageListener {
 
     // ------------------------------------------------------------------ 설정
 
+    /** brooms.yml 형식 버전. 기본 파일의 config-version 과 같아야 한다. */
+    static final int CONFIG_VERSION = 2;
+
     public void reload() {
         File file = new File(plugin.getDataFolder(), "brooms.yml");
         if (!file.exists()) plugin.saveResource("brooms.yml", false);
         var yml = YamlConfiguration.loadConfiguration(file);
+        if (yml.getInt("config-version", 1) < CONFIG_VERSION) {
+            // 2026-10-16: 30종 개편(번호·능력치 전부 바뀜). 예전 파일은 남겨 두고 새 기본 파일로 바꾼다.
+            File backup = new File(plugin.getDataFolder(), "brooms.yml.v" + yml.getInt("config-version", 1) + ".bak");
+            if (!backup.exists() && file.renameTo(backup)) {
+                plugin.saveResource("brooms.yml", false);
+                plugin.getLogger().warning("brooms.yml 을 새 버전(" + CONFIG_VERSION + ")으로 바꿨습니다. 예전 파일: " + backup.getName());
+                yml = YamlConfiguration.loadConfiguration(file);
+            } else {
+                plugin.getLogger().warning("brooms.yml 이 예전 버전입니다. 자동 교체에 실패했으니 직접 바꿔 주세요 (백업 파일이 이미 있음: " + backup.getName() + ")");
+            }
+        }
         brooms.clear();
         var section = yml.getConfigurationSection("brooms");
         if (section != null) {
