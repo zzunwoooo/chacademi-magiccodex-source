@@ -296,6 +296,7 @@ public final class BroomPhysics {
     public void caught() {
         balance = Math.min(18,maximumBalance());
         prevBalance = balance;
+        flightPitch = Float.NaN; // 다시 잡은 순간의 시선에서 새로 시작
         fellOff = false;
     }
 

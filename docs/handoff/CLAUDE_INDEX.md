@@ -114,4 +114,4 @@ Audit integration verified and deployed; Story content intentionally deferred. S
 
 ## Claude 빗자루 30종 개편 (2026-10-16, 미빌드)
 
-[CLAUDE_BROOMS30_20261016.md](CLAUDE_BROOMS30_20261016.md): `claude/broom-30-20261016` (기준 `claude/broom-trails-20261016`). 빗자루 ID를 등급 순 broom_1~30으로 재번호(지급 이력 없음, 변환 없음), bbmodel 30종, brooms.yml 새 능력치(등급 배수 제거, config-version 2 자동 교체), Space 상승 제거·상하에도 선회 적용·최대 균형 90+3×안정 단계, 장비창 30칸·게이지=단계, 궤적 팩 BroomTrails 새 버전(희귀·유일·전설 26종 전용 궤적). 모션 모드·플러그인·magic-codex·PortableVFX 팩 같이 배포.
+[CLAUDE_BROOMS30_20261016.md](CLAUDE_BROOMS30_20261016.md): `claude/broom-30-20261016` (기준 `claude/broom-trails-20261016`). 빗자루 ID를 등급 순 broom_1~30으로 재번호(지급 이력 없음, 변환 없음), bbmodel 30종, brooms.yml 새 능력치(등급 배수 제거, config-version 2 자동 교체), Space 상승 제거·상하에도 선회 적용·최대 균형 90+3×안정 단계, 장비창 30칸·게이지=단계, 궤적 팩 4개(BroomTrails 교체 + Wood/Unique/Legend 신규, 팩당 시스템 16개 미만 한도 때문에 분할). 모션 모드·플러그인·magic-codex·PortableVFX 팩 4개 같이 배포.

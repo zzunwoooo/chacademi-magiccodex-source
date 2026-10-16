@@ -1,5 +1,4 @@
-// BroomTrails — 빗자루 비행 궤적 팩 (클라이언트 배포용). 자동 생성 파일: rare_layers.js + unique_layers.js + legend_layers.js + pack_footer.js 를 이어 붙임 (build_pack.sh).
-// 2026-10-16 사용자 확정: 일반 = basic, 희귀 11종 / 유일 7종 / 전설 7종은 빗자루마다 전용 궤적.
+// BroomTrails — 빗자루 비행 궤적 팩 (자동 생성: rare/unique/legend_layers.js + pack_footer.js, build_pack.py)
 // 희귀 등급 빗자루 궤적 레이어 (원점 = 빗자루 솔 끝, +Z = 빗자루 앞(코), +Y = 위). 2026-10-16 기획:
 //  rare_plus(차큐스 200·300) 기본보다 조금 더 화려 / rare_gold(고급스러운) 금빛 / wave1(레이서 1) 물결 / wave2(레이서 2) 더 센 물결
 //  leaf_*(차큐스 400 나무 5종) 나뭇잎이 흩날림 / galaxy(초보 마녀) 은하수
@@ -159,6 +158,7 @@ const TRAILS = { basic:BASIC, rare_plus:RARE_PLUS, rare_gold:RARE_GOLD, wave1:WA
   leaf_oak:LEAF.oak.full, leaf_cherry:LEAF.cherry.full, leaf_birch:LEAF.birch.full, leaf_mahogany:LEAF.mahogany.full, leaf_bamboo:LEAF.bamboo.full, galaxy:GALAXY };
 const TRAILS_LITE = { rare_plus:RARE_PLUS_LITE, rare_gold:RARE_GOLD_LITE, wave1:WAVE1_LITE, wave2:WAVE2_LITE,
   leaf_oak:LEAF.oak.lite, leaf_cherry:LEAF.cherry.lite, leaf_birch:LEAF.birch.lite, leaf_mahogany:LEAF.mahogany.lite, leaf_bamboo:LEAF.bamboo.lite, galaxy:GALAXY_LITE };
+
 // ================= 유일 등급 궤적 (rare_layers.js 의 공통 정의 뒤에 붙음) =================
 // u_dark(차큐스 500) 아주 어두운 고급 / u_classic(미드나잇) 클래식 고급 / u_emerald 초록 + 에너지 고리 / u_crimson 빨강 + 에너지 고리
 // u_sonic(쏜살같은) 소닉붐 고리 연속 / u_holo(건메탈) 마법공학 홀로그램 물결 / u_twin(바이올렛 트윈테일) 고리 두 줄 + 보라 궤적
@@ -280,6 +280,7 @@ Object.assign(RARE_MATS, {
 });
 Object.assign(TRAILS, { u_dark:U_DARK, u_classic:U_CLASSIC, u_emerald:U_EMERALD, u_crimson:U_CRIMSON, u_sonic:U_SONIC, u_holo:U_HOLO, u_twin:U_TWIN });
 Object.assign(TRAILS_LITE, { u_dark:U_DARK_LITE, u_classic:U_CLASSIC_LITE, u_emerald:U_EMERALD_LITE, u_crimson:U_CRIMSON_LITE, u_sonic:U_SONIC_LITE, u_holo:U_HOLO_LITE, u_twin:U_TWIN_LITE });
+
 // ================= 전설 등급 궤적 (rare_layers.js + unique_layers.js 뒤에 붙음) — 전설답게 크고 화려하게 =================
 // l_heart(마법소녀) 핑크 하트 + 노랑·파랑 컨페티 / l_darkheart(타락한 마법소녀) 검은 하트 + 보라·노랑 컨페티
 // l_dragon(드래고니아) 파란 드래곤 브레스 / l_butterfly(블러디 플라이) 빨간 홀로그램 나비 / l_foxfire(아홉꼬리) 하늘색 여우불(빗자루 둘레를 도는 구슬 + 남는 불꽃)
@@ -401,19 +402,24 @@ Object.assign(RARE_MATS, {
 Object.assign(TRAILS, { l_heart:L_HEART, l_darkheart:L_DARKHEART, l_dragon:L_DRAGON, l_butterfly:L_BUTTERFLY, l_foxfire:L_FOXFIRE, l_angel:L_ANGEL, l_devil:L_DEVIL });
 Object.assign(TRAILS_LITE, { l_heart:L_HEART_LITE, l_darkheart:L_DARKHEART_LITE, l_dragon:L_DRAGON_LITE, l_butterfly:L_BUTTERFLY_LITE, l_foxfire:L_FOXFIRE_LITE, l_angel:L_ANGEL_LITE, l_devil:L_DEVIL_LITE });
 
+const PACK_NAME = "BroomTrails";
+const PACK_KEYS = ["basic", "rare_plus", "rare_gold", "wave1", "wave2"];
+
 // ================= 팩 구성 (모드가 켜고 끄는 시스템). 원점 P = 빗자루 솔 끝, M = 빗자루 방향(+Z 코, +Y 위) =================
 // 역할 static: 모드(BroomTrails)가 매 틱 move/basis 로 옮긴다. *_lite = 멀리 있는 사람용(입자 수 적음).
 // 시스템 ID = 궤적 키. 효과 ID = claude:broomtrails/<키>. 연결표는 chacademy-motion 의 broom_trails.json.
-const MATS = RARE_MATS;
 const sys = (id, layers) => ({ id, role:"static", loop:true, duration:1.0, layers });
-const PACK_KEYS = Object.keys(TRAILS);
+// 클라이언트 한도: 팩 하나에 시스템 16개 미만(ClaudeEffect 검사) → 4개 팩으로 나눔. PACK_NAME / PACK_KEYS 는 build_pack.py 가 앞에 넣는다.
 const SYSTEMS = [];
 for (const k of PACK_KEYS) {
   SYSTEMS.push(sys(k, TRAILS[k]));
   SYSTEMS.push(sys(k + "_lite", k === "basic" ? [ Object.assign({}, B_CORE, { name:"01 WindStreakLite", rateDist:6, size:[0.06,0.075] }) ] : TRAILS_LITE[k]));
 }
+// 이 팩에서 쓰는 재질만 넣는다 (안 쓰는 텍스처를 팩에 싣지 않도록).
+const MATS = {};
+for (const sy of SYSTEMS) for (const l of sy.layers) { MATS[l.mat] = RARE_MATS[l.mat]; if (l.trail) MATS[l.trail.mat] = RARE_MATS[l.trail.mat]; }
 const SCENE = {
-  name: "BroomTrails",
+  name: PACK_NAME,
   bloom:{ threshold:0.95, intensity:1.2, scatter:0.65, tint:[1.0,0.97,1.0] }, tonemapping:"neutral",
   systems: SYSTEMS,
   // 이 팩의 미리보기는 정지 상태다. 비행 모습은 BroomTrails_Preview.html(빗자루별 attached 미리보기)에서 확인.

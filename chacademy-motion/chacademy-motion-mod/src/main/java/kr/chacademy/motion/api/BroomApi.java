@@ -114,7 +114,7 @@ public final class BroomApi {
         return b == null ? id : b.name();
     }
 
-    /** 등급 표시 문구 (기본/일반/고급/희귀/전설). */
+    /** 등급 표시 문구 (일반/희귀/유일/전설). */
     public static String grade(String id) {
         var b = find(id);
         return b == null ? "" : b.grade();
@@ -172,7 +172,6 @@ public final class BroomApi {
         for (var b : owned) if (b.id().equals(id)) return b;
         return null;
     }
-
 
     // ------------------------------------------------------------------ 화면에 3D 모델 그리기
 

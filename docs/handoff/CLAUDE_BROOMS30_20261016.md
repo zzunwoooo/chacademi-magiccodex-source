@@ -11,11 +11,14 @@
    - 혹시 테스트로 준 `chacademy.broom.own.broom_N` 권한이 있으면 새 번호 기준으로 다시 확인할 것.
 2. **서버의 `plugins/ChacademyMotion/brooms.yml`은 자동으로 교체된다.**
    - 새 기본 파일에 `config-version: 2`가 있다.
-   - 플러그인이 버전 없는(=1) 파일을 찾으면 `brooms.yml.v1.bak`으로 옮기고 새 기본 파일을 쓴다. 로그 경고 1회.
-   - 백업 파일이 이미 있으면 교체하지 않고 경고만 한다(수동 교체).
+   - 플러그인이 버전 없는(=1) 파일을 찾으면 `brooms.yml.v1.bak`으로 옮기고(이미 있으면 `.bak2`, `.bak3`…) 새 기본 파일을 쓴다.
+   - 빗자루 목록과 `practice-broom`은 새 기본값을 쓴다. 나머지 서버 설정(`mastery-full-hours`, 쿨다운 3개, `blocked-worlds`, `debug`)은 예전 값을 옮겨 적는다. 로그 경고 1회.
+   - 파일 이동이 실패하면 예전 파일을 그대로 쓰고, 실제 오류를 경고로 남긴다. 이때는 수동으로 교체해야 한다(예전 파일의 수치는 등급 배수가 사라져서 원래 의도보다 낮게 나온다).
 3. **클라이언트 배포물 3가지를 같이 바꿔야 한다.**
    - 모션 모드 jar: 모델 30종, 물리, 궤적 연결표가 들어 있다.
-   - PortableVFX 팩 `BroomTrails` 교체: `.minecraft/config/portablevfx/effects/BroomTrails/`, 원본은 `portable-vfx-runtime/assets/BroomTrails/`. 시스템 50개, 텍스처 22장.
+   - PortableVFX 팩 **4개**: `BroomTrails`(교체), `BroomTrailsWood`, `BroomTrailsUnique`, `BroomTrailsLegend`(신규). 위치는 `.minecraft/config/portablevfx/effects/<팩>/`, 원본은 `portable-vfx-runtime/assets/<팩>/`.
+     - 클라이언트가 팩 하나에 시스템 16개 미만만 받기 때문에 나눴다(`ClaudeEffect.java:388`). 50개를 한 팩에 넣으면 팩 전체가 거절된다.
+     - 4개 모두 실제 클라이언트 파서(`ClaudeEffect.parse`)로 통과를 확인했다. 시스템 수: 10 / 12 / 14 / 14.
    - magic-codex jar: 장비창 보유 목록 상한 10 → 30(`BroomUiLink`). magic-codex 버전 문자열은 GPT 쪽 버전 체계와 충돌하지 않게 건드리지 않았으니 배포 때 올려 줄 것.
 4. **패킷 형식은 그대로다.** `climb` 필드는 남겨 두고 항상 0을 보낸다. 모드는 이 값을 쓰지 않는다.
 5. 버전: 모션 모드 `0.3.0-codex.3-hud.2-trails.2-brooms30.1`, 모션 플러그인 `0.3.0-codex.3-carrier.1-brooms30.1`.
@@ -71,7 +74,7 @@
 | 파일 | 내용 |
 |---|---|
 | `plugin/.../BroomType.java` | 등급별 배수(`tier`)를 없앴다. yml 값을 그대로 쓴다. 등급은 일반/희귀/유일/전설로 정규화한다(예전 이름 기본→일반, 고급→희귀). `climb`은 항상 0 |
-| `plugin/.../BroomService.java` | `CONFIG_VERSION = 2`, `reload()`에서 예전 파일을 백업하고 교체 |
+| `plugin/.../BroomService.java` | `CONFIG_VERSION = 2`, `upgrade()`: 예전 파일을 백업하고 새 기본 파일로 교체, 빗자루 목록 밖의 서버 설정은 유지 |
 | `plugin/.../brooms.yml` | 30종 (위 표), `config-version: 2`, 공식 주석 |
 | `plugin/.../plugin.yml` | 설명 문구 10종 → 30종 |
 | `mod/.../BroomPhysics.java` | ① 상승(Space) 제거. 실속 판정의 `!jump` 조건도 같이 뺐다. ② 새 필드 `flightPitch`가 시선 pitch를 틱마다 `maxTurn`만큼만 따라간다(좌우와 같은 값: 최고 속도에서 ×0.6, 부스트 중 ×0.6). 첫 틱은 시선과 같은 값으로 시작한다. 상승·하강 속도 계산은 이제 camPitch 대신 flightPitch를 쓴다. ③ `balanceCap() = 90 + 3·단계`(단계 = 1 + (stability−0.6)·7.5, 1~10으로 자름). 시작 균형 = cap, 피로 곡선 `maximumBalance()`도 100 대신 cap 기준 |
@@ -81,16 +84,24 @@
 | `mod/.../broom_trails.json` | 궤적 키 25개, 빗자루 30개 연결. cost는 vfx.json에서 계산(Σ rateOverDistance×평균 수명, constCost = Σ rateOverTime×평균 수명) |
 | `mod/assets/chacademy_motion/brooms/` | bbmodel 30개 (1.1 MB) |
 | `magic-codex-fabric/.../BroomUiLink.java` | `owned()` 상한 `limit(10)` → `limit(30)` |
+| `BroomPhysics.caught()` | 공중에서 다시 잡으면 `flightPitch`를 초기화(그 순간 시선에서 시작) |
+| `BroomServiceSafetyTest` | 보유 수 기대값 10 → 30 |
 | 테스트 | `BroomResponseTest`에 `pitchFollowsLookAtTurnRate`, `noClimbKeyAndBalanceCapFollowsStabilityLevel` 추가 |
 
 ## 3. 궤적 팩 `BroomTrails` (새 버전)
 - 원본: `tools/vfx-src/BroomTrails/`
   - `rare_layers.js`, `unique_layers.js`, `legend_layers.js`, `pack_footer.js`
-  - `BroomTrails.js`는 위 네 파일을 이어 붙인 자동 생성본이다.
+  - `BroomTrails.js`, `BroomTrailsWood.js`, `BroomTrailsUnique.js`, `BroomTrailsLegend.js`는 `build_pack.py`가 위 네 파일을 이어 붙인 자동 생성본이다.
   - 텍스처 생성기: `gen_trail_tex_rare.py`, `gen_trail_tex_unique.py`, `gen_trail_tex_legend.py`
   - 미리보기 생성: `make_previews.py`(빗자루별 비행 미리보기), `gallery.py`(탭 갤러리)
+- 팩 4개, 효과 ID `claude:<팩 폴더 소문자>/<키>`:
+  - `broomtrails`: basic, rare_plus, rare_gold, wave1, wave2
+  - `broomtrailswood`: leaf_oak, leaf_cherry, leaf_birch, leaf_mahogany, leaf_bamboo, galaxy
+  - `broomtrailsunique`: u_dark, u_classic, u_emerald, u_crimson, u_sonic, u_holo, u_twin
+  - `broomtrailslegend`: l_heart, l_darkheart, l_dragon, l_butterfly, l_foxfire, l_angel, l_devil
+  - 빌드는 `tools/vfx-src/BroomTrails/build_pack.py`. 팩마다 쓰는 재질과 텍스처만 들어간다.
 - 시스템: 궤적 키마다 `<키>`와 `<키>_lite` 한 쌍, 전부 `role static`, `loop`. 원점 = 솔 끝, +Z = 빗자루 코. 예전 `legend`(별빛 오로라)는 빼고, 전설 7종은 전용 궤적으로 바꿨다.
-- `client_compat check` OK. 경고 1개: 텍스처 RGBA 5.0 MiB > 4 MiB 목표. 이 수치는 검사기가 재질마다 텍스처를 중복으로 센 값이고, 파일 기준으로는 1.95 MiB(22장)다. 클라이언트는 텍스처를 경로 키로 캐시한다(`ClaudeBackend.textures`).
+- 4개 모두 `client_compat check` OK.
 - 새로 쓰는 기능: 메시 입자(사각 메시 x축 90° = 에너지 고리), 플립북(잎·깃털·컨페티 뒤집힘, 나비 날갯짓, 불꽃), 알파 블렌드 색 텍스처(잎·깃털·검은 하트·연기), 로컬 레이어 + orbitalY + trail(아홉꼬리 여우불 구슬). 모두 클라이언트 지원 목록 안에 있다.
 - 입자 비용(이동 1블록당): 희귀 3.5~12.8, 유일 6.5~12.8, 전설 9.3~19.5 (+정지 4.2, 여우불 7.3). `TrailPlanner` 예산(2000)과 lite 전환 규칙은 그대로다.
 
