@@ -189,6 +189,7 @@ final class KyudichiPrepareScreen extends SocialScreen {
     private void changed() { KyudichiLoadout.get().save(); CastingClient.refreshBindings(); }
 
     private void toggleReady() {
+        if (KyudichiPreview.active()) { sound(1.5f, .25f); KyudichiPreview.toggleReady(); return; }
         var m = KyudichiClient.match; if (m == null || client.player == null) return;
         boolean ready = m.players().stream().anyMatch(p -> p.id().equals(client.player.getUuid()) && (p.flags() & 4) != 0);
         if (!ready && KyudichiLoadout.get().flightSlot() < 0) { notice("비행 마법이 한 칸에 있어야 해요."); return; }

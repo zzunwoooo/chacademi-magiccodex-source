@@ -55,13 +55,14 @@ public final class KyudichiQueueClient {
     }
 
     static void send(FromClient m) {
+        if (KyudichiPreview.active()) { KyudichiPreview.queueAction(m); return; }
         if (ClientPlayNetworking.canSend(Payload.ID)) ClientPlayNetworking.send(new Payload(KyudichiQueueProtocol.encode(m)));
     }
     static void requestDash() { wantDash = true; send(new DashRequest()); }
     static void requestRanking() { wantRanking = true; send(new RankingRequest()); }
     static void requestRecord(String nick) { wantRecord = true; send(new RecordRequest(nick == null ? "" : nick)); }
 
-    private static void receive(ToClient m) {
+    static void receive(ToClient m) {
         var c = MinecraftClient.getInstance();
         switch (m) {
             case Status x -> {

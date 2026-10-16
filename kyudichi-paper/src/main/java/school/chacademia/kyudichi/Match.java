@@ -695,6 +695,11 @@ final class Match {
     private void reconnectTimeouts() {
         if (now % 20 != 0) return;
         for (var m : players.values()) if (!m.online && !m.left && m.leftAt >= 0 && now - m.leftAt >= RECONNECT_TICKS) { m.left = true; feed(5, m.team.ordinal(), m.nick, "", 0); }
+        // 테스트·연습은 한 팀이 비어 있는 게 정상 (혼자 테스트): 모두 나갔을 때만 끝낸다.
+        if (opt.test()) {
+            if (started && players.values().stream().allMatch(m -> m.left)) end(null, EndReason.ABANDONED);
+            return;
+        }
         for (Team t : Team.values()) {
             boolean any = players.values().stream().anyMatch(m -> m.team == t && !m.left);
             if (!any && started) { end(t.other(), EndReason.ABANDONED); return; }

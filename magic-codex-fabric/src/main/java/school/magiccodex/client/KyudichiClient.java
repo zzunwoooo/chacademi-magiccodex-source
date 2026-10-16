@@ -74,7 +74,7 @@ public final class KyudichiClient {
         KyudichiHud.close();
     }
 
-    private static void receive(KyudichiProtocol.Message m) {
+    static void receive(KyudichiProtocol.Message m) {
         long now = Util.getMeasuringTimeMs();
         switch (m) {
             case KyudichiProtocol.Match x -> {
