@@ -1,0 +1,103 @@
+package school.chacademia.kyudichi;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
+import org.bukkit.plugin.java.JavaPlugin;
+
+/** 큐디치 (3:3 aerial PvP). Runs on the arena server; see docs/handoff/CLAUDE_KYUDICHI_*.md. */
+public final class KyudichiPlugin extends JavaPlugin {
+    private static final List<String> BLUEPRINTS = List.of("kyudichi_quaffle", "kyudichi_bludger", "kyudichi_snitch");
+
+    private Rules rules;
+    private ArenaStore arenas;
+    private Hooks hooks;
+    private RatingStore store;
+    private Matches matches;
+    private Results results;
+    private Net net;
+    private Pings pings;
+    private Spectate spectate;
+    private Selections selections;
+
+    @Override public void onEnable() {
+        saveDefaultConfig();
+        rules = new Rules(getConfig());
+        arenas = new ArenaStore(getDataFolder().toPath().resolve("arenas.yml"), getLogger());
+        arenas.load();
+        hooks = new Hooks(this);
+        store = new RatingStore(this, (int) rules.rating.start());
+        try { store.open(getDataFolder().toPath()); }
+        catch (Exception e) { getLogger().severe("큐디치 DB를 열 수 없어 플러그인을 끕니다: " + e); Bukkit.getPluginManager().disablePlugin(this); return; }
+        matches = new Matches(this); results = new Results(this); net = new Net(this); pings = new Pings(); spectate = new Spectate(this);
+        selections = new Selections(this);
+        net.register();
+        var listener = new GameListener(this);
+        Bukkit.getPluginManager().registerEvents(listener, this);
+        Bukkit.getPluginManager().registerEvents(selections, this);
+        // Bridge / MagicMythic events after every plugin is enabled
+        Bukkit.getScheduler().runTask(this, () -> { listener.hookBridge(); listener.hookHeal(); });
+        var admin = new AdminCommand(this);
+        var cmd = getCommand("큐디치관리"); cmd.setExecutor(admin); cmd.setTabCompleter(admin);
+        var player = new PlayerCommand(this);
+        var pc = getCommand("큐디치"); pc.setExecutor(player); pc.setTabCompleter(player);
+        matches.startTicking();
+        Bukkit.getScheduler().runTaskTimer(this, () -> { selections.tick(); spectate.tick(); }, 10, 10);
+        installBlueprints();
+        removeStrays();
+        for (var p : Bukkit.getOnlinePlayers()) store.load(p.getUniqueId(), p.getName(), null);
+        getLogger().info("큐디치 준비 완료 · 경기장 " + arenas.all().size() + "개");
+    }
+
+    @Override public void onDisable() {
+        if (matches != null) matches.stopAll("서버 종료/리로드");
+        if (net != null) net.unregister();
+        if (store != null) store.close();
+    }
+
+    void reload() {
+        reloadConfig();
+        rules = new Rules(getConfig());
+        if (matches.all().isEmpty()) arenas.load();
+        hooks.reset();
+    }
+
+    /** Ball models go to ModelEngine's blueprint folder (only missing files; /meg reload afterwards). */
+    private void installBlueprints() {
+        var me = Bukkit.getPluginManager().getPlugin("ModelEngine");
+        if (me == null) { getLogger().info("ModelEngine 없음: 공은 아이템 모양으로 표시"); return; }
+        Path dir = me.getDataFolder().toPath().resolve("blueprints").resolve("kyudichi");
+        int added = 0;
+        try {
+            Files.createDirectories(dir);
+            for (String b : BLUEPRINTS) {
+                Path f = dir.resolve(b + ".bbmodel");
+                if (Files.exists(f)) continue;
+                try (InputStream in = getResource("blueprints/" + b + ".bbmodel")) { if (in != null) { Files.copy(in, f); added++; } }
+            }
+        } catch (IOException e) { getLogger().warning("공 모델 설치 실패: " + e.getMessage()); }
+        if (added > 0) getLogger().warning("공 모델 " + added + "개를 ModelEngine에 설치했어요. /meg reload 후 리소스팩(ItemsAdder) 반영이 필요합니다.");
+    }
+
+    /** Ball entities are non-persistent, but a hard crash between saves could leave some: remove tagged leftovers. */
+    private void removeStrays() {
+        int n = 0;
+        for (var w : Bukkit.getWorlds()) for (Entity e : w.getEntities()) if (Hooks.isOurs(e)) { e.remove(); n++; }
+        if (n > 0) getLogger().info("남아 있던 큐디치 공 " + n + "개 제거");
+    }
+
+    Rules rules() { return rules; }
+    ArenaStore arenas() { return arenas; }
+    Hooks hooks() { return hooks; }
+    RatingStore store() { return store; }
+    Matches matches() { return matches; }
+    Results results() { return results; }
+    Net net() { return net; }
+    Pings pings() { return pings; }
+    Spectate spectate() { return spectate; }
+    Selections selections() { return selections; }
+}

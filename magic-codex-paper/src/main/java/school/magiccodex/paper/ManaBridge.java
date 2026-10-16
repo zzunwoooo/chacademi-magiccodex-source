@@ -104,6 +104,14 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
             var result=plugin.castTamingResult(p);
             return new Response(sequence,result.status(),result.cooldownMillis(),a.snapshot());
         }
+        if(spell!=null&&internal==null){
+            var attempt=new MagicCastAttemptEvent(p,spell.id());
+            Bukkit.getPluginManager().callEvent(attempt);
+            if(attempt.isCancelled()){
+                if(attempt.getMessage()!=null&&!attempt.getMessage().isBlank())p.sendActionBar(net.kyori.adventure.text.Component.text(attempt.getMessage()));
+                return new Response(sequence,ManaProtocol.UNAVAILABLE,0,a.snapshot());
+            }
+        }
         casting.add(id);
         ManaCasting.Result result;
         try {

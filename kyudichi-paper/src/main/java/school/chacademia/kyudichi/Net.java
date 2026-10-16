@@ -1,0 +1,42 @@
+package school.chacademia.kyudichi;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.messaging.PluginMessageListener;
+import school.magiccodex.protocol.KyudichiProtocol;
+
+/** chacademi:kyudichi plugin channel. Players without the MagicCodex client get the vanilla fallback (boss bar, action bar, chat). */
+final class Net implements PluginMessageListener {
+    private final KyudichiPlugin plugin;
+    Net(KyudichiPlugin plugin) { this.plugin = plugin; }
+
+    void register() {
+        Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, KyudichiProtocol.CHANNEL);
+        Bukkit.getMessenger().registerIncomingPluginChannel(plugin, KyudichiProtocol.CHANNEL, this);
+    }
+    void unregister() {
+        Bukkit.getMessenger().unregisterOutgoingPluginChannel(plugin, KyudichiProtocol.CHANNEL);
+        Bukkit.getMessenger().unregisterIncomingPluginChannel(plugin, KyudichiProtocol.CHANNEL, this);
+    }
+
+    boolean hasMod(Player p) { return p.getListeningPluginChannels().contains(KyudichiProtocol.CHANNEL); }
+
+    void send(Player p, KyudichiProtocol.Message m) {
+        if (!hasMod(p)) return;
+        try { p.sendPluginMessage(plugin, KyudichiProtocol.CHANNEL, KyudichiProtocol.encode(m)); }
+        catch (IllegalArgumentException e) { plugin.getLogger().warning("큐디치 패킷 인코딩 실패: " + e.getMessage()); }
+    }
+
+    @Override public void onPluginMessageReceived(String channel, Player p, byte[] bytes) {
+        if (!KyudichiProtocol.CHANNEL.equals(channel)) return;
+        KyudichiProtocol.Request r;
+        try { r = KyudichiProtocol.decodeRequest(bytes); } catch (IllegalArgumentException e) { return; }
+        Match m = plugin.matches().of(p.getUniqueId());
+        if (m == null) return;
+        switch (r) {
+            case KyudichiProtocol.PingRequest ping -> m.ping(p, ping);
+            case KyudichiProtocol.Forfeit f -> p.sendMessage(m.forfeit(p, f.yes()));
+            case KyudichiProtocol.Ready ready -> m.ready(p, ready.ready());
+        }
+    }
+}

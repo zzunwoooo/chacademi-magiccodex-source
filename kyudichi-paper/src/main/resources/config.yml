@@ -1,0 +1,111 @@
+# 큐디치 규칙. 숫자는 전부 여기서 조정합니다. /큐디치관리 리로드 (진행 중인 경기는 끝난 뒤 적용)
+# 시간은 초, 거리는 블록, 속도는 블록/초.
+
+match:
+  prepare-seconds: 60        # 준비(마법 세팅) 시간
+  countdown-seconds: 3       # 시작·골인 후 재개 카운트다운
+  goal-pause-seconds: 2      # 골인 연출 후 위치 복귀까지
+  play-seconds: 600          # 본 경기 10분
+  overtime-seconds: 180      # 골든골 연장 최대 3분
+  snitch-at-seconds: 300     # 스니치 등장 (멈춘 시간 제외한 실제 경기 시간)
+  respawn-seconds: 5         # 사망 후 부활까지
+  respawn-invulnerable-seconds: 2
+  game-mode: ADVENTURE       # 경기 중 게임모드 (ADVENTURE 권장: 블록 파괴 불가)
+
+score:
+  goal: 10
+  kill: 3
+  snitch: 100
+  kill-credit-seconds: 10    # 마지막으로 피해를 준 적이 이 시간 안이면 처치 인정
+
+key:                         # 큐디치 키(F) 공통
+  range: 3.0
+  cooldown-seconds: 1.0
+
+quaffle:
+  drift-speed: 3.0           # 아무도 안 들었을 때 떠다니는 속도
+  throw-speed: 30.0
+  gravity: 6.0               # 던진 공이 아래로 받는 가속 (블록/초²)
+  flight-seconds: 3.0        # 던진 뒤 이 시간이 지나면 다시 떠다님
+  hold-seconds: 10           # 10초 룰
+  auto-catch-radius: 1.5     # 팀원 패스 자동 받기 (몸에 닿을 때)
+  rethrow-block-seconds: 0.5 # 던진 사람은 이 시간 동안 다시 못 잡음
+  drop-pop-speed: 6.0        # 놓쳤을 때 튕겨 나가는 속도
+
+bludger:
+  count: 2
+  wander-speed: 6.0
+  chase-speed: 16.0
+  steer: 2.5                 # 방향을 바꾸는 빠르기 (클수록 급회전)
+  hit-radius: 1.3
+  damage-percent: 25         # 최대 체력의 %, 모든 피해 감소 무시
+  knockback: 1.2
+  ignore-after-hit-seconds: 2
+  idle-target-radius: 8      # 공 든 사람이 없을 때 노리는 범위
+  second-delay-seconds: 1    # 두 번째 블러저가 같은 사람을 노릴 때 늦게 출발
+  deflect-speed: 24.0
+  deflect-seconds: 1.5
+
+snitch:
+  speed: 12.0
+  flee-radius: 16
+  catch-range: 2.0
+  pause-every-seconds: [6, 10]
+  pause-seconds: 1.2
+
+shrine:
+  pickup-radius: 1.6
+  respawn-seconds: 20
+  health-percent: 50
+  mana-percent: 50
+  vfx:                       # PortableVFX 팩 (ShrineHealth 등, PC 차카데미 vfx_Claude 폴더)
+    health: shrinehealth
+    mana: shrinemana
+    stability: shrinestability
+    haste: shrinehaste
+
+rating:
+  start: 1000
+  k: 60
+  min-change: 5
+  contribution-min: 0.8      # 이겼을 때 기여 배율 범위 (졌을 때는 1.2 → 0.7)
+  contribution-max: 1.3
+  loss-max: 1.2
+  loss-min: 0.7
+  leaver-multiplier: 1.2
+  tiers:                     # 이 점수 이상
+    silver: 900
+    gold: 1100
+    platinum: 1300
+    diamond: 1500
+    master: 1700
+
+mvp:                         # MVP 점수 (레이팅 기여 보정에도 사용)
+  goal: 10
+  kill: 3
+  snitch: 30
+  assist: 1
+  carrier-stop-bonus: 2
+  pass: 1
+  save-goal: 3
+  save-bludger: 2
+  deflect-hit: 2
+  heal-per: 10               # 파티원 회복 10당 1점
+  damage-per: 20             # 적 피해 20당 1점
+  save-goal-radius: 8
+
+# 큐디치에서 쓸 수 없는 마법 (준비 화면에서 회색, 경기 중 시전 막힘)
+banned-spells: []
+# 큐디치에서 막는 아티팩트 (현재는 순간이동형만 서버에서 막을 수 있음: 아래 teleport-guard)
+banned-artifacts: [rewind_hourglass]
+teleport-guard: true          # 경기 중 다른 플러그인의 순간이동(되감기 모래시계, 귀환 등) 차단
+
+models:                       # ModelEngine 모델 id (plugins/ModelEngine/blueprints/kyudichi 에 자동 설치)
+  quaffle: kyudichi_quaffle
+  bludger: kyudichi_bludger
+  snitch: kyudichi_snitch
+  scale: 1.0
+fallback-items:               # ModelEngine이 없을 때 보이는 아이템
+  quaffle: ORANGE_CONCRETE_POWDER
+  bludger: BLACKSTONE
+  snitch: GOLD_BLOCK

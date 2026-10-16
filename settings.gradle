@@ -5,3 +5,5 @@ include 'chacademi-party-velocity'
 include 'magic-mythic-paper'
 
 include "gimmick-paper"
+
+include "kyudichi-paper"

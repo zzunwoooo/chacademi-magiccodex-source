@@ -270,6 +270,9 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
         if (!e.usable()) return e.name() + "은(는) 사용하는 아티팩트가 아닙니다.";
         long left = remaining(p.getUniqueId(), id, now);
         if (left > 0) return e.name() + " 재사용 대기 " + ((left + 999) / 1000) + "초";
+        var attempt = new ArtifactUseAttemptEvent(p, id);
+        Bukkit.getPluginManager().callEvent(attempt);
+        if (attempt.isCancelled()) return attempt.getMessage() != null ? attempt.getMessage() : e.name() + "은(는) 지금 사용할 수 없습니다.";
         var event = new ArtifactUseEvent(p, id, e.cooldown());
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isUsed()) return event.getResponse() != null ? event.getResponse() : e.name() + "의 효과는 아직 준비 중입니다.";

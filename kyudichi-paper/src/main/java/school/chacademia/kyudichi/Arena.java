@@ -1,0 +1,107 @@
+package school.chacademia.kyudichi;
+
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import org.bukkit.configuration.ConfigurationSection;
+
+/** One arena's layout. Mutated only by admin commands on the main thread; a match reads it at start. */
+final class Arena {
+    final String name;
+    boolean enabled, practice;
+    Box bounds, ballArea, snitchArea;
+    final Map<Team, List<Box>> goals = new EnumMap<>(Team.class);          // goals a team DEFENDS
+    final Map<Team, Point[]> starts = new EnumMap<>(Team.class);           // 3 each
+    final Map<Team, Point[]> respawns = new EnumMap<>(Team.class);         // optional, null = start
+    final Map<Team, Point> prepare = new EnumMap<>(Team.class);            // optional
+    Point quaffle;
+    final Point[] bludgers = new Point[2];
+    final List<Point> snitchSpawns = new ArrayList<>();
+    final Map<ShrineType, List<Point>> shrines = new EnumMap<>(ShrineType.class);
+    final List<Box> forbidden = new ArrayList<>();
+
+    Arena(String name) {
+        this.name = name;
+        for (Team t : Team.values()) { goals.put(t, new ArrayList<>()); starts.put(t, new Point[3]); respawns.put(t, new Point[3]); }
+        for (ShrineType s : ShrineType.values()) shrines.put(s, new ArrayList<>());
+    }
+
+    Box ballBox() { return ballArea != null ? ballArea : bounds; }
+    Box snitchBox() { return snitchArea != null ? snitchArea : ballBox(); }
+    String world() { return bounds == null ? null : bounds.world(); }
+
+    Point respawn(Team t, int slot) {
+        Point r = respawns.get(t)[slot];
+        return r != null ? r : starts.get(t)[slot];
+    }
+
+    /** Missing required items, in Korean, empty = can be enabled. */
+    List<String> problems() {
+        var p = new ArrayList<String>();
+        if (bounds == null) p.add("경계");
+        for (Team t : Team.values()) {
+            if (goals.get(t).isEmpty()) p.add(t.key + "팀 골대");
+            Point[] s = starts.get(t);
+            for (int i = 0; i < 3; i++) if (s[i] == null) p.add(t.key + "팀 시작위치 " + (i + 1));
+        }
+        if (quaffle == null) p.add("퀘이플위치");
+        for (int i = 0; i < 2; i++) if (bludgers[i] == null) p.add("블러저위치 " + (i + 1));
+        for (ShrineType s : ShrineType.values()) if (shrines.get(s).isEmpty()) p.add(s.label + " 성소 후보");
+        if (bounds != null) {
+            String w = bounds.world();
+            if (ballArea != null && !ballArea.inside(bounds)) p.add("공영역이 경계 밖으로 나감");
+            if (snitchArea != null && !snitchArea.inside(bounds)) p.add("스니치영역이 경계 밖으로 나감");
+            for (Team t : Team.values()) for (Box g : goals.get(t)) if (!g.world().equals(w)) p.add(t.key + "팀 골대가 다른 월드");
+            if (quaffle != null && !bounds.contains(quaffle.vector())) p.add("퀘이플위치가 경계 밖");
+            for (Team t : Team.values()) for (Point s : starts.get(t)) if (s != null && (!s.world().equals(w) || !bounds.contains(s.vector()))) { p.add(t.key + "팀 시작위치가 경계 밖"); break; }
+        }
+        return p;
+    }
+
+    void save(ConfigurationSection s) {
+        s.set("enabled", enabled); s.set("practice", practice);
+        s.set("bounds", bounds == null ? null : bounds.serialize());
+        s.set("ball-area", ballArea == null ? null : ballArea.serialize());
+        s.set("snitch-area", snitchArea == null ? null : snitchArea.serialize());
+        for (Team t : Team.values()) {
+            s.set("goals." + t.key, goals.get(t).stream().map(Box::serialize).toList());
+            s.set("starts." + t.key, points(starts.get(t)));
+            s.set("respawns." + t.key, points(respawns.get(t)));
+            s.set("prepare." + t.key, prepare.get(t) == null ? null : prepare.get(t).serialize());
+        }
+        s.set("quaffle", quaffle == null ? null : quaffle.serialize());
+        s.set("bludgers", points(bludgers));
+        s.set("snitch-spawns", snitchSpawns.stream().map(Point::serialize).toList());
+        for (ShrineType t : ShrineType.values()) s.set("shrines." + t.key, shrines.get(t).stream().map(Point::serialize).toList());
+        s.set("forbidden", forbidden.stream().map(Box::serialize).toList());
+    }
+
+    static Arena load(String name, ConfigurationSection s) {
+        var a = new Arena(name);
+        a.enabled = s.getBoolean("enabled"); a.practice = s.getBoolean("practice");
+        a.bounds = Box.parse(s.getString("bounds")); a.ballArea = Box.parse(s.getString("ball-area")); a.snitchArea = Box.parse(s.getString("snitch-area"));
+        for (Team t : Team.values()) {
+            for (String g : s.getStringList("goals." + t.key)) { Box b = Box.parse(g); if (b != null) a.goals.get(t).add(b); }
+            read(s.getStringList("starts." + t.key), a.starts.get(t));
+            read(s.getStringList("respawns." + t.key), a.respawns.get(t));
+            Point p = Point.parse(s.getString("prepare." + t.key)); if (p != null) a.prepare.put(t, p);
+        }
+        a.quaffle = Point.parse(s.getString("quaffle"));
+        read(s.getStringList("bludgers"), a.bludgers);
+        for (String p : s.getStringList("snitch-spawns")) { Point v = Point.parse(p); if (v != null) a.snitchSpawns.add(v); }
+        for (ShrineType t : ShrineType.values()) for (String p : s.getStringList("shrines." + t.key)) { Point v = Point.parse(p); if (v != null) a.shrines.get(t).add(v); }
+        for (String f : s.getStringList("forbidden")) { Box b = Box.parse(f); if (b != null) a.forbidden.add(b); }
+        if (!a.problems().isEmpty()) a.enabled = false;
+        return a;
+    }
+
+    private static List<String> points(Point[] ps) {
+        var out = new ArrayList<String>();
+        for (Point p : ps) out.add(p == null ? "" : p.serialize());
+        return out;
+    }
+    private static void read(List<String> in, Point[] out) {
+        for (int i = 0; i < out.length && i < in.size(); i++) out[i] = Point.parse(in.get(i).isEmpty() ? null : in.get(i));
+    }
+}
