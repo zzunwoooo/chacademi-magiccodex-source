@@ -97,4 +97,17 @@ class ReactionBookTest {
         assertThrows(IllegalArgumentException.class, () -> ElementProtocol.decode(new byte[]{2, 0, 0, 0, 0, 0}));
         assertThrows(IllegalArgumentException.class, () -> ElementProtocol.decode(new byte[]{1, 0, 0, 0, 0, 1, 9, 0, 60}));
     }
+
+    @Test void casterMarkDurationAndArtifactHelpers() {
+        var book = new ReactionBook(60, 60);
+        assertEquals(new ReactionBook.Marked(Element.FIRE, 80), book.hit(mob, a, Element.FIRE, 0, 80));
+        assertEquals(Element.FIRE, book.element(mob, 79));
+        assertEquals(new ReactionBook.MarkInfo(Element.FIRE, a), book.mark(mob, 10));
+        book.hit(mob, b, Element.WATER, 20); // reacts, immune until 80
+        assertInstanceOf(ReactionBook.Immune.class, book.hit(mob, a, Element.WIND, 30));
+        book.force(mob, a, Element.EARTH, 60, 30); // ink bottle ignores the immunity
+        assertEquals(Element.EARTH, book.element(mob, 31));
+        assertEquals(new ReactionBook.MarkInfo(Element.EARTH, a), book.take(mob, 40));
+        assertNull(book.mark(mob, 41));
+    }
 }

@@ -20,6 +20,21 @@ class ArtifactProtocolTest {
   b=new ByteArrayOutputStream();d=new DataOutputStream(b);
   d.writeInt(1);d.writeByte(ArtifactProtocol.STATE);d.writeLong(3);d.writeByte(1);d.writeShort(1);d.write(new byte[]{1});d.writeByte(1);d.writeUTF("old");d.writeUTF("");
   assertArrayEquals(new int[]{0},((State)ArtifactProtocol.decode(b.toByteArray())).cooldownMs());
-  assertThrows(IllegalArgumentException.class,()->new Request(4,0,"x"));
+  assertThrows(IllegalArgumentException.class,()->new Request(7,0,"x"));
   assertThrows(IllegalArgumentException.class,()->new Entry("x","x",0,"","","",ArtifactProtocol.MAX_COOLDOWN+1));}
+ @Test void summonFramesRoundTrip(){
+  var m=new Summon(ArtifactProtocol.SUMMON_RESULT,3,"rewind_hourglass",3,true,0,new int[]{0,1,2,0},"");
+  var back=(Summon)ArtifactProtocol.decode(ArtifactProtocol.encode(m));
+  assertEquals("rewind_hourglass",back.artifactId());assertEquals(3,back.grade());assertTrue(back.isNew());assertArrayEquals(new int[]{0,1,2,0},back.decoys());
+  var info=(Summon)ArtifactProtocol.decode(ArtifactProtocol.encode(Summon.simple(ArtifactProtocol.SUMMON_STATE,7,"")));assertEquals(7,info.keys());
+  assertEquals(ArtifactProtocol.SUMMON,ArtifactProtocol.request(ArtifactProtocol.request(new Request(ArtifactProtocol.SUMMON,0,""))).action());
+  assertThrows(IllegalArgumentException.class,()->new Summon(ArtifactProtocol.SUMMON_RESULT,0,"x",0,false,0,new int[]{0,0,4,0},""));
+  assertThrows(IllegalArgumentException.class,()->new Request(ArtifactProtocol.USE,0,""));}
+ @Test void fivePullRoundTrips(){
+  var pulls=List.of(new Pull("sturdy_vest",0,true,0),new Pull("sturdy_vest",0,false,1),new Pull("mana_necklace",1,true,0),new Pull("giant_heart",2,true,0),new Pull("rewind_hourglass",3,true,0));
+  var back=(SummonMulti)ArtifactProtocol.decode(ArtifactProtocol.encode(new SummonMulti(4,pulls,"조각 1개")));
+  assertEquals(pulls,back.pulls());assertEquals(4,back.keys());assertEquals("조각 1개",back.notice());
+  assertEquals(ArtifactProtocol.SUMMON_MULTI,ArtifactProtocol.request(ArtifactProtocol.request(new Request(ArtifactProtocol.SUMMON_MULTI,0,""))).action());
+  assertThrows(IllegalArgumentException.class,()->new SummonMulti(0,List.of(),""));
+  assertThrows(IllegalArgumentException.class,()->new Pull("x",4,true,0));}
 }

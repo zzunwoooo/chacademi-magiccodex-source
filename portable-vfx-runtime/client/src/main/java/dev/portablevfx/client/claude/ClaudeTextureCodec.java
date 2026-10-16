@@ -22,9 +22,23 @@ final class ClaudeTextureCodec {
     /** Two-subset partition shapes (bit p set = pixel p in subset 1) and the subset-1 anchor pixel. */
     private static final int[] PARTITIONS = {0xcccc, 0x8888, 0xeeee, 0xecc8, 0xc880, 0xfeec, 0xfec8, 0xec80, 0xc800, 0xffec, 0xfe80, 0xe800, 0xffe8, 0xff00, 0xfff0, 0xf000, 0xf710, 0x008e, 0x7100, 0x08ce, 0x008c, 0x7310, 0x3100, 0x8cce, 0x088c, 0x3110, 0x6666, 0x366c, 0x17e8, 0x0ff0, 0x718e, 0x399c, 0xaaaa, 0xf0f0, 0x5a5a, 0x33cc, 0x3c3c, 0x55aa, 0x9696, 0xa55a, 0x73ce, 0x13c8, 0x324c, 0x3bdc, 0x6996, 0xc33c, 0x9966, 0x0660, 0x0272, 0x04e4, 0x4e40, 0x2720, 0xc936, 0x936c, 0x39c6, 0x639c, 0x9336, 0x9cc6, 0x817e, 0xe718, 0xccf0, 0x0fcc, 0x7744, 0xee22};
     private static final int[] ANCHORS = {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 2, 8, 2, 2, 8, 8, 15, 2, 8, 2, 2, 8, 8, 2, 2, 15, 15, 6, 8, 2, 8, 15, 15, 2, 8, 2, 2, 2, 15, 15, 6, 6, 2, 6, 8, 15, 15, 2, 2, 15, 15, 15, 15, 15, 2, 2, 15};
-    /** Squared RGBA error (16 pixels x 4 channels) above which a block is retried with two subsets (~RMS 3). */
-    private static final long HARD_BLOCK_ERROR = 16 * 4 * 9;
+    /** Weighted squared error (16 pixels x 4 channels, x256 scale) above which a block is retried with two subsets (~RMS 3). */
+    private static final long HARD_BLOCK_ERROR = 16 * 4 * 9 * 256L; // errors are scaled by 256 (colour weighted by alpha + 1)
     private static final int PARTITION_CANDIDATES = 6;
+    /**
+     * Alpha error weight. Fully transparent texels must stay exactly 0 (and opaque ones 255): additive particles carry
+     * HDR tints and bloom, so even alpha 1/255 across a sprite's empty area shows as a faint rectangle around the quad.
+     */
+    private static final int ALPHA_WEIGHT = 16;
+    /** Penalty that makes "an empty texel gains alpha" lose against any encoding that keeps it at 0. */
+    private static final long EMPTY_LEAK = 1L << 40;
+    /** Snaps the endpoint alphas to exactly 0 / 255 when the block has such texels and the p-bit allows it. */
+    private static void snapAlpha(int[] low, int[] high, int lowPbit, int highPbit, boolean hasZero, boolean hasFull) {
+        int[] min = low[3] <= high[3] ? low : high, max = min == low ? high : low;
+        int minP = min == low ? lowPbit : highPbit, maxP = max == low ? lowPbit : highPbit;
+        if (hasZero && minP == 0) min[3] = 0;
+        if (hasFull && maxP == 1) max[3] = 255;
+    }
     static {
         for (int t = 0; t <= 64; t++) {
             int best = 0;
@@ -37,7 +51,7 @@ final class ClaudeTextureCodec {
     /** Textures whose visible-pixel PSNR after compression falls below this stay uncompressed RGBA8. */
     static final double MIN_VISIBLE_PSNR = 38.0;
     /** Bump whenever encoder output or the quality rule changes; it is part of the disk-cache file name. */
-    static final int ENCODER_VERSION = 1;
+    static final int ENCODER_VERSION = 2;
 
     /**
      * Compresses when the result is visually transparent: returns BC7 blocks, or {@code null} when the texture is one
@@ -45,7 +59,11 @@ final class ClaudeTextureCodec {
      */
     static byte[] compressIfFaithful(byte[] rgba, int width, int height) {
         byte[] blocks = encode(rgba, width, height);
-        return visiblePsnr(rgba, decode(blocks, width, height)) >= MIN_VISIBLE_PSNR ? blocks : null;
+        byte[] decoded = decode(blocks, width, height);
+        if (visiblePsnr(rgba, decoded) < MIN_VISIBLE_PSNR) return null;
+        // Never let empty texels gain alpha (a faint quad outline under HDR tint/bloom).
+        for (int i = 3; i < rgba.length; i += 4) if (rgba[i] == 0 && decoded[i] != 0) return null;
+        return blocks;
     }
 
     /** PSNR of what the shader shows (premultiplied colour and alpha), over pixels that are visible in either image. */
@@ -117,7 +135,8 @@ final class ClaudeTextureCodec {
         final double[] mean = new double[4], cov = new double[16], axis = new double[4], next = new double[4], e0 = new double[4], e1 = new double[4];
 
         void encodeBlock(byte[] out, int offset) {
-            boolean constant = true;
+            boolean constant = true, hasZero = false, hasFull = false;
+            for (int i = 0; i < 16; i++) { hasZero |= px[i * 4 + 3] == 0; hasFull |= px[i * 4 + 3] == 255; }
             for (int i = 4; i < 64 && constant; i++) constant = px[i] == px[i & 3];
             java.util.Arrays.fill(mean, 0);
             for (int i = 0; i < 16; i++) for (int c = 0; c < 4; c++) mean[c] += px[i * 4 + c];
@@ -130,6 +149,7 @@ final class ClaudeTextureCodec {
                 for (int p = 0; p < 4; p++) {
                     int p0 = p & 1, p1 = p >> 1;
                     for (int c = 0; c < 4; c++) { q0[c] = quantise(e0[c], p0); q1[c] = quantise(e1[c], p1); }
+                    snapAlpha(q0, q1, p0, p1, hasZero, hasFull);
                     long error = assign();
                     if (error < bestError) {
                         bestError = error;
@@ -137,7 +157,7 @@ final class ClaudeTextureCodec {
                         System.arraycopy(idx, 0, bestIdx, 0, 16);
                     }
                 }
-                if (bestError <= 16 || refine == 1 || !leastSquares()) break;
+                if (bestError <= 16 * 256 || refine == 1 || !leastSquares()) break;
             }
             write(out, offset, bestQ0, bestQ1, bestIdx);
             if (bestError > HARD_BLOCK_ERROR) two.encode(px, out, offset, bestError);
@@ -204,9 +224,14 @@ final class ClaudeTextureCodec {
                     guess = NEAREST[(int) Math.max(0, Math.min(64, (dot * 64 + dd / 2) / dd))];
                 }
                 int best = guess; long bestError = Long.MAX_VALUE;
-                for (int k = Math.max(0, guess - 1), end = Math.min(15, guess + 1); k <= end; k++) {
+                // The colour projection ignores alpha weighting; empty/opaque texels also try both endpoints,
+                // where the snapped exact 0/255 alpha lives.
+                boolean edge = a == 0 || a == 255;
+                for (int k = edge ? 0 : Math.max(0, guess - 1), end = edge ? 15 : Math.min(15, guess + 1); k <= end; k++) {
+                    if (edge && k > 0 && k < 15 && Math.abs(k - guess) > 1) continue;
                     int o = k * 4;
-                    long er = sq(r - palette[o]) + sq(g - palette[o + 1]) + sq(b - palette[o + 2]) + sq(a - palette[o + 3]);
+                    long er = (sq(r - palette[o]) + sq(g - palette[o + 1]) + sq(b - palette[o + 2])) * (a + 1) + sq(a - palette[o + 3]) * ALPHA_WEIGHT * 256
+                            + (a == 0 && palette[o + 3] != 0 ? EMPTY_LEAK : 0);
                     if (er < bestError) { bestError = er; best = k; }
                 }
                 idx[i] = best; total += bestError;
@@ -299,6 +324,8 @@ final class ClaudeTextureCodec {
         private long fitSubset(int shape, int subset, int mode) {
             int n = moments(shape, subset);
             if (n == 0) return 0;
+            boolean subsetZero = false, subsetFull = false;
+            for (int i = 0; i < 16; i++) if (((shape >> i) & 1) == subset) { subsetZero |= px[i * 4 + 3] == 0; subsetFull |= px[i * 4 + 3] == 255; }
             largestEigen();
             double tMin = Double.MAX_VALUE, tMax = -Double.MAX_VALUE;
             for (int i = 0; i < 16; i++) if (((shape >> i) & 1) == subset) {
@@ -314,6 +341,7 @@ final class ClaudeTextureCodec {
                     int p0 = p & 1, p1 = mode == 1 ? p0 : p >> 1; // mode 1 shares one p-bit per subset
                     if (mode == 1 && p > 1) break;
                     for (int c = 0; c < 4; c++) { trialEnd0[c] = endpoint(lo[c], mode, c, p0); trialEnd1[c] = endpoint(hi[c], mode, c, p1); }
+                    if (mode == 7) snapAlpha(trialEnd0, trialEnd1, p0, p1, subsetZero, subsetFull);
                     long error = assign(shape, subset, weights);
                     if (error < best) {
                         best = error; bestP0 = p0; bestP1 = p1;
@@ -350,7 +378,8 @@ final class ClaudeTextureCodec {
                 long bestError = Long.MAX_VALUE; int best = 0;
                 for (int k = 0; k < levels; k++) {
                     int o = k * 4;
-                    long er = sq(px[i * 4] - palette[o]) + sq(px[i * 4 + 1] - palette[o + 1]) + sq(px[i * 4 + 2] - palette[o + 2]) + sq(px[i * 4 + 3] - palette[o + 3]);
+                    long er = (sq(px[i * 4] - palette[o]) + sq(px[i * 4 + 1] - palette[o + 1]) + sq(px[i * 4 + 2] - palette[o + 2])) * (px[i * 4 + 3] + 1) + sq(px[i * 4 + 3] - palette[o + 3]) * ALPHA_WEIGHT * 256
+                        + (px[i * 4 + 3] == 0 && palette[o + 3] != 0 ? EMPTY_LEAK : 0);
                     if (er < bestError) { bestError = er; best = k; }
                 }
                 trialIndex[i] = best; total += bestError;

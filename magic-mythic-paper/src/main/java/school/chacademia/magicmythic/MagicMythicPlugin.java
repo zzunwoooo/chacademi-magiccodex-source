@@ -23,6 +23,16 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
     public boolean canTarget(org.bukkit.entity.Player player,org.bukkit.entity.Entity target){return targets!=null&&targets.enemy(player,target);}
     public boolean canTouch(org.bukkit.entity.Player player,org.bukkit.entity.Entity target){return targets!=null&&!targets.excluded(target)&&protection.pair(player,target.getLocation());}
     MagicProtection protection(){return protection;}
+
+    // ---- artifact API (MagicCodexBridge calls these by reflection; main thread)
+    /** Element id of the target's live mark, or "" when none. */
+    public String markElement(org.bukkit.entity.LivingEntity target){var m=reactions==null?null:reactions.markOf(target);return m==null?"":m.element().id;}
+    /** Puts `element`'s mark on an enemy, ignoring the post-reaction immunity. */
+    public boolean forceMark(org.bukkit.entity.Player caster,org.bukkit.entity.LivingEntity target,String element){return reactions!=null&&targets.enemy(caster,target)&&protection.pair(caster,target.getLocation())&&reactions.forceMark(caster,target,element);}
+    /** Pops the target's mark for `damage`. @return the popped element id, or null when it had no mark */
+    public String detonateMark(org.bukkit.entity.Player caster,org.bukkit.entity.LivingEntity target,double damage){return reactions==null||!targets.enemy(caster,target)||!protection.pair(caster,target.getLocation())?null:reactions.detonate(caster,target,damage);}
+    /** Moves `element`'s mark to the nearest unmarked enemy around `center`. */
+    public boolean spreadMark(org.bukkit.entity.Player caster,org.bukkit.Location center,org.bukkit.entity.LivingEntity exclude,String element,double radius){return reactions!=null&&protection.pair(caster,center)&&reactions.spread(caster,center,exclude,element,radius);}
     private Ticker ticker;
     private TempBlocks tempBlocks;
     private Guards guards;

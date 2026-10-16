@@ -69,6 +69,23 @@ class ClaudeTextureCodecTest {
         assertTrue(ClaudeTextureCodec.visiblePsnr(rgba, ClaudeTextureCodec.decode(block, 4, 4)) > 38);
     }
 
+    /** Regression (2026-10-16): empty texels decoded as alpha 1..12 and showed a faint quad outline under bloom. */
+    @Test void emptyTexelsStayFullyTransparent() {
+        int[][] edge = {{221,100,23,0},{221,100,23,0},{222,100,23,0},{222,101,23,1},{222,100,23,0},{222,101,23,1},{223,102,24,2},{224,104,24,4},
+                {223,103,24,3},{224,105,25,5},{226,108,26,9},{229,114,28,14},{227,110,27,11},{231,117,29,17},{236,126,32,27},{244,138,37,40}};
+        byte[] block = new byte[64];
+        for (int i = 0; i < 16; i++) for (int c = 0; c < 4; c++) block[i * 4 + c] = (byte) edge[i][c];
+        byte[] decoded = ClaudeTextureCodec.decode(ClaudeTextureCodec.encode(block, 4, 4), 4, 4);
+        for (int i = 0; i < 16; i++) if (edge[i][3] == 0) assertEquals(0, decoded[i * 4 + 3] & 0xff, "texel " + i);
+        // A coloured but fully transparent area (white RGB, alpha 0) must not become alpha 1.
+        byte[] white = new byte[64 * 4];
+        for (int i = 0; i < 64; i++) { white[i * 4] = (byte) 255; white[i * 4 + 1] = (byte) 255; white[i * 4 + 2] = (byte) 255; }
+        byte[] whiteDecoded = ClaudeTextureCodec.decode(ClaudeTextureCodec.encode(white, 8, 8), 8, 8);
+        for (int i = 3; i < whiteDecoded.length; i += 4) assertEquals(0, whiteDecoded[i] & 0xff);
+        byte[] glow = glow(48, 40), glowDecoded = ClaudeTextureCodec.decode(ClaudeTextureCodec.encode(glow, 48, 40), 48, 40);
+        for (int i = 3; i < glow.length; i += 4) if (glow[i] == 0) assertEquals(0, glowDecoded[i] & 0xff);
+    }
+
     @Test void noiseStaysUncompressed() {
         int w = 64, h = 64; byte[] rgba = new byte[w * h * 4]; new Random(7).nextBytes(rgba);
         assertNull(ClaudeTextureCodec.compressIfFaithful(rgba, w, h));

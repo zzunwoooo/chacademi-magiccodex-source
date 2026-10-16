@@ -71,6 +71,7 @@ public final class BroomService implements Listener, PluginMessageListener {
         int remaining; // 0 = 제한 없음
         final boolean limited;
         final SpeedGuard guard = new SpeedGuard();
+        final CarrierVelocity carrier = new CarrierVelocity();
         Location last;
         int secondTicks;
 
@@ -310,6 +311,7 @@ public final class BroomService implements Listener, PluginMessageListener {
 
             Location now = p.getLocation();
             if (s.last != null && s.last.getWorld() == now.getWorld()) {
+                s.carrier.sample(now.getX() - s.last.getX(), now.getY() - s.last.getY(), now.getZ() - s.last.getZ());
                 double cap = s.type.maxSpeed() * 1.45 + 0.6; // 부스트·급강하·구르기 여유
                 if (s.guard.tick(s.last.distance(now), cap)) {
                     plugin.getLogger().warning(p.getName() + " 빗자루 속도 상한 초과로 비행 종료 (" + s.type.id() + ")");
@@ -319,6 +321,7 @@ public final class BroomService implements Listener, PluginMessageListener {
                 }
             } else {
                 s.guard.reset();
+                s.carrier.reset();
             }
             s.last = now;
 
@@ -473,6 +476,7 @@ public final class BroomService implements Listener, PluginMessageListener {
         var s = sessions.get(e.getPlayer().getUniqueId());
         if (s != null) {
             s.guard.reset();
+            s.carrier.reset();
             s.last = null;
         }
     }
@@ -483,8 +487,18 @@ public final class BroomService implements Listener, PluginMessageListener {
         var s = sessions.get(e.getPlayer().getUniqueId());
         if (s != null) {
             s.guard.reset();
+            s.carrier.reset();
             s.last = null;
         }
+    }
+
+    /**
+     * 빗자루 비행 속도 {x, y, z} (블록/틱, 서버가 받은 위치로 추정). 타고 있지 않으면 null.
+     * 투사체 마법이 속도 상속·지연 보정에 쓴다.
+     */
+    public double[] velocity(Player p) {
+        var s = sessions.get(p.getUniqueId());
+        return s == null ? null : s.carrier.get();
     }
 
     /** 타고 있는 동안 낙하 피해는 없다 (내리거나 떨어진 뒤의 낙하만 피해). */

@@ -1,0 +1,8 @@
+# Dedicated player-state connection. Generic database.properties remains separate.
+# Install only with operator-provided credentials; never commit the real file.
+mode=mariadb
+host=YOUR_DATABASE_HOST
+port=3306
+database=YOUR_DATABASE_NAME
+user=YOUR_DATABASE_USER
+password=REPLACE_LOCALLY

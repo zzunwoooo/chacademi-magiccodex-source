@@ -1,0 +1,658 @@
+CHA_feather_step:
+  Cooldown: 0
+  Skills:
+    - chaselfpotion{type=SLOW_FALLING;duration=100;level=0} @self
+CHA_wind_basket:
+  Cooldown: 0
+  Skills:
+    - delay 1
+CHA_harvest_wind:
+  Cooldown: 0
+  Skills:
+    - delay 1
+CHA_wind_push:
+  Cooldown: 0
+  Skills:
+    - chahit{knock=1.6;up=0.35;element=wind}
+CHA_light_leap:
+  Cooldown: 0
+  Skills:
+    - chaselfvelocity{m=set;x=0;y=1.2;z=0} @self
+    - delay 14
+    - chaselfpotion{type=SLOW_FALLING;duration=40;level=0} @self
+CHA_flight:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=flight;ticks=200} @self
+CHA_far_touch:
+  Cooldown: 0
+  Skills:
+    - delay 1
+CHA_storm_command:
+  Cooldown: 0
+  Skills:
+    - delay 30
+    - chazone{r=4;ticks=40;period=10;mult=0.5;suck=0.15;element=wind}
+CHA_vacuum_cleave:
+  Cooldown: 0
+  Skills:
+    - chabolt{speed=2.2;range=24;radius=0.6;pierce=99;breaks=CHAIN;element=wind}
+CHA_gale_dash:
+  Cooldown: 0
+  Skills:
+    - delay 1
+CHA_returning_wind:
+  Cooldown: 0
+  Skills:
+    - chaguard{type=reflect;ticks=10;r=4} @self
+CHA_wind_grooming:
+  Cooldown: 0
+  Skills:
+    - delay 1
+CHA_weightless_zone:
+  Cooldown: 0
+  Skills:
+    - chazone{r=5;ticks=60;period=5;mult=0;suck=0.45;element=wind}
+CHA_dust_duster:
+  Cooldown: 0
+  Skills:
+    - delay 1
+CHA_leaf_cleanup:
+  Cooldown: 0
+  Skills:
+    - delay 1
+CHA_feather_rustle:
+  Cooldown: 0
+  Skills:
+    - delay 1
+CHA_cross_breeze:
+  Cooldown: 0
+  Skills:
+    - delay 40
+    - chabolt{speed=2.5;range=30;radius=0.7;pierce=1;aoe=2;aoemult=0.5;element=wind}
+CHA_returning_blade:
+  Cooldown: 0
+  Skills:
+    - chabolt{speed=1.1;range=14;radius=1.2;pierce=99;returns=true;element=wind}
+CHA_pressure_press:
+  Cooldown: 0
+  Skills:
+    - chahit{slam=2.2;element=wind}
+CHA_wind_decoy:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=decoy;r=10;ticks=100}
+CHA_air_step:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=platform;ticks=400} @self
+CHA_lightning_needle:
+  Cooldown: 0
+  Skills:
+    - chahit{r=1.5;max=3;element=wind}
+CHA_air_stacking:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=line;max=6}
+CHA_arrested_orbit:
+  Cooldown: 0
+  Skills:
+    - chabolt{speed=1.8;range=25;radius=0.5;homing=true;spread=-8;element=wind}
+    - delay 4
+    - chabolt{speed=1.8;range=25;radius=0.5;homing=true;spread=8;element=wind}
+    - delay 4
+    - chabolt{speed=1.8;range=25;radius=0.5;homing=true;spread=-4;element=wind}
+    - delay 4
+    - chabolt{speed=1.8;range=25;radius=0.5;homing=true;spread=4;element=wind}
+    - delay 4
+    - chabolt{speed=1.8;range=25;radius=0.5;homing=true;element=wind}
+CHA_crossfire:
+  Cooldown: 0
+  Skills:
+    - delay 10
+    - chahit{execute=0.2;element=wind}
+CHA_pressure_rupture:
+  Cooldown: 0
+  Skills:
+    - chahit{center=caster;r=3;knock=1.2;up=0.3;element=wind} @self
+CHA_storm_crown:
+  Cooldown: 0
+  Skills:
+    - >-
+      chabolt{speed=2;range=15;radius=0.5;homing=true;combo=storm_crown;combocount=3;combobuff=SPEED:60:2;element=wind}
+    - delay 6
+    - >-
+      chabolt{speed=2;range=15;radius=0.5;homing=true;combo=storm_crown;combocount=3;combobuff=SPEED:60:2;element=wind}
+    - delay 6
+    - >-
+      chabolt{speed=2;range=15;radius=0.5;homing=true;combo=storm_crown;combocount=3;combobuff=SPEED:60:2;element=wind}
+CHA_hearth_touch:
+  Cooldown: 0
+  Skills:
+    - delay 1
+CHA_ember_bolt:
+  Cooldown: 0
+  Skills:
+    - chabolt{speed=1.6;range=24;radius=0.5;ignite=40;element=fire}
+CHA_rekindle:
+  Cooldown: 0
+  Skills:
+    - delay 1
+CHA_ember_trap:
+  Cooldown: 0
+  Skills:
+    - chazone{r=1.5;ticks=1200;trap=true;trapr=3;key=ember_trap;limit=2;ignite=60;element=fire}
+CHA_fire_curtain:
+  Cooldown: 0
+  Skills:
+    - chazone{wall=6;r=1.5;ticks=100;period=10;ignite=40;element=fire}
+CHA_phoenix_oath:
+  Cooldown: 0
+  Skills:
+    - chaguard{type=lethal;ticks=6000;heal=6} @self
+CHA_living_furnace:
+  Cooldown: 0
+  Skills:
+    - delay 1
+CHA_falling_star:
+  Cooldown: 0
+  Skills:
+    - delay 25
+    - chahit{r=4;max=12;knock=0.8;up=0.4;ignite=60;element=fire}
+CHA_flame_lash:
+  Cooldown: 0
+  Skills:
+    - chahit{pull=1.4;ignite=40;element=fire}
+CHA_cinder_detonation:
+  Cooldown: 0
+  Skills:
+    - chahit{r=3;max=6;ignite=60;element=fire}
+CHA_palm_fireworks:
+  Cooldown: 0
+  Skills:
+    - delay 1
+CHA_ash_brand:
+  Cooldown: 0
+  Skills:
+    - chamark{type=ash_brand;ticks=60;r=3;cooldown=200}
+CHA_flame_leap:
+  Cooldown: 0
+  Skills:
+    - chahit{center=caster;r=2.5;knock=0.8;ignite=40;element=fire} @self
+CHA_crimson_heart:
+  Cooldown: 0
+  Skills:
+    - chahit{center=caster;r=5;max=12;mult=0;hpcost=0.5;hpscale=2.5;knock=1;element=fire} @self
+CHA_wick_trimming:
+  Cooldown: 0
+  Skills:
+    - delay 1
+CHA_charcoal_conversion:
+  Cooldown: 0
+  Skills:
+    - chahit{mult=0;ignite=200;element=fire}
+CHA_sponge_drying:
+  Cooldown: 0
+  Skills:
+    - delay 1
+CHA_boiling_armor:
+  Cooldown: 0
+  Skills:
+    - delay 1
+CHA_kiln_breath:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=kiln;r=6;ticks=400} @self
+CHA_explosive_wedge:
+  Cooldown: 0
+  Skills:
+    - chamark{type=wedge;ticks=600;r=2.5}
+CHA_heat_recovery:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=heat;r=10} @self
+CHA_firebird_hunt:
+  Cooldown: 0
+  Skills:
+    - chabolt{speed=1.2;range=12;radius=1.6;pierce=99;ignite=60;element=fire}
+CHA_lava_suture:
+  Cooldown: 0
+  Skills:
+    - delay 1
+CHA_flame_sword_dance:
+  Cooldown: 0
+  Skills:
+    - chamark{type=swords;count=3;ticks=600} @self
+CHA_incandescent_break:
+  Cooldown: 0
+  Skills:
+    - chabolt{speed=4;range=15;radius=0.6;pierce=99;shield=100;element=fire}
+CHA_crimson_breath:
+  Cooldown: 0
+  Skills:
+    - delay 30
+    - chahit{center=caster;cone=50;r=9;mult=0.4;ignite=40;element=fire} @self
+    - delay 6
+    - chahit{center=caster;cone=50;r=9;mult=0.4;ignite=40;element=fire} @self
+    - delay 6
+    - chahit{center=caster;cone=50;r=9;mult=0.4;ignite=40;element=fire} @self
+    - delay 6
+    - chahit{center=caster;cone=50;r=9;mult=0.4;ignite=40;element=fire} @self
+    - delay 6
+    - chahit{center=caster;cone=50;r=9;mult=0.4;ignite=40;element=fire} @self
+CHA_water_breath:
+  Cooldown: 0
+  Skills:
+    - chaselfpotion{type=WATER_BREATHING;duration=600;level=0} @self
+CHA_tide_stride:
+  Cooldown: 0
+  Skills:
+    - chaselfpotion{type=DOLPHINS_GRACE;duration=300;level=0} @self
+CHA_water_bolt:
+  Cooldown: 0
+  Skills:
+    - chabolt{speed=1.6;range=15;radius=0.5;knock=0.45;element=water}
+CHA_quench:
+  Cooldown: 0
+  Skills:
+    - chaally{type=quench} @self
+CHA_purifying_wave:
+  Cooldown: 0
+  Skills:
+    - chaally{type=cleanse;r=5} @self
+CHA_ice_bridge:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=frostwalk;ticks=300;r=2} @self
+CHA_spring_unseal:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=water}
+CHA_water_elemental:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=companion;ticks=600;period=30;range=10;knock=0.3} @self
+CHA_eternal_ice_prison:
+  Cooldown: 0
+  Skills:
+    - chamark{type=prison;ticks=100}
+CHA_cauldron_fill:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=cauldron}
+CHA_dye_rinse:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=dye} @self
+CHA_fish_lure:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=lure;min=20;max=60} @self
+CHA_frost_rupture:
+  Cooldown: 0
+  Skills:
+    - delay 20
+    - chahit{r=2.5;max=8;up=0.5;effect=SLOWNESS:40:1;element=water}
+CHA_pressure_lance:
+  Cooldown: 0
+  Skills:
+    - chabolt{speed=2.5;range=15;radius=0.6;pierce=3;falloff=0.7;element=water}
+CHA_life_distribution:
+  Cooldown: 0
+  Skills:
+    - chaally{type=share;r=6;max=3} @self
+CHA_moist_farmland:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=wetfarm;r=2;max=9}
+CHA_wash_letters:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=sign}
+CHA_healing_rain:
+  Cooldown: 0
+  Skills:
+    - chazone{r=5;ticks=100;period=20;mult=0;heal=2;element=water}
+CHA_dew_gathering:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=dew;max=3} @self
+CHA_quiet_mooring:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=boat} @self
+CHA_bubble_aria:
+  Cooldown: 0
+  Skills:
+    - chabolt{speed=1.3;range=15;radius=0.6;mult=0;aoe=4;aoemult=1;element=water}
+CHA_pressure_hammer:
+  Cooldown: 0
+  Skills:
+    - delay 15
+    - chahit{r=3;max=10;effect=SLOWNESS:20:4;element=water}
+CHA_waterspout:
+  Cooldown: 0
+  Skills:
+    - chazone{r=2.5;ticks=60;period=10;mult=0.35;lift=0.55;element=water}
+CHA_current_sorting:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=sapgeum;min=1;max=3;item=GOLD_NUGGET} @self
+CHA_potion_mist:
+  Cooldown: 0
+  Skills:
+    - chaally{type=potion;r=5;ticks=200} @self
+CHA_waterwheel_shield:
+  Cooldown: 0
+  Skills:
+    - chaguard{type=deflect;ticks=200;reduce=0.5;push=1.2} @self
+CHA_concrete_curing:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=concrete;max=16}
+CHA_ripple_guard:
+  Cooldown: 0
+  Skills:
+    - chaguard{type=block;ticks=40} @self
+CHA_tidal_wave:
+  Cooldown: 0
+  Skills:
+    - chabolt{speed=0.9;range=12;radius=2.2;pierce=99;knock=1.3;up=0.3;from=caster;element=water}
+CHA_bouncing_droplet:
+  Cooldown: 0
+  Skills:
+    - chabolt{speed=1.4;range=15;radius=0.5;bounce=3;bouncer=6;element=water}
+CHA_abyssal_pressure:
+  Cooldown: 0
+  Skills:
+    - chazone{r=2.5;ticks=120;period=20;mult=0.3;effect=SLOWNESS:30:2,MINING_FATIGUE:30:1;element=water}
+CHA_verdant_touch:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=grow;r=5;max=8} @self
+CHA_ore_whisper:
+  Cooldown: 0
+  Skills:
+    - chaworld{type=ore;r=10;max=3;ticks=100} @self
+CHA_pebble_toss:
+  Cooldown: 0
+  Skills:
+    - chabolt{speed=1.6;range=15;radius=0.5;element=earth}
+CHA_miners_rhythm:
+  Cooldown: 0
+  Skills:
+    - chaselfpotion{type=HASTE;duration=300;level=0} @self
+CHA_earth_shaping:
+  Cooldown: 0
+  Skills:
+    - >-
+      chahit{center=caster;cone=60;r=7;up=0.45;knock=0.2;hitevent=external:hitBurst;element=earth;spell=earth_shaping}
+      @self
+CHA_stone_wall:
+  Cooldown: 0
+  Skills:
+    - chazone{wall=4;r=0.6;height=3;ticks=200;period=20;mult=0;solid=true;element=earth;spell=stone_wall}
+CHA_vine_ladder:
+  Cooldown: 0
+  Skills:
+    - chasummon{type=ladder;h=8;ticks=600;range=5;element=earth;spell=vine_ladder} @self
+CHA_earth_elemental:
+  Cooldown: 0
+  Skills:
+    - >-
+      chasummon{type=golem;ticks=1200;range=8;reach=2.2;period=36;windup=12;hitr=1.5;knock=0.6;element=earth;spell=earth_elemental}
+      @self
+CHA_earthquake:
+  Cooldown: 0
+  Skills:
+    - >-
+      chazone{center=caster;r=6;ticks=60;period=20;mult=0.5;effect=SLOWNESS:20:0;element=earth;spell=earthquake}
+      @self
+CHA_climate_control:
+  Cooldown: 0
+  Skills:
+    - chafarm{type=weather;element=earth;spell=climate_control} @self
+CHA_seed_row:
+  Cooldown: 0
+  Skills:
+    - chafarm{type=seedrow;max=6;element=earth;spell=seed_row} @self
+CHA_bee_calm:
+  Cooldown: 0
+  Skills:
+    - chafarm{type=bees;r=8;element=earth;spell=bee_calm} @self
+CHA_thorn_armor:
+  Cooldown: 0
+  Skills:
+    - chaguard{type=thorns;ticks=160;element=earth;spell=thorn_armor} @self
+CHA_vein_fracture:
+  Cooldown: 0
+  Skills:
+    - chautil{type=vein;max=8;element=earth;spell=vein_fracture}
+CHA_earth_anchor:
+  Cooldown: 0
+  Skills:
+    - chaguard{type=anchor;ticks=200;element=earth;spell=earth_anchor} @self
+CHA_weathering_touch:
+  Cooldown: 0
+  Skills:
+    - chautil{type=age;element=earth;spell=weathering_touch}
+CHA_iron_carapace:
+  Cooldown: 0
+  Skills:
+    - chaselfpotion{type=RESISTANCE;duration=400;level=0;element=earth;spell=iron_carapace} @self
+CHA_moss_coating:
+  Cooldown: 0
+  Skills:
+    - chautil{type=deepdark;depth=64;element=earth;spell=moss_coating} @self
+CHA_grass_sprouting:
+  Cooldown: 0
+  Skills:
+    - chafarm{type=grass;size=2;element=earth;spell=grass_sprouting}
+CHA_flint_sorting:
+  Cooldown: 0
+  Skills:
+    - chabolt{speed=1.8;range=15;radius=0.4;count=3;countmax=5;interval=3;element=earth;spell=flint_sorting}
+CHA_bark_peeling:
+  Cooldown: 0
+  Skills:
+    - chafarm{type=strip;max=6;element=earth;spell=bark_peeling}
+CHA_compost_return:
+  Cooldown: 0
+  Skills:
+    - chafarm{type=compost;element=earth;spell=compost_return} @self
+CHA_thorn_seeds:
+  Cooldown: 0
+  Skills:
+    - chabolt{speed=2;range=15;radius=0.5;spread=-20;element=earth;spell=thorn_seeds}
+    - chabolt{speed=2;range=15;radius=0.5;spread=-10;element=earth;spell=thorn_seeds}
+    - chabolt{speed=2;range=15;radius=0.5;spread=0;element=earth;spell=thorn_seeds}
+    - chabolt{speed=2;range=15;radius=0.5;spread=10;element=earth;spell=thorn_seeds}
+    - chabolt{speed=2;range=15;radius=0.5;spread=20;element=earth;spell=thorn_seeds}
+CHA_pollen_matchmaking:
+  Cooldown: 0
+  Skills:
+    - chafarm{type=breed;r=8;element=earth;spell=pollen_matchmaking}
+CHA_dormant_seed:
+  Cooldown: 0
+  Skills:
+    - chafarm{type=harvest;len=5;element=earth;spell=dormant_seed} @self
+CHA_counterweight:
+  Cooldown: 0
+  Skills:
+    - chaguard{type=counter;ticks=20;extra=40;element=earth;spell=counterweight} @self
+CHA_material_exchange:
+  Cooldown: 0
+  Skills:
+    - chamark{type=root;ticks=40;element=earth;spell=material_exchange}
+CHA_remembering_field:
+  Cooldown: 0
+  Skills:
+    - chafarm{type=ripen;len=5;element=earth;spell=remembering_field} @self
+CHA_little_giant:
+  Cooldown: 0
+  Skills:
+    - chabuff{type=giant;ticks=300;scale=0.5;reach=1;damage=0.3;element=earth;spell=little_giant} @self
+CHA_spring_ground:
+  Cooldown: 0
+  Skills:
+    - chasummon{type=spring;uses=3;ticks=600;up=1.1;forward=0.5;element=earth;spell=spring_ground}
+CHA_mountain_back:
+  Cooldown: 0
+  Skills:
+    - delay 10
+    - >-
+      chabolt{speed=0.5;range=16;radius=1.4;pierce=99;rehit=8;knock=0.9;up=0.2;from=caster;mult=0.4;missevent=external:wallBreak;element=earth;spell=mountain_back}
+CHA_earth_embrace:
+  Cooldown: 0
+  Skills:
+    - chafarm{type=revive;len=5;element=earth;spell=earth_embrace} @self
+CHA_forest_throne:
+  Cooldown: 0
+  Skills:
+    - chabuff{type=root;ticks=160;element=earth;spell=forest_throne} @self
+    - >-
+      chazone{center=caster;r=6;ticks=160;period=10;max=2;pick=random;mult=0.35;knock=0.8;up=0.3;element=earth;spell=forest_throne}
+      @self
+CHA_primordial_stone:
+  Cooldown: 0
+  Skills:
+    - >-
+      chautil{type=core;ticks=6000;speed=0.7;range=22;radius=0.8;aoe=2.5;aoemult=0.5;mana=500;element=earth;spell=primordial_stone}
+      @self
+CHA_guiding_star:
+  Cooldown: 0
+  Skills:
+    - chautil{type=star;ticks=200;element=light;spell=guiding_star} @self
+CHA_minor_heal:
+  Cooldown: 0
+  Skills:
+    - chaally{type=heal;amount=2;element=light;spell=minor_heal} @self
+CHA_light_mark:
+  Cooldown: 0
+  Skills:
+    - chabolt{speed=1.2;range=20;radius=0.5;homing=true;element=light;spell=light_mark}
+CHA_true_sight:
+  Cooldown: 0
+  Skills:
+    - chautil{type=truesight;r=16;ticks=300;element=light;spell=true_sight} @self
+CHA_protective_ward:
+  Cooldown: 0
+  Skills:
+    - chaguard{type=ward;ticks=200;r=2.5;per=2;reduce=10;extra=200;element=light;spell=protective_ward} @self
+CHA_constellation_blessing:
+  Cooldown: 0
+  Skills:
+    - >-
+      chaally{type=buff;r=6;effect=SPEED:600:0,RESISTANCE:600:0;element=light;spell=constellation_blessing}
+      @self
+CHA_arcane_imprint:
+  Cooldown: 0
+  Skills:
+    - chautil{type=mine;ticks=400;element=light;spell=arcane_imprint} @self
+CHA_dawn_ritual:
+  Cooldown: 0
+  Skills:
+    - chaally{type=dawn;r=8;ticks=400;element=light;spell=dawn_ritual} @self
+CHA_comforting_light:
+  Cooldown: 0
+  Skills:
+    - chaally{type=comfort;range=15;amount=10;ticks=100;element=light;spell=comforting_light} @self
+CHA_exorcism_flash:
+  Cooldown: 0
+  Skills:
+    - chahit{center=caster;r=8;max=16;undead=true;element=light;spell=exorcism_flash} @self
+CHA_arcane_mending:
+  Cooldown: 0
+  Skills:
+    - chautil{type=mend;element=light;spell=arcane_mending} @self
+CHA_companion_return:
+  Cooldown: 0
+  Skills:
+    - chautil{type=return;element=light;spell=companion_return} @self
+CHA_flawless_moment:
+  Cooldown: 0
+  Skills:
+    - chaguard{type=invuln;ticks=60;element=light;spell=flawless_moment} @self
+CHA_solar_judgment:
+  Cooldown: 0
+  Skills:
+    - chachannel{ticks=240;move=0.3;then=CHA_solar_judgment_fire;element=light;spell=solar_judgment}
+CHA_firefly_mark:
+  Cooldown: 0
+  Skills:
+    - chasummon{type=light;ticks=1200;level=15;element=light;spell=firefly_mark} @self
+CHA_sun_drying:
+  Cooldown: 0
+  Skills:
+    - chafarm{type=craft;in=ROTTEN_FLESH:4;out=LEATHER:1;element=light;spell=sun_drying} @self
+CHA_luminous_copy:
+  Cooldown: 0
+  Skills:
+    - chautil{type=text;range=12;ticks=100;wait=600;element=light;spell=luminous_copy}
+CHA_guiding_fletching:
+  Cooldown: 0
+  Skills:
+    - chaguard{type=homing;ticks=100;element=light;spell=guiding_fletching} @self
+CHA_sharing_table:
+  Cooldown: 0
+  Skills:
+    - chaally{type=feed;r=8;element=light;spell=sharing_table} @self
+CHA_summons_letter:
+  Cooldown: 0
+  Skills:
+    - chasummon{type=pets;ticks=600;element=light;spell=summons_letter} @self
+CHA_starlight_survey:
+  Cooldown: 0
+  Skills:
+    - chautil{type=survey;range=48;element=light;spell=starlight_survey} @self
+CHA_luminous_handover:
+  Cooldown: 0
+  Skills:
+    - chautil{type=taunt;r=10;ticks=100;element=light;spell=luminous_handover} @self
+CHA_mana_conduit:
+  Cooldown: 0
+  Skills:
+    - chasummon{type=conduit;count=5;r=6;ticks=400;amount=50;ratio=0.5;element=light;spell=mana_conduit} @self
+CHA_merciful_arrow:
+  Cooldown: 0
+  Skills:
+    - >-
+      chabolt{speed=3;range=25;radius=0.6;ally=true;pierce=1;hitevent=external:heal;element=light;spell=merciful_arrow}
+CHA_mana_deposit:
+  Cooldown: 0
+  Skills:
+    - chautil{type=potion;element=light;spell=mana_deposit} @self
+CHA_guardian_oath:
+  Cooldown: 0
+  Skills:
+    - chaally{type=oath;range=10;r=10;ratio=0.3;ticks=200;element=light;spell=guardian_oath} @self
+CHA_experience_exchange:
+  Cooldown: 0
+  Skills:
+    - chautil{type=exp;ratio=0.5;element=light;spell=experience_exchange} @self
+CHA_starlight_reprise:
+  Cooldown: 0
+  Skills:
+    - chautil{type=reprise;element=light;spell=starlight_reprise} @self
+CHA_constellation_emissary:
+  Cooldown: 0
+  Skills:
+    - >-
+      chasummon{type=emissary;ticks=600;r=8;amount=6;period=40;element=light;spell=constellation_emissary}
+      @self
+CHA_night_sight:
+  Cooldown: 0
+  Skills:
+    - chaselfpotion{type=NIGHT_VISION;duration=1200;level=0;element=dark;spell=night_sight} @self
+CHA_shadow_bind:
+  Cooldown: 0
+  Skills:
+    - chahit{mult=0;effect=SLOWNESS:60:1;element=dark;spell=shadow_bind}
+CHA_faint_veil:
+  Cooldown: 0
+  Skills:
+    - chaselfpotion{type=INVISIBILITY;duration=160;level=0;element=dark;spell=faint_veil} @self
+CHA_solar_judgment_fire:
+  Cooldown: 0
+  Skills:
+    - chazone{r=4;ticks=60;period=5;mult=0.15;element=light;spell=solar_judgment}

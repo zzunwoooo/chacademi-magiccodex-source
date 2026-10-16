@@ -101,8 +101,33 @@ final class Targets {
         return Math.sqrt(Math.pow(p.getX() - x, 2) + Math.pow(p.getY() - y, 2) + Math.pow(p.getZ() - z, 2));
     }
 
-    boolean hurt(LivingEntity caster, LivingEntity target, double amount) {
-        return enemy(caster,target)&&plugin.protection().damage(caster,target,Math.max(0,amount));
+    boolean hurt(LivingEntity caster, LivingEntity target, double amount) { return hurt(caster, target, amount, "", ""); }
+
+    /** Spell damage with its element (for {@link MagicDamageEvent}: artifact bonuses). */
+    boolean hurt(LivingEntity caster, LivingEntity target, double amount, String element) { return hurt(caster, target, amount, element, ""); }
+
+    boolean hurt(LivingEntity caster, LivingEntity target, double amount, String element, String reaction) {
+        if (!enemy(caster,target)) return false;
+        amount = Math.max(0, amount);
+        if (amount > 0 && caster instanceof Player && MagicDamageEvent.listened()) {
+            var mark = plugin.reactions() == null ? null : plugin.reactions().markOf(target);
+            var e = new MagicDamageEvent(caster, target, element == null ? "" : element, reaction == null ? "" : reaction,
+                    mark == null ? "" : mark.element().id, mark == null ? null : mark.caster(), amount);
+            Bukkit.getPluginManager().callEvent(e);
+            amount = e.getDamage();
+        }
+        return plugin.protection().damage(caster,target,amount);
+    }
+
+    /** Spell heal on a player (zone heal, rainbow). Fires {@link MagicHealEvent} for artifact bonuses. */
+    void heal(LivingEntity caster, Player ally, double amount, String reaction) {
+        if (amount <= 0) return;
+        if (MagicHealEvent.listened()) {
+            var e = new MagicHealEvent(caster, ally, reaction, amount);
+            Bukkit.getPluginManager().callEvent(e);
+            amount = e.getAmount();
+        }
+        heal(caster, ally, amount);
     }
     /** Same as hurt, but marked as a passive's extra hit so it never re-triggers a passive. */
     boolean hurtProc(LivingEntity caster, LivingEntity target, double amount) {

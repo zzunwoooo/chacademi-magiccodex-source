@@ -35,6 +35,7 @@ class CatalogMeteorCastTest {
             default -> throw new AssertionError(method);
         });
         Server server=proxy(Server.class,(method,args)->switch(method){
+            case "getPluginManager" -> proxy(org.bukkit.plugin.PluginManager.class,(m,a)-> { if(m.equals("getPlugin")) return null; throw new AssertionError(m); });
             case "isPrimaryThread" -> true;
             case "getPlayer" -> player;
             default -> throw new AssertionError(method);

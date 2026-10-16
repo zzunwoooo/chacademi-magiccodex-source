@@ -6,7 +6,7 @@ class ArtifactCatalogTest {
   for(String id:root.getKeys(false)){var s=root.getConfigurationSection(id);String icon=s.getString("icon","");if(!icon.isBlank()){icons++;assertTrue(Files.exists(Path.of("../magic-codex-fabric/src/main/resources/assets/magiccodex",icon.substring("magiccodex:".length()))),id);}if(s.getBoolean("use"))usable++;if(!s.getBoolean("enabled",true))continue;
    int grade=List.of("common","rare","unique","legendary").indexOf(s.getString("grade"));assertTrue(grade>=0,id);entries.add(new ArtifactProtocol.Entry(id,s.getString("name"),grade,s.getString("description",""),s.getString("effect",""),icon,s.getBoolean("use")?s.getInt("cooldown"):ArtifactProtocol.PASSIVE));
   }
-  assertEquals(148,entries.size());assertEquals(71,icons);assertEquals(20,usable);assertFalse(root.getBoolean("bug_repellent_incense.enabled"));assertFalse(root.getBoolean("comeback_medal.enabled"));
+  assertEquals(148,entries.size());assertEquals(150,icons);assertEquals(20,usable);assertFalse(root.getBoolean("bug_repellent_incense.enabled"));assertFalse(root.getBoolean("comeback_medal.enabled"));
   var decoded=new ArrayList<ArtifactProtocol.Entry>();for(byte[] packet:ArtifactProtocol.catalog(123,entries)){assertTrue(packet.length<=ArtifactProtocol.MAX_BYTES);decoded.addAll(((ArtifactProtocol.Catalog)ArtifactProtocol.decode(packet)).entries());}assertEquals(entries,decoded);
  }
 }

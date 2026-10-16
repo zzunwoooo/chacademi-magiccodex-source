@@ -2,7 +2,7 @@ package school.chacademia.magicmythic;
 import java.lang.reflect.*;import java.util.*;import org.bukkit.*;import org.bukkit.entity.Player;
 /** A visual handle following an existing gameplay projectile; never simulates collision or damage. */
 final class GameplayVisual implements AutoCloseable {
- static final Map<String,String> PROJECTILES=Map.of("flint_sorting","flintsorting","thorn_seeds","thornseeds","mountain_back","mountainback","primordial_stone","primordialstone","merciful_arrow","mercifularrow");
+ static final Map<String,String> PROJECTILES=Map.of("flint_sorting","flintsorting","thorn_seeds","thornseeds","mountain_back","mountainback","primordial_stone","primordialstone","merciful_arrow","mercifularrow","light_mark","lightmark");
  private final Object service;private final Method update,finish,basis;private final UUID handle;private boolean closed;
  private GameplayVisual(Object service,Method update,Method finish,Method basis,UUID handle){this.service=service;this.update=update;this.finish=finish;this.basis=basis;this.handle=handle;}
  static GameplayVisual projectile(Player player,String spell,Location at,org.bukkit.util.Vector direction){

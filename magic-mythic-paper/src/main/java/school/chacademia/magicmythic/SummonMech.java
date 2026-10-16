@@ -256,6 +256,7 @@ final class SummonMech extends Mech {
         return plugin.ticker().add(new Ticker.Tick() {
             int age = 0;
             public String kind() { return "summon"; }
+            public void stop() { if (pl.isOnline()) vfx(pl, "external:ladder_end", base.getLocation().add(0.5, 0, 0.5), null); }
             public boolean tick() {
                 if (age++ >= ticks || !plugin.protection().at(base.getLocation())) return false;
                 var box = new org.bukkit.util.BoundingBox(base.getX() - 0.1, base.getY() - 0.5, base.getZ() - 0.1, base.getX() + 1.1, base.getY() + top + 0.6, base.getZ() + 1.1);

@@ -60,6 +60,15 @@ public final class ChacademyMotionPlugin extends JavaPlugin implements PluginMes
         return brooms != null && brooms.isRiding(player);
     }
 
+    /**
+     * 빗자루 비행 속도 {x, y, z} (블록/틱). 타고 있지 않으면 null.
+     * 투사체 마법(마법 미몹 chabolt, PortableVFX 투사체 연출)이 리플렉션으로 불러
+     * "탄 사람 속도만큼 더 빠르게, 지연만큼 앞에서" 출발시킨다.
+     */
+    public double[] broomVelocity(@NotNull Player player) {
+        return brooms == null ? null : brooms.velocity(player);
+    }
+
     /** 강제로 빗자루에서 내리게 한다 (구역 보호 등). */
     public void stopBroom(@NotNull Player player) {
         if (brooms != null) brooms.stop(player);

@@ -55,3 +55,6 @@ shop-mailbox-database.properties
 # Private portrait reference assets must never enter public Git.
 **/style-reference.png
 **/style-reference-full.png
+
+# Dedicated operating player-state connection is private.
+player-state-database.properties

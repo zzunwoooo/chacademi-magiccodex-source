@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /** Exercises every original delivered PNG in one backend's real decoded allocation budget. */
 class ClaudePackBackendTest {
-    /** BC7 (default): 27 of the 30 PNGs compress faithfully, 3 stay RGBA8. */
-    @Test void allSixSystemsLoadAndSimulateTogetherWithinExistingBudget() throws Exception { loadAll(16_318_464L); }
+    /** BC7 (default): 26 of the 30 PNGs compress faithfully, 4 stay RGBA8. */
+    @Test void allSixSystemsLoadAndSimulateTogetherWithinExistingBudget() throws Exception { loadAll(16_416_768L); }
     /** Legacy uncompressed path ({@code -Dportablevfx.claude.textureCompression=off}). */
     @Test void uncompressedTexturesKeepTheOriginalRgbaBudget() throws Exception {
         String previous=System.getProperty("portablevfx.claude.textureCompression");

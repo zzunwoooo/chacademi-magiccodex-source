@@ -14,10 +14,11 @@ import org.bukkit.plugin.Plugin;
  *   boolean broomFlight(Player, int practiceTicks)  - 타고 있으면 내리고, 아니면 탄다. 모드가 없으면 false
  *   boolean isRidingBroom(Player)
  *   void stopBroom(Player)
+ *   double[] broomVelocity(Player)                   - 비행 속도 {x,y,z} 블록/틱, 안 타면 null (0.3.0-codex.3 이후)
  */
 final class BroomLink {
     private static Plugin cachedPlugin;
-    private static Method flight, riding, stop;
+    private static Method flight, riding, stop, velocity;
 
     private BroomLink() {}
 
@@ -29,6 +30,11 @@ final class BroomLink {
                 flight = p.getClass().getMethod("broomFlight", Player.class, int.class);
                 riding = p.getClass().getMethod("isRidingBroom", Player.class);
                 stop = p.getClass().getMethod("stopBroom", Player.class);
+                try {
+                    velocity = p.getClass().getMethod("broomVelocity", Player.class);
+                } catch (NoSuchMethodException older) {
+                    velocity = null; // 예전 ChacademyMotion: 투사체 보정만 꺼짐
+                }
                 cachedPlugin = p;
             } catch (ReflectiveOperationException | LinkageError e) {
                 cachedPlugin = null;
@@ -66,5 +72,16 @@ final class BroomLink {
             stop.invoke(p, player);
         } catch (ReflectiveOperationException | RuntimeException ignored) {
         }
+    }
+
+    /** 빗자루 비행 속도 (블록/틱). 타고 있지 않거나 ChacademyMotion 이 없으면 null. */
+    static org.bukkit.util.Vector velocity(Player player) {
+        Plugin p = plugin();
+        if (p == null || velocity == null) return null;
+        try {
+            if (velocity.invoke(p, player) instanceof double[] v && v.length == 3) return new org.bukkit.util.Vector(v[0], v[1], v[2]);
+        } catch (ReflectiveOperationException | RuntimeException ignored) {
+        }
+        return null;
     }
 }

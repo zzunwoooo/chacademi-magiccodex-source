@@ -92,6 +92,25 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private SchoolBridge school;
     private EquipmentBridge equipment;
     private ArtifactBridge artifacts;
+    private AlchemyBridge alchemy;
+    private ArtifactEffects artifactEffects;
+    private PartyRoster partyRoster;
+    /** Party membership pushed by Velocity (also a Bukkit service). Null before enable. */
+    public PartyRoster partyRoster(){return partyRoster;}
+    /** Equipped artifacts changed (equip/unequip, ownership): recompute their effects now. */
+    void artifactsChanged(Player p){if(artifactEffects!=null)artifactEffects.refresh(p);savePlayerState(p);}
+    private PlayerStats stats2;
+    /** Derived stats (equipment, artifacts, ...): one refresh for server arrival and for changes. Public for other plugins. */
+    public PlayerStats stats(){return stats2;}
+    /** Re-applies every registered stat source for this player (server thread). */
+    public void refreshStats(Player p){if(stats2!=null)stats2.refresh(p);}
+    String artifactCooldowns(UUID player){return artifacts==null?"":artifacts.cooldownText(player);}
+    void restoreArtifactCooldowns(UUID player,String text){if(artifacts!=null)artifacts.restoreCooldowns(player,text);}
+    /** Artifact runtime state that must survive a server switch (internal cooldowns, timed buffs, armed flags). */
+    String artifactRuntime(Player p){return artifactEffects==null?"":artifactEffects.runtimeText(p);}
+    void restoreArtifactRuntime(Player p,String text){if(artifactEffects!=null)artifactEffects.restoreRuntime(p,text);}
+    /** A spell was cast successfully (after mana and cooldown). */
+    void artifactCast(Player p,String spell,double cost){if(artifactEffects!=null)artifactEffects.cast(p,spell,cost);}
     private PlayerStateBridge playerState;
     boolean playerStateReady(Player p){return playerState==null||playerState.ready(p);}
     void savePlayerState(Player p){if(playerState!=null)playerState.save(p);}
@@ -139,7 +158,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
             catch (RuntimeException | LinkageError error) { getLogger().warning("LuckPerms 알림 연결 실패: 보조 권한 확인을 사용합니다."); }
         }
         getServer().getScheduler().runTaskTimer(this, this::process, 1L, 20L);
-        try { mana=new ManaBridge(this);stats=new StatsBridge(this,mana);school=new SchoolBridge(this,stats.service());social=new SocialBridge(this,mana,stats.service());partyIdentity=new PartyIdentityBridge(this);partyVitals=new PartyVitalsBridge(this,mana.mana);ascension=new AscensionBridge(this,stats.service());temperature=new TemperatureBridge(this);pets=new PetBridge(this);climate=new ClimateService(this,mana.mana,temperature.service());equipment=new EquipmentBridge(this,mana.mana);appraisal=new AppraisalBridge(this);enhancement=new EnhancementBridge(this);reconfiguration=new ReconfigurationBridge(this,enhancement);playerState=new PlayerStateBridge(this,mana.mana,DatabaseSettings.load(getDataFolder().toPath().resolve("database.properties"))); }
+        try { mana=new ManaBridge(this);stats2=new PlayerStats(this,mana.mana);stats2.register("equipment",this::refreshEquipment);stats=new StatsBridge(this,mana);school=new SchoolBridge(this,stats.service());social=new SocialBridge(this,mana,stats.service());partyIdentity=new PartyIdentityBridge(this);partyVitals=new PartyVitalsBridge(this,mana.mana);ascension=new AscensionBridge(this,stats.service());temperature=new TemperatureBridge(this);pets=new PetBridge(this);climate=new ClimateService(this,mana.mana,temperature.service());equipment=new EquipmentBridge(this,mana.mana);appraisal=new AppraisalBridge(this);enhancement=new EnhancementBridge(this);reconfiguration=new ReconfigurationBridge(this,enhancement);playerState=new PlayerStateBridge(this,mana.mana,DatabaseSettings.load(java.nio.file.Files.exists(getDataFolder().toPath().resolve("player-state-database.properties"))?getDataFolder().toPath().resolve("player-state-database.properties"):getDataFolder().toPath().resolve("database.properties"))); }
         catch(Exception error) {
             getLogger().severe("마나 초기화 실패: "+error.getMessage());
             getServer().getPluginManager().disablePlugin(this);return;
@@ -154,7 +173,12 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         mana.bindSpellCommand();
         try { mailbox=new MailboxBridge(this); shops=new ShopBridge(this); shopAdmin=new ShopAdminBridge(this); } catch(Exception e) { getLogger().severe("Mailbox initialization failed: "+e.getClass().getSimpleName()); getServer().getPluginManager().disablePlugin(this); return; }
         journal=new JournalBridge(this);
+        partyRoster=new PartyRoster(this);
         try{artifacts=new ArtifactBridge(this);}catch(Exception error){getLogger().severe("아티팩트 도감 초기화 실패 (artifacts.yml 확인): "+error.getMessage());}
+        if(artifacts!=null)try{artifactEffects=new ArtifactEffects(this,artifacts,mana.mana,partyRoster,npcSocial);}catch(RuntimeException|LinkageError error){getLogger().severe("아티팩트 효과 초기화 실패: "+error);}
+        if(artifactEffects!=null){stats2.register("artifacts",artifactEffects::refresh);stats2.afterArrival("artifacts",artifactEffects::arrived);}
+        if(artifacts!=null)stats2.afterArrival("artifact-client",artifacts::push);
+        try{alchemy=new AlchemyBridge(this);}catch(Exception error){getLogger().severe("연금술 초기화 실패 (alchemy.yml 확인): "+error.getMessage());}
         new AdminCommandBridge(this,mana,school,enhancement,appraisal,titles,npcSocial);
         getLogger().info("권한 연동 준비 완료. 활성 도감만 조회, 작업당 최대 " + budget + "회, 보조 확인 " + refresh / 1000 + "초.");
     }
@@ -220,6 +244,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(quests!=null){quests.close();quests=null;}
         if(taming!=null){taming.close();taming=null;}
         if(playerState!=null){playerState.close();playerState=null;}
+        if(artifactEffects!=null){artifactEffects.close();artifactEffects=null;}
         if(reconfiguration!=null)reconfiguration.close();
         if(enhancement!=null)enhancement.close();
         if(appraisal!=null)appraisal.close();

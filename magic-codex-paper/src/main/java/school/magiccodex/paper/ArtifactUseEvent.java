@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList;
 
 /**
  * A player pressed the artifact use key (default X) with a usable artifact equipped, and the server already checked
- * ownership, equipment and the cooldown. Abilities are not implemented yet: the plugin that implements an artifact
+ * ownership, equipment and the cooldown. Built-in abilities: {@link ArtifactActions}. A plugin that implements an artifact
  * listens for its id, does the effect and calls {@link #setUsed(boolean) setUsed(true)} - only then is the cooldown
  * (artifacts.yml `cooldown`) started. {@link #setResponse} replaces the action-bar notice.
  */

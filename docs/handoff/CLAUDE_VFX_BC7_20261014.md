@@ -7,7 +7,7 @@
    - 여기서는 Maven 접근이 없어 LWJGL·Minecraft 를 스텁으로 두고 javac 타입검사 + 아래 테스트만 손으로 돌렸다:
      `ClaudeTextureCodecTest`(신규 5), `ClaudePackBackendTest`(2), `ClaudePreloadCacheTest`(5) 전부 통과.
    - `EffectRenderer.java` 는 Minecraft 클래스가 없어 컴파일 확인을 못 했다(변경 8줄, FabricLoader `getGameDir()` 만 추가).
-2. GL 스모크(`client/tools/claude-smoke`) 실행. `ClaudePreloadGlTest` 기대값은 BC7 기준 16,318,464 바이트로 바꿨다(`-Dportablevfx.claude.textureCompression=off` 면 예전 58,195,968).
+2. GL 스모크(`client/tools/claude-smoke`) 실행. `ClaudePreloadGlTest` 기대값은 BC7 기준 16,416,768 바이트로 바꿨다(`-Dportablevfx.claude.textureCompression=off` 면 예전 58,195,968).
    렌더 결과 픽셀을 정확히 비교하는 스모크가 있으면 압축 때문에 값이 조금 달라질 수 있다 → `off` 로 돌리거나 허용 오차를 둔다.
 3. 실게임 확인: 로그 한 줄 `Claude preload ready: ... / textures bc7=N rgba=M diskHits=K encode=Xms gpu=YMiB (raw ZMiB)`.
    - 첫 실행만 압축(encode) 시간이 들고, 두 번째 실행부터 `diskHits` 로 바로 읽는다.
@@ -49,3 +49,13 @@
 - 맥 사용자는 BC7→DXT5 두 번 손실이라 화질이 조금 더 떨어질 수 있다. 맥 사용자가 없다면 무시.
 - 인코더나 화질 기준을 바꾸면 `ClaudeTextureCodec.ENCODER_VERSION` 을 올릴 것(캐시 파일 이름에 들어감).
 - 101~167 바인딩은 여전히 `portable-vfx-runtime/docs/pending` 초안. 이 패치가 배포된 클라이언트에서만 62팩을 함께 켤 수 있다(팩은 런처로 같은 릴리스에 배포).
+
+## 5. 수정 (2026-10-16): 이펙트 주변 반투명 사각형
+- 증상(준우 님 인게임): 압축 패치 후 비행 등 일부 이펙트에 스프라이트 크기만 한 반투명 사각형 테두리.
+- 원인: 인코더가 완전히 투명한 텍셀(alpha 0)을 alpha 1~12 로 만들었다(신규 62팩 압축 텍스처 523장 중 351장). 가산 재질은 HDR 틴트·블룸을 받으므로 1/255 도 사각형으로 보인다. 화질 지표(PSNR)로는 잡히지 않는 오차였다.
+- 수정(`ClaudeTextureCodec`, `ENCODER_VERSION` 2 → 디스크 캐시 자동 재인코딩):
+  - 오차 계산에서 색 오차를 알파로 가중(투명 텍셀의 색은 무시), 알파 오차 가중 16배.
+  - alpha 0 텍셀이 0 이 아닌 알파로 디코드되는 후보는 사실상 금지(벌점), 끝점 알파를 0/255 로 스냅.
+  - 안전장치: 그래도 투명 텍셀에 알파가 생기는 텍스처는 압축하지 않고 RGBA8 로 둔다.
+- 결과: 신규 62팩에서 투명 텍셀 알파 누출 0(이전 991만 픽셀), RGBA 유지 9장, GPU 118 MiB 그대로. 테스트 `emptyTexelsStayFullyTransparent` 추가, 샘플 기대값 16,416,768.
+- 기존 97팩(비행 포함)도 클라이언트가 로딩 때 같은 인코더로 압축하므로 함께 고쳐진다. 배포만 하면 되고 팩 파일은 바꿀 필요 없음.

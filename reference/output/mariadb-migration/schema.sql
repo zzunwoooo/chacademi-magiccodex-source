@@ -79,6 +79,12 @@ CREATE TABLE IF NOT EXISTS codex_player_state (
   reconfig_credit_0 INT NOT NULL DEFAULT 0,
   reconfig_credit_1 INT NOT NULL DEFAULT 0,
   reconfig_credit_2 INT NOT NULL DEFAULT 0,
+  artifact_equipped VARCHAR(512) NULL DEFAULT NULL,
+  artifact_cooldowns TEXT NULL,
+  artifact_biomes TEXT NULL,
+  artifact_kept BLOB NULL,
+  artifact_runtime TEXT NULL,
+  health DOUBLE NULL,
   lease_token CHAR(36) NULL,
   lease_until BIGINT NOT NULL DEFAULT 0,
   revision BIGINT NOT NULL DEFAULT 0

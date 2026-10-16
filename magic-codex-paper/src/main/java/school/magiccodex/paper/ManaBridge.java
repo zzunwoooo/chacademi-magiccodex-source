@@ -128,7 +128,7 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
             result=new ManaCasting.Result(ManaProtocol.FAILED,0);
         }finally{casting.remove(id);}
         mana.publish(id);
-        if(result.status()==ManaProtocol.OK){mana.save(p);plugin.markPlayerStateDirty(p);DiscoveryLink.cast(p.getUniqueId(),spell.id(),spell.cost());}
+        if(result.status()==ManaProtocol.OK){mana.save(p);plugin.markPlayerStateDirty(p);DiscoveryLink.cast(p.getUniqueId(),spell.id(),spell.cost());plugin.artifactCast(p,spell.id(),spell.cost());}
         return new Response(sequence,result.status(),result.cooldownMillis(),a.snapshot());
     }
     /** The same exact configured command typed into chat also goes through the mana guard. */

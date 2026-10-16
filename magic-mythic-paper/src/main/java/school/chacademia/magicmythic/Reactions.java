@@ -67,22 +67,42 @@ final class Reactions implements Listener, AutoCloseable {
         Element element = Element.of(elementId);
         if (element == null) return;
         long now = Bukkit.getCurrentTick();
-        switch (book.hit(target.getUniqueId(), caster.getUniqueId(), element, now)) {
+        int ticks = book.markTicks();
+        if (caster instanceof Player && MagicMarkEvent.listened() && !book.coolingDown(target.getUniqueId(), now)) {
+            var e = new MagicMarkEvent(caster, target, element.id, ticks);
+            Bukkit.getPluginManager().callEvent(e);
+            ticks = e.getTicks();
+        }
+        switch (book.hit(target.getUniqueId(), caster.getUniqueId(), element, now, ticks)) {
             case ReactionBook.Immune ignored -> {}
             case ReactionBook.Marked m -> send(target, new ElementProtocol.Mark(target.getEntityId(), m.element(), m.ticks()));
             case ReactionBook.Reacted r -> {
                 send(target, new ElementProtocol.Clear(target.getEntityId()));
                 send(target, new ElementProtocol.Pop(target.getEntityId(), r.reaction()));
+                Bonus bonus = Bonus.NONE;
+                if (caster instanceof Player && MagicReactionEvent.listened()) {
+                    Element markElement = r.reaction().a == element ? r.reaction().b : r.reaction().a;
+                    var e = new MagicReactionEvent(caster, target, id(r.reaction()), markElement.id, element.id);
+                    Bukkit.getPluginManager().callEvent(e);
+                    if (e.isEffectCancelled()) return; // name pop only (artifact: element chalk)
+                    bonus = new Bonus(e.getRadiusBonus(), e.getBounceBonus(), e.getControlBonusTicks(), e.getHealBonus());
+                }
                 applying = true;
-                try { apply(r.reaction(), caster, target, Math.max(damage, floor) * scale, now); }
+                try { apply(r.reaction(), caster, target, Math.max(damage, floor) * scale, now, bonus); }
                 catch (RuntimeException e) { plugin.getLogger().warning("원소 반응 오류: " + e.getClass().getSimpleName() + " " + e.getMessage()); }
                 finally { applying = false; }
             }
         }
     }
 
-    private void apply(Reaction reaction, LivingEntity caster, LivingEntity target, double ref, long now) {
+    /** Artifact bonuses for one reaction ({@link MagicReactionEvent}). */
+    private record Bonus(double radius, int bounces, int control, double heal) { static final Bonus NONE = new Bonus(0, 0, 0, 0); }
+
+    static String id(Reaction r) { return r.name().toLowerCase(java.util.Locale.ROOT); }
+
+    private void apply(Reaction reaction, LivingEntity caster, LivingEntity target, double ref, long now, Bonus bonus) {
         var targets = plugin.targets();
+        String rid = id(reaction);
         boolean boss = targets.boss(target);
         Location at = target.getLocation();
         switch (reaction) {
@@ -96,7 +116,7 @@ final class Reactions implements Listener, AutoCloseable {
             // 증기 폭발: 주변 2블록 작은 피해 + 살짝 튀어 오름
             case STEAM -> {
                 for (LivingEntity t : targets.enemiesNear(caster, at, 2, 8)) {
-                    if (!targets.hurt(caster, t, ref * 0.15)) continue;
+                    if (!targets.hurt(caster, t, ref * 0.15, "", rid)) continue;
                     if (!targets.boss(t)) t.setVelocity(t.getVelocity().setY(0.35));
                 }
             }
@@ -121,13 +141,13 @@ final class Reactions implements Listener, AutoCloseable {
                 var done = new HashSet<UUID>(List.of(target.getUniqueId()));
                 LivingEntity from = target;
                 double amount = ref * 0.15;
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < 3 + bonus.bounces(); i++) {
                     LivingEntity next = null;
                     for (LivingEntity t : targets.enemiesNear(caster, from.getLocation(), 4, 8))
                         if (!done.contains(t.getUniqueId())) { next = t; break; }
                     if (next == null) break;
                     done.add(next.getUniqueId());
-                    targets.hurt(caster, next, amount);
+                    targets.hurt(caster, next, amount, "", rid);
                     // one bolt per jump, 0.15 s apart so the chain reads in order (visual only)
                     LivingEntity a = from, b = next;
                     if (i == 0) vfx.bolt(a, b);
@@ -137,17 +157,17 @@ final class Reactions implements Listener, AutoCloseable {
                 }
             }
             // 진흙: 1.5초 크게 느려짐
-            case MUD -> { if (!boss) target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 30, 3)); }
+            case MUD -> { if (!boss) target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 30 + bonus.control(), 3)); }
             // 무지개: 시전자와 주변 4블록 아군 체력 반 칸 회복 (유일한 아군 효과)
             case RAINBOW -> {
                 for (Player ally : targets.alliesNear(caster, caster.getLocation(), 4, 8))
-                    ally.setHealth(Math.min(Targets.maxHealth(ally), ally.getHealth() + 1));
+                    targets.heal(caster, ally, 1 + bonus.heal(), rid);
             }
             // 심연: 1초 둥실 떠오름
-            case ABYSS -> { if (!boss) target.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20, 1)); }
+            case ABYSS -> { if (!boss) target.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20 + bonus.control(), 1)); }
             // 모래 회오리: 주변 3블록 적을 대상 쪽으로 빨아들임
             case SANDSTORM -> {
-                for (LivingEntity t : targets.enemiesNear(caster, at, 3, 8)) {
+                for (LivingEntity t : targets.enemiesNear(caster, at, 3 + bonus.radius(), 8)) {
                     if (t.equals(target) || targets.boss(t)) continue;
                     Vector v = at.toVector().subtract(t.getLocation().toVector()).setY(0);
                     if (v.lengthSquared() > 0.36) t.setVelocity(v.normalize().multiply(Math.min(0.55, v.length() * 0.3)).setY(0.08));
@@ -161,9 +181,9 @@ final class Reactions implements Listener, AutoCloseable {
             // 공허 균열: 1초 뒤 대상이 반응한 자리로 끌려 돌아옴
             case VOID_GUST -> { if (!boss) later(20, () -> pullBack(target, at.clone())); }
             // 수정화: 0.5초 경직 (이동·공격 불가)
-            case CRYSTAL -> { if (!boss) stun(target, 10); }
+            case CRYSTAL -> { if (!boss) stun(target, 10 + bonus.control()); }
             // 매장: 1초 이동 불가
-            case BIND -> { if (!boss) target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 9)); }
+            case BIND -> { if (!boss) target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20 + bonus.control(), 9)); }
             // 일식: 0.5초 뒤 반응 자리에서 터지며 주변 3블록 피해
             case ECLIPSE -> {
                 Location center = at.clone();
@@ -171,11 +191,52 @@ final class Reactions implements Listener, AutoCloseable {
                 later(10, () -> {
                     if (!caster.isValid() || !plugin.protection().pair(caster, center)) return;
                     applying = true;
-                    try { for (LivingEntity t : targets.enemiesNear(caster, center, 3, 8)) targets.hurt(caster, t, amount); }
+                    try { for (LivingEntity t : targets.enemiesNear(caster, center, 3, 8)) targets.hurt(caster, t, amount, "", rid); }
                     finally { applying = false; }
                 });
             }
         }
+    }
+
+    // ---------------------------------------------------------------- artifact API (through MagicMythicPlugin)
+
+    /** Live mark on the target, or null. */
+    ReactionBook.MarkInfo markOf(LivingEntity target) {
+        return enabled ? book.mark(target.getUniqueId(), Bukkit.getCurrentTick()) : null;
+    }
+
+    /** Marks `target` with `element` even during the post-reaction immunity. @return false when disabled / bad element */
+    boolean forceMark(LivingEntity caster, LivingEntity target, String elementId) {
+        Element element = Element.of(elementId);
+        if (!enabled || element == null || !target.isValid() || target.isDead()) return false;
+        book.force(target.getUniqueId(), caster.getUniqueId(), element, book.markTicks(), Bukkit.getCurrentTick());
+        send(target, new ElementProtocol.Mark(target.getEntityId(), element, book.markTicks()));
+        return true;
+    }
+
+    /** Removes the target's mark and deals `damage` (counts as reaction damage "detonate"). @return the element id or null */
+    String detonate(LivingEntity caster, LivingEntity target, double damage) {
+        if (!enabled) return null;
+        var m = book.take(target.getUniqueId(), Bukkit.getCurrentTick());
+        if (m == null) return null;
+        send(target, new ElementProtocol.Clear(target.getEntityId()));
+        applying = true;
+        try { plugin.targets().hurt(caster, target, damage, "", "detonate"); } finally { applying = false; }
+        return m.element().id;
+    }
+
+    /** Spreads `element` to the nearest unmarked enemy around `center` (not `exclude`). @return true when placed */
+    boolean spread(LivingEntity caster, Location center, LivingEntity exclude, String elementId, double radius) {
+        Element element = Element.of(elementId);
+        if (!enabled || element == null || center.getWorld() == null) return false;
+        long now = Bukkit.getCurrentTick();
+        for (LivingEntity t : plugin.targets().enemiesNear(caster, center, radius, 8)) {
+            if (t.equals(exclude) || !book.spread(t.getUniqueId(), caster.getUniqueId(), element, now)) continue;
+            send(t, new ElementProtocol.Mark(t.getEntityId(), element, book.markTicks()));
+            vfx.body(Reaction.WILDFIRE, t);
+            return true;
+        }
+        return false;
     }
 
     private void pullBack(LivingEntity target, Location origin) {

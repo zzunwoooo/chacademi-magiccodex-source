@@ -17,3 +17,5 @@
 
 # Preserve approved packaged asset bytes, including intentional mixed line endings.
 magic-codex-fabric/src/main/resources/assets/** -text whitespace=cr-at-eol
+
+deployment/operating-config/** -text

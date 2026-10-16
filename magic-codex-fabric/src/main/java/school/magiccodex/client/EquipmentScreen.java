@@ -29,7 +29,8 @@ public final class EquipmentScreen extends Screen {
     private CodexLayout layout(){return BroomSelectionLayout.equipmentFit(width,height,broomLayout);}
     private float stretch(){return BroomSelectionLayout.equipmentStretch(broomLayout);}
     private void sound(){if(client!=null)client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK.value(),1.1f,.2f));}
-    private static int x(int i){return i<4?307:1208;}
+    /** Slot frame left edge in the panel art (left gold frame 307..456, right 1216..1366; right was 1208 = 8px too far left). */
+    private static int x(int i){return i<4?307:1216;}
     private int y(int i){return 156+(i%4)*(broomLayout?192:158);}
     private int extra(){return broomLayout?120:0;}
     private static boolean hit(double mx,double my,int x,int y,int w,int h){return mx>=x&&mx<x+w&&my>=y&&my<y+h;}

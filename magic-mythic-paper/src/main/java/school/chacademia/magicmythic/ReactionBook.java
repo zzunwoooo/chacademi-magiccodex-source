@@ -23,6 +23,8 @@ final class ReactionBook {
     record Immune() implements Outcome {}
 
     private record Mark(Element element, long until, UUID caster) {}
+    /** Live mark on a target: its element and who left it. */
+    record MarkInfo(Element element, UUID caster) {}
 
     private final Map<UUID, Mark> marks = new HashMap<>();
     private final Map<UUID, Long> cooldown = new HashMap<>();
@@ -37,8 +39,12 @@ final class ReactionBook {
 
     int markTicks() { return markTicks; }
 
-    Outcome hit(UUID target, UUID caster, Element element, long now) {
+    Outcome hit(UUID target, UUID caster, Element element, long now) { return hit(target, caster, element, now, markTicks); }
+
+    /** Same as {@link #hit(UUID, UUID, Element, long)} with this caster's mark duration (artifacts may change it). */
+    Outcome hit(UUID target, UUID caster, Element element, long now, int ticks) {
         Objects.requireNonNull(target); Objects.requireNonNull(element);
+        ticks = Math.clamp(ticks, 1, 20 * 60);
         if (coolingDown(target, now)) return new Immune();
         Mark old = marks.get(target);
         if (old != null && old.until() > now && old.element() != element) {
@@ -46,8 +52,27 @@ final class ReactionBook {
             if (cooldownTicks > 0) cooldown.put(target, now + cooldownTicks);
             return new Reacted(Reaction.of(old.element(), element), old.caster());
         }
-        marks.put(target, new Mark(element, now + markTicks, caster));
-        return new Marked(element, markTicks);
+        marks.put(target, new Mark(element, now + ticks, caster));
+        return new Marked(element, ticks);
+    }
+
+    /** Puts a mark even during the post-reaction immunity (artifact: element ink bottle). Replaces any mark. */
+    void force(UUID target, UUID caster, Element element, int ticks, long now) {
+        cooldown.remove(target);
+        marks.put(target, new Mark(element, now + Math.clamp(ticks, 1, 20 * 60), caster));
+    }
+
+    /** Live mark or null. */
+    MarkInfo mark(UUID target, long now) {
+        Mark m = marks.get(target);
+        return m == null || m.until() <= now ? null : new MarkInfo(m.element(), m.caster());
+    }
+
+    /** Removes and returns the live mark (artifact: reaction detonator glove), or null. */
+    MarkInfo take(UUID target, long now) {
+        MarkInfo m = mark(target, now);
+        if (m != null) marks.remove(target);
+        return m;
     }
 
     /**
