@@ -107,3 +107,7 @@ Audit integration verified and deployed; Story content intentionally deferred. S
 ## Claude 빗자루 투사체 보정 (2026-10-15, 미빌드)
 
 [CLAUDE_BROOM_PROJECTILE_20261015.md](CLAUDE_BROOM_PROJECTILE_20261015.md): `claude/broom-projectile-20261015`. 빗자루 비행 중 직선 투사체가 뒤에서 나오는 문제 — 비행 속도 상속 + 핑 지연만큼 출발점 앞당김 (chabolt 판정·PortableVFX 연출 동일 공식). ChacademyMotion·magic-mythic·PortableVFX paper 3개 jar. magic-71 라인 BoltMech 와 머지 충돌 주의.
+
+## Claude 빗자루 비행 궤적 (2026-10-16, 미빌드)
+
+[CLAUDE_BROOM_TRAILS_20261016.md](CLAUDE_BROOM_TRAILS_20261016.md): `claude/broom-trails-20261016` (기준 `claude/broom-projectile-20261015`). 빗자루별 비행 궤적 — 모션 모드가 PortableVFX 클라이언트 API(무수정)로 솔 끝에 궤적 효과를 켜고 매 틱 보간 위치·기울기를 넘김. 새 팩 `BroomTrails`(기본·전설 + lite) 클라 배포 필요. 서버·패킷 변경 없음. 재시도 간격·순간이동·월드 변경·경계 히스테리시스·입자 예산 2000 반영. 한계: 내/남 궤적 투명도 분리 불가, 덮어쓰기 hook 은 로컬 전용.

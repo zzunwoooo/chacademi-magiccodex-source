@@ -30,6 +30,38 @@ import java.util.List;
 public final class BroomApi {
     private BroomApi() {}
 
+    // ------------------------------------------------------------------ 비행 궤적 덮어쓰기 (아티팩트 등)
+
+    /**
+     * 이 플레이어의 비행 궤적을 broom_trails.json 의 궤적 키로 바꾼다. 비행 중이면 옛 궤적은 사라지고(꼬리 남김) 새 궤적이 켜진다.
+     * <b>이 PC 화면에만</b> 적용된다. 다른 사람 화면에도 보이게 하려면 서버가 각 클라이언트에 알려 주는 별도 연동이 필요하다.
+     * 접속 종료 때 모두 해제된다.
+     *
+     * @param playerUuid 플레이어 UUID 문자열
+     * @param trailKey   broom_trails.json 의 effects 키 (예: "legend")
+     * @return 없는 키·잘못된 UUID 면 false
+     */
+    public static boolean setTrailOverride(String playerUuid, String trailKey) {
+        try {
+            return kr.chacademy.motion.broom.trail.BroomTrails.setOverride(java.util.UUID.fromString(playerUuid), trailKey);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    /** 덮어쓰기 해제 → 빗자루 기본 궤적으로 돌아감. */
+    public static void clearTrailOverride(String playerUuid) {
+        try {
+            kr.chacademy.motion.broom.trail.BroomTrails.clearOverride(java.util.UUID.fromString(playerUuid));
+        } catch (IllegalArgumentException ignored) {
+        }
+    }
+
+    /** 모든 덮어쓰기 해제. */
+    public static void clearTrailOverrides() {
+        kr.chacademy.motion.broom.trail.BroomTrails.clearOverrides();
+    }
+
     // ------------------------------------------------------------------ 보유 목록 (서버 chacademy:broom_list)
 
     private static List<BroomPackets.Owned> owned = List.of();

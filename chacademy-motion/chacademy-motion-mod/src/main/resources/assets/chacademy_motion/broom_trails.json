@@ -1,0 +1,20 @@
+{
+  "_설명": "빗자루 ID → 비행 궤적. 리소스팩에 같은 경로(assets/chacademy_motion/broom_trails.json)로 넣으면 덮어씀. cost = 이동 1블록당 살아 있는 입자 수(예산 계산용), constCost = 정지해도 있는 입자 수. 지금 배정은 임시: 궤적이 기본·전설 2종뿐이라 전설 등급(brooms.yml grade 전설: broom_10 장인의 빗자루, broom_7 발걸이 경주용 빗자루)에 legend, 나머지에 basic.",
+  "default": "basic",
+  "effects": {
+    "basic":  { "full": "claude:broomtrails/basic",  "lite": "claude:broomtrails/basic_lite",  "cost": 6.1,  "liteCost": 1.8, "constCost": 0 },
+    "legend": { "full": "claude:broomtrails/legend", "lite": "claude:broomtrails/legend_lite", "cost": 18.8, "liteCost": 3.5, "constCost": 4.2 }
+  },
+  "brooms": {
+    "broom_1": "basic",
+    "broom_6": "basic",
+    "broom_4": "basic",
+    "broom_9": "basic",
+    "broom_2": "basic",
+    "broom_8": "basic",
+    "broom_5": "basic",
+    "broom_3": "basic",
+    "broom_10": "legend",
+    "broom_7": "legend"
+  }
+}
