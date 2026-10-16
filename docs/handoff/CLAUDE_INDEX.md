@@ -1,3 +1,5 @@
+> Claude 2026-10-17 (not built): [하우징 1차 — 기숙사 내 방 꾸미기 UI (새 플러그인 ChacaHousing + MagicCodex 창)](CLAUDE_HOUSING_20261017.md). Branch claude/housing-20261017 on claude/kyudichi-20261017 @ 268e92c. New plugin housing-paper (school/wild, shared MariaDB) + client mod must ship together (new channel chacademi:housing). Bridge/Velocity unchanged.
+
 > Claude 2026-10-17 (not built): [큐디치 3:3 공중 PvP — 경기장 플러그인·매칭 대기열·클라 HUD/창](CLAUDE_KYUDICHI_20261017.md). Branch claude/kyudichi-20261017 on claude/party-ui-20261016 @ 8e9bbad. New arena server + ChacaKyudichi, Velocity party jar, Bridge (all servers), client mod and chacademy-motion must ship together.
 
 > Claude 2026-10-16 (not built): [파티 창 UI + 파티 초대 알림](CLAUDE_PARTY_UI_20261016.md). Branch claude/party-ui-20261016 on codex/operating-alchemy-carrier-20261016 @ 9cefa25. Velocity party plugin + magic-codex UI must be deployed together (new channel chacademi:party_ui).
@@ -94,6 +96,7 @@ Claude 는 GPT 작업 브랜치에 직접 커밋하지 않고, **`claude/` 로 �
 | `claude/artifact-catalog-20261015` | `claude/reaction-vfx-20261015` @ `b07c62c` (위 브랜치 포함) | `CLAUDE_ARTIFACT_CATALOG_20261015.md` | 검수 완료 아티팩트 150항목 yml(보류 2 숨김, 사용형 20), 아이콘 71장, 아티팩트 사용 키 X(프로토콜 v2 `USE`·대기 시간·`ArtifactUseEvent`), 마법 키세팅에서 X 금지. **능력 미구현, 서버·모드 같이 배포. Fabric 화면 코드 컴파일 미확인** | 받음 (Codex integration; 637 hosting tests passed; school/wild and personal UI deployed) |
 | `claude/artifact-summon-20261015` | `claude/artifact-catalog-20261015` @ `c1c2c01` (위 브랜치 포함) | `CLAUDE_ARTIFACT_SUMMON_20261015.md` | 유물함 소환(아티팩트 뽑기): `/아티팩트소환` 창, [소환하기]로 `item:random_artifact` 소모, 등급 5:3:1:0.1, 새것은 권한 지급·중복은 `item:artifact_shard` 우편, 등급이 드러나는 개봉 연출(가산 합성 셰이더·바닐라 사운드). **아이템애더 아이템 2개 생성 필요, Fabric 화면 컴파일 미확인** | 받기 전 |
 | `claude/artifact-effects-20261015` | `claude/artifact-summon-20261015` @ `0236fee` 이후 (위 브랜치 포함) | `CLAUDE_ARTIFACT_EFFECTS_20261015.md` | 아티팩트 효과 120/150 구현(스탯·받는 피해·마법 피해·원소 반응·채집·음식·사용 키 18종), 보류 30(모션·키세팅·빗자루 훅 등). 파티 명단 Velocity→서버 `chacademi:party_roster` + 공개 서비스 `PartyRoster`. MagicMythic 이벤트 4종 추가. 스쿨·야생 공유(`codex_player_state`에 열 6개 자동 추가) + 서버 도착 시 능력치 통합 갱신 `PlayerStats`(장신구·아티팩트 재계산 후 현재 체력·마나 복원). **Paper API 소스로 javac 확인, Gradle·실게임 전. Velocity·Bridge·MagicMythic 같이 배포** | 받기 전 |
+| `claude/housing-20261017` | `claude/kyudichi-20261017` @ `268e92c` (위 브랜치 포함) | `CLAUDE_HOUSING_20261017.md` | 하우징 1차: 기숙사실 문 → UI 미니룸 편집(쿼터뷰, 가구 상자, 레이아웃 3칸, 확장 Vault), 구경(좋아요·방명록·친구 방·구경 중 명단 실시간). 새 플러그인 `housing-paper`(ChacaHousing, 공용 MariaDB `codex_housing_*`). **Gradle·실게임 전, 플러그인·모드 같이 배포, 확장 비용 임시값** | 받기 전 |
 
 ## Claude 가 지키는 규칙
 

@@ -7,3 +7,5 @@ include 'magic-mythic-paper'
 include "gimmick-paper"
 
 include "kyudichi-paper"
+
+include "housing-paper"
