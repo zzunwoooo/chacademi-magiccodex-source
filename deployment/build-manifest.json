@@ -1,5 +1,5 @@
 {
-  "status": "built_not_deployed_pending_personal_game_exit",
+  "status": "deployed_verified",
   "versions": [
     {
       "module": "magic-codex-paper",
@@ -35,5 +35,17 @@
   "tests": 1056,
   "baselinePreserved": true,
   "temporaryLauncherChanged": false,
-  "realTimeSeasonApplied": false
+  "realTimeSeasonApplied": true,
+  "sourceCommit": "506aa202a9bec05a2c7b14319f0a8e8fd7b7b4b1",
+  "seasonEpoch": "2026-10-16T15:33:16+09:00",
+  "hoursPerSeason": 72,
+  "seasonReloadVerifiedBoth": true,
+  "temporaryScriptRemoved": true,
+  "serverJarReplacements": 8,
+  "personalUiReplaced": true,
+  "personalOtherFilesUnchanged": 2832,
+  "serverOtherBackupFilesUnchanged": 131,
+  "serverForceKilled": false,
+  "staleTask9TestWorkerStopped": 15072,
+  "firstAttemptRolledBackDueToStaleWorkerJarLock": true
 }

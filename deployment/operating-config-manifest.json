@@ -34,5 +34,11 @@
     "sha256": "2991a65b165f56d8f1a0d9c424fff00766dfb7bf9b4125631b3f9b43c6482282",
     "sameOnSchoolAndWild": true,
     "role": "non-secret gameplay configuration; deployment overlay, not player data"
+  },
+  {
+    "path": "deployment/operating-config/MagicCodexBridge/climate.yml",
+    "sha256": "79d2678902e9fcf8cd9d9b7919cb881c2fdca131462212858d5c22401c7f17e6",
+    "sameOnSchoolAndWild": true,
+    "role": "non-secret applied realtime season configuration; preserve this epoch when reproducing this deployment"
   }
 ]

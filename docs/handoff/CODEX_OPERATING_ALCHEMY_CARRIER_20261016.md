@@ -26,7 +26,7 @@ All affected builds passed; machine-readable test counts are in deployment/test-
 
 ## Operating configuration contract
 
-Apply the six nonsecret gameplay overlays in deployment/operating-config to the corresponding plugin data directories when reconstructing the installation. They were copied from matching school/wild operating files and preserve runtime-only bindings, including 103/134. Verify deployment/operating-config-manifest.json. Do not overwrite existing user data or private connection settings.
+Apply the seven nonsecret gameplay overlays in deployment/operating-config to the corresponding plugin data directories when reconstructing the installation. They were copied from matching school/wild operating files and preserve runtime-only bindings, including 103/134. Verify deployment/operating-config-manifest.json. Do not overwrite existing user data or private connection settings.
 
 MagicCodexBridge reads player-state-database.properties first, falling back to generic database.properties only if the dedicated file is absent. Both current servers have the dedicated MariaDB configuration with matching connection targets; the generic file is absent. The dedicated template contains placeholders only. Do NOT add a generic database.properties as a supposed correction: it also enables unrelated database consumers. No live credentials, player data, logs, or private settings are included.
 
@@ -39,3 +39,15 @@ The complete 163 VFX packs / 2017 files, including LightMark and VineLadder, are
 The requested Library answer was read. Its appendix ZIP could not be materialized by the official helper on Windows (os.setxattr unavailable), so the appendix was not reviewed. All three requested commits and their repository handoff documents were available.
 
 Real-game login, UI rendering, actual player crafting, broom flight/projectile alignment, and cross-server discovery were not executed. These require authorized player QA after deployment. Separate H2 storage and zero production recipes remain explicit dependencies, not silently corrected settings.
+
+## Deployment completed
+
+School/wild received the four server JARs each, and the closed personal launcher received the UI JAR. See deployment/build-manifest.json for exact versions and SHA256. Both servers reached Done, each loaded 157 visual bindings with zero skipped, startup ERROR/SEVERE count was zero, and all three network ping endpoints responded with zero players. Eight server JAR hashes and the personal UI hash match the tested builds. 131 other backed-up server files and 2832 other personal mod/config files remain byte-identical.
+
+Both servers use epoch 2026-10-16T15:33:16+09:00, 72 hours per season. The reload response confirmed spring, automatic, epoch 2026-10-16T06:33:16Z and next transition 2026-10-19T15:33:16+09:00. Direct console Korean encoding failed; an existing Skript one-shot executed only the requested reload internally, then was disabled and deleted. No fixed-season command or supervisor setting change occurred.
+
+The first install attempt restored the old JARs after a lock error. An orphan task-9 Gradle test worker (PID 15072, stopped in TestWorker.stop, task-9 classpath containing the old VFX JAR) held the file. Only that stale test worker was terminated; server processes were stopped gracefully. The second install succeeded. Backups: C:/Chacademi/backups/alchemy-carrier-20261016-task10.
+
+Read-only DB checks independently connected with each dedicated configuration, ran SELECT 1 and information_schema existence checks for codex_player_state and artifact_equipped. No player rows, credentials or connection targets are published. Generic database.properties is absent on both servers, so generic consumers default to SQLite; friends.db, school.db and titles.db have SQLite headers. The dedicated loader is present in this source commit and the deployed Bridge bytecode. It was an operating integration change missing from the earlier upstream view.
+
+All 150 nonempty artifact icon references in each server YAML resolve to entries in both the previous and newly installed UI JARs. This verifies files, not in-game rendering. Database and LuckPerms configuration remains unchanged.
