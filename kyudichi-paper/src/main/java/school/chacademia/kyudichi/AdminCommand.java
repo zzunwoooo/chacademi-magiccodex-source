@@ -46,7 +46,7 @@ final class AdminCommand implements TabExecutor {
                     else test(s, new String[]{"테스트", a[1], "준비:0", "스니치:0", "무적"});
                 }
                 case "경기" -> match(s, a);
-                case "대기열" -> info(s, "대기열은 Velocity 매칭 작업(다음 단계)에서 들어가요. 지금은 /큐디치관리 경기 시작 으로 직접 경기를 열 수 있어요.");
+                case "대기열" -> info(s, "대기열은 Velocity 프록시가 관리해요 (/큐디치 대기열 · /큐디치 신청). 매칭 없이 직접 열려면 /큐디치관리 경기 시작");
                 case "리로드" -> { plugin.reload(); ok(s, "config.yml · arenas.yml 다시 읽음 (진행 중인 경기는 이전 규칙 유지)"); }
                 case "유저" -> user(s, a);
                 default -> help(s);
