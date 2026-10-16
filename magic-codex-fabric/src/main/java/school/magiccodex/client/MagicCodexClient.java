@@ -51,6 +51,7 @@ public final class MagicCodexClient implements ClientModInitializer {
         EquipmentClient.initialize();
         ArtifactClient.initialize();
         AlchemyClient.initialize();
+        AlchemyAdminClient.initialize();
         PetClient.initialize();
         TamingClient.initialize();
         ShinyClient.initialize();

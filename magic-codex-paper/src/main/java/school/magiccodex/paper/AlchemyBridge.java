@@ -183,7 +183,7 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
         return itemsAdder.create(key, amount);
     }
 
-    private byte[] preview(String key, ItemStack fallback) {
+    byte[] preview(String key, ItemStack fallback) {
         byte[] cached = previews.get(key);
         if (cached != null) return cached;
         ItemStack canonical = create(key, 1);
@@ -425,7 +425,7 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
         String sub = args.length == 0 ? "편집" : args[0];
         switch (sub) {
             case "편집", "edit" -> {
-                if (sender instanceof Player p) editor.openList(p, 0);
+                if (sender instanceof Player p) editor.open(p);
                 else sender.sendMessage("레시피 편집 창은 게임 안에서 /연금술관리 로 엽니다. (콘솔: 새로고침|목록|발견|잊기)");
             }
             case "새로고침", "reload" -> {
