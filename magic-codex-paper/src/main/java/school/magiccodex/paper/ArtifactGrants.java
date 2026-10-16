@@ -17,6 +17,13 @@ final class ArtifactGrants {
         return lp.getUserManager().modifyUser(player, user -> user.data().add(Node.builder(permission).value(true).build()));
     }
 
+    /** Removes a permission node granted by {@link #grant}; null when LuckPerms is not installed. */
+    static CompletableFuture<Void> revoke(UUID player, String permission) {
+        LuckPerms lp = Bukkit.getServicesManager().load(LuckPerms.class);
+        if (lp == null) return null;
+        return lp.getUserManager().modifyUser(player, user -> user.data().remove(Node.builder(permission).value(true).build()));
+    }
+
     static boolean available() {
         try { return Bukkit.getServicesManager().load(LuckPerms.class) != null; }
         catch (NoClassDefFoundError e) { return false; }

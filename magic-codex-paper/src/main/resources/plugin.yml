@@ -84,6 +84,14 @@ commands:
     description: Open the artifact summon window (admins may open it for another player).
     usage: /아티팩트소환 [플레이어]
     permission: magiccodex.artifact.summon
+  연금술:
+    description: Open the alchemy window (admins, console and NPC commands may open it for another player).
+    usage: /연금술 [플레이어]
+    permission: magiccodex.alchemy.use
+  연금술관리:
+    description: Reload alchemy.yml, list recipes, discover or forget recipes for a player.
+    usage: /연금술관리 <새로고침|목록|발견|잊기>
+    permission: magiccodex.alchemy.admin
   기숙사점수:
     description: School house standings and administrator point adjustments.
     aliases: [학교기증, 학교점수]
@@ -135,6 +143,12 @@ permissions:
   magiccodex.artifact.summon:
     default: true
   magiccodex.artifact.own.*:
+    default: false
+  magiccodex.alchemy.use:
+    default: true
+  magiccodex.alchemy.admin:
+    default: op
+  magiccodex.alchemy.recipe.*:
     default: false
   magiccodex.nickname.admin:
     description: 다른 플레이어에게 /최초닉네임설정 열기

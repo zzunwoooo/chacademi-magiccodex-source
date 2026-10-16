@@ -92,6 +92,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private SchoolBridge school;
     private EquipmentBridge equipment;
     private ArtifactBridge artifacts;
+    private AlchemyBridge alchemy;
     private ArtifactEffects artifactEffects;
     private PartyRoster partyRoster;
     /** Party membership pushed by Velocity (also a Bukkit service). Null before enable. */
@@ -177,6 +178,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(artifacts!=null)try{artifactEffects=new ArtifactEffects(this,artifacts,mana.mana,partyRoster,npcSocial);}catch(RuntimeException|LinkageError error){getLogger().severe("아티팩트 효과 초기화 실패: "+error);}
         if(artifactEffects!=null){stats2.register("artifacts",artifactEffects::refresh);stats2.afterArrival("artifacts",artifactEffects::arrived);}
         if(artifacts!=null)stats2.afterArrival("artifact-client",artifacts::push);
+        try{alchemy=new AlchemyBridge(this);}catch(Exception error){getLogger().severe("연금술 초기화 실패 (alchemy.yml 확인): "+error.getMessage());}
         new AdminCommandBridge(this,mana,school,enhancement,appraisal,titles,npcSocial);
         getLogger().info("권한 연동 준비 완료. 활성 도감만 조회, 작업당 최대 " + budget + "회, 보조 확인 " + refresh / 1000 + "초.");
     }
