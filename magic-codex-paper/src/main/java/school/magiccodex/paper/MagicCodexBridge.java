@@ -240,6 +240,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     }
     @EventHandler public void onWorldChange(PlayerChangedWorldEvent event) { markDirty(event.getPlayer().getUniqueId()); }
     @Override public void onDisable() {
+        if(alchemy!=null){alchemy.close();alchemy=null;}
         if(shopAdmin!=null)shopAdmin.close(); if(shops!=null)shops.close(); if(mailbox!=null)mailbox.close();
         if(spellRuntime!=null){spellRuntime.close();spellRuntime=null;}
         if(titles!=null){titles.close();titles=null;}

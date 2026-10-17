@@ -53,6 +53,7 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
     private final Map<UUID, Integer> viewers = new HashMap<>();
     private final Map<UUID, Long> limits = new HashMap<>();
     private AlchemyEditor editor;
+    private AlchemySharedConfig shared;
 
     AlchemyBridge(MagicCodexBridge plugin) throws Exception {
         this.plugin = plugin;
@@ -60,6 +61,8 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
         if (!new File(plugin.getDataFolder(), "alchemy.yml").exists()) plugin.saveResource("alchemy.yml", false);
         reload();
         editor = new AlchemyEditor(plugin, this);
+        // school and wild share one alchemy.yml through the shared MariaDB (local file = this server's copy)
+        shared = new AlchemySharedConfig(plugin, localText(), this::applyText);
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, AlchemyProtocol.REQUEST, this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, AlchemyProtocol.RESPONSE);
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -411,6 +414,27 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
     // ------------------------------------------------------------------ commands
 
     int slots() { return slots; }
+    AlchemySharedConfig shared() { return shared; }
+
+    /** This server's alchemy.yml text ("" when unreadable). */
+    String localText() {
+        try { return java.nio.file.Files.readString(file().toPath(), java.nio.charset.StandardCharsets.UTF_8); } catch (Exception e) { return ""; }
+    }
+
+    /** Replace the local alchemy.yml with this text and reload; on a load error the previous file is put back. */
+    String applyText(String text) {
+        String before = localText();
+        try { java.nio.file.Files.writeString(file().toPath(), text, java.nio.charset.StandardCharsets.UTF_8); }
+        catch (Exception e) { return "alchemy.yml 쓰기 실패: " + e.getMessage(); }
+        String error = reloadAndPush();
+        if (error != null) {
+            try { java.nio.file.Files.writeString(file().toPath(), before, java.nio.charset.StandardCharsets.UTF_8); } catch (Exception ignored) { }
+            reloadAndPush();
+        }
+        return error;
+    }
+
+    void close() { if (shared != null) shared.close(); }
     File file() { return new File(plugin.getDataFolder(), "alchemy.yml"); }
 
     /** Reload alchemy.yml and refresh every open alchemy window; the error text, or null on success. */
@@ -429,9 +453,13 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
                 else sender.sendMessage("레시피 편집 창은 게임 안에서 /연금술관리 로 엽니다. (콘솔: 새로고침|목록|발견|잊기)");
             }
             case "새로고침", "reload" -> {
+                // this server's file (edited by hand) becomes the shared setting for both servers
                 String error = reloadAndPush();
                 if (error != null) { sender.sendMessage("§calchemy.yml 오류: " + error); return true; }
-                sender.sendMessage("§a연금술 레시피 " + recipes.size() + "개를 다시 불러왔습니다. (재료 칸 " + slots + "개, 재료 카테고리 " + categories + ")");
+                int count = recipes.size();
+                shared.publish(localText(), "reload:" + sender.getName(), failed -> sender.sendMessage(failed == null
+                        ? "§a연금술 레시피 " + count + "개를 다시 불러왔습니다." + (shared.shared() ? " 스쿨·야생 두 서버에 같이 적용됩니다." : " (공유 DB 없음: 이 서버만)")
+                        : "§e이 서버에는 불러왔지만 다른 서버와 공유하지 못했습니다: " + failed));
             }
             case "목록", "list" -> {
                 for (Recipe r : recipes) sender.sendMessage("§f" + r.name() + " §8" + r.id() + " §7→ " + r.result() + " ×" + r.amount() + ", 경험치 " + r.exp() + ", 재료 " + r.ingredients());

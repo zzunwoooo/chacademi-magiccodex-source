@@ -448,8 +448,8 @@ final class AlchemyScreen extends Screen {
             HudMesh.line(c, x.cx() - r, x.cy() - r, x.cx() + r, x.cy() + r, 3, xc); HudMesh.line(c, x.cx() - r, x.cy() + r, x.cx() + r, x.cy() - r, 3, xc);
             var list = AlchemyClient.selectable();
             if (list.isEmpty()) {
-                text(c, "가방에 '재료' 아이템이 없습니다.", p.cx(), p.cy() - 10, 22, MUTED, LABEL, true);
-                text(c, "아이템 설명 첫 줄이 '재료'인 아이템만 넣을 수 있습니다.", p.cx(), p.cy() + 24, 17, DIM, BODY, true);
+                text(c, "가방에 재료 아이템이 없습니다.", p.cx(), p.cy() - 10, 22, MUTED, LABEL, true);
+                text(c, "재료 아이템만 넣을 수 있습니다.", p.cx(), p.cy() + 24, 17, DIM, BODY, true);
             }
             int max = AlchemyLayout.PICK_COLUMNS * AlchemyLayout.PICK_ROWS;
             for (int i = 0; i < Math.min(max, list.size()); i++) {

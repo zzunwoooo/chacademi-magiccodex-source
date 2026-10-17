@@ -20,8 +20,9 @@ import school.magiccodex.protocol.AlchemyProtocol;
 /**
  * Server side of the in-game alchemy recipe editor (/연금술관리 → the mod's AlchemyAdminScreen, same art as the
  * alchemy window). Every request checks magiccodex.alchemy.admin. The client sends a whole recipe draft; this class
- * validates it, writes alchemy.yml (Bukkit YAML keeps the comments) and reloads at once, putting the old file back if
- * the new one does not load. Ingredients that the player slot picker would not show (first lore line is not 재료) are
+ * validates it, writes alchemy.yml (Bukkit YAML keeps the comments), reloads at once and publishes it to the shared
+ * copy (AlchemySharedConfig) so school and wild stay identical, putting the old file back if
+ * the new one does not load or cannot be shared. Ingredients that the player slot picker would not show (first lore line is not 재료) are
  * added to settings.material-items so players can still put them in.
  */
 final class AlchemyEditor implements PluginMessageListener, Listener {
@@ -127,11 +128,12 @@ final class AlchemyEditor implements PluginMessageListener, Listener {
             case AlchemyAdminProtocol.QUERY -> send(p, AlchemyAdminProtocol.KIND_STATE, "");
             case AlchemyAdminProtocol.RELOAD -> {
                 String error = bridge.reloadAndPush();
-                result(p, r.sequence(), error == null, "", error == null ? "alchemy.yml 을 다시 불러왔습니다." : "alchemy.yml 오류: " + error);
-                send(p, AlchemyAdminProtocol.KIND_STATE, "");
+                if (error != null) { result(p, r.sequence(), false, "", "alchemy.yml 오류: " + error); send(p, AlchemyAdminProtocol.KIND_STATE, ""); }
+                else share(p, r.sequence(), bridge.localText(), "", "alchemy.yml 을 다시 불러왔습니다");
             }
-            case AlchemyAdminProtocol.SAVE -> { save(p, r.sequence(), r.row()); send(p, AlchemyAdminProtocol.KIND_STATE, ""); }
-            case AlchemyAdminProtocol.DELETE -> { delete(p, r.sequence(), r.id()); send(p, AlchemyAdminProtocol.KIND_STATE, ""); }
+            // results (and the refreshed state) are sent once the shared copy is updated
+            case AlchemyAdminProtocol.SAVE -> save(p, r.sequence(), r.row());
+            case AlchemyAdminProtocol.DELETE -> delete(p, r.sequence(), r.id());
             default -> { }
         }
     }
@@ -204,15 +206,33 @@ final class AlchemyEditor implements PluginMessageListener, Listener {
             return;
         }
         plugin.getLogger().info("ALCHEMY EDIT save by=" + p.getName() + " recipe=" + id);
-        String message = "'" + name + "' 저장 완료 · 바로 적용되었습니다." + (d.enabled() ? "" : " (꺼짐)");
-        if (!added.isEmpty()) message += " 재료로 등록: " + added.size() + "개";
-        result(p, seq, true, id, message);
+        String message = "'" + name + "' 저장 완료" + (d.enabled() ? "" : " (꺼짐)");
+        if (!added.isEmpty()) message += " · 재료로 등록 " + added.size() + "개";
+        share(p, seq, before, id, message);
+    }
+
+    /** The edit is applied here; now make it the shared setting for both servers (or undo it here). */
+    private void share(Player p, long seq, String before, String id, String message) {
+        var shared = bridge.shared();
+        shared.publish(bridge.localText(), "editor:" + p.getName(), failed -> {
+            if (failed != null) {
+                bridge.applyText(before);
+                plugin.getLogger().warning("ALCHEMY EDIT not shared, reverted here: " + failed);
+                if (p.isOnline()) { result(p, seq, false, id, "저장하지 못했습니다: " + failed); send(p, AlchemyAdminProtocol.KIND_STATE, ""); }
+                return;
+            }
+            if (p.isOnline()) {
+                result(p, seq, true, id, message + (shared.shared() ? " · 스쿨·야생에 바로 적용됩니다." : " · 이 서버에 적용 (공유 DB 없음)"));
+                send(p, AlchemyAdminProtocol.KIND_STATE, "");
+            }
+        });
     }
 
     private void delete(Player p, long seq, String id) {
         File file = bridge.file();
+        String before;
         try {
-            String before = Files.readString(file.toPath(), StandardCharsets.UTF_8);
+            before = Files.readString(file.toPath(), StandardCharsets.UTF_8);
             var yaml = load();
             if (!yaml.contains("recipes." + id)) { result(p, seq, false, id, "이미 없는 레시피입니다."); return; }
             yaml.set("recipes." + id, null);
@@ -221,6 +241,6 @@ final class AlchemyEditor implements PluginMessageListener, Listener {
             if (error != null) { Files.writeString(file.toPath(), before, StandardCharsets.UTF_8); bridge.reloadAndPush(); result(p, seq, false, id, "삭제 후 불러오기 오류로 되돌렸습니다: " + error); return; }
         } catch (Exception e) { result(p, seq, false, id, "삭제하지 못했습니다: " + e.getMessage()); return; }
         plugin.getLogger().info("ALCHEMY EDIT delete by=" + p.getName() + " recipe=" + id);
-        result(p, seq, true, "", "레시피를 삭제했습니다.");
+        share(p, seq, before, "", "레시피를 삭제했습니다");
     }
 }
