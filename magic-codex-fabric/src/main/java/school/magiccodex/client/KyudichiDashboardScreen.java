@@ -52,7 +52,7 @@ final class KyudichiDashboardScreen extends KyudichiViewScreen {
         var ranks = new ArrayList<DashboardView.Rank>();
         DashboardView.Rank mine = null;
         if (rk != null) { for (var r : rk.top()) ranks.add(rank(r)); if (rk.mine() != null) mine = rank(rk.mine()); }
-        rankScroll = Math.clamp(rankScroll, 0, Math.max(0, ranks.size() - 7));
+        rankScroll = Math.clamp(rankScroll, 0, DashboardView.maxRankScroll(ranks.size()));
         var rr = KyudichiQueueClient.record;
         DashboardView.PlayerRec rec = null;
         if (rr != null && rr.record() != null) {

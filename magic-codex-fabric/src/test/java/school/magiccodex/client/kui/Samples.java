@@ -51,6 +51,8 @@ final class Samples {
         }));
         ALL.add(new View("accept", 1586, 992, -1, -1, p -> AcceptView.paint(p, new AcceptView.Data(8, 3, 6, false))));
         for (var tab : DashboardView.Tab.values()) ALL.add(new View("dashboard_" + tab.name().toLowerCase(), 1672, 941, -1, -1, p -> DashboardView.paint(p, dash(tab))));
+        ALL.add(new View("dashboard_ranking_scrolled", 1672, 941, -1, -1, p -> { var d = dash(DashboardView.Tab.RANKING);
+            DashboardView.paint(p, new DashboardView.Data(d.tab(), 4, d.live(), 0, d.ranking(), d.mine(), 18, d.record(), true, "", false, false, "")); }));
     }
     static DashboardView.Who who(int i, String n) { return new DashboardView.Who(id(i), n, ""); }
     static DashboardView.Data dash(DashboardView.Tab tab) {

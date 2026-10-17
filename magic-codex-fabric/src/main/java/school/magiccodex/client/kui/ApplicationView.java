@@ -6,8 +6,7 @@ import school.magiccodex.client.kui.Canvas.Face;
 
 /**
  * 큐디치 신청 창 + 매칭 대기 중 카드 (application_layout, reference 00fe2cb4; 1672×941).
- * Icons the reference shows but the pack does not have yet (bar chart, crossed swords, crown, clock, range, cancel mark)
- * are left out — see the handoff list.
+ * Icons from the owner's EXTRA_PNG (icons/*), placed at their reference positions.
  */
 public final class ApplicationView {
     private ApplicationView() {}
@@ -25,6 +24,8 @@ public final class ApplicationView {
         p.text("큐디치 신청", 512, 140, 50, Theme.GOLD, Face.TITLE, Canvas.LEFT);
         // summary band
         p.image("application/summary_band", 421, 207, 831, 109);
+        Theme.icon(p, "icons/bar_chart", 545.5f, 260, 39, 38);
+        Theme.icon(p, "icons/crossed_swords", 957.5f, 259.5f, 40, 39);
         p.text("내 레이팅", 605, 242, 21, Theme.CREAM, Face.SERIF, Canvas.LEFT);
         p.text(String.valueOf(d.myRating()), 606, 281, 38, Theme.GOLD, Face.SERIF, Canvas.LEFT);
         p.text("전적", 1016, 242, 21, Theme.CREAM, Face.SERIF, Canvas.LEFT);
@@ -42,6 +43,7 @@ public final class ApplicationView {
                 p.text("매칭되면 함께해요", cx, 508, 17, Theme.MUTED, Face.SANS, Canvas.CENTER);
                 continue;
             }
+            if (lead) Theme.icon(p, "icons/crown", 522 + dx, 354, 26, 20);
             if (lead) p.text("파티장", cx + 23, 354, 17, Theme.GOLD, Face.SERIF, Canvas.CENTER);
             p.head(m.id(), m.skin(), 505 + dx, 376, 104);
             p.fit(m.nick(), cx, 508, 28, 220, Theme.WHITE, Face.SERIF, Canvas.CENTER);
@@ -52,6 +54,7 @@ public final class ApplicationView {
                 p.text(Theme.HOUSE_NAMES[m.house()], left + 64, 567, 22, Theme.HOUSE_COLORS[m.house()], Face.SERIF, Canvas.LEFT);
             }
             p.image("application/rating_field", 449 + dx, 604, 218, 51);
+            Theme.icon(p, "icons/bar_chart", 480.5f + dx, 631, 21, 20);
             p.text("레이팅", 517 + dx, 630, 19, Theme.CREAM, Face.SERIF, Canvas.LEFT);
             p.text(String.valueOf(m.rating()), 650 + dx, 630, 26, Theme.GOLD, Face.SERIF, Canvas.RIGHT);
         }
@@ -74,12 +77,15 @@ public final class ApplicationView {
         p.image("application/queue_panel", 1307, 35, 344, 313);
         spinner(p, 1377, 101, nowMs);
         p.text("매칭 대기 중", 1427, 100, 28, Theme.WHITE, Face.SERIF, Canvas.LEFT);
+        Theme.icon(p, "icons/clock", 1367, 173.5f, 26, 26);
         p.text("대기", 1400, 173, 21, Theme.CREAM, Face.SERIF, Canvas.LEFT);
         p.text(q.waitedSec() / 60 + ":" + String.format("%02d", q.waitedSec() % 60), 1455, 173, 30, Theme.GOLD, Face.SERIF, Canvas.LEFT);
+        Theme.icon(p, "icons/range_slider", 1367, 218, 26, 22);
         p.text("범위", 1400, 218, 21, Theme.CREAM, Face.SERIF, Canvas.LEFT);
         p.text(q.range(), 1455, 218, 25, Theme.WHITE, Face.SERIF, Canvas.LEFT);
         p.button(CANCEL, "application/queue_cancel", 1341, 252, 267, 61, true);
-        p.text("취소", 1475, 282, 24, 0xFFFF9C9C, Face.SERIF, Canvas.CENTER);
+        Theme.icon(p, "icons/cancel", 1443.5f, 281.5f, 25, 25);
+        p.text("취소", 1495, 282, 24, 0xFFFF9C9C, Face.SERIF, Canvas.CENTER);
     }
 
     /** Loading ring of dots (the README asks for the waiting animation in code). */

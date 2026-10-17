@@ -6,7 +6,7 @@ import school.magiccodex.client.kui.Canvas.Face;
 
 /**
  * 경기 준비 화면 (prepare_layout, reference 58ad6006; 1672×941). Online dots are replaced by 준비 완료 / 세팅 중 (README).
- * The centre panel shows my six match spells; clicking it opens the spell picker. Rating icon (crossed swords) is not in the pack yet.
+ * The centre panel shows my six match spells; clicking it opens the spell picker.
  */
 public final class PrepareView {
     private PrepareView() {}
@@ -60,7 +60,8 @@ public final class PrepareView {
             Theme.crest(p, r.house(), rx + 258, ry + 59, 64);
             if (r.broomId() != null && !r.broomId().isEmpty()) p.c.broom(r.broomId(), rx + 373, ry + 36, 130, 40);
             p.fit(r.broomName(), rx + 376, ry + 82, 17, 150, Theme.CREAM, Face.SERIF, Canvas.CENTER);
-            p.text(String.valueOf(r.rating()), rx + 506, ry + 72, 24, Theme.WHITE, Face.SERIF, Canvas.CENTER);
+            Theme.icon(p, "icons/crossed_swords", rx + 506.5f, ry + 39, 22, 24);
+            p.text(String.valueOf(r.rating()), rx + 506, ry + 72, 24, Theme.GOLD, Face.SERIF, Canvas.CENTER);
         }
     }
 }

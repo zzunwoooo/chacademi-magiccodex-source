@@ -141,8 +141,15 @@ public final class Parts {
         m.put("tiers/silver", new int[]{1254, 1254});
         m.put("dashboard/scrollbar_thumb", new int[]{25, 130});   // split from scrollbar.png (thumb rows 4..133)
         m.put("dashboard/scrollbar_track", new int[]{25, 512});   // scrollbar.png with the thumb rows replaced by track
-        m.put("dashboard/frame_ranking", new int[]{1672, 941});   // owner 2026-10-17: whole 랭킹 window (tabs, rows, my row baked), canvas coordinates
-        m.put("dashboard/frame_record", new int[]{1672, 941});    // owner 2026-10-17: whole 플레이어 기록 window (tabs, search, cards, table baked)
+        // owner EXTRA_PNG 2026-10-17: whole windows in canvas coordinates (tabs baked with that tab selected)
+        m.put("dashboard/frame_live", new int[]{1672, 941});      // no cards
+        m.put("dashboard/frame_ranking", new int[]{1672, 941});   // list panel + scroll track, no rows, no my-rank row (baked thumb cut out)
+        m.put("dashboard/rank_thumb", new int[]{21, 124});        // the thumb cut from frame_ranking (x 1431, y 286), background keyed out
+        m.put("dashboard/frame_record", new int[]{1672, 941});    // search, profile, 8 stat cards, recent table, 최근 10경기 bar icon baked
+        m.put("dashboard/waiting_party_pill", new int[]{700, 104}); // cropped to its alpha box, scaled from 1999
+        for (String i : new String[]{"arena", "bar_chart", "cancel", "clock", "crossed_swords", "crown", "hourglass", "party", "range_slider", "search"})
+            m.put("icons/" + i, new int[]{128, 128});
+        for (int i = 1; i <= 3; i++) m.put("medals/rank_" + i, new int[]{256, 256});
         return Map.copyOf(m);
     }
     public static int[] size(String part) { int[] s = SIZES.get(part); if (s == null) throw new IllegalArgumentException("unknown part " + part); return s; }

@@ -64,6 +64,12 @@
 - 프로토콜 추가: 대기열 S2C 5 APPLY, C2S 11 APPLY, DASH 는 LiveCard(얼굴), Rank·PlayerRecord 에 skin 해시. 경기장 S2C 8 ROSTER(기숙사·빗자루·레이팅).
 - 새 공개 메서드: Bridge `MagicCodexBridge.houseOf(Player)`, 모션 플러그인 `ChacademyMotionPlugin.equippedBroomId(Player)` (경기장 플러그인이 리플렉션으로 사용).
 - F키·퀘이플 타이머는 레퍼런스 위치(화면 맨 아래)가 핫바와 겹쳐 핫바·액션바 바로 위로 올림.
-- **아직 PNG 가 없어 비워 둔 것** (오너에게 요청함): 빈 경기 현황 창(카드 없는 frame_live), 행 없는 frame_ranking, 최근 10경기 줄 끊김·막대 아이콘,
-  아이콘(막대그래프·교차 검·왕관·시계·범위·취소·사람·경기장·돋보기·모래시계), 1~3위 날개 메달, 대기 중인 파티 알약 판. 포기 버튼은 코드로 그린 캡슐.
+- 오너 EXTRA_PNG (2026-10-17) 적용: 탭별 창 `dashboard/frame_live·frame_ranking·frame_record` (1672×941 캔버스 좌표, 탭 구워짐),
+  `dashboard/waiting_party_pill` (알파 영역만 잘라 700px), `icons/*` 10개, `medals/rank_1~3`.
+  아이콘 위치는 레퍼런스에서 잰 값이고 `Theme.icon()` 이 PNG 투명 여백을 빼고 그림 부분만 맞춘다.
+  - frame_ranking 에 구워진 스크롤 손잡이를 잘라 `dashboard/rank_thumb` 로 분리 (프레임 그 자리는 트랙으로 채움).
+  - match_card 의 "◇ ─ ◇" 가운데 줄이 "진행 중" 글자를 가로질러 그 줄만 지움 (양옆 줄·마름모는 그대로).
+  - 랭킹: 맨 위에서는 1~3위 금색 행 + 메달, 스크롤하면 고른 높이의 일반 행 8줄. 내 순위 행은 목록 판 안쪽 아래.
+  - 대기 파티 알약 그림이 레퍼런스보다 가로로 길어 297×44 로 그림 (레퍼런스 235×48).
+  - 이제 안 쓰는 부품: dashboard/main, tab_idle·tab_selected, search_field, profile, stat_card, recent_table, scrollbar* (지우지 않음).
 - 클라이언트는 여전히 이 환경에서 컴파일 못 함 → 호스팅 빌드에서 오류 나면 수정.

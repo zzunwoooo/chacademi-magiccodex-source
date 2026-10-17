@@ -6,7 +6,7 @@ import school.magiccodex.client.kui.Canvas.Face;
 
 /**
  * 결과 창 (result_layout, reference e4af0ac1; 1672×941). Team banners stay plain (README rule 8: no lion / eagle).
- * The MVP crown the reference shows before a name is not in the pack yet: MVP is marked with text.
+ * MVP: icons/crown before the name.
  */
 public final class ResultView {
     private ResultView() {}
@@ -59,7 +59,7 @@ public final class ResultView {
             float y = 464 + r * 77.5f, cy = y + 38;
             p.head(l.id(), l.skin(), 283 + dx, y + 5, 66);
             float nx = 371 + dx;
-            if (l.mvp()) { p.text("MVP", nx, cy, 15, Theme.GOLD, Face.SANS_BOLD, Canvas.LEFT); nx += 44; }
+            if (l.mvp()) { Theme.icon(p, "icons/crown", nx + 45, cy - 7, 26, 22); nx += 72; }
             p.fit(l.nick(), nx, cy, 22, 560 + dx - nx, Theme.WHITE, Face.SERIF, Canvas.LEFT);
             p.text(String.valueOf(l.goals()), cols[0] + dx, cy, 22, Theme.WHITE, Face.SERIF, Canvas.CENTER);
             p.text(String.valueOf(l.kills()), cols[1] + dx, cy, 22, Theme.WHITE, Face.SERIF, Canvas.CENTER);
