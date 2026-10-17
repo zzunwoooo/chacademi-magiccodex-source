@@ -75,17 +75,17 @@ final class ShopView {
     static float tabX(int i) { return TAB_X + i * (TAB_W + TAB_GAP); }
     // row-relative
     static final float SLOT_DX = 10, SLOT_DY = 8, SLOT_W = 132, SLOT_H = 108, ICON = 96, TEXT_DX = 162,
-            COIN_DX = 588, PRICE_DX = 620, PRICE_MAX = 150, BTN_W = 144, BTN_DX = ROW_W - 14 - BTN_W;
+            LABEL_DX = 500, COIN_DX = 562, AMOUNT_RIGHT = ROW_W - 14 - 144 - 22, BTN_W = 144, BTN_DX = ROW_W - 14 - BTN_W;
     // footer
-    static final float QTY_LABEL_X = 656, QTY_X = 712, QTY_W = 192, QTY_H = 50, STEP = 44,
-            MAX_X = 916, DIVIDER_X = 996, SUM_LABEL_X = 1016, SUM_COIN_X = 1070, SUM_X = 1110, SUM_MAX = 190,
+    static final float QTY_LABEL_X = 656, QTY_X = 706, QTY_W = 226, QTY_H = 50, STEP = 44,
+            MAX_X = 942, DIVIDER_X = 1012, SUM_LABEL_X = 1030, SUM_COIN_X = 1080, SUM_X = 1118, SUM_MAX = 184,
             TRADE_X = 1316, TRADE_W = 263, TRADE_H = 58;
 
     static float qtyY() { return FOOT_Y + (FOOT_H - QTY_H) / 2; }
     static float footCenter() { return FOOT_Y + FOOT_H / 2; }
-    static float[] minusBox() { return new float[]{QTY_X + 4, qtyY() + 3, STEP, STEP}; }
-    static float[] plusBox() { return new float[]{QTY_X + QTY_W - 4 - STEP, qtyY() + 3, STEP, STEP}; }
-    static float[] quantityBox() { return new float[]{QTY_X + 8 + STEP, qtyY() + 3, QTY_W - 16 - 2 * STEP, STEP}; }
+    static float[] minusBox() { return new float[]{QTY_X + 17, qtyY() + 3, STEP, STEP}; }
+    static float[] plusBox() { return new float[]{QTY_X + QTY_W - 17 - STEP, qtyY() + 3, STEP, STEP}; }
+    static float[] quantityBox() { return new float[]{QTY_X + 21 + STEP, qtyY() + 3, QTY_W - 42 - 2 * STEP, STEP}; }
     static float[] tradeBox() { return new float[]{TRADE_X, FOOT_Y + (FOOT_H - TRADE_H) / 2, TRADE_W, TRADE_H}; }
     static float[] searchBox() { return new float[]{SEARCH_X, BAR_Y, SEARCH_W, BAR_H}; }
 
@@ -216,15 +216,15 @@ final class ShopView {
         // balance · search · tabs
         slice(c, BALANCE, BAL_X, BAR_Y, BAL_W, BAR_H);
         float mid = BAR_Y + BAR_H / 2;
-        coin(c, BAL_X + 28, mid, 28);
-        c.text("보유 골드", BAL_X + 56, mid, 21, WHITE, Face.LABEL, false);
-        float labelEnd = BAL_X + 56 + c.width("보유 골드", 21, Face.LABEL) + 18;
+        coin(c, BAL_X + 44, mid, 28);
+        c.text("보유 골드", BAL_X + 68, mid, 21, WHITE, Face.LABEL, false);
+        float labelEnd = BAL_X + 68 + c.width("보유 골드", 21, Face.LABEL) + 18;
         String bal = m.balance().isEmpty() ? "—" : money(m.balance()) + " G";
-        float bs = shrink(c, bal, 26, Face.BOLD, BAL_X + BAL_W - 20 - labelEnd);
-        c.text(bal, BAL_X + BAL_W - 20 - c.width(bal, bs, Face.BOLD), mid, bs, WHITE, Face.BOLD, false);
+        float bs = shrink(c, bal, 26, Face.BOLD, BAL_X + BAL_W - 34 - labelEnd);
+        c.text(bal, BAL_X + BAL_W - 34 - c.width(bal, bs, Face.BOLD), mid, bs, WHITE, Face.BOLD, false);
         slice(c, SEARCH, searchBox());
-        icon(c, "search", SEARCH_X + 28, mid, 30, 128, 128);
-        c.searchField(SEARCH_X + 44, BAR_Y + 5, SEARCH_W - 54, BAR_H - 10);
+        icon(c, "search", SEARCH_X + 36, mid, 32, 128, 128);
+        c.searchField(SEARCH_X + 54, BAR_Y + 5, SEARCH_W - 70, BAR_H - 10);
         String[] tabs = {"전체", "구매", "판매"};
         for (int i = 0; i < 3; i++) {
             float[] b = {tabX(i), TAB_Y, TAB_W, TAB_H};
@@ -241,7 +241,7 @@ final class ShopView {
         footer(c, m);
         if (!m.notice().isEmpty() && m.noticeAlpha() > 0) {
             c.pushLayer(400);
-            float y = listBottom() - 60;
+            float y = listBottom() - 150;
             slice(c, BALANCE, CX + 40, y, ROW_W - 80, 52);
             int a = Math.round(255 * Math.min(1, m.noticeAlpha()));
             fitted(c, m.notice(), CX + ROW_W / 2, y + 26, 21, ROW_W - 130, (a << 24) | (WHITE & 0xFFFFFF), Face.LABEL, true);
@@ -257,39 +257,37 @@ final class ShopView {
         c.item(r, x + SLOT_DX + (SLOT_W - ICON) / 2, y + SLOT_DY + (SLOT_H - ICON) / 2, ICON);
 
         boolean both = both(m, r), sells = !both && rowSells(m, r);
-        float shift = both ? Math.max(priceShift(c, r.buy(), 23), priceShift(c, r.sell(), 23))
-                : priceShift(c, sells ? r.sell() : r.buy(), 26);
-        float tx = x + TEXT_DX, textMax = x + COIN_DX - shift - (both ? 66 : 0) - 26 - tx;
+        float tx = x + TEXT_DX, textMax = x + (both ? LABEL_DX - 14 : COIN_DX - 32) - tx;
         boolean lore = !r.lore().isEmpty();
         fitted(c, r.name(), tx, y + (lore ? 37 : 62), 30, textMax, WHITE, Face.SECTION, false);
         for (int l = 0; l < Math.min(2, r.lore().size()); l++)
             fitted(c, r.lore().get(l), tx, y + 74 + l * 25, 18, textMax, MUTED, Face.BODY, false);
 
+        // Price column: label and coin left-aligned on fixed columns, amount right-aligned before the button.
         if (both) {
-            float lx = x + COIN_DX - shift - 19;
-            price(c, r.buy(), x, y + 38, 23, shift);
-            price(c, r.sell(), x, y + 86, 23, shift);
-            c.text("구매가", lx - c.width("구매가", 15, Face.LABEL), y + 38, 15, MUTED, Face.LABEL, false);
-            c.text("판매가", lx - c.width("판매가", 15, Face.LABEL), y + 86, 15, MUTED, Face.LABEL, false);
+            c.text("구매가", x + LABEL_DX, y + 38, 16, MUTED, Face.LABEL, false);
+            c.text("판매가", x + LABEL_DX, y + 86, 16, MUTED, Face.LABEL, false);
+            price(c, r.buy(), x, y + 38, 23);
+            price(c, r.sell(), x, y + 86, 23);
             action(c, m, buyButton(r, true, i), "구매", true, r.canBuy());
             action(c, m, sellButton(r, true, i), "판매", false, r.canSell());
         } else if (sells) {
-            price(c, r.sell(), x, y + 50, 26, shift);
-            c.text("보유 " + money(Integer.toString(r.owned())) + "개", x + PRICE_DX - shift, y + 84, 16, MUTED, Face.LABEL, false);
+            price(c, r.sell(), x, y + 50, 26);
+            String owned = "보유 " + money(Integer.toString(r.owned())) + "개";
+            c.text(owned, x + AMOUNT_RIGHT - c.width(owned, 16, Face.LABEL), y + 84, 16, MUTED, Face.LABEL, false);
             action(c, m, sellButton(r, false, i), "판매", m.tab() == Tab.SELL, r.canSell());
         } else {
-            price(c, r.buy(), x, y + 62, 26, shift);
+            price(c, r.buy(), x, y + 62, 26);
             action(c, m, buyButton(r, false, i), "구매", true, r.canBuy());
         }
     }
-    /** Long prices move the coin/price column left (up to 110) before shrinking; never cut. */
-    static float priceShift(Canvas c, String value, float size) {
-        return Math.max(0, Math.min(110, c.width(money(value) + " G", size, Face.BOLD) - PRICE_MAX));
-    }
-    static void price(Canvas c, String value, float x, float cy, float size, float shift) {
+    /** Coin on the fixed left column, amount right-aligned; long amounts only shrink (never cut). */
+    static void price(Canvas c, String value, float x, float cy, float size) {
         String v = money(value) + " G";
-        coin(c, x + COIN_DX - shift, cy, size);
-        c.text(v, x + PRICE_DX - shift, cy, shrink(c, v, size, Face.BOLD, PRICE_MAX + shift), WHITE, Face.BOLD, false);
+        coin(c, x + COIN_DX, cy, size);
+        float left = x + COIN_DX + size / 2 + 10, right = x + AMOUNT_RIGHT;
+        float k = shrink(c, v, size, Face.BOLD, right - left);
+        c.text(v, right - c.width(v, k, Face.BOLD), cy, k, WHITE, Face.BOLD, false);
     }
     static void action(Canvas c, Model m, float[] b, String label, boolean goldStyle, boolean ok) {
         ok = ok && !m.busy();
@@ -334,7 +332,7 @@ final class ShopView {
         fitted(c, "최대 " + money(Integer.toString(m.max())), MAX_X, cy, 15, DIVIDER_X - MAX_X - 8, MUTED, Face.LABEL, false);
         c.fill(DIVIDER_X, cy - 22, 1.5f, 44, 0x66E7CE91);
         c.text("합계", SUM_LABEL_X, cy, 22, WHITE, Face.LABEL, false);
-        coin(c, SUM_COIN_X + 12, cy, 30);
+        coin(c, SUM_COIN_X + 14, cy, 30);
         String sum = m.total().isEmpty() ? "—" : money(m.total()) + " G";
         c.text(sum, SUM_X, cy, shrink(c, sum, 30, Face.BOLD, SUM_MAX), GOLD, Face.BOLD, false);
         float[] b = tradeBox();

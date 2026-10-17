@@ -35,6 +35,7 @@ public final class ShopScreen extends SocialScreen {
     private ShopView.Tab tab = ShopView.Tab.ALL;
     private boolean selling, pressed, dragging;
     private int scroll;
+    private double lastMouseX = -1, lastMouseY = -1;
     private long searchAt;
     private Map<String, ItemStack> icons = Map.of();
     private Map<String, List<String>> lore = Map.of();
@@ -142,6 +143,15 @@ public final class ShopScreen extends SocialScreen {
         if (changed) quantity.widget.setText("1");
     }
 
+    /** Leaving the number box: empty/0 becomes 1, more than possible becomes the maximum. */
+    private void commitQuantity() {
+        quantity.focus(false);
+        int max = possible();
+        int n;
+        try { n = Integer.parseInt(quantity.text()); } catch (NumberFormatException e) { n = 0; }
+        int fixed = n < 1 ? 1 : max > 0 ? Math.min(n, max) : n;
+        if (!Integer.toString(fixed).equals(quantity.text())) quantity.widget.setText(Integer.toString(fixed));
+    }
     private int number() { try { return ShopProtocol.quantity(quantity.text()); } catch (Exception e) { return 0; } }
     private int possible(Product p, boolean sell) {
         if (p == null || data == null || !tradable(p, sell)) return 0;
@@ -268,7 +278,22 @@ public final class ShopScreen extends SocialScreen {
             images.drawTexture(c, id, x0, y0, 0, 0, Math.round(x + w) - x0, Math.round(y + h) - y0, (int) s[0], (int) s[1], (int) s[0], (int) s[1], 0xFFFFFFFF);
         }
         public void searchField(float x, float y, float w, float h) { search.draw(c, x, y, w, h, "아이템 검색"); }
-        public void quantityField(float x, float y, float w, float h) { quantity.drawCentered(c, x, y, w, h, "1", WHITE); }
+        public void quantityField(float x, float y, float w, float h) {
+            // Direct entry: the number box is a text field (digits only). Hover/focus get a soft highlight,
+            // and a click selects the whole number so typing replaces it.
+            boolean focus = quantity.focus(), hover = in(lastMouseX, lastMouseY, x, y, w, h);
+            if (focus || hover) HudMesh.quad(c, x + 2, y + 4, w - 4, h - 8, focus ? 0x3392E7F2 : 0x1FE7CE91, focus ? 0x3392E7F2 : 0x1FE7CE91);
+            String v = quantity.text();
+            int cursor = quantity.widget.getCursor(), anchor = ((school.magiccodex.mixin.TextFieldAccessor) quantity.widget).magiccodex$selectionEnd();
+            if (focus && cursor != anchor && !v.isEmpty()) {
+                float size = Math.min(29, 29 * (w - 24) / Math.max(1, type.width(v, 29, BOLD)));
+                float left = x + (w - type.width(v, size, BOLD)) / 2;
+                int lo = Math.min(cursor, anchor), hi = Math.max(cursor, anchor);
+                float a = type.width(v.substring(0, lo), size, BOLD), b = type.width(v.substring(0, hi), size, BOLD);
+                HudMesh.quad(c, left + a, y + 8, b - a, h - 16, 0x8865A5C5, 0x8865A5C5);
+            }
+            quantity.drawCentered(c, x, y, w, h, "1", WHITE);
+        }
         public void pushLayer(float z) { c.getMatrices().push(); c.getMatrices().translate(0, 0, z); }
         public void popLayer() { c.getMatrices().pop(); }
     }
@@ -277,6 +302,11 @@ public final class ShopScreen extends SocialScreen {
         var f = fit();
         double mx = f.x(mouseX), my = f.y(mouseY);
         ItemStack hovered = ItemStack.EMPTY;
+        lastMouseX = mx;
+        lastMouseY = my;
+        // Blur + darken the world behind the shop (vanilla menu blur; strength follows the
+        // player's "Menu Background Blur" option).
+        renderBackground(c, mouseX, mouseY, delta);
         start(c);
         try {
             var m = model(mx, my);
@@ -298,7 +328,7 @@ public final class ShopScreen extends SocialScreen {
         var hit = ShopView.hit(m, mx, my);
         if (hit.kind() == ShopView.Kind.CLOSE) { sound(1.1f, .16f); close(); return true; }
         if (hit.kind() != ShopView.Kind.SEARCH) search.focus(false);
-        if (hit.kind() != ShopView.Kind.QUANTITY) quantity.focus(false);
+        if (hit.kind() != ShopView.Kind.QUANTITY && quantity.focus()) commitQuantity();
         if (busy) return true;
         var list = visible();
         switch (hit.kind()) {
@@ -324,7 +354,13 @@ public final class ShopScreen extends SocialScreen {
             case SCROLL -> { dragging = true; scroll = ShopView.scrollAt(m, my); }
             case MINUS -> { if (number() > 1) { quantity.widget.setText(Integer.toString(number() - 1)); sound(1.1f, .14f); } }
             case PLUS -> { if (number() < possible()) { quantity.widget.setText(Integer.toString(Math.max(1, number() + 1))); sound(1.1f, .14f); } }
-            case QUANTITY -> quantity.click(Math.clamp(mx, quantity.x, quantity.x + quantity.w - .1), Math.clamp(my, quantity.y, quantity.y + quantity.h - .1));
+            case QUANTITY -> {
+                if (!quantity.focus()) {          // first click: focus and select all, so typing replaces the number
+                    quantity.focus(true);
+                    quantity.widget.setCursorToEnd(false);
+                    quantity.widget.setSelectionEnd(0);
+                } else quantity.click(Math.clamp(mx, quantity.x, quantity.x + quantity.w - .1), Math.clamp(my, quantity.y, quantity.y + quantity.h - .1));
+            }
             case TRADE -> trade();
             default -> {}
         }
@@ -345,7 +381,7 @@ public final class ShopScreen extends SocialScreen {
     @Override public boolean keyPressed(int key, int scan, int mods) {
         if ((key == GLFW.GLFW_KEY_ESCAPE || key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER) && (search.focus() || quantity.focus())) {
             search.focus(false);
-            quantity.focus(false);
+            if (quantity.focus()) commitQuantity();
             return true;
         }
         // A focused field consumes every key so letters typed into it never reach other key handlers.
