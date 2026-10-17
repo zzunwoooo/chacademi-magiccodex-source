@@ -150,8 +150,9 @@ class SpellKeySettingsTest {
         assertEquals("third",casting.bindings().getFirst().spellId());
         assertEquals(53,casting.bindings().getFirst().keyCode());
     }
-    @Test void bothAltsReservedLeftShiftAndControlAllowed() {
+    @Test void altsAndControlsReservedLeftShiftAllowed() {
         assertFalse(KeySettingsLayout.allowed(342)); assertFalse(KeySettingsLayout.allowed(346));
-        assertTrue(KeySettingsLayout.allowed(340)); assertTrue(KeySettingsLayout.allowed(341));
+        assertFalse(KeySettingsLayout.allowed(341)); assertFalse(KeySettingsLayout.allowed(345)); // Ctrl = HUD cursor
+        assertTrue(KeySettingsLayout.allowed(340));
     }
 }

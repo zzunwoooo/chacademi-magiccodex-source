@@ -88,7 +88,7 @@ public final class SkillHudRenderer implements AutoCloseable {
         }
         return -1;
     }
-    /** Drag feedback (Alt / chat): rings on the picked and hovered slots, the picked icon under the pointer. */
+    /** Drag feedback (Ctrl / chat): rings on the picked and hovered slots, the picked icon under the pointer. */
     private void drag(DrawContext ctx,CastingState state,float left,float top,float scale) {
         int from=HudSlotDrag.from(); if(from<0) return;
         var c=MinecraftClient.getInstance();

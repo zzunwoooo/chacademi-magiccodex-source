@@ -13,8 +13,8 @@ final class HudChatClicks {
                 ScreenMouseEvents.allowMouseClick(screen).register((s, x, y, button) -> !TopMenuClient.click(x, y, button) && !HudSlotDrag.press(x, y, button)
                         && !KyudichiQueueClient.click(x, y, button));
                 // A slot dragged onto another swaps the two (bottom-right magic bar).
-                ScreenMouseEvents.allowMouseRelease(screen).register((s, x, y, button) -> !HudSlotDrag.release(x, y, button));
-                ScreenEvents.remove(screen).register(s -> HudSlotDrag.cancel());
+                ScreenMouseEvents.allowMouseRelease(screen).register((s, x, y, button) -> !(HudSlotDrag.release(x, y, button) | KyudichiQueueClient.release(x, y, button)));
+                ScreenEvents.remove(screen).register(s -> { HudSlotDrag.cancel(); KyudichiQueueClient.cursorClosed(); });
             }
         });
     }

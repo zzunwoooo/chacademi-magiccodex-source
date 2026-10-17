@@ -30,7 +30,7 @@ import static school.magiccodex.client.PartyHudLayout.*;
 
 /**
  * 파티 위젯. Velocity 파티 플러그인이 보내는 실제 파티(한글 닉네임·기숙사·체력·마나)를 그린다.
- * Alt(HUD 커서)를 누른 동안: 끌어서 이동, 오른쪽 아래 모서리를 끌어 크기 조절, 우클릭으로 초기화,
+ * Ctrl(HUD 커서)를 누른 동안: 끌어서 이동, 오른쪽 아래 모서리를 끌어 크기 조절, 우클릭으로 초기화,
  * 체력·마나 막대에 마우스를 올리면 수치 팝업. 위치·크기는 config/magiccodex/party-hud.json 에 저장.
  */
 public final class PartyHudClient {
@@ -107,7 +107,7 @@ public final class PartyHudClient {
     /** /hud 파티 켜기|끄기|초기화 */
     static com.mojang.brigadier.builder.LiteralArgumentBuilder<FabricClientCommandSource> command(){
         var root=ClientCommandManager.literal("파티");
-        root.executes(ctx->{ctx.getSource().sendFeedback(Text.literal("/hud 파티 켜기 · 끄기 · 초기화  (Alt 누른 채 끌어서 이동, 오른쪽 아래 모서리로 크기 조절)"));return 1;});
+        root.executes(ctx->{ctx.getSource().sendFeedback(Text.literal("/hud 파티 켜기 · 끄기 · 초기화  (Ctrl 누른 채 끌어서 이동, 오른쪽 아래 모서리로 크기 조절)"));return 1;});
         root.then(ClientCommandManager.literal("켜기").executes(ctx->{settings().enabled=true;save();ctx.getSource().sendFeedback(Text.literal("파티 창을 켰습니다."));return 1;}));
         root.then(ClientCommandManager.literal("끄기").executes(ctx->{settings().enabled=false;gesture=null;save();ctx.getSource().sendFeedback(Text.literal("파티 창을 껐습니다."));return 1;}));
         root.then(ClientCommandManager.literal("초기화").executes(ctx->{resetLayout();ctx.getSource().sendFeedback(Text.literal("파티 창 위치와 크기를 처음대로 돌렸습니다."));return 1;}));
@@ -133,7 +133,7 @@ public final class PartyHudClient {
     private static double mouseX(MinecraftClient c){var w=c.getWindow();return c.mouse.getX()*w.getScaledWidth()/w.getWidth();}
     private static double mouseY(MinecraftClient c){var w=c.getWindow();return c.mouse.getY()*w.getScaledHeight()/w.getHeight();}
 
-    // ---------- Alt 커서 조작 (HudCursorScreen 에서 호출) ----------
+    // ---------- Ctrl 커서 조작 (HudCursorScreen 에서 호출) ----------
     static boolean click(double x,double y,int button){
         var c=MinecraftClient.getInstance();
         if(!(c.currentScreen instanceof HudCursorScreen)||!visible(c))return false;
@@ -149,7 +149,7 @@ public final class PartyHudClient {
         if(gesture==null||button!=0)return false;
         apply(MinecraftClient.getInstance(),x,y);finish();return true;
     }
-    /** Alt를 놓아 커서 화면이 닫힐 때. */
+    /** Ctrl을 놓아 커서 화면이 닫힐 때. */
     static void cursorClosed(){finish();}
     private static void finish(){if(gesture!=null){gesture=null;save();}}
     private static void apply(MinecraftClient c,double mx,double my){
@@ -183,7 +183,7 @@ public final class PartyHudClient {
             ctx.getMatrices().translate(f.ox(),f.oy(),150);ctx.getMatrices().scale(f.scale(),f.scale(),1);
             float h=height(f.count());
             if(cursor){
-                // Alt 모드: 잡을 수 있는 영역과 크기 조절 모서리를 보여 준다.
+                // Ctrl 모드: 잡을 수 있는 영역과 크기 조절 모서리를 보여 준다.
                 boolean active=gesture!=null||hot!=NONE;
                 HudMesh.quad(ctx,-8,-6,WIDTH+16,h+12,active?0x3A0C1F32:0x260C1F32,active?0x3A0C1F32:0x260C1F32);
                 outline(ctx,-8,-6,WIDTH+16,h+12,active?0xCCE7CE91:0x66E7CE91);

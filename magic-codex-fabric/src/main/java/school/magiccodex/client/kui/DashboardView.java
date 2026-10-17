@@ -203,7 +203,7 @@ public final class DashboardView {
         // profile
         p.head(r.id(), r.skin(), 219, 268, 112);
         p.fit(r.nick(), 362, 281, 34, 310, Theme.WHITE, Face.TITLE, Canvas.LEFT);
-        p.image(Theme.tier(r.tier()), 352, 307, 118, 118);
+        p.image(Theme.tier(r.tier()), 368, 307, 84, 84); // owner 2026-10-17: inside the profile box (between the two lines)
         p.text(Theme.TIER_NAMES[Math.clamp(r.tier(), 0, 8)] + (r.rank() > 0 ? "  ·  " + r.rank() + "위" : ""), 490, 333, 22, Theme.CREAM, Face.SERIF, Canvas.LEFT);
         p.text(String.valueOf(r.rating()), 490, 369, 38, Theme.WHITE, Face.TITLE, Canvas.LEFT);
         String[] labels = {"경기", "승", "패", "무", "승률"};

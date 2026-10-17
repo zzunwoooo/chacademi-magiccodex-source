@@ -30,8 +30,9 @@ public final class PlayerHudClient {
     }
     /** Read outside the HUD lambda (chat-layout's optional redirect targets that lambda; chat is now handled here). */
     private static net.minecraft.client.gui.screen.Screen screenNow(){return MinecraftClient.getInstance().currentScreen;}
-    public static boolean handleAlt(MinecraftClient c,int key,int action){
-        if(key!=GLFW.GLFW_KEY_LEFT_ALT && key!=GLFW.GLFW_KEY_RIGHT_ALT)return false;
+    /** HUD cursor key: Ctrl (owner 2026-10-17, was Alt). Held = cursor screen (pings, HUD drag, card clicks). */
+    public static boolean handleCursorKey(MinecraftClient c,int key,int action){
+        if(key!=GLFW.GLFW_KEY_LEFT_CONTROL && key!=GLFW.GLFW_KEY_RIGHT_CONTROL)return false;
         if(c.currentScreen instanceof HudCursorScreen)return true;
         if(action==GLFW.GLFW_PRESS && active() && c.currentScreen==null && c.getOverlay()==null
                 && c.isWindowFocused() && c.player.isAlive()){
@@ -59,8 +60,8 @@ public final class PlayerHudClient {
         ClientTickEvents.END_CLIENT_TICK.register(c->{
             if(c.currentScreen instanceof HudCursorScreen){
                 long window=c.getWindow().getHandle();
-                boolean held=GLFW.glfwGetKey(window,GLFW.GLFW_KEY_LEFT_ALT)==GLFW.GLFW_PRESS
-                        || GLFW.glfwGetKey(window,GLFW.GLFW_KEY_RIGHT_ALT)==GLFW.GLFW_PRESS;
+                boolean held=GLFW.glfwGetKey(window,GLFW.GLFW_KEY_LEFT_CONTROL)==GLFW.GLFW_PRESS
+                        || GLFW.glfwGetKey(window,GLFW.GLFW_KEY_RIGHT_CONTROL)==GLFW.GLFW_PRESS;
                 if(!held || !active() || !c.isWindowFocused() || !c.player.isAlive())c.setScreen(null);
             }
         });

@@ -86,7 +86,7 @@ final class Link implements PluginMessageListener {
         networked.addAll(all);
         gathering.computeIfAbsent(a.match(), k -> new Gather(a, tick));
         for (UUID id : all) {
-            plugin.store().load(id, Bukkit.getOfflinePlayer(id).getName() == null ? "플레이어" : Bukkit.getOfflinePlayer(id).getName(), null);
+            plugin.store().load(id, plugin.hooks().nick(Bukkit.getOfflinePlayer(id)), null);
             Player p = Bukkit.getPlayer(id);
             if (p != null && plugin.spectate().spectating(id)) { keepOnLeave.add(id); plugin.spectate().leave(p); keepOnLeave.remove(id); }
             if (p != null) p.sendMessage(Component.text("큐디치 경기 준비 중… 모두 모이면 시작해요.", NamedTextColor.GOLD));

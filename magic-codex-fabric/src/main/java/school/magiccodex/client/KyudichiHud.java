@@ -20,7 +20,7 @@ import school.magiccodex.protocol.KyudichiProtocol;
  *  - F key (+ quaffle hold timer while holding): bottom centre, lifted above the hotbar / action bar
  *    (the layout puts it on the very bottom edge where the hotbar is)
  *  - ball indicators in the world, at the screen edge with the matching arrow when off-screen
- *  - Alt: magnet ring and direction wheel (ping art), forfeit button while voting / with the cursor
+ *  - Ctrl: magnet ring and direction wheel (ping art), forfeit button while voting / with the cursor
  */
 final class KyudichiHud {
     private KyudichiHud() {}
@@ -39,6 +39,7 @@ final class KyudichiHud {
     static boolean forfeitHit(double x, double y) { return forfeitShown && x >= forfeitX && x <= forfeitX + forfeitW && y >= forfeitY && y <= forfeitY + forfeitH; }
 
     static float scale(float w, float h) { return Math.min(w / 1672f, h / 941f); }
+    static final float KEYS_SCALE = .7f;
     /** Bottom edge (GUI px) the F key may use: above the action bar and the 차카데미 hotbar status chips. */
     static float keysBottom(float w, float h) {
         float bottom = h - 76;
@@ -74,7 +75,9 @@ final class KyudichiHud {
             canvas.pop();
             // F key
             if (!KyudichiClient.spectator()) {
-                canvas.push(w / 2f - 836 * s, keysBottom(w, h) - 924 * s, s);
+                // owner 2026-10-17: 70 % of the reference size, 24 px (design) higher
+                float ks = s * KEYS_SCALE;
+                canvas.push(w / 2f - 836 * ks, keysBottom(w, h) - 24 * s - 924 * ks, ks);
                 HudView.keys(new Pen(canvas, -1, -1, null), keys(now));
                 canvas.pop();
             }
@@ -145,6 +148,7 @@ final class KyudichiHud {
         var balls = KyudichiClient.balls;
         if (balls != null) for (var b : balls.balls()) {
             int k = Math.clamp(b.kind(), 0, 2);
+            if (k == 2) continue; // owner 2026-10-17: no snitch marker (the server no longer sends it either)
             Vec3d p = KyudichiClient.ball(b);
             boolean danger = k == 1 && (b.flags() & 2) != 0;
             float alpha = danger && (now / 140) % 2 == 0 ? .55f : 1;
@@ -210,7 +214,7 @@ final class KyudichiHud {
         return new float[]{(float) (w / 2.0 + dx * t), (float) (h / 2.0 + dy * t), (float) Math.atan2(dy, dx)};
     }
 
-    // ================================================================== ping preview (Alt): magnet ring, direction menu
+    // ================================================================== ping preview (Ctrl): magnet ring, direction menu
     private static void magnetAndWheel(DrawContext ctx, MinecraftClient c, float s, long now) {
         if (!(c.currentScreen instanceof HudCursorScreen) || KyudichiClient.spectator()) return;
         double mx = HudPointer.x(), my = HudPointer.y();

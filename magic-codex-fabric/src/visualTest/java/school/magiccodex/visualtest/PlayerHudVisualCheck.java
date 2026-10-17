@@ -87,15 +87,15 @@ final class PlayerHudVisualCheck {
                     if(PlayerHudClient.active())throw new IllegalStateException("HUD off failed");
                     dispatcher.execute("hud on",source);dispatcher.execute("hud frame 9",source);
                     float yaw=c.player.getYaw(),pitch=c.player.getPitch();
-                    if(!PlayerHudClient.handleAlt(c,GLFW.GLFW_KEY_LEFT_ALT,GLFW.GLFW_PRESS)
+                    if(!PlayerHudClient.handleCursorKey(c,GLFW.GLFW_KEY_LEFT_CONTROL,GLFW.GLFW_PRESS)
                         || !(c.currentScreen instanceof HudCursorScreen) || c.mouse.isCursorLocked())
-                        throw new IllegalStateException("Alt did not unlock cursor");
+                        throw new IllegalStateException("Ctrl did not unlock cursor");
                     c.currentScreen.mouseClicked(20,20,0);
                     if(c.options.attackKey.isPressed())throw new IllegalStateException("Cursor click attacked");
                     if(c.player.getYaw()!=yaw || c.player.getPitch()!=pitch)throw new IllegalStateException("HUD modified player aim");
                     phase[0]=13;
                 }else if(phase[0]==13){
-                    if(c.currentScreen instanceof HudCursorScreen)throw new IllegalStateException("Released Alt stuck open");
+                    if(c.currentScreen instanceof HudCursorScreen)throw new IllegalStateException("Released Ctrl stuck open");
                     // Minecraft intentionally keeps the cursor released while another app has focus.
                     // Closing the Alt screen must not seize that other app's pointer.
                     if(c.isWindowFocused() && c.currentScreen==null && !c.mouse.isCursorLocked())throw new IllegalStateException("Cursor did not relock while focused");

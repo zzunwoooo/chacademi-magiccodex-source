@@ -70,7 +70,8 @@ public final class PartyPlugin {
         kyudichi=new KyudichiQueue(proxy,logger,new KyudichiQueue.Host(){
             @Override public boolean enqueue(Runnable task){return PartyPlugin.this.enqueue(task);}
             @Override public PartyBook.Party party(UUID member){return ready?book.party(member):null;}
-            @Override public String name(UUID id){return PartyPlugin.this.name(id);}
+            // MagicCodex 한글 닉네임 (identity, then the remembered one); the account name only when neither is known
+            @Override public String name(UUID id){return person(id,0).nickname();}
             @Override public void notice(Player p,String text){PartyPlugin.this.notice(p,text);}
             @Override public boolean trusted(String server){return trusted.contains(server);}
             @Override public int house(UUID id){return person(id,0).house();}

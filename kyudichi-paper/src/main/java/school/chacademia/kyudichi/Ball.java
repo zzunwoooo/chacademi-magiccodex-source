@@ -27,15 +27,32 @@ class Ball {
         boolean hit = false;
         double[] p = {pos.getX(), pos.getY(), pos.getZ()}, v = {vel.getX(), vel.getY(), vel.getZ()};
         double[] lo = {box.minX() + 0.3, box.minY() + 0.3, box.minZ() + 0.3}, hi = {box.maxX() - 0.3, box.maxY() - 0.3, box.maxZ() - 0.3};
-        for (int a = 0; a < 3; a++) {
-            double next = p[a] + v[a];
-            if (next < lo[a] || next > hi[a]) { v[a] = -v[a] * restitution; next = Math.clamp(next, lo[a], Math.max(lo[a], hi[a])); hit = true; }
-            double old = p[a]; p[a] = next;
-            if (solid(world, p[0], p[1], p[2])) { p[a] = old; v[a] = -v[a] * restitution; hit = true; }
+        // fast balls (1-2 blocks/tick) move in sub-steps of at most 0.45 blocks so they cannot pass through a wall or floor
+        int n = (int) Math.min(8, Math.max(1, Math.ceil(Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]) / 0.45)));
+        for (int k = 0; k < n; k++) {
+            for (int a = 0; a < 3; a++) {
+                double next = p[a] + v[a] / n;
+                if (next < lo[a] || next > hi[a]) { v[a] = -v[a] * restitution; next = Math.clamp(next, lo[a], Math.max(lo[a], hi[a])); hit = true; }
+                double old = p[a]; p[a] = next;
+                if (solid(world, p[0], p[1], p[2])) { p[a] = old; v[a] = -v[a] * restitution; hit = true; }
+            }
         }
         pos = new Vector(p[0], p[1], p[2]);
         vel = new Vector(v[0], v[1], v[2]);
         return hit;
+    }
+
+    /** Squared distance from point c to the segment this tick moved along (prev → pos): hits cannot be skipped at speed. */
+    double sweptDistanceSquared(Vector c) {
+        Vector ab = pos.clone().subtract(prev), ac = c.clone().subtract(prev);
+        double len2 = ab.lengthSquared();
+        double t = len2 < 1e-9 ? 1 : Math.clamp(ac.dot(ab) / len2, 0, 1);
+        return prev.clone().add(ab.multiply(t)).distanceSquared(c);
+    }
+
+    /** Resting on something solid (or the box floor) right under the ball. */
+    boolean grounded(World world, Box box) {
+        return pos.getY() - 0.45 <= box.minY() + 0.3 || solid(world, pos.getX(), pos.getY() - 0.45, pos.getZ());
     }
 
     static boolean solid(World w, double x, double y, double z) {
@@ -72,7 +89,8 @@ class Ball {
     }
 
     static final class Snitch extends Ball {
-        long nextPauseAt, pausedUntil;
+        long nextPauseAt, pausedUntil, nextDashAt, dashUntil;
+        Vector dashDir;
         Snitch(Vector p) { super(BallKind.SNITCH, 0, p); }
     }
 }

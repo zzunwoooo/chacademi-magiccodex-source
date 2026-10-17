@@ -118,6 +118,14 @@ final class Hooks {
         try { return b.getClass().getMethod("houseOf", Player.class).invoke(b, p) instanceof Integer i ? i : -1; }
         catch (ReflectiveOperationException | LinkageError e) { warnOnce("bridge-house", "MagicCodexBridge.houseOf 없음 (Bridge 업데이트 필요)"); return -1; }
     }
+    /** MagicCodex 한글 닉네임 (MagicCodexBridge.nicknameOf); the account name when the bridge is missing or old. */
+    String nick(org.bukkit.OfflinePlayer p) {
+        String fallback = p.getName() == null ? "플레이어" : p.getName();
+        Plugin b = Bukkit.getPluginManager().getPlugin("MagicCodexBridge");
+        if (b == null || !b.isEnabled()) return fallback;
+        try { return b.getClass().getMethod("nicknameOf", org.bukkit.OfflinePlayer.class).invoke(b, p) instanceof String n && !n.isBlank() ? n : fallback; }
+        catch (ReflectiveOperationException | LinkageError | RuntimeException e) { warnOnce("bridge-nick", "MagicCodexBridge.nicknameOf 없음 (Bridge 업데이트 필요)"); return fallback; }
+    }
     /** Stability shrine: refill the client balance gauge. Needs the motion update (refillBroomBalance). */
     void refillBroomBalance(Player p) { motion("refillBroomBalance", p); }
     /** Haste shrine: the normal broom boost without using / starting its cooldown. Needs the motion update (freeBroomBoost). */

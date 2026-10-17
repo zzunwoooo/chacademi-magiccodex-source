@@ -92,8 +92,20 @@ final class RatingStore {
     Row cached(UUID id, String name) { return cache.getOrDefault(id, Row.fresh(id, name, MODE, start)); }
     List<UUID> challengers() { return challengers; }
 
+    /** Loads a player's row; when they already have games under another name, the stored name becomes {@code name}
+     *  (the MagicCodex 한글 닉네임) so 랭킹 · 정보 show the current nickname. */
     void load(UUID id, String name, Consumer<Row> done) {
-        async(c -> read(c, id, name), r -> { if (r != null) cache.put(id, r); if (done != null) done.accept(r); });
+        async(c -> {
+            Row r = read(c, id, name);
+            if (r != null && r.games() > 0 && name != null && !name.isBlank() && !name.equals(r.name())) {
+                try (PreparedStatement s = c.prepareStatement("UPDATE " + tRating + " SET name=? WHERE player=? AND mode=?")) {
+                    s.setString(1, name); s.setString(2, id.toString()); s.setString(3, MODE); s.executeUpdate();
+                }
+                r = new Row(r.id(), name, r.mode(), r.rating(), r.games(), r.wins(), r.losses(), r.draws(), r.goals(), r.kills(), r.deaths(), r.assists(),
+                        r.damage(), r.heal(), r.snitch(), r.deflectHits(), r.mvp(), r.reachedAt(), r.bannedUntil(), r.leaves());
+            }
+            return r;
+        }, r -> { if (r != null) cache.put(id, r); if (done != null) done.accept(r); });
     }
     void forget(UUID id) { cache.remove(id); }
 

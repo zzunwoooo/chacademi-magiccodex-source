@@ -23,8 +23,9 @@ public final class KeySettingsLayout {
     static final float KEYBOARD_SCALE = .84f, KEYBOARD_X = 212, KEYBOARD_Y = 191;
     public static final List<Key> KEYS = keys();
     // 88 = X: artifact use key (2026-10-15 owner decision: never a spell key, even if the artifact key is rebound).
+    // 341/345 = Ctrl: HUD cursor key (owner 2026-10-17), never a spell key.
     private static final Set<Integer> RESERVED = Set.of(87, 65, 83, 68, 73, 90, 80, 79, 88,
-            344, 345, 342, 346, 343, 347, 348, 280);
+            341, 344, 345, 342, 346, 343, 347, 348, 280);
     private static java.util.function.IntPredicate equipmentKey=code->false;
     static void equipmentKey(java.util.function.IntPredicate predicate){equipmentKey=predicate;}
     private static java.util.function.IntPredicate artifactKey=code->false;

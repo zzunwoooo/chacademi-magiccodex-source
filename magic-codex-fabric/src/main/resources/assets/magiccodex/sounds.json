@@ -2202,5 +2202,86 @@
         "preload": true
       }
     ]
+  },
+  "kyudichi.whistle_short": {
+    "sounds": [
+      {
+        "name": "magiccodex:kyudichi/whistle_short",
+        "stream": false,
+        "preload": true
+      }
+    ]
+  },
+  "kyudichi.whistle_long": {
+    "sounds": [
+      {
+        "name": "magiccodex:kyudichi/whistle_long",
+        "stream": false,
+        "preload": true
+      }
+    ]
+  },
+  "kyudichi.whistle_end": {
+    "sounds": [
+      {
+        "name": "magiccodex:kyudichi/whistle_end",
+        "stream": false,
+        "preload": true
+      }
+    ]
+  },
+  "kyudichi.goal": {
+    "sounds": [
+      {
+        "name": "magiccodex:kyudichi/goal",
+        "stream": false,
+        "preload": true
+      }
+    ]
+  },
+  "kyudichi.snitch_appear": {
+    "sounds": [
+      {
+        "name": "magiccodex:kyudichi/snitch_appear",
+        "stream": false,
+        "preload": true
+      }
+    ]
+  },
+  "kyudichi.bludger_hit": {
+    "sounds": [
+      {
+        "name": "magiccodex:kyudichi/bludger_hit",
+        "stream": false,
+        "preload": true
+      }
+    ]
+  },
+  "kyudichi.deflect": {
+    "sounds": [
+      {
+        "name": "magiccodex:kyudichi/deflect",
+        "stream": false,
+        "preload": true
+      }
+    ]
+  },
+  "kyudichi.throw": {
+    "sounds": [
+      {
+        "name": "magiccodex:kyudichi/throw",
+        "stream": false,
+        "preload": true
+      }
+    ]
+  },
+  "kyudichi.catch": {
+    "sounds": [
+      {
+        "name": "magiccodex:kyudichi/catch",
+        "stream": false,
+        "preload": true
+      }
+    ]
   }
 }

@@ -28,7 +28,8 @@ interface BallVisual {
 
     static BallVisual spawn(Location at, BallKind kind, Rules rules, Logger log) {
         BallVisual v = ModelEngineVisual.spawn(at, rules.models.get(kind), rules.modelScale, log);
-        return v != null ? v : new ItemVisual(at, new ItemStack(rules.fallback.get(kind)), kind == BallKind.SNITCH ? 0.45f : 0.7f);
+        // the snitch never glows (owner 2026-10-17: no way to see it through walls)
+        return v != null ? v : new ItemVisual(at, new ItemStack(rules.fallback.get(kind)), kind == BallKind.SNITCH ? 0.45f : 0.7f, kind != BallKind.SNITCH);
     }
 
     static void prepare(Entity e) {
@@ -40,14 +41,14 @@ interface BallVisual {
 
     final class ItemVisual implements BallVisual {
         private final ItemDisplay display;
-        ItemVisual(Location at, ItemStack item, float scale) {
+        ItemVisual(Location at, ItemStack item, float scale, boolean glow) {
             display = at.getWorld().spawn(at, ItemDisplay.class, d -> {
                 prepare(d);
                 d.setItemStack(item);
                 d.setBillboard(Display.Billboard.CENTER);
                 d.setTeleportDuration(1);
                 d.setViewRange(4f);
-                d.setGlowing(true);
+                d.setGlowing(glow);
                 d.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(), new Vector3f(scale, scale, scale), new AxisAngle4f()));
             });
         }
