@@ -32,7 +32,8 @@ public final class BroomPhysics {
     static final float BOOST_MULT = 1.45f;
     static final int BOOST_TICKS = 30;
     static final int ROLL_TICKS = 14;
-    static final float ROLL_IMPULSE = 0.66f;
+    static final float ROLL_IMPULSE = 0.85f;   // 배럴롤 옆 밀기 (2026-10-17: 0.66 → 0.85, 회피 거리 약 2배)
+    static final float GRIP_ROLL = 0.02f;      // 배럴롤 중 옆미끄러짐 감쇠 (평소 GRIP 0.10 대신 → 끝까지 밀려 나감)
     static final float GRIP = 0.10f;          // 옆미끄러짐이 틱마다 사라지는 비율
     static final float GRIP_DRIFT = 0.035f;   // A/D 드리프트 중
     static final float GLIDE_DRAG = 0.987f;   // 손 뗐을 때
@@ -171,7 +172,7 @@ public final class BroomPhysics {
         // 4) 옆: A/D 드리프트 + 미끄러짐 감쇠
         boolean drifting = in.left() != in.right();
         if (drifting) vr += (in.right() ? 1 : -1) * accel * 0.35;
-        vr *= 1 - (drifting ? GRIP_DRIFT : GRIP);
+        vr *= 1 - (rollTicks > 0 ? GRIP_ROLL : drifting ? GRIP_DRIFT : GRIP);
 
         // 배럴롤 (A/D 두 번)
         if (in.rollRequest() != 0 && rollCooldown == 0 && rollTicks == 0 && sf > 0.3f) {
