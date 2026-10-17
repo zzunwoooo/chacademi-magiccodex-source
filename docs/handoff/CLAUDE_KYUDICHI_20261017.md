@@ -49,3 +49,21 @@
 - 순수 테스트 통과: RatingMath, Box/기간/핑, KyudichiWire, KyudichiProtocol(3), KyudichiQueueProtocol(5), KyudichiMatchmaker(5).
 - javac 소스 대조: kyudichi-paper, chacademi-party-velocity, Bridge 새 이벤트 — 자기 파일 오류 0. Bridge `SpellRuntime` 수정분과 Fabric 클라이언트 전체는 **미컴파일**.
 - 실제 서버/게임 테스트 0회. 우선 확인할 것: 혼자 테스트 경기(F키·공·성소·결과), 2계정 매칭(수락→이동→복귀), 재접속, 관전, 대시보드, 세팅 창, 공중 조준.
+
+
+## 2026-10-17 오후: UI 재제작 (커밋 0f4c798, 06afebc)
+
+- 혼자 테스트·연습 경기는 한 팀이 비어도 끝나지 않음 (모두 나가야 종료).
+- 오너 PNG `CHACADEMI_QUIDDITCH_FULL_UI_REBUILD` 를 `textures/gui/kyudichi/ui/<폴더>/` 에 넣음 (layouts 제외, keys 256px로 축소,
+  recent_table 의 예시 승패 배지 제거, scrollbar 를 track/thumb 로 분리, 오너가 따로 준 frame_ranking·frame_record 추가). 약 23MB.
+- 화면 코드: `client/kui/*View.java` (마인크래프트 의존 없음, 레퍼런스 1672×941 좌표 그대로) + 게임용 `KyudichiCanvas`.
+  같은 코드를 `src/test/.../kui/PreviewMain` 이 Java2D 로 그려 레퍼런스와 비교 이미지를 만든다 (`AwtCanvas`, `Samples`).
+  레이아웃을 고칠 때는 View 만 고치고 PreviewMain 으로 확인.
+- 새 창: 신청(`/큐디치`, 프록시 APPLY) · 매칭 대기 카드(HUD 오른쪽 위) · 수락 팝업(자동) · 준비(자동, F 로 다시 열기) · 마법 선택 · 결과(자동) ·
+  대시보드(`/큐디치 현황|랭킹|정보`). `/큐디치미리보기 신청|매칭|수락|준비|경기|결과|대시보드|끄기` 로 서버 없이 확인.
+- 프로토콜 추가: 대기열 S2C 5 APPLY, C2S 11 APPLY, DASH 는 LiveCard(얼굴), Rank·PlayerRecord 에 skin 해시. 경기장 S2C 8 ROSTER(기숙사·빗자루·레이팅).
+- 새 공개 메서드: Bridge `MagicCodexBridge.houseOf(Player)`, 모션 플러그인 `ChacademyMotionPlugin.equippedBroomId(Player)` (경기장 플러그인이 리플렉션으로 사용).
+- F키·퀘이플 타이머는 레퍼런스 위치(화면 맨 아래)가 핫바와 겹쳐 핫바·액션바 바로 위로 올림.
+- **아직 PNG 가 없어 비워 둔 것** (오너에게 요청함): 빈 경기 현황 창(카드 없는 frame_live), 행 없는 frame_ranking, 최근 10경기 줄 끊김·막대 아이콘,
+  아이콘(막대그래프·교차 검·왕관·시계·범위·취소·사람·경기장·돋보기·모래시계), 1~3위 날개 메달, 대기 중인 파티 알약 판. 포기 버튼은 코드로 그린 캡슐.
+- 클라이언트는 여전히 이 환경에서 컴파일 못 함 → 호스팅 빌드에서 오류 나면 수정.
