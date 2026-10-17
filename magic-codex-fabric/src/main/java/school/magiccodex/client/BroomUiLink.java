@@ -23,7 +23,7 @@ final class BroomUiLink {
     private static Object call(String name) { return call(name,new Class<?>[0]); }
     static boolean available() { return Boolean.TRUE.equals(call("available")); }
     static void refresh() { call("refresh"); }
-    static String[] owned() { var value=call("owned");return value instanceof String[] a?Arrays.stream(a).filter(s->s!=null&&!s.isBlank()).distinct().limit(10).toArray(String[]::new):new String[0]; }
+    static String[] owned() { var value=call("owned");return value instanceof String[] a?Arrays.stream(a).filter(s->s!=null&&!s.isBlank()).distinct().limit(30).toArray(String[]::new):new String[0]; }
     static String equipped() { var value=call("equipped");return value instanceof String s?s:""; }
     static long version() { var value=call("version");return value instanceof Number n?n.longValue():0; }
     static float mastery() { var value=call("mastery");return value instanceof Number n?Math.clamp(n.floatValue(),0,1):0; }

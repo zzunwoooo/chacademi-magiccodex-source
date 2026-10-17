@@ -1,0 +1,29 @@
+name: ChacaHousing
+version: '${version}'
+main: school.chacademia.housing.HousingPlugin
+api-version: '1.21.4'
+description: 기숙사 내 방 꾸미기 (차카데미 하우징)
+softdepend: [Vault, MagicCodexBridge]
+commands:
+  하우징관리:
+    description: 기숙사실 문 등록, 가구 지급·회수, 방 크기, 리로드
+    usage: /하우징관리
+    aliases: [housing-admin]
+    permission: chacademi.housing.admin
+  방구경:
+    description: 다른 학생의 방 구경하기
+    usage: /방구경 <닉네임>
+    aliases: [housing-visit]
+    permission: chacademi.housing.visit
+  내방:
+    description: 기숙사실에 가지 않고 내 방 꾸미기 열기 (관리자용)
+    usage: /내방
+    aliases: [housing-home]
+    permission: chacademi.housing.anywhere
+permissions:
+  chacademi.housing.admin:
+    default: op
+  chacademi.housing.anywhere:
+    default: op
+  chacademi.housing.visit:
+    default: true

@@ -69,6 +69,8 @@ public final class SpellYamlLoader {
         spells.sort(Comparator.comparingInt(Spell::order).thenComparing(Spell::id));
         return new Result(errors.isEmpty() ? spells : List.of(), errors);
     }
+    static final Set<String> REVIEWED_ICON_IDS = Set.of("pressure_lance","healing_rain","bubble_aria","pressure_hammer","waterspout","concrete_curing","ripple_guard","bouncing_droplet");
+
     public Spell parse(String source) {
         LoaderOptions options = new LoaderOptions();
         options.setAllowDuplicateKeys(false);
@@ -85,6 +87,9 @@ public final class SpellYamlLoader {
         catch (IllegalArgumentException error) { throw new IllegalArgumentException("category: wind, fire, water, earth, light, dark 중 선택하세요."); }
         if (category == Category.ALL) throw new IllegalArgumentException("category에 all은 사용할 수 없습니다.");
         String icon = string(root, "icon", "", 256);
+        // Preserve user-configured icons; fill only the eight reviewed legacy blank assignments.
+        if (icon.isBlank() && REVIEWED_ICON_IDS.contains(id))
+            icon = "magiccodex:textures/spells/reviewed_20261016/" + id + ".png";
         if (!icon.isBlank() && (!icon.matches("[a-z0-9_.-]+:textures/[a-z0-9_./-]+\\.png") || icon.contains("..")))
             throw new IllegalArgumentException("icon은 namespace:textures/.../image.png 형식이어야 합니다.");
         String permission = string(root, "permission", null, 100);

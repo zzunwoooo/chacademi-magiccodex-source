@@ -1,3 +1,16 @@
+> Integrated shop redesign db396a7 (build/deployment status recorded separately): [CLAUDE_SHOP_REDESIGN_20261017.md](CLAUDE_SHOP_REDESIGN_20261017.md). Client only.
+
+
+## Claude 빗자루 배럴롤 거리 증가 (2026-10-17, 미빌드)
+
+[CLAUDE_BROOM_ROLL_20261017.md](CLAUDE_BROOM_ROLL_20261017.md): `claude/broom-roll-20261017` (broom-30 기준). A·A/D·D 배럴롤 옆 회피 거리 약 2배 (ROLL_IMPULSE 0.85, 구르는 동안 감쇠 0.02). 모드만 변경, 균형 소모·쿨다운 그대로.
+
+## Claude 어깨 시점 조준점 대상 선택 (2026-10-17, 미빌드)
+
+[CLAUDE_SHOULDER_CROSSHAIR_20261017.md](CLAUDE_SHOULDER_CROSSHAIR_20261017.md): `claude/shoulder-crosshair-20261017`. F5 어깨 시점에서 블럭 부수기·설치·공격·상호작용이 캐릭터 정면이 아니라 조준점 대상을 따른다. 리치와 가림은 눈 기준으로 검사해 서버와 일치한다. MagicCodex 클라이언트만 바뀐다.
+
+> Claude 2026-10-17 (not built): [하우징 1차 — 기숙사 내 방 꾸미기 UI (새 플러그인 ChacaHousing + MagicCodex 창)](CLAUDE_HOUSING_20261017.md). Branch claude/housing-20261017 on claude/kyudichi-20261017 @ 268e92c. New plugin housing-paper (school/wild, shared MariaDB) + client mod must ship together (new channel chacademi:housing). Bridge/Velocity unchanged.
+
 > Claude 2026-10-17 (not built): [큐디치 3:3 공중 PvP — 경기장 플러그인·매칭 대기열·클라 HUD/창](CLAUDE_KYUDICHI_20261017.md). Branch claude/kyudichi-20261017 on claude/party-ui-20261016 @ 8e9bbad. New arena server + ChacaKyudichi, Velocity party jar, Bridge (all servers), client mod and chacademy-motion must ship together.
 
 > Claude 2026-10-16 (not built): [파티 창 UI + 파티 초대 알림](CLAUDE_PARTY_UI_20261016.md). Branch claude/party-ui-20261016 on codex/operating-alchemy-carrier-20261016 @ 9cefa25. Velocity party plugin + magic-codex UI must be deployed together (new channel chacademi:party_ui).
@@ -94,6 +107,8 @@ Claude 는 GPT 작업 브랜치에 직접 커밋하지 않고, **`claude/` 로 �
 | `claude/artifact-catalog-20261015` | `claude/reaction-vfx-20261015` @ `b07c62c` (위 브랜치 포함) | `CLAUDE_ARTIFACT_CATALOG_20261015.md` | 검수 완료 아티팩트 150항목 yml(보류 2 숨김, 사용형 20), 아이콘 71장, 아티팩트 사용 키 X(프로토콜 v2 `USE`·대기 시간·`ArtifactUseEvent`), 마법 키세팅에서 X 금지. **능력 미구현, 서버·모드 같이 배포. Fabric 화면 코드 컴파일 미확인** | 받음 (Codex integration; 637 hosting tests passed; school/wild and personal UI deployed) |
 | `claude/artifact-summon-20261015` | `claude/artifact-catalog-20261015` @ `c1c2c01` (위 브랜치 포함) | `CLAUDE_ARTIFACT_SUMMON_20261015.md` | 유물함 소환(아티팩트 뽑기): `/아티팩트소환` 창, [소환하기]로 `item:random_artifact` 소모, 등급 5:3:1:0.1, 새것은 권한 지급·중복은 `item:artifact_shard` 우편, 등급이 드러나는 개봉 연출(가산 합성 셰이더·바닐라 사운드). **아이템애더 아이템 2개 생성 필요, Fabric 화면 컴파일 미확인** | 받기 전 |
 | `claude/artifact-effects-20261015` | `claude/artifact-summon-20261015` @ `0236fee` 이후 (위 브랜치 포함) | `CLAUDE_ARTIFACT_EFFECTS_20261015.md` | 아티팩트 효과 120/150 구현(스탯·받는 피해·마법 피해·원소 반응·채집·음식·사용 키 18종), 보류 30(모션·키세팅·빗자루 훅 등). 파티 명단 Velocity→서버 `chacademi:party_roster` + 공개 서비스 `PartyRoster`. MagicMythic 이벤트 4종 추가. 스쿨·야생 공유(`codex_player_state`에 열 6개 자동 추가) + 서버 도착 시 능력치 통합 갱신 `PlayerStats`(장신구·아티팩트 재계산 후 현재 체력·마나 복원). **Paper API 소스로 javac 확인, Gradle·실게임 전. Velocity·Bridge·MagicMythic 같이 배포** | 받기 전 |
+| `claude/alchemy-20261016` | `claude/artifact-effects-20261015` @ `ac545d0` (위 브랜치 포함) | `CLAUDE_ALCHEMY_20261016.md` | 연금술: 경험치 포인트로 제작, 숨겨진 레시피(알맞은 재료로 합성하면 발견, LuckPerms `magiccodex.alchemy.recipe.<id>`), 근접 힌트, 결과는 인벤토리→우편. 재료 칸은 lore 첫 줄 '재료' 아이템만. `/연금술`, `/연금술관리`, `alchemy.yml`(레시피 비어 있음). GPT 연금술 PNG + MagicCodex 폰트, 겹침 테스트. **새 채널, 서버·모드 같이 배포. 서버는 Paper API 소스 javac 통과, Fabric 화면 컴파일 미확인**  + 10-17 레시피 관리 화면(`/연금술관리`, 모드 전용 화면, 새 채널) | 받기 전 |
+| `claude/housing-20261017` | `claude/kyudichi-20261017` @ `268e92c` (위 브랜치 포함) | `CLAUDE_HOUSING_20261017.md` | 하우징 1차: 기숙사실 문 → UI 미니룸 편집(쿼터뷰, 가구 상자, 레이아웃 3칸, 확장 Vault), 구경(좋아요·방명록·친구 방·구경 중 명단 실시간). 새 플러그인 `housing-paper`(ChacaHousing, 공용 MariaDB `codex_housing_*`). **Gradle·실게임 전, 플러그인·모드 같이 배포, 확장 비용 임시값** | 받기 전 |
 
 ## Claude 가 지키는 규칙
 
@@ -122,3 +137,13 @@ Audit integration verified and deployed; Story content intentionally deferred. S
 [CLAUDE_UNIT_TARGET_RING_20261015.md](CLAUDE_UNIT_TARGET_RING_20261015.md): selected client-only ring patch 09186da; unrelated broom-projectile ancestor excluded.
 
 See [artifact catalogue and unit ring integration](CODEX_ARTIFACT_CATALOG_UNITRING_20261015.md) for versions, validation and deployment boundary.
+
+[CLAUDE_BROOM_PROJECTILE_20261015.md](CLAUDE_BROOM_PROJECTILE_20261015.md): `claude/broom-projectile-20261015`. 빗자루 비행 중 직선 투사체가 뒤에서 나오는 문제 — 비행 속도 상속 + 핑 지연만큼 출발점 앞당김 (chabolt 판정·PortableVFX 연출 동일 공식). ChacademyMotion·magic-mythic·PortableVFX paper 3개 jar. magic-71 라인 BoltMech 와 머지 충돌 주의.
+
+## Claude 빗자루 비행 궤적 (2026-10-16, 미빌드)
+
+[CLAUDE_BROOM_TRAILS_20261016.md](CLAUDE_BROOM_TRAILS_20261016.md): `claude/broom-trails-20261016` (기준 `claude/broom-projectile-20261015`). 빗자루별 비행 궤적 — 모션 모드가 PortableVFX 클라이언트 API(무수정)로 솔 끝에 궤적 효과를 켜고 매 틱 보간 위치·기울기를 넘김. 새 팩 `BroomTrails`(기본·전설 + lite) 클라 배포 필요. 서버·패킷 변경 없음. 재시도 간격·순간이동·월드 변경·경계 히스테리시스·입자 예산 2000 반영. 한계: 내/남 궤적 투명도 분리 불가, 덮어쓰기 hook 은 로컬 전용.
+
+## Claude 빗자루 30종 개편 (2026-10-16, 미빌드)
+
+[CLAUDE_BROOMS30_20261016.md](CLAUDE_BROOMS30_20261016.md): `claude/broom-30-20261016` (기준 `claude/broom-trails-20261016`). 빗자루 ID를 등급 순 broom_1~30으로 재번호(지급 이력 없음, 변환 없음), bbmodel 30종, brooms.yml 새 능력치(등급 배수 제거, config-version 2 자동 교체), 스페이스 상승 유지(공통 climb-power, 시선 상승과 합산)·상하에도 선회 적용·최대 균형 90+3×안정 단계, 장비창 30칸·게이지=단계, 궤적 팩 4개(BroomTrails 교체 + Wood/Unique/Legend 신규, 팩당 시스템 16개 미만 한도 때문에 분할). 모션 모드·플러그인·magic-codex·PortableVFX 팩 4개 같이 배포.

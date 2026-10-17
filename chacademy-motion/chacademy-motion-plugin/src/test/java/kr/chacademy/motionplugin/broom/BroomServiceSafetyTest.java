@@ -34,8 +34,8 @@ class BroomServiceSafetyTest {
  @AfterEach void cleanup(){if(bukkit!=null)bukkit.close();}
  BroomType type(){return service.brooms().values().iterator().next();}
  void own(){when(player.hasPermission("chacademy.broom.own."+type().id())).thenReturn(true);}
- @Test void opOwnsAllWithoutExplicitPermission(){when(player.isOp()).thenReturn(true);assertEquals(10,service.ownedBrooms(player).size());}
- @Test void wildcardOwnsAll(){when(player.hasPermission("chacademy.broom.own.*")).thenReturn(true);assertEquals(10,service.ownedBrooms(player).size());}
+ @Test void opOwnsAllWithoutExplicitPermission(){when(player.isOp()).thenReturn(true);assertEquals(30,service.ownedBrooms(player).size());}
+ @Test void wildcardOwnsAll(){when(player.hasPermission("chacademy.broom.own.*")).thenReturn(true);assertEquals(30,service.ownedBrooms(player).size());}
  @Test void unownedCannotEquipOrStartUnlimited(){assertFalse(service.equip(player,type()));assertFalse(service.start(player,type(),0));assertTrue(service.start(player,type(),200));}
  @Test void revokedSelectionFallsBackToPractice(){own();assertTrue(service.equip(player,type()));when(player.hasPermission("chacademy.broom.own."+type().id())).thenReturn(false);assertNull(service.ownedBroom(player));}
  @Test void dismountRestoresOriginalFlightFalse(){own();assertTrue(service.start(player,type(),0));service.stop(player);verify(player).setAllowFlight(false);assertFalse(service.isRiding(player));}

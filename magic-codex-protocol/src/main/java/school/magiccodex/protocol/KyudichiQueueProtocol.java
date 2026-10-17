@@ -21,15 +21,11 @@ import java.util.UUID;
  *       S2C 2 DASH    u16 queuedParties · u8 n · n×Live
  *       S2C 3 RANKING u8 n · n×Rank · u8 hasMine [· Rank]
  *       S2C 4 RECORD  u8 found [· PlayerRecord]
- *       S2C 5 APPLY   i32 myRating · u16 wins · u16 losses · i32 baseRating · u8 canStart · UTF note · u8 n(≤3) · n×Member   (신청 창)
  *       C2S 1 JOIN · 2 LEAVE · 3 ACCEPT · 4 DECLINE · 5 DASH · 6 RANKING · 7 RECORD UTF nick(빈칸 = 나) · 8 SPECTATE UTF arena
- *                     · 9 HELLO (모드 있음 알림: 접속할 때 한 번, 상태는 액션바 대신 HUD로 받는다) · 10 PRACTICE · 11 APPLY (신청 창 열기)
- * Live     (LINK) UTF arena · u8 phase · u16 scoreA · u16 scoreB · i32 timeLeftMs · u8 spectators · UTF teamA · UTF teamB
- * LiveCard (DASH) UTF arena · u8 phase · u16 scoreA · u16 scoreB · i32 timeLeftMs · u8 spectators · u8 nA · nA×Who · u8 nB · nB×Who
- * Who      UUID · UTF nick · UTF skin(빈칸 = 모름)
- * Member   UUID · UTF nick · UTF skin · i8 house(-1 없음) · i32 rating · u8 leader
- * Rank    u16 rank · UUID · UTF nick · UTF skin · i32 rating · u8 tier · u16 games · u16 wins · u16 losses
- * PlayerRecord  UUID · UTF nick · UTF skin · i32 rating · u8 tier · u16 rank(0 순위 밖) · 11×i32(games wins losses draws goals kills deaths assists snitch deflectHits mvp)
+ *                     · 9 HELLO (모드 있음 알림: 접속할 때 한 번, 상태는 액션바 대신 HUD로 받는다) · 10 PRACTICE
+ * Live    UTF arena · u8 phase · u16 scoreA · u16 scoreB · i32 timeLeftMs · u8 spectators · UTF teamA · UTF teamB
+ * Rank    u16 rank · UUID · UTF nick · i32 rating · u8 tier · u16 games · u16 wins · u16 losses
+ * PlayerRecord  UUID · UTF nick · i32 rating · u8 tier · u16 rank(0 순위 밖) · 11×i32(games wins losses draws goals kills deaths assists snitch deflectHits mvp)
  *         · f32 damage · f32 heal · u8 n · n×(i64 endedAt · u8 outcome(0 패 1 승 2 무) · u8 team · u16 scoreA · u16 scoreB · u8 goals · u8 kills · u8 deaths · u8 mvp · i16 delta)
  *
  * LINK P2A 1 ASSIGN   UUID match · u8 rated · u8 nA · nA×UUID · u8 nB · nB×UUID
@@ -51,22 +47,18 @@ public final class KyudichiQueueProtocol {
 
     // ------------------------------------------------------------------ records
     public record Live(String arena, int phase, int scoreA, int scoreB, int timeLeftMs, int spectators, String teamA, String teamB) {}
-    public record Who(UUID id, String nick, String skin) {}
-    public record LiveCard(String arena, int phase, int scoreA, int scoreB, int timeLeftMs, int spectators, List<Who> teamA, List<Who> teamB) {}
-    public record Member(UUID id, String nick, String skin, int house, int rating, boolean leader) {}
-    public record Rank(int rank, UUID id, String nick, String skin, int rating, int tier, int games, int wins, int losses) {}
+    public record Rank(int rank, UUID id, String nick, int rating, int tier, int games, int wins, int losses) {}
     public record Recent(long endedAt, int outcome, int team, int scoreA, int scoreB, int goals, int kills, int deaths, boolean mvp, int delta) {}
-    public record PlayerRecord(UUID id, String nick, String skin, int rating, int tier, int rank, int games, int wins, int losses, int draws, int goals, int kills,
+    public record PlayerRecord(UUID id, String nick, int rating, int tier, int rank, int games, int wins, int losses, int draws, int goals, int kills,
                          int deaths, int assists, int snitch, int deflectHits, int mvp, float damage, float heal, List<Recent> recent) {}
 
-    public sealed interface ToClient permits Status, Dash, Ranking, RecordReply, Apply {}
+    public sealed interface ToClient permits Status, Dash, Ranking, RecordReply {}
     public record Status(int state, int waitedSec, int offerLeftSec, int accepted, int total, boolean iAccepted, int queuedParties) implements ToClient {}
-    public record Dash(int queuedParties, List<LiveCard> live) implements ToClient {}
+    public record Dash(int queuedParties, List<Live> live) implements ToClient {}
     public record Ranking(List<Rank> top, Rank mine) implements ToClient {}
     public record RecordReply(PlayerRecord record) implements ToClient {}
-    public record Apply(int myRating, int wins, int losses, int baseRating, boolean canStart, String note, List<Member> members) implements ToClient {}
 
-    public sealed interface FromClient permits Join, Leave, Accept, Decline, DashRequest, RankingRequest, RecordRequest, SpectateRequest, ClientHello, PracticeRequest, ApplyRequest {}
+    public sealed interface FromClient permits Join, Leave, Accept, Decline, DashRequest, RankingRequest, RecordRequest, SpectateRequest, ClientHello, PracticeRequest {}
     public record Join() implements FromClient {}
     public record Leave() implements FromClient {}
     public record Accept() implements FromClient {}
@@ -77,7 +69,6 @@ public final class KyudichiQueueProtocol {
     public record SpectateRequest(String arena) implements FromClient {}
     public record ClientHello() implements FromClient {}
     public record PracticeRequest() implements FromClient {}
-    public record ApplyRequest() implements FromClient {}
 
     public sealed interface ToArena permits Assign, Spectate, Practice {}
     public record Assign(UUID match, boolean rated, List<UUID> teamA, List<UUID> teamB) implements ToArena {}
@@ -99,12 +90,7 @@ public final class KyudichiQueueProtocol {
                     o.writeByte(1); u8(o, x.state, 4); u16(o, x.waitedSec); u8(o, Math.min(255, Math.max(0, x.offerLeftSec)), 255);
                     u8(o, x.accepted, 6); u8(o, x.total, 6); o.writeByte(x.iAccepted ? 1 : 0); u16(o, x.queuedParties);
                 }
-                case Dash x -> { o.writeByte(2); u16(o, x.queuedParties); u8(o, x.live.size(), 16); for (LiveCard l : x.live) card(o, l); }
-                case Apply x -> {
-                    o.writeByte(5); o.writeInt(x.myRating); u16(o, x.wins); u16(o, x.losses); o.writeInt(x.baseRating); o.writeByte(x.canStart ? 1 : 0);
-                    utf(o, x.note, 64); u8(o, x.members.size(), 3);
-                    for (Member mm : x.members) { uuid(o, mm.id); utf(o, mm.nick, 32); utf(o, mm.skin, 64); o.writeByte(Math.clamp(mm.house, -1, 3)); o.writeInt(mm.rating); o.writeByte(mm.leader ? 1 : 0); }
-                }
+                case Dash x -> { o.writeByte(2); u16(o, x.queuedParties); u8(o, x.live.size(), 16); for (Live l : x.live) live(o, l); }
                 case Ranking x -> {
                     o.writeByte(3); u8(o, x.top.size(), 100); for (Rank r : x.top) rank(o, r);
                     o.writeByte(x.mine == null ? 0 : 1); if (x.mine != null) rank(o, x.mine);
@@ -113,7 +99,7 @@ public final class KyudichiQueueProtocol {
                     o.writeByte(4); o.writeByte(x.record == null ? 0 : 1);
                     if (x.record != null) {
                         PlayerRecord r = x.record;
-                        uuid(o, r.id); utf(o, r.nick, 32); utf(o, r.skin, 64); o.writeInt(r.rating); u8(o, r.tier, 8); u16(o, r.rank);
+                        uuid(o, r.id); utf(o, r.nick, 32); o.writeInt(r.rating); u8(o, r.tier, 8); u16(o, r.rank);
                         for (int v : new int[]{r.games, r.wins, r.losses, r.draws, r.goals, r.kills, r.deaths, r.assists, r.snitch, r.deflectHits, r.mvp}) o.writeInt(Math.max(0, v));
                         f(o, r.damage); f(o, r.heal); u8(o, r.recent.size(), 10);
                         for (Recent c : r.recent) {
@@ -131,8 +117,8 @@ public final class KyudichiQueueProtocol {
         return read(bytes, i -> switch (i.readUnsignedByte()) {
             case 1 -> new Status(r8(i, 4), i.readUnsignedShort(), i.readUnsignedByte(), r8(i, 6), r8(i, 6), rflag(i), i.readUnsignedShort());
             case 2 -> {
-                int q = i.readUnsignedShort(), n = r8(i, 16); var ls = new ArrayList<LiveCard>();
-                for (int k = 0; k < n; k++) ls.add(rcard(i));
+                int q = i.readUnsignedShort(), n = r8(i, 16); var ls = new ArrayList<Live>();
+                for (int k = 0; k < n; k++) ls.add(rlive(i));
                 yield new Dash(q, List.copyOf(ls));
             }
             case 3 -> {
@@ -142,22 +128,12 @@ public final class KyudichiQueueProtocol {
             }
             case 4 -> {
                 if (!rflag(i)) yield new RecordReply(null);
-                UUID id = ruuid(i); String nick = rutf(i, 32), skin = rutf(i, 64); int rating = i.readInt(), tier = r8(i, 8), rank = i.readUnsignedShort();
+                UUID id = ruuid(i); String nick = rutf(i, 32); int rating = i.readInt(), tier = r8(i, 8), rank = i.readUnsignedShort();
                 int[] v = new int[11]; for (int k = 0; k < 11; k++) { v[k] = i.readInt(); if (v[k] < 0) throw new IllegalArgumentException("stat"); }
                 float dmg = rf(i), heal = rf(i); int n = r8(i, 10); var rs = new ArrayList<Recent>();
                 for (int k = 0; k < n; k++) rs.add(new Recent(i.readLong(), r8(i, 2), r8(i, 1), i.readUnsignedShort(), i.readUnsignedShort(),
                         i.readUnsignedByte(), i.readUnsignedByte(), i.readUnsignedByte(), rflag(i), i.readShort()));
-                yield new RecordReply(new PlayerRecord(id, nick, skin, rating, tier, rank, v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9], v[10], dmg, heal, List.copyOf(rs)));
-            }
-            case 5 -> {
-                int my = i.readInt(), w = i.readUnsignedShort(), l = i.readUnsignedShort(), base = i.readInt(); boolean can = rflag(i); String note = rutf(i, 64);
-                int n = r8(i, 3); var ms = new ArrayList<Member>();
-                for (int k = 0; k < n; k++) {
-                    UUID id = ruuid(i); String nick = rutf(i, 32), skin = rutf(i, 64); int house = i.readByte();
-                    if (house < -1 || house > 3) throw new IllegalArgumentException("house");
-                    ms.add(new Member(id, nick, skin, house, i.readInt(), rflag(i)));
-                }
-                yield new Apply(my, w, l, base, can, note, List.copyOf(ms));
+                yield new RecordReply(new PlayerRecord(id, nick, rating, tier, rank, v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9], v[10], dmg, heal, List.copyOf(rs)));
             }
             default -> throw new IllegalArgumentException("kind");
         });
@@ -176,7 +152,6 @@ public final class KyudichiQueueProtocol {
                 case SpectateRequest x -> { o.writeByte(8); utf(o, x.arena, 32); }
                 case ClientHello x -> o.writeByte(9);
                 case PracticeRequest x -> o.writeByte(10);
-                case ApplyRequest x -> o.writeByte(11);
             }
         });
     }
@@ -189,7 +164,6 @@ public final class KyudichiQueueProtocol {
             case 8 -> new SpectateRequest(rutf(i, 32));
             case 9 -> new ClientHello();
             case 10 -> new PracticeRequest();
-            case 11 -> new ApplyRequest();
             default -> throw new IllegalArgumentException("kind");
         });
     }
@@ -252,25 +226,11 @@ public final class KyudichiQueueProtocol {
         if (t < 0) throw new IllegalArgumentException("time");
         return new Live(a, ph, sa, sb, t, i.readUnsignedByte(), rutf(i, 64), rutf(i, 64));
     }
-    private static void card(DataOutputStream o, LiveCard l) throws IOException {
-        utf(o, l.arena, 32); u8(o, l.phase, 6); u16(o, l.scoreA); u16(o, l.scoreB); o.writeInt(Math.max(0, l.timeLeftMs)); o.writeByte(Math.clamp(l.spectators, 0, 255));
-        whos(o, l.teamA); whos(o, l.teamB);
-    }
-    private static LiveCard rcard(DataInputStream i) throws IOException {
-        String a = rutf(i, 32); int ph = r8(i, 6), sa = i.readUnsignedShort(), sb = i.readUnsignedShort(), t = i.readInt();
-        if (t < 0) throw new IllegalArgumentException("time");
-        int spec = i.readUnsignedByte();
-        return new LiveCard(a, ph, sa, sb, t, spec, rwhos(i), rwhos(i));
-    }
-    private static void whos(DataOutputStream o, List<Who> l) throws IOException { u8(o, l.size(), 6); for (Who w : l) { uuid(o, w.id); utf(o, w.nick, 32); utf(o, w.skin, 64); } }
-    private static List<Who> rwhos(DataInputStream i) throws IOException {
-        int n = r8(i, 6); var l = new ArrayList<Who>(n); for (int k = 0; k < n; k++) l.add(new Who(ruuid(i), rutf(i, 32), rutf(i, 64))); return List.copyOf(l);
-    }
     private static void rank(DataOutputStream o, Rank r) throws IOException {
-        u16(o, r.rank); uuid(o, r.id); utf(o, r.nick, 32); utf(o, r.skin, 64); o.writeInt(r.rating); u8(o, r.tier, 8); u16(o, r.games); u16(o, r.wins); u16(o, r.losses);
+        u16(o, r.rank); uuid(o, r.id); utf(o, r.nick, 32); o.writeInt(r.rating); u8(o, r.tier, 8); u16(o, r.games); u16(o, r.wins); u16(o, r.losses);
     }
     private static Rank rrank(DataInputStream i) throws IOException {
-        return new Rank(i.readUnsignedShort(), ruuid(i), rutf(i, 32), rutf(i, 64), i.readInt(), r8(i, 8), i.readUnsignedShort(), i.readUnsignedShort(), i.readUnsignedShort());
+        return new Rank(i.readUnsignedShort(), ruuid(i), rutf(i, 32), i.readInt(), r8(i, 8), i.readUnsignedShort(), i.readUnsignedShort(), i.readUnsignedShort());
     }
     private static void uuids(DataOutputStream o, List<UUID> l, int max) throws IOException { u8(o, l.size(), max); for (UUID u : l) uuid(o, u); }
     private static List<UUID> ruuids(DataInputStream i, int max) throws IOException {

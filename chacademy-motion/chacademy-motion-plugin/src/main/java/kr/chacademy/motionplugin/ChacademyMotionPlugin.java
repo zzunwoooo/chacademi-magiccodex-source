@@ -75,12 +75,6 @@ public final class ChacademyMotionPlugin extends JavaPlugin implements PluginMes
     }
 
     /** 균형(안정성) 게이지를 가득 채운다 (큐디치 안정성 성소). 타고 있지 않으면 false. */
-    /** 장착한 빗자루 id (없으면 ""). 큐디치 준비 화면에 쓴다. */
-    public String equippedBroomId(@NotNull Player player) {
-        var t = brooms == null ? null : brooms.ownedBroom(player);
-        return t == null ? "" : t.id();
-    }
-
     public boolean refillBroomBalance(@NotNull Player player) {
         return brooms != null && brooms.fx(player, kr.chacademy.motionplugin.broom.BroomCodec.FX_REFILL_BALANCE);
     }

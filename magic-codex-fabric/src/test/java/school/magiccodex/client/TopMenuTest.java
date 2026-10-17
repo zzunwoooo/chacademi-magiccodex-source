@@ -37,11 +37,47 @@ class TopMenuTest {
             assertEquals(base+TopMenuState.LABELS.length*TopMenuState.STEP,state.width(base));
             assertTrue(state.arrowCenter(base)-state.iconCenter(base,TopMenuState.LABELS.length-1)>29);
         }
-        assertEquals("캐시샵",TopMenuState.command(0));assertEquals("우편함",TopMenuState.command(1));
-        assertEquals("",TopMenuState.command(2));assertEquals("펫도감",TopMenuState.command(3));
-        assertEquals("스텟창",TopMenuState.command(4));assertEquals("친구",TopMenuState.command(5));
-        assertEquals("의뢰게시판",TopMenuState.command(6));assertEquals("학교기증",TopMenuState.command(7));assertEquals("",TopMenuState.command(8));
-        assertArrayEquals(new String[]{"캐시샵","우편함","마법도감","펫 도감","내정보","친구","퀘스트","기숙사 점수","설정"},TopMenuState.LABELS);
+        assertEquals("캐시샵",TopMenuState.command(0));
+        assertEquals("우편함",TopMenuState.command(5));
+        assertEquals("의뢰게시판",TopMenuState.command(4));
+        assertArrayEquals(new String[]{"캐시샵","내 정보","도감","소셜","퀘스트","우편함","설정"},TopMenuState.LABELS);
+    }
+    @Test void groupsHaveFixedOrderAndRoomyVerticalTargets(){
+        var state=new TopMenuState();state.toggle(0);state.update(240);
+        for(int group=1;group<=3;group++){
+            state.toggleGroup(group,300);state.update(480);
+            float x=state.iconCenter(300,group);
+            for(int row=0;row<3;row++){
+                float top=TopMenuState.rowTop(row);
+                assertEquals(TopMenuState.childHit(group,row),state.hit(x,top+1,300));
+                assertEquals(TopMenuState.childHit(group,row),state.hit(x+30,top+60,300));
+                assertEquals(-2,state.hit(x+40,top+30,300));
+            }
+        }
+        assertEquals("스탯",TopMenuState.childLabel(1,0));
+        assertEquals("장비",TopMenuState.childLabel(1,1));
+        assertEquals("칭호",TopMenuState.childLabel(1,2));
+        assertEquals("아티팩트 도감",TopMenuState.childLabel(2,2));
+        assertEquals("파티",TopMenuState.childLabel(3,1));
+        assertEquals("기숙사",TopMenuState.childLabel(3,2));
+        assertTrue(TopMenuState.ROW_HEIGHT>=64);
+    }
+    @Test void dropdownDoesNotClickDuringAnimationAndToggleClosesIt(){
+        var state=new TopMenuState();state.toggle(0);state.update(240);
+        state.toggleGroup(2,300);state.update(390);
+        assertEquals(-2,state.hit(state.iconCenter(300,2),TopMenuState.rowTop(0)+20,300));
+        state.update(480);assertEquals(120,state.hit(state.iconCenter(300,2),TopMenuState.rowTop(0)+20,300));
+        state.toggleGroup(2,500);assertEquals(-1,state.group());
+        state.toggleGroup(1,600);state.toggle(650);assertEquals(-1,state.group());
+        state.toggleGroup(3,700);assertEquals(-1,state.group());
+    }
+    @Test void nonGroupCannotOpenDropdownAndBlankPaddingIsNotAnItem(){
+        var state=new TopMenuState();state.toggle(0);state.update(240);
+        for(int index:new int[]{-1,0,4,5,6,100}){state.toggleGroup(index,300);assertEquals(-1,state.group());}
+        state.toggleGroup(1,300);state.update(480);float x=state.iconCenter(300,1);
+        assertEquals(-2,state.hit(x,TopMenuState.DROPDOWN_TOP+1,300));
+        assertEquals(-2,state.hit(x,TopMenuState.DROPDOWN_TOP+TopMenuState.dropdownHeight()-1,300));
+        state.closeGroup();assertFalse(state.insideDropdown(x,80,300));
     }
     @Test void walletProtocolIsFixedSizeAndRejectsInvalidValues(){
         var snapshot=new WalletProtocol.Snapshot(true,12450.25);

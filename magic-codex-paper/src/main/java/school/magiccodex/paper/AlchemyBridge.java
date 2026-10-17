@@ -52,12 +52,14 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
     /** Players with the window open -> last state signature (resend only when it changes). */
     private final Map<UUID, Integer> viewers = new HashMap<>();
     private final Map<UUID, Long> limits = new HashMap<>();
+    private AlchemyEditor editor;
 
     AlchemyBridge(MagicCodexBridge plugin) throws Exception {
         this.plugin = plugin;
         itemsAdder = new ItemsAdderItems(plugin.getLogger());
         if (!new File(plugin.getDataFolder(), "alchemy.yml").exists()) plugin.saveResource("alchemy.yml", false);
         reload();
+        editor = new AlchemyEditor(plugin, this);
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, AlchemyProtocol.REQUEST, this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, AlchemyProtocol.RESPONSE);
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -155,7 +157,7 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
     private static boolean empty(ItemStack i) { return i == null || i.getType().isAir() || i.getAmount() <= 0; }
 
     /** The item's alchemy key (ItemsAdder id first, else the vanilla id), or null for air. */
-    private String keyOf(ItemStack item) {
+    String keyOf(ItemStack item) {
         if (empty(item)) return null;
         String ia = itemsAdder.idOf(item);
         if (ia != null) { String k = ia.toLowerCase(Locale.ROOT); if (AlchemyProtocol.validKey(k)) return k; }
@@ -163,7 +165,7 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
     }
 
     /** Category 재료: first lore line (brackets ignored) is a material category, or the key is listed in material-items. */
-    private boolean material(ItemStack item, String key) {
+    boolean material(ItemStack item, String key) {
         if (materialItems.contains(key)) return true;
         var meta = item.getItemMeta();
         var lore = meta == null ? null : meta.lore();
@@ -172,7 +174,7 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
     }
 
     /** A new stack of this key (ItemsAdder or vanilla), or null when it does not exist. */
-    private ItemStack create(String key, int amount) {
+    ItemStack create(String key, int amount) {
         if (key.startsWith("minecraft:")) {
             org.bukkit.Material m = org.bukkit.Material.matchMaterial(key);
             if (m == null || m.isAir() || !m.isItem()) return null;
@@ -181,7 +183,7 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
         return itemsAdder.create(key, amount);
     }
 
-    private byte[] preview(String key, ItemStack fallback) {
+    byte[] preview(String key, ItemStack fallback) {
         byte[] cached = previews.get(key);
         if (cached != null) return cached;
         ItemStack canonical = create(key, 1);
@@ -211,7 +213,7 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
         } catch (RuntimeException e) { return new byte[0]; }
     }
 
-    private static String displayName(ItemStack item) {
+    static String displayName(ItemStack item) {
         if (item == null) return "";
         var meta = item.getItemMeta();
         String n = meta != null && meta.hasDisplayName() ? PlainTextComponentSerializer.plainText().serialize(meta.displayName())
@@ -408,13 +410,27 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
 
     // ------------------------------------------------------------------ commands
 
+    int slots() { return slots; }
+    File file() { return new File(plugin.getDataFolder(), "alchemy.yml"); }
+
+    /** Reload alchemy.yml and refresh every open alchemy window; the error text, or null on success. */
+    String reloadAndPush() {
+        try { reload(); } catch (Exception e) { return String.valueOf(e.getMessage()); }
+        for (var id : List.copyOf(viewers.keySet())) { Player p = Bukkit.getPlayer(id); if (p != null) send(p, AlchemyProtocol.KIND_STATE, ""); }
+        return null;
+    }
+
     @Override public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equals("연금술")) return open(sender, args);
-        String sub = args.length == 0 ? "" : args[0];
+        String sub = args.length == 0 ? "편집" : args[0];
         switch (sub) {
+            case "편집", "edit" -> {
+                if (sender instanceof Player p) editor.open(p);
+                else sender.sendMessage("레시피 편집 창은 게임 안에서 /연금술관리 로 엽니다. (콘솔: 새로고침|목록|발견|잊기)");
+            }
             case "새로고침", "reload" -> {
-                try { reload(); } catch (Exception e) { sender.sendMessage("§calchemy.yml 오류: " + e.getMessage()); return true; }
-                for (var id : List.copyOf(viewers.keySet())) { Player p = Bukkit.getPlayer(id); if (p != null) send(p, AlchemyProtocol.KIND_STATE, ""); }
+                String error = reloadAndPush();
+                if (error != null) { sender.sendMessage("§calchemy.yml 오류: " + error); return true; }
                 sender.sendMessage("§a연금술 레시피 " + recipes.size() + "개를 다시 불러왔습니다. (재료 칸 " + slots + "개, 재료 카테고리 " + categories + ")");
             }
             case "목록", "list" -> {
@@ -437,7 +453,7 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
                 sender.sendMessage("§a" + target.getName() + ": 레시피 " + ids.size() + "개 " + (grant ? "발견 처리" : "잊게 함") + " (LuckPerms 반영까지 잠시 걸릴 수 있음)");
                 if (viewers.containsKey(target.getUniqueId())) Bukkit.getScheduler().runTaskLater(plugin, () -> { if (target.isOnline()) send(target, AlchemyProtocol.KIND_STATE, ""); }, 20);
             }
-            default -> sender.sendMessage("/연금술관리 <새로고침|목록|발견 <플레이어> <레시피|전체>|잊기 <플레이어> <레시피|전체>>");
+            default -> sender.sendMessage("/연금술관리 (편집 창) | 새로고침 | 목록 | 발견 <플레이어> <레시피|전체> | 잊기 <플레이어> <레시피|전체>");
         }
         return true;
     }
@@ -458,7 +474,7 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
     @Override public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         var players = Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
         if (command.getName().equals("연금술")) return args.length == 1 && sender.hasPermission("magiccodex.alchemy.admin") ? players : List.of();
-        if (args.length == 1) return List.of("새로고침", "목록", "발견", "잊기");
+        if (args.length == 1) return List.of("편집", "새로고침", "목록", "발견", "잊기");
         if (args.length == 2 && (args[0].equals("발견") || args[0].equals("잊기"))) return players;
         if (args.length == 3 && (args[0].equals("발견") || args[0].equals("잊기"))) {
             var ids = new ArrayList<String>(); ids.add("전체"); recipes.forEach(r -> ids.add(r.id())); return ids;

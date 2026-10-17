@@ -32,7 +32,8 @@ public final class BroomPhysics {
     static final float BOOST_MULT = 1.45f;
     static final int BOOST_TICKS = 30;
     static final int ROLL_TICKS = 14;
-    static final float ROLL_IMPULSE = 0.66f;
+    static final float ROLL_IMPULSE = 0.85f;   // 배럴롤 옆 밀기 (2026-10-17: 0.66 → 0.85, 회피 거리 약 2배)
+    static final float GRIP_ROLL = 0.02f;      // 배럴롤 중 옆미끄러짐 감쇠 (평소 GRIP 0.10 대신 → 끝까지 밀려 나감)
     static final float GRIP = 0.10f;          // 옆미끄러짐이 틱마다 사라지는 비율
     static final float GRIP_DRIFT = 0.035f;   // A/D 드리프트 중
     static final float GLIDE_DRAG = 0.987f;   // 손 뗐을 때
@@ -46,8 +47,10 @@ public final class BroomPhysics {
     public double vx, vy, vz;
     public float heading;
     public float prevHeading;
-    public float balance = 100;
-    public float prevBalance = 100;
+    public float balance;
+    public float prevBalance;
+    /** 빗자루 기수가 실제로 향한 위아래 각도. 시선(camPitch)을 선회 속도로 늦게 따라간다 (NaN = 첫 틱에 시선으로 맞춤). */
+    public float flightPitch = Float.NaN;
     public int boostTicks;
     public int boostCooldown;
     public int rollTicks;
@@ -64,7 +67,15 @@ public final class BroomPhysics {
     /** Gradual fatigue, not an expiry timer. Smooth flight can continue beyond one minute. */
     public float maximumBalance(){
         double timeScale=45+15*clamp(stats.mastery,0,1)+3*(clamp(stats.stability,.3f,3)-1);
-        return (float)Math.max(5,100*Math.exp(-(ridingTicks/20.0)/timeScale));
+        return (float)Math.max(5,balanceCap()*Math.exp(-(ridingTicks/20.0)/timeScale));
+    }
+    /** 안정성 단계별 최대 균형: 90 + 3×단계 (단계 = 1 + (stability−0.6)×7.5, 1~10 → 93~120). */
+    public float balanceCap(){
+        return balanceCap(stats.stability);
+    }
+    static float balanceCap(float stability){
+        float level=clamp(1+(stability-0.6f)*7.5f,1,10);
+        return 90+3*level;
     }
 
     public BroomPhysics(Stats stats, float heading, double vx, double vy, double vz, long seed) {
@@ -75,6 +86,8 @@ public final class BroomPhysics {
         this.vy = vy;
         this.vz = vz;
         this.random = new Random(seed);
+        this.balance = balanceCap();
+        this.prevBalance = balance;
     }
 
     public double horizontalSpeed() {
@@ -133,7 +146,11 @@ public final class BroomPhysics {
         double vr = vx * rx + vz * rz;
         double up = vy;
 
-        float pitch = clamp(in.camPitch(), -50, 60);
+        // 위아래도 선회 수치만큼만 시선을 따라감 (위를 보고 W = 상승, 아래를 보고 W = 하강). 좌우와 같은 maxTurn.
+        float pitchTarget = clamp(in.camPitch(), -50, 60);
+        if (Float.isNaN(flightPitch)) flightPitch = pitchTarget;
+        flightPitch += clamp(pitchTarget - flightPitch, -maxTurn, maxTurn);
+        float pitch = flightPitch;
         double pr = Math.toRadians(pitch);
         float accel = stats.accel * (boostTicks > 0 ? 1.8f : 1f);
 
@@ -155,7 +172,7 @@ public final class BroomPhysics {
         // 4) 옆: A/D 드리프트 + 미끄러짐 감쇠
         boolean drifting = in.left() != in.right();
         if (drifting) vr += (in.right() ? 1 : -1) * accel * 0.35;
-        vr *= 1 - (drifting ? GRIP_DRIFT : GRIP);
+        vr *= 1 - (rollTicks > 0 ? GRIP_ROLL : drifting ? GRIP_DRIFT : GRIP);
 
         // 배럴롤 (A/D 두 번)
         if (in.rollRequest() != 0 && rollCooldown == 0 && rollTicks == 0 && sf > 0.3f) {
@@ -167,9 +184,9 @@ public final class BroomPhysics {
         }
 
         // 5) 위아래 + 실속
+        // 스페이스 = 상승 (시선 + 전진 상승과 함께 쓰면 더 빨리 오른다). Shift 는 하차 전용.
         float lift = clamp(0.35f + sf, 0.35f, 1f);
         if (in.jump()) up += stats.climb * lift;
-        // Sneak is exclusively dismount; descent uses downward pitch + forward or natural stall.
         up *= 0.88;
         if (sf < STALL && !in.jump()) up -= 0.03 * (1 - sf / STALL);
         // 오르면 속도를 잃고, 내려꽂으면 속도가 붙음
@@ -282,6 +299,7 @@ public final class BroomPhysics {
     public void caught() {
         balance = Math.min(18,maximumBalance());
         prevBalance = balance;
+        flightPitch = Float.NaN; // 다시 잡은 순간의 시선에서 새로 시작
         fellOff = false;
     }
 

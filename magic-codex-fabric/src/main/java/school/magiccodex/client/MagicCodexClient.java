@@ -51,6 +51,7 @@ public final class MagicCodexClient implements ClientModInitializer {
         EquipmentClient.initialize();
         ArtifactClient.initialize();
         AlchemyClient.initialize();
+        AlchemyAdminClient.initialize();
         PetClient.initialize();
         TamingClient.initialize();
         ShinyClient.initialize();
@@ -60,10 +61,10 @@ public final class MagicCodexClient implements ClientModInitializer {
         PlayerHudClient.initialize();
         KyudichiClient.initialize();
         KyudichiQueueClient.initialize();
-        KyudichiPreview.initialize();
         HudChatClicks.initialize();
         PartyHudClient.initialize();
         PartyUiClient.initialize();
+        HousingClient.initialize();
         ScreenVfxClient.initialize();
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             for (String alias : new String[]{"UI", "ui"}) {

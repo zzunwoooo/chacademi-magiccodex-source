@@ -20,7 +20,7 @@ import java.util.Set;
 
 /**
  * 빗자루 모델 모음. 리소스 경로 assets/chacademy_motion/brooms/&lt;ID&gt;.bbmodel 을 읽는다.
- * 모드 안에 10종이 들어 있고, 서버 리소스팩(ItemsAdder)에 같은 경로로 넣으면 덮어쓰거나 새로 추가된다.
+ * 모드 안에 30종(broom_1~30, 등급 순서)이 들어 있고, 서버 리소스팩(ItemsAdder)에 같은 경로로 넣으면 덮어쓰거나 새로 추가된다.
  * 텍스처는 bbmodel 안에 내장된 PNG 를 처음 그릴 때(렌더 스레드) 등록한다.
  */
 public final class BroomModels {

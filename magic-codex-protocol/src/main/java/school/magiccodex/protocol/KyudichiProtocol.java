@@ -25,7 +25,6 @@ import java.util.UUID;
  * S2C 6 RESULT  u8 outcome(0 패 1 승 2 무 3 무효) · u16 scoreA · u16 scoreB · i16 delta · i32 rating · u8 tierBefore · u8 tierAfter
  *               · u8 n · n×(UUID · UTF nick · u8 team · u8 goals · u8 kills · u8 deaths · u8 snitch · u8 mvp)
  * S2C 7 SHRINES u8 n · n×(u8 type · f32 x · f32 y · f32 z)              type 0 체력 1 마나 2 안정성 3 가속
- * S2C 8 ROSTER  u8 n · n×(UUID · i8 house(-1 없음) · UTF broomId · i32 rating)   준비 화면용, 경기 시작·입장 때
  * C2S 1 PING    u8 kind · f32 x · f32 y · f32 z · u8 hasTarget [· UUID target]
  * C2S 2 FORFEIT u8 yes
  * C2S 3 READY   u8 ready
@@ -36,13 +35,13 @@ import java.util.UUID;
 public final class KyudichiProtocol {
     public static final String CHANNEL = "chacademi:kyudichi";
     public static final int VERSION = 1, MAX_BYTES = 8192;
-    public static final int MATCH = 1, KEY = 2, BALLS = 3, FEED = 4, PING = 5, RESULT = 6, SHRINES = 7, ROSTER = 8;
+    public static final int MATCH = 1, KEY = 2, BALLS = 3, FEED = 4, PING = 5, RESULT = 6, SHRINES = 7;
     public static final int C_PING = 1, C_FORFEIT = 2, C_READY = 3, C_AIM = 4;
     public static final int PING_KINDS = 15;
 
     private KyudichiProtocol() {}
 
-    public sealed interface Message permits Match, Key, Balls, Feed, Ping, Result, Shrines, Roster {}
+    public sealed interface Message permits Match, Key, Balls, Feed, Ping, Result, Shrines {}
     public record Person(UUID id, String nick, int team, int flags) {}
     public record Match(int phase, int myTeam, int scoreA, int scoreB, int timeLeftMs, int flags, String arena, List<Person> players) implements Message {}
     public record Key(int action, int cooldownMs, int holdLeftMs) implements Message {}
@@ -54,8 +53,6 @@ public final class KyudichiProtocol {
     public record Result(int outcome, int scoreA, int scoreB, int delta, int rating, int tierBefore, int tierAfter, List<Line> lines) implements Message {}
     public record Shrine(int type, float x, float y, float z) {}
     public record Shrines(List<Shrine> shrines) implements Message {}
-    public record Entry(UUID id, int house, String broom, int rating) {}
-    public record Roster(List<Entry> entries) implements Message {}
 
     /** Client requests. */
     public sealed interface Request permits PingRequest, Forfeit, Ready, Aim {}
@@ -96,10 +93,6 @@ public final class KyudichiProtocol {
                 case Shrines x -> {
                     o.writeByte(SHRINES); count(o, x.shrines.size(), 16);
                     for (Shrine s : x.shrines) { u8(o, s.type, 3); f(o, s.x); f(o, s.y); f(o, s.z); }
-                }
-                case Roster x -> {
-                    o.writeByte(ROSTER); count(o, x.entries.size(), 16);
-                    for (Entry e : x.entries) { uuid(o, e.id); o.writeByte(Math.clamp(e.house, -1, 3)); utf(o, e.broom, 64); o.writeInt(e.rating); }
                 }
             }
         });
@@ -154,14 +147,6 @@ public final class KyudichiProtocol {
                     int n = r8(i, 16); var ss = new ArrayList<Shrine>();
                     for (int k = 0; k < n; k++) ss.add(new Shrine(r8(i, 3), rf(i), rf(i), rf(i)));
                     yield new Shrines(List.copyOf(ss));
-                }
-                case ROSTER -> {
-                    int n = r8(i, 16); var es = new ArrayList<Entry>();
-                    for (int k = 0; k < n; k++) {
-                        UUID id = ruuid(i); int h = i.readByte(); if (h < -1 || h > 3) throw new IllegalArgumentException("house");
-                        es.add(new Entry(id, h, rutf(i, 64), i.readInt()));
-                    }
-                    yield new Roster(List.copyOf(es));
                 }
                 default -> throw new IllegalArgumentException("kind " + kind);
             };

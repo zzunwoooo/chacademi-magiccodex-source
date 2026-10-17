@@ -91,7 +91,7 @@ commands:
     permission: magiccodex.alchemy.use
   연금술관리:
     description: Reload alchemy.yml, list recipes, discover or forget recipes for a player.
-    usage: /연금술관리 <새로고침|목록|발견|잊기>
+    usage: /연금술관리 [편집|새로고침|목록|발견|잊기]
     permission: magiccodex.alchemy.admin
   기숙사점수:
     description: School house standings and administrator point adjustments.

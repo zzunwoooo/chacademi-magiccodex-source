@@ -27,7 +27,7 @@ import school.magiccodex.protocol.KyudichiQueueProtocol.PlayerRecord;
  */
 final class KyudichiDb {
     static final String MODE = "kyudichi";
-    record Standing(int rating, long bannedUntil, int wins, int losses) {}
+    record Standing(int rating, long bannedUntil) {}
 
     private final Logger log; private final int start; private final int[] floors;
     private final ExecutorService io = Executors.newSingleThreadExecutor(r -> { var t = new Thread(r, "Chacademi-kyudichi-db"); t.setDaemon(true); return t; });
@@ -66,13 +66,13 @@ final class KyudichiDb {
     /** Rating and ban for each player (missing rows = start rating, no ban). Callback runs on the DB thread. */
     void standings(List<UUID> ids, Consumer<Map<UUID, Standing>> done) {
         var fallback = new HashMap<UUID, Standing>();
-        for (UUID id : ids) fallback.put(id, new Standing(start, 0, 0, 0));
+        for (UUID id : ids) fallback.put(id, new Standing(start, 0));
         async(c -> {
             var out = new HashMap<>(fallback);
-            try (PreparedStatement s = c.prepareStatement("SELECT rating, banned_until, wins, losses FROM " + table + " WHERE player=? AND mode=?")) {
+            try (PreparedStatement s = c.prepareStatement("SELECT rating, banned_until FROM " + table + " WHERE player=? AND mode=?")) {
                 for (UUID id : ids) {
                     s.setString(1, id.toString()); s.setString(2, MODE);
-                    try (ResultSet r = s.executeQuery()) { if (r.next()) out.put(id, new Standing(r.getInt(1), r.getLong(2), r.getInt(3), r.getInt(4))); }
+                    try (ResultSet r = s.executeQuery()) { if (r.next()) out.put(id, new Standing(r.getInt(1), r.getLong(2))); }
                 }
             }
             return out;
@@ -102,7 +102,7 @@ final class KyudichiDb {
                     int i = 1;
                     while (r.next()) {
                         int rating = r.getInt(3);
-                        var row = new Rank(i, UUID.fromString(r.getString(1)), r.getString(2), "", rating, tier(rating, i), r.getInt(4), r.getInt(5), r.getInt(6));
+                        var row = new Rank(i, UUID.fromString(r.getString(1)), r.getString(2), rating, tier(rating, i), r.getInt(4), r.getInt(5), r.getInt(6));
                         top.add(row); if (row.id().equals(viewer)) mine = row; i++;
                     }
                 }
@@ -111,7 +111,7 @@ final class KyudichiDb {
                 try (PreparedStatement s = c.prepareStatement("SELECT name,rating,games,wins,losses,reached_at FROM " + table + " WHERE player=? AND mode=? AND games>0")) {
                     s.setString(1, viewer.toString()); s.setString(2, MODE);
                     try (ResultSet r = s.executeQuery()) {
-                        if (r.next()) { int rating = r.getInt(2); int rk = rank(c, rating, r.getLong(6)); mine = new Rank(rk, viewer, r.getString(1), "", rating, tier(rating, rk), r.getInt(3), r.getInt(4), r.getInt(5)); }
+                        if (r.next()) { int rating = r.getInt(2); int rk = rank(c, rating, r.getLong(6)); mine = new Rank(rk, viewer, r.getString(1), rating, tier(rating, rk), r.getInt(3), r.getInt(4), r.getInt(5)); }
                     }
                 }
             }
@@ -129,7 +129,7 @@ final class KyudichiDb {
                     if (!r.next()) return null;
                     UUID who = UUID.fromString(r.getString("player"));
                     int rating = r.getInt("rating"); int rk = r.getInt("games") > 0 ? rank(c, rating, r.getLong("reached_at")) : 0;
-                    return new PlayerRecord(who, r.getString("name"), "", rating, tier(rating, rk), rk, r.getInt("games"), r.getInt("wins"), r.getInt("losses"), r.getInt("draws"),
+                    return new PlayerRecord(who, r.getString("name"), rating, tier(rating, rk), rk, r.getInt("games"), r.getInt("wins"), r.getInt("losses"), r.getInt("draws"),
                             r.getInt("goals"), r.getInt("kills"), r.getInt("deaths"), r.getInt("assists"), r.getInt("snitch"), r.getInt("deflect_hits"), r.getInt("mvp"),
                             (float) r.getDouble("damage"), (float) r.getDouble("heal"), recent(c, who));
                 }

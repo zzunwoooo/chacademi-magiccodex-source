@@ -111,13 +111,6 @@ final class Hooks {
     }
     boolean riding(Player p) { return Boolean.TRUE.equals(motion("isRidingBroom", p)); }
     void stopBroomIfRiding(Player p) { if (riding(p)) motion("stopBroom", p); }
-    String broomId(Player p) { return motion("equippedBroomId", p) instanceof String s ? s : ""; }
-    int house(Player p) {
-        Plugin b = Bukkit.getPluginManager().getPlugin("MagicCodexBridge");
-        if (b == null) return -1;
-        try { return b.getClass().getMethod("houseOf", Player.class).invoke(b, p) instanceof Integer i ? i : -1; }
-        catch (ReflectiveOperationException | LinkageError e) { warnOnce("bridge-house", "MagicCodexBridge.houseOf 없음 (Bridge 업데이트 필요)"); return -1; }
-    }
     /** Stability shrine: refill the client balance gauge. Needs the motion update (refillBroomBalance). */
     void refillBroomBalance(Player p) { motion("refillBroomBalance", p); }
     /** Haste shrine: the normal broom boost without using / starting its cooldown. Needs the motion update (freeBroomBoost). */

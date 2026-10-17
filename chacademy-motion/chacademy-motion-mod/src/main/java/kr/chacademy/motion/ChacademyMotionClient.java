@@ -9,6 +9,7 @@ import kr.chacademy.motion.broom.BroomModels;
 import kr.chacademy.motion.broom.BroomPose;
 import kr.chacademy.motion.broom.BroomRenderer;
 import kr.chacademy.motion.broom.BroomRiders;
+import kr.chacademy.motion.broom.trail.BroomTrails;
 import kr.chacademy.motion.net.BroomPackets;
 import kr.chacademy.motion.net.MotionPackets;
 import net.fabricmc.api.ClientModInitializer;
@@ -60,6 +61,7 @@ public class ChacademyMotionClient implements ClientModInitializer {
         MotionPlayer.init();
         BroomPose.init();
         BroomModels.init();
+        BroomTrails.init(); // 빗자루 비행 궤적 (PortableVFX 있을 때만)
 
         // 빗자루: 서버가 "타라"(나만) / "누가 탔다·내렸다"(나와 주변)를 알려줌. 둘 다 클라 스레드에서 실행됨.
         ClientPlayNetworking.registerGlobalReceiver(BroomPackets.RideS2C.TYPE, (payload, context) -> BroomFlight.onRide(payload));
@@ -71,6 +73,7 @@ public class ChacademyMotionClient implements ClientModInitializer {
             BroomRiders.clear();
             BroomPose.clear();
             BroomApi.clear();
+            BroomTrails.reset();
         }));
         WorldRenderEvents.AFTER_ENTITIES.register(BroomRenderer::render);
         HudRenderCallback.EVENT.register(BroomHud::render);

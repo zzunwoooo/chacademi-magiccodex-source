@@ -2,11 +2,34 @@ package school.magiccodex.client;
 
 /** Layout and animation share one coordinate system, including all hit targets. */
 public final class TopMenuState {
-    public static final String[] LABELS={"캐시샵","우편함","마법도감","펫 도감","내정보","친구","퀘스트","기숙사 점수","설정"};
-    private static final String[] COMMANDS={"캐시샵","우편함","","펫도감","스텟창","친구","의뢰게시판","학교기증",""};
+    public static final String[] LABELS={"캐시샵","내 정보","도감","소셜","퀘스트","우편함","설정"};
+    private static final String[] COMMANDS={"캐시샵","","","","의뢰게시판","우편함",""};
     public static final float STEP=38,HEIGHT=36;
     public static final float SEASON_SPACE=28,SEASON_CENTER=28;
     public static final float TEMPERATURE_SPACE=56;
+    public static final float DROPDOWN_WIDTH=76, DROPDOWN_TOP=40, ROW_HEIGHT=64, DROPDOWN_PAD=9;
+    private static final String[][] CHILDREN={{},{"스탯","장비","칭호"},{"마법 도감","펫 도감","아티팩트 도감"},{"친구","파티","기숙사"},{},{},{}};
+    private int group=-1;
+    private long groupStarted;
+    private float groupProgress;
+    public static boolean isGroup(int index){return index>=1&&index<=3;}
+    public int group(){return group;}
+    public float groupProgress(){return groupProgress;}
+    public static String childLabel(int group,int row){return CHILDREN[group][row];}
+    public static int childHit(int group,int row){return 100+group*10+row;}
+    public static float rowTop(int row){return DROPDOWN_TOP+DROPDOWN_PAD+ROW_HEIGHT*row;}
+    public static float dropdownHeight(){return DROPDOWN_PAD*2+ROW_HEIGHT*3;}
+    public float dropdownLeft(float base){return iconCenter(base,group)-DROPDOWN_WIDTH/2;}
+    public void closeGroup(){group=-1;groupProgress=0;}
+    public void toggleGroup(int index,long now){
+        if(!isGroup(index)||!expanded||progress<.999f)return;
+        if(group==index){closeGroup();return;}
+        group=index;groupStarted=now;groupProgress=0;
+    }
+    public boolean insideDropdown(float x,float y,float base){
+        return group>=0&&x>=dropdownLeft(base)&&x<=dropdownLeft(base)+DROPDOWN_WIDTH
+            &&y>=DROPDOWN_TOP&&y<=DROPDOWN_TOP+dropdownHeight();
+    }
     private HudSeason season=HudSeason.SPRING;
     private boolean expanded;
     private float from,progress;
@@ -21,13 +44,19 @@ public final class TopMenuState {
         float t=Math.clamp((now-started)/240f,0,1);
         float eased=t*t*(3-2*t);
         progress=from+((expanded?1:0)-from)*eased;
+        if(group>=0){float g=Math.clamp((now-groupStarted)/180f,0,1);groupProgress=g*g*(3-2*g);}
     }
-    public void toggle(long now){update(now);from=progress;expanded=!expanded;started=now;}
+    public void toggle(long now){closeGroup();update(now);from=progress;expanded=!expanded;started=now;}
     public float width(float base){return base+STEP*LABELS.length*progress;}
     public float iconCenter(float base,int index){return base-13+STEP*index;}
     public float arrowCenter(float base){return width(base)-20;}
-    /** -2 outside, -1 arrow, 0..8 menu. Hidden/transitioning items cannot activate. */
+    /** -2 outside, -1 arrow, 0..6 menu, 100+group*10+row submenu. Hidden/transitioning items cannot activate. */
     public int hit(float x,float y,float base){
+        if(group>=0&&expanded&&progress>=.999f&&groupProgress>=.999f&&insideDropdown(x,y,base)){
+            int row=(int)((y-DROPDOWN_TOP-DROPDOWN_PAD)/ROW_HEIGHT);
+            if(y>=DROPDOWN_TOP+DROPDOWN_PAD&&row>=0&&row<3)return childHit(group,row);
+            return -2;
+        }
         if(y<5 || y>31)return -2;
         if(Math.abs(x-arrowCenter(base))<=13)return -1;
         if(progress<.999f || !expanded)return -2;

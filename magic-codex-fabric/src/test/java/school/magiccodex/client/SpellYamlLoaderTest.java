@@ -48,6 +48,24 @@ class SpellYamlLoaderTest {
         assertEquals("",spell.icon());assertEquals(1.5,spell.cooldown());
     }
 
+    @Test void reviewedMissingIconsResolveForLegacyBlankConfigurations() throws Exception {
+        for(String id:SpellYamlLoader.REVIEWED_ICON_IDS){
+            var source=VALID.replace("magical_flame",id).replace("icon: magiccodex:textures/spells/"+id+".png","icon: ''");
+            var spell=loader.parse(source);
+            assertEquals("magiccodex:textures/spells/reviewed_20261016/"+id+".png",spell.icon());
+            assertEquals(10,spell.cooldown());
+            try(var in=getClass().getResourceAsStream("/assets/magiccodex/textures/spells/reviewed_20261016/"+id+".png")){
+                assertNotNull(in,id);byte[] signature=in.readNBytes(8);
+                assertArrayEquals(new byte[]{(byte)137,80,78,71,13,10,26,10},signature);
+            }
+        }
+        assertEquals(8,SpellYamlLoader.REVIEWED_ICON_IDS.size());
+    }
+    @Test void reviewedIconsNeverOverrideExplicitUserSelection(){
+        var spell=loader.parse(VALID.replace("magical_flame","pressure_lance"));
+        assertEquals("magiccodex:textures/spells/pressure_lance.png",spell.icon());
+    }
+
     @Test void readsManaCostAndPreservesItAcrossPermissionUpdates() {
         var spell = loader.parse(VALID.replace("cooldown-seconds: 10", "cooldown-seconds: 10\n  mana-cost: 180"));
         assertEquals(180, spell.manaCost());

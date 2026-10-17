@@ -73,8 +73,6 @@ public final class PartyPlugin {
             @Override public String name(UUID id){return PartyPlugin.this.name(id);}
             @Override public void notice(Player p,String text){PartyPlugin.this.notice(p,text);}
             @Override public boolean trusted(String server){return trusted.contains(server);}
-            @Override public int house(UUID id){return person(id,0).house();}
-            @Override public String skin(UUID id){return person(id,0).skin().hash();}
         },this);
         try{kyudichi.initialize(directory);}catch(RuntimeException e){logger.error("Kyudichi queue initialization failed; queue unavailable",e);}
     }

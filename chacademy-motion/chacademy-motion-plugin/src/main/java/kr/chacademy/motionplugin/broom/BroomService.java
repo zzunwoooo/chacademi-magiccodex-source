@@ -94,16 +94,21 @@ public final class BroomService implements Listener, PluginMessageListener {
 
     // ------------------------------------------------------------------ 설정
 
+    /** brooms.yml 형식 버전. 기본 파일의 config-version 과 같아야 한다. */
+    static final int CONFIG_VERSION = 2;
+
     public void reload() {
         File file = new File(plugin.getDataFolder(), "brooms.yml");
         if (!file.exists()) plugin.saveResource("brooms.yml", false);
         var yml = YamlConfiguration.loadConfiguration(file);
+        if (yml.getInt("config-version", 1) < CONFIG_VERSION) yml = upgrade(file, yml);
         brooms.clear();
+        double climbPower = yml.getDouble("climb-power", 0.055);
         var section = yml.getConfigurationSection("brooms");
         if (section != null) {
             for (String id : section.getKeys(false)) {
                 var s = section.getConfigurationSection(id);
-                if (s != null && id.matches("[a-z0-9_]{1,40}")) brooms.put(id, BroomType.read(id, s));
+                if (s != null && id.matches("[a-z0-9_]{1,40}")) brooms.put(id, BroomType.read(id, s, climbPower));
             }
         }
         practiceBroom = yml.getString("practice-broom", "broom_1");
@@ -113,6 +118,36 @@ public final class BroomService implements Listener, PluginMessageListener {
         catchWindow = Math.max(10, yml.getInt("catch-window-ticks", 40));
         blockedWorlds = new HashSet<>(yml.getStringList("blocked-worlds"));
         debug = yml.getBoolean("debug", false);
+    }
+
+    /**
+     * 2026-10-16: 30종 개편으로 빗자루 번호·능력치가 전부 바뀌었다. 예전 파일은 brooms.yml.v&lt;N&gt;.bak 으로 남기고
+     * 새 기본 파일을 쓰되, 빗자루 목록(brooms) 밖의 서버 설정(연습용 빗자루 제외)은 예전 값을 옮겨 온다.
+     */
+    private YamlConfiguration upgrade(File file, YamlConfiguration old) {
+        int oldVersion = old.getInt("config-version", 1);
+        File backup = new File(plugin.getDataFolder(), "brooms.yml.v" + oldVersion + ".bak");
+        for (int i = 2; backup.exists(); i++) backup = new File(plugin.getDataFolder(), "brooms.yml.v" + oldVersion + ".bak" + i);
+        try {
+            java.nio.file.Files.move(file.toPath(), backup.toPath());
+        } catch (java.io.IOException e) {
+            plugin.getLogger().warning("brooms.yml 이 예전 버전인데 백업으로 옮기지 못했습니다(" + e + "). 새 파일로 직접 바꿔 주세요.");
+            return old;
+        }
+        plugin.saveResource("brooms.yml", false);
+        var fresh = YamlConfiguration.loadConfiguration(file);
+        for (String key : new String[]{"climb-power", "mastery-full-hours", "boost-cooldown-ticks", "roll-cooldown-ticks", "catch-window-ticks", "blocked-worlds", "debug"}) {
+            if (old.contains(key)) fresh.set(key, old.get(key));
+        }
+        try {
+            fresh.save(file);
+        } catch (java.io.IOException e) {
+            plugin.getLogger().warning("brooms.yml 에 예전 서버 설정을 옮겨 적지 못했습니다(" + e + "). 기본값으로 동작합니다.");
+            return YamlConfiguration.loadConfiguration(file);
+        }
+        plugin.getLogger().warning("brooms.yml 을 새 버전(" + CONFIG_VERSION + ", 빗자루 30종)으로 바꿨습니다. 예전 파일: " + backup.getName()
+                + " (빗자루 목록·연습용 빗자루는 새 기본값, 나머지 서버 설정은 예전 값 유지)");
+        return fresh;
     }
 
     public Map<String, BroomType> brooms() {

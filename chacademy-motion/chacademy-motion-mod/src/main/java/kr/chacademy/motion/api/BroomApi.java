@@ -30,6 +30,38 @@ import java.util.List;
 public final class BroomApi {
     private BroomApi() {}
 
+    // ------------------------------------------------------------------ 비행 궤적 덮어쓰기 (아티팩트 등)
+
+    /**
+     * 이 플레이어의 비행 궤적을 broom_trails.json 의 궤적 키로 바꾼다. 비행 중이면 옛 궤적은 사라지고(꼬리 남김) 새 궤적이 켜진다.
+     * <b>이 PC 화면에만</b> 적용된다. 다른 사람 화면에도 보이게 하려면 서버가 각 클라이언트에 알려 주는 별도 연동이 필요하다.
+     * 접속 종료 때 모두 해제된다.
+     *
+     * @param playerUuid 플레이어 UUID 문자열
+     * @param trailKey   broom_trails.json 의 effects 키 (예: "l_dragon", "u_sonic")
+     * @return 없는 키·잘못된 UUID 면 false
+     */
+    public static boolean setTrailOverride(String playerUuid, String trailKey) {
+        try {
+            return kr.chacademy.motion.broom.trail.BroomTrails.setOverride(java.util.UUID.fromString(playerUuid), trailKey);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    /** 덮어쓰기 해제 → 빗자루 기본 궤적으로 돌아감. */
+    public static void clearTrailOverride(String playerUuid) {
+        try {
+            kr.chacademy.motion.broom.trail.BroomTrails.clearOverride(java.util.UUID.fromString(playerUuid));
+        } catch (IllegalArgumentException ignored) {
+        }
+    }
+
+    /** 모든 덮어쓰기 해제. */
+    public static void clearTrailOverrides() {
+        kr.chacademy.motion.broom.trail.BroomTrails.clearOverrides();
+    }
+
     // ------------------------------------------------------------------ 보유 목록 (서버 chacademy:broom_list)
 
     private static List<BroomPackets.Owned> owned = List.of();
@@ -82,7 +114,7 @@ public final class BroomApi {
         return b == null ? id : b.name();
     }
 
-    /** 등급 표시 문구 (기본/일반/고급/희귀/전설). */
+    /** 등급 표시 문구 (일반/희귀/유일/전설). */
     public static String grade(String id) {
         var b = find(id);
         return b == null ? "" : b.grade();
@@ -95,17 +127,23 @@ public final class BroomApi {
 
     /**
      * 마우스 올렸을 때 보여줄 게이지 값 0~1 (5개, {@link #gaugeLabels} 순서).
-     * 빗자루 10종 범위에 맞춰 최하 빗자루도 막대가 조금은 보이도록 0.15~1 로 맞췄다.
+     * 2026-10-16 30종 기획의 1~10단계를 수치에서 되돌려 계산해 단계/10 으로 준다 (UI 는 ×10 해서 칸 수로 쓴다).
      */
     public static float[] gauges(String id) {
         var b = find(id);
         if (b == null) return new float[5];
         return new float[]{
-                norm(b.maxSpeed(), 0.70f, 1.40f),
-                norm(b.accel(), 0.025f, 0.052f),
-                norm(b.turn(), 7.0f, 13.5f),
-                norm(b.brake(), 0.026f, 0.047f),
-                norm(b.stability(), 0.75f, 1.50f)};
+                level((b.maxSpeed() * 20 - 10.9f) * 9 / 22.1f),
+                level((b.accel() - 0.025f) / 0.005f),
+                level(b.turn() - 7f),
+                level((b.brake() - 0.025f) / 0.005f),
+                level((b.stability() - 0.6f) * 7.5f)};
+    }
+
+    /** (단계 − 1) 값 → 단계/10 (1~10 단계로 반올림). */
+    static float level(float stepsAboveOne) {
+        float l = Math.round(stepsAboveOne) + 1;
+        return Math.max(1, Math.min(10, l)) / 10f;
     }
 
     /** 게이지 옆에 쓸 실제 값 문구 (예: "27 b/s"). */
@@ -133,11 +171,6 @@ public final class BroomApi {
     private static BroomPackets.Owned find(String id) {
         for (var b : owned) if (b.id().equals(id)) return b;
         return null;
-    }
-
-    private static float norm(float v, float lo, float hi) {
-        float t = (v - lo) / (hi - lo);
-        return 0.15f + 0.85f * Math.max(0f, Math.min(1f, t));
     }
 
     // ------------------------------------------------------------------ 화면에 3D 모델 그리기
