@@ -53,6 +53,8 @@ public final class KyudichiClient {
     static final List<PingMark> pings = new ArrayList<>();
     static KyudichiProtocol.Result result; static long resultAt;
     static final Map<UUID, Integer> teams = new HashMap<>();
+    /** ROSTER: house, broom and rating per player (preparation window). */
+    static final Map<UUID, KyudichiProtocol.Entry> roster = new HashMap<>();
 
     static void initialize() {
         PayloadTypeRegistry.playS2C().register(Payload.ID, Payload.CODEC);
@@ -69,12 +71,12 @@ public final class KyudichiClient {
     }
 
     static void reset() {
-        match = null; balls = prevBalls = null; shrines = List.of(); feed.clear(); pings.clear(); result = null; teams.clear(); gesture = null;
+        match = null; balls = prevBalls = null; shrines = List.of(); feed.clear(); pings.clear(); result = null; teams.clear(); roster.clear(); gesture = null;
         key = new KyudichiProtocol.Key(0, 0, 0);
         KyudichiHud.close();
     }
 
-    private static void receive(KyudichiProtocol.Message m) {
+    static void receive(KyudichiProtocol.Message m) {
         long now = Util.getMeasuringTimeMs();
         switch (m) {
             case KyudichiProtocol.Match x -> {
@@ -95,8 +97,12 @@ public final class KyudichiClient {
                 var c = MinecraftClient.getInstance();
                 c.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), x.kind() == 3 ? 0.8f : 1.4f, 0.35f));
             }
+            case KyudichiProtocol.Roster x -> { roster.clear(); for (var e : x.entries()) roster.put(e.id(), e); }
             case KyudichiProtocol.Result x -> {
                 result = x; resultAt = now; match = null; balls = prevBalls = null; shrines = List.of(); pings.clear();
+                var c = MinecraftClient.getInstance();
+                if (c.currentScreen == null || HudPointer.hudVisibleUnder(c.currentScreen) || c.currentScreen instanceof KyudichiPrepareScreen
+                        || c.currentScreen instanceof KyudichiSpellPickScreen) c.setScreen(new KyudichiResultScreen(x));
             }
         }
     }
@@ -121,6 +127,16 @@ public final class KyudichiClient {
     static void openSetup() {
         var c = MinecraftClient.getInstance();
         if (playing() && match.phase() == 0) c.setScreen(new KyudichiPrepareScreen());
+    }
+
+    /**
+     * CodexKeyboardMixin, before casting: during the preparation the 큐디치 key (F) opens the preparation window again
+     * (it has nothing else to do before the start).
+     */
+    public static boolean handleKey(MinecraftClient c, int key, int scan, int action) {
+        if (action != 1 || c.currentScreen != null || !playing() || match.phase() != 0 || !c.options.swapHandsKey.matchesKey(key, scan)) return false;
+        openSetup();
+        return true;
     }
 
     /** Right before an aimed cast whose point is in the air: the server uses this point once (MagicAimPointEvent). */
@@ -164,7 +180,6 @@ public final class KyudichiClient {
     /** HudCursorScreen.mouseClicked, after the other HUD widgets. */
     public static boolean cursorPress(double x, double y, int button) {
         if (!active() || spectator() || button != 0) return false;
-        if (KyudichiHud.setupHit(x, y)) { openSetup(); return true; }
         if (KyudichiHud.forfeitHit(x, y)) {
             if (ClientPlayNetworking.canSend(Payload.ID)) ClientPlayNetworking.send(new Payload(KyudichiProtocol.encode(new KyudichiProtocol.Forfeit(true))));
             return true;

@@ -21,6 +21,7 @@ public abstract class CodexKeyboardMixin {
                 || school.magiccodex.client.EquipmentClient.handleKey(client,key,scan,action)
                 || StatsClient.handleKey(client, key, scan, action)
                 || MagicCodexClient.handleOpenShortcut(client, key, scan, action)
+                || school.magiccodex.client.KyudichiClient.handleKey(client, key, scan, action)
                 || (!school.magiccodex.client.KyudichiClient.reservesKey(client, key, scan) && CastingClient.handleKey(client, key, scan, action))))
             ci.cancel();
     }

@@ -28,6 +28,19 @@ final class Catalog {
     int revision() { return revision; }
     HousingProtocol.Catalog message() { return new HousingProtocol.Catalog(revision, ordered); }
 
+    /** 이 플레이어가 놓을 수 있는 가구 → 최대 개수 (권한이 있는 것만). */
+    Map<String, Integer> allowed(org.bukkit.permissions.Permissible p) {
+        var map = new HashMap<String, Integer>();
+        for (Def d : ordered) if (p.hasPermission(HousingRules.permission(d.id()))) map.put(d.id(), d.max());
+        return map;
+    }
+    /** 권한과 상관없이 모든 가구의 최대 개수 (관리자 크기 변경 등 주인이 없을 때 정리용). */
+    Map<String, Integer> everything() {
+        var map = new HashMap<String, Integer>();
+        for (Def d : ordered) map.put(d.id(), d.max());
+        return map;
+    }
+
     static Catalog parse(ConfigurationSection root, Logger log) {
         var list = new ArrayList<Def>();
         for (String id : root.getKeys(false)) {
@@ -73,7 +86,10 @@ final class Catalog {
         int accent = color(s.getString("accent", "#E1B866"));
         String icon = s.getString("icon", "").strip();
         if (!icon.isEmpty() && !icon.matches("[a-z0-9_.-]+:[a-z0-9_./-]+\\.png")) throw new IllegalArgumentException("icon 은 namespace:path.png");
-        return new Def(id, name, cat, sub, w, d, height, color, accent, icon);
+        int max = s.getInt("max", 1);
+        if (max < 1 || max > HousingRules.MAX_PLACEMENTS) throw new IllegalArgumentException("max 는 1~" + HousingRules.MAX_PLACEMENTS);
+        if (cat == HousingRules.CAT_SURFACE) max = 1;
+        return new Def(id, name, cat, sub, w, d, height, color, accent, icon, max);
     }
 
     static int color(String hex) {

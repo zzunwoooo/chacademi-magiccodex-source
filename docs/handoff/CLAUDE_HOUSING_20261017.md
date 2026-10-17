@@ -7,7 +7,7 @@
 - 방은 마인크래프트 월드에 만들지 않는다. **UI 전용 미니룸**(싸이월드 미니홈피 느낌).
 - 기숙사마다 있는 **기숙사실에서 방(문)으로 들어가면 UI 가 열리고 내 방이 나온다.**
 - 처음 **7×7** (2026-10-17 오너 최종 결정), 돈을 써서 7→9→11→13→15 로 넓힌다(최대 15×15, 관리자 `/하우징관리 크기` 는 32 까지). 벽 높이 **4칸**. 가구는 UI 에서 놓는다.
-- 방 바닥·벽 기본 PNG 는 오너가 가져오기로 함 → 받으면 지금 색칠한 바닥·벽 대신 텍스처로 입힌다.
+- 방 바닥·벽 기본 그림(오너 납품 HOUSING_DEFAULT_TEXTURES): `textures/gui/housing/floor_default.png`(128², 칸마다 한 장) · `wall_default.png`(128×512 = 한 칸 × 높이 4칸). 벽지·바닥재 아이템을 적용하면 그 아이템 색으로 그린다(아이템별 그림은 아직 없음). 그림은 `RenderLayer.getGuiTextured` 사각형에 직접 UV 로 입힌다(`HousingScreen.texFace`) — 실게임에서 벽·바닥이 안 보이거나 뒤집혀 보이면 이 부분.
 - 미니미(내 스킨 캐릭터)는 2차. 미니미는 각자 클라이언트에서 자유 행동, 서버는 **방에 있는 사람 명단·닉네임만** 보낸다 (이번에 구현).
 - 플러그인은 새로 만든다 (Bridge 에 넣지 않음). 오너가 직접 승인했으므로 MagicCodex 수정도 바로 진행.
 
@@ -19,8 +19,9 @@
    - Bridge(magic-codex-paper)·Velocity 는 **바뀌지 않았다.**
 2. `settings.gradle` 에 `include "housing-paper"` 추가. build.gradle 은 kyudichi-paper 와 같은 형식 (`../magic-codex-database/lib/mariadb-java-client-3.5.10.jar` 를 jar 에 포함).
 3. **DB**: `plugins/ChacaHousing/database.properties` 를 Bridge 와 같은 형식으로 **공용 MariaDB** 로. 테이블 자동 생성:
-   `codex_housing_room / _layout / _owned / _like / _visit / _guestbook / _presence / _online`.
+   `codex_housing_room / _layout / _like / _visit / _guestbook / _presence / _online`. (보유 가구 테이블 없음 — 가구는 권한)
    Bridge 테이블 `codex_nicknames`(닉네임), `codex_houses`(기숙사), `codex_friends`(친구 목록)는 **읽기만** 한다.
+   기숙사는 Bridge `SchoolBridge.house` 와 같은 순서로 찾는다: `codex_houses` → Bridge `StatsService` 의 dormitory(리플렉션) → `magiccodex.house.<arkeon|lumina|bestiaz|noxer>` 권한. 방 정보에는 기숙사 이름 + 문장 아이콘만 보인다.
    SQLite 모드로 켜지면 경고를 남기고 닉네임·기숙사·친구는 비어 보인다.
 4. `config.yml` 의 `server-name` 을 서버마다 다르게 (`school`, `wild`). 구경 중 명단·접속 표시의 서버 구분에만 쓴다.
 5. **Vault** 가 있어야 방 확장이 된다 (Bridge 상점과 같은 리플렉션 방식). 확장 비용은 `config.yml expansion` — 단계 9·11·13·15 는 오너 결정, **비용(10000·25000·50000·100000)은 임시 값 — 오너가 정할 것.** 처음 크기 `start-size: 7`.
@@ -37,7 +38,7 @@
 
 ### 편집 모드 (내 방, 문으로 열었을 때)
 - 레퍼런스 layout_edit 배치: 제목·방 정보(얼굴·닉네임·기숙사·오늘/누적 방문·좋아요), 상단 버튼(방 확장·BGM·방명록·친구 방·닫기), 도구(회전·회수·되돌리기·저장), 레이아웃 1·2·3, 보관함(가구·소품·벽걸이·벽지·바닥 탭 + 검색 + 가로 스크롤).
-- 보관함에서 고르면 손에 들고, 방 위에서 초록/빨강 칸으로 놓을 자리를 보여 준다. 좌클릭 놓기, **R** 회전, 우클릭·ESC 취소, Shift+클릭 같은 가구 이어서 놓기.
+- 보관함에서 고르면 손에 들고, 방 위에서 초록/빨강 칸으로 놓을 자리를 보여 준다. 칸 구분선은 평소엔 숨기고 가구를 들고 있을 때만 점선으로 보인다(벽걸이면 벽에도). 좌클릭 놓기, **R** 회전, 우클릭·ESC 취소, Shift+클릭 같은 가구 이어서 놓기.
 - 놓인 가구 좌클릭 = 집어서 옮기기, 우클릭·Delete = 보관함으로. **Ctrl+Z** 되돌리기, **Ctrl+S** 저장. 휠 = 확대/축소, 빈 곳 드래그(또는 우·가운데 버튼) = 이동.
 - 벽걸이는 마우스가 있는 쪽 벽(왼쪽/오른쪽)에 걸린다. 벽지·바닥재는 누르면 적용/해제.
 - 레이아웃 3칸은 각각 따로 꾸밀 수 있고, **저장한 칸이 방문자에게 보이는 레이아웃**이 된다(초록 점). 칸마다 보유 개수까지 쓸 수 있다.
@@ -53,13 +54,16 @@
 
 ### 구경 중 명단 (실시간)
 - 창이 열려 있는 동안 `codex_housing_presence` 에 (보는 사람, 방 주인, 닉네임, 서버, 시각)을 2초마다 올리고, 같은 방을 보는 사람(모든 서버)을 읽어 바뀌었을 때만 보낸다. 8초 갱신 없으면 빠진다.
-- 방이 바뀌면(저장·확장·좋아요·방명록·새 방문·관리자 지급) `codex_housing_room.rev` 가 오르고, 그 방을 보고 있는 모든 서버가 다음 동기화 때 다시 보낸다. 편집 중인 주인 창은 **저장하지 않은 칸을 덮어쓰지 않는다.**
+- 방이 바뀌면(저장·확장·좋아요·방명록·새 방문·관리자 크기 변경) `codex_housing_room.rev` 가 오르고, 그 방을 보고 있는 모든 서버가 다음 동기화 때 다시 보낸다. 편집 중인 주인 창은 **저장하지 않은 칸을 덮어쓰지 않는다.**
 - 화면에는 「구경 중 N명 · 이름 3개」 표시판. (미니미 2차에서 이 명단으로 캐릭터를 그린다.)
 
 ### 가구
 - `plugins/ChacaHousing/furniture.yml` (오너가 언제든 수정, `/하우징관리 리로드`). 이름·카테고리(가구/소품/벽걸이/벽지/바닥재)·크기·높이·색·테두리색·아이콘(선택).
 - **가구 모델이 아직 없어서 색 상자로 그린다.** 지금 목록 14개는 기능 확인용 임시 가구. 아이콘 PNG 를 모드에 넣고 `icon:` 을 적으면 보관함에 아이콘이 나온다.
-- 획득 경로는 아직 없음 → 관리자 `/하우징관리 가구 지급 <유저> <가구ID|모두> [개수]`, `회수`, `가구 목록 [유저]`. 회수·크기 축소 시 넘치는 배치는 자동으로 빠진다(`HousingRules.prune`).
+- **가구는 권한으로 준다 (2026-10-17 오너 결정, 있다/없다만 판단).** 권한 `chacademi.housing.furniture.<가구ID>`, 전부는 `chacademi.housing.furniture.*` (LuckPerms). 학교·야생이 같은 권한을 봐야 한다(LuckPerms 공유 DB).
+- 권한이 있으면 그 가구를 `furniture.yml` 의 `max` 개까지(레이아웃마다) 놓을 수 있다. 벽지·바닥재는 1.
+- 권한이 빠지면 **다음 접속 때** 저장된 레이아웃에서 빠진다(`HousingStore.touch` → `HousingRules.prune`). 저장할 때도 서버가 그때의 권한으로 다시 검사한다. 관리자 크기 축소 때는 권한과 상관없이 크기·max 로만 정리.
+- `/하우징관리 가구 목록` = 가구 ID·최대 개수·권한 안내. (예전 지급·회수 명령은 없앰)
 
 ## 2. 프로토콜 `chacademi:housing` (클라이언트 ↔ 게임 서버)
 
@@ -80,7 +84,7 @@
 |---|---|---|
 | 프로토콜 | `HousingProtocol.java` (새) | 형식, 방명록 글 정리(`cleanText`) |
 | 프로토콜 | `HousingRules.java` (새) | 가구 정의·배치·레이아웃, 놓기 검사(`fits`)·저장 검사(`validate`)·정리(`prune`), DB 텍스트 형식 `v1|벽지|바닥|id,x,y,z,r;…` |
-| 플러그인 | `housing-paper/**` (새) | `HousingPlugin`, `Rooms`(세션·요청·동기화), `HousingStore`(DB), `Catalog`(furniture.yml), `Doors`, `Commands`, `Economy`(Vault), `Skins`, `Settings`, `Net` |
+| 플러그인 | `housing-paper/**` (새) | `HousingPlugin`, `Rooms`(세션·요청·동기화), `HousingStore`(DB), `Catalog`(furniture.yml, 권한 → 놓을 수 있는 개수), `Doors`, `Commands`, `Economy`(Vault), `Skins`, `Settings`, `Net` |
 | 클라 | `HousingClient.java` (새) | 채널, 상태(카탈로그·방·명단·방명록·친구), 얼굴 텍스처 |
 | 클라 | `HousingScreen.java` (새) | 창 전체 (`SocialScreen` 상속) |
 | 클라 | `HousingIso.java` (새) | 쿼터뷰 좌표·마우스→칸/벽·윤곽 (순수 자바) |
@@ -98,7 +102,7 @@
 
 ## 5. 실게임에서 볼 것 (우선순위)
 
-1. `/하우징관리 가구 지급 <나> 모두 2` → 기숙사실 문 등록 → 우클릭 → 창이 열리는지 (안 열리면 서버 로그 「하우징 준비 완료」, 클라 `canSend(chacademi:housing)`).
+1. 테스트 계정에 권한 `chacademi.housing.furniture.*` → 기숙사실 문 등록 → 우클릭 → 창이 열리는지 (안 열리면 서버 로그 「하우징 준비 완료」, 클라 `canSend(chacademi:housing)`).
 2. 놓기·회전·옮기기·우클릭 회수·Ctrl+Z·저장 → 다시 열었을 때 그대로인지. 겹치게/밖으로 놓으면 빨간 칸.
 3. 두 계정: `/방구경` → 좋아요·방명록·구경 중 표시판, 주인 창에 실시간 반영(2초 안), 주인이 저장하면 구경하는 쪽 방이 바뀌는지.
 4. 학교↔야생: 다른 서버에서 같은 방·명단이 보이는지 (공용 DB).

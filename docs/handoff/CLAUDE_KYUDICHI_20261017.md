@@ -49,3 +49,27 @@
 - 순수 테스트 통과: RatingMath, Box/기간/핑, KyudichiWire, KyudichiProtocol(3), KyudichiQueueProtocol(5), KyudichiMatchmaker(5).
 - javac 소스 대조: kyudichi-paper, chacademi-party-velocity, Bridge 새 이벤트 — 자기 파일 오류 0. Bridge `SpellRuntime` 수정분과 Fabric 클라이언트 전체는 **미컴파일**.
 - 실제 서버/게임 테스트 0회. 우선 확인할 것: 혼자 테스트 경기(F키·공·성소·결과), 2계정 매칭(수락→이동→복귀), 재접속, 관전, 대시보드, 세팅 창, 공중 조준.
+
+
+## 2026-10-17 오후: UI 재제작 (커밋 0f4c798, 06afebc)
+
+- 혼자 테스트·연습 경기는 한 팀이 비어도 끝나지 않음 (모두 나가야 종료).
+- 오너 PNG `CHACADEMI_QUIDDITCH_FULL_UI_REBUILD` 를 `textures/gui/kyudichi/ui/<폴더>/` 에 넣음 (layouts 제외, keys 256px로 축소,
+  recent_table 의 예시 승패 배지 제거, scrollbar 를 track/thumb 로 분리, 오너가 따로 준 frame_ranking·frame_record 추가). 약 23MB.
+- 화면 코드: `client/kui/*View.java` (마인크래프트 의존 없음, 레퍼런스 1672×941 좌표 그대로) + 게임용 `KyudichiCanvas`.
+  같은 코드를 `src/test/.../kui/PreviewMain` 이 Java2D 로 그려 레퍼런스와 비교 이미지를 만든다 (`AwtCanvas`, `Samples`).
+  레이아웃을 고칠 때는 View 만 고치고 PreviewMain 으로 확인.
+- 새 창: 신청(`/큐디치`, 프록시 APPLY) · 매칭 대기 카드(HUD 오른쪽 위) · 수락 팝업(자동) · 준비(자동, F 로 다시 열기) · 마법 선택 · 결과(자동) ·
+  대시보드(`/큐디치 현황|랭킹|정보`). `/큐디치미리보기 신청|매칭|수락|준비|경기|결과|대시보드|끄기` 로 서버 없이 확인.
+- 프로토콜 추가: 대기열 S2C 5 APPLY, C2S 11 APPLY, DASH 는 LiveCard(얼굴), Rank·PlayerRecord 에 skin 해시. 경기장 S2C 8 ROSTER(기숙사·빗자루·레이팅).
+- 새 공개 메서드: Bridge `MagicCodexBridge.houseOf(Player)`, 모션 플러그인 `ChacademyMotionPlugin.equippedBroomId(Player)` (경기장 플러그인이 리플렉션으로 사용).
+- F키·퀘이플 타이머는 레퍼런스 위치(화면 맨 아래)가 핫바와 겹쳐 핫바·액션바 바로 위로 올림.
+- 오너 EXTRA_PNG (2026-10-17) 적용: 탭별 창 `dashboard/frame_live·frame_ranking·frame_record` (1672×941 캔버스 좌표, 탭 구워짐),
+  `dashboard/waiting_party_pill` (알파 영역만 잘라 700px), `icons/*` 10개, `medals/rank_1~3`.
+  아이콘 위치는 레퍼런스에서 잰 값이고 `Theme.icon()` 이 PNG 투명 여백을 빼고 그림 부분만 맞춘다.
+  - frame_ranking 에 구워진 스크롤 손잡이를 잘라 `dashboard/rank_thumb` 로 분리 (프레임 그 자리는 트랙으로 채움).
+  - match_card 의 "◇ ─ ◇" 가운데 줄이 "진행 중" 글자를 가로질러 그 줄만 지움 (양옆 줄·마름모는 그대로).
+  - 랭킹: 맨 위에서는 1~3위 금색 행 + 메달, 스크롤하면 고른 높이의 일반 행 8줄. 내 순위 행은 목록 판 안쪽 아래.
+  - 대기 파티 알약 그림이 레퍼런스보다 가로로 길어 297×44 로 그림 (레퍼런스 235×48).
+  - 이제 안 쓰는 부품: dashboard/main, tab_idle·tab_selected, search_field, profile, stat_card, recent_table, scrollbar* (지우지 않음).
+- 클라이언트는 여전히 이 환경에서 컴파일 못 함 → 호스팅 빌드에서 오류 나면 수정.

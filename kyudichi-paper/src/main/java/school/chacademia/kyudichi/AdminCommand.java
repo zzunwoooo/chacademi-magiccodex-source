@@ -379,6 +379,7 @@ final class AdminCommand implements TabExecutor {
     // ================================================================== tab
     @Override
     public List<String> onTabComplete(CommandSender s, Command c, String label, String[] a) {
+        if (a.length >= 3 && a[0].equals("테스트")) return TestCommandSuggestions.complete(a, names());
         List<String> opts = switch (a.length) {
             case 1 -> List.of("막대", "pos1", "pos2", "선택", "경기장", "테스트", "공테스트", "경기", "유저", "리로드");
             case 2 -> switch (a[0]) {

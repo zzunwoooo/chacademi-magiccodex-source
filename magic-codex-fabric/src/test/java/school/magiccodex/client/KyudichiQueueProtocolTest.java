@@ -15,17 +15,18 @@ class KyudichiQueueProtocolTest {
     static final Live LIVE = new Live("경기장1", 2, 20, 10, 300000, 3, "준우 · 서하 · 도윤", "하린 · 지우 · 시우");
 
     @Test void toClientRoundTrip() {
-        var rank = new Rank(1, A, "준우", 1712, 6, 30, 22, 8);
-        var rec = new PlayerRecord(A, "준우", 1712, 6, 1, 30, 22, 8, 0, 41, 77, 30, 12, 3, 19, 9, 51234.5f, 8000f,
+        var rank = new Rank(1, A, "준우", "0123456789abcdef0123456789abcdef", 1712, 6, 30, 22, 8);
+        var rec = new PlayerRecord(A, "준우", "", 1712, 6, 1, 30, 22, 8, 0, 41, 77, 30, 12, 3, 19, 9, 51234.5f, 8000f,
                 List.of(new Recent(1_760_000_000_000L, 1, 0, 80, 50, 3, 2, 0, true, 18), new Recent(1_759_000_000_000L, 2, 1, 40, 40, 0, 1, 1, false, 0)));
         for (ToClient m : List.of(new Status(1, 125, 0, 0, 0, false, 7), new Status(2, 0, 9, 4, 6, true, 3),
-                new Dash(5, List.of(LIVE)), new Ranking(List.of(rank), rank), new Ranking(List.of(), null), new RecordReply(rec), new RecordReply(null)))
+                new Dash(5, List.of(new LiveCard("경기장1", 2, 20, 10, 300000, 3, List.of(new Who(A, "준우", ""), new Who(B, "서하", "ab")), List.of()))),
+                new Apply(1250, 18, 12, 1250, true, "파티장만 시작할 수 있습니다.", List.of(new Member(A, "준우", "", 0, 1250, true), new Member(B, "루나", "", -1, 1280, false))), new Ranking(List.of(rank), rank), new Ranking(List.of(), null), new RecordReply(rec), new RecordReply(null)))
             assertEquals(m, KyudichiQueueProtocol.decodeToClient(KyudichiQueueProtocol.encode(m)));
     }
 
     @Test void fromClientRoundTrip() {
         for (FromClient m : List.of(new Join(), new Leave(), new Accept(), new Decline(), new DashRequest(), new RankingRequest(),
-                new RecordRequest(""), new RecordRequest("서하"), new SpectateRequest("경기장1"), new ClientHello(), new PracticeRequest()))
+                new RecordRequest(""), new RecordRequest("서하"), new SpectateRequest("경기장1"), new ClientHello(), new PracticeRequest(), new ApplyRequest()))
             assertEquals(m, KyudichiQueueProtocol.decodeFromClient(KyudichiQueueProtocol.encode(m)));
     }
 

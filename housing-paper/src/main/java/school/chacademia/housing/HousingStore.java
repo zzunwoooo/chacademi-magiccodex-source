@@ -36,7 +36,7 @@ final class HousingStore {
     record RoomRow(UUID owner, String name, int house, String skin, boolean slim, int size, int active, int likes, int visits, long rev) {
         Person person() { return new Person(owner, name.isBlank() ? "학생" : name, house, skin, slim); }
     }
-    record RoomData(RoomRow row, Map<Integer, Layout> layouts, Map<String, Integer> owned, int today, boolean liked) {}
+    record RoomData(RoomRow row, Map<Integer, Layout> layouts, int today, boolean liked) {}
     record Presence(UUID viewer, UUID owner, String name) {}
     record Sync(Map<UUID, List<Viewer>> viewers, Map<UUID, Long> revs) {}
 
@@ -46,7 +46,7 @@ final class HousingStore {
     private final Plugin plugin; private final Logger log;
     private final ExecutorService io = Executors.newSingleThreadExecutor(r -> { var t = new Thread(r, "ChacaHousing-db"); t.setDaemon(true); return t; });
     private ConnectionHolder db; private DatabaseSettings settings; private boolean maria;
-    private String tRoom, tLayout, tOwned, tLike, tVisit, tBook, tPresence, tOnline, tFriends, tNick, tHouse;
+    private String tRoom, tLayout, tLike, tVisit, tBook, tPresence, tOnline, tFriends, tNick, tHouse;
 
     HousingStore(Plugin plugin) { this.plugin = plugin; this.log = plugin.getLogger(); }
 
@@ -60,7 +60,6 @@ final class HousingStore {
             db = settings.holder(dataFolder.resolve("housing.db"));
             tRoom = settings.table("housing_room", "housing_room");
             tLayout = settings.table("housing_layout", "housing_layout");
-            tOwned = settings.table("housing_owned", "housing_owned");
             tLike = settings.table("housing_like", "housing_like");
             tVisit = settings.table("housing_visit", "housing_visit");
             tBook = settings.table("housing_guestbook", "housing_guestbook");
@@ -75,7 +74,6 @@ final class HousingStore {
                         + " skin VARCHAR(64) NOT NULL, slim INT NOT NULL, size INT NOT NULL, active INT NOT NULL, likes INT NOT NULL, visits INT NOT NULL,"
                         + " rev BIGINT NOT NULL)" + engine);
                 s.execute("CREATE TABLE IF NOT EXISTS " + tLayout + "(owner CHAR(36) NOT NULL, slot INT NOT NULL, data TEXT NOT NULL, PRIMARY KEY(owner, slot))" + engine);
-                s.execute("CREATE TABLE IF NOT EXISTS " + tOwned + "(owner CHAR(36) NOT NULL, item VARCHAR(32) NOT NULL, amount INT NOT NULL, PRIMARY KEY(owner, item))" + engine);
                 s.execute("CREATE TABLE IF NOT EXISTS " + tLike + "(owner CHAR(36) NOT NULL, liker CHAR(36) NOT NULL, created BIGINT NOT NULL, PRIMARY KEY(owner, liker))" + engine);
                 s.execute("CREATE TABLE IF NOT EXISTS " + tVisit + "(owner CHAR(36) NOT NULL, visitor CHAR(36) NOT NULL, day INT NOT NULL, PRIMARY KEY(owner, visitor, day))" + engine);
                 s.execute("CREATE TABLE IF NOT EXISTS " + tBook + "(" + (maria ? "id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY" : "id INTEGER PRIMARY KEY AUTOINCREMENT")
@@ -130,11 +128,15 @@ final class HousingStore {
     private static String in(int n) { return String.join(",", Collections.nCopies(n, "?")); }
 
     // ------------------------------------------------------------ 방
-    /** 접속할 때: 방이 없으면 만들고, 닉네임·기숙사·스킨을 최신으로 맞춘다. */
-    void touch(UUID id, String fallback, String skin, boolean slim, int startSize, Consumer<RoomRow> done) {
+    /**
+     * 접속할 때: 방이 없으면 만들고, 닉네임·기숙사·스킨을 최신으로 맞춘다.
+     * 기숙사는 Bridge 와 같은 순서: codex_houses → (없으면) fallbackHouse (Bridge StatsService·magiccodex.house.* 권한, 메인 스레드에서 구함).
+     * allowed = 지금 권한으로 놓을 수 있는 가구 → 권한이 빠진 가구는 저장된 레이아웃에서 뺀다.
+     */
+    void touch(UUID id, String fallback, int fallbackHouse, String skin, boolean slim, int startSize, Function<String, Def> defs, Map<String, Integer> allowed, Consumer<RoomRow> done) {
         async("접속 갱신", c -> {
             String name = nickname(c, id); if (name == null || name.isBlank()) name = fallback;
-            int house = house(c, id);
+            int house = house(c, id); if (house < 0) house = fallbackHouse;
             RoomRow row = room(c, id);
             if (row == null) {
                 try (var s = c.prepareStatement(insertIgnore() + tRoom + "(owner,name,house,skin,slim,size,active,likes,visits,rev) VALUES(?,?,?,?,?,?,0,0,0,1)")) {
@@ -146,7 +148,9 @@ final class HousingStore {
                     s.setString(1, cut(name)); s.setInt(2, house); s.setString(3, skin); s.setInt(4, slim ? 1 : 0); s.setString(5, id.toString()); s.executeUpdate();
                 }
             }
-            return room(c, id);
+            RoomRow now = room(c, id);
+            if (now != null) pruneAll(c, id, now.size(), defs, allowed);
+            return now;
         }, done);
     }
 
@@ -164,7 +168,6 @@ final class HousingStore {
             }
             RoomRow row = room(c, owner);
             var layouts = layouts(c, owner);
-            var owned = owned(c, owner);
             int today;
             try (var s = c.prepareStatement("SELECT COUNT(*) FROM " + tVisit + " WHERE owner=? AND day=?")) {
                 s.setString(1, owner.toString()); s.setInt(2, day);
@@ -175,16 +178,16 @@ final class HousingStore {
                 s.setString(1, owner.toString()); s.setString(2, viewer.toString());
                 try (var r = s.executeQuery()) { liked = r.next(); }
             }
-            return new RoomData(row, layouts, owned, today, liked);
+            return new RoomData(row, layouts, today, liked);
         }, done);
     }
 
     /** @return null = 저장됨, 아니면 이유 */
-    void save(UUID owner, int slot, Layout layout, Function<String, Def> defs, Consumer<String> done) {
+    void save(UUID owner, int slot, Layout layout, Function<String, Def> defs, Map<String, Integer> allowed, Consumer<String> done) {
         async("레이아웃 저장", c -> tx(t -> {
             RoomRow row = room(t, owner);
             if (row == null) return "방을 찾을 수 없어요.";
-            String why = HousingRules.validate(layout, row.size(), defs, owned(t, owner));
+            String why = HousingRules.validate(layout, row.size(), defs, allowed);
             if (why != null) return why;
             try (var s = t.prepareStatement(upsert(tLayout, "owner,slot", "data"))) {
                 s.setString(1, owner.toString()); s.setInt(2, slot); s.setString(3, HousingRules.encode(layout)); s.executeUpdate();
@@ -204,12 +207,12 @@ final class HousingStore {
     }
 
     /** 관리자: 크기 바꾸기 (줄이면 밖으로 나간 가구는 보관함으로). */
-    void setSize(UUID owner, int size, Function<String, Def> defs, Consumer<Boolean> done) {
+    void setSize(UUID owner, int size, Function<String, Def> defs, Map<String, Integer> limits, Consumer<Boolean> done) {
         async("방 크기 설정", c -> tx(t -> {
             int n;
             try (var s = t.prepareStatement("UPDATE " + tRoom + " SET size=?,rev=rev+1 WHERE owner=?")) { s.setInt(1, size); s.setString(2, owner.toString()); n = s.executeUpdate(); }
             if (n == 0) return false;
-            pruneAll(t, owner, size, defs);
+            pruneAll(t, owner, size, defs, limits);
             return true;
         }), done);
     }
@@ -323,21 +326,6 @@ final class HousingStore {
         }, done);
     }
 
-    // ------------------------------------------------------------ 보유 가구 (관리자 지급·회수)
-    /** delta 만큼 더하거나 뺀다 (0 아래로는 안 감). 줄어들면 레이아웃에서 넘치는 것을 뺀다. @return 새 개수 */
-    void give(UUID owner, String item, int delta, Function<String, Def> defs, Consumer<Integer> done) {
-        async("가구 지급", c -> tx(t -> {
-            int now = owned(t, owner).getOrDefault(item, 0), next = Math.clamp((long) now + delta, 0, 9999);
-            if (next == 0) try (var s = t.prepareStatement("DELETE FROM " + tOwned + " WHERE owner=? AND item=?")) { s.setString(1, owner.toString()); s.setString(2, item); s.executeUpdate(); }
-            else try (var s = t.prepareStatement(upsert(tOwned, "owner,item", "amount"))) { s.setString(1, owner.toString()); s.setString(2, item); s.setInt(3, next); s.executeUpdate(); }
-            RoomRow row = room(t, owner);
-            if (row != null) { if (next < now) pruneAll(t, owner, row.size(), defs); bump(t, owner); }
-            return next;
-        }), done);
-    }
-
-    void ownedOf(UUID owner, Consumer<Map<String, Integer>> done) { async("보유 가구", c -> owned(c, owner), done); }
-
     /** 닉네임(또는 저장된 방 이름)으로 찾기. 없으면 null. */
     void find(String name, Consumer<UUID> done) {
         async("닉네임 찾기", c -> {
@@ -409,8 +397,7 @@ final class HousingStore {
     private void bump(Connection c, UUID owner) throws SQLException {
         try (var s = c.prepareStatement("UPDATE " + tRoom + " SET rev=rev+1 WHERE owner=?")) { s.setString(1, owner.toString()); s.executeUpdate(); }
     }
-    private void pruneAll(Connection c, UUID owner, int size, Function<String, Def> defs) throws SQLException {
-        var owned = owned(c, owner);
+    private void pruneAll(Connection c, UUID owner, int size, Function<String, Def> defs, Map<String, Integer> owned) throws SQLException {
         for (var e : layouts(c, owner).entrySet()) {
             Layout pruned = HousingRules.prune(e.getValue(), size, defs, owned);
             if (pruned.equals(e.getValue())) continue;
@@ -440,14 +427,6 @@ final class HousingStore {
                     catch (IllegalArgumentException bad) { log.warning("방 " + owner + " 레이아웃 " + slot + " 형식 오류: 빈 방으로 보여요."); }
                 }
             }
-        }
-        return map;
-    }
-    private Map<String, Integer> owned(Connection c, UUID owner) throws SQLException {
-        var map = new HashMap<String, Integer>();
-        try (var s = c.prepareStatement("SELECT item,amount FROM " + tOwned + " WHERE owner=?")) {
-            s.setString(1, owner.toString());
-            try (var r = s.executeQuery()) { while (r.next()) if (r.getInt(2) > 0 && HousingRules.validId(r.getString(1))) map.put(r.getString(1), r.getInt(2)); }
         }
         return map;
     }

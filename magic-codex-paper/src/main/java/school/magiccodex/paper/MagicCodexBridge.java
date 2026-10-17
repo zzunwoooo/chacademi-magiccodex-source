@@ -119,6 +119,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     Double equipmentPower(UUID id,Double base){return equipment==null?base:equipment.power(id,base);}
     DisplayNames names(){return names;}
     int questHouse(Player p){return school==null?-1:school.house(p);}
+    /** 기숙사 0 아르케온 · 1 루미나 · 2 베스티아즈 · 3 노크세르, 없으면 -1 (큐디치 준비 화면 등 다른 플러그인용). */
+    public int houseOf(Player p){return questHouse(p);}
     void questHouseReward(String token,int house,long points,Runnable done,java.util.function.Consumer<String> fail){if(school==null){fail.accept("학교 기록 없음");return;}school.questReward(token,house,points,done,fail);}
     String dorm(Player p){return school==null?"":school.dorm(p);}
     int circle(Player player){return ascension==null?1:ascension.current(player);}

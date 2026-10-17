@@ -11,12 +11,12 @@ import school.magiccodex.protocol.HousingRules.Layout;
 import school.magiccodex.protocol.HousingRules.Placement;
 
 class HousingRulesTest {
-    static final Def BED = new Def("bed", "침대", 0, 0, 2, 1, 6, 0, 0, "");
-    static final Def PLANT = new Def("plant", "화분", 1, 0, 1, 1, 6, 0, 0, "");
-    static final Def FRAME = new Def("frame", "액자", 2, 0, 1, 1, 10, 0, 0, "");
-    static final Def BANNER = new Def("banner", "배너", 2, 0, 1, 1, 20, 0, 0, "");
-    static final Def PAPER = new Def("paper", "벽지", 3, 0, 1, 1, 0, 0, 0, "");
-    static final Def WOOD = new Def("wood", "바닥", 3, 1, 1, 1, 0, 0, 0, "");
+    static final Def BED = new Def("bed", "침대", 0, 0, 2, 1, 6, 0, 0, "", 4);
+    static final Def PLANT = new Def("plant", "화분", 1, 0, 1, 1, 6, 0, 0, "", 4);
+    static final Def FRAME = new Def("frame", "액자", 2, 0, 1, 1, 10, 0, 0, "", 4);
+    static final Def BANNER = new Def("banner", "배너", 2, 0, 1, 1, 20, 0, 0, "", 4);
+    static final Def PAPER = new Def("paper", "벽지", 3, 0, 1, 1, 0, 0, 0, "", 4);
+    static final Def WOOD = new Def("wood", "바닥", 3, 1, 1, 1, 0, 0, 0, "", 4);
     static final Map<String, Def> DEFS = Map.of("bed", BED, "plant", PLANT, "frame", FRAME, "banner", BANNER, "paper", PAPER, "wood", WOOD);
     static final Map<String, Integer> OWNED = Map.of("bed", 1, "plant", 2, "frame", 1, "banner", 1, "paper", 1, "wood", 1);
 

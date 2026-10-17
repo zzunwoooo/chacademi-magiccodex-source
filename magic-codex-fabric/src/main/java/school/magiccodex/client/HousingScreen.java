@@ -174,8 +174,8 @@ public final class HousingScreen extends SocialScreen {
         type.draw(c,fit(o.name(),26,150,BOLD),150,152,26,0xFFFFFFFF,BOLD,false);
         if(o.house()>=0){
             images.drawTexture(c,HOUSE_EMBLEM[o.house()],150,178,0,0,24,24,128,128,128,128,0xFFFFFFFF);
-            type.draw(c,SchoolProtocol.HOUSES.get(o.house())+" 기숙사",180,190,18,SUB,BODY,false);
-        }else type.draw(c,"기숙사 미정",150,190,18,MUTED,BODY,false);
+            type.draw(c,SchoolProtocol.HOUSES.get(o.house()),180,190,18,SUB,BODY,false);
+        }
         HudMesh.line(c,44,236,290,236,1f,0x66E1B866);
         icon(images,c,ICON_VISITOR,58,262,20,0xFFFFFFFF);
         type.draw(c,"오늘 "+fmt(room.today())+"   |   누적 "+fmt(room.total()),78,262,18,TEXT,BODY,false);
@@ -233,7 +233,13 @@ public final class HousingScreen extends SocialScreen {
         // 바닥 두께 (앞쪽 두 면)
         face(c,new float[][]{{0,0,n},{n,0,n},{n,-.3f,n},{0,-.3f,n}},shade(TRIM,1f));
         face(c,new float[][]{{n,0,0},{n,0,n},{n,-.3f,n},{n,-.3f,0}},shade(TRIM,.8f));
-        // 벽 (뒤 두 면): 벽지 + 아래 판자 + 위 몰딩
+        // 벽 (뒤 두 면): 벽지가 없으면 기본 벽 그림(wall_default.png, 한 칸 × 높이 4칸)을 칸마다, 있으면 벽지 색 + 아래 판자 + 위 몰딩
+        if(wallDef==null){
+            for(int i=0;i<n;i++){
+                texFace(c,WALL_TEXTURE,new float[][]{{0,H,i},{0,H,i+1},{0,0,i+1},{0,0,i}},0xFFD6D2CC);
+                texFace(c,WALL_TEXTURE,new float[][]{{i,H,0},{i+1,H,0},{i+1,0,0},{i,0,0}},0xFFFFFFFF);
+            }
+        }else{
         face(c,new float[][]{{0,0,0},{0,0,n},{0,H,n},{0,H,0}},shade(wall,.92f));
         face(c,new float[][]{{0,0,0},{n,0,0},{n,H,0},{0,H,0}},wall);
         if(wallDef!=null)for(int i=1;i<n;i++){ // 벽지 세로 무늬
@@ -242,6 +248,7 @@ public final class HousingScreen extends SocialScreen {
         face(c,new float[][]{{0,0,0},{0,0,n},{0,.7f,n},{0,.7f,0}},shade(band,.85f));
         face(c,new float[][]{{0,0,0},{n,0,0},{n,.7f,0},{0,.7f,0}},band);
         line3(c,0,.7f,0,0,.7f,n,GOLD_LINE,1.4f);line3(c,0,.7f,0,n,.7f,0,GOLD_LINE,1.4f);
+        }
         // 벽 윗면·끝면 (두께)
         face(c,new float[][]{{-t,H,-t},{-t,H,n},{0,H,n},{0,H,0}},shade(TRIM,1.15f));
         face(c,new float[][]{{-t,H,-t},{n,H,-t},{n,H,0},{0,H,0}},shade(TRIM,1.15f));
@@ -249,9 +256,18 @@ public final class HousingScreen extends SocialScreen {
         face(c,new float[][]{{n,0,-t},{n,0,0},{n,H,0},{n,H,-t}},shade(TRIM,.75f));
         line3(c,0,0,0,0,H,0,alpha(0xFF000000,.25f),1.2f);
         // 바닥 칸
-        for(int x=0;x<n;x++)for(int z=0;z<n;z++)
-            face(c,new float[][]{{x,0,z},{x+1,0,z},{x+1,0,z+1},{x,0,z+1}},((x+z)&1)==0?floorA:floorB);
-        if(editing()){for(int i=0;i<=n;i++){line3(c,i,0,0,i,0,n,0x26FFFFFF,1f);line3(c,0,0,i,n,0,i,0x26FFFFFF,1f);}}
+        for(int x=0;x<n;x++)for(int z=0;z<n;z++){
+            float[][] cell={{x,0,z},{x+1,0,z},{x+1,0,z+1},{x,0,z+1}};
+            // 바닥 그림 한 장이 2×2 칸을 덮는다 (한 칸에 한 장이면 나뭇결이 너무 촘촘함)
+            if(floorDef==null){float u=(x&1)*.5f,v=(z&1)*.5f;texFace(c,FLOOR_TEXTURE,cell,0xFFFFFFFF,new float[]{u,u+.5f,u+.5f,u},new float[]{v,v,v+.5f,v+.5f});}
+            else face(c,cell,((x+z)&1)==0?floorA:floorB);
+        }
+        // 칸 구분선: 평소엔 숨기고, 가구를 들고 있을 때만 점선으로 또렷하게
+        if(editing()&&held!=null){
+            for(int i=1;i<n;i++){dashed(c,i,0,0,i,0,n,0xB0FFFFFF);dashed(c,0,0,i,n,0,i,0xB0FFFFFF);}
+            if(held.def().wall())for(int i=1;i<n;i++){dashed(c,0,0,i,0,HousingRules.WALL_HEIGHT,i,0x90FFFFFF);dashed(c,i,0,0,i,HousingRules.WALL_HEIGHT,0,0x90FFFFFF);}
+            if(held.def().wall())for(int y=1;y<HousingRules.WALL_HEIGHT;y++){dashed(c,0,y,0,0,y,n,0x90FFFFFF);dashed(c,0,y,0,n,y,0,0x90FFFFFF);}
+        }
 
         // 놓인 것들
         var list=lay.placements();var order=new ArrayList<Integer>();
@@ -350,6 +366,18 @@ public final class HousingScreen extends SocialScreen {
     private void outline(DrawContext c,float[][] hull,int color){
         for(int i=0;i<hull.length;i++){var a=hull[i];var b=hull[(i+1)%hull.length];HudMesh.line(c,a[0],a[1],b[0],b[1],2f,color);}
     }
+    private static final Identifier WALL_TEXTURE=Identifier.of("magiccodex","textures/gui/housing/wall_default.png"),FLOOR_TEXTURE=Identifier.of("magiccodex","textures/gui/housing/floor_default.png");
+    /** 방 좌표 네 점에 그림 한 장을 통째로 입힌다 (점 순서: 그림의 왼쪽 위 → 오른쪽 위 → 오른쪽 아래 → 왼쪽 아래). */
+    private void texFace(DrawContext c,Identifier texture,float[][] p,int tint){texFace(c,texture,p,tint,new float[]{0,1,1,0},new float[]{0,0,1,1});}
+    private void texFace(DrawContext c,Identifier texture,float[][] p,int tint,float[] u0,float[] v0){
+        float[] xs=new float[4],ys=new float[4],us=u0.clone(),vs=v0.clone();
+        for(int i=0;i<4;i++){xs[i]=iso.sx(p[i][0],p[i][1],p[i][2]);ys[i]=iso.sy(p[i][0],p[i][1],p[i][2]);}
+        double area=0;for(int i=0;i<4;i++){int j=(i+1)%4;area+=xs[i]*ys[j]-xs[j]*ys[i];}
+        if(area>0){swap(xs,1,3);swap(ys,1,3);swap(us,1,3);swap(vs,1,3);}
+        var m=c.getMatrices().peek().getPositionMatrix();
+        c.draw(v->{var b=v.getBuffer(RenderLayer.getGuiTextured(texture));for(int i=0;i<4;i++)b.vertex(m,xs[i],ys[i],0).texture(us[i],vs[i]).color(tint);});
+    }
+    private static void swap(float[] a,int i,int j){float t=a[i];a[i]=a[j];a[j]=t;}
     /** 방 좌표 네 점 → 사각형 하나 (GUI 레이어는 뒷면을 버리므로 화면에서 시계 반대 방향으로 맞춘다). */
     private void face(DrawContext c,float[][] p,int color){
         float[] xs=new float[4],ys=new float[4];
@@ -361,6 +389,12 @@ public final class HousingScreen extends SocialScreen {
         if(area>0){float t=xs[1];xs[1]=xs[3];xs[3]=t;t=ys[1];ys[1]=ys[3];ys[3]=t;}
         var m=c.getMatrices().peek().getPositionMatrix();
         c.draw(v->{var b=v.getBuffer(RenderLayer.getGui());for(int i=0;i<4;i++)b.vertex(m,xs[i],ys[i],0).color(color);});
+    }
+    /** 방 좌표 선분을 점선으로 (한 칸에 점 4개). */
+    private void dashed(DrawContext c,float x0,float y0,float z0,float x1,float y1,float z1,int color){
+        float len=Math.max(Math.abs(x1-x0),Math.max(Math.abs(y1-y0),Math.abs(z1-z0)));int n=Math.max(1,Math.round(len*4));
+        for(int i=0;i<n;i++){float a=(i+.2f)/n,b=(i+.65f)/n;
+            line3(c,x0+(x1-x0)*a,y0+(y1-y0)*a,z0+(z1-z0)*a,x0+(x1-x0)*b,y0+(y1-y0)*b,z0+(z1-z0)*b,color,1.6f);}
     }
     private void line3(DrawContext c,float x0,float y0,float z0,float x1,float y1,float z1,int color,float w){
         HudMesh.line(c,iso.sx(x0,y0,z0),iso.sy(x0,y0,z0),iso.sx(x1,y1,z1),iso.sy(x1,y1,z1),w,color);

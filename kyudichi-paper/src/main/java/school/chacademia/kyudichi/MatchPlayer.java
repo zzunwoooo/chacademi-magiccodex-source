@@ -23,6 +23,7 @@ final class MatchPlayer {
     final Map<UUID, Long> damagedBy = new HashMap<>();   // enemy → last tick (assists)
     Location lastSafe;
     int lastKeyAction = -1;
+    int house = -1; String broom = "";   // 준비 화면 (ROSTER)
     org.bukkit.util.Vector aim; long aimAt = -1000;   // 공중 조준점 (C2S AIM), 바로 뒤 시전 하나에만
     // stats
     int goals, kills, deaths, assists, snitch, passes, carrierStops, saveGoal, saveBludger, deflectHits;

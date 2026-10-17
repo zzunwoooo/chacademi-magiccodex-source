@@ -22,7 +22,7 @@ import school.magiccodex.protocol.HousingRules.Placement;
  * 서버 → 클라이언트: u8 version(1) · u8 kind · ...
  *   1 ROOM       u8 flags(1 창 열기, 2 편집 가능, 4 내가 좋아요, 8 내 방으로 돌아갈 수 있음) · Person 주인 · u8 size · u8 다음 크기(0 = 끝)
  *                · i64 확장 비용 · i32 좋아요 · i32 오늘 방문 · i32 누적 방문 · u8 보이는 슬롯 · u8 n · n×(u8 slot · Layout)
- *                · u16 m · m×(UTF id · u16 보유 개수)   (보유 목록은 편집 가능할 때만)
+ *                · u16 m · m×(UTF id · u16 놓을 수 있는 개수)   (편집 가능할 때만: 주인이 권한을 가진 가구 → furniture.yml max)
  *   2 VIEWERS    UUID 방 주인 · u16 전체 인원 · u8 n · n×(UUID · UTF 닉네임)
  *   3 GUESTBOOK  UUID 방 주인 · u8 n · n×Entry
  *   4 FRIENDS    u8 n · n×(Person · u8 온라인 · u8 방 크기)
@@ -31,7 +31,7 @@ import school.magiccodex.protocol.HousingRules.Placement;
  *   Person = UUID · UTF 닉네임 · i8 기숙사(-1~3) · UTF 스킨 해시("" 가능) · u8 slim
  *   Layout = UTF 벽지 · UTF 바닥재 · u8 n · n×(UTF id · u8 x · u8 y · u8 z · u8 rot)
  *   Entry  = i64 id · Person 작성자 · i64 작성 시각(ms) · UTF 글
- *   Def    = UTF id · UTF 이름 · u8 category · u8 sub · u8 w · u8 d · u8 height · i32 color · i32 accent · UTF icon
+ *   Def    = UTF id · UTF 이름 · u8 category · u8 sub · u8 w · u8 d · u8 height · i32 color · i32 accent · UTF icon · u8 max
  * </pre>
  * 한 패킷은 {@value #MAX_BYTES} 바이트를 넘지 않는다 (Bukkit 플러그인 메시지 한도 안).
  */
@@ -156,7 +156,7 @@ public final class HousingProtocol {
                     out.writeByte(K_CATALOG);out.writeInt(c.revision());out.writeShort(c.defs().size());
                     for(var d:c.defs()){
                         out.writeUTF(d.id());out.writeUTF(d.name());out.writeByte(d.category());out.writeByte(d.sub());out.writeByte(d.w());out.writeByte(d.d());
-                        out.writeByte(d.height());out.writeInt(d.color());out.writeInt(d.accent());out.writeUTF(d.icon());
+                        out.writeByte(d.height());out.writeInt(d.color());out.writeInt(d.accent());out.writeUTF(d.icon());out.writeByte(d.max());
                     }
                 }
             }
@@ -201,7 +201,7 @@ public final class HousingProtocol {
                     int rev=in.readInt(),n=in.readUnsignedShort();if(n>MAX_CATALOG)throw new IllegalArgumentException("catalog");
                     var list=new ArrayList<Def>(n);var seen=new HashSet<String>();
                     for(int i=0;i<n;i++){
-                        var d=new Def(in.readUTF(),in.readUTF(),in.readUnsignedByte(),in.readUnsignedByte(),in.readUnsignedByte(),in.readUnsignedByte(),in.readUnsignedByte(),in.readInt(),in.readInt(),in.readUTF());
+                        var d=new Def(in.readUTF(),in.readUTF(),in.readUnsignedByte(),in.readUnsignedByte(),in.readUnsignedByte(),in.readUnsignedByte(),in.readUnsignedByte(),in.readInt(),in.readInt(),in.readUTF(),in.readUnsignedByte());
                         if(!seen.add(d.id()))throw new IllegalArgumentException("Duplicate def");list.add(d);
                     }
                     yield new Catalog(rev,list);
