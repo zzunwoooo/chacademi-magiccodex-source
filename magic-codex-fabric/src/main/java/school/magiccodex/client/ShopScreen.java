@@ -70,7 +70,20 @@ public final class ShopScreen extends SocialScreen {
         normalize(false);
     }
     void failed(String m) { busy = false; notice(m); }
+    /**
+     * Shared notification for a completed trade (existing SharedNotifications card, item icon on the left).
+     * Captured at request time so it still fires when the shop was closed before the reply arrived.
+     */
+    private Runnable receipt(Product p, boolean sell, int count, String sum) {
+        String item = name(p), price = ShopView.money(sum) + " G";
+        ItemStack icon = icons.getOrDefault(p.id(), ItemStack.EMPTY).copy();
+        String id = "shop:" + UUID.randomUUID();
+        return sell
+                ? () -> SharedNotifications.item(id, item + " ×" + count + " 판매 완료", price + " 획득 · 보유 골드에 더해졌습니다.", icon)
+                : () -> SharedNotifications.item(id, item + " ×" + count + " 구매 완료", "우편함으로 보냈습니다 · " + price + " 사용", icon);
+    }
     void tradeSucceeded() {
+        notice = "";   // the success card replaces the in-shop "완료" toast; failures still use the toast
         client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1.25f, .30f));
     }
 
@@ -180,12 +193,13 @@ public final class ShopScreen extends SocialScreen {
         var p = selected();
         if (p == null || number() == 0 || number() > possible()) { notice("가능 수량 안에서 숫자를 입력해 주세요."); return; }
         sound(1.1f, .16f);
-        send(selling ? ShopProtocol.SELL : ShopProtocol.BUY, p);
+        send(selling ? ShopProtocol.SELL : ShopProtocol.BUY, p, receipt(p, selling, number(), total()));
     }
-    private void send(int action, Product p) {
+    private void send(int action, Product p) { send(action, p, null); }
+    private void send(int action, Product p, Runnable onSuccess) {
         if (data == null || busy) return;
         busy = ShopClient.request(this, new Request(action, 1, data.session(), data.shop(), data.revision(),
-                p == null ? "" : p.id(), quantity.text(), UUID.randomUUID().toString(), search.text()));
+                p == null ? "" : p.id(), quantity.text(), UUID.randomUUID().toString(), search.text()), onSuccess);
         if (!busy && action != ShopProtocol.CLOSE) notice("상점 서버 연결 또는 처리 상태를 확인해 주세요.");
     }
 
