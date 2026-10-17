@@ -150,7 +150,7 @@ public final class PartyScreen extends SocialScreen {
         float by=top+32;
         if(leader()&&!me){
             if(button(c,"정보",INFO,546,by,133,BLUE,BLUE_HOVER,BLUE_TEXT,mx,my,!modal&&inList,p.online()))hit=100+index*3;
-            if(button(c,"위임",CROWN,693,by,133,GOLD,GOLD_HOVER,GOLD_TEXT,mx,my,!modal&&inList,true))hit=101+index*3;
+            if(button(c,"위임",CROWN,693,by,133,PartyUiAtlas.GOLD,GOLD_HOVER,GOLD_TEXT,mx,my,!modal&&inList,true))hit=101+index*3;
             if(button(c,"강퇴",KICK,841,by,133,ROSE,ROSE_HOVER,ROSE_TEXT,mx,my,!modal&&inList,true))hit=102+index*3;
         }else if(button(c,"정보",INFO,816,by,159,BLUE,BLUE_HOVER,BLUE_TEXT,mx,my,!modal&&inList,p.online()||me))hit=100+index*3;
         return hit;
@@ -211,7 +211,7 @@ public final class PartyScreen extends SocialScreen {
             String name=confirmTarget==null?"":confirmTarget.nickname();
             String text=switch(confirm){case LEAVE->leader()&&PartyUiClient.state().members().size()>1?"파티를 나갈까요? 파티장은 다른 동료에게 넘어가요.":"파티를 나갈까요?";case PROMOTE->name+"님에게 파티장을 넘길까요?";case KICK->name+"님을 파티에서 내보낼까요?";};
             type.draw(c,text,539,445,Math.min(23,23*500/Math.max(1,type.width(text,23,BODY))),TEXT,BODY,true);
-            var yes=confirm==Confirm.KICK?ROSE:confirm==Confirm.PROMOTE?GOLD:BLUE;var yesHover=confirm==Confirm.KICK?ROSE_HOVER:confirm==Confirm.PROMOTE?GOLD_HOVER:BLUE_HOVER;
+            var yes=confirm==Confirm.KICK?ROSE:confirm==Confirm.PROMOTE?PartyUiAtlas.GOLD:BLUE;var yesHover=confirm==Confirm.KICK?ROSE_HOVER:confirm==Confirm.PROMOTE?GOLD_HOVER:BLUE_HOVER;
             int yesText=confirm==Confirm.KICK?ROSE_TEXT:confirm==Confirm.PROMOTE?GOLD_TEXT:BLUE_TEXT;
             String label=switch(confirm){case LEAVE->"나가기";case PROMOTE->"위임";case KICK->"강퇴";};
             if(button(c,label,null,384,480,150,yes,yesHover,yesText,mx,my,true,true))hit=300;
