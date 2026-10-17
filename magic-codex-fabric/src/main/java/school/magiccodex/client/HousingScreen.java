@@ -233,7 +233,13 @@ public final class HousingScreen extends SocialScreen {
         // 바닥 두께 (앞쪽 두 면)
         face(c,new float[][]{{0,0,n},{n,0,n},{n,-.3f,n},{0,-.3f,n}},shade(TRIM,1f));
         face(c,new float[][]{{n,0,0},{n,0,n},{n,-.3f,n},{n,-.3f,0}},shade(TRIM,.8f));
-        // 벽 (뒤 두 면): 벽지 + 아래 판자 + 위 몰딩
+        // 벽 (뒤 두 면): 벽지가 없으면 기본 벽 그림(wall_default.png, 한 칸 × 높이 4칸)을 칸마다, 있으면 벽지 색 + 아래 판자 + 위 몰딩
+        if(wallDef==null){
+            for(int i=0;i<n;i++){
+                texFace(c,WALL_TEXTURE,new float[][]{{0,H,i},{0,H,i+1},{0,0,i+1},{0,0,i}},0xFFD6D2CC);
+                texFace(c,WALL_TEXTURE,new float[][]{{i,H,0},{i+1,H,0},{i+1,0,0},{i,0,0}},0xFFFFFFFF);
+            }
+        }else{
         face(c,new float[][]{{0,0,0},{0,0,n},{0,H,n},{0,H,0}},shade(wall,.92f));
         face(c,new float[][]{{0,0,0},{n,0,0},{n,H,0},{0,H,0}},wall);
         if(wallDef!=null)for(int i=1;i<n;i++){ // 벽지 세로 무늬
@@ -242,6 +248,7 @@ public final class HousingScreen extends SocialScreen {
         face(c,new float[][]{{0,0,0},{0,0,n},{0,.7f,n},{0,.7f,0}},shade(band,.85f));
         face(c,new float[][]{{0,0,0},{n,0,0},{n,.7f,0},{0,.7f,0}},band);
         line3(c,0,.7f,0,0,.7f,n,GOLD_LINE,1.4f);line3(c,0,.7f,0,n,.7f,0,GOLD_LINE,1.4f);
+        }
         // 벽 윗면·끝면 (두께)
         face(c,new float[][]{{-t,H,-t},{-t,H,n},{0,H,n},{0,H,0}},shade(TRIM,1.15f));
         face(c,new float[][]{{-t,H,-t},{n,H,-t},{n,H,0},{0,H,0}},shade(TRIM,1.15f));
@@ -249,8 +256,11 @@ public final class HousingScreen extends SocialScreen {
         face(c,new float[][]{{n,0,-t},{n,0,0},{n,H,0},{n,H,-t}},shade(TRIM,.75f));
         line3(c,0,0,0,0,H,0,alpha(0xFF000000,.25f),1.2f);
         // 바닥 칸
-        for(int x=0;x<n;x++)for(int z=0;z<n;z++)
-            face(c,new float[][]{{x,0,z},{x+1,0,z},{x+1,0,z+1},{x,0,z+1}},((x+z)&1)==0?floorA:floorB);
+        for(int x=0;x<n;x++)for(int z=0;z<n;z++){
+            float[][] cell={{x,0,z},{x+1,0,z},{x+1,0,z+1},{x,0,z+1}};
+            if(floorDef==null)texFace(c,FLOOR_TEXTURE,cell,0xFFFFFFFF);
+            else face(c,cell,((x+z)&1)==0?floorA:floorB);
+        }
         if(editing()){for(int i=0;i<=n;i++){line3(c,i,0,0,i,0,n,0x26FFFFFF,1f);line3(c,0,0,i,n,0,i,0x26FFFFFF,1f);}}
 
         // 놓인 것들
@@ -350,6 +360,17 @@ public final class HousingScreen extends SocialScreen {
     private void outline(DrawContext c,float[][] hull,int color){
         for(int i=0;i<hull.length;i++){var a=hull[i];var b=hull[(i+1)%hull.length];HudMesh.line(c,a[0],a[1],b[0],b[1],2f,color);}
     }
+    private static final Identifier WALL_TEXTURE=Identifier.of("magiccodex","textures/gui/housing/wall_default.png"),FLOOR_TEXTURE=Identifier.of("magiccodex","textures/gui/housing/floor_default.png");
+    /** 방 좌표 네 점에 그림 한 장을 통째로 입힌다 (점 순서: 그림의 왼쪽 위 → 오른쪽 위 → 오른쪽 아래 → 왼쪽 아래). */
+    private void texFace(DrawContext c,Identifier texture,float[][] p,int tint){
+        float[] xs=new float[4],ys=new float[4],us={0,1,1,0},vs={0,0,1,1};
+        for(int i=0;i<4;i++){xs[i]=iso.sx(p[i][0],p[i][1],p[i][2]);ys[i]=iso.sy(p[i][0],p[i][1],p[i][2]);}
+        double area=0;for(int i=0;i<4;i++){int j=(i+1)%4;area+=xs[i]*ys[j]-xs[j]*ys[i];}
+        if(area>0){swap(xs,1,3);swap(ys,1,3);swap(us,1,3);swap(vs,1,3);}
+        var m=c.getMatrices().peek().getPositionMatrix();
+        c.draw(v->{var b=v.getBuffer(RenderLayer.getGuiTextured(texture));for(int i=0;i<4;i++)b.vertex(m,xs[i],ys[i],0).texture(us[i],vs[i]).color(tint);});
+    }
+    private static void swap(float[] a,int i,int j){float t=a[i];a[i]=a[j];a[j]=t;}
     /** 방 좌표 네 점 → 사각형 하나 (GUI 레이어는 뒷면을 버리므로 화면에서 시계 반대 방향으로 맞춘다). */
     private void face(DrawContext c,float[][] p,int color){
         float[] xs=new float[4],ys=new float[4];
