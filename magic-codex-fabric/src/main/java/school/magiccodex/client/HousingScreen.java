@@ -174,8 +174,8 @@ public final class HousingScreen extends SocialScreen {
         type.draw(c,fit(o.name(),26,150,BOLD),150,152,26,0xFFFFFFFF,BOLD,false);
         if(o.house()>=0){
             images.drawTexture(c,HOUSE_EMBLEM[o.house()],150,178,0,0,24,24,128,128,128,128,0xFFFFFFFF);
-            type.draw(c,SchoolProtocol.HOUSES.get(o.house())+" 기숙사",180,190,18,SUB,BODY,false);
-        }else type.draw(c,"기숙사 미정",150,190,18,MUTED,BODY,false);
+            type.draw(c,SchoolProtocol.HOUSES.get(o.house()),180,190,18,SUB,BODY,false);
+        }
         HudMesh.line(c,44,236,290,236,1f,0x66E1B866);
         icon(images,c,ICON_VISITOR,58,262,20,0xFFFFFFFF);
         type.draw(c,"오늘 "+fmt(room.today())+"   |   누적 "+fmt(room.total()),78,262,18,TEXT,BODY,false);

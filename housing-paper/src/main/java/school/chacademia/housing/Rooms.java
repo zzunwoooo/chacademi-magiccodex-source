@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import school.magiccodex.protocol.HousingProtocol;
 import school.magiccodex.protocol.HousingProtocol.*;
 import school.magiccodex.protocol.HousingRules.Layout;
+import school.magiccodex.protocol.SchoolProtocol;
 
 /**
  * 누가 어느 방을 보고 있는지 (이 서버), 요청 처리, 다른 서버와 구경 중 명단·방 변경 맞추기.
@@ -31,7 +32,7 @@ final class Rooms {
     void join(Player p) {
         var skin = Skins.of(p);
         var catalog = plugin.catalog();
-        plugin.store().touch(p.getUniqueId(), p.getName(), skin.hash(), skin.slim(), plugin.settings().startSize(), catalog::get, catalog.allowed(p), row -> {
+        plugin.store().touch(p.getUniqueId(), p.getName(), fallbackHouse(p), skin.hash(), skin.slim(), plugin.settings().startSize(), catalog::get, catalog.allowed(p), row -> {
             if (row != null) people.put(p.getUniqueId(), row.person());
         });
         plugin.store().heartbeat(plugin.settings().server(), List.of(p.getUniqueId()));
@@ -41,8 +42,30 @@ final class Rooms {
         sessions.remove(id); catalogSent.remove(id); people.remove(id); lastAction.remove(id); lastPost.remove(id);
         plugin.store().offline(id, plugin.settings().server());
     }
-    /** 기숙사 문 검사용 (모르면 -1). */
+    /** 기숙사 문 검사용 (아직 못 읽었으면 -2, 기숙사 없음 -1). */
     int house(UUID id) { var p = people.get(id); return p == null ? -2 : p.house(); }
+
+    private static final List<String> HOUSE_PERMISSIONS = List.of("arkeon", "lumina", "bestiaz", "noxer");
+    /**
+     * DB(codex_houses)에 기숙사가 없을 때 MagicCodexBridge 와 같은 방법으로 찾는다:
+     * Bridge StatsService 의 dormitory → magiccodex.house.&lt;영문&gt; 권한. 없으면 -1.
+     */
+    static int fallbackHouse(Player p) {
+        try {
+            for (Class<?> type : Bukkit.getServicesManager().getKnownServices()) {
+                if (!type.getName().equals("school.magiccodex.paper.StatsService")) continue;
+                @SuppressWarnings({"rawtypes", "unchecked"}) var reg = Bukkit.getServicesManager().getRegistration((Class) type);
+                if (reg == null) break;
+                Object extra = type.getMethod("get", UUID.class).invoke(reg.getProvider(), p.getUniqueId());
+                Object dorm = extra.getClass().getMethod("dormitory").invoke(extra);
+                int i = dorm == null ? -1 : SchoolProtocol.HOUSES.indexOf(dorm.toString());
+                if (i >= 0) return i;
+                break;
+            }
+        } catch (ReflectiveOperationException | RuntimeException ignored) { /* Bridge 없음 */ }
+        for (int i = 0; i < HOUSE_PERMISSIONS.size(); i++) if (p.hasPermission("magiccodex.house." + HOUSE_PERMISSIONS.get(i))) return i;
+        return -1;
+    }
     Person person(Player p) {
         var known = people.get(p.getUniqueId());
         if (known != null) return known;
@@ -58,6 +81,8 @@ final class Rooms {
         UUID id = p.getUniqueId();
         var catalog = plugin.catalog();
         if (!Objects.equals(catalogSent.get(id), catalog.revision())) { plugin.net().send(p, catalog.message()); catalogSent.put(id, catalog.revision()); }
+        // 기숙사를 아직 몰랐는데 지금은 알 수 있으면 (Bridge 가 늦게 채운 경우) 방을 읽기 전에 먼저 고쳐 둔다 (같은 DB 작업 줄이라 순서 보장).
+        if (owner.equals(id) && house(id) < 0 && fallbackHouse(p) >= 0) join(p);
         var session = new Session(owner, home && owner.equals(id), home, ++tokens);
         var previous = sessions.put(id, session);
         load(p, session, true, true, previous);

@@ -130,12 +130,13 @@ final class HousingStore {
     // ------------------------------------------------------------ 방
     /**
      * 접속할 때: 방이 없으면 만들고, 닉네임·기숙사·스킨을 최신으로 맞춘다.
+     * 기숙사는 Bridge 와 같은 순서: codex_houses → (없으면) fallbackHouse (Bridge StatsService·magiccodex.house.* 권한, 메인 스레드에서 구함).
      * allowed = 지금 권한으로 놓을 수 있는 가구 → 권한이 빠진 가구는 저장된 레이아웃에서 뺀다.
      */
-    void touch(UUID id, String fallback, String skin, boolean slim, int startSize, Function<String, Def> defs, Map<String, Integer> allowed, Consumer<RoomRow> done) {
+    void touch(UUID id, String fallback, int fallbackHouse, String skin, boolean slim, int startSize, Function<String, Def> defs, Map<String, Integer> allowed, Consumer<RoomRow> done) {
         async("접속 갱신", c -> {
             String name = nickname(c, id); if (name == null || name.isBlank()) name = fallback;
-            int house = house(c, id);
+            int house = house(c, id); if (house < 0) house = fallbackHouse;
             RoomRow row = room(c, id);
             if (row == null) {
                 try (var s = c.prepareStatement(insertIgnore() + tRoom + "(owner,name,house,skin,slim,size,active,likes,visits,rev) VALUES(?,?,?,?,?,?,0,0,0,1)")) {

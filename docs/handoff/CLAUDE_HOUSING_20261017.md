@@ -21,6 +21,7 @@
 3. **DB**: `plugins/ChacaHousing/database.properties` 를 Bridge 와 같은 형식으로 **공용 MariaDB** 로. 테이블 자동 생성:
    `codex_housing_room / _layout / _like / _visit / _guestbook / _presence / _online`. (보유 가구 테이블 없음 — 가구는 권한)
    Bridge 테이블 `codex_nicknames`(닉네임), `codex_houses`(기숙사), `codex_friends`(친구 목록)는 **읽기만** 한다.
+   기숙사는 Bridge `SchoolBridge.house` 와 같은 순서로 찾는다: `codex_houses` → Bridge `StatsService` 의 dormitory(리플렉션) → `magiccodex.house.<arkeon|lumina|bestiaz|noxer>` 권한. 방 정보에는 기숙사 이름 + 문장 아이콘만 보인다.
    SQLite 모드로 켜지면 경고를 남기고 닉네임·기숙사·친구는 비어 보인다.
 4. `config.yml` 의 `server-name` 을 서버마다 다르게 (`school`, `wild`). 구경 중 명단·접속 표시의 서버 구분에만 쓴다.
 5. **Vault** 가 있어야 방 확장이 된다 (Bridge 상점과 같은 리플렉션 방식). 확장 비용은 `config.yml expansion` — 단계 9·11·13·15 는 오너 결정, **비용(10000·25000·50000·100000)은 임시 값 — 오너가 정할 것.** 처음 크기 `start-size: 7`.

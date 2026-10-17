@@ -76,6 +76,7 @@ final class Doors implements Listener {
         lastClick.put(p.getUniqueId(), now);
         if (door.house() >= 0) {
             int house = plugin.rooms().house(p.getUniqueId());
+            if (house < 0) { int live = Rooms.fallbackHouse(p); if (live >= 0) house = live; }
             if (house == -2) { p.sendMessage("§e[하우징] 학생 정보를 불러오는 중이에요. 잠시 후 다시 눌러 주세요."); return; }
             if (house != door.house() && !p.hasPermission("chacademi.housing.admin")) {
                 p.sendMessage("§c[하우징] " + SchoolProtocol.HOUSES.get(door.house()) + " 기숙사 학생만 들어갈 수 있어요.");
