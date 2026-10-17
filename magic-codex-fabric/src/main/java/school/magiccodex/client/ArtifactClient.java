@@ -70,6 +70,8 @@ public final class ArtifactClient {
     private static int summonKeys;
     private static String summonRates = "";
 
+    static KeyBinding binding() { return useKey; }
+
     public static void initialize() {
         useKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.magiccodex.artifact_use", GLFW.GLFW_KEY_X, "category.magiccodex"));
         KeySettingsLayout.artifactKey(code -> useKey.matchesKey(code, 0));

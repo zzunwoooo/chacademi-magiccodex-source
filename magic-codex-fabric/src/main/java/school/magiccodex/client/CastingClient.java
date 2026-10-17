@@ -31,6 +31,7 @@ public final class CastingClient {
     private static boolean matchLoadout;
     public static CastingState state() { STATE.catalog(CodexCatalog.spells()); return STATE; }
     public static boolean enabled() { return STATE.enabled(); }
+    static KeyBinding binding() { return toggleKey; }
     public static List<String> permissions() { return state().permissions(); }
     public static void initialize() {
         toggleKey=KeyBindingHelper.registerKeyBinding(new KeyBinding("key.magiccodex.magic_mode",GLFW.GLFW_KEY_Z,"category.magiccodex"));

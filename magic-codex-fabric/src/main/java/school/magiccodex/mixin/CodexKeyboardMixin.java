@@ -18,6 +18,7 @@ public abstract class CodexKeyboardMixin {
     private void magiccodex$openShortcut(long window, int key, int scan, int action, int modifiers, CallbackInfo ci) {
         var client = MinecraftClient.getInstance();
         if (window == client.getWindow().getHandle() && (PlayerHudClient.handleCursorKey(client, key, action)
+                || school.magiccodex.client.UiKeys.handleKey(client, key, scan, action)
                 || school.magiccodex.client.EquipmentClient.handleKey(client,key,scan,action)
                 || StatsClient.handleKey(client, key, scan, action)
                 || MagicCodexClient.handleOpenShortcut(client, key, scan, action)

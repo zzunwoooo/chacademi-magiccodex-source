@@ -13,19 +13,21 @@ public final class KeySettingsLayout {
     public static final Rect CLOSE = new Rect(1478, 65, 54, 50);
     public static final Rect SAVE = new Rect(1206, 613, 150, 52);
     public static final Rect RESET = new Rect(1370, 613, 143, 52);
-    public static final Rect PREVIOUS = new Rect(388, 742, 95, 40);
-    public static final Rect NEXT = new Rect(1190, 742, 95, 40);
-    public static final Rect PICKER_CLOSE = new Rect(1248, 170, 48, 48);
+    // Picker (owner 2026-10-17): UI shortcut menu on the left (UI_PANEL), the spell list smaller on the right (SPELL_PANEL).
+    public static final Rect UI_PANEL = new Rect(300, 162, 262, 635);
+    public static final Rect SPELL_PANEL = new Rect(578, 162, 794, 635);
+    public static final Rect PREVIOUS = new Rect(598, 742, 95, 40);
+    public static final Rect NEXT = new Rect(1257, 742, 95, 40);
+    public static final Rect PICKER_CLOSE = new Rect(1316, 170, 48, 48);
+    public static Rect uiChoice(int index) { return new Rect(316, 262 + index * 55, 230, 48); }
     public static final Rect DISCARD = new Rect(845, 510, 220, 50);
     public static final Rect CONTINUE = new Rect(605, 510, 220, 50);
     /** Keyboard area of key_settings_base.png and where/how big it is drawn (keys are baked into that art). */
     static final Rect KEYBOARD_SRC = new Rect(212, 158, 1248, 415);
     static final float KEYBOARD_SCALE = .84f, KEYBOARD_X = 212, KEYBOARD_Y = 191;
     public static final List<Key> KEYS = keys();
-    // 88 = X: artifact use key (2026-10-15 owner decision: never a spell key, even if the artifact key is rebound).
-    // 341/345 = Ctrl: HUD cursor key (owner 2026-10-17), never a spell key.
-    private static final Set<Integer> RESERVED = Set.of(87, 65, 83, 68, 73, 90, 80, 79, 88,
-            341, 344, 345, 342, 346, 343, 347, 348, 280);
+    // Owner 2026-10-17: only WASD is locked. Every other key may hold a spell or a UI shortcut (UiKeys), one thing per key.
+    private static final Set<Integer> RESERVED = Set.of(87, 65, 83, 68);
     private static java.util.function.IntPredicate equipmentKey=code->false;
     static void equipmentKey(java.util.function.IntPredicate predicate){equipmentKey=predicate;}
     private static java.util.function.IntPredicate artifactKey=code->false;
@@ -33,9 +35,10 @@ public final class KeySettingsLayout {
     static boolean equipmentReserved(int code){return code==79||equipmentKey.test(code);}
     /** X and the (possibly rebound) artifact use key. */
     static boolean artifactReserved(int code){return code==88||artifactKey.test(code);}
-    public static boolean reservedShortcut(int code){return code==87||code==65||code==83||code==68||code==73||code==90||code==80||code==79||equipmentKey.test(code)||artifactReserved(code);}
+    /** WASD (movement) only. */
+    public static boolean reservedShortcut(int code){return RESERVED.contains(code);}
     /** Shown when a reserved key is refused. */
-    public static final String RESERVED_MESSAGE="WASD · I · O · P · X · Z와 보조 키는 지정할 수 없습니다.";
+    public static final String RESERVED_MESSAGE="WASD는 이동 키라 지정할 수 없습니다.";
     // Positive values outside GLFW keyboard range preserve version-1 integer storage.
     public static final int THUMB_1=1003, THUMB_2=1004;
     public static boolean mouse(int code){return code==THUMB_1||code==THUMB_2;}
@@ -43,7 +46,7 @@ public final class KeySettingsLayout {
     public static int mouseButton(int code){return code==THUMB_1?4:code==THUMB_2?3:-1;}
     public static boolean allowed(int code) {
         if(mouse(code))return true;
-        return !RESERVED.contains(code) && !equipmentKey.test(code) && !artifactKey.test(code) && KEYS.stream().anyMatch(k -> k.code() == code);
+        return !RESERVED.contains(code) && KEYS.stream().anyMatch(k -> k.code() == code);
     }
     public static String name(int code) {
         if(mouse(code))return code==THUMB_1?"\uc5c4\uc9c0 1":"\uc5c4\uc9c0 2";
@@ -51,7 +54,7 @@ public final class KeySettingsLayout {
     }
     public static Rect slot(int index) { return new Rect(375 + index * 166,622,92,88); }
     public static Rect slotKey(int index) { return new Rect(376 + index * 166,729,90,30); }
-    public static Rect choice(int index) { return new Rect(386 + index % 3 * 303, 257 + index / 3 * 148, 286,132); }
+    public static Rect choice(int index) { return new Rect(598 + index % 3 * 254, 257 + index / 3 * 148, 240,132); }
     private static List<Key> keys() {
         var keys = new ArrayList<Key>();
         row(keys,179,69,new int[]{251,351,437,522,608,692,778,862,948,1033,1118,1204,1290},

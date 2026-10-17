@@ -17,6 +17,7 @@ public final class MagicCodexClient implements ClientModInitializer {
     private static String pendingChat;
     private static KeyBinding openKey;
     private static final CodexShortcut SHORTCUT = new CodexShortcut();
+    static KeyBinding binding() { return openKey; }
     static boolean matchesOpenKey(int key, int scan) { return openKey != null && openKey.matchesKey(key, scan); }
     public static boolean handleOpenShortcut(MinecraftClient client, int key, int scan, int action) {
         boolean ready = client.world != null && client.player != null && client.currentScreen == null
@@ -29,7 +30,8 @@ public final class MagicCodexClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         UiResources.initialize();
-        openKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.magiccodex.open", GLFW.GLFW_KEY_I, "category.magiccodex"));
+        UiKeys.initialize();
+        openKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.magiccodex.open", GLFW.GLFW_KEY_K, "category.magiccodex"));
         CodexCatalog.initialize();
         PermissionClient.initialize();
         WalletClient.initialize();

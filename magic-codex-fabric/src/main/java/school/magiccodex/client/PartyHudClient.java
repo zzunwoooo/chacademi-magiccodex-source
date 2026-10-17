@@ -107,7 +107,7 @@ public final class PartyHudClient {
     /** /hud 파티 켜기|끄기|초기화 */
     static com.mojang.brigadier.builder.LiteralArgumentBuilder<FabricClientCommandSource> command(){
         var root=ClientCommandManager.literal("파티");
-        root.executes(ctx->{ctx.getSource().sendFeedback(Text.literal("/hud 파티 켜기 · 끄기 · 초기화  (Ctrl 누른 채 끌어서 이동, 오른쪽 아래 모서리로 크기 조절)"));return 1;});
+        root.executes(ctx->{ctx.getSource().sendFeedback(Text.literal("/hud 파티 켜기 · 끄기 · 초기화  ("+UiKeys.cursorHint()+" 끌어서 이동, 오른쪽 아래 모서리로 크기 조절)"));return 1;});
         root.then(ClientCommandManager.literal("켜기").executes(ctx->{settings().enabled=true;save();ctx.getSource().sendFeedback(Text.literal("파티 창을 켰습니다."));return 1;}));
         root.then(ClientCommandManager.literal("끄기").executes(ctx->{settings().enabled=false;gesture=null;save();ctx.getSource().sendFeedback(Text.literal("파티 창을 껐습니다."));return 1;}));
         root.then(ClientCommandManager.literal("초기화").executes(ctx->{resetLayout();ctx.getSource().sendFeedback(Text.literal("파티 창 위치와 크기를 처음대로 돌렸습니다."));return 1;}));

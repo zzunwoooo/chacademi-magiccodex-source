@@ -21,7 +21,7 @@ class SpellKeySettingsTest {
     }
     @Test void reservedAndUnknownKeysAreRejected() {
         var s=new SpellKeySettings(); s.select(0,"flame");
-        for(int code:new int[]{87,65,83,68,73,90,80,79,256,342,343,999,-1})
+        for(int code:new int[]{87,65,83,68,256,999,-1})
             assertThrows(IllegalArgumentException.class,()->s.bind(0,code));
         assertFalse(s.complete());
     }
@@ -59,9 +59,9 @@ class SpellKeySettingsTest {
         Path file=directory.resolve("settings.yml"); Files.writeString(file," ".repeat(16385));
         assertThrows(java.io.IOException.class,()->SpellKeySettings.load(file));
     }
-    @Test void legacyPBindingKeepsSpellAndOtherKeysWithoutRewritingFile() throws Exception {
+    @Test void legacyWBindingKeepsSpellAndOtherKeysWithoutRewritingFile() throws Exception {
         Path file=directory.resolve("old.yml");
-        String content="version: 1\nslots: [{spell: fire, key: 80}, {spell: wind, key: 70}, null, null, null, null]";
+        String content="version: 1\nslots: [{spell: fire, key: 87}, {spell: wind, key: 70}, null, null, null, null]";
         Files.writeString(file,content);
         var settings=SpellKeySettings.load(file);
         assertEquals("fire",settings.get(0).spellId());assertEquals(-1,settings.get(0).keyCode());
@@ -70,18 +70,15 @@ class SpellKeySettingsTest {
         settings.bind(0,49);settings.save(file);
         assertTrue(SpellKeySettings.load(file).sameAs(settings));
     }
-    @Test void oldEquipmentShortcutPreservesSpellAndOtherBindings() throws Exception {
+    // owner 2026-10-17: only WASD is locked; former shortcut keys (O, P, X, I, Z) keep spells saved on them
+    @Test void formerShortcutKeysKeepTheirSpells() throws Exception {
         Path file=directory.resolve("old-o.yml");
         Files.writeString(file,"version: 1\nslots: [{spell: fire, key: 79}, {spell: wind, key: 70}, null, null, null, null]");
         var settings=SpellKeySettings.load(file);
-        assertEquals(new SpellKeySettings.Binding("fire",-1),settings.get(0));
+        assertEquals(new SpellKeySettings.Binding("fire",79),settings.get(0));
         assertEquals(new SpellKeySettings.Binding("wind",70),settings.get(1));
-        assertFalse(KeySettingsLayout.allowed(79));assertTrue(KeySettingsLayout.reservedShortcut(79));
-    }
-    @Test void changedEquipmentKeyCannotBeAssignedToSpell(){
-        KeySettingsLayout.equipmentKey(code->code==75);
-        try{assertFalse(KeySettingsLayout.allowed(75));assertTrue(KeySettingsLayout.reservedShortcut(75));}
-        finally{KeySettingsLayout.equipmentKey(code->false);}
+        for(int code:new int[]{73,79,80,88,90})assertTrue(KeySettingsLayout.allowed(code));
+        assertFalse(KeySettingsLayout.reservedShortcut(79));assertTrue(KeySettingsLayout.reservedShortcut(87));
     }
     @Test void missingCatalogEntriesArePreservedForLaterReload() throws Exception {
         var s=new SpellKeySettings(); s.select(3,"temporarily_missing"); s.bind(3,82);
@@ -150,9 +147,7 @@ class SpellKeySettingsTest {
         assertEquals("third",casting.bindings().getFirst().spellId());
         assertEquals(53,casting.bindings().getFirst().keyCode());
     }
-    @Test void altsAndControlsReservedLeftShiftAllowed() {
-        assertFalse(KeySettingsLayout.allowed(342)); assertFalse(KeySettingsLayout.allowed(346));
-        assertFalse(KeySettingsLayout.allowed(341)); assertFalse(KeySettingsLayout.allowed(345)); // Ctrl = HUD cursor
-        assertTrue(KeySettingsLayout.allowed(340));
+    @Test void modifierKeysAreAssignable() {
+        for(int code:new int[]{340,341,342,344,345,346})assertTrue(KeySettingsLayout.allowed(code));
     }
 }

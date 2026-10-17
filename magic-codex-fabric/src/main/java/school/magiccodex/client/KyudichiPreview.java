@@ -36,19 +36,22 @@ final class KyudichiPreview {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, access) -> {
             LiteralArgumentBuilder<FabricClientCommandSource> root = ClientCommandManager.literal("큐디치미리보기")
                     .executes(c -> { c.getSource().sendFeedback(Text.literal("/큐디치미리보기 신청 · 매칭 · 수락 · 준비 · 경기 · 결과 · 대시보드 · 끄기  (가짜 데이터, 서버로 아무것도 안 보냄)")); return 1; });
-            root.then(ClientCommandManager.literal("신청").executes(c -> { application(); return 1; }));
-            root.then(ClientCommandManager.literal("준비").executes(c -> { prepare(); return 1; }));
-            root.then(ClientCommandManager.literal("경기").executes(c -> { match(); return 1; }));
-            root.then(ClientCommandManager.literal("결과").executes(c -> { result(); return 1; }));
-            root.then(ClientCommandManager.literal("수락").executes(c -> { queue(KyudichiQueueProtocol.S_OFFER); return 1; }));
-            root.then(ClientCommandManager.literal("매칭").executes(c -> { queue(KyudichiQueueProtocol.S_SEARCHING); return 1; }));
-            root.then(ClientCommandManager.literal("대시보드").executes(c -> { dashboard(); return 1; }));
+            // A command runs inside ChatScreen, which closes itself right after: open the windows on the next task, not now.
+            root.then(ClientCommandManager.literal("신청").executes(c -> later(KyudichiPreview::application)));
+            root.then(ClientCommandManager.literal("준비").executes(c -> later(KyudichiPreview::prepare)));
+            root.then(ClientCommandManager.literal("경기").executes(c -> later(KyudichiPreview::match)));
+            root.then(ClientCommandManager.literal("결과").executes(c -> later(KyudichiPreview::result)));
+            root.then(ClientCommandManager.literal("수락").executes(c -> later(() -> queue(KyudichiQueueProtocol.S_OFFER))));
+            root.then(ClientCommandManager.literal("매칭").executes(c -> later(() -> queue(KyudichiQueueProtocol.S_SEARCHING))));
+            root.then(ClientCommandManager.literal("대시보드").executes(c -> later(KyudichiPreview::dashboard)));
             root.then(ClientCommandManager.literal("끄기").executes(c -> { stop(); c.getSource().sendFeedback(Text.literal("미리보기를 껐어요.")); return 1; }));
             dispatcher.register(root);
         });
         ClientTickEvents.END_CLIENT_TICK.register(KyudichiPreview::tick);
         ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> mode = Mode.NONE);
     }
+
+    private static int later(Runnable r) { var c = MinecraftClient.getInstance(); c.send(() -> c.send(r)); return 1; }
 
     private static UUID me() { var p = MinecraftClient.getInstance().player; return p == null ? new UUID(0, 0) : p.getUuid(); }
     /** MagicCodex 한글 닉네임 (the account name only before the server sent it). */
