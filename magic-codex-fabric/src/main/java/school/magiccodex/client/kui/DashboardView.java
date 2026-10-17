@@ -8,7 +8,7 @@ import school.magiccodex.client.kui.Canvas.Face;
  * 큐디치 대시보드 (dashboard_*_layout, references e404802e / caeb9f6b / 60b1c202; 1672×941).
  * Each tab has its own whole-window frame from the owner (dashboard/frame_live · frame_ranking · frame_record, canvas
  * coordinates, tab row baked with that tab selected); content is drawn at the reference coordinates.
- * frame_ranking's baked scroll thumb was cut out into dashboard/rank_thumb so it can move. The close X reuses skills/close.
+ * frame_ranking's baked scroll thumb was cut out into dashboard/rank_thumb so it can move. Close X: dashboard/close_button.
  */
 public final class DashboardView {
     private DashboardView() {}
@@ -37,13 +37,21 @@ public final class DashboardView {
             new float[][]{{322, 178, 331, 55}, {663, 178, 344, 55}, {1016, 178, 332, 55}}, 128, 72, new float[]{1409, 89, 47, 45}, 25);
     static final Chrome RECORD_CHROME = new Chrome("dashboard/frame_record",
             new float[][]{{496, 128, 221, 43}, {720, 128, 233, 43}, {955, 128, 227, 43}}, 90, 56, new float[]{1438, 81, 47, 45}, 20);
+    /** dashboard/close_button (X art 31 px inside 96) drawn at the old X size (34 px) around (cx, cy); hit = the X. */
+    static void close(Pen p, float cx, float cy) {
+        float k = 34f / 31f, hx = cx - 24, hy = cy - 24;
+        boolean over = p.over(hx, hy, 48, 48);
+        String part = over && CLOSE.equals(p.pressed) ? "dashboard/close_button_pressed" : over ? "dashboard/close_button_hover" : "dashboard/close_button";
+        p.image(part, cx - 49.5f * k, cy - 51.5f * k, 96 * k, 96 * k);
+        p.hit(CLOSE, hx, hy, 48, 48);
+    }
     static Chrome chromeOf(Tab t) { return t == Tab.LIVE ? LIVE_CHROME : t == Tab.RANKING ? RANKING_CHROME : RECORD_CHROME; }
 
     public static void paint(Pen p, Data d) {
         Chrome ch = chromeOf(d.tab());
         p.image(ch.frame(), 0, 0, W, H);
         p.text("큐디치", 836, ch.titleY(), ch.titleSize(), Theme.GOLD, Face.TITLE, Canvas.CENTER);
-        p.button(CLOSE, "skills/close", ch.close()[0], ch.close()[1], ch.close()[2], ch.close()[3], true);
+        close(p, ch.close()[0] + 21, ch.close()[1] + 21.5f);
         if (d.tab() == Tab.LIVE) {
             // 대기 중인 파티 pill (reference 1235..1470 × 166..214; the pill art is longer, so it is a little wider and lower)
             p.image("dashboard/waiting_party_pill", 1168, 168, 297, 44);
@@ -89,7 +97,7 @@ public final class DashboardView {
                 p.text(String.valueOf(l.scoreA()), 580, ct + 86, 56, Theme.GOLD, Face.TITLE, Canvas.CENTER);
                 p.text(":", 642, ct + 86, 56, Theme.GOLD, Face.TITLE, Canvas.CENTER);
                 p.text(String.valueOf(l.scoreB()), 704, ct + 86, 56, 0xFFDDE3F5, Face.TITLE, Canvas.CENTER);
-                Theme.icon(p, "icons/clock", 564, ct + 136, 25, 25);
+                Theme.icon(p, "icons_line/clock", 564, ct + 136, 25, 25);
                 p.text("남은 시간", 586, ct + 137, 20, Theme.CREAM, Face.SERIF, Canvas.LEFT);
                 p.text(Theme.time2(l.timeLeftMs()), 676, ct + 137, 24, Theme.WHITE, Face.SERIF, Canvas.LEFT);
             }

@@ -119,15 +119,15 @@ final class KyudichiHud {
         return new HudView.Keys(action, cooldown, lit, hold, 10_000);
     }
 
-    // ================================================================== forfeit (no art in the pack: drawn like the other HUD capsules)
+    // ================================================================== forfeit (hud/forfeit_button, art 352×62 at (4,4) inside 360×96)
     private static void forfeit(DrawContext ctx, Canvas canvas, KyudichiProtocol.Match m, float w, float s) {
         boolean vote = (m.flags() & 8) != 0;
         forfeitShown = (HudPointer.active() || vote) && m.myTeam() != 2 && m.phase() == 2;
         if (!forfeitShown) return;
-        float fw = (vote ? 150 : 84) * s, fh = 40 * s, fx = w / 2f + (1160 - 836 + 14) * s, fy = (56 - 20) * s;
-        HudMesh.capsule(ctx, fx, fy, fw, fh, vote ? 0xFFE36571 : 0xFFB8925A, vote ? 0xFFB83A48 : 0xFF7A5E33);
-        HudMesh.capsule(ctx, fx + 1.5f, fy + 1.5f, fw - 3, fh - 3, 0xF2132433, 0xF20C1F32);
-        canvas.text(vote ? "포기 투표 중 · 찬성" : "포기", fx + fw / 2, fy + fh / 2, 17 * s, vote ? 0xFFFFC2C8 : Theme.CREAM, Canvas.Face.SERIF, Canvas.CENTER);
+        float fh = 32 * s, k = fh / 62f, fw = 352 * k, fx = w / 2f + (1160 - 836 + 14) * s, fy = (56 - 16) * s;
+        boolean over = HudPointer.active() && HudPointer.x() >= fx && HudPointer.x() <= fx + fw && HudPointer.y() >= fy && HudPointer.y() <= fy + fh;
+        canvas.image(over ? "hud/forfeit_button_hover" : "hud/forfeit_button", fx - 4 * k, fy - 4 * k, 360 * k, 96 * k, 1);
+        canvas.text(vote ? "포기 투표 중 · 찬성" : "포기", fx + fw / 2, fy + fh / 2, 16 * s, vote ? 0xFFFFD6DA : Theme.CREAM, Canvas.Face.SERIF, Canvas.CENTER);
         forfeitX = fx; forfeitY = fy; forfeitW = fw; forfeitH = fh;
     }
 

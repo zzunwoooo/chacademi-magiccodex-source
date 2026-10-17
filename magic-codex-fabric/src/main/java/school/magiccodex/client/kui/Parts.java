@@ -150,6 +150,10 @@ public final class Parts {
         for (String i : new String[]{"arena", "bar_chart", "cancel", "clock", "crossed_swords", "crown", "hourglass", "party", "range_slider", "search"})
             m.put("icons/" + i, new int[]{128, 128});
         for (int i = 1; i <= 3; i++) m.put("medals/rank_" + i, new int[]{256, 256});
+        // owner LINE_BUTTON_PNG 2026-10-17
+        for (String v : new String[]{"", "_hover", "_pressed"}) m.put("dashboard/close_button" + v, new int[]{96, 96});
+        for (String v : new String[]{"", "_hover", "_pressed", "_disabled"}) m.put("hud/forfeit_button" + v, new int[]{360, 96});
+        for (String i : new String[]{"bar_chart_silver", "clock", "crossed_swords_silver", "range_slider"}) m.put("icons_line/" + i, new int[]{128, 128});
         return Map.copyOf(m);
     }
     public static int[] size(String part) { int[] s = SIZES.get(part); if (s == null) throw new IllegalArgumentException("unknown part " + part); return s; }

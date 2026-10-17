@@ -24,6 +24,8 @@ public final class Theme {
             java.util.Map.entry("icons/crossed_swords", new int[]{14, 16, 117, 118}), java.util.Map.entry("icons/crown", new int[]{9, 14, 121, 108}),
             java.util.Map.entry("icons/hourglass", new int[]{30, 13, 97, 115}), java.util.Map.entry("icons/party", new int[]{8, 31, 119, 101}),
             java.util.Map.entry("icons/range_slider", new int[]{9, 52, 120, 79}), java.util.Map.entry("icons/search", new int[]{12, 8, 118, 114}),
+            java.util.Map.entry("icons_line/bar_chart_silver", new int[]{22, 21, 122, 94}), java.util.Map.entry("icons_line/clock", new int[]{18, 21, 103, 106}),
+            java.util.Map.entry("icons_line/crossed_swords_silver", new int[]{22, 12, 110, 100}), java.util.Map.entry("icons_line/range_slider", new int[]{6, 19, 122, 107}),
             java.util.Map.entry("medals/rank_1", new int[]{9, 27, 246, 211}), java.util.Map.entry("medals/rank_2", new int[]{11, 35, 248, 214}),
             java.util.Map.entry("medals/rank_3", new int[]{8, 34, 248, 216}));
     /** Draws an icon so its visible art fits w×h centred on (cx, cy) (the PNG's transparent padding is ignored). */
