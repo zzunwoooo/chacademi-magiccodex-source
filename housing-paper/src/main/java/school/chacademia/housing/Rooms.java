@@ -30,7 +30,8 @@ final class Rooms {
     // ------------------------------------------------------------ 접속
     void join(Player p) {
         var skin = Skins.of(p);
-        plugin.store().touch(p.getUniqueId(), p.getName(), skin.hash(), skin.slim(), plugin.settings().startSize(), row -> {
+        var catalog = plugin.catalog();
+        plugin.store().touch(p.getUniqueId(), p.getName(), skin.hash(), skin.slim(), plugin.settings().startSize(), catalog::get, catalog.allowed(p), row -> {
             if (row != null) people.put(p.getUniqueId(), row.person());
         });
         plugin.store().heartbeat(plugin.settings().server(), List.of(p.getUniqueId()));
@@ -79,7 +80,7 @@ final class Rooms {
                 return;
             }
             knownRev.put(s.owner(), data.row().rev());
-            plugin.net().send(p, new RoomMessage(room(data, s, open)));
+            plugin.net().send(p, new RoomMessage(room(data, s, open, p)));
             if (guestbook) sendGuestbook(p, s);
             var viewers = lastViewers.get(s.owner());
             if (viewers != null) sendViewers(p, s.owner(), viewers);
@@ -90,14 +91,14 @@ final class Rooms {
             if (entries != null && p.isOnline() && sessions.get(p.getUniqueId()) == s) plugin.net().send(p, new Guestbook(s.owner(), entries));
         });
     }
-    private Room room(HousingStore.RoomData d, Session s, boolean open) {
+    private Room room(HousingStore.RoomData d, Session s, boolean open, Player viewer) {
         var row = d.row();
         int flags = (open ? HousingProtocol.F_OPEN : 0) | (s.edit() ? HousingProtocol.F_EDIT : 0) | (d.liked() ? HousingProtocol.F_LIKED : 0) | (s.home() ? HousingProtocol.F_HOME : 0);
         var next = plugin.settings().next(row.size());
         Map<Integer, Layout> layouts = new HashMap<>();
         if (s.edit()) layouts.putAll(d.layouts());
         else layouts.put(row.active(), d.layouts().getOrDefault(row.active(), Layout.EMPTY));
-        Map<String, Integer> owned = s.edit() ? limit(d.owned()) : Map.of();
+        Map<String, Integer> owned = s.edit() ? limit(plugin.catalog().allowed(viewer)) : Map.of();
         return new Room(flags, row.person(), row.size(), next == null ? 0 : next.getKey(), next == null ? 0 : next.getValue(),
                 row.likes(), d.today(), row.visits(), row.active(), layouts, owned);
     }
@@ -158,7 +159,7 @@ final class Rooms {
 
     private void save(Player p, Session s, Save save) {
         if (!s.edit()) { plugin.net().result(p, false, "내 방에서만 꾸밀 수 있어요."); return; }
-        plugin.store().save(s.owner(), save.slot(), save.layout(), plugin.catalog()::get, why -> {
+        plugin.store().save(s.owner(), save.slot(), save.layout(), plugin.catalog()::get, plugin.catalog().allowed(p), why -> {
             plugin.net().result(p, why == null, why == null ? "저장했어요. 방문한 친구에게는 레이아웃 " + (save.slot() + 1) + "이(가) 보여요." : why);
             if (why == null) refresh(s.owner());
         });

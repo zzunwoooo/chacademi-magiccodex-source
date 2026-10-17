@@ -25,7 +25,7 @@ class HousingProtocolTest {
             new Guestbook(A, List.of(new Entry(7, new Person(B, "서하", 0, "0123456789abcdef0123456789abcdef", true), 1_700_000_000_000L, "방 예쁘다!"))),
             new FriendList(List.of(new Friend(new Person(B, "서하", 0, "", false), true, 5))),
             new Result(true, "저장했어요."),
-            new Catalog(3, List.of(new Def("bed", "아카데미 침대", 0, 0, 2, 1, 6, 0xFF1F2F5A, 0xFFE0B860, ""))));
+            new Catalog(3, List.of(new Def("bed", "아카데미 침대", 0, 0, 2, 1, 6, 0xFF1F2F5A, 0xFFE0B860, "", 1))));
 
     @Test void roundTrip() {
         for (Message m : SAMPLES) assertEquals(m, HousingProtocol.decode(HousingProtocol.encode(m)));

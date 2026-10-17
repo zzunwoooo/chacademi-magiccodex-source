@@ -49,7 +49,7 @@ final class Commands implements CommandExecutor, TabCompleter {
                 if (size < 0) { s.sendMessage(P + "§c크기는 " + HousingRules.MIN_SIZE + "~" + HousingRules.MAX_SIZE); return; }
                 resolve(a[1], id -> {
                     if (id == null) { s.sendMessage(P + "§c유저를 찾을 수 없어요."); return; }
-                    plugin.store().setSize(id, size, plugin.catalog()::get, ok -> {
+                    plugin.store().setSize(id, size, plugin.catalog()::get, plugin.catalog().everything(), ok -> {
                         s.sendMessage(P + (Boolean.TRUE.equals(ok) ? a[1] + " 의 방 크기 = " + size + "×" + size + " (밖으로 나간 가구는 보관함으로)" : "§c방이 없거나 저장하지 못했어요. (그 학생이 한 번 접속해야 방이 생겨요)"));
                         if (Boolean.TRUE.equals(ok)) plugin.rooms().refresh(id);
                     });
@@ -87,45 +87,9 @@ final class Commands implements CommandExecutor, TabCompleter {
     }
 
     private void furniture(CommandSender s, String[] a) {
-        if (a.length >= 2 && a[1].equals("목록")) {
-            if (a.length == 2) {
-                s.sendMessage(P + "가구 " + plugin.catalog().all().size() + "개 (furniture.yml)");
-                for (var d : plugin.catalog().all()) s.sendMessage(" §7- §f" + d.id() + " §7" + d.name() + " · " + category(d));
-                return;
-            }
-            resolve(a[2], id -> {
-                if (id == null) { s.sendMessage(P + "§c유저를 찾을 수 없어요."); return; }
-                plugin.store().ownedOf(id, owned -> {
-                    if (owned == null) { s.sendMessage(P + "§c읽지 못했어요."); return; }
-                    s.sendMessage(P + a[2] + " 의 가구 " + owned.size() + "종");
-                    for (var e : new TreeMap<>(owned).entrySet()) {
-                        var d = plugin.catalog().get(e.getKey());
-                        s.sendMessage(" §7- §f" + e.getKey() + " §7" + (d == null ? "(목록에 없음)" : d.name()) + " ×" + e.getValue());
-                    }
-                });
-            });
-            return;
-        }
-        if (a.length < 4 || !List.of("지급", "회수").contains(a[1])) { s.sendMessage(P + "/하우징관리 가구 <지급|회수> <유저> <가구ID|모두> [개수]  ·  /하우징관리 가구 목록 [유저]"); return; }
-        boolean give = a[1].equals("지급");
-        int amount = a.length >= 5 ? number(a[4], 1, 999) : 1;
-        if (amount < 0) { s.sendMessage(P + "§c개수는 1~999"); return; }
-        List<String> items;
-        if (a[3].equals("모두")) items = plugin.catalog().all().stream().map(d -> d.id()).toList();
-        else if (plugin.catalog().get(a[3]) == null) { s.sendMessage(P + "§c가구 '" + a[3] + "' 가 furniture.yml 에 없어요."); return; }
-        else items = List.of(a[3]);
-        resolve(a[2], id -> {
-            if (id == null) { s.sendMessage(P + "§c유저를 찾을 수 없어요."); return; }
-            var left = new int[] {items.size()};
-            for (String item : items) plugin.store().give(id, item, give ? amount : -amount, plugin.catalog()::get, count -> {
-                if (count == null) s.sendMessage(P + "§c" + item + " 저장 실패");
-                else if (items.size() == 1) s.sendMessage(P + a[2] + " · " + item + " = " + count + "개");
-                if (--left[0] == 0) {
-                    if (items.size() > 1) s.sendMessage(P + a[2] + " 에게 가구 " + items.size() + "종을 " + amount + "개씩 " + (give ? "지급" : "회수") + "했어요.");
-                    plugin.rooms().refresh(id);
-                }
-            });
-        });
+        if (a.length >= 2 && !a[1].equals("목록")) { s.sendMessage(P + "가구는 권한으로 줘요: " + HousingRules.permission("<가구ID>") + " (전부: chacademi.housing.furniture.*)"); return; }
+        s.sendMessage(P + "가구 " + plugin.catalog().all().size() + "개 (furniture.yml) · 권한 " + HousingRules.permission("<ID>"));
+        for (var d : plugin.catalog().all()) s.sendMessage(" §7- §f" + d.id() + " §7" + d.name() + " · " + category(d) + " · 최대 " + d.max() + "개");
     }
 
     private static String category(school.magiccodex.protocol.HousingRules.Def d) {
@@ -141,8 +105,7 @@ final class Commands implements CommandExecutor, TabCompleter {
         s.sendMessage(P + "하우징 관리");
         s.sendMessage(" §7/하우징관리 문 등록 [기숙사|모두] §f바라보는 블록을 기숙사실 문으로");
         s.sendMessage(" §7/하우징관리 문 삭제 · 문 목록");
-        s.sendMessage(" §7/하우징관리 가구 지급|회수 <유저> <가구ID|모두> [개수]");
-        s.sendMessage(" §7/하우징관리 가구 목록 [유저]");
+        s.sendMessage(" §7/하우징관리 가구 목록 §f가구 ID·최대 개수 (가구는 권한 " + HousingRules.permission("<ID>") + " 으로 지급)");
         s.sendMessage(" §7/하우징관리 크기 <유저> <크기>");
         s.sendMessage(" §7/하우징관리 열기 <유저> §f(구경 모드)");
         s.sendMessage(" §7/하우징관리 리로드 §fconfig.yml · furniture.yml · doors.yml");
@@ -166,9 +129,8 @@ final class Commands implements CommandExecutor, TabCompleter {
         if (!command.getName().equals("하우징관리")) return List.of();
         List<String> out = switch (a.length) {
             case 1 -> SUB;
-            case 2 -> switch (a[0]) { case "문" -> List.of("등록", "삭제", "목록"); case "가구" -> List.of("지급", "회수", "목록"); case "크기", "열기" -> names(a[1]); default -> List.of(); };
-            case 3 -> a[0].equals("문") && a[1].equals("등록") ? concat(SchoolProtocol.HOUSES, "모두") : a[0].equals("가구") ? names(a[2]) : List.of();
-            case 4 -> a[0].equals("가구") && !a[1].equals("목록") ? concat(plugin.catalog().all().stream().map(d -> d.id()).toList(), "모두") : List.of();
+            case 2 -> switch (a[0]) { case "문" -> List.of("등록", "삭제", "목록"); case "가구" -> List.of("목록"); case "크기", "열기" -> names(a[1]); default -> List.of(); };
+            case 3 -> a[0].equals("문") && a[1].equals("등록") ? concat(SchoolProtocol.HOUSES, "모두") : List.of();
             default -> List.of();
         };
         String last = a[a.length - 1];

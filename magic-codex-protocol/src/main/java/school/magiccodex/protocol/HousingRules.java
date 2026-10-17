@@ -25,8 +25,9 @@ public final class HousingRules {
      * 가구 정의 (서버 furniture.yml). w·d = 바닥 칸 수 (벽걸이는 w = 벽을 따라, d 무시), height = 높이 (1/10 칸 단위; 벽걸이는 칸 수×10).
      * color·accent 는 모델이 생기기 전 상자로 그릴 때의 색 (ARGB). icon 은 보관함 아이콘 리소스 ("" 이면 상자 미리보기).
      * sub 는 벽지·바닥재 구분 ({@link #SURFACE_WALLPAPER}/{@link #SURFACE_FLOOR}), 그 밖에는 0.
+     * max = 권한이 있을 때 한 레이아웃에 놓을 수 있는 최대 개수 (가구 권한은 있다/없다만 본다).
      */
-    public record Def(String id,String name,int category,int sub,int w,int d,int height,int color,int accent,String icon){
+    public record Def(String id,String name,int category,int sub,int w,int d,int height,int color,int accent,String icon,int max){
         public Def{
             if(!validId(id))throw new IllegalArgumentException("Invalid furniture id");
             if(name==null||name.isBlank()||name.length()>24)throw new IllegalArgumentException("Invalid furniture name");
@@ -36,6 +37,7 @@ public final class HousingRules {
             if(height<0||height>WALL_HEIGHT*10)throw new IllegalArgumentException("Invalid height");
             if(category==CAT_WALL&&(height<10||height%10!=0))throw new IllegalArgumentException("Wall item height must be whole cells");
             if(icon==null||icon.length()>96)throw new IllegalArgumentException("Invalid icon");
+            if(max<1||max>MAX_PLACEMENTS)throw new IllegalArgumentException("Invalid max");
         }
         public boolean floor(){return category==CAT_FURNITURE||category==CAT_PROP;}
         public boolean wall(){return category==CAT_WALL;}
@@ -73,6 +75,9 @@ public final class HousingRules {
             return map;
         }
     }
+
+    /** 가구 권한 노드. LuckPerms 로 chacademi.housing.furniture.* 를 주면 전부 해금. */
+    public static String permission(String id){return "chacademi.housing.furniture."+id;}
 
     public static boolean validId(String id){
         if(id==null||id.isEmpty()||id.length()>32)return false;
