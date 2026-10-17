@@ -122,3 +122,8 @@ Audit integration verified and deployed; Story content intentionally deferred. S
 [CLAUDE_UNIT_TARGET_RING_20261015.md](CLAUDE_UNIT_TARGET_RING_20261015.md): selected client-only ring patch 09186da; unrelated broom-projectile ancestor excluded.
 
 See [artifact catalogue and unit ring integration](CODEX_ARTIFACT_CATALOG_UNITRING_20261015.md) for versions, validation and deployment boundary.
+
+## Claude 어깨 시점 조준점 대상 선택 (2026-10-17, 미빌드)
+
+[CLAUDE_SHOULDER_CROSSHAIR_20261017.md](CLAUDE_SHOULDER_CROSSHAIR_20261017.md): `claude/shoulder-crosshair-20261017`. F5 어깨 시점에서 블럭 부수기·설치·공격·상호작용이 캐릭터 정면이 아니라 조준점 대상을 따른다. 리치와 가림은 눈 기준으로 검사해 서버와 일치한다. MagicCodex 클라이언트만 바뀐다.
+
