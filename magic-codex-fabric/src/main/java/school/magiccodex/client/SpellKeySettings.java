@@ -116,9 +116,8 @@ public final class SpellKeySettings {
                 if(!(value instanceof Map<?,?> binding) || !(binding.get("spell") instanceof String id)
                         || !(binding.get("key") instanceof Integer code)) throw new IllegalArgumentException("올바르지 않은 키 설정입니다.");
                 result.select(i,id);
-                // P, O and X (artifact use, 2026-10-15) are shortcuts. Preserve those spells and all other
-                // slots, leaving only its key unassigned until the user chooses another.
-                if(code!=80&&!KeySettingsLayout.equipmentReserved(code)&&!KeySettingsLayout.artifactReserved(code)&&code!=-1)result.bind(i,code);
+                // A key that can no longer hold a spell (WASD) leaves the spell without a key until the user picks another.
+                if(code!=-1&&KeySettingsLayout.allowed(code))result.bind(i,code);
             }
             if(map.get("registration-order") instanceof List<?> order) {
                 var verified=new ArrayList<String>();

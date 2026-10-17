@@ -82,7 +82,7 @@ public final class KyudichiLoadout {
         var used = new java.util.HashSet<Integer>();
         for (var b : normal) if (!b.empty() && KeySettingsLayout.allowed(b.keyCode())) used.add(b.keyCode());
         var spare = new ArrayList<Integer>();
-        for (int code : SPARE_KEYS) if (KeySettingsLayout.allowed(code) && !used.contains(code)) spare.add(code);
+        for (int code : SPARE_KEYS) if (KeySettingsLayout.allowed(code) && !used.contains(code) && !UiKeys.isUiKey(code)) spare.add(code);
         for (int i = 0; i < SIZE; i++) {
             String id = spells.get(i);
             int key = i < normal.size() && KeySettingsLayout.allowed(normal.get(i).keyCode()) ? normal.get(i).keyCode() : -1;
@@ -93,8 +93,8 @@ public final class KyudichiLoadout {
         }
         return List.copyOf(out);
     }
-    /** Q E R T G V C — tried in this order for slots whose normal key is missing. */
-    static final int[] SPARE_KEYS = {81, 69, 82, 84, 71, 86, 67};
+    /** Q E R T G V B — tried in this order for slots whose normal key is missing (C is 앉기/빗자루 하강 since 2026-10-17). */
+    static final int[] SPARE_KEYS = {81, 69, 82, 84, 71, 86, 66};
 
     boolean load(Path path) throws IOException {
         if (!Files.exists(path)) return false;

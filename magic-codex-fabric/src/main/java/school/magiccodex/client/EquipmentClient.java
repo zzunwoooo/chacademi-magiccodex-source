@@ -20,6 +20,7 @@ import school.magiccodex.protocol.EquipmentProtocol.*;
 public final class EquipmentClient {
     private static net.minecraft.client.option.KeyBinding key;
     private static final CodexShortcut shortcut=new CodexShortcut();
+    static net.minecraft.client.option.KeyBinding binding(){return key;}
     public static boolean handleKey(MinecraftClient c,int code,int scan,int action){
         boolean ready=c.world!=null&&c.player!=null&&c.player.isAlive()&&(c.currentScreen==null||c.currentScreen instanceof EquipmentScreen)&&c.getOverlay()==null&&c.isWindowFocused();
         var result=shortcut.handle(code,action,key!=null&&key.matchesKey(code,scan),ready);

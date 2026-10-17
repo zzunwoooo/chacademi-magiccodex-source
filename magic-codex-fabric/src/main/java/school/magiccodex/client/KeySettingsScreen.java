@@ -31,6 +31,8 @@ public final class KeySettingsScreen extends Screen {
     private final boolean catalogBacked;
     private final Path path;
     private SpellKeySettings saved, draft;
+    /** UI shortcut keys (UiKeys), edited and saved together with the spells. */
+    private UiKeys.Binds uiSaved=UiKeys.current().copy(), uiDraft=uiSaved.copy();
     private CodexTypography type;
     /** selected = slot picked for click-to-swap reordering; pickerKey = key whose spell is being chosen. */
     private int selected=-1, pickerKey=-1, page;
@@ -59,6 +61,7 @@ public final class KeySettingsScreen extends Screen {
     public List<SpellKeySettings.Binding> bindings() { return draft.slots(); }
     public boolean pickerOpen() { return pickerKey>=0; }
     public int pickerKey() { return pickerKey; }
+    private boolean dirty() { return !draft.sameAs(saved) || !uiDraft.sameAs(uiSaved); }
     private boolean waiting() { return catalogBacked && !PermissionClient.catalogConfirmed(); }
     private static Identifier id(String value) { return Identifier.of("magiccodex",value); }
     @Override protected void init() { type=UiResources.text();images=UiResources.images();resourceGeneration=UiResources.generation(); }
@@ -78,14 +81,15 @@ public final class KeySettingsScreen extends Screen {
             ctx.getMatrices().translate(layout.x(),layout.y(),0); ctx.getMatrices().scale(layout.scale(),layout.scale(),1);
             drawBackground(ctx);
             text(ctx,"마법 키 설정",836,102,38,IVORY,TITLE);
-            text(ctx,"화면의 키를 클릭해 마법을 등록하세요 · 최대 6개",836,140,19,GOLD,BODY);
+            text(ctx,"화면의 키를 클릭해 마법(최대 6개)이나 UI 단축키를 등록하세요",836,140,19,GOLD,BODY);
             for(var key:KeySettingsLayout.KEYS) drawKey(ctx,key);
             drawMouse(ctx);
             text(ctx,waiting()?"서버에서 배운 마법을 확인하고 있습니다…":!notice.isEmpty()?notice:
                     "우클릭으로 등록 해제 · 처음 등록한 마법부터 왼쪽에 표시됩니다",836,567,17,GOLD,BODY);
-            label(ctx,"WASD 이동   I 도감   P 스테이터스   Z 마법 모드",171,639,16,MUTED);
+            int cursor=uiDraft.get(UiKeys.Action.CURSOR);
+            label(ctx,"마법 순서: "+(cursor<0?"채팅창을 연 채":"["+KeySettingsLayout.name(cursor)+"] 키를 누른 채")+" 화면 우측 하단 마법 칸을 끌어서 바꿀 수 있습니다",171,639,16,MUTED);
             text(ctx,"등록 " + draft.slots().stream().filter(b->!b.empty()).count()+" / 6",1116,639,18,GOLD,BODY);
-            button(ctx,KeySettingsLayout.SAVE,draft.sameAs(saved)?"저장":"저장 *",true);
+            button(ctx,KeySettingsLayout.SAVE,dirty()?"저장 *":"저장",true);
             button(ctx,KeySettingsLayout.RESET,"초기화",false);
             if(hover(KeySettingsLayout.CLOSE) && !pickerOpen() && !confirmDiscard) overlay(ctx,KeySettingsLayout.CLOSE,0x334CB2A0,0x99C9AD7A,5);
             // Typography renders at z+1. Lift the entire modal above the base text/icons.
@@ -137,7 +141,8 @@ public final class KeySettingsScreen extends Screen {
     private static int fade(int color,float alpha) { return (Math.round((color>>>24)*alpha)<<24)|(color&0xFFFFFF); }
     private void drawKey(DrawContext ctx,KeySettingsLayout.Key key) {
         Rect r=key.box(); boolean allowed=KeySettingsLayout.allowed(key.code());
-        boolean blocked=KeySettingsLayout.reservedShortcut(key.code()) || (key.code()==GLFW.GLFW_KEY_LEFT_CONTROL || key.code()==GLFW.GLFW_KEY_RIGHT_CONTROL);
+        boolean blocked=KeySettingsLayout.reservedShortcut(key.code());
+        UiKeys.Action ui=uiDraft.actionOf(key.code());
         int slot=-1;
         for(int i=0;i<6;i++) if(!draft.get(i).empty() && draft.get(i).keyCode()==key.code()) slot=i;
         boolean hot=hover(r) && !pickerOpen() && !confirmDiscard;
@@ -147,6 +152,12 @@ public final class KeySettingsScreen extends Screen {
             Spell spell=spell(draft.get(slot).spellId());
             if(spell!=null) art(ctx,spell,r.centerX(),r.centerY()-4,44);
             text(ctx,key.label(),r.x()+r.width()-15,r.y()+r.height()-13,16,IVORY,BODY);
+        } else if(ui!=null) {
+            // UI shortcut on this key: its short name in gold, the key name small underneath
+            overlay(ctx,r,0x2A6A5530,0xAAD0B98C,6);
+            float size=Math.min(15f,15f*(r.width()-8)/Math.max(1f,type.width(ui.shortLabel,15,BODY)));
+            text(ctx,ui.shortLabel,r.centerX(),r.centerY()-7,size,GOLD,BODY);
+            text(ctx,key.label(),r.centerX(),r.y()+r.height()-13,12,IVORY,BODY);
         } else {
             text(ctx,key.label(),r.centerX(),r.centerY()-(blocked?7:0),key.label().length()>5?17:21,blocked?0xFFFFC3C3:allowed?0xFFD5DADF:0xFF858E99,BODY);
             if(blocked) text(ctx,"지정 불가",r.centerX(),r.y()+r.height()-13,12,0xFFF0A4A8,BODY);
@@ -171,9 +182,26 @@ public final class KeySettingsScreen extends Screen {
     }
     private void drawPicker(DrawContext ctx) {
         ctx.fill(124,48-PICKER_DY,1549,HEIGHT-24-PICKER_DY,0xC507111B);
-        overlay(ctx,new Rect(354,162,964,635),0xF20D1C2C,GOLD,12);
-        text(ctx,"["+KeySettingsLayout.name(pickerKey)+"] 키에 등록할 마법",836,201,28,IVORY,TITLE);
-        text(ctx,waiting()?"권한 확인 중…":"검색: " + (query.isEmpty()?"이름을 입력하세요":query),836,236,18,MUTED,BODY);
+        // left: UI shortcuts (this key opens …)
+        Rect left=KeySettingsLayout.UI_PANEL;
+        overlay(ctx,left,0xF20D1C2C,GOLD,12);
+        text(ctx,"UI 단축키",left.centerX(),201,24,IVORY,TITLE);
+        boolean mouseKey=KeySettingsLayout.mouse(pickerKey);
+        text(ctx,mouseKey?"마우스 버튼에는 마법만":"이 키로 열기",left.centerX(),236,16,MUTED,BODY);
+        UiKeys.Action[] actions=UiKeys.Action.values();
+        for(int i=0;i<actions.length;i++){
+            Rect r=KeySettingsLayout.uiChoice(i); var a=actions[i];
+            int at=uiDraft.get(a); boolean current=at==pickerKey;
+            overlay(ctx,r,!mouseKey&&hover(r)?0x5545706C:0x66213043,current?GOLD:!mouseKey&&hover(r)?TEAL:0x996B7B80,6);
+            label(ctx,a.label,r.x()+12,r.centerY(),17,mouseKey?MUTED:IVORY);
+            String k=current?"현재 이 키":at<0?"미지정":KeySettingsLayout.name(at);
+            label(ctx,k,r.x()+r.width()-12-type.width(k,15,BODY),r.centerY(),15,current?GOLD:MUTED);
+        }
+        // right: spells
+        Rect right=KeySettingsLayout.SPELL_PANEL;
+        overlay(ctx,right,0xF20D1C2C,GOLD,12);
+        text(ctx,"["+KeySettingsLayout.name(pickerKey)+"] 키에 등록할 마법",right.centerX(),201,26,IVORY,TITLE);
+        text(ctx,waiting()?"권한 확인 중…":"검색: " + (query.isEmpty()?"이름을 입력하세요":query),right.centerX(),236,18,MUTED,BODY);
         button(ctx,KeySettingsLayout.PICKER_CLOSE,"×",false);
         var all=choices(); page=Math.min(page,Math.max(0,(all.size()-1)/9));
         for(int i=0;i<9;i++) {
@@ -182,21 +210,21 @@ public final class KeySettingsScreen extends Screen {
             String state=choiceState(s);
             boolean blocked=state.equals(FULL), current=state.equals(CURRENT);
             overlay(ctx,r,hover(r)&&!blocked?0x5545706C:0x66213043,blocked?0xFF505D68:current?0xFFD0B98C:hover(r)?TEAL:0x996B7B80,7);
-            art(ctx,s,r.x()+53,r.centerY(),76);
-            label(ctx,shorten(s.name(),165,21),r.x()+102,r.centerY()-12,21,blocked?MUTED:IVORY);
-            label(ctx,state.isEmpty()?s.category().label:state,r.x()+102,r.centerY()+20,16,current?GOLD:MUTED);
+            art(ctx,s,r.x()+44,r.centerY(),64);
+            label(ctx,shorten(s.name(),142,19),r.x()+86,r.centerY()-12,19,blocked?MUTED:IVORY);
+            label(ctx,shorten(state.isEmpty()?s.category().label:state,142,14),r.x()+86,r.centerY()+18,14,current?GOLD:MUTED);
         }
         for(int i=0;i<9;i++)if(hover(KeySettingsLayout.choice(i))&&page*9+i<all.size()){
             String description=all.get(page*9+i).description();
             if(description!=null&&!description.isBlank()){
-                overlay(ctx,new Rect(386,695,900,36),0xF0112230,0xAA998A6E,6);
-                label(ctx,shorten(description.replace('\n',' '),870,17),401,713,17,IVORY);
+                overlay(ctx,new Rect(598,695,756,36),0xF0112230,0xAA998A6E,6);
+                label(ctx,shorten(description.replace('\n',' '),726,17),613,713,17,IVORY);
             }
             break;
         }
-        if(all.isEmpty()) text(ctx,waiting()?"잠시만 기다려 주세요":"등록할 수 있는 배운 마법이 없습니다",836,469,23,MUTED,BODY);
+        if(all.isEmpty()) text(ctx,waiting()?"잠시만 기다려 주세요":"등록할 수 있는 배운 마법이 없습니다",right.centerX(),469,23,MUTED,BODY);
         button(ctx,KeySettingsLayout.PREVIOUS,"이전",false); button(ctx,KeySettingsLayout.NEXT,"다음",false);
-        text(ctx,(page+1)+" / "+Math.max(1,(all.size()+8)/9)+"    ·    ESC 취소",836,762,18,GOLD,BODY);
+        text(ctx,(page+1)+" / "+Math.max(1,(all.size()+8)/9)+"    ·    ESC 취소",right.centerX(),762,18,GOLD,BODY);
     }
     private static final String CURRENT="현재 이 키", FULL="6개 모두 등록됨";
     /** Picker subtitle: empty = free to register, otherwise why/what happens on click. */
@@ -211,7 +239,7 @@ public final class KeySettingsScreen extends Screen {
         ctx.fill(124,48,1549,HEIGHT-24,0xD007111B);
         overlay(ctx,new Rect(550,350,572,254),0xFF101F2D,GOLD,10);
         text(ctx,"저장하지 않은 변경이 있습니다",836,416,26,IVORY,TITLE);
-        text(ctx,"변경을 취소하고 도감으로 돌아갈까요?",836,460,20,MUTED,BODY);
+        text(ctx,"변경을 취소하고 나갈까요?",836,460,20,MUTED,BODY);
         button(ctx,KeySettingsLayout.CONTINUE,"계속 설정",false); button(ctx,KeySettingsLayout.DISCARD,"변경 취소",false);
     }
     private void button(DrawContext ctx,Rect r,String label,boolean primary) {
@@ -255,6 +283,8 @@ public final class KeySettingsScreen extends Screen {
             if(hover(KeySettingsLayout.PICKER_CLOSE)) { pickerKey=-1; sound(false); return true; }
             if(hover(KeySettingsLayout.PREVIOUS)) { page=Math.max(0,page-1); sound(false); return true; }
             if(hover(KeySettingsLayout.NEXT)) { page=Math.min(Math.max(0,(choices().size()-1)/9),page+1); sound(false); return true; }
+            UiKeys.Action[] actions=UiKeys.Action.values();
+            for(int i=0;i<actions.length;i++) if(hover(KeySettingsLayout.uiChoice(i))) { assignUi(actions[i]); return true; }
             if(waiting()) return true;
             for(int i=0;i<9;i++) if(hover(KeySettingsLayout.choice(i))) {
                 int index=page*9+i; var choices=choices(); if(index>=choices.size()) return true;
@@ -264,12 +294,14 @@ public final class KeySettingsScreen extends Screen {
         }
         if(button==0 && hover(KeySettingsLayout.CLOSE)) { close(); return true; }
         if(button==0 && hover(KeySettingsLayout.SAVE)) { save(); return true; }
-        if(button==0 && hover(KeySettingsLayout.RESET)) { draft.clear(); selected=-1; notice=""; sound(false); return true; }
+        if(button==0 && hover(KeySettingsLayout.RESET)) { draft.clear(); uiDraft.reset(); selected=-1; notice=""; sound(false); return true; }
         int mouseKey=MouseBindingLayout.hit(mx,my);
         if(mouseKey>=0){if(button==1){draft.clearKey(mouseKey);sound(false);}else openPicker(mouseKey);return true;}
         for(var key:KeySettingsLayout.KEYS) if(hover(key.box())) {
             if(button==1) {
                 if(draft.clearKey(key.code())>=0) { notice=""; sound(false); }
+                UiKeys.Action ui=uiDraft.actionOf(key.code());
+                if(ui!=null) { uiDraft.set(ui,-1); notice=ui.label+" 단축키를 해제했습니다."; sound(false); }
                 if(selected>=0 && draft.get(selected).empty()) selected=-1;
             } else openPicker(key.code());
             return true;
@@ -280,21 +312,51 @@ public final class KeySettingsScreen extends Screen {
     private boolean openPicker(int code) {
         if(!KeySettingsLayout.mouse(code)&&!KeySettingsLayout.KEYS.stream().anyMatch(k->k.code()==code)) return false;
         if(!KeySettingsLayout.allowed(code)) {
-            notice=KeySettingsLayout.reservedShortcut(code)?"WASD · I · O · P · X · Z 키는 지정할 수 없습니다.":"이 키는 지정할 수 없습니다.";
+            notice=KeySettingsLayout.reservedShortcut(code)?KeySettingsLayout.RESERVED_MESSAGE:"이 키는 지정할 수 없습니다.";
             sound(true); return false;
         }
-        if(waiting()) { notice="서버에서 배운 마법을 확인하고 있습니다…"; sound(true); return false; }
         selected=-1; pickerKey=code; page=0; query=""; notice=""; sound(false);
         return true;
     }
     private void choose(Spell s) {
         if(!s.permissionKnown() || !s.discovered()) { notice="배운 마법만 키를 지정할 수 있습니다."; sound(true); return; }
         if(choiceState(s).equals(CURRENT)) { pickerKey=-1; sound(false); return; }
-        try { draft.assign(pickerKey,s.id()); pickerKey=-1; notice=""; sound(false); }
+        UiKeys.Action ui=uiDraft.actionOf(pickerKey);
+        int movedFrom=draft.slotOfSpell(s.id())>=0?draft.get(draft.slotOfSpell(s.id())).keyCode():-1;
+        try {
+            draft.assign(pickerKey,s.id()); notice="";
+            // the UI shortcut that had this key takes the spell's old key, or none
+            if(ui!=null) {
+                int give=movedFrom>=0&&!KeySettingsLayout.mouse(movedFrom)&&uiDraft.actionOf(movedFrom)==null?movedFrom:-1;
+                uiDraft.set(ui,give);
+                notice=ui.label+" 단축키는 "+(give<0?"미지정이 되었습니다 (키를 눌러 왼쪽 메뉴에서 다시 지정)":KeySettingsLayout.name(give)+" 키로 옮겼습니다.");
+            }
+            pickerKey=-1; sound(false);
+        }
         catch(IllegalArgumentException error) { notice=error.getMessage(); pickerKey=-1; sound(true); }
     }
+    /** Left menu of the picker: this key opens a UI. The action's old key goes to whatever had this key (swap). */
+    private void assignUi(UiKeys.Action a) {
+        int key=pickerKey;
+        if(KeySettingsLayout.mouse(key)) { notice="마우스 버튼에는 마법만 등록할 수 있습니다."; sound(true); return; }
+        int old=uiDraft.get(a);
+        if(old==key) { pickerKey=-1; sound(false); return; }
+        UiKeys.Action other=uiDraft.actionOf(key);
+        uiDraft.set(a,key); notice="";
+        if(other!=null && other!=a) {
+            uiDraft.set(other,old);
+            notice=other.label+" 단축키는 "+(old<0?"미지정이 되었습니다.":KeySettingsLayout.name(old)+" 키로 옮겼습니다.");
+        }
+        int slot=draft.slotOfKey(key);
+        if(slot>=0) {
+            String spell=draft.get(slot).spellId();
+            if(old>=0 && draft.slotOfKey(old)<0 && KeySettingsLayout.allowed(old)) { draft.assign(old,spell); notice="마법을 "+KeySettingsLayout.name(old)+" 키로 옮겼습니다."; }
+            else { draft.clearKey(key); notice="이 키의 마법 등록을 해제했습니다."; }
+        }
+        pickerKey=-1; sound(false);
+    }
     private void save() {
-        try { draft.save(path); saved=draft.copy(); if(catalogBacked) CastingClient.saved(saved);
+        try { draft.save(path); saved=draft.copy(); if(catalogBacked) { CastingClient.saved(saved); UiKeys.commit(uiDraft); } uiSaved=uiDraft.copy();
             notice=""; savedPopupAt=Util.getMeasuringTimeMs(); sound(false); }
         catch(Exception error) { notice=error.getMessage(); sound(true); org.slf4j.LoggerFactory.getLogger("magiccodex").warn("키 설정 저장 실패",error); }
     }
@@ -325,7 +387,7 @@ public final class KeySettingsScreen extends Screen {
         if(pickerOpen() && !confirmDiscard && vertical!=0) { page=Math.clamp(page+(vertical<0?1:-1),0,Math.max(0,(choices().size()-1)/9)); sound(false); }
         return true;
     }
-    @Override public void close() { sound(false); if(!draft.sameAs(saved)) confirmDiscard=true; else leave(); }
+    @Override public void close() { sound(false); if(dirty()) confirmDiscard=true; else leave(); }
     private void leave() { client.setScreen(parent); }
     public void invalidateImageCache() { images=null;type=null; }
     public void verifyImageRenderer() { if(images==null || images.size()==0) throw new IllegalStateException("No key setting images"); images.verifyGpuState(); }

@@ -31,6 +31,7 @@ public final class StatsClient {
                 ManaClient.available()?ManaClient.regeneration():null,p==null?null:(double)p.getArmor(),
                 known?(int)spells.stream().filter(CodexData.Spell::discovered).count():null,spells.size(),additional.popularity(),ManaClient.available()?ManaClient.haste():null);
     }
+    static KeyBinding binding(){return key;}
     public static boolean matches(int code,int scan){return key!=null && key.matchesKey(code,scan);}
     public static String keyLabel(){return key==null?"P":key.getBoundKeyLocalizedText().getString();}
     public static boolean handleKey(MinecraftClient c,int code,int scan,int action){
@@ -46,7 +47,7 @@ public final class StatsClient {
     }
     private static void reset(){shortcut.reset();pending=false;additional=new Additional(null,null,null,null);StatsSocialActions.reset();}
     public static void initialize(){
-        key=KeyBindingHelper.registerKeyBinding(new KeyBinding("key.magiccodex.stats",GLFW.GLFW_KEY_P,"category.magiccodex"));
+        key=KeyBindingHelper.registerKeyBinding(new KeyBinding("key.magiccodex.stats",GLFW.GLFW_KEY_I,"category.magiccodex"));
         ClientPlayConnectionEvents.JOIN.register((handler,sender,c)->reset());
         ClientPlayConnectionEvents.DISCONNECT.register((handler,c)->reset());
         ClientTickEvents.END_CLIENT_TICK.register(c->{
