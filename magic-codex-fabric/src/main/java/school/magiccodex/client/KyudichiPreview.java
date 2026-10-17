@@ -35,7 +35,8 @@ final class KyudichiPreview {
         for (int i = 0; i < FAKE.length; i++) FAKE[i] = new UUID(0x6b79756469636869L, i + 1);
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, access) -> {
             LiteralArgumentBuilder<FabricClientCommandSource> root = ClientCommandManager.literal("큐디치미리보기")
-                    .executes(c -> { c.getSource().sendFeedback(Text.literal("/큐디치미리보기 준비 · 경기 · 결과 · 수락 · 매칭 · 대시보드 · 끄기  (가짜 데이터, 서버로 아무것도 안 보냄)")); return 1; });
+                    .executes(c -> { c.getSource().sendFeedback(Text.literal("/큐디치미리보기 신청 · 매칭 · 수락 · 준비 · 경기 · 결과 · 대시보드 · 끄기  (가짜 데이터, 서버로 아무것도 안 보냄)")); return 1; });
+            root.then(ClientCommandManager.literal("신청").executes(c -> { application(); return 1; }));
             root.then(ClientCommandManager.literal("준비").executes(c -> { prepare(); return 1; }));
             root.then(ClientCommandManager.literal("경기").executes(c -> { match(); return 1; }));
             root.then(ClientCommandManager.literal("결과").executes(c -> { result(); return 1; }));
@@ -63,6 +64,11 @@ final class KyudichiPreview {
     private static void prepare() {
         KyudichiClient.reset(); mode = Mode.PREPARE; ready = false; until = Util.getMeasuringTimeMs() + 60_000;
         KyudichiClient.receive(fakeMatch(0, 60_000));
+        var entries = new ArrayList<KyudichiProtocol.Entry>();
+        entries.add(new KyudichiProtocol.Entry(me(), 0, "", 1250));
+        int[] houses = {1, 2, 0, 3, 1}; int[] ratings = {1280, 1220, 1260, 1240, 1250};
+        for (int i = 0; i < 5; i++) entries.add(new KyudichiProtocol.Entry(FAKE[i], houses[i], "", ratings[i]));
+        KyudichiClient.receive(new KyudichiProtocol.Roster(entries));
         MinecraftClient.getInstance().setScreen(new KyudichiPrepareScreen());
     }
 
@@ -95,16 +101,33 @@ final class KyudichiPreview {
         KyudichiQueueClient.receive(new KyudichiQueueProtocol.Status(state, 42, state == KyudichiQueueProtocol.S_OFFER ? 10 : 0, 2, 6, false, 4));
     }
 
+    private static void application() {
+        stop(); mode = Mode.QUEUE; until = Util.getMeasuringTimeMs() + 600_000;
+        KyudichiQueueClient.receive(apply());
+    }
+    private static KyudichiQueueProtocol.Apply apply() {
+        return new KyudichiQueueProtocol.Apply(1250, 18, 12, 1280, true, "파티장만 시작할 수 있습니다.", List.of(
+                new KyudichiQueueProtocol.Member(me(), myName(), "", 0, 1250, true),
+                new KyudichiQueueProtocol.Member(FAKE[0], NAMES[0], "", 1, 1280, false),
+                new KyudichiQueueProtocol.Member(FAKE[1], NAMES[1], "", 2, 1220, false)));
+    }
+
     private static void dashboard() {
         stop(); mode = Mode.QUEUE; until = Util.getMeasuringTimeMs() + 600_000;
         KyudichiQueueClient.dash = dash(); KyudichiQueueClient.ranking = ranking(); KyudichiQueueClient.record = record(myName());
-        MinecraftClient.getInstance().setScreen(new KyudichiDashboardScreen(KyudichiDashboardScreen.Tab.LIVE));
+        MinecraftClient.getInstance().setScreen(new KyudichiDashboardScreen(school.magiccodex.client.kui.DashboardView.Tab.LIVE));
     }
     private static KyudichiQueueProtocol.Dash dash() {
         return new KyudichiQueueProtocol.Dash(4, List.of(
-                new KyudichiQueueProtocol.Live("별빛 경기장", 2, 30, 20, 372_000, 3, "준우 · 루나 · 하린", "서하 · 이안 · 유진"),
-                new KyudichiQueueProtocol.Live("하늘 경기장", 2, 50, 40, 228_000, 20, "루나 · 하린 · 준우", "이안 · 서하 · 유진"),
-                new KyudichiQueueProtocol.Live("새벽 경기장", 0, 0, 0, 32_000, 0, "하린 · 준우 · 루나", "유진 · 이안 · 서하")));
+                new KyudichiQueueProtocol.LiveCard("별빛 경기장", 2, 30, 20, 372_000, 3, team(-1, 0, 1), team(2, 3, 4)),
+                new KyudichiQueueProtocol.LiveCard("하늘 경기장", 2, 50, 40, 228_000, 20, team(0, 1, -1), team(3, 2, 4)),
+                new KyudichiQueueProtocol.LiveCard("새벽 경기장", 0, 0, 0, 32_000, 0, team(1, -1, 0), team(4, 3, 2))));
+    }
+    /** -1 = me, 0..4 = the fake players. */
+    private static List<KyudichiQueueProtocol.Who> team(int... who) {
+        var l = new ArrayList<KyudichiQueueProtocol.Who>();
+        for (int i : who) l.add(i < 0 ? new KyudichiQueueProtocol.Who(me(), myName(), "") : new KyudichiQueueProtocol.Who(FAKE[i], NAMES[i], ""));
+        return l;
     }
     private static KyudichiQueueProtocol.Ranking ranking() {
         var top = new ArrayList<KyudichiQueueProtocol.Rank>();
@@ -113,16 +136,16 @@ final class KyudichiPreview {
         for (int i = 0; i < 40; i++) {
             int rating = i < 7 ? r[i] : 1600 - i * 12;
             int tier = i < 3 ? 6 + i : rating >= 1700 ? 5 : rating >= 1500 ? 4 : rating >= 1300 ? 3 : 2;
-            top.add(new KyudichiQueueProtocol.Rank(i + 1, new UUID(7, i), i < 7 ? n[i] : "플레이어" + (i + 1), rating, tier, 50, 30, 20));
+            top.add(new KyudichiQueueProtocol.Rank(i + 1, new UUID(7, i), i < 7 ? n[i] : "플레이어" + (i + 1), "", rating, tier, 50, 30, 20));
         }
-        return new KyudichiQueueProtocol.Ranking(List.copyOf(top), new KyudichiQueueProtocol.Rank(47, me(), myName(), 1342, 3, 50, 27, 21));
+        return new KyudichiQueueProtocol.Ranking(List.copyOf(top), new KyudichiQueueProtocol.Rank(47, me(), myName(), "", 1342, 3, 50, 27, 21));
     }
     private static KyudichiQueueProtocol.RecordReply record(String nick) {
         var recent = new ArrayList<KyudichiQueueProtocol.Recent>();
         int[][] g = {{1, 80, 50}, {0, 40, 60}, {1, 70, 30}, {0, 20, 50}, {1, 90, 70}, {0, 30, 60}, {1, 60, 40}, {2, 50, 50}, {1, 80, 60}, {0, 30, 40}};
         long now = System.currentTimeMillis();
         for (int i = 0; i < g.length; i++) recent.add(new KyudichiQueueProtocol.Recent(now - i * 3_600_000L, g[i][0], 0, g[i][1], g[i][2], 3 - i % 3, 2 + i % 4, 2 + i % 3, i == 0, g[i][0] == 1 ? 18 : g[i][0] == 2 ? 0 : -15));
-        return new KyudichiQueueProtocol.RecordReply(new KyudichiQueueProtocol.PlayerRecord(me(), nick, 1342, 3, 47, 50, 27, 21, 2, 128, 96, 72, 40, 9, 147, 12,
+        return new KyudichiQueueProtocol.RecordReply(new KyudichiQueueProtocol.PlayerRecord(me(), nick, "", 1342, 3, 47, 50, 27, 21, 2, 128, 96, 72, 40, 9, 147, 12,
                 24_580f, 8_240f, List.copyOf(recent)));
     }
 
@@ -137,6 +160,7 @@ final class KyudichiPreview {
             case KyudichiQueueProtocol.DashRequest x -> KyudichiQueueClient.receive(dash());
             case KyudichiQueueProtocol.RankingRequest x -> KyudichiQueueClient.receive(ranking());
             case KyudichiQueueProtocol.RecordRequest x -> KyudichiQueueClient.receive(record(x.nick().isBlank() ? myName() : x.nick()));
+            case KyudichiQueueProtocol.ApplyRequest x -> KyudichiQueueClient.receive(apply());
             default -> MinecraftClient.getInstance().player.sendMessage(Text.literal("미리보기에서는 실제로 이동하지 않아요."), true);
         }
     }

@@ -49,6 +49,10 @@ final class KyudichiQueue {
         PartyBook.Party party(UUID member);
         String name(UUID id);
         void notice(Player p, String text);
+        /** House 0..3 or -1, from the party plugin's identity memory. */
+        int house(UUID id);
+        /** Skin texture hash (textures.minecraft.net) last seen for this player, or "". */
+        String skin(UUID id);
         boolean trusted(String server);
     }
 
@@ -360,14 +364,47 @@ final class KyudichiQueue {
     // =============================================================== dashboard
     private void dash(Player p) {
         long now = System.currentTimeMillis();
-        var list = new ArrayList<Live>();
-        if (now - liveAt < LIVE_FRESH_MS) for (var lm : live) list.add(lm.live());
+        var list = new ArrayList<LiveCard>();
+        if (now - liveAt < LIVE_FRESH_MS) for (var lm : live) {
+            var l = lm.live();
+            list.add(new LiveCard(l.arena(), l.phase(), l.scoreA(), l.scoreB(), l.timeLeftMs(), l.spectators(), whos(lm.teamA()), whos(lm.teamB())));
+        }
         toClient(p, new Dash(parties(), list));
+    }
+    private List<Who> whos(List<UUID> ids) {
+        var out = new ArrayList<Who>();
+        for (UUID id : ids) if (out.size() < 6) out.add(new Who(id, host.name(id), host.skin(id)));
+        return out;
+    }
+    private Rank skinned(Rank r) { return r == null ? null : new Rank(r.rank(), r.id(), r.nick(), host.skin(r.id()), r.rating(), r.tier(), r.games(), r.wins(), r.losses()); }
+
+    /** 신청 창: my party (or me alone) with houses and ratings; only the leader (or a solo player) can start. */
+    private void apply(Player p) {
+        UUID me = p.getUniqueId();
+        var party = host.party(me);
+        List<UUID> members = party == null || party.members().size() == 1 ? List.of(me) : party.members();
+        UUID leader = party == null ? me : party.leader();
+        db.standings(members, st -> host.enqueue(() -> {
+            if (online(me) != p) return;
+            var list = new ArrayList<Member>();
+            int base = 0;
+            for (UUID id : members) {
+                if (list.size() >= 3) break;
+                var s = st.get(id); int rating = s == null ? 1000 : s.rating();
+                base = Math.max(base, rating);
+                list.add(new Member(id, host.name(id), host.skin(id), host.house(id), rating, members.size() > 1 && id.equals(leader)));
+            }
+            var mine = st.get(me);
+            boolean solo = members.size() == 1, three = members.size() == KyudichiMatchmaker.TEAM_SIZE;
+            boolean can = (solo || three && leader.equals(me)) && !playing.containsKey(me);
+            String note = solo ? "혼자 신청하면 랜덤 팀으로 매칭돼요." : !three ? "큐디치는 3인 파티 또는 혼자만 신청할 수 있어요." : "파티장만 시작할 수 있습니다.";
+            toClient(p, new Apply(mine == null ? 1000 : mine.rating(), mine == null ? 0 : mine.wins(), mine == null ? 0 : mine.losses(), base, can, note, list));
+        }));
     }
     private void ranking(Player p) {
         db.ranking(p.getUniqueId(), res -> host.enqueue(() -> {
             @SuppressWarnings("unchecked") var top = (List<Rank>) res[0];
-            toClient(p, new Ranking(top, (Rank) res[1]));
+            toClient(p, new Ranking(top.stream().map(this::skinned).toList(), skinned((Rank) res[1])));
             if (!modded.contains(p.getUniqueId())) {
                 if (top.isEmpty()) { host.notice(p, db.available() ? "아직 랭킹이 없어요." : "랭킹을 불러올 수 없어요."); return; }
                 host.notice(p, "── 큐디치 랭킹 ──");
@@ -380,7 +417,8 @@ final class KyudichiQueue {
     private void record(Player p, String nick) {
         UUID id = nick == null || nick.isBlank() ? p.getUniqueId() : null;
         db.record(id, nick, rec -> host.enqueue(() -> {
-            toClient(p, new RecordReply(rec));
+            toClient(p, new RecordReply(rec == null ? null : new PlayerRecord(rec.id(), rec.nick(), host.skin(rec.id()), rec.rating(), rec.tier(), rec.rank(), rec.games(),
+                    rec.wins(), rec.losses(), rec.draws(), rec.goals(), rec.kills(), rec.deaths(), rec.assists(), rec.snitch(), rec.deflectHits(), rec.mvp(), rec.damage(), rec.heal(), rec.recent())));
             if (!modded.contains(p.getUniqueId())) {
                 if (rec == null) { host.notice(p, "기록이 없어요."); return; }
                 host.notice(p, "── " + rec.nick() + " · " + TIERS[rec.tier()] + " " + rec.rating() + (rec.rank() > 0 ? " · " + rec.rank() + "위" : "") + " ──");
@@ -410,6 +448,7 @@ final class KyudichiQueue {
                 case RecordRequest r -> record(p, r.nick());
                 case SpectateRequest s -> spectate(p, s.arena());
                 case PracticeRequest x -> practice(p);
+                case ApplyRequest x -> apply(p);
             }
         });
     }
@@ -467,7 +506,7 @@ final class KyudichiQueue {
      * 포기 · 준비 · 관전 나가기 (and everything else) return false from hasPermission, so Velocity passes them to the arena server.
      */
     private final class Command implements SimpleCommand {
-        private static final Set<String> MINE = Set.of("신청", "취소", "수락", "거절", "대기열", "관전", "랭킹", "정보", "연습", "도움말");
+        private static final Set<String> MINE = Set.of("신청", "취소", "수락", "거절", "대기열", "관전", "랭킹", "정보", "연습", "도움말", "현황");
         @Override public boolean hasPermission(Invocation i) {
             if (!(i.source() instanceof Player p)) return false;
             String[] a = i.arguments();
@@ -483,19 +522,21 @@ final class KyudichiQueue {
             if (!host.enqueue(() -> {
                 if (online(p.getUniqueId()) != p) return;
                 // No arguments: the MagicCodex client opens the dashboard (an unrequested DASH); others get the command list.
-                if (a.length == 0 && modded.contains(p.getUniqueId())) { dash(p); return; }
+                if (a.length == 0 && modded.contains(p.getUniqueId())) { apply(p); return; }
+                if (a.length == 1 && a[0].equals("현황") && modded.contains(p.getUniqueId())) { dash(p); return; }
                 String sub = a.length == 0 ? "도움말" : a[0];
                 switch (sub) {
                     case "신청" -> join(p);
                     case "취소" -> leave(p, null);
                     case "수락" -> accept(p);
                     case "거절" -> decline(p);
+                    case "현황" -> host.notice(p, "진행 중인 경기 " + (System.currentTimeMillis() - liveAt < LIVE_FRESH_MS ? live.size() : 0) + "개 · 대기 중인 파티 " + parties() + "개");
                     case "대기열" -> host.notice(p, "대기 중인 파티 " + parties() + "개" + (queuedBy.containsKey(p.getUniqueId()) ? " · 나는 매칭 중" : ""));
                     case "관전" -> spectate(p, a.length > 1 ? a[1] : "");
                     case "랭킹" -> ranking(p);
                     case "정보" -> record(p, a.length > 1 ? a[1] : null);
                     case "연습" -> practice(p);
-                    default -> host.notice(p, "/큐디치 신청 · 취소 · 수락 · 거절 · 대기열 · 관전 [경기장] · 랭킹 · 정보 [닉] · 연습 · (경기 중) 포기 · 준비");
+                    default -> host.notice(p, "/큐디치 (신청 창) · 신청 · 취소 · 수락 · 거절 · 대기열 · 현황 · 관전 [경기장] · 랭킹 · 정보 [닉] · 연습 · (경기 중) 포기 · 준비");
                 }
             })) host.notice(p, "요청이 많아요. 잠시 후 다시 시도해 주세요.");
         }

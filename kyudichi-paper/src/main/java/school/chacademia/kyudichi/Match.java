@@ -73,6 +73,7 @@ final class Match {
         int slot = (int) players.values().stream().filter(m -> m.team == team).count();
         var mp = new MatchPlayer(p.getUniqueId(), p.getName(), team, Math.min(2, slot), rating);
         mp.returnTo = p.getLocation(); mp.returnMode = p.getGameMode();
+        mp.house = plugin.hooks().house(p); mp.broom = plugin.hooks().broomId(p);
         players.put(p.getUniqueId(), mp);
         p.showBossBar(bar);
         return mp;
@@ -107,6 +108,7 @@ final class Match {
         phaseLeft = opt.prepareTicks();
         if (phaseLeft <= 0) lineup(); else broadcastTitle(Component.text("경기 준비", NamedTextColor.GOLD), Component.text("마법 6칸을 세팅하세요"));
         sendMatchAll();
+        sendRoster();
     }
 
     private void prepare(Player p, MatchPlayer m) {
@@ -665,11 +667,13 @@ final class Match {
         MatchPlayer m = players.get(p.getUniqueId());
         if (m == null || m.left || m.online) return false;
         m.online = true; m.leftAt = -1;
+        m.house = plugin.hooks().house(p); m.broom = plugin.hooks().broomId(p);
         p.showBossBar(bar);
         prepare(p, m);
         tp(p, (frozen() ? arena.starts.get(m.team)[m.slot] : arena.respawn(m.team, m.slot)).location());
         p.sendMessage(Component.text("큐디치 경기에 다시 들어왔어요.", NamedTextColor.GOLD));
         sendMatchAll();
+        sendRoster();
         return true;
     }
 
@@ -810,6 +814,15 @@ final class Match {
     void sendMatchAll() {
         for (var m : players.values()) { Player p = online(m); if (p != null) plugin.net().send(p, matchMessage(m.team.ordinal())); }
         for (UUID s : spectators) { Player p = Bukkit.getPlayer(s); if (p != null) plugin.net().send(p, matchMessage(2)); }
+    }
+
+    /** House, broom and rating per player (the preparation window). Sent at the start and whenever someone (re)joins. */
+    void sendRoster() {
+        var list = new ArrayList<KyudichiProtocol.Entry>();
+        for (var m : players.values()) if (list.size() < 16) list.add(new KyudichiProtocol.Entry(m.id, m.house, m.broom == null ? "" : m.broom, (int) Math.round(m.ratingBefore)));
+        var msg = new KyudichiProtocol.Roster(list);
+        for (Player p : onlinePlayers()) plugin.net().send(p, msg);
+        for (UUID s : spectators) { Player p = Bukkit.getPlayer(s); if (p != null) plugin.net().send(p, msg); }
     }
 
     KyudichiProtocol.Match matchMessage(int myTeam) {
