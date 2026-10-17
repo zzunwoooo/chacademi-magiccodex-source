@@ -3,7 +3,7 @@ package school.magiccodex.client;
 import net.minecraft.client.MinecraftClient;
 
 /**
- * With the Alt cursor or chat open, drag a bottom-right magic slot onto another to swap the two
+ * With the Ctrl cursor or chat open, drag a bottom-right magic slot onto another to swap the two
  * ({@link CastingClient#swapHudSlots}): the normal six keep spell+key together, a 큐디치 match swaps spells only.
  */
 public final class HudSlotDrag {

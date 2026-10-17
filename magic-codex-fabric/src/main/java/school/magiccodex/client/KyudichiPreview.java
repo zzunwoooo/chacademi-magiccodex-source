@@ -51,7 +51,8 @@ final class KyudichiPreview {
     }
 
     private static UUID me() { var p = MinecraftClient.getInstance().player; return p == null ? new UUID(0, 0) : p.getUuid(); }
-    private static String myName() { var p = MinecraftClient.getInstance().player; return p == null ? "나" : p.getName().getString(); }
+    /** MagicCodex 한글 닉네임 (the account name only before the server sent it). */
+    private static String myName() { var p = MinecraftClient.getInstance().player; return SchoolClient.nickname(p == null ? "나" : p.getName().getString()); }
 
     // ------------------------------------------------------------------ fake data
     private static KyudichiProtocol.Match fakeMatch(int phase, int timeLeftMs) {
@@ -169,8 +170,20 @@ final class KyudichiPreview {
 
     static void stop() {
         if (mode == Mode.PREPARE || mode == Mode.MATCH) KyudichiClient.reset();
-        if (mode == Mode.QUEUE) KyudichiQueueClient.receive(new KyudichiQueueProtocol.Status(0, 0, 0, 0, 0, false, 0));
+        if (mode == Mode.QUEUE) {
+            KyudichiQueueClient.receive(new KyudichiQueueProtocol.Status(0, 0, 0, 0, 0, false, 0));
+            // fake 현황 / 랭킹 / 기록 / 신청 data must not stay behind for the real windows
+            KyudichiQueueClient.dash = null; KyudichiQueueClient.ranking = null; KyudichiQueueClient.record = null; KyudichiQueueClient.apply = null;
+        }
         mode = Mode.NONE;
+    }
+    /** A real packet from the arena server ends a 준비 / 경기 preview. */
+    static void realArena() { if (mode == Mode.PREPARE || mode == Mode.MATCH) stop(); }
+    /** Real 현황 · 랭킹 · 기록 · 신청 data, or a real queue state, from the proxy ends a queue / dashboard preview. */
+    static void realQueue(KyudichiQueueProtocol.ToClient m) {
+        if (mode != Mode.QUEUE) return;
+        if (m instanceof KyudichiQueueProtocol.Status st && st.state() == 0) return;
+        stop();
     }
 
     /** Keeps the fake match alive (the HUD drops a match after 4 s without packets) and moves the balls around the player. */

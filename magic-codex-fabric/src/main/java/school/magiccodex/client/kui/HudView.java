@@ -24,13 +24,14 @@ public final class HudView {
         if (!s.sub().isEmpty()) p.text(s.sub(), 836, 80, 14, Theme.GOLD, Face.SANS_BOLD, Canvas.CENTER);
         p.text(String.valueOf(s.rightScore()), 968, 61, 46, s.rightColor(), Face.TITLE, Canvas.CENTER);
         p.text(s.rightLabel(), 1054, 61, 23, Theme.CREAM, Face.SERIF, Canvas.CENTER);
+        // owner 2026-10-17: 14 px lower than the reference so the wings clear the score board
         if (s.snitchOut()) {
-            p.image("hud/indicator_snitch", 798, 98, 77, 70);
+            p.image("hud/indicator_snitch", 798, 112, 77, 70);
         } else {
-            p.image("hud/snitch_locked", 766, 96, 139, 47);
+            p.image("hud/snitch_locked", 766, 110, 139, 47);
         }
-        p.image("hud/snitch_label", 796, 155, 80, 38);
-        p.text(s.snitchOut() ? "등장" : "잠김", 836, 173, 17, s.snitchOut() ? Theme.GOLD : Theme.CREAM, Face.SANS_BOLD, Canvas.CENTER);
+        p.image("hud/snitch_label", 796, 169, 80, 38);
+        p.text(s.snitchOut() ? "등장" : "잠김", 836, 187, 17, s.snitchOut() ? Theme.GOLD : Theme.CREAM, Face.SANS_BOLD, Canvas.CENTER);
     }
 
     // ================================================================== feed (anchor: top right, x 1672)

@@ -31,7 +31,7 @@ final class PlayerCommand implements TabExecutor {
                     say(p, r.games() + "경기 " + r.wins() + "승 " + r.losses() + "패 " + r.draws() + "무 · 골 " + r.goals() + " · 처치 " + r.kills() + " · 데스 " + r.deaths()
                             + " · 딜 " + Math.round(r.damage()) + " · 힐 " + Math.round(r.heal()) + " · 스니치 " + r.snitch() + " · MVP " + r.mvp(), NamedTextColor.WHITE);
                 };
-                if (a.length > 1) store.find(a[1], show); else store.load(p.getUniqueId(), p.getName(), show);
+                if (a.length > 1) store.find(a[1], show); else store.load(p.getUniqueId(), plugin.hooks().nick(p), show);
             }
             case "랭킹" -> plugin.store().top(10, rows -> {
                 if (rows == null || rows.isEmpty()) { say(p, "아직 랭킹이 없어요.", NamedTextColor.GRAY); return; }

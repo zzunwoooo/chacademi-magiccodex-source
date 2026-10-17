@@ -71,7 +71,7 @@ public final class CastingClient {
         else STATE.setBindings(base);
     }
     /**
-     * Alt / chat: a HUD slot dragged onto another. Normal six: the two positions swap (spell and key together, saved).
+     * Ctrl / chat: a HUD slot dragged onto another. Normal six: the two positions swap (spell and key together, saved).
      * Match: the two match spells swap, keys stay with the positions (saved for the next match too).
      */
     public static void swapHudSlots(int a,int b) {

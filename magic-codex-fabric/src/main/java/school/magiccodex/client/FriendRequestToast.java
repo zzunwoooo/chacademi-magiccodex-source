@@ -17,7 +17,7 @@ import school.magiccodex.protocol.SocialProtocol.Entry;
 import school.magiccodex.protocol.PartyUiProtocol.Person;
 
 /**
- * 수락/거절 알림 카드 (친구 신청, 파티 초대). 화면을 열지 않는 HUD 표시라 조작을 빼앗지 않으며, Alt 커서 모드에서만 클릭된다.
+ * 수락/거절 알림 카드 (친구 신청, 파티 초대). 화면을 열지 않는 HUD 표시라 조작을 빼앗지 않으며, Ctrl 커서 모드에서만 클릭된다.
  * 파티 초대는 파티 UI 아틀라스의 알림 패널(레퍼런스 우하단)로 그린다. 한 번에 카드 하나, 파티 초대가 먼저.
  */
 public final class FriendRequestToast {
@@ -37,7 +37,7 @@ public final class FriendRequestToast {
     private FriendRequestToast(){}
     static void initialize(){
         HudRenderCallback.EVENT.register((ctx,ticks)->render(ctx));
-        // HudCursorScreen(Alt 커서 모드)의 클릭만 가로챈다. 다른 화면에서는 카드가 보이지 않는다.
+        // HudCursorScreen(Ctrl 커서 모드)의 클릭만 가로챈다. 다른 화면에서는 카드가 보이지 않는다.
         ScreenEvents.AFTER_INIT.register((client,screen,width,height)->{
             if(screen instanceof HudCursorScreen)ScreenMouseEvents.allowMouseClick(screen).register((s,x,y,button)->!click(x,y,button));
         });
@@ -124,7 +124,7 @@ public final class FriendRequestToast {
             float tailWidth=text.width(tail,26,BODY),size=Math.max(10,Math.min(28,28*(W-56-tailWidth)/Math.max(1,text.width(name,28,BOLD)))),nameWidth=text.width(name,size,BOLD);
             text.draw(ctx,name,28,72,size,color(alpha,0xFF,SocialLayout.color(current.dormitory())&0xFFFFFF),BOLD,false);
             text.draw(ctx,tail,28+nameWidth,72,26,color(alpha,0xFF,0xF0F3F5),BODY,false);
-            text.draw(ctx,cursor?"버튼을 눌러 주세요":"Alt 누른 채 클릭",28,BUTTON_Y+BUTTON_H/2,20,color(alpha,0xFF,0xA5B8C8),BODY,false);
+            text.draw(ctx,cursor?"버튼을 눌러 주세요":"Ctrl 누른 채 클릭",28,BUTTON_Y+BUTTON_H/2,20,color(alpha,0xFF,0xA5B8C8),BODY,false);
             button(ctx,"수락",ACCEPT_X,hot==1,alpha);button(ctx,"거절",DECLINE_X,hot==2,alpha);
             // 남은 표시 시간
             HudMesh.quad(ctx,2,H-5,(W-4)*(1-age/(float)SHOW_MILLIS),3,color(alpha,0xB0,0x92E7F2),color(alpha,0xB0,0x92E7F2));
@@ -151,7 +151,7 @@ public final class FriendRequestToast {
             images.drawTexture(ctx,STAR,116,41,0,0,26,26,128,128,128,128,white);
             text.draw(ctx,"파티 초대",152,54,21,color(alpha,0xFF,0xF0D293),SERIF_TITLE,false);
             if(PARTY.size()>0)text.draw(ctx,"+"+PARTY.size(),152+text.width("파티 초대",21,SERIF_TITLE)+10,54,15,color(alpha,0xFF,0xA5B8C8),BODY,false);
-            if(!cursor){String hint="Alt 누른 채 클릭";text.draw(ctx,hint,P_CLOSE_X-22-text.width(hint,14,BODY),P_CLOSE_Y,14,color(alpha,0xFF,0x8FA3B5),BODY,false);}
+            if(!cursor){String hint="Ctrl 누른 채 클릭";text.draw(ctx,hint,P_CLOSE_X-22-text.width(hint,14,BODY),P_CLOSE_Y,14,color(alpha,0xFF,0x8FA3B5),BODY,false);}
             String name=party.nickname(),tail="님이 파티에 초대했어요.";
             float room=P_ACCEPT_X-116-14,size=Math.max(10,Math.min(16,16*room/Math.max(1,text.width(name+tail,16,BODY))));
             text.draw(ctx,name+tail,116,P_BUTTON_Y+P_BUTTON_H/2,size,color(alpha,0xFF,0xE6E9EE),BODY,false);

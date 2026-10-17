@@ -137,7 +137,7 @@ public final class KeySettingsScreen extends Screen {
     private static int fade(int color,float alpha) { return (Math.round((color>>>24)*alpha)<<24)|(color&0xFFFFFF); }
     private void drawKey(DrawContext ctx,KeySettingsLayout.Key key) {
         Rect r=key.box(); boolean allowed=KeySettingsLayout.allowed(key.code());
-        boolean blocked=KeySettingsLayout.reservedShortcut(key.code()) || (key.code()==GLFW.GLFW_KEY_LEFT_ALT || key.code()==GLFW.GLFW_KEY_RIGHT_ALT);
+        boolean blocked=KeySettingsLayout.reservedShortcut(key.code()) || (key.code()==GLFW.GLFW_KEY_LEFT_CONTROL || key.code()==GLFW.GLFW_KEY_RIGHT_CONTROL);
         int slot=-1;
         for(int i=0;i<6;i++) if(!draft.get(i).empty() && draft.get(i).keyCode()==key.code()) slot=i;
         boolean hot=hover(r) && !pickerOpen() && !confirmDiscard;

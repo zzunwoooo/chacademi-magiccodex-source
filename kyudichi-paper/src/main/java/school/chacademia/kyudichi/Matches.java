@@ -60,25 +60,25 @@ final class Matches {
         World w = Bukkit.getWorld(arena.world());
         if (w == null) return "월드 " + arena.world() + " 이(가) 없어요.";
         for (var list : teams.values()) for (Player p : list) {
-            if (of(p.getUniqueId()) != null) return p.getName() + " 님은 이미 경기 중이에요.";
+            if (of(p.getUniqueId()) != null) return plugin.hooks().nick(p) + " 님은 이미 경기 중이에요.";
             if (spectating(p.getUniqueId()) != null) plugin.spectate().leave(p);
         }
         Rules rules = plugin.rules();
         var match = new Match(plugin, arena, rules, opt, w);
         for (Team t : Team.values()) for (Player p : teams.getOrDefault(t, List.of())) {
-            var row = plugin.store().cached(p.getUniqueId(), p.getName());
+            var row = plugin.store().cached(p.getUniqueId(), plugin.hooks().nick(p));
             match.add(p, t, row.rating());
         }
         for (Team t : Team.values()) for (UUID id : absent.getOrDefault(t, List.of())) {
-            var row = plugin.store().cached(id, nameOf(id));
-            match.addAbsent(id, row.name(), t, row.rating());
+            String nick = plugin.hooks().nick(Bukkit.getOfflinePlayer(id));
+            var row = plugin.store().cached(id, nick);
+            match.addAbsent(id, nick, t, row.rating());
         }
         byArena.put(arena.name, match);
         match.start();
         return null;
     }
 
-    private static String nameOf(UUID id) { String n = Bukkit.getOfflinePlayer(id).getName(); return n == null ? "플레이어" : n; }
 
     void ended(Match m) {
         byArena.remove(m.arena.name);

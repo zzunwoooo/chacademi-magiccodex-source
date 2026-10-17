@@ -26,7 +26,7 @@ import net.minecraft.world.RaycastContext;
 import school.magiccodex.protocol.KyudichiProtocol;
 
 /**
- * 큐디치 client: state from the arena server (chacademi:kyudichi), the F-key reservation, and Alt pings.
+ * 큐디치 client: state from the arena server (chacademi:kyudichi), the F-key reservation, and Ctrl pings.
  * Drawing lives in {@link KyudichiHud}. The F action itself goes through vanilla swap-hands (the server listens to it),
  * so the key works even without this mod; the mod only keeps a spell bound to F from eating it during a match.
  */
@@ -62,7 +62,7 @@ public final class KyudichiClient {
         ClientPlayNetworking.registerGlobalReceiver(Payload.ID, (payload, context) -> {
             KyudichiProtocol.Message m;
             try { m = KyudichiProtocol.decode(payload.bytes()); } catch (IllegalArgumentException bad) { return; }
-            context.client().execute(() -> receive(m));
+            context.client().execute(() -> { KyudichiPreview.realArena(); receive(m); });
         });
         ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> reset());
         net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.END_CLIENT_TICK.register(KyudichiClient::tick);
@@ -134,9 +134,28 @@ public final class KyudichiClient {
      * (it has nothing else to do before the start).
      */
     public static boolean handleKey(MinecraftClient c, int key, int scan, int action) {
-        if (action != 1 || c.currentScreen != null || !playing() || match.phase() != 0 || !c.options.swapHandsKey.matchesKey(key, scan)) return false;
-        openSetup();
-        return true;
+        if (action != 1 || c.currentScreen != null || !playing() || !c.options.swapHandsKey.matchesKey(key, scan)) return false;
+        if (match.phase() == 0) { openSetup(); return true; }
+        // owner 2026-10-17: F throws the quaffle / hits a bludger toward the crosshair (not the body's facing). The point goes
+        // first; vanilla then sends swap-hands (the server's F) on its next tick.
+        if (live()) sendAim(crosshairPoint(c));
+        return false;
+    }
+
+    /** World point under the screen centre (the crosshair), from the camera (shoulder view aware); 120 blocks if nothing is hit. */
+    static Vec3d crosshairPoint(MinecraftClient c) {
+        var p = c.player; var w = c.world;
+        if (p == null || w == null) return null;
+        Vec3d from, dir;
+        if (AimView.valid()) {
+            var win = c.getWindow();
+            from = AimView.camera(); dir = AimView.ray(win.getScaledWidth() / 2f, win.getScaledHeight() / 2f).normalize();
+        } else { from = p.getCameraPosVec(1f); dir = p.getRotationVec(1f); }
+        Vec3d end = from.add(dir.multiply(120));
+        var hit = w.raycast(new RaycastContext(from, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, p));
+        Vec3d at = hit.getType() == HitResult.Type.MISS ? end : hit.getPos();
+        // too close (aiming at a wall right behind the shoulder camera): use the far point along the same ray
+        return at.squaredDistanceTo(p.getEyePos()) < 4 ? end : at;
     }
 
     /** Right before an aimed cast whose point is in the air: the server uses this point once (MagicAimPointEvent). */
@@ -171,8 +190,8 @@ public final class KyudichiClient {
         return w == null ? null : w.getPlayerByUuid(id);
     }
 
-    // ------------------------------------------------------------------ Alt pings
-    /** Alt + click = magnet ping; Alt + drag = direction menu (위 경고 · 오른쪽 가는 중 · 아래 도움 · 왼쪽 힐 줘). */
+    // ------------------------------------------------------------------ Ctrl pings
+    /** Ctrl + click = magnet ping; Ctrl + drag = direction menu (위 경고 · 오른쪽 가는 중 · 아래 도움 · 왼쪽 힐 줘). */
     record Gesture(double x, double y, long at) {}
     static Gesture gesture;
     static final int WHEEL_RADIUS = 18;   // GUI px of drag before the menu takes over

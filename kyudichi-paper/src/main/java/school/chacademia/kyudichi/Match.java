@@ -71,7 +71,7 @@ final class Match {
 
     MatchPlayer add(Player p, Team team, double rating) {
         int slot = (int) players.values().stream().filter(m -> m.team == team).count();
-        var mp = new MatchPlayer(p.getUniqueId(), p.getName(), team, Math.min(2, slot), rating);
+        var mp = new MatchPlayer(p.getUniqueId(), plugin.hooks().nick(p), team, Math.min(2, slot), rating);
         mp.returnTo = p.getLocation(); mp.returnMode = p.getGameMode();
         mp.house = plugin.hooks().house(p); mp.broom = plugin.hooks().broomId(p);
         players.put(p.getUniqueId(), mp);
@@ -142,7 +142,9 @@ final class Match {
         phase = Phase.PLAY;
         if (shrines.isEmpty()) for (ShrineType t : ShrineType.values()) { var s = new ShrineSlot(t); shrines.put(t, s); spawnShrine(s, null); }
         broadcastTitle(Component.text("시작!", NamedTextColor.GOLD), Component.empty());
-        sound(Sound.ENTITY_PLAYER_LEVELUP, 1.4f);
+        // kick-off: the quaffle is tossed up and then falls (gravity)
+        if (quaffle != null && quaffle.state == Quaffle.State.FREE) quaffle.vel = new Vector(0, rules.throwSpeed * 0.35, 0);
+        Sounds.whistle(this);
         sendMatchAll();
     }
 
@@ -181,6 +183,15 @@ final class Match {
                 broadcastTitle(Component.text("골든골 연장", NamedTextColor.GOLD), Component.text("먼저 득점하는 팀이 승리"));
                 feed(4, 0, "", "", 0);
             } else { end(score[0] == score[1] ? null : (score[0] > score[1] ? Team.A : Team.B), EndReason.TIME); return; }
+        }
+        for (var m : players.values()) {
+            Player p = m.active(now) ? online(m) : null;
+            if (p == null) { m.lastBody = null; m.motion = new Vector(); m.mounted = m.falling = false; continue; }
+            Vector b = body(p);
+            m.motion = m.lastBody == null ? new Vector() : b.clone().subtract(m.lastBody);
+            m.lastBody = b;
+            fallCheck(m, p);
+            if (phase != Phase.PLAY) return;
         }
         if (snitch == null && !snitchCaught && elapsed >= opt.snitchAtTicks()) spawnSnitch();
         quaffleTick();
@@ -240,7 +251,7 @@ final class Match {
             }
             case FLYING -> {
                 q.vel.setY(q.vel.getY() - rules.gravity);
-                q.step(world, arena.ballBox(), 0.5);
+                q.step(world, arena.ballBox(), 0.45);
                 Team defender = goalHit(q.prev, q.pos);
                 MatchPlayer thrower = players.get(q.thrower);
                 if (defender != null && thrower != null && defender != q.throwerTeam) { goal(thrower, true); return; }
@@ -248,7 +259,7 @@ final class Match {
                 for (var m : players.values()) {
                     if (m.team != q.throwerTeam || !m.active(now) || (m.id.equals(q.thrower) && now < m.rethrowBlockUntil)) continue;
                     Player p = online(m); if (p == null) continue;
-                    if (p.getLocation().toVector().add(new Vector(0, 0.9, 0)).distanceSquared(q.pos) <= rules.autoCatchRadius * rules.autoCatchRadius) {
+                    if (q.sweptDistanceSquared(body(p)) <= rules.autoCatchRadius * rules.autoCatchRadius) {
                         if (!m.id.equals(q.thrower) && thrower != null) thrower.passes++;
                         catchQuaffle(m, p); return;
                     }
@@ -257,9 +268,14 @@ final class Match {
                 q.visual.move(q.location(world));
             }
             case FREE -> {
-                if (--q.wanderTimer <= 0) { q.wanderTimer = 40 + random.nextInt(40); q.steerTarget = Ball.randomDirection(random, 0.35).multiply(rules.quaffleDrift); }
-                if (q.steerTarget != null) q.steer(q.steerTarget, 0.05);
-                q.step(world, arena.ballBox(), 0.8);
+                // owner 2026-10-17: a loose quaffle falls (gravity), bounces and rolls to a stop on the ground
+                q.vel.setY(q.vel.getY() - rules.gravity);
+                q.vel.multiply(0.985);
+                q.step(world, arena.ballBox(), 0.4);
+                if (q.grounded(world, arena.ballBox())) {
+                    q.vel.setX(q.vel.getX() * 0.85); q.vel.setZ(q.vel.getZ() * 0.85);
+                    if (Math.abs(q.vel.getY()) < 0.08) q.vel.setY(0);
+                }
                 q.visual.move(q.location(world));
             }
         }
@@ -275,7 +291,7 @@ final class Match {
         quaffle.state = Quaffle.State.HELD; quaffle.thrower = null; quaffle.vel = new Vector();
         quaffle.heldSince = now;
         setHolder(m.id);
-        p.playSound(p.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1, 0.8f);
+        Sounds.at(this, p.getLocation(), "catch", Sound.ENTITY_ITEM_PICKUP, 1, 1);
         p.sendActionBar(Component.text("퀘이플 소유! 10초 안에 F로 던지세요 (소유 중 마법 사용 불가)", NamedTextColor.GOLD));
     }
 
@@ -311,10 +327,23 @@ final class Match {
         quaffle.state = Quaffle.State.FLYING; setHolder(null);
         quaffle.thrower = m.id; quaffle.throwerTeam = m.team; quaffle.thrownAt = now;
         m.rethrowBlockUntil = now + rules.rethrowBlockTicks;
-        Vector dir = p.getEyeLocation().getDirection().normalize();
+        Vector dir = aimDirection(m, p);
         quaffle.pos = p.getEyeLocation().toVector().add(dir.clone().multiply(0.8));
         quaffle.vel = dir.multiply(rules.throwSpeed).add(p.getVelocity().multiply(0.5));
-        p.playSound(p.getLocation(), Sound.ENTITY_SNOWBALL_THROW, 1, 0.7f);
+        Sounds.at(this, p.getLocation(), "throw", Sound.ENTITY_SNOWBALL_THROW, 1, 1);
+    }
+
+    /**
+     * Where F throws / hits: toward the crosshair point the client sent with the key press (C2S AIM, third-person / shoulder
+     * camera aware); the body's look direction when there is none (no mod, or older than half a second).
+     */
+    private Vector aimDirection(MatchPlayer m, Player p) {
+        Vector eye = p.getEyeLocation().toVector();
+        if (m.aim != null && now - m.aimAt <= 10) {
+            Vector d = m.aim.clone().subtract(eye); m.aim = null;
+            if (d.lengthSquared() > 0.25) return d.normalize();
+        }
+        return p.getEyeLocation().getDirection().normalize();
     }
 
     private void bludgerTick(Bludger b) {
@@ -325,7 +354,7 @@ final class Match {
             for (var m : players.values()) {
                 if (m.team == b.deflectTeam || !m.active(now) || now < m.invulnerableUntil || opt.invulnerable().contains(m.id)) continue;
                 Player p = online(m);
-                if (p != null && body(p).distanceSquared(b.pos) <= rules.bludgerHitRadius * rules.bludgerHitRadius) {
+                if (p != null && b.sweptDistanceSquared(body(p)) <= rules.bludgerHitRadius * rules.bludgerHitRadius) {
                     MatchPlayer by = players.get(b.deflectBy);
                     if (by != null) by.deflectHits++;
                     bludgerHit(b, m, p, by);
@@ -341,7 +370,10 @@ final class Match {
         if (tm != null && tm.active(now)) target = online(tm);
         if (target != null && now >= b.startAt) {
             b.state = Bludger.State.CHASE;
-            Vector to = body(target).subtract(b.pos);
+            // aims where the victim is going (lead up to 1 s), so flying straight does not shake it off
+            double dist = body(target).distance(b.pos);
+            double lead = Math.min(20, dist / Math.max(0.05, rules.bludgerChase));
+            Vector to = body(target).add(tm.motion.clone().multiply(lead)).subtract(b.pos);
             double d = to.length();
             b.steer(d < 1e-6 ? new Vector() : to.multiply(rules.bludgerChase / d), rules.bludgerSteer);
         } else {
@@ -352,7 +384,7 @@ final class Match {
         b.step(world, arena.ballBox(), 0.7);
         b.visual.move(b.location(world));
         if (target != null && now >= b.startAt && now >= tm.invulnerableUntil && !opt.invulnerable().contains(tm.id)
-                && body(target).distanceSquared(b.pos) <= rules.bludgerHitRadius * rules.bludgerHitRadius)
+                && b.sweptDistanceSquared(body(target)) <= rules.bludgerHitRadius * rules.bludgerHitRadius)
             bludgerHit(b, tm, target, null);
     }
 
@@ -361,6 +393,12 @@ final class Match {
         if (quaffle.state == Quaffle.State.HELD && !b.ignore.containsKey(quaffle.holder)) {
             MatchPlayer h = players.get(quaffle.holder);
             if (h != null && h.active(now)) b.target = h.id;
+        }
+        // 악질: keeps hunting the same victim while they are in play and not far away, instead of switching to whoever is nearest
+        if (b.target == null && old != null && !b.ignore.containsKey(old)) {
+            MatchPlayer o = players.get(old); Player op = o == null ? null : online(o);
+            double keep = Math.max(rules.idleTargetRadius, 8) * 1.5;
+            if (o != null && op != null && o.active(now) && body(op).distanceSquared(b.pos) <= keep * keep) b.target = old;
         }
         if (b.target == null && rules.idleTargetRadius > 0) {
             double best = rules.idleTargetRadius * rules.idleTargetRadius;
@@ -387,7 +425,7 @@ final class Match {
         Vector push = p.getLocation().toVector().subtract(b.pos);
         if (push.lengthSquared() < 1e-6) push = b.vel.clone();
         push = push.lengthSquared() < 1e-6 ? new Vector(0, 0.4, 0) : push.normalize().multiply(rules.bludgerKnockback).setY(0.35);
-        world.playSound(p.getLocation(), Sound.ENTITY_IRON_GOLEM_ATTACK, 1, 0.6f);
+        Sounds.at(this, p.getLocation(), "bludger_hit", Sound.ENTITY_IRON_GOLEM_ATTACK, 1.2f, 1);
         world.spawnParticle(Particle.EXPLOSION, b.location(world), 1);
         b.vel = b.vel.multiply(-0.4);
         if (credit != null) { recordDamage(credit, victim, dmg); }
@@ -405,7 +443,8 @@ final class Match {
         snitch.visual.animate("spawn");
         snitch.nextPauseAt = now + rules.pauseMin + random.nextInt(Math.max(1, rules.pauseMax - rules.pauseMin + 1));
         broadcastTitle(Component.empty(), Component.text("스니치가 나타났어요!", NamedTextColor.GOLD));
-        sound(Sound.BLOCK_AMETHYST_BLOCK_CHIME, 1.6f);
+        Sounds.all(this, "snitch_appear", Sound.BLOCK_AMETHYST_BLOCK_CHIME, 1, 1);
+        Sounds.all(this, "whistle_long", null, 0.8f, 1);
         sendMatchAll();
     }
 
@@ -414,29 +453,45 @@ final class Match {
         return arena.snitchBox().center();
     }
 
+    /**
+     * Owner 2026-10-17: much faster and freer. Flees anyone near (closer = stronger), jukes sideways in short dashes,
+     * wanders the whole snitch box in 3D when nobody is near, and only rarely hovers for a moment (the chance to catch it).
+     */
     private void snitchTick() {
         var s = snitch;
-        if (now < s.pausedUntil) { s.vel.multiply(0.6); }
-        else {
+        double top = rules.snitchSpeed;
+        if (now < s.pausedUntil) {
+            s.vel.multiply(0.7);
+            s.vel.add(Ball.randomDirection(random, 1).multiply(0.02));   // hovering flutter
+        } else {
             if (now >= s.nextPauseAt) { s.pausedUntil = now + rules.pauseTicks; s.nextPauseAt = s.pausedUntil + rules.pauseMin + random.nextInt(Math.max(1, rules.pauseMax - rules.pauseMin + 1)); }
             Vector flee = new Vector(); int n = 0;
             double r2 = rules.snitchFlee * rules.snitchFlee;
             for (var m : players.values()) {
                 if (!m.active(now)) continue;
                 Player p = online(m); if (p == null) continue;
-                Vector away = s.pos.clone().subtract(body(p));
+                // run from where the chaser is heading, not only where they are
+                Vector away = s.pos.clone().subtract(body(p).add(m.motion.clone().multiply(6)));
                 double d2 = away.lengthSquared();
                 if (d2 < r2 && d2 > 1e-6) { flee.add(away.multiply(1 / d2)); n++; }
             }
+            if (now >= s.nextDashAt) {
+                Vector r = Ball.randomDirection(random, 0.8);
+                // juke: with a chaser, dash across the chase line; otherwise anywhere
+                s.dashDir = n > 0 && flee.lengthSquared() > 1e-9 ? flee.clone().normalize().crossProduct(r).add(flee.clone().normalize().multiply(0.4)) : r;
+                if (s.dashDir.lengthSquared() < 1e-6) s.dashDir = r;
+                s.dashDir.normalize();
+                s.dashUntil = now + 6 + random.nextInt(9);
+                s.nextDashAt = now + (n > 0 ? 12 + random.nextInt(20) : 25 + random.nextInt(40));
+            }
             Vector desired;
-            if (n > 0) {
-                Vector jitter = Ball.randomDirection(random, 0.5).multiply(0.35);
-                desired = flee.normalize().add(jitter).normalize().multiply(rules.snitchSpeed);
-            } else {
-                if (--s.wanderTimer <= 0) { s.wanderTimer = 30 + random.nextInt(40); s.steerTarget = Ball.randomDirection(random, 0.5).multiply(rules.snitchSpeed * 0.45); }
+            if (now < s.dashUntil) desired = s.dashDir.clone().multiply(top * 1.25);
+            else if (n > 0) desired = flee.normalize().add(Ball.randomDirection(random, 0.8).multiply(0.6)).normalize().multiply(top);
+            else {
+                if (--s.wanderTimer <= 0) { s.wanderTimer = 15 + random.nextInt(25); s.steerTarget = Ball.randomDirection(random, 0.8).multiply(top * 0.6); }
                 desired = s.steerTarget == null ? new Vector() : s.steerTarget;
             }
-            s.steer(desired, 0.18);
+            s.steer(desired, now < s.dashUntil ? 0.5 : 0.3);
         }
         s.step(world, arena.snitchBox(), 0.9);
         s.visual.move(s.location(world));
@@ -482,9 +537,9 @@ final class Match {
         if (was != null && was.team == m.team && !was.id.equals(m.id) && best.state == Bludger.State.CHASE) m.saveBludger++;
         best.state = Bludger.State.DEFLECT; best.deflectBy = m.id; best.deflectTeam = m.team; best.deflectUntil = now + rules.deflectTicks;
         best.target = null;
-        best.vel = p.getEyeLocation().getDirection().normalize().multiply(rules.deflectSpeed);
+        best.vel = aimDirection(m, p).multiply(rules.deflectSpeed);
         best.visual.animate("hit");
-        world.playSound(best.location(world), Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK, 1.2f, 0.7f);
+        Sounds.at(this, best.location(world), "deflect", Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK, 1.2f, 1);
         world.spawnParticle(Particle.SWEEP_ATTACK, best.location(world), 1);
     }
 
@@ -496,7 +551,8 @@ final class Match {
         snitch = null;
         feed(3, m.team.ordinal(), m.nick, "", rules.snitchPoints);
         broadcastTitle(Component.text(m.nick + " 스니치 포획!", NamedTextColor.GOLD), Component.text("+" + rules.snitchPoints, NamedTextColor.YELLOW));
-        sound(Sound.UI_TOAST_CHALLENGE_COMPLETE, 1f);
+        Sounds.all(this, "goal", Sound.UI_TOAST_CHALLENGE_COMPLETE, 1, 1.1f);
+        Sounds.all(this, "whistle_end", null, 1, 1);
         end(score[0] == score[1] ? null : (score[0] > score[1] ? Team.A : Team.B), EndReason.SNITCH);
     }
 
@@ -576,7 +632,8 @@ final class Match {
         quaffle.state = Quaffle.State.FREE; setHolder(null); quaffle.vel = new Vector();
         feed(1, scorer.team.ordinal(), scorer.nick, "", rules.goalPoints);
         broadcastTitle(Component.text(scorer.team.label + " 골!", scorer.team.color), Component.text(scorer.nick + " +" + rules.goalPoints, NamedTextColor.WHITE));
-        sound(Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 1f);
+        Sounds.all(this, "goal", Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 1, 1);
+        Sounds.whistle(this);
         world.spawnParticle(Particle.FIREWORK, quaffle.location(world), 40, 0.6, 0.6, 0.6, 0.15);
         if (overtime) { end(scorer.team, EndReason.GOLDEN_GOAL); return; }
         phase = Phase.GOAL_PAUSE; phaseLeft = Math.max(1, rules.goalPauseTicks);
@@ -619,6 +676,21 @@ final class Match {
         p.showTitle(Title.title(Component.text("쓰러졌어요", NamedTextColor.RED), Component.text((rules.respawnTicks / 20) + "초 뒤 부활" + (killer != null ? " · " + killer.nick : ""))));
         world.playSound(p.getLocation(), Sound.ENTITY_PLAYER_DEATH, 1, 1);
         sendMatchAll();
+    }
+
+    /**
+     * 낙마 (owner 2026-10-17): leaving the broom in the air (knocked off, flight ended, broom lost) and then touching the
+     * ground is a death (5 s respawn; the last enemy who hit them within the credit time gets the kill).
+     * Getting off while already standing on the ground is not a fall.
+     */
+    private void fallCheck(MatchPlayer m, Player p) {
+        if (plugin.hooks().riding(p)) { m.mounted = true; m.falling = false; return; }
+        if (m.mounted) { m.mounted = false; m.falling = !p.isOnGround(); }
+        if (m.falling && (p.isOnGround() || p.isInWater())) {
+            m.falling = false;
+            p.sendActionBar(Component.text("낙마!", NamedTextColor.RED));
+            kill(m, p, null);
+        }
     }
 
     private void respawns() {
@@ -746,6 +818,7 @@ final class Match {
     // ================================================================== end
     void end(Team winner, EndReason reason) {
         if (phase == Phase.ENDED) return;
+        if (reason != EndReason.SNITCH && phase != Phase.PREPARE) Sounds.all(this, "whistle_end", Sound.BLOCK_NOTE_BLOCK_FLUTE, 1, 1);
         phase = Phase.ENDED;
         cleanupWorld();
         plugin.results().finish(this, winner, reason);
@@ -841,7 +914,7 @@ final class Match {
         var all = new ArrayList<KyudichiProtocol.Ball>();
         if (quaffle != null) all.add(new KyudichiProtocol.Ball(0, 0, (float) quaffle.pos.getX(), (float) quaffle.pos.getY(), (float) quaffle.pos.getZ(), quaffle.state == Quaffle.State.HELD ? 1 : 0));
         for (Bludger b : bludgers) all.add(new KyudichiProtocol.Ball(1, b.index, (float) b.pos.getX(), (float) b.pos.getY(), (float) b.pos.getZ(), 0));
-        if (snitch != null) all.add(new KyudichiProtocol.Ball(2, 0, (float) snitch.pos.getX(), (float) snitch.pos.getY(), (float) snitch.pos.getZ(), 0));
+        // owner 2026-10-17: no snitch marker — its position is not sent to anyone
         for (var m : players.values()) {
             Player p = online(m); if (p == null || !plugin.net().hasMod(p)) continue;
             var mine = new ArrayList<KyudichiProtocol.Ball>(all.size());

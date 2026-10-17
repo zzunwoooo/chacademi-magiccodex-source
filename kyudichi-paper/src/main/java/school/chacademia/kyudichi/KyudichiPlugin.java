@@ -27,6 +27,7 @@ public final class KyudichiPlugin extends JavaPlugin {
 
     @Override public void onEnable() {
         saveDefaultConfig();
+        migrateConfig();
         rules = new Rules(getConfig());
         arenas = new ArenaStore(getDataFolder().toPath().resolve("arenas.yml"), getLogger());
         arenas.load();
@@ -51,7 +52,7 @@ public final class KyudichiPlugin extends JavaPlugin {
         Bukkit.getScheduler().runTaskTimer(this, () -> { selections.tick(); spectate.tick(); }, 10, 10);
         installBlueprints();
         removeStrays();
-        for (var p : Bukkit.getOnlinePlayers()) store.load(p.getUniqueId(), p.getName(), null);
+        for (var p : Bukkit.getOnlinePlayers()) store.load(p.getUniqueId(), hooks.nick(p), null);
         getLogger().info("큐디치 준비 완료 · 경기장 " + arenas.all().size() + "개");
     }
 
@@ -64,6 +65,7 @@ public final class KyudichiPlugin extends JavaPlugin {
 
     void reload() {
         reloadConfig();
+        migrateConfig();
         rules = new Rules(getConfig());
         if (matches.all().isEmpty()) arenas.load();
         hooks.reset();
@@ -96,6 +98,23 @@ public final class KyudichiPlugin extends JavaPlugin {
     Rules rules() { return rules; }
     ArenaStore arenas() { return arenas; }
     Hooks hooks() { return hooks; }
+
+    /** config-version 1 → 2 (owner 2026-10-17): much faster balls, quaffle gravity. Only these keys change; the rest is kept. */
+    private void migrateConfig() {
+        var c = getConfig();
+        if (c.getInt("config-version", 1) >= 2) return;
+        Object[][] v2 = {
+                {"quaffle.throw-speed", 44.0}, {"quaffle.gravity", 16.0},
+                {"bludger.wander-speed", 16.0}, {"bludger.chase-speed", 30.0}, {"bludger.steer", 6.0}, {"bludger.hit-radius", 1.5},
+                {"bludger.ignore-after-hit-seconds", 1.2}, {"bludger.idle-target-radius", 40}, {"bludger.second-delay-seconds", 0.5},
+                {"bludger.deflect-speed", 42.0},
+                {"snitch.speed", 30.0}, {"snitch.flee-radius", 26}, {"snitch.catch-range", 1.6},
+                {"snitch.pause-every-seconds", java.util.List.of(10, 18)}, {"snitch.pause-seconds", 0.6}};
+        for (Object[] kv : v2) c.set((String) kv[0], kv[1]);
+        c.set("config-version", 2);
+        saveConfig();
+        getLogger().info("config.yml 을 버전 2로 바꿨어요 (공 속도·퀘이플 중력)");
+    }
     RatingStore store() { return store; }
     Matches matches() { return matches; }
     Results results() { return results; }

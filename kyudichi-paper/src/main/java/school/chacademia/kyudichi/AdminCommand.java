@@ -216,7 +216,7 @@ final class AdminCommand implements TabExecutor {
             if (m == null || !m.opt.test()) throw new IllegalArgumentException("그 경기장에서 테스트 경기가 없어요.");
             Player p = player(s); Team t = team(a[3]);
             if (plugin.matches().of(p.getUniqueId()) != null) throw new IllegalArgumentException("이미 경기 중이에요.");
-            var mp = m.add(p, t, plugin.store().cached(p.getUniqueId(), p.getName()).rating());
+            var mp = m.add(p, t, plugin.store().cached(p.getUniqueId(), plugin.hooks().nick(p)).rating());
             m.rejoinAs(p, mp);
             ok(s, t.label + "으로 참가");
             return;
@@ -372,7 +372,7 @@ final class AdminCommand implements TabExecutor {
 
     private void withRow(CommandSender s, String name, Consumer<RatingStore.Row> then) {
         Player online = Bukkit.getPlayerExact(name);
-        if (online != null) { plugin.store().load(online.getUniqueId(), online.getName(), r -> { if (r != null) then.accept(r); else err(s, "불러오기 실패"); }); return; }
+        if (online != null) { plugin.store().load(online.getUniqueId(), plugin.hooks().nick(online), r -> { if (r != null) then.accept(r); else err(s, "불러오기 실패"); }); return; }
         plugin.store().find(name, r -> { if (r == null) err(s, "큐디치 기록이 없는 닉네임이에요: " + name); else then.accept(r); });
     }
 

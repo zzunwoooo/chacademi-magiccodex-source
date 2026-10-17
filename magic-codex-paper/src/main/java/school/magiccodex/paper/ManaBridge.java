@@ -112,6 +112,7 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
                 return new Response(sequence,ManaProtocol.UNAVAILABLE,0,a.snapshot());
             }
         }
+        if(spell!=null&&internal==null&&BroomCastGuard.endFlight(p,spell.id()))return new Response(sequence,ManaProtocol.OK,0,a.snapshot());
         casting.add(id);
         ManaCasting.Result result;
         try {

@@ -25,8 +25,8 @@ import net.minecraft.world.phys.Vec3;
  * <p>조작
  * <pre>
  *  W 가속(아래를 보며 W = 급강하) · S 약한 브레이크 · 마우스 방향(빗자루가 늦게 따라옴)
- *  A/D 드리프트 · A/D 두 번 배럴롤 · 스페이스 상승 · 아래를 보며 W 하강 · 달리기 키 부스트
- *  앉기 키 한 번 = 지상/공중 모두 내리기 (키 재지정 지원)
+ *  A/D 드리프트 · A/D 두 번 배럴롤 · 스페이스 상승 · 앉기 키(Shift) 하강 · 아래를 보며 W 하강 · 달리기 키 부스트
+ *  내리기 = 비행 마법 키를 다시 누름 (서버가 내리게 함, 오너 2026-10-17)
  *  낙마 후 이동 키 4개를 순서대로 빠르게 입력 = 다시 잡기
  * </pre>
  */
@@ -208,7 +208,6 @@ public final class BroomFlight {
         if (rightTap > 0) rightTap--;
         if (crashCooldown > 0) crashCooldown--;
         boolean sprintEdge = k.sprint() && !prevSprint;
-        boolean dismount = k.shift() && !prevShift;
         if (k.left() && !prevLeft) {
             if (leftTap > 0) rollReq = -1;
             leftTap = 6;
@@ -222,16 +221,12 @@ public final class BroomFlight {
         prevLeft = k.left();
         prevRight = k.right();
         prevJump = k.jump();
-        if (dismount) {
-            end(false, true);
-            return false;
-        }
         if (p.hurtTime > lastHurtTime) physics.hurt();
         lastHurtTime = p.hurtTime;
 
         int boostBefore = physics.boostTicks, rollBefore = physics.rollTicks;
         var level = p.level();
-        var input = new BroomPhysics.Input(k.forward(), k.backward(), k.left(), k.right(), k.jump(), false,
+        var input = new BroomPhysics.Input(k.forward(), k.backward(), k.left(), k.right(), k.jump(), k.shift(),
                 sprintEdge, rollReq, p.getYRot(), p.getXRot(),
                 level.isRainingAt(p.blockPosition()), level.isThundering(), p.getY());
         physics.step(input);

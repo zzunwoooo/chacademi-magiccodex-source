@@ -14,7 +14,7 @@ public final class HudCursorScreen extends Screen {
         return TopMenuClient.click(x,y,button) || PartyHudClient.click(x,y,button) || HudSlotDrag.press(x,y,button) || KyudichiQueueClient.click(x,y,button) || KyudichiClient.cursorPress(x,y,button) || super.mouseClicked(x,y,button);
     }
     @Override public boolean mouseReleased(double x,double y,int button){
-        return HudSlotDrag.release(x,y,button) || PartyHudClient.release(x,y,button) || KyudichiClient.cursorRelease(x,y,button) || super.mouseReleased(x,y,button);
+        return HudSlotDrag.release(x,y,button) || KyudichiQueueClient.release(x,y,button) || PartyHudClient.release(x,y,button) || KyudichiClient.cursorRelease(x,y,button) || super.mouseReleased(x,y,button);
     }
-    @Override public void removed(){PartyHudClient.cursorClosed();HudSlotDrag.cancel();KyudichiClient.gesture=null;super.removed();}
+    @Override public void removed(){PartyHudClient.cursorClosed();KyudichiQueueClient.cursorClosed();HudSlotDrag.cancel();KyudichiClient.gesture=null;super.removed();}
 }

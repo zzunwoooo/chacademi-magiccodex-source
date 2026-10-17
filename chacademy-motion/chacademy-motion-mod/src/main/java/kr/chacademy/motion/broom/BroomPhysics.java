@@ -38,6 +38,11 @@ public final class BroomPhysics {
     static final float GLIDE_DRAG = 0.987f;   // 손 뗐을 때
     static final float STALL = 0.18f;         // 최고 속도 대비 이 비율 아래면 실속
     static final float CRASH_FALL_IMPACT = 0.75f; // 이만큼 속도를 한 번에 잃으면 바로 낙마
+    // 위아래 (오너 2026-10-17: 스페이스 상승 · Shift 하강, 지금보다 훨씬 잘 되게)
+    static final float VERTICAL_RESPONSE = 0.32f; // 목표 상승/하강 속도로 틱마다 다가가는 비율
+    static final float DESCEND_SPEED = 0.85f;     // Shift 하강 속도 (블록/틱)
+    /** 스페이스 상승 속도 (블록/틱): climb 0.045 → 0.54, 0.05 → 0.6. */
+    float climbSpeed() { return clamp(stats.climb * 12f, 0.4f, 0.95f); }
 
     public final Stats stats;
     private final Random random;
@@ -138,10 +143,13 @@ public final class BroomPhysics {
         float accel = stats.accel * (boostTicks > 0 ? 1.8f : 1f);
 
         // 3) 앞뒤
+        boolean vertical = in.jump() != in.shift(); // 스페이스 또는 Shift 하나만: 키가 위아래를 정함
         if (in.forward() || boostTicks > 0) {
             vf += accel * Math.cos(pr);
-            double pitchLift=-Math.sin(pr)*stats.maxSpeed*Math.max(.2f,sf)*.65;
-            up+=(pitchLift-up)*(.08+accel); // Pitch steers vertical velocity as speed rises.
+            if (!vertical) {
+                double pitchLift=-Math.sin(pr)*stats.maxSpeed*Math.max(.2f,sf)*.65;
+                up+=(pitchLift-up)*(.08+accel); // Pitch steers vertical velocity as speed rises.
+            }
         }
         if (in.back()) {
             vf *= 1 - stats.brake;
@@ -166,14 +174,16 @@ public final class BroomPhysics {
             stress += 14f;
         }
 
-        // 5) 위아래 + 실속
-        float lift = clamp(0.35f + sf, 0.35f, 1f);
-        if (in.jump()) up += stats.climb * lift;
-        // Sneak is exclusively dismount; descent uses downward pitch + forward or natural stall.
-        up *= 0.88;
-        if (sf < STALL && !in.jump()) up -= 0.03 * (1 - sf / STALL);
-        // 오르면 속도를 잃고, 내려꽂으면 속도가 붙음
-        if (up > 0) vf -= up * 0.04;
+        // 5) 위아래 + 실속: 스페이스 = 상승, Shift = 하강 (제자리에서도 바로 반응), 둘 다 떼면 서서히 수평
+        if (vertical) {
+            double target = in.jump() ? climbSpeed() : -DESCEND_SPEED;
+            up += (target - up) * VERTICAL_RESPONSE;
+        } else {
+            up *= 0.88;
+            if (sf < STALL) up -= 0.03 * (1 - sf / STALL);
+        }
+        // 오르면 속도를 조금 잃고, 내려꽂으면 속도가 붙음
+        if (up > 0) vf -= up * 0.015;
         else if (in.forward()) vf += -up * 0.03;
 
         // 6) 속도 상한
@@ -184,7 +194,7 @@ public final class BroomPhysics {
             vf *= cap * 1.1 / h;
             vr *= cap * 1.1 / h;
         }
-        up = Math.max(-1.2, Math.min(0.8, up));
+        up = Math.max(-1.2, Math.min(1.0, up));
 
         // 7) 악천후·고공 바람
         if (in.thunder()) {

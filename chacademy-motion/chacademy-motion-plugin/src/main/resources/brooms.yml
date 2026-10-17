@@ -26,7 +26,7 @@ debug: false
 #   turn       느릴 때 틱마다 돌 수 있는 각도(도). 최고 속도에서는 이 값의 40% 로 줄어듦
 #   brake      S 를 누를 때 틱마다 줄어드는 속도 비율 (급정거가 어렵도록 작게)
 #   stability  균형 게이지가 깎이는 양을 나누는 값. 클수록 잘 안 떨어짐
-#   climb      스페이스 상승 힘 (Shift는 하차, 하강은 시선과 전진)
+#   climb      스페이스 상승 빠르기 (Shift 하강 · 비행 마법 키를 다시 누르면 하차)
 #
 # 모델은 모드의 assets/chacademy_motion/brooms/<ID>.bbmodel 입니다.
 # ItemsAdder 리소스팩에 같은 경로로 넣으면 모드를 다시 배포하지 않고 모델을 바꾸거나 새 빗자루를 추가할 수 있습니다.

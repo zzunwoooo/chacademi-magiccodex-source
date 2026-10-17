@@ -146,7 +146,7 @@ final class GameListener implements Listener {
     // ------------------------------------------------------------------ join / quit
     @EventHandler
     public void join(PlayerJoinEvent e) {
-        plugin.store().load(e.getPlayer().getUniqueId(), e.getPlayer().getName(), null);
+        plugin.store().load(e.getPlayer().getUniqueId(), plugin.hooks().nick(e.getPlayer()), null);
         plugin.matches().joined(e.getPlayer());
         plugin.link().joined(e.getPlayer());
     }

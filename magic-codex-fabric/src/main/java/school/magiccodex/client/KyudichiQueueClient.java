@@ -25,7 +25,7 @@ import school.magiccodex.protocol.KyudichiQueueProtocol.*;
 
 /**
  * 큐디치 대기열 (Velocity 프록시 ↔ 클라이언트, chacademi:kyudichi_queue).
- *  - 매칭 중: 오른쪽 위 "매칭 대기 중" 카드 (application/queue_panel, 상태 아이콘 아래). 취소는 Alt 커서·채팅창에서.
+ *  - 매칭 중: 오른쪽 위 "매칭 대기 중" 카드 (application/queue_panel, 상태 아이콘 아래). 취소는 Ctrl 커서·채팅창에서.
  *  - 경기를 찾으면 수락 팝업(KyudichiAcceptScreen)을 연다.
  *  - 서버가 부탁하지 않은 APPLY·DASH·RANKING·RECORD를 보내면(/큐디치, /큐디치 현황·랭킹·정보) 해당 창을 연다.
  */
@@ -47,6 +47,9 @@ public final class KyudichiQueueClient {
     private static long offerSoundAt;
     private static List<Pen.Hit> panelHits = List.of();
     private static float panelX, panelY, panelS = 1;
+    /** Card offset from its default place (GUI px), moved with Ctrl + drag, right click = reset. config/magiccodex/kyudichi-queue-card.txt */
+    private static float offX, offY; private static boolean dragging, loaded; private static double grabX, grabY;
+    private static final java.nio.file.Path CARD_FILE = net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDir().resolve("magiccodex/kyudichi-queue-card.txt");
 
     static void initialize() {
         PayloadTypeRegistry.playS2C().register(Payload.ID, Payload.CODEC);
@@ -54,7 +57,7 @@ public final class KyudichiQueueClient {
         ClientPlayNetworking.registerGlobalReceiver(Payload.ID, (payload, context) -> {
             ToClient m;
             try { m = KyudichiQueueProtocol.decodeToClient(payload.bytes()); } catch (IllegalArgumentException bad) { return; }
-            context.client().execute(() -> receive(m));
+            context.client().execute(() -> { KyudichiPreview.realQueue(m); receive(m); });
         });
         // Tell the proxy this client draws the queue itself (no action-bar fallback). Sent again after every server switch.
         ClientPlayConnectionEvents.JOIN.register((h, sender, c) -> c.execute(() -> send(new ClientHello())));
@@ -124,7 +127,16 @@ public final class KyudichiQueueClient {
         images.beginFrame(); text.beginFrame();
         float w = c.getWindow().getScaledWidth(), h = c.getWindow().getScaledHeight(), s = KyudichiHud.scale(w, h) * .8f;
         // layout card at x 1307..1651, y 35..348 of the 1672 canvas: keep its right margin, start under the status effects
-        panelX = w - 1672 * s; panelY = KyudichiHud.rightTop() + (KyudichiClient.active() ? 200 * s : 0) - 35 * s; panelS = s;
+        if (!loaded) loadCard();
+        if (dragging) {
+            if (HudPointer.active()) { offX = (float) (HudPointer.x() - grabX); offY = (float) (HudPointer.y() - grabY); }
+            else { dragging = false; saveCard(); }
+        }
+        float baseX = w - 1672 * s, baseY = KyudichiHud.rightTop() + (KyudichiClient.active() ? 200 * s : 0) - 35 * s;
+        // keep the whole card (1307..1651 × 35..348 of the layout) on screen
+        offX = Math.clamp(offX, -(baseX + 1307 * s), w - (baseX + 1651 * s));
+        offY = Math.clamp(offY, -(baseY + 35 * s), h - (baseY + 348 * s));
+        panelX = baseX + offX; panelY = baseY + offY; panelS = s;
         var canvas = new KyudichiCanvas(ctx, images, text);
         try {
             ctx.getMatrices().push(); ctx.getMatrices().translate(0, 0, 150);
@@ -138,11 +150,30 @@ public final class KyudichiQueueClient {
         } finally { ctx.getMatrices().pop(); images.endFrame(); }
     }
 
-    /** Alt cursor / chat click on the card. */
+    /** Ctrl cursor / chat click on the card: 취소, drag to move, right click = back to the default place. */
     public static boolean click(double x, double y, int button) {
-        if (button != 0) return false;
+        if (panelHits.isEmpty()) return false;
         float dx = (float) ((x - panelX) / panelS), dy = (float) ((y - panelY) / panelS);
+        boolean onCard = dx >= 1307 && dx <= 1651 && dy >= 35 && dy <= 348;
+        if (!onCard) return false;
+        if (button == 1) { offX = offY = 0; saveCard(); return true; }
+        if (button != 0) return false;
         for (var hit : panelHits) if (hit.contains(dx, dy) && hit.id().equals(ApplicationView.CANCEL)) { send(new Leave()); return true; }
-        return false;
+        dragging = true; grabX = x - offX; grabY = y - offY;
+        return true;
+    }
+    public static boolean release(double x, double y, int button) {
+        if (!dragging || button != 0) return false;
+        dragging = false; saveCard(); return true;
+    }
+    static void cursorClosed() { if (dragging) { dragging = false; saveCard(); } }
+    private static void loadCard() {
+        loaded = true;
+        try { var t = java.nio.file.Files.readString(CARD_FILE).trim().split("\\s+"); offX = Float.parseFloat(t[0]); offY = Float.parseFloat(t[1]); }
+        catch (Exception missing) { offX = offY = 0; }
+    }
+    private static void saveCard() {
+        try { java.nio.file.Files.createDirectories(CARD_FILE.getParent()); java.nio.file.Files.writeString(CARD_FILE, offX + " " + offY); }
+        catch (java.io.IOException ignored) { }
     }
 }
