@@ -91,6 +91,7 @@ Claude 는 GPT 작업 브랜치에 직접 커밋하지 않고, **`claude/` 로 �
 | `claude/artifact-summon-20261015` | `claude/artifact-catalog-20261015` @ `c1c2c01` (위 브랜치 포함) | `CLAUDE_ARTIFACT_SUMMON_20261015.md` | 유물함 소환(아티팩트 뽑기): `/아티팩트소환` 창, [소환하기]로 `item:random_artifact` 소모, 등급 5:3:1:0.1, 새것은 권한 지급·중복은 `item:artifact_shard` 우편, 등급이 드러나는 개봉 연출(가산 합성 셰이더·바닐라 사운드). **아이템애더 아이템 2개 생성 필요, Fabric 화면 컴파일 미확인** | 받기 전 |
 | `claude/artifact-effects-20261015` | `claude/artifact-summon-20261015` @ `0236fee` 이후 (위 브랜치 포함) | `CLAUDE_ARTIFACT_EFFECTS_20261015.md` | 아티팩트 효과 120/150 구현(스탯·받는 피해·마법 피해·원소 반응·채집·음식·사용 키 18종), 보류 30(모션·키세팅·빗자루 훅 등). 파티 명단 Velocity→서버 `chacademi:party_roster` + 공개 서비스 `PartyRoster`. MagicMythic 이벤트 4종 추가. 스쿨·야생 공유(`codex_player_state`에 열 6개 자동 추가) + 서버 도착 시 능력치 통합 갱신 `PlayerStats`(장신구·아티팩트 재계산 후 현재 체력·마나 복원). **Paper API 소스로 javac 확인, Gradle·실게임 전. Velocity·Bridge·MagicMythic 같이 배포** | 받기 전 |
 | `claude/shop-redesign-20261017` | `codex/operating-alchemy-carrier-20261016` @ `9cefa25` | `CLAUDE_SHOP_REDESIGN_20261017.md` | 상점 UI 개편(승인 시안 approved.png): 남색 프레임·NPC 일러스트+이름표·전체/구매/판매 탭·검색·4줄 목록·수량/합계/구매하기, 원본 PNG 31장. 클라이언트만, 프로토콜·서버 불변. **yarn jar javac 타입검사·Java2D 미리보기만, Gradle·실게임 전 — 문서 0·5장 먼저** | 받기 전 |
+| `claude/alchemy-shared-20261017` | `claude/shop-redesign-20261017` @ `2369096` (위 브랜치 포함) | `CLAUDE_ALCHEMY_20261016.md` 6·7장 | 연금술 레시피 관리 화면(`/연금술관리`, 연금술 그림 재사용, 새 채널 `alchemy_admin`) + **alchemy.yml 스쿨·야생 공유**(공유 MariaDB `codex_alchemy_config`, 5초 동기화, revision 충돌 시 되돌림) + 재료 선택 빈 문구. **서버·모드 같이 배포, Fabric 화면 컴파일 미확인** | 받기 전 |
 
 ## Claude 가 지키는 규칙
 

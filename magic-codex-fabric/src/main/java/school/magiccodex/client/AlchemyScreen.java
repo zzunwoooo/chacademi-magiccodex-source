@@ -28,13 +28,13 @@ import school.magiccodex.protocol.AlchemyRules;
  * undiscovered ones as locked rows; clicking a recipe fills the slots with its ingredients.
  */
 final class AlchemyScreen extends Screen {
-    private static final Identifier PANEL = tex("panel"), CIRCLE = tex("circle");
-    private static final Identifier TITLE = Identifier.of("magiccodex", "title"), BOLD = Identifier.of("magiccodex", "hud_bold"),
+    static final Identifier PANEL = tex("panel"), CIRCLE = tex("circle");
+    static final Identifier TITLE = Identifier.of("magiccodex", "title"), BOLD = Identifier.of("magiccodex", "hud_bold"),
             LABEL = Identifier.of("magiccodex", "label"), BODY = Identifier.of("magiccodex", "body");
-    private static final int GOLD = 0xFFE7C77E, TITLE_GOLD = 0xFFF2D9A0, IVORY = 0xFFF3E9D3, TEXT = 0xFFE4E9EF, MUTED = 0xFF9AA8BB,
+    static final int GOLD = 0xFFE7C77E, TITLE_GOLD = 0xFFF2D9A0, IVORY = 0xFFF3E9D3, TEXT = 0xFFE4E9EF, MUTED = 0xFF9AA8BB,
             DIM = 0xFF6B7A90, WARN = 0xFFFF9E9E, EXP = 0xFF8EE07A, CYAN = 0xFF9FE6F5;
 
-    private static Identifier tex(String name) { return Identifier.of("magiccodex", "textures/gui/alchemy/" + name + ".png"); }
+    static Identifier tex(String name) { return Identifier.of("magiccodex", "textures/gui/alchemy/" + name + ".png"); }
 
     private final UiResources.Entrance entrance = new UiResources.Entrance();
     private String[] slotKeys = new String[6];
@@ -448,8 +448,8 @@ final class AlchemyScreen extends Screen {
             HudMesh.line(c, x.cx() - r, x.cy() - r, x.cx() + r, x.cy() + r, 3, xc); HudMesh.line(c, x.cx() - r, x.cy() + r, x.cx() + r, x.cy() - r, 3, xc);
             var list = AlchemyClient.selectable();
             if (list.isEmpty()) {
-                text(c, "가방에 '재료' 아이템이 없습니다.", p.cx(), p.cy() - 10, 22, MUTED, LABEL, true);
-                text(c, "아이템 설명 첫 줄이 '재료'인 아이템만 넣을 수 있습니다.", p.cx(), p.cy() + 24, 17, DIM, BODY, true);
+                text(c, "가방에 재료 아이템이 없습니다.", p.cx(), p.cy() - 10, 22, MUTED, LABEL, true);
+                text(c, "재료 아이템만 넣을 수 있습니다.", p.cx(), p.cy() + 24, 17, DIM, BODY, true);
             }
             int max = AlchemyLayout.PICK_COLUMNS * AlchemyLayout.PICK_ROWS;
             for (int i = 0; i < Math.min(max, list.size()); i++) {
@@ -500,7 +500,7 @@ final class AlchemyScreen extends Screen {
         }
     }
 
-    private void tooltip(DrawContext c, List<String> lines, double mx, double my) {
+    static void tooltip(DrawContext c, List<String> lines, double mx, double my) {
         var t = UiResources.text();
         float w = 0;
         for (int i = 0; i < lines.size(); i++) w = Math.max(w, t.width(lines.get(i), i == 0 ? 20 : 17, i == 0 ? BOLD : LABEL));
@@ -631,24 +631,24 @@ final class AlchemyScreen extends Screen {
         if (client != null) client.getSoundManager().play(PositionedSoundInstance.master(event, pitch, volume));
     }
 
-    private static int argb(float alpha, int rgb) { return (Math.round(Math.clamp(alpha, 0f, 1f) * 255) << 24) | (rgb & 0xFFFFFF); }
+    static int argb(float alpha, int rgb) { return (Math.round(Math.clamp(alpha, 0f, 1f) * 255) << 24) | (rgb & 0xFFFFFF); }
 
-    private static void text(DrawContext c, String value, float x, float y, float size, int color, Identifier face, boolean centered) {
+    static void text(DrawContext c, String value, float x, float y, float size, int color, Identifier face, boolean centered) {
         if (value != null && !value.isBlank() && (color >>> 24) > 3) UiResources.text().draw(c, value, x, y, size, color, face, centered);
     }
     /** Largest size up to `size` at which the text fits `max` wide. */
-    private static float fit(String value, float size, Identifier face, float max) {
+    static float fit(String value, float size, Identifier face, float max) {
         float w = UiResources.text().width(value, size, face);
         return w <= max ? size : Math.max(10, size * max / w);
     }
     /** The end of a long search text (what is being typed stays visible). */
-    private static String tail(String value, float size, Identifier face, float max) {
+    static String tail(String value, float size, Identifier face, float max) {
         String v = value;
         while (v.length() > 1 && UiResources.text().width(v, size, face) > max) v = v.substring(1);
         return v;
     }
     /** Amount badge: bold with an outline, right-aligned at x, above items. */
-    private static void count(DrawContext c, String value, float right, float cy, int color) {
+    static void count(DrawContext c, String value, float right, float cy, int color) {
         var m = c.getMatrices(); m.push();
         try {
             m.translate(0, 0, 200);
@@ -656,7 +656,7 @@ final class AlchemyScreen extends Screen {
             UiResources.text().drawOutline(c, value, right - w, cy, 19, color, BOLD, false);
         } finally { m.pop(); }
     }
-    private static void item(DrawContext c, ItemStack stack, float cx, float cy, float size) {
+    static void item(DrawContext c, ItemStack stack, float cx, float cy, float size) {
         if (stack == null || stack.isEmpty() || size < 2) return;
         var m = c.getMatrices(); m.push();
         try {
@@ -665,7 +665,7 @@ final class AlchemyScreen extends Screen {
             c.drawItem(stack, 0, 0);
         } finally { m.pop(); }
     }
-    private static void outline(DrawContext c, Box b, float t, int color) {
+    static void outline(DrawContext c, Box b, float t, int color) {
         HudMesh.line(c, b.x(), b.y(), b.right(), b.y(), t, color);
         HudMesh.line(c, b.x(), b.bottom(), b.right(), b.bottom(), t, color);
         HudMesh.line(c, b.x(), b.y(), b.x(), b.bottom(), t, color);
@@ -673,7 +673,7 @@ final class AlchemyScreen extends Screen {
     }
 
     /** Whole art scaled so its frame box lands exactly on `target` (glow margins spill outside, as drawn). */
-    private static void drawArt(DrawContext c, Art a, Box target, int tint) {
+    static void drawArt(DrawContext c, Art a, Box target, int tint) {
         float sx = target.w() / a.frameW(), sy = target.h() / a.frameH();
         int x = Math.round(target.x() - a.frameX() * sx), y = Math.round(target.y() - a.frameY() * sy);
         int w = Math.round(a.width() * sx), h = Math.round(a.height() * sy);
@@ -684,7 +684,7 @@ final class AlchemyScreen extends Screen {
      * Nine-slice (same rule as the artifact codex): the frame box lands on `cell`, corners keep the scale of the
      * height so a wide row or search field does not stretch its ornaments.
      */
-    private static void nine(DrawContext c, Art a, int corner, Box cell, int tint) {
+    static void nine(DrawContext c, Art a, int corner, Box cell, int tint) {
         int tw = a.width(), th = a.height(), fl = a.frameX(), ft = a.frameY(), fr = a.frameX() + a.frameW(), fb = a.frameY() + a.frameH();
         float s = cell.h() / (fb - ft);
         int[] sx = {0, fl + corner, fr - corner, tw};
