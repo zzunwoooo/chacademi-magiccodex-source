@@ -24,7 +24,7 @@ import org.bukkit.util.Vector;
  *      Both can trigger from the same hit; the extra arrows never trigger either passive again (proc flag).
  *  049 glass_firing 광석 재련 - ore drops are smelted (furnace recipe). mana per ore block.
  *  052 flame_footprints 불꽃 걸음 - mana per second; footprints behind the player explode after a fuse.
- *  055 glaze_coating 화염의 정복자 - immune to fire-tick (burning) damage.
+ *  055 glaze_coating 화염의 정복자 - immune to fire damage (in fire, burning) and to the 화상 status.
  *  121 automatic_supply 자동 보급 - the last building block in hand is refilled from the inventory.
  * Numbers: config.yml passives.* (all placeholders until the balance review).
  */
@@ -125,11 +125,15 @@ final class Passives implements Listener {
     }
 
     // ------------------------------------------------------------------ 055 burn immunity
+    // Owner 2026-10-19: 화염의 정복자 = immune to fire (standing in fire, burning) and to the 화상 status.
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void burning(EntityDamageEvent e) {
-        if (e.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK && e.getEntity() instanceof Player p && on(p, "glaze_coating"))
+        var cause = e.getCause();
+        if ((cause == EntityDamageEvent.DamageCause.FIRE_TICK || cause == EntityDamageEvent.DamageCause.FIRE) && e.getEntity() instanceof Player p && on(p, "glaze_coating"))
             e.setCancelled(true);
     }
+    /** 화염의 정복자 equipped (StatusEffects refuses 화상). */
+    boolean fireImmune(Player p) { return on(p, "glaze_coating"); }
 
     // ------------------------------------------------------------------ 121 refill
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

@@ -12,15 +12,12 @@ import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.ClientBossBar;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import school.magiccodex.protocol.ElementProtocol;
@@ -39,7 +36,9 @@ import school.magiccodex.protocol.TargetHudProtocol;
  *
  * Geometry is in frame-asset pixels (frame.png 1237 x 101, slot rectangles measured on the PNG) and scaled to
  * a width of ~38 % of the screen. Text is drawn unscaled at the matching GUI size so glyphs stay sharp.
- * The server decides the target (last combat partner 10 s, else crosshair) - see TargetHudBridge.
+ * The server decides the targets - see TargetHudBridge. Up to two bars: with a boss near, the boss on top and the
+ * normal mob under the crosshair below it (78 % size); otherwise one bar (combat partner 10 s, else crosshair).
+ * All boss bars are hidden (owner 2026-10-19: this HUD replaces them).
  */
 public final class TargetHudClient {
     private TargetHudClient() {}
@@ -75,11 +74,13 @@ public final class TargetHudClient {
     static float width(int screenW) { return TargetHudLayout.width(screenW); }
 
     // ---------------------------------------------------------------- state
-    private static TargetHudProtocol.Show target, preview;
-    private static long receivedAt, previewUntil, shownAt;
-    private static int shownId = Integer.MIN_VALUE;
-    private static float health = -1, mana = -1;
+    /** One bar on screen: eased values per entity, kept per slot. */
+    private static final class Bar { int id = Integer.MIN_VALUE; long shownAt; float health = -1, mana = -1; }
+    private static final Bar[] bars = {new Bar(), new Bar()};
+    private static List<TargetHudProtocol.Show> targets = List.of(), preview = List.of();
+    private static long receivedAt, previewUntil;
     private static long lastFrame;
+    static final float SECOND_SCALE = .78f;
     private static ClientWorld world;
     private static HudTextureCache images;
     private static CodexTypography text;
@@ -97,6 +98,8 @@ public final class TargetHudClient {
             drawer.attachLayerAfter(IdentifiedLayer.CROSSHAIR, Identifier.of("magiccodex", "target_hud"), TargetHudClient::render);
             // Owner 2026-10-19: vanilla effect icons (buffs too) are gone; debuffs show as 차카데미 icons top right.
             drawer.removeLayer(IdentifiedLayer.STATUS_EFFECTS);
+            // Owner 2026-10-19: every boss bar is hidden; bosses show on this HUD instead.
+            drawer.removeLayer(IdentifiedLayer.BOSSBAR);
         });
         ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> { reset(); close(); });
         ClientPlayConnectionEvents.JOIN.register((h, s, c) -> reset());
@@ -106,7 +109,8 @@ public final class TargetHudClient {
             root.then(ClientCommandManager.literal("일반").executes(c -> { startPreview(0); return 1; }));
             root.then(ClientCommandManager.literal("이로치").executes(c -> { startPreview(1); return 1; }));
             root.then(ClientCommandManager.literal("플레이어").executes(c -> { startPreview(2); return 1; }));
-            root.then(ClientCommandManager.literal("끄기").executes(c -> { previewUntil = 0; preview = null; return 1; }));
+            root.then(ClientCommandManager.literal("보스").executes(c -> { startPreview(3); return 1; }));
+            root.then(ClientCommandManager.literal("끄기").executes(c -> { previewUntil = 0; preview = List.of(); return 1; }));
             dispatcher.register(root);
         });
     }
@@ -114,35 +118,24 @@ public final class TargetHudClient {
     private static void accept(TargetHudProtocol.Frame f) {
         sync();
         long now = Util.getMeasuringTimeMs();
-        switch (f) {
-            case TargetHudProtocol.Show s -> {
-                if (target == null || target.entityId() != s.entityId() || now - receivedAt > TIMEOUT_MS) { health = -1; mana = -1; }
-                target = s; receivedAt = now;
-            }
-            case TargetHudProtocol.Hide h -> { target = null; }
-        }
+        targets = f.targets();
+        receivedAt = now;
     }
 
     private static void sync() {
         var c = MinecraftClient.getInstance();
         if (c.world != world) { reset(); world = c.world; }
     }
-    private static void reset() { target = null; preview = null; previewUntil = 0; health = mana = -1; shownId = Integer.MIN_VALUE; }
+    private static void reset() { targets = List.of(); preview = List.of(); previewUntil = 0; for (Bar b : bars) { b.id = Integer.MIN_VALUE; b.health = b.mana = -1; } }
     static void close() {
         if (images != null) { images.close(); images = null; }
         if (text != null) { text.close(); text = null; }
     }
 
-    /** Name currently on the HUD (boss bar filter), "" when none. */
-    static String shownName() {
-        var t = current(Util.getMeasuringTimeMs());
-        return t == null ? "" : name(t);
-    }
-
-    private static TargetHudProtocol.Show current(long now) {
-        if (preview != null && now < previewUntil) return preview;
-        if (target != null && now - receivedAt <= TIMEOUT_MS) return target;
-        return null;
+    private static List<TargetHudProtocol.Show> current(long now) {
+        if (!preview.isEmpty() && now < previewUntil) return preview;
+        if (now - receivedAt <= TIMEOUT_MS) return targets;
+        return List.of();
     }
 
     private static String name(TargetHudProtocol.Show t) {
@@ -160,9 +153,9 @@ public final class TargetHudClient {
         sync();
         if (c.player == null || c.world == null || c.options.hudHidden || !HudPointer.hudVisibleUnder(c.currentScreen)) return;
         long now = Util.getMeasuringTimeMs();
-        var t = current(now);
+        var list = current(now);
         boolean self = !StatusClient.of(c.player.getId()).isEmpty() || ElementMarkClient.markOf(c.player.getId()) != null;
-        if (t == null && !self) { shownId = Integer.MIN_VALUE; lastFrame = now; return; }
+        if (list.isEmpty() && !self) { for (Bar b : bars) b.id = Integer.MIN_VALUE; lastFrame = now; return; }
         if (generation != UiResources.generation()) { close(); generation = UiResources.generation(); }
         if (images == null) images = new HudTextureCache(c);
         if (text == null) text = new CodexTypography(c);
@@ -170,11 +163,19 @@ public final class TargetHudClient {
         try {
             ctx.getMatrices().push();
             ctx.getMatrices().translate(0, 0, 120);
-            if (t != null) {
-                if (t.entityId() != shownId) { shownId = t.entityId(); shownAt = now; }
-                float alpha = Math.clamp((now - shownAt) / (float) FADE_MS, 0, 1);
-                drawTarget(ctx, c, t, now, alpha);
-            } else shownId = Integer.MIN_VALUE;
+            int sw = c.getWindow().getScaledWidth();
+            float w = width(sw);
+            float y = 8;
+            if (KyudichiClient.active()) y += 215 * KyudichiHud.scale(sw, c.getWindow().getScaledHeight());
+            for (int i = 0; i < bars.length; i++) {
+                Bar bar = bars[i];
+                if (i >= list.size()) { bar.id = Integer.MIN_VALUE; continue; }
+                var t = list.get(i);
+                if (t.entityId() != bar.id) { bar.id = t.entityId(); bar.shownAt = now; bar.health = bar.mana = -1; }
+                float alpha = Math.clamp((now - bar.shownAt) / (float) FADE_MS, 0, 1);
+                float bw = i == 0 ? w : w * SECOND_SCALE;
+                y = drawTarget(ctx, c, t, bar, now, alpha, bw, y) + 6;
+            }
             if (self) drawSelf(ctx, c, now);
             ctx.getMatrices().pop();
         } finally {
@@ -183,17 +184,17 @@ public final class TargetHudClient {
         lastFrame = now;
     }
 
-    private static void drawTarget(DrawContext ctx, MinecraftClient c, TargetHudProtocol.Show t, long now, float alpha) {
+    /** Draws one bar whose name top is at `top` (GUI px); returns the GUI y of its bottom (below the icon row). */
+    private static float drawTarget(DrawContext ctx, MinecraftClient c, TargetHudProtocol.Show t, Bar bar, long now, float alpha, float w, float top) {
         int sw = c.getWindow().getScaledWidth();
-        float w = width(sw), s = w / FRAME_W;
-        float top = 8 + (NAME_SIZE * .5f - NAME_Y) * s;
-        if (KyudichiClient.active()) top += 215 * KyudichiHud.scale(sw, c.getWindow().getScaledHeight());
-        float fx = (sw - w) / 2f, fy = top;
+        float s = w / FRAME_W;
+        float fx = (sw - w) / 2f, fy = top + (NAME_SIZE * .5f - NAME_Y) * s;
         boolean rare = t.shiny(), hasMana = t.hasMana();
         // Smooth bars: health eases toward the server value (~4 updates per second).
         float dt = Math.clamp((now - lastFrame) / 1000f, 0, .1f);
-        health = health < 0 ? t.health() : health + (t.health() - health) * Math.min(1, dt * (t.health() > health ? 14 : 9));
-        if (hasMana) mana = mana < 0 ? t.mana() : mana + (t.mana() - mana) * Math.min(1, dt * 12);
+        bar.health = bar.health < 0 ? t.health() : bar.health + (t.health() - bar.health) * Math.min(1, dt * (t.health() > bar.health ? 14 : 9));
+        if (hasMana) bar.mana = bar.mana < 0 ? t.mana() : bar.mana + (t.mana() - bar.mana) * Math.min(1, dt * 12);
+        float health = bar.health, mana = bar.mana;
         float fHp = Math.clamp(health / t.maxHealth(), 0, 1);
         int a8 = Math.round(alpha * 255) << 24;
 
@@ -276,6 +277,7 @@ public final class TargetHudClient {
             String odds = pct > 0 && pct < 10 ? String.format(Locale.ROOT, "%.1f%%", pct) : Math.round(pct) + "%";
             text.drawOutline(ctx, odds, fx + 55 * s, fy + (below + HEART_DY) * s, 30 * s, a8 | 0xF4F1EA, TITLE, false);
         }
+        return fy + ((hasMana ? FRAME_H : FRAME_HP_H) + ICON_DY + ICON_D / 2) * s;
     }
 
     /** Own statuses: top right, oldest at the right edge, element mark left of them; wraps every 10. */
@@ -299,48 +301,22 @@ public final class TargetHudClient {
         return r >= 1_000_000 ? String.format(Locale.ROOT, "%.1fM", v / 1_000_000f) : String.valueOf(r);
     }
 
-    // ---------------------------------------------------------------- boss bars (vanilla + MythicMobs replaced)
-
-    private static final Set<String> nearby = new HashSet<>();
-    private static long nearbyAt;
-
-    /**
-     * True for a boss bar that belongs to a mob: vanilla boss bars (translatable entity name) or a bar whose title is
-     * the name of a living entity near the player (MythicMobs boss bars use the mob's display name). Other bars
-     * (큐디치 match bars, events) stay.
-     */
-    public static boolean hidesBossBar(ClientBossBar bar) {
-        Text name = bar.getName();
-        if (name.getContent() instanceof TranslatableTextContent tr && tr.getKey().startsWith("entity.")) return true;
-        String plain = strip(name.getString());
-        if (plain.isEmpty()) return false;
-        if (plain.equals(strip(shownName()))) return true;
-        long now = Util.getMeasuringTimeMs();
-        var c = MinecraftClient.getInstance();
-        if (now - nearbyAt > 1000 && c.world != null && c.player != null) {
-            nearbyAt = now; nearby.clear();
-            var box = c.player.getBoundingBox().expand(96);
-            for (var e : c.world.getEntitiesByClass(LivingEntity.class, box, x -> x.hasCustomName())) {
-                if (e.getCustomName() != null) nearby.add(strip(e.getCustomName().getString()));
-            }
-        }
-        return nearby.contains(plain);
-    }
-    private static String strip(String s) { return s == null ? "" : s.replaceAll("§[0-9a-fk-orA-FK-OR]", "").strip(); }
-
     // ---------------------------------------------------------------- preview (/대상체력바미리보기)
 
     private static long previewStart;
     private static void startPreview(int kind) {
         long now = Util.getMeasuringTimeMs();
         previewStart = now; previewUntil = now + 15000;
+        var wolf = new TargetHudProtocol.Show(-1, new UUID(0, 3), TargetHudProtocol.KIND_VANILLA, 0, "달빛 늑대", "", 720, 1000, -1, 0, 280, .38f);
         preview = switch (kind) {
-            case 1 -> new TargetHudProtocol.Show(-1, new UUID(0, 1), TargetHudProtocol.KIND_CUSTOM, TargetHudProtocol.FLAG_SHINY, "달빛 늑대", "",
-                720, 1000, 160, 240, 280, .38f);
-            case 2 -> new TargetHudProtocol.Show(-1, new UUID(0, 2), TargetHudProtocol.KIND_PLAYER, 0, "차카", "", 14, 20, 82, 120, 12, -1);
-            default -> new TargetHudProtocol.Show(-1, new UUID(0, 3), TargetHudProtocol.KIND_VANILLA, 0, "달빛 늑대", "", 720, 1000, -1, 0, 280, .38f);
+            case 1 -> List.of(new TargetHudProtocol.Show(-1, new UUID(0, 1), TargetHudProtocol.KIND_CUSTOM, TargetHudProtocol.FLAG_SHINY, "달빛 늑대", "",
+                720, 1000, 160, 240, 280, .38f));
+            case 2 -> List.of(new TargetHudProtocol.Show(-1, new UUID(0, 2), TargetHudProtocol.KIND_PLAYER, 0, "차카", "", 14, 20, 82, 120, 12, -1));
+            case 3 -> List.of(new TargetHudProtocol.Show(-2, new UUID(0, 4), TargetHudProtocol.KIND_CUSTOM, TargetHudProtocol.FLAG_BOSS | TargetHudProtocol.FLAG_COMBAT,
+                "고대의 수호자", "", 8400, 12000, 600, 900, 1530, .05f), wolf);
+            default -> List.of(wolf);
         };
-        health = -1; mana = -1;
+        for (Bar b : bars) b.id = Integer.MIN_VALUE;
         var c = MinecraftClient.getInstance();
         if (c.player != null) StatusClient.preview(c.player.getId(), List.of(
             new StatusClient.Line(StatusProtocol.Status.SLOW, now, now + 8000),

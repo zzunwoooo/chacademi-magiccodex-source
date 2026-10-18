@@ -172,6 +172,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
     WorldMech.State worldState() { return worldState; }
     Reactions reactions() { return reactions; }
     StatusEffects status() { return status; }
+    Passives passives() { return passives; }
     SpellSlots slots() { return slots; }
     boolean debug() { return getConfig().getBoolean("debug", false); }
 }

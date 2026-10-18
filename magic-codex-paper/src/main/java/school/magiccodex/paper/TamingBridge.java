@@ -104,6 +104,13 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
         return new HudInfo(name==null?"":name.strip(),rare,f!=null&&f.boss,odds);
     }
     PetBridge pets(){return pets;}
+    /** MythicMobs internal type name, or null for vanilla / without MythicMobs. */
+    String mythicType(LivingEntity e){
+        if(mobManager==null||activeMob==null)return null;
+        try{var a=(Optional<?>)activeMob.invoke(mobManager,e.getUniqueId());if(a.isEmpty())return null;
+            Object type=a.get().getClass().getMethod("getType").invoke(a.get());return (String)type.getClass().getMethod("getInternalName").invoke(type);}
+        catch(Exception|LinkageError ex){return null;}
+    }
     /** Shared server-authoritative ray for taming and rarity commands. Never picks by proximity. */
     LivingEntity target(Player p,double maxRange){return target(p,maxRange,false);}
     private LivingEntity target(Player p,double maxRange,boolean informationOnly){

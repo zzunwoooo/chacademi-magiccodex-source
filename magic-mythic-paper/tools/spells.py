@@ -24,7 +24,7 @@ S = [
  U('dust_duster'), U('leaf_cleanup'), U('feather_rustle'),
  ('cross_breeze','CHA_cross_breeze','AIM',30,7,0.55,False,['delay 40','chabolt{speed=2.5;range=30;radius=0.7;pierce=1;aoe=2;aoemult=0.5}'],'2초 충전 후 강한 화살'),
  ('returning_blade','CHA_returning_blade','AIM',18,4,0.3,False,['chabolt{speed=1.1;range=14;radius=1.2;pierce=99;returns=true}'],'갔다가 돌아오며 각 1회씩 타격'),
- ('pressure_press','CHA_pressure_press','AIR_ENTITY',15,0,0,False,['chahit{slam=2.2}'],'공중 대상을 내리꽂음 (낙하 피해는 바닐라)'),
+ ('pressure_press','CHA_pressure_press','AIR_ENTITY',15,0,0,False,['chahit{slam=2.2;status=gravity:40}'],'공중 대상을 내리꽂음 + 2초 중력 (낙하 피해는 바닐라)'),
  ('wind_decoy','CHA_wind_decoy','AIM',10,0,0,False,['chaworld{type=decoy;r=10;ticks=100}'],'반경 10블록 일반 몬스터 유인 5초'),
  ('air_step','CHA_air_step','SELF',12,0,0,False,['chaworld{type=platform;ticks=400} @self'],'발밑 3x3 임시 발판 20초 (보이는 건 VFX)'),
  ('lightning_needle','CHA_lightning_needle','AIM',20,6,0.5,False,['chahit{r=1.5;max=3}'],'지정 위치 낙뢰 피해'),
@@ -97,7 +97,7 @@ S = [
  ('ripple_guard','CHA_ripple_guard','SELF',12,0,0,False,['chaguard{type=block;ticks=40} @self'],'2초 정면 투사체 소멸'),
  ('tidal_wave','CHA_tidal_wave','AIM',12,6,0.45,False,['chabolt{speed=0.9;range=12;radius=2.2;pierce=99;knock=1.3;up=0.3;from=caster}'],'전방 해일, 3블록 밀침'),
  ('bouncing_droplet','CHA_bouncing_droplet','AIM',15,3,0.3,False,['chabolt{speed=1.4;range=15;radius=0.5;bounce=3;bouncer=6}'],'서로 다른 적 최대 4명 튕김'),
- ('abyssal_pressure','CHA_abyssal_pressure','AIM',15,5,0.35,False,['chazone{r=2.5;ticks=120;period=20;mult=0.3;effect=SLOWNESS:30:2,MINING_FATIGUE:30:1}'],'6초 수압 지대, 감속·지속 피해'),
+ ('abyssal_pressure','CHA_abyssal_pressure','AIM',15,5,0.35,False,['chazone{r=2.5;ticks=120;period=20;mult=0.3;effect=SLOWNESS:30:2;status=physical_weakness:30}'],'6초 수압 지대, 둔화·나약함·지속 피해'),
  # ---------------- earth ----------------
  ('verdant_touch','CHA_verdant_touch','SELF',12,0,0,False,['chaworld{type=grow;r=5;max=8} @self'],'주변 밀·당근·감자 최대 8개 한 단계 성장'),
  ('ore_whisper','CHA_ore_whisper','SELF',12,0,0,False,['chaworld{type=ore;r=10;max=3;ticks=100} @self'],'광석 최대 3곳 5초 발광 표시 (시전자만 보임)'),

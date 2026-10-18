@@ -23,10 +23,10 @@
 | ChAcademiaMagicMythic (magic-mythic-paper) | 상태이상 엔진 `StatusEffects`, 새 채널 `magiccodex:status`, `chastatus` 메커닉, `/마법미몹 상태이상` | `...-carrier.1-status.1` |
 | MagicCodexBridge (magic-codex-paper) | 대상 HUD 서버 `TargetHudBridge`, 새 채널 `magiccodex:target_hud`, 불타는 대상 판정을 화상으로 변경 | `0.31.1-integrated-20261018.1-statushud.1` |
 | MagicCodex 클라 모드 (magic-codex-fabric) | 대상 HUD·머리 위 아이콘·내 디버프·새 원소 아이콘 | `0.40.1-integrated-20261018.1-statushud.1` |
-| MythicMobs 스킬 | `chacademi_spells.yml`: 수압해머 `effect=SLOWNESS:20:4` → `status=stun:20` | - |
+| MythicMobs 스킬 | `chacademi_spells.yml`: 수압해머 `status=stun:20`, 심해의 압력 `status=physical_weakness:30`(채굴 피로 제거), 윈드 프레스 `status=gravity:40` | - |
 
 - 학교·야생 서버 모두 해당합니다.
-- `deployment/operating-config/MythicMobs/Skills/chacademi_spells.yml`(옛 형식)은 고치지 않았습니다. 운영에 쓰는 파일이면 수압해머 줄도 같이 바꿔 주세요.
+- `deployment/operating-config/MythicMobs/Skills/chacademi_spells.yml`(옛 형식)은 고치지 않았습니다. 운영에 쓰는 파일이면 위 세 줄도 같이 바꿔 주세요.
 - 클라 없이 서버만 올려도 동작합니다(아이콘만 안 보임). 서버 없이 클라만 올리면 대상 HUD가 안 뜹니다. 이전에 쓰던 교화 QUERY를 클라가 더 이상 보내지 않기 때문입니다.
 
 ## 2. 서버: 상태이상 (`magic-mythic-paper/.../StatusEffects.java`)
@@ -67,6 +67,9 @@
 | Marks stun (반격의 무게추) | 기절 |
 | Marks root (자재 치환) | 속박 |
 | 수압해머 | 1초 기절 |
+| 심해의 압력 | 채굴 피로 대신 나약함 1.5초 (`status=physical_weakness:30`, 오너 2차 결정) |
+| 윈드 프레스 | 2초 중력 추가 (`status=gravity:40`, 오너 2차 결정) |
+| 화염의 정복자 (055 패시브) | 불 피해(FIRE·FIRE_TICK) 면역 + 화상 status가 아예 걸리지 않음 (오너 2차 결정) |
 | 정화의 물결 | 독·나약함·둔화 status도 지움 |
 | 여명의 의식 | 모든 status를 지움 (IMMUNE 가드가 있는 동안 새 status도 거부) |
 | 불길 씻기, 불사조의 서약 | 화상도 끔 |
@@ -90,7 +93,15 @@
 ### 서버 `TargetHudBridge`
 
 - 5틱마다, 채널을 등록한 플레이어만 처리합니다.
-- **대상 선택:** 최근 10초 안의 전투 상대(내가 때렸거나 나를 때린 대상, 48블록 안)를 먼저 고릅니다. 없으면 `TamingBridge.lookTarget`(교화 정보 레이, ModelEngine 서브 히트박스, 25블록)으로 바라보는 대상을 고릅니다.
+- **대상 선택 (오너 2차 결정):**
+  - 64블록 안에 보스가 있으면 보스가 항상 맨 위입니다. 일반 몹과 싸우는 중이어도 바뀌지 않습니다.
+    - 보스가 여럿이면 최근 10초 안에 싸운 보스, 없으면 가장 가까운 보스입니다.
+    - 그 아래 두 번째 바에는 바라보는 일반 몬스터만 나옵니다(플레이어·보스 제외).
+  - 보스가 없으면 바 하나입니다. 최근 10초 안의 전투 상대(내가 때렸거나 나를 때린 대상, 48블록 안)를 먼저 고르고, 없으면 `TamingBridge.lookTarget`(교화 정보 레이, ModelEngine 서브 히트박스, 25블록)으로 바라보는 대상을 고릅니다.
+  - 보스 판정은 MagicMythic `Targets.boss`와 같은 규칙입니다: 바닐라 보스(Boss·Warden·ElderGuardian), 태그 `chacademia_boss`, MythicMobs `BOSS_` 접두사, 교화 프로필 boss.
+    - Bridge config `target-hud.boss-tags` / `target-hud.boss-mythic-prefixes`로 바꿀 수 있습니다(없으면 기본값).
+    - 보스 목록은 1초마다 다시 훑습니다.
+- 프로토콜 프레임 하나에 바를 최대 2개(위부터) 담고, 0개면 숨깁니다.
 - **제외 대상:** 내 MCPets 펫(`PetBridge.ownedBy`), 아머스탠드, NPC, 비전투 중인 투명 대상.
 - **보내는 내용:**
   - 이름: 교화 프로필의 한글 이름, 없으면 커스텀 이름, 그것도 없으면 번역 키(클라가 한글로 표시). 플레이어는 MagicCodex 닉네임입니다.
@@ -111,24 +122,21 @@
   - 머리 위(`ElementMarkClient`): 원소 표식 1개를 왼쪽에, 디버프 최대 3개를 오른쪽에 두고, 넘치면 "…"을 표시합니다. 내 머리 위에는 그리지 않습니다.
   - 내 디버프: 화면 오른쪽 위(바닐라 효과 아이콘이 있던 자리), 10개마다 줄바꿈합니다.
 - 바닐라 효과 HUD는 `IdentifiedLayer.STATUS_EFFECTS`를 지워서 없앴습니다(버프 포함, 오너 결정). 인벤토리 화면 옆 효과 목록은 그대로입니다.
-- 보스바는 `BossBarFilterMixin`(`BossBarHud.render`의 `Map.values()` Redirect)으로 걸러냅니다.
-  - 숨기는 것: 바닐라 엔티티 보스바(번역 키 `entity.*`), 이름이 근처 커스텀 이름 몹이나 현재 HUD 대상과 같은 보스바(MythicMobs).
-  - 큐디치 등 다른 보스바는 남습니다.
+- 보스바는 전부 숨깁니다(오너 2차 결정). `IdentifiedLayer.BOSSBAR` 레이어를 지웠고, 큐디치 등 다른 플러그인의 보스바도 안 보입니다.
+- 두 번째 바(보스 아래)는 78% 크기로 그립니다.
 - `TamingClient`: 머리 위 교화 카드(`renderMonster`)와 주기 QUERY를 없앴습니다. 교화 시전·채널링 창은 그대로입니다. `hidesVanillaName`은 항상 false입니다.
 - 원소 아이콘 6종을 새 PNG로 교체했습니다(`textures/element/*.png`, 256px).
-- 미리보기: `/대상체력바미리보기 [일반|이로치|플레이어|끄기]`
+- 미리보기: `/대상체력바미리보기 [일반|이로치|플레이어|보스|끄기]` (보스 = 보스 + 아래 일반 몹 2단)
   - 가짜 데이터로 15초 동안 보여 주고, 서버로는 아무것도 보내지 않습니다.
   - 내 디버프 아이콘도 함께 미리 보여 줍니다.
 
 ## 4. 확인 부탁 (빌드 때)
 
-1. Fabric 쪽 이름 확인
-   - `IdentifiedLayer.STATUS_EFFECTS`, `drawer.removeLayer`(fabric-api 0.119.4).
-   - `BossBarHud.render`에 `Map.values()` 호출이 실제로 있는지. `defaultRequire 1`이라 없으면 시작할 때 크래시가 납니다.
+1. Fabric 쪽 이름 확인: `IdentifiedLayer.STATUS_EFFECTS`, `IdentifiedLayer.BOSSBAR`, `drawer.removeLayer`(fabric-api 0.119.4). 믹스인은 추가하지 않았습니다.
 2. Paper 쪽 이름 확인: `EntityType#translationKey()`, `TNTPrimed#getSource()`, `AttributeModifier#getKey()`, `PotionEffect#isInfinite()`, `Mob#getPathfinder().moveTo(Location,double)`.
 3. `MagicProtection.magicDamaging()`으로 나약함(마법 아님)과 약화(마법)를 구분합니다. 패시브 화살(`procDamage`)은 마법으로 취급됩니다.
 4. 반응 수정화(`Reactions.frozen`)는 여전히 자기 방식으로 AI를 멈춥니다. 같은 몹에 기절이 겹치면 해제 순서가 꼬일 수 있습니다. 원소 반응 재기획 때 status 기절로 옮길 예정입니다.
-5. 화염의 정복자(화염 지속 피해 면역)는 바닐라 FIRE_TICK만 막습니다. 화상 마지막 추가 피해를 막을지는 오너에게 확인이 필요합니다.
+5. 큐디치 경기 화면에 보스바를 쓰던 부분이 있으면 이제 보이지 않습니다(오너: 보스바 전부 숨김).
 6. 숲의 왕좌(자기 고정, BuffMech root)는 디버프가 아니라서 아이콘이 없습니다.
 
 ## 5. 파일
@@ -138,7 +146,7 @@
   - 변경: `MagicMythicPlugin`, `Marks`, `Targets`, `HitMech`, `BoltMech`, `ZoneMech`, `Passives`, `Reactions`, `Guards`, `AllyMech`, `UtilMech`, `Links`, `config.yml`, `build.gradle`, `tools/spells.py`, `SPELLS.md`, `mythicmobs/Skills/chacademi_spells.yml`
 - 서버(Bridge): `TargetHudBridge`
   - 변경: `MagicCodexBridge`, `TamingBridge`, `PetBridge`, `MagicProtectionLink`, `SpellRuntime`, `build.gradle`
-- 클라: `TargetHudClient`, `TargetHudLayout`, `StatusClient`, `StatusIcons`, `mixin/BossBarFilterMixin`
-  - 변경: `ElementMarkClient`, `TamingClient`, `HudTextureCache`, `MagicCodexClient`, `magiccodex.mixins.json`, `gradle.properties`
+- 클라: `TargetHudClient`, `TargetHudLayout`, `StatusClient`, `StatusIcons`
+  - 변경: `ElementMarkClient`, `TamingClient`, `HudTextureCache`, `MagicCodexClient`, `gradle.properties`
   - 에셋: `textures/gui/target_hud/*`, `textures/status/*`(16), `textures/element/*`(교체)
 - 테스트: `magic-codex-fabric/src/test/.../StatusHudProtocolTest.java`

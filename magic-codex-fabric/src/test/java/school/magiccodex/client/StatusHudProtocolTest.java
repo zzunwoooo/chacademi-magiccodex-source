@@ -33,12 +33,17 @@ class StatusHudProtocolTest {
     @Test void targetHudRoundTripAndClamps() {
         var show = new TargetHudProtocol.Show(5, UUID.randomUUID(), TargetHudProtocol.KIND_CUSTOM, TargetHudProtocol.FLAG_SHINY | TargetHudProtocol.FLAG_COMBAT,
             "달빛 늑대", "", 720, 1000, -1, 0, 280, .38f);
-        var back = (TargetHudProtocol.Show) TargetHudProtocol.decode(TargetHudProtocol.encode(show));
+        var boss = new TargetHudProtocol.Show(9, UUID.randomUUID(), TargetHudProtocol.KIND_CUSTOM, TargetHudProtocol.FLAG_BOSS, "보스", "", 1, 2, 1, 2, 0, -1);
+        var frame = new TargetHudProtocol.Frame(List.of(boss, show));
+        assertEquals(frame, TargetHudProtocol.decode(TargetHudProtocol.encode(frame)));   // boss on top, looked-at mob below
+        var back = TargetHudProtocol.decode(TargetHudProtocol.encode(new TargetHudProtocol.Frame(List.of(show)))).targets().get(0);
         assertEquals(show, back);
         assertTrue(back.shiny()); assertTrue(back.combat()); assertFalse(back.boss()); assertFalse(back.hasMana());
         var over = new TargetHudProtocol.Show(5, UUID.randomUUID(), 0, 0, "x", "entity.minecraft.zombie", 30, 20, 5, 10, -3, 2);
         assertEquals(20f, over.health(), 1e-6); assertEquals(0f, over.damage(), 1e-6); assertEquals(1f, over.tameChance(), 1e-6);
-        assertInstanceOf(TargetHudProtocol.Hide.class, TargetHudProtocol.decode(TargetHudProtocol.encode(new TargetHudProtocol.Hide())));
+        assertTrue(TargetHudProtocol.decode(TargetHudProtocol.encode(TargetHudProtocol.Frame.hide())).empty());
+        assertThrows(IllegalArgumentException.class, () -> new TargetHudProtocol.Frame(List.of(show, show, show)));
+        assertThrows(IllegalArgumentException.class, () -> TargetHudProtocol.decode(new byte[]{1, 3}));
         assertThrows(IllegalArgumentException.class, () -> new TargetHudProtocol.Show(1, UUID.randomUUID(), 0, 0, "", "", 1, 0, -1, 0, 0, -1));
     }
     @Test void hpSegmentsAreFixedSixWithBrightTip() {

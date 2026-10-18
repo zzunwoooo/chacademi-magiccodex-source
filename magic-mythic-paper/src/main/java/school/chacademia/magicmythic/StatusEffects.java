@@ -151,6 +151,7 @@ final class StatusEffects implements Listener, AutoCloseable {
         if (status == null || target == null || !target.isValid() || target.isDead()) return false;
         if (target instanceof Player p && (p.getGameMode() == GameMode.CREATIVE || p.getGameMode() == GameMode.SPECTATOR)) return false;
         if (plugin.guards() != null && plugin.guards().has(target, Guards.Type.IMMUNE)) return false;
+        if (status == Status.BURN && target instanceof Player p && plugin.passives() != null && plugin.passives().fireImmune(p)) return false; // 화염의 정복자
         ticks = Math.clamp(ticks, 1, 20 * 600);
         boolean boss = plugin.targets().boss(target);
         if (boss && status == Status.ROOT) return false;
