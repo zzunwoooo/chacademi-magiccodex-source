@@ -28,6 +28,7 @@ import school.magiccodex.protocol.KyudichiQueueProtocol.*;
  *  - 매칭 중: 오른쪽 위 "매칭 대기 중" 카드 (application/queue_panel, 상태 아이콘 아래). 취소는 Ctrl 커서·채팅창에서.
  *  - 경기를 찾으면 수락 팝업(KyudichiAcceptScreen)을 연다.
  *  - 서버가 부탁하지 않은 APPLY·DASH·RANKING·RECORD를 보내면(/큐디치, /큐디치 현황·랭킹·정보) 해당 창을 연다.
+ *  - 결투장 로비 (2026-10-18): LOBBY(open) 이면 KyudichiLobbyScreen 을 연다. BOARD · RANKS · PROFILE 은 모드별로 보관.
  */
 public final class KyudichiQueueClient {
     private KyudichiQueueClient() {}
@@ -41,7 +42,9 @@ public final class KyudichiQueueClient {
         public Id<Payload> getId() { return ID; }
     }
 
-    static Status status = new Status(0, 0, 0, 0, 0, false, 0); static long statusAt;
+    static Status status = new Status(0, 0, 0, 0, 0, false, 0, 0); static long statusAt;
+    static Lobby lobby; static final Board[] board = new Board[2]; static final Ranks[] ranks = new Ranks[2]; static final ProfileReply[] profile = new ProfileReply[2];
+    static long boardAt, ranksAt, profileAt, lobbyAt;
     static Dash dash; static Ranking ranking; static RecordReply record; static Apply apply;
     static boolean wantDash, wantRanking, wantRecord, wantApply;
     private static long offerSoundAt;
@@ -61,7 +64,7 @@ public final class KyudichiQueueClient {
         });
         // Tell the proxy this client draws the queue itself (no action-bar fallback). Sent again after every server switch.
         ClientPlayConnectionEvents.JOIN.register((h, sender, c) -> c.execute(() -> send(new ClientHello())));
-        ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> { status = new Status(0, 0, 0, 0, 0, false, 0); dash = null; ranking = null; record = null; apply = null; });
+        ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> { status = new Status(0, 0, 0, 0, 0, false, 0, 0); dash = null; ranking = null; record = null; apply = null; clearLobby(); });
         ClientTickEvents.END_CLIENT_TICK.register(KyudichiQueueClient::tick);
         HudLayerRegistrationCallback.EVENT.register(d -> d.attachLayerAfter(IdentifiedLayer.CROSSHAIR, Identifier.of("magiccodex", "kyudichi_queue"), KyudichiQueueClient::render));
     }
@@ -74,6 +77,7 @@ public final class KyudichiQueueClient {
     static void requestRanking() { wantRanking = true; send(new RankingRequest()); }
     static void requestRecord(String nick) { wantRecord = true; send(new RecordRequest(nick == null ? "" : nick)); }
     static void requestApply() { wantApply = true; send(new ApplyRequest()); }
+    static void clearLobby() { lobby = null; for (int i = 0; i < 2; i++) { board[i] = null; ranks[i] = null; profile[i] = null; } }
 
     static void receive(ToClient m) {
         var c = MinecraftClient.getInstance();
@@ -88,6 +92,17 @@ public final class KyudichiQueueClient {
             case Dash x -> { dash = x; boolean asked = wantDash; wantDash = false; if (!asked) openDashboard(Tab.LIVE); }
             case Ranking x -> { ranking = x; boolean asked = wantRanking; wantRanking = false; if (!asked) openDashboard(Tab.RANKING); }
             case RecordReply x -> { record = x; boolean asked = wantRecord; wantRecord = false; if (!asked) openDashboard(Tab.RECORD); }
+            case Lobby x -> {
+                lobby = x; lobbyAt = Util.getMeasuringTimeMs();
+                if (x.open()) {
+                    if (c.currentScreen instanceof KyudichiLobbyScreen s) s.show(x.tab(), x.mode());
+                    else if (c.currentScreen == null || HudPointer.hudVisibleUnder(c.currentScreen) || c.currentScreen instanceof KyudichiViewScreen)
+                        c.setScreen(new KyudichiLobbyScreen(x.tab(), x.mode()));
+                }
+            }
+            case Board x -> { board[Math.clamp(x.mode(), 0, 1)] = x; boardAt = Util.getMeasuringTimeMs(); }
+            case Ranks x -> { ranks[Math.clamp(x.mode(), 0, 1)] = x; ranksAt = Util.getMeasuringTimeMs(); }
+            case ProfileReply x -> { profile[Math.clamp(x.mode(), 0, 1)] = x; profileAt = Util.getMeasuringTimeMs(); }
             case Apply x -> {
                 apply = x; boolean asked = wantApply; wantApply = false;
                 if (!asked && !(c.currentScreen instanceof KyudichiApplicationScreen) && (c.currentScreen == null || HudPointer.hudVisibleUnder(c.currentScreen)))
@@ -107,7 +122,7 @@ public final class KyudichiQueueClient {
     /** A found match opens the accept popup over the game (not over other windows the player is using). */
     private static void tick(MinecraftClient c) {
         if (state() == KyudichiQueueProtocol.S_OFFER && !status.iAccepted() && !(c.currentScreen instanceof KyudichiAcceptScreen)
-                && (c.currentScreen == null || HudPointer.hudVisibleUnder(c.currentScreen) || c.currentScreen instanceof KyudichiApplicationScreen)
+                && (c.currentScreen == null || HudPointer.hudVisibleUnder(c.currentScreen) || c.currentScreen instanceof KyudichiApplicationScreen || c.currentScreen instanceof KyudichiLobbyScreen)
                 && c.player != null)
             c.setScreen(new KyudichiAcceptScreen());
     }

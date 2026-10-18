@@ -82,6 +82,12 @@ public final class AwtCanvas implements Canvas {
         g.setColor(new Color(0x3A7BD5)); float e = size / 8;
         g.fill(new java.awt.geom.Rectangle2D.Float(x + e, y + e * 4.2f, e * 1.4f, e)); g.fill(new java.awt.geom.Rectangle2D.Float(x + e * 5.6f, y + e * 4.2f, e * 1.4f, e));
     }
+    @Override public void avatar(UUID id, String skin, float cx, float cy, float r) {
+        var clip = g.getClip();
+        g.clip(new Ellipse2D.Float(cx - r, cy - r, r * 2, r * 2));
+        head(id, skin, cx - r, cy - r, r * 2);
+        g.setClip(clip);
+    }
     @Override public boolean broom(String id, float cx, float cy, float w, float h) {
         g.setStroke(new BasicStroke(Math.max(2, h / 10), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         g.setColor(new Color(0x8A5A32)); g.draw(new java.awt.geom.Line2D.Float(cx - w * .45f, cy + h * .3f, cx + w * .2f, cy - h * .25f));
@@ -98,7 +104,12 @@ public final class AwtCanvas implements Canvas {
         layout.draw(g, left, top);
     }
     @Override public float width(String s, float size, Face face) { return s.isEmpty() ? 0 : (float) new TextLayout(s, fonts.get(face).deriveFont(size), FRC).getAdvance(); }
-    @Override public void fill(float x, float y, float w, float h, int argb) { g.setColor(new Color(argb, true)); g.fill(new java.awt.geom.Rectangle2D.Float(x, y, w, h)); }
+    @Override public void fill(float x, float y, float w, float h, int argb) {
+        // no antialiasing on rectangles: like the game's quads, adjacent strips must not leave seams
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        g.setColor(new Color(argb, true)); g.fill(new java.awt.geom.Rectangle2D.Float(x, y, w, h));
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    }
     @Override public void arc(float cx, float cy, float inner, float outer, float start, float end, int argb) {
         var a = new Area(new Arc2D.Float(cx - outer, cy - outer, outer * 2, outer * 2, 90 - start * 360, -(end - start) * 360, Arc2D.PIE));
         if (inner > 0) a.subtract(new Area(new Ellipse2D.Float(cx - inner, cy - inner, inner * 2, inner * 2)));

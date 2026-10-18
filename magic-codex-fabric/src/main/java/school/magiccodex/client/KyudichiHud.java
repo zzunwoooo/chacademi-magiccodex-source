@@ -74,7 +74,7 @@ final class KyudichiHud {
             HudView.feed(new Pen(canvas, -1, -1, null), feed(now));
             canvas.pop();
             // F key
-            if (!KyudichiClient.spectator()) {
+            if (!KyudichiClient.spectator() && !KyudichiClient.duel()) {
                 // owner 2026-10-17: 70 % of the reference size, 24 px (design) higher
                 float ks = s * KEYS_SCALE;
                 canvas.push(w / 2f - 836 * ks, keysBottom(w, h) - 24 * s - 924 * ks, ks);
@@ -88,11 +88,23 @@ final class KyudichiHud {
     // ================================================================== data → views
     private static HudView.Score score(KyudichiProtocol.Match m, long now) {
         int left = Math.max(0, m.timeLeftMs() - (int) (now - KyudichiClient.matchAt));
-        String sub = switch (m.phase()) { case 0 -> "준비"; case 1 -> "곧 시작"; case 3 -> "골!"; default -> (m.flags() & 2) != 0 ? "골든골" : ""; };
+        boolean duel = (m.flags() & 16) != 0;
+        String sub = switch (m.phase()) { case 0 -> "준비"; case 1 -> duel ? "라운드 시작" : "곧 시작"; case 3 -> duel ? "라운드 종료" : "골!"; default -> (m.flags() & 2) != 0 ? "골든골" : ""; };
         boolean out = (m.flags() & 1) != 0;
+        if (duel) {
+            // 1:1: names instead of 우리 팀 / 상대 팀, the score is rounds won
+            String a = nameOf(m, 0), b = nameOf(m, 1);
+            if (m.myTeam() == 1) return new HudView.Score(b, m.scoreB(), Theme.RED, a, m.scoreA(), Theme.BLUE, Theme.time2(left), sub, false);
+            return new HudView.Score(a, m.scoreA(), Theme.BLUE, b, m.scoreB(), Theme.RED, Theme.time2(left), sub, false);
+        }
         if (m.myTeam() == 1) return new HudView.Score("우리 팀", m.scoreB(), Theme.RED, "상대 팀", m.scoreA(), Theme.BLUE, Theme.time2(left), sub, out);
         if (m.myTeam() == 0) return new HudView.Score("우리 팀", m.scoreA(), Theme.BLUE, "상대 팀", m.scoreB(), Theme.RED, Theme.time2(left), sub, out);
         return new HudView.Score("파랑 팀", m.scoreA(), Theme.BLUE, "빨강 팀", m.scoreB(), Theme.RED, Theme.time2(left), sub, out);
+    }
+
+    private static String nameOf(KyudichiProtocol.Match m, int team) {
+        for (var p : m.players()) if (p.team() == team) return p.nick();
+        return team == 0 ? "파랑" : "빨강";
     }
 
     private static List<HudView.FeedLine> feed(long now) {

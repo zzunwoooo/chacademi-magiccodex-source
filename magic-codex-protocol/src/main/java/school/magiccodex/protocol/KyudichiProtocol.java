@@ -16,7 +16,7 @@ import java.util.UUID;
  *
  * <pre>
  * S2C 1 MATCH   u8 phase · u8 myTeam(0 A,1 B,2 관전) · u16 scoreA · u16 scoreB · i32 timeLeftMs · u8 flags · UTF arena
- *               · u8 n · n×(UUID · UTF nick · u8 team · u8 flags)        flags MATCH: 1 스니치 등장 2 연장 4 테스트 8 포기투표중
+ *               · u8 n · n×(UUID · UTF nick · u8 team · u8 flags)        flags MATCH: 1 스니치 등장 2 연장 4 테스트 8 포기투표중 16 1:1 대전
  *                                                                        flags player: 1 사망 2 퀘이플 소유 4 준비완료
  * S2C 2 KEY     u8 action · u16 cooldownMs · u16 holdLeftMs              action: 0 없음 1 퀘이플 잡기 2 퀘이플 던지기 3 블러저 쳐내기 4 스니치 잡기
  * S2C 3 BALLS   u8 n · n×(u8 kind · u8 index · f32 x · f32 y · f32 z · u8 flags)   kind 0 퀘이플 1 블러저 2 스니치; flags 1 소유됨 2 나를 노림

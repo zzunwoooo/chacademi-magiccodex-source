@@ -19,6 +19,8 @@ public interface Canvas {
     void texture(String resource, float x, float y, float w, float h, float alpha);
     /** A player's face (skin hash may be empty: the client then uses what it knows, else the default skin). */
     void head(UUID id, String skin, float x, float y, float size);
+    /** A round portrait centred on (cx, cy): my own illustration's face when it is me and it is loaded, else the skin face. */
+    void avatar(UUID id, String skin, float cx, float cy, float radius);
     /** The broom model / picture, centred. Returns false when nothing could be drawn. */
     boolean broom(String id, float cx, float cy, float w, float h);
     /** Text; y is the vertical centre of the ink. */

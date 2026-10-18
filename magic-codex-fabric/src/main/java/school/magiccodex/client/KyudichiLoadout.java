@@ -20,26 +20,39 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
  *  - 경기 중에만 우측 아래 6칸을 이 세팅으로 덮어쓴다. 키는 원래 칸의 키 그대로 (칸 순서대로).
  *  - 다음 경기에도 유지 (config/magiccodex/kyudichi-loadout.yml).
  *  - 한 칸은 반드시 비행({@value #FLIGHT}). 자리는 자유, 빼거나 다른 마법으로 바꿀 수는 없다.
+ * 결투장 (2026-10-18): 모드별로 따로 저장. 1:1 대전({@code kyudichi-duel-loadout.yml})은 비행 금지라 비행 칸이 없다.
  * Pure state + file; {@link CastingClient} decides when it is applied.
  */
 public final class KyudichiLoadout {
     public static final String FLIGHT = "flight";
     public static final int SIZE = SpellKeySettings.LIMIT;
-    private static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("magiccodex/kyudichi-loadout.yml");
+    public static final int KYUDICHI = 0, DUEL = 1;
+    private static final Path[] PATHS = {FabricLoader.getInstance().getConfigDir().resolve("magiccodex/kyudichi-loadout.yml"),
+            FabricLoader.getInstance().getConfigDir().resolve("magiccodex/kyudichi-duel-loadout.yml")};
     private final List<String> spells = new ArrayList<>(Collections.nCopies(SIZE, ""));
+    private final int mode;
 
-    private static KyudichiLoadout current;
+    private static final KyudichiLoadout[] current = new KyudichiLoadout[2];
 
-    /** Loaded once; the first time it starts from the normal six (in HUD order) with flight added. */
-    public static KyudichiLoadout get() {
-        if (current == null) {
-            var l = new KyudichiLoadout();
-            try { if (!l.load(PATH)) l.seed(CastingClient.base().orderedSlots().stream().map(SpellKeySettings.Binding::spellId).toList()); }
+    KyudichiLoadout() { this(KYUDICHI); }
+    KyudichiLoadout(int mode) { this.mode = mode; }
+
+    /** The loadout of the match being played (1:1 when the match says so), else 큐디치. */
+    public static KyudichiLoadout get() { return get(KyudichiClient.duel() ? DUEL : KYUDICHI); }
+
+    /** Loaded once per mode; the first time it starts from the normal six (in HUD order), with flight added for 큐디치. */
+    public static KyudichiLoadout get(int mode) {
+        int m = mode == DUEL ? DUEL : KYUDICHI;
+        if (current[m] == null) {
+            var l = new KyudichiLoadout(m);
+            try { if (!l.load(PATHS[m])) l.seed(CastingClient.base().orderedSlots().stream().map(SpellKeySettings.Binding::spellId).toList()); }
             catch (IOException | RuntimeException e) { l.seed(CastingClient.base().orderedSlots().stream().map(SpellKeySettings.Binding::spellId).toList()); }
-            current = l;
+            current[m] = l;
         }
-        return current;
+        return current[m];
     }
+    public int mode() { return mode; }
+    public boolean duel() { return mode == DUEL; }
 
     public List<String> spells() { return List.copyOf(spells); }
     public String get(int slot) { return spells.get(slot); }
@@ -49,11 +62,11 @@ public final class KyudichiLoadout {
     void seed(List<String> from) {
         Collections.fill(spells, "");
         int i = 0;
-        for (String id : from) { if (i >= SIZE) break; if (id == null || id.isEmpty() || spells.contains(id)) { i++; continue; } spells.set(i++, id); }
+        for (String id : from) { if (i >= SIZE) break; if (id == null || id.isEmpty() || spells.contains(id) || duel() && id.equals(FLIGHT)) { i++; continue; } spells.set(i++, id); }
         ensureFlight();
     }
     void ensureFlight() {
-        if (spells.contains(FLIGHT)) return;
+        if (duel() || spells.contains(FLIGHT)) return;
         int empty = spells.indexOf("");
         spells.set(empty >= 0 ? empty : SIZE - 1, FLIGHT);
     }
@@ -66,6 +79,7 @@ public final class KyudichiLoadout {
     public String set(int slot, String id) {
         if (id == null) id = "";
         if (!id.isEmpty() && !id.matches("[a-z0-9_-]{1,64}")) return "올바르지 않은 마법이에요.";
+        if (duel() && id.equals(FLIGHT)) return "1:1 대전에서는 비행을 쓸 수 없어요.";
         String old = spells.get(slot);
         if (old.equals(FLIGHT) && !id.equals(FLIGHT)) return "비행 칸은 비울 수 없어요. 자리를 바꾸려면 다른 칸으로 끌어 놓으세요.";
         int other = id.isEmpty() ? -1 : spells.indexOf(id);
@@ -115,7 +129,7 @@ public final class KyudichiLoadout {
         var root = new LinkedHashMap<String, Object>(); root.put("version", 1); root.put("spells", List.copyOf(spells));
         var options = new DumperOptions(); options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         try {
-            Path target = PATH.toAbsolutePath(); Files.createDirectories(target.getParent());
+            Path target = PATHS[mode].toAbsolutePath(); Files.createDirectories(target.getParent());
             Path temp = Files.createTempFile(target.getParent(), "kyudichi-loadout-", ".tmp");
             try { Files.writeString(temp, new Yaml(options).dump(root)); Files.move(temp, target, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING); }
             finally { Files.deleteIfExists(temp); }
