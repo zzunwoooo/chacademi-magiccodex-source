@@ -20,7 +20,8 @@
     "ChatIconGlyphMixin",
     "CodexMouseMixin",
     "ShoulderCameraMixin",
-    "ShoulderCrosshairMixin"
+    "ShoulderCrosshairMixin",
+    "BossBarFilterMixin"
   ],
   "injectors": {
     "defaultRequire": 1

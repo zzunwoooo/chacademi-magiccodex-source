@@ -74,9 +74,8 @@ final class HitMech extends Mech {
         }
         if(!targets.hurt(c.caster(), t, dmg, p.s("element", "")))return;
         plugin.reactions().hit(c.caster(), t, p.s("element", ""), dmg);
-        targets.effects(t, p.effects("effect"));
-        int ignite = p.i("ignite", 0);
-        if (ignite > 0) t.setFireTicks(Math.max(t.getFireTicks(), ignite));
+        targets.effects(c.caster(), t, p.effects("effect"));
+        targets.sideEffects(c.caster(), t, p);
         int shield = p.i("shield", 0);
         if (shield > 0 && t instanceof Player pl && pl.isBlocking()) pl.setCooldown(Material.SHIELD, shield);
         Vector facing = c.caster().getLocation().getDirection();

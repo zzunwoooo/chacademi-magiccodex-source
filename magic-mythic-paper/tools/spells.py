@@ -88,7 +88,7 @@ S = [
  ('dew_gathering','CHA_dew_gathering','SELF',12,0,0,False,['chaworld{type=dew;max=3} @self'],'빈 병 최대 3개 물병으로'),
  ('quiet_mooring','CHA_quiet_mooring','SELF',12,0,0,False,['chaworld{type=boat} @self'],'물 위에서 보트 생성'),
  ('bubble_aria','CHA_bubble_aria','AIM',15,5,0.4,False,['chabolt{speed=1.3;range=15;radius=0.6;mult=0;aoe=4;aoemult=1}'],'명중 지점 반경 4블록 광역'),
- ('pressure_hammer','CHA_pressure_hammer','AIM',15,9,0.6,False,['delay 15','chahit{r=3;max=10;effect=SLOWNESS:20:4}'],'반경 3블록 강타 + 짧은 경직'),
+ ('pressure_hammer','CHA_pressure_hammer','AIM',15,9,0.6,False,['delay 15','chahit{r=3;max=10;status=stun:20}'],'반경 3블록 강타 + 1초 기절'),
  ('waterspout','CHA_waterspout','AIM',15,6,0.45,False,['chazone{r=2.5;ticks=60;period=10;mult=0.35;lift=0.55}'],'3초 용오름, 띄우며 지속 피해'),
  ('current_sorting','CHA_current_sorting','SELF',12,0,0,False,['chaworld{type=sapgeum;min=1;max=3;item=GOLD_NUGGET} @self'],'물 속에서 사금(금 조각) 1~3개'),
  ('potion_mist','CHA_potion_mist','SELF',12,0,0,False,['chaally{type=potion;r=5;ticks=200} @self'],'손의 물약 소비, 반경 5블록 동료 10초 적용'),

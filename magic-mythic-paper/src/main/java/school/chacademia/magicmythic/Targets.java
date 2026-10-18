@@ -109,6 +109,7 @@ final class Targets {
     boolean hurt(LivingEntity caster, LivingEntity target, double amount, String element, String reaction) {
         if (!enemy(caster,target)) return false;
         amount = Math.max(0, amount);
+        if (amount > 0 && plugin.status() != null) amount *= plugin.status().spellMultiplier(caster); // 약화
         if (amount > 0 && caster instanceof Player && MagicDamageEvent.listened()) {
             var mark = plugin.reactions() == null ? null : plugin.reactions().markOf(target);
             var e = new MagicDamageEvent(caster, target, element == null ? "" : element, reaction == null ? "" : reaction,
@@ -131,6 +132,7 @@ final class Targets {
     }
     /** Same as hurt, but marked as a passive's extra hit so it never re-triggers a passive. */
     boolean hurtProc(LivingEntity caster, LivingEntity target, double amount) {
+        if (plugin.status() != null) amount *= plugin.status().spellMultiplier(caster); // 약화
         return enemy(caster,target)&&plugin.protection().procDamage(caster,target,Math.max(0,amount));
     }
 
@@ -150,14 +152,52 @@ final class Targets {
     /** Heal without going over max health. Returns the amount actually healed. */
     static double heal(LivingEntity e, double amount) {
         if (amount <= 0 || !e.isValid() || e.isDead()) return 0;
+        if (sealed != null && sealed.test(e)) return 0; // 회복봉인
+
         double before = e.getHealth(), after = Math.min(maxHealth(e), before + amount);
         if (after <= before) return 0;
         e.setHealth(after);
         return after - before;
     }
 
-    void effects(LivingEntity target, List<PotionEffect> effects) {
-        for (PotionEffect e : effects) target.addPotionEffect(e);
+    /** Set by the plugin: 회복봉인 check for the static heal helper. */
+    static java.util.function.Predicate<LivingEntity> sealed;
+
+    /**
+     * Spell side effects. Slowness becomes the 둔화 status (icon, 15 % per level like vanilla, same duration);
+     * other potion effects stay vanilla.
+     */
+    void effects(LivingEntity target, List<PotionEffect> effects) { effects(null, target, effects); }
+    void effects(LivingEntity caster, LivingEntity target, List<PotionEffect> effects) {
+        for (PotionEffect e : effects) {
+            if (e.getType().equals(org.bukkit.potion.PotionEffectType.SLOWNESS) && plugin.status() != null) {
+                plugin.status().apply(caster, target, school.magiccodex.protocol.StatusProtocol.Status.SLOW, e.getDuration(), Math.min(0.9, 0.15 * (e.getAmplifier() + 1)));
+                continue;
+            }
+            target.addPotionEffect(e);
+        }
+    }
+
+    /**
+     * Common on-hit extras of the cha* mechanics: `ignite=<ticks>` = 화상 (no vanilla fire, owner 2026-10-19),
+     * `status=<id>:<ticks>[:<power>],...` = any status effect (e.g. status=stun:20).
+     */
+    void sideEffects(LivingEntity caster, LivingEntity target, Params p) {
+        var st = plugin.status();
+        if (st == null || target == null || !target.isValid() || target.isDead()) return;
+        int ignite = p.i("ignite", 0);
+        if (ignite > 0) st.apply(caster, target, school.magiccodex.protocol.StatusProtocol.Status.BURN, ignite, 0);
+        String raw = p.s("status", "");
+        if (raw.isBlank()) return;
+        for (String part : raw.split("[,+]")) {
+            String[] f = part.trim().split(":");
+            var s = school.magiccodex.protocol.StatusProtocol.Status.of(f[0]);
+            if (s == null) continue;
+            int ticks = 60; double power = 0;
+            try { if (f.length > 1) ticks = Integer.parseInt(f[1].trim()); if (f.length > 2) power = Double.parseDouble(f[2].trim()); }
+            catch (NumberFormatException ignored) { continue; }
+            st.apply(caster, target, s, ticks, power);
+        }
     }
 
     /** Push away from `from` horizontally by `knock`, plus `up`. Bosses get a reduced push. */

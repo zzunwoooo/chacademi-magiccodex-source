@@ -32,14 +32,23 @@ final class AllyMech extends Mech {
         var targets = plugin.targets();
         switch (type) {
             case "quench" -> {
-                if (caster.getFireTicks() <= 0) return false;
+                var st = plugin.status();
+                boolean burning = st.has(caster, school.magiccodex.protocol.StatusProtocol.Status.BURN);
+                if (caster.getFireTicks() <= 0 && !burning) return false;
                 caster.setFireTicks(0);
+                if (burning) st.clear(caster, school.magiccodex.protocol.StatusProtocol.Status.BURN); // 화상도 꺼짐 (마지막 추가 피해 없음)
                 return true;
             }
             case "cleanse" -> {
                 boolean any = false;
-                for (LivingEntity e : group(caster, p.d("r", 5), 32))
+                var st = plugin.status();
+                var statuses = new school.magiccodex.protocol.StatusProtocol.Status[]{school.magiccodex.protocol.StatusProtocol.Status.POISON,
+                    school.magiccodex.protocol.StatusProtocol.Status.PHYSICAL_WEAKNESS, school.magiccodex.protocol.StatusProtocol.Status.SLOW};
+                for (LivingEntity e : group(caster, p.d("r", 5), 32)) {
                     for (var t : CLEANSE) if (e.hasPotionEffect(t)) { e.removePotionEffect(t); any = true; DiscoveryHooks.cleansed(caster, p.s("spell", ""), t.getKey().getKey()); }
+                    // Same three as status effects (독·나약함·둔화).
+                    for (var s : statuses) if (st.has(e, s)) { st.clear(e, s); any = true; }
+                }
                 return any;
             }
             case "share" -> {
@@ -111,6 +120,7 @@ final class AllyMech extends Mech {
                 for (LivingEntity e : group(caster, p.d("r", 8), 64)) {
                     for (PotionEffect fx : new ArrayList<>(e.getActivePotionEffects()))
                         if (fx.getType().getEffectCategory() == PotionEffectType.Category.HARMFUL) e.removePotionEffect(fx.getType());
+                    plugin.status().clear(e); // every status effect is harmful
                     guards.add(e, new Guards.Guard(Guards.Type.IMMUNE, guards.now() + ticks, 0, 0, 0, 0, 0, 0, caster.getUniqueId(), p.s("spell", "")));
                     vfx(caster, "external:cleanse", e);
                 }

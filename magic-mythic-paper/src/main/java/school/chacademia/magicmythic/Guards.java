@@ -135,6 +135,7 @@ final class Guards implements Listener {
         consume(le, Type.LETHAL);
         le.setHealth(Math.min(Targets.maxHealth(le), Math.max(1, g.heal())));
         le.setFireTicks(0);
+        plugin.status().clear(le, school.magiccodex.protocol.StatusProtocol.Status.BURN);
         le.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 40, 4));
     }
 

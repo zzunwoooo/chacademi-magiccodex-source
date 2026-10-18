@@ -60,6 +60,8 @@ public final class MagicCodexClient implements ClientModInitializer {
         CastingClient.initialize();
         AimClient.initialize();
         ElementMarkClient.initialize();
+        StatusClient.initialize();
+        TargetHudClient.initialize();
         PlayerHudClient.initialize();
         KyudichiClient.initialize();
         KyudichiQueueClient.initialize();

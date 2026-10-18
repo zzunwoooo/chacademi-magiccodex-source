@@ -202,7 +202,7 @@ final class Passives implements Listener {
         for (LivingEntity t : plugin.targets().enemiesNear(p, at, r, 8)) {
             if (plugin.targets().hurt(p, t, dmg)) {
                 int ignite = c.getInt("ignite-ticks", 0);
-                if (ignite > 0) t.setFireTicks(Math.max(t.getFireTicks(), ignite));
+                if (ignite > 0) plugin.status().apply(p, t, school.magiccodex.protocol.StatusProtocol.Status.BURN, ignite, 0); // 화상 (no vanilla fire)
             }
         }
     }

@@ -65,6 +65,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private TemperatureBridge temperature;
     private PetBridge pets;
     private TamingBridge taming;
+    private TargetHudBridge targetHud;
     private QuestBridge quests;
     private JournalBridge journal;
     JournalBridge journalBridge(){return journal;}
@@ -168,6 +169,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
             getServer().getPluginManager().disablePlugin(this);return;
         }
         try{taming=new TamingBridge(this,mana.mana,pets);}catch(Exception error){getLogger().severe("교화 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
+        try{targetHud=new TargetHudBridge(this,taming,mana.mana,names);}catch(RuntimeException|LinkageError error){targetHud=null;getLogger().warning("대상 체력바 초기화 실패 (나머지는 계속): "+error);}
         try{quests=new QuestBridge(this);}catch(Exception error){getLogger().severe("의뢰 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
         try{dialogues=new DialogueBridge(this);}catch(Exception error){getLogger().severe("대화 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
         try{npcSocial=new NpcSocialService(this);}catch(Exception error){npcSocial=null;getLogger().warning("NPC 호감도 초기화 실패 (AI NPC 연결 없이 계속): "+error.getMessage());}
@@ -247,6 +249,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(npcSocial!=null){npcSocial.close();npcSocial=null;}
         if(dialogues!=null){dialogues.close();dialogues=null;}
         if(quests!=null){quests.close();quests=null;}
+        if(targetHud!=null){targetHud.close();targetHud=null;}
         if(taming!=null){taming.close();taming=null;}
         if(playerState!=null){playerState.close();playerState=null;}
         if(artifactEffects!=null){artifactEffects.close();artifactEffects=null;}

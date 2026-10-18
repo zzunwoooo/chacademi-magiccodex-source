@@ -130,8 +130,8 @@ final class Reactions implements Listener, AutoCloseable {
                     if (--left == 0) break;
                 }
             }
-            // 용암 분출: 2초 불붙음
-            case MAGMA -> target.setFireTicks(Math.max(target.getFireTicks(), 40));
+            // 용암 분출: 2초 화상 (마법에서 바닐라 불 제거, 2026-10-19)
+            case MAGMA -> plugin.status().apply(caster, target, school.magiccodex.protocol.StatusProtocol.Status.BURN, 40, 0);
             // 태양 플레어: 4초 발광 (벽 너머로도 보임)
             case FLARE -> target.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 80, 0));
             // 잿불 낙인: 8초 안에 처치되면 경험치 2배

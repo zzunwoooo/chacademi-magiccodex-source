@@ -86,7 +86,7 @@ final class ZoneMech extends Mech {
             double dmg = c.dmg(p), suck = p.d("suck", 0), lift = p.d("lift", 0);
             int ignite = p.i("ignite", 0);
             double search = wall > 0 ? Math.max(wall, r) : r;
-            if (dmg <= 0 && p.d("knock", 0) == 0 && suck == 0 && lift == 0 && p.s("effect", "").isBlank() && ignite <= 0) return true;
+            if (dmg <= 0 && p.d("knock", 0) == 0 && suck == 0 && lift == 0 && p.s("effect", "").isBlank() && p.s("status", "").isBlank() && ignite <= 0) return true;
             var found = new ArrayList<>(targets.enemiesNear(c.caster(), center, search + 1, p.s("pick", "").equals("random") ? 64 : p.i("max", 16)));
             if (p.s("pick", "").equals("random")) { Collections.shuffle(found); found = new ArrayList<>(found.subList(0, Math.min(found.size(), p.i("max", 16)))); }
             for (LivingEntity t : found) {
@@ -96,8 +96,8 @@ final class ZoneMech extends Mech {
                 plugin.reactions().hit(c.caster(), t, p.s("element", ""), dmg);
                 vfx("external:strike", t.getLocation(), t.getUniqueId());
                 targets.knock(t, center, facing, p.d("knock", 0), p.d("up", 0));
-                targets.effects(t, p.effects("effect"));
-                if (ignite > 0) t.setFireTicks(Math.max(t.getFireTicks(), ignite));
+                targets.effects(c.caster(), t, p.effects("effect"));
+                targets.sideEffects(c.caster(), t, p);
                 if (suck > 0) {
                     Vector v = center.toVector().subtract(t.getLocation().toVector()).setY(0);
                     if (v.length() > 0.6) t.setVelocity(v.normalize().multiply(Math.min(suck, v.length() * 0.5)).setY(0.05));
@@ -138,9 +138,8 @@ final class ZoneMech extends Mech {
             for (LivingEntity t : targets.enemiesNear(c.caster(), center, p.d("trapr", 3), p.i("max", 16))) {
                 if(!targets.hurt(c.caster(), t, dmg, p.s("element", "")))continue;
                 plugin.reactions().hit(c.caster(), t, p.s("element", ""), dmg);
-                targets.effects(t, p.effects("effect"));
-                int ignite = p.i("ignite", 0);
-                if (ignite > 0) t.setFireTicks(Math.max(t.getFireTicks(), ignite));
+                targets.effects(c.caster(), t, p.effects("effect"));
+                targets.sideEffects(c.caster(), t, p);
                 targets.knock(t, center, facing, p.d("knock", 0.6), p.d("up", 0.3));
             }
             return false;

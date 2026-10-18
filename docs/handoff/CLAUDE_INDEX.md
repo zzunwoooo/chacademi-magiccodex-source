@@ -1,3 +1,5 @@
+> Claude 2026-10-19 (not built): [대상 체력바 HUD(보스 HUD 레퍼런스) + 상태이상 16종 + 머리 위 원소·디버프 아이콘](CLAUDE_STATUS_HUD_20261019.md). Branch claude/status-hud-20261019 on codex/operating-latest-20261018 @ 6fe06f0. MagicMythic + Bridge (school/wild) + client mod together; new channels magiccodex:status, magiccodex:target_hud.
+
 > Deployed 2026-10-18: latest integrated Kyudichi/duel, controls, shop and shared alchemy; 814 tests, personal client, school/wild/arena/Velocity and public launcher v0.1.12 verified. See [deployment](CODEX_LATEST_DEPLOYED_20261018.md).
 
 > Operating integration candidate: Kyudichi c2ec793 + Housing f1d3302, preserving deployed shop db396a7, shoulder 9ed319e and broom roll f0e9aaf. Deployment evidence is recorded separately.

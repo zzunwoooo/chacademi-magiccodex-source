@@ -22,6 +22,8 @@ import school.magiccodex.protocol.ElementProtocol.Element;
 
 /**
  * Element marks above mobs. The server (MagicMythic) owns every rule; this only draws what it was told.
+ * Since 2026-10-19 the row above a head is: element mark (always left) + status effects ({@link StatusClient}, at most 3,
+ * then "…"); the taming card that used to float above the head is gone (owner: only marks and debuffs up there).
  *
  * Drawn as HUD icons, exactly like the other MagicCodex UI images: the original PNG
  * (assets/magiccodex/textures/element/<id>.png, 256 px) goes through HudTextureCache, which keeps the file unchanged
@@ -49,6 +51,14 @@ public final class ElementMarkClient {
     }
 
     private record Mark(Element element, long start, long end) {}
+    /** Live mark for HUDs (start/end on the client clock). */
+    public record Shown(Element element, long start, long end) {}
+    public static Shown markOf(int entityId) {
+        var c = MinecraftClient.getInstance();
+        if (c.world != world) return null;
+        Mark m = marks.get(entityId);
+        return m == null || m.end() <= Util.getMeasuringTimeMs() ? null : new Shown(m.element(), m.start(), m.end());
+    }
     private record Popup(int entityId, String label, int color, long start) {}
 
     private static final Map<Integer, Mark> marks = new HashMap<>();
@@ -103,12 +113,12 @@ public final class ElementMarkClient {
         if (text != null) { text.close(); text = null; }
     }
 
-    private record Draw(Entity entity, Mark mark, double distance) {}
+    private record Draw(Entity entity, Mark mark, List<StatusClient.Line> statuses, double distance) {}
 
     private static void render(DrawContext ctx, RenderTickCounter ticks) {
         var c = MinecraftClient.getInstance();
         if (c.world != world) { reset(); world = c.world; }
-        if (marks.isEmpty() && popups.isEmpty()) return;
+        if (marks.isEmpty() && popups.isEmpty() && StatusClient.entities().isEmpty()) return;
         if (c.player == null || c.world == null || c.options.hudHidden || !AimView.valid()) return;
         if (!HudPointer.hudVisibleUnder(c.currentScreen)) return;
         if (generation != UiResources.generation()) { close(); generation = UiResources.generation(); }
@@ -123,10 +133,20 @@ public final class ElementMarkClient {
             var e = it.next();
             Mark m = e.getValue();
             Entity entity = c.world.getEntityById(e.getKey());
-            if (now >= m.end() || entity == null || entity.isRemoved()) { it.remove(); continue; }
+            if (now >= m.end() || entity == null || entity.isRemoved()) it.remove();
+        }
+        var ids = new HashSet<Integer>(marks.keySet());
+        ids.addAll(StatusClient.entities());
+        for (int id : ids) {
+            if (id == c.player.getId()) continue; // own statuses: top-right HUD
+            Entity entity = c.world.getEntityById(id);
+            if (entity == null || entity.isRemoved()) continue;
+            Mark m = marks.get(id);
+            var statuses = StatusClient.of(id);
+            if (m == null && statuses.isEmpty()) continue;
             double d = entity.getLerpedPos(delta).distanceTo(eye);
             if (d > MAX_DISTANCE || !c.player.canSee(entity)) continue;
-            visible.add(new Draw(entity, m, d));
+            visible.add(new Draw(entity, m, statuses, d));
         }
         popups.removeIf(p -> now - p.start() > POPUP_MS);
 
@@ -152,23 +172,26 @@ public final class ElementMarkClient {
         return (float) (20 - 7 * Math.clamp((distance - 6) / (MAX_DISTANCE - 6), 0, 1));
     }
 
+    /** Above-head row: [element] [status1] [status2] [status3] […], centered over the head. */
+    static final int MAX_OVERHEAD = 3;
     private static void drawMark(DrawContext ctx, Draw d, float delta, long now) {
         float[] s = AimView.toScreen(anchor(d.entity(), delta));
         if (s == null) return;
-        float size = size(d.distance()), x = s[0], y = s[1];
-        Mark m = d.mark();
-        long left = m.end() - now, total = Math.max(1, m.end() - m.start());
-        float fraction = Math.clamp(left / (float) total, 0, 1);
-        // Last second: blink so the reaction window is easy to read.
-        float alpha = left < 1000 ? .45f + .55f * (float) Math.abs(Math.sin(now / 110.0)) : 1f;
-        int rgb = color(m.element());
-        float radius = size * .62f, thickness = Math.max(1.6f, size * .1f);
+        float size = size(d.distance()) * 1.1f, x = s[0], y = s[1];
+        int shownStatuses = Math.min(MAX_OVERHEAD, d.statuses().size());
+        boolean more = d.statuses().size() > MAX_OVERHEAD;
+        int slots = (d.mark() != null ? 1 : 0) + shownStatuses + (more ? 1 : 0);
+        float step = size * 1.12f, left = x - (slots - 1) * step / 2;
         ctx.getMatrices().push();
         try {
             ctx.getMatrices().translate(0, 0, 150);
-            HudMesh.arc(ctx, x, y, radius, thickness + 1.2f, 0, (float) (Math.PI * 2), argb(0x101925, .55f * alpha));
-            HudMesh.arc(ctx, x, y, radius, thickness, (float) (-Math.PI / 2), (float) (Math.PI * 2 * fraction), argb(rgb, .95f * alpha));
-            images.drawCentered(ctx, icon(m.element()), x, y, Math.round(size), argb(0xFFFFFF, alpha));
+            int slot = 0;
+            if (d.mark() != null) {
+                Mark m = d.mark();
+                StatusIcons.element(ctx, images, new Shown(m.element(), m.start(), m.end()), left + step * slot++, y, size, now, 1);
+            }
+            for (int i = 0; i < shownStatuses; i++) StatusIcons.status(ctx, images, d.statuses().get(i), left + step * slot++, y, size, now, 1);
+            if (more) StatusIcons.more(ctx, left + step * slot, y, size, 1);
         } finally {
             ctx.getMatrices().pop();
         }

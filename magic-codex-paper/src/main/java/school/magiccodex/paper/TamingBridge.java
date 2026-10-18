@@ -92,6 +92,18 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
         return profiles.values().stream().filter(p->p.vanilla.equals(e.getType().name())).findFirst().orElse(null);
     }
     private LivingEntity target(Player p){return target(p,range);}
+    /** Target HUD: entity under the crosshair (same bounded ModelEngine-aware ray, no block test, 25 blocks). */
+    LivingEntity lookTarget(Player p,double maxRange){return target(p,maxRange,true);}
+    record HudInfo(String name,boolean shiny,boolean boss,double chance){}
+    /** Target HUD: configured Korean name, rarity and taming odds (-1 = not capturable / no profile). */
+    HudInfo hudInfo(LivingEntity e){
+        Profile f=profile(e);boolean rare=shiny!=null&&shiny.isShiny(e);
+        String name=f==null?"":ChatColor.stripColor(f.name);
+        double odds=-1;
+        if(f!=null)try{if(pets.capturable(f.pet))odds=chance(e,f);}catch(RuntimeException|LinkageError ignored){}
+        return new HudInfo(name==null?"":name.strip(),rare,f!=null&&f.boss,odds);
+    }
+    PetBridge pets(){return pets;}
     /** Shared server-authoritative ray for taming and rarity commands. Never picks by proximity. */
     LivingEntity target(Player p,double maxRange){return target(p,maxRange,false);}
     private LivingEntity target(Player p,double maxRange,boolean informationOnly){

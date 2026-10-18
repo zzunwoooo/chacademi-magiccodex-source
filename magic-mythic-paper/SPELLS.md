@@ -84,7 +84,7 @@
 | 84 | dew_gathering | 이슬 모으기 | SELF | 미몹+애드온 | 빈 병 최대 3개 물병으로 |
 | 85 | quiet_mooring | 노아의 방주 | SELF | 미몹+애드온 | 물 위에서 보트 생성 |
 | 86 | bubble_aria | 물거품 아리아 | AIM | 미몹+애드온 | 명중 지점 반경 4블록 광역 |
-| 87 | pressure_hammer | 수압해머 | AIM | 미몹+애드온 | 반경 3블록 강타 + 짧은 경직 |
+| 87 | pressure_hammer | 수압해머 | AIM | 미몹+애드온 | 반경 3블록 강타 + 1초 기절 |
 | 88 | waterspout | 용오름 | AIM | 미몹+애드온 | 3초 용오름, 띄우며 지속 피해 |
 | 89 | current_sorting | 사금 추출 | SELF | 미몹+애드온 | 물 속에서 사금(금 조각) 1~3개 |
 | 90 | potion_mist | 약액 분무 | SELF | 미몹+애드온 | 손의 물약 소비, 반경 5블록 동료 10초 적용 |
