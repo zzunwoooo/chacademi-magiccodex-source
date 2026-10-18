@@ -49,11 +49,30 @@ final class AdminCommand implements TabExecutor {
                 case "대기열" -> info(s, "대기열은 Velocity 프록시가 관리해요 (/큐디치 대기열 · /큐디치 신청). 매칭 없이 직접 열려면 /큐디치관리 경기 시작");
                 case "리로드" -> { plugin.reload(); ok(s, "config.yml · arenas.yml 다시 읽음 (진행 중인 경기는 이전 규칙 유지)"); }
                 case "유저" -> user(s, a);
+                case "시즌시작" -> {
+                    String mode = seasonMode(a);
+                    double days = a.length > 2 ? Double.parseDouble(a[2]) : plugin.getConfig().getDouble("season.length-days", 7);
+                    if (!(days > 0 && days <= 365)) throw new IllegalArgumentException("기간(일)은 0보다 크고 365 이하로");
+                    plugin.store().startSeason(mode, days, n -> { if (n == null) err(s, "저장 실패 (콘솔 확인)"); else ok(s, label(mode) + " 시즌 " + n.number() + " 시작 · "
+                            + new java.text.SimpleDateFormat("M월 d일 HH:mm").format(new java.util.Date(n.endsAt())) + "까지 (끝나면 자동 초기화 후 다음 시즌)"); });
+                }
+                case "시즌초기화" -> {
+                    String mode = seasonMode(a);
+                    plugin.store().resetSeason(mode, done -> { if (done == null) err(s, "초기화 실패 (콘솔 확인)"); else ok(s, label(mode) + " 레이팅·전적을 모두 초기화했어요 (경기 기록·이용 제한은 유지)"); });
+                }
                 default -> help(s);
             }
         } catch (IllegalArgumentException e) { err(s, e.getMessage() == null ? "잘못된 입력" : e.getMessage()); }
         return true;
     }
+
+    /** 시즌 명령의 모드: 큐디치 | 1대1 (기본 큐디치). */
+    private static String seasonMode(String[] a) {
+        if (a.length < 2 || a[1].equals("큐디치")) return RatingStore.MODE;
+        if (a[1].equals("1대1") || a[1].equals("1:1") || a[1].equals("결투")) return RatingStore.DUEL;
+        throw new IllegalArgumentException("모드는 큐디치 또는 1대1");
+    }
+    private static String label(String mode) { return mode.equals(RatingStore.DUEL) ? "1:1 대전" : "큐디치"; }
 
     private Player player(CommandSender s) {
         if (s instanceof Player p) return p;
@@ -63,7 +82,7 @@ final class AdminCommand implements TabExecutor {
     private void help(CommandSender s) {
         for (String line : List.of(
                 "/큐디치관리 막대 · pos1 · pos2 · 선택 확장 <위|아래|사방> <칸> · 선택 해제",
-                "/큐디치관리 경기장 생성|삭제 <이름> · 경기장 목록",
+                "/큐디치관리 경기장 생성 <이름> [1대1] · 삭제 <이름> · 경기장 목록   (1대1 = 결투장: 경계 + 시작위치 A 1·B 1, 체력·마나 성소)",
                 "/큐디치관리 경기장 <이름> 정보|이동|검사|켜기|끄기|보기",
                 "/큐디치관리 경기장 <이름> 경계|공영역|스니치영역 (선택 영역으로)",
                 "/큐디치관리 경기장 <이름> 골대 <A|B> 추가|목록|삭제 <번호> · 금지영역 추가|목록|삭제 <번호>",
@@ -74,6 +93,7 @@ final class AdminCommand implements TabExecutor {
                 "/큐디치관리 공테스트 <경기장> 시작|끝",
                 "/큐디치관리 경기 목록 · 경기 시작 <경기장> <파랑:닉,닉,닉> <빨강:닉,닉,닉> [레이팅] · 경기 <경기장> 강제종료",
                 "/큐디치관리 유저 <닉> 정보|레이팅 설정 <값>|레이팅 추가 <±값>|레이팅 초기화|전적 초기화|퇴장|금지 <1h|1d|영구|해제>",
+                "/큐디치관리 시즌시작 <큐디치|1대1> [일, 기본 7] · 시즌초기화 <큐디치|1대1> (레이팅·전적 즉시 초기화)",
                 "/큐디치관리 리로드")) info(s, line);
     }
 
@@ -85,7 +105,10 @@ final class AdminCommand implements TabExecutor {
             case "생성" -> {
                 need(a, 3); if (!ArenaStore.valid(a[2])) throw new IllegalArgumentException("이름은 한글·영문·숫자·_- 32자까지");
                 if (store.get(a[2]) != null) throw new IllegalArgumentException("이미 있는 경기장이에요.");
-                store.create(a[2]); ok(s, "경기장 " + a[2] + " 생성. 이제 경계·골대·시작위치 등을 지정하세요.");
+                boolean duel = a.length > 3 && (a[3].equals("1대1") || a[3].equals("1:1") || a[3].equals("결투"));
+                var created = store.create(a[2]);
+                if (duel) { created.duel = true; store.save(); ok(s, "1:1 결투장 " + a[2] + " 생성. 경계 · 시작위치 A 1 · 시작위치 B 1 을 지정하세요 (체력·마나 성소 후보는 선택)."); }
+                else ok(s, "경기장 " + a[2] + " 생성. 이제 경계·골대·시작위치 등을 지정하세요.");
                 return;
             }
             case "삭제" -> {
@@ -96,7 +119,7 @@ final class AdminCommand implements TabExecutor {
             }
             case "목록" -> {
                 if (store.all().isEmpty()) info(s, "경기장이 없어요.");
-                for (Arena ar : store.all()) info(s, ar.name + (ar.enabled ? " [켜짐]" : " [꺼짐]") + (ar.practice ? " [연습용]" : "")
+                for (Arena ar : store.all()) info(s, ar.name + (ar.duel ? " [1:1]" : "") + (ar.enabled ? " [켜짐]" : " [꺼짐]") + (ar.practice ? " [연습용]" : "")
                         + (plugin.matches().inArena(ar.name) != null ? " [경기 중]" : "") + (ar.problems().isEmpty() ? "" : " · 빠짐 " + ar.problems().size()));
                 return;
             }
@@ -154,6 +177,7 @@ final class AdminCommand implements TabExecutor {
                 } else {
                     ShrineType t = ShrineType.parse(a[3]);
                     if (t == null) throw new IllegalArgumentException("성소 종류: 체력 · 마나 · 안정성 · 가속");
+                    if (ar.duel && (t == ShrineType.STABILITY || t == ShrineType.HASTE)) throw new IllegalArgumentException("1:1 결투장에는 체력·마나 성소만 있어요.");
                     need(a, 5);
                     changed = list(s, a, 4, ar.shrines.get(t), () -> here(s), this::fmt, t.label + " 성소");
                 }
@@ -381,7 +405,7 @@ final class AdminCommand implements TabExecutor {
     public List<String> onTabComplete(CommandSender s, Command c, String label, String[] a) {
         if (a.length >= 3 && a[0].equals("테스트")) return TestCommandSuggestions.complete(a, names());
         List<String> opts = switch (a.length) {
-            case 1 -> List.of("막대", "pos1", "pos2", "선택", "경기장", "테스트", "공테스트", "경기", "유저", "리로드");
+            case 1 -> List.of("막대", "pos1", "pos2", "선택", "경기장", "테스트", "공테스트", "경기", "유저", "시즌시작", "시즌초기화", "리로드");
             case 2 -> switch (a[0]) {
                 case "경기장" -> concat(List.of("생성", "삭제", "목록"), names());
                 case "테스트" -> concat(List.of("참가", "종료"), names());
@@ -389,6 +413,7 @@ final class AdminCommand implements TabExecutor {
                 case "경기" -> concat(List.of("목록", "시작"), names());
                 case "선택" -> List.of("확장", "해제");
                 case "유저" -> Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+                case "시즌시작", "시즌초기화" -> List.of("큐디치", "1대1");
                 default -> List.of();
             };
             case 3 -> switch (a[0]) {

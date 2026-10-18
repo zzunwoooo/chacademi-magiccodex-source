@@ -35,7 +35,7 @@ import school.magiccodex.protocol.KyudichiProtocol;
  */
 final class Match {
     enum Phase { PREPARE, COUNTDOWN, PLAY, GOAL_PAUSE, ENDED }
-    enum EndReason { TIME, SNITCH, GOLDEN_GOAL, FORFEIT, ABANDONED, ADMIN, VOID }
+    enum EndReason { TIME, SNITCH, GOLDEN_GOAL, FORFEIT, ABANDONED, ADMIN, VOID, ROUNDS }
 
     /** Test / admin options. `rated` false = no rating or stats written. */
     record Options(boolean rated, boolean test, int prepareTicks, int playTicks, int snitchAtTicks, boolean bludgers, Set<UUID> invulnerable) {}
@@ -43,6 +43,8 @@ final class Match {
     static final int FORFEIT_MIN_TICKS = 3 * 60 * 20, FORFEIT_WINDOW = 15 * 20, FORFEIT_RETRY = 60 * 20, RECONNECT_TICKS = 60 * 20;
 
     final KyudichiPlugin plugin; final Arena arena; final Rules rules; final Options opt; final World world;
+    /** 1:1 결투 (arena.duel): no balls, rounds instead of goals (score = rounds won), a kill ends the round. */
+    final boolean duel; int round;
     final Map<UUID, MatchPlayer> players = new LinkedHashMap<>();
     final Set<UUID> spectators = new HashSet<>();
     final Random random = new Random();
@@ -66,6 +68,7 @@ final class Match {
 
     Match(KyudichiPlugin plugin, Arena arena, Rules rules, Options opt, World world) {
         this.plugin = plugin; this.arena = arena; this.rules = rules; this.opt = opt; this.world = world;
+        this.duel = arena.duel;
         playLeft = opt.playTicks();
     }
 
@@ -102,9 +105,10 @@ final class Match {
             prepare(p, m);
             Point pre = arena.prepare.get(m.team);
             tp(p, (pre != null ? pre : arena.starts.get(m.team)[m.slot]).location());
-            p.sendMessage(Component.text("큐디치 " + arena.name + " · " + m.team.label + " · 준비 시간에 마법을 세팅하세요. (F: 공 잡기·던지기·블러저 쳐내기)", m.team.color));
+            p.sendMessage(duel ? Component.text("1:1 대전 " + arena.name + " · " + rules.duelWins + "판 선승 · 라운드 " + rules.duelRoundTicks / 1200 + "분 · 준비 시간에 마법을 세팅하세요. (비행 금지)", m.team.color)
+                    : Component.text("큐디치 " + arena.name + " · " + m.team.label + " · 준비 시간에 마법을 세팅하세요. (F: 공 잡기·던지기·블러저 쳐내기)", m.team.color));
         }
-        spawnBalls();
+        if (!duel) spawnBalls();
         phaseLeft = opt.prepareTicks();
         if (phaseLeft <= 0) lineup(); else broadcastTitle(Component.text("경기 준비", NamedTextColor.GOLD), Component.text("마법 6칸을 세팅하세요"));
         sendMatchAll();
@@ -133,14 +137,20 @@ final class Match {
             plugin.hooks().stopBroomIfRiding(p);
             tp(p, arena.starts.get(m.team)[m.slot].location());
             p.setVelocity(new Vector());
+            // 1:1: every round starts full (체력·마나)
+            if (duel) { heal(p); p.setFireTicks(0); for (var e : p.getActivePotionEffects()) p.removePotionEffect(e.getType()); plugin.hooks().restoreMana(p, 100); }
         }
-        resetBalls();
+        if (duel) { round++; playLeft = rules.duelRoundTicks; broadcastTitle(Component.text("라운드 " + round, NamedTextColor.GOLD), Component.text(score[0] + " : " + score[1])); }
+        else resetBalls();
         sendMatchAll();
     }
 
     private void startPlay() {
         phase = Phase.PLAY;
-        if (shrines.isEmpty()) for (ShrineType t : ShrineType.values()) { var s = new ShrineSlot(t); shrines.put(t, s); spawnShrine(s, null); }
+        if (shrines.isEmpty()) for (ShrineType t : ShrineType.values()) {
+            if (duel && t != ShrineType.HEALTH && t != ShrineType.MANA) continue;   // 1:1: 체력·마나 성소만
+            var s = new ShrineSlot(t); shrines.put(t, s); spawnShrine(s, null);
+        }
         broadcastTitle(Component.text("시작!", NamedTextColor.GOLD), Component.empty());
         // kick-off: the quaffle is tossed up and then falls (gravity)
         if (quaffle != null && quaffle.state == Quaffle.State.FREE) quaffle.vel = new Vector(0, rules.throwSpeed * 0.35, 0);
@@ -176,6 +186,11 @@ final class Match {
 
     private void play() {
         elapsed++;
+        if (duel) {
+            if (--playLeft <= 0) { roundTimeUp(); return; }
+            shrinesTick();
+            return;
+        }
         if (--playLeft <= 0) {
             if (overtime) { end(score[0] == score[1] ? null : (score[0] > score[1] ? Team.A : Team.B), EndReason.TIME); return; }
             if (score[0] == score[1] && rules.overtimeTicks > 0) {
@@ -500,7 +515,7 @@ final class Match {
     // ================================================================== F key
     /** Action the F key would do now (wire KEY action). */
     int keyAction(MatchPlayer m, Player p) {
-        if (!live() || !m.active(now)) return 0;
+        if (duel || !live() || !m.active(now)) return 0;
         Vector at = body(p); double r2 = rules.keyRange * rules.keyRange;
         for (Bludger b : bludgers) if (!(b.state == Bludger.State.DEFLECT && b.deflectTeam == m.team) && b.pos.distanceSquared(at) <= r2) return 3;
         boolean holding = quaffle.state == Quaffle.State.HELD && m.id.equals(quaffle.holder);
@@ -657,6 +672,18 @@ final class Match {
     void kill(MatchPlayer victim, Player p, MatchPlayer killer) {
         if (victim.dead(now)) return;
         if (killer == null && victim.lastDamager != null && now - victim.lastDamagedAt <= rules.killCreditTicks) killer = players.get(victim.lastDamager);
+        if (duel) {
+            // 1:1: a kill ends the round — no spectator time, both go back to their spawn points
+            if (phase != Phase.PLAY) return;
+            victim.deaths++;
+            if (killer != null && killer.team != victim.team) { killer.kills++; feed(2, killer.team.ordinal(), killer.nick, victim.nick, 0); }
+            else feed(2, victim.team.other().ordinal(), "", victim.nick, 0);
+            victim.damagedBy.clear(); victim.lastDamager = null;
+            heal(p);
+            world.playSound(p.getLocation(), Sound.ENTITY_PLAYER_DEATH, 1, 1);
+            roundWon(victim.team.other());
+            return;
+        }
         damaged(victim, killer, null);
         victim.deaths++;
         victim.deadUntil = now + Math.max(1, rules.respawnTicks);
@@ -691,6 +718,34 @@ final class Match {
             p.sendActionBar(Component.text("낙마!", NamedTextColor.RED));
             kill(m, p, null);
         }
+    }
+
+    // ================================================================== 1:1 rounds
+    /** Round time is up: the higher remaining health % wins the round; equal = a point to both. */
+    private void roundTimeUp() {
+        double[] hp = {-1, -1};
+        for (var m : players.values()) {
+            Player p = online(m);
+            double v = 0;
+            if (p != null) { var max = p.getAttribute(Attribute.MAX_HEALTH); v = p.getHealth() / (max == null ? 20 : max.getValue()); }
+            hp[m.team.ordinal()] = Math.max(hp[m.team.ordinal()], v);
+        }
+        Team w = Math.abs(hp[0] - hp[1]) < 1e-6 ? null : hp[0] > hp[1] ? Team.A : Team.B;
+        broadcastTitle(Component.text("시간 종료", NamedTextColor.GRAY), Component.text(w == null ? "체력이 같아 둘 다 1점" : "남은 체력이 많은 " + nickOf(w) + " 승리"));
+        roundWon(w);
+    }
+
+    private String nickOf(Team t) { for (var m : players.values()) if (m.team == t) return m.nick; return t.label; }
+
+    /** `winner` null = both get the point. First to rules.duelWins ends the match (both at it = draw). */
+    private void roundWon(Team winner) {
+        if (winner == null) { score[0]++; score[1]++; } else score[winner.ordinal()]++;
+        Sounds.whistle(this);
+        if (winner != null) broadcastTitle(Component.text(nickOf(winner) + " 라운드 승리", winner.color), Component.text(score[0] + " : " + score[1]));
+        boolean a = score[0] >= rules.duelWins, b = score[1] >= rules.duelWins;
+        if (a || b) { end(a && b ? null : a ? Team.A : Team.B, EndReason.ROUNDS); return; }
+        phase = Phase.GOAL_PAUSE; phaseLeft = rules.duelRoundPauseTicks;
+        sendMatchAll();
     }
 
     private void respawns() {
@@ -869,11 +924,11 @@ final class Match {
     void updateBar() {
         int left = phase == Phase.PLAY ? playLeft : phaseLeft;
         String time = String.format("%02d:%02d", left / 1200, (left / 20) % 60);
-        String snitchText = snitchCaught ? "" : snitch != null ? " · 스니치 등장!" : phase == Phase.PLAY ? " · 스니치 " + mmss(Math.max(0, opt.snitchAtTicks() - elapsed)) + " 후" : "";
-        String head = switch (phase) { case PREPARE -> "준비 "; case COUNTDOWN -> "곧 시작 "; case GOAL_PAUSE -> "골! "; default -> overtime ? "골든골 " : ""; };
+        String snitchText = duel ? " · 라운드 " + Math.max(1, round) : snitchCaught ? "" : snitch != null ? " · 스니치 등장!" : phase == Phase.PLAY ? " · 스니치 " + mmss(Math.max(0, opt.snitchAtTicks() - elapsed)) + " 후" : "";
+        String head = switch (phase) { case PREPARE -> "준비 "; case COUNTDOWN -> "곧 시작 "; case GOAL_PAUSE -> duel ? "라운드 종료 " : "골! "; default -> overtime ? "골든골 " : ""; };
         bar.name(Component.text(Team.A.label + " ", Team.A.color).append(Component.text(score[0] + " : " + score[1], NamedTextColor.WHITE, TextDecoration.BOLD))
                 .append(Component.text(" " + Team.B.label, Team.B.color)).append(Component.text("   " + head + time + snitchText, NamedTextColor.GRAY)));
-        int total = phase == Phase.PLAY ? (overtime ? rules.overtimeTicks : opt.playTicks()) : Math.max(1, phase == Phase.PREPARE ? opt.prepareTicks() : rules.countdownTicks);
+        int total = phase == Phase.PLAY ? (duel ? rules.duelRoundTicks : overtime ? rules.overtimeTicks : opt.playTicks()) : Math.max(1, phase == Phase.PREPARE ? opt.prepareTicks() : rules.countdownTicks);
         bar.progress((float) Math.clamp(left / (double) Math.max(1, total), 0, 1));
         bar.color(overtime ? BossBar.Color.YELLOW : BossBar.Color.BLUE);
         // the boss bar is the scoreboard for players WITHOUT the client mod (the mod draws its own)
@@ -901,7 +956,7 @@ final class Match {
     KyudichiProtocol.Match matchMessage(int myTeam) {
         int wirePhase = switch (phase) { case PREPARE -> 0; case COUNTDOWN -> 1; case PLAY -> 2; case GOAL_PAUSE -> 3; case ENDED -> 5; };
         int left = phase == Phase.PLAY ? playLeft : phaseLeft;
-        int flags = (snitch != null ? 1 : 0) | (overtime ? 2 : 0) | (opt.test() ? 4 : 0) | (voteTeam != null && voteTeam.ordinal() == myTeam ? 8 : 0);
+        int flags = (snitch != null ? 1 : 0) | (overtime ? 2 : 0) | (opt.test() ? 4 : 0) | (voteTeam != null && voteTeam.ordinal() == myTeam ? 8 : 0) | (duel ? 16 : 0);
         var list = new ArrayList<KyudichiProtocol.Person>();
         for (var m : players.values()) {
             int f = (m.dead(now) || !m.online || m.left ? 1 : 0) | (quaffle != null && m.id.equals(quaffle.holder) ? 2 : 0) | (m.ready ? 4 : 0);

@@ -50,9 +50,13 @@ public final class KyudichiPlugin extends JavaPlugin {
         var pc = getCommand("큐디치"); pc.setExecutor(player); pc.setTabCompleter(player);
         matches.startTicking();
         Bukkit.getScheduler().runTaskTimer(this, () -> { selections.tick(); spectate.tick(); }, 10, 10);
+        // weekly seasons: an ended season resets that mode and the next one starts (checked every minute)
+        Bukkit.getScheduler().runTaskTimer(this, () -> store.rollSeasons(rolled -> {
+            if (rolled != null) for (var s : rolled) getLogger().info("시즌 종료 → " + (s.mode().equals(RatingStore.DUEL) ? "1:1" : "큐디치") + " 시즌 " + s.number() + " 시작 (레이팅·전적 초기화)");
+        }), 200, 1200);
         installBlueprints();
         removeStrays();
-        for (var p : Bukkit.getOnlinePlayers()) store.load(p.getUniqueId(), hooks.nick(p), null);
+        for (var p : Bukkit.getOnlinePlayers()) store.loadAll(p.getUniqueId(), hooks.nick(p));
         getLogger().info("큐디치 준비 완료 · 경기장 " + arenas.all().size() + "개");
     }
 

@@ -66,12 +66,12 @@ final class Matches {
         Rules rules = plugin.rules();
         var match = new Match(plugin, arena, rules, opt, w);
         for (Team t : Team.values()) for (Player p : teams.getOrDefault(t, List.of())) {
-            var row = plugin.store().cached(p.getUniqueId(), plugin.hooks().nick(p));
+            var row = plugin.store().cached(p.getUniqueId(), plugin.hooks().nick(p), arena.duel ? RatingStore.DUEL : RatingStore.MODE);
             match.add(p, t, row.rating());
         }
         for (Team t : Team.values()) for (UUID id : absent.getOrDefault(t, List.of())) {
             String nick = plugin.hooks().nick(Bukkit.getOfflinePlayer(id));
-            var row = plugin.store().cached(id, nick);
+            var row = plugin.store().cached(id, nick, arena.duel ? RatingStore.DUEL : RatingStore.MODE);
             match.addAbsent(id, nick, t, row.rating());
         }
         byArena.put(arena.name, match);

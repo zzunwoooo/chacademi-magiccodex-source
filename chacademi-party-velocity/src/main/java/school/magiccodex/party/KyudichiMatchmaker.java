@@ -22,13 +22,15 @@ final class KyudichiMatchmaker {
     /** One queue entry = a party (or one player). rating = max of its members. */
     record Entry(UUID id, List<UUID> members, int rating, long since) {
         boolean premade() { return members.size() == TEAM_SIZE; }
+        boolean premade(int size) { return members.size() == size; }
     }
     record Team(List<Entry> parts, int rating, long since, boolean premade) {
         List<UUID> members() { var l = new ArrayList<UUID>(); for (Entry e : parts) l.addAll(e.members()); return l; }
-        static Team of(List<Entry> parts) {
+        static Team of(List<Entry> parts) { return of(parts, TEAM_SIZE); }
+        static Team of(List<Entry> parts, int size) {
             int r = parts.stream().mapToInt(Entry::rating).max().orElse(0);
             long since = parts.stream().mapToLong(Entry::since).min().orElse(0);
-            return new Team(List.copyOf(parts), r, since, parts.size() == 1 && parts.get(0).premade());
+            return new Team(List.copyOf(parts), r, since, parts.size() == 1 && parts.get(0).premade(size));
         }
     }
     record Pair(Team a, Team b) {}
@@ -36,17 +38,20 @@ final class KyudichiMatchmaker {
     static int range(long waitedMs) { return waitedMs < NARROW_MS ? 100 : waitedMs < WIDE_MS ? 250 : Integer.MAX_VALUE; }
 
     /** The first fair pair for the oldest waiting teams, or null. Never uses an entry twice. */
-    static Pair find(List<Entry> queue, long now) {
+    static Pair find(List<Entry> queue, long now) { return find(queue, now, TEAM_SIZE); }
+
+    /** `size` = players per team: 3 (큐디치) or 1 (1:1 결투, every entry is one player). */
+    static Pair find(List<Entry> queue, long now, int size) {
         var sorted = new ArrayList<>(queue);
         sorted.sort(Comparator.comparingLong(Entry::since));
         var teams = new ArrayList<Team>();
         var used = new HashSet<UUID>();
-        for (Entry e : sorted) if (e.premade()) { teams.add(Team.of(List.of(e))); used.add(e.id()); }
-        // random teams from 1–2 player entries, oldest first, closest rating within the oldest's range
+        for (Entry e : sorted) if (e.premade(size)) { teams.add(Team.of(List.of(e), size)); used.add(e.id()); }
+        // random teams from smaller entries, oldest first, closest rating within the oldest's range
         for (Entry e : sorted) {
-            if (used.contains(e.id()) || e.members().size() >= TEAM_SIZE) continue;
+            if (used.contains(e.id()) || e.members().size() >= size) continue;
             var parts = new ArrayList<Entry>(); parts.add(e);
-            if (fill(parts, sorted, used, e, now)) { for (Entry p : parts) used.add(p.id()); teams.add(Team.of(parts)); }
+            if (fill(parts, sorted, used, e, now, size)) { for (Entry p : parts) used.add(p.id()); teams.add(Team.of(parts, size)); }
         }
         teams.sort(Comparator.comparingLong(Team::since));
         for (int i = 0; i < teams.size(); i++) {
@@ -66,13 +71,13 @@ final class KyudichiMatchmaker {
         return null;
     }
 
-    private static boolean fill(List<Entry> parts, List<Entry> sorted, Set<UUID> used, Entry first, long now) {
+    private static boolean fill(List<Entry> parts, List<Entry> sorted, Set<UUID> used, Entry first, long now, int teamSize) {
         int size = first.members().size();
         int range = range(now - first.since());
-        while (size < TEAM_SIZE) {
+        while (size < teamSize) {
             Entry pick = null; int gap = Integer.MAX_VALUE;
             for (Entry o : sorted) {
-                if (used.contains(o.id()) || parts.contains(o) || o.members().size() + size > TEAM_SIZE) continue;
+                if (used.contains(o.id()) || parts.contains(o) || o.members().size() + size > teamSize) continue;
                 int g = Math.abs(o.rating() - first.rating());
                 if (g <= range && g < gap) { pick = o; gap = g; }
             }

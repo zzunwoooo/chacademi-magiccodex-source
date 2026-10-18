@@ -37,6 +37,15 @@ class KyudichiMatchmakerTest {
         assertEquals(6, all.size());
     }
 
+    @Test void duelPairsTwoSolosByRating() {
+        assertNull(KyudichiMatchmaker.find(List.of(solo(1000, 0)), 1000, 1));
+        assertNull(KyudichiMatchmaker.find(List.of(solo(1000, 0), solo(1400, 0)), 1000, 1));   // ±100 at first
+        var p = KyudichiMatchmaker.find(List.of(solo(1000, 0), solo(1400, 0), solo(1050, 0)), 1000, 1);
+        assertNotNull(p);
+        assertEquals(1, p.a().members().size()); assertEquals(1, p.b().members().size());
+        assertTrue(Math.abs(p.a().rating() - p.b().rating()) <= 100);
+    }
+
     @Test void premadeAndRandomOnlyMixAfterOneMinute() {
         var q = List.of(party(1000, 0), solo(1000, 0), solo(1000, 0), solo(1000, 0));
         assertNull(KyudichiMatchmaker.find(q, 20_000));
