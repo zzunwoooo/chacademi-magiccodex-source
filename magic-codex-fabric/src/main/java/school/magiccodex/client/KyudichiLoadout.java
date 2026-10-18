@@ -38,10 +38,10 @@ public final class KyudichiLoadout {
     KyudichiLoadout(int mode) { this.mode = mode; }
 
     /** The loadout of the match being played (1:1 when the match says so), else 큐디치. */
-    public static KyudichiLoadout get() { return get(KyudichiClient.duel() ? DUEL : KYUDICHI); }
+    public static KyudichiLoadout get() { return forMode(KyudichiClient.duel() ? DUEL : KYUDICHI); }
 
     /** Loaded once per mode; the first time it starts from the normal six (in HUD order), with flight added for 큐디치. */
-    public static KyudichiLoadout get(int mode) {
+    public static KyudichiLoadout forMode(int mode) {
         int m = mode == DUEL ? DUEL : KYUDICHI;
         if (current[m] == null) {
             var l = new KyudichiLoadout(m);

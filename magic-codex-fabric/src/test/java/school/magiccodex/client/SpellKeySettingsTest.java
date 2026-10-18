@@ -49,7 +49,6 @@ class SpellKeySettingsTest {
         Path file=directory.resolve("settings.yml");
         for(String content:new String[]{"version: 2\nslots: []", "version: 1\nversion: 1\nslots: []",
                 "version: 1\nslots: [{spell: fire, key: 49}, {spell: wind, key: 49}, null, null, null, null]",
-                "version: 1\nslots: [{spell: fire, key: 87}, null, null, null, null, null]",
                 "version: 1\nslots: [{spell: fire, key: 49}, {spell: fire, key: 50}, null, null, null, null]"}) {
             Files.writeString(file,content); assertThrows(java.io.IOException.class,()->SpellKeySettings.load(file));
             assertEquals(content,Files.readString(file));

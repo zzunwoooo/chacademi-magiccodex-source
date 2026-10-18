@@ -22,7 +22,7 @@ final class KyudichiSpellPickScreen extends KyudichiViewScreen {
     KyudichiSpellPickScreen(Screen parent) { this(parent, KyudichiClient.duel() ? KyudichiLoadout.DUEL : KyudichiLoadout.KYUDICHI); }
     /** mode: 0 큐디치 · 1 1:1 대전 (each has its own six, saved separately). */
     KyudichiSpellPickScreen(Screen parent, int mode) { super(mode == KyudichiLoadout.DUEL ? "1:1 대전 마법 세팅" : "큐디치 마법 세팅"); this.parent = parent; this.mode = mode; }
-    private KyudichiLoadout loadout() { return KyudichiLoadout.get(mode); }
+    private KyudichiLoadout loadout() { return KyudichiLoadout.forMode(mode); }
 
     @Override float designW() { return SpellPickView.W; }
     @Override float designH() { return SpellPickView.H; }

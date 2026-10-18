@@ -80,7 +80,7 @@ final class KyudichiLobbyScreen extends KyudichiViewScreen {
         }
         boolean leaderMe = party.size() <= 1 || party.stream().anyMatch(m -> m.me() && m.leader());
         // spells of this mode, with the key each slot gets in a match
-        var l = KyudichiLoadout.get(mode);
+        var l = KyudichiLoadout.forMode(mode);
         var binds = l.bindings(CastingClient.base().orderedSlots());
         var spells = new ArrayList<LobbyView.Spell>();
         for (int i = 0; i < KyudichiLoadout.SIZE; i++) {
