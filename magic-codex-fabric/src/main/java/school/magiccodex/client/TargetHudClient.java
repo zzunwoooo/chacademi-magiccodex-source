@@ -81,6 +81,8 @@ public final class TargetHudClient {
     private static long receivedAt, previewUntil;
     private static long lastFrame;
     static final float SECOND_SCALE = .78f;
+    /** Icons drawn this frame (GUI px), for the hover popup. */
+    private static final List<StatusIcons.Hit> hits = new ArrayList<>();
     private static ClientWorld world;
     private static HudTextureCache images;
     private static CodexTypography text;
@@ -160,6 +162,7 @@ public final class TargetHudClient {
         if (images == null) images = new HudTextureCache(c);
         if (text == null) text = new CodexTypography(c);
         images.beginFrame(); text.beginFrame();
+        hits.clear();
         try {
             ctx.getMatrices().push();
             ctx.getMatrices().translate(0, 0, 120);
@@ -177,6 +180,17 @@ public final class TargetHudClient {
                 y = drawTarget(ctx, c, t, bar, now, alpha, bw, y) + 6;
             }
             if (self) drawSelf(ctx, c, now);
+            // Hover popup: only while the mouse pointer is out (Ctrl cursor / chat).
+            if (HudPointer.active() && !hits.isEmpty()) {
+                float mx = (float) HudPointer.x(), my = (float) HudPointer.y();
+                for (var h : hits) {
+                    float dx = mx - h.cx(), dy = my - h.cy();
+                    if (dx * dx + dy * dy <= h.r() * h.r()) {
+                        StatusIcons.tooltip(ctx, text, h, mx, my, c.getWindow().getScaledWidth(), c.getWindow().getScaledHeight(), now);
+                        break;
+                    }
+                }
+            }
             ctx.getMatrices().pop();
         } finally {
             images.endFrame();
@@ -244,8 +258,16 @@ public final class TargetHudClient {
             var mark = t.entityId() < 0 ? previewMark(now) : ElementMarkClient.markOf(t.entityId());
             float iconY = below + ICON_DY;
             int slot = 0;
-            for (var line : statuses) StatusIcons.status(ctx, images, line, TargetHudLayout.iconX(ICON_RIGHT, ICON_D, ICON_STEP, slot++), iconY, ICON_D, now, alpha);
-            if (mark != null) StatusIcons.element(ctx, images, mark, TargetHudLayout.iconX(ICON_RIGHT, ICON_D, ICON_STEP, slot), iconY, ICON_D, now, alpha);
+            for (var line : statuses) {
+                float ix = TargetHudLayout.iconX(ICON_RIGHT, ICON_D, ICON_STEP, slot++);
+                StatusIcons.status(ctx, images, line, ix, iconY, ICON_D, now, alpha);
+                hits.add(new StatusIcons.Hit(fx + ix * s, fy + iconY * s, ICON_D / 2 * s, line, null));
+            }
+            if (mark != null) {
+                float ix = TargetHudLayout.iconX(ICON_RIGHT, ICON_D, ICON_STEP, slot);
+                StatusIcons.element(ctx, images, mark, ix, iconY, ICON_D, now, alpha);
+                hits.add(new StatusIcons.Hit(fx + ix * s, fy + iconY * s, ICON_D / 2 * s, null, mark));
+            }
         } finally {
             m.pop();
         }
@@ -290,8 +312,8 @@ public final class TargetHudClient {
         for (int i = 0; i < n; i++) {
             int row = i / 10, col = i % 10;
             float cx = sw - 6 - d / 2 - col * step, cy = 6 + d / 2 + row * step;
-            if (i < lines.size()) StatusIcons.status(ctx, images, lines.get(i), cx, cy, d, now, 1);
-            else StatusIcons.element(ctx, images, mark, cx, cy, d, now, 1);
+            if (i < lines.size()) { StatusIcons.status(ctx, images, lines.get(i), cx, cy, d, now, 1); hits.add(new StatusIcons.Hit(cx, cy, d / 2, lines.get(i), null)); }
+            else { StatusIcons.element(ctx, images, mark, cx, cy, d, now, 1); hits.add(new StatusIcons.Hit(cx, cy, d / 2, null, mark)); }
         }
     }
 
