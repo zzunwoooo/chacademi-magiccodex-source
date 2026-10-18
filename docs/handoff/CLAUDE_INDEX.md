@@ -1,3 +1,5 @@
+> Deployed 2026-10-18: latest integrated Kyudichi/duel, controls, shop and shared alchemy; 814 tests, personal client, school/wild/arena/Velocity and public launcher v0.1.12 verified. See [deployment](CODEX_LATEST_DEPLOYED_20261018.md).
+
 > Operating integration candidate: Kyudichi c2ec793 + Housing f1d3302, preserving deployed shop db396a7, shoulder 9ed319e and broom roll f0e9aaf. Deployment evidence is recorded separately.
 
 > Integrated shop redesign db396a7 (build/deployment status recorded separately): [CLAUDE_SHOP_REDESIGN_20261017.md](CLAUDE_SHOP_REDESIGN_20261017.md). Client only.
