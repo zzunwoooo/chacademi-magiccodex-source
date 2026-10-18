@@ -25,6 +25,9 @@ final class Rules {
     final RatingMath rating;
     final MvpWeights mvp;
     final Set<String> bannedSpells, bannedArtifacts;
+    /** 1:1 결투 (owner 2026-10-18): 3판 2선승, 라운드 3분 (시간 끝 = 남은 체력 % 높은 쪽, 같으면 둘 다 1점), 비행 금지. */
+    final int duelWins, duelRoundTicks, duelPrepareTicks, duelRoundPauseTicks;
+    final Set<String> duelBannedSpells;
     final boolean teleportGuard;
     final Map<BallKind, String> models; final double modelScale; final Map<BallKind, Material> fallback;
 
@@ -81,6 +84,12 @@ final class Rules {
                 c.getDouble("mvp.save-goal-radius", 8));
         bannedSpells = lower(c.getStringList("banned-spells"));
         bannedArtifacts = lower(c.getStringList("banned-artifacts"));
+        duelWins = (int) num(c, "duel.wins", 2, 1, 5);
+        duelRoundTicks = sec(c, "duel.round-seconds", 180, 20, 1800);
+        duelPrepareTicks = sec(c, "duel.prepare-seconds", 30, 0, 600);
+        duelRoundPauseTicks = sec(c, "duel.round-pause-seconds", 3, 1, 30);
+        var db = new java.util.HashSet<>(lower(c.getStringList("duel.banned-spells"))); db.add("flight");
+        duelBannedSpells = Set.copyOf(db);
         teleportGuard = c.getBoolean("teleport-guard", true);
         var m = new TreeMap<BallKind, String>(); var f = new TreeMap<BallKind, Material>();
         for (BallKind k : BallKind.values()) {

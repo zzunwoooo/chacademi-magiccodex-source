@@ -48,7 +48,7 @@ final class Results {
             change.put(m.id, d);
         }
         int win = winner == null ? -1 : winner.ordinal();
-        if (!deltas.isEmpty()) plugin.store().record(match.id, match.arena.name, match.score[0], match.score[1], win, reason.name(), deltas, rows -> {
+        if (!deltas.isEmpty()) plugin.store().record(match.duel ? RatingStore.DUEL : RatingStore.MODE, match.id, match.arena.name, match.score[0], match.score[1], win, reason.name(), teams(match), deltas, rows -> {
             if (rows == null) return;
             for (var m : match.players.values()) {
                 Player p = Bukkit.getPlayer(m.id);
@@ -60,14 +60,22 @@ final class Results {
             Player p = Bukkit.getPlayer(m.id);
             if (p != null) sendResult(match, p, m, winner, voided, 0, (int) m.ratingBefore);
         }
-        plugin.getLogger().info("큐디치 경기 종료 " + match.arena.name + " " + match.score[0] + ":" + match.score[1] + " 승리=" + (winner == null ? "무승부" : winner.key) + " 사유=" + reason
+        plugin.getLogger().info((match.duel ? "1:1 대전 종료 " : "큐디치 경기 종료 ") + match.arena.name + " " + match.score[0] + ":" + match.score[1] + " 승리=" + (winner == null ? "무승부" : winner.key) + " 사유=" + reason
                 + (match.opt.rated() ? "" : " (레이팅 미반영)"));
+    }
+
+    /** 전적 table: each team as "<first player> 파티" with that player's house (matches have no team names). */
+    private static RatingStore.Teams teams(Match match) {
+        MatchPlayer a = null, b = null;
+        for (var m : match.players.values()) { if (m.team == Team.A && (a == null || m.slot < a.slot)) a = m; if (m.team == Team.B && (b == null || m.slot < b.slot)) b = m; }
+        String suffix = match.duel ? "" : " 파티";
+        return new RatingStore.Teams(a == null ? "" : a.nick + suffix, b == null ? "" : b.nick + suffix, a == null ? -1 : a.house, b == null ? -1 : b.house);
     }
 
     private void sendResult(Match match, Player p, MatchPlayer m, Team winner, boolean voided, int delta, int ratingAfter) {
         var r = match.rules.rating;
         int outcome = voided ? 3 : winner == null ? 2 : winner == m.team ? 1 : 0;
-        var before = r.tier(m.ratingBefore, 0); var after = r.tier(ratingAfter, plugin.store().rank(m.id));
+        var before = r.tier(m.ratingBefore, 0); var after = r.tier(ratingAfter, plugin.store().rank(m.id, match.duel ? RatingStore.DUEL : RatingStore.MODE));
         if (plugin.net().hasMod(p)) {
             var lines = new ArrayList<KyudichiProtocol.Line>();
             for (var o : match.players.values()) lines.add(new KyudichiProtocol.Line(o.id, o.nick, o.team.ordinal(), o.goals, o.kills, o.deaths, o.snitch, o.mvp));

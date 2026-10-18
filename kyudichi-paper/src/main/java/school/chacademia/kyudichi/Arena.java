@@ -10,6 +10,8 @@ import org.bukkit.configuration.ConfigurationSection;
 final class Arena {
     final String name;
     boolean enabled, practice;
+    /** 1:1 결투장 (owner 2026-10-18): needs only 경계 + 시작위치 A 1 / B 1; 체력·마나 성소 후보는 선택. */
+    boolean duel;
     Box bounds, ballArea, snitchArea;
     final Map<Team, List<Box>> goals = new EnumMap<>(Team.class);          // goals a team DEFENDS
     final Map<Team, Point[]> starts = new EnumMap<>(Team.class);           // 3 each
@@ -40,6 +42,14 @@ final class Arena {
     List<String> problems() {
         var p = new ArrayList<String>();
         if (bounds == null) p.add("경계");
+        if (duel) {
+            for (Team t : Team.values()) {
+                Point s = starts.get(t)[0];
+                if (s == null) p.add(t.key + "팀 시작위치 1");
+                else if (bounds != null && (!s.world().equals(bounds.world()) || !bounds.contains(s.vector()))) p.add(t.key + "팀 시작위치가 경계 밖");
+            }
+            return p;
+        }
         for (Team t : Team.values()) {
             if (goals.get(t).isEmpty()) p.add(t.key + "팀 골대");
             Point[] s = starts.get(t);
@@ -60,7 +70,7 @@ final class Arena {
     }
 
     void save(ConfigurationSection s) {
-        s.set("enabled", enabled); s.set("practice", practice);
+        s.set("enabled", enabled); s.set("practice", practice); s.set("kind", duel ? "duel" : "kyudichi");
         s.set("bounds", bounds == null ? null : bounds.serialize());
         s.set("ball-area", ballArea == null ? null : ballArea.serialize());
         s.set("snitch-area", snitchArea == null ? null : snitchArea.serialize());
@@ -79,7 +89,7 @@ final class Arena {
 
     static Arena load(String name, ConfigurationSection s) {
         var a = new Arena(name);
-        a.enabled = s.getBoolean("enabled"); a.practice = s.getBoolean("practice");
+        a.enabled = s.getBoolean("enabled"); a.practice = s.getBoolean("practice"); a.duel = "duel".equals(s.getString("kind"));
         a.bounds = Box.parse(s.getString("bounds")); a.ballArea = Box.parse(s.getString("ball-area")); a.snitchArea = Box.parse(s.getString("snitch-area"));
         for (Team t : Team.values()) {
             for (String g : s.getStringList("goals." + t.key)) { Box b = Box.parse(g); if (b != null) a.goals.get(t).add(b); }

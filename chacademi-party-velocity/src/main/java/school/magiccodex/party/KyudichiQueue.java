@@ -37,6 +37,7 @@ import school.magiccodex.protocol.KyudichiQueueProtocol.*;
  *  - 매칭이 잡히면 6명 모두 수락 확인(10초). 거절·시간 초과한 쪽은 대기열에서 빠지고, 나머지는 원래 대기 순서로 돌아간다.
  *  - 모두 수락하면 경기장 서버로 이동, 경기가 끝나면 원래 있던 서버로 돌아간다 (위치는 그 서버가 저장한 자리).
  *  - 경기 중 접속이 끊겼다가 다시 들어오면 경기장 서버로 바로 보낸다 (60초 재접속은 경기장 서버가 판정).
+ * 결투장 (2026-10-18): 모드 0 큐디치 · 1 1:1 대전. 1:1은 혼자만 신청(파티에 있어도 각자), 팀 1명. 대기열·경기장·레이팅은 모드별로 따로.
  * All state lives on the party plugin's single worker thread.
  */
 final class KyudichiQueue {
@@ -58,16 +59,16 @@ final class KyudichiQueue {
 
     private final ProxyServer proxy; private final Logger log; private final Host host; private final Object plugin;
     private String arenaServer = "arena", fallbackServer = "school";
-    private int arenaSlots = 3;
+    private int arenaSlots = 3, duelSlots = 3;
     private KyudichiDb db;
 
-    private record Queued(KyudichiMatchmaker.Entry entry, UUID leader) {}
+    private record Queued(KyudichiMatchmaker.Entry entry, UUID leader, int mode) {}
     private final Map<UUID, Queued> queue = new LinkedHashMap<>();       // entry id → entry
     private final Map<UUID, UUID> queuedBy = new HashMap<>();             // player → entry id
     private final Set<UUID> joining = new HashSet<>();                    // DB lookup in flight
     private static final class Offer {
-        final UUID id = UUID.randomUUID(); final KyudichiMatchmaker.Pair pair; final long deadline; final Set<UUID> accepted = new HashSet<>();
-        Offer(KyudichiMatchmaker.Pair pair, long deadline) { this.pair = pair; this.deadline = deadline; }
+        final UUID id = UUID.randomUUID(); final KyudichiMatchmaker.Pair pair; final long deadline; final int mode; final Set<UUID> accepted = new HashSet<>();
+        Offer(KyudichiMatchmaker.Pair pair, long deadline, int mode) { this.pair = pair; this.deadline = deadline; this.mode = mode; }
         List<UUID> everyone() { var l = new ArrayList<>(pair.a().members()); l.addAll(pair.b().members()); return l; }
         List<KyudichiMatchmaker.Entry> entries() { var l = new ArrayList<>(pair.a().parts()); l.addAll(pair.b().parts()); return l; }
     }
@@ -80,7 +81,7 @@ final class KyudichiQueue {
     private final Map<UUID, String> pendingSpectate = new HashMap<>();
     private final Set<UUID> pendingPractice = new HashSet<>();
     private final Set<UUID> modded = new HashSet<>();
-    private List<LiveMatch> live = List.of(); private int liveFree = -1; private long liveAt;
+    private List<LiveMatch> live = List.of(); private int liveFree = -1, liveFreeDuel = -1; private long liveAt;
 
     KyudichiQueue(ProxyServer proxy, Logger log, Host host, Object plugin) { this.proxy = proxy; this.log = log; this.host = host; this.plugin = plugin; }
 
@@ -91,13 +92,14 @@ final class KyudichiQueue {
             var p = new Properties();
             if (Files.exists(file)) { try (var r = Files.newBufferedReader(file)) { p.load(r); } }
             else {
-                p.setProperty("arena-server", "arena"); p.setProperty("return-fallback-server", "school"); p.setProperty("arena-slots", "3");
+                p.setProperty("arena-server", "arena"); p.setProperty("return-fallback-server", "school"); p.setProperty("arena-slots", "3"); p.setProperty("duel-slots", "3");
                 p.setProperty("rating-start", "1000"); p.setProperty("tier-floors", "900,1100,1300,1500,1700");
                 try (var w = Files.newBufferedWriter(file)) { p.store(w, "Kyudichi queue. arena-server = Velocity server name of the arena/PvP server. tier-floors must match ChacaKyudichi config.yml rating.tiers (silver..master). Restart after editing."); }
             }
             arenaServer = p.getProperty("arena-server", "arena").strip();
             fallbackServer = p.getProperty("return-fallback-server", "school").strip();
             arenaSlots = Math.clamp(Integer.parseInt(p.getProperty("arena-slots", "3").strip()), 1, 16);
+            duelSlots = Math.clamp(Integer.parseInt(p.getProperty("duel-slots", "3").strip()), 0, 16);
             start = Integer.parseInt(p.getProperty("rating-start", "1000").strip());
             var f = p.getProperty("tier-floors", "900,1100,1300,1500,1700").split(",");
             if (f.length == 5) for (int i = 0; i < 5; i++) floors[i] = Integer.parseInt(f[i].strip());
@@ -109,7 +111,7 @@ final class KyudichiQueue {
         proxy.getScheduler().buildTask(plugin, () -> host.enqueue(this::tick)).repeat(1, TimeUnit.SECONDS).schedule();
         var manager = proxy.getCommandManager();
         manager.register(manager.metaBuilder("큐디치").aliases("kyudichi").plugin(plugin).build(), new Command());
-        log.info("큐디치 대기열: 경기장 서버 '" + arenaServer + "', 경기장 " + arenaSlots + "개");
+        log.info("큐디치 대기열: 경기장 서버 '" + arenaServer + "', 큐디치 경기장 " + arenaSlots + "개 · 1:1 경기장 " + duelSlots + "개");
     }
     void shutdown() { if (db != null) db.close(); }
 
@@ -124,28 +126,45 @@ final class KyudichiQueue {
         var c = via.getCurrentServer().orElse(null);
         if (c != null && c.getServerInfo().getName().equals(arenaServer)) c.sendPluginMessage(LINK, KyudichiQueueProtocol.encode(m));
     }
-    private int parties() { return queue.size(); }
+    private int parties() { return parties(KyudichiQueueProtocol.MODE_KYUDICHI); }
+    private int parties(int mode) { return (int) queue.values().stream().filter(q -> q.mode() == mode).count(); }
+    private int queuedPlayers(int mode) { return queue.values().stream().filter(q -> q.mode() == mode).mapToInt(q -> q.entry().members().size()).sum(); }
+    private static int clampMode(int mode) { return mode == KyudichiQueueProtocol.MODE_DUEL ? mode : KyudichiQueueProtocol.MODE_KYUDICHI; }
+    private static String modeName(int mode) { return mode == KyudichiQueueProtocol.MODE_DUEL ? "1:1 대전" : "큐디치"; }
+    private static int teamSize(int mode) { return mode == KyudichiQueueProtocol.MODE_DUEL ? 1 : KyudichiMatchmaker.TEAM_SIZE; }
+    private int modeOf(UUID player) {
+        UUID eid = queuedBy.get(player); if (eid != null && queue.containsKey(eid)) return queue.get(eid).mode();
+        var o = offerOf.get(player); if (o != null) return o.mode;
+        UUID m = playing.get(player); if (m != null && matches.containsKey(m)) return matches.get(m).assign.mode();
+        return KyudichiQueueProtocol.MODE_KYUDICHI;
+    }
 
-    /** Arenas we may still fill: configured slots minus matches we sent, and never more than the arena server last reported free. */
-    private int freeArenas(long now) {
-        int free = arenaSlots - matches.size() - offersOpen();
-        if (liveFree >= 0 && now - liveAt < LIVE_FRESH_MS) {
-            long notYetLive = matches.keySet().stream().filter(id -> live.stream().noneMatch(l -> l.match().equals(id))).count();
-            free = Math.min(free, liveFree - (int) notYetLive - offersOpen());
+    /** Arenas of a mode we may still fill: configured slots minus matches we sent, and never more than the arena server last reported free. */
+    private int freeArenas(long now, int mode) {
+        long sent = matches.values().stream().filter(a -> a.assign.mode() == mode).count();
+        int free = (mode == KyudichiQueueProtocol.MODE_DUEL ? duelSlots : arenaSlots) - (int) sent - offersOpen(mode);
+        int reported = mode == KyudichiQueueProtocol.MODE_DUEL ? liveFreeDuel : liveFree;
+        if (reported >= 0 && now - liveAt < LIVE_FRESH_MS) {
+            long notYetLive = matches.entrySet().stream().filter(e -> e.getValue().assign.mode() == mode)
+                    .filter(e -> live.stream().noneMatch(l -> l.match().equals(e.getKey()))).count();
+            free = Math.min(free, reported - (int) notYetLive - offersOpen(mode));
         }
         return free;
     }
-    private int offersOpen() { return (int) offerOf.values().stream().distinct().count(); }
+    private int offersOpen(int mode) { return (int) offerOf.values().stream().distinct().filter(o -> o.mode == mode).count(); }
 
     // =============================================================== join / leave
-    void join(Player p) {
+    void join(Player p) { join(p, KyudichiQueueProtocol.MODE_KYUDICHI); }
+    void join(Player p, int mode) {
+        final int md = clampMode(mode);
         UUID me = p.getUniqueId();
-        if (queuedBy.containsKey(me) || joining.contains(me)) { host.notice(p, "이미 큐디치 대기열에 있어요. 나가려면 /큐디치 취소"); return; }
+        if (queuedBy.containsKey(me) || joining.contains(me)) { host.notice(p, "이미 " + modeName(modeOf(me)) + " 대기열에 있어요. 나가려면 /큐디치 취소"); return; }
         if (offerOf.containsKey(me)) { host.notice(p, "매칭 수락 확인 중이에요."); return; }
         if (playing.containsKey(me)) { host.notice(p, "이미 큐디치 경기 중이에요."); return; }
         var party = host.party(me);
         List<UUID> members;
-        if (party == null) members = List.of(me);
+        if (md == KyudichiQueueProtocol.MODE_DUEL) members = List.of(me); // 1:1 is always solo, party or not
+        else if (party == null) members = List.of(me);
         else {
             if (!party.leader().equals(me)) { host.notice(p, "파티는 파티장만 큐디치를 신청할 수 있어요."); return; }
             if (party.members().size() == 1) members = List.of(me);
@@ -161,23 +180,24 @@ final class KyudichiQueue {
             if (pendingPractice.contains(m)) { host.notice(p, host.name(m) + " 님이 연습장으로 가는 중이에요."); return; }
         }
         joining.addAll(members);
-        db.standings(members, standings -> host.enqueue(() -> {
+        db.standings(members, KyudichiDb.mode(md), standings -> host.enqueue(() -> {
             joining.removeAll(members);
             long now = System.currentTimeMillis();
             for (UUID m : members) {
                 var st = standings.get(m);
                 if (st != null && st.bannedUntil() > now) {
                     long min = Math.max(1, (st.bannedUntil() - now + 59_999) / 60_000);
-                    sayAll(members, host.name(m) + " 님은 큐디치 이용이 제한된 상태예요 (" + (min >= 60 ? min / 60 + "시간 " : "") + min % 60 + "분 남음).");
+                    sayAll(members, host.name(m) + " 님은 " + modeName(md) + " 이용이 제한된 상태예요 (" + (min >= 60 ? min / 60 + "시간 " : "") + min % 60 + "분 남음).");
                     return;
                 }
                 if (online(m) == null || queuedBy.containsKey(m) || playing.containsKey(m)) { say(me, "신청하는 사이에 파티원 상태가 바뀌었어요. 다시 신청해 주세요."); return; }
             }
             int rating = members.stream().mapToInt(m -> standings.get(m).rating()).max().orElse(1000);
             var entry = new KyudichiMatchmaker.Entry(UUID.randomUUID(), List.copyOf(members), rating, now);
-            queue.put(entry.id(), new Queued(entry, me));
+            queue.put(entry.id(), new Queued(entry, me, md));
             for (UUID m : members) queuedBy.put(m, entry.id());
-            sayAll(members, members.size() == 1 ? "큐디치 랜덤 매칭을 시작했어요. 취소: /큐디치 취소" : "파티 큐디치 매칭을 시작했어요. 취소: /큐디치 취소");
+            sayAll(members, md == KyudichiQueueProtocol.MODE_DUEL ? "1:1 대전 매칭을 시작했어요. 취소: /큐디치 취소"
+                    : members.size() == 1 ? "큐디치 랜덤 매칭을 시작했어요. 취소: /큐디치 취소" : "파티 큐디치 매칭을 시작했어요. 취소: /큐디치 취소");
             status(now);
         }));
     }
@@ -187,20 +207,20 @@ final class KyudichiQueue {
         if (eid == null) { if (why == null) host.notice(p, "대기열에 있지 않아요."); return; }
         var q = queue.remove(eid);
         for (UUID m : q.entry().members()) { queuedBy.remove(m); var mp = online(m); if (mp != null) { toClient(mp, idle()); clearBar(mp); } }
-        sayAll(q.entry().members(), why != null ? why : host.name(p.getUniqueId()) + " 님이 큐디치 매칭을 취소했어요.");
+        sayAll(q.entry().members(), why != null ? why : host.name(p.getUniqueId()) + " 님이 " + modeName(q.mode()) + " 매칭을 취소했어요.");
     }
 
-    private static Status idle() { return new Status(KyudichiQueueProtocol.S_NONE, 0, 0, 0, 0, false, 0); }
+    private static Status idle() { return new Status(KyudichiQueueProtocol.S_NONE, 0, 0, 0, 0, false, 0, 0); }
     private void clearBar(Player p) { if (!modded.contains(p.getUniqueId())) p.sendActionBar(Component.empty()); }
 
     // =============================================================== offers
-    private void offer(KyudichiMatchmaker.Pair pair, long now) {
-        var o = new Offer(pair, now + OFFER_MS);
+    private void offer(KyudichiMatchmaker.Pair pair, long now, int mode) {
+        var o = new Offer(pair, now + OFFER_MS, mode);
         for (var e : o.entries()) { queue.remove(e.id()); for (UUID m : e.members()) queuedBy.remove(m); }
         for (UUID m : o.everyone()) {
             offerOf.put(m, o);
             var p = online(m); if (p == null) continue;
-            p.sendMessage(Component.text("[큐디치] ", NamedTextColor.GOLD).append(Component.text("경기를 찾았어요! 10초 안에 수락해 주세요  ", NamedTextColor.YELLOW))
+            p.sendMessage(Component.text(mode == KyudichiQueueProtocol.MODE_DUEL ? "[1:1 대전] " : "[큐디치] ", NamedTextColor.GOLD).append(Component.text("경기를 찾았어요! 10초 안에 수락해 주세요  ", NamedTextColor.YELLOW))
                     .append(Component.text("[수락]", NamedTextColor.GREEN).clickEvent(ClickEvent.runCommand("/큐디치 수락")).hoverEvent(HoverEvent.showText(Component.text("/큐디치 수락"))))
                     .append(Component.text("  "))
                     .append(Component.text("[거절]", NamedTextColor.RED).clickEvent(ClickEvent.runCommand("/큐디치 거절")).hoverEvent(HoverEvent.showText(Component.text("/큐디치 거절")))));
@@ -234,7 +254,7 @@ final class KyudichiQueue {
                 boolean allOnline = e.members().stream().allMatch(m -> online(m) != null);
                 if (!allOnline) { sayAll(e.members(), why + " 파티원이 접속 중이 아니라 대기열에서 나왔어요."); continue; }
                 UUID leader = e.members().getFirst();
-                queue.put(e.id(), new Queued(e, leader));
+                queue.put(e.id(), new Queued(e, leader, o.mode));
                 for (UUID m : e.members()) queuedBy.put(m, e.id());
                 sayAll(e.members(), why + " 대기열 앞자리로 돌아갔어요.");
             }
@@ -244,19 +264,20 @@ final class KyudichiQueue {
 
     private void transfer(Offer o, long now) {
         for (UUID m : o.everyone()) offerOf.remove(m);
-        var assign = new Assign(UUID.randomUUID(), true, o.pair.a().members(), o.pair.b().members());
+        var assign = new Assign(UUID.randomUUID(), true, o.pair.a().members(), o.pair.b().members(), o.mode);
         matches.put(assign.match(), new Assigned(assign, now));
         RegisteredServer arena = proxy.getServer(arenaServer).orElse(null);
         for (UUID m : o.everyone()) {
             playing.put(m, assign.match());
             pendingSpectate.remove(m); pendingPractice.remove(m);
             Player p = online(m); if (p == null) continue;
-            toClient(p, new Status(KyudichiQueueProtocol.S_MOVING, 0, 0, 6, 6, true, parties()));
+            int n = o.everyone().size();
+            toClient(p, new Status(KyudichiQueueProtocol.S_MOVING, 0, 0, n, n, true, parties(o.mode), o.mode));
             clearBar(p);
             if (onArena(p)) { toArena(p, assign); continue; }
             origin.put(m, serverOf(p));
             if (arena == null) { host.notice(p, "경기장 서버(" + arenaServer + ")를 찾을 수 없어요. 관리자에게 알려 주세요."); continue; }
-            host.notice(p, "큐디치 경기장으로 이동해요.");
+            host.notice(p, modeName(o.mode) + " 경기장으로 이동해요.");
             p.createConnectionRequest(arena).connect().whenComplete((r, err) -> host.enqueue(() -> {
                 if (err == null && r.isSuccessful()) return;
                 log.warn("큐디치 경기장 이동 실패: " + p.getUsername() + (err != null ? " " + err : " " + r.getStatus()));
@@ -280,7 +301,7 @@ final class KyudichiQueue {
             if (gone != null) {
                 queue.remove(e.id());
                 for (UUID m : e.members()) { queuedBy.remove(m); var mp = online(m); if (mp != null) toClient(mp, idle()); }
-                sayAll(e.members(), gone + " 큐디치 매칭이 취소됐어요.");
+                sayAll(e.members(), gone + " " + modeName(q.mode()) + " 매칭이 취소됐어요.");
             }
         }
         for (Offer o : offerOf.values().stream().distinct().toList()) {
@@ -290,31 +311,35 @@ final class KyudichiQueue {
         }
         matches.values().removeIf(a -> now - a.lastSeen > UNSEEN_MS);
         playing.values().removeIf(id -> !matches.containsKey(id));
-        int free = freeArenas(now);
-        while (free > 0) {
-            var pair = KyudichiMatchmaker.find(queue.values().stream().map(Queued::entry).toList(), now);
-            if (pair == null) break;
-            offer(pair, now); free--;
+        for (int mode = 0; mode < KyudichiQueueProtocol.MODES; mode++) {
+            final int md = mode;
+            int free = freeArenas(now, mode);
+            while (free > 0) {
+                var pair = KyudichiMatchmaker.find(queue.values().stream().filter(q -> q.mode() == md).map(Queued::entry).toList(), now, teamSize(mode));
+                if (pair == null) break;
+                offer(pair, now, mode); free--;
+            }
         }
         status(now);
     }
 
     private void status(long now) {
-        int n = parties();
         for (var q : queue.values()) {
             int waited = (int) Math.min(65535, (now - q.entry().since()) / 1000);
+            int n = q.mode() == KyudichiQueueProtocol.MODE_DUEL ? queuedPlayers(q.mode()) : parties(q.mode());
             for (UUID m : q.entry().members()) {
                 var p = online(m); if (p == null) continue;
-                if (modded.contains(m)) toClient(p, new Status(KyudichiQueueProtocol.S_SEARCHING, waited, 0, 0, 0, false, n));
-                else p.sendActionBar(Component.text("큐디치 매칭 중 · " + waited / 60 + ":" + String.format("%02d", waited % 60) + " · 대기 파티 " + n, NamedTextColor.GOLD));
+                if (modded.contains(m)) toClient(p, new Status(KyudichiQueueProtocol.S_SEARCHING, waited, 0, 0, 0, false, n, q.mode()));
+                else p.sendActionBar(Component.text(modeName(q.mode()) + " 매칭 중 · " + waited / 60 + ":" + String.format("%02d", waited % 60)
+                        + (q.mode() == KyudichiQueueProtocol.MODE_DUEL ? " · 대기 " + n + "명" : " · 대기 파티 " + n), NamedTextColor.GOLD));
             }
         }
         for (Offer o : offerOf.values().stream().distinct().toList()) {
             int left = (int) Math.max(0, (o.deadline - now + 999) / 1000);
             for (UUID m : o.everyone()) {
                 var p = online(m); if (p == null) continue;
-                if (modded.contains(m)) toClient(p, new Status(KyudichiQueueProtocol.S_OFFER, 0, left, o.accepted.size(), o.everyone().size(), o.accepted.contains(m), n));
-                else p.sendActionBar(Component.text("큐디치 경기 수락 " + o.accepted.size() + "/" + o.everyone().size() + " · " + left + "초 · /큐디치 수락", NamedTextColor.YELLOW));
+                if (modded.contains(m)) toClient(p, new Status(KyudichiQueueProtocol.S_OFFER, 0, left, o.accepted.size(), o.everyone().size(), o.accepted.contains(m), parties(o.mode), o.mode));
+                else p.sendActionBar(Component.text(modeName(o.mode) + " 경기 수락 " + o.accepted.size() + "/" + o.everyone().size() + " · " + left + "초 · /큐디치 수락", NamedTextColor.YELLOW));
             }
         }
     }
@@ -334,14 +359,17 @@ final class KyudichiQueue {
         }));
     }
 
-    void practice(Player p) {
+    private final Map<UUID, Integer> practiceMode = new HashMap<>();
+    void practice(Player p) { practice(p, KyudichiQueueProtocol.MODE_KYUDICHI); }
+    void practice(Player p, int mode) {
+        mode = clampMode(mode);
         UUID me = p.getUniqueId();
         if (playing.containsKey(me) || offerOf.containsKey(me)) { host.notice(p, "경기 중이에요."); return; }
         if (queuedBy.containsKey(me)) { host.notice(p, "대기열에 있는 동안에는 연습장에 갈 수 없어요."); return; }
-        if (onArena(p)) { toArena(p, new Practice(me)); return; }
+        if (onArena(p)) { toArena(p, new Practice(me, mode)); return; }
         var target = proxy.getServer(arenaServer).orElse(null);
         if (target == null) { host.notice(p, "경기장 서버를 찾을 수 없어요."); return; }
-        pendingPractice.add(me); origin.put(me, serverOf(p));
+        pendingPractice.add(me); practiceMode.put(me, mode); origin.put(me, serverOf(p));
         host.notice(p, "연습장으로 이동해요.");
         p.createConnectionRequest(target).connect().whenComplete((r, err) -> host.enqueue(() -> {
             if (err == null && r.isSuccessful()) return;
@@ -367,6 +395,7 @@ final class KyudichiQueue {
         var list = new ArrayList<LiveCard>();
         if (now - liveAt < LIVE_FRESH_MS) for (var lm : live) {
             var l = lm.live();
+            if (l.mode() != KyudichiQueueProtocol.MODE_KYUDICHI) continue;
             list.add(new LiveCard(l.arena(), l.phase(), l.scoreA(), l.scoreB(), l.timeLeftMs(), l.spectators(), whos(lm.teamA()), whos(lm.teamB())));
         }
         toClient(p, new Dash(parties(), list));
@@ -428,6 +457,109 @@ final class KyudichiQueue {
         }));
     }
 
+    // =============================================================== 결투장 로비 (2026-10-18)
+    /** Lobby frame: both modes' season / rating / tier / queue and my party. open = the server asks the client to show it (command). */
+    private void lobby(Player p, int tab, int mode, boolean open) {
+        UUID me = p.getUniqueId();
+        var party = host.party(me);
+        List<UUID> members = party == null || party.members().size() == 1 ? List.of(me) : party.members();
+        UUID leader = party == null ? me : party.leader();
+        final int tb = Math.clamp(tab, 0, 3), md = clampMode(mode);
+        db.lobby(members, both -> host.enqueue(() -> {
+            if (online(me) != p) return;
+            long now = System.currentTimeMillis();
+            var modes = new ArrayList<ModeInfo>();
+            for (int m = 0; m < KyudichiQueueProtocol.MODES; m++) {
+                var st = both.standings().get(m).get(me);
+                int rating = st == null ? 1000 : st.rating();
+                int tier = db.tier(rating, 0);
+                var season = both.seasons().get(m);
+                int left = season.number() == 0 ? 0 : (int) Math.clamp((season.endsAt() - now) / 1000, 0, Integer.MAX_VALUE);
+                boolean busy = playing.containsKey(me) || offerOf.containsKey(me);
+                boolean can; String note;
+                if (m == KyudichiQueueProtocol.MODE_DUEL) {
+                    can = !busy; note = busy ? "경기 중이에요." : "혼자 신청해 비슷한 레이팅의 상대와 1:1로 겨뤄요.";
+                } else {
+                    boolean solo = members.size() == 1, three = members.size() == KyudichiMatchmaker.TEAM_SIZE;
+                    can = (solo || three && leader.equals(me)) && !busy;
+                    note = busy ? "경기 중이에요." : solo ? "혼자 신청하면 랜덤 팀으로 매칭돼요." : !three ? "큐디치는 3인 파티 또는 혼자만 신청할 수 있어요." : leader.equals(me) ? "" : "파티장만 시작할 수 있습니다.";
+                }
+                modes.add(new ModeInfo(Math.min(season.number(), 65535), left, rating, tier, db.floor(tier), db.nextFloor(tier),
+                        st == null ? 0 : st.wins(), st == null ? 0 : st.losses(), st == null ? 0 : st.draws(), Math.min(65535, queuedPlayers(m)), can, note));
+            }
+            var list = new ArrayList<Member>();
+            var qst = both.standings().get(0);
+            for (UUID id : members) {
+                if (list.size() >= 3) break;
+                var st = qst.get(id);
+                list.add(new Member(id, host.name(id), host.skin(id), host.house(id), st == null ? 1000 : st.rating(), members.size() > 1 && id.equals(leader)));
+            }
+            toClient(p, new Lobby(open, tb, md, modes, list));
+        }));
+    }
+
+    /** 진행 중인 경기 of one mode, with each fighter's rating and tier. */
+    private void board(Player p, int mode) {
+        final int md = clampMode(mode);
+        long now = System.currentTimeMillis();
+        var mine = now - liveAt < LIVE_FRESH_MS ? live.stream().filter(l -> l.live().mode() == md).limit(24).toList() : List.<LiveMatch>of();
+        var ids = new ArrayList<UUID>(); for (var lm : mine) { ids.addAll(lm.teamA()); ids.addAll(lm.teamB()); }
+        db.standings(ids, KyudichiDb.mode(md), st -> host.enqueue(() -> {
+            if (online(p.getUniqueId()) != p) return;
+            var cards = new ArrayList<Card>();
+            for (var lm : mine) {
+                var l = lm.live();
+                var a = fighters(lm.teamA(), st); var b = fighters(lm.teamB(), st);
+                String na = md == KyudichiQueueProtocol.MODE_DUEL ? first(a) : first(a).isEmpty() ? "" : first(a) + " 파티";
+                String nb = md == KyudichiQueueProtocol.MODE_DUEL ? first(b) : first(b).isEmpty() ? "" : first(b) + " 파티";
+                cards.add(new Card(l.arena(), l.phase(), l.scoreA(), l.scoreB(), l.timeLeftMs(), Math.min(255, l.spectators()), l.houseA(), l.houseB(), na, nb, a, b));
+            }
+            toClient(p, new Board(md, cards));
+        }));
+    }
+    private List<Fighter> fighters(List<UUID> ids, Map<UUID, KyudichiDb.Standing> st) {
+        var out = new ArrayList<Fighter>();
+        for (UUID id : ids) {
+            if (out.size() >= 3) break;
+            var s = st.get(id); int rating = s == null ? 1000 : s.rating();
+            out.add(new Fighter(id, host.name(id), host.skin(id), rating, db.tier(rating, 0)));
+        }
+        return out;
+    }
+    private static String first(List<Fighter> f) { return f.isEmpty() ? "" : f.getFirst().nick(); }
+
+    private void ranks(Player p, int mode, int page, String search) {
+        final int md = clampMode(mode);
+        db.ranks(p.getUniqueId(), KyudichiDb.mode(md), Math.max(1, page), search, KyudichiQueueProtocol.RANK_PAGE, pg -> host.enqueue(() -> {
+            if (online(p.getUniqueId()) != p) return;
+            var rows = pg.rows().stream().map(this::skinned).toList();
+            toClient(p, new Ranks(md, pg.page(), pg.pages(), rows, skinned(pg.mine()), pg.highlight(), pg.notice()));
+        }));
+    }
+    private Row skinned(Row r) { return r == null ? null : new Row(r.rank(), r.id(), r.nick(), host.skin(r.id()), r.rating(), r.tier(), r.wins(), r.losses(), r.draws()); }
+
+    private void profile(Player p, int mode, String nick) {
+        final int md = clampMode(mode);
+        String q = nick == null ? "" : nick.strip();
+        UUID id = q.isEmpty() ? p.getUniqueId() : null;
+        db.profile(id, q, KyudichiDb.mode(md), found -> host.enqueue(() -> {
+            if (online(p.getUniqueId()) != p) return;
+            Profile out = null;
+            if (found != null) {
+                var f = found.profile();
+                var games = new ArrayList<Game>();
+                for (int i = 0; i < f.recent().size(); i++) {
+                    var g = f.recent().get(i); UUID opp = found.opponents().get(i);
+                    games.add(new Game(g.endedAt(), g.outcome(), g.delta(), g.ratingAfter(), g.goals(), g.kills(), g.deaths(), g.damage(), g.myScore(), g.theirScore(),
+                            opp != null && g.opponent().isEmpty() ? host.name(opp) : g.opponent(), opp != null ? host.skin(opp) : "", g.opponentHouse()));
+                }
+                out = new Profile(f.id(), f.nick(), host.skin(f.id()), f.rating(), f.tier(), f.rank(), f.games(), f.wins(), f.losses(), f.draws(), f.goals(), f.kills(),
+                        f.deaths(), f.snitch(), f.deflectHits(), f.damage(), f.heal(), games);
+            }
+            toClient(p, new ProfileReply(md, q, out));
+        }));
+    }
+
     // =============================================================== events
     @Subscribe public void queueMessage(PluginMessageEvent event) {
         if (!event.getIdentifier().equals(QUEUE)) return;
@@ -449,6 +581,12 @@ final class KyudichiQueue {
                 case SpectateRequest s -> spectate(p, s.arena());
                 case PracticeRequest x -> practice(p);
                 case ApplyRequest x -> apply(p);
+                case JoinMode j -> join(p, j.mode());
+                case LobbyRequest l -> lobby(p, l.tab(), l.mode(), false);
+                case BoardRequest b -> board(p, b.mode());
+                case RanksRequest r -> ranks(p, r.mode(), r.page(), r.search());
+                case ProfileRequest r -> profile(p, r.mode(), r.nick());
+                case PracticeMode x -> practice(p, x.mode());
             }
         });
     }
@@ -468,10 +606,10 @@ final class KyudichiQueue {
                     UUID match = playing.get(me);
                     if (match != null && matches.containsKey(match)) toArena(via, matches.get(match).assign);
                     else if (pendingSpectate.containsKey(me)) toArena(via, new Spectate(me, pendingSpectate.remove(me)));
-                    else if (pendingPractice.remove(me)) toArena(via, new Practice(me));
+                    else if (pendingPractice.remove(me)) toArena(via, new Practice(me, practiceMode.getOrDefault(me, 0)));
                 }
                 case LiveList l -> {
-                    live = l.matches(); liveFree = l.freeArenas(); liveAt = System.currentTimeMillis();
+                    live = l.matches(); liveFree = l.freeArenas(); liveFreeDuel = l.freeDuelArenas(); liveAt = System.currentTimeMillis();
                     for (var lm : live) { var a = matches.get(lm.match()); if (a != null) a.lastSeen = liveAt; }
                 }
                 case Return r -> { for (UUID id : r.players()) sendHome(id); }
@@ -492,10 +630,10 @@ final class KyudichiQueue {
         Player p = event.getPlayer(); UUID me = p.getUniqueId();
         host.enqueue(() -> {
             modded.remove(me);
-            if (queuedBy.containsKey(me)) leave(p, host.name(me) + " 님이 접속을 끊어서 큐디치 매칭이 취소됐어요.");
+            if (queuedBy.containsKey(me)) leave(p, host.name(me) + " 님이 접속을 끊어서 " + modeName(modeOf(me)) + " 매칭이 취소됐어요.");
             var o = offerOf.get(me);
             if (o != null) failOffer(o, Set.of(me), host.name(me) + " 님이 접속을 끊었어요.");
-            pendingSpectate.remove(me); pendingPractice.remove(me);
+            pendingSpectate.remove(me); pendingPractice.remove(me); practiceMode.remove(me);
             if (!playing.containsKey(me)) origin.remove(me);
         });
     }
@@ -505,6 +643,8 @@ final class KyudichiQueue {
      * /큐디치 on the proxy handles the queue, spectating, ranking and records from any server.
      * 포기 · 준비 · 관전 나가기 (and everything else) return false from hasPermission, so Velocity passes them to the arena server.
      */
+    private static boolean isDuel(String word) { return Set.of("1대1", "1:1", "결투", "duel").contains(word); }
+
     private final class Command implements SimpleCommand {
         private static final Set<String> MINE = Set.of("신청", "취소", "수락", "거절", "대기열", "관전", "랭킹", "정보", "연습", "도움말", "현황");
         @Override public boolean hasPermission(Invocation i) {
@@ -521,12 +661,26 @@ final class KyudichiQueue {
             String[] a = i.arguments().clone();
             if (!host.enqueue(() -> {
                 if (online(p.getUniqueId()) != p) return;
-                // No arguments: the MagicCodex client opens the dashboard (an unrequested DASH); others get the command list.
-                if (a.length == 0 && modded.contains(p.getUniqueId())) { apply(p); return; }
-                if (a.length == 1 && a[0].equals("현황") && modded.contains(p.getUniqueId())) { dash(p); return; }
+                // MagicCodex client: /큐디치 opens the 결투장 lobby (현황 · 랭킹 · 정보 open that tab); others get chat text.
+                boolean mod = modded.contains(p.getUniqueId());
+                int mode = a.length > 1 && isDuel(a[a.length - 1]) ? KyudichiQueueProtocol.MODE_DUEL : KyudichiQueueProtocol.MODE_KYUDICHI;
+                if (mod) {
+                    if (a.length == 0) { lobby(p, KyudichiQueueProtocol.TAB_MATCH, modeOf(p.getUniqueId()), true); return; }
+                    switch (a[0]) {
+                        case "현황" -> { lobby(p, KyudichiQueueProtocol.TAB_LIVE, mode, true); return; }
+                        case "랭킹" -> { lobby(p, KyudichiQueueProtocol.TAB_RANKING, mode, true); return; }
+                        case "정보" -> {
+                            String nick = a.length > 1 && !isDuel(a[1]) ? a[1] : "";
+                            lobby(p, KyudichiQueueProtocol.TAB_RECORD, mode, true);
+                            if (!nick.isEmpty()) profile(p, mode, nick);
+                            return;
+                        }
+                        default -> { }
+                    }
+                }
                 String sub = a.length == 0 ? "도움말" : a[0];
                 switch (sub) {
-                    case "신청" -> join(p);
+                    case "신청" -> join(p, mode);
                     case "취소" -> leave(p, null);
                     case "수락" -> accept(p);
                     case "거절" -> decline(p);
@@ -534,15 +688,16 @@ final class KyudichiQueue {
                     case "대기열" -> host.notice(p, "대기 중인 파티 " + parties() + "개" + (queuedBy.containsKey(p.getUniqueId()) ? " · 나는 매칭 중" : ""));
                     case "관전" -> spectate(p, a.length > 1 ? a[1] : "");
                     case "랭킹" -> ranking(p);
-                    case "정보" -> record(p, a.length > 1 ? a[1] : null);
-                    case "연습" -> practice(p);
-                    default -> host.notice(p, "/큐디치 (신청 창) · 신청 · 취소 · 수락 · 거절 · 대기열 · 현황 · 관전 [경기장] · 랭킹 · 정보 [닉] · 연습 · (경기 중) 포기 · 준비");
+                    case "정보" -> record(p, a.length > 1 && !isDuel(a[1]) ? a[1] : null);
+                    case "연습" -> practice(p, mode);
+                    default -> host.notice(p, "/큐디치 (결투장) · 신청 [1대1] · 취소 · 수락 · 거절 · 대기열 · 현황 · 관전 [경기장] · 랭킹 · 정보 [닉] · 연습 [1대1] · (경기 중) 포기 · 준비");
                 }
             })) host.notice(p, "요청이 많아요. 잠시 후 다시 시도해 주세요.");
         }
         @Override public List<String> suggest(Invocation i) {
             String[] a = i.arguments();
             if (a.length <= 1) { String pre = a.length == 0 ? "" : a[0]; return List.of("신청", "취소", "수락", "거절", "대기열", "관전", "랭킹", "정보", "연습", "포기", "준비").stream().filter(s -> s.startsWith(pre)).toList(); }
+            if (a.length == 2 && Set.of("신청", "연습", "현황", "랭킹").contains(a[0])) return List.of("큐디치", "1대1").stream().filter(s -> s.startsWith(a[1])).toList();
             return List.of();
         }
     }

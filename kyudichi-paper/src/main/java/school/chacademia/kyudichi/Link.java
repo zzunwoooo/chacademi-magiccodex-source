@@ -86,7 +86,7 @@ final class Link implements PluginMessageListener {
         networked.addAll(all);
         gathering.computeIfAbsent(a.match(), k -> new Gather(a, tick));
         for (UUID id : all) {
-            plugin.store().load(id, plugin.hooks().nick(Bukkit.getOfflinePlayer(id)), null);
+            plugin.store().loadAll(id, plugin.hooks().nick(Bukkit.getOfflinePlayer(id)));
             Player p = Bukkit.getPlayer(id);
             if (p != null && plugin.spectate().spectating(id)) { keepOnLeave.add(id); plugin.spectate().leave(p); keepOnLeave.remove(id); }
             if (p != null) p.sendMessage(Component.text("큐디치 경기 준비 중… 모두 모이면 시작해요.", NamedTextColor.GOLD));
@@ -105,16 +105,18 @@ final class Link implements PluginMessageListener {
     private void practice(Practice x) {
         Player p = Bukkit.getPlayer(x.player()); if (p == null) return;
         networked.add(p.getUniqueId());
-        Arena ar = plugin.arenas().all().stream().filter(a -> a.practice && a.problems().isEmpty() && plugin.matches().inArena(a.name) == null).findFirst().orElse(null);
+        boolean duel = x.mode() == KyudichiQueueProtocol.MODE_DUEL;
+        Arena ar = pick(duel, true);
         String err;
-        if (ar == null) err = "비어 있는 연습장이 없어요.";
+        if (ar == null) err = duel ? "비어 있는 1:1 연습장이 없어요." : "비어 있는 연습장이 없어요.";
         else {
             var teams = new EnumMap<Team, List<Player>>(Team.class);
             teams.put(Team.A, List.of(p)); teams.put(Team.B, List.of());
             err = plugin.matches().start(ar, teams, new Match.Options(false, true, 0, plugin.rules().playTicks, 0, true, Set.of()));
         }
         if (err != null) { p.sendMessage(Component.text(err, NamedTextColor.RED)); done(p.getUniqueId()); }
-        else p.sendMessage(Component.text("연습 시작! F로 퀘이플 잡기·던지기, 블러저 쳐내기, 스니치 잡기를 해 보세요. 끝내려면 /큐디치 포기", NamedTextColor.GREEN));
+        else p.sendMessage(Component.text(duel ? "1:1 연습장에 들어왔어요. 마법을 자유롭게 연습해 보세요. 끝내려면 /큐디치 포기"
+                : "연습 시작! F로 퀘이플 잡기·던지기, 블러저 쳐내기, 스니치 잡기를 해 보세요. 끝내려면 /큐디치 포기", NamedTextColor.GREEN));
     }
 
     // ================================================================== starting assigned matches
@@ -138,9 +140,11 @@ final class Link implements PluginMessageListener {
             send(anyone(), new Ended(id));
             return;
         }
-        Arena ar = plugin.arenas().all().stream().filter(a -> a.enabled && !a.practice && a.problems().isEmpty() && plugin.matches().inArena(a.name) == null).findFirst().orElse(null);
-        String err = ar == null ? "비어 있는 경기장이 없어요." : plugin.matches().start(ar, present, new Match.Options(g.assign.rated(), false,
-                plugin.rules().prepareTicks, plugin.rules().playTicks, plugin.rules().snitchAtTicks, true, Set.of()), absent);
+        boolean duel = g.assign.mode() == KyudichiQueueProtocol.MODE_DUEL;
+        Arena ar = pick(duel, false);
+        var r = plugin.rules();
+        String err = ar == null ? (duel ? "비어 있는 1:1 결투장이 없어요." : "비어 있는 경기장이 없어요.") : plugin.matches().start(ar, present, new Match.Options(g.assign.rated(), false,
+                duel ? r.duelPrepareTicks : r.prepareTicks, duel ? r.duelRoundTicks : r.playTicks, r.snitchAtTicks, !duel, Set.of()), absent);
         if (err != null) {
             plugin.getLogger().warning("큐디치 매칭 경기 시작 실패: " + err);
             for (var l : present.values()) for (Player p : l) { p.sendMessage(Component.text("경기를 시작하지 못했어요 (" + err + "). 원래 서버로 돌아가요.", NamedTextColor.RED)); done(p.getUniqueId()); }
@@ -148,6 +152,16 @@ final class Link implements PluginMessageListener {
             return;
         }
         started.put(id, plugin.matches().inArena(ar.name).id);
+    }
+
+    /** A free enabled arena of the kind (1:1 or 큐디치), chosen at random (owner: 등록된 맵 중 랜덤). */
+    private Arena pick(boolean duel, boolean practice) {
+        var free = plugin.arenas().all().stream().filter(a -> a.duel == duel && (practice ? a.practice : a.enabled && !a.practice) && a.problems().isEmpty()
+                && plugin.matches().inArena(a.name) == null).toList();
+        return free.isEmpty() ? null : free.get(java.util.concurrent.ThreadLocalRandom.current().nextInt(free.size()));
+    }
+    private int free(boolean duel) {
+        return (int) plugin.arenas().all().stream().filter(a -> a.duel == duel && a.enabled && !a.practice && a.problems().isEmpty() && plugin.matches().inArena(a.name) == null).count();
     }
 
     // ================================================================== ends
@@ -180,19 +194,23 @@ final class Link implements PluginMessageListener {
 
     private void live() {
         Player via = anyone(); if (via == null) return;
-        int free = (int) plugin.arenas().all().stream().filter(a -> a.enabled && !a.practice && a.problems().isEmpty() && plugin.matches().inArena(a.name) == null).count();
-        free = Math.max(0, free - gathering.size());
+        long gatherDuel = gathering.values().stream().filter(g -> g.assign.mode() == KyudichiQueueProtocol.MODE_DUEL).count();
+        int free = Math.max(0, free(false) - (int) (gathering.size() - gatherDuel)), freeDuel = Math.max(0, free(true) - (int) gatherDuel);
         var list = new ArrayList<LiveMatch>();
         var byMatch = new HashMap<UUID, UUID>(); for (var e : started.entrySet()) byMatch.put(e.getValue(), e.getKey());
         for (Match m : plugin.matches().all()) {
             if (m.opt.test() || list.size() >= 16) continue;
             var msg = m.matchMessage(2);
             var a = new ArrayList<UUID>(); var b = new ArrayList<UUID>(); var na = new ArrayList<String>(); var nb = new ArrayList<String>();
-            for (var mp : m.players.values()) { if (mp.team == Team.A) { a.add(mp.id); na.add(mp.nick); } else { b.add(mp.id); nb.add(mp.nick); } }
+            int ha = -1, hb = -1;
+            for (var mp : m.players.values()) {
+                if (mp.team == Team.A) { a.add(mp.id); na.add(mp.nick); if (mp.slot == 0) ha = mp.house; } else { b.add(mp.id); nb.add(mp.nick); if (mp.slot == 0) hb = mp.house; }
+            }
             UUID key = byMatch.getOrDefault(m.id, m.id);
             list.add(new LiveMatch(key, new Live(m.arena.name, msg.phase(), msg.scoreA(), msg.scoreB(), msg.timeLeftMs(), m.spectators.size(),
-                    String.join(" · ", na), String.join(" · ", nb)), a.subList(0, Math.min(6, a.size())), b.subList(0, Math.min(6, b.size()))));
+                    String.join(" · ", na), String.join(" · ", nb), m.duel ? KyudichiQueueProtocol.MODE_DUEL : KyudichiQueueProtocol.MODE_KYUDICHI, ha, hb),
+                    a.subList(0, Math.min(6, a.size())), b.subList(0, Math.min(6, b.size()))));
         }
-        send(via, new LiveList(free, list));
+        send(via, new LiveList(free, list, freeDuel));
     }
 }
