@@ -133,7 +133,7 @@
 - 클라이언트
   - `KyudichiLobbyScreen` + `kui/LobbyView` (레퍼런스 8장 좌표). 배경 `lobby/bg_kyudichi·bg_duel` = 오너 그림을 가우시안 5px 블러 후 1280×720 저장,
     화면 전체를 덮게 그림. 패널·탭·알약은 이미지 대신 둥근 반투명 도형(Pen.round/outline/panel).
-  - 매칭 시작 버튼 = 오너 MATCH_START_BUTTON 4상태. 임시 선 아이콘(연필·핀·사람·돋보기·꺾쇠 `lobby/icon_*`, 64px)은 Claude 가 그린 것 → 오너 아이콘으로 교체 예정.
+  - 매칭 시작 버튼 = 오너 MATCH_START_BUTTON 4상태. 선 아이콘(연필·핀·사람·돋보기·꺾쇠 `lobby/icon_*`, 64px) = 오너 CHACADEMI_DUEL_LOBBY_ICONS_8.
   - 둥근 얼굴 `Canvas.avatar`: 나는 내 일러스트 얼굴(그림 위쪽 정사각형을 원으로 자름, `PlayerPortraitTexture.drawFace` 비율 조정 가능), 남은 스킨 얼굴.
     다른 사람 일러스트는 일러스트 플러그인이 남의 그림을 주지 않아 스킨 얼굴.
   - 마법 세팅 모드별: `kyudichi-loadout.yml` / `kyudichi-duel-loadout.yml` (1:1 은 비행 없음, 목록에서도 뺌). 로비 연필 → 그 모드 세팅.
