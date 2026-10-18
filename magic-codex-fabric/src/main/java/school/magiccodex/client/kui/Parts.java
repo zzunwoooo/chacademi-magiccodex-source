@@ -154,6 +154,11 @@ public final class Parts {
         for (String v : new String[]{"", "_hover", "_pressed"}) m.put("dashboard/close_button" + v, new int[]{96, 96});
         for (String v : new String[]{"", "_hover", "_pressed", "_disabled"}) m.put("hud/forfeit_button" + v, new int[]{360, 96});
         for (String i : new String[]{"bar_chart_silver", "clock", "crossed_swords_silver", "range_slider"}) m.put("icons_line/" + i, new int[]{128, 128});
+        // 결투장 로비 2026-10-18: blurred backgrounds (owner art, Gaussian 5 px at 1672, stored 1280×720), owner MATCH_START_BUTTON, line icons
+        m.put("lobby/bg_kyudichi", new int[]{1280, 720});
+        m.put("lobby/bg_duel", new int[]{1280, 720});
+        for (String v : new String[]{"", "_hover", "_pressed", "_disabled"}) m.put("lobby/match_start" + v, new int[]{640, 160});
+        for (String i : new String[]{"pencil", "pin", "people", "search", "chevron_left", "chevron_right", "chevron_up", "chevron_down"}) m.put("lobby/icon_" + i, new int[]{64, 64});
         return Map.copyOf(m);
     }
     public static int[] size(String part) { int[] s = SIZES.get(part); if (s == null) throw new IllegalArgumentException("unknown part " + part); return s; }

@@ -26,6 +26,8 @@ abstract class KyudichiViewScreen extends Screen {
     float fill() { return .96f; }
     int dim() { return 0x99060B12; }
     void pressed(String id, float x, float y) { }
+    /** Drawn in screen pixels before the view (e.g. a background that covers the whole screen). */
+    void backdrop(KyudichiCanvas canvas) { }
     void released(float x, float y) { }
 
     /** Control under a design-pixel point in the last frame, or null. */
@@ -43,6 +45,7 @@ abstract class KyudichiViewScreen extends Screen {
         var images = UiResources.images(); var type = UiResources.text();
         images.beginFrame(); type.beginFrame();
         var canvas = new KyudichiCanvas(c, images, type);
+        backdrop(canvas);
         canvas.push(ox, oy, scale);
         try {
             var pen = new Pen(canvas, mx(mouseX), my(mouseY), pressed);

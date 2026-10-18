@@ -112,6 +112,8 @@ public final class KyudichiClient {
     static boolean live() { return active() && match.phase() == 2; }
     static boolean spectator() { return active() && match.myTeam() == 2; }
     /** Playing (not spectating): the match loadout replaces the bottom-right six, and aimed spells may stay in the air. */
+    /** Match flag 16: a 1:1 대전 (no balls, no F key, ground only). */
+    static boolean duel() { return match != null && (match.flags() & 16) != 0 && Util.getMeasuringTimeMs() - matchAt < 4000; }
     static boolean playing() { return active() && match.myTeam() != 2; }
     public static boolean airAim() { return playing(); }
 
@@ -138,7 +140,7 @@ public final class KyudichiClient {
         if (match.phase() == 0) { openSetup(); return true; }
         // owner 2026-10-17: F throws the quaffle / hits a bludger toward the crosshair (not the body's facing). The point goes
         // first; vanilla then sends swap-hands (the server's F) on its next tick.
-        if (live()) sendAim(crosshairPoint(c));
+        if (live() && !duel()) sendAim(crosshairPoint(c));
         return false;
     }
 
@@ -169,7 +171,8 @@ public final class KyudichiClient {
      * consume it. Returning true makes the mixin skip CastingClient for this key; vanilla then sends swap-hands to the server.
      */
     public static boolean reservesKey(MinecraftClient c, int key, int scan) {
-        return active() && !spectator() && c.options.swapHandsKey.matchesKey(key, scan);
+        // 1:1 대전 has no F action after the preparation: F stays a normal key (a spell bound to it works)
+        return active() && !spectator() && !(duel() && match.phase() != 0) && c.options.swapHandsKey.matchesKey(key, scan);
     }
 
     static String keyLabel() { return MinecraftClient.getInstance().options.swapHandsKey.getBoundKeyLocalizedText().getString(); }

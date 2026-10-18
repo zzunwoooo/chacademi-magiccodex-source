@@ -18,14 +18,20 @@ final class KyudichiSpellPickScreen extends KyudichiViewScreen {
     private String notice = "";
     private long noticeAt;
 
-    KyudichiSpellPickScreen(Screen parent) { super("큐디치 마법 세팅"); this.parent = parent; }
+    private final int mode;
+    KyudichiSpellPickScreen(Screen parent) { this(parent, KyudichiClient.duel() ? KyudichiLoadout.DUEL : KyudichiLoadout.KYUDICHI); }
+    /** mode: 0 큐디치 · 1 1:1 대전 (each has its own six, saved separately). */
+    KyudichiSpellPickScreen(Screen parent, int mode) { super(mode == KyudichiLoadout.DUEL ? "1:1 대전 마법 세팅" : "큐디치 마법 세팅"); this.parent = parent; this.mode = mode; }
+    private KyudichiLoadout loadout() { return KyudichiLoadout.get(mode); }
 
     @Override float designW() { return SpellPickView.W; }
     @Override float designH() { return SpellPickView.H; }
 
-    private static List<CodexData.Spell> learned() {
+    /** Learned spells; 1:1 대전 leaves out flight (banned there). */
+    private List<CodexData.Spell> learned() {
         var out = new ArrayList<CodexData.Spell>();
-        for (var s : CodexCatalog.spells()) if (s.discovered() && s.permissionKnown() && !s.command().isBlank()) out.add(s);
+        for (var s : CodexCatalog.spells())
+            if (s.discovered() && s.permissionKnown() && !s.command().isBlank() && !(mode == KyudichiLoadout.DUEL && s.id().equals(KyudichiLoadout.FLIGHT))) out.add(s);
         out.sort(Comparator.comparingInt(CodexData.Spell::order));
         return out;
     }
@@ -36,7 +42,7 @@ final class KyudichiSpellPickScreen extends KyudichiViewScreen {
     }
 
     @Override void paint(Pen p) {
-        var l = KyudichiLoadout.get();
+        var l = loadout();
         var equipped = new ArrayList<SpellPickView.Cell>();
         for (int i = 0; i < KyudichiLoadout.SIZE; i++) equipped.add(cell(CastingClient.state().spell(l.get(i))));
         var keys = new ArrayList<String>();
@@ -62,14 +68,14 @@ final class KyudichiSpellPickScreen extends KyudichiViewScreen {
             String id = hitAt(x, y);
             if (id != null && id.startsWith("slot:")) {
                 int to = Integer.parseInt(id.substring(5));
-                if (to != dragFrom) { KyudichiLoadout.get().swap(dragFrom, to); selected = to; changed(); sound(1.3f, .2f); }
+                if (to != dragFrom) { loadout().swap(dragFrom, to); selected = to; changed(); sound(1.3f, .2f); }
             }
         }
         dragging = false; dragFrom = -1;
     }
 
     @Override void clicked(String id, int button) {
-        var l = KyudichiLoadout.get();
+        var l = loadout();
         if (id.equals(SpellPickView.CLOSE) || id.equals(SpellPickView.CONFIRM)) { close(); return; }
         if (id.startsWith("slot:")) {
             int i = Integer.parseInt(id.substring(5));
@@ -90,7 +96,11 @@ final class KyudichiSpellPickScreen extends KyudichiViewScreen {
 
     @Override public boolean mouseScrolled(double x, double y, double h, double v) { scroll -= (int) Math.signum(v); return true; }
 
-    private void changed() { KyudichiLoadout.get().save(); CastingClient.refreshBindings(); }
+    private void changed() { loadout().save(); CastingClient.refreshBindings(); }
 
-    @Override public void close() { changed(); client.setScreen(parent instanceof KyudichiPrepareScreen && KyudichiClient.playing() && KyudichiClient.match.phase() == 0 ? parent : null); }
+    @Override public void close() {
+        changed();
+        boolean back = parent instanceof KyudichiPrepareScreen && KyudichiClient.playing() && KyudichiClient.match.phase() == 0 || parent instanceof KyudichiLobbyScreen;
+        client.setScreen(back ? parent : null);
+    }
 }

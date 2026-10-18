@@ -46,6 +46,14 @@ final class KyudichiCanvas implements Canvas {
         ctx.drawTexture(RenderLayer::getGuiTextured, tex, ix, iy, 8, 8, s, s, 8, 8, 64, 64);
         ctx.drawTexture(RenderLayer::getGuiTextured, tex, ix, iy, 40, 8, s, s, 8, 8, 64, 64);
     }
+    @Override public void avatar(UUID id, String skin, float cx, float cy, float radius) {
+        var c = MinecraftClient.getInstance();
+        if (c.player != null && c.player.getUuid().equals(id) && PortraitClient.drawFace(ctx, cx, cy, radius)) return;
+        Identifier tex = KyudichiFaces.face(id, skin);
+        // face (8,8)-(16,16) then the hat layer (40,8)-(48,16) of the 64×64 skin
+        HudMesh.texturedDisk(ctx, RenderLayer.getGuiTextured(tex), cx, cy, radius, 8 / 64f, 8 / 64f, 16 / 64f, 16 / 64f, 0xFFFFFFFF);
+        HudMesh.texturedDisk(ctx, RenderLayer.getGuiTextured(tex), cx, cy, radius, 40 / 64f, 8 / 64f, 48 / 64f, 16 / 64f, 0xFFFFFFFF);
+    }
     @Override public boolean broom(String id, float cx, float cy, float w, float h) {
         // the model lies along the view: a side view, slightly tilted like the reference picture
         return BroomUiLink.render(ctx, id, cx, cy, w, 90, 15, -18);

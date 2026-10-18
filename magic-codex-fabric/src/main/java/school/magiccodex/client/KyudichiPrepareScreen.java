@@ -61,7 +61,7 @@ final class KyudichiPrepareScreen extends KyudichiViewScreen {
         if (KyudichiPreview.active()) { KyudichiPreview.toggleReady(); return; }
         var m = KyudichiClient.match; if (m == null || client.player == null) return;
         boolean ready = m.players().stream().anyMatch(p -> p.id().equals(client.player.getUuid()) && (p.flags() & 4) != 0);
-        if (!ready && KyudichiLoadout.get().flightSlot() < 0) return;
+        if (!ready && !KyudichiLoadout.get().duel() && KyudichiLoadout.get().flightSlot() < 0) return;
         if (ClientPlayNetworking.canSend(KyudichiClient.Payload.ID))
             ClientPlayNetworking.send(new KyudichiClient.Payload(KyudichiProtocol.encode(new KyudichiProtocol.Ready(!ready))));
     }

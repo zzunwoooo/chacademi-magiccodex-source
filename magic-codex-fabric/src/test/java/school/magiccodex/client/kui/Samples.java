@@ -53,7 +53,53 @@ final class Samples {
         for (var tab : DashboardView.Tab.values()) ALL.add(new View("dashboard_" + tab.name().toLowerCase(), 1672, 941, -1, -1, p -> DashboardView.paint(p, dash(tab))));
         ALL.add(new View("dashboard_ranking_scrolled", 1672, 941, -1, -1, p -> { var d = dash(DashboardView.Tab.RANKING);
             DashboardView.paint(p, new DashboardView.Data(d.tab(), 4, d.live(), 0, d.ranking(), d.mine(), 18, d.record(), true, "", false, false, "")); }));
+        String[] tabs = {"match", "live", "rank", "record"};
+        for (int t = 0; t < 4; t++) for (int m = 0; m < 2; m++) {
+            int tt = t, mm = m;
+            ALL.add(new View("lobby_" + tabs[t] + (m == 0 ? "_q" : "_d"), 1672, 941, -1, -1, p -> LobbyView.paint(p, lobby(tt, mm))));
+        }
+        ALL.add(new View("lobby_match_q_menu", 1672, 941, 1500, 600, p -> { var d = lobby(0, 0);
+            LobbyView.paint(p, new LobbyView.Data(d.tab(), d.mode(), d.me(), d.myNick(), d.mySkin(), d.info(), d.party(), true, 1, true, d.spells(), d.specialKey(),
+                    new LobbyView.Queue(1, 0, 42), d.cards(), 0, true, d.rows(), d.mine(), d.page(), d.pages(), 0, d.rankSearch(), true, d.profile(), true, 0, d.recordSearch(), "")); }));
     }
+    static LobbyView.Data lobby(int tab, int mode) {
+        var info = new LobbyView.Mode(1, 12 * 86400 + 3000, 1250, 2, 1100, 1300, 32, 18, 2, mode == 0 ? 14 : 6, true, "");
+        var party = List.of(new LobbyView.Member(id(1), "준우", "", true, true), new LobbyView.Member(id(2), "서하", "", false, false));
+        var spells = new ArrayList<LobbyView.Spell>();
+        for (int i = 0; i < 6; i++) spells.add(new LobbyView.Spell("x", String.valueOf(i + 1)));
+        var cards = new ArrayList<LobbyView.Card>();
+        if (mode == 0) {
+            cards.add(new LobbyView.Card("제 1 경기장", 2, 30, 20, 372_000, 0, 1, "준우 파티", "서하 파티", List.of(f(1, "준우", 1250, 2), f(2, "루나", 1280, 2)), List.of(f(4, "서하", 1780, 5)), false));
+            cards.add(new LobbyView.Card("제 2 경기장", 2, 10, 40, 275_000, 2, 3, "유진 파티", "지안 파티", List.of(f(5, "유진", 980, 1)), List.of(f(6, "지안", 1648, 4)), false));
+            cards.add(new LobbyView.Card("제 3 경기장", 0, 0, 0, 32_000, 1, 0, "도윤 파티", "하린 파티", List.of(f(7, "도윤", 650, 0)), List.of(f(8, "하린", 1250, 2)), false));
+            cards.add(new LobbyView.Card("제 4 경기장", 2, 0, 0, 32_000, -1, -1, "가 파티", "나 파티", List.of(), List.of(), false));
+        } else {
+            cards.add(new LobbyView.Card("결투장 1", 2, 1, 0, 156_000, -1, -1, "준우", "서하", List.of(f(1, "준우", 1250, 2)), List.of(f(4, "서하", 1780, 5)), false));
+            cards.add(new LobbyView.Card("결투장 2", 2, 0, 1, 108_000, -1, -1, "유진", "지안", List.of(f(5, "유진", 980, 1)), List.of(f(6, "지안", 1648, 4)), false));
+            cards.add(new LobbyView.Card("결투장 3", 0, 0, 0, 32_000, -1, -1, "도윤", "하린", List.of(f(7, "도윤", 650, 0)), List.of(f(8, "하린", 1250, 2)), false));
+        }
+        var rows = new ArrayList<LobbyView.Row>();
+        String[] n = {"준서", "하린", "도윤", "서하", "유진", "지안"}; int[] r = {1924, 1886, 1832, 1780, 1726, 1648}; int[] tier = {6, 7, 8, 5, 5, 4};
+        int[][] wld = {{32, 18, 2}, {28, 14, 4}, {27, 16, 3}, {25, 17, 4}, {22, 18, 6}, {20, 19, 5}};
+        for (int i = 0; i < 6; i++) rows.add(new LobbyView.Row(i + 1, id(20 + i), n[i], "", r[i], tier[i], wld[i][0], wld[i][1], wld[i][2]));
+        var mine = new LobbyView.Row(47, id(1), "준우", "", 1250, 2, 32, 18, 2);
+        long t0 = 1_735_384_440_000L;
+        var games = mode == 0 ? List.of(
+                new LobbyView.Game(t0, 1, 14, 1264, 12, 14, 6, 2410, 120, 80, "호크문 기사단", "", 0),
+                new LobbyView.Game(t0 - 90_000_000L, 0, -12, 1238, 8, 7, 11, 1320, 80, 100, "청월의 비상", "", 1),
+                new LobbyView.Game(t0 - 170_000_000L, 2, 0, 1250, 10, 9, 9, 1760, 100, 100, "새벽의 매", "", -1),
+                new LobbyView.Game(t0 - 260_000_000L, 1, 16, 1250, 14, 11, 5, 2880, 140, 90, "흑담의 창", "", 2))
+                : List.of(
+                new LobbyView.Game(t0, 1, 14, 1264, 0, 8, 3, 2410, 2, 1, "서리월", "", -1),
+                new LobbyView.Game(t0 - 90_000_000L, 0, -12, 1238, 0, 3, 7, 1320, 0, 2, "하린", "", -1),
+                new LobbyView.Game(t0 - 170_000_000L, 1, 16, 1250, 0, 10, 4, 2880, 2, 0, "네로", "", -1),
+                new LobbyView.Game(t0 - 260_000_000L, 2, 0, 1234, 0, 5, 5, 1760, 1, 1, "카엘", "", -1));
+        var prof = new LobbyView.Profile(id(1), "준우", "", 1250, 2, 47, 52, 32, 18, 2, 24, 86, 54, 7, 42, 64_480, 3200, games);
+        var empty = new LobbyView.Field("", false, false);
+        return new LobbyView.Data(tab, mode, id(1), "준우", "", info, party, true, -1, true, spells, "F", new LobbyView.Queue(0, 0, 0),
+                cards, 0, true, rows, mine, 1, 9, 0, empty, true, prof, true, 0, empty, "");
+    }
+    static LobbyView.Fighter f(int i, String n, int rating, int tier) { return new LobbyView.Fighter(id(i), n, "", rating, tier); }
     static DashboardView.Who who(int i, String n) { return new DashboardView.Who(id(i), n, ""); }
     static DashboardView.Data dash(DashboardView.Tab tab) {
         var live = List.of(

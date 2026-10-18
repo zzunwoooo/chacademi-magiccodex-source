@@ -67,6 +67,8 @@ public final class PortraitClient {
     static int imageWidth(){return texture==null?1:texture.width();}
     static int imageHeight(){return texture==null?1:texture.height();}
     static void draw(DrawContext c,int x,int y,int width){if(texture!=null)texture.draw(c,x,y,width);}
+    /** My illustration's face in a circle; false when there is none (use the skin face). */
+    static boolean drawFace(DrawContext c,float cx,float cy,float radius){if(!ready())return false;texture.drawFace(c,cx,cy,radius);return true;}
     static void drawTurn(DrawContext c){if(texture!=null)texture.drawTurn(c);}
     private static void reset(){
         LOAD.next();IO.getQueue().clear();helloSent=ready=confirmed=loading=helloRetried=false;loadingSince=0;dropIncoming();

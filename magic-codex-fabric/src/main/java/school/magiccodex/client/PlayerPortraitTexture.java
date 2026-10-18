@@ -87,6 +87,17 @@ final class PlayerPortraitTexture implements AutoCloseable {
         c.drawTexture(any->layer,id,x,y,0,0,w,h,width,height,width,height,0xFFFFFFFF);
     }
 
+    /**
+     * Round face crop for small avatars (결투장): a square at the top of the drawn figure (its alpha bounds), as wide as about
+     * 45 % of the figure, centred. Tuned for bust / upper-body illustrations.
+     */
+    void drawFace(DrawContext c,float cx,float cy,float radius){
+        if(closed)return;
+        float side=Math.min(bounds.width()*.46f,bounds.height()*.34f);
+        float fx=bounds.x()+bounds.width()/2f-side/2,fy=bounds.y()+side*.06f;
+        HudMesh.texturedDisk(c,layer,cx,cy,radius,fx/width,fy/height,(fx+side)/width,(fy+side)/height,0xFFFFFFFF);
+    }
+
     void drawTurn(DrawContext c){
         var p=PlayerTurnPortraitLayout.place(width,height,bounds);
         draw(c,p.x(),p.y(),p.width());
