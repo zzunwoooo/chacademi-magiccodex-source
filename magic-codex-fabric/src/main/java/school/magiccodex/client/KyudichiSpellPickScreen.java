@@ -31,7 +31,8 @@ final class KyudichiSpellPickScreen extends KyudichiViewScreen {
     private List<CodexData.Spell> learned() {
         var out = new ArrayList<CodexData.Spell>();
         for (var s : CodexCatalog.spells())
-            if (s.discovered() && s.permissionKnown() && !s.command().isBlank() && !(mode == KyudichiLoadout.DUEL && s.id().equals(KyudichiLoadout.FLIGHT))) out.add(s);
+            // same rule as the key settings window (learned = discovered + permission known); the live spell files have no cast command
+            if (s.discovered() && s.permissionKnown() && !(mode == KyudichiLoadout.DUEL && s.id().equals(KyudichiLoadout.FLIGHT))) out.add(s);
         out.sort(Comparator.comparingInt(CodexData.Spell::order));
         return out;
     }
