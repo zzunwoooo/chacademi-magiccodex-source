@@ -33,7 +33,13 @@ final class CropAwakening implements Listener {
     CropAwakening(WildlifePlugin plugin) { this.plugin = plugin; }
 
     void reload() {
-        var section = plugin.getConfig().getConfigurationSection("crop-awakening.crops");
+        var config = plugin.getConfig();
+        String path = "crop-awakening.crops";
+        // JavaPlugin defaults supply scalar getters, but an absent section is materialized empty by
+        // getConfigurationSection and getKeys(false) does not enumerate inherited defaults.
+        // Check direct presence before requesting a section; explicit empty/custom maps remain authoritative.
+        var section = config.isSet(path) ? config.getConfigurationSection(path)
+            : config.getDefaults() == null ? null : config.getDefaults().getConfigurationSection(path);
         var next = new EnumMap<Material, String>(Material.class);
         if (section != null) for (String key : section.getKeys(false)) {
             Material m = Material.matchMaterial(key);

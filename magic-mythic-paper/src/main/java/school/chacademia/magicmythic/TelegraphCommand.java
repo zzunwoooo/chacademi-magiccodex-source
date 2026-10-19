@@ -21,7 +21,8 @@ final class TelegraphCommand {
         if (!(sender instanceof Player p)) return "플레이어만 쓸 수 있습니다.";
         String kind = a.length == 0 ? "전부" : a[0];
         double seconds = 1;
-        if (a.length > 1) try { seconds = Math.clamp(Double.parseDouble(a[1]), 0.1, 30); } catch (NumberFormatException e) { return "초는 숫자로 적어 주세요."; }
+        // fx takes a pack/system in a[1]; its own parser handles numeric parameters.
+        if (a.length > 1 && !kind.equals("효과") && !kind.equals("fx")) try { seconds = Math.clamp(Double.parseDouble(a[1]), 0.1, 30); } catch (NumberFormatException e) { return "초는 숫자로 적어 주세요."; }
         int ticks = (int) Math.round(seconds * 20);
         var feet = p.getLocation();
         float yaw = feet.getYaw();

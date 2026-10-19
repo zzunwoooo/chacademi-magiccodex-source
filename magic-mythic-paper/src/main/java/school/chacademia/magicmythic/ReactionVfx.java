@@ -31,6 +31,8 @@ final class ReactionVfx {
     private Object service;
     private Method play, scaledPlay, effectBasis;
     private Constructor<?> request;
+    private final java.util.Map<String,AuthoredScale> authoredScales=new java.util.HashMap<>();
+    private record AuthoredScale(double reference,double min,double max) {}
 
     ReactionVfx(MagicMythicPlugin plugin) { this.plugin = plugin; reload(); }
 
@@ -40,7 +42,7 @@ final class ReactionVfx {
         pack = c.getString("reactions.vfx.pack", "elementreactions").toLowerCase(Locale.ROOT);
         if (!pack.matches("[a-z0-9_-]{1,64}")) pack = "elementreactions";
         range = Math.clamp(c.getDouble("reactions.vfx.range", 48), 8, 128);
-        resolved = false; warned = false; service = null;
+        resolved = false; warned = false; service = null; authoredScales.clear();
     }
 
     /** System id inside the pack (= lower-case reaction name, e.g. ember_curse). */
@@ -138,6 +140,10 @@ final class ReactionVfx {
     void effect(String id, Location at, float scale, float yaw, int ticks, int tint) {
         if (id == null || id.isBlank() || at.getWorld() == null || !resolve()) return;
         try {
+            if(id.startsWith("claude:")&&Math.abs(scale-1f)>0.000001f){
+                areaEffect(id,at,authoredScaleInput(id,scale),yaw,ticks,tint);
+                return;
+            }
             Object req = request.newInstance(id, at.getWorld().getName(), at.getX(), at.getY(), at.getZ(),
                     scale, ticks, yaw, 0f, 0f, tint & 0xFFFFFF, 1f, range);
             play.invoke(service, req);
@@ -147,6 +153,36 @@ final class ReactionVfx {
         } catch (ReflectiveOperationException | RuntimeException e) {
             warn(e);
         }
+    }
+
+    /** Convert an explicitly requested factor using the installed authored descriptor, never a guessed reference.
+     * Every Claude effect caller (including admin previews) therefore sends a unit transform.
+     * Reload invalidates the small per-pack metadata cache. Invalid/missing/unsupported descriptors fail visibly. */
+    double authoredScaleInput(String id,double factor){
+        if(!Double.isFinite(factor)||factor<=0)throw new IllegalArgumentException("Invalid VFX scale factor");
+        if(!id.matches("claude:[a-z0-9_-]{1,64}/[a-z0-9_-]{1,64}"))throw new IllegalArgumentException("Invalid Claude effect ID");
+        String slug=id.substring(7,id.indexOf('/'));
+        AuthoredScale descriptor=authoredScales.get(slug);
+        if(descriptor==null){
+            java.nio.file.Path root=plugin.getDataFolder().toPath().getParent().resolve("PortableVFX/effects");
+            java.nio.file.Path folder=root.resolve(slug),file=folder.resolve("vfx.json");
+            try{
+                if(java.nio.file.Files.isSymbolicLink(root)||java.nio.file.Files.isSymbolicLink(folder)||java.nio.file.Files.isSymbolicLink(file)
+                    ||!java.nio.file.Files.isRegularFile(file)||java.nio.file.Files.size(file)>4L*1024*1024)
+                    throw new IllegalArgumentException("Missing/unsafe authored scale descriptor for "+slug);
+                var json=com.google.gson.JsonParser.parseString(java.nio.file.Files.readString(file,java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject();
+                var module=json.getAsJsonObject("scale");
+                if(module==null)throw new IllegalArgumentException("Pack has no physical scale module: "+slug);
+                String input=module.get("input").getAsString();
+                double ref=module.get("reference").getAsDouble(),min=module.get("min").getAsDouble(),max=module.get("max").getAsDouble();
+                if(!(input.equals("targetHeight")||input.equals("areaRadius"))||!Double.isFinite(ref)||ref<=0
+                    ||!Double.isFinite(min)||!Double.isFinite(max)||min<=0||max<min)throw new IllegalArgumentException("Invalid authored scale module: "+slug);
+                descriptor=new AuthoredScale(ref,min,max);authoredScales.put(slug,descriptor);
+            }catch(java.io.IOException error){throw new IllegalArgumentException("Cannot read authored scale module: "+slug,error);}
+        }
+        if(factor<descriptor.min()-0.000001||factor>descriptor.max()+0.000001)
+            throw new IllegalArgumentException("Requested VFX factor exceeds authored bounds: "+slug);
+        return descriptor.reference()*factor;
     }
 
     /** Use the schema's physical scale input; generic Claude transform magnification must stay one. */
