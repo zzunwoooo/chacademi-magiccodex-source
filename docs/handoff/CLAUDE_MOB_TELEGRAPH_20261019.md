@@ -25,7 +25,8 @@
 2. VFX 팩: 사장님 PC `C:\Users\matil\Desktop\차카데미 vfx_Claude\SealCircle\SealCircle.zip` → PortableVFX 팩 폴더 `sealcircle` (static 2시스템 seal / seal_ruby, areaRadius reference 4). client_compat check OK.
 3. MythicMobs: `chacademi_mob_skills.yml` 를 Skills 폴더에, `chacademia_custom.yml` 의 `CA_Wild_mf_warden_mage` / `_shiny` Skills 에 파일 맨 위 주석의 줄 추가 → `/mm reload`.
 4. 확인: `/마법미몹 예고 전부` (세 모양), `/마법미몹 예고 봉인진`, `/마법미몹 예고 봉인진이로치`, 서바이벌로 봉인의 술사 앞에서 장판 안/밖 판정.
-5. 시전 모션: 지금은 기존 `attack` 상태(state{s=attack}). 전용 `seal_cast` 애니는 모델 원본(.bbmodel)을 받으면 Claude 가 추가 예정 → 그때 s=seal_cast 로 교체.
+5. 시전 모션 `seal_cast` (1.6초, 1.12초 내려찍기·1.2초 발동): 사장님 PC `C:\Users\matil\Desktop\차카데미 vfx_Claude\몹스킬\봉인의 술사 - 봉인진\model\ca_mf_warden_mage(_s).bbmodel` 로 ModelEngine blueprints 의 기존 파일 교체 → `/meg reload` + 리소스팩 재생성. 기존 애니(idle/walk/attack/tentacle/death/ca_hurt)는 그대로.
+6. 한 폴더 모음: `...\몹스킬\봉인의 술사 - 봉인진\` (model / mythicmobs / vfx / preview / source + README.md). 몹 파일은 Skills 에 한 줄만 추가(참고본 mobs_mf_warden_mage.yml).
 
 ## 주의
 - 서버 부담: 예고 1개당 패킷 1번(~60바이트, 64블록 안 플레이어만) + 지연 작업 1개 + 판정 때 엔티티 검색 1번. 매 틱 도는 작업 없음(시전자 사망은 사망 이벤트로 취소). 그리는 건 전부 클라이언트.
