@@ -964,3 +964,149 @@ CHA_MOB_smoke_bomb_lostasset_mob3_herbthief_shiny:
   - chatelegraph{shape=circle;at=caster;r=6;ticks=16;flat=2;element=earth;status=blindness:30;vfxref=6;vfxlead=2;vfx=smokebomb/smoke_s;spell=mob_smoke_bomb} @target
   - delay 16
   - potion{type=INVISIBILITY;duration=40;level=0;hasParticles=false} @self
+
+# ---- 망각의 해골술사 - 뼈의 손아귀 (모션 bone_grasp, 예고 0.8초)
+CHA_MOB_bone_grasp_ncr_mage_skeleton:
+  Cooldown: 11
+  Conditions:
+  - targetwithin{d=19} true
+  Skills:
+  - state{s=bone_grasp;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=6;ticks=16;flat=3;element=dark;status=root:10;pull=1.4;vfxref=6;vfxlead=2;vfx=bonegrasp/grasp;spell=mob_bone_grasp} @target
+CHA_MOB_bone_grasp_ncr_mage_skeleton_shiny:
+  Cooldown: 11
+  Conditions:
+  - targetwithin{d=19} true
+  Skills:
+  - state{s=bone_grasp;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=6;ticks=16;flat=3;element=dark;status=root:10;pull=1.4;vfxref=6;vfxlead=2;vfx=bonegrasp/grasp_s;spell=mob_bone_grasp} @target
+
+# ---- 요정 4종 - 요정 가루 (모션 fairy_dust, 예고 1.0초)
+CHA_MOB_fairy_dust_lostasset_mob2_flowersprite:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=10} true
+  Skills:
+  - state{s=fairy_dust;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=caster;r=6;ticks=20;flat=2;status=sleep:30;vfxref=6;vfxlead=2;element=earth;vfx=fairydust/dust_flower;spell=mob_fairy_dust} @target
+CHA_MOB_fairy_dust_lostasset_mob2_flowersprite_shiny:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=10} true
+  Skills:
+  - state{s=fairy_dust;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=caster;r=6;ticks=20;flat=2;status=sleep:30;vfxref=6;vfxlead=2;element=earth;vfx=fairydust/dust_flower_s;spell=mob_fairy_dust} @target
+CHA_MOB_fairy_dust_lostasset_mob2_lakefairy:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=10} true
+  Skills:
+  - state{s=fairy_dust;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=caster;r=6;ticks=20;flat=2;status=sleep:30;vfxref=6;vfxlead=2;element=water;vfx=fairydust/dust_lake;spell=mob_fairy_dust} @target
+CHA_MOB_fairy_dust_lostasset_mob2_lakefairy_shiny:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=10} true
+  Skills:
+  - state{s=fairy_dust;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=caster;r=6;ticks=20;flat=2;status=sleep:30;vfxref=6;vfxlead=2;element=water;vfx=fairydust/dust_lake_s;spell=mob_fairy_dust} @target
+CHA_MOB_fairy_dust_lostasset_mob2_leaffairy:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=10} true
+  Skills:
+  - state{s=fairy_dust;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=caster;r=6;ticks=20;flat=2;status=sleep:30;vfxref=6;vfxlead=2;element=wind;vfx=fairydust/dust_leaf;spell=mob_fairy_dust} @target
+CHA_MOB_fairy_dust_lostasset_mob2_leaffairy_shiny:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=10} true
+  Skills:
+  - state{s=fairy_dust;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=caster;r=6;ticks=20;flat=2;status=sleep:30;vfxref=6;vfxlead=2;element=wind;vfx=fairydust/dust_leaf_s;spell=mob_fairy_dust} @target
+CHA_MOB_fairy_dust_lostasset_mob2_mushroomfairy:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=10} true
+  Skills:
+  - state{s=fairy_dust;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=caster;r=6;ticks=20;flat=2;vfxref=6;vfxlead=2;element=earth;status=sleep:40;vfx=fairydust/dust_mushroom;spell=mob_fairy_dust} @target
+CHA_MOB_fairy_dust_lostasset_mob2_mushroomfairy_shiny:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=10} true
+  Skills:
+  - state{s=fairy_dust;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=caster;r=6;ticks=20;flat=2;vfxref=6;vfxlead=2;element=earth;status=sleep:40;vfx=fairydust/dust_mushroom_s;spell=mob_fairy_dust} @target
+
+# ---- 유적 궁수 - 무기별 직선기 (모션 aim_shot, 예고 2.0초)
+CHA_MOB_aim_shot_ncr_archer_skeleton:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=26} true
+  Skills:
+  - state{s=aim_shot;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=24;width=1.5;ticks=40;flat=8;vfxlead=2;vfx=ruinstrike/strike_arrow;spell=mob_aim_shot} @target
+CHA_MOB_aim_shot_ncr_archer_skeleton_shiny:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=26} true
+  Skills:
+  - state{s=aim_shot;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=24;width=1.5;ticks=40;flat=8;vfxlead=2;vfx=ruinstrike/strike_arrow_s;spell=mob_aim_shot} @target
+
+# ---- 유적 창병 - 무기별 직선기 (모션 spear_throw, 예고 1.0초)
+CHA_MOB_spear_throw_ncr_spear_skeleton:
+  Cooldown: 9
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=spear_throw;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=16;width=2;ticks=20;flat=6;status=slow:30:0.3;vfxlead=2;vfx=ruinstrike/strike_spear;spell=mob_spear_throw} @target
+CHA_MOB_spear_throw_ncr_spear_skeleton_shiny:
+  Cooldown: 9
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=spear_throw;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=16;width=2;ticks=20;flat=6;status=slow:30:0.3;vfxlead=2;vfx=ruinstrike/strike_spear_s;spell=mob_spear_throw} @target
+
+# ---- 유적 검병 - 무기별 직선기 (모션 dash_slash, 예고 0.8초)
+CHA_MOB_dash_slash_ncr_warrior_skeleton:
+  Cooldown: 8
+  Conditions:
+  - targetwithin{d=13} true
+  Skills:
+  - state{s=dash_slash;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=10;width=3;ticks=16;flat=6;vfxlead=2;vfx=ruinstrike/strike_slash;spell=mob_dash_slash} @target
+  - delay 14
+  - lunge{velocity=2.0;velocityY=0.2} @target
+CHA_MOB_dash_slash_ncr_warrior_skeleton_shiny:
+  Cooldown: 8
+  Conditions:
+  - targetwithin{d=13} true
+  Skills:
+  - state{s=dash_slash;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=10;width=3;ticks=16;flat=6;vfxlead=2;vfx=ruinstrike/strike_slash_s;spell=mob_dash_slash} @target
+  - delay 14
+  - lunge{velocity=2.0;velocityY=0.2} @target
+
+# ---- 봉인의 기사 - 봉인 돌격 (모션 seal_charge, 예고 1.0초)
+CHA_MOB_seal_charge_mf_warden_knight:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=seal_charge;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=15;width=3;ticks=20;flat=7;element=light;status=stun:16;knock=0.6;vfxlead=2;vfx=sealcharge/charge;spell=mob_seal_charge} @target
+  - delay 18
+  - lunge{velocity=2.6;velocityY=0.2} @target
+CHA_MOB_seal_charge_mf_warden_knight_shiny:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=seal_charge;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=15;width=3;ticks=20;flat=7;element=light;status=stun:16;knock=0.6;vfxlead=2;vfx=sealcharge/charge_s;spell=mob_seal_charge} @target
+  - delay 18
+  - lunge{velocity=2.6;velocityY=0.2} @target

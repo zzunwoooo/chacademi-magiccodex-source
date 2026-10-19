@@ -101,3 +101,18 @@
 
 - 주의: 약초 골렘·도둑 모델은 ca_attack 대신 `attack` 애니를 기준으로 새 애니를 만듦(뼈 이름 ra/la/b, r_a/l_a).
 - 주의: 울프호크 lunge·도둑 투명은 예고가 끝날 때(`delay 18` / `delay 16`) 실행 — MythicMobs 기본 mechanic.
+
+## 추가 — 몹 스킬 5차 묶음 (범위기, 마지막)
+| 계열 | 스킬 id | 예고 | 효과 | VFX 팩 / 시스템 | 모션 |
+|---|---|---|---|---|---|
+| 망각의 해골술사 | bone_grasp | 원형 대상 r6 · 0.8초 | 피해 3 + 술사 쪽으로 끌어옴(pull 1.4) + 속박 0.5초 | `bonegrasp` / grasp[_s] | bone_grasp 1.4초 |
+| 요정 4종 | fairy_dust | 원형 시전자 r6 · 1.0초 | 피해 2 + 수면 1.5초 (포자 요정 2초) | `fairydust` / dust_{flower,lake,leaf,mushroom}[_s] | fairy_dust 1.5초 |
+| 유적 궁수 | aim_shot | 직선 24×1.5 · 2.0초 | 피해 8 | `ruinstrike` / strike_arrow[_s] | aim_shot 2.4초 |
+| 유적 창병 | spear_throw | 직선 16×2 · 1.0초 | 피해 6 + 둔화 1.5초 | `ruinstrike` / strike_spear[_s] | spear_throw 1.4초 |
+| 유적 검병 | dash_slash | 직선 10×3 · 0.8초 + 끝에 lunge | 피해 6 | `ruinstrike` / strike_slash[_s] | dash_slash 1.3초 |
+| 봉인의 기사 | seal_charge | 직선 15×3 · 1.0초 + 끝에 lunge | 피해 7 + 기절 0.8초 | `sealcharge` / charge[_s] | seal_charge 1.8초 |
+
+- 요정 4종: 문서상 범위기는 포자 요정 "수면 포자"뿐이라, 색만 다른 몹 규칙대로 4종 공통 스킬로 하고 가루 모양·색만 다르게 함.
+- 유적 궁수 "조준 중 맞으면 취소"는 아직 없음(예고는 시전자 사망 때만 취소). 필요하면 다음에 피격 취소 추가.
+- 같은 스킬에 같은 status 가 두 번이면 몹별 값이 이김(skills.py). 사장님 PC 의 모든 몹스킬 폴더 `chacademi_mob_skills.yml` 을 최신(스킬 138개)으로 맞춤.
+- 남은 것(나중에): 유도·순간이동 계열 — 키츠네 여우불/순보, 와이번 낚아채기, 만티코어 독침, 요정 구슬/장난 등. 몹용 날아가는 VFX(투사체 추적)가 필요.
