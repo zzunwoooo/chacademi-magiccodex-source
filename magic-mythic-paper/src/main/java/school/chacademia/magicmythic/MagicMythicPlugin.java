@@ -166,7 +166,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
         }
         if (Set.of("예고", "telegraph").contains(sub)) { sender.sendMessage(TelegraphCommand.run(this, sender, Arrays.copyOfRange(args, 1, args.length))); return true; }
         if (Set.of("상태이상", "debuff").contains(sub)) { sender.sendMessage(StatusCommand.run(this, sender, Arrays.copyOfRange(args, 1, args.length))); return true; }
-        sender.sendMessage("/마법미몹 <새로고침|상태|장착 <플레이어> [id...|비우기]|시험 <마법ID>|상태이상 <종류|해제> [초] [나|바라봄|플레이어] [세기]|예고 <원형|직선|부채꼴|전부|봉인진|봉인진이로치|빙핵레이저|빙핵레이저이로치> [초]>");
+        sender.sendMessage("/마법미몹 <새로고침|상태|장착 <플레이어> [id...|비우기]|시험 <마법ID>|상태이상 <종류|해제> [초] [나|바라봄|플레이어] [세기]|예고 <원형|직선|부채꼴|전부|봉인진|빙핵레이저|효과 ...> [초]>");
         return true;
     }
 

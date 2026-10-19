@@ -43,3 +43,16 @@
 - 모음 폴더: 사장님 PC `차카데미 vfx_Claude\몹스킬\빙핵의 수호자 - 빙핵 레이저\` (README 표대로 설치).
 - 테스트: `/마법미몹 예고 빙핵레이저`, `/마법미몹 예고 빙핵레이저이로치` (내 발에서 바라보는 방향, 피해 없음).
 - 주의: VFX 발사점은 발 위 2.4 m · 앞 1.6 m (모델 문양 위치). ModelEngine 에서 모델 크기를 바꿨다면 어긋날 수 있음.
+
+## 추가 — 몹 스킬 1차 묶음 (계열당 대표 1개, 색만 다른 몹은 같은 스킬·VFX 색만 다름)
+| 계열 | 스킬 id (`CHA_MOB_<스킬>_<몹>`) | 예고 | 효과 | VFX 팩 / 시스템 | 모션 |
+|---|---|---|---|---|---|
+| 오우거 3종 | ground_quake | 원형 시전자 r6 · 1.2초 | 피해 7 + 기절 0.8초 | `ogrequake` / quake_{club,axe,hammer}[_s] | ground_quake (attack2 늘림) |
+| 고대 골렘 4종 | gravity_slam | 원형 시전자 r7 · 1.2초 (vfxlead 3) | 피해 8 + 중력 2초 | `gravityslam` / gravity_{arcane,corrupted,magma,royal}[_s] | gravity_slam (새로) |
+| 드래곤 4종 | dragon_breath | 부채꼴 r10 · 60° · 1.2초 | 피해 9 + 사막 독 / 빙하 둔화 / 화산 화상 / 스컬크 실명 | `dragonbreath` / breath_{desert,glacial,nether,sculk}[_s] | dragon_breath (새로) |
+| 서리 기사 | frost_field | 원형 시전자 r5 · 1.0초 | 피해 5 + 속박 1초 | `frostfield` / frost_field[_s] | frost_field (새로) |
+| 터스커 3종 | earth_stomp | 원형 시전자 r6 · 1.2초 | 피해 6 + 기절 0.8초 | `earthstomp` / stomp_{demonic,dreamlight,forest}[_s] | earth_stomp (새로) |
+- 스킬 yml: `chacademi_mob_skills.yml` 의 "자동 생성" 구간 (사장님 PC 각 폴더 mythicmobs/ 에도 같은 파일). 몹마다 Skills 에 한 줄 (mobs_*.yml 참고본).
+- 모델: 사장님 PC `차카데미 vfx_Claude\몹스킬\<계열> - <스킬>\model\` (기본·이로치 모두). blueprints 같은 이름 교체.
+- 시험 명령 추가: `/마법미몹 예고 효과 <팩/시스템> <원형|원형내발|직선|부채꼴> <크기> [각도·폭] [틱] [리드틱]` (피해 없음).
+- 주의: 팩 이름 `earthquake` 는 기존 마법 팩과 겹쳐서 오우거 팩은 `ogrequake` 로 함.

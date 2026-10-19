@@ -57,9 +57,46 @@ final class TelegraphCommand {
                 plugin.getServer().getScheduler().runTaskLater(plugin,
                     () -> plugin.reactions().vfx().effect(id, at, 1, yaw, 40, 0xFFFFFF), Math.max(1, warn - 2));
             }
-            default -> { return "/마법미몹 예고 <원형|직선|부채꼴|전부|봉인진|봉인진이로치|빙핵레이저|빙핵레이저이로치> [초]"; }
+            case "효과", "fx" -> { return fx(plugin, p, a, feet, look, yaw); }
+            default -> { return USAGE; }
         }
         return "예고 장판 " + kind + " " + seconds + "초 (피해 없음)";
+    }
+
+    static final String USAGE = "/마법미몹 예고 <원형|직선|부채꼴|전부|봉인진|봉인진이로치|빙핵레이저|빙핵레이저이로치> [초]"
+        + "  또는  /마법미몹 예고 효과 <팩/시스템> <원형|원형내발|직선|부채꼴> <반경·길이> [각도·폭] [틱=24] [리드틱=2]";
+
+    /** 몹 스킬 시험: 예고 + 그 VFX (피해 없음). 예) 효과 earthquake/quake_club 원형내발 6 · 효과 dragonbreath/breath_nether 부채꼴 10 60 */
+    private static String fx(MagicMythicPlugin plugin, Player p, String[] a, Location feet, Location look, float yaw) {
+        if (a.length < 4) return USAGE;
+        String id = TelegraphMech.vfxId(a[1]);
+        if (id.isEmpty()) return "효과 id 가 이상합니다 (예: earthquake/quake_club).";
+        float size, extra = 0; int warn = 24, lead = 2;
+        try {
+            size = Float.parseFloat(a[3]);
+            if (a.length > 4) extra = Float.parseFloat(a[4]);
+            if (a.length > 5) warn = Integer.parseInt(a[5]);
+            if (a.length > 6) lead = Integer.parseInt(a[6]);
+        } catch (NumberFormatException e) { return "숫자를 확인해 주세요."; }
+        var t = plugin.telegraphs();
+        Show s;
+        try {
+            s = switch (a[2]) {
+                case "원형", "circle" -> circle(t, look, size, warn);
+                case "원형내발", "self" -> new Show(t.id(), Shape.CIRCLE, feet.getX(), Telegraphs.ground(feet), feet.getZ(), yaw, size, 0, 0, warn, TelegraphProtocol.RED);
+                case "직선", "line" -> new Show(t.id(), Shape.LINE, feet.getX(), Telegraphs.ground(feet), feet.getZ(), yaw, size, extra > 0 ? extra : 2, 0, warn, TelegraphProtocol.RED);
+                case "부채꼴", "cone" -> new Show(t.id(), Shape.CONE, feet.getX(), Telegraphs.ground(feet), feet.getZ(), yaw, size, 0, extra > 0 ? extra : 60, warn, TelegraphProtocol.RED);
+                default -> null;
+            };
+        } catch (IllegalArgumentException e) { return "모양 값이 범위를 벗어났습니다."; }
+        if (s == null) return USAGE;
+        show(plugin, p, s);
+        var at = new Location(p.getWorld(), s.x(), s.y(), s.z());
+        float scale = 1;
+        final Show shown = s;
+        plugin.getServer().getScheduler().runTaskLater(plugin,
+            () -> plugin.reactions().vfx().effect(id, at, scale, shown.yaw(), 40, 0xFFFFFF), Math.max(1, warn - lead));
+        return "예고 + " + id + " (" + a[2] + " " + size + ", " + warn + "틱, 피해 없음)";
     }
 
     private static Show circle(Telegraphs t, Location at, float r, int ticks) {
