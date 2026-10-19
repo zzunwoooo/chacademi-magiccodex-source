@@ -9,8 +9,9 @@ import school.magiccodex.protocol.TelegraphProtocol.Shape;
 import school.magiccodex.protocol.TelegraphProtocol.Show;
 
 /**
- * 테스트용 (피해 없음, 보이기만): /마법미몹 예고 <원형|직선|부채꼴|전부|봉인진|봉인진이로치> [초=1]
+ * 테스트용 (피해 없음, 보이기만): /마법미몹 예고 <원형|직선|부채꼴|전부|봉인진|봉인진이로치|빙핵레이저|빙핵레이저이로치> [초=1]
  *  원형 = 바라보는 블록(최대 24칸) 중심 반경 3, 직선 = 내 발에서 바라보는 방향 길이 8 폭 2, 부채꼴 = 반경 6 각도 70.
+ *  빙핵레이저(이로치) = 빙핵의 수호자 스킬과 같은 직선 16x2 예고 1.2초 + FrostLaser VFX (내 발에서 바라보는 방향).
  *  봉인진(이로치) = 봉인의 술사 스킬과 같은 반경 4 예고 1.2초 + SealCircle VFX (PortableVFX에 sealcircle 팩이 있어야 보임).
  */
 final class TelegraphCommand {
@@ -47,7 +48,16 @@ final class TelegraphCommand {
                 plugin.getServer().getScheduler().runTaskLater(plugin,
                     () -> plugin.reactions().vfx().effect(id, at, 1, 0, 40, 0xFFFFFF), Math.max(1, warn - 2));
             }
-            default -> { return "/마법미몹 예고 <원형|직선|부채꼴|전부|봉인진|봉인진이로치> [초]"; }
+            case "빙핵레이저", "frost_laser", "빙핵레이저이로치", "frost_laser_obsidian" -> {
+                int warn = a.length < 2 ? 24 : ticks; // 초를 안 적으면 실제 스킬과 같은 1.2초
+                var s = new Show(t.id(), Shape.LINE, feet.getX(), Telegraphs.ground(feet), feet.getZ(), yaw, 16, 2, 0, warn, TelegraphProtocol.RED);
+                show(plugin, p, s);
+                var at = new Location(p.getWorld(), s.x(), s.y(), s.z());
+                String id = kind.endsWith("이로치") || kind.endsWith("obsidian") ? "claude:frostlaser/laser_obsidian" : "claude:frostlaser/laser";
+                plugin.getServer().getScheduler().runTaskLater(plugin,
+                    () -> plugin.reactions().vfx().effect(id, at, 1, yaw, 40, 0xFFFFFF), Math.max(1, warn - 2));
+            }
+            default -> { return "/마법미몹 예고 <원형|직선|부채꼴|전부|봉인진|봉인진이로치|빙핵레이저|빙핵레이저이로치> [초]"; }
         }
         return "예고 장판 " + kind + " " + seconds + "초 (피해 없음)";
     }
