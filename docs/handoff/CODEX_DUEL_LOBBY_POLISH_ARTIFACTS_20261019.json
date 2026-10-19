@@ -1,5 +1,5 @@
 {
-    "status":  "LATEST_HUD_V4_AND_DUEL_LOBBY_BUILD_VERIFIED",
+    "status":  "LATEST_HUD_V4_AND_DUEL_LOBBY_PUBLISHED",
     "version":  "0.40.1-integrated-20261018.1-statushud.3-lobbypolish.1+mc1.21.4",
     "artifact":  "magic-codex-ui-0.40.1-integrated-20261018.1-statushud.3-lobbypolish.1+mc1.21.4.jar",
     "sha256":  "56d65a4b8ee9c800d4819229d29e8398095892b73479bb1f1bc57c73721761a0",
@@ -18,6 +18,78 @@
     "temporaryLauncherVersion":  "0.1.14",
     "temporaryCandidateCommit":  "994472982e24f58f12bf339465cb4553e8d6707f",
     "temporaryAssets":  8,
-    "publicationAttempted":  false,
-    "mainFeedChanged":  false
+    "publicationAttempted":  true,
+    "mainFeedChanged":  true,
+    "publication":  {
+                        "url":  "https://github.com/zzunwoooo/chacademi-launcher/releases/tag/v0.1.14",
+                        "personalRedeployed":  false,
+                        "id":  416859534,
+                        "mainUpdated":  true,
+                        "assetCount":  8,
+                        "serverRedeployed":  false,
+                        "commit":  "994472982e24f58f12bf339465cb4553e8d6707f",
+                        "tag":  "v0.1.14",
+                        "status":  "PUBLISHED",
+                        "uploadedDigestsVerified":  true
+                    },
+    "publicVerification":  {
+                               "status":  "PUBLIC_RELEASE_FILES_HASHES_AND_MAIN_FEED_VERIFIED",
+                               "url":  "https://github.com/zzunwoooo/chacademi-launcher/releases/tag/v0.1.14",
+                               "tag":  "v0.1.14",
+                               "releaseId":  416859534,
+                               "assets":  8,
+                               "publicDownloadedAssetHashes":  [
+                                                                   {
+                                                                       "name":  "Chacademi-Launcher-setup-0.1.14.exe",
+                                                                       "size":  98767152,
+                                                                       "sha256":  "e325a0cc43f4160c385244f296b7a6b72c42a2589509debb88451d9862d980f3"
+                                                                   },
+                                                                   {
+                                                                       "name":  "Chacademi-Launcher-setup-0.1.14.exe.blockmap",
+                                                                       "size":  103770,
+                                                                       "sha256":  "6e4e70acaa7ba531dd5b47c5c38575f9ddd7fdfbb9faf433d414d979550a3bf5"
+                                                                   },
+                                                                   {
+                                                                       "name":  "Chacademi-Launcher-setup-0.1.14.zip",
+                                                                       "size":  136818275,
+                                                                       "sha256":  "95fe5b62ab61212eac18fa60af8ee70f3010f398620358aacad2b55a58d2efb1"
+                                                                   },
+                                                                   {
+                                                                       "name":  "distribution.json",
+                                                                       "size":  55481,
+                                                                       "sha256":  "89ab42d954d3fd4ca5c940112ec2a1b28c5cd5271ea40a87aedac0fe6a7425f1"
+                                                                   },
+                                                                   {
+                                                                       "name":  "latest.yml",
+                                                                       "size":  367,
+                                                                       "sha256":  "672915e87c603a50343bf40798376d82fd240ef0e73b03e47ffb4b632ef9b73e"
+                                                                   },
+                                                                   {
+                                                                       "name":  "magic-codex-ui-0.40.1-integrated-20261018.1-statushud.3-lobbypolish.1+mc1.21.4.jar",
+                                                                       "size":  200657736,
+                                                                       "sha256":  "56d65a4b8ee9c800d4819229d29e8398095892b73479bb1f1bc57c73721761a0"
+                                                                   },
+                                                                   {
+                                                                       "name":  "payload-sha256.json",
+                                                                       "size":  32291,
+                                                                       "sha256":  "fbd12e40cb710438d5098a7faf305a7a1995d79ba8446940939376d33bc56407"
+                                                                   },
+                                                                   {
+                                                                       "name":  "SHA256SUMS.txt",
+                                                                       "size":  711,
+                                                                       "sha256":  "9b1ae5b3d2f407df75691d6b91ab532c10c8dfde16848f37688ca83714265c1f"
+                                                                   }
+                                                               ],
+                               "mainFeedMatches":  [
+                                                       "distribution.json",
+                                                       "manifests/payload-sha256.json",
+                                                       "package.json"
+                                                   ],
+                               "updatedHudModule":  "kr.chacademi:magiccodex:0.40.1-integrated-20261018.1-statushud.3-lobbypolish.1+mc1.21.4@jar",
+                               "retainedResourceLinksVerified":  [
+                                                                     "kr.chacademi:chacademy_motion:0.3.1-integrated-20261018.1@jar",
+                                                                     "chacademi-client-assets.zip"
+                                                                 ],
+                               "serverRedeployed":  false
+                           }
 }
