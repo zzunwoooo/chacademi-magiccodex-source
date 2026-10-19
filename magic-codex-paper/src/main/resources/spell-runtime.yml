@@ -248,3 +248,195 @@ spells:
     utility: true
     base-damage: 0
     power-ratio: 0
+  fox_orbit:
+    name: 여우불 공전
+    skill: CHA_fox_orbit
+    target: AIM
+    range: 20
+    utility: false
+    base-damage: 3
+    power-ratio: 0.25
+  curving_plumes:
+    name: 곡선 불깃털
+    skill: CHA_curving_plumes
+    target: AIM
+    range: 20
+    utility: false
+    base-damage: 3
+    power-ratio: 0.25
+  crystal_orbit:
+    name: 결정 공전탄
+    skill: CHA_crystal_orbit
+    target: SELF
+    range: 12
+    utility: false
+    base-damage: 3
+    power-ratio: 0.2
+  venom_spit:
+    name: 독 뱉기
+    skill: CHA_venom_spit
+    target: AIM
+    range: 18
+    utility: false
+    base-damage: 3
+    power-ratio: 0.2
+  smoke_veil:
+    name: 연막 은신
+    skill: CHA_smoke_veil
+    target: SELF
+    range: 6
+    utility: false
+    base-damage: 1
+    power-ratio: 0.1
+  domain_stomp:
+    name: 영역 선포
+    skill: CHA_domain_stomp
+    target: SELF
+    range: 6
+    utility: false
+    base-damage: 5
+    power-ratio: 0.4
+  seal_circle:
+    name: 봉인진
+    skill: CHA_seal_circle
+    target: AIM
+    range: 16
+    utility: false
+    base-damage: 4
+    power-ratio: 0.3
+  seal_talismans:
+    name: 봉인 부적
+    skill: CHA_seal_talismans
+    target: AIM
+    range: 20
+    utility: false
+    base-damage: 3
+    power-ratio: 0.2
+  shield_slam:
+    name: 방패 내려찍기
+    skill: CHA_shield_slam
+    target: SELF
+    range: 5
+    utility: false
+    base-damage: 5
+    power-ratio: 0.4
+  chain_arrow:
+    name: 사슬 화살
+    skill: CHA_chain_arrow
+    target: AIM
+    range: 22
+    utility: false
+    base-damage: 4
+    power-ratio: 0.3
+  mana_drain:
+    name: 마나 흡수
+    skill: CHA_mana_drain
+    target: AIM
+    range: 14
+    utility: false
+    base-damage: 3
+    power-ratio: 0.2
+  soul_scythe:
+    name: 영혼 낫
+    skill: CHA_soul_scythe
+    target: SELF
+    range: 5
+    utility: false
+    base-damage: 5
+    power-ratio: 0.4
+  oblivion_orbs:
+    name: 망각의 탄환
+    skill: CHA_oblivion_orbs
+    target: AIM
+    range: 20
+    utility: false
+    base-damage: 3
+    power-ratio: 0.2
+  bone_grasp:
+    name: 뼈의 손아귀
+    skill: CHA_bone_grasp
+    target: AIM
+    range: 15
+    utility: false
+    base-damage: 3
+    power-ratio: 0.2
+  shadow_leap:
+    name: 그림자 도약
+    skill: CHA_shadow_leap
+    target: ENTITY
+    range: 14
+    utility: false
+    base-damage: 5
+    power-ratio: 0.4
+  binding_pull:
+    name: 끌어오기
+    skill: CHA_binding_pull
+    target: ENTITY
+    range: 14
+    utility: false
+    base-damage: 2
+    power-ratio: 0.15
+  fairy_dust:
+    name: 요정 가루
+    skill: CHA_fairy_dust
+    target: SELF
+    range: 6
+    utility: false
+    base-damage: 1
+    power-ratio: 0.1
+  moon_wind:
+    name: 반달 바람날
+    skill: CHA_moon_wind
+    target: SELF
+    range: 10
+    utility: false
+    base-damage: 4
+    power-ratio: 0.3
+  gale_wings:
+    name: 돌풍 날갯짓
+    skill: CHA_gale_wings
+    target: SELF
+    range: 6
+    utility: false
+    base-damage: 3
+    power-ratio: 0.25
+  feather_storm:
+    name: 깃털 폭풍
+    skill: CHA_feather_storm
+    target: SELF
+    range: 5
+    utility: false
+    base-damage: 5
+    power-ratio: 0.4
+  hunting_pounce:
+    name: 사냥 도약
+    skill: CHA_hunting_pounce
+    target: ENTITY
+    range: 12
+    utility: false
+    base-damage: 5
+    power-ratio: 0.4
+  roar_leap:
+    name: 포효 도약
+    skill: CHA_roar_leap
+    target: ENTITY
+    range: 14
+    utility: false
+    base-damage: 5
+    power-ratio: 0.4
+  gravity_slam:
+    name: 중력 강타
+    skill: CHA_gravity_slam
+    target: SELF
+    range: 5
+    utility: false
+    base-damage: 6
+    power-ratio: 0.45
+  tail_spikes:
+    name: 꼬리 가시
+    skill: CHA_tail_spikes
+    target: AIM
+    range: 16
+    utility: false
+    base-damage: 2
+    power-ratio: 0.15
