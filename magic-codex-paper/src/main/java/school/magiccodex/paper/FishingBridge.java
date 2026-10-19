@@ -58,6 +58,7 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
     private FishingConfig config;
     private final FishingGear gear;
     private final FishingStore store;
+    private final FishTank tank;
     private final ItemsAdderItems itemsAdder;
     private final Map<UUID, Session> sessions = new HashMap<>();
     private final Map<UUID, long[]> limits = new HashMap<>();
@@ -68,6 +69,8 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         config = FishingConfig.load(plugin.getDataFolder());
         gear = new FishingGear(plugin, config);
         store = new FishingStore(plugin);
+        tank = new FishTank(plugin);
+        tank.capacity(config.tankCapacity);
         itemsAdder = new ItemsAdderItems(plugin.getLogger());
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, FishingProtocol.REQUEST, this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, FishingProtocol.RESPONSE);
@@ -76,15 +79,26 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
             var command = Objects.requireNonNull(plugin.getCommand(name));
             command.setExecutor(this); command.setTabCompleter(this);
         }
-        for (Player p : Bukkit.getOnlinePlayers()) store.load(p.getUniqueId(), null);
+        for (Player p : Bukkit.getOnlinePlayers()) { store.load(p.getUniqueId(), null); tank.refresh(p.getUniqueId(), null); }
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 2, 2);
         plugin.getLogger().info("낚시: 물고기 " + config.fish.size() + "종, 장비 " + config.gear.stream().mapToInt(Map::size).sum() + "종");
+    }
+
+    FishTank tank() { return tank; }
+    FishingConfig config() { return config; }
+    FishingGear gear() { return gear; }
+
+    /** A fish item (taken out of the tank) for this tank row, or null when the species no longer exists. */
+    ItemStack fishItem(FishTank.Fish f) {
+        var def = config.fishById.get(f.fish());
+        return def == null ? null : gear.fish(def, (float) f.size());
     }
 
     void close() {
         for (var s : List.copyOf(sessions.values())) { removeHook(s); Player p = Bukkit.getPlayer(s.player); if (p != null) send(p, new Close(s.id, "")); }
         sessions.clear();
         store.close();
+        tank.close();
     }
 
     // ------------------------------------------------------------------ vanilla rod
@@ -105,7 +119,12 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
                     p.sendActionBar(FishingGear.plain("낚싯대가 고장 났어요. 수리한 뒤 다시 던져 주세요.", 0xFF9E9E));
                     return;
                 }
-                if (s != null && !s.preview && (s.state == SINKING || s.state == BITING)) e.setCancelled(true);
+                if (s != null && !s.preview && (s.state == SINKING || s.state == BITING)) { e.setCancelled(true); return; }
+                if (tank.full(p.getUniqueId())) {
+                    // owner 2026-10-20: a full tank blocks fishing
+                    e.setCancelled(true);
+                    p.sendActionBar(FishingGear.plain("통발 수조가 가득 찼어요 (" + tank.count(p.getUniqueId()) + "/" + tank.capacity() + "). 물고기를 팔거나 꺼낸 뒤 낚시해 주세요.", 0xFF9E9E));
+                }
             }
             case BITE, CAUGHT_FISH, LURED -> {
                 if (s != null && s.hook != null && s.hook.equals(e.getHook())) { e.setCancelled(true); e.setExpToDrop(0); }
@@ -219,8 +238,9 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         if (s != null) removeHook(s);
         limits.remove(e.getPlayer().getUniqueId());
         store.forget(e.getPlayer().getUniqueId());
+        tank.forget(e.getPlayer().getUniqueId());
     }
-    @EventHandler public void join(PlayerJoinEvent e) { store.load(e.getPlayer().getUniqueId(), null); }
+    @EventHandler public void join(PlayerJoinEvent e) { store.load(e.getPlayer().getUniqueId(), null); tank.refresh(e.getPlayer().getUniqueId(), null); }
     @EventHandler public void changedWorld(PlayerChangedWorldEvent e) {
         var s = sessions.get(e.getPlayer().getUniqueId());
         if (s != null && !s.preview) end(e.getPlayer(), s, "");
@@ -399,9 +419,12 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
             } else {
                 var f = s.fish;
                 fishId = f.id(); name = f.name(); grade = f.grade(); shape = f.shape(); cm = s.size;
-                items.add(gear.fish(f, cm));
-                if (!s.preview) { var r = store.record(p.getUniqueId(), f.id(), cm); fresh = r[0]; record = r[1]; }
-                else fresh = true;
+                // owner 2026-10-20: fish go into the 통발 tank, not the inventory
+                if (!s.preview) {
+                    var r = store.record(p.getUniqueId(), f.id(), cm); fresh = r[0]; record = r[1];
+                    tank.add(p.getUniqueId(), f.id(), cm);
+                    notes.add("통발 수조에 넣었어요 (" + tank.count(p.getUniqueId()) + "/" + tank.capacity() + ").");
+                } else fresh = true;
             }
             for (ItemStack it : merge(items)) rewards.add(new Reward(FishingGear.cut(AlchemyBridge.displayName(it)), it.getAmount(), preview(it)));
             if (rewards.size() > FishingProtocol.MAX_REWARDS) rewards.subList(FishingProtocol.MAX_REWARDS, rewards.size()).clear();
@@ -707,7 +730,7 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
             case "리로드" -> {
                 try {
                     var next = FishingConfig.load(plugin.getDataFolder());
-                    config = next; gear.config(next);
+                    config = next; gear.config(next); tank.capacity(next.tankCapacity);
                     sender.sendMessage("§a낚시 설정을 다시 읽었습니다. (물고기 " + next.fish.size() + "종)");
                 } catch (Exception e) { sender.sendMessage("§c낚시 설정 오류 (이전 설정 유지): " + e.getMessage()); }
             }

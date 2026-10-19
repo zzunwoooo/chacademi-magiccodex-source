@@ -101,6 +101,10 @@ commands:
     description: Reload fishing ymls, give gear or fish, reset a codex, preview the fishing panel.
     usage: /낚시관리 [리로드|장비지급|물고기지급|도감초기화|미리보기]
     permission: magiccodex.fishing.admin
+  물고기상점관리:
+    description: Fish shop (sells fish from the 통발 tank) — open, reload, prices, NPC, portrait.
+    usage: /물고기상점관리 [열기|리로드|가격|크기보정|조건보정|NPC|NPC삭제|초상|이름|가격표]
+    permission: magiccodex.fishshop.admin
   기숙사점수:
     description: School house standings and administrator point adjustments.
     aliases: [학교기증, 학교점수]
@@ -162,6 +166,8 @@ permissions:
   magiccodex.fishing.codex:
     default: true
   magiccodex.fishing.admin:
+    default: op
+  magiccodex.fishshop.admin:
     default: op
   magiccodex.nickname.admin:
     description: 다른 플레이어에게 /최초닉네임설정 열기
