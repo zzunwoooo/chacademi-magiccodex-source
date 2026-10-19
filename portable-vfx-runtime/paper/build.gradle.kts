@@ -1,6 +1,6 @@
 plugins { java }
 
-version = "3.2.1-expansion71.1-carrier.1"
+version = "3.2.1-integrated-20261019.1-mobdirect.1"
 
 // Optional local mirror for reproducible offline builds; never packaged in the plugin.
 providers.gradleProperty("localDependencyRepo").orNull?.let { localRepo ->

@@ -8,6 +8,8 @@ public final class SpellCatalog {
     private static final Pattern ID = Pattern.compile("[a-z0-9]+(?:_[a-z0-9]+)*");
     private static final Pattern EFFECT = Pattern.compile("claude:[a-z0-9_.-]+(?:/[a-z0-9_.-]+)+");
 
+    private static final List<String> MOB_DIRECT_IDS=List.of("fox_orbit","curving_plumes","crystal_orbit","venom_spit","smoke_veil","domain_stomp","seal_circle","seal_talismans","shield_slam","chain_arrow","mana_drain","soul_scythe","oblivion_orbs","bone_grasp","shadow_leap","binding_pull","fairy_dust","moon_wind","gale_wings","feather_storm","hunting_pounce","roar_leap","gravity_slam","tail_spikes");
+
     /** Only an explicit trigger starts a phase; no inferred timeline from effect names/demo data. */
     public record Phase(String trigger, String effect, String anchor, int delayTicks, int durationTicks) {
         public Phase {
@@ -23,7 +25,11 @@ public final class SpellCatalog {
 
     public record Spell(int number, String id, String name, String permission, String icon,
                         Double manaCost, Double cooldownSeconds, boolean reviewed,
-                        boolean enabled, List<String> aliases, List<Phase> phases) {
+                        boolean enabled, List<String> aliases, List<Phase> phases, List<String> mechanicEffects) {
+        public Spell(int number,String id,String name,String permission,String icon,Double manaCost,Double cooldownSeconds,boolean reviewed,boolean enabled,List<String> aliases,List<Phase> phases){this(number,id,name,permission,icon,manaCost,cooldownSeconds,reviewed,enabled,aliases,phases,List.of());}
+        /** Gameplay mechanics own these VFX; catalogue readiness still requires every exact system. */
+        public boolean mechanicVfx(){return !mechanicEffects.isEmpty();}
+
         public Spell {
             if (number < 1 || number > 10000 || id == null || !ID.matcher(id).matches())
                 throw new IllegalArgumentException("Invalid spell identity");
@@ -31,8 +37,12 @@ public final class SpellCatalog {
                 throw new IllegalArgumentException("Missing spell name/permission: " + id);
             icon = icon == null ? "" : icon;
             checkCost(manaCost, "mana"); checkCost(cooldownSeconds, "cooldown");
-            aliases = List.copyOf(aliases); phases = List.copyOf(phases);
-            if (enabled && (!reviewed || manaCost == null || cooldownSeconds == null || phases.isEmpty()))
+            aliases = List.copyOf(aliases); phases = List.copyOf(phases); mechanicEffects=List.copyOf(mechanicEffects);
+            if(!mechanicEffects.isEmpty()){
+                if(number<300||number>323||!MOB_DIRECT_IDS.get(number-300).equals(id)||!phases.isEmpty()||mechanicEffects.size()>16)throw new IllegalArgumentException("Invalid mechanic-owned VFX spell: "+id);
+                for(String effect:mechanicEffects)if(!EFFECT.matcher(effect).matches()||effect.contains(".."))throw new IllegalArgumentException("Invalid mechanic effect: "+effect);
+            }
+            if (enabled && (!reviewed || manaCost == null || cooldownSeconds == null || (phases.isEmpty()&&mechanicEffects.isEmpty())))
                 throw new IllegalArgumentException("Enabled spell needs review, known costs and explicit VFX phases: " + id);
         }
         private static void checkCost(Double value, String field) {
@@ -134,8 +144,16 @@ public final class SpellCatalog {
         }
         return new Spell(integer(s,"number",-1), id, string(s,"name"), string(s,"permission"),
                 optionalString(s,"icon",""), decimal(s,"mana-cost"), decimal(s,"cooldown-seconds"),
-                bool(s,"reviewed"), bool(s,"enabled"), aliases, phases);
+                bool(s,"reviewed"), bool(s,"enabled"), aliases, phases, mechanicEffects(s));
     }
+    private static List<String> mechanicEffects(Map<?,?> row){
+        boolean direct="mob-skill-vfx-direct".equals(row.get("preparation-status"));
+        List<String> effects=strings(row.get("required-effects"));
+        if(direct&&effects.isEmpty())throw new IllegalArgumentException("Mechanic-owned VFX needs explicit required-effects");
+        if(!direct&&!effects.isEmpty())throw new IllegalArgumentException("required-effects needs explicit mechanic-owned mode");
+        return effects;
+    }
+    public Set<String> mechanicEffects(){return spells.values().stream().filter(s->s.enabled()&&s.mechanicVfx()).flatMap(s->s.mechanicEffects().stream()).collect(java.util.stream.Collectors.toUnmodifiableSet());}
     private static Map<?, ?> map(Object value,String field) {
         if (!(value instanceof Map<?, ?> m)) throw new IllegalArgumentException(field + " must be a map");
         return m;

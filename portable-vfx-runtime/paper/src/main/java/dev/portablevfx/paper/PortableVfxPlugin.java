@@ -119,6 +119,8 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
      */
     public Boolean castAuthorizedSpell(Player player,String id) {
         Boolean admitted=catalogAdmission(player,id);if(!Boolean.TRUE.equals(admitted))return admitted;
+        // The existing mana transaction executes Mythic gameplay after admission; those mechanics play their own VFX.
+        if(spellCatalog.resolve(id).map(dev.portablevfx.paper.internal.spell.SpellCatalog.Spell::mechanicVfx).orElse(false))return Boolean.TRUE;
         Boolean result;
         try{result=catalogVisuals.cast(player,id);}
         catch(RuntimeException failure){return refuse(player,id,"dispatch exception "+failure.getClass().getSimpleName()+": "+failure.getMessage(),failure);}
@@ -306,7 +308,7 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
             }
             var visuals=new dev.portablevfx.paper.internal.spell.CatalogVisualEngine(service,bindings,readCastLimits());
             if(catalogVisuals!=null)catalogVisuals.clear();spellCatalog=next;catalogVisuals=visuals;
-            engine.catalogRequirements(bindings.values().stream().flatMap(p->p.phases().stream()).map(p->p.effect()).collect(java.util.stream.Collectors.toUnmodifiableSet()));
+            engine.catalogRequirements(java.util.stream.Stream.concat(bindings.values().stream().flatMap(p->p.phases().stream()).map(p->p.effect()),next.mechanicEffects().stream()).collect(java.util.stream.Collectors.toUnmodifiableSet()));
             getLogger().info("Spell catalogue loaded: "+next.entries().size()+" spell(s), "+bindings.size()+" visual binding(s), "+skipped.size()+" skipped.");
             return new CatalogReload(true,next.entries().size(),bindings.size(),skipped,"");
         } catch(Exception error) {

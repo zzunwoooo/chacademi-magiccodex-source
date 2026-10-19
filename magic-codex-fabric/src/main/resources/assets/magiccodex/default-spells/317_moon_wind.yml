@@ -2,7 +2,8 @@ id: moon_wind
 name: 반달 바람날
 category: wind
 description: 날개를 차듯 반달 모양 바람날 두 개를 앞으로 날려 보냅니다. 닿은 적은 밀려납니다.
-icon: ''
+# Existing icon reused from feather_fall; dedicated mob-skill artwork was not supplied.
+icon: magiccodex:textures/spells/novice/feather_step.png
 permission: magic.learned.moon_wind
 discovery:
   description: 페가수스를 처치하면 5% 확률로 습득합니다.

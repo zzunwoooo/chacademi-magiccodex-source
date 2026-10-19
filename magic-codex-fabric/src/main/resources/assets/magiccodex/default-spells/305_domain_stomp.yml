@@ -2,7 +2,8 @@ id: domain_stomp
 name: 영역 선포
 category: light
 description: 발굽으로 땅을 구르듯 마력을 내리찍어 주변 적을 위로 튕겨 올립니다.
-icon: ''
+# Existing icon reused from guardian_oath; dedicated mob-skill artwork was not supplied.
+icon: magiccodex:textures/spells/expansion_2/guardian_oath.png
 permission: magic.learned.domain_stomp
 discovery:
   description: 영록을 처치하면 5% 확률로 습득합니다.

@@ -2,7 +2,8 @@ id: binding_pull
 name: 끌어오기
 category: wind
 description: 바람의 고리로 대상을 감아 자신의 바로 앞으로 끌어옵니다. 끌려온 적은 잠시 느려집니다.
-icon: ''
+# Existing icon reused from feather_fall; dedicated mob-skill artwork was not supplied.
+icon: magiccodex:textures/spells/novice/feather_step.png
 permission: magic.learned.binding_pull
 discovery:
   description: 하늘뱀을 처치하면 5% 확률로 습득합니다.

@@ -8350,311 +8350,368 @@ spells:
     number: 300
     name: 여우불 공전
     permission: magic.learned.fox_orbit
-    icon: ''
+    icon: magiccodex:textures/spells/expansion_2/firefly_mark.png
     mana-cost: 30
     cooldown-seconds: 8
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:kitsunefox/hit_normal
+      - claude:kitsunefox/shot_normal
     mob-vfx-pack: kitsunefox
   curving_plumes:
     number: 301
     name: 곡선 불깃털
     permission: magic.learned.curving_plumes
-    icon: ''
+    icon: magiccodex:textures/spells/expansion_2/firebird_hunt.png
     mana-cost: 30
     cooldown-seconds: 8
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:phoenixfeather/hit_flame
+      - claude:phoenixfeather/shot_flame
     mob-vfx-pack: phoenixfeather
   crystal_orbit:
     number: 302
     name: 결정 공전탄
     permission: magic.learned.crystal_orbit
-    icon: ''
+    icon: magiccodex:textures/spells/expansion/frost_rupture.png
     mana-cost: 45
     cooldown-seconds: 14
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:glacialshards/hit_glacial
+      - claude:glacialshards/shot_glacial
     mob-vfx-pack: glacialshards
   venom_spit:
     number: 303
     name: 독 뱉기
     permission: magic.learned.venom_spit
-    icon: ''
+    icon: magiccodex:textures/spells/expansion_2/thorn_seeds.png
     mana-cost: 30
     cooldown-seconds: 10
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:basiliskspit/hit_wild
+      - claude:basiliskspit/shot_wild
     mob-vfx-pack: basiliskspit
   smoke_veil:
     number: 304
     name: 연막 은신
     permission: magic.learned.smoke_veil
-    icon: ''
+    icon: magiccodex:textures/spells/novice_extra/faint_veil.png
     mana-cost: 35
     cooldown-seconds: 20
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:smokebomb/smoke
     mob-vfx-pack: smokebomb
   domain_stomp:
     number: 305
     name: 영역 선포
     permission: magic.learned.domain_stomp
-    icon: ''
+    icon: magiccodex:textures/spells/expansion_2/guardian_oath.png
     mana-cost: 40
     cooldown-seconds: 14
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:domainseal/domain_heavenly
     mob-vfx-pack: domainseal
   seal_circle:
     number: 306
     name: 봉인진
     permission: magic.learned.seal_circle
-    icon: ''
+    icon: magiccodex:textures/spells/intermediate/sealing_thread.png
     mana-cost: 45
     cooldown-seconds: 16
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:sealcircle/seal
     mob-vfx-pack: sealcircle
   seal_talismans:
     number: 307
     name: 봉인 부적
     permission: magic.learned.seal_talismans
-    icon: ''
+    icon: magiccodex:textures/spells/expansion/exorcism_flash.png
     mana-cost: 25
     cooldown-seconds: 7
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:sealtalisman/hit_seal
+      - claude:sealtalisman/shot_seal
     mob-vfx-pack: sealtalisman
   shield_slam:
     number: 308
     name: 방패 내려찍기
     permission: magic.learned.shield_slam
-    icon: ''
+    icon: magiccodex:textures/spells/intermediate/protective_ward.png
     mana-cost: 30
     cooldown-seconds: 10
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:sealshield/shield
     mob-vfx-pack: sealshield
   chain_arrow:
     number: 309
     name: 사슬 화살
     permission: magic.learned.chain_arrow
-    icon: ''
+    icon: magiccodex:textures/spells/expansion_2/guiding_fletching.png
     mana-cost: 20
     cooldown-seconds: 6
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:chainarrow/hit_chain
+      - claude:chainarrow/shot_chain
     mob-vfx-pack: chainarrow
   mana_drain:
     number: 310
     name: 마나 흡수
     permission: magic.learned.mana_drain
-    icon: ''
+    icon: magiccodex:textures/spells/expansion_2/mana_conduit.png
     mana-cost: 40
     cooldown-seconds: 16
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:phantomdrain/drain_ender
     mob-vfx-pack: phantomdrain
   soul_scythe:
     number: 311
     name: 영혼 낫
     permission: magic.learned.soul_scythe
-    icon: ''
+    icon: magiccodex:textures/spells/expansion/black_harvest.png
     mana-cost: 25
     cooldown-seconds: 7
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:phantomscythe/reap_ender
     mob-vfx-pack: phantomscythe
   oblivion_orbs:
     number: 312
     name: 망각의 탄환
     permission: magic.learned.oblivion_orbs
-    icon: ''
+    icon: magiccodex:textures/spells/expansion_2/abyssal_pressure.png
     mana-cost: 30
     cooldown-seconds: 9
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:skelorb/hit
+      - claude:skelorb/shot
     mob-vfx-pack: skelorb
   bone_grasp:
     number: 313
     name: 뼈의 손아귀
     permission: magic.learned.bone_grasp
-    icon: ''
+    icon: magiccodex:textures/spells/novice_extra/shadow_bind.png
     mana-cost: 40
     cooldown-seconds: 16
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:bonegrasp/grasp
     mob-vfx-pack: bonegrasp
   shadow_leap:
     number: 314
     name: 그림자 도약
     permission: magic.learned.shadow_leap
-    icon: ''
+    icon: magiccodex:textures/spells/novice_extra/light_leap.png
     mana-cost: 40
     cooldown-seconds: 14
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:specialkitsune/in_normal
+      - claude:specialkitsune/out_normal
     mob-vfx-pack: specialkitsune
   binding_pull:
     number: 315
     name: 끌어오기
     permission: magic.learned.binding_pull
-    icon: ''
+    icon: magiccodex:textures/spells/novice/feather_step.png
     mana-cost: 45
     cooldown-seconds: 18
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:specialserpent/in_jade
+      - claude:specialserpent/mark_jade
     mob-vfx-pack: specialserpent
   fairy_dust:
     number: 316
     name: 요정 가루
     permission: magic.learned.fairy_dust
-    icon: ''
+    icon: magiccodex:textures/spells/expansion_2/night_lullaby.png
     mana-cost: 40
     cooldown-seconds: 20
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:fairydust/dust_flower
     mob-vfx-pack: fairydust
   moon_wind:
     number: 317
     name: 반달 바람날
     permission: magic.learned.moon_wind
-    icon: ''
+    icon: magiccodex:textures/spells/novice/feather_step.png
     mana-cost: 25
     cooldown-seconds: 7
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:pegasuscrescent/moon
     mob-vfx-pack: pegasuscrescent
   gale_wings:
     number: 318
     name: 돌풍 날갯짓
     permission: magic.learned.gale_wings
-    icon: ''
+    icon: magiccodex:textures/spells/expansion/gale_dash.png
     mana-cost: 40
     cooldown-seconds: 16
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:galewings/gale
     mob-vfx-pack: galewings
   feather_storm:
     number: 319
     name: 깃털 폭풍
     permission: magic.learned.feather_storm
-    icon: ''
+    icon: magiccodex:textures/spells/expansion_2/thorn_seeds.png
     mana-cost: 35
     cooldown-seconds: 12
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:featherstorm/fstorm_common
     mob-vfx-pack: featherstorm
   hunting_pounce:
     number: 320
     name: 사냥 도약
     permission: magic.learned.hunting_pounce
-    icon: ''
+    icon: magiccodex:textures/spells/novice_extra/light_leap.png
     mana-cost: 35
     cooldown-seconds: 14
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:sabertoothpounce/pounce_arctic
     mob-vfx-pack: sabertoothpounce
   roar_leap:
     number: 321
     name: 포효 도약
     permission: magic.learned.roar_leap
-    icon: ''
+    icon: magiccodex:textures/spells/expansion_2/bell_of_fear.png
     mana-cost: 40
     cooldown-seconds: 16
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:manticoreroar/roar_aether
     mob-vfx-pack: manticoreroar
   gravity_slam:
     number: 322
     name: 중력 강타
     permission: magic.learned.gravity_slam
-    icon: ''
+    icon: magiccodex:textures/spells/expansion/weightless_zone.png
     mana-cost: 45
     cooldown-seconds: 16
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:gravityslam/gravity_arcane
     mob-vfx-pack: gravityslam
   tail_spikes:
     number: 323
     name: 꼬리 가시
     permission: magic.learned.tail_spikes
-    icon: ''
+    icon: magiccodex:textures/spells/reviewed_20261016/pressure_lance.png
     mana-cost: 35
     cooldown-seconds: 12
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
     preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:wyvernspikes/spikes_green
     mob-vfx-pack: wyvernspikes

@@ -2,7 +2,8 @@ id: soul_scythe
 name: 영혼 낫
 category: dark
 description: 영혼의 낫을 크게 휘둘러 앞쪽의 적을 베어 냅니다.
-icon: ''
+# Existing icon reused from black_harvest; dedicated mob-skill artwork was not supplied.
+icon: magiccodex:textures/spells/expansion/black_harvest.png
 permission: magic.learned.soul_scythe
 discovery:
   description: 팬텀을 처치하면 5% 확률로 습득합니다.

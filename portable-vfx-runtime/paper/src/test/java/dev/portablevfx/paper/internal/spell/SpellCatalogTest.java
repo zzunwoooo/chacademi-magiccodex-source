@@ -75,4 +75,22 @@ class SpellCatalogTest {
         assertThrows(IllegalArgumentException.class,()->new SpellCatalog.Phase("cast","claude:stormcrown/projO","caster",0,1));
         assertThrows(IllegalArgumentException.class,()->new SpellCatalog.Phase("cast","claude:x/../bad","caster",0,1));
     }
+
+    @Test void mechanicOwnedMobEffectsRemainExplicitAndParticipateInReadiness(){
+        var refs=List.of("claude:kitsunefox/shot_normal","claude:kitsunefox/hit_normal");
+        var mob=new SpellCatalog.Spell(300,"fox_orbit","여우불 공전","magic.learned.fox_orbit","",30d,8d,true,true,List.of(),List.of(),refs);
+        assertTrue(mob.mechanicVfx());assertTrue(mob.phases().isEmpty());assertEquals(Set.copyOf(refs),new SpellCatalog(List.of(mob)).mechanicEffects());
+        var off=new SpellCatalog.Spell(300,"fox_orbit","여우불 공전","magic.learned.fox_orbit","",30d,8d,true,false,List.of(),List.of(),refs);
+        assertTrue(new SpellCatalog(List.of(off)).mechanicEffects().isEmpty());
+        assertThrows(IllegalArgumentException.class,()->new SpellCatalog.Spell(299,"fox_orbit","x","permission","",30d,8d,true,true,List.of(),List.of(),refs));
+        assertThrows(IllegalArgumentException.class,()->new SpellCatalog.Spell(300,"other","x","permission","",30d,8d,true,true,List.of(),List.of(),refs));
+        assertThrows(IllegalArgumentException.class,()->new SpellCatalog.Spell(300,"fox_orbit","x","permission","",null,8d,true,true,List.of(),List.of(),refs));
+        assertThrows(IllegalArgumentException.class,()->new SpellCatalog.Spell(300,"fox_orbit","x","permission","",30d,8d,false,true,List.of(),List.of(),refs));
+    }
+    @Test void mechanicModeCannotSilentlyEnableEmptyOrUnboundSpells(){
+        var row=new HashMap<String,Object>();row.put("number",300);row.put("name","여우불 공전");row.put("permission","magic.learned.fox_orbit");row.put("mana-cost",30);row.put("cooldown-seconds",8);row.put("reviewed",true);row.put("enabled",true);row.put("preparation-status","mob-skill-vfx-direct");row.put("phases",List.of());
+        assertThrows(IllegalArgumentException.class,()->SpellCatalog.fromMap(Map.of("schema-version",1,"spells",Map.of("fox_orbit",row))));
+        row.put("required-effects",List.of("claude:kitsunefox/shot_normal","claude:kitsunefox/hit_normal"));assertTrue(SpellCatalog.fromMap(Map.of("schema-version",1,"spells",Map.of("fox_orbit",row))).resolve("fox_orbit").orElseThrow().mechanicVfx());
+        row.remove("preparation-status");assertThrows(IllegalArgumentException.class,()->SpellCatalog.fromMap(Map.of("schema-version",1,"spells",Map.of("fox_orbit",row))));
+    }
 }

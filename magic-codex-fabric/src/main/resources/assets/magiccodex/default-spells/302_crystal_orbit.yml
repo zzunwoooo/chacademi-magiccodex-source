@@ -2,7 +2,8 @@ id: crystal_orbit
 name: 결정 공전탄
 category: water
 description: 얼음 결정 여덟 개를 몸 둘레에 띄워 돌리다가 사방으로 쏘아 보냅니다. 맞은 적은 잠시 느려집니다.
-icon: ''
+# Existing icon reused from frost_rupture; dedicated mob-skill artwork was not supplied.
+icon: magiccodex:textures/spells/expansion/frost_rupture.png
 permission: magic.learned.crystal_orbit
 discovery:
   description: 빙핵의 수호자를 처치하면 5% 확률로 습득합니다.

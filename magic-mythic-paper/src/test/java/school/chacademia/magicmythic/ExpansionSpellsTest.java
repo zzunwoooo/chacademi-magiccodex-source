@@ -20,7 +20,7 @@ class ExpansionSpellsTest {
         "chaguard", Set.of("lethal", "reflect", "block", "deflect", "thorns", "anchor", "counter", "ward", "invuln", "homing"),
         "chamark", Set.of("ash_brand", "wedge", "prison", "swords", "root"),
         "chaally", Set.of("quench", "cleanse", "share", "potion", "heal", "buff", "feed", "comfort", "dawn", "oath"));
-    static final Set<String> UNTYPED = Set.of("chahit", "chabolt", "chazone", "chachannel", "chanote", "chaselfpotion", "chaselfvelocity");
+    static final Set<String> UNTYPED = Set.of("chahit", "chabolt", "chazone", "chachannel", "chanote", "chaselfpotion", "chaselfvelocity", "chamobshot", "chatelegraph");
 
     @Test void everyGeneratedLineUsesAnImplementedMechanic() throws Exception {
         var yaml = YamlConfiguration.loadConfiguration(Path.of("mythicmobs/Skills/chacademi_spells.yml").toFile());
@@ -29,7 +29,7 @@ class ExpansionSpellsTest {
         for (String skill : yaml.getKeys(false)) {
             for (String l : yaml.getStringList(skill + ".Skills")) {
                 Matcher m = line.matcher(l);
-                if (!m.find()) { assertTrue(l.startsWith("delay "), skill + ": " + l); continue; }
+                if (!m.find()) { assertTrue(l.startsWith("delay ") || l.startsWith("leap{"), skill + ": " + l); continue; }
                 String mech = m.group(1);
                 var params = new HashMap<String, String>();
                 for (String kv : m.group(2).split(";")) if (kv.contains("=")) params.put(kv.split("=", 2)[0], kv.split("=", 2)[1]);

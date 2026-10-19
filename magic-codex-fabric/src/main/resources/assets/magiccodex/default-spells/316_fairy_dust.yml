@@ -2,7 +2,8 @@ id: fairy_dust
 name: 요정 가루
 category: earth
 description: 반짝이는 요정 가루를 흩뿌립니다. 주변 적은 2초 동안 잠듭니다.
-icon: ''
+# Existing icon reused from night_lullaby; dedicated mob-skill artwork was not supplied.
+icon: magiccodex:textures/spells/expansion_2/night_lullaby.png
 permission: magic.learned.fairy_dust
 discovery:
   description: 요정을 처치하면 5% 확률로 습득합니다.
