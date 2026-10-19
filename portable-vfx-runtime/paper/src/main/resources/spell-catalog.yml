@@ -3486,7 +3486,7 @@ spells:
     number: 101
     name: 대지 성형
     permission: magic.learned.earth_shaping
-    icon: magiccodex:textures/spells/intermediate/earth_shaping.png
+    icon: magiccodex:textures/spells/reviewed_20261020/earth_shaping.png
     mana-cost: 120
     cooldown-seconds: 25
     reviewed: true
@@ -3979,7 +3979,7 @@ spells:
     number: 114
     name: 이끼 입히기
     permission: magic.learned.moss_coating
-    icon: magiccodex:textures/spells/expansion_2/moss_coating.png
+    icon: magiccodex:textures/spells/reviewed_20261020/moss_coating.png
     mana-cost: 12
     cooldown-seconds: 5
     reviewed: true
@@ -4031,7 +4031,7 @@ spells:
     number: 116
     name: 돌 고르기
     permission: magic.learned.flint_sorting
-    icon: magiccodex:textures/spells/expansion_2/flint_sorting.png
+    icon: magiccodex:textures/spells/reviewed_20261020/flint_sorting.png
     mana-cost: 35
     cooldown-seconds: 5
     reviewed: true
@@ -4281,7 +4281,7 @@ spells:
     number: 122
     name: 동면의 씨앗
     permission: magic.learned.dormant_seed
-    icon: magiccodex:textures/spells/expansion_2/dormant_seed.png
+    icon: magiccodex:textures/spells/reviewed_20261020/dormant_seed.png
     mana-cost: 15
     cooldown-seconds: 3
     reviewed: true
@@ -4351,7 +4351,7 @@ spells:
     number: 124
     name: 자재 치환
     permission: magic.learned.material_exchange
-    icon: magiccodex:textures/spells/expansion_2/material_exchange.png
+    icon: magiccodex:textures/spells/reviewed_20261020/material_exchange.png
     mana-cost: 100
     cooldown-seconds: 60
     reviewed: true
@@ -4386,7 +4386,7 @@ spells:
     number: 125
     name: 기억하는 밭
     permission: magic.learned.remembering_field
-    icon: magiccodex:textures/spells/expansion_2/remembering_field.png
+    icon: magiccodex:textures/spells/reviewed_20261020/remembering_field.png
     mana-cost: 100
     cooldown-seconds: 30
     reviewed: true

@@ -785,7 +785,7 @@ spells:
   earth_shaping:
     name: "대지 성형"
     permission: "magic.learned.earth_shaping"
-    icon: "magiccodex:textures/spells/intermediate/earth_shaping.png"
+    icon: magiccodex:textures/spells/reviewed_20261020/earth_shaping.png
     category: "earth"
     condition-text: "흙, 잔디, 거친 흙 등 흙 계열 블록을 누적 100개 설치합니다."
     requirements:
@@ -950,7 +950,7 @@ spells:
   remembering_field:
     name: "기억하는 밭"
     permission: "magic.learned.remembering_field"
-    icon: "magiccodex:textures/spells/expansion_2/remembering_field.png"
+    icon: magiccodex:textures/spells/reviewed_20261020/remembering_field.png
     category: "earth"
     condition-text: "작물을 누적 300개 수확합니다."
     requirements:

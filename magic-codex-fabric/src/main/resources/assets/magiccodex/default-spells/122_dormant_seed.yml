@@ -2,7 +2,7 @@ id: dormant_seed
 name: 동면의 씨앗
 category: earth
 description: 전방 일렬 5칸에서 다 자란 작물만 수확합니다. 수확 후 다시 심지 않습니다.
-icon: magiccodex:textures/spells/expansion_2/dormant_seed.png
+icon: magiccodex:textures/spells/reviewed_20261020/dormant_seed.png
 permission: magic.learned.dormant_seed
 discovery:
   description: 획득 조건 미정

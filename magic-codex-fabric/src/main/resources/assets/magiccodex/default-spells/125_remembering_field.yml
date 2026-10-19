@@ -2,7 +2,7 @@ id: remembering_field
 name: 기억하는 밭
 category: earth
 description: 전방 일렬 5칸의 작물을 즉시 성숙시킵니다.
-icon: magiccodex:textures/spells/expansion_2/remembering_field.png
+icon: magiccodex:textures/spells/reviewed_20261020/remembering_field.png
 permission: magic.learned.remembering_field
 discovery:
   description: 작물을 누적 300개 수확합니다.

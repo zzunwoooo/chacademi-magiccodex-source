@@ -71,6 +71,19 @@ public final class SpellYamlLoader {
     }
     static final Set<String> REVIEWED_ICON_IDS = Set.of("pressure_lance","healing_rain","bubble_aria","pressure_hammer","waterspout","concrete_curing","ripple_guard","bouncing_droplet");
 
+    // Artwork assignments only: no catalogue registration, permission, cast, or enablement changes.
+    static final Set<String> PREPARED_20261020_ICON_IDS = Set.of("earth_shaping","moss_coating","flint_sorting","dormant_seed","material_exchange","remembering_field","afterlife_gate","barrelroll_stitch","horizon_trim","folding_broom_wings","landing_airbrake","wingmate_towline","potion_effect_decant","twin_cup_draught","wandering_alembic","heartfold_wrapping","conversation_ripples","hushed_soles","thorn_manners","cinder_skipring","droplet_relay","folding_tideplane");
+
+    // Explicit owner-checked replacements only; match the previous resource before overriding.
+    static final Map<String,String> REPLACED_ICON_PREVIOUS_PATHS = Map.ofEntries(
+            Map.entry("earth_shaping", "magiccodex:textures/spells/intermediate/earth_shaping.png"),
+            Map.entry("moss_coating", "magiccodex:textures/spells/expansion_2/moss_coating.png"),
+            Map.entry("flint_sorting", "magiccodex:textures/spells/expansion_2/flint_sorting.png"),
+            Map.entry("dormant_seed", "magiccodex:textures/spells/expansion_2/dormant_seed.png"),
+            Map.entry("material_exchange", "magiccodex:textures/spells/expansion_2/material_exchange.png"),
+            Map.entry("remembering_field", "magiccodex:textures/spells/expansion_2/remembering_field.png"),
+            Map.entry("afterlife_gate", "magiccodex:textures/spells/advanced/afterlife_gate.png"));
+
     public Spell parse(String source) {
         LoaderOptions options = new LoaderOptions();
         options.setAllowDuplicateKeys(false);
@@ -90,6 +103,13 @@ public final class SpellYamlLoader {
         // Preserve user-configured icons; fill only the eight reviewed legacy blank assignments.
         if (icon.isBlank() && REVIEWED_ICON_IDS.contains(id))
             icon = "magiccodex:textures/spells/reviewed_20261016/" + id + ".png";
+        // Fill only blank assignments for these exact prepared IDs; preserve custom icons.
+        if (icon.isBlank() && PREPARED_20261020_ICON_IDS.contains(id))
+            icon = "magiccodex:textures/spells/reviewed_20261020/" + id + ".png";
+        // Repoint the seven confirmed old defaults; keep unrelated/custom icon paths.
+        if (REPLACED_ICON_PREVIOUS_PATHS.containsKey(id)
+                && (icon.isBlank() || REPLACED_ICON_PREVIOUS_PATHS.get(id).equals(icon)))
+            icon = "magiccodex:textures/spells/reviewed_20261020/" + id + ".png";
         if (!icon.isBlank() && (!icon.matches("[a-z0-9_.-]+:textures/[a-z0-9_./-]+\\.png") || icon.contains("..")))
             throw new IllegalArgumentException("icon은 namespace:textures/.../image.png 형식이어야 합니다.");
         String permission = string(root, "permission", null, 100);
