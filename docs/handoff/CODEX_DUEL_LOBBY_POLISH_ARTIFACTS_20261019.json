@@ -1,65 +1,23 @@
 {
-  "status": "PERSONAL_DEPLOYED_TEMP_LAUNCHER_PREPARED",
-  "baseline": "c5a2ccf7d8f0005e6fd8df7ce3b17417e842a454",
-  "feature": "289c6f9889884919a765d3e254009db508231191",
-  "sourceCommit": "75f7b8b13cbc6bf124d28f4c3c843e25cf4e8ea4",
-  "branch": "codex/operating-duel-lobby-polish-20261019",
-  "build": {
-    "ui": {
-      "tests": {
-        "tests": 381,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0
-      },
-      "name": "magic-codex-ui-0.40.1-integrated-20261018.1-statushud.1-lobbypolish.1+mc1.21.4.jar",
-      "size": 200130760,
-      "sha256": "53115bcfae26edb072f70158e338227f2bc4b46a7db20dd7db3e71390d1cdaaf",
-      "version": "0.40.1-integrated-20261018.1-statushud.1-lobbypolish.1+mc1.21.4",
-      "preservedAssetEntries": 1550
-    },
-    "serverUnchanged": {
-      "installedJarHashesVerified": 6,
-      "processesUnchanged": 4,
-      "restarted": false
-    },
-    "previews": {
-      "renderer": "Java2D synthetic sample data",
-      "count": 21,
-      "wideDuelAndKyudichiVisuallyInspected": true,
-      "gameCaptured": false
-    }
-  },
-  "personal": {
-    "otherModsPreserved": 14,
-    "gameForcedClosed": false,
-    "version": "0.40.1-integrated-20261018.1-statushud.1-lobbypolish.1+mc1.21.4",
-    "backupCreated": false,
-    "optionsPreserved": true,
-    "status": "INSTALLED_VERIFIED",
-    "sha256": "53115bcfae26edb072f70158e338227f2bc4b46a7db20dd7db3e71390d1cdaaf"
-  },
-  "temporaryLauncher": {
-    "status": "BUILT_VERIFIED_PUBLICATION_PENDING_APPROVAL",
-    "assetCount": 8,
-    "commit": "ae12305fd47284f1e5d3e52c6414dc763e5b11ae",
-    "tag": "v0.1.14",
-    "reason": "Explicit approval required for public zzunwoooo/chacademi-launcher release and main feed update"
-  },
-  "launcherTests": {
-    "tests": 10,
-    "pass": 10,
-    "fail": 0,
-    "skipped": 0
-  },
-  "publicationAttempted": false,
-  "mainFeedChanged": false,
-  "serverRedeployed": false,
-  "serverRestarted": false,
-  "backupCreated": false,
-  "mapsCopied": false,
-  "gameForcedClosed": false,
-  "gameCaptured": false,
-  "newHudDesignPngIncluded": false,
-  "statusIconRecolorIncluded": false
+    "status":  "LATEST_HUD_V4_AND_DUEL_LOBBY_BUILD_VERIFIED",
+    "version":  "0.40.1-integrated-20261018.1-statushud.3-lobbypolish.1+mc1.21.4",
+    "artifact":  "magic-codex-ui-0.40.1-integrated-20261018.1-statushud.3-lobbypolish.1+mc1.21.4.jar",
+    "sha256":  "56d65a4b8ee9c800d4819229d29e8398095892b73479bb1f1bc57c73721761a0",
+    "clientTests":  {
+                        "tests":  384,
+                        "failures":  0,
+                        "errors":  0,
+                        "skipped":  0
+                    },
+    "new2048HudAnd16Icons":  true,
+    "position7163262Exact":  true,
+    "lobby289c6f9Exact":  true,
+    "approvedAssetChanges":  25,
+    "unrelatedAssetsPreserved":  1528,
+    "geometryCases":  24,
+    "temporaryLauncherVersion":  "0.1.14",
+    "temporaryCandidateCommit":  "994472982e24f58f12bf339465cb4553e8d6707f",
+    "temporaryAssets":  8,
+    "publicationAttempted":  false,
+    "mainFeedChanged":  false
 }

@@ -1,51 +1,17 @@
-# Duel lobby polish integration — 2026-10-19
+# Latest HUD v4 and duel lobby integration - 2026-10-19
 
-Status: PERSONAL CLIENT DEPLOYED AND VERIFIED; TEMPORARY LAUNCHER v0.1.14 BUILT/VERIFIED, NOT PUBLISHED.
+Supersedes the earlier intermediate lobby-only report. Final build includes the complete HUD chain 37f8643 -> bd6db65 -> 14c2606 -> 7163262 and duel lobby 289c6f9. Both feature tips are ancestors of this integration branch.
 
-## Source and scope
+The native 2048x84 gold HUD frame, clipped gauges, 16 new 256px status icons and timer/text rendering are included. Name/divider/damage coordinates remain the exact latest 7163262 values (-70/-12/-24) in their intended 2048px layout. No 1237px adaptation remains. HUD Java matches 7163262 and lobby Java matches 289c6f9.
 
-Read AGENTS.md and the latest 2026-10-19 section of CLAUDE_KYUDICHI_20261017.md before integration. Feature 289c6f9 is exactly one commit on deployed status HUD baseline c5a2ccf. Merged on codex/operating-duel-lobby-polish-20261019. Built code: 75f7b8b13cbc6bf124d28f4c3c843e25cf4e8ea4.
+Client version: 0.40.1-integrated-20261018.1-statushud.3-lobbypolish.1+mc1.21.4
 
-Changed production Java: kui/LobbyView.java, KyudichiLobbyScreen.java, PartyScreen.java, KyudichiCanvas.java and the supporting kui/Canvas.java documentation. Samples.java and handoff updated upstream. No server, protocol or texture change. Existing status HUD and all operating patches retained. Separate new HUD design PNGs and status icon recolors were not included.
+SHA-256: 56d65a4b8ee9c800d4819229d29e8398095892b73479bb1f1bc57c73721761a0
 
-Behavior: use Minecraft skin face plus hat instead of portrait illustration; align left controls and right information to wide-screen edges while lists stay centered; smaller one-line 1:1 title and 70% spell-settings block; click special-key cap to rebind vanilla swap-hands (ESC cancels, UI/spell conflicts rejected); party window opens above lobby and returns to it when closed.
+384 client tests passed, including wide-screen lobby hit targets and actual PNG/font geometry at six GUI widths and four device scales. Actual gauge pixels remain clear; decorative frame/stroke contact is recorded in the local geometry audit. Runtime remapJar/build passed; optional source archives were excluded under host disk constraints. All 25 approved asset changes match upstream and 1528 unrelated assets are preserved.
 
-## Verification
+Temporary launcher v0.1.14: candidate 994472982e24f58f12bf339465cb4553e8d6707f, eight files prepared; launcher lint, 10 tests, ASAR and updater/blockmap checks passed. Only the UI module changed; 84 other modules retained. No public release or main feed update attempted. Publishing v0.1.14 to zzunwoooo/chacademi-launcher and updating its main feed remains a separate approval scope.
 
-- Client test/build/remapJar succeeded. 381 tests, zero failures/errors/skips. Five new regression tests cover wide-screen hit targets, 70% special-key hit bounds, duel exclusion, centered ranking rows/right search and balanced transforms across modes/tabs/aspect ratios.
-- All 1550 assets entries in the existing client are byte-identical; no resources were replaced or added.
-- Existing Java2D renderer generated 21 synthetic sample previews. Wide duel and Kyudichi images visually inspected for clipping/overlap. This was not a live Minecraft capture; skin/broom sample drawings are stand-ins.
-- Initial packaging failed with host disk free=0. Reclaimed only this work's disposable build intermediates, auxiliary source JARs and redundant v0.1.13 packaging output. Canonical public release files, runtime JARs, source, tests and evidence retained. Successful retry verified.
+No server source changes or deployment were needed. Local personal-installation evidence is reported separately and is not included in this repository summary. No private installation paths, settings or service process data are included.
 
-## Personal deployment
-
-Version: 0.40.1-integrated-20261018.1-statushud.1-lobbypolish.1+mc1.21.4
-
-JAR: magic-codex-ui-0.40.1-integrated-20261018.1-statushud.1-lobbypolish.1+mc1.21.4.jar
-
-SHA-256: 53115bcfae26edb072f70158e338227f2bc4b46a7db20dd7db3e71390d1cdaaf
-
-Replaced one personal MagicCodex UI JAR, verified installed hash. Other 14 mods and options.txt preserved. No backup, game force-close, game launch, live-game capture or maps copied. If Minecraft was already running, the new mod takes effect on the user's next game launch.
-
-## Servers
-
-No server JARs copied and no restart issued. Six previously deployed Bridge/Mythic JAR hashes match and all four service PIDs/alive states are unchanged before/after this client task. Existing server build/tests were not rerun because no server code changed.
-
-## Temporary launcher
-
-v0.1.14 prepared from current public v0.1.13/main c940587. Candidate commit ae12305fd47284f1e5d3e52c6414dc763e5b11ae; eight release assets with SHA-256 checksums prepared. Only MagicCodex UI distribution module changed; 84 other modules and resource links preserved. Launcher lint, 10 tests, packaged ASAR byte checks, updater SHA512/size and NSIS/blockmap checks passed. Packaging used normal compression to reduce transient disk/CPU cost; runtime and manifests unchanged by that build option.
-
-No release uploaded or published, no main feed changed. Public remains v0.1.13. Publishing the new v0.1.14 assets to zzunwoooo/chacademi-launcher and updating its main distribution/payload/package feed requires approval for that new release; earlier approval explicitly covered v0.1.13. No new publication attempt or automatic-review rejection occurred in this task.
-
-## Manual acceptance
-
-- `/큐디치미리보기 로비` and `/큐디치미리보기 로비1대1`: check one-line title, equal slot sizes, screen-edge alignment at wide aspect ratio.
-- In actual lobby `/큐디치`: use invite or configured party key (default P); party overlays lobby; ESC/close returns to the same lobby.
-- In Kyudichi mode click special-key cap: unused keyboard key binds swap-hands; ESC cancels; UI/magic-bound keys are refused. Verify after reopen/relaunch. This changes the user's chosen key only when they perform that action; deployment did not overwrite options.
-- Check portrait-bearing player now uses skin face and hat in lobby. Check status HUD and existing keys still work.
-
-Live game/multiplayer interaction was not performed. Permission/key/party server interactions are code-reviewed and compiled; synthetic geometry tests do not replace those manual checks.
-
-## Evidence
-
-A repository-safe verification summary is in CODEX_DUEL_LOBBY_POLISH_ARTIFACTS_20261019.json. Detailed host paths and service process metadata are retained privately on the deployment host and omitted from this repository.
+Manual checks: reopen Minecraft normally; use /대상체력바미리보기 일반, 이로치, 보스, 플레이어 and /큐디치미리보기 로비, 로비1대1. Verify new HUD appearance, special-key rebinding and party overlay/return. Live gameplay was not captured.
