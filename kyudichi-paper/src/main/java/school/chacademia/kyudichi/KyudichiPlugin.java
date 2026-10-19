@@ -106,7 +106,17 @@ public final class KyudichiPlugin extends JavaPlugin {
     /** config-version 1 → 2 (owner 2026-10-17): much faster balls, quaffle gravity. Only these keys change; the rest is kept. */
     private void migrateConfig() {
         var c = getConfig();
-        if (c.getInt("config-version", 1) >= 2) return;
+        int version = c.getInt("config-version", 1);
+        if (version >= 3) return;
+        if (version >= 2) {
+            // 3 (owner 2026-10-19): balls twice as big, longer F reach — only when the old defaults are still there
+            if (c.getDouble("models.scale", 1.0) == 1.0) c.set("models.scale", 2.0);
+            if (c.getDouble("key.range", 3.0) == 3.0) c.set("key.range", 5.0);
+            c.set("config-version", 3);
+            saveConfig();
+            getLogger().info("config.yml 을 버전 3으로 바꿨어요 (공 크기 2배·F 범위 5)");
+            return;
+        }
         Object[][] v2 = {
                 {"quaffle.throw-speed", 44.0}, {"quaffle.gravity", 16.0},
                 {"bludger.wander-speed", 16.0}, {"bludger.chase-speed", 30.0}, {"bludger.steer", 6.0}, {"bludger.hit-radius", 1.5},
@@ -115,9 +125,10 @@ public final class KyudichiPlugin extends JavaPlugin {
                 {"snitch.speed", 30.0}, {"snitch.flee-radius", 26}, {"snitch.catch-range", 1.6},
                 {"snitch.pause-every-seconds", java.util.List.of(10, 18)}, {"snitch.pause-seconds", 0.6}};
         for (Object[] kv : v2) c.set((String) kv[0], kv[1]);
-        c.set("config-version", 2);
+        c.set("models.scale", 2.0); c.set("key.range", 5.0);
+        c.set("config-version", 3);
         saveConfig();
-        getLogger().info("config.yml 을 버전 2로 바꿨어요 (공 속도·퀘이플 중력)");
+        getLogger().info("config.yml 을 버전 3으로 바꿨어요 (공 속도·퀘이플 중력·공 크기 2배·F 범위 5)");
     }
     RatingStore store() { return store; }
     Matches matches() { return matches; }

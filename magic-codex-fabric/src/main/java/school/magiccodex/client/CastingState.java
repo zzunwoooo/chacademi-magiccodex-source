@@ -16,6 +16,10 @@ public final class CastingState {
     private final Set<Integer> captured = new HashSet<>();
     private final Map<String,Long> pending=new HashMap<>();
     private boolean enabled;
+    /** Riding a broom (motion mod). The flight key then means "get off": no local cooldown or pending wait (owner 2026-10-19). */
+    private java.util.function.BooleanSupplier riding = () -> false;
+    public void ridingCheck(java.util.function.BooleanSupplier value) { riding = value == null ? () -> false : value; }
+    private boolean dismount(String id) { return "flight".equals(id) && riding.getAsBoolean(); }
 
     public boolean enabled() { return enabled; }
     public void setBindings(SpellKeySettings value) { bindings = value.orderedSlots(); }
@@ -82,12 +86,14 @@ public final class CastingState {
         if(!s.permissionKnown()) return result(Kind.UNKNOWN,id);
         if(!s.discovered()) return result(Kind.LOCKED,id);
         if(s.command().isBlank())return result(Kind.NO_COMMAND,id);
+        if(dismount(id)) return null; // the server ends the flight without mana or cooldown
         if(managed&&pending.getOrDefault(id,0L)>now)return result(Kind.PENDING,id);
         if(remaining(id,now)>0) return result(Kind.COOLDOWN,id);
         return null;
     }
     private Result send(String id,long now,boolean managed,Consumer<Spell> send) {
         Spell s=spell(id);
+        if(dismount(id)) { send.accept(s); return result(Kind.CAST,id); } // keeps the flight cooldown as it was
         if(managed) { send.accept(s);pending.put(id,now+3000);return result(Kind.PENDING,id); }
         send.accept(s);
         cooldowns.entrySet().removeIf(e -> e.getValue().until()<=now);

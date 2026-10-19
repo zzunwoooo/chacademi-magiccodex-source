@@ -33,7 +33,7 @@ public final class CastingClient {
     public static boolean enabled() { return STATE.enabled(); }
     static KeyBinding binding() { return toggleKey; }
     public static List<String> permissions() { return state().permissions(); }
-    public static void initialize() {
+    public static void initialize() {STATE.ridingCheck(BroomClientLink::riding);
         toggleKey=KeyBindingHelper.registerKeyBinding(new KeyBinding("key.magiccodex.magic_mode",GLFW.GLFW_KEY_Z,"category.magiccodex"));
         reloadBindings();
         ClientPlayConnectionEvents.JOIN.register((handler,sender,client)->{ STATE.reset(); reloadBindings(); });

@@ -112,6 +112,16 @@ public final class KyudichiClient {
     static boolean live() { return active() && match.phase() == 2; }
     static boolean spectator() { return active() && match.myTeam() == 2; }
     /** Playing (not spectating): the match loadout replaces the bottom-right six, and aimed spells may stay in the air. */
+    /**
+     * Mixin (Entity.shouldRender): during a match other players, the ball models (ModelEngine bones are display entities)
+     * and their armor-stand bases are drawn at any distance.
+     */
+    public static boolean renderFar(net.minecraft.entity.Entity e) {
+        if (match == null || !active()) return false;
+        return e instanceof net.minecraft.entity.player.PlayerEntity || e instanceof net.minecraft.entity.decoration.DisplayEntity
+                || e instanceof net.minecraft.entity.decoration.ArmorStandEntity;
+    }
+
     /** Match flag 16: a 1:1 대전 (no balls, no F key, ground only). */
     static boolean duel() { return match != null && (match.flags() & 16) != 0 && Util.getMeasuringTimeMs() - matchAt < 4000; }
     static boolean playing() { return active() && match.myTeam() != 2; }
