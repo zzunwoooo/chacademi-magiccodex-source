@@ -19,7 +19,8 @@ class ExpansionSpellsTest {
         "chabuff", Set.of("giant", "root"),
         "chaguard", Set.of("lethal", "reflect", "block", "deflect", "thorns", "anchor", "counter", "ward", "invuln", "homing"),
         "chamark", Set.of("ash_brand", "wedge", "prison", "swords", "root"),
-        "chaally", Set.of("quench", "cleanse", "share", "potion", "heal", "buff", "feed", "comfort", "dawn", "oath"));
+        "chaally", Set.of("quench", "cleanse", "share", "potion", "heal", "buff", "feed", "comfort", "dawn", "oath"),
+        "chaarcana", Set.of("double", "echo", "thread", "swap", "contract", "siphon", "drowse", "spread", "discord", "chain", "defer", "ink", "nail", "lullaby", "loosen", "seal", "scales", "cage", "wound", "ghosttool", "bell", "eclipse", "airbrake", "hushed", "thorns", "skipring", "droplet", "tideplane"));
     static final Set<String> UNTYPED = Set.of("chahit", "chabolt", "chazone", "chachannel", "chanote", "chaselfpotion", "chaselfvelocity", "chamobshot", "chatelegraph");
 
     @Test void everyGeneratedLineUsesAnImplementedMechanic() throws Exception {

@@ -7,8 +7,16 @@ import java.util.*;
 
 /** Updates only recognized shipped defaults. Local edits and extra files remain untouched. */
 final class DefaultSpellMigration {
-    static final String VERSION="spells-101-167-20261015-v1";
+    static final String VERSION="spells-101-214-arcana-20261019-v2";
     private static final String ROOT="/assets/magiccodex/default-spells/";
+    private static final Set<String> ARCANA_IDS=Set.of("shadow_double","echo_reading","sealing_thread","shadow_exchange","forbidden_contract","life_siphon","drowsiness","misfortune_whisper","hungry_shadow","curse_transfer","discord","night_chain","pain_deferral","black_harvest","ink_fingertip","shadow_nail","night_lullaby","loosen_grasp","healing_seal","shadow_scales","warning_thread","wound_accounting","inverted_offering","ghost_tool","bell_of_fear","eclipse_eye","void_maw","landing_airbrake","hushed_soles","thorn_manners","cinder_skipring","droplet_relay","folding_tideplane");
+    static boolean managedHistoryName(String name){
+        if(name.startsWith("149_"))return false;
+        if(name.matches("(?:10[1-9]|1[1-5][0-9]|16[0-7])_.*\\.yml"))return true;
+        if(!name.matches("(?:16[89]|1[7-9][0-9]|20[0-9]|21[0-4])_.*\\.yml"))return false;
+        String id=name.substring(name.indexOf('_')+1,name.length()-4);
+        return ARCANA_IDS.contains(id); // Excludes all fourteen deferred IDs and legacy wind entries sharing 200-series numbers.
+    }
     static String hash(byte[] bytes) {
         String text=new String(bytes,StandardCharsets.UTF_8).replace("\r\n","\n");
         try{return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(text.getBytes(StandardCharsets.UTF_8)));}
@@ -22,7 +30,7 @@ final class DefaultSpellMigration {
     static void install(Path directory)throws IOException {
         Map<String,Set<String>> history=new HashMap<>();
         for(String line:new String(resource("known-hashes.tsv"),StandardCharsets.UTF_8).lines().toList()){
-            String[] parts=line.split("\t");if(parts.length==2 && parts[0].matches("(?:10[1-9]|1[1-5][0-9]|16[0-7])_.*\\.yml") && !parts[0].startsWith("149_"))history.computeIfAbsent(parts[0],k->new HashSet<>()).add(parts[1]);
+            String[] parts=line.split("\t");if(parts.length==2 && managedHistoryName(parts[0]))history.computeIfAbsent(parts[0],k->new HashSet<>()).add(parts[1]);
         }
         Map<String,byte[]> defaults=new LinkedHashMap<>();
         for(String id:new String(resource("index.txt"),StandardCharsets.UTF_8).lines().filter(s->!s.isBlank()).toList())defaults.put(id+".yml",resource(id+".yml"));
@@ -38,11 +46,7 @@ final class DefaultSpellMigration {
                 if(!Files.isRegularFile(file,LinkOption.NOFOLLOW_LINKS)||Files.size(file)>65536)continue;
                 byte[] current=Files.readAllBytes(file);String oldHash=hash(current);
                 if(oldHash.equals(hash(next))||!history.getOrDefault(name,Set.of()).contains(oldHash))continue;
-                Path backup=directory.resolve(".defaults-backup").resolve(version);
-                if(Files.isSymbolicLink(directory.resolve(".defaults-backup"))||Files.isSymbolicLink(backup))throw new IOException("Refusing symlink backup");
-                Files.createDirectories(backup);Path saved=backup.resolve(name+"."+oldHash+".bak");
-                if(!Files.exists(saved,LinkOption.NOFOLLOW_LINKS))Files.write(saved,current,StandardOpenOption.CREATE_NEW);
-                if(!Files.isRegularFile(saved,LinkOption.NOFOLLOW_LINKS)||!Arrays.equals(Files.readAllBytes(saved),current))throw new IOException("Backup verification failed");
+                // Recognized shipped bytes are reproducible; this migration creates no backup, as requested.
             }
             atomicWrite(file,next);
         }

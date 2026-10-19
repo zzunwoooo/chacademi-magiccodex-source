@@ -29,7 +29,7 @@ final class ReactionVfx {
     private String pack = "elementreactions";
     private double range = 48;
     private Object service;
-    private Method play;
+    private Method play, scaledPlay, effectBasis;
     private Constructor<?> request;
 
     ReactionVfx(MagicMythicPlugin plugin) { this.plugin = plugin; reload(); }
@@ -68,7 +68,8 @@ final class ReactionVfx {
 
     private void play(String system, Location at, float scale, float yaw, int ticks) {
         if (!enabled) return;
-        effect("claude:" + pack + "/" + system, at, scale, yaw, ticks, 0xFFFFFF);
+        if(scale!=1f && pack.equals("elementreactions"))areaEffect("claude:"+pack+"/"+system,at,1.8*scale,yaw,ticks,0xFFFFFF);
+        else effect("claude:" + pack + "/" + system, at, scale, yaw, ticks, 0xFFFFFF);
     }
 
     /**
@@ -89,6 +90,19 @@ final class ReactionVfx {
         }
     }
 
+    /** Use the schema's physical scale input; generic Claude transform magnification must stay one. */
+    void areaEffect(String id,Location at,double inputMetres,float yaw,int ticks,int tint){
+        if(id==null||id.isBlank()||at.getWorld()==null||!resolve())return;
+        try{
+            Object req=request.newInstance(id,at.getWorld().getName(),at.getX(),at.getY(),at.getZ(),1f,ticks,yaw,0f,0f,tint&0xFFFFFF,1f,range);
+            double angle=Math.toRadians(yaw);
+            Object basis=effectBasis.invoke(null,-Math.sin(angle),0d,Math.cos(angle));
+            scaledPlay.invoke(service,req,basis,java.util.UUID.randomUUID().getLeastSignificantBits(),0d,inputMetres,-1d);
+        }catch(InvocationTargetException e){
+            if(!(e.getCause() instanceof java.util.concurrent.RejectedExecutionException))warn(e.getCause());
+        }catch(ReflectiveOperationException|RuntimeException e){warn(e);}
+    }
+
     private boolean resolve() {
         if (resolved) return service != null;
         resolved = true;
@@ -103,6 +117,9 @@ final class ReactionVfx {
             request = requestType.getConstructor(String.class, String.class, double.class, double.class, double.class,
                     float.class, int.class, float.class, float.class, float.class, int.class, float.class, double.class);
             play = serviceType.getMethod("play", requestType);
+            Class<?> frame=Class.forName("dev.portablevfx.protocol.EffectBasis",true,loader);
+            effectBasis=frame.getMethod("projectile",double.class,double.class,double.class);
+            scaledPlay=serviceType.getMethod("startCast",requestType,frame,long.class,double.class,double.class,double.class);
             service = reg.getProvider();
             return true;
         } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {

@@ -45,7 +45,11 @@ final class TelegraphMech extends Mech {
             var at = new Location(world, show.x(), show.y(), show.z());
             int id = show.id();
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-                if (plugin.telegraphs().live(id)) plugin.reactions().vfx().effect(vfx, at, scale, show.yaw(), 40, tint);
+                if (plugin.telegraphs().live(id)) {
+                    // Unit transforms retain the old playback path; resized areas use authored metre-input scaling.
+                    if(Math.abs(scale-1f)<0.000001f)plugin.reactions().vfx().effect(vfx,at,1f,show.yaw(),40,tint);
+                    else plugin.reactions().vfx().areaEffect(vfx,at,show.size(),show.yaw(),40,tint);
+                }
             }, Math.max(1, ticks - lead));
         }
         double dmg = c.dmg(p);

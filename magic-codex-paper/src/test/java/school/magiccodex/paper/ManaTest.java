@@ -57,9 +57,9 @@ class ManaTest {
         Files.writeString(file,source.replace("mana-cost: 10","mana-cost: .NaN"));assertThrows(Exception.class,()->ManaSpells.load(file.toFile()));
         Files.writeString(file,source+source.substring("spells:\n".length()).replace("  test:","  second:"));assertThrows(Exception.class,()->ManaSpells.load(file.toFile()));
     }
-    @Test void catalogContainsReviewedCommandsFromTheIntegrated323SpellPack()throws Exception{
+    @Test void catalogContainsReviewedCommandsFromTheIntegrated329SpellPack()throws Exception{
         var spells=ManaSpells.load(Path.of("src/main/resources/mana-spells.yml").toFile());
-        assertEquals(178,spells.byId.size());assertEquals(323,spells.discoveryPermissions.size());
+        assertEquals(210,spells.byId.size());assertEquals(329,spells.discoveryPermissions.size());
         assertEquals(spells.byId.size(),spells.byCommand.size());
         assertEquals(800,spells.byId.get("solar_judgment").cost());
         assertEquals(300_000,spells.byId.get("solar_judgment").cooldown());

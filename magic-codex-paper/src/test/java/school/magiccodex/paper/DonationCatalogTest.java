@@ -17,6 +17,8 @@ class DonationCatalogTest {
         "oblivion_orbs","bone_grasp","shadow_leap","binding_pull","fairy_dust","moon_wind",
         "gale_wings","feather_storm","hunting_pounce","roar_leap","gravity_slam","tail_spikes");
 
+    private static final Set<String> UNPRICED_ARCANA=Set.of("landing_airbrake","hushed_soles","thorn_manners","cinder_skipring","droplet_relay","folding_tideplane");
+
     /** Every catalog id, enabled or not (ManaSpells.byId keeps only enabled spells). */
     private static Set<String> catalogIds()throws Exception{
         var y=new YamlConfiguration();y.load(Path.of("src/main/resources/mana-spells.yml").toFile());
@@ -33,7 +35,7 @@ class DonationCatalogTest {
         }
         assertTrue(all.containsAll(KILL_DISCOVERY_ONLY));
         for(String id:all){
-            if(KILL_DISCOVERY_ONLY.contains(id))assertFalse(root.contains(id),"kill-discovery spell must not acquire an invented donation price: "+id);
+            if(KILL_DISCOVERY_ONLY.contains(id)||UNPRICED_ARCANA.contains(id))assertFalse(root.contains(id),"spell without an approved donation price must not acquire one: "+id);
             else assertTrue(root.contains(id),"mana spell missing from donation catalog: "+id);
         }
         for(String retired:Set.of("feather_step","dampen_powder","handful_of_snow","wet_footprints","pressure_weight","cold_storage","liquid_barrier","water_rebound","thaw_pulse"))
