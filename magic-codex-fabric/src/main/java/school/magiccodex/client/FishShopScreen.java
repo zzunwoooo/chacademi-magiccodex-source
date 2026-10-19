@@ -31,19 +31,21 @@ final class FishShopScreen extends Screen {
     static final String[] GRADES = {"일반", "고급", "유일", "전설"};
     private static final Map<Identifier, float[]> SIZES = new HashMap<>();
 
-    // ---- layout (guides/layout_1672x941.json)
+    // ---- layout: measured on the approved references (sale / lock screens, 1671x941), not the preview guide
     static final float FRAME_X = 594, FRAME_Y = 31, FRAME_W = 1034, FRAME_H = 877;
-    static final float TAB_Y = 190, TAB_W = 178, TAB_H = 47, TAB_SALE_X = 628, TAB_LOCK_X = 814;
+    static final float TAB_Y = 192, TAB_W = 170, TAB_H = 44, TAB_SALE_X = 632, TAB_LOCK_X = 818;
     static final float CLOSE_X = 1550, CLOSE_Y = 101, CLOSE_S = 40;
-    static final float BAL_X = 1110, BAL_W = 482;
-    static final float ALL_X = 1210, CLEAR_X = 1403, BTN_Y = 250, BTN_W = 182, BTN_H = 45;
-    static final float ROW_X = 622, ROW_Y = 311, ROW_W = 970, ROW_H = 116, ROW_PITCH = 123;
-    static final float FOOT_X = 621, FOOT_Y = 817, FOOT_W = 973, FOOT_H = 78;
-    static final float SEARCH_X = 627, SEARCH_Y = 251, SEARCH_W = 714, SEARCH_H = 53, FILTER_X = 1355, FILTER_W = 235;
-    static final float GRID_X = 622, GRID_Y = 343, CARD_W = 232, CARD_H = 142, PITCH_X = 243, PITCH_Y = 151;
+    static final float BAL_X = 1116, BAL_W = 474;
+    static final float ALL_X = 1213, ALL_W = 175, CLEAR_X = 1406, CLEAR_W = 178, BTN_Y = 253, BTN_H = 39;
+    static final float ROW_X = 628, ROW_Y = 322, ROW_W = 957, ROW_H = 96, ROW_PITCH = 123;
+    static final float FOOT_X = 628, FOOT_Y = 821, FOOT_W = 961, FOOT_H = 72;
+    static final float SELL_X = 1322, SELL_Y = 830, SELL_W = 250, SELL_H = 54;
+    static final float SEARCH_X = 632, SEARCH_Y = 254, SEARCH_W = 706, SEARCH_H = 46, FILTER_X = 1360, FILTER_W = 226;
+    static final float GRID_X = 628, GRID_Y = 352, CARD_W = 220, CARD_H = 126, PITCH_X = 243, PITCH_Y = 151;
     static final int COLS = 4, ROWS = 3;
-    static final float BAR_X = 1601, BAR_Y = 342, BAR_H = 445;
-    static final float PLATE_X = 78, PLATE_Y = 727, PLATE_W = 438, PLATE_H = 438f * 794 / 1707;
+    static final float BAR_X = 1600, BAR_Y = 345, BAR_H = 445;
+    static final float CLOSE_BTN_X = 1196, APPLY_X = 1393, FOOT_BTN_Y = 833, FOOT_BTN_W = 177, FOOT_BTN_H = 49;
+    static final float PLATE_X = 86, PLATE_Y = 735, PLATE_W = 412, PLATE_H = 412f * 794 / 1707;
 
     private final UiResources.Entrance entrance = new UiResources.Entrance();
     private State state;
@@ -127,10 +129,10 @@ final class FishShopScreen extends Screen {
         if (in(mx, my, TAB_SALE_X, TAB_Y, TAB_W, TAB_H) && lockTab) { lockTab = false; search.setFocused(false); click(); return true; }
         if (in(mx, my, TAB_LOCK_X, TAB_Y, TAB_W, TAB_H) && !lockTab) { lockTab = true; scroll = 0; click(); return true; }
         if (!lockTab) {
-            if (in(mx, my, ALL_X, BTN_Y, BTN_W, BTN_H)) { Arrays.fill(checked, true); click(); return true; }
-            if (in(mx, my, CLEAR_X, BTN_Y, BTN_W, BTN_H)) { Arrays.fill(checked, false); click(); return true; }
+            if (in(mx, my, ALL_X, BTN_Y, ALL_W, BTN_H)) { Arrays.fill(checked, true); click(); return true; }
+            if (in(mx, my, CLEAR_X, BTN_Y, CLEAR_W, BTN_H)) { Arrays.fill(checked, false); click(); return true; }
             for (int g = 0; g < 4; g++) if (in(mx, my, ROW_X, ROW_Y + g * ROW_PITCH, ROW_W, ROW_H)) { checked[g] = !checked[g]; click(); return true; }
-            if (in(mx, my, 1322, 830, 250, 52)) { sell(); return true; }
+            if (in(mx, my, SELL_X, SELL_Y, SELL_W, SELL_H)) { sell(); return true; }
         } else {
             boolean searchHit = in(mx, my, SEARCH_X, SEARCH_Y, SEARCH_W, SEARCH_H);
             search.setFocused(searchHit);
@@ -147,9 +149,9 @@ final class FishShopScreen extends Screen {
                     dirty = true; click(); return true;
                 }
             }
-            if (in(mx, my, BAR_X - 8, BAR_Y, 20, BAR_H)) { scroll = Math.round((float) ((my - BAR_Y) / BAR_H) * maxScroll()); return true; }
-            if (in(mx, my, 1196, 833, 176, 50)) { close(); return true; }
-            if (in(mx, my, 1392, 833, 180, 50)) {
+            if (in(mx, my, BAR_X - 10, BAR_Y, 22, BAR_H)) { scroll = Math.round((float) ((my - BAR_Y) / BAR_H) * maxScroll()); return true; }
+            if (in(mx, my, CLOSE_BTN_X, FOOT_BTN_Y, FOOT_BTN_W, FOOT_BTN_H)) { close(); return true; }
+            if (in(mx, my, APPLY_X, FOOT_BTN_Y, FOOT_BTN_W, FOOT_BTN_H)) {
                 FishShopClient.locks(pending); dirty = false; click();
                 return true;
             }
@@ -244,8 +246,9 @@ final class FishShopScreen extends Screen {
             if (!notice.isBlank() && age < 4500) {
                 float a = age > 4000 ? (4500 - age) / 500f : 1;
                 float s = fit(notice, 18, BODY, 900), w = width(notice, s, BODY) + 40;
-                FishingArt.card(c, 1105 - w / 2, 772, w, 36, FishingArt.argb(.85f * a, 0x0A1428), FishingArt.argb(.7f * a, 0xE9C878), 1.2f);
-                text(c, notice, 1105, 790, s, FishingArt.argb(a, 0xF4E7C6), BODY, true);
+                // between the last row / grid line and the footer
+                FishingArt.card(c, 1105 - w / 2, 789, w, 30, FishingArt.argb(.88f * a, 0x0A1428), FishingArt.argb(.7f * a, 0xE9C878), 1.2f);
+                text(c, notice, 1105, 804, s, FishingArt.argb(a, 0xF4E7C6), BODY, true);
             }
         } finally { m.pop(); images.endFrame(); }
         entrance.draw(c, width, height);
@@ -255,7 +258,7 @@ final class FishShopScreen extends Screen {
         String s = hover(mx, my, x, TAB_Y, TAB_W, TAB_H);
         if (selected) nine(c, "tab_selected" + s, 190, 64, i(21, 21, 21, 21), x, TAB_Y, TAB_W, TAB_H, 0xFFFFFFFF);
         else nine(c, "tab_idle" + s, 180, 62, i(20, 20, 20, 20), x, TAB_Y, TAB_W, TAB_H, 0xFFFFFFFF);
-        text(c, label, x + TAB_W / 2, TAB_Y + TAB_H / 2 + 1, 22, selected ? DARK : CREAM, SECTION, true);
+        text(c, label, x + TAB_W / 2, TAB_Y + TAB_H / 2 + 1, 23, selected ? DARK : CREAM, SECTION, true);
     }
 
     private void npc(DrawContext c, float screenBottom) {
@@ -271,9 +274,9 @@ final class FishShopScreen extends Screen {
         whole(c, "npc_nameplate", 1707, 794, PLATE_X, PLATE_Y, PLATE_W, PLATE_H, 0xFFFFFFFF);
         float cx = PLATE_X + PLATE_W / 2;
         String role = state == null ? "물고기 매입상" : state.role(), name = state == null ? "" : state.npcName();
-        // role between the top star's tip and the divider line, the name under the line (reference nameplate)
-        text(c, role, cx, PLATE_Y + 86, fit(role, 18, LABEL, 230), GOLD, LABEL, true);
-        text(c, name, cx, PLATE_Y + 126, fit(name, 40, SECTION, 270), 0xFFFFFFFF, SECTION, true);
+        // reference: role above the divider line, the name below it
+        text(c, role, cx, PLATE_Y + 73, fit(role, 18, LABEL, 220), GOLD, LABEL, true);
+        text(c, name, cx, PLATE_Y + 121, fit(name, 40, SECTION, 260), 0xFFFFFFFF, SECTION, true);
     }
     private Identifier portrait() {
         if (state == null || state.portrait().isBlank() || client == null) return null;
@@ -295,72 +298,71 @@ final class FishShopScreen extends Screen {
     // ---- 판매
 
     private void saleTab(DrawContext c, double mx, double my) {
+        float bcy = TAB_Y + TAB_H / 2 + 1;
         nine(c, "balance_field", 1958, 262, i(90, 55, 90, 55), BAL_X, TAB_Y, BAL_W, TAB_H, 0xFFFFFFFF);
-        whole(c, "coin", 75, 77, BAL_X + 22, TAB_Y + 9, 29, 30, 0xFFFFFFFF);
-        text(c, "보유 골드", BAL_X + 62, TAB_Y + TAB_H / 2 + 1, 19, CREAM, BODY, false);
-        right(c, state.balance().isBlank() ? "-" : money(state.balance()) + " G", BAL_X + BAL_W - 26, TAB_Y + TAB_H / 2 + 1, 21, CREAM, BOLD);
+        whole(c, "coin", 75, 77, BAL_X + 12, bcy - 14, 27, 28, 0xFFFFFFFF);
+        text(c, "보유 골드", BAL_X + 49, bcy, 19, CREAM, BODY, false);
+        right(c, state.balance().isBlank() ? "-" : money(state.balance()) + " G", BAL_X + BAL_W - 22, bcy, 21, CREAM, BODY);
         text(c, "등급을 선택해 한 번에 판매하세요", 636, 276, 19, TEXT, BODY, false);
         int locks = state.locks().size();
         if (locks > 0) {
-            whole(c, "lock_closed_gold", 128, 160, 1020, 262, 16, 20, 0xFFFFFFFF);
-            text(c, "잠금 " + locks + "종 제외", 1042, 274, 17, 0xFFD9C8A0, BODY, false);
+            whole(c, "lock_closed_gold", 128, 160, 1022, 265, 17, 21, 0xFFFFFFFF);
+            text(c, "잠금 " + locks + "종 제외", 1045, 276, 17, 0xFFD9C8A0, BODY, false);
         }
-        goldButton(c, mx, my, ALL_X, BTN_Y, BTN_W, BTN_H, "전체 선택", true);
-        navyButton(c, mx, my, CLEAR_X, BTN_Y, BTN_W, BTN_H, "선택 해제");
+        goldButton(c, mx, my, ALL_X, BTN_Y, ALL_W, BTN_H, "전체 선택", true);
+        navyButton(c, mx, my, CLEAR_X, BTN_Y, CLEAR_W, BTN_H, "선택 해제");
         for (int g = 0; g < 4; g++) row(c, mx, my, g);
         // footer
         nine(c, "footer_panel", 1328, 154, i(60, 45, 60, 45), FOOT_X, FOOT_Y, FOOT_W, FOOT_H, 0xFFFFFFFF);
         float cy = FOOT_Y + FOOT_H / 2 + 1;
-        text(c, "선택", 649, cy, 19, TEXT, BODY, false);
-        text(c, selectedCount() + "마리", 712, cy, 28, CREAM, SECTION, false);
-        FishingArt.vline(c, 862, FOOT_Y + 18, FOOT_Y + FOOT_H - 18, 0x60E9C878);
+        text(c, "선택", 650, cy, 19, TEXT, BODY, false);
+        text(c, selectedCount() + "마리", 712, cy, 30, CREAM, SECTION, false);
+        FishingArt.vline(c, 862, cy - 21, cy + 21, 0x70E9C878);
         text(c, "예상 판매금", 885, cy, 19, TEXT, BODY, false);
-        whole(c, "coin", 75, 77, 1040, cy - 15, 29, 30, 0xFFFFFFFF);
-        text(c, money(selectedTotal()) + " G", 1082, cy, fit(money(selectedTotal()) + " G", 28, SECTION, 220), GOLD, SECTION, false);
+        whole(c, "coin", 75, 77, 1040, cy - 15, 28, 29, 0xFFFFFFFF);
+        String total = money(selectedTotal()) + " G";
+        text(c, total, 1085, cy, fit(total, 30, SECTION, 220), CREAM, SECTION, false);
         int count = selectedCount();
-        goldButton(c, mx, my, 1322, 830, 250, 52, busy ? "판매 중…" : allChecked() ? "전체 판매" : "선택 판매", count > 0 && !busy);
+        goldButton(c, mx, my, SELL_X, SELL_Y, SELL_W, SELL_H, busy ? "판매 중…" : allChecked() ? "전체 판매" : "선택 판매", count > 0 && !busy);
     }
 
     private void row(DrawContext c, double mx, double my, int g) {
-        float y = ROW_Y + g * ROW_PITCH;
+        float y = ROW_Y + g * ROW_PITCH, cy = y + ROW_H / 2;
         var grade = state.grades().get(g);
         boolean over = in(mx, my, ROW_X, y, ROW_W, ROW_H);
         String panel = checked[g] ? "item_row_selected" : over ? "item_row_hover" : "item_row";
         nine(c, panel, 2080, 306, i(65, 60, 65, 60), ROW_X, y, ROW_W, ROW_H, 0xFFFFFFFF);
-        // fish of this grade (the most valuable one in the tank), clipped to the row
-        float fx = ROW_X + 150, fy = y + ROW_H / 2;
-        var art = grade.sample().isEmpty() ? null : FishingArt.fish(grade.sample());
-        c.enableScissor(Math.round(ROW_X + 8), Math.round(y + 6), Math.round(ROW_X + 300), Math.round(y + ROW_H - 6));
-        try {
-            if (art != null) FishingArt.drawCentered(c, art, fx, fy, 210, 210, 0xFFFFFFFF, false, 0, false);
-            else FishingArt.drawCentered(c, FishingArt.SHAPES[0], fx, fy, 170, 170, 0x55000000, false, 0, false);
-        } finally { c.disableScissor(); }
-        text(c, GRADES[g], ROW_X + 310, y + 40, 28, GRADE[g], SECTION, false);
-        text(c, "판매 가능 " + grade.count() + "마리", ROW_X + 312, y + 78, 18, TEXT, BODY, false);
-        whole(c, "coin", 75, 77, ROW_X + 630, y + ROW_H / 2 - 13, 26, 27, grade.count() > 0 ? 0xFFFFFFFF : 0xFF8890A0);
-        right(c, money(grade.total()) + " G", ROW_X + 860, y + ROW_H / 2 + 6, 24, grade.count() > 0 ? CREAM : DIM, SECTION);
-        float bx = ROW_X + 900, by = y + ROW_H / 2 - 23;
-        whole(c, checked[g] ? "checkbox_frame_selected" : "checkbox_frame_empty", 56, 58, bx, by, 45, 47, 0xFFFFFFFF);
-        if (checked[g]) whole(c, "check_selected_gold", 160, 144, bx + 4, by + 5, 37, 34, 0xFFFFFFFF);
+        // the most valuable fish of this grade, fitted by its silhouette inside the row (never past the frame)
+        if (grade.sample().isEmpty()) FishingArt.fishFit(c, "", 0, ROW_X + 143, cy, 200, 70, 0x40000000, false);
+        else FishingArt.fishFit(c, grade.sample(), 0, ROW_X + 143, cy, 222, 82, 0xFFFFFFFF, false);
+        text(c, GRADES[g], ROW_X + 305, y + 28, 28, GRADE[g], SECTION, false);
+        text(c, "판매 가능 " + grade.count() + "마리", ROW_X + 307, y + 68, 18, TEXT, BODY, false);
+        boolean any = grade.count() > 0;
+        whole(c, "coin", 75, 77, ROW_X + 623, cy - 14, 27, 28, any ? 0xFFFFFFFF : 0xFF8890A0);
+        right(c, money(grade.total()) + " G", ROW_X + 854, cy + 4, 25, any ? CREAM : DIM, BODY);
+        float bx = ROW_X + 896, by = cy - 21;
+        whole(c, checked[g] ? "checkbox_frame_selected" : "checkbox_frame_empty", 56, 58, bx, by, 42, 43, 0xFFFFFFFF);
+        if (checked[g]) whole(c, "check_selected_gold", 160, 144, bx + 5, by + 6, 32, 29, 0xFFFFFFFF);
     }
 
     // ---- 잠금 설정
 
     private void lockTab(DrawContext c, double mx, double my) {
-        right(c, "잠금 " + pending.size() + "종", 1582, 214, 20, GOLD, SECTION);
+        right(c, "잠금 " + pending.size() + "종", 1582, 214, 22, GOLD, SECTION);
+        float scy = SEARCH_Y + SEARCH_H / 2 + 1;
         nine(c, "search_field", 2039, 266, i(75, 55, 75, 55), SEARCH_X, SEARCH_Y, SEARCH_W, SEARCH_H, 0xFFFFFFFF);
-        whole(c, "search", 128, 128, SEARCH_X + 22, SEARCH_Y + 13, 27, 27, 0xFFFFFFFF);
+        whole(c, "search", 128, 128, SEARCH_X + 17, scy - 12, 24, 24, 0xFFFFFFFF);
         boolean focused = search.isFocused();
         String shown = query.isEmpty() && !focused ? "물고기 이름 검색" : query + (focused && Util.getMeasuringTimeMs() / 500 % 2 == 0 ? "|" : "");
-        text(c, shown, SEARCH_X + 62, SEARCH_Y + SEARCH_H / 2 + 1, 20, query.isEmpty() && !focused ? DIM : TEXT, BODY, false);
+        text(c, shown, SEARCH_X + 58, scy, 20, query.isEmpty() && !focused ? 0xFF8E9BB0 : TEXT, BODY, false);
         nine(c, "search_field", 2039, 266, i(75, 55, 75, 55), FILTER_X, SEARCH_Y, FILTER_W, SEARCH_H, 0xFFFFFFFF);
-        float tx = FILTER_X + 14, ty = SEARCH_Y + 7;
-        whole(c, lockedOnly ? "filter_toggle_track_on" : "filter_toggle_track_off", 78, 40, tx, ty, 78, 40, 0xFFFFFFFF);
-        whole(c, "filter_toggle_knob", 40, 40, lockedOnly ? tx + 38 : tx, ty, 40, 40, 0xFFFFFFFF);
-        text(c, "잠금만 보기", FILTER_X + 104, SEARCH_Y + SEARCH_H / 2 + 1, 20, CREAM, BODY, false);
+        float tx = FILTER_X + 12, ty = scy - 16;
+        whole(c, lockedOnly ? "filter_toggle_track_on" : "filter_toggle_track_off", 78, 40, tx, ty, 63, 32, 0xFFFFFFFF);
+        whole(c, "filter_toggle_knob", 40, 40, lockedOnly ? tx + 31 : tx, ty, 32, 32, 0xFFFFFFFF);
+        text(c, "잠금만 보기", FILTER_X + 87, scy, 20, CREAM, BODY, false);
         var list = cards();
-        text(c, (lockedOnly ? "잠금 " : "전체 ") + list.size() + "종", 636, 328, 18, TEXT, BODY, false);
-        FishingArt.hline(c, 780, 1578, 328, 0x40E9C878);
+        text(c, (lockedOnly ? "잠금 " : "전체 ") + list.size() + "종", 636, 330, 18, TEXT, BODY, false);
+        FishingArt.hline(c, 790, 1580, 330, 0x40E9C878);
         scroll = Math.clamp(scroll, 0, maxScroll());
         for (int k = 0; k < COLS * ROWS; k++) {
             int index = scroll * COLS + k;
@@ -368,40 +370,36 @@ final class FishShopScreen extends Screen {
             card(c, mx, my, list.get(index), GRID_X + (k % COLS) * PITCH_X, GRID_Y + (k / COLS) * PITCH_Y);
         }
         if (list.isEmpty()) text(c, lockedOnly ? "잠긴 물고기가 없어요." : "검색 결과가 없어요.", 1105, 560, 20, MUTED, BODY, true);
-        // scrollbar (code-drawn)
-        FishingArt.rect(c, BAR_X, BAR_Y, 3, BAR_H, 0x40E9C878);
+        // scrollbar (code-drawn, thin like the reference)
+        FishingArt.rect(c, BAR_X - 1, BAR_Y, 2, BAR_H, 0x40E9C878);
         int max = maxScroll();
-        float thumb = Math.max(50, BAR_H * ROWS / Math.max(ROWS, (list.size() + COLS - 1) / COLS));
+        float thumb = Math.max(60, BAR_H * ROWS / Math.max(ROWS, (list.size() + COLS - 1) / COLS));
         float ty0 = BAR_Y + (max == 0 ? 0 : (BAR_H - thumb) * scroll / max);
-        FishingArt.rect(c, BAR_X - 1.5f, ty0, 6, thumb, 0xC0E9C878);
+        FishingArt.rect(c, BAR_X - 2.5f, ty0, 5, thumb, 0xC0E9C878);
         // footer
         nine(c, "footer_panel", 1328, 154, i(60, 45, 60, 45), FOOT_X, FOOT_Y, FOOT_W, FOOT_H, 0xFFFFFFFF);
-        whole(c, "lock_closed_gold", 128, 160, 645, FOOT_Y + 26, 21, 27, 0xFFFFFFFF);
-        text(c, dirty ? "바뀐 잠금은 「적용」을 눌러야 저장돼요" : "잠긴 종류는 판매에서 제외됩니다", 680, FOOT_Y + FOOT_H / 2 + 1, 19, dirty ? GOLD : TEXT, BODY, false);
-        navyButton(c, mx, my, 1196, 833, 176, 50, "닫기");
-        goldButton(c, mx, my, 1392, 833, 180, 50, "적용", dirty);
+        float cy = FOOT_Y + FOOT_H / 2 + 1;
+        whole(c, "lock_closed_gold", 128, 160, 642, cy - 13, 21, 27, 0xFFFFFFFF);
+        text(c, dirty ? "바뀐 잠금은 「적용」을 눌러야 저장돼요" : "잠긴 종류는 판매에서 제외됩니다", 682, cy, 19, dirty ? GOLD : TEXT, BODY, false);
+        navyButton(c, mx, my, CLOSE_BTN_X, FOOT_BTN_Y, FOOT_BTN_W, FOOT_BTN_H, "닫기");
+        goldButton(c, mx, my, APPLY_X, FOOT_BTN_Y, FOOT_BTN_W, FOOT_BTN_H, "적용", dirty);
     }
 
     private void card(DrawContext c, double mx, double my, Species s, float x, float y) {
         boolean locked = pending.contains(s.id()), over = in(mx, my, x, y, CARD_W, CARD_H);
         nine(c, locked ? "species_card_locked" : over ? "species_card_hover" : "species_card_default", 960, 492, i(72, 72, 72, 72), x, y, CARD_W, CARD_H, 0xFFFFFFFF);
-        var art = FishingArt.fish(s.id());
-        c.enableScissor(Math.round(x + 4), Math.round(y + 4), Math.round(x + CARD_W - 4), Math.round(y + CARD_H - 4));
-        try {
-            if (art != null) FishingArt.drawCentered(c, art, x + CARD_W / 2, y + 50, 132, 132, 0xFFFFFFFF, false, 0, false);
-            else FishingArt.drawCentered(c, FishingArt.SHAPES[0], x + CARD_W / 2, y + 50, 116, 116, 0x88000000, false, 0, false);
-        } finally { c.disableScissor(); }
-        text(c, s.name(), x + 12, y + 100, fit(s.name(), 20, SECTION, CARD_W - 100), TEXT, SECTION, false);
-        text(c, GRADES[s.grade()], x + 13, y + 122, 12, GRADE[s.grade()], BODY, false);
+        FishingArt.fishFit(c, s.id(), 0, x + CARD_W / 2, y + 48, 186, 74, 0xFFFFFFFF, false);
+        text(c, s.name(), x + 11, y + 93, fit(s.name(), 20, LABEL, CARD_W - 96), TEXT, LABEL, false);
+        text(c, GRADES[s.grade()], x + 12, y + 114, 12, s.grade() == 0 ? MUTED : GRADE[s.grade()], BODY, false);
         if (locked) {
-            float bw = 72, bh = 30, bx = x + CARD_W - bw - 10, by = y + CARD_H - bh - 10;
+            float bw = 76, bh = 30, bx = x + CARD_W - bw - 6, by = y + CARD_H - bh - 4;
             nine(c, "lock_button_frame_gold", 94, 54, i(9, 9, 9, 9), bx, by, bw, bh, 0xFFFFFFFF);
             whole(c, "lock_closed_gold", 128, 160, bx + 10, by + 5, 16, 20, 0xFFFFFFFF);
-            text(c, "잠김", bx + 32, by + bh / 2 + 1, 15, GOLD, BOLD, false);
+            text(c, "잠김", bx + 32, by + bh / 2 + 1, 16, GOLD, BODY, false);
         } else {
-            float b = 30, bx = x + CARD_W - b - 10, by = y + CARD_H - b - 10;
+            float b = 31, bx = x + CARD_W - b - 13, by = y + CARD_H - b - 4;
             nine(c, "lock_button_frame_neutral", 52, 54, i(9, 9, 9, 9), bx, by, b, b, 0xFFFFFFFF);
-            whole(c, "lock_open_blue", 128, 160, bx + 7, by + 5, 16, 20, 0xFFFFFFFF);
+            whole(c, "lock_open_blue", 128, 160, bx + 8, by + 5, 15, 19, 0xFFFFFFFF);
         }
     }
 }
