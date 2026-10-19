@@ -65,6 +65,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private TemperatureBridge temperature;
     private PetBridge pets;
     private TamingBridge taming;
+    /** Shared server ray (ModelEngine sub-hitboxes / hitbox interactions resolved to the modeled mob); null before enable. */
+    TamingBridge tamingBridge(){return taming;}
     private TargetHudBridge targetHud;
     private QuestBridge quests;
     private JournalBridge journal;

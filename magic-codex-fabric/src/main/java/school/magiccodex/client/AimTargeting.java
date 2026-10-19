@@ -8,6 +8,8 @@ import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.decoration.InteractionEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -146,6 +148,13 @@ public final class AimTargeting {
             var living=(LivingEntity)entity;var intersection=living.getBoundingBox().expand(.55).raycast(eye,castPoint);
             if(intersection.isPresent()&&eye.squaredDistanceTo(intersection.get())<closest){target=living;castPoint=intersection.get();closest=eye.squaredDistanceTo(castPoint);}
         }
+        if(target==null)for(var box:world.getOtherEntities(player,player.getBoundingBox().expand(reach+1),e->e instanceof InteractionEntity)){
+            // ModelEngine: the model's hitbox is an Interaction entity, the mob itself is the (invisible, smaller) base.
+            var intersection=box.getBoundingBox().raycast(eye,castPoint);
+            if(intersection.isEmpty()||eye.squaredDistanceTo(intersection.get())>=closest)continue;
+            LivingEntity base=modelBase(world,player,box);
+            if(base!=null){target=base;castPoint=intersection.get();closest=eye.squaredDistanceTo(castPoint);}
+        }
         String reason=null;boolean snapped=false;airPoint=false;
         if(KyudichiClient.airAim()&&target==null&&hit.getType()==HitResult.Type.MISS){
             // 큐디치: nothing under the aim → the point stays in the air at the wheel distance (server: MagicAimPointEvent).
@@ -197,8 +206,26 @@ public final class AimTargeting {
         return null;
     }
 
+    /**
+     * ModelEngine mobs are sent to clients with the invisible flag (the model is drawn by display entities), so
+     * "invisible" alone must not hide a mob from targeting. Invisible players (옅은 은신) stay untargetable.
+     */
     static boolean targetable(Entity e) {
-        return e instanceof LivingEntity living && living.isAlive() && !(e instanceof ArmorStandEntity) && !e.isSpectator() && !e.isInvisible();
+        return e instanceof LivingEntity living && living.isAlive() && !(e instanceof ArmorStandEntity) && !e.isSpectator()
+            && !(e.isInvisible() && e instanceof PlayerEntity);
+    }
+
+    /** The modeled mob a ModelEngine hitbox belongs to: the entity it rides, else the living mob whose base sits inside it. */
+    static LivingEntity modelBase(World world, Entity player, Entity hitbox) {
+        if (hitbox.getVehicle() instanceof LivingEntity v && v != player && targetable(v)) return v;
+        Box b = hitbox.getBoundingBox().expand(.6, 1, .6);
+        LivingEntity best = null; double d = Double.MAX_VALUE;
+        for (var e : world.getOtherEntities(player, b, AimTargeting::targetable)) {
+            if (e instanceof PlayerEntity) continue;
+            double q = e.getPos().squaredDistanceTo(hitbox.getPos());
+            if (q < d) { d = q; best = (LivingEntity) e; }
+        }
+        return best;
     }
 
     /** Same idea as the server check: nothing solid between the eyes and the point. */

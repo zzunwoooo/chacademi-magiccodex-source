@@ -190,3 +190,11 @@
 | `72294d5` (merge `194aea1`) | 대상 체력바: 머리 방향 대신 **화면 십자선(에임) 기준**으로 몹 선택. 새 C2S 채널 `magiccodex:target_aim` → 서버 Bridge + 클라 모드 같이 배포 | `docs/handoff/CLAUDE_TARGET_HUD_AIM_20261019.md` |
 - 이 브랜치는 체력바 브랜치 `claude/status-hud-polish-20261019` 를 포함 (따로 배포할 필요 없음, `claude/target-hud-aim-20261019` 도 이미 합쳐짐).
 - 알려진 문제(미수정): 체력바에서 플레이어 닉네임이 한글로 안 나온다는 제보. 서버는 `DisplayNames`(저장된 닉네임 → PlaceholderAPI `display-name-placeholder` → 계정 이름) 순으로 보냄 → 그 서버에서 닉네임 저장소/플레이스홀더가 비어 있는지 먼저 확인. 글자가 □ 로 깨지면 `hud_bold` 글꼴 한글 문제.
+
+## 대상 지정 마법이 ModelEngine 모델 몹에게 안 써지던 문제 (2026-10-19 밤, 오너 제보) — 코드 있음, 빌드·실게임 안 함
+- **원인 1 (클라):** `AimTargeting.targetable` 이 투명한 엔티티를 빼는데, ModelEngine 몹의 본체는 클라에 투명으로 보냄 → 조준 미리보기에서 대상이 안 잡혀 "사거리 안의 대상을 조준해 주세요". 모델 히트박스(Interaction 엔티티)도 대상으로 안 봄.
+  - 수정: 투명이어도 플레이어가 아니면 대상 가능(옅은 은신 플레이어는 계속 불가). 조준선이 Interaction 히트박스에 닿으면 그걸 탄 몹 → 없으면 그 안에 있는 몹으로 바꿈(`modelBase`).
+- **원인 2 (서버):** `SpellRuntime.prepare` 의 바닐라 광선이 작은 본체 상자만 알거나, 모델 히트박스(Interaction/Display)에 맞으면 몹이 아닌 엔티티가 대상이 됨.
+  - 수정: ENTITY/AIR_ENTITY/BURNING_ENTITY 마법에서 맞은 게 LivingEntity 가 아니면 교화·체력바와 같은 광선 `TamingBridge.target(p, range)`(서브 히트박스·히트박스 엔티티 → 원래 몹)으로 다시 고름. `MagicCodexBridge.tamingBridge()` 게터 추가.
+- 범위·조준점(AIM) 마법은 그대로.
+- GPT 확인: 모델 몹(예: 고대 골렘, 드래곤)에게 대상 지정 마법(만년빙옥·화염 채찍·발화 등) 시전, 일반 몹·플레이어 대상도 예전처럼 되는지.
