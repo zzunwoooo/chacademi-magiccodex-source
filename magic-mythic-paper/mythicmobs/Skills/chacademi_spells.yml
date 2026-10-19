@@ -1102,8 +1102,201 @@ CHA_tail_spikes:
   - delay 8
   - chatelegraph{shape=circle;at=target;r=3;ticks=8;mult=1;vfx=wyvernspikes/spikes_green;vfxref=4;vfxlead=6;warn=false;hits=enemies;element=earth;spell=tail_spikes}
 
+# 168 그림자 분신 - 제자리에 분신 8초, 8초 안 재사용 시 복귀(재사용 마나 환급). 분신 유지 중 쿨 없음, 복귀/소멸 시 쿨 시작
+CHA_shadow_double:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=double;ticks=160;mana=75;cooldown=25;element=dark;spell=shadow_double} @self
+
+# 169 잔향 읽기 - 바라본 블록/엔티티(6칸)에 MagicEchoEvent 발생 - 퀘스트·던전 플러그인이 단서 문구를 넣음 (없으면 "남아 있는 기억이 없다")
+CHA_echo_reading:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=echo;range=6;element=dark;spell=echo_reading} @self
+
+# 170 봉인의 실 - 직접 설치한 문/상자/통에 봉인(다른 사람은 못 엶), 같은 대상에 다시 쓰면 해제
+CHA_sealing_thread:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=thread;range=5;ticks=6000;element=dark;spell=sealing_thread} @self
+
+# 172 그림자 교환 - 대상과 위치 교환 (0.3초 사라졌다 나타남). 남의 펫·보호구역·PvP 불가 대상 제외
+CHA_shadow_exchange:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=swap;range=15;hide=6;element=dark;spell=shadow_exchange}
+
+# 173 금서의 계약 - 최대 마나 70% 지불 → 3초간 마나 회복분을 체력으로 전환 → 이어서 15초 마나 회복 금지
+CHA_forbidden_contract:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=contract;ratio=0.7;ticks=60;lock=300;heal=0.1;element=dark;spell=forbidden_contract} @self
+
+# 174 생명 갈취 - 조준 지점 반경 3 암흑지대 3초, 0.5초마다 피해 + 준 피해 50% 회복
+CHA_life_siphon:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=siphon;r=3;ticks=60;period=10;heal=0.5;element=dark;spell=life_siphon}
+
+# 175 졸음 - 어둠 구체가 조준 지점으로 날아가 10초 감지, 처음 들어온 적 3초 속박 후 소멸
+CHA_drowsiness:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=drowse;speed=0.8;r=3;wait=200;root=60;element=dark;spell=drowsiness}
+
+# 176 나약함의 저주 - 대상 8초 약화(마법 피해↓) + 물리 약화(공격 피해↓)
+CHA_misfortune_whisper:
+  Cooldown: 0
+  Skills:
+  - chahit{mult=0;status=magic_weakness:160+physical_weakness:160;element=dark;spell=misfortune_whisper}
+
+# 178 저주의 전가 - 대상의 상태이상·해로운 포션을 반경 6 적 최대 5명에게 복사 (지속 70%), 원래 대상은 유지, 연쇄 없음
+CHA_curse_transfer:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=spread;r=6;max=5;keep=0.7;element=dark;spell=curse_transfer}
+
+# 179 마인드컨트롤 - 보스 제외 일반 몬스터 6초 조종: 0.5초마다 반경 10 가장 가까운 다른 몬스터를 노림, 플레이어 노림 차단
+CHA_discord:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=discord;ticks=120;r=10;element=dark;spell=discord}
+
+# 180 밤의 사슬 - 조준 지점 반경 6 몬스터(2마리 이상) 8초 연결: 한 마리가 받은 피해의 30%를 나머지에 전달, 재전파 없음, 수 제한 없음
+CHA_night_chain:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=chain;r=6;ticks=160;ratio=0.3;element=dark;spell=night_chain}
+
+# 181 고통 유예 - 6초간 받는 피해 50%를 쌓아 두고, 끝난 뒤 5초 동안 1초마다 나눠 받음
+CHA_pain_deferral:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=defer;ticks=120;after=100;ratio=0.5;element=dark;spell=pain_deferral} @self
+
+# 182 검은 수확 - 주변 5블록 베기 + 3초 침묵(무장해제), 처형 삭제
+CHA_black_harvest:
+  Cooldown: 0
+  Skills:
+  - chahit{center=caster;r=5;max=16;status=disarm:60;element=dark;spell=black_harvest} @self
+
+# 183 먹물 손끝 - 손(주/보조)에 든 염료와 같은 색 염료 64개 생성, 재료 소모 없음. 염료를 안 들면 실패(마나·쿨 환급)
+CHA_ink_fingertip:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=ink;mana=30;element=dark;spell=ink_fingertip} @self
+
+# 184 그림자 못 - 15초 저주, 시전자와 20블록 넘게 멀어지면 피해 1회 후 종료, 그냥 만료되면 피해 없음
+CHA_shadow_nail:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=nail;ticks=300;dist=20;element=dark;spell=shadow_nail}
+
+# 185 밤의 자장가 - 팬텀 3마리 10초 소환, 0.5초마다 반경 16 적 재타겟, 햇빛에 안 탐, 드롭·경험치 없음, 주인/아군 공격 안 함
+CHA_night_lullaby:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=lullaby;count=3;ticks=200;range=16;element=dark;spell=night_lullaby} @self
+
+# 186 손아귀 풀기 - 플레이어: 선택 핫바 슬롯을 무작위로 바꿈 / 몬스터: 4초 침묵(무장해제)
+CHA_loosen_grasp:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=loosen;ticks=80;element=dark;spell=loosen_grasp}
+
+# 188 회복 봉인 - 대상 8초 회복봉인 (자연 회복·물약·마법 회복 차단 = 기존 회복봉인 상태 그대로)
+CHA_healing_seal:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=seal;ticks=160;element=dark;spell=healing_seal}
+
+# 189 어둠의 저울 - 조준 지점 반경 4 폭발, 대상 체력 ÷ 시전자 체력 비율로 추가 피해 +1%~+50% (2배 이상 = 150%)
+CHA_shadow_scales:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=scales;r=4;delay=8;element=dark;spell=shadow_scales}
+
+# 190 경고의 실 - 대상(또는 조준 지점) 중심 반경 6 결계 7초: 시전 때 안에 있던 적은 밖으로 못 나감 (되밀림)
+CHA_warning_thread:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=cage;r=6;ticks=140;element=dark;spell=warning_thread}
+
+# 192 상처 회계 - 유도 먹물 덩어리가 맞으면 무작위 상태이상 1개 (기절1초·속박1.5·무장해제2·둔화3·화상3·회복봉인4·약화5·중력3·고정3·독4·물리약화5·실명2·물약봉인5·마나소각·수면2·공포1.5)
+CHA_wound_accounting:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=wound;speed=0.7;range=20;element=dark;spell=wound_accounting}
+
+# 194 유령 도구 - 30초 블록 설치·파괴 사거리 +27 (block_interaction_range), 공격 사거리 그대로
+CHA_ghost_tool:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=ghosttool;ticks=600;reach=27;element=dark;spell=ghost_tool} @self
+
+# 195 공포의 종 - 주변 8블록 일반 몬스터 3초 공포 (파동 도달 순서대로), 플레이어·보스 제외
+CHA_bell_of_fear:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=bell;r=8;ticks=60;element=dark;spell=bell_of_fear} @self
+
+# 196 월식의 눈 - 5초 영창(이동·피격 시 실패) → 조준 지점 반경 15 영역 10초: 안의 시전자 이동속도 +30%·마나 계속 채움, 달빛 6개가 떠돌며 접촉 피해(같은 적 1초 간격)
+CHA_eclipse_eye:
+  Cooldown: 0
+  Skills:
+  - chachannel{ticks=100;move=0.3;then=CHA_eclipse_eye_zone;element=dark;spell=eclipse_eye}
+
+# 198 공허의 입 - 조준 지점에서 1.25초 뒤 바닥의 입이 삼킴: 반경 4 피해
+CHA_void_maw:
+  Cooldown: 0
+  Skills:
+  - delay 25
+  - chahit{r=4;max=16;element=dark;spell=void_maw}
+
+# 203 빗자루 차원이동 - 빗자루 탑승 중 바라보는 방향 6블록 앞으로 순간이동 (막히면 그 앞까지, 속도 유지)
+CHA_landing_airbrake:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=airbrake;dist=6;element=wind;spell=landing_airbrake} @self
+
+# 210 고요한 밑창 - 20초간 자신의 걷기·달리기 진동(STEP)만 스컬크가 못 느낌. 착지·블록·아이템·공격 진동은 그대로
+CHA_hushed_soles:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=hushed;ticks=400;element=dark;spell=hushed_soles} @self
+
+# 211 가시의 예절 - 20초간 달콤한 열매 덤불의 감속·피해 무시 (자신만, 덤불은 그대로)
+CHA_thorn_manners:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=thorns;ticks=400;element=earth;spell=thorn_manners} @self
+
+# 212 불꽃 줄넘기 - 발밑 불고리 반지름 1→7 (2초, 3블록/초), 고리 띠(±0.25)에 닿은 적 1회 피해, 점프(+0.4 이상)·안쪽·다른 층은 회피
+CHA_cinder_skipring:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=skipring;r0=1;r1=7;ticks=40;element=fire;spell=cinder_skipring} @self
+
+# 213 물방울 인계 - 물방울이 조준 지점(10블록)으로 날아가 반경 2.5 적에게 피해 + 3초 공중부양
+CHA_droplet_relay:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=droplet;speed=0.6;r=2.5;ticks=60;element=water;spell=droplet_relay}
+
+# 214 접히는 수면 - 조준 지점에 6×2 물막, 1초 뒤 시전자 반대쪽으로 1.3초 동안 책장처럼 넘어감, 움직이는 막에 닿은 적 1회 피해
+CHA_folding_tideplane:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=tideplane;len=6;width=2;delay=20;turn=26;element=water;spell=folding_tideplane}
+
 # (추가 스킬) 태양의 심판 영창 완료 후 3초 레이저 (chachannel then=)
 CHA_solar_judgment_fire:
   Cooldown: 0
   Skills:
   - chazone{r=4;ticks=60;period=5;mult=0.15;element=light;spell=solar_judgment}
+
+# (추가 스킬) 월식의 눈 영창 완료 후 10초 영역 (chachannel then=)
+CHA_eclipse_eye_zone:
+  Cooldown: 0
+  Skills:
+  - chaarcana{type=eclipse;r=15;ticks=200;shards=6;speed=0.3;contact=20;haste=0.3;element=dark;spell=eclipse_eye}

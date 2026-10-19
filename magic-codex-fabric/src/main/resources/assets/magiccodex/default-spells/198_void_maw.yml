@@ -1,14 +1,14 @@
 id: void_maw
 name: 공허의 입
 category: dark
-description: 바닥에 검은 입을 만듭니다. 잠시 뒤 닫히며 그 위에 남은 적에게 큰 피해를 줍니다. 적은 범위 밖으로 피할 수 있습니다.
+description: 바닥에서 어둠의 생물이 튀어나와 지정한 곳의 적을 삼킵니다.
 icon: magiccodex:textures/spells/expansion_2/void_maw.png
 permission: magic.learned.void_maw
 discovery:
-  description: 학교 도서관에서 숨겨진 '텅 빈 것의 식욕' 책 읽기.
+  description: 학교 도서관 숨겨진 텅 빈 것의 식욕 책 읽기 유지
 research: 아무것도 없는 곳에서 무엇인가 입을 벌렸다.
 cast:
-  command: ''
-  cooldown-seconds: 90
+  command: 마법 void_maw
+  cooldown-seconds: 100
   mana-cost: 500
 order: 198

@@ -68,7 +68,7 @@ final class BuffMech extends Mech {
     }
 
     static void clear(LivingEntity e, String type) {
-        for (Attribute a : List.of(Attribute.SCALE, Attribute.ENTITY_INTERACTION_RANGE, Attribute.ATTACK_DAMAGE, Attribute.MOVEMENT_SPEED, Attribute.JUMP_STRENGTH)) {
+        for (Attribute a : List.of(Attribute.SCALE, Attribute.ENTITY_INTERACTION_RANGE, Attribute.BLOCK_INTERACTION_RANGE, Attribute.ATTACK_DAMAGE, Attribute.MOVEMENT_SPEED, Attribute.JUMP_STRENGTH)) {
             var attr = e.getAttribute(a);
             if (attr != null) attr.removeModifier(key(type, a));
         }

@@ -184,6 +184,23 @@ final class StatusEffects implements Listener, AutoCloseable {
         return true;
     }
 
+    /**
+     * Custom statuses on the entity right now -> {ticks left, power x 1000} (vanilla look-alike potions are left out:
+     * 178 저주의 전가 copies those as potions). Used by 178 to copy them onto other enemies.
+     */
+    Map<Status, int[]> active(LivingEntity e) {
+        var out = new EnumMap<Status, int[]>(Status.class);
+        if (e == null) return out;
+        Holder h = holders.get(e.getUniqueId());
+        for (Line l : lines(e)) {
+            if (l.left() == StatusProtocol.INFINITE || l.left() <= 0) continue;
+            Entry x = h == null ? null : h.entries.get(l.status());
+            if (x == null) continue;
+            out.put(l.status(), new int[]{l.left(), (int) Math.round(x.power * 1000)});
+        }
+        return out;
+    }
+
     boolean has(Entity e, Status s) {
         if (e == null) return false;
         Holder h = holders.get(e.getUniqueId());
