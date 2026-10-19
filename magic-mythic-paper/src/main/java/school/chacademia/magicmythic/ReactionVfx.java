@@ -67,10 +67,19 @@ final class ReactionVfx {
     }
 
     private void play(String system, Location at, float scale, float yaw, int ticks) {
-        if (!enabled || at.getWorld() == null || !resolve()) return;
+        if (!enabled) return;
+        effect("claude:" + pack + "/" + system, at, scale, yaw, ticks, 0xFFFFFF);
+    }
+
+    /**
+     * Any PortableVFX effect by full id (e.g. "claude:blazepillar/erupt"), tinted (0xFFFFFF = authored colours;
+     * colour-variant mobs pass their own tint). Used by mob skills (chatelegraph vfx=...). Same budget/failure rules.
+     */
+    void effect(String id, Location at, float scale, float yaw, int ticks, int tint) {
+        if (id == null || id.isBlank() || at.getWorld() == null || !resolve()) return;
         try {
-            Object req = request.newInstance("claude:" + pack + "/" + system, at.getWorld().getName(), at.getX(), at.getY(), at.getZ(),
-                    scale, ticks, yaw, 0f, 0f, 0xFFFFFF, 1f, range);
+            Object req = request.newInstance(id, at.getWorld().getName(), at.getX(), at.getY(), at.getZ(),
+                    scale, ticks, yaw, 0f, 0f, tint & 0xFFFFFF, 1f, range);
             play.invoke(service, req);
         } catch (InvocationTargetException e) {
             // RejectedExecutionException = PortableVFX play budget exhausted: skip this one quietly.

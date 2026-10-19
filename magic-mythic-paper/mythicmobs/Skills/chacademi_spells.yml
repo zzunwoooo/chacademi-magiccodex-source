@@ -949,6 +949,159 @@ CHA_faint_veil:
   Skills:
   - chaselfpotion{type=INVISIBILITY;duration=160;level=0;element=dark;spell=faint_veil} @self
 
+# 300 여우불 공전 - 여우불 3개가 0.8초 몸 둘레를 돌다가 조준한 적에게 휘어 날아감 (불씨 2초)
+CHA_fox_orbit:
+  Cooldown: 0
+  Skills:
+  - chamobshot{count=3;spread=30;orbit=16;speed=0.7;homing=0.2;range=20;mult=1;ignite=40;vfx=kitsunefox/shot_normal;hitvfx=kitsunefox/hit_normal;hits=enemies;element=fire;spell=fox_orbit}
+
+# 301 곡선 불깃털 - 좌우로 퍼졌다가 휘어 들어오는 불깃털 3발 (불씨 2초)
+CHA_curving_plumes:
+  Cooldown: 0
+  Skills:
+  - chamobshot{count=3;spread=40;speed=0.8;homing=0.18;range=20;mult=1;ignite=40;vfx=phoenixfeather/shot_flame;hitvfx=phoenixfeather/hit_flame;hits=enemies;element=fire;spell=curving_plumes}
+
+# 302 결정 공전탄 - 얼음 결정 8개가 1초 몸 둘레를 돈 뒤 8방향으로 발사, 맞으면 1.5초 둔화
+CHA_crystal_orbit:
+  Cooldown: 0
+  Skills:
+  - chamobshot{count=8;spread=45;orbit=20;speed=0.7;range=12;mult=1;status=slow:30:0.3;vfx=glacialshards/shot_glacial;hitvfx=glacialshards/hit_glacial;hits=enemies;element=water;spell=crystal_orbit}
+
+# 303 독 뱉기 - 포물선 독 덩어리, 떨어진 자리 반경 2.5 피해 + 중독 3초 (웅덩이는 VFX)
+CHA_venom_spit:
+  Cooldown: 0
+  Skills:
+  - chamobshot{count=1;speed=0.7;rise=0.35;range=18;burst=2.5;mult=1;status=poison:60;vfx=basiliskspit/shot_wild;hitvfx=basiliskspit/hit_wild;hits=enemies;element=earth;spell=venom_spit}
+
+# 304 연막 은신 - 주변 5블록 적 실명 2초 + 자신 2초 투명
+CHA_smoke_veil:
+  Cooldown: 0
+  Skills:
+  - chatelegraph{shape=circle;at=caster;r=5;ticks=2;mult=1;status=blindness:40;vfx=smokebomb/smoke;vfxref=6;vfxlead=2;warn=false;hits=enemies;element=earth;spell=smoke_veil}
+  - chaselfpotion{type=INVISIBILITY;duration=40;level=0;element=earth;spell=smoke_veil} @self
+
+# 305 영역 선포 - 주변 6블록 적을 위로 튕겨 올림
+CHA_domain_stomp:
+  Cooldown: 0
+  Skills:
+  - chatelegraph{shape=circle;at=caster;r=6;ticks=4;mult=1;up=0.9;vfx=domainseal/domain_heavenly;vfxref=10;vfxlead=4;warn=false;hits=enemies;element=light;spell=domain_stomp}
+
+# 306 봉인진 - 조준 지점 반경 4, 0.8초 뒤 봉인 — 무장 해제 1.5초
+CHA_seal_circle:
+  Cooldown: 0
+  Skills:
+  - chatelegraph{shape=circle;at=target;r=4;ticks=16;mult=1;status=disarm:30;vfx=sealcircle/seal;vfxref=4;vfxlead=2;warn=false;hits=enemies;element=light;spell=seal_circle}
+
+# 307 봉인 부적 - 곡선 유도 부적 3장
+CHA_seal_talismans:
+  Cooldown: 0
+  Skills:
+  - chamobshot{count=3;spread=30;speed=0.8;homing=0.15;range=20;mult=1;vfx=sealtalisman/shot_seal;hitvfx=sealtalisman/hit_seal;hits=enemies;element=light;spell=seal_talismans}
+
+# 308 방패 내려찍기 - 앞 부채꼴 반경 4.5 · 120° 강타 + 기절 0.5초
+CHA_shield_slam:
+  Cooldown: 0
+  Skills:
+  - chatelegraph{shape=cone;at=caster;r=4.5;angle=120;ticks=4;mult=1;status=stun:10;vfx=sealshield/shield;vfxref=3;vfxlead=4;warn=false;hits=enemies;element=light;spell=shield_slam}
+
+# 309 사슬 화살 - 빠른 사슬 화살, 맞으면 1.5초 둔화
+CHA_chain_arrow:
+  Cooldown: 0
+  Skills:
+  - chamobshot{count=1;speed=1.3;range=22;radius=0.6;mult=1;status=slow:30:0.4;vfx=chainarrow/shot_chain;hitvfx=chainarrow/hit_chain;hits=enemies;element=light;spell=chain_arrow}
+
+# 310 마나 흡수 - 조준 지점 반경 4, 0.6초 뒤 피해 + 마나 연소 2초
+CHA_mana_drain:
+  Cooldown: 0
+  Skills:
+  - chatelegraph{shape=circle;at=target;r=4;ticks=12;mult=1;status=mana_burn:40;vfx=phantomdrain/drain_ender;vfxref=6;vfxlead=2;warn=false;hits=enemies;element=dark;spell=mana_drain}
+
+# 311 영혼 낫 - 앞 부채꼴 반경 5 · 150° 베기
+CHA_soul_scythe:
+  Cooldown: 0
+  Skills:
+  - chatelegraph{shape=cone;at=caster;r=5;angle=150;ticks=4;mult=1;vfx=phantomscythe/reap_ender;vfxref=5;vfxlead=4;warn=false;hits=enemies;element=dark;spell=soul_scythe}
+
+# 312 망각의 탄환 - 느리게 날아가는 탄 3발, 맞으면 1.5초 둔화
+CHA_oblivion_orbs:
+  Cooldown: 0
+  Skills:
+  - chamobshot{count=3;spread=14;speed=0.45;homing=0.08;range=20;radius=0.9;mult=1;status=slow:30:0.3;vfx=skelorb/shot;hitvfx=skelorb/hit;hits=enemies;element=dark;spell=oblivion_orbs}
+
+# 313 뼈의 손아귀 - 조준 지점 반경 4, 0.6초 뒤 묶음 1초 + 시전자 쪽으로 끌어옴
+CHA_bone_grasp:
+  Cooldown: 0
+  Skills:
+  - chatelegraph{shape=circle;at=target;r=4;ticks=12;mult=1;status=root:20;pull=1.4;vfx=bonegrasp/grasp;vfxref=6;vfxlead=2;warn=false;hits=enemies;element=dark;spell=bone_grasp}
+
+# 314 그림자 도약 - 대상 옆으로 순간이동해 반경 2.5 타격 (2칸 빈 공간 필요)
+CHA_shadow_leap:
+  Cooldown: 0
+  Skills:
+  - chatelegraph{shape=circle;at=target;r=2.5;ticks=4;mult=1;blink=true;vfx=specialkitsune/in_normal;vfxout=specialkitsune/out_normal;vfxref=3;vfxlead=4;warn=false;hits=enemies;element=dark;spell=shadow_leap}
+
+# 315 끌어오기 - 대상을 내 앞 1.6블록으로 순간이동시키고 1초 둔화
+CHA_binding_pull:
+  Cooldown: 0
+  Skills:
+  - chatelegraph{shape=circle;at=target;r=1.5;ticks=4;mult=1;tpme=true;status=slow:20:0.3;vfx=specialserpent/mark_jade;vfxin=specialserpent/in_jade;vfxref=3;vfxlead=4;warn=false;hits=enemies;element=wind;spell=binding_pull}
+
+# 316 요정 가루 - 주변 5블록 적 수면 2초 (피해 받으면 깸)
+CHA_fairy_dust:
+  Cooldown: 0
+  Skills:
+  - chatelegraph{shape=circle;at=caster;r=5;ticks=4;mult=1;status=sleep:40;vfx=fairydust/dust_flower;vfxref=6;vfxlead=4;warn=false;hits=enemies;element=earth;spell=fairy_dust}
+
+# 317 반달 바람날 - 앞 직선 10 · 폭 3, 반달 바람날 2개가 밀며 지나감
+CHA_moon_wind:
+  Cooldown: 0
+  Skills:
+  - chatelegraph{shape=line;at=caster;length=10;width=3;ticks=4;mult=1;knock=0.8;vfx=pegasuscrescent/moon;vfxref=5;vfxlead=4;warn=false;hits=enemies;element=wind;spell=moon_wind}
+
+# 318 돌풍 날갯짓 - 앞 반원 반경 6 밀치기 + 중력 1초
+CHA_gale_wings:
+  Cooldown: 0
+  Skills:
+  - chatelegraph{shape=cone;at=caster;r=6;angle=180;ticks=4;mult=1;knock=1.6;up=0.4;status=gravity:20;vfx=galewings/gale;vfxref=10;vfxlead=4;warn=false;hits=enemies;element=wind;spell=gale_wings}
+
+# 319 깃털 폭풍 - 주변 5블록 깃털 칼날 폭풍
+CHA_feather_storm:
+  Cooldown: 0
+  Skills:
+  - chatelegraph{shape=circle;at=caster;r=5;ticks=4;mult=1;vfx=featherstorm/fstorm_common;vfxref=8;vfxlead=4;warn=false;hits=enemies;element=wind;spell=feather_storm}
+
+# 320 사냥 도약 - 대상에게 뛰어들어 착지 반경 3 피해 + 묶음 1초
+CHA_hunting_pounce:
+  Cooldown: 0
+  Skills:
+  - leap{velocity=130;noise=0} @target
+  - delay 14
+  - chatelegraph{shape=circle;at=caster;r=3;ticks=2;mult=1;status=root:20;vfx=sabertoothpounce/pounce_arctic;vfxref=6;vfxlead=2;warn=false;hits=enemies;element=earth;spell=hunting_pounce} @self
+
+# 321 포효 도약 - 대상에게 뛰어들어 착지하며 포효, 반경 4 피해 + 공포 1초
+CHA_roar_leap:
+  Cooldown: 0
+  Skills:
+  - leap{velocity=150;noise=0} @target
+  - delay 16
+  - chatelegraph{shape=circle;at=caster;r=4;ticks=2;mult=1;status=fear:20;vfx=manticoreroar/roar_aether;vfxref=8;vfxlead=2;warn=false;hits=enemies;element=wind;spell=roar_leap} @self
+
+# 322 중력 강타 - 주변 5블록 강타 + 중력 2초
+CHA_gravity_slam:
+  Cooldown: 0
+  Skills:
+  - chatelegraph{shape=circle;at=caster;r=5;ticks=6;mult=1;status=gravity:40;vfx=gravityslam/gravity_arcane;vfxref=11;vfxlead=6;warn=false;hits=enemies;element=earth;spell=gravity_slam}
+
+# 323 꼬리 가시 - 조준 지점 반경 3에 0.4초 간격 가시 3번
+CHA_tail_spikes:
+  Cooldown: 0
+  Skills:
+  - chatelegraph{shape=circle;at=target;r=3;ticks=8;mult=1;vfx=wyvernspikes/spikes_green;vfxref=4;vfxlead=6;warn=false;hits=enemies;element=earth;spell=tail_spikes}
+  - delay 8
+  - chatelegraph{shape=circle;at=target;r=3;ticks=8;mult=1;vfx=wyvernspikes/spikes_green;vfxref=4;vfxlead=6;warn=false;hits=enemies;element=earth;spell=tail_spikes}
+  - delay 8
+  - chatelegraph{shape=circle;at=target;r=3;ticks=8;mult=1;vfx=wyvernspikes/spikes_green;vfxref=4;vfxlead=6;warn=false;hits=enemies;element=earth;spell=tail_spikes}
+
 # (추가 스킬) 태양의 심판 영창 완료 후 3초 레이저 (chachannel then=)
 CHA_solar_judgment_fire:
   Cooldown: 0

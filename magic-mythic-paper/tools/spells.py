@@ -173,6 +173,11 @@ S = [
  ('faint_veil','CHA_faint_veil','SELF',12,0,0,False,['chaselfpotion{type=INVISIBILITY;duration=160;level=0} @self'],'8초 투명 (갑옷·손 아이템은 보임)'),
 ]
 # 한 마법이 쓰는 추가 스킬 (Bridge 라우트 없음)
+# 300~323: mob skills learned by killing that mob (tools/mob_spells.py is their source of truth)
+import sys as _sys; _sys.path.insert(0, HERE)
+import mob_spells as _mob_spells
+S += _mob_spells.routes()
+
 EXTRA = {
  'CHA_solar_judgment_fire': ('solar_judgment', ['chazone{r=4;ticks=60;period=5;mult=0.15}'], '태양의 심판 영창 완료 후 3초 레이저 (chachannel then=)'),
 }
@@ -268,8 +273,17 @@ def aim_shape(spec):
         if first and 'r' in _params(first): d['radius'] = float(_params(first)['r'])
         return d
     if tgt == 'BLOCK': return {'mode': 'point', 'range': rng, 'radius': 0.6}
-    first = next((l for l in lines if l.startswith(('chahit{', 'chabolt{', 'chazone{', 'chaworld{', 'chafarm{', 'chautil{', 'chasummon{', 'chachannel{'))), None)
+    first = next((l for l in lines if l.startswith(('chahit{', 'chabolt{', 'chazone{', 'chaworld{', 'chafarm{', 'chautil{', 'chasummon{', 'chachannel{', 'chatelegraph{', 'chamobshot{'))), None)
     if first is None: return {'mode': 'point', 'range': rng, 'radius': 0.6}
+    if first.startswith('chamobshot{'):
+        q = _params(first)
+        return {'mode': 'line', 'range': rng, 'length': float(q.get('range', rng)), 'width': round(max(0.2, 2 * float(q.get('radius', 0.7))), 2), 'origin': 'caster'}
+    if first.startswith('chatelegraph{'):
+        q = _params(first)
+        if q.get('at') == 'target': return {'mode': 'area', 'range': rng, 'radius': float(q.get('r', 3))}
+        if q.get('shape') == 'cone': return {'mode': 'cone', 'range': rng, 'length': float(q.get('r', 3)), 'angle': float(q.get('angle', 60))}
+        if q.get('shape') == 'line': return {'mode': 'line', 'range': rng, 'length': float(q.get('length', 8)), 'width': float(q.get('width', 2)), 'origin': 'caster'}
+        return None
     p = _params(first)
     if p.get('center') == 'caster':
         if 'cone' in p: return {'mode': 'cone', 'range': rng, 'length': float(p.get('r', rng)), 'angle': float(p['cone'])}

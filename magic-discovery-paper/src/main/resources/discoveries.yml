@@ -1259,3 +1259,244 @@ spells:
       "sneak.night": 200
     chance: 1.0
     prerequisites: []
+  # ---- 300~323 몹 기술 습득 마법 (magic-mythic-paper/tools/mob_spells.py) ----
+  fox_orbit:
+    name: "여우불 공전"
+    permission: "magic.learned.fox_orbit"
+    icon: "magiccodex:textures/spells/mob_skill/fox_orbit.png"
+    category: "fire"
+    condition-text: "키츠네를 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.kitsune": 1
+    chance: 0.05
+    prerequisites: []
+  curving_plumes:
+    name: "곡선 불깃털"
+    permission: "magic.learned.curving_plumes"
+    icon: "magiccodex:textures/spells/mob_skill/curving_plumes.png"
+    category: "fire"
+    condition-text: "피닉스를 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.phoenix": 1
+    chance: 0.05
+    prerequisites: []
+  crystal_orbit:
+    name: "결정 공전탄"
+    permission: "magic.learned.crystal_orbit"
+    icon: "magiccodex:textures/spells/mob_skill/crystal_orbit.png"
+    category: "water"
+    condition-text: "빙핵의 수호자를 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.glacialcore": 1
+    chance: 0.05
+    prerequisites: []
+  venom_spit:
+    name: "독 뱉기"
+    permission: "magic.learned.venom_spit"
+    icon: "magiccodex:textures/spells/mob_skill/venom_spit.png"
+    category: "earth"
+    condition-text: "바실리스크를 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.basilisk": 1
+    chance: 0.05
+    prerequisites: []
+  smoke_veil:
+    name: "연막 은신"
+    permission: "magic.learned.smoke_veil"
+    icon: "magiccodex:textures/spells/mob_skill/smoke_veil.png"
+    category: "earth"
+    condition-text: "약초 도둑을 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.herbthief": 1
+    chance: 0.05
+    prerequisites: []
+  domain_stomp:
+    name: "영역 선포"
+    permission: "magic.learned.domain_stomp"
+    icon: "magiccodex:textures/spells/mob_skill/domain_stomp.png"
+    category: "light"
+    condition-text: "영록을 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.stag": 1
+    chance: 0.05
+    prerequisites: []
+  seal_circle:
+    name: "봉인진"
+    permission: "magic.learned.seal_circle"
+    icon: "magiccodex:textures/spells/mob_skill/seal_circle.png"
+    category: "light"
+    condition-text: "봉인의 술사를 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.warden_mage": 1
+    chance: 0.05
+    prerequisites: []
+  seal_talismans:
+    name: "봉인 부적"
+    permission: "magic.learned.seal_talismans"
+    icon: "magiccodex:textures/spells/mob_skill/seal_talismans.png"
+    category: "light"
+    condition-text: "봉인의 술사를 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.warden_mage": 1
+    chance: 0.05
+    prerequisites: []
+  shield_slam:
+    name: "방패 내려찍기"
+    permission: "magic.learned.shield_slam"
+    icon: "magiccodex:textures/spells/mob_skill/shield_slam.png"
+    category: "light"
+    condition-text: "봉인의 기사를 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.warden_knight": 1
+    chance: 0.05
+    prerequisites: []
+  chain_arrow:
+    name: "사슬 화살"
+    permission: "magic.learned.chain_arrow"
+    icon: "magiccodex:textures/spells/mob_skill/chain_arrow.png"
+    category: "light"
+    condition-text: "봉인의 궁수를 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.warden_archer": 1
+    chance: 0.05
+    prerequisites: []
+  mana_drain:
+    name: "마나 흡수"
+    permission: "magic.learned.mana_drain"
+    icon: "magiccodex:textures/spells/mob_skill/mana_drain.png"
+    category: "dark"
+    condition-text: "팬텀을 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.phantom": 1
+    chance: 0.05
+    prerequisites: []
+  soul_scythe:
+    name: "영혼 낫"
+    permission: "magic.learned.soul_scythe"
+    icon: "magiccodex:textures/spells/mob_skill/soul_scythe.png"
+    category: "dark"
+    condition-text: "팬텀을 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.phantom": 1
+    chance: 0.05
+    prerequisites: []
+  oblivion_orbs:
+    name: "망각의 탄환"
+    permission: "magic.learned.oblivion_orbs"
+    icon: "magiccodex:textures/spells/mob_skill/oblivion_orbs.png"
+    category: "dark"
+    condition-text: "망각의 해골술사를 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.skeleton_mage": 1
+    chance: 0.05
+    prerequisites: []
+  bone_grasp:
+    name: "뼈의 손아귀"
+    permission: "magic.learned.bone_grasp"
+    icon: "magiccodex:textures/spells/mob_skill/bone_grasp.png"
+    category: "dark"
+    condition-text: "망각의 해골술사를 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.skeleton_mage": 1
+    chance: 0.05
+    prerequisites: []
+  shadow_leap:
+    name: "그림자 도약"
+    permission: "magic.learned.shadow_leap"
+    icon: "magiccodex:textures/spells/mob_skill/shadow_leap.png"
+    category: "dark"
+    condition-text: "키츠네를 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.kitsune": 1
+    chance: 0.05
+    prerequisites: []
+  binding_pull:
+    name: "끌어오기"
+    permission: "magic.learned.binding_pull"
+    icon: "magiccodex:textures/spells/mob_skill/binding_pull.png"
+    category: "wind"
+    condition-text: "하늘뱀을 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.sky_serpent": 1
+    chance: 0.05
+    prerequisites: []
+  fairy_dust:
+    name: "요정 가루"
+    permission: "magic.learned.fairy_dust"
+    icon: "magiccodex:textures/spells/mob_skill/fairy_dust.png"
+    category: "earth"
+    condition-text: "요정을 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.fairy": 1
+    chance: 0.05
+    prerequisites: []
+  moon_wind:
+    name: "반달 바람날"
+    permission: "magic.learned.moon_wind"
+    icon: "magiccodex:textures/spells/mob_skill/moon_wind.png"
+    category: "wind"
+    condition-text: "페가수스를 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.pegasus": 1
+    chance: 0.05
+    prerequisites: []
+  gale_wings:
+    name: "돌풍 날갯짓"
+    permission: "magic.learned.gale_wings"
+    icon: "magiccodex:textures/spells/mob_skill/gale_wings.png"
+    category: "wind"
+    condition-text: "페가수스를 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.pegasus": 1
+    chance: 0.05
+    prerequisites: []
+  feather_storm:
+    name: "깃털 폭풍"
+    permission: "magic.learned.feather_storm"
+    icon: "magiccodex:textures/spells/mob_skill/feather_storm.png"
+    category: "wind"
+    condition-text: "히포그리프를 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.hippogryph": 1
+    chance: 0.05
+    prerequisites: []
+  hunting_pounce:
+    name: "사냥 도약"
+    permission: "magic.learned.hunting_pounce"
+    icon: "magiccodex:textures/spells/mob_skill/hunting_pounce.png"
+    category: "earth"
+    condition-text: "검치호를 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.sabertooth": 1
+    chance: 0.05
+    prerequisites: []
+  roar_leap:
+    name: "포효 도약"
+    permission: "magic.learned.roar_leap"
+    icon: "magiccodex:textures/spells/mob_skill/roar_leap.png"
+    category: "wind"
+    condition-text: "만티코어를 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.manticore": 1
+    chance: 0.05
+    prerequisites: []
+  gravity_slam:
+    name: "중력 강타"
+    permission: "magic.learned.gravity_slam"
+    icon: "magiccodex:textures/spells/mob_skill/gravity_slam.png"
+    category: "earth"
+    condition-text: "고대 골렘을 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.golem": 1
+    chance: 0.05
+    prerequisites: []
+  tail_spikes:
+    name: "꼬리 가시"
+    permission: "magic.learned.tail_spikes"
+    icon: "magiccodex:textures/spells/mob_skill/tail_spikes.png"
+    category: "earth"
+    condition-text: "와이번을 처치하면 5% 확률로 습득."
+    requirements:
+      "kill.mob.wyvern": 1
+    chance: 0.05
+    prerequisites: []

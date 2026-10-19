@@ -28,6 +28,15 @@
    "radius": 0.6,
    "range": 6
   },
+  "binding_pull": {
+   "mode": "unit",
+   "range": 14
+  },
+  "bone_grasp": {
+   "mode": "area",
+   "radius": 4.0,
+   "range": 15
+  },
   "bouncing_droplet": {
    "length": 15.0,
    "mode": "line",
@@ -46,6 +55,13 @@
    "mode": "point",
    "radius": 0.6,
    "range": 15
+  },
+  "chain_arrow": {
+   "length": 22.0,
+   "mode": "line",
+   "origin": "caster",
+   "range": 22,
+   "width": 1.2
   },
   "charcoal_conversion": {
    "mode": "unit",
@@ -78,6 +94,13 @@
   "crossfire": {
    "mode": "unit",
    "range": 15
+  },
+  "curving_plumes": {
+   "length": 20.0,
+   "mode": "line",
+   "origin": "caster",
+   "range": 20,
+   "width": 1.4
   },
   "earth_shaping": {
    "angle": 60.0,
@@ -135,6 +158,13 @@
    "range": 15,
    "width": 0.8
   },
+  "fox_orbit": {
+   "length": 20.0,
+   "mode": "line",
+   "origin": "caster",
+   "range": 20,
+   "width": 1.4
+  },
   "frost_rupture": {
    "mode": "area",
    "radius": 2.5,
@@ -149,6 +179,10 @@
    "mode": "area",
    "radius": 5.0,
    "range": 15
+  },
+  "hunting_pounce": {
+   "mode": "unit",
+   "range": 12
   },
   "incandescent_break": {
    "length": 15.0,
@@ -170,6 +204,11 @@
    "mode": "point",
    "radius": 0.6,
    "range": 12
+  },
+  "mana_drain": {
+   "mode": "area",
+   "radius": 4.0,
+   "range": 14
   },
   "material_exchange": {
    "mode": "unit",
@@ -193,6 +232,13 @@
    "origin": "caster",
    "range": 16,
    "width": 2.8
+  },
+  "oblivion_orbs": {
+   "length": 20.0,
+   "mode": "line",
+   "origin": "caster",
+   "range": 20,
+   "width": 1.8
   },
   "pebble_toss": {
    "length": 15.0,
@@ -230,9 +276,29 @@
    "range": 18,
    "width": 2.4
   },
+  "roar_leap": {
+   "mode": "unit",
+   "range": 14
+  },
+  "seal_circle": {
+   "mode": "area",
+   "radius": 4.0,
+   "range": 16
+  },
+  "seal_talismans": {
+   "length": 20.0,
+   "mode": "line",
+   "origin": "caster",
+   "range": 20,
+   "width": 1.4
+  },
   "shadow_bind": {
    "mode": "unit",
    "range": 10
+  },
+  "shadow_leap": {
+   "mode": "unit",
+   "range": 14
   },
   "solar_judgment": {
    "mode": "point",
@@ -267,6 +333,11 @@
    "range": 15,
    "width": 1.0
   },
+  "tail_spikes": {
+   "mode": "area",
+   "radius": 3.0,
+   "range": 16
+  },
   "thorn_seeds": {
    "length": 15.0,
    "mode": "line",
@@ -292,6 +363,13 @@
    "mode": "point",
    "radius": 0.6,
    "range": 6
+  },
+  "venom_spit": {
+   "length": 18.0,
+   "mode": "line",
+   "origin": "caster",
+   "range": 18,
+   "width": 1.4
   },
   "wash_letters": {
    "mode": "point",

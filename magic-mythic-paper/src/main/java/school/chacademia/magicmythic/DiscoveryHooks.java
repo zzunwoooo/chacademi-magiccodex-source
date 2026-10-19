@@ -21,6 +21,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
  *   heal.magic_other    - health restored on other players                      (157 마력 전선 x100)
  *   mana.exactly_zero   - current mana hit exactly 0                            (161 경험의 환전)
  *   cast.six_elements   - spells of all six elements within 30 s               (163 별빛 재현)
+ *   kill.mob.<family>   - a player killed one of our wild mobs (CA_Wild_*, any colour / shiny, any weapon)
+ *                         (300~323 몹 기술 습득 마법: x1 + chance 0.05 = 5% per kill; families = tools/mob_spells.py FAMILIES)
  */
 final class DiscoveryHooks implements Listener {
     private record Last(UUID caster, String spell, String element, long at) {}
@@ -67,12 +69,34 @@ final class DiscoveryHooks implements Listener {
     // ------------------------------------------------------------------ kills
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void death(EntityDeathEvent e) {
+        mobKill(e);
         Last last = LAST.remove(e.getEntity().getUniqueId());
         if (last == null || System.currentTimeMillis() - last.at() > 3000) return;
         Player caster = Bukkit.getPlayer(last.caster());
         if (caster == null) return;
         signal(caster, "kill.spell." + last.spell(), 1);
         if ("light".equals(last.element()) && Targets.undead(e.getEntity())) signal(caster, "kill.light_undead", 1);
+    }
+
+    /** CA_Wild_ name prefix (after "CA_Wild_") -> family key. Longest prefixes first is not needed: none overlap. */
+    static final Map<String, String> MOB_FAMILIES = Map.ofEntries(
+        Map.entry("kitsune_", "kitsune"), Map.entry("phoenix_", "phoenix"), Map.entry("glacialcore", "glacialcore"),
+        Map.entry("basilisk_", "basilisk"), Map.entry("lostasset_mob3_herbthief", "herbthief"), Map.entry("stag_", "stag"),
+        Map.entry("mf_warden_mage", "warden_mage"), Map.entry("mf_warden_knight", "warden_knight"), Map.entry("mf_warden_archer", "warden_archer"),
+        Map.entry("phantom_", "phantom"), Map.entry("ncr_mage_skeleton", "skeleton_mage"), Map.entry("sky_serpent_", "sky_serpent"),
+        Map.entry("lostasset_mob2_", "fairy"), Map.entry("horse_pegasus", "pegasus"), Map.entry("hippogryph_", "hippogryph"),
+        Map.entry("sabertooth_", "sabertooth"), Map.entry("manticore_", "manticore"), Map.entry("golem_", "golem"), Map.entry("wyvern_", "wyvern"));
+    static String mobFamily(String mythicType) {
+        if (mythicType == null || !mythicType.startsWith("CA_Wild_")) return null;
+        String rest = mythicType.substring("CA_Wild_".length());
+        for (var f : MOB_FAMILIES.entrySet()) if (rest.startsWith(f.getKey())) return f.getValue();
+        return null;
+    }
+    private static void mobKill(EntityDeathEvent e) {
+        Player killer = e.getEntity().getKiller();
+        if (killer == null) return;
+        String family = mobFamily(Targets.mythicType(e.getEntity()));
+        if (family != null) signal(killer, "kill.mob." + family, 1);
     }
 
     // ------------------------------------------------------------------ mana 0 (polled; the Bridge has no mana event)
