@@ -58,6 +58,14 @@ final class Samples {
             int tt = t, mm = m;
             ALL.add(new View("lobby_" + tabs[t] + (m == 0 ? "_q" : "_d"), 1672, 941, -1, -1, p -> LobbyView.paint(p, lobby(tt, mm))));
         }
+        for (int m = 0; m < 2; m++) {
+            int mm = m;
+            // a 1909×1004 window: 59 design px beyond the canvas on each side
+            ALL.add(new View("lobby_wide_" + (m == 0 ? "q" : "d"), 1790, 941, -1, -1, p -> {
+                LobbyView.edges(59, 59); p.push(59, 0, 1);
+                p.push(-59, 0, 1790 / 1672f); LobbyView.background(p, 0, mm); p.pop();
+                LobbyView.content(p, lobby(0, mm)); p.pop(); LobbyView.edges(0, 0); }));
+        }
         ALL.add(new View("lobby_match_q_menu", 1672, 941, 1500, 600, p -> { var d = lobby(0, 0);
             LobbyView.paint(p, new LobbyView.Data(d.tab(), d.mode(), d.me(), d.myNick(), d.mySkin(), d.info(), d.party(), true, 1, true, d.spells(), d.specialKey(),
                     new LobbyView.Queue(1, 0, 42), d.cards(), 0, true, d.rows(), d.mine(), d.page(), d.pages(), 0, d.rankSearch(), true, d.profile(), true, 0, d.recordSearch(), "")); }));

@@ -53,6 +53,17 @@ public final class LobbyView {
     /** Party menu actions on member i: promote / kick / leave. */
     public static String actionId(String action, int member) { return "act:" + action + ":" + member; }
     public static String rowId(int i) { return "row:" + i; }
+    public static final String SPECIAL_KEY = "special_key";
+
+    /**
+     * Screen edges beyond the 1672 canvas (design px), set by the screen each frame: the menus / title / 마법 세팅 stick to the
+     * screen's left edge and the season pill / right column to its right edge on wide windows (owner 2026-10-19).
+     */
+    static float edgeL, edgeR;
+    public static void edges(float left, float right) { edgeL = Math.max(0, left); edgeR = Math.max(0, right); }
+    /** The 특수 키 cap is waiting for a key press (set by the screen). */
+    static boolean keyCapture;
+    public static void keyCapture(boolean on) { keyCapture = on; }
 
     // ------------------------------------------------------------------ colours
     static final int CYAN = 0xFF2BD3EA, CYAN_DIM = 0x8022C5DD, TEXT = 0xFFF2F4F7, SOFT = 0xFFC8CED6, DIM = 0xFF8D96A3, GOLD = 0xFFF0C86A,
@@ -98,6 +109,7 @@ public final class LobbyView {
     static final String[] TABS = {"매칭", "진행 중인 경기", "랭킹", "전적"};
     static final float[] TAB_X = {266, 397, 527, 618};
     static void top(Pen p, Data d) {
+        p.push(-edgeL, 0, 1);
         p.text("결투장", 68, 54, 38, TEXT, Face.SERIF, Canvas.LEFT);
         p.c.fill(201, 40, 1.5f, 30, 0x50FFFFFF);
         p.c.fill(232, 77, 460, 1, 0x26FFFFFF);
@@ -123,12 +135,13 @@ public final class LobbyView {
             p.text(names[m], x + sw / 2, ty + sh / 2, 20, on ? TEXT : over ? 0xFFE6EAF0 : SOFT, on ? Face.SANS_BOLD : Face.SANS, Canvas.CENTER);
             p.hit(modeId(m), x, ty, sw, sh);
         }
-        // season (not on 전적: the search field is there)
+        p.pop();
+        // season (not on 전적: the search field is there), at the screen's right edge
         if (d.tab() != RECORD && d.info() != null) {
             String s = d.info().season() <= 0 ? "시즌 준비 중" : "시즌 " + d.info().season() + "  ·  " + left(d.info().seasonLeftSec());
-            float w = p.width(s, 22, Face.SANS) + 52;
-            p.panel(1604 - w, 24, w, 48, 24, 0xB00A111A, 0x33FFFFFF);
-            p.text(s, 1604 - w / 2, 48, 22, TEXT, Face.SANS, Canvas.CENTER);
+            float w = p.width(s, 22, Face.SANS) + 52, r = 1626 + edgeR;
+            p.panel(r - w, 24, w, 48, 24, 0xB00A111A, 0x33FFFFFF);
+            p.text(s, r - w / 2, 48, 22, TEXT, Face.SANS, Canvas.CENTER);
         }
     }
     static String left(int sec) {
@@ -141,15 +154,10 @@ public final class LobbyView {
     // ================================================================== 매칭
     static void match(Pen p, Data d) {
         boolean duel = d.mode() == DUEL;
-        float linkY;
-        if (duel) {
-            p.text("1:1", 74, 398, 96, TEXT, Face.TITLE, Canvas.LEFT);
-            p.text("랭크 대전", 74, 484, 72, TEXT, Face.TITLE, Canvas.LEFT);
-            linkY = 565;
-        } else {
-            p.text("큐디치", 70, 372, 108, TEXT, Face.TITLE, Canvas.LEFT);
-            linkY = 476;
-        }
+        p.push(-edgeL, 0, 1);
+        // owner 2026-10-19: smaller title, 1:1 is "1:1 대전"
+        p.text(duel ? "1:1 대전" : "큐디치", 70, 392, 78, TEXT, Face.TITLE, Canvas.LEFT);
+        float linkY = 462;
         // 연습 경기장 입장 >
         float lw = p.width("연습 경기장 입장", 24, Face.SANS_BOLD);
         boolean lo = p.over(66, linkY - 24, lw + 50, 48);
@@ -157,15 +165,16 @@ public final class LobbyView {
         p.image("lobby/icon_chevron_right", 74 + lw + 10, linkY - 11, 22, 22);
         p.hit(PRACTICE, 66, linkY - 24, lw + 50, 48);
 
-        // 마법 세팅
-        float panelY = duel ? 772 : 743, n = 6, slot = duel ? 86 : 92, gap = duel ? 106 : 113.5f, panelW = duel ? 640 : 708;
+        // 마법 세팅: 70 % of the reference size, kept at the bottom-left corner (54, 900)
+        p.push(54 * .3f, 900 * .3f, .7f);
+        float panelY = 743, n = 6, slot = 92, gap = 113.5f, panelW = 708;
         float labelY = panelY - 24;
         boolean so = p.over(60, labelY - 20, 160, 40);
         p.text("마법 세팅", 66, labelY, 21, so ? CYAN : TEXT, Face.SANS_BOLD, Canvas.LEFT);
         p.image("lobby/icon_pencil", 66 + p.width("마법 세팅", 21, Face.SANS_BOLD) + 10, labelY - 10, 20, 20);
         p.hit(SPELLS, 60, labelY - 20, 160, 40);
         float totalW = panelW + (duel ? 0 : 160);
-        p.panel(54, panelY, totalW, duel ? 136 : 150, 14, 0x8C0C1420, GLASS_LINE);
+        p.panel(54, panelY, totalW, 150, 14, 0x8C0C1420, GLASS_LINE);
         for (int i = 0; i < n; i++) {
             float x = 70 + i * gap, y = panelY + 14;
             var s = i < d.spells().size() ? d.spells().get(i) : null;
@@ -180,13 +189,19 @@ public final class LobbyView {
         if (!duel) {
             float fx = 54 + panelW; // F 특수 키
             p.c.fill(fx + 8, panelY + 26, 1.5f, 96, 0x33FFFFFF);
-            p.panel(fx + 36, panelY + 34, 50, 50, 8, 0xCC0A121C, 0x50FFFFFF);
-            p.fit(d.specialKey(), fx + 61, panelY + 59, 24, 42, TEXT, Face.SANS_BOLD, Canvas.CENTER);
+            // click the cap, then press a key: the 특수 키 (vanilla swap-hands) is set here
+            boolean ko = p.over(fx + 30, panelY + 28, 62, 62);
+            p.panel(fx + 36, panelY + 34, 50, 50, 8, keyCapture ? 0xE00E3550 : 0xCC0A121C, keyCapture || ko ? CYAN : 0x50FFFFFF);
+            p.fit(keyCapture ? "?" : d.specialKey(), fx + 61, panelY + 59, 24, 42, keyCapture ? CYAN : TEXT, Face.SANS_BOLD, Canvas.CENTER);
+            p.hit(SPECIAL_KEY, fx + 30, panelY + 28, 62, 62);
             p.image("hud/indicator_quaffle", fx + 98, panelY + 38, 42, 43);
-            p.text("특수 키", fx + 89, panelY + 112, 20, SOFT, Face.SANS_BOLD, Canvas.CENTER);
+            p.text(keyCapture ? "키를 누르세요" : "특수 키", fx + 89, panelY + 112, 20, keyCapture ? CYAN : SOFT, Face.SANS_BOLD, Canvas.CENTER);
         }
+        p.pop();
+        p.pop();
 
-        // tier progress
+        // tier progress + right column: at the screen's right edge
+        p.push(edgeR, 0, 1);
         var m = d.info();
         float bx = duel ? 940 : 1012, bw = duel ? 332 : 310, by = 882;
         if (m != null) {
@@ -234,6 +249,7 @@ public final class LobbyView {
         p.text(label, cx, by2 + bh2 / 2, 30, enabled ? (over ? 0xFFFFFFFF : TEXT) : DIM, Face.SERIF, Canvas.CENTER);
         if (m != null && !enabled && !mine && !other && m.note() != null && !m.note().isEmpty())
             p.fit(m.note(), cx, by2 + bh2 + 15, 16, 330, DIM, Face.SANS, Canvas.CENTER);
+        p.pop();
     }
     static String clock(int sec) { return sec / 60 + ":" + String.format("%02d", sec % 60); }
 
@@ -458,7 +474,9 @@ public final class LobbyView {
     static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm");
     static void record(Pen p, Data d) {
         boolean duel = d.mode() == DUEL;
-        field(p, d.recordSearch(), "다른 유저의 전적을 검색하세요.", 1203, 42, 407, 46, RECORD_SEARCH, RECORD_SEARCH_GO);
+        p.push(edgeR, 0, 1);
+        field(p, d.recordSearch(), "다른 유저의 전적을 검색하세요.", 1219, 42, 407, 46, RECORD_SEARCH, RECORD_SEARCH_GO);
+        p.pop();
         var r = d.profile();
         if (r == null) {
             p.panel(68, 220, 1539, 140, 12, GLASS, GLASS_LINE);

@@ -137,7 +137,28 @@ final class KyudichiLobbyScreen extends KyudichiViewScreen {
     }
 
     private LobbyView.Data last;
-    @Override void paint(Pen p) { last = data(); LobbyView.content(p, last); }
+    @Override void paint(Pen p) {
+        last = data();
+        LobbyView.edges(ox / scale, ox / scale); // wide windows: menus to the left edge, season / right column to the right edge
+        LobbyView.keyCapture(capturing);
+        LobbyView.content(p, last);
+    }
+
+    // ================================================================== 특수 키 (vanilla swap-hands) set from the lobby
+    private boolean capturing;
+    private void bindSpecial(int key) {
+        capturing = false;
+        if (key == GLFW.GLFW_KEY_ESCAPE) return;
+        if (!KeySettingsLayout.allowed(key)) { say("그 키는 쓸 수 없어요."); return; }
+        if (UiKeys.isUiKey(key)) { say(KeySettingsLayout.name(key) + " 키는 UI 단축키로 쓰고 있어요. 키 설정에서 먼저 바꿔 주세요."); return; }
+        for (var b : CastingClient.base().orderedSlots())
+            if (!b.empty() && b.keyCode() == key) { say(KeySettingsLayout.name(key) + " 키에는 마법이 있어요. 키 설정에서 먼저 바꿔 주세요."); return; }
+        var o = client.options;
+        o.swapHandsKey.setBoundKey(net.minecraft.client.util.InputUtil.Type.KEYSYM.createFromCode(key));
+        net.minecraft.client.option.KeyBinding.updateKeysByCode();
+        o.write();
+        say("특수 키를 " + KeySettingsLayout.name(key) + " 키로 바꿨어요.");
+    }
 
     /** Background scaled to cover the whole window (the view is fitted, so wide or tall windows have no bars). */
     @Override void backdrop(KyudichiCanvas canvas) {
@@ -151,6 +172,7 @@ final class KyudichiLobbyScreen extends KyudichiViewScreen {
     // ================================================================== input
     @Override void clicked(String id, int button) {
         if (!id.startsWith("menu:") && !id.startsWith("act:")) menuFor = -1;
+        if (!id.equals(LobbyView.SPECIAL_KEY)) capturing = false;
         if (id.startsWith("tab:")) { int t = Integer.parseInt(id.substring(4)); if (t != tab) { tab = t; focus = 0; request(); } return; }
         if (id.startsWith("mode:")) { int m = Integer.parseInt(id.substring(5)); if (m != mode) { mode = m; livePage = 0; recentScroll = 0; request(); } return; }
         switch (id) {
@@ -158,7 +180,8 @@ final class KyudichiLobbyScreen extends KyudichiViewScreen {
             case LobbyView.SPELLS -> { client.setScreen(new KyudichiSpellPickScreen(this, mode)); return; }
             case LobbyView.START -> { start(); return; }
             case LobbyView.PARTY_TOGGLE -> { partyOpen = !partyOpen; return; }
-            case LobbyView.INVITE -> { client.setScreen(new PartyScreen()); return; }
+            case LobbyView.INVITE -> { client.setScreen(new PartyScreen(this)); return; }
+            case LobbyView.SPECIAL_KEY -> { capturing = !capturing; return; }
             case LobbyView.RANK_SEARCH_GO -> { searchRanks(); return; }
             case LobbyView.RECORD_SEARCH_GO -> { searchRecord(recordSearch.getText()); return; }
             case LobbyView.ME_ROW -> { openRecord(""); return; }
@@ -241,6 +264,9 @@ final class KyudichiLobbyScreen extends KyudichiViewScreen {
     private TextFieldWidget field() { return focus == 1 ? rankSearch : focus == 2 ? recordSearch : null; }
     @Override public boolean charTyped(char ch, int mods) { var f = field(); return f != null ? f.charTyped(ch, mods) : super.charTyped(ch, mods); }
     @Override public boolean keyPressed(int key, int scan, int mods) {
+        if (capturing) { bindSpecial(key); return true; }
+        // the 파티창 key opens the party window inside the lobby (closing it comes back here)
+        if (field() == null && key == UiKeys.code(UiKeys.Action.PARTY)) { client.setScreen(new PartyScreen(this)); return true; }
         var f = field();
         if (f != null) {
             if (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER) { if (focus == 1) searchRanks(); else searchRecord(recordSearch.getText()); return true; }
