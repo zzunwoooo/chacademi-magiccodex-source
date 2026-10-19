@@ -57,10 +57,10 @@ ESC = `CANCEL`(훅 제거). 손으로 회수·아이템 바꾸기·월드 이동
 1. `FishHook` 대기 시간: `setMaxWaitTime → setMinWaitTime → setWaitTime` 순서, 예외는 무시. 바닐라 입질이 그래도 나면 이벤트 취소로 막힘.
 2. `launchProjectile(FishHook.class)` 로 다시 던진 훅이 플레이어의 낚싯대 훅으로 인정되는지(손으로 회수 가능한지) 실게임 확인.
 3. 낚싯대 아이템 모델: `items/fishing/rods/*.json` 은 GUI·바닥·액자에서 아이콘, 손에서는 바닐라 낚싯대(던지면 cast 모델). 이 select 정의라 `ItemIconTextures`(부드러운 큰 아이콘) 대상이 아니어서 인벤 아이콘은 바닐라 방식으로 축소됨. 찌·줄·미끼는 단순 모델이라 부드럽게 그려짐.
-4. `fishing.yml settings.fish-item-models` 는 **물고기 그림 200장을 다 넣은 뒤에만** true (빠진 그림은 보라·검정 텍스처). 패널·도감은 그림이 있는 물고기만 그림, 없는 건 실루엣이라 언제 넣어도 됨.
+4. 물고기 그림 200종(GPT 게임용 256x256, 이름·등급 yml 과 전부 일치 확인) 반영 완료: `textures/gui/fishing/fish/`(256, 결과·도감) + `textures/item/fishing/fish/`(128, 아이템) + models/items json. `fishing.yml settings.fish-item-models: true` 로 켜 둠. 물고기를 새로 추가할 땐 그림도 같이 넣어야 함(없으면 아이템이 보라·검정 텍스처). 줄다리기 중에는 일부러 실루엣만 보임(잡기 전엔 뭔지 모르게).
 5. 스크롤되는 수중 배경(724x2172)은 통째로 그리고 scissor 로 자름(영역 잘라 그리기를 매 프레임 바꾸면 텍스처 캐시가 늘어나서).
 6. 클라 텍스트는 정수 m 로만 그려서 글자 캐시가 폭증하지 않게 함.
 
 ## 6. 남은 일 (오너와 정할 것)
 
-- 물고기 그림 200종 (→ `install_fish_art.py`), 보물·도감 보상 내용, 장비 획득 경로·수리, 상점 판매, 하우징 수조 연결 (`FishingGear.fishOf(item)` 로 물고기 ID 읽기 가능).
+- 보물·도감 보상 내용, 장비 획득 경로·수리, 상점 판매, 하우징 수조 연결 (`FishingGear.fishOf(item)` 로 물고기 ID 읽기 가능).

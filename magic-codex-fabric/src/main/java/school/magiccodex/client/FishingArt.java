@@ -46,10 +46,10 @@ final class FishingArt {
 
     private static final Map<Identifier, Boolean> EXISTS = new HashMap<>();
     private static int existsGeneration = -1;
-    /** Fish artwork when it has been added to the mod (textures/gui/fishing/fish/<id>.png, 512x512), else null. */
+    /** Fish artwork when it has been added to the mod (textures/gui/fishing/fish/<id>.png, 256x256), else null. */
     static Art fish(String id) {
         if (id == null || id.isEmpty()) return null;
-        var a = art("fish/" + id, 512, 512);
+        var a = art("fish/" + id, 256, 256);
         return exists(a.id()) ? a : null;
     }
     static boolean exists(Identifier id) {

@@ -3,8 +3,8 @@
 settings:
   # 바닐라 낚싯대(장비 정보 없음)로 낚시할 때도 기본 세트로 미니게임을 연다
   enabled: true
-  # 물고기 아이템에 item_model(magiccodex:fishing/fish/<id>) 을 붙임. 물고기 그림을 모드에 넣은 뒤 true
-  fish-item-models: false
+  # 물고기 아이템에 item_model(magiccodex:fishing/fish/<id>) 을 붙임 (200종 그림이 모드에 들어 있음, 2026-10-20)
+  fish-item-models: true
   # 장비 아이템 아이콘 (모드에 포함된 그림)
   gear-item-models: true
   # 물 넓이 측정 상한 (칸). 이 이상은 전부 '대형'
