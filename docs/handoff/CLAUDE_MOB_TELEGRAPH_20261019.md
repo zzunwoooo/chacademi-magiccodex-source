@@ -72,5 +72,5 @@
 
 - 코드: `chatelegraph` 에 `pulses`/`period` (같은 장판에 지연 판정 추가, 매 틱 작업 없음 — 판정마다 runTaskLater 1개, 시전자 죽으면 건너뜀), `knock`/`up`/`pull` (원형·부채꼴 = 중심에서 바깥, 직선 = 앞 방향). 시험 명령 `효과 ... [배율]` 인자 추가.
 - 파일: 사장님 PC `차카데미 vfx_Claude\몹스킬\<계열> - <스킬>\` 10개 계열 모두 새로 덮어씀 (model / mythicmobs / vfx / preview / source / README). 팩만 따로: `차카데미 vfx_Claude\<Pack>\`.
-- 주의: client_compat WARN 의 RGBA 수치(6~20 MiB)는 같은 텍스처를 재질마다 세는 툴 문제. 공용 lib/tex 를 같이 쓰는 팩들이라 고유 텍스처는 팩당 2~4 MiB 수준.
+- 주의: client_compat WARN 의 RGBA 수치(6~20 MiB)는 같은 텍스처를 재질마다 세는 툴 문제. 공용 lib/tex 를 같이 쓰는 팩들이라 고유 텍스처 실측 팩당 0.7~2.6 MiB.
 - 주의: 브레스 pulses 는 같은 위치·방향 장판으로 판정(시전자가 돌아도 장판은 고정 — 예고와 같음).
