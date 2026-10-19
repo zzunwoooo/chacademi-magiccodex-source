@@ -91,11 +91,14 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     ManaSpells.Spell tamingSpell(){return mana==null?null:mana.tamingSpell();}
     ManaCasting.Result castTamingResult(Player player){return taming==null?new ManaCasting.Result(ManaProtocol.FAILED,0):taming.castResult(player);}
     private ClimateService climate;
+    /** Season source for fishing (null before start / when the climate failed). */
+    ClimateService climateService(){return climate;}
     private DisplayNames names;
     private SchoolBridge school;
     private EquipmentBridge equipment;
     private ArtifactBridge artifacts;
     private AlchemyBridge alchemy;
+    private FishingBridge fishing;
     private ArtifactEffects artifactEffects;
     private PartyRoster partyRoster;
     /** Party membership pushed by Velocity (also a Bukkit service). Null before enable. */
@@ -187,6 +190,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(artifactEffects!=null){stats2.register("artifacts",artifactEffects::refresh);stats2.afterArrival("artifacts",artifactEffects::arrived);}
         if(artifacts!=null)stats2.afterArrival("artifact-client",artifacts::push);
         try{alchemy=new AlchemyBridge(this);}catch(Exception error){getLogger().severe("연금술 초기화 실패 (alchemy.yml 확인): "+error.getMessage());}
+        try{fishing=new FishingBridge(this);}catch(Exception error){getLogger().severe("낚시 초기화 실패 (fishing*.yml 확인): "+error.getMessage());}
         new AdminCommandBridge(this,mana,school,enhancement,appraisal,titles,npcSocial);
         getLogger().info("권한 연동 준비 완료. 활성 도감만 조회, 작업당 최대 " + budget + "회, 보조 확인 " + refresh / 1000 + "초.");
     }
@@ -245,6 +249,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     @EventHandler public void onWorldChange(PlayerChangedWorldEvent event) { markDirty(event.getPlayer().getUniqueId()); }
     @Override public void onDisable() {
         if(alchemy!=null){alchemy.close();alchemy=null;}
+        if(fishing!=null){fishing.close();fishing=null;}
         if(shopAdmin!=null)shopAdmin.close(); if(shops!=null)shops.close(); if(mailbox!=null)mailbox.close();
         if(spellRuntime!=null){spellRuntime.close();spellRuntime=null;}
         if(titles!=null){titles.close();titles=null;}
