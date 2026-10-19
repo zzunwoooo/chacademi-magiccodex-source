@@ -7,8 +7,8 @@
 - **이번 커밋은 VFX 팩(클라이언트 에셋)과 원본 소스만 바꿨습니다.** 서버 코드(`Reactions`, `ReactionVfx`)는 아직 그대로입니다.
   - 아래 "3. 서버 변경 계획"은 GPT 확인 후 적용합니다.
 - 툴킷 `client_compat.py check` **OK**입니다.
-  - 고유 텍스처 26장, RGBA 3.6 MiB입니다.
-  - 검사기 WARN 10.7 MiB는 재질마다 중복으로 센 값입니다.
+  - 고유 텍스처 36장, RGBA 3.96 MiB입니다 (반응마다 직접 칠한 텍스처, 레이어 81개).
+  - 검사기 WARN 6.2 MiB는 재질마다 중복으로 센 값입니다.
 - 오너 요청: 새 반응 기획(아래 표)에 맞춰 다시 만들기, 예전보다 잘 보이게, 몹 크기에 따라 크기 조절.
 
 ## 1. 새 반응 기획 (오너 확정 2026-10-20)
@@ -85,7 +85,7 @@
 ## 4. 원본
 
 - `tools/vfx-src/ElementReactions/elementreactions.js`: spec. 맨 위 주석에 재생 규칙이 있습니다.
-- `tools/vfx-src/ElementReactions/gen_er.py`: 텍스처 생성기입니다. 아래쪽 `2026-10-20 additions`가 새로 추가한 부분입니다.
+- `tools/vfx-src/ElementReactions/gen_er2.py`: 텍스처 생성기입니다 (예전 gen_er.py 대체).
 - 고칠 때는 anime-vfx-maker 툴킷의 `make_bundle` → `client_compat fix/check` 순서로 돌립니다.
 
 ## 5. 배포
