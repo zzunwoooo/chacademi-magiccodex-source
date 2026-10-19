@@ -72,7 +72,7 @@ public final class StatsScreen extends Screen {
             portrait(ctx);
             ctx.getMatrices().push();ctx.getMatrices().translate(0,0,200);
             drawStars(ctx,true,v.circle());
-            socialButton(ctx,StatsLayout.FRIEND,remote==null?"친구 목록":"친구 추가",true,socialHover==1);
+            socialButton(ctx,StatsLayout.FRIEND,remote==null?"친구 목록":friendOfMine()?"친구 방 이동":"친구 추가",true,socialHover==1);
             socialButton(ctx,StatsLayout.POPULARITY,"인기도 상승",false,socialHover==2);
             drawNotice(ctx,now);
             label(ctx,"내 정보",220,107,43,WHITE,true);
@@ -127,6 +127,13 @@ public final class StatsScreen extends Screen {
     private void gaugeTrack(DrawContext c,int y){HudMesh.capsule(c,799,y-9,544,18,0xFF6A8293,0xFF6A8293);HudMesh.capsule(c,801,y-7,540,14,0xFF0C2031,0xFF0C2031);}
     private void row(DrawContext c,String name,String value,float y){
         label(c,name,801,y,28,WHITE,true);right(c,value,1336,y,29,WHITE);
+    }
+    /** Owner 2026-10-19: on a friend's 내 정보 the friend button goes to their room (housing /방구경, allowed for friends). */
+    private boolean friendOfMine(){return remote!=null&&SocialClient.entries().stream().anyMatch(e->e.id().equals(remote.id()));}
+    private String visitFriendRoom(){
+        var h=client.getNetworkHandler();if(h==null)return "서버에 연결되어 있지 않습니다.";
+        h.sendChatCommand("방구경 "+remote.id()); // by id: the command also takes a UUID
+        return "친구 방으로 이동합니다.";
     }
     private void socialButton(DrawContext c,CodexHitboxes.Rect r,String name,boolean friend,boolean hover){
         if(hover)HudMesh.capsule(c,r.x()-2,r.y()-2,r.width()+4,r.height()+4,0x284DC5EA,0x284DC5EA);
@@ -217,7 +224,9 @@ public final class StatsScreen extends Screen {
                 if(now-lastSocialClick<400)return true;
                 lastSocialClick=now;sound(1.12f,.2f);
                 if(client.player!=null){
-                    try{if(remote==null&&action==StatsSocialActions.Action.FRIEND){SocialClient.open();notice="";}else notice=remote==null?"다른 플레이어의 내 정보에서 사용할 수 있습니다.":remote.action(action);}
+                    try{if(remote==null&&action==StatsSocialActions.Action.FRIEND){SocialClient.open();notice="";}
+                    else if(action==StatsSocialActions.Action.FRIEND&&friendOfMine())notice=visitFriendRoom();
+                    else notice=remote==null?"다른 플레이어의 내 정보에서 사용할 수 있습니다.":remote.action(action);}
                     catch(RuntimeException error){notice="요청을 처리하지 못했습니다.";org.slf4j.LoggerFactory.getLogger("magiccodex").warn("Stats social action failed",error);}
                     noticeAt=now;
                 }

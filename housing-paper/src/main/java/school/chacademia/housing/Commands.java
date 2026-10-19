@@ -26,11 +26,17 @@ final class Commands implements CommandExecutor, TabCompleter {
             }
             case "방구경" -> {
                 if (!(sender instanceof Player p)) { sender.sendMessage("게임 안에서만 쓸 수 있어요."); return true; }
-                if (!plugin.settings().visitCommand() && !p.hasPermission("chacademi.housing.admin")) { p.sendMessage(P + "다른 학생의 방은 기숙사실에서 친구 방 목록으로 구경할 수 있어요."); return true; }
                 if (a.length != 1) { p.sendMessage(P + "/방구경 <닉네임>"); return true; }
+                boolean free = plugin.settings().visitCommand() || p.hasPermission("chacademi.housing.admin");
                 resolve(a[0], id -> {
                     if (id == null) { p.sendMessage(P + "§c'" + a[0] + "' 학생의 방을 찾을 수 없어요."); return; }
-                    if (p.isOnline()) plugin.rooms().open(p, id, false);
+                    if (free) { if (p.isOnline()) plugin.rooms().open(p, id, false); return; }
+                    // owner 2026-10-19: a friend's room can always be visited (내 정보 → 친구 방 이동)
+                    plugin.store().isFriend(p.getUniqueId(), id, friend -> {
+                        if (!p.isOnline()) return;
+                        if (Boolean.TRUE.equals(friend)) plugin.rooms().open(p, id, false);
+                        else p.sendMessage(P + "다른 학생의 방은 친구가 되면 구경할 수 있어요.");
+                    });
                 });
             }
             default -> admin(sender, a);
