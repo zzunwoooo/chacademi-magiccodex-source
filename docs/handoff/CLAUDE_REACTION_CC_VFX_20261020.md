@@ -1,11 +1,12 @@
-# 원소 반응 CC 개편 1단계: VFX 팩 교체 (Claude, 2026-10-20)
+# 원소 반응 CC 개편: VFX 팩 교체 + 서버 반응 효과 (Claude, 2026-10-20)
 
 브랜치: `claude/reaction-cc-vfx-20261020` (기준: `codex/operating-final-20261019` @ `8356980`)
 
 ## 0. 상태
 
-- **이번 커밋은 VFX 팩(클라이언트 에셋)과 원본 소스만 바꿨습니다.** 서버 코드(`Reactions`, `ReactionVfx`)는 아직 그대로입니다.
-  - 아래 "3. 서버 변경 계획"은 GPT 확인 후 적용합니다.
+- VFX 팩(클라이언트 에셋)과 서버 코드(`Reactions`, `ReactionVfx`, `config.yml`)를 함께 바꿨습니다. 오너가 바로 구현을 요청했습니다(2026-10-20).
+- **빌드하지 않았습니다.** 이 환경에서 paper-api를 받을 수 없어(403) javac도 돌리지 못했습니다.
+  - API 시그니처는 손으로 검토했습니다. 컴파일 오류가 나면 "3. 서버 변경" 부분부터 봐 주세요.
 - 툴킷 `client_compat.py check` **OK**입니다.
   - 고유 텍스처 36장, RGBA 3.96 MiB입니다 (반응마다 직접 칠한 텍스처, 레이어 81개).
   - 검사기 WARN 6.2 MiB는 재질마다 중복으로 센 값입니다.
@@ -27,7 +28,7 @@
 | 무지개 (물+빛) | 주변 아군 회복 |
 | 심연 (물+어둠) | 독 3초 |
 | 모래 회오리 (바람+대지) | 반경 4 끌어모으기 + 고정 1초 |
-| 섬광 (바람+빛) | **미정** (VFX는 예전 것 유지) |
+| 섬광 (바람+빛) | **미정** (기존 효과 = 주변 몹 어그로 해제 유지, VFX는 간단한 섬광) |
 | 공허 균열 (바람+어둠) | 공포 1초 |
 | 수정화 (대지+빛) | 기절 1초 |
 | 매장 (대지+어둠) | 속박 1초 |
@@ -54,9 +55,8 @@
 
 - 단일 대상 연출은 1.8 m 기준으로 만들었습니다. 일반 CC는 걸리는 순간만 보여 주고, 남은 시간은 머리 위 디버프 아이콘이 보여 줍니다.
 - 하드 CC 연출은 CC 시간 1초 동안 유지됩니다.
-- 예전 `void_gust`(1초 뒤 되돌리기 지점 표시)와 `eclipse`(0.45초 뒤 폭발)는 새 효과에 맞게 바뀌었습니다. 예전 서버 코드로 재생해도 오류는 없지만 모양이 새 기획 기준입니다.
 
-## 3. 서버 변경 계획 (GPT 확인 후 적용)
+## 3. 서버 변경 (적용함)
 
 ### 3-1. 크기 (`ReactionVfx`)
 
@@ -67,16 +67,27 @@
   - 예전 식(높이/1.8, 0.5~1.5)은 넓적한 몹에서 너무 작았습니다.
 - **범위형 배율:** `(반경 + 대상 가로/2) / (반경 + 0.3)`
   - 큰 몹은 범위 원이 몸 바깥까지 보이게 됩니다.
-  - 판정 반경도 같은 기준(몸 가장자리부터)으로 맞출지는 오너 확인이 필요합니다.
-- 재생 시간(`ticks`)은 위 표 길이에 맞춥니다.
+  - 판정 반경은 그대로(대상 발밑 중심)입니다. 몸 가장자리부터 잴지는 오너 확인이 필요합니다.
+- 재생 시간(`ticks`)은 위 표 길이에 맞췄습니다.
+- API: `body(String system, LivingEntity, ticks)`, `body(Reaction, LivingEntity, ticks)`, `area(Reaction, Location, radius, LivingEntity centre, ticks)`, `size(LivingEntity)`.
+  - 예전 `body(Reaction, LivingEntity)` / `body(Reaction, Location, double)` / `area(Reaction, Location, int)`는 지웠습니다. 호출하던 곳은 `Reactions`뿐이었습니다.
+  - ModelEngine 조회는 `ModelEngineAPI.getModeledEntity(uuid).getModels()` → `getBlueprint().getMainHitbox().getWidth()/getHeight()` × `getScale()`입니다.
+  - 이름이 하나라도 다르면 그 세션 동안 조회를 끄고 바운딩 박스를 씁니다. 실서버에서 큰 모델 몹 크기가 맞는지 봐 주세요.
 
 ### 3-2. 반응 효과 (`Reactions`)
 
-- 위 1번 표대로 바꿉니다. CC는 모두 상태이상 엔진(`plugin.status().apply`)으로 겁니다.
-  - 바닐라 포션(구속·공중부양)과 수정화의 자체 AI 정지는 없앱니다. 기절이 겹칠 때 해제 순서가 꼬이던 문제도 같이 없어집니다.
-- 경험치 2배, 어그로 해제, 공허 균열 되돌리기, 일식 지연 폭발 코드는 삭제합니다.
-- 보스는 상태이상 엔진 규칙을 그대로 따릅니다.
-- 아티팩트 보너스(`control` 틱)는 새 CC 시간에 더합니다.
+- 위 1번 표대로 바꿨습니다. CC는 모두 상태이상 엔진(`plugin.status().apply`)으로 겁니다.
+  - 바닐라 포션(구속·공중부양)과 수정화의 자체 AI 정지(`frozen`)는 없앴습니다. 기절이 겹칠 때 해제 순서가 꼬이던 문제도 같이 없어집니다.
+  - 태양 플레어의 발광만 바닐라 GLOWING 그대로입니다(디버프 아님).
+- 경험치 2배(`doubleExp`), 공허 균열 되돌리기, 일식 지연 폭발, 불씨 확산 표식 번짐 코드는 삭제했습니다.
+  - 아티팩트 API `spread()`(표식 옮기기)는 그대로이고, 연출만 `wildfire_burn`으로 바꿨습니다.
+- 연쇄 번개: 첫 대상과 튄 대상 모두 무장해제 1초입니다.
+- 모래 회오리: 범위 안 적을 끌어모으고(보스 제외), 첫 대상 포함 모두 고정 1초입니다.
+- 마나번 시간은 `status.mana-burn-ticks`(내부 쿨) 값을 그대로 씁니다.
+- 보스는 상태이상 엔진 규칙을 그대로 따릅니다(기절·수면·공포 → 둔화, 속박 면역).
+- 아티팩트 보너스(`control` 틱)는 새 CC 시간에 더합니다. 반응 장인의 인장 +0.5초가 그대로 들어갑니다.
+- 새 config(`reactions:`): `cc-ticks: 60`, `hard-cc-ticks: 20`, `steam-radius: 3`, `wildfire-radius: 2`, `sandstorm-radius: 4`, `mud-slow: 0.4`.
+  - 기존 서버 config에 없어도 코드 기본값으로 동작합니다.
 
 ### 3-3. 아티팩트 (오너 결정 대기)
 
@@ -90,5 +101,6 @@
 
 ## 5. 배포
 
-- 클라이언트 팩만 바뀝니다. 설치 위치는 `.minecraft/config/portablevfx/effects/ElementReactions/`입니다.
-- 3번 서버 변경 전에 팩만 먼저 배포해도 됩니다. 이름이 같은 시스템은 새 모양으로 나오고, 새 보조 시스템(`*_burn`, `*_disarm`, `*_heal`, `*_pin`)은 서버가 아직 부르지 않습니다.
+- ChAcademiaMagicMythic (magic-mythic-paper) jar: 학교·야생 서버 모두 해당합니다.
+- 클라이언트 VFX 팩: 설치 위치는 `.minecraft/config/portablevfx/effects/ElementReactions/`입니다.
+  - 팩 없이 서버만 올려도 반응 효과는 동작하고, 연출만 안 보입니다.
