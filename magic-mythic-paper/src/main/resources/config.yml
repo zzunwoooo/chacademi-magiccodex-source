@@ -32,6 +32,29 @@ reactions:
     enabled: true
     pack: elementreactions  # 팩 폴더 이름(소문자) -> claude:elementreactions/<반응>
     range: 48               # 이 거리 안의 플레이어에게만 재생
+
+# 상태이상(디버프) 16종 (2026-10-19, 공포 추가) ---------------------------------------------------
+# 플레이어·몹 모두 걸림. 아이콘은 MagicCodex 모드가 머리 위 / 대상 체력바 / 내 HUD 에 그림. 수치는 임시값.
+# 테스트: /마법미몹 상태이상 <종류|해제|목록> [초] [나|바라봄|플레이어] [세기]
+status:
+  icon-range: 48            # 이 거리 안의 플레이어에게만 아이콘 패킷 전송
+  sync-ticks: 40            # 새로 다가온 플레이어용 재전송 간격
+  boss-slow: 0.45           # 보스에게 기절·수면을 걸면 대신 이만큼 둔화 (속박은 보스 면역)
+  slow-max: 0.9             # 둔화 최대치 (이동 속도 감소 비율)
+  burn-ratio: 0.1           # 화상: 지속 중 받은 피해 합의 이 비율을 끝날 때 한 번 더
+  poison-damage: 1.0        # 독: 초당 피해
+  poison-lethal: false      # false = 독으로는 체력 1 아래로 안 내려감 (바닐라 독과 같음)
+  magic-weakness: 0.3       # 약화: 내가 주는 마법 피해 감소 비율
+  physical-weakness: 0.3    # 나약함: 내가 주는 마법 아닌 피해(근접·화살) 감소 비율
+  mana-burn-ratio: 0.1      # 마나번: 최대 마나의 이 비율만큼 빼앗음
+  mana-burn-ticks: 100      # 마나번 내부 쿨 (아이콘 유지 시간), 걸 때 초를 따로 주면 그 값
+  blindness-mob-range: 3    # 실명 몹: 이 거리보다 먼 대상은 놓침
+  fear-range: 16            # 공포 몹: 이 거리 안의 플레이어에게서 도망감 (건 플레이어는 2배 거리까지)
+  fear-push: 0.35           # 공포 플레이어: 건 대상에게서 0.25초마다 밀려나는 세기
+  vanilla-icons: true       # 바닐라 구속·독·위더·실명·어둠·나약함·불도 같은 아이콘으로 표시
+  flight-spells: [flight]   # 중력: 시전 불가
+  movement-spells: [light_leap, gale_dash, flight, spring_ground, companion_return]  # 고정: 시전 불가
+
 debug: false
 
 # 2026-10-14 추가 (71종) --------------------------------------------------------

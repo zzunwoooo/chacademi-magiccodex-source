@@ -64,7 +64,7 @@ public final class TamingClient {
         }catch(IllegalArgumentException ignored){}});
         ClientPlayConnectionEvents.JOIN.register((h,s,c)->reset());ClientPlayConnectionEvents.DISCONNECT.register((h,c)->reset());
         ClientTickEvents.END_CLIENT_TICK.register(TamingClient::tick);HudRenderCallback.EVENT.register((ctx,t)->render(ctx));
-        HudRenderCallback.EVENT.register((ctx,t)->renderMonster(ctx));
+        // 2026-10-19: the taming card above the head is gone; the target HUD (TargetHudClient) shows name, HP and odds.
     }
     private static void accept(State s){accept(s,null);}
     private static void accept(State s,TamingProtocol.Anchor anchor){
@@ -85,87 +85,19 @@ public final class TamingClient {
         if(observedWorld!=c.world){reset();observedWorld=c.world;}
         if(state!=null&&state.status()==TamingProtocol.CHANNEL&&n-received<1800){if(n>=nextLoop){stopLoop();looping=PositionedSoundInstance.master(SoundEvent.of(Identifier.of("magiccodex","taming.channel_loop")),1,.3f);c.getSoundManager().play(looping);nextLoop=n+2400;}}
         else stopLoop();
-
-        if(!informationScreen(c)||!ClientPlayNetworking.canSend(Request.ID)||n<nextQuery)return;nextQuery=n+500;
-        if(state!=null&&(state.status()==TamingProtocol.CHANNEL||state.status()==TamingProtocol.PENDING)&&n-received<15000)return;
-        if(state!=null&&(state.status()==TamingProtocol.SUCCESS||state.status()==TamingProtocol.FAIL||state.status()==TamingProtocol.ERROR)&&n-received<2400)return;
-        // ModelEngine visuals can hide the living base or expose a different hitbox UUID.
-        // The server already performs the bounded, obstruction-aware authoritative ray.
-        // Shoulder view: point the server's eye ray at the creature under the crosshair for this one query.
-        boolean aimed=CrosshairAim.aim(c,25);
-        ClientPlayNetworking.send(new Request(TamingProtocol.encode(new TamingProtocol.Request(TamingProtocol.QUERY,NONE))));
-        if(aimed)CrosshairAim.restore(c);
+        // 2026-10-19: no periodic QUERY any more. It only fed the removed head card; the server now pushes the
+        // target HUD (magiccodex:target_hud). Casting and cancelling still use Request.
     }
     private static void sound(String name,float volume){MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvent.of(Identifier.of("magiccodex","taming."+name)),1,volume));}
     private static void stopLoop(){if(looping!=null){MinecraftClient.getInstance().getSoundManager().stop(looping);looping=null;}}
     private static void close(){if(images!=null){images.close();images=null;}if(text!=null){text.close();text=null;}}
     private static void reset(){monster=null;state=null;serverAnchor=null;stateWorld=observedWorld=null;received=nextQuery=nextLoop=lastToken=0;lastStatus=-1;stopLoop();close();}
-    // Keep the normal entity name; the chance label sits above it rather than replacing it.
-    public static boolean hidesVanillaName(int entityId){var c=MinecraftClient.getInstance();return monster!=null&&monster.custom()&&state!=null&&state.entityId()==entityId&&stateWorld==c.world&&c.world!=null&&c.world.getEntityById(entityId)!=null&&c.world.getEntityById(entityId).getUuid().equals(monster.target().anchor().entityUuid())&&informationScreen(c)&&!c.options.hudHidden&&Util.getMeasuringTimeMs()-received<1200;}
+    // The head card that covered the name tag is gone (2026-10-19), so vanilla names always show.
+    public static boolean hidesVanillaName(int entityId){return false;}
     private static boolean targetRegistered(){return CastingClient.state().registered("rainbow_collar")||CastingClient.state().registered("taming");}
     public static void bindingsChanged(){
 
         nextQuery=0;
-    }
-    private static void renderChance(WorldRenderContext context){
-        var c=MinecraftClient.getInstance();
-        if(!targetRegistered()||state==null||stateWorld!=c.world||c.world==null||c.player==null
-                ||c.currentScreen!=null||c.options.hudHidden||!TamingChanceLabel.visible(state,Util.getMeasuringTimeMs()-received))return;
-        var entity=c.world.getEntityById(state.entityId());
-        TamingProtocol.Anchor tracked=null;
-        if(entity instanceof LivingEntity&&entity.isAlive()){
-            var at=entity.getLerpedPos(context.tickCounter().getTickDelta(false));
-            tracked=new TamingProtocol.Anchor(entity.getUuid(),at.x,at.y,at.z,Math.clamp(entity.getHeight(),0,64));
-        }
-        var anchor=TamingTargetAnchor.resolve(state,Util.getMeasuringTimeMs()-received,serverAnchor,tracked,
-                entity!=null,entity!=null&&entity.isAlive());
-        if(anchor==null)return;
-        var pos=new Vec3d(anchor.x(),anchor.y()+anchor.height()+.7,anchor.z()).subtract(context.camera().getPos());
-        if(pos.lengthSquared()>16*16)return;
-        var matrices=context.matrixStack();var consumers=context.consumers();
-        if(matrices==null||consumers==null)return;
-        String label=TamingChanceLabel.text(state.chance());
-        float scale=TamingChanceLabel.scale(pos.length());
-        matrices.push();
-        try{
-            // Anchor the bottom of the glyphs above vanilla name tags, even at the far scale.
-            matrices.translate(pos.x,pos.y,pos.z);
-            matrices.multiply(context.camera().getRotation());
-            matrices.scale(scale,-scale,scale);
-            // NORMAL keeps terrain depth testing. There is deliberately no screen-edge clamping,
-            // fallback card, icon or panel: off-camera/occluded targets remain out of view.
-            c.textRenderer.draw(label,-c.textRenderer.getWidth(label)/2f,-c.textRenderer.fontHeight,0xff8deafa,true,
-                    matrices.peek().getPositionMatrix(),consumers,TextRenderer.TextLayerType.NORMAL,
-                    0,LightmapTextureManager.MAX_LIGHT_COORDINATE);
-        }finally{matrices.pop();}
-    }
-    private static void renderMonster(DrawContext ctx){
-        var c=MinecraftClient.getInstance();if(monster==null||state==null||stateWorld!=c.world||c.player==null||c.world==null||!informationScreen(c)||c.options.hudHidden||Util.getMeasuringTimeMs()-received>1200)return;
-        var a=monster.target().anchor();var point=new Vec3d(a.x(),a.y()+a.height()+.5,a.z());var entity=c.world.getEntityById(state.entityId());
-        if(entity!=null){if(!entity.isAlive()||!entity.getUuid().equals(a.entityUuid()))return;point=entity.getLerpedPos(c.getRenderTickCounter().getTickDelta(false)).add(0,entity.getHeight()+.5,0);}
-        var screen=AimView.toScreen(point);if(screen==null)return;
-        if(c.player.getEyePos().squaredDistanceTo(new Vec3d(a.x(),a.y(),a.z()))>25*25)return;
-        if(generation!=UiResources.generation()){close();generation=UiResources.generation();}if(images==null)images=new HudTextureCache(c,true);if(text==null)text=new CodexTypography(c);
-        images.beginFrame();text.beginFrame();var m=ctx.getMatrices();m.push();try{
-            // Fixed on-screen size (only the position follows the head): ~70% of the previous panel.
-            float scale=MonsterPanel.scale(c.getWindow().getScaledWidth(),c.getWindow().getScaledHeight());m.translate(screen[0]-300*scale,screen[1]-110*scale,350);m.scale(scale,scale,1);
-            var atlas=Identifier.of("magiccodex","textures/gui/review/monster_atlas.png");boolean shiny=monster.shiny();images.drawTexture(ctx,atlas,0,0,0,shiny?345:35,600,110,1671,shiny?278:309,1671,941,0xFFFFFFFF);
-            // Inner box measured on monster_atlas (normal y 22..100, shiny y 11..96; corner diamonds end at x 58,
-            // divider star 330..354); the same 10-unit margin on every side of both halves.
-            var box=MonsterPanel.box(shiny);
-            String name=state.name().replaceAll("§[0-9a-fk-orA-FK-OR]","");
-            float nameSize=MonsterPanel.fit(MonsterPanel.NAME,text.width(name,MonsterPanel.NAME,FONT),box.leftWidth());
-            text.draw(ctx,name,box.left(),box.nameY(),nameSize,shiny?0xFFE9D5FF:0xFFFFE3A7,FONT,false);
-            HudMesh.capsule(ctx,box.left(),box.barY(),box.leftWidth(),MonsterPanel.BAR,0xFF203653,0xFF203653);
-            float hp=(float)(box.leftWidth()*Math.clamp(monster.health()/monster.maximum(),0,1));
-            if(hp>0)HudMesh.capsule(ctx,box.left(),box.barY(),hp,MonsterPanel.BAR,shiny?0xFFADAFFF:0xFF4EE4EB,shiny?0xFFADAFFF:0xFF4EE4EB);
-            text.draw(ctx,Math.round(monster.health())+" / "+Math.round(monster.maximum()),box.left(),box.hpY(),MonsterPanel.HP,0xFFCFDFEC,BODY,false);
-            float em=box.emblem();
-            images.drawTexture(ctx,atlas,Math.round(box.right()),Math.round(box.centerY()-em/2),shiny?361:72,625,Math.round(em),Math.round(em*67/62),292,295,1671,941,0xFFFFFFFF);
-            String status=MonsterTargetLabel.text(monster.tameable(),state.chance(),state.message());
-            float statusLeft=box.right()+em+10,statusWidth=box.rightEnd()-statusLeft;
-            text.draw(ctx,status,statusLeft+statusWidth/2,box.centerY(),MonsterPanel.fit(MonsterPanel.STATUS,text.width(status,MonsterPanel.STATUS,FONT),statusWidth),shiny?0xFFE4CDFF:0xFFFFDFB0,FONT,true);
-        }finally{m.pop();images.endFrame();}
     }
     private static void panel(DrawContext ctx,String file,int x,int y,int w,int h,int sw,int sh){images.drawTexture(ctx,Identifier.of("magiccodex","textures/gui/taming/"+file+".png"),x,y,0,0,w,h,sw,sh,sw,sh,0xffffffff);}
     private static void label(DrawContext ctx,String value,float x,float y,float size,int color,boolean bold){text.draw(ctx,value.replaceAll("§[0-9a-fk-orA-FK-OR]",""),x,y,size,value.startsWith("§e")?0xffffff55:color,bold?FONT:BODY,true);}

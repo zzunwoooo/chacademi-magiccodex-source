@@ -44,6 +44,15 @@ final class PetBridge implements PluginMessageListener,Listener,CommandExecutor,
         if(!connect())return false;
         try{return hook.activeEntity.invoke(null,entity)!=null;}catch(Exception e){return true;}
     }
+    /** True when `entity` is one of `owner`'s summoned MCPets pets (target HUD skips your own pet). */
+    boolean ownedBy(org.bukkit.entity.Entity entity,UUID owner){
+        if(owner==null||!connect())return false;
+        try{
+            Object pet=hook.activeEntity.invoke(null,entity);if(pet==null)return false;
+            for(Object mine:hook.active(owner))if(mine==pet||mine.equals(pet))return true;
+            return false;
+        }catch(Exception|LinkageError e){return false;}
+    }
     private boolean connect(){
         var p=Bukkit.getPluginManager().getPlugin("MCPets");
         if(p==null||!p.isEnabled()){hook=null;return false;}

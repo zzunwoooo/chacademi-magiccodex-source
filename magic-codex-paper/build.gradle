@@ -1,6 +1,6 @@
 plugins { id 'java' }
 group = 'school.magiccodex'
-version = '0.31.1-integrated-20261018.1'
+version = '0.31.1-integrated-20261018.1-statushud.1'
 base { archivesName = 'magic-codex-bridge' }
 repositories {
     if (findProperty('localDependencyRepo')) maven { url = uri(property('localDependencyRepo')) }

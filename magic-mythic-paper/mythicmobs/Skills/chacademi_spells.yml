@@ -114,11 +114,11 @@ CHA_returning_blade:
   Skills:
   - chabolt{speed=1.1;range=14;radius=1.2;pierce=99;returns=true;element=wind;spell=returning_blade}
 
-# 23 윈드 프레스 - 공중 대상을 내리꽂음 (낙하 피해는 바닐라)
+# 23 윈드 프레스 - 공중 대상을 내리꽂음 + 2초 중력 (낙하 피해는 바닐라)
 CHA_pressure_press:
   Cooldown: 0
   Skills:
-  - chahit{slam=2.2;element=wind;spell=pressure_press}
+  - chahit{slam=2.2;status=gravity:40;element=wind;spell=pressure_press}
 
 # 24 바람 미끼 - 반경 10블록 일반 몬스터 유인 5초
 CHA_wind_decoy:
@@ -474,12 +474,12 @@ CHA_bubble_aria:
   Skills:
   - chabolt{speed=1.3;range=15;radius=0.6;mult=0;aoe=4;aoemult=1;element=water;spell=bubble_aria}
 
-# 87 수압해머 - 반경 3블록 강타 + 짧은 경직
+# 87 수압해머 - 반경 3블록 강타 + 1초 기절
 CHA_pressure_hammer:
   Cooldown: 0
   Skills:
   - delay 15
-  - chahit{r=3;max=10;effect=SLOWNESS:20:4;element=water;spell=pressure_hammer}
+  - chahit{r=3;max=10;status=stun:20;element=water;spell=pressure_hammer}
 
 # 88 용오름 - 3초 용오름, 띄우며 지속 피해
 CHA_waterspout:
@@ -529,11 +529,11 @@ CHA_bouncing_droplet:
   Skills:
   - chabolt{speed=1.4;range=15;radius=0.5;bounce=3;bouncer=6;element=water;spell=bouncing_droplet}
 
-# 96 심해의 압력 - 6초 수압 지대, 감속·지속 피해
+# 96 심해의 압력 - 6초 수압 지대, 둔화·나약함·지속 피해
 CHA_abyssal_pressure:
   Cooldown: 0
   Skills:
-  - chazone{r=2.5;ticks=120;period=20;mult=0.3;effect=SLOWNESS:30:2,MINING_FATIGUE:30:1;element=water;spell=abyssal_pressure}
+  - chazone{r=2.5;ticks=120;period=20;mult=0.3;effect=SLOWNESS:30:2;status=physical_weakness:30;element=water;spell=abyssal_pressure}
 
 # 97 풍요의 손길 - 주변 밀·당근·감자 최대 8개 한 단계 성장
 CHA_verdant_touch:

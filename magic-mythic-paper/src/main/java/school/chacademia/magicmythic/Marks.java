@@ -15,13 +15,13 @@ import org.bukkit.potion.PotionEffectType;
  * Marks that wait for something to happen.
  *  ash_brand - bursts after `ticks`, the burst brands the enemies it hits (each enemy rebrandable after `cooldown`)
  *  wedge     - bursts when the marked enemy takes a melee hit from a player, or never (no timed burst)
- *  prison    - normal mobs stop acting until `ticks` end or they take enough damage; bosses are only slowed.
- *              The mob's own awareness is saved on the mob (PDC) and put back on release, on plugin stop and,
- *              after a crash, when the mob loads again.
+ *  prison    - 기절 status ({@link StatusEffects}) on normal mobs until `ticks` end or they take enough damage
+ *              (prison-break-damage-ratio); bosses and players get 둔화 (45 %) instead. The mob's own awareness is
+ *              saved on the mob (PDC) and put back on release, on plugin stop and, after a crash, when it loads again.
  *  swords    - on the caster: each melee hit on an enemy spends one sword for extra damage
- *  root      - movement only is held for `ticks` (attacks and skills still work); bosses are immune (material_exchange)
- *  stun      - all actions stop for `ticks`: mobs lose AI (same saved-awareness rule as prison), players are slowed,
- *              weakened and cannot dig; bosses are only slowed (counterweight)
+ *  root      - 속박 status: movement only is held for `ticks`; bosses are immune (material_exchange)
+ *  stun      - 기절 status for `ticks`; bosses get 둔화 instead (counterweight)
+ *  (2026-10-19: these three are now status effects so they show as icons; this class only routes them.)
  */
 final class Marks implements Listener {
     enum Type { ASH_BRAND, WEDGE, PRISON, SWORDS, ROOT, STUN }
@@ -63,30 +63,19 @@ final class Marks implements Listener {
                 brandCooldown.put(holder.getUniqueId(), now + Math.max(0, p.i("cooldown", 200)));
             }
             case PRISON -> {
-                if (marks.stream().anyMatch(m -> m.type == Type.PRISON && m.holder.equals(holder) && !m.done)) return false;
-                if (plugin.targets().boss(holder) || !(holder instanceof Mob)) {
-                    holder.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) ticks, 2));
-                    return true;
-                }
-                Mob mob = (Mob) holder;
-                // Remember the mob's own awareness (some mobs are intentionally unaware) before freezing it.
-                freezeMob(mob, prisonKey);
+                var st = plugin.status();
+                if (st.has(holder, school.magiccodex.protocol.StatusProtocol.Status.STUN)) return false;
+                // Bosses and players were only slowed by the prison (45 % = old Slowness III).
+                if (plugin.targets().boss(holder) || !(holder instanceof Mob))
+                    return st.apply(caster, holder, school.magiccodex.protocol.StatusProtocol.Status.SLOW, (int) ticks, 0.45);
+                return st.apply(caster, holder, school.magiccodex.protocol.StatusProtocol.Status.STUN, (int) ticks,
+                    Math.max(0.0001, plugin.getConfig().getDouble("prison-break-damage-ratio", 0.2)));
             }
             case SWORDS -> marks.removeIf(m -> m.type == Type.SWORDS && m.holder.equals(holder));
-            case ROOT -> {
-                if (plugin.targets().boss(holder)) return false;
-                marks.removeIf(m -> m.type == Type.ROOT && m.holder.equals(holder));
-                holder.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) ticks, 9, false, false, true));
-            }
+            case ROOT -> { return plugin.status().apply(caster, holder, school.magiccodex.protocol.StatusProtocol.Status.ROOT, (int) ticks, 0); }
             case STUN -> {
-                if (marks.stream().anyMatch(m -> (m.type == Type.STUN || m.type == Type.PRISON) && m.holder.equals(holder) && !m.done)) return false;
-                if (plugin.targets().boss(holder)) { holder.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) ticks, 2)); return true; }
-                if (holder instanceof Mob mob) freezeMob(mob, prisonKey);
-                else {
-                    holder.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) ticks, 9, false, false, true));
-                    holder.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, (int) ticks, 9, false, false, true));
-                    holder.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, (int) ticks, 9, false, false, true));
-                }
+                if (plugin.status().has(holder, school.magiccodex.protocol.StatusProtocol.Status.STUN)) return false;
+                return plugin.status().apply(caster, holder, school.magiccodex.protocol.StatusProtocol.Status.STUN, (int) ticks, 0);
             }
             default -> {}
         }
@@ -106,11 +95,6 @@ final class Marks implements Listener {
             if (m.type == Type.ASH_BRAND && !gone && now >= m.until) { burstBrand(m); m.done = true; }
             else if (gone || now >= m.until) m.done = true;
             if (m.done && (m.type == Type.PRISON || m.type == Type.STUN)) release(m);
-            if (!m.done && m.type == Type.ROOT) {
-                if (m.holder instanceof Mob mob) mob.getPathfinder().stopPathfinding();
-                var v = m.holder.getVelocity();
-                m.holder.setVelocity(new org.bukkit.util.Vector(0, Math.min(0, v.getY()), 0));
-            }
             } finally { SpellTrace.set(traceBefore); }
         }
         marks.removeIf(m -> m.done);

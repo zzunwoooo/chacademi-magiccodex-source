@@ -24,6 +24,10 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
     public boolean canTouch(org.bukkit.entity.Player player,org.bukkit.entity.Entity target){return targets!=null&&!targets.excluded(target)&&protection.pair(player,target.getLocation());}
     MagicProtection protection(){return protection;}
 
+    // ---- status API (MagicCodexBridge calls this by reflection; main thread)
+    /** Status effect id (stun, burn, ...) active on the entity. "burn" also counts vanilla fire (불타는 대상 마법). */
+    public boolean hasStatus(org.bukkit.entity.LivingEntity entity,String id){var s=school.magiccodex.protocol.StatusProtocol.Status.of(id);return status!=null&&s!=null&&entity!=null&&status.shows(entity,s);}
+
     // ---- artifact API (MagicCodexBridge calls these by reflection; main thread)
     /** Element id of the target's live mark, or "" when none. */
     public String markElement(org.bukkit.entity.LivingEntity target){var m=reactions==null?null:reactions.markOf(target);return m==null?"":m.element().id;}
@@ -39,6 +43,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
     private Marks marks;
     private WorldMech.State worldState;
     private Reactions reactions;
+    private StatusEffects status;
     private SpellSlots slots;
     private Passives passives;
     private UtilMech.State utilState;
@@ -55,11 +60,15 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
         marks = new Marks(this);
         worldState = new WorldMech.State(this);
         reactions = new Reactions(this);
+        status = new StatusEffects(this);
+        Targets.sealed = e -> status != null && status.recoverySealed(e);
+        Links.manaSealed = pl -> status != null && status.recoverySealed(pl);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(guards, this);
         getServer().getPluginManager().registerEvents(marks, this);
         getServer().getPluginManager().registerEvents(tempBlocks, this);
         getServer().getPluginManager().registerEvents(reactions, this);
+        getServer().getPluginManager().registerEvents(status, this);
         slots = new SpellSlots(this);
         slots.register();
         getServer().getPluginManager().registerEvents(slots, this);
@@ -77,6 +86,9 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
 
     @Override public void onDisable() {
         if (reactions != null) reactions.close();
+        Targets.sealed = null;
+        Links.manaSealed = null;
+        if (status != null) { status.close(); status = null; }
         if (slots != null) slots.unregister();
         if (utilState != null) utilState.closeAll();
         if (guards != null) guards.closeAll();
@@ -110,6 +122,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
             case "chabuff" -> new BuffMech(this, p);
             case "chachannel" -> new ChannelMech(this, p);
             case "chanote" -> new NoteMech(this, p);
+            case "chastatus" -> new StatusMech(this, p);
             default -> null;
         };
         if (mechanic != null) event.register(mechanic);
@@ -124,13 +137,13 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
         if (!sender.hasPermission("chacademia.magicmythic.admin")) return false;
         String sub = args.length == 0 ? "" : args[0];
         if (Set.of("새로고침", "reload").contains(sub)) {
-            reloadConfig(); targets.reload(); reactions.reload();
+            reloadConfig(); targets.reload(); reactions.reload(); status.reload();
             sender.sendMessage("마법 미몹 설정을 다시 불러왔습니다. 스킬 YAML을 고쳤다면 /mm reload 도 실행하세요.");
             return true;
         }
         if (Set.of("상태", "status").contains(sub)) {
             sender.sendMessage("진행 중: " + ticker.summary() + ", 보호막 " + guards.count() + ", 표식 " + marks.count()
-                + ", 임시 블록 " + tempBlocks.count() + ", " + reactions.summary());
+                + ", 임시 블록 " + tempBlocks.count() + ", " + reactions.summary() + ", " + status.summary());
             return true;
         }
         if (Set.of("장착", "slots").contains(sub) && args.length >= 2) {
@@ -146,7 +159,8 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
             sender.sendMessage(TestCast.cast(this, player, args[1]));
             return true;
         }
-        sender.sendMessage("/마법미몹 <새로고침|상태|장착 <플레이어> [id...|비우기]|시험 <마법ID>>");
+        if (Set.of("상태이상", "debuff").contains(sub)) { sender.sendMessage(StatusCommand.run(this, sender, Arrays.copyOfRange(args, 1, args.length))); return true; }
+        sender.sendMessage("/마법미몹 <새로고침|상태|장착 <플레이어> [id...|비우기]|시험 <마법ID>|상태이상 <종류|해제> [초] [나|바라봄|플레이어] [세기]>");
         return true;
     }
 
@@ -157,6 +171,8 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
     Marks marks() { return marks; }
     WorldMech.State worldState() { return worldState; }
     Reactions reactions() { return reactions; }
+    StatusEffects status() { return status; }
+    Passives passives() { return passives; }
     SpellSlots slots() { return slots; }
     boolean debug() { return getConfig().getBoolean("debug", false); }
 }

@@ -525,7 +525,7 @@ final class UtilMech extends Mech {
         @org.bukkit.event.EventHandler(priority = org.bukkit.event.EventPriority.MONITOR, ignoreCancelled = true)
         public void drink(org.bukkit.event.player.PlayerItemConsumeEvent e) {
             if (!isManaPotion(e.getItem())) return;
-            Links.add(e.getPlayer(), plugin.getConfig().getDouble("mana-potion.restore", 50));
+            Links.add(e.getPlayer(), plugin.getConfig().getDouble("mana-potion.restore", 50)); // 회복봉인: Links.add refuses
         }
         @org.bukkit.event.EventHandler(priority = org.bukkit.event.EventPriority.HIGH)
         public void use(org.bukkit.event.player.PlayerInteractEvent e) {
@@ -534,6 +534,7 @@ final class UtilMech extends Mech {
             ItemStack it = e.getItem();
             if (it == null || it.getType() == Material.POTION || !isManaPotion(it)) return;
             e.setCancelled(true);
+            if (plugin.status().potionSealed(e.getPlayer())) { e.getPlayer().sendActionBar(net.kyori.adventure.text.Component.text("물약봉인 상태에서는 물약을 쓸 수 없어요")); return; }
             if (Links.add(e.getPlayer(), plugin.getConfig().getDouble("mana-potion.restore", 50)) && e.getPlayer().getGameMode() != GameMode.CREATIVE)
                 it.setAmount(it.getAmount() - 1);
         }

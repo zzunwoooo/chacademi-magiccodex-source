@@ -45,7 +45,7 @@ final class SpellRuntime implements CommandExecutor,TabCompleter,AutoCloseable {
             }
             if(r.target()!=SpellRules.Target.AIM&&target==null){p.sendMessage("시야 안의 몬스터를 지정해 주세요.");return REFUSED;}
             if(r.target()==SpellRules.Target.AIR_ENTITY&&((LivingEntity)target).isOnGround()){p.sendMessage("공중에 있는 몬스터에게 사용해 주세요.");return REFUSED;}
-            if(r.target()==SpellRules.Target.BURNING_ENTITY&&target.getFireTicks()<=0){p.sendMessage("불타는 몬스터에게 사용해 주세요.");return REFUSED;}
+            if(r.target()==SpellRules.Target.BURNING_ENTITY&&!(target instanceof LivingEntity burning&&MagicProtectionLink.status(burning,"burn"))){p.sendMessage("화상 상태인 몬스터에게 사용해 주세요.");return REFUSED;}
         }
         if(!MagicProtectionLink.at(p,location))return REFUSED;
         return new Plan(true,r,target,location);

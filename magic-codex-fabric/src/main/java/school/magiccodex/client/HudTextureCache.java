@@ -148,6 +148,31 @@ public final class HudTextureCache implements AutoCloseable {
                 roundCenter?Math.round(cy-h/2f):(int)cy-h/2,w,h,tint);
         return true;
     }
+    /** Pixel size of a whole file, or null while it is still loading. */
+    public int[] size(String path) {
+        var value=get(new Region(path,0,0,0,0));
+        return value.map(t->new int[]{t.width(),t.height()}).orElse(null);
+    }
+    /** Whole file stretched into x,y,w,h (no aspect fit). */
+    public boolean drawStretched(DrawContext ctx,String path,int x,int y,int w,int h,int tint) {
+        if(w<=0||h<=0)return true;
+        var value=get(new Region(path,0,0,0,0));
+        if(value.isEmpty())return false;
+        render(ctx,value.get(),x,y,w,h,tint);
+        return true;
+    }
+    /**
+     * Part of a whole file (u,v,regionWidth,regionHeight in file pixels) into x,y,w,h. Uses the file's one GPU copy,
+     * so a part that changes every frame (a filling bar) never creates new textures.
+     */
+    public boolean drawPart(DrawContext ctx,String path,int x,int y,int w,int h,float u,float v,int regionWidth,int regionHeight,int tint) {
+        if(w<=0||h<=0||regionWidth<=0||regionHeight<=0)return true;
+        var value=get(new Region(path,0,0,0,0));
+        if(value.isEmpty())return false;
+        var t=value.get();
+        ctx.drawTexture(id->t.layer(),t.id(),x,y,u,v,w,h,regionWidth,regionHeight,t.width(),t.height(),tint);
+        return true;
+    }
     public void drawTexture(DrawContext ctx,Identifier path,int x,int y,int u,int v,int w,int h,int tw,int th) {
         drawTexture(ctx,path,x,y,u,v,w,h,w,h,tw,th,0xFFFFFFFF);
     }

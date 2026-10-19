@@ -182,9 +182,8 @@ final class BoltMech extends Mech {
             if(!(p.b("proc", false) ? targets.hurtProc(c.caster(), t, dmg) : targets.hurt(c.caster(), t, dmg, p.s("element", ""))))return;
             plugin.reactions().hit(c.caster(), t, p.s("element", ""), dmg);
             vfx(p.s("hitevent", "external:contact"), t.getLocation(), t.getUniqueId());
-            targets.effects(t, p.effects("effect"));
-            int ignite = p.i("ignite", 0);
-            if (ignite > 0) t.setFireTicks(Math.max(t.getFireTicks(), ignite));
+            targets.effects(c.caster(), t, p.effects("effect"));
+            targets.sideEffects(c.caster(), t, p);
             int shield = p.i("shield", 0);
             if (shield > 0 && t instanceof Player pl && pl.isBlocking()) pl.setCooldown(Material.SHIELD, shield);
             Location from = pos.clone().subtract(dir.clone().multiply(2));
@@ -207,7 +206,7 @@ final class BoltMech extends Mech {
             for (LivingEntity t : plugin.targets().enemiesNear(c.caster(), pos, aoe, p.i("max", 16))) {
                 if(!plugin.targets().hurt(c.caster(), t, dmg, p.s("element", "")))continue;
                 plugin.reactions().hit(c.caster(), t, p.s("element", ""), dmg);
-                plugin.targets().effects(t, p.effects("effect"));
+                plugin.targets().effects(c.caster(), t, p.effects("effect"));
                 plugin.targets().knock(t, pos, dir, p.d("aoeknock", 0), p.d("aoeup", 0));
             }
         }

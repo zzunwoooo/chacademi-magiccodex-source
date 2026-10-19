@@ -22,7 +22,7 @@
 | 20 | feather_rustle | 깃털 털기 | SELF | Bridge 유틸 | MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸) |
 | 21 | cross_breeze | 바람 화살 | AIM | 미몹+애드온 | 2초 충전 후 강한 화살 |
 | 22 | returning_blade | 되돌이 칼날 | AIM | 미몹+애드온 | 갔다가 돌아오며 각 1회씩 타격 |
-| 23 | pressure_press | 윈드 프레스 | AIR_ENTITY | 미몹+애드온 | 공중 대상을 내리꽂음 (낙하 피해는 바닐라) |
+| 23 | pressure_press | 윈드 프레스 | AIR_ENTITY | 미몹+애드온 | 공중 대상을 내리꽂음 + 2초 중력 (낙하 피해는 바닐라) |
 | 24 | wind_decoy | 바람 미끼 | AIM | 미몹+애드온 | 반경 10블록 일반 몬스터 유인 5초 |
 | 25 | air_step | 허공 디딤 | SELF | 미몹+애드온 | 발밑 3x3 임시 발판 20초 (보이는 건 VFX) |
 | 26 | lightning_needle | 라이트닝 쇼크 | AIM | 미몹+애드온 | 지정 위치 낙뢰 피해 |
@@ -84,7 +84,7 @@
 | 84 | dew_gathering | 이슬 모으기 | SELF | 미몹+애드온 | 빈 병 최대 3개 물병으로 |
 | 85 | quiet_mooring | 노아의 방주 | SELF | 미몹+애드온 | 물 위에서 보트 생성 |
 | 86 | bubble_aria | 물거품 아리아 | AIM | 미몹+애드온 | 명중 지점 반경 4블록 광역 |
-| 87 | pressure_hammer | 수압해머 | AIM | 미몹+애드온 | 반경 3블록 강타 + 짧은 경직 |
+| 87 | pressure_hammer | 수압해머 | AIM | 미몹+애드온 | 반경 3블록 강타 + 1초 기절 |
 | 88 | waterspout | 용오름 | AIM | 미몹+애드온 | 3초 용오름, 띄우며 지속 피해 |
 | 89 | current_sorting | 사금 추출 | SELF | 미몹+애드온 | 물 속에서 사금(금 조각) 1~3개 |
 | 90 | potion_mist | 약액 분무 | SELF | 미몹+애드온 | 손의 물약 소비, 반경 5블록 동료 10초 적용 |
@@ -93,7 +93,7 @@
 | 93 | ripple_guard | 파문방벽 | SELF | 미몹+애드온 | 2초 정면 투사체 소멸 |
 | 94 | tidal_wave | 해일 | AIM | 미몹+애드온 | 전방 해일, 3블록 밀침 |
 | 95 | bouncing_droplet | 도약하는 물방울 | AIM | 미몹+애드온 | 서로 다른 적 최대 4명 튕김 |
-| 96 | abyssal_pressure | 심해의 압력 | AIM | 미몹+애드온 | 6초 수압 지대, 감속·지속 피해 |
+| 96 | abyssal_pressure | 심해의 압력 | AIM | 미몹+애드온 | 6초 수압 지대, 둔화·나약함·지속 피해 |
 | 97 | verdant_touch | 풍요의 손길 | SELF | 미몹+애드온 | 주변 밀·당근·감자 최대 8개 한 단계 성장 |
 | 98 | ore_whisper | 땅의 속삭임 | SELF | 미몹+애드온 | 광석 최대 3곳 5초 발광 표시 (시전자만 보임) |
 | 99 | pebble_toss | 조약돌 던지기 | AIM | 미몹+애드온 | 약한 조약돌 탄 |

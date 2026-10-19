@@ -64,9 +64,12 @@ final class Links {
         try { return Boolean.TRUE.equals(manaClass.getMethod("tryConsume", UUID.class, double.class).invoke(m, p.getUniqueId(), amount)); }
         catch (ReflectiveOperationException | RuntimeException e) { return false; }
     }
+    /** Set by the plugin: 회복봉인 refuses mana gains that go through here (mana potion, conduit, ...). */
+    static java.util.function.Predicate<Player> manaSealed;
     static boolean add(Player p, double amount) {
         Object m = mana();
         if (m == null || amount <= 0) return false;
+        if (manaSealed != null && manaSealed.test(p)) return false;
         try { manaClass.getMethod("add", UUID.class, double.class).invoke(m, p.getUniqueId(), amount); return true; }
         catch (ReflectiveOperationException | RuntimeException e) { return false; }
     }
