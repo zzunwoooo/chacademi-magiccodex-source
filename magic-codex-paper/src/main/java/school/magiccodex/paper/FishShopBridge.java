@@ -26,14 +26,17 @@ import school.magiccodex.protocol.FishingProtocol;
  * one fish = base x size factor, base = per-fish override or grade base (x special bonus for fish with special
  * conditions), size factor = linear from size-min (smallest of the species) to size-max (largest).
  * NPCs and the portrait work like the normal shop (Citizens NPC right click, textures/gui/dialogue/&lt;portrait&gt;.png).
- * fish-shop.yml is per server (NPC ids differ per server); keep prices the same on school and wild.
+ * fish-shop.yml (title, names, portrait, prices) is shared by school and wild through the player-state MariaDB
+ * (SharedConfigText row "fish_shop", owner 2026-10-20: 가격·보유·잠금은 DB로 공유). Only the NPC list is per server
+ * (fish-shop-npcs.yml), because Citizens ids differ between servers. Tank and locks are already in the shared DB.
  */
 final class FishShopBridge implements PluginMessageListener, Listener, CommandExecutor, TabCompleter {
     private record Session(Entity anchor, String npcName) {}
 
     private final MagicCodexBridge plugin;
     private final FishingBridge fishing;
-    private final File file;
+    private final File file, npcFile;
+    private SharedConfigText shared;
     private YamlConfiguration yaml;
     private final double[] gradeBase = {80, 400, 2000, 10000};
     private double sizeMin = .7, sizeMax = 1.5, specialBonus = 1.3;
@@ -47,8 +50,11 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
     FishShopBridge(MagicCodexBridge plugin, FishingBridge fishing) throws Exception {
         this.plugin = plugin; this.fishing = fishing;
         file = new File(plugin.getDataFolder(), "fish-shop.yml");
+        npcFile = new File(plugin.getDataFolder(), "fish-shop-npcs.yml");
         if (!file.exists()) plugin.saveResource("fish-shop.yml", false);
+        if (!npcFile.exists()) plugin.saveResource("fish-shop-npcs.yml", false);
         reload();
+        shared = new SharedConfigText(plugin, "fish_shop", "물고기 판매소 설정", localText(), this::applyText);
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, FishShopProtocol.REQUEST, this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, FishShopProtocol.RESPONSE);
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -57,7 +63,20 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
         citizens();
     }
 
-    void close() { sessions.clear(); }
+    void close() { sessions.clear(); if (shared != null) shared.close(); }
+
+    String localText() {
+        try { return java.nio.file.Files.readString(file.toPath()); } catch (Exception e) { return ""; }
+    }
+    /** Another server published a new fish-shop.yml: write it here and load it. Returns an error or null. */
+    String applyText(String text) {
+        String before = localText();
+        try { java.nio.file.Files.writeString(file.toPath(), text); reload(); return null; }
+        catch (Exception e) {
+            try { java.nio.file.Files.writeString(file.toPath(), before); reload(); } catch (Exception ignored) {}
+            return e.getMessage();
+        }
+    }
 
     // ------------------------------------------------------------------ config
 
@@ -85,10 +104,21 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
         defaultName = cut(y.getString("npc-name", "물고기 매입상"));
         portrait = y.getString("portrait", "");
         if (!portrait.matches("[a-z0-9_/-]{0,120}") || portrait.contains("..")) portrait = "";
-        npcs = Set.copyOf(y.getStringList("npcs"));
+        var local = new YamlConfiguration();
+        if (npcFile.exists()) local.load(npcFile);
+        npcs = Set.copyOf(local.getStringList("npcs"));
     }
 
-    private void save() throws Exception { yaml.save(file); reload(); }
+    /** Saves fish-shop.yml here, then shares it with the other server; on a sharing failure the old text comes back. */
+    private void save(CommandSender sender, String done) throws Exception {
+        String before = localText();
+        yaml.save(file); reload();
+        if (shared == null) { sender.sendMessage("§a" + done); return; }
+        shared.publish(localText(), "command:" + sender.getName(), failed -> {
+            if (failed == null) sender.sendMessage("§a" + done + (shared.shared() ? " (학교·야생에 같이 적용)" : " (공유 DB 없음: 이 서버만)"));
+            else { applyText(before); sender.sendMessage("§c공유하지 못해서 되돌렸습니다: " + failed); }
+        });
+    }
 
     static boolean special(FishingConfig.Fish f) {
         return !f.weather().equals("전체") || !f.moon().isEmpty() || f.underground() || f.yMin() != null || f.yMax() != null;
@@ -286,39 +316,48 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
                     if (t == null) throw new IllegalArgumentException("플레이어를 찾지 못했습니다.");
                     open(t, null, null);
                 }
-                case "리로드" -> { reload(); sender.sendMessage("§a물고기 판매소 설정을 다시 읽었습니다."); }
+                case "리로드" -> {
+                    String before = localText();
+                    reload();
+                    shared.publish(localText(), "reload:" + sender.getName(), failed -> {
+                        if (failed == null) sender.sendMessage("§a물고기 판매소 설정을 다시 읽었습니다." + (shared.shared() ? " (학교·야생에 같이 적용)" : ""));
+                        else { applyText(before); sender.sendMessage("§c공유하지 못해서 되돌렸습니다: " + failed); }
+                    });
+                }
                 case "가격" -> {
                     if (args.length != 3) throw new IllegalArgumentException("가격 <일반|고급|유일|전설|물고기ID> <G|기본>");
                     int g = FishingProtocol.gradeIndex(args[1]);
                     if (g >= 0) yaml.set("prices.grade." + args[1], number(args[2]));
                     else if (fishing.config().fishById.containsKey(args[1])) yaml.set("prices.fish." + args[1], args[2].equals("기본") ? null : number(args[2]));
                     else throw new IllegalArgumentException("등급이나 물고기 ID를 확인하세요.");
-                    save(); sender.sendMessage("§a가격을 바꿨습니다. (" + args[1] + ")");
+                    save(sender, "가격을 바꿨습니다. (" + args[1] + ")");
                 }
                 case "크기보정" -> {
                     if (args.length != 3) throw new IllegalArgumentException("크기보정 <최소배율> <최대배율>");
-                    yaml.set("prices.size-min", number(args[1])); yaml.set("prices.size-max", number(args[2])); save();
-                    sender.sendMessage("§a크기 보정을 바꿨습니다.");
+                    yaml.set("prices.size-min", number(args[1])); yaml.set("prices.size-max", number(args[2]));
+                    save(sender, "크기 보정을 바꿨습니다.");
                 }
                 case "조건보정" -> {
                     if (args.length != 2) throw new IllegalArgumentException("조건보정 <배율>");
-                    yaml.set("prices.special-bonus", number(args[1])); save(); sender.sendMessage("§a조건 보정을 바꿨습니다.");
+                    yaml.set("prices.special-bonus", number(args[1])); save(sender, "조건 보정을 바꿨습니다.");
                 }
                 case "NPC", "NPC삭제" -> {
                     if (args.length != 2 || !args[1].matches("citizens:[0-9]{1,9}")) throw new IllegalArgumentException(args[0] + " <citizens:ID>");
-                    var list = new ArrayList<>(yaml.getStringList("npcs"));
+                    var local = new YamlConfiguration();
+                    if (npcFile.exists()) local.load(npcFile);
+                    var list = new ArrayList<>(local.getStringList("npcs"));
                     list.remove(args[1]);
                     if (args[0].equals("NPC")) list.add(args[1]);
-                    yaml.set("npcs", list); save();
+                    local.set("npcs", list); local.save(npcFile); reload();
                     sender.sendMessage("§a이 서버의 물고기 판매소 NPC: " + list);
                 }
                 case "초상" -> {
                     if (args.length != 2 || !args[1].matches("[a-z0-9_/-]{1,120}") || args[1].contains("..")) throw new IllegalArgumentException("초상 <초상ID> (textures/gui/dialogue/<초상ID>.png)");
-                    yaml.set("portrait", args[1]); save(); sender.sendMessage("§a초상을 바꿨습니다.");
+                    yaml.set("portrait", args[1]); save(sender, "초상을 바꿨습니다.");
                 }
                 case "이름" -> {
                     if (args.length < 2) throw new IllegalArgumentException("이름 <NPC 이름> (Citizens NPC 이름이 없을 때 쓰는 이름)");
-                    yaml.set("npc-name", String.join(" ", Arrays.copyOfRange(args, 1, args.length))); save(); sender.sendMessage("§a이름을 바꿨습니다.");
+                    yaml.set("npc-name", String.join(" ", Arrays.copyOfRange(args, 1, args.length))); save(sender, "이름을 바꿨습니다.");
                 }
                 case "가격표" -> {
                     if (args.length == 2) {
