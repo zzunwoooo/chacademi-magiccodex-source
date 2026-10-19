@@ -5,7 +5,7 @@ description: 두 주먹으로 땅을 내리쳐 주변 적에게 피해를 주고
 icon: ''
 permission: magic.learned.gravity_slam
 discovery:
-  description: 고대 골렘을(를) 처치하면 5% 확률로 습득합니다.
+  description: 고대 골렘을 처치하면 5% 확률로 습득합니다.
 research: 고대 골렘이 내리친 땅은 한동안 하늘을 잊는다.
 cast:
   command: 마법 gravity_slam

@@ -5,7 +5,7 @@ description: 여우불 세 개를 불러 잠시 몸 둘레를 돌게 한 뒤, �
 icon: ''
 permission: magic.learned.fox_orbit
 discovery:
-  description: 키츠네을(를) 처치하면 5% 확률로 습득합니다.
+  description: 키츠네를 처치하면 5% 확률로 습득합니다.
 research: 키츠네의 불은 곧장 날아가지 않는다. 한 바퀴 돌며 상대를 고른다.
 cast:
   command: 마법 fox_orbit

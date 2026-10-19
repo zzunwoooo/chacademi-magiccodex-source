@@ -5,7 +5,7 @@ description: 마력의 방패를 들어 앞쪽 땅을 내리찍습니다. 앞에
 icon: ''
 permission: magic.learned.shield_slam
 discovery:
-  description: 봉인의 기사을(를) 처치하면 5% 확률로 습득합니다.
+  description: 봉인의 기사를 처치하면 5% 확률로 습득합니다.
 research: 봉인의 기사에게 방패는 막는 물건이 아니다. 문장을 새기는 도장이다.
 cast:
   command: 마법 shield_slam

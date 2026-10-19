@@ -5,7 +5,7 @@ description: 날개를 차듯 반달 모양 바람날 두 개를 앞으로 날�
 icon: ''
 permission: magic.learned.moon_wind
 discovery:
-  description: 페가수스을(를) 처치하면 5% 확률로 습득합니다.
+  description: 페가수스를 처치하면 5% 확률로 습득합니다.
 research: 페가수스의 날갯짓은 달의 모양을 닮았다. 차오르기 전에 베고 지나간다.
 cast:
   command: 마법 moon_wind

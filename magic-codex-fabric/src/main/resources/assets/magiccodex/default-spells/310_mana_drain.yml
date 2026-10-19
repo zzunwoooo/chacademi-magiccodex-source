@@ -5,7 +5,7 @@ description: 조준한 자리의 마력을 빨아들입니다. 그 안의 적은
 icon: ''
 permission: magic.learned.mana_drain
 discovery:
-  description: 팬텀을(를) 처치하면 5% 확률로 습득합니다.
+  description: 팬텀을 처치하면 5% 확률로 습득합니다.
 research: 팬텀은 피를 마시지 않는다. 마력이 흐르는 소리를 마신다.
 cast:
   command: 마법 mana_drain

@@ -1265,7 +1265,7 @@ spells:
     permission: "magic.learned.fox_orbit"
     icon: "magiccodex:textures/spells/mob_skill/fox_orbit.png"
     category: "fire"
-    condition-text: "키츠네을(를) 처치하면 5% 확률로 습득."
+    condition-text: "키츠네를 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.kitsune": 1
     chance: 0.05
@@ -1275,7 +1275,7 @@ spells:
     permission: "magic.learned.curving_plumes"
     icon: "magiccodex:textures/spells/mob_skill/curving_plumes.png"
     category: "fire"
-    condition-text: "피닉스을(를) 처치하면 5% 확률로 습득."
+    condition-text: "피닉스를 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.phoenix": 1
     chance: 0.05
@@ -1285,7 +1285,7 @@ spells:
     permission: "magic.learned.crystal_orbit"
     icon: "magiccodex:textures/spells/mob_skill/crystal_orbit.png"
     category: "water"
-    condition-text: "빙핵의 수호자을(를) 처치하면 5% 확률로 습득."
+    condition-text: "빙핵의 수호자를 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.glacialcore": 1
     chance: 0.05
@@ -1295,7 +1295,7 @@ spells:
     permission: "magic.learned.venom_spit"
     icon: "magiccodex:textures/spells/mob_skill/venom_spit.png"
     category: "earth"
-    condition-text: "바실리스크을(를) 처치하면 5% 확률로 습득."
+    condition-text: "바실리스크를 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.basilisk": 1
     chance: 0.05
@@ -1305,7 +1305,7 @@ spells:
     permission: "magic.learned.smoke_veil"
     icon: "magiccodex:textures/spells/mob_skill/smoke_veil.png"
     category: "earth"
-    condition-text: "약초 도둑을(를) 처치하면 5% 확률로 습득."
+    condition-text: "약초 도둑을 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.herbthief": 1
     chance: 0.05
@@ -1315,7 +1315,7 @@ spells:
     permission: "magic.learned.domain_stomp"
     icon: "magiccodex:textures/spells/mob_skill/domain_stomp.png"
     category: "light"
-    condition-text: "영록을(를) 처치하면 5% 확률로 습득."
+    condition-text: "영록을 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.stag": 1
     chance: 0.05
@@ -1325,7 +1325,7 @@ spells:
     permission: "magic.learned.seal_circle"
     icon: "magiccodex:textures/spells/mob_skill/seal_circle.png"
     category: "light"
-    condition-text: "봉인의 술사을(를) 처치하면 5% 확률로 습득."
+    condition-text: "봉인의 술사를 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.warden_mage": 1
     chance: 0.05
@@ -1335,7 +1335,7 @@ spells:
     permission: "magic.learned.seal_talismans"
     icon: "magiccodex:textures/spells/mob_skill/seal_talismans.png"
     category: "light"
-    condition-text: "봉인의 술사을(를) 처치하면 5% 확률로 습득."
+    condition-text: "봉인의 술사를 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.warden_mage": 1
     chance: 0.05
@@ -1345,7 +1345,7 @@ spells:
     permission: "magic.learned.shield_slam"
     icon: "magiccodex:textures/spells/mob_skill/shield_slam.png"
     category: "light"
-    condition-text: "봉인의 기사을(를) 처치하면 5% 확률로 습득."
+    condition-text: "봉인의 기사를 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.warden_knight": 1
     chance: 0.05
@@ -1355,7 +1355,7 @@ spells:
     permission: "magic.learned.chain_arrow"
     icon: "magiccodex:textures/spells/mob_skill/chain_arrow.png"
     category: "light"
-    condition-text: "봉인의 궁수을(를) 처치하면 5% 확률로 습득."
+    condition-text: "봉인의 궁수를 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.warden_archer": 1
     chance: 0.05
@@ -1365,7 +1365,7 @@ spells:
     permission: "magic.learned.mana_drain"
     icon: "magiccodex:textures/spells/mob_skill/mana_drain.png"
     category: "dark"
-    condition-text: "팬텀을(를) 처치하면 5% 확률로 습득."
+    condition-text: "팬텀을 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.phantom": 1
     chance: 0.05
@@ -1375,7 +1375,7 @@ spells:
     permission: "magic.learned.soul_scythe"
     icon: "magiccodex:textures/spells/mob_skill/soul_scythe.png"
     category: "dark"
-    condition-text: "팬텀을(를) 처치하면 5% 확률로 습득."
+    condition-text: "팬텀을 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.phantom": 1
     chance: 0.05
@@ -1385,7 +1385,7 @@ spells:
     permission: "magic.learned.oblivion_orbs"
     icon: "magiccodex:textures/spells/mob_skill/oblivion_orbs.png"
     category: "dark"
-    condition-text: "망각의 해골술사을(를) 처치하면 5% 확률로 습득."
+    condition-text: "망각의 해골술사를 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.skeleton_mage": 1
     chance: 0.05
@@ -1395,7 +1395,7 @@ spells:
     permission: "magic.learned.bone_grasp"
     icon: "magiccodex:textures/spells/mob_skill/bone_grasp.png"
     category: "dark"
-    condition-text: "망각의 해골술사을(를) 처치하면 5% 확률로 습득."
+    condition-text: "망각의 해골술사를 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.skeleton_mage": 1
     chance: 0.05
@@ -1405,7 +1405,7 @@ spells:
     permission: "magic.learned.shadow_leap"
     icon: "magiccodex:textures/spells/mob_skill/shadow_leap.png"
     category: "dark"
-    condition-text: "키츠네을(를) 처치하면 5% 확률로 습득."
+    condition-text: "키츠네를 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.kitsune": 1
     chance: 0.05
@@ -1415,7 +1415,7 @@ spells:
     permission: "magic.learned.binding_pull"
     icon: "magiccodex:textures/spells/mob_skill/binding_pull.png"
     category: "wind"
-    condition-text: "하늘뱀을(를) 처치하면 5% 확률로 습득."
+    condition-text: "하늘뱀을 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.sky_serpent": 1
     chance: 0.05
@@ -1425,7 +1425,7 @@ spells:
     permission: "magic.learned.fairy_dust"
     icon: "magiccodex:textures/spells/mob_skill/fairy_dust.png"
     category: "earth"
-    condition-text: "요정을(를) 처치하면 5% 확률로 습득."
+    condition-text: "요정을 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.fairy": 1
     chance: 0.05
@@ -1435,7 +1435,7 @@ spells:
     permission: "magic.learned.moon_wind"
     icon: "magiccodex:textures/spells/mob_skill/moon_wind.png"
     category: "wind"
-    condition-text: "페가수스을(를) 처치하면 5% 확률로 습득."
+    condition-text: "페가수스를 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.pegasus": 1
     chance: 0.05
@@ -1445,7 +1445,7 @@ spells:
     permission: "magic.learned.gale_wings"
     icon: "magiccodex:textures/spells/mob_skill/gale_wings.png"
     category: "wind"
-    condition-text: "페가수스을(를) 처치하면 5% 확률로 습득."
+    condition-text: "페가수스를 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.pegasus": 1
     chance: 0.05
@@ -1455,7 +1455,7 @@ spells:
     permission: "magic.learned.feather_storm"
     icon: "magiccodex:textures/spells/mob_skill/feather_storm.png"
     category: "wind"
-    condition-text: "히포그리프을(를) 처치하면 5% 확률로 습득."
+    condition-text: "히포그리프를 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.hippogryph": 1
     chance: 0.05
@@ -1465,7 +1465,7 @@ spells:
     permission: "magic.learned.hunting_pounce"
     icon: "magiccodex:textures/spells/mob_skill/hunting_pounce.png"
     category: "earth"
-    condition-text: "검치호을(를) 처치하면 5% 확률로 습득."
+    condition-text: "검치호를 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.sabertooth": 1
     chance: 0.05
@@ -1475,7 +1475,7 @@ spells:
     permission: "magic.learned.roar_leap"
     icon: "magiccodex:textures/spells/mob_skill/roar_leap.png"
     category: "wind"
-    condition-text: "만티코어을(를) 처치하면 5% 확률로 습득."
+    condition-text: "만티코어를 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.manticore": 1
     chance: 0.05
@@ -1485,7 +1485,7 @@ spells:
     permission: "magic.learned.gravity_slam"
     icon: "magiccodex:textures/spells/mob_skill/gravity_slam.png"
     category: "earth"
-    condition-text: "고대 골렘을(를) 처치하면 5% 확률로 습득."
+    condition-text: "고대 골렘을 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.golem": 1
     chance: 0.05
@@ -1495,7 +1495,7 @@ spells:
     permission: "magic.learned.tail_spikes"
     icon: "magiccodex:textures/spells/mob_skill/tail_spikes.png"
     category: "earth"
-    condition-text: "와이번을(를) 처치하면 5% 확률로 습득."
+    condition-text: "와이번을 처치하면 5% 확률로 습득."
     requirements:
       "kill.mob.wyvern": 1
     chance: 0.05

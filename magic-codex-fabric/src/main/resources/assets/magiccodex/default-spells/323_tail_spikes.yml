@@ -5,7 +5,7 @@ description: 조준한 자리에 꼬리 가시를 세 번 연달아 떨어뜨립
 icon: ''
 permission: magic.learned.tail_spikes
 discovery:
-  description: 와이번을(를) 처치하면 5% 확률로 습득합니다.
+  description: 와이번을 처치하면 5% 확률로 습득합니다.
 research: 와이번의 꼬리는 한 번 휘두르면 세 번 떨어진다.
 cast:
   command: 마법 tail_spikes

@@ -5,7 +5,7 @@ description: 대상 바로 옆으로 순간이동해 주변을 공격합니다. 
 icon: ''
 permission: magic.learned.shadow_leap
 discovery:
-  description: 키츠네을(를) 처치하면 5% 확률로 습득합니다.
+  description: 키츠네를 처치하면 5% 확률로 습득합니다.
 research: 여우는 달려가지 않는다. 눈을 깜빡이면 이미 곁에 있다.
 cast:
   command: 마법 shadow_leap

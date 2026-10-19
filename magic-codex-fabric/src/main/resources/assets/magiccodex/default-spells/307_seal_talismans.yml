@@ -5,7 +5,7 @@ description: 봉인 부적 세 장을 던집니다. 부적은 빙글 돌며 휘�
 icon: ''
 permission: magic.learned.seal_talismans
 discovery:
-  description: 봉인의 술사을(를) 처치하면 5% 확률로 습득합니다.
+  description: 봉인의 술사를 처치하면 5% 확률로 습득합니다.
 research: 부적은 바람을 거스르지 않는다. 돌아가더라도 반드시 닿는다.
 cast:
   command: 마법 seal_talismans

@@ -5,7 +5,7 @@ description: 조준한 땅에서 뼈의 손을 솟게 합니다. 손에 붙잡�
 icon: ''
 permission: magic.learned.bone_grasp
 discovery:
-  description: 망각의 해골술사을(를) 처치하면 5% 확률로 습득합니다.
+  description: 망각의 해골술사를 처치하면 5% 확률로 습득합니다.
 research: 망자의 손은 놓는 법을 모른다.
 cast:
   command: 마법 bone_grasp

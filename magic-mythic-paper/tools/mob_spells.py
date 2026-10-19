@@ -155,6 +155,11 @@ M = [
   '와이번의 꼬리는 한 번 휘두르면 세 번 떨어진다.'),
 ]
 
+def obj(word):
+    """word + 을/를 by the last syllable's final consonant."""
+    c = ord(word[-1]) - 0xAC00
+    return word + ('을' if 0 <= c < 11172 and c % 28 else '를')
+
 def routes():
     """(id, skill, target, range, base, ratio, utility, lines, note) rows for spells.py S."""
     return [(i, 'CHA_' + i, tgt, rng, base, ratio, False, lines, note) for (o, i, nm, cat, fam, tgt, rng, base, ratio, mana, cd, lines, note, desc, res) in M]
@@ -177,7 +182,7 @@ def write_all():
     for (o, i, nm, cat, fam, tgt, rng, base, ratio, mana, cd, lines, note, desc, res) in M:
         mob = FAMILIES[fam][0]
         y = (f"id: {i}\nname: {nm}\ncategory: {cat}\ndescription: {desc}\nicon: ''\npermission: magic.learned.{i}\n"
-             f"discovery:\n  description: {mob}을(를) 처치하면 5% 확률로 습득합니다.\nresearch: {res}\n"
+             f"discovery:\n  description: {obj(mob)} 처치하면 5% 확률로 습득합니다.\nresearch: {res}\n"
              f"cast:\n  command: 마법 {i}\n  cooldown-seconds: {cd}\n  mana-cost: {mana}\norder: {o}\n")
         fn = f'{o}_{i}.yml'; _write_if(os.path.join(ds, fn), y)
         idx.append(f'{o}_{i}')
@@ -202,7 +207,7 @@ def write_all():
     for (o, i, nm, cat, fam, *_r) in M:
         mob = FAMILIES[fam][0]
         disc += (f'  {i}:\n    name: "{nm}"\n    permission: "magic.learned.{i}"\n    icon: "magiccodex:textures/spells/mob_skill/{i}.png"\n'
-                 f'    category: "{cat}"\n    condition-text: "{mob}을(를) 처치하면 5% 확률로 습득."\n    requirements:\n      "kill.mob.{fam}": 1\n'
+                 f'    category: "{cat}"\n    condition-text: "{obj(mob)} 처치하면 5% 확률로 습득."\n    requirements:\n      "kill.mob.{fam}": 1\n'
                  f'    chance: 0.05\n    prerequisites: []\n')
     _section(os.path.join(REPO, 'magic-discovery-paper/src/main/resources/discoveries.yml'), mark, disc)
     # summary doc

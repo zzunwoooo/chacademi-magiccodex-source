@@ -5,7 +5,7 @@ description: 대상을 향해 크게 뛰어올라 덮칩니다. 내려앉은 자
 icon: ''
 permission: magic.learned.hunting_pounce
 discovery:
-  description: 검치호을(를) 처치하면 5% 확률로 습득합니다.
+  description: 검치호를 처치하면 5% 확률로 습득합니다.
 research: 검치호는 두 번 뛰지 않는다.
 cast:
   command: 마법 hunting_pounce

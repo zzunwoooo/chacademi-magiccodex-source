@@ -5,7 +5,7 @@ description: 얼음 결정 여덟 개를 몸 둘레에 띄워 돌리다가 사�
 icon: ''
 permission: magic.learned.crystal_orbit
 discovery:
-  description: 빙핵의 수호자을(를) 처치하면 5% 확률로 습득합니다.
+  description: 빙핵의 수호자를 처치하면 5% 확률로 습득합니다.
 research: 빙핵의 수호자는 둘러싸이는 것을 두려워하지 않는다. 사방이 곧 과녁이다.
 cast:
   command: 마법 crystal_orbit

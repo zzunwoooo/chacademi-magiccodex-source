@@ -5,7 +5,7 @@ description: 날개를 크게 내려쳐 앞쪽 반원에 돌풍을 일으킵니�
 icon: ''
 permission: magic.learned.gale_wings
 discovery:
-  description: 페가수스을(를) 처치하면 5% 확률로 습득합니다.
+  description: 페가수스를 처치하면 5% 확률로 습득합니다.
 research: 바람이 무겁다고 느껴진다면, 그것은 날개가 너를 내려다보고 있기 때문이다.
 cast:
   command: 마법 gale_wings

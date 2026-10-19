@@ -5,7 +5,7 @@ description: 불타는 깃털 세 개를 부채꼴로 날립니다. 깃털은 �
 icon: ''
 permission: magic.learned.curving_plumes
 discovery:
-  description: 피닉스을(를) 처치하면 5% 확률로 습득합니다.
+  description: 피닉스를 처치하면 5% 확률로 습득합니다.
 research: 피닉스의 깃털은 바람을 타고 돌아 들어온다. 막아도 옆에서 닿는다.
 cast:
   command: 마법 curving_plumes
