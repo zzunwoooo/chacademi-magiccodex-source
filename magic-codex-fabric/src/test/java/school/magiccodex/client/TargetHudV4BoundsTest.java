@@ -21,9 +21,9 @@ class TargetHudV4BoundsTest {
   assertEquals(2048,v("FRAME_W"));assertEquals(-70,v("NAME_Y"));assertEquals(-12,v("DIVIDER_Y"));assertEquals(-24,v("DAMAGE_Y"));assertEquals(74,v("NAME_SIZE"));assertEquals(430,v("DIVIDER_W"));
   assertFalse(source().contains("title_decoration.png"));assertTrue(source().contains("title_divider.png"));
  }
- @Test void actualFontAndAlphaBoundsStayOnScreenAndAboveFrameAtGuiScales()throws Exception{
-  var report=new StringBuilder("guiWidth,deviceScale,frameTop,nameBottom,dividerTop,dividerBottom,damageBottom\n");
-  var div=image("title_divider.png");var ab=alpha(div);double dh=Math.round(v("DIVIDER_W")*div.getHeight()/div.getWidth());
+ @Test void actualFontAndAlphaBoundsStayOnScreenAndClearOfGaugeAtGuiScales()throws Exception{
+  var report=new StringBuilder("guiWidth,deviceScale,frameOrigin,frameInkTop,gaugeInkTop,nameBottom,dividerTop,dividerBottom,damageBottom\n");
+  var div=image("title_divider.png");var ab=alpha(div);double dh=Math.round(v("DIVIDER_W")*div.getHeight()/div.getWidth());var frameAlpha=alpha(image("frame.png"));var gaugeAlpha=alpha(image("track.png"));
   for(int sw:new int[]{320,640,960,1280,1920,2560})for(float device:new float[]{1,2,3,4}){
    float w=TargetHudLayout.width(sw),s=w/v("FRAME_W");double fx=(sw-w)/2d,fy=8+(v("NAME_SIZE")*.5-v("NAME_Y"))*s;
    double divTop=fy+(Math.round(v("DIVIDER_Y")-dh/2)+ab.t*dh/div.getHeight())*s,divBottom=fy+(Math.round(v("DIVIDER_Y")-dh/2)+ab.b*dh/div.getHeight())*s;
@@ -33,8 +33,8 @@ class TargetHudV4BoundsTest {
    assertTrue(name.t>=0&&name.l>=0&&name.r<=sw,"Name clipped at "+sw+" / "+device);
    assertTrue(name.b<fy,"Name touches frame at "+sw+" / "+device);
    assertTrue(divTop>=0&&divBottom<=fy+3.1*s,"Divider extends past frame ornament boundary");
-   assertTrue(dmg.l>=fx&&dmg.r<=fx+w&&dmg.b<=fy+2/device,"Damage text clipped/inside gauge at "+sw+" / "+device);
-   report.append(sw+","+device+","+fy+","+name.b+","+divTop+","+divBottom+","+dmg.b+"\n");
+   assertTrue(dmg.l>=fx&&dmg.r<=fx+w&&dmg.b<=fy+gaugeAlpha.t*s,"Damage text clipped/inside actual gauge at "+sw+" / "+device);
+   report.append(sw+","+device+","+fy+","+(fy+frameAlpha.t*s)+","+(fy+gaugeAlpha.t*s)+","+name.b+","+divTop+","+divBottom+","+dmg.b+"\n");
   }
   Files.createDirectories(Path.of("build/hud-v4-audit"));Files.writeString(Path.of("build/hud-v4-audit/bounds.csv"),report);
   preview();
@@ -56,5 +56,5 @@ class TargetHudV4BoundsTest {
   String d="123,456";float ds=v("DAMAGE_SIZE")*s;draw(g,d,ds,fx+(2048-40)*s-CodexTextRasterizer.width(font(),d,ds),fy+v("DAMAGE_Y")*s,false);
   draw(g,"750 / 1000",v("HP_TEXT")*s,sw/2f,fy+(19+18)*s,true);g.dispose();ImageIO.write(out,"png",Path.of("build/hud-v4-audit/preview.png").toFile());
  }
- void draw(Graphics2D g,String text,float size,float x,float y,boolean center)throws Exception{var im=glyph(text,size,2);var p=im.createGraphics();p.setComposite(AlphaComposite.SrcIn);p.setColor(new Color(0xFFF5DB));p.fillRect(0,0,im.getWidth(),im.getHeight());p.dispose();int w=Math.round(im.getWidth()/2f),h=Math.round(im.getHeight()/2f);g.drawImage(im,Math.round(center?x-w/2f:x),Math.round(y-h/2f),w,h,null);}
+ void draw(Graphics2D g,String text,float size,float x,float y,boolean center)throws Exception{float px=Math.round(size*2*64)/64f;var fill=CodexTextRasterizer.rasterize(font(),text,px);var border=CodexTextRasterizer.rasterize(font(),text,px,true);for(var im:new BufferedImage[]{border,fill}){var p=im.createGraphics();p.setComposite(AlphaComposite.SrcIn);p.setColor(im==border?Color.BLACK:new Color(0xFFF5DB));p.fillRect(0,0,im.getWidth(),im.getHeight());p.dispose();int w=Math.round(im.getWidth()/2f),h=Math.round(im.getHeight()/2f);g.drawImage(im,Math.round(center?x-w/2f:x),Math.round(y-h/2f),w,h,null);}}
 }
