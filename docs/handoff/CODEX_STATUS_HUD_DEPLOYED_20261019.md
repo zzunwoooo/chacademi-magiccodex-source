@@ -2,7 +2,7 @@
 
 ## Result
 
-SERVERS_AND_PERSONAL_DEPLOYED_TEMP_PUBLICATION_PENDING. Baseline 6fe06f0 was confirmed against live server and personal client hashes before changes. Integrated feature aa785a5 (three commits from that exact baseline) using a merge commit, preserving operating Kyudichi, housing, shop, broom and alchemy patches.
+DEPLOYED_VERIFIED. Baseline 6fe06f0 was confirmed against live server and personal client hashes before changes. Integrated feature aa785a5 (three commits from that exact baseline) using a merge commit, preserving operating Kyudichi, housing, shop, broom and alchemy patches.
 
 ## Build and fixes
 
@@ -30,9 +30,9 @@ aa785a5 preserves the 6504a31 behavior: remove the entire vanilla BOSS_BAR layer
 
 ## Temporary launcher
 
-Candidate: BUILT_VERIFIED_PUBLICATION_BLOCKED. release/v0.1.13 based on current public main d3bd464. Only MagicCodex module changed; 84 other distribution modules and all resource URLs preserved. Installer EXE/ZIP, lint, 10 launcher tests, packaged ASAR byte checks and SHA512/size/updater/blockmap checks passed.
+Candidate: PUBLISHED. release/v0.1.13 based on current public main d3bd464. Only MagicCodex module changed; 84 other distribution modules and all resource URLs preserved. Installer EXE/ZIP, lint, 10 launcher tests, packaged ASAR byte checks and SHA512/size/updater/blockmap checks passed.
 
-Public destination is https://github.com/zzunwoooo/chacademi-launcher/releases/tag/v0.1.13. Public upload and main feed update were rejected by automatic approval review because explicit authorization for that public repository/payload disclosure was not established. User approval requested; no v0.1.13 publication occurred as of this report. Existing v0.1.12 remains public. The fully verified candidate and eight asset checksums are retained in staging/temp-launcher-status-hud-20261019.
+Public v0.1.13 release and main feed update completed with explicit user approval. Release ID 416813030, commit c940587d8fa9b699cc79ba9c209a8848e5764a06. Eight uploaded SHA-256 digests verified. Actual public downloads of all eight files were independently hashed and matched, raw main distribution/payload/package JSON matched, and retained Motion/resource URLs answered successfully. Release: https://github.com/zzunwoooo/chacademi-launcher/releases/tag/v0.1.13. No server redeployment or restart occurred during this follow-up.
 
 ## Remaining limits
 
@@ -41,5 +41,7 @@ No live multiplayer or visual acceptance was performed. Status effects are not n
 ## Hosting evidence
 
 C:/Chacademi/artifacts/status-hud-20261019: build-evidence.json, before-metadata.json (hash metadata only), server-installed.json, startup-verification.json, personal-installed.json, completion.json. Source/build/test logs: C:/Chacademi/staging/status-hud-20261019. Launcher: C:/Chacademi/staging/temp-launcher-status-hud-20261019 (candidate.json, preparation.json, release-candidate-hashes.json, installation/build/lint/test/ASAR/updater evidence).
+
+Manual test instructions: [CODEX_STATUS_HUD_TESTS_20261019.md](CODEX_STATUS_HUD_TESTS_20261019.md). Public verification evidence: C:/Chacademi/staging/temp-launcher-status-hud-20261019/public-verification.json.
 
 Read-only Korean status diagnostics through the existing supervisor console arrived as question marks and returned Unknown command; no status-command runtime verification is claimed. Plugin activation, startup logs, protocol response and unit tests are the completed checks. No console encoding/service-script change was made.

@@ -1,5 +1,5 @@
 {
-  "status": "SERVERS_AND_PERSONAL_DEPLOYED_TEMP_PUBLICATION_PENDING",
+  "status": "DEPLOYED_VERIFIED",
   "baseline": "6fe06f0",
   "feature": "aa785a5422249fb9e1d52d05b3f6bd32c112192a",
   "sourceCommit": "4c47d2ed0e9a91dcc2652a1b9c058fc8a98caea0",
@@ -125,14 +125,77 @@
     "backupCreated": false
   },
   "temporaryLauncher": {
-    "status": "BUILT_VERIFIED_PUBLICATION_BLOCKED",
+    "mainUpdated": true,
+    "id": 416813030,
     "assetCount": 8,
-    "commit": "c940587d8fa9b699cc79ba9c209a8848e5764a06",
+    "uploadedDigestsVerified": true,
+    "url": "https://github.com/zzunwoooo/chacademi-launcher/releases/tag/v0.1.13",
+    "status": "PUBLISHED",
     "tag": "v0.1.13",
-    "reason": "Explicit approval required for public zzunwoooo/chacademi-launcher release and main feed update"
+    "commit": "c940587d8fa9b699cc79ba9c209a8848e5764a06"
   },
   "backupCreated": false,
   "mapsCopied": false,
   "gameForcedClosed": false,
-  "screenshots": 0
+  "screenshots": 0,
+  "temporaryPublicVerification": {
+    "status": "PUBLIC_RELEASE_FILES_HASHES_AND_MAIN_FEED_VERIFIED",
+    "url": "https://github.com/zzunwoooo/chacademi-launcher/releases/tag/v0.1.13",
+    "tag": "v0.1.13",
+    "releaseId": 416813030,
+    "assets": 8,
+    "publicDownloadedAssetHashes": [
+      {
+        "name": "Chacademi-Launcher-setup-0.1.13.exe",
+        "size": 98766926,
+        "sha256": "3f82e4ef40bd4c5ace1f4af6ce52e5959b43cab12b5ca375505ee77fe0b1ef1c"
+      },
+      {
+        "name": "Chacademi-Launcher-setup-0.1.13.exe.blockmap",
+        "size": 103709,
+        "sha256": "da1de0c2e5ea7b626ad8b61a7db5a9ca4d5e7f14b9839504512a3fbd0326e1f1"
+      },
+      {
+        "name": "Chacademi-Launcher-setup-0.1.13.zip",
+        "size": 136449186,
+        "sha256": "ea9fdf87bd1f2b929c215f1413f5068f8f6e7da198dfa61530f03fe07edda50d"
+      },
+      {
+        "name": "distribution.json",
+        "size": 55439,
+        "sha256": "1555a52d0d08961c3be3ea353bfaaae13d6bf2c35900f98ae36a2198ceae29c7"
+      },
+      {
+        "name": "latest.yml",
+        "size": 367,
+        "sha256": "5c4679f020fb48ab1618539eadd3488e5d8a11d229e4db8301454016f60bd5b2"
+      },
+      {
+        "name": "magic-codex-ui-0.40.1-integrated-20261018.1-statushud.1+mc1.21.4.jar",
+        "size": 200129400,
+        "sha256": "8cec1365381adc9eef3e5a4410185a76e8a1f9952543a11de7b82261f6ab426c"
+      },
+      {
+        "name": "payload-sha256.json",
+        "size": 32263,
+        "sha256": "2526eeb4ab1d402f2da949b58c2464368109bc872646aa2dac69f991fd62eea5"
+      },
+      {
+        "name": "SHA256SUMS.txt",
+        "size": 697,
+        "sha256": "450977b16a1d734cf5df0843b204c34165cd2136d382c130f46f65570fc0b49f"
+      }
+    ],
+    "mainFeedMatches": [
+      "distribution.json",
+      "manifests/payload-sha256.json",
+      "package.json"
+    ],
+    "updatedHudModule": "kr.chacademi:magiccodex:0.40.1-integrated-20261018.1-statushud.1+mc1.21.4@jar",
+    "retainedResourceLinksVerified": [
+      "kr.chacademi:chacademy_motion:0.3.1-integrated-20261018.1@jar",
+      "chacademi-client-assets.zip"
+    ],
+    "serverRedeployed": false
+  }
 }
