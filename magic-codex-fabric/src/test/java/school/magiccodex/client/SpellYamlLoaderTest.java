@@ -87,11 +87,11 @@ class SpellYamlLoaderTest {
                 .noneMatch(c->c.getName().equals("rank") || c.getName().equals("circle")));
     }
 
-    @Test void finalCatalogLoads299WithUniqueOrderAndPreservedIdentity() {
+    @Test void finalCatalogLoads323WithUniqueOrderAndPreservedIdentity() {
         var result=loader.load(Path.of("src/main/resources/assets/magiccodex/default-spells"));
         assertTrue(result.success(),result.errors().toString());
-        assertEquals(299,result.spells().size());
-        for(int i=0;i<299;i++) {
+        assertEquals(323,result.spells().size());
+        for(int i=0;i<323;i++) {
             var s=result.spells().get(i);
             assertEquals(i+1,s.order());
             assertFalse(s.condition().isBlank());
@@ -167,12 +167,12 @@ class SpellYamlLoaderTest {
         assertTrue(result.errors().getFirst().contains("broken.yml"));
     }
 
-    @Test void firstRunInstalls299PreservesUserEditsAndRestoresMissingDefaults() throws Exception {
+    @Test void firstRunInstalls323PreservesUserEditsAndRestoresMissingDefaults() throws Exception {
         Path spells = directory.resolve("spells");
         loader.installDefaults(spells);
         var result = loader.load(spells);
         assertTrue(result.success(), result.errors().toString());
-        assertEquals(299, result.spells().size());
+        assertEquals(323, result.spells().size());
         assertTrue(result.spells().stream().noneMatch(CodexData.Spell::permissionKnown));
         Files.writeString(spells.resolve("001_feather_fall.yml"), "user contents");
         Files.delete(spells.resolve("002_wind_basket.yml"));
@@ -214,5 +214,11 @@ class SpellYamlLoaderTest {
         state.replaceSpells(List.of(loader.parse(VALID)));
         assertEquals(0, state.page());
         assertNull(state.selected());
+    }
+
+    @Test void mobSpellsKeepTheirRuntime300To323IdsWithoutRenumbering() {
+        var result=loader.load(Path.of("src/main/resources/assets/magiccodex/default-spells"));assertTrue(result.success());
+        var ids=List.of("fox_orbit","curving_plumes","crystal_orbit","venom_spit","smoke_veil","domain_stomp","seal_circle","seal_talismans","shield_slam","chain_arrow","mana_drain","soul_scythe","oblivion_orbs","bone_grasp","shadow_leap","binding_pull","fairy_dust","moon_wind","gale_wings","feather_storm","hunting_pounce","roar_leap","gravity_slam","tail_spikes");
+        for(int i=0;i<24;i++){var spell=result.spells().get(299+i);assertEquals(300+i,spell.order());assertEquals(ids.get(i),spell.id());}
     }
 }
