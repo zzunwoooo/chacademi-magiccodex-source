@@ -11,10 +11,14 @@ import net.minecraft.text.Style;
 public final class HeldItemNameHud {
     private HeldItemNameHud(){}
     public static int draw(DrawContext c,TextRenderer renderer,Text name,int color){
+        if(!PlayerHudSettings.get().visible())return 0;
         var window=MinecraftClient.getInstance().getWindow();
-        var layout=PlayerHudLayout.of(window.getScaledWidth(),window.getScaledHeight());
+        var layout=PlayerHudLayout.player(window.getScaledWidth(),window.getScaledHeight(),PlayerHudSettings.get().percent());
         float scale=layout.scale()*1.65f;
         int max=Math.max(1,(int)Math.min(600,(window.getScaledWidth()-32)/scale));
+        float titleY=(layout.hotbarTop()-39-14*1.65f)*layout.scale();
+        if(titleY<(layout.frameY()+90)*layout.scale()&&titleY+14*scale>(layout.frameY()-90)*layout.scale())
+            max=Math.max(1,Math.min(max,(int)(2*(window.getScaledWidth()/2f-(layout.frameX()+90)*layout.scale()-8)/scale)));
         Text display=name;
         if(renderer.getWidth(name)>max){
             var trimmed=renderer.trimToWidth(name,Math.max(1,max-renderer.getWidth("…")));

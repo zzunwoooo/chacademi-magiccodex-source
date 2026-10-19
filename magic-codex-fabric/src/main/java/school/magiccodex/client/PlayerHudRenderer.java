@@ -27,9 +27,9 @@ public final class PlayerHudRenderer implements AutoCloseable {
         this.client=client;images=new HudTextureCache(client);text=new CodexTypography(client);
     }
     private static Identifier id(String file){return Identifier.of("magiccodex","textures/hud/"+file);}
-    private PlayerHudLayout layout(){return PlayerHudLayout.of(client.getWindow().getScaledWidth(),client.getWindow().getScaledHeight());}
+    private PlayerHudLayout layout(){return PlayerHudLayout.player(client.getWindow().getScaledWidth(),client.getWindow().getScaledHeight(),PlayerHudSettings.get().percent());}
     public void renderHotbar(DrawContext ctx,PlayerEntity player){
-        if(player==null)return;
+        if(player==null||!PlayerHudSettings.get().visible())return;
         var l=layout();images.beginFrame();text.beginFrame();
         ctx.getMatrices().push();
         try{
@@ -69,7 +69,7 @@ public final class PlayerHudRenderer implements AutoCloseable {
         }
     }
     public void renderStatus(DrawContext ctx,PlayerEntity player,int rank,float mana,float maxMana,boolean cursor,long now){
-        if(player==null)return;
+        if(player==null||!PlayerHudSettings.get().visible())return;
         var l=layout();images.beginFrame();text.beginFrame();
         float dt=lastTime==0?0:Math.min(.1f,(now-lastTime)/1000f);lastTime=now;
         float mx=(float)(client.mouse.getX()*client.getWindow().getScaledWidth()/client.getWindow().getWidth())/l.scale();
