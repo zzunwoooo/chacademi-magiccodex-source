@@ -1,0 +1,138 @@
+{
+  "status": "SERVERS_AND_PERSONAL_DEPLOYED_TEMP_PUBLICATION_PENDING",
+  "baseline": "6fe06f0",
+  "feature": "aa785a5422249fb9e1d52d05b3f6bd32c112192a",
+  "sourceCommit": "4c47d2ed0e9a91dcc2652a1b9c058fc8a98caea0",
+  "branch": "codex/operating-status-hud-20261019",
+  "tests": 781,
+  "build": {
+    "bridge": {
+      "tests": {
+        "tests": 347,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "path": "C:\\Chacademi\\staging\\status-hud-20261019\\magic-codex-paper\\build\\libs\\magic-codex-bridge-0.31.1-integrated-20261018.1-statushud.1.jar",
+      "name": "magic-codex-bridge-0.31.1-integrated-20261018.1-statushud.1.jar",
+      "size": 2126039,
+      "sha256": "d5a886384964c3b15d33a5f38156e8b01c0f6432beebd7e81de8494ea6f6113d"
+    },
+    "mythic": {
+      "tests": {
+        "tests": 58,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "path": "C:\\Chacademi\\staging\\status-hud-20261019\\magic-mythic-paper\\build\\libs\\chacademia-magic-mythic-0.2.0-expansion71.1-reaction.2-vfx103134.1-effects.1-carrier.1-status.1.jar",
+      "name": "chacademia-magic-mythic-0.2.0-expansion71.1-reaction.2-vfx103134.1-effects.1-carrier.1-status.1.jar",
+      "size": 311352,
+      "sha256": "bd566fcd35f7a6aac811ec997395b1d8495d141e8951c28196d6fb1c21275695"
+    },
+    "ui": {
+      "tests": {
+        "tests": 376,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "path": "C:\\Chacademi\\staging\\status-hud-20261019\\magic-codex-fabric\\build\\libs\\magic-codex-ui-0.40.1-integrated-20261018.1-statushud.1+mc1.21.4.jar",
+      "name": "magic-codex-ui-0.40.1-integrated-20261018.1-statushud.1+mc1.21.4.jar",
+      "size": 200129400,
+      "sha256": "8cec1365381adc9eef3e5a4410185a76e8a1f9952543a11de7b82261f6ab426c",
+      "preservedAssetEntries": 1521,
+      "statusIcons": 16
+    }
+  },
+  "startup": {
+    "servers": {
+      "velocity": {
+        "status": {
+          "protocol": 769,
+          "version": "Velocity 1.7.2-26.2",
+          "online": 0
+        },
+        "startupDone": true,
+        "fatalMarkers": {}
+      },
+      "school": {
+        "status": {
+          "protocol": 769,
+          "version": "Purpur 1.21.4",
+          "online": 0
+        },
+        "startupDone": true,
+        "fatalMarkers": {},
+        "bridgeVersionInLog": true,
+        "mythicVersionInLog": true,
+        "pluginEnableLines": [
+          "[10:01:13] [Server thread/INFO]: [MagicCodexBridge] Loading server plugin MagicCodexBridge v0.31.1-integrated-20261018.1-statushud.1",
+          "[10:01:14] [Server thread/INFO]: [ChAcademiaMagicMythic] Loading server plugin ChAcademiaMagicMythic v0.2.0-expansion71.1-reaction.2-vfx103134.1-effects.1-carrier.1-status.1",
+          "[10:01:41] [Server thread/INFO]: [MagicCodexBridge] Enabling MagicCodexBridge v0.31.1-integrated-20261018.1-statushud.1",
+          "[10:01:42] [Server thread/INFO]: [ChAcademiaMagicMythic] Enabling ChAcademiaMagicMythic v0.2.0-expansion71.1-reaction.2-vfx103134.1-effects.1-carrier.1-status.1"
+        ]
+      },
+      "wild": {
+        "status": {
+          "protocol": 769,
+          "version": "Purpur 1.21.4",
+          "online": 0
+        },
+        "startupDone": true,
+        "fatalMarkers": {},
+        "bridgeVersionInLog": true,
+        "mythicVersionInLog": true,
+        "pluginEnableLines": [
+          "[10:01:15] [Server thread/INFO]: [MagicCodexBridge] Loading server plugin MagicCodexBridge v0.31.1-integrated-20261018.1-statushud.1",
+          "[10:01:15] [Server thread/INFO]: [ChAcademiaMagicMythic] Loading server plugin ChAcademiaMagicMythic v0.2.0-expansion71.1-reaction.2-vfx103134.1-effects.1-carrier.1-status.1",
+          "[10:01:43] [Server thread/INFO]: [MagicCodexBridge] Enabling MagicCodexBridge v0.31.1-integrated-20261018.1-statushud.1",
+          "[10:01:44] [Server thread/INFO]: [ChAcademiaMagicMythic] Enabling ChAcademiaMagicMythic v0.2.0-expansion71.1-reaction.2-vfx103134.1-effects.1-carrier.1-status.1"
+        ]
+      },
+      "arena": {
+        "status": {
+          "protocol": 769,
+          "version": "Purpur 1.21.4",
+          "online": 0
+        },
+        "startupDone": true,
+        "fatalMarkers": {},
+        "bridgeVersionInLog": true,
+        "mythicVersionInLog": true,
+        "pluginEnableLines": [
+          "[10:01:13] [Server thread/INFO]: [MagicCodexBridge] Loading server plugin MagicCodexBridge v0.31.1-integrated-20261018.1-statushud.1",
+          "[10:01:14] [Server thread/INFO]: [ChAcademiaMagicMythic] Loading server plugin ChAcademiaMagicMythic v0.2.0-expansion71.1-reaction.2-vfx103134.1-effects.1-carrier.1-status.1",
+          "[10:01:41] [Server thread/INFO]: [MagicCodexBridge] Enabling MagicCodexBridge v0.31.1-integrated-20261018.1-statushud.1",
+          "[10:01:42] [Server thread/INFO]: [ChAcademiaMagicMythic] Enabling ChAcademiaMagicMythic v0.2.0-expansion71.1-reaction.2-vfx103134.1-effects.1-carrier.1-status.1"
+        ]
+      }
+    },
+    "jarHashesVerified": true,
+    "preservedJars": 94,
+    "resourcePacksVerified": 3,
+    "skillsVerified": 3,
+    "backupCreated": false,
+    "mapsCopied": false
+  },
+  "personal": {
+    "optionsPreserved": true,
+    "otherModsPreserved": 14,
+    "gameForcedClosed": false,
+    "target": "C:\\Users\\matil\\AppData\\Roaming\\.zzunwoo\\instances\\launcher_v2-1.21.4\\mods\\magic-codex-ui-0.40.1-integrated-20261018.1-statushud.1+mc1.21.4.jar",
+    "status": "INSTALLED_VERIFIED",
+    "sha256": "8CEC1365381ADC9EEF3E5A4410185A76E8A1F9952543A11DE7B82261F6AB426C",
+    "backupCreated": false
+  },
+  "temporaryLauncher": {
+    "status": "BUILT_VERIFIED_PUBLICATION_BLOCKED",
+    "assetCount": 8,
+    "commit": "c940587d8fa9b699cc79ba9c209a8848e5764a06",
+    "tag": "v0.1.13",
+    "reason": "Explicit approval required for public zzunwoooo/chacademi-launcher release and main feed update"
+  },
+  "backupCreated": false,
+  "mapsCopied": false,
+  "gameForcedClosed": false,
+  "screenshots": 0
+}
