@@ -1110,3 +1110,153 @@ CHA_MOB_seal_charge_mf_warden_knight_shiny:
   - chatelegraph{shape=line;at=caster;length=15;width=3;ticks=20;flat=7;element=light;status=stun:16;knock=0.6;vfxlead=2;vfx=sealcharge/charge_s;spell=mob_seal_charge} @target
   - delay 18
   - lunge{velocity=2.6;velocityY=0.2} @target
+
+# ---- 랩터 3종 - 물어뜯기 (모션 bite, 예고 0.4초)
+CHA_MOB_bite_raptor_nightmare:
+  Cooldown: 3
+  Conditions:
+  - targetwithin{d=8} true
+  Skills:
+  - state{s=bite;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=5;width=2;ticks=8;flat=4;vfxlead=2;element=dark;vfx=beastbite/bite_nightmare;spell=mob_bite} @target
+  - delay 6
+  - lunge{velocity=1.2;velocityY=0.2} @target
+CHA_MOB_bite_raptor_nightmare_shiny:
+  Cooldown: 3
+  Conditions:
+  - targetwithin{d=8} true
+  Skills:
+  - state{s=bite;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=5;width=2;ticks=8;flat=4;vfxlead=2;element=dark;vfx=beastbite/bite_nightmare_s;spell=mob_bite} @target
+  - delay 6
+  - lunge{velocity=1.2;velocityY=0.2} @target
+CHA_MOB_bite_raptor_red:
+  Cooldown: 3
+  Conditions:
+  - targetwithin{d=8} true
+  Skills:
+  - state{s=bite;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=5;width=2;ticks=8;flat=4;vfxlead=2;vfx=beastbite/bite_red;spell=mob_bite} @target
+  - delay 6
+  - lunge{velocity=1.2;velocityY=0.2} @target
+CHA_MOB_bite_raptor_red_shiny:
+  Cooldown: 3
+  Conditions:
+  - targetwithin{d=8} true
+  Skills:
+  - state{s=bite;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=5;width=2;ticks=8;flat=4;vfxlead=2;vfx=beastbite/bite_red_s;spell=mob_bite} @target
+  - delay 6
+  - lunge{velocity=1.2;velocityY=0.2} @target
+CHA_MOB_bite_raptor_undead:
+  Cooldown: 3
+  Conditions:
+  - targetwithin{d=8} true
+  Skills:
+  - state{s=bite;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=5;width=2;ticks=8;flat=4;vfxlead=2;element=dark;vfx=beastbite/bite_undead;spell=mob_bite} @target
+  - delay 6
+  - lunge{velocity=1.2;velocityY=0.2} @target
+CHA_MOB_bite_raptor_undead_shiny:
+  Cooldown: 3
+  Conditions:
+  - targetwithin{d=8} true
+  Skills:
+  - state{s=bite;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=5;width=2;ticks=8;flat=4;vfxlead=2;element=dark;vfx=beastbite/bite_undead_s;spell=mob_bite} @target
+  - delay 6
+  - lunge{velocity=1.2;velocityY=0.2} @target
+
+# ---- 악어 - 물어뜯기 (모션 croc_bite, 예고 0.5초)
+CHA_MOB_croc_bite_crocodile:
+  Cooldown: 4
+  Conditions:
+  - targetwithin{d=7} true
+  Skills:
+  - state{s=croc_bite;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=4;width=2.5;ticks=10;flat=6;status=root:12;vfxlead=2;vfx=beastbite/bite_croc;spell=mob_croc_bite} @target
+CHA_MOB_croc_bite_crocodile_shiny:
+  Cooldown: 4
+  Conditions:
+  - targetwithin{d=7} true
+  Skills:
+  - state{s=croc_bite;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=4;width=2.5;ticks=10;flat=6;status=root:12;vfxlead=2;vfx=beastbite/bite_croc_s;spell=mob_croc_bite} @target
+
+# ---- 곰 3종 - 앞발 후려치기 (모션 swipe, 예고 0.5초)
+CHA_MOB_swipe_bear:
+  Cooldown: 4
+  Conditions:
+  - targetwithin{d=8} true
+  Skills:
+  - state{s=swipe;li=0;lo=3} @self
+  - chatelegraph{shape=cone;at=caster;r=4.5;angle=110;ticks=10;flat=6;knock=1.0;up=0.25;vfxlead=2;vfx=bearswipe/swipe_brown;spell=mob_swipe} @target
+CHA_MOB_swipe_bear_shiny:
+  Cooldown: 4
+  Conditions:
+  - targetwithin{d=8} true
+  Skills:
+  - state{s=swipe;li=0;lo=3} @self
+  - chatelegraph{shape=cone;at=caster;r=4.5;angle=110;ticks=10;flat=6;knock=1.0;up=0.25;vfxlead=2;vfx=bearswipe/swipe_brown_s;spell=mob_swipe} @target
+CHA_MOB_swipe_bear_black:
+  Cooldown: 4
+  Conditions:
+  - targetwithin{d=8} true
+  Skills:
+  - state{s=swipe;li=0;lo=3} @self
+  - chatelegraph{shape=cone;at=caster;r=4.5;angle=110;ticks=10;flat=6;knock=1.0;up=0.25;vfxlead=2;vfx=bearswipe/swipe_black;spell=mob_swipe} @target
+CHA_MOB_swipe_bear_black_shiny:
+  Cooldown: 4
+  Conditions:
+  - targetwithin{d=8} true
+  Skills:
+  - state{s=swipe;li=0;lo=3} @self
+  - chatelegraph{shape=cone;at=caster;r=4.5;angle=110;ticks=10;flat=6;knock=1.0;up=0.25;vfxlead=2;vfx=bearswipe/swipe_black_s;spell=mob_swipe} @target
+CHA_MOB_swipe_bear_polar:
+  Cooldown: 4
+  Conditions:
+  - targetwithin{d=8} true
+  Skills:
+  - state{s=swipe;li=0;lo=3} @self
+  - chatelegraph{shape=cone;at=caster;r=4.5;angle=110;ticks=10;flat=6;knock=1.0;up=0.25;vfxlead=2;element=water;status=slow:20:0.3;vfx=bearswipe/swipe_polar;spell=mob_swipe} @target
+CHA_MOB_swipe_bear_polar_shiny:
+  Cooldown: 4
+  Conditions:
+  - targetwithin{d=8} true
+  Skills:
+  - state{s=swipe;li=0;lo=3} @self
+  - chatelegraph{shape=cone;at=caster;r=4.5;angle=110;ticks=10;flat=6;knock=1.0;up=0.25;vfxlead=2;element=water;status=slow:20:0.3;vfx=bearswipe/swipe_polar_s;spell=mob_swipe} @target
+
+# ---- 봉인의 궁수 - 사슬 화살·방패 밀치기 (모션 chain_shot, 예고 0.6초)
+CHA_MOB_chain_shot_mf_warden_archer:
+  Cooldown: 6
+  Conditions:
+  - targetwithin{d=20} true
+  Skills:
+  - state{s=chain_shot;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=18;width=1.5;ticks=12;flat=5;element=light;pull=0.9;vfxlead=2;vfx=wardenarts/warden_chain;spell=mob_chain_shot} @target
+CHA_MOB_chain_shot_mf_warden_archer_shiny:
+  Cooldown: 6
+  Conditions:
+  - targetwithin{d=20} true
+  Skills:
+  - state{s=chain_shot;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=18;width=1.5;ticks=12;flat=5;element=light;pull=0.9;vfxlead=2;vfx=wardenarts/warden_chain_s;spell=mob_chain_shot} @target
+
+# ---- 봉인의 거벽 - 사슬 화살·방패 밀치기 (모션 shield_bash, 예고 0.5초)
+CHA_MOB_shield_bash_mf_warden_tank:
+  Cooldown: 6
+  Conditions:
+  - targetwithin{d=8} true
+  Skills:
+  - state{s=shield_bash;li=0;lo=3} @self
+  - chatelegraph{shape=cone;at=caster;r=4.5;angle=120;ticks=10;flat=5;element=light;knock=1.8;up=0.3;vfxlead=2;vfx=wardenarts/warden_bash;spell=mob_shield_bash} @target
+  - potion{type=RESISTANCE;duration=100;level=1;hasParticles=false} @self
+CHA_MOB_shield_bash_mf_warden_tank_shiny:
+  Cooldown: 6
+  Conditions:
+  - targetwithin{d=8} true
+  Skills:
+  - state{s=shield_bash;li=0;lo=3} @self
+  - chatelegraph{shape=cone;at=caster;r=4.5;angle=120;ticks=10;flat=5;element=light;knock=1.8;up=0.3;vfxlead=2;vfx=wardenarts/warden_bash_s;spell=mob_shield_bash} @target
+  - potion{type=RESISTANCE;duration=100;level=1;hasParticles=false} @self
