@@ -94,6 +94,8 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
     private LivingEntity target(Player p){return target(p,range);}
     /** Target HUD: entity under the crosshair (same bounded ModelEngine-aware ray, no block test, 25 blocks). */
     LivingEntity lookTarget(Player p,double maxRange){return target(p,maxRange,true);}
+    /** Target HUD with the client's crosshair ray (shoulder camera): same picking, from the camera instead of the eyes. */
+    LivingEntity lookTarget(Player p,Location origin,org.bukkit.util.Vector direction,double maxRange){return target(p,origin,direction,maxRange,true);}
     record HudInfo(String name,boolean shiny,boolean boss,double chance){}
     /** Target HUD: configured Korean name, rarity and taming odds (-1 = not capturable / no profile). */
     HudInfo hudInfo(LivingEntity e){
@@ -114,8 +116,11 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
     /** Shared server-authoritative ray for taming and rarity commands. Never picks by proximity. */
     LivingEntity target(Player p,double maxRange){return target(p,maxRange,false);}
     private LivingEntity target(Player p,double maxRange,boolean informationOnly){
+        var eye=p.getEyeLocation();return target(p,eye,eye.getDirection(),maxRange,informationOnly);
+    }
+    private LivingEntity target(Player p,Location eye,org.bukkit.util.Vector direction,double maxRange,boolean informationOnly){
         if(!p.isOnline()||p.isDead()||p.getGameMode()==GameMode.SPECTATOR)return null;
-        var eye=p.getEyeLocation();var origin=eye.toVector();var direction=eye.getDirection();
+        var origin=eye.toVector();direction=direction.clone().normalize();
         var block=informationOnly?null:p.getWorld().rayTraceBlocks(eye,direction,maxRange,FluidCollisionMode.NEVER,true);
         double limit=block==null?maxRange:Math.min(maxRange,block.getHitPosition().distance(origin));
         if(limit<=0)return null;
