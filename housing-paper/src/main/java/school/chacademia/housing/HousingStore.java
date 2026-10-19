@@ -311,6 +311,16 @@ final class HousingStore {
         }, done);
     }
 
+    /** viewer has target in their friend list (Bridge friends table). null = could not read. */
+    void isFriend(UUID viewer, UUID target, Consumer<Boolean> done) {
+        async("친구 확인", c -> {
+            try (var s = c.prepareStatement("SELECT 1 FROM " + tFriends + " WHERE owner=? AND target=?")) {
+                s.setString(1, viewer.toString()); s.setString(2, target.toString());
+                try (var r = s.executeQuery()) { return r.next(); }
+            }
+        }, done);
+    }
+
     // ------------------------------------------------------------ 친구 방 목록
     void friends(UUID viewer, int limit, Consumer<List<Friend>> done) {
         async("친구 목록", c -> {
@@ -324,27 +334,33 @@ final class HousingStore {
                         catch (IllegalArgumentException bad) { /* 건너뜀 */ }
                     }
                 }
-            } catch (SQLException missing) { return List.<Friend>of(); } // SQLite 모드 등 친구 테이블 없음
+            } catch (SQLException missing) { // SQLite 모드 등 친구 테이블 없음: 하우징 서버가 학교 서버(Bridge)와 같은 MariaDB 를 써야 함
+                log.warning("하우징 친구 목록: 친구 테이블(" + tFriends + ")을 읽을 수 없어요 — 학교 서버와 같은 MariaDB 인지 database.properties 확인: " + missing.getMessage());
+                return List.<Friend>of();
+            }
             if (list.isEmpty()) return List.<Friend>of();
             var ids = list.stream().map(f -> f.id().toString()).toList();
             var rooms = new HashMap<UUID, RoomRow>();
+            // a friend without a room (or an unreadable room row) is still listed
             try (var s = c.prepareStatement("SELECT * FROM " + tRoom + " WHERE owner IN (" + in(ids.size()) + ")")) {
                 for (int i = 0; i < ids.size(); i++) s.setString(i + 1, ids.get(i));
-                try (var r = s.executeQuery()) { while (r.next()) { var row = row(r); rooms.put(row.owner(), row); } }
-            }
+                try (var r = s.executeQuery()) { while (r.next()) { try { var row = row(r); rooms.put(row.owner(), row); } catch (RuntimeException bad) { } } }
+            } catch (SQLException e) { log.warning("하우징 친구 목록: 방 정보 읽기 실패 " + e.getMessage()); }
             var online = new HashSet<UUID>();
             try (var s = c.prepareStatement("SELECT player FROM " + tOnline + " WHERE seen>? AND player IN (" + in(ids.size()) + ")")) {
                 s.setLong(1, System.currentTimeMillis() - ONLINE_TTL);
                 for (int i = 0; i < ids.size(); i++) s.setString(i + 2, ids.get(i));
                 try (var r = s.executeQuery()) { while (r.next()) online.add(UUID.fromString(r.getString(1))); }
-            }
+            } catch (SQLException e) { log.warning("하우징 친구 목록: 접속 정보 읽기 실패 " + e.getMessage()); }
             var out = new ArrayList<Friend>();
             for (var f : list) {
                 var room = rooms.get(f.id());
                 String name = room != null && !room.name().isBlank() ? room.name() : f.name();
                 try {
-                    var p = new Person(f.id(), name == null || name.isBlank() ? "학생" : cut(name), room != null ? room.house() : f.house(),
-                            room != null ? room.skin() : "", room != null && room.slim());
+                    String shown = name == null || name.isBlank() ? "학생" : cut(name);
+                    Person p;
+                    try { p = new Person(f.id(), shown, room != null ? room.house() : f.house(), room != null ? room.skin() : "", room != null && room.slim()); }
+                    catch (IllegalArgumentException odd) { p = new Person(f.id(), "학생", Math.clamp(f.house(), -1, 3), "", false); } // 이상한 이름·스킨이라도 목록에는 남김
                     out.add(new Friend(p, online.contains(f.id()), room != null ? room.size() : 0));
                 } catch (IllegalArgumentException bad) { /* 건너뜀 */ }
             }

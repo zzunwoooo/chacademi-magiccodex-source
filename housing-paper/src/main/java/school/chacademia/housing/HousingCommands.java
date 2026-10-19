@@ -53,11 +53,16 @@ final class HousingCommands {
         })), "어디서나 내 방 꾸미기 열기", "하우징 내방");
         ChacaLink.playerCommand(plugin, Commands.literal("방구경").then(Commands.argument("닉네임", ChacaLink.player()).executes(ctx -> {
             Player p = player(ctx);
-            if (!plugin.settings().visitCommand() && !p.isOp()) throw ChacaLink.error("다른 학생의 방은 기숙사실에서 친구 방 목록으로 구경할 수 있어요");
+            boolean free = plugin.settings().visitCommand() || p.isOp();
             String input = ctx.getArgument("닉네임", String.class);
             find(input, id -> {
                 if (id == null) { deny(p, "'" + input + "' 학생의 방을 찾을 수 없어요"); return; }
-                if (p.isOnline()) plugin.rooms().open(p, id, false);
+                if (free) { if (p.isOnline()) plugin.rooms().open(p, id, false); return; }
+                plugin.store().isFriend(p.getUniqueId(), id, friend -> {
+                    if (!p.isOnline()) return;
+                    if (Boolean.TRUE.equals(friend)) plugin.rooms().open(p, id, false);
+                    else deny(p, "다른 학생의 방은 친구가 되면 구경할 수 있어요");
+                });
             });
             return 1;
         })), "다른 학생의 방 구경하기", List.of());
