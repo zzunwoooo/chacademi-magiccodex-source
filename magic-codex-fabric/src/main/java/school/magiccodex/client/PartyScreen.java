@@ -34,7 +34,10 @@ public final class PartyScreen extends SocialScreen {
     private boolean dragging,draggingCandidates;private double dragY;
     private int hot;
 
-    public PartyScreen(){super("파티");}
+    /** Window this one was opened from (결투장 로비): drawn underneath and shown again on close. */
+    private final net.minecraft.client.gui.screen.Screen parent;
+    public PartyScreen(){this(null);}
+    public PartyScreen(net.minecraft.client.gui.screen.Screen parent){super("파티");this.parent=parent;}
 
     @Override SocialLayout.Fit fit(){
         float s=Math.min(width*.94f/1580,height*.9f/860);
@@ -42,7 +45,7 @@ public final class PartyScreen extends SocialScreen {
         return new SocialLayout.Fit((width-s*(right-48))/2-s*48,(height-s*860)/2-s*70,s);
     }
     private static float ease(float t){t=Math.clamp(t,0,1);return t*t*(3-2*t);}
-    @Override protected void init(){String query=search==null?"":search.text();super.init();search=new Input("닉네임 검색",16,query);PartyUiClient.send(PartyUiProtocol.OPEN,null);}
+    @Override protected void init(){String query=search==null?"":search.text();super.init();search=new Input("닉네임 검색",16,query);PartyUiClient.send(PartyUiProtocol.OPEN,null);if(parent!=null&&client!=null)parent.init(client,width,height);}
 
     /** 프록시에서 새 상태·후보 목록이 왔을 때. */
     void stateChanged(){
@@ -79,6 +82,10 @@ public final class PartyScreen extends SocialScreen {
 
     // ---------------------------------------------------------------- 그리기
     @Override public void render(DrawContext c,int mouseX,int mouseY,float delta){
+        if(parent!=null){parent.render(c,-1,-1,delta);c.getMatrices().push();c.getMatrices().translate(0,0,200);c.fill(0,0,width,height,0x99060A12);}
+        try{renderParty(c,mouseX,mouseY,delta);}finally{if(parent!=null)c.getMatrices().pop();}
+    }
+    private void renderParty(DrawContext c,int mouseX,int mouseY,float delta){
         long now=Util.getMeasuringTimeMs();float dt=lastFrame==0?0:Math.min(.1f,(now-lastFrame)/1000f);lastFrame=now;
         openT=Math.clamp(openT+(inviteOpen?dt:-dt)/.22f,0,1);
         var f=fit();double mx=f.x(mouseX),my=f.y(mouseY);boolean modal=confirm!=null;
@@ -337,5 +344,5 @@ public final class PartyScreen extends SocialScreen {
         if(inviteOpen&&search.focus()){candidateScroll=0;return search.key(key,scan,mods);}
         return super.keyPressed(key,scan,mods);
     }
-    @Override public void close(){sound(.95f,.18f);super.close();}
+    @Override public void close(){sound(.95f,.18f);if(parent!=null&&client!=null)client.setScreen(parent);else super.close();}
 }

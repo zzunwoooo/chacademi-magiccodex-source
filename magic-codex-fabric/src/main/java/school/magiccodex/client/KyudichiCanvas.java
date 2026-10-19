@@ -47,8 +47,7 @@ final class KyudichiCanvas implements Canvas {
         ctx.drawTexture(RenderLayer::getGuiTextured, tex, ix, iy, 40, 8, s, s, 8, 8, 64, 64);
     }
     @Override public void avatar(UUID id, String skin, float cx, float cy, float radius) {
-        var c = MinecraftClient.getInstance();
-        if (c.player != null && c.player.getUuid().equals(id) && PortraitClient.drawFace(ctx, cx, cy, radius)) return;
+        // owner 2026-10-19: always the Minecraft skin face (not the illustration)
         Identifier tex = KyudichiFaces.face(id, skin);
         // face (8,8)-(16,16) then the hat layer (40,8)-(48,16) of the 64×64 skin
         HudMesh.texturedDisk(ctx, RenderLayer.getGuiTextured(tex), cx, cy, radius, 8 / 64f, 8 / 64f, 16 / 64f, 16 / 64f, 0xFFFFFFFF);
