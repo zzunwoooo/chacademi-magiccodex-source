@@ -27,3 +27,13 @@ This checkpoint is built and staged, not installed. The operating integration pr
 - All3 currently run the same MagicMythic plugin, so school/wild/arena receive the coherent CC JAR. Wildlife+crop definitions/models are wild-only. Velocity party and arena Kyudichi are included.
 - ModelEngine auto-generates its pack after server startup. ItemsAdder merges ModelEngine/resource pack; school self-host8163,wild8162,arena uses school8163. After wild models compile, regenerate ItemsAdder's hosted pack, inspect crop model/texture references, verify the hosted generated.zip hash and logs, then ensure clients receive that pack. Do not substitute raw bbmodel transfer for native generation.
 - Coordinate the final restart and normal user game exit for locked personal mods. No forced game closure, real-game capture, map copy, additional backup or nickname DB changes. Do not expose secrets.
+## Exact audited export identities
+
+| Export | Canonical SHA256 | Allowed systems/layers |
+|---|---|---|
+|elementreactions|`4aaa77707430d5e69025e59676a36bb525b4cec48410f578ddb7632ab237348b`|19/64|
+|cinderskipring|`984399ad237fb5e0c97d6946b4bba5a96a3e681188895d58ed0d3181cc7c0ae4`|16/101|
+|finalknot|`804a0a81815303ef95ec06f22f58531d1ada1ef2d93f94e340574a97a904519d`|16/68|
+|nightchain|`33f0409df5704e89030d31cde3908e39ab4a6a369e4577e8862ae5b24ce7df0f`|16/70|
+
+AuditedPackLimitsTest: both tests pass; every original system and layer count retained, selected-envelope parse succeeds; renamed or gravity-edited content rejects the exception and retains16/64. Final Fabric408 tests pass. Server plan4367 files/15 JAR replacements; target summary is recorded separately in final-target-change-summary.json. No live installation has occurred.
