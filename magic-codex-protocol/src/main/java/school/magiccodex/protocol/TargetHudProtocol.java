@@ -19,6 +19,37 @@ import java.util.*;
  */
 public final class TargetHudProtocol {
     public static final String CHANNEL = "magiccodex:target_hud";
+    /**
+     * Client -> server aim ray (owner 2026-10-19: "띄우는 건 내 에임 기준, 플레이어 시선 말고"). The shoulder camera sits
+     * beside the head, so the bar must follow the crosshair ray, not the head ray.
+     * v1: byte version=1, float dx, dy, dz (camera position minus the player's eyes, blocks), float yaw, float pitch (degrees).
+     * Sent on change (at most every 2 ticks) and every second otherwise; the server falls back to the eye ray when it is stale.
+     */
+    public static final String AIM_CHANNEL = "magiccodex:target_aim";
+    public static final int AIM_BYTES = 21;
+    /** Largest accepted camera offset from the eyes (shoulder camera distance is well inside this). */
+    public static final float MAX_AIM_OFFSET = 8;
+    public record Aim(float dx, float dy, float dz, float yaw, float pitch) {
+        public Aim {
+            if (!Float.isFinite(dx) || !Float.isFinite(dy) || !Float.isFinite(dz) || !Float.isFinite(yaw) || !Float.isFinite(pitch)
+                || dx * dx + dy * dy + dz * dz > MAX_AIM_OFFSET * MAX_AIM_OFFSET || Math.abs(pitch) > 90.001f) throw new IllegalArgumentException("aim");
+        }
+    }
+    public static byte[] encodeAim(Aim a) {
+        try {
+            var b = new ByteArrayOutputStream(AIM_BYTES); var o = new DataOutputStream(b);
+            o.writeByte(VERSION); o.writeFloat(a.dx()); o.writeFloat(a.dy()); o.writeFloat(a.dz()); o.writeFloat(a.yaw()); o.writeFloat(a.pitch());
+            return b.toByteArray();
+        } catch (IOException e) { throw new IllegalArgumentException(e); }
+    }
+    public static Aim decodeAim(byte[] raw) {
+        try {
+            if (raw == null || raw.length != AIM_BYTES) throw new IOException("size");
+            var i = new DataInputStream(new ByteArrayInputStream(raw));
+            if (i.readUnsignedByte() != VERSION) throw new IOException("version");
+            return new Aim(i.readFloat(), i.readFloat(), i.readFloat(), i.readFloat(), i.readFloat());
+        } catch (IOException | RuntimeException e) { throw new IllegalArgumentException(e); }
+    }
     public static final int VERSION = 1;
     public static final int MAX_BYTES = 512;
     public static final int MAX_NAME = 48;

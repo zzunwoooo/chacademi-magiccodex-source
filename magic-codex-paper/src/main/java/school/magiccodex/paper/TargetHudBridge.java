@@ -36,6 +36,14 @@ final class TargetHudBridge implements Listener, AutoCloseable {
 
     private record Combat(UUID target, long tick) {}
     private record Sent(byte[] bytes, long tick) {}
+    /** The client's crosshair ray (camera offset from the eyes + view direction), see TargetHudProtocol.AIM_CHANNEL. */
+    private record Aim(TargetHudProtocol.Aim ray, long tick) {}
+    private static final long AIM_STALE_TICKS = 30;
+    private final Map<UUID, Aim> aims = new HashMap<>();
+    private final org.bukkit.plugin.messaging.PluginMessageListener aimListener = (channel, player, bytes) -> {
+        if (!TargetHudProtocol.AIM_CHANNEL.equals(channel)) return;
+        try { aims.put(player.getUniqueId(), new Aim(TargetHudProtocol.decodeAim(bytes), now())); } catch (IllegalArgumentException ignored) {}
+    };
 
     private final MagicCodexBridge plugin;
     private final TamingBridge taming;
@@ -55,6 +63,7 @@ final class TargetHudBridge implements Listener, AutoCloseable {
     TargetHudBridge(MagicCodexBridge plugin, TamingBridge taming, ManaService mana, DisplayNames names) {
         this.plugin = plugin; this.taming = taming; this.mana = mana; this.names = names;
         plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, TargetHudProtocol.CHANNEL);
+        plugin.getServer().getMessenger().registerIncomingPluginChannel(plugin, TargetHudProtocol.AIM_CHANNEL, aimListener);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         var c = plugin.getConfig();
         if (c.isList("target-hud.boss-tags")) bossTags = Set.copyOf(c.getStringList("target-hud.boss-tags"));
@@ -102,7 +111,7 @@ final class TargetHudBridge implements Listener, AutoCloseable {
 
     @EventHandler public void quit(PlayerQuitEvent e) {
         UUID id = e.getPlayer().getUniqueId();
-        combat.remove(id); dealt.remove(id); sent.remove(id);
+        combat.remove(id); dealt.remove(id); sent.remove(id); aims.remove(id);
         combat.values().removeIf(c -> c.target().equals(id));
     }
 
@@ -137,9 +146,18 @@ final class TargetHudBridge implements Listener, AutoCloseable {
         return best;
     }
 
+    /** Entity under the player's crosshair: the client's aim ray when fresh (shoulder camera), else the eye ray (old clients). */
     private LivingEntity look(Player p) {
         LivingEntity look;
-        try { look = taming.lookTarget(p, LOOK_RANGE); } catch (RuntimeException | LinkageError ex) { look = null; }
+        Aim a = aims.get(p.getUniqueId());
+        try {
+            if (a != null && now() - a.tick() <= AIM_STALE_TICKS) {
+                var r = a.ray();
+                var origin = p.getEyeLocation().add(r.dx(), r.dy(), r.dz());
+                origin.setYaw(r.yaw()); origin.setPitch(r.pitch());
+                look = taming.lookTarget(p, origin, origin.getDirection(), LOOK_RANGE);
+            } else look = taming.lookTarget(p, LOOK_RANGE);
+        } catch (RuntimeException | LinkageError ex) { look = null; }
         return look != null && shown(p, look, LOOK_RANGE + 2, false) ? look : null;
     }
 
@@ -243,7 +261,8 @@ final class TargetHudBridge implements Listener, AutoCloseable {
     @Override public void close() {
         task.cancel();
         HandlerList.unregisterAll(this);
-        combat.clear(); dealt.clear(); sent.clear(); bosses.clear();
+        combat.clear(); dealt.clear(); sent.clear(); bosses.clear(); aims.clear();
         plugin.getServer().getMessenger().unregisterOutgoingPluginChannel(plugin, TargetHudProtocol.CHANNEL);
+        plugin.getServer().getMessenger().unregisterIncomingPluginChannel(plugin, TargetHudProtocol.AIM_CHANNEL, aimListener);
     }
 }

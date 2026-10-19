@@ -58,6 +58,37 @@ public final class TargetHudClient {
         public Id<Payload> getId() { return ID; }
     }
 
+    /** Client -> server crosshair ray (TargetHudProtocol.AIM_CHANNEL): the bar follows the aim, not the head (owner 2026-10-19). */
+    public record AimPayload(byte[] bytes) implements CustomPayload {
+        static final Id<AimPayload> ID = new Id<>(Identifier.of(TargetHudProtocol.AIM_CHANNEL));
+        static final PacketCodec<RegistryByteBuf, AimPayload> CODEC = new PacketCodec<>() {
+            public AimPayload decode(RegistryByteBuf b) { int n = Math.min(b.readableBytes(), TargetHudProtocol.AIM_BYTES); byte[] a = new byte[n]; b.readBytes(a); b.skipBytes(b.readableBytes()); return new AimPayload(a); }
+            public void encode(RegistryByteBuf b, AimPayload value) { b.writeBytes(value.bytes()); }
+        };
+        public Id<AimPayload> getId() { return ID; }
+    }
+    private static float[] lastAim;
+    private static int aimTicks;
+
+    /** Every 2 ticks: send the crosshair ray when it moved (0.5 deg / 5 cm), else once a second as keepalive. */
+    private static void sendAim(MinecraftClient c) {
+        if (++aimTicks % 2 != 0) return;
+        var p = c.player;
+        if (p == null || c.world == null || c.getNetworkHandler() == null || !ClientPlayNetworking.canSend(AimPayload.ID)) return;
+        var eye = p.getEyePos();
+        var cam = ShoulderCamera.active() && AimView.valid() ? AimView.camera() : eye;
+        var off = cam.subtract(eye);
+        if (off.lengthSquared() > TargetHudProtocol.MAX_AIM_OFFSET * TargetHudProtocol.MAX_AIM_OFFSET) off = net.minecraft.util.math.Vec3d.ZERO;
+        float[] now = {(float) off.x, (float) off.y, (float) off.z, p.getYaw(), Math.clamp(p.getPitch(), -90f, 90f)};
+        boolean moved = lastAim == null || Math.abs(now[3] - lastAim[3]) > .5f || Math.abs(now[4] - lastAim[4]) > .5f
+            || Math.abs(now[0] - lastAim[0]) + Math.abs(now[1] - lastAim[1]) + Math.abs(now[2] - lastAim[2]) > .05f;
+        if (!moved && aimTicks % 20 != 0) return;
+        try {
+            ClientPlayNetworking.send(new AimPayload(TargetHudProtocol.encodeAim(new TargetHudProtocol.Aim(now[0], now[1], now[2], now[3], now[4]))));
+            lastAim = now;
+        } catch (IllegalArgumentException ignored) {}
+    }
+
     // ---------------------------------------------------------------- assets (magiccodex:textures/gui/target_hud)
     private static final String DIR = "magiccodex:textures/gui/target_hud/";
     private static final String FRAME = DIR + "frame.png", FRAME_HP = DIR + "frame_hp.png", TRACK = DIR + "track.png",
@@ -95,6 +126,8 @@ public final class TargetHudClient {
 
     public static void initialize() {
         PayloadTypeRegistry.playS2C().register(Payload.ID, Payload.CODEC);
+        PayloadTypeRegistry.playC2S().register(AimPayload.ID, AimPayload.CODEC);
+        net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.END_CLIENT_TICK.register(TargetHudClient::sendAim);
         ClientPlayNetworking.registerGlobalReceiver(Payload.ID, (payload, context) -> {
             TargetHudProtocol.Frame f;
             try { f = TargetHudProtocol.decode(payload.bytes()); } catch (IllegalArgumentException ignored) { return; }
@@ -108,7 +141,7 @@ public final class TargetHudClient {
             drawer.removeLayer(IdentifiedLayer.BOSS_BAR);
         });
         ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> { reset(); close(); });
-        ClientPlayConnectionEvents.JOIN.register((h, s, c) -> reset());
+        ClientPlayConnectionEvents.JOIN.register((h, s, c) -> { reset(); lastAim = null; });
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, access) -> {
             LiteralArgumentBuilder<FabricClientCommandSource> root = ClientCommandManager.literal("대상체력바미리보기")
                 .executes(c -> { startPreview(0); c.getSource().sendFeedback(Text.literal("대상 체력바 미리보기 15초 (가짜 데이터). /대상체력바미리보기 일반 · 이로치 · 플레이어 · 끄기")); return 1; });
