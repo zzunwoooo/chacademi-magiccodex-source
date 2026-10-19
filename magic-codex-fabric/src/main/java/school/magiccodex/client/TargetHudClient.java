@@ -69,7 +69,7 @@ public final class TargetHudClient {
     static final int FRAME_W = 2048, FRAME_H = 84;
     static final float GAUGE_X = 54, GAUGE_W = 1940, HP_Y = 19, HP_H = 36, HP_ONLY_H = 48, MP_Y = 57, MP_H = 10;
     /** Sizes are chosen for readability at ~40 % screen width (the reference draws text and icons smaller). */
-    static final float NAME_Y = -96, NAME_SIZE = 74, DIVIDER_Y = -40, DIVIDER_W = 430, DAMAGE_Y = -34, DAMAGE_SIZE = 54;
+    static final float NAME_Y = -70, NAME_SIZE = 74, DIVIDER_Y = -12, DIVIDER_W = 430, DAMAGE_Y = -24, DAMAGE_SIZE = 54; // owner: name + divider sit right on the frame
     static final float HP_TEXT = 34, BELOW = 20, HEART_X = 70, HEART_SIZE = 58, ICON_D = 86, ICON_STEP = 104, ICON_RIGHT = 1994,
         TIME_SIZE = 34, PCT_SIZE = 36;
     /** Icon row height below the frame: icon + time text. */
