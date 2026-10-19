@@ -110,6 +110,7 @@ public final class SpellYamlLoader {
         if (REPLACED_ICON_PREVIOUS_PATHS.containsKey(id)
                 && (icon.isBlank() || REPLACED_ICON_PREVIOUS_PATHS.get(id).equals(icon)))
             icon = "magiccodex:textures/spells/reviewed_20261020/" + id + ".png";
+        icon = MobSpellIcons.resolve(id, icon);
         if (!icon.isBlank() && (!icon.matches("[a-z0-9_.-]+:textures/[a-z0-9_./-]+\\.png") || icon.contains("..")))
             throw new IllegalArgumentException("icon은 namespace:textures/.../image.png 형식이어야 합니다.");
         String permission = string(root, "permission", null, 100);

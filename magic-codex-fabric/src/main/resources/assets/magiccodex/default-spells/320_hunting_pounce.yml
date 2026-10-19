@@ -3,7 +3,7 @@ name: 사냥 도약
 category: earth
 description: 대상을 향해 크게 뛰어올라 덮칩니다. 내려앉은 자리 주변의 적은 피해를 입고 잠시 묶입니다.
 # Existing icon reused from light_leap; dedicated mob-skill artwork was not supplied.
-icon: magiccodex:textures/spells/novice_extra/light_leap.png
+icon: magiccodex:textures/spells/mob_skill/hunting_pounce.png
 permission: magic.learned.hunting_pounce
 discovery:
   description: 검치호를 처치하면 5% 확률로 습득합니다.

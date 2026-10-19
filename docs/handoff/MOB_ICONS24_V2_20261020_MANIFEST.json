@@ -1,0 +1,254 @@
+{
+  "base": "ad2e087",
+  "revision": "v2",
+  "rows": [
+    {
+      "id": "fox_orbit",
+      "runtime": 300,
+      "planning": 215,
+      "sha256": "1a7aca77354c1e2a0ee2e9fd65c581388ab43102342b97f746acf45843456a6d",
+      "bytes": 1229559,
+      "icon": "magiccodex:textures/spells/mob_skill/fox_orbit.png",
+      "old": "magiccodex:textures/spells/expansion_2/firefly_mark.png"
+    },
+    {
+      "id": "curving_plumes",
+      "runtime": 301,
+      "planning": 216,
+      "sha256": "b08f13abde2e3003e6dcb0197fba7a45307dbe72d8e7f1d6aa34aea45f390c83",
+      "bytes": 1567397,
+      "icon": "magiccodex:textures/spells/mob_skill/curving_plumes.png",
+      "old": "magiccodex:textures/spells/expansion_2/firebird_hunt.png"
+    },
+    {
+      "id": "crystal_orbit",
+      "runtime": 302,
+      "planning": 217,
+      "sha256": "eb0f1edf3bcd66a6de6191bd6e82707c1fbae7bd380a63534d9d8e341b05a73b",
+      "bytes": 1063468,
+      "icon": "magiccodex:textures/spells/mob_skill/crystal_orbit.png",
+      "old": "magiccodex:textures/spells/expansion/frost_rupture.png"
+    },
+    {
+      "id": "venom_spit",
+      "runtime": 303,
+      "planning": 218,
+      "sha256": "82353ef69411d72b09f63149cc2d446a2401a78746c9828cbead48c5bd04d956",
+      "bytes": 1053135,
+      "icon": "magiccodex:textures/spells/mob_skill/venom_spit.png",
+      "old": "magiccodex:textures/spells/expansion_2/thorn_seeds.png"
+    },
+    {
+      "id": "smoke_veil",
+      "runtime": 304,
+      "planning": 219,
+      "sha256": "02918b86bf0223f8524b975c136804205b21da2e0bf0dcc66ba78c7fc79e36ec",
+      "bytes": 1872611,
+      "icon": "magiccodex:textures/spells/mob_skill/smoke_veil.png",
+      "old": "magiccodex:textures/spells/novice_extra/faint_veil.png"
+    },
+    {
+      "id": "domain_stomp",
+      "runtime": 305,
+      "planning": 220,
+      "sha256": "c5f7bd31ef626288301899f9454ef9bcf5e9ba14d6f28e4591b3c8f90e6a399d",
+      "bytes": 1694640,
+      "icon": "magiccodex:textures/spells/mob_skill/domain_stomp.png",
+      "old": "magiccodex:textures/spells/expansion_2/guardian_oath.png"
+    },
+    {
+      "id": "seal_circle",
+      "runtime": 306,
+      "planning": 221,
+      "sha256": "fe08b57079928f271864b11fd231f57cc190730b8276e8c793b4a106e0eb99c1",
+      "bytes": 1865986,
+      "icon": "magiccodex:textures/spells/mob_skill/seal_circle.png",
+      "old": "magiccodex:textures/spells/intermediate/sealing_thread.png"
+    },
+    {
+      "id": "seal_talismans",
+      "runtime": 307,
+      "planning": 222,
+      "sha256": "2964261dd3a109e97f22066797fcc26b2c02c60202b9ba2af59908a0d0275aa8",
+      "bytes": 1468920,
+      "icon": "magiccodex:textures/spells/mob_skill/seal_talismans.png",
+      "old": "magiccodex:textures/spells/expansion/exorcism_flash.png"
+    },
+    {
+      "id": "shield_slam",
+      "runtime": 308,
+      "planning": 223,
+      "sha256": "fe7c74fac3a26a62aeee8cab2d4b7eb91afcdddac43b645d8158bf7745e977d2",
+      "bytes": 1631247,
+      "icon": "magiccodex:textures/spells/mob_skill/shield_slam.png",
+      "old": "magiccodex:textures/spells/intermediate/protective_ward.png"
+    },
+    {
+      "id": "chain_arrow",
+      "runtime": 309,
+      "planning": 224,
+      "sha256": "1f19dcb52e4988ba0ebb2b8fdb0a02282c49f40eebd9ff4aef07391257593c1b",
+      "bytes": 1015208,
+      "icon": "magiccodex:textures/spells/mob_skill/chain_arrow.png",
+      "old": "magiccodex:textures/spells/expansion_2/guiding_fletching.png"
+    },
+    {
+      "id": "mana_drain",
+      "runtime": 310,
+      "planning": 225,
+      "sha256": "22c8300868a7d0a370b380b04034d30fab3f286961bb2d461aa7b49f6456a171",
+      "bytes": 1707891,
+      "icon": "magiccodex:textures/spells/mob_skill/mana_drain.png",
+      "old": "magiccodex:textures/spells/expansion_2/mana_conduit.png"
+    },
+    {
+      "id": "soul_scythe",
+      "runtime": 311,
+      "planning": 226,
+      "sha256": "82e1711385bddb82129ff8c6489ace4a386a1297587518e044adcbf9b7fd9e2d",
+      "bytes": 1253693,
+      "icon": "magiccodex:textures/spells/mob_skill/soul_scythe.png",
+      "old": "magiccodex:textures/spells/expansion/black_harvest.png"
+    },
+    {
+      "id": "oblivion_orbs",
+      "runtime": 312,
+      "planning": 227,
+      "sha256": "256d6c392af8bf385135e74cc7e9b4fce0dd5fbb71c841260652923d6eab7359",
+      "bytes": 1555212,
+      "icon": "magiccodex:textures/spells/mob_skill/oblivion_orbs.png",
+      "old": "magiccodex:textures/spells/expansion_2/abyssal_pressure.png"
+    },
+    {
+      "id": "bone_grasp",
+      "runtime": 313,
+      "planning": 228,
+      "sha256": "4861d2fc42eb2b4bddff982e72dc2e9d98b92d24fed41e6405ca58086608472c",
+      "bytes": 1480694,
+      "icon": "magiccodex:textures/spells/mob_skill/bone_grasp.png",
+      "old": "magiccodex:textures/spells/novice_extra/shadow_bind.png"
+    },
+    {
+      "id": "shadow_leap",
+      "runtime": 314,
+      "planning": 229,
+      "sha256": "a5bc693766a0bfa79d9a9ba2fa6ff529d4b3b37a787ab6da8dff85796799237f",
+      "bytes": 1083608,
+      "icon": "magiccodex:textures/spells/mob_skill/shadow_leap.png",
+      "old": "magiccodex:textures/spells/novice_extra/light_leap.png"
+    },
+    {
+      "id": "binding_pull",
+      "runtime": 315,
+      "planning": 230,
+      "sha256": "c1826bc4bda0a24f30cb907cfc6b6303012eeed8fadb29a3e70784270dd03ac4",
+      "bytes": 1365437,
+      "icon": "magiccodex:textures/spells/mob_skill/binding_pull.png",
+      "old": "magiccodex:textures/spells/novice/feather_step.png"
+    },
+    {
+      "id": "fairy_dust",
+      "runtime": 316,
+      "planning": 231,
+      "sha256": "fe03ac6d7456628259ce1dd949aa22e8df9e403c0026397c148c9af1dbea7426",
+      "bytes": 1083924,
+      "icon": "magiccodex:textures/spells/mob_skill/fairy_dust.png",
+      "old": "magiccodex:textures/spells/expansion_2/night_lullaby.png"
+    },
+    {
+      "id": "moon_wind",
+      "runtime": 317,
+      "planning": 232,
+      "sha256": "cbecb2b01b9f69816d2f0631020e4590163fbf4e66485b3f410c642b68ef6978",
+      "bytes": 1142217,
+      "icon": "magiccodex:textures/spells/mob_skill/moon_wind.png",
+      "old": "magiccodex:textures/spells/novice/feather_step.png"
+    },
+    {
+      "id": "gale_wings",
+      "runtime": 318,
+      "planning": 233,
+      "sha256": "7fb2922d552ca2254b81f2b0c7c2b4780216b9de239a491051f0926997d22a68",
+      "bytes": 1792164,
+      "icon": "magiccodex:textures/spells/mob_skill/gale_wings.png",
+      "old": "magiccodex:textures/spells/expansion/gale_dash.png"
+    },
+    {
+      "id": "feather_storm",
+      "runtime": 319,
+      "planning": 234,
+      "sha256": "b152ca4febfb572d6993f4334d503551e15658d3ec06d61ea54126e71e32b090",
+      "bytes": 2038344,
+      "icon": "magiccodex:textures/spells/mob_skill/feather_storm.png",
+      "old": "magiccodex:textures/spells/expansion_2/thorn_seeds.png"
+    },
+    {
+      "id": "hunting_pounce",
+      "runtime": 320,
+      "planning": 235,
+      "sha256": "21dfd8bff1746382bacfa77db91afdfa2d8b3695bd1da7d5dfe1e2d31d34df23",
+      "bytes": 1480055,
+      "icon": "magiccodex:textures/spells/mob_skill/hunting_pounce.png",
+      "old": "magiccodex:textures/spells/novice_extra/light_leap.png"
+    },
+    {
+      "id": "roar_leap",
+      "runtime": 321,
+      "planning": 236,
+      "sha256": "edb3ef318b129361fd2c188e1f291274e1671bb73f447fe85ae3283e863721d6",
+      "bytes": 1785433,
+      "icon": "magiccodex:textures/spells/mob_skill/roar_leap.png",
+      "old": "magiccodex:textures/spells/expansion_2/bell_of_fear.png"
+    },
+    {
+      "id": "gravity_slam",
+      "runtime": 322,
+      "planning": 237,
+      "sha256": "aea611b56feac31d1fbd092e9ae2f40e4f1a9b1d1e39065a999f3e90cc902180",
+      "bytes": 1897714,
+      "icon": "magiccodex:textures/spells/mob_skill/gravity_slam.png",
+      "old": "magiccodex:textures/spells/expansion/weightless_zone.png"
+    },
+    {
+      "id": "tail_spikes",
+      "runtime": 323,
+      "planning": 238,
+      "sha256": "77d0b97f25a7910630b98b3865b17052ac3f74657a150a66e3edc0ac508ecb29",
+      "bytes": 899353,
+      "icon": "magiccodex:textures/spells/mob_skill/tail_spikes.png",
+      "old": "magiccodex:textures/spells/reviewed_20261016/pressure_lance.png"
+    }
+  ],
+  "changedTrackedFiles": [
+    "magic-codex-fabric/gradle.properties",
+    "magic-codex-fabric/src/main/java/school/magiccodex/client/CodexData.java",
+    "magic-codex-fabric/src/main/java/school/magiccodex/client/DiscoveryClient.java",
+    "magic-codex-fabric/src/main/java/school/magiccodex/client/SpellYamlLoader.java",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/300_fox_orbit.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/301_curving_plumes.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/302_crystal_orbit.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/303_venom_spit.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/304_smoke_veil.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/305_domain_stomp.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/306_seal_circle.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/307_seal_talismans.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/308_shield_slam.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/309_chain_arrow.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/310_mana_drain.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/311_soul_scythe.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/312_oblivion_orbs.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/313_bone_grasp.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/314_shadow_leap.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/315_binding_pull.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/316_fairy_dust.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/317_moon_wind.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/318_gale_wings.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/319_feather_storm.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/320_hunting_pounce.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/321_roar_leap.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/322_gravity_slam.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/323_tail_spikes.yml",
+    "magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/known-hashes.tsv"
+  ],
+  "serverChanged": false
+}

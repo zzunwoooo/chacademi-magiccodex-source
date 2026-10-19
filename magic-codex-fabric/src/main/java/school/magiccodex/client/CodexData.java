@@ -15,6 +15,7 @@ public final class CodexData {
     public record Spell(String id, String name, Category category, String description,
                         String condition, String research, double cooldown, boolean discovered,
                         String icon, String permission, String command, int order, boolean permissionKnown, int manaCost) {
+        public Spell { icon = MobSpellIcons.resolve(id, icon); }
         public Spell(String id, String name, Category category, String description,
                      String condition, String research, double cooldown, boolean discovered,
                      String icon, String permission, String command, int order, boolean permissionKnown) {
