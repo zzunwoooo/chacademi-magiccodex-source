@@ -21,6 +21,7 @@ import school.magiccodex.protocol.TelegraphProtocol.Show;
  *   vfxref=3 (authored radius: scale = r / vfxref)  tint=FFFFFF (colour-variant mobs)  cancel=true (caster death cancels)
  *   pulses=4 period=8 (sustained: extra hits every period ticks on the same shape, e.g. breath)
  *   knock=1.2 (outward / forward push)  up=0.8 (launch)  pull=1.5 (toward the caster) - applied to every target hit
+ *   warn=false (no red warning is drawn; the hit still lands after ticks on the same shape - mob basic attacks)
  *   blink=true (the caster appears beside the warned spot when it fires, then hits: "몹이 나에게 순간이동")
  *     vfxout=pack/system (played where the caster vanished)
  *   tpme=true (every target hit is teleported in front of the caster, then knock/up/pull apply: "나를 몹 앞으로")
@@ -49,7 +50,7 @@ final class TelegraphMech extends Mech {
         }
         double dmg = c.dmg(p);
         int pulses = Math.clamp(p.i("pulses", 1), 1, 20), period = Math.clamp(p.i("period", 8), 1, 40);
-        return plugin.telegraphs().start(show, c.caster(), world, p.b("cancel", true), s -> {
+        return plugin.telegraphs().start(show, c.caster(), world, p.b("cancel", true), p.b("warn", true), s -> {
             if (p.b("blink", false)) blink(c.caster(), s);
             hit(c.caster(), s, dmg);
             // sustained skills (breath): more hits on the same shape, one delayed task each - nothing runs per tick

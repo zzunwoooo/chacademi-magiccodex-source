@@ -177,3 +177,8 @@
 | BearMaul | 곰 | 양앞발 내려찍기 |
 | ChainArrow / ShieldBash | 봉인궁수 / 거벽 | 사슬 화살 / 방패 돌진 |
 - 모두 client_compat check OK. **텍스처 주의:** 붓질 획 시트(T_SlashStroke_Sheet + T_InkStroke_Sheet, 각 1024×512)가 팩마다 들어가 고유 RGBA 2.9~7.2 MiB (목표 4 MiB 초과). 클라 1 GiB 예산이 빠듯하면 두 시트를 512×256 으로 줄이거나 공용 팩 하나로 묶는 작업 필요 — 알려주면 Claude 가 함.
+
+### 기본기 예고 없음 (2026-10-19 15:40, 사장님: "기본기는 위험 예고 하지 말고, 범위형 큰 기술만 예고")
+- `chatelegraph` 새 파라미터 `warn=false`: 빨간 장판을 안 보내고(패킷 없음) 같은 모양으로 `ticks` 뒤 판정만 함. `Telegraphs.start(..., warn, ...)` 오버로드, 그려지지 않은 건 clear 패킷도 안 보냄.
+- 기본기 근접형 전부 `warn=false;ticks=8` (0.4초 뒤 판정, 휘두르는 모션에 맞춤). 유니콘 별 낙하만 ticks=14 (VFX 가 별가루 모으는 0.7초). 투사체 기본기(chamobshot)는 원래 예고 없음.
+- 처음 만든 큰 기술(범위기)과 특수기는 예고 그대로.

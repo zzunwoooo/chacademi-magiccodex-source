@@ -44,6 +44,8 @@ final class Telegraphs implements AutoCloseable, Listener {
     }
 
     /** Next id for a warning (wraps, never 0). */
+    private final java.util.Set<Integer> silent = new java.util.HashSet<>();
+
     int id() { int id = nextId++; if (nextId == Integer.MAX_VALUE) nextId = 1; return id; }
 
     /**
@@ -51,13 +53,19 @@ final class Telegraphs implements AutoCloseable, Listener {
      * @return false when too many are live (the skill is skipped)
      */
     boolean start(Show show, LivingEntity caster, World world, boolean cancelOnDeath, Consumer<Show> then) {
+        return start(show, caster, world, cancelOnDeath, true, then);
+    }
+
+    /** warn=false: same delayed hit on the same shape, but nothing is drawn (mob basic attacks - owner 2026-10-19: only area skills warn). */
+    boolean start(Show show, LivingEntity caster, World world, boolean cancelOnDeath, boolean warn, Consumer<Show> then) {
         if (live.size() >= limit) return false;
-        send(world, show.x(), show.z(), TelegraphProtocol.encode(show));
+        if (warn) send(world, show.x(), show.z(), TelegraphProtocol.encode(show)); else silent.add(show.id());
         int id = show.id();
         // One delayed task per warning (no per-tick work). A caster dying early is handled by the death listener.
         BukkitTask task = Bukkit.getScheduler().runTaskLater(plugin, () -> {
             Live l = live.remove(id);
             if (l == null) return;
+            silent.remove(id);
             if (cancelOnDeath && caster != null && (!caster.isValid() || caster.isDead() || !caster.getWorld().equals(world))) { sendClear(l); return; }
             try { then.accept(show); } catch (RuntimeException e) { plugin.getLogger().warning("예고 장판 판정 오류: " + e); }
         }, show.ticks());
@@ -74,6 +82,7 @@ final class Telegraphs implements AutoCloseable, Listener {
     }
 
     private void sendClear(Live l) {
+        if (silent.remove(l.show().id())) return;   // never drawn
         World w = Bukkit.getWorld(l.world());
         if (w != null) send(w, l.show().x(), l.show().z(), TelegraphProtocol.encode(new TelegraphProtocol.Clear(l.show().id())));
     }
