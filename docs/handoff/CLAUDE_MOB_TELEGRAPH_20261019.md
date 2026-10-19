@@ -89,3 +89,15 @@
 - 주의: 같은 스킬에 status 가 둘이면 `status=fear:20,poison:40` 처럼 한 줄로 합침(skills.py 가 처리).
 - 파일: 사장님 PC `차카데미 vfx_Claude\몹스킬\<계열> - <스킬>\` 5개 새 폴더 (preview 에 `vfx_preview_전체색.html` = 모든 색 변종). 팩만 따로 `차카데미 vfx_Claude\<Pack>\`.
 - 최신 `chacademi_mob_skills.yml` 은 3차 폴더와 이 레포에 있음 (1·2차 폴더의 사본은 그 계열 스킬만 같고 3차 스킬은 없음 → 서버엔 레포 파일 하나만 넣으면 됨).
+
+## 추가 — 몹 스킬 4차 묶음 (범위기)
+| 계열 | 스킬 id | 예고 | 효과 | VFX 팩 / 시스템 | 모션 |
+|---|---|---|---|---|---|
+| 팬텀 2종 | soul_drain | 원형 대상 r6 · 1.0초 | 피해 4 + 마나번 2초 | `phantomdrain` / drain_{ender,ghost}[_s] | soul_drain 2.0초 |
+| 검치호 3종 | pounce | `leap{velocity=130}` + 원형 대상 r6 · 1.0초 | 피해 7 + 속박 1초 | `sabertoothpounce` / pounce_{arctic,midnight,savanna}[_s] | pounce 1.6초 |
+| 울프호크 4종 | glide_dive | 직선 18×4 · 1.0초 + 끝에 `lunge` | 피해 6 + 살짝 밀침 (먹구름 기절 0.5초) | `wolfhawkglide` / glide_{dire,fallen,fullmoon,stormcloud}[_s] | glide_dive 1.9초 |
+| 약초 수호골렘 | root_bind | 원형 대상 r6 · 1.0초 | 피해 4 + 속박 1.5초 | `rootbind` / roots[_s] | root_bind 1.7초 |
+| 약초 도둑 | smoke_bomb | 원형 시전자 r6 · 0.8초 | 피해 2 + 실명 1.5초, 끝에 자기 투명 2초 (potion) | `smokebomb` / smoke[_s] | smoke_bomb 1.2초 |
+
+- 주의: 약초 골렘·도둑 모델은 ca_attack 대신 `attack` 애니를 기준으로 새 애니를 만듦(뼈 이름 ra/la/b, r_a/l_a).
+- 주의: 울프호크 lunge·도둑 투명은 예고가 끝날 때(`delay 18` / `delay 16`) 실행 — MythicMobs 기본 mechanic.

@@ -774,3 +774,193 @@ CHA_MOB_roar_leap_manticore_venom_shiny:
   - state{s=roar_leap;li=0;lo=3} @self
   - leap{velocity=150;noise=0} @target
   - chatelegraph{shape=circle;at=target;r=8;ticks=20;flat=7;vfxref=8;vfxlead=2;element=earth;status=fear:20,poison:40;vfx=manticoreroar/roar_venom_s;spell=mob_roar_leap} @target
+
+# ---- 팬텀 2종 - 마나 흡수 (모션 soul_drain, 예고 1.0초)
+CHA_MOB_soul_drain_phantom_ender:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=soul_drain;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=6;ticks=20;flat=4;element=dark;status=mana_burn:40;vfxref=6;vfxlead=2;vfx=phantomdrain/drain_ender;spell=mob_soul_drain} @target
+CHA_MOB_soul_drain_phantom_ender_shiny:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=soul_drain;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=6;ticks=20;flat=4;element=dark;status=mana_burn:40;vfxref=6;vfxlead=2;vfx=phantomdrain/drain_ender_s;spell=mob_soul_drain} @target
+CHA_MOB_soul_drain_phantom_ghost:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=soul_drain;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=6;ticks=20;flat=4;element=dark;status=mana_burn:40;vfxref=6;vfxlead=2;vfx=phantomdrain/drain_ghost;spell=mob_soul_drain} @target
+CHA_MOB_soul_drain_phantom_ghost_shiny:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=soul_drain;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=6;ticks=20;flat=4;element=dark;status=mana_burn:40;vfxref=6;vfxlead=2;vfx=phantomdrain/drain_ghost_s;spell=mob_soul_drain} @target
+
+# ---- 검치호 3종 - 사냥 도약 (모션 pounce, 예고 1.0초)
+CHA_MOB_pounce_sabertooth_arctic:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=pounce;li=0;lo=3} @self
+  - leap{velocity=130;noise=0} @target
+  - chatelegraph{shape=circle;at=target;r=6;ticks=20;flat=7;status=root:20;vfxref=6;vfxlead=2;element=water;vfx=sabertoothpounce/pounce_arctic;spell=mob_pounce} @target
+CHA_MOB_pounce_sabertooth_arctic_shiny:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=pounce;li=0;lo=3} @self
+  - leap{velocity=130;noise=0} @target
+  - chatelegraph{shape=circle;at=target;r=6;ticks=20;flat=7;status=root:20;vfxref=6;vfxlead=2;element=water;vfx=sabertoothpounce/pounce_arctic_s;spell=mob_pounce} @target
+CHA_MOB_pounce_sabertooth_midnight:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=pounce;li=0;lo=3} @self
+  - leap{velocity=130;noise=0} @target
+  - chatelegraph{shape=circle;at=target;r=6;ticks=20;flat=7;status=root:20;vfxref=6;vfxlead=2;element=dark;vfx=sabertoothpounce/pounce_midnight;spell=mob_pounce} @target
+CHA_MOB_pounce_sabertooth_midnight_shiny:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=pounce;li=0;lo=3} @self
+  - leap{velocity=130;noise=0} @target
+  - chatelegraph{shape=circle;at=target;r=6;ticks=20;flat=7;status=root:20;vfxref=6;vfxlead=2;element=dark;vfx=sabertoothpounce/pounce_midnight_s;spell=mob_pounce} @target
+CHA_MOB_pounce_sabertooth_savanna:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=pounce;li=0;lo=3} @self
+  - leap{velocity=130;noise=0} @target
+  - chatelegraph{shape=circle;at=target;r=6;ticks=20;flat=7;status=root:20;vfxref=6;vfxlead=2;element=earth;vfx=sabertoothpounce/pounce_savanna;spell=mob_pounce} @target
+CHA_MOB_pounce_sabertooth_savanna_shiny:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=pounce;li=0;lo=3} @self
+  - leap{velocity=130;noise=0} @target
+  - chatelegraph{shape=circle;at=target;r=6;ticks=20;flat=7;status=root:20;vfxref=6;vfxlead=2;element=earth;vfx=sabertoothpounce/pounce_savanna_s;spell=mob_pounce} @target
+
+# ---- 울프호크 4종 - 활강 습격 (모션 glide_dive, 예고 1.0초)
+CHA_MOB_glide_dive_wolfhawk_dire:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=20} true
+  Skills:
+  - state{s=glide_dive;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=18;width=4;ticks=20;flat=6;knock=0.8;up=0.4;vfxlead=2;element=wind;vfx=wolfhawkglide/glide_dire;spell=mob_glide_dive} @target
+  - delay 18
+  - lunge{velocity=2.4;velocityY=0.3} @target
+CHA_MOB_glide_dive_wolfhawk_dire_shiny:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=20} true
+  Skills:
+  - state{s=glide_dive;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=18;width=4;ticks=20;flat=6;knock=0.8;up=0.4;vfxlead=2;element=wind;vfx=wolfhawkglide/glide_dire_s;spell=mob_glide_dive} @target
+  - delay 18
+  - lunge{velocity=2.4;velocityY=0.3} @target
+CHA_MOB_glide_dive_wolfhawk_fallen:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=20} true
+  Skills:
+  - state{s=glide_dive;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=18;width=4;ticks=20;flat=6;knock=0.8;up=0.4;vfxlead=2;element=dark;vfx=wolfhawkglide/glide_fallen;spell=mob_glide_dive} @target
+  - delay 18
+  - lunge{velocity=2.4;velocityY=0.3} @target
+CHA_MOB_glide_dive_wolfhawk_fallen_shiny:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=20} true
+  Skills:
+  - state{s=glide_dive;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=18;width=4;ticks=20;flat=6;knock=0.8;up=0.4;vfxlead=2;element=dark;vfx=wolfhawkglide/glide_fallen_s;spell=mob_glide_dive} @target
+  - delay 18
+  - lunge{velocity=2.4;velocityY=0.3} @target
+CHA_MOB_glide_dive_wolfhawk_fullmoon:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=20} true
+  Skills:
+  - state{s=glide_dive;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=18;width=4;ticks=20;flat=6;knock=0.8;up=0.4;vfxlead=2;element=light;vfx=wolfhawkglide/glide_fullmoon;spell=mob_glide_dive} @target
+  - delay 18
+  - lunge{velocity=2.4;velocityY=0.3} @target
+CHA_MOB_glide_dive_wolfhawk_fullmoon_shiny:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=20} true
+  Skills:
+  - state{s=glide_dive;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=18;width=4;ticks=20;flat=6;knock=0.8;up=0.4;vfxlead=2;element=light;vfx=wolfhawkglide/glide_fullmoon_s;spell=mob_glide_dive} @target
+  - delay 18
+  - lunge{velocity=2.4;velocityY=0.3} @target
+CHA_MOB_glide_dive_wolfhawk_stormcloud:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=20} true
+  Skills:
+  - state{s=glide_dive;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=18;width=4;ticks=20;flat=6;knock=0.8;up=0.4;vfxlead=2;element=wind;status=stun:10;vfx=wolfhawkglide/glide_stormcloud;spell=mob_glide_dive} @target
+  - delay 18
+  - lunge{velocity=2.4;velocityY=0.3} @target
+CHA_MOB_glide_dive_wolfhawk_stormcloud_shiny:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=20} true
+  Skills:
+  - state{s=glide_dive;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=18;width=4;ticks=20;flat=6;knock=0.8;up=0.4;vfxlead=2;element=wind;status=stun:10;vfx=wolfhawkglide/glide_stormcloud_s;spell=mob_glide_dive} @target
+  - delay 18
+  - lunge{velocity=2.4;velocityY=0.3} @target
+
+# ---- 약초 수호골렘 - 뿌리 묶기 (모션 root_bind, 예고 1.0초)
+CHA_MOB_root_bind_lostasset_mob3_herbgolem:
+  Cooldown: 11
+  Conditions:
+  - targetwithin{d=19} true
+  Skills:
+  - state{s=root_bind;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=6;ticks=20;flat=4;element=earth;status=root:30;vfxref=6;vfxlead=2;vfx=rootbind/roots;spell=mob_root_bind} @target
+CHA_MOB_root_bind_lostasset_mob3_herbgolem_shiny:
+  Cooldown: 11
+  Conditions:
+  - targetwithin{d=19} true
+  Skills:
+  - state{s=root_bind;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=6;ticks=20;flat=4;element=earth;status=root:30;vfxref=6;vfxlead=2;vfx=rootbind/roots_s;spell=mob_root_bind} @target
+
+# ---- 약초 도둑 - 연막탄 (모션 smoke_bomb, 예고 0.8초)
+CHA_MOB_smoke_bomb_lostasset_mob3_herbthief:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=10} true
+  Skills:
+  - state{s=smoke_bomb;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=caster;r=6;ticks=16;flat=2;element=earth;status=blindness:30;vfxref=6;vfxlead=2;vfx=smokebomb/smoke;spell=mob_smoke_bomb} @target
+  - delay 16
+  - potion{type=INVISIBILITY;duration=40;level=0;hasParticles=false} @self
+CHA_MOB_smoke_bomb_lostasset_mob3_herbthief_shiny:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=10} true
+  Skills:
+  - state{s=smoke_bomb;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=caster;r=6;ticks=16;flat=2;element=earth;status=blindness:30;vfxref=6;vfxlead=2;vfx=smokebomb/smoke_s;spell=mob_smoke_bomb} @target
+  - delay 16
+  - potion{type=INVISIBILITY;duration=40;level=0;hasParticles=false} @self
