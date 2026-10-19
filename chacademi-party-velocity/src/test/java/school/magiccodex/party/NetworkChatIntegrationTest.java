@@ -32,7 +32,7 @@ class NetworkChatIntegrationTest {
  @SuppressWarnings("unchecked") static <T>T mock(Class<T> type,Calls calls){return (T)java.lang.reflect.Proxy.newProxyInstance(type.getClassLoader(),new Class<?>[]{type},(proxy,method,args)->{if(method.getName().equals("equals"))return proxy==args[0];if(method.getName().equals("hashCode"))return System.identityHashCode(proxy);if(method.getName().equals("toString"))return type.getSimpleName();return calls.call(method.getName(),args==null?new Object[0]:args);});}
  @BeforeEach void setup()throws Exception {
   var proxy=mock(ProxyServer.class,(method,args)->switch(method){case "getPlayer"->{Person p=people.get(args[0]);yield Optional.ofNullable(p==null?null:p.player);}case "getAllPlayers"->people.values().stream().map(p->p.player).toList();default->null;});
-  plugin=new PartyPlugin(proxy,LoggerFactory.getLogger(getClass()),dir);field("network").set(plugin,new NetworkChat(Set.of("school","wild")));((Set<String>)field("trusted").get(plugin)).addAll(Set.of("school","wild"));
+  plugin=new PartyPlugin(proxy,LoggerFactory.getLogger(getClass()),dir);field("network").set(plugin,new NetworkChat(Set.of("school","wild","arena")));((Set<String>)field("trusted").get(plugin)).addAll(Set.of("school","wild","arena"));
  }
  static Field field(String name)throws Exception {var f=PartyPlugin.class.getDeclaredField(name);f.setAccessible(true);return f;}
  void drain()throws Exception {((ExecutorService)field("worker").get(plugin)).submit(()->{}).get(3,TimeUnit.SECONDS);}
@@ -68,5 +68,13 @@ class NetworkChatIntegrationTest {
   var commands=(com.velocitypowered.api.command.SimpleCommand)ctor.newInstance(plugin);
   var invocation=mock(com.velocitypowered.api.command.SimpleCommand.Invocation.class,(method,args)->method.equals("source")?a.player:method.equals("arguments")?new String[0]:null);
   assertTrue(commands.hasPermission(invocation));a.denied.add("chacademi.party");assertFalse(commands.hasPermission(invocation));
+ }
+
+ @Test void arenaCanSendGlobalAndReceiveSameHouseWithoutWildServerLabel()throws Throwable {
+  var a=new Person("arena");var school=new Person("school");var wild=new Person("wild");identity(a,2);identity(school,2);identity(wild,3);
+  send(a,"g","arena-global");for(var p:List.of(a,school,wild))assertEquals(1,p.received.size());
+  String text=plain(school.received.getFirst());assertTrue(text.startsWith("[전체] [아레나] "));assertFalse(text.contains("\uE115"));
+  send(school,"h","school-house");assertEquals(2,a.received.size());assertEquals(2,school.received.size());assertEquals(1,wild.received.size());
+  assertTrue(plain(a.received.getLast()).startsWith("[기숙사]"));
  }
 }

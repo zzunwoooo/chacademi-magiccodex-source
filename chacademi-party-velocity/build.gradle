@@ -1,6 +1,6 @@
 plugins { id 'java' }
 group = 'school.magiccodex'
-version = '0.2.2-integrated-20261018.1'
+version = '0.2.2-integrated-20261019.1-arenachat.1'
 repositories { mavenCentral() }
 def velocityJar = findProperty('velocityJar') ?: 'C:/Chacademi/tools/Velocity-source/proxy/build/libs/velocity-proxy-3.6.0-SNAPSHOT-all.jar'
 dependencies {

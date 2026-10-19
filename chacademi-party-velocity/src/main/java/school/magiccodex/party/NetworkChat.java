@@ -31,10 +31,10 @@ final class NetworkChat {
     Identity identity(UUID player,Object active,long now){
         var identity=identities.get(player);return identity!=null&&identity.source()==active&&identity.until()>now?identity:null;
     }
-    boolean networkServer(String server){return trusted.contains(server)&&Set.of("school","wild").contains(server);}
+    boolean networkServer(String server){return trusted.contains(server)&&Set.of("school","wild","arena").contains(server);}
     Identity sender(UUID actor,Map<UUID,Connection> online,long now){
         var connection=online.get(actor);
-        if(connection==null||!networkServer(connection.server()))throw new IllegalArgumentException("학교·야생 서버에서 사용할 수 있습니다.");
+        if(connection==null||!networkServer(connection.server()))throw new IllegalArgumentException("학교·야생·아레나 서버에서 사용할 수 있습니다.");
         var identity=identity(actor,connection.source(),now);
         if(identity==null)throw new IllegalArgumentException("닉네임·기숙사 정보를 확인 중입니다. 잠시 후 다시 보내 주세요.");
         return identity;

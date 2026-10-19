@@ -232,7 +232,7 @@ public final class PartyPlugin {
         NetworkChat.claimChat(nextChat,actor,now);
         String tag=channel==NetworkChat.Channel.GLOBAL?"[전체] ":"[기숙사] ";
         var message=Component.text(tag,NamedTextColor.AQUA)
-                .append(icon(sender.server().equals("school")?"\uE114":"\uE115"))
+                .append(sender.server().equals("arena")?Component.text("[아레나]",NamedTextColor.GRAY):icon(sender.server().equals("school")?"\uE114":"\uE115"))
                 .append(Component.text(" ")).append(icon(channel==NetworkChat.Channel.GLOBAL?"\uE110":"\uE111"))
                 .append(Component.text(" "+sender.nickname()+" : ",NamedTextColor.AQUA))
                 .append(Component.text(text,NamedTextColor.WHITE));
@@ -357,7 +357,7 @@ public final class PartyPlugin {
         for(var invite:book.invites)if(invite.target().equals(viewer))invites.add(person(invite.inviter(),0));
         return PartyUi.state(open,book.capacity,members,invites);
     }
-    /** 초대할 수 있는 사람: 학교·야생(신뢰 서버)에 접속 중이고 파티가 없는 다른 플레이어. */
+    /** 초대할 수 있는 사람: 학교·야생·아레나(신뢰 서버)에 접속 중이고 파티가 없는 다른 플레이어. */
     private List<PartyUi.Person> candidates(UUID viewer,long now){
         book.expire(now);var mine=book.party(viewer);var list=new ArrayList<PartyUi.Person>();
         for(Player player:proxy.getAllPlayers()){

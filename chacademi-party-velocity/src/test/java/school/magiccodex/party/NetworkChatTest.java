@@ -8,13 +8,13 @@ class NetworkChatTest {
  static byte[] wire(int version,String name,int house)throws IOException {
   var bytes=new ByteArrayOutputStream();var out=new DataOutputStream(bytes);out.writeByte(version);out.writeUTF(name);if(version==2)out.writeByte(house);return bytes.toByteArray();
  }
- @Test void globalUniqueAudienceAndFourHousePartitionsAcrossBothBackends()throws Exception {
-  var chat=new NetworkChat(Set.of("school","wild","lobby"));var online=new LinkedHashMap<UUID,NetworkChat.Connection>();var houses=new HashMap<Integer,Set<UUID>>();
-  for(int house=0;house<4;house++)for(String server:List.of("school","wild")){
+ @Test void globalUniqueAudienceAndFourHousePartitionsAcrossAllThreeBackends()throws Exception {
+  var chat=new NetworkChat(Set.of("school","wild","arena","lobby"));var online=new LinkedHashMap<UUID,NetworkChat.Connection>();var houses=new HashMap<Integer,Set<UUID>>();
+  for(int house=0;house<4;house++)for(String server:List.of("school","wild","arena")){
    var id=UUID.randomUUID();var source=new Object();online.put(id,new NetworkChat.Connection(source,server));chat.accept(id,source,source,server,true,wire(2,"별빛"+house,house),100);houses.computeIfAbsent(house,k->new HashSet<>()).add(id);
   }
   var lobby=UUID.randomUUID();online.put(lobby,new NetworkChat.Connection(new Object(),"lobby"));
-  for(int house=0;house<4;house++){var actor=houses.get(house).iterator().next();assertEquals(houses.get(house),chat.recipients(NetworkChat.Channel.HOUSE,actor,online,101));assertEquals(8,chat.recipients(NetworkChat.Channel.GLOBAL,actor,online,101).size());}
+  for(int house=0;house<4;house++){var actor=houses.get(house).iterator().next();assertEquals(houses.get(house),chat.recipients(NetworkChat.Channel.HOUSE,actor,online,101));assertEquals(12,chat.recipients(NetworkChat.Channel.GLOBAL,actor,online,101).size());}
  }
  @Test void missingV1ExpiredOfflineTransferAndHouseChangeFailClosed()throws Exception {
   var chat=new NetworkChat(Set.of("school","wild"));var a=UUID.randomUUID();var b=UUID.randomUUID();var sa=new Object();var sb=new Object();var online=new HashMap<UUID,NetworkChat.Connection>();online.put(a,new NetworkChat.Connection(sa,"school"));online.put(b,new NetworkChat.Connection(sb,"wild"));
@@ -42,5 +42,11 @@ class NetworkChatTest {
   var worker=PartyPlugin.newWorker();var started=new CountDownLatch(1);var release=new CountDownLatch(1);
   try{worker.execute(()->{started.countDown();try{release.await();}catch(InterruptedException e){Thread.currentThread().interrupt();}});assertTrue(started.await(3,TimeUnit.SECONDS));for(int i=0;i<256;i++)worker.execute(()->{});assertThrows(RejectedExecutionException.class,()->worker.execute(()->{}));}
   finally{release.countDown();worker.shutdownNow();assertTrue(worker.awaitTermination(3,TimeUnit.SECONDS));}
+ }
+
+ @Test void arenaStillRequiresTrustedBackendAndCannotBroadenToLobby()throws Exception {
+  var chat=new NetworkChat(Set.of("school","wild","lobby"));assertFalse(chat.networkServer("arena"));assertFalse(chat.networkServer("lobby"));
+  var id=UUID.randomUUID();var source=new Object();assertFalse(chat.accept(id,source,source,"arena",true,wire(2,"별빛",0),0));
+  assertThrows(IllegalArgumentException.class,()->chat.sender(id,Map.of(id,new NetworkChat.Connection(source,"arena")),1));
  }
 }
