@@ -182,3 +182,4 @@
 - 1:1 화면 정리 (오너 2026-10-19 "공은 없는데 스니치 UI가 있음"): 점수판 아래 스니치 잠김/등장 표시 숨김(`HudView.Score.duel`),
   결과 창은 이름 대 이름 · "라운드 승리" · 처치/데스 열(골·스니치·MVP 없음, `ResultView.Data.duel` / 마지막 경기 플래그 `KyudichiClient.lastDuel`),
   준비 창은 빗자루 칸 숨김, 모드 없는 사람의 채팅 결과도 1:1 형식. 1:1 전용 디자인은 레퍼런스가 오면 다시.
+- F3+B 히트박스: 경기(관전 포함) 중엔 켤 수 없고, 켜 둔 채 경기가 시작되면 꺼짐 (`KyudichiHitboxMixin`). 모드를 고친 클라이언트까지 막으려면 경기장 월드에 gamerule reducedDebugInfo true (F3 좌표도 숨겨짐).
