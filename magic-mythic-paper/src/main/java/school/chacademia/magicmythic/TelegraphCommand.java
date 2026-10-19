@@ -11,8 +11,8 @@ import school.magiccodex.protocol.TelegraphProtocol.Show;
 /**
  * 테스트용 (피해 없음, 보이기만): /마법미몹 예고 <원형|직선|부채꼴|전부|봉인진|봉인진이로치|빙핵레이저|빙핵레이저이로치> [초=1]
  *  원형 = 바라보는 블록(최대 24칸) 중심 반경 3, 직선 = 내 발에서 바라보는 방향 길이 8 폭 2, 부채꼴 = 반경 6 각도 70.
- *  빙핵레이저(이로치) = 빙핵의 수호자 스킬과 같은 직선 16x2 예고 1.2초 + FrostLaser VFX (내 발에서 바라보는 방향).
- *  봉인진(이로치) = 봉인의 술사 스킬과 같은 반경 4 예고 1.2초 + SealCircle VFX (PortableVFX에 sealcircle 팩이 있어야 보임).
+ *  빙핵레이저(이로치) = 빙핵의 수호자 스킬과 같은 직선 24x3 예고 1.2초 + FrostLaser VFX (내 발에서 바라보는 방향).
+ *  봉인진(이로치) = 봉인의 술사 스킬과 같은 반경 7 예고 1.2초 + SealCircle VFX (PortableVFX에 sealcircle 팩이 있어야 보임).
  */
 final class TelegraphCommand {
     private TelegraphCommand() {}
@@ -41,21 +41,21 @@ final class TelegraphCommand {
             }
             case "봉인진", "seal", "봉인진이로치", "seal_ruby" -> {
                 int warn = a.length < 2 ? 24 : ticks; // 초를 안 적으면 실제 스킬과 같은 1.2초
-                var s = circle(t, look, 4, warn);
+                var s = circle(t, look, 7, warn);
                 show(plugin, p, s);
                 var at = new Location(p.getWorld(), s.x(), s.y(), s.z());
                 String id = kind.endsWith("이로치") || kind.endsWith("ruby") ? "claude:sealcircle/seal_ruby" : "claude:sealcircle/seal";
                 plugin.getServer().getScheduler().runTaskLater(plugin,
-                    () -> plugin.reactions().vfx().effect(id, at, 1, 0, 40, 0xFFFFFF), Math.max(1, warn - 2));
+                    () -> plugin.reactions().vfx().effect(id, at, 7f / 4, 0, 40, 0xFFFFFF), Math.max(1, warn - 2));
             }
             case "빙핵레이저", "frost_laser", "빙핵레이저이로치", "frost_laser_obsidian" -> {
                 int warn = a.length < 2 ? 24 : ticks; // 초를 안 적으면 실제 스킬과 같은 1.2초
-                var s = new Show(t.id(), Shape.LINE, feet.getX(), Telegraphs.ground(feet), feet.getZ(), yaw, 16, 2, 0, warn, TelegraphProtocol.RED);
+                var s = new Show(t.id(), Shape.LINE, feet.getX(), Telegraphs.ground(feet), feet.getZ(), yaw, 24, 3, 0, warn, TelegraphProtocol.RED);
                 show(plugin, p, s);
                 var at = new Location(p.getWorld(), s.x(), s.y(), s.z());
                 String id = kind.endsWith("이로치") || kind.endsWith("obsidian") ? "claude:frostlaser/laser_obsidian" : "claude:frostlaser/laser";
                 plugin.getServer().getScheduler().runTaskLater(plugin,
-                    () -> plugin.reactions().vfx().effect(id, at, 1, yaw, 40, 0xFFFFFF), Math.max(1, warn - 2));
+                    () -> plugin.reactions().vfx().effect(id, at, 1.5f, yaw, 40, 0xFFFFFF), Math.max(1, warn - 2));
             }
             case "효과", "fx" -> { return fx(plugin, p, a, feet, look, yaw); }
             default -> { return USAGE; }
@@ -64,19 +64,20 @@ final class TelegraphCommand {
     }
 
     static final String USAGE = "/마법미몹 예고 <원형|직선|부채꼴|전부|봉인진|봉인진이로치|빙핵레이저|빙핵레이저이로치> [초]"
-        + "  또는  /마법미몹 예고 효과 <팩/시스템> <원형|원형내발|직선|부채꼴> <반경·길이> [각도·폭] [틱=24] [리드틱=2]";
+        + "  또는  /마법미몹 예고 효과 <팩/시스템> <원형|원형내발|직선|부채꼴> <반경·길이> [각도·폭] [틱=24] [리드틱=2] [배율=1]";
 
     /** 몹 스킬 시험: 예고 + 그 VFX (피해 없음). 예) 효과 earthquake/quake_club 원형내발 6 · 효과 dragonbreath/breath_nether 부채꼴 10 60 */
     private static String fx(MagicMythicPlugin plugin, Player p, String[] a, Location feet, Location look, float yaw) {
         if (a.length < 4) return USAGE;
         String id = TelegraphMech.vfxId(a[1]);
         if (id.isEmpty()) return "효과 id 가 이상합니다 (예: earthquake/quake_club).";
-        float size, extra = 0; int warn = 24, lead = 2;
+        float size, extra = 0, scale0 = 1; int warn = 24, lead = 2;
         try {
             size = Float.parseFloat(a[3]);
             if (a.length > 4) extra = Float.parseFloat(a[4]);
             if (a.length > 5) warn = Integer.parseInt(a[5]);
             if (a.length > 6) lead = Integer.parseInt(a[6]);
+            if (a.length > 7) scale0 = Math.clamp(Float.parseFloat(a[7]), 0.25f, 4f);
         } catch (NumberFormatException e) { return "숫자를 확인해 주세요."; }
         var t = plugin.telegraphs();
         Show s;
@@ -92,8 +93,7 @@ final class TelegraphCommand {
         if (s == null) return USAGE;
         show(plugin, p, s);
         var at = new Location(p.getWorld(), s.x(), s.y(), s.z());
-        float scale = 1;
-        final Show shown = s;
+        final Show shown = s; final float scale = scale0;
         plugin.getServer().getScheduler().runTaskLater(plugin,
             () -> plugin.reactions().vfx().effect(id, at, scale, shown.yaw(), 40, 0xFFFFFF), Math.max(1, warn - lead));
         return "예고 + " + id + " (" + a[2] + " " + size + ", " + warn + "틱, 피해 없음)";

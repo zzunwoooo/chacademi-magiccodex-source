@@ -47,12 +47,30 @@
 ## 추가 — 몹 스킬 1차 묶음 (계열당 대표 1개, 색만 다른 몹은 같은 스킬·VFX 색만 다름)
 | 계열 | 스킬 id (`CHA_MOB_<스킬>_<몹>`) | 예고 | 효과 | VFX 팩 / 시스템 | 모션 |
 |---|---|---|---|---|---|
-| 오우거 3종 | ground_quake | 원형 시전자 r6 · 1.2초 | 피해 7 + 기절 0.8초 | `ogrequake` / quake_{club,axe,hammer}[_s] | ground_quake (attack2 늘림) |
-| 고대 골렘 4종 | gravity_slam | 원형 시전자 r7 · 1.2초 (vfxlead 3) | 피해 8 + 중력 2초 | `gravityslam` / gravity_{arcane,corrupted,magma,royal}[_s] | gravity_slam (새로) |
-| 드래곤 4종 | dragon_breath | 부채꼴 r10 · 60° · 1.2초 | 피해 9 + 사막 독 / 빙하 둔화 / 화산 화상 / 스컬크 실명 | `dragonbreath` / breath_{desert,glacial,nether,sculk}[_s] | dragon_breath (새로) |
-| 서리 기사 | frost_field | 원형 시전자 r5 · 1.0초 | 피해 5 + 속박 1초 | `frostfield` / frost_field[_s] | frost_field (새로) |
-| 터스커 3종 | earth_stomp | 원형 시전자 r6 · 1.2초 | 피해 6 + 기절 0.8초 | `earthstomp` / stomp_{demonic,dreamlight,forest}[_s] | earth_stomp (새로) |
+| 오우거 3종 | ground_quake | 원형 시전자 r10 · 1.2초 | 피해 7 + 기절 0.8초 | `ogrequake` / quake_{club,axe,hammer}[_s] | ground_quake (attack2 늘림) |
+| 고대 골렘 4종 | gravity_slam | 원형 시전자 r11 · 1.2초 (vfxlead 3) | 피해 8 + 중력 2초 | `gravityslam` / gravity_{arcane,corrupted,magma,royal}[_s] | gravity_slam (새로) |
+| 드래곤 4종 | dragon_breath | 부채꼴 r16 · 60° · 1.2초 | 1.5초 구름 브레스, 0.3초마다 피해 4 ×5 + 사막 독 / 빙하 둔화 / 화산 화상 / 스컬크 실명 | `dragonbreath` / breath_{desert,glacial,nether,sculk}[_s] | dragon_breath (새로) |
+| 서리 기사 | frost_field | 원형 시전자 r8 · 1.0초 | 피해 5 + 속박 1초 | `frostfield` / frost_field[_s] | frost_field (새로) |
+| 터스커 3종 | earth_stomp | 원형 시전자 r10 · 1.2초 | 피해 6 + 기절 0.8초 | `earthstomp` / stomp_{demonic,dreamlight,forest}[_s] | earth_stomp (새로) |
 - 스킬 yml: `chacademi_mob_skills.yml` 의 "자동 생성" 구간 (사장님 PC 각 폴더 mythicmobs/ 에도 같은 파일). 몹마다 Skills 에 한 줄 (mobs_*.yml 참고본).
 - 모델: 사장님 PC `차카데미 vfx_Claude\몹스킬\<계열> - <스킬>\model\` (기본·이로치 모두). blueprints 같은 이름 교체.
 - 시험 명령 추가: `/마법미몹 예고 효과 <팩/시스템> <원형|원형내발|직선|부채꼴> <크기> [각도·폭] [틱] [리드틱]` (피해 없음).
 - 주의: 팩 이름 `earthquake` 는 기존 마법 팩과 겹쳐서 오우거 팩은 `ogrequake` 로 함.
+
+## 추가 — 범위 확대 + 브레스 다시 만듦 + 몹 스킬 2차 묶음
+사장님: "범위 너무 작아 … 브레스면 구름같은걸 쏴야지". 1차 표는 위에서 새 범위로 고침. VFX 팩도 새 범위에 맞게 다시 빌드(같은 이름 덮어쓰기).
+- 봉인진 r4 → **r7** (vfxref 4 그대로 → VFX 1.75배), 빙핵 레이저 16×2 → **24×3** (vfxref 16 → 1.5배). 팩은 그대로.
+- 드래곤 브레스 VFX: 직선 줄기·불꽃 튀김 없앰 → 부채꼴 안을 굴러 나가는 구름 덩어리(dust 시트, 가산 빛 구름 + 알파 구름 몸체 + 연기 + 바닥 구름). 하늘뱀 브레스도 같은 틀.
+
+| 계열 | 스킬 id | 예고 | 효과 | VFX 팩 / 시스템 | 모션 |
+|---|---|---|---|---|---|
+| 영록 4종 | domain_seal | 원형 시전자 r10 · 1.0초 | 피해 6 + 위로 튕김(up 0.9) | `domainseal` / domain_{heavenly,demonic,rune,void}[_s] | domain_stomp 1.7초 |
+| 하늘뱀 4종 | serpent_breath | 부채꼴 r12 · 55° · 1.0초 | 1.2초 구름 브레스, 피해 3 ×4 + 비취 둔화 / 마그마 화상 / 태양 실명 / 영체 약화 | `serpentbreath` / sbreath_{jade,magma,solar,spectral}[_s] | serpent_breath 2.6초 |
+| 피닉스 4종 | feather_barrage | 부채꼴 r14 · 55° · 0.8초 | 깃털 5발, 피해 7 + 화상 / 뇌광 기절 | `featherbarrage` / feather_{flame,darkflame,light,thunder}[_s] | feather_barrage 1.4초 |
+| 페가수스 | gale_wings | 반원(부채꼴 180°) r10 · 1.0초 | 피해 4 + 바깥으로 밀침(knock 1.6, up 0.4) + 중력 1초 | `galewings` / gale[_s] | gale_wings 1.7초 |
+| 히포그리프 4종 | feather_storm | 원형 시전자 r8 · 1.0초 | 피해 6 | `featherstorm` / fstorm_{common,crystal,fallen,royal}[_s] | feather_storm 1.7초 |
+
+- 코드: `chatelegraph` 에 `pulses`/`period` (같은 장판에 지연 판정 추가, 매 틱 작업 없음 — 판정마다 runTaskLater 1개, 시전자 죽으면 건너뜀), `knock`/`up`/`pull` (원형·부채꼴 = 중심에서 바깥, 직선 = 앞 방향). 시험 명령 `효과 ... [배율]` 인자 추가.
+- 파일: 사장님 PC `차카데미 vfx_Claude\몹스킬\<계열> - <스킬>\` 10개 계열 모두 새로 덮어씀 (model / mythicmobs / vfx / preview / source / README). 팩만 따로: `차카데미 vfx_Claude\<Pack>\`.
+- 주의: client_compat WARN 의 RGBA 수치(6~20 MiB)는 같은 텍스처를 재질마다 세는 툴 문제. 공용 lib/tex 를 같이 쓰는 팩들이라 고유 텍스처는 팩당 2~4 MiB 수준.
+- 주의: 브레스 pulses 는 같은 위치·방향 장판으로 판정(시전자가 돌아도 장판은 고정 — 예고와 같음).

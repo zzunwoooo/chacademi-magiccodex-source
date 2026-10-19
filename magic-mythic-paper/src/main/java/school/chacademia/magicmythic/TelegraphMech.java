@@ -19,6 +19,8 @@ import school.magiccodex.protocol.TelegraphProtocol.Show;
  *   hits=players|enemies (default players: mob skills hit players only)  height=3 (vertical reach above the ground)
  *   vfx=sealcircle/seal (PortableVFX id; "claude:" added when missing)  vfxlead=2 (ticks before the hit)
  *   vfxref=3 (authored radius: scale = r / vfxref)  tint=FFFFFF (colour-variant mobs)  cancel=true (caster death cancels)
+ *   pulses=4 period=8 (sustained: extra hits every period ticks on the same shape, e.g. breath)
+ *   knock=1.2 (outward / forward push)  up=0.8 (launch)  pull=1.5 (toward the caster) - applied to every target hit
  *
  * Shape, origin and yaw are fixed when the warning starts; the hit uses the same {@link Show}.
  */
@@ -41,7 +43,15 @@ final class TelegraphMech extends Mech {
                 if (plugin.telegraphs().live(id)) plugin.reactions().vfx().effect(vfx, at, scale, show.yaw(), 40, tint);
             }, Math.max(1, ticks - lead));
         }
-        return plugin.telegraphs().start(show, c.caster(), world, p.b("cancel", true), s -> hit(c.caster(), s, c.dmg(p)));
+        double dmg = c.dmg(p);
+        int pulses = Math.clamp(p.i("pulses", 1), 1, 20), period = Math.clamp(p.i("period", 8), 1, 40);
+        return plugin.telegraphs().start(show, c.caster(), world, p.b("cancel", true), s -> {
+            hit(c.caster(), s, dmg);
+            // sustained skills (breath): more hits on the same shape, one delayed task each - nothing runs per tick
+            for (int k = 1; k < pulses; k++) plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                if (c.caster().isValid() && !c.caster().isDead()) hit(c.caster(), s, dmg);
+            }, (long) k * period);
+        });
     }
 
     Show show(Ctx c) {
@@ -77,7 +87,25 @@ final class TelegraphMech extends Mech {
             if (!TelegraphProtocol.inside(s, t.getLocation().getX(), t.getLocation().getZ(), t.getWidth() / 2)) continue;
             if (!plugin.targets().hurt(caster, t, dmg, p.s("element", ""))) continue; // 0 = protection probe only
             plugin.targets().sideEffects(caster, t, p);
+            push(caster, s, t);
         }
+    }
+
+    /** knock = outward from the shape origin (circle/cone: radial, line: along the forward), up = vertical, pull = toward the caster (blocks/tick-ish). */
+    private void push(LivingEntity caster, Show s, LivingEntity t) {
+        double knock = p.d("knock", 0), up = p.d("up", 0), pull = p.d("pull", 0);
+        if (knock == 0 && up == 0 && pull == 0) return;
+        var at = t.getLocation();
+        double dx, dz;
+        if (s.shape() != Shape.LINE) { dx = at.getX() - s.x(); dz = at.getZ() - s.z(); }
+        else { dx = s.fx(); dz = s.fz(); }
+        double len = Math.hypot(dx, dz); if (len < 1e-4) { dx = s.fx(); dz = s.fz(); len = 1; }
+        var v = new org.bukkit.util.Vector(dx / len * knock, up, dz / len * knock);
+        if (pull != 0) {
+            var c = caster.getLocation(); double px = c.getX() - at.getX(), pz = c.getZ() - at.getZ(), pl = Math.hypot(px, pz);
+            if (pl > 1e-4) v.add(new org.bukkit.util.Vector(px / pl * pull, 0.15 * Math.abs(pull), pz / pl * pull));
+        }
+        t.setVelocity(t.getVelocity().add(v));
     }
 
     static String vfxId(String raw) {
