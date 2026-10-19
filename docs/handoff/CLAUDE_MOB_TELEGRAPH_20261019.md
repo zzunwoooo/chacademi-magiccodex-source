@@ -74,3 +74,18 @@
 - 파일: 사장님 PC `차카데미 vfx_Claude\몹스킬\<계열> - <스킬>\` 10개 계열 모두 새로 덮어씀 (model / mythicmobs / vfx / preview / source / README). 팩만 따로: `차카데미 vfx_Claude\<Pack>\`.
 - 주의: client_compat WARN 의 RGBA 수치(6~20 MiB)는 같은 텍스처를 재질마다 세는 툴 문제. 공용 lib/tex 를 같이 쓰는 팩들이라 고유 텍스처 실측 팩당 0.7~2.6 MiB.
 - 주의: 브레스 pulses 는 같은 위치·방향 장판으로 판정(시전자가 돌아도 장판은 고정 — 예고와 같음).
+
+## 추가 — 몹 스킬 3차 묶음 (범위기만, 유도·텔포 계열은 나중에 따로)
+| 계열 | 스킬 id | 예고 | 효과 | VFX 팩 / 시스템 | 모션 |
+|---|---|---|---|---|---|
+| 키츠네 3종 | fox_charm | 원형 대상 r7 · 1.0초 | 피해 4 + 공포 1.5초 | `kitsunecharm` / charm_{normal,demonic,inferno}[_s] | charm_cast 1.6초 |
+| 유니콘 | horn_ray | 직선 22×3 · 1.0초 | 피해 7 + 약화 2초 | `unicornray` / ray[_s] | horn_ray 1.9초 |
+| 바실리스크 3종 | tail_sweep | 반원(부채꼴 180°) r9 · 1.0초 | 피해 6 + 밀침 (눈보라 둔화) | `basilisksweep` / sweep_{obsidian,snowstorm,wild}[_s] | tail_sweep 1.7초 |
+| 와이번 4종 | tail_spikes | 원형 대상 r4 · 1.0초 × 3번 (delay 8틱) | 한 번에 피해 4 + 공허 실명 / 녹빛 독 / 업화 화상 / 불사 약화 | `wyvernspikes` / spikes_{ender,green,inferno,undead}[_s] | tail_spikes 2.2초 |
+| 만티코어 4종 | roar_leap | MythicMobs `leap{velocity=150}` + 원형 대상 r8 · 1.0초 | 피해 7 + 공포 1초 (맹독 독 추가) | `manticoreroar` / roar_{aether,dusk,soul,venom}[_s] | roar_leap 1.8초 |
+
+- 주의: 와이번 VFX 는 착탄 T0 = 0.3초 → `vfxlead=6` (다른 팩은 2). 3번 모두 그때 대상 위치에 새로 깔림.
+- 주의: 만티코어 leap 는 MythicMobs 기본 mechanic. 몹이 못 뛰는 지형이면 예고·판정만 그 자리에서 남음(정상).
+- 주의: 같은 스킬에 status 가 둘이면 `status=fear:20,poison:40` 처럼 한 줄로 합침(skills.py 가 처리).
+- 파일: 사장님 PC `차카데미 vfx_Claude\몹스킬\<계열> - <스킬>\` 5개 새 폴더 (preview 에 `vfx_preview_전체색.html` = 모든 색 변종). 팩만 따로 `차카데미 vfx_Claude\<Pack>\`.
+- 최신 `chacademi_mob_skills.yml` 은 3차 폴더와 이 레포에 있음 (1·2차 폴더의 사본은 그 계열 스킬만 같고 3차 스킬은 없음 → 서버엔 레포 파일 하나만 넣으면 됨).

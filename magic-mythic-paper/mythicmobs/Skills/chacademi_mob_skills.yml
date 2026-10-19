@@ -514,3 +514,263 @@ CHA_MOB_feather_storm_hippogryph_royal_shiny:
   Skills:
   - state{s=feather_storm;li=0;lo=3} @self
   - chatelegraph{shape=circle;at=caster;r=8;ticks=20;flat=6;vfxref=8;vfxlead=2;element=light;vfx=featherstorm/fstorm_royal_s;spell=mob_feather_storm} @target
+
+# ---- 키츠네 3종 - 현혹 (모션 charm_cast, 예고 1.0초)
+CHA_MOB_fox_charm_kitsune_normal:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=14} true
+  Skills:
+  - state{s=charm_cast;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=7;ticks=20;flat=4;status=fear:30;vfxref=7;vfxlead=2;element=fire;vfx=kitsunecharm/charm_normal;spell=mob_fox_charm} @target
+CHA_MOB_fox_charm_kitsune_normal_shiny:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=14} true
+  Skills:
+  - state{s=charm_cast;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=7;ticks=20;flat=4;status=fear:30;vfxref=7;vfxlead=2;element=fire;vfx=kitsunecharm/charm_normal_s;spell=mob_fox_charm} @target
+CHA_MOB_fox_charm_kitsune_demonic:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=14} true
+  Skills:
+  - state{s=charm_cast;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=7;ticks=20;flat=4;status=fear:30;vfxref=7;vfxlead=2;element=dark;vfx=kitsunecharm/charm_demonic;spell=mob_fox_charm} @target
+CHA_MOB_fox_charm_kitsune_demonic_shiny:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=14} true
+  Skills:
+  - state{s=charm_cast;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=7;ticks=20;flat=4;status=fear:30;vfxref=7;vfxlead=2;element=dark;vfx=kitsunecharm/charm_demonic_s;spell=mob_fox_charm} @target
+CHA_MOB_fox_charm_kitsune_inferno:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=14} true
+  Skills:
+  - state{s=charm_cast;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=7;ticks=20;flat=4;status=fear:30;vfxref=7;vfxlead=2;element=fire;vfx=kitsunecharm/charm_inferno;spell=mob_fox_charm} @target
+CHA_MOB_fox_charm_kitsune_inferno_shiny:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=14} true
+  Skills:
+  - state{s=charm_cast;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=7;ticks=20;flat=4;status=fear:30;vfxref=7;vfxlead=2;element=fire;vfx=kitsunecharm/charm_inferno_s;spell=mob_fox_charm} @target
+
+# ---- 유니콘 - 뿔 광선 (모션 horn_ray, 예고 1.0초)
+CHA_MOB_horn_ray_horse_unicorn:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=24} true
+  Skills:
+  - state{s=horn_ray;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=22;width=3;ticks=20;flat=7;element=light;status=magic_weakness:40;vfxref=22;vfxlead=2;vfx=unicornray/ray;spell=mob_horn_ray} @target
+CHA_MOB_horn_ray_horse_unicorn_shiny:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=24} true
+  Skills:
+  - state{s=horn_ray;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=22;width=3;ticks=20;flat=7;element=light;status=magic_weakness:40;vfxref=22;vfxlead=2;vfx=unicornray/ray_s;spell=mob_horn_ray} @target
+
+# ---- 바실리스크 3종 - 꼬리 휩쓸기 (모션 tail_sweep, 예고 1.0초)
+CHA_MOB_tail_sweep_basilisk_obsidian:
+  Cooldown: 9
+  Conditions:
+  - targetwithin{d=12} true
+  Skills:
+  - state{s=tail_sweep;li=0;lo=3} @self
+  - chatelegraph{shape=cone;at=caster;r=9;angle=180;ticks=20;flat=6;knock=1.8;up=0.35;vfxlead=2;element=earth;vfx=basilisksweep/sweep_obsidian;spell=mob_tail_sweep} @target
+CHA_MOB_tail_sweep_basilisk_obsidian_shiny:
+  Cooldown: 9
+  Conditions:
+  - targetwithin{d=12} true
+  Skills:
+  - state{s=tail_sweep;li=0;lo=3} @self
+  - chatelegraph{shape=cone;at=caster;r=9;angle=180;ticks=20;flat=6;knock=1.8;up=0.35;vfxlead=2;element=earth;vfx=basilisksweep/sweep_obsidian_s;spell=mob_tail_sweep} @target
+CHA_MOB_tail_sweep_basilisk_snowstorm:
+  Cooldown: 9
+  Conditions:
+  - targetwithin{d=12} true
+  Skills:
+  - state{s=tail_sweep;li=0;lo=3} @self
+  - chatelegraph{shape=cone;at=caster;r=9;angle=180;ticks=20;flat=6;knock=1.8;up=0.35;vfxlead=2;element=water;status=slow:30:0.3;vfx=basilisksweep/sweep_snowstorm;spell=mob_tail_sweep} @target
+CHA_MOB_tail_sweep_basilisk_snowstorm_shiny:
+  Cooldown: 9
+  Conditions:
+  - targetwithin{d=12} true
+  Skills:
+  - state{s=tail_sweep;li=0;lo=3} @self
+  - chatelegraph{shape=cone;at=caster;r=9;angle=180;ticks=20;flat=6;knock=1.8;up=0.35;vfxlead=2;element=water;status=slow:30:0.3;vfx=basilisksweep/sweep_snowstorm_s;spell=mob_tail_sweep} @target
+CHA_MOB_tail_sweep_basilisk_wild:
+  Cooldown: 9
+  Conditions:
+  - targetwithin{d=12} true
+  Skills:
+  - state{s=tail_sweep;li=0;lo=3} @self
+  - chatelegraph{shape=cone;at=caster;r=9;angle=180;ticks=20;flat=6;knock=1.8;up=0.35;vfxlead=2;element=earth;vfx=basilisksweep/sweep_wild;spell=mob_tail_sweep} @target
+CHA_MOB_tail_sweep_basilisk_wild_shiny:
+  Cooldown: 9
+  Conditions:
+  - targetwithin{d=12} true
+  Skills:
+  - state{s=tail_sweep;li=0;lo=3} @self
+  - chatelegraph{shape=cone;at=caster;r=9;angle=180;ticks=20;flat=6;knock=1.8;up=0.35;vfxlead=2;element=earth;vfx=basilisksweep/sweep_wild_s;spell=mob_tail_sweep} @target
+
+# ---- 와이번 4종 - 꼬리 가시 (모션 tail_spikes, 예고 1.0초)
+CHA_MOB_tail_spikes_wyvern_ender:
+  Cooldown: 11
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=tail_spikes;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=dark;status=blindness:20;vfx=wyvernspikes/spikes_ender;spell=mob_tail_spikes} @target
+  - delay 8
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=dark;status=blindness:20;vfx=wyvernspikes/spikes_ender;spell=mob_tail_spikes} @target
+  - delay 8
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=dark;status=blindness:20;vfx=wyvernspikes/spikes_ender;spell=mob_tail_spikes} @target
+CHA_MOB_tail_spikes_wyvern_ender_shiny:
+  Cooldown: 11
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=tail_spikes;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=dark;status=blindness:20;vfx=wyvernspikes/spikes_ender_s;spell=mob_tail_spikes} @target
+  - delay 8
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=dark;status=blindness:20;vfx=wyvernspikes/spikes_ender_s;spell=mob_tail_spikes} @target
+  - delay 8
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=dark;status=blindness:20;vfx=wyvernspikes/spikes_ender_s;spell=mob_tail_spikes} @target
+CHA_MOB_tail_spikes_wyvern_green:
+  Cooldown: 11
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=tail_spikes;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=earth;status=poison:40;vfx=wyvernspikes/spikes_green;spell=mob_tail_spikes} @target
+  - delay 8
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=earth;status=poison:40;vfx=wyvernspikes/spikes_green;spell=mob_tail_spikes} @target
+  - delay 8
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=earth;status=poison:40;vfx=wyvernspikes/spikes_green;spell=mob_tail_spikes} @target
+CHA_MOB_tail_spikes_wyvern_green_shiny:
+  Cooldown: 11
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=tail_spikes;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=earth;status=poison:40;vfx=wyvernspikes/spikes_green_s;spell=mob_tail_spikes} @target
+  - delay 8
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=earth;status=poison:40;vfx=wyvernspikes/spikes_green_s;spell=mob_tail_spikes} @target
+  - delay 8
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=earth;status=poison:40;vfx=wyvernspikes/spikes_green_s;spell=mob_tail_spikes} @target
+CHA_MOB_tail_spikes_wyvern_inferno:
+  Cooldown: 11
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=tail_spikes;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=fire;status=burn:40;vfx=wyvernspikes/spikes_inferno;spell=mob_tail_spikes} @target
+  - delay 8
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=fire;status=burn:40;vfx=wyvernspikes/spikes_inferno;spell=mob_tail_spikes} @target
+  - delay 8
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=fire;status=burn:40;vfx=wyvernspikes/spikes_inferno;spell=mob_tail_spikes} @target
+CHA_MOB_tail_spikes_wyvern_inferno_shiny:
+  Cooldown: 11
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=tail_spikes;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=fire;status=burn:40;vfx=wyvernspikes/spikes_inferno_s;spell=mob_tail_spikes} @target
+  - delay 8
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=fire;status=burn:40;vfx=wyvernspikes/spikes_inferno_s;spell=mob_tail_spikes} @target
+  - delay 8
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=fire;status=burn:40;vfx=wyvernspikes/spikes_inferno_s;spell=mob_tail_spikes} @target
+CHA_MOB_tail_spikes_wyvern_undead:
+  Cooldown: 11
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=tail_spikes;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=dark;status=magic_weakness:40;vfx=wyvernspikes/spikes_undead;spell=mob_tail_spikes} @target
+  - delay 8
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=dark;status=magic_weakness:40;vfx=wyvernspikes/spikes_undead;spell=mob_tail_spikes} @target
+  - delay 8
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=dark;status=magic_weakness:40;vfx=wyvernspikes/spikes_undead;spell=mob_tail_spikes} @target
+CHA_MOB_tail_spikes_wyvern_undead_shiny:
+  Cooldown: 11
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=tail_spikes;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=dark;status=magic_weakness:40;vfx=wyvernspikes/spikes_undead_s;spell=mob_tail_spikes} @target
+  - delay 8
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=dark;status=magic_weakness:40;vfx=wyvernspikes/spikes_undead_s;spell=mob_tail_spikes} @target
+  - delay 8
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=4;vfxref=4;vfxlead=6;element=dark;status=magic_weakness:40;vfx=wyvernspikes/spikes_undead_s;spell=mob_tail_spikes} @target
+
+# ---- 만티코어 4종 - 포효 도약 (모션 roar_leap, 예고 1.0초)
+CHA_MOB_roar_leap_manticore_aether:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=roar_leap;li=0;lo=3} @self
+  - leap{velocity=150;noise=0} @target
+  - chatelegraph{shape=circle;at=target;r=8;ticks=20;flat=7;status=fear:20;vfxref=8;vfxlead=2;element=wind;vfx=manticoreroar/roar_aether;spell=mob_roar_leap} @target
+CHA_MOB_roar_leap_manticore_aether_shiny:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=roar_leap;li=0;lo=3} @self
+  - leap{velocity=150;noise=0} @target
+  - chatelegraph{shape=circle;at=target;r=8;ticks=20;flat=7;status=fear:20;vfxref=8;vfxlead=2;element=wind;vfx=manticoreroar/roar_aether_s;spell=mob_roar_leap} @target
+CHA_MOB_roar_leap_manticore_dusk:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=roar_leap;li=0;lo=3} @self
+  - leap{velocity=150;noise=0} @target
+  - chatelegraph{shape=circle;at=target;r=8;ticks=20;flat=7;status=fear:20;vfxref=8;vfxlead=2;element=light;vfx=manticoreroar/roar_dusk;spell=mob_roar_leap} @target
+CHA_MOB_roar_leap_manticore_dusk_shiny:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=roar_leap;li=0;lo=3} @self
+  - leap{velocity=150;noise=0} @target
+  - chatelegraph{shape=circle;at=target;r=8;ticks=20;flat=7;status=fear:20;vfxref=8;vfxlead=2;element=light;vfx=manticoreroar/roar_dusk_s;spell=mob_roar_leap} @target
+CHA_MOB_roar_leap_manticore_soul:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=roar_leap;li=0;lo=3} @self
+  - leap{velocity=150;noise=0} @target
+  - chatelegraph{shape=circle;at=target;r=8;ticks=20;flat=7;status=fear:20;vfxref=8;vfxlead=2;element=dark;vfx=manticoreroar/roar_soul;spell=mob_roar_leap} @target
+CHA_MOB_roar_leap_manticore_soul_shiny:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=roar_leap;li=0;lo=3} @self
+  - leap{velocity=150;noise=0} @target
+  - chatelegraph{shape=circle;at=target;r=8;ticks=20;flat=7;status=fear:20;vfxref=8;vfxlead=2;element=dark;vfx=manticoreroar/roar_soul_s;spell=mob_roar_leap} @target
+CHA_MOB_roar_leap_manticore_venom:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=roar_leap;li=0;lo=3} @self
+  - leap{velocity=150;noise=0} @target
+  - chatelegraph{shape=circle;at=target;r=8;ticks=20;flat=7;vfxref=8;vfxlead=2;element=earth;status=fear:20,poison:40;vfx=manticoreroar/roar_venom;spell=mob_roar_leap} @target
+CHA_MOB_roar_leap_manticore_venom_shiny:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - state{s=roar_leap;li=0;lo=3} @self
+  - leap{velocity=150;noise=0} @target
+  - chatelegraph{shape=circle;at=target;r=8;ticks=20;flat=7;vfxref=8;vfxlead=2;element=earth;status=fear:20,poison:40;vfx=manticoreroar/roar_venom_s;spell=mob_roar_leap} @target
