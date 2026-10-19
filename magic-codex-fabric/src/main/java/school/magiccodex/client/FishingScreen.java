@@ -113,6 +113,7 @@ final class FishingScreen extends Screen {
         if (s.phase() == FishingProtocol.PHASE_WATER) {
             setPhase(SINKING);
             bobberDepth = 0; camTop = -1; bite = null; result = null;
+            stopped = hooked = missed = spooked = holding = false;
             ripples.add(new float[]{BOBBER_X, surfaceY(), Util.getMeasuringTimeMs()});
             sound(SoundEvents.ENTITY_FISHING_BOBBER_SPLASH, 1.1f, .35f);
         } else {
@@ -164,7 +165,7 @@ final class FishingScreen extends Screen {
         gearList = g; gearOpen = true; gearNotice = g.notice();
         if (g.gear() != null) gear = g.gear();
         if (phase == NONE && session == 0) setPhase(NONE);
-        gearSelected = Math.min(gearSelected, cards().size() - 1);
+        gearSelected = Math.min(gearSelected, cards().size());   // 0 = the equipped piece, then the owned cards
         if (gearSelected < 0 && !cards().isEmpty()) gearSelected = 0;
     }
 
@@ -295,7 +296,8 @@ final class FishingScreen extends Screen {
     }
 
     private void startReel() {
-        fishDepth = bobberDepth; stamina = 1; tension = .2f; overFor = 0; graceUsed = false; holding = false;
+        // the button is still down from the hooking click: winding starts right away
+        fishDepth = bobberDepth; stamina = 1; tension = .2f; overFor = 0; graceUsed = false; holding = true;
         fishX = BOBBER_X; wobble = 0;
         nextEvent = 1.5f + rng.nextFloat() * 2; eventEnd = 0; eventKind = 0;
         sound(SoundEvents.ENTITY_FISHING_BOBBER_SPLASH, .7f, .6f);
@@ -335,6 +337,7 @@ final class FishingScreen extends Screen {
         float pull = (.18f + power * .055f) * (.35f + .65f * stamina) * mod;
         float reel = FishingProtocol.reelSpeed(gear == null ? 10 : gear.reelPower());
         if (background == FishingProtocol.BG_OCEAN) reel *= effect(FishingProtocol.ROD, "sea_reel");
+        if (bite.magic()) reel *= effect(FishingProtocol.ROD, "magic_reel");
         float down = (.6f + power * .35f) * (.35f + .65f * stamina) * mod * (bite.pattern() == FishingProtocol.DIVE && t < eventEnd ? 1.8f : 1);
         if (holding) fishDepth -= reel * Math.max(.15f, 1 - .55f * pull) * dt;
         else fishDepth += down * dt;
@@ -376,7 +379,8 @@ final class FishingScreen extends Screen {
 
     @Override public void tick() {
         if (client == null || client.player == null || !client.player.isAlive()) { close(); return; }
-        if (phase == WAIT_RESULT && since(phaseAt) > 6) { say("서버 응답이 늦어요."); setPhase(READY); }
+        if (phase == WAIT_RESULT && since(phaseAt) > 8) { client.inGameHud.setOverlayMessage(Text.literal("서버 응답이 늦어서 낚시를 멈췄어요."), false); close(); return; }
+        if (phase == CASTING && since(phaseAt) > 10) { say("찌를 던지지 못했어요. 다시 클릭해 주세요."); setPhase(READY); }
     }
 
     // ------------------------------------------------------------------ input

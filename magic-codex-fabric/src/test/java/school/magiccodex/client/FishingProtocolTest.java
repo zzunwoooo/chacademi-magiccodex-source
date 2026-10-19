@@ -19,7 +19,7 @@ class FishingProtocolTest {
     @Test void roundTrip() {
         var frames = List.<Frame>of(
                 new Session(7, FishingProtocol.PHASE_WATER, FishingProtocol.BG_OCEAN, 15, 3, 4096, gear(), ""),
-                new Bite(7, 99, FishingProtocol.SHAPE_EEL, .4f, -1, 3000, 2, 600, 3, FishingProtocol.DIVE, 1234L, 12.5f),
+                new Bite(7, 99, FishingProtocol.SHAPE_EEL, .4f, -1, 3000, 2, 600, 3, FishingProtocol.DIVE, 1234L, 12.5f, true),
                 new Result(7, FishingProtocol.CAUGHT, "fish_001", "붕어", 0, 0, 21.4f, true, false,
                         List.of(new Reward("붕어", 1, new byte[]{1, 2, 3})), false, gear(), "알림"),
                 new Close(7, "끝"),

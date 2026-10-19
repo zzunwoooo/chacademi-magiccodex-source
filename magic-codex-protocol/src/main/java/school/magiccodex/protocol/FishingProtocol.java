@@ -87,10 +87,11 @@ public final class FishingProtocol {
     }
     /**
      * What will bite. waitMs = until it starts coming, teases = fake nibbles before the real one, hookWindowMs = the
-     * reaction window, size = 0..1 within the silhouette range, grade = -1 unless the float reveals it.
+     * reaction window, size = 0..1 within the silhouette range, grade = -1 unless the float reveals it, magic = a magic fish
+     * (the mana-amplifier rod reels it faster).
      */
     public record Bite(long session, int token, int shape, float size, int grade, int waitMs, int teases, int hookWindowMs,
-                       int power, int pattern, long seed, float depth) implements Frame {
+                       int power, int pattern, long seed, float depth, boolean magic) implements Frame {
         public Bite {
             if (shape < 0 || shape > SHAPE_CHEST || !Float.isFinite(size) || size < 0 || size > 1 || grade < -1 || grade > 3 || waitMs < 0 || waitMs > 60000
                     || teases < 0 || teases > 8 || hookWindowMs < 100 || hookWindowMs > 5000 || power < 1 || power > 10 || pattern < 0
@@ -215,7 +216,7 @@ public final class FishingProtocol {
                 case Bite b -> {
                     d.writeByte(FRAME_BITE); d.writeLong(b.session()); d.writeInt(b.token()); d.writeByte(b.shape()); d.writeFloat(b.size());
                     d.writeByte(b.grade() + 1); d.writeInt(b.waitMs()); d.writeByte(b.teases()); d.writeInt(b.hookWindowMs()); d.writeByte(b.power());
-                    d.writeByte(b.pattern()); d.writeLong(b.seed()); d.writeFloat(b.depth());
+                    d.writeByte(b.pattern()); d.writeLong(b.seed()); d.writeFloat(b.depth()); d.writeBoolean(b.magic());
                 }
                 case Result r -> {
                     d.writeByte(FRAME_RESULT); d.writeLong(r.session()); d.writeByte(r.outcome()); d.writeUTF(r.fishId()); d.writeUTF(r.name());
@@ -256,7 +257,7 @@ public final class FishingProtocol {
                 case FRAME_SESSION -> new Session(d.readLong(), d.readUnsignedByte(), d.readUnsignedByte(), d.readFloat(), d.readUnsignedByte(),
                         d.readInt(), gear(d), d.readUTF());
                 case FRAME_BITE -> new Bite(d.readLong(), d.readInt(), d.readUnsignedByte(), d.readFloat(), d.readUnsignedByte() - 1, d.readInt(),
-                        d.readUnsignedByte(), d.readInt(), d.readUnsignedByte(), d.readUnsignedByte(), d.readLong(), d.readFloat());
+                        d.readUnsignedByte(), d.readInt(), d.readUnsignedByte(), d.readUnsignedByte(), d.readLong(), d.readFloat(), d.readBoolean());
                 case FRAME_RESULT -> {
                     long session = d.readLong(); int outcome = d.readUnsignedByte(); String id = d.readUTF(), name = d.readUTF();
                     int grade = d.readUnsignedByte(), shape = d.readUnsignedByte(); float size = d.readFloat();
