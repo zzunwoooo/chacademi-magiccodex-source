@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 
 class TelegraphMechTest {
     @Test void vfxIdGetsThePackPrefix() {
-        assertEquals("claude:blazepillar/erupt", TelegraphMech.vfxId("blazepillar/erupt"));
-        assertEquals("claude:blazepillar/erupt", TelegraphMech.vfxId("Claude:BlazePillar/erupt"));
+        assertEquals("claude:sealcircle/seal", TelegraphMech.vfxId("sealcircle/seal"));
+        assertEquals("claude:sealcircle/seal", TelegraphMech.vfxId("Claude:SealCircle/seal"));
         assertEquals("", TelegraphMech.vfxId(""));
         assertEquals("", TelegraphMech.vfxId("bad id!"));
     }

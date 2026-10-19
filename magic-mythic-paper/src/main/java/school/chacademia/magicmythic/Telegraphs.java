@@ -8,6 +8,10 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.scheduler.BukkitTask;
 import school.magiccodex.protocol.TelegraphProtocol;
 import school.magiccodex.protocol.TelegraphProtocol.Show;
@@ -16,15 +20,17 @@ import school.magiccodex.protocol.TelegraphProtocol.Show;
  * Ground warnings for enemy area attacks ({@link TelegraphProtocol}). A warning is sent to every listening player
  * nearby, and after its ticks the callback runs with the same {@link Show} so the hit test matches what was drawn.
  * The warning is cancelled (CLEAR, no hit) when the caster dies or leaves the world first.
+ * Load: one packet (~60 bytes) per warning to players within range, one delayed task, one entity scan at the hit;
+ * the client draws it. Nothing runs per tick.
  */
-final class Telegraphs implements AutoCloseable {
+final class Telegraphs implements AutoCloseable, Listener {
     private final MagicMythicPlugin plugin;
     private final Map<Integer, Live> live = new HashMap<>();
     private int nextId = 1;
     private double range = 64;
     private int limit = 128;
 
-    private record Live(Show show, LivingEntity caster, String world, BukkitTask task) {}
+    private record Live(Show show, LivingEntity caster, String world, boolean cancelOnDeath, BukkitTask task) {}
 
     Telegraphs(MagicMythicPlugin plugin) {
         this.plugin = plugin;
@@ -48,17 +54,14 @@ final class Telegraphs implements AutoCloseable {
         if (live.size() >= limit) return false;
         send(world, show.x(), show.z(), TelegraphProtocol.encode(show));
         int id = show.id();
-        BukkitTask task = new org.bukkit.scheduler.BukkitRunnable() {
-            int left = show.ticks();
-            @Override public void run() {
-                if (cancelOnDeath && caster != null && (!caster.isValid() || caster.isDead() || !caster.getWorld().equals(world))) { clear(id); return; }
-                if (--left > 0) return;
-                live.remove(id);
-                cancel();
-                try { then.accept(show); } catch (RuntimeException e) { plugin.getLogger().warning("예고 장판 판정 오류: " + e); }
-            }
-        }.runTaskTimer(plugin, 1, 1);
-        live.put(id, new Live(show, caster, world.getName(), task));
+        // One delayed task per warning (no per-tick work). A caster dying early is handled by the death listener.
+        BukkitTask task = Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            Live l = live.remove(id);
+            if (l == null) return;
+            if (cancelOnDeath && caster != null && (!caster.isValid() || caster.isDead() || !caster.getWorld().equals(world))) { sendClear(l); return; }
+            try { then.accept(show); } catch (RuntimeException e) { plugin.getLogger().warning("예고 장판 판정 오류: " + e); }
+        }, show.ticks());
+        live.put(id, new Live(show, caster, world.getName(), cancelOnDeath, task));
         return true;
     }
 
@@ -67,8 +70,20 @@ final class Telegraphs implements AutoCloseable {
         Live l = live.remove(id);
         if (l == null) return;
         l.task().cancel();
+        sendClear(l);
+    }
+
+    private void sendClear(Live l) {
         World w = Bukkit.getWorld(l.world());
-        if (w != null) send(w, l.show().x(), l.show().z(), TelegraphProtocol.encode(new TelegraphProtocol.Clear(id)));
+        if (w != null) send(w, l.show().x(), l.show().z(), TelegraphProtocol.encode(new TelegraphProtocol.Clear(l.show().id())));
+    }
+
+    /** The caster died: its warnings vanish at once and never hit. Costs nothing while no warning is live. */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void death(EntityDeathEvent event) {
+        if (live.isEmpty()) return;
+        var dead = event.getEntity();
+        for (var e : List.copyOf(live.entrySet())) if (e.getValue().cancelOnDeath() && dead.equals(e.getValue().caster())) clear(e.getKey());
     }
 
     int count() { return live.size(); }

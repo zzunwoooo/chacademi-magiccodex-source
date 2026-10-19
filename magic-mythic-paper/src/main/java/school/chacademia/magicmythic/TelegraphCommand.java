@@ -9,9 +9,9 @@ import school.magiccodex.protocol.TelegraphProtocol.Shape;
 import school.magiccodex.protocol.TelegraphProtocol.Show;
 
 /**
- * 테스트용 (피해 없음, 보이기만): /마법미몹 예고 <원형|직선|부채꼴|전부|화염기둥> [초=1]
- *  원형/화염기둥 = 바라보는 블록(최대 24칸) 중심 반경 3, 직선 = 내 발에서 바라보는 방향 길이 8 폭 2, 부채꼴 = 반경 6 각도 70.
- *  화염기둥 = 블레이즈 스킬과 같은 예고 1초 + BlazePillar VFX (PortableVFX에 blazepillar 팩이 있어야 보임).
+ * 테스트용 (피해 없음, 보이기만): /마법미몹 예고 <원형|직선|부채꼴|전부|봉인진|봉인진이로치> [초=1]
+ *  원형 = 바라보는 블록(최대 24칸) 중심 반경 3, 직선 = 내 발에서 바라보는 방향 길이 8 폭 2, 부채꼴 = 반경 6 각도 70.
+ *  봉인진(이로치) = 봉인의 술사 스킬과 같은 반경 4 예고 1.2초 + SealCircle VFX (PortableVFX에 sealcircle 팩이 있어야 보임).
  */
 final class TelegraphCommand {
     private TelegraphCommand() {}
@@ -38,14 +38,16 @@ final class TelegraphCommand {
                 show(plugin, p, new Show(t.id(), Shape.LINE, feet.getX(), Telegraphs.ground(feet), feet.getZ(), yaw + 35, 8, 2, 0, ticks, TelegraphProtocol.RED));
                 show(plugin, p, new Show(t.id(), Shape.CONE, left.getX(), Telegraphs.ground(left), left.getZ(), yaw, 6, 0, 70, ticks, TelegraphProtocol.RED));
             }
-            case "화염기둥", "blaze" -> {
-                var s = circle(t, look, 3, ticks);
+            case "봉인진", "seal", "봉인진이로치", "seal_ruby" -> {
+                int warn = a.length < 2 ? 24 : ticks; // 초를 안 적으면 실제 스킬과 같은 1.2초
+                var s = circle(t, look, 4, warn);
                 show(plugin, p, s);
                 var at = new Location(p.getWorld(), s.x(), s.y(), s.z());
+                String id = kind.endsWith("이로치") || kind.endsWith("ruby") ? "claude:sealcircle/seal_ruby" : "claude:sealcircle/seal";
                 plugin.getServer().getScheduler().runTaskLater(plugin,
-                    () -> plugin.reactions().vfx().effect("claude:blazepillar/erupt", at, 1, 0, 40, 0xFFFFFF), Math.max(1, ticks - 2));
+                    () -> plugin.reactions().vfx().effect(id, at, 1, 0, 40, 0xFFFFFF), Math.max(1, warn - 2));
             }
-            default -> { return "/마법미몹 예고 <원형|직선|부채꼴|전부|화염기둥> [초]"; }
+            default -> { return "/마법미몹 예고 <원형|직선|부채꼴|전부|봉인진|봉인진이로치> [초]"; }
         }
         return "예고 장판 " + kind + " " + seconds + "초 (피해 없음)";
     }

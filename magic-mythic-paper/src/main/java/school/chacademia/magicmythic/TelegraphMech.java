@@ -17,7 +17,7 @@ import school.magiccodex.protocol.TelegraphProtocol.Show;
  *   r=3 (circle/cone radius)  length=8 width=2 (line)  angle=60 (cone, full degrees)  ticks=20 (warning)
  *   flat=6 / mult (damage, Ctx.dmg)  element=fire  ignite=60  status=burn:60,slow:40:0.3 (Targets.sideEffects)
  *   hits=players|enemies (default players: mob skills hit players only)  height=3 (vertical reach above the ground)
- *   vfx=blazepillar/erupt (PortableVFX id; "claude:" added when missing)  vfxlead=2 (ticks before the hit)
+ *   vfx=sealcircle/seal (PortableVFX id; "claude:" added when missing)  vfxlead=2 (ticks before the hit)
  *   vfxref=3 (authored radius: scale = r / vfxref)  tint=FFFFFF (colour-variant mobs)  cancel=true (caster death cancels)
  *
  * Shape, origin and yaw are fixed when the warning starts; the hit uses the same {@link Show}.
