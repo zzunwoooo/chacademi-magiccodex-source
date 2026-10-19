@@ -9,6 +9,6 @@ discovery:
 research: 영록이 발을 구르면 그곳은 그의 땅이 된다. 남의 발은 땅에 붙어 있지 못한다.
 cast:
   command: 마법 domain_stomp
-  cooldown-seconds: 14
-  mana-cost: 40
+  cooldown-seconds: 25
+  mana-cost: 120
 order: 305

@@ -9,6 +9,6 @@ discovery:
 research: 히포그리프의 깃털은 떨어지지 않는다. 날아간다.
 cast:
   command: 마법 feather_storm
-  cooldown-seconds: 12
-  mana-cost: 35
+  cooldown-seconds: 16
+  mana-cost: 90
 order: 319

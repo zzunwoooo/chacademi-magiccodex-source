@@ -9,6 +9,6 @@ discovery:
 research: 바람이 무겁다고 느껴진다면, 그것은 날개가 너를 내려다보고 있기 때문이다.
 cast:
   command: 마법 gale_wings
-  cooldown-seconds: 16
-  mana-cost: 40
+  cooldown-seconds: 25
+  mana-cost: 110
 order: 318

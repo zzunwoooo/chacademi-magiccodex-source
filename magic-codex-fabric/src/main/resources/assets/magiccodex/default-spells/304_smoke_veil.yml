@@ -9,6 +9,6 @@ discovery:
 research: 약초 도둑은 싸우지 않는다. 연기가 걷히면 이미 없다.
 cast:
   command: 마법 smoke_veil
-  cooldown-seconds: 20
-  mana-cost: 35
+  cooldown-seconds: 30
+  mana-cost: 80
 order: 304

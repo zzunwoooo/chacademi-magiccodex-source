@@ -9,6 +9,6 @@ discovery:
 research: 요정의 장난은 해롭지 않다. 다만 깨어났을 때 모든 것이 바뀌어 있을 뿐.
 cast:
   command: 마법 fairy_dust
-  cooldown-seconds: 20
-  mana-cost: 40
+  cooldown-seconds: 45
+  mana-cost: 200
 order: 316

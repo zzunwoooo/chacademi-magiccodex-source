@@ -9,6 +9,6 @@ discovery:
 research: 봉인의 술사는 칼을 빼앗지 않는다. 칼을 쥘 이유를 잊게 한다.
 cast:
   command: 마법 seal_circle
-  cooldown-seconds: 16
-  mana-cost: 45
+  cooldown-seconds: 30
+  mana-cost: 150
 order: 306

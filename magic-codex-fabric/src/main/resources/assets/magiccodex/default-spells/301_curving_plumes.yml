@@ -9,6 +9,6 @@ discovery:
 research: 피닉스의 깃털은 바람을 타고 돌아 들어온다. 막아도 옆에서 닿는다.
 cast:
   command: 마법 curving_plumes
-  cooldown-seconds: 8
-  mana-cost: 30
+  cooldown-seconds: 14
+  mana-cost: 90
 order: 301

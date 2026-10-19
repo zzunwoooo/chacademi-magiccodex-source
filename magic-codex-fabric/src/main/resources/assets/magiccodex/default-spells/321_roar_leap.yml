@@ -9,6 +9,6 @@ discovery:
 research: 만티코어의 포효는 착지보다 먼저 도착한다.
 cast:
   command: 마법 roar_leap
-  cooldown-seconds: 16
-  mana-cost: 40
+  cooldown-seconds: 25
+  mana-cost: 130
 order: 321

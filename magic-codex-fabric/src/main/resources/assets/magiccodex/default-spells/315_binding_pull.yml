@@ -9,6 +9,6 @@ discovery:
 research: 하늘뱀은 먹이를 쫓지 않는다. 바람을 감아 당길 뿐이다.
 cast:
   command: 마법 binding_pull
-  cooldown-seconds: 18
-  mana-cost: 45
+  cooldown-seconds: 30
+  mana-cost: 150
 order: 315

@@ -9,6 +9,6 @@ discovery:
 research: 검치호는 두 번 뛰지 않는다.
 cast:
   command: 마법 hunting_pounce
-  cooldown-seconds: 14
-  mana-cost: 35
+  cooldown-seconds: 22
+  mana-cost: 110
 order: 320

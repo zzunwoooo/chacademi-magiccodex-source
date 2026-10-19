@@ -8351,12 +8351,18 @@ spells:
     name: 여우불 공전
     permission: magic.learned.fox_orbit
     icon: ''
-    mana-cost: 30
-    cooldown-seconds: 8
-    reviewed: false
-    enabled: false
+    mana-cost: 90
+    cooldown-seconds: 14
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:kitsunefox/hit_normal
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: kitsunefox
   curving_plumes:
@@ -8364,12 +8370,18 @@ spells:
     name: 곡선 불깃털
     permission: magic.learned.curving_plumes
     icon: ''
-    mana-cost: 30
-    cooldown-seconds: 8
-    reviewed: false
-    enabled: false
+    mana-cost: 90
+    cooldown-seconds: 14
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:phoenixfeather/hit_flame
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: phoenixfeather
   crystal_orbit:
@@ -8377,12 +8389,18 @@ spells:
     name: 결정 공전탄
     permission: magic.learned.crystal_orbit
     icon: ''
-    mana-cost: 45
-    cooldown-seconds: 14
-    reviewed: false
-    enabled: false
+    mana-cost: 120
+    cooldown-seconds: 20
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:glacialshards/hit_glacial
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: glacialshards
   venom_spit:
@@ -8390,12 +8408,18 @@ spells:
     name: 독 뱉기
     permission: magic.learned.venom_spit
     icon: ''
-    mana-cost: 30
-    cooldown-seconds: 10
-    reviewed: false
-    enabled: false
+    mana-cost: 70
+    cooldown-seconds: 14
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:basiliskspit/hit_wild
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: basiliskspit
   smoke_veil:
@@ -8403,12 +8427,18 @@ spells:
     name: 연막 은신
     permission: magic.learned.smoke_veil
     icon: ''
-    mana-cost: 35
-    cooldown-seconds: 20
-    reviewed: false
-    enabled: false
+    mana-cost: 80
+    cooldown-seconds: 30
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:smokebomb/smoke
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: smokebomb
   domain_stomp:
@@ -8416,12 +8446,18 @@ spells:
     name: 영역 선포
     permission: magic.learned.domain_stomp
     icon: ''
-    mana-cost: 40
-    cooldown-seconds: 14
-    reviewed: false
-    enabled: false
+    mana-cost: 120
+    cooldown-seconds: 25
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:domainseal/domain_heavenly
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: domainseal
   seal_circle:
@@ -8429,12 +8465,18 @@ spells:
     name: 봉인진
     permission: magic.learned.seal_circle
     icon: ''
-    mana-cost: 45
-    cooldown-seconds: 16
-    reviewed: false
-    enabled: false
+    mana-cost: 150
+    cooldown-seconds: 30
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:sealcircle/seal
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: sealcircle
   seal_talismans:
@@ -8442,12 +8484,18 @@ spells:
     name: 봉인 부적
     permission: magic.learned.seal_talismans
     icon: ''
-    mana-cost: 25
-    cooldown-seconds: 7
-    reviewed: false
-    enabled: false
+    mana-cost: 60
+    cooldown-seconds: 10
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:sealtalisman/hit_seal
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: sealtalisman
   shield_slam:
@@ -8455,12 +8503,18 @@ spells:
     name: 방패 내려찍기
     permission: magic.learned.shield_slam
     icon: ''
-    mana-cost: 30
-    cooldown-seconds: 10
-    reviewed: false
-    enabled: false
+    mana-cost: 80
+    cooldown-seconds: 15
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:sealshield/shield
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: sealshield
   chain_arrow:
@@ -8468,12 +8522,18 @@ spells:
     name: 사슬 화살
     permission: magic.learned.chain_arrow
     icon: ''
-    mana-cost: 20
-    cooldown-seconds: 6
-    reviewed: false
-    enabled: false
+    mana-cost: 30
+    cooldown-seconds: 7
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:chainarrow/hit_chain
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: chainarrow
   mana_drain:
@@ -8481,12 +8541,18 @@ spells:
     name: 마나 흡수
     permission: magic.learned.mana_drain
     icon: ''
-    mana-cost: 40
-    cooldown-seconds: 16
-    reviewed: false
-    enabled: false
+    mana-cost: 120
+    cooldown-seconds: 25
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:phantomdrain/drain_ender
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: phantomdrain
   soul_scythe:
@@ -8494,12 +8560,18 @@ spells:
     name: 영혼 낫
     permission: magic.learned.soul_scythe
     icon: ''
-    mana-cost: 25
-    cooldown-seconds: 7
-    reviewed: false
-    enabled: false
+    mana-cost: 60
+    cooldown-seconds: 12
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:phantomscythe/reap_ender
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: phantomscythe
   oblivion_orbs:
@@ -8507,12 +8579,18 @@ spells:
     name: 망각의 탄환
     permission: magic.learned.oblivion_orbs
     icon: ''
-    mana-cost: 30
-    cooldown-seconds: 9
-    reviewed: false
-    enabled: false
+    mana-cost: 70
+    cooldown-seconds: 12
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:skelorb/hit
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: skelorb
   bone_grasp:
@@ -8520,12 +8598,18 @@ spells:
     name: 뼈의 손아귀
     permission: magic.learned.bone_grasp
     icon: ''
-    mana-cost: 40
-    cooldown-seconds: 16
-    reviewed: false
-    enabled: false
+    mana-cost: 150
+    cooldown-seconds: 30
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:bonegrasp/grasp
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: bonegrasp
   shadow_leap:
@@ -8533,12 +8617,18 @@ spells:
     name: 그림자 도약
     permission: magic.learned.shadow_leap
     icon: ''
-    mana-cost: 40
-    cooldown-seconds: 14
-    reviewed: false
-    enabled: false
+    mana-cost: 120
+    cooldown-seconds: 25
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:specialkitsune/in_normal
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: specialkitsune
   binding_pull:
@@ -8546,12 +8636,18 @@ spells:
     name: 끌어오기
     permission: magic.learned.binding_pull
     icon: ''
-    mana-cost: 45
-    cooldown-seconds: 18
-    reviewed: false
-    enabled: false
+    mana-cost: 150
+    cooldown-seconds: 30
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:specialserpent/mark_jade
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: specialserpent
   fairy_dust:
@@ -8559,12 +8655,18 @@ spells:
     name: 요정 가루
     permission: magic.learned.fairy_dust
     icon: ''
-    mana-cost: 40
-    cooldown-seconds: 20
-    reviewed: false
-    enabled: false
+    mana-cost: 200
+    cooldown-seconds: 45
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:fairydust/dust_flower
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: fairydust
   moon_wind:
@@ -8572,12 +8674,18 @@ spells:
     name: 반달 바람날
     permission: magic.learned.moon_wind
     icon: ''
-    mana-cost: 25
-    cooldown-seconds: 7
-    reviewed: false
-    enabled: false
+    mana-cost: 60
+    cooldown-seconds: 12
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:pegasuscrescent/moon
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: pegasuscrescent
   gale_wings:
@@ -8585,12 +8693,18 @@ spells:
     name: 돌풍 날갯짓
     permission: magic.learned.gale_wings
     icon: ''
-    mana-cost: 40
-    cooldown-seconds: 16
-    reviewed: false
-    enabled: false
+    mana-cost: 110
+    cooldown-seconds: 25
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:galewings/gale
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: galewings
   feather_storm:
@@ -8598,12 +8712,18 @@ spells:
     name: 깃털 폭풍
     permission: magic.learned.feather_storm
     icon: ''
-    mana-cost: 35
-    cooldown-seconds: 12
-    reviewed: false
-    enabled: false
+    mana-cost: 90
+    cooldown-seconds: 16
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:featherstorm/fstorm_common
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: featherstorm
   hunting_pounce:
@@ -8611,12 +8731,18 @@ spells:
     name: 사냥 도약
     permission: magic.learned.hunting_pounce
     icon: ''
-    mana-cost: 35
-    cooldown-seconds: 14
-    reviewed: false
-    enabled: false
+    mana-cost: 110
+    cooldown-seconds: 22
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:sabertoothpounce/pounce_arctic
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: sabertoothpounce
   roar_leap:
@@ -8624,12 +8750,18 @@ spells:
     name: 포효 도약
     permission: magic.learned.roar_leap
     icon: ''
-    mana-cost: 40
-    cooldown-seconds: 16
-    reviewed: false
-    enabled: false
+    mana-cost: 130
+    cooldown-seconds: 25
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:manticoreroar/roar_aether
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: manticoreroar
   gravity_slam:
@@ -8637,12 +8769,18 @@ spells:
     name: 중력 강타
     permission: magic.learned.gravity_slam
     icon: ''
-    mana-cost: 45
-    cooldown-seconds: 16
-    reviewed: false
-    enabled: false
+    mana-cost: 180
+    cooldown-seconds: 35
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:gravityslam/gravity_arcane
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: gravityslam
   tail_spikes:
@@ -8650,11 +8788,17 @@ spells:
     name: 꼬리 가시
     permission: magic.learned.tail_spikes
     icon: ''
-    mana-cost: 35
-    cooldown-seconds: 12
-    reviewed: false
-    enabled: false
+    mana-cost: 110
+    cooldown-seconds: 20
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:wyvernspikes/spikes_green
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: wyvernspikes

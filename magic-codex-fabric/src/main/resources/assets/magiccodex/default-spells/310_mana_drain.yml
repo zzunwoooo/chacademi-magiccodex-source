@@ -9,6 +9,6 @@ discovery:
 research: 팬텀은 피를 마시지 않는다. 마력이 흐르는 소리를 마신다.
 cast:
   command: 마법 mana_drain
-  cooldown-seconds: 16
-  mana-cost: 40
+  cooldown-seconds: 25
+  mana-cost: 120
 order: 310

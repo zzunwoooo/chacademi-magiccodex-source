@@ -9,6 +9,6 @@ discovery:
 research: 망자의 손은 놓는 법을 모른다.
 cast:
   command: 마법 bone_grasp
-  cooldown-seconds: 16
-  mana-cost: 40
+  cooldown-seconds: 30
+  mana-cost: 150
 order: 313

@@ -9,6 +9,6 @@ discovery:
 research: 와이번의 꼬리는 한 번 휘두르면 세 번 떨어진다.
 cast:
   command: 마법 tail_spikes
-  cooldown-seconds: 12
-  mana-cost: 35
+  cooldown-seconds: 20
+  mana-cost: 110
 order: 323

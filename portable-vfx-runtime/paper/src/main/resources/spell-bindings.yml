@@ -6606,3 +6606,436 @@ bindings:
           - claude:earthelemental/idle
           - claude:earthelemental/walk
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  # ---- 300~323 몹 기술 습득 마법 (magic-mythic-paper/tools/mob_spells.py) ----
+  fox_orbit:
+    folder: MobSkill_fox_orbit
+    number: 300
+    range: 20
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:kitsunefox/hit_normal
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  curving_plumes:
+    folder: MobSkill_curving_plumes
+    number: 301
+    range: 20
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:phoenixfeather/hit_flame
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  crystal_orbit:
+    folder: MobSkill_crystal_orbit
+    number: 302
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:glacialshards/hit_glacial
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  venom_spit:
+    folder: MobSkill_venom_spit
+    number: 303
+    range: 18
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:basiliskspit/hit_wild
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  smoke_veil:
+    folder: MobSkill_smoke_veil
+    number: 304
+    range: 6
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:smokebomb/smoke
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  domain_stomp:
+    folder: MobSkill_domain_stomp
+    number: 305
+    range: 6
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:domainseal/domain_heavenly
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  seal_circle:
+    folder: MobSkill_seal_circle
+    number: 306
+    range: 16
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:sealcircle/seal
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  seal_talismans:
+    folder: MobSkill_seal_talismans
+    number: 307
+    range: 20
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:sealtalisman/hit_seal
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  shield_slam:
+    folder: MobSkill_shield_slam
+    number: 308
+    range: 5
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:sealshield/shield
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  chain_arrow:
+    folder: MobSkill_chain_arrow
+    number: 309
+    range: 22
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:chainarrow/hit_chain
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  mana_drain:
+    folder: MobSkill_mana_drain
+    number: 310
+    range: 14
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:phantomdrain/drain_ender
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  soul_scythe:
+    folder: MobSkill_soul_scythe
+    number: 311
+    range: 5
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:phantomscythe/reap_ender
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  oblivion_orbs:
+    folder: MobSkill_oblivion_orbs
+    number: 312
+    range: 20
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:skelorb/hit
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  bone_grasp:
+    folder: MobSkill_bone_grasp
+    number: 313
+    range: 15
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:bonegrasp/grasp
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  shadow_leap:
+    folder: MobSkill_shadow_leap
+    number: 314
+    range: 14
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:specialkitsune/in_normal
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  binding_pull:
+    folder: MobSkill_binding_pull
+    number: 315
+    range: 14
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:specialserpent/mark_jade
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  fairy_dust:
+    folder: MobSkill_fairy_dust
+    number: 316
+    range: 6
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:fairydust/dust_flower
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  moon_wind:
+    folder: MobSkill_moon_wind
+    number: 317
+    range: 10
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:pegasuscrescent/moon
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  gale_wings:
+    folder: MobSkill_gale_wings
+    number: 318
+    range: 6
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:galewings/gale
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  feather_storm:
+    folder: MobSkill_feather_storm
+    number: 319
+    range: 5
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:featherstorm/fstorm_common
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  hunting_pounce:
+    folder: MobSkill_hunting_pounce
+    number: 320
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:sabertoothpounce/pounce_arctic
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  roar_leap:
+    folder: MobSkill_roar_leap
+    number: 321
+    range: 14
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:manticoreroar/roar_aether
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  gravity_slam:
+    folder: MobSkill_gravity_slam
+    number: 322
+    range: 5
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:gravityslam/gravity_arcane
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast
+  tail_spikes:
+    folder: MobSkill_tail_spikes
+    number: 323
+    range: 16
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: external:mobskill
+        effect: claude:wyvernspikes/spikes_green
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Mob-skill spell - chatelegraph/chamobshot play the mob VFX pack directly; catalog only accepts the cast

@@ -9,6 +9,6 @@ discovery:
 research: 키츠네의 불은 곧장 날아가지 않는다. 한 바퀴 돌며 상대를 고른다.
 cast:
   command: 마법 fox_orbit
-  cooldown-seconds: 8
-  mana-cost: 30
+  cooldown-seconds: 14
+  mana-cost: 90
 order: 300

@@ -9,6 +9,6 @@ discovery:
 research: 부적은 바람을 거스르지 않는다. 돌아가더라도 반드시 닿는다.
 cast:
   command: 마법 seal_talismans
-  cooldown-seconds: 7
-  mana-cost: 25
+  cooldown-seconds: 10
+  mana-cost: 60
 order: 307

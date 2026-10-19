@@ -9,6 +9,6 @@ discovery:
 research: 빙핵의 수호자는 둘러싸이는 것을 두려워하지 않는다. 사방이 곧 과녁이다.
 cast:
   command: 마법 crystal_orbit
-  cooldown-seconds: 14
-  mana-cost: 45
+  cooldown-seconds: 20
+  mana-cost: 120
 order: 302

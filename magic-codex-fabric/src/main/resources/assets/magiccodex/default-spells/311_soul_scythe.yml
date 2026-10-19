@@ -9,6 +9,6 @@ discovery:
 research: 낫이 지나간 자리에는 상처보다 먼저 한기가 남는다.
 cast:
   command: 마법 soul_scythe
-  cooldown-seconds: 7
-  mana-cost: 25
+  cooldown-seconds: 12
+  mana-cost: 60
 order: 311

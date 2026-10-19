@@ -9,6 +9,6 @@ discovery:
 research: 봉인의 궁수는 쓰러뜨리려 쏘지 않는다. 붙잡아 두려 쏜다.
 cast:
   command: 마법 chain_arrow
-  cooldown-seconds: 6
-  mana-cost: 20
+  cooldown-seconds: 7
+  mana-cost: 30
 order: 309

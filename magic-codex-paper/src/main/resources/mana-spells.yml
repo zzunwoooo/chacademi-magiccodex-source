@@ -2099,169 +2099,169 @@ spells:
   # ---- 300~323 몹 기술 습득 마법 (magic-mythic-paper/tools/mob_spells.py) ----
   fox_orbit:
     name: 여우불 공전
-    enabled: false
+    enabled: true
     command: 마법 fox_orbit
     permission: magic.learned.fox_orbit
-    mana-cost: 30
-    cooldown-seconds: 8
+    mana-cost: 90
+    cooldown-seconds: 14
   curving_plumes:
     name: 곡선 불깃털
-    enabled: false
+    enabled: true
     command: 마법 curving_plumes
     permission: magic.learned.curving_plumes
-    mana-cost: 30
-    cooldown-seconds: 8
+    mana-cost: 90
+    cooldown-seconds: 14
   crystal_orbit:
     name: 결정 공전탄
-    enabled: false
+    enabled: true
     command: 마법 crystal_orbit
     permission: magic.learned.crystal_orbit
-    mana-cost: 45
-    cooldown-seconds: 14
+    mana-cost: 120
+    cooldown-seconds: 20
   venom_spit:
     name: 독 뱉기
-    enabled: false
+    enabled: true
     command: 마법 venom_spit
     permission: magic.learned.venom_spit
-    mana-cost: 30
-    cooldown-seconds: 10
+    mana-cost: 70
+    cooldown-seconds: 14
   smoke_veil:
     name: 연막 은신
-    enabled: false
+    enabled: true
     command: 마법 smoke_veil
     permission: magic.learned.smoke_veil
-    mana-cost: 35
-    cooldown-seconds: 20
+    mana-cost: 80
+    cooldown-seconds: 30
   domain_stomp:
     name: 영역 선포
-    enabled: false
+    enabled: true
     command: 마법 domain_stomp
     permission: magic.learned.domain_stomp
-    mana-cost: 40
-    cooldown-seconds: 14
+    mana-cost: 120
+    cooldown-seconds: 25
   seal_circle:
     name: 봉인진
-    enabled: false
+    enabled: true
     command: 마법 seal_circle
     permission: magic.learned.seal_circle
-    mana-cost: 45
-    cooldown-seconds: 16
+    mana-cost: 150
+    cooldown-seconds: 30
   seal_talismans:
     name: 봉인 부적
-    enabled: false
+    enabled: true
     command: 마법 seal_talismans
     permission: magic.learned.seal_talismans
-    mana-cost: 25
-    cooldown-seconds: 7
+    mana-cost: 60
+    cooldown-seconds: 10
   shield_slam:
     name: 방패 내려찍기
-    enabled: false
+    enabled: true
     command: 마법 shield_slam
     permission: magic.learned.shield_slam
-    mana-cost: 30
-    cooldown-seconds: 10
+    mana-cost: 80
+    cooldown-seconds: 15
   chain_arrow:
     name: 사슬 화살
-    enabled: false
+    enabled: true
     command: 마법 chain_arrow
     permission: magic.learned.chain_arrow
-    mana-cost: 20
-    cooldown-seconds: 6
+    mana-cost: 30
+    cooldown-seconds: 7
   mana_drain:
     name: 마나 흡수
-    enabled: false
+    enabled: true
     command: 마법 mana_drain
     permission: magic.learned.mana_drain
-    mana-cost: 40
-    cooldown-seconds: 16
+    mana-cost: 120
+    cooldown-seconds: 25
   soul_scythe:
     name: 영혼 낫
-    enabled: false
+    enabled: true
     command: 마법 soul_scythe
     permission: magic.learned.soul_scythe
-    mana-cost: 25
-    cooldown-seconds: 7
+    mana-cost: 60
+    cooldown-seconds: 12
   oblivion_orbs:
     name: 망각의 탄환
-    enabled: false
+    enabled: true
     command: 마법 oblivion_orbs
     permission: magic.learned.oblivion_orbs
-    mana-cost: 30
-    cooldown-seconds: 9
+    mana-cost: 70
+    cooldown-seconds: 12
   bone_grasp:
     name: 뼈의 손아귀
-    enabled: false
+    enabled: true
     command: 마법 bone_grasp
     permission: magic.learned.bone_grasp
-    mana-cost: 40
-    cooldown-seconds: 16
+    mana-cost: 150
+    cooldown-seconds: 30
   shadow_leap:
     name: 그림자 도약
-    enabled: false
+    enabled: true
     command: 마법 shadow_leap
     permission: magic.learned.shadow_leap
-    mana-cost: 40
-    cooldown-seconds: 14
+    mana-cost: 120
+    cooldown-seconds: 25
   binding_pull:
     name: 끌어오기
-    enabled: false
+    enabled: true
     command: 마법 binding_pull
     permission: magic.learned.binding_pull
-    mana-cost: 45
-    cooldown-seconds: 18
+    mana-cost: 150
+    cooldown-seconds: 30
   fairy_dust:
     name: 요정 가루
-    enabled: false
+    enabled: true
     command: 마법 fairy_dust
     permission: magic.learned.fairy_dust
-    mana-cost: 40
-    cooldown-seconds: 20
+    mana-cost: 200
+    cooldown-seconds: 45
   moon_wind:
     name: 반달 바람날
-    enabled: false
+    enabled: true
     command: 마법 moon_wind
     permission: magic.learned.moon_wind
-    mana-cost: 25
-    cooldown-seconds: 7
+    mana-cost: 60
+    cooldown-seconds: 12
   gale_wings:
     name: 돌풍 날갯짓
-    enabled: false
+    enabled: true
     command: 마법 gale_wings
     permission: magic.learned.gale_wings
-    mana-cost: 40
-    cooldown-seconds: 16
+    mana-cost: 110
+    cooldown-seconds: 25
   feather_storm:
     name: 깃털 폭풍
-    enabled: false
+    enabled: true
     command: 마법 feather_storm
     permission: magic.learned.feather_storm
-    mana-cost: 35
-    cooldown-seconds: 12
+    mana-cost: 90
+    cooldown-seconds: 16
   hunting_pounce:
     name: 사냥 도약
-    enabled: false
+    enabled: true
     command: 마법 hunting_pounce
     permission: magic.learned.hunting_pounce
-    mana-cost: 35
-    cooldown-seconds: 14
+    mana-cost: 110
+    cooldown-seconds: 22
   roar_leap:
     name: 포효 도약
-    enabled: false
+    enabled: true
     command: 마법 roar_leap
     permission: magic.learned.roar_leap
-    mana-cost: 40
-    cooldown-seconds: 16
+    mana-cost: 130
+    cooldown-seconds: 25
   gravity_slam:
     name: 중력 강타
-    enabled: false
+    enabled: true
     command: 마법 gravity_slam
     permission: magic.learned.gravity_slam
-    mana-cost: 45
-    cooldown-seconds: 16
+    mana-cost: 180
+    cooldown-seconds: 35
   tail_spikes:
     name: 꼬리 가시
-    enabled: false
+    enabled: true
     command: 마법 tail_spikes
     permission: magic.learned.tail_spikes
-    mana-cost: 35
-    cooldown-seconds: 12
+    mana-cost: 110
+    cooldown-seconds: 20

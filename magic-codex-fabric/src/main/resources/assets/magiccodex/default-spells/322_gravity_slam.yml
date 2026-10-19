@@ -9,6 +9,6 @@ discovery:
 research: 고대 골렘이 내리친 땅은 한동안 하늘을 잊는다.
 cast:
   command: 마법 gravity_slam
-  cooldown-seconds: 16
-  mana-cost: 45
+  cooldown-seconds: 35
+  mana-cost: 180
 order: 322

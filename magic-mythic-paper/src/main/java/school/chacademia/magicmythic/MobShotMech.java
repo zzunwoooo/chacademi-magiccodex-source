@@ -22,6 +22,7 @@ import org.bukkit.util.Vector;
  *   tint=FFFFFF  burst=0 (radius: when the shot lands or hits, everything inside takes the hit instead - thrown rocks, bottles)
  *   orbit=0 (ticks the shots first circle the caster at 1.6 blocks before flying - foxfire) 
  *   count up to 8, spread up to 360 (radial bursts)
+ *   Player AIM spells (no entity target): homing / orbit end aim at the aimed point (until a shot is within 1.5 blocks).
  *
  * Server cost: one Ticker entry per flying shot (removed on hit, block or range); a shot lives at most range/speed ticks.
  */
@@ -47,6 +48,9 @@ final class MobShotMech extends Mech {
         return true;
     }
 
+    /** The entity the shots go for: never the caster itself (player SELF spells run the skill @self). */
+    static Entity aimed(Ctx c) { return c.target() == null || c.target().equals(c.caster()) ? null : c.target(); }
+
     /** Fan the shots symmetrically around the aim: 0, +s, -s, +2s, -2s ... (odd counts) or ±s/2 pairs (even). */
     static double offset(int k, int count, double spread) {
         if (count % 2 == 1) return k == 0 ? 0 : ((k + 1) / 2) * spread * (k % 2 == 1 ? 1 : -1);
@@ -56,7 +60,7 @@ final class MobShotMech extends Mech {
     private void launch(Ctx c, double yawOffset, double dmg) {
         LivingEntity caster = c.caster();
         Location feet = caster.getLocation();
-        Location aim = c.target() instanceof LivingEntity le ? le.getLocation().add(0, le.getHeight() * 0.55, 0) : c.at();
+        Location aim = aimed(c) instanceof LivingEntity le ? le.getLocation().add(0, le.getHeight() * 0.55, 0) : c.at();
         Vector flat = aim.toVector().subtract(feet.toVector()).setY(0);
         if (flat.lengthSquared() < 1e-4) flat = feet.getDirection().setY(0);
         if (flat.lengthSquared() < 1e-4) flat = new Vector(0, 0, 1);
@@ -76,9 +80,13 @@ final class MobShotMech extends Mech {
         final boolean playersOnly = !p.s("hits", "players").toLowerCase(Locale.ROOT).startsWith("e");
         final double burst = Math.clamp(p.d("burst", 0), 0, 6); final int orbit = Math.clamp(p.i("orbit", 0), 0, 60);
         double travelled; GameplayVisual visual; boolean done; int age; final double orbitPhase;
+        /** Player AIM spells have no entity target: home on the aimed point instead (until the shot reaches it). */
+        final Location aimPoint; boolean aimReached;
 
         Shot(Ctx c, Location start, Vector dir, double dmg) {
             this.c = c; this.pos = start.clone(); this.dmg = dmg; this.orbitPhase = Math.atan2(dir.getX(), dir.getZ());
+            Location at = aimed(c) instanceof LivingEntity ? null : c.at();
+            this.aimPoint = at != null && at.getWorld() == start.getWorld() && at.distanceSquared(c.caster().getLocation()) > 4 ? at.clone().add(0, burst > 0 ? 0 : 1.0, 0) : null;   // a ground aim point: fly at chest height over it
             this.vel = dir.clone().multiply(speed); if (rise > 0) vel.setY(vel.getY() + rise);
             String id = TelegraphMech.vfxId(p.s("vfx", ""));
             if (!id.isEmpty()) visual = GameplayVisual.cast(null, id, pos, vel.clone().normalize());
@@ -91,12 +99,21 @@ final class MobShotMech extends Mech {
                 double a = orbitPhase + age * 0.35; var cl = c.caster().getLocation();
                 pos.setX(cl.getX() + Math.sin(a) * 1.6); pos.setY(cl.getY() + p.d("fromy", 1.4) + Math.sin(age * 0.5) * 0.15); pos.setZ(cl.getZ() + Math.cos(a) * 1.6);
                 if (visual != null) visual.move(pos, new Vector(Math.cos(a), 0, -Math.sin(a)));
-                if (age == orbit && c.target() instanceof LivingEntity t) vel = t.getLocation().add(0, t.getHeight() * 0.55, 0).toVector().subtract(pos.toVector()).normalize().multiply(speed);
+                if (age == orbit) {
+                    Vector goal = aimed(c) instanceof LivingEntity t ? t.getLocation().add(0, t.getHeight() * 0.55, 0).toVector() : aimPoint != null ? aimPoint.toVector() : null;
+                    if (goal != null && goal.distanceSquared(pos.toVector()) > 1e-4) vel = goal.subtract(pos.toVector()).normalize().multiply(speed);
+                }
                 return true;
             }
-            if (homing > 0 && c.target() instanceof LivingEntity t && t.isValid() && !t.isDead()) {
-                Vector to = t.getLocation().add(0, t.getHeight() * 0.55, 0).toVector().subtract(pos.toVector());
-                if (to.lengthSquared() > 1e-4) vel = vel.clone().normalize().multiply(1 - homing).add(to.normalize().multiply(homing)).normalize().multiply(speed);
+            if (homing > 0) {
+                Vector goal = null;
+                if (aimed(c) instanceof LivingEntity t && t.isValid() && !t.isDead()) goal = t.getLocation().add(0, t.getHeight() * 0.55, 0).toVector();
+                else if (aimPoint != null && !aimReached) {
+                    goal = aimPoint.toVector();
+                    if (goal.distanceSquared(pos.toVector()) < 2.25) { aimReached = true; goal = null; }
+                }
+                Vector to = goal == null ? null : goal.subtract(pos.toVector());
+                if (to != null && to.lengthSquared() > 1e-4) vel = vel.clone().normalize().multiply(1 - homing).add(to.normalize().multiply(homing)).normalize().multiply(speed);
             }
             if (rise > 0) vel.setY(vel.getY() - 0.04);
             double len = vel.length(); int steps = Math.max(1, (int) Math.ceil(len / 0.4)); Vector step = vel.clone().multiply(1.0 / steps);

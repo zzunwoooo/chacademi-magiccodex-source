@@ -9,6 +9,6 @@ discovery:
 research: 느린 것은 피할 수 있다. 피하는 동안 다른 것을 잊는다.
 cast:
   command: 마법 oblivion_orbs
-  cooldown-seconds: 9
-  mana-cost: 30
+  cooldown-seconds: 12
+  mana-cost: 70
 order: 312
