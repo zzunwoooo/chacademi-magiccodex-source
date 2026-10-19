@@ -141,11 +141,12 @@ final class KyudichiLobbyScreen extends KyudichiViewScreen {
         last = data();
         LobbyView.edges(ox / scale, ox / scale); // wide windows: menus to the left edge, season / right column to the right edge
         LobbyView.keyCapture(capturing);
+        LobbyView.tierInfo(tierInfo && tab == LobbyView.MATCH);
         LobbyView.content(p, last);
     }
 
     // ================================================================== 특수 키 (vanilla swap-hands) set from the lobby
-    private boolean capturing;
+    private boolean capturing, tierInfo;
     private void bindSpecial(int key) {
         capturing = false;
         if (key == GLFW.GLFW_KEY_ESCAPE) return;
@@ -173,6 +174,8 @@ final class KyudichiLobbyScreen extends KyudichiViewScreen {
     @Override void clicked(String id, int button) {
         if (!id.startsWith("menu:") && !id.startsWith("act:")) menuFor = -1;
         if (!id.equals(LobbyView.SPECIAL_KEY)) capturing = false;
+        if (id.equals(LobbyView.TIER_INFO)) { tierInfo = !tierInfo; return; }
+        tierInfo = false;
         if (id.startsWith("tab:")) { int t = Integer.parseInt(id.substring(4)); if (t != tab) { tab = t; focus = 0; request(); } return; }
         if (id.startsWith("mode:")) { int m = Integer.parseInt(id.substring(5)); if (m != mode) { mode = m; livePage = 0; recentScroll = 0; request(); } return; }
         switch (id) {
@@ -246,7 +249,7 @@ final class KyudichiLobbyScreen extends KyudichiViewScreen {
 
     @Override public boolean mouseClicked(double x, double y, int button) {
         String id = hitAt(mx(x), my(y));
-        if (id == null) menuFor = -1;
+        if (id == null) { menuFor = -1; tierInfo = false; }
         focus = 0;
         return super.mouseClicked(x, y, button);
     }

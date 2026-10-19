@@ -66,6 +66,7 @@ final class Samples {
                 p.push(-59, 0, 1790 / 1672f); LobbyView.background(p, 0, mm); p.pop();
                 LobbyView.content(p, lobby(0, mm)); p.pop(); LobbyView.edges(0, 0); }));
         }
+        ALL.add(new View("lobby_tierinfo", 1672, 941, -1, -1, p -> { LobbyView.tierInfo(true); LobbyView.paint(p, lobby(0, 0)); LobbyView.tierInfo(false); }));
         ALL.add(new View("lobby_match_q_menu", 1672, 941, 1500, 600, p -> { var d = lobby(0, 0);
             LobbyView.paint(p, new LobbyView.Data(d.tab(), d.mode(), d.me(), d.myNick(), d.mySkin(), d.info(), d.party(), true, 1, true, d.spells(), d.specialKey(),
                     new LobbyView.Queue(1, 0, 42), d.cards(), 0, true, d.rows(), d.mine(), d.page(), d.pages(), 0, d.rankSearch(), true, d.profile(), true, 0, d.recordSearch(), "")); }));

@@ -64,6 +64,15 @@ public final class LobbyView {
     /** The 특수 키 cap is waiting for a key press (set by the screen). */
     static boolean keyCapture;
     public static void keyCapture(boolean on) { keyCapture = on; }
+    /** 티어 정보 popup open (set by the screen). */
+    static boolean tierInfo;
+    public static void tierInfo(boolean on) { tierInfo = on; }
+    public static final String TIER_INFO = "tier_info";
+    /**
+     * Lowest rating of 실버 · 골드 · 플래티넘 · 다이아몬드 · 마스터: the defaults of the arena config rating.tiers and the proxy
+     * kyudichi.properties tier-floors. Change them together with those if the owner changes the tiers.
+     */
+    public static final int[] TIER_FLOORS = {900, 1100, 1300, 1500, 1700};
 
     // ------------------------------------------------------------------ colours
     static final int CYAN = 0xFF2BD3EA, CYAN_DIM = 0x8022C5DD, TEXT = 0xFFF2F4F7, SOFT = 0xFFC8CED6, DIM = 0xFF8D96A3, GOLD = 0xFFF0C86A,
@@ -204,6 +213,13 @@ public final class LobbyView {
         p.push(edgeR, 0, 1);
         var m = d.info();
         float bx = duel ? 940 : 1012, bw = duel ? 332 : 310, by = 882;
+        // 티어 정보 (i) button left of the bar
+        float ix = bx - 40, iy = by - 48;
+        boolean io = tierInfo || p.over(ix - 20, iy - 20, 40, 40);
+        p.c.arc(ix, iy, 0, 17, 0, 1, io ? 0xE00E3550 : 0xB00A111A);
+        p.c.arc(ix, iy, 15.5f, 17, 0, 1, io ? CYAN : 0x80FFFFFF);
+        p.text("i", ix, iy, 21, io ? CYAN : TEXT, Face.SERIF, Canvas.CENTER);
+        p.hit(TIER_INFO, ix - 20, iy - 20, 40, 40);
         if (m != null) {
             int next = m.next();
             float frac = next <= m.floor() ? 1 : Math.clamp((m.rating() - m.floor()) / (float) (next - m.floor()), 0, 1);
@@ -249,7 +265,29 @@ public final class LobbyView {
         p.text(label, cx, by2 + bh2 / 2, 30, enabled ? (over ? 0xFFFFFFFF : TEXT) : DIM, Face.SERIF, Canvas.CENTER);
         if (m != null && !enabled && !mine && !other && m.note() != null && !m.note().isEmpty())
             p.fit(m.note(), cx, by2 + bh2 + 15, 16, 330, DIM, Face.SANS, Canvas.CENTER);
+        if (tierInfo) tierTable(p, m == null ? -1 : m.tier(), bx - 60, by - 96);
         p.pop();
+    }
+
+    /** Which rating is which tier, bottom-left corner at (x, bottom). The current tier row is lit. */
+    static void tierTable(Pen p, int mine, float x, float bottom) {
+        int rows = 7; float rh = 46, w = 360, h = 70 + rows * rh + 46, y = bottom - h;
+        p.panel(x, y, w, h, 14, 0xF20A111A, 0x6022D3EE);
+        p.text("티어 정보", x + 22, y + 32, 22, TEXT, Face.SANS_BOLD, Canvas.LEFT);
+        p.text("레이팅", x + w - 22, y + 32, 17, DIM, Face.SANS, Canvas.RIGHT);
+        p.c.fill(x + 16, y + 56, w - 32, 1, 0x30FFFFFF);
+        int[] f = TIER_FLOORS;
+        String[] ranges = {"~ " + (f[0] - 1), f[0] + " ~ " + (f[1] - 1), f[1] + " ~ " + (f[2] - 1), f[2] + " ~ " + (f[3] - 1), f[3] + " ~ " + (f[4] - 1), f[4] + " ~", f[4] + " 이상 1~3위"};
+        int[] icon = {0, 1, 2, 3, 4, 5, 6};
+        for (int i = 0; i < rows; i++) {
+            float ry = y + 64 + i * rh, cy = ry + rh / 2;
+            boolean on = i == Math.min(mine, 6);
+            if (on) p.round(x + 10, ry + 2, w - 20, rh - 4, 8, 0x3022D3EE);
+            p.image(Theme.tier(icon[i]), x + 22, cy - 18, 36, 36);
+            p.text(i == 6 ? "챌린저" : Theme.TIER_NAMES[i], x + 70, cy, 19, on ? CYAN : tierColor(i), Face.SANS_BOLD, Canvas.LEFT);
+            p.text(ranges[i], x + w - 22, cy, 18, on ? TEXT : SOFT, Face.SANS, Canvas.RIGHT);
+        }
+        p.fit("시즌이 끝나면 모두 처음 점수로 돌아가요.", x + w / 2, y + h - 24, 15, w - 30, DIM, Face.SANS, Canvas.CENTER);
     }
     static String clock(int sec) { return sec / 60 + ":" + String.format("%02d", sec % 60); }
 

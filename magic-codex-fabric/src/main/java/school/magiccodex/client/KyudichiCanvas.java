@@ -64,7 +64,14 @@ final class KyudichiCanvas implements Canvas {
         type.draw(ctx, s, left, y, size, argb, f, align == CENTER);
     }
     @Override public float width(String s, float size, Face face) { return s == null || s.isEmpty() ? 0 : type.width(s, size, face(face)); }
-    @Override public void fill(float x, float y, float w, float h, int argb) { HudMesh.quad(ctx, x, y, w, h, argb, argb); }
+    @Override public void fill(float x, float y, float w, float h, int argb) {
+        // thin lines in scaled groups (e.g. the 70 % 마법 세팅) must stay at least one screen pixel or they vanish
+        var m = ctx.getMatrices().peek().getPositionMatrix();
+        float sx = Math.abs(m.m00()), sy = Math.abs(m.m11());
+        if (sx > 0 && w * sx < 1) { x -= (1 / sx - w) / 2; w = 1 / sx; }
+        if (sy > 0 && h * sy < 1) { y -= (1 / sy - h) / 2; h = 1 / sy; }
+        HudMesh.quad(ctx, x, y, w, h, argb, argb);
+    }
     @Override public void arc(float cx, float cy, float inner, float outer, float start, float end, int argb) {
         if (end <= start) return;
         float radius = (inner + outer) / 2, thickness = outer - inner;
