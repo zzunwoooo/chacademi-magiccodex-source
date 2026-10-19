@@ -85,9 +85,16 @@ final class Results {
         String head = switch (outcome) { case 1 -> "승리"; case 0 -> "패배"; case 2 -> "무승부"; default -> "경기 무효"; };
         NamedTextColor color = outcome == 1 ? NamedTextColor.GOLD : outcome == 0 ? NamedTextColor.RED : NamedTextColor.GRAY;
         p.showTitle(Title.title(Component.text(head, color), Component.text(match.score[0] + " : " + match.score[1])));
-        p.sendMessage(Component.text("── 큐디치 " + head + " " + Team.A.label + " " + match.score[0] + " : " + match.score[1] + " " + Team.B.label + " ──", color));
-        for (Team t : Team.values()) for (var o : match.players.values()) if (o.team == t)
-            p.sendMessage(Component.text((o.mvp ? "♛ " : "  ") + o.nick + "  골 " + o.goals + " · 처치 " + o.kills + " · 데스 " + o.deaths + (o.snitch > 0 ? " · 스니치" : ""), t.color));
+        if (match.duel) {
+            var names = teams(match);
+            p.sendMessage(Component.text("── 1:1 대전 " + head + " " + names.nameA() + " " + match.score[0] + " : " + match.score[1] + " " + names.nameB() + " ──", color));
+            for (Team t : Team.values()) for (var o : match.players.values()) if (o.team == t)
+                p.sendMessage(Component.text("  " + o.nick + "  라운드 " + match.score[t.ordinal()] + " · 처치 " + o.kills + " · 데스 " + o.deaths, t.color));
+        } else {
+            p.sendMessage(Component.text("── 큐디치 " + head + " " + Team.A.label + " " + match.score[0] + " : " + match.score[1] + " " + Team.B.label + " ──", color));
+            for (Team t : Team.values()) for (var o : match.players.values()) if (o.team == t)
+                p.sendMessage(Component.text((o.mvp ? "♛ " : "  ") + o.nick + "  골 " + o.goals + " · 처치 " + o.kills + " · 데스 " + o.deaths + (o.snitch > 0 ? " · 스니치" : ""), t.color));
+        }
         if (match.opt.rated() && !voided)
             p.sendMessage(Component.text("레이팅 " + (int) m.ratingBefore + " → " + ratingAfter + " (" + (delta >= 0 ? "+" : "") + delta + ")  " + after.label, NamedTextColor.AQUA));
         else if (!voided) p.sendMessage(Component.text("테스트 경기라 레이팅은 바뀌지 않았어요.", NamedTextColor.GRAY));

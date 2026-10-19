@@ -44,6 +44,8 @@ public final class KyudichiClient {
 
     // ------------------------------------------------------------------ state (render thread)
     static KyudichiProtocol.Match match; static long matchAt;
+    /** The last match seen was a 1:1 대전 (the result message has no mode; the result screen reads this). */
+    static boolean lastDuel;
     static KyudichiProtocol.Key key = new KyudichiProtocol.Key(0, 0, 0); static long keyAt, keyLitAt;
     static KyudichiProtocol.Balls balls, prevBalls; static long ballsAt, prevBallsAt;
     static List<KyudichiProtocol.Shrine> shrines = List.of();
@@ -80,7 +82,7 @@ public final class KyudichiClient {
         long now = Util.getMeasuringTimeMs();
         switch (m) {
             case KyudichiProtocol.Match x -> {
-                match = x; matchAt = now;
+                match = x; matchAt = now; lastDuel = (x.flags() & 16) != 0;
                 teams.clear(); for (var p : x.players()) teams.put(p.id(), p.team());
                 if (x.phase() == 0 && result != null && now - resultAt > 3000) result = null;
             }

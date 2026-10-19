@@ -66,6 +66,9 @@ final class Samples {
                 p.push(-59, 0, 1790 / 1672f); LobbyView.background(p, 0, mm); p.pop();
                 LobbyView.content(p, lobby(0, mm)); p.pop(); LobbyView.edges(0, 0); }));
         }
+        ALL.add(new View("hud_duel", 1672, 941, -1, -1, p -> HudView.score(p, new HudView.Score("준우", 1, Theme.BLUE, "서하", 0, Theme.RED, "02:36", "", false, true))));
+        ALL.add(new View("result_duel", 1672, 941, -1, -1, p -> ResultView.paint(p, new ResultView.Data(1, "준우", "서하", 2, 1,
+                List.of(new ResultView.Line(id(1), "준우", "", 0, 2, 0, true, 1)), List.of(new ResultView.Line(id(4), "서하", "", 0, 1, 0, false, 2)), 1250, 1264, true, true))));
         ALL.add(new View("lobby_tierinfo", 1672, 941, -1, -1, p -> { LobbyView.tierInfo(true); LobbyView.paint(p, lobby(0, 0)); LobbyView.tierInfo(false); }));
         ALL.add(new View("lobby_match_q_menu", 1672, 941, 1500, 600, p -> { var d = lobby(0, 0);
             LobbyView.paint(p, new LobbyView.Data(d.tab(), d.mode(), d.me(), d.myNick(), d.mySkin(), d.info(), d.party(), true, 1, true, d.spells(), d.specialKey(),

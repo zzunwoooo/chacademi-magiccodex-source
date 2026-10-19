@@ -167,3 +167,18 @@
   열려 있을 때만 전체 마법 권한을 묻고 평소엔 지금 칸에 있는 마법만 묻는다 → 큐디치/1:1 마법 세팅 창에서는 목록이 비었음.
   `KyudichiSpellPickScreen` 도 전체 권한을 묻는 창에 추가. 목록이 비어 있으면 "불러오는 중 (상태)" / "배운 마법이 없어요" 표시.
 - 경기장 서버에서도 목록이 나오려면 Bridge(권한 연동)가 경기장 서버에 있어야 함.
+
+## 2026-10-19 밤: 큐디치 전투 개선 (브랜치 `claude/kyudichi-combat-20261019`)
+
+- 공 크기 2배: config `models.scale` 2.0 (아이템 대체 모양도 2배). F 범위 `key.range` 3 → 5 (퀘이플·블러저, 스니치는 `snitch.catch-range` 그대로).
+  config-version 3: 서버의 예전 config 는 켜질 때 이 두 값이 옛 기본값이면 새 값으로 바꿈.
+- 비행: 큐디치 경기 중엔 비행 쿨타임 없음(매 틱 ManaService.clearCooldown). 공중에서 빗자루를 놓치면(낙마) `match.flight-fall-cooldown-seconds` 5초
+  동안 비행 시전 거부. 타고 있을 때 비행 키 = 내리기는 퀘이플을 들고 있어도 허용.
+- 클라이언트: 빗자루를 타고 있으면 비행 키는 쿨타임·대기와 상관없이 서버로 보냄(내리기). `CastingState.ridingCheck`.
+- 쳐낸 블러저: 쳐낸 방향으로 날아간 뒤(또는 맞힌 뒤) `bludger.after-deflect-rest-seconds` 2초 동안 아무도 쫓지 않고 흘러감.
+- 렌더 거리: 경기 중 플레이어·디스플레이(ModelEngine 공 뼈대)·갑옷 거치대는 거리 상관없이 그림 (`KyudichiRenderDistanceMixin`).
+  ⚠ 서버도 보내 줘야 함: 경기장 서버 spigot.yml `world-settings.default.entity-tracking-range` players·misc·display·other 를 크게(예 512),
+  server.properties `view-distance` 도 경기장 크기를 덮게(예 16). 안 바꾸면 기본 추적 거리(플레이어 48, misc 32블록) 밖은 안 보임.
+- 1:1 화면 정리 (오너 2026-10-19 "공은 없는데 스니치 UI가 있음"): 점수판 아래 스니치 잠김/등장 표시 숨김(`HudView.Score.duel`),
+  결과 창은 이름 대 이름 · "라운드 승리" · 처치/데스 열(골·스니치·MVP 없음, `ResultView.Data.duel` / 마지막 경기 플래그 `KyudichiClient.lastDuel`),
+  준비 창은 빗자루 칸 숨김, 모드 없는 사람의 채팅 결과도 1:1 형식. 1:1 전용 디자인은 레퍼런스가 오면 다시.
