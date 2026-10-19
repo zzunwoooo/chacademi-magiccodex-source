@@ -12,7 +12,7 @@ import school.magiccodex.protocol.KyudichiProtocol;
  * The centre panel opens the spell picker; 준비 완료 sends READY (in /큐디치미리보기 it only toggles locally).
  */
 final class KyudichiPrepareScreen extends KyudichiViewScreen {
-    KyudichiPrepareScreen() { super("큐디치 경기 준비"); }
+    KyudichiPrepareScreen() { super(KyudichiClient.duel() ? "1:1 대전 준비" : "큐디치 경기 준비"); }
 
     @Override float designW() { return PrepareView.W; }
     @Override float designH() { return PrepareView.H; }
@@ -32,8 +32,9 @@ final class KyudichiPrepareScreen extends KyudichiViewScreen {
         boolean ready = false;
         for (var person : m.players()) {
             var r = KyudichiClient.roster.get(person.id());
-            String broom = r == null ? "" : r.broom();
-            String broomName = broom.isEmpty() ? "연습용 빗자루" : BroomUiLink.text("name", broom);
+            boolean duel = (m.flags() & 16) != 0; // 1:1 대전 is on the ground: no broom shown
+            String broom = duel || r == null ? "" : r.broom();
+            String broomName = duel ? "" : broom.isEmpty() ? "연습용 빗자루" : BroomUiLink.text("name", broom);
             var row = new PrepareView.Row(person.id(), person.nick(), "", (person.flags() & 4) != 0, r == null ? -1 : r.house(), broom, broomName, r == null ? 0 : r.rating());
             if (person.id().equals(me)) { ready = row.ready(); mine.add(0, row); }
             else if (person.team() == myTeam) mine.add(row); else enemy.add(row);

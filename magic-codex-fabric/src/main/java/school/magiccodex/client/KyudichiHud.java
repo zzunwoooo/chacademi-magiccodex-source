@@ -94,8 +94,8 @@ final class KyudichiHud {
         if (duel) {
             // 1:1: names instead of 우리 팀 / 상대 팀, the score is rounds won
             String a = nameOf(m, 0), b = nameOf(m, 1);
-            if (m.myTeam() == 1) return new HudView.Score(b, m.scoreB(), Theme.RED, a, m.scoreA(), Theme.BLUE, Theme.time2(left), sub, false);
-            return new HudView.Score(a, m.scoreA(), Theme.BLUE, b, m.scoreB(), Theme.RED, Theme.time2(left), sub, false);
+            if (m.myTeam() == 1) return new HudView.Score(b, m.scoreB(), Theme.RED, a, m.scoreA(), Theme.BLUE, Theme.time2(left), sub, false, true);
+            return new HudView.Score(a, m.scoreA(), Theme.BLUE, b, m.scoreB(), Theme.RED, Theme.time2(left), sub, false, true);
         }
         if (m.myTeam() == 1) return new HudView.Score("우리 팀", m.scoreB(), Theme.RED, "상대 팀", m.scoreA(), Theme.BLUE, Theme.time2(left), sub, out);
         if (m.myTeam() == 0) return new HudView.Score("우리 팀", m.scoreA(), Theme.BLUE, "상대 팀", m.scoreB(), Theme.RED, Theme.time2(left), sub, out);

@@ -180,3 +180,6 @@
 - 렌더 거리: 경기 중 플레이어·디스플레이(ModelEngine 공 뼈대)·갑옷 거치대는 거리 상관없이 그림 (`KyudichiRenderDistanceMixin`).
   ⚠ 서버도 보내 줘야 함: 경기장 서버 spigot.yml `world-settings.default.entity-tracking-range` players·misc·display·other 를 크게(예 512),
   server.properties `view-distance` 도 경기장 크기를 덮게(예 16). 안 바꾸면 기본 추적 거리(플레이어 48, misc 32블록) 밖은 안 보임.
+- 1:1 화면 정리 (오너 2026-10-19 "공은 없는데 스니치 UI가 있음"): 점수판 아래 스니치 잠김/등장 표시 숨김(`HudView.Score.duel`),
+  결과 창은 이름 대 이름 · "라운드 승리" · 처치/데스 열(골·스니치·MVP 없음, `ResultView.Data.duel` / 마지막 경기 플래그 `KyudichiClient.lastDuel`),
+  준비 창은 빗자루 칸 숨김, 모드 없는 사람의 채팅 결과도 1:1 형식. 1:1 전용 디자인은 레퍼런스가 오면 다시.

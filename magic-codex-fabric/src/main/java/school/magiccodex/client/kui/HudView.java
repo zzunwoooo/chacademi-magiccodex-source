@@ -13,7 +13,11 @@ public final class HudView {
 
     // ================================================================== score board (anchor: top centre, x 836)
     public record Score(String leftLabel, int leftScore, int leftColor, String rightLabel, int rightScore, int rightColor,
-                        String time, String sub, boolean snitchOut) {}
+                        String time, String sub, boolean snitchOut, boolean duel) {
+        public Score(String leftLabel, int leftScore, int leftColor, String rightLabel, int rightScore, int rightColor, String time, String sub, boolean snitchOut) {
+            this(leftLabel, leftScore, leftColor, rightLabel, rightScore, rightColor, time, sub, snitchOut, false);
+        }
+    }
 
     public static void score(Pen p, Score s) {
         p.image("hud/scoreboard", 514, 14, 646, 84);
@@ -24,6 +28,7 @@ public final class HudView {
         if (!s.sub().isEmpty()) p.text(s.sub(), 836, 80, 14, Theme.GOLD, Face.SANS_BOLD, Canvas.CENTER);
         p.text(String.valueOf(s.rightScore()), 968, 61, 46, s.rightColor(), Face.TITLE, Canvas.CENTER);
         p.text(s.rightLabel(), 1054, 61, 23, Theme.CREAM, Face.SERIF, Canvas.CENTER);
+        if (s.duel()) return; // 1:1 대전: no snitch (owner 2026-10-19)
         // owner 2026-10-17: 14 px lower than the reference so the wings clear the score board
         if (s.snitchOut()) {
             p.image("hud/indicator_snitch", 798, 112, 77, 70);
