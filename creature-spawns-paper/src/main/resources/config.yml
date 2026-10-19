@@ -6,6 +6,7 @@
   "player-min-distance": 24,
   "player-max-distance": 80,
   "area-cap": 24,
+  "chunk-cap": 6,
   "shiny-denominator": 4096,
   "excluded-areas": {
     "spawn": {

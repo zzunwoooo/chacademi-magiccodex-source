@@ -1,13 +1,14 @@
 name: ChAcademiaWildlife
-version: 0.3.0
+version: 0.3.1-chunkcap.1
 main: school.chacademia.wildlife.WildlifePlugin
 api-version: '1.21.4'
 depend: [MythicMobs]
 softdepend: [MagicCodexBridge, WorldGuard]
 commands:
   야생관리:
+    aliases: [wildlifeadmin]
     permission: chacademia.wildlife.admin
-    usage: /야생관리 reload | check <id> | structures
+    usage: /야생관리 reload | check <id> | structures | status
 permissions:
   chacademia.wildlife.admin:
     default: op

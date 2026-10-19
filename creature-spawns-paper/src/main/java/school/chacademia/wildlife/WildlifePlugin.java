@@ -29,6 +29,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
     private final Location scratch=new Location(null,0,0,0);
     private NamespacedKey naturalKey;
     private boolean groupSpawning;
+    private ChunkMobLimit chunkLimit;
     private long lastCleanupLog;
     @Override public void onEnable() {
         saveDefaultConfig(); reloadSettings(); reloadHabitats(); naturalKey=new NamespacedKey(this,"natural");
@@ -47,8 +48,12 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
             excluded.add(new Excluded(a.getString("world"),a.getDouble("x"),a.getDouble("z"),a.getDouble("radius")));
         }
         double min=c.getDouble("player-min-distance",24),max=c.getDouble("player-max-distance",80);
+        Object configuredCap=c.get("chunk-cap",ChunkMobLimit.DEFAULT_CAP);
+        if(!(configuredCap instanceof Integer cap)) throw new IllegalArgumentException("chunk-cap must be a positive integer");
+        var nextChunkLimit=new ChunkMobLimit(cap);
         settings=new Settings(c.getBoolean("enabled",true),Set.copyOf(c.getStringList("worlds")),min*min,max*max,
             c.getInt("area-cap",24),Math.max(1,c.getInt("shiny-denominator",4096)),List.copyOf(excluded));
+        chunkLimit=nextChunkLimit;
         population.clear();
     }
     /** 모든 서식지를 불변 Habitat으로 한 번에 해석한다. 하나라도 필수 값이 잘못되면 예외를 던지고 기존 설정을 유지한다. */
@@ -88,6 +93,9 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
     }
     private static final Set<Material> BAD_FLOORS=Set.of(Material.MAGMA_BLOCK,Material.CACTUS,Material.CAMPFIRE,Material.SOUL_CAMPFIRE);
     public String check(String id,Location l,boolean population) {
+        return check(id,l,population,null);
+    }
+    private String check(String id,Location l,boolean population,UUID pendingEntity) {
         if(!Bukkit.isPrimaryThread()) return "메인 스레드 외 호출";
         Habitat h=habitats.get(id);
         if(h==null) return "등록되지 않은 몹";
@@ -129,6 +137,10 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         for(Excluded a:cfg.excluded()) {
             if(w.getName().equals(a.world())&&Math.hypot(l.getX()-a.x(),l.getZ()-a.z())<a.radius()) return "보호 구역";
         }
+        // Fresh loaded-chunk count: do not reuse a TTL population snapshot here.
+        if(chunkLimit.full(w.getChunkAt(x>>4,z>>4),pendingEntity,uuid ->
+                MythicBukkit.inst().getMobManager().getActiveMob(uuid)
+                    .map(m -> m.getType().getInternalName()).orElse(null))) return "청크 개체 제한";
         if(population) {
             double nearest=Double.POSITIVE_INFINITY;
             for(Player p:w.getPlayers()) if(p.getGameMode()==GameMode.SURVIVAL||p.getGameMode()==GameMode.ADVENTURE) nearest=Math.min(nearest,p.getLocation(scratch).distanceSquared(l));
@@ -156,11 +168,11 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         String type=e.getMobType().getInternalName();
         String id=type.substring(8).replaceFirst("_shiny$","");
         if(!habitats.containsKey(id)) return;
-        // 개체 수·플레이어 거리 제한은 여기서 다시 보지 않는다(설계 의도):
+        // 기존 지역·종별·플레이어 거리 제한은 여기서 다시 보지 않는다(설계 의도):
         // 우두머리는 RandomSpawn의 cahabitat 조건(check(...,true))을, 무리는 group()의 check(...,true)를 이미 통과했고,
         // 이 시점에는 방금 만들어진 자기 자신이 세어져 제한 직전 스폰이 스스로 취소될 수 있다.
         // 따라서 RandomSpawn 항목에는 반드시 cahabitat 조건이 있어야 제한이 적용된다.
-        if(!check(id,e.getLocation(),false).equals("OK")) { e.setCancelled();return; }
+        if(!check(id,e.getLocation(),false,e.getEntity().getUniqueId()).equals("OK")) { e.setCancelled();return; }
         e.getEntity().getPersistentDataContainer().set(naturalKey,PersistentDataType.LONG,System.currentTimeMillis());
         // 같은 틱·같은 스캔 주기 안의 다음 후보가 이 개체를 세도록 살아 있는 스캔 결과에 바로 더한다.
         Location at=e.getLocation(); if(at.getWorld()!=null) population.noteSpawn(at.getWorld(),type,at);
@@ -228,6 +240,11 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         if(args.length>0&&args[0].equals("reload")) {
             try {reloadConfig();reloadSettings();reloadHabitats();sender.sendMessage("§a서식지 재적용 완료. RandomSpawns 변경 시 /mm reload도 실행하세요.");}
             catch(Exception ex) {sender.sendMessage("§c설정 오류: "+ex.getMessage());} return true;
+        }
+        if(args.length==1&&args[0].equalsIgnoreCase("status")) {
+            sender.sendMessage("Wildlife "+getDescription().getVersion()+" enabled="+settings.enabled()
+                +" chunk-cap="+chunkLimit.cap()+" area-cap="+settings.areaCap());
+            return true;
         }
         if(sender instanceof Player p) {
             if(args.length==2&&args[0].equals("check")) p.sendMessage(args[1]+": "+check(args[1],p.getLocation(),false)+" / "+p.getWorld().getBiome(p.getLocation()).getKey());
