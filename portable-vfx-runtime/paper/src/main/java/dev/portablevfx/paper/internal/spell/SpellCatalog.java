@@ -57,14 +57,26 @@ public final class SpellCatalog {
     public SpellCatalog(Collection<Spell> entries) {
         Map<String, Spell> ids = new LinkedHashMap<>();
         Map<String, Spell> lookup = new HashMap<>();
-        Set<Integer> numbers = new HashSet<>();
+        Map<Integer,Spell> numbers = new HashMap<>();
         for (Spell spell : entries) {
-            if (ids.putIfAbsent(spell.id(), spell) != null || !numbers.add(spell.number()))
-                throw new IllegalArgumentException("Duplicate spell ID/number: " + spell.id());
+            if (ids.putIfAbsent(spell.id(), spell) != null)
+                throw new IllegalArgumentException("Duplicate spell ID: " + spell.id());
+            Spell prior=numbers.putIfAbsent(spell.number(),spell);
+            if(prior!=null&&!sharedDisplayNumber(prior,spell))throw new IllegalArgumentException("Duplicate spell number: "+spell.number());
             addName(lookup, spell.id(), spell);
             for (String alias : spell.aliases()) addName(lookup, alias, spell);
         }
         spells = Collections.unmodifiableMap(ids); names = Map.copyOf(lookup);
+    }
+
+    // IDs remain unique; only these approved display-sort slots overlap retained disabled wind entries.
+    private static final Map<Integer,List<String>> SHARED_SORT_SLOTS=Map.of(203,List.of("air_brake","landing_airbrake"),210,List.of("wind_performance","hushed_soles"),211,List.of("draft_closer","thorn_manners"),212,List.of("air_compass","cinder_skipring"),213,List.of("experience_confluence","droplet_relay"),214,List.of("melody_bottle","folding_tideplane"));
+    private static boolean sharedDisplayNumber(Spell a,Spell b){
+        if(a==null||a.number()!=b.number())return false;
+        var pair=SHARED_SORT_SLOTS.get(a.number());if(pair==null)return false;
+        Spell legacy=a.id().equals(pair.get(0))?a:b.id().equals(pair.get(0))?b:null;
+        Spell arcana=a.id().equals(pair.get(1))?a:b.id().equals(pair.get(1))?b:null;
+        return legacy!=null&&arcana!=null&&!legacy.enabled();
     }
 
     private static void addName(Map<String, Spell> names, String value, Spell spell) {
@@ -106,13 +118,13 @@ public final class SpellCatalog {
         Object raw = root.get("spells");
         if (!(raw instanceof Map<?, ?> entries)) throw new IllegalArgumentException("Missing spells map");
         List<Spell> accepted = new ArrayList<>();
-        Set<Integer> numbers = new HashSet<>();
+        Map<Integer,Spell> numbers = new HashMap<>();
         Map<String, String> owners = new HashMap<>();
         for (var entry : entries.entrySet()) {
             String id = String.valueOf(entry.getKey());
             try {
                 Spell spell = parseSpell(id, entry.getValue());
-                if (numbers.contains(spell.number())) throw new IllegalArgumentException("Duplicate spell number: " + spell.number());
+                if (numbers.containsKey(spell.number())&&!sharedDisplayNumber(numbers.get(spell.number()),spell)) throw new IllegalArgumentException("Duplicate spell number: " + spell.number());
                 List<String> keys = new ArrayList<>();
                 keys.add(normalize(spell.id()));
                 for (String alias : spell.aliases()) keys.add(normalize(alias));
@@ -121,7 +133,7 @@ public final class SpellCatalog {
                     String owner = owners.get(key);
                     if (owner != null && !owner.equals(spell.id())) throw new IllegalArgumentException("Name or alias '" + key + "' already belongs to " + owner);
                 }
-                numbers.add(spell.number());
+                numbers.putIfAbsent(spell.number(),spell);
                 for (String key : keys) owners.put(key, spell.id());
                 accepted.add(spell);
             } catch (RuntimeException invalid) {

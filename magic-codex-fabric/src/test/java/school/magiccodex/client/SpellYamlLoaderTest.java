@@ -87,15 +87,23 @@ class SpellYamlLoaderTest {
                 .noneMatch(c->c.getName().equals("rank") || c.getName().equals("circle")));
     }
 
-    @Test void finalCatalogLoads323WithUniqueOrderAndPreservedIdentity() {
+    @Test void finalCatalogLoads329WithApprovedSharedSlotsAndPreservedIdentity() {
         var result=loader.load(Path.of("src/main/resources/assets/magiccodex/default-spells"));
         assertTrue(result.success(),result.errors().toString());
         assertEquals(329,result.spells().size());
-        for(int i=0;i<323;i++) {
-            var s=result.spells().get(i);
-            assertEquals(i+1,s.order());
-            assertFalse(s.condition().isBlank());
-            assertFalse(s.permissionKnown());assertFalse(s.discovered());
+        var shared=java.util.Map.of(
+                203,java.util.Set.of("air_brake","landing_airbrake"),210,java.util.Set.of("wind_performance","hushed_soles"),
+                211,java.util.Set.of("draft_closer","thorn_manners"),212,java.util.Set.of("air_compass","cinder_skipring"),
+                213,java.util.Set.of("experience_confluence","droplet_relay"),214,java.util.Set.of("melody_bottle","folding_tideplane"));
+        var slots=result.spells().stream().collect(java.util.stream.Collectors.groupingBy(CodexData.Spell::order,
+                java.util.stream.Collectors.mapping(CodexData.Spell::id,java.util.stream.Collectors.toSet())));
+        assertEquals(323,slots.size());assertEquals(329,result.spells().stream().map(CodexData.Spell::id).distinct().count());
+        for(int order=1;order<=323;order++){
+            assertTrue(slots.containsKey(order),"missing preserved slot "+order);
+            if(shared.containsKey(order))assertEquals(shared.get(order),slots.get(order));else assertEquals(1,slots.get(order).size());
+        }
+        for(var spell:result.spells()){
+            assertFalse(spell.condition().isBlank());assertFalse(spell.permissionKnown());assertFalse(spell.discovered());
         }
     }
 
@@ -219,6 +227,6 @@ class SpellYamlLoaderTest {
     @Test void mobSpellsKeepTheirRuntime300To323IdsWithoutRenumbering() {
         var result=loader.load(Path.of("src/main/resources/assets/magiccodex/default-spells"));assertTrue(result.success());
         var ids=List.of("fox_orbit","curving_plumes","crystal_orbit","venom_spit","smoke_veil","domain_stomp","seal_circle","seal_talismans","shield_slam","chain_arrow","mana_drain","soul_scythe","oblivion_orbs","bone_grasp","shadow_leap","binding_pull","fairy_dust","moon_wind","gale_wings","feather_storm","hunting_pounce","roar_leap","gravity_slam","tail_spikes");
-        for(int i=0;i<24;i++){var spell=result.spells().get(299+i);assertEquals(300+i,spell.order());assertEquals(ids.get(i),spell.id());}
+        for(int i=0;i<24;i++){final String id=ids.get(i);var spell=result.spells().stream().filter(s->s.id().equals(id)).findFirst().orElseThrow();assertEquals(300+i,spell.order());assertEquals(id,spell.id());}
     }
 }

@@ -2,7 +2,7 @@ plugins {
     id("fabric-loom") version "1.10.5"
 }
 
-version = "3.2.0-catalog.alpha.4-opacity.1-bc7.2"
+version = "3.2.1-integrated-20261019.1-audited.1"
 
 base { archivesName.set("portable-vfx-client") }
 

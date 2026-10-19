@@ -12,6 +12,7 @@ final class GameplayVisual implements AutoCloseable {
  /** Any PortableVFX projectile-role system by full id, moved by the caller (mob shots: chamobshot vfx=...). */
  static GameplayVisual cast(UUID owner,String id,Location at,org.bukkit.util.Vector direction){
   if(id==null||id.isBlank()||at.getWorld()==null)return null;
+  id=id.toLowerCase(Locale.ROOT); // Config systems are canonicalized to lowercase resource IDs; event names retain their authored case.
   try{
    var plugin=Bukkit.getPluginManager().getPlugin("PortableVFX");if(plugin==null||!plugin.isEnabled())return null;var loader=plugin.getClass().getClassLoader();
    Class<?> api=Class.forName("dev.portablevfx.paper.api.PortableVfxService",true,loader),request=Class.forName("dev.portablevfx.paper.api.EffectRequest",true,loader),frame=Class.forName("dev.portablevfx.protocol.EffectBasis",true,loader);

@@ -27,4 +27,22 @@ class ReactionVfxScaleInputTest {
    verify(api,never()).play(any(EffectRequest.class));
   }
  }
+
+ @Test void bodyAndAreaUseModelFallbackDimensions()throws Exception{
+  var service=mock(PortableVfxService.class);var vfx=ReactionVfxTest.ready(ReactionVfxTest.plugin(new YamlConfiguration()),service);
+  ReactionVfxTest.field(vfx,"scaledPlay",PortableVfxService.class.getMethod("startCast",EffectRequest.class,EffectBasis.class,long.class,double.class,double.class,double.class));
+  ReactionVfxTest.field(vfx,"effectBasis",EffectBasis.class.getMethod("projectile",double.class,double.class,double.class));
+  var entity=mock(org.bukkit.entity.LivingEntity.class);when(entity.getBoundingBox()).thenReturn(new org.bukkit.util.BoundingBox(0,0,0,1.2,3.6,1.2));when(entity.getLocation()).thenAnswer(i->ReactionVfxTest.at());
+  var manager=mock(PluginManager.class);
+  try(var bukkit=mockStatic(Bukkit.class)){
+   bukkit.when(Bukkit::getPluginManager).thenReturn(manager);
+   vfx.body(school.magiccodex.protocol.ElementProtocol.Reaction.CRYSTAL,entity,20);
+   vfx.area(school.magiccodex.protocol.ElementProtocol.Reaction.STEAM,ReactionVfxTest.at(),3,entity,60);
+  }
+  var request=ArgumentCaptor.forClass(EffectRequest.class);var scale=ArgumentCaptor.forClass(Double.class);
+  verify(service,times(2)).startCast(request.capture(),any(EffectBasis.class),anyLong(),eq(0d),scale.capture(),eq(-1d));
+  assertEquals(3.6,scale.getAllValues().get(0),0.000001);
+  assertEquals(1.8*(float)(3.6/3.3),scale.getAllValues().get(1),0.000001);
+  assertTrue(request.getAllValues().stream().allMatch(r->r.scale()==1f));verify(service,never()).play(any());
+ }
 }

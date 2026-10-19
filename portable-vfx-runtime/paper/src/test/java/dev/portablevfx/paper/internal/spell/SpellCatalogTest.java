@@ -93,4 +93,15 @@ class SpellCatalogTest {
         row.put("required-effects",List.of("claude:kitsunefox/shot_normal","claude:kitsunefox/hit_normal"));assertTrue(SpellCatalog.fromMap(Map.of("schema-version",1,"spells",Map.of("fox_orbit",row))).resolve("fox_orbit").orElseThrow().mechanicVfx());
         row.remove("preparation-status");assertThrows(IllegalArgumentException.class,()->SpellCatalog.fromMap(Map.of("schema-version",1,"spells",Map.of("fox_orbit",row))));
     }
+    @Test void onlyApprovedArcanaDisplaySlotsCanOverlapDisabledLegacyEntries(){
+        var legacy=spell("air_brake",203,List.of(),false);
+        var arcana=spell("landing_airbrake",203,List.of(),true);
+        var catalog=new SpellCatalog(List.of(legacy,arcana));
+        assertEquals(2,catalog.entries().size());assertFalse(catalog.resolve("air_brake").orElseThrow().enabled());
+        assertTrue(catalog.resolve("landing_airbrake").orElseThrow().enabled());assertTrue(catalog.resolve("203").isEmpty());
+        assertThrows(IllegalArgumentException.class,()->new SpellCatalog(List.of(spell("air_brake",203,List.of(),true),arcana)));
+        assertThrows(IllegalArgumentException.class,()->new SpellCatalog(List.of(spell("other",203,List.of(),false),arcana)));
+        assertThrows(IllegalArgumentException.class,()->new SpellCatalog(List.of(legacy,arcana,arcana)));
+    }
+
 }

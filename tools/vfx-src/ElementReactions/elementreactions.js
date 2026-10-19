@@ -351,6 +351,8 @@ BODY.forEach((id, i) => {
 
 const SCENE = {
   name: "ElementReactions",
+  // Existing PortableVFX scaleInput module, including the lightning bolt minimum.
+  scale: { input: "targetHeight", unit: "m", reference: 1.8, min: 0.15, max: 4 },
   bloom: { threshold: 0.95, intensity: 1.3, scatter: 0.65, tint: [1, 0.95, 0.92] }, tonemapping: "neutral",
   systems: SYS.map(([id, , layers, len]) => ({ id, role: "impact", loop: false, duration: Math.max(0.2, len), layers })),
   demo: {

@@ -335,9 +335,11 @@ public record ClaudeEffect(String name, String schemaVersion, double fixedTimeSt
         private Map<String,Material> materials;
         private Map<String,Mesh> meshes;
         private Map<String,Model> models;
+        private AuditedPackLimits.Limits limits;
         private final LinkedHashSet<String> actualRequired=new LinkedHashSet<>();
         ClaudeEffect parse(JsonElement root) {
             JsonObject o=rawObj(root,"$");
+            limits=AuditedPackLimits.forEffect(o);
             String version=str(o,"schemaVersion","$");
             if(!version.matches("1\\.\\d+\\.\\d+")) fail("$.schemaVersion","unsupported version '"+version+"'; major 1 required");
             // Reject required capabilities before parsing newer fields, identifying every affected layer.
@@ -385,7 +387,7 @@ public record ClaudeEffect(String name, String schemaVersion, double fixedTimeSt
             for(var e:rawObj(req(o,"meshes","$"),"$.meshes").entrySet()) meshes.put(e.getKey(),mesh(e.getValue(),"$.meshes."+e.getKey()));
             ArrayList<SystemDef> systems=new ArrayList<>(); HashSet<String> ids=new HashSet<>();
             for(JsonElement s:array(req(o,"systems","$"),"$.systems")) {
-                if(systems.size()>=16) fail("$.systems","runtime limit: 16 systems");
+                if(systems.size()>=limits.systems()) fail("$.systems","runtime limit: "+limits.systems()+" systems");
                 SystemDef system=system(s,"$.systems["+systems.size()+"]",byLayer);
                 if(!ids.add(system.id)) fail("$.systems","duplicate id "+system.id); systems.add(system);
             }
@@ -502,7 +504,7 @@ public record ClaudeEffect(String name, String schemaVersion, double fixedTimeSt
             double duration=num(o,"duration",p); if(duration<=0||duration>600) fail(p+".duration","runtime limit: duration must be in (0,600] seconds");
             ArrayList<Layer> layers=new ArrayList<>(); HashSet<String> ids=new HashSet<>();
             for(JsonElement l:array(req(o,"layers",p),p+".layers")) {
-                if(layers.size()>=64) fail(p+".layers","runtime limit: 64 layers per system");
+                if(layers.size()>=limits.layers()) fail(p+".layers","runtime limit: "+limits.layers()+" layers per system");
                 Layer layer=layer(l,p+".layers["+layers.size()+"]");
                 if(layer.path()!=null&&!role.equals("link"))fail(p+".layers["+layers.size()+"].path","path requires role link");
                 if(!ids.add(layer.id)) fail(p+".layers","duplicate id "+layer.id);

@@ -2,7 +2,7 @@ id: landing_airbrake
 name: 빗자루 차원이동
 category: wind
 description: 빗자루를 탄 채로 바라보는 방향 약 6블록 앞으로 순간이동합니다.
-icon: ''
+icon: magiccodex:textures/spells/reviewed_20261020/landing_airbrake.png
 permission: magic.learned.landing_airbrake
 discovery:
   description: 비행 중 텔레포트 마법 사용

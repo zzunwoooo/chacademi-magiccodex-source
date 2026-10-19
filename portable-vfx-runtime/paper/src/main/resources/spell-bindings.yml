@@ -6953,25 +6953,25 @@ bindings:
     phases:
     - role: attached
       trigger: external:bind
-      effect: claude:nightchain/bindForm
+      effect: claude:nightchain/bindform
       anchor: target
       delay-ticks: 0
       duration-ticks: 24
     - role: attached
       trigger: external:bind
-      effect: claude:nightchain/bindHold
+      effect: claude:nightchain/bindhold
       anchor: target
       delay-ticks: 10
       duration-ticks: 160
     - role: attached
       trigger: external:bind
-      effect: claude:nightchain/bindFade
+      effect: claude:nightchain/bindfade
       anchor: target
       delay-ticks: 160
       duration-ticks: 30
     - role: link
       trigger: external:chain
-      effect: claude:nightchain/chainForm
+      effect: claude:nightchain/chainform
       anchor: impact
       delay-ticks: 0
       duration-ticks: 24
@@ -6979,7 +6979,7 @@ bindings:
       link-target: target
     - role: link
       trigger: external:chain
-      effect: claude:nightchain/chainHold
+      effect: claude:nightchain/chainhold
       anchor: impact
       delay-ticks: 10
       duration-ticks: 160
@@ -6987,7 +6987,7 @@ bindings:
       link-target: target
     - role: link
       trigger: external:chain
-      effect: claude:nightchain/chainFade
+      effect: claude:nightchain/chainfade
       anchor: impact
       delay-ticks: 160
       duration-ticks: 24
@@ -7599,13 +7599,13 @@ bindings:
       duration-ticks: 26
     - role: attached
       trigger: external:fear
-      effect: claude:belloffear/fearApply
+      effect: claude:belloffear/fearapply
       anchor: target
       delay-ticks: 0
       duration-ticks: 18
     - role: attached
       trigger: external:fear
-      effect: claude:belloffear/fearHold
+      effect: claude:belloffear/fearhold
       anchor: target
       delay-ticks: 2
       duration-ticks: 60
@@ -7623,13 +7623,13 @@ bindings:
     phases:
     - role: static
       trigger: cast
-      effect: claude:eclipseeye/zoneBegin
+      effect: claude:eclipseeye/zonebegin
       anchor: target
       delay-ticks: 0
       duration-ticks: 50
     - role: static
       trigger: cast
-      effect: claude:eclipseeye/zoneSustain
+      effect: claude:eclipseeye/zonesustain
       anchor: target
       delay-ticks: 3
       duration-ticks: 320
@@ -7641,16 +7641,16 @@ bindings:
       duration-ticks: 106
     - role: static
       trigger: external:struct_cancel
-      effect: claude:eclipseeye/chantCancel
+      effect: claude:eclipseeye/chantcancel
       anchor: impact
       delay-ticks: 0
       duration-ticks: 34
       stop-effects:
       - claude:eclipseeye/chant
-      - claude:eclipseeye/zoneSustain
+      - claude:eclipseeye/zonesustain
     - role: static
       trigger: external:struct_cancel
-      effect: claude:eclipseeye/zoneEnd
+      effect: claude:eclipseeye/zoneend
       anchor: impact
       delay-ticks: 0
       duration-ticks: 50
@@ -7662,23 +7662,23 @@ bindings:
       duration-ticks: 42
     - role: static
       trigger: external:eclipse
-      effect: claude:eclipseeye/eclipseHold
+      effect: claude:eclipseeye/eclipsehold
       anchor: impact
       delay-ticks: 0
       duration-ticks: 204
     - role: static
       trigger: external:eclipse_end
-      effect: claude:eclipseeye/eclipseEnd
+      effect: claude:eclipseeye/eclipseend
       anchor: impact
       delay-ticks: 0
       duration-ticks: 92
       stop-effects:
-      - claude:eclipseeye/eclipseHold
-      - claude:eclipseeye/zoneSustain
+      - claude:eclipseeye/eclipsehold
+      - claude:eclipseeye/zonesustain
       - claude:eclipseeye/haste
     - role: static
       trigger: external:eclipse_end
-      effect: claude:eclipseeye/zoneEnd
+      effect: claude:eclipseeye/zoneend
       anchor: impact
       delay-ticks: 0
       duration-ticks: 50
@@ -7696,7 +7696,7 @@ bindings:
       duration-ticks: 14
     - role: impact
       trigger: external:shardFade
-      effect: claude:eclipseeye/shardFade
+      effect: claude:eclipseeye/shardfade
       anchor: impact
       delay-ticks: 0
       duration-ticks: 18
@@ -7714,13 +7714,13 @@ bindings:
     phases:
     - role: static
       trigger: cast
-      effect: claude:voidmaw/warnBegin
+      effect: claude:voidmaw/warnbegin
       anchor: target
       delay-ticks: 0
       duration-ticks: 28
     - role: static
       trigger: cast
-      effect: claude:voidmaw/warnHold
+      effect: claude:voidmaw/warnhold
       anchor: target
       delay-ticks: 4
       duration-ticks: 22

@@ -6892,25 +6892,25 @@ spells:
     phases:
     - role: attached
       trigger: external:bind
-      effect: claude:nightchain/bindForm
+      effect: claude:nightchain/bindform
       anchor: target
       delay-ticks: 0
       duration-ticks: 24
     - role: attached
       trigger: external:bind
-      effect: claude:nightchain/bindHold
+      effect: claude:nightchain/bindhold
       anchor: target
       delay-ticks: 10
       duration-ticks: 160
     - role: attached
       trigger: external:bind
-      effect: claude:nightchain/bindFade
+      effect: claude:nightchain/bindfade
       anchor: target
       delay-ticks: 160
       duration-ticks: 30
     - role: link
       trigger: external:chain
-      effect: claude:nightchain/chainForm
+      effect: claude:nightchain/chainform
       anchor: impact
       delay-ticks: 0
       duration-ticks: 24
@@ -6918,7 +6918,7 @@ spells:
       link-target: target
     - role: link
       trigger: external:chain
-      effect: claude:nightchain/chainHold
+      effect: claude:nightchain/chainhold
       anchor: impact
       delay-ticks: 10
       duration-ticks: 160
@@ -6926,7 +6926,7 @@ spells:
       link-target: target
     - role: link
       trigger: external:chain
-      effect: claude:nightchain/chainFade
+      effect: claude:nightchain/chainfade
       anchor: impact
       delay-ticks: 160
       duration-ticks: 24
@@ -7592,13 +7592,13 @@ spells:
       duration-ticks: 26
     - role: attached
       trigger: external:fear
-      effect: claude:belloffear/fearApply
+      effect: claude:belloffear/fearapply
       anchor: target
       delay-ticks: 0
       duration-ticks: 18
     - role: attached
       trigger: external:fear
-      effect: claude:belloffear/fearHold
+      effect: claude:belloffear/fearhold
       anchor: target
       delay-ticks: 2
       duration-ticks: 60
@@ -7618,13 +7618,13 @@ spells:
     phases:
     - role: static
       trigger: cast
-      effect: claude:eclipseeye/zoneBegin
+      effect: claude:eclipseeye/zonebegin
       anchor: target
       delay-ticks: 0
       duration-ticks: 50
     - role: static
       trigger: cast
-      effect: claude:eclipseeye/zoneSustain
+      effect: claude:eclipseeye/zonesustain
       anchor: target
       delay-ticks: 3
       duration-ticks: 320
@@ -7636,16 +7636,16 @@ spells:
       duration-ticks: 106
     - role: static
       trigger: external:struct_cancel
-      effect: claude:eclipseeye/chantCancel
+      effect: claude:eclipseeye/chantcancel
       anchor: impact
       delay-ticks: 0
       duration-ticks: 34
       stop-effects:
       - claude:eclipseeye/chant
-      - claude:eclipseeye/zoneSustain
+      - claude:eclipseeye/zonesustain
     - role: static
       trigger: external:struct_cancel
-      effect: claude:eclipseeye/zoneEnd
+      effect: claude:eclipseeye/zoneend
       anchor: impact
       delay-ticks: 0
       duration-ticks: 50
@@ -7657,23 +7657,23 @@ spells:
       duration-ticks: 42
     - role: static
       trigger: external:eclipse
-      effect: claude:eclipseeye/eclipseHold
+      effect: claude:eclipseeye/eclipsehold
       anchor: impact
       delay-ticks: 0
       duration-ticks: 204
     - role: static
       trigger: external:eclipse_end
-      effect: claude:eclipseeye/eclipseEnd
+      effect: claude:eclipseeye/eclipseend
       anchor: impact
       delay-ticks: 0
       duration-ticks: 92
       stop-effects:
-      - claude:eclipseeye/eclipseHold
-      - claude:eclipseeye/zoneSustain
+      - claude:eclipseeye/eclipsehold
+      - claude:eclipseeye/zonesustain
       - claude:eclipseeye/haste
     - role: static
       trigger: external:eclipse_end
-      effect: claude:eclipseeye/zoneEnd
+      effect: claude:eclipseeye/zoneend
       anchor: impact
       delay-ticks: 0
       duration-ticks: 50
@@ -7691,7 +7691,7 @@ spells:
       duration-ticks: 14
     - role: impact
       trigger: external:shardFade
-      effect: claude:eclipseeye/shardFade
+      effect: claude:eclipseeye/shardfade
       anchor: impact
       delay-ticks: 0
       duration-ticks: 18
@@ -7725,13 +7725,13 @@ spells:
     phases:
     - role: static
       trigger: cast
-      effect: claude:voidmaw/warnBegin
+      effect: claude:voidmaw/warnbegin
       anchor: target
       delay-ticks: 0
       duration-ticks: 28
     - role: static
       trigger: cast
-      effect: claude:voidmaw/warnHold
+      effect: claude:voidmaw/warnhold
       anchor: target
       delay-ticks: 4
       duration-ticks: 22
@@ -9532,7 +9532,7 @@ spells:
     number: 203
     name: 빗자루 차원이동
     permission: magic.learned.landing_airbrake
-    icon: ''
+    icon: magiccodex:textures/spells/reviewed_20261020/landing_airbrake.png
     mana-cost: 35
     cooldown-seconds: 16
     reviewed: true
@@ -9556,7 +9556,7 @@ spells:
     number: 210
     name: 고요한 밑창
     permission: magic.learned.hushed_soles
-    icon: ''
+    icon: magiccodex:textures/spells/reviewed_20261020/hushed_soles.png
     mana-cost: 55
     cooldown-seconds: 45
     reviewed: true
@@ -9574,7 +9574,7 @@ spells:
     number: 211
     name: 가시의 예절
     permission: magic.learned.thorn_manners
-    icon: ''
+    icon: magiccodex:textures/spells/reviewed_20261020/thorn_manners.png
     mana-cost: 10
     cooldown-seconds: 30
     reviewed: true
@@ -9592,7 +9592,7 @@ spells:
     number: 212
     name: 불꽃 줄넘기
     permission: magic.learned.cinder_skipring
-    icon: ''
+    icon: magiccodex:textures/spells/reviewed_20261020/cinder_skipring.png
     mana-cost: 90
     cooldown-seconds: 18
     reviewed: true
@@ -9616,7 +9616,7 @@ spells:
     number: 213
     name: 물방울 인계
     permission: magic.learned.droplet_relay
-    icon: ''
+    icon: magiccodex:textures/spells/reviewed_20261020/droplet_relay.png
     mana-cost: 100
     cooldown-seconds: 20
     reviewed: true
@@ -9652,7 +9652,7 @@ spells:
     number: 214
     name: 접히는 수면
     permission: magic.learned.folding_tideplane
-    icon: ''
+    icon: magiccodex:textures/spells/reviewed_20261020/folding_tideplane.png
     mana-cost: 110
     cooldown-seconds: 22
     reviewed: true

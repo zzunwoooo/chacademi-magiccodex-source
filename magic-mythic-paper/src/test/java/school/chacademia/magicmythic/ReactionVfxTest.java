@@ -24,21 +24,21 @@ class ReactionVfxTest {
  static Location at(){var w=mock(World.class);when(w.getName()).thenReturn("world");return new Location(w,1,64,2);}
  @Test void everyReactionProducesOneDistinctValidRequest()throws Exception {
   var service=mock(PortableVfxService.class);var vfx=ready(plugin(new YamlConfiguration()),service);var at=at();
-  for(var reaction:Reaction.values())vfx.area(reaction,at,30);
+  for(var reaction:Reaction.values())vfx.area(reaction,at,3,null,30);
   var requests=ArgumentCaptor.forClass(EffectRequest.class);verify(service,times(15)).play(requests.capture());
   var ids=new HashSet<String>();for(var req:requests.getAllValues()){assertTrue(ids.add(req.effectId()));assertEquals(48,req.radius());assertEquals("world",req.worldName());}
   assertEquals(Set.of("steam","wildfire","magma","flare","ember_curse","shock","mud","rainbow","abyss","sandstorm","flash","void_gust","crystal","bind","eclipse"),ids.stream().map(id->id.substring(id.indexOf('/')+1)).collect(java.util.stream.Collectors.toSet()));
  }
  @Test void offAndReloadPreventPlayback()throws Exception {
   var config=new YamlConfiguration();config.set("reactions.vfx.enabled",false);var service=mock(PortableVfxService.class);var vfx=ready(plugin(config),service);
-  vfx.area(Reaction.STEAM,at(),30);verifyNoInteractions(service);assertEquals("반응 VFX 꺼짐",vfx.summary());
-  config.set("reactions.vfx.enabled",true);vfx=ready(plugin(config),service);vfx.area(Reaction.STEAM,at(),30);verify(service,times(1)).play(any(EffectRequest.class));
-  config.set("reactions.vfx.enabled",false);vfx.reload();vfx.area(Reaction.STEAM,at(),30);verifyNoMoreInteractions(service);
+  vfx.area(Reaction.STEAM,at(),3,null,30);verifyNoInteractions(service);assertEquals("반응 VFX 꺼짐",vfx.summary());
+  config.set("reactions.vfx.enabled",true);vfx=ready(plugin(config),service);vfx.area(Reaction.STEAM,at(),3,null,30);verify(service,times(1)).play(any(EffectRequest.class));
+  config.set("reactions.vfx.enabled",false);vfx.reload();vfx.area(Reaction.STEAM,at(),3,null,30);verifyNoMoreInteractions(service);
  }
  @Test void missingPluginAndBudgetExhaustionDoNotBreakGameplay()throws Exception {
-  var p=plugin(new YamlConfiguration());try(var b=mockStatic(Bukkit.class)){b.when(Bukkit::getPluginManager).thenReturn(mock(PluginManager.class));assertDoesNotThrow(()->new ReactionVfx(p).area(Reaction.STEAM,at(),30));}
+  var p=plugin(new YamlConfiguration());try(var b=mockStatic(Bukkit.class)){b.when(Bukkit::getPluginManager).thenReturn(mock(PluginManager.class));assertDoesNotThrow(()->new ReactionVfx(p).area(Reaction.STEAM,at(),3,null,30));}
   var service=mock(PortableVfxService.class);when(service.play(any(EffectRequest.class))).thenThrow(new RejectedExecutionException());var vfx=ready(p,service);
-  assertDoesNotThrow(()->vfx.area(Reaction.STEAM,at(),30));verify(p.getLogger(),never()).warning(anyString());
+  assertDoesNotThrow(()->vfx.area(Reaction.STEAM,at(),3,null,30));verify(p.getLogger(),never()).warning(anyString());
  }
  @Test void boltUsesHorizontalDirectionAndDistanceOnce()throws Exception {
   var service=mock(PortableVfxService.class);var vfx=ready(plugin(new YamlConfiguration()),service);var from=mock(LivingEntity.class);var to=mock(LivingEntity.class);var origin=at();

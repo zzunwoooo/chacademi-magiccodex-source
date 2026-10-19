@@ -2,7 +2,7 @@ id: folding_tideplane
 name: 접히는 수면
 category: water
 description: 바닥에 물막을 펼쳤다가 책장처럼 반대편으로 넘깁니다. 넘어가는 막에 닿은 적은 피해를 입습니다.
-icon: ''
+icon: magiccodex:textures/spells/reviewed_20261020/folding_tideplane.png
 permission: magic.learned.folding_tideplane
 discovery:
   description: 연금술로 물 + 책을 합성하여 물로 된 책 제작

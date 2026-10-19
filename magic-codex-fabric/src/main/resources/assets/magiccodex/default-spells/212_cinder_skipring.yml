@@ -2,7 +2,7 @@ id: cinder_skipring
 name: 불꽃 줄넘기
 category: fire
 description: 발밑에서 바깥으로 퍼지는 불고리를 보냅니다. 고리에 닿은 적은 피해를 입고, 뛰어넘거나 안쪽으로 파고들면 피할 수 있습니다.
-icon: ''
+icon: magiccodex:textures/spells/reviewed_20261020/cinder_skipring.png
 permission: magic.learned.cinder_skipring
 discovery:
   description: 전투 중 적의 지상 범위 공격을 점프로 회피 20회.
