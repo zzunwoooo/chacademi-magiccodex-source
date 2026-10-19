@@ -1,7 +1,7 @@
 # 큐디치 규칙. 숫자는 전부 여기서 조정합니다. /큐디치관리 리로드 (진행 중인 경기는 끝난 뒤 적용)
 # 시간은 초, 거리는 블록, 속도는 블록/초.
 # 참고: 빗자루 최고 속도는 초당 16~25블록 (부스트 1.45배).
-config-version: 2            # 2 = 2026-10-17 공 속도·중력 조정 (예전 파일은 서버가 켜질 때 이 값들로 바꿈)
+config-version: 3            # 2 = 2026-10-17 공 속도·중력, 3 = 2026-10-19 공 크기 2배·F 범위 (예전 파일은 서버가 켜질 때 이 값들로 바꿈)
 
 season:
   length-days: 7             # 시즌 길이 (큐디치·1:1 각각). 끝나면 그 모드의 레이팅·전적을 완전 초기화하고 다음 시즌 자동 시작.
@@ -23,6 +23,7 @@ match:
   snitch-at-seconds: 300     # 스니치 등장 (멈춘 시간 제외한 실제 경기 시간)
   respawn-seconds: 5         # 사망 후 부활까지
   respawn-invulnerable-seconds: 2
+  flight-fall-cooldown-seconds: 5  # 큐디치는 비행 쿨타임 없음. 공중에서 빗자루를 놓치면(낙마) 이 시간 동안만 비행 불가
   game-mode: ADVENTURE       # 경기 중 게임모드 (ADVENTURE 권장: 블록 파괴 불가)
 
 score:
@@ -32,7 +33,7 @@ score:
   kill-credit-seconds: 10    # 마지막으로 피해를 준 적이 이 시간 안이면 처치 인정
 
 key:                         # 큐디치 키(F) 공통
-  range: 3.0
+  range: 5.0                 # 퀘이플 잡기·블러저 쳐내기 범위 (스니치는 snitch.catch-range)
   cooldown-seconds: 1.0
 
 quaffle:
@@ -58,6 +59,7 @@ bludger:
   second-delay-seconds: 0.5  # 두 번째 블러저가 같은 사람을 노릴 때 늦게 출발
   deflect-speed: 42.0        # 쳐낸 블러저 속도 (에임 방향)
   deflect-seconds: 1.5
+  after-deflect-rest-seconds: 2.0  # 쳐낸 블러저는 날아간 뒤 이 시간 동안 아무도 쫓지 않음
 
 snitch:                      # 위치 표시 없음 · 빛나지 않음
   speed: 30.0                # 순간 돌진은 이 속도의 1.25배
@@ -117,7 +119,7 @@ models:                       # ModelEngine 모델 id (plugins/ModelEngine/bluep
   quaffle: kyudichi_quaffle
   bludger: kyudichi_bludger
   snitch: kyudichi_snitch
-  scale: 1.0
+  scale: 2.0                  # 공 크기 (2026-10-19 2배)
 fallback-items:               # ModelEngine이 없을 때 보이는 아이템
   quaffle: ORANGE_CONCRETE_POWDER
   bludger: BLACKSTONE

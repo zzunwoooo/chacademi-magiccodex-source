@@ -88,6 +88,17 @@ final class Hooks {
         return mana != null;
     }
 
+    private Method manaClear; private boolean manaClearMissing;
+    /** Makes a spell ready again (ManaService.clearCooldown; the client gets the reset too). */
+    void clearCooldown(Player p, String spell) {
+        if (manaClearMissing || !mana()) return;
+        try {
+            if (manaClear == null) manaClear = mana.getClass().getMethod("clearCooldown", UUID.class, String.class);
+            manaClear.invoke(mana, p.getUniqueId(), spell);
+        } catch (NoSuchMethodException e) { manaClearMissing = true; warnOnce("mana-clear", "MagicCodexBridge 가 오래돼 비행 쿨타임을 없앨 수 없어요");
+        } catch (ReflectiveOperationException | RuntimeException e) { warnOnce("mana-clear-err", "쿨타임 초기화 실패: " + e); }
+    }
+
     /** Adds `percent` of the player's maximum mana. */
     void restoreMana(Player p, double percent) {
         if (!mana()) return;

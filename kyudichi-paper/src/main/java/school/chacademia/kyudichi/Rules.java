@@ -12,6 +12,10 @@ import org.bukkit.configuration.ConfigurationSection;
 /** Immutable snapshot of config.yml. A running match keeps the Rules it started with. Times are ticks, speeds blocks/tick. */
 final class Rules {
     final int prepareTicks, countdownTicks, goalPauseTicks, playTicks, overtimeTicks, snitchAtTicks, respawnTicks, respawnInvulTicks;
+    /** 큐디치: flight has no cooldown, except this lock after leaving the broom in the air (owner 2026-10-19). */
+    final int flightFallLockTicks;
+    /** A deflected bludger flies on, then rests this long before it hunts anyone again. */
+    final int deflectRestTicks;
     final GameMode gameMode;
     final int goalPoints, killPoints, snitchPoints, killCreditTicks;
     final double keyRange; final int keyCooldownTicks;
@@ -40,12 +44,14 @@ final class Rules {
         snitchAtTicks = sec(c, "match.snitch-at-seconds", 300, 0, 7200);
         respawnTicks = sec(c, "match.respawn-seconds", 5, 0, 60);
         respawnInvulTicks = sec(c, "match.respawn-invulnerable-seconds", 2, 0, 30);
+        flightFallLockTicks = secD(c, "match.flight-fall-cooldown-seconds", 5, 0, 60);
+        deflectRestTicks = secD(c, "bludger.after-deflect-rest-seconds", 2, 0, 20);
         GameMode gm;
         try { gm = GameMode.valueOf(c.getString("match.game-mode", "ADVENTURE").toUpperCase(Locale.ROOT)); } catch (IllegalArgumentException e) { gm = GameMode.ADVENTURE; }
         gameMode = gm == GameMode.SPECTATOR ? GameMode.ADVENTURE : gm;
         goalPoints = c.getInt("score.goal", 10); killPoints = c.getInt("score.kill", 3); snitchPoints = c.getInt("score.snitch", 100);
         killCreditTicks = sec(c, "score.kill-credit-seconds", 10, 1, 60);
-        keyRange = num(c, "key.range", 3, 0.5, 10); keyCooldownTicks = secD(c, "key.cooldown-seconds", 1, 0, 10);
+        keyRange = num(c, "key.range", 5, 0.5, 10); keyCooldownTicks = secD(c, "key.cooldown-seconds", 1, 0, 10);
         quaffleDrift = speed(c, "quaffle.drift-speed", 3); throwSpeed = speed(c, "quaffle.throw-speed", 30);
         gravity = num(c, "quaffle.gravity", 6, 0, 60) / 400.0;
         flightTicks = secD(c, "quaffle.flight-seconds", 3, 0.5, 20); holdTicks = sec(c, "quaffle.hold-seconds", 10, 1, 120);
@@ -98,7 +104,7 @@ final class Rules {
             f.put(k, mat == null || !mat.isItem() ? k.fallback : mat);
         }
         models = Map.copyOf(m); fallback = Map.copyOf(f);
-        modelScale = num(c, "models.scale", 1, 0.1, 5);
+        modelScale = num(c, "models.scale", 2, 0.1, 5);
     }
 
     private static Set<String> lower(List<String> list) {

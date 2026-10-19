@@ -205,6 +205,7 @@ final class Match {
             Vector b = body(p);
             m.motion = m.lastBody == null ? new Vector() : b.clone().subtract(m.lastBody);
             m.lastBody = b;
+            if (!duel) plugin.hooks().clearCooldown(p, "flight"); // 큐디치: no flight cooldown (only the lock after a fall)
             fallCheck(m, p);
             if (phase != Phase.PLAY) return;
         }
@@ -373,11 +374,11 @@ final class Match {
                     MatchPlayer by = players.get(b.deflectBy);
                     if (by != null) by.deflectHits++;
                     bludgerHit(b, m, p, by);
-                    b.state = Bludger.State.FREE;
+                    endDeflect(b);
                     return;
                 }
             }
-            if (now >= b.deflectUntil) b.state = Bludger.State.FREE;
+            if (now >= b.deflectUntil) endDeflect(b);
             return;
         }
         if (now % 10 == b.index * 5L) retarget(b);
@@ -403,6 +404,12 @@ final class Match {
             bludgerHit(b, tm, target, null);
     }
 
+    /** End of a deflection: it keeps drifting the way it was hit and only hunts again after a short rest (no sudden turn onto someone else). */
+    private void endDeflect(Bludger b) {
+        b.state = Bludger.State.FREE; b.target = null; b.startAt = now + rules.deflectRestTicks;
+        b.steerTarget = b.vel.lengthSquared() > 1e-6 ? b.vel.clone().normalize().multiply(rules.bludgerWander) : null; b.wanderTimer = rules.deflectRestTicks;
+    }
+
     private void retarget(Bludger b) {
         UUID old = b.target; b.target = null;
         if (quaffle.state == Quaffle.State.HELD && !b.ignore.containsKey(quaffle.holder)) {
@@ -426,7 +433,7 @@ final class Match {
         }
         if (b.target != null && !b.target.equals(old)) {
             boolean shared = bludgers.stream().anyMatch(o -> o != b && b.target.equals(o.target));
-            b.startAt = shared ? now + rules.secondDelayTicks : now;
+            b.startAt = Math.max(b.startAt, shared ? now + rules.secondDelayTicks : now); // keeps an after-deflect rest
         }
     }
 
@@ -712,7 +719,10 @@ final class Match {
      */
     private void fallCheck(MatchPlayer m, Player p) {
         if (plugin.hooks().riding(p)) { m.mounted = true; m.falling = false; return; }
-        if (m.mounted) { m.mounted = false; m.falling = !p.isOnGround(); }
+        if (m.mounted) {
+            m.mounted = false; m.falling = !p.isOnGround();
+            if (m.falling) m.flightLockUntil = now + rules.flightFallLockTicks;
+        }
         if (m.falling && (p.isOnGround() || p.isInWater())) {
             m.falling = false;
             p.sendActionBar(Component.text("낙마!", NamedTextColor.RED));

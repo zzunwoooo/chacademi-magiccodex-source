@@ -26,7 +26,8 @@ final class MatchPlayer {
     int house = -1; String broom = "";   // 준비 화면 (ROSTER)
     org.bukkit.util.Vector aim; long aimAt = -1000;   // 공중 조준점 (C2S AIM), 바로 뒤 시전 하나 · F 던지기/쳐내기 하나에만
     org.bukkit.util.Vector lastBody, motion = new org.bukkit.util.Vector();   // body movement per tick (bludger lead)
-    boolean mounted, falling;   // 낙마: left the broom in the air → touching the ground is a death (owner 2026-10-17)
+    boolean mounted, falling;
+    long flightLockUntil;       // 낙마 후 비행 잠금 (match tick)   // 낙마: left the broom in the air → touching the ground is a death (owner 2026-10-17)
     // stats
     int goals, kills, deaths, assists, snitch, passes, carrierStops, saveGoal, saveBludger, deflectHits;
     double damage, heal;

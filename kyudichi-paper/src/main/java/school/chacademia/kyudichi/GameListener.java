@@ -180,11 +180,15 @@ final class GameListener implements Listener {
             if (m == null || m.phase == Match.Phase.ENDED) return;
             MatchPlayer mp = m.get(p.getUniqueId());
             String why = null;
+            // the flight key while riding only gets off the broom: always allowed
+            if (id.equals("flight") && plugin.hooks().riding(p)) return;
             if (!m.live()) why = "경기가 시작되면 마법을 쓸 수 있어요";
             else if (mp.dead(m.now)) why = "쓰러진 동안은 마법을 쓸 수 없어요";
             else if (m.quaffle != null && mp.id.equals(m.quaffle.holder)) why = "퀘이플을 들고 있을 때는 마법을 쓸 수 없어요";
             else if (m.duel && m.rules.duelBannedSpells.contains(id)) why = id.equals("flight") ? "1:1 대전에서는 비행할 수 없어요" : "1:1 대전에서 쓸 수 없는 마법이에요";
             else if (!m.duel && m.rules.bannedSpells.contains(id)) why = "큐디치에서 쓸 수 없는 마법이에요";
+            else if (!m.duel && id.equals("flight") && m.now < mp.flightLockUntil)
+                why = "낙마 후 " + Math.max(1, (mp.flightLockUntil - m.now + 19) / 20) + "초 동안 비행할 수 없어요";
             if (why != null) cancel.accept(why);
         });
         hookAimPoint(cl);
