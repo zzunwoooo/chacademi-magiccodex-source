@@ -21,6 +21,10 @@ import school.magiccodex.protocol.TelegraphProtocol.Show;
  *   vfxref=3 (authored radius: scale = r / vfxref)  tint=FFFFFF (colour-variant mobs)  cancel=true (caster death cancels)
  *   pulses=4 period=8 (sustained: extra hits every period ticks on the same shape, e.g. breath)
  *   knock=1.2 (outward / forward push)  up=0.8 (launch)  pull=1.5 (toward the caster) - applied to every target hit
+ *   blink=true (the caster appears beside the warned spot when it fires, then hits: "몹이 나에게 순간이동")
+ *     vfxout=pack/system (played where the caster vanished)
+ *   tpme=true (every target hit is teleported in front of the caster, then knock/up/pull apply: "나를 몹 앞으로")
+ *     vfxin=pack/system (played at the arrival spot)
  *
  * Shape, origin and yaw are fixed when the warning starts; the hit uses the same {@link Show}.
  */
@@ -46,6 +50,7 @@ final class TelegraphMech extends Mech {
         double dmg = c.dmg(p);
         int pulses = Math.clamp(p.i("pulses", 1), 1, 20), period = Math.clamp(p.i("period", 8), 1, 40);
         return plugin.telegraphs().start(show, c.caster(), world, p.b("cancel", true), s -> {
+            if (p.b("blink", false)) blink(c.caster(), s);
             hit(c.caster(), s, dmg);
             // sustained skills (breath): more hits on the same shape, one delayed task each - nothing runs per tick
             for (int k = 1; k < pulses; k++) plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
@@ -87,8 +92,44 @@ final class TelegraphMech extends Mech {
             if (!TelegraphProtocol.inside(s, t.getLocation().getX(), t.getLocation().getZ(), t.getWidth() / 2)) continue;
             if (!plugin.targets().hurt(caster, t, dmg, p.s("element", ""))) continue; // 0 = protection probe only
             plugin.targets().sideEffects(caster, t, p);
+            if (p.b("tpme", false)) pullTo(caster, t);
             push(caster, s, t);
         }
+    }
+
+    /** blink=true: put the caster 1.4 blocks from the warned spot on its own side, facing it (2-block clear space only). */
+    private void blink(LivingEntity caster, Show s) {
+        if (caster == null || !caster.isValid()) return;
+        var from = caster.getLocation();
+        double dx = from.getX() - s.x(), dz = from.getZ() - s.z(), d = Math.hypot(dx, dz);
+        if (d < 1e-3) { dx = -s.fx(); dz = -s.fz(); d = 1; }
+        var to = new Location(caster.getWorld(), s.x() + dx / d * 1.4, s.y(), s.z() + dz / d * 1.4);
+        if (!clear(to)) to = new Location(caster.getWorld(), s.x(), s.y(), s.z());
+        if (!clear(to)) return;
+        to.setYaw((float) Math.toDegrees(Math.atan2(dx / d, -dz / d))); to.setPitch(0);
+        String out = vfxId(p.s("vfxout", ""));
+        if (!out.isEmpty()) plugin.reactions().vfx().effect(out, from, 1, from.getYaw(), 30, tint(p.s("tint", "FFFFFF")));
+        caster.teleport(to);
+    }
+
+    /** tpme=true: bring a hit target 1.6 blocks in front of the caster, facing it. */
+    private void pullTo(LivingEntity caster, LivingEntity t) {
+        var c = caster.getLocation();
+        var fwd = c.getDirection().setY(0);
+        if (fwd.lengthSquared() < 1e-4) fwd = new org.bukkit.util.Vector(0, 0, 1);
+        fwd.normalize();
+        var to = c.clone().add(fwd.multiply(Math.max(1.2, caster.getWidth() / 2 + 1.1)));
+        to.setY(Telegraphs.ground(to.clone().add(0, 1, 0)));
+        if (!clear(to)) return;
+        to.setYaw(c.getYaw() + 180); to.setPitch(0);
+        t.teleport(to);
+        String in = vfxId(p.s("vfxin", ""));
+        if (!in.isEmpty()) plugin.reactions().vfx().effect(in, to, 1, to.getYaw(), 30, tint(p.s("tint", "FFFFFF")));
+    }
+
+    private static boolean clear(Location at) {
+        var b = at.getBlock();
+        return b.isPassable() && b.getRelative(org.bukkit.block.BlockFace.UP).isPassable();
     }
 
     /** knock = outward from the shape origin (circle/cone: radial, line: along the forward), up = vertical, pull = toward the caster (blocks/tick-ish). */

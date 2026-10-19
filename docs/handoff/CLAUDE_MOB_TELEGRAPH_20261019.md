@@ -129,3 +129,51 @@
 - 기본기는 `~onTimer:40 0.5` (2초마다 50%), 쿨 3~6초. 예고가 짧아(0.4~0.6초) 피할 수는 있지만 근접에서 꾸준히 위협.
 - 거벽 "거벽 진형"(정면 피해 -60%)은 정면 판정 기능이 없어서 지금은 MythicMobs `potion RESISTANCE` 5초로 대신함.
 - 랩터·곰·악어는 문서에 없는 몹 — 사장님 요청(기본 공격형)으로 공격적인 야생 몹을 골라 추가함. 스킬 152개.
+
+## 기본기 · 특수기 (2026-10-19 오후, 사장님: "모든 몹이 기본 공격 느낌의 기술 / 특수기는 레어 몹만 / 몹별로 다르게 / 이 퀄리티로")
+
+### 새 서버 코드 (빌드·테스트 필요 — GPT)
+- `MobShotMech` (`chamobshot`, MagicMythicPlugin 등록) — 몹 가벼운 투사체. 예고 없음(보고 피하는 기술). 파라미터: count≤8 spread≤360 interval speed range radius homing rise(중력 0.04) fromy/fromz burst orbit flat/element/status/knock/up, `vfx`=projectile 역할 시스템(`GameplayVisual.cast(null, id, …)` 로 서버가 움직임), `hitvfx`=맞은/떨어진 자리(`ReactionVfx.effect`). **hit 시스템은 impact 역할**로 만들어져 있음 → `ReactionVfx.effect` 가 impact 역할도 재생하는지 확인, 안 되면 클라 쪽 static 취급 또는 팩의 role 을 static 으로 바꿔 재생(레이어는 그대로, 로컬 +Y=위).
+- `GameplayVisual.cast(UUID owner, …)` — owner null 허용(몹).
+- `TelegraphMech`: `blink=true`(+`vfxout`) 몹이 예고 자리 옆으로 순간이동 후 판정, `tpme=true`(+`vfxin`) 맞은 대상을 몹 앞 1.6블록으로 끌어옴. 둘 다 2칸 빈 공간 확인.
+- 소환수 `mythicmobs/Mobs/chacademi_mob_minions.yml`: `CHA_MINION_wolf`(WOLF + ca_lostasset_mob1_wolf) / `CHA_MINION_skeleton`(HUSK + ca_ncr_warrior_skeleton), 10초 뒤 remove. 모델 id·Type 확인.
+
+### yml
+- `chacademi_mob_skills.yml` 끝 "자동 생성 2" 구간 (scratchpad ms/basics.py): 기본기 156개(`CHA_MOB_<기본기>_<몹>`), 특수기 38개.
+- 몹 항목 줄: 큰 기술 `~onTimer:300 0.35` (예전 100 → 덜 쓰게), 기본기 `~onTimer:40 0.6`, 특수기 `~onTimer:240 0.3`. 몹별 참고본 = PC `몹스킬\<폴더>\mythicmobs\mobs_추가할줄.yml`. 랩터·악어·곰·봉인궁수·거벽은 예전 6차 bite/swipe/chain_shot/shield_bash 가 새 기본기로 교체(예전 스킬은 yml 에 남아 있지만 몹에 안 붙임).
+- 모션: `state{s=attack}` 기본, 오우거 attack1 · 서리기사 slash · 해골술사/유적궁수/유적검병 attack2 · 빙핵 skill5. 모델에 그 이름이 없으면 모션 없이 기술만 나감 — GPT 가 bbmodel 애니 이름 확인.
+- 콤보(서리기사 2연·히포그리프 2연·검치호 3연·유적검병 3연): 예고를 여러 번, VFX 는 첫 번째에만(VFX 하나가 콤보 전체를 그림).
+
+### VFX 팩 (PC `차카데미 vfx_Claude\몹스킬\<폴더>\기본기\` + 루트 `<Pack>\`)
+| 팩 | 몹 | 방식 |
+|---|---|---|
+| OgreSwing | 오우거 | 부채꼴 160° 휘두르기 |
+| GolemBoulder | 골렘 | 룬 바위 포물선 투척 + 착탄 |
+| DragonTail | 드래곤 | 꼬리 360° 회전 |
+| FrostCross | 서리기사 | X자 2연 베기 |
+| TuskerUpper | 터스커 | 엄니 올려치기 |
+| StagHorn | 영록 | 빛 뿔 3갈래 투사체 |
+| SerpentCoil | 하늘뱀 | 나선 휘감기 (+ SpecialSerpent 끌어오기) |
+| PhoenixFeather | 피닉스 | 곡선 유도 불깃털 3발 |
+| PegasusCrescent | 페가수스 | 날아가는 반달 바람날 2개 |
+| HippoClaw | 히포그리프 | 발톱 세 줄 2연 |
+| KitsuneFox | 키츠네 | 여우불 공전 후 유도 (+ SpecialKitsune 순간이동) |
+| UnicornStar | 유니콘 | 대상 발밑 별 낙하 |
+| BasiliskSpit | 바실리스크 | 독 포물선 + 웅덩이 |
+| WyvernSpike | 와이번 | 가시 3연사 포물선 (+ SpecialWyvern 끌어오기) |
+| ManticoreClaw | 만티코어 | 2연 할퀴기 + 포효 |
+| PhantomScythe | 팬텀 | 영혼 낫 (+ SpecialPhantom 순간이동) |
+| SaberClaw | 검치호 | 3연 할퀴기 |
+| WolfhawkBlade | 울프호크 | 회전 바람칼날 (+ SpecialWolfhawk 늑대 소환) |
+| HerbWhip | 약초골렘 | 덩굴 채찍 |
+| HerbPotion | 약초도둑 | 독약병 + 독 웅덩이 |
+| SkelOrb | 해골술사 | 망각탄 3발 (+ SpecialSkelmage 뼈병사 소환) |
+| FairyOrb | 요정 | 곡선 유도 구슬 2발 |
+| RuinArrow / RuinSpin / RuinTriple | 유적 궁수/창병/검병 | 뼈화살 2연사 / 창 회전 / 3연 베기 |
+| SealShield | 봉인기사 | 방패 내려찍기 문양 |
+| SealTalisman | 봉인술사 | 부적 3장 곡선 (+ SpecialSeal 끌어오기) |
+| GlacialShards | 빙핵의 수호자 | 결정 공전 → 8방향 |
+| BeastJaw | 랩터·악어 | 물어뜯기 |
+| BearMaul | 곰 | 양앞발 내려찍기 |
+| ChainArrow / ShieldBash | 봉인궁수 / 거벽 | 사슬 화살 / 방패 돌진 |
+- 모두 client_compat check OK. **텍스처 주의:** 붓질 획 시트(T_SlashStroke_Sheet + T_InkStroke_Sheet, 각 1024×512)가 팩마다 들어가 고유 RGBA 2.9~7.2 MiB (목표 4 MiB 초과). 클라 1 GiB 예산이 빠듯하면 두 시트를 512×256 으로 줄이거나 공용 팩 하나로 묶는 작업 필요 — 알려주면 Claude 가 함.
