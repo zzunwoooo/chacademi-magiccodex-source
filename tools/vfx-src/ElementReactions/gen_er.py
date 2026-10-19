@@ -139,3 +139,108 @@ print("ok")
 for name, S in (("T_Rift.png", 256), ("T_Shard.png", 128)):
     im = Image.open(OUT + name); c = Image.new("RGBA", (S, S), (255, 255, 255, 0))
     c.paste(im, ((S - im.size[0]) // 2, (S - im.size[1]) // 2)); c.save(OUT + name)
+
+# ================================================================ 2026-10-20 additions (CC reaction rework)
+from PIL import ImageDraw, ImageFilter
+def glyph(draw_fn, S=128, k=3, blur=6, core_w=1.0):
+    """Line art drawn at k x with PIL, white on clear, + gaussian glow halo; downsampled to S."""
+    big = Image.new("L", (S * k, S * k), 0); d = ImageDraw.Draw(big); draw_fn(d, S * k)
+    line = np.asarray(big.resize((S, S), Image.LANCZOS), float) / 255
+    halo = np.asarray(big.filter(ImageFilter.GaussianBlur(blur * k)).resize((S, S), Image.LANCZOS), float) / 255
+    a = np.clip(line * core_w + halo * 1.6, 0, 1)
+    return hot(np.clip(line, 0, 1)), a
+
+# thin line profile for mesh rings (u along the ring, v across)
+W, H = 64, 32; v = np.linspace(-1, 1, H)[:, None] + 0 * np.zeros((1, W))
+core = np.exp(-(v / 0.16) ** 2); halo = np.exp(-(v / 0.6) ** 2) * 0.45
+save(hot(core), np.clip(core + halo, 0, 1) * (1 - ss(0.9, 1, np.abs(v))), "T_Line.png")
+
+# flame tongue flipbook 4x4 (64 px), grey-hot (tinted per use)
+C = 64; yy, xx = np.mgrid[-1:1:C*1j, -1:1:C*1j]
+nA = smooth_noise(C, C, 16, 16, 3, 31); nB = smooth_noise(C, C, 8, 8, 3, 32); stk = smooth_noise(C, C, 4, 22, 3, 33)
+rgbS = np.zeros((C*4, C*4, 3)); aS = np.zeros((C*4, C*4))
+for i in range(16):
+    t = i / 15
+    wx = xx + (nA - .5) * .5 * (1 - yy) * .6; wy = yy + 0.25
+    width = 0.7 * np.clip((wy + 1) / 1.6, 0, 1) ** 0.8 * (1 - 0.25 * t)
+    tip = ss(-1.0 + 0.5 * t, -0.2, wy)                        # tongue rises, tip burns away over time
+    body = 1 - np.abs(wx) / (width + 1e-3)
+    heat = np.clip(body, 0, 1) * tip * (0.7 + 0.4 * stk) - t ** 1.4 * 0.6 * (0.4 + nB)
+    a = ss(0.0, 0.12, heat) + np.exp(-(np.clip(-body, 0, None) / 0.5) ** 2) * 0.25 * tip * (1 - t)
+    a *= ss(1.0, 0.75, wy)                                     # soft base
+    r_, c_ = divmod(i, 4)
+    rgbS[r_*C:(r_+1)*C, c_*C:(c_+1)*C] = hot(np.clip(heat * 1.4, 0, 1)); aS[r_*C:(r_+1)*C, c_*C:(c_+1)*C] = np.clip(a, 0, 1)
+save(rgbS, aS, "T_FlameTongue_Sheet.png")
+
+# small lightning arcs 2x2 (128 px): jagged arc segments for the disarm crackle
+C = 128; rgbS = np.zeros((256, 256, 3)); aS = np.zeros((256, 256))
+for i in range(4):
+    rng = np.random.default_rng(100 + i); n = 9
+    pts = [(0.12 + 0.76 * k / (n - 1), 0.5 + rng.normal(0, 0.13)) for k in range(n)]
+    def dr(d, S, pts=pts, rng=rng):
+        P = [(x * S, y * S) for x, y in pts]
+        d.line(P, fill=255, width=int(S * 0.025), joint="curve")
+        for k in (2, 5):                                         # two small forks
+            x, y = P[k]; d.line([(x, y), (x + S * 0.12, y + S * rng.choice([-0.18, 0.18]))], fill=200, width=int(S * 0.015))
+    rgb, a = glyph(dr, S=C, blur=4)
+    r_, c_ = divmod(i, 2); rgbS[r_*C:(r_+1)*C, c_*C:(c_+1)*C] = rgb; aS[r_*C:(r_+1)*C, c_*C:(c_+1)*C] = a
+save(rgbS, aS, "T_Arc_Sheet.png")
+
+# bubble (ring with highlight)
+xx, yy, r = grid(64)
+bub = np.exp(-((r - 0.7) / 0.08) ** 2) + np.exp(-(np.hypot(xx + 0.3, yy + 0.3) / 0.15) ** 2) * 0.9 + (r < 0.7) * 0.15
+save(hot(np.clip(bub, 0, 1)), np.clip(bub, 0, 1) * (1 - ss(0.9, 1, r)), "T_Bubble.png")
+
+# glyphs (192 px): heal cross, broken heal seal, crescent moon, Z, mana diamond, weak arrow
+def cross(d, S, w=0.13):
+    c = S / 2; a = S * 0.32; b = S * w
+    d.polygon([(c - b, c - a), (c + b, c - a), (c + b, c - b), (c + a, c - b), (c + a, c + b), (c + b, c + b), (c + b, c + a),
+               (c - b, c + a), (c - b, c + b), (c - a, c + b), (c - a, c - b), (c - b, c - b)], outline=255, width=int(S * 0.03))
+rgb, a = glyph(lambda d, S: cross(d, S)); save(rgb, a, "T_Cross.png")
+def seal(d, S):
+    cross(d, S, 0.11); c = S / 2
+    d.ellipse([S * 0.1, S * 0.1, S * 0.9, S * 0.9], outline=255, width=int(S * 0.035))
+    d.line([(S * 0.2, S * 0.8), (S * 0.8, S * 0.2)], fill=255, width=int(S * 0.06))
+rgb, a = glyph(seal); save(rgb, a, "T_Seal.png")
+def moon(d, S):
+    d.ellipse([S * 0.18, S * 0.18, S * 0.82, S * 0.82], fill=255)
+    d.ellipse([S * 0.34, S * 0.1, S * 0.94, S * 0.7], fill=0)
+rgb, a = glyph(moon, blur=5, core_w=0.9); save(rgb, a, "T_Moon.png")
+def zz(d, S):
+    w = int(S * 0.07)
+    d.line([(S * 0.28, S * 0.28), (S * 0.72, S * 0.28), (S * 0.28, S * 0.72), (S * 0.72, S * 0.72)], fill=255, width=w, joint="curve")
+rgb, a = glyph(zz, blur=4); save(rgb, a, "T_Z.png")
+def diamond(d, S):
+    c = S / 2
+    d.polygon([(c, S * 0.1), (S * 0.78, c), (c, S * 0.9), (S * 0.22, c)], outline=255, width=int(S * 0.04))
+    d.polygon([(c, S * 0.3), (S * 0.62, c), (c, S * 0.7), (S * 0.38, c)], fill=170)
+    d.line([(S * 0.42, S * 0.18), (S * 0.56, S * 0.45), (S * 0.46, S * 0.6), (S * 0.6, S * 0.85)], fill=0, width=int(S * 0.035))
+rgb, a = glyph(diamond); save(rgb, a, "T_ManaCrack.png")
+def arrow(d, S):
+    c = S / 2; w = int(S * 0.06)
+    for y0 in (0.18, 0.44):
+        d.line([(S * 0.26, S * y0), (c, S * (y0 + 0.24)), (S * 0.74, S * y0)], fill=255, width=w, joint="curve")
+rgb, a = glyph(arrow); save(rgb, a, "T_Down.png")
+
+# chain strip (256x64, u along, tiles horizontally): oval links
+def chain(d, S):
+    pass
+W, H = 256, 64; big = Image.new("L", (W * 3, H * 3), 0); dd = ImageDraw.Draw(big)
+for k in range(5):
+    x0 = k * W * 3 / 4 - W * 3 / 8 * 0
+    if k % 2 == 0: dd.ellipse([x0 - 70, 36, x0 + 110, 156], outline=255, width=14)
+    else: dd.line([(x0 - 40, 96), (x0 + 80, 96)], fill=255, width=16)
+line = np.asarray(big.resize((W, H), Image.LANCZOS), float) / 255
+halo = np.asarray(big.filter(ImageFilter.GaussianBlur(12)).resize((W, H), Image.LANCZOS), float) / 255
+save(hot(line), np.clip(line + halo * 1.4, 0, 1), "T_Chain.png")
+
+# dark wisp stroke (256x64, head right): smoky tapered tail for fear
+W, H = 256, 64
+x = np.linspace(0, 1, W)[None, :]; y = np.linspace(-1, 1, H)[:, None]
+nW = smooth_noise(W, H, 40, 6, 3, 120)
+wy = y + (nW - 0.5) * 0.5 * (1 - x)
+taper = np.sin(np.pi * np.clip(x, 0, 1)) ** 0.7 * x ** 0.4
+d = np.abs(wy) / (0.55 * taper + 1e-3)
+body = np.clip(1 - d, 0, 1) ** 0.8 * (0.8 + 0.4 * smooth_noise(W, H, 60, 4, 3, 121))
+save(hot(np.exp(-(d / 0.3) ** 2) * taper), np.clip(body, 0, 1), "T_Wisp.png")
+print("ok2")
