@@ -41,3 +41,5 @@ No live multiplayer or visual acceptance was performed. Status effects are not n
 ## Hosting evidence
 
 C:/Chacademi/artifacts/status-hud-20261019: build-evidence.json, before-metadata.json (hash metadata only), server-installed.json, startup-verification.json, personal-installed.json, completion.json. Source/build/test logs: C:/Chacademi/staging/status-hud-20261019. Launcher: C:/Chacademi/staging/temp-launcher-status-hud-20261019 (candidate.json, preparation.json, release-candidate-hashes.json, installation/build/lint/test/ASAR/updater evidence).
+
+Read-only Korean status diagnostics through the existing supervisor console arrived as question marks and returned Unknown command; no status-command runtime verification is claimed. Plugin activation, startup logs, protocol response and unit tests are the completed checks. No console encoding/service-script change was made.
