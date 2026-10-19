@@ -14,7 +14,7 @@ final class TargetHudLayout {
         return Math.clamp((int) Math.ceil(f * SLOTS.length - 1e-6) - 1, 0, SLOTS.length - 1);
     }
     /** HUD width in GUI px for a screen width. */
-    static float width(int screenW) { return Math.clamp(screenW * .304f, 184, 400); } // owner 2026-10-19: 80 % of the first size
+    static float width(int screenW) { return Math.clamp(screenW * .38f, 230, 500); }
     /** Center x of the n-th icon counted from the right (0 = rightmost). */
     static float iconX(float right, float diameter, float step, int n) { return right - diameter / 2 - step * n; }
 }

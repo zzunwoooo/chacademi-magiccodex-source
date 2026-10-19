@@ -30,7 +30,7 @@ import school.magiccodex.protocol.TargetHudProtocol;
  *
  *        달빛 늑대                     name (rare/이로치 = lavender, hp_rare bar)
  *   ───────◇───────            280    title decoration · damage I dealt to it
- *   [■■■■][■■■■][■720/1000■][■■][  ][  ]   6 fixed HP segments, one color with gloss, frame block squashed to BAR_Y
+ *   [■■■■][■■■■][■720/1000■][▒▒][  ][  ]   6 fixed HP segments, the segment holding the tip is brighter
  *   [=========160 / 240======        ]       mana (players / mobs with mana only; vanilla mobs: no mana row)
  *   ♥ 38%                      (元)(●)(●)   taming odds · element mark (left) + statuses filled from the right
  *
@@ -72,10 +72,6 @@ public final class TargetHudClient {
     static float segment(float f, int i) { return TargetHudLayout.segment(f, i); }
     static int tipSegment(float f) { return TargetHudLayout.tipSegment(f); }
     static float width(int screenW) { return TargetHudLayout.width(screenW); }
-    /** Owner 2026-10-19 (in game): bar a bit thinner -> the frame block is drawn squashed to this height. */
-    static final float BAR_Y = .74f;
-    private static final Identifier NAME_FONT = Identifier.of("magiccodex", "section");
-    private static int fade(int argb, float alpha) { return (Math.round(((argb >>> 24) & 255) * alpha) << 24) | (argb & 0xFFFFFF); }
 
     // ---------------------------------------------------------------- state
     /** One bar on screen: eased values per entity, kept per slot. */
@@ -221,22 +217,18 @@ public final class TargetHudClient {
         try {
             m.translate(fx, fy, 0);
             m.scale(s, s, 1);
-            // name plate: soft dark band so the name reads on bright sky (owner: name was hard to see)
-            HudMesh.quad(ctx, FRAME_W / 2f - 420, NAME_Y - 30, 420, 60, fade(0x00060C18, alpha), fade(0x94060C18, alpha));
-            HudMesh.quad(ctx, FRAME_W / 2f, NAME_Y - 30, 420, 60, fade(0x94060C18, alpha), fade(0x00060C18, alpha));
             // title decoration
             int[] dsz = images.size(DECOR);
             if (dsz != null) {
                 int dh = Math.round(DECOR_W * dsz[1] / (float) dsz[0]);
                 images.drawStretched(ctx, DECOR, Math.round(FRAME_W / 2f - DECOR_W / 2), Math.round(DECOR_Y - dh / 2f), Math.round(DECOR_W), dh, a8 | 0xFFFFFF);
             }
-            // frame block (frame, HP, mana) squashed to BAR_Y height
-            m.push();
-            m.scale(1, BAR_Y, 1);
+            // frame
             images.drawStretched(ctx, hasMana ? FRAME : FRAME_HP, 0, 0, FRAME_W, hasMana ? FRAME_H : FRAME_HP_H, a8 | 0xFFFFFF);
             // HP segments: one continuous strip clipped per slot, so the rare gradient runs across all six.
             String strip = rare ? HP_RARE : HP;
             int[] hsz = images.size(strip);
+            int tip = tipSegment(fHp);
             if (hsz != null) {
                 float span0 = SLOTS[0][0], span = SLOTS[SLOTS.length - 1][1] - span0;
                 for (int i = 0; i < SLOTS.length; i++) {
@@ -244,12 +236,10 @@ public final class TargetHudClient {
                     if (part <= 0) continue;
                     float x0 = SLOTS[i][0], sw0 = SLOTS[i][1] - x0, wPart = sw0 * part;
                     float u = (x0 - span0) / span * hsz[0], uw = wPart / span * hsz[0];
-                    // One color for every segment (owner: no pink tip); gloss on top, shade at the bottom.
-                    int x = Math.round(x0), y0 = Math.round(HP_TOP), wi = Math.max(1, Math.round(wPart)), hi = Math.round(HP_BOTTOM - HP_TOP);
-                    images.drawPart(ctx, strip, x, y0, wi, hi, u, 0, Math.max(1, Math.round(uw)), hsz[1], a8 | 0xFFFFFF);
-                    ctx.fillGradient(x, y0, x + wi, y0 + Math.round(hi * .48f), fade(0x5CFFFFFF, alpha), fade(0x00FFFFFF, alpha));
-                    ctx.fillGradient(x, y0 + Math.round(hi * .55f), x + wi, y0 + hi, fade(0x00000000, alpha), fade(0x70000000, alpha));
-                    ctx.fill(x, y0, x + wi, y0 + 2, fade(0x66FFFFFF, alpha));
+                    int tint = i == tip ? 0xFFFFFF : 0xD2D2D2;
+                    images.drawPart(ctx, strip, Math.round(x0), Math.round(HP_TOP), Math.max(1, Math.round(wPart)), Math.round(HP_BOTTOM - HP_TOP),
+                        u, 0, Math.max(1, Math.round(uw)), hsz[1], a8 | tint);
+                    if (i == tip) HudMesh.quad(ctx, x0, HP_TOP, wPart, HP_BOTTOM - HP_TOP, (Math.round(alpha * 46) << 24) | 0xFFFFFF, (Math.round(alpha * 70) << 24) | 0xFFFFFF);
                 }
             }
             // mana
@@ -260,19 +250,7 @@ public final class TargetHudClient {
                     images.drawPart(ctx, MANA, Math.round(MANA_LEFT), Math.round(MANA_TOP), Math.max(1, Math.round(mw)), Math.round(MANA_BOTTOM - MANA_TOP),
                         0, 0, Math.max(1, Math.round(msz[0] * fm)), msz[1], a8 | 0xFFFFFF);
             }
-            m.pop();
-            float frameH = (hasMana ? FRAME_H : FRAME_HP_H) * BAR_Y, below = frameH;
-            // ornaments (owner: a little decoration): gold hairlines above/below the frame and diamonds at both ends
-            int gold = 0xE9C98B;
-            for (float ly : new float[]{-3, frameH + 1.5f}) {
-                HudMesh.quad(ctx, 60, ly, FRAME_W / 2f - 60, 1.6f, fade(0x00000000 | gold, alpha), fade(0xC0000000 | gold, alpha));
-                HudMesh.quad(ctx, FRAME_W / 2f, ly, FRAME_W / 2f - 60, 1.6f, fade(0xC0000000 | gold, alpha), fade(0x00000000 | gold, alpha));
-            }
-            for (float ex : new float[]{-2, FRAME_W + 2}) {
-                HudMesh.star(ctx, ex, frameH / 2, 19, fade(0xFF000000 | gold, alpha));
-                HudMesh.star(ctx, ex, frameH / 2, 13, fade(0xFF0A1424, alpha));
-                HudMesh.star(ctx, ex, frameH / 2, 6, fade(0xFF000000 | gold, alpha));
-            }
+            float below = hasMana ? FRAME_H : FRAME_HP_H;
             // taming odds heart
             if (t.tameChance() >= 0) images.drawCentered(ctx, HEART, 28.7f, below + HEART_DY, Math.round(HEART_SIZE), a8 | 0xFFFFFF);
             // element mark (left) + statuses filled from the right
@@ -296,34 +274,38 @@ public final class TargetHudClient {
 
         // ---- text (GUI px, unscaled)
         String name = name(t);
-        int nameColor = rare ? 0xD9C8FF : t.kind() == TargetHudProtocol.KIND_PLAYER ? 0xFFFFFF : 0xFFF4DE;
+        int nameColor = rare ? 0xC9B4FF : t.kind() == TargetHudProtocol.KIND_PLAYER ? 0xF4F1EA : 0xF3EBDD;
         float nameSize = NAME_SIZE * s, nameMax = 900 * s;
-        float nw = text.width(name, nameSize, NAME_FONT);
+        float nw = text.width(name, nameSize, TITLE);
         if (nw > nameMax) nameSize *= nameMax / nw;
-        float nx = fx + FRAME_W / 2f * s, ny = fy + NAME_Y * s, sh = Math.max(1, nameSize * .07f);
-        text.draw(ctx, name, nx + sh, ny + sh, nameSize, fade(0x99000000, alpha), NAME_FONT, true);   // drop shadow
-        text.drawOutline(ctx, name, nx, ny, nameSize, a8 | nameColor, NAME_FONT, true);
+        label(ctx, name, fx + FRAME_W / 2f * s, fy + NAME_Y * s, nameSize, a8 | nameColor, TITLE, true);
         if (t.damage() >= 0.5f) {
             String dmg = number(t.damage());
             float dSize = DAMAGE_SIZE * s;
-            text.drawOutline(ctx, dmg, fx + 1232 * s - text.width(dmg, dSize, TITLE), fy + DAMAGE_Y * s, dSize, a8 | 0xF1E3C6, TITLE, false);
+            label(ctx, dmg, fx + 1232 * s - text.width(dmg, dSize, TITLE), fy + DAMAGE_Y * s, dSize, a8 | 0xF1E3C6, TITLE, false);
         }
         // Numbers show the server value (the bar eases); a new text sprite only when the value really changes.
         String hp = number(t.health()) + " / " + number(t.maxHealth());
-        text.drawOutline(ctx, hp, fx + FRAME_W / 2f * s, fy + (HP_TOP + HP_BOTTOM) / 2 * BAR_Y * s, HP_TEXT * .86f * s, a8 | 0xFFF7F2, TITLE, true);
+        label(ctx, hp, fx + FRAME_W / 2f * s, fy + (HP_TOP + HP_BOTTOM) / 2 * s, HP_TEXT * s, a8 | 0xFFF7F2, TITLE, true);
         if (hasMana) {
             String mt = number(t.mana()) + " / " + number(t.maxMana());
-            float ms = MANA_TEXT * .9f * s, mw = text.width(mt, ms, TITLE) + 24 * s, ph = 24 * s, cy = fy + (MANA_TOP + MANA_BOTTOM) / 2 * BAR_Y * s;
-            HudMesh.capsule(ctx, fx + FRAME_W / 2f * s - mw / 2, cy - ph / 2, mw, ph, (Math.round(alpha * 235) << 24) | 0x07172A, (Math.round(alpha * 235) << 24) | 0x07172A);
-            text.drawOutline(ctx, mt, fx + FRAME_W / 2f * s, cy, ms, a8 | 0x9BE8FF, TITLE, true);
+            float ms = MANA_TEXT * s, mw = text.width(mt, ms, TITLE) + 28 * s, cy = fy + (MANA_TOP + MANA_BOTTOM) / 2 * s;
+            HudMesh.capsule(ctx, fx + FRAME_W / 2f * s - mw / 2, cy - 14 * s, mw, 28 * s, (Math.round(alpha * 235) << 24) | 0x07172A, (Math.round(alpha * 235) << 24) | 0x07172A);
+            label(ctx, mt, fx + FRAME_W / 2f * s, cy, ms, a8 | 0x9BE8FF, TITLE, true);
         }
         if (t.tameChance() >= 0) {
-            float below = (hasMana ? FRAME_H : FRAME_HP_H) * BAR_Y;
+            float below = hasMana ? FRAME_H : FRAME_HP_H;
             double pct = t.tameChance() * 100;
             String odds = pct > 0 && pct < 10 ? String.format(Locale.ROOT, "%.1f%%", pct) : Math.round(pct) + "%";
-            text.drawOutline(ctx, odds, fx + 55 * s, fy + (below + HEART_DY) * s, 30 * s, a8 | 0xF4F1EA, TITLE, false);
+            label(ctx, odds, fx + 55 * s, fy + (below + HEART_DY) * s, 30 * s, a8 | 0xF4F1EA, TITLE, false);
         }
-        return fy + ((hasMana ? FRAME_H : FRAME_HP_H) * BAR_Y + ICON_DY + ICON_D / 2) * s;
+        return fy + ((hasMana ? FRAME_H : FRAME_HP_H) + ICON_DY + ICON_D / 2) * s;
+    }
+
+    /** HUD text: black stroke first, then the colored fill on top (drawOutline alone only draws the stroke). */
+    private static void label(DrawContext ctx, String value, float x, float y, float size, int color, Identifier face, boolean centered) {
+        text.drawOutline(ctx, value, x, y, size, (color & 0xFF000000) | 0x000000, face, centered);
+        text.draw(ctx, value, x, y, size, color, face, centered);
     }
 
     /** Own statuses: top right, oldest at the right edge, element mark left of them; wraps every 10. */
