@@ -1,4 +1,4 @@
-> Claude 2026-10-19 (not built): [대상 체력바 글자 — 색 채움 + 검은 외곽선, 디자인은 배포본 그대로](CLAUDE_STATUS_HUD_TEXT_20261019.md). Branch claude/status-hud-polish-20261019 on codex/operating-status-hud-20261019 @ c5a2ccf. Client mod only.
+> Claude 2026-10-19 (not built): [대상 체력바 HUD v4 (금색 프레임·한 줄 게이지) + 상태이상 아이콘 v2 + 글자 외곽선](CLAUDE_STATUS_HUD_TEXT_20261019.md). Branch claude/status-hud-polish-20261019 on codex/operating-status-hud-20261019 @ c5a2ccf. Client mod only.
 
 > Claude 2026-10-19 (not built): [대상 체력바 HUD(보스 HUD 레퍼런스) + 상태이상 16종 + 머리 위 원소·디버프 아이콘](CLAUDE_STATUS_HUD_20261019.md). Branch claude/status-hud-20261019 on codex/operating-latest-20261018 @ 6fe06f0. MagicMythic + Bridge (school/wild) + client mod together; new channels magiccodex:status, magiccodex:target_hud.
 

@@ -25,17 +25,19 @@ import school.magiccodex.protocol.StatusProtocol;
 import school.magiccodex.protocol.TargetHudProtocol;
 
 /**
- * Target health HUD at the top of the screen (CHACADEMI_BOSS_HUD, approved reference 2026-10-19) and the player's
- * own status icons at the top right (where vanilla effect icons were; vanilla effect icons are hidden).
+ * Target health HUD at the top of the screen (HUD v4 reference, owner 2026-10-19) and the player's own status
+ * icons at the top right (where vanilla effect icons were; vanilla effect icons are hidden).
  *
- *        달빛 늑대                     name (rare/이로치 = lavender, hp_rare bar)
- *   ───────◇───────            280    title decoration · damage I dealt to it
- *   [■■■■][■■■■][■720/1000■][▒▒][  ][  ]   6 fixed HP segments, the segment holding the tip is brighter
- *   [=========160 / 240======        ]       mana (players / mobs with mana only; vanilla mobs: no mana row)
- *   ♥ 38%                      (元)(●)(●)   taming odds · element mark (left) + statuses filled from the right
+ *              별숲의 수호자                     name (rare/이로치 = lavender, rare gauge)
+ *              ───◇───                  280     title divider · damage I dealt to it
+ *   ◆[██████████████720 / 1000█████        ]◆   one HP gauge clipped to the ratio (gold frame on top)
+ *    [=================                      ]   mana gauge (players / mobs with mana only; otherwise the HP
+ *    ♥                              ✦  ✕  🔥     gauge fills the whole opening, frame_hp.png)
+ *   38%                            3초 5초 8초   taming odds · element mark (left) + statuses from the right, time below
  *
- * Geometry is in frame-asset pixels (frame.png 1237 x 101, slot rectangles measured on the PNG) and scaled to
- * a width of ~38 % of the screen. Text is drawn unscaled at the matching GUI size so glyphs stay sharp.
+ * Geometry is in frame-asset pixels (frame.png 2048 x 84, HP x54 y19 1940x36, MP x54 y57 1940x10 from layout.json)
+ * scaled to the HUD width. All images go through HudTextureCache (full-size PNG, alpha-correct trilinear mipmaps);
+ * text is baked at the real device size by CodexTypography with a black stroke under a colored fill.
  * The server decides the targets - see TargetHudBridge. Up to two bars: with a boss near, the boss on top and the
  * normal mob under the crosshair below it (78 % size); otherwise one bar (combat partner 10 s, else crosshair).
  * All boss bars are hidden (owner 2026-10-19: this HUD replaces them).
@@ -58,19 +60,21 @@ public final class TargetHudClient {
 
     // ---------------------------------------------------------------- assets (magiccodex:textures/gui/target_hud)
     private static final String DIR = "magiccodex:textures/gui/target_hud/";
-    private static final String FRAME = DIR + "frame.png", FRAME_HP = DIR + "frame_hp.png", HP = DIR + "hp_normal.png",
-        HP_RARE = DIR + "hp_rare.png", MANA = DIR + "mana.png", DECOR = DIR + "title_decoration.png", HEART = DIR + "heart.png";
+    private static final String FRAME = DIR + "frame.png", FRAME_HP = DIR + "frame_hp.png", TRACK = DIR + "track.png",
+        TRACK_HP = DIR + "track_hp.png", HP = DIR + "hp_normal.png", HP_RARE = DIR + "hp_rare.png", MANA = DIR + "mana.png",
+        DIVIDER = DIR + "title_divider.png", HEART = DIR + "heart.png";
     private static final Identifier TITLE = Identifier.of("magiccodex", "title"), BOLD = Identifier.of("magiccodex", "hud_bold");
 
-    // ---------------------------------------------------------------- geometry (frame-asset px)
-    static final int FRAME_W = 1237, FRAME_H = 101, FRAME_HP_H = 74;
-    static final float[][] SLOTS = TargetHudLayout.SLOTS;
-    static final float HP_TOP = 16.8f, HP_BOTTOM = 56.4f, MANA_LEFT = 16.8f, MANA_RIGHT = 1219.2f, MANA_TOP = 69f, MANA_BOTTOM = 85.8f;
-    static final float NAME_Y = -68, NAME_SIZE = 46, DECOR_Y = -23, DECOR_W = 730, DAMAGE_Y = -26, DAMAGE_SIZE = 34;
-    static final float HP_TEXT = 34, MANA_TEXT = 24, HEART_DY = 14.5f, HEART_SIZE = 33, ICON_DY = 34.6f, ICON_D = 69, ICON_STEP = 83, ICON_RIGHT = 1231.5f;
+    // ---------------------------------------------------------------- geometry (frame-asset px, frame.png 2048 x 84)
+    static final int FRAME_W = 2048, FRAME_H = 84;
+    static final float GAUGE_X = 54, GAUGE_W = 1940, HP_Y = 19, HP_H = 36, HP_ONLY_H = 48, MP_Y = 57, MP_H = 10;
+    /** Sizes are chosen for readability at ~40 % screen width (the reference draws text and icons smaller). */
+    static final float NAME_Y = -96, NAME_SIZE = 74, DIVIDER_Y = -40, DIVIDER_W = 430, DAMAGE_Y = -34, DAMAGE_SIZE = 54;
+    static final float HP_TEXT = 34, BELOW = 20, HEART_X = 70, HEART_SIZE = 58, ICON_D = 86, ICON_STEP = 104, ICON_RIGHT = 1994,
+        TIME_SIZE = 34, PCT_SIZE = 36;
+    /** Icon row height below the frame: icon + time text. */
+    static final float ROW_H = BELOW + ICON_D + 6 + TIME_SIZE;
 
-    static float segment(float f, int i) { return TargetHudLayout.segment(f, i); }
-    static int tipSegment(float f) { return TargetHudLayout.tipSegment(f); }
     static float width(int screenW) { return TargetHudLayout.width(screenW); }
 
     // ---------------------------------------------------------------- state
@@ -204,59 +208,48 @@ public final class TargetHudClient {
         float s = w / FRAME_W;
         float fx = (sw - w) / 2f, fy = top + (NAME_SIZE * .5f - NAME_Y) * s;
         boolean rare = t.shiny(), hasMana = t.hasMana();
-        // Smooth bars: health eases toward the server value (~4 updates per second).
+        // Smooth gauges: ease toward the server value (~4 updates per second).
         float dt = Math.clamp((now - lastFrame) / 1000f, 0, .1f);
         bar.health = bar.health < 0 ? t.health() : bar.health + (t.health() - bar.health) * Math.min(1, dt * (t.health() > bar.health ? 14 : 9));
         if (hasMana) bar.mana = bar.mana < 0 ? t.mana() : bar.mana + (t.mana() - bar.mana) * Math.min(1, dt * 12);
-        float health = bar.health, mana = bar.mana;
-        float fHp = Math.clamp(health / t.maxHealth(), 0, 1);
-        int a8 = Math.round(alpha * 255) << 24;
+        float fHp = Math.clamp(bar.health / t.maxHealth(), 0, 1);
+        int a8 = Math.round(alpha * 255) << 24, white = a8 | 0xFFFFFF;
+        float hpH = hasMana ? HP_H : HP_ONLY_H;
+        float rowY = FRAME_H + BELOW;            // top of the icon row
+        float iconY = rowY + ICON_D / 2;
 
         var m = ctx.getMatrices();
         m.push();
         try {
             m.translate(fx, fy, 0);
             m.scale(s, s, 1);
-            // title decoration
-            int[] dsz = images.size(DECOR);
+            // title divider
+            int[] dsz = images.size(DIVIDER);
             if (dsz != null) {
-                int dh = Math.round(DECOR_W * dsz[1] / (float) dsz[0]);
-                images.drawStretched(ctx, DECOR, Math.round(FRAME_W / 2f - DECOR_W / 2), Math.round(DECOR_Y - dh / 2f), Math.round(DECOR_W), dh, a8 | 0xFFFFFF);
+                int dh = Math.round(DIVIDER_W * dsz[1] / (float) dsz[0]);
+                images.drawStretched(ctx, DIVIDER, Math.round(FRAME_W / 2f - DIVIDER_W / 2), Math.round(DIVIDER_Y - dh / 2f), Math.round(DIVIDER_W), dh, white);
             }
-            // frame
-            images.drawStretched(ctx, hasMana ? FRAME : FRAME_HP, 0, 0, FRAME_W, hasMana ? FRAME_H : FRAME_HP_H, a8 | 0xFFFFFF);
-            // HP segments: one continuous strip clipped per slot, so the rare gradient runs across all six.
+            // back to front: dark tracks -> HP -> MP -> gold frame
+            images.drawStretched(ctx, hasMana ? TRACK : TRACK_HP, 0, 0, FRAME_W, FRAME_H, white);
             String strip = rare ? HP_RARE : HP;
             int[] hsz = images.size(strip);
-            int tip = tipSegment(fHp);
-            if (hsz != null) {
-                float span0 = SLOTS[0][0], span = SLOTS[SLOTS.length - 1][1] - span0;
-                for (int i = 0; i < SLOTS.length; i++) {
-                    float part = segment(fHp, i);
-                    if (part <= 0) continue;
-                    float x0 = SLOTS[i][0], sw0 = SLOTS[i][1] - x0, wPart = sw0 * part;
-                    float u = (x0 - span0) / span * hsz[0], uw = wPart / span * hsz[0];
-                    int tint = i == tip ? 0xFFFFFF : 0xD2D2D2;
-                    images.drawPart(ctx, strip, Math.round(x0), Math.round(HP_TOP), Math.max(1, Math.round(wPart)), Math.round(HP_BOTTOM - HP_TOP),
-                        u, 0, Math.max(1, Math.round(uw)), hsz[1], a8 | tint);
-                    if (i == tip) HudMesh.quad(ctx, x0, HP_TOP, wPart, HP_BOTTOM - HP_TOP, (Math.round(alpha * 46) << 24) | 0xFFFFFF, (Math.round(alpha * 70) << 24) | 0xFFFFFF);
-                }
-            }
-            // mana
+            // Clip (never squash) so the colors keep their place along the gauge.
+            if (hsz != null && fHp > 0)
+                images.drawPart(ctx, strip, Math.round(GAUGE_X), Math.round(HP_Y), Math.max(1, Math.round(GAUGE_W * fHp)), Math.round(hpH),
+                    0, 0, Math.max(1, Math.round(hsz[0] * fHp)), hsz[1], white);
             if (hasMana) {
                 int[] msz = images.size(MANA);
-                float fm = Math.clamp(mana / t.maxMana(), 0, 1), mw = (MANA_RIGHT - MANA_LEFT) * fm;
-                if (msz != null && mw > 0)
-                    images.drawPart(ctx, MANA, Math.round(MANA_LEFT), Math.round(MANA_TOP), Math.max(1, Math.round(mw)), Math.round(MANA_BOTTOM - MANA_TOP),
-                        0, 0, Math.max(1, Math.round(msz[0] * fm)), msz[1], a8 | 0xFFFFFF);
+                float fm = Math.clamp(bar.mana / t.maxMana(), 0, 1);
+                if (msz != null && fm > 0)
+                    images.drawPart(ctx, MANA, Math.round(GAUGE_X), Math.round(MP_Y), Math.max(1, Math.round(GAUGE_W * fm)), Math.round(MP_H),
+                        0, 0, Math.max(1, Math.round(msz[0] * fm)), msz[1], white);
             }
-            float below = hasMana ? FRAME_H : FRAME_HP_H;
+            images.drawStretched(ctx, hasMana ? FRAME : FRAME_HP, 0, 0, FRAME_W, FRAME_H, white);
             // taming odds heart
-            if (t.tameChance() >= 0) images.drawCentered(ctx, HEART, 28.7f, below + HEART_DY, Math.round(HEART_SIZE), a8 | 0xFFFFFF);
+            if (t.tameChance() >= 0) images.drawCentered(ctx, HEART, HEART_X, rowY + HEART_SIZE / 2, Math.round(HEART_SIZE), white);
             // element mark (left) + statuses filled from the right
             var statuses = t.entityId() < 0 ? previewLines(now) : StatusClient.of(t.entityId());
             var mark = t.entityId() < 0 ? previewMark(now) : ElementMarkClient.markOf(t.entityId());
-            float iconY = below + ICON_DY;
             int slot = 0;
             for (var line : statuses) {
                 float ix = TargetHudLayout.iconX(ICON_RIGHT, ICON_D, ICON_STEP, slot++);
@@ -272,34 +265,41 @@ public final class TargetHudClient {
             m.pop();
         }
 
-        // ---- text (GUI px, unscaled)
+        // ---- text (GUI px): black stroke + colored fill, baked at device resolution
         String name = name(t);
-        int nameColor = rare ? 0xC9B4FF : t.kind() == TargetHudProtocol.KIND_PLAYER ? 0xF4F1EA : 0xF3EBDD;
-        float nameSize = NAME_SIZE * s, nameMax = 900 * s;
+        int nameColor = rare ? 0xD7C6FF : t.kind() == TargetHudProtocol.KIND_PLAYER ? 0xFFFFFF : 0xFBEFD6;
+        float nameSize = NAME_SIZE * s, nameMax = 1500 * s;
         float nw = text.width(name, nameSize, TITLE);
         if (nw > nameMax) nameSize *= nameMax / nw;
         label(ctx, name, fx + FRAME_W / 2f * s, fy + NAME_Y * s, nameSize, a8 | nameColor, TITLE, true);
         if (t.damage() >= 0.5f) {
             String dmg = number(t.damage());
             float dSize = DAMAGE_SIZE * s;
-            label(ctx, dmg, fx + 1232 * s - text.width(dmg, dSize, TITLE), fy + DAMAGE_Y * s, dSize, a8 | 0xF1E3C6, TITLE, false);
+            label(ctx, dmg, fx + (FRAME_W - 40) * s - text.width(dmg, dSize, TITLE), fy + DAMAGE_Y * s, dSize, a8 | 0xF4E4C2, TITLE, false);
         }
-        // Numbers show the server value (the bar eases); a new text sprite only when the value really changes.
+        // Numbers show the server value (the gauge eases); a new text sprite only when the value really changes.
         String hp = number(t.health()) + " / " + number(t.maxHealth());
-        label(ctx, hp, fx + FRAME_W / 2f * s, fy + (HP_TOP + HP_BOTTOM) / 2 * s, HP_TEXT * s, a8 | 0xFFF7F2, TITLE, true);
-        if (hasMana) {
-            String mt = number(t.mana()) + " / " + number(t.maxMana());
-            float ms = MANA_TEXT * s, mw = text.width(mt, ms, TITLE) + 28 * s, cy = fy + (MANA_TOP + MANA_BOTTOM) / 2 * s;
-            HudMesh.capsule(ctx, fx + FRAME_W / 2f * s - mw / 2, cy - 14 * s, mw, 28 * s, (Math.round(alpha * 235) << 24) | 0x07172A, (Math.round(alpha * 235) << 24) | 0x07172A);
-            label(ctx, mt, fx + FRAME_W / 2f * s, cy, ms, a8 | 0x9BE8FF, TITLE, true);
-        }
+        label(ctx, hp, fx + FRAME_W / 2f * s, fy + (HP_Y + hpH / 2) * s, Math.max(HP_TEXT, hpH * .9f) * s, a8 | 0xFFFFFF, TITLE, true);
         if (t.tameChance() >= 0) {
-            float below = hasMana ? FRAME_H : FRAME_HP_H;
             double pct = t.tameChance() * 100;
             String odds = pct > 0 && pct < 10 ? String.format(Locale.ROOT, "%.1f%%", pct) : Math.round(pct) + "%";
-            label(ctx, odds, fx + 55 * s, fy + (below + HEART_DY) * s, 30 * s, a8 | 0xF4F1EA, TITLE, false);
+            label(ctx, odds, fx + HEART_X * s, fy + (rowY + HEART_SIZE + 6 + PCT_SIZE / 2) * s, PCT_SIZE * s, a8 | 0xFFFFFF, TITLE, true);
         }
-        return fy + ((hasMana ? FRAME_H : FRAME_HP_H) + ICON_DY + ICON_D / 2) * s;
+        // time left under each icon
+        float timeY = fy + (rowY + ICON_D + 6 + TIME_SIZE / 2) * s;
+        var statuses = t.entityId() < 0 ? previewLines(now) : StatusClient.of(t.entityId());
+        var mark = t.entityId() < 0 ? previewMark(now) : ElementMarkClient.markOf(t.entityId());
+        int slot = 0;
+        for (var line : statuses) {
+            String left = StatusIcons.timeLeft(line, now);
+            float ix = TargetHudLayout.iconX(ICON_RIGHT, ICON_D, ICON_STEP, slot++);
+            if (!left.isEmpty()) label(ctx, left, fx + ix * s, timeY, TIME_SIZE * s, a8 | 0xFFFFFF, TITLE, true);
+        }
+        if (mark != null) {
+            float ix = TargetHudLayout.iconX(ICON_RIGHT, ICON_D, ICON_STEP, slot);
+            label(ctx, StatusIcons.timeLeft(mark, now), fx + ix * s, timeY, TIME_SIZE * s, a8 | 0xFFFFFF, TITLE, true);
+        }
+        return fy + (FRAME_H + ROW_H) * s;
     }
 
     /** HUD text: black stroke first, then the colored fill on top (drawOutline alone only draws the stroke). */
@@ -311,15 +311,21 @@ public final class TargetHudClient {
     /** Own statuses: top right, oldest at the right edge, element mark left of them; wraps every 10. */
     private static void drawSelf(DrawContext ctx, MinecraftClient c, long now) {
         int sw = c.getWindow().getScaledWidth(), sh = c.getWindow().getScaledHeight();
-        float ui = Math.clamp(Math.min(sw / 960f, sh / 540f), .8f, 1.4f), d = 20 * ui, step = d * 1.16f;
+        float ui = Math.clamp(Math.min(sw / 960f, sh / 540f), .8f, 1.4f), d = 22 * ui, step = d * 1.25f, ts = 8.5f * ui, rowH = d + ts + 6 * ui;
         var lines = StatusClient.of(c.player.getId());
         var mark = ElementMarkClient.markOf(c.player.getId());
         int n = lines.size() + (mark == null ? 0 : 1);
         for (int i = 0; i < n; i++) {
             int row = i / 10, col = i % 10;
-            float cx = sw - 6 - d / 2 - col * step, cy = 6 + d / 2 + row * step;
-            if (i < lines.size()) { StatusIcons.status(ctx, images, lines.get(i), cx, cy, d, now, 1); hits.add(new StatusIcons.Hit(cx, cy, d / 2, lines.get(i), null)); }
-            else { StatusIcons.element(ctx, images, mark, cx, cy, d, now, 1); hits.add(new StatusIcons.Hit(cx, cy, d / 2, null, mark)); }
+            float cx = sw - 6 - d / 2 - col * step, cy = 6 + d / 2 + row * rowH, ty = cy + d / 2 + 2 * ui + ts / 2;
+            if (i < lines.size()) {
+                StatusIcons.status(ctx, images, lines.get(i), cx, cy, d, now, 1); hits.add(new StatusIcons.Hit(cx, cy, d / 2, lines.get(i), null));
+                String left = StatusIcons.timeLeft(lines.get(i), now);
+                if (!left.isEmpty()) label(ctx, left, cx, ty, ts, 0xFFFFFFFF, TITLE, true);
+            } else {
+                StatusIcons.element(ctx, images, mark, cx, cy, d, now, 1); hits.add(new StatusIcons.Hit(cx, cy, d / 2, null, mark));
+                label(ctx, StatusIcons.timeLeft(mark, now), cx, ty, ts, 0xFFFFFFFF, TITLE, true);
+            }
         }
     }
 
