@@ -6504,11 +6504,45 @@ spells:
     icon: magiccodex:textures/spells/intermediate/shadow_double.png
     mana-cost: 75
     cooldown-seconds: 25
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: static
+        trigger: external:form
+        effect: claude:shadowdouble/form
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 34
+      - role: static
+        trigger: external:form
+        effect: claude:shadowdouble/hold
+        anchor: impact
+        delay-ticks: 8
+        duration-ticks: 168
+      - role: static
+        trigger: external:depart
+        effect: claude:shadowdouble/depart
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: static
+        trigger: external:return
+        effect: claude:shadowdouble/return
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 28
+        stop-effects:
+          - claude:shadowdouble/hold
+      - role: static
+        trigger: external:expire
+        effect: claude:shadowdouble/expire
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 46
+        stop-effects:
+          - claude:shadowdouble/hold
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/intermediate/shadow_double.png
   echo_reading:
@@ -6518,11 +6552,17 @@ spells:
     icon: magiccodex:textures/spells/intermediate/echo_reading.png
     mana-cost: 25
     cooldown-seconds: 10
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: static
+        trigger: external:echo_reading
+        effect: claude:echoreading/echo_reading
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 86
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/intermediate/echo_reading.png
   sealing_thread:
@@ -6532,11 +6572,37 @@ spells:
     icon: magiccodex:textures/spells/intermediate/sealing_thread.png
     mana-cost: 40
     cooldown-seconds: 20
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: link
+        trigger: external:thread
+        effect: claude:sealingthread/thread
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+        link-source: caster-hand
+        link-target: event-point
+      - role: static
+        trigger: external:wrap_chest
+        effect: claude:sealingthread/wrap_chest
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 46
+      - role: static
+        trigger: external:wrap_door_r
+        effect: claude:sealingthread/wrap_door_r
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 46
+      - role: static
+        trigger: external:wrap_door_l
+        effect: claude:sealingthread/wrap_door_l
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 46
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/intermediate/sealing_thread.png
   afterlife_gate:
@@ -6560,11 +6626,23 @@ spells:
     icon: magiccodex:textures/spells/advanced/shadow_exchange.png
     mana-cost: 100
     cooldown-seconds: 30
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: static
+        trigger: external:vanish
+        effect: claude:shadowexchange/vanish
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 26
+      - role: static
+        trigger: external:appear
+        effect: claude:shadowexchange/appear
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 26
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/advanced/shadow_exchange.png
   forbidden_contract:
@@ -6572,13 +6650,41 @@ spells:
     name: 금서의 계약
     permission: magic.learned.forbidden_contract
     icon: magiccodex:textures/spells/advanced/forbidden_contract.png
-    mana-cost: 200
-    cooldown-seconds: 120
-    reviewed: false
-    enabled: false
+    mana-cost: 0
+    cooldown-seconds: 180
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: attached
+        trigger: external:contract
+        effect: claude:forbiddencontract/contract
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 52
+      - role: attached
+        trigger: external:conversion
+        effect: claude:forbiddencontract/conversion
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 64
+      - role: attached
+        trigger: external:seal_lock
+        effect: claude:forbiddencontract/seal_lock
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 304
+        stop-effects:
+          - claude:forbiddencontract/conversion
+      - role: attached
+        trigger: external:seal_break
+        effect: claude:forbiddencontract/seal_break
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 22
+        stop-effects:
+          - claude:forbiddencontract/seal_lock
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/advanced/forbidden_contract.png
   life_siphon:
@@ -6586,13 +6692,41 @@ spells:
     name: 생명 갈취
     permission: magic.learned.life_siphon
     icon: magiccodex:textures/spells/expansion/life_siphon.png
-    mana-cost: 55
-    cooldown-seconds: 15
-    reviewed: false
-    enabled: false
+    mana-cost: 30
+    cooldown-seconds: 10
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: static
+        trigger: external:zone
+        effect: claude:lifesiphon/begin
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+      - role: static
+        trigger: external:zone
+        effect: claude:lifesiphon/sustain
+        anchor: impact
+        delay-ticks: 4
+        duration-ticks: 64
+      - role: static
+        trigger: external:zone_end
+        effect: claude:lifesiphon/end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+        stop-effects:
+          - claude:lifesiphon/sustain
+      - role: link
+        trigger: external:drain
+        effect: claude:lifesiphon/drain
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+        link-source: event-point
+        link-target: caster
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/life_siphon.png
   drowsiness:
@@ -6600,27 +6734,45 @@ spells:
     name: 졸음
     permission: magic.learned.drowsiness
     icon: magiccodex:textures/spells/expansion/drowsiness.png
-    mana-cost: 20
-    cooldown-seconds: 10
+    mana-cost: 100
+    cooldown-seconds: 16
     reviewed: false
     enabled: false
     aliases: []
     phases: []
-    preparation-status: unreviewed-baseline
+    preparation-status: vfx-pack-missing
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/drowsiness.png
   misfortune_whisper:
     number: 176
-    name: 불운의 속삭임
+    name: 나약함의 저주
     permission: magic.learned.misfortune_whisper
     icon: magiccodex:textures/spells/expansion/misfortune_whisper.png
-    mana-cost: 35
-    cooldown-seconds: 12
-    reviewed: false
-    enabled: false
+    mana-cost: 60
+    cooldown-seconds: 20
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:misfortune_whisper/misfortune_whisper_begin
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 28
+      - role: attached
+        trigger: cast
+        effect: claude:misfortune_whisper/misfortune_whisper
+        anchor: target
+        delay-ticks: 6
+        duration-ticks: 160
+      - role: attached
+        trigger: cast
+        effect: claude:misfortune_whisper/misfortune_whisper_end
+        anchor: target
+        delay-ticks: 160
+        duration-ticks: 24
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/misfortune_whisper.png
   hungry_shadow:
@@ -6628,13 +6780,29 @@ spells:
     name: 굶주린 그림자
     permission: magic.learned.hungry_shadow
     icon: magiccodex:textures/spells/expansion/hungry_shadow.png
-    mana-cost: 20
-    cooldown-seconds: 15
-    reviewed: false
-    enabled: false
+    mana-cost: 0
+    cooldown-seconds: 0
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: link
+        trigger: cast
+        effect: claude:hungryshadow/maw
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+        link-source: caster-hand
+        link-target: event-point
+      - role: link
+        trigger: external:devour
+        effect: claude:hungryshadow/devour
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+        link-source: event-point
+        link-target: caster
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/hungry_shadow.png
   curse_transfer:
@@ -6644,25 +6812,71 @@ spells:
     icon: magiccodex:textures/spells/expansion/curse_transfer.png
     mana-cost: 90
     cooldown-seconds: 30
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: link
+        trigger: external:spread_g1
+        effect: claude:cursetransfer/spread_g1
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+        link-source: event-point
+        link-target: target
+      - role: attached
+        trigger: external:mark
+        effect: claude:cursetransfer/mark_begin
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 24
+      - role: attached
+        trigger: external:mark
+        effect: claude:cursetransfer/mark_hold
+        anchor: target
+        delay-ticks: 10
+        duration-ticks: 110
+      - role: attached
+        trigger: external:mark
+        effect: claude:cursetransfer/mark_end
+        anchor: target
+        delay-ticks: 110
+        duration-ticks: 14
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/curse_transfer.png
   discord:
     number: 179
-    name: 불화
+    name: 마인드컨트롤
     permission: magic.learned.discord
     icon: magiccodex:textures/spells/expansion/discord.png
     mana-cost: 110
     cooldown-seconds: 30
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: attached
+        trigger: external:discord_begin
+        effect: claude:discord/discord_begin
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 22
+      - role: attached
+        trigger: external:discord_begin
+        effect: claude:discord/discord_mark
+        anchor: target
+        delay-ticks: 4
+        duration-ticks: 124
+      - role: attached
+        trigger: external:discord_end
+        effect: claude:discord/discord_end
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 14
+        stop-effects:
+          - claude:discord/discord_mark
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/discord.png
   night_chain:
@@ -6672,11 +6886,61 @@ spells:
     icon: magiccodex:textures/spells/expansion/night_chain.png
     mana-cost: 200
     cooldown-seconds: 45
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: attached
+        trigger: external:bind
+        effect: claude:nightchain/bindForm
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 24
+      - role: attached
+        trigger: external:bind
+        effect: claude:nightchain/bindHold
+        anchor: target
+        delay-ticks: 10
+        duration-ticks: 160
+      - role: attached
+        trigger: external:bind
+        effect: claude:nightchain/bindFade
+        anchor: target
+        delay-ticks: 160
+        duration-ticks: 30
+      - role: link
+        trigger: external:chain
+        effect: claude:nightchain/chainForm
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+        link-source: event-point
+        link-target: target
+      - role: link
+        trigger: external:chain
+        effect: claude:nightchain/chainHold
+        anchor: impact
+        delay-ticks: 10
+        duration-ticks: 160
+        link-source: event-point
+        link-target: target
+      - role: link
+        trigger: external:chain
+        effect: claude:nightchain/chainFade
+        anchor: impact
+        delay-ticks: 160
+        duration-ticks: 24
+        link-source: event-point
+        link-target: target
+      - role: link
+        trigger: external:relay
+        effect: claude:nightchain/relay
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+        link-source: event-point
+        link-target: target
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/night_chain.png
   pain_deferral:
@@ -6686,11 +6950,107 @@ spells:
     icon: magiccodex:textures/spells/expansion/pain_deferral.png
     mana-cost: 150
     cooldown-seconds: 45
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:paindeferral/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: attached
+        trigger: external:shard_slot1
+        effect: claude:paindeferral/shard_slot1
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 224
+      - role: attached
+        trigger: external:shard_slot2
+        effect: claude:paindeferral/shard_slot2
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 224
+      - role: attached
+        trigger: external:shard_slot3
+        effect: claude:paindeferral/shard_slot3
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 224
+      - role: attached
+        trigger: external:shard_slot4
+        effect: claude:paindeferral/shard_slot4
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 224
+      - role: attached
+        trigger: external:shard_slot5
+        effect: claude:paindeferral/shard_slot5
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 224
+      - role: attached
+        trigger: external:shard_slot6
+        effect: claude:paindeferral/shard_slot6
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 224
+      - role: attached
+        trigger: external:absorb_slot1
+        effect: claude:paindeferral/absorb_slot1
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+        stop-effects:
+          - claude:paindeferral/shard_slot1
+      - role: attached
+        trigger: external:absorb_slot2
+        effect: claude:paindeferral/absorb_slot2
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+        stop-effects:
+          - claude:paindeferral/shard_slot2
+      - role: attached
+        trigger: external:absorb_slot3
+        effect: claude:paindeferral/absorb_slot3
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+        stop-effects:
+          - claude:paindeferral/shard_slot3
+      - role: attached
+        trigger: external:absorb_slot4
+        effect: claude:paindeferral/absorb_slot4
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+        stop-effects:
+          - claude:paindeferral/shard_slot4
+      - role: attached
+        trigger: external:absorb_slot5
+        effect: claude:paindeferral/absorb_slot5
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+        stop-effects:
+          - claude:paindeferral/shard_slot5
+      - role: attached
+        trigger: external:absorb_slot6
+        effect: claude:paindeferral/absorb_slot6
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+        stop-effects:
+          - claude:paindeferral/shard_slot6
+      - role: attached
+        trigger: external:pulse
+        effect: claude:paindeferral/pulse
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 10
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/pain_deferral.png
   black_harvest:
@@ -6698,13 +7058,19 @@ spells:
     name: 검은 수확
     permission: magic.learned.black_harvest
     icon: magiccodex:textures/spells/expansion/black_harvest.png
-    mana-cost: 450
-    cooldown-seconds: 120
-    reviewed: false
-    enabled: false
+    mana-cost: 80
+    cooldown-seconds: 12
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:blackharvest/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 38
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/black_harvest.png
   ink_fingertip:
@@ -6712,13 +7078,109 @@ spells:
     name: 먹물 손끝
     permission: magic.learned.ink_fingertip
     icon: magiccodex:textures/spells/expansion_2/ink_fingertip.png
-    mana-cost: 3
-    cooldown-seconds: 2
-    reviewed: false
-    enabled: false
+    mana-cost: 30
+    cooldown-seconds: 120
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: attached
+        trigger: external:ink_white
+        effect: claude:inkfingertip/ink_white
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: external:ink_light_gray
+        effect: claude:inkfingertip/ink_light_gray
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: external:ink_gray
+        effect: claude:inkfingertip/ink_gray
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: external:ink_black
+        effect: claude:inkfingertip/ink_black
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: external:ink_brown
+        effect: claude:inkfingertip/ink_brown
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: external:ink_red
+        effect: claude:inkfingertip/ink_red
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: external:ink_orange
+        effect: claude:inkfingertip/ink_orange
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: external:ink_yellow
+        effect: claude:inkfingertip/ink_yellow
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: external:ink_lime
+        effect: claude:inkfingertip/ink_lime
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: external:ink_green
+        effect: claude:inkfingertip/ink_green
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: external:ink_cyan
+        effect: claude:inkfingertip/ink_cyan
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: external:ink_light_blue
+        effect: claude:inkfingertip/ink_light_blue
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: external:ink_blue
+        effect: claude:inkfingertip/ink_blue
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: external:ink_purple
+        effect: claude:inkfingertip/ink_purple
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: external:ink_magenta
+        effect: claude:inkfingertip/ink_magenta
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: external:ink_pink
+        effect: claude:inkfingertip/ink_pink
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/ink_fingertip.png
   shadow_nail:
@@ -6726,13 +7188,41 @@ spells:
     name: 그림자 못
     permission: magic.learned.shadow_nail
     icon: magiccodex:textures/spells/expansion_2/shadow_nail.png
-    mana-cost: 45
-    cooldown-seconds: 15
-    reviewed: false
-    enabled: false
+    mana-cost: 170
+    cooldown-seconds: 60
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: attached
+        trigger: external:nail
+        effect: claude:shadownail/shadow_nail_begin
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: attached
+        trigger: external:nail
+        effect: claude:shadownail/shadow_nail
+        anchor: target
+        delay-ticks: 2
+        duration-ticks: 300
+      - role: attached
+        trigger: external:nail_burst
+        effect: claude:shadownail/shadow_nail_burst
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 26
+        stop-effects:
+          - claude:shadownail/shadow_nail
+      - role: attached
+        trigger: external:nail_fade
+        effect: claude:shadownail/shadow_nail_fade
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 26
+        stop-effects:
+          - claude:shadownail/shadow_nail
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/shadow_nail.png
   night_lullaby:
@@ -6740,13 +7230,39 @@ spells:
     name: 밤의 자장가
     permission: magic.learned.night_lullaby
     icon: magiccodex:textures/spells/expansion_2/night_lullaby.png
-    mana-cost: 30
-    cooldown-seconds: 30
-    reviewed: false
-    enabled: false
+    mana-cost: 130
+    cooldown-seconds: 60
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: static
+        trigger: external:rift
+        effect: claude:nightlullaby/rift
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: external:trail
+        effect: claude:nightlullaby/trail
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 200
+      - role: impact
+        trigger: external:hit
+        effect: claude:nightlullaby/hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 22
+      - role: static
+        trigger: external:dismiss
+        effect: claude:nightlullaby/dismiss
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 34
+        stop-effects:
+          - claude:nightlullaby/trail
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/night_lullaby.png
   loosen_grasp:
@@ -6756,11 +7272,37 @@ spells:
     icon: magiccodex:textures/spells/expansion_2/loosen_grasp.png
     mana-cost: 60
     cooldown-seconds: 20
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: attached
+        trigger: external:hand_ripple
+        effect: claude:loosengrasp/hand_ripple
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: attached
+        trigger: external:mark
+        effect: claude:loosengrasp/mark_begin
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 14
+      - role: attached
+        trigger: external:mark
+        effect: claude:loosengrasp/mark
+        anchor: target
+        delay-ticks: 2
+        duration-ticks: 80
+      - role: attached
+        trigger: external:mark_break
+        effect: claude:loosengrasp/mark_break
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 18
+        stop-effects:
+          - claude:loosengrasp/mark
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/loosen_grasp.png
   shadow_tracking:
@@ -6784,11 +7326,29 @@ spells:
     icon: magiccodex:textures/spells/expansion_2/healing_seal.png
     mana-cost: 85
     cooldown-seconds: 25
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: attached
+        trigger: external:healing_seal
+        effect: claude:healingseal/healing_seal_begin
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 32
+      - role: attached
+        trigger: external:healing_seal
+        effect: claude:healingseal/healing_seal
+        anchor: target
+        delay-ticks: 8
+        duration-ticks: 160
+      - role: attached
+        trigger: external:healing_seal
+        effect: claude:healingseal/healing_seal_end
+        anchor: target
+        delay-ticks: 160
+        duration-ticks: 16
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/healing_seal.png
   shadow_scales:
@@ -6798,11 +7358,35 @@ spells:
     icon: magiccodex:textures/spells/expansion_2/shadow_scales.png
     mana-cost: 100
     cooldown-seconds: 20
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: static
+        trigger: external:burst
+        effect: claude:shadowscales/burst
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 62
+      - role: impact
+        trigger: external:hit_low
+        effect: claude:shadowscales/hit_low
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: impact
+        trigger: external:hit_mid
+        effect: claude:shadowscales/hit_mid
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 26
+      - role: impact
+        trigger: external:hit_high
+        effect: claude:shadowscales/hit_high
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 36
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/shadow_scales.png
   warning_thread:
@@ -6810,13 +7394,39 @@ spells:
     name: 경고의 실
     permission: magic.learned.warning_thread
     icon: magiccodex:textures/spells/expansion_2/warning_thread.png
-    mana-cost: 20
-    cooldown-seconds: 15
-    reviewed: false
-    enabled: false
+    mana-cost: 200
+    cooldown-seconds: 60
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: static
+        trigger: external:cage
+        effect: claude:warningthread/begin
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 44
+      - role: static
+        trigger: external:cage
+        effect: claude:warningthread/sustain
+        anchor: impact
+        delay-ticks: 18
+        duration-ticks: 140
+      - role: static
+        trigger: external:cage_end
+        effect: claude:warningthread/end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 38
+        stop-effects:
+          - claude:warningthread/sustain
+      - role: impact
+        trigger: external:breach
+        effect: claude:warningthread/breach
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/warning_thread.png
   final_knot:
@@ -6838,13 +7448,31 @@ spells:
     name: 상처 회계
     permission: magic.learned.wound_accounting
     icon: magiccodex:textures/spells/expansion_2/wound_accounting.png
-    mana-cost: 180
-    cooldown-seconds: 35
-    reviewed: false
-    enabled: false
+    mana-cost: 80
+    cooldown-seconds: 30
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: attached
+        trigger: external:gather
+        effect: claude:woundaccounting/gather
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: impact
+        trigger: external:contact
+        effect: claude:woundaccounting/contact
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: attached
+        trigger: external:absorb
+        effect: claude:woundaccounting/absorb
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 26
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/wound_accounting.png
   inverted_offering:
@@ -6852,13 +7480,29 @@ spells:
     name: 뒤집힌 공물
     permission: magic.learned.inverted_offering
     icon: magiccodex:textures/spells/expansion_2/inverted_offering.png
-    mana-cost: 50
-    cooldown-seconds: 30
-    reviewed: false
-    enabled: false
+    mana-cost: 0
+    cooldown-seconds: 0
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: link
+        trigger: cast
+        effect: claude:invertedoffering/offering
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+        link-source: event-point
+        link-target: caster
+      - role: link
+        trigger: external:offering
+        effect: claude:invertedoffering/offering
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+        link-source: event-point
+        link-target: caster
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/inverted_offering.png
   ghost_tool:
@@ -6866,13 +7510,61 @@ spells:
     name: 유령 도구
     permission: magic.learned.ghost_tool
     icon: magiccodex:textures/spells/expansion_2/ghost_tool.png
-    mana-cost: 45
-    cooldown-seconds: 10
-    reviewed: false
-    enabled: false
+    mana-cost: 100
+    cooldown-seconds: 60
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:ghosttool/ghost_tool_begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: attached
+        trigger: cast
+        effect: claude:ghosttool/ghost_tool
+        anchor: caster
+        delay-ticks: 4
+        duration-ticks: 600
+      - role: attached
+        trigger: cast
+        effect: claude:ghosttool/ghost_tool_end
+        anchor: caster
+        delay-ticks: 600
+        duration-ticks: 24
+      - role: static
+        trigger: external:ghost_tool_break
+        effect: claude:ghosttool/ghost_tool_break
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: static
+        trigger: external:ghost_tool_place
+        effect: claude:ghosttool/ghost_tool_place
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: static
+        trigger: external:ghost_tool_swing_pickaxe
+        effect: claude:ghosttool/ghost_tool_swing_pickaxe
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: static
+        trigger: external:ghost_tool_swing_axe
+        effect: claude:ghosttool/ghost_tool_swing_axe
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: static
+        trigger: external:ghost_tool_swing_shovel
+        effect: claude:ghosttool/ghost_tool_swing_shovel
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/ghost_tool.png
   bell_of_fear:
@@ -6881,12 +7573,36 @@ spells:
     permission: magic.learned.bell_of_fear
     icon: magiccodex:textures/spells/expansion_2/bell_of_fear.png
     mana-cost: 140
-    cooldown-seconds: 40
-    reviewed: false
-    enabled: false
+    cooldown-seconds: 30
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:belloffear/bell
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 44
+      - role: static
+        trigger: cast
+        effect: claude:belloffear/ripple
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 26
+      - role: attached
+        trigger: external:fear
+        effect: claude:belloffear/fearApply
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: attached
+        trigger: external:fear
+        effect: claude:belloffear/fearHold
+        anchor: target
+        delay-ticks: 2
+        duration-ticks: 60
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/bell_of_fear.png
   eclipse_eye:
@@ -6894,13 +7610,92 @@ spells:
     name: 월식의 눈
     permission: magic.learned.eclipse_eye
     icon: magiccodex:textures/spells/expansion_2/eclipse_eye.png
-    mana-cost: 160
-    cooldown-seconds: 35
-    reviewed: false
-    enabled: false
+    mana-cost: 1500
+    cooldown-seconds: 300
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:eclipseeye/zoneBegin
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 50
+      - role: static
+        trigger: cast
+        effect: claude:eclipseeye/zoneSustain
+        anchor: target
+        delay-ticks: 3
+        duration-ticks: 320
+      - role: static
+        trigger: cast
+        effect: claude:eclipseeye/chant
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 106
+      - role: static
+        trigger: external:struct_cancel
+        effect: claude:eclipseeye/chantCancel
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 34
+        stop-effects:
+          - claude:eclipseeye/chant
+          - claude:eclipseeye/zoneSustain
+      - role: static
+        trigger: external:struct_cancel
+        effect: claude:eclipseeye/zoneEnd
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 50
+      - role: static
+        trigger: external:eclipse
+        effect: claude:eclipseeye/eclipse
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 42
+      - role: static
+        trigger: external:eclipse
+        effect: claude:eclipseeye/eclipseHold
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 204
+      - role: static
+        trigger: external:eclipse_end
+        effect: claude:eclipseeye/eclipseEnd
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 92
+        stop-effects:
+          - claude:eclipseeye/eclipseHold
+          - claude:eclipseeye/zoneSustain
+          - claude:eclipseeye/haste
+      - role: static
+        trigger: external:eclipse_end
+        effect: claude:eclipseeye/zoneEnd
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 50
+      - role: attached
+        trigger: external:haste
+        effect: claude:eclipseeye/haste
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 200
+      - role: impact
+        trigger: external:contact
+        effect: claude:eclipseeye/contact
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 14
+      - role: impact
+        trigger: external:shardFade
+        effect: claude:eclipseeye/shardFade
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/eclipse_eye.png
   death_ledger:
@@ -6923,12 +7718,30 @@ spells:
     permission: magic.learned.void_maw
     icon: magiccodex:textures/spells/expansion_2/void_maw.png
     mana-cost: 500
-    cooldown-seconds: 90
-    reviewed: false
-    enabled: false
+    cooldown-seconds: 100
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:voidmaw/warnBegin
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 28
+      - role: static
+        trigger: cast
+        effect: claude:voidmaw/warnHold
+        anchor: target
+        delay-ticks: 4
+        duration-ticks: 22
+      - role: static
+        trigger: cast
+        effect: claude:voidmaw/bite
+        anchor: target
+        delay-ticks: 25
+        duration-ticks: 48
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/void_maw.png
   twilight_bargain:
@@ -8802,3 +9615,166 @@ spells:
         duration-ticks: 20
     preparation-status: mob-skill-vfx-direct
     mob-vfx-pack: wyvernspikes
+  # ---- 168~214 최종 기획 신규 구현 (magic-mythic-paper/tools/arcana_spells.py) ----
+  landing_airbrake:
+    number: 203
+    name: 빗자루 차원이동
+    permission: magic.learned.landing_airbrake
+    icon: ''
+    mana-cost: 35
+    cooldown-seconds: 16
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: external:depart
+        effect: claude:landingairbrake/depart
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: static
+        trigger: external:arrive
+        effect: claude:landingairbrake/arrive
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+    preparation-status: server-events-connected
+  hushed_soles:
+    number: 210
+    name: 고요한 밑창
+    permission: magic.learned.hushed_soles
+    icon: ''
+    mana-cost: 55
+    cooldown-seconds: 45
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: impact
+        trigger: external:step
+        effect: claude:hushedsoles/step
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+    preparation-status: server-events-connected
+  thorn_manners:
+    number: 211
+    name: 가시의 예절
+    permission: magic.learned.thorn_manners
+    icon: ''
+    mana-cost: 10
+    cooldown-seconds: 30
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: impact
+        trigger: external:contact
+        effect: claude:thornmanners/contact
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+    preparation-status: server-events-connected
+  cinder_skipring:
+    number: 212
+    name: 불꽃 줄넘기
+    permission: magic.learned.cinder_skipring
+    icon: ''
+    mana-cost: 90
+    cooldown-seconds: 18
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:cinderskipring/ring
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 44
+      - role: impact
+        trigger: external:hit
+        effect: claude:cinderskipring/hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+    preparation-status: server-events-connected
+  droplet_relay:
+    number: 213
+    name: 물방울 인계
+    permission: magic.learned.droplet_relay
+    icon: ''
+    mana-cost: 100
+    cooldown-seconds: 20
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: external:form
+        effect: claude:dropletrelay/form
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: impact
+        trigger: external:arrive
+        effect: claude:dropletrelay/arrive
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+      - role: attached
+        trigger: external:capture
+        effect: claude:dropletrelay/capture
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 66
+      - role: attached
+        trigger: external:release
+        effect: claude:dropletrelay/release
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 32
+    preparation-status: server-events-connected
+  folding_tideplane:
+    number: 214
+    name: 접히는 수면
+    permission: magic.learned.folding_tideplane
+    icon: ''
+    mana-cost: 110
+    cooldown-seconds: 22
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: external:sheet
+        effect: claude:foldingtideplane/spread
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 54
+      - role: static
+        trigger: external:sheet
+        effect: claude:foldingtideplane/axis
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 112
+      - role: static
+        trigger: external:sheet
+        effect: claude:foldingtideplane/turn
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 76
+      - role: static
+        trigger: external:sheet
+        effect: claude:foldingtideplane/disperse
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 108
+      - role: impact
+        trigger: external:contact
+        effect: claude:foldingtideplane/contact
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 22
+    preparation-status: server-events-connected

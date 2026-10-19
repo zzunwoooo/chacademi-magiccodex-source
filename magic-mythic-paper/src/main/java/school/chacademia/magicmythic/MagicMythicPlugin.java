@@ -48,6 +48,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
     private SpellSlots slots;
     private Passives passives;
     private UtilMech.State utilState;
+    private ArcanaMech.State arcanaState;
 
     @Override public void onEnable() {
         if(!protectionReady){getServer().getPluginManager().disablePlugin(this);return;}
@@ -79,6 +80,8 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
         getServer().getPluginManager().registerEvents(passives, this);
         utilState = new UtilMech.State(this);
         getServer().getPluginManager().registerEvents(utilState, this);
+        arcanaState = new ArcanaMech.State(this);
+        getServer().getPluginManager().registerEvents(arcanaState, this);
         getServer().getPluginManager().registerEvents(new ChannelMech.Hooks(), this);
         getServer().getPluginManager().registerEvents(new SummonMech.Hooks(this), this);
         getServer().getPluginManager().registerEvents(new DiscoveryHooks(this), this);
@@ -95,6 +98,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
         if (telegraphs != null) { telegraphs.close(); telegraphs = null; }
         if (slots != null) slots.unregister();
         if (utilState != null) utilState.closeAll();
+        if (arcanaState != null) { arcanaState.closeAll(); arcanaState = null; }
         if (guards != null) guards.closeAll();
         BuffMech.clearAll();
         TempAbsorb.clearAll();
@@ -129,6 +133,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
             case "chastatus" -> new StatusMech(this, p);
             case "chatelegraph" -> new TelegraphMech(this, p);
             case "chamobshot" -> new MobShotMech(this, p);
+            case "chaarcana" -> new ArcanaMech(this, p);
             default -> null;
         };
         if (mechanic != null) event.register(mechanic);

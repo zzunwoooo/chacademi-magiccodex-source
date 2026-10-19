@@ -99,6 +99,10 @@ passives:
     max-active: 12
   glaze_coating: {}          # 055 화염의 정복자: 수치 없음
   automatic_supply: {}       # 121 자동 보급: 수치 없음
+  hungry_shadow:             # 177 굶주린 그림자: 처치 시 배고픔 회복
+    food: 2                  # 1칸 = 2
+  inverted_offering:         # 193 뒤집힌 공물: 처치한 몬스터 드롭 -> 추가 경험치 (conversion_ratio 미정, 임시)
+    xp-per-item: 0.5
 
 # 036 불꽃 단조 재료표: "입력재료: 결과[:개수[:필요개수]]" (결과는 바닐라 이름 또는 ItemsAdder id)
 # 비어 있으면 시전이 항상 실패합니다 (재료표 미정).

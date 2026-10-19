@@ -177,10 +177,14 @@ S = [
 import sys as _sys; _sys.path.insert(0, HERE)
 import mob_spells as _mob_spells
 S += _mob_spells.routes()
+# 168~214 최종 기획 신규 (tools/arcana_spells.py is their source of truth)
+import arcana_spells as _arcana
+S += _arcana.routes()
 
 EXTRA = {
  'CHA_solar_judgment_fire': ('solar_judgment', ['chazone{r=4;ticks=60;period=5;mult=0.15}'], '태양의 심판 영창 완료 후 3초 레이저 (chachannel then=)'),
 }
+EXTRA.update(_arcana.EXTRA)
 SKIP = {
  'wind_message':'Bridge가 직접 처리하는 귓속말 마법',
  'rainbow_collar':'교화(HolyTaming): TamingBridge가 별도 처리',
@@ -195,6 +199,9 @@ PASSIVE = {
  'glaze_coating':'장착 중 화염 지속 피해(FIRE_TICK) 면역',
  'automatic_supply':'장착 중 손의 건축 블록이 떨어지면 인벤토리에서 보충',
 }
+
+PASSIVE.update(_arcana.passive_notes())
+SKIP.update(_arcana.SKIP)
 
 def catalog():
     D = {}

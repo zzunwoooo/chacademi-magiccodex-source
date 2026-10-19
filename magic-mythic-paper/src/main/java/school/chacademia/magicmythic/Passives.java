@@ -26,6 +26,9 @@ import org.bukkit.util.Vector;
  *  052 flame_footprints 불꽃 걸음 - mana per second; footprints behind the player explode after a fuse.
  *  055 glaze_coating 화염의 정복자 - immune to fire damage (in fire, burning) and to the 화상 status.
  *  121 automatic_supply 자동 보급 - the last building block in hand is refilled from the inventory.
+ *  177 hungry_shadow 굶주린 그림자 - each monster the player kills gives food (1칸 = 2 points, saturation unchanged).
+ *  193 inverted_offering 뒤집힌 공물 - a monster the player kills drops no items; they are offered for extra XP
+ *      (xp-per-item x item count, rounded up; conversion_ratio 미정 - placeholder). Players / own summons never count.
  * Numbers: config.yml passives.* (all placeholders until the balance review).
  */
 final class Passives implements Listener {
@@ -208,6 +211,27 @@ final class Passives implements Listener {
                 int ignite = c.getInt("ignite-ticks", 0);
                 if (ignite > 0) plugin.status().apply(p, t, school.magiccodex.protocol.StatusProtocol.Status.BURN, ignite, 0); // 화상 (no vanilla fire)
             }
+        }
+    }
+
+    // ------------------------------------------------------------------ 177 / 193 kill passives
+    @EventHandler(priority = EventPriority.HIGH)
+    public void killed(org.bukkit.event.entity.EntityDeathEvent e) {
+        LivingEntity dead = e.getEntity(); Player p = dead.getKiller();
+        if (p == null || dead instanceof Player || !(dead instanceof Enemy) || dead.getScoreboardTags().contains("chacademia_summon")) return;
+        if (on(p, "hungry_shadow")) {
+            int food = Math.max(0, cfg("hungry_shadow").getInt("food", 2));
+            p.setFoodLevel(Math.min(20, p.getFoodLevel() + food));
+            Links.vfx(p, "hungry_shadow", "external:devour", dead.getLocation(), p.getUniqueId());
+        }
+        if (on(p, "inverted_offering") && !e.getDrops().isEmpty()) {
+            double per = Math.max(0, cfg("inverted_offering").getDouble("xp-per-item", 0.5));
+            int items = 0; for (ItemStack it : e.getDrops()) if (it != null) items += it.getAmount();
+            int xp = (int) Math.ceil(items * per);
+            if (xp <= 0) return;
+            e.getDrops().clear();
+            e.setDroppedExp(e.getDroppedExp() + xp);
+            Links.vfx(p, "inverted_offering", "external:offering", dead.getLocation(), p.getUniqueId());
         }
     }
 

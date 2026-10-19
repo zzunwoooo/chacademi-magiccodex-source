@@ -95,6 +95,10 @@
    "mode": "unit",
    "range": 15
   },
+  "curse_transfer": {
+   "mode": "unit",
+   "range": 12
+  },
   "curving_plumes": {
    "length": 20.0,
    "mode": "line",
@@ -102,11 +106,30 @@
    "range": 20,
    "width": 1.4
   },
+  "discord": {
+   "mode": "unit",
+   "range": 12
+  },
+  "droplet_relay": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 10
+  },
+  "drowsiness": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 16
+  },
   "earth_shaping": {
    "angle": 60.0,
    "length": 7.0,
    "mode": "cone",
    "range": 7
+  },
+  "eclipse_eye": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 30
   },
   "ember_bolt": {
    "length": 24.0,
@@ -158,6 +181,11 @@
    "range": 15,
    "width": 0.8
   },
+  "folding_tideplane": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 10
+  },
   "fox_orbit": {
    "length": 20.0,
    "mode": "line",
@@ -180,6 +208,10 @@
    "radius": 5.0,
    "range": 15
   },
+  "healing_seal": {
+   "mode": "unit",
+   "range": 12
+  },
   "hunting_pounce": {
    "mode": "unit",
    "range": 12
@@ -191,6 +223,11 @@
    "range": 15,
    "width": 1.2
   },
+  "life_siphon": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 12
+  },
   "light_mark": {
    "mode": "unit",
    "range": 20
@@ -199,6 +236,10 @@
    "mode": "area",
    "radius": 1.5,
    "range": 20
+  },
+  "loosen_grasp": {
+   "mode": "unit",
+   "range": 12
   },
   "luminous_copy": {
    "mode": "point",
@@ -221,6 +262,10 @@
    "range": 25,
    "width": 1.2
   },
+  "misfortune_whisper": {
+   "mode": "unit",
+   "range": 12
+  },
   "moist_farmland": {
    "mode": "area",
    "radius": 2.0,
@@ -232,6 +277,11 @@
    "origin": "caster",
    "range": 16,
    "width": 2.8
+  },
+  "night_chain": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 12
   },
   "oblivion_orbs": {
    "length": 20.0,
@@ -296,9 +346,22 @@
    "mode": "unit",
    "range": 10
   },
+  "shadow_exchange": {
+   "mode": "unit",
+   "range": 15
+  },
   "shadow_leap": {
    "mode": "unit",
    "range": 14
+  },
+  "shadow_nail": {
+   "mode": "unit",
+   "range": 20
+  },
+  "shadow_scales": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 12
   },
   "solar_judgment": {
    "mode": "point",
@@ -371,6 +434,16 @@
    "range": 18,
    "width": 1.4
   },
+  "void_maw": {
+   "mode": "area",
+   "radius": 4.0,
+   "range": 16
+  },
+  "warning_thread": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 15
+  },
   "wash_letters": {
    "mode": "point",
    "radius": 0.6,
@@ -406,6 +479,10 @@
   "wind_push": {
    "mode": "unit",
    "range": 10
+  },
+  "wound_accounting": {
+   "mode": "unit",
+   "range": 20
   }
  },
  "version": 1
