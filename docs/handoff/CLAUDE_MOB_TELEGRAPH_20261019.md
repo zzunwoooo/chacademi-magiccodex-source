@@ -182,3 +182,11 @@
 - `chatelegraph` 새 파라미터 `warn=false`: 빨간 장판을 안 보내고(패킷 없음) 같은 모양으로 `ticks` 뒤 판정만 함. `Telegraphs.start(..., warn, ...)` 오버로드, 그려지지 않은 건 clear 패킷도 안 보냄.
 - 기본기 근접형 전부 `warn=false;ticks=8` (0.4초 뒤 판정, 휘두르는 모션에 맞춤). 유니콘 별 낙하만 ticks=14 (VFX 가 별가루 모으는 0.7초). 투사체 기본기(chamobshot)는 원래 예고 없음.
 - 처음 만든 큰 기술(범위기)과 특수기는 예고 그대로.
+
+## 이 브랜치에 같이 들어간 이후 변경 (2026-10-19 밤) — 배포할 때 같이 확인
+| 커밋 | 내용 | 설명 문서 |
+|---|---|---|
+| `a31fb9e`, `c7925ef` | 몹 스킬을 플레이어 습득 마법 300~323번으로 (그 몹 처치 시 5% 발견) — default-spells, mana-spells, discoveries, spell-runtime, chacademi_spells, spell-catalog | `magic-mythic-paper/tools/mob_spells_doc.md`, 프로젝트 문서 `claude/mob-spells-300-323.md` |
+| `72294d5` (merge `194aea1`) | 대상 체력바: 머리 방향 대신 **화면 십자선(에임) 기준**으로 몹 선택. 새 C2S 채널 `magiccodex:target_aim` → 서버 Bridge + 클라 모드 같이 배포 | `docs/handoff/CLAUDE_TARGET_HUD_AIM_20261019.md` |
+- 이 브랜치는 체력바 브랜치 `claude/status-hud-polish-20261019` 를 포함 (따로 배포할 필요 없음, `claude/target-hud-aim-20261019` 도 이미 합쳐짐).
+- 알려진 문제(미수정): 체력바에서 플레이어 닉네임이 한글로 안 나온다는 제보. 서버는 `DisplayNames`(저장된 닉네임 → PlaceholderAPI `display-name-placeholder` → 계정 이름) 순으로 보냄 → 그 서버에서 닉네임 저장소/플레이스홀더가 비어 있는지 먼저 확인. 글자가 □ 로 깨지면 `hud_bold` 글꼴 한글 문제.
