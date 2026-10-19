@@ -101,7 +101,7 @@ public final class TargetHudClient {
             // Owner 2026-10-19: vanilla effect icons (buffs too) are gone; debuffs show as 차카데미 icons top right.
             drawer.removeLayer(IdentifiedLayer.STATUS_EFFECTS);
             // Owner 2026-10-19: every boss bar is hidden; bosses show on this HUD instead.
-            drawer.removeLayer(IdentifiedLayer.BOSSBAR);
+            drawer.removeLayer(IdentifiedLayer.BOSS_BAR);
         });
         ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> { reset(); close(); });
         ClientPlayConnectionEvents.JOIN.register((h, s, c) -> reset());

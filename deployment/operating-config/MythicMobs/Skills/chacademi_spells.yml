@@ -77,7 +77,7 @@ CHA_returning_blade:
 CHA_pressure_press:
   Cooldown: 0
   Skills:
-    - chahit{slam=2.2;element=wind}
+    - chahit{slam=2.2;status=gravity:40;element=wind}
 CHA_wind_decoy:
   Cooldown: 0
   Skills:
@@ -329,7 +329,7 @@ CHA_pressure_hammer:
   Cooldown: 0
   Skills:
     - delay 15
-    - chahit{r=3;max=10;effect=SLOWNESS:20:4;element=water}
+    - chahit{r=3;max=10;status=stun:20;element=water}
 CHA_waterspout:
   Cooldown: 0
   Skills:
@@ -365,7 +365,7 @@ CHA_bouncing_droplet:
 CHA_abyssal_pressure:
   Cooldown: 0
   Skills:
-    - chazone{r=2.5;ticks=120;period=20;mult=0.3;effect=SLOWNESS:30:2,MINING_FATIGUE:30:1;element=water}
+    - chazone{r=2.5;ticks=120;period=20;mult=0.3;effect=SLOWNESS:30:2;status=physical_weakness:30;element=water}
 CHA_verdant_touch:
   Cooldown: 0
   Skills:
