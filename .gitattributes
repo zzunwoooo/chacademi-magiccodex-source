@@ -19,3 +19,5 @@
 magic-codex-fabric/src/main/resources/assets/** -text whitespace=cr-at-eol
 
 deployment/operating-config/** -text
+
+creature-spawns-paper/mythicmobs/blueprints/*.bbmodel text eol=lf

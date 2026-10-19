@@ -1,5 +1,5 @@
 name: ChAcademiaWildlife
-version: 0.3.1-chunkcap.1
+version: 0.4.0
 main: school.chacademia.wildlife.WildlifePlugin
 api-version: '1.21.4'
 depend: [MythicMobs]
@@ -8,7 +8,7 @@ commands:
   야생관리:
     aliases: [wildlifeadmin]
     permission: chacademia.wildlife.admin
-    usage: /야생관리 reload | check <id> | structures | status
+    usage: /야생관리 reload | check <id> | structures | status | crop <id> [shiny]
 permissions:
   chacademia.wildlife.admin:
     default: op

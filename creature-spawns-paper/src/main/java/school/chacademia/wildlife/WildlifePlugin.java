@@ -31,11 +31,13 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
     private boolean groupSpawning;
     private ChunkMobLimit chunkLimit;
     private long lastCleanupLog;
+    private final CropAwakening crops=new CropAwakening(this);
     @Override public void onEnable() {
         saveDefaultConfig(); reloadSettings(); reloadHabitats(); naturalKey=new NamespacedKey(this,"natural");
         getServer().getPluginManager().registerEvents(this,this);
         // 구조물 색인은 지연 방식이다: 청크 로드 때가 아니라 구조물 조건이 있는 서식지가 물을 때만 계산한다.
         getServer().getPluginManager().registerEvents(structures,this);
+        crops.reload(); getServer().getPluginManager().registerEvents(crops,this);
         // Handles entities loaded after restart too; only our marked natural mobs are eligible.
         Bukkit.getScheduler().runTaskTimer(this,this::cleanup,200,200);
     }
@@ -238,7 +240,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
     @Override public boolean onCommand(CommandSender sender,Command c,String label,String[] args) {
         if(!sender.hasPermission("chacademia.wildlife.admin")) return true;
         if(args.length>0&&args[0].equals("reload")) {
-            try {reloadConfig();reloadSettings();reloadHabitats();sender.sendMessage("§a서식지 재적용 완료. RandomSpawns 변경 시 /mm reload도 실행하세요.");}
+            try {reloadConfig();reloadSettings();reloadHabitats();crops.reload();sender.sendMessage("§a서식지 재적용 완료. RandomSpawns 변경 시 /mm reload도 실행하세요.");}
             catch(Exception ex) {sender.sendMessage("§c설정 오류: "+ex.getMessage());} return true;
         }
         if(args.length==1&&args[0].equalsIgnoreCase("status")) {
@@ -248,8 +250,16 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         }
         if(sender instanceof Player p) {
             if(args.length==2&&args[0].equals("check")) p.sendMessage(args[1]+": "+check(args[1],p.getLocation(),false)+" / "+p.getWorld().getBiome(p.getLocation()).getKey());
+            else if(args.length>=2&&args[0].equals("crop")) {
+                var direction=p.getLocation().getDirection().setY(0);
+                if(direction.lengthSquared()<1.0E-4) direction.setZ(1);
+                var at=p.getLocation().add(direction.normalize().multiply(3));
+                at.setY(p.getLocation().getBlockY()); at.setX(at.getBlockX()+.5); at.setZ(at.getBlockZ()+.5);
+                String r=crops.spawn(p,args[1],args.length>2&&args[2].equals("shiny"),at);
+                p.sendMessage(r.equals("OK")?"§a작물 몹 소환: "+args[1]:"§c"+r+" (가능: "+crops.ids()+")");
+            }
             else if(args.length==1&&args[0].equals("structures")) p.sendMessage(structures.nearby(p.getLocation(),Set.of(),96).toString());
-            else p.sendMessage("/야생관리 check <몹ID> | structures | reload");
+            else p.sendMessage("/야생관리 check <몹ID> | structures | reload | status | crop <작물ID> [shiny]");
         }
         return true;
     }
