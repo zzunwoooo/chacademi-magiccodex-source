@@ -53,7 +53,9 @@ public final class PermissionClient {
         boolean inWorld=client.world!=null && client.player!=null;
         boolean catalogScreen=client.currentScreen instanceof CodexScreen screen && screen.isCatalogBacked()
                 || client.currentScreen instanceof KeySettingsScreen keys && keys.isCatalogBacked()
-                || client.currentScreen instanceof StatsScreen stats && stats.isLive();
+                || client.currentScreen instanceof StatsScreen stats && stats.isLive()
+                // 큐디치 / 1:1 마법 세팅: the list shows every learned spell, so the whole catalog needs permission results
+                || client.currentScreen instanceof KyudichiSpellPickScreen;
         var view = CodexCatalog.permissions();
         List<String> wanted=catalogScreen?view.allPermissions():CastingClient.enabled()?CastingClient.permissions():List.of();
         // Same filtering/size cap as the OPEN request, so an oversized list cannot reopen every tick.

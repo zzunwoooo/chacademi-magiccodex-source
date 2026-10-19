@@ -52,6 +52,7 @@ final class KyudichiSpellPickScreen extends KyudichiViewScreen {
         int rows = (catalog.size() + SpellPickView.COLS - 1) / SpellPickView.COLS;
         scroll = Math.clamp(scroll, 0, Math.max(0, rows - SpellPickView.ROWS));
         String n = net.minecraft.util.Util.getMeasuringTimeMs() - noticeAt < 3000 ? notice : "";
+        if (n.isEmpty() && catalog.isEmpty()) n = PermissionClient.catalogConfirmed() ? "배운 마법이 없어요." : "배운 마법 목록을 불러오는 중… (" + CodexCatalog.status() + ")";
         SpellPickView.paint(p, new SpellPickView.Data(equipped, keys, l.flightSlot(), catalog, selected, scroll, dragging ? dragFrom : -1, n));
     }
 
