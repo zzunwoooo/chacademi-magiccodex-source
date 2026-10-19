@@ -46,15 +46,74 @@ final class ReactionVfx {
     /** System id inside the pack (= lower-case reaction name, e.g. ember_curse). */
     static String system(Reaction reaction) { return reaction.name().toLowerCase(Locale.ROOT); }
 
-    /** Body-sized effect at the entity's feet, scaled to its height (authored for 1.8 m). */
-    void body(Reaction reaction, LivingEntity entity) { body(reaction, entity.getLocation(), entity.getHeight()); }
-
-    void body(Reaction reaction, Location feet, double height) {
-        play(system(reaction), feet, (float) Math.clamp(height / 1.8, 0.5, 1.5), 0, reaction == Reaction.VOID_GUST ? 40 : 30);
+    /**
+     * Single-target effect at the entity's feet (pack v3, authored for a 1.8 x 0.6 m humanoid), scaled to its size:
+     * s = clamp((height / 1.8 + width / 0.6) / 2, 0.6, 4). ModelEngine mobs use their model hitbox.
+     */
+    void body(String system, LivingEntity entity, int ticks) {
+        double[] wh = size(entity);
+        play(system, entity.getLocation(), (float) Math.clamp((wh[1] / 1.8 + wh[0] / 0.6) / 2, 0.6, 4), 0, ticks);
     }
 
-    /** Area effect authored at its real radius (steam 2, rainbow 4, sandstorm 3, eclipse 3 blocks): scale 1. */
-    void area(Reaction reaction, Location feet, int ticks) { play(system(reaction), feet, 1, 0, ticks); }
+    void body(Reaction reaction, LivingEntity entity, int ticks) { body(system(reaction), entity, ticks); }
+
+    /**
+     * Area effect authored at its gameplay radius (steam 3, wildfire 2, sandstorm 4, rainbow 4 blocks). Around a big
+     * centre entity the ring grows so it still reaches past its body: scale = (radius + width / 2) / (radius + 0.3).
+     */
+    void area(Reaction reaction, Location feet, double radius, LivingEntity centre, int ticks) {
+        double w = centre == null ? 0.6 : size(centre)[0];
+        play(system(reaction), feet, (float) Math.clamp((radius + w / 2) / (radius + 0.3), 1, 4), 0, ticks);
+    }
+
+    /** {width, height} in blocks: ModelEngine main hitbox x model scale when modelled, else the bounding box. */
+    static double[] size(LivingEntity e) {
+        var box = e.getBoundingBox();
+        double w = Math.max(box.getWidthX(), box.getWidthZ()), h = box.getHeight();
+        double[] model = modelSize(e);
+        if (model != null) { w = model[0]; h = model[1]; }
+        if (!(w > 0.05) || !(h > 0.05)) { w = 0.6; h = 1.8; }
+        return new double[] {w, h};
+    }
+
+    private static boolean meMissing;
+    /** Reflection only (no compile dependency). Any API mismatch disables the lookup for the session. */
+    private static double[] modelSize(LivingEntity e) {
+        if (meMissing || !Bukkit.getPluginManager().isPluginEnabled("ModelEngine")) return null;
+        try {
+            Plugin me = Bukkit.getPluginManager().getPlugin("ModelEngine");
+            Class<?> api = Class.forName("com.ticxo.modelengine.api.ModelEngineAPI", true, me.getClass().getClassLoader());
+            Object modeled = api.getMethod("getModeledEntity", java.util.UUID.class).invoke(null, e.getUniqueId());
+            if (modeled == null) return null;
+            var models = (java.util.Map<?, ?>) modeled.getClass().getMethod("getModels").invoke(modeled);
+            double w = 0, h = 0;
+            for (Object model : models.values()) {
+                Object blueprint = model.getClass().getMethod("getBlueprint").invoke(model);
+                Object hitbox = blueprint.getClass().getMethod("getMainHitbox").invoke(blueprint);
+                if (hitbox == null) continue;
+                double scale = scaleOf(model);
+                w = Math.max(w, number(hitbox, "getWidth") * scale);
+                h = Math.max(h, number(hitbox, "getHeight") * scale);
+            }
+            return w > 0 && h > 0 ? new double[] {w, h} : null;
+        } catch (ReflectiveOperationException | RuntimeException | LinkageError ex) {
+            meMissing = true;
+            return null;
+        }
+    }
+
+    private static double scaleOf(Object model) {
+        try {
+            Object v = model.getClass().getMethod("getScale").invoke(model);
+            if (v instanceof Number n) return n.doubleValue();
+            if (v != null) return ((Number) v.getClass().getMethod("x").invoke(v)).doubleValue();
+        } catch (ReflectiveOperationException | RuntimeException ignored) {}
+        return 1;
+    }
+
+    private static double number(Object o, String getter) throws ReflectiveOperationException {
+        return ((Number) o.getClass().getMethod(getter).invoke(o)).doubleValue();
+    }
 
     /** Chain-lightning jump: bolt from `from`'s chest toward `to`'s chest (horizontal; scaled to the distance). */
     void bolt(LivingEntity from, LivingEntity to) {

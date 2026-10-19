@@ -25,8 +25,14 @@ reactions:
   enabled: true
   mark-ticks: 60          # 표식 유지 시간 (20틱 = 1초)
   cooldown-ticks: 60      # 반응이 일어난 대상의 내부 쿨다운 (이 동안은 표식도 안 생김)
-  damage-floor: 2         # 피해 반응(증기 폭발·연쇄 번개·일식) 기준값의 최소치
+  damage-floor: 2         # 피해 반응(증기 폭발·연쇄 번개) 기준값의 최소치
   damage-scale: 1.0       # 피해 반응 배율 (밸런스 조절용)
+  cc-ticks: 60            # 일반 CC 반응 시간 (화상·회복봉인·약화·둔화·독, 태양 플레어 발광) 2026-10-20
+  hard-cc-ticks: 20       # 하드 CC 반응 시간 (무장해제·고정·공포·기절·속박·수면)
+  steam-radius: 3         # 증기 폭발 범위
+  wildfire-radius: 2      # 불씨 확산(화상) 범위
+  sandstorm-radius: 4     # 모래 회오리 끌어모으기·고정 범위
+  mud-slow: 0.4           # 진흙 둔화 세기 (이동 속도 감소 비율)
   icon-range: 48          # 이 거리 안의 플레이어에게만 아이콘 패킷 전송
   vfx:                    # 반응 연출 (PortableVFX 팩 ElementReactions, 클라이언트에 팩 설치 필요)
     enabled: true

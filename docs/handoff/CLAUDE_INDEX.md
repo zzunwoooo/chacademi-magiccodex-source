@@ -1,6 +1,6 @@
-> Claude 2026-10-20 (not built): [원소 반응 CC 개편 1단계 — VFX 팩 교체 + 서버 변경 계획](CLAUDE_REACTION_CC_VFX_20261020.md). Branch claude/reaction-cc-vfx-20261020 on codex/operating-final-20261019 @ 8356980. Client VFX pack only; server code waits for GPT review.
+> Claude 2026-10-20 (not built): [원소 반응 CC 개편 — VFX 팩 교체 + 반응 효과·크기 서버 코드](CLAUDE_REACTION_CC_VFX_20261020.md). Branch claude/reaction-cc-vfx-20261020 on codex/operating-final-20261019 @ 8356980. MagicMythic jar (school/wild) + client VFX pack.
 
-> Claude 2026-10-20 (not built): [원소 반응 CC 개편 1단계 — VFX 팩 교체 + 서버 변경 계획](CLAUDE_REACTION_CC_VFX_20261020.md). Branch claude/reaction-cc-vfx-20261020 on codex/operating-final-20261019 @ 8356980. Client VFX pack only; server code waits for GPT review.
+> Claude 2026-10-20 (not built): [원소 반응 CC 개편 — VFX 팩 교체 + 반응 효과·크기 서버 코드](CLAUDE_REACTION_CC_VFX_20261020.md). Branch claude/reaction-cc-vfx-20261020 on codex/operating-final-20261019 @ 8356980. MagicMythic jar (school/wild) + client VFX pack.
 
 > Claude 2026-10-19 (not built): [몹 예고 장판 원형·직선·부채꼴 + 블레이즈 화염 기둥](CLAUDE_MOB_TELEGRAPH_20261019.md). Branch claude/mob-telegraph-20261019 on claude/status-hud-polish-20261019. Protocol + MagicMythic + client mod; VFX pack BlazePillar on the owner PC.
 > Claude 2026-10-19 (not built): [대상 체력바 HUD v4 (금색 프레임·한 줄 게이지) + 상태이상 아이콘 v2 + 글자 외곽선](CLAUDE_STATUS_HUD_TEXT_20261019.md). Branch claude/status-hud-polish-20261019 on codex/operating-status-hud-20261019 @ c5a2ccf. Client mod only.
