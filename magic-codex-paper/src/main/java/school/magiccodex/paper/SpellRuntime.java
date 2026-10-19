@@ -43,6 +43,15 @@ final class SpellRuntime implements CommandExecutor,TabCompleter,AutoCloseable {
                 var chosen=aim.getLocation();
                 if(chosen!=null&&chosen.getWorld()==p.getWorld()&&chosen.distanceSquared(p.getEyeLocation())<=(r.range()+.5)*(r.range()+.5))location=chosen;
             }
+            // ModelEngine mobs (owner 2026-10-19: "타겟 마법이 모델 쓰는 몹한테 안 써짐"): the vanilla ray only knows the small
+            // base box, and a hit on the model's hitbox Interaction/Display is not the mob. Same rule as the taming/target-HUD
+            // ray: sub-hitboxes and hitbox entities resolve to the modeled base mob.
+            if(r.target()!=SpellRules.Target.AIM&&!(target instanceof LivingEntity)){
+                var tm=plugin.tamingBridge();LivingEntity modeled=null;
+                if(tm!=null)try{modeled=tm.target(p,r.range());}catch(RuntimeException|LinkageError ignored){}
+                if(modeled!=null&&MagicProtectionLink.target(p,modeled)){target=modeled;location=modeled.getLocation().add(0,modeled.getHeight()*.5,0);}
+                else target=null;
+            }
             if(r.target()!=SpellRules.Target.AIM&&target==null){p.sendMessage("시야 안의 몬스터를 지정해 주세요.");return REFUSED;}
             if(r.target()==SpellRules.Target.AIR_ENTITY&&((LivingEntity)target).isOnGround()){p.sendMessage("공중에 있는 몬스터에게 사용해 주세요.");return REFUSED;}
             if(r.target()==SpellRules.Target.BURNING_ENTITY&&!(target instanceof LivingEntity burning&&MagicProtectionLink.status(burning,"burn"))){p.sendMessage("화상 상태인 몬스터에게 사용해 주세요.");return REFUSED;}
