@@ -4,7 +4,7 @@
     python tools/fishing/install_fish_art.py <그림 폴더>
 
 <그림 폴더> 안의 fish_001.png ~ fish_200.png (투명 PNG, 크기 상관없음) 를
-  - 낚시 패널·도감용: magic-codex-fabric/.../textures/gui/fishing/fish/<id>.png (512x512)
+  - 낚시 패널·도감용: magic-codex-fabric/.../textures/gui/fishing/fish/<id>.png (256x256)
   - 아이템 아이콘용:   magic-codex-fabric/.../textures/item/fishing/fish/<id>.png (128x128) + models / items json
 으로 넣는다. 그림이 있는 물고기만 바뀌고, 없는 물고기는 계속 실루엣으로 보인다.
 아이템 아이콘을 쓰려면 서버 fishing.yml 의 settings.fish-item-models 를 true 로 바꾸고 /낚시관리 리로드.
@@ -15,14 +15,12 @@ from PIL import Image
 ROOT = os.path.join(os.path.dirname(__file__), "..", "..", "magic-codex-fabric", "src", "main", "resources", "assets", "magiccodex")
 
 def fit(img, size):
+    """Square, transparent, at most `size`; GPT's 256x256 game assets already carry their margins, so no cropping."""
     img = img.convert("RGBA")
-    box = img.getbbox() or (0, 0, img.width, img.height)
-    img = img.crop(box)
-    scale = size * .92 / max(img.width, img.height)
-    img = img.resize((max(1, round(img.width * scale)), max(1, round(img.height * scale))), Image.LANCZOS)
-    out = Image.new("RGBA", (size, size), (0, 0, 0, 0))
-    out.paste(img, ((size - img.width) // 2, (size - img.height) // 2), img)
-    return out
+    if img.width != img.height:
+        side = max(img.width, img.height)
+        sq = Image.new("RGBA", (side, side), (0, 0, 0, 0)); sq.paste(img, ((side - img.width) // 2, (side - img.height) // 2), img); img = sq
+    return img if img.width == size else img.resize((size, size), Image.LANCZOS)
 
 def main(folder):
     n = 0
@@ -31,7 +29,7 @@ def main(folder):
         if not m: continue
         fid = m.group(1)
         img = Image.open(os.path.join(folder, name))
-        for sub, size in (("textures/gui/fishing/fish", 512), ("textures/item/fishing/fish", 128)):
+        for sub, size in (("textures/gui/fishing/fish", 256), ("textures/item/fishing/fish", 128)):
             os.makedirs(os.path.join(ROOT, sub), exist_ok=True)
             fit(img, size).save(os.path.join(ROOT, sub, fid + ".png"), optimize=True)
         os.makedirs(os.path.join(ROOT, "models/item/fishing/fish"), exist_ok=True)
