@@ -46,14 +46,10 @@ class StatusHudProtocolTest {
         assertThrows(IllegalArgumentException.class, () -> TargetHudProtocol.decode(new byte[]{1, 3}));
         assertThrows(IllegalArgumentException.class, () -> new TargetHudProtocol.Show(1, UUID.randomUUID(), 0, 0, "", "", 1, 0, -1, 0, 0, -1));
     }
-    @Test void hpSegmentsAreFixedSixWithBrightTip() {
-        assertEquals(-1, TargetHudLayout.tipSegment(0));
-        assertEquals(0, TargetHudLayout.tipSegment(.01f));
-        assertEquals(4, TargetHudLayout.tipSegment(.72f));   // 720/1000 = 4.32 of 6: segments 0-3 full, segment 4 partly
-        assertEquals(1, TargetHudLayout.segment(.72f, 3), 1e-6);
-        assertEquals(.32f, TargetHudLayout.segment(.72f, 4), 1e-4);
-        assertEquals(0, TargetHudLayout.segment(.72f, 5), 1e-6);
-        assertEquals(5, TargetHudLayout.tipSegment(1));
-        assertEquals(1, TargetHudLayout.tipSegment(2 / 6f)); // exactly two full segments: tip is the second one
+    @Test void iconsFillFromTheRightAndHudWidthIsBounded() {
+        assertEquals(1994 - 43f, TargetHudLayout.iconX(1994, 86, 104, 0), 1e-4);
+        assertEquals(1994 - 43f - 208, TargetHudLayout.iconX(1994, 86, 104, 2), 1e-4);
+        assertEquals(260f, TargetHudLayout.width(300), 1e-4);
+        assertEquals(620f, TargetHudLayout.width(4000), 1e-4);
     }
 }

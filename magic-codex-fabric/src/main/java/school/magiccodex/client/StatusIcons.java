@@ -5,39 +5,38 @@ import school.magiccodex.protocol.ElementProtocol;
 import school.magiccodex.protocol.StatusProtocol;
 
 /**
- * Round status icon of the owner's reference sheet (2026-10-19): dark disc, faint ring in the status color,
- * bright arc = time left (from 12 o'clock), symbol PNG in the middle. Used above heads, on the target HUD and
- * on the player's own HUD. Element marks use the same shape with their element PNG.
+ * Status icons of the HUD v4 reference (2026-10-19): the colored 256 px symbol alone (no ring, no frame), time left
+ * written under it where there is room (target HUD, own HUD). A very soft dark halo behind the symbol keeps it
+ * readable on bright sky. Last second: blinks. Used above heads, on the target HUD and on the player's own HUD.
+ * Element marks are drawn the same way with their element PNG.
  */
 final class StatusIcons {
     private StatusIcons() {}
 
     static String path(StatusProtocol.Status s) { return "magiccodex:textures/status/" + s.id + ".png"; }
 
-    /** fraction: time left 0..1 (1 for no end); alpha 0..1. Returns the drawn diameter. */
-    static void draw(DrawContext ctx, HudTextureCache images, String icon, int rgb, float cx, float cy, float diameter,
-                     float fraction, float alpha, float symbolScale) {
-        float r = diameter / 2;
-        float ring = Math.max(1.2f, diameter * .075f);
-        HudMesh.arc(ctx, cx, cy, r * 1.06f, diameter * .16f, 0, (float) (Math.PI * 2), argb(rgb, .12f * alpha));   // soft glow
-        HudMesh.disk(ctx, cx, cy, r * .92f, argb(0x0E1626, .82f * alpha));                                       // disc
-        HudMesh.arc(ctx, cx, cy, r * .86f, ring, 0, (float) (Math.PI * 2), argb(rgb, .30f * alpha));              // track
-        float f = Math.clamp(fraction, 0, 1);
-        if (f > 0) HudMesh.arc(ctx, cx, cy, r * .86f, ring * 1.1f, (float) (-Math.PI / 2), (float) (Math.PI * 2 * f), argb(lighten(rgb), alpha));
-        images.drawCentered(ctx, icon, cx, cy, Math.max(1, Math.round(diameter * symbolScale)), argb(0xFFFFFF, alpha));
+    /** Symbol PNG fitted to `size`, with a faint halo for contrast. */
+    static void draw(DrawContext ctx, HudTextureCache images, String icon, float cx, float cy, float size, float alpha) {
+        HudMesh.disk(ctx, cx, cy, size * .38f, argb(0x050A14, .20f * alpha));
+        images.drawCentered(ctx, icon, cx, cy, Math.max(1, Math.round(size)), argb(0xFFFFFF, alpha));
     }
 
     static void status(DrawContext ctx, HudTextureCache images, StatusClient.Line line, float cx, float cy, float d, long now, float alpha) {
-        float a = alpha * line.blink(now);
-        // Status PNGs are 192 px squares with the symbol (168 px) centered on its bounding box.
-        draw(ctx, images, path(line.status()), line.status().color, cx, cy, d, line.fraction(now), a, .56f);
+        draw(ctx, images, path(line.status()), cx, cy, d, alpha * line.blink(now));
     }
 
     static void element(DrawContext ctx, HudTextureCache images, ElementMarkClient.Shown mark, float cx, float cy, float d, long now, float alpha) {
-        long left = mark.end() - now, total = Math.max(1, mark.end() - mark.start());
+        long left = mark.end() - now;
         float a = alpha * (left < 1000 ? .45f + .55f * (float) Math.abs(Math.sin(now / 110.0)) : 1f);
-        draw(ctx, images, ElementMarkClient.icon(mark.element()), ElementMarkClient.color(mark.element()), cx, cy, d,
-            left / (float) total, a, .62f);
+        draw(ctx, images, ElementMarkClient.icon(mark.element()), cx, cy, d * .9f, a);
+    }
+
+    /** "3초", "2분"; "" without an end (vanilla infinite effects). */
+    static String timeLeft(StatusClient.Line line, long now) { return line.infinite() ? "" : seconds(line.end() - now); }
+    static String timeLeft(ElementMarkClient.Shown mark, long now) { return seconds(mark.end() - now); }
+    private static String seconds(long ms) {
+        long sec = Math.max(1, (long) Math.ceil(ms / 1000.0));
+        return sec >= 60 ? (sec + 59) / 60 + "분" : sec + "초";
     }
 
     /** "…" after the third status above a head. */
