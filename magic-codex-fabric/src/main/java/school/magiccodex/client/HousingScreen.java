@@ -60,7 +60,22 @@ public final class HousingScreen extends SocialScreen {
 
     public HousingScreen(){super("내 방");for(int i=0;i<undo.length;i++)undo[i]=new ArrayDeque<>();}
 
-    @Override SocialLayout.Fit fit(){float s=Math.min(width/VW,height/VH);return new SocialLayout.Fit((width-VW*s)/2,(height-VH*s)/2,s);}
+    /**
+     * Wide windows (owner 2026-10-19, like the 결투장 lobby): the canvas starts at the screen's left edge and {@link #dx} is the
+     * extra width on the right. Left parts (title, room info) stay, right parts (top buttons, guestbook, zoom, tools, search)
+     * move by dx, the room / inventory panel grow by dx and popups move by dx/2.
+     */
+    private float dx;
+    @Override SocialLayout.Fit fit(){
+        float s=Math.min(width/VW,height/VH);
+        dx=Math.max(0,width/s-VW);
+        return new SocialLayout.Fit(dx>0?0:(width-VW*s)/2,(height-VH*s)/2,s);
+    }
+    /** Draws a group moved right by `by` (design px); `mx` given to it must be moved back the same way. */
+    private int shifted(DrawContext c,float by,java.util.function.IntSupplier draw){
+        c.getMatrices().push();c.getMatrices().translate(by,0,0);
+        try{return draw.getAsInt();}finally{c.getMatrices().pop();}
+    }
     @Override protected void init(){
         String q=search==null?"":search.text(),t=post==null?"":post.text();
         super.init();search=new Input("가구 검색",16,q);post=new Input("한마디",HousingProtocol.GUESTBOOK_CHARS,t);
@@ -135,17 +150,17 @@ public final class HousingScreen extends SocialScreen {
             // ---- 제목·방 정보
             title(c,room,edit);
             {int h=infoPanel(c,room,mx,my,modal,edit);if(h!=0)newHot=h;}
-            {int h=topButtons(c,room,mx,my,modal,edit);if(h!=0)newHot=h;}
+            {int h=shifted(c,dx,()->topButtons(c,room,mx-dx,my,modal,edit));if(h!=0)newHot=h;}
             if(edit){
                 int h=tools(c,mx,my,modal);if(h!=0)newHot=h;
                 h=inventory(c,mx,my,modal);if(h!=0)newHot=h;
-                if(guestbookOpen){h=guestbook(c,room,mx,my,modal,1311,84,334,506);if(h!=0)newHot=h;}
-            }else{int h=guestbook(c,room,mx,my,modal,1311,135,334,650);if(h!=0)newHot=h;}
-            {int h=zoomButtons(c,mx,my,modal,edit);if(h!=0)newHot=h;}
+                if(guestbookOpen){h=guestbook(c,room,mx,my,modal,1311+dx,84,334,506);if(h!=0)newHot=h;}
+            }else{int h=guestbook(c,room,mx,my,modal,1311+dx,135,334,650);if(h!=0)newHot=h;}
+            {int h=shifted(c,dx,()->zoomButtons(c,mx-dx,my,modal,edit));if(h!=0)newHot=h;}
             drawToast(c,edit);
             if(!modal&&edit&&newHot>=H_ITEM&&newHot<H_MORE)itemTooltip(c,newHot-H_ITEM,mx,my);
-            if(busy){long now=Util.getMeasuringTimeMs();float t=now/180f;for(int i=0;i<3;i++)HudMesh.disk(c,820+i*18,edit?566:870,3,((int)(100+155*(.5+.5*Math.sin(t-i)))<<24)|0x92E7F2);}
-            if(modal){c.getMatrices().push();c.getMatrices().translate(0,0,80);try{newHot=popup(c,room,mx,my);}finally{c.getMatrices().pop();}}
+            if(busy){long now=Util.getMeasuringTimeMs();float t=now/180f;for(int i=0;i<3;i++)HudMesh.disk(c,820+dx/2+i*18,edit?566:870,3,((int)(100+155*(.5+.5*Math.sin(t-i)))<<24)|0x92E7F2);}
+            if(modal){c.getMatrices().push();c.getMatrices().translate(0,0,80);try{HudMesh.quad(c,-400,-400,VW+dx+800,VH+800,0xA0050B14,0xA0050B14);newHot=shifted(c,dx/2,()->popup(c,room,mx-dx/2,my));}finally{c.getMatrices().pop();}}
         }finally{end(c);}
         hot=newHot;hover(hot>=H_ITEM&&hot<H_MORE?0:hot);
     }
@@ -156,7 +171,7 @@ public final class HousingScreen extends SocialScreen {
         float w=x1-x0,h=y1-y0,k=Math.max(w/VW,h/VH);
         stretch(images,c,BACKGROUND,x0+(w-VW*k)/2,y0+(h-VH*k)/2,VW*k,VH*k,0xFFFFFFFF);
     }
-    private float[] roomArea(){return editing()?new float[]{300,84,1300,512}:new float[]{300,92,1000,800};}
+    private float[] roomArea(){return editing()?new float[]{300,84,1300+dx,512}:new float[]{300,92,1000+dx,800};}
     private boolean inRoom(double mx,double my){float[] a=roomArea();return mx>=a[0]&&mx<a[0]+a[2]&&my>=a[1]&&my<a[1]+a[3];}
 
     private void title(DrawContext c,Room room,boolean edit){
@@ -419,18 +434,18 @@ public final class HousingScreen extends SocialScreen {
         String hint=held!=null?held.def().name()+" · R 회전 · 우클릭 취소 · Delete 보관함으로"
                 :"보관함에서 골라 방에 놓아요 · 놓인 가구를 누르면 옮기고, 우클릭하면 보관함으로 돌아가요";
         if(held!=null&&candidateWhy!=null)hint=candidateWhy;
-        type.draw(c,fit(hint,17,540,BODY),320,622,17,held!=null&&candidateWhy!=null?RED:MUTED,BODY,false);
-        Object[][] tools={{H_ROTATE,"회전",ICON_ROTATE,880f,92f},{H_RETRIEVE,"회수",ICON_RETRIEVE,982f,90f},{H_UNDO,"되돌리기",ICON_UNDO,1082f,124f},{H_SAVE,"저장",ICON_SAVE,1216f,100f}};
+        type.draw(c,fit(hint,17,540+dx,BODY),320,622,17,held!=null&&candidateWhy!=null?RED:MUTED,BODY,false);
+        Object[][] tools={{H_ROTATE,"회전",ICON_ROTATE,880f+dx,92f},{H_RETRIEVE,"회수",ICON_RETRIEVE,982f+dx,90f},{H_UNDO,"되돌리기",ICON_UNDO,1082f+dx,124f},{H_SAVE,"저장",ICON_SAVE,1216f+dx,100f}};
         for(var t:tools){
             int id=(int)t[0];float x=(float)t[3],w=(float)t[4];
             boolean over=!modal&&in(mx,my,x,600,w,44);if(over)hit=id;
             boolean glow=id==H_SAVE&&dirty[slot];
             button(c,(String)t[1],(Tex)t[2],x,600,w,44,over,glow);
         }
-        HudMesh.line(c,1338,604,1338,640,1.2f,0x88E1B866);
+        HudMesh.line(c,1338+dx,604,1338+dx,640,1.2f,0x88E1B866);
         var room=room();
         for(int i=0;i<HousingRules.SLOTS;i++){
-            float x=1370+i*60.5f;boolean over=!modal&&in(mx,my,x,600,48,44);if(over)hit=H_SLOT+i;
+            float x=1370+dx+i*60.5f;boolean over=!modal&&in(mx,my,x,600,48,44);if(over)hit=H_SLOT+i;
             nine(images,c,i==slot?LAYOUT_SELECTED:LAYOUT_UNSELECTED,x,600,48,44,10,over?0xFFFFFFFF:0xFFE6E6E6);
             type.draw(c,String.valueOf(i+1)+(dirty[i]?"*":""),x+24,622,20,i==slot?0xFFFFFFFF:GOLD_TEXT,BOLD,true);
             if(room!=null&&room.activeSlot()==i)HudMesh.disk(c,x+42,606,4,GREEN);
@@ -449,10 +464,10 @@ public final class HousingScreen extends SocialScreen {
         }
         return list;
     }
-    private float maxInvScroll(){return Math.max(0,visibleItems.size()*SLOT_STEP-(SLOT_STEP-SLOT_W)-SLOT_VIEW);}
+    private float maxInvScroll(){return Math.max(0,visibleItems.size()*SLOT_STEP-(SLOT_STEP-SLOT_W)-(SLOT_VIEW+dx));}
     private int inventory(DrawContext c,double mx,double my,boolean modal){
         int hit=0;
-        nine(images,c,PANEL_INVENTORY,40,657,1592,250,22,0xFFFFFFFF);
+        nine(images,c,PANEL_INVENTORY,40,657,1592+dx,250,22,0xFFFFFFFF);
         for(int i=0;i<TABS.length;i++){
             boolean over=!modal&&in(mx,my,TAB_X[i],675,TAB_W[i],49);if(over)hit=H_TAB+i;
             nine(images,c,i==tab?TAB_SELECTED:TAB_UNSELECTED,TAB_X[i],675,TAB_W[i],49,12,over?0xFFFFFFFF:0xFFE8E8E8);
@@ -460,16 +475,16 @@ public final class HousingScreen extends SocialScreen {
             icon(images,c,TAB_ICONS[i],left+12,700,24,0xFFFFFFFF);
             type.draw(c,TABS[i],left+32,700,19,i==tab?0xFFFFFFFF:GOLD_TEXT,BODY,false);
         }
-        nine(images,c,INPUT_FIELD,1238,675,357,49,10,0xFFFFFFFF);
-        icon(images,c,ICON_SEARCH,1264,700,20,0xFFD0D8E0);
-        search.draw(c,1276,675,312,49,"가구 검색");
+        nine(images,c,INPUT_FIELD,1238+dx,675,357,49,10,0xFFFFFFFF);
+        icon(images,c,ICON_SEARCH,1264+dx,700,20,0xFFD0D8E0);
+        search.draw(c,1276+dx,675,312,49,"가구 검색");
         invScroll=Math.clamp(invScroll,0,maxInvScroll());
         var list=visibleItems;var lay=layout();
-        boolean live=!modal&&my>=SLOT_Y&&my<SLOT_Y+SLOT_H&&mx>=72&&mx<1600;
-        c.enableScissor(70,734,1602,888);
+        boolean live=!modal&&my>=SLOT_Y&&my<SLOT_Y+SLOT_H&&mx>=72&&mx<1600+dx;
+        c.enableScissor(70,734,Math.round(1602+dx),888);
         try{
             for(int i=0;i<list.size();i++){
-                float x=SLOT_X+i*SLOT_STEP-invScroll;if(x+SLOT_W<70||x>1602)continue;
+                float x=SLOT_X+i*SLOT_STEP-invScroll;if(x+SLOT_W<70||x>1602+dx)continue;
                 var d=list.get(i);
                 boolean over=live&&in(mx,my,x,SLOT_Y,SLOT_W,SLOT_H);if(over)hit=H_ITEM+i;
                 boolean selected=held!=null&&held.def().id().equals(d.id())||d.surface()&&(d.id().equals(lay.wallpaper())||d.id().equals(lay.floor()));
@@ -485,11 +500,12 @@ public final class HousingScreen extends SocialScreen {
                 }
             }
         }finally{c.disableScissor();}
-        if(list.isEmpty())type.draw(c,HousingClient.catalog().isEmpty()?"가구 목록을 불러오는 중…":"이 칸에 가진 가구가 없어요",836,810,20,MUTED,BODY,true);
+        if(list.isEmpty())type.draw(c,HousingClient.catalog().isEmpty()?"가구 목록을 불러오는 중…":"이 칸에 가진 가구가 없어요",836+dx/2,810,20,MUTED,BODY,true);
         float max=maxInvScroll();
         if(max>0){
-            nine(images,c,SCROLL_TRACK_HORIZONTAL,75,888,1520,8,3,0xFFFFFFFF);
-            float thumb=Math.max(60,1520*SLOT_VIEW/(SLOT_VIEW+max)),tx=75+(1520-thumb)*invScroll/max;
+            float track=1520+dx;
+            nine(images,c,SCROLL_TRACK_HORIZONTAL,75,888,track,8,3,0xFFFFFFFF);
+            float thumb=Math.max(60,track*(SLOT_VIEW+dx)/(SLOT_VIEW+dx+max)),tx=75+(track-thumb)*invScroll/max;
             nine(images,c,SCROLL_THUMB,tx,887,thumb,10,4,0xFFFFFFFF);
         }
         return hit;
@@ -586,7 +602,7 @@ public final class HousingScreen extends SocialScreen {
         button(c,"남기기",null,px+pw-112,iy,92,52,over,false);
         return hit;
     }
-    private float[] bookPanel(){return editing()?new float[]{1311,84,334,506}:new float[]{1311,135,334,650};}
+    private float[] bookPanel(){return editing()?new float[]{1311+dx,84,334,506}:new float[]{1311+dx,135,334,650};}
 
     private int zoomButtons(DrawContext c,double mx,double my,boolean modal,boolean edit){
         float zx=edit&&guestbookOpen?1250:1603,x1=edit?zx:1511,y1=edit?508:800,x2=edit?zx:1585,y2=edit?560:800;
@@ -600,17 +616,16 @@ public final class HousingScreen extends SocialScreen {
     private void drawToast(DrawContext c,boolean edit){
         long age=Util.getMeasuringTimeMs()-toastAt;if(toast.isEmpty()||age>3600)return;
         float a=age<150?age/150f:age>3200?(3600-age)/400f:1;
-        float[] area=roomArea();float cx=area[0]+area[2]/2,y=edit?538:844,w=Math.min(600,type.width(toast,18,BODY)+90);
+        float[] area=roomArea();float cx=area[0]+area[2]/2,y=edit?534:840,w=Math.min(820,type.width(toast,18,BODY)+150);
         c.getMatrices().push();c.getMatrices().translate(0,0,50);
         try{
-            nine(images,c,TOAST,cx-w/2,y,w,48,14,alpha(0xFFFFFFFF,a));
-            type.draw(c,fit(toast,18,w-60,BODY),cx,y+24,18,alpha(toastOk?TEXT:0xFFFFC2C2,a),BODY,true);
+            nine(images,c,TOAST,cx-w/2,y,w,54,14,alpha(0xFFFFFFFF,a));
+            type.draw(c,fit(toast,18,w-110,BODY),cx,y+27,18,alpha(toastOk?TEXT:0xFFFFC2C2,a),BODY,true);
         }finally{c.getMatrices().pop();}
     }
 
     // ---------------------------------------------------------------- 팝업
     private int popup(DrawContext c,Room room,double mx,double my){
-        HudMesh.quad(c,-400,-400,VW+800,VH+800,0xA0050B14,0xA0050B14);
         return switch(popup){
             case FRIENDS->friendsPopup(c,room,mx,my);
             case EXPAND->expandPopup(c,room,mx,my);
@@ -788,15 +803,15 @@ public final class HousingScreen extends SocialScreen {
                 if(h==H_POP_CLOSE){popup=Popup.NONE;sound(1,.15f);}
                 else if(h==H_GO_HOME){popup=Popup.NONE;visit(self());}
                 else if(h>=H_VISIT&&h<H_GO_HOME){var list=HousingClient.friends();int i=h-H_VISIT;if(list!=null&&i<list.size()){popup=Popup.NONE;visit(list.get(i).person().id());}}
-                else if(!in(mx,my,566,110,540,720)){popup=Popup.NONE;sound(1,.15f);}
+                else if(!in(mx,my,566+dx/2,110,540,720)){popup=Popup.NONE;sound(1,.15f);}
             }
             case EXPAND->{
                 if(h==H_POP_OK){send(new Expand(room.size()));}
-                else if(h==H_POP_CANCEL||!in(mx,my,586,290,500,310)){popup=Popup.NONE;sound(1,.15f);}
+                else if(h==H_POP_CANCEL||!in(mx,my,586+dx/2,290,500,310)){popup=Popup.NONE;sound(1,.15f);}
             }
             case CONFIRM_CLOSE->{
                 if(h==H_POP_OK){Arrays.fill(dirty,false);popup=Popup.NONE;close();}
-                else if(h==H_POP_CANCEL||!in(mx,my,566,340,540,240)){popup=Popup.NONE;sound(1,.15f);}
+                else if(h==H_POP_CANCEL||!in(mx,my,566+dx/2,340,540,240)){popup=Popup.NONE;sound(1,.15f);}
             }
             case NONE->{}
         }
@@ -902,7 +917,7 @@ public final class HousingScreen extends SocialScreen {
         if(popup==Popup.FRIENDS){friendScroll=(float)Math.max(0,friendScroll-vertical*60);return true;}
         if(popup!=Popup.NONE)return true;
         boolean edit=editing();
-        if(edit&&my>=657&&my<907&&mx>=40&&mx<1632){invScroll=(float)Math.clamp(invScroll-vertical*SLOT_STEP,0,maxInvScroll());return true;}
+        if(edit&&my>=657&&my<907&&mx>=40&&mx<1632+dx){invScroll=(float)Math.clamp(invScroll-vertical*SLOT_STEP,0,maxInvScroll());return true;}
         var b=bookPanel();
         if((!edit||guestbookOpen)&&in(mx,my,b[0],b[1],b[2],b[3])){bookScroll=(float)Math.max(0,bookScroll-vertical*50);return true;}
         if(inRoom(mx,my)){zoom=(float)Math.clamp(zoom*Math.pow(1.12,vertical),.5,3);return true;}
