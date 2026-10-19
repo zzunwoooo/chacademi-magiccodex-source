@@ -1,0 +1,17 @@
+# 차카데미 몹 전용 스킬 (손으로 관리) - 예고 장판은 chatelegraph 가 그리고, 같은 모양으로 판정합니다.
+# 적 공격 예고는 빨간색 고정 (모드 TelegraphRenderer). VFX 는 PortableVFX 팩 (claude:<팩>/<시스템>).
+#
+# 몹에 붙이는 법 (MythicMobs Mobs/*.yml 의 해당 몹 아래):
+#   ChAcademiaWildBlaze:
+#     Skills:
+#     - skill{s=CHA_MOB_blaze_pillar} @target ~onTimer:80 0.6
+#
+# 색만 다른 변형 몹은 tint 만 바꾼 스킬을 하나 더 만들면 됩니다 (예: 푸른 블레이즈 tint=7FC8FF).
+
+# 블레이즈 - 화염 기둥: 대상 발밑 반경 3 원형 예고 1초 -> 불기둥, 피해 6 + 화상 3초
+CHA_MOB_blaze_pillar:
+  Cooldown: 8
+  Conditions:
+  - targetwithin{d=18} true
+  Skills:
+  - chatelegraph{shape=circle;at=target;r=3;ticks=20;flat=6;element=fire;status=burn:60;vfx=blazepillar/erupt;vfxref=3;vfxlead=2;tint=FFFFFF;spell=mob_blaze_pillar} @target

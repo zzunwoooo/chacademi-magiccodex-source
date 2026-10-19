@@ -39,6 +39,8 @@ final class Reactions implements Listener, AutoCloseable {
     private final Set<Mob> frozen = new HashSet<>();
     private final BukkitTask sweeper;
     private final ReactionVfx vfx;
+    /** PortableVFX player shared with mob skills (chatelegraph vfx=...). */
+    ReactionVfx vfx() { return vfx; }
     private boolean enabled = true, applying;
     private double floor = 2, scale = 1, sendRange = 48;
 

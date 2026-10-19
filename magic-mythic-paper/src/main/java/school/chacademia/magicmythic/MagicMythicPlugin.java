@@ -44,6 +44,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
     private WorldMech.State worldState;
     private Reactions reactions;
     private StatusEffects status;
+    private Telegraphs telegraphs;
     private SpellSlots slots;
     private Passives passives;
     private UtilMech.State utilState;
@@ -61,6 +62,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
         worldState = new WorldMech.State(this);
         reactions = new Reactions(this);
         status = new StatusEffects(this);
+        telegraphs = new Telegraphs(this);
         Targets.sealed = e -> status != null && status.recoverySealed(e);
         Links.manaSealed = pl -> status != null && status.recoverySealed(pl);
         getServer().getPluginManager().registerEvents(this, this);
@@ -89,6 +91,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
         Targets.sealed = null;
         Links.manaSealed = null;
         if (status != null) { status.close(); status = null; }
+        if (telegraphs != null) { telegraphs.close(); telegraphs = null; }
         if (slots != null) slots.unregister();
         if (utilState != null) utilState.closeAll();
         if (guards != null) guards.closeAll();
@@ -123,6 +126,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
             case "chachannel" -> new ChannelMech(this, p);
             case "chanote" -> new NoteMech(this, p);
             case "chastatus" -> new StatusMech(this, p);
+            case "chatelegraph" -> new TelegraphMech(this, p);
             default -> null;
         };
         if (mechanic != null) event.register(mechanic);
@@ -137,13 +141,13 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
         if (!sender.hasPermission("chacademia.magicmythic.admin")) return false;
         String sub = args.length == 0 ? "" : args[0];
         if (Set.of("새로고침", "reload").contains(sub)) {
-            reloadConfig(); targets.reload(); reactions.reload(); status.reload();
+            reloadConfig(); targets.reload(); reactions.reload(); status.reload(); telegraphs.reload();
             sender.sendMessage("마법 미몹 설정을 다시 불러왔습니다. 스킬 YAML을 고쳤다면 /mm reload 도 실행하세요.");
             return true;
         }
         if (Set.of("상태", "status").contains(sub)) {
             sender.sendMessage("진행 중: " + ticker.summary() + ", 보호막 " + guards.count() + ", 표식 " + marks.count()
-                + ", 임시 블록 " + tempBlocks.count() + ", " + reactions.summary() + ", " + status.summary());
+                + ", 임시 블록 " + tempBlocks.count() + ", " + reactions.summary() + ", " + status.summary() + ", 예고 장판 " + telegraphs.count());
             return true;
         }
         if (Set.of("장착", "slots").contains(sub) && args.length >= 2) {
@@ -159,8 +163,9 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
             sender.sendMessage(TestCast.cast(this, player, args[1]));
             return true;
         }
+        if (Set.of("예고", "telegraph").contains(sub)) { sender.sendMessage(TelegraphCommand.run(this, sender, Arrays.copyOfRange(args, 1, args.length))); return true; }
         if (Set.of("상태이상", "debuff").contains(sub)) { sender.sendMessage(StatusCommand.run(this, sender, Arrays.copyOfRange(args, 1, args.length))); return true; }
-        sender.sendMessage("/마법미몹 <새로고침|상태|장착 <플레이어> [id...|비우기]|시험 <마법ID>|상태이상 <종류|해제> [초] [나|바라봄|플레이어] [세기]>");
+        sender.sendMessage("/마법미몹 <새로고침|상태|장착 <플레이어> [id...|비우기]|시험 <마법ID>|상태이상 <종류|해제> [초] [나|바라봄|플레이어] [세기]|예고 <원형|직선|부채꼴|전부|화염기둥> [초]>");
         return true;
     }
 
@@ -172,6 +177,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
     WorldMech.State worldState() { return worldState; }
     Reactions reactions() { return reactions; }
     StatusEffects status() { return status; }
+    Telegraphs telegraphs() { return telegraphs; }
     Passives passives() { return passives; }
     SpellSlots slots() { return slots; }
     boolean debug() { return getConfig().getBoolean("debug", false); }
