@@ -66,7 +66,7 @@ public final class TargetHudClient {
     static final int FRAME_W = 1237, FRAME_H = 101, FRAME_HP_H = 74;
     static final float[][] SLOTS = TargetHudLayout.SLOTS;
     static final float HP_TOP = 16.8f, HP_BOTTOM = 56.4f, MANA_LEFT = 16.8f, MANA_RIGHT = 1219.2f, MANA_TOP = 69f, MANA_BOTTOM = 85.8f;
-    static final float NAME_Y = -68, NAME_SIZE = 46, DECOR_Y = -23, DECOR_W = 730, DAMAGE_Y = -26, DAMAGE_SIZE = 34;
+    static final float NAME_Y = -70, NAME_SIZE = 46, DECOR_Y = -12, DECOR_W = 730, DAMAGE_Y = -24, DAMAGE_SIZE = 34; // 7163262 positions only; preserve deployed frame, sizes and assets
     static final float HP_TEXT = 34, MANA_TEXT = 24, HEART_DY = 14.5f, HEART_SIZE = 33, ICON_DY = 34.6f, ICON_D = 69, ICON_STEP = 83, ICON_RIGHT = 1231.5f;
 
     static float segment(float f, int i) { return TargetHudLayout.segment(f, i); }
