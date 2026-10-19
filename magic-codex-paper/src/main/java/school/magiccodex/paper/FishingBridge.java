@@ -50,6 +50,7 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         float size, depth;
         long sentAt;
         int minimum;
+        int rodSlot = -1;          // held hotbar slot when the fish was picked
         Session(UUID player) { this.player = player; }
     }
 
@@ -94,7 +95,8 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         Session s = sessions.get(p.getUniqueId());
         switch (e.getState()) {
             case FISHING -> {
-                if (!config.enabled || e.isCancelled()) return;
+                // only refusals here; the session starts at MONITOR (after other plugins had their say)
+                if (!config.enabled || e.isCancelled() || !modded(p)) return;
                 ItemStack rod = rodOf(p);
                 if (rod == null) return;
                 var l = gear.read(rod);
@@ -103,11 +105,7 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
                     p.sendActionBar(FishingGear.plain("낚싯대가 고장 났어요. 수리한 뒤 다시 던져 주세요.", 0xFF9E9E));
                     return;
                 }
-                if (s != null && (s.state == SINKING || s.state == BITING)) { e.setCancelled(true); return; }
-                if (s == null) { s = new Session(p.getUniqueId()); sessions.put(p.getUniqueId(), s); }
-                s.hook = e.getHook(); s.state = LANDING; s.since = System.currentTimeMillis();
-                if (!s.ownCast) s.target = null;
-                quiet(s.hook);
+                if (s != null && !s.preview && (s.state == SINKING || s.state == BITING)) e.setCancelled(true);
             }
             case BITE, CAUGHT_FISH, LURED -> {
                 if (s != null && s.hook != null && s.hook.equals(e.getHook())) { e.setCancelled(true); e.setExpToDrop(0); }
@@ -115,12 +113,30 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
             default -> {
                 // REEL_IN, IN_GROUND, FAILED_ATTEMPT, CAUGHT_ENTITY: the player pulled the bobber back by hand
                 if (s != null && s.hook != null && s.hook.equals(e.getHook())) {
+                    if (s.state == BITING) penalty(p, s);
                     if (s.state == SINKING || s.state == BITING) { end(p, s, ""); }
                     else if (s.state == LANDING) { if (s.ownCast) ready(p, s, ""); else sessions.remove(p.getUniqueId()); }
                 }
             }
         }
     }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void cast(PlayerFishEvent e) {
+        if (e.getState() != PlayerFishEvent.State.FISHING || !config.enabled) return;
+        Player p = e.getPlayer();
+        if (!modded(p) || rodOf(p) == null) return;     // no MagicCodex mod: plain vanilla fishing
+        Session s = sessions.get(p.getUniqueId());
+        if (s != null && s.preview) { sessions.remove(p.getUniqueId()); s = null; }
+        if (s != null && (s.state == SINKING || s.state == BITING)) return;
+        if (s == null) { s = new Session(p.getUniqueId()); sessions.put(p.getUniqueId(), s); }
+        s.hook = e.getHook(); s.state = LANDING; s.since = System.currentTimeMillis();
+        if (!s.ownCast) s.target = null;
+        quiet(s.hook);
+    }
+
+    /** The MagicCodex client listens on the fishing channel (players without it fish the vanilla way). */
+    private static boolean modded(Player p) { return p.getListeningPluginChannels().contains(FishingProtocol.RESPONSE); }
 
     /** Vanilla must never bite this hook (the minigame decides). */
     private static void quiet(FishHook hook) {
@@ -130,11 +146,10 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         } catch (RuntimeException | LinkageError ignored) {}
     }
 
+    /** The rod in the main hand (owner set: the gear window follows the held rod; an offhand rod fishes the vanilla way). */
     private ItemStack rodOf(Player p) {
         ItemStack main = p.getInventory().getItemInMainHand();
-        if (FishingGear.isRod(main)) return main;
-        ItemStack off = p.getInventory().getItemInOffHand();
-        return FishingGear.isRod(off) ? off : null;
+        return FishingGear.isRod(main) ? main : null;
     }
 
     private void tick() {
@@ -156,7 +171,8 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
                     if (!s.hook.getWorld().equals(p.getWorld()) || s.hook.getLocation().distanceSquared(p.getLocation()) > 48 * 48) {
                         end(p, s, config.message("far", "찌가 너무 멀어져서 낚시를 멈췄어요.")); continue;
                     }
-                    if (s.state == BITING && now - s.sentAt > 5 * 60_000) end(p, s, "");
+                    if (s.state == BITING && now - s.sentAt > 5 * 60_000) { penalty(p, s); end(p, s, ""); }
+                    if (s.state == SINKING && now - s.since > 90_000) end(p, s, "");
                 }
                 default -> {}
             }
@@ -171,7 +187,9 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         if (s.target == null) s.target = s.hook.getLocation().clone();
         var l = gear.read(rodOf(p));
         float cap = config.depthCap(water.depth());
-        s.maxDepth = Math.min(FishingProtocol.MAX_DEPTH, cap <= 0 ? l.line().gear().a() : Math.min(cap, l.line().gear().a()));
+        // the bobber may go to 85% of the line: the last 15% is the room a hooked fish can pull before the line runs out
+        float reach = l.line().gear().a() * .85f;
+        s.maxDepth = Math.min(FishingProtocol.MAX_DEPTH, cap <= 0 ? reach : Math.min(cap, reach));
         s.state = SINKING; s.since = System.currentTimeMillis();
         send(p, new FishingProtocol.Session(s.id, FishingProtocol.PHASE_WATER, water.background(), s.maxDepth, config.waterClassOf(water.area()),
                 Math.min(water.area(), 1_000_000), gear.protocol(l), ""));
@@ -224,7 +242,7 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
             case FishingProtocol.STOP -> { if (ours && s.state == SINKING) bite(p, s, Math.min(r.depth(), s.maxDepth)); }
             case FishingProtocol.RESULT -> { if (ours && s.state == BITING && r.token() == s.token) result(p, s, r.outcome()); }
             case FishingProtocol.RECAST -> { if (ours && s.state == READY) recast(p, s); }
-            case FishingProtocol.CANCEL -> { if (ours) { removeHook(s); sessions.remove(p.getUniqueId()); } }
+            case FishingProtocol.CANCEL -> { if (ours) { if (s.state == BITING) penalty(p, s); removeHook(s); sessions.remove(p.getUniqueId()); } }
             case FishingProtocol.GEAR_OPEN -> sendGear(p, "");
             case FishingProtocol.GEAR_EQUIP -> equip(p, r.kind(), r.slot());
             case FishingProtocol.CODEX_OPEN -> openCodex(p);
@@ -330,11 +348,12 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         int grade = l.flt().gear().has("grade_glow") ? (s.fish != null ? s.fish.grade() : s.chest) : -1;
         int window = Math.clamp(Math.round(l.rod().gear().b() * 1000), 100, 5000);
         s.token = rnd.nextInt(1, Integer.MAX_VALUE);
-        var b = new Bite(s.id, s.token, shape, size, grade, Math.round(wait * 1000), teases, window, power, pattern, rnd.nextLong(), depth);
+        var b = new Bite(s.id, s.token, shape, size, grade, Math.round(Math.min(wait, 59) * 1000), teases, window, power, pattern, rnd.nextLong(), depth,
+                s.fish != null && s.fish.magic());
         s.minimum = FishingProtocol.minimumCatchMillis(b, l.rod().gear().a());
         s.sentAt = System.currentTimeMillis();
-        s.state = BITING;
-        send(p, b);
+        s.rodSlot = p.getInventory().getHeldItemSlot();
+        if (send(p, b)) s.state = BITING; else end(p, s, "낚시 정보를 보내지 못했어요.");
     }
 
     private static int pickGrade(double[] weights, boolean[] allowed, float bonus) {
@@ -355,27 +374,10 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
             plugin.getLogger().warning("FISHING too fast player=" + p.getName() + " elapsed=" + elapsed + "ms min=" + s.minimum + "ms");
             outcome = FishingProtocol.REFUSED;
         }
-        ItemStack rod = rodOf(p);
-        var l = gear.read(rod);
+        if (s.preview) s.rodSlot = p.getInventory().getHeldItemSlot();
+        if (outcome != FishingProtocol.REFUSED && !heldRod(p, s)) outcome = FishingProtocol.REFUSED;   // rod swapped after the bite
         var notes = new ArrayList<String>();
-        boolean tug = outcome == FishingProtocol.CAUGHT || outcome == FishingProtocol.SNAPPED || outcome == FishingProtocol.ESCAPED;
-        boolean baitUsed = outcome == FishingProtocol.CAUGHT || outcome == FishingProtocol.MISSED || outcome == FishingProtocol.SNAPPED || outcome == FishingProtocol.ESCAPED;
-        if (!s.preview && rod != null && outcome != FishingProtocol.REFUSED) {
-            var returned = new ArrayList<ItemStack>();
-            var rodPart = wear(l.rod(), tug ? 1 : 0);
-            var flt = wear(l.flt(), 1);
-            var line = wear(l.line(), tug ? 1 + (outcome == FishingProtocol.SNAPPED ? config.snapDamage : 0) : 0);
-            var bait = l.bait();
-            if (baitUsed && !bait.fallback()) bait = bait.value() - 1 <= 0 ? new FishingGear.Part(config.fallback[3], -1, true) : new FishingGear.Part(bait.gear(), bait.value() - 1, false);
-            if (!rodPart.fallback() && rodPart.value() <= 0) notes.add(rodPart.gear().name() + "이(가) 고장 났어요.");
-            if (!flt.fallback() && flt.value() <= 0) { returned.add(gear.create(flt.gear(), 0, 1)); notes.add(flt.gear().name() + "이(가) 고장 나서 빠졌어요."); flt = new FishingGear.Part(config.fallback[1], -1, true); }
-            if (!line.fallback() && line.value() <= 0) { returned.add(gear.create(line.gear(), 0, 1)); notes.add(line.gear().name() + "이(가) 고장 나서 빠졌어요."); line = new FishingGear.Part(config.fallback[2], -1, true); }
-            if (!l.bait().fallback() && bait.fallback()) notes.add("미끼를 다 썼어요.");
-            var next = new FishingGear.Loadout(rodPart, flt, line, bait);
-            if (!(l.rod().fallback() && next.flt().fallback() && next.line().fallback() && next.bait().fallback())) gear.write(rod, next);
-            l = next;
-            if (!returned.isEmpty()) give(p, returned, "fishing-gear:" + s.id + ":" + s.token);
-        }
+        var l = wearAndBait(p, s, outcome, notes);
         String fishId = "", name = ""; int grade = 0, shape = 0; float cm = 0; boolean record = false, fresh = false, mailed = false;
         var rewards = new ArrayList<Reward>();
         int shown = outcome;
@@ -411,6 +413,41 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         s.state = READY; s.ownCast = false; s.since = System.currentTimeMillis();
         send(p, new FishingProtocol.Result(s.id, shown, fishId, FishingGear.cut(name), grade, shape, cm, record, fresh, rewards, mailed,
                 gear.protocol(l), cut(String.join(" ", notes))));
+    }
+
+    private boolean heldRod(Player p, Session s) {
+        return p.getInventory().getHeldItemSlot() == s.rodSlot && FishingGear.isRod(p.getInventory().getItemInMainHand());
+    }
+
+    /** Cancelling / reeling in by hand after the bite costs the same as losing the fish (no free re-rolls). */
+    private void penalty(Player p, Session s) {
+        if (s.preview || !heldRod(p, s)) return;
+        var notes = new ArrayList<String>();
+        wearAndBait(p, s, FishingProtocol.ESCAPED, notes);
+        if (!notes.isEmpty()) p.sendActionBar(FishingGear.plain(String.join(" ", notes), 0xFFD9A0));
+    }
+
+    /** Wear and bait use for one try, written into the held rod. Returns the loadout after it. */
+    private FishingGear.Loadout wearAndBait(Player p, Session s, int outcome, List<String> notes) {
+        ItemStack rod = rodOf(p);
+        var l = gear.read(rod);
+        if (s.preview || rod == null || outcome == FishingProtocol.REFUSED) return l;
+        boolean tug = outcome == FishingProtocol.CAUGHT || outcome == FishingProtocol.SNAPPED || outcome == FishingProtocol.ESCAPED;
+        boolean baitUsed = tug || outcome == FishingProtocol.MISSED;
+        var returned = new ArrayList<ItemStack>();
+        var rodPart = wear(l.rod(), tug ? 1 : 0);
+        var flt = wear(l.flt(), 1);
+        var line = wear(l.line(), tug ? 1 + (outcome == FishingProtocol.SNAPPED ? config.snapDamage : 0) : 0);
+        var bait = l.bait();
+        if (baitUsed && !bait.fallback()) bait = bait.value() - 1 <= 0 ? new FishingGear.Part(config.fallback[3], -1, true) : new FishingGear.Part(bait.gear(), bait.value() - 1, false);
+        if (!rodPart.fallback() && rodPart.value() <= 0) notes.add(rodPart.gear().name() + "이(가) 고장 났어요.");
+        if (!flt.fallback() && flt.value() <= 0) { returned.add(gear.create(flt.gear(), 0, 1)); notes.add(flt.gear().name() + "이(가) 고장 나서 빠졌어요."); flt = new FishingGear.Part(config.fallback[1], -1, true); }
+        if (!line.fallback() && line.value() <= 0) { returned.add(gear.create(line.gear(), 0, 1)); notes.add(line.gear().name() + "이(가) 고장 나서 빠졌어요."); line = new FishingGear.Part(config.fallback[2], -1, true); }
+        if (!l.bait().fallback() && bait.fallback()) notes.add("미끼를 다 썼어요.");
+        var next = new FishingGear.Loadout(rodPart, flt, line, bait);
+        if (!(l.rod().fallback() && next.flt().fallback() && next.line().fallback() && next.bait().fallback())) gear.write(rod, next);
+        if (!returned.isEmpty()) give(p, returned, "fishing-gear:" + s.id + ":" + s.token);
+        return next;
     }
 
     private static FishingGear.Part wear(FishingGear.Part p, int amount) {
@@ -478,7 +515,7 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         var l = gear.read(main);
         if (!l.rod().fallback() && l.rod().value() <= 0) { ready(p, s, "낚싯대가 고장 났어요."); return; }
         Location target = s.target;
-        if (target == null || !p.getWorld().equals(target.getWorld()) || target.distanceSquared(p.getLocation()) > 40 * 40) {
+        if (target == null || !p.getWorld().equals(target.getWorld()) || target.distanceSquared(p.getLocation()) > 30 * 30) {
             end(p, s, "처음 던진 곳이 너무 멀어요. 다시 던져 주세요."); return;
         }
         FishHook hook;
@@ -734,9 +771,9 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
 
     // ------------------------------------------------------------------ io
 
-    private void send(Player p, Frame frame) {
-        try { p.sendPluginMessage(plugin, FishingProtocol.RESPONSE, FishingProtocol.encode(frame)); }
-        catch (IllegalArgumentException e) { plugin.getLogger().warning("낚시 패킷 만들기 실패: " + e.getMessage()); }
+    private boolean send(Player p, Frame frame) {
+        try { p.sendPluginMessage(plugin, FishingProtocol.RESPONSE, FishingProtocol.encode(frame)); return true; }
+        catch (IllegalArgumentException e) { plugin.getLogger().warning("낚시 패킷 만들기 실패: " + e.getMessage()); return false; }
     }
     private static String cut(String s) { return s == null ? "" : s.length() > FishingProtocol.MAX_NOTICE ? s.substring(0, FishingProtocol.MAX_NOTICE) : s; }
     private static String cutText(String s) { return s == null ? "" : s.length() > FishingProtocol.MAX_TEXT ? s.substring(0, FishingProtocol.MAX_TEXT) : s; }

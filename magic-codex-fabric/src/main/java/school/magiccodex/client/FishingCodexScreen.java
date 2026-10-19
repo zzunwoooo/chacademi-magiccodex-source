@@ -48,7 +48,6 @@ final class FishingCodexScreen extends Screen {
         search = new TextFieldWidget(textRenderer, 0, 0, 300, 20, Text.literal("검색"));
         search.setMaxLength(16); search.setText(query); search.setDrawsBackground(false);
         search.setChangedListener(v -> { query = v; scroll = 0; });
-        search.setVisible(false);
         addDrawableChild(search);
     }
     @Override public boolean shouldPause() { return false; }

@@ -68,7 +68,7 @@ final class FishingConfig {
         c.scanLimit = Math.clamp(main.getInt("settings.water-scan-limit", 4096), 16, 32768);
         c.snapDamage = Math.max(0, main.getInt("settings.snap-line-damage", 10));
         var w = main.getDoubleList("settings.wait-seconds");
-        if (w.size() == 2) { c.waitMin = (float) Math.max(.5, w.get(0).doubleValue()); c.waitMax = (float) Math.max(c.waitMin, w.get(1).doubleValue()); }
+        if (w.size() == 2) { c.waitMin = (float) Math.max(.5, w.get(0).doubleValue()); c.waitMax = (float) Math.clamp(w.get(1).doubleValue(), c.waitMin, 55); c.waitMin = Math.min(c.waitMin, c.waitMax); }
         var t = main.getIntegerList("settings.teases");
         if (t.size() == 2) { c.teaseMin = Math.clamp(t.get(0), 0, 8); c.teaseMax = Math.clamp(t.get(1), c.teaseMin, 8); }
         c.treasureChance = (float) Math.clamp(main.getDouble("settings.treasure-chance", .03), 0, 1);

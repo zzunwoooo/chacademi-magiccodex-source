@@ -23,6 +23,8 @@ final class FishingStore implements AutoCloseable {
         final Map<String, Rec> rows = new HashMap<>();
         final Set<Integer> claimed = new HashSet<>();
         volatile boolean loaded;
+        boolean loading;                                  // main thread only
+        final List<Runnable> waiting = new ArrayList<>();  // callbacks for the load in flight
     }
 
     private final MagicCodexBridge plugin;
@@ -63,8 +65,12 @@ final class FishingStore implements AutoCloseable {
     /** The cached book (empty until loaded). */
     Book book(UUID player) { return books.computeIfAbsent(player, k -> new Book()); }
 
+    /** Loads once per join; a second call while loading only queues its callback (no double counts). Main thread. */
     void load(UUID player, Runnable done) {
         var book = book(player);
+        if (done != null) book.waiting.add(done);
+        if (book.loading || book.loaded) { if (book.loaded) runWaiting(book); return; }
+        book.loading = true;
         io.execute(() -> {
             var rows = new HashMap<String, Rec>(); var claimed = new HashSet<Integer>();
             try (var p = db().prepareStatement("SELECT fish,first_at,best,count FROM codex_fishing WHERE uuid=?")) {
@@ -82,9 +88,14 @@ final class FishingStore implements AutoCloseable {
                     book.claimed.addAll(claimed);
                     book.loaded = true;
                 }
-                if (done != null) done.run();
+                book.loading = false;
+                runWaiting(book);
             });
         });
+    }
+    private static void runWaiting(Book book) {
+        var list = List.copyOf(book.waiting); book.waiting.clear();
+        for (Runnable r : list) r.run();
     }
     void forget(UUID player) { books.remove(player); }
 
