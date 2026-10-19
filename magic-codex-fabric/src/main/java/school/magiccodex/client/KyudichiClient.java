@@ -131,7 +131,11 @@ public final class KyudichiClient {
 
     private static int lastPhase = -1;
     /** Every client tick: switch the magic bar to the match loadout and open the setup window when a match's preparation starts. */
+    /** Mixin (F3+B): no hitboxes while a match (or spectating one) is going on. */
+    public static boolean hitboxesLocked() { return active(); }
+
     private static void tick(MinecraftClient c) {
+        if (active() && c.getEntityRenderDispatcher().shouldRenderHitboxes()) c.getEntityRenderDispatcher().setRenderHitboxes(false);
         boolean on = playing();
         CastingClient.setMatchLoadout(on);
         int phase = on ? match.phase() : -1;
