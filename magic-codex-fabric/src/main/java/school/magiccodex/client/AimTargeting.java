@@ -211,8 +211,7 @@ public final class AimTargeting {
      * "invisible" alone must not hide a mob from targeting. Invisible players (옅은 은신) stay untargetable.
      */
     static boolean targetable(Entity e) {
-        return e instanceof LivingEntity living && living.isAlive() && !(e instanceof ArmorStandEntity) && !e.isSpectator()
-            && !(e.isInvisible() && e instanceof PlayerEntity);
+        return e instanceof LivingEntity living && AimEntityPolicy.allowed(living.isAlive(),e instanceof ArmorStandEntity,e.isSpectator(),e instanceof PlayerEntity,e.isInvisible());
     }
 
     /** The modeled mob a ModelEngine hitbox belongs to: the entity it rides, else the living mob whose base sits inside it. */
