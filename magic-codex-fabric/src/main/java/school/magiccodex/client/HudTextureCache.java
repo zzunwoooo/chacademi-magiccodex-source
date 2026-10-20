@@ -188,6 +188,40 @@ public final class HudTextureCache implements AutoCloseable {
         if(w<=0 || h<=0) return;
         get(new Region(path.toString(),u,v,sw,sh)).ifPresent(t->ctx.drawTexture(id->t.additive(),t.id(),x,y,0,0,w,h,t.width(),t.height(),t.width(),t.height(),tint));
     }
+    /**
+     * A deformable mesh over a whole file (2026-10-20, 통발 수조: swaying light, moving caustics, the radial zoom mask).
+     * Grid points (i 0..cols, j 0..rows) give x, y (screen space before the matrix), u, v and an ARGB tint through the
+     * arrays (index j*(cols+1)+i). wrap: u, v are in tile units of a texture holding 2x2 copies of one seamless tile,
+     * and every cell is shifted by whole tiles so it stays inside the texture (no GL repeat needed). A cell may span
+     * at most one tile.
+     */
+    public boolean drawGrid(DrawContext ctx,Identifier path,boolean additive,int cols,int rows,float[] x,float[] y,float[] u,float[] v,int[] color,boolean wrap){
+        if(cols<1||rows<1)return true;
+        int n=(cols+1)*(rows+1);
+        if(x.length<n||y.length<n||u.length<n||v.length<n||color.length<n)throw new IllegalArgumentException("grid");
+        var value=get(new Region(path.toString(),0,0,0,0));
+        if(value.isEmpty())return false;
+        var t=value.get();
+        var m=ctx.getMatrices().peek().getPositionMatrix();
+        ctx.draw(p->{
+            var out=p.getBuffer(additive?t.additive():t.layer());
+            int[] corner=new int[4];
+            for(int j=0;j<rows;j++)for(int i=0;i<cols;i++){
+                corner[0]=(j+1)*(cols+1)+i;corner[1]=(j+1)*(cols+1)+i+1;corner[2]=j*(cols+1)+i+1;corner[3]=j*(cols+1)+i;
+                float fu=0,fv=0,k=1;
+                if(wrap){
+                    fu=Float.POSITIVE_INFINITY;fv=Float.POSITIVE_INFINITY;
+                    for(int q:corner){fu=Math.min(fu,u[q]);fv=Math.min(fv,v[q]);}
+                    fu=(float)Math.floor(fu);fv=(float)Math.floor(fv);k=.5f;
+                }
+                boolean visible=false;
+                for(int q:corner)if((color[q]>>>24)!=0){visible=true;break;}
+                if(!visible)continue;
+                for(int q:corner)out.vertex(m,x[q],y[q],0).texture((u[q]-fu)*k,(v[q]-fv)*k).color(color[q]);
+            }
+        });
+        return true;
+    }
     /** Call on the render thread during loading to keep decoding/uploads out of first use. */
     public void prepareRegion(Identifier path,int x,int y,int width,int height){
         get(new Region(path.toString(),x,y,width,height));

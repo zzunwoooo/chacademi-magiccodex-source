@@ -2307,3 +2307,11 @@ spells:
     permission: magic.learned.folding_tideplane
     mana-cost: 110
     cooldown-seconds: 22
+  fish_trap:
+    name: 통발
+    enabled: true
+    command: 마법 fish_trap
+    permission: magic.learned.fish_trap
+    aliases: [아공간 수조, 수조]
+    mana-cost: 5
+    cooldown-seconds: 2

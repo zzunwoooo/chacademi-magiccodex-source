@@ -81,6 +81,25 @@ final class FishingArt {
             draw(c, a, -w / 2, -h / 2, w, h, tint, additive);
         } finally { m.pop(); }
     }
+    /**
+     * A fish picture fitted into a box (centre cx, cy) by its visible silhouette (FishArtBounds), keeping its ratio.
+     * Without art the silhouette shape is drawn the same way. Returns false when nothing could be drawn.
+     */
+    static boolean fishFit(DrawContext c, String fishId, int fallbackShape, float cx, float cy, float boxW, float boxH, int tint, boolean mirror) {
+        Art a = fish(fishId);
+        int[] b = a == null ? null : FishArtBounds.of(fishId);
+        if (a == null) { a = SHAPES[Math.clamp(fallbackShape, 0, SHAPES.length - 1)]; b = new int[]{24, 64, 488, 448}; }
+        if (b == null) b = new int[]{0, 0, a.w(), a.h()};
+        float bw = b[2] - b[0], bh = b[3] - b[1];
+        if (bw <= 0 || bh <= 0) return false;
+        float k = Math.min(boxW / bw, boxH / bh);
+        float w = a.w() * k, h = a.h() * k;
+        // centre of the silhouette, not of the canvas
+        float ox = ((b[0] + b[2]) / 2f - a.w() / 2f) * k, oy = ((b[1] + b[3]) / 2f - a.h() / 2f) * k;
+        drawCentered(c, a, cx - (mirror ? -ox : ox), cy - oy, w, h, tint, mirror, 0, false);
+        return true;
+    }
+
     /** Soft round bloom. */
     static void bloom(DrawContext c, float cx, float cy, float radius, int rgb, float alpha) {
         if (alpha <= .004f) return;

@@ -108,4 +108,24 @@ final class HudMesh {
             }
         });
     }
+    /**
+     * Radial gradient ring from r0 (inner colour) to r1 (outer colour), then the outer colour out to r2.
+     * Used for the soft vignette around a focused subject.
+     */
+    static void radial(DrawContext c,float cx,float cy,float r0,float r1,float r2,int inner,int outer){
+        var m=c.getMatrices().peek().getPositionMatrix();
+        int n=64;
+        c.draw(p->{
+            var v=p.getBuffer(RenderLayer.getGui());
+            for(int i=0;i<n;i++){
+                // same winding as arc() (the GUI layer culls back faces): larger angle first
+                double a=(i+1)*Math.PI*2/n,b=i*Math.PI*2/n;
+                float ca=(float)Math.cos(a),sa=(float)Math.sin(a),cb=(float)Math.cos(b),sb=(float)Math.sin(b);
+                v.vertex(m,cx+ca*r0,cy+sa*r0,0).color(inner);v.vertex(m,cx+ca*r1,cy+sa*r1,0).color(outer);
+                v.vertex(m,cx+cb*r1,cy+sb*r1,0).color(outer);v.vertex(m,cx+cb*r0,cy+sb*r0,0).color(inner);
+                v.vertex(m,cx+ca*r1,cy+sa*r1,0).color(outer);v.vertex(m,cx+ca*r2,cy+sa*r2,0).color(outer);
+                v.vertex(m,cx+cb*r2,cy+sb*r2,0).color(outer);v.vertex(m,cx+cb*r1,cy+sb*r1,0).color(outer);
+            }
+        });
+    }
 }

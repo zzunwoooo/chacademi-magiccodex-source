@@ -54,7 +54,7 @@ final class FishingConfig {
     Treasure[] treasure = new Treasure[4];
     CodexReward[] codexRewards = new CodexReward[4];
     boolean enabled = true, fishModels, gearModels = true;
-    int scanLimit = 4096, snapDamage = 10;
+    int scanLimit = 4096, snapDamage = 10, tankCapacity = 100;
     float waitMin = 3, waitMax = 9, treasureChance = .03f;
     int teaseMin = 1, teaseMax = 3;
     Map<String, String> messages = new HashMap<>();
@@ -67,6 +67,7 @@ final class FishingConfig {
         c.gearModels = main.getBoolean("settings.gear-item-models", true);
         c.scanLimit = Math.clamp(main.getInt("settings.water-scan-limit", 4096), 16, 32768);
         c.snapDamage = Math.max(0, main.getInt("settings.snap-line-damage", 10));
+        c.tankCapacity = Math.clamp(main.getInt("tank.capacity", 100), 1, 10000);
         var w = main.getDoubleList("settings.wait-seconds");
         if (w.size() == 2) { c.waitMin = (float) Math.max(.5, w.get(0).doubleValue()); c.waitMax = (float) Math.clamp(w.get(1).doubleValue(), c.waitMin, 55); c.waitMin = Math.min(c.waitMin, c.waitMax); }
         var t = main.getIntegerList("settings.teases");
