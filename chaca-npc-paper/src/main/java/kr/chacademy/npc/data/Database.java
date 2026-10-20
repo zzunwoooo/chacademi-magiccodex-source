@@ -105,6 +105,15 @@ public final class Database {
         }
     }
 
+    /** DB 스레드에서 실행. {@link #async}와 달리 실패를 삼키지 않고 예외로 완료한다 (관리 명령이 실패 알림을 보내도록). */
+    public <T> CompletableFuture<T> call(Supplier<T> task) {
+        try {
+            return CompletableFuture.supplyAsync(task, executor);
+        } catch (java.util.concurrent.RejectedExecutionException ex) {
+            return CompletableFuture.failedFuture(ex);
+        }
+    }
+
     /** Storage 가 치명적이지 않은 문제를 알릴 때 쓴다. */
     void logWarning(String message) {
         log.warning(message);

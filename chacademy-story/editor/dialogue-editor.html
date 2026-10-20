@@ -176,7 +176,7 @@ details.adv[open]>summary{margin-bottom:8px}
       <div class="panel">
         <div class="ph"><h2>대화가 끝나면 항상 실행할 서버 명령어</h2></div>
         <div class="sbody">
-          <textarea id="m_endcmds" rows="2" placeholder="한 줄에 하나씩. 예) storydialogue {player} ch1_school" spellcheck="false" style="font-family:var(--mono)"></textarea>
+          <textarea id="m_endcmds" rows="2" placeholder="한 줄에 하나씩. 예) 대화관리 재생 {player} 대화 ch1_school" spellcheck="false" style="font-family:var(--mono)"></textarea>
           <p class="tip">어느 결말로 끝나든 실행돼요. 앞에 /는 붙이지 않아도 돼요. 명령어에서는 {player} = 마인크래프트 닉네임, {nickname} = 한글 닉네임.</p>
           <span class="lbl" style="margin-top:6px">대화가 끝나면 항상 바꿀 호감도</span>
           <div id="m_endaff"></div>
@@ -789,7 +789,7 @@ function toYaml() {
 function toServerYaml() {
   ensureEvents();
   const L = [`# 서버용. zip 의 이 폴더(${cmt(D.meta.id)})를 통째로 서버 plugins/ChacademyStory/dialogues/ 안에 복사하세요`,
-    "# (dialogue.yml 로 서버가 선택지·결말을 검증하고, 이 파일의 명령어·호감도를 실행합니다. 바꾼 뒤에는 /cutscene reload)",
+    "# (dialogue.yml 로 서버가 선택지·결말을 검증하고, 이 파일의 명령어·호감도를 실행합니다. 바꾼 뒤에는 /서버관리 새로고침 스토리)",
     "# 명령어 안의 {player} = 마인크래프트 닉네임, {nickname} = 한글 닉네임"];
   const o = D.orphans || {};
   const npcSet = new Set();
@@ -1032,7 +1032,7 @@ document.getElementById("exportBtn").onclick = async () => {
     dir.file("dialogue.yml", toYaml()); if (withServer) dir.file("server_commands.yml", toServerYaml());
     const lost = [];
     for (const [f, n] of names) { if (f.missing) lost.push(n); else dir.file(n, await toPng(f)); }
-    dir.file("넣는 곳.txt", `1) 클라: 이 폴더(${D.meta.id})를 통째로 .minecraft/config/chaca_dialogue/ 안에 넣으세요.\n2) 서버: 같은 폴더를 통째로 plugins/ChacademyStory/dialogues/ 안에 넣으세요 (그림은 없어도 돼요).\n   서버는 dialogue.yml 로 선택지·결말을 검증하고 server_commands.yml 의 명령어·호감도를 실행해요. 넣은 뒤 /cutscene reload\n3) 서버에서 대화 열기: storydialogue <플레이어> ${D.meta.id}\n   혼자 테스트: /story dialogue ${D.meta.id}\n`);
+    dir.file("넣는 곳.txt", `1) 클라: 이 폴더(${D.meta.id})를 통째로 .minecraft/config/chaca_dialogue/ 안에 넣으세요.\n2) 서버: 같은 폴더를 통째로 plugins/ChacademyStory/dialogues/ 안에 넣으세요 (그림은 없어도 돼요).\n   서버는 dialogue.yml 로 선택지·결말을 검증하고 server_commands.yml 의 명령어·호감도를 실행해요. 넣은 뒤 /서버관리 새로고침 스토리\n3) 서버에서 대화 열기: /대화관리 재생 <닉네임> 대화 ${D.meta.id}\n   혼자 테스트: /스토리도구 대화 ${D.meta.id}\n`);
     const blob = await zip.generateAsync({ type: "blob" });
     if (await saveFile(`${D.meta.id}.zip`, blob)) toast(lost.length ? `${D.meta.id}.zip 저장. 그림 ${lost.length}개는 파일이 없어 빠졌어요: ${lost.slice(0, 3).join(", ")}` : `${D.meta.id}.zip 저장. 클라 config/chaca_dialogue 와 서버 dialogues 폴더에 풀면 돼요`);
   } catch (e) { toast("내보내지 못했어요: " + e.message); }

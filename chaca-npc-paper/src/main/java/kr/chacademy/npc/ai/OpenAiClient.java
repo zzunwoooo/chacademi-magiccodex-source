@@ -182,12 +182,12 @@ public final class OpenAiClient {
         return health.blocked(System.currentTimeMillis());
     }
 
-    /** /cnpc budget 용: 최근 1시간 종류별 실패 수. */
+    /** /서버관리 AI 예산 용: 최근 1시간 종류별 실패 수. */
     public String failureSummary() {
         return AiHealth.format(health.lastHour(System.currentTimeMillis()));
     }
 
-    /** /cnpc budget 용: 차단기 상태. */
+    /** /서버관리 AI 예산 용: 차단기 상태. */
     public String circuitSummary() {
         return health.isOpen() ? "열림 (AI 호출 쉬는 중, 연속 실패 " + health.consecutiveFailures() + "회)"
                 : "닫힘 (연속 실패 " + health.consecutiveFailures() + "회)";
@@ -364,7 +364,7 @@ public final class OpenAiClient {
         }
         String summary = health.summaryIfDue(now);
         if (summary != null) {
-            log.warning("[ChacaNPC] 최근 AI 실패: " + summary + " — /cnpc budget 에서 최근 1시간 집계를 볼 수 있어요.");
+            log.warning("[ChacaNPC] 최근 AI 실패: " + summary + " — /서버관리 AI 예산 에서 최근 1시간 집계를 볼 수 있어요.");
         }
     }
 

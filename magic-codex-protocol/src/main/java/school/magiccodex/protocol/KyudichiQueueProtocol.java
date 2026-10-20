@@ -53,10 +53,13 @@ import java.util.UUID;
  * LINK P2A 1 ASSIGN   UUID match · u8 rated · u8 nA · nA×UUID · u8 nB · nB×UUID · u8 mode
  *      P2A 2 SPECTATE UUID player · UTF arena(빈칸 = 아무 경기)
  *      P2A 3 PRACTICE UUID player · u8 mode
+ *      P2A 4 ADMIN_REPLY UUID request · u8 ok · UTF message · u8 n(≤24) · n×UTF line      (관리 요청 결과)
  *      A2P 1 HELLO    UUID player                    (경기장 서버에 들어온 사람, 배정을 묻는다)
  *      A2P 2 LIVE     u8 freeArenas · u8 n · n×(UUID match · Live · u8 nA · nA×UUID · u8 nB · nB×UUID) · u8 freeDuelArenas
  *      A2P 3 RETURN   u8 n · n×UUID                  (원래 서버로 돌려보낼 사람)
  *      A2P 4 ENDED    UUID match
+ *      A2P 5 ADMIN    UUID request · u8 action · UUID target · u8 mode
+ *                     (/유저관리 &lt;닉네임&gt; 큐디치·결투·파티: 1 대기열에서빼기 · 2 매칭상태초기화 · 3 파티 보기 · 4 파티 빼기 · 5 파티 해산)
  * </pre>
  * Tier: 0 브론즈 1 실버 2 골드 3 플래티넘 4 다이아몬드 5 마스터 6~8 챌린저 1~3.
  */
@@ -67,6 +70,8 @@ public final class KyudichiQueueProtocol {
     public static final int MODE_KYUDICHI = 0, MODE_DUEL = 1, MODES = 2;
     public static final int TAB_MATCH = 0, TAB_LIVE = 1, TAB_RANKING = 2, TAB_RECORD = 3;
     public static final int RANK_PAGE = 6;
+    /** 관리 요청 (경기장 서버 → 프록시, {@link AdminRequest}). */
+    public static final int ADMIN_QUEUE_REMOVE = 1, ADMIN_MATCH_RESET = 2, ADMIN_PARTY_VIEW = 3, ADMIN_PARTY_REMOVE = 4, ADMIN_PARTY_DISBAND = 5, ADMIN_ACTIONS = 5;
 
     private KyudichiQueueProtocol() {}
 
@@ -121,17 +126,21 @@ public final class KyudichiQueueProtocol {
     public record ProfileRequest(int mode, String nick) implements FromClient {}
     public record PracticeMode(int mode) implements FromClient {}
 
-    public sealed interface ToArena permits Assign, Spectate, Practice {}
+    public sealed interface ToArena permits Assign, Spectate, Practice, AdminReply {}
     public record Assign(UUID match, boolean rated, List<UUID> teamA, List<UUID> teamB, int mode) implements ToArena {}
     public record Spectate(UUID player, String arena) implements ToArena {}
     public record Practice(UUID player, int mode) implements ToArena {}
+    /** 관리 요청 결과. ok=false 이면 message 는 관리자에게 보여 줄 실패 이유. lines 는 보기 결과(채팅 줄). */
+    public record AdminReply(UUID request, boolean ok, String message, List<String> lines) implements ToArena {}
 
-    public sealed interface ToProxy permits Hello, LiveList, Return, Ended {}
+    public sealed interface ToProxy permits Hello, LiveList, Return, Ended, AdminRequest {}
     public record Hello(UUID player) implements ToProxy {}
     public record LiveMatch(UUID match, Live live, List<UUID> teamA, List<UUID> teamB) {}
     public record LiveList(int freeArenas, List<LiveMatch> matches, int freeDuelArenas) implements ToProxy {}
     public record Return(List<UUID> players) implements ToProxy {}
     public record Ended(UUID match) implements ToProxy {}
+    /** 관리 요청: action = ADMIN_*, mode = MODE_* (파티 요청은 0). */
+    public record AdminRequest(UUID request, int action, UUID target, int mode) implements ToProxy {}
 
     // ------------------------------------------------------------------ queue channel
     public static byte[] encode(ToClient m) {
@@ -326,6 +335,10 @@ public final class KyudichiQueueProtocol {
                 case Assign x -> { o.writeByte(1); uuid(o, x.match); o.writeByte(x.rated ? 1 : 0); uuids(o, x.teamA, 3); uuids(o, x.teamB, 3); u8(o, x.mode, MODES - 1); }
                 case Spectate x -> { o.writeByte(2); uuid(o, x.player); utf(o, x.arena, 32); }
                 case Practice x -> { o.writeByte(3); uuid(o, x.player); u8(o, x.mode, MODES - 1); }
+                case AdminReply x -> {
+                    o.writeByte(4); uuid(o, x.request); o.writeByte(x.ok ? 1 : 0); utf(o, x.message, 200);
+                    u8(o, x.lines.size(), 24); for (String line : x.lines) utf(o, line, 200);
+                }
             }
         });
     }
@@ -335,6 +348,11 @@ public final class KyudichiQueueProtocol {
             case 1 -> new Assign(ruuid(i), rflag(i), ruuids(i, 3), ruuids(i, 3), r8(i, MODES - 1));
             case 2 -> new Spectate(ruuid(i), rutf(i, 32));
             case 3 -> new Practice(ruuid(i), r8(i, MODES - 1));
+            case 4 -> {
+                UUID request = ruuid(i); boolean ok = rflag(i); String message = rutf(i, 200);
+                int n = r8(i, 24); var lines = new ArrayList<String>(n); for (int k = 0; k < n; k++) lines.add(rutf(i, 200));
+                yield new AdminReply(request, ok, message, List.copyOf(lines));
+            }
             default -> throw new IllegalArgumentException("kind");
         });
     }
@@ -350,6 +368,7 @@ public final class KyudichiQueueProtocol {
                 }
                 case Return x -> { o.writeByte(3); uuids(o, x.players, 64); }
                 case Ended x -> { o.writeByte(4); uuid(o, x.match); }
+                case AdminRequest x -> { o.writeByte(5); uuid(o, x.request); u8(o, x.action, ADMIN_ACTIONS); uuid(o, x.target); u8(o, x.mode, MODES - 1); }
             }
         });
     }
@@ -364,6 +383,11 @@ public final class KyudichiQueueProtocol {
             }
             case 3 -> new Return(ruuids(i, 64));
             case 4 -> new Ended(ruuid(i));
+            case 5 -> {
+                UUID request = ruuid(i); int action = r8(i, ADMIN_ACTIONS);
+                if (action == 0) throw new IllegalArgumentException("action");
+                yield new AdminRequest(request, action, ruuid(i), r8(i, MODES - 1));
+            }
             default -> throw new IllegalArgumentException("kind");
         });
     }

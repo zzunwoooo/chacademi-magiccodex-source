@@ -2,8 +2,7 @@ package kr.chacademy.npc;
 
 import kr.chacademy.npc.ai.OpenAiClient;
 import kr.chacademy.npc.budget.BudgetService;
-import kr.chacademy.npc.cmd.AdminCommand;
-import kr.chacademy.npc.cmd.PlayerCommands;
+import kr.chacademy.npc.cmd.NpcCommands;
 import kr.chacademy.npc.config.CharacterRepository;
 import kr.chacademy.npc.config.ContentRepository;
 import kr.chacademy.npc.config.PlaceRepository;
@@ -19,9 +18,6 @@ import kr.chacademy.npc.npc.NpcManager;
 import kr.chacademy.npc.social.SocialService;
 import kr.chacademy.npc.social.VibeService;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -92,7 +88,7 @@ public final class ChacaNpcPlugin extends JavaPlugin implements Listener {
                 storage.createTables();
                 budget.loadFromDb();
                 getLogger().info("[ChacaNPC] AI 스위치: " + (budget.isAiEnabled() ? "켜짐"
-                        : "꺼짐 — 모든 NPC가 고정 대사로 대답합니다 (/cnpc ai on 으로 켜기)"));
+                        : "꺼짐 — 모든 NPC가 고정 대사로 대답합니다 (/서버관리 AI 켜기 로 켜기)"));
             } catch (RuntimeException ex) {
                 // 여기서 실패하면 예산을 알 수 없어 AI를 부르지 않는다 (고정 대사만). 조용히 넘어가지 않게 크게 남긴다.
                 budget.markLoadFailed(ex.getMessage());
@@ -127,12 +123,7 @@ public final class ChacaNpcPlugin extends JavaPlugin implements Listener {
             getLogger().warning("[ChacaNPC] MagicCodexBridge NPC API 없음 — 호감도는 기본값, 퀘스트·선물·스토리 우선 판단 꺼짐");
         }
 
-        AdminCommand admin = new AdminCommand(this);
-        PlayerCommands playerCmds = new PlayerCommands(this);
-        bind("cnpc", admin);
-        bind("t", playerCmds);
-        bind("nickname", playerCmds);
-        bind("chacanpc-ui", playerCmds);
+        new NpcCommands(this).register();
 
         Bukkit.getScheduler().runTaskLater(this, npcs::scan, 40L);
         Bukkit.getScheduler().runTaskTimer(this, () -> {
@@ -172,18 +163,6 @@ public final class ChacaNpcPlugin extends JavaPlugin implements Listener {
         instance = null;
     }
 
-    private void bind(String name, Object handler) {
-        PluginCommand cmd = getCommand(name);
-        if (cmd == null) {
-            getLogger().warning("[ChacaNPC] plugin.yml에 명령어 '" + name + "'가 없습니다");
-            return;
-        }
-        cmd.setExecutor((CommandExecutor) handler);
-        if (handler instanceof TabCompleter tc) {
-            cmd.setTabCompleter(tc);
-        }
-    }
-
     private void saveDefaults() {
         saveDefaultConfig();
         String[] files = {"places.yml", "quests.yml", "hints.yml", "filter.yml", "database.properties.example",
@@ -215,7 +194,7 @@ public final class ChacaNpcPlugin extends JavaPlugin implements Listener {
         return c;
     }
 
-    /** /cnpc reload */
+    /** /서버관리 새로고침 NPC */
     public void reloadEverything() {
         reloadConfig();
         settings = new Settings(getConfig());

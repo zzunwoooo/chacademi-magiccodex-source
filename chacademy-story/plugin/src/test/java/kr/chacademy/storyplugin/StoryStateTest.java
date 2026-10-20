@@ -84,7 +84,7 @@ class StoryStateTest {
         var ps=new StoryState.PlayerStory();
         var first=new StoryState.Request(StoryState.Kind.DIALOGUE,"ch1",ps.nextSeq());
         assertTrue(ps.claimEvent(first,"c_1"));
-        // 관리자가 중간에 멈춤 (/storydialogue stop): 완료 기록은 없지만 실행한 이벤트 기록은 남는다
+        // 관리자가 중간에 멈춤 (/대화관리 중지): 완료 기록은 없지만 실행한 이벤트 기록은 남는다
         assertEquals(StoryState.Open.FRESH,ps.decideOpen("ch1",false,null,false));
         var second=new StoryState.Request(StoryState.Kind.DIALOGUE,"ch1",ps.nextSeq());
         assertFalse(ps.claimEvent(second,"c_1"));assertTrue(ps.claimEvent(second,"c_2"));

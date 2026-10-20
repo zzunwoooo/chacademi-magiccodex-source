@@ -86,7 +86,7 @@ public final class VibeService {
         });
     }
 
-    /** 바로 실행 (/cnpc vibe run). */
+    /** 바로 실행 (/NPC관리 분위기노트 지금생성). */
     public void run(String stamp, Consumer<String> report) {
         Settings st = plugin.settings();
         if (!plugin.budget().isAiEnabled()) {
@@ -252,7 +252,7 @@ public final class VibeService {
                 }
                 plugin.storage().expireVibes(now - st.vibeExpireDays * 86_400_000L);
                 msg = "후보 " + accepted.size() + "개 확인, 새로 " + added + "개 추가"
-                        + (st.vibeAutoApprove ? " (자동 승인)" : " — /cnpc vibe review 로 확인하세요");
+                        + (st.vibeAutoApprove ? " (자동 승인)" : " — /NPC관리 분위기노트 보기 로 확인하세요");
             } catch (RuntimeException ex) {
                 msg = "저장 실패: " + ex.getMessage();
             }

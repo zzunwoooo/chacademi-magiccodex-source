@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * 대화 하나의 서버 쪽 정의: 흐름 (dialogue.yml, 없을 수 있음) + 명령어·호감도 (server_commands.yml).
- * 서버를 켤 때와 /cutscene reload 때만 파일에서 읽어 메모리에 두고, 패킷을 받을 때는 파일을 건드리지 않는다.
+ * 서버를 켤 때와 /서버관리 새로고침 스토리 때만 파일에서 읽어 메모리에 두고, 패킷을 받을 때는 파일을 건드리지 않는다.
  * 만든 뒤에는 바뀌지 않는다. Bukkit 없이 테스트한다.
  */
 final class StoryDef {

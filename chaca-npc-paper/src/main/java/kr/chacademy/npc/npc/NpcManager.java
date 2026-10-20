@@ -53,7 +53,7 @@ public final class NpcManager implements Listener {
                         int drop = Math.max(cur, npc.getId());
                         plugin.getLogger().warning("[ChacaNPC] 캐릭터 '" + charId + "'가 Citizens NPC #" + keep + " 와 #" + drop
                                 + " 둘에 연결돼 있습니다. #" + keep + " 만 사용합니다 — #" + drop
-                                + " 옆에서 /cnpc unlink 하거나 다른 캐릭터로 /cnpc link 하세요.");
+                                + " 옆에서 /NPC관리 연결해제 하거나 다른 캐릭터로 /NPC관리 연결 하세요.");
                         if (keep == cur) {
                             continue;
                         }
@@ -157,10 +157,10 @@ public final class NpcManager implements Listener {
             });
         } else if (Bukkit.getPluginManager().isPluginEnabled("MagicCodexBridge")) {
             // Bridge는 켜져 있는데 NPC API 연결이 없음(초기화 실패·버전 불일치): Bridge가 이 클릭으로 고정 대화를
-            // 열 수 있으므로 AI 대화를 같이 열지 않는다. (/t 로는 대화 가능)
+            // 열 수 있으므로 AI 대화를 같이 열지 않는다. (/말 로는 대화 가능)
             if (!warnedNoLink) {
                 warnedNoLink = true;
-                plugin.getLogger().warning("[ChacaNPC] MagicCodexBridge NPC API에 연결되지 않아 우클릭 AI 대화를 열지 않습니다 (/t 사용 가능)");
+                plugin.getLogger().warning("[ChacaNPC] MagicCodexBridge NPC API에 연결되지 않아 우클릭 AI 대화를 열지 않습니다 (/말 사용 가능)");
             }
         } else if (c.openOnRightClick()) {
             plugin.dialogue().open(p, c, npcId, false);
@@ -276,7 +276,7 @@ public final class NpcManager implements Listener {
         return best;
     }
 
-    /** 플레이어가 바라보는(가까운) 아무 Citizens NPC — /cnpc link 용. */
+    /** 플레이어가 바라보는(가까운) 아무 Citizens NPC — /NPC관리 연결 용. */
     public NPC nearestAny(Player p, double maxDistance) {
         NPC best = null;
         double bestD = maxDistance * maxDistance;

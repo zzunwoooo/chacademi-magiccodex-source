@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * 채팅 대화 화면 (MagicCodex HUD 대화를 지원하지 않는 클라이언트용 대체 화면).
- * 플레이어는 /t <할 말> 로 대화한다.
+ * 플레이어는 /말 <할 말> 로 대화한다. "생각 중" 표시는 하지 않는다 (오너 결정: 액션바 없음).
  */
 public final class ChatDialogueView implements DialogueView {
 
@@ -40,27 +40,26 @@ public final class ChatDialogueView implements DialogueView {
         TextComponent.Builder row = Component.text().content("  ");
         for (Button b : buttons) {
             row.append(Component.text("[" + b.label() + "]", NamedTextColor.AQUA)
-                    .clickEvent(ClickEvent.runCommand("/chacanpc-ui btn " + b.id()))
+                    .clickEvent(ClickEvent.runCommand("/대화선택 버튼 " + b.id()))
                     .hoverEvent(HoverEvent.showText(Component.text("클릭해서 말하기"))));
             row.append(Component.text(" "));
         }
         player.sendMessage(row.build());
-        player.sendMessage(Component.text("  /t <할 말> 로 대화, /t 그만 으로 끝내기", NamedTextColor.DARK_GRAY));
+        player.sendMessage(Component.text("  /말 <할 말> 로 대화, /말 그만 으로 끝내기", NamedTextColor.DARK_GRAY));
     }
 
     @Override
     public void thinking(Player player, DialogueSession session, int seq) {
-        player.sendActionBar(Component.text(session.character().name() + ": …", nameColor(session)));
+        // 채팅 화면에서는 "생각 중" 표시를 하지 않는다
     }
 
     @Override
     public void stall(Player player, DialogueSession session, int seq, String line) {
-        player.sendActionBar(Component.text(session.character().name() + ": " + line, nameColor(session)));
+        // 채팅 화면에서는 "잠깐만..." 이어 말하기를 보여주지 않는다 (대답이 오면 바로 채팅으로)
     }
 
     @Override
     public void line(Player player, DialogueSession session, int seq, String line) {
-        player.sendActionBar(Component.empty());
         player.sendMessage(npcLine(session, line));
     }
 
@@ -68,10 +67,10 @@ public final class ChatDialogueView implements DialogueView {
     public void questOffer(Player player, DialogueSession session, int seq, String title, String token) {
         player.sendMessage(Component.text("  부탁: " + title + " ", NamedTextColor.YELLOW)
                 .append(Component.text("[수락]", NamedTextColor.GREEN)
-                        .clickEvent(ClickEvent.runCommand("/chacanpc-ui quest accept " + token)))
+                        .clickEvent(ClickEvent.runCommand("/대화선택 부탁 수락 " + token)))
                 .append(Component.text(" "))
                 .append(Component.text("[거절]", NamedTextColor.RED)
-                        .clickEvent(ClickEvent.runCommand("/chacanpc-ui quest decline " + token))));
+                        .clickEvent(ClickEvent.runCommand("/대화선택 부탁 거절 " + token))));
     }
 
     @Override
@@ -81,7 +80,6 @@ public final class ChatDialogueView implements DialogueView {
 
     @Override
     public void close(Player player, DialogueSession session, String farewell) {
-        player.sendActionBar(Component.empty());
         if (farewell != null) {
             player.sendMessage(npcLine(session, farewell));
         }

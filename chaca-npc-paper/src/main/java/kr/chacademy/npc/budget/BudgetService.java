@@ -47,11 +47,11 @@ public final class BudgetService {
     private double reserved;          // 아직 정산 안 된 예약 합계 (전체)
     private final Map<String, Integer> callsToday = new ConcurrentHashMap<>();
     private volatile boolean aiEnabled = true;
-    private volatile boolean aiSwitchTouched; // 불러오기 전에 관리자가 /cnpc ai 를 썼으면 그 값을 따른다
+    private volatile boolean aiSwitchTouched; // 불러오기 전에 관리자가 /서버관리 AI 를 썼으면 그 값을 따른다
     private volatile boolean loaded;
     private volatile String loadError;
 
-    /** cnpc_meta 키: /cnpc ai off 상태를 재시작 뒤에도 유지한다. 값 "0" = 꺼짐. */
+    /** cnpc_meta 키: /서버관리 AI 끄기 상태를 재시작 뒤에도 유지한다. 값 "0" = 꺼짐. */
     private static final String META_AI = "ai_enabled";
 
     private long latencyCount;
@@ -83,7 +83,7 @@ public final class BudgetService {
         }
     }
 
-    /** 테이블 준비·사용량 불러오기가 실패했다: AI는 계속 꺼진 상태(예약 불가)이고 /cnpc budget 에 이유를 보여준다. */
+    /** 테이블 준비·사용량 불러오기가 실패했다: AI는 계속 꺼진 상태(예약 불가)이고 /서버관리 AI 예산 에 이유를 보여준다. */
     public void markLoadFailed(String reason) {
         loadError = reason == null || reason.isBlank() ? "알 수 없는 오류" : reason;
     }
@@ -112,7 +112,7 @@ public final class BudgetService {
         return aiEnabled;
     }
 
-    /** /cnpc ai on|off. DB에 저장해서 재시작해도 유지된다. */
+    /** /서버관리 AI 켜기|끄기. DB에 저장해서 재시작해도 유지된다. */
     public void setAiEnabled(boolean enabled) {
         this.aiSwitchTouched = true;
         this.aiEnabled = enabled;

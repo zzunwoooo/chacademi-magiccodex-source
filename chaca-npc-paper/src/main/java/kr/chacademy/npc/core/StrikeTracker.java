@@ -22,7 +22,7 @@ public final class StrikeTracker {
         this.lockMillis = lockMillis;
     }
 
-    /** /cnpc reload: 쌓인 기록·잠금은 그대로 두고 기준만 바꾼다. */
+    /** /서버관리 새로고침 NPC: 쌓인 기록·잠금은 그대로 두고 기준만 바꾼다. */
     public void reconfigure(long windowMillis, int maxStrikes, long lockMillis) {
         this.windowMillis = windowMillis;
         this.maxStrikes = maxStrikes;

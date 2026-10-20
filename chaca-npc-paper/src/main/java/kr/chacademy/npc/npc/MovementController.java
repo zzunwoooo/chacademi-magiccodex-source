@@ -253,7 +253,7 @@ public final class MovementController {
         return false;
     }
 
-    /** /cnpc reload 후 다시 계산하도록. */
+    /** /서버관리 새로고침 NPC 후 다시 계산하도록. */
     public void reset() {
         states.clear();
     }

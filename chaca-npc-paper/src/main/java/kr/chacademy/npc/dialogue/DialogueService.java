@@ -375,7 +375,7 @@ public final class DialogueService {
     public void input(Player p, String rawText, String buttonId) {
         DialogueSession s = sessions.get(p.getUniqueId());
         if (s == null) {
-            viewFor(p).info(p, null, "대화 중인 NPC가 없어요. NPC를 우클릭하거나 가까이 가서 /t <할 말> 을 입력하세요.");
+            viewFor(p).info(p, null, "대화 중인 NPC가 없어요. NPC를 우클릭하거나 가까이 가서 /말 <할 말> 을 입력하세요.");
             return;
         }
         input(p, rawText, buttonId, ++s.chatSeq);

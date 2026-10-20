@@ -134,12 +134,15 @@ final class RatingStore {
     }
     void forget(UUID id) { for (var c : caches.values()) c.remove(id); }
 
-    /** By nickname (case-insensitive, latest name we stored). */
-    void find(String name, Consumer<Row> done) {
+    /** Cached row of a mode, or null when this server has not loaded it (never blocks; /유저관리 요약 줄). */
+    Row peek(UUID id, String mode) { return cache(mode).get(id); }
+
+    /** By nickname (case-insensitive, latest name we stored) in one mode. */
+    void find(String name, String mode, Consumer<Row> done) {
         async(c -> {
             try (PreparedStatement s = c.prepareStatement("SELECT player FROM " + tRating + " WHERE mode=? AND LOWER(name)=LOWER(?) LIMIT 1")) {
-                s.setString(1, MODE); s.setString(2, name);
-                try (ResultSet r = s.executeQuery()) { return r.next() ? read(c, UUID.fromString(r.getString(1)), name, MODE) : null; }
+                s.setString(1, mode); s.setString(2, name);
+                try (ResultSet r = s.executeQuery()) { return r.next() ? read(c, UUID.fromString(r.getString(1)), name, mode) : null; }
             }
         }, done);
     }
@@ -208,9 +211,12 @@ final class RatingStore {
         }, done);
     }
 
-    /** Admin edits. `edit` receives the current row and returns the new one. */
-    void update(UUID id, String name, java.util.function.UnaryOperator<Row> edit, Consumer<Row> done) {
-        async(c -> { Row n = edit.apply(read(c, id, name, MODE)); write(c, n); refreshChallengersNow(MODE); return n; }, done);
+    /** Admin edits in one mode (큐디치 = {@link #MODE}, 결투 = {@link #DUEL}). `edit` receives the current row and returns the new one. */
+    void update(UUID id, String name, String mode, java.util.function.UnaryOperator<Row> edit, Consumer<Row> done) {
+        async(c -> {
+            Row n = edit.apply(read(c, id, name, mode)); write(c, n);
+            refreshChallengersNow(mode); return n;
+        }, done);
     }
 
     void recent(UUID id, int limit, Consumer<List<Recent>> done) {
@@ -256,7 +262,7 @@ final class RatingStore {
     private static String cut(String s) { return s == null ? "" : s.length() > 32 ? s.substring(0, 32) : s; }
 
     // ================================================================== seasons (owner 2026-10-18: weekly, full reset)
-    /** Current season of a mode, or null before the first /큐디치관리 시즌시작. */
+    /** Current season of a mode, or null before the first /큐디치관리 시즌 시작. */
     Season season(String mode) { return seasons.get(mode); }
 
     private void loadSeasonsNow() throws SQLException {
@@ -284,10 +290,10 @@ final class RatingStore {
         refreshChallengersNow(mode);
     }
 
-    /** /큐디치관리 시즌초기화: reset now, the season itself (number, end) stays. */
+    /** /큐디치관리 시즌 초기화: reset now, the season itself (number, end) stays. */
     void resetSeason(String mode, Consumer<Boolean> done) { async(c -> { resetNow(c, mode); return true; }, done); }
 
-    /** /큐디치관리 시즌시작: a new season from now (number + 1, `days` long). Does not reset by itself. */
+    /** /큐디치관리 시즌 시작: a new season from now (number + 1, `days` long). Does not reset by itself. */
     void startSeason(String mode, double days, Consumer<Season> done) {
         async(c -> {
             Season old = seasons.get(mode);
