@@ -14,6 +14,7 @@ import school.magiccodex.database.DatabaseSettings;
  *
  * codex_fish_tank(id, uuid, fish, size, caught_at)  -- one row per fish
  * codex_fish_lock(uuid, fish)                       -- species the fish shop must never sell
+ * codex_fish_item(id, fish, size, caught_at)        -- fish taken out as items (owner: data in the DB, the item has the id)
  *
  * Shared by school and wild through the player-state MariaDB (else a per-server fishing.db, like the codex).
  * The database is the truth: removing fish (selling, taking out) deletes rows by id and only what was really deleted
@@ -51,6 +52,7 @@ final class FishTank implements AutoCloseable {
             try (var st = db().createStatement()) {
                 st.execute("CREATE TABLE IF NOT EXISTS codex_fish_tank(id VARCHAR(36) PRIMARY KEY,uuid VARCHAR(36) NOT NULL,fish VARCHAR(64) NOT NULL,size DOUBLE NOT NULL,caught_at BIGINT NOT NULL)");
                 st.execute("CREATE TABLE IF NOT EXISTS codex_fish_lock(uuid VARCHAR(36) NOT NULL,fish VARCHAR(64) NOT NULL,PRIMARY KEY(uuid,fish))");
+                st.execute("CREATE TABLE IF NOT EXISTS codex_fish_item(id VARCHAR(36) PRIMARY KEY,fish VARCHAR(64) NOT NULL,size DOUBLE NOT NULL,caught_at BIGINT NOT NULL,updated_at BIGINT NOT NULL)");
                 try { st.execute("CREATE INDEX " + (settings.mariaDb() ? "" : "IF NOT EXISTS ") + "codex_fish_tank_uuid ON codex_fish_tank(uuid)"); } catch (Exception ignored) {}
             } catch (Exception e) { plugin.getLogger().warning("통발 수조 테이블 준비 실패: " + e.getMessage()); }
         });
@@ -175,6 +177,107 @@ final class FishTank implements AutoCloseable {
                 var ids = new HashSet<String>(); for (Fish f : list) ids.add(f.id());
                 tank(player).fish.removeIf(f -> ids.contains(f.id()));
                 done.accept(removed);
+            });
+        });
+    }
+
+    // ------------------------------------------------------------------ fish items (taken out of the tank)
+
+    /**
+     * Takes this fish out as an item: its tank row moves to codex_fish_item (same id). done(true) only when the tank
+     * row was really there (main thread).
+     */
+    void takeOut(UUID player, Fish f, Consumer<Boolean> done) {
+        io.execute(() -> {
+            boolean moved = false;
+            try (var d = db().prepareStatement("DELETE FROM codex_fish_tank WHERE id=? AND uuid=?")) {
+                d.setString(1, f.id()); d.setString(2, player.toString());
+                if (d.executeUpdate() == 1) {
+                    moved = true;
+                    try (var i = db().prepareStatement("INSERT INTO codex_fish_item(id,fish,size,caught_at,updated_at) VALUES(?,?,?,?,?)")) {
+                        i.setString(1, f.id()); i.setString(2, f.fish()); i.setDouble(3, f.size()); i.setLong(4, f.caughtAt()); i.setLong(5, System.currentTimeMillis());
+                        i.executeUpdate();
+                    }
+                }
+            } catch (Exception e) { plugin.getLogger().severe("통발 아이템화 저장 실패 " + player + " " + f + ": " + e.getMessage()); }
+            boolean ok = moved;
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                if (ok) tank(player).fish.removeIf(x -> x.id().equals(f.id()));
+                done.accept(ok);
+            });
+        });
+    }
+
+    /** Registers a fish item made outside the tank (admin gift) so it can be put in later. */
+    void registerItem(Fish f) {
+        io.execute(() -> {
+            try (var i = db().prepareStatement("INSERT INTO codex_fish_item(id,fish,size,caught_at,updated_at) VALUES(?,?,?,?,?)")) {
+                i.setString(1, f.id()); i.setString(2, f.fish()); i.setDouble(3, f.size()); i.setLong(4, f.caughtAt()); i.setLong(5, System.currentTimeMillis());
+                i.executeUpdate();
+            } catch (Exception e) { plugin.getLogger().warning("물고기 아이템 등록 실패 " + f + ": " + e.getMessage()); }
+        });
+    }
+
+    /** Size / caught date of fish items by id (only the ones that exist), main thread. */
+    void itemInfo(Collection<String> ids, Consumer<Map<String, Fish>> done) {
+        var list = List.copyOf(ids);
+        if (list.isEmpty()) { done.accept(Map.of()); return; }
+        io.execute(() -> {
+            var out = new HashMap<String, Fish>();
+            try (var p = db().prepareStatement("SELECT id,fish,size,caught_at FROM codex_fish_item WHERE id=?")) {
+                for (String id : list) {
+                    p.setString(1, id);
+                    try (var r = p.executeQuery()) { if (r.next()) out.put(id, new Fish(r.getString(1), r.getString(2), r.getDouble(3), r.getLong(4))); }
+                }
+            } catch (Exception e) { plugin.getLogger().warning("물고기 아이템 읽기 실패: " + e.getMessage()); }
+            Bukkit.getScheduler().runTask(plugin, () -> done.accept(out));
+        });
+    }
+
+    /**
+     * Puts a fish item back: its codex_fish_item row moves into the tank (capacity checked in the database).
+     * DUPLICATE = no such item row (a copied item, or already put back); the Fish is the restored row on OK.
+     */
+    void putBack(UUID player, String id, java.util.function.BiConsumer<Put, Fish> done) {
+        int cap = capacity;
+        io.execute(() -> {
+            Put out = Put.FAILED; Fish restored = null;
+            try {
+                int n = 0;
+                try (var c = db().prepareStatement("SELECT COUNT(*) FROM codex_fish_tank WHERE uuid=?")) {
+                    c.setString(1, player.toString());
+                    try (var r = c.executeQuery()) { if (r.next()) n = r.getInt(1); }
+                }
+                if (n >= cap) out = Put.FULL;
+                else {
+                    Fish row = null;
+                    try (var q = db().prepareStatement("SELECT id,fish,size,caught_at FROM codex_fish_item WHERE id=?")) {
+                        q.setString(1, id);
+                        try (var r = q.executeQuery()) { if (r.next()) row = new Fish(r.getString(1), r.getString(2), r.getDouble(3), r.getLong(4)); }
+                    }
+                    if (row == null) out = Put.DUPLICATE;
+                    else try (var d = db().prepareStatement("DELETE FROM codex_fish_item WHERE id=?")) {
+                        d.setString(1, id);
+                        if (d.executeUpdate() != 1) out = Put.DUPLICATE;
+                        else try (var i = db().prepareStatement("INSERT INTO codex_fish_tank(id,uuid,fish,size,caught_at) VALUES(?,?,?,?,?)")) {
+                            i.setString(1, row.id()); i.setString(2, player.toString()); i.setString(3, row.fish()); i.setDouble(4, row.size()); i.setLong(5, row.caughtAt());
+                            i.executeUpdate();
+                            out = Put.OK; restored = row;
+                        } catch (Exception insert) {
+                            // never lose the fish: the item row comes back
+                            try (var back = db().prepareStatement("INSERT INTO codex_fish_item(id,fish,size,caught_at,updated_at) VALUES(?,?,?,?,?)")) {
+                                back.setString(1, row.id()); back.setString(2, row.fish()); back.setDouble(3, row.size()); back.setLong(4, row.caughtAt()); back.setLong(5, System.currentTimeMillis());
+                                back.executeUpdate();
+                            }
+                            throw insert;
+                        }
+                    }
+                }
+            } catch (Exception e) { out = Put.FAILED; plugin.getLogger().severe("통발 넣기 실패 " + player + " " + id + ": " + e.getMessage()); }
+            Put result = out; Fish fish = restored;
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                if (result == Put.OK) { var t = tank(player); t.fish.removeIf(x -> x.id().equals(fish.id())); t.fish.add(fish); }
+                done.accept(result, fish);
             });
         });
     }

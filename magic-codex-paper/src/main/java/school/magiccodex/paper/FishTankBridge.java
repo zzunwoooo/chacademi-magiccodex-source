@@ -58,7 +58,19 @@ final class FishTankBridge implements PluginMessageListener, Listener {
 
     private long price(FishTank.Fish f) { return shop == null ? 0 : shop.price(f); }
 
+    /** Reads the size / date of the fish items in the inventory from the database, then sends the state. */
     private void send(Player p, int kind, String notice) {
+        if (!open.contains(p.getUniqueId())) return;
+        var ids = new ArrayList<String>();
+        var inv = p.getInventory();
+        for (int slot = 0; slot < FishTankProtocol.MAX_INVENTORY; slot++) {
+            if (slot > 35 && slot != 40) continue;
+            var h = fishing.gear().heldFish(inv.getItem(slot));
+            if (h != null && !h.tankId().isEmpty()) ids.add(h.tankId());
+        }
+        fishing.tank().itemInfo(ids, items -> { if (p.isOnline()) send(p, kind, notice, items); });
+    }
+    private void send(Player p, int kind, String notice, Map<String, FishTank.Fish> items) {
         if (!open.contains(p.getUniqueId())) return;
         var tank = fishing.tank().tank(p.getUniqueId());
         var config = fishing.config();
@@ -77,7 +89,9 @@ final class FishTankBridge implements PluginMessageListener, Listener {
             if (h == null) continue;
             var def = config.fishById.get(h.fish());
             if (def == null || !FishTankProtocol.validTankId(h.tankId())) continue;
-            held.add(new Held(slot, h.tankId(), def.id(), h.size(), h.caughtAt()));
+            var row = items.get(h.tankId());
+            if (!h.tankId().isEmpty() && row == null) continue;   // a copied / already put back item: nothing to put in
+            held.add(new Held(slot, h.tankId(), def.id(), row != null ? (float) row.size() : h.size(), row != null ? row.caughtAt() : h.caughtAt()));
             species.computeIfAbsent(def.id(), k -> info(def));
         }
         try {
@@ -142,8 +156,8 @@ final class FishTankBridge implements PluginMessageListener, Listener {
         if (p.getInventory().firstEmpty() < 0) { done(p, r, false, "인벤토리에 빈 칸이 없어서 꺼낼 수 없어요."); return; }
         ItemStack item = fishing.fishItem(f);
         if (item == null) { done(p, r, false, "더 이상 없는 물고기라서 꺼낼 수 없어요."); return; }
-        fishing.tank().remove(p.getUniqueId(), List.of(f), removed -> {
-            if (removed.isEmpty()) { gone(p, r); return; }
+        fishing.tank().takeOut(p.getUniqueId(), f, moved -> {
+            if (!moved) { gone(p, r); return; }
             // a slot was free a moment ago; if it filled meanwhile the item goes by mail instead of being lost
             fishing.give(p, List.of(item), "fish-tank:" + f.id());
             plugin.getLogger().info("FISH TANK itemize player=" + p.getName() + " fish=" + f.fish() + " id=" + f.id());
@@ -195,26 +209,31 @@ final class FishTankBridge implements PluginMessageListener, Listener {
         var def = h == null ? null : fishing.config().fishById.get(h.fish());
         if (h == null || def == null || !h.tankId().equals(r.tankId())) { done(p, r, false, "그 칸의 물고기가 바뀌었어요. 다시 골라 주세요."); return; }
         if (fishing.tank().full(p.getUniqueId())) { done(p, r, false, "수조가 가득 찼어요."); return; }
-        // old fish items (before the tank) have no id: they get one now; stacked copies go in one at a time
-        var fish = new FishTank.Fish(h.tankId().isEmpty() ? UUID.randomUUID().toString() : h.tankId(), def.id(),
-                Math.round(h.size() * 10) / 10.0, h.caughtAt() > 0 ? h.caughtAt() : System.currentTimeMillis());
+        // the item is taken first; the database decides whether it was a real fish
         ItemStack taken = item.asOne();
         if (item.getAmount() > 1) item.setAmount(item.getAmount() - 1); else inv.setItem(slot, null);
-        fishing.tank().put(p.getUniqueId(), fish, put -> {
-            switch (put) {
-                case OK -> {
-                    plugin.getLogger().info("FISH TANK insert player=" + p.getName() + " fish=" + fish.fish() + " id=" + fish.id());
-                    p.playSound(p.getLocation(), Sound.ITEM_BUCKET_EMPTY_FISH, .8f, 1.1f);
-                    done(p, r, true, "수조에 넣었어요.");
-                }
-                case DUPLICATE -> {
-                    plugin.getLogger().warning("FISH TANK duplicate item refused player=" + p.getName() + " id=" + fish.id());
-                    done(p, r, false, "이미 수조에 있는 물고기예요. (복제된 아이템)");
-                }
-                case FULL -> { fishing.give(p, List.of(taken), "fish-tank-full:" + fish.id()); done(p, r, false, "수조가 가득 찼어요."); }
-                case FAILED -> { fishing.give(p, List.of(taken), "fish-tank-failed:" + fish.id()); done(p, r, false, "수조에 넣지 못했어요. 잠시 뒤 다시 해 주세요."); }
+        if (!h.tankId().isEmpty()) {
+            fishing.tank().putBack(p.getUniqueId(), h.tankId(), (put, fish) -> inserted(p, r, put, h.tankId(), taken));
+            return;
+        }
+        // an old fish item (before the tank) carries its own size: it gets a new id now
+        var fish = new FishTank.Fish(UUID.randomUUID().toString(), def.id(), Math.round(h.size() * 10) / 10.0, h.caughtAt() > 0 ? h.caughtAt() : System.currentTimeMillis());
+        fishing.tank().put(p.getUniqueId(), fish, put -> inserted(p, r, put, fish.id(), taken));
+    }
+    private void inserted(Player p, Request r, FishTank.Put put, String id, ItemStack taken) {
+        switch (put) {
+            case OK -> {
+                plugin.getLogger().info("FISH TANK insert player=" + p.getName() + " id=" + id);
+                p.playSound(p.getLocation(), Sound.ITEM_BUCKET_EMPTY_FISH, .8f, 1.1f);
+                done(p, r, true, "수조에 넣었어요.");
             }
-        });
+            case DUPLICATE -> {
+                plugin.getLogger().warning("FISH TANK unknown/duplicate fish item refused player=" + p.getName() + " id=" + id);
+                done(p, r, false, "이미 수조에 넣었거나 복제된 물고기예요.");
+            }
+            case FULL -> { fishing.give(p, List.of(taken), "fish-tank-full:" + id); done(p, r, false, "수조가 가득 찼어요."); }
+            case FAILED -> { fishing.give(p, List.of(taken), "fish-tank-failed:" + id); done(p, r, false, "수조에 넣지 못했어요. 잠시 뒤 다시 해 주세요."); }
+        }
     }
 
     @EventHandler public void quit(PlayerQuitEvent e) { UUID id = e.getPlayer().getUniqueId(); open.remove(id); busy.remove(id); limits.remove(id); }

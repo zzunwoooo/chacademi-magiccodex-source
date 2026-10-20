@@ -42,7 +42,7 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         boolean ownCast, preview;
         int previewBackground;
         FishingWater water;
-        float maxDepth;
+        float maxDepth, floorDepth;
         // the bite
         int token;
         FishingConfig.Fish fish;
@@ -51,6 +51,8 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         long sentAt;
         int minimum;
         int rodSlot = -1;          // held hotbar slot when the fish was picked
+        List<FishingProtocol.Attack> attacks = List.of();
+        int waitMs;
         Session(UUID player) { this.player = player; }
     }
 
@@ -59,6 +61,7 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
     private final FishingGear gear;
     private final FishingStore store;
     private final FishTank tank;
+    private final FishingGearStore gearStore;
     private final ItemsAdderItems itemsAdder;
     private final Map<UUID, Session> sessions = new HashMap<>();
     private final Map<UUID, long[]> limits = new HashMap<>();
@@ -67,11 +70,12 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         this.plugin = plugin;
         for (String f : FILES) if (!new File(plugin.getDataFolder(), f).exists()) plugin.saveResource(f, false);
         config = FishingConfig.load(plugin.getDataFolder());
-        gear = new FishingGear(plugin, config);
+        itemsAdder = new ItemsAdderItems(plugin.getLogger());
+        gearStore = new FishingGearStore(plugin);
+        gear = new FishingGear(plugin, config, itemsAdder, gearStore);
         store = new FishingStore(plugin);
         tank = new FishTank(plugin);
         tank.capacity(config.tankCapacity);
-        itemsAdder = new ItemsAdderItems(plugin.getLogger());
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, FishingProtocol.REQUEST, this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, FishingProtocol.RESPONSE);
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -79,7 +83,7 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
             var command = Objects.requireNonNull(plugin.getCommand(name));
             command.setExecutor(this); command.setTabCompleter(this);
         }
-        for (Player p : Bukkit.getOnlinePlayers()) { store.load(p.getUniqueId(), null); tank.refresh(p.getUniqueId(), null); }
+        for (Player p : Bukkit.getOnlinePlayers()) { store.load(p.getUniqueId(), null); tank.refresh(p.getUniqueId(), null); preloadGear(p); }
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 2, 2);
         plugin.getLogger().info("낚시: 물고기 " + config.fish.size() + "종, 장비 " + config.gear.stream().mapToInt(Map::size).sum() + "종");
     }
@@ -106,6 +110,15 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         sessions.clear();
         store.close();
         tank.close();
+        gearStore.close();
+    }
+    FishingStore store() { return store; }
+
+    /** Gear rows of everything the player carries (owner: durability lives in the DB), so casting never waits. */
+    private void preloadGear(Player p) {
+        var items = new ArrayList<ItemStack>();
+        for (ItemStack it : p.getInventory().getContents()) if (it != null && gear.kindOf(it) >= 0) items.add(it);
+        gear.load(items, null);
     }
 
     // ------------------------------------------------------------------ vanilla rod
@@ -120,6 +133,12 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
                 if (!config.enabled || e.isCancelled() || !modded(p)) return;
                 ItemStack rod = rodOf(p);
                 if (rod == null) return;
+                if (!gear.ready(rod)) {
+                    e.setCancelled(true);
+                    gear.load(List.of(rod), null);
+                    p.sendActionBar(FishingGear.plain("낚싯대 정보를 불러오는 중이에요. 잠시 뒤 다시 던져 주세요.", 0xFFD9A0));
+                    return;
+                }
                 var l = gear.read(rod);
                 if (!l.rod().fallback() && l.rod().value() <= 0) {
                     e.setCancelled(true);
@@ -216,17 +235,18 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         // the bobber may go to 85% of the line: the last 15% is the room a hooked fish can pull before the line runs out
         float reach = l.line().gear().a() * .85f;
         s.maxDepth = Math.min(FishingProtocol.MAX_DEPTH, cap <= 0 ? reach : Math.min(cap, reach));
+        s.floorDepth = cap <= 0 ? FishingProtocol.MAX_DEPTH : Math.min(FishingProtocol.MAX_DEPTH, cap);
         s.state = SINKING; s.since = System.currentTimeMillis();
-        send(p, new FishingProtocol.Session(s.id, FishingProtocol.PHASE_WATER, water.background(), s.maxDepth, config.waterClassOf(water.area()),
-                Math.min(water.area(), 1_000_000), gear.protocol(l), ""));
+        send(p, new FishingProtocol.Session(s.id, FishingProtocol.PHASE_WATER, water.background(), s.maxDepth, s.floorDepth, config.waterClassOf(water.area()),
+                Math.min(water.area(), 1_000_000), tank.count(p.getUniqueId()), tank.capacity(), gear.protocol(l), ""));
     }
 
     private void ready(Player p, Session s, String notice) {
         s.state = READY; s.ownCast = false; s.hook = null; s.since = System.currentTimeMillis();
         var l = gear.read(rodOf(p));
         int bg = s.preview ? s.previewBackground : s.water == null ? 0 : s.water.background();
-        send(p, new FishingProtocol.Session(s.id, FishingProtocol.PHASE_READY, bg, s.maxDepth, s.water == null ? 0 : config.waterClassOf(s.water.area()),
-                s.water == null ? 0 : Math.min(s.water.area(), 1_000_000), gear.protocol(l), cut(notice)));
+        send(p, new FishingProtocol.Session(s.id, FishingProtocol.PHASE_READY, bg, s.maxDepth, Math.max(s.maxDepth, s.floorDepth), s.water == null ? 0 : config.waterClassOf(s.water.area()),
+                s.water == null ? 0 : Math.min(s.water.area(), 1_000_000), tank.count(p.getUniqueId()), tank.capacity(), gear.protocol(l), cut(notice)));
     }
 
     private void end(Player p, Session s, String notice) {
@@ -247,7 +267,7 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         store.forget(e.getPlayer().getUniqueId());
         tank.forget(e.getPlayer().getUniqueId());
     }
-    @EventHandler public void join(PlayerJoinEvent e) { store.load(e.getPlayer().getUniqueId(), null); tank.refresh(e.getPlayer().getUniqueId(), null); }
+    @EventHandler public void join(PlayerJoinEvent e) { store.load(e.getPlayer().getUniqueId(), null); tank.refresh(e.getPlayer().getUniqueId(), null); preloadGear(e.getPlayer()); }
     @EventHandler public void changedWorld(PlayerChangedWorldEvent e) {
         var s = sessions.get(e.getPlayer().getUniqueId());
         if (s != null && !s.preview) end(e.getPlayer(), s, "");
@@ -267,7 +287,7 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         boolean ours = s != null && s.id == r.session();
         switch (r.action()) {
             case FishingProtocol.STOP -> { if (ours && s.state == SINKING) bite(p, s, Math.min(r.depth(), s.maxDepth)); }
-            case FishingProtocol.RESULT -> { if (ours && s.state == BITING && r.token() == s.token) result(p, s, r.outcome()); }
+            case FishingProtocol.RESULT -> { if (ours && s.state == BITING && r.token() == s.token) result(p, s, r.outcome(), r.heldMask()); }
             case FishingProtocol.RECAST -> { if (ours && s.state == READY) recast(p, s); }
             case FishingProtocol.CANCEL -> { if (ours) { if (s.state == BITING) penalty(p, s); removeHook(s); sessions.remove(p.getUniqueId()); } }
             case FishingProtocol.GEAR_OPEN -> sendGear(p, "");
@@ -375,8 +395,32 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         int grade = l.flt().gear().has("grade_glow") ? (s.fish != null ? s.fish.grade() : s.chest) : -1;
         int window = Math.clamp(Math.round(l.rod().gear().b() * 1000), 100, 5000);
         s.token = rnd.nextInt(1, Integer.MAX_VALUE);
-        var b = new Bite(s.id, s.token, shape, size, grade, Math.round(Math.min(wait, 59) * 1000), teases, window, power, pattern, rnd.nextLong(), depth,
-                s.fish != null && s.fish.magic());
+        // hook gauge (owner: faster and harder for better fish; 일반 stays as it was): needle time and zone by grade
+        int realGrade = s.fish != null ? s.fish.grade() : Math.max(0, s.chest);
+        float[] speed = {1f, 1.25f, 1.5f, 2f}, zones = {.22f, .18f, .15f, .12f};
+        int sweep = Math.clamp(Math.round(l.rod().gear().b() / .22f / speed[realGrade] * 1000), 500, 20000);
+        // strain (owner: low-grade gear deep down almost always fails): how far into what this line can reach, by gear grade
+        float reach = l.line().gear().a() * .85f;
+        float into = (float) Math.clamp((depth - .55 * reach) / Math.max(.1, .45 * reach), 0, 1);
+        float gearGrade = (l.rod().gear().grade() + l.line().gear().grade()) / 2f;
+        float strain = Math.clamp(1 + .9f * into * (1 - gearGrade / 3f * .85f), .5f, 5f);
+        // fish attacks during the reel (extra wear on the line / rod)
+        var attacks = new ArrayList<FishingProtocol.Attack>();
+        if (s.fish != null) {
+            int n = switch (realGrade) { case 0 -> rnd.nextFloat() < .3f ? 1 : 0; case 1 -> rnd.nextFloat() < .6f ? 1 : 0; case 2 -> 1 + rnd.nextInt(2); default -> 2 + rnd.nextInt(3); };
+            float reel = FishingProtocol.reelSpeed(l.rod().gear().a()) * .75f * .5f;
+            int span = (int) Math.clamp(depth / Math.max(.3f, reel) * 1000 * .9f, 3000, 120000);
+            int at = 1500;
+            for (int i = 0; i < n; i++) {
+                at += 1500 + rnd.nextInt(Math.max(1, span / Math.max(1, n)));
+                int damage = new int[]{2, 3, 4, 6}[realGrade] + power / 3;
+                attacks.add(new FishingProtocol.Attack(Math.min(at, 600000), rnd.nextBoolean() ? FishingProtocol.ATTACK_LINE : FishingProtocol.ATTACK_ROD, damage));
+            }
+        }
+        s.attacks = List.copyOf(attacks);
+        s.waitMs = Math.round(Math.min(wait, 59) * 1000);
+        var b = new Bite(s.id, s.token, shape, size, grade, s.waitMs, teases, window, power, pattern, rnd.nextLong(), depth,
+                s.fish != null && s.fish.magic(), sweep, zones[realGrade], realGrade == 3, strain, attacks);
         s.minimum = FishingProtocol.minimumCatchMillis(b, l.rod().gear().a());
         s.sentAt = System.currentTimeMillis();
         s.rodSlot = p.getInventory().getHeldItemSlot();
@@ -395,7 +439,7 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
 
     // ------------------------------------------------------------------ result
 
-    private void result(Player p, Session s, int outcome) {
+    private void result(Player p, Session s, int outcome, int heldMask) {
         long elapsed = System.currentTimeMillis() - s.sentAt;
         if (outcome == FishingProtocol.CAUGHT && elapsed < s.minimum) {
             plugin.getLogger().warning("FISHING too fast player=" + p.getName() + " elapsed=" + elapsed + "ms min=" + s.minimum + "ms");
@@ -404,7 +448,16 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         if (s.preview) s.rodSlot = p.getInventory().getHeldItemSlot();
         if (outcome != FishingProtocol.REFUSED && !heldRod(p, s)) outcome = FishingProtocol.REFUSED;   // rod swapped after the bite
         var notes = new ArrayList<String>();
-        var l = wearAndBait(p, s, outcome, notes);
+        // attacks that happened before the reported end wear the gear (doubled when the player kept winding)
+        int lineHit = 0, rodHit = 0;
+        boolean tugged = outcome == FishingProtocol.CAUGHT || outcome == FishingProtocol.SNAPPED || outcome == FishingProtocol.ESCAPED;
+        if (tugged && !s.preview) for (int i = 0; i < s.attacks.size(); i++) {
+            var a = s.attacks.get(i);
+            if (elapsed + 1500 < s.waitMs + a.atMs()) continue;
+            int d = a.damage() * ((heldMask >> i & 1) != 0 ? 2 : 1);
+            if (a.kind() == FishingProtocol.ATTACK_LINE) lineHit += d; else rodHit += d;
+        }
+        var l = wearAndBait(p, s, outcome, notes, lineHit, rodHit);
         String fishId = "", name = ""; int grade = 0, shape = 0; float cm = 0; boolean record = false, fresh = false, mailed = false;
         var rewards = new ArrayList<Reward>();
         int shown = outcome;
@@ -430,7 +483,6 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
                 if (!s.preview) {
                     var r = store.record(p.getUniqueId(), f.id(), cm); fresh = r[0]; record = r[1];
                     tank.add(p.getUniqueId(), f.id(), cm);
-                    notes.add("통발 수조에 넣었어요 (" + tank.count(p.getUniqueId()) + "/" + tank.capacity() + ").");
                 } else fresh = true;
             }
             for (ItemStack it : merge(items)) rewards.add(new Reward(FishingGear.cut(AlchemyBridge.displayName(it)), it.getAmount(), preview(it)));
@@ -442,7 +494,7 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         removeHook(s);
         s.state = READY; s.ownCast = false; s.since = System.currentTimeMillis();
         send(p, new FishingProtocol.Result(s.id, shown, fishId, FishingGear.cut(name), grade, shape, cm, record, fresh, rewards, mailed,
-                gear.protocol(l), cut(String.join(" ", notes))));
+                gear.protocol(l), tank.count(p.getUniqueId()), tank.capacity(), cut(String.join(" ", notes))));
     }
 
     private boolean heldRod(Player p, Session s) {
@@ -453,21 +505,21 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
     private void penalty(Player p, Session s) {
         if (s.preview || !heldRod(p, s)) return;
         var notes = new ArrayList<String>();
-        wearAndBait(p, s, FishingProtocol.ESCAPED, notes);
+        wearAndBait(p, s, FishingProtocol.ESCAPED, notes, 0, 0);
         if (!notes.isEmpty()) p.sendActionBar(FishingGear.plain(String.join(" ", notes), 0xFFD9A0));
     }
 
     /** Wear and bait use for one try, written into the held rod. Returns the loadout after it. */
-    private FishingGear.Loadout wearAndBait(Player p, Session s, int outcome, List<String> notes) {
+    private FishingGear.Loadout wearAndBait(Player p, Session s, int outcome, List<String> notes, int lineHit, int rodHit) {
         ItemStack rod = rodOf(p);
         var l = gear.read(rod);
         if (s.preview || rod == null || outcome == FishingProtocol.REFUSED) return l;
         boolean tug = outcome == FishingProtocol.CAUGHT || outcome == FishingProtocol.SNAPPED || outcome == FishingProtocol.ESCAPED;
         boolean baitUsed = tug || outcome == FishingProtocol.MISSED;
         var returned = new ArrayList<ItemStack>();
-        var rodPart = wear(l.rod(), tug ? 1 : 0);
+        var rodPart = wear(l.rod(), tug ? 1 + rodHit : 0);
         var flt = wear(l.flt(), 1);
-        var line = wear(l.line(), tug ? 1 + (outcome == FishingProtocol.SNAPPED ? config.snapDamage : 0) : 0);
+        var line = wear(l.line(), tug ? 1 + lineHit + (outcome == FishingProtocol.SNAPPED ? config.snapDamage : 0) : 0);
         var bait = l.bait();
         if (baitUsed && !bait.fallback()) bait = bait.value() - 1 <= 0 ? new FishingGear.Part(config.fallback[3], -1, true) : new FishingGear.Part(bait.gear(), bait.value() - 1, false);
         if (!rodPart.fallback() && rodPart.value() <= 0) notes.add(rodPart.gear().name() + "이(가) 고장 났어요.");
@@ -537,7 +589,8 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
     private void recast(Player p, Session s) {
         if (s.preview) {
             s.state = SINKING; s.since = System.currentTimeMillis();
-            send(p, new FishingProtocol.Session(s.id, FishingProtocol.PHASE_WATER, s.previewBackground, s.maxDepth, 3, 4096, gear.protocol(gear.read(rodOf(p))), ""));
+            send(p, new FishingProtocol.Session(s.id, FishingProtocol.PHASE_WATER, s.previewBackground, s.maxDepth, s.floorDepth, 3, 4096,
+                    tank.count(p.getUniqueId()), tank.capacity(), gear.protocol(gear.read(rodOf(p))), ""));
             return;
         }
         ItemStack main = p.getInventory().getItemInMainHand();
@@ -582,7 +635,13 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         return s != null && !s.preview && s.state != READY;
     }
 
+    /** Loads the database rows of the held rod and the gear in the inventory, then sends the window. */
     private void sendGear(Player p, String notice) {
+        var items = new ArrayList<ItemStack>();
+        for (ItemStack it : p.getInventory().getStorageContents()) if (it != null && gear.kindOf(it) >= 0) items.add(it);
+        gear.load(items, () -> { if (p.isOnline()) sendGearNow(p, notice); });
+    }
+    private void sendGearNow(Player p, String notice) {
         ItemStack rod = rodOf(p);
         var l = gear.read(rod);
         var owned = new ArrayList<Owned>();
@@ -616,6 +675,7 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         if (gear.kindOf(chosen) != kind) { sendGear(p, "그 장비를 찾지 못했어요."); return; }
         var g = gear.gearOf(chosen);
         if (g == null) { sendGear(p, ""); return; }
+        if (!gear.ready(chosen) || !gear.ready(rod)) { sendGear(p, "장비 정보를 불러오는 중이에요. 다시 골라 주세요."); return; }
         if (kind != 3 && !gear.plainRod(chosen) && gear.durabilityOf(chosen) == 0) { sendGear(p, config.message("broken", "고장 난 장비는 장착할 수 없어요.")); return; }
         if (kind == FishingProtocol.ROD) {
             // swap the held rod with the chosen one
@@ -669,8 +729,27 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
             int reached = FishingProtocol.tiersReached(caught, config.fish.size());
             int claimed = 0, available = 0;
             for (int t = 0; t < 4; t++) { if (book.claimed.contains(t)) claimed |= 1 << t; else if (t < reached) available |= 1 << t; }
-            send(p, new Codex(entries, chests, claimed, available, cut(notice)));
+            send(p, new Codex(entries, chests, claimed, available, tierRewards(), cut(notice)));
         }
+    }
+
+    /** What each completion tier gives, for the codex tooltip: items as previews, command rewards by their display text. */
+    private List<List<Reward>> tierRewards() {
+        var out = new ArrayList<List<Reward>>();
+        for (int t = 0; t < 4; t++) {
+            var list = new ArrayList<Reward>();
+            var reward = config.codexRewards[t];
+            for (String spec : reward.items()) {
+                int at = spec.lastIndexOf(':');
+                String key = spec; int amount = 1;
+                if (at > 0) { try { amount = Integer.parseInt(spec.substring(at + 1)); key = spec.substring(0, at); } catch (NumberFormatException ignored) {} }
+                var it = item(key, amount);
+                if (it != null && list.size() < FishingProtocol.MAX_REWARDS) list.add(new Reward(FishingGear.cut(AlchemyBridge.displayName(it)), amount, preview(it)));
+            }
+            for (String text : reward.display()) if (!text.isBlank() && list.size() < FishingProtocol.MAX_REWARDS) list.add(new Reward(FishingGear.cut(text), 0, new byte[0]));
+            out.add(list);
+        }
+        return out;
     }
 
     private static String seasonText(FishingConfig.Fish f) {
@@ -766,7 +845,9 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
                 var f = config.fishById.get(args[2]);
                 if (t == null || f == null) { sender.sendMessage("§c플레이어나 물고기를 찾지 못했습니다."); return true; }
                 float cm = args.length > 3 ? (float) parseDouble(args[3], f.maxSize()) : f.maxSize();
-                give(t, List.of(gear.fish(f, cm)), "fishing-admin:" + UUID.randomUUID());
+                var row = new FishTank.Fish(UUID.randomUUID().toString(), f.id(), cm, System.currentTimeMillis());
+                tank.registerItem(row);
+                give(t, List.of(gear.fish(f, cm, row.id(), row.caughtAt())), "fishing-admin:" + row.id());
                 sender.sendMessage("§a" + t.getName() + " 에게 " + f.name() + " (" + cm + "cm) 지급");
             }
             case "도감초기화" -> {
@@ -782,10 +863,11 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
                 if (old != null) removeHook(old);
                 var s = new Session(p.getUniqueId());
                 s.preview = true; s.previewBackground = bg; s.state = SINKING;
-                s.maxDepth = Math.min(FishingProtocol.MAX_DEPTH, gear.read(rodOf(p)).line().gear().a());
+                s.maxDepth = Math.min(FishingProtocol.MAX_DEPTH, gear.read(rodOf(p)).line().gear().a() * .85f);
+                s.floorDepth = FishingProtocol.MAX_DEPTH;
                 sessions.put(p.getUniqueId(), s);
-                send(p, new FishingProtocol.Session(s.id, FishingProtocol.PHASE_WATER, bg, s.maxDepth, 3, 4096, gear.protocol(gear.read(rodOf(p))),
-                        "미리보기: 보상·내구도·도감 기록이 없어요."));
+                send(p, new FishingProtocol.Session(s.id, FishingProtocol.PHASE_WATER, bg, s.maxDepth, s.floorDepth, 3, 4096, tank.count(p.getUniqueId()), tank.capacity(),
+                        gear.protocol(gear.read(rodOf(p))), "미리보기: 보상·내구도·도감 기록이 없어요."));
             }
             default -> sender.sendMessage("§c알 수 없는 명령입니다.");
         }

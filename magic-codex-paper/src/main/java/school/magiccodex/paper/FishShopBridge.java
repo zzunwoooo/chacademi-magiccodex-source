@@ -145,7 +145,8 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
     void open(Player p, Entity anchor, String npcName) {
         if (!modded(p)) { p.sendMessage("§c물고기 판매소를 열려면 차카데미 모드를 업데이트해 주세요."); return; }
         sessions.put(p.getUniqueId(), new Session(anchor, npcName == null || npcName.isBlank() ? defaultName : cut(npcName)));
-        fishing.tank().refresh(p.getUniqueId(), () -> { if (p.isOnline() && sessions.containsKey(p.getUniqueId())) send(p, FishShopProtocol.KIND_OPEN, ""); });
+        // the lock tab lists only the species this player has caught (codex), so the codex is loaded too
+        fishing.store().load(p.getUniqueId(), () -> fishing.tank().refresh(p.getUniqueId(), () -> { if (p.isOnline() && sessions.containsKey(p.getUniqueId())) send(p, FishShopProtocol.KIND_OPEN, ""); }));
     }
 
     private List<FishTank.Fish> sellable(Player p, int mask) {
@@ -173,7 +174,13 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
             grades.add(new Grade(count, total, sample));
         }
         var species = new ArrayList<Species>();
-        if (kind == FishShopProtocol.KIND_OPEN) for (var f : fishing.config().fish) species.add(new Species(f.id(), FishingGear.cut(f.name()), f.grade()));
+        if (kind == FishShopProtocol.KIND_OPEN) {
+            // owner 2026-10-20: fish not caught yet are not shown in the lock list
+            var book = fishing.store().book(p.getUniqueId());
+            synchronized (book) {
+                for (var f : fishing.config().fish) if (book.rows.containsKey(f.id())) species.add(new Species(f.id(), FishingGear.cut(f.name()), f.grade()));
+            }
+        }
         var locks = new ArrayList<String>();
         for (String l : tank.locks) if (FishingProtocol.validId(l) && locks.size() < FishShopProtocol.MAX_SPECIES) locks.add(l);
         try {
