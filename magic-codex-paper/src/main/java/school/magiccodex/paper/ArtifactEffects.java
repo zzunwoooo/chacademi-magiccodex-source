@@ -46,6 +46,8 @@ import org.joml.Vector3f;
 final class ArtifactEffects implements Listener {
     static final String MOD = "artifact:effect";
     static final long COMBAT_MS = 5_000;
+    /** Same tag as MagicMythic Reactions.ANCHOR_TAG: not pulled by 모래 회오리. */
+    static final String ANCHOR_TAG = "chacademi_anchor";
     final MagicCodexBridge plugin;
     final ArtifactBridge artifacts;
     final ManaService mana;
@@ -242,6 +244,7 @@ final class ArtifactEffects implements Listener {
         modifier(p.getAttribute(Attribute.KNOCKBACK_RESISTANCE), knockKey, knock, AttributeModifier.Operation.ADD_NUMBER);
         modifier(p.getAttribute(Attribute.JUMP_STRENGTH), jumpKey, jump, AttributeModifier.Operation.ADD_NUMBER);
         modifier(p.getAttribute(Attribute.STEP_HEIGHT), stepKey, step, AttributeModifier.Operation.ADD_NUMBER);
+        if (has(p, "highland_telescope")) p.addScoreboardTag(ANCHOR_TAG); else p.removeScoreboardTag(ANCHOR_TAG); // 닻 장식
 
         UUID id = p.getUniqueId();
         var snap = mana.snapshot(id).orElse(null);
@@ -270,6 +273,7 @@ final class ArtifactEffects implements Listener {
     }
 
     private void clear(Player p) {
+        p.removeScoreboardTag(ANCHOR_TAG);
         for (var pair : List.of(Map.entry(Attribute.MAX_HEALTH, hpFlatKey), Map.entry(Attribute.MAX_HEALTH, hpPctKey), Map.entry(Attribute.MOVEMENT_SPEED, speedKey),
                 Map.entry(Attribute.KNOCKBACK_RESISTANCE, knockKey), Map.entry(Attribute.JUMP_STRENGTH, jumpKey), Map.entry(Attribute.STEP_HEIGHT, stepKey))) {
             var a = p.getAttribute(pair.getKey());
@@ -356,7 +360,7 @@ final class ArtifactEffects implements Listener {
         var cause = e.getCause();
         if (has(p, "thick_gloves") && (cause == EntityDamageEvent.DamageCause.ENTITY_ATTACK || cause == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)) mult -= 0.03;
         if (has(p, "leather_bracer") && cause == EntityDamageEvent.DamageCause.PROJECTILE) mult -= 0.04;
-        if (has(p, "scorched_apron") && (cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION)) mult -= 0.06;
+        if (has(p, "balance_scale")) mult += 0.10;               // 굳센 심장: CC -50%, 대신 받는 피해 +10%
         var max = p.getAttribute(Attribute.MAX_HEALTH);
         if (has(p, "cushion_cotton") && max != null && p.getHealth() >= max.getValue() - 0.01) mult -= 0.30;
         if (has(p, "melee_bell") && p.getNearbyEntities(10, 10, 10).stream().filter(x -> x instanceof Enemy).limit(3).count() >= 3) mult -= 0.08;
@@ -447,10 +451,8 @@ final class ArtifactEffects implements Listener {
         var pm = p.getAttribute(Attribute.MAX_HEALTH);
         if (has(p, "tilted_scales") && pm != null) add += 0.60 * Math.clamp(1 - p.getHealth() / pm.getValue(), 0, 1);
         if (has(p, "philosopher_stone")) add += Math.min(0.40, p.getLevel() * 0.005);
-        if (has(p, "bug_repellent_incense") && (t instanceof Spider || t instanceof Silverfish || t instanceof Endermite || t instanceof Bee)) add += 0.05;
-        if (has(p, "focus_headband") && r.castSneak) add += 0.10;
+        if (has(p, "focus_headband") && Boolean.TRUE.equals(hooks.api("isControlled", new Class<?>[]{LivingEntity.class}, t))) add += 0.08; // 제압의 머리띠
         if (has(p, "running_caster_badge") && r.castSprint) add += 0.06;
-        if (has(p, "highland_telescope") && p.getLocation().getY() - t.getLocation().getY() >= 3) add += 0.08;
         if (has(p, "hunter_mark_ring")) {
             if (r.huntCast != r.castIndex) {
                 if (t.getUniqueId().equals(r.huntTarget)) r.huntStacks = Math.min(5, r.huntStacks + 1);
@@ -459,13 +461,8 @@ final class ArtifactEffects implements Listener {
             }
             if (t.getUniqueId().equals(r.huntTarget)) add += 0.03 * r.huntStacks;
         }
-        long time = p.getWorld().getTime();
-        if (has(p, "twilight_cape") && ((time >= 12000 && time < 13800) || time >= 22200 || time < 600)) add += 0.10;
-        if (has(p, "storm_lightning_rod")) add += p.getWorld().isThundering() ? 0.12 : !p.getWorld().hasStorm() ? -0.04 : 0;
         if (has(p, "double_mark_lens") && p.getUniqueId().equals(markCaster)) add += 0.05;
         if (has(p, "element_cycle_bracelet") && spell && r.prevElement != null) add += r.prevElement.equals(element) ? -0.20 : 0.20;
-        if (!reaction.isEmpty() && has(p, "reaction_catalyst")) add += 0.15;
-        if (!reaction.isEmpty() && has(p, "slow_inkwell")) add -= 0.30;
         if (has(p, "cheer_flag") && r.castCheer) add += 0.10;
         double mult = Math.max(0, 1 + add);
         if (r.comebackUntil > now) mult *= 2;
@@ -480,7 +477,9 @@ final class ArtifactEffects implements Listener {
         if (has(p, "chain_glove") && reaction.equals("shock")) hooks.call(e, "setBounceBonus", 1);
         if (has(p, "sand_pouch") && reaction.equals("sandstorm")) hooks.call(e, "setRadiusBonus", 1.0);
         if (has(p, "rainbow_watering_can") && reaction.equals("rainbow")) hooks.call(e, "setHealBonus", 1.0);
-        if (has(p, "reaction_master_seal") && control) hooks.call(e, "setControlBonusTicks", 10);
+        if (has(p, "reaction_master_seal") && control) hooks.call(e, "multiplyControl", 1.2);   // 반응 CC +20%
+        if (has(p, "slow_inkwell") && control) hooks.call(e, "multiplyControl", 0.7);           // 표식 2배, 대신 반응 CC -30%
+        if (has(p, "reaction_catalyst") && control) hooks.call(e, "setNormalControlBonusTicks", 20); // 일반 CC(3초) +1초
         if (has(p, "cheer_megaphone"))
             for (Player m : party.onlineMates(p)) if (m.getWorld() == p.getWorld() && m.getLocation().distanceSquared(p.getLocation()) <= 64) timed(m, "cheer_megaphone", 5_000, 0, 3);
         if (has(p, "element_collector_note")) {
@@ -494,6 +493,26 @@ final class ArtifactEffects implements Listener {
             }
         }
         if (has(p, "reaction_chain_orb")) orbs.put(target.getUniqueId(), new Orb(p.getUniqueId(), trigger, now + 3_000));
+    }
+
+    /**
+     * Duration multiplier for a status landing on `p` (MagicStatusEvent, any source). 0 = immune.
+     * Reductions multiply: 작은 방패 배지 all -15%, 굳센 심장 all -50%, 벌레 퇴치 향 독·화상 -30%,
+     * 그을린 앞치마 둔화·중력 -30%, 폭풍우 피뢰침 기절·무장해제 -30%, 닻 장식 고정 -50%, 잠깨기 종 수면 면역.
+     */
+    double controlTaken(Player p, String status) {
+        if (has(p, "twilight_cape") && status.equals("sleep")) return 0;
+        double m = 1;
+        if (has(p, "small_shield_badge")) m *= 0.85;
+        if (has(p, "balance_scale")) m *= 0.5;
+        switch (status) {
+            case "poison", "burn" -> { if (has(p, "bug_repellent_incense")) m *= 0.7; }
+            case "slow", "gravity" -> { if (has(p, "scorched_apron")) m *= 0.7; }
+            case "stun", "disarm" -> { if (has(p, "storm_lightning_rod")) m *= 0.7; }
+            case "movement_lock" -> { if (has(p, "highland_telescope")) m *= 0.5; }
+            default -> { }
+        }
+        return m;
     }
 
     private int markTicks(Player p, int ticks) {
@@ -524,6 +543,8 @@ final class ArtifactEffects implements Listener {
                 register(cl, "school.chacademia.magicmythic.MagicHealEvent", this::heal);
                 mythic = mm;
                 plugin.getLogger().info("아티팩트 마법 효과 연결: " + mm.getName());
+                try { register(cl, "school.chacademia.magicmythic.MagicStatusEvent", this::status); }
+                catch (ClassNotFoundException | LinkageError old) { plugin.getLogger().warning("아티팩트 CC 감소 연결 안 됨 (MagicMythic에 MagicStatusEvent 없음): 이전 버전"); }
             } catch (ReflectiveOperationException | LinkageError err) {
                 plugin.getLogger().warning("아티팩트 마법 효과 연결 실패 (MagicMythic 버전 확인): " + err);
             }
@@ -580,6 +601,13 @@ final class ArtifactEffects implements Listener {
             if (!(get(e, "getCaster") instanceof Player p) || !wearsAny(p)) return;
             int ticks = (int) get(e, "getTicks"), next = markTicks(p, ticks);
             if (next != ticks) call(e, "setTicks", next);
+        }
+        private void status(Event e) {
+            if (!(get(e, "getTarget") instanceof Player p) || !wearsAny(p)) return;
+            int ticks = (int) get(e, "getTicks");
+            double mult = controlTaken(p, (String) get(e, "getStatus"));
+            if (mult <= 0) { call(e, "setCancelled", true); return; }
+            if (mult != 1) call(e, "setTicks", Math.max(1, (int) Math.round(ticks * mult)));
         }
         private void heal(Event e) {
             if (!(get(e, "getCaster") instanceof Player p) || !wearsAny(p)) return;

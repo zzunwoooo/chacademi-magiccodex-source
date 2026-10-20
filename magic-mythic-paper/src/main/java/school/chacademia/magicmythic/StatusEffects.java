@@ -156,6 +156,12 @@ final class StatusEffects implements Listener, AutoCloseable {
         boolean boss = plugin.targets().boss(target);
         if (boss && status == Status.ROOT) return false;
         if (boss && BOSS_SLOWED.contains(status)) { status = Status.SLOW; power = bossSlow; }
+        if (target instanceof Player tp && status != Status.MANA_BURN && MagicStatusEvent.listened()) {
+            var ev = new MagicStatusEvent(source, tp, status.id, ticks);
+            Bukkit.getPluginManager().callEvent(ev);
+            if (ev.isCancelled()) return false;
+            ticks = Math.clamp(ev.getTicks(), 1, 20 * 600);
+        }
         long now = now();
         Holder h = holders.computeIfAbsent(target.getUniqueId(), k -> new Holder(target));
         h.entity = target;
@@ -199,6 +205,17 @@ final class StatusEffects implements Listener, AutoCloseable {
             out.put(l.status(), new int[]{l.left(), (int) Math.round(x.power * 1000)});
         }
         return out;
+    }
+
+    /** Crowd control that limits movement or actions (제압의 머리띠 etc.). */
+    static final java.util.Set<Status> CONTROL = java.util.EnumSet.of(Status.STUN, Status.SLEEP, Status.ROOT, Status.FEAR, Status.DISARM,
+            Status.SLOW, Status.GRAVITY, Status.MOVEMENT_LOCK, Status.BLINDNESS);
+
+    boolean controlled(Entity e) {
+        if (e == null) return false;
+        Holder h = holders.get(e.getUniqueId());
+        if (h != null) for (Status s : h.entries.keySet()) if (CONTROL.contains(s)) return true;
+        return false;
     }
 
     boolean has(Entity e, Status s) {

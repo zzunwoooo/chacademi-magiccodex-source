@@ -247,7 +247,7 @@ artifacts:
     name: "그을린 앞치마"
     grade: common
     description: "아랫단이 검게 그을린 캔버스 앞치마."
-    effect: "받는 폭발 피해 -6%"
+    effect: "나에게 걸린 둔화·중력 지속 시간 -30%"
     icon: "magiccodex:textures/artifact/scorched_apron.png"
     order: 690
   practice_wand:
@@ -261,7 +261,7 @@ artifacts:
     name: "벌레 퇴치 향"
     grade: common
     description: "벌레들이 싫어하는 매캐한 향."
-    effect: "거미·좀벌레 같은 절지류에게 마법 피해 +5%"
+    effect: "나에게 걸린 독·화상 지속 시간 -30%"
     icon: "magiccodex:textures/artifact/bug_repellent_incense.png"
     order: 710
     enabled: false        # 보류: 첫 개발 버전 제외
@@ -283,7 +283,7 @@ artifacts:
     name: "작은 방패 배지"
     grade: common
     description: "손바닥만 한 둥근 방패 모양 배지."
-    effect: "방패로 막을 때 5% 확률로 방패 내구도가 줄지 않음"
+    effect: "나에게 걸리는 CC 지속 시간 -15%"
     icon: "magiccodex:textures/artifact/small_shield_badge.png"
     order: 740
   fur_scarf:
@@ -655,7 +655,7 @@ artifacts:
     name: "반응 촉진제"
     grade: rare
     description: "두 원소가 섞이며 거품이 이는 플라스크."
-    effect: "내가 일으킨 원소 반응의 피해 +15%"
+    effect: "내가 일으킨 원소 반응의 일반 CC(3초짜리) 시간 +1초"
     icon: "magiccodex:textures/artifact/reaction_catalyst.png"
     order: 290
   resonance_earring:
@@ -731,10 +731,10 @@ artifacts:
     icon: "magiccodex:textures/artifact/war_drum.png"
     order: 1170
   focus_headband:
-    name: "집중의 머리띠"
+    name: "제압의 머리띠"
     grade: rare
-    description: "이마에 푸른 보석이 박힌 머리띠."
-    effect: "웅크린 채 쓴 마법 피해 +10%"
+    description: "단단히 동여매면 눈앞의 적만 보인다."
+    effect: "CC에 걸린 적(기절·수면·속박·공포·무장해제·둔화·중력·고정·실명)에게 마법 피해 +8%"
     icon: "magiccodex:textures/artifact/focus_headband.png"
     order: 1180
   running_caster_badge:
@@ -745,10 +745,10 @@ artifacts:
     icon: "magiccodex:textures/artifact/running_caster_badge.png"
     order: 1190
   highland_telescope:
-    name: "고지대 망원경"
+    name: "닻 장식"
     grade: rare
-    description: "높은 곳에서 내려다보면 다 보인다."
-    effect: "나보다 3블록 이상 낮은 적에게 마법 피해 +8%"
+    description: "작은 쇠닻 모양 장식. 묵직하게 발밑을 붙잡는다."
+    effect: "모래 회오리에 끌려가지 않고, 나에게 걸린 고정 지속 시간 -50%"
     icon: "magiccodex:textures/artifact/highland_telescope.png"
     order: 1200
   melee_bell:
@@ -780,17 +780,17 @@ artifacts:
     icon: "magiccodex:textures/artifact/mana_cycle_ring.png"
     order: 1240
   twilight_cape:
-    name: "해질녘 망토"
+    name: "잠깨기 종"
     grade: rare
-    description: "노을빛으로 물든 망토 자락."
-    effect: "해 질 녘·새벽에 마법 피해 +10%"
+    description: "딸랑, 하고 울리면 졸음이 싹 달아나는 작은 종."
+    effect: "수면에 걸리지 않음"
     icon: "magiccodex:textures/artifact/twilight_cape.png"
     order: 1250
   storm_lightning_rod:
     name: "폭풍우 피뢰침"
     grade: rare
     description: "꼭대기에 작은 번개가 맺힌 피뢰침."
-    effect: "뇌우 중 마법 피해 +12%, 맑은 날에는 -4%"
+    effect: "나에게 걸린 기절·무장해제 지속 시간 -30%"
     icon: "magiccodex:textures/artifact/storm_lightning_rod.png"
     order: 1260
   double_mark_lens:
@@ -950,10 +950,10 @@ artifacts:
     icon: "magiccodex:textures/artifact/hermit_lantern.png"
     order: 450
   balance_scale:
-    name: "균형의 저울"
+    name: "굳센 심장"
     grade: unique
-    description: "어느 쪽으로도 기울지 않는 작은 저울."
-    effect: "키세팅이 3개 원소로 2칸씩 고르게 짜여 있으면 스킬 가속 +30"
+    description: "무엇에도 흔들리지 않는 묵직한 심장 모양 돌."
+    effect: "나에게 걸리는 CC 지속 시간 -50%, 대신 받는 피해 +10%"
     icon: "magiccodex:textures/artifact/balance_scale.png"
     order: 460
   element_collector_note:
@@ -967,14 +967,14 @@ artifacts:
     name: "반응 장인의 인장"
     grade: unique
     description: "두 원소 문양이 맞물린 보라 도장."
-    effect: "내가 일으킨 군중 제어 반응의 제어 시간 +0.5초"
+    effect: "내가 일으킨 원소 반응의 CC 시간 +20%"
     icon: "magiccodex:textures/artifact/reaction_master_seal.png"
     order: 480
   slow_inkwell:
     name: "느린 잉크병"
     grade: unique
     description: "잉크가 아주 천천히 떨어진다."
-    effect: "내 원소 표식 지속 시간 2배, 대신 원소 반응 피해 -30%"
+    effect: "내 원소 표식 지속 시간 2배, 대신 내가 일으킨 원소 반응의 CC 시간 -30%"
     icon: "magiccodex:textures/artifact/slow_inkwell.png"
     order: 490
   love_letter:
@@ -1041,7 +1041,7 @@ artifacts:
     name: "무지개 프리즘"
     grade: legendary
     description: "여러 원소의 빛을 품은 프리즘."
-    effect: "키세팅 6칸이 6원소 하나씩이면 내가 일으킨 원소 반응의 효과 2배"
+    effect: "키세팅 6칸이 6원소 하나씩이면 내가 일으킨 원소 반응의 피해·회복·범위 2배, CC 시간 +50%"
     icon: "magiccodex:textures/artifact/rainbow_prism.png"
     order: 530
   chaos_dice:

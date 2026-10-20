@@ -93,7 +93,7 @@ final class Reactions implements Listener, AutoCloseable {
                     var e = new MagicReactionEvent(caster, target, id(r.reaction()), markElement.id, element.id);
                     Bukkit.getPluginManager().callEvent(e);
                     if (e.isEffectCancelled()) return; // name pop only (artifact: element chalk)
-                    bonus = new Bonus(e.getRadiusBonus(), e.getBounceBonus(), e.getControlBonusTicks(), e.getHealBonus());
+                    bonus = new Bonus(e.getRadiusBonus(), e.getBounceBonus(), e.getControlBonusTicks(), e.getNormalControlBonusTicks(), e.getControlMultiplier(), e.getHealBonus());
                 }
                 applying = true;
                 try { apply(r.reaction(), caster, target, Math.max(damage, floor) * scale, now, bonus); }
@@ -104,7 +104,9 @@ final class Reactions implements Listener, AutoCloseable {
     }
 
     /** Artifact bonuses for one reaction ({@link MagicReactionEvent}). */
-    private record Bonus(double radius, int bounces, int control, double heal) { static final Bonus NONE = new Bonus(0, 0, 0, 0); }
+    private record Bonus(double radius, int bounces, int control, int normalControl, double controlMul, double heal) {
+        static final Bonus NONE = new Bonus(0, 0, 0, 0, 1, 0);
+    }
 
     static String id(Reaction r) { return r.name().toLowerCase(java.util.Locale.ROOT); }
 
@@ -114,10 +116,18 @@ final class Reactions implements Listener, AutoCloseable {
             POISON = StatusProtocol.Status.POISON, LOCK = StatusProtocol.Status.MOVEMENT_LOCK, FEAR = StatusProtocol.Status.FEAR,
             STUN = StatusProtocol.Status.STUN, ROOT = StatusProtocol.Status.ROOT, SLEEP = StatusProtocol.Status.SLEEP;
 
-    /** Crowd control through the status engine (icons, boss rules, immunity). Artifact control bonus adds ticks. */
+    /**
+     * Crowd control through the status engine (icons, boss rules, immunity, the target's own artifact reductions).
+     * Artifacts: duration x multiplier, + bonus ticks, + normal-CC-only bonus ticks when this is the 3 s kind.
+     */
     private void cc(LivingEntity caster, LivingEntity target, StatusProtocol.Status status, int ticks, double power, Bonus bonus) {
-        plugin.status().apply(caster, target, status, ticks + bonus.control(), power);
+        boolean normal = ticks == ccTicks && ticks != hardTicks;
+        int t = (int) Math.round(ticks * bonus.controlMul()) + bonus.control() + (normal ? bonus.normalControl() : 0);
+        plugin.status().apply(caster, target, status, Math.max(1, t), power);
     }
+
+    /** 닻 장식 (artifact): players wearing it are not pulled by 모래 회오리. Tag kept by MagicCodexBridge. */
+    static final String ANCHOR_TAG = "chacademi_anchor";
 
     /*
      * Owner rework 2026-10-20 (PvP): every reaction gives crowd control. Normal CC 3 s, hard CC 1 s (config).
@@ -147,7 +157,7 @@ final class Reactions implements Listener, AutoCloseable {
             case MAGMA -> { vfx.body(reaction, target, 20); cc(caster, target, SEAL, ccTicks, 0, bonus); }
             case FLARE -> {
                 vfx.body(reaction, target, 16);
-                target.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, ccTicks + bonus.control(), 0));
+                target.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, (int) Math.round(ccTicks * bonus.controlMul()) + bonus.control() + bonus.normalControl(), 0));
                 cc(caster, target, WEAK, ccTicks, 0, bonus);
             }
             case EMBER_CURSE -> { vfx.body(reaction, target, 20); cc(caster, target, MANA, manaBurnTicks, 0, Bonus.NONE); }
@@ -187,7 +197,7 @@ final class Reactions implements Listener, AutoCloseable {
                 double r = sandRadius + bonus.radius();
                 vfx.area(reaction, at, r, target, 16);
                 for (LivingEntity t : targets.enemiesNear(caster, at, r, 12)) {
-                    if (!t.equals(target) && !targets.boss(t)) {
+                    if (!t.equals(target) && !targets.boss(t) && !t.getScoreboardTags().contains(ANCHOR_TAG)) {
                         Vector v = at.toVector().subtract(t.getLocation().toVector()).setY(0);
                         if (v.lengthSquared() > 0.36) t.setVelocity(v.normalize().multiply(Math.min(0.7, v.length() * 0.3)).setY(0.08));
                     }

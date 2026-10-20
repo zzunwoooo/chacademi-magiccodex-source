@@ -1,4 +1,7 @@
 > Deployed 2026-10-20: [Korean command cleanup — all installed Paper modules, arena, Velocity and four client modules](CODEX_COMMAND_CLEANUP_DEPLOYED_20261020.md). Code 8e8cc23f, launcher feed b721b32, 1583 tests (2 hosting-only skips), actual loads and Korean console commands verified. House sorting 06753da and repaired asset manifest preserved; house dialogue content and artifact CC 7882171 remain excluded.
+> Claude 2026-10-20 (not built): [아티팩트 CC·원소 반응 개편 — 반응 아티팩트 4 수정 + CC 감소류 8 교체](CLAUDE_ARTIFACT_CC_20261020.md). Same branch claude/reaction-cc-vfx-20261020. MagicMythic + MagicCodexBridge + artifacts.yml together.
+
+> Claude 2026-10-20 (not built): [원소 반응 CC 개편 — VFX 팩 교체 + 반응 효과·크기 서버 코드](CLAUDE_REACTION_CC_VFX_20261020.md). Branch claude/reaction-cc-vfx-20261020 on codex/operating-final-20261019 @ 8356980. MagicMythic jar (school/wild) + client VFX pack.
 
 > Claude 2026-10-20 (not built): [명령어 전면 정리 — 한글 대단원 15개·Brigadier 칸 안내·실패 알림·영어 명령 삭제](CLAUDE_COMMAND_CLEANUP_20261020.md), 운영자 안내 [ADMIN_COMMANDS_KO.md](../ADMIN_COMMANDS_KO.md). Branch claude/command-cleanup-20261020 on codex/operating-final-20261019 @ ef55623. **All plugins + Velocity + all client mods together**; operating config command strings must change (§1).
 > Claude 2026-10-20 (not built): [하우징 가구 100종 그림 + furniture.yml 100종](CLAUDE_HOUSING_20261017.md#2026-10-20-가구-100종-그림-브랜치-claudehousing-furniture-20261020). Branch claude/housing-furniture-20261020 on codex/operating-final-20261019 @ ef55623 (+ cherry-pick 8521b9e). Client mod + live furniture.yml replacement on school/wild.
