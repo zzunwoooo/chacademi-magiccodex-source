@@ -152,3 +152,6 @@ The Bridge (school + wild) and the client mod must ship together. There are new 
 - Both servers and the client ship together (fishing protocol v2).
 - Register the 227 ItemsAdder items (27 gear + 200 fish, ids in the ymls). Without ItemsAdder the server falls back to plain items and logs a warning.
 - Live `fishing-gear.yml` / `fishing-fish.yml` / `fishing.yml` are not overwritten by the jar. Missing `itemsadder:` keys default to the same numbering, so merging is optional, but add `display: []` under codex-rewards if command rewards are used.
+
+- Top menu: 도감 dropdown has a 4th row 물고기 도감 (textures/hud/fish-codex-menu.png) → CODEX_OPEN. TopMenuTest updated.
+- Commits: 7b862ac (server/protocol/codex/shop/tank), 73b8bec (menu), 3153cae (minigame screen).
