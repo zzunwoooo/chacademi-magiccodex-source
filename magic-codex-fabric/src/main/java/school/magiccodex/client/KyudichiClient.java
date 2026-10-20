@@ -215,6 +215,16 @@ public final class KyudichiClient {
     static Gesture gesture;
     static final int WHEEL_RADIUS = 18;   // GUI px of drag before the menu takes over
 
+    /** Chat / cursor screen click on the spectator "나가기" button (KyudichiHud.leave): asks the arena server to end spectating. */
+    public static boolean leaveClick(double x, double y, int button) {
+        if (!active() || !spectator() || button != 0 || !KyudichiHud.leaveHit(x, y)) return false;
+        if (ClientPlayNetworking.canSend(Payload.ID)) ClientPlayNetworking.send(new Payload(KyudichiProtocol.encode(new KyudichiProtocol.SpectateLeave())));
+        var c = MinecraftClient.getInstance();
+        c.getSoundManager().play(net.minecraft.client.sound.PositionedSoundInstance.master(net.minecraft.sound.SoundEvents.UI_BUTTON_CLICK.value(), 1f, .4f));
+        if (c.currentScreen instanceof net.minecraft.client.gui.screen.ChatScreen) c.setScreen(null);
+        return true;
+    }
+
     /** HudCursorScreen.mouseClicked, after the other HUD widgets. */
     public static boolean cursorPress(double x, double y, int button) {
         if (!active() || spectator() || button != 0) return false;

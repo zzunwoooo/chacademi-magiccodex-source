@@ -15,7 +15,7 @@ public final class PartyChatInput {
   try{
    String text=PrivatePeer.message(raw);
    if(client.getConnection()==null)return true;
-   client.getConnection().sendCommand("party chat "+text);
+   client.getConnection().sendCommand("파티 채팅 "+text);
    ChatManager.INSTANCE.addSentMessage(raw);
   }catch(IllegalArgumentException e){client.gui.getChat().addMessage(Component.literal("[시스템] "+e.getMessage()));}
   return true;

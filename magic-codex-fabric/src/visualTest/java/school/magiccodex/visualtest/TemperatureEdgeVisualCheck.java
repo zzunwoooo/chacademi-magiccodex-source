@@ -24,7 +24,7 @@ final class TemperatureEdgeVisualCheck {
             c.player.setYaw(30);c.player.setPitch(8);
             if(phase[0]==-1){
                 c.getServer().execute(()->c.getServer().getOverworld().setTimeOfDay(6000));
-                command(c,"hud on");command(c,"hud temperature 18");phase[0]=0;ticks[0]=0;return;
+                command(c,"화면표시 켜기");school.magiccodex.client.PreviewClient.show(java.util.List.of("temperature","18"));phase[0]=0;ticks[0]=0;return;
             }
             c.inGameHud.getChatHud().clear(false);
             if(++ticks[0]<110)return;ticks[0]=0;
@@ -33,9 +33,9 @@ final class TemperatureEdgeVisualCheck {
                 String[] names={"normal-18","hot-40","cold-minus10","hot-45"};
                 try(var shot=ScreenshotRecorder.takeScreenshot(c.getFramebuffer())){shot.writeTo(out.resolve(names[phase[0]]+".png"));}
                 switch(phase[0]++){
-                    case 0->command(c,"hud temperature 40");
-                    case 1->command(c,"hud temperature -10");
-                    case 2->command(c,"hud temperature 45");
+                    case 0->school.magiccodex.client.PreviewClient.show(java.util.List.of("temperature","40"));
+                    case 1->school.magiccodex.client.PreviewClient.show(java.util.List.of("temperature","-10"));
+                    case 2->school.magiccodex.client.PreviewClient.show(java.util.List.of("temperature","45"));
                     default->{System.out.println("TEMPERATURE_EDGE_OK: normal 18, hot 40/45, cold -10; same camera; center remains readable");c.scheduleStop();}
                 }
             }catch(Exception e){throw new IllegalStateException(e);}

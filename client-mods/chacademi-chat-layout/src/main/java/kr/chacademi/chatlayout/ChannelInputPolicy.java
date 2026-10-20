@@ -9,6 +9,6 @@ public final class ChannelInputPolicy {
     }
     public static String command(Route route,String raw){
         String message=PrivatePeer.message(raw);
-        return switch(route){case GLOBAL->"chacachat g "+message;case HOUSE->"chacachat h "+message;default->throw new IllegalArgumentException("No channel command");};
+        return switch(route){case GLOBAL->"채팅 전체 "+message;case HOUSE->"채팅 기숙사 "+message;default->throw new IllegalArgumentException("No channel command");};
     }
 }

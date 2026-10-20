@@ -79,13 +79,13 @@ final class PlayerHudVisualCheck {
                 }else if(phase[0]==12){
                     var dispatcher=net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.getActiveDispatcher();
                     var source=(net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource)c.getNetworkHandler().getCommandSource();
-                    dispatcher.execute("hud frame 5",source);
+                    dispatcher.execute("화면표시 테두리 5",source);
                     if(PlayerHudClient.frame()!=5)throw new IllegalStateException("Frame command failed");
-                    try{dispatcher.execute("hud frame 10",source);throw new IllegalStateException("Accepted rank10");}
+                    try{dispatcher.execute("화면표시 테두리 10",source);throw new IllegalStateException("Accepted rank10");}
                     catch(com.mojang.brigadier.exceptions.CommandSyntaxException expected){}
-                    dispatcher.execute("hud off",source);
+                    dispatcher.execute("화면표시 끄기",source);
                     if(PlayerHudClient.active())throw new IllegalStateException("HUD off failed");
-                    dispatcher.execute("hud on",source);dispatcher.execute("hud frame 9",source);
+                    dispatcher.execute("화면표시 켜기",source);dispatcher.execute("화면표시 테두리 9",source);
                     float yaw=c.player.getYaw(),pitch=c.player.getPitch();
                     if(!PlayerHudClient.handleCursorKey(c,GLFW.GLFW_KEY_LEFT_CONTROL,GLFW.GLFW_PRESS)
                         || !(c.currentScreen instanceof HudCursorScreen) || c.mouse.isCursorLocked())
@@ -101,7 +101,7 @@ final class PlayerHudVisualCheck {
                     if(c.isWindowFocused() && c.currentScreen==null && !c.mouse.isCursorLocked())throw new IllegalStateException("Cursor did not relock while focused");
                     System.out.println("HUD_CURSOR_RELEASE: focused="+c.isWindowFocused()+", locked="+c.mouse.isCursorLocked()+", screen="+(c.currentScreen==null?"none":c.currentScreen.getClass().getSimpleName()));
                     if(c.player.experienceLevel<=0 || c.player.getArmor()<=0)throw new IllegalStateException("Missing XP/armor fixture");
-                    net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.getActiveDispatcher().execute("hud off",
+                    net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.getActiveDispatcher().execute("화면표시 끄기",
                         (net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource)c.getNetworkHandler().getCommandSource());
                     phase[0]=14;
                 }else if(phase[0]==14){

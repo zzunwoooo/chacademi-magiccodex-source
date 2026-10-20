@@ -39,7 +39,7 @@ public final class PreviewClient {
         });
     }
 
-    static void show(List<String> parts) {
+    public static void show(List<String> parts) {
         String kind = parts.getFirst();
         String value = parts.size() > 1 ? parts.get(1) : "";
         switch (kind) {

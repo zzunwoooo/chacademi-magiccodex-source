@@ -22,7 +22,7 @@ final class PetVisualCheck {
             c.player.setYaw(30);c.player.setPitch(8);
             if(phase[0]==-1&&c.currentScreen==null){
                 c.getServer().execute(()->c.getServer().getOverworld().setTimeOfDay(6000));
-                command(c,"petcodex preview");phase[0]=0;ticks[0]=0;return;
+                command(c,"펫도감 preview");phase[0]=0;ticks[0]=0;return;
             }
             if(!(c.currentScreen instanceof PetScreen s))return;
             c.inGameHud.getChatHud().clear(false);if(++ticks[0]<90)return;ticks[0]=0;
@@ -34,10 +34,10 @@ final class PetVisualCheck {
                     case 0->click(c,PetScreen.fit(s.width,s.height),1018,380);
                     case 1->click(c,PetScreen.fit(s.width,s.height),891,233);
                     case 2->click(c,PetScreen.fit(s.width,s.height),700,130);
-                    case 3->{click(c,PetScreen.fit(s.width,s.height),460,130);command(c,"petcodex model codex_fixture");}
+                    case 3->{click(c,PetScreen.fit(s.width,s.height),460,130);command(c,"펫도감 model codex_fixture");}
                     case 4->{var f=PetScreen.fit(s.width,s.height);click(c,f,640,350);s.mouseDragged(f.x()+740*f.scale(),f.y()+350*f.scale(),0,100*f.scale(),0);s.mouseReleased(f.x()+740*f.scale(),f.y()+350*f.scale(),0);}
                     case 5->{c.options.getGuiScale().setValue(3);c.onResolutionChanged();}
-                    case 6->command(c,"petcodex model missing_pet");
+                    case 6->command(c,"펫도감 model missing_pet");
                     default->{System.out.println("PET_UI_OK: filters, arrows, favorite, bbmodel textured hierarchy/idle/rotation, missing file, GUI scales 2/3");c.scheduleStop();}
                 }
             }catch(Exception e){throw new IllegalStateException(e);}
