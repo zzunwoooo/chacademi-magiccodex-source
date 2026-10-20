@@ -47,7 +47,7 @@ class TopMenuTest {
         for(int group=1;group<=3;group++){
             state.toggleGroup(group,300);state.update(480);
             float x=state.iconCenter(300,group);
-            for(int row=0;row<3;row++){
+            for(int row=0;row<TopMenuState.rows(group);row++){
                 float top=TopMenuState.rowTop(row);
                 assertEquals(TopMenuState.childHit(group,row),state.hit(x,top+1,300));
                 assertEquals(TopMenuState.childHit(group,row),state.hit(x+30,top+60,300));
@@ -58,6 +58,8 @@ class TopMenuTest {
         assertEquals("장비",TopMenuState.childLabel(1,1));
         assertEquals("칭호",TopMenuState.childLabel(1,2));
         assertEquals("아티팩트 도감",TopMenuState.childLabel(2,2));
+        assertEquals("물고기 도감",TopMenuState.childLabel(2,3));
+        assertEquals(4,TopMenuState.rows(2));assertEquals(3,TopMenuState.rows(1));
         assertEquals("파티",TopMenuState.childLabel(3,1));
         assertEquals("기숙사",TopMenuState.childLabel(3,2));
         assertTrue(TopMenuState.ROW_HEIGHT>=64);

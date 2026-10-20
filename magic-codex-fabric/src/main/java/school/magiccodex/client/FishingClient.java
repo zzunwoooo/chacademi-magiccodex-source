@@ -102,7 +102,10 @@ public final class FishingClient {
         return true;
     }
     static void stop(long session, float depth) { send(FishingProtocol.Request.stop(session, Math.clamp(depth, 0, FishingProtocol.MAX_DEPTH))); }
-    static void result(long session, int token, int outcome, int elapsed) { send(FishingProtocol.Request.result(session, token, outcome, Math.max(0, elapsed))); }
+    /** heldMask: bit i = the player was winding when bite attack i happened (that attack wears double). */
+    static void result(long session, int token, int outcome, int elapsed, int heldMask) {
+        send(FishingProtocol.Request.result(session, token, outcome, Math.max(0, elapsed), heldMask & 0xFF));
+    }
     static void recast(long session) { send(FishingProtocol.Request.of(FishingProtocol.RECAST, session)); }
     static void cancel(long session) { send(FishingProtocol.Request.of(FishingProtocol.CANCEL, session)); }
     static void openGear() { send(FishingProtocol.Request.of(FishingProtocol.GEAR_OPEN, 0)); }

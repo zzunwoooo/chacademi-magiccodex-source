@@ -65,4 +65,9 @@ class FishTankSqlTest {
  @Test void legacyRowsMigrateWithoutLosingIdentity()throws Exception{
   try(var c=connection()){try(var p=c.createStatement()){p.execute("CREATE TABLE codex_fish_tank(id VARCHAR(36) PRIMARY KEY,uuid VARCHAR(36),fish VARCHAR(64),size DOUBLE,caught_at BIGINT)");}var s=store(c);var f=fish();assertEquals(Put.OK,s.put(owner,f,100));assertEquals(f,s.list(owner).getFirst());}
  }
+ @Test void itemMetadataRegistrationPersistsWithoutDiscardingIdentity()throws Exception{
+  var f=fish();var item=new Fish(f.id(),f.fish(),f.size(),f.caughtAt(),UUID.randomUUID().toString());
+  try(var c=connection()){var s=store(c);assertTrue(s.registerItem(item));assertEquals(Map.of(item.id(),item),s.items(List.of(item.id(),item.id())));assertTrue(s.list(owner).isEmpty());}
+  try(var c=connection()){var s=store(c);assertEquals(Put.OK,s.put(owner,item,100));assertTrue(s.items(List.of(item.id())).isEmpty());assertThrows(SQLException.class,()->s.registerItem(item));assertEquals(item,s.list(owner).getFirst());}
+ }
 }

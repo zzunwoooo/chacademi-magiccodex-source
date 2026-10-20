@@ -46,6 +46,7 @@ public final class TopMenuClient {
             case 120 -> MagicCodexClient.openFromMenu();
             case 121 -> PetClient.open();
             case 122 -> {MagicCodexClient.dismiss();c.setScreen(new ArtifactCodexScreen(null));}
+            case 123 -> FishingClient.openCodex();   // 물고기 도감 (the server answers with the codex frame)
             case 130 -> SocialClient.open();
             case 131 -> {MagicCodexClient.dismiss();c.setScreen(new PartyScreen());}
             case 132 -> SchoolClient.open();

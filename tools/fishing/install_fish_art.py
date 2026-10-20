@@ -5,11 +5,10 @@
 
 <그림 폴더> 안의 fish_001.png ~ fish_200.png (투명 PNG, 크기 상관없음) 를
   - 낚시 패널·도감용: magic-codex-fabric/.../textures/gui/fishing/fish/<id>.png (256x256)
-  - 아이템 아이콘용:   magic-codex-fabric/.../textures/item/fishing/fish/<id>.png (128x128) + models / items json
 으로 넣는다. 그림이 있는 물고기만 바뀌고, 없는 물고기는 계속 실루엣으로 보인다.
-아이템 아이콘을 쓰려면 서버 fishing.yml 의 settings.fish-item-models 를 true 로 바꾸고 /낚시관리 리로드.
+아이템 아이콘은 ItemsAdder 아이템(item:fish_1~200)이 맡는다 (2026-10-20 owner). 넣은 뒤 tools/fishing/fish_bounds.py 도 다시 실행.
 """
-import json, os, re, sys
+import os, re, sys
 from PIL import Image
 
 ROOT = os.path.join(os.path.dirname(__file__), "..", "..", "magic-codex-fabric", "src", "main", "resources", "assets", "magiccodex")
@@ -29,17 +28,11 @@ def main(folder):
         if not m: continue
         fid = m.group(1)
         img = Image.open(os.path.join(folder, name))
-        for sub, size in (("textures/gui/fishing/fish", 256), ("textures/item/fishing/fish", 128)):
-            os.makedirs(os.path.join(ROOT, sub), exist_ok=True)
-            fit(img, size).save(os.path.join(ROOT, sub, fid + ".png"), optimize=True)
-        os.makedirs(os.path.join(ROOT, "models/item/fishing/fish"), exist_ok=True)
-        os.makedirs(os.path.join(ROOT, "items/fishing/fish"), exist_ok=True)
-        json.dump({"parent": "minecraft:item/generated", "textures": {"layer0": "magiccodex:item/fishing/fish/" + fid}},
-                  open(os.path.join(ROOT, "models/item/fishing/fish", fid + ".json"), "w"))
-        json.dump({"model": {"type": "minecraft:model", "model": "magiccodex:item/fishing/fish/" + fid}},
-                  open(os.path.join(ROOT, "items/fishing/fish", fid + ".json"), "w"))
+        sub = "textures/gui/fishing/fish"
+        os.makedirs(os.path.join(ROOT, sub), exist_ok=True)
+        fit(img, 256).save(os.path.join(ROOT, sub, fid + ".png"), optimize=True)
         n += 1
-    print(f"{n}종 넣음. 서버 fishing.yml settings.fish-item-models: true 로 바꾼 뒤 /낚시관리 리로드")
+    print(f"{n}종 넣음. tools/fishing/fish_bounds.py 로 실루엣 범위를 다시 만드세요.")
 
 if __name__ == "__main__":
     if len(sys.argv) != 2: sys.exit(__doc__)

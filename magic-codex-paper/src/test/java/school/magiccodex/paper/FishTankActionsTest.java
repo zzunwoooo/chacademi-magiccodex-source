@@ -16,6 +16,7 @@ class FishTankActionsTest {
   when(fishing.tank()).thenReturn(tank);when(fishing.gear()).thenReturn(gear);var data=new FishTank.Tank();data.loaded=true;data.fish.add(fish);when(tank.tank(owner)).thenReturn(data);
   var config=new FishingConfig();var def=mock(FishingConfig.Fish.class);when(def.id()).thenReturn(fish.fish());config.fishById=Map.of(fish.fish(),def);when(fishing.config()).thenReturn(config);
   when(gear.heldFish(item)).thenReturn(new FishingGear.HeldFish(fish.fish(),(float)fish.size(),fish.id(),fish.caughtAt(),fish.token()));
+  doAnswer(i->{Consumer<Map<String,Fish>> done=i.getArgument(1);done.accept(Map.of(fish.id(),fish));return null;}).when(tank).itemInfo(anyCollection(),any());
   when(shop.ready()).thenReturn(true);when(shop.price(fish)).thenReturn(100L);
  }
  void putOutcome(Put result){doAnswer(i->{Consumer<Put> done=i.getArgument(2);done.accept(result);return null;}).when(tank).put(eq(owner),any(Fish.class),any());}
@@ -27,6 +28,14 @@ class FishTankActionsTest {
  @Test void duplicatePhysicalItemIsConsumedWithoutAnotherFish()throws Exception{putOutcome(Put.DUPLICATE);invoke("insert",FishTankProtocol.Request.insert(2,fish.id(),11));verify(inventory).setItem(2,null);verify(tank,times(1)).put(eq(owner),any(Fish.class),any());}
  @Test void slotReplacementDoesNotConsumeAnUnrelatedItem()throws Exception{var other=mock(ItemStack.class);when(inventory.getItem(2)).thenReturn(item,other);when(gear.heldFish(other)).thenReturn(new FishingGear.HeldFish("fish_002",5,UUID.randomUUID().toString(),fish.caughtAt(),""));putOutcome(Put.OK);invoke("insert",FishTankProtocol.Request.insert(2,fish.id(),11));verify(inventory,never()).setItem(anyInt(),any());verify(other,never()).setAmount(anyInt());}
  @Test void offlineCompletionCannotMutateDisconnectedInventory()throws Exception{when(player.isOnline()).thenReturn(false);putOutcome(Put.OK);invoke("insert",FishTankProtocol.Request.insert(2,fish.id(),11));verify(inventory,never()).setItem(anyInt(),any());}
+ @Test void idOnlyFishUsesDatabaseSizeAndDate()throws Exception{
+  when(gear.heldFish(item)).thenReturn(new FishingGear.HeldFish(fish.fish(),0,fish.id(),0,fish.token()));putOutcome(Put.OK);invoke("insert",FishTankProtocol.Request.insert(2,fish.id(),11));
+  verify(tank).put(eq(owner),eq(fish),any());verify(inventory).setItem(2,null);
+ }
+ @Test void unregisteredFishNeverConsumesItemOrMintsValue()throws Exception{
+  doAnswer(i->{Consumer<Map<String,Fish>> done=i.getArgument(1);done.accept(Map.of());return null;}).when(tank).itemInfo(anyCollection(),any());invoke("insert",FishTankProtocol.Request.insert(2,fish.id(),11));
+  verify(tank,never()).put(any(),any(),any());verify(inventory,never()).setItem(anyInt(),any());assertFalse(busy.contains(owner));
+ }
  @Test void fullInventoryNeverClaimsAnItemizedFish()throws Exception{when(inventory.firstEmpty()).thenReturn(-1);invoke("itemize",FishTankProtocol.Request.fish(FishTankProtocol.ITEMIZE,fish.id(),12));verify(tank,never()).remove(any(),anyCollection(),any(Action.class),any());verify(fishing,never()).give(any(),anyList(),anyString());}
  @Test void inventoryFilledDuringDatabaseWaitRestoresClaim()throws Exception{when(inventory.firstEmpty()).thenReturn(0,-1);when(fishing.fishItem(fish)).thenReturn(item);claim(Action.ITEMIZE);finalizeSuccessfully();invoke("itemize",FishTankProtocol.Request.fish(FishTankProtocol.ITEMIZE,fish.id(),12));verify(tank).finish(eq(owner),eq(List.of(fish)),eq(Action.ITEMIZE),eq(false),any());verify(fishing,never()).give(any(),anyList(),anyString());}
  @Test void lockedFishAndStalePricesNeverReachPayment()throws Exception{tank.tank(owner).locks.add(fish.fish());invoke("sell",FishTankProtocol.Request.sell(fish.id(),100,13));verify(tank,never()).remove(any(),anyCollection(),any(Action.class),any());tank.tank(owner).locks.clear();invoke("sell",FishTankProtocol.Request.sell(fish.id(),999,14));verify(shop,never()).deposit(any(),anyLong());}

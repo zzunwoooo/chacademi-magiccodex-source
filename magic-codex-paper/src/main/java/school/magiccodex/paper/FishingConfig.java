@@ -16,9 +16,10 @@ final class FishingConfig {
 
     record Fish(String id, String name, int grade, boolean magic, int shape, float minSize, float maxSize, float minDepth, float maxDepth,
                 int waterMin, int waterMax, List<String> biomes, Set<String> seasons, String time, String weather, boolean underground,
-                Integer yMin, Integer yMax, String moon, int power, int pattern, String description, String item) {}
+                Integer yMin, Integer yMax, String moon, int power, int pattern, String description, String item, String itemsadder) {}
+    /** itemsadder = the ItemsAdder item that IS this gear (owner 2026-10-20: item:fishing_rod_1, item:lure_1, item:fishing_line_1, item:bait_1). */
     record Gear(int kind, String id, String name, int grade, float a, float b, int durability, String special, String specialText,
-                String description, boolean fallback) {
+                String description, boolean fallback, String itemsadder) {
         /** rods: a=reel power b=hook window / floats: a=sink speed b=sensitivity / lines: a=length b=max tension / baits: a=rare% b=wait% */
         float effect(String code, float otherwise) {
             for (String part : special.split(";")) {
@@ -37,7 +38,8 @@ final class FishingConfig {
     }
     record Reward(String item, int min, int max, int weight) {}
     record Treasure(int rolls, List<Reward> rewards) {}
-    record CodexReward(List<String> commands, List<String> items) {}
+    /** display = what the codex tooltip shows for the command rewards (commands have no readable name). */
+    record CodexReward(List<String> commands, List<String> items, List<String> display) {}
 
     float[] zoneMin = new float[4], zoneMax = new float[4];
     int[] depthCapBlocks = new int[0];
@@ -51,9 +53,11 @@ final class FishingConfig {
     Map<String, Fish> fishById = Map.of();
     final List<Map<String, Gear>> gear = new ArrayList<>(List.of(Map.of(), Map.of(), Map.of(), Map.of()));
     final Gear[] fallback = new Gear[4];
+    Map<String, Gear> gearByItem = Map.of();
+    Map<String, Fish> fishByItem = Map.of();
     Treasure[] treasure = new Treasure[4];
     CodexReward[] codexRewards = new CodexReward[4];
-    boolean enabled = true, fishModels, gearModels = true;
+    boolean enabled = true;
     int scanLimit = 4096, snapDamage = 10, tankCapacity = 100;
     float waitMin = 3, waitMax = 9, treasureChance = .03f;
     int teaseMin = 1, teaseMax = 3;
@@ -63,8 +67,6 @@ final class FishingConfig {
         var c = new FishingConfig();
         var main = yaml(new File(folder, "fishing.yml"));
         c.enabled = main.getBoolean("settings.enabled", true);
-        c.fishModels = main.getBoolean("settings.fish-item-models", false);
-        c.gearModels = main.getBoolean("settings.gear-item-models", true);
         c.scanLimit = Math.clamp(main.getInt("settings.water-scan-limit", 4096), 16, 32768);
         c.snapDamage = Math.max(0, main.getInt("settings.snap-line-damage", 10));
         c.tankCapacity = Math.clamp(main.getInt("tank.capacity", 100), 1, 10000);
@@ -106,7 +108,8 @@ final class FishingConfig {
         int[] tiers = {25, 50, 75, 100};
         for (int i = 0; i < 4; i++) {
             var s = main.getConfigurationSection("codex-rewards." + tiers[i]);
-            c.codexRewards[i] = new CodexReward(s == null ? List.of() : s.getStringList("commands"), s == null ? List.of() : s.getStringList("items"));
+            c.codexRewards[i] = new CodexReward(s == null ? List.of() : s.getStringList("commands"), s == null ? List.of() : s.getStringList("items"),
+                    s == null ? List.of() : s.getStringList("display"));
         }
         var ms = main.getConfigurationSection("messages");
         if (ms != null) for (String k : ms.getKeys(false)) c.messages.put(k, ms.getString(k, ""));
@@ -116,7 +119,9 @@ final class FishingConfig {
         var root = fy.getConfigurationSection("fish");
         if (root == null) throw new IllegalArgumentException("fishing-fish.yml fish 가 없음");
         var list = new ArrayList<Fish>();
+        int fishNumber = 0;
         for (String id : root.getKeys(false)) {
+            fishNumber++;
             var s = root.getConfigurationSection(id);
             String where = "fishing-fish.yml " + id;
             if (s == null || !FishingProtocol.validId(id)) throw new IllegalArgumentException(where + ": 아이디는 영문 소문자·숫자·_");
@@ -138,12 +143,18 @@ final class FishingConfig {
                     size.get(0).floatValue(), size.get(1).floatValue(), depth.get(0).floatValue(), depth.get(1).floatValue(), w0, w1,
                     List.copyOf(s.getStringList("biomes")), Set.copyOf(s.getStringList("seasons")), time, weather, s.getBoolean("underground", false),
                     s.contains("y-min") ? s.getInt("y-min") : null, s.contains("y-max") ? s.getInt("y-max") : null, s.getString("moon", ""),
-                    Math.clamp(s.getInt("power", 1), 1, 10), pattern, s.getString("description", ""), s.getString("item", "minecraft:cod")));
+                    Math.clamp(s.getInt("power", 1), 1, 10), pattern, s.getString("description", ""), s.getString("item", "minecraft:cod"),
+                    s.getString("itemsadder", "item:fish_" + fishNumber).strip()));
         }
         if (list.isEmpty() || list.size() > FishingProtocol.MAX_FISH) throw new IllegalArgumentException("물고기는 1~" + FishingProtocol.MAX_FISH + "종");
         c.fish = List.copyOf(list);
         var byId = new LinkedHashMap<String, Fish>(); for (Fish f : list) byId.put(f.id(), f);
         c.fishById = Collections.unmodifiableMap(byId);
+        var fishItems = new HashMap<String, Fish>();
+        for (Fish f : list) if (!f.itemsadder().isEmpty() && fishItems.put(f.itemsadder(), f) != null) throw new IllegalArgumentException("fishing-fish.yml " + f.id() + ".itemsadder 가 겹침: " + f.itemsadder());
+        c.fishByItem = Map.copyOf(fishItems);
+        var gearItems = new HashMap<String, Gear>();
+        String[] itemPrefix = {"item:fishing_rod_", "item:lure_", "item:fishing_line_", "item:bait_"};
 
         // ---- gear
         var gy = yaml(new File(folder, "fishing-gear.yml"));
@@ -152,6 +163,7 @@ final class FishingConfig {
             var sec = gy.getConfigurationSection(key);
             if (sec == null) throw new IllegalArgumentException("fishing-gear.yml " + key + " 가 없음");
             var map = new LinkedHashMap<String, Gear>();
+            int number = 0;
             String[] fields = switch (kind) { case 0 -> new String[]{"reel-power", "hook-window"}; case 1 -> new String[]{"sink-speed", "sensitivity"};
                 case 2 -> new String[]{"length", "max-tension"}; default -> new String[]{"rare-bonus", "wait-reduction"}; };
             for (String id : sec.getKeys(false)) {
@@ -160,16 +172,20 @@ final class FishingConfig {
                 if (s == null || !FishingProtocol.validId(id)) throw new IllegalArgumentException(where + ": 아이디는 영문 소문자·숫자·_");
                 int grade = FishingProtocol.gradeIndex(s.getString("grade", ""));
                 if (grade < 0) throw new IllegalArgumentException(where + ".grade");
+                number++;
                 var g = new Gear(kind, id, s.getString("name", id), grade, (float) s.getDouble(fields[0]), (float) s.getDouble(fields[1]),
                         kind == FishingProtocol.BAIT ? -1 : Math.max(1, s.getInt("durability", 50)), s.getString("special", ""),
-                        s.getString("special-text", ""), s.getString("description", ""), s.getBoolean("default", false));
+                        s.getString("special-text", ""), s.getString("description", ""), s.getBoolean("default", false),
+                        s.getString("itemsadder", itemPrefix[kind] + number).strip());
                 map.put(id, g);
+                if (!g.itemsadder().isEmpty() && gearItems.put(g.itemsadder(), g) != null) throw new IllegalArgumentException(where + ".itemsadder 가 겹침: " + g.itemsadder());
                 if (g.fallback() && c.fallback[kind] == null) c.fallback[kind] = g;
             }
             if (map.isEmpty()) throw new IllegalArgumentException(where(key) + " 가 비어 있음");
             if (c.fallback[kind] == null) c.fallback[kind] = map.values().iterator().next();
             c.gear.set(kind, Collections.unmodifiableMap(map));
         }
+        c.gearByItem = Map.copyOf(gearItems);
 
         // ---- treasure
         var ty = yaml(new File(folder, "fishing-treasure.yml"));

@@ -55,6 +55,13 @@ final class FishTank implements AutoCloseable {
   tank(id).fish.add(f);write(id,f,result->{if(result==Put.OK||result==Put.DUPLICATE)try{journal.acknowledge(pending);}catch(java.io.IOException e){failure("catch acknowledge",e);}else tank(id).fish.removeIf(x->x.id().equals(f.id()));if(done!=null)done.accept(f,result);});return f;
  }
  private void recover()throws Exception{for(var pending:journal.pending()){Put result=db().put(pending.owner(),pending.fish(),capacity);if(result==Put.OK||result==Put.DUPLICATE)journal.acknowledge(pending);}}
+ void itemInfo(Collection<String> ids,Consumer<Map<String,Fish>> done){
+  var copy=List.copyOf(ids);io.execute(()->{Map<String,Fish> rows;try{rows=db().items(copy);}catch(Exception e){failure("item metadata",e);rows=Map.of();}var out=rows;main(()->done.accept(out));});
+ }
+ void registerItem(Fish fish,BiConsumer<Fish,Boolean> done){
+  var saved=new Fish(fish.id(),fish.fish(),fish.size(),fish.caughtAt(),UUID.randomUUID().toString());
+  io.execute(()->{boolean ok=false;try{ok=db().registerItem(saved);}catch(Exception e){failure("register item",e);}boolean success=ok;main(()->done.accept(saved,success));});
+ }
  void put(UUID id,Fish fish,Consumer<Put> done){write(id,fish,done);}
  private void write(UUID id,Fish fish,Consumer<Put> done){
   int cap=capacity;io.execute(()->{Put result;

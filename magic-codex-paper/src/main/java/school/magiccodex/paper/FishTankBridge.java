@@ -61,7 +61,16 @@ final class FishTankBridge implements PluginMessageListener, Listener {
 
     private long price(FishTank.Fish f) { return shop == null ? 0 : shop.price(f); }
 
-    private void send(Player p, int kind, String notice) {
+    private void send(Player p,int kind,String notice){
+        if(!p.isOnline()||!open.contains(p.getUniqueId()))return;
+        var ids=new ArrayList<String>();
+        for(int slot=0;slot<FishTankProtocol.MAX_INVENTORY;slot++){
+            if(slot>35&&slot!=40)continue;var h=fishing.gear().heldFish(p.getInventory().getItem(slot));
+            if(h!=null&&!h.tankId().isEmpty())ids.add(h.tankId());
+        }
+        fishing.tank().itemInfo(ids,items->send(p,kind,notice,items));
+    }
+    private void send(Player p, int kind, String notice,Map<String,FishTank.Fish> items) {
         if (!p.isOnline() || !open.contains(p.getUniqueId())) return;
         var tank = fishing.tank().tank(p.getUniqueId());
         var config = fishing.config();
@@ -80,7 +89,10 @@ final class FishTankBridge implements PluginMessageListener, Listener {
             if (h == null) continue;
             var def = config.fishById.get(h.fish());
             if (def == null || !h.tankId().isEmpty() && !FishTankProtocol.validTankId(h.tankId())) continue;
-            held.add(new Held(slot, h.tankId(), def.id(), h.size(), h.caughtAt()));
+            var row=items.get(h.tankId());
+            if(!h.tankId().isEmpty()&&(row==null||!row.token().equals(h.token())||!row.fish().equals(h.fish())))continue;
+            if(row==null&&(!Float.isFinite(h.size())||h.size()<=0))continue;
+            held.add(new Held(slot,h.tankId(),def.id(),row==null?h.size():(float)row.size(),row==null?h.caughtAt():row.caughtAt()));
             species.computeIfAbsent(def.id(), k -> info(def));
         }
         try {
@@ -194,6 +206,15 @@ final class FishTankBridge implements PluginMessageListener, Listener {
         ItemStack item=inv.getItem(slot);var h=fishing.gear().heldFish(item);var def=h==null?null:fishing.config().fishById.get(h.fish());
         if(h==null||def==null||!h.tankId().equals(r.tankId())){done(p,r,false,"그 칸의 물고기가 바뀌었어요. 다시 골라 주세요.");return;}
         if(fishing.tank().full(p.getUniqueId())){done(p,r,false,"수조가 가득 찼어요.");return;}
+        if(!h.tankId().isEmpty()){
+            var held=h;int lookupSlot=slot;
+            fishing.tank().itemInfo(List.of(h.tankId()),items->{
+                var row=items.get(held.tankId());
+                if(row==null||!row.fish().equals(held.fish())||!row.token().equals(held.token())){done(p,r,false,"Invalid or already processed fish item.");return;}
+                commitInsert(p,r,lookupSlot,new FishTank.Fish(row.id(),row.fish(),row.size(),row.caughtAt(),held.token()));
+            });return;
+        }
+        if(!Float.isFinite(h.size())||h.size()<=0){done(p,r,false,"Fish metadata is missing.");return;}
         if(h.tankId().isEmpty()){
             int target=slot;
             if(item.getAmount()>1){target=inv.firstEmpty();if(target<0){done(p,r,false,"기존 물고기를 구분할 빈 칸 하나가 필요해요.");return;}}
@@ -203,7 +224,10 @@ final class FishTankBridge implements PluginMessageListener, Listener {
             tagged.setItemMeta(meta);if(target!=slot)item.setAmount(item.getAmount()-1);inv.setItem(target,tagged);slot=target;item=tagged;h=fishing.gear().heldFish(tagged);
         }
         var fish=new FishTank.Fish(h.tankId(),def.id(),Math.round(h.size()*10)/10.0,h.caughtAt()>0?h.caughtAt():System.currentTimeMillis(),h.token());
-        int sourceSlot=slot;
+        commitInsert(p,r,slot,fish);
+    }
+    private void commitInsert(Player p,Request r,int sourceSlot,FishTank.Fish fish){
+        var inv=p.getInventory();
         // Commit ownership first. An interrupted callback leaves a duplicate physical item, never two redeemable fish.
         fishing.tank().put(p.getUniqueId(),fish,put->{
             if((put==FishTank.Put.OK||put==FishTank.Put.DUPLICATE)&&p.isOnline()){

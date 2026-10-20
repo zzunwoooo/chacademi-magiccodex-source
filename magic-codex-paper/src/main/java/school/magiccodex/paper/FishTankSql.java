@@ -42,6 +42,20 @@ final class FishTankSql {
         }return out;
     }
     private Fish row(ResultSet r)throws SQLException{return new Fish(r.getString(1),r.getString(2),r.getDouble(3),r.getLong(4),r.getString(5));}
+    Map<String,Fish> items(Collection<String> ids)throws SQLException {
+        var out=new HashMap<String,Fish>();
+        try(var p=c.prepareStatement("SELECT id,fish,size,caught_at,item_token FROM codex_fish_tank WHERE id=? AND fish_state='ITEM'")){
+            for(String id:new HashSet<>(ids)){p.setString(1,id);try(var r=p.executeQuery()){if(r.next())out.put(id,row(r));}}
+        }return Map.copyOf(out);
+    }
+    boolean registerItem(Fish f)throws SQLException {
+        if(!Double.isFinite(f.size())||f.size()<=0||f.caughtAt()<=0||!f.id().matches("[a-fA-F0-9-]{36}")||f.token().isEmpty())return false;
+        return tx(new UUID(0,0),()->{
+            try(var p=c.prepareStatement("INSERT INTO codex_fish_tank(id,uuid,fish,size,caught_at,fish_state,item_token) VALUES(?,?,?,?,?,'ITEM',?)")){
+                p.setString(1,f.id());p.setString(2,new UUID(0,0).toString());p.setString(3,f.fish());p.setDouble(4,f.size());p.setLong(5,f.caughtAt());p.setString(6,f.token());return p.executeUpdate()==1;
+            }
+        });
+    }
     Set<String> locks(UUID owner)throws SQLException {
         var out=new HashSet<String>();try(var p=c.prepareStatement("SELECT fish FROM codex_fish_lock WHERE uuid=?")){p.setString(1,owner.toString());try(var r=p.executeQuery()){while(r.next())out.add(r.getString(1));}}return out;
     }

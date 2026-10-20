@@ -98,3 +98,60 @@ The Bridge (school + wild) and the client mod must ship together. There are new 
 
 - Owner decisions still open: whether itemized fish may be traded (it works today, because a traded item simply goes into the new owner's tank) and whether the fishing ymls should be shared through the DB. Today they are per server, like the codex.
 - No real-game QA yet. The layout was checked with PIL mocks that use the same coordinates.
+
+## 6. 2026-10-20 2차 패치 (owner QA 1~32, 한 번에 승인)
+
+**프로토콜 `FishingProtocol` v2** (VERSION 2, so client and Bridge must ship together):
+- `Session`: + `floorDepth` (real bottom m; 999 = deeper than measurable), `tankCount`, `tankCapacity`.
+- `Bite`: + `sweepMs`, `zone`, `rush` (hook gauge by fish grade: 일반 unchanged, 고급 ×1.25 / 18%, 유일 ×1.5 / 15%, 전설 ×2 / 12% + rush), `strain` (gear grade vs how deep into the line's reach: low gear near its line end → stronger fish), `attacks` (fish attacks during the reel).
+- `Result`: + tank count. The "통발에 넣었어요" note is gone; the count is shown next to the 낚시 title instead.
+- `Codex`: + `tierRewards` for the chest tooltip. `fishing.yml` codex-rewards gets a new `display:` list for command rewards.
+- `Request.result`: + `heldMask`. An attack while winding wears double. The client can only add wear, never remove it.
+
+**ItemsAdder + DB (owner 15/16/19):**
+- Gear items are ItemsAdder items. The ids are in `fishing-gear.yml itemsadder:` (`item:fishing_rod_1..7`, `item:lure_1..8`, `item:fishing_line_1..4`, `item:bait_1..8`). Rods must use the `minecraft:fishing_rod` base material.
+- Durability and fitted parts are in the new table `codex_fishing_gear` (`FishingGearStore`, shared DB). The item carries only `fishing_uid`. Copies share one row.
+- Rows are preloaded on join and when the gear window opens. A rod whose row isn't loaded yet refuses one cast with "불러오는 중".
+- Fish items are ItemsAdder `item:fish_1..200` (`fishing-fish.yml itemsadder:`). Itemize moves the tank row to `codex_fish_item`; putting the fish back moves it back. A copied item finds no row and is refused. Admin `물고기지급` registers a row.
+- Items from the first build (PDC kind/id/dur, size) are still read.
+- MagicCodex item models/icons for gear and fish were removed (681 files: `items/`, `models/item/`, `textures/item/fishing`).
+
+**Client (owner items):**
+- Result screen: localized names, item tooltips, title never covered.
+- Minigame:
+  - Thump on pulls; red-zone tremble, vignette and creak.
+  - New tension model: winding builds heat, releasing drops tension in about 1s; slack for 1.6s means the hook slips; strain applies.
+  - Tension gauge moved to the left.
+  - Ambient fish roam, and one of them bites.
+  - Early click no longer spooks an invisible fish.
+  - Hook and line are connected.
+  - Fleeing fish leave faster.
+  - Louder bite ding.
+  - Attack events, with the durability shown.
+  - Bottomless water when the line runs out; the ruler shows the real bottom, the line end and the zones.
+  - The bottom "수면까지" line is removed.
+  - Gradient behind the title, and the tank count beside it.
+  - Gear window divider moved.
+- Codex: dropdowns on the top layer; chest progress bar with hover zoom, glow, sound and reward tooltip.
+- Shop:
+  - Title between the laurels in jamsil extra-bold.
+  - Fish and text inside the borders; the lock count moved.
+  - Only caught species are listed (the server filters by codex).
+- Tank: no 개체 번호 row; ambient bubbles with sound; the selected fish swims to a reachable spot, and the panel flips to the left when the fish stays on the right.
+
+**Tension tuning:** simulated with a bot whose reaction time is 0.10 / 0.18 / 0.28 s. Holding the button all the time fails except on very shallow fish.
+
+| Case | 0.10 s | 0.18 s | 0.28 s | Time |
+|---|---|---|---|---|
+| 일반 fish, 5–8m, basic gear | 100% | 100% | 100% | 4–8 s |
+| 일반 fish at the basic line end (12m) | 100% | 90% | 15% | — |
+| 고급+ fish at the basic line end | 0% | 0% | 0% | — |
+| Matching gear | — | — | — | 고급 ~9 s, 유일 ~20 s, 전설 ~40 s |
+
+**GPT deploy notes:**
+- Both servers and the client ship together (fishing protocol v2).
+- Register the 227 ItemsAdder items (27 gear + 200 fish, ids in the ymls). Without ItemsAdder the server falls back to plain items and logs a warning.
+- Live `fishing-gear.yml` / `fishing-fish.yml` / `fishing.yml` are not overwritten by the jar. Missing `itemsadder:` keys default to the same numbering, so merging is optional, but add `display: []` under codex-rewards if command rewards are used.
+
+- Top menu: 도감 dropdown has a 4th row 물고기 도감 (textures/hud/fish-codex-menu.png) → CODEX_OPEN. TopMenuTest updated.
+- Commits: 7b862ac (server/protocol/codex/shop/tank), 73b8bec (menu), 3153cae (minigame screen).

@@ -18,7 +18,7 @@ import java.util.*;
  */
 public final class FishingProtocol {
     public static final String REQUEST = "magiccodex:fishing_request", RESPONSE = "magiccodex:fishing_response";
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;   // 2026-10-20 v2: floor depth, tank count, hook gauge, strain, attacks, codex tier rewards
     public static final int MAX_REQUEST_BYTES = 256, MAX_BYTES = 262144;
 
     // C2S actions
@@ -46,20 +46,24 @@ public final class FishingProtocol {
     public static final int MAX_ID = 64, MAX_NAME = 48, MAX_TEXT = 200, MAX_NOTICE = 160, MAX_OWNED = 108, MAX_FISH = 400,
             MAX_REWARDS = 16, MAX_PREVIEW = 2048, MAX_SPECIAL = 64;
     public static final float MAX_DEPTH = 999;
+    public static final int MAX_ATTACKS = 8;
+    // fish attacks during the reel (extra wear): bite the line / shake the rod
+    public static final int ATTACK_LINE = 0, ATTACK_ROD = 1;
 
     // ------------------------------------------------------------------ records
 
-    public record Request(int action, long session, float depth, int token, int outcome, int elapsedMs, int kind, int slot, int tier) {
+    /** RESULT v2: heldMask = bit i set when the player was winding during attack i (that attack wears double; it can only add wear). */
+    public record Request(int action, long session, float depth, int token, int outcome, int elapsedMs, int kind, int slot, int tier, int heldMask) {
         public Request {
             if (action < STOP || action > CODEX_CLAIM || !Float.isFinite(depth) || depth < 0 || depth > MAX_DEPTH
                     || outcome < 0 || outcome > ESCAPED || elapsedMs < 0 || kind < ROD || kind > BAIT || slot < 0 || slot > 1000
-                    || tier < 0 || tier > 3) throw new IllegalArgumentException("fishing request");
+                    || tier < 0 || tier > 3 || heldMask < 0 || heldMask > 255) throw new IllegalArgumentException("fishing request");
         }
-        public static Request of(int action, long session) { return new Request(action, session, 0, 0, 0, 0, 0, 0, 0); }
-        public static Request stop(long session, float depth) { return new Request(STOP, session, depth, 0, 0, 0, 0, 0, 0); }
-        public static Request result(long session, int token, int outcome, int elapsed) { return new Request(RESULT, session, 0, token, outcome, elapsed, 0, 0, 0); }
-        public static Request equip(int kind, int slot) { return new Request(GEAR_EQUIP, 0, 0, 0, 0, 0, kind, slot, 0); }
-        public static Request claim(int tier) { return new Request(CODEX_CLAIM, 0, 0, 0, 0, 0, 0, 0, tier); }
+        public static Request of(int action, long session) { return new Request(action, session, 0, 0, 0, 0, 0, 0, 0, 0); }
+        public static Request stop(long session, float depth) { return new Request(STOP, session, depth, 0, 0, 0, 0, 0, 0, 0); }
+        public static Request result(long session, int token, int outcome, int elapsed, int heldMask) { return new Request(RESULT, session, 0, token, outcome, elapsed, 0, 0, 0, heldMask); }
+        public static Request equip(int kind, int slot) { return new Request(GEAR_EQUIP, 0, 0, 0, 0, 0, kind, slot, 0, 0); }
+        public static Request claim(int tier) { return new Request(CODEX_CLAIM, 0, 0, 0, 0, 0, 0, 0, tier, 0); }
     }
 
     /** One equipped piece. count = bait amount (-1 = endless default), durability/max = -1 when it has none. */
@@ -78,24 +82,43 @@ public final class FishingProtocol {
         public Piece piece(int kind) { return pieces.get(kind); }
     }
     public sealed interface Frame permits Session, Bite, Result, Close, GearList, Codex {}
-    /** maxDepth = how deep the bobber can sink here (line length and the water's real depth). */
-    public record Session(long session, int phase, int background, float maxDepth, int waterClass, int waterBlocks, Gear gear, String notice) implements Frame {
+    /**
+     * maxDepth = how deep the bobber can sink here (line length and the water's real depth). floorDepth = the water's
+     * real bottom (m); MAX_DEPTH = deeper than anything measurable. The bobber stopped by the line (floorDepth > maxDepth)
+     * hangs in open water: no sea floor is drawn. tankCount / tankCapacity = the 통발 tank, shown next to the title.
+     */
+    public record Session(long session, int phase, int background, float maxDepth, float floorDepth, int waterClass, int waterBlocks,
+                          int tankCount, int tankCapacity, Gear gear, String notice) implements Frame {
         public Session {
             if (phase < PHASE_READY || phase > PHASE_WATER || background < 0 || background > 3 || !Float.isFinite(maxDepth) || maxDepth < 0
-                    || maxDepth > MAX_DEPTH || waterClass < 0 || waterClass > 3 || gear == null || !okNotice(notice)) throw new IllegalArgumentException("fishing session");
+                    || maxDepth > MAX_DEPTH || !Float.isFinite(floorDepth) || floorDepth < 0 || floorDepth > MAX_DEPTH
+                    || waterClass < 0 || waterClass > 3 || tankCount < 0 || tankCapacity < 0 || gear == null || !okNotice(notice)) throw new IllegalArgumentException("fishing session");
         }
+        public boolean bottomless() { return floorDepth > maxDepth + .5f; }
+    }
+    /** A fish attack during the reel at atMs after the hook: kind ATTACK_LINE / ATTACK_ROD, damage = durability lost (x2 when winding). */
+    public record Attack(int atMs, int kind, int damage) {
+        public Attack { if (atMs < 0 || atMs > 600000 || kind < ATTACK_LINE || kind > ATTACK_ROD || damage < 0 || damage > 1000) throw new IllegalArgumentException("fishing attack"); }
     }
     /**
      * What will bite. waitMs = until it starts coming, teases = fake nibbles before the real one, hookWindowMs = the
      * reaction window, size = 0..1 within the silhouette range, grade = -1 unless the float reveals it, magic = a magic fish
      * (the mana-amplifier rod reels it faster).
+     * v2: sweepMs = how long the hook gauge needle takes across the bar, zone = width of the success zone (0..1), rush = the
+     * needle speeds up near the zone (legendary); strain = how hard this fish is for this gear at this depth (1 = normal,
+     * higher = stronger pull / lower tension room: low-grade gear deep down); attacks = what the fish does to the gear
+     * while it is reeled (the server charges the wear of the attacks that happened before the reported end).
      */
     public record Bite(long session, int token, int shape, float size, int grade, int waitMs, int teases, int hookWindowMs,
-                       int power, int pattern, long seed, float depth, boolean magic) implements Frame {
+                       int power, int pattern, long seed, float depth, boolean magic, int sweepMs, float zone, boolean rush, float strain,
+                       List<Attack> attacks) implements Frame {
         public Bite {
             if (shape < 0 || shape > SHAPE_CHEST || !Float.isFinite(size) || size < 0 || size > 1 || grade < -1 || grade > 3 || waitMs < 0 || waitMs > 60000
                     || teases < 0 || teases > 8 || hookWindowMs < 100 || hookWindowMs > 5000 || power < 1 || power > 10 || pattern < 0
-                    || pattern >= PATTERNS.length || !Float.isFinite(depth) || depth < 0 || depth > MAX_DEPTH) throw new IllegalArgumentException("fishing bite");
+                    || pattern >= PATTERNS.length || !Float.isFinite(depth) || depth < 0 || depth > MAX_DEPTH || sweepMs < 200 || sweepMs > 20000
+                    || !Float.isFinite(zone) || zone < .03f || zone > .6f || !Float.isFinite(strain) || strain < .5f || strain > 5
+                    || attacks == null || attacks.size() > MAX_ATTACKS) throw new IllegalArgumentException("fishing bite");
+            attacks = List.copyOf(attacks);
         }
     }
     public record Reward(String name, int amount, byte[] preview) {
@@ -103,13 +126,16 @@ public final class FishingProtocol {
             if (name == null || name.length() > MAX_NAME || amount < 0 || preview == null || preview.length > MAX_PREVIEW) throw new IllegalArgumentException("fishing reward");
         }
     }
-    /** fishId/name are "" unless something was caught. grade = fish grade or chest grade. */
+    /**
+     * fishId/name are "" unless something was caught. grade = fish grade or chest grade. Reward.preview is the serialized
+     * item: the client shows its own localized name and the normal item tooltip from it (name is only a fallback).
+     */
     public record Result(long session, int outcome, String fishId, String name, int grade, int shape, float sizeCm, boolean record, boolean newEntry,
-                         List<Reward> rewards, boolean mailed, Gear gear, String notice) implements Frame {
+                         List<Reward> rewards, boolean mailed, Gear gear, int tankCount, int tankCapacity, String notice) implements Frame {
         public Result {
             if (outcome < CAUGHT || outcome > REFUSED || fishId == null || (!fishId.isEmpty() && !validId(fishId)) || name == null || name.length() > MAX_NAME
                     || grade < 0 || grade > 3 || shape < 0 || shape > SHAPE_CHEST || !Float.isFinite(sizeCm) || sizeCm < 0 || rewards == null
-                    || rewards.size() > MAX_REWARDS || gear == null || !okNotice(notice)) throw new IllegalArgumentException("fishing result");
+                    || rewards.size() > MAX_REWARDS || gear == null || tankCount < 0 || tankCapacity < 0 || !okNotice(notice)) throw new IllegalArgumentException("fishing result");
             rewards = List.copyOf(rewards);
         }
     }
@@ -139,12 +165,16 @@ public final class FishingProtocol {
                 throw new IllegalArgumentException("fishing entry " + id);
         }
     }
-    /** treasures[g] = chests of grade g opened; claimed/available = bit masks over the 4 completion tiers. */
-    public record Codex(List<Entry> entries, int[] treasures, int claimed, int available, String notice) implements Frame {
+    /**
+     * treasures[g] = chests of grade g opened; claimed/available = bit masks over the 4 completion tiers.
+     * tierRewards[t] = what tier t gives (items: serialized preview; command rewards: name = the yml display text, empty preview).
+     */
+    public record Codex(List<Entry> entries, int[] treasures, int claimed, int available, List<List<Reward>> tierRewards, String notice) implements Frame {
         public Codex {
             if (entries == null || entries.size() > MAX_FISH || treasures == null || treasures.length != 4 || claimed < 0 || claimed > 15
-                    || available < 0 || available > 15 || !okNotice(notice)) throw new IllegalArgumentException("fishing codex");
-            entries = List.copyOf(entries); treasures = treasures.clone();
+                    || available < 0 || available > 15 || tierRewards == null || tierRewards.size() != 4 || !okNotice(notice)) throw new IllegalArgumentException("fishing codex");
+            for (var l : tierRewards) if (l == null || l.size() > MAX_REWARDS) throw new IllegalArgumentException("fishing codex rewards");
+            entries = List.copyOf(entries); treasures = treasures.clone(); tierRewards = tierRewards.stream().map(List::copyOf).toList();
         }
         public int caught() { int n = 0; for (Entry e : entries) if (e.caught()) n++; return n; }
     }
@@ -182,7 +212,7 @@ public final class FishingProtocol {
             d.writeInt(VERSION); d.writeByte(r.action()); d.writeLong(r.session());
             switch (r.action()) {
                 case STOP -> d.writeFloat(r.depth());
-                case RESULT -> { d.writeInt(r.token()); d.writeByte(r.outcome()); d.writeInt(r.elapsedMs()); }
+                case RESULT -> { d.writeInt(r.token()); d.writeByte(r.outcome()); d.writeInt(r.elapsedMs()); d.writeByte(r.heldMask()); }
                 case GEAR_EQUIP -> { d.writeByte(r.kind()); d.writeInt(r.slot()); }
                 case CODEX_CLAIM -> d.writeByte(r.tier());
                 default -> {}
@@ -195,9 +225,9 @@ public final class FishingProtocol {
             int action = d.readUnsignedByte(); long session = d.readLong();
             return switch (action) {
                 case STOP -> Request.stop(session, d.readFloat());
-                case RESULT -> { int token = d.readInt(); int outcome = d.readUnsignedByte(); yield Request.result(session, token, outcome, d.readInt()); }
-                case GEAR_EQUIP -> { int kind = d.readUnsignedByte(); yield new Request(GEAR_EQUIP, session, 0, 0, 0, 0, kind, d.readInt(), 0); }
-                case CODEX_CLAIM -> new Request(CODEX_CLAIM, session, 0, 0, 0, 0, 0, 0, d.readUnsignedByte());
+                case RESULT -> { int token = d.readInt(); int outcome = d.readUnsignedByte(); int elapsed = d.readInt(); yield Request.result(session, token, outcome, elapsed, d.readUnsignedByte()); }
+                case GEAR_EQUIP -> { int kind = d.readUnsignedByte(); yield new Request(GEAR_EQUIP, session, 0, 0, 0, 0, kind, d.readInt(), 0, 0); }
+                case CODEX_CLAIM -> new Request(CODEX_CLAIM, session, 0, 0, 0, 0, 0, 0, d.readUnsignedByte(), 0);
                 default -> Request.of(action, session);
             };
         });
@@ -211,19 +241,22 @@ public final class FishingProtocol {
             switch (frame) {
                 case Session s -> {
                     d.writeByte(FRAME_SESSION); d.writeLong(s.session()); d.writeByte(s.phase()); d.writeByte(s.background());
-                    d.writeFloat(s.maxDepth()); d.writeByte(s.waterClass()); d.writeInt(s.waterBlocks()); gear(d, s.gear()); d.writeUTF(s.notice());
+                    d.writeFloat(s.maxDepth()); d.writeFloat(s.floorDepth()); d.writeByte(s.waterClass()); d.writeInt(s.waterBlocks());
+                    d.writeInt(s.tankCount()); d.writeInt(s.tankCapacity()); gear(d, s.gear()); d.writeUTF(s.notice());
                 }
                 case Bite b -> {
                     d.writeByte(FRAME_BITE); d.writeLong(b.session()); d.writeInt(b.token()); d.writeByte(b.shape()); d.writeFloat(b.size());
                     d.writeByte(b.grade() + 1); d.writeInt(b.waitMs()); d.writeByte(b.teases()); d.writeInt(b.hookWindowMs()); d.writeByte(b.power());
                     d.writeByte(b.pattern()); d.writeLong(b.seed()); d.writeFloat(b.depth()); d.writeBoolean(b.magic());
+                    d.writeInt(b.sweepMs()); d.writeFloat(b.zone()); d.writeBoolean(b.rush()); d.writeFloat(b.strain());
+                    d.writeByte(b.attacks().size()); for (Attack a : b.attacks()) { d.writeInt(a.atMs()); d.writeByte(a.kind()); d.writeShort(a.damage()); }
                 }
                 case Result r -> {
                     d.writeByte(FRAME_RESULT); d.writeLong(r.session()); d.writeByte(r.outcome()); d.writeUTF(r.fishId()); d.writeUTF(r.name());
                     d.writeByte(r.grade()); d.writeByte(r.shape()); d.writeFloat(r.sizeCm()); d.writeBoolean(r.record()); d.writeBoolean(r.newEntry());
                     d.writeByte(r.rewards().size());
-                    for (Reward w : r.rewards()) { d.writeUTF(w.name()); d.writeInt(w.amount()); d.writeShort(w.preview().length); d.write(w.preview()); }
-                    d.writeBoolean(r.mailed()); gear(d, r.gear()); d.writeUTF(r.notice());
+                    for (Reward w : r.rewards()) reward(d, w);
+                    d.writeBoolean(r.mailed()); gear(d, r.gear()); d.writeInt(r.tankCount()); d.writeInt(r.tankCapacity()); d.writeUTF(r.notice());
                 }
                 case Close c -> { d.writeByte(FRAME_CLOSE); d.writeLong(c.session()); d.writeUTF(c.notice()); }
                 case GearList g -> {
@@ -243,7 +276,9 @@ public final class FishingProtocol {
                         d.writeUTF(e.depth()); d.writeUTF(e.time());
                     }
                     for (int t : c.treasures()) d.writeInt(t);
-                    d.writeByte(c.claimed()); d.writeByte(c.available()); d.writeUTF(c.notice());
+                    d.writeByte(c.claimed()); d.writeByte(c.available());
+                    for (var l : c.tierRewards()) { d.writeByte(l.size()); for (Reward w : l) reward(d, w); }
+                    d.writeUTF(c.notice());
                 }
             }
         });
@@ -254,22 +289,28 @@ public final class FishingProtocol {
             if (d.readInt() != VERSION) throw new IOException("version");
             int type = d.readUnsignedByte();
             return switch (type) {
-                case FRAME_SESSION -> new Session(d.readLong(), d.readUnsignedByte(), d.readUnsignedByte(), d.readFloat(), d.readUnsignedByte(),
-                        d.readInt(), gear(d), d.readUTF());
-                case FRAME_BITE -> new Bite(d.readLong(), d.readInt(), d.readUnsignedByte(), d.readFloat(), d.readUnsignedByte() - 1, d.readInt(),
-                        d.readUnsignedByte(), d.readInt(), d.readUnsignedByte(), d.readUnsignedByte(), d.readLong(), d.readFloat(), d.readBoolean());
+                case FRAME_SESSION -> new Session(d.readLong(), d.readUnsignedByte(), d.readUnsignedByte(), d.readFloat(), d.readFloat(), d.readUnsignedByte(),
+                        d.readInt(), d.readInt(), d.readInt(), gear(d), d.readUTF());
+                case FRAME_BITE -> {
+                    long session = d.readLong(); int token = d.readInt(), shape = d.readUnsignedByte(); float size = d.readFloat();
+                    int grade = d.readUnsignedByte() - 1, wait = d.readInt(), teases = d.readUnsignedByte(), window = d.readInt(), power = d.readUnsignedByte(),
+                            pattern = d.readUnsignedByte();
+                    long seed = d.readLong(); float depth = d.readFloat(); boolean magic = d.readBoolean();
+                    int sweep = d.readInt(); float zone = d.readFloat(); boolean rush = d.readBoolean(); float strain = d.readFloat();
+                    int n = d.readUnsignedByte(); if (n > MAX_ATTACKS) throw new IOException("attacks");
+                    var attacks = new ArrayList<Attack>();
+                    for (int i = 0; i < n; i++) attacks.add(new Attack(d.readInt(), d.readUnsignedByte(), d.readUnsignedShort()));
+                    yield new Bite(session, token, shape, size, grade, wait, teases, window, power, pattern, seed, depth, magic, sweep, zone, rush, strain, attacks);
+                }
                 case FRAME_RESULT -> {
                     long session = d.readLong(); int outcome = d.readUnsignedByte(); String id = d.readUTF(), name = d.readUTF();
                     int grade = d.readUnsignedByte(), shape = d.readUnsignedByte(); float size = d.readFloat();
                     boolean record = d.readBoolean(), fresh = d.readBoolean();
                     int n = d.readUnsignedByte(); if (n > MAX_REWARDS) throw new IOException("rewards");
                     var rewards = new ArrayList<Reward>();
-                    for (int i = 0; i < n; i++) {
-                        String rn = d.readUTF(); int amount = d.readInt(); int len = d.readUnsignedShort();
-                        if (len > MAX_PREVIEW) throw new IOException("preview");
-                        byte[] p = new byte[len]; d.readFully(p); rewards.add(new Reward(rn, amount, p));
-                    }
-                    yield new Result(session, outcome, id, name, grade, shape, size, record, fresh, rewards, d.readBoolean(), gear(d), d.readUTF());
+                    for (int i = 0; i < n; i++) rewards.add(reward(d));
+                    boolean mailed = d.readBoolean(); Gear g = gear(d); int tank = d.readInt(), capacity = d.readInt();
+                    yield new Result(session, outcome, id, name, grade, shape, size, record, fresh, rewards, mailed, g, tank, capacity, d.readUTF());
                 }
                 case FRAME_CLOSE -> new Close(d.readLong(), d.readUTF());
                 case FRAME_GEAR -> {
@@ -288,13 +329,25 @@ public final class FishingProtocol {
                     for (int i = 0; i < n; i++) entries.add(new Entry(d.readUTF(), d.readUTF(), d.readUnsignedByte(), d.readUnsignedByte(), d.readBoolean(),
                             d.readFloat(), d.readInt(), d.readUTF(), d.readUTF(), d.readUTF(), d.readUTF(), d.readUTF()));
                     int[] t = new int[4]; for (int i = 0; i < 4; i++) t[i] = d.readInt();
-                    yield new Codex(entries, t, d.readUnsignedByte(), d.readUnsignedByte(), d.readUTF());
+                    int claimed = d.readUnsignedByte(), available = d.readUnsignedByte();
+                    var tiers = new ArrayList<List<Reward>>();
+                    for (int k = 0; k < 4; k++) {
+                        int m = d.readUnsignedByte(); if (m > MAX_REWARDS) throw new IOException("tier rewards");
+                        var l = new ArrayList<Reward>(); for (int i = 0; i < m; i++) l.add(reward(d)); tiers.add(l);
+                    }
+                    yield new Codex(entries, t, claimed, available, tiers, d.readUTF());
                 }
                 default -> throw new IOException("frame " + type);
             };
         });
     }
 
+    private static void reward(DataOutputStream d, Reward w) throws IOException { d.writeUTF(w.name()); d.writeInt(w.amount()); d.writeShort(w.preview().length); d.write(w.preview()); }
+    private static Reward reward(DataInputStream d) throws IOException {
+        String rn = d.readUTF(); int amount = d.readInt(); int len = d.readUnsignedShort();
+        if (len > MAX_PREVIEW) throw new IOException("preview");
+        byte[] p = new byte[len]; d.readFully(p); return new Reward(rn, amount, p);
+    }
     private static void gear(DataOutputStream d, Gear g) throws IOException {
         for (Piece p : g.pieces()) {
             d.writeByte(p.kind()); d.writeUTF(p.id()); d.writeUTF(p.name()); d.writeByte(p.grade()); d.writeInt(p.durability());

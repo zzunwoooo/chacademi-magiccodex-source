@@ -22,8 +22,10 @@ import school.magiccodex.protocol.FishTankProtocol.*;
  * light rays sway and flicker and two caustic layers move over the sand and under the surface like real water.
  * Clicking a fish (or a list row) zooms the camera onto it smoothly (eased progress + smoothed focus, the fish slows,
  * turns and comes closer to about 380px) while the background edge blurs through a radial mask (pre-blurred copy
- * under the sharp one) and the info panel slides in: name, grade, size, caught date, sale price, 개체 번호,
- * description, and 아이템화 / 방생 (press twice) / 즉시 판매.
+ * under the sharp one) and the info panel slides in: name, grade, size, caught date, sale price,
+ * description, and 아이템화 / 방생 (press twice) / 즉시 판매. The fish swims to a spot the clamped camera can reach;
+ * a fish on the right half gets the panel mirrored to its left (side changes fade out and back in).
+ * Every 6-14 s a quiet bubble sound plays and a few bubbles rise from the sand.
  * The right list (collapsible) has search and 최근 / 등급 / 크기 / 넣기. 넣기 lists the fish items in the inventory
  * (owner: no inventory band at the bottom); clicking one opens a popup with 수조에 넣기.
  * The server decides everything (FishTankBridge); this screen only shows and asks.
@@ -64,6 +66,8 @@ final class FishTankScreen extends Screen {
     private long lastFrame;
     private float time;
     private final float[][] motes = new float[46][5];   // x, y, size, speed, phase in 0..1 view units
+    private final List<float[]> bubbles = new ArrayList<>();
+    private float nextBubble = -1;                      // time of the next ambient bubble burst
 
     // ---- camera / selection
     private String selected, hovered;
@@ -72,6 +76,9 @@ final class FishTankScreen extends Screen {
     private float list = 0;            // right list slide 0..1
     private boolean listOpen;
     private float camX, camY, zoom = 1, viewCx, viewCy, maskX, maskY;
+    // panel side: 1 = panel right of the fish (fish at the left focus point), -1 = mirrored (fish on the right part)
+    private int side = 1, sideShown = 1;
+    private float sideFade = 1, focusSide = 1;   // panel fade while changing sides, smoothed focus side for the camera
     private float l0, t0, r0, b0;      // visible bounds in layout units
 
     // ---- UI
@@ -201,9 +208,13 @@ final class FishTankScreen extends Screen {
                 s.drop -= dt; if (s.drop <= 0) s.y = Math.max(s.y, areaTop());
                 s.vy += (60 - s.vy) * Math.min(1, dt * 1.2f); s.vx *= (float) Math.exp(-dt);
             } else if (focused) {
-                float k = (float) Math.exp(-dt * 3.2f);
-                s.vx *= k; s.vy *= k;
-                s.faceTarget = 1;
+                // swims gently to a spot the camera can bring to the focus point, then rests facing the panel
+                float[] p = comfort(s);
+                float max = Math.max(60, s.speed * 1.8f);
+                float dvx = Math.clamp((p[0] - s.x) * 1.4f, -max, max), dvy = Math.clamp((p[1] - s.y) * 1.4f, -max * .6f, max * .6f);
+                float a = Math.min(1, dt * 2.2f);
+                s.vx += (dvx - s.vx) * a; s.vy += (dvy - s.vy) * a;
+                s.faceTarget = Math.abs(s.vx) > (s.faceTarget == side ? 18 : 8) ? Math.signum(s.vx) : side;
                 s.z += (1 - s.z) * Math.min(1, dt * 2.5f);
             } else {
                 s.retarget -= dt;
@@ -234,6 +245,50 @@ final class FishTankScreen extends Screen {
         }
         // motes drift up slowly with the water
         for (float[] m : motes) { m[1] -= m[3] * dt; m[0] += (float) Math.sin(time * .6 + m[4] * 6.283) * .004f * dt; if (m[1] < -.05f) seedMote(m, false); }
+        ambientBubbles(dt);
+    }
+
+    /**
+     * Ambient bubbles (owner): every 6-14 s a quiet underwater bubble sound and, at the same moment, a few small
+     * bubbles rise from the sand at a random x. Driven by render, so it stops with the screen.
+     */
+    private void ambientBubbles(float dt) {
+        if (nextBubble < 0) nextBubble = time + 3 + random.nextFloat() * 4;
+        if (loaded && r0 > l0 && time >= nextBubble) {
+            nextBubble = time + 6 + random.nextFloat() * 8;
+            float x = areaLeft() + 40 + random.nextFloat() * Math.max(100, areaRight() - areaLeft() - 80);
+            float y = t0 + (b0 - t0) * (.80f + random.nextFloat() * .06f);
+            int n = 3 + random.nextInt(4);
+            for (int i = 0; i < n; i++)   // x, y, radius, rise speed, phase, wobble, age (a little staggered)
+                bubbles.add(new float[]{x + (random.nextFloat() - .5f) * 22, y + random.nextFloat() * 10, 2.2f + random.nextFloat() * 3.4f,
+                        55 + random.nextFloat() * 45, random.nextFloat() * 6.283f, 2 + random.nextFloat() * 4, -i * (.08f + random.nextFloat() * .14f)});
+            if (client != null) {
+                var sounds = client.getSoundManager();
+                sounds.play(PositionedSoundInstance.master(SoundEvents.BLOCK_BUBBLE_COLUMN_BUBBLE_POP, .8f + random.nextFloat() * .5f, .10f + random.nextFloat() * .08f));
+                if (random.nextFloat() < .3f)
+                    sounds.play(PositionedSoundInstance.master(SoundEvents.AMBIENT_UNDERWATER_LOOP_ADDITIONS, .9f + random.nextFloat() * .25f, .12f));
+            }
+        }
+        for (var it = bubbles.iterator(); it.hasNext(); ) {
+            float[] b = it.next();
+            b[6] += dt;
+            if (b[6] <= 0) continue;
+            b[1] -= b[3] * dt;
+            b[3] = Math.min(b[3] + 14 * dt, 130);   // they speed up a little on the way up
+            if (b[1] < t0 + (b0 - t0) * .08f) it.remove();
+        }
+    }
+    private void drawBubbles(DrawContext c) {
+        float top = t0 + (b0 - t0) * .08f;
+        for (float[] b : bubbles) {
+            if (b[6] <= 0) continue;
+            float al = Math.min(1, b[6] / .25f) * smooth(top, top + 140, b[1]);
+            if (al <= .01f) continue;
+            float x = b[0] + (float) Math.sin(b[6] * 4.2 + b[4]) * b[5], r = b[2];
+            HudMesh.disk(c, x, b[1], r, FishingArt.argb(.34f * al, 0xDFF6FF));                       // light rim
+            HudMesh.disk(c, x, b[1], r * .72f, FishingArt.argb(.22f * al, 0x0B2A4A));                 // clear middle
+            HudMesh.disk(c, x - r * .34f, b[1] - r * .34f, Math.max(.6f, r * .26f), FishingArt.argb(.75f * al, 0xFFFFFF));   // highlight
+        }
     }
     private void seedMote(float[] m, boolean anywhere) {
         m[0] = random.nextFloat(); m[1] = anywhere ? random.nextFloat() : 1.05f; m[2] = .8f + random.nextFloat() * 1.8f;
@@ -253,7 +308,31 @@ final class FishTankScreen extends Screen {
         var magnification=FishTankUiMath.magnification(shown);
         zoomTarget=magnification.zoom();presTarget=magnification.presentation();
         if (fresh) zoomSmooth = zoomTarget;
+        // panel side from where the fish is on screen: right of the centre -> panel on the left (mirrored)
+        int want = sideFor(toLocalX(s.x) > viewCx - 150 * ease(list) ? -1 : 1);
+        side = want;
+        if (panelShown() <= .01f) { sideShown = want; sideFade = 1; }   // nothing shown yet: no fade needed
+        if (progress <= .001f) focusSide = want;
         click();
+    }
+    /** The wanted side, unless the right panel would overlap the open list (then it goes left). */
+    private int sideFor(int want) {
+        if (want > 0 && listOpen && viewCx - 150 + 47 + PANEL_W > r0 - 317 - 58) return -1;
+        return want;
+    }
+    /**
+     * A world spot near the focused fish where the clamped camera (final zoom) can actually put it at the focus
+     * point of the panel side; the fish swims there gently while zooming (owner: it stopped behind the panel).
+     */
+    private float[] comfort(Swimmer s) {
+        float z = Math.max(1, zoomTarget);
+        float[] bg = bgRect();
+        float hw = (r0 - l0) / 2 / z, hh = (b0 - t0) / 2 / z;
+        float cx0 = bg[0] + hw, cx1 = Math.max(cx0, bg[2] - hw), cy0 = bg[1] + hh, cy1 = Math.max(cy0, bg[3] - hh);
+        float ox = (viewCx - 150 * (listOpen ? 1 : 0) - 261 * side - viewCx) / z, oy = -30 / z, pad = 30 / z;
+        float x0 = cx0 + ox + pad, x1 = cx1 + ox - pad;
+        float y0 = Math.max(cy0 + oy + pad, areaTop()), y1 = Math.min(cy1 + oy - pad, areaBottom());
+        return new float[]{x0 <= x1 ? Math.clamp(s.x, x0, x1) : (x0 + x1) / 2, y0 <= y1 ? Math.clamp(s.y, y0, y1) : (y0 + y1) / 2};
     }
     private void deselect() { selected = null; deselectAt = 0; releaseConfirmation.reset(); }
     private static float ease(float t) { return FishTankUiMath.ease(t); }
@@ -270,7 +349,13 @@ final class FishTankScreen extends Screen {
         viewCx = (l0 + r0) / 2; viewCy = (t0 + b0) / 2;
         zoomSmooth += (zoomTarget - zoomSmooth) * (FishTankUiMath.blend(dt,4));
         zoom = 1 + (zoomSmooth - 1) * e;
-        float fx = viewCx - 261 - 150 * ease(list), fy = viewCy - 30;
+        // panel side: the list opening over a right panel sends it left; a side change fades out, swaps, fades in
+        if (selected != null && side > 0 && sideFor(1) < 0) side = -1;
+        if (side != sideShown) { sideFade = Math.max(0, sideFade - dt / .16f); if (sideFade <= 0 || panelAlpha() <= .01f) sideShown = side; }
+        else sideFade = Math.min(1, sideFade + dt / .22f);
+        focusSide += (side - focusSide) * (1 - (float) Math.exp(-dt * 3.5f));
+        if (progress <= .001f) focusSide = side;
+        float fx = viewCx - 261 * focusSide - 150 * ease(list), fy = viewCy - 30;
         float followX = focusX - (fx - viewCx) / zoom, followY = focusY - (fy - viewCy) / zoom;
         camX = viewCx + (followX - viewCx) * e; camY = viewCy + (followY - viewCy) * e;
         // keep the view inside the background
@@ -301,10 +386,6 @@ final class FishTankScreen extends Screen {
     private int shape(String fishId) { var i = info(fishId); return i == null ? 0 : i.shape(); }
     static String cm(float v) { return String.format(Locale.ROOT, "%.1f", v) + " cm"; }
     static String date(long at) { return at <= 0 ? "-" : new SimpleDateFormat("yyyy.MM.dd").format(new Date(at)); }
-    static String serial(String id) {
-        String h = id.replace("-", "").toUpperCase(Locale.ROOT);
-        return h.length() < 8 ? "#" + h : "#" + h.substring(0, 4) + "-" + h.substring(4, 8);
-    }
     static String money(long v) { return String.format(Locale.ROOT, "%,d", v); }
 
     private List<Fish> rows() {
@@ -338,9 +419,12 @@ final class FishTankScreen extends Screen {
     static final float ROW_H = 98, LIST_TOP_OFF = 205;
     private float listX() { return r0 - 317 + 340 * (1 - ease(list)); }
     private float listBottom() { return b0 - 34; }
-    private float panelX() { return viewCx + 47 - 150 * ease(list); }
-    private float panelY() { return viewCy - 266; }
-    static final float PANEL_W = 542, PANEL_H = 540;
+    /** Info panel: right of the fish (side 1, the reference) or mirrored to the left of it (side -1). */
+    private float panelX() { float cx = viewCx - 150 * ease(list); return sideShown > 0 ? cx + 47 : cx - 47 - PANEL_W; }
+    private float panelY() { return viewCy - 266 + ROW_GAP / 2; }
+    /** One info row; the panel lost the 개체 번호 row (reference 542x508 -> one row shorter). */
+    static final float ROW_GAP = 38, BUTTONS_Y = 455 - ROW_GAP;
+    static final float PANEL_W = 542, PANEL_H = 540 - ROW_GAP;
     static final float POP_W = 520, POP_H = 420;
 
     // ------------------------------------------------------------------ input
@@ -349,6 +433,8 @@ final class FishTankScreen extends Screen {
     private static boolean in(double mx, double my, float x, float y, float w, float h) { return mx >= x && mx < x + w && my >= y && my < y + h; }
     private void click() { if (client != null) client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK.value(), 1.4f, .25f)); }
     private float panelAlpha() { return ease((progress - .4f) / .6f); }
+    /** Panel alpha including the fade while it changes sides. */
+    private float panelShown() { return panelAlpha() * ease(sideFade); }
 
     @Override public boolean mouseClicked(double mouseX, double mouseY, int button) {
         mouseDown = true;
@@ -365,7 +451,7 @@ final class FishTankScreen extends Screen {
         search.setFocused(false);
         // the info panel
         var sel = selected == null ? null : fish.get(selected);
-        if (sel != null && panelAlpha() > .5f && in(mx, my, panelX(), panelY(), PANEL_W, PANEL_H)) { panelClick(mx, my, sel); return true; }
+        if (sel != null && panelShown() > .5f && in(mx, my, panelX(), panelY(), PANEL_W, PANEL_H)) { panelClick(mx, my, sel); return true; }
         // the water
         String hit = pick(mx, my);
         if (hit != null && !hit.equals(selected)) { select(hit); return true; }
@@ -415,7 +501,7 @@ final class FishTankScreen extends Screen {
     }
 
     private void panelClick(double mx, double my, Fish f) {
-        float x = panelX(), y = panelY() + 455;
+        float x = panelX(), y = panelY() + BUTTONS_Y;
         if (busy()) return;
         if (in(mx, my, x + 39, y, 133, 54)) {
             if (inventoryFull) { say("인벤토리에 빈 칸이 없어요."); return; }
@@ -594,6 +680,7 @@ final class FishTankScreen extends Screen {
             var order = new ArrayList<>(swimmers.values());
             order.sort(Comparator.comparingDouble(s -> s.id.equals(selected) ? 9 : s.z));
             for (var s : order) fish(c, s, e, fsx, fsy);
+            drawBubbles(c);
             // 7. near plants
             float fh = (bg[2] - bg[0]) * 512 / 2560f;
             int dark = FishingArt.argb(1, FishingArt.mix(0xFFFFFF, 0x26344A, .45f * e));
@@ -789,13 +876,13 @@ final class FishTankScreen extends Screen {
     }
 
     private void panel(DrawContext c, double mx, double my) {
-        float al = panelAlpha();
+        float al = panelShown();
         if (selected == null && progress <= 0) return;
         Fish f = selected == null ? null : fish.get(selected);
         if (f == null) f = lastPanel;
         if (f == null || al <= .01f) return;
         lastPanel = f;
-        float x = panelX() + 28 * (1 - al), y = panelY();
+        float x = panelX() + 28 * (1 - al) * sideShown, y = panelY();   // slides in from its own side
         int g = grade(f.fish());
         nine(c, PANELS[g], 540, 500, 48, x, y, PANEL_W, PANEL_H, white(al));
         FishingArt.rect(c, x + 39, y + 42, 3, 82, a(GRADE[g], al));
@@ -804,23 +891,24 @@ final class FishTankScreen extends Screen {
         text(c, GRADES[g], x + 74, y + 113, 24, a(GRADE[g], al), BODY, false);
         int line = FishingArt.argb(.32f * al, 0xC9D6E6);
         FishingArt.hline(c, x + 50, x + 500, y + 157, line);
-        String[] labels = {"크기", "잡은 날짜", "판매가", "개체 번호"};
-        String[] values = {cm(f.size()), date(f.caughtAt()), f.locked() ? "잠긴 종류 · 판매 안 함" : money(f.price()) + " G", serial(f.id())};
-        for (int i = 0; i < 4; i++) {
-            float ry = y + 191 + i * 38;
+        // owner (2026-10-20): no 개체 번호 row; the description and the buttons move up by one row
+        String[] labels = {"크기", "잡은 날짜", "판매가"};
+        String[] values = {cm(f.size()), date(f.caughtAt()), f.locked() ? "잠긴 종류 · 판매 안 함" : money(f.price()) + " G"};
+        for (int i = 0; i < 3; i++) {
+            float ry = y + 191 + i * ROW_GAP;
             text(c, labels[i], x + 49, ry, 21, a(0xFFC3CEDB, al), BODY, false);
-            text(c, values[i], x + 233, ry, 21, a(i == 2 && f.locked() ? GOLD : i == 3 ? 0xFFAFC0D4 : WHITE, al), BODY, false);
+            text(c, values[i], x + 233, ry, 21, a(i == 2 && f.locked() ? GOLD : WHITE, al), BODY, false);
         }
-        FishingArt.hline(c, x + 50, x + 500, y + 335, line);
+        FishingArt.hline(c, x + 50, x + 500, y + 335 - ROW_GAP, line);
         var info = info(f.fish());
         String desc = info == null ? "" : info.description();
         var lines = CodexTextLayout.wrap(desc, 450, s -> width(s, 21, BODY));
         for (int i = 0; i < Math.min(3, lines.size()); i++) {
             String s = lines.get(i);
             if (i == 2 && lines.size() > 3) s = s + "…";
-            text(c, s, x + 49, y + 370 + i * 32, 21, a(0xFFE6ECF3, al), BODY, false);
+            text(c, s, x + 49, y + 370 - ROW_GAP + i * 32, 21, a(0xFFE6ECF3, al), BODY, false);
         }
-        float by = y + 455;
+        float by = y + BUTTONS_Y;
         boolean busy = busy(), interactive = al > .5f;
         double bmx = interactive ? mx : -1, bmy = interactive ? my : -1;
         boolean confirm=releaseConfirmation.armed(Util.getMeasuringTimeMs());
