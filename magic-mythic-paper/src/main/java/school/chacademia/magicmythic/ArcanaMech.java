@@ -1,8 +1,6 @@
 package school.chacademia.magicmythic;
 
 import java.util.*;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -60,7 +58,10 @@ final class ArcanaMech extends Mech {
 
     private String spell() { return p.s("spell", ""); }
     private void vfx(Player pl, String event, Location at, UUID target) { if (pl != null && !spell().isBlank()) Links.vfx(pl, "" + spell(), "external:" + event, at, target); }
-    private static void bar(Player pl, String text) { pl.sendActionBar(Component.text(text, NamedTextColor.GOLD)); }
+    /** 할 수 없는 행동 → 경고 알림 (같은 문구는 2초 안에 다시 안 보냄). */
+    private static void bar(Player pl, String text) { ChacaLink.notify(pl, "warning", "magic-mythic:" + text, text, "", 2000); }
+    /** 결과 안내 → 정보 알림. */
+    private static void info(Player pl, String text) { ChacaLink.notify(pl, "system", "magic-mythic:" + text, text, "", 1500); }
     private static Vector flat(Player pl) { double y = Math.toRadians(pl.getLocation().getYaw()); return new Vector(-Math.sin(y), 0, Math.cos(y)); }
     private static Location chest(Entity e) { return e.getLocation().add(0, e.getHeight() * 0.55, 0); }
     private State st() { return State.get(); }
@@ -153,8 +154,8 @@ final class ArcanaMech extends Mech {
         var ev = new MagicEchoEvent(pl, b, e, bottom);
         Bukkit.getPluginManager().callEvent(ev);
         vfx(pl, "echo_reading", bottom, e == null ? null : e.getUniqueId());
-        if (ev.getClue() != null) pl.sendActionBar(Component.text(ev.getClue(), NamedTextColor.LIGHT_PURPLE));
-        else if (!ev.isHandled()) bar(pl, "남아 있는 기억이 없다.");
+        if (ev.getClue() != null) ChacaLink.notify(pl, "system", "magic-mythic:echo-clue", "남아 있는 기억", ev.getClue(), 1000);
+        else if (!ev.isHandled()) info(pl, "남아 있는 기억이 없다.");
         return true;
     }
 
@@ -166,14 +167,14 @@ final class ArcanaMech extends Mech {
         UUID placer = State.placer(key);
         if (placer == null || !placer.equals(pl.getUniqueId())) { bar(pl, "직접 설치한 문이나 상자에만 봉인을 걸 수 있어요."); return false; }
         var st = st(); String k = State.key(key);
-        if (st.seals.containsKey(k)) { st.seals.remove(k); bar(pl, "봉인을 풀었다."); return true; }
+        if (st.seals.containsKey(k)) { st.seals.remove(k); info(pl, "봉인을 풀었다."); return true; }
         st.seals.put(k, new Object[]{pl.getUniqueId(), st.now + Math.clamp(p.i("ticks", 6000), 20, 20 * 3600)});
         Location lock = key.getLocation().add(0.5, Tag.DOORS.isTagged(key.getType()) ? 0.95 : 0.5625, 0.5);
         vfx(pl, "thread", lock, null);
         String wrap = "wrap_chest";
         if (key.getBlockData() instanceof Door door) wrap = door.getHinge() == Door.Hinge.LEFT ? "wrap_door_r" : "wrap_door_l";
         vfx(pl, wrap, lock, null);
-        bar(pl, "봉인을 걸었다. 다시 걸면 풀린다.");
+        info(pl, "봉인을 걸었다. 다시 걸면 풀린다.");
         return true;
     }
 
@@ -836,7 +837,7 @@ final class ArcanaMech extends Mech {
             Object[] s = seals.get(key(b));
             if (s == null || (long) s[1] < now || e.getPlayer().getUniqueId().equals(s[0])) return;
             e.setCancelled(true);
-            e.getPlayer().sendActionBar(Component.text("봉인의 실로 묶여 있어 부술 수 없다.", NamedTextColor.DARK_PURPLE));
+            bar(e.getPlayer(), "봉인의 실로 묶여 있어 부술 수 없다.");
         }
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         public void broken(org.bukkit.event.block.BlockBreakEvent e) {
@@ -856,7 +857,7 @@ final class ArcanaMech extends Mech {
             }
             if (s == null || (long) s[1] < now || e.getPlayer().getUniqueId().equals(s[0])) return;
             e.setCancelled(true);
-            e.getPlayer().sendActionBar(Component.text("봉인의 실로 묶여 있어 열 수 없다.", NamedTextColor.DARK_PURPLE));
+            bar(e.getPlayer(), "봉인의 실로 묶여 있어 열 수 없다.");
         }
 
         // ---- 194: show the far block place / break

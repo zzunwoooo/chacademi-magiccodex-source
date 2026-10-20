@@ -71,7 +71,12 @@ final class UtilMech extends Mech {
         String spell = p.s("spell", "");
         if (!spell.isBlank()) Links.vfx(pl, spell, event, at, target);
     }
-    private static void bar(Player pl, String text) { pl.sendActionBar(Component.text(text, NamedTextColor.GOLD)); }
+    /** 할 수 없는 행동 → 경고 알림 (같은 문구는 2초 안에 다시 안 보냄). */
+    private static void bar(Player pl, String text) { ChacaLink.notify(pl, "warning", "magic-mythic:" + text, text, "", 2000); }
+    /** 결과 안내 → 정보 알림. */
+    private static void info(Player pl, String text) { ChacaLink.notify(pl, "system", "magic-mythic:" + text, text, "", 1500); }
+    /** 계속 바뀌는 실시간 표시(길잡이 별 방향·거리)만 액션바. */
+    private static void live(Player pl, String text) { pl.sendActionBar(Component.text(text, NamedTextColor.GOLD)); }
 
     private static Block aimedSolid(Player pl, Location at) {
         Block b = at.getBlock();
@@ -198,7 +203,7 @@ final class UtilMech extends Mech {
         Block b = aimBlock(pl, Math.clamp(p.d("range", 48), 1, 128));
         if (b == null) return false;
         double dist = pl.getEyeLocation().distance(b.getLocation().add(0.5, 0.5, 0.5));
-        bar(pl, String.format("X %d  Y %d  Z %d  ·  거리 %.1f블록", b.getX(), b.getY(), b.getZ(), dist));
+        info(pl, String.format("X %d  Y %d  Z %d  ·  거리 %.1f블록", b.getX(), b.getY(), b.getZ(), dist));
         vfx(pl, "external:survey", b.getLocation().add(0.5, 1, 0.5), null);
         return true;
     }
@@ -285,7 +290,7 @@ final class UtilMech extends Mech {
             Location l = pl.getLocation();
             pdc.set(starKey(), PersistentDataType.STRING, l.getWorld().getName() + ";" + l.getX() + ";" + l.getY() + ";" + l.getZ());
             vfx(pl, "external:save", l, null);
-            bar(pl, "길잡이 별: 이 위치를 기억했습니다.");
+            info(pl, "길잡이 별: 이 위치를 기억했습니다.");
             return true;
         }
         String raw = pdc.get(starKey(), PersistentDataType.STRING);
@@ -301,7 +306,7 @@ final class UtilMech extends Mech {
             int age = 0;
             public boolean tick() {
                 if (!pl.isOnline() || !pl.getWorld().equals(w) || age++ >= ticks) return false;
-                if (age % 10 == 1 && plugin.getConfig().getBoolean("guiding-star-text", true)) bar(pl, "길잡이 별 " + arrow(pl.getLocation(), target) + "  " + Math.round(pl.getLocation().distance(target)) + "블록");
+                if (age % 10 == 1 && plugin.getConfig().getBoolean("guiding-star-text", true)) live(pl, "길잡이 별 " + arrow(pl.getLocation(), target) + "  " + Math.round(pl.getLocation().distance(target)) + "블록");
                 return true;
             }
         });
@@ -321,13 +326,13 @@ final class UtilMech extends Mech {
         var slots = plugin.slots();
         var pool = new ArrayList<String>();
         for (String id : slots.list(pl)) if (!id.equals(self)) pool.add(id);
-        if (pool.isEmpty()) { bar(pl, slots.known(pl) ? "초기화할 다른 장착 마법이 없습니다." : "장착 정보를 받지 못했습니다 (모드 업데이트 필요)."); vfx(pl, "external:fizzle", pl.getLocation(), null); return false; }
+        if (pool.isEmpty()) { bar(pl, slots.known(pl) ? "초기화할 다른 장착 마법이 없습니다." : "장착한 마법 정보를 아직 받지 못했어요."); vfx(pl, "external:fizzle", pl.getLocation(), null); return false; }
         String pick = pool.get(ThreadLocalRandom.current().nextInt(pool.size()));
         // The Bridge sets this spell's own cooldown after we return; clearing the other one is independent.
         Boolean done = Links.clearCooldown(pl, pick);
-        if (done == null) { bar(pl, "서버 마나 플러그인 업데이트가 필요합니다 (쿨타임 API)."); vfx(pl, "external:fizzle", pl.getLocation(), null); return false; }
+        if (done == null) { plugin.getLogger().warning("별빛 재현: MagicCodexBridge 쿨타임 API(clearCooldown)가 없습니다. 서버 마나 플러그인 업데이트 필요"); bar(pl, "지금은 별빛 재현을 쓸 수 없어요."); vfx(pl, "external:fizzle", pl.getLocation(), null); return false; }
         vfx(pl, done ? "external:absorb" : "external:fizzle", pl.getLocation(), null);
-        if (done) bar(pl, "별빛 재현: " + pick + " 재사용 가능");
+        if (done) info(pl, "별빛 재현: " + plugin.spellNames().label(pick) + " 재사용 가능");
         return done;
     }
 
@@ -491,7 +496,7 @@ final class UtilMech extends Mech {
         boolean awaitText(MagicMythicPlugin plugin, Player pl, Location at, int ticks, int wait, String spell) {
             if (!plugin.protection().pair(pl, at)) return false;
             texts.put(pl.getUniqueId(), new Object[]{at.clone(), ticks, now + wait, spell});
-            pl.sendActionBar(Component.text("빛의 필사: 채팅으로 쓸 글씨를 입력하세요.", NamedTextColor.GOLD));
+            ChacaLink.notify(pl, "system", "magic-mythic:light-script", "빛의 필사", "채팅으로 쓸 글씨를 입력하세요.", 1500);
             if (!spell.isBlank()) Links.vfx(pl, spell, "external:gather_begin", pl.getLocation(), null);
             return true;
         }
@@ -534,7 +539,7 @@ final class UtilMech extends Mech {
             ItemStack it = e.getItem();
             if (it == null || it.getType() == Material.POTION || !isManaPotion(it)) return;
             e.setCancelled(true);
-            if (plugin.status().potionSealed(e.getPlayer())) { e.getPlayer().sendActionBar(net.kyori.adventure.text.Component.text("물약봉인 상태에서는 물약을 쓸 수 없어요")); return; }
+            if (plugin.status().potionSealed(e.getPlayer())) { ChacaLink.notify(e.getPlayer(), "warning", "magic-mythic:potion-seal", "물약봉인 상태에서는 물약을 쓸 수 없어요", "", 2000); return; }
             if (Links.add(e.getPlayer(), plugin.getConfig().getDouble("mana-potion.restore", 50)) && e.getPlayer().getGameMode() != GameMode.CREATIVE)
                 it.setAmount(it.getAmount() - 1);
         }
