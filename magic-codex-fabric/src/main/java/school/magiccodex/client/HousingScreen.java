@@ -249,7 +249,13 @@ public final class HousingScreen extends SocialScreen {
         face(c,new float[][]{{0,0,n},{n,0,n},{n,-.3f,n},{0,-.3f,n}},shade(TRIM,1f));
         face(c,new float[][]{{n,0,0},{n,0,n},{n,-.3f,n},{n,-.3f,0}},shade(TRIM,.8f));
         // 벽 (뒤 두 면): 벽지가 없으면 기본 벽 그림(wall_default.png, 한 칸 × 높이 4칸)을 칸마다, 있으면 벽지 색 + 아래 판자 + 위 몰딩
-        if(wallDef==null){
+        boolean wallArt=wallDef!=null&&loaded(wallDef.icon());
+        if(wallArt){
+            for(int i=0;i<n;i++){
+                artFace(c,wallDef.icon(),new float[][]{{0,H,i},{0,H,i+1},{0,0,i},{0,0,i+1}},0xFFD6D2CC,0,1,0,1);
+                artFace(c,wallDef.icon(),new float[][]{{i,H,0},{i+1,H,0},{i,0,0},{i+1,0,0}},0xFFFFFFFF,0,1,0,1);
+            }
+        }else if(wallDef==null){
             for(int i=0;i<n;i++){
                 texFace(c,WALL_TEXTURE,new float[][]{{0,H,i},{0,H,i+1},{0,0,i+1},{0,0,i}},0xFFD6D2CC);
                 texFace(c,WALL_TEXTURE,new float[][]{{i,H,0},{i+1,H,0},{i+1,0,0},{i,0,0}},0xFFFFFFFF);
@@ -270,11 +276,13 @@ public final class HousingScreen extends SocialScreen {
         face(c,new float[][]{{-t,0,n},{0,0,n},{0,H,n},{-t,H,n}},shade(TRIM,.9f));
         face(c,new float[][]{{n,0,-t},{n,0,0},{n,H,0},{n,H,-t}},shade(TRIM,.75f));
         line3(c,0,0,0,0,H,0,alpha(0xFF000000,.25f),1.2f);
-        // 바닥 칸
+        // 바닥 칸 (바닥재 그림도 한 장이 2×2 칸)
+        boolean floorArt=floorDef!=null&&loaded(floorDef.icon());
         for(int x=0;x<n;x++)for(int z=0;z<n;z++){
             float[][] cell={{x,0,z},{x+1,0,z},{x+1,0,z+1},{x,0,z+1}};
             // 바닥 그림 한 장이 2×2 칸을 덮는다 (한 칸에 한 장이면 나뭇결이 너무 촘촘함)
             if(floorDef==null){float u=(x&1)*.5f,v=(z&1)*.5f;texFace(c,FLOOR_TEXTURE,cell,0xFFFFFFFF,new float[]{u,u+.5f,u+.5f,u},new float[]{v,v,v+.5f,v+.5f});}
+            else if(floorArt){float u=(x&1)*.5f,v=(z&1)*.5f;artFace(c,floorDef.icon(),new float[][]{{x,0,z},{x+1,0,z},{x,0,z+1},{x+1,0,z+1}},0xFFFFFFFF,u,u+.5f,v,v+.5f);}
             else face(c,cell,((x+z)&1)==0?floorA:floorB);
         }
         // 칸 구분선: 평소엔 숨기고, 가구를 들고 있을 때만 점선으로 또렷하게
@@ -330,6 +338,25 @@ public final class HousingScreen extends SocialScreen {
         return HousingIso.depth(c[0],c[1],c[2],c[3])+(d.height()<2?-.5f:0); // 러그처럼 납작한 것은 먼저
     }
     private float[][] drawPlaced(DrawContext c,Def d,Placement p,float alpha,boolean ghost){
+        int[] size=d.icon().isEmpty()?null:images.size(d.icon());
+        if(size!=null){
+            int tint=alpha(0xFFFFFFFF,alpha);
+            if(d.wall()){
+                // 벽걸이 그림(정면, 한 칸 256px)을 벽 칸에 그대로 붙인다. 왼쪽 벽은 화면 왼쪽이 z 큰 쪽.
+                int side=p.wallSide();float a0=p.x(),a1=p.x()+d.w(),y0=p.y(),y1=p.y()+d.wallCells(),e=.02f;
+                float[][] q=side==0?new float[][]{{e,y1,a1},{e,y1,a0},{e,y0,a1},{e,y0,a0}}:new float[][]{{a0,y1,e},{a1,y1,e},{a0,y0,e},{a1,y0,e}};
+                artFace(c,d.icon(),q,tint,0,1,0,1);
+                return iso.wallRect(side,a0,a1,y0,y1);
+            }
+            // 바닥 가구 그림(쿼터뷰, 한 칸 = 가로 256px): 그림의 (32 + 가로칸×128, 높이-32) 점이 차지 칸의 맨 앞 꼭짓점에 오게.
+            // 홀수 회전은 좌우를 뒤집어 그린다 (뒤집으면 가로·세로 칸이 바뀐 모양이 됨).
+            int[] cells=HousingRules.cells(d,p);int fw=cells[2]-cells[0];
+            float k=iso.tile/256f,ax=iso.sx(cells[2],0,cells[3]),ay=iso.sy(cells[2],0,cells[3]);
+            float left=ax-(32+fw*128)*k,top=ay-(size[1]-32)*k,right=left+size[0]*k,bottom=top+size[1]*k;
+            art(c,d.icon(),new float[]{left,right,left,right},new float[]{top,top,bottom,bottom},(p.rot()&1)==1,tint,0,1,0,1);
+            float h=Math.max(.1f,d.height()/10f);
+            return iso.boxHull(cells[0]+.08f,cells[1]+.08f,cells[2]-.08f,cells[3]-.08f,h);
+        }
         int color=alpha(d.color(),alpha),accent=alpha(d.accent(),alpha);
         if(d.wall()){
             int side=p.wallSide();float a0=p.x()+.06f,a1=p.x()+d.w()-.06f,y0=p.y()+.06f,y1=p.y()+d.wallCells()-.06f;
@@ -380,6 +407,18 @@ public final class HousingScreen extends SocialScreen {
     }
     private void outline(DrawContext c,float[][] hull,int color){
         for(int i=0;i<hull.length;i++){var a=hull[i];var b=hull[(i+1)%hull.length];HudMesh.line(c,a[0],a[1],b[0],b[1],2f,color);}
+    }
+    private boolean loaded(String path){return path!=null&&!path.isEmpty()&&images.size(path)!=null;}
+    /** 그림 한 장을 화면 네 점(왼쪽 위, 오른쪽 위, 왼쪽 아래, 오른쪽 아래)에 입힌다 (밉맵 있는 UI 텍스처). mirror = 좌우 뒤집기. */
+    private boolean art(DrawContext c,String path,float[] xs,float[] ys,boolean mirror,int tint,float u0,float u1,float v0,float v1){
+        float[] us=mirror?new float[]{u1,u0,u1,u0}:new float[]{u0,u1,u0,u1},vs={v0,v0,v1,v1};
+        return images.drawGrid(c,Identifier.of(path),false,1,1,xs,ys,us,vs,new int[]{tint,tint,tint,tint},false);
+    }
+    /** 방 좌표 네 점(왼쪽 위, 오른쪽 위, 왼쪽 아래, 오른쪽 아래)에 그림을 입힌다. */
+    private boolean artFace(DrawContext c,String path,float[][] p,int tint,float u0,float u1,float v0,float v1){
+        float[] xs=new float[4],ys=new float[4];
+        for(int i=0;i<4;i++){xs[i]=iso.sx(p[i][0],p[i][1],p[i][2]);ys[i]=iso.sy(p[i][0],p[i][1],p[i][2]);}
+        return art(c,path,xs,ys,false,tint,u0,u1,v0,v1);
     }
     private static final Identifier WALL_TEXTURE=Identifier.of("magiccodex","textures/gui/housing/wall_default.png"),FLOOR_TEXTURE=Identifier.of("magiccodex","textures/gui/housing/floor_default.png");
     /** 방 좌표 네 점에 그림 한 장을 통째로 입힌다 (점 순서: 그림의 왼쪽 위 → 오른쪽 위 → 오른쪽 아래 → 왼쪽 아래). */
@@ -513,7 +552,12 @@ public final class HousingScreen extends SocialScreen {
     /** 보관함 칸 미리보기: 아이콘이 있으면 아이콘, 없으면 작은 상자 (벽지·바닥재는 색 견본). */
     private void preview(DrawContext c,Def d,float cx,float cy,boolean available){
         int tint=available?0xFFFFFFFF:0x77FFFFFF;
-        if(!d.icon().isEmpty()&&images.drawCentered(c,d.icon(),cx,cy,82,tint))return;
+        if(d.surface()&&!d.icon().isEmpty()){
+            // 벽지·바닥재 그림은 정사각형 견본으로 (벽지는 가운데쯤을 잘라서)
+            int[] size=images.size(d.icon());
+            if(size!=null){int side=Math.min(size[0],size[1]);images.drawPart(c,d.icon(),Math.round(cx-38),Math.round(cy-38),76,76,0,(size[1]-side)*.45f,side,side,tint);return;}
+        }
+        if(!d.icon().isEmpty()&&!d.surface()&&images.drawCentered(c,d.icon(),cx,cy,82,tint))return;
         var saved=iso;
         try{
             if(d.surface()){
