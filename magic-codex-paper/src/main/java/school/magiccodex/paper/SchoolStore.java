@@ -35,6 +35,8 @@ final class SchoolStore implements AutoCloseable {
                 s.execute("CREATE TABLE IF NOT EXISTS donations(spell TEXT PRIMARY KEY,spell_name TEXT NOT NULL,donor TEXT NOT NULL,nickname TEXT NOT NULL,house INTEGER NOT NULL,created INTEGER NOT NULL)");
                 s.execute("CREATE TABLE IF NOT EXISTS houses(player TEXT PRIMARY KEY,house INTEGER NOT NULL)");
             }
+            s.execute("CREATE TABLE IF NOT EXISTS codex_house_assignment_lock(id INT PRIMARY KEY,revision INT NOT NULL)"+(maria?" ENGINE=InnoDB":""));
+            s.execute((maria?"INSERT IGNORE INTO ":"INSERT OR IGNORE INTO ")+"codex_house_assignment_lock VALUES(1,0)");
             s.execute("CREATE TABLE IF NOT EXISTS codex_quest_house_awards(token VARCHAR(36) PRIMARY KEY,house INT NOT NULL,points BIGINT NOT NULL)"+(maria?" ENGINE=InnoDB":""));
             for(int i=0;i<4;i++)s.execute((maria?"INSERT IGNORE INTO ":"INSERT OR IGNORE INTO ")+points+" VALUES("+i+",0)");
         }
@@ -98,7 +100,39 @@ final class SchoolStore implements AutoCloseable {
         long next=set?value:Math.addExact(before,value);if(next < -MAX_SCORE||next>MAX_SCORE)throw new IllegalArgumentException("Score range exceeded");
         try(var s=db().prepareStatement("UPDATE "+points+" SET points=? WHERE house=?")){s.setLong(1,next);s.setInt(2,house);s.executeUpdate();}
     }
-    void house(UUID id,int house)throws SQLException{if(house<0||house>3)throw new IllegalArgumentException("House");try(var s=db().prepareStatement(maria?"INSERT INTO "+houses+" VALUES(?,?) ON DUPLICATE KEY UPDATE house=VALUES(house)":"INSERT INTO "+houses+" VALUES(?,?) ON CONFLICT(player) DO UPDATE SET house=excluded.house")){s.setString(1,id.toString());s.setInt(2,house);s.executeUpdate();}}
+    record Assignment(int house,int preferred,boolean created) {}
+    /** A shared DB row serializes all updated writers, including different Bukkit servers. */
+    private void lockHouses()throws SQLException{
+        try(var q=db().createStatement()){if(q.executeUpdate("UPDATE codex_house_assignment_lock SET revision=1-revision WHERE id=1")!=1)throw new SQLException("Missing house assignment lock");}
+    }
+    Integer savedHouse(UUID id)throws SQLException{
+        try(var q=db().prepareStatement("SELECT house FROM "+houses+" WHERE player=?")){q.setString(1,id.toString());try(var r=q.executeQuery()){
+            if(!r.next())return null;int h=r.getInt(1);if(h<0||h>3)throw new SQLException("Invalid saved house");return h;
+        }}
+    }
+    long[] houseCounts()throws SQLException{
+        long[] counts=new long[4]; // GROUP BY omits empty houses: keep explicit zeroes.
+        try(var q=db().createStatement();var r=q.executeQuery("SELECT house,COUNT(*) FROM "+houses+" GROUP BY house")){
+            while(r.next()){int h=r.getInt(1);if(h<0||h>3)throw new SQLException("Invalid saved house");counts[h]=r.getLong(2);}
+        }return counts;
+    }
+    Assignment assignHouse(UUID id,int t,int d,int tolerance)throws SQLException{
+        int preferred=HouseSorting.preferred(t,d);HouseSorting.tolerance(tolerance);
+        holder.begin();try{
+            lockHouses();Integer existing=savedHouse(id);
+            if(existing!=null){db().commit();return new Assignment(existing,preferred,false);}
+            int chosen=HouseSorting.choose(t,d,houseCounts(),tolerance);
+            writeHouse(id,chosen);db().commit();return new Assignment(chosen,preferred,true);
+        }catch(SQLException|RuntimeException error){holder.rollback();throw error;}finally{holder.end();}
+    }
+    void house(UUID id,int house)throws SQLException{
+        if(house<0||house>3)throw new IllegalArgumentException("House");
+        holder.begin();try{lockHouses();writeHouse(id,house);db().commit();}
+        catch(SQLException|RuntimeException error){holder.rollback();throw error;}finally{holder.end();}
+    }
+    private void writeHouse(UUID id,int house)throws SQLException{
+        try(var s=db().prepareStatement(maria?"INSERT INTO "+houses+" VALUES(?,?) ON DUPLICATE KEY UPDATE house=VALUES(house)":"INSERT INTO "+houses+" VALUES(?,?) ON CONFLICT(player) DO UPDATE SET house=excluded.house")){s.setString(1,id.toString());s.setInt(2,house);s.executeUpdate();}
+    }
     void reset(String spell)throws SQLException{
         if(spell.equals("all")){try(var s=db().createStatement()){s.executeUpdate("DELETE FROM "+donations);}}
         else try(var s=db().prepareStatement("DELETE FROM "+donations+" WHERE spell=?")){s.setString(1,spell);s.executeUpdate();}

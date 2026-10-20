@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'kr.chacademy'
-version = '0.1.3'
+version = '0.1.3-houses.1'
 
 repositories {
     mavenCentral()

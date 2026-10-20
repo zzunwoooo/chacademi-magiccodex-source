@@ -19,4 +19,10 @@ class LocalEndingSessionsTest {
   for(int mode=0;mode<4;mode++){var sessions=new LocalEndingSessions();var s=sessions.begin(player,def.id,def.endings.get("s20"),0);sessions.ready(player,s.id(),s.token(),0);if(mode==0)sessions.abort(player,s.id(),s.token(),0);if(mode==1)sessions.cancel(player);if(mode==2)sessions.clear();assertTrue(sessions.finish(player,s.id(),s.token(),"s20",mode==3?LocalEndingSessions.TTL:1).isEmpty());}
  }
  @Test void oldCompletionCannotConsumeNewPlayback(){var sessions=new LocalEndingSessions();var a=sessions.begin(player,def.id,def.endings.get("s20"),0);sessions.ready(player,a.id(),a.token(),0);sessions.finish(player,a.id(),a.token(),"s20",0);var b=sessions.begin(player,def.id,def.endings.get("s20"),1);sessions.ready(player,b.id(),b.token(),1);assertNotEquals(a.token(),b.token());assertFalse(sessions.abort(player,a.id(),a.token(),1));assertTrue(sessions.finish(player,a.id(),a.token(),"s20",1).isEmpty());assertEquals(1,sessions.finish(player,b.id(),b.token(),"s21",1).size());}
+ @Test void sortingEndingIsValidatedBeforeLiteralPlaceholderSubstitution(){
+  var sessions=new LocalEndingSessions();var s=sessions.begin(player,"ch1-14",List.of("기숙사분류 결정 {player} {ending}"),0);sessions.ready(player,s.id(),s.token(),0);
+  for(String invalid:new String[]{null,"p_33 evil","p_33\nstop","$1","{player}","p_33;stop"})assertTrue(sessions.finish(player,s.id(),s.token(),invalid,1).isEmpty());
+  var commands=sessions.finish(player,s.id(),s.token(),"p_33",1);assertEquals(List.of("기숙사분류 결정 {player} p_33"),commands.stream().map(c->c.replace("{ending}","p_33")).toList());
+  assertTrue(sessions.finish(player,s.id(),s.token(),"p_33",1).isEmpty());
+ }
 }

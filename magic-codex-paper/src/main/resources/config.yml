@@ -44,3 +44,7 @@ display-name-placeholder: "%user_nickname%"
 first-nickname:
   on-complete:
     - "storydialogue {player} ch1-2"
+
+# Population ceiling is checked BEFORE adding the new student.
+house-sorting:
+  population-tolerance: 2

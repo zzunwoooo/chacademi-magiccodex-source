@@ -961,7 +961,12 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
                 case StoryCodec.DIALOGUE_SESSION_SIGNAL -> {
                     var signal=StoryCodec.sessionSignal(message);long now=System.currentTimeMillis();
                     if(signal.action()==0){if(endingSessions.ready(uuid,signal.id(),signal.token(),now))dialogueAcks.accept(uuid,signal.id());}
-                    else if(signal.action()==1)run(endingSessions.finish(uuid,signal.id(),signal.token(),signal.ending(),now),p,Map.of());
+                    else if(signal.action()==1){
+                        // Codec validates a non-null [a-z0-9_-]{1,64} ending; finish authenticates
+                        // and consumes the session BEFORE substitution/dispatch. String.replace is literal.
+                        var commands=endingSessions.finish(uuid,signal.id(),signal.token(),signal.ending(),now);
+                        run(commands,p,Map.of("{ending}",signal.ending()));
+                    }
                     else if(endingSessions.abort(uuid,signal.id(),signal.token(),now))dialogueAcks.reject(uuid,signal.id());
                 }
                 case StoryCodec.DIALOGUE_REWARD -> {

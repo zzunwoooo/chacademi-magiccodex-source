@@ -105,6 +105,10 @@ commands:
     description: Fish shop (sells fish from the 통발 tank) — open, reload, prices, NPC, portrait.
     usage: /물고기상점관리 [열기|리로드|가격|크기보정|조건보정|NPC|NPC삭제|초상|이름|가격표]
     permission: magiccodex.fishshop.admin
+  기숙사분류:
+    description: Administrator house sorting and population balance.
+    permission: magiccodex.school.admin
+    usage: /기숙사분류 시작|결정|현황|허용치
   기숙사점수:
     description: School house standings and administrator point adjustments.
     aliases: [학교기증, 학교점수]
