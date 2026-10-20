@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import org.bukkit.*;
-import org.bukkit.command.*;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.player.*;
@@ -16,7 +16,7 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import school.magiccodex.protocol.DiscoveryProtocol;
 import school.magiccodex.database.DatabaseSettings;
 
-public final class MagicDiscovery extends JavaPlugin implements Listener,CommandExecutor,TabCompleter,PluginMessageListener {
+public final class MagicDiscovery extends JavaPlugin implements Listener,PluginMessageListener {
     Definitions definitions;DiscoveryStore store;NativeConditions nativeConditions;ExpansionConditions expansionConditions;TitleRewards rewards;
     final Map<UUID,Session> sessions=new HashMap<>();private DiscoveryService api;
     private record LearnedKey(UUID player,String spell){}
@@ -49,7 +49,8 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,Command
             Bukkit.getServicesManager().register(DiscoveryService.class,api,this,ServicePriority.Normal);
             Bukkit.getPluginManager().registerEvents(this,this);Bukkit.getPluginManager().registerEvents(nativeConditions,this);Bukkit.getPluginManager().registerEvents(expansionConditions,this);
             Bukkit.getMessenger().registerIncomingPluginChannel(this,DiscoveryProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(this,DiscoveryProtocol.RESPONSE);
-            Objects.requireNonNull(getCommand("마법발견관리")).setExecutor(this);getCommand("마법발견관리").setTabCompleter(this);Objects.requireNonNull(getCommand("칭호수령")).setExecutor(this);
+            if(ChacaLink.ready()){try{new DiscoveryCommands(this).register();}catch(RuntimeException e){getLogger().log(java.util.logging.Level.WARNING,"명령어 허브에 마법 발견 명령을 붙이지 못했습니다",e);}}
+            else getLogger().warning("MagicCodexBridge 명령어 허브가 없어 마법 발견 관리·테스트 명령을 등록하지 않았습니다 (발견 판정은 그대로 동작).");
             for(var p:Bukkit.getOnlinePlayers())load(p);
             long period=Math.clamp(getConfig().getInt("progress-save-seconds",5),1,60)*20L;
             Bukkit.getScheduler().runTaskTimer(this,()->{for(var s:List.copyOf(sessions.values())){save(s);if(s.loaded)checkMeta(s);}},period,period);
@@ -217,7 +218,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,Command
             syncPermissions(id,nodes).whenComplete((ignored,permissionError)->later(()->{
                 if(permissionError!=null){done.accept("DB 저장 완료, 권한 동기화 실패. 재접속 또는 동일 명령으로 복구하세요.");return;}
                 if(!Objects.equals(learnedVersions.get(key),version)){done.accept("더 최근 관리자 변경이 우선합니다.");return;}
-                if(grant&&award.created()&&online!=null&&online.isOnline()&&current!=null){if(current.noticeReady)sendPending(online,current);else online.sendMessage("새로운 마법 발견: "+spell.name());rewards.claim(online,current,false);}
+                if(grant&&award.created()&&online!=null&&online.isOnline()&&current!=null){if(current.noticeReady)sendPending(online,current);else ChacaLink.notify(online,"shop","discovery:"+spellId,"새로운 마법 발견",spell.name(),0);rewards.claim(online,current,false);}
                 if(grant&&current!=null)checkMeta(current,true);
                 done.accept(action+" 완료: "+spell.name()+" ("+node+")"+(grant&&!award.created()?" · 기존 발견 기록 유지, 알림·최초보상 추가 없음":""));
             }));
@@ -260,8 +261,8 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,Command
             s.acquired.putIfAbsent(spell.id(),award.acquisition());
             if(learnedVersions.getOrDefault(key,0L)!=version)return;
             s.learned.set(spell.id(),true,Map.of());syncPermission(s.id,spell.permission(),true);
-            if(award.created()){if(s.noticeReady)sendPending(p,s);else p.sendMessage("새로운 마법 발견: "+spell.name());rewards.claim(p,s,false);}
-            else p.sendMessage("마법을 다시 습득했습니다: "+spell.name());
+            if(award.created()){if(s.noticeReady)sendPending(p,s);else ChacaLink.notify(p,"shop","discovery:"+spell.id(),"새로운 마법 발견",spell.name(),0);rewards.claim(p,s,false);}
+            else ChacaLink.notify(p,"system","discovery-relearn:"+spell.id(),"마법을 다시 습득했어요",spell.name(),0);
             checkMeta(s,true);
         }));
     }
@@ -313,39 +314,71 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,Command
     @EventHandler public void join(PlayerJoinEvent e){load(e.getPlayer());}
     @EventHandler public void respawn(PlayerRespawnEvent e){later(()->{var p=e.getPlayer();var s=session(p);if(s!=null)rewards.claim(p,s,false);});}
     @EventHandler public void quit(PlayerQuitEvent e){var s=sessions.remove(e.getPlayer().getUniqueId());if(s!=null&&s.loaded)finalSave(s.id,takeFinal(s),0);nativeConditions.quit(e.getPlayer());if(expansionConditions!=null)expansionConditions.quit(e.getPlayer());}
-    @Override public boolean onCommand(CommandSender sender,Command cmd,String label,String[] args){
-        if(cmd.getName().equals("칭호수령")){if(sender instanceof Player p){var s=session(p);if(s!=null)rewards.claim(p,s,true);}return true;}
-        if(!sender.hasPermission("magicdiscovery.admin"))return true;
-        try{
-            if(args.length==2&&args[0].equals("칭호")&&sender instanceof Player p){rewards.configure(p,args[1]);return true;}
-            if((args.length==2||args.length==4)&&args[0].equals("보상")){
-                var online=Bukkit.getPlayerExact(args[1]);UUID target;
-                var known=online!=null?null:Bukkit.getOfflinePlayerIfCached(args[1]);
-                if(online!=null)target=online.getUniqueId();else if(known!=null)target=known.getUniqueId();else try{target=UUID.fromString(args[1]);}catch(IllegalArgumentException invalid){sender.sendMessage("접속한 적 있는 닉네임 또는 플레이어 UUID를 입력해 주세요.");return true;}
-                if(args.length==2)rewards.adminReserved(sender,target,args[1]);
-                else if(Set.of("재수령","완료").contains(args[3]))rewards.adminResolve(sender,target,args[1],Long.parseLong(args[2]),args[3].equals("재수령"));
-                else sender.sendMessage("/마법발견관리 보상 <닉네임|UUID> <번호> 재수령|완료");
-                return true;}
-            if((args.length==3&&args[0].equals("이벤트"))||(args.length==4&&Set.of("이벤트","상태").contains(args[0]))){var p=Bukkit.getPlayerExact(args[1]);if(p==null){sender.sendMessage("접속 중인 플레이어를 찾을 수 없습니다.");return true;}
-                double value=args.length==4?Double.parseDouble(args[3]):1;boolean ok=args[0].equals("상태")?state(p.getUniqueId(),args[2],value,true):signal(p.getUniqueId(),args[2],value);sender.sendMessage(ok?"조건 정보 전달 완료":"이벤트 이름/수치 또는 플레이어 로딩 상태를 확인해 주세요.");return true;}
-            sender.sendMessage("/마법발견관리 이벤트 <닉네임> <이벤트> [수량]\n/마법발견관리 상태 <닉네임> <상태> <값>\n/마법발견관리 칭호 <마법ID> : 손에 든 아이템을 칭호 보상으로 등록\n/마법발견관리 보상 <닉네임|UUID> [<번호> 재수령|완료] : 지급 확인 대기로 멈춘 칭호 보상 조회·복구");
-        }catch(Exception e){sender.sendMessage("설정 또는 입력을 확인해 주세요: "+e.getMessage());}return true;
+    /** 기존 /칭호수령: 받을 수 있는 마법 발견 칭호 아이템을 지급한다. MagicCodexBridge의 /칭호 수령이 리플렉션으로 부른다(메인 스레드). */
+    public void claimTitles(Player p){
+        if(p==null||!p.isOnline())return;
+        var s=session(p);
+        if(s==null){ChacaLink.notify(p,"warning","title-reward-loading","마법 발견 정보를 아직 불러오는 중이에요","잠시 뒤 다시 시도해 주세요",2000);return;}
+        rewards.claim(p,s,true);
     }
-    @Override public List<String> onTabComplete(CommandSender sender,Command command,String alias,String[] args){
-        if(!sender.hasPermission("magicdiscovery.admin")||args.length==0)return List.of();
-        Collection<String> choices;
-        if(args.length==1)choices=List.of("이벤트","상태","칭호","보상");
-        else if(args.length==2&&args[0].equals("칭호"))choices=definitions.spells.keySet();
-        else if(args.length==2&&Set.of("이벤트","상태","보상").contains(args[0]))choices=Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
-        else if(args.length==3&&args[0].equals("상태"))choices=List.of("state.circle","state.temperature","state.flight_prohibited","state.mana_maximum");
-        else if(args.length==3&&args[0].equals("이벤트"))choices=definitions.index.keySet().stream().filter(key->!key.startsWith("state.")).toList();
-        else if(args.length==4&&args[0].equals("이벤트"))choices=List.of("<이벤트수량>");
-        else if(args.length==3&&args[0].equals("보상"))choices=List.of("<보상번호>");
-        else if(args.length==4&&args[0].equals("보상"))choices=List.of("재수령","완료");
-        else if(args.length==4&&args[0].equals("상태"))choices=switch(args[2]){case "state.circle"->List.of("<클래스1~9>");case "state.temperature"->List.of("<온도값>");case "state.flight_prohibited"->List.of("<비행금지여부0또는1>");default->List.of("<상태값>");};
-        else choices=List.of();
-        String part=args[args.length-1];return choices.stream().filter(value->value.startsWith(part)).sorted().toList();
+
+    /** /서버관리 새로고침 마법발견: discoveries.yml·manual-conditions.yml·titles.yml·config.yml. 실패하면 예외(이전 설정 유지). */
+    void reloadDefinitions()throws Exception{
+        main();
+        var next=new Definitions(new File(getDataFolder(),"discoveries.yml"));
+        next.manual(new File(getDataFolder(),"manual-conditions.yml"));
+        rewards.reload();
+        reloadConfig();
+        definitions=next;refreshAdminCatalog();
     }
+
+    /** 진행도 키 후보 (자동완성). */
+    List<String> progressKeys(){
+        var out=new TreeSet<String>(definitions.index.keySet());
+        for(String id:definitions.manual.keySet())out.add(Definitions.conditionKey(id));
+        out.addAll(List.of("state.circle","state.temperature","state.flight_prohibited","state.mana_maximum"));
+        return List.copyOf(out);
+    }
+
+    /** 접속 중이고 데이터가 로드된 유저의 진행도 (없으면 null). */
+    Map<String,Double> loadedProgress(UUID id){var s=sessions.get(id);return s==null||!s.loaded?null:Map.copyOf(s.progress);}
+
+    /** 진행도 보기: 접속 중이면 세션 값, 아니면 DB. done(map) 은 메인 스레드. */
+    void adminProgress(UUID id,Consumer<Map<String,Double>> done,Consumer<Throwable> failed){
+        main();var live=loadedProgress(id);if(live!=null){done.accept(live);return;}
+        store.load(id).whenComplete((data,error)->later(()->{if(error!=null)failed.accept(error);else done.accept(data.progress());}));
+    }
+
+    /**
+     * 진행도 설정 (관리자). 카운터를 낮추는 것도 그대로 덮어쓴다. 접속 중이면 세션에도 반영하고, 값을 올려 조건을 채우면 획득 판정을 한다.
+     * state.* 키는 상태 이벤트(state)로 처리한다. done(null)=성공, 그 밖은 유저용 문구.
+     */
+    void adminSetProgress(UUID id,String key,double value,Consumer<String> done,Consumer<Throwable> failed){
+        main();
+        if(!key.matches("[a-z0-9_.-]{1,128}")||!Double.isFinite(value)||Math.abs(value)>1e9){done.accept("키 또는 값이 올바르지 않아요");return;}
+        var s=sessions.get(id);boolean live=s!=null&&s.loaded;
+        if(key.startsWith("state.")){
+            if(!live){done.accept("상태 값은 이 서버에 접속 중인 유저만 바꿀 수 있어요");return;}
+            done.accept(state(id,key,value,true)?null:"상태 키 또는 값이 올바르지 않아요 (state.circle은 1~9)");return;
+        }
+        if(live){s.progress.put(key,value);s.dirtyKeys.remove(key);}
+        store.overwrite(id,key,value).whenComplete((ok,error)->later(()->{
+            if(error!=null){failed.accept(error);return;}
+            var current=sessions.get(id);var p=Bukkit.getPlayer(id);
+            if(current!=null&&current.loaded&&p!=null)for(var spell:definitions.index.getOrDefault(key,List.of()))
+                if(current.learned.meets(spell,current.progress)&&spell.prerequisites().stream().allMatch(p::hasPermission))acquire(p,current,spell);
+            done.accept(null);
+        }));
+    }
+
+    void adminReserved(CommandSender sender,UUID id,String name){rewards.adminReserved(sender,id,name);}
+    void adminResolve(CommandSender sender,UUID id,String name,long token,boolean claimable)throws com.mojang.brigadier.exceptions.CommandSyntaxException{rewards.adminResolve(sender,id,name,token,claimable);}
+    void configureTitle(Player p,String id)throws Exception{rewards.configure(p,id);}
+    Set<String> spellIds(){return definitions.spells.keySet();}
+    String spellName(String id){var spell=definitions.spells.get(id);return spell==null?id:spell.name();}
+    /** 이벤트 키 후보 (state.* 제외). */
+    List<String> eventKeys(){return definitions.index.keySet().stream().filter(key->!key.startsWith("state.")).sorted().toList();}
+
     @Override public void onDisable(){
         if(nativeConditions!=null)nativeConditions.close();if(expansionConditions!=null)expansionConditions.close();Bukkit.getScheduler().cancelTasks(this);Bukkit.getServicesManager().unregisterAll(this);
         for(var s:sessions.values()){if(store!=null&&s.loaded)store.save(s.id,takeFinal(s)).exceptionally(error->{storageFailure("종료 시 진행도 저장 실패",error);return null;});if(s.attachment!=null){var p=Bukkit.getPlayer(s.id);if(p!=null)p.removeAttachment(s.attachment);}}

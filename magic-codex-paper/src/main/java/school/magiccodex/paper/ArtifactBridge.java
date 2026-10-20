@@ -5,7 +5,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.zip.CRC32;
 import org.bukkit.*;
-import org.bukkit.command.*;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -34,7 +37,7 @@ import school.magiccodex.protocol.ArtifactProtocol.Entry;
  * artifact of that grade. New ownership and duplicate classification commit atomically; duplicates mail
  * summon.duplicate.item (item:artifact_shard). The client only plays the reveal; the result is decided here.
  */
-final class ArtifactBridge implements PluginMessageListener, Listener, CommandExecutor, TabCompleter {
+final class ArtifactBridge implements PluginMessageListener, Listener {
     private final MagicCodexBridge plugin;
     private final NamespacedKey equippedKey;
     private volatile List<Entry> catalog = List.of();
@@ -69,10 +72,7 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, ArtifactProtocol.REQUEST, this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, ArtifactProtocol.RESPONSE);
         Bukkit.getPluginManager().registerEvents(this, plugin);
-        var command = Objects.requireNonNull(plugin.getCommand("아티팩트관리"));
-        command.setExecutor(this); command.setTabCompleter(this);
-        var summon = Objects.requireNonNull(plugin.getCommand("아티팩트소환"));
-        summon.setExecutor(this); summon.setTabCompleter(this);
+        CmdKit.register(plugin, "/아티팩트뽑기·/유저관리 아티팩트·/컨텐츠관리 아티팩트·/테스트 아티팩트", this::commands);
 
     }
 
@@ -341,20 +341,15 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
         p.sendPluginMessage(plugin, ArtifactProtocol.RESPONSE, ArtifactProtocol.encode(frame));
     }
 
-    /** /아티팩트소환 [플레이어]: opens the client window. OPEN/STATE notices carry the grade chances for the window. */
-    private boolean openSummon(CommandSender sender, String[] args) {
-        Player target;
-        if (args.length > 0) {
-            if (!sender.hasPermission("magiccodex.artifact.admin")) { sender.sendMessage("§c다른 플레이어의 소환 창은 관리자만 열 수 있습니다."); return true; }
-            target = Bukkit.getPlayerExact(args[0]);
-            if (target == null) { sender.sendMessage("§c접속 중인 플레이어가 아닙니다: " + args[0]); return true; }
-        } else if (sender instanceof Player p) target = p;
-        else { sender.sendMessage("/아티팩트소환 <플레이어>"); return true; }
-        if (!target.getListeningPluginChannels().contains(ArtifactProtocol.RESPONSE)) { sender.sendMessage("§c차카데미 모드가 있어야 소환 창을 열 수 있습니다."); return true; }
+    /** /아티팩트뽑기 (본인), /테스트 아티팩트 뽑기 [닉네임]: opens the client window. OPEN/STATE notices carry the grade chances for the window. */
+    private void openSummon(CommandSender sender, Player target) throws CommandSyntaxException {
+        if (!target.getListeningPluginChannels().contains(ArtifactProtocol.RESPONSE)) {
+            if (sender == target) { CmdKit.notify(target, "warning", "artifact-mod", "아티팩트 뽑기 창을 열 수 없어요", "차카데미 모드를 업데이트해 주세요", 3000); return; }
+            throw ChacaApi.error(plugin.names().name(target) + " 님은 차카데미 모드가 없어 뽑기 창을 열 수 없어요");
+        }
         listening.add(target.getUniqueId());
         send(target, true, "");
         sendSummon(target, ArtifactProtocol.Summon.simple(ArtifactProtocol.SUMMON_OPEN, keys(target), summonInfoText()));
-        return true;
     }
 
     /** After the shared state (school/wild) loaded: send equipped + cooldowns so the client's X-key HUD and codex match. */
@@ -392,46 +387,165 @@ final class ArtifactBridge implements PluginMessageListener, Listener, CommandEx
 
     @EventHandler public void quit(PlayerQuitEvent e) { listening.remove(e.getPlayer().getUniqueId()); limits.remove(e.getPlayer().getUniqueId()); ownership.forget(e.getPlayer().getUniqueId()); }
 
-    // ------------------------------------------------------------------ admin
+    // ------------------------------------------------------------------ 명령 (2026-10-20)
 
-    @Override public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (command.getName().equals("아티팩트소환")) return openSummon(sender, args);
-        String sub = args.length == 0 ? "" : args[0];
-        if(Set.of("grant","revoke","reset").contains(sub)) {
-            if(!sender.hasPermission("magiccodex.artifact.admin")){sender.sendMessage("No permission.");return true;}
-            if(args.length<2||(!sub.equals("reset")&&args.length<3)){sender.sendMessage("/artifactadmin <grant|revoke> <online-name|uuid> <id>; reset <online-name|uuid>");return true;}
-            UUID target;var online=Bukkit.getPlayerExact(args[1]);try{target=online!=null?online.getUniqueId():UUID.fromString(args[1]);}catch(IllegalArgumentException e){sender.sendMessage("Use an online player name or UUID.");return true;}
-            String id=sub.equals("reset")?null:args[2];if(id!=null&&(!school.magiccodex.protocol.ArtifactProtocol.validId(id)||(sub.equals("grant")&&!definedIds.contains(id)))){sender.sendMessage("Unknown artifact ID.");return true;}
-            ownership.admin(target,id,sub.equals("grant"),ok->sender.sendMessage(ok?"Shared artifact ownership updated.":"Shared database unavailable; no confirmed ownership change."));return true;
-        }
-        switch (sub) {
-            case "새로고침", "reload" -> {
-                try { reload(); } catch (Exception e) { sender.sendMessage("§cartifacts.yml 오류: " + e.getMessage()); return true; }
-                for (Player p : Bukkit.getOnlinePlayers()) if (listening.contains(p.getUniqueId())) send(p, true, "");
-                sender.sendMessage("§a아티팩트 " + catalog.size() + "개를 다시 불러왔습니다. (장착 최대 " + maxEquipped + "개" + (ownsAll ? ", 전원 보유 테스트 모드" : "") + ")");
-                sender.sendMessage("§7소환: " + summonItem + " " + summonCost + "개, 확률 " + rates() + ", 중복 → " + shardItem);
-            }
-            case "목록", "list" -> {
-                for (Entry e : catalog) sender.sendMessage("§7[" + ArtifactProtocol.GRADE_LABELS[e.grade()] + "] §f" + e.name() + " §8" + e.id()
-                        + (e.usable() ? " §b(사용형" + (e.cooldown() > 0 ? " " + e.cooldown() + "초" : "") + ")" : ""));
-                sender.sendMessage("§7총 " + catalog.size() + "개");
-            }
-            case "확인", "check" -> {
-                Player target = args.length > 1 ? Bukkit.getPlayerExact(args[1]) : null;
-                if (target == null) { sender.sendMessage("/아티팩트관리 확인 <플레이어>"); return true; }
-                long owned = catalog.stream().filter(e -> owns(target, e.id())).count();
-                sender.sendMessage("§f" + target.getName() + "§7: 보유 " + owned + " / " + catalog.size() + ", 장착 " + equipped(target));
-            }
-            default -> sender.sendMessage("/artifactadmin <reload|list|check|grant|revoke|reset> - ownership is shared MariaDB; local LP ownership nodes are not imported again.");
-        }
-        return true;
+    private ArtifactEffects effects;
+    /** ArtifactEffects가 만들어질 때 자신을 알린다 (쿨타임초기화·보관품돌려주기). */
+    void effects(ArtifactEffects fx) { effects = fx; }
+
+    /** 등록된(켜진) 아티팩트 ID → 이름. */
+    private Map<String, String> names() { var out = new LinkedHashMap<String, String>(); for (Entry e : catalog) out.put(e.id(), e.name()); return out; }
+    private String label(String id) { Entry e = entry(id); return e == null ? id : e.name(); }
+
+    private String artifactArg(CommandContext<CommandSourceStack> ctx, boolean anyDefined) throws CommandSyntaxException {
+        String input = CmdKit.text(ctx, "아티팩트");
+        String id = AdminCommandRules.resolve(names(), input);
+        if (id == null && anyDefined && ArtifactProtocol.validId(input) && definedIds.contains(input)) id = input;
+        if (id == null) throw ChacaApi.error("아티팩트를 찾을 수 없어요: " + input);
+        return id;
     }
 
-    @Override public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        if (command.getName().equals("아티팩트소환"))
-            return args.length == 1 && sender.hasPermission("magiccodex.artifact.admin") ? Bukkit.getOnlinePlayers().stream().map(Player::getName).toList() : List.of();
-        if (args.length == 1) return List.of("reload", "list", "check", "grant", "revoke", "reset");
-        if (args.length == 2 && args[0].equals("확인")) return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
-        return List.of();
+    private void commands() {
+        ChacaApi.playerCommand(plugin, CmdKit.literal("아티팩트뽑기").executes(CmdKit.run(ctx -> { Player p = CmdKit.self(ctx); openSummon(p, p); })), "아티팩트 뽑기 창 열기", List.of());
+        var names = (java.util.function.Supplier<Collection<String>>) () -> AdminCommandRules.catalogChoices(names());
+        var user = CmdKit.literal("아티팩트")
+                .then(CmdKit.literal("보기").executes(CmdKit.run(this::show)))
+                .then(CmdKit.literal("주기").then(CmdKit.word("아티팩트", names).executes(CmdKit.run(ctx -> own(ctx, artifactArg(ctx, false), true)))))
+                .then(CmdKit.literal("회수").then(CmdKit.word("아티팩트", names).executes(CmdKit.run(ctx -> own(ctx, artifactArg(ctx, true), false)))))
+                .then(CmdKit.confirm(CmdKit.literal("초기화"), ctx -> own(ctx, null, false)))
+                .then(CmdKit.literal("장착해제").executes(CmdKit.run(ctx -> unequip(ctx, null)))
+                        .then(CmdKit.wordIn("아티팩트", ctx -> { UUID id = CmdKit.targetOf(ctx); Player p = id == null ? null : Bukkit.getPlayer(id); return p == null ? List.of() : equipped(p).stream().map(a -> AdminCommandRules.compact(label(a))).toList(); })
+                                .executes(CmdKit.run(ctx -> unequip(ctx, artifactArg(ctx, false))))))
+                .then(CmdKit.literal("쿨타임초기화").executes(CmdKit.run(this::resetCooldowns)))
+                .then(CmdKit.literal("보관품돌려주기").executes(CmdKit.run(this::returnKept)))
+                .then(CmdKit.literal("뽑기기록")
+                        .then(CmdKit.literal("보기").executes(CmdKit.run(this::history)))
+                        .then(CmdKit.literal("다시주기").then(CmdKit.argument("번호", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 200)).executes(CmdKit.run(ctx -> fixHistory(ctx, true)))))
+                        .then(CmdKit.literal("완료처리").then(CmdKit.argument("번호", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 200)).executes(CmdKit.run(ctx -> fixHistory(ctx, false))))));
+        ChacaApi.branch(plugin, ChacaApi.유저관리, user, "아티팩트 보유·장착·쿨타임·보관품·뽑기 기록", "아티팩트 보기");
+        ChacaApi.branch(plugin, ChacaApi.컨텐츠관리, CmdKit.literal("아티팩트").then(CmdKit.literal("목록").executes(CmdKit.run(ctx -> list(CmdKit.sender(ctx))))), "등록된 아티팩트와 뽑기 확률", "아티팩트 목록");
+        var test = CmdKit.literal("아티팩트")
+                .then(CmdKit.literal("전체보유")
+                        .then(CmdKit.literal("켜기").executes(CmdKit.run(ctx -> ownsAll(ctx, true))))
+                        .then(CmdKit.literal("끄기").executes(CmdKit.run(ctx -> ownsAll(ctx, false)))))
+                .then(CmdKit.literal("뽑기").executes(CmdKit.run(ctx -> openSummon(CmdKit.sender(ctx), CmdKit.self(ctx))))
+                        .then(CmdKit.player("닉네임").executes(CmdKit.run(ctx -> openSummon(CmdKit.sender(ctx), ChacaApi.resolveOnline(ctx, "닉네임"))))));
+        ChacaApi.branch(plugin, ChacaApi.테스트, test, "아티팩트 전체 보유 테스트 모드·뽑기 창", "아티팩트 뽑기");
+        ChacaApi.reload(plugin, "아티팩트", "artifacts.yml (아티팩트 도감·뽑기)", () -> {
+            reload();
+            for (Player p : Bukkit.getOnlinePlayers()) if (listening.contains(p.getUniqueId())) send(p, true, "");
+            plugin.getLogger().info("아티팩트 " + catalog.size() + "개 (장착 최대 " + maxEquipped + (ownsAll ? ", 전원 보유 테스트 모드" : "") + "), 뽑기 " + summonItem + " " + summonCost + "개, 확률 " + rates());
+        });
+        ChacaApi.summary(plugin, "아티팩트", id -> {
+            Player p = Bukkit.getPlayer(id);
+            long owned = catalog.stream().filter(e -> p != null ? owns(p, e.id()) : ownership.owns(id, e.id())).count();
+            if (p == null && owned == 0) return "";
+            return "보유 " + owned + " / " + catalog.size() + (p == null ? "" : " · 장착 " + String.join(", ", equipped(p).stream().map(this::label).toList()));
+        });
+    }
+
+    private void list(CommandSender sender) {
+        var out = new ArrayList<String>();
+        out.add("── 아티팩트 목록 (" + catalog.size() + "개, 장착 최대 " + maxEquipped + ") ──");
+        for (Entry e : catalog) out.add("[" + ArtifactProtocol.GRADE_LABELS[e.grade()] + "] " + e.name() + "  (" + e.id() + ")" + (e.usable() ? " · 사용형" + (e.cooldown() > 0 ? " " + e.cooldown() + "초" : "") : ""));
+        out.add("뽑기: " + summonItemName + " " + summonCost + "개 · 확률 " + rates());
+        out.add("중복: " + shardItem + " (일반 " + shardAmount[0] + " · 고급 " + shardAmount[1] + " · 유일 " + shardAmount[2] + " · 전설 " + shardAmount[3] + "개)" + (ownsAll ? " · 전체 보유 테스트 모드 켜짐" : ""));
+        CmdKit.lines(sender, out);
+    }
+
+    private void show(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        UUID id = ChacaApi.target(ctx);
+        var sender = CmdKit.sender(ctx);
+        String who = CmdKit.name(id);
+        ownership.owned(id, owned -> {
+            if (owned == null) { CmdKit.fail(sender, "아티팩트 보유 정보를 불러오지 못했어요", null); return; }
+            var out = new ArrayList<String>();
+            out.add("── " + who + " 아티팩트 ──");
+            out.add("보유 " + owned.size() + "개: " + (owned.isEmpty() ? "없음" : String.join(", ", owned.stream().sorted().map(this::label).toList())));
+            Player p = Bukkit.getPlayer(id);
+            if (p != null) {
+                out.add("장착: " + (equipped(p).isEmpty() ? "없음" : String.join(", ", equipped(p).stream().map(this::label).toList())));
+                String cd = cooldownText(id);
+                out.add("쿨타임: " + (cd.isEmpty() ? "없음" : cd.replace(";", " ").strip()));
+            } else out.add("장착·쿨타임: 이 서버에 접속 중일 때만 보여요");
+            CmdKit.lines(sender, out);
+        });
+    }
+
+    private void own(CommandContext<CommandSourceStack> ctx, String id, boolean grant) throws CommandSyntaxException {
+        UUID target = ChacaApi.target(ctx);
+        var sender = CmdKit.sender(ctx);
+        String who = CmdKit.name(target);
+        plugin.getLogger().info("ARTIFACT ADMIN admin=" + sender.getName() + " player=" + target + " " + (id == null ? "reset" : (grant ? "grant " : "revoke ") + id));
+        ownership.admin(target, id, grant, ok -> {
+            if (!ok) { CmdKit.fail(sender, "아티팩트 보유를 바꾸지 못했어요 (공유 DB 확인)", null); return; }
+            CmdKit.ok(sender, id == null ? who + " 님의 아티팩트 보유를 모두 지웠어요" : who + " 님" + (grant ? "에게 " : "의 ") + label(id) + "을(를) " + (grant ? "주었어요" : "회수했어요"));
+        });
+    }
+
+    private void unequip(CommandContext<CommandSourceStack> ctx, String id) throws CommandSyntaxException {
+        Player p = ChacaApi.targetOnline(ctx);
+        if (!plugin.playerStateReady(p)) throw ChacaApi.error("캐릭터 정보를 불러오는 중이에요. 잠시 뒤 다시 해 주세요");
+        var list = new ArrayList<>(equipped(p));
+        String who = plugin.names().name(p);
+        if (id == null) { if (list.isEmpty()) throw ChacaApi.error(who + " 님은 장착한 아티팩트가 없어요"); list.clear(); }
+        else if (!list.remove(id)) throw ChacaApi.error(who + " 님은 " + label(id) + "을(를) 장착하지 않았어요");
+        store(p, list); plugin.artifactsChanged(p); send(p, false, "");
+        CmdKit.ok(CmdKit.sender(ctx), who + " 님 " + (id == null ? "아티팩트를 모두" : label(id) + "을(를)") + " 장착 해제했어요");
+    }
+
+    private void resetCooldowns(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Player p = ChacaApi.targetOnline(ctx);
+        readyAt.remove(p.getUniqueId());
+        if (effects != null) effects.resetCooldowns(p);
+        plugin.markPlayerStateDirty(p); send(p, false, "");
+        CmdKit.ok(CmdKit.sender(ctx), plugin.names().name(p) + " 님 아티팩트 쿨타임을 초기화했어요");
+    }
+
+    private void returnKept(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Player p = ChacaApi.targetOnline(ctx);
+        if (!plugin.playerStateReady(p)) throw ChacaApi.error("캐릭터 정보를 불러오는 중이에요. 잠시 뒤 다시 해 주세요");
+        if (effects == null) throw ChacaApi.error("아티팩트 효과가 준비되지 않았어요");
+        String who = plugin.names().name(p);
+        String item = effects.life.adminReturnKept(p);
+        if (item == null) throw ChacaApi.error(who + " 님에게 보관 중인 아이템이 없어요");
+        CmdKit.ok(CmdKit.sender(ctx), who + " 님에게 보관품 " + item + "을(를) 돌려주었어요");
+    }
+
+    private void history(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        UUID id = ChacaApi.target(ctx);
+        var sender = CmdKit.sender(ctx);
+        String who = CmdKit.name(id);
+        ownership.history(id, rows -> {
+            if (rows == null) { CmdKit.fail(sender, "뽑기 기록을 불러오지 못했어요", null); return; }
+            var out = new ArrayList<String>();
+            out.add("── " + who + " 뽑기 중복 조각 기록 (" + rows.size() + "건) ──");
+            for (int i = 0; i < rows.size(); i++) { var r = rows.get(i); out.add((i + 1) + ". " + r.item() + " ×" + r.amount() + " · " + (r.delivered() ? "우편 보냄" : "아직 못 보냄")); }
+            if (rows.isEmpty()) out.add("(기록 없음)");
+            else out.add("다시주기 <번호>: 우편을 한 번 더 보냄 · 완료처리 <번호>: 보낸 것으로 표시");
+            CmdKit.lines(sender, out);
+        });
+    }
+
+    private void fixHistory(CommandContext<CommandSourceStack> ctx, boolean resend) throws CommandSyntaxException {
+        UUID id = ChacaApi.target(ctx);
+        int number = com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(ctx, "번호");
+        var sender = CmdKit.sender(ctx);
+        String who = CmdKit.name(id);
+        ownership.history(id, rows -> {
+            if (rows == null) { CmdKit.fail(sender, "뽑기 기록을 불러오지 못했어요", null); return; }
+            if (number > rows.size()) { CmdKit.userFail(sender, "그 번호의 기록이 없어요 (뽑기기록 보기로 번호 확인)"); return; }
+            var row = rows.get(number - 1);
+            plugin.getLogger().info("ARTIFACT ADMIN history admin=" + sender.getName() + " player=" + id + " " + (resend ? "resend" : "mark") + " " + row);
+            if (resend) ownership.redeliver(id, row, error -> { if (error == null) CmdKit.ok(sender, who + " 님에게 " + row.item() + " ×" + row.amount() + "을(를) 우편으로 다시 보냈어요"); else CmdKit.userFail(sender, error); });
+            else if (row.delivered()) CmdKit.userFail(sender, "이미 우편을 보낸 기록이에요");
+            else ownership.markDelivered(id, row, ok -> { if (ok == null) CmdKit.fail(sender, "기록을 바꾸지 못했어요", null); else CmdKit.ok(sender, who + " 님 " + number + "번 기록을 완료로 표시했어요"); });
+        });
+    }
+
+    private void ownsAll(CommandContext<CommandSourceStack> ctx, boolean on) {
+        ownsAll = on;
+        for (Player p : Bukkit.getOnlinePlayers()) { if (plugin.playerStateReady(p)) plugin.artifactsChanged(p); if (listening.contains(p.getUniqueId())) send(p, false, ""); }
+        CmdKit.ok(CmdKit.sender(ctx), "아티팩트 전체 보유 테스트 모드 " + (on ? "켜짐" : "꺼짐") + " (새로고침하면 artifacts.yml 값으로 돌아가요)");
     }
 }

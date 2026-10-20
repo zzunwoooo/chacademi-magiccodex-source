@@ -265,7 +265,7 @@ public final class BroomService implements Listener, PluginMessageListener {
         if (!hasMod(p) || isRiding(p) || (limitTicks <= 0 && !owns(p, type))) return false;
         if (p.isDead() || p.getGameMode() == GameMode.SPECTATOR || p.isInsideVehicle() || p.isGliding()) return false;
         if (blockedWorlds.contains(p.getWorld().getName())) {
-            p.sendActionBar(net.kyori.adventure.text.Component.text("이곳에서는 빗자루를 탈 수 없습니다."));
+            kr.chacademy.motionplugin.ChacaLink.notify(p, "warning", "broom-blocked-world", "이곳에서는 빗자루를 탈 수 없습니다", "", 3000);
             return false;
         }
         if (!p.hasPermission("chacademy.broom.use")) return false;
@@ -308,7 +308,7 @@ public final class BroomService implements Listener, PluginMessageListener {
             }
             if (reason == BroomCodec.STATE_TIMEOUT) {
                 p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 100, 0));
-                p.sendActionBar(net.kyori.adventure.text.Component.text("연습용 빗자루의 마력이 다했습니다."));
+                kr.chacademy.motionplugin.ChacaLink.notify(p, "warning", "broom-practice-timeout", "연습용 빗자루의 마력이 다했습니다", "", 3000);
             }
             if (reason == BroomCodec.STATE_FALL) {
                 catches.put(id, new PendingCatch(s.type, s.remaining, s.prevAllowFlight, tick + catchWindow));

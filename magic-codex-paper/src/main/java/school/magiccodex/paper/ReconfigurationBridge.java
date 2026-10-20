@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import org.bukkit.*;
-import org.bukkit.command.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
@@ -17,7 +16,7 @@ import school.magiccodex.protocol.ReconfigurationProtocol;
 import school.magiccodex.protocol.ReconfigurationProtocol.*;
 
 /** Single-use offers, exact item snapshots and credits are checked/committed on the server thread. */
-final class ReconfigurationBridge implements CommandExecutor,Listener,PluginMessageListener,AutoCloseable {
+final class ReconfigurationBridge implements Listener,PluginMessageListener,AutoCloseable {
     private final MagicCodexBridge plugin;
     private final EnhancementBridge enhancement;
     private final Map<UUID,Offer> offers=new HashMap<>();
@@ -28,8 +27,7 @@ final class ReconfigurationBridge implements CommandExecutor,Listener,PluginMess
     ReconfigurationBridge(MagicCodexBridge plugin,EnhancementBridge enhancement) {
         this.plugin=plugin;this.enhancement=enhancement;
         File f=new File(plugin.getDataFolder(),"reconfiguration.yml");if(!f.exists())plugin.saveResource("reconfiguration.yml",false);reload();
-        Objects.requireNonNull(plugin.getCommand("마력재구성")).setExecutor(this);
-        Objects.requireNonNull(plugin.getCommand("재구성관리")).setExecutor(this);
+        CmdKit.register(plugin,"/마력재구성·/유저관리 재구성권",this::commands);
         Bukkit.getPluginManager().registerEvents(this,plugin);
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin,ReconfigurationProtocol.REQUEST,this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,ReconfigurationProtocol.RESPONSE);
@@ -42,37 +40,36 @@ final class ReconfigurationBridge implements CommandExecutor,Listener,PluginMess
     private boolean target(ItemStack i,int mode){return i!=null&&i.getAmount()==1&&i.hasItemMeta()&&(mode==2?integer(i,"core_state",-1)==1&&integer(i,"core_nodes",-1)>=0&&integer(i,"core_nodes",11)<=10:i.getItemMeta().getPersistentDataContainer().has(key("wand_id"),PersistentDataType.STRING));}
     private int credits(Player p,int mode){return Math.clamp(p.getPersistentDataContainer().getOrDefault(key("reconfig_credit_"+mode),PersistentDataType.INTEGER,0),0,1000000);}
     void grant(Player p,int mode,int amount){
-        if(!plugin.playerStateReady(p))throw new IllegalArgumentException("캐릭터 정보를 불러오는 중입니다.");
-        if(!Bukkit.isPrimaryThread()||mode<0||mode>2||amount<1||amount>1000000||credits(p,mode)>1000000-amount)throw new IllegalArgumentException("종류 0~2, 합계 1~1000000, 서버 주 스레드");
+        if(!plugin.playerStateReady(p))throw new IllegalArgumentException("캐릭터 정보를 불러오는 중이에요. 잠시 뒤 다시 해 주세요");
+        if(!Bukkit.isPrimaryThread()||mode<0||mode>2)throw new IllegalStateException("mode 0..2 on the server thread");
+        if(amount<1||amount>1000000||credits(p,mode)>1000000-amount)throw new IllegalArgumentException("재구성권은 합계 1~1000000회까지예요");
         p.getPersistentDataContainer().set(key("reconfig_credit_"+mode),PersistentDataType.INTEGER,credits(p,mode)+amount);p.saveData();plugin.savePlayerState(p);
     }
-    private int mode(String s){return switch(s){case "초기화","reset"->0;case "복구","restore"->1;case "변경","affinity"->2;default->throw new IllegalArgumentException("초기화 / 복구 / 변경");};}
-    @Override public boolean onCommand(CommandSender sender,Command cmd,String label,String[] args){
-        try{
-            if(cmd.getName().equals("재구성관리")){
-                if(!sender.hasPermission("magiccodex.reconfigure.admin"))return true;
-                if(args.length==1&&args[0].equals("reload")){reload();sender.sendMessage("재구성 설정을 다시 읽었습니다.");return true;}
-                if(args.length==4&&args[0].equals("지급")){Player p=Bukkit.getPlayerExact(args[1]);if(p==null)throw new IllegalArgumentException("접속 중인 유저가 필요합니다.");grant(p,mode(args[2]),Integer.parseInt(args[3]));sender.sendMessage("재구성 사용 횟수를 지급했습니다.");return true;}
-                if(args.length==4&&args[0].equals("원본")&&sender instanceof Player p){
-                    if(enhancement.active(p))throw new IllegalArgumentException("강화를 먼저 종료해 주세요.");
-                    ItemStack i=p.getInventory().getItemInMainHand();if(!target(i,0))throw new IllegalArgumentException("마법봉을 들어 주세요.");
-                    double[] values=new double[3];for(int j=0;j<3;j++){values[j]=Double.parseDouble(args[j+1]);if(!Double.isFinite(values[j])||values[j]<0||values[j]>number(i,"wand_"+STATS[j]))throw new IllegalArgumentException("원본 수치는 현재 수치 이하이어야 합니다.");}
-                    var m=i.getItemMeta();for(int j=0;j<3;j++)m.getPersistentDataContainer().set(key("wand_base_"+STATS[j]),PersistentDataType.DOUBLE,values[j]);i.setItemMeta(m);p.saveData();sender.sendMessage("구형 마법봉의 강화 전 원본 수치를 등록했습니다.");return true;
-                }
-                sender.sendMessage("/재구성관리 지급 <닉네임> <초기화|복구|변경> <횟수>\n/재구성관리 원본 <마력> <추가 마나> <마법 가속>\n/재구성관리 reload");return true;
-            }
-            if(sender instanceof Player p&&p.hasPermission("magiccodex.reconfigure"))open(p,args.length==0?0:mode(args[0]));
-        }catch(IllegalArgumentException e){sender.sendMessage("설정을 확인해 주세요: "+e.getMessage());}
-        return true;
+    private static final List<String> MODES=List.of("초기화","복구","변경");
+    private void commands(){
+        var user=CmdKit.literal("마력재구성").executes(CmdKit.run(ctx->open(CmdKit.self(ctx),0)));
+        var admin=CmdKit.literal("재구성권");
+        for(int i=0;i<MODES.size();i++){
+            int mode=i;String name=MODES.get(i);
+            user.then(CmdKit.literal(name).executes(CmdKit.run(ctx->open(CmdKit.self(ctx),mode))));
+            admin.then(CmdKit.literal(name).then(CmdKit.argument("횟수",com.mojang.brigadier.arguments.IntegerArgumentType.integer(1,1_000_000)).executes(CmdKit.run(ctx->{
+                Player target=ChacaApi.targetOnline(ctx);int amount=com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(ctx,"횟수");
+                CmdKit.user(()->{grant(target,mode,amount);return null;});
+                CmdKit.ok(CmdKit.sender(ctx),plugin.names().name(target)+" 님에게 "+name+" 재구성권 "+amount+"회를 주었어요 (지금 "+credits(target,mode)+"회)");
+            }))));
+        }
+        ChacaApi.playerCommand(plugin,user,"마력 재구성 창 열기 (초기화·복구·변경)",List.of());
+        ChacaApi.branch(plugin,ChacaApi.유저관리,admin,"마력 재구성권 주기 (초기화·복구·변경)","재구성권 초기화 1");
+        ChacaApi.reload(plugin,"재구성","reconfiguration.yml (마력 재구성)",this::reload);
     }
     private boolean usable(Player p){var t=p.getOpenInventory().getType();return !p.isDead()&&p.getGameMode()!=GameMode.SPECTATOR&&(t==org.bukkit.event.inventory.InventoryType.CRAFTING||t==org.bukkit.event.inventory.InventoryType.CREATIVE)&&p.getItemOnCursor().getType().isAir()&&!enhancement.active(p);}
     void open(Player p,int mode){
         if(!Bukkit.isPrimaryThread()||mode<0||mode>2)throw new IllegalArgumentException();
         long t=System.currentTimeMillis();if(t<limits.getOrDefault(p.getUniqueId(),0L))return;limits.put(p.getUniqueId(),t+200);
-        if(!plugin.playerStateReady(p)){p.sendMessage("캐릭터 정보를 불러오는 중입니다.");return;}
+        if(!plugin.playerStateReady(p)){warn(p,"캐릭터 정보를 불러오는 중이에요. 잠시 뒤 다시 해 주세요");return;}
         if(!p.hasPermission("magiccodex.reconfigure"))return;
-        if(!p.getListeningPluginChannels().contains(ReconfigurationProtocol.RESPONSE)){p.sendMessage("마력 재구성 UI 모드 0.28.0 이상이 필요합니다.");return;}
-        if(!usable(p)){p.sendMessage("다른 보관함이나 진행 중인 강화를 먼저 닫아 주세요.");return;}
+        if(!p.getListeningPluginChannels().contains(ReconfigurationProtocol.RESPONSE)){warn(p,"차카데미 모드를 업데이트해 주세요");return;}
+        if(!usable(p)){warn(p,"다른 보관함이나 진행 중인 강화를 먼저 닫아 주세요");return;}
         int slot=p.getInventory().getHeldItemSlot();ItemStack item=p.getInventory().getItem(slot);
         if(!target(item,mode)){slot=-1;for(int j=0;j<36;j++)if(target(p.getInventory().getItem(j),mode)){slot=j;break;}item=slot<0?null:p.getInventory().getItem(slot);}
         String message="",name="대상 없음";int attempts=0,successes=0,limit=10,nodes=0,affinity=0,nextAttempts=0;
@@ -85,7 +82,7 @@ final class ReconfigurationBridge implements CommandExecutor,Listener,PluginMess
                 enhancement.captureBase(item);
                 attempts=integer(item,"enhance_attempts",0);successes=integer(item,"enhance_successes",0);limit=integer(item,"enhance_limit",10);
                 before=List.of(number(item,"wand_power"),number(item,"wand_mana"),number(item,"wand_haste"));after=before;
-                if(attempts<0||attempts>100||successes<0||successes>attempts||limit<1||limit>100||before.stream().anyMatch(v->!Double.isFinite(v)||v<0||v>100000)){p.sendMessage("마법봉 데이터가 올바르지 않습니다.");return;}
+                if(attempts<0||attempts>100||successes<0||successes>attempts||limit<1||limit>100||before.stream().anyMatch(v->!Double.isFinite(v)||v<0||v>100000)){plugin.getLogger().warning("재구성: 마법봉 데이터 이상 player="+p.getName()+" attempts="+attempts+" successes="+successes+" limit="+limit+" stats="+before);warn(p,"마법봉 데이터가 올바르지 않아요. 관리자에게 알려 주세요");return;}
                 nextAttempts=mode==0?0:ReconfigurationRules.restore(attempts,successes,restoreCount);
                 if(mode==0){
                     if(!enhancement.hasBase(item))message="강화 전 원본 수치를 먼저 등록해 주세요.";
@@ -119,6 +116,7 @@ final class ReconfigurationBridge implements CommandExecutor,Listener,PluginMess
         reply(p,r,1,r.mode()==0?"강화를 초기화했습니다.":r.mode()==1?"실패 횟수 "+(r.attempts()-r.nextAttempts())+"회를 복구했습니다.":"코어 성향을 변경했습니다.",next);
     }
     private void reply(Player p,Response r,int state,String message,int affinity){Response result=new Response(r.token(),r.mode(),state,r.slot(),r.name(),message,credits(p,r.mode()),r.nodes(),r.affinity(),affinity,r.attempts(),r.successes(),r.limit(),r.nextAttempts(),r.before(),r.after(),false);send(p,result);offers.put(p.getUniqueId(),new Offer(result,null,System.currentTimeMillis()+60000));}
+    private static void warn(Player p,String body){CmdKit.notify(p,"warning","reconfig-open","마력 재구성을 열 수 없어요",body,1500);}
     private void send(Player p,Response r){p.sendPluginMessage(plugin,ReconfigurationProtocol.RESPONSE,ReconfigurationProtocol.response(r));}
     @EventHandler public void quit(PlayerQuitEvent e){offers.remove(e.getPlayer().getUniqueId());limits.remove(e.getPlayer().getUniqueId());}
     @Override public void close(){offers.clear();limits.clear();}

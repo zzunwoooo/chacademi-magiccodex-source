@@ -60,8 +60,10 @@ public final class GimmickPlugin extends JavaPlugin {
             catch (LinkageError e) { getLogger().warning("마법 연동 실패: ChAcademiaMagicMythic 버전을 확인하세요 (" + e + ")"); }
         } else getLogger().info("ChAcademiaMagicMythic 이 없어 마법 연동은 꺼져 있습니다.");
 
-        var cmd = getCommand("기믹");
-        if (cmd != null) { var c = new GimmickCommand(this); cmd.setExecutor(c); cmd.setTabCompleter(c); }
+        if (ChacaLink.ready()) {
+            try { new GimmickCommand(this).register(); }
+            catch (RuntimeException e) { getLogger().log(java.util.logging.Level.WARNING, "명령어 허브에 /던전관리 갈래를 붙이지 못했습니다", e); }
+        } else getLogger().warning("MagicCodexBridge 명령어 허브가 없어 /던전관리 명령을 등록하지 않았습니다 (기믹·퍼즐은 그대로 동작).");
 
         // ModelEngine loads blueprints a moment after start; spawn a little later.
         Bukkit.getScheduler().runTaskLater(this, () -> { world.spawnLoaded(); for (Gimmick g : world.all()) collision.refresh(g); mana.dirty(); }, 40);

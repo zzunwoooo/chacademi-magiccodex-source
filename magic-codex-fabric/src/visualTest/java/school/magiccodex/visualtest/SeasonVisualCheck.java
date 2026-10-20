@@ -26,7 +26,7 @@ final class SeasonVisualCheck {
                 if(c.player.getHealth()<=0){c.player.requestRespawn();return;}
                 if(c.currentScreen!=null)return;
                 c.player.setPitch(8);c.player.setYaw(30);c.options.hudHidden=false;
-                command(c,"hud on");command(c,"hud season 봄");phase[0]=0;ticks[0]=0;return;
+                command(c,"화면표시 켜기");school.magiccodex.client.PreviewClient.show(java.util.List.of("season","spring"));phase[0]=0;ticks[0]=0;return;
             }
             if(++ticks[0]<40)return;ticks[0]=0;
             try{
@@ -34,8 +34,8 @@ final class SeasonVisualCheck {
                 if(phase[0]<4){
                     shot(c,"0"+(phase[0]+1)+"-"+HudSeason.values()[phase[0]].id());
                     phase[0]++;
-                    if(phase[0]<4){command(c,"hud season "+HudSeason.values()[phase[0]].label());return;}
-                    command(c,"hud season winter");c.options.getGuiScale().setValue(3);c.onResolutionChanged();
+                    if(phase[0]<4){school.magiccodex.client.PreviewClient.show(java.util.List.of("season",HudSeason.values()[phase[0]].label()));return;}
+                    school.magiccodex.client.PreviewClient.show(java.util.List.of("season","winter"));c.options.getGuiScale().setValue(3);c.onResolutionChanged();
                     click(c,-1);return;
                 }
                 if(phase[0]==4){shot(c,"05-expanded-gui3");c.options.getGuiScale().setValue(4);c.onResolutionChanged();phase[0]++;return;}

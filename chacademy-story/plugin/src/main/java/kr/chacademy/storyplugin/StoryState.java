@@ -29,7 +29,7 @@ final class StoryState {
     /** 대화 열기 요청의 결과: 처음 / 다시 보기 / 이미 끝냄 (열지 않음) / 이미 진행·대기 중 / 대기열 가득. */
     enum Open { FRESH, REPLAY, ALREADY_DONE, DUPLICATE, QUEUE_FULL }
 
-    /** 재생 요청 하나 (/cutscene play, /storydialogue 한 번). */
+    /** 재생 요청 하나 (/대화관리 재생 한 번). */
     static final class Request {
         final Kind kind;
         final String id;

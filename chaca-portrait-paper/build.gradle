@@ -1,6 +1,6 @@
 plugins { id 'java' }
 group = 'kr.chacademy'
-version = '0.1.0'
+version = '0.1.0-commands.1'
 base { archivesName = 'chaca-portrait' }
 repositories {
     if (findProperty('localDependencyRepo')) maven { url = uri(property('localDependencyRepo')) }

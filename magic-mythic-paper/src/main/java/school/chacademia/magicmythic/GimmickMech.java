@@ -1,8 +1,6 @@
 package school.chacademia.magicmythic;
 
 import java.util.*;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -40,7 +38,7 @@ final class GimmickMech extends Mech {
             case "extinguish" -> "끌 불을 바라보고 써 주세요.";
             default -> "바라보는 곳에 이 마법이 통하는 장치가 없습니다.";
         };
-        pl.sendActionBar(Component.text(msg, NamedTextColor.GOLD));
+        ChacaLink.notify(pl, "warning", "magic-mythic:gimmick-fail", msg, "", 1500);
         refund(pl, spell);
         return false;
     }

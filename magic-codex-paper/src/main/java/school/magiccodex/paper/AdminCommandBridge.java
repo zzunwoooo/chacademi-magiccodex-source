@@ -1,190 +1,311 @@
 package school.magiccodex.paper;
 
+import static school.magiccodex.paper.CmdKit.*;
+
+import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import java.util.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import school.magiccodex.protocol.ManaProtocol;
-import school.magiccodex.protocol.SchoolProtocol;
 
-/** Administrator-only facade; every mutation delegates to the subsystem that owns its state. */
-final class AdminCommandBridge implements CommandExecutor,TabCompleter {
-    private static final List<String> USER_ACTIONS=List.of("스탯","마법","기숙사","호감도","퀘스트","퀘스트기록편집");
+/**
+ * 관리자 명령 (2026-10-20 명령어 정리). 모든 변경은 그 상태를 가진 하위 시스템에 맡긴다.
+ * <ul>
+ *   <li>/유저관리 &lt;닉네임&gt; 스탯 · 마법 · 마법조건 · 퀘스트 · 호감도</li>
+ *   <li>/아이템관리 마법봉 · 마력코어</li>
+ * </ul>
+ * OP 검사는 허브가 대단원 단위로 한다.
+ */
+final class AdminCommandBridge {
+    private static final List<String> SPELL_ACTIONS = List.of("배우기", "잊기");
     private final MagicCodexBridge plugin;
     private final ManaBridge mana;
-    private final SchoolBridge school;
     private final EnhancementBridge enhancement;
     private final AppraisalBridge appraisal;
-    private final TitleBridge titles;
     private final NpcSocialService social;
-    AdminCommandBridge(MagicCodexBridge plugin,ManaBridge mana,SchoolBridge school,EnhancementBridge enhancement,AppraisalBridge appraisal,TitleBridge titles,NpcSocialService social){
-        this.plugin=plugin;this.mana=mana;this.school=school;this.enhancement=enhancement;this.appraisal=appraisal;this.titles=titles;this.social=social;
-        for(String name:List.of("유저관리","점수관리","아이템관리","칭호추가","칭호삭제")){
-            PluginCommand command=Objects.requireNonNull(plugin.getCommand(name));command.setExecutor(this);command.setTabCompleter(this);
-        }
-    }
-    private static void allowed(CommandSender sender,String permission){if(!sender.hasPermission(permission))throw new IllegalArgumentException("권한이 없습니다: "+permission);}
-    private Player player(String name){Player player=plugin.names().resolve(name);if(player==null)throw new IllegalArgumentException("접속 중인 유저를 찾을 수 없거나 닉네임이 중복됩니다. 영문 계정명을 사용해 주세요.");return player;}
-    private static String joined(String[] args,int start,int end){return String.join(" ",Arrays.copyOfRange(args,start,end));}
-    private int userAction(String[] args){for(int i=1;i<args.length;i++)if(USER_ACTIONS.contains(args[i])&&plugin.names().resolve(joined(args,0,i))!=null)return i;for(int i=args.length-1;i>=1;i--)if(plugin.names().resolve(joined(args,0,i))!=null)return i;return 1;}
-    @Override public boolean onCommand(CommandSender sender,Command command,String label,String[] args){
-        try{
-            switch(command.getName()){
-                case "유저관리"->user(sender,args);
-                case "점수관리"->score(sender,args);
-                case "아이템관리"->item(sender,args);
-                case "칭호추가","칭호삭제"->title(sender,args,command.getName().equals("칭호삭제"));
-                default->throw new IllegalArgumentException("등록되지 않은 관리 명령입니다.");
-            }
-        }catch(NumberFormatException e){sender.sendMessage("수치를 올바른 숫자로 입력해 주세요. 정수 항목에는 소수를 사용할 수 없습니다.");}
-        catch(IllegalArgumentException e){sender.sendMessage(e.getMessage()==null?"입력값을 확인해 주세요.":e.getMessage());}
-        return true;
-    }
-    private void user(CommandSender sender,String[] input){
-        if(input.length>0&&input[0].equals("\ud018\uc2a4\ud2b8\uae30\ub85d\ud3b8\uc9d1")){
-            for(int i=2;i<input.length;i++)if(JournalBridge.OPERATIONS.contains(input[i])){Player target=player(joined(input,1,i));plugin.journalBridge().command(sender,target,Arrays.copyOfRange(input,i,input.length));return;}
-            throw new IllegalArgumentException("/\uc720\uc800\uad00\ub9ac \ud018\uc2a4\ud2b8\uae30\ub85d\ud3b8\uc9d1 <\uc720\uc800> \uc870\ud68c|\ubd80\uc5ec|\uc9c4\ud589|\uc644\ub8cc|\ucd08\uae30\ud654 [source:id]");
-        }
 
-        int index=userAction(input);
-        if(input.length<=index)throw new IllegalArgumentException("/유저관리 <닉네임·영문계정> 스탯|마법|기숙사|호감도 ...");
-        String action=input[index];allowed(sender,permission(action));Player target=player(joined(input,0,index));
-        String[] args=Arrays.copyOfRange(input,index+1,input.length);
-        switch(action){
-            case "퀘스트"->plugin.journalBridge().categoryCommand(sender,target,args);
-            case "퀘스트기록편집"->plugin.journalBridge().command(sender,target,args);
-            case "스탯"->{
-                if(args.length!=3||!AdminCommandRules.STATS.contains(args[0]))throw new IllegalArgumentException("/유저관리 <유저> 스탯 현재마나|마나|마나회복|마법가속 설정|추가|감소 <수치>");
-                if(!plugin.playerStateReady(target))throw new IllegalArgumentException("캐릭터 정보를 불러오는 중입니다.");
-                plugin.refreshEquipment(target);UUID id=target.getUniqueId();ManaAccount account=mana.mana.account(id);
-                double before=switch(args[0]){case "현재마나"->account.snapshot().current();case "마나"->account.baseMaximum;case "마나회복"->account.baseRegen;default->account.baseHaste;};
-                double next=AdminCommandRules.changed(before,args[1],AdminCommandRules.nonnegative(args[2],1_000_000),1_000_000);
-                switch(args[0]){case "현재마나"->mana.mana.setCurrent(id,next);case "마나"->mana.mana.setBaseMaximum(id,next);case "마나회복"->mana.mana.setBaseRegeneration(id,next);default->mana.mana.setBaseHaste(id,next);}
-                mana.mana.save(target);plugin.savePlayerState(target);var snapshot=mana.mana.account(id).snapshot();
-                if(target.getListeningPluginChannels().contains(ManaProtocol.RESPONSE))target.sendPluginMessage(plugin,ManaProtocol.RESPONSE,ManaProtocol.encode(new ManaProtocol.Response(0,ManaProtocol.SNAPSHOT,0,snapshot)));
-                double actual=args[0].equals("현재마나")?snapshot.current():next;
-                sender.sendMessage(plugin.names().name(target)+" "+args[0]+" = "+AdminCommandRules.number(actual)+(args[0].equals("현재마나")?"":" (장비·버프 제외 기본값)"));
-            }
-            case "마법"->{
-                if(args.length<2||!List.of("습득","미습득","조건지급","조건회수","조건초기화","조건조회").contains(args[0]))throw new IllegalArgumentException("/유저관리 <유저> 마법 습득|미습득|조건지급|조건회수|조건초기화|조건조회 <등록된 마법명·ID>");
-                Map<String,String> catalog=args[0].startsWith("조건")?DiscoveryLink.manualConditions():DiscoveryLink.registeredSpells();String id=AdminCommandRules.resolve(catalog,joined(args,1,args.length));
-                if(id==null)throw new IllegalArgumentException("등록된 마법이 없거나 이름이 중복됩니다. 마법 ID를 선택해 주세요. 발견 플러그인 활성 상태도 확인해 주세요.");
-                String name=plugin.names().name(target);
-                if(args[0].startsWith("조건")){DiscoveryLink.adminCondition(target.getUniqueId(),id,args[0],sender::sendMessage);return;}
-                DiscoveryLink.adminSetLearned(target.getUniqueId(),id,args[0].equals("습득"),error->sender.sendMessage(error==null?name+" · "+catalog.get(id)+" "+args[0]+" 처리 완료":error));
-            }
-            case "기숙사"->{
-                if(args.length!=1)throw new IllegalArgumentException("/유저관리 <유저> 기숙사 <기숙사명>");
-                int house=SchoolBridge.parseHouse(args[0]);if(house<0)throw new IllegalArgumentException("등록된 기숙사를 선택해 주세요.");
-                String name=plugin.names().name(target);school.adminHouse(target,house,error->sender.sendMessage(error==null?name+"의 기숙사 = "+SchoolProtocol.HOUSES.get(house):error));
-            }
-            case "호감도"->{
-                if(social==null)throw new IllegalArgumentException("NPC 호감도 기능이 준비되지 않았습니다.");
-                int op=args.length-1;if(op>=0&&!args[op].equals("조회"))op--;
-                if(op<1||!AdminCommandRules.QUERIES.contains(args[op]))throw new IllegalArgumentException("/유저관리 <유저> 호감도 <등록 NPC명·ID> 조회 또는 설정|추가|감소 <정수>");
-                String operation=args[op];if(operation.equals("조회")&&op!=args.length-1||!operation.equals("조회")&&op!=args.length-2)throw new IllegalArgumentException("호감도 명령 인수를 확인해 주세요.");
-                int value=operation.equals("조회")?0:Integer.parseInt(args[args.length-1]);if(value<0)throw new IllegalArgumentException("호감도 수치는 0 이상의 정수입니다.");
-                String npc=AdminCommandRules.resolve(social.registeredNpcs(),joined(args,0,op));if(npc==null)throw new IllegalArgumentException("등록된 NPC가 없거나 이름이 중복됩니다. NPC ID를 선택해 주세요.");
-                String name=plugin.names().name(target);
-                social.adminChange(target.getUniqueId(),npc,operation,value).whenComplete((row,error)->{
-                    if(error!=null){sender.sendMessage("호감도를 처리하지 못했습니다. 입력값과 서버 로그를 확인해 주세요.");return;}
-                    sender.sendMessage(name+" · "+npc+" 호감도 "+row.score()+" / "+AffinityStore.gate(row.heart())+" · 하트 "+row.heart());
+    AdminCommandBridge(MagicCodexBridge plugin, ManaBridge mana, SchoolBridge school, EnhancementBridge enhancement, AppraisalBridge appraisal, TitleBridge titles, NpcSocialService social) {
+        this.plugin = plugin; this.mana = mana; this.enhancement = enhancement; this.appraisal = appraisal; this.social = social;
+        register(plugin, "/유저관리 스탯·마법·퀘스트·호감도", () -> {
+            ChacaApi.branch(plugin, ChacaApi.유저관리, stats(), "마나·마법 가속 기본값 바꾸기", "스탯 최대마나 설정 500");
+            ChacaApi.branch(plugin, ChacaApi.유저관리, spells(), "마법 배우게 하기·잊게 하기", "마법 배우기 ");
+            ChacaApi.branch(plugin, ChacaApi.유저관리, conditions(), "마법 발견 수동 조건 보기·주기·회수·초기화", "마법조건 보기 ");
+            ChacaApi.branch(plugin, ChacaApi.유저관리, quests(), "메인·일일 퀘스트 기록 보기·주기·진행·완료·초기화", "퀘스트 메인 보기");
+            ChacaApi.branch(plugin, ChacaApi.유저관리, affinity(), "NPC 호감도·하트·호칭", "호감도 ");
+        });
+        register(plugin, "/아이템관리 마법봉·마력코어", () -> {
+            ChacaApi.branch(plugin, ChacaApi.아이템관리, wand(), "마법봉 주기·만들기·등록·원본설정", "마법봉 주기");
+            ChacaApi.branch(plugin, ChacaApi.아이템관리, core(), "마력코어 주기·만들기", "마력코어 주기");
+        });
+    }
+
+    // ------------------------------------------------------------------ /유저관리 <닉네임> 스탯
+
+    private LiteralArgumentBuilder<CommandSourceStack> stats() {
+        var root = literal("스탯");
+        for (String stat : AdminCommandRules.STATS) {
+            var node = literal(stat);
+            for (String change : AdminCommandRules.CHANGES)
+                node.then(literal(change).then(argument("값", DoubleArgumentType.doubleArg(0, 1_000_000)).executes(run(ctx -> stat(ctx, stat, change)))));
+            root.then(node);
+        }
+        return root;
+    }
+
+    private void stat(CommandContext<CommandSourceStack> ctx, String stat, String change) throws CommandSyntaxException {
+        Player target = ChacaApi.targetOnline(ctx);
+        if (!plugin.playerStateReady(target)) throw ChacaApi.error("캐릭터 정보를 불러오는 중이에요. 잠시 뒤 다시 해 주세요");
+        double value = DoubleArgumentType.getDouble(ctx, "값");
+        plugin.refreshEquipment(target);
+        UUID id = target.getUniqueId();
+        ManaAccount account = mana.mana.account(id);
+        double before = switch (stat) { case "현재마나" -> account.snapshot().current(); case "최대마나" -> account.baseMaximum; case "마나회복" -> account.baseRegen; default -> account.baseHaste; };
+        double next = user(() -> AdminCommandRules.changed(before, change, value, 1_000_000));
+        switch (stat) {
+            case "현재마나" -> mana.mana.setCurrent(id, next);
+            case "최대마나" -> mana.mana.setBaseMaximum(id, next);
+            case "마나회복" -> mana.mana.setBaseRegeneration(id, next);
+            default -> mana.mana.setBaseHaste(id, next);
+        }
+        mana.mana.save(target); plugin.savePlayerState(target);
+        var snapshot = mana.mana.account(id).snapshot();
+        if (target.getListeningPluginChannels().contains(ManaProtocol.RESPONSE))
+            target.sendPluginMessage(plugin, ManaProtocol.RESPONSE, ManaProtocol.encode(new ManaProtocol.Response(0, ManaProtocol.SNAPSHOT, 0, snapshot)));
+        double actual = stat.equals("현재마나") ? snapshot.current() : next;
+        ok(sender(ctx), plugin.names().name(target) + " 님 " + stat + " " + AdminCommandRules.number(actual) + (stat.equals("현재마나") ? "" : " (장비·버프 제외 기본값)"));
+    }
+
+    // ------------------------------------------------------------------ 마법 · 마법조건 (MagicDiscovery)
+
+    private LiteralArgumentBuilder<CommandSourceStack> spells() {
+        var root = literal("마법");
+        for (String action : SPELL_ACTIONS)
+            root.then(literal(action).then(word("마법", () -> AdminCommandRules.catalogChoices(DiscoveryLink.registeredSpells())).executes(run(ctx -> {
+                UUID target = ChacaApi.target(ctx);
+                Map<String, String> catalog = DiscoveryLink.registeredSpells();
+                if (catalog.isEmpty()) throw ChacaApi.error("마법 발견 플러그인이 준비되지 않았어요");
+                String id = pick(catalog, text(ctx, "마법"), "마법");
+                var sender = sender(ctx);
+                String who = CmdKit.name(target);
+                DiscoveryLink.adminSetLearned(target, id, action.equals("배우기"), error -> {
+                    if (error == null) ok(sender, who + " 님이 " + catalog.get(id) + " 마법을 " + (action.equals("배우기") ? "배웠어요" : "잊었어요"));
+                    else userFail(sender, error);
                 });
-            }
-            default->throw new IllegalArgumentException("스탯, 마법, 기숙사, 호감도 중 선택해 주세요.");
-        }
+            }))));
+        return root;
     }
-    private static String permission(String branch){return switch(branch){case "퀘스트","퀘스트기록편집"->"magiccodex.quests.admin";case "스탯"->"magiccodex.mana.admin";case "마법"->"magicdiscovery.admin";case "기숙사"->"magiccodex.school.admin";case "호감도"->"magiccodex.dialogue.admin";default->throw new IllegalArgumentException("스탯, 마법, 기숙사, 호감도 중 선택해 주세요.");};}
-    private void score(CommandSender sender,String[] args){
-        allowed(sender,"magiccodex.school.admin");
-        if(args.length<2||args.length>3||!AdminCommandRules.QUERIES.contains(args[1])||args[1].equals("조회")&&args.length!=2||!args[1].equals("조회")&&args.length!=3)throw new IllegalArgumentException("/점수관리 <기숙사> 조회 또는 추가|감소|설정 <점수>");
-        int house=SchoolBridge.parseHouse(args[0]);long value=args.length==3?Long.parseLong(args[2]):0;
-        school.adminScore(house,args[1],value,sender::sendMessage);
-    }
-    private void item(CommandSender sender,String[] args){
-        if(args.length==0)throw new IllegalArgumentException("/아이템관리 마법봉 <마력> <추가마나> <마법가속> 또는 마력코어 <코어수> <성공률%> <별잡기보너스%> <상승배율> <성향>");
-        allowed(sender,args[0].equals("마법봉")?"magiccodex.enhance.admin":"magiccodex.core.admin");
-        if(!(sender instanceof Player target))throw new IllegalArgumentException("아이템은 명령을 실행한 유저에게 지급됩니다. 게임 안에서 실행해 주세요.");
-        if(!plugin.playerStateReady(target))throw new IllegalArgumentException("캐릭터 정보를 불러오는 중입니다.");
-        if(target.getInventory().firstEmpty()<0)throw new IllegalArgumentException("인벤토리에 빈칸이 필요합니다.");
-        ItemStack item;
-        switch(args[0]){
-            case "마법봉"->{
-                if(args.length!=4)throw new IllegalArgumentException("/아이템관리 마법봉 <마력:0~100000> <추가마나:0~100000> <마법가속:0~100000>");
-                double power=AdminCommandRules.nonnegative(args[1],100000),mana=AdminCommandRules.nonnegative(args[2],100000),haste=AdminCommandRules.nonnegative(args[3],100000);
-                item=new ItemStack(Material.BLAZE_ROD);var meta=item.getItemMeta();meta.displayName(net.kyori.adventure.text.Component.text("마법봉").decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC,false));item.setItemMeta(meta);enhancement.register(item,power,mana,haste);
-            }
-            case "마력코어"->{
-                if(args.length!=6)throw new IllegalArgumentException("/아이템관리 마력코어 <코어수:1~10> <성공률%:0~100> <별잡기보너스%:0~100> <상승배율:0초과~10000> <마력|마나|마법가속>");
-                item=appraisal.adminCore(Integer.parseInt(args[1]),AdminCommandRules.nonnegative(args[2],100),AdminCommandRules.nonnegative(args[3],100),AdminCommandRules.nonnegative(args[4],10000),AdminCommandRules.affinity(args[5]));
-            }
-            default->throw new IllegalArgumentException("마법봉 또는 마력코어를 선택해 주세요.");
-        }
-        target.getInventory().addItem(item);target.saveData();plugin.savePlayerState(target);sender.sendMessage(args[0]+" 1개를 지급했습니다.");
-    }
-    private void title(CommandSender sender,String[] args,boolean remove){
-        allowed(sender,"magiccodex.titles.admin");
-        if(args.length<2)throw new IllegalArgumentException("/"+(remove?"칭호삭제":"칭호추가")+" <닉네임·영문계정> <등록 칭호명·ID>");
-        int split=1;for(int i=1;i<args.length;i++)if(plugin.names().resolve(joined(args,0,i))!=null)split=i;
-        Player target=player(joined(args,0,split));Map<String,String> catalog=titles.registeredTitles(remove);String id=AdminCommandRules.resolve(catalog,joined(args,split,args.length));
-        if(id==null)throw new IllegalArgumentException("등록된 "+(remove?"":"활성 ")+"칭호가 없거나 이름이 중복됩니다. 칭호 ID를 선택해 주세요.");
-        titles.grant(target.getUniqueId(),id,remove,ok->sender.sendMessage(ok?"칭호 "+(remove?"삭제":"추가")+" 완료: "+catalog.get(id):"칭호를 저장하지 못했습니다."));
-    }
-    private List<String> players(){var choices=new ArrayList<String>();for(Player p:Bukkit.getOnlinePlayers()){choices.add(p.getName());String name=plugin.names().name(p);if(plugin.names().resolve(name)==p)choices.add(name);}return choices;}
-    @Override public List<String> onTabComplete(CommandSender sender,Command command,String label,String[] args){
-        if(args==null||args.length==0)return List.of();
-        try{return complete(sender,command.getName(),args);}catch(IllegalArgumentException e){return List.of();}
-    }
-    private List<String> complete(CommandSender sender,String command,String[] args){
-        String part=args[args.length-1];Collection<String> choices=List.of();
-        if(command.equals("\uc720\uc800\uad00\ub9ac")&&args[0].equals("\ud018\uc2a4\ud2b8\uae30\ub85d\ud3b8\uc9d1")){
-            allowed(sender,"magiccodex.quests.admin");int op=-1;for(int i=2;i<args.length-1;i++)if(JournalBridge.OPERATIONS.contains(args[i])){op=i;break;}
-            if(op>=0){Player target=player(joined(args,1,op));return AdminCommandRules.tailChoices(AdminCommandRules.catalogChoices(plugin.journalBridge().catalog(target)),args,op+1);}
-            for(int i=2;i<args.length;i++)if(plugin.names().resolve(joined(args,1,i))!=null)return AdminCommandRules.filter(JournalBridge.OPERATIONS,part);
-            return AdminCommandRules.tailChoices(players(),args,1);
-        }
 
-        switch(command){
-            case "유저관리"->{
-                List<String> branches=USER_ACTIONS.stream().filter(a->sender.hasPermission(permission(a))).toList();if(branches.isEmpty())return List.of();
-                if(args.length==1){var first=new ArrayList<>(players());if(sender.hasPermission("magiccodex.quests.admin"))first.add("\ud018\uc2a4\ud2b8\uae30\ub85d\ud3b8\uc9d1");choices=first;}
-                else{
-                    int branch=userAction(args);if(plugin.names().resolve(joined(args,0,branch))==null)choices=AdminCommandRules.tailChoices(players(),args,0);
-                    else if(args.length==branch+1)choices=branches;
-                    else if(branch<args.length&&branches.contains(args[branch])){
-                        int position=args.length-branch-1;String action=args[branch];
-                        choices=switch(action){
-                            case "퀘스트"->position==1?List.of("메인","일일"):position==2?JournalBridge.OPERATIONS:AdminCommandRules.tailChoices(plugin.journalBridge().choices(player(joined(args,0,branch)),args[branch+1],args[branch+2]),args,branch+3);
-                            case "퀘스트기록편집"->position==1?JournalBridge.OPERATIONS:AdminCommandRules.tailChoices(AdminCommandRules.catalogChoices(plugin.journalBridge().catalog(player(joined(args,0,branch)))),args,branch+2);
-                            case "스탯"->AdminCommandRules.statOptions(position);
-                            case "기숙사"->position==1?SchoolProtocol.HOUSES:List.of();
-                            case "마법"->position==1?List.of("습득","미습득","조건지급","조건회수","조건초기화","조건조회"):position>=2?AdminCommandRules.tailChoices(AdminCommandRules.catalogChoices(args[branch+1].startsWith("조건")?DiscoveryLink.manualConditions():DiscoveryLink.registeredSpells()),args,branch+2):List.of();
-                            case "호감도"->{
-                                if(social==null)yield List.of();
-                                int operation=-1;for(int i=branch+2;i<args.length-1;i++)if(AdminCommandRules.QUERIES.contains(args[i]))operation=i;
-                                if(operation>=0)yield args.length==operation+2&&!args[operation].equals("조회")?List.of("<호감도:0이상_정수>","0","1","5","20","100"):List.of();
-                                String npc=joined(args,branch+1,args.length-1);
-                                yield position>=2&&AdminCommandRules.resolve(social.registeredNpcs(),npc)!=null?AdminCommandRules.QUERIES:AdminCommandRules.tailChoices(AdminCommandRules.catalogChoices(social.registeredNpcs()),args,branch+1);
-                            }
-                            default->List.of();
-                        };
-                    }
-                }
+    private LiteralArgumentBuilder<CommandSourceStack> conditions() {
+        var root = literal("마법조건");
+        Map<String, String> actions = new LinkedHashMap<>();
+        actions.put("보기", "조건조회"); actions.put("주기", "조건지급"); actions.put("회수", "조건회수"); actions.put("초기화", "조건초기화");
+        actions.forEach((verb, legacy) -> {
+            var spell = word("마법", () -> AdminCommandRules.catalogChoices(DiscoveryLink.manualConditions()));
+            CmdKit.Body body = ctx -> {
+                UUID target = ChacaApi.target(ctx);
+                Map<String, String> catalog = DiscoveryLink.manualConditions();
+                if (catalog.isEmpty()) throw ChacaApi.error("마법 발견 플러그인이 준비되지 않았어요");
+                String id = pick(catalog, text(ctx, "마법"), "수동 조건 마법");
+                var sender = sender(ctx);
+                DiscoveryLink.adminCondition(target, id, legacy, text -> {
+                    if (verb.equals("보기")) lines(sender, List.of("── " + CmdKit.name(target) + " · " + catalog.get(id) + " 수동 조건 ──", text));
+                    else if (text != null && text.startsWith(legacy + " 완료")) ok(sender, CmdKit.name(target) + " 님 " + catalog.get(id) + " 조건 " + verb + " 완료");
+                    else userFail(sender, text == null ? "조건을 처리하지 못했어요" : text);
+                });
+            };
+            if (verb.equals("초기화")) root.then(literal(verb).then(confirm(spell, body)));
+            else root.then(literal(verb).then(spell.executes(run(body))));
+        });
+        return root;
+    }
+
+    // ------------------------------------------------------------------ 퀘스트
+
+    private LiteralArgumentBuilder<CommandSourceStack> quests() {
+        var root = literal("퀘스트");
+        for (String category : List.of("메인", "일일")) {
+            var node = literal(category);
+            for (String operation : JournalBridge.OPERATIONS) {
+                var op = literal(operation);
+                var quest = wordIn("퀘스트", ctx -> {
+                    UUID id = targetOf(ctx);
+                    Player target = id == null ? null : org.bukkit.Bukkit.getPlayer(id);
+                    return target == null ? List.of() : plugin.journalBridge().choices(target, category, operation);
+                });
+                CmdKit.Body body = ctx -> plugin.journalBridge().categoryCommand(sender(ctx), ChacaApi.targetOnline(ctx), category, operation, text(ctx, "퀘스트"));
+                if (operation.equals("보기")) op.executes(run(ctx -> plugin.journalBridge().categoryCommand(sender(ctx), ChacaApi.targetOnline(ctx), category, operation, "")));
+                if (operation.equals("초기화")) op.then(confirm(quest, body));
+                else op.then(quest.executes(run(body)));
+                node.then(op);
             }
-            case "점수관리"->{allowed(sender,"magiccodex.school.admin");choices=args.length==1?SchoolProtocol.HOUSES:args.length==2?AdminCommandRules.QUERIES:args.length==3&&!args[1].equals("조회")?List.of("<점수:정수>","0","1","10","100"):List.of();}
-            case "아이템관리"->{
-                if(args.length==1){var options=new ArrayList<String>();if(sender instanceof Player&&sender.hasPermission("magiccodex.enhance.admin"))options.add("마법봉");if(sender instanceof Player&&sender.hasPermission("magiccodex.core.admin"))options.add("마력코어");choices=options;}
-                else if(sender instanceof Player&&args[0].equals("마법봉")&&sender.hasPermission("magiccodex.enhance.admin"))choices=AdminCommandRules.itemOptions("마법봉",args.length);
-                else if(sender instanceof Player&&args[0].equals("마력코어")&&sender.hasPermission("magiccodex.core.admin"))choices=AdminCommandRules.itemOptions("마력코어",args.length);
-            }
-            case "칭호추가","칭호삭제"->{
-                allowed(sender,"magiccodex.titles.admin");int split=0;for(int i=1;i<args.length;i++)if(plugin.names().resolve(joined(args,0,i))!=null)split=i;
-                choices=split==0?AdminCommandRules.tailChoices(players(),args,0):AdminCommandRules.tailChoices(AdminCommandRules.catalogChoices(titles.registeredTitles(command.equals("칭호삭제"))),args,split);
-            }
-            default->{return List.of();}
+            root.then(node);
         }
-        return AdminCommandRules.filter(choices,part);
+        return root;
+    }
+
+    // ------------------------------------------------------------------ 호감도
+
+    private LiteralArgumentBuilder<CommandSourceStack> affinity() {
+        var npc = word("NPC", () -> social == null ? List.of() : AdminCommandRules.catalogChoices(social.registeredNpcs()));
+        npc.then(literal("보기").executes(run(ctx -> affinityChange(ctx, "보기", 0))));
+        for (String change : List.of("설정", "추가", "빼기"))
+            npc.then(literal(change).then(argument("값", IntegerArgumentType.integer(0, 100)).executes(run(ctx -> affinityChange(ctx, change, IntegerArgumentType.getInteger(ctx, "값"))))));
+        npc.then(literal("하트")
+                .then(literal("보기").executes(run(ctx -> affinityChange(ctx, "보기", 0))))
+                .then(literal("설정").then(argument("단계", IntegerArgumentType.integer(0, 4)).executes(run(this::heart)))));
+        npc.then(literal("호칭")
+                .then(literal("보기").executes(run(ctx -> affinityChange(ctx, "보기", 0))))
+                .then(literal("설정").then(word("호칭", List::of).executes(run(ctx -> nickname(ctx, text(ctx, "호칭"))))))
+                .then(literal("초기화").executes(run(ctx -> nickname(ctx, "")))));
+        return literal("호감도").then(npc);
+    }
+
+    private String npc(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        if (social == null) throw ChacaApi.error("NPC 호감도 기능이 준비되지 않았어요");
+        Map<String, String> npcs = social.registeredNpcs();
+        if (npcs.isEmpty()) throw ChacaApi.error("등록된 NPC가 없어요 (ChacaNPC 상태 확인)");
+        return pick(npcs, text(ctx, "NPC"), "NPC");
+    }
+
+    private static List<String> affinityLines(String who, String npc, AffinityStore.Row row) {
+        return List.of("── " + who + " · " + npc + " 호감도 ──",
+                "점수 " + row.score() + " / 상한 " + AffinityStore.gate(row.heart()),
+                "하트 " + row.heart() + "단계",
+                "호칭 " + (row.nickname().isEmpty() ? "(없음)" : row.nickname()));
+    }
+
+    private void affinityChange(CommandContext<CommandSourceStack> ctx, String action, int value) throws CommandSyntaxException {
+        UUID target = ChacaApi.target(ctx);
+        String id = npc(ctx);
+        var sender = sender(ctx);
+        String who = CmdKit.name(target);
+        social.adminChange(target, id, action, value).whenComplete((row, error) -> {
+            if (error != null) { fail(sender, "호감도를 처리하지 못했어요", error); return; }
+            if (action.equals("보기")) lines(sender, affinityLines(who, id, row));
+            else ok(sender, who + " 님 " + id + " 호감도 " + row.score() + " (상한 " + AffinityStore.gate(row.heart()) + ")");
+        });
+    }
+
+    private void heart(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        UUID target = ChacaApi.target(ctx);
+        String id = npc(ctx);
+        int level = IntegerArgumentType.getInteger(ctx, "단계");
+        var sender = sender(ctx);
+        String who = CmdKit.name(target);
+        social.adminHeart(target, id, level).whenComplete((row, error) -> {
+            if (error != null) fail(sender, "하트 단계를 바꾸지 못했어요", error);
+            else ok(sender, who + " 님 " + id + " 하트 " + row.heart() + "단계 (호감도 " + row.score() + ")");
+        });
+    }
+
+    private void nickname(CommandContext<CommandSourceStack> ctx, String nickname) throws CommandSyntaxException {
+        UUID target = ChacaApi.target(ctx);
+        String id = npc(ctx);
+        if (nickname.codePointCount(0, nickname.length()) > 8) throw ChacaApi.error("호칭은 8글자까지예요");
+        var sender = sender(ctx);
+        String who = CmdKit.name(target);
+        social.setNickname(target, id, nickname).whenComplete((row, error) -> {
+            if (error != null) fail(sender, "호칭을 바꾸지 못했어요", error);
+            else ok(sender, who + " 님 " + id + " 호칭 " + (row.nickname().isEmpty() ? "초기화" : "= " + row.nickname()));
+        });
+    }
+
+    // ------------------------------------------------------------------ /아이템관리 마법봉 · 마력코어
+
+    private static final String[] WAND_STATS = {"마력", "추가마나", "마법가속"};
+
+    private LiteralArgumentBuilder<CommandSourceStack> wand() {
+        var give = literal("주기").executes(run(ctx -> giveWand(ctx, self(ctx))))
+                .then(player("닉네임").executes(run(ctx -> giveWand(ctx, ChacaApi.resolveOnline(ctx, "닉네임")))));
+        var make = literal("만들기").then(wandStats(run(ctx -> makeWand(ctx, self(ctx))), run(ctx -> makeWand(ctx, ChacaApi.resolveOnline(ctx, "닉네임")))));
+        var register = literal("등록").then(wandStats(run(this::registerWand), null));
+        var base = literal("원본설정").then(wandStats(run(this::wandBase), null));
+        return literal("마법봉").then(give).then(make).then(register).then(base);
+    }
+
+    /** &lt;마력&gt; &lt;추가마나&gt; &lt;마법가속&gt; [닉네임] */
+    private static com.mojang.brigadier.builder.RequiredArgumentBuilder<CommandSourceStack, Double> wandStats(com.mojang.brigadier.Command<CommandSourceStack> done, com.mojang.brigadier.Command<CommandSourceStack> withPlayer) {
+        var last = argument(WAND_STATS[2], DoubleArgumentType.doubleArg(0, 100_000)).executes(done);
+        if (withPlayer != null) last.then(player("닉네임").executes(withPlayer));
+        return argument(WAND_STATS[0], DoubleArgumentType.doubleArg(0, 100_000)).then(argument(WAND_STATS[1], DoubleArgumentType.doubleArg(0, 100_000)).then(last));
+    }
+
+    private static double[] wandValues(CommandContext<CommandSourceStack> ctx) {
+        return new double[]{DoubleArgumentType.getDouble(ctx, WAND_STATS[0]), DoubleArgumentType.getDouble(ctx, WAND_STATS[1]), DoubleArgumentType.getDouble(ctx, WAND_STATS[2])};
+    }
+
+    private void deliver(CommandContext<CommandSourceStack> ctx, Player target, List<ItemStack> items, String what) throws CommandSyntaxException {
+        if (!plugin.playerStateReady(target)) throw ChacaApi.error("캐릭터 정보를 불러오는 중이에요. 잠시 뒤 다시 해 주세요");
+        long empty = Arrays.stream(target.getInventory().getStorageContents()).filter(i -> i == null || i.getType().isAir()).count();
+        if (empty < items.size()) throw ChacaApi.error(plugin.names().name(target) + " 님 인벤토리에 빈칸이 " + items.size() + "개 필요해요");
+        for (ItemStack item : items) target.getInventory().addItem(item);
+        target.saveData(); plugin.savePlayerState(target); plugin.refreshEquipment(target);
+        ok(sender(ctx), plugin.names().name(target) + " 님에게 " + what + "을(를) 주었어요");
+    }
+
+    private void giveWand(CommandContext<CommandSourceStack> ctx, Player target) throws CommandSyntaxException {
+        deliver(ctx, target, List.of(enhancement.apprenticeWand()), "수습 마법봉");
+    }
+
+    private void makeWand(CommandContext<CommandSourceStack> ctx, Player target) throws CommandSyntaxException {
+        double[] v = wandValues(ctx);
+        ItemStack item = new ItemStack(Material.BLAZE_ROD);
+        var meta = item.getItemMeta();
+        meta.displayName(net.kyori.adventure.text.Component.text("마법봉").decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false));
+        item.setItemMeta(meta);
+        user(() -> { enhancement.register(item, v[0], v[1], v[2]); return null; });
+        deliver(ctx, target, List.of(item), "마법봉");
+    }
+
+    private void registerWand(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Player p = self(ctx);
+        double[] v = wandValues(ctx);
+        ItemStack hand = p.getInventory().getItemInMainHand();
+        if (hand.getType().isAir() || hand.getAmount() != 1) throw ChacaApi.error("등록할 아이템 한 개를 주 손에 들어 주세요");
+        if (enhancement.isWand(hand)) throw ChacaApi.error("이미 마법봉으로 등록된 아이템이에요");
+        user(() -> { enhancement.register(hand, v[0], v[1], v[2]); return null; });
+        p.saveData(); plugin.refreshEquipment(p);
+        ok(sender(ctx), "손에 든 아이템을 마법봉으로 등록했어요");
+    }
+
+    private void wandBase(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Player p = self(ctx);
+        double[] v = wandValues(ctx);
+        user(() -> { enhancement.setBase(p, v); return null; });
+        ok(sender(ctx), "손에 든 마법봉의 강화 전 원본 수치를 정했어요");
+    }
+
+    private LiteralArgumentBuilder<CommandSourceStack> core() {
+        var give = literal("주기").executes(run(ctx -> giveCores(ctx, self(ctx), 1)))
+                .then(player("닉네임").executes(run(ctx -> giveCores(ctx, ChacaApi.resolveOnline(ctx, "닉네임"), 1)))
+                        .then(argument("개수", IntegerArgumentType.integer(1, 36)).executes(run(ctx -> giveCores(ctx, ChacaApi.resolveOnline(ctx, "닉네임"), IntegerArgumentType.getInteger(ctx, "개수"))))));
+        var tendency = word("성향", () -> List.of("마력", "마나", "마법가속"))
+                .executes(run(ctx -> makeCore(ctx, self(ctx))))
+                .then(player("닉네임").executes(run(ctx -> makeCore(ctx, ChacaApi.resolveOnline(ctx, "닉네임")))));
+        var make = literal("만들기").then(argument("코어수", IntegerArgumentType.integer(1, 10))
+                .then(argument("성공률", DoubleArgumentType.doubleArg(0, 100))
+                        .then(argument("별잡기보너스", DoubleArgumentType.doubleArg(0, 100))
+                                .then(argument("상승배율", DoubleArgumentType.doubleArg(0, 10_000)).then(tendency)))));
+        return literal("마력코어").then(give).then(make);
+    }
+
+    private void giveCores(CommandContext<CommandSourceStack> ctx, Player target, int count) throws CommandSyntaxException {
+        var items = new ArrayList<ItemStack>();
+        for (int i = 0; i < count; i++) items.add(appraisal.unappraisedCore());
+        deliver(ctx, target, items, "미감정 마력코어 " + count + "개");
+    }
+
+    private void makeCore(CommandContext<CommandSourceStack> ctx, Player target) throws CommandSyntaxException {
+        int nodes = IntegerArgumentType.getInteger(ctx, "코어수");
+        double success = DoubleArgumentType.getDouble(ctx, "성공률"), bonus = DoubleArgumentType.getDouble(ctx, "별잡기보너스"), gain = DoubleArgumentType.getDouble(ctx, "상승배율");
+        int tendency = user(() -> AdminCommandRules.affinity(text(ctx, "성향")));
+        ItemStack item = user(() -> appraisal.adminCore(nodes, success, bonus, gain, tendency));
+        deliver(ctx, target, List.of(item), "마력코어");
     }
 }

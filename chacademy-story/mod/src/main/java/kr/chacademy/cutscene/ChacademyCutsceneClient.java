@@ -1,7 +1,6 @@
 package kr.chacademy.cutscene;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import kr.chacademy.cutscene.client.BgmPlayer;
 import kr.chacademy.cutscene.client.CutscenePlayback;
 import kr.chacademy.cutscene.client.SeenStore;
@@ -16,7 +15,6 @@ import kr.chacademy.story.dialogue.TextVars;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -33,11 +31,11 @@ import java.util.Map;
 /**
  * 차카데미 스토리 모드 (컷신 + 대화).
  * <pre>
- * [플러그인] /cutscene play 준우 ch1_intro     → 컷신 재생 → 끝나면 cutscene_done
- * [플러그인] /storydialogue 준우 ch1_wakeup    → 대화 열기 → 선택지마다 dialogue_event, 끝나면 dialogue_done
+ * [서버] /대화관리 재생 준우 컷신 ch1_intro   → 컷신 재생 → 끝나면 cutscene_done
+ * [서버] /대화관리 재생 준우 대화 ch1_wakeup   → 대화 열기 → 끝나면 서버 끝 명령 세션
  * </pre>
  * 대화창은 이 모드가 그리지 않는다: 대화 내용·흐름(DialogueRunner)만 갖고, 화면은 MagicCodex 대화창이 그린다 (DialoguePresenter).
- * /story dialogue 는 클라이언트 대화 파일과 로컬 기록만 사용한다.
+ * /스토리도구 (개발용 로컬 미리보기) 는 클라이언트 파일과 로컬 기록만 사용한다.
  */
 public class ChacademyCutsceneClient implements ClientModInitializer {
     public static final String MOD_ID = "chaca_story";
@@ -161,51 +159,47 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
 
         refreshIds();
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-            dispatcher.register(ClientCommandManager.literal("story")
-                    .then(cutsceneArg(ClientCommandManager.literal("cutscene")))
-                    .then(ClientCommandManager.literal("reload").executes(ctx->reloadContent(CutscenePackets.KIND_DIALOGUE,ctx.getSource()::sendFeedback)))
-                    .then(ClientCommandManager.literal("dialogue")
-                            .then(ClientCommandManager.argument("id", StringArgumentType.word())
-                                    .suggests((ctx, b) -> {
-                                        dialogueIds.forEach(b::suggest);
-                                        return b.buildFuture();
-                                    })
-                                    .executes(ctx -> {
-                                        String id = StringArgumentType.getString(ctx, "id");
-                                        pendingLocal = () -> openLocalDialogue(id, Map.of(), false);
-                                        return 1;
-                                    })))
-                    .then(ClientCommandManager.literal("list").executes(ctx -> {
-                        var c = CutsceneLoader.listIds();
-                        var d = DialogueLoader.listIds();
-                        ctx.getSource().sendFeedback(Component.literal("컷신 " + c.size() + "개: " + String.join(", ", c)));
-                        ctx.getSource().sendFeedback(Component.literal("대화 " + d.size() + "개: " + String.join(", ", d)));
-                        return 1;
-                    }))
-                    .then(ClientCommandManager.literal("resetseen").executes(ctx -> {
-                        SeenStore.reset();
-                        ctx.getSource().sendFeedback(Component.literal("본 컷신 기록을 지웠어요."));
-                        return 1;
-                    })));
-            // Server /스토리 and /컷신 are intentionally not shadowed by client roots.
+            // 개발용 로컬 미리보기 하나만 (서버 /대화관리·/테스트 스토리 와 이름이 겹치지 않게)
             dispatcher.register(ClientCommandManager.literal("스토리도구")
-                    .then(ClientCommandManager.literal("리로드").executes(ctx->reloadContent(CutscenePackets.KIND_DIALOGUE,ctx.getSource()::sendFeedback)))
-                    .then(ClientCommandManager.literal("목록").executes(ctx->{ctx.getSource().sendFeedback(Component.literal("대화: "+String.join(", ",dialogueIds)));return 1;}))
-                    .then(ClientCommandManager.literal("재생").then(ClientCommandManager.argument("id",StringArgumentType.word())
-                            .suggests((ctx,b)->{dialogueIds.forEach(b::suggest);return b.buildFuture();})
-                            .executes(ctx->{String id=StringArgumentType.getString(ctx,"id");pendingLocal=()->openLocalDialogue(id,Map.of(),false);return 1;}))));
-            dispatcher.register(ClientCommandManager.literal("컷신도구")
-                    .then(cutsceneArg(ClientCommandManager.literal("재생")))
-                    .then(ClientCommandManager.literal("리로드").executes(ctx->reloadContent(CutscenePackets.KIND_CUTSCENE,ctx.getSource()::sendFeedback)))
-                    .then(ClientCommandManager.literal("목록").executes(ctx->{ctx.getSource().sendFeedback(Component.literal("컷신: "+String.join(", ",cutsceneIds)));return 1;})));
-            // 예전 명령어도 그대로
-            dispatcher.register(ClientCommandManager.literal("ccs")
-                    .then(cutsceneArg(ClientCommandManager.literal("play")))
-                    .then(ClientCommandManager.literal("list").executes(ctx -> {
-                        ctx.getSource().sendFeedback(Component.literal("컷신: " + String.join(", ", CutsceneLoader.listIds())));
+                    .then(ClientCommandManager.literal("재생").then(ClientCommandManager.argument("ID", StringArgumentType.word())
+                            .suggests((ctx, b) -> {
+                                dialogueIds.forEach(b::suggest);
+                                cutsceneIds.forEach(b::suggest);
+                                return b.buildFuture();
+                            })
+                            .executes(ctx -> playAny(StringArgumentType.getString(ctx, "ID")))))
+                    .then(ClientCommandManager.literal("대화").then(ClientCommandManager.argument("대화", StringArgumentType.word())
+                            .suggests((ctx, b) -> {
+                                dialogueIds.forEach(b::suggest);
+                                return b.buildFuture();
+                            })
+                            .executes(ctx -> {
+                                String id = StringArgumentType.getString(ctx, "대화");
+                                pendingLocal = () -> openLocalDialogue(id, Map.of(), false);
+                                return 1;
+                            })))
+                    .then(ClientCommandManager.literal("컷신").then(ClientCommandManager.argument("컷신", StringArgumentType.word())
+                            .suggests((ctx, b) -> {
+                                cutsceneIds.forEach(b::suggest);
+                                return b.buildFuture();
+                            })
+                            .executes(ctx -> {
+                                String id = StringArgumentType.getString(ctx, "컷신");
+                                pendingLocal = () -> play(id, CutscenePackets.MODE_SKIP, false);
+                                return 1;
+                            })))
+                    .then(ClientCommandManager.literal("목록").executes(ctx -> {
+                        refreshIds();
+                        ctx.getSource().sendFeedback(Component.literal("대화 " + dialogueIds.size() + "개: " + String.join(", ", dialogueIds)));
+                        ctx.getSource().sendFeedback(Component.literal("컷신 " + cutsceneIds.size() + "개: " + String.join(", ", cutsceneIds)));
                         return 1;
                     }))
-                    .then(ClientCommandManager.literal("resetseen").executes(ctx -> {
+                    .then(ClientCommandManager.literal("새로고침").executes(ctx -> {
+                        int ok = reloadContent(CutscenePackets.KIND_DIALOGUE, ctx.getSource()::sendFeedback);
+                        ok &= reloadContent(CutscenePackets.KIND_CUTSCENE, ctx.getSource()::sendFeedback);
+                        return ok;
+                    }))
+                    .then(ClientCommandManager.literal("본기록초기화").executes(ctx -> {
                         SeenStore.reset();
                         ctx.getSource().sendFeedback(Component.literal("본 컷신 기록을 지웠어요."));
                         return 1;
@@ -215,18 +209,19 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
         LOGGER.info("Chacademy Story 로드됨 (컷신: {}, 대화: {})", CutsceneLoader.rootDir(), DialogueLoader.rootDir());
     }
 
-    private static LiteralArgumentBuilder<FabricClientCommandSource> cutsceneArg(
-            LiteralArgumentBuilder<FabricClientCommandSource> literal) {
-        return literal.then(ClientCommandManager.argument("id", StringArgumentType.word())
-                .suggests((ctx, b) -> {
-                    cutsceneIds.forEach(b::suggest);
-                    return b.buildFuture();
-                })
-                .executes(ctx -> {
-                    String id = StringArgumentType.getString(ctx, "id");
-                    pendingLocal = () -> play(id, CutscenePackets.MODE_SKIP, false);
-                    return 1;
-                }));
+    /** /스토리도구 재생 &lt;ID&gt;: 대화 ID 면 대화, 컷신 ID 면 컷신 (둘 다 있으면 대화). */
+    private static int playAny(String id) {
+        refreshIds();
+        if (dialogueIds.contains(id)) {
+            pendingLocal = () -> openLocalDialogue(id, Map.of(), false);
+            return 1;
+        }
+        if (cutsceneIds.contains(id)) {
+            pendingLocal = () -> play(id, CutscenePackets.MODE_SKIP, false);
+            return 1;
+        }
+        error("대화·컷신을 찾을 수 없어요: " + id);
+        return 0;
     }
 
     // ---------------------------------------------------------------- 컷신
@@ -306,7 +301,7 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
             try{signals.accept();}catch(java.io.UncheckedIOException e){DialoguePresenter.stop();localRecordFailure(e);if(acknowledge)reportDialogueFailure(id,"local_record");return;}
             if(signals.isRejected()){if(acknowledge)reportDialogueFailure(id,"local_record");return;}
             if(acknowledge){if(token.isEmpty())sendLocalReady(id);else sessionSignal(0,id,token,"");}
-        }catch(Exception e){sessionSignal(2,id,token,"");LOGGER.warn("로컬 대화 열기 실패: {}",id,e);error("대화를 열지 못했습니다: "+id+" ("+e.getMessage()+")");if(acknowledge)reportDialogueFailure(id,CutscenePackets.FAIL_BROKEN);}
+        }catch(Exception e){sessionSignal(2,id,token,"");LOGGER.warn("로컬 대화 열기 실패: {}",id,e);error("대화를 열지 못했어요: "+id);if(acknowledge)reportDialogueFailure(id,CutscenePackets.FAIL_BROKEN);}
     }
     private static void sendLocalReady(String id){if(ClientPlayNetworking.canSend(CutscenePackets.DialogueReadyC2S.TYPE))ClientPlayNetworking.send(new CutscenePackets.DialogueReadyC2S(id));}
     private static void localRecordFailure(Exception e){DialoguePresenter.stop();LOGGER.warn("로컬 대화 기록 저장 실패; 추가 명령을 실행하지 않습니다",e);error("대화 기록을 저장하지 못했습니다. 명령 실행을 중단했습니다.");}
@@ -349,7 +344,7 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
             dialogue = DialogueLoader.load(id);
         } catch (Exception e) {
             LOGGER.warn("대화 {} 불러오기 실패", id, e);
-            error("대화를 찾을 수 없어요: " + id + " (" + e.getMessage() + ")");
+            error("대화를 찾을 수 없어요: " + id);
             if (fromServer) {
                 boolean missing = !Files.isRegularFile(DialogueLoader.folder(id).resolve("dialogue.yml"));
                 reportDialogueFailure(id, missing ? CutscenePackets.FAIL_MISSING : CutscenePackets.FAIL_BROKEN);

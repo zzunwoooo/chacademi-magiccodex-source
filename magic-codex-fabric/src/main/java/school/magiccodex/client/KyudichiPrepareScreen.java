@@ -9,7 +9,7 @@ import school.magiccodex.protocol.KyudichiProtocol;
 
 /**
  * 경기 준비 화면 (PrepareView). Opens by itself when a match's 60 s preparation starts; F (the 큐디치 key) opens it again.
- * The centre panel opens the spell picker; 준비 완료 sends READY (in /큐디치미리보기 it only toggles locally).
+ * The centre panel opens the spell picker; 준비 완료 sends READY (in the server-sent preview it only toggles locally).
  */
 final class KyudichiPrepareScreen extends KyudichiViewScreen {
     KyudichiPrepareScreen() { super(KyudichiClient.duel() ? "1:1 대전 준비" : "큐디치 경기 준비"); }

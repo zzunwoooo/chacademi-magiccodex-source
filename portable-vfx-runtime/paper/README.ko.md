@@ -1,6 +1,6 @@
 # 현재 서버 권위 테스트 버전: 3.1.0-claude.alpha.1
 
-서버 명령은 `/pvfxserverdebug` 하나입니다(`/pvfx …` 명령은 이 플러그인에 없습니다. 클라이언트 쪽 디버그는 `/pvfxdebug`). 카탈로그 마법 연결은 `../docs/CATALOG-PROTOCOL.ko.md`, 서버 부하 상한은 아래 "안전 상한과 수명"을 보세요. 아래 일부 설명은 기존 릴레이 시절의 내용을 보존한 것입니다.
+서버 명령은 MagicCodexBridge 명령어 허브의 `/개발 이펙트 <재생|따라가기|마무리|정지|전부정지|준비상태|상태>`, `/테스트 마법 이펙트 <마법> [단계]`, `/서버관리 새로고침 이펙트`입니다(OP 전용. 클라이언트 쪽 디버그는 `/이펙트도구`). 카탈로그 마법 연결은 `../docs/CATALOG-PROTOCOL.ko.md`, 서버 부하 상한은 아래 "안전 상한과 수명"을 보세요. 아래 일부 설명은 기존 릴레이 시절의 내용을 보존한 것입니다.
 
 ---
 
@@ -13,11 +13,11 @@ Paper 1.21.4 / Java 21용 독립 서버 플러그인입니다. 이 플러그인�
 1. 루트에서 `./gradlew :paper:build -PskipClient`로 빌드합니다. 루트 Gradle 설정이 client 제외 속성을 지원하는 경우 사용할 수 있습니다.
 2. `paper/build/libs/portable-vfx-paper-<버전>.jar`를 Paper 서버의 `plugins/`에 넣고 재시작합니다. API와 공통 코덱은 이 JAR에 포함됩니다. `common.jar`를 별도로 넣지 않습니다.
 3. 플레이어는 동일 프로토콜의 PortableVFX Fabric 클라이언트와 해당 효과 리소스 팩이 있어야 합니다. 일반 클라이언트에 효과 패킷을 보내지 않습니다.
-4. `/pvfxserverdebug status`에서 호환 클라이언트와 수신 가능 클라이언트 수를 확인합니다.
+4. `/개발 이펙트 상태`에서 호환 클라이언트와 수신 가능 클라이언트 수를 확인합니다.
 
 `portablevfx:hello`에 정확히 4바이트 big-endian 정수 `1`을 보낸 연결만 호환 상태가 됩니다. 또한 클라이언트가 `portablevfx:effect` 수신 채널을 등록해야 합니다. 서버는 effect 채널의 송신자로 등록합니다. hello는 클라이언트 능력 확인이며 플레이어 인증이나 권한 부여 수단이 아닙니다. 클라이언트가 서버에 효과 실행을 요청하는 수신 채널은 없습니다.
 
-프록시의 사용자 정의 payload 전달 여부는 실제 구성에서 검증해야 합니다. 설정만 바꿀 때는 `/pvfxserverdebug reload`를 사용하세요. 플러그인을 비활성화/재활성화(PlugMan, Bukkit `/reload`)하면 서버의 hello·capability·카탈로그 준비 상태가 사라지지만 재접속은 필요 없습니다. 활성화 다음 tick에 접속 중인 플레이어에게 채널 목록(`minecraft:register`)을 다시 보내고, PortableVFX 클라이언트는 이를 받으면 모든 hello와 `catalog_ready`를 다시 보냅니다. Paper는 로그인 때만 이 목록을 보내므로 플러그인이 CraftPlayer의 `sendSupportedChannels`를 리플렉션으로 호출합니다. 실패하면 경고를 남기며, 클라이언트의 30초 주기 재전송으로 복구됩니다. 중복 hello는 멱등이며 플레이어 객체가 아직 조회되지 않을 때 도착한 hello는 최대 200 tick 보관 후 재적용합니다.
+프록시의 사용자 정의 payload 전달 여부는 실제 구성에서 검증해야 합니다. 설정만 바꿀 때는 `/서버관리 새로고침 이펙트`를 사용하세요. 플러그인을 비활성화/재활성화(PlugMan, Bukkit `/reload`)하면 서버의 hello·capability·카탈로그 준비 상태가 사라지지만 재접속은 필요 없습니다. 활성화 다음 tick에 접속 중인 플레이어에게 채널 목록(`minecraft:register`)을 다시 보내고, PortableVFX 클라이언트는 이를 받으면 모든 hello와 `catalog_ready`를 다시 보냅니다. Paper는 로그인 때만 이 목록을 보내므로 플러그인이 CraftPlayer의 `sendSupportedChannels`를 리플렉션으로 호출합니다. 실패하면 경고를 남기며, 클라이언트의 30초 주기 재전송으로 복구됩니다. 중복 hello는 멱등이며 플레이어 객체가 아직 조회되지 않을 때 도착한 hello는 최대 200 tick 보관 후 재적용합니다.
 
 ## Effekseer 클라이언트 주의
 
@@ -25,18 +25,18 @@ Paper 1.21.4 / Java 21용 독립 서버 플러그인입니다. 이 플러그인�
 
 ## 명령어
 
-모든 명령의 권한은 `portablevfx.admin`이며 기본값은 OP입니다. 콘솔에서도 사용할 수 있습니다.
+모든 명령은 OP 전용입니다(명령어 허브가 대단원 단위로 검사). 콘솔에서도 사용할 수 있습니다.
 
 ```text
-/pvfxserverdebug play <effect> <world> <x> <y> <z> [scale] [durationTicks] [yaw] [pitch] [roll] [rgbHex] [opacity] [radius]
-/pvfxserverdebug follow <effect> <entityUUID|self> [scale] [durationTicks] [anchor] [offsetX] [offsetY] [offsetZ]
-/pvfxserverdebug catalog <spellId>            (플레이어 전용: 마나 없이 카탈로그 연출만 시험)
-/pvfxserverdebug event <spellId> <eventName>  (플레이어 전용: 특정 트리거 단계만 미리보기)
-/pvfxserverdebug finish <handle>
-/pvfxserverdebug stop <handle>
-/pvfxserverdebug clear
-/pvfxserverdebug status
-/pvfxserverdebug reload
+/개발 이펙트 재생 <효과> <월드> <x> <y> <z> [크기] [틱] [요] [피치] [롤] [색] [불투명도] [반경]
+/개발 이펙트 따라가기 <효과> <엔티티UUID|나> [크기] [틱] [기준점] [x오프셋] [y오프셋] [z오프셋]
+/테스트 마법 이펙트 <마법>                 (플레이어 전용: 마나 없이 카탈로그 연출만 시험)
+/테스트 마법 이펙트 <마법> <단계>          (플레이어 전용: 특정 트리거 단계만 미리보기)
+/개발 이펙트 마무리 <핸들>
+/개발 이펙트 정지 <핸들>
+/개발 이펙트 전부정지
+/개발 이펙트 상태
+/서버관리 새로고침 이펙트
 ```
 
 - `status`: 호환/수신 가능 클라이언트, 활성 핸들, 종료 추적(draining) 핸들, PLAY 재시도 대기, 진행 중 시전 수, 오류로 취소된 시전/건너뛴 단계 수, 자신의 카탈로그 준비 진단과 최근 거부 사유를 보여 줍니다.
@@ -55,8 +55,8 @@ Paper 1.21.4 / Java 21용 독립 서버 플러그인입니다. 이 플러그인�
 선택 인수는 순서대로 제공해야 합니다. 반환되는 handle은 서버가 생성한 UUID입니다. 실제 전송이 0명인 경우 UUID는 출력되지만 활성 핸들로 보관하지 않습니다. 전송 수는 패킷 전송 호출 성공 수이며 클라이언트의 실제 렌더링 성공을 확인한 값은 아닙니다.
 
 ```text
-/pvfxserverdebug play portablevfx:aurademo world 0 70 0
-/pvfxserverdebug play portablevfx:aurademo world 0 70 0 1.5 60 90 0 0 FFFFFF 1 96
+/개발 이펙트 재생 portablevfx:aurademo world 0 70 0
+/개발 이펙트 재생 portablevfx:aurademo world 0 70 0 1.5 60 90 0 0 FFFFFF 1 96
 ```
 
 실제 데모 팩에 등록된 effect ID는 루트 문서의 목록을 사용하세요. 위 `portablevfx:aurademo`는 API 설명용 예시 ID입니다.
@@ -144,12 +144,12 @@ boolean existed = vfx.stop(result.handle());
 
 ## Dual runtime: seed / 시각 부착 확장
 
-기존 `/pvfxserverdebug play`와 `PortableVfxService.play(EffectRequest)`는 그대로 사용합니다.
+기존 `/개발 이펙트 재생`와 `PortableVfxService.play(EffectRequest)`는 그대로 사용합니다.
 클라이언트의 리소스 정의가 Effekseer/Unity-style backend를 선택합니다.
 새 클라이언트에만 `portablevfx:play_ext_hello` capability 확인 후 seed/startTick이
 포함된 opcode 6을 보냅니다. 구형 클라이언트는 기존 바이트를 받습니다.
 
-- `/pvfxserverdebug follow <id> <entityUUID|self> [scale] [ticks] [anchor] [offsetX] [offsetY] [offsetZ]`
+- `/개발 이펙트 따라가기 <효과> <엔티티UUID|나> [크기] [틱] [기준점] [x오프셋] [y오프셋] [z오프셋]`
 - anchor: `entity`, `head`, `left_shoulder`, `right_shoulder`
 - 명시적 고정 seed/부착 API: `play(EffectRequest, PlaybackOptions)`
 - `PlaybackOptions.world(0)`는 고정 seed 0, `PlaybackOptions.attached(uuid, EffectAnchor.HEAD, 42)`는 head 부착

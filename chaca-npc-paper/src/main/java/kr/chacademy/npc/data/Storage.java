@@ -739,6 +739,119 @@ public final class Storage {
         });
     }
 
+    // ------------------------------------------------------------------ 관리 (/유저관리 <닉네임> AI대화)
+
+    public record MemoRow(long id, String npc, String memo, long createdAt) {
+    }
+
+    /** 한 유저의 기억 줄 (npc가 null이면 모든 NPC). 번호(id) 순. */
+    public List<MemoRow> memoRows(String player, String npc) {
+        return exec(c -> {
+            List<MemoRow> out = new ArrayList<>();
+            String sql = "SELECT id, npc_id, memo, created_at FROM cnpc_memory WHERE player_uuid=?"
+                    + (npc == null ? "" : " AND npc_id=?") + " ORDER BY npc_id, id";
+            try (PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setString(1, player);
+                if (npc != null) {
+                    ps.setString(2, npc);
+                }
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        out.add(new MemoRow(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getLong(4)));
+                    }
+                }
+            }
+            return out;
+        });
+    }
+
+    /** 이 유저의 기억 한 줄 삭제. 지웠으면 true. */
+    public boolean deleteMemo(String player, long id) {
+        return exec(c -> {
+            try (PreparedStatement ps = c.prepareStatement("DELETE FROM cnpc_memory WHERE id=? AND player_uuid=?")) {
+                ps.setLong(1, id);
+                ps.setString(2, player);
+                return ps.executeUpdate() > 0;
+            }
+        });
+    }
+
+    /** 기억(메모)과 지난 대화 기록을 지운다 (npc가 null이면 모든 NPC). 지운 기억 줄 수. */
+    public int clearMemory(String player, String npc) {
+        return exec(c -> {
+            String where = " WHERE player_uuid=?" + (npc == null ? "" : " AND npc_id=?");
+            int n;
+            try (PreparedStatement ps = c.prepareStatement("DELETE FROM cnpc_memory" + where)) {
+                ps.setString(1, player);
+                if (npc != null) {
+                    ps.setString(2, npc);
+                }
+                n = ps.executeUpdate();
+            }
+            try (PreparedStatement ps = c.prepareStatement("DELETE FROM cnpc_last_chat" + where)) {
+                ps.setString(1, player);
+                if (npc != null) {
+                    ps.setString(2, npc);
+                }
+                ps.executeUpdate();
+            }
+            return n;
+        });
+    }
+
+    /** NPC id("*" = 모든 NPC 공통) → 호칭. */
+    public Map<String, String> nicknames(String player) {
+        return exec(c -> {
+            Map<String, String> out = new HashMap<>();
+            try (PreparedStatement ps = c.prepareStatement("SELECT npc_id, nickname FROM cnpc_nickname WHERE player_uuid=?")) {
+                ps.setString(1, player);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        out.put(rs.getString(1), rs.getString(2));
+                    }
+                }
+            }
+            return out;
+        });
+    }
+
+    /** NPC id → 마지막 대화 끝난 시각. */
+    public Map<String, Long> lastChatTimes(String player) {
+        return exec(c -> {
+            Map<String, Long> out = new HashMap<>();
+            try (PreparedStatement ps = c.prepareStatement("SELECT npc_id, ended_at FROM cnpc_last_chat WHERE player_uuid=?")) {
+                ps.setString(1, player);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        out.put(rs.getString(1), rs.getLong(2));
+                    }
+                }
+            }
+            return out;
+        });
+    }
+
+    public record UsageRow(String day, int calls, long inputTokens, long cachedTokens, long outputTokens, double cost) {
+    }
+
+    /** 한 유저의 날짜별 AI 사용량 (최근 날짜부터 limit일). */
+    public List<UsageRow> usage(String player, int limit) {
+        return exec(c -> {
+            List<UsageRow> out = new ArrayList<>();
+            try (PreparedStatement ps = c.prepareStatement("SELECT day, calls, input_tokens, cached_tokens, output_tokens, cost_usd"
+                    + " FROM cnpc_usage WHERE player_uuid=? ORDER BY day DESC LIMIT ?")) {
+                ps.setString(1, player);
+                ps.setInt(2, limit);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        out.add(new UsageRow(rs.getString(1), rs.getInt(2), rs.getLong(3), rs.getLong(4), rs.getLong(5), rs.getDouble(6)));
+                    }
+                }
+            }
+            return out;
+        });
+    }
+
     // ------------------------------------------------------------------ util
 
     private <T> T exec(Database.SqlFunction<T> fn) {

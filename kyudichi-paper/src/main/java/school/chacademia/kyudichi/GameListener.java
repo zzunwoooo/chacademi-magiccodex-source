@@ -2,8 +2,6 @@ package school.chacademia.kyudichi;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
 import java.lang.reflect.Method;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -133,7 +131,7 @@ final class GameListener implements Listener {
             switch (e.getCause()) {
                 case PLUGIN, ENDER_PEARL, CHORUS_FRUIT, UNKNOWN, SPECTATE -> {
                     e.setCancelled(true);
-                    p.sendActionBar(Component.text("큐디치 중에는 순간이동할 수 없어요", NamedTextColor.RED));
+                    ChacaLink.notify(p, "warning", "kyudichi:teleport", "순간이동할 수 없어요", "큐디치 경기 중이에요", 3000);
                 }
                 default -> { }
             }

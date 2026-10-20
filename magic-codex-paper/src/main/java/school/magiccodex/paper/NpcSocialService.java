@@ -217,11 +217,11 @@ final class NpcSocialService implements Listener, AutoCloseable {
         if (player == null) throw new IllegalArgumentException("플레이어를 지정해 주세요.");
         if (nonnegativeValue < 0) throw new IllegalArgumentException("호감도 값은 0 이상이어야 합니다.");
         String operation = switch (action == null ? "" : action.toLowerCase(Locale.ROOT)) {
-            case "조회", "query" -> "query";
-            case "설정", "set" -> "set";
-            case "추가", "add" -> "add";
-            case "감소", "remove" -> "remove";
-            default -> throw new IllegalArgumentException("조회/설정/추가/감소 중 하나를 지정해 주세요.");
+            case "보기" -> "query";
+            case "설정" -> "set";
+            case "추가" -> "add";
+            case "빼기" -> "remove";
+            default -> throw new IllegalArgumentException("보기/설정/추가/빼기 중 하나를 지정해 주세요.");
         };
         String id = registeredNpcId(registeredNpcs(), npc);
         long now = System.currentTimeMillis();
@@ -229,6 +229,16 @@ final class NpcSocialService implements Listener, AutoCloseable {
                 : store.adminChange(player, id, operation, nonnegativeValue, now)).thenApply(row -> {
             // 오프라인 관리로 접속자 캐시가 무한히 늘어나지 않게 한다.
             if (Bukkit.getPlayer(player) != null) remember(player, id, row);
+            return row;
+        });
+    }
+
+    /** 관리 명령 전용: 하트 단계를 그대로 정한다(내릴 수도 있음). 완료 콜백은 메인 스레드. */
+    CompletableFuture<AffinityStore.Row> adminHeart(UUID player, String npc, int level) {
+        if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("server thread required");
+        long now = System.currentTimeMillis();
+        return work(() -> store.adminHeart(player, npc, level, now)).thenApply(row -> {
+            if (Bukkit.getPlayer(player) != null) remember(player, npc, row);
             return row;
         });
     }

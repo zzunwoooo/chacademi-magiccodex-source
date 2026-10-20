@@ -1,5 +1,5 @@
 # Each backend uses the same database.properties. Change this local identifier per server.
-# Editing here does not affect other servers until /의뢰관리 reload publishes the catalog.
+# Editing here does not affect other servers until /퀘스트관리 파일반영 publishes the catalog.
 server-id: school
 quests:
   field_patrol:

@@ -34,9 +34,11 @@ final class KyudichiHud {
 
     private static HudTextureCache images; private static CodexTypography text; private static int generation = -1;
     private static float forfeitX, forfeitY, forfeitW, forfeitH; private static boolean forfeitShown;
+    private static float leaveX, leaveY, leaveW, leaveH; private static boolean leaveShown;
 
     static void close() { if (images != null) { images.close(); images = null; } if (text != null) { text.close(); text = null; } }
     static boolean forfeitHit(double x, double y) { return forfeitShown && x >= forfeitX && x <= forfeitX + forfeitW && y >= forfeitY && y <= forfeitY + forfeitH; }
+    static boolean leaveHit(double x, double y) { return leaveShown && x >= leaveX && x <= leaveX + leaveW && y >= leaveY && y <= leaveY + leaveH; }
 
     static float scale(float w, float h) { return Math.min(w / 1672f, h / 941f); }
     static final float KEYS_SCALE = .7f;
@@ -51,8 +53,8 @@ final class KyudichiHud {
 
     static void render(DrawContext ctx, RenderTickCounter ticks) {
         var c = MinecraftClient.getInstance();
-        if (!KyudichiClient.active()) { forfeitShown = false; return; }
-        if (c.player == null || c.options.hudHidden || !HudPointer.hudVisibleUnder(c.currentScreen)) return;
+        if (!KyudichiClient.active()) { forfeitShown = false; leaveShown = false; return; }
+        if (c.player == null || c.options.hudHidden || !HudPointer.hudVisibleUnder(c.currentScreen)) { leaveShown = false; return; }
         if (generation != UiResources.generation()) { close(); generation = UiResources.generation(); }
         if (images == null) images = new HudTextureCache(c);
         if (text == null) text = new CodexTypography(c);
@@ -69,6 +71,7 @@ final class KyudichiHud {
             HudView.score(new Pen(canvas, -1, -1, null), score(m, now));
             canvas.pop();
             forfeit(ctx, canvas, m, w, s);
+            leave(canvas, m, w, s);
             // feed
             canvas.push(w - 1672 * s, rightTop() - 28 * s, s);
             HudView.feed(new Pen(canvas, -1, -1, null), feed(now));
@@ -144,6 +147,18 @@ final class KyudichiHud {
         canvas.image(over ? "hud/forfeit_button_hover" : "hud/forfeit_button", fx - 4 * k, fy - 4 * k, 360 * k, 96 * k, 1);
         canvas.text(vote ? "포기 투표 중 · 찬성" : "포기", fx + fw / 2, fy + fh / 2, 16 * s, vote ? 0xFFFFD6DA : Theme.CREAM, Canvas.Face.SERIF, Canvas.CENTER);
         forfeitX = fx; forfeitY = fy; forfeitW = fw; forfeitH = fh;
+    }
+
+    // ================================================================== spectator leave (same hud/forfeit_button art and place, 2026-10-20)
+    /** Spectators get a "나가기" button where players see 포기; open chat (or the cursor) to click it. Sends SpectateLeave. */
+    private static void leave(Canvas canvas, KyudichiProtocol.Match m, float w, float s) {
+        leaveShown = m.myTeam() == 2;
+        if (!leaveShown) return;
+        float fh = 32 * s, k = fh / 62f, fw = 352 * k, fx = w / 2f + (1160 - 836 + 14) * s, fy = (56 - 16) * s;
+        boolean over = HudPointer.active() && HudPointer.x() >= fx && HudPointer.x() <= fx + fw && HudPointer.y() >= fy && HudPointer.y() <= fy + fh;
+        canvas.image(over ? "hud/forfeit_button_hover" : "hud/forfeit_button", fx - 4 * k, fy - 4 * k, 360 * k, 96 * k, 1);
+        canvas.text("나가기", fx + fw / 2, fy + fh / 2, 16 * s, Theme.CREAM, Canvas.Face.SERIF, Canvas.CENTER);
+        leaveX = fx; leaveY = fy; leaveW = fw; leaveH = fh;
     }
 
     // ================================================================== world markers

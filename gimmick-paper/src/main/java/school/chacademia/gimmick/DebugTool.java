@@ -65,7 +65,7 @@ final class DebugTool implements Listener {
     public void click(PlayerInteractEvent e) {
         if (e.getHand() != EquipmentSlot.HAND || !isTool(e.getItem())) return;
         Player p = e.getPlayer();
-        if (!p.hasPermission("chacademia.gimmick.admin")) return;
+        if (!p.isOp()) return;
         e.setCancelled(true);
         boolean right = e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK;
         Gimmick g = plugin.world().looking(p, 12);
@@ -80,7 +80,7 @@ final class DebugTool implements Listener {
 
     /** Called by Inputs when a gimmick entity itself was clicked with the tool. */
     void use(Player p, Gimmick g, boolean right) {
-        if (!p.hasPermission("chacademia.gimmick.admin")) return;
+        if (!p.isOp()) return;
         if (p.isSneaking()) { cycle(p, right); return; }
         apply(p, g, right);
     }
@@ -95,7 +95,7 @@ final class DebugTool implements Listener {
     }
 
     private void apply(Player p, Gimmick g, boolean right) {
-        if(!plugin.protection().pair(p,g.location())){bar(p,"Protected location.");return;}
+        if(!plugin.protection().pair(p,g.location())){bar(p,"보호 구역 안의 기믹입니다.");return;}
         boolean changedSelection = !g.id.equals(selected.get(p.getUniqueId()));
         select(p, g);
         Mode m = modes.getOrDefault(p.getUniqueId(), Mode.INFO);

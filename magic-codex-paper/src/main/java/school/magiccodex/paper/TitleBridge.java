@@ -5,7 +5,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 import org.bukkit.*;
-import org.bukkit.command.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
@@ -14,7 +13,7 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import school.magiccodex.database.DatabaseSettings;
 import school.magiccodex.protocol.TitleProtocol;
 
-final class TitleBridge implements Listener,CommandExecutor,TabCompleter,PluginMessageListener,AutoCloseable {
+final class TitleBridge implements Listener,PluginMessageListener,AutoCloseable {
     private final MagicCodexBridge plugin;private final TitleStore store;
     private final ExecutorService io=Executors.newSingleThreadExecutor(r->{var t=new Thread(r,"MagicCodex-title-io");t.setDaemon(true);return t;});
     private volatile Map<String,TitleDefinition> catalog=Map.of();
@@ -29,7 +28,7 @@ final class TitleBridge implements Listener,CommandExecutor,TabCompleter,PluginM
         this.plugin=plugin;if(!new File(plugin.getDataFolder(),"titles.yml").exists())plugin.saveResource("titles.yml",false);reload();
         try{var settings=DatabaseSettings.load(plugin.getDataFolder().toPath().resolve("database.properties"));store=io.submit(()->new TitleStore(settings,plugin.getDataFolder().toPath().resolve("titles.db"))).get(15,TimeUnit.SECONDS);}catch(Exception e){io.shutdownNow();throw e;}
         Bukkit.getPluginManager().registerEvents(this,plugin);Bukkit.getMessenger().registerIncomingPluginChannel(plugin,TitleProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,TitleProtocol.RESPONSE);
-        for(String name:List.of("칭호","칭호관리")){plugin.getCommand(name).setExecutor(this);plugin.getCommand(name).setTabCompleter(this);}
+        CmdKit.register(plugin,"/칭호·/유저관리 칭호·/컨텐츠관리 칭호",this::commands);
         if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){expansion=new TitleExpansion(this,plugin.getDescription().getVersion());if(!expansion.register())plugin.getLogger().warning("chacademiatitle 플레이스홀더 등록 실패");}
         Bukkit.getScheduler().runTaskTimer(plugin,()->{for(Player p:Bukkit.getOnlinePlayers()){var old=cache.get(p.getUniqueId());if(old!=null)cache.put(p.getUniqueId(),new Cached(old.state(),plugin.names().name(p)));}long now=System.currentTimeMillis();sessions.values().removeIf(s->s.until()<now);limits.values().removeIf(t->t<now);},40,40);
         Bukkit.getScheduler().runTaskTimer(plugin,()->{for(Player p:Bukkit.getOnlinePlayers())if(!busy.contains(p.getUniqueId()))load(p,false,0,false);},600,600);
@@ -49,7 +48,7 @@ final class TitleBridge implements Listener,CommandExecutor,TabCompleter,PluginM
     }
     private void load(Player p,boolean open,long sequence,boolean reply){
         UUID id=p.getUniqueId();if(!current(p))return;if(busy.contains(id)){if(reply)deferred.put(id,new ViewRequest(p,open,sequence));return;}busy.add(id);var defaults=defaults();
-        work(()->store.load(id,defaults),state->{if(current(p)){busy.remove(id);cache.put(id,new Cached(state,plugin.names().name(p)));var next=deferred.remove(id);if(next!=null&&next.player()==p)reply(p,next.open(),next.sequence(),"");else if(reply)reply(p,open,sequence,"");}},()->{if(current(p)){busy.remove(id);var next=deferred.remove(id);if(reply||next!=null)p.sendMessage("칭호 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");}});
+        work(()->store.load(id,defaults),state->{if(current(p)){busy.remove(id);cache.put(id,new Cached(state,plugin.names().name(p)));var next=deferred.remove(id);if(next!=null&&next.player()==p)reply(p,next.open(),next.sequence(),"");else if(reply)reply(p,open,sequence,"");}},()->{if(current(p)){busy.remove(id);var next=deferred.remove(id);if(reply||next!=null)CmdKit.notify(p,"warning","title-load","칭호 정보를 불러오지 못했어요","잠시 뒤 다시 열어 주세요",3000);}});
     }
     @EventHandler public void join(PlayerJoinEvent e){load(e.getPlayer(),false,0,false);}
     @EventHandler public void quit(PlayerQuitEvent e){UUID id=e.getPlayer().getUniqueId();cache.remove(id);busy.remove(id);sessions.remove(id);limits.remove(id);deferred.remove(id);}
@@ -60,7 +59,7 @@ final class TitleBridge implements Listener,CommandExecutor,TabCompleter,PluginM
         long now=System.currentTimeMillis();if(now<limits.getOrDefault(id,0L))return;limits.put(id,now+200);
         if(r.action()==TitleProtocol.OPEN){load(p,false,r.sequence(),true);return;}
         if(busy.contains(id))return;
-        var session=sessions.get(id);if(session==null||session.player()!=p||session.until()<now||!session.token().equals(r.token())){p.sendMessage("칭호창을 다시 열어 주세요.");return;}
+        var session=sessions.get(id);if(session==null||session.player()!=p||session.until()<now||!session.token().equals(r.token())){CmdKit.notify(p,"warning","title-session","칭호창을 다시 열어 주세요","",2000);return;}
         if(p.isDead()||p.getGameMode()==GameMode.SPECTATOR){reply(p,false,r.sequence(),"지금은 변경할 수 없습니다.");return;}
         var snapshot=catalog;var defaults=defaults();busy.add(id);
         work(()->store.select(id,r.revision(),r.prefix(),r.suffix(),snapshot,defaults),result->{if(current(p)){busy.remove(id);cache.put(id,new Cached(result.state(),plugin.names().name(p)));reply(p,false,r.sequence(),result.applied()?"칭호를 적용했습니다.":"보유 칭호가 변경되었습니다. 다시 선택해 주세요.");var next=deferred.remove(id);if(next!=null&&next.player()==p)reply(p,next.open(),next.sequence(),"");if(result.applied())p.playSound(p.getLocation(),Sound.BLOCK_AMETHYST_BLOCK_CHIME,.35f,1.3f);}},()->{if(current(p)){busy.remove(id);reply(p,false,r.sequence(),"저장하지 못했습니다. 다시 시도해 주세요.");var next=deferred.remove(id);if(next!=null&&next.player()==p)reply(p,next.open(),next.sequence(),"저장하지 못했습니다.");}});
@@ -68,7 +67,7 @@ final class TitleBridge implements Listener,CommandExecutor,TabCompleter,PluginM
     private String selected(TitleStore.State s,String id,int side){var d=catalog.get(id);return d!=null&&d.enabled()&&d.side()==side&&s.owned().contains(id)?id:"";}
     private void reply(Player p,boolean open,long sequence,String message){
         var cached=cache.get(p.getUniqueId());if(cached==null||!current(p))return;
-        if(!p.getListeningPluginChannels().contains(TitleProtocol.RESPONSE)){if(open)p.sendMessage("칭호 UI 모드를 업데이트해 주세요.");return;}
+        if(!p.getListeningPluginChannels().contains(TitleProtocol.RESPONSE)){if(open)CmdKit.notify(p,"warning","title-mod","칭호창을 열 수 없어요","차카데미 모드를 업데이트해 주세요",3000);return;}
         var old=sessions.get(p.getUniqueId());String token=old!=null&&old.player()==p&&old.until()>System.currentTimeMillis()?old.token():UUID.randomUUID().toString();sessions.put(p.getUniqueId(),new Session(p,token,System.currentTimeMillis()+90000));
         var s=cached.state();var entries=catalog.values().stream().filter(d->d.enabled()&&s.owned().contains(d.id())).map(d->new TitleProtocol.Entry(d.id(),d.side(),d.name(),d.color())).toList();
         p.sendPluginMessage(plugin,TitleProtocol.RESPONSE,TitleProtocol.encode(new TitleProtocol.Response(open,sequence,token,s.revision(),plugin.names().name(p),selected(s,s.prefix(),0),selected(s,s.suffix(),1),message,entries)));
@@ -83,19 +82,71 @@ final class TitleBridge implements Listener,CommandExecutor,TabCompleter,PluginM
     Map<String,String> registeredTitles(boolean remove){
         var result=new LinkedHashMap<String,String>();catalog.values().stream().filter(d->AdminCommandRules.titleAllowed(d,remove)).forEach(d->result.put(d.id(),d.name()));return Map.copyOf(result);
     }
-    @Override public boolean onCommand(CommandSender sender,Command cmd,String label,String[] args){
-        if(cmd.getName().equals("칭호")){if(sender instanceof Player p&&p.hasPermission("magiccodex.titles"))load(p,true,0,true);return true;}
-        if(!sender.hasPermission("magiccodex.titles.admin"))return true;
-        try{
-            if(args.length==1&&Set.of("새로고침","리로드").contains(args[0])){reload();for(Player p:Bukkit.getOnlinePlayers())if(sessions.containsKey(p.getUniqueId()))reply(p,false,0,"");sender.sendMessage("칭호 설정을 불러왔습니다.");return true;}
-            if(args.length==1&&args[0].equals("목록")){catalog.values().forEach(d->sender.sendMessage(d.id()+" · "+(d.side()==0?"접두사":"접미사")+" · "+d.name()));return true;}
-            if(args.length>=2){OfflinePlayer target=Bukkit.getPlayerExact(args[1]);if(target==null)try{target=Bukkit.getOfflinePlayer(UUID.fromString(args[1]));}catch(IllegalArgumentException e){target=Bukkit.getOfflinePlayerIfCached(args[1]);}if(target==null)throw new IllegalArgumentException("온라인 이름 또는 UUID를 입력해 주세요.");UUID id=target.getUniqueId();
-                if(args.length==3&&(args[0].equals("지급")||args[0].equals("회수"))){if(!AdminCommandRules.titleAllowed(catalog.get(args[2]),args[0].equals("회수")))throw new IllegalArgumentException("등록된 활성 칭호 ID를 확인하세요. /칭호관리 목록");grant(id,args[2],args[0].equals("회수"),ok->sender.sendMessage(ok?"칭호 처리를 완료했습니다.":"칭호 처리에 실패했습니다."));return true;}
-                if(args.length==2&&args[0].equals("확인")){var defaults=defaults();work(()->store.load(id,defaults),s->sender.sendMessage("보유: "+String.join(", ",new TreeSet<>(s.owned()))+" / 접두사 "+s.prefix()+" / 접미사 "+s.suffix()),()->sender.sendMessage("조회하지 못했습니다."));return true;}
-            }
-        }catch(Exception e){sender.sendMessage(e.getMessage());return true;}
-        sender.sendMessage("/칭호관리 목록 | 새로고침 | 지급 <플레이어/UUID> <ID> | 회수 <플레이어/UUID> <ID> | 확인 <플레이어/UUID>");return true;
+    // ------------------------------------------------------------------ 명령 (2026-10-20)
+
+    private void commands(){
+        ChacaApi.playerCommand(plugin,CmdKit.literal("칭호").executes(CmdKit.run(ctx->{Player p=CmdKit.self(ctx);if(p.hasPermission("magiccodex.titles"))load(p,true,0,true);}))
+                .then(CmdKit.literal("수령").executes(CmdKit.run(ctx->claimDiscovery(CmdKit.self(ctx))))),"칭호창 열기 · 수령: 마법 발견 칭호 보상 받기",List.of());
+        var title=CmdKit.word("칭호",()->AdminCommandRules.catalogChoices(registeredTitles(false)));
+        var revoke=CmdKit.word("칭호",()->AdminCommandRules.catalogChoices(registeredTitles(true)));
+        var equip=CmdKit.literal("장착");
+        for(int side=0;side<2;side++){
+            int s=side;
+            equip.then(CmdKit.literal(side==0?"앞":"뒤")
+                    .then(CmdKit.literal("비우기").executes(CmdKit.run(ctx->equip(ctx,s,""))))
+                    .then(CmdKit.word("칭호",()->AdminCommandRules.catalogChoices(sideTitles(s))).executes(CmdKit.run(ctx->equip(ctx,s,CmdKit.pick(sideTitles(s),CmdKit.text(ctx,"칭호"),"칭호"))))));
+        }
+        var user=CmdKit.literal("칭호")
+                .then(CmdKit.literal("보기").executes(CmdKit.run(this::show)))
+                .then(CmdKit.literal("주기").then(title.executes(CmdKit.run(ctx->change(ctx,false)))))
+                .then(CmdKit.literal("회수").then(revoke.executes(CmdKit.run(ctx->change(ctx,true)))))
+                .then(equip);
+        ChacaApi.branch(plugin,ChacaApi.유저관리,user,"칭호 보기·주기·회수·장착","칭호 보기");
+        ChacaApi.branch(plugin,ChacaApi.컨텐츠관리,CmdKit.literal("칭호").then(CmdKit.literal("목록").executes(CmdKit.run(ctx->{
+            var out=new ArrayList<String>();out.add("── 칭호 목록 ("+catalog.size()+"개) ──");
+            for(var d:catalog.values())out.add((d.side()==0?"[앞] ":"[뒤] ")+d.name()+"  ("+d.id()+")"+(d.enabled()?"":" · 꺼짐")+(d.initial()?" · 기본 지급":""));
+            CmdKit.lines(CmdKit.sender(ctx),out);
+        }))),"등록된 칭호 목록","칭호 목록");
+        ChacaApi.reload(plugin,"칭호","titles.yml (칭호 목록)",()->{reload();for(Player p:Bukkit.getOnlinePlayers())if(sessions.containsKey(p.getUniqueId()))reply(p,false,0,"");});
+        ChacaApi.summary(plugin,"칭호",id->{var c=cache.get(id);if(c==null)return "";var st=c.state();var a=catalog.get(selected(st,st.prefix(),0));var b=catalog.get(selected(st,st.suffix(),1));return "보유 "+st.owned().size()+"개 · 앞 "+(a==null?"없음":a.name())+" · 뒤 "+(b==null?"없음":b.name());});
     }
-    @Override public List<String> onTabComplete(CommandSender s,Command c,String label,String[] args){if(!c.getName().equals("칭호관리")||!s.hasPermission("magiccodex.titles.admin"))return List.of();List<String> list=args.length==1?List.of("목록","새로고침","지급","회수","확인"):args.length==2?Bukkit.getOnlinePlayers().stream().map(Player::getName).toList():args.length==3?List.copyOf(registeredTitles(args[0].equals("회수")).keySet()):List.of();return list.stream().filter(v->v.startsWith(args[args.length-1])).toList();}
+    /** /칭호 수령: MagicDiscovery 플러그인의 public claimTitles(Player)를 부른다. */
+    private void claimDiscovery(Player p)throws com.mojang.brigadier.exceptions.CommandSyntaxException{
+        var discovery=Bukkit.getPluginManager().getPlugin("MagicDiscovery");
+        if(discovery==null||!discovery.isEnabled())throw ChacaApi.error("지금은 칭호 보상을 받을 수 없어요");
+        java.lang.reflect.Method claim;
+        try{claim=discovery.getClass().getMethod("claimTitles",Player.class);}
+        catch(NoSuchMethodException missing){plugin.getLogger().warning("MagicDiscovery.claimTitles(Player) 가 없습니다. MagicDiscovery를 업데이트하세요.");throw ChacaApi.error("지금은 칭호 보상을 받을 수 없어요");}
+        try{claim.invoke(discovery,p);}
+        catch(ReflectiveOperationException error){throw new IllegalStateException("MagicDiscovery.claimTitles failed",error.getCause()==null?error:error.getCause());}
+    }
+    private Map<String,String> sideTitles(int side){var out=new LinkedHashMap<String,String>();catalog.values().stream().filter(d->d.enabled()&&d.side()==side).forEach(d->out.put(d.id(),d.name()));return out;}
+    private void show(com.mojang.brigadier.context.CommandContext<io.papermc.paper.command.brigadier.CommandSourceStack> ctx)throws com.mojang.brigadier.exceptions.CommandSyntaxException{
+        UUID id=ChacaApi.target(ctx);var sender=CmdKit.sender(ctx);String who=CmdKit.name(id);var defaults=defaults();var snapshot=catalog;
+        work(()->store.load(id,defaults),st->{
+            var out=new ArrayList<String>();out.add("── "+who+" 칭호 ──");
+            var a=snapshot.get(st.prefix());var b=snapshot.get(st.suffix());
+            out.add("장착: 앞 "+(a==null?"없음":a.name())+" · 뒤 "+(b==null?"없음":b.name()));
+            var owned=new ArrayList<String>();for(String t:new TreeSet<>(st.owned())){var d=snapshot.get(t);owned.add(d==null?t:d.name());}
+            out.add("보유 "+owned.size()+"개: "+(owned.isEmpty()?"없음":String.join(", ",owned)));
+            CmdKit.lines(sender,out);
+        },()->CmdKit.fail(sender,"칭호 정보를 불러오지 못했어요",null));
+    }
+    private void change(com.mojang.brigadier.context.CommandContext<io.papermc.paper.command.brigadier.CommandSourceStack> ctx,boolean remove)throws com.mojang.brigadier.exceptions.CommandSyntaxException{
+        UUID id=ChacaApi.target(ctx);var registered=registeredTitles(remove);String title=CmdKit.pick(registered,CmdKit.text(ctx,"칭호"),remove?"칭호":"사용 중인 칭호");
+        var sender=CmdKit.sender(ctx);String who=CmdKit.name(id);
+        grant(id,title,remove,ok->{if(ok)CmdKit.ok(sender,who+" 님"+(remove?"의 ":"에게 ")+registered.get(title)+" 칭호를 "+(remove?"회수했어요":"주었어요"));else CmdKit.fail(sender,"칭호를 저장하지 못했어요",null);});
+    }
+    /** 관리자 장착: 보유한 칭호만, 빈 문자열 = 비우기. 다른 쪽 칸은 그대로. */
+    private void equip(com.mojang.brigadier.context.CommandContext<io.papermc.paper.command.brigadier.CommandSourceStack> ctx,int side,String title)throws com.mojang.brigadier.exceptions.CommandSyntaxException{
+        UUID id=ChacaApi.target(ctx);var sender=CmdKit.sender(ctx);String who=CmdKit.name(id);var snapshot=catalog;var defaults=defaults();
+        work(()->{var st=store.load(id,defaults);if(!title.isEmpty()&&!st.owned().contains(title))return null;
+            return store.select(id,st.revision(),side==0?title:st.prefix(),side==1?title:st.suffix(),snapshot,defaults);},result->{
+            if(result==null){CmdKit.userFail(sender,who+" 님이 가진 칭호가 아니에요");return;}
+            if(!result.applied()){CmdKit.userFail(sender,"칭호가 방금 바뀌었어요. 다시 해 주세요");return;}
+            Player p=Bukkit.getPlayer(id);if(p!=null&&current(p)){cache.put(id,new Cached(result.state(),plugin.names().name(p)));if(sessions.containsKey(id))reply(p,false,0,"");}
+            var d=snapshot.get(title);CmdKit.ok(sender,who+" 님 "+(side==0?"앞":"뒤")+" 칭호 "+(d==null?"비움":"= "+d.name()));
+        },()->CmdKit.fail(sender,"칭호를 저장하지 못했어요",null));
+    }
     @Override public void close(){closing=true;if(expansion!=null)expansion.unregister();io.execute(()->{try{store.close();}catch(Exception e){plugin.getLogger().warning("칭호 저장소 종료 실패");}});io.shutdown();try{if(!io.awaitTermination(20,TimeUnit.SECONDS))plugin.getLogger().severe("칭호 DB 종료 대기 초과");}catch(InterruptedException e){Thread.currentThread().interrupt();}cache.clear();sessions.clear();busy.clear();}
 }

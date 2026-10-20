@@ -4,7 +4,9 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 import org.bukkit.Bukkit;
-import org.bukkit.command.*;
+import com.mojang.brigadier.Command;
+import io.papermc.paper.command.brigadier.Commands;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.player.*;
@@ -17,7 +19,7 @@ import school.magiccodex.protocol.ManaProtocol;
 import school.magiccodex.database.DatabaseSettings;
 
 /** Event driven social state. No global player polling or disk access in packet handlers. */
-final class SocialBridge implements Listener,PluginMessageListener,CommandExecutor,AutoCloseable {
+final class SocialBridge implements Listener,PluginMessageListener,AutoCloseable {
     private final MagicCodexBridge plugin;
     private final ManaBridge mana;
     private final StatsService stats;
@@ -43,7 +45,7 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin,SocialProtocol.REQUEST,this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,SocialProtocol.RESPONSE);
         Bukkit.getPluginManager().registerEvents(this,plugin);
-        Objects.requireNonNull(plugin.getCommand("친구")).setExecutor(this);
+        registerCommands();
         mana.windCast=this::castOpened;
         for(Player p:Bukkit.getOnlinePlayers())load(p);
         Bukkit.getScheduler().runTaskTimer(plugin,()->tickets.expire(now()),200,200);
@@ -151,7 +153,7 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
         var b=books.get(p.getUniqueId());if(b==null||!b.allow(now()))return;
         Request r;try{r=SocialProtocol.request(data);}catch(IllegalArgumentException e){
             // 이전 버전 모드는 새 프로토콜을 해석하지 못한다: 접속당 한 번만 안내한다.
-            if(!b.warned&&SocialProtocol.legacy(data)){b.warned=true;p.sendMessage(Component.text("친구 기능을 사용하려면 최신 Magic Codex 모드로 업데이트해 주세요.",NamedTextColor.YELLOW));}
+            if(!b.warned&&SocialProtocol.legacy(data)){b.warned=true;CodexCommands.warn(p,"friends-mod","친구 기능을 쓰려면 최신 MagicCodex 모드가 필요해요");}
             return;}
         if(r.sequence()<=b.sequence)return;b.sequence=r.sequence();
         long n=now();
@@ -260,12 +262,42 @@ final class SocialBridge implements Listener,PluginMessageListener,CommandExecut
         if(b==null||now()<b.nextAction){e.setResponse("잠시 후 다시 시도해 주세요.");return;}b.nextAction=now()+400;
         Player target=e.getTarget();Bukkit.getScheduler().runTask(plugin,()->{if(p.isOnline())add(p,target,0);});e.setResponse("친구 신청을 보내고 있습니다.");
     }
-    @Override public boolean onCommand(CommandSender s,Command command,String label,String[] args){
-        if(!(s instanceof Player p)){s.sendMessage("게임 안에서 사용해 주세요.");return true;}
-        if(!p.getListeningPluginChannels().contains(SocialProtocol.RESPONSE)){p.sendMessage("최신 Magic Codex 모드가 필요합니다.");return true;}
-        if(args.length!=0){p.sendMessage("/친구 로 친구창을 열어 주세요.");return true;}
-        packet(p,new Response(SocialProtocol.OPEN,0,SocialProtocol.NONE,0,"","","",0,List.of()));return true;
+    // ------------------------------------------------------------------ 명령 (2026-10-20 명령어 정리)
+    private void registerCommands(){
+        if(!CodexCommands.ready(plugin,"/친구"))return;
+        ChacaApi.playerCommand(plugin,Commands.literal("친구").executes(ctx->{
+            var p=CodexCommands.self(ctx);
+            if(!p.getListeningPluginChannels().contains(SocialProtocol.RESPONSE))throw ChacaApi.error("최신 MagicCodex 모드가 필요해요");
+            packet(p,new Response(SocialProtocol.OPEN,0,SocialProtocol.NONE,0,"","","",0,List.of()));return Command.SINGLE_SUCCESS;
+        }),"친구창 열기",List.of());
+        // /유저관리 <닉네임> 친구 <보기|끊기 <닉네임>|요청비우기>
+        ChacaApi.branch(plugin,ChacaApi.유저관리,Commands.literal("친구")
+            .then(Commands.literal("보기").executes(ctx->{
+                UUID id=ChacaApi.target(ctx);var sender=CodexCommands.sender(ctx);
+                work(()->store.snapshot(id,wall()),snap->{
+                    var rows=new ArrayList<String>();
+                    rows.add(" 친구 "+snap.friends().size()+"명");for(var e:snap.friends())rows.add("  · "+adminName(e)+(Bukkit.getPlayer(e.id())!=null?" (접속 중)":""));
+                    rows.add(" 받은 신청 "+snap.incoming().size()+"건");for(var e:snap.incoming())rows.add("  · "+adminName(e));
+                    rows.add(" 보낸 신청 "+snap.outgoing().size()+"건");for(var e:snap.outgoing())rows.add("  · "+adminName(e));
+                    CodexCommands.lines(sender,"── "+ChacaApi.name(id)+" 님의 친구 ──",rows);
+                },e->ChacaApi.fail(sender,"친구 목록을 읽지 못했어요",e));return Command.SINGLE_SUCCESS;
+            }))
+            .then(Commands.literal("끊기").then(Commands.argument("상대",ChacaApi.player()).executes(ctx->{
+                UUID id=ChacaApi.target(ctx),other=ChacaApi.resolve(ctx,"상대");var sender=CodexCommands.sender(ctx);
+                if(id.equals(other))throw ChacaApi.error("같은 유저예요");
+                work(()->store.unfriend(id,other),done->{
+                    if(!done){ChacaApi.fail(sender,ChacaApi.name(id)+" 님과 "+ChacaApi.name(other)+" 님은 친구가 아니에요",null);return;}
+                    tickets.remove(id);tickets.remove(other);conversations.forget(id,other);conversations.forget(other,id);peer(id,"");peer(other,"");
+                    ChacaApi.ok(sender,ChacaApi.name(id)+" 님과 "+ChacaApi.name(other)+" 님의 친구 관계를 끊었어요");
+                },e->ChacaApi.fail(sender,"친구 관계를 바꾸지 못했어요",e));return Command.SINGLE_SUCCESS;
+            })))
+            .then(Commands.literal("요청비우기").executes(ctx->{
+                UUID id=ChacaApi.target(ctx);var sender=CodexCommands.sender(ctx);
+                work(()->store.clearRequests(id),n->{peer(id,"");for(Player p:Bukkit.getOnlinePlayers()){var b=books.get(p.getUniqueId());if(b!=null&&b.ready)refresh(p,b,"");}
+                    ChacaApi.ok(sender,ChacaApi.name(id)+" 님의 친구 신청 "+n+"건을 지웠어요");},e->ChacaApi.fail(sender,"친구 신청을 지우지 못했어요",e));return Command.SINGLE_SUCCESS;
+            })),"친구 보기·관계 끊기·신청 비우기","친구 보기");
     }
+    private String adminName(Entry e){return plugin.names().name(Bukkit.getOfflinePlayer(e.id()),e.name());}
     @EventHandler public void join(PlayerJoinEvent e){load(e.getPlayer());}
     @EventHandler(priority=EventPriority.LOWEST) public void quit(PlayerQuitEvent e){
         Player p=e.getPlayer();UUID id=p.getUniqueId();String name=plugin.names().name(p),dorm=dorm(p);books.remove(id);tickets.remove(id);conversations.remove(id);

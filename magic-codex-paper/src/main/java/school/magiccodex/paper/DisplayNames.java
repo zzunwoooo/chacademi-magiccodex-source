@@ -28,6 +28,8 @@ final class DisplayNames {
         cache.put(player.getUniqueId(),new Cached(value,now+2000));return value;
     }
     String name(Player player){return name(player,player.getName());}
+    /** 명령어 공용: 닉네임 저장소 (오프라인 닉네임 찾기·자동완성). */
+    NicknameBridge nicknames(){return nicknames;}
     Player resolve(String input){
         try{Player p=Bukkit.getPlayer(UUID.fromString(input));if(p!=null)return p;}catch(IllegalArgumentException ignored){}
         Player p=Bukkit.getPlayerExact(input);if(p!=null)return p;

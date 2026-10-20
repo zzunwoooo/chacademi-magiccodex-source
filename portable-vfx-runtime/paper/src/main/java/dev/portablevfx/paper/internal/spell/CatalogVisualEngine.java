@@ -74,6 +74,8 @@ public final class CatalogVisualEngine {
     public CatalogVisualEngine(PortableVfxService service,Map<String,Plan> plans){this(service,plans,Limits.DEFAULT);}
     public CatalogVisualEngine(PortableVfxService service,Map<String,Plan> plans,Limits limits){this.service=Objects.requireNonNull(service);this.plans=Map.copyOf(plans);this.limits=Objects.requireNonNull(limits,"limits");}
     public Set<String> spellIds(){return plans.keySet();}
+    /** Visual plan for an ID, or null (operator tooling only). */
+    public Plan plan(String id){return plans.get(id);}
     /** 엄격 모드: 잘못된 마법이 하나라도 있으면 전체를 거부한다. */
     public static Map<String,Plan> read(ConfigurationSection root){
         Map<String,Plan> out=new LinkedHashMap<>();

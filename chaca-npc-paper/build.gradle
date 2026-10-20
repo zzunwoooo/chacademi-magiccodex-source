@@ -1,6 +1,6 @@
 plugins { id 'java' }
 group = 'kr.chacademy'
-version = '0.2.0'
+version = '0.2.0-commands.1'
 base { archivesName = 'chaca-npc' }
 // school 서버 Citizens 실제 버전에 맞춰 -PcitizensVersion=... 로 바꿀 수 있음 (컴파일 기준값일 뿐 설치 버전이 아님)
 def citizensVersion = findProperty('citizensVersion') ?: '2.0.37-SNAPSHOT'

@@ -126,6 +126,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     void markPlayerStateDirty(Player p){if(playerState!=null)playerState.markDirty(p);}
     Double equipmentPower(UUID id,Double base){return equipment==null?base:equipment.power(id,base);}
     DisplayNames names(){return names;}
+    private CommandHub commandHub;
+    CommandHub commandHub(){return commandHub;}
     int questHouse(Player p){return school==null?-1:school.house(p);}
     /** 기숙사 0 아르케온 · 1 루미나 · 2 베스티아즈 · 3 노크세르, 없으면 -1 (큐디치 준비 화면 등 다른 플러그인용). */
     public int houseOf(Player p){return questHouse(p);}
@@ -157,6 +159,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         saveDefaultConfig();
         if (!databaseModeAccepted()) return;
         names=new DisplayNames(this);
+        commandHub=new CommandHub(this);
         wallet=new WalletBridge(this);
         long refresh = Math.clamp(getConfig().getLong("refresh-interval-ticks", 200), 20, 1200) * 50;
         long timeout = Math.clamp(getConfig().getLong("session-timeout-seconds", 45), 30, 120) * 1000;
@@ -252,6 +255,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     }
     @EventHandler public void onWorldChange(PlayerChangedWorldEvent event) { markDirty(event.getPlayer().getUniqueId()); }
     @Override public void onDisable() {
+        if(commandHub!=null)commandHub.close();
         if(alchemy!=null){alchemy.close();alchemy=null;}
         if(fishTank!=null){fishTank.close();fishTank=null;}
         if(fishShop!=null){fishShop.close();fishShop=null;}

@@ -10,7 +10,8 @@ import java.util.concurrent.RejectedExecutionException;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.command.*;
+import com.mojang.brigadier.Command;
+import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
@@ -26,7 +27,7 @@ import school.magiccodex.protocol.SeasonProtocol;
  * MariaDB 모드는 학교·야생 두 서버가 codex_shared_state의 "season" 값(시작 계절·기준 시각·자동 여부·계절 길이)을 함께 보고,
  * 실제 시각으로 계산한다 (1틱=50ms, days-per-season 1일 = 24000틱 = 실제 20분). DB는 전용 IO 스레드에서만 읽고 쓰며
  * 30초마다 다시 읽는다. DB를 쓸 수 없으면 마지막으로 알던 상태로 계속 계산한다. */
-public final class ClimateService implements Listener, CommandExecutor, TabCompleter, PluginMessageListener, AutoCloseable {
+public final class ClimateService implements Listener, PluginMessageListener, AutoCloseable {
     public enum Season {
         SPRING("봄"), SUMMER("여름"), AUTUMN("가을"), WINTER("겨울");
         public final String label;
@@ -80,7 +81,7 @@ public final class ClimateService implements Listener, CommandExecutor, TabCompl
         Bukkit.getServicesManager().register(ClimateService.class,this,plugin,ServicePriority.Normal);
         Bukkit.getPluginManager().registerEvents(this,plugin);
         var messenger=Bukkit.getMessenger();messenger.registerIncomingPluginChannel(plugin,SeasonProtocol.REQUEST,this);messenger.registerOutgoingPluginChannel(plugin,SeasonProtocol.RESPONSE);
-        Objects.requireNonNull(plugin.getCommand("계절관리")).setExecutor(this);plugin.getCommand("계절관리").setTabCompleter(this);
+        registerCommands();
         for(var p:Bukkit.getOnlinePlayers()){clearPenalty(p);enqueue(p);}
         expansion=Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")?new ClimateExpansion(this):null;
         if(expansion!=null)expansion.register();
@@ -245,31 +246,39 @@ public final class ClimateService implements Listener, CommandExecutor, TabCompl
         var state=new YamlConfiguration();state.set("season",Season.values()[clock.start].id());state.set("anchor",clock.anchor);state.set("automatic",clock.automatic);
         try{state.save(new File(plugin.getDataFolder(),"climate-state.yml"));}catch(IOException e){plugin.getLogger().severe("계절 저장 실패: "+e.getMessage());}
     }
-    @Override public boolean onCommand(CommandSender sender,Command cmd,String label,String[] args){
-        if(!sender.hasPermission("magiccodex.climate.admin"))return true;
-        try{
-            if(args.length==2&&(args[0].equals("계절")||args[0].equalsIgnoreCase("season"))){clock.set(Season.parse(args[1]).ordinal(),clockTime(),externalClock()?false:clock.automatic);updateClock();saveState();publishSeason();}
-            else if(args.length==2&&(args[0].equals("자동")||args[0].equalsIgnoreCase("auto"))&&Set.of("켜기","끄기","on","off").contains(args[1])){clock.set(current.ordinal(),clockTime(),(args[1].equals("켜기")||args[1].equals("on")));saveState();publishSeason();}
-            else if(args.length==1&&(args[0].equals("새로고침")||args[0].equalsIgnoreCase("reload"))){
-                var next=readConfig();int season=current.ordinal();boolean auto=clock.automatic;config=next;enabled=config.getBoolean("enabled",true);worlds=Set.copyOf(config.getStringList("worlds"));
-                long length=config.getLong("days-per-season",7)*24000;
-                // 공유 모드: 계절 길이가 그대로면 두 서버가 함께 쓰는 진행도(기준 시각)를 건드리지 않는다. 길이가 바뀌었을 때만 새로 시작해 DB에 올린다.
-                if(!shared||clock.length!=length){clock=new SeasonClock(clockTime(),season,auto,length,clockTime());publishSeason();}
-                updateClock();saveState();
-            }else if(args.length!=0&&!(args.length==1&&(args[0].equals("조회")||args[0].equalsIgnoreCase("status"))))throw new IllegalArgumentException("/계절관리 계절 봄|여름|가을|겨울 · 자동 켜기|끄기 · 조회 · 새로고침");
-            for(var p:Bukkit.getOnlinePlayers())enqueue(p);
-            sendSeasons();
-            if(sender instanceof Player p && args.length==1 && (args[0].equals("조회")||args[0].equalsIgnoreCase("status"))){
-                var sub=subscribers.get(p.getUniqueId());
-                sender.sendMessage("계절 HUD 채널: "+p.getListeningPluginChannels().contains(SeasonProtocol.RESPONSE)+" · 전송 계절: "+(sub==null||sub.season<0?"대기":Season.values()[sub.season].label));
-            }
-            if(realtimeMode())sender.sendMessage("계절: "+current.label+" · 실제 "+realtimeClock(config).hours()+"시간 주기 · 기준 "+realtimeClock(config).epoch()+" · 다음 "+realtimeClock(config).next(java.time.Instant.now()).atZone(realtimeClock(config).zone())+" · "+(clock.automatic?"자동":"관리자 고정"));else if(calendarMode())sender.sendMessage("계절: "+current.label+" · 실제 날짜 "+java.time.LocalDate.now(calendarZone())+" · "+calendarZone()+" · "+(clock.automatic?"달력 자동":"관리자 고정"));else sender.sendMessage("계절: "+current.label+" · "+clock.day()+"/"+(clock.length/24000)+"일 · 자동 전환 "+(clock.automatic?"ON":"OFF")+(shared?" · 두 서버 공유(실제 시간 기준, 1일=20분)":""));
-        }catch(Exception e){sender.sendMessage("계절 설정 오류: "+e.getMessage());}return true;
+    // ------------------------------------------------------------------ 명령 (2026-10-20 명령어 정리)
+    /** 계절 설정 파일을 다시 읽는다. 실패하면 예외(기존 설정 유지). */
+    private void reloadClimate()throws IOException{
+        var next=readConfig();int season=current.ordinal();boolean auto=clock.automatic;config=next;enabled=config.getBoolean("enabled",true);worlds=Set.copyOf(config.getStringList("worlds"));
+        long length=config.getLong("days-per-season",7)*24000;
+        // 공유 모드: 계절 길이가 그대로면 두 서버가 함께 쓰는 진행도(기준 시각)를 건드리지 않는다. 길이가 바뀌었을 때만 새로 시작해 DB에 올린다.
+        if(!shared||clock.length!=length){clock=new SeasonClock(clockTime(),season,auto,length,clockTime());publishSeason();}
+        updateClock();saveState();refreshAll();
     }
-    @Override public List<String> onTabComplete(CommandSender s,Command c,String a,String[] args){
-        if(!s.hasPermission("magiccodex.climate.admin"))return List.of();
-        var choices=args.length==1?List.of("조회","계절","자동","새로고침"):args.length==2&&Set.of("계절","season").contains(args[0])?List.of("봄","여름","가을","겨울"):args.length==2&&Set.of("자동","auto").contains(args[0])?List.of("켜기","끄기"):List.<String>of();
-        return choices.stream().filter(x->x.startsWith(args[args.length-1])).toList();
+    private void refreshAll(){for(var p:Bukkit.getOnlinePlayers())enqueue(p);sendSeasons();}
+    private List<String> status(){
+        var out=new ArrayList<String>();out.add("── 계절 ──");out.add(" 지금 계절: "+current.label+(enabled?"":" (계절 효과 꺼짐)"));
+        if(realtimeMode()){var rc=realtimeClock(config);out.add(" 방식: 실제 시간 "+rc.hours()+"시간마다 · "+(clock.automatic?"자동":"관리자 고정"));if(clock.automatic)out.add(" 다음 바뀌는 때: "+rc.next(java.time.Instant.now()).atZone(rc.zone()).toLocalDateTime().withNano(0).toString().replace('T',' '));}
+        else if(calendarMode())out.add(" 방식: 실제 달력 ("+java.time.LocalDate.now(calendarZone())+") · "+(clock.automatic?"자동":"관리자 고정"));
+        else out.add(" 방식: 게임 날짜 "+clock.day()+"/"+(clock.length/24000)+"일째 · "+(clock.automatic?"자동":"관리자 고정")+(shared?" · 두 서버 공유":""));
+        return out;
+    }
+    private void registerCommands(){
+        if(!CodexCommands.ready(plugin,"/월드관리 계절"))return;
+        ChacaApi.reload(plugin,"계절","계절·기온 설정(climate.yml)",this::reloadClimate);
+        var change=Commands.literal("변경");
+        for(var season:Season.values())change.then(Commands.literal(season.label).executes(ctx->{
+            clock.set(season.ordinal(),clockTime(),externalClock()?false:clock.automatic);updateClock();saveState();publishSeason();refreshAll();
+            ChacaApi.ok(CodexCommands.sender(ctx),"계절을 "+current.label+"(으)로 바꿨어요"+(externalClock()?" (자동 전환은 꺼짐)":""));return Command.SINGLE_SUCCESS;
+        }));
+        var auto=Commands.literal("자동");
+        for(String v:List.of("켜기","끄기"))auto.then(Commands.literal(v).executes(ctx->{
+            clock.set(current.ordinal(),clockTime(),v.equals("켜기"));updateClock();saveState();publishSeason();refreshAll();
+            ChacaApi.ok(CodexCommands.sender(ctx),"계절 자동 전환을 "+(v.equals("켜기")?"켰어요":"껐어요")+" · 지금 "+current.label);return Command.SINGLE_SUCCESS;
+        }));
+        ChacaApi.branch(plugin,ChacaApi.월드관리,Commands.literal("계절")
+            .then(Commands.literal("보기").executes(ctx->{ChacaApi.lines(CodexCommands.sender(ctx),status());return Command.SINGLE_SUCCESS;}))
+            .then(change).then(auto),"계절 보기·변경·자동 전환","계절 보기");
     }
     @Override public void close(){
         closed=true;

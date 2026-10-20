@@ -3,7 +3,6 @@ package school.chacademia.magicmythic;
 import io.lumine.mythic.bukkit.events.MythicConditionLoadEvent;
 import io.lumine.mythic.bukkit.events.MythicMechanicLoadEvent;
 import java.util.*;
-import org.bukkit.command.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * this plugin only supplies the gameplay mechanics (damage, knockback, zones, guards, small world utilities)
  * that the CHA_* skills call. Visuals stay in PortableVFX.
  */
-public final class MagicMythicPlugin extends JavaPlugin implements Listener, CommandExecutor {
+public final class MagicMythicPlugin extends JavaPlugin implements Listener {
     private Targets targets;
     private final MagicProtection protection=new MagicProtection();
     private boolean protectionReady;
@@ -85,8 +84,11 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
         getServer().getPluginManager().registerEvents(new ChannelMech.Hooks(), this);
         getServer().getPluginManager().registerEvents(new SummonMech.Hooks(this), this);
         getServer().getPluginManager().registerEvents(new DiscoveryHooks(this), this);
-        var command = getCommand("마법미몹");
-        if (command != null) command.setExecutor(this);
+        spellRoutes = new SpellRoutes(new java.io.File(getDataFolder().getParentFile(), "MagicCodexBridge/spell-runtime.yml"));
+        if (ChacaLink.ready()) {
+            try { new MythicCommands(this).register(); }
+            catch (RuntimeException e) { getLogger().log(java.util.logging.Level.WARNING, "명령어 허브에 마법 미몹 명령을 붙이지 못했습니다", e); }
+        } else getLogger().warning("MagicCodexBridge 명령어 허브가 없어 마법 미몹 관리·테스트 명령을 등록하지 않았습니다 (메커닉은 그대로 동작).");
         getLogger().info("마법 미몹 메커닉 준비 완료 (MythicMobs 다시 불러오기 시 등록됩니다)");
     }
 
@@ -145,37 +147,19 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
             event.register(new EnemyCondition(this, event.getContainer().getLine()));
     }
 
-    @Override public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!sender.hasPermission("chacademia.magicmythic.admin")) return false;
-        String sub = args.length == 0 ? "" : args[0];
-        if (Set.of("새로고침", "reload").contains(sub)) {
-            reloadConfig(); targets.reload(); reactions.reload(); status.reload(); telegraphs.reload();
-            sender.sendMessage("마법 미몹 설정을 다시 불러왔습니다. 스킬 YAML을 고쳤다면 /mm reload 도 실행하세요.");
-            return true;
-        }
-        if (Set.of("상태", "status").contains(sub)) {
-            sender.sendMessage("진행 중: " + ticker.summary() + ", 보호막 " + guards.count() + ", 표식 " + marks.count()
-                + ", 임시 블록 " + tempBlocks.count() + ", " + reactions.summary() + ", " + status.summary() + ", 예고 장판 " + telegraphs.count());
-            return true;
-        }
-        if (Set.of("장착", "slots").contains(sub) && args.length >= 2) {
-            var target = getServer().getPlayerExact(args[1]);
-            if (target == null) { sender.sendMessage("접속 중인 플레이어가 아닙니다."); return true; }
-            if (args.length == 2) { sender.sendMessage(target.getName() + " 장착: " + slots.list(target) + " (모드 " + slots.mode() + ", 보고 " + (slots.known(target) ? "있음" : "없음") + ")"); return true; }
-            var ids = Arrays.asList(args).subList(2, args.length);
-            slots.force(target, ids.contains("비우기") || ids.contains("clear") ? List.of() : SpellSlots.parse(String.join(",", ids)));
-            sender.sendMessage(target.getName() + " 장착(강제): " + slots.list(target));
-            return true;
-        }
-        if (Set.of("시험", "test").contains(sub) && args.length >= 2 && sender instanceof org.bukkit.entity.Player player) {
-            sender.sendMessage(TestCast.cast(this, player, args[1]));
-            return true;
-        }
-        if (Set.of("예고", "telegraph").contains(sub)) { sender.sendMessage(TelegraphCommand.run(this, sender, Arrays.copyOfRange(args, 1, args.length))); return true; }
-        if (Set.of("상태이상", "debuff").contains(sub)) { sender.sendMessage(StatusCommand.run(this, sender, Arrays.copyOfRange(args, 1, args.length))); return true; }
-        sender.sendMessage("/마법미몹 <새로고침|상태|장착 <플레이어> [id...|비우기]|시험 <마법ID>|상태이상 <종류|해제> [초] [나|바라봄|플레이어] [세기]|예고 <원형|직선|부채꼴|전부|봉인진|빙핵레이저|효과 ...> [초]>");
-        return true;
+    /** /서버관리 새로고침 몹마법 */
+    void reloadAll() {
+        reloadConfig(); targets.reload(); reactions.reload(); status.reload(); telegraphs.reload();
     }
+
+    /** /서버관리 상태 의 몹마법 줄 */
+    String statusLine() {
+        return "진행 중 " + ticker.summary() + ", 보호막 " + guards.count() + ", 표식 " + marks.count()
+            + ", 임시 블록 " + tempBlocks.count() + ", " + reactions.summary() + ", " + status.summary() + ", 예고 장판 " + telegraphs.count();
+    }
+
+    private SpellRoutes spellRoutes;
+    SpellRoutes spellNames() { return spellRoutes; }
 
     Targets targets() { return targets; }
     Ticker ticker() { return ticker; }

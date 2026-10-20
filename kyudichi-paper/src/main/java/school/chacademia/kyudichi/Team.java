@@ -5,10 +5,11 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 /** A = blue, B = red (team colours are never house colours). Order = wire id. */
 enum Team {
-    A("A", "파랑 팀", NamedTextColor.BLUE), B("B", "빨강 팀", NamedTextColor.RED);
+    A("A", "파랑", "파랑 팀", NamedTextColor.BLUE), B("B", "빨강", "빨강 팀", NamedTextColor.RED);
 
-    final String key, label; final NamedTextColor color;
-    Team(String key, String label, NamedTextColor color) { this.key = key; this.label = label; this.color = color; }
+    /** key = arenas.yml 저장 키(바꾸지 않음), word = 명령어 칸에 쓰는 한글. */
+    final String key, word, label; final NamedTextColor color;
+    Team(String key, String word, String label, NamedTextColor color) { this.key = key; this.word = word; this.label = label; this.color = color; }
     Team other() { return this == A ? B : A; }
 
     static Team parse(String s) {

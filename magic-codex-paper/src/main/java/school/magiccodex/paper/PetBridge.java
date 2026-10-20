@@ -4,7 +4,8 @@ import java.lang.reflect.*;
 import java.nio.file.*;
 import java.util.*;
 import org.bukkit.*;
-import org.bukkit.command.*;
+import com.mojang.brigadier.Command;
+import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
@@ -14,7 +15,7 @@ import school.magiccodex.protocol.PetProtocol;
 import school.magiccodex.protocol.PetProtocol.*;
 
 /** Optional MCPets 4.1.11 integration. No commands dispatched and no per-tick pet scanning. */
-final class PetBridge implements PluginMessageListener,Listener,CommandExecutor,TabCompleter,AutoCloseable {
+final class PetBridge implements PluginMessageListener,Listener,AutoCloseable {
     private final MagicCodexBridge plugin;
     private final Map<UUID,Long> requests=new HashMap<>(),actions=new HashMap<>();
     private final Path settings;
@@ -27,7 +28,7 @@ final class PetBridge implements PluginMessageListener,Listener,CommandExecutor,
         if(!Files.exists(settings))Files.writeString(settings,"# MCPets ID -> 1~3성. 등록하지 않은 펫은 default-stars 사용\ndefault-stars: 1\nstars: {}\n");
         reload();
         var m=plugin.getServer().getMessenger();m.registerIncomingPluginChannel(plugin,PetProtocol.REQUEST,this);m.registerOutgoingPluginChannel(plugin,PetProtocol.RESPONSE);
-        Bukkit.getPluginManager().registerEvents(this,plugin);Objects.requireNonNull(plugin.getCommand("펫관리")).setExecutor(this);plugin.getCommand("펫관리").setTabCompleter(this);
+        Bukkit.getPluginManager().registerEvents(this,plugin);registerCommands();
     }
     private void reload(){try{config=CreatureConfigFiles.load(plugin.getDataFolder(),"pets","stars");catalogAt=0;}catch(Exception e){throw new IllegalArgumentException("펫 등급 설정을 읽지 못했습니다",e);}}
     private static long now(){return System.nanoTime()/1_000_000;}
@@ -80,7 +81,7 @@ final class PetBridge implements PluginMessageListener,Listener,CommandExecutor,
                     if(checked&&(permission==null||!player.hasPermission(permission))){send(player,r.sequence(),"아직 소환할 수 없는 펫입니다.",snapshot(player));return;}
                     // Spawn on behalf of this authenticated player only. MCPets applies region/limit/event checks.
                     int result=(int)hook.spawn.invoke(pet,player,player.getLocation());
-                    notice=result==0||result==1?"펫을 소환했습니다.":"지금은 소환할 수 없습니다. (MCPets "+result+")";
+                    notice=result==0||result==1?"펫을 소환했습니다.":"지금은 소환할 수 없습니다.";if(result!=0&&result!=1)plugin.getLogger().info("MCPets 소환 거부 "+player.getName()+" "+r.id()+" 코드 "+result);
                 }else{
                     Object active=hook.active(player.getUniqueId()).stream().filter(p->hook.idOf(p).equals(r.id())).findFirst().orElse(null);
                     if(active==null)notice="소환 중인 펫이 아닙니다.";
@@ -88,7 +89,7 @@ final class PetBridge implements PluginMessageListener,Listener,CommandExecutor,
                 }
             }
             send(player,r.sequence(),notice,snapshot(player));
-        }catch(Exception|LinkageError e){plugin.getLogger().warning("펫 요청 실패: "+e.getMessage());send(player,r.sequence(),"펫 정보를 처리하지 못했습니다. 서버 로그를 확인해 주세요.",List.of());}
+        }catch(Exception|LinkageError e){plugin.getLogger().warning("펫 요청 실패: "+e.getMessage());send(player,r.sequence(),"펫 정보를 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.",List.of());}
     }
     private List<Entry> snapshot(Player player)throws Exception{
         List<?> current=(List<?>)hook.list.invoke(null);
@@ -121,13 +122,42 @@ final class PetBridge implements PluginMessageListener,Listener,CommandExecutor,
     }
     private void send(Player p,long seq,String msg,List<Entry> list){for(var part:PetProtocol.split(seq,msg,list))p.sendPluginMessage(plugin,PetProtocol.RESPONSE,PetProtocol.encode(part));}
     @EventHandler public void quit(PlayerQuitEvent e){requests.remove(e.getPlayer().getUniqueId());actions.remove(e.getPlayer().getUniqueId());}
-    public boolean onCommand(CommandSender sender,Command command,String label,String[] args){
-        if(!sender.hasPermission("magiccodex.pets.admin")){sender.sendMessage("권한이 없습니다.");return true;}
-        if(args.length>1||args.length==1&&!Set.of("새로고침","reload").contains(args[0])){sender.sendMessage("/펫관리 새로고침");return true;}
-        reload();hook=null;retryAt=0;sender.sendMessage("펫 등급 설정을 다시 불러왔습니다. MCPets 연결: "+(connect()?"정상":"대기"));return true;
+    // ------------------------------------------------------------------ 명령 (2026-10-20 명령어 정리)
+    /** 펫 ID (MCPets) → 보유 권한 노드. CheckPermission 이 꺼진 펫은 누구나 가진 것으로 보고 빠진다. */
+    private Map<String,String> ownable(){
+        var out=new TreeMap<String,String>();if(!connect())return out;
+        try{for(Object pet:(List<?>)hook.list.invoke(null)){String id=hook.idOf(pet);String perm=(String)hook.permission.invoke(pet);if(PetProtocol.validId(id)&&(boolean)hook.checked.invoke(pet)&&perm!=null&&perm.matches("[a-z0-9_.-]{1,100}"))out.put(id,perm);}}
+        catch(Exception|LinkageError e){plugin.getLogger().warning("MCPets 펫 목록 읽기 실패: "+e);}
+        return out;
     }
-    @Override public List<String> onTabComplete(CommandSender sender,Command command,String label,String[] args){
-        return sender.hasPermission("magiccodex.pets.admin")&&args.length==1?AdminCommandRules.filter(List.of("새로고침"),args[0]):List.of();
+    private String petName(String id){for(var d:catalog)if(d.id.equals(id))return d.name;return id;}
+    private void registerCommands(){
+        if(!CodexCommands.ready(plugin,"펫"))return;
+        ChacaApi.reload(plugin,"펫","펫 등급(pets.yml)·MCPets 다시 연결",()->{reload();hook=null;retryAt=0;connect();});
+        ChacaApi.status(plugin,"MCPets",()->connect()?"정상 · 펫 "+ownable().size()+"종 (보유 권한 있는 펫)":"대기 · MCPets가 없거나 연결 중");
+        var node=Commands.literal("펫");
+        node.then(Commands.literal("보기").executes(ctx->{
+            UUID id=ChacaApi.target(ctx);var sender=CodexCommands.sender(ctx);var perms=ownable();
+            if(perms.isEmpty())throw ChacaApi.error("MCPets가 연결되지 않았거나 보유 권한이 있는 펫이 없어요");
+            ChacaApi.permissions(id,"").whenComplete((nodes,error)->{
+                if(error!=null){ChacaApi.fail(sender,"보유 펫을 읽지 못했어요",error);return;}
+                var have=new HashSet<>(nodes);var rows=new ArrayList<String>();
+                for(var e:perms.entrySet())if(have.contains(e.getValue()))rows.add(" "+petName(e.getKey())+" ("+e.getKey()+")");
+                int owned=rows.size();if(owned==0)rows.add(" 보유한 펫이 없어요");
+                rows.add(" 보유 "+owned+" / "+perms.size()+"종");
+                CodexCommands.lines(sender,"── "+ChacaApi.name(id)+" 님의 펫 ──",rows);
+            });return Command.SINGLE_SUCCESS;
+        }));
+        for(String action:List.of("주기","회수"))node.then(Commands.literal(action).then(Commands.argument("펫",ChacaApi.word(()->ownable().keySet())).executes(ctx->{
+            UUID id=ChacaApi.target(ctx);String pet=ctx.getArgument("펫",String.class);var sender=CodexCommands.sender(ctx);
+            String perm=ownable().get(pet);if(perm==null)throw ChacaApi.error(pet+" 펫을 찾을 수 없어요 (MCPets 보유 권한이 있는 펫만)");
+            boolean grant=action.equals("주기");
+            ChacaApi.permission(id,perm,grant).whenComplete((v,error)->{
+                if(error!=null){ChacaApi.fail(sender,"펫 보유를 바꾸지 못했어요",error);return;}
+                ChacaApi.ok(sender,ChacaApi.name(id)+" 님에게 "+petName(pet)+(grant?" 펫을 주었어요":" 펫을 회수했어요"));
+            });return Command.SINGLE_SUCCESS;
+        })));
+        ChacaApi.branch(plugin,ChacaApi.유저관리,node,"펫 보유 보기·주기·회수 (MCPets 권한)","펫 보기");
     }
     public void close(){catalog=List.of();objects=List.of();requests.clear();actions.clear();hook=null;}
     private static final class Hook{

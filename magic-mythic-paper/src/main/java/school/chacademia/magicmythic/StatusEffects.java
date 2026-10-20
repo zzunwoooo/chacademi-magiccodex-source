@@ -627,13 +627,13 @@ final class StatusEffects implements Listener, AutoCloseable {
     public void drink(PlayerItemConsumeEvent e) {
         if (!potionSealed(e.getPlayer()) || !potion(e.getItem())) return;
         e.setCancelled(true);
-        e.getPlayer().sendActionBar(net.kyori.adventure.text.Component.text("물약봉인 상태에서는 물약을 마실 수 없어요"));
+        ChacaLink.notify(e.getPlayer(), "warning", "magic-mythic:potion-seal", "물약봉인 상태에서는 물약을 마실 수 없어요", "", 2000);
     }
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void thrown(ProjectileLaunchEvent e) {
         if (e.getEntity() instanceof ThrownPotion pot && pot.getShooter() instanceof Player p && potionSealed(p)) {
             e.setCancelled(true);
-            p.sendActionBar(net.kyori.adventure.text.Component.text("물약봉인 상태에서는 물약을 던질 수 없어요"));
+            ChacaLink.notify(p, "warning", "magic-mythic:potion-seal", "물약봉인 상태에서는 물약을 던질 수 없어요", "", 2000);
         }
     }
     static boolean potion(ItemStack it) {

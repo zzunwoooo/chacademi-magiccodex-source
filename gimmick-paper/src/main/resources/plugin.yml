@@ -2,13 +2,4 @@ name: ChacaGimmick
 version: '${version}'
 main: school.chacademia.gimmick.GimmickPlugin
 api-version: '1.21.4'
-softdepend: [ItemsAdder, ModelEngine, ChAcademiaMagicMythic, WorldGuard, MCPets]
-commands:
-  기믹:
-    description: Dungeon gimmick models and puzzles
-    usage: /기믹 도움
-    aliases: [gimmick]
-    permission: chacademia.gimmick.admin
-permissions:
-  chacademia.gimmick.admin:
-    default: op
+softdepend: [ItemsAdder, ModelEngine, ChAcademiaMagicMythic, WorldGuard, MCPets, MagicCodexBridge]

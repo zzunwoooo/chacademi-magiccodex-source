@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.*;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.*;
-import org.bukkit.command.*;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -32,7 +32,7 @@ import school.magiccodex.protocol.AlchemyRules;
  * - Undiscovered recipes never reach the client (it only learns how many are still locked).
  * Everything runs on the main thread (plugin messages, commands, the refresh timer).
  */
-final class AlchemyBridge implements PluginMessageListener, Listener, CommandExecutor, TabCompleter {
+final class AlchemyBridge implements PluginMessageListener, Listener {
     private record Recipe(String id, String name, String result, int amount, int exp, Map<String, Integer> ingredients, int order) {}
     private record Inventory(Map<String, Integer> counts, Map<String, ItemStack> samples, Set<String> materials) {}
 
@@ -66,10 +66,7 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, AlchemyProtocol.REQUEST, this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, AlchemyProtocol.RESPONSE);
         Bukkit.getPluginManager().registerEvents(this, plugin);
-        for (String name : List.of("연금술", "연금술관리")) {
-            var command = Objects.requireNonNull(plugin.getCommand(name));
-            command.setExecutor(this); command.setTabCompleter(this);
-        }
+        CmdKit.register(plugin, "/연금술·/유저관리 연금술·/컨텐츠관리 연금술·/테스트 연금술", this::commands);
         // Inventory or experience changed while the window is open (pickups, other plugins): resend, at most once a second.
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for (var id : List.copyOf(viewers.keySet())) {
@@ -403,7 +400,7 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
         plugin.getLogger().warning("ALCHEMY MAIL FAILED (" + why + ") player=" + p.getUniqueId() + " craft=" + craftId + " items=" + items);
         if (!p.isOnline()) return;
         for (ItemStack item : items) p.getWorld().dropItemNaturally(p.getLocation(), item);
-        p.sendMessage("§e[연금술] 우편으로 보내지 못한 결과물을 발밑에 떨어뜨렸습니다.");
+        CmdKit.notify(p, "warning", "alchemy-drop", "연금술 결과물을 발밑에 떨어뜨렸어요", "우편으로 보내지 못했어요", 0);
     }
 
     @EventHandler public void quit(PlayerQuitEvent e) {
@@ -444,69 +441,79 @@ final class AlchemyBridge implements PluginMessageListener, Listener, CommandExe
         return null;
     }
 
-    @Override public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (command.getName().equals("연금술")) return open(sender, args);
-        String sub = args.length == 0 ? "편집" : args[0];
-        switch (sub) {
-            case "편집", "edit" -> {
-                if (sender instanceof Player p) editor.open(p);
-                else sender.sendMessage("레시피 편집 창은 게임 안에서 /연금술관리 로 엽니다. (콘솔: 새로고침|목록|발견|잊기)");
-            }
-            case "새로고침", "reload" -> {
-                // this server's file (edited by hand) becomes the shared setting for both servers
-                String error = reloadAndPush();
-                if (error != null) { sender.sendMessage("§calchemy.yml 오류: " + error); return true; }
-                int count = recipes.size();
-                shared.publish(localText(), "reload:" + sender.getName(), failed -> sender.sendMessage(failed == null
-                        ? "§a연금술 레시피 " + count + "개를 다시 불러왔습니다." + (shared.shared() ? " 스쿨·야생 두 서버에 같이 적용됩니다." : " (공유 DB 없음: 이 서버만)")
-                        : "§e이 서버에는 불러왔지만 다른 서버와 공유하지 못했습니다: " + failed));
-            }
-            case "목록", "list" -> {
-                for (Recipe r : recipes) sender.sendMessage("§f" + r.name() + " §8" + r.id() + " §7→ " + r.result() + " ×" + r.amount() + ", 경험치 " + r.exp() + ", 재료 " + r.ingredients());
-                sender.sendMessage("§7총 " + recipes.size() + "개");
-            }
-            case "발견", "잊기" -> {
-                Player target = args.length > 2 ? Bukkit.getPlayerExact(args[1]) : null;
-                if (target == null) { sender.sendMessage("/연금술관리 " + sub + " <플레이어> <레시피아이디|전체>"); return true; }
-                boolean all = args[2].equals("전체") || args[2].equals("*");
-                var ids = all ? recipes.stream().map(Recipe::id).toList() : recipes.stream().map(Recipe::id).filter(args[2]::equals).toList();
-                if (ids.isEmpty()) { sender.sendMessage("§c없는 레시피: " + args[2]); return true; }
-                boolean grant = sub.equals("발견");
-                for (String id : ids) {
-                    var future = grant ? ArtifactGrants.grant(target.getUniqueId(), PERMISSION + id) : ArtifactGrants.revoke(target.getUniqueId(), PERMISSION + id);
-                    if (future == null) { sender.sendMessage("§cLuckPerms 가 없어 저장할 수 없습니다."); return true; }
-                    var pending = pendingGrants.computeIfAbsent(target.getUniqueId(), k -> new HashSet<>());
-                    if (grant) pending.add(id); else pending.remove(id);
-                }
-                sender.sendMessage("§a" + target.getName() + ": 레시피 " + ids.size() + "개 " + (grant ? "발견 처리" : "잊게 함") + " (LuckPerms 반영까지 잠시 걸릴 수 있음)");
-                if (viewers.containsKey(target.getUniqueId())) Bukkit.getScheduler().runTaskLater(plugin, () -> { if (target.isOnline()) send(target, AlchemyProtocol.KIND_STATE, ""); }, 20);
-            }
-            default -> sender.sendMessage("/연금술관리 (편집 창) | 새로고침 | 목록 | 발견 <플레이어> <레시피|전체> | 잊기 <플레이어> <레시피|전체>");
+    // ------------------------------------------------------------------ 명령 (2026-10-20)
+
+    private Map<String, String> recipeNames() { var out = new LinkedHashMap<String, String>(); for (Recipe r : recipes) out.put(r.id(), r.name()); return out; }
+    private List<String> recipeChoices() { var out = new ArrayList<String>(); out.add("전체"); out.addAll(AdminCommandRules.catalogChoices(recipeNames())); return out; }
+
+    private void commands() {
+        ChacaApi.playerCommand(plugin, CmdKit.literal("연금술").executes(CmdKit.run(ctx -> { Player p = CmdKit.self(ctx); openWindow(p, p); })), "연금술 창 열기", List.of());
+        var user = CmdKit.literal("연금술")
+                .then(CmdKit.literal("레시피주기").then(CmdKit.word("레시피", this::recipeChoices).executes(CmdKit.run(ctx -> recipes(ctx, true)))))
+                .then(CmdKit.literal("레시피회수").then(CmdKit.word("레시피", this::recipeChoices).executes(CmdKit.run(ctx -> recipes(ctx, false)))));
+        ChacaApi.branch(plugin, ChacaApi.유저관리, user, "연금술 레시피 주기·회수", "연금술 레시피주기 전체");
+        ChacaApi.branch(plugin, ChacaApi.컨텐츠관리, CmdKit.literal("연금술")
+                .then(CmdKit.literal("레시피편집").executes(CmdKit.run(ctx -> editor.open(CmdKit.self(ctx)))))
+                .then(CmdKit.literal("목록").executes(CmdKit.run(ctx -> {
+                    var out = new ArrayList<String>();
+                    out.add("── 연금술 레시피 (" + recipes.size() + "개) ──");
+                    for (Recipe r : recipes) out.add(r.name() + "  (" + r.id() + ") → " + r.result() + " ×" + r.amount() + " · 경험치 " + r.exp() + " · 재료 " + r.ingredients());
+                    CmdKit.lines(CmdKit.sender(ctx), out);
+                }))), "연금술 레시피 편집 창·목록", "연금술 목록");
+        var test = CmdKit.literal("연금술");
+        for (String action : List.of("열기", "전체발견", "전체잊기")) {
+            CmdKit.Body body = ctx -> {
+                Player target = CmdKit.onlineOrSelf(ctx, "닉네임");
+                if (action.equals("열기")) openWindow(CmdKit.sender(ctx), target);
+                else change(CmdKit.sender(ctx), target.getUniqueId(), recipes.stream().map(Recipe::id).toList(), action.equals("전체발견"));
+            };
+            test.then(CmdKit.literal(action).executes(CmdKit.run(body)).then(CmdKit.player("닉네임").executes(CmdKit.run(body))));
         }
-        return true;
+        ChacaApi.branch(plugin, ChacaApi.테스트, test, "연금술 창 열기·레시피 전체 발견·전체 잊기", "연금술 열기");
+        ChacaApi.reload(plugin, "연금술", "alchemy.yml (연금술 레시피, 학교·야생 공유)", () -> {
+            // this server's file (edited by hand) becomes the shared setting for both servers
+            String error = reloadAndPush();
+            if (error != null) throw new IllegalArgumentException("alchemy.yml: " + error);
+            shared.publish(localText(), "reload", failed -> {
+                if (failed != null) plugin.getLogger().warning("연금술: 이 서버에는 불러왔지만 다른 서버와 공유하지 못했습니다: " + failed);
+            });
+        });
     }
 
-    private boolean open(CommandSender sender, String[] args) {
-        Player target;
-        if (args.length > 0) {
-            if (!sender.hasPermission("magiccodex.alchemy.admin")) { sender.sendMessage("§c다른 플레이어의 연금술 창은 관리자만 열 수 있습니다."); return true; }
-            target = Bukkit.getPlayerExact(args[0]);
-            if (target == null) { sender.sendMessage("§c접속 중인 플레이어가 아닙니다: " + args[0]); return true; }
-        } else if (sender instanceof Player p) target = p;
-        else { sender.sendMessage("/연금술 <플레이어>"); return true; }
-        if (!target.getListeningPluginChannels().contains(AlchemyProtocol.RESPONSE)) { sender.sendMessage("§c차카데미 모드가 있어야 연금술 창을 열 수 있습니다."); return true; }
+    private void recipes(com.mojang.brigadier.context.CommandContext<io.papermc.paper.command.brigadier.CommandSourceStack> ctx, boolean grant) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        UUID target = ChacaApi.target(ctx);
+        String input = CmdKit.text(ctx, "레시피");
+        List<String> ids = input.equals("전체") ? recipes.stream().map(Recipe::id).toList() : List.of(CmdKit.pick(recipeNames(), input, "레시피"));
+        change(CmdKit.sender(ctx), target, ids, grant);
+    }
+
+    /** 레시피 발견(LuckPerms 노드) 주기·회수. 오프라인 유저도 LuckPerms가 저장한다. */
+    private void change(CommandSender sender, UUID target, List<String> ids, boolean grant) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        if (ids.isEmpty()) throw ChacaApi.error("등록된 레시피가 없어요");
+        if (!ArtifactGrants.available()) throw ChacaApi.error("LuckPerms가 없어 레시피를 저장할 수 없어요");
+        var futures = new ArrayList<java.util.concurrent.CompletableFuture<Void>>();
+        for (String id : ids) {
+            var future = grant ? ArtifactGrants.grant(target, PERMISSION + id) : ArtifactGrants.revoke(target, PERMISSION + id);
+            if (future == null) throw ChacaApi.error("LuckPerms가 없어 레시피를 저장할 수 없어요");
+            futures.add(future);
+            var pending = pendingGrants.computeIfAbsent(target, k -> new HashSet<>());
+            if (grant) pending.add(id); else pending.remove(id);
+        }
+        String who = CmdKit.name(target);
+        String what = ids.size() == 1 ? recipeNames().getOrDefault(ids.getFirst(), ids.getFirst()) + " 레시피" : "레시피 " + ids.size() + "개";
+        java.util.concurrent.CompletableFuture.allOf(futures.toArray(java.util.concurrent.CompletableFuture[]::new)).whenComplete((ok, error) -> Bukkit.getScheduler().runTask(plugin, () -> {
+            if (error != null) { CmdKit.fail(sender, "레시피를 저장하지 못했어요", error); return; }
+            CmdKit.ok(sender, who + " 님" + (grant ? "에게 " : "의 ") + what + "을(를) " + (grant ? "주었어요" : "회수했어요"));
+            Player online = Bukkit.getPlayer(target);
+            if (online != null && viewers.containsKey(target)) send(online, AlchemyProtocol.KIND_STATE, "");
+        }));
+    }
+
+    private void openWindow(CommandSender sender, Player target) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        if (!target.getListeningPluginChannels().contains(AlchemyProtocol.RESPONSE)) {
+            if (sender == target) { CmdKit.notify(target, "warning", "alchemy-mod", "연금술 창을 열 수 없어요", "차카데미 모드를 업데이트해 주세요", 3000); return; }
+            throw ChacaApi.error(plugin.names().name(target) + " 님은 차카데미 모드가 없어 연금술 창을 열 수 없어요");
+        }
         send(target, AlchemyProtocol.KIND_OPEN, "");
-        return true;
-    }
-
-    @Override public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        var players = Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
-        if (command.getName().equals("연금술")) return args.length == 1 && sender.hasPermission("magiccodex.alchemy.admin") ? players : List.of();
-        if (args.length == 1) return List.of("편집", "새로고침", "목록", "발견", "잊기");
-        if (args.length == 2 && (args[0].equals("발견") || args[0].equals("잊기"))) return players;
-        if (args.length == 3 && (args[0].equals("발견") || args[0].equals("잊기"))) {
-            var ids = new ArrayList<String>(); ids.add("전체"); recipes.forEach(r -> ids.add(r.id())); return ids;
-        }
-        return List.of();
     }
 }

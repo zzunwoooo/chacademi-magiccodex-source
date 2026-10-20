@@ -3,7 +3,6 @@ package school.magiccodex.paper;
 import java.util.*;
 import org.bukkit.*;
 import org.bukkit.attribute.*;
-import org.bukkit.command.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
@@ -16,8 +15,10 @@ import school.magiccodex.protocol.EquipmentProtocol;
 import school.magiccodex.protocol.EquipmentProtocol.*;
 
 /** Server-owned equipment. Vanilla armor stays in vanilla slots; accessories live in player PDC. */
-final class EquipmentBridge implements PluginMessageListener,Listener,CommandExecutor,AutoCloseable {
+final class EquipmentBridge implements PluginMessageListener,Listener,AutoCloseable {
     private static final String[] TYPES={"artifact","ring","earring","necklace"};
+    /** 장신구 칸 한글 이름 (TYPES와 같은 순서). */
+    static final List<String> SLOT_NAMES=List.of("아티팩트","반지","귀걸이","목걸이");
     private final MagicCodexBridge plugin;
     private final ManaService mana;
     private final NamespacedKey type,hpModifier;
@@ -36,7 +37,7 @@ final class EquipmentBridge implements PluginMessageListener,Listener,CommandExe
         plugin.getServer().getMessenger().registerIncomingPluginChannel(plugin,EquipmentProtocol.REQUEST,this);
         plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin,EquipmentProtocol.RESPONSE);
         Bukkit.getPluginManager().registerEvents(this,plugin);
-        Objects.requireNonNull(plugin.getCommand("장비설정")).setExecutor(this);
+        CmdKit.register(plugin,"/아이템관리 장비·/유저관리 장신구",this::commands);
         for(Player p:Bukkit.getOnlinePlayers())apply(p);
         Bukkit.getScheduler().runTaskTimer(plugin,()->{for(Player p:Bukkit.getOnlinePlayers())if(!Objects.equals(hands.get(p.getUniqueId()),p.getInventory().getItemInMainHand()))apply(p);},10,10);
         Bukkit.getScheduler().runTaskTimer(plugin,()->{long now=System.currentTimeMillis();sessions.values().removeIf(s->s.until<now);limits.values().removeIf(t->t<now);},200,200);
@@ -121,15 +122,49 @@ final class EquipmentBridge implements PluginMessageListener,Listener,CommandExe
         var response=new Response(seq,rev,Math.clamp(plugin.circle(p),1,9),plugin.names().name(p),notice,b[0],b[1],b[2],b[3],Arrays.stream(eq).map(EquipmentBridge::preview).toList(),candidates,b[4]);
         p.sendPluginMessage(plugin,EquipmentProtocol.RESPONSE,EquipmentProtocol.response(response));
     }
-    @Override public boolean onCommand(CommandSender sender,Command cmd,String label,String[] args){
-        if(!(sender instanceof Player p)||!p.hasPermission("magiccodex.equipment.admin")){sender.sendMessage("관리자만 사용할 수 있습니다.");return true;}
-        try{
-            if((args.length!=5&&args.length!=6)||!List.of(TYPES).contains(args[0]))throw new IllegalArgumentException();
-            ItemStack item=p.getInventory().getItemInMainHand();if(empty(item))throw new IllegalArgumentException();
-            double[] v=new double[5];for(int i=0;i<5;i++){v[i]=i+1<args.length?Double.parseDouble(args[i+1]):0;if(!Double.isFinite(v[i])||v[i]<0||v[i]>(i==1?200:100000))throw new IllegalArgumentException();}
-            var meta=item.getItemMeta();meta.getPersistentDataContainer().set(type,PersistentDataType.STRING,args[0]);for(int i=0;i<5;i++)meta.getPersistentDataContainer().set(bonuses[i],PersistentDataType.DOUBLE,v[i]);item.setItemMeta(meta);
-            p.sendMessage("손에 든 아이템을 "+args[0]+" 장비로 등록했습니다.");
-        }catch(IllegalArgumentException e){p.sendMessage("/장비설정 <artifact|ring|earring|necklace> <마력> <체력 0~200> <최대 마나> <초당 마나 회복> [마법 가속]");}return true;
+    private static final String[] BONUS_NAMES={"마력","체력","최대마나","마나회복","마법가속"};
+    private void commands(){
+        var kind=CmdKit.word("종류",()->SLOT_NAMES);
+        var last=CmdKit.argument(BONUS_NAMES[3],com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg(0,100000)).executes(CmdKit.run(ctx->registerHeld(ctx,false)))
+                .then(CmdKit.argument(BONUS_NAMES[4],com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg(0,100000)).executes(CmdKit.run(ctx->registerHeld(ctx,true))));
+        kind.then(CmdKit.argument(BONUS_NAMES[0],com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg(0,100000))
+                .then(CmdKit.argument(BONUS_NAMES[1],com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg(0,200))
+                        .then(CmdKit.argument(BONUS_NAMES[2],com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg(0,100000)).then(last))));
+        ChacaApi.branch(plugin,ChacaApi.아이템관리,CmdKit.literal("장비").then(CmdKit.literal("등록").then(kind)),"손에 든 아이템을 장신구로 등록 (능력치)","장비 등록 반지 10 0 0 0");
+        var slot=CmdKit.word("칸",()->SLOT_NAMES);
+        var user=CmdKit.literal("장신구")
+                .then(CmdKit.literal("보기").executes(CmdKit.run(this::show)))
+                .then(CmdKit.literal("돌려주기").then(CmdKit.word("칸",()->SLOT_NAMES).executes(CmdKit.run(ctx->takeOut(ctx,true)))))
+                .then(CmdKit.literal("비우기").then(CmdKit.confirm(slot,ctx->takeOut(ctx,false))));
+        ChacaApi.branch(plugin,ChacaApi.유저관리,user,"장신구 칸 보기·인벤토리로 돌려주기·비우기","장신구 보기");
+    }
+    private void registerHeld(com.mojang.brigadier.context.CommandContext<io.papermc.paper.command.brigadier.CommandSourceStack> ctx,boolean haste)throws com.mojang.brigadier.exceptions.CommandSyntaxException{
+        Player p=CmdKit.self(ctx);int index=SLOT_NAMES.indexOf(CmdKit.text(ctx,"종류"));if(index<0)throw ChacaApi.error("종류는 아티팩트·반지·귀걸이·목걸이 중 하나예요");
+        ItemStack item=p.getInventory().getItemInMainHand();if(empty(item))throw ChacaApi.error("등록할 아이템을 주 손에 들어 주세요");
+        double[] v=new double[5];for(int i=0;i<4;i++)v[i]=com.mojang.brigadier.arguments.DoubleArgumentType.getDouble(ctx,BONUS_NAMES[i]);v[4]=haste?com.mojang.brigadier.arguments.DoubleArgumentType.getDouble(ctx,BONUS_NAMES[4]):0;
+        var meta=item.getItemMeta();meta.getPersistentDataContainer().set(type,PersistentDataType.STRING,TYPES[index]);for(int i=0;i<5;i++)meta.getPersistentDataContainer().set(bonuses[i],PersistentDataType.DOUBLE,v[i]);item.setItemMeta(meta);
+        CmdKit.ok(CmdKit.sender(ctx),"손에 든 아이템을 "+SLOT_NAMES.get(index)+" 장비로 등록했어요");
+    }
+    private static String itemName(ItemStack item){return net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(item.displayName());}
+    private void show(com.mojang.brigadier.context.CommandContext<io.papermc.paper.command.brigadier.CommandSourceStack> ctx)throws com.mojang.brigadier.exceptions.CommandSyntaxException{
+        Player p=ChacaApi.targetOnline(ctx);if(!plugin.playerStateReady(p))throw ChacaApi.error("캐릭터 정보를 불러오는 중이에요. 잠시 뒤 다시 해 주세요");
+        var out=new ArrayList<String>();out.add("── "+plugin.names().name(p)+" 장신구 ──");
+        for(int i=0;i<4;i++){ItemStack item=accessory(p,i);out.add(SLOT_NAMES.get(i)+": "+(empty(item)?"(비어 있음)":itemName(item)));}
+        double[] t=totals.getOrDefault(p.getUniqueId(),new double[5]);
+        out.add("장비 합계: 마력 "+AdminCommandRules.number(t[0])+" · 체력 "+AdminCommandRules.number(t[1])+" · 최대마나 "+AdminCommandRules.number(t[2])+" · 마나회복 "+AdminCommandRules.number(t[3])+" · 마법가속 "+AdminCommandRules.number(t[4]));
+        CmdKit.lines(CmdKit.sender(ctx),out);
+    }
+    /** 장신구 한 칸을 인벤토리로 돌려주거나(giveBack) 지운다. */
+    private void takeOut(com.mojang.brigadier.context.CommandContext<io.papermc.paper.command.brigadier.CommandSourceStack> ctx,boolean giveBack)throws com.mojang.brigadier.exceptions.CommandSyntaxException{
+        Player p=ChacaApi.targetOnline(ctx);if(!plugin.playerStateReady(p))throw ChacaApi.error("캐릭터 정보를 불러오는 중이에요. 잠시 뒤 다시 해 주세요");
+        int index=SLOT_NAMES.indexOf(CmdKit.text(ctx,"칸"));if(index<0)throw ChacaApi.error("칸은 아티팩트·반지·귀걸이·목걸이 중 하나예요");
+        ItemStack item=accessory(p,index);String who=plugin.names().name(p);
+        if(empty(item))throw ChacaApi.error(who+" 님 "+SLOT_NAMES.get(index)+" 칸이 비어 있어요");
+        if(giveBack&&p.getInventory().firstEmpty()<0)throw ChacaApi.error(who+" 님 인벤토리에 빈칸이 없어요");
+        accessory(p,index,null);if(giveBack)p.getInventory().addItem(item);
+        sessions.remove(p.getUniqueId());apply(p);p.saveData();plugin.savePlayerState(p);
+        plugin.getLogger().info("EQUIPMENT ADMIN "+(giveBack?"return":"clear")+" admin="+CmdKit.sender(ctx).getName()+" player="+p.getUniqueId()+" slot="+TYPES[index]+" item="+itemName(item));
+        CmdKit.ok(CmdKit.sender(ctx),who+" 님 "+SLOT_NAMES.get(index)+" 칸 "+itemName(item)+"을(를) "+(giveBack?"인벤토리로 돌려주었어요":"비웠어요"));
     }
     @EventHandler(priority=EventPriority.MONITOR) public void join(PlayerJoinEvent e){apply(e.getPlayer());}
     @EventHandler public void quit(PlayerQuitEvent e){sessions.remove(e.getPlayer().getUniqueId());limits.remove(e.getPlayer().getUniqueId());totals.remove(e.getPlayer().getUniqueId());hands.remove(e.getPlayer().getUniqueId());}

@@ -66,7 +66,7 @@ final class ArtifactLife implements Listener {
         data.set(biomesKey, PersistentDataType.STRING, String.join(",", set));
         fx.plugin.markPlayerStateDirty(p); // shared with the other server (codex_player_state.artifact_biomes)
         p.giveExp(30);
-        p.sendActionBar(Component.text("여행자의 수첩: 처음 와 보는 곳! (경험치 +30)", NamedTextColor.GREEN));
+        ArtifactEffects.notice(p, "travel_journal", "여행자의 수첩", "처음 와 보는 곳! (경험치 +30)");
         p.playSound(p.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, .8f, 1.2f);
     }
 
@@ -79,7 +79,7 @@ final class ArtifactLife implements Listener {
         Long prev = warned.get(p.getUniqueId());
         if (prev != null && Math.abs(prev - startsAt) < 200) return;
         warned.put(p.getUniqueId(), startsAt);
-        p.sendActionBar(Component.text("풍향계: 곧(약 " + Math.max(1, left / 20) + "초 뒤) 비가 올 것 같아요", NamedTextColor.AQUA));
+        ArtifactEffects.notice(p, "weather_vane", "풍향계", "곧(약 " + Math.max(1, left / 20) + "초 뒤) 비가 올 것 같아요");
         p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, .6f, .8f);
     }
 
@@ -117,7 +117,7 @@ final class ArtifactLife implements Listener {
         if (e.getState() != PlayerFishEvent.State.CAUGHT_FISH || !has(p, "fishing_bobber") || !(e.getCaught() instanceof Item item) || !chance(0.05)) return;
         var extra = item.getItemStack().clone(); extra.setAmount(1);
         ArtifactActions.give(p, extra);
-        p.sendActionBar(Component.text("낚시찌: 한 마리 더!", NamedTextColor.AQUA));
+        ArtifactEffects.notice(p, "fishing_float", "낚시찌", "한 마리 더!");
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -232,7 +232,7 @@ final class ArtifactLife implements Listener {
             at.getWorld().spawnParticle(Particle.WAX_ON, at.clone().add(0, 1, 0), 20, .3, .5, .3, 0);
             at.getWorld().playSound(at, Sound.BLOCK_CHAIN_PLACE, 1f, 1.8f);
             at.getWorld().playSound(at, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1.4f);
-            p.sendActionBar(Component.text("행운의 동전: +1000원", NamedTextColor.GOLD));
+            CmdKit.notify(p, "shop", "artifact:lucky_coin", "행운의 동전", "+1000원", 2000);
         }
     }
 
@@ -280,6 +280,18 @@ final class ArtifactLife implements Listener {
         Bukkit.getScheduler().runTaskLater(fx.plugin, () -> { if (e.getPlayer().isOnline() && fx.plugin.playerStateReady(e.getPlayer())) returnKept(e.getPlayer()); }, 40);
     }
 
+    /** 관리자 보관품돌려주기: 상태 준비만 보고 바로 돌려준다. 돌려준 아이템 이름, 없으면 null. */
+    String adminReturnKept(Player p) {
+        byte[] bytes = p.getPersistentDataContainer().get(keptKey, PersistentDataType.BYTE_ARRAY);
+        if (bytes == null) return null;
+        ItemStack item = ItemStack.deserializeBytes(bytes);
+        p.getPersistentDataContainer().remove(keptKey);
+        fx.plugin.savePlayerState(p);
+        ArtifactActions.give(p, item);
+        fx.plugin.getLogger().info("ARTIFACT ADMIN returned kept item player=" + p.getUniqueId() + " item=" + item.getType());
+        return net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(item.displayName());
+    }
+
     void returnKept(Player p) {
         if (p.isDead() || !fx.plugin.playerStateReady(p)) return;
         byte[] bytes = p.getPersistentDataContainer().get(keptKey, PersistentDataType.BYTE_ARRAY);
@@ -288,7 +300,7 @@ final class ArtifactLife implements Listener {
         fx.plugin.savePlayerState(p);
         try {
             ArtifactActions.give(p, ItemStack.deserializeBytes(bytes));
-            p.sendActionBar(Component.text("튼튼한 끈이 아이템 하나를 지켜 주었습니다.", NamedTextColor.GOLD));
+            ArtifactEffects.notice(p, "sturdy_string", "튼튼한 끈", "아이템 하나를 지켜 주었어요");
         } catch (RuntimeException err) { fx.plugin.getLogger().warning("튼튼한 끈 아이템 복원 실패: " + p.getName()); }
     }
 
@@ -297,7 +309,7 @@ final class ArtifactLife implements Listener {
         long time = p.getWorld().getTime();
         if (!has(p, "inn_key") || time > 2000) return; // only after actually sleeping through the night
         p.setFoodLevel(Math.min(20, p.getFoodLevel() + 4));
-        p.sendActionBar(Component.text("여관 열쇠: 푹 잤습니다 (배고픔 2칸 회복)", NamedTextColor.GOLD));
+        ArtifactEffects.notice(p, "inn_key", "여관 열쇠", "푹 잤어요 (배고픔 2칸 회복)");
     }
 
     // ------------------------------------------------------------------ small things

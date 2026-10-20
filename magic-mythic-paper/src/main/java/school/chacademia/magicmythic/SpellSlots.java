@@ -19,7 +19,7 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
  *                       payload = UTF-8 "id1,id2,...", max 6 ids, sent on join and whenever the key settings change
  *                       (client side is a MagicCodex proposal: docs/handoff/proposals/CLIENT_SPELL_SLOTS_20261014.md)
  *   learned           - every learned spell (permission magic.learned.<id>) counts as equipped (temporary fallback)
- * Admins can force entries for tests: /마법미몹 장착 <player> <id...|비우기>
+ * Admins can force entries for tests: /유저관리 <닉네임> 마법슬롯 <마법...|비우기>
  * Whatever the source, a spell only counts when the player also has its magic.learned.<id> permission.
  */
 final class SpellSlots implements Listener, PluginMessageListener {

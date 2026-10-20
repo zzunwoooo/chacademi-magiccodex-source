@@ -5,7 +5,8 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.command.*;
+import com.mojang.brigadier.Command;
+import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
@@ -22,7 +23,7 @@ import school.magiccodex.protocol.TamingProtocol;
 import school.magiccodex.protocol.TamingProtocol.State;
 
 /** Event-driven grace states, bounded active casts; all Bukkit mutations on the main thread. */
-final class TamingBridge implements Listener,PluginMessageListener,CommandExecutor,AutoCloseable {
+final class TamingBridge implements Listener,PluginMessageListener,AutoCloseable {
     private ShinyBridge shiny;
     private final MagicCodexBridge plugin;private final ManaService mana;private final PetBridge pets;
     private final Map<String,Profile> profiles=new HashMap<>();
@@ -47,7 +48,7 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
         plugin=p;this.mana=mana;this.pets=pets;graceKey=new NamespacedKey(p,"taming_grace");
         if(!new File(p.getDataFolder(),"taming.yml").exists())p.saveResource("taming.yml",false);reload();
         var m=p.getServer().getMessenger();m.registerIncomingPluginChannel(p,TamingProtocol.REQUEST,this);m.registerOutgoingPluginChannel(p,TamingProtocol.RESPONSE);m.registerOutgoingPluginChannel(p,TamingProtocol.ANCHORED_RESPONSE);m.registerOutgoingPluginChannel(p,school.magiccodex.protocol.MonsterTargetProtocol.CHANNEL);
-        Bukkit.getPluginManager().registerEvents(this,p);Bukkit.getPluginManager().registerEvents(new CosmeticPetSafety(),p);p.getCommand("교화").setExecutor(this);p.getCommand("교화관리").setExecutor(this);
+        Bukkit.getPluginManager().registerEvents(this,p);Bukkit.getPluginManager().registerEvents(new CosmeticPetSafety(),p);registerCommands();
         Bukkit.getScheduler().runTaskTimer(p,this::tick,4,4);
         shiny=new ShinyBridge(p,this);
     }
@@ -198,7 +199,8 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
             p.sendPluginMessage(plugin,TamingProtocol.ANCHORED_RESPONSE,TamingProtocol.encode(new TamingProtocol.AnchoredState(s,anchor)));
         }else send(p,s); // Existing clients continue to receive the unchanged v1 state.
     }
-    private void message(Player p,String text){send(p,new State(++token,TamingProtocol.ERROR,-1,"",false,0,0,0,0,text));p.sendMessage(text);}
+    /** 교화 HUD 에 오류 상태 + 경고 알림(예전 채팅 글씨 대신). */
+    private void message(Player p,String text){send(p,new State(++token,TamingProtocol.ERROR,-1,"",false,0,0,0,0,text));CodexCommands.warn(p,"taming",text);}
     private boolean permitted(Player p){return TamingSpell.permitted(plugin.tamingSpell(),p::hasPermission);}
     private ManaCasting.Result rejected(Player p,int status,String text){message(p,text);return new ManaCasting.Result(status,0);}
     private void query(Player p,UUID claimed){
@@ -318,15 +320,25 @@ final class TamingBridge implements Listener,PluginMessageListener,CommandExecut
     @EventHandler public void quit(PlayerQuitEvent e){requests.remove(e.getPlayer().getUniqueId());var c=casts.get(e.getPlayer().getUniqueId());if(c!=null&&!c.pending)finish(c,false,"교화 중단");}
     @EventHandler public void unload(EntitiesUnloadEvent e){for(var entity:e.getEntities()){var g=graces.remove(entity.getUniqueId());if(g!=null){removeEffect(g.fx);entity.remove();}}}
     @EventHandler public void load(org.bukkit.event.world.EntitiesLoadEvent e){for(var entity:e.getEntities())if(entity.getPersistentDataContainer().has(graceKey)||entity.getScoreboardTags().contains("chacademia_taming_fx"))entity.remove();}
-    public boolean onCommand(CommandSender sender,Command command,String label,String[] args){
-        if(command.getName().equals("교화")){if(sender instanceof Player p)cast(p);return true;}
-        if(!sender.hasPermission("magiccodex.taming.admin"))return true;
-        if(args.length==1&&args[0].equalsIgnoreCase("reload")){if(!casts.isEmpty()||!graces.isEmpty()){sender.sendMessage("교화 연출이 종료된 후 다시 불러와 주세요.");return true;}try{reload();sender.sendMessage("교화 설정을 다시 불러왔습니다.");}catch(Exception ex){sender.sendMessage("설정 오류: "+ex.getMessage());}return true;}
-        if(args.length==2&&args[0].equalsIgnoreCase("spawn")&&sender instanceof Player p){
-            var f=profiles.get(args[1]);if(f==null||f.mythic.isEmpty()||mobManager==null){sender.sendMessage("등록된 MythicMobs 대상 ID를 확인해 주세요.");return true;}
-            try{mobManager.getClass().getMethod("spawnMob",String.class,Location.class,double.class).invoke(mobManager,f.mythic,p.getLocation().add(p.getLocation().getDirection().setY(0).normalize().multiply(3)),1d);sender.sendMessage("예시 몹 소환: "+f.name);}catch(Exception ex){sender.sendMessage("MythicMobs에 예시 파일을 먼저 등록해 주세요.");}return true;
-        }
-        sender.sendMessage("/교화관리 reload | /교화관리 spawn <"+String.join("|",profiles.keySet())+">");return true;
+    // ------------------------------------------------------------------ 명령 (2026-10-20 명령어 정리)
+    private void registerCommands(){
+        if(!CodexCommands.ready(plugin,"/교화"))return;
+        ChacaApi.playerCommand(plugin,Commands.literal("교화").executes(ctx->{cast(CodexCommands.self(ctx));return Command.SINGLE_SUCCESS;}),"바라보는 몬스터 교화하기",List.of());
+        ChacaApi.reload(plugin,"교화","교화 대상(taming.yml·taming/ 폴더)",()->{
+            if(!casts.isEmpty()||!graces.isEmpty())throw new IllegalStateException("교화 연출 중에는 다시 읽지 않습니다 (진행 "+casts.size()+" · 봉인 "+graces.size()+")");
+            reload();
+        });
+        ChacaApi.status(plugin,"교화 대상",()->profiles.size()+"종"+(mobManager==null?" · MythicMobs 연결 없음":""));
+    }
+    /** /테스트 몹 교화몹 자동완성: MythicMobs 예시 몹이 있는 교화 프로필. */
+    List<String> profileIds(){return profiles.values().stream().filter(f->!f.mythic.isEmpty()).map(Profile::id).sorted().toList();}
+    /** /테스트 몹 교화몹 &lt;프로필&gt;: 앞쪽 3칸에 MythicMobs 예시 몹 소환. 표시 이름을 돌려준다. */
+    String spawnExample(Player p,String id)throws com.mojang.brigadier.exceptions.CommandSyntaxException{
+        var f=profiles.get(id);if(f==null||f.mythic.isEmpty())throw ChacaApi.error("MythicMobs 몹이 등록된 교화 프로필을 골라 주세요");
+        if(mobManager==null)throw ChacaApi.error("MythicMobs가 연결되지 않았어요");
+        try{mobManager.getClass().getMethod("spawnMob",String.class,Location.class,double.class).invoke(mobManager,f.mythic,p.getLocation().add(p.getLocation().getDirection().setY(0).normalize().multiply(3)),1d);}
+        catch(ReflectiveOperationException|RuntimeException ex){plugin.getLogger().warning("교화 예시 몹 소환 실패 ("+f.mythic+"): "+ex);throw ChacaApi.error("MythicMobs에 예시 몹("+f.mythic+")을 먼저 등록해 주세요");}
+        return f.name;
     }
     public void close(){closed=true;if(shiny!=null)shiny.close();for(var c:List.copyOf(casts.values())){TamingVfxLink.cancel(plugin,c.visual,c.player);if(!c.profile.boss&&c.fx!=null)removeEffect(c.fx);}casts.clear();locked.clear();for(var g:graces.values())g.entity.remove();graces.clear();for(var fx:List.copyOf(effects))removeEffect(fx);requests.clear();}
 }

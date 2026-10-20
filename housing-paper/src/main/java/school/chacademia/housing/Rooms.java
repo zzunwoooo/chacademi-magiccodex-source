@@ -13,7 +13,7 @@ import school.magiccodex.protocol.SchoolProtocol;
  * 방이 바뀌면(저장·좋아요·방명록·방문·확장) DB 의 rev 가 올라가고, 그 방을 보고 있는 모든 서버가 다음 동기화 때 다시 보낸다.
  */
 final class Rooms {
-    /** home = 이 창을 기숙사실 문(또는 /내방)으로 열었음 → 내 방은 편집, 남의 방에서 내 방으로 돌아갈 수 있음. */
+    /** home = 이 창을 기숙사실 문(또는 /테스트 하우징 내방)으로 열었음 → 내 방은 편집, 남의 방에서 내 방으로 돌아갈 수 있음. */
     record Session(UUID owner, boolean edit, boolean home, long token) {}
 
     private final HousingPlugin plugin;
@@ -22,6 +22,8 @@ final class Rooms {
     private final Map<UUID, Long> knownRev = new HashMap<>();
     private final Map<UUID, List<Viewer>> lastViewers = new HashMap<>();
     private final Map<UUID, Person> people = new HashMap<>();
+    /** 방 크기 캐시 (접속·방 읽기 때 채움, /유저관리 보기 요약용). */
+    private final Map<UUID, Integer> sizes = new HashMap<>();
     private final Map<UUID, Long> lastAction = new HashMap<>(), lastPost = new HashMap<>();
     private long tokens;
     private boolean syncing;
@@ -33,19 +35,22 @@ final class Rooms {
         var skin = Skins.of(p);
         var catalog = plugin.catalog();
         plugin.store().touch(p.getUniqueId(), p.getName(), fallbackHouse(p), skin.hash(), skin.slim(), plugin.settings().startSize(), catalog::get, catalog.allowed(p), row -> {
-            if (row != null) people.put(p.getUniqueId(), row.person());
+            if (row != null) { people.put(p.getUniqueId(), row.person()); sizes.put(p.getUniqueId(), row.size()); }
         });
         plugin.store().heartbeat(plugin.settings().server(), List.of(p.getUniqueId()));
     }
     void quit(Player p) {
         UUID id = p.getUniqueId();
-        sessions.remove(id); catalogSent.remove(id); people.remove(id); lastAction.remove(id); lastPost.remove(id);
+        sessions.remove(id); catalogSent.remove(id); people.remove(id); sizes.remove(id); lastAction.remove(id); lastPost.remove(id);
         plugin.store().offline(id, plugin.settings().server());
     }
     /** 기숙사 문 검사용 (아직 못 읽었으면 -2, 기숙사 없음 -1). */
     int house(UUID id) { var p = people.get(id); return p == null ? -2 : p.house(); }
+    /** 캐시된 방 크기 (모르면 null). */
+    Integer size(UUID id) { return sizes.get(id); }
+    void size(UUID id, int size) { if (Bukkit.getPlayer(id) != null) sizes.put(id, size); }
 
-    private static final List<String> HOUSE_PERMISSIONS = List.of("arkeon", "lumina", "bestiaz", "noxer");
+    static final List<String> HOUSE_PERMISSIONS = List.of("arkeon", "lumina", "bestiaz", "noxer");
     /**
      * DB(codex_houses)에 기숙사가 없을 때 MagicCodexBridge 와 같은 방법으로 찾는다:
      * Bridge StatsService 의 dormitory → magiccodex.house.&lt;영문&gt; 권한. 없으면 -1.
@@ -75,9 +80,9 @@ final class Rooms {
     void catalogChanged() { catalogSent.clear(); }
 
     // ------------------------------------------------------------ 열기·닫기
-    /** @param home 기숙사실 문·/내방 으로 열었는지 (또는 그렇게 연 창 안에서 이동했는지) */
+    /** @param home 기숙사실 문·/테스트 하우징 내방 으로 열었는지 (또는 그렇게 연 창 안에서 이동했는지) */
     void open(Player p, UUID owner, boolean home) {
-        if (!plugin.net().hasMod(p)) { p.sendMessage("§c[하우징] 내 방 꾸미기는 차카데미 클라이언트(MagicCodex)에서만 열 수 있어요."); return; }
+        if (!plugin.net().hasMod(p)) { ChacaLink.notify(p, "warning", "housing-nomod", "방 꾸미기를 열 수 없어요", "차카데미 클라이언트에서만 열 수 있어요", 2000); return; }
         UUID id = p.getUniqueId();
         var catalog = plugin.catalog();
         if (!Objects.equals(catalogSent.get(id), catalog.revision())) { plugin.net().send(p, catalog.message()); catalogSent.put(id, catalog.revision()); }
@@ -105,6 +110,7 @@ final class Rooms {
                 return;
             }
             knownRev.put(s.owner(), data.row().rev());
+            size(s.owner(), data.row().size());
             plugin.net().send(p, new RoomMessage(room(data, s, open, p)));
             if (guestbook) sendGuestbook(p, s);
             var viewers = lastViewers.get(s.owner());
@@ -170,7 +176,7 @@ final class Rooms {
             case Post post -> post(p, s, post);
             case Delete d -> {
                 if (!d.owner().equals(s.owner())) return;
-                plugin.store().deleteEntry(s.owner(), d.entry(), id, p.hasPermission("chacademi.housing.admin"), why -> {
+                plugin.store().deleteEntry(s.owner(), d.entry(), id, p.isOp(), why -> {
                     plugin.net().result(p, why == null, why == null ? "방명록 글을 지웠어요." : why);
                     if (why == null) refresh(s.owner());
                 });
@@ -200,6 +206,7 @@ final class Rooms {
         UUID owner = s.owner();
         plugin.store().expand(owner, from, next.getKey(), ok -> {
             if (Boolean.TRUE.equals(ok)) {
+                size(owner, next.getKey());
                 plugin.net().result(p, true, "방이 " + next.getKey() + "×" + next.getKey() + " 크기로 넓어졌어요!");
                 refresh(owner);
                 return;

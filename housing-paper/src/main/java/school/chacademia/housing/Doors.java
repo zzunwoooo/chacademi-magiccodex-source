@@ -77,9 +77,9 @@ final class Doors implements Listener {
         if (door.house() >= 0) {
             int house = plugin.rooms().house(p.getUniqueId());
             if (house < 0) { int live = Rooms.fallbackHouse(p); if (live >= 0) house = live; }
-            if (house == -2) { p.sendMessage("§e[하우징] 학생 정보를 불러오는 중이에요. 잠시 후 다시 눌러 주세요."); return; }
-            if (house != door.house() && !p.hasPermission("chacademi.housing.admin")) {
-                p.sendMessage("§c[하우징] " + SchoolProtocol.HOUSES.get(door.house()) + " 기숙사 학생만 들어갈 수 있어요.");
+            if (house == -2) { ChacaLink.notify(p, "system", "housing-door-wait", "학생 정보를 불러오는 중이에요", "잠시 후 다시 눌러 주세요", 1500); return; }
+            if (house != door.house() && !p.isOp()) {
+                ChacaLink.notify(p, "warning", "housing-door-house", "들어갈 수 없는 방이에요", SchoolProtocol.HOUSES.get(door.house()) + " 기숙사 학생만 들어갈 수 있어요", 2000);
                 return;
             }
         }
@@ -91,7 +91,7 @@ final class Doors implements Listener {
     public void onBreak(BlockBreakEvent e) {
         if (near(e.getBlock()) == null) return;
         e.setCancelled(true);
-        e.getPlayer().sendMessage("§e[하우징] 기숙사실 문으로 등록된 블록이에요. /하우징관리 문 삭제 로 먼저 등록을 지워 주세요.");
+        ChacaLink.notify(e.getPlayer(), "warning", "housing-door-break", "기숙사실 문으로 등록된 블록이에요", "/하우징관리 문 삭제 로 먼저 등록을 지워 주세요", 2000);
     }
 
     void forget(UUID id) { lastClick.remove(id); }

@@ -101,6 +101,12 @@ final class DiscoveryStore implements AutoCloseable {
         if(reset){putLearned(id,spell,false);try(var q=db().prepareStatement("DELETE FROM "+retryProgress+" WHERE player=? AND spell=?")){q.setString(1,id.toString());q.setString(2,spell);q.executeUpdate();}}
         return null;
     }));}
+    /** 관리자 설정: 카운터도 큰 값 병합 없이 그 값으로 덮어쓴다. */
+    CompletableFuture<Void> overwrite(UUID id,String key,double value){return task(()->tx(()->{
+        String sql=maria?"INSERT INTO "+progress+"(player,progress_key,value) VALUES(?,?,?) ON DUPLICATE KEY UPDATE value=VALUES(value)":"INSERT INTO "+progress+" VALUES(?,?,?) ON CONFLICT(player,key) DO UPDATE SET value=excluded.value";
+        try(var p=db().prepareStatement(sql)){p.setString(1,id.toString());p.setString(2,key);p.setDouble(3,value);p.executeUpdate();}
+        return null;
+    }));}
     CompletableFuture<Void> save(UUID id,Map<String,Double> values){return task(()->{if(!values.isEmpty())tx(()->{putProgress(id,values);return null;});return null;});}
     CompletableFuture<Award> acquire(UUID id,String spell,Map<String,Double> values,boolean everyPlayer){return task(()->tx(()->acquireNow(id,spell,values,everyPlayer)));}
     CompletableFuture<Award> grantCondition(UUID id,String spell,boolean everyPlayer){return task(()->tx(()->{

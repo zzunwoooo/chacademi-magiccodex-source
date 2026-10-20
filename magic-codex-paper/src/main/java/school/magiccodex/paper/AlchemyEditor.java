@@ -37,13 +37,13 @@ final class AlchemyEditor implements PluginMessageListener, Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-    private static boolean admin(Player p) { return p.hasPermission("magiccodex.alchemy.admin"); }
+    /** 편집 패킷: OP(관리 명령 기준) 또는 magiccodex.alchemy.admin. */
+    private static boolean admin(Player p) { return p.isOp() || p.hasPermission("magiccodex.alchemy.admin"); }
     private static boolean empty(ItemStack i) { return i == null || i.getType().isAir() || i.getAmount() <= 0; }
 
-    /** /연금술관리: opens the editor on the client. */
+    /** /컨텐츠관리 연금술 레시피편집: opens the editor on the client (OP는 허브가 검사). */
     void open(Player p) {
-        if (!admin(p)) { p.sendMessage("§c관리자만 사용할 수 있습니다."); return; }
-        if (!p.getListeningPluginChannels().contains(AlchemyAdminProtocol.RESPONSE)) { p.sendMessage("§c최신 차카데미 모드가 있어야 레시피 편집 창을 열 수 있습니다."); return; }
+        if (!p.getListeningPluginChannels().contains(AlchemyAdminProtocol.RESPONSE)) { CmdKit.userFail(p, "최신 차카데미 모드가 있어야 레시피 편집 창을 열 수 있어요"); return; }
         send(p, AlchemyAdminProtocol.KIND_OPEN, "");
     }
 
@@ -75,7 +75,7 @@ final class AlchemyEditor implements PluginMessageListener, Listener {
                             Math.clamp(s.getInt("exp", 0), 0, AlchemyProtocol.MAX_EXP), s.getBoolean("enabled", true), s.getInt("order", 0), stacks));
                 } catch (RuntimeException e) { if (skipped != null) skipped.add(id); }
             }
-        } catch (Exception e) { if (skipped != null) skipped.add("alchemy.yml: " + e.getMessage()); }
+        } catch (Exception e) { plugin.getLogger().warning("연금술 편집: alchemy.yml 읽기 실패: " + e.getMessage()); if (skipped != null) skipped.add("alchemy.yml(콘솔 확인)"); }
         list.sort(Comparator.comparingInt(Row::order).thenComparing(Row::id));
         return list;
     }
@@ -106,7 +106,7 @@ final class AlchemyEditor implements PluginMessageListener, Listener {
         if (note.length() > AlchemyProtocol.MAX_NOTICE) note = note.substring(0, AlchemyProtocol.MAX_NOTICE);
         byte[] frame;
         try { frame = AlchemyAdminProtocol.encode(new State(kind, bridge.slots(), items, held.size() > 64 ? held.subList(0, 64) : held, rows, note)); }
-        catch (IllegalArgumentException e) { p.sendMessage("§c[연금술] 편집 정보를 보내지 못했습니다: " + e.getMessage()); return; }
+        catch (IllegalArgumentException e) { CmdKit.fail(p, "레시피 편집 정보를 보내지 못했어요", e); return; }
         p.sendPluginMessage(plugin, AlchemyAdminProtocol.RESPONSE, frame);
     }
 
@@ -170,7 +170,7 @@ final class AlchemyEditor implements PluginMessageListener, Listener {
         File file = bridge.file();
         String before; YamlConfiguration yaml;
         try { before = Files.readString(file.toPath(), StandardCharsets.UTF_8); yaml = load(); }
-        catch (Exception e) { result(p, seq, false, d.id(), "alchemy.yml 을 읽지 못했습니다: " + e.getMessage()); return; }
+        catch (Exception e) { plugin.getLogger().warning("연금술 편집: alchemy.yml 읽기 실패: " + e); result(p, seq, false, d.id(), "alchemy.yml 을 읽지 못했어요 (자세한 내용은 콘솔)"); return; }
         String id = d.id();
         int order = d.order();
         if (id.isEmpty()) {
@@ -197,12 +197,13 @@ final class AlchemyEditor implements PluginMessageListener, Listener {
             if ((sample == null || !bridge.material(sample, k)) && !materialItems.contains(k)) { materialItems.add(k); added.add(k); }
         }
         if (!added.isEmpty()) yaml.set("settings.material-items", materialItems);
-        try { yaml.save(file); } catch (Exception e) { result(p, seq, false, d.id(), "저장하지 못했습니다: " + e.getMessage()); return; }
+        try { yaml.save(file); } catch (Exception e) { plugin.getLogger().warning("연금술 편집: 저장 실패: " + e); result(p, seq, false, d.id(), "저장하지 못했어요 (자세한 내용은 콘솔)"); return; }
         String error = bridge.reloadAndPush();
         if (error != null) {
             try { Files.writeString(file.toPath(), before, StandardCharsets.UTF_8); } catch (Exception ignored) { }
             bridge.reloadAndPush();
-            result(p, seq, false, d.id(), "저장한 내용을 불러오지 못해 되돌렸습니다: " + error);
+            plugin.getLogger().warning("연금술 편집: 저장 뒤 불러오기 오류로 되돌림: " + error);
+            result(p, seq, false, d.id(), "저장한 내용을 불러오지 못해 되돌렸어요 (자세한 내용은 콘솔)");
             return;
         }
         plugin.getLogger().info("ALCHEMY EDIT save by=" + p.getName() + " recipe=" + id);
@@ -218,7 +219,8 @@ final class AlchemyEditor implements PluginMessageListener, Listener {
             if (failed != null) {
                 bridge.applyText(before);
                 plugin.getLogger().warning("ALCHEMY EDIT not shared, reverted here: " + failed);
-                if (p.isOnline()) { result(p, seq, false, id, "저장하지 못했습니다: " + failed); send(p, AlchemyAdminProtocol.KIND_STATE, ""); }
+                plugin.getLogger().warning("연금술 편집: 공유 저장 실패: " + failed);
+                if (p.isOnline()) { result(p, seq, false, id, "저장하지 못했어요 (자세한 내용은 콘솔)"); send(p, AlchemyAdminProtocol.KIND_STATE, ""); }
                 return;
             }
             if (p.isOnline()) {
@@ -238,8 +240,8 @@ final class AlchemyEditor implements PluginMessageListener, Listener {
             yaml.set("recipes." + id, null);
             yaml.save(file);
             String error = bridge.reloadAndPush();
-            if (error != null) { Files.writeString(file.toPath(), before, StandardCharsets.UTF_8); bridge.reloadAndPush(); result(p, seq, false, id, "삭제 후 불러오기 오류로 되돌렸습니다: " + error); return; }
-        } catch (Exception e) { result(p, seq, false, id, "삭제하지 못했습니다: " + e.getMessage()); return; }
+            if (error != null) { Files.writeString(file.toPath(), before, StandardCharsets.UTF_8); bridge.reloadAndPush(); plugin.getLogger().warning("연금술 편집: 삭제 뒤 불러오기 오류로 되돌림: " + error); result(p, seq, false, id, "삭제 뒤 불러오기 오류로 되돌렸어요 (자세한 내용은 콘솔)"); return; }
+        } catch (Exception e) { plugin.getLogger().warning("연금술 편집: 삭제 실패: " + e); result(p, seq, false, id, "삭제하지 못했어요 (자세한 내용은 콘솔)"); return; }
         plugin.getLogger().info("ALCHEMY EDIT delete by=" + p.getName() + " recipe=" + id);
         share(p, seq, before, "", "레시피를 삭제했습니다");
     }

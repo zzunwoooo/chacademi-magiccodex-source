@@ -1,6 +1,6 @@
 plugins { id 'java' }
 group = 'school.magiccodex'
-version = '0.3.1-integrated-20261020.1-gimmick.1'
+version = '0.3.1-integrated-20261020.1-gimmick.1-commands.1'
 base { archivesName = 'magic-discovery' }
 repositories { mavenCentral(); maven { url = 'https://repo.papermc.io/repository/maven-public/' } }
 dependencies {

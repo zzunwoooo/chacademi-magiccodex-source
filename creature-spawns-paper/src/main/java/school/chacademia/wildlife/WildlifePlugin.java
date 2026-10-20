@@ -6,7 +6,7 @@ import io.lumine.mythic.bukkit.events.*;
 import io.lumine.mythic.api.mobs.entities.SpawnReason;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.command.*;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
@@ -43,6 +43,10 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         // 구조물 색인은 지연 방식이다: 청크 로드 때가 아니라 구조물 조건이 있는 서식지가 물을 때만 계산한다.
         getServer().getPluginManager().registerEvents(structures,this);
         crops.reload(); getServer().getPluginManager().registerEvents(crops,this);
+        if(ChacaLink.ready()){
+            try{new WildlifeCommands(this,crops).register();}
+            catch(RuntimeException e){getLogger().log(java.util.logging.Level.WARNING,"명령어 허브에 야생몹 명령을 붙이지 못했습니다",e);}
+        }else getLogger().warning("MagicCodexBridge 명령어 허브가 없어 야생몹 관리·테스트 명령을 등록하지 않았습니다 (스폰은 그대로 동작).");
         // Handles entities loaded after restart too; only our marked natural mobs are eligible.
         Bukkit.getScheduler().runTaskTimer(this,this::cleanup,200,200);
     }
@@ -267,16 +271,18 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
             return result.equals("OK");
         });
     }
-    private void globalDiagnostics(CommandSender sender){
-        sender.sendMessage("Natural condition counters="+naturalChecks+" confirmed="+naturalSpawned);
-        sender.sendMessage("Natural main-thread gate="+(naturalGate==null?"not started":naturalGate.diagnostic()));
+    List<String> globalDiagnostics(){
+        return List.of(" 자연 스폰 조건 결과="+naturalChecks+" 확정="+naturalSpawned,
+            " 메인 스레드 게이트="+(naturalGate==null?"시작 전":naturalGate.diagnostic()));
     }
     @Override public void onDisable(){if(naturalGate!=null)naturalGate.close();}
     /** Read-only, bounded sampling of already loaded chunks. Never teleports or spawns. */
-    private void diagnose(CommandSender sender,Player player){
+    List<String> diagnose(Player player){
+        var out=new ArrayList<String>();
         var at=player.getLocation();var world=at.getWorld();var biome=world.getBiome(at).getKey().toString();
-        sender.sendMessage("Wildlife diagnose player="+player.getName()+" world="+world.getName()+" x="+at.getBlockX()+" y="+at.getBlockY()+" z="+at.getBlockZ()+" biome="+biome+" mode="+player.getGameMode()+" time="+world.getTime()+" doMobSpawning="+world.getGameRuleValue(GameRule.DO_MOB_SPAWNING)+" chunk-cap="+chunkLimit.cap()+" area-cap="+settings.areaCap());
-        globalDiagnostics(sender);
+        out.add(" 위치 "+world.getName()+" "+at.getBlockX()+" "+at.getBlockY()+" "+at.getBlockZ()+" · 바이옴 "+biome+" · 모드 "+player.getGameMode()+" · 시간 "+world.getTime());
+        out.add(" doMobSpawning="+world.getGameRuleValue(GameRule.DO_MOB_SPAWNING)+" · 청크 제한 "+chunkLimit.cap()+" · 지역 제한 "+settings.areaCap());
+        out.addAll(globalDiagnostics());
         var outcomes=new TreeMap<String,Integer>();var eligible=new TreeSet<String>();int checked=0;
         for(int step=0;step<8;step++){
             double angle=step*Math.PI/4;int x=at.getBlockX()+(int)Math.round(Math.cos(angle)*48),z=at.getBlockZ()+(int)Math.round(Math.sin(angle)*48);
@@ -290,38 +296,11 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
                 if(result.equals("OK"))eligible.add(row.getKey());
             }
         }
-        sender.sendMessage("Loaded-ring samples="+checked+" outcomes="+outcomes+" eligible="+eligible);
+        out.add(" 주변 48칸 표본 "+checked+"회 · 결과 "+outcomes+" · 나올 수 있는 몹 "+eligible);
+        return out;
     }
-    @Override public boolean onCommand(CommandSender sender,Command c,String label,String[] args) {
-        if(!sender.hasPermission("chacademia.wildlife.admin")) return true;
-        if(args.length>0&&args[0].equalsIgnoreCase("diagnose")){
-            Player target=args.length==2?Bukkit.getPlayerExact(args[1]):sender instanceof Player p?p:null;
-            if(args.length==1&&target==null)globalDiagnostics(sender);
-            else if(target==null||args.length>2)sender.sendMessage("/wildlife diagnose [online-player]");else diagnose(sender,target);
-            return true;
-        }
-        if(args.length>0&&args[0].equals("reload")) {
-            try {reloadConfig();reloadSettings();reloadHabitats();crops.reload();sender.sendMessage("§a서식지 재적용 완료. RandomSpawns 변경 시 /mm reload도 실행하세요.");}
-            catch(Exception ex) {sender.sendMessage("§c설정 오류: "+ex.getMessage());} return true;
-        }
-        if(args.length==1&&args[0].equalsIgnoreCase("status")) {
-            sender.sendMessage("Wildlife "+getDescription().getVersion()+" enabled="+settings.enabled()
-                +" chunk-cap="+chunkLimit.cap()+" area-cap="+settings.areaCap());
-            return true;
-        }
-        if(sender instanceof Player p) {
-            if(args.length==2&&args[0].equals("check")) p.sendMessage(args[1]+": "+check(args[1],p.getLocation(),false)+" / "+p.getWorld().getBiome(p.getLocation()).getKey());
-            else if(args.length>=2&&args[0].equals("crop")) {
-                var direction=p.getLocation().getDirection().setY(0);
-                if(direction.lengthSquared()<1.0E-4) direction.setZ(1);
-                var at=p.getLocation().add(direction.normalize().multiply(3));
-                at.setY(p.getLocation().getBlockY()); at.setX(at.getBlockX()+.5); at.setZ(at.getBlockZ()+.5);
-                String r=crops.spawn(p,args[1],args.length>2&&args[2].equals("shiny"),at);
-                p.sendMessage(r.equals("OK")?"§a작물 몹 소환: "+args[1]:"§c"+r+" (가능: "+crops.ids()+")");
-            }
-            else if(args.length==1&&args[0].equals("structures")) p.sendMessage(structures.nearby(p.getLocation(),Set.of(),96).toString());
-            else p.sendMessage("/야생관리 check <몹ID> | structures | reload | status | crop <작물ID> [shiny]");
-        }
-        return true;
-    }
+    /** /서버관리 새로고침 야생: 실패하면 예외(이전 설정 유지). */
+    void reloadAll(){reloadConfig();reloadSettings();reloadHabitats();crops.reload();}
+    String statusLine(){return "야생몹 "+getDescription().getVersion()+" · "+(settings.enabled()?"켜짐":"꺼짐")+" · 청크 제한 "+chunkLimit.cap()+" · 지역 제한 "+settings.areaCap()+" · 서식지 "+habitats.size()+"종";}
+    StructureIndex structureIndex(){return structures;}
 }

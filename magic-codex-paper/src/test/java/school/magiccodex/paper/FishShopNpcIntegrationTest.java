@@ -20,11 +20,9 @@ class FishShopNpcIntegrationTest {
  @Test void fishTargetCannotCollideWithAnExistingAsciiShopId()throws Exception{
   assertFalse(ShopNpcTarget.fish("fish_shop"));assertTrue(ShopNpcTarget.fish(ShopNpcTarget.LABEL));try(var s=store()){s.create("fish_shop","기존 일반 상점");s.bind("school","tag:normal","fish_shop");s.bind("school","tag:seller",ShopNpcTarget.FISH);assertEquals("fish_shop",s.bindings("school").get("tag:normal"));assertThrows(IllegalArgumentException.class,()->s.create(ShopNpcTarget.FISH,"collision"));assertThrows(IllegalArgumentException.class,()->s.bind("school","../bad",ShopNpcTarget.FISH));}
  }
- @Test void existingAdminCompletionExposesTypedBindingAndDetachWithoutPermissionLeak(){
-  var shops=Map.of("general",new ShopStore.Shop("general","일반","portrait",1,List.of()));
-  assertEquals(List.of(ShopNpcTarget.LABEL),ShopCommandCompletion.complete("상점관리",new String[]{"NPC","물"},true,true,true,shops,List.of(),List.of()));
-  assertEquals(List.of("tag:seller"),ShopCommandCompletion.complete("상점관리",new String[]{"연결해제",ShopNpcTarget.LABEL,"tag:"},true,true,true,shops,List.of("tag:seller"),List.of()));
-  assertTrue(ShopCommandCompletion.complete("상점관리",new String[]{"NPC","물"},true,true,false,shops,List.of(),List.of()).isEmpty());
+ @Test void npcArgumentTakesCitizensNumberAndShowsItBack(){
+  assertEquals("citizens:7",ShopBridge.npcKey("7"));assertEquals("tag:seller",ShopBridge.npcKey("tag:seller"));assertEquals("7",ShopBridge.npcShown("citizens:7"));assertEquals("tag:seller",ShopBridge.npcShown("tag:seller"));
+  assertTrue(ShopNpcTarget.validKey(ShopBridge.npcKey("7")));assertFalse(ShopNpcTarget.validKey(ShopBridge.npcKey("칠")));
  }
  static void field(Object object,String name,Object value)throws Exception{var f=ShopBridge.class.getDeclaredField(name);f.setAccessible(true);f.set(object,value);}
  @Test void boundNpcOpensFishUiThroughTheExistingNpcEntryPoint()throws Exception{

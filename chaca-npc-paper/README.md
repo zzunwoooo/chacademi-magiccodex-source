@@ -25,7 +25,7 @@ school 서버에 실제 설치된 Citizens 버전은 아직 확인되지 않았�
    파일이 없으면 SQLite `plugins/ChacaNPC/chaca-npc.db`. 운영은 기존 MariaDB 인스턴스의 **전용 스키마**(예: `chacademi_npc`) + 그 스키마 권한만 가진 계정을 권장.
    테이블은 모두 `cnpc_` 접두어이며 켜질 때 자동 생성됩니다. (스키마·계정 생성은 아직 하지 않았음)
 4. `config.yml`: `budget.start-date`(운영 시작일), `world-lore`(세계관 요약).
-5. 장소 `/cnpc place <이름> [반경] [표시이름]`, NPC `/cnpc spawn <id>` 또는 기존 Citizens NPC 옆에서 `/cnpc link <id>`.
+5. 장소 `/NPC관리 장소 <이름> [반경] [표시이름]`, NPC `/NPC관리 소환 <캐릭터>` 또는 기존 Citizens NPC 옆에서 `/NPC관리 연결 <캐릭터>`.
 
 ## 클릭 진입점 (연결된 NPC)
 
@@ -40,7 +40,7 @@ ChacaNPC 하나가 처리하고, MagicCodexBridge의 Citizens 클릭 처리에�
 ## 대화 화면
 
 - MagicCodex 모드가 `NpcTalkProtocol` 버전 handshake(HELLO/HELLO_ACK)를 마친 클라이언트 → HUD 대화창
-- 그 외 → 채팅 대체 화면 (`/t <할 말>`, `/t 그만`, 채팅 클릭 버튼)
+- 그 외 → 채팅 대체 화면 (`/말 <할 말>`, `/말 그만`, 채팅 클릭 버튼 = `/대화선택`)
 - 서버는 **검사(입력 필터·moderation·대사 검사)를 통과한 완성 대사만** 보냅니다. HUD는 타자기 효과로 표시.
 - 모든 요청·응답에 세션 토큰과 요청 순번. 창 닫기·재접속·다른 NPC 전환·시간 초과 후 도착한 응답은 화면에 보내지 않음(비용은 정산).
 - 입력은 서버에서도 100자(코드포인트)·UTF-8 400바이트·제어문자 검사.
@@ -66,7 +66,7 @@ ChacaNPC 하나가 처리하고, MagicCodexBridge의 Citizens 클릭 처리에�
 - 플레이어 대화와 백그라운드 작업(버튼 미리 생성·NPC 잡담·분위기 요약)은 스레드·대기열이 따로이고, 플레이어 쪽이 붐비면 백그라운드부터 버립니다.
 - 플레이어 대기열(`openai.max-queue`)이 가득 차면 바로 고정 대사 + 하루 횟수 환불. 대기 중 기한이 지났거나 창을 닫은 요청은 OpenAI에 보내지 않습니다(과금 없음).
 - 429·5xx·연결 실패만 한 번 다시 보냅니다. 연속 실패가 `openai.circuit.failures` 번이면 `cooloff-seconds` 동안 AI를 부르지 않습니다(차단기).
-- 실패는 `debug` 와 무관하게 종류별로 집계해 1분에 한 번 WARNING 으로 남기고, `/cnpc budget` 에 최근 1시간 집계·차단기 상태가 나옵니다.
+- 실패는 `debug` 와 무관하게 종류별로 집계해 1분에 한 번 WARNING 으로 남기고, `/서버관리 AI 예산` 에 최근 1시간 집계·차단기 상태가 나옵니다.
 - 과금 없이 실패한 호출은 플레이어 하루 횟수를 돌려줍니다. "생각 중"은 입력 시점부터 `timeout-seconds`+3초 안에 반드시 끝납니다.
 
 ## 저장·공개되는 글 검사
@@ -78,4 +78,4 @@ ChacaNPC 하나가 처리하고, MagicCodexBridge의 Citizens 클릭 처리에�
 
 ## 관리자 명령어
 
-`/cnpc test <id> <말>` · `/cnpc budget` · `/cnpc ai off` · `/cnpc list` · `/cnpc vibe review|approve|remove|clear|run` · `/cnpc reload` · `/cnpc place` · `/cnpc waypoint add|clear` · `/cnpc spawn|link|unlink`
+`/테스트 NPC 대화 <캐릭터> <문장…>` · `/서버관리 AI 예산|켜기|끄기|캐시` · `/NPC관리 목록` · `/NPC관리 분위기노트 보기|승인 <번호|전체>|삭제 <번호>|비우기|지금생성` · `/서버관리 새로고침 NPC` · `/NPC관리 장소` · `/NPC관리 경로 추가|비우기` · `/NPC관리 소환|연결|연결해제` · `/유저관리 <닉네임> AI대화 …` · 유저: `/말`, `/호칭 <이름|초기화>`

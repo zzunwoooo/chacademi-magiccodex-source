@@ -27,9 +27,13 @@ class BoxTest {
     }
 
     @Test void durations() {
-        assertEquals(3_600_000L, AdminCommand.duration("1h"));
-        assertEquals(86_400_000L + 1_800_000L, AdminCommand.duration("1d30m"));
-        assertThrows(IllegalArgumentException.class, () -> AdminCommand.duration("soon"));
+        assertEquals(3_600_000L, KyudichiCommands.duration("1h"));
+        assertEquals(86_400_000L + 1_800_000L, KyudichiCommands.duration("1d30m"));
+        assertEquals(1_800_000L, KyudichiCommands.duration("30분"));
+        assertEquals(3_600_000L, KyudichiCommands.duration("1시간"));
+        assertEquals(2 * 86_400_000L + 3 * 3_600_000L, KyudichiCommands.duration("2일3시간"));
+        assertThrows(IllegalArgumentException.class, () -> KyudichiCommands.duration("soon"));
+        assertThrows(IllegalArgumentException.class, () -> KyudichiCommands.duration("1주"));
     }
 
     @Test void pingLimit() {

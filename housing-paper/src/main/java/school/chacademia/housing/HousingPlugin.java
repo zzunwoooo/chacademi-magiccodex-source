@@ -31,8 +31,7 @@ public final class HousingPlugin extends JavaPlugin implements Listener {
         doors = new Doors(this); doors.load();
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(doors, this);
-        var commands = new Commands(this);
-        for (String name : new String[] {"하우징관리", "방구경", "내방"}) { var c = getCommand(name); c.setExecutor(commands); c.setTabCompleter(commands); }
+        new HousingCommands(this).register();
         for (var p : Bukkit.getOnlinePlayers()) rooms.join(p);
         Bukkit.getScheduler().runTaskTimer(this, () -> rooms.sync(), settings.presenceTicks(), settings.presenceTicks());
         Bukkit.getScheduler().runTaskTimer(this, () -> rooms.heartbeat(), 20 * 30, 20 * 30);

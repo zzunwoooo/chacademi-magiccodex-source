@@ -1,5 +1,6 @@
 package school.magiccodex.paper;
 
+import io.papermc.paper.command.brigadier.Commands;
 import java.util.*;
 import java.util.concurrent.*;
 import org.bukkit.Bukkit;
@@ -19,7 +20,7 @@ import school.magiccodex.protocol.NicknameProtocol.*;
  * 두 서버 공유: 닉네임 행은 접속 시 + 45초마다 DB에서 다시 읽는다. 최초 설정 완료 여부의 기준은 DB의 first_done이며
  * (first-nickname.yml은 이 서버의 "창을 다시 열 대상" 목록일 뿐), on-complete는 first_done을 0→1로 바꾼 서버에서 한 번만 실행된다.
  * 메인 스레드는 DB·파일 작업을 기다리지 않는다: 대기 목록 파일은 메모리 상태를 먼저 바꾸고 IO 스레드가 뒤따라 기록한다(실패 시 재시도). */
-final class NicknameBridge implements Listener,PluginMessageListener,org.bukkit.command.TabExecutor,AutoCloseable {
+final class NicknameBridge implements Listener,PluginMessageListener,AutoCloseable {
     private final MagicCodexBridge plugin;private final DisplayNames names;
     private final ExecutorService io=Executors.newSingleThreadExecutor(r->{var t=new Thread(r,"MagicCodex-nickname-io");t.setDaemon(true);return t;});
     private final Map<UUID,NicknameStore.State> profiles=new ConcurrentHashMap<>();
@@ -43,11 +44,20 @@ final class NicknameBridge implements Listener,PluginMessageListener,org.bukkit.
         // 시작 시 한 번만 기다린다. 이후 기록은 비동기(queueFirst)라 메인 스레드를 막지 않는다.
         firstLatest=Set.copyOf(initial);firstState=new FirstNicknameState(initial,this::queueFirst);
         Bukkit.getScheduler().runTaskTimer(plugin,this::refresh,REFRESH_TICKS,REFRESH_TICKS);
-        var firstCommand=plugin.getCommand("최초닉네임설정");if(firstCommand!=null){firstCommand.setExecutor(this);firstCommand.setTabCompleter(this);}
+        // 명령은 허브가 만들어진 뒤 StatsBridge 생성자에서 registerCommands()로 붙인다 (DisplayNames가 허브보다 먼저 만들어짐).
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin,NicknameProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,NicknameProtocol.RESPONSE);Bukkit.getPluginManager().registerEvents(this,plugin);
         if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){var manager=me.clip.placeholderapi.PlaceholderAPIPlugin.getInstance().getLocalExpansionManager();for(String id:List.of("magiccodex","user")){if(manager.getExpansion(id)!=null)continue;var expansion=new NicknameExpansion(this,id,plugin.getDescription().getVersion());if(expansion.register())expansions.add(expansion);}}
     }
     String stored(UUID id){var state=profiles.get(id);return state==null?"":state.nickname();}
+    /** 저장된 닉네임으로 주인 찾기 (접속하지 않은 유저 포함, 대소문자·전각 무시). 없으면 null. 메인 스레드. */
+    UUID ownerOf(String nickname){
+        String key;try{key=NicknameStore.key(nickname.strip());}catch(IllegalArgumentException e){return null;}
+        UUID found=null;
+        for(var e:profiles.entrySet()){String saved=e.getValue().nickname();if(saved==null||saved.isEmpty())continue;String k;try{k=NicknameStore.key(saved);}catch(IllegalArgumentException ignored){continue;}if(k.equals(key)){if(found!=null)return null;found=e.getKey();}}
+        return found;
+    }
+    /** 자동완성용: 저장된 닉네임 전체 (접속하지 않은 유저 포함). */
+    java.util.List<String> nicknames(){var out=new java.util.ArrayList<String>(profiles.size());for(var s:profiles.values())if(s.nickname()!=null&&!s.nickname().isEmpty())out.add(s.nickname());return out;}
     String placeholder(OfflinePlayer p){String value=stored(p.getUniqueId());return value.isEmpty()?(p.getName()==null?"":p.getName()):value;}
     /** nickname/account 자리 표시자 값. 그 밖의 키는 null. */
     String answer(OfflinePlayer p,String params){if(p==null)return "";return params.equals("nickname")?placeholder(p):params.equals("account")?(p.getName()==null?"":p.getName()):null;}
@@ -142,14 +152,14 @@ final class NicknameBridge implements Listener,PluginMessageListener,org.bukkit.
     /** 대기 등록 후 창을 연다; repeated commands do not create multiple pending entries. */
     void startFirst(Player p){
         try{firstState.start(p.getUniqueId());pushFirst(p,0);}
-        catch(Exception e){plugin.getLogger().warning("Could not persist first nickname state.");p.sendMessage("§c닉네임 설정 상태를 저장하지 못했습니다. 다시 시도해 주세요.");}
+        catch(Exception e){plugin.getLogger().warning("Could not persist first nickname state: "+e);CodexCommands.warn(p,"nickname","닉네임 설정 상태를 저장하지 못했어요. 잠시 후 다시 해 주세요");}
     }
     /** The client registers its channels a moment after join; retry for ~15 s. */
     private void pushFirst(Player p,int attempt){
         if(closed||!p.isOnline()||!firstState.pending(p.getUniqueId()))return;
         if(p.getListeningPluginChannels().contains(NicknameProtocol.RESPONSE)){push(p,NicknameProtocol.FIRST);return;}
         if(attempt<15)Bukkit.getScheduler().runTaskLater(plugin,()->pushFirst(p,attempt+1),20L);
-        else p.sendMessage("§c닉네임 설정 창을 열지 못했습니다. MagicCodex UI 모드가 필요합니다.");
+        else CodexCommands.warn(p,"nickname","닉네임 설정 창을 열지 못했어요. MagicCodex 모드가 필요해요");
     }
     private void push(Player p,int kind){
         var state=profiles.get(p.getUniqueId());
@@ -165,7 +175,7 @@ final class NicknameBridge implements Listener,PluginMessageListener,org.bukkit.
             try {
                 var config=plugin.getConfig();
                 plan=FirstNicknameCommands.plan(config.isSet("first-nickname.on-complete")?config.getStringList("first-nickname.on-complete"):null,p.getName(),id,names.name(p));
-            } catch(IllegalArgumentException e) { firstBusy.remove(id);p.sendMessage("§c최초 닉네임 후속 설정에 오류가 있습니다. 관리자에게 문의해 주세요.");return; }
+            } catch(IllegalArgumentException e) { firstBusy.remove(id);plugin.getLogger().warning("config.yml first-nickname.on-complete 오류: "+e.getMessage());CodexCommands.warn(p,"nickname","닉네임 다음 단계를 열지 못했어요. 관리자에게 알려 주세요");return; }
             // Release the mandatory nickname screen so the dialogue can actually open.
             // This UI message does NOT write database first_done.
             push(p,NicknameProtocol.FIRST_DONE);
@@ -175,7 +185,8 @@ final class NicknameBridge implements Listener,PluginMessageListener,org.bukkit.
                 if(!gate.accept(error==null&&Boolean.TRUE.equals(accepted),!closed&&p.isOnline()&&Bukkit.getPlayer(id)==p&&firstState.pending(id))){
                     firstBusy.remove(id);
                     if(p.isOnline()&&Bukkit.getPlayer(id)==p&&firstState.pending(id)){
-                        p.sendMessage("§c후속 대화를 열지 못했습니다. 파일과 모드를 확인한 뒤 닉네임을 다시 저장해 주세요.");
+                        plugin.getLogger().warning("최초 닉네임 후속 대화를 열지 못함: "+p.getName()+" (ChacademyStory·대화 파일·모드 확인)");
+                        CodexCommands.warn(p,"nickname","다음 대화를 열지 못했어요. 닉네임을 다시 저장해 주세요");
                         pushFirst(p,0);
                     }
                     return;
@@ -223,53 +234,73 @@ final class NicknameBridge implements Listener,PluginMessageListener,org.bukkit.
             });
         });}catch(RejectedExecutionException ignored){}
     }
-    @Override public boolean onCommand(org.bukkit.command.CommandSender sender,org.bukkit.command.Command command,String label,String[] args){
-        boolean admin=sender.hasPermission("magiccodex.nickname.admin");
-        Player target;
-        if(args.length>=1){
-            if(!admin){sender.sendMessage("§c다른 플레이어에게는 관리자만 쓸 수 있습니다.");return true;}
-            target=Bukkit.getPlayerExact(args[0]);
-            if(target==null){sender.sendMessage("§c접속 중인 플레이어가 아닙니다: "+args[0]);return true;}
-        }else if(sender instanceof Player self)target=self;
-        else{sender.sendMessage("사용법: /최초닉네임설정 <플레이어> [강제]");return true;}
-        boolean force=admin&&args.length>=2&&(args[1].equals("강제")||args[1].equalsIgnoreCase("force"));
-        UUID id=target.getUniqueId();
+    // ------------------------------------------------------------------ 명령 (2026-10-20 명령어 정리)
+    /** /유저관리 <닉네임> 닉네임 <창열기|다시정하기|설정 <새닉네임>> (예전 /최초닉네임설정 &lt;플레이어&gt; [강제]). */
+    void registerCommands(){
+        if(!CodexCommands.ready(plugin,"닉네임"))return;
+        ChacaApi.branch(plugin,ChacaApi.유저관리,Commands.literal("닉네임")
+            .then(Commands.literal("창열기").executes(ctx->{openFirst(CodexCommands.sender(ctx),ChacaApi.targetOnline(ctx),false);return 1;}))
+            .then(Commands.literal("다시정하기").executes(ctx->{openFirst(CodexCommands.sender(ctx),ChacaApi.targetOnline(ctx),true);return 1;}))
+            .then(Commands.literal("설정").then(Commands.argument("새닉네임",ChacaApi.word(List::of)).executes(ctx->{
+                adminSet(CodexCommands.sender(ctx),ChacaApi.target(ctx),ctx.getArgument("새닉네임",String.class));return 1;
+            }))),"최초 닉네임 창 열기·다시 정하기·관리자 지정","닉네임 창열기");
+        // 스토리 1-1 대화 끝(endings.wake)이 플레이어 명령으로 부른다. 본인용: 아직 최초 닉네임을 안 정했을 때만 열림.
+        ChacaApi.playerCommand(plugin,Commands.literal("최초닉네임설정").executes(ctx->{var self=CodexCommands.self(ctx);openFirst(self,self,false);return 1;}),
+            "최초 닉네임 정하기 (스토리 진행용)",List.of());
+    }
+    /** 최초 닉네임 창. force=true 이면 이미 마친 유저도 처음부터 다시 정하게 한다. */
+    private void openFirst(org.bukkit.command.CommandSender sender,Player target,boolean force){
+        UUID id=target.getUniqueId();String who=names.name(target);
         // 이미 대기 중이면 창만 다시 연다.
-        if(firstState.pending(id)&&!force){pushFirst(target,0);if(sender!=target)sender.sendMessage("§7"+target.getName()+" 님에게 최초 닉네임 설정 창을 다시 열었습니다.");return true;}
-        if(!firstBusy.add(id)){sender.sendMessage("§7처리 중입니다. 잠시 후 다시 시도해 주세요.");return true;}
+        if(firstState.pending(id)&&!force){pushFirst(target,0);ChacaApi.ok(sender,who+" 님에게 닉네임 창을 다시 열었어요");return;}
+        if(!firstBusy.add(id)){ChacaApi.fail(sender,"처리 중이에요. 잠시 후 다시 해 주세요",null);return;}
         // 판단 기준은 캐시가 아니라 DB 행 (다른 서버에서 이미 정했을 수 있다). 조회는 IO 스레드에서 한다.
         try{io.execute(()->{
             NicknameStore.State loaded=null;boolean ok=false;
-            try{if(force)store.reopenFirst(id);loaded=store.load(id);ok=true;}catch(Exception ignored){}
+            try{if(force)store.reopenFirst(id);loaded=store.load(id);ok=true;}catch(Exception e){plugin.getLogger().warning("최초 닉네임 상태 읽기 실패 ("+id+"): "+e);}
             final var state=loaded;final boolean success=ok;
             main(()->{
                 firstBusy.remove(id);
                 if(success&&!busy.contains(id))apply(id,state);
-                if(!target.isOnline()){sender.sendMessage("§c플레이어가 접속을 종료했습니다: "+target.getName());return;}
+                if(!target.isOnline()){ChacaApi.fail(sender,who+" 님이 나갔어요",null);return;}
                 // DB를 읽지 못하면 마지막 캐시로 판단한다 (스토리 진행이 DB 순간 장애로 멈추지 않도록).
                 var known=success?state:profiles.get(id);
-                if(!admin){
-                    // 본인은 아직 닉네임이 없을 때만 (이미 정한 사람이 스토리를 다시 여는 것을 막음)
-                    if(known!=null&&(!known.nickname().isEmpty()||known.firstDone())){sender.sendMessage("§7이미 닉네임을 정했습니다. 바꾸려면 /닉네임설정 을 써 주세요.");return;}
-                }else if(!force&&known!=null&&known.firstDone()){
-                    sender.sendMessage("§7"+target.getName()+" 님은 이미 최초 닉네임 설정을 마쳤습니다. 다시 진행하려면 /최초닉네임설정 "+target.getName()+" 강제");return;
-                }
+                if(!force&&known!=null&&known.firstDone()){ChacaApi.fail(sender,who+" 님은 이미 최초 닉네임을 정했어요. 처음부터 다시 하려면 '다시정하기'",null);return;}
                 startFirst(target);
-                if(sender!=target)sender.sendMessage("§7"+target.getName()+" 님에게 최초 닉네임 설정 창을 열었습니다.");
+                ChacaApi.ok(sender,who+" 님에게 "+(force?"닉네임 다시 정하기 창을":"최초 닉네임 창을")+" 열었어요");
             });
         });}catch(RejectedExecutionException e){firstBusy.remove(id);}
-        return true;
     }
-    @Override public List<String> onTabComplete(org.bukkit.command.CommandSender sender,org.bukkit.command.Command command,String label,String[] args){
-        if(args.length==2&&sender.hasPermission("magiccodex.nickname.admin"))return "강제".startsWith(args[1])?List.of("강제"):List.of();
-        if(args.length!=1||!sender.hasPermission("magiccodex.nickname.admin"))return List.of();
-        String prefix=args[0].toLowerCase(Locale.ROOT);
-        return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(n->n.toLowerCase(Locale.ROOT).startsWith(prefix)).toList();
+    /** 관리자가 닉네임을 직접 정한다. 형식·중복 검사는 유저 저장과 같다 (DB UNIQUE 포함). */
+    private void adminSet(org.bukkit.command.CommandSender sender,UUID id,String nickname)throws com.mojang.brigadier.exceptions.CommandSyntaxException{
+        String key;
+        try{NicknameProtocol.validate(nickname);key=NicknameStore.key(nickname);}catch(IllegalArgumentException e){throw ChacaApi.error(e.getMessage());}
+        for(Player other:Bukkit.getOnlinePlayers())if(!other.getUniqueId().equals(id)&&other.getName().toLowerCase(Locale.ROOT).equals(key))throw ChacaApi.error("이미 사용 중인 닉네임이에요");
+        if(busy.contains(id))throw ChacaApi.error("그 유저의 닉네임을 저장하는 중이에요. 잠시 후 다시 해 주세요");
+        var offline=Bukkit.getOfflinePlayer(id);var cached=profiles.get(id);
+        String account=offline.getName()!=null?offline.getName():cached!=null?cached.account():null;
+        if(account==null||account.isBlank())throw ChacaApi.error("계정 이름을 알 수 없는 유저예요");
+        busy.add(id);
+        try{io.execute(()->{
+            NicknameStore.Saved result=null;Exception failure=null;
+            try{var now=store.load(id);result=store.save(id,account,nickname,now==null?0:now.revision());}catch(Exception e){failure=e;}
+            final var saved=result;final var error=failure;
+            main(()->{
+                busy.remove(id);
+                if(error!=null){ChacaApi.fail(sender,"닉네임을 저장하지 못했어요",error);return;}
+                if(saved.state()!=null)profiles.put(id,saved.state());names.invalidate(id);
+                switch(saved.outcome()){
+                    case SAVED->{ChacaApi.ok(sender,"닉네임을 "+nickname+"(으)로 정했어요");plugin.getLogger().info("NICKNAME ADMIN "+sender.getName()+" set "+id+" -> "+nickname);}
+                    case DUPLICATE->ChacaApi.fail(sender,"이미 사용 중인 닉네임이에요",null);
+                    default->ChacaApi.fail(sender,"닉네임이 방금 바뀌었어요. 다시 해 주세요",null);
+                }
+            });
+        });}catch(RejectedExecutionException e){busy.remove(id);throw ChacaApi.error("서버가 종료 중이에요");}
     }
     @EventHandler(ignoreCancelled=true) public void inspect(PlayerInteractEntityEvent e){
         if(e.getHand()!=org.bukkit.inventory.EquipmentSlot.HAND||!e.getPlayer().isSneaking()||!(e.getRightClicked() instanceof Player target)||target.hasMetadata("NPC"))return;
         Player viewer=e.getPlayer();if(viewer==target||!viewer.canSee(target))return;
-        var command=plugin.getCommand("스텟창");if(command!=null){e.setCancelled(true);command.execute(viewer,"스텟창",new String[]{target.getUniqueId().toString()});}
+        var stats=StatsBridge.active;if(stats!=null){e.setCancelled(true);try{stats.open(viewer,target);}catch(com.mojang.brigadier.exceptions.CommandSyntaxException ex){CodexCommands.warn(viewer,"stats-open",ex.getRawMessage().getString());}}
     }
     @EventHandler public void disabled(PluginDisableEvent e){if(e.getPlugin()==plugin)close();}
     @Override public void close(){

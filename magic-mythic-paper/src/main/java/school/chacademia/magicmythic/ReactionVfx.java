@@ -16,7 +16,7 @@ import school.magiccodex.protocol.ElementProtocol.Reaction;
  * missing pack or exhausted play budget just means no effect.
  *
  * Reflection keeps this plugin free of a compile dependency on PortableVFX (softdepend only). The API is resolved
- * lazily on first use and again after /마법미몹 새로고침.
+ * lazily on first use and again after /서버관리 새로고침 몹마법.
  */
 final class ReactionVfx {
     private static final String SERVICE = "dev.portablevfx.paper.api.PortableVfxService";

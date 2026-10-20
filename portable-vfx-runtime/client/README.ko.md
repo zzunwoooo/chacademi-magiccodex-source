@@ -1,17 +1,17 @@
 # Claude 클라이언트 런타임
 
-Minecraft 1.21.4 / Fabric용 Claude vfx.json 렌더러입니다. 일반 마법 선택은 서버의 `/마법`을 사용합니다. 클라이언트 전용 점검·미리보기 명령은 `/pvfxdebug` 아래에만 있습니다.
+Minecraft 1.21.4 / Fabric용 Claude vfx.json 렌더러입니다. 일반 마법 선택은 서버(MagicCodex)가 담당합니다. 클라이언트 전용 점검·미리보기 명령은 `/이펙트도구` 아래에만 있습니다.
 
 ## 점검 명령
 
-- `/pvfxdebug status`: 렌더러·활성 효과·리소스 사전 준비 상태
-- `/pvfxdebug list`: 등록된 효과 ID
-- `/pvfxdebug configerrors`: 설정 로딩 오류
-- `/pvfxdebug active`, `stop <uuid>`, `clear`: 로컬 효과 관리
-- `/pvfxdebug reload`: F3+T와 같은 리소스 재로딩
-- `/pvfxdebug play <id>`, `playhere <id>`, `playat <id> <x> <y> <z>`: 로컬 배치
-- `/pvfxdebug playproof <id>`: seed 0으로 고정한 비교용 미리보기
-- `/pvfxdebug follow`, `launch`, `groundlaunch`, `burst`, `impact`, `finish`: 부착·이동·단계 전환 점검
+- `/이펙트도구 상태`: 렌더러·활성 효과·리소스 사전 준비 상태
+- `/이펙트도구 목록`: 등록된 효과 ID
+- `/이펙트도구 설정오류`: 설정 로딩 오류
+- `/이펙트도구 활성`, `정지 <인스턴스>`, `전부정지`: 로컬 효과 관리
+- `/이펙트도구 새로고침`: F3+T와 같은 리소스 재로딩
+- `/이펙트도구 재생 <효과>`, `여기재생 <효과>`, `좌표재생 <효과> <x> <y> <z>`: 로컬 배치
+- `/이펙트도구 증명재생 <효과>`: seed 0으로 고정한 비교용 미리보기
+- `/이펙트도구 따라가기`, `발사`, `지면발사`, `폭발`, `충돌`, `마무리`: 부착·이동·단계 전환 점검
 
 이 명령은 서버 권한이나 게임플레이를 부여하지 않습니다. 이전 `/pvfxclient`, Unity/Effekseer 불덩이 테스트는 제거했습니다. Claude 효과의 HDR/bloom은 원본 vfx.json의 설정을 기반으로 사용합니다.
 

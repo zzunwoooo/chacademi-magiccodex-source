@@ -49,7 +49,7 @@ public final class EquipmentClient {
             if(!r.message().isBlank())notice=r.message();
         });}catch(IllegalArgumentException ignored){}});
         ClientPlayConnectionEvents.JOIN.register((h,s,c)->reset());ClientPlayConnectionEvents.DISCONNECT.register((h,c)->reset());
-        ClientCommandRegistrationCallback.EVENT.register((d,a)->{for(String name:new String[]{"장비","equipment"})d.register(ClientCommandManager.literal(name).executes(c->{open();return 1;}));});
+        ClientCommandRegistrationCallback.EVENT.register((d,a)->d.register(ClientCommandManager.literal("장비").executes(c->{open();return 1;})));
         ClientTickEvents.END_CLIENT_TICK.register(c->{
             while(key.wasPressed()){}
             if(!c.isWindowFocused())shortcut.reset();

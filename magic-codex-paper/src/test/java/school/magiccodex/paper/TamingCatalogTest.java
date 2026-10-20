@@ -85,6 +85,8 @@ class TamingCatalogTest {
         assertEquals(12,encounter.getInt("range"));assertEquals(4000,encounter.getInt("cast-milliseconds"));
         assertFalse(encounter.contains("mana-cost"));assertFalse(encounter.contains("cooldown-seconds"));
         var plugin=yaml(Path.of("src/main/resources/plugin.yml"));
-        assertEquals(TamingSpell.PERMISSION,plugin.getString("commands.교화.permission"));
+        assertFalse(plugin.contains("commands.교화"),"교화 is now owned by the Brigadier hub");
+        var bridge=Files.readString(Path.of("src/main/java/school/magiccodex/paper/TamingBridge.java"));
+        assertTrue(bridge.contains("TamingSpell.permitted(spell,p::hasPermission)"),"the shared casting transaction must retain learned permission enforcement");
     }
 }

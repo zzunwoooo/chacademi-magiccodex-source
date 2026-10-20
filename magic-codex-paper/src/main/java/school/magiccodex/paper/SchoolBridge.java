@@ -5,7 +5,13 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 import org.bukkit.*;
-import org.bukkit.command.*;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.LongArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
@@ -16,7 +22,7 @@ import school.magiccodex.protocol.SchoolProtocol;
 import school.magiccodex.protocol.SchoolProtocol.*;
 import school.magiccodex.database.DatabaseSettings;
 
-final class SchoolBridge implements PluginMessageListener,Listener,CommandExecutor,TabCompleter,AutoCloseable {
+final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.command.CommandExecutor,org.bukkit.command.TabCompleter,AutoCloseable {
     private final MagicCodexBridge plugin;
     private final StatsService stats;
     private final SchoolStore store;
@@ -35,7 +41,10 @@ final class SchoolBridge implements PluginMessageListener,Listener,CommandExecut
         loadCatalog();
         try{var settings=DatabaseSettings.load(plugin.getDataFolder().toPath().resolve("database.properties"));shared=settings.mariaDb();store=io.submit(()->new SchoolStore(plugin.getDataFolder().toPath().resolve("school.db"),settings)).get(10,TimeUnit.SECONDS);var active=shared?activePlayers():null;data=io.submit(()->store.snapshot(active)).get(10,TimeUnit.SECONDS);}catch(Exception e){io.shutdownNow();throw e;}
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin,SchoolProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,SchoolProtocol.RESPONSE);Bukkit.getPluginManager().registerEvents(this,plugin);
-        for(String c:List.of("기숙사점수","기증기록","기숙사분류")){Objects.requireNonNull(plugin.getCommand(c)).setExecutor(this);plugin.getCommand(c).setTabCompleter(this);}
+        registerCommands();
+        // Preserve the independently reviewed sorting command; its dialogue content is deferred.
+        Objects.requireNonNull(plugin.getCommand("기숙사분류")).setExecutor(this);
+        plugin.getCommand("기숙사분류").setTabCompleter(this);
         if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){expansion=new SchoolExpansion(this);expansion.register();}
         Bukkit.getScheduler().runTaskTimer(plugin,()->{long n=System.currentTimeMillis();viewers.values().removeIf(v->v<n);limits.values().removeIf(v->v<n);},200,200);
         if(shared)Bukkit.getScheduler().runTaskTimer(plugin,this::refreshShared,40,40);
@@ -56,7 +65,7 @@ final class SchoolBridge implements PluginMessageListener,Listener,CommandExecut
     int house(Player p){
         Integer saved=data.houses().get(p.getUniqueId());if(saved!=null)return saved;
         String dorm=stats.get(p.getUniqueId()).dormitory();int i=dorm==null?-1:SchoolProtocol.HOUSES.indexOf(dorm);if(i>=0)return i;
-        for(i=0;i<4;i++)if(p.hasPermission("magiccodex.house."+List.of("arkeon","lumina","bestiaz","noxer").get(i)))return i;
+        for(i=0;i<4;i++)if(p.hasPermission("magiccodex.house."+HOUSE_IDS.get(i)))return i;
         return -1;
     }
     void questReward(String token,int house,long points,Runnable done,Consumer<String> fail){work(()->store.questReward(token,house,points),ok->done.run(),fail);}
@@ -109,28 +118,6 @@ final class SchoolBridge implements PluginMessageListener,Listener,CommandExecut
         long delta=AdminCommandRules.scoreValue(action,amount);
         work(()->{if(!action.equals("조회"))store.change(house,delta,action.equals("설정"));return true;},ok->done.accept(SchoolProtocol.HOUSES.get(house)+" "+data.scores().get(house)+"점"),done);
     }
-    @Override public boolean onCommand(CommandSender sender,Command cmd,String label,String[] a){
-        if(cmd.getName().equals("기숙사분류"))return sortingCommand(sender,a);
-        if(a.length==0){if(sender instanceof Player p){reply(p,new Request(SchoolProtocol.LIST,0,0,""),"open");}else sender.sendMessage("/기숙사점수 <추가|설정> <기숙사> <점수>");return true;}
-        if(!sender.hasPermission("magiccodex.school.admin")){sender.sendMessage("관리 권한이 없습니다.");return true;}
-        try{
-            if(cmd.getName().equals("기증기록")){
-                if(a.length>=3&&a[0].equals("초기화")&&a[a.length-1].equals("확인")){String input=String.join(" ",Arrays.copyOfRange(a,1,a.length-1));String id=input.equals("all")?"all":resolveDonation(input);work(()->{store.reset(id);return true;},v->sender.sendMessage("기증 기록을 초기화했습니다. 기숙사 점수는 유지됩니다."),sender::sendMessage);return true;}
-                if(a.length>=2&&Set.of("상태","금지","해제").contains(a[0])){
-                    String id=resolveDonation(String.join(" ",Arrays.copyOfRange(a,1,a.length)));
-                    if(a[0].equals("상태")){work(()->true,ok->sender.sendMessage(spells.get(id).name()+" ("+id+"): "+(data.records().stream().anyMatch(record->record.spell().equals(id))?"기증 완료":"기증 기록 없음")+" · 기증 "+(data.blocked().contains(id)?"금지":"허용")),sender::sendMessage);}
-                    else work(()->{store.setBlocked(id,a[0].equals("금지"));return true;},ok->sender.sendMessage(spells.get(id).name()+" 기증 "+a[0]+" 완료. 기존 기록과 점수는 유지됩니다."),sender::sendMessage);
-                    return true;
-                }
-                if(a.length==1&&a[0].equals("reload")){loadCatalog();sender.sendMessage("기증 마법 설정을 다시 읽었습니다.");return true;}
-                sender.sendMessage("/기증기록 초기화 <all|마법ID|한글명> 확인 · /기증기록 상태|금지|해제 <마법ID|한글명> · /기증기록 reload");return true;
-            }
-            if(a.length==2&&a[0].equals("초기화")&&a[1].equals("확인")){work(()->{store.resetPoints();return true;},v->sender.sendMessage("기숙사 점수만 초기화했습니다."),sender::sendMessage);return true;}
-            if(a.length==3&&a[0].equals("소속")){Player p=plugin.names().resolve(a[1]);int h=parseHouse(a[2]);if(p==null||h<0)throw new IllegalArgumentException();UUID id=p.getUniqueId();work(()->{store.house(id,h);return true;},v->{DiscoveryLink.signal(id,"dormitory.assigned",1);sender.sendMessage("소속 기숙사를 저장했습니다.");reply(p,new Request(SchoolProtocol.IDENTITY,0,0,""),"");},sender::sendMessage);return true;}
-            if(a.length==3&&(a[0].equals("추가")||a[0].equals("설정"))){int h=parseHouse(a[1]);long value=Long.parseLong(a[2]);if(h<0||value < -SchoolStore.MAX_SCORE||value>SchoolStore.MAX_SCORE)throw new IllegalArgumentException();boolean set=a[0].equals("설정");work(()->{store.change(h,value,set);return true;},v->sender.sendMessage(SchoolProtocol.HOUSES.get(h)+" "+data.scores().get(h)+"점"),sender::sendMessage);return true;}
-        }catch(Exception e){sender.sendMessage("입력값을 확인해 주세요. "+e.getMessage());return true;}
-        sender.sendMessage("/기숙사점수 <추가|설정> <기숙사> <점수> · /기숙사점수 소속 <유저> <기숙사> · /기숙사점수 초기화 확인");return true;
-    }
     private boolean sortingAdmin(CommandSender sender){return sender instanceof ConsoleCommandSender||sender instanceof Player&&sender.hasPermission("magiccodex.school.admin");}
     private int sortingTolerance(){
         Object raw=plugin.getConfig().get("house-sorting.population-tolerance",2);
@@ -172,7 +159,7 @@ final class SchoolBridge implements PluginMessageListener,Listener,CommandExecut
     private void sortingDialogue(CommandSender sender,Player player,String dialogue,boolean saved){
         String state=saved?"소속은 저장되어 있습니다. 결정 명령을 다시 실행하면 기존 소속으로 결과 대사를 재시도합니다.":"";
         if(!player.isOnline()){sender.sendMessage("유저가 접속을 종료하여 대사를 실행하지 못했습니다. "+state);return;}
-        try{if(!Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"storydialogue "+player.getName()+" "+dialogue))sender.sendMessage("스토리 명령을 실행하지 못했습니다. "+state);}
+        try{if(!Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"대화관리 재생 "+player.getName()+" 대화 "+dialogue))sender.sendMessage("스토리 명령을 실행하지 못했습니다. "+state);}
         catch(RuntimeException error){plugin.getLogger().warning("기숙사 대사 실행 실패: "+error);sender.sendMessage("기숙사 대사를 실행하지 못했습니다. "+state);}
     }
     private List<String> sortingTabs(CommandSender sender,String[] a){
@@ -183,25 +170,99 @@ final class SchoolBridge implements PluginMessageListener,Listener,CommandExecut
         else if(a.length==3&&a[0].equals("결정")){var values=new ArrayList<String>();for(int t=0;t<4;t++)for(int d=0;d<4;d++)values.add("p_"+t+d);choices=values;}
         String prefix=a[a.length-1].toLowerCase(Locale.ROOT);return choices.stream().filter(v->v.toLowerCase(Locale.ROOT).startsWith(prefix)).sorted().toList();
     }
+    @Override public boolean onCommand(CommandSender sender,org.bukkit.command.Command cmd,String label,String[] args){return sortingCommand(sender,args);}
+    @Override public List<String> onTabComplete(CommandSender sender,org.bukkit.command.Command cmd,String label,String[] args){return sortingTabs(sender,args);}
     private String resolveDonation(String input){
         if(spells.containsKey(input))return input;
         var matches=spells.entrySet().stream().filter(e->e.getValue().name().replace(" ","").equals(input.replace(" ",""))).map(Map.Entry::getKey).toList();
         if(matches.size()!=1)throw new IllegalArgumentException(matches.isEmpty()?"등록된 마법 이름 또는 ID를 입력해 주세요.":"이름이 중복됩니다. 마법 ID를 입력해 주세요.");
         return matches.getFirst();
     }
-    static int parseHouse(String value){int h=SchoolProtocol.HOUSES.indexOf(value);return h>=0?h:List.of("arkeon","lumina","bestiaz","noxer").indexOf(value.toLowerCase(Locale.ROOT));}
-    public List<String> onTabComplete(CommandSender s,Command c,String label,String[] a){
-        if(c.getName().equals("기숙사분류"))return sortingTabs(s,a);
-        if(!s.hasPermission("magiccodex.school.admin")||a.length==0)return List.of();
-        if(c.getName().equals("기증기록")){
-            Collection<String> choices=List.of();
-            if(a.length==1)choices=List.of("초기화","상태","금지","해제","reload");
-            else if(a.length==2&&Set.of("초기화","상태","금지","해제").contains(a[0])){var names=new TreeSet<String>(spells.keySet());spells.values().forEach(v->names.add(v.name().replace(" ","")));if(a[0].equals("초기화"))names.add("all");choices=names;}
-            else if(a.length>=3&&a[0].equals("초기화"))choices=List.of("확인");
-            String prefix=a[a.length-1];return choices.stream().filter(v->v.startsWith(prefix)).sorted().toList();
-        }
-        if(a.length==1)return List.of("추가","설정","소속","초기화");
-        if(a.length==2&&(a[0].equals("추가")||a[0].equals("설정"))||a.length==3&&a[0].equals("소속"))return SchoolProtocol.HOUSES;return List.of();
+    /** 기숙사 이름(한글) 또는 ID 값(arkeon·lumina·bestiaz·noxer, 스토리 1-14 결말 ID 호환). 없으면 -1. */
+    static int parseHouse(String value){int h=SchoolProtocol.HOUSES.indexOf(value);return h>=0?h:HOUSE_IDS.indexOf(value.toLowerCase(Locale.ROOT));}
+    static final List<String> HOUSE_IDS=List.of("arkeon","lumina","bestiaz","noxer");
+
+    // ------------------------------------------------------------------ 명령 (2026-10-20 명령어 정리)
+    private static int house(CommandContext<CommandSourceStack> ctx,String arg)throws com.mojang.brigadier.exceptions.CommandSyntaxException{
+        int h=parseHouse(ctx.getArgument(arg,String.class));if(h<0)throw ChacaApi.error("아르케온·루미나·베스티아즈·노크세르 중에서 골라 주세요");return h;
+    }
+    private Collection<String> donationChoices(){var names=new TreeSet<String>();spells.forEach((id,v)->{String n=v.name().replace(" ","");names.add(n.isEmpty()?id:n);});return names;}
+    private String donation(CommandContext<CommandSourceStack> ctx)throws com.mojang.brigadier.exceptions.CommandSyntaxException{
+        try{return resolveDonation(ctx.getArgument("마법",String.class));}catch(IllegalArgumentException e){throw ChacaApi.error(e.getMessage());}
+    }
+    /** work() 실패 문구는 이미 유저용(기술 원인은 콘솔에 남김). */
+    private Consumer<String> failTo(CommandSender sender){return m->ChacaApi.fail(sender,m==null||m.isBlank()?"명령어 사용에 실패했습니다":m,null);}
+    private void score(CommandSender sender,int h,String action,long value){
+        long delta=action.equals("빼기")?-value:value;boolean set=action.equals("설정");
+        work(()->{store.change(h,delta,set);return true;},v->ChacaApi.ok(sender,SchoolProtocol.HOUSES.get(h)+" 점수 "+data.scores().get(h)+"점"),failTo(sender));
+    }
+    private void registerCommands(){
+        if(!CodexCommands.ready(plugin,"기숙사"))return;
+        ChacaApi.reload(plugin,"기증","기증 마법 목록(donation-spells.yml)",this::loadCatalog);
+        ChacaApi.summary(plugin,"기숙사",id->{Integer h=data.houses().get(id);return h==null||h<0||h>3?"":SchoolProtocol.HOUSES.get(h);});
+        // /기숙사 (누구나): 학교 점수·기증 창
+        ChacaApi.playerCommand(plugin,Commands.literal("기숙사").executes(ctx->{
+            var p=CodexCommands.self(ctx);
+            if(!p.getListeningPluginChannels().contains(SchoolProtocol.RESPONSE))throw ChacaApi.error("최신 MagicCodex 모드가 필요해요");
+            reply(p,new Request(SchoolProtocol.LIST,0,0,""),"open");return Command.SINGLE_SUCCESS;
+        }),"기숙사 점수·학교 기증 창 열기",List.of());
+
+        // /유저관리 <닉네임> 기숙사 <기숙사|기증보기>
+        ChacaApi.branch(plugin,ChacaApi.유저관리,Commands.literal("기숙사")
+            .then(Commands.literal("기증보기").executes(ctx->{
+                UUID id=ChacaApi.target(ctx);var rows=new ArrayList<String>();
+                for(var e:data.records())if(e.donor().equals(id))rows.add(" "+e.spellName()+" ("+e.spell()+") · "+SchoolProtocol.HOUSES.get(e.house())+" · "+java.time.Instant.ofEpochMilli(e.time()).atZone(java.time.ZoneId.of("Asia/Seoul")).toLocalDate());
+                if(rows.isEmpty())rows.add(" 기증한 마법이 없어요");
+                CodexCommands.lines(CodexCommands.sender(ctx),"── "+ChacaApi.name(id)+" 님의 학교 기증 ──",rows);return Command.SINGLE_SUCCESS;
+            }))
+            .then(Commands.argument("기숙사",ChacaApi.word(()->SchoolProtocol.HOUSES)).executes(ctx->{
+                UUID id=ChacaApi.target(ctx);int h=house(ctx,"기숙사");var sender=CodexCommands.sender(ctx);
+                work(()->{store.house(id,h);return true;},ok->{
+                    DiscoveryLink.signal(id,"dormitory.assigned",1);Player online=Bukkit.getPlayer(id);if(online!=null)reply(online,new Request(SchoolProtocol.IDENTITY,0,0,""),"");
+                    ChacaApi.ok(sender,ChacaApi.name(id)+" 님의 기숙사를 "+SchoolProtocol.HOUSES.get(h)+"(으)로 정했어요");
+                },failTo(sender));return Command.SINGLE_SUCCESS;
+            })),"소속 기숙사 정하기·기증 기록 보기","기숙사 루미나");
+
+        // /기숙사관리 점수 [<기숙사> <보기|설정|추가|빼기> [값]]
+        var houseArg=Commands.argument("기숙사",ChacaApi.word(()->SchoolProtocol.HOUSES))
+            .then(Commands.literal("보기").executes(ctx->{int h=house(ctx,"기숙사");ChacaApi.ok(CodexCommands.sender(ctx),SchoolProtocol.HOUSES.get(h)+" 점수 "+data.scores().get(h)+"점");return Command.SINGLE_SUCCESS;}));
+        for(String action:List.of("설정","추가","빼기"))
+            houseArg.then(Commands.literal(action).then(Commands.argument("값",LongArgumentType.longArg(action.equals("설정")?-SchoolStore.MAX_SCORE:0,SchoolStore.MAX_SCORE))
+                .executes(ctx->{score(CodexCommands.sender(ctx),house(ctx,"기숙사"),action,LongArgumentType.getLong(ctx,"값"));return Command.SINGLE_SUCCESS;})));
+        ChacaApi.branch(plugin,ChacaApi.기숙사관리,Commands.literal("점수").executes(ctx->{
+            var rows=new ArrayList<String>();for(int i=0;i<4;i++)rows.add(" "+SchoolProtocol.HOUSES.get(i)+" · "+data.scores().get(i)+"점");
+            CodexCommands.lines(CodexCommands.sender(ctx),"── 기숙사 점수 ──",rows);return Command.SINGLE_SUCCESS;
+        }).then(houseArg),"기숙사 점수 보기·설정·추가·빼기","점수 루미나 추가 10");
+        ChacaApi.branch(plugin,ChacaApi.기숙사관리,CodexCommands.confirmed(Commands.literal("점수초기화"),ctx->{
+            var sender=CodexCommands.sender(ctx);work(()->{store.resetPoints();return true;},v->ChacaApi.ok(sender,"네 기숙사 점수를 0으로 초기화했어요"),failTo(sender));return Command.SINGLE_SUCCESS;
+        }),"네 기숙사 점수를 0으로 (기증 기록은 유지)","점수초기화 확인");
+
+        // /기숙사관리 기증마법 <보기 [마법]|금지 <마법>|해제 <마법>>
+        var donate=Commands.literal("기증마법");
+        donate.then(Commands.literal("보기").executes(ctx->{
+            var rows=new ArrayList<String>();
+            for(var e:new TreeMap<>(spells).entrySet()){String id=e.getKey();boolean done=data.records().stream().anyMatch(r->r.spell().equals(id));boolean blocked=data.blocked().contains(id);if(done||blocked)rows.add(" "+e.getValue().name()+" ("+id+") · "+(done?"기증 완료":"기증 전")+(blocked?" · 금지":""));}
+            rows.add(" 등록된 기증 마법 "+spells.size()+"종 · 기증 완료 "+data.records().size()+"종");
+            CodexCommands.lines(CodexCommands.sender(ctx),"── 기증 마법 ──",rows);return Command.SINGLE_SUCCESS;
+        }).then(Commands.argument("마법",ChacaApi.word(this::donationChoices)).executes(ctx->{
+            String id=donation(ctx);var rec=data.records().stream().filter(r->r.spell().equals(id)).findFirst().orElse(null);
+            ChacaApi.lines(CodexCommands.sender(ctx),List.of("── "+spells.get(id).name()+" ("+id+") ──",
+                " 기증: "+(rec==null?"아직 없음":ChacaApi.name(rec.donor())+" · "+SchoolProtocol.HOUSES.get(rec.house())),
+                " 기증 허용: "+(data.blocked().contains(id)?"금지":"허용")+" · 점수 "+spells.get(id).points()+"점"));return Command.SINGLE_SUCCESS;
+        })));
+        for(String action:List.of("금지","해제"))donate.then(Commands.literal(action).then(Commands.argument("마법",ChacaApi.word(this::donationChoices)).executes(ctx->{
+            String id=donation(ctx);var sender=CodexCommands.sender(ctx);boolean block=action.equals("금지");
+            work(()->{store.setBlocked(id,block);return true;},ok->ChacaApi.ok(sender,spells.get(id).name()+" 기증을 "+(block?"금지했어요":"다시 허용했어요")),failTo(sender));return Command.SINGLE_SUCCESS;
+        })));
+        ChacaApi.branch(plugin,ChacaApi.기숙사관리,donate,"기증 마법 보기·금지·해제","기증마법 보기");
+
+        // /기숙사관리 기증마법초기화 <마법|전체> 확인
+        var resetArg=Commands.argument("마법",ChacaApi.word(()->{var l=new ArrayList<String>();l.add("전체");l.addAll(donationChoices());return l;}));
+        CodexCommands.confirmed(resetArg,ctx->{
+            String input=ctx.getArgument("마법",String.class);String id=input.equals("전체")?"all":donation(ctx);var sender=CodexCommands.sender(ctx);
+            work(()->{store.reset(id);return true;},v->ChacaApi.ok(sender,(id.equals("all")?"기증 기록 전체":spells.get(id).name()+" 기증 기록")+"을 지웠어요 (점수는 그대로)"),failTo(sender));return Command.SINGLE_SUCCESS;
+        });
+        ChacaApi.branch(plugin,ChacaApi.기숙사관리,Commands.literal("기증마법초기화").then(resetArg),"기증 기록 지우기 (점수는 유지)","기증마법초기화 전체 확인");
     }
     @EventHandler public void quit(PlayerQuitEvent e){limits.remove(e.getPlayer().getUniqueId());viewers.remove(e.getPlayer().getUniqueId());}
     @EventHandler public void join(PlayerJoinEvent e){if(shared)refreshShared();}

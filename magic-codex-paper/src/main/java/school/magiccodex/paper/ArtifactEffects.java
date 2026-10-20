@@ -104,10 +104,17 @@ final class ArtifactEffects implements Listener {
         Bukkit.getScheduler().runTaskTimer(plugin, this::fastTick, 2, 2);
         Bukkit.getScheduler().runTask(plugin, hooks::connect);
         if (social != null) social.affinityModifier(this::affinity);
+        artifacts.effects(this);
         for (Player p : Bukkit.getOnlinePlayers()) refresh(p);
     }
 
     // ------------------------------------------------------------------ equipped / state
+
+    /** 관리자 쿨타임초기화: 내부 재사용 대기(ready)를 지운다. */
+    void resetCooldowns(Player p) { var r = runs.get(p.getUniqueId()); if (r != null) r.ready.clear(); }
+
+    /** 효과 발동 알림 (액션바 대신, 같은 효과는 2초 안에 다시 띄우지 않음). */
+    static void notice(Player p, String key, String title, String body) { CmdKit.notify(p, "system", "artifact:" + key, title, body, 2000); }
 
     boolean has(Player p, String id) { var s = worn.get(p.getUniqueId()); return s != null && s.contains(id); }
     boolean wearsAny(Player p) { var s = worn.get(p.getUniqueId()); return s != null && !s.isEmpty(); }
@@ -407,7 +414,7 @@ final class ArtifactEffects implements Listener {
         if (r.chantArmed && cost > 0) {
             r.chantArmed = false;
             if (mana.snapshot(p.getUniqueId()).isPresent()) mana.add(p.getUniqueId(), cost);
-            p.sendActionBar(Component.text("주문 촛대: 마나를 쓰지 않았습니다", NamedTextColor.GOLD));
+            notice(p, "chant", "주문 촛대", "마나를 쓰지 않았어요");
         }
     }
 
@@ -482,7 +489,7 @@ final class ArtifactEffects implements Listener {
             if (r.reactions.stream().mapToLong(x -> x[0]).distinct().count() >= 5) {
                 r.reactions.clear();
                 timed(p, "element_collector_note", 10_000, 0, 50);
-                p.sendActionBar(Component.text("원소 수집 노트: 10초간 스킬 가속 +50", NamedTextColor.AQUA));
+                notice(p, "element_note", "원소 수집 노트", "10초간 스킬 가속 +50");
                 p.getWorld().playSound(p.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_RESONATE, 1f, 1.2f);
             }
         }
@@ -611,7 +618,7 @@ final class ArtifactEffects implements Listener {
             var group = new ArrayList<Player>(party.onlineMates(bard)); group.add(bard);
             for (Player m : group) {
                 timed(m, "bard_lute", 10_000, 0, 100);
-                m.sendActionBar(Component.text("♫ 음유시인의 연주: 10초간 스킬 가속 +100", NamedTextColor.LIGHT_PURPLE));
+                notice(m, "bard_lute", "음유시인의 연주", "10초간 스킬 가속 +100");
                 m.playSound(m.getLocation(), Sound.BLOCK_NOTE_BLOCK_FLUTE, 1f, 1.5f);
             }
         }
@@ -622,12 +629,12 @@ final class ArtifactEffects implements Listener {
         Player dead = e.getEntity(); long now = System.currentTimeMillis();
         run(dead).deathAt = now;
         for (Player m : party.onlineMates(dead)) {
-            if (has(m, "cheer_flag")) { run(m).cheerArmed = true; m.sendActionBar(Component.text("응원 깃발: 다음 마법 피해 +10%", NamedTextColor.GOLD)); }
+            if (has(m, "cheer_flag")) { run(m).cheerArmed = true; notice(m, "cheer_flag", "응원 깃발", "다음 마법 피해 +10%"); }
             if (has(m, "comeback_medal") && !m.isDead() && lastStanding(m, now) && ready(m, "comeback_medal", 60_000)) {
                 run(m).comebackUntil = now + 10_000;
                 apply(m);
                 Bukkit.getScheduler().runTaskLater(plugin, () -> apply(m), 201);
-                m.sendActionBar(Component.text("역전의 메달: 10초간 피해 2배!", NamedTextColor.RED));
+                notice(m, "comeback_medal", "역전의 메달", "10초간 피해 2배!");
                 m.getWorld().playSound(m.getLocation(), Sound.ITEM_TOTEM_USE, .6f, 1.4f);
             }
         }

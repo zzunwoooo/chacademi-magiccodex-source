@@ -21,7 +21,6 @@ public final class QuestClient {
     public static void initialize(){PayloadTypeRegistry.playC2S().register(Query.ID,Query.CODEC);PayloadTypeRegistry.playS2C().register(Reply.ID,Reply.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(Reply.ID,(p,c)->{try{var r=QuestProtocol.response(p.bytes());c.client().execute(()->{data=r;if(r.open()){MagicCodexClient.dismiss();c.client().setScreen(new QuestScreen());}if(c.client().currentScreen instanceof QuestScreen s)s.received(r.message());});}catch(IllegalArgumentException ignored){}});
         ClientPlayConnectionEvents.JOIN.register((h,s,c)->reset());ClientPlayConnectionEvents.DISCONNECT.register((h,c)->reset());
-        ClientCommandRegistrationCallback.EVENT.register((d,a)->d.register(ClientCommandManager.literal("의뢰게시판").executes(c->{open();return 1;})));
     }
     private static void reset(){data=new QuestProtocol.Response(false,0,0,"",List.of());}
     public static void open(){MagicCodexClient.dismiss();MinecraftClient.getInstance().setScreen(new QuestScreen());}

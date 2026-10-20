@@ -14,8 +14,8 @@ Minecraft 1.21.4 / Java 21 / Fabric + Paper용 서버 권위 VFX 런타임입니
 ## 명령
 
 - `/마법 <영문ID>`: 기존 서버 브리지의 일반 시전
-- `/pvfxdebug`: 로컬 효과 ID/준비 상태/설정 오류 확인
-- `/pvfxserverdebug`: 관리자용 범용 서버 VFX 진단
+- `/이펙트도구`: 로컬 효과 ID/준비 상태/설정 오류 확인
+- `/개발 이펙트`: 관리자(OP)용 범용 서버 VFX 진단
 - `/codexsounddebug <영문ID>`: 기존 HUD 효과음만 확인
 
 정상 시전 성공은 UUID나 디버그 채팅을 출력하지 않습니다. 피해·죽음·채굴·접촉처럼 후속 게임플레이가 소유하는 이벤트는 별도 이벤트 인터페이스와 디버그 명령으로 구분합니다. 준비되지 않은 효과를 다른 그림으로 대신하지 않습니다.
@@ -47,7 +47,7 @@ JDK 21과 Gradle 8.12를 사용합니다. 일반 환경에서는 `./gradlew :com
 | `fallingstar/meteor` 단계 | `stop-effects` | `[claude:fallingstar/chant]` |
 | `fallingstar/impact` 단계 (role `impact`) | `stop-effects` | `[claude:fallingstar/mark]` |
 
-병합 후 `/pvfxserverdebug reload`로 다시 읽고, 경고 목록에서 `falling_star`가 사라졌는지는 다음 서버 시작 로그에서 확인합니다. `spell-catalog.yml`도 같은 방식으로 백업 후 교체하세요.
+병합 후 `/서버관리 새로고침 이펙트`로 다시 읽고, 경고 목록에서 `falling_star`가 사라졌는지는 다음 서버 시작 로그에서 확인합니다. `spell-catalog.yml`도 같은 방식으로 백업 후 교체하세요.
 
 투사체 사거리 종료/수명 만료 시 로컬 몸체만 제거하고 월드 잔상을 보존합니다. 늦은 렌더 프레임도 기록된 FINISH 시각에 맞춰 꼬리 수명을 계산합니다.
 기본 클라이언트 80개(선택 fixture 3개 제외), 서버 69개, 통신 규약 31,753 assertions 및 최종 Mesa OpenGL bloom/depth6402 검사가 통과했습니다. 별도 구형 WaterElemental fixture 2개는 현재 에셋 구조/개수 기대값 차이로 실패했습니다. 실제 Minecraft/Iris/Paper 화면 검증은 미실시입니다.

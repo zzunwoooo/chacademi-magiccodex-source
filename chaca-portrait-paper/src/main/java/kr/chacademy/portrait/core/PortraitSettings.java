@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-/** config.yml 스냅샷 (불변). /portrait reload 때 새로 만든다. */
+/** config.yml 스냅샷 (불변). /서버관리 새로고침 초상화 때 새로 만든다. */
 public final class PortraitSettings {
 
     public final String serverId;

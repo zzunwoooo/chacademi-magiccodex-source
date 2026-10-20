@@ -1,10 +1,6 @@
 package school.magiccodex.client;
 
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import java.util.*;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
@@ -142,16 +138,6 @@ public final class TargetHudClient {
         });
         ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> { reset(); close(); });
         ClientPlayConnectionEvents.JOIN.register((h, s, c) -> { reset(); lastAim = null; });
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, access) -> {
-            LiteralArgumentBuilder<FabricClientCommandSource> root = ClientCommandManager.literal("대상체력바미리보기")
-                .executes(c -> { startPreview(0); c.getSource().sendFeedback(Text.literal("대상 체력바 미리보기 15초 (가짜 데이터). /대상체력바미리보기 일반 · 이로치 · 플레이어 · 끄기")); return 1; });
-            root.then(ClientCommandManager.literal("일반").executes(c -> { startPreview(0); return 1; }));
-            root.then(ClientCommandManager.literal("이로치").executes(c -> { startPreview(1); return 1; }));
-            root.then(ClientCommandManager.literal("플레이어").executes(c -> { startPreview(2); return 1; }));
-            root.then(ClientCommandManager.literal("보스").executes(c -> { startPreview(3); return 1; }));
-            root.then(ClientCommandManager.literal("끄기").executes(c -> { previewUntil = 0; preview = List.of(); return 1; }));
-            dispatcher.register(root);
-        });
     }
 
     private static void accept(TargetHudProtocol.Frame f) {
@@ -368,7 +354,20 @@ public final class TargetHudClient {
         return r >= 1_000_000 ? String.format(Locale.ROOT, "%.1fM", v / 1_000_000f) : String.valueOf(r);
     }
 
-    // ---------------------------------------------------------------- preview (/대상체력바미리보기)
+    // ---------------------------------------------------------------- preview (server /테스트 몹 체력바 → magiccodex:preview "targethud ...")
+
+    /** normal · shiny · player · boss · off. False when unknown. */
+    static boolean showPreview(String value) {
+        switch (value) {
+            case "normal" -> startPreview(0);
+            case "shiny" -> startPreview(1);
+            case "player" -> startPreview(2);
+            case "boss" -> startPreview(3);
+            case "off" -> { previewUntil = 0; preview = List.of(); }
+            default -> { return false; }
+        }
+        return true;
+    }
 
     private static long previewStart;
     private static void startPreview(int kind) {

@@ -19,9 +19,7 @@ import java.util.concurrent.RejectedExecutionException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.LivingEntity;
@@ -91,9 +89,10 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
         service = new ServerService();
         reloadSpellCatalog(true, engine.limits().maxDurationTicks());
         getServer().getServicesManager().register(PortableVfxService.class, service, this, ServicePriority.Normal);
-        PluginCommand command = Objects.requireNonNull(getCommand("pvfxserverdebug"), "pvfxserverdebug missing from plugin.yml");
-        command.setExecutor(this);
-        command.setTabCompleter(this);
+        if (DebugCommands.hubReady()) {
+            try { new DebugCommands(this).register(); }
+            catch (RuntimeException failure) { getLogger().log(java.util.logging.Level.WARNING, "Could not attach PortableVFX commands to the MagicCodexBridge command hub", failure); }
+        } else getLogger().warning("MagicCodexBridge command hub not found: /개발 이펙트 and /테스트 마법 이펙트 are not registered (relay keeps working).");
         ticker = getServer().getScheduler().runTaskTimer(this, this::tickRuntime, 1L, 1L);
         // After all channels are registered: ask already-connected clients to hello again.
         getServer().getScheduler().runTask(this, this::requestClientHellos);
@@ -162,7 +161,7 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
         if(catalogVisuals==null)return refuse(player,id,"visual engine unavailable",null);
         if(!spell.enabled())return refuse(player,id,"spell disabled in catalogue",null);
         if(!engine.supportsCatalogCast(player.getUniqueId())){
-            player.sendActionBar(net.kyori.adventure.text.Component.text("마법 이펙트가 아직 준비되지 않았습니다. 로딩 완료 후 다시 시도하세요."));
+            ChacaLink.notify(player, "warning", "pvfx-not-ready", "마법 이펙트가 아직 준비되지 않았어요", "로딩이 끝난 뒤 다시 시도해 주세요", 3000);
             return refuse(player,id,"client not ready",null);
         }
         return true;
@@ -315,7 +314,7 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
             return new CatalogReload(true,next.entries().size(),bindings.size(),skipped,"");
         } catch(Exception error) {
             String reason=error.getClass().getSimpleName()+": "+error.getMessage();
-            if(startup||spellCatalog==null)getLogger().severe("Spell catalogue could NOT be loaded ("+reason+"). No catalogue is active: every catalog cast is refused until spell-catalog.yml / spell-bindings.yml are fixed and /pvfxserverdebug reload succeeds.");
+            if(startup||spellCatalog==null)getLogger().severe("Spell catalogue could NOT be loaded ("+reason+"). No catalogue is active: every catalog cast is refused until spell-catalog.yml / spell-bindings.yml are fixed and /서버관리 새로고침 이펙트 succeeds.");
             else getLogger().warning("Spell catalog reload rejected; retaining previous catalog and running effects: "+reason);
             return new CatalogReload(false,spellCatalog==null?0:spellCatalog.entries().size(),0,skipped,reason);
         }
@@ -434,181 +433,124 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
         worldKeys.remove(event.getWorld().getUID());
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!sender.hasPermission("portablevfx.admin")) {
-            sender.sendMessage("[PortableVFX] portablevfx.admin 권한이 필요합니다.");
-            return true;
-        }
-        if (args.length == 0) {
-            usage(sender);
-            return true;
-        }
-        try {
-            switch (args[0].toLowerCase(Locale.ROOT)) {
-                case "play" -> playCommand(sender, args);
-                case "follow" -> followCommand(sender, args);
-                case "catalog" -> {
-                    if(!(sender instanceof Player player))throw new IllegalArgumentException("catalog requires a player");
-                    expectArgs(args,2,"catalog <spellId>");sender.sendMessage("[PortableVFX debug] catalog="+castAuthorizedSpell(player,args[1]));
-                }
-                case "event" -> {
-                    if(!(sender instanceof Player player))throw new IllegalArgumentException("event requires a player");
-                    expectArgs(args,3,"event <spellId> <eventName>");sender.sendMessage("[PortableVFX debug] preview="+(catalogVisuals==null?false:catalogVisuals.previewEvent(player,args[1],args[2])));
-                }
-                case "finish" -> {
-                    expectArgs(args,2,"finish <handle>");sender.sendMessage("[PortableVFX debug] finish="+service.finishCast(UUID.fromString(args[1])));
-                }
-                case "stop" -> {
-                    expectArgs(args, 2, "stop <uuid>");
-                    UUID handle = UUID.fromString(args[1]);
-                    boolean stopped = service.stop(handle);
-                    sender.sendMessage(stopped
-                            ? "[PortableVFX] 중지 요청: " + handle
-                            : "[PortableVFX] 활성 핸들이 없습니다: " + handle);
-                }
-                case "clear" -> {
-                    expectArgs(args, 1, "clear");
-                    if(catalogVisuals!=null)catalogVisuals.clear();
-                    sender.sendMessage("[PortableVFX] " + service.clear() + "개 핸들을 정리했습니다.");
-                }
-                case "readiness" -> {
-                    expectArgs(args,2,"readiness <player>");
-                    Player target=Bukkit.getPlayerExact(args[1]);
-                    if(target==null)throw new IllegalArgumentException("Player is not online on this server");
-                    sender.sendMessage("[PortableVFX readiness] "+target.getName()+": "+engine.catalogDiagnostic(target.getUniqueId()));
-                }
-                case "status" -> {
-                    expectArgs(args, 1, "status");
-                    VfxStatus status = service.status();
-                    sender.sendMessage("[PortableVFX] protocol=" + status.protocolVersion()
-                            + ", 호환=" + status.compatibleClients() + ", 수신 가능=" + status.receivingClients()
-                            + ", 핸들=" + status.activeHandles() + ", 제어 대기=" + status.pendingControlRecipients());
-                    sender.sendMessage("[PortableVFX] 이번 tick 전송=" + status.packetsThisTick()
-                            + ", play=" + status.playsThisTick() + ", 누적 전송=" + status.packetsSent()
-                            + ", 잘못된 hello=" + status.rejectedHellos());
-                    sender.sendMessage("[PortableVFX] authority 호환=" + engine.authoritativeClients()
-                            + ", width 호환=" + engine.widthPlayClients() + ", 카탈로그=" + (spellCatalog==null?0:spellCatalog.entries().size()) + " (리소스 존재/렌더링 확인 아님)");
-                    sender.sendMessage("[PortableVFX] 종료 추적 핸들=" + engine.drainingHandles() + ", PLAY 재시도 대기=" + engine.deferredPlayViewers()
-                            + "명(기한 초과 누적 " + engine.deferredPlayDrops() + "), hello 제한=" + engine.throttledHellos() + ", 중복 readiness=" + engine.duplicateReadyPackets());
-                    if(catalogVisuals!=null)sender.sendMessage("[PortableVFX] 진행 중 시전=" + catalogVisuals.activeCasts() + "/" + catalogVisuals.limits().maxCasts()
-                            + " (플레이어당 " + catalogVisuals.limits().maxPerPlayer() + "), 오류로 취소=" + catalogVisuals.tickFailures()
-                            + ", 건너뛴 단계=" + catalogVisuals.phaseFailures() + ", 시청자 없던 단계=" + catalogVisuals.noViewerPhases());
-                    if(sender instanceof Player player)sender.sendMessage("[VFX 진단] "+engine.catalogDiagnostic(player.getUniqueId()));
-                    if(catalogVisuals!=null){
-                        if(sender instanceof Player player&&!catalogVisuals.lastFailure(player.getUniqueId()).isEmpty())sender.sendMessage("[VFX 진단] 내 최근 시전 거부="+catalogVisuals.lastFailure(player.getUniqueId()));
-                        if(!catalogVisuals.lastFailure().isEmpty())sender.sendMessage("[VFX 진단] 서버 전체 최근 시전 거부(다른 플레이어일 수 있음)="+catalogVisuals.lastFailure());
-                        if(!catalogVisuals.lastTickFailure().isEmpty())sender.sendMessage("[VFX 진단] 최근 실행 중 오류="+catalogVisuals.lastTickFailure());
-                    }
-                }
-                case "reload" -> {
-                    expectArgs(args, 1, "reload");
-                    requireMainThread();
-                    reloadConfig();
-                    RelayLimits limits = readLimits();
-                    CatalogReload outcome = reloadSpellCatalog(false, limits.maxDurationTicks());
-                    if (outcome.applied()) {
-                        // 새 카탈로그가 적용됐다: 이전 연출은 reloadSpellCatalog 가 정리했고, 릴레이 핸들도 비운다.
-                        engine.reload(limits);
-                        requestClientHellos();
-                        sender.sendMessage("[PortableVFX] 설정과 마법 카탈로그를 다시 읽었습니다: 마법 " + outcome.spells() + "개, 연출 " + outcome.bindings()
-                                + "개, 건너뜀 " + outcome.skipped().size() + "개. 기존 효과 정리를 요청했습니다.");
-                    } else {
-                        // 카탈로그가 거부됐다: 이전 카탈로그와 실행 중인 효과는 그대로 두고 config.yml 한도만 적용한다.
-                        engine.applyLimits(limits);
-                        if (catalogVisuals != null) catalogVisuals.limits(readCastLimits());
-                        sender.sendMessage("[PortableVFX] 마법 카탈로그 reload 실패: " + outcome.error());
-                        sender.sendMessage("[PortableVFX] 이전 카탈로그(마법 " + outcome.spells() + "개)를 유지하고 실행 중인 효과는 건드리지 않았습니다. config.yml 한도만 적용했습니다.");
-                    }
-                    int shown = 0;
-                    for (var problem : outcome.skipped().entrySet()) {
-                        if (shown++ >= 5) { sender.sendMessage("[PortableVFX] ... 외 " + (outcome.skipped().size() - 5) + "개 (서버 로그 참고)"); break; }
-                        sender.sendMessage("[PortableVFX] 건너뛴 마법 " + problem.getKey() + ": " + problem.getValue());
-                    }
-                }
-                default -> usage(sender);
-            }
-        } catch (IllegalArgumentException | RejectedExecutionException e) {
-            sender.sendMessage("[PortableVFX] 거부: " + e.getMessage());
-        }
-        return true;
+    // ---------------------------------------------------------------- operator commands (DebugCommands, OP only via the hub)
+
+    /** /테스트 마법 이펙트 &lt;마법&gt; : the normal catalog cast visuals, without mana. */
+    Boolean debugCatalogCast(Player player, String id) { return castAuthorizedSpell(player, id); }
+
+    /** Mythic gameplay mechanics play this spell's VFX themselves (no catalogue visual plan). */
+    boolean mechanicOwned(String id) { return spellCatalog != null && spellCatalog.resolve(id).map(dev.portablevfx.paper.internal.spell.SpellCatalog.Spell::mechanicVfx).orElse(false); }
+
+    /** Every effect ID referenced by the visual plans (for suggestions). */
+    List<String> effectIds() {
+        var visuals = catalogVisuals;
+        if (visuals == null) return List.of();
+        var out = new java.util.TreeSet<String>();
+        for (String id : visuals.spellIds()) { var plan = visuals.plan(id); if (plan != null) for (var ph : plan.phases()) out.add(ph.effect()); }
+        return List.copyOf(out);
     }
 
-    private void followCommand(CommandSender sender, String[] args) {
-        if (args.length < 3 || args.length > 9) throw new IllegalArgumentException("follow <effect> <entityUUID|self> [scale] [durationTicks] [anchor] [offsetX] [offsetY] [offsetZ]");
-        org.bukkit.entity.Entity entity;
-        if (args[2].equalsIgnoreCase("self")) {
-            if (!(sender instanceof Player player)) throw new IllegalArgumentException("follow self requires an in-game player");
-            entity = player;
-        } else entity = Bukkit.getEntity(UUID.fromString(args[2]));
-        if (entity == null || !entity.isValid() || entity.isDead()) throw new IllegalArgumentException("Entity is not alive and loaded");
+    /** /테스트 마법 이펙트 &lt;마법&gt; &lt;단계&gt; : start the plan at an explicit event. */
+    Boolean debugPreviewEvent(Player player, String id, String event) { return catalogVisuals == null ? Boolean.FALSE : catalogVisuals.previewEvent(player, id, event); }
+
+    /** Suggestions: catalogue display names (spaces as _) first, then IDs. */
+    List<String> spellSuggestions() {
+        if (spellCatalog == null) return List.of();
+        var out = new ArrayList<String>();
+        for (var spell : spellCatalog.entries()) out.add(spell.name().trim().replace(' ', '_'));
+        out.addAll(spellCatalog.complete(""));
+        return out;
+    }
+
+    /** Typed name (display name with _ for spaces, alias or ID) → catalogue ID, or null. */
+    String resolveSpell(String input) {
+        if (spellCatalog == null || input == null) return null;
+        var spell = spellCatalog.resolve(input).or(() -> spellCatalog.resolve(input.replace('_', ' ')));
+        return spell.map(dev.portablevfx.paper.internal.spell.SpellCatalog.Spell::id).orElse(null);
+    }
+
+    String spellName(String id) { return spellCatalog == null ? id : spellCatalog.resolve(id).map(dev.portablevfx.paper.internal.spell.SpellCatalog.Spell::name).orElse(id); }
+
+    /** Distinct phase triggers of the spell's visual plan (for the 단계 suggestions). */
+    List<String> spellEvents(String id) {
+        var visuals = catalogVisuals;
+        if (visuals == null) return List.of();
+        var plan = visuals.plan(id);
+        return plan == null ? List.of() : plan.phases().stream().map(dev.portablevfx.paper.internal.spell.CatalogVisualEngine.Phase::trigger).distinct().toList();
+    }
+
+    PlayResult debugPlay(EffectRequest request) { return service.play(request); }
+
+    PlayResult debugFollow(String effectId, org.bukkit.entity.Entity entity, float scale, int ticks, String anchor, float ox, float oy, float oz) {
         Location at = entity.getLocation();
-        var effect = new PlayEffect(UUID.randomUUID(), args[1], at.getWorld().getKey().toString(),
-                at.getX(), at.getY(), at.getZ(), 0, 0, 0, number(args, 3, 1), 0xffffff, 1,
-                integer(args, 4, 100), entity.getUniqueId());
-        if (args.length > 5) effect = new PlayEffect(effect.instanceId(), effect.effectId(), effect.dimensionId(),
+        var effect = new PlayEffect(UUID.randomUUID(), effectId, at.getWorld().getKey().toString(),
+                at.getX(), at.getY(), at.getZ(), 0, 0, 0, scale, 0xffffff, 1, ticks, entity.getUniqueId());
+        if (anchor != null) effect = new PlayEffect(effect.instanceId(), effect.effectId(), effect.dimensionId(),
                 effect.x(), effect.y(), effect.z(), effect.yaw(), effect.pitch(), effect.roll(), effect.scale(),
                 effect.rgb(), effect.opacity(), effect.durationTicks(), effect.followEntity(), effect.seed(), -1,
-                dev.portablevfx.protocol.EffectAnchor.parse(args[5]), number(args, 6, 0), number(args, 7, 0), number(args, 8, 0));
-        PlayResult result = engine.play(effect, engine.limits().defaultRadius());
-        sender.sendMessage("[PortableVFX] follow handle=" + result.handle() + ", recipients=" + result.recipients());
+                dev.portablevfx.protocol.EffectAnchor.parse(anchor), ox, oy, oz);
+        return engine.play(effect, engine.limits().defaultRadius());
     }
 
-    private void playCommand(CommandSender sender, String[] args) {
-        if (args.length < 6 || args.length > 14) {
-            throw new IllegalArgumentException("play <effect> <world> <x> <y> <z> [scale] [durationTicks] [yaw] [pitch] [roll] [rgbHex] [opacity] [radius]");
+    boolean debugFinish(UUID handle) { return service.finishCast(handle); }
+    boolean debugStop(UUID handle) { return service.stop(handle); }
+    int debugClear() { if (catalogVisuals != null) catalogVisuals.clear(); return service.clear(); }
+    int maxDurationTicks() { return engine.limits().maxDurationTicks(); }
+    double defaultRadius() { return engine.limits().defaultRadius(); }
+    String readiness(UUID player) { return engine.catalogDiagnostic(player); }
+
+    /** /개발 이펙트 상태 (OP debug chat; raw diagnostics are intended here). */
+    List<String> debugStatus(Player viewer) {
+        var out = new ArrayList<String>();
+        VfxStatus status = service.status();
+        out.add("── PortableVFX 상태 ──");
+        out.add("[PortableVFX] protocol=" + status.protocolVersion()
+                + ", 호환=" + status.compatibleClients() + ", 수신 가능=" + status.receivingClients()
+                + ", 핸들=" + status.activeHandles() + ", 제어 대기=" + status.pendingControlRecipients());
+        out.add("[PortableVFX] 이번 tick 전송=" + status.packetsThisTick()
+                + ", play=" + status.playsThisTick() + ", 누적 전송=" + status.packetsSent()
+                + ", 잘못된 hello=" + status.rejectedHellos());
+        out.add("[PortableVFX] authority 호환=" + engine.authoritativeClients()
+                + ", width 호환=" + engine.widthPlayClients() + ", 카탈로그=" + (spellCatalog==null?0:spellCatalog.entries().size()) + " (리소스 존재/렌더링 확인 아님)");
+        out.add("[PortableVFX] 종료 추적 핸들=" + engine.drainingHandles() + ", PLAY 재시도 대기=" + engine.deferredPlayViewers()
+                + "명(기한 초과 누적 " + engine.deferredPlayDrops() + "), hello 제한=" + engine.throttledHellos() + ", 중복 readiness=" + engine.duplicateReadyPackets());
+        if(catalogVisuals!=null)out.add("[PortableVFX] 진행 중 시전=" + catalogVisuals.activeCasts() + "/" + catalogVisuals.limits().maxCasts()
+                + " (플레이어당 " + catalogVisuals.limits().maxPerPlayer() + "), 오류로 취소=" + catalogVisuals.tickFailures()
+                + ", 건너뛴 단계=" + catalogVisuals.phaseFailures() + ", 시청자 없던 단계=" + catalogVisuals.noViewerPhases());
+        if(viewer!=null)out.add("[VFX 진단] "+engine.catalogDiagnostic(viewer.getUniqueId()));
+        if(catalogVisuals!=null){
+            if(viewer!=null&&!catalogVisuals.lastFailure(viewer.getUniqueId()).isEmpty())out.add("[VFX 진단] 내 최근 시전 거부="+catalogVisuals.lastFailure(viewer.getUniqueId()));
+            if(!catalogVisuals.lastFailure().isEmpty())out.add("[VFX 진단] 서버 전체 최근 시전 거부(다른 플레이어일 수 있음)="+catalogVisuals.lastFailure());
+            if(!catalogVisuals.lastTickFailure().isEmpty())out.add("[VFX 진단] 최근 실행 중 오류="+catalogVisuals.lastTickFailure());
         }
-        EffectRequest request = new EffectRequest(args[1], args[2],
-                Double.parseDouble(args[3]), Double.parseDouble(args[4]), Double.parseDouble(args[5]),
-                number(args, 6, 1), integer(args, 7, Math.min(40, engine.limits().maxDurationTicks())),
-                number(args, 8, 0), number(args, 9, 0), number(args, 10, 0),
-                args.length > 11 ? color(args[11]) : 0xFFFFFF,
-                number(args, 12, 1), args.length > 13 ? Double.parseDouble(args[13]) : engine.limits().defaultRadius());
-        PlayResult result = service.play(request);
-        sender.sendMessage("[PortableVFX] handle=" + result.handle() + ", 전송=" + result.recipients()
-                + ", 다음 tick 재시도=" + result.deferred() + ", 예산 제외=" + result.skippedRateLimited() + ", 반경=" + result.effectiveRadius());
-        if (result.recipients() == 0 && result.deferred() == 0) {
-            sender.sendMessage("[PortableVFX] 활성 핸들이 생성되지 않았습니다. 같은 월드·반경 내 호환 클라이언트와 채널 등록을 확인하세요.");
+        return out;
+    }
+
+    /** /서버관리 상태 line. */
+    String statusLine() {
+        if (service == null) return "꺼짐";
+        VfxStatus status = service.status();
+        return "호환 클라이언트 " + status.compatibleClients() + "명 · 핸들 " + status.activeHandles() + " · 카탈로그 " + (spellCatalog == null ? "없음" : spellCatalog.entries().size() + "종");
+    }
+
+    /**
+     * /서버관리 새로고침 이펙트. A rejected catalogue keeps the previous one and running effects (config.yml limits still apply)
+     * and throws so the hub reports the failure; details go to the console.
+     */
+    void reloadAll() {
+        requireMainThread();
+        reloadConfig();
+        RelayLimits limits = readLimits();
+        CatalogReload outcome = reloadSpellCatalog(false, limits.maxDurationTicks());
+        if (outcome.applied()) {
+            engine.reload(limits);
+            requestClientHellos();
+            getLogger().info("Reloaded config and spell catalogue: " + outcome.spells() + " spell(s), " + outcome.bindings() + " visual binding(s), " + outcome.skipped().size() + " skipped.");
+            return;
         }
-    }
-
-    @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (!sender.hasPermission("portablevfx.admin")) return List.of();
-        List<String> candidates;
-        if (args.length == 1) candidates = List.of("play","follow","catalog","event","finish","stop","clear","status","reload");
-        else if(args.length==2&&(args[0].equalsIgnoreCase("catalog")||args[0].equalsIgnoreCase("event")))candidates=spellCatalog==null?List.of():spellCatalog.complete(args[1]);
-        else if (args.length == 3 && args[0].equalsIgnoreCase("follow") && sender instanceof Player) candidates = List.of("self");
-        else if (args.length == 3 && args[0].equalsIgnoreCase("play")) {
-            candidates = getServer().getWorlds().stream().map(World::getName).toList();
-        } else return List.of();
-        String prefix = args[args.length - 1].toLowerCase(Locale.ROOT);
-        return candidates.stream().filter(value -> value.toLowerCase(Locale.ROOT).startsWith(prefix)).toList();
-    }
-
-    private static float number(String[] args, int index, float fallback) {
-        return args.length > index ? Float.parseFloat(args[index]) : fallback;
-    }
-
-    private static int integer(String[] args, int index, int fallback) {
-        return args.length > index ? Integer.parseInt(args[index]) : fallback;
-    }
-
-    private static int color(String input) {
-        String hex = input.startsWith("#") ? input.substring(1) : input;
-        if (!hex.matches("[0-9a-fA-F]{6}")) throw new IllegalArgumentException("rgbHex must be six hexadecimal digits (RRGGBB)");
-        return Integer.parseInt(hex, 16);
-    }
-
-    private static void expectArgs(String[] args, int expected, String syntax) {
-        if (args.length != expected) throw new IllegalArgumentException(syntax);
-    }
-
-    private static void usage(CommandSender sender) {
-        sender.sendMessage("/pvfxserverdebug play <effect> <world> <x> <y> <z> [scale] [ticks]");
-        sender.sendMessage("/pvfxserverdebug follow <effect> <entityUUID|self> [scale] [ticks]");
-        sender.sendMessage("/pvfxserverdebug catalog <spellId> | event <spellId> <eventName>");
-        sender.sendMessage("/pvfxserverdebug finish <handle> | stop <handle> | clear | status | reload");
+        engine.applyLimits(limits);
+        if (catalogVisuals != null) catalogVisuals.limits(readCastLimits());
+        throw new IllegalStateException("Spell catalogue reload rejected (previous catalogue with " + outcome.spells() + " spell(s) kept, config.yml limits applied): " + outcome.error());
     }
 
     private RelayLimits readLimits() {

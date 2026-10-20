@@ -10,7 +10,7 @@ import org.bukkit.configuration.ConfigurationSection;
 final class Arena {
     final String name;
     boolean enabled, practice;
-    /** 1:1 결투장 (owner 2026-10-18): needs only 경계 + 시작위치 A 1 / B 1; 체력·마나 성소 후보는 선택. */
+    /** 1:1 결투장 (owner 2026-10-18): needs only 경계 + 시작위치 파랑 1 / 빨강 1; 체력·마나 성소 후보는 선택. */
     boolean duel;
     Box bounds, ballArea, snitchArea;
     final Map<Team, List<Box>> goals = new EnumMap<>(Team.class);          // goals a team DEFENDS
@@ -39,32 +39,47 @@ final class Arena {
     }
 
     /** Missing required items, in Korean, empty = can be enabled. */
-    List<String> problems() {
-        var p = new ArrayList<String>();
-        if (bounds == null) p.add("경계");
+    List<String> problems() { return new ArrayList<>(fixes().keySet()); }
+
+    /**
+     * Missing required items in the order to fill them → the /큐디치관리 command that fixes each one
+     * (검사 shows these lines; clicking one puts the command in the chat box).
+     */
+    java.util.LinkedHashMap<String, String> fixes() {
+        var p = new java.util.LinkedHashMap<String, String>();
+        String c = "/큐디치관리 ";
+        if (bounds == null) p.put("경계", c + "경계");
         if (duel) {
             for (Team t : Team.values()) {
                 Point s = starts.get(t)[0];
-                if (s == null) p.add(t.key + "팀 시작위치 1");
-                else if (bounds != null && (!s.world().equals(bounds.world()) || !bounds.contains(s.vector()))) p.add(t.key + "팀 시작위치가 경계 밖");
+                if (s == null) p.put(t.word + " 시작위치 1", c + "시작위치 " + t.word);
+                else if (bounds != null && (!s.world().equals(bounds.world()) || !bounds.contains(s.vector()))) p.put(t.word + " 시작위치가 경계 밖", c + "삭제 " + t.word + "시작위치 1");
             }
             return p;
         }
+        for (Team t : Team.values()) if (goals.get(t).isEmpty()) p.put(t.word + " 골대", c + "골대 " + t.word);
         for (Team t : Team.values()) {
-            if (goals.get(t).isEmpty()) p.add(t.key + "팀 골대");
             Point[] s = starts.get(t);
-            for (int i = 0; i < 3; i++) if (s[i] == null) p.add(t.key + "팀 시작위치 " + (i + 1));
+            for (int i = 0; i < 3; i++) if (s[i] == null) p.put(t.word + " 시작위치 " + (i + 1), c + "시작위치 " + t.word);
         }
-        if (quaffle == null) p.add("퀘이플위치");
-        for (int i = 0; i < 2; i++) if (bludgers[i] == null) p.add("블러저위치 " + (i + 1));
-        for (ShrineType s : ShrineType.values()) if (shrines.get(s).isEmpty()) p.add(s.label + " 성소 후보");
+        if (quaffle == null) p.put("퀘이플위치", c + "퀘이플위치");
+        for (int i = 0; i < 2; i++) if (bludgers[i] == null) p.put("블러저위치 " + (i + 1), c + "블러저위치");
+        for (ShrineType s : ShrineType.values()) if (shrines.get(s).isEmpty()) p.put(s.label + " 성소 후보", c + "성소 " + s.label);
         if (bounds != null) {
             String w = bounds.world();
-            if (ballArea != null && !ballArea.inside(bounds)) p.add("공영역이 경계 밖으로 나감");
-            if (snitchArea != null && !snitchArea.inside(bounds)) p.add("스니치영역이 경계 밖으로 나감");
-            for (Team t : Team.values()) for (Box g : goals.get(t)) if (!g.world().equals(w)) p.add(t.key + "팀 골대가 다른 월드");
-            if (quaffle != null && !bounds.contains(quaffle.vector())) p.add("퀘이플위치가 경계 밖");
-            for (Team t : Team.values()) for (Point s : starts.get(t)) if (s != null && (!s.world().equals(w) || !bounds.contains(s.vector()))) { p.add(t.key + "팀 시작위치가 경계 밖"); break; }
+            if (ballArea != null && !ballArea.inside(bounds)) p.put("공영역이 경계 밖으로 나감", c + "공영역");
+            if (snitchArea != null && !snitchArea.inside(bounds)) p.put("스니치영역이 경계 밖으로 나감", c + "스니치영역");
+            for (Team t : Team.values()) {
+                var g = goals.get(t);
+                for (int i = 0; i < g.size(); i++) if (!g.get(i).world().equals(w)) { p.put(t.word + " 골대 " + (i + 1) + "이(가) 다른 월드", c + "삭제 " + t.word + "골대 " + (i + 1)); break; }
+            }
+            if (quaffle != null && !bounds.contains(quaffle.vector())) p.put("퀘이플위치가 경계 밖", c + "퀘이플위치");
+            for (Team t : Team.values()) {
+                Point[] s = starts.get(t);
+                for (int i = 0; i < s.length; i++) if (s[i] != null && (!s[i].world().equals(w) || !bounds.contains(s[i].vector()))) {
+                    p.put(t.word + " 시작위치 " + (i + 1) + "이(가) 경계 밖", c + "삭제 " + t.word + "시작위치 " + (i + 1)); break;
+                }
+            }
         }
         return p;
     }

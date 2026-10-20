@@ -39,7 +39,7 @@ class TopMenuTest {
         }
         assertEquals("캐시샵",TopMenuState.command(0));
         assertEquals("우편함",TopMenuState.command(5));
-        assertEquals("의뢰게시판",TopMenuState.command(4));
+        assertEquals("의뢰",TopMenuState.command(4));
         assertArrayEquals(new String[]{"캐시샵","내 정보","도감","소셜","퀘스트","우편함","설정"},TopMenuState.LABELS);
     }
     @Test void groupsHaveFixedOrderAndRoomyVerticalTargets(){

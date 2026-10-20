@@ -45,8 +45,6 @@ public final class SchoolClient {
         PayloadTypeRegistry.playC2S().register(Query.ID,Query.CODEC);PayloadTypeRegistry.playS2C().register(Reply.ID,Reply.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(Reply.ID,(p,c)->{try{Response r=SchoolProtocol.response(p.bytes());c.client().execute(()->receive(r));}catch(IllegalArgumentException ignored){}});
         ClientPlayConnectionEvents.JOIN.register((h,s,c)->reset());ClientPlayConnectionEvents.DISCONNECT.register((h,c)->reset());
-        // Separate alias leaves the server's /기숙사점수 management command untouched.
-        ClientCommandRegistrationCallback.EVENT.register((d,a)->d.register(ClientCommandManager.literal("학교기증").executes(c->{open();return 1;})));
         ClientTickEvents.END_CLIENT_TICK.register(c->{
             if(c.player==null||c.world==null)return;
             if(open&&c.getOverlay()==null){open=false;MagicCodexClient.dismiss();c.setScreen(new SchoolScreen());}

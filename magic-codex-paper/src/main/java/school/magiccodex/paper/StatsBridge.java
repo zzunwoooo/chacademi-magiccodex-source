@@ -3,7 +3,8 @@ package school.magiccodex.paper;
 import java.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.command.*;
+import com.mojang.brigadier.Command;
+import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -12,11 +13,13 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import school.magiccodex.protocol.StatsProtocol;
 import school.magiccodex.protocol.StatsProtocol.*;
 
-final class StatsBridge implements PluginMessageListener,Listener,CommandExecutor,TabCompleter,AutoCloseable {
+final class StatsBridge implements PluginMessageListener,Listener,AutoCloseable {
     private final MagicCodexBridge plugin;
     private final ManaBridge mana;
     private final StatsService service=new StatsService();
     StatsService service(){return service;}
+    /** 웅크리고 우클릭(NicknameBridge)이 스탯창을 여는 데 쓴다. */
+    static volatile StatsBridge active;
     private final Map<UUID,Session> sessions=new HashMap<>();
     private final Map<UUID,Long> nextOpen=new HashMap<>();
     private final Map<UUID,Learned> learned=new HashMap<>();
@@ -25,30 +28,32 @@ final class StatsBridge implements PluginMessageListener,Listener,CommandExecuto
     private static class Session {final long token;final UUID target;long expires,nextRefresh,nextAction;Session(long token,UUID target,long now){this.token=token;this.target=target;expires=now+20000;nextRefresh=now+3000;}}
     private static long now(){return System.nanoTime()/1_000_000;}
     StatsBridge(MagicCodexBridge plugin,ManaBridge mana){
-        this.plugin=plugin;this.mana=mana;
+        this.plugin=plugin;this.mana=mana;active=this;
         plugin.getServer().getMessenger().registerIncomingPluginChannel(plugin,StatsProtocol.REQUEST,this);
         plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin,StatsProtocol.RESPONSE);
         Bukkit.getPluginManager().registerEvents(this,plugin);
         Bukkit.getServicesManager().register(StatsService.class,service,plugin,ServicePriority.Normal);
-        Objects.requireNonNull(plugin.getCommand("스텟창")).setExecutor(this);plugin.getCommand("스텟창").setTabCompleter(this);
+        if(CodexCommands.ready(plugin,"/스탯창")){
+            ChacaApi.playerCommand(plugin,Commands.literal("스탯창").executes(ctx->{var p=CodexCommands.self(ctx);open(p,p);return Command.SINGLE_SUCCESS;})
+                .then(Commands.argument("닉네임",ChacaApi.player()).executes(ctx->{var p=CodexCommands.self(ctx);open(p,ChacaApi.resolveOnline(ctx,"닉네임"));return Command.SINGLE_SUCCESS;})),
+                "스탯창 열기 (닉네임을 넣으면 그 유저의 스탯창)",List.of());
+        }
+        // 닉네임 저장소(DisplayNames)는 허브보다 먼저 만들어지므로 그 명령은 여기서 붙인다.
+        if(plugin.names()!=null)plugin.names().nicknames().registerCommands();
+        // /테스트 화면 미리보기 (MagicCodexBridge.onEnable 을 고치지 않고 여기서 만든다)
+        try{new PreviewSender(plugin,mana);}catch(RuntimeException|LinkageError error){plugin.getLogger().warning("미리보기 명령 준비 실패: "+error);}
         Bukkit.getScheduler().runTaskTimer(plugin,()->{long n=now();sessions.values().removeIf(s->s.expires<n);learned.values().removeIf(s->s.until()<n);nextOpen.values().removeIf(t->t<n);},200,200);
     }
-    @Override public boolean onCommand(CommandSender sender,Command cmd,String label,String[] args){
-        if(!(sender instanceof Player viewer)){sender.sendMessage("게임 안에서 사용해 주세요.");return true;}
-        if(!viewer.hasPermission("magiccodex.stats.view")){viewer.sendMessage("스테이터스를 열 권한이 없습니다.");return true;}
-        if(args.length>1){viewer.sendMessage("/스텟창 [유저 닉네임]");return true;}
-        long n=now();if(nextOpen.getOrDefault(viewer.getUniqueId(),0L)>n)return true;nextOpen.put(viewer.getUniqueId(),n+1000);
-        if(!viewer.getListeningPluginChannels().contains(StatsProtocol.RESPONSE)){viewer.sendMessage("최신 Magic Codex 모드가 필요합니다.");return true;}
-        Player target=args.length==0?viewer:plugin.names().resolve(args[0]);
-        if(!visible(viewer,target)){viewer.sendMessage("접속 중인 플레이어를 찾을 수 없습니다.");return true;}
+    /** 스탯창 열기 (/스탯창, 웅크리고 우클릭). 실패는 유저가 고칠 수 있는 이유만 알린다. */
+    void open(Player viewer,Player target)throws com.mojang.brigadier.exceptions.CommandSyntaxException{
+        if(!viewer.hasPermission("magiccodex.stats.view"))throw ChacaApi.error("스탯창을 열 수 없어요");
+        long n=now();if(nextOpen.getOrDefault(viewer.getUniqueId(),0L)>n)return;nextOpen.put(viewer.getUniqueId(),n+1000);
+        if(!viewer.getListeningPluginChannels().contains(StatsProtocol.RESPONSE))throw ChacaApi.error("최신 MagicCodex 모드가 필요해요");
+        if(!visible(viewer,target))throw ChacaApi.error("접속 중인 유저를 찾을 수 없어요");
         var session=new Session(++serial,target.getUniqueId(),n);sessions.put(viewer.getUniqueId(),session);
-        snapshot(viewer,target,session,StatsProtocol.OPEN);return true;
+        snapshot(viewer,target,session,StatsProtocol.OPEN);
     }
     private boolean visible(Player viewer,Player target){return target!=null&&target.isOnline()&&viewer.canSee(target);}
-    @Override public List<String> onTabComplete(CommandSender sender,Command command,String alias,String[] args){
-        if(!(sender instanceof Player p)||args.length!=1||!p.hasPermission("magiccodex.stats.view"))return List.of();
-        return Bukkit.getOnlinePlayers().stream().filter(t->visible(p,t)).map(t->plugin.names().name(t)).filter(n->n.toLowerCase(Locale.ROOT).startsWith(args[0].toLowerCase(Locale.ROOT))).sorted().toList();
-    }
     @Override public void onPluginMessageReceived(String channel,Player viewer,byte[] bytes){
         if(!channel.equals(StatsProtocol.REQUEST))return;
         Request r;try{r=StatsProtocol.decodeRequest(bytes);}catch(IllegalArgumentException e){return;}
@@ -92,5 +97,5 @@ final class StatsBridge implements PluginMessageListener,Listener,CommandExecuto
     @EventHandler public void quit(PlayerQuitEvent e){UUID id=e.getPlayer().getUniqueId();sessions.remove(id);nextOpen.remove(id);learned.remove(id);service.remove(id);
         var it=sessions.entrySet().iterator();while(it.hasNext()){var entry=it.next();if(entry.getValue().target.equals(id)){var p=Bukkit.getPlayer(entry.getKey());if(p!=null)send(p,new Response(StatsProtocol.GONE,entry.getValue().token,id,"상대방이 접속을 종료했습니다.",null));it.remove();}}
     }
-    @Override public void close(){sessions.clear();nextOpen.clear();learned.clear();service.clear();Bukkit.getServicesManager().unregister(service);}
+    @Override public void close(){if(active==this)active=null;sessions.clear();nextOpen.clear();learned.clear();service.clear();Bukkit.getServicesManager().unregister(service);}
 }

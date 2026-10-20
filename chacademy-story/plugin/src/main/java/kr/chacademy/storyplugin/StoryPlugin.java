@@ -4,16 +4,20 @@ import kr.chacademy.storyplugin.StoryState.Effect;
 import kr.chacademy.storyplugin.StoryState.Kind;
 import kr.chacademy.storyplugin.StoryState.PlayerStory;
 import kr.chacademy.storyplugin.StoryState.Request;
+import com.mojang.brigadier.builder.ArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -42,14 +46,14 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import java.util.regex.Pattern;
 
 /**
  * 차카데미 메인 스토리 서버 쪽.
  * <ul>
- *   <li>/cutscene play &lt;플레이어&gt; &lt;id&gt; → 컷신, 끝나면 config on-finish 명령</li>
- *   <li>/storydialogue &lt;플레이어&gt; &lt;id&gt; → 대화 (콘솔 가능), 선택지 이벤트·끝마다 서버 명령어 파일의 명령</li>
- *   <li>/affinity → 호감도. MagicCodexBridge 가 있으면 그 값 (ChacaNPC 와 같음), 없으면 affinity.yml</li>
+ *   <li>/대화관리 재생 &lt;닉네임|모두&gt; 컷신 &lt;id&gt; → 컷신, 끝나면 config on-finish 명령</li>
+ *   <li>/대화관리 재생 &lt;닉네임|모두&gt; 대화 &lt;id&gt; → 대화 (콘솔 가능), 끝나면 dialogues/server_command.yml 의 명령</li>
+ *   <li>/테스트 스토리 대화|컷신 &lt;id&gt; [닉네임] → 기록·보상 없는 미리보기, /유저관리 &lt;닉네임&gt; 스토리기록 → 기록 보기·초기화</li>
+ *   <li>명령은 MagicCodexBridge 명령어 허브 ({@link ChacaLink}) 에 붙는다. 호감도는 MagicCodex 하나로만 ({@link MagicCodexLink})</li>
  *   <li>대사의 {player} = MagicCodex 한글 닉네임, config 의 dialogue-placeholders = PlaceholderAPI 값</li>
  * </ul>
  * 구조:
@@ -62,8 +66,7 @@ import java.util.regex.Pattern;
  * </ul>
  * 모든 상태는 메인 스레드에서만 건드린다.
  */
-public class StoryPlugin extends JavaPlugin implements PluginMessageListener, TabExecutor, Listener {
-    private static final Pattern ID = StorySafety.ID;
+public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Listener {
     /** 접속 직후 이만큼은 기다렸다가 스토리를 보낸다 (화면이 다 뜨기 전에 보내지 않게). */
     private static final long JOIN_DELAY_MS = 2000;
     /** 접속 뒤 이 시간까지 모드 채널이 안 잡히면 "모드 없음" 으로 본다 (채널 등록은 접속 뒤 몇 틱 늦게 온다). */
@@ -82,8 +85,6 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
     private final Map<UUID, StorySafety.TokenBucket> buckets = new HashMap<>();
     private final Map<UUID,StoryCatalog> clientCatalogs=new HashMap<>();
     private final Map<UUID,Long> catalogUpdated=new HashMap<>();
-    private final Map<UUID,String> completionNames=new HashMap<>();
-    private final Map<UUID,Long> nameUpdated=new HashMap<>();
     private List<String> registeredCutscenes=List.of();
     private final Map<UUID, Long> joinedAt = new HashMap<>();
     private final ReloadTickets<CommandSender> reloadTickets=new ReloadTickets<>();
@@ -92,7 +93,6 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
     private final DialogueAcks dialogueAcks = new DialogueAcks();
     private final Set<UUID> helloSent = new HashSet<>();
     private final Map<UUID, Long> lastPacketLog = new HashMap<>();
-    private AffinityStore affinity;
     private MagicCodexLink codex;
     private StoryProtection protection;
 
@@ -108,9 +108,6 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         saveDefaultConfig();
         File dialogues = new File(getDataFolder(), "dialogues");
         dialogues.mkdirs();
-        affinity = new AffinityStore(new File(getDataFolder(), "affinity.yml"), getLogger());
-        applyAffinityConfig();
-        affinity.load();
         codex = new MagicCodexLink(getLogger());
         protection = new StoryProtection(() -> getConfig().getBoolean("protect-during-story", true),
                 () -> Math.max(0, getConfig().getLong("protect-max-seconds", 900)) * 1000L);
@@ -120,7 +117,11 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
                 r -> Bukkit.getScheduler().runTask(this, r), getLogger());
         ready = true;
         applyDefs(loadDefs(dialogues), null);
-        reloadServerSettings(Bukkit.getConsoleSender());
+        try {
+            reloadServerSettings();
+        } catch (Exception e) {
+            getLogger().log(Level.SEVERE, "스토리 서버 설정을 읽지 못했습니다 (config.yml / dialogues/server_command.yml)", e);
+        }
         registeredCutscenes=getConfig().getStringList("cutscenes").stream().filter(StorySafety::validId).toList();
 
         Messenger m = getServer().getMessenger();
@@ -132,23 +133,16 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
                 StoryCodec.CUTSCENE_ABORT, StoryCodec.STORY_FAIL, StoryCodec.DIALOGUE_READY, StoryCodec.DIALOGUE_REWARD, StoryCodec.STORY_CATALOG, StoryCodec.DIALOGUE_SESSION_SIGNAL, StoryCodec.RELOAD_RESULT)) {
             m.registerIncomingPluginChannel(this, in, this);
         }
-        for (String c : List.of("cutscene", "storydialogue", "affinity", "스토리")) {
-            var cmd = getCommand(c);
-            if (cmd != null) {
-                cmd.setExecutor(this);
-                cmd.setTabCompleter(this);
-            }
-        }
+        registerCommands();
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(protection, this);
-        Bukkit.getScheduler().runTaskTimerAsynchronously(this, affinity::saveIfDirty, 100, 100);
         Bukkit.getScheduler().runTaskTimer(this, this::heartbeat, 20, 20);
         // /reload 등으로 켜졌을 때 이미 접속해 있는 사람도 이어서
         long now = System.currentTimeMillis();
         for (Player p : Bukkit.getOnlinePlayers()) joinedAt.put(p.getUniqueId(), now);
         // MagicCodexBridge 가 서비스를 등록한 뒤 연결 (서버가 다 켜진 다음 틱)
         Bukkit.getScheduler().runTask(this, () -> {
-            if (!codex.connect()) getLogger().info("MagicCodexBridge 없음 — 호감도는 affinity.yml, {player} 는 PlaceholderAPI 또는 마인크래프트 닉네임");
+            if (!codex.connect()) getLogger().warning("MagicCodexBridge 없음 — 스토리 호감도는 적용되지 않고, {player} 는 PlaceholderAPI 또는 마인크래프트 닉네임을 씁니다");
         });
         if (getConfig().getBoolean("finish-if-missing-mod", false)) {
             getLogger().warning("finish-if-missing-mod: true — 모드가 없는 (또는 모드 채널을 숨긴) 플레이어는 스토리를 보지 않고도 끝 명령·호감도를 받습니다.");
@@ -159,11 +153,10 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
     @Override
     public void onDisable() {
         dialogueAcks.clear();endingSessions.clear();reloadTickets.clear();
-        clientCatalogs.clear();catalogUpdated.clear();completionNames.clear();nameUpdated.clear();
+        clientCatalogs.clear();catalogUpdated.clear();
         Messenger m = getServer().getMessenger();
         m.unregisterIncomingPluginChannel(this);
         m.unregisterOutgoingPluginChannel(this);
-        if (affinity != null) affinity.saveIfDirty();
         // 서버가 꺼질 때만 이 스레드에서 바로 쓴다
         if (ready && store != null) {
             Map<String, Object> snap = state.snapshot();
@@ -174,15 +167,6 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         buckets.clear();
         joinedAt.clear();
         helloSent.clear();
-    }
-
-    private void applyAffinityConfig() {
-        affinity.limits(getConfig().getInt("affinity-default", 25), getConfig().getInt("affinity-min", -100),
-                getConfig().getInt("affinity-max", 100));
-    }
-
-    public AffinityStore affinity() {
-        return affinity;
     }
 
     public MagicCodexLink codex() {
@@ -376,9 +360,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
                 + (noGraph.isEmpty() ? "" : ", dialogue.yml 없음 " + noGraph.size() + "개")
                 + (brokenDefs.isEmpty() ? "" : ", 오류 " + brokenDefs.size() + "개") + ")";
         getLogger().info(summary);
-        if (tell != null && !(tell instanceof ConsoleCommandSender)) {
-            tell.sendMessage(ChatColor.GRAY + summary + (load.warnings().isEmpty() && brokenDefs.isEmpty() ? "" : " — 자세한 내용은 콘솔"));
-        }
+        if (tell != null && !(tell instanceof ConsoleCommandSender)) ChacaLink.ok(tell, summary);
     }
 
     // ================================================================ 모드 확인
@@ -393,7 +375,10 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
 
     private void message(Player p, String key, String def) {
         String msg = getConfig().getString(key, def);
-        if (msg != null && !msg.isEmpty()) p.sendMessage(color(msg));
+        if (msg == null || msg.isEmpty()) return;
+        String text = ChatColor.stripColor(color(msg)).strip();
+        if (text.startsWith("(") && text.endsWith(")")) text = text.substring(1, text.length() - 1);
+        ChacaLink.notify(p, "warning", "story-" + key, text, "", 3000);
     }
 
     private long joined(Player p) {
@@ -424,7 +409,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         r.mode = mode;
         ps.queue.add(r);
         if (ps.active != null) note(who, "[Story cutscene] " + id + " queued behind " + ps.active.id
-                + (ps.active.parked ? " (failed/parked; use /cutscene stop <player> to cancel only that request)" : ""));
+                + (ps.active.parked ? " (failed/parked; /대화관리 중지 <닉네임> 으로 그 요청만 취소)" : ""));
         saveSoon(null);
         pump(p);
         return true;
@@ -440,9 +425,9 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         var effect=LocalStoryRewards.resolve(key);
         if(effect==null)return;
         if(effect.affinityNpc()!=null) {
-            if(!codex.available()){p.sendMessage("§c스토리 호감도 연결을 사용할 수 없습니다. 관리자에게 알려 주세요.");return;}
+            if(!codex.available()){getLogger().warning("[LocalStoryReward] "+p.getName()+" "+key+": MagicCodex 호감도 연결 없음");rewardFailed(p);return;}
             codex.addAffinity(p.getUniqueId(),effect.affinityNpc(),effect.affinityDelta()).thenAccept(score->{
-                if(score==null)p.sendMessage("§c스토리 호감도 적용에 실패했습니다. 관리자에게 알려 주세요.");
+                if(score==null){getLogger().warning("[LocalStoryReward] "+p.getName()+" "+key+": 호감도 적용 실패");rewardFailed(p);}
                 else getLogger().info("[LocalStoryReward] "+p.getUniqueId()+" "+key+" applied score="+score);
             });
         } else {
@@ -453,8 +438,12 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
                         .invoke(discovery,p.getUniqueId(),effect.discoveryEvent(),effect.discoveryAmount()));
                 if(!applied)throw new IllegalStateException("discovery not ready");
                 getLogger().info("[LocalStoryReward] "+p.getUniqueId()+" "+key+" applied");
-            }catch(ReflectiveOperationException|RuntimeException e){p.sendMessage("§c스토리 마법 발견 적용에 실패했습니다. 관리자에게 알려 주세요.");getLogger().warning("Local story discovery effect unavailable: "+e.getClass().getSimpleName());}
+            }catch(ReflectiveOperationException|RuntimeException e){rewardFailed(p);getLogger().warning("Local story discovery effect unavailable: "+e);}
         }
+    }
+
+    private static void rewardFailed(Player p) {
+        ChacaLink.notify(p, "warning", "story-reward-fail", "스토리 보상을 받지 못했어요", "관리자에게 알려 주세요", 3000);
     }
 
     /** Only requests local playback. Does not inspect server dialogue files or completion/reward state. */
@@ -491,7 +480,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         StoryDef def = defs.get(id);
         if ((def == null || def.graph == null) && getConfig().getBoolean("require-server-graph", true)) {
             refuse(who, "대화 " + id + " 을(를) 열지 않습니다: 서버에 plugins/ChacademyStory/dialogues/" + id
-                    + "/dialogue.yml 이 없습니다 (넣고 /cutscene reload, 또는 config 의 require-server-graph: false)");
+                    + "/dialogue.yml 이 없습니다 (넣고 /서버관리 새로고침 스토리, 또는 config 의 require-server-graph: false)");
             return false;
         }
         PlayerStory ps = state.of(p.getUniqueId());
@@ -503,8 +492,8 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
                 return false;
             }
             case ALREADY_DONE -> {
-                note(who, p.getName() + ": 대화 " + id + " 은(는) 이미 끝냈습니다 — 다시 열지 않고 명령어도 실행하지 않습니다 (다시 보여 주려면 /storydialogue "
-                        + p.getName() + " " + id + " replay)");
+                note(who, p.getName() + ": 대화 " + id + " 은(는) 이미 끝냈습니다 — 다시 열지 않고 명령어도 실행하지 않습니다 (다시 보여 주려면 /테스트 스토리 대화 "
+                        + id + " " + p.getName() + ")");
                 return false;
             }
             case QUEUE_FULL -> {
@@ -525,12 +514,12 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
 
     private void note(CommandSender who, String msg) {
         getLogger().info(msg);
-        if (who != null && !(who instanceof ConsoleCommandSender)) who.sendMessage(ChatColor.GRAY + msg);
+        if (who != null && !(who instanceof ConsoleCommandSender)) ChacaLink.ok(who, msg);
     }
 
     private void refuse(CommandSender who, String msg) {
         getLogger().warning(msg);
-        if (who != null && !(who instanceof ConsoleCommandSender)) who.sendMessage(ChatColor.RED + msg);
+        if (who != null && !(who instanceof ConsoleCommandSender)) ChacaLink.fail(who, "스토리를 재생하지 못했어요", new IllegalStateException(msg));
     }
 
     private void prune(UUID id, PlayerStory ps) {
@@ -583,10 +572,6 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
 
     /** 1초마다: 채널을 기다리던 요청, 다시 보내기, 접속 뒤 밀린 효과, 보호 시간 한도, 대사 위치 저장. */
     private void heartbeat() {
-        long nameNow=System.currentTimeMillis();
-        for(Player online:Bukkit.getOnlinePlayers())if(nameNow-nameUpdated.getOrDefault(online.getUniqueId(),0L)>=2000){
-            completionNames.put(online.getUniqueId(),codex.nickname(online));nameUpdated.put(online.getUniqueId(),nameNow);
-        }
         long now = System.currentTimeMillis();
         for (Player p : Bukkit.getOnlinePlayers()) {
             UUID uuid = p.getUniqueId();
@@ -669,7 +654,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         if (brokenDefs.containsKey(a.id) || ((def == null || def.graph == null) && getConfig().getBoolean("require-server-graph", true))) {
             a.parked = true;
             getLogger().warning(p.getName() + ": 대화 " + a.id + " 을(를) 이어서 열 수 없습니다 — 서버에 dialogues/" + a.id
-                    + "/dialogue.yml 이 없거나 오류가 있습니다. 파일을 넣고 /cutscene reload 하면 다시 시도합니다.");
+                    + "/dialogue.yml 이 없거나 오류가 있습니다. 파일을 넣고 /서버관리 새로고침 스토리 하면 다시 시도합니다.");
             return;
         }
         // 저장된 장면이 지금 흐름에 없으면 (파일이 바뀜) 처음부터
@@ -688,10 +673,8 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         String vars = StoryCodec.encodeVars(textVars(p));
         List<String> npcs = def == null ? List.of() : def.npcs;
         if (!codex.available()) {
-            // 파일 호감도: 기록된 것 전부 + 이 대화의 NPC (기록이 없으면 서버 기본값을 명시해서 보낸다)
-            Map<String, Integer> scores = new TreeMap<>(affinity.all(uuid));
-            for (String n : npcs) scores.put(n, affinity.get(uuid, n));
-            deliverOpen(p, a, def, scores, vars);
+            // 호감도는 MagicCodex 하나로만: 연결이 없으면 점수 없이 연다 (모드·서버 모두 기본값으로 흐름을 따라감)
+            deliverOpen(p, a, def, new TreeMap<>(), vars);
             return;
         }
         // MagicCodex 호감도: 이 대화에 나오는 NPC (서버 yml 의 npcs) 만 물어본다
@@ -880,13 +863,13 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
             if (v == 0) continue;
             if (v > 0) ps.gained.merge(dialogueId, v, Integer::sum);
             final int amount = v;
+            String name = p.getName();
             if (codex.available()) {
-                String name = p.getName();
                 codex.addAffinity(p.getUniqueId(), npc, amount).thenAccept(now -> {
                     if (now == null) codex.affinityDropped(name, npc, amount);
                 });
             } else {
-                affinity.add(p.getUniqueId(), npc, amount);
+                codex.affinityDropped(name, npc, amount);
             }
             if (logging) getLogger().info(p.getName() + " 호감도 " + npc + " " + (amount > 0 ? "+" : "") + amount + " (" + why + ")");
         }
@@ -956,7 +939,10 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
                 }
                 case StoryCodec.RELOAD_RESULT -> {
                     var result=StoryCodec.reloadResult(message);CommandSender requester=reloadTickets.finish(uuid,result.token());
-                    if(requester!=null)requester.sendMessage((result.failures()==0?ChatColor.GREEN:ChatColor.RED)+"[Story client] "+p.getName()+": "+(result.failures()==0?"Reload OK (dialogues + cutscenes)":"Reload FAILED in "+result.failures()+" content categories; details on the target client.")+" Records preserved.");
+                    if(requester!=null){
+                        if(result.failures()==0)ChacaLink.ok(requester,nick(p)+" 님 클라이언트의 대화·컷신 파일을 새로고침했어요");
+                        else ChacaLink.fail(requester,nick(p)+" 님 클라이언트 파일에 오류가 있어요 (자세한 내용은 그 화면)",new IllegalStateException("[스토리] "+p.getName()+" 클라이언트 새로고침 실패 "+result.failures()+"종류"));
+                    }
                 }
                 case StoryCodec.DIALOGUE_SESSION_SIGNAL -> {
                     var signal=StoryCodec.sessionSignal(message);long now=System.currentTimeMillis();
@@ -1010,8 +996,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
                             saveSoon(null);
                             getLogger().warning("[Story cutscene] " + p.getName() + ": " + f.id() + " failed (" + reason
                                     + "); cancelled this request without completion/rewards. Continuing queued requests.");
-                            p.sendMessage(ChatColor.RED + "[Story cutscene] " + f.id() + " failed (" + reason
-                                    + "). Request cancelled; fix the content and play again. Progress/rewards preserved.");
+                            ChacaLink.notify(p, "warning", "story-cutscene-fail", "컷신을 재생하지 못했어요", "관리자에게 알려 주세요", 3000);
                             pump(p);
                         }
                         break;
@@ -1132,7 +1117,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         helloSent.remove(uuid);
         buckets.remove(uuid);
         lastPacketLog.remove(uuid);
-        clientCatalogs.remove(uuid);catalogUpdated.remove(uuid);completionNames.remove(uuid);nameUpdated.remove(uuid);
+        clientCatalogs.remove(uuid);catalogUpdated.remove(uuid);
         // 컷신도 대화도 지우지 않는다: 다시 접속하면 컷신은 처음부터, 대화는 저장된 곳부터 이어서 연다
         PlayerStory ps = state.players.get(uuid);
         if (ps != null && ps.active != null) ps.active.resetTransient();
@@ -1151,119 +1136,273 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         if (e.getProvider().getService().getName().equals(MagicCodexLink.FACADE)) codex.invalidate();
     }
 
-    // ================================================================ 명령어
 
-    @Override
-    public boolean onCommand(@NotNull CommandSender s, @NotNull Command cmd, @NotNull String label, @NotNull String[] a) {
-        if (!s.hasPermission("chacademy.story.admin")) {
-            s.sendMessage(ChatColor.RED + "스토리 관리자 권한이 필요합니다."); return true;
-        }
-        return switch (cmd.getName()) {
-            case "cutscene" -> label.equals("컷신") ? koreanCommand(s,false,a) : cutsceneCommand(s, a);
-            case "스토리" -> koreanCommand(s,true,a);
-            case "storydialogue" -> dialogueCommand(s, a);
-            case "affinity" -> affinityCommand(s, a);
-            default -> false;
-        };
-    }
+    // ================================================================ 명령어 (MagicCodexBridge 명령어 허브)
 
-    private boolean reloadServerSettings(CommandSender sender){
-        try{
-            File commandsFile=new File(getDataFolder(),"dialogues/server_command.yml");
-            if(commandsFile.length()>1_048_576)throw new IllegalArgumentException("server_command.yml exceeds 1 MiB");
-            Object candidate=commandsFile.isFile()?readYaml(commandsFile):Map.of("commands",Map.of());
-            ServerCommandRegistry.parse(candidate);
-            // Strict parsing before JavaPlugin.reloadConfig, which otherwise logs and falls back silently.
-            var checked=new YamlConfiguration();checked.load(new File(getDataFolder(),"config.yml"));
-            reloadConfig();endingCommands.replace(candidate);endingSessions.clear();dialogueAcks.clear();
-            registeredCutscenes=getConfig().getStringList("cutscenes").stream().filter(StorySafety::validId).toList();
-            applyAffinityConfig();codex.resetPlaceholderLookup();if(!codex.available())codex.connect();
-            sender.sendMessage(ChatColor.GREEN+"[Story server] Reload OK: config.yml + dialogues/server_command.yml ("+endingCommands.size()+" dialogue IDs). Progress/rewards preserved.");return true;
-        }catch(Exception e){sender.sendMessage(ChatColor.RED+"[Story server] Reload FAILED; previous command list retained: "+e.getMessage());return false;}
-    }
-    private boolean koreanCommand(CommandSender s,boolean dialogue,String[] a) {
-        String root=dialogue?"스토리":"컷신";
-        if(a.length==0){koreanHelp(s,root);return true;}
-        String action=StoryCommandNames.action(a[0]);
-        if(action.equals("reload")) {
-            if(dialogue)reloadServerSettings(s);
-            List<Player> players=a.length>1?targets(s,String.join(" ",java.util.Arrays.copyOfRange(a,1,a.length))):s instanceof Player p?List.of(p):List.of();
-            if(players.isEmpty()){s.sendMessage(ChatColor.YELLOW+"[Story client] Not reloaded: specify an online player from console, e.g. /storydialogue or /\uC2A4\uD1A0\uB9AC \uB9AC\uB85C\uB4DC <player>.");return true;}
-            for(Player p:players) {
-                if(dialogue&&p.getListeningPluginChannels().contains(StoryCodec.RELOAD_REQUEST)){
-                    var ticket=reloadTickets.begin(p.getUniqueId(),s);
-                    p.sendPluginMessage(this,StoryCodec.RELOAD_REQUEST,StoryCodec.reloadRequest(ticket.token()));
-                    s.sendMessage(ChatColor.GRAY+"[Story client] "+p.getName()+": reload requested; awaiting result.");
-                    Bukkit.getScheduler().runTaskLater(this,()->{var requester=reloadTickets.finish(p.getUniqueId(),ticket.token());if(requester!=null)requester.sendMessage(ChatColor.RED+"[Story client] "+p.getName()+": no reload result received (timeout).");},200L);
-                    continue;
-                }
-                if(!p.getListeningPluginChannels().contains(StoryCodec.STORY_RELOAD)){s.sendMessage(ChatColor.RED+p.getName()+": 최신 스토리 모드가 필요합니다.");continue;}
-                p.sendPluginMessage(this,StoryCodec.STORY_RELOAD,StoryCodec.reloadContent(dialogue?StoryCodec.KIND_DIALOGUE:StoryCodec.KIND_CUTSCENE));
-                s.sendMessage(ChatColor.GRAY+p.getName()+": 클라이언트 파일 검사를 요청했습니다. 결과는 대상 화면에 표시됩니다.");
-            }
-            return true;
-        }
-        if(action.equals("serverreload"))return cutsceneCommand(s,new String[]{"reload"});
-        if(action.equals("list")) {
-            List<String> ids=completionIds(dialogue,a.length>1?String.join(" ",java.util.Arrays.copyOfRange(a,1,a.length)):s instanceof Player player?player.getName():"@a");
-            s.sendMessage(ChatColor.GOLD+root+" 목록: "+String.join(", ",ids));return true;
-        }
-        if(action.equals("play")&&a.length>=3) {
-            try {
-                var play=StoryCommandNames.play(dialogue,a);
-                return dialogue?dialogueCommand(s,new String[]{play.target(),play.id()}):cutsceneCommand(s,new String[]{"play",play.target(),play.id(),play.mode()});
-            } catch(IllegalArgumentException e){s.sendMessage(ChatColor.RED+e.getMessage());return true;}
-        }
-        if(Set.of("stop","clear").contains(action)&&a.length>=2){
-            String target=String.join(" ",java.util.Arrays.copyOfRange(a,1,a.length));
-            return dialogue&&action.equals("stop")?dialogueCommand(s,new String[]{"stop",target}):cutsceneCommand(s,new String[]{action,target});
-        }
-        koreanHelp(s,root);return true;
-    }
-    private void koreanHelp(CommandSender s,String root) {
-        s.sendMessage(ChatColor.GOLD+"/"+root+" 재생 <유저·한글닉네임> <식별자>");
-        s.sendMessage(ChatColor.GRAY+"/"+root+" 중지 <유저> · /"+root+" 취소 <유저> · /"+root+" 목록 [유저]");
-        s.sendMessage(ChatColor.GRAY+"/"+root+" 리로드 [유저] — 서버 설정 + 대상 클라이언트 파일 검사, 기록 유지");
-        s.sendMessage(ChatColor.GRAY+"/"+root+" 서버리로드 — 서버 설정·기존 서버 대화 파일 검사");
+    /** 서버 설정 + dialogues/server_command.yml + 서버 대화 파일 다시 읽기. 실패하면 예전 값을 그대로 두고 예외를 던진다. */
+    private void reloadServerSettings() throws Exception {
+        File commandsFile = new File(getDataFolder(), "dialogues/server_command.yml");
+        if (commandsFile.length() > 1_048_576) throw new IllegalArgumentException("server_command.yml exceeds 1 MiB");
+        Object candidate = commandsFile.isFile() ? readYaml(commandsFile) : Map.of("commands", Map.of());
+        ServerCommandRegistry.parse(candidate);
+        // JavaPlugin.reloadConfig 는 오류를 삼키고 빈 설정으로 넘어가므로 먼저 엄격하게 읽어 본다
+        var checked = new YamlConfiguration();
+        checked.load(new File(getDataFolder(), "config.yml"));
+        reloadConfig();
+        endingCommands.replace(candidate);
+        endingSessions.clear();
+        dialogueAcks.clear();
+        registeredCutscenes = getConfig().getStringList("cutscenes").stream().filter(StorySafety::validId).toList();
+        codex.resetPlaceholderLookup();
+        if (!codex.available()) codex.connect();
+        getLogger().info("[스토리 새로고침] config.yml + dialogues/server_command.yml (대화 " + endingCommands.size() + "개). 진행·보상 기록은 그대로입니다.");
     }
 
-    private boolean cutsceneCommand(CommandSender s, String[] a) {
-        if (a.length == 0) return false;
-        switch (a[0].toLowerCase(Locale.ROOT)) {
-            case "reload" -> { reloadServerSettings(s); }
-            case "play" -> {
-                if (a.length < 3) return false;
-                if (!ID.matcher(a[2]).matches()) {
-                    s.sendMessage(ChatColor.RED + "컷신 id는 소문자, 숫자, _, - 만: " + a[2]);
-                    return true;
-                }
-                int mode = a.length >= 4 ? switch (a[3].toLowerCase(Locale.ROOT)) {
-                    case "skip" -> StoryCodec.MODE_SKIP;
-                    case "noskip" -> StoryCodec.MODE_NOSKIP;
-                    default -> StoryCodec.MODE_AUTO;
-                } : StoryCodec.MODE_AUTO;
-                List<Player> t = targets(s, a[1]);
-                int n = 0;
-                for (Player p : t) if (requestCutscene(s, p, a[2], mode)) n++;
-                s.sendMessage(ChatColor.GRAY + "컷신 " + a[2] + " 재생 요청: " + n + "명" + (n < t.size() ? " (" + (t.size() - n) + "명 제외)" : ""));
-            }
-            case "stop" -> {
-                if (a.length < 2) return false;
-                List<Player> t = targets(s, a[1]);
-                t.forEach(this::stopCutscene);
-                s.sendMessage(ChatColor.GRAY + "컷신 멈춤: " + t.size() + "명");
-            }
-            case "clear" -> {
-                if (a.length < 2) return false;
-                List<Player> t = targets(s, a[1]);
-                for (Player p : t) clearStory(p);
-                s.sendMessage(ChatColor.GRAY + "재생 중·대기 중인 스토리를 모두 취소: " + t.size() + "명 (끝 명령은 실행하지 않음, 완료 기록은 그대로)");
-            }
-            default -> {
-                return false;
-            }
+    /** 명령 대상. 실행 단계에서 정한다 (못 찾으면 허브가 유저용 실패 알림). */
+    @FunctionalInterface
+    private interface Targets {
+        List<Player> get(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException;
+    }
+
+    private static final String NICK = "닉네임";
+    private static final Targets EVERYONE = ctx -> {
+        List<Player> all = List.copyOf(Bukkit.getOnlinePlayers());
+        if (all.isEmpty()) throw ChacaLink.error("접속한 유저가 없어요");
+        return all;
+    };
+    private static final Targets NAMED = ctx -> List.of(ChacaLink.resolveOnline(ctx, NICK));
+
+    /** 생략 가능한 [닉네임]: 없으면 명령을 친 사람 (콘솔이면 실패). */
+    private static Player selfOr(CommandContext<CommandSourceStack> ctx, boolean named) throws CommandSyntaxException {
+        if (named) return ChacaLink.resolveOnline(ctx, NICK);
+        if (ctx.getSource().getSender() instanceof Player p) return p;
+        throw ChacaLink.error("콘솔에서는 닉네임을 적어 주세요");
+    }
+
+    private static String nick(Player p) {
+        return ChacaLink.name(p.getUniqueId());
+    }
+
+    private static String who(List<Player> players) {
+        return players.size() == 1 ? nick(players.get(0)) + " 님" : players.size() + "명";
+    }
+
+    private void registerCommands() {
+        if (!ChacaLink.ready()) {
+            getLogger().warning("MagicCodexBridge 명령어 허브가 없어 /대화관리·/테스트 스토리·/유저관리 스토리기록 명령을 등록하지 않았습니다.");
+            return;
         }
-        return true;
+        try {
+            // /대화관리 재생 <닉네임|모두> <대화|컷신> <ID> [건너뛰기허용|건너뛰기금지|자동]
+            var play = Commands.literal("재생");
+            var playAll = Commands.literal("모두");
+            addPlayKinds(playAll, EVERYONE, "all");
+            var playOne = Commands.argument(NICK, ChacaLink.player());
+            addPlayKinds(playOne, NAMED, "arg");
+            play.then(playAll).then(playOne);
+            ChacaLink.branch(this, ChacaLink.대화관리, play, "스토리 대화·컷신 재생 (대기열 순서대로)", "재생 ");
+
+            ChacaLink.branch(this, ChacaLink.대화관리, Commands.literal("중지")
+                    .then(Commands.literal("모두").executes(ctx -> stopCommand(ctx, EVERYONE)))
+                    .then(Commands.argument(NICK, ChacaLink.player()).executes(ctx -> stopCommand(ctx, NAMED))),
+                    "보고 있는 스토리 멈추기 (끝 명령 실행 안 함)", "중지 ");
+
+            ChacaLink.branch(this, ChacaLink.대화관리, Commands.literal("대기열비우기")
+                    .then(Commands.literal("모두").executes(ctx -> clearCommand(ctx, EVERYONE)))
+                    .then(Commands.argument(NICK, ChacaLink.player()).executes(ctx -> clearCommand(ctx, NAMED))),
+                    "재생 중·대기 중인 스토리 모두 취소 (완료 기록 유지)", "대기열비우기 ");
+
+            ChacaLink.branch(this, ChacaLink.대화관리, Commands.literal("목록")
+                    .executes(ctx -> listCommand(ctx, false))
+                    .then(Commands.argument(NICK, ChacaLink.player()).executes(ctx -> listCommand(ctx, true))),
+                    "재생할 수 있는 대화·컷신 ID 보기", "목록");
+
+            ChacaLink.branch(this, ChacaLink.대화관리, Commands.literal("클라이언트새로고침")
+                    .executes(ctx -> clientReloadCommand(ctx, false))
+                    .then(Commands.argument(NICK, ChacaLink.player()).executes(ctx -> clientReloadCommand(ctx, true))),
+                    "유저 클라이언트의 대화·컷신 파일 다시 읽기 (기록 유지)", "클라이언트새로고침");
+
+            // /유저관리 <닉네임> 스토리기록 <보기 [대화]|초기화 <대화|전체> 확인>
+            ChacaLink.branch(this, ChacaLink.유저관리, Commands.literal("스토리기록")
+                    .then(Commands.literal("보기")
+                            .executes(ctx -> ledgerCommand(ctx, null))
+                            .then(Commands.argument("대화", ChacaLink.word(() -> defs.keySet()))
+                                    .suggests(this::suggestLedgerIds)
+                                    .executes(ctx -> ledgerCommand(ctx, ctx.getArgument("대화", String.class)))))
+                    .then(Commands.literal("초기화")
+                            .then(Commands.literal("전체")
+                                    .executes(ctx -> { throw confirmNeeded(); })
+                                    .then(Commands.literal("확인").executes(ctx -> resetCommand(ctx, null))))
+                            .then(Commands.argument("대화", ChacaLink.word(() -> defs.keySet()))
+                                    .suggests(this::suggestLedgerIds)
+                                    .executes(ctx -> { throw confirmNeeded(); })
+                                    .then(Commands.literal("확인").executes(ctx -> resetCommand(ctx, ctx.getArgument("대화", String.class)))))),
+                    "스토리 진행·완료 기록 보기·초기화 (이 서버)", "스토리기록 보기");
+
+            // /테스트 스토리 <대화 <ID>|컷신 <ID>> [닉네임]
+            ChacaLink.branch(this, ChacaLink.테스트, Commands.literal("스토리")
+                    .then(Commands.literal("대화").then(idArgument(true, "self")
+                            .executes(ctx -> previewDialogue(ctx, false))
+                            .then(Commands.argument(NICK, ChacaLink.player()).executes(ctx -> previewDialogue(ctx, true)))))
+                    .then(Commands.literal("컷신").then(idArgument(false, "self")
+                            .executes(ctx -> previewCutscene(ctx, false))
+                            .then(Commands.argument(NICK, ChacaLink.player()).executes(ctx -> previewCutscene(ctx, true))))),
+                    "스토리 대화·컷신 미리보기 (조건·기록 무시, 보상 없음)", "스토리 대화 ");
+
+            ChacaLink.reload(this, "스토리", "스토리 서버 설정 + 대화 파일", () -> {
+                reloadServerSettings();
+                File dialogues = new File(getDataFolder(), "dialogues");
+                applyDefs(loadDefs(dialogues), null);
+            });
+            ChacaLink.status(this, "스토리", () -> {
+                int mod = 0, online = 0;
+                for (Player p : Bukkit.getOnlinePlayers()) { online++; if (hasMod(p)) mod++; }
+                return "정상 · 스토리 모드 " + mod + "/" + online + "명 · 호감도 " + (codex.available() ? "MagicCodex 연결" : "대기 (MagicCodex 연결 없음)");
+            });
+        } catch (RuntimeException e) {
+            getLogger().log(Level.WARNING, "스토리 명령을 허브에 등록하지 못했습니다", e);
+        }
+    }
+
+    private static CommandSyntaxException confirmNeeded() {
+        return ChacaLink.error("되돌릴 수 없어요. 끝에 '확인'을 붙여 다시 입력해 주세요");
+    }
+
+    private void addPlayKinds(ArgumentBuilder<CommandSourceStack, ?> parent, Targets targets, String scope) {
+        parent.then(Commands.literal("대화").then(idArgument(true, scope).executes(ctx -> playDialogueCommand(ctx, targets))));
+        parent.then(Commands.literal("컷신").then(idArgument(false, scope)
+                .executes(ctx -> playCutsceneCommand(ctx, targets, StoryCodec.MODE_AUTO))
+                .then(Commands.literal("건너뛰기허용").executes(ctx -> playCutsceneCommand(ctx, targets, StoryCodec.MODE_SKIP)))
+                .then(Commands.literal("건너뛰기금지").executes(ctx -> playCutsceneCommand(ctx, targets, StoryCodec.MODE_NOSKIP)))
+                .then(Commands.literal("자동").executes(ctx -> playCutsceneCommand(ctx, targets, StoryCodec.MODE_AUTO)))));
+    }
+
+    /** scope: all = 접속자 전체의 클라 목록, arg = 앞 칸 닉네임의 클라 목록, self = 명령 친 사람 (콘솔이면 전체). */
+    private RequiredArgumentBuilder<CommandSourceStack, String> idArgument(boolean dialogue, String scope) {
+        return Commands.argument("ID", ChacaLink.word(() -> completionIds(dialogue, null)))
+                .suggests((ctx, b) -> {
+                    UUID target = null;
+                    try {
+                        if (scope.equals("arg")) target = ChacaLink.find(ctx.getArgument(NICK, String.class));
+                        else if (scope.equals("self") && ctx.getSource().getSender() instanceof Player p) target = p.getUniqueId();
+                    } catch (RuntimeException ignored) {
+                    }
+                    if (scope.equals("arg") && target == null) return b.buildFuture();
+                    return suggest(b, completionIds(dialogue, target));
+                });
+    }
+
+    private static CompletableFuture<Suggestions> suggest(SuggestionsBuilder b, java.util.Collection<String> values) {
+        String typed = b.getRemaining().toLowerCase(Locale.ROOT);
+        for (String v : values) if (v.toLowerCase(Locale.ROOT).startsWith(typed)) b.suggest(v);
+        return b.buildFuture();
+    }
+
+    private CompletableFuture<Suggestions> suggestLedgerIds(CommandContext<CommandSourceStack> ctx, SuggestionsBuilder b) {
+        Set<String> ids = new TreeSet<>(defs.keySet());
+        try {
+            PlayerStory ps = state.players.get(ChacaLink.target(ctx));
+            if (ps != null) ids.addAll(ps.done.keySet());
+        } catch (Exception ignored) {
+        }
+        return suggest(b, ids);
+    }
+
+    /** 자동완성 후보: 컷신은 config 의 cutscenes + 클라가 알려 온 목록, 대화는 클라가 알려 온 목록. target null = 접속자 전체. */
+    private List<String> completionIds(boolean dialogue, UUID target) {
+        var ids = new TreeSet<String>();
+        if (!dialogue) ids.addAll(registeredCutscenes);
+        if (target == null) clientCatalogs.values().forEach(c -> ids.addAll(dialogue ? c.dialogues() : c.cutscenes()));
+        else {
+            StoryCatalog c = clientCatalogs.get(target);
+            if (c != null) ids.addAll(dialogue ? c.dialogues() : c.cutscenes());
+        }
+        return List.copyOf(ids);
+    }
+
+    private static String id(CommandContext<CommandSourceStack> ctx, boolean dialogue) throws CommandSyntaxException {
+        String id = ctx.getArgument("ID", String.class);
+        if (!StorySafety.validId(id)) throw ChacaLink.error((dialogue ? "대화" : "컷신") + " ID는 영문 소문자·숫자·_·-만 쓸 수 있어요");
+        return id;
+    }
+
+    /** 대화 재생 (예전 storydialogue &lt;플레이어&gt; &lt;id&gt; 와 같은 경로: 클라이언트 대화 파일 + 서버 끝 명령 세션). */
+    private int playDialogueCommand(CommandContext<CommandSourceStack> ctx, Targets targets) throws CommandSyntaxException {
+        String id = id(ctx, true);
+        List<Player> t = targets.get(ctx);
+        int n = 0;
+        for (Player p : t) if (p.getListeningPluginChannels().contains(StoryCodec.DIALOGUE_VIEW)) { requestNicknameDialogue(p, id); n++; }
+        if (n == 0) throw ChacaLink.error(t.size() == 1 ? nick(t.get(0)) + " 님은 최신 스토리 모드가 없어요" : "최신 스토리 모드가 있는 유저가 없어요");
+        ChacaLink.ok(ctx.getSource().getSender(), who(t) + "에게 대화 " + id + " 재생을 요청했어요" + (n < t.size() ? " (모드 없음 " + (t.size() - n) + "명 제외)" : ""));
+        return 1;
+    }
+
+    private int playCutsceneCommand(CommandContext<CommandSourceStack> ctx, Targets targets, int mode) throws CommandSyntaxException {
+        String id = id(ctx, false);
+        List<Player> t = targets.get(ctx);
+        int n = 0;
+        for (Player p : t) if (requestCutscene(null, p, id, mode)) n++;
+        if (n == 0) throw ChacaLink.error(t.size() == 1 ? nick(t.get(0)) + " 님은 이미 이 컷신을 보는 중이거나 대기열이 가득 찼어요" : "재생을 요청할 수 있는 유저가 없어요");
+        ChacaLink.ok(ctx.getSource().getSender(), who(t) + "에게 컷신 " + id + " 재생을 요청했어요" + (n < t.size() ? " (" + (t.size() - n) + "명 제외)" : ""));
+        return 1;
+    }
+
+    private int stopCommand(CommandContext<CommandSourceStack> ctx, Targets targets) throws CommandSyntaxException {
+        List<Player> t = targets.get(ctx);
+        for (Player p : t) {
+            PlayerStory ps = state.players.get(p.getUniqueId());
+            // 지금 보는 것만 멈춘다 (둘 다 멈추면 컷신을 멈춘 뒤 바로 시작된 다음 대화까지 닫힌다)
+            if (ps != null && ps.active != null && ps.active.kind == Kind.CUTSCENE) stopCutscene(p);
+            else stopDialogue(p);
+        }
+        ChacaLink.ok(ctx.getSource().getSender(), who(t) + "의 스토리를 멈췄어요");
+        return 1;
+    }
+
+    private int clearCommand(CommandContext<CommandSourceStack> ctx, Targets targets) throws CommandSyntaxException {
+        List<Player> t = targets.get(ctx);
+        for (Player p : t) clearStory(p);
+        ChacaLink.ok(ctx.getSource().getSender(), who(t) + "의 스토리 대기열을 비웠어요");
+        return 1;
+    }
+
+    private int listCommand(CommandContext<CommandSourceStack> ctx, boolean named) throws CommandSyntaxException {
+        UUID target = null;
+        String title = "접속자 전체";
+        if (named) {
+            target = ChacaLink.resolve(ctx, NICK);
+            title = ChacaLink.name(target);
+        } else if (ctx.getSource().getSender() instanceof Player p) {
+            target = p.getUniqueId();
+            title = nick(p);
+        }
+        List<String> d = completionIds(true, target), c = completionIds(false, target);
+        ChacaLink.lines(ctx.getSource().getSender(), List.of(
+                "스토리 목록 (" + title + ")",
+                "대화 " + d.size() + "개: " + (d.isEmpty() ? "-" : String.join(", ", d)),
+                "컷신 " + c.size() + "개: " + (c.isEmpty() ? "-" : String.join(", ", c))));
+        return 1;
+    }
+
+    /** 대상 클라이언트의 대화·컷신 파일을 다시 읽게 한다 (서버 설정은 /서버관리 새로고침 스토리). */
+    private int clientReloadCommand(CommandContext<CommandSourceStack> ctx, boolean named) throws CommandSyntaxException {
+        Player p = selfOr(ctx, named);
+        CommandSender s = ctx.getSource().getSender();
+        if (p.getListeningPluginChannels().contains(StoryCodec.RELOAD_REQUEST)) {
+            var ticket = reloadTickets.begin(p.getUniqueId(), s);
+            p.sendPluginMessage(this, StoryCodec.RELOAD_REQUEST, StoryCodec.reloadRequest(ticket.token()));
+            ChacaLink.ok(s, nick(p) + " 님 클라이언트에 새로고침을 요청했어요");
+            Bukkit.getScheduler().runTaskLater(this, () -> {
+                var requester = reloadTickets.finish(p.getUniqueId(), ticket.token());
+                if (requester != null) ChacaLink.fail(requester, nick(p) + " 님 클라이언트가 새로고침 결과를 보내지 않았어요",
+                        new IllegalStateException("[스토리] " + p.getName() + " 클라이언트 새로고침 응답 없음 (10초)"));
+            }, 200L);
+            return 1;
+        }
+        if (!p.getListeningPluginChannels().contains(StoryCodec.STORY_RELOAD)) throw ChacaLink.error(nick(p) + " 님은 최신 스토리 모드가 없어요");
+        p.sendPluginMessage(this, StoryCodec.STORY_RELOAD, StoryCodec.reloadContent(StoryCodec.KIND_DIALOGUE));
+        ChacaLink.ok(s, nick(p) + " 님 클라이언트에 대화 파일 검사를 요청했어요 (결과는 그 화면에)");
+        return 1;
     }
 
     /** 재생 중인 것과 대기열을 모두 버린다 (막힌 플레이어를 풀 때). 완료 기록과 실행 대기 효과는 건드리지 않는다. */
@@ -1283,44 +1422,40 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         }
     }
 
-    private boolean dialogueCommand(CommandSender s, String[] a) {
-        if (a.length < 2) return false;
-        if (a[0].equalsIgnoreCase("stop")) {
-            List<Player> t = targets(s, a[1]);
-            t.forEach(this::stopDialogue);
-            s.sendMessage(ChatColor.GRAY + "대화 닫음: " + t.size() + "명");
-            return true;
-        }
-        if (a[0].equalsIgnoreCase("ledger")) return ledgerCommand(s, a);
-        if (a[0].equalsIgnoreCase("reset")) return resetCommand(s, a);
-        String id = a[1];
-        if (!ID.matcher(id).matches()) {
-            s.sendMessage(ChatColor.RED + "대화 id는 소문자, 숫자, _, - 만: " + id);
-            return true;
-        }
-        boolean replay = a.length >= 3 && a[2].equalsIgnoreCase("replay");
-        List<Player> t = targets(s, a[0]);
-        if (t.isEmpty()) {
-            s.sendMessage(ChatColor.RED + "대상 플레이어가 없어요: " + a[0]);
-            return true;
-        }
-        int n = 0;
-        for (Player p : t) if (p.getListeningPluginChannels().contains(StoryCodec.DIALOGUE_VIEW)) { requestNicknameDialogue(p, id); n++; }
-        s.sendMessage(ChatColor.GRAY + "대화 " + id + " 열기 요청: " + n + "명" + (n < t.size() ? " (" + (t.size() - n) + "명 제외 — 최신 스토리 모드 연결 확인 필요)" : ""));
-        return true;
+    // ---------------------------------------------------------------- /테스트 스토리 (미리보기)
+
+    /**
+     * 대화 미리보기: 대기열·완료 기록·끝 명령 세션을 거치지 않고 클라이언트 대화 파일을 바로 연다. 이미 끝낸 대화도 다시 보인다
+     * (예전 storydialogue … replay 인자가 무시되던 문제). 서버 흐름용 열기 신호(DIALOGUE_OPEN)를 쓰므로 클라는 로컬 기록·보상·명령을
+     * 건드리지 않고, 클라가 보내는 이벤트·끝 신호는 서버에 해당 요청이 없어 무시된다 → 보상·명령 없음.
+     */
+    private int previewDialogue(CommandContext<CommandSourceStack> ctx, boolean named) throws CommandSyntaxException {
+        String id = id(ctx, true);
+        Player p = selfOr(ctx, named);
+        if (!p.getListeningPluginChannels().contains(StoryCodec.DIALOGUE_OPEN)) throw ChacaLink.error(nick(p) + " 님은 최신 스토리 모드가 없어요");
+        PlayerStory ps = state.players.get(p.getUniqueId());
+        if ((ps != null && ps.active != null && ps.active.sent) || endingSessions.current(p.getUniqueId(), System.currentTimeMillis()) != null)
+            throw ChacaLink.error(nick(p) + " 님은 지금 다른 스토리를 보는 중이에요");
+        p.sendPluginMessage(this, StoryCodec.DIALOGUE_OPEN, StoryCodec.dialogueOpen(id, "", StoryCodec.encodeVars(textVars(p)), "", 0));
+        getLogger().info("[스토리 미리보기] " + ctx.getSource().getSender().getName() + " → " + p.getName() + " 대화 " + id);
+        ChacaLink.ok(ctx.getSource().getSender(), nick(p) + " 님에게 대화 " + id + " 미리보기를 열었어요");
+        return 1;
     }
 
-    /** 이름 (접속 중이거나 기록에 있는 사람) 또는 UUID 로 기록을 찾는다. 없으면 null. */
-    private UUID findRecord(String arg) {
-        Player online = Bukkit.getPlayerExact(arg);
-        if (online != null) return online.getUniqueId();
-        for (var e : state.players.entrySet()) if (e.getValue().name.equalsIgnoreCase(arg)) return e.getKey();
-        try {
-            return UUID.fromString(arg);
-        } catch (IllegalArgumentException ignored) {
-            return null;
-        }
+    /** 컷신 미리보기: 대기열·기록을 거치지 않고 바로 보낸다. 끝나도 on-finish 를 실행하지 않는다 (서버가 요청한 재생이 아니므로 끝 신호를 무시). */
+    private int previewCutscene(CommandContext<CommandSourceStack> ctx, boolean named) throws CommandSyntaxException {
+        String id = id(ctx, false);
+        Player p = selfOr(ctx, named);
+        if (!hasMod(p)) throw ChacaLink.error(nick(p) + " 님은 스토리 모드가 없어요");
+        PlayerStory ps = state.players.get(p.getUniqueId());
+        if (ps != null && ps.active != null && ps.active.sent) throw ChacaLink.error(nick(p) + " 님은 지금 다른 스토리를 보는 중이에요");
+        p.sendPluginMessage(this, StoryCodec.CUTSCENE_PLAY, StoryCodec.cutscenePlay(id, StoryCodec.MODE_SKIP));
+        getLogger().info("[스토리 미리보기] " + ctx.getSource().getSender().getName() + " → " + p.getName() + " 컷신 " + id);
+        ChacaLink.ok(ctx.getSource().getSender(), nick(p) + " 님에게 컷신 " + id + " 미리보기를 열었어요");
+        return 1;
     }
+
+    // ---------------------------------------------------------------- /유저관리 <닉네임> 스토리기록
 
     private static String describe(Request r) {
         String what = (r.kind == Kind.CUTSCENE ? "컷신 " : "대화 ") + r.id + (r.replay ? " (다시 보기)" : "");
@@ -1328,218 +1463,67 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Ta
         return what;
     }
 
-    /** /storydialogue ledger <플레이어> [대화id] — 진행 상태와 완료 기록 보기. */
-    private boolean ledgerCommand(CommandSender s, String[] a) {
-        UUID uuid = findRecord(a[1]);
-        PlayerStory ps = uuid == null ? null : state.players.get(uuid);
+    /** 진행 상태와 완료 기록 보기 (이 서버의 progress.yml). */
+    private int ledgerCommand(CommandContext<CommandSourceStack> ctx, String id) throws CommandSyntaxException {
+        UUID uuid = ChacaLink.target(ctx);
+        String name = ChacaLink.name(uuid);
+        CommandSender s = ctx.getSource().getSender();
+        PlayerStory ps = state.players.get(uuid);
         if (ps == null) {
-            s.sendMessage(ChatColor.GRAY + a[1] + ": 스토리 기록이 없어요 (이 서버 기준).");
-            return true;
+            ChacaLink.ok(s, name + " 님은 이 서버에 스토리 기록이 없어요");
+            return 1;
         }
-        if (a.length >= 3) {
-            String id = a[2];
+        List<String> out = new ArrayList<>();
+        if (id != null) {
+            if (!StorySafety.validId(id)) throw ChacaLink.error("대화 ID는 영문 소문자·숫자·_·-만 쓸 수 있어요");
             StoryState.Done d = ps.done.get(id);
-            s.sendMessage(ChatColor.GOLD + a[1] + " / 대화 " + id + ": " + (d == null ? "아직 끝내지 않음"
-                    : "끝냄 (결말 " + (d.scene.isEmpty() ? "-" : d.scene) + ", " + d.times + "번, " + new java.util.Date(d.at) + ")"));
+            out.add(name + " / 대화 " + id);
+            out.add(d == null ? "아직 끝내지 않음" : "끝냄 (결말 " + (d.scene.isEmpty() ? "-" : d.scene) + ", " + d.times + "번, " + new java.util.Date(d.at) + ")");
             Set<String> fired = ps.fired.get(id);
-            s.sendMessage(ChatColor.GRAY + "실행된 이벤트: " + (fired == null || fired.isEmpty() ? "없음" : String.join(", ", fired)));
-            s.sendMessage(ChatColor.GRAY + "이 대화로 오른 호감도 합: " + ps.gained.getOrDefault(id, 0));
-            return true;
+            out.add("실행된 이벤트: " + (fired == null || fired.isEmpty() ? "없음" : String.join(", ", fired)));
+            out.add("이 대화로 오른 호감도 합: " + ps.gained.getOrDefault(id, 0));
+            ChacaLink.lines(s, out);
+            return 1;
         }
         Request act = ps.active;
-        s.sendMessage(ChatColor.GOLD + a[1] + " 스토리 기록 (이 서버)");
-        s.sendMessage(ChatColor.GRAY + "지금: " + (act == null ? "없음" : describe(act) + (act.sent ? " — 보는 중" : act.parked ? " — 멈춤 (다음 접속/reload 때 다시)" : " — 보내기 대기")));
+        out.add(name + " 스토리 기록 (이 서버)");
+        out.add("지금: " + (act == null ? "없음" : describe(act) + (act.sent ? " — 보는 중" : act.parked ? " — 멈춤 (다음 접속 때 다시)" : " — 보내기 대기")));
         if (!ps.queue.isEmpty()) {
             List<String> q = new ArrayList<>();
             for (Request r : ps.queue) q.add(describe(r));
-            s.sendMessage(ChatColor.GRAY + "대기: " + String.join(", ", q));
+            out.add("대기: " + String.join(", ", q));
         }
-        if (!ps.effects.isEmpty()) s.sendMessage(ChatColor.GRAY + "실행 대기 효과: " + ps.effects.size() + "개");
+        if (!ps.effects.isEmpty()) out.add("실행 대기 효과: " + ps.effects.size() + "개");
         List<String> done = new ArrayList<>();
         for (var e : ps.done.entrySet()) done.add(e.getKey() + (e.getValue().scene.isEmpty() ? "" : "(" + e.getValue().scene + ")"));
-        s.sendMessage(ChatColor.GRAY + "끝낸 대화 " + done.size() + "개: " + (done.isEmpty() ? "-" : String.join(", ", done)));
-        return true;
+        out.add("끝낸 대화 " + done.size() + "개: " + (done.isEmpty() ? "-" : String.join(", ", done)));
+        ChacaLink.lines(s, out);
+        return 1;
     }
 
-    /** /storydialogue reset <플레이어> <대화id|all> — 완료 기록 지우기 (다시 처음부터 보상까지 받을 수 있게 됨). */
-    private boolean resetCommand(CommandSender s, String[] a) {
-        if (a.length < 3) return false;
-        UUID uuid = findRecord(a[1]);
-        PlayerStory ps = uuid == null ? null : state.players.get(uuid);
-        if (ps == null) {
-            s.sendMessage(ChatColor.GRAY + a[1] + ": 스토리 기록이 없어요 (이 서버 기준).");
-            return true;
-        }
-        String id = a[2];
-        if (id.equalsIgnoreCase("all")) {
+    /** 완료 기록 지우기 (다시 처음부터 보상까지 받을 수 있게 됨). id null = 전체. */
+    private int resetCommand(CommandContext<CommandSourceStack> ctx, String id) throws CommandSyntaxException {
+        UUID uuid = ChacaLink.target(ctx);
+        String name = ChacaLink.name(uuid);
+        CommandSender s = ctx.getSource().getSender();
+        if (id != null && !StorySafety.validId(id)) throw ChacaLink.error("대화 ID는 영문 소문자·숫자·_·-만 쓸 수 있어요");
+        PlayerStory ps = state.players.get(uuid);
+        if (ps == null) throw ChacaLink.error(name + " 님은 이 서버에 스토리 기록이 없어요");
+        if (id == null) {
             int n = ps.done.size();
             ps.done.clear();
             ps.fired.clear();
             ps.gained.clear();
-            getLogger().info(s.getName() + " 이(가) " + a[1] + " 의 대화 완료 기록 전체 (" + n + "개) 를 지웠습니다");
-            s.sendMessage(ChatColor.GOLD + a[1] + ": 대화 완료 기록 " + n + "개를 모두 지웠어요.");
+            getLogger().info(s.getName() + " 이(가) " + name + "(" + uuid + ") 의 대화 완료 기록 전체 (" + n + "개) 를 지웠습니다");
+            ChacaLink.ok(s, name + " 님의 대화 완료 기록 " + n + "개를 모두 지웠어요");
         } else {
-            if (!ID.matcher(id).matches()) {
-                s.sendMessage(ChatColor.RED + "대화 id는 소문자, 숫자, _, - 만: " + id);
-                return true;
-            }
             boolean had = ps.resetLedger(id);
-            getLogger().info(s.getName() + " 이(가) " + a[1] + " 의 대화 " + id + " 완료 기록을 지웠습니다" + (had ? "" : " (기록 없었음)"));
-            s.sendMessage(ChatColor.GOLD + a[1] + ": 대화 " + id + (had ? " 기록을 지웠어요. 다시 열면 이벤트·끝 명령이 다시 실행됩니다." : " 기록이 없어요."));
+            if (!had) throw ChacaLink.error(name + " 님은 대화 " + id + " 기록이 없어요");
+            getLogger().info(s.getName() + " 이(가) " + name + "(" + uuid + ") 의 대화 " + id + " 완료 기록을 지웠습니다");
+            ChacaLink.ok(s, name + " 님의 대화 " + id + " 기록을 지웠어요");
         }
         saveSoon(null);
         prune(uuid, ps);
-        return true;
-    }
-
-    private boolean affinityCommand(CommandSender s, String[] a) {
-        if (a.length == 0) return false;
-        // 이름으로 프로필을 찾으러 나가면 메인 스레드가 멈출 수 있어서, 접속 중이거나 서버가 이미 아는 사람만 받는다
-        OfflinePlayer op = Bukkit.getPlayerExact(a[0]);
-        if (op == null) op = Bukkit.getOfflinePlayerIfCached(a[0]);
-        UUID id;
-        if (op != null) id = op.getUniqueId();
-        else {
-            try {
-                id = UUID.fromString(a[0]);
-            } catch (IllegalArgumentException e) {
-                s.sendMessage(ChatColor.RED + "접속 중이거나 이 서버에 접속한 적 있는 플레이어 이름 (또는 UUID) 을 넣어 주세요: " + a[0]);
-                return true;
-            }
-        }
-        String where = codex.available() ? " (MagicCodex)" : " (affinity.yml)";
-        if (a.length == 1) {
-            if (codex.available()) {
-                s.sendMessage(ChatColor.GOLD + "NPC 를 지정해 주세요: /affinity " + a[0] + " <npc>" + where);
-                return true;
-            }
-            var all = affinity.all(id);
-            s.sendMessage(ChatColor.GOLD + a[0] + " 호감도 (기본 " + affinity.defaultScore() + "): "
-                    + (all.isEmpty() ? "기록 없음" : all.toString()) + where);
-            return true;
-        }
-        String npc = a[1];
-        if (!StorySafety.NPC.matcher(npc).matches()) {
-            s.sendMessage(ChatColor.RED + "NPC id 가 잘못됐어요: " + npc);
-            return true;
-        }
-        if (a.length == 2) {
-            if (codex.available()) codex.affinity(id, npc).thenAccept(v ->
-                    s.sendMessage(ChatColor.GOLD + a[0] + " → " + npc + ": " + (v == null ? "읽기 실패" : v) + where));
-            else s.sendMessage(ChatColor.GOLD + a[0] + " → " + npc + ": " + affinity.get(id, npc) + where);
-            return true;
-        }
-        if (a.length < 4) return false;
-        int v;
-        try {
-            v = Integer.parseInt(a[3]);
-        } catch (NumberFormatException e) {
-            s.sendMessage(ChatColor.RED + "숫자를 넣어 주세요: " + a[3]);
-            return true;
-        }
-        boolean set = a[2].equalsIgnoreCase("set");
-        final int value = v;
-        if (codex.available()) {
-            // MagicCodex 에는 set 이 없어서 지금 값과의 차이만큼 더한다 (하트 단계 상한은 그대로 적용)
-            CompletableFuture<Integer> f;
-            if (set) {
-                f = codex.affinity(id, npc).thenCompose(cur -> cur == null
-                        ? CompletableFuture.<Integer>completedFuture(null)
-                        : codex.addAffinity(id, npc, value - cur));
-            } else {
-                f = codex.addAffinity(id, npc, value);
-            }
-            f.thenAccept(now -> s.sendMessage(ChatColor.GOLD + a[0] + " → " + npc + ": " + (now == null ? "바꾸기 실패" : now) + where));
-            return true;
-        }
-        int now = set ? affinity.set(id, npc, v) : affinity.add(id, npc, v);
-        s.sendMessage(ChatColor.GOLD + a[0] + " → " + npc + ": " + now + where);
-        return true;
-    }
-
-    private List<Player> targets(CommandSender s,String arg) {
-        List<Player> out=new ArrayList<>();
-        if(arg.startsWith("@")) {
-            try {for(Entity e:Bukkit.selectEntities(s,arg))if(e instanceof Player p)out.add(p);}
-            catch(IllegalArgumentException e){s.sendMessage(ChatColor.RED+"대상 선택자가 올바르지 않습니다.");}
-        } else {
-            Player p=codex.resolvePlayer(arg);
-            if(p!=null)out.add(p);
-            else s.sendMessage(ChatColor.RED+"접속 중인 유저를 찾을 수 없거나 닉네임이 중복됩니다. 정확한 영문 계정명을 사용해 주세요.");
-        }
-        return out;
-    }
-    private List<String> completionPlayers() {
-        var result=new TreeSet<String>();result.add("@a");result.add("@p");
-        for(Player p:Bukkit.getOnlinePlayers())result.add(p.getName());
-        var counts=new HashMap<String,Integer>();completionNames.values().forEach(n->counts.merge(n,1,Integer::sum));
-        completionNames.forEach((id,name)->{if(counts.get(name)==1&&!name.isBlank())result.add(name);});
-        return List.copyOf(result);
-    }
-    private List<String> completionIds(boolean dialogue,String target) {
-        var ids=new TreeSet<String>();
-        if(!dialogue)ids.addAll(registeredCutscenes);
-        if(target.startsWith("@"))clientCatalogs.values().forEach(c->ids.addAll(dialogue?c.dialogues():c.cutscenes()));
-        else {
-            Player exact=Bukkit.getPlayerExact(target);UUID uuid=exact==null?null:exact.getUniqueId();
-            if(uuid==null){for(var e:completionNames.entrySet())if(e.getValue().equals(target)){if(uuid!=null)return List.of();uuid=e.getKey();}}
-            StoryCatalog c=clientCatalogs.get(uuid);if(c!=null)ids.addAll(dialogue?c.dialogues():c.cutscenes());
-        }
-        return List.copyOf(ids);
-    }
-
-    @Override
-    public List<String> onTabComplete(@NotNull CommandSender s, @NotNull Command cmd, @NotNull String alias, @NotNull String[] a) {
-        if (!s.hasPermission("chacademy.story.admin") || a.length == 0) return List.of();
-        List<String> o = new ArrayList<>();
-        List<String> players = completionPlayers();
-        boolean korean=cmd.getName().equals("스토리")||alias.equals("컷신");
-        if(korean) {
-            boolean dialogue=cmd.getName().equals("스토리");String action=StoryCommandNames.action(a[0]);
-            if(a.length==1)o.addAll(List.of("재생","중지","취소","리로드","서버리로드","목록"));
-            else if(!action.equals("serverreload")) {
-                String prefix=String.join(" ",java.util.Arrays.copyOfRange(a,1,a.length));
-                for(String name:players)if(name.startsWith(prefix)) {
-                    int used=String.join(" ",java.util.Arrays.copyOfRange(a,1,a.length-1)).length();
-                    if(used>0)used++;if(used<=name.length())o.add(name.substring(used));
-                }
-                if(action.equals("play")&&a.length>=3)o.addAll(completionIds(dialogue,String.join(" ",java.util.Arrays.copyOfRange(a,1,a.length-1))));
-                if(!dialogue&&action.equals("play")&&a.length>=4)o.addAll(List.of("자동","건너뛰기허용","건너뛰기금지"));
-            }
-            String last=a[a.length-1].toLowerCase(Locale.ROOT);return o.stream().filter(x->x.toLowerCase(Locale.ROOT).startsWith(last)).distinct().toList();
-        }
-        switch (cmd.getName()) {
-            case "cutscene" -> {
-                if (a.length == 1) o.addAll(List.of("play", "stop", "clear", "reload"));
-                else if (a.length == 2 && !a[0].equalsIgnoreCase("reload")) o.addAll(players);
-                else if (a.length == 3 && a[0].equalsIgnoreCase("play")) o.addAll(completionIds(false,a[1]));
-                else if (a.length == 4 && a[0].equalsIgnoreCase("play")) o.addAll(List.of("auto", "skip", "noskip"));
-            }
-            case "storydialogue" -> {
-                boolean admin = a[0].equalsIgnoreCase("ledger") || a[0].equalsIgnoreCase("reset");
-                if (a.length == 1) {
-                    o.addAll(List.of("stop", "ledger", "reset"));
-                    o.addAll(players);
-                } else if (a.length == 2 && (a[0].equalsIgnoreCase("stop") || admin)) {
-                    Bukkit.getOnlinePlayers().forEach(p -> o.add(p.getName()));
-                    if (a[0].equalsIgnoreCase("stop")) o.addAll(List.of("@a", "@p"));
-                } else if (a.length == 2 || (a.length == 3 && admin)) {
-                    // 파일을 뒤지지 않고 메모리에 읽어 둔 목록만 쓴다
-                    o.addAll(admin?defs.keySet():completionIds(true,a[0]));
-                    if (a.length == 3 && a[0].equalsIgnoreCase("reset")) o.add("all");
-                } else if (a.length == 3 && !a[0].equalsIgnoreCase("stop")) {
-                    o.add("replay");
-                }
-            }
-            case "affinity" -> {
-                if (a.length == 1) Bukkit.getOnlinePlayers().forEach(p -> o.add(p.getName()));
-                else if (a.length == 3) o.addAll(List.of("add", "set"));
-            }
-            default -> {
-            }
-        }
-        String last = a[a.length - 1].toLowerCase(Locale.ROOT);
-        o.removeIf(x -> !x.toLowerCase(Locale.ROOT).startsWith(last));
-        return o;
+        return 1;
     }
 }

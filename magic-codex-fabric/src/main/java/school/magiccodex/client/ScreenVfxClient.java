@@ -1,13 +1,10 @@
 package school.magiccodex.client;
 
-import com.mojang.brigadier.arguments.StringArgumentType;
-import net.fabricmc.fabric.api.client.command.v2.*;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.text.Text;
 import net.minecraft.util.*;
 
 /** Preserved cast audio only. World VFX is exclusively owned by the server-driven PortableVFX runtime. */
@@ -16,15 +13,11 @@ public final class ScreenVfxClient {
     private static long soundUntil;
     private ScreenVfxClient() { }
     public static void initialize() {
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher,access)->dispatcher.register(
-            ClientCommandManager.literal("마법효과음테스트").then(ClientCommandManager.argument("spell",StringArgumentType.greedyString())
-                .suggests((ctx,builder)->{for(var cue:SpellCastSounds.values())if(cue.id().startsWith(builder.getRemaining()))builder.suggest(cue.id());return builder.buildFuture();})
-                .executes(ctx->{String name=StringArgumentType.getString(ctx,"spell");if(name.equals("stop")){stop();return 1;}
-                    var cue=SpellCastSounds.find(name);if(cue==null){ctx.getSource().sendError(Text.literal("등록되지 않은 마법 효과음입니다."));return 0;}
-                    play(cue);return 1;}))));
         ClientTickEvents.END_CLIENT_TICK.register(client->{if(client.world==null||client.player==null||!client.player.isAlive()||Util.getMeasuringTimeMs()>=soundUntil)stop();});
         ClientPlayConnectionEvents.DISCONNECT.register((handler,client)->stop());
     }
+    /** Server preview (/테스트 마법 효과음 → magiccodex:preview "sound &lt;id|stop&gt;"). False when the cue is unknown. */
+    static boolean previewSound(String name){if(name.equals("stop")){stop();return true;}var cue=SpellCastSounds.find(name);if(cue==null)return false;play(cue);return true;}
     public static void onCast(String id) { var cue=SpellCastSounds.byId(id);if(cue!=null)play(cue); }
     private static void play(SpellCastSounds.Cue cue) {
         var client=MinecraftClient.getInstance();if(client.world==null||client.player==null||!client.player.isAlive())return;

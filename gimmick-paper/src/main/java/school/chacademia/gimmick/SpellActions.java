@@ -1,8 +1,6 @@
 package school.chacademia.gimmick;
 
 import java.util.*;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -43,7 +41,8 @@ final class SpellActions implements Listener {
         double dx = to.getX() - from.getX(), dz = to.getZ() - from.getZ();
         return dx * dx + dz * dz < 1e-6 ? 0 : (float) Math.toDegrees(Math.atan2(-dx, dz));
     }
-    private void bar(Player p, String text) { p.sendActionBar(Component.text(text, NamedTextColor.GOLD)); }
+    /** 기믹 마법 결과 안내 → 정보 알림 (같은 문구는 1.5초 안에 다시 안 보냄). */
+    private void bar(Player p, String text) { ChacaLink.notify(p, "system", "gimmick-spell:" + text, text, "", 1500); }
 
     // ================================================================== dispatch
     @EventHandler(priority = EventPriority.NORMAL)

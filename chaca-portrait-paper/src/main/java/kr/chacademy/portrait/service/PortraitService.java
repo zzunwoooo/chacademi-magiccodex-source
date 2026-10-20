@@ -175,7 +175,7 @@ public final class PortraitService {
         a.execute(r);
     }
 
-    /** /portrait reload: 작업 수·레퍼런스 다시 읽기. */
+    /** /서버관리 새로고침 초상화: 작업 수·레퍼런스 다시 읽기. */
     public void reload() {
         PortraitSettings s = plugin.settings();
         ThreadPoolExecutor p = pool;
@@ -344,7 +344,7 @@ public final class PortraitService {
                 && backoff.allowed(id, System.currentTimeMillis(), LocalDate.now(ZONE).toString());
     }
 
-    /** 관리자 초기화(/portrait reset) 시: 자동 생성 간격 제한을 푼다. */
+    /** 관리자 초기화(/유저관리 <닉네임> 초상화 초기화) 시: 자동 생성 간격 제한을 푼다. */
     public void clearBackoff(UUID id) {
         backoff.clear(id);
     }
@@ -505,7 +505,7 @@ public final class PortraitService {
                         p.sendMessage(s.message("done"));
                     }
                     if (job.reporter() != null && !(job.reporter() instanceof Player rp && rp.getUniqueId().equals(job.player()))) {
-                        job.reporter().sendMessage("§a[ChacaPortrait] " + job.name() + " 완료 — " + done.model + ", " + CostModel.usd(done.cost));
+                        kr.chacademy.portrait.cmd.PortraitCommands.report(job.reporter(), true, job.name() + " 님 일러스트 완성 · " + done.model + ", " + CostModel.usd(done.cost));
                     }
                 });
             } catch (RuntimeException e) {
@@ -837,7 +837,7 @@ public final class PortraitService {
     private void notifyBudget(Job job) {
         plugin.main(() -> {
             if (job.reporter() != null) {
-                job.reporter().sendMessage("§c[ChacaPortrait] 예산이 부족합니다 (/portrait budget)");
+                kr.chacademy.portrait.cmd.PortraitCommands.report(job.reporter(), false, "일러스트 예산이 부족해요 (/서버관리 초상화 예산보기)");
             }
         });
     }
@@ -873,7 +873,7 @@ public final class PortraitService {
         }
         plugin.main(() -> {
             if (job.reporter() != null) {
-                job.reporter().sendMessage("§c[ChacaPortrait] " + job.name() + " 실패: " + error);
+                kr.chacademy.portrait.cmd.PortraitCommands.report(job.reporter(), false, job.name() + " 님 일러스트를 그리지 못했어요 (사유는 콘솔)");
             }
             if (auto && !f.quiet && !retry) {
                 Player p = Bukkit.getPlayer(job.player());

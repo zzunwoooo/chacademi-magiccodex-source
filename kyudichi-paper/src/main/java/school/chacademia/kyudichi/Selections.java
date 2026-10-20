@@ -25,7 +25,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
-/** WorldEdit-style pos1/pos2 per admin (선택 막대) + particle outlines for 보기. */
+/** WorldEdit-style 지점1/지점2 per admin (선택도구) + particle outlines for 테두리보기. */
 final class Selections implements Listener {
     private final KyudichiPlugin plugin;
     private final NamespacedKey wandKey;
@@ -38,8 +38,8 @@ final class Selections implements Listener {
     ItemStack wand() {
         var item = new ItemStack(Material.BLAZE_ROD);
         item.editMeta(m -> {
-            m.displayName(Component.text("큐디치 선택 막대", NamedTextColor.GOLD));
-            m.lore(java.util.List.of(Component.text("좌클릭 pos1 · 우클릭 pos2", NamedTextColor.GRAY)));
+            m.displayName(Component.text("큐디치 선택도구", NamedTextColor.GOLD));
+            m.lore(java.util.List.of(Component.text("좌클릭 지점1 · 우클릭 지점2", NamedTextColor.GRAY)));
             m.getPersistentDataContainer().set(wandKey, PersistentDataType.BYTE, (byte) 1);
         });
         return item;
@@ -49,11 +49,11 @@ final class Selections implements Listener {
 
     @EventHandler
     public void click(PlayerInteractEvent e) {
-        if (e.getHand() != EquipmentSlot.HAND || !isWand(e.getItem()) || !e.getPlayer().hasPermission("chacademi.kyudichi.admin")) return;
+        if (e.getHand() != EquipmentSlot.HAND || !isWand(e.getItem()) || !e.getPlayer().isOp()) return;
         e.setCancelled(true);
         Block b = e.getClickedBlock();
         if (b == null) b = e.getPlayer().getTargetBlockExact(64);
-        if (b == null) { e.getPlayer().sendMessage(Component.text("블록을 보고 클릭하세요.", NamedTextColor.RED)); return; }
+        if (b == null) { ChacaLink.notify(e.getPlayer(), "warning", "kyudichi:wand", "블록을 보고 클릭하세요", "", 1000); return; }
         boolean left = e.getAction() == Action.LEFT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_AIR;
         set(e.getPlayer(), left ? 0 : 1, b.getLocation());
     }
@@ -63,8 +63,8 @@ final class Selections implements Listener {
         s[i] = l.toBlockLocation();
         showSelection.add(p.getUniqueId());
         Box box = box(p);
-        p.sendMessage(Component.text("pos" + (i + 1) + " = " + s[i].getBlockX() + ", " + s[i].getBlockY() + ", " + s[i].getBlockZ()
-                + (box != null ? "  (선택 " + box.size() + ")" : ""), NamedTextColor.YELLOW));
+        ChacaLink.notify(p, "system", "kyudichi:point" + i, "지점" + (i + 1) + " = " + s[i].getBlockX() + ", " + s[i].getBlockY() + ", " + s[i].getBlockZ(),
+                box != null ? "선택 " + box.size() : "", 0);
     }
 
     Box box(Player p) {
@@ -73,11 +73,11 @@ final class Selections implements Listener {
         return Box.of(s[0], s[1]);
     }
 
-    /** 선택 확장 위|아래|사방 n */
+    /** 선택 확장 위|아래|사방 n. null = no selection yet. */
     String expand(Player p, String dir, int n) {
         var s = sel.get(p.getUniqueId());
         Box b = box(p);
-        if (b == null) return "먼저 pos1, pos2를 정하세요.";
+        if (b == null) return null;
         int x1 = b.x1(), y1 = b.y1(), z1 = b.z1(), x2 = b.x2(), y2 = b.y2(), z2 = b.z2();
         switch (dir) {
             case "위" -> y2 += n;

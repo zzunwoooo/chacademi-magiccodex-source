@@ -25,7 +25,7 @@ client-content-missing-message: "&c스토리 파일이 최신이 아닙니다. �
 on-finish: {}
 # on-finish:
 #   ch1_ashen_night:
-#     - "storydialogue {player} ch1_wakeup"     # 컷신이 끝나면 바로 대화로
+#     - "대화관리 재생 {player} 대화 ch1_wakeup"     # 컷신이 끝나면 바로 대화로
 
 # 탭 자동완성용 컷신 id (선택)
 cutscenes:
@@ -33,7 +33,7 @@ cutscenes:
 
 # 컷신별 최소 시청 시간(초). 이보다 빨리 "끝났다" 고 오면 인정하지 않고 다시 재생한다. 0 또는 없음 = 검사 안 함.
 # 2배속 버튼이 있으므로 컷신 길이의 절반보다 조금 작게 적을 것. 이 값이 있는 컷신은 auto 모드에서도 건너뛰기 없이 재생된다
-# (/cutscene play ... skip 으로 보낸 것은 검사하지 않는다).
+# (/대화관리 재생 <닉네임> 컷신 <id> 건너뛰기허용 으로 보낸 것은 검사하지 않는다).
 min-seconds: {}
 # min-seconds:
 #   ch1_ashen_night: 7
@@ -44,13 +44,13 @@ cutscene-resend-delay-seconds: 3
 cutscene-max-resends: 5
 
 # ---------------------------------------------------------------- 대화
-# 현재 기본 /story dialogue 및 /storydialogue는 클라이언트 파일·로컬 기록을 사용한다.
+# 현재 기본 대화 재생(/대화관리 재생 <닉네임> 대화 <id>)은 클라이언트 파일·로컬 기록을 사용한다.
 # 아래 그래프/서버 ledger 관련 설정은 보존된 구형 서버 흐름에만 적용된다.
 # 최신 명령 절·보상 연결·리로드 설명: docs/handoff/CODEX_STORY_LOCAL_20261011.md
 # 대화마다 서버 폴더 plugins/ChacademyStory/dialogues/<대화id>/ 에 편집기 zip 의 두 파일을 그대로 넣는다:
 #   dialogue.yml          대화 흐름 (서버가 선택지·결말을 검증)
 #   server_commands.yml   명령어·호감도
-# (예전 위치 dialogues/<대화id>.yml 의 명령어 파일도 계속 읽는다.) 바꾼 뒤에는 /cutscene reload.
+# (예전 위치 dialogues/<대화id>.yml 의 명령어 파일도 계속 읽는다.) 바꾼 뒤에는 /서버관리 새로고침 스토리.
 # 명령어 안의 {player} 는 마인크래프트 닉네임, {nickname} 은 MagicCodex 한글 닉네임 (글자·숫자·_·- 만 남김).
 
 # 서버에 dialogue.yml 이 없는 대화를 열지 말지
@@ -59,10 +59,10 @@ cutscene-max-resends: 5
 require-server-graph: true
 
 # 이미 끝낸 대화를 다시 열라는 명령이 오면
-#   false (기본): 열지 않는다 (명령어도 다시 실행하지 않음). /storydialogue <플레이어> <id> replay 로만 다시 보여 줄 수 있다.
+#   false (기본): 열지 않는다 (명령어도 다시 실행하지 않음). 다시 보여 주기만 하려면 /테스트 스토리 대화 <id> [닉네임] (보상·명령 없음).
 #   true : 다시 보여 준다. 어느 쪽이든 다시 보기는 명령어·호감도를 다시 주지 않는다.
 # 대화별로 server_commands.yml 에 allow-replay: true/false 를 적으면 그 대화는 그 값을 따른다.
-# 완료 기록 보기/지우기: /storydialogue ledger <플레이어> [대화id], /storydialogue reset <플레이어> <대화id|all>
+# 완료 기록 보기/지우기: /유저관리 <닉네임> 스토리기록 보기 [대화id], /유저관리 <닉네임> 스토리기록 초기화 <대화id|전체> 확인
 allow-replay: false
 
 # 대사 속 글자 바꾸기
@@ -84,17 +84,13 @@ protect-during-story: true
 protect-max-seconds: 900
 
 # ---------------------------------------------------------------- 호감도
-# MagicCodexBridge 가 켜져 있으면 호감도는 MagicCodex 가 저장한다 (ChacaNPC 와 같은 점수, 하트 단계 상한 적용).
+# 호감도는 MagicCodexBridge 하나로만 저장한다 (ChacaNPC 와 같은 점수, 하트 단계 상한 적용).
 #   스토리 대화로 바뀐 점수는 출처 "dialogue" 로 기록 (MagicCodex affinity.yml 의 daily-caps.dialogue).
 #   대화를 열 때는 server_commands.yml 의 npcs 목록에 있는 NPC 점수만 보낸다 (편집기가 자동으로 적어 줌).
-# MagicCodexBridge 가 없을 때만 아래 값과 이 폴더의 affinity.yml 을 쓴다 (이 서버만의 점수).
-# 기록이 없을 때 점수
-affinity-default: 25
-affinity-min: -100
-affinity-max: 100
+#   MagicCodexBridge 가 꺼져 있으면 스토리 호감도 변경은 적용되지 않고 콘솔에 경고만 남는다.
+# (예전의 affinity-default / affinity-min / affinity-max 와 이 폴더의 affinity.yml 은 더 이상 쓰지 않는다. 지워도 된다.)
 # 한 항목 한도: 선택지·장면 이벤트 ±20, 결말·끝 ±50 (넘는 값은 읽을 때 자르고 콘솔에 경고).
 # 한 플레이어가 한 대화에서 얻을 수 있는 호감도 합 (오른 것만 셈, 모든 NPC 합). 0 = 제한 없음.
-# (예전의 affinity-max-per-dialogue 는 쓰지 않는다. 지워도 된다.)
 affinity-gain-cap-per-dialogue: 0
 # 호감도가 바뀔 때마다 콘솔에 기록
 affinity-log: false
@@ -104,7 +100,7 @@ affinity-log: false
 # 재생 중·대기 중인 것, 대화에서 보고 있던 장면·대사 번호, 끝낸 대화와 이미 실행한 이벤트는 progress.yml 에 저장된다.
 # 접속이 끊기거나 서버가 재시작돼도 다시 접속하면 이어진다 (컷신은 처음부터, 대화는 보던 대사부터).
 # 이 파일들은 이 서버만의 것이다: 서버가 여러 대면 보상을 주는 스토리 명령은 한 서버에서만 실행되게 할 것.
-# 관리자가 강제로 끝내려면: /storydialogue stop <플레이어>, /cutscene stop <플레이어>, 전부 취소는 /cutscene clear <플레이어>
+# 관리자가 강제로 끝내려면: /대화관리 중지 <닉네임|모두>, 전부 취소는 /대화관리 대기열비우기 <닉네임|모두>
 
 # 흐름에 맞지 않아 무시한 패킷을 콘솔에 하나씩 기록 (문제 찾을 때만)
 story-debug: false

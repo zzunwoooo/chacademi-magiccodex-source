@@ -89,6 +89,19 @@ final class PlayerStateStore implements AutoCloseable {
             s.setString(1,id.toString());s.setString(2,token);s.executeUpdate();
         }
     }
+    /** 관리자 확인용 잠금 상태. 행이 없으면 null. */
+    record Lease(String token,long until,long revision){boolean held(long now){return token!=null&&until>=now;}}
+    Lease lease(UUID id)throws SQLException {
+        try(var s=db().prepareStatement("SELECT lease_token,lease_until,revision FROM codex_player_state WHERE player=?")){
+            s.setString(1,id.toString());try(var r=s.executeQuery()){return r.next()?new Lease(r.getString(1),r.getLong(2),r.getLong(3)):null;}
+        }
+    }
+    /** 관리자: 토큰과 상관없이 잠금을 푼다 (이전 서버가 비정상 종료해 잠금이 남았을 때). 풀린 행이 있으면 true. */
+    boolean forceRelease(UUID id)throws SQLException {
+        try(var s=db().prepareStatement("UPDATE codex_player_state SET lease_token=NULL,lease_until=0 WHERE player=? AND lease_token IS NOT NULL")){
+            s.setString(1,id.toString());return s.executeUpdate()==1;
+        }
+    }
     /** @throws LeaseLostException 이 토큰이 더 이상 행을 소유하지 않을 때만. 그 밖의 SQLException은 일시 오류로 다시 시도할 수 있다. */
     void save(UUID id,State state,String token,boolean release)throws SQLException {
         String updates="circle=?,mana_current=?,mana_maximum=?,mana_regeneration=?,magic_haste=?,mana_cooldowns=?,"

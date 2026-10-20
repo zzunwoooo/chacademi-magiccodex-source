@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  * </ul>
  * facade 는 메인 스레드에서만 부르고, future 도 메인 스레드에서 끝난다 (MagicCodex 약속).
  * <p>MagicCodexBridge 가 꺼지거나 다시 켜지면 (서비스 등록 해제, 호출 실패) 연결을 버리고
- * {@value #RECONNECT_MILLIS}ms 에 한 번씩 다시 찾는다. 연결이 없는 동안 호감도는 이 플러그인의 affinity.yml 로 간다.
+ * {@value #RECONNECT_MILLIS}ms 에 한 번씩 다시 찾는다. 연결이 없는 동안 스토리 호감도 변경은 적용되지 않고 콘솔에 남는다 (호감도는 MagicCodex 하나로만).
  */
 public final class MagicCodexLink {
     public static final String FACADE = "school.magiccodex.paper.NpcSocialFacade";
@@ -45,7 +45,7 @@ public final class MagicCodexLink {
 
     /** 서비스가 등록 해제됐거나 호출이 실패했을 때: 낡은 연결을 버린다. 다음 호출에서 다시 찾는다. */
     public void invalidate() {
-        if (facade != null) log.warning("MagicCodexBridge 연결이 끊겼습니다. 다시 연결될 때까지 호감도는 affinity.yml, 닉네임은 PlaceholderAPI 를 씁니다.");
+        if (facade != null) log.warning("MagicCodexBridge 연결이 끊겼습니다. 다시 연결될 때까지 스토리 호감도는 적용되지 않고, 닉네임은 PlaceholderAPI 를 씁니다.");
         facade = null;
         methods.clear();
         lastReconnect = 0;
@@ -84,7 +84,7 @@ public final class MagicCodexLink {
             if (reg == null) continue;
             try {
                 if (!bind(type, reg.getProvider())) {
-                    log.warning("MagicCodexBridge NPC API version mismatch; using local affinity.");
+                    log.warning("MagicCodexBridge NPC API 버전이 맞지 않아 연결하지 않습니다 (스토리 호감도 적용 안 됨).");
                     return false;
                 }
                 log.info("MagicCodexBridge 연결 완료 (한글 닉네임, 호감도를 ChacaNPC 와 같이 씀)");

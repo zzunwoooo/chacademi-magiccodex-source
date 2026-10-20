@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * config.yml 값을 한 번에 읽어 둔다. /cnpc reload 때 새로 만든다.
+ * config.yml 값을 한 번에 읽어 둔다. /서버관리 새로고침 NPC 때 새로 만든다.
  */
 public final class Settings {
 
