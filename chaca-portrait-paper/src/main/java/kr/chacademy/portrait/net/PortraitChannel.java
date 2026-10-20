@@ -187,7 +187,7 @@ public final class PortraitChannel implements PluginMessageListener, Listener {
         transfers.put(id, self[0]);
     }
 
-    /** 일러스트 삭제 알림 (/portrait reset). */
+    /** 일러스트 삭제 알림 (/유저관리 <닉네임> 초상화 초기화). */
     public void cleared(Player p) {
         if (capable(p)) {
             sentSha.put(p.getUniqueId(), "");
@@ -226,7 +226,7 @@ public final class PortraitChannel implements PluginMessageListener, Listener {
                 String current = found.get(id);
                 if (current == null) {
                     if (!sent.isEmpty()) {
-                        cleared(p); // 다른 서버에서 삭제됨 (/portrait reset)
+                        cleared(p); // 다른 서버에서 삭제됨 (/유저관리 <닉네임> 초상화 초기화)
                     }
                     continue;
                 }

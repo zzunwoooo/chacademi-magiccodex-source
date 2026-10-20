@@ -505,7 +505,7 @@ public final class PortraitStorage {
     }
 
     /**
-     * 관리자 반환 (/portrait refund): 이 서버에서 차감했던 가장 최근 소모 실패(CONSUMED) 1건을 REFUND_DUE로 되돌린다.
+     * 관리자 반환 (/유저관리 <닉네임> 초상화 환불): 이 서버에서 차감했던 가장 최근 소모 실패(CONSUMED) 1건을 REFUND_DUE로 되돌린다.
      * 실제 지급은 기존 반환 경로(영수증 확인)가 한다. 대상이 없으면 null, 있으면 토큰.
      */
     public String refundConsumed(UUID id, String server) throws SQLException {
@@ -684,7 +684,7 @@ public final class PortraitStorage {
         return n;
     }
 
-    /** 관리자 장부 보정 (/portrait budget adjust): 사용액에 delta(micro-USD, 음수 가능)를 더한다. 0 아래로는 내려가지 않는다. */
+    /** 관리자 장부 보정 (/서버관리 초상화 예산조정): 사용액에 delta(micro-USD, 음수 가능)를 더한다. 0 아래로는 내려가지 않는다. */
     public BudgetState adjustSpent(long delta) throws SQLException {
         db.with(c -> {
             try (PreparedStatement ps = c.prepareStatement(

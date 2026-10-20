@@ -1,7 +1,7 @@
 package kr.chacademy.portrait;
 
 import kr.chacademy.portrait.ai.OpenAiImageClient;
-import kr.chacademy.portrait.cmd.AdminCommand;
+import kr.chacademy.portrait.cmd.PortraitCommands;
 import kr.chacademy.portrait.core.PortraitSettings;
 import kr.chacademy.portrait.data.Database;
 import kr.chacademy.portrait.data.PortraitStorage;
@@ -10,7 +10,6 @@ import kr.chacademy.portrait.service.ItemsAdderHook;
 import kr.chacademy.portrait.service.PortraitService;
 import kr.chacademy.portrait.service.RerollService;
 import org.bukkit.Bukkit;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -102,12 +101,7 @@ public final class ChacaPortraitPlugin extends JavaPlugin implements Listener {
         channel.register();
         Bukkit.getPluginManager().registerEvents(rerolls, this);
         Bukkit.getPluginManager().registerEvents(this, this);
-        PluginCommand cmd = getCommand("portrait");
-        if (cmd != null) {
-            AdminCommand admin = new AdminCommand(this);
-            cmd.setExecutor(admin);
-            cmd.setTabCompleter(admin);
-        }
+        new PortraitCommands(this).register();
         Bukkit.getScheduler().runTaskTimer(this, rerolls::sweep, 100L, 100L);
         // 다른 서버에서 완성된 일러스트 전달 확인 (20초마다, 접속 중인 클라이언트의 SHA만 한 번에 조회)
         Bukkit.getScheduler().runTaskTimer(this, channel::syncRemote, 400L, 400L);
