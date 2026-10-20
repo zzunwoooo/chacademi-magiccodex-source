@@ -21,6 +21,7 @@ public final class ProtocolTests {
             try{EffectOwner.decode(bad);throw new AssertionError("invalid owner accepted");}catch(IllegalArgumentException expected){}
         }
         readiness();
+        CatalogReadinessV2Tests.run();
         parameterizedPlay();
         finishIntent();
         widthPlay();

@@ -80,6 +80,8 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
         getServer().getMessenger().registerIncomingPluginChannel(this, VfxProtocol.WIDTH_PLAY_HELLO_CHANNEL, this);
         getServer().getMessenger().registerIncomingPluginChannel(this, VfxProtocol.STOP_INTENT_HELLO_CHANNEL, this);
         getServer().getMessenger().registerIncomingPluginChannel(this, dev.portablevfx.protocol.CatalogReadiness.CHANNEL, this);
+        getServer().getMessenger().registerIncomingPluginChannel(this, dev.portablevfx.protocol.CatalogReadinessV2.CHANNEL, this);
+        getServer().getMessenger().registerOutgoingPluginChannel(this, dev.portablevfx.protocol.CatalogReadinessV2.EPOCH_CHANNEL);
         getServer().getMessenger().registerOutgoingPluginChannel(this, VfxProtocol.EFFECT_CHANNEL);
         getServer().getMessenger().registerOutgoingPluginChannel(this, dev.portablevfx.protocol.EffectOwner.CHANNEL);
         getServer().getPluginManager().registerEvents(this, this);
@@ -359,7 +361,7 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
     /** 이벤트 순서/누락에 대비한 저빈도 대조(플레이어당 CHANNEL_RESYNC_TICKS 마다 한 번). */
     private void resyncEffectChannels() {
         java.util.Set<UUID> online = new java.util.HashSet<>();
-        for (Player player : getServer().getOnlinePlayers()) { online.add(player.getUniqueId()); syncEffectChannel(player); }
+        for (Player player : getServer().getOnlinePlayers()) { online.add(player.getUniqueId()); syncEffectChannel(player);sendCatalogEpoch(player); }
         effectChannel.retainAll(online);
     }
 
@@ -370,6 +372,7 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
     @Override
     public void onPluginMessageReceived(String channel, Player player, byte[] message) {
         if (!Bukkit.isPrimaryThread()) return;
+        if (dev.portablevfx.protocol.CatalogReadinessV2.CHANNEL.equals(channel)) {engine.catalogReadyV2(player.getUniqueId(),message);return;}
         if (dev.portablevfx.protocol.CatalogReadiness.CHANNEL.equals(channel)) {engine.catalogReady(player.getUniqueId(),message);return;}
         if (VfxProtocol.STOP_INTENT_HELLO_CHANNEL.equals(channel)) { engine.stopIntentHello(player.getUniqueId(), message); return; }
         if (VfxProtocol.WIDTH_PLAY_HELLO_CHANNEL.equals(channel)) { engine.widthPlayHello(player.getUniqueId(), message); return; }
@@ -380,6 +383,12 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
         // Only a bounded 4-byte protocol announcement is accepted from the client.
         // Clients never submit play commands or effect payloads to the server.
         engine.hello(player.getUniqueId(), message);
+        sendCatalogEpoch(player);
+    }
+    private void sendCatalogEpoch(Player player){
+        if(!player.getListeningPluginChannels().contains(dev.portablevfx.protocol.CatalogReadinessV2.EPOCH_CHANNEL))return;
+        UUID epoch=engine.catalogEpoch(player.getUniqueId());
+        if(epoch!=null)player.sendPluginMessage(this,dev.portablevfx.protocol.CatalogReadinessV2.EPOCH_CHANNEL,dev.portablevfx.protocol.CatalogReadinessV2.encodeEpoch(epoch));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -390,6 +399,7 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onRegister(PlayerRegisterChannelEvent event) {
+        if(dev.portablevfx.protocol.CatalogReadinessV2.EPOCH_CHANNEL.equals(event.getChannel()))sendCatalogEpoch(event.getPlayer());
         if (VfxProtocol.EFFECT_CHANNEL.equals(event.getChannel()) && effectChannel.add(event.getPlayer().getUniqueId()))
             engine.viewerChanged(event.getPlayer().getUniqueId());
     }
@@ -462,6 +472,12 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
                     if(catalogVisuals!=null)catalogVisuals.clear();
                     sender.sendMessage("[PortableVFX] " + service.clear() + "개 핸들을 정리했습니다.");
                 }
+                case "readiness" -> {
+                    expectArgs(args,2,"readiness <player>");
+                    Player target=Bukkit.getPlayerExact(args[1]);
+                    if(target==null)throw new IllegalArgumentException("Player is not online on this server");
+                    sender.sendMessage("[PortableVFX readiness] "+target.getName()+": "+engine.catalogDiagnostic(target.getUniqueId()));
+                }
                 case "status" -> {
                     expectArgs(args, 1, "status");
                     VfxStatus status = service.status();
@@ -494,6 +510,7 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
                     if (outcome.applied()) {
                         // 새 카탈로그가 적용됐다: 이전 연출은 reloadSpellCatalog 가 정리했고, 릴레이 핸들도 비운다.
                         engine.reload(limits);
+                        requestClientHellos();
                         sender.sendMessage("[PortableVFX] 설정과 마법 카탈로그를 다시 읽었습니다: 마법 " + outcome.spells() + "개, 연출 " + outcome.bindings()
                                 + "개, 건너뜀 " + outcome.skipped().size() + "개. 기존 효과 정리를 요청했습니다.");
                     } else {

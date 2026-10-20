@@ -32,6 +32,7 @@ public final class VfxNetworking {
     private boolean helloSent, orientationHelloSent, extendedPlayHelloSent, authoritativeHelloSent, widthPlayHelloSent, stopIntentHelloSent;
     private int joinTicks, reannounceTicks;
     private java.util.Set<String> lastReady;
+    private final ReadinessUpload readinessUpload=new ReadinessUpload();
 
     public void register(EffectRuntime runtime) {
         active=this;
@@ -47,6 +48,12 @@ public final class VfxNetworking {
         PayloadTypeRegistry.playC2S().register(WidthPlayHelloPayload.ID, WidthPlayHelloPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(StopIntentHelloPayload.ID, StopIntentHelloPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(CatalogReadyPayload.ID,CatalogReadyPayload.CODEC);
+        PayloadTypeRegistry.playC2S().register(CatalogReadyV2Payload.ID,CatalogReadyV2Payload.CODEC);
+        PayloadTypeRegistry.playS2C().register(CatalogEpochPayload.ID,CatalogEpochPayload.CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(CatalogEpochPayload.ID,(payload,context)->{
+            try{var epoch=dev.portablevfx.protocol.CatalogReadinessV2.decodeEpoch(payload.data());context.client().execute(()->{if(context.client().player==context.player())readinessUpload.epoch(epoch);});}
+            catch(IllegalArgumentException|dev.portablevfx.protocol.ProtocolException ignored){}
+        });
         PayloadTypeRegistry.playS2C().register(EffectPayload.ID, EffectPayload.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(EffectPayload.ID, (payload, context) -> {
             // Fabric's object-based handler executes on the client thread.
@@ -77,7 +84,7 @@ public final class VfxNetworking {
             reannounceTicks = 0;
             BUDGET.reset(System.nanoTime());
             helloSent = false; orientationHelloSent = false; extendedPlayHelloSent = false; authoritativeHelloSent = false; widthPlayHelloSent = false; stopIntentHelloSent = false;
-            lastReady=null;joinTicks = 0;
+            lastReady=null;readinessUpload.disconnect();joinTicks = 0;
             sendHelloIfAdvertised();
         });
         // Fabric may invoke DISCONNECT from Netty; the client executor owns all connection state.
@@ -85,7 +92,7 @@ public final class VfxNetworking {
             runtime.clear();
             deferredPoses.clear();
             helloSent = false; orientationHelloSent = false; extendedPlayHelloSent = false; authoritativeHelloSent = false; widthPlayHelloSent = false; stopIntentHelloSent = false;
-            lastReady=null;joinTicks = 200;
+            lastReady=null;readinessUpload.disconnect();joinTicks = 200;
             BUDGET.reset(System.nanoTime());
         }));
         // Re-handshake: the server (re)advertised portablevfx:hello. This fires at join and again
@@ -112,7 +119,8 @@ public final class VfxNetworking {
         var n=active;if(n==null)return "network=uninitialized";
         return "hello="+n.helloSent+", stop="+n.stopIntentHelloSent+", width="+n.widthPlayHelloSent
                 +", readyChannel="+ClientPlayNetworking.canSend(CatalogReadyPayload.ID)
-                +", sentReady="+(n.lastReady==null?"none":n.lastReady.size())+", joinTicks="+n.joinTicks;
+                +", sentReady="+(n.lastReady==null?"none":n.lastReady.size())+", joinTicks="+n.joinTicks
+                +", chunked="+ClientPlayNetworking.canSend(CatalogReadyV2Payload.ID)+", epoch="+n.readinessUpload.hasEpoch()+", sentV2="+n.readinessUpload.sentCount();
     }
 
     private void applyDeferredPose(EffectRuntime runtime, java.util.UUID instanceId) {
@@ -124,13 +132,20 @@ public final class VfxNetworking {
     private void rehandshake() {
         reannounceTicks = 0;
         helloSent = false; orientationHelloSent = false; extendedPlayHelloSent = false; authoritativeHelloSent = false; widthPlayHelloSent = false; stopIntentHelloSent = false;
-        lastReady = null;
+        lastReady = null;readinessUpload.invalidate();
         sendHelloIfAdvertised();
     }
 
     private void publishReadiness(EffectRuntime runtime) {
         if(!stopIntentHelloSent||!ClientPlayNetworking.canSend(CatalogReadyPayload.ID))return;
         var ready=runtime.readyEffectIds().stream().map(Identifier::toString).collect(java.util.stream.Collectors.toUnmodifiableSet());
+        if(ClientPlayNetworking.canSend(CatalogReadyV2Payload.ID)){
+            try{
+                byte[] frame=readinessUpload.peek(ready);
+                if(frame!=null){ClientPlayNetworking.send(new CatalogReadyV2Payload(frame));readinessUpload.sent();}
+            }catch(IllegalArgumentException error){runtime.status("Catalog readiness blocked: "+error.getMessage());}
+            return;
+        }
         if(ready.equals(lastReady))return;
         try {ClientPlayNetworking.send(new CatalogReadyPayload(dev.portablevfx.protocol.CatalogReadiness.encode(ready)));lastReady=ready;}
         catch(IllegalArgumentException error){runtime.status("Catalog readiness blocked: "+error.getMessage());}
@@ -162,6 +177,22 @@ public final class VfxNetworking {
         }
     }
 
+    private record CatalogEpochPayload(byte[] data) implements RawPayload {
+        static final Id<CatalogEpochPayload> ID=new Id<>(Identifier.of(dev.portablevfx.protocol.CatalogReadinessV2.EPOCH_CHANNEL));
+        static final PacketCodec<RegistryByteBuf,CatalogEpochPayload> CODEC=new PacketCodec<>(){
+            public CatalogEpochPayload decode(RegistryByteBuf b){if(b.readableBytes()!=16){b.skipBytes(b.readableBytes());return new CatalogEpochPayload(new byte[0]);}byte[] bytes=new byte[16];b.readBytes(bytes);return new CatalogEpochPayload(bytes);}
+            public void encode(RegistryByteBuf b,CatalogEpochPayload p){if(p.data.length!=16)throw new IllegalArgumentException("Invalid readiness epoch");b.writeBytes(p.data);}
+        };
+        public Id<? extends CustomPayload> getId(){return ID;}
+    }
+    private record CatalogReadyV2Payload(byte[] data) implements RawPayload {
+        static final Id<CatalogReadyV2Payload> ID=new Id<>(Identifier.of(dev.portablevfx.protocol.CatalogReadinessV2.CHANNEL));
+        static final PacketCodec<RegistryByteBuf,CatalogReadyV2Payload> CODEC=new PacketCodec<>(){
+            public CatalogReadyV2Payload decode(RegistryByteBuf b){int size=b.readableBytes();if(size<72||size>dev.portablevfx.protocol.CatalogReadinessV2.MAX_PACKET_BYTES){b.skipBytes(size);return new CatalogReadyV2Payload(new byte[0]);}byte[] bytes=new byte[size];b.readBytes(bytes);return new CatalogReadyV2Payload(bytes);}
+            public void encode(RegistryByteBuf b,CatalogReadyV2Payload p){if(p.data.length<72||p.data.length>dev.portablevfx.protocol.CatalogReadinessV2.MAX_PACKET_BYTES)throw new IllegalArgumentException("Invalid readiness frame");b.writeBytes(p.data);}
+        };
+        public Id<? extends CustomPayload> getId(){return ID;}
+    }
     private record CatalogReadyPayload(byte[] data) implements RawPayload {
         static final Id<CatalogReadyPayload> ID=new Id<>(Identifier.of(dev.portablevfx.protocol.CatalogReadiness.CHANNEL));
         static final PacketCodec<RegistryByteBuf,CatalogReadyPayload> CODEC=new PacketCodec<>() {

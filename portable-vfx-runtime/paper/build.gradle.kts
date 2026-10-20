@@ -1,6 +1,6 @@
 plugins { java }
 
-version = "3.2.1-integrated-20261019.2-arcana.1"
+version = "3.2.2-integrated-20261020.1-readychunks.1"
 
 // Optional local mirror for reproducible offline builds; never packaged in the plugin.
 providers.gradleProperty("localDependencyRepo").orNull?.let { localRepo ->

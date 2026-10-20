@@ -23,6 +23,9 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
     private record Excluded(String world,double x,double z,double radius) {}
     private record Settings(boolean enabled,Set<String> worlds,double playerMinSquared,double playerMaxSquared,int areaCap,int shinyDenominator,List<Excluded> excluded) {}
     private Map<String,Habitat> habitats=Map.of();
+    private BiomeCompatibility biomeCompatibility=new BiomeCompatibility(Map.of());
+    private final Map<String,Long> naturalChecks=new TreeMap<>();
+    private long naturalSpawned,lastNaturalSpawnLog;
     private Settings settings=new Settings(false,Set.of(),0,0,0,1,List.of());
     private final PopulationCache population=new PopulationCache();
     // 메인 스레드 전용 임시 좌표: 비교할 때마다 Location을 새로 만들지 않는다.
@@ -60,6 +63,11 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
     }
     /** 모든 서식지를 불변 Habitat으로 한 번에 해석한다. 하나라도 필수 값이 잘못되면 예외를 던지고 기존 설정을 유지한다. */
     void reloadHabitats() {
+        var compatibilityFile=new File(getDataFolder(),"biome-compatibility.yml");
+        if(!compatibilityFile.exists())saveResource("biome-compatibility.yml",false);
+        var aliases=new YamlConfiguration();
+        try{aliases.load(compatibilityFile);}catch(Exception error){throw new IllegalArgumentException("biome-compatibility.yml error",error);}
+        var nextCompatibility=BiomeCompatibility.parse(aliases.getConfigurationSection("vanilla-biomes"));
         if(!new File(getDataFolder(),"habitats.yml").exists()) saveResource("habitats.yml",false);
         var next=new YamlConfiguration();
         try { next.load(new File(getDataFolder(),"habitats.yml")); }
@@ -68,7 +76,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         if(entries==null||entries.getKeys(false).isEmpty()) throw new IllegalArgumentException("habitats 누락");
         var parsed=new LinkedHashMap<String,Habitat>(); var warnings=new ArrayList<String>();
         for(String id:entries.getKeys(false)) parsed.put(id,Habitat.parse(id,entries.getConfigurationSection(id),warnings));
-        habitats=Collections.unmodifiableMap(parsed);
+        habitats=Collections.unmodifiableMap(parsed); biomeCompatibility=nextCompatibility;
         if(!warnings.isEmpty()) getLogger().warning("habitats.yml 값 "+warnings.size()+"건을 기본값으로 대체했습니다: "+String.join(", ",warnings.subList(0,Math.min(10,warnings.size())))+(warnings.size()>10?" …":""));
         structures.clear(); population.clear();
     }
@@ -108,7 +116,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         if(!w.getWorldBorder().isInside(l)) return "월드 경계";
         if(y<h.minY()||y>h.maxY()) return "높이";
         String biome=w.getBiome(x,y,z).getKey().toString();
-        if(!h.biomes().contains(biome)) return "바이옴";
+        if(!biomeCompatibility.matches(h.biomes(),biome)) return "바이옴";
         String season=seasonCheck(h.seasons(),w);
         if(!season.equals("OK")) return season;
         long t=w.getTime();
@@ -130,7 +138,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
             for(int dx=-r;dx<=r;dx++) for(int dz=-r;dz<=r;dz++)
                 if(!w.getBlockAt(x+dx,y-1,z+dz).getType().isSolid()) return "발판 부족";
         }
-        boolean cave=biome.contains(":cave/");
+        boolean cave=BiomeCompatibility.cave(biome);
         if(!cave && !water && w.getBlockAt(x,y,z).getLightFromSky()==0) return "지상 조건";
         if(cave&&w.getBlockAt(x,y,z).getLightFromBlocks()>h.maxBlockLight()) return "동굴 조명";
         if(h.nearWater()&&!waterNearby(w,x,y,z)) return "물가 아님";
@@ -180,7 +188,16 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         Location at=e.getLocation(); if(at.getWorld()!=null) population.noteSpawn(at.getWorld(),type,at);
         if(groupSpawning) return;
         Entity leader=e.getEntity();
-        Bukkit.getScheduler().runTask(this,()-> { if(leader.isValid()) group(id,leader.getLocation()); });
+        Bukkit.getScheduler().runTask(this,()-> {
+            if(!leader.isValid()||leader.isDead())return;
+            naturalSpawned++;
+            long now=System.currentTimeMillis();
+            if(naturalSpawned<=3||now-lastNaturalSpawnLog>=60000){
+                lastNaturalSpawnLog=now;var spawnedAt=leader.getLocation();
+                getLogger().info("Natural wildlife confirmed total="+naturalSpawned+" id="+type+" uuid="+leader.getUniqueId()+" world="+spawnedAt.getWorld().getName()+" x="+spawnedAt.getBlockX()+" y="+spawnedAt.getBlockY()+" z="+spawnedAt.getBlockZ()+" biome="+spawnedAt.getWorld().getBiome(spawnedAt).getKey());
+            }
+            group(id,leader.getLocation());
+        });
     }
     public int group(String id,Location origin) {
         Habitat h=habitats.get(id); World w=origin.getWorld();
@@ -237,8 +254,38 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
             getLogger().log(java.util.logging.Level.WARNING,"야생 개체 정리 중 "+failures+"건 실패(나머지는 계속 처리, 로그는 1분에 한 번)",firstFailure);
         }
     }
+    boolean naturalCheck(String id,Location at){
+        String result=check(id,at,true);
+        if(Bukkit.isPrimaryThread())naturalChecks.merge(result,1L,Long::sum);
+        return result.equals("OK");
+    }
+    /** Read-only, bounded sampling of already loaded chunks. Never teleports or spawns. */
+    private void diagnose(CommandSender sender,Player player){
+        var at=player.getLocation();var world=at.getWorld();var biome=world.getBiome(at).getKey().toString();
+        sender.sendMessage("Wildlife diagnose player="+player.getName()+" world="+world.getName()+" x="+at.getBlockX()+" y="+at.getBlockY()+" z="+at.getBlockZ()+" biome="+biome+" mode="+player.getGameMode()+" time="+world.getTime()+" doMobSpawning="+world.getGameRuleValue(GameRule.DO_MOB_SPAWNING)+" chunk-cap="+chunkLimit.cap()+" area-cap="+settings.areaCap());
+        sender.sendMessage("Natural condition counters="+naturalChecks+" confirmed="+naturalSpawned);
+        var outcomes=new TreeMap<String,Integer>();var eligible=new TreeSet<String>();int checked=0;
+        for(int step=0;step<8;step++){
+            double angle=step*Math.PI/4;int x=at.getBlockX()+(int)Math.round(Math.cos(angle)*48),z=at.getBlockZ()+(int)Math.round(Math.sin(angle)*48);
+            if(!world.isChunkLoaded(x>>4,z>>4))continue;
+            int y=world.getHighestBlockYAt(x,z,HeightMap.MOTION_BLOCKING_NO_LEAVES)+1;
+            var sample=new Location(world,x+.5,y,z+.5);String actual=world.getBiome(sample).getKey().toString();int species=0;
+            for(var row:habitats.entrySet()){
+                if(!biomeCompatibility.matches(row.getValue().biomes(),actual))continue;
+                if(species++>=16)break;
+                String result=check(row.getKey(),sample,true);outcomes.merge(result,1,Integer::sum);checked++;
+                if(result.equals("OK"))eligible.add(row.getKey());
+            }
+        }
+        sender.sendMessage("Loaded-ring samples="+checked+" outcomes="+outcomes+" eligible="+eligible);
+    }
     @Override public boolean onCommand(CommandSender sender,Command c,String label,String[] args) {
         if(!sender.hasPermission("chacademia.wildlife.admin")) return true;
+        if(args.length>0&&args[0].equalsIgnoreCase("diagnose")){
+            Player target=args.length==2?Bukkit.getPlayerExact(args[1]):sender instanceof Player p?p:null;
+            if(target==null||args.length>2)sender.sendMessage("/wildlife diagnose [online-player]");else diagnose(sender,target);
+            return true;
+        }
         if(args.length>0&&args[0].equals("reload")) {
             try {reloadConfig();reloadSettings();reloadHabitats();crops.reload();sender.sendMessage("§a서식지 재적용 완료. RandomSpawns 변경 시 /mm reload도 실행하세요.");}
             catch(Exception ex) {sender.sendMessage("§c설정 오류: "+ex.getMessage());} return true;

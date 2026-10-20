@@ -14,6 +14,6 @@ public final class HabitatCondition extends SkillCondition implements ILocationC
         this.threadSafetyLevel=ThreadSafetyLevel.SYNC_ONLY;
     }
     @Override public boolean check(AbstractLocation location) {
-        return plugin.check(id, BukkitAdapter.adapt(location), true).equals("OK");
+        return plugin.naturalCheck(id, BukkitAdapter.adapt(location));
     }
 }

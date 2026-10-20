@@ -90,6 +90,11 @@ public final class RelayEngine {
     private final Map<UUID,byte[]> queuedReady=new LinkedHashMap<>();
     private final Map<UUID,double[]> readyTokens=new HashMap<>();
     private final Map<UUID,double[]> helloTokens=new HashMap<>();
+    private final Map<UUID,UUID> catalogEpochs=new HashMap<>();
+    private final Map<UUID,dev.portablevfx.protocol.CatalogReadinessV2.Receiver> readyReceivers=new HashMap<>();
+    private final Map<UUID,double[]> readyV2Tokens=new HashMap<>();
+    private final Set<UUID> readyTransfers=new HashSet<>();
+    public static final int MAX_READY_TRANSFERS=64;
     private long throttledHellos, duplicateReady;
     public static final double MAX_CAST_DISTANCE = 256;
     /** readiness: 플레이어당 버스트 3개, 이후 20 tick 에 1개. hello: 버스트 32개, tick 당 1개. */
@@ -272,6 +277,12 @@ public final class RelayEngine {
     /** 요구 목록이 바뀔 때만 모든 플레이어의 준비 여부를 다시 계산한다. */
     public void catalogRequirements(Set<String> ids){
         catalogRequirements=Set.copyOf(ids);
+        // A successful catalog reload invalidates every v2 generation, even if IDs did not change.
+        for(UUID player:new ArrayList<>(catalogEpochs.keySet())){
+            UUID epoch=UUID.randomUUID();catalogEpochs.put(player,epoch);
+            readyReceivers.put(player,new dev.portablevfx.protocol.CatalogReadinessV2.Receiver(epoch));
+            readyTransfers.remove(player);withdrawCatalogReady(player);
+        }
         for(UUID player:new ArrayList<>(readyEffects.keySet()))refreshCatalogReady(player);
     }
     /**
@@ -279,6 +290,7 @@ public final class RelayEngine {
      * 같은 payload 는 디코드 없이 무시하고, 제한에 걸린 payload 는 최신 것 하나만 보관해 다음 tick 들에 적용한다.
      */
     public void catalogReady(UUID player,byte[] payload){
+        if(catalogEpochs.containsKey(player))return; // A v2 session can never downgrade to unframed readiness.
         if(!compatible.contains(player)&&deferAfterBase(player,"ready",payload))return;
         byte[] last=lastReadyPayload.get(player);
         if(last!=null&&payload!=null&&Arrays.equals(last,payload)){queuedReady.remove(player);duplicateReady++;return;}
@@ -326,6 +338,59 @@ public final class RelayEngine {
         else catalogReadyPlayers.remove(player);
     }
     public boolean supportsCatalogCast(UUID player){return catalogReadyPlayers.contains(player);}
+    /** Server-issued nonce belongs to one connection/catalog generation. Never reset by duplicate hellos. */
+    public UUID catalogEpoch(UUID player){
+        if(!compatible.contains(player)||viewer(player)==null)return null;
+        UUID epoch=catalogEpochs.get(player);
+        if(epoch==null){
+            if(catalogEpochs.size()>=MAX_THROTTLE_ENTRIES)return null;
+            epoch=UUID.randomUUID();catalogEpochs.put(player,epoch);
+            readyReceivers.put(player,new dev.portablevfx.protocol.CatalogReadinessV2.Receiver(epoch));
+            withdrawCatalogReady(player);
+        }
+        return epoch;
+    }
+    private void withdrawCatalogReady(UUID player){
+        readyEffects.remove(player);catalogReadyPlayers.remove(player);lastReadyPayload.remove(player);queuedReady.remove(player);
+    }
+    /** Bounded, one-transfer-per-player assembly. Nothing becomes ready before hash/count/IDs validate. */
+    public void catalogReadyV2(UUID player,byte[] payload){
+        var receiver=readyReceivers.get(player);
+        if(receiver==null||!compatible.contains(player)||!stopIntentCompatible.contains(player)){
+            rejectReadiness(player,"v2 ready received without current epoch/base/stop hello");return;
+        }
+        // A late packet can race the periodic expiry sweep. Release its global slot before accept().
+        if(receiver.expire(transport.currentTick())){
+            readyTransfers.remove(player);withdrawCatalogReady(player);rejectReadiness(player,"v2 readiness assembly timed out");
+        }
+        if(payload==null||payload.length>dev.portablevfx.protocol.CatalogReadinessV2.MAX_PACKET_BYTES){
+            withdrawCatalogReady(player);rejectReadiness(player,"Invalid v2 readiness size");return;
+        }
+        if(!takeToken(readyV2Tokens,player,32,2)){
+            withdrawCatalogReady(player);rejectReadiness(player,"v2 readiness rate limit");return;
+        }
+        if(!readyTransfers.contains(player)&&readyTransfers.size()>=MAX_READY_TRANSFERS){
+            withdrawCatalogReady(player);rejectReadiness(player,"v2 readiness assembly capacity");return;
+        }
+        try{
+            var result=receiver.accept(payload,transport.currentTick());
+            if(result.started()){withdrawCatalogReady(player);readyTransfers.add(player);}
+            if(result.complete()!=null){
+                readyEffects.put(player,result.complete());readyTransfers.remove(player);readinessRejection.remove(player);refreshCatalogReady(player);
+            }
+        }catch(ProtocolException|IllegalArgumentException error){
+            readyTransfers.remove(player);withdrawCatalogReady(player);rejectReadiness(player,error.getMessage());
+        }
+    }
+    private void expireReadyTransfers(){
+        long now=transport.currentTick();
+        for(UUID player:new ArrayList<>(readyTransfers)){
+            var receiver=readyReceivers.get(player);
+            if(receiver==null||receiver.expire(now)){
+                readyTransfers.remove(player);withdrawCatalogReady(player);rejectReadiness(player,"v2 readiness assembly timed out");
+            }
+        }
+    }
     /** Read-only operator diagnostic: distinguishes transport, withdrawn readiness and mismatched packs. */
     public String catalogDiagnostic(UUID player){
         Set<String> ids=readyEffects.get(player);
@@ -817,7 +882,7 @@ public final class RelayEngine {
     public void forget(UUID player) {
         forgetState(player);
         helloTokens.remove(player);
-        readyTokens.remove(player);
+        readyTokens.remove(player);readyV2Tokens.remove(player);
     }
 
     /** 잘못된 hello 로 상태만 초기화할 때는 속도 제한 버킷을 유지한다(폭주로 버킷을 리셋할 수 없게). */
@@ -830,6 +895,7 @@ public final class RelayEngine {
         widthPlayCompatible.remove(player);
         stopIntentCompatible.remove(player);
         readyEffects.remove(player);
+        catalogEpochs.remove(player);readyReceivers.remove(player);readyTransfers.remove(player);
         readinessRejection.remove(player);
         catalogReadyPlayers.remove(player);
         lastReadyPayload.remove(player);
@@ -846,6 +912,7 @@ public final class RelayEngine {
         sync();
         replayDeferredHellos();
         replayQueuedReady();
+        expireReadyTransfers();
         flushControls();
         flushDeferredPlays();
     }
@@ -868,6 +935,7 @@ public final class RelayEngine {
         widthPlayCompatible.clear();
         stopIntentCompatible.clear();
         readyEffects.clear();
+        catalogEpochs.clear();readyReceivers.clear();readyTransfers.clear();readyV2Tokens.clear();
         readinessRejection.clear();
         catalogReadyPlayers.clear();
         lastReadyPayload.clear();
