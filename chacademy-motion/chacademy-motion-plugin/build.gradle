@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'kr.chacademy'
-version = '0.3.0-codex.3-carrier.1-brooms30.2-kyudichi.1-kyuui.2-commands.1'
+version = '0.3.0-codex.3-carrier.1-brooms30.2-kyudichi.1-kyuui.2-commands.1-followups.1'
 
 repositories {
     mavenCentral()

@@ -1,6 +1,6 @@
 plugins { id 'java' }
 group = 'school.chacademia'
-version = '0.1.1-commands.1'
+version = '0.1.1-commands.1-followups.1'
 base { archivesName = 'chaca-housing' }
 repositories {
     if (findProperty('localDependencyRepo')) maven { url = uri(property('localDependencyRepo')) }
