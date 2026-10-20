@@ -37,6 +37,9 @@ public final class BroomPose {
     public static final String BOOST = "broom_boost";
     public static final String WOBBLE = "broom_wobble";
     public static final String FALL = "broom_fall";
+    /** 큐디치: 한 팔로 매달려 흔들흔들 (반복) / 다시 올라타기 (2026-10-20) */
+    public static final String HANG = "broom_hang";
+    public static final String CLIMB = "broom_climb";
 
     /** 플레이어별 지금 틀어 둔 모션 이름 */
     private static final Map<UUID, String> CURRENT = new HashMap<>();
@@ -56,7 +59,7 @@ public final class BroomPose {
     private static Optional<AdjustmentModifier.PartModifier> lean(UUID id, PartKey part) {
         if (part != PartKey.BODY) return Optional.empty();
         var r = BroomRiders.get(id);
-        if (r == null || !CURRENT.containsKey(id)) return Optional.empty();
+        if (r == null || !CURRENT.containsKey(id) || r.hanging || r.climbTicks > 0) return Optional.empty();
         float pt = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
         // 급강하면 앞으로 숙이고(pitch 음수), 선회 방향으로 몸을 기울임(roll 양수 = 왼쪽)
         float pitch = -r.pitch(pt) * 0.45f;
@@ -93,8 +96,22 @@ public final class BroomPose {
 
     /** 틱마다: 부스트/흔들림/기본 자세 중 고름 (바뀔 때만 교체). */
     static void update(Player p, BroomRiders.Rider r) {
-        String want = r.boosting ? BOOST : r.wobbling ? WOBBLE : RIDE;
-        if (!want.equals(CURRENT.get(p.getUUID()))) play(p, want, 5);
+        String want = r.hanging ? HANG : r.climbTicks > 0 ? CLIMB : r.boosting ? BOOST : r.wobbling ? WOBBLE : RIDE;
+        // 같은 이름이어도 레이어가 비어 있으면 다시 튼다: 죽었다 살아나거나 순간이동·시야 밖에서 돌아오면
+        // 그 플레이어 엔티티가 새로 만들어져 레이어가 비는데, 이름만 보고 건너뛰면 남 화면에서 서 있는 자세로 보였음
+        if (!want.equals(CURRENT.get(p.getUUID())) || idle(p)) play(p, want, want.equals(CLIMB) ? 2 : 5);
+    }
+
+    private static boolean idle(Player p) {
+        var layer = layer(p);
+        if (layer == null) return false;
+        var anim = layer.getAnimation();
+        return anim == null || !anim.isActive();
+    }
+
+    /** 시야 밖으로 나가 목록에서 빠진 사람: 다시 보이면 처음부터 틀도록 */
+    static void forget(java.util.UUID id) {
+        CURRENT.remove(id);
     }
 
     /** 내림. fell 이면 허우적 모션(끝나면 저절로 바닐라 자세로). */

@@ -1,7 +1,7 @@
 # 큐디치 규칙. 숫자는 전부 여기서 조정합니다. /서버관리 새로고침 큐디치 (진행 중인 경기는 끝난 뒤 적용)
 # 시간은 초, 거리는 블록, 속도는 블록/초.
 # 참고: 빗자루 최고 속도는 초당 16~25블록 (부스트 1.45배).
-config-version: 3            # 2 = 2026-10-17 공 속도·중력, 3 = 2026-10-19 공 크기 2배·F 범위 (예전 파일은 서버가 켜질 때 이 값들로 바꿈)
+config-version: 4            # 2 = 2026-10-17 공 속도·중력, 3 = 2026-10-19 공 크기 2배·F 범위, 4 = 2026-10-20 공 크기 1.4·블러저 범위·퀘이플 비행 (예전 파일은 서버가 켜질 때 이 값들로 바꿈)
 
 season:
   length-days: 7             # 시즌 길이 (큐디치·1:1 각각). 끝나면 그 모드의 레이팅·전적을 완전 초기화하고 다음 시즌 자동 시작.
@@ -23,7 +23,7 @@ match:
   snitch-at-seconds: 300     # 스니치 등장 (멈춘 시간 제외한 실제 경기 시간)
   respawn-seconds: 5         # 사망 후 부활까지
   respawn-invulnerable-seconds: 2
-  flight-fall-cooldown-seconds: 5  # 큐디치는 비행 쿨타임 없음. 공중에서 빗자루를 놓치면(낙마) 이 시간 동안만 비행 불가
+  flight-fall-cooldown-seconds: 5  # (안 씀: 2026-10-20 큐디치는 낙마 없음 — 안정성 0이면 빗자루에 매달려 회복까지 정지)
   game-mode: ADVENTURE       # 경기 중 게임모드 (ADVENTURE 권장: 블록 파괴 불가)
 
 score:
@@ -37,10 +37,10 @@ key:                         # 큐디치 키(F) 공통
   cooldown-seconds: 1.0
 
 quaffle:
-  drift-speed: 3.0           # (안 씀: 놓친 퀘이플은 중력으로 떨어져 바닥에서 멈춤)
+  drift-speed: 12.0          # 놓친·자유 퀘이플이 블러저처럼 떠다니는 속도
   throw-speed: 44.0          # 에임(조준점) 방향으로 던짐
-  gravity: 16.0              # 던졌거나 놓친 퀘이플이 받는 중력 (블록/초²)
-  flight-seconds: 3.0        # 던진 뒤 이 시간 동안은 패스(팀원 몸에 닿으면 받기)
+  gravity: 16.0              # (안 씀: 2026-10-20 던진 퀘이플은 직선, 놓친 퀘이플은 떠다님)
+  flight-seconds: 3.0        # 던진 뒤 이 시간 동안 직선으로 날아감 + 패스(팀원 몸에 닿으면 받기)
   hold-seconds: 10           # 10초 룰
   auto-catch-radius: 1.5     # 팀원 패스 자동 받기 (몸에 닿을 때)
   rethrow-block-seconds: 0.5 # 던진 사람은 이 시간 동안 다시 못 잡음
@@ -51,7 +51,7 @@ bludger:
   wander-speed: 16.0
   chase-speed: 30.0          # 빗자루보다 빠름: 쳐내기(F)·배럴롤로 피해야 함
   steer: 6.0                 # 방향을 바꾸는 빠르기 (클수록 급회전)
-  hit-radius: 1.5
+  hit-radius: 1.0            # 블러저에 맞는 거리 (2026-10-20 1.5 → 1.0)
   damage-percent: 25         # 최대 체력의 %, 모든 피해 감소 무시
   knockback: 1.2
   ignore-after-hit-seconds: 1.2
@@ -113,13 +113,13 @@ mvp:                         # MVP 점수 (레이팅 기여 보정에도 사용)
 banned-spells: []
 # 큐디치에서 막는 아티팩트 (현재는 순간이동형만 서버에서 막을 수 있음: 아래 teleport-guard)
 banned-artifacts: [rewind_hourglass]
-teleport-guard: true          # 경기 중 다른 플러그인의 순간이동(되감기 모래시계, 귀환 등) 차단
+teleport-guard: true          # 경기 중 다른 플러그인의 순간이동(되감기 모래시계, 귀환 등) 차단. 경기장 안으로의 짧은 순간이동(빗자루 순간이동 마법 등)은 허용
 
 models:                       # ModelEngine 모델 id (plugins/ModelEngine/blueprints/kyudichi 에 자동 설치)
   quaffle: kyudichi_quaffle
   bludger: kyudichi_bludger
   snitch: kyudichi_snitch
-  scale: 2.0                  # 공 크기 (2026-10-19 2배)
+  scale: 1.4                  # 공 크기 (2026-10-19 2배 → 2026-10-20 1.4)
 fallback-items:               # ModelEngine이 없을 때 보이는 아이템
   quaffle: ORANGE_CONCRETE_POWDER
   bludger: BLACKSTONE

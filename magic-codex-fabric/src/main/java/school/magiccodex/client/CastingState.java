@@ -45,7 +45,12 @@ public final class CastingState {
     public void clearCooldown(String id) { cooldowns.remove(id); pending.remove(id); }
     public void releaseInputs() { captured.clear(); }
     public void disable() { enabled=false; }
-    public void reset() { enabled=false; captured.clear(); cooldowns.clear(); pending.clear(); }
+    /** Dead / spectating: turn magic off but remember it was on (owner 2026-10-20: respawn keeps magic mode). */
+    public void suspend() { if(enabled) { enabled=false; suspended=true; } }
+    /** Alive again: magic mode comes back if it was on before death. */
+    public void resume() { if(suspended) { suspended=false; enabled=true; } }
+    private boolean suspended;
+    public void reset() { enabled=false; suspended=false; captured.clear(); cooldowns.clear(); pending.clear(); }
     public void serverResult(String id,int remaining,long now) {
         pending.remove(id);
         if(id.equals("wind_message")&&remaining==0)cooldowns.remove(id);
@@ -63,7 +68,7 @@ public final class CastingState {
         if(action==0) { captured.remove(key); return result(Kind.PASS,""); }
         if(captured.contains(key)) return result(Kind.CONSUME,"");
         if(action!=1 || !gameplay || key<0) return result(Kind.PASS,"");
-        if(toggleKey) { captured.add(key); enabled=!enabled; return result(Kind.MODE,""); }
+        if(toggleKey) { captured.add(key); enabled=!enabled; suspended=false; return result(Kind.MODE,""); }
         if(!enabled) return result(Kind.PASS,"");
         var binding=bindings.stream().filter(b -> !b.empty() && KeySettingsLayout.allowed(key) && b.keyCode()==key).findFirst().orElse(null);
         if(binding==null) return result(Kind.PASS,"");

@@ -52,6 +52,17 @@ public final class BroomFlight {
     private static BroomPhysics fallenPhysics;
     private static net.minecraft.client.multiplayer.ClientLevel catchLevel;
     private static BroomCatchSequence catchSequence;
+
+    // 큐디치 매달림 (오너 2026-10-20: 낙마 없음 — 균형 0이면 그 자리에서 한 팔로 매달렸다가 다 회복되면 다시 올라탐)
+    /** 균형 0 → 가득까지 걸리는 시간 (틱) */
+    public static final int HANG_RECOVER_TICKS = 60;
+    /** 다시 올라타는 모션 길이 (broom_climb.json 과 맞춤) */
+    public static final int CLIMB_TICKS = 16;
+    private static boolean hangMode;
+    private static boolean hanging;
+    private static int climbTicks;
+    public static boolean hanging() { return physics != null && hanging; }
+    public static int climbTicks() { return physics == null ? 0 : climbTicks; }
     public static BroomCatchSequence catchSequence(){return catchSequence;}
     private static int movementMask(Minecraft mc){return (mc.options.keyUp.isDown()?1:0)|(mc.options.keyLeft.isDown()?2:0)|(mc.options.keyDown.isDown()?4:0)|(mc.options.keyRight.isDown()?8:0);}
 
@@ -120,6 +131,12 @@ public final class BroomFlight {
     /** 서버가 내리게 함 (시간 끝, 금지 구역, 명령어, 다시 마법). */
     /** 큐디치 성소: 균형 가득 / 쿨타임과 상관없는 가속 한 번 (쿨타임은 그대로 둔다). */
     public static void onFx(byte kind) {
+        if (kind == BroomPackets.FX_HANG_MODE_ON) { hangMode = true; return; }
+        if (kind == BroomPackets.FX_HANG_MODE_OFF) {
+            hangMode = false;
+            if (hanging) { hanging = false; climbTicks = CLIMB_TICKS; send(BroomPackets.EVT_CLIMB, 0); }
+            return;
+        }
         if (physics == null) return;
         if (kind == BroomPackets.FX_REFILL_BALANCE) { physics.balance = physics.maximumBalance(); physics.prevBalance = physics.balance; }
         else if (kind == BroomPackets.FX_FREE_BOOST) physics.boostTicks = BroomPhysics.BOOST_TICKS;
@@ -144,6 +161,7 @@ public final class BroomFlight {
         drop = null;
         awaitingCatch = 0;
         fallenPhysics=null;catchRequested=false;catchLevel=null;
+        hangMode = false; hanging = false; climbTicks = 0;
         if (wind != null) wind.finish();
         wind = null;
     }
@@ -154,6 +172,7 @@ public final class BroomFlight {
         BroomPhysics ph = physics;
         physics = null;
         rider = null;
+        hanging = false; climbTicks = 0;
         if (wind != null) wind.finish();
         wind = null;
         if (p == null || ph == null) return;
@@ -202,6 +221,7 @@ public final class BroomFlight {
             Minecraft.getInstance().gui.setOverlayMessage(Component.literal("빗자루가 젖어서 날 수 없습니다"), false);
             return false;
         }
+        if (hanging || climbTicks > 0) { holdOnBroom(p); return true; }
         var k = p.input.keyPresses;
         int rollReq = 0;
         if (leftTap > 0) leftTap--;
@@ -260,8 +280,44 @@ public final class BroomFlight {
             p.setXRot(Mth.clamp(p.getXRot() + (p.getRandom().nextFloat() - 0.5f) * shake, -90f, 90f));
             if (p.tickCount % 6 == 0) play(SoundEvents.BAMBOO_WOOD_HIT, 0.6f + physics.balance / 50f, 0.5f);
         }
-        if (physics.fellOff()) fall();
+        if (physics.fellOff()) {
+            if (hangMode) startHang();
+            else fall();
+        }
         return true;
+    }
+
+    /** 큐디치: 균형을 잃음 → 떨어지지 않고 그 자리에서 한 팔로 매달림. */
+    private static void startHang() {
+        physics.startHang();
+        hanging = true;
+        climbTicks = 0;
+        if (rider != null) { rider.bank = rider.prevBank = 0; rider.pitch = rider.prevPitch = 0; }
+        send(BroomPackets.EVT_HANG, 0);
+        play(SoundEvents.WOOD_BREAK, 0.7f, 1.0f);
+        Minecraft.getInstance().gui.setOverlayMessage(Component.literal("균형을 잃었습니다! 회복될 때까지 빗자루에 매달려 있어요"), false);
+    }
+
+    /** 매달림 / 다시 올라타는 동안: 그 자리에 멈춤, 이동 키는 무시. */
+    private static void holdOnBroom(LocalPlayer p) {
+        p.setDeltaMovement(Vec3.ZERO);
+        p.resetFallDistance();
+        if (p.hurtTime > lastHurtTime && hanging) physics.hurt(); // 매달린 채 맞으면 회복이 늦어짐
+        lastHurtTime = p.hurtTime;
+        if (physics.boostCooldown > 0) physics.boostCooldown--;
+        if (physics.rollCooldown > 0) physics.rollCooldown--;
+        if (hanging) {
+            if (physics.recoverHang(physics.maximumBalance() / HANG_RECOVER_TICKS)) {
+                hanging = false;
+                climbTicks = CLIMB_TICKS;
+                send(BroomPackets.EVT_CLIMB, 0);
+                play(SoundEvents.ARMOR_EQUIP_ELYTRA.value(), 1.2f, 0.8f);
+            }
+        } else if (--climbTicks <= 0) {
+            climbTicks = 0;
+            physics.recoverHang(0);
+            Minecraft.getInstance().gui.setOverlayMessage(Component.literal("다시 빗자루에 올라탔습니다"), false);
+        }
     }
 
     // ------------------------------------------------------------------ 틱 (이동 뒤)
@@ -314,6 +370,9 @@ public final class BroomFlight {
         r.bank += (bankTarget - r.bank) * 0.35f;
         r.boosting = ph.boostTicks > 0;
         r.wobbling = ph.balance < 25;
+        r.hanging = hanging;
+        r.climbTicks = climbTicks;
+        if (hanging || climbTicks > 0) { r.pitch = 0; r.bank = 0; r.boosting = false; r.wobbling = false; }
     }
 
     // ------------------------------------------------------------------ 도구

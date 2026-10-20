@@ -25,6 +25,8 @@ import java.util.Set;
 public final class BroomRenderer {
     /** 발 위치에서 좌석(p_pilot)까지 높이 (블록). 몸이 빗자루 위에 앉아 보이도록 맞춘 값. */
     public static final float SEAT_Y = 0.66f;
+    /** 큐디치 매달림: 머리 위로 뻗은 손 높이까지 빗자루를 올리는 양 (발에서 손 ≈ 2.0블록). */
+    public static final float HANG_LIFT = 1.36f;
     private static final double MAX_DIST_SQ = 96 * 96;
 
     private BroomRenderer() {}
@@ -52,6 +54,7 @@ public final class BroomRenderer {
             BroomModel model = BroomModels.get(r.broom);
             if (model == null) continue;
             float bob = Mth.sin((p.tickCount + pt) * 0.157f) * 0.03f * (1f - Mth.clamp(r.speed / 0.6f, 0f, 1f));
+            bob += r.hangLift(pt);
             float scale = r.summonScale(pt);
             int light = LevelRenderer.getLightColor(mc.level, BlockPos.containing(pos.x, pos.y + SEAT_Y, pos.z));
             draw(pose, buffers, used, model, pos.x - cam.x, pos.y + SEAT_Y + bob - cam.y, pos.z - cam.z,

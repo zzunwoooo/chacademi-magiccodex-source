@@ -74,6 +74,8 @@ public final class BroomService implements Listener, PluginMessageListener {
         final CarrierVelocity carrier = new CarrierVelocity();
         Location last;
         int secondTicks;
+        /** 큐디치 매달림 중 (늦게 시야에 들어온 사람에게도 매달린 자세를 보여 주려고 기억) */
+        boolean hanging;
 
         Session(UUID id, BroomType type, boolean prevAllowFlight, int limitTicks) {
             this.id = id;
@@ -176,6 +178,24 @@ public final class BroomService implements Listener, PluginMessageListener {
 
     /** 모드가 깔려 있어서 빗자루 비행을 할 수 있는 클라이언트인지. */
     /** 타고 있는 사람의 모드에 비행 효과를 보낸다 (BroomCodec.FX_*). 타고 있지 않거나 모드가 없으면 false. */
+    /** 큐디치 매달림 모드인 플레이어 (낙마 대신 매달림). */
+    private final java.util.Set<UUID> hangMode = new java.util.HashSet<>();
+
+    /**
+     * 큐디치(오너 2026-10-20): 켜면 균형이 0이 돼도 떨어지지 않고 그 자리에서 한 팔로 매달렸다가, 회복되면 다시 올라탄다.
+     * 타고 있지 않아도 모드에 알려 둔다. 모드가 없으면 false.
+     */
+    public boolean hangMode(Player p, boolean on) {
+        if (on) hangMode.add(p.getUniqueId()); else hangMode.remove(p.getUniqueId());
+        if (!on) {
+            var s = sessions.get(p.getUniqueId());
+            if (s != null && s.hanging) { s.hanging = false; broadcast(p, s.type.id(), BroomCodec.STATE_CLIMB, false); }
+        }
+        if (!p.getListeningPluginChannels().contains(BroomCodec.CHANNEL_FX)) return false;
+        p.sendPluginMessage(plugin, BroomCodec.CHANNEL_FX, new byte[]{on ? BroomCodec.FX_HANG_MODE_ON : BroomCodec.FX_HANG_MODE_OFF});
+        return true;
+    }
+
     public boolean fx(Player p, byte kind) {
         if (!isRiding(p) || !p.getListeningPluginChannels().contains(BroomCodec.CHANNEL_FX)) return false;
         p.sendPluginMessage(plugin, BroomCodec.CHANNEL_FX, new byte[]{kind});
@@ -405,6 +425,16 @@ public final class BroomService implements Listener, PluginMessageListener {
                 if (c == null || c.until() < tick || isRiding(player) || player.isDead() || player.isOnGround() || player.isInsideVehicle() || player.isGliding() || player.getGameMode() == GameMode.SPECTATOR || !player.hasPermission("chacademy.broom.use") || blockedWorlds.contains(player.getWorld().getName()) || (c.remaining() <= 0 && !owns(player, c.type()))) return;
                 begin(player, c.type(), c.remaining(), c.prevAllowFlight());
             }
+            case BroomCodec.EVT_HANG, BroomCodec.EVT_CLIMB -> {
+                var s = sessions.get(id);
+                if (s == null) return;
+                boolean hang = e.type() == BroomCodec.EVT_HANG;
+                if (hang && !hangMode.contains(id)) return;
+                if (s.hanging == hang) return;
+                s.hanging = hang;
+                // 다른 사람 화면에서도 매달림 / 다시 올라타기 모션이 보이도록
+                broadcast(player, s.type.id(), hang ? BroomCodec.STATE_HANG : BroomCodec.STATE_CLIMB, false);
+            }
             case BroomCodec.EVT_ROLL_LEFT, BroomCodec.EVT_ROLL_RIGHT -> {
                 if (!isRiding(player)) return;
                 Long last = lastRoll.get(id);
@@ -476,7 +506,7 @@ public final class BroomService implements Listener, PluginMessageListener {
         var s = sessions.get(rider.getUniqueId());
         if (s == null) return;
         Player viewer = e.getPlayer();
-        byte[] payload = BroomCodec.encodeState(new BroomCodec.State(rider.getUniqueId(), s.type.id(), BroomCodec.STATE_NORMAL));
+        byte[] payload = BroomCodec.encodeState(new BroomCodec.State(rider.getUniqueId(), s.type.id(), s.hanging ? BroomCodec.STATE_HANG : BroomCodec.STATE_NORMAL));
         // 엔티티 생성 패킷보다 늦게 도착하도록 다음 틱에 보냄 (모드는 UUID 로 기억하므로 순서가 바뀌어도 괜찮음)
         Bukkit.getScheduler().runTask(plugin, () -> {
             if (viewer.isOnline() && sessions.containsKey(rider.getUniqueId())) {
@@ -498,6 +528,7 @@ public final class BroomService implements Listener, PluginMessageListener {
             }
         }
         catches.remove(id);
+        hangMode.remove(id);
         lastRoll.remove(id);
         lastRequest.remove(id);
         store.saveIfDirty();
