@@ -3,7 +3,6 @@ package school.chacademia.wildlife;
 import io.lumine.mythic.api.adapters.AbstractLocation;
 import io.lumine.mythic.api.skills.ThreadSafetyLevel;
 import io.lumine.mythic.api.skills.conditions.ILocationCondition;
-import io.lumine.mythic.bukkit.BukkitAdapter;
 import io.lumine.mythic.core.skills.SkillCondition;
 
 public final class HabitatCondition extends SkillCondition implements ILocationCondition {
@@ -14,6 +13,6 @@ public final class HabitatCondition extends SkillCondition implements ILocationC
         this.threadSafetyLevel=ThreadSafetyLevel.SYNC_ONLY;
     }
     @Override public boolean check(AbstractLocation location) {
-        return plugin.naturalCheck(id, BukkitAdapter.adapt(location));
+        return plugin.naturalCheck(id, location);
     }
 }

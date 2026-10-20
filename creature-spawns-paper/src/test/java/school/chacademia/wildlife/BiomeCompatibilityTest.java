@@ -37,7 +37,7 @@ class BiomeCompatibilityTest {
   for(String id:rows.getKeys(false)){assertTrue(id.matches("minecraft:[a-z0-9_]+"));for(String value:rows.getStringList(id))assertTrue(allowed.contains(value),value);}
  }
  @Test void operatorDiagnosticsKeepTheOriginalAliasAndTheBuiltVersion(){
-  var plugin=resource("plugin.yml");assertEquals("0.4.1-integrated-20261020.2-biomes.1",plugin.getString("version"));
+  var plugin=resource("plugin.yml");assertEquals("0.4.1-integrated-20261020.3-spawngate.1",plugin.getString("version"));
   var commands=plugin.getConfigurationSection("commands");assertEquals(1,commands.getKeys(false).size());String name=commands.getKeys(false).iterator().next();
   assertEquals(Set.of("wildlifeadmin","wildlife"),new HashSet<>(commands.getStringList(name+".aliases")));
   assertTrue(commands.getString(name+".usage").contains("diagnose [online-player]"));

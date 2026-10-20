@@ -26,6 +26,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
     private BiomeCompatibility biomeCompatibility=new BiomeCompatibility(Map.of());
     private final Map<String,Long> naturalChecks=new TreeMap<>();
     private long naturalSpawned,lastNaturalSpawnLog;
+    private MainThreadSpawnGate naturalGate;
     private Settings settings=new Settings(false,Set.of(),0,0,0,1,List.of());
     private final PopulationCache population=new PopulationCache();
     // 메인 스레드 전용 임시 좌표: 비교할 때마다 Location을 새로 만들지 않는다.
@@ -36,6 +37,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
     private long lastCleanupLog;
     private final CropAwakening crops=new CropAwakening(this);
     @Override public void onEnable() {
+        naturalGate=new MainThreadSpawnGate(Bukkit::isPrimaryThread,action->{var task=Bukkit.getScheduler().runTask(this,action);return task::cancel;},16,250);
         saveDefaultConfig(); reloadSettings(); reloadHabitats(); naturalKey=new NamespacedKey(this,"natural");
         getServer().getPluginManager().registerEvents(this,this);
         // 구조물 색인은 지연 방식이다: 청크 로드 때가 아니라 구조물 조건이 있는 서식지가 물을 때만 계산한다.
@@ -77,6 +79,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         var parsed=new LinkedHashMap<String,Habitat>(); var warnings=new ArrayList<String>();
         for(String id:entries.getKeys(false)) parsed.put(id,Habitat.parse(id,entries.getConfigurationSection(id),warnings));
         habitats=Collections.unmodifiableMap(parsed); biomeCompatibility=nextCompatibility;
+        if(naturalGate!=null)naturalGate.invalidate();
         if(!warnings.isEmpty()) getLogger().warning("habitats.yml 값 "+warnings.size()+"건을 기본값으로 대체했습니다: "+String.join(", ",warnings.subList(0,Math.min(10,warnings.size())))+(warnings.size()>10?" …":""));
         structures.clear(); population.clear();
     }
@@ -254,16 +257,26 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
             getLogger().log(java.util.logging.Level.WARNING,"야생 개체 정리 중 "+failures+"건 실패(나머지는 계속 처리, 로그는 1분에 한 번)",firstFailure);
         }
     }
-    boolean naturalCheck(String id,Location at){
-        String result=check(id,at,true);
-        if(Bukkit.isPrimaryThread())naturalChecks.merge(result,1L,Long::sum);
-        return result.equals("OK");
+    boolean naturalCheck(String id,io.lumine.mythic.api.adapters.AbstractLocation location){
+        var gate=naturalGate;
+        return gate!=null&&gate.check(()->{
+            // Mythic 5.9 evaluates RandomSpawner conditions asynchronously even with SYNC_ONLY.
+            // Adaptation and every Bukkit/world access occur only inside this main-thread action.
+            String result=check(id,BukkitAdapter.adapt(location),true);
+            naturalChecks.merge(result,1L,Long::sum);
+            return result.equals("OK");
+        });
     }
+    private void globalDiagnostics(CommandSender sender){
+        sender.sendMessage("Natural condition counters="+naturalChecks+" confirmed="+naturalSpawned);
+        sender.sendMessage("Natural main-thread gate="+(naturalGate==null?"not started":naturalGate.diagnostic()));
+    }
+    @Override public void onDisable(){if(naturalGate!=null)naturalGate.close();}
     /** Read-only, bounded sampling of already loaded chunks. Never teleports or spawns. */
     private void diagnose(CommandSender sender,Player player){
         var at=player.getLocation();var world=at.getWorld();var biome=world.getBiome(at).getKey().toString();
         sender.sendMessage("Wildlife diagnose player="+player.getName()+" world="+world.getName()+" x="+at.getBlockX()+" y="+at.getBlockY()+" z="+at.getBlockZ()+" biome="+biome+" mode="+player.getGameMode()+" time="+world.getTime()+" doMobSpawning="+world.getGameRuleValue(GameRule.DO_MOB_SPAWNING)+" chunk-cap="+chunkLimit.cap()+" area-cap="+settings.areaCap());
-        sender.sendMessage("Natural condition counters="+naturalChecks+" confirmed="+naturalSpawned);
+        globalDiagnostics(sender);
         var outcomes=new TreeMap<String,Integer>();var eligible=new TreeSet<String>();int checked=0;
         for(int step=0;step<8;step++){
             double angle=step*Math.PI/4;int x=at.getBlockX()+(int)Math.round(Math.cos(angle)*48),z=at.getBlockZ()+(int)Math.round(Math.sin(angle)*48);
@@ -283,7 +296,8 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         if(!sender.hasPermission("chacademia.wildlife.admin")) return true;
         if(args.length>0&&args[0].equalsIgnoreCase("diagnose")){
             Player target=args.length==2?Bukkit.getPlayerExact(args[1]):sender instanceof Player p?p:null;
-            if(target==null||args.length>2)sender.sendMessage("/wildlife diagnose [online-player]");else diagnose(sender,target);
+            if(args.length==1&&target==null)globalDiagnostics(sender);
+            else if(target==null||args.length>2)sender.sendMessage("/wildlife diagnose [online-player]");else diagnose(sender,target);
             return true;
         }
         if(args.length>0&&args[0].equals("reload")) {

@@ -17,3 +17,9 @@ Three PortableVFX JARs, wild Wildlife JAR and new biome-compatibility.yml applie
 
 ## F3+B correction
 During active Kyudichi/duel matches, including tests and spectators, hitboxes cannot be enabled and an existing enabled state is turned off. No admin/test exemption. Outside a match they remain available.
+
+## Common spawn gate follow-up
+
+Actual Mythic5.9 RandomSpawnGenerator/ClusterGenerator evaluates ILocationCondition on its async scheduler before synchronous spawn. SYNC_ONLY does not move this path to the main thread; old check rejected every such call. Added bounded main-thread bridge16pending/250ms, deadline/timeout/cancel and reload/disable generation checks. BukkitAdapter/world reads stay on main; main never waits. Wildlife43 tests and independent review pass. Version0.4.1-integrated-20261020.3-spawngate.1 deployed to wild only, SHA2568685fb9205dce6eff7f8c31789b367c1bc89c49b81fa8acc3bf022e0e7550da1, PID13988,118 protected hashes match. Other servers unchanged. No online wild players at verification, so actual naturally generated entity evidence remains pending.
+
+VFX repair also deployed to personal client and public launcher v0.1.19,79854212eb98c393e11cbcb13081da18ae2627da;9 release digests, public latest feed/updater verified. Personal VFX hash2c4a83f13cdb716660824315b1da795c9c539ed3c274a87b2f3921d9e30bc969;14 other mods/options preserved, only two preload count fields1237->4096. Client reconnect QA pending.
