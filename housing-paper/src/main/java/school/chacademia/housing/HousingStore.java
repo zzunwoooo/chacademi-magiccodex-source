@@ -233,6 +233,33 @@ final class HousingStore {
         }), done);
     }
 
+    /** 관리자: 방 정보 한 줄 (요약·보기용). 방이 없으면 null. */
+    void row(UUID owner, Consumer<RoomRow> done) { async("방 정보", c -> room(c, owner), done); }
+
+    /** 관리자: 레이아웃 지우기. slot &lt; 0 이면 전부. @return 지운 레이아웃 수 (방이 없으면 -1, DB 오류 null) */
+    void resetLayouts(UUID owner, int slot, Consumer<Integer> done) {
+        async("배치 초기화", c -> tx(t -> {
+            if (room(t, owner) == null) return -1;
+            int n;
+            try (var s = t.prepareStatement("DELETE FROM " + tLayout + " WHERE owner=?" + (slot >= 0 ? " AND slot=?" : ""))) {
+                s.setString(1, owner.toString()); if (slot >= 0) s.setInt(2, slot); n = s.executeUpdate();
+            }
+            bump(t, owner);
+            return n;
+        }), done);
+    }
+
+    /** 관리자: 좋아요 전부 지우기. @return 지운 수 (방이 없으면 -1, DB 오류 null) */
+    void resetLikes(UUID owner, Consumer<Integer> done) {
+        async("좋아요 초기화", c -> tx(t -> {
+            if (room(t, owner) == null) return -1;
+            int n;
+            try (var s = t.prepareStatement("DELETE FROM " + tLike + " WHERE owner=?")) { s.setString(1, owner.toString()); n = s.executeUpdate(); }
+            try (var s = t.prepareStatement("UPDATE " + tRoom + " SET likes=0,rev=rev+1 WHERE owner=?")) { s.setString(1, owner.toString()); s.executeUpdate(); }
+            return n;
+        }), done);
+    }
+
     // ------------------------------------------------------------ 방명록
     void post(UUID owner, Person author, String text, int keep, Consumer<Boolean> done) {
         async("방명록 쓰기", c -> tx(t -> {

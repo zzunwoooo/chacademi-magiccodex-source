@@ -1,4 +1,4 @@
-# 차카데미 하우징 (기숙사 내 방 꾸미기). /하우징관리 리로드 로 다시 읽습니다.
+# 차카데미 하우징 (기숙사 내 방 꾸미기). /서버관리 새로고침 하우징 으로 다시 읽습니다.
 # DB 는 plugins/ChacaHousing/database.properties (MagicCodexBridge 와 같은 형식, 공용 MariaDB 를 써야 학교·야생에서 같은 방이 보입니다).
 
 # 이 서버 이름 (구경 중 명단·접속 표시에만 씀). 학교 서버는 school, 야생은 wild 처럼.
