@@ -24,7 +24,7 @@ import school.magiccodex.protocol.FishingProtocol.Piece;
  */
 final class FishingGear {
     static final int[] GRADE_RGB = {0xDCE3EA, 0x71E5F2, 0xD2A8FF, 0xFFD582};
-    private final NamespacedKey kind, id, dur, fFloat, fFloatDur, fLine, fLineDur, fBait, fBaitCount, fish, size, tankId, caught;
+    private final NamespacedKey kind, id, dur, fFloat, fFloatDur, fLine, fLineDur, fBait, fBaitCount, fish, size, tankId, caught, itemToken;
     private FishingConfig config;
 
     /** One fitted piece: gear + durability (-1 = endless) or bait count (-1 = endless default). fallback = not a real item. */
@@ -41,7 +41,7 @@ final class FishingGear {
         fLine = new NamespacedKey(plugin, "fishing_line"); fLineDur = new NamespacedKey(plugin, "fishing_line_dur");
         fBait = new NamespacedKey(plugin, "fishing_bait"); fBaitCount = new NamespacedKey(plugin, "fishing_bait_count");
         fish = new NamespacedKey(plugin, "fishing_fish"); size = new NamespacedKey(plugin, "fishing_size");
-        tankId = new NamespacedKey(plugin, "fishing_tank_id"); caught = new NamespacedKey(plugin, "fishing_caught");
+        tankId = new NamespacedKey(plugin, "fishing_tank_id"); caught = new NamespacedKey(plugin, "fishing_caught"); itemToken = new NamespacedKey(plugin, "fishing_item_token");
     }
     void config(FishingConfig c) { config = c; }
 
@@ -185,7 +185,8 @@ final class FishingGear {
      * A fish item for one tank fish. It keeps the tank row id and the caught date (owner 2026-10-20: 개체 정보), so
      * putting it back restores the same fish, and the id (the table's primary key) refuses a duplicated item.
      */
-    ItemStack fish(FishingConfig.Fish f, float cm, String tank, long caughtAt) {
+    ItemStack fish(FishingConfig.Fish f, float cm, String tank, long caughtAt) { return fish(f,cm,tank,caughtAt,""); }
+    ItemStack fish(FishingConfig.Fish f, float cm, String tank, long caughtAt, String token) {
         Material base = Material.matchMaterial(f.item());
         if (base == null || !base.isItem()) base = Material.COD;
         var item = new ItemStack(base);
@@ -201,6 +202,7 @@ final class FishingGear {
         pdc.set(size, PersistentDataType.FLOAT, cm);
         pdc.set(tankId, PersistentDataType.STRING, tank);
         pdc.set(caught, PersistentDataType.LONG, caughtAt);
+        if(!token.isEmpty())pdc.set(itemToken,PersistentDataType.STRING,token);
         if (config.fishModels) meta.setItemModel(new NamespacedKey("magiccodex", "fishing/fish/" + f.id()));
         item.setItemMeta(meta);
         return item;
@@ -211,7 +213,7 @@ final class FishingGear {
         return item.getItemMeta().getPersistentDataContainer().get(fish, PersistentDataType.STRING);
     }
     /** Fish item data: species, size, tank id ("" for old items), caught date (0 = unknown). Null when not a fish item. */
-    record HeldFish(String fish, float size, String tankId, long caughtAt) {}
+    record HeldFish(String fish, float size, String tankId, long caughtAt, String token) {}
     HeldFish heldFish(ItemStack item) {
         if (item == null || item.getAmount() < 1 || item.getItemMeta() == null) return null;
         var pdc = item.getItemMeta().getPersistentDataContainer();
@@ -220,7 +222,8 @@ final class FishingGear {
         Float cm = pdc.get(size, PersistentDataType.FLOAT);
         String id = pdc.get(tankId, PersistentDataType.STRING);
         Long at = pdc.get(caught, PersistentDataType.LONG);
-        return new HeldFish(f, cm == null ? 0 : cm, id == null ? "" : id, at == null ? 0 : at);
+        if(cm==null || !Float.isFinite(cm) || cm<=0)return null;
+        return new HeldFish(f, cm, id == null ? "" : id, at == null ? 0 : at, pdc.getOrDefault(itemToken,PersistentDataType.STRING,""));
     }
 
     // ------------------------------------------------------------------ protocol

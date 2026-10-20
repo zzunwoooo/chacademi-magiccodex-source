@@ -90,15 +90,16 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
     /** A line is in the water (cast, sinking or a fish on it): the 통발 window waits until it is done. */
     boolean fishingNow(UUID player) {
         var s = sessions.get(player);
-        return s != null && !s.preview && (s.state == SINKING || s.state == BITING || s.state == LANDING && s.hook != null);
+        return s != null && blocksTank(s.preview,s.state);
     }
+    static boolean blocksTank(boolean preview,int state){return !preview&&state!=READY;}
     FishingConfig config() { return config; }
     FishingGear gear() { return gear; }
 
     /** A fish item (taken out of the tank) for this tank row, or null when the species no longer exists. */
     ItemStack fishItem(FishTank.Fish f) {
         var def = config.fishById.get(f.fish());
-        return def == null ? null : gear.fish(def, (float) f.size(), f.id(), f.caughtAt());
+        return def == null ? null : gear.fish(def, (float) f.size(), f.id(), f.caughtAt(), f.token());
     }
 
     void close() {
@@ -429,8 +430,10 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
                 // owner 2026-10-20: fish go into the 통발 tank, not the inventory
                 if (!s.preview) {
                     var r = store.record(p.getUniqueId(), f.id(), cm); fresh = r[0]; record = r[1];
-                    tank.add(p.getUniqueId(), f.id(), cm);
-                    notes.add("통발 수조에 넣었어요 (" + tank.count(p.getUniqueId()) + "/" + tank.capacity() + ").");
+                    tank.add(p.getUniqueId(),f.id(),cm,(saved,put)->{
+                        if(put!=FishTank.Put.OK&&p.isOnline())p.sendMessage("§e잡은 물고기는 안전하게 보존했어요. 수조 공간과 저장소가 준비되면 자동 복구돼요.");
+                    });
+                    notes.add("통발 수조에 저장 요청했어요 (" + tank.count(p.getUniqueId()) + "/" + tank.capacity() + ").");
                 } else fresh = true;
             }
             for (ItemStack it : merge(items)) rewards.add(new Reward(FishingGear.cut(AlchemyBridge.displayName(it)), it.getAmount(), preview(it)));

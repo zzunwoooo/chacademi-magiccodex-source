@@ -31,6 +31,7 @@ final class FishTankBridge implements PluginMessageListener, Listener {
     private final FishShopBridge shop;     // may be null (shop failed to load): no instant sale
     private final Set<UUID> open = new HashSet<>(), busy = new HashSet<>();
     private final Map<UUID, long[]> limits = new HashMap<>();
+    private final Map<UUID,Set<Long>> completed=new HashMap<>();
 
     FishTankBridge(MagicCodexBridge plugin, FishingBridge fishing, FishShopBridge shop) {
         this.plugin = plugin; this.fishing = fishing; this.shop = shop;
@@ -45,11 +46,13 @@ final class FishTankBridge implements PluginMessageListener, Listener {
     /** The 통발 spell: false (no mana spent) when the window cannot open. */
     boolean cast(Player p) {
         if (!modded(p)) { p.sendMessage("§c통발 수조를 열려면 차카데미 모드를 업데이트해 주세요."); return false; }
+        if(!fishing.tank().loaded(p.getUniqueId())){fishing.tank().refresh(p.getUniqueId(),null);p.sendMessage("§e수조를 읽는 중이에요. 잠시 후 다시 열어 주세요.");return false;}
         if (fishing.fishingNow(p.getUniqueId())) { p.sendActionBar(FishingGear.plain("낚시 중에는 통발 수조를 열 수 없어요.", 0xFF9E9E)); return false; }
         open(p);
         return true;
     }
     void open(Player p) {
+        if(!busy.contains(p.getUniqueId()))completed.remove(p.getUniqueId());
         open.add(p.getUniqueId());
         fishing.tank().refresh(p.getUniqueId(), () -> { if (p.isOnline() && open.contains(p.getUniqueId())) send(p, FishTankProtocol.KIND_OPEN, ""); });
     }
@@ -59,7 +62,7 @@ final class FishTankBridge implements PluginMessageListener, Listener {
     private long price(FishTank.Fish f) { return shop == null ? 0 : shop.price(f); }
 
     private void send(Player p, int kind, String notice) {
-        if (!open.contains(p.getUniqueId())) return;
+        if (!p.isOnline() || !open.contains(p.getUniqueId())) return;
         var tank = fishing.tank().tank(p.getUniqueId());
         var config = fishing.config();
         var fish = new ArrayList<Fish>(); var species = new LinkedHashMap<String, Info>();
@@ -76,7 +79,7 @@ final class FishTankBridge implements PluginMessageListener, Listener {
             var h = fishing.gear().heldFish(inv.getItem(slot));
             if (h == null) continue;
             var def = config.fishById.get(h.fish());
-            if (def == null || !FishTankProtocol.validTankId(h.tankId())) continue;
+            if (def == null || !h.tankId().isEmpty() && !FishTankProtocol.validTankId(h.tankId())) continue;
             held.add(new Held(slot, h.tankId(), def.id(), h.size(), h.caughtAt()));
             species.computeIfAbsent(def.id(), k -> info(def));
         }
@@ -91,6 +94,7 @@ final class FishTankBridge implements PluginMessageListener, Listener {
         return new Info(f.id(), FishingGear.cut(f.name()), f.grade(), Math.clamp(f.shape(), 0, 255), d);
     }
     private void result(Player p, Request r, boolean ok, String notice) {
+        if(!p.isOnline())return;
         try { p.sendPluginMessage(plugin, FishTankProtocol.RESPONSE, FishTankProtocol.encode(new Result(r.operation(), r.action(), ok, r.tankId(), cut(notice)))); }
         catch (IllegalArgumentException ignored) {}
     }
@@ -111,10 +115,12 @@ final class FishTankBridge implements PluginMessageListener, Listener {
         if (r.action() == FishTankProtocol.CLOSE) { open.remove(id); return; }
         if (r.action() == FishTankProtocol.QUERY) { fishing.tank().refresh(id, () -> { if (p.isOnline()) send(p, FishTankProtocol.KIND_STATE, ""); }); return; }
         if (busy.contains(id)) { result(p, r, false, "앞의 요청을 처리하고 있어요."); return; }
+        var seen=completed.computeIfAbsent(id,k->new LinkedHashSet<>());if(!seen.add(r.operation())){result(p,r,false,"이미 처리한 요청이에요.");return;}if(seen.size()>256)seen.remove(seen.iterator().next());
         busy.add(id);
         // every change is decided on a fresh read (the other server may have changed the tank)
         fishing.tank().refresh(id, () -> {
             if (!p.isOnline()) { busy.remove(id); return; }
+            if(!fishing.tank().loaded(id)){done(p,r,false,"수조를 읽지 못했어요. 잠시 후 다시 시도해 주세요.");return;}
             switch (r.action()) {
                 case FishTankProtocol.ITEMIZE -> itemize(p, r);
                 case FishTankProtocol.RELEASE -> release(p, r);
@@ -137,18 +143,20 @@ final class FishTankBridge implements PluginMessageListener, Listener {
     private void gone(Player p, Request r) { done(p, r, false, "이미 수조에 없는 물고기예요."); }
 
     private void itemize(Player p, Request r) {
-        var f = find(p, r.tankId());
-        if (f == null) { gone(p, r); return; }
-        if (p.getInventory().firstEmpty() < 0) { done(p, r, false, "인벤토리에 빈 칸이 없어서 꺼낼 수 없어요."); return; }
-        ItemStack item = fishing.fishItem(f);
-        if (item == null) { done(p, r, false, "더 이상 없는 물고기라서 꺼낼 수 없어요."); return; }
-        fishing.tank().remove(p.getUniqueId(), List.of(f), removed -> {
-            if (removed.isEmpty()) { gone(p, r); return; }
-            // a slot was free a moment ago; if it filled meanwhile the item goes by mail instead of being lost
-            fishing.give(p, List.of(item), "fish-tank:" + f.id());
-            plugin.getLogger().info("FISH TANK itemize player=" + p.getName() + " fish=" + f.fish() + " id=" + f.id());
-            p.playSound(p.getLocation(), Sound.ENTITY_ITEM_PICKUP, .7f, 1.2f);
-            done(p, r, true, "아이템으로 꺼냈어요.");
+        var f=find(p,r.tankId());if(f==null){gone(p,r);return;}
+        if(p.getInventory().firstEmpty()<0){done(p,r,false,"인벤토리에 빈 칸이 없어요.");return;}
+        fishing.tank().remove(p.getUniqueId(),List.of(f),FishTankSql.Action.ITEMIZE,claimed->{
+            if(claimed.isEmpty()){gone(p,r);return;}
+            var actual=claimed.getFirst();ItemStack item=fishing.fishItem(actual);
+            if(!p.isOnline()||p.getInventory().firstEmpty()<0||item==null){
+                fishing.tank().finish(p.getUniqueId(),claimed,FishTankSql.Action.ITEMIZE,false,ok->done(p,r,false,ok?"꺼내기를 취소하고 수조에 보존했어요.":"수조 상태를 확인해야 해요. 관리자에게 알려 주세요."));return;
+            }
+            try{fishing.give(p,List.of(item),"fish-tank:"+actual.id()+":"+actual.token());}
+            catch(RuntimeException uncertain){plugin.getLogger().severe("FISH TANK delivery outcome uncertain; claim retained id="+actual.id());done(p,r,false,"지급 결과 확인이 필요해요. 관리자에게 알려 주세요.");return;}
+            fishing.tank().finish(p.getUniqueId(),claimed,FishTankSql.Action.ITEMIZE,true,ok->{
+                if(p.isOnline())p.playSound(p.getLocation(),Sound.ENTITY_ITEM_PICKUP,.7f,1.2f);
+                done(p,r,ok,ok?"아이템으로 꺼냈어요.":"지급 기록 확인이 필요해요. 관리자에게 알려 주세요.");
+            });
         });
     }
 
@@ -163,59 +171,60 @@ final class FishTankBridge implements PluginMessageListener, Listener {
         });
     }
 
-    private void sell(Player p, Request r) {
-        var f = find(p, r.tankId());
-        if (f == null) { gone(p, r); return; }
-        if (shop == null || !shop.ready()) { done(p, r, false, "지금은 판매할 수 없어요."); return; }
-        if (fishing.tank().tank(p.getUniqueId()).locks.contains(f.fish())) { done(p, r, false, "잠긴 종류라서 팔 수 없어요. 판매소에서 잠금을 풀어 주세요."); return; }
-        long price = price(f);
-        if (price != r.expected()) { done(p, r, false, "가격이 바뀌었어요. 다시 확인해 주세요."); return; }
-        fishing.tank().remove(p.getUniqueId(), List.of(f), removed -> {
-            if (removed.isEmpty()) { gone(p, r); return; }
-            boolean paid;
-            try { paid = price == 0 || shop.deposit(p, price); } catch (Exception e) { paid = false; }
-            if (!paid) {
-                plugin.getLogger().severe("FISH TANK PAY FAILED player=" + p.getUniqueId() + " price=" + price + " fish=" + f + " -> returning it");
-                fishing.tank().put(p.getUniqueId(), f, null);
-                done(p, r, false, "돈을 지급하지 못해서 물고기를 돌려놨어요.");
-                return;
-            }
-            plugin.getLogger().info("FISH TANK sold player=" + p.getName() + " fish=" + f.fish() + " id=" + f.id() + " price=" + price);
-            p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, .8f, 1.1f);
-            done(p, r, true, String.format("%,d G에 팔았어요.", price));
+    private void sell(Player p,Request r){
+        var f=find(p,r.tankId());if(f==null){gone(p,r);return;}
+        if(shop==null||!shop.ready()){done(p,r,false,"지금은 판매할 수 없어요.");return;}
+        if(fishing.tank().tank(p.getUniqueId()).locks.contains(f.fish())){done(p,r,false,"잠긴 종류라서 팔 수 없어요.");return;}
+        long quoted=price(f);if(quoted!=r.expected()){done(p,r,false,"가격이 바뀌었어요. 다시 확인해 주세요.");return;}
+        fishing.tank().remove(p.getUniqueId(),List.of(f),FishTankSql.Action.SELL,claimed->{
+            if(claimed.isEmpty()){gone(p,r);return;}
+            plugin.getLogger().info("FISH TANK PAYMENT_ATTEMPT owner="+p.getUniqueId()+" op="+r.operation()+" fish="+f.id()+" total="+quoted);
+            boolean paid=false;
+            if(p.isOnline())try{paid=quoted==0||shop.deposit(p,quoted);}catch(Exception uncertain){plugin.getLogger().severe("FISH TANK payment outcome uncertain; claim retained id="+f.id());done(p,r,false,"지급 결과 확인이 필요해요. 관리자에게 알려 주세요.");return;}
+            plugin.getLogger().info("FISH TANK PAYMENT_RESULT owner="+p.getUniqueId()+" op="+r.operation()+" confirmed="+paid+" total="+quoted);
+            boolean payment=paid;
+            fishing.tank().finish(p.getUniqueId(),claimed,FishTankSql.Action.SELL,payment,ok->{
+                done(p,r,ok&&payment,!ok?"판매 기록 확인이 필요해요. 관리자에게 알려 주세요.":payment?String.format("%,d G에 팔았어요.",quoted):"돈을 지급하지 못해서 물고기를 수조에 보존했어요.");
+            });
         });
     }
 
-    private void insert(Player p, Request r) {
-        var inv = p.getInventory();
-        int slot = r.slot();
-        if (slot > 35 && slot != 40) { done(p, r, false, "물고기를 찾지 못했어요."); return; }
-        ItemStack item = inv.getItem(slot);
-        var h = fishing.gear().heldFish(item);
-        var def = h == null ? null : fishing.config().fishById.get(h.fish());
-        if (h == null || def == null || !h.tankId().equals(r.tankId())) { done(p, r, false, "그 칸의 물고기가 바뀌었어요. 다시 골라 주세요."); return; }
-        if (fishing.tank().full(p.getUniqueId())) { done(p, r, false, "수조가 가득 찼어요."); return; }
-        // old fish items (before the tank) have no id: they get one now; stacked copies go in one at a time
-        var fish = new FishTank.Fish(h.tankId().isEmpty() ? UUID.randomUUID().toString() : h.tankId(), def.id(),
-                Math.round(h.size() * 10) / 10.0, h.caughtAt() > 0 ? h.caughtAt() : System.currentTimeMillis());
-        ItemStack taken = item.asOne();
-        if (item.getAmount() > 1) item.setAmount(item.getAmount() - 1); else inv.setItem(slot, null);
-        fishing.tank().put(p.getUniqueId(), fish, put -> {
-            switch (put) {
-                case OK -> {
-                    plugin.getLogger().info("FISH TANK insert player=" + p.getName() + " fish=" + fish.fish() + " id=" + fish.id());
-                    p.playSound(p.getLocation(), Sound.ITEM_BUCKET_EMPTY_FISH, .8f, 1.1f);
-                    done(p, r, true, "수조에 넣었어요.");
+    private void insert(Player p,Request r){
+        var inv=p.getInventory();int slot=r.slot();if(slot>35&&slot!=40){done(p,r,false,"물고기를 찾지 못했어요.");return;}
+        ItemStack item=inv.getItem(slot);var h=fishing.gear().heldFish(item);var def=h==null?null:fishing.config().fishById.get(h.fish());
+        if(h==null||def==null||!h.tankId().equals(r.tankId())){done(p,r,false,"그 칸의 물고기가 바뀌었어요. 다시 골라 주세요.");return;}
+        if(fishing.tank().full(p.getUniqueId())){done(p,r,false,"수조가 가득 찼어요.");return;}
+        if(h.tankId().isEmpty()){
+            int target=slot;
+            if(item.getAmount()>1){target=inv.firstEmpty();if(target<0){done(p,r,false,"기존 물고기를 구분할 빈 칸 하나가 필요해요.");return;}}
+            ItemStack tagged=item.asOne();var meta=tagged.getItemMeta();var data=meta.getPersistentDataContainer();
+            data.set(new org.bukkit.NamespacedKey(plugin,"fishing_tank_id"),org.bukkit.persistence.PersistentDataType.STRING,UUID.randomUUID().toString());
+            if(h.caughtAt()<=0)data.set(new org.bukkit.NamespacedKey(plugin,"fishing_caught"),org.bukkit.persistence.PersistentDataType.LONG,System.currentTimeMillis());
+            tagged.setItemMeta(meta);if(target!=slot)item.setAmount(item.getAmount()-1);inv.setItem(target,tagged);slot=target;item=tagged;h=fishing.gear().heldFish(tagged);
+        }
+        var fish=new FishTank.Fish(h.tankId(),def.id(),Math.round(h.size()*10)/10.0,h.caughtAt()>0?h.caughtAt():System.currentTimeMillis(),h.token());
+        int sourceSlot=slot;
+        // Commit ownership first. An interrupted callback leaves a duplicate physical item, never two redeemable fish.
+        fishing.tank().put(p.getUniqueId(),fish,put->{
+            if((put==FishTank.Put.OK||put==FishTank.Put.DUPLICATE)&&p.isOnline()){
+                var current=inv.getItem(sourceSlot);var held=fishing.gear().heldFish(current);
+                if(held!=null&&held.tankId().equals(fish.id())&&held.token().equals(fish.token())){
+                    if(current.getAmount()>1)current.setAmount(current.getAmount()-1);else inv.setItem(sourceSlot,null);
                 }
-                case DUPLICATE -> {
-                    plugin.getLogger().warning("FISH TANK duplicate item refused player=" + p.getName() + " id=" + fish.id());
-                    done(p, r, false, "이미 수조에 있는 물고기예요. (복제된 아이템)");
-                }
-                case FULL -> { fishing.give(p, List.of(taken), "fish-tank-full:" + fish.id()); done(p, r, false, "수조가 가득 찼어요."); }
-                case FAILED -> { fishing.give(p, List.of(taken), "fish-tank-failed:" + fish.id()); done(p, r, false, "수조에 넣지 못했어요. 잠시 뒤 다시 해 주세요."); }
+            }
+            switch(put){
+                case OK->done(p,r,true,"수조에 넣었어요.");
+                case DUPLICATE->{plugin.getLogger().warning("FISH TANK duplicate item refused player="+p.getUniqueId()+" id="+fish.id());done(p,r,false,"이미 처리된 물고기예요. (복제되거나 지난 인출의 아이템)");}
+                case FULL->done(p,r,false,"수조가 가득 찼어요. 아이템은 그대로 있어요.");
+                case FAILED->done(p,r,false,"저장하지 못했어요. 아이템은 그대로 있어요.");
             }
         });
     }
 
-    @EventHandler public void quit(PlayerQuitEvent e) { UUID id = e.getPlayer().getUniqueId(); open.remove(id); busy.remove(id); limits.remove(id); }
+    @EventHandler public void inventory(org.bukkit.event.inventory.InventoryClickEvent e){if(e.getWhoClicked() instanceof Player p&&busy.contains(p.getUniqueId()))e.setCancelled(true);}
+    @EventHandler public void drag(org.bukkit.event.inventory.InventoryDragEvent e){if(e.getWhoClicked() instanceof Player p&&busy.contains(p.getUniqueId()))e.setCancelled(true);}
+    @EventHandler public void drop(org.bukkit.event.player.PlayerDropItemEvent e){if(busy.contains(e.getPlayer().getUniqueId()))e.setCancelled(true);}
+    @EventHandler public void swap(org.bukkit.event.player.PlayerSwapHandItemsEvent e){if(busy.contains(e.getPlayer().getUniqueId()))e.setCancelled(true);}
+
+    @EventHandler public void quit(PlayerQuitEvent e) { UUID id = e.getPlayer().getUniqueId(); open.remove(id); limits.remove(id); }
 }

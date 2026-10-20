@@ -80,7 +80,8 @@ final class FishTankScreen extends Screen {
     private int scroll;
     private TextFieldWidget search;
     private String query = "", notice = "";
-    private long noticeAt, pendingOp, pendingAt, releaseConfirmUntil;
+    private long noticeAt, pendingOp, pendingAt;
+    private final FishReleaseConfirmation releaseConfirmation=new FishReleaseConfirmation();
     private String pendingFish = "";
     private int pendingAction = -1;
     private Held popup;
@@ -98,7 +99,7 @@ final class FishTankScreen extends Screen {
     }
     @Override public boolean shouldPause() { return false; }
     @Override public void renderBackground(DrawContext c, int mouseX, int mouseY, float delta) {}
-    @Override public void removed() { FishTankClient.close(); }
+    @Override public void removed() { releaseConfirmation.reset();popup=null;pendingOp=0;FishTankClient.close(); }
 
     // ------------------------------------------------------------------ server
 
@@ -245,31 +246,29 @@ final class FishTankScreen extends Screen {
     private void select(String id) {
         var s = swimmers.get(id);
         if (s == null || s.leave >= 0) return;
-        boolean fresh = progress <= 0.001f || selected == null;
+        boolean fresh = FishTankUiMath.fresh(progress,selected);
         if (fresh) { focusX = s.x; focusY = s.y; }
-        selected = id; deselectAt = 0; releaseConfirmUntil = 0;
+        selected = id; deselectAt = 0; releaseConfirmation.reset();
         float shown = s.length;                            // at depth 1, before the presentation scale
-        zoomTarget = Math.clamp(380 / shown, 1.3f, 2.2f);
-        presTarget = Math.clamp(380 / (shown * zoomTarget), 1f, 2.4f);
+        var magnification=FishTankUiMath.magnification(shown);
+        zoomTarget=magnification.zoom();presTarget=magnification.presentation();
         if (fresh) zoomSmooth = zoomTarget;
         click();
     }
-    private void deselect() { selected = null; deselectAt = 0; releaseConfirmUntil = 0; }
-    private static float ease(float t) { t = Math.clamp(t, 0, 1); return t * t * t * (t * (t * 6 - 15) + 10); }
+    private void deselect() { selected = null; deselectAt = 0; releaseConfirmation.reset(); }
+    private static float ease(float t) { return FishTankUiMath.ease(t); }
 
     private void camera(float dt) {
-        float target = selected != null ? 1 : 0;
-        float rate = selected != null ? 1 / .85f : 1 / .7f;
-        progress = target > progress ? Math.min(target, progress + dt * rate) : Math.max(target, progress - dt * rate);
+        progress=FishTankUiMath.progress(progress,selected!=null,dt);
         list += ((listOpen ? 1 : 0) - list) * Math.min(1, dt * 7);
         var s = selected == null ? null : swimmers.get(selected);
         if (s != null) {
-            float k = 1 - (float) Math.exp(-dt * 6);
+            float k = FishTankUiMath.blend(dt,6);
             focusX += (s.x - focusX) * k; focusY += (s.y - focusY) * k;
         }
         float e = ease(progress);
         viewCx = (l0 + r0) / 2; viewCy = (t0 + b0) / 2;
-        zoomSmooth += (zoomTarget - zoomSmooth) * (1 - (float) Math.exp(-dt * 4));
+        zoomSmooth += (zoomTarget - zoomSmooth) * (FishTankUiMath.blend(dt,4));
         zoom = 1 + (zoomSmooth - 1) * e;
         float fx = viewCx - 261 - 150 * ease(list), fy = viewCy - 30;
         float followX = focusX - (fx - viewCx) / zoom, followY = focusY - (fy - viewCy) / zoom;
@@ -288,10 +287,10 @@ final class FishTankScreen extends Screen {
         float cx = (l0 + r0) / 2, bottom = b0 + (h - vh) * .2f;
         return new float[]{cx - w / 2, bottom - h, cx + w / 2, bottom};
     }
-    private float toLocalX(float wx) { return (wx - camX) * zoom + viewCx; }
-    private float toLocalY(float wy) { return (wy - camY) * zoom + viewCy; }
-    private float toWorldX(double lx) { return (float) ((lx - viewCx) / zoom + camX); }
-    private float toWorldY(double ly) { return (float) ((ly - viewCy) / zoom + camY); }
+    private float toLocalX(float wx) { return FishTankUiMath.local(wx,camX,zoom,viewCx); }
+    private float toLocalY(float wy) { return FishTankUiMath.local(wy,camY,zoom,viewCy); }
+    private float toWorldX(double lx) { return FishTankUiMath.world(lx,camX,zoom,viewCx); }
+    private float toWorldY(double ly) { return FishTankUiMath.world(ly,camY,zoom,viewCy); }
 
     // ------------------------------------------------------------------ model helpers
 
@@ -423,8 +422,7 @@ final class FishTankScreen extends Screen {
             click(); ask(FishTankClient.fish(FishTankProtocol.ITEMIZE, f.id()), FishTankProtocol.ITEMIZE, f.id());
         } else if (in(mx, my, x + 182, y, 129, 54)) {
             long now = Util.getMeasuringTimeMs();
-            if (now < releaseConfirmUntil) { releaseConfirmUntil = 0; click(); ask(FishTankClient.fish(FishTankProtocol.RELEASE, f.id()), FishTankProtocol.RELEASE, f.id()); }
-            else { releaseConfirmUntil = now + 3000; click(); }
+            if(releaseConfirmation.click(now)){click();ask(FishTankClient.fish(FishTankProtocol.RELEASE,f.id()),FishTankProtocol.RELEASE,f.id());}else click();
         } else if (in(mx, my, x + 322, y, 192, 54)) {
             if (f.locked()) { say("잠긴 종류는 팔 수 없어요. 물고기 판매소에서 잠금을 풀어 주세요."); return; }
             click(); ask(FishTankClient.sell(f.id(), f.price()), FishTankProtocol.SELL, f.id());
@@ -825,7 +823,7 @@ final class FishTankScreen extends Screen {
         float by = y + 455;
         boolean busy = busy(), interactive = al > .5f;
         double bmx = interactive ? mx : -1, bmy = interactive ? my : -1;
-        boolean confirm = Util.getMeasuringTimeMs() < releaseConfirmUntil;
+        boolean confirm=releaseConfirmation.armed(Util.getMeasuringTimeMs());
         String item = busy && pendingAction == FishTankProtocol.ITEMIZE ? "꺼내는 중…" : inventoryFull ? "인벤토리 가득" : "아이템화";
         button(c, bmx, bmy, x + 39, by, 133, 54, item, ACCENT, GRADE[g] & 0xFFFFFF, !busy && !inventoryFull, al);
         button(c, bmx, bmy, x + 182, by, 129, 54, busy && pendingAction == FishTankProtocol.RELEASE ? "놓아주는 중…" : confirm ? "정말 방생?" : "방생",

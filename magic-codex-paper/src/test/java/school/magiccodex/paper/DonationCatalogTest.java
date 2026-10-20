@@ -35,7 +35,7 @@ class DonationCatalogTest {
         }
         assertTrue(all.containsAll(KILL_DISCOVERY_ONLY));
         for(String id:all){
-            if(KILL_DISCOVERY_ONLY.contains(id)||UNPRICED_ARCANA.contains(id))assertFalse(root.contains(id),"spell without an approved donation price must not acquire one: "+id);
+            if(id.equals("fish_trap")||KILL_DISCOVERY_ONLY.contains(id)||UNPRICED_ARCANA.contains(id))assertFalse(root.contains(id),"spell without an approved donation price must not acquire one: "+id);
             else assertTrue(root.contains(id),"mana spell missing from donation catalog: "+id);
         }
         for(String retired:Set.of("feather_step","dampen_powder","handful_of_snow","wet_footprints","pressure_weight","cold_storage","liquid_barrier","water_rebound","thaw_pulse"))

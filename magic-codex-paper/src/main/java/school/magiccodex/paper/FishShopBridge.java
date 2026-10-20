@@ -46,13 +46,14 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
     private final Map<UUID, Session> sessions = new HashMap<>();
     private final Set<UUID> busy = new HashSet<>();
     private final Map<UUID, long[]> limits = new HashMap<>();
+    private final Map<UUID,Set<Long>> completed=new HashMap<>();
 
     FishShopBridge(MagicCodexBridge plugin, FishingBridge fishing) throws Exception {
         this.plugin = plugin; this.fishing = fishing;
         file = new File(plugin.getDataFolder(), "fish-shop.yml");
         npcFile = new File(plugin.getDataFolder(), "fish-shop-npcs.yml");
         if (!file.exists()) plugin.saveResource("fish-shop.yml", false);
-        if (!npcFile.exists()) plugin.saveResource("fish-shop-npcs.yml", false);
+        // NPC assignments use the existing server-scoped ShopStore; no separate list is seeded.
         reload();
         shared = new SharedConfigText(plugin, "fish_shop", "물고기 판매소 설정", localText(), this::applyText);
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, FishShopProtocol.REQUEST, this);
@@ -60,10 +61,10 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
         Bukkit.getPluginManager().registerEvents(this, plugin);
         var command = Objects.requireNonNull(plugin.getCommand("물고기상점관리"));
         command.setExecutor(this); command.setTabCompleter(this);
-        citizens();
+        Bukkit.getServicesManager().register(FishShopBridge.class,this,plugin,org.bukkit.plugin.ServicePriority.Normal);
     }
 
-    void close() { sessions.clear(); if (shared != null) shared.close(); }
+    void close() { Bukkit.getServicesManager().unregister(FishShopBridge.class,this);sessions.clear(); if (shared != null) shared.close(); }
 
     String localText() {
         try { return java.nio.file.Files.readString(file.toPath()); } catch (Exception e) { return ""; }
@@ -86,17 +87,18 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
         double[] base = gradeBase.clone();
         for (int g = 0; g < 4; g++) {
             double v = y.getDouble("prices.grade." + FishingProtocol.GRADE_LABELS[g], base[g]);
-            if (v < 0 || v > 1e12) throw new IllegalArgumentException("prices.grade." + FishingProtocol.GRADE_LABELS[g] + " 는 0 이상");
+            if (!Double.isFinite(v) || v < 0 || v > 1e12) throw new IllegalArgumentException("prices.grade." + FishingProtocol.GRADE_LABELS[g] + " 는 0 이상");
             base[g] = v;
         }
         double min = y.getDouble("prices.size-min", .7), max = y.getDouble("prices.size-max", 1.5), bonus = y.getDouble("prices.special-bonus", 1.3);
-        if (min < 0 || max < min) throw new IllegalArgumentException("prices.size-min ≤ size-max 이어야 함");
+        if (!Double.isFinite(min) || !Double.isFinite(max) || !Double.isFinite(bonus) || min < 0 || max < min || bonus < 0) throw new IllegalArgumentException("prices.size-min ≤ size-max 이어야 함");
         var over = new HashMap<String, Double>();
         var fs = y.getConfigurationSection("prices.fish");
         if (fs != null) for (String id : fs.getKeys(false)) {
             if (!fishing.config().fishById.containsKey(id)) throw new IllegalArgumentException("prices.fish." + id + ": 없는 물고기");
-            over.put(id, fs.getDouble(id));
+            double value=fs.getDouble(id);if(!Double.isFinite(value)||value<0||value>1e12)throw new IllegalArgumentException("invalid fish price: "+id);over.put(id,value);
         }
+        for(var fish:fishing.config().fish){double value=over.getOrDefault(fish.id(),base[fish.grade()]*(special(fish)?bonus:1));FishShopPricing.validate(value,min,max);}
         // commit
         yaml = y; System.arraycopy(base, 0, gradeBase, 0, 4); sizeMin = min; sizeMax = max; specialBonus = bonus;
         overrides.clear(); overrides.putAll(over);
@@ -112,11 +114,12 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
     /** Saves fish-shop.yml here, then shares it with the other server; on a sharing failure the old text comes back. */
     private void save(CommandSender sender, String done) throws Exception {
         String before = localText();
-        yaml.save(file); reload();
+        try{yaml.save(file);reload();}catch(Exception failed){applyText(before);throw failed;}
         if (shared == null) { sender.sendMessage("§a" + done); return; }
-        shared.publish(localText(), "command:" + sender.getName(), failed -> {
+        String attempted=localText();
+        shared.publish(attempted, "command:" + sender.getName(), failed -> {
             if (failed == null) sender.sendMessage("§a" + done + (shared.shared() ? " (학교·야생에 같이 적용)" : " (공유 DB 없음: 이 서버만)"));
-            else { applyText(before); sender.sendMessage("§c공유하지 못해서 되돌렸습니다: " + failed); }
+            else { if(localText().equals(attempted))applyText(before); sender.sendMessage("§c공유하지 못해서 되돌렸습니다: " + failed); }
         });
     }
 
@@ -144,6 +147,7 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
 
     void open(Player p, Entity anchor, String npcName) {
         if (!modded(p)) { p.sendMessage("§c물고기 판매소를 열려면 차카데미 모드를 업데이트해 주세요."); return; }
+        if(!busy.contains(p.getUniqueId()))completed.remove(p.getUniqueId());
         sessions.put(p.getUniqueId(), new Session(anchor, npcName == null || npcName.isBlank() ? defaultName : cut(npcName)));
         fishing.tank().refresh(p.getUniqueId(), () -> { if (p.isOnline() && sessions.containsKey(p.getUniqueId())) send(p, FishShopProtocol.KIND_OPEN, ""); });
     }
@@ -161,7 +165,7 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
 
     private void send(Player p, int kind, String notice) {
         var s = sessions.get(p.getUniqueId());
-        if (s == null) return;
+        if (s == null || !p.isOnline()) return;
         var tank = fishing.tank().tank(p.getUniqueId());
         var grades = new ArrayList<Grade>();
         for (int g = 0; g < 4; g++) {
@@ -183,6 +187,7 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
     }
 
     private void result(Player p, long op, boolean ok, int sold, long total, String notice) {
+        if(!p.isOnline())return;
         try { p.sendPluginMessage(plugin, FishShopProtocol.RESPONSE, FishShopProtocol.encode(new Result(op, ok, sold, total, cut(notice)))); }
         catch (IllegalArgumentException ignored) {}
     }
@@ -198,7 +203,7 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
         Request r;
         try { r = FishShopProtocol.request(bytes); } catch (IllegalArgumentException e) { return; }
         var s = sessions.get(p.getUniqueId());
-        if (s == null) return;
+        if (s == null || !p.isOnline()) return;
         if (r.action() == FishShopProtocol.CLOSE) { sessions.remove(p.getUniqueId()); return; }
         if (!near(p, s.anchor())) { sessions.remove(p.getUniqueId()); return; }
         switch (r.action()) {
@@ -206,50 +211,43 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
             case FishShopProtocol.LOCKS -> {
                 var set = new HashSet<String>();
                 for (String id : r.locks()) if (fishing.config().fishById.containsKey(id)) set.add(id);
-                fishing.tank().locks(p.getUniqueId(), set);
-                send(p, FishShopProtocol.KIND_STATE, "잠금을 저장했어요. (" + set.size() + "종)");
+                fishing.tank().locks(p.getUniqueId(), set, ok->send(p,FishShopProtocol.KIND_STATE,ok?"잠금을 저장했어요. ("+set.size()+"종)":"잠금을 저장하지 못했어요. 다시 시도해 주세요."));
             }
             case FishShopProtocol.SELL -> sell(p, r);
             default -> {}
         }
     }
 
-    private void sell(Player p, Request r) {
-        UUID id = p.getUniqueId();
-        if (busy.contains(id)) return;
-        if (economy() == null) { result(p, r.operation(), false, 0, 0, "경제 서비스 연결이 필요해요."); return; }
+    private void sell(Player p,Request r){
+        UUID id=p.getUniqueId();if(busy.contains(id))return;
+        if(economy()==null){result(p,r.operation(),false,0,0,"경제 서비스 연결이 필요해요.");return;}
+        var seen=completed.computeIfAbsent(id,k->new LinkedHashSet<>());if(!seen.add(r.operation())){result(p,r.operation(),false,0,0,"이미 처리한 요청이에요.");return;}if(seen.size()>256)seen.remove(seen.iterator().next());
         busy.add(id);
-        // re-read the tank first so the decision uses the database (another server may have changed it)
-        fishing.tank().refresh(id, () -> {
-            if (!p.isOnline()) { busy.remove(id); return; }
-            var list = sellable(p, r.mask());
-            long expected = 0; for (var f : list) expected += price(f);
-            if (list.isEmpty()) { busy.remove(id); result(p, r.operation(), false, 0, 0, "판매할 물고기가 없어요."); send(p, FishShopProtocol.KIND_STATE, ""); return; }
-            if (expected != r.expected()) { busy.remove(id); result(p, r.operation(), false, 0, 0, "판매 금액이 바뀌었어요. 다시 확인해 주세요."); send(p, FishShopProtocol.KIND_STATE, ""); return; }
-            fishing.tank().remove(id, list, removed -> {
-                long total = 0; for (var f : removed) total += price(f);
-                boolean paid = true;
-                if (total > 0) {
-                    try { paid = deposit(p, total); } catch (Exception e) { paid = false; }
-                }
-                if (!paid) {
-                    plugin.getLogger().severe("FISH SHOP PAY FAILED player=" + id + " total=" + total + " fish=" + removed.size() + " -> returning fish to the tank");
-                    for (var f : removed) fishing.tank().put(id, f, null);
-                    busy.remove(id);
-                    result(p, r.operation(), false, 0, 0, "돈을 지급하지 못해서 물고기를 돌려놨어요. 관리자에게 알려 주세요.");
-                    send(p, FishShopProtocol.KIND_STATE, "");
-                    return;
-                }
-                plugin.getLogger().info("FISH SHOP sold player=" + p.getName() + " fish=" + removed.size() + " total=" + total + " op=" + r.operation());
-                busy.remove(id);
-                p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, .8f, 1.1f);
-                result(p, r.operation(), true, removed.size(), total, removed.size() + "마리를 " + String.format("%,d", total) + " G에 팔았어요.");
-                send(p, FishShopProtocol.KIND_STATE, "");
+        fishing.tank().refresh(id,()->{
+            if(!p.isOnline()){busy.remove(id);return;}
+            if(!fishing.tank().loaded(id)){busy.remove(id);result(p,r.operation(),false,0,0,"수조를 읽지 못했어요.");return;}
+            var list=sellable(p,r.mask());var quote=new HashMap<String,Long>();long sum=0;
+            try{for(var f:list){long value=price(f);sum=Math.addExact(sum,value);quote.put(f.id(),value);}}
+            catch(ArithmeticException invalid){busy.remove(id);result(p,r.operation(),false,0,0,"판매 금액 범위를 확인해야 해요.");return;}
+            if(list.isEmpty()||sum!=r.expected()){busy.remove(id);result(p,r.operation(),false,0,0,"판매 대상이나 금액이 바뀌었어요. 다시 확인해 주세요.");send(p,FishShopProtocol.KIND_STATE,"");return;}
+            final long accepted=sum;
+            fishing.tank().remove(id,list,FishTankSql.Action.SELL,claimed->{
+                if(claimed.isEmpty()){busy.remove(id);result(p,r.operation(),false,0,0,"잠금이나 수조 내용이 바뀌었어요. 다시 확인해 주세요.");fishing.tank().refresh(id,()->send(p,FishShopProtocol.KIND_STATE,""));return;}
+                plugin.getLogger().info("FISH SHOP PAYMENT_ATTEMPT owner="+id+" op="+r.operation()+" total="+accepted+" fish="+claimed.stream().map(FishTank.Fish::id).toList());
+                boolean paid=false;
+                if(p.isOnline())try{paid=accepted==0||deposit(p,accepted);}catch(Exception uncertain){plugin.getLogger().severe("FISH SHOP payment outcome uncertain; claims retained player="+id+" op="+r.operation());busy.remove(id);result(p,r.operation(),false,0,0,"지급 결과 확인이 필요해요. 관리자에게 알려 주세요.");return;}
+                plugin.getLogger().info("FISH SHOP PAYMENT_RESULT owner="+id+" op="+r.operation()+" confirmed="+paid+" total="+accepted);
+                boolean payment=paid;
+                fishing.tank().finish(id,claimed,FishTankSql.Action.SELL,payment,ok->{
+                    busy.remove(id);result(p,r.operation(),ok&&payment,ok&&payment?claimed.size():0,ok&&payment?accepted:0,
+                        !ok?"판매 기록 확인이 필요해요. 관리자에게 알려 주세요.":payment?claimed.size()+"마리를 "+String.format("%,d",accepted)+" G에 팔았어요.":"돈을 지급하지 못해서 물고기를 수조에 보존했어요.");
+                    send(p,FishShopProtocol.KIND_STATE,"");
+                });
             });
         });
     }
 
-    @EventHandler public void quit(PlayerQuitEvent e) { sessions.remove(e.getPlayer().getUniqueId()); busy.remove(e.getPlayer().getUniqueId()); limits.remove(e.getPlayer().getUniqueId()); }
+    @EventHandler public void quit(PlayerQuitEvent e) { sessions.remove(e.getPlayer().getUniqueId()); limits.remove(e.getPlayer().getUniqueId()); }
 
     // ------------------------------------------------------------------ economy (Vault through reflection, like ShopBridge)
 
@@ -320,9 +318,10 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
                 case "리로드" -> {
                     String before = localText();
                     reload();
-                    shared.publish(localText(), "reload:" + sender.getName(), failed -> {
+                    String attempted=localText();
+                    shared.publish(attempted, "reload:" + sender.getName(), failed -> {
                         if (failed == null) sender.sendMessage("§a물고기 판매소 설정을 다시 읽었습니다." + (shared.shared() ? " (학교·야생에 같이 적용)" : ""));
-                        else { applyText(before); sender.sendMessage("§c공유하지 못해서 되돌렸습니다: " + failed); }
+                        else { if(localText().equals(attempted))applyText(before); sender.sendMessage("§c공유하지 못해서 되돌렸습니다: " + failed); }
                     });
                 }
                 case "가격" -> {
@@ -343,14 +342,9 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
                     yaml.set("prices.special-bonus", number(args[1])); save(sender, "조건 보정을 바꿨습니다.");
                 }
                 case "NPC", "NPC삭제" -> {
-                    if (args.length != 2 || !args[1].matches("citizens:[0-9]{1,9}")) throw new IllegalArgumentException(args[0] + " <citizens:ID>");
-                    var local = new YamlConfiguration();
-                    if (npcFile.exists()) local.load(npcFile);
-                    var list = new ArrayList<>(local.getStringList("npcs"));
-                    list.remove(args[1]);
-                    if (args[0].equals("NPC")) list.add(args[1]);
-                    local.set("npcs", list); local.save(npcFile); reload();
-                    sender.sendMessage("§a이 서버의 물고기 판매소 NPC: " + list);
+                    if(args.length!=2||!ShopNpcTarget.validKey(args[1]))throw new IllegalArgumentException(args[0]+" <citizens:ID/tag:태그>");
+                    var common=Bukkit.getServicesManager().load(ShopBridge.class);if(common==null)throw new IllegalStateException("기존 상점 저장소가 준비되어야 NPC를 연결할 수 있습니다.");
+                    common.configureFishNpc(sender,args[1],args[0].equals("NPC삭제"));
                 }
                 case "초상" -> {
                     if (args.length != 2 || !args[1].matches("[a-z0-9_/-]{1,120}") || args[1].contains("..")) throw new IllegalArgumentException("초상 <초상ID> (textures/gui/dialogue/<초상ID>.png)");
@@ -390,7 +384,7 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
             var all = new ArrayList<>(List.of(FishingProtocol.GRADE_LABELS)); all.addAll(fishing.config().fishById.keySet());
             return filter(all, args[1]);
         }
-        if (args.length == 2 && args[0].equals("NPC삭제")) return filter(new ArrayList<>(npcs), args[1]);
+        if(args.length==2&&args[0].equals("NPC삭제")){var common=Bukkit.getServicesManager().load(ShopBridge.class);return common==null?List.of():filter(common.fishNpcKeys(),args[1]);}
         return List.of();
     }
     private static List<String> filter(List<String> all, String prefix) { return all.stream().filter(s -> s.startsWith(prefix)).limit(80).toList(); }

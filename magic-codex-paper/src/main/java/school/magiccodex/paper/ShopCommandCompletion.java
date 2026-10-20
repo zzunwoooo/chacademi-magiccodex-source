@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 
 /** Pure completion over already-loaded snapshots: no database, filesystem or Bukkit calls. */
 final class ShopCommandCompletion {
-    private static final List<String> ADMIN = List.of("생성", "아이템추가", "가격", "NPC", "초상", "목록", "기록", "처리");
+    private static final List<String> ADMIN = List.of("생성", "아이템추가", "가격", "NPC", "초상", "목록", "기록", "처리", "물고기", "연결해제", "연결목록");
     /** /상점관리 처리 <거래ID> 뒤에 오는 처리 방법. */
     static final List<String> RESOLUTIONS = List.of("완료", "환불", "취소");
 
@@ -29,6 +29,8 @@ final class ShopCommandCompletion {
         if (args.length == 1)
             return match(ADMIN.stream().filter(s -> player || !s.equals("아이템추가")).toList(), prefix);
         String sub = args[0];
+        if(sub.equals("물고기"))return args.length==2?match(List.of("열기","리로드","가격","크기보정","조건보정","NPC","NPC삭제","초상","이름","가격표"),prefix):List.of();
+        if(sub.equals("NPC")||sub.equals("연결해제")){if(args.length==2)return match(Stream.concat(catalog.keySet().stream(),Stream.of(ShopNpcTarget.LABEL)).toList(),prefix);if(args.length==3)return match(npcKeys,prefix);return List.of();}
         if (sub.equals("생성")) return List.of(); // New IDs and names are free input, not existing shops.
         if (sub.equals("기록")) return args.length == 2 ? match(onlineIds, prefix) : List.of();
         if (sub.equals("처리"))

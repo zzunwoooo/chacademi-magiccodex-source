@@ -1,200 +1,83 @@
 package school.magiccodex.paper;
-
 import java.sql.Connection;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.function.Consumer;
+import java.util.function.*;
 import org.bukkit.Bukkit;
 import school.magiccodex.database.DatabaseSettings;
 
-/**
- * 통발 수조 (2026-10-20, owner): caught fish are not items, they swim in a big sub-space tank (opened by the 통발 spell).
- * What is in the tank is what the player owns: the fish shop sells from it, fish can be taken out as items and put back.
- * Capacity 100 (fishing.yml tank.capacity); a full tank blocks fishing.
- *
- * codex_fish_tank(id, uuid, fish, size, caught_at)  -- one row per fish
- * codex_fish_lock(uuid, fish)                       -- species the fish shop must never sell
- *
- * Shared by school and wild through the player-state MariaDB (else a per-server fishing.db, like the codex).
- * The database is the truth: removing fish (selling, taking out) deletes rows by id and only what was really deleted
- * counts, so two servers or a double click can never sell one fish twice. A tank is re-read from the database every
- * time a window opens. JDBC runs only on the IO thread; callbacks come back on the main thread.
- */
+/** Async facade. Fish rows survive terminal actions; JDBC callbacks only publish committed state. */
 final class FishTank implements AutoCloseable {
-    record Fish(String id, String fish, double size, long caughtAt) {}
-    static final class Tank {
-        final List<Fish> fish = new ArrayList<>();
-        final Set<String> locks = new HashSet<>();
-        boolean loaded, loading;
-        final List<Runnable> waiting = new ArrayList<>();
-    }
-
-    private final MagicCodexBridge plugin;
-    private final DatabaseSettings settings;
-    private final java.nio.file.Path sqlite;
-    private final ExecutorService io = Executors.newSingleThreadExecutor(r -> { var t = new Thread(r, "MagicCodex-fish-tank"); t.setDaemon(true); return t; });
-    private final Map<UUID, Tank> tanks = new HashMap<>();   // main thread
-    private Connection connection;
-    private volatile int capacity = 100;
-
-    FishTank(MagicCodexBridge plugin) {
-        this.plugin = plugin;
-        DatabaseSettings s;
-        try {
-            var folder = plugin.getDataFolder().toPath();
-            var dedicated = folder.resolve("player-state-database.properties");
-            s = DatabaseSettings.load(java.nio.file.Files.exists(dedicated) ? dedicated : folder.resolve("database.properties"));
-        } catch (Exception e) { s = new DatabaseSettings(false, "", "", ""); }
-        settings = s;
-        sqlite = plugin.getDataFolder().toPath().resolve("fishing.db");
-        io.execute(() -> {
-            try (var st = db().createStatement()) {
-                st.execute("CREATE TABLE IF NOT EXISTS codex_fish_tank(id VARCHAR(36) PRIMARY KEY,uuid VARCHAR(36) NOT NULL,fish VARCHAR(64) NOT NULL,size DOUBLE NOT NULL,caught_at BIGINT NOT NULL)");
-                st.execute("CREATE TABLE IF NOT EXISTS codex_fish_lock(uuid VARCHAR(36) NOT NULL,fish VARCHAR(64) NOT NULL,PRIMARY KEY(uuid,fish))");
-                try { st.execute("CREATE INDEX " + (settings.mariaDb() ? "" : "IF NOT EXISTS ") + "codex_fish_tank_uuid ON codex_fish_tank(uuid)"); } catch (Exception ignored) {}
-            } catch (Exception e) { plugin.getLogger().warning("통발 수조 테이블 준비 실패: " + e.getMessage()); }
-        });
-    }
-
-    void capacity(int n) { capacity = Math.clamp(n, 1, 10000); }
-    int capacity() { return capacity; }
-
-    private Connection db() throws Exception {
-        if (connection == null || connection.isClosed() || !connection.isValid(2)) {
-            if (connection != null) try { connection.close(); } catch (Exception ignored) {}
-            connection = settings.connect(sqlite);
-            settings.configure(connection);
-        }
-        return connection;
-    }
-
-    // ------------------------------------------------------------------ reading (main thread)
-
-    Tank tank(UUID player) { return tanks.computeIfAbsent(player, k -> new Tank()); }
-    int count(UUID player) { return tank(player).fish.size(); }
-    boolean full(UUID player) { return count(player) >= capacity; }
-    boolean loaded(UUID player) { return tank(player).loaded; }
-
-    /** Re-reads the tank from the database (queued after any write still in flight), then runs done. */
-    void refresh(UUID player, Runnable done) {
-        var tank = tank(player);
-        if (done != null) tank.waiting.add(done);
-        if (tank.loading) return;
-        tank.loading = true;
-        io.execute(() -> {
-            var fish = new ArrayList<Fish>(); var locks = new HashSet<String>();
-            boolean ok = true;
-            try (var p = db().prepareStatement("SELECT id,fish,size,caught_at FROM codex_fish_tank WHERE uuid=? ORDER BY caught_at,id")) {
-                p.setString(1, player.toString());
-                try (var r = p.executeQuery()) { while (r.next()) fish.add(new Fish(r.getString(1), r.getString(2), r.getDouble(3), r.getLong(4))); }
-                try (var q = db().prepareStatement("SELECT fish FROM codex_fish_lock WHERE uuid=?")) {
-                    q.setString(1, player.toString());
-                    try (var r = q.executeQuery()) { while (r.next()) locks.add(r.getString(1)); }
-                }
-            } catch (Exception e) { ok = false; plugin.getLogger().warning("통발 수조 읽기 실패 " + player + ": " + e.getMessage()); }
-            boolean read = ok;
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                if (read) { tank.fish.clear(); tank.fish.addAll(fish); tank.locks.clear(); tank.locks.addAll(locks); tank.loaded = true; }
-                tank.loading = false;
-                var list = List.copyOf(tank.waiting); tank.waiting.clear();
-                for (Runnable r : list) r.run();
-            });
-        });
-    }
-    void forget(UUID player) { tanks.remove(player); }
-
-    // ------------------------------------------------------------------ writing
-
-    /** Puts one fish in the tank (caller checked capacity). Main thread. */
-    Fish add(UUID player, String fishId, double size) {
-        var f = new Fish(UUID.randomUUID().toString(), fishId, size, System.currentTimeMillis());
-        tank(player).fish.add(f);
-        io.execute(() -> {
-            try (var p = db().prepareStatement("INSERT INTO codex_fish_tank(id,uuid,fish,size,caught_at) VALUES(?,?,?,?,?)")) {
-                p.setString(1, f.id()); p.setString(2, player.toString()); p.setString(3, f.fish()); p.setDouble(4, f.size()); p.setLong(5, f.caughtAt());
-                p.executeUpdate();
-            } catch (Exception e) { plugin.getLogger().severe("통발 수조 저장 실패 " + player + " " + fishId + " " + size + "cm: " + e.getMessage()); }
-        });
-        return f;
-    }
-
-    enum Put { OK, DUPLICATE, FULL, FAILED }
-    /**
-     * Puts this exact fish (same row id) into the tank: a fish item going back in, or a sale that could not be paid.
-     * The id is the primary key, so a duplicated item can never become two fish. The capacity is checked again in the
-     * database (another server may have filled the tank). done (main thread, may be null) gets the outcome.
-     */
-    void put(UUID player, Fish f, Consumer<Put> done) {
-        int cap = capacity;
-        boolean checkCapacity = done != null;
-        io.execute(() -> {
-            Put out;
-            try {
-                int n = 0;
-                if (checkCapacity) try (var c = db().prepareStatement("SELECT COUNT(*) FROM codex_fish_tank WHERE uuid=?")) {
-                    c.setString(1, player.toString());
-                    try (var r = c.executeQuery()) { if (r.next()) n = r.getInt(1); }
-                }
-                if (checkCapacity && n >= cap) out = Put.FULL;
-                else try (var p = db().prepareStatement("INSERT INTO codex_fish_tank(id,uuid,fish,size,caught_at) VALUES(?,?,?,?,?)")) {
-                    p.setString(1, f.id()); p.setString(2, player.toString()); p.setString(3, f.fish()); p.setDouble(4, f.size()); p.setLong(5, f.caughtAt());
-                    p.executeUpdate();
-                    out = Put.OK;
-                }
-            } catch (java.sql.SQLException e) {
-                String state = e.getSQLState();
-                String text = String.valueOf(e.getMessage()).toLowerCase(Locale.ROOT);
-                boolean dup = e instanceof java.sql.SQLIntegrityConstraintViolationException || state != null && state.startsWith("23")
-                        || text.contains("constraint") || text.contains("duplicate");   // xerial SQLite: SQLITE_CONSTRAINT, no SQL state
-                out = dup ? Put.DUPLICATE : Put.FAILED;
-                if (out == Put.FAILED) plugin.getLogger().severe("통발 수조 넣기 실패 " + player + " " + f + ": " + e.getMessage());
-            } catch (Exception e) { out = Put.FAILED; plugin.getLogger().severe("통발 수조 넣기 실패 " + player + " " + f + ": " + e.getMessage()); }
-            Put result = out;
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                if (result == Put.OK) { var t = tank(player); t.fish.removeIf(x -> x.id().equals(f.id())); t.fish.add(f); }
-                if (done != null) done.accept(result);
-            });
-        });
-    }
-
-    /**
-     * Removes these fish; done gets only the ones that were really still in the database (main thread).
-     * Used by selling and taking out, so a fish is never paid or given twice.
-     */
-    void remove(UUID player, Collection<Fish> fish, Consumer<List<Fish>> done) {
-        var list = List.copyOf(fish);
-        io.execute(() -> {
-            var removed = new ArrayList<Fish>();
-            try (var p = db().prepareStatement("DELETE FROM codex_fish_tank WHERE id=? AND uuid=?")) {
-                for (Fish f : list) {
-                    p.setString(1, f.id()); p.setString(2, player.toString());
-                    if (p.executeUpdate() == 1) removed.add(f);
-                }
-            } catch (Exception e) { plugin.getLogger().warning("통발 수조 꺼내기 실패 " + player + ": " + e.getMessage()); }
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                var ids = new HashSet<String>(); for (Fish f : list) ids.add(f.id());
-                tank(player).fish.removeIf(f -> ids.contains(f.id()));
-                done.accept(removed);
-            });
-        });
-    }
-
-    /** Replaces the locked species. Main thread. */
-    void locks(UUID player, Set<String> species) {
-        var tank = tank(player);
-        tank.locks.clear(); tank.locks.addAll(species);
-        var copy = Set.copyOf(species);
-        io.execute(() -> {
-            try (var d = db().prepareStatement("DELETE FROM codex_fish_lock WHERE uuid=?"); var i = db().prepareStatement("INSERT INTO codex_fish_lock(uuid,fish) VALUES(?,?)")) {
-                d.setString(1, player.toString()); d.executeUpdate();
-                for (String s : copy) { i.setString(1, player.toString()); i.setString(2, s); i.executeUpdate(); }
-            } catch (Exception e) { plugin.getLogger().warning("물고기 잠금 저장 실패 " + player + ": " + e.getMessage()); }
-        });
-    }
-
-    @Override public void close() {
-        io.shutdown();
-        try { io.awaitTermination(5, TimeUnit.SECONDS); } catch (InterruptedException ignored) { Thread.currentThread().interrupt(); }
-        try { if (connection != null) connection.close(); } catch (Exception ignored) {}
-    }
+ record Fish(String id,String fish,double size,long caughtAt,String token) {
+  Fish(String id,String fish,double size,long caughtAt){this(id,fish,size,caughtAt,"");}
+ }
+ static final class Tank {final List<Fish> fish=new ArrayList<>();final Set<String> locks=new HashSet<>();boolean loaded,loading;final List<Runnable> waiting=new ArrayList<>();}
+ enum Put {OK,DUPLICATE,FULL,FAILED}
+ private final MagicCodexBridge plugin;
+ private final DatabaseSettings settings;
+ private final java.nio.file.Path sqlite;
+ private final ScheduledExecutorService io=Executors.newSingleThreadScheduledExecutor(r->{var t=new Thread(r,"MagicCodex-fish-tank");t.setDaemon(true);return t;});
+ private final Map<UUID,Tank> tanks=new HashMap<>();
+ private final FishCatchJournal journal;
+ private Connection connection;private FishTankSql storage;private volatile int capacity=100;
+ FishTank(MagicCodexBridge plugin){
+  this.plugin=plugin;try{journal=new FishCatchJournal(plugin.getDataFolder().toPath().resolve("fish-catch-recovery"));}catch(java.io.IOException e){throw new IllegalStateException("Cannot initialize catch recovery journal",e);}DatabaseSettings s;
+  try{var folder=plugin.getDataFolder().toPath();var dedicated=folder.resolve("player-state-database.properties");s=DatabaseSettings.load(java.nio.file.Files.exists(dedicated)?dedicated:folder.resolve("database.properties"));}
+  catch(Exception e){s=new DatabaseSettings(false,"","","");}
+  settings=s;sqlite=plugin.getDataFolder().toPath().resolve("fishing.db");
+  io.execute(()->{try{db();}catch(Exception e){failure("schema",e);}});
+  io.scheduleWithFixedDelay(()->{try{recover();}catch(Exception e){failure("catch recovery (records retained)",e);}},5,5,TimeUnit.SECONDS);
+ }
+ private FishTankSql db()throws Exception{
+  if(connection==null||connection.isClosed()||!connection.isValid(2)){
+   if(connection!=null)try{connection.close();}catch(Exception ignored){}
+   connection=settings.connect(sqlite);settings.configure(connection);storage=new FishTankSql(connection,settings.mariaDb());try{storage.init();}catch(Exception e){connection.close();connection=null;storage=null;throw e;}
+  }return storage;
+ }
+ private void failure(String action,Exception e){plugin.getLogger().severe("FISH TANK "+action+" failed ("+e.getClass().getSimpleName()+")");}
+ private void main(Runnable r){if(plugin.isEnabled())Bukkit.getScheduler().runTask(plugin,r);}
+ void capacity(int n){capacity=Math.clamp(n,1,school.magiccodex.protocol.FishTankProtocol.MAX_FISH);}int capacity(){return capacity;}
+ Tank tank(UUID id){return tanks.computeIfAbsent(id,k->new Tank());}int count(UUID id){return tank(id).fish.size();}boolean full(UUID id){return count(id)>=capacity;}boolean loaded(UUID id){return tank(id).loaded;}
+ void refresh(UUID id,Runnable done){
+  var t=tank(id);if(done!=null)t.waiting.add(done);if(t.loading)return;t.loading=true;
+  io.execute(()->{
+   List<Fish> fish=List.of();Set<String> locks=Set.of();boolean ok=false;
+   try{fish=db().list(id);locks=db().locks(id);ok=true;}catch(Exception e){failure("read",e);}
+   var f=fish;var l=locks;boolean success=ok;
+   main(()->{t.loaded=success;if(success){t.fish.clear();t.fish.addAll(f);t.locks.clear();t.locks.addAll(l);}t.loading=false;var callbacks=List.copyOf(t.waiting);t.waiting.clear();for(var r:callbacks)r.run();});
+  });
+ }
+ void forget(UUID id){tanks.remove(id);}
+ Fish add(UUID id,String species,double size){return add(id,species,size,null);}
+ Fish add(UUID id,String species,double size,BiConsumer<Fish,Put> done){
+  var f=new Fish(UUID.randomUUID().toString(),species,size,System.currentTimeMillis());
+  final FishCatchJournal.Pending pending;try{pending=journal.save(id,f);}catch(java.io.IOException e){throw new IllegalStateException("Cannot persist caught fish",e);}
+  tank(id).fish.add(f);write(id,f,result->{if(result==Put.OK||result==Put.DUPLICATE)try{journal.acknowledge(pending);}catch(java.io.IOException e){failure("catch acknowledge",e);}else tank(id).fish.removeIf(x->x.id().equals(f.id()));if(done!=null)done.accept(f,result);});return f;
+ }
+ private void recover()throws Exception{for(var pending:journal.pending()){Put result=db().put(pending.owner(),pending.fish(),capacity);if(result==Put.OK||result==Put.DUPLICATE)journal.acknowledge(pending);}}
+ void put(UUID id,Fish fish,Consumer<Put> done){write(id,fish,done);}
+ private void write(UUID id,Fish fish,Consumer<Put> done){
+  int cap=capacity;io.execute(()->{Put result;
+   try{result=db().put(id,fish,cap);}catch(Exception e){result=Put.FAILED;failure("insert (item remains owned; retry checks committed identity)",e);}
+   Put out=result;main(()->{if(out==Put.OK){var t=tank(id);t.fish.removeIf(x->x.id().equals(fish.id()));t.fish.add(fish);}if(done!=null)done.accept(out);});
+  });
+ }
+ void remove(UUID id,Collection<Fish> fish,Consumer<List<Fish>> done){remove(id,fish,FishTankSql.Action.RELEASE,done);}
+ void remove(UUID id,Collection<Fish> fish,FishTankSql.Action action,Consumer<List<Fish>> done){
+  var list=List.copyOf(fish);io.execute(()->{List<Fish> out;
+   try{out=db().claim(id,list,action);}catch(Exception e){failure("claim",e);out=List.of();}
+   var claimed=out;main(()->{var ids=new HashSet<String>();for(Fish f:claimed)ids.add(f.id());tank(id).fish.removeIf(f->ids.contains(f.id()));done.accept(claimed);});
+  });
+ }
+ void finish(UUID id,List<Fish> fish,FishTankSql.Action action,boolean success,Consumer<Boolean> done){
+  io.execute(()->{boolean ok=false;try{ok=db().finish(id,fish,action,success);}catch(Exception e){failure("finalize (claim retained for reconciliation)",e);}boolean out=ok;
+   main(()->{refresh(id,()->{if(done!=null)done.accept(out);});});
+  });
+ }
+ void locks(UUID id,Set<String> species,Consumer<Boolean> done){
+  var copy=Set.copyOf(species);io.execute(()->{boolean ok=false;try{db().locks(id,copy);ok=true;}catch(Exception e){failure("locks",e);}boolean out=ok;
+   main(()->{if(out){var t=tank(id);t.locks.clear();t.locks.addAll(copy);}if(done!=null)done.accept(out);});
+  });
+ }
+ @Override public void close(){io.shutdown();try{io.awaitTermination(10,TimeUnit.SECONDS);}catch(InterruptedException e){Thread.currentThread().interrupt();}try{if(connection!=null)connection.close();}catch(Exception ignored){}}
 }
