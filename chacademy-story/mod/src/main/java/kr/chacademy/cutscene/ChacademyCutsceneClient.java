@@ -78,6 +78,8 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         kr.chacademy.story.dialogue.StoryJournal.install();
+        // 스토리 진행 단계 HUD · 목표 포탈 · NPC 징표 (서버 ChacademyStory 의 quest_step / quest_update)
+        kr.chacademy.story.quest.QuestClient.install();
         PayloadTypeRegistry.playS2C().register(CutscenePackets.ReloadRequestS2C.TYPE,CutscenePackets.ReloadRequestS2C.CODEC);
         PayloadTypeRegistry.playC2S().register(CutscenePackets.ReloadResultC2S.TYPE,CutscenePackets.ReloadResultC2S.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(CutscenePackets.ReloadRequestS2C.TYPE,(payload,context)->context.client().execute(()->{

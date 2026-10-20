@@ -95,6 +95,8 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
     private final Map<UUID, Long> lastPacketLog = new HashMap<>();
     private MagicCodexLink codex;
     private StoryProtection protection;
+    /** 스토리 진행 단계 (조건 → 호출 → 다음 대화, HUD). */
+    private QuestEngine quests;
 
     private File progressFile;
     private boolean ready;
@@ -133,6 +135,8 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
                 StoryCodec.CUTSCENE_ABORT, StoryCodec.STORY_FAIL, StoryCodec.DIALOGUE_READY, StoryCodec.DIALOGUE_REWARD, StoryCodec.STORY_CATALOG, StoryCodec.DIALOGUE_SESSION_SIGNAL, StoryCodec.RELOAD_RESULT)) {
             m.registerIncomingPluginChannel(this, in, this);
         }
+        quests = new QuestEngine(this);
+        quests.enable();
         registerCommands();
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(protection, this);
@@ -152,6 +156,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
 
     @Override
     public void onDisable() {
+        if (quests != null) quests.disable();
         dialogueAcks.clear();endingSessions.clear();reloadTickets.clear();
         clientCatalogs.clear();catalogUpdated.clear();
         Messenger m = getServer().getMessenger();
@@ -196,7 +201,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
     }
 
     /** 키에 점(.)이 있어도 쪼개지지 않게 읽는다. 아무 스레드에서나 부를 수 있다. */
-    private static Map<?, ?> readYaml(File f) throws Exception {
+    static Map<?, ?> readYaml(File f) throws Exception {
         if (f.length() > MAX_YML_BYTES) throw new java.io.IOException("파일이 너무 큼 (" + f.length() + " 바이트)");
         YamlConfiguration y = new YamlConfiguration();
         y.options().pathSeparator(NO_PATH_SEPARATOR);
@@ -365,6 +370,12 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
 
     // ================================================================ 모드 확인
 
+    /** 이 플레이어의 스토리 대기열(재생 중 포함)에 이 대화·컷신이 있는지. */
+    boolean hasStory(UUID player, boolean dialogue, String id) {
+        PlayerStory ps = state.players.get(player);
+        return ps != null && ps.has(dialogue ? Kind.DIALOGUE : Kind.CUTSCENE, id);
+    }
+
     public boolean hasMod(Player p) {
         return p.getListeningPluginChannels().contains(StoryCodec.CUTSCENE_PLAY);
     }
@@ -460,6 +471,8 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
         if(existing!=null)return existing;
         var future=dialogueAcks.begin(uuid,id);
         var commands=endingCommands.commands(id);
+        // 스토리 단계가 띄우는 대화는 끝 명령이 없어도 완료 신호를 받아야 한다 (빈 명령 세션)
+        if(commands==null&&quests!=null&&quests.wantsSession(uuid,id))commands=List.of();
         var session=p.getListeningPluginChannels().contains(StoryCodec.DIALOGUE_SESSION)
                 ?endingSessions.begin(uuid,id,commands,System.currentTimeMillis()):null;
         if(session!=null)p.sendPluginMessage(this,StoryCodec.DIALOGUE_SESSION,StoryCodec.dialogueSession(id,StoryCodec.encodeVars(textVars(p)),session.token()));
@@ -720,6 +733,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
     /** 지금 진행 중인 대화를 닫는다 (끝 명령은 실행하지 않음, 완료로 기록하지 않음). 대기 중인 다음 요청이 있으면 이어서 시작한다. */
     public void stopDialogue(Player p) {
         endingSessions.cancel(p.getUniqueId());dialogueAcks.disconnect(p.getUniqueId());
+        if (quests != null) quests.dialogueAborted(p.getUniqueId(), null);
         PlayerStory ps = state.players.get(p.getUniqueId());
         if (ps != null && ps.active != null && ps.active.kind == Kind.DIALOGUE) {
             ps.active = null;
@@ -825,6 +839,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
                 StoryDef def = defs.get(e.id);
                 if (def == null) {
                     if (!e.missing) getLogger().warning(p.getName() + ": 대화 " + e.id + " 의 서버 파일이 없어 끝 명령을 실행하지 못했습니다");
+                    if (quests != null) quests.dialogueFinished(p, e.id);
                     return;
                 }
                 if (!e.name.isEmpty()) applyAffinity(p, ps, e.id, def.affinityEndings.get(e.name), e.id + " 결말 " + e.name);
@@ -832,10 +847,12 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
                 Map<String, String> vars = Map.of("{id}", e.id, "{scene}", e.name);
                 if (!e.name.isEmpty()) run(def.endings.get(e.name), p, vars);
                 run(def.end, p, vars);
+                if (quests != null) quests.dialogueFinished(p, e.id);
             }
             case Effect.CUTSCENE_END -> {
                 Bukkit.getPluginManager().callEvent(new StoryEvents.CutsceneFinish(p, e.id, e.skipped, e.missing));
                 run(getConfig().getStringList("on-finish." + e.id), p, Map.of("{id}", e.id, "{skipped}", String.valueOf(e.skipped)));
+                if (quests != null) quests.cutsceneFinished(p, e.id);
             }
             default -> {
             }
@@ -950,10 +967,14 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
                     else if(signal.action()==1){
                         // Codec validates a non-null [a-z0-9_-]{1,64} ending; finish authenticates
                         // and consumes the session BEFORE substitution/dispatch. String.replace is literal.
+                        var cur=endingSessions.current(uuid,now);
+                        boolean valid=cur!=null&&cur.ready()&&cur.id().equals(signal.id())&&cur.token().equals(signal.token())&&StorySafety.validId(signal.ending());
                         var commands=endingSessions.finish(uuid,signal.id(),signal.token(),signal.ending(),now);
                         run(commands,p,Map.of("{ending}",signal.ending()));
+                        // 세션이 확인된 완료만 스토리 단계에 알린다 (끝 명령 실행 뒤: tp 같은 명령이 먼저 돌게)
+                        if(valid&&quests!=null)quests.dialogueFinished(p,signal.id());
                     }
-                    else if(endingSessions.abort(uuid,signal.id(),signal.token(),now))dialogueAcks.reject(uuid,signal.id());
+                    else if(endingSessions.abort(uuid,signal.id(),signal.token(),now)){dialogueAcks.reject(uuid,signal.id());if(quests!=null)quests.dialogueAborted(uuid,signal.id());}
                 }
                 case StoryCodec.DIALOGUE_REWARD -> {
                     applyLocalReward(p,StoryCodec.dialogueId(message));
@@ -1249,15 +1270,17 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
                             .then(Commands.argument(NICK, ChacaLink.player()).executes(ctx -> previewCutscene(ctx, true))))),
                     "스토리 대화·컷신 미리보기 (조건·기록 무시, 보상 없음)", "스토리 대화 ");
 
-            ChacaLink.reload(this, "스토리", "스토리 서버 설정 + 대화 파일", () -> {
+            quests.registerCommands();
+            ChacaLink.reload(this, "스토리", "스토리 서버 설정 + 대화 파일 + 진행 단계(steps.yml)", () -> {
                 reloadServerSettings();
                 File dialogues = new File(getDataFolder(), "dialogues");
                 applyDefs(loadDefs(dialogues), null);
+                quests.reload();
             });
             ChacaLink.status(this, "스토리", () -> {
                 int mod = 0, online = 0;
                 for (Player p : Bukkit.getOnlinePlayers()) { online++; if (hasMod(p)) mod++; }
-                return "정상 · 스토리 모드 " + mod + "/" + online + "명 · 호감도 " + (codex.available() ? "MagicCodex 연결" : "대기 (MagicCodex 연결 없음)");
+                return "정상 · 스토리 모드 " + mod + "/" + online + "명 · 호감도 " + (codex.available() ? "MagicCodex 연결" : "대기 (MagicCodex 연결 없음)") + " · " + quests.statusLine();
             });
         } catch (RuntimeException e) {
             getLogger().log(Level.WARNING, "스토리 명령을 허브에 등록하지 못했습니다", e);
@@ -1408,6 +1431,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
     /** 재생 중인 것과 대기열을 모두 버린다 (막힌 플레이어를 풀 때). 완료 기록과 실행 대기 효과는 건드리지 않는다. */
     private void clearStory(Player p) {
         endingSessions.cancel(p.getUniqueId());dialogueAcks.disconnect(p.getUniqueId());
+        if (quests != null) quests.dialogueAborted(p.getUniqueId(), null);
         PlayerStory ps = state.players.get(p.getUniqueId());
         if (ps != null) {
             ps.active = null;
