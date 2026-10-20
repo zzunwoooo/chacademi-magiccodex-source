@@ -37,7 +37,9 @@ final class FishingScreen extends Screen {
     static final float RULER_X = 1153, RULER_TOP = 103, RULER_BOTTOM = 570;
     static final float SLOT_Y = 776, SLOT_W = 174, SLOT_H = 92;
     static final float[] SLOT_X = {466, 655, 843, 1031};
-    static final float GAUGE_X = 1186, GAUGE_TOP = 190, GAUGE_BOTTOM = 515;
+    static final float GAUGE_X = 482, GAUGE_TOP = 214, GAUGE_BOTTOM = 539;      // tension gauge on the left (owner 2026-10-20)
+    /** Where the line ties on hook.png (the top of its eye), as a fraction of the picture. */
+    static final float HOOK_EYE_X = 78 / 128f, HOOK_EYE_Y = 17 / 128f;
 
     private static final int NONE = 0, READY = 1, CASTING = 2, SINKING = 3, BITING = 4, REEL = 5, WAIT_RESULT = 6, RESULT = 7;
 
@@ -46,7 +48,9 @@ final class FishingScreen extends Screen {
     private long session;
     private Gear gear;
     private int background;
-    private float maxDepth = 15;
+    private float maxDepth = 15, floorDepth = 15;
+    private boolean bottomless;
+    private int tankCount, tankCapacity;
     private String notice = "";
     private long noticeAt, phaseAt, openedAt, lastFrame;
     private boolean closingByServer, pendingReady;
@@ -57,17 +61,38 @@ final class FishingScreen extends Screen {
     private Bite bite;
     private long biteAt;
     private Random rng = new Random();
-    private float approachEnd, warningStart, warningEnd, biteTime, sweep, zoneStart, zoneWidth;
+    private float approachEnd, warningStart, warningEnd, biteTime, sweep, zoneStart, zoneWidth, gaugeTime;
     private float[] teaseTimes = new float[0];
     private int fishSide = 1;
     private float fishW;
-    private boolean hooked, missed, spooked;
-    private long hookClickAt;
+    private boolean hooked, missed, spooked, biteSounded;
+    private long hookClickAt, lineEndAt;
+    // fish swimming around the bobber while it waits: x, dy (px from the bobber), speed, dir, phase, size, shape, alpha, real
+    private final List<float[]> swimmers = new ArrayList<>();
+    private boolean approachCaptured;
+    private float apX, apDy, apSize, apAlpha;
+    // a fish darting away (spooked / missed / escaped / slipped / snapped)
+    private long fleeAt;
+    private float fleeX, fleeDepth, fleeDy, fleeDir, fleeAlpha, fleeW, fleeRot;
+    private int fleeShape = -1;
+    private String lossMessage;
     // reel
-    private float fishDepth, stamina = 1, tension, overFor, fishX, wobble;
-    private boolean holding, graceUsed;
+    private float fishDepth, stamina = 1, tension, overFor, slackFor, heat, fishX, wobble;
+    private boolean holding, graceUsed, pulling;
     private float nextEvent, eventEnd, eventKind;
-    private long reelClickSound;
+    private long reelClickSound, creakSound;
+    // reel attacks: what hit, when; heldMask = winding during attack i
+    private int attacksDone, heldMask;
+    private final int[] wear = new int[2];
+    private long attackAt;
+    private int attackKind, attackDamage;
+    // panel shake: thump at a pull's start, attack hit
+    private long thumpAt;
+    private float thumpAmp;
+    // result tooltip (drawn last, in screen coordinates)
+    private ItemStack hoverStack = ItemStack.EMPTY;
+    private String hoverLabel;
+    private float hoverX, hoverY;
     // result
     private Result result;
     private long resultAt;
@@ -108,12 +133,15 @@ final class FishingScreen extends Screen {
     void onSession(FishingProtocol.Session s) {
         boolean newSession = s.session() != session;
         session = s.session(); gear = s.gear(); background = s.background(); maxDepth = Math.max(1, s.maxDepth());
+        floorDepth = Math.max(maxDepth, s.floorDepth()); bottomless = s.bottomless();
+        tankCount = s.tankCount(); tankCapacity = s.tankCapacity();
         if (!s.notice().isBlank()) say(s.notice());
         if (newSession || ambient.isEmpty()) seedAmbient(s.session());
         if (s.phase() == FishingProtocol.PHASE_WATER) {
             setPhase(SINKING);
             bobberDepth = 0; camTop = -1; bite = null; result = null;
             stopped = hooked = missed = spooked = holding = false;
+            lineEndAt = 0; fleeShape = -1; lossMessage = null; swimmers.clear();
             ripples.add(new float[]{BOBBER_X, surfaceY(), Util.getMeasuringTimeMs()});
             sound(SoundEvents.ENTITY_FISHING_BOBBER_SPLASH, 1.1f, .35f);
         } else {
@@ -126,7 +154,8 @@ final class FishingScreen extends Screen {
         if (b.session() != session || phase != SINKING && phase != BITING) return;
         bite = b; biteAt = Util.getMeasuringTimeMs();
         rng = new Random(b.seed());
-        hooked = missed = spooked = false; stopped = false;
+        hooked = missed = spooked = biteSounded = approachCaptured = false; stopped = false;
+        fleeShape = -1; lossMessage = null; heldMask = 0; attacksDone = 0;
         boolean chest = b.shape() == FishingProtocol.SHAPE_CHEST;
         float approach = chest ? 0 : (b.depth() >= 50 && special(FishingProtocol.FLOAT, "abyss_approach") ? 1.25f : 1.6f);
         float t = b.waitMs() / 1000f;
@@ -138,17 +167,22 @@ final class FishingScreen extends Screen {
         float sensitivity = gear == null ? .2f : Math.max(.2f, gear.sensitivity());
         warningEnd = warningStart + sensitivity;
         biteTime = warningEnd;
-        zoneWidth = .22f;
-        sweep = Math.clamp(b.hookWindowMs() / 1000f / zoneWidth, 1.2f, 6f);
-        zoneStart = .38f + rng.nextFloat() * (.86f - zoneWidth - .38f);
+        // hook gauge (v2): the server sets the needle time and the zone width
+        zoneWidth = Math.clamp(b.zone(), .03f, .6f);
+        sweep = Math.max(.2f, b.sweepMs() / 1000f);
+        float lo = .3f, hi = Math.max(lo, .95f - zoneWidth);
+        zoneStart = Math.min(1 - zoneWidth, lo + rng.nextFloat() * (hi - lo));
+        gaugeTime = gaugeDuration();
         fishSide = rng.nextBoolean() ? 1 : -1;
         fishW = chest ? 120 : 70 + 330 * (float) Math.pow(b.size(), .8);
+        seedSwimmers(b, chest);
         setPhase(BITING);
     }
 
     void onResult(Result r) {
         if (r.session() != session) return;
         result = r; resultAt = Util.getMeasuringTimeMs(); gear = r.gear();
+        tankCount = r.tankCount(); tankCapacity = r.tankCapacity();
         rewardIcons.clear();
         for (var w : r.rewards()) rewardIcons.add(FishingClient.decode(w.preview()));
         if (!r.notice().isBlank()) say(r.notice());
@@ -203,7 +237,11 @@ final class FishingScreen extends Screen {
 
     // ------------------------------------------------------------------ depth <-> picture
 
-    private float depthRange() { return Math.max(10, maxDepth) * 1.08f; }
+    /**
+     * Metres shown by the picture. With a floor in reach the sea floor sits right under maxDepth (as before); in open
+     * water (the line ran out before the floor) the art is stretched so its floor stays below anything visible.
+     */
+    private float depthRange() { return bottomless ? Math.max(maxDepth * 1.6f, maxDepth + 12) : Math.max(10, maxDepth) * 1.08f; }
     private float bgScale() { return VW / 724f; }
     private float bgHeight() { return 2172 * bgScale(); }
     private float surfaceBg() { return 64 * bgScale(); }
@@ -211,6 +249,15 @@ final class FishingScreen extends Screen {
     private float depthToBg(float d) { return surfaceBg() + d * pxPerMeter(); }
     private float screenY(float depth) { return VY + depthToBg(depth) - camTop; }
     private float surfaceY() { return screenY(0); }
+    /** The bobber's screen y; hanging at the end of the line in open water it bounces a little. */
+    private float bobberY() {
+        float y = screenY(bobberDepth);
+        if (bottomless && lineEndAt != 0) {
+            float u = since(lineEndAt);
+            y += 7 * (float) Math.exp(-3.2f * u) * (float) Math.sin(u * 10) + 1.4f * (float) Math.sin(u * 1.7f);
+        }
+        return y;
+    }
 
     private float focusDepth() {
         return switch (phase) {
@@ -235,7 +282,8 @@ final class FishingScreen extends Screen {
                     if (bobberDepth >= maxDepth && since(phaseAt) > .3f) stopSinking();
                 }
             }
-            case BITING -> stepBite();
+            case BITING -> { stepSwimmers(dt); stepBite(); }
+            case WAIT_RESULT -> { if (missed || spooked) stepSwimmers(dt); }
             case REEL -> stepReel(dt);
             default -> {}
         }
@@ -254,15 +302,65 @@ final class FishingScreen extends Screen {
     }
 
     private void stopSinking() {
-        if (phase != SINKING || bite != null) return;
+        if (phase != SINKING || bite != null || stopped) return;
         FishingClient.stop(session, bobberDepth);
         sound(SoundEvents.BLOCK_NOTE_BLOCK_HAT.value(), 1.6f, .25f);
+        // open water: the line ran out, the bobber hangs mid-water
+        if (bottomless && bobberDepth >= maxDepth - .01f) lineEndAt = Util.getMeasuringTimeMs();
         // the bite frame arrives right away; keep sinking state until then
         phaseAt = Util.getMeasuringTimeMs();
         bite = null;
         stopped = true;
     }
     private boolean stopped;
+
+    // ---- fish around the bobber while it waits (item: several silhouettes, the real one comes to bite)
+
+    private void seedSwimmers(Bite b, boolean chest) {
+        swimmers.clear();
+        var r = new Random(b.seed() ^ 0x5717L);
+        int n = 3 + r.nextInt(3);
+        for (int i = 0; i < n; i++) {
+            boolean real = i == 0 && !chest;
+            int shape = real ? b.shape() : r.nextFloat() < .7f ? FishingProtocol.SHAPE_FISH : 1 + r.nextInt(4);
+            float size = real ? Math.clamp(fishW * .6f, 46, 170) : 34 + r.nextFloat() * 70;
+            float dy = (r.nextBoolean() ? 1 : -1) * (real ? 40 + r.nextFloat() * 70 : 45 + r.nextFloat() * 130);
+            float x = VX + 60 + r.nextFloat() * (VW - 120);
+            swimmers.add(new float[]{x, dy, 22 + r.nextFloat() * 34, r.nextBoolean() ? 1 : -1, r.nextFloat() * 6.28f, size, shape,
+                    real ? .5f : .28f + .2f * r.nextFloat(), real ? 1 : 0});
+        }
+    }
+    private float[] realSwimmer() {
+        for (float[] f : swimmers) if (f[8] > 0) return f;
+        return null;
+    }
+    private float swimY(float[] f, float t) {
+        return Math.max(surfaceY() + f[5] * .3f + 10, bobberY() + f[1] + (float) Math.sin(t * .9f + f[4]) * 8);
+    }
+    private void stepSwimmers(float dt) {
+        if (bite == null) return;
+        float t = since(biteAt);
+        for (float[] f : swimmers) {
+            boolean real = f[8] > 0;
+            if (real && approachCaptured) continue;
+            f[0] += f[3] * f[2] * dt;
+            float margin = f[5] * .5f + 20;
+            if (f[0] < VX + margin) { f[0] = VX + margin; f[3] = 1; }
+            if (f[0] > VX + VW - margin) { f[0] = VX + VW - margin; f[3] = -1; }
+            if (Math.random() < dt * .18) f[3] = -f[3];
+            if (real && Math.abs(f[0] - BOBBER_X) > 260) f[3] = Math.signum(BOBBER_X - f[0]);   // the biter lingers nearby
+        }
+        if (!approachCaptured && t >= bite.waitMs() / 1000f) {
+            approachCaptured = true;
+            float[] f = realSwimmer();
+            if (f != null) {
+                apX = f[0]; apDy = swimY(f, t) - bobberY(); apSize = f[5]; apAlpha = f[7];
+                if (Math.abs(apX - BOBBER_X) > 30) fishSide = apX > BOBBER_X ? 1 : -1;
+            } else { apX = BOBBER_X + fishSide * (VW * .6f + fishW); apDy = 0; apSize = fishW; apAlpha = 0; }
+        }
+    }
+
+    // ---- bite + hook gauge
 
     private void stepBite() {
         if (bite == null) return;
@@ -271,16 +369,43 @@ final class FishingScreen extends Screen {
             if (since(phaseAt) > 1.2f && phase == BITING) setPhase(WAIT_RESULT);
             return;
         }
-        if (!hooked && t > biteTime + sweep) { missed = true; report(FishingProtocol.MISSED); }
+        if (!hooked && !biteSounded && t >= biteTime) { biteSounded = true; biteSound(); }
+        if (!hooked && t > biteTime + gaugeTime) { missed = true; startBiteFlee(); report(FishingProtocol.MISSED); }
+    }
+    /** The real bite: a clear "띵" (hat + pling), one more higher pling for a revealed legendary. */
+    private void biteSound() {
+        sound(SoundEvents.BLOCK_NOTE_BLOCK_HAT.value(), 1.6f, .85f);
+        sound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 1.5f, .6f);
+        if (bite != null && bite.grade() == 3) sound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 2f, .5f);
     }
 
-    private float cursor() { return bite == null ? 0 : Math.clamp((since(biteAt) - biteTime) / sweep, 0, 1); }
+    // hook gauge: the needle crosses the bar in bite.sweepMs; a rushing (legendary) needle runs x1.6 near the zone
+    private float rushLo() { return Math.max(0, zoneStart - .12f); }
+    private float rushHi() { return Math.min(1, zoneStart + zoneWidth + .12f); }
+    private float gaugeDuration() {
+        if (bite == null || !bite.rush()) return sweep;
+        float a = rushLo(), b = rushHi();
+        return sweep * (a + (b - a) / 1.6f + (1 - b));
+    }
+    private float cursorAt(float e) {
+        if (e <= 0) return 0;
+        if (bite == null || !bite.rush()) return Math.min(1, e / sweep);
+        float a = rushLo(), b = rushHi(), ta = a * sweep, tb = ta + (b - a) * sweep / 1.6f;
+        if (e < ta) return e / sweep;
+        if (e < tb) return a + (e - ta) * 1.6f / sweep;
+        return Math.min(1, b + (e - tb) / sweep);
+    }
+    private float cursor() { return bite == null ? 0 : cursorAt(since(biteAt) - biteTime); }
     private boolean biting() { return bite != null && since(biteAt) >= biteTime && !hooked && !missed && !spooked; }
 
     private void click() {
         float t = since(biteAt);
-        if (t < biteTime) {           // fake nibble / tremble: scared away
-            spooked = true; phaseAt = Util.getMeasuringTimeMs();
+        if (t < biteTime) {
+            // only a fish that is actually there (coming in / nibbling) can be scared; an empty bobber ignores clicks
+            boolean chest = bite.shape() == FishingProtocol.SHAPE_CHEST;
+            boolean visible = !chest && approachCaptured && targetFish(t)[6] > .3f;
+            if (!visible && !teasing(t)) return;
+            spooked = true; startBiteFlee();
             sound(SoundEvents.ENTITY_FISH_SWIM, 1.4f, .6f);
             report(FishingProtocol.SPOOKED);
             return;
@@ -290,15 +415,39 @@ final class FishingScreen extends Screen {
             hooked = true; hookClickAt = Util.getMeasuringTimeMs();
             startReel();
         } else {
-            missed = true; phaseAt = Util.getMeasuringTimeMs();
+            missed = true; startBiteFlee();
             report(FishingProtocol.MISSED);
         }
     }
 
+    // ---- fleeing fish: fast start, accelerating, gone within ~0.4 s
+
+    private void startBiteFlee() {
+        phaseAt = Util.getMeasuringTimeMs();
+        fleeShape = -1;
+        if (bite == null || bite.shape() == FishingProtocol.SHAPE_CHEST) return;
+        var f = targetFish(since(biteAt));
+        flee(f[0], bobberDepth, f[1] - screenY(bobberDepth), f[0] >= BOBBER_X ? 1 : -1, f[2], f[5], bite.shape(), f[3]);
+    }
+    private void reelFlee() {
+        fleeShape = -1;
+        if (bite == null || bite.shape() == FishingProtocol.SHAPE_CHEST) return;
+        boolean vanished = bite.pattern() == FishingProtocol.TELEPORT && since(phaseAt) < eventEnd;
+        flee(fishX, fishDepth, 0, fishSide > 0 ? -1 : 1, vanished ? 0 : .95f, fishW, bite.shape(), 0);
+    }
+    private void flee(float x, float depth, float dy, float dir, float alpha, float w, int shape, float rot) {
+        fleeAt = Util.getMeasuringTimeMs();
+        fleeX = x; fleeDepth = depth; fleeDy = dy; fleeDir = dir; fleeAlpha = alpha; fleeW = w; fleeRot = rot;
+        fleeShape = alpha > .02f ? shape : -1;
+    }
+
+    // ---- reel
+
     private void startReel() {
         // the button is still down from the hooking click: winding starts right away
-        fishDepth = bobberDepth; stamina = 1; tension = .2f; overFor = 0; graceUsed = false; holding = true;
-        fishX = BOBBER_X; wobble = 0;
+        fishDepth = bobberDepth; stamina = 1; tension = .2f; overFor = 0; slackFor = 0; heat = 0; graceUsed = false; holding = true;
+        fishX = BOBBER_X; wobble = 0; pulling = false; thumpAt = 0; attackAt = 0;
+        attacksDone = 0; heldMask = 0; wear[0] = wear[1] = 0;
         nextEvent = 1.5f + rng.nextFloat() * 2; eventEnd = 0; eventKind = 0;
         sound(SoundEvents.ENTITY_FISHING_BOBBER_SPLASH, .7f, .6f);
         setPhase(REEL);
@@ -329,50 +478,105 @@ final class FishingScreen extends Screen {
         };
     }
 
+    /**
+     * Tension model (2026-10-20, tuned by simulation): winding brings line in and builds tension (plus a slow "heat" while
+     * the reel keeps turning); letting go drops it to near zero within about a second, the fish only holding a little of
+     * it while it pulls. A strong pull takes line even while you wind. Too slack for 1.6 s and the hook slips out.
+     */
     private void stepReel(float dt) {
-        if (bite == null) return;
+        if (bite == null || phase != REEL) return;
         float t = since(phaseAt);
-        float power = bite.power();
+        float p = bite.power(), strain = bite.strain();
         float mod = pattern(t);
-        float pull = (.18f + power * .055f) * (.35f + .65f * stamina) * mod;
-        float reel = FishingProtocol.reelSpeed(gear == null ? 10 : gear.reelPower());
+        boolean event = t < eventEnd;
+        float st = stamina;
+        float force = (.20f + .075f * p) * strain * (.4f + .6f * st) * mod;
+        float reelPower = gear == null ? 10 : gear.reelPower();
+        float reel = FishingProtocol.reelSpeed(reelPower);
         if (background == FishingProtocol.BG_OCEAN) reel *= effect(FishingProtocol.ROD, "sea_reel");
         if (bite.magic()) reel *= effect(FishingProtocol.ROD, "magic_reel");
-        float down = (.6f + power * .35f) * (.35f + .65f * stamina) * mod * (bite.pattern() == FishingProtocol.DIVE && t < eventEnd ? 1.8f : 1);
-        if (holding) fishDepth -= reel * Math.max(.15f, 1 - .55f * pull) * dt;
-        else fishDepth += down * dt;
-        // tension towards its target
+        float maxT = gear == null ? 100 : Math.max(10, gear.maxTension());
+        float down = (.5f + .30f * p) * strain * (.4f + .6f * st) * mod * (bite.pattern() == FishingProtocol.DIVE && event ? 1.8f : 1);
         float rise = special(FishingProtocol.ROD, "tension_rise") ? effect(FishingProtocol.ROD, "tension_rise") : 1;
-        float raw = holding ? (.25f + pull * .95f) * rise : pull * .3f;
-        float norm = raw * 100f / (gear == null ? 100 : Math.max(10, gear.maxTension()));
-        float rate = norm > tension ? 1.7f : 1.25f;
-        tension += (norm - tension) * Math.min(1, rate * dt * 2);
-        // stamina
-        float tire = holding ? .10f * (gear == null ? 1 : gear.reelPower() / 10f) / (.5f + power * .12f) : .01f;
-        stamina = Math.max(0, stamina - tire * dt);
+        if (holding) {
+            if (event && mod > 1.25f) fishDepth += down * .35f * dt;          // it takes line even while you wind
+            else fishDepth -= reel * .75f * Math.max(.15f, 1 - .8f * force) * dt;
+            heat += .18f * strain * dt;
+            float target = ((.30f + force) * 100f / maxT + heat) * rise;
+            tension += (target - tension) * Math.min(1, 2.2f * dt);
+        } else {
+            fishDepth += down * dt;
+            heat = Math.max(0, heat - .5f * dt);
+            float target = force * .35f * 100f / maxT;
+            tension += (target - tension) * Math.min(1, 3f * dt);
+        }
+        stamina -= (.012f + (event ? .05f : 0)) * dt;
+        if (holding) stamina -= (.08f * reelPower / 10f) / (.5f + .12f * p) * dt;
+        stamina = Math.max(0, stamina);
+        // 손맛: a heavy thump when a pull starts (the panel shakes, see shake())
+        long now = Util.getMeasuringTimeMs();
+        boolean pull = event || mod > 1.25f;
+        if (pull && !pulling && now - thumpAt > 450) { thumpAt = now; thumpAmp = 4 + 3 * Math.clamp((mod - 1) / .75f, 0, 1); }
+        pulling = pull;
         // fish moves sideways
         wobble += dt;
         float sway = bite.pattern() == FishingProtocol.ZIGZAG ? 170 : 70;
         float targetX = BOBBER_X + (float) Math.sin(wobble * (bite.pattern() == FishingProtocol.ZIGZAG ? 2.6 : 1.1)) * sway;
         fishX += (targetX - fishX) * Math.min(1, dt * 2.5f);
         // reel clicks
-        long now = Util.getMeasuringTimeMs();
         if (holding && now - reelClickSound > 140) { reelClickSound = now; sound(SoundEvents.UI_BUTTON_CLICK.value(), 1.8f + (float) Math.random() * .2f, .07f); }
+        // the line creaks in the red zone, faster towards 100%
+        if (tension >= .85f) {
+            float red = Math.clamp((tension - .85f) / .15f, 0, 1);
+            if (now - creakSound > (long) (520 - 340 * red)) {
+                creakSound = now;
+                sound(SoundEvents.ENTITY_FISHING_BOBBER_RETRIEVE, 1.55f + .45f * red + (float) Math.random() * .08f, .10f + .10f * red);
+            }
+        }
+        // fish attacks (the server charges their wear)
+        attacks(t);
+        if (phase != REEL) return;
         // outcomes
         if (tension >= 1) {
             overFor += dt;
-            float limit = .12f;
+            float limit = .15f;
             if (!graceUsed && special(FishingProtocol.LINE, "snap_grace")) limit += effect(FishingProtocol.LINE, "snap_grace");
-            if (overFor > limit) { graceUsed = true; report(FishingProtocol.SNAPPED); return; }
-        } else { if (overFor > .12f) graceUsed = true; overFor = 0; }
+            if (overFor > limit) { graceUsed = true; reelFlee(); report(FishingProtocol.SNAPPED); return; }
+        } else { if (overFor > .15f) graceUsed = true; overFor = 0; }
+        if (tension < .12f) {
+            slackFor += dt;
+            if (slackFor > 1.6f) { lossMessage = "바늘이 빠졌다.."; reelFlee(); report(FishingProtocol.ESCAPED); return; }
+        } else slackFor = 0;
         float length = gear == null ? 15 : gear.lineLength();
-        if (fishDepth >= length) { fishDepth = length; report(FishingProtocol.ESCAPED); return; }
+        if (fishDepth >= length) { fishDepth = length; reelFlee(); report(FishingProtocol.ESCAPED); return; }
         if (fishDepth <= 0) { fishDepth = 0; report(FishingProtocol.CAUGHT); }
+    }
+
+    /** Plays the bite's attacks that are due. Winding at that moment doubles the wear (heldMask bit i). */
+    private void attacks(float t) {
+        var list = bite.attacks();
+        while (attacksDone < list.size() && t * 1000 >= list.get(attacksDone).atMs()) {
+            int i = attacksDone++;
+            var a = list.get(i);
+            if (holding) heldMask |= 1 << i;
+            int damage = a.damage() * (holding ? 2 : 1);
+            int k = a.kind() == FishingProtocol.ATTACK_LINE ? 0 : 1;
+            wear[k] += damage;
+            attackAt = Util.getMeasuringTimeMs(); attackKind = a.kind(); attackDamage = damage;
+            sound(SoundEvents.ENTITY_PLAYER_ATTACK_STRONG, .7f, .6f);
+            sound(SoundEvents.ENTITY_GENERIC_SPLASH, k == 0 ? 1.5f : .9f, .4f);
+            Piece piece = gear == null ? null : gear.piece(k == 0 ? FishingProtocol.LINE : FishingProtocol.ROD);
+            if (damage > 0 && piece != null && !piece.fallback() && piece.maxDurability() > 0 && piece.durability() >= 0 && wear[k] >= piece.durability()) {
+                if (k == 0) { lossMessage = "물고기가 낚싯줄을 끊어버렸다.."; reelFlee(); report(FishingProtocol.SNAPPED); }
+                else { lossMessage = "낚싯대가 버티지 못했다.."; reelFlee(); report(FishingProtocol.ESCAPED); }
+                return;
+            }
+        }
     }
 
     private void report(int outcome) {
         if (bite == null) return;
-        FishingClient.result(session, bite.token(), outcome, (int) (Util.getMeasuringTimeMs() - biteAt));
+        FishingClient.result(session, bite.token(), outcome, (int) (Util.getMeasuringTimeMs() - biteAt), heldMask);
         if (outcome == FishingProtocol.CAUGHT || outcome == FishingProtocol.SNAPPED || outcome == FishingProtocol.ESCAPED) setPhase(WAIT_RESULT);
         holding = false;
     }
@@ -431,6 +635,7 @@ final class FishingScreen extends Screen {
     private void toReady() {
         result = null;
         setPhase(READY); pendingReady = false; camTop = -1; bite = null; stopped = false;
+        lossMessage = null; fleeShape = -1; lineEndAt = 0; swimmers.clear();
     }
     private boolean gearLocked() { return phase == CASTING || phase == SINKING || phase == BITING || phase == REEL || phase == WAIT_RESULT; }
 
@@ -445,14 +650,52 @@ final class FishingScreen extends Screen {
         double mx = l.localX(mouseX), my = l.localY(mouseY);
         var images = UiResources.images(); var text = UiResources.text();
         images.beginFrame(); text.beginFrame();
+        hoverStack = ItemStack.EMPTY; hoverLabel = null;
         var m = c.getMatrices(); m.push();
         try {
             m.translate(l.x(), l.y(), 0); m.scale(l.scale(), l.scale(), 1);
             float t = (now - openedAt) / 1000f;
-            panel(c, t, gearOpen ? -1 : mx, gearOpen ? -1 : my);
+            float[] shake = gearOpen ? new float[2] : shake();
+            m.push();
+            try {
+                m.translate(shake[0], shake[1], 0);
+                panel(c, t, gearOpen ? -1 : mx, gearOpen ? -1 : my);
+            } finally { m.pop(); }
             if (gearOpen) gearWindow(c, t, mx, my);
+            // a reward without a readable item: a small label next to the cursor, above everything
+            if (hoverLabel != null && hoverStack.isEmpty()) {
+                m.push();
+                try { m.translate(0, 0, 400); tooltip(c, hoverLabel, hoverX, hoverY); } finally { m.pop(); }
+            }
         } finally { m.pop(); images.endFrame(); }
         entrance.draw(c, width, height);
+        // item tooltip last, in screen coordinates, after the panel's batches are flushed (same as the inventory screens)
+        if (!hoverStack.isEmpty() && entrance.ready()) {
+            c.draw();
+            if (!ItemTooltipRenderer.render(c, textRenderer, hoverStack, mouseX, mouseY)) c.drawItemTooltip(textRenderer, hoverStack, mouseX, mouseY);
+        }
+    }
+
+    /**
+     * Panel shake offset (reference px): a heavy thump when a pull starts and a small shake while it lasts (손맛),
+     * a bigger jolt when the fish attacks the gear, and a fine tremble that grows through the red tension zone.
+     */
+    private float[] shake() {
+        float ox = 0, oy = 0;
+        if (phase != REEL && phase != WAIT_RESULT) return new float[]{0, 0};
+        float time = Util.getMeasuringTimeMs() / 1000f;
+        float u = since(thumpAt);
+        if (thumpAt != 0 && u < .25f) { float k = 1 - u / .25f, a = thumpAmp * k * k; ox += a * .55f * (float) Math.sin(u * 70); oy += a * (float) Math.cos(u * 52); }
+        float v = since(attackAt);
+        if (attackAt != 0 && v < .35f) { float k = 1 - v / .35f, a = 11 * k * k; ox += a * (float) Math.sin(v * 64); oy += a * .8f * (float) Math.cos(v * 49); }
+        if (phase == REEL) {
+            if (pulling) { ox += 1.1f * (float) Math.sin(time * 38); oy += .9f * (float) Math.cos(time * 31); }
+            if (tension >= .85f) {
+                float r = Math.clamp((tension - .85f) / .15f, 0, 1), a = .5f + 1.9f * r;
+                ox += a * (float) Math.sin(time * (70 + 40 * r)); oy += a * .6f * (float) Math.cos(time * (83 + 40 * r));
+            }
+        }
+        return new float[]{ox, oy};
     }
 
     private void panel(DrawContext c, float t, double mx, double my) {
@@ -461,15 +704,25 @@ final class FishingScreen extends Screen {
             rect(c, VX, VY, VW, PY + PH - VY, 0xFF081428);
             water(c, t);
             scene(c, t, mx, my);
+            alarms(c, t);
         } finally { c.disableScissor(); }
         // bottom bar
         rect(c, VX, VB, VW, PY + PH - 12 - VB, 0xD9081428);
         hline(c, VX + 22, VX + VW - 22, VB, 0x55E7C77E);
         slots(c, t, mx, my);
+        // a soft dark strip behind the title so it reads on bright water
+        float dx = 472 + width("낚시", 25, TITLE) + 14;
+        String tank = tankCapacity > 0 ? "아공간 수조 " + tankCount + " / " + tankCapacity : "";
+        float stripEnd = Math.max(dx + 60, tank.isEmpty() ? 0 : dx + 18 + width(tank, 15, BODY) + 40) + 90;
+        hgrad(c, VX, 19, stripEnd - VX, 40, 0x8C000000, 0x00000000);
         draw(c, FRAME_PANEL, PX, PY, PW, PH, 0xFFFFFFFF);
         text(c, "낚시", 472, 38, 25, TITLE_GOLD, TITLE, false);
-        diamond(c, 472 + width("낚시", 25, TITLE) + 14, 39, 5, GOLD);
-        bloom(c, 472 + width("낚시", 25, TITLE) + 14, 39, 14, 0xE7C77E, .25f + .1f * (float) Math.sin(t * 2));
+        diamond(c, dx, 39, 5, GOLD);
+        bloom(c, dx, 39, 14, 0xE7C77E, .25f + .1f * (float) Math.sin(t * 2));
+        if (!tank.isEmpty()) {
+            int tc = tankCount >= tankCapacity ? 0xFFFF7A6E : tankCount * 10 >= tankCapacity * 9 ? 0xFFF2D37A : 0xFFC9D6E4;
+            text(c, tank, dx + 18, 40, 15, tc, BODY, false);
+        }
         if (!notice.isBlank() && since(noticeAt) < 5) {
             float a = Math.min(1, since(noticeAt) * 4) * Math.min(1, (5 - since(noticeAt)) * 1.5f);
             float s = fit(notice, 18, BODY, VW - 120);
@@ -505,6 +758,14 @@ final class FishingScreen extends Screen {
         float camDepth = (camTop + VH / 2 - surfaceBg()) / pxPerMeter();
         float dark = Math.clamp(camDepth / Math.max(30, depthRange()), 0, .55f);
         if (dark > .01f) HudMesh.quad(c, VX, VY, VW, VH, argb(dark * .6f, 0x020812), argb(dark * .6f, 0x020812));
+        // open water: no sea floor, the deep fades into dark water below the end of the line
+        if (bottomless) {
+            float f0 = screenY(maxDepth) + 30, f1 = screenY(maxDepth + depthRange() * .22f);
+            if (f0 < VB) {
+                vgrad(c, VX, f0, VW, Math.max(1, f1 - f0), 0x00040A16, 0xFF040A16);
+                if (f1 < VB) rect(c, VX, f1, VW, VB - f1 + 2, 0xFF040A16);
+            }
+        }
         // ambient fish (behind everything)
         for (float[] f : ambient) {
             float y = screenY(f[0]) + (float) Math.sin(t * .9 + f[5]) * 6;
@@ -537,9 +798,42 @@ final class FishingScreen extends Screen {
             case SINKING -> { sinking(c, t); ruler(c, t, bobberDepth); }
             case BITING -> { biting(c, t); ruler(c, t, bobberDepth); }
             case REEL -> { reeling(c, t); ruler(c, t, fishDepth); tensionGauge(c, t); bars(c, t); }
-            case WAIT_RESULT -> { if (bite != null && (missed || spooked)) biting(c, t); else waitDots(c, t); }
+            case WAIT_RESULT -> {
+                if (bite != null && (missed || spooked)) biting(c, t);
+                else {
+                    fleeing(c);
+                    if (lossMessage != null) text(c, lossMessage, BOBBER_X, VY + VH * .62f, 28, argb(Math.min(1, since(phaseAt) * 2), 0xF3E9D3), TITLE, true);
+                    waitDots(c, t);
+                }
+            }
             case RESULT -> result(c, t, mx, my);
             default -> {}
+        }
+    }
+
+    /** Red-zone vignette, the attack flash and its floating text (inside the water view, over the scene). */
+    private void alarms(DrawContext c, float t) {
+        if (phase == REEL && tension >= .85f) {
+            float r = Math.clamp((tension - .85f) / .15f, 0, 1);
+            float pulse = .5f + .5f * (float) Math.sin(t * (7 + 9 * r));
+            float a = (.18f + .22f * r) * (.55f + .45f * pulse), bw = 70 + 30 * r;
+            int edge = argb(a, 0xFF2A1E), clear = edge & 0xFFFFFF;
+            hgrad(c, VX, VY, bw, VH, edge, clear);
+            hgrad(c, VX + VW - bw, VY, bw, VH, clear, edge);
+            vgrad(c, VX, VY, VW, bw * .8f, edge, clear);
+            vgrad(c, VX, VB - bw * .8f, VW, bw * .8f, clear, edge);
+        }
+        if (attackAt != 0 && (phase == REEL || phase == WAIT_RESULT)) {
+            float u = since(attackAt);
+            if (u < .3f) rect(c, VX, VY, VW, VH, argb(.32f * (1 - u / .3f), 0xFF2A1E));
+            if (u < 1.6f) {
+                float a = Math.min(1, u * 6) * Math.min(1, (1.6f - u) * 2.5f);
+                float y = VY + VH * .36f - u * 22, pop = u < .12f ? 1.25f - u * 2 : 1;
+                boolean line = attackKind == FishingProtocol.ATTACK_LINE;
+                bloom(c, BOBBER_X, y, 130, 0xFF5A4A, .25f * a);
+                outlined(c, line ? "줄을 물어뜯었다!" : "낚싯대를 거세게 흔든다!", BOBBER_X, y, 30 * pop, argb(a, 0xFF8A7A), TITLE);
+                text(c, (line ? "낚싯줄 −" : "낚싯대 −") + attackDamage, BOBBER_X, y + 36, 20, argb(a, 0xFFE4E9EF), BOLD, true);
+            }
         }
     }
 
@@ -572,6 +866,24 @@ final class FishingScreen extends Screen {
         HudMesh.line(c, x0, y0, x1, y1, 1.3f, argb(alpha, 0xE9F6FF));
     }
 
+    /** Line from above down to the bobber; taut and humming a little when it hangs at the end of the line. */
+    private void bobberLine(DrawContext c, float x, float y) {
+        if (bottomless && lineEndAt != 0) {
+            float u = since(lineEndAt);
+            float vib = (float) Math.sin(u * 42) * 1.6f * (float) Math.exp(-2.2f * u);
+            HudMesh.line(c, BOBBER_X, VY - 10, x + vib, y, 5.5f, argb(.2f, 0xCFEFFF));
+            HudMesh.line(c, BOBBER_X, VY - 10, x + vib, y, 1.6f, 0xFFF2FAFF);
+        } else line(c, BOBBER_X, VY - 10, x, y, .7f);
+    }
+    /** "낚싯줄이 끝까지 풀렸다" for a moment after the line ran out in open water. */
+    private void lineEndHint(DrawContext c, float y) {
+        if (!bottomless || lineEndAt == 0) return;
+        float u = since(lineEndAt);
+        if (u > 2.6f) return;
+        float a = Math.min(1, u * 4) * Math.min(1, (2.6f - u) * 2);
+        text(c, "낚싯줄이 끝까지 풀렸다", BOBBER_X, y + 92, 18, argb(a, 0xF2D9A0), BOLD, true);
+    }
+
     private void glowBobber(DrawContext c, float t, float x, float y, float pulse) {
         bloom(c, x, y, 30 + 8 * pulse, 0x55D8FF, .45f + .25f * pulse);
         bloom(c, x, y, 12, 0xE6FBFF, .8f);
@@ -580,9 +892,10 @@ final class FishingScreen extends Screen {
     }
 
     private void sinking(DrawContext c, float t) {
-        float y = screenY(bobberDepth);
-        line(c, BOBBER_X, VY - 10, BOBBER_X, y, .7f);
+        float y = bobberY();
+        bobberLine(c, BOBBER_X, y);
         glowBobber(c, t, BOBBER_X, y, .5f + .5f * (float) Math.sin(t * 5));
+        lineEndHint(c, y);
         if (bite == null && !stopped) {
             // chevrons under the bobber
             for (int i = 0; i < 2; i++) {
@@ -596,18 +909,27 @@ final class FishingScreen extends Screen {
         }
     }
 
+    /**
+     * The biting fish: x, y, alpha, rotation, mirrored (1/0), size, visible alpha (0 while it only swims around with
+     * the others; from the approach on it is the drawn alpha).
+     */
     private float[] targetFish(float t) {
-        // returns x, y, alpha, rotation, mirror(1/-1)
-        float y0 = screenY(bobberDepth);
+        float y0 = bobberY();
         float near = fishW * .55f + 18, nose = fishW * .47f;
-        float side = fishSide;
-        float x, alpha = 1, rot = 0;
-        if (t < bite.waitMs() / 1000f) { x = BOBBER_X + side * (VW * .6f + fishW); alpha = 0; }
-        else if (t < approachEnd) {
-            float u = (t - bite.waitMs() / 1000f) / Math.max(.1f, approachEnd - bite.waitMs() / 1000f);
+        float side = fishSide, wait = bite.waitMs() / 1000f;
+        if (t < wait || !approachCaptured) {
+            float[] f = realSwimmer();
+            if (f == null) return new float[]{BOBBER_X + side * (VW * .6f + fishW), y0, 0, 0, side > 0 ? 1 : 0, fishW, 0};
+            return new float[]{f[0], swimY(f, t), f[7], (float) Math.sin(t * 1.3f + f[4]) * .04f, f[3] < 0 ? 1 : 0, f[5], 0};
+        }
+        float x, y = y0 + (float) Math.sin(t * 1.7) * 4 + fishW * .04f, alpha = 1, rot = 0, size = fishW;
+        if (t < approachEnd) {
+            float u = Math.clamp((t - wait) / Math.max(.1f, approachEnd - wait), 0, 1);
             float e = 1 - (1 - u) * (1 - u);
-            x = BOBBER_X + side * (VW * .6f + fishW - (VW * .6f + fishW - near) * e);
-            alpha = Math.min(1, u * 2);
+            x = apX + (BOBBER_X + side * near - apX) * e;
+            y = y0 + apDy + (y - y0 - apDy) * e;
+            size = apSize + (fishW - apSize) * e;
+            alpha = apAlpha + (1 - apAlpha) * Math.min(1, u * 1.6f);
         } else {
             x = BOBBER_X + side * (near + (float) Math.sin(t * 1.3) * 10);
             for (float tt : teaseTimes) {
@@ -624,8 +946,7 @@ final class FishingScreen extends Screen {
             if (t >= biteTime) x = BOBBER_X + side * nose;
             rot = (float) Math.sin(t * 2.1) * .03f;
         }
-        float y = y0 + (float) Math.sin(t * 1.7) * 4 + fishW * .04f;
-        return new float[]{x, y, alpha, rot, side};
+        return new float[]{x, y, alpha, rot, side > 0 ? 1 : 0, size, alpha};
     }
 
     private boolean teasing(float t) {
@@ -633,38 +954,68 @@ final class FishingScreen extends Screen {
         return false;
     }
 
+    /** Silhouettes swimming around the bobber (darker / smaller than the biter once it comes in). */
+    private void swimmers(DrawContext c, float t) {
+        for (float[] f : swimmers) {
+            if (f[8] > 0) continue;
+            float y = swimY(f, t);
+            drawCentered(c, SHAPES[(int) f[6]], f[0], y, f[5], f[5], argb(f[7], 0x050B16), f[3] < 0, (float) Math.sin(t * 1.3f + f[4]) * .05f, false);
+        }
+    }
+
+    /** A fish darting away: fast from the start, accelerating, gone within ~0.4 s. */
+    private void fleeing(DrawContext c) {
+        if (fleeShape < 0) return;
+        float u = since(fleeAt);
+        if (u > .42f) return;
+        float d = 520 * u + 2600 * u * u;
+        float x = fleeX + fleeDir * d, y = screenY(fleeDepth) + fleeDy - 26 * u;
+        float a = fleeAlpha * Math.max(0, 1 - u / .4f);
+        float stretch = 1 + Math.min(.22f, u * .7f);
+        drawCentered(c, SHAPES[fleeShape], x, y, fleeW * stretch, fleeW / stretch, argb(.92f * a, 0x040C1A), fleeDir < 0, fleeRot, false);
+        for (int i = 0; i < 4; i++) {
+            float bx = x - fleeDir * (fleeW * .5f + 10 + i * 16), by = y + (float) Math.sin(i * 2.3f + u * 20) * 6;
+            HudMesh.arc(c, bx, by, 2.5f + i % 2, 1.1f, 0, (float) (Math.PI * 2), argb(.55f * a, 0xDFF7FF));
+        }
+    }
+
+    private void hook(DrawContext c, float lineX, float lineY, float size, int tint) {
+        draw(c, HOOK, lineX - HOOK_EYE_X * size, lineY - HOOK_EYE_Y * size, size, size, tint);
+    }
+
     private void biting(DrawContext c, float t0) {
         if (bite == null) { sinking(c, t0); return; }
         float t = since(biteAt);
         boolean chest = bite.shape() == FishingProtocol.SHAPE_CHEST;
-        float y = screenY(bobberDepth);
+        float y = bobberY();
         float dip = teasing(t) ? 5 : 0;
         float tremble = t >= warningStart && t < biteTime ? (float) Math.sin(t * 70) * 2.2f : 0;
         if (biting() || hooked) dip = 14;
         if (missed || spooked) dip = 0;
         float by = y + dip;
+        swimmers(c, t);
         // target fish
-        if (!chest) {
+        if (missed || spooked) fleeing(c);
+        else if (!chest) {
             var f = targetFish(t);
             float fx = f[0], fy = f[1], a = f[2];
-            if (missed || spooked) {
-                float u = since(phaseAt);
-                fx += -fishSide * u * 420; a = Math.max(0, 1 - u * .9f);
-            }
             boolean mirror = f[4] > 0;     // silhouettes face right: on the right side it must face left
-            if (bite.grade() >= 0 && a > 0) bloom(c, fx, fy, fishW * .62f, GRADE[bite.grade()] & 0xFFFFFF, .22f * a);
-            drawCentered(c, SHAPES[bite.shape()], fx, fy, fishW, fishW, argb(.92f * a, 0x040C1A), mirror, f[3], false);
+            if (bite.grade() >= 0 && f[6] > 0) bloom(c, fx, fy, f[5] * .62f, GRADE[bite.grade()] & 0xFFFFFF, .22f * f[6]);
+            int body = f[6] > 0 ? 0x040C1A : 0x050B16;
+            drawCentered(c, SHAPES[bite.shape()], fx, fy, f[5], f[5], argb((f[6] > 0 ? .92f : 1) * a, body), mirror, f[3], false);
             if (teasing(t)) bloom(c, BOBBER_X, by, 22, 0xBFEFFF, .35f);
         }
-        line(c, BOBBER_X, VY - 10, BOBBER_X + tremble, by, .7f);
         if (missed || spooked) {
-            draw(c, HOOK, BOBBER_X - 15, by - 4, 30, 30, 0xFFE4E9EF);
+            line(c, BOBBER_X, VY - 10, BOBBER_X, by, .7f);
+            hook(c, BOBBER_X, by, 30, 0xFFE4E9EF);
             String msg = spooked ? "물고기가 놀라 도망갔다.." : "미끼만 먹고 도망갔다..";
             text(c, msg, BOBBER_X, VY + VH * .62f, 28, argb(Math.min(1, since(phaseAt) * 2), 0xF3E9D3), TITLE, true);
             return;
         }
+        bobberLine(c, BOBBER_X + tremble, by);
         float pulse = t >= warningStart ? .5f + .5f * (float) Math.sin(t * 18) : .5f + .5f * (float) Math.sin(t * 5);
         glowBobber(c, t, BOBBER_X + tremble, by, pulse);
+        lineEndHint(c, by);
         if (t >= warningStart && t < biteTime) {
             float u = (t - warningStart) / Math.max(.1f, biteTime - warningStart);
             glow(c, RING, BOBBER_X - 26 - u * 20, by - 26 - u * 20, 52 + u * 40, 52 + u * 40, argb(.55f * (1 - u), 0x9FE9FF));
@@ -700,6 +1051,9 @@ final class FishingScreen extends Screen {
         boolean chest = bite.shape() == FishingProtocol.SHAPE_CHEST;
         float fy = screenY(fishDepth);
         float shake = (float) Math.sin(t * (holding ? 26 : 12)) * (2 + tension * 5);
+        // an attack jolts the fish hard
+        float hit = since(attackAt);
+        if (attackAt != 0 && hit < .35f) shake += 22 * (1 - hit / .35f) * (float) Math.sin(hit * 50);
         boolean vanished = bite.pattern() == FishingProtocol.TELEPORT && t < eventEnd && eventEnd - t > .25f;
         // decoys
         if (bite.pattern() == FishingProtocol.DECOY) for (int i = 0; i < 2; i++) {
@@ -711,6 +1065,7 @@ final class FishingScreen extends Screen {
         if (!vanished) {
             if (bite.grade() >= 0) bloom(c, fishX, fy, fishW * .6f, GRADE[bite.grade()] & 0xFFFFFF, .2f);
             float rot = (float) Math.sin(t * 9) * (.05f + tension * .06f);
+            if (attackAt != 0 && hit < .35f) rot += .35f * (1 - hit / .35f) * (float) Math.sin(hit * 38);
             if (chest) drawCentered(c, SHAPES[FishingProtocol.SHAPE_CHEST], fishX + shake, fy, fishW, fishW, 0xEE050B16, false, rot, false);
             else drawCentered(c, SHAPES[bite.shape()], fishX + shake, fy, fishW, fishW, 0xF2040C1A, fishSide > 0, rot, false);
             // struggle lines
@@ -731,53 +1086,93 @@ final class FishingScreen extends Screen {
         text(c, "풀기 (떼기)", 588, 176, 15, holding ? MUTED : 0xFFFFFFFF, BODY, false);
     }
 
+    /** Metres covered by the depth ruler: down to the floor when it is in reach, else the open-water view. */
+    private float rulerRange() {
+        if (!bottomless) return Math.max(1, Math.max(maxDepth, Math.min(floorDepth, maxDepth + .5f)));
+        float view = Math.max(maxDepth * 1.6f, maxDepth + 12);
+        return floorDepth < FishingProtocol.MAX_DEPTH && floorDepth <= view ? floorDepth : view;
+    }
+
     private void ruler(DrawContext c, float t, float current) {
-        float top = RULER_TOP, bottom = RULER_BOTTOM, range = Math.max(1, maxDepth);
+        float top = RULER_TOP, bottom = RULER_BOTTOM, range = rulerRange(), span = bottom - top;
         vline(c, RULER_X, top, bottom, 0xB0DCE6F0);
+        boolean floorIn = floorDepth < FishingProtocol.MAX_DEPTH && floorDepth <= range + .01f;
+        float lineY = top + span * Math.clamp(maxDepth / range, 0, 1), floorY = top + span * Math.clamp(floorDepth / range, 0, 1);
+        // rows taken by the line-end / floor labels (left side)
+        var busy = new ArrayList<Float>();
+        if (bottomless) busy.add(lineY);
+        if (floorIn) busy.add(floorY);
+        // zones: 얕은 0-10 / 중층 10-25 / 깊은 25-50 / 심해 50+
+        float[] edges = {0, 10, 25, 50, Float.MAX_VALUE};
+        String[] names = {"얕은", "중층", "깊은", "심해"};
+        for (int z = 0; z < 4 && edges[z] < range; z++) {
+            float lo = edges[z], hi = Math.min(edges[z + 1], range);
+            if (z > 0) hline(c, RULER_X - 16, RULER_X - 2, top + span * lo / range, 0x8CA8D8FF);
+            float my = top + span * (lo + hi) / 2 / range;
+            boolean free = (hi - lo) / range * span > 24;
+            for (float b : busy) if (Math.abs(b - my) < 18) free = false;
+            if (free) FishingArt.right(c, names[z], RULER_X - 10, my, 12, 0x99A8C4DC, BODY);
+        }
+        // scale (right)
         float step = range <= 12 ? 2 : range <= 30 ? 5 : range <= 60 ? 10 : 20;
         for (float d = 0; d <= range + .01f; d += step / 2) {
-            float y = top + (bottom - top) * d / range;
+            float y = top + span * d / range;
             boolean major = Math.abs(d / step - Math.round(d / step)) < .01f;
             hline(c, RULER_X - (major ? 7 : 4), RULER_X + (major ? 7 : 4), y, 0xB0DCE6F0);
             if (major && d > 0 && range - d > step * .45f) text(c, num(d) + "m", RULER_X + 15, y, 15, 0xD0E4E9EF, BODY, false);
         }
         hline(c, RULER_X - 7, RULER_X + 7, bottom, 0xB0DCE6F0);
         text(c, "0m", RULER_X + 15, top, 15, 0xD0E4E9EF, BODY, false);
-        text(c, "최대 " + num(range) + "m", RULER_X - 12, bottom + 18, 15, 0xD0E4E9EF, BODY, false);
-        float y = top + (bottom - top) * Math.clamp(current / range, 0, 1);
+        // end of the line (gold)
+        if (bottomless) {
+            HudMesh.line(c, RULER_X - 11, lineY, RULER_X + 11, lineY, 2.4f, 0xFFE7C77E);
+            diamond(c, RULER_X, lineY, 3.5f, GOLD);
+            FishingArt.right(c, "줄 끝 " + num(Math.round(maxDepth * 10) / 10f) + "m", RULER_X - 15, lineY, 14, 0xFFF2D9A0, BOLD);
+        }
+        // the real bottom (sand) or how deep it goes below the ruler
+        if (floorIn) {
+            HudMesh.line(c, RULER_X - 11, floorY, RULER_X + 11, floorY, 3f, 0xFFD9B77A);
+            FishingArt.right(c, "바닥 " + num(Math.round(floorDepth * 10) / 10f) + "m", RULER_X - 15, floorY + (bottomless && Math.abs(floorY - lineY) < 16 ? 16 : 0), 14, 0xFFE6CB92, BOLD);
+        } else {
+            String deep = floorDepth >= FishingProtocol.MAX_DEPTH ? "50m 이상" : num(Math.round(floorDepth)) + "m";
+            FishingArt.right(c, "▼ 바닥 " + deep, RULER_X + 30, bottom + 20, 14, 0xFFE6CB92, BOLD);
+        }
+        float y = top + span * Math.clamp(current / range, 0, 1);
         bloom(c, RULER_X, y, 16, 0x55D8FF, .55f);
         HudMesh.disk(c, RULER_X, y, 4.5f, 0xFF7FE3FF);
         text(c, "현재 " + Math.round(current) + "m", RULER_X + 14, y, 14, 0xFFFFFFFF, BOLD, false);
     }
     private static String num(float v) { return v == Math.rint(v) ? String.valueOf((int) v) : String.valueOf(Math.round(v * 10) / 10f); }
 
+    /** Tension gauge (left side). In the red zone it shakes and blinks, faster towards 100%. */
     private void tensionGauge(DrawContext c, float t) {
-        float x = GAUGE_X, top = GAUGE_TOP, bottom = GAUGE_BOTTOM, h = bottom - top;
+        float red = tension >= .85f ? Math.clamp((tension - .85f) / .15f, 0, 1) : -1;
+        float x = GAUGE_X + (red >= 0 ? (float) Math.sin(t * (60 + 30 * red)) * (1 + 2 * red) : 0), top = GAUGE_TOP, bottom = GAUGE_BOTTOM, h = bottom - top;
         text(c, "장력", x, top - 26, 17, TEXT, BOLD, true);
         // zones: 안전 (bottom 40%), 주의, 위험 (top 25%)
         rect(c, x - 2.2f, top + h * .25f, 4.4f, h * .35f, 0xFFE7C24E);
         rect(c, x - 2.2f, top + h * .6f, 4.4f, h * .4f, 0xFF3FC86A);
         rect(c, x - 2.2f, top, 4.4f, h * .25f, 0xFFE8483E);
-        text(c, "위험", x - 32, top + h * .12f, 14, 0xFFFF7A6E, BODY, true);
-        text(c, "주의", x - 32, top + h * .42f, 14, 0xFFF2D37A, BODY, true);
-        text(c, "안전", x - 32, top + h * .8f, 14, 0xFF7FE59A, BODY, true);
+        if (red >= 0) {
+            float blink = (float) Math.sin(t * Math.PI * 2 * (4 + 6 * red)) > 0 ? 1 : .25f;
+            rect(c, x - 4.5f, top, 9, h, argb(.55f * blink, 0xFF3A2E));
+            bloom(c, x, top + h * .12f, 34 + 10 * red, 0xFF3A2E, .35f * blink);
+        }
+        text(c, "위험", x + 13, top + h * .12f, 13, 0xFFFF7A6E, BODY, false);
+        text(c, "주의", x + 13, top + h * .42f, 13, 0xFFF2D37A, BODY, false);
+        text(c, "안전", x + 13, top + h * .8f, 13, 0xFF7FE59A, BODY, false);
         float v = Math.clamp(tension, 0, 1.05f);
         float y = bottom - h * Math.min(1, v);
         int col = v > .75f ? 0xFF6A5A : v > .4f ? 0xF2D37A : 0x7FE59A;
         bloom(c, x, y, 18 + (v > .75f ? 8 * (float) Math.sin(t * 25) : 0), col, .5f);
-        rect(c, x - 12, y - 1.6f, 24, 3.2f, 0xFFFFFFFF);
-        text(c, Math.round(Math.min(1, v) * 100) + "%", x - 28, y, 15, 0xFFFFFFFF, BOLD, true);
+        rect(c, x - 12, y - 1.6f, 24, 3.2f, red >= 0 && (float) Math.sin(t * Math.PI * 2 * (4 + 6 * red)) > 0 ? 0xFFFF6A5A : 0xFFFFFFFF);
+        text(c, Math.round(Math.min(1, v) * 100) + "%", x + 46, y, 15, 0xFFFFFFFF, BOLD, false);
     }
 
     private void bars(DrawContext c, float t) {
         float length = gear == null ? 15 : gear.lineLength();
         bar(c, "체력", stamina, 633, 0x4FD7EC);
         bar(c, "낚싯줄", Math.clamp(1 - fishDepth / Math.max(1, length), 0, 1), 690, 0xE9F2FF);
-        // pulled up to the surface
-        float up = Math.clamp(1 - fishDepth / Math.max(.5f, bobberDepth), 0, 1);
-        float bx = 840, bw = 287;
-        rect(c, bx, 600, bw * up, 2.4f, 0xFFE7C77E);
-        text(c, "수면까지 " + Math.round(fishDepth) + "m", bx + bw, 587, 13, 0xC8E7C77E, BODY, false);
     }
     private void bar(DrawContext c, String label, float value, float y, int rgb) {
         float bx = 840, bw = 287;
@@ -852,6 +1247,7 @@ final class FishingScreen extends Screen {
             drawCentered(c, chest(result.grade(), true), cx, cy, 300, 300, argb(in, 0xFFFFFF), false, 0, false);
             text(c, grade(result.grade()), cx, 476, 20, argb(in, gc), BOLD, true);
             text(c, "보물 발견", cx, 524, 42, argb(in, 0xF3E9D3), TITLE, true);
+            // reward slots: hovering one shows the normal item tooltip (drawn last, see render)
             int n = rewardIcons.size();
             float w = 111, gap = 20, x = cx - (n * w + (n - 1) * gap) / 2;
             for (int i = 0; i < n; i++) {
@@ -860,10 +1256,7 @@ final class FishingScreen extends Screen {
                 card(c, rx, 567, w, 106, argb(.85f * in, 0x0B1530), argb(in, over ? 0xFFE7C77E : 0xC8A877), 1.4f);
                 AlchemyScreen.item(c, rewardIcons.get(i), rx + w / 2, 607, 52);
                 text(c, "×" + result.rewards().get(i).amount(), rx + w / 2, 655, 17, argb(in, 0xF3E9D3), BOLD, true);
-            }
-            for (int i = 0; i < n; i++) {
-                float rx = x + i * (w + gap);
-                if (inside(mx, my, rx, 567, w, 106)) tooltip(c, result.rewards().get(i).name(), rx + w / 2, 560);
+                if (over) { hoverStack = rewardIcons.get(i); hoverLabel = rewardName(i); hoverX = (float) mx + 14; hoverY = (float) my; }
             }
         } else {
             String msg = switch (o) {
@@ -873,13 +1266,16 @@ final class FishingScreen extends Screen {
                 case FishingProtocol.ESCAPED -> "놓쳐버렸다..";
                 default -> "낚시를 확인하지 못했다..";
             };
+            // the client saw why (hook slipped, line bitten through, rod gave out)
+            if (lossMessage != null && (o == FishingProtocol.ESCAPED || o == FishingProtocol.SNAPPED)) msg = lossMessage;
             // the empty hook swaying, the fish swimming off
             float sway = (float) Math.sin(t * 1.6) * 8;
             float hy = 390;
             if (o == FishingProtocol.SNAPPED) { line(c, 720, VY - 10, 735 + sway, 250, .6f); HudMesh.line(c, 735 + sway, 250, 742 + sway, 262, 1.2f, 0x88E9F6FF); }
             else {
                 line(c, 720, VY - 10, 765 + sway, hy - 20, .65f);
-                draw(c, o == FishingProtocol.ESCAPED ? BOBBER : HOOK, 750 + sway, hy - 26, 34, 34, 0xFFE4E9EF);
+                if (o == FishingProtocol.ESCAPED) draw(c, BOBBER, 750 + sway, hy - 26, 34, 34, 0xFFE4E9EF);
+                else hook(c, 765 + sway, hy - 20, 34, 0xFFE4E9EF);
             }
             float fx = 1010 + u * 160;
             drawCentered(c, SHAPES[result.shape() == FishingProtocol.SHAPE_CHEST ? 0 : result.shape()], fx, 380, 250, 250, argb(Math.max(0, .9f - u * .25f), 0x040C1A), false, -.12f, false);
@@ -893,10 +1289,19 @@ final class FishingScreen extends Screen {
         button(c, resultButtonX(), resultButtonY(), resultButtonW(), resultButtonH(), "확인", false, over, true);
     }
 
-    private void tooltip(DrawContext c, String label, float cx, float bottom) {
+    /** Fallback label for a reward whose item could not be read: next to the cursor (left, vertically centred). */
+    private void tooltip(DrawContext c, String label, float left, float cy) {
         float w = width(label, 16, BODY) + 28;
-        card(c, cx - w / 2, bottom - 40, w, 32, 0xF00B1428, 0xFFE7C77E, 1.2f);
-        text(c, label, cx, bottom - 24, 16, TEXT, BODY, true);
+        card(c, left, cy - 16, w, 32, 0xF00B1428, 0xFFE7C77E, 1.2f);
+        text(c, label, left + w / 2, cy, 16, TEXT, BODY, true);
+    }
+    /** The reward's name as the client shows it (localized), the server's name only as a fallback. */
+    private String rewardName(int i) {
+        var w = result.rewards().get(i);
+        ItemStack stack = i < rewardIcons.size() ? rewardIcons.get(i) : ItemStack.EMPTY;
+        if (stack.isEmpty()) return w.name();
+        String name = ItemTooltipRenderer.localName(stack, stack.getName()).getString();
+        return name.isBlank() ? w.name() : name;
     }
 
     // ---- bottom slots
@@ -963,8 +1368,8 @@ final class FishingScreen extends Screen {
         draw(c, FRAME_GEAR, GX, GY, GW, GH, 0xFFFFFFFF);
         text(c, "낚시 장비", 415, 233, 33, IVORY, TITLE, false);
         float tw = width("낚시 장비", 33, TITLE);
-        hline(c, 410, 1270, 254, 0x55E7C77E);
-        diamond(c, 415 + tw + 18, 254, 4, GOLD);
+        hline(c, 410, 1270, 261, 0x55E7C77E);
+        diamond(c, 415 + tw + 18, 261, 4, GOLD);
         // close X (code-drawn)
         boolean overX = inside(mx, my, 1242, 212, 36, 36);
         HudMesh.line(c, 1250, 220, 1270, 240, 2.2f, overX ? 0xFFFFE9B0 : 0xFFE7C77E); HudMesh.line(c, 1270, 220, 1250, 240, 2.2f, overX ? 0xFFFFE9B0 : 0xFFE7C77E);

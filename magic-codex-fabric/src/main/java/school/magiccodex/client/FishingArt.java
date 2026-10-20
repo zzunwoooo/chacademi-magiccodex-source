@@ -150,6 +150,25 @@ final class FishingArt {
         HudMesh.arc(c, x + r, y + h - r, r, thickness, q, q, border);
     }
     static void rect(DrawContext c, float x, float y, float w, float h, int color) { HudMesh.quad(c, x, y, w, h, color, color); }
+    /** Horizontal gradient (left colour -> right colour, alpha included). */
+    static void hgrad(DrawContext c, float x, float y, float w, float h, int left, int right) { HudMesh.quad(c, x, y, w, h, left, right); }
+    /** Vertical gradient top -> bottom (alpha included), drawn as thin bands since the mesh quad only blends sideways. */
+    static void vgrad(DrawContext c, float x, float y, float w, float h, int top, int bottom) {
+        if (w <= 0 || h <= 0) return;
+        int bands = Math.clamp(Math.round(h / 6), 2, 48);
+        float bh = h / bands;
+        for (int i = 0; i < bands; i++) {
+            int col = lerpArgb(top, bottom, (i + .5f) / bands);
+            if ((col >>> 24) == 0) continue;
+            HudMesh.quad(c, x, y + i * bh, w, bh + .35f, col, col);
+        }
+    }
+    /** Like mix but alpha is interpolated too. */
+    static int lerpArgb(int a, int b, float t) {
+        t = Math.clamp(t, 0f, 1f);
+        int aa = a >>> 24, ba = b >>> 24;
+        return (Math.round(aa + (ba - aa) * t) << 24) | (mix(a, b, t) & 0xFFFFFF);
+    }
     static void hline(DrawContext c, float x0, float x1, float y, int color) { HudMesh.line(c, x0, y, x1, y, 1.4f, color); }
     static void vline(DrawContext c, float x, float y0, float y1, int color) { HudMesh.line(c, x, y0, x, y1, 1.4f, color); }
 
