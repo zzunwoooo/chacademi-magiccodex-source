@@ -153,6 +153,13 @@ final class FriendStore implements AutoCloseable {
     boolean unfriend(UUID a,UUID b)throws SQLException{
         try(var s=db().prepareStatement("DELETE FROM "+friends+" WHERE (owner=? AND target=?) OR (owner=? AND target=?)")){s.setString(1,a.toString());s.setString(2,b.toString());s.setString(3,b.toString());s.setString(4,a.toString());return s.executeUpdate()>0;}
     }
+    /** 관리자: 이 유저가 받은·보낸 친구 신청을 모두 지운다 (거절 대기 기록 포함). 지운 신청 수. */
+    int clearRequests(UUID owner)throws SQLException{
+        int n;String id=owner.toString();
+        try(var s=db().prepareStatement("DELETE FROM "+requests+" WHERE sender=? OR target=?")){s.setString(1,id);s.setString(2,id);n=s.executeUpdate();}
+        try(var s=db().prepareStatement("DELETE FROM "+declines+" WHERE sender=? OR target=?")){s.setString(1,id);s.setString(2,id);s.executeUpdate();}
+        return n;
+    }
     List<SocialProtocol.Entry> incoming(UUID target,long now)throws SQLException{return requestList("SELECT sender,name,dorm FROM "+requests+" WHERE target=? AND created>=? ORDER BY created LIMIT "+SocialProtocol.LIMIT,target,now);}
     List<SocialProtocol.Entry> outgoing(UUID sender,long now)throws SQLException{return requestList("SELECT target,target_name,target_dorm FROM "+requests+" WHERE sender=? AND created>=? ORDER BY created LIMIT "+SocialProtocol.LIMIT,sender,now);}
     private List<SocialProtocol.Entry> requestList(String sql,UUID id,long now)throws SQLException{

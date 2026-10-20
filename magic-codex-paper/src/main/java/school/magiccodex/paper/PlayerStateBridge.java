@@ -2,7 +2,10 @@ package school.magiccodex.paper;
 
 import java.util.*;
 import java.util.concurrent.*;
+import com.mojang.brigadier.Command;
+import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
@@ -36,13 +39,51 @@ final class PlayerStateBridge implements Listener,AutoCloseable {
     private int passes;private boolean fullDue;
     PlayerStateBridge(MagicCodexBridge plugin,ManaService mana,DatabaseSettings settings)throws Exception {
         this.plugin=plugin;this.mana=mana;
-        if(!settings.mariaDb()){io=null;store=null;return;}
+        if(!settings.mariaDb()){io=null;store=null;registerCommands();return;}
         io=Executors.newSingleThreadScheduledExecutor(r->{var t=new Thread(r,"MagicCodex-player-state");t.setDaemon(true);return t;});
         try{store=io.submit(()->new PlayerStateStore(settings)).get(10,TimeUnit.SECONDS);}
         catch(Exception error){io.shutdownNow();throw error;}
         Bukkit.getPluginManager().registerEvents(this,plugin);
         for(Player p:Bukkit.getOnlinePlayers())load(p);
         Bukkit.getScheduler().runTaskTimer(plugin,this::flush,100L,100L);
+        registerCommands();
+    }
+    // ------------------------------------------------------------------ 명령 (2026-10-20 명령어 정리)
+    /** /유저관리 <닉네임> 캐릭터잠금 <보기|풀기 확인>: 서버 이동 뒤 "이전 서버가 잠금을 풀지 않음"으로 들어오지 못할 때. */
+    private void registerCommands(){
+        if(!CodexCommands.ready(plugin,"캐릭터잠금"))return;
+        ChacaApi.status(plugin,"캐릭터 공유 저장",()->store==null?"없음 · MariaDB 모드가 아님 (서버별 저장)":failures.get()>0?"재시도 중 · 저장 실패 "+failures.get()+"번 연속":"정상");
+        var node=Commands.literal("캐릭터잠금");
+        node.then(Commands.literal("보기").executes(ctx->{
+            UUID id=ChacaApi.target(ctx);var sender=CodexCommands.sender(ctx);requireStore();
+            String mine=sessions.get(id);
+            lockJob(sender,()->store.lease(id),lease->{
+                long now=System.currentTimeMillis();var rows=new ArrayList<String>();
+                if(lease==null)rows.add(" 공유 저장 기록이 아직 없어요 (처음 접속 전)");
+                else if(!lease.held(now))rows.add(" 잠금 없음 · 어느 서버에서든 들어올 수 있어요");
+                else{
+                    rows.add(" 잠금 있음 · "+(lease.token().equals(mine)?"이 서버가 가지고 있어요 (접속 중)":"다른 서버가 가지고 있어요"));
+                    rows.add(" 남은 시간: "+CodexCommands.seconds(lease.until()-now)+" (그 서버가 계속 저장하면 늘어나요)");
+                }
+                if(lease!=null)rows.add(" 저장 횟수: "+lease.revision());
+                CodexCommands.lines(sender,"── "+ChacaApi.name(id)+" 님의 캐릭터 잠금 ──",rows);
+            });return Command.SINGLE_SUCCESS;
+        }));
+        node.then(CodexCommands.confirmed(Commands.literal("풀기"),ctx->{
+            UUID id=ChacaApi.target(ctx);var sender=CodexCommands.sender(ctx);requireStore();
+            if(sessions.containsKey(id)&&Bukkit.getPlayer(id)!=null)throw ChacaApi.error("이 서버에 접속 중인 유저예요. 잠금은 나갈 때 자동으로 풀려요");
+            lockJob(sender,()->store.forceRelease(id),released->{
+                plugin.getLogger().warning("PLAYER STATE LEASE force-released by "+sender.getName()+" for "+id+" (released="+released+")");
+                ChacaApi.ok(sender,released?ChacaApi.name(id)+" 님의 캐릭터 잠금을 풀었어요":ChacaApi.name(id)+" 님은 잠겨 있지 않아요");
+            });return Command.SINGLE_SUCCESS;
+        }));
+        ChacaApi.branch(plugin,ChacaApi.유저관리,node,"서버 이동 뒤 남은 캐릭터 잠금 보기·풀기","캐릭터잠금 보기");
+    }
+    private void requireStore()throws com.mojang.brigadier.exceptions.CommandSyntaxException{if(store==null||closing)throw ChacaApi.error("공유 저장(MariaDB)을 쓰지 않아 캐릭터 잠금이 없어요");}
+    private interface Job<T>{T run()throws Exception;}
+    private <T> void lockJob(CommandSender sender,Job<T> job,java.util.function.Consumer<T> done){
+        try{io.execute(()->{try{T v=job.run();onMain(()->done.accept(v));}catch(Exception e){onMain(()->ChacaApi.fail(sender,"캐릭터 잠금을 확인하지 못했어요",e));}});}
+        catch(RejectedExecutionException e){ChacaApi.fail(sender,"캐릭터 잠금을 확인하지 못했어요",e);}
     }
     boolean ready(Player p){return store==null||ready.contains(p.getUniqueId());}
     private NamespacedKey key(String name){return new NamespacedKey(plugin,name);}
@@ -95,7 +136,7 @@ final class PlayerStateBridge implements Listener,AutoCloseable {
                     onMain(()->{
                         if(closing||!session.equals(sessions.get(id))||!p.isOnline())return;
                         if(retry>=CLAIM_RETRIES){failure(p,new IllegalStateException("Previous server has not released player state"));return;}
-                        if(retry==10)p.sendMessage("§7이전 서버에서 캐릭터 정보를 넘겨받는 중입니다. 잠시만 기다려 주세요.");
+                        if(retry==10)CodexCommands.notify(p,"system","player-state-claim","이전 서버에서 캐릭터 정보를 넘겨받는 중이에요. 잠시만 기다려 주세요",10000);
                         Bukkit.getScheduler().runTaskLater(plugin,()->{if(!closing&&session.equals(sessions.get(id))&&p.isOnline())loadAttempt(p,session,fallback,retry+1);},CLAIM_RETRY_TICKS);
                     });return;
                 }

@@ -6,7 +6,15 @@ import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import org.bukkit.*;
-import org.bukkit.command.*;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.LongArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
@@ -19,7 +27,7 @@ import school.magiccodex.protocol.QuestProtocol;
 import school.magiccodex.protocol.QuestAdminProtocol;
 import static school.magiccodex.paper.QuestDefinition.*;
 
-final class QuestBridge implements Listener,CommandExecutor,TabCompleter,PluginMessageListener,AutoCloseable {
+final class QuestBridge implements Listener,PluginMessageListener,AutoCloseable {
     private final MagicCodexBridge plugin;private final File file;private final QuestStore store;
     private final ExecutorService io=Executors.newSingleThreadExecutor(r->{var t=new Thread(r,"MagicCodex-quest-io");t.setDaemon(true);return t;});
     private Map<String,QuestDefinition> catalog=Map.of();private final Map<UUID,List<QuestStore.Entry>> cache=new HashMap<>();
@@ -39,7 +47,7 @@ final class QuestBridge implements Listener,CommandExecutor,TabCompleter,PluginM
         try{store=io.submit(()->new QuestStore(settings,plugin.getDataFolder().toPath().resolve("quests.db"))).get(15,TimeUnit.SECONDS);io.submit(()->{store.seed(local);return null;}).get(15,TimeUnit.SECONDS);catalog=io.submit(store::catalog).get(15,TimeUnit.SECONDS);}catch(Exception e){io.shutdownNow();throw e;}
         Bukkit.getPluginManager().registerEvents(this,plugin);Bukkit.getMessenger().registerIncomingPluginChannel(plugin,QuestProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,QuestProtocol.RESPONSE);
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin,QuestAdminProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,QuestAdminProtocol.RESPONSE);
-        for(String c:List.of("의뢰","의뢰관리")){plugin.getCommand(c).setExecutor(this);plugin.getCommand(c).setTabCompleter(this);}
+        registerCommands();
         hook("Citizens","net.citizensnpcs.api.event.NPCRightClickEvent",event->{Player p=(Player)invoke(event,"getClicker");Object npc=invoke(event,"getNPC");Entity e=(Entity)invoke(npc,"getEntity");if(e!=null&&e.getWorld().equals(p.getWorld())&&e.getLocation().distanceSquared(p.getLocation())<=36)event(p,Type.NPC,String.valueOf(invoke(npc,"getId")),1);});
         hook("MythicMobs","io.lumine.mythic.bukkit.events.MythicMobDeathEvent",event->{Object killer=invoke(event,"getKiller");if(killer instanceof Player p&&invoke(event,"getEntity") instanceof Entity e&&!e.getScoreboardTags().contains("chacademia_pet"))event(p,Type.MYTHIC_KILL,(String)invoke(invoke(event,"getMobType"),"getInternalName"),1);});
         Bukkit.getScheduler().runTaskTimer(plugin,()->{if(!refreshing&&!closing){refreshing=true;long known=catalogRevision;work(()->{long revision=store.catalogRevision();return revision==known?null:new Published(revision,store.catalog());},v->{refreshing=false;if(v!=null){catalog=v.catalog();catalogRevision=v.revision();}},m->refreshing=false);}for(Player p:Bukkit.getOnlinePlayers())if(viewers.getOrDefault(p.getUniqueId(),0L)>System.currentTimeMillis())load(p,false,"");},100,100);
@@ -99,7 +107,7 @@ final class QuestBridge implements Listener,CommandExecutor,TabCompleter,PluginM
         }
         var q=new QuestDefinition(id,s.getString("title",id),s.getString("description",""),s.getString("permission",""),s.getBoolean("daily",true),s.getBoolean("enabled",true),goals,s.getString("reward.label",""),s.getStringList("reward.commands"),s.getStringList("reward.items"),s.getString("rank","F").toUpperCase(Locale.ROOT),s.getInt("completion-limit",1),parseTime(s.getString("opens-at","")),s.getDouble("reward.money",0),s.getInt("reward.house-points",0),s.getBoolean("main",false),s.getStringList("requires"));
         for(String item:q.items())if(Material.matchMaterial(item.split(":")[0])==null)throw new IllegalArgumentException("보상 아이템 오류");if(q.encode().length()>60000)throw new IllegalArgumentException("의뢰 데이터가 너무 큽니다: "+id);result.put(id,q);}
-        server=sid;return Map.copyOf(result);
+        server=sid;draftIds=Set.copyOf(result.keySet());return Map.copyOf(result);
     }
     @EventHandler public void join(PlayerJoinEvent e){load(e.getPlayer(),false,"");}
     @EventHandler public void quit(PlayerQuitEvent e){UUID id=e.getPlayer().getUniqueId();flush(id,true);notices.remove(id);cache.remove(id);completed.remove(id);busy.remove(id);limits.remove(id);viewers.remove(id);pages.remove(id);tabs.remove(id);adminLimits.remove(id);adminBusy.remove(id);}
@@ -137,7 +145,7 @@ final class QuestBridge implements Listener,CommandExecutor,TabCompleter,PluginM
             flushing.computeIfPresent(id,(k,n)->n>1?n-1:null);
             var back=deltas.computeIfAbsent(id,k->new Batch(since));back.since=Math.min(back.since,since);for(var d:list)back.counts.merge(new DeltaKey(d.type(),d.target(),d.world()),d.amount(),(a,b)->(int)Math.min(1_000_000L,(long)a+b));
             long now=System.currentTimeMillis();Player p=Bukkit.getPlayer(id);
-            if(p!=null&&current(p)&&now>=notices.getOrDefault(id,0L)){notices.put(id,now+30000);p.sendMessage("의뢰 진행도 저장이 지연되고 있습니다. 진행도는 보관 중이며 자동으로 다시 저장합니다.");}
+            if(p!=null&&current(p)&&now>=notices.getOrDefault(id,0L)){notices.put(id,now+30000);CodexCommands.notify(p,"system","quest-delay","의뢰 진행도 저장이 늦어지고 있어요. 진행도는 보관 중이고 자동으로 다시 저장해요",30000);}
         });
     }
     private boolean tracks(QuestStore.Entry e,Type type,String target,String world){if(!e.status().equals("active")||!e.current(System.currentTimeMillis()))return false;for(int i=0;i<e.progress().length;i++){var g=e.quest().objectives().get(i);if(e.progress()[i]<g.amount()&&g.matches(type,target,server,world))return true;}return false;}
@@ -164,10 +172,10 @@ final class QuestBridge implements Listener,CommandExecutor,TabCompleter,PluginM
         },m->{busy.remove(uid);reply(p,false,m);});
     }
     private static String stageText(int stage){
-        if((stage&QuestStore.RECORDED)==0)return "지급 단계 기록 없음 — 지급 도중 서버가 멈췄을 수 있습니다. 로그의 QUEST DELIVERED/QUEST REVIEW 줄과 유저 인벤토리·잔액을 확인하세요 (retry 불가: delivered 또는 reset)";
+        if((stage&QuestStore.RECORDED)==0)return "지급 단계 기록 없음 — 지급 도중 서버가 멈췄을 수 있습니다. 로그의 QUEST DELIVERED/QUEST REVIEW 줄과 유저 인벤토리·잔액을 확인하세요 (다시지급 불가: 완료처리 또는 되돌리기)";
         var given=new ArrayList<String>();var left=new ArrayList<String>();String[] names={"아이템(제출·보상)","돈","보상 명령어","기숙사 점수"};
         for(int i=0;i<4;i++)((stage&(1<<i))!=0?given:left).add(names[i]);
-        return "지급함: "+(given.isEmpty()?"없음":String.join(", ",given))+" / 남음: "+(left.isEmpty()?"없음":String.join(", ",left))+" (retry 는 남은 것만 실행)";
+        return "지급함: "+(given.isEmpty()?"없음":String.join(", ",given))+" / 남음: "+(left.isEmpty()?"없음":String.join(", ",left))+" (다시지급은 남은 것만 실행)";
     }
     /**
      * 보상 지급. already 에 없는 단계만 실행한다: 아이템(제출 차감+보상 아이템) -> 돈 -> 보상 명령어 -> 기숙사 점수(토큰으로 멱등) -> 완료 기록.
@@ -194,7 +202,7 @@ final class QuestBridge implements Listener,CommandExecutor,TabCompleter,PluginM
         }
         int reached=stage;plugin.getLogger().info("QUEST DELIVERED "+ref);
         Runnable finish=()->submit(uid,()->{store.finish(uid,reserved,true);return true;},v->ok.run(),m->{
-            plugin.getLogger().severe("QUEST REVIEW "+ref+" 보상은 모두 지급했으나 완료 기록에 실패했습니다. /의뢰관리 resolve "+uid+" "+q.id()+" "+reserved.cycle()+" delivered 로 닫으세요.");
+            plugin.getLogger().severe("QUEST REVIEW "+ref+" 보상은 모두 지급했으나 완료 기록에 실패했습니다. /유저관리 "+p.getName()+" 의뢰기록 처리 "+q.id()+" "+reserved.cycle()+" 완료처리 로 닫으세요.");
             submit(uid,()->{store.stage(uid,reserved,15|QuestStore.RECORDED);return true;},v->{},x->{});held.accept("보상 기록 확인이 필요합니다. 관리자에게 문의해 주세요.");});
         if(q.housePoints()>0&&(reached&QuestStore.HOUSE)==0)plugin.questHouseReward(reserved.token(),rewardHouse,q.housePoints(),finish,m->{
             plugin.getLogger().severe("QUEST REVIEW "+ref+" 기숙사 점수 지급 실패 — "+stageText(reached|QuestStore.RECORDED));
@@ -204,7 +212,7 @@ final class QuestBridge implements Listener,CommandExecutor,TabCompleter,PluginM
     /** 보상 명령어의 첫 단어가 이 서버에 등록되어 있는지 확인한다. 다른 서버 전용 명령어일 수 있으므로 막지 않고 경고만 한다. */
     private List<String> commandWarnings(Collection<QuestDefinition> quests){
         var out=new ArrayList<String>();
-        for(var q:quests)for(String command:q.commands()){String label=command.split(" ",2)[0];if(out.size()<10&&Bukkit.getCommandMap().getCommand(label)==null)out.add("경고: 의뢰 "+q.id()+" 의 보상 명령어 '"+label+"' 을(를) 이 서버에서 찾을 수 없습니다. 오타인지 확인하세요. (실패해도 의뢰는 완료되고 로그에 QUEST REWARD COMMAND FAILED 로 남습니다)");}
+        for(var q:quests)for(String command:q.commands()){String label=command.split(" ",2)[0];if(out.size()<10&&Bukkit.getCommandMap().getCommand(label)==null)out.add("주의: 의뢰 "+q.id()+" 의 보상 명령 '"+label+"' 을 이 서버에서 찾을 수 없어요. 다른 서버 전용이 아니면 오타를 확인해 주세요");}
         return out;
     }
     private ItemStack[] plan(Player p,QuestDefinition q){
@@ -220,24 +228,24 @@ final class QuestBridge implements Listener,CommandExecutor,TabCompleter,PluginM
         flush(player.getUniqueId(),true);work(()->store.journalEntries(player.getUniqueId()),entries->{var rows=new ArrayList<school.magiccodex.protocol.JournalProtocol.Entry>();
             for(var e:entries){if(e.status().equals("ready")||(!e.current(System.currentTimeMillis())&&e.status().equals("active")))continue;var q=e.quest();String details=java.util.stream.IntStream.range(0,q.objectives().size()).mapToObj(i->q.objectives().get(i).label()+" "+e.progress()[i]+" / "+q.objectives().get(i).amount()).collect(java.util.stream.Collectors.joining("\n"));
                 rows.add(new school.magiccodex.protocol.JournalProtocol.Entry("quest",q.id(),q.title(),q.description(),e.status(),q.main(),school.magiccodex.protocol.JournalProtocol.cut(details,1200),school.magiccodex.protocol.JournalProtocol.cut(rewardText(q),500)));}
-            callback.accept(List.copyOf(rows));},m->{player.sendMessage(m);callback.accept(List.of());});
+            callback.accept(List.copyOf(rows));},m->{plugin.getLogger().warning("의뢰 기록 읽기 실패 ("+player.getName()+"): "+m);callback.accept(List.of());});
     }
     void journalEdit(CommandSender sender,Player target,String id,String operation){
         var q=catalog.get(id);for(var e:cache.getOrDefault(target.getUniqueId(),List.of()))if(e.quest().id().equals(id)&&e.current(System.currentTimeMillis()))q=e.quest();
         if(q==null)throw new IllegalArgumentException("등록된 퀘스트를 찾을 수 없습니다.");final var definition=q;
-        if(operation.equals("query")){journalRows(target,rows->rows.stream().filter(e->e.id().equals(id)).forEach(e->sender.sendMessage(e.key()+" / "+e.title()+" / "+e.state()+" / "+e.details())));return;}
+        if(operation.equals("query")){journalRows(target,rows->ChacaApi.lines(sender,rows.stream().filter(e->e.id().equals(id)).map(e->" "+e.key()+" / "+e.title()+" / "+e.state()+" / "+e.details()).toList()));return;}
         if(busy.contains(target.getUniqueId()))throw new IllegalArgumentException("보상 처리가 진행 중입니다. 잠시 후 다시 시도해 주세요.");flush(target.getUniqueId(),true);
-        work(()->{store.adminRecord(target.getUniqueId(),definition,operation,System.currentTimeMillis());return true;},ok->{load(target,false,"");sender.sendMessage("퀘스트 기록을 변경했습니다. 보상을 지급하거나 수령 기록을 초기화하지 않았습니다.");if(operation.equals("grant"))JournalBridge.notify(plugin,target,definition.title(),definition.description());plugin.getLogger().info("QUEST JOURNAL admin="+sender.getName()+" player="+target.getUniqueId()+" id="+id+" operation="+operation);},sender::sendMessage);
+        work(()->{store.adminRecord(target.getUniqueId(),definition,operation,System.currentTimeMillis());return true;},ok->{load(target,false,"");ChacaApi.ok(sender,"퀘스트 기록을 바꿨어요 (보상 지급·수령 기록은 그대로)");if(operation.equals("grant"))JournalBridge.notify(plugin,target,definition.title(),definition.description());plugin.getLogger().info("QUEST JOURNAL admin="+sender.getName()+" player="+target.getUniqueId()+" id="+id+" operation="+operation);},m->ChacaApi.fail(sender,m,null));
     }
     private record Journal(List<QuestStore.Entry> entries,Set<String> completed){}
-    private void load(Player p,boolean open,String message){UUID id=p.getUniqueId();flush(id,true);work(()->new Journal(store.entries(id),store.completed(id)),v->{if(current(p)){var later=deltas.get(id);if(later!=null)for(var e:later.counts.entrySet())apply(v.entries(),e.getKey().type(),e.getKey().target(),e.getKey().world(),e.getValue(),System.currentTimeMillis());cache.put(id,v.entries());completed.put(id,v.completed());if(open)viewers.put(id,System.currentTimeMillis()+15000);reply(p,open,message);}},m->{if(current(p))p.sendMessage(m);});}
-    private void reply(Player p,boolean open,String message){if(!current(p))return;if(!p.getListeningPluginChannels().contains(QuestProtocol.RESPONSE)){if(open)p.sendMessage("의뢰 게시판 모드를 업데이트해 주세요.");else if(!message.isEmpty())p.sendMessage(message);return;}
+    private void load(Player p,boolean open,String message){UUID id=p.getUniqueId();flush(id,true);work(()->new Journal(store.entries(id),store.completed(id)),v->{if(current(p)){var later=deltas.get(id);if(later!=null)for(var e:later.counts.entrySet())apply(v.entries(),e.getKey().type(),e.getKey().target(),e.getKey().world(),e.getValue(),System.currentTimeMillis());cache.put(id,v.entries());completed.put(id,v.completed());if(open)viewers.put(id,System.currentTimeMillis()+15000);reply(p,open,message);}},m->{if(current(p))CodexCommands.warn(p,"quest",m);});}
+    private void reply(Player p,boolean open,String message){if(!current(p))return;if(!p.getListeningPluginChannels().contains(QuestProtocol.RESPONSE)){if(open)CodexCommands.warn(p,"quest","의뢰 게시판을 열려면 최신 MagicCodex 모드가 필요해요");else if(!message.isEmpty())CodexCommands.notify(p,"system","quest",message,1500);return;}
         long now=System.currentTimeMillis();var all=new TreeMap<String,QuestDefinition>();catalog.values().stream().filter(q->q.available(now)&&QuestStore.unlocked(q,completed.getOrDefault(p.getUniqueId(),Set.of()))&&(q.permission().isEmpty()||p.hasPermission(q.permission()))).forEach(q->all.put(q.id(),q));var states=new HashMap<String,QuestStore.Entry>();
         for(var e:cache.getOrDefault(p.getUniqueId(),List.of()))if((e.current(now)&&(e.status().equals("active")||all.containsKey(e.quest().id())))||e.status().equals("paying")){states.put(e.quest().id(),e);if(e.status().equals("active")||e.status().equals("paying"))all.put(e.quest().id(),e.quest());}
         int tab=tabs.getOrDefault(p.getUniqueId(),0);
         var list=all.values().stream().filter(q->tab==tabFor(displayState(q,states.get(q.id())))).sorted(Comparator.comparing(QuestDefinition::main).reversed().thenComparing(QuestDefinition::id)).toList();int page=Math.clamp(pages.getOrDefault(p.getUniqueId(),0),0,Math.max(0,(list.size()-1)/6));pages.put(p.getUniqueId(),page);var cards=new ArrayList<QuestProtocol.Card>();
         for(var q:list.subList(Math.min(page*6,list.size()),Math.min(page*6+6,list.size()))){var e=states.get(q.id());String state=displayState(q,e);var goals=new ArrayList<QuestProtocol.Goal>();for(int i=0;i<q.objectives().size();i++){var g=q.objectives().get(i);int count=e==null||!state.equals("active")?0:e.progress()[i];if(g.type()==Type.SUBMIT){count=0;var required=submissionItem(g.target());for(var item:p.getInventory().getStorageContents())if(item!=null&&item.isSimilar(required))count+=item.getAmount();}if(state.equals("claimed"))count=g.amount();goals.add(new QuestProtocol.Goal(g.label(),Math.min(g.amount(),count),g.amount()));}cards.add(new QuestProtocol.Card(q.id(),q.title(),q.description(),rewardText(q),state,goals,q.rank(),e==null?0:e.completions(),q.completionLimit(),q.main()));}
-        try{p.sendPluginMessage(plugin,QuestProtocol.RESPONSE,QuestProtocol.encode(new QuestProtocol.Response(open,page,Math.min(list.size(),QuestProtocol.MAX_TOTAL),message,cards,Math.max(0,3-QuestStore.activeSubquests(cache.getOrDefault(p.getUniqueId(),List.of()),now)))));}catch(IllegalArgumentException ex){p.sendMessage("의뢰 게시판 데이터가 너무 큽니다. 관리자에게 알려 주세요.");plugin.getLogger().warning("Quest board encode: "+ex.getMessage());}
+        try{p.sendPluginMessage(plugin,QuestProtocol.RESPONSE,QuestProtocol.encode(new QuestProtocol.Response(open,page,Math.min(list.size(),QuestProtocol.MAX_TOTAL),message,cards,Math.max(0,3-QuestStore.activeSubquests(cache.getOrDefault(p.getUniqueId(),List.of()),now)))));}catch(IllegalArgumentException ex){CodexCommands.warn(p,"quest","의뢰 게시판을 열지 못했어요. 관리자에게 알려 주세요");plugin.getLogger().warning("Quest board encode: "+ex.getMessage());}
     }
 
     static long parseTime(String value){if(value.isBlank()||value.equals("0"))return 0;return java.time.LocalDateTime.parse(value.trim().replace(' ','T')).atZone(java.time.ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();}
@@ -255,18 +263,13 @@ final class QuestBridge implements Listener,CommandExecutor,TabCompleter,PluginM
             if(r.id().isBlank())throw new IllegalArgumentException("의뢰 ID를 입력하세요");var q=r.action()==2?QuestAdminDocument.parse(r.id(),r.fields()):null;
             // Bound the return document before committing, not after a successful save.
             if(q!=null)QuestAdminProtocol.encode(new QuestAdminProtocol.Response("",List.of(),q.id(),"",QuestAdminDocument.fields(q)));
-            adminBusy.add(uid);work(()->store.edit(r.id(),r.revision(),q),ok->{adminBusy.remove(uid);if(!current(p))return;if(!ok){adminReply(p,"다른 곳에서 수정했습니다. 다시 열어 확인해 주세요.",null);return;}try{saveDraft(r.id(),q);}catch(Exception ex){plugin.getLogger().warning("Quest draft export: "+ex.getClass().getSimpleName());}adminReply(p,q==null?"의뢰를 삭제했습니다.":"저장하여 게시판에 반영했습니다.",q==null?null:q.id());if(q!=null)commandWarnings(List.of(q)).forEach(p::sendMessage);},m->{adminBusy.remove(uid);if(current(p))adminReply(p,m,null);});
-        }catch(Exception e){adminReply(p,"입력 확인: "+(e.getMessage()==null?"형식 오류":e.getMessage()),null);}
+            adminBusy.add(uid);work(()->store.edit(r.id(),r.revision(),q),ok->{adminBusy.remove(uid);if(!current(p))return;if(!ok){adminReply(p,"다른 곳에서 수정했습니다. 다시 열어 확인해 주세요.",null);return;}try{saveDraft(r.id(),q);}catch(Exception ex){plugin.getLogger().warning("Quest draft export: "+ex.getClass().getSimpleName());}adminReply(p,q==null?"의뢰를 삭제했습니다.":"저장하여 게시판에 반영했습니다.",q==null?null:q.id());if(q!=null){var w=commandWarnings(List.of(q));if(!w.isEmpty())ChacaApi.lines(p,w);}},m->{adminBusy.remove(uid);if(current(p))adminReply(p,m,null);});
+        }catch(Exception e){plugin.getLogger().info("Quest admin input rejected ("+p.getName()+"): "+e);adminReply(p,"입력을 확인해 주세요"+(e instanceof IllegalArgumentException&&e.getMessage()!=null&&!e.getMessage().contains("Exception")?": "+e.getMessage():""),null);}
     }
     private void adminReply(Player p,String message,String id){if(!p.hasPermission("magiccodex.quests.admin")||!p.getListeningPluginChannels().contains(QuestAdminProtocol.RESPONSE))return;
-        work(store::catalog,map->{catalog=map;if(!current(p)||!p.hasPermission("magiccodex.quests.admin"))return;var rows=map.values().stream().sorted(Comparator.comparing(QuestDefinition::id)).limit(QuestAdminProtocol.MAX_ENTRIES).map(q->new QuestAdminProtocol.Summary(q.id(),q.title(),q.rank(),!q.enabled()?"비공개":q.opensAt()>System.currentTimeMillis()?"예약 "+timeText(q.opensAt()):"공개")).toList();var q=id==null?null:map.get(id);String note=map.size()>rows.size()&&message.isEmpty()?"목록은 앞의 "+rows.size()+"개만 표시합니다. 나머지는 quests.yml에서 수정해 주세요.":message;try{p.sendPluginMessage(plugin,QuestAdminProtocol.RESPONSE,QuestAdminProtocol.encode(new QuestAdminProtocol.Response(note,rows,q==null?"":q.id(),q==null?"":QuestStore.fingerprint(q),q==null?Map.of():QuestAdminDocument.fields(q))));}catch(IllegalArgumentException ex){p.sendMessage("편집 문서가 너무 큽니다. quests.yml에서 수정해 주세요.");}},p::sendMessage);
+        work(store::catalog,map->{catalog=map;if(!current(p)||!p.hasPermission("magiccodex.quests.admin"))return;var rows=map.values().stream().sorted(Comparator.comparing(QuestDefinition::id)).limit(QuestAdminProtocol.MAX_ENTRIES).map(q->new QuestAdminProtocol.Summary(q.id(),q.title(),q.rank(),!q.enabled()?"비공개":q.opensAt()>System.currentTimeMillis()?"예약 "+timeText(q.opensAt()):"공개")).toList();var q=id==null?null:map.get(id);String note=map.size()>rows.size()&&message.isEmpty()?"목록은 앞의 "+rows.size()+"개만 표시합니다. 나머지는 quests.yml에서 수정해 주세요.":message;try{p.sendPluginMessage(plugin,QuestAdminProtocol.RESPONSE,QuestAdminProtocol.encode(new QuestAdminProtocol.Response(note,rows,q==null?"":q.id(),q==null?"":QuestStore.fingerprint(q),q==null?Map.of():QuestAdminDocument.fields(q))));}catch(IllegalArgumentException ex){plugin.getLogger().warning("Quest admin encode: "+ex.getMessage());CodexCommands.warn(p,"quest","편집 화면에 담기에 너무 커요. quests.yml에서 고친 뒤 파일반영 해 주세요");}},m->CodexCommands.warn(p,"quest",m));
     }
     private void saveDraft(String id,QuestDefinition q)throws Exception{var y=new YamlConfiguration();y.load(file);String path="quests."+id;y.set(path,null);if(q!=null){var f=QuestAdminDocument.fields(q);for(var e:f.entrySet())if(!e.getKey().startsWith("goal")){Object v=switch(e.getKey()){case "daily","enabled","main"->Boolean.parseBoolean(e.getValue());case "requires"->q.requires();case "completion-limit","reward.house-points"->Integer.parseInt(e.getValue());case "reward.money"->Double.parseDouble(e.getValue());case "reward.items"->q.items();case "reward.commands"->q.commands();default->e.getValue();};y.set(path+"."+e.getKey(),v);}y.set(path+".objectives",q.objectives().stream().map(g->Map.of("type",g.type().name(),"target",g.target(),"amount",g.amount(),"label",g.label(),"server",g.server(),"world",g.world())).toList());}y.save(file);}
-    private void release(CommandSender sender,String[] a){
-        boolean schedule=a[0].equals("schedule");long spacing=schedule?Long.parseLong(a[1]):0;if(schedule&&(a.length<3||spacing<1||spacing>31536000))throw new IllegalArgumentException("schedule <간격 초> <의뢰ID...>");
-        var ids=schedule?List.of(Arrays.copyOfRange(a,2,a.length)):List.of(a[1]);long start=System.currentTimeMillis();boolean enabled=!a[0].equals("close");
-        work(()->store.release(ids,start,spacing*1000,enabled),map->{catalog=map;for(String id:ids)try{saveDraft(id,map.get(id));}catch(Exception ex){plugin.getLogger().warning("Quest draft export failed");}sender.sendMessage(schedule?"지정 순서대로 일정 간격 공개를 예약했습니다.":enabled?"의뢰를 공개했습니다.":"신규 수락을 닫았습니다.");},sender::sendMessage);
-    }
     private boolean current(Player p){return p.isOnline()&&Bukkit.getPlayer(p.getUniqueId())==p;}
     private interface Job<T>{T run()throws Exception;}
     /** 메인 스레드 후속 처리는 여기를 거친다: 예외가 나도 busy 가 풀린다(보상 지급 기록은 paying 그대로 남아 관리자 audit 에 보인다). */
@@ -283,64 +286,215 @@ final class QuestBridge implements Listener,CommandExecutor,TabCompleter,PluginM
             main(()->{pending--;guard(owner,()->done.accept(value));});});
     }
     private void main(Runnable r){if(!closing&&plugin.isEnabled())Bukkit.getScheduler().runTask(plugin,()->{if(!closing)r.run();});}
-    @Override public boolean onCommand(CommandSender s,Command c,String label,String[] a){
-        if(c.getName().equals("의뢰")){if(s instanceof Player p)request(p,0,"",0,true);return true;}
-        if(!s.hasPermission("magiccodex.quests.admin"))return true;
-        try{
-            if(a.length==0&&s instanceof Player p){adminReply(p,"",null);return true;}
+    // ------------------------------------------------------------------ 명령 (2026-10-20 명령어 정리)
+    /** /퀘스트관리 설정 의 한글 항목 → quests.yml 키. */
+    static final Map<String,String> FIELDS=new LinkedHashMap<>();
+    /** /퀘스트관리 목표 의 한글 종류 → 목표 타입. */
+    static final Map<String,Type> GOALS=new LinkedHashMap<>();
+    static {
+        String[][] f={{"제목","title"},{"설명","description"},{"일일","daily"},{"사용","enabled"},{"권한","permission"},{"보상이름","reward.label"},{"등급","rank"},
+            {"완료제한","completion-limit"},{"열리는시간","opens-at"},{"보상돈","reward.money"},{"보상기숙사점수","reward.house-points"}};
+        for(var e:f)FIELDS.put(e[0],e[1]);
+        GOALS.put("처치",Type.KILL);GOALS.put("미몹처치",Type.MYTHIC_KILL);GOALS.put("제출",Type.SUBMIT);GOALS.put("NPC",Type.NPC);GOALS.put("바이옴",Type.BIOME);GOALS.put("이벤트",Type.EVENT);
+    }
+    /** quests.yml 초안에만 있는 ID까지 자동완성에 보이도록 (만들기·파일 읽기 때 갱신). */
+    private volatile Set<String> draftIds=Set.of();
+    private Collection<String> questIds(){var out=new TreeSet<String>(catalog.keySet());out.addAll(draftIds);return out;}
+    private Consumer<String> failTo(CommandSender sender){return m->ChacaApi.fail(sender,m==null||m.isBlank()?"명령어 사용에 실패했습니다":m,null);}
+    private static String questArg(CommandContext<CommandSourceStack> ctx)throws CommandSyntaxException{
+        String id=ctx.getArgument("퀘스트",String.class);if(!id.matches("[a-z0-9_-]{1,48}"))throw ChacaApi.error("퀘스트 ID는 영문 소문자·숫자·_·- 로 입력해 주세요");return id;
+    }
+    /** 관리자 /의뢰기록 보기 에서 본 검토 대기 기록 (보낸 사람 → "퀘스트 주기"), 처리 자동완성용. */
+    private final Map<String,List<String[]>> audited=new HashMap<>();
+    /** /테스트 의뢰 이벤트 자동완성: 등록된 이벤트 목표. */
+    List<String> eventIds(){var out=new TreeSet<String>();for(var q:catalog.values())for(var g:q.objectives())if(g.type()==Type.EVENT)out.add(g.target());return List.copyOf(out);}
+    /** /테스트 의뢰 이벤트: 신뢰된 서버 경로와 같은 진행. */
+    void testEvent(Player p,String id,int amount){event(p,Type.EVENT,id,amount);}
 
-            if(a.length>=2&&Set.of("open","close","schedule").contains(a[0])){release(s,a);return true;}
-            if(a.length==1&&a[0].equals("pull")){work(store::catalog,v->{try{var y=new YamlConfiguration();y.load(file);java.nio.file.Files.copy(file.toPath(),file.toPath().resolveSibling("quests-before-pull-"+System.currentTimeMillis()+".yml"));y.set("quests",null);for(var q:v.values()){String path="quests."+q.id();y.set(path+".rank",q.rank());y.set(path+".main",q.main());y.set(path+".requires",q.requires());y.set(path+".completion-limit",q.completionLimit());y.set(path+".opens-at",timeText(q.opensAt()));y.set(path+".reward.money",q.money());y.set(path+".reward.house-points",q.housePoints());y.set(path+".title",q.title());y.set(path+".description",q.description());y.set(path+".permission",q.permission());y.set(path+".enabled",q.enabled());y.set(path+".daily",q.daily());y.set(path+".objectives",q.objectives().stream().map(g->Map.of("type",g.type().name(),"target",g.target(),"amount",g.amount(),"label",g.label(),"server",g.server(),"world",g.world())).toList());y.set(path+".reward.label",q.rewardLabel());y.set(path+".reward.items",q.items());y.set(path+".reward.commands",q.commands());}y.save(file);s.sendMessage("공용 의뢰를 로컬 초안에 가져왔습니다. 이전 파일은 백업했습니다.");}catch(Exception ex){s.sendMessage("의뢰 초안 저장 실패");}},s::sendMessage);return true;}
-            if(a.length==4&&a[0].equals("submititem")&&s instanceof Player p){String id=a[1];if(!id.matches("[a-z0-9_-]{1,48}"))throw new IllegalArgumentException("의뢰 ID");var y=new YamlConfiguration();y.load(file);String path="quests."+id+".objectives";var goals=new ArrayList<Map<?,?>>(y.getMapList(path));int index=Integer.parseInt(a[2])-1,amount=Integer.parseInt(a[3]);if(index<0||index>=goals.size()||amount<1||amount>100000)throw new IllegalArgumentException("목표 번호/수량");var item=p.getInventory().getItemInMainHand().clone();if(item.isEmpty())throw new IllegalArgumentException("아이템을 주 손에 들어 주세요");item.setAmount(1);String target="stack:"+Base64.getEncoder().encodeToString(item.serializeAsBytes());if(target.length()>16000)throw new IllegalArgumentException("아이템 데이터가 너무 큽니다");goals.set(index,Map.of("type","SUBMIT","target",target,"amount",amount,"label","지정 아이템 제출"));y.set(path,goals);y.save(file);s.sendMessage("주 손 아이템과 동일한 데이터의 제출 조건 저장. /의뢰관리 reload 로 반영하세요.");return true;}
-            if(a.length==1&&a[0].equals("reload")){var next=read();work(()->{store.publish(next);return store.catalog();},v->{catalog=v;s.sendMessage("공용 의뢰 설정 반영 완료. 수락한 의뢰는 기존 조건을 유지합니다.");commandWarnings(v.values()).forEach(s::sendMessage);},s::sendMessage);return true;}
-            if(a.length>=3&&a[0].equals("event")){Player p=Bukkit.getPlayerExact(a[1]);if(p==null)throw new IllegalArgumentException("온라인 플레이어 없음");event(p,Type.EVENT,a[2],a.length>3?Integer.parseInt(a[3]):1);return true;}
-            if(a.length==2&&a[0].equals("audit")){UUID id=target(a[1]);work(()->store.entries(id),v->{var rows=v.stream().filter(e->e.status().equals("paying")).toList();s.sendMessage("보상 검토 대기 "+rows.size()+"건 ("+id+")"+(rows.isEmpty()?"":" — /의뢰관리 resolve "+a[1]+" <id> <cycle> delivered|retry|reset"));for(var e:rows){s.sendMessage(e.quest().id()+" "+e.cycle()+" "+e.token()+" | "+e.quest().title());s.sendMessage("  → "+stageText(e.stage()));}},s::sendMessage);return true;}
-            if(a.length==5&&a[0].equals("resolve")){
-                UUID id=target(a[1]);String action=a[4],admin=s.getName();
-                if(!Set.of("delivered","retry","reset").contains(action))throw new IllegalArgumentException("delivered|retry|reset 중 선택 — delivered: 지급 완료로 닫기 / retry: 기록상 아직 주지 않은 보상만 지급 / reset: 수령 전으로 되돌림(유저가 전부 다시 받을 수 있음)");
-                if(busy.contains(id)){s.sendMessage("이 유저의 의뢰를 지금 처리하는 중입니다. 잠시 뒤 다시 시도하세요.");return true;}
-                if(!action.equals("retry")){
-                    work(()->{store.resolve(id,a[2],a[3],action.equals("delivered"));return true;},v->{
-                        plugin.getLogger().warning("QUEST ADMIN admin="+admin+" player="+id+" quest="+a[2]+" cycle="+a[3]+" action="+action);
-                        s.sendMessage(action.equals("delivered")?"지급 완료로 닫았습니다. (추가 지급 없음)":"수령 전 상태로 되돌렸습니다. 유저가 보상을 처음부터 다시 받을 수 있습니다.");
-                        Player online=Bukkit.getPlayer(id);if(online!=null&&current(online))load(online,false,"");
-                    },s::sendMessage);return true;
+    private void registerCommands(){
+        if(!CodexCommands.ready(plugin,"퀘스트"))return;
+        ChacaApi.reload(plugin,"퀘스트","quests.yml 확인(server-id)과 공용 의뢰 목록 다시 읽기 (파일 내용 반영은 /퀘스트관리 파일반영)",()->{
+            read();work(()->new Published(store.catalogRevision(),store.catalog()),v->{catalog=v.catalog();catalogRevision=v.revision();},m->plugin.getLogger().warning("의뢰 목록 다시 읽기 실패: "+m));
+        });
+        // /의뢰 (누구나): 의뢰 게시판
+        ChacaApi.playerCommand(plugin,Commands.literal("의뢰").executes(ctx->{
+            var p=CodexCommands.self(ctx);
+            if(!p.getListeningPluginChannels().contains(QuestProtocol.RESPONSE))throw ChacaApi.error("의뢰 게시판을 열려면 최신 MagicCodex 모드가 필요해요");
+            request(p,0,"",0,true);return Command.SINGLE_SUCCESS;
+        }),"의뢰 게시판 열기",List.of());
+
+        String root=ChacaApi.퀘스트관리;
+        ChacaApi.branch(plugin,root,Commands.literal("편집").executes(ctx->{
+            var p=CodexCommands.self(ctx);if(!p.getListeningPluginChannels().contains(QuestAdminProtocol.RESPONSE))throw ChacaApi.error("편집 화면을 열려면 최신 MagicCodex 모드가 필요해요");
+            adminReply(p,"",null);return Command.SINGLE_SUCCESS;
+        }),"의뢰 편집 화면 열기 (저장하면 바로 공용 반영)","편집");
+        ChacaApi.branch(plugin,root,Commands.literal("목록").executes(ctx->{
+            var rows=new ArrayList<String>();long now=System.currentTimeMillis();
+            for(var q:new TreeMap<>(catalog).values())rows.add(" "+q.id()+" · "+q.title()+" · "+q.rank()+"등급 · "+(!q.enabled()?"닫힘":q.opensAt()>now?"예약 "+timeText(q.opensAt()):"열림")+(q.daily()?" · 일일":"")+(q.main()?" · 메인":""));
+            var drafts=new TreeSet<>(draftIds);drafts.removeAll(catalog.keySet());if(!drafts.isEmpty())rows.add(" 초안에만 있음(파일반영 전): "+String.join(", ",drafts));
+            if(rows.isEmpty())rows.add(" 등록된 의뢰가 없어요");
+            CodexCommands.lines(CodexCommands.sender(ctx),"── 의뢰 "+catalog.size()+"개 ──",rows);return Command.SINGLE_SUCCESS;
+        }),"공용 의뢰 목록","목록");
+        ChacaApi.branch(plugin,root,Commands.literal("만들기").then(Commands.argument("퀘스트",ChacaApi.word(List::of)).executes(ctx->{
+            draftEdit(CodexCommands.sender(ctx),questArg(ctx),"create",null);return Command.SINGLE_SUCCESS;
+        })),"새 의뢰 초안 만들기 (닫힌 상태)","만들기 ");
+
+        var set=Commands.argument("퀘스트",ChacaApi.word(this::questIds));
+        for(var field:FIELDS.entrySet())set.then(Commands.literal(field.getKey()).then(Commands.argument("값",StringArgumentType.greedyString()).executes(ctx->{
+            draftEdit(CodexCommands.sender(ctx),questArg(ctx),"set",new String[]{field.getValue(),StringArgumentType.getString(ctx,"값")});return Command.SINGLE_SUCCESS;
+        })));
+        ChacaApi.branch(plugin,root,Commands.literal("설정").then(set),"의뢰 항목 고치기 (초안)","설정 ");
+
+        var goalType=Commands.argument("번호",IntegerArgumentType.integer(1,6));
+        for(var g:GOALS.entrySet())goalType.then(Commands.literal(g.getKey()).then(Commands.argument("대상",ChacaApi.word(()->g.getValue()==Type.KILL?Arrays.stream(EntityType.values()).filter(EntityType::isAlive).map(Enum::name).sorted().toList():List.of()))
+            .then(Commands.argument("수량",IntegerArgumentType.integer(1,100000)).then(Commands.argument("문구",StringArgumentType.greedyString()).executes(ctx->{
+                draftEdit(CodexCommands.sender(ctx),questArg(ctx),"goal",new String[]{Integer.toString(IntegerArgumentType.getInteger(ctx,"번호")),g.getValue().name(),ctx.getArgument("대상",String.class),
+                    Integer.toString(IntegerArgumentType.getInteger(ctx,"수량")),StringArgumentType.getString(ctx,"문구")});return Command.SINGLE_SUCCESS;
+            })))));
+        ChacaApi.branch(plugin,root,Commands.literal("목표").then(Commands.argument("퀘스트",ChacaApi.word(this::questIds)).then(goalType)),"의뢰 목표 정하기 (초안)","목표 ");
+
+        ChacaApi.branch(plugin,root,Commands.literal("제출아이템").then(Commands.argument("퀘스트",ChacaApi.word(this::questIds)).then(Commands.argument("목표번호",IntegerArgumentType.integer(1,6))
+            .then(Commands.argument("수량",IntegerArgumentType.integer(1,100000)).executes(ctx->{
+                var p=CodexCommands.self(ctx);var item=p.getInventory().getItemInMainHand().clone();if(item.isEmpty())throw ChacaApi.error("제출받을 아이템을 주 손에 들어 주세요");
+                draftEdit(p,questArg(ctx),"submit",new String[]{Integer.toString(IntegerArgumentType.getInteger(ctx,"목표번호")),Integer.toString(IntegerArgumentType.getInteger(ctx,"수량")),stack(item)});return Command.SINGLE_SUCCESS;
+            })))),"손에 든 아이템을 제출 목표로 (초안)","제출아이템 ");
+        ChacaApi.branch(plugin,root,Commands.literal("보상아이템").then(Commands.argument("퀘스트",ChacaApi.word(this::questIds)).executes(ctx->{
+            var p=CodexCommands.self(ctx);var item=p.getInventory().getItemInMainHand();if(item.isEmpty())throw ChacaApi.error("보상으로 줄 아이템을 주 손에 들어 주세요");
+            if(item.hasItemMeta()&&!item.isSimilar(new ItemStack(item.getType())))ChacaApi.lines(p,List.of("주의: 의뢰 보상 아이템은 종류와 개수만 저장돼요 (이름·마법 부여 등은 빠짐)"));
+            draftEdit(p,questArg(ctx),"rewarditem",new String[]{item.getType().name()+":"+Math.min(999,item.getAmount())});return Command.SINGLE_SUCCESS;
+        })),"손에 든 아이템(종류·개수)을 보상으로 (초안)","보상아이템 ");
+        ChacaApi.branch(plugin,root,Commands.literal("보상명령").then(Commands.argument("퀘스트",ChacaApi.word(this::questIds)).then(Commands.argument("명령",StringArgumentType.greedyString()).executes(ctx->{
+            String command=StringArgumentType.getString(ctx,"명령").strip();if(command.startsWith("/"))command=command.substring(1);
+            draftEdit(CodexCommands.sender(ctx),questArg(ctx),"rewardcommand",new String[]{command});return Command.SINGLE_SUCCESS;
+        }))),"보상 명령 (콘솔로 실행, {player} {uuid}) (초안)","보상명령 ");
+
+        for(String action:List.of("열기","닫기"))ChacaApi.branch(plugin,root,Commands.literal(action).then(Commands.argument("퀘스트",ChacaApi.word(()->catalog.keySet())).executes(ctx->{
+            release(CodexCommands.sender(ctx),List.of(questArg(ctx)),0,action.equals("열기"));return Command.SINGLE_SUCCESS;
+        })),action.equals("열기")?"의뢰를 바로 공개 (공용)":"새 수락 닫기 (공용)",action+" ");
+        ChacaApi.branch(plugin,root,Commands.literal("주기설정").then(Commands.argument("간격",LongArgumentType.longArg(1,31536000)).then(Commands.argument("퀘스트",StringArgumentType.greedyString()).suggests((ctx,b)->{
+            String rem=b.getRemaining();int cut=rem.lastIndexOf(' ')+1;var sub=b.createOffset(b.getStart()+cut);String typed=rem.substring(cut);
+            for(String id:catalog.keySet())if(id.startsWith(typed))sub.suggest(id);return sub.buildFuture();
+        }).executes(ctx->{
+            var ids=List.of(StringArgumentType.getString(ctx,"퀘스트").strip().split("\\s+"));
+            release(CodexCommands.sender(ctx),ids,LongArgumentType.getLong(ctx,"간격")*1000,true);return Command.SINGLE_SUCCESS;
+        }))),"적은 순서대로 간격(초)마다 하나씩 공개 예약","주기설정 3600 ");
+        ChacaApi.branch(plugin,root,Commands.literal("삭제").then(CodexCommands.confirmed(Commands.argument("퀘스트",ChacaApi.word(this::questIds)),ctx->{
+            draftEdit(CodexCommands.sender(ctx),questArg(ctx),"delete",null);return Command.SINGLE_SUCCESS;
+        })),"의뢰 초안 지우기 (파일반영 때 공용에서도 빠짐)","삭제 ");
+        ChacaApi.branch(plugin,root,Commands.literal("파일로내보내기").executes(ctx->{exportFile(CodexCommands.sender(ctx));return Command.SINGLE_SUCCESS;}),"공용 의뢰를 quests.yml 로 내보내기 (이전 파일은 백업)","파일로내보내기");
+        ChacaApi.branch(plugin,root,Commands.literal("파일반영").executes(ctx->{
+            var sender=CodexCommands.sender(ctx);Map<String,QuestDefinition> next;
+            try{next=read();}catch(Exception e){plugin.getLogger().warning("quests.yml 검증 실패: "+e);throw ChacaApi.error("quests.yml에 문제가 있어 반영하지 않았어요 (자세한 내용은 콘솔)");}
+            work(()->{store.publish(next);return new Published(store.catalogRevision(),store.catalog());},v->{
+                catalog=v.catalog();catalogRevision=v.revision();ChacaApi.ok(sender,"의뢰 "+v.catalog().size()+"개를 공용에 반영했어요 (수락한 의뢰는 기존 조건 유지)");
+                var warnings=commandWarnings(v.catalog().values());if(!warnings.isEmpty())ChacaApi.lines(sender,warnings);
+            },failTo(sender));return Command.SINGLE_SUCCESS;
+        }),"quests.yml 초안을 검증해 공용에 반영","파일반영");
+
+        // /유저관리 <닉네임> 의뢰기록 <보기|처리 <퀘스트> <주기> <완료처리|다시지급|되돌리기>>
+        var resolve=Commands.argument("퀘스트",ChacaApi.word(()->{var s=new TreeSet<String>();audited.values().forEach(l->l.forEach(e->s.add(e[0])));return s;}))
+            .then(Commands.argument("주기",ChacaApi.word(()->{var s=new TreeSet<String>();audited.values().forEach(l->l.forEach(e->s.add(e[1])));return s;}))
+                .then(Commands.literal("완료처리").executes(ctx->{resolve(ctx,"delivered");return Command.SINGLE_SUCCESS;}))
+                .then(Commands.literal("다시지급").executes(ctx->{resolve(ctx,"retry");return Command.SINGLE_SUCCESS;}))
+                .then(Commands.literal("되돌리기").executes(ctx->{resolve(ctx,"reset");return Command.SINGLE_SUCCESS;})));
+        ChacaApi.branch(plugin,ChacaApi.유저관리,Commands.literal("의뢰기록")
+            .then(Commands.literal("보기").executes(ctx->{
+                UUID id=ChacaApi.target(ctx);var sender=CodexCommands.sender(ctx);
+                work(()->store.entries(id),v->{
+                    var rows=v.stream().filter(e->e.status().equals("paying")).toList();
+                    audited.put(sender.getName(),rows.stream().map(e->new String[]{e.quest().id(),e.cycle()}).toList());
+                    var out=new ArrayList<String>();out.add("── "+ChacaApi.name(id)+" 님의 보상 확인 대기 "+rows.size()+"건 ──");
+                    for(var e:rows){out.add(" "+e.quest().id()+" "+e.cycle()+" · "+e.quest().title());out.add("   → "+stageText(e.stage()));}
+                    if(!rows.isEmpty())out.add(" 처리: /유저관리 "+ChacaApi.name(id)+" 의뢰기록 처리 <퀘스트> <주기> <완료처리|다시지급|되돌리기>");
+                    ChacaApi.lines(sender,out);
+                },failTo(sender));return Command.SINGLE_SUCCESS;
+            }))
+            .then(Commands.literal("처리").then(resolve)),"의뢰 보상 확인 대기 보기·처리","의뢰기록 보기");
+    }
+    private static String stack(ItemStack item){item.setAmount(1);return "stack:"+Base64.getEncoder().encodeToString(item.serializeAsBytes());}
+    /** quests.yml 초안 고치기 (메인 스레드에서 파일을 쓰는 예전 방식 그대로). 공용 반영은 파일반영. */
+    private void draftEdit(CommandSender s,String id,String action,String[] a)throws CommandSyntaxException{
+        try{
+            var y=new YamlConfiguration();y.load(file);String path="quests."+id;
+            if(action.equals("create")){
+                if(y.contains(path)||catalog.containsKey(id))throw ChacaApi.error("이미 있는 퀘스트 ID예요");
+                y.set(path+".title",id);y.set(path+".description","");y.set(path+".enabled",false);y.set(path+".daily",true);y.set(path+".objectives",List.of(Map.of("type","KILL","target","ZOMBIE","amount",10,"label","좀비 처치")));y.set(path+".reward.label","에메랄드 3개");y.set(path+".reward.items",List.of("EMERALD:3"));
+            }else{
+                if(!y.contains(path))throw ChacaApi.error(catalog.containsKey(id)?"quests.yml 초안에 없는 의뢰예요. 먼저 파일로내보내기를 해 주세요":"없는 퀘스트예요");
+                switch(action){
+                    case "delete"->y.set(path,null);
+                    case "set"->{
+                        String key=a[0],v=a[1].strip();Object value;
+                        switch(key){
+                            case "daily","enabled"->{var b=bool(v);if(b==null)throw ChacaApi.error("켜기 또는 끄기로 입력해 주세요");value=b;}
+                            case "completion-limit","reward.house-points"->{try{value=Integer.parseInt(v);}catch(NumberFormatException e){throw ChacaApi.error("숫자를 입력해 주세요");}}
+                            case "reward.money"->{try{value=Double.parseDouble(v);}catch(NumberFormatException e){throw ChacaApi.error("숫자를 입력해 주세요");}}
+                            case "rank"->{value=v.toUpperCase(Locale.ROOT);if(!((String)value).matches("[A-F]"))throw ChacaApi.error("등급은 A~F 중 하나예요");}
+                            case "opens-at"->{if(v.equals("없음")||v.equals("0"))v="";else try{parseTime(v);}catch(RuntimeException e){throw ChacaApi.error("시간은 2026-10-20 18:00 처럼 입력해 주세요 (없애려면 '없음')");}value=v;}
+                            default->value=v;
+                        }
+                        y.set(path+"."+key,value);
+                    }
+                    case "goal"->{
+                        int index=Integer.parseInt(a[0])-1;var goals=new ArrayList<Map<?,?>>(y.getMapList(path+".objectives"));
+                        if(index>goals.size())throw ChacaApi.error("목표는 "+(goals.size()+1)+"번까지 차례로 정해 주세요");
+                        Type t=Type.valueOf(a[1]);if(t==Type.KILL&&Arrays.stream(EntityType.values()).noneMatch(e->e.name().equals(a[2])&&e.isAlive()))throw ChacaApi.error("처치 대상은 몹 종류(예: ZOMBIE)로 입력해 주세요");
+                        if(t==Type.SUBMIT&&Material.matchMaterial(a[2])==null)throw ChacaApi.error("제출 대상은 아이템 종류(예: WHEAT)로 입력하거나 제출아이템 명령을 써 주세요");
+                        var g=Map.of("type",t.name(),"target",a[2],"amount",Integer.parseInt(a[3]),"label",a[4]);
+                        if(index==goals.size())goals.add(g);else goals.set(index,g);y.set(path+".objectives",goals);
+                    }
+                    case "submit"->{
+                        var goals=new ArrayList<Map<?,?>>(y.getMapList(path+".objectives"));int index=Integer.parseInt(a[0])-1;
+                        if(index<0||index>=goals.size())throw ChacaApi.error("목표 "+(index+1)+"번이 없어요 (지금 "+goals.size()+"개)");
+                        if(a[2].length()>16000)throw ChacaApi.error("아이템 정보가 너무 커요");
+                        goals.set(index,Map.of("type","SUBMIT","target",a[2],"amount",Integer.parseInt(a[1]),"label","지정 아이템 제출"));y.set(path+".objectives",goals);
+                    }
+                    case "rewarditem"->y.set(path+".reward.items",List.of(a[0]));
+                    case "rewardcommand"->y.set(path+".reward.commands",List.of(a[0]));
+                    default->throw new IllegalArgumentException(action);
                 }
-                // retry: 기록(stage)에 없는 단계만 실행한다. 유저가 이 서버에 있어야 한다.
-                Player t=Bukkit.getPlayer(id);if(t==null||!current(t)||t.isDead()||t.getGameMode()==GameMode.SPECTATOR||!plugin.playerStateReady(t))throw new IllegalArgumentException("retry 는 유저가 이 서버에 접속해 있고 보상을 받을 수 있는 상태일 때만 할 수 있습니다.");
-                busy.add(id);work(id,()->store.paying(id,a[2],a[3]),e->{
-                    if(e==null){busy.remove(id);s.sendMessage("검토 대기 기록 없음");return;}
-                    if((e.stage()&QuestStore.RECORDED)==0){busy.remove(id);s.sendMessage("지급 단계 기록이 없어 retry 할 수 없습니다(지급 도중 서버가 멈춘 기록). 유저가 받은 것을 확인한 뒤 delivered 또는 reset 을 쓰세요.");return;}
-                    if(!current(t)||t.isDead()||!plugin.playerStateReady(t)){busy.remove(id);s.sendMessage("유저 상태가 바뀌었습니다. 다시 시도하세요.");return;}
-                    int house=plugin.questHouse(t);
-                    if(e.quest().housePoints()>0&&(e.stage()&QuestStore.HOUSE)==0&&house<0){busy.remove(id);s.sendMessage("유저의 기숙사 소속이 없어 기숙사 점수를 줄 수 없습니다.");return;}
-                    if(e.quest().money()>0&&(e.stage()&QuestStore.MONEY)==0&&economy()==null){busy.remove(id);s.sendMessage("경제 서비스가 연결되지 않아 돈을 줄 수 없습니다.");return;}
-                    ItemStack[] contents=(e.stage()&QuestStore.ITEMS)!=0?null:plan(t,e.quest());
-                    if((e.stage()&QuestStore.ITEMS)==0&&contents==null){busy.remove(id);s.sendMessage("유저의 제출 아이템·제출 장소 또는 인벤토리 공간이 맞지 않아 아이템 단계를 실행할 수 없습니다.");return;}
-                    plugin.getLogger().warning("QUEST ADMIN admin="+admin+" player="+id+" quest="+a[2]+" cycle="+a[3]+" action=retry token="+e.token()+" — "+stageText(e.stage()));
-                    pay(t,e,e.stage(),house,contents,()->{busy.remove(id);s.sendMessage("남은 보상을 지급하고 완료 처리했습니다.");if(current(t))load(t,false,"의뢰 보상을 받았습니다.");},m->{busy.remove(id);s.sendMessage("다시 멈췄습니다. audit 로 확인하세요: "+m);});
-                },m->{busy.remove(id);s.sendMessage(m);});return true;
             }
-            if(a.length>=2&&Set.of("create","set","goal","rewarditem","rewardcommand","delete").contains(a[0])){edit(s,a);return true;}
-        }catch(Exception e){s.sendMessage("설정 오류: "+e.getMessage());return true;}
-        s.sendMessage("/의뢰관리 create <id> | set <id> <title|description|daily|enabled|permission|reward.label> <내용>\n/의뢰관리 goal <id> <번호1~6> <KILL|MYTHIC_KILL|SUBMIT|NPC|BIOME|EVENT> <대상> <수량> <표시문구>\n/의뢰관리 rewarditem <id> <MATERIAL:수량> | rewardcommand <id> <명령어>\n/의뢰관리 delete <id> | reload | event <플레이어> <이벤트ID> [수량]\n/의뢰관리 audit <유저|UUID> | resolve <유저|UUID> <id> <cycle> <delivered|retry|reset>");return true;
+            // 고친 것은 초안이다. 파일반영이 전체를 검증해 공용에 한 번에 반영한다.
+            y.save(file);var ids=new HashSet<>(draftIds);if(action.equals("delete"))ids.remove(id);else ids.add(id);draftIds=Set.copyOf(ids);
+            ChacaApi.ok(s,id+" 초안을 저장했어요 · /퀘스트관리 파일반영 으로 공용에 반영해 주세요");
+            if(action.equals("rewardcommand")){String label=a[0].split(" ",2)[0];if(Bukkit.getCommandMap().getCommand(label)==null)ChacaApi.lines(s,List.of("주의: '"+label+"' 명령을 이 서버에서 찾을 수 없어요. 다른 서버 전용이 아니면 오타를 확인해 주세요"));}
+        }catch(CommandSyntaxException e){throw e;}
+        catch(Exception e){plugin.getLogger().warning("quests.yml 초안 저장 실패 ("+id+" "+action+"): "+e);throw ChacaApi.error("quests.yml 초안을 저장하지 못했어요 (자세한 내용은 콘솔)");}
     }
-    private UUID target(String input){try{return UUID.fromString(input);}catch(IllegalArgumentException ignored){}Player online=plugin.names().resolve(input);if(online==null)throw new IllegalArgumentException("접속 중인 유저의 닉네임·영문 계정명 또는 UUID를 입력하세요.");return online.getUniqueId();}
-    private void edit(CommandSender s,String[] a)throws Exception{
-        String id=a[1];if(!id.matches("[a-z0-9_-]{1,48}"))throw new IllegalArgumentException("ID는 영문 소문자/숫자/_/-");
-        var y=new YamlConfiguration();y.load(file);String path="quests."+id;
-        if(a[0].equals("create")){if(y.contains(path))throw new IllegalArgumentException("이미 있는 ID");y.set(path+".title",id);y.set(path+".description","");y.set(path+".enabled",false);y.set(path+".daily",true);y.set(path+".objectives",List.of(Map.of("type","KILL","target","ZOMBIE","amount",10,"label","좀비 처치")));y.set(path+".reward.label","에메랄드 3개");y.set(path+".reward.items",List.of("EMERALD:3"));}
-        else {if(!y.contains(path))throw new IllegalArgumentException("없는 의뢰");switch(a[0]){
-            case "delete"->y.set(path,null);
-            case "set"->{if(a.length<4||!Set.of("title","description","daily","enabled","permission","reward.label","rank","completion-limit","opens-at","reward.money","reward.house-points").contains(a[2]))throw new IllegalArgumentException("수정 항목 확인");String v=String.join(" ",Arrays.copyOfRange(a,3,a.length));if(Set.of("daily","enabled").contains(a[2])&&!Set.of("true","false").contains(v))throw new IllegalArgumentException("true 또는 false");Object value=switch(a[2]){case "daily","enabled"->Boolean.parseBoolean(v);case "completion-limit","reward.house-points"->Integer.parseInt(v);case "reward.money"->Double.parseDouble(v);default->v;};y.set(path+"."+a[2],value);}
-            case "goal"->{if(a.length<7)throw new IllegalArgumentException("goal 인자 확인");int index=Integer.parseInt(a[2])-1;var goals=new ArrayList<Map<?,?>>(y.getMapList(path+".objectives"));if(index<0||index>goals.size()||index>=6)throw new IllegalArgumentException("목표 번호");var g=Map.of("type",a[3].toUpperCase(Locale.ROOT),"target",a[4],"amount",Integer.parseInt(a[5]),"label",String.join(" ",Arrays.copyOfRange(a,6,a.length)));if(index==goals.size())goals.add(g);else goals.set(index,g);y.set(path+".objectives",goals);}
-            case "rewarditem","rewardcommand"->{if(a.length<3)throw new IllegalArgumentException();y.set(path+".reward."+(a[0].equals("rewarditem")?"items":"commands"),List.of(String.join(" ",Arrays.copyOfRange(a,2,a.length))));}
-        }}
-        // Edits are drafts. Explicit reload validates and publishes the complete catalog atomically.
-        y.save(file);s.sendMessage("quests.yml 초안 저장 완료. /의뢰관리 reload 로 검증·공용 반영하세요.");
-        if(a[0].equals("rewardcommand")){String label=a[2].startsWith("/")?a[2].substring(1):a[2];if(Bukkit.getCommandMap().getCommand(label)==null)s.sendMessage("경고: 보상 명령어 '"+a[2]+"' 을(를) 이 서버에서 찾을 수 없습니다. 오타인지 확인하세요. (명령어는 / 없이 적습니다)");}
+    private static Boolean bool(String v){return switch(v){case "켜기","예","네","true","사용"->true;case "끄기","아니오","false","미사용"->false;default->null;};}
+    private void release(CommandSender sender,List<String> ids,long spacing,boolean enabled){
+        long start=System.currentTimeMillis();
+        work(()->store.release(ids,start,spacing,enabled),map->{catalog=map;for(String id:ids)try{saveDraft(id,map.get(id));}catch(Exception ex){plugin.getLogger().warning("Quest draft export failed: "+ex);}
+            ChacaApi.ok(sender,spacing>0?ids.size()+"개 의뢰를 "+(spacing/1000)+"초 간격으로 차례로 공개하도록 예약했어요":enabled?"의뢰를 공개했어요":"새 수락을 닫았어요");},failTo(sender));
     }
-    @Override public List<String> onTabComplete(CommandSender s,Command c,String label,String[] a){if(!s.hasPermission("magiccodex.quests.admin"))return List.of();if(a.length==1)return List.of("create","set","goal","rewarditem","rewardcommand","delete","reload","pull","open","close","schedule","event","audit","resolve").stream().filter(v->v.startsWith(a[0])).toList();if(a.length==2)return Set.of("audit","resolve","event").contains(a[0])?AdminCommandRules.filter(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList(),a[1]):AdminCommandRules.filter(catalog.keySet(),a[1]);if(a.length==3&&a[0].equals("resolve"))return AdminCommandRules.filter(catalog.keySet(),a[2]);if(a.length==5&&a[0].equals("resolve"))return AdminCommandRules.filter(List.of("delivered","retry","reset"),a[4]);if(a.length==3&&a[0].equals("set"))return List.of("title","description","daily","enabled","permission","reward.label","rank","completion-limit","opens-at","reward.money","reward.house-points");if(a.length==4&&a[0].equals("goal"))return Arrays.stream(Type.values()).map(Enum::name).toList();return List.of();}
+    private void exportFile(CommandSender s){
+        work(store::catalog,v->{try{var y=new YamlConfiguration();y.load(file);java.nio.file.Files.copy(file.toPath(),file.toPath().resolveSibling("quests-before-pull-"+System.currentTimeMillis()+".yml"));y.set("quests",null);for(var q:v.values()){String path="quests."+q.id();y.set(path+".rank",q.rank());y.set(path+".main",q.main());y.set(path+".requires",q.requires());y.set(path+".completion-limit",q.completionLimit());y.set(path+".opens-at",timeText(q.opensAt()));y.set(path+".reward.money",q.money());y.set(path+".reward.house-points",q.housePoints());y.set(path+".title",q.title());y.set(path+".description",q.description());y.set(path+".permission",q.permission());y.set(path+".enabled",q.enabled());y.set(path+".daily",q.daily());y.set(path+".objectives",q.objectives().stream().map(g->Map.of("type",g.type().name(),"target",g.target(),"amount",g.amount(),"label",g.label(),"server",g.server(),"world",g.world())).toList());y.set(path+".reward.label",q.rewardLabel());y.set(path+".reward.items",q.items());y.set(path+".reward.commands",q.commands());}y.save(file);draftIds=Set.copyOf(v.keySet());ChacaApi.ok(s,"공용 의뢰 "+v.size()+"개를 quests.yml 로 내보냈어요 (이전 파일은 백업)");}catch(Exception ex){ChacaApi.fail(s,"quests.yml 로 내보내지 못했어요",ex);}},failTo(s));
+    }
+    private void resolve(CommandContext<CommandSourceStack> ctx,String action)throws CommandSyntaxException{
+        UUID id=ChacaApi.target(ctx);var s=CodexCommands.sender(ctx);String quest=ctx.getArgument("퀘스트",String.class),cycle=ctx.getArgument("주기",String.class),admin=s.getName();
+        if(busy.contains(id))throw ChacaApi.error("이 유저의 의뢰를 지금 처리하는 중이에요. 잠시 뒤 다시 해 주세요");
+        if(!action.equals("retry")){
+            work(()->{store.resolve(id,quest,cycle,action.equals("delivered"));return true;},v->{
+                plugin.getLogger().warning("QUEST ADMIN admin="+admin+" player="+id+" quest="+quest+" cycle="+cycle+" action="+action);
+                ChacaApi.ok(s,action.equals("delivered")?"지급 완료로 닫았어요 (더 주지 않음)":"보상 받기 전으로 되돌렸어요. 유저가 처음부터 다시 받을 수 있어요");
+                Player online=Bukkit.getPlayer(id);if(online!=null&&current(online))load(online,false,"");
+            },failTo(s));return;
+        }
+        // 다시지급: 기록(stage)에 없는 단계만 실행한다. 유저가 이 서버에 있어야 한다.
+        Player t=Bukkit.getPlayer(id);if(t==null||!current(t)||t.isDead()||t.getGameMode()==GameMode.SPECTATOR||!plugin.playerStateReady(t))throw ChacaApi.error("다시지급은 유저가 이 서버에 접속해 보상을 받을 수 있을 때만 할 수 있어요");
+        busy.add(id);work(id,()->store.paying(id,quest,cycle),e->{
+            if(e==null){busy.remove(id);ChacaApi.fail(s,"확인 대기 기록이 없어요",null);return;}
+            if((e.stage()&QuestStore.RECORDED)==0){busy.remove(id);ChacaApi.fail(s,"지급 단계 기록이 없어 다시지급할 수 없어요. 받은 것을 확인한 뒤 완료처리 또는 되돌리기를 써 주세요",null);return;}
+            if(!current(t)||t.isDead()||!plugin.playerStateReady(t)){busy.remove(id);ChacaApi.fail(s,"유저 상태가 바뀌었어요. 다시 해 주세요",null);return;}
+            int house=plugin.questHouse(t);
+            if(e.quest().housePoints()>0&&(e.stage()&QuestStore.HOUSE)==0&&house<0){busy.remove(id);ChacaApi.fail(s,"유저의 기숙사가 없어 기숙사 점수를 줄 수 없어요",null);return;}
+            if(e.quest().money()>0&&(e.stage()&QuestStore.MONEY)==0&&economy()==null){busy.remove(id);ChacaApi.fail(s,"경제 연결(Vault)이 없어 돈을 줄 수 없어요",null);return;}
+            ItemStack[] contents=(e.stage()&QuestStore.ITEMS)!=0?null:plan(t,e.quest());
+            if((e.stage()&QuestStore.ITEMS)==0&&contents==null){busy.remove(id);ChacaApi.fail(s,"유저의 제출 아이템·장소 또는 인벤토리 공간이 맞지 않아요",null);return;}
+            plugin.getLogger().warning("QUEST ADMIN admin="+admin+" player="+id+" quest="+quest+" cycle="+cycle+" action=retry token="+e.token()+" — "+stageText(e.stage()));
+            pay(t,e,e.stage(),house,contents,()->{busy.remove(id);ChacaApi.ok(s,"남은 보상을 주고 완료 처리했어요");if(current(t))load(t,false,"의뢰 보상을 받았습니다.");},m->{busy.remove(id);ChacaApi.fail(s,"다시 멈췄어요. '보기'로 확인해 주세요: "+m,null);});
+        },m->{busy.remove(id);ChacaApi.fail(s,m,null);});
+    }
     @Override public void close(){
         // 모아 둔 진행도를 마지막으로 기록한다. (closing 을 올리기 전에 IO 대기열에 넣고, 아래에서 끝날 때까지 기다린다.)
         for(var entry:deltas.entrySet()){

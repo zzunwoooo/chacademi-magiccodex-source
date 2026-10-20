@@ -3,12 +3,12 @@ package school.magiccodex.paper;
 import java.io.File;
 import java.util.*;
 import org.bukkit.*;
-import org.bukkit.command.*;
 import org.bukkit.entity.*;
 import io.lumine.mythic.bukkit.MythicBukkit;
 
 /** MythicMobs owns combat/effects. This bridge only authenticates routes, captures stats and performs inventory/block utilities. */
-final class SpellRuntime implements CommandExecutor,TabCompleter,AutoCloseable {
+final class SpellRuntime implements AutoCloseable {
+
     private final MagicCodexBridge plugin;
     private final SpellUtility utility;
     private Map<String,SpellRules.Rule> rules;
@@ -16,11 +16,11 @@ final class SpellRuntime implements CommandExecutor,TabCompleter,AutoCloseable {
         this.plugin=plugin;utility=new SpellUtility(plugin);
         if(!new File(plugin.getDataFolder(),"spell-runtime.yml").exists())plugin.saveResource("spell-runtime.yml",false);
         reload();
-        plugin.getCommand("마법").setExecutor(this);plugin.getCommand("마법").setTabCompleter(this);
-        plugin.getCommand("마법관리").setExecutor(this);plugin.getCommand("마법관리").setTabCompleter(this);
+        ManaBridge.runtime=new ManaBridge.Runtime(this::reload,this::routeCount,this);
     }
     int routeCount(){return rules.size();}
-    private void reload()throws Exception{var next=SpellRules.load(new File(plugin.getDataFolder(),"spell-runtime.yml"));rules=next;utility.reloadRecipes();}
+    /** spell-runtime.yml 을 다시 읽는다 (검증에 실패하면 예외, 기존 경로 유지). MythicMobs YAML 은 /mm reload 가 따로 읽는다. */
+    void reload()throws Exception{var next=SpellRules.load(new File(plugin.getDataFolder(),"spell-runtime.yml"));rules=next;utility.reloadRecipes();}
     private static boolean enemy(Entity entity){
         return entity instanceof Monster||entity instanceof Slime||entity instanceof Ghast||entity instanceof Phantom||entity instanceof Shulker||entity instanceof EnderDragon;
     }
@@ -32,7 +32,7 @@ final class SpellRuntime implements CommandExecutor,TabCompleter,AutoCloseable {
         var r=rules.get(id);if(r==null)return null;
         if(!Bukkit.getPluginManager().isPluginEnabled("MythicMobs"))return REFUSED;
         var skill=MythicBukkit.inst().getSkillManager().getSkill(r.skill());
-        if(skill.isEmpty()){p.sendMessage("마법 스킬을 불러오지 못했습니다. 관리자에게 알려 주세요.");return REFUSED;}
+        if(skill.isEmpty()){plugin.getLogger().warning("마법 실행 경로 "+id+"의 MythicMobs 스킬 "+r.skill()+"을 찾지 못했습니다 (/mm reload 확인).");CodexCommands.warn(p,"magic-fail","지금은 이 마법을 쓸 수 없어요");return REFUSED;}
         Entity target=null;Location location=p.getLocation();
         if(r.target()==SpellRules.Target.AIM||r.target()==SpellRules.Target.ENTITY||r.target()==SpellRules.Target.AIR_ENTITY||r.target()==SpellRules.Target.BURNING_ENTITY){
             var trace=p.getWorld().rayTrace(p.getEyeLocation(),p.getEyeLocation().getDirection(),r.range(),FluidCollisionMode.NEVER,true,.55,e->!e.equals(p)&&MagicProtectionLink.target(p,e));
@@ -52,9 +52,9 @@ final class SpellRuntime implements CommandExecutor,TabCompleter,AutoCloseable {
                 if(modeled!=null&&MagicProtectionLink.target(p,modeled)){target=modeled;location=modeled.getLocation().add(0,modeled.getHeight()*.5,0);}
                 else target=null;
             }
-            if(r.target()!=SpellRules.Target.AIM&&target==null){p.sendMessage("시야 안의 몬스터를 지정해 주세요.");return REFUSED;}
-            if(r.target()==SpellRules.Target.AIR_ENTITY&&((LivingEntity)target).isOnGround()){p.sendMessage("공중에 있는 몬스터에게 사용해 주세요.");return REFUSED;}
-            if(r.target()==SpellRules.Target.BURNING_ENTITY&&!(target instanceof LivingEntity burning&&MagicProtectionLink.status(burning,"burn"))){p.sendMessage("화상 상태인 몬스터에게 사용해 주세요.");return REFUSED;}
+            if(r.target()!=SpellRules.Target.AIM&&target==null){CodexCommands.warn(p,"magic-target","시야 안의 몬스터를 바라봐 주세요");return REFUSED;}
+            if(r.target()==SpellRules.Target.AIR_ENTITY&&((LivingEntity)target).isOnGround()){CodexCommands.warn(p,"magic-target","공중에 있는 몬스터에게 써 주세요");return REFUSED;}
+            if(r.target()==SpellRules.Target.BURNING_ENTITY&&!(target instanceof LivingEntity burning&&MagicProtectionLink.status(burning,"burn"))){CodexCommands.warn(p,"magic-target","화상 상태인 몬스터에게 써 주세요");return REFUSED;}
         }
         if(!MagicProtectionLink.at(p,location))return REFUSED;
         return new Plan(true,r,target,location);
@@ -65,7 +65,7 @@ final class SpellRuntime implements CommandExecutor,TabCompleter,AutoCloseable {
         double power=plugin.magicPower(p);
         boolean changed=false;
         if(r.utility()){
-            if(!utility.apply(p,r.id())){p.sendMessage("마법을 적용할 대상이나 재료가 없습니다.");return false;}
+            if(!utility.apply(p,r.id())){CodexCommands.warn(p,"magic-target","마법을 쓸 대상이나 재료가 없어요");return false;}
             changed=true;
         }
         try{
@@ -88,17 +88,5 @@ final class SpellRuntime implements CommandExecutor,TabCompleter,AutoCloseable {
         if(plan==null)return null;
         return plan.ok()&&execute(p,plan);
     }
-    public boolean onCommand(CommandSender sender,Command command,String label,String[] args){
-        if(command.getName().equals("마법관리")){
-            if(!sender.hasPermission("magiccodex.mana.admin"))return false;
-            try{if(args.length!=1||!Set.of("새로고침","reload").contains(args[0])){sender.sendMessage("/마법관리 새로고침");return true;}reload();sender.sendMessage("마법 실행 설정 "+rules.size()+"종을 불러왔습니다. 미씩몹 YAML 수정은 /mm reload도 실행해 주세요.");}catch(Exception e){sender.sendMessage("설정 오류: "+e.getMessage());}return true;
-        }
-        if(!(sender instanceof Player p))return false;
-        String name=String.join("",args).replace(" ","");
-        var route=rules.values().stream().filter(r->r.name().replace(" ","").equals(name)||r.id().equals(name)).findFirst().orElse(null);
-        if(route==null){p.sendMessage("아직 구현되지 않았거나 이름이 다른 마법입니다.");return false;}
-        return plugin.castMagic(p,route.id());
-    }
-    public List<String> onTabComplete(CommandSender sender,Command command,String label,String[] args){if(command.getName().equals("마법관리"))return sender.hasPermission("magiccodex.mana.admin")&&args.length==1?AdminCommandRules.filter(List.of("새로고침"),args[0]):List.of();return rules.values().stream().map(SpellRules.Rule::name).map(s->s.replace(" ","")).filter(s->s.startsWith(String.join("",args))).toList();}
-    public void close(){utility.close();rules=Map.of();}
+    public void close(){var r=ManaBridge.runtime;if(r!=null&&r.owner()==this)ManaBridge.runtime=null;utility.close();rules=Map.of();}
 }

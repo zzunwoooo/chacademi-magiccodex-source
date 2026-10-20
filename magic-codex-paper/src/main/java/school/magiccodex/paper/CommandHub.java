@@ -101,7 +101,7 @@ final class CommandHub {
     void branch(Plugin owner, String root, LiteralCommandNode<CommandSourceStack> node, String description, String example) {
         var list = branches.get(root);
         if (list == null) throw new IllegalArgumentException("없는 대단원: " + root);
-        list.removeIf(b -> b.owner().equals(owner) && b.node().getLiteral().equals(node.getLiteral()));
+        // 같은 이름 갈래는 Brigadier가 자식들을 합친다 (같은 플러그인의 다른 파일이 같은 갈래에 붙여도 덮어쓰지 않음).
         list.add(new Branch(owner, node, description, example == null ? node.getLiteral() + " " : example));
         lateWarning(owner, "/" + root + " " + node.getLiteral());
     }

@@ -2,8 +2,10 @@ package school.magiccodex.paper;
 
 import java.io.File;
 import java.util.*;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.Bukkit;
-import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.player.*;
@@ -12,7 +14,7 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import school.magiccodex.protocol.ManaProtocol;
 import school.magiccodex.protocol.ManaProtocol.*;
 
-final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor,TabCompleter,AutoCloseable {
+final class ManaBridge implements Listener,PluginMessageListener,AutoCloseable {
     private final MagicCodexBridge plugin;
     final ManaService mana;
     private ManaSpells spells;
@@ -21,6 +23,9 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
     java.util.function.Predicate<Player> fishTrapCast;
     Response castWindForFriend(Player p){var result=cast(p,0,spells.byId.get("wind_message"),()->true);send(p,result);return result;}
     List<String> discoveryPermissions(){var result=new ArrayList<>(spells.discoveryPermissions);if(!result.contains("magiccodex.taming"))result.add("magiccodex.taming");return List.copyOf(result);}
+    /** MythicMobs 실행 경로(SpellRuntime)가 켜져 있으면 그 새로고침·경로 수. MythicMobs 클래스를 여기서 직접 부르지 않으려고 따로 둔다. */
+    record Runtime(ChacaApi.ThrowingRunnable reload,java.util.function.IntSupplier routes,Object owner){}
+    static volatile Runtime runtime;
     private ManaExpansion expansion;private boolean expansionRegistered;
     private final Map<UUID,Session> sessions=new HashMap<>();
     private final Set<UUID> casting=new HashSet<>();
@@ -40,8 +45,7 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
         mana.cooldownCleared=(id,spell)->{var p=Bukkit.getPlayer(id);if(p!=null)p.sendPluginMessage(plugin,ManaProtocol.COOLDOWN_RESET,ManaProtocol.cooldownReset(spell));};
         plugin.getServer().getPluginManager().registerEvents(this,plugin);
         plugin.getServer().getServicesManager().register(ManaService.class,mana,plugin,ServicePriority.Normal);
-        Objects.requireNonNull(plugin.getCommand("마나관리")).setExecutor(this);
-        plugin.getCommand("마나관리").setTabCompleter(this);
+        registerAdmin();
         for(Player p:Bukkit.getOnlinePlayers())mana.join(p);
         if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){
             // 닉네임 확장이 이미 "magiccodex" 식별자를 소유하면 그쪽에 위임한다. 같은 식별자를 다시 등록하면 PlaceholderAPI가 기존 확장을 내린다.
@@ -93,7 +97,7 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
     ManaSpells.Spell tamingSpell(){return spells.forCast(TamingSpell.ID);}
     boolean castRegistered(Player player,String id){
         var spell=spells.forCast(id);var response=cast(player,0,spell);send(player,response);
-        if(response.status()!=ManaProtocol.OK&&response.status()!=ManaProtocol.UNAVAILABLE&&!TamingSpell.matches(id))player.sendMessage(message(response.status()));
+        if(response.status()!=ManaProtocol.OK&&response.status()!=ManaProtocol.UNAVAILABLE&&!TamingSpell.matches(id))CodexCommands.warn(player,"magic-fail",message(response.status()));
         return response.status()==ManaProtocol.OK;
     }
     private Response cast(Player p,long sequence,ManaSpells.Spell spell,java.util.function.BooleanSupplier internal){
@@ -110,7 +114,7 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
             var attempt=new MagicCastAttemptEvent(p,spell.id());
             Bukkit.getPluginManager().callEvent(attempt);
             if(attempt.isCancelled()){
-                if(attempt.getMessage()!=null&&!attempt.getMessage().isBlank())p.sendActionBar(net.kyori.adventure.text.Component.text(attempt.getMessage()));
+                if(attempt.getMessage()!=null&&!attempt.getMessage().isBlank())CodexCommands.warn(p,"magic-refused",attempt.getMessage());
                 return new Response(sequence,ManaProtocol.UNAVAILABLE,0,a.snapshot());
             }
         }
@@ -122,7 +126,7 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
             result=ManaCasting.attempt(a,spell,permitted,System.currentTimeMillis(),spell!=null&&BroomCastGuard.blocked(p,spell.id()),()->{
                 mana.publish(id);
                 if(internal!=null)return internal.getAsBoolean();
-                if(!MagicProtectionLink.cast(p)){p.sendMessage("이 구역에서는 마법을 사용할 수 없습니다.");return false;}
+                if(!MagicProtectionLink.cast(p)){CodexCommands.warn(p,"magic-region","이 구역에서는 마법을 사용할 수 없어요");return false;}
                 if(spell.id().equals("wind_message")&&windCast!=null){
                     if(!p.hasPermission("magiccodex.friends")||!p.getListeningPluginChannels().contains(school.magiccodex.protocol.SocialProtocol.RESPONSE))return false;
                     Boolean visual=CatalogVfxLink.cast(plugin,p,spell.id());
@@ -151,49 +155,72 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
         if(spell==null){
             // Do not let ignored trailing arguments turn a known paid spell into a free cast.
             boolean paidPrefix=spells.byCommand.keySet().stream().anyMatch(c->normalized.startsWith(c+" "));
-            if(paidPrefix){e.setCancelled(true);e.getPlayer().sendMessage("마법 명령에 등록되지 않은 인수가 있습니다.");}
+            if(paidPrefix){e.setCancelled(true);CodexCommands.warn(e.getPlayer(),"magic-args","마법 이름 뒤에 다른 글자를 붙일 수 없어요");}
             return;
         }
         e.setCancelled(true);
         if(!sessions.computeIfAbsent(e.getPlayer().getUniqueId(),id->new Session()).allow(now()))return;
         var r=cast(e.getPlayer(),0,spell);send(e.getPlayer(),r);
-        if(r.status()!=ManaProtocol.OK&&r.status()!=ManaProtocol.UNAVAILABLE&&!TamingSpell.matches(spell.id()))e.getPlayer().sendMessage(message(r.status()));
+        if(r.status()!=ManaProtocol.OK&&r.status()!=ManaProtocol.UNAVAILABLE&&!TamingSpell.matches(spell.id()))CodexCommands.warn(e.getPlayer(),"magic-fail",message(r.status()));
     }
     static String message(int status){return switch(status){
         case ManaProtocol.EMPTY->"마나가 부족합니다.";case ManaProtocol.COOLDOWN->"아직 재사용 대기 중입니다.";
         case ManaProtocol.LOCKED->"이 마법을 사용할 수 없습니다.";case ManaProtocol.UNKNOWN->"서버에 등록되지 않았거나 비활성화된 마법입니다.";
         default->"마법 명령을 실행하지 못했습니다. 마나는 차감하지 않았습니다.";
     };}
+    /**
+     * /마법 &lt;마법&gt; (누구나). mana-spells.yml 의 command: "마법 &lt;id&gt;" 그대로 친 경우는 위 PlayerCommandPreprocess 가 먼저 받아
+     * 같은 마나 경로로 시전한다(클라이언트 마법 모드도 이 문자열을 보냄). 여기는 한글 마법 이름·별칭으로 친 경우.
+     */
     void bindSpellCommand(){
-        Objects.requireNonNull(plugin.getCommand("마법")).setExecutor(this);
-        plugin.getCommand("마법").setTabCompleter(this);
-        if(isCatalogMode()){plugin.getCommand("마법관리").setExecutor(this);plugin.getCommand("마법관리").setTabCompleter(this);}
+        if(!CodexCommands.ready(plugin,"/마법"))return;
+        ChacaApi.playerCommand(plugin,Commands.literal("마법").executes(ctx->{throw ChacaApi.error("마법 이름을 입력해 주세요");})
+            .then(Commands.argument("마법",StringArgumentType.greedyString()).suggests((ctx,b)->{
+                String typed=b.getRemaining().replace(" ","").toLowerCase(Locale.ROOT);var sender=ctx.getSource().getSender();
+                var names=new TreeSet<String>();
+                for(var spell:spells.byId.values()){
+                    if(!sender.hasPermission(spell.permission()))continue;
+                    var info=spells.registeredCatalog.get(spell.id());String name=info==null?"":info.getOrDefault("name","").replace(" ","");
+                    if(!name.isEmpty()&&spells.resolve(name)!=null)names.add(name);
+                }
+                int n=0;for(String name:names)if(name.toLowerCase(Locale.ROOT).startsWith(typed)){b.suggest(name);if(++n>=60)break;}
+                if(n<60)for(var spell:spells.byId.values())if(sender.hasPermission(spell.permission())&&spell.id().startsWith(typed)){b.suggest(spell.id());if(++n>=60)break;}
+                return b.buildFuture();
+            }).executes(ctx->{
+                var player=CodexCommands.self(ctx);
+                String id=spells.resolve(StringArgumentType.getString(ctx,"마법"));
+                if(id==null)throw ChacaApi.error("서버에 등록되지 않았거나 쓸 수 없는 마법이에요");
+                castRegistered(player,id);return Command.SINGLE_SUCCESS;
+            })),"마법 쓰기",List.of());
     }
-    @Override public boolean onCommand(CommandSender sender,Command command,String label,String[] args){
-        if(command.getName().equals("마법")){
-            if(!(sender instanceof Player player)){sender.sendMessage("게임 안에서 사용해 주세요.");return true;}
-            if(args.length==0){sender.sendMessage("사용법: /마법 <마법명>");return true;}
-            String id=spells.resolve(String.join(" ",args));
-            if(id==null){sender.sendMessage("서버에 등록되지 않았거나 비활성화된 마법입니다.");return true;}
-            castRegistered(player,id);return true;
-        }
-        if(!sender.hasPermission("magiccodex.mana.admin")){sender.sendMessage("권한이 없습니다.");return true;}
-        try{
-            if(args.length==1&&(args[0].equals("새로고침")||args[0].equalsIgnoreCase("reload"))){
-                var next=ManaSpells.load(new File(plugin.getDataFolder(),"mana-spells.yml"));plugin.reloadConfig();spells=next;
-                sender.sendMessage("마나 설정과 마법 비용 "+spells.byId.size()+"종을 다시 불러왔습니다. 기존 플레이어 수치는 유지합니다.");return true;
-            }
-            sender.sendMessage("/마나관리 새로고침 · 유저 수치는 /유저관리 <유저> 스탯 <항목> 설정|추가|감소 <수치>로 관리합니다.");
-        }catch(Exception error){sender.sendMessage("마나 설정 오류: "+error.getMessage());}return true;
+    /** mana-spells.yml (마법 비용·쿨타임·이름) + MythicMobs 실행 경로 spell-runtime.yml 까지 한 번에. */
+    void reloadSpells()throws Exception{
+        var next=ManaSpells.load(new File(plugin.getDataFolder(),"mana-spells.yml"));
+        var r=runtime;if(r!=null)r.reload().run();
+        spells=next;
     }
-    public List<String> onTabComplete(CommandSender s,Command c,String a,String[] args){
-        if(c.getName().equals("마법")){
-            String prefix=String.join("",args).toLowerCase(Locale.ROOT);
-            return spells.byId.values().stream().filter(x->s.hasPermission(x.permission())).map(ManaSpells.Spell::id).filter(x->x.startsWith(prefix)).sorted().toList();
-        }
-        if(!s.hasPermission("magiccodex.mana.admin"))return List.of();
-        var options=args.length==1?List.of("새로고침"):List.<String>of();
-        return options.stream().filter(x->x.toLowerCase(Locale.ROOT).startsWith(args[args.length-1].toLowerCase(Locale.ROOT))).toList();
+    private void registerAdmin(){
+        if(!CodexCommands.ready(plugin,"마나 관리"))return;
+        ChacaApi.reload(plugin,"마법","마법 비용·쿨타임(mana-spells.yml)과 실행 경로(spell-runtime.yml)",this::reloadSpells);
+        ChacaApi.reload(plugin,"마나","기본 마나 설정(config.yml mana.*), 유저 수치는 유지",plugin::reloadConfig);
+        ChacaApi.status(plugin,"MythicMobs 실행 경로",()->{var r=runtime;return r!=null?"정상 · "+r.routes().getAsInt()+"개 경로":Bukkit.getPluginManager().isPluginEnabled("MythicMobs")?"대기 · 실행 경로 없음 (예전 명령 경로 사용)":"없음 · MythicMobs가 꺼져 있음 (예전 명령 경로 사용)";});
+        ChacaApi.status(plugin,"마법 목록",()->spells.byId.size()+"종"+(spells.catalogMode?" (도감 모드)":""));
+        // /유저관리 <닉네임> 마법쿨타임 <보기|초기화>
+        ChacaApi.branch(plugin,ChacaApi.유저관리,Commands.literal("마법쿨타임")
+            .then(Commands.literal("보기").executes(ctx->{
+                var p=ChacaApi.targetOnline(ctx);var a=mana.account(p.getUniqueId());long now=System.currentTimeMillis();
+                var rows=new ArrayList<String>();
+                a.cooldowns.entrySet().stream().filter(e->e.getValue()>now).sorted(Map.Entry.comparingByValue()).forEach(e->rows.add(" "+spellName(e.getKey())+" ("+e.getKey()+") · "+CodexCommands.seconds(e.getValue()-now)+" 남음"));
+                if(rows.isEmpty())rows.add(" 기다리는 마법이 없어요");
+                CodexCommands.lines(CodexCommands.sender(ctx),"── "+ChacaApi.name(p.getUniqueId())+" 님의 마법 쿨타임 ──",rows);return Command.SINGLE_SUCCESS;
+            }))
+            .then(Commands.literal("초기화").executes(ctx->{
+                var p=ChacaApi.targetOnline(ctx);UUID id=p.getUniqueId();int n=0;
+                for(String spell:List.copyOf(mana.account(id).cooldowns.keySet()))if(mana.clearCooldown(id,spell))n++;
+                mana.save(p);plugin.markPlayerStateDirty(p);
+                ChacaApi.ok(CodexCommands.sender(ctx),ChacaApi.name(id)+" 님의 마법 쿨타임 "+n+"개를 초기화했어요");return Command.SINGLE_SUCCESS;
+            })),"마법 쿨타임 보기·초기화","마법쿨타임 보기");
     }
+    private String spellName(String id){var info=spells.registeredCatalog.get(id);return info==null?id:info.getOrDefault("name",id);}
     public void close(){if(expansion!=null){if(expansionRegistered)expansion.unregister();else if(plugin.names()!=null)plugin.names().delegatePlaceholders(null);}mana.close();Bukkit.getServicesManager().unregister(ManaService.class,mana);sessions.clear();}
 }

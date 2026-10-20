@@ -7,7 +7,12 @@ import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.logging.Level;
 import org.bukkit.*;
-import org.bukkit.command.*;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
@@ -24,7 +29,7 @@ import school.magiccodex.protocol.*;
  *  - 유저가 나갔거나 서버가 꺼져 실행하지 못한 동작(queued)은 다음 접속(준비된 뒤) 또는 다음 대화 열기 때 이어서 실행한다.
  *  - 실패한 동작(review)·실행 여부를 알 수 없는 동작(running, 옛 pending)만 관리자 확인으로 가며, 그 대화만 막는다.
  */
-final class DialogueBridge implements Listener,CommandExecutor,TabCompleter,PluginMessageListener,AutoCloseable {
+final class DialogueBridge implements Listener,PluginMessageListener,AutoCloseable {
     private final MagicCodexBridge plugin;
     private final ExecutorService io=Executors.newSingleThreadExecutor(r->{var t=new Thread(r,"MagicCodex-dialogue-io");t.setDaemon(true);return t;});
     private final DialogueStore store;private final Path directory;
@@ -70,7 +75,7 @@ final class DialogueBridge implements Listener,CommandExecutor,TabCompleter,Plug
         for(String channel:List.of(DialogueProtocol.REQUEST,DialogueAdminProtocol.REQUEST))Bukkit.getMessenger().registerIncomingPluginChannel(plugin,channel,this);
         for(String channel:List.of(DialogueProtocol.RESPONSE))Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,channel);
         Bukkit.getPluginManager().registerEvents(this,plugin);
-        for(String c:List.of("대화","대화관리","메인퀘스트")){plugin.getCommand(c).setExecutor(this);plugin.getCommand(c).setTabCompleter(this);}
+        registerCommands();
         citizens();
         Bukkit.getScheduler().runTaskTimer(plugin,()->{
             sessions.entrySet().removeIf(e->System.currentTimeMillis()>e.getValue().expires);
@@ -93,7 +98,7 @@ final class DialogueBridge implements Listener,CommandExecutor,TabCompleter,Plug
     private boolean gate(Player p){UUID id=p.getUniqueId();long now=System.currentTimeMillis();if(closing||busy.contains(id)||now<limits.getOrDefault(id,0L))return false;limits.put(id,now+150);return true;}
     private void open(Player p,DialogueDefinition d,boolean preview,Entity anchor){
         if(!p.hasPermission("magiccodex.dialogue")||!ready(p)||!gate(p))return;
-        if(!p.getListeningPluginChannels().contains(DialogueProtocol.RESPONSE)){p.sendMessage("대화 모드를 업데이트해 주세요.");return;}
+        if(!p.getListeningPluginChannels().contains(DialogueProtocol.RESPONSE)){CodexCommands.warn(p,"dialogue","대화를 열려면 최신 MagicCodex 모드가 필요해요");return;}
         if(!preview&&(!d.enabled()||(!d.permission().isEmpty()&&!p.hasPermission(d.permission()))))return;
         UUID id=p.getUniqueId();busy.add(id);sessions.remove(id);String revision=preview?"":revisions.getOrDefault(d.id(),"");
         work(id,()->new Opening(store.state(id),preview?List.<DialogueStore.Effect>of():store.effects(id)),o->{
@@ -101,10 +106,10 @@ final class DialogueBridge implements Listener,CommandExecutor,TabCompleter,Plug
             // 이전에 끝내지 못한 동작을 먼저 이어서 실행한다. 그래도 남은 것이 이 대화의 것이면 이 대화만 막는다.
             resume(p,o.effects(),0,blocked,()->{
                 busy.remove(id);if(!current(p)||!ready(p)||!near(p,anchor))return;
-                if(blocked.containsKey(d.id())){p.sendMessage(blocked.get(d.id()));return;}
-                var s=new Session(d,o.state(),preview,anchor,revision);if(!allowed(p,s,d.nodes().get(s.node).conditions())){p.sendMessage("아직 이 대화를 시작할 수 없습니다.");return;}sessions.put(id,s);send(p,s,"");
+                if(blocked.containsKey(d.id())){CodexCommands.warn(p,"dialogue",blocked.get(d.id()));return;}
+                var s=new Session(d,o.state(),preview,anchor,revision);if(!allowed(p,s,d.nodes().get(s.node).conditions())){CodexCommands.warn(p,"dialogue","아직 이 대화를 시작할 수 없어요");return;}sessions.put(id,s);send(p,s,"");
             });
-        },m->{busy.remove(id);if(current(p))p.sendMessage(m);});
+        },m->{busy.remove(id);if(current(p))CodexCommands.warn(p,"dialogue",m);});
     }
     private record Opening(DialogueStore.State state,List<DialogueStore.Effect> effects){}
     /**
@@ -120,7 +125,7 @@ final class DialogueBridge implements Listener,CommandExecutor,TabCompleter,Plug
         if(candidates.isEmpty()||!p.hasPermission("magiccodex.dialogue")){f.complete("NONE");return f;}
         UUID id=p.getUniqueId();
         if(closing||!ready(p)||busy.contains(id)||!near(p,anchor)){f.complete("BUSY");return f;}
-        if(!p.getListeningPluginChannels().contains(DialogueProtocol.RESPONSE)){p.sendMessage("대화 모드를 업데이트해 주세요.");f.complete("BLOCKED");return f;}
+        if(!p.getListeningPluginChannels().contains(DialogueProtocol.RESPONSE)){CodexCommands.warn(p,"dialogue","대화를 열려면 최신 MagicCodex 모드가 필요해요");f.complete("BLOCKED");return f;}
         if(!gate(p)){f.complete("BUSY");return f;}
         busy.add(id);sessions.remove(id);var known=revisions;
         work(id,()->new Opening(store.state(id),store.effects(id)),o->{
@@ -133,9 +138,9 @@ final class DialogueBridge implements Listener,CommandExecutor,TabCompleter,Plug
                     if(blocked.containsKey(d.id())){if(held==null)held=blocked.get(d.id());continue;}
                     var s=new Session(d,o.state(),false,anchor,known.getOrDefault(d.id(),""));if(allowed(p,s,d.nodes().get(s.node).conditions())){sessions.put(id,s);send(p,s,"");f.complete("OPENED");return;}
                 }
-                if(held!=null){p.sendMessage(held);f.complete("BLOCKED");}else f.complete("NONE");
+                if(held!=null){CodexCommands.warn(p,"dialogue",held);f.complete("BLOCKED");}else f.complete("NONE");
             });
-        },m->{busy.remove(id);if(current(p))p.sendMessage(m);f.complete("BLOCKED");});
+        },m->{busy.remove(id);if(current(p))CodexCommands.warn(p,"dialogue",m);f.complete("BLOCKED");});
         return f;
     }
     /** 메인 퀘스트 진행 요약 (story.* 상태 값). */
@@ -156,7 +161,7 @@ final class DialogueBridge implements Listener,CommandExecutor,TabCompleter,Plug
     private void send(Player p,Session s,String message){if(!current(p))return;var n=s.definition.nodes().get(s.node);var cs=n.choices().stream().filter(c->allowed(p,s,c.conditions())).map(c->new DialogueProtocol.Choice(c.id(),c.text())).toList();p.sendPluginMessage(plugin,DialogueProtocol.RESPONSE,DialogueProtocol.encode(new DialogueProtocol.Response(s.token,s.sequence,false,s.preview,(s.definition.storyId().isEmpty()?"":"[메인 퀘스트] ")+s.definition.title(),n.speaker(),n.portrait(),n.text(),cs,message)));}
     private void end(Player p,Session s,String message){sessions.remove(p.getUniqueId(),s);if(current(p))p.sendPluginMessage(plugin,DialogueProtocol.RESPONSE,DialogueProtocol.encode(new DialogueProtocol.Response(s.token,s.sequence,true,s.preview,"","","","",List.of(),message)));}
     @Override public void onPluginMessageReceived(String channel,Player p,byte[] bytes){
-        if(channel.equals(DialogueAdminProtocol.REQUEST)){if(p.hasPermission("magiccodex.dialogue.admin"))p.sendMessage("Legacy editor removed; use /\uB300\uD654\uAD00\uB9AC preview|reload|pull <ID>.");return;}
+        if(channel.equals(DialogueAdminProtocol.REQUEST))return; // 옛 대화 편집기 요청: 없앤 기능이라 무시 (/대화관리 파일반영·파일로내보내기)
         if(!channel.equals(DialogueProtocol.REQUEST)||!p.hasPermission("magiccodex.dialogue"))return;
         try{var r=DialogueProtocol.request(bytes);var s=sessions.get(p.getUniqueId());if(s==null||!s.token.equals(r.session())||s.sequence!=r.sequence())return;
             if(r.close()){sessions.remove(p.getUniqueId(),s);return;}
@@ -263,56 +268,100 @@ final class DialogueBridge implements Listener,CommandExecutor,TabCompleter,Plug
     }
     @EventHandler public void join(PlayerJoinEvent e){resumeLater(e.getPlayer(),0);}
     private void advance(Player p,Session s,DialogueDefinition.Choice c){if(c.next().isEmpty()){end(p,s,"");return;}s.node=c.next();s.sequence++;s.expires=System.currentTimeMillis()+300000;if(!allowed(p,s,s.definition.nodes().get(s.node).conditions())){end(p,s,"");return;}send(p,s,"");}
-    @Override public boolean onCommand(CommandSender sender,Command command,String label,String[] args){try{
-        if(command.getName().equals("메인퀘스트")){if(sender instanceof Player p)journal(p);return true;}
-        if(!sender.hasPermission("magiccodex.dialogue.admin"))return true;
-        if(args.length==0){sender.sendMessage("/\uB300\uD654\uAD00\uB9AC preview|reload|pull <ID> | audit <player> | resolve <player> <token> rerun|done");return true;}
-        if(command.getName().equals("대화")&&args.length==1&&sender instanceof Player p){var d=catalog.get(args[0]);if(d!=null)open(p,d,false,null);return true;}
-        if(args.length==2&&args[0].equals("preview")&&sender instanceof Player p){var d=catalog.get(args[1]);if(d!=null)open(p,d,true,null);return true;}
-        if(args.length==2&&args[0].equals("reload")){String id=args[1];DialogueDefinition.id(id);String expected=revisions.getOrDefault(id,"");work(()->store.edit(id,expected,read(id)),ok->{sender.sendMessage(ok?"대화 파일 반영 완료":"다른 곳에서 변경되었습니다. pull로 확인하세요.");refresh();},sender::sendMessage);return true;}
-        if(args.length==2&&args[0].equals("pull")){String id=args[1];DialogueDefinition.id(id);work(()->{var d=store.catalog().get(id);if(d==null)throw new IllegalArgumentException("대화 없음");export(d);return true;},ok->sender.sendMessage("공용 대화를 YAML로 저장했습니다. 이전 파일은 .bak 백업."),sender::sendMessage);return true;}
-        if(args.length==2&&args[0].equals("audit")){UUID uid=target(args[1]);work(()->store.effects(uid),rows->{
-            sender.sendMessage("끝나지 않은 대화 동작 "+rows.size()+"건 ("+uid+")"+(rows.isEmpty()?"":" — /대화관리 resolve "+args[1]+" <토큰> rerun|done"));
-            listed.put(sender.getName(),rows.stream().map(DialogueStore.Effect::token).toList());
-            for(var e:rows){sender.sendMessage(e.token()+" | "+e.key()+" | "+statusText(e));for(String action:e.actions())sender.sendMessage("    남은 동작: "+action);}
-        },sender::sendMessage);return true;}
-        if((args.length==3||args.length==4)&&args[0].equals("resolve")){
-            UUID uid=target(args[1]);String token=UUID.fromString(args[2]).toString();
-            if(args.length==3||!List.of("rerun","done").contains(args[3])){
-                // 무엇을 처리하는지 먼저 보여 주고, 방법을 고르게 한다.
-                work(()->store.effects(uid),rows->{var e=rows.stream().filter(v->v.token().equals(token)).findFirst().orElse(null);if(e==null){sender.sendMessage("끝나지 않은 기록 중에 그 토큰이 없습니다. audit 로 확인하세요.");return;}
-                    sender.sendMessage(e.key()+" | "+statusText(e));for(String action:e.actions())sender.sendMessage("    남은 동작: "+action);
-                    sender.sendMessage("처리 방법을 고르세요: /대화관리 resolve "+args[1]+" "+token+" rerun (남은 동작을 다시 실행) | done (실행하지 않고 완료로 닫기)");},sender::sendMessage);
-                return true;
-            }
-            if(runs.containsKey(token)||busy.contains(uid)){sender.sendMessage("지금 처리 중인 기록입니다. 잠시 뒤 다시 시도하세요.");return true;}
-            boolean rerun=args[3].equals("rerun");String admin=sender.getName();
-            work(()->{
-                var before=store.effects(uid).stream().filter(e->e.token().equals(token)).findFirst().orElseThrow(()->new IllegalArgumentException("끝나지 않은 기록 중에 그 토큰이 없습니다. audit 로 확인하세요."));
-                if(!rerun)store.finish(uid,token);
-                else if(!before.status().equals("queued")&&!store.move(uid,token,List.of("review","running","pending"),"queued",null))throw new IllegalStateException("기록이 방금 바뀌었습니다. audit 로 다시 확인하세요.");
-                return before;
-            },before->{
-                plugin.getLogger().warning("DIALOGUE ADMIN admin="+admin+" player="+uid+" key="+before.key()+" token="+token+" action="+args[3]+" from="+before.status()+" actions="+before.actions());
-                if(!rerun){sender.sendMessage("실행하지 않고 완료로 닫았습니다. 실행하지 않은 동작 "+before.actions().size()+"개: "+String.join(" ; ",before.actions()));return;}
-                Player online=Bukkit.getPlayer(uid);
-                if(online==null||!current(online)||!ready(online)||busy.contains(uid)||sessions.containsKey(uid)){sender.sendMessage("다시 실행 대기로 바꿨습니다. 유저가 다음에 접속하거나 대화를 열 때 남은 동작을 실행합니다.");return;}
-                busy.add(uid);work(uid,()->store.effects(uid),list->{var blocked=new HashMap<String,String>();resume(online,list,0,blocked,()->{busy.remove(uid);sender.sendMessage(blocked.containsKey(before.dialogue())?"다시 실행했지만 끝나지 않았습니다: "+blocked.get(before.dialogue()):"남은 동작을 다시 실행해 완료했습니다.");});},m->{busy.remove(uid);sender.sendMessage(m);});
-            },sender::sendMessage);return true;
-        }
-    }catch(Exception e){sender.sendMessage("대화 설정 확인: "+e.getMessage());return true;}
-        sender.sendMessage("/대화 <ID> · /대화관리 · /대화관리 preview|reload|pull <ID> · audit <유저|UUID> · resolve <유저|UUID> <토큰> rerun|done");return true;
+    // ------------------------------------------------------------------ 명령 (2026-10-20 명령어 정리)
+    private Collection<String> dialogueIds(){return new TreeSet<>(catalog.keySet());}
+    private String dialogueArg(CommandContext<CommandSourceStack> ctx)throws CommandSyntaxException{
+        String id=ctx.getArgument("대화",String.class);
+        try{DialogueDefinition.id(id);}catch(IllegalArgumentException e){throw ChacaApi.error("대화 ID는 영문 소문자·숫자·_·- 로 입력해 주세요");}
+        return id;
     }
-    private UUID target(String input){try{return UUID.fromString(input);}catch(IllegalArgumentException ignored){}Player online=plugin.names().resolve(input);if(online==null)throw new IllegalArgumentException("접속 중인 유저의 닉네임·영문 계정명 또는 UUID를 입력하세요.");return online.getUniqueId();}
+    private Consumer<String> failTo(CommandSender sender){return m->ChacaApi.fail(sender,m==null||m.isBlank()?"명령어 사용에 실패했습니다":m,null);}
+    private void registerCommands(){
+        if(!CodexCommands.ready(plugin,"대화"))return;
+        ChacaApi.reload(plugin,"대화","MagicCodex 공용 대화 목록을 DB에서 다시 읽기 (파일 반영은 /대화관리 파일반영)",this::refresh);
+        // /메인퀘스트 (누구나)
+        ChacaApi.playerCommand(plugin,Commands.literal("메인퀘스트").executes(ctx->{journal(CodexCommands.self(ctx));return Command.SINGLE_SUCCESS;}),"메인 퀘스트 기록 열기",List.of());
+        // /대화관리 파일반영 <대화> · 파일로내보내기 <대화> · 열기 <닉네임> <대화>
+        ChacaApi.branch(plugin,ChacaApi.대화관리,Commands.literal("파일반영").then(Commands.argument("대화",ChacaApi.word(this::fileIds)).executes(ctx->{
+            String id=dialogueArg(ctx);var sender=CodexCommands.sender(ctx);String expected=revisions.getOrDefault(id,"");
+            if(!Files.exists(directory.resolve(id+".yml")))throw ChacaApi.error("dialogues/"+id+".yml 파일이 없어요");
+            work(()->store.edit(id,expected,read(id)),ok->{
+                if(ok){ChacaApi.ok(sender,id+" 대화 파일을 반영했어요");refresh();}
+                else ChacaApi.fail(sender,"다른 곳에서 먼저 바뀌었어요. 파일로내보내기로 확인한 뒤 다시 해 주세요",null);
+            },failTo(sender));return Command.SINGLE_SUCCESS;
+        })),"MagicCodex 대화 YAML 파일을 공용 대화에 반영","파일반영 ");
+        ChacaApi.branch(plugin,ChacaApi.대화관리,Commands.literal("파일로내보내기").then(Commands.argument("대화",ChacaApi.word(this::dialogueIds)).executes(ctx->{
+            String id=dialogueArg(ctx);var sender=CodexCommands.sender(ctx);
+            work(()->{var d=store.catalog().get(id);if(d==null)throw new IllegalArgumentException(id+" 대화가 없어요");export(d);return true;},
+                ok->ChacaApi.ok(sender,id+" 대화를 dialogues/"+id+".yml 로 내보냈어요 (이전 파일은 .bak)"),failTo(sender));return Command.SINGLE_SUCCESS;
+        })),"공용 대화를 YAML 파일로 내보내기","파일로내보내기 ");
+        ChacaApi.branch(plugin,ChacaApi.대화관리,Commands.literal("열기").then(Commands.argument("닉네임",ChacaApi.player())
+            .then(Commands.argument("대화",ChacaApi.word(this::dialogueIds)).executes(ctx->{
+                Player p=ChacaApi.resolveOnline(ctx,"닉네임");String id=dialogueArg(ctx);var d=catalog.get(id);
+                if(d==null)throw ChacaApi.error(id+" 대화가 없어요");
+                if(!p.getListeningPluginChannels().contains(DialogueProtocol.RESPONSE))throw ChacaApi.error(ChacaApi.name(p.getUniqueId())+" 님에게 최신 MagicCodex 모드가 없어요");
+                open(p,d,false,null);ChacaApi.ok(CodexCommands.sender(ctx),ChacaApi.name(p.getUniqueId())+" 님에게 "+d.title()+" 대화를 열었어요");return Command.SINGLE_SUCCESS;
+            }))),"유저에게 MagicCodex 대화 열기 (조건·권한은 그대로 확인)","열기 ");
+
+        // /유저관리 <닉네임> 대화기록 <보기|처리 <기록> <다시실행|완료처리>>
+        var resolve=Commands.argument("기록",ChacaApi.word(()->{var all=new ArrayList<String>();listed.values().forEach(all::addAll);return all;}));
+        for(String how:List.of("다시실행","완료처리"))resolve.then(Commands.literal(how).executes(ctx->{resolveEffect(ctx,how.equals("다시실행"));return Command.SINGLE_SUCCESS;}));
+        resolve.executes(ctx->{
+            UUID uid=ChacaApi.target(ctx);String token=tokenArg(ctx);var sender=CodexCommands.sender(ctx);
+            work(()->store.effects(uid),rows->{var e=rows.stream().filter(v->v.token().equals(token)).findFirst().orElse(null);
+                if(e==null){ChacaApi.fail(sender,"끝나지 않은 기록 중에 그 기록이 없어요. '보기'로 확인해 주세요",null);return;}
+                var out=new ArrayList<String>();out.add("── "+e.key()+" ──");out.add(" 상태: "+statusText(e));for(String action:e.actions())out.add("  남은 동작: "+action);
+                out.add(" 끝에 '다시실행'(남은 동작 실행) 또는 '완료처리'(실행하지 않고 닫기)를 붙여 주세요");ChacaApi.lines(sender,out);
+            },failTo(sender));return Command.SINGLE_SUCCESS;
+        });
+        ChacaApi.branch(plugin,ChacaApi.유저관리,Commands.literal("대화기록")
+            .then(Commands.literal("보기").executes(ctx->{
+                UUID uid=ChacaApi.target(ctx);var sender=CodexCommands.sender(ctx);
+                work(()->store.effects(uid),rows->{
+                    listed.put(sender.getName(),rows.stream().map(DialogueStore.Effect::token).toList());
+                    var out=new ArrayList<String>();out.add("── "+ChacaApi.name(uid)+" 님의 끝나지 않은 대화 동작 "+rows.size()+"건 ──");
+                    for(var e:rows){out.add(" "+e.token()+" · "+e.key()+" · "+statusText(e));for(String action:e.actions())out.add("   남은 동작: "+action);}
+                    if(!rows.isEmpty())out.add(" 처리: /유저관리 "+ChacaApi.name(uid)+" 대화기록 처리 <기록> <다시실행|완료처리>");
+                    ChacaApi.lines(sender,out);
+                },failTo(sender));return Command.SINGLE_SUCCESS;
+            }))
+            .then(Commands.literal("처리").then(resolve)),"MagicCodex 대화 효과 기록 보기·처리","대화기록 보기");
+    }
+    /** 대화관리 파일반영 자동완성: dialogues/ 폴더의 yml 파일 이름. */
+    private Collection<String> fileIds(){
+        var out=new TreeSet<String>();
+        try(var list=Files.list(directory)){list.forEach(f->{String n=f.getFileName().toString();if(n.endsWith(".yml"))out.add(n.substring(0,n.length()-4));});}catch(IOException ignored){}
+        return out;
+    }
+    private static String tokenArg(CommandContext<CommandSourceStack> ctx)throws CommandSyntaxException{
+        try{return UUID.fromString(ctx.getArgument("기록",String.class)).toString();}catch(IllegalArgumentException e){throw ChacaApi.error("기록 번호는 '보기'에 나온 긴 번호를 그대로 넣어 주세요");}
+    }
+    private void resolveEffect(CommandContext<CommandSourceStack> ctx,boolean rerun)throws CommandSyntaxException{
+        UUID uid=ChacaApi.target(ctx);String token=tokenArg(ctx);var sender=CodexCommands.sender(ctx);String admin=sender.getName();
+        if(runs.containsKey(token)||busy.contains(uid))throw ChacaApi.error("지금 처리 중인 기록이에요. 잠시 뒤 다시 해 주세요");
+        work(()->{
+            var before=store.effects(uid).stream().filter(e->e.token().equals(token)).findFirst().orElseThrow(()->new IllegalArgumentException("끝나지 않은 기록 중에 그 기록이 없어요. '보기'로 확인해 주세요"));
+            if(!rerun)store.finish(uid,token);
+            else if(!before.status().equals("queued")&&!store.move(uid,token,List.of("review","running","pending"),"queued",null))throw new IllegalStateException("기록이 방금 바뀌었어요. '보기'로 다시 확인해 주세요");
+            return before;
+        },before->{
+            plugin.getLogger().warning("DIALOGUE ADMIN admin="+admin+" player="+uid+" key="+before.key()+" token="+token+" action="+(rerun?"rerun":"done")+" from="+before.status()+" actions="+before.actions());
+            if(!rerun){ChacaApi.ok(sender,"실행하지 않고 완료로 닫았어요 (남은 동작 "+before.actions().size()+"개)");return;}
+            Player online=Bukkit.getPlayer(uid);
+            if(online==null||!current(online)||!ready(online)||busy.contains(uid)||sessions.containsKey(uid)){ChacaApi.ok(sender,"다시 실행 대기로 바꿨어요. 유저가 다음에 접속하거나 대화를 열 때 실행해요");return;}
+            busy.add(uid);work(uid,()->store.effects(uid),list->{var blocked=new HashMap<String,String>();resume(online,list,0,blocked,()->{busy.remove(uid);
+                if(blocked.containsKey(before.dialogue()))ChacaApi.fail(sender,"다시 실행했지만 끝나지 않았어요: "+blocked.get(before.dialogue()),null);else ChacaApi.ok(sender,"남은 동작을 다시 실행해 끝냈어요");});},m->{busy.remove(uid);ChacaApi.fail(sender,m,null);});
+        },failTo(sender));
+    }
     private String statusText(DialogueStore.Effect e){return switch(e.status()){case "queued"->runs.containsKey(e.token())?"실행 중":"대기 — 유저 접속·대화 열기 때 자동 실행";case "running"->runs.containsKey(e.token())?"실행 중":"실행 여부 불명 — 실행 도중 서버가 멈춤 (관리자 확인)";case "review"->"동작 실패 — 맨 위 동작부터 실행되지 않음 (관리자 확인)";case "pending"->"옛 기록 — 실행 여부 불명 (관리자 확인)";default->e.status();};}
     Map<String,String> journalCatalog(){var result=new TreeMap<String,String>();catalog.values().stream().filter(d->!d.storyId().isEmpty()).forEach(d->result.put("dialogue:"+d.storyId(),d.storyTitle()));return result;}
     void journalRows(Player p,java.util.function.Consumer<List<school.magiccodex.protocol.JournalProtocol.Entry>> callback){work(()->store.state(p.getUniqueId()),state->{
         var rows=new ArrayList<school.magiccodex.protocol.JournalProtocol.Entry>();var ids=new TreeSet<String>();for(String key:state.values().keySet())if(key.startsWith("story."))ids.add(key.substring(6));else if(key.startsWith("journal."))ids.add(key.substring(8));
         for(String id:ids){var d=catalog.values().stream().filter(v->v.storyId().equals(id)).sorted(Comparator.comparing(DialogueDefinition::id)).findFirst().orElse(null);String stage=state.values().getOrDefault("story."+id,"");String status=state.values().getOrDefault("journal."+id,"active");if(status.equals("hidden"))continue;
-            rows.add(new school.magiccodex.protocol.JournalProtocol.Entry("dialogue",id,d==null?id:d.storyTitle(),d==null?stage:d.stages().getOrDefault(stage,stage),status,true,"",""));}callback.accept(List.copyOf(rows));},m->{p.sendMessage(m);callback.accept(List.of());});}
+            rows.add(new school.magiccodex.protocol.JournalProtocol.Entry("dialogue",id,d==null?id:d.storyTitle(),d==null?stage:d.stages().getOrDefault(stage,stage),status,true,"",""));}callback.accept(List.copyOf(rows));},m->{plugin.getLogger().warning("대화 기록 읽기 실패 ("+p.getName()+"): "+m);callback.accept(List.of());});}
     void journalEdit(CommandSender sender,Player target,String id,String operation){if(!journalCatalog().containsKey("dialogue:"+id))throw new IllegalArgumentException("등록된 대화 퀘스트를 찾을 수 없습니다.");
-        if(operation.equals("query")){journalRows(target,rows->rows.stream().filter(e->e.id().equals(id)).forEach(e->sender.sendMessage(e.key()+" / "+e.state()+" / "+e.description())));return;}
-        work(()->{store.journalEdit(target.getUniqueId(),id,operation);return true;},ok->{sender.sendMessage("퀘스트 기록을 변경했습니다. 이야기 단계와 보상·호감도 수령 기록은 유지됩니다.");if(operation.equals("grant"))JournalBridge.notify(plugin,target,journalCatalog().get("dialogue:"+id),"");plugin.getLogger().info("DIALOGUE JOURNAL admin="+sender.getName()+" player="+target.getUniqueId()+" id="+id+" operation="+operation);},sender::sendMessage);
+        if(operation.equals("query")){journalRows(target,rows->ChacaApi.lines(sender,rows.stream().filter(e->e.id().equals(id)).map(e->" "+e.key()+" / "+e.state()+" / "+e.description()).toList()));return;}
+        work(()->{store.journalEdit(target.getUniqueId(),id,operation);return true;},ok->{ChacaApi.ok(sender,"퀘스트 기록을 바꿨어요 (이야기 단계·보상·호감도 수령 기록은 그대로)");if(operation.equals("grant"))JournalBridge.notify(plugin,target,journalCatalog().get("dialogue:"+id),"");plugin.getLogger().info("DIALOGUE JOURNAL admin="+sender.getName()+" player="+target.getUniqueId()+" id="+id+" operation="+operation);},m->ChacaApi.fail(sender,m,null));
     }
     private void journal(Player p){if(!ready(p)||!gate(p))return;if(p.getListeningPluginChannels().contains(school.magiccodex.protocol.JournalProtocol.REPLY)){JournalBridge.send(plugin,p,new school.magiccodex.protocol.JournalProtocol.Message(6,"","","","",0,0,List.of()));return;}work(()->store.state(p.getUniqueId()),state->{
         if(!current(p))return;
@@ -320,19 +369,9 @@ final class DialogueBridge implements Listener,CommandExecutor,TabCompleter,Plug
         int pages=Math.max(1,(rows.size()+3)/4);var nodes=new LinkedHashMap<String,DialogueDefinition.Node>();
         for(int page=0;page<pages;page++){var choices=new ArrayList<DialogueDefinition.Choice>();if(page>0)choices.add(new DialogueDefinition.Choice("previous","이전 이야기","p"+(page-1),List.of(),List.of()));if(page+1<pages)choices.add(new DialogueDefinition.Choice("next","다음 이야기","p"+(page+1),List.of(),List.of()));String text=rows.isEmpty()?"아직 시작한 이야기가 없습니다.":String.join("\n\n",rows.subList(page*4,Math.min(rows.size(),page*4+4)));nodes.put("p"+page,new DialogueDefinition.Node("이야기 기록","",text,List.of(),List.copyOf(choices)));}
         var d=new DialogueDefinition("journal","메인 퀘스트","p0",true,"",List.of(),Map.copyOf(nodes),"","",Map.of());var session=new Session(d,state,false,null,"");session.journal=true;sessions.put(p.getUniqueId(),session);send(p,session,"");
-    },p::sendMessage);}
+    },m->CodexCommands.warn(p,"dialogue",m));}
     private void refresh(){work(()->store.snapshot(null),this::install,m->plugin.getLogger().warning(m));}
-    @Override public List<String> onTabComplete(CommandSender s,Command c,String l,String[] a){
-        if(!s.hasPermission("magiccodex.dialogue.admin")||a.length==0||c.getName().equals("메인퀘스트"))return List.of();String prefix=a[a.length-1];
-        if(c.getName().equals("대화"))return a.length==1?AdminCommandRules.filter(catalog.keySet(),prefix):List.of();
-        List<String> options=switch(a.length){
-            case 1->List.of("preview","reload","pull","audit","resolve");
-            case 2->Set.of("audit","resolve").contains(a[0])?Bukkit.getOnlinePlayers().stream().map(Player::getName).toList():Set.of("preview","reload","pull").contains(a[0])?List.copyOf(catalog.keySet()):List.<String>of();
-            case 3->a[0].equals("resolve")?listed.getOrDefault(s.getName(),List.of()):List.<String>of();
-            case 4->a[0].equals("resolve")?List.of("rerun","done"):List.<String>of();
-            default->List.<String>of();};
-        return AdminCommandRules.filter(options,prefix);
-    }
+
     private interface Job<T>{T run()throws Exception;}
     /** 메인 스레드 후속 처리는 여기를 거친다: 예외가 나도 busy 가 풀리고, 실행 중이던 묶음은 남은 동작 그대로 기록해 다음에 이어서 실행한다. */
     private void guard(UUID owner,Runnable r){
