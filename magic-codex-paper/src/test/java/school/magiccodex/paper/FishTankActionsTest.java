@@ -42,4 +42,44 @@ class FishTankActionsTest {
  @Test void failedPaymentRestoresBeforeAcknowledging()throws Exception{claim(Action.SELL);finalizeSuccessfully();when(shop.deposit(player,100)).thenReturn(false);invoke("sell",FishTankProtocol.Request.sell(fish.id(),100,13));verify(tank).finish(eq(owner),eq(List.of(fish)),eq(Action.SELL),eq(false),any());assertFalse(busy.contains(owner));}
  @Test void ambiguousPaymentKeepsClaimForReconciliation()throws Exception{claim(Action.SELL);when(shop.deposit(player,100)).thenThrow(new RuntimeException("injected uncertain provider outcome"));invoke("sell",FishTankProtocol.Request.sell(fish.id(),100,13));verify(tank,never()).finish(any(),anyList(),any(Action.class),anyBoolean(),any());}
  @Test void quitDoesNotUnlockAnInflightRequestBeforeItsCallback(){bridge.quit(new PlayerQuitEvent(player,""));assertTrue(busy.contains(owner));}
+
+ void missingItemRows(){doAnswer(i->{Consumer<Map<String,Fish>> done=i.getArgument(1);done.accept(Map.of());return null;}).when(tank).itemInfo(anyCollection(),any());}
+ @Test void preDatabaseAdminGiftWithMetadataKeepsIdentitySizeAndDate()throws Exception{
+  var legacy=new Fish(fish.id(),fish.fish(),fish.size(),fish.caughtAt(),"");
+  when(gear.heldFish(item)).thenReturn(new FishingGear.HeldFish(legacy.fish(),(float)legacy.size(),legacy.id(),legacy.caughtAt(),""));
+  missingItemRows();putOutcome(Put.OK);invoke("insert",FishTankProtocol.Request.insert(2,fish.id(),11));
+  var order=inOrder(tank,inventory);order.verify(tank).put(eq(owner),eq(legacy),any());order.verify(inventory).setItem(2,null);
+ }
+ @Test void idOnlyUnknownItemWithNoTokenCannotUseLegacyFallback()throws Exception{
+  when(gear.heldFish(item)).thenReturn(new FishingGear.HeldFish(fish.fish(),0,fish.id(),0,""));missingItemRows();
+  invoke("insert",FishTankProtocol.Request.insert(2,fish.id(),11));verify(tank,never()).put(any(),any(),any());verify(inventory,never()).setItem(anyInt(),any());
+ }
+ @Test void withdrawnItemWithUnknownRowAndOldTokenCannotUseLegacyFallback()throws Exception{
+  when(gear.heldFish(item)).thenReturn(new FishingGear.HeldFish(fish.fish(),(float)fish.size(),fish.id(),fish.caughtAt(),"old-withdrawal-token"));missingItemRows();
+  invoke("insert",FishTankProtocol.Request.insert(2,fish.id(),11));verify(tank,never()).put(any(),any(),any());verify(inventory,never()).setItem(anyInt(),any());
+ }
+ @Test void existingRowWithDifferentTokenNeverFallsBackToLegacyMetadata()throws Exception{
+  when(gear.heldFish(item)).thenReturn(new FishingGear.HeldFish(fish.fish(),(float)fish.size(),fish.id(),fish.caughtAt(),""));
+  invoke("insert",FishTankProtocol.Request.insert(2,fish.id(),11));verify(tank,never()).put(any(),any(),any());verify(inventory,never()).setItem(anyInt(),any());
+ }
+ @Test void unknownLegacyIdWithoutCaughtDateCannotBeMigrated()throws Exception{
+  when(gear.heldFish(item)).thenReturn(new FishingGear.HeldFish(fish.fish(),(float)fish.size(),fish.id(),0,""));missingItemRows();
+  invoke("insert",FishTankProtocol.Request.insert(2,fish.id(),11));verify(tank,never()).put(any(),any(),any());
+ }
+ List<FishTankProtocol.Held> sentInventory(Map<String,Fish> rows)throws Exception{
+  field(bridge,"open",new HashSet<>(Set.of(owner)));when(tank.capacity()).thenReturn(100);
+  when(fishing.config().fishById.get(fish.fish()).name()).thenReturn("Test fish");
+  var m=FishTankBridge.class.getDeclaredMethod("send",Player.class,int.class,String.class,Map.class);m.setAccessible(true);m.invoke(bridge,player,FishTankProtocol.KIND_STATE,"",rows);
+  var bytes=org.mockito.ArgumentCaptor.forClass(byte[].class);verify(player).sendPluginMessage(any(),eq(FishTankProtocol.RESPONSE),bytes.capture());
+  return ((FishTankProtocol.State)FishTankProtocol.decode(bytes.getValue())).inventory();
+ }
+ @Test void tankInventoryListsPreDatabaseAdminGiftUsingItsOriginalMetadata()throws Exception{
+  when(gear.heldFish(item)).thenReturn(new FishingGear.HeldFish(fish.fish(),(float)fish.size(),fish.id(),fish.caughtAt(),""));
+  var held=sentInventory(Map.of());assertEquals(1,held.size());assertEquals(fish.id(),held.getFirst().id());assertEquals((float)fish.size(),held.getFirst().size());assertEquals(fish.caughtAt(),held.getFirst().caughtAt());
+ }
+ @Test void tankInventoryHidesUnknownIdOnlyItemsAndWithdrawnTokens()throws Exception{
+  when(gear.heldFish(item)).thenReturn(new FishingGear.HeldFish(fish.fish(),0,fish.id(),0,""));
+  var stale=mock(ItemStack.class);when(inventory.getItem(3)).thenReturn(stale);when(gear.heldFish(stale)).thenReturn(new FishingGear.HeldFish(fish.fish(),(float)fish.size(),UUID.randomUUID().toString(),fish.caughtAt(),"old-withdrawal-token"));
+  assertTrue(sentInventory(Map.of()).isEmpty());
+ }
 }

@@ -90,7 +90,10 @@ final class FishTankBridge implements PluginMessageListener, Listener {
             var def = config.fishById.get(h.fish());
             if (def == null || !h.tankId().isEmpty() && !FishTankProtocol.validTankId(h.tankId())) continue;
             var row=items.get(h.tankId());
-            if(!h.tankId().isEmpty()&&(row==null||!row.token().equals(h.token())||!row.fish().equals(h.fish())))continue;
+            if(!h.tankId().isEmpty()){
+                if(row==null){if(!legacyMetadata(h))continue;}
+                else if(!row.token().equals(h.token())||!row.fish().equals(h.fish()))continue;
+            }
             if(row==null&&(!Float.isFinite(h.size())||h.size()<=0))continue;
             held.add(new Held(slot,h.tankId(),def.id(),row==null?h.size():(float)row.size(),row==null?h.caughtAt():row.caughtAt()));
             species.computeIfAbsent(def.id(), k -> info(def));
@@ -99,6 +102,11 @@ final class FishTankBridge implements PluginMessageListener, Listener {
             p.sendPluginMessage(plugin, FishTankProtocol.RESPONSE, FishTankProtocol.encode(new State(kind, fishing.tank().capacity(), inv.firstEmpty() < 0,
                     fish, held, List.copyOf(species.values()), cut(notice))));
         } catch (IllegalArgumentException e) { plugin.getLogger().warning("통발 수조 패킷 실패: " + e.getMessage()); }
+    }
+    /** Pre-DB admin gifts already had an identity, positive size/date, and no withdrawal token. */
+    private static boolean legacyMetadata(FishingGear.HeldFish held){
+        return !held.tankId().isEmpty()&&FishTankProtocol.validTankId(held.tankId())&&held.token().isEmpty()
+                &&Float.isFinite(held.size())&&held.size()>0&&held.caughtAt()>0;
     }
     private static Info info(FishingConfig.Fish f) {
         String d = f.description() == null ? "" : f.description();
@@ -210,7 +218,13 @@ final class FishTankBridge implements PluginMessageListener, Listener {
             var held=h;int lookupSlot=slot;
             fishing.tank().itemInfo(List.of(h.tankId()),items->{
                 var row=items.get(held.tankId());
-                if(row==null||!row.fish().equals(held.fish())||!row.token().equals(held.token())){done(p,r,false,"Invalid or already processed fish item.");return;}
+                if(row==null){
+                    if(!legacyMetadata(held)){done(p,r,false,"Invalid or already processed fish item.");return;}
+                    // SQL.put remains authoritative: an existing SOLD/RELEASED/withdrawn identity is never minted again.
+                    commitInsert(p,r,lookupSlot,new FishTank.Fish(held.tankId(),def.id(),Math.round(held.size()*10)/10.0,held.caughtAt(),""));
+                    return;
+                }
+                if(!row.fish().equals(held.fish())||!row.token().equals(held.token())){done(p,r,false,"Invalid or already processed fish item.");return;}
                 commitInsert(p,r,lookupSlot,new FishTank.Fish(row.id(),row.fish(),row.size(),row.caughtAt(),held.token()));
             });return;
         }
