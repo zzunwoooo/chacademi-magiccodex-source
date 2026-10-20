@@ -128,6 +128,7 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
         if (o != null) return o;
         return gradeBase[f.grade()] * (special(f) ? specialBonus : 1);
     }
+    boolean ready() { return economy() != null; }
     long price(FishTank.Fish fish) {
         var f = fishing.config().fishById.get(fish.fish());
         if (f == null) return 0;
@@ -233,7 +234,7 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
                 }
                 if (!paid) {
                     plugin.getLogger().severe("FISH SHOP PAY FAILED player=" + id + " total=" + total + " fish=" + removed.size() + " -> returning fish to the tank");
-                    for (var f : removed) fishing.tank().add(id, f.fish(), f.size());
+                    for (var f : removed) fishing.tank().put(id, f, null);
                     busy.remove(id);
                     result(p, r.operation(), false, 0, 0, "돈을 지급하지 못해서 물고기를 돌려놨어요. 관리자에게 알려 주세요.");
                     send(p, FishShopProtocol.KIND_STATE, "");
@@ -262,7 +263,7 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
             }
         return null;
     }
-    private String balance(Player p) {
+    String balance(Player p) {
         try {
             var e = economy();
             if (e == null) return "";
@@ -270,7 +271,7 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
             return BigDecimal.valueOf(v).stripTrailingZeros().toPlainString();
         } catch (Exception ex) { return ""; }
     }
-    private boolean deposit(Player p, long amount) throws Exception {
+    boolean deposit(Player p, long amount) throws Exception {
         var e = economy();
         if (e == null) return false;
         Object result = e.type.getMethod("depositPlayer", OfflinePlayer.class, double.class).invoke(e.provider, p, (double) amount);

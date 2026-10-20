@@ -24,7 +24,7 @@ import school.magiccodex.protocol.FishingProtocol.Piece;
  */
 final class FishingGear {
     static final int[] GRADE_RGB = {0xDCE3EA, 0x71E5F2, 0xD2A8FF, 0xFFD582};
-    private final NamespacedKey kind, id, dur, fFloat, fFloatDur, fLine, fLineDur, fBait, fBaitCount, fish, size;
+    private final NamespacedKey kind, id, dur, fFloat, fFloatDur, fLine, fLineDur, fBait, fBaitCount, fish, size, tankId, caught;
     private FishingConfig config;
 
     /** One fitted piece: gear + durability (-1 = endless) or bait count (-1 = endless default). fallback = not a real item. */
@@ -41,6 +41,7 @@ final class FishingGear {
         fLine = new NamespacedKey(plugin, "fishing_line"); fLineDur = new NamespacedKey(plugin, "fishing_line_dur");
         fBait = new NamespacedKey(plugin, "fishing_bait"); fBaitCount = new NamespacedKey(plugin, "fishing_bait_count");
         fish = new NamespacedKey(plugin, "fishing_fish"); size = new NamespacedKey(plugin, "fishing_size");
+        tankId = new NamespacedKey(plugin, "fishing_tank_id"); caught = new NamespacedKey(plugin, "fishing_caught");
     }
     void config(FishingConfig c) { config = c; }
 
@@ -178,7 +179,13 @@ final class FishingGear {
 
     // ------------------------------------------------------------------ fish items
 
-    ItemStack fish(FishingConfig.Fish f, float cm) {
+    /** A fresh fish item (admin give): it gets its own tank id now, so copies of it can never enter a tank twice. */
+    ItemStack fish(FishingConfig.Fish f, float cm) { return fish(f, cm, UUID.randomUUID().toString(), System.currentTimeMillis()); }
+    /**
+     * A fish item for one tank fish. It keeps the tank row id and the caught date (owner 2026-10-20: 개체 정보), so
+     * putting it back restores the same fish, and the id (the table's primary key) refuses a duplicated item.
+     */
+    ItemStack fish(FishingConfig.Fish f, float cm, String tank, long caughtAt) {
         Material base = Material.matchMaterial(f.item());
         if (base == null || !base.isItem()) base = Material.COD;
         var item = new ItemStack(base);
@@ -186,10 +193,14 @@ final class FishingGear {
         meta.displayName(plain(f.name(), GRADE_RGB[f.grade()]));
         meta.lore(List.of(plain(FishingProtocol.GRADE_LABELS[f.grade()] + " 물고기", GRADE_RGB[f.grade()]),
                 plain("크기 " + String.format(Locale.ROOT, "%.1f", cm) + "cm", 0xAFC2D6),
-                plain(f.description(), 0x8D9AAD)));
+                plain("잡은 날짜 " + new java.text.SimpleDateFormat("yyyy.MM.dd").format(new Date(caughtAt)), 0xAFC2D6),
+                plain(f.description(), 0x8D9AAD),
+                plain("통발 수조에 다시 넣을 수 있어요 (판매소에서는 팔 수 없어요)", 0x7E8BA0)));
         var pdc = meta.getPersistentDataContainer();
         pdc.set(fish, PersistentDataType.STRING, f.id());
         pdc.set(size, PersistentDataType.FLOAT, cm);
+        pdc.set(tankId, PersistentDataType.STRING, tank);
+        pdc.set(caught, PersistentDataType.LONG, caughtAt);
         if (config.fishModels) meta.setItemModel(new NamespacedKey("magiccodex", "fishing/fish/" + f.id()));
         item.setItemMeta(meta);
         return item;
@@ -198,6 +209,18 @@ final class FishingGear {
     String fishOf(ItemStack item) {
         if (item == null || item.getItemMeta() == null) return null;
         return item.getItemMeta().getPersistentDataContainer().get(fish, PersistentDataType.STRING);
+    }
+    /** Fish item data: species, size, tank id ("" for old items), caught date (0 = unknown). Null when not a fish item. */
+    record HeldFish(String fish, float size, String tankId, long caughtAt) {}
+    HeldFish heldFish(ItemStack item) {
+        if (item == null || item.getAmount() < 1 || item.getItemMeta() == null) return null;
+        var pdc = item.getItemMeta().getPersistentDataContainer();
+        String f = pdc.get(fish, PersistentDataType.STRING);
+        if (f == null) return null;
+        Float cm = pdc.get(size, PersistentDataType.FLOAT);
+        String id = pdc.get(tankId, PersistentDataType.STRING);
+        Long at = pdc.get(caught, PersistentDataType.LONG);
+        return new HeldFish(f, cm == null ? 0 : cm, id == null ? "" : id, at == null ? 0 : at);
     }
 
     // ------------------------------------------------------------------ protocol

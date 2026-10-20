@@ -118,6 +118,45 @@ final class FishTank implements AutoCloseable {
         return f;
     }
 
+    enum Put { OK, DUPLICATE, FULL, FAILED }
+    /**
+     * Puts this exact fish (same row id) into the tank: a fish item going back in, or a sale that could not be paid.
+     * The id is the primary key, so a duplicated item can never become two fish. The capacity is checked again in the
+     * database (another server may have filled the tank). done (main thread, may be null) gets the outcome.
+     */
+    void put(UUID player, Fish f, Consumer<Put> done) {
+        int cap = capacity;
+        boolean checkCapacity = done != null;
+        io.execute(() -> {
+            Put out;
+            try {
+                int n = 0;
+                if (checkCapacity) try (var c = db().prepareStatement("SELECT COUNT(*) FROM codex_fish_tank WHERE uuid=?")) {
+                    c.setString(1, player.toString());
+                    try (var r = c.executeQuery()) { if (r.next()) n = r.getInt(1); }
+                }
+                if (checkCapacity && n >= cap) out = Put.FULL;
+                else try (var p = db().prepareStatement("INSERT INTO codex_fish_tank(id,uuid,fish,size,caught_at) VALUES(?,?,?,?,?)")) {
+                    p.setString(1, f.id()); p.setString(2, player.toString()); p.setString(3, f.fish()); p.setDouble(4, f.size()); p.setLong(5, f.caughtAt());
+                    p.executeUpdate();
+                    out = Put.OK;
+                }
+            } catch (java.sql.SQLException e) {
+                String state = e.getSQLState();
+                String text = String.valueOf(e.getMessage()).toLowerCase(Locale.ROOT);
+                boolean dup = e instanceof java.sql.SQLIntegrityConstraintViolationException || state != null && state.startsWith("23")
+                        || text.contains("constraint") || text.contains("duplicate");   // xerial SQLite: SQLITE_CONSTRAINT, no SQL state
+                out = dup ? Put.DUPLICATE : Put.FAILED;
+                if (out == Put.FAILED) plugin.getLogger().severe("통발 수조 넣기 실패 " + player + " " + f + ": " + e.getMessage());
+            } catch (Exception e) { out = Put.FAILED; plugin.getLogger().severe("통발 수조 넣기 실패 " + player + " " + f + ": " + e.getMessage()); }
+            Put result = out;
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                if (result == Put.OK) { var t = tank(player); t.fish.removeIf(x -> x.id().equals(f.id())); t.fish.add(f); }
+                if (done != null) done.accept(result);
+            });
+        });
+    }
+
     /**
      * Removes these fish; done gets only the ones that were really still in the database (main thread).
      * Used by selling and taking out, so a fish is never paid or given twice.

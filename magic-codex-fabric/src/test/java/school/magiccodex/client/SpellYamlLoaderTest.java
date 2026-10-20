@@ -90,15 +90,15 @@ class SpellYamlLoaderTest {
     @Test void finalCatalogLoads329WithApprovedSharedSlotsAndPreservedIdentity() {
         var result=loader.load(Path.of("src/main/resources/assets/magiccodex/default-spells"));
         assertTrue(result.success(),result.errors().toString());
-        assertEquals(329,result.spells().size());
+        assertEquals(330,result.spells().size());
         var shared=java.util.Map.of(
                 203,java.util.Set.of("air_brake","landing_airbrake"),210,java.util.Set.of("wind_performance","hushed_soles"),
                 211,java.util.Set.of("draft_closer","thorn_manners"),212,java.util.Set.of("air_compass","cinder_skipring"),
                 213,java.util.Set.of("experience_confluence","droplet_relay"),214,java.util.Set.of("melody_bottle","folding_tideplane"));
         var slots=result.spells().stream().collect(java.util.stream.Collectors.groupingBy(CodexData.Spell::order,
                 java.util.stream.Collectors.mapping(CodexData.Spell::id,java.util.stream.Collectors.toSet())));
-        assertEquals(323,slots.size());assertEquals(329,result.spells().stream().map(CodexData.Spell::id).distinct().count());
-        for(int order=1;order<=323;order++){
+        assertEquals(324,slots.size());assertEquals(330,result.spells().stream().map(CodexData.Spell::id).distinct().count());
+        for(int order=1;order<=324;order++){
             assertTrue(slots.containsKey(order),"missing preserved slot "+order);
             if(shared.containsKey(order))assertEquals(shared.get(order),slots.get(order));else assertEquals(1,slots.get(order).size());
         }
@@ -180,7 +180,7 @@ class SpellYamlLoaderTest {
         loader.installDefaults(spells);
         var result = loader.load(spells);
         assertTrue(result.success(), result.errors().toString());
-        assertEquals(329, result.spells().size());
+        assertEquals(330, result.spells().size());
         assertTrue(result.spells().stream().noneMatch(CodexData.Spell::permissionKnown));
         Files.writeString(spells.resolve("001_feather_fall.yml"), "user contents");
         Files.delete(spells.resolve("002_wind_basket.yml"));

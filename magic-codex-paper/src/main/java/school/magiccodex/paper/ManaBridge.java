@@ -17,6 +17,8 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
     final ManaService mana;
     private ManaSpells spells;
     java.util.function.Consumer<Player> windCast;
+    /** 통발 (fish_trap, 2026-10-20): opens the tank window; false = not opened, no mana spent. */
+    java.util.function.Predicate<Player> fishTrapCast;
     Response castWindForFriend(Player p){var result=cast(p,0,spells.byId.get("wind_message"),()->true);send(p,result);return result;}
     List<String> discoveryPermissions(){var result=new ArrayList<>(spells.discoveryPermissions);if(!result.contains("magiccodex.taming"))result.add("magiccodex.taming");return List.copyOf(result);}
     private ManaExpansion expansion;private boolean expansionRegistered;
@@ -127,6 +129,7 @@ final class ManaBridge implements Listener,PluginMessageListener,CommandExecutor
                     if(Boolean.FALSE.equals(visual))return false;
                     windCast.accept(p);return true;
                 }
+                if(spell.id().equals("fish_trap"))return fishTrapCast!=null&&fishTrapCast.test(p);
                 Boolean handled=plugin.runtimeCast(p,spell.id());
                 if(handled!=null)return handled;
                 String label=spell.command().split("\\s+",2)[0];

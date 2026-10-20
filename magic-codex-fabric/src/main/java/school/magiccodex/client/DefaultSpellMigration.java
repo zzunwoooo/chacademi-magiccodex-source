@@ -7,7 +7,7 @@ import java.util.*;
 
 /** Updates only recognized shipped defaults. Local edits and extra files remain untouched. */
 final class DefaultSpellMigration {
-    static final String VERSION="spells-101-214-arcana-20261019-v2";
+    static final String VERSION="spells-fish-trap-20261020";
     private static final String ROOT="/assets/magiccodex/default-spells/";
     private static final Set<String> ARCANA_IDS=Set.of("shadow_double","echo_reading","sealing_thread","shadow_exchange","forbidden_contract","life_siphon","drowsiness","misfortune_whisper","hungry_shadow","curse_transfer","discord","night_chain","pain_deferral","black_harvest","ink_fingertip","shadow_nail","night_lullaby","loosen_grasp","healing_seal","shadow_scales","warning_thread","wound_accounting","inverted_offering","ghost_tool","bell_of_fear","eclipse_eye","void_maw","landing_airbrake","hushed_soles","thorn_manners","cinder_skipring","droplet_relay","folding_tideplane");
     static boolean managedHistoryName(String name){

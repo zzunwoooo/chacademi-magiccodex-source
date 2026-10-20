@@ -100,6 +100,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private AlchemyBridge alchemy;
     private FishingBridge fishing;
     private FishShopBridge fishShop;
+    private FishTankBridge fishTank;
     private ArtifactEffects artifactEffects;
     private PartyRoster partyRoster;
     /** Party membership pushed by Velocity (also a Bukkit service). Null before enable. */
@@ -193,6 +194,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         try{alchemy=new AlchemyBridge(this);}catch(Exception error){getLogger().severe("연금술 초기화 실패 (alchemy.yml 확인): "+error.getMessage());}
         try{fishing=new FishingBridge(this);}catch(Exception error){getLogger().severe("낚시 초기화 실패 (fishing*.yml 확인): "+error.getMessage());}
         if(fishing!=null)try{fishShop=new FishShopBridge(this,fishing);}catch(Exception error){getLogger().severe("물고기 판매소 초기화 실패 (fish-shop.yml 확인): "+error.getMessage());}
+        if(fishing!=null){fishTank=new FishTankBridge(this,fishing,fishShop);fishing.tankWindow(fishTank);if(mana!=null)mana.fishTrapCast=fishTank::cast;}
         new AdminCommandBridge(this,mana,school,enhancement,appraisal,titles,npcSocial);
         getLogger().info("권한 연동 준비 완료. 활성 도감만 조회, 작업당 최대 " + budget + "회, 보조 확인 " + refresh / 1000 + "초.");
     }
@@ -251,6 +253,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     @EventHandler public void onWorldChange(PlayerChangedWorldEvent event) { markDirty(event.getPlayer().getUniqueId()); }
     @Override public void onDisable() {
         if(alchemy!=null){alchemy.close();alchemy=null;}
+        if(fishTank!=null){fishTank.close();fishTank=null;}
         if(fishShop!=null){fishShop.close();fishShop=null;}
         if(fishing!=null){fishing.close();fishing=null;}
         if(shopAdmin!=null)shopAdmin.close(); if(shops!=null)shops.close(); if(mailbox!=null)mailbox.close();

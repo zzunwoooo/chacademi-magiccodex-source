@@ -84,14 +84,21 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         plugin.getLogger().info("낚시: 물고기 " + config.fish.size() + "종, 장비 " + config.gear.stream().mapToInt(Map::size).sum() + "종");
     }
 
+    private FishTankBridge tankWindow;
+    void tankWindow(FishTankBridge w) { tankWindow = w; }
     FishTank tank() { return tank; }
+    /** A line is in the water (cast, sinking or a fish on it): the 통발 window waits until it is done. */
+    boolean fishingNow(UUID player) {
+        var s = sessions.get(player);
+        return s != null && !s.preview && (s.state == SINKING || s.state == BITING || s.state == LANDING && s.hook != null);
+    }
     FishingConfig config() { return config; }
     FishingGear gear() { return gear; }
 
     /** A fish item (taken out of the tank) for this tank row, or null when the species no longer exists. */
     ItemStack fishItem(FishTank.Fish f) {
         var def = config.fishById.get(f.fish());
-        return def == null ? null : gear.fish(def, (float) f.size());
+        return def == null ? null : gear.fish(def, (float) f.size(), f.id(), f.caughtAt());
     }
 
     void close() {
@@ -505,7 +512,7 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
     }
 
     /** Inventory first, the rest by mail (else at the feet). Returns true when something went to the mailbox. */
-    private boolean give(Player p, List<ItemStack> items, String source) {
+    boolean give(Player p, List<ItemStack> items, String source) {
         var leftover = new ArrayList<ItemStack>();
         for (ItemStack it : items) leftover.addAll(p.getInventory().addItem(it.clone()).values());
         if (leftover.isEmpty()) return false;
@@ -725,7 +732,7 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
             openCodex(target);
             return true;
         }
-        if (args.length == 0) { sender.sendMessage("§e/낚시관리 리로드 | 장비지급 <플레이어> <장비ID> [개수] | 물고기지급 <플레이어> <물고기ID> [cm] | 도감초기화 <플레이어> | 미리보기 [민물|바다|얼음|동굴]"); return true; }
+        if (args.length == 0) { sender.sendMessage("§e/낚시관리 리로드 | 장비지급 <플레이어> <장비ID> [개수] | 물고기지급 <플레이어> <물고기ID> [cm] | 도감초기화 <플레이어> | 미리보기 [민물|바다|얼음|동굴] | 수조 [플레이어]"); return true; }
         switch (args[0]) {
             case "리로드" -> {
                 try {
@@ -746,6 +753,12 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
                 else for (int i = 0; i < Math.clamp(n, 1, 36); i++) items.add(gear.create(g, -1, 1));
                 give(t, items, "fishing-admin:" + UUID.randomUUID());
                 sender.sendMessage("§a" + t.getName() + " 에게 " + g.name() + " 지급");
+            }
+            case "수조" -> {
+                Player t = args.length > 1 ? Bukkit.getPlayerExact(args[1]) : sender instanceof Player self ? self : null;
+                if (t == null || tankWindow == null) { sender.sendMessage("§c플레이어를 찾지 못했습니다."); return true; }
+                if (!FishTankBridge.modded(t)) { sender.sendMessage("§c" + t.getName() + " 은(는) 모드가 없어서 수조 창을 열 수 없습니다."); return true; }
+                tankWindow.open(t);
             }
             case "물고기지급" -> {
                 if (args.length < 3) { sender.sendMessage("§e/낚시관리 물고기지급 <플레이어> <물고기ID> [cm]"); return true; }
@@ -781,8 +794,8 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
 
     @Override public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equals("낚시도감")) return args.length == 1 && sender.hasPermission("magiccodex.fishing.admin") ? null : List.of();
-        if (args.length == 1) return filter(List.of("리로드", "장비지급", "물고기지급", "도감초기화", "미리보기"), args[0]);
-        if (args.length == 2 && List.of("장비지급", "물고기지급", "도감초기화").contains(args[0])) return null;
+        if (args.length == 1) return filter(List.of("리로드", "장비지급", "물고기지급", "도감초기화", "미리보기", "수조"), args[0]);
+        if (args.length == 2 && List.of("장비지급", "물고기지급", "도감초기화", "수조").contains(args[0])) return null;
         if (args.length == 2 && args[0].equals("미리보기")) return filter(List.of("민물", "바다", "얼음", "동굴"), args[1]);
         if (args.length == 3 && args[0].equals("장비지급")) { var ids = new ArrayList<String>(); for (var m : config.gear) ids.addAll(m.keySet()); return filter(ids, args[2]); }
         if (args.length == 3 && args[0].equals("물고기지급")) return filter(new ArrayList<>(config.fishById.keySet()), args[2]);
