@@ -7893,3 +7893,232 @@ bindings:
       delay-ticks: 0
       duration-ticks: 22
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  # ---- 239~250 던전 기믹 마법 (magic-mythic-paper/tools/gimmick_spells.py) ----
+  thawing_heat:
+    folder: ThawingHeat
+    number: 239
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 80
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:thawingheat/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 60
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  steam_ignition:
+    folder: SteamIgnition
+    number: 240
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 136
+    sequence:
+      sustainStart: 0
+    holdTicks: 36
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:steamignition/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  water_level:
+    folder: WaterLevel
+    number: 241
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 136
+    sequence:
+      sustainStart: 0
+    holdTicks: 36
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:waterlevel/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  stone_weight:
+    folder: StoneWeight
+    number: 242
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 136
+    sequence:
+      sustainStart: 0
+    holdTicks: 36
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:stoneweight/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  vine_awaken:
+    folder: VineAwaken
+    number: 243
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 136
+    sequence:
+      sustainStart: 0
+    holdTicks: 36
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:vineawaken/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  light_beam:
+    folder: LightBeam
+    number: 244
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 80
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:lightbeam/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 60
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  mirror_tune:
+    folder: MirrorTune
+    number: 245
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 134
+    sequence:
+      sustainStart: 0
+    holdTicks: 34
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:mirrortune/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  prism_tint:
+    folder: PrismTint
+    number: 246
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 134
+    sequence:
+      sustainStart: 0
+    holdTicks: 34
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:prismtint/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  statue_wake:
+    folder: StatueWake
+    number: 247
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 136
+    sequence:
+      sustainStart: 0
+    holdTicks: 36
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:statuewake/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  rewind:
+    folder: Rewind
+    number: 248
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 136
+    sequence:
+      sustainStart: 0
+    holdTicks: 36
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:rewind/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  conduit_turn:
+    folder: ConduitTurn
+    number: 249
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 134
+    sequence:
+      sustainStart: 0
+    holdTicks: 34
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:conduitturn/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  dimension_mark:
+    folder: DimensionMark
+    number: 250
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 136
+    sequence:
+      sustainStart: 0
+    holdTicks: 36
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:dimensionmark/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick

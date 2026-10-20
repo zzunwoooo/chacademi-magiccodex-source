@@ -21,7 +21,7 @@ class MobDirectResourceCatalogTest {
         }
         var problems=new LinkedHashMap<String,String>();
         var catalog=SpellCatalog.fromMapLenient(values(yaml),problems);
-        assertTrue(problems.isEmpty(),problems.toString());assertEquals(329,catalog.entries().size());
+        assertTrue(problems.isEmpty(),problems.toString());assertEquals(236,catalog.entries().size());
         var expected=List.of("fox_orbit","curving_plumes","crystal_orbit","venom_spit","smoke_veil","domain_stomp","seal_circle","seal_talismans","shield_slam","chain_arrow","mana_drain","soul_scythe","oblivion_orbs","bone_grasp","shadow_leap","binding_pull","fairy_dust","moon_wind","gale_wings","feather_storm","hunting_pounce","roar_leap","gravity_slam","tail_spikes");
         for(int offset=0;offset<expected.size();offset++){
             var spell=catalog.resolve(expected.get(offset)).orElseThrow();

@@ -19,6 +19,9 @@ class DonationCatalogTest {
 
     private static final Set<String> UNPRICED_ARCANA=Set.of("landing_airbrake","hushed_soles","thorn_manners","cinder_skipring","droplet_relay","folding_tideplane");
 
+    // Gimmick acquisition and donation prices are not approved; do not invent them.
+    private static final Set<String> UNPRICED_GIMMICKS=Set.of("thawing_heat","steam_ignition","water_level","stone_weight","vine_awaken","light_beam","mirror_tune","prism_tint","statue_wake","rewind","conduit_turn","dimension_mark");
+
     /** Every catalog id, enabled or not (ManaSpells.byId keeps only enabled spells). */
     private static Set<String> catalogIds()throws Exception{
         var y=new YamlConfiguration();y.load(Path.of("src/main/resources/mana-spells.yml").toFile());
@@ -35,7 +38,7 @@ class DonationCatalogTest {
         }
         assertTrue(all.containsAll(KILL_DISCOVERY_ONLY));
         for(String id:all){
-            if(id.equals("fish_trap")||KILL_DISCOVERY_ONLY.contains(id)||UNPRICED_ARCANA.contains(id))assertFalse(root.contains(id),"spell without an approved donation price must not acquire one: "+id);
+            if(id.equals("fish_trap")||KILL_DISCOVERY_ONLY.contains(id)||UNPRICED_ARCANA.contains(id)||UNPRICED_GIMMICKS.contains(id))assertFalse(root.contains(id),"spell without an approved donation price must not acquire one: "+id);
             else assertTrue(root.contains(id),"mana spell missing from donation catalog: "+id);
         }
         for(String retired:Set.of("feather_step","dampen_powder","handful_of_snow","wet_footprints","pressure_weight","cold_storage","liquid_barrier","water_rebound","thaw_pulse"))

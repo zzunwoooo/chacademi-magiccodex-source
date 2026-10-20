@@ -237,8 +237,8 @@ spells:
     name: "다시 타오르는 불"
     skill: "CHA_rekindle"
     target: "SELF"
-    range: 24
-    utility: true
+    range: 12
+    utility: false
     base-damage: 0
     power-ratio: 0
   ember_trap:
@@ -333,8 +333,8 @@ spells:
     name: "심지 줄이기"
     skill: "CHA_wick_trimming"
     target: "SELF"
-    range: 24
-    utility: true
+    range: 12
+    utility: false
     base-damage: 0
     power-ratio: 0
   charcoal_conversion:
@@ -1410,250 +1410,346 @@ spells:
     base-damage: 2
     power-ratio: 0.15
   shadow_double:
-    name: 그림자 분신
-    skill: CHA_shadow_double
-    target: SELF
+    name: "그림자 분신"
+    skill: "CHA_shadow_double"
+    target: "SELF"
     range: 12
     utility: false
     base-damage: 0
     power-ratio: 0
   echo_reading:
-    name: 잔향 읽기
-    skill: CHA_echo_reading
-    target: SELF
+    name: "잔향 읽기"
+    skill: "CHA_echo_reading"
+    target: "SELF"
     range: 6
     utility: false
     base-damage: 0
     power-ratio: 0
   sealing_thread:
-    name: 봉인의 실
-    skill: CHA_sealing_thread
-    target: SELF
+    name: "봉인의 실"
+    skill: "CHA_sealing_thread"
+    target: "SELF"
     range: 5
     utility: false
     base-damage: 0
     power-ratio: 0
   shadow_exchange:
-    name: 그림자 교환
-    skill: CHA_shadow_exchange
-    target: ENTITY
+    name: "그림자 교환"
+    skill: "CHA_shadow_exchange"
+    target: "ENTITY"
     range: 15
     utility: false
     base-damage: 0
     power-ratio: 0
   forbidden_contract:
-    name: 금서의 계약
-    skill: CHA_forbidden_contract
-    target: SELF
+    name: "금서의 계약"
+    skill: "CHA_forbidden_contract"
+    target: "SELF"
     range: 12
     utility: false
     base-damage: 0
     power-ratio: 0
   life_siphon:
-    name: 생명 갈취
-    skill: CHA_life_siphon
-    target: AIM
+    name: "생명 갈취"
+    skill: "CHA_life_siphon"
+    target: "AIM"
     range: 12
     utility: false
     base-damage: 2
     power-ratio: 0.15
   drowsiness:
-    name: 졸음
-    skill: CHA_drowsiness
-    target: AIM
+    name: "졸음"
+    skill: "CHA_drowsiness"
+    target: "AIM"
     range: 16
     utility: false
     base-damage: 0
     power-ratio: 0
   misfortune_whisper:
-    name: 나약함의 저주
-    skill: CHA_misfortune_whisper
-    target: ENTITY
+    name: "나약함의 저주"
+    skill: "CHA_misfortune_whisper"
+    target: "ENTITY"
     range: 12
     utility: false
     base-damage: 0
     power-ratio: 0
   curse_transfer:
-    name: 저주의 전가
-    skill: CHA_curse_transfer
-    target: ENTITY
+    name: "저주의 전가"
+    skill: "CHA_curse_transfer"
+    target: "ENTITY"
     range: 12
     utility: false
     base-damage: 0
     power-ratio: 0
   discord:
-    name: 마인드컨트롤
-    skill: CHA_discord
-    target: ENTITY
+    name: "마인드컨트롤"
+    skill: "CHA_discord"
+    target: "ENTITY"
     range: 12
     utility: false
     base-damage: 0
     power-ratio: 0
   night_chain:
-    name: 밤의 사슬
-    skill: CHA_night_chain
-    target: AIM
+    name: "밤의 사슬"
+    skill: "CHA_night_chain"
+    target: "AIM"
     range: 12
     utility: false
     base-damage: 0
     power-ratio: 0
   pain_deferral:
-    name: 고통 유예
-    skill: CHA_pain_deferral
-    target: SELF
+    name: "고통 유예"
+    skill: "CHA_pain_deferral"
+    target: "SELF"
     range: 12
     utility: false
     base-damage: 0
     power-ratio: 0
   black_harvest:
-    name: 검은 수확
-    skill: CHA_black_harvest
-    target: SELF
+    name: "검은 수확"
+    skill: "CHA_black_harvest"
+    target: "SELF"
     range: 5
     utility: false
     base-damage: 6
     power-ratio: 0.45
   ink_fingertip:
-    name: 먹물 손끝
-    skill: CHA_ink_fingertip
-    target: SELF
+    name: "먹물 손끝"
+    skill: "CHA_ink_fingertip"
+    target: "SELF"
     range: 12
     utility: false
     base-damage: 0
     power-ratio: 0
   shadow_nail:
-    name: 그림자 못
-    skill: CHA_shadow_nail
-    target: ENTITY
+    name: "그림자 못"
+    skill: "CHA_shadow_nail"
+    target: "ENTITY"
     range: 20
     utility: false
     base-damage: 12
     power-ratio: 0.8
   night_lullaby:
-    name: 밤의 자장가
-    skill: CHA_night_lullaby
-    target: SELF
+    name: "밤의 자장가"
+    skill: "CHA_night_lullaby"
+    target: "SELF"
     range: 16
     utility: false
     base-damage: 0
     power-ratio: 0
   loosen_grasp:
-    name: 손아귀 풀기
-    skill: CHA_loosen_grasp
-    target: ENTITY
+    name: "손아귀 풀기"
+    skill: "CHA_loosen_grasp"
+    target: "ENTITY"
     range: 12
     utility: false
     base-damage: 0
     power-ratio: 0
   healing_seal:
-    name: 회복 봉인
-    skill: CHA_healing_seal
-    target: ENTITY
+    name: "회복 봉인"
+    skill: "CHA_healing_seal"
+    target: "ENTITY"
     range: 12
     utility: false
     base-damage: 0
     power-ratio: 0
   shadow_scales:
-    name: 어둠의 저울
-    skill: CHA_shadow_scales
-    target: AIM
+    name: "어둠의 저울"
+    skill: "CHA_shadow_scales"
+    target: "AIM"
     range: 12
     utility: false
     base-damage: 6
     power-ratio: 0.45
   warning_thread:
-    name: 경고의 실
-    skill: CHA_warning_thread
-    target: AIM
+    name: "경고의 실"
+    skill: "CHA_warning_thread"
+    target: "AIM"
     range: 15
     utility: false
     base-damage: 0
     power-ratio: 0
   wound_accounting:
-    name: 상처 회계
-    skill: CHA_wound_accounting
-    target: ENTITY
+    name: "상처 회계"
+    skill: "CHA_wound_accounting"
+    target: "ENTITY"
     range: 20
     utility: false
     base-damage: 0
     power-ratio: 0
   ghost_tool:
-    name: 유령 도구
-    skill: CHA_ghost_tool
-    target: SELF
+    name: "유령 도구"
+    skill: "CHA_ghost_tool"
+    target: "SELF"
     range: 12
     utility: false
     base-damage: 0
     power-ratio: 0
   bell_of_fear:
-    name: 공포의 종
-    skill: CHA_bell_of_fear
-    target: SELF
+    name: "공포의 종"
+    skill: "CHA_bell_of_fear"
+    target: "SELF"
     range: 8
     utility: false
     base-damage: 0
     power-ratio: 0
   eclipse_eye:
-    name: 월식의 눈
-    skill: CHA_eclipse_eye
-    target: AIM
+    name: "월식의 눈"
+    skill: "CHA_eclipse_eye"
+    target: "AIM"
     range: 30
     utility: false
     base-damage: 3
     power-ratio: 0.2
   void_maw:
-    name: 공허의 입
-    skill: CHA_void_maw
-    target: AIM
+    name: "공허의 입"
+    skill: "CHA_void_maw"
+    target: "AIM"
     range: 16
     utility: false
     base-damage: 14
     power-ratio: 0.9
   landing_airbrake:
-    name: 빗자루 차원이동
-    skill: CHA_landing_airbrake
-    target: SELF
+    name: "빗자루 차원이동"
+    skill: "CHA_landing_airbrake"
+    target: "SELF"
     range: 12
     utility: false
     base-damage: 0
     power-ratio: 0
   hushed_soles:
-    name: 고요한 밑창
-    skill: CHA_hushed_soles
-    target: SELF
+    name: "고요한 밑창"
+    skill: "CHA_hushed_soles"
+    target: "SELF"
     range: 12
     utility: false
     base-damage: 0
     power-ratio: 0
   thorn_manners:
-    name: 가시의 예절
-    skill: CHA_thorn_manners
-    target: SELF
+    name: "가시의 예절"
+    skill: "CHA_thorn_manners"
+    target: "SELF"
     range: 12
     utility: false
     base-damage: 0
     power-ratio: 0
   cinder_skipring:
-    name: 불꽃 줄넘기
-    skill: CHA_cinder_skipring
-    target: SELF
+    name: "불꽃 줄넘기"
+    skill: "CHA_cinder_skipring"
+    target: "SELF"
     range: 7
     utility: false
     base-damage: 0
     power-ratio: 0
   droplet_relay:
-    name: 물방울 인계
-    skill: CHA_droplet_relay
-    target: AIM
+    name: "물방울 인계"
+    skill: "CHA_droplet_relay"
+    target: "AIM"
     range: 10
     utility: false
     base-damage: 4
     power-ratio: 0.3
   folding_tideplane:
-    name: 접히는 수면
-    skill: CHA_folding_tideplane
-    target: AIM
+    name: "접히는 수면"
+    skill: "CHA_folding_tideplane"
+    target: "AIM"
     range: 10
     utility: false
     base-damage: 5
     power-ratio: 0.4
+  thawing_heat:
+    name: "해빙의 열기"
+    skill: "CHA_thawing_heat"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  steam_ignition:
+    name: "증기 점화"
+    skill: "CHA_steam_ignition"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  water_level:
+    name: "수위 조절"
+    skill: "CHA_water_level"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  stone_weight:
+    name: "무게추"
+    skill: "CHA_stone_weight"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  vine_awaken:
+    name: "덩굴 깨우기"
+    skill: "CHA_vine_awaken"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  light_beam:
+    name: "빛줄기"
+    skill: "CHA_light_beam"
+    target: "SELF"
+    range: 32
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  mirror_tune:
+    name: "반사 조율"
+    skill: "CHA_mirror_tune"
+    target: "SELF"
+    range: 20
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  prism_tint:
+    name: "프리즘 물들이기"
+    skill: "CHA_prism_tint"
+    target: "SELF"
+    range: 20
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  statue_wake:
+    name: "석상 깨우기"
+    skill: "CHA_statue_wake"
+    target: "SELF"
+    range: 16
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  rewind:
+    name: "되감기"
+    skill: "CHA_rewind"
+    target: "SELF"
+    range: 16
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  conduit_turn:
+    name: "도관 회전"
+    skill: "CHA_conduit_turn"
+    target: "SELF"
+    range: 16
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  dimension_mark:
+    name: "차원 표식"
+    skill: "CHA_dimension_mark"
+    target: "SELF"
+    range: 24
+    utility: false
+    base-damage: 0
+    power-ratio: 0

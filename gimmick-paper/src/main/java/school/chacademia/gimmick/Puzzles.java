@@ -117,10 +117,35 @@ final class Puzzles {
         var restored=new PuzzleEngine(e.def(),new Effects(g.puzzle));restored.load(before);engines.put(g.puzzle,restored);
         while(pendingEffects.size()>effectsBefore)pendingEffects.removeLast();return false;
     }
-    void standing(String puzzle, String node, boolean standing, Player who) {
-        if(standing&&!allowed(puzzle,who))return;
+    void standing(String puzzle, String node, boolean standing, Player who) { held(puzzle, node, "stand", standing, who); }
+
+    /** puzzle:node:key -> last value, for rising-edge triggers of continuous inputs. */
+    private final Map<String, Boolean> heldInputs = new HashMap<>();
+    /**
+     * Continuous input (stand, mana, light, water): `while: [key]` nodes follow it; `turn-on` / `toggle` nodes get one trigger
+     * when it starts. Key "state" = device condition (level / position / facing) matched.
+     */
+    void held(String puzzle, String node, String key, boolean on, Player who) {
+        if (on && !allowed(puzzle, who)) return;
         var e = engines.get(puzzle);
-        if (e != null) e.standing(node, standing, who == null ? null : who.getName(), tick);
+        if (e == null) return;
+        Boolean before = heldInputs.put(puzzle + ":" + node + ":" + key, on);
+        String name = who == null ? null : who.getName();
+        boolean wasOn = e.on(node);
+        e.held(node, key, on, name, tick);
+        // rising edge; an input already present when the server starts (first 5 s) is a state, not an event (no timed door opening at boot)
+        boolean first = before == null;
+        if (on && !Boolean.TRUE.equals(before) && !key.equals("state") && !(first && (tick < 100 || wasOn))) e.trigger(node, key, name, tick);
+    }
+    /** Re-check a device condition (water level, mirror/dial position, statue facing) after the device changed. */
+    void deviceChanged(Gimmick g) {
+        if (!g.inPuzzle()) return;
+        var d = node(g.puzzle, g.node);
+        if (d == null || !d.device().condition()) return;
+        var dev = d.device();
+        boolean match = (dev.level() == null || dev.level() == g.level) && (dev.position() == null || dev.position() == g.pos)
+            && (dev.facing() == null || dev.facing() == g.facing);
+        held(g.puzzle, g.node, "state", match, null);
     }
     boolean force(String puzzle, String node, Boolean on, String who) {
         if(!allowed(puzzle,who==null?null:Bukkit.getPlayerExact(who)))return false;
@@ -133,6 +158,10 @@ final class Puzzles {
         var e = engines.get(puzzle);
         if (e == null) return false;
         e.reset();
+        heldInputs.keySet().removeIf(k -> k.startsWith(puzzle + ":"));
+        for (Gimmick g : plugin.world().all()) if (g.puzzle.equals(puzzle)) plugin.devices().reset(g);
+        for (Gimmick g : plugin.world().all()) if (g.puzzle.equals(puzzle)) deviceChanged(g); // devices keep their pose: re-check level/position/facing
+        plugin.mana().dirty();
         dirty = true;
         return true;
     }
@@ -157,7 +186,10 @@ final class Puzzles {
             for (Gimmick g : plugin.world().inNode(puzzle, node)) {
                 if (g.live()) plugin.world().transition(g, on, def.animOn(), def.animOff());
                 plugin.solids().refresh(g);
+                plugin.collision().refresh(g);
+                plugin.devices().nodeChanged(g, on);
             }
+            if (def.device().manaOut() || plugin.world().inNode(puzzle, node).stream().anyMatch(g -> plugin.catalog().get(g.model).is("conduit"))) plugin.mana().dirty();
             for (String cmd : on ? def.commandsOn() : def.commandsOff()) {
                 if (cmd.contains("{player}") && who == null) continue;
                 String line = cmd.replace("{player}", who == null ? "" : who).replace("{puzzle}", puzzle).replace("{node}", node);

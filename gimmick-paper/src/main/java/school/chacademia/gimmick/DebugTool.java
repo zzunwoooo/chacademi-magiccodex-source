@@ -18,7 +18,7 @@ import org.bukkit.util.Vector;
  * Admin wand. Click a model (or look at it and click air) to select and edit it.
  *  right click = + / next      left click = - / previous
  *  sneak + right click = next mode      sneak + left click = previous mode
- * Modes: 정보, 회전, 크기, 이동(바라보는 방향 축), 높이, 애니메이션, 삭제
+ * Modes: 정보, 회전(90도), 크기, 이동(바라보는 방향 축으로 1칸), 높이(1칸), 애니메이션, 삭제
  */
 final class DebugTool implements Listener {
     enum Mode { INFO("정보"), ROTATE("회전"), SCALE("크기"), MOVE("이동"), HEIGHT("높이"), ANIM("애니메이션"), DELETE("삭제");
@@ -104,18 +104,26 @@ final class DebugTool implements Listener {
         switch (m) {
             case INFO -> { info(p, g); return; }
             case ROTATE -> {
-                g.yaw = (float) normalize(g.yaw + sign * cfg.getDouble("tool.rotate-degrees", 15));
-                if (g.attached()) { var l = g.location(); if (l != null) { var host = Bukkit.getEntity(g.host); if (host != null) host.setRotation(g.yaw, 0); } }
+                if (g.attached()) {
+                    g.yaw = (float) normalize(g.yaw + sign * 90);
+                    var host = Bukkit.getEntity(g.host); if (host != null) host.setRotation(g.yaw, 0);
+                } else {
+                    var info = plugin.catalog().get(g.model);
+                    int old = g.facing; g.facing = Math.floorMod(g.facing + sign, 4);
+                    if (blocked(p, g, info)) { g.facing = old; return; }
+                }
             }
             case SCALE -> g.scale = Math.clamp(Math.round((g.scale + sign * cfg.getDouble("tool.scale-step", 0.1)) * 1000) / 1000.0, 0.1, 8);
             case MOVE -> {
                 if (g.attached()) { bar(p, "몹에 씌운 모델은 이동할 수 없습니다."); return; }
-                Vector axis = axis(p.getLocation().getDirection()).multiply(sign * cfg.getDouble("tool.move-step", 0.25));
-                g.x += axis.getX(); g.z += axis.getZ();
+                Vector axis = axis(p.getLocation().getDirection()).multiply(sign);
+                g.bx += axis.getBlockX(); g.bz += axis.getBlockZ();
+                if (blocked(p, g, plugin.catalog().get(g.model))) { g.bx -= axis.getBlockX(); g.bz -= axis.getBlockZ(); return; }
             }
             case HEIGHT -> {
                 if (g.attached()) { bar(p, "몹에 씌운 모델은 이동할 수 없습니다."); return; }
-                g.y += sign * cfg.getDouble("tool.height-step", 0.125);
+                g.by += sign;
+                if (blocked(p, g, plugin.catalog().get(g.model))) { g.by -= sign; return; }
             }
             case ANIM -> { cycleAnim(p, g, sign); return; }
             case DELETE -> {
@@ -135,7 +143,17 @@ final class DebugTool implements Listener {
             }
         }
         plugin.world().transform(g);
-        bar(p, String.format(Locale.ROOT, "%s  %s  방향 %.0f°  크기 %.2f  위치 %.2f, %.2f, %.2f", m.label, g.id, g.yaw, g.scale, g.x, g.y, g.z));
+        bar(p, g.attached() ? String.format(Locale.ROOT, "%s  %s  방향 %.0f°  크기 %.2f", m.label, g.id, g.yaw, g.scale)
+            : String.format(Locale.ROOT, "%s  %s  방향 %s  크기 %.2f  블록 %d, %d, %d", m.label, g.id, FACING[g.facing], g.scale, g.bx, g.by, g.bz));
+    }
+    static final String[] FACING = {"남(0°)", "서(90°)", "북(180°)", "동(270°)"};
+
+    /** Another gimmick already takes one of the blocks (the grid is one model per block). */
+    boolean blocked(Player p, Gimmick g, ModelCatalog.Info info) {
+        Gimmick other = plugin.world().overlap(g.world, g.columns(info), g.by, g.layers(info), g);
+        if (other == null) return false;
+        bar(p, "그 자리에는 이미 다른 기믹(" + other.id + ")이 있습니다.");
+        return true;
     }
 
     private void cycleAnim(Player p, Gimmick g, int sign) {
@@ -151,8 +169,15 @@ final class DebugTool implements Listener {
         var info = plugin.catalog().get(g.model);
         String state = g.inPuzzle() ? (plugin.puzzles().isOn(g.puzzle, g.node) ? "켜짐" : "꺼짐") : "-";
         p.sendMessage(Component.text("[기믹] " + g.id + " " + info.name() + " (" + g.model + ")", NamedTextColor.GOLD));
-        p.sendMessage(Component.text(String.format(Locale.ROOT, " 위치 %s %.2f, %.2f, %.2f  방향 %.1f°  크기 %.2f%s",
-            g.attached() ? "(몹에 씌움)" : g.world, g.x, g.y, g.z, g.yaw, g.scale, ""), NamedTextColor.GRAY));
+        p.sendMessage(Component.text(g.attached() ? String.format(Locale.ROOT, " (몹에 씌움)  방향 %.0f°  크기 %.2f", g.yaw, g.scale)
+            : String.format(Locale.ROOT, " 블록 %s %d, %d, %d  방향 %s  크기 %.2f  차지 %dx%d칸 (%s)", g.world, g.bx, g.by, g.bz, FACING[g.facing], g.scale,
+                info.footW(), info.footD(), info.collision()), NamedTextColor.GRAY));
+        String dev = switch (info.kind()) {
+            case "mirror", "dial" -> "위치 " + g.pos; case "pillar" -> "수위 " + g.level; case "prism" -> "색 " + Colors.ko(g.color);
+            case "conduit" -> "포트 " + info.ports() + (plugin.mana().powered(g) ? "  마력 흐름" : "");
+            default -> plugin.mana().powered(g) ? "마력 받는 중" : "";
+        };
+        if (!dev.isEmpty()) p.sendMessage(Component.text(" 장치 " + dev, NamedTextColor.GRAY));
         p.sendMessage(Component.text(" 퍼즐 " + (g.puzzle.isEmpty() ? "-" : g.puzzle) + " / 노드 " + (g.node.isEmpty() ? "-" : g.node)
             + "  상태 " + state + "  재생 중 " + (g.lastAnim.isEmpty() ? "-" : g.lastAnim), NamedTextColor.GRAY));
     }

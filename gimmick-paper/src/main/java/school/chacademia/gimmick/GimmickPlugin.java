@@ -20,6 +20,12 @@ public final class GimmickPlugin extends JavaPlugin {
     private Puzzles puzzles;
     private Solids solids;
     private DebugTool tool;
+    private Collision collision;
+    private ManaGrid mana;
+    private Devices devices;
+    private Placer placer;
+    private final GimmickVfx vfx = new GimmickVfx(this);
+    private Object spellActions; // SpellActions when ChAcademiaMagicMythic is present (class not loaded otherwise)
 
     @Override public void onEnable() {
         saveDefaultConfig();
@@ -31,9 +37,15 @@ public final class GimmickPlugin extends JavaPlugin {
         puzzles = new Puzzles(this);
         solids = new Solids(this);
         tool = new DebugTool(this);
+        devices = new Devices(this);
+        collision = new Collision(this);
+        mana = new ManaGrid(this);
+        placer = new Placer(this);
         world.load();
         solids.load(world.all().stream().map(g -> g.id).collect(java.util.stream.Collectors.toSet()));
         puzzles.load().forEach(w -> getLogger().warning("퍼즐 설정: " + w));
+        world.applyOffsets();
+        collision.load();
 
         initialized=true;
         var pm = getServer().getPluginManager();
@@ -41,8 +53,10 @@ public final class GimmickPlugin extends JavaPlugin {
         pm.registerEvents(solids, this);
         pm.registerEvents(new Inputs(this), this);
         pm.registerEvents(tool, this);
+        pm.registerEvents(collision, this);
+        pm.registerEvents(placer, this);
         if (pm.isPluginEnabled("ChAcademiaMagicMythic")) {
-            try { pm.registerEvents(new MagicHook(this), this); getLogger().info("마법 연동 켜짐 (ChAcademiaMagicMythic)"); }
+            try { var hook = new MagicHook(this); pm.registerEvents(hook, this); spellActions = hook.actions(); getLogger().info("마법 연동 켜짐 (ChAcademiaMagicMythic, 기믹 마법 239~250)"); }
             catch (LinkageError e) { getLogger().warning("마법 연동 실패: ChAcademiaMagicMythic 버전을 확인하세요 (" + e + ")"); }
         } else getLogger().info("ChAcademiaMagicMythic 이 없어 마법 연동은 꺼져 있습니다.");
 
@@ -50,13 +64,14 @@ public final class GimmickPlugin extends JavaPlugin {
         if (cmd != null) { var c = new GimmickCommand(this); cmd.setExecutor(c); cmd.setTabCompleter(c); }
 
         // ModelEngine loads blueprints a moment after start; spawn a little later.
-        Bukkit.getScheduler().runTaskLater(this, () -> world.spawnLoaded(), 40);
+        Bukkit.getScheduler().runTaskLater(this, () -> { world.spawnLoaded(); for (Gimmick g : world.all()) collision.refresh(g); mana.dirty(); }, 40);
         getLogger().info("기믹 " + world.all().size() + "개, 퍼즐 " + puzzles.ids().size() + "개, 렌더러 " + renderer.name()
             + (renderer.available() ? "" : " (사용 불가 - 플러그인 설치 확인)"));
     }
 
     @Override public void onDisable() {
         if(!initialized)return;
+        if (spellActions instanceof SpellActions a) a.shutdown();
         if (puzzles != null) puzzles.saveState(false);
         if (world != null) { world.despawnAll(); world.save(); }
     }
@@ -82,7 +97,11 @@ public final class GimmickPlugin extends JavaPlugin {
         catalog.load(new File(getDataFolder(), "models.yml"));
         renderer = pickRenderer();
         var warnings = puzzles.load();
+        world.applyOffsets();
+        vfx.reload();
         world.spawnLoaded();
+        for (Gimmick g : world.all()) collision.refresh(g);
+        mana.dirty();
         return warnings;
     }
 
@@ -94,4 +113,9 @@ public final class GimmickPlugin extends JavaPlugin {
     Puzzles puzzles() { return puzzles; }
     Solids solids() { return solids; }
     DebugTool tool() { return tool; }
+    Collision collision() { return collision; }
+    ManaGrid mana() { return mana; }
+    Devices devices() { return devices; }
+    Placer placer() { return placer; }
+    GimmickVfx vfx() { return vfx; }
 }

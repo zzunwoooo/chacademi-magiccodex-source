@@ -6,7 +6,10 @@ import java.util.*;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
@@ -36,6 +39,12 @@ final class Inputs implements Listener {
         if (plugin.tool().isTool(p.getInventory().getItemInMainHand())) { e.setCancelled(true); plugin.tool().use(p, g, true); return; }
         if (!g.inPuzzle()) return;
         e.setCancelled(true);
+        interact(p, g);
+    }
+
+    /** Right click on a gimmick (its model, its collision barrier, or from afar with 194 유령 도구). */
+    void interact(Player p, Gimmick g) {
+        if (!g.inPuzzle()) return;
         var node = plugin.puzzles().node(g.puzzle, g.node);
         if (node == null) return;
         // 1) item insert
@@ -49,8 +58,35 @@ final class Inputs implements Listener {
         }
         // 2) portal
         if (node.teleport() != null && plugin.puzzles().isOn(g.puzzle, g.node) && teleport(p, g.puzzle, node.teleport())) return;
-        // 3) plain interact
+        // 3) plain interact (levers can be undone with 248 되감기)
+        if (node.on().contains("interact") || node.off().contains("interact") || node.toggle().contains("interact")) plugin.devices().remember(g);
         plugin.puzzles().trigger(g, "interact", p);
+    }
+
+    /**
+     * Clicks that land on a gimmick's collision barrier (the client hits the block before the model) and right clicks
+     * from beyond normal reach while 194 유령 도구 raised the block reach.
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void blockClick(PlayerInteractEvent e) {
+        if (e.getHand() != EquipmentSlot.HAND) return;
+        Player p = e.getPlayer();
+        boolean right = e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR;
+        boolean left = e.getAction() == Action.LEFT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_AIR;
+        if (!right && !left) return;
+        Gimmick g = null;
+        var b = e.getClickedBlock();
+        if (b != null && plugin.collision().ours(b)) g = plugin.world().at(b.getWorld().getName(), b.getX(), b.getY(), b.getZ());
+        if (g == null && right && e.getAction() == Action.RIGHT_CLICK_AIR) {
+            var reach = p.getAttribute(Attribute.BLOCK_INTERACTION_RANGE);
+            double r = reach == null ? 4.5 : reach.getValue();
+            if (r > 6) { Gimmick far = plugin.world().looking(p, r); if (far != null && far.location() != null && far.location().distance(p.getEyeLocation()) > 3) g = far; }
+        }
+        if (g == null || !plugin.protection().pair(p, g.location())) return;
+        if (plugin.tool().isTool(p.getInventory().getItemInMainHand()) || plugin.placer().isItem(p.getInventory().getItemInMainHand())) return; // tool / placer handle it
+        e.setCancelled(true);
+        if (right) interact(p, g);
+        else if (!g.attached()) plugin.puzzles().trigger(g, "attack", p);
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -102,6 +138,37 @@ final class Inputs implements Listener {
         return true;
     }
 
+    /** Extra things that hold plates down (set by MagicHook: shadow doubles). */
+    static java.util.function.Supplier<List<Location>> extraStanders = List::of;
+
+    /** Gates linked by 250 차원 표식: walking in goes to the other gate. */
+    private void linkedGates() {
+        for (Gimmick g : plugin.world().all()) {
+            if (!g.live() || !plugin.catalog().get(g.model).is("gate")) continue;
+            Gimmick other = plugin.devices().linked(g);
+            if (other == null) continue;
+            Location l = g.location();
+            if (l == null) continue;
+            BoundingBox box = g.box(plugin.catalog().get(g.model));
+            for (Player p : l.getWorld().getPlayers()) {
+                if (p.getGameMode() == GameMode.SPECTATOR || !box.contains(p.getLocation().toVector()) || !plugin.protection().pair(p, l)) continue;
+                teleportTo(p, other);
+            }
+        }
+    }
+    private boolean teleportTo(Player p, Gimmick t) {
+        long now = plugin.puzzles().now();
+        if (teleportCooldown.getOrDefault(p.getUniqueId(), -1L) > now) return false;
+        Location to = t.location();
+        if (to == null || !plugin.protection().pair(p, to)) return false;
+        Vector f = t.forward().multiply(1.5);
+        to = to.clone().add(f.getX(), 0.1, f.getZ()); to.setY(t.by + 0.05); to.setYaw(t.yaw); to.setPitch(0);
+        if (!to.getBlock().isPassable() || !to.clone().add(0, 1, 0).getBlock().isPassable()) return false;
+        teleportCooldown.put(p.getUniqueId(), now + plugin.getConfig().getLong("teleport-cooldown-ticks", 60));
+        p.teleport(to);
+        return true;
+    }
+
     /** Pressure plates ("while: stand" / "turn-on: stand") and walk-in portals. */
     private void standCheck() {
         var seen = new HashMap<String, Player>();
@@ -125,17 +192,18 @@ final class Inputs implements Listener {
                 if (plate) seen.putIfAbsent(key, p);
                 if (portal && teleport(p, g.puzzle, node.teleport())) break;
             }
+            // 168 그림자 분신: a shadow double standing on a plate holds it down too
+            if (plate && !seen.containsKey(key)) for (Location d : extraStanders.get())
+                if (d.getWorld() == l.getWorld() && feet.contains(d.toVector())) { seen.put(key, null); break; }
         }
+        linkedGates();
         for (String key : anyStandNode) {
             boolean now = seen.containsKey(key);
             Boolean before = standingNodes.put(key, now);
             if (before != null && before == now) continue;
             String[] pn = key.split(":", 2);
             Player who = seen.get(key);
-            plugin.puzzles().standing(pn[0], pn[1], now, who);
-            if (now) {
-                for (Gimmick g : plugin.world().inNode(pn[0], pn[1])) { plugin.puzzles().trigger(g, "stand", who); break; }
-            }
+            plugin.puzzles().standing(pn[0], pn[1], now, who); // also fires turn-on/toggle "stand" once on the rising edge
         }
         standingNodes.keySet().retainAll(anyStandNode);
     }

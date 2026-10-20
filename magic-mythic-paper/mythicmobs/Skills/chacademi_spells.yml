@@ -193,11 +193,11 @@ CHA_ember_bolt:
   Skills:
   - chabolt{speed=1.6;range=24;radius=0.5;ignite=40;element=fire;spell=ember_bolt}
 
-# 35 다시 타오르는 불 - MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸)
+# 35 다시 타오르는 불 - 원소 화로(기믹) 점화, 없으면 모닥불·초 (2026-10-20 Bridge 유틸에서 이동)
 CHA_rekindle:
   Cooldown: 0
   Skills:
-  - chanote{n=1;element=fire;spell=rekindle} @self
+  - chagimmick{type=ignite;range=12;mana=10;element=fire;spell=rekindle} @self
 
 # 37 잿불 덫 - 60초 덫, 최대 2개, 밟으면 폭발
 CHA_ember_trap:
@@ -266,11 +266,11 @@ CHA_crimson_heart:
   Skills:
   - chahit{center=caster;r=5;max=12;mult=0;hpcost=0.5;hpscale=2.5;knock=1;element=fire;spell=crimson_heart} @self
 
-# 48 심지 줄이기 - MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸)
+# 48 심지 줄이기 - 원소 화로(기믹) 끄기, 없으면 불 블록 끄기 (2026-10-20 Bridge 유틸에서 이동)
 CHA_wick_trimming:
   Cooldown: 0
   Skills:
-  - chanote{n=1;element=fire;spell=wick_trimming} @self
+  - chagimmick{type=extinguish;range=12;mana=50;element=fire;spell=wick_trimming} @self
 
 # 50 발화 - 10초 발화
 CHA_charcoal_conversion:
@@ -1288,6 +1288,78 @@ CHA_folding_tideplane:
   Cooldown: 0
   Skills:
   - chaarcana{type=tideplane;len=6;width=2;delay=20;turn=26;element=water;spell=folding_tideplane}
+
+# 239 해빙의 열기 - 얼음 봉인 3초 채널링 → thaw 트리거, 시전자 피해 시 취소
+CHA_thawing_heat:
+  Cooldown: 0
+  Skills:
+  - chagimmick{type=thaw;range=12;mana=40;element=fire;spell=thawing_heat} @self
+
+# 240 증기 점화 - 증기 밸브 steam 트리거 (밸브 노드 mana: out 이면 마력 신호)
+CHA_steam_ignition:
+  Cooldown: 0
+  Skills:
+  - chagimmick{type=steam;range=12;mana=30;element=fire;spell=steam_ignition} @self
+
+# 241 수위 조절 - 수위 기둥 레벨 0~3 (+1 / 웅크리면 -1)
+CHA_water_level:
+  Cooldown: 0
+  Skills:
+  - chagimmick{type=level;range=12;mana=20;element=water;spell=water_level} @self
+
+# 242 무게추 - 대지 압력판 weight 트리거 (보통 hold 짧게 + mana: out)
+CHA_stone_weight:
+  Cooldown: 0
+  Skills:
+  - chagimmick{type=weight;range=12;mana=30;element=earth;spell=stone_weight} @self
+
+# 243 덩굴 깨우기 - 씨앗 화분 grow 트리거 → 노드 climb 설정만큼 위로 덩굴(타고 오르는 블록)
+CHA_vine_awaken:
+  Cooldown: 0
+  Skills:
+  - chagimmick{type=grow;range=12;mana=40;element=earth;spell=vine_awaken} @self
+
+# 244 빛줄기 - 3초 채널링(이동 불가) 빛줄기, 거울 반사·프리즘 색 변경, 수신 수정 light 입력
+CHA_light_beam:
+  Cooldown: 0
+  Skills:
+  - chagimmick{type=beam;range=32;mana=50;element=light;spell=light_beam} @self
+
+# 245 반사 조율 - 회전 반사 거울·회전 다이얼 위치 +1 (0~3)
+CHA_mirror_tune:
+  Cooldown: 0
+  Skills:
+  - chagimmick{type=tune;range=20;mana=15;element=light;spell=mirror_tune} @self
+
+# 246 프리즘 물들이기 - 프리즘 색 흰색→빨강→노랑→초록→파랑→보라 순환 (웅크리면 반대)
+CHA_prism_tint:
+  Cooldown: 0
+  Skills:
+  - chagimmick{type=tint;range=20;mana=15;element=light;spell=prism_tint} @self
+
+# 247 석상 깨우기 - 잠든 석상 방향 +90° (노드 facing 조건)
+CHA_statue_wake:
+  Cooldown: 0
+  Skills:
+  - chagimmick{type=wake;range=16;mana=20;element=dark;spell=statue_wake} @self
+
+# 248 되감기 - 마지막 변화(방향·위치·수위·색·레버) 1단계 되돌리기, 60초 이내
+CHA_rewind:
+  Cooldown: 0
+  Skills:
+  - chagimmick{type=rewind;range=16;mana=30;element=dark;spell=rewind} @self
+
+# 249 도관 회전 - 마력 도관 방향 +90° → 마력 신호 경로 재계산
+CHA_conduit_turn:
+  Cooldown: 0
+  Skills:
+  - chagimmick{type=conduit;range=16;mana=10;element=earth;spell=conduit_turn} @self
+
+# 250 차원 표식 - 첫 시전 = 표식(30초), 두 번째 = 다른 게이트와 연결(120초, 걸어 들어가면 이동)
+CHA_dimension_mark:
+  Cooldown: 0
+  Skills:
+  - chagimmick{type=mark;range=24;mana=40;element=dark;spell=dimension_mark} @self
 
 # (추가 스킬) 태양의 심판 영창 완료 후 3초 레이저 (chachannel then=)
 CHA_solar_judgment_fire:

@@ -5,7 +5,7 @@ $env:Path=$env:JAVA_HOME+'\bin;'+$env:Path
 $env:GRADLE_USER_HOME='C:\Chacademi\tools\gradle-cache'
 Set-Location -LiteralPath 'C:\Chacademi\staging\duel-lobby-polish-20261019'
 $tasks=if($Verify){@('verifyServer','assembleServer',':magic-mythic-paper:build',':chacademi-party-velocity:build',':kyudichi-paper:build')}else{@('assembleServer')}
-& '.\gradlew.bat' --no-daemon --console=plain --max-workers=2 --continue "-PmythicJar=C:/Chacademi/network/wild/plugins/MythicMobs-5.9.0.jar" "-PmagicCodexBridgeJar=C:/Chacademi/staging/duel-lobby-polish-20261019/magic-codex-paper/build/libs/magic-codex-bridge-0.31.1-integrated-20261019.3-arcana.1.jar" @tasks
+& '.\gradlew.bat' --no-daemon --console=plain --max-workers=2 --continue "-PmythicJar=C:/Chacademi/network/wild/plugins/MythicMobs-5.9.0.jar" "-PmagicCodexBridgeJar=C:/Chacademi/staging/duel-lobby-polish-20261019/magic-codex-paper/build/libs/magic-codex-bridge-0.31.3-integrated-20261020.1-gimmick.1.jar" @tasks
 if($LASTEXITCODE -ne 0){throw 'Remote server plugin build failed'}
 $dest='C:\Chacademi\artifacts\final-integration-20261019\arcana-build'
 New-Item -ItemType Directory -Path $dest -Force|Out-Null

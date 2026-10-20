@@ -8,6 +8,10 @@
 #  while:   [stand]      누군가 밟고 있는 동안만 켜짐
 #    트리거: magic:fire  magic:wind  magic:water  magic:earth  magic:light  magic:dark  magic:any
 #            interact(우클릭)  attack(좌클릭)  stand(밟기 시작)
+#            기믹 마법(2026-10-20): ignite(35 다시 타오르는 불) extinguish(48 심지 줄이기) thaw(239 해빙의 열기) steam(240 증기 점화)
+#                                   weight(242 무게추) grow(243 덩굴 깨우기)
+#            계속 들어오는 입력: stand(밟고 있음) mana(마력 신호) light(244 빛줄기가 닿음) water(물레방아 밑으로 물이 흐름)
+#              → while: [mana] 처럼 쓰면 들어오는 동안만 켜짐, turn-on: [mana] 는 들어오기 시작할 때 한 번
 #    (주의) on: / off: 는 YAML 에서 참/거짓으로 읽히므로 키 이름은 turn-on / turn-off 를 쓴다.
 #  hold: 초        켜진 뒤 이 시간이 지나면 저절로 꺼짐 (0 = 계속)
 #  cooldown: 초    같은 노드에 트리거가 연달아 들어올 때 무시하는 시간 (기본 0.5)
@@ -23,57 +27,74 @@
 #      그 상태일 때 기믹 자리에 투명 방벽 블록을 세움 (문은 when: off, 다리·석주는 when: on)
 #  teleport: 노드이름   켜져 있을 때 들어가거나 우클릭하면 그 노드의 기믹 앞으로 이동
 #  command-on / command-off: ["콘솔 명령 {player}"]   message: "켜질 때 주변에 보일 문구"
+#  mana: out       켜져 있는 동안 이 노드의 기믹이 붙어 있는 도관·장치에 마력 신호를 보냄 (도관은 포트 방향으로만 전달)
+#  level: 0~3      수위 기둥이 이 수위일 때만 켜짐 (241 수위 조절)
+#  position: 0~3   반사 거울·회전 다이얼이 이 위치일 때만 켜짐 (245 반사 조율)
+#  facing: 남|서|북|동   잠든 석상이 이 방향을 볼 때만 켜짐 (247 석상 깨우기)
+#  color: red      빛 수신 수정: 이 색 빛줄기만 받음 (white red yellow green blue purple, 프리즘 = 246 프리즘 물들이기)
+#  move: [x, y, z] + speed: 2   부유 발판: 켜지면 그만큼 한 방향으로 이동 (돌아오지 않음, /기믹 초기화 때만 제자리)
+#  launch: 1.3     바람 분출구: 켜져 있는 동안 위에 선 사람을 띄우는 세기
+#  climb: 5        씨앗 화분: 켜지면 화분 앞 칸에 이 높이만큼 타고 오르는 덩굴
+#  막힘(배리어): 모델이 차지한 칸은 자동으로 배리어가 생긴다 (models.yml collision). 문·수문·얼음 봉인은 켜지면 열리고, 빛의 다리는 켜져야 밟힌다.
 #  퍼즐 옵션 persist: false  면 서버 재시작 때 상태를 저장하지 않음 (기본 저장)
 
 puzzles:
 
-  # 예시 1: 화로 두 개에 불을 붙이면 문이 열린다 (물·바람이 닿으면 화로가 꺼짐)
+  # 예시 1: 원소 화로 두 개에 불을 붙이면 봉인문이 열린다 (35 다시 타오르는 불 또는 화염 마법, 48 심지 줄이기·물 마법으로 꺼짐)
   example_fire_gate:
     nodes:
       brazier_left:
-        turn-on: [magic:fire]
-        turn-off: [magic:water, magic:wind]
+        turn-on: [ignite, magic:fire]
+        turn-off: [extinguish, magic:water]
       brazier_right:
-        turn-on: [magic:fire]
-        turn-off: [magic:water, magic:wind]
+        turn-on: [ignite, magic:fire]
+        turn-off: [extinguish, magic:water]
       door:
         when: "all(brazier_left, brazier_right)"
         latch: true
-        solid: {width: 3, height: 4, depth: 1, when: off}
         message: "봉인문이 열렸다!"
 
-  # 예시 2: 바람 종 세 개를 정해진 순서로 울리기 (10초 안에)
-  example_bells:
+  # 예시 2: 무게추(242)로 압력판을 누르면 마력 신호 → 도관을 따라 시간차 문이 8초 열림
+  #   압력판 - 도관 - 도관 - 시간차 문 을 칸마다 붙여 놓는다 (249 도관 회전으로 길을 맞춤)
+  example_weight_door:
     nodes:
-      bell_1: {turn-on: [magic:wind], hold: 10}
-      bell_2: {turn-on: [magic:wind], hold: 10}
-      bell_3: {turn-on: [magic:wind], hold: 10}
-      chest: {when: "seq(bell_1, bell_2, bell_3)", latch: true}
+      plate: {turn-on: [weight], while: [stand], hold: 2, mana: out}
+      door: {turn-on: [mana], hold: 8}
 
-  # 예시 3: 협동 - 쌍둥이 공명석 두 개를 1초 안에 동시에 맞히면 다리가 생긴다
-  example_twin:
+  # 예시 3: 풍차 터빈에 바람 마법 → 마력 신호 → 물길 수문이 올라감 (신호가 있는 동안만)
+  example_turbine_sluice:
     nodes:
-      stone_a: {turn-on: [magic:any], hold: 1, anim-on: hit}
-      stone_b: {turn-on: [magic:any], hold: 1, anim-on: hit}
-      bridge:
-        when: "sync(1.0, stone_a, stone_b)"
-        latch: true
-        solid: {width: 1, height: 1, depth: 2, when: on}
+      turbine: {turn-on: [magic:wind], hold: 10, mana: out}
+      sluice: {while: [mana]}
 
-  # 예시 4: 레버 + 압력판 (한 명은 밟고 있고, 한 명이 레버를 당겨야 열림)
-  example_lever_plate:
+  # 예시 4: 빛줄기(244) → 반사 거울 → 프리즘(빨강) → 빨간 빛만 받는 수신 수정 → 빛의 다리
+  example_light_bridge:
     nodes:
-      lever: {toggle: [interact, magic:any]}
-      plate: {while: [stand]}
-      gate: {when: "all(lever, plate)", solid: {width: 3, height: 3, depth: 1, when: off}}
+      receiver: {while: [light], color: red}
+      bridge: {when: "receiver", latch: true}
 
-  # 예시 5: 원소 조각 모으기 → 텔레포트 게이트
-  example_fragments:
+  # 예시 5: 수위 기둥을 2칸으로 맞추고(241) 석상을 서쪽으로 돌리면(247) 봉인 보물상자가 열림
+  example_water_statue:
     nodes:
-      altar:
-        collect:
-          "chacademi:fragment_fire": insert_fire
-          "chacademi:fragment_water": insert_water
-          "chacademi:fragment_wind": insert_wind
-      gate_in: {when: "altar", teleport: gate_out}
-      gate_out: {when: "altar"}
+      pillar: {level: 2}
+      statue: {facing: 서}
+      chest: {when: "all(pillar, statue)", latch: true}
+
+  # 예시 6: 얼음 봉인 녹이기(239) / 씨앗 화분 깨우기(243, 앞에 5칸 덩굴) / 증기 밸브(240) + 레버 둘 다 → 부유 발판이 위로 4칸, 남쪽(+z)으로 6칸 이동
+  example_misc:
+    nodes:
+      ice: {turn-on: [thaw], latch: true}
+      pot: {turn-on: [grow], latch: true, climb: 5}
+      valve: {turn-on: [steam], hold: 6}
+      lever: {toggle: [interact]}
+      platform: {when: "all(valve, lever)", move: [0, 4, 6], speed: 2}
+      vent: {when: "all(valve, lever)", launch: 1.3}
+      # 마력 신호로 하고 싶으면: valve 에 mana: out 을 주고 밸브-도관-발판을 붙인 뒤 platform: {turn-on: [mana], move: ...}
+
+  # 예시 7: 물레방아 밑으로 물(72 수맥 개방)이 흐르면 마력 → 회전 다이얼을 2번 위치로(245) 맞추면 텔레포트 게이트 개방
+  example_wheel_gate:
+    nodes:
+      wheel: {while: [water], mana: out}
+      dial: {position: 2}
+      gate_in: {when: "all(wheel, dial)", teleport: gate_out}
+      gate_out: {when: "all(wheel, dial)"}

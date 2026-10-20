@@ -258,22 +258,8 @@ EXTRA = {
 }
 
 # 다른 플러그인 / 모드 / Bridge API 연동이 필요해 보류 (오너: "놔두고 말해 줘")
-SKIP = {
- 'afterlife_gate': '171 유체이탈의 문 - 클라이언트 유령 렌더·분신 가시성(모드)',
- 'shadow_tracking': '187 그림자 추적 - 클라이언트 시야 반전(모드)',
- 'final_knot': '191 검은보따리 - MCPets 연동',
- 'death_ledger': '197 죽음의 장부 - Bridge 가속(haste) 스탯 API',
- 'twilight_bargain': '199 황혼의 거래 - Bridge 마나 비용 대납 API',
- 'barrelroll_stitch': '200 회전 봉합 - 빗자루 모드 회피/롤',
- 'horizon_trim': '201 수평 나침반 - 빗자루 모드 고도 유지',
- 'folding_broom_wings': '202 접이 날개 - 빗자루 모드 안정성',
- 'wingmate_towline': '204 동행 견인줄 - 빗자루 모드 견인',
- 'potion_effect_decant': '205 되담는 약효 - 연금술/물약 Bridge 시스템',
- 'twin_cup_draught': '206 쌍잔 기울이기 - 연금술/물약 Bridge 시스템',
- 'wandering_alembic': '207 떠도는 연금실 - 연금술 시스템 (VFX 팩도 없음)',
- 'heartfold_wrapping': '208 마음을 접은 포장 - ChacaNPC 플러그인',
- 'conversation_ripples': '209 말끝의 물결 - ChacaNPC 플러그인',
-}
+# 2026-10-20 오너: 개발 안 된 168번 이후 마법은 전부 버림 → 보류 목록과 도감 파일을 지웠다 (tools/gimmick_spells.py 머리말 참고)
+SKIP = {}
 
 def routes():
     return [(i, 'CHA_' + i, tgt, rng, base, ratio, False, lines, note) for (o, i, nm, cat, tgt, rng, base, ratio, mana, cd, lines, note, *_r) in M]

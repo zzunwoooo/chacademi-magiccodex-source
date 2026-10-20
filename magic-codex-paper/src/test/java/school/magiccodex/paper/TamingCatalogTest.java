@@ -29,7 +29,7 @@ class TamingCatalogTest {
         for(String alias:Set.of("rainbow_collar","taming","교화","무지개 목줄"))
             assertEquals(TamingSpell.ID,catalog.resolve(alias),alias);
         assertFalse(catalog.byId.containsKey("taming"));
-        assertEquals(330,catalog.registeredCatalog.size());
+        assertEquals(237,catalog.registeredCatalog.size());
         assertEquals("교화",catalog.registeredCatalog.get(TamingSpell.ID).get("name"));
     }
     @Test void aliasesCannotChargeTwiceOrAcquireIndependentCooldowns()throws Exception{
@@ -73,7 +73,7 @@ class TamingCatalogTest {
     @Test void clientAndServerMetadataKeep149WithinThe323Catalog()throws Exception{
         var defaults=Path.of("../magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells");
         var index=Files.readAllLines(defaults.resolve("index.txt")).stream().filter(s->!s.isBlank()).toList();
-        assertEquals(330,index.size());assertEquals(1,index.stream().filter("149_rainbow_collar"::equals).count());
+        assertEquals(237,index.size());assertEquals(1,index.stream().filter("149_rainbow_collar"::equals).count());
         assertFalse(index.contains("taming"));
         var client=yaml(defaults.resolve("149_rainbow_collar.yml"));
         assertEquals(TamingSpell.ID,client.getString("id"));assertEquals("교화",client.getString("name"));

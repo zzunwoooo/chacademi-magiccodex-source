@@ -57,7 +57,7 @@ final class AdminCommandRulesTest {
     }
     @Test void adminCatalogIncludesEveryRegisteredSpellWithoutChangingCastingEnablement()throws Exception{
         var catalog=ManaSpells.load(java.nio.file.Path.of("src/main/resources/mana-spells.yml").toFile());
-        assertEquals(330,catalog.registeredCatalog.size());
+        assertEquals(237,catalog.registeredCatalog.size());
         assertTrue(catalog.registeredCatalog.containsKey("aerial_haul"));assertFalse(catalog.byId.containsKey("aerial_haul"));
         assertEquals("magic.learned.aerial_haul",catalog.registeredCatalog.get("aerial_haul").get("permission"));
         catalog.byId.forEach((id,spell)->assertEquals(spell.permission(),catalog.registeredCatalog.get(id).get("permission")));

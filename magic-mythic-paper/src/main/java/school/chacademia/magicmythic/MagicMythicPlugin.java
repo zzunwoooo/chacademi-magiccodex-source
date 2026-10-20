@@ -134,6 +134,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
             case "chatelegraph" -> new TelegraphMech(this, p);
             case "chamobshot" -> new MobShotMech(this, p);
             case "chaarcana" -> new ArcanaMech(this, p);
+            case "chagimmick" -> new GimmickMech(this, p);
             default -> null;
         };
         if (mechanic != null) event.register(mechanic);

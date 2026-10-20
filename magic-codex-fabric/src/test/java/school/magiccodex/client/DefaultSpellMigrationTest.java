@@ -52,4 +52,15 @@ class DefaultSpellMigrationTest {
   for(String name:List.of("149_rainbow_collar.yml","171_afterlife_gate.yml","187_shadow_tracking.yml","191_final_knot.yml","197_death_ledger.yml","199_twilight_bargain.yml","200_barrelroll_stitch.yml","201_horizon_trim.yml","202_folding_broom_wings.yml","204_wingmate_towline.yml","205_potion_effect_decant.yml","206_twin_cup_draught.yml","207_wandering_alembic.yml","208_heartfold_wrapping.yml","209_conversation_ripples.yml","203_air_brake.yml","300_fox_orbit.yml"))assertFalse(DefaultSpellMigration.managedHistoryName(name),name);
  }
 
+ @Test void retiredShippedSpellsAreRemovedButEditedOnesStay()throws Exception {
+  Files.write(dir.resolve("215_copper_polish.yml"),bytes("shipped\r\n"));
+  Files.write(dir.resolve("216_wax_melting.yml"),bytes("player edit\n"));
+  var history=Map.of("215_copper_polish.yml",Set.of(DefaultSpellMigration.hash(bytes("shipped\n"))),"216_wax_melting.yml",Set.of(DefaultSpellMigration.hash(bytes("shipped\n"))));
+  DefaultSpellMigration.removeRetired(dir,List.of("215_copper_polish.yml","216_wax_melting.yml","../x.yml"),history);
+  assertFalse(Files.exists(dir.resolve("215_copper_polish.yml")));
+  assertTrue(Files.exists(dir.resolve("216_wax_melting.yml")));
+  for(String name:List.of("239_thawing_heat.yml","244_light_beam.yml","250_dimension_mark.yml"))assertTrue(DefaultSpellMigration.managedHistoryName(name),name);
+  assertFalse(DefaultSpellMigration.managedHistoryName("239_bubble_brand.yml"));
+  assertTrue(DefaultSpellMigration.allHistory("a.yml\th1\r\nb.yml\th2\n").get("a.yml").contains("h1"));
+ }
 }
