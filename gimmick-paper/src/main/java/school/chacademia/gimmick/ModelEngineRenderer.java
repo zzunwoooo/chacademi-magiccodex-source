@@ -73,11 +73,32 @@ final class ModelEngineRenderer implements Renderer {
             overlays.add(animation);
             return true;
         }
+        final java.util.Map<String, String> groups = new java.util.HashMap<>();
+        public boolean layer(String group, String animation) {
+            var h = model.getAnimationHandler();
+            String old = groups.remove(group);
+            if (old != null && !old.equals(animation)) { h.stopAnimation(old); overlays.remove(old); }
+            if (animation == null) return true;
+            if (!animation.equals(old)) h.playAnimation(animation, 0.1, 0.1, 1, true);
+            groups.put(group, animation); overlays.add(animation);
+            return true;
+        }
+        /** ModelEngine 4 tint by reflection: ActiveModel#getBone(id) -> ModelBone#setDefaultTint(Color), else ActiveModel#setDefaultTint(Color). */
+        public void tint(String bone, int rgb) {
+            var color = org.bukkit.Color.fromRGB(rgb & 0xFFFFFF);
+            try {
+                Object found = model.getClass().getMethod("getBone", String.class).invoke(model, bone);
+                if (found instanceof java.util.Optional<?> o) found = o.orElse(null);
+                if (found != null) { found.getClass().getMethod("setDefaultTint", org.bukkit.Color.class).invoke(found, color); return; }
+            } catch (ReflectiveOperationException | RuntimeException | LinkageError ignored) {}
+            try { model.getClass().getMethod("setDefaultTint", org.bukkit.Color.class).invoke(model, color); }
+            catch (ReflectiveOperationException | RuntimeException | LinkageError ignored) {}
+        }
         public void stop() {
             var h = model.getAnimationHandler();
             if (!current.isEmpty()) h.stopAnimation(current);
             for (String o : overlays) h.stopAnimation(o);
-            current = ""; overlays.clear();
+            current = ""; overlays.clear(); groups.clear();
         }
         public void teleport(Location loc) { base.teleport(loc); }
         public void scale(double scale) { model.setScale(scale); }

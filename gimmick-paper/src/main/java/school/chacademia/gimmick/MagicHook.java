@@ -12,7 +12,14 @@ final class MagicHook implements Listener {
     private final GimmickPlugin plugin;
     private final Map<String, Long> lastHit = new HashMap<>(); // gimmick id -> tick
 
-    MagicHook(GimmickPlugin plugin) { this.plugin = plugin; }
+    private final SpellActions actions;
+    MagicHook(GimmickPlugin plugin) {
+        this.plugin = plugin;
+        this.actions = new SpellActions(plugin);
+        plugin.getServer().getPluginManager().registerEvents(actions, plugin);
+        Inputs.extraStanders = school.chacademia.magicmythic.MagicMythicApi::shadowDoubles;
+    }
+    SpellActions actions() { return actions; }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void impact(MagicImpactEvent e) {

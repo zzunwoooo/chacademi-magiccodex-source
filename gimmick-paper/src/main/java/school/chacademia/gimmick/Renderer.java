@@ -21,6 +21,10 @@ interface Renderer {
         boolean play(String animation);
         /** Extra layer kept on top of the main animation (e.g. inserted fragments). Same as play() where layering is unsupported. */
         default boolean overlay(String animation) { return play(animation); }
+        /** Layer in a named group: replaces the group's previous layer (null = just stop it). Mirror/dial pose, water level. */
+        default boolean layer(String group, String animation) { return animation == null || overlay(animation); }
+        /** Tint one bone (or the whole model when the bone is missing) with 0xRRGGBB. Prism colour. */
+        default void tint(String bone, int rgb) {}
         /** Stop everything, overlays included. */
         void stop();
         void teleport(Location loc);

@@ -60,12 +60,21 @@ public final class PuzzleEngine {
     }
 
     /** "while: stand" input: on exactly while someone stands there. */
-    public boolean standing(String node, boolean standing, String who, long now) {
+    public boolean standing(String node, boolean standing, String who, long now) { return held(node, "stand", standing, who, now); }
+
+    /**
+     * Continuous input (stand, mana, light, water) or a device condition (key "state": level / position / facing matched).
+     * Nodes listing the key under `while` (or having a device condition, for "state") are on exactly while it holds.
+     */
+    public boolean held(String node, String key, boolean holding, String who, long now) {
         this.now = now;
         var d = def.nodes().get(node);
-        if (d == null || !d.whileTriggers().contains("stand")) return false;
-        boolean changed = set(node, standing, "stand", who);
-        if (changed && standing) checkSequences(node, who);
+        if (d == null) return false;
+        key = PuzzleDef.key(key);
+        boolean whileKey = d.whileTriggers().contains(key) || key.equals("state") && d.device().condition();
+        if (!whileKey) return false;
+        boolean changed = set(node, holding, key, who);
+        if (changed && holding) checkSequences(node, who);
         propagate(who);
         return changed;
     }

@@ -87,21 +87,20 @@ class SpellYamlLoaderTest {
                 .noneMatch(c->c.getName().equals("rank") || c.getName().equals("circle")));
     }
 
-    @Test void finalCatalogLoads329WithApprovedSharedSlotsAndPreservedIdentity() {
+    @Test void finalCatalogLoads237AfterRetiringUndevelopedSpells() {
+        // 2026-10-20 owner: undeveloped 168~299 spells were dropped; 239~250 are the new dungeon gimmick spells.
         var result=loader.load(Path.of("src/main/resources/assets/magiccodex/default-spells"));
         assertTrue(result.success(),result.errors().toString());
-        assertEquals(330,result.spells().size());
-        var shared=java.util.Map.of(
-                203,java.util.Set.of("air_brake","landing_airbrake"),210,java.util.Set.of("wind_performance","hushed_soles"),
-                211,java.util.Set.of("draft_closer","thorn_manners"),212,java.util.Set.of("air_compass","cinder_skipring"),
-                213,java.util.Set.of("experience_confluence","droplet_relay"),214,java.util.Set.of("melody_bottle","folding_tideplane"));
+        assertEquals(237,result.spells().size());
         var slots=result.spells().stream().collect(java.util.stream.Collectors.groupingBy(CodexData.Spell::order,
                 java.util.stream.Collectors.mapping(CodexData.Spell::id,java.util.stream.Collectors.toSet())));
-        assertEquals(324,slots.size());assertEquals(330,result.spells().stream().map(CodexData.Spell::id).distinct().count());
-        for(int order=1;order<=324;order++){
-            assertTrue(slots.containsKey(order),"missing preserved slot "+order);
-            if(shared.containsKey(order))assertEquals(shared.get(order),slots.get(order));else assertEquals(1,slots.get(order).size());
+        assertEquals(237,slots.size());assertEquals(237,result.spells().stream().map(CodexData.Spell::id).distinct().count());
+        var retired=java.util.Set.of(171,187,191,197,199,200,201,202,204,205,206,207,208,209);
+        for(int order=1;order<=250;order++){
+            if(retired.contains(order)||order>=215&&order<=238)assertFalse(slots.containsKey(order),"retired slot "+order);
+            else{assertTrue(slots.containsKey(order),"missing slot "+order);assertEquals(1,slots.get(order).size());}
         }
+        for(int order=300;order<=324;order++)assertTrue(slots.containsKey(order),"missing slot "+order);
         for(var spell:result.spells()){
             assertFalse(spell.condition().isBlank());assertFalse(spell.permissionKnown());assertFalse(spell.discovered());
         }

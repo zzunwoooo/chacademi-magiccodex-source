@@ -12,11 +12,11 @@ import org.bukkit.entity.*;
 /** /기믹 ... (alias /gimmick). Korean sub-commands with English aliases. */
 final class GimmickCommand implements CommandExecutor, TabCompleter {
     private static final List<String> SUBS = List.of("도움", "소환", "씌우기", "벗기기", "도구", "선택", "정보", "노드", "설정", "재생",
-        "제거", "목록", "모델", "근처", "신호", "초기화", "퍼즐", "리로드");
+        "제거", "목록", "모델", "근처", "신호", "초기화", "퍼즐", "리로드", "아이템");
     private static final Map<String, String> ALIAS = Map.ofEntries(Map.entry("help", "도움"), Map.entry("spawn", "소환"), Map.entry("attach", "씌우기"),
         Map.entry("detach", "벗기기"), Map.entry("tool", "도구"), Map.entry("select", "선택"), Map.entry("info", "정보"), Map.entry("node", "노드"),
         Map.entry("set", "설정"), Map.entry("play", "재생"), Map.entry("remove", "제거"), Map.entry("list", "목록"), Map.entry("models", "모델"),
-        Map.entry("near", "근처"), Map.entry("signal", "신호"), Map.entry("reset", "초기화"), Map.entry("puzzle", "퍼즐"), Map.entry("reload", "리로드"));
+        Map.entry("near", "근처"), Map.entry("signal", "신호"), Map.entry("reset", "초기화"), Map.entry("puzzle", "퍼즐"), Map.entry("reload", "리로드"), Map.entry("item", "아이템"));
 
     private final GimmickPlugin plugin;
     GimmickCommand(GimmickPlugin plugin) { this.plugin = plugin; }
@@ -30,12 +30,19 @@ final class GimmickCommand implements CommandExecutor, TabCompleter {
                 if (p == null || a.length < 2) return usage(s, "/기믹 소환 <모델> [퍼즐] [노드]");
                 String model = a[1];
                 if (!plugin.catalog().known(model)) s.sendMessage("알림: models.yml 에 없는 모델입니다. 렌더러에 등록돼 있으면 그대로 소환됩니다.");
-                Location at = spawnSpot(p);
-                if(!plugin.protection().pair(p,at))return fail(s,"Protected location.");
-                float yaw = (float) (Math.round((p.getLocation().getYaw() + 180) / 15.0) * 15.0);
-                Gimmick g = plugin.world().create(model, at, yaw, a.length > 2 ? a[2] : "", a.length > 3 ? a[3] : "");
-                plugin.tool().select(p, g);
-                ok(s, g.id + " 소환 (" + model + ")" + (g.live() ? "" : " - 모델을 그리지 못했습니다. 콘솔을 확인하세요."));
+                // 2026-10-20: the block the admin stands in, model centred on it, facing where the admin looks (90° steps)
+                var feet = p.getLocation().getBlock();
+                Gimmick g = plugin.placer().place(p, model, feet, Gimmick.facingOf(p.getLocation().getYaw()), a.length > 2 ? a[2] : "", a.length > 3 ? a[3] : "");
+                if (g == null) return true;
+                ok(s, g.id + " 설치 (" + model + ")  블록 " + g.bx + ", " + g.by + ", " + g.bz + (g.live() ? "" : " - 모델을 그리지 못했습니다. 콘솔을 확인하세요."));
+            }
+            case "아이템" -> {
+                if (p == null || a.length < 2) return usage(s, "/기믹 아이템 <모델> [개수]   (블록 면을 우클릭하면 그 칸에 설치, 나를 바라봄)");
+                if (!plugin.catalog().known(a[1])) return fail(s, "models.yml 에 없는 모델입니다.");
+                var item = plugin.placer().item(a[1]);
+                item.setAmount((int) Math.clamp(a.length > 2 ? parse(a[2], 1) : 1, 1, 64));
+                p.getInventory().addItem(item);
+                ok(s, plugin.catalog().get(a[1]).name() + " 설치 아이템 지급");
             }
             case "씌우기" -> {
                 if (p == null || a.length < 2) return usage(s, "/기믹 씌우기 <모델> [크기]  (바라보는 몹에)");
@@ -58,7 +65,7 @@ final class GimmickCommand implements CommandExecutor, TabCompleter {
             case "도구" -> {
                 if (p == null) return true;
                 p.getInventory().addItem(plugin.tool().create());
-                ok(s, "기믹 도구 지급. 우클릭 +, 좌클릭 -, 웅크리고 클릭하면 모드 변경 (정보·회전·크기·이동·높이·애니메이션·삭제)");
+                ok(s, "기믹 도구 지급. 우클릭 +, 좌클릭 -, 웅크리고 클릭하면 모드 변경 (정보·회전 90°·크기·이동 1칸·높이 1칸·애니메이션·삭제)");
             }
             case "선택" -> {
                 if (p == null) return true;
@@ -89,17 +96,25 @@ final class GimmickCommand implements CommandExecutor, TabCompleter {
                 Gimmick g = target(p, a, 99);
                 if (g == null||p!=null&&!plugin.protection().pair(p,g.location())) return fail(s, "선택된 기믹이 없습니다.");
                 switch (a[1]) {
-                    case "방향", "yaw" -> g.yaw = (float) parse(a[2], g.yaw);
+                    case "방향", "yaw" -> { Integer v = facingArg(a[2]); if (v == null) return usage(s, "방향: 남/서/북/동 또는 0/90/180/270"); if (g.attached()) g.yaw = v * 90f; else g.facing = v; }
                     case "크기", "scale" -> g.scale = Math.clamp(parse(a[2], g.scale), 0.1, 8);
-                    case "높이", "y" -> { if (!g.attached()) g.y = parse(a[2], g.y); }
+                    case "높이", "y" -> { if (!g.attached()) g.by = (int) Math.floor(parse(a[2], g.by)); }
                     case "위치", "pos" -> {
-                        if (g.attached() || a.length < 5) return usage(s, "/기믹 설정 위치 <x> <y> <z>");
-                        g.x = parse(a[2], g.x); g.y = parse(a[3], g.y); g.z = parse(a[4], g.z);
+                        if (g.attached() || a.length < 5) return usage(s, "/기믹 설정 위치 <x> <y> <z>   (블록 좌표)");
+                        g.bx = (int) Math.floor(parse(a[2], g.bx)); g.by = (int) Math.floor(parse(a[3], g.by)); g.bz = (int) Math.floor(parse(a[4], g.bz));
                     }
-                    default -> { return usage(s, "/기믹 설정 <방향|크기|높이|위치> <값>"); }
+                    case "상태", "state" -> {
+                        if (a.length < 3) return usage(s, "/기믹 설정 상태 <0~3>   (거울·다이얼 위치 / 수위 기둥 수위) 또는 색 이름 (프리즘)");
+                        var info = plugin.catalog().get(g.model);
+                        if (info.is("prism")) plugin.devices().color(g, a[2]);
+                        else if (info.is("pillar")) plugin.devices().level(g, (int) parse(a[2], g.level) - g.level);
+                        else plugin.devices().position(g, (int) parse(a[2], g.pos) - g.pos);
+                    }
+                    default -> { return usage(s, "/기믹 설정 <방향|크기|높이|위치|상태> <값>"); }
                 }
                 plugin.world().transform(g);
-                ok(s, String.format(Locale.ROOT, "%s 방향 %.1f° 크기 %.2f 위치 %.2f %.2f %.2f", g.id, g.yaw, g.scale, g.x, g.y, g.z));
+                ok(s, g.attached() ? String.format(Locale.ROOT, "%s 방향 %.0f° 크기 %.2f", g.id, g.yaw, g.scale)
+                    : String.format(Locale.ROOT, "%s 블록 %d %d %d  방향 %s  크기 %.2f", g.id, g.bx, g.by, g.bz, DebugTool.FACING[g.facing], g.scale));
             }
             case "재생" -> {
                 if (p == null || a.length < 2) return usage(s, "/기믹 재생 <애니메이션>   (선택한 기믹)");
@@ -169,10 +184,11 @@ final class GimmickCommand implements CommandExecutor, TabCompleter {
     private void help(CommandSender s) {
         s.sendMessage(Component.text("[기믹] 명령어", NamedTextColor.GOLD));
         for (String line : List.of(
-            "/기믹 모델 [검색]  - 모델 목록", "/기믹 소환 <모델> [퍼즐] [노드]  - 바라보는 블록 위에 소환 (나를 바라봄)",
+            "/기믹 모델 [검색]  - 모델 목록", "/기믹 소환 <모델> [퍼즐] [노드]  - 내가 서 있는 칸 중앙에 설치 (내가 보는 방향)",
+            "/기믹 아이템 <모델> [개수]  - 설치 아이템 (블록 면 우클릭 = 그 칸에 설치, 나를 바라봄)",
             "/기믹 씌우기 <모델> [크기] / 벗기기  - 바라보는 몹에 모델 씌우기", "/기믹 도구  - 클릭으로 회전·크기·이동·높이·애니메이션·삭제",
             "/기믹 선택 [id] · 정보 · 제거 [id] · 목록 [퍼즐|모델] · 근처 [반경]", "/기믹 노드 <퍼즐> <노드>  - 선택한 기믹을 퍼즐 노드에 연결",
-            "/기믹 설정 <방향|크기|높이|위치> <값> · 재생 <애니메이션>", "/기믹 퍼즐 [이름] · 신호 <퍼즐> <노드> [켜기|끄기|전환] · 초기화 <퍼즐>",
+            "/기믹 설정 <방향|크기|높이|위치|상태> <값> · 재생 <애니메이션>", "/기믹 퍼즐 [이름] · 신호 <퍼즐> <노드> [켜기|끄기|전환] · 초기화 <퍼즐>",
             "/기믹 리로드  - config·models·puzzles 다시 읽기"))
             s.sendMessage(Component.text(" " + line, NamedTextColor.GRAY));
     }
@@ -182,12 +198,7 @@ final class GimmickCommand implements CommandExecutor, TabCompleter {
         return plugin.tool().selection(p);
     }
 
-    private static Location spawnSpot(Player p) {
-        Block b = p.getTargetBlockExact(8);
-        if (b != null && !b.isPassable()) return b.getLocation().add(0.5, 1, 0.5);
-        Location l = p.getLocation();
-        return new Location(l.getWorld(), l.getBlockX() + 0.5, l.getY(), l.getBlockZ() + 0.5);
-    }
+    private static Integer facingArg(String v) { return school.chacademia.gimmick.puzzle.PuzzleDef.facingOf(v); }
 
     private static LivingEntity lookingMob(Player p) {
         var eye=p.getEyeLocation();var block=p.getWorld().rayTraceBlocks(eye,eye.getDirection(),12,FluidCollisionMode.NEVER,true);
@@ -213,7 +224,8 @@ final class GimmickCommand implements CommandExecutor, TabCompleter {
             case "노드" -> a.length == 2 ? match(concat(puzzles, List.of("없음")), a[1]) : a.length == 3 ? match(plugin.puzzles().nodes(a[1]), a[2]) : List.of();
             case "신호" -> a.length == 2 ? match(puzzles, a[1]) : a.length == 3 ? match(plugin.puzzles().nodes(a[1]), a[2]) : a.length == 4 ? match(List.of("켜기", "끄기", "전환"), a[3]) : List.of();
             case "초기화", "퍼즐" -> a.length == 2 ? match(puzzles, a[1]) : List.of();
-            case "설정" -> a.length == 2 ? match(List.of("방향", "크기", "높이", "위치"), a[1]) : List.of();
+            case "설정" -> a.length == 2 ? match(List.of("방향", "크기", "높이", "위치", "상태"), a[1]) : a.length == 3 && a[1].equals("방향") ? match(List.of("남", "서", "북", "동"), a[2]) : List.of();
+            case "아이템" -> a.length == 2 ? match(plugin.catalog().ids(), a[1]) : List.of();
             case "재생" -> {
                 Gimmick g = s instanceof Player p ? plugin.tool().selection(p) : null;
                 yield a.length == 2 && g != null ? match(plugin.catalog().get(g.model).anims().keySet(), a[1]) : List.of();

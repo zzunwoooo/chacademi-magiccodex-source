@@ -118,4 +118,35 @@ class PuzzleEngineTest {
         assertTrue(f.on("a"));
         assertFalse(f.on("t"), "timed nodes come back off");
     }
+
+    @Test void deviceConditionsAndManaInputs() {
+        var log = new Log();
+        var e = engine("""
+            nodes:
+              pillar: {level: 2}
+              statue: {facing: west}
+              plate: {turn-on: [weight], hold: 3, mana: out}
+              door: {turn-on: [mana], hold: 8}
+              sluice: {while: [mana]}
+              receiver: {while: [light], color: red, mana: out}
+            """, log);
+        var d = e.def().nodes();
+        assertTrue(d.get("plate").device().manaOut());
+        assertEquals(1, d.get("statue").device().facing());
+        assertEquals("red", d.get("receiver").device().color());
+        assertTrue(d.get("pillar").device().condition());
+        assertTrue(e.held("pillar", "state", true, null, 1));
+        assertFalse(e.held("plate", "state", true, null, 1), "no condition: state is ignored");
+        e.trigger("plate", "weight", null, 2);
+        e.held("sluice", "mana", true, null, 3);
+        e.trigger("door", "mana", null, 3);
+        assertTrue(e.on("sluice") && e.on("door") && e.on("plate"));
+        e.held("sluice", "mana", false, null, 4);
+        assertFalse(e.on("sluice"));
+        for (long t = 5; t < 200; t++) e.tick(t);
+        assertFalse(e.on("plate"));
+        assertFalse(e.on("door"));
+        e.held("receiver", "light", true, null, 201);
+        assertTrue(e.on("receiver"));
+    }
 }

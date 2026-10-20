@@ -17,11 +17,25 @@ public record PuzzleDef(String id, Map<String, NodeDef> nodes, boolean persist) 
                           double hold, Expr when, boolean latch, double cooldown, boolean resetOnFail,
                           LinkedHashMap<String, String> collect,
                           String animOn, String animOff, Solid solid, String teleport,
-                          List<String> commandsOn, List<String> commandsOff, String message) {
+                          List<String> commandsOn, List<String> commandsOff, String message, Device device) {
         public boolean listens(String trigger, Set<String> set) {
             if (set.contains(trigger)) return true;
             return trigger.startsWith("magic:") && set.contains("magic:any");
         }
+    }
+
+    /**
+     * Device options (2026-10-20 dungeon gimmick spells).
+     * manaOut: while the node is on, its gimmicks send a mana signal into adjacent conduits / devices.
+     * level / position / facing: the node is on exactly while its device shows that state (water pillar 0..3, mirror/dial 0..3,
+     *   statue facing 0..3 = south/west/north/east). color: light receiver only accepts beams of this colour.
+     * move [dx,dy,dz] + speed (blocks/s): floating platform travels one way when the node turns on. launch: wind vent upward speed.
+     * climb: vine pot ladder height (blocks of vines in front of the pot while on).
+     */
+    public record Device(boolean manaOut, Integer level, Integer position, Integer facing, String color,
+                         double[] move, double speed, double launch, int climb) {
+        public static final Device NONE = new Device(false, null, null, null, null, null, 2, 0, 0);
+        public boolean condition() { return level != null || position != null || facing != null; }
     }
 
     /** Barrier box that exists while the node is in `whenOn` state. Sizes in blocks, centered on the gimmick. */
@@ -66,7 +80,28 @@ public record PuzzleDef(String id, Map<String, NodeDef> nodes, boolean persist) 
             d(m.get("hold"), 0), when, Boolean.TRUE.equals(m.get("latch")), d(m.get("cooldown"), 0.5),
             m.containsKey("reset-on-fail") ? Boolean.TRUE.equals(m.get("reset-on-fail")) : hasSeq,
             collect, str(m.get("anim-on")), str(m.get("anim-off")), solid, str(m.get("teleport")),
-            list(m.get("command-on")), list(m.get("command-off")), str(m.get("message")));
+            list(m.get("command-on")), list(m.get("command-off")), str(m.get("message")), device(m));
+    }
+
+    private static Device device(Map<String, Object> m) {
+        Object mana = first(m, "mana", "마력", null);
+        boolean out = mana != null && Set.of("out", "true", "출력", "내보냄").contains(String.valueOf(mana).toLowerCase(Locale.ROOT));
+        double[] move = null;
+        if (m.get("move") instanceof List<?> l && l.size() == 3) move = new double[]{d(l.get(0), 0), d(l.get(1), 0), d(l.get(2), 0)};
+        return new Device(out, opt(m.get("level"), 0, 3), opt(m.get("position"), 0, 3), facing(m.get("facing")),
+            m.get("color") == null ? null : String.valueOf(m.get("color")).trim().toLowerCase(Locale.ROOT),
+            move, Math.max(0.1, d(m.get("speed"), 2)), d(m.get("launch"), 0), Math.clamp(i(m.get("climb"), 0), 0, 32));
+    }
+    private static Integer opt(Object o, int min, int max) { return o == null ? null : Math.clamp(i(o, min), min, max); }
+    /** 0..3 or south/west/north/east (남/서/북/동), or degrees. */
+    public static Integer facingOf(Object o) { return facing(o); }
+    static Integer facing(Object o) {
+        if (o == null) return null;
+        String s = String.valueOf(o).trim().toLowerCase(Locale.ROOT);
+        return switch (s) {
+            case "south", "s", "남", "남쪽" -> 0; case "west", "w", "서", "서쪽" -> 1; case "north", "n", "북", "북쪽" -> 2; case "east", "e", "동", "동쪽" -> 3;
+            default -> { double v = d(o, 0); yield v > 3 || v < 0 ? Math.floorMod((int) Math.round(v / 90), 4) : Math.floorMod((int) Math.round(v), 4); }
+        };
     }
 
     private static Object first(Map<?, ?> m, Object a, Object b, Object c) {

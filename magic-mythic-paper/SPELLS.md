@@ -34,7 +34,7 @@
 | 32 | storm_crown | 삼중 탄환 | AIM | 미몹+애드온 | 3발 모두 같은 대상 적중 시 3초 신속 III |
 | 33 | hearth_touch | 손끝의 화로 | SELF | Bridge 유틸 | MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸) |
 | 34 | ember_bolt | 파이어 볼 | AIM | 미몹+애드온 | 약한 불씨 탄 |
-| 35 | rekindle | 다시 타오르는 불 | SELF | Bridge 유틸 | MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸) |
+| 35 | rekindle | 다시 타오르는 불 | SELF | 미몹+애드온 | 원소 화로(기믹) 점화, 없으면 모닥불·초 (2026-10-20 Bridge 유틸에서 이동) |
 | 36 | flame_forging | 불꽃 단조 | SELF | 미몹+애드온 | 손에 든 재료를 단조표대로 변환 (재료표 미정: config flame-forging.recipes) |
 | 37 | ember_trap | 잿불 덫 | AIM | 미몹+애드온 | 60초 덫, 최대 2개, 밟으면 폭발 |
 | 38 | fire_curtain | 플레어 월 | AIM | 미몹+애드온 | 폭 6블록 화염벽 5초 |
@@ -47,7 +47,7 @@
 | 45 | ash_brand | 재의 낙인 | ENTITY | 미몹+애드온 | 3초 뒤 폭발, 맞은 적에게 전이 |
 | 46 | flame_leap | 블레이즈 킥 | SELF | 미몹+애드온 | 회전 발차기 근접 범위 |
 | 47 | crimson_heart | 홍련의 심장 | SELF | 미몹+애드온 | 현재 체력 절반 소모, 소모량 비례 폭발 |
-| 48 | wick_trimming | 심지 줄이기 | SELF | Bridge 유틸 | MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸) |
+| 48 | wick_trimming | 심지 줄이기 | SELF | 미몹+애드온 | 원소 화로(기믹) 끄기, 없으면 불 블록 끄기 (2026-10-20 Bridge 유틸에서 이동) |
 | 49 | glass_firing | 광석 재련 | 장착 | 애드온 패시브 | 장착 중 광석 드롭 자동 재련 (광석당 마나 3) |
 | 50 | charcoal_conversion | 발화 | ENTITY | 미몹+애드온 | 10초 발화 |
 | 51 | sponge_drying | 스펀지 말리기 | SELF | Bridge 유틸 | MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸) |
@@ -166,7 +166,6 @@
 | 168 | shadow_double | 그림자 분신 | SELF | 미몹+애드온 | 제자리에 분신 8초, 8초 안 재사용 시 복귀(재사용 마나 환급). 분신 유지 중 쿨 없음, 복귀/소멸 시 쿨 시작 |
 | 169 | echo_reading | 잔향 읽기 | SELF | 미몹+애드온 | 바라본 블록/엔티티(6칸)에 MagicEchoEvent 발생 - 퀘스트·던전 플러그인이 단서 문구를 넣음 (없으면 "남아 있는 기억이 없다") |
 | 170 | sealing_thread | 봉인의 실 | SELF | 미몹+애드온 | 직접 설치한 문/상자/통에 봉인(다른 사람은 못 엶), 같은 대상에 다시 쓰면 해제 |
-| 171 | afterlife_gate | 사후세계의 문 | - | 보류 | 171 유체이탈의 문 - 클라이언트 유령 렌더·분신 가시성(모드) |
 | 172 | shadow_exchange | 그림자 교환 | ENTITY | 미몹+애드온 | 대상과 위치 교환 (0.3초 사라졌다 나타남). 남의 펫·보호구역·PvP 불가 대상 제외 |
 | 173 | forbidden_contract | 금서의 계약 | SELF | 미몹+애드온 | 최대 마나 70% 지불 → 3초간 마나 회복분을 체력으로 전환 → 이어서 15초 마나 회복 금지 |
 | 174 | life_siphon | 생명 갈취 | AIM | 미몹+애드온 | 조준 지점 반경 3 암흑지대 3초, 0.5초마다 피해 + 준 피해 50% 회복 |
@@ -182,25 +181,33 @@
 | 184 | shadow_nail | 그림자 못 | ENTITY | 미몹+애드온 | 15초 저주, 시전자와 20블록 넘게 멀어지면 피해 1회 후 종료, 그냥 만료되면 피해 없음 |
 | 185 | night_lullaby | 밤의 자장가 | SELF | 미몹+애드온 | 팬텀 3마리 10초 소환, 0.5초마다 반경 16 적 재타겟, 햇빛에 안 탐, 드롭·경험치 없음, 주인/아군 공격 안 함 |
 | 186 | loosen_grasp | 손아귀 풀기 | ENTITY | 미몹+애드온 | 플레이어: 선택 핫바 슬롯을 무작위로 바꿈 / 몬스터: 4초 침묵(무장해제) |
-| 187 | shadow_tracking | 그림자 추적 | - | 보류 | 187 그림자 추적 - 클라이언트 시야 반전(모드) |
 | 188 | healing_seal | 회복 봉인 | ENTITY | 미몹+애드온 | 대상 8초 회복봉인 (자연 회복·물약·마법 회복 차단 = 기존 회복봉인 상태 그대로) |
 | 189 | shadow_scales | 어둠의 저울 | AIM | 미몹+애드온 | 조준 지점 반경 4 폭발, 대상 체력 ÷ 시전자 체력 비율로 추가 피해 +1%~+50% (2배 이상 = 150%) |
 | 190 | warning_thread | 경고의 실 | AIM | 미몹+애드온 | 대상(또는 조준 지점) 중심 반경 6 결계 7초: 시전 때 안에 있던 적은 밖으로 못 나감 (되밀림) |
-| 191 | final_knot | 끝매듭 | - | 보류 | 191 검은보따리 - MCPets 연동 |
 | 192 | wound_accounting | 상처 회계 | ENTITY | 미몹+애드온 | 유도 먹물 덩어리가 맞으면 무작위 상태이상 1개 (기절1초·속박1.5·무장해제2·둔화3·화상3·회복봉인4·약화5·중력3·고정3·독4·물리약화5·실명2·물약봉인5·마나소각·수면2·공포1.5) |
 | 193 | inverted_offering | 뒤집힌 공물 | 장착 | 애드온 패시브 | 장착 중 처치한 몬스터의 드롭을 경험치로 바꿈 (아이템 1개당 0.5, 올림 - conversion_ratio 미정 임시), 플레이어·소환수 제외 |
 | 194 | ghost_tool | 유령 도구 | SELF | 미몹+애드온 | 30초 블록 설치·파괴 사거리 +27 (block_interaction_range), 공격 사거리 그대로 |
 | 195 | bell_of_fear | 공포의 종 | SELF | 미몹+애드온 | 주변 8블록 일반 몬스터 3초 공포 (파동 도달 순서대로), 플레이어·보스 제외 |
 | 196 | eclipse_eye | 월식의 눈 | AIM | 미몹+애드온 | 5초 영창(이동·피격 시 실패) → 조준 지점 반경 15 영역 10초: 안의 시전자 이동속도 +30%·마나 계속 채움, 달빛 6개가 떠돌며 접촉 피해(같은 적 1초 간격) |
-| 197 | death_ledger | 죽음의 장부 | - | 보류 | 197 죽음의 장부 - Bridge 가속(haste) 스탯 API |
 | 198 | void_maw | 공허의 입 | AIM | 미몹+애드온 | 조준 지점에서 1.25초 뒤 바닥의 입이 삼킴: 반경 4 피해 |
-| 199 | twilight_bargain | 황혼의 거래 | - | 보류 | 199 황혼의 거래 - Bridge 마나 비용 대납 API |
 | 203 | landing_airbrake | 빗자루 차원이동 | SELF | 미몹+애드온 | 빗자루 탑승 중 바라보는 방향 6블록 앞으로 순간이동 (막히면 그 앞까지, 속도 유지) |
 | 210 | hushed_soles | 고요한 밑창 | SELF | 미몹+애드온 | 20초간 자신의 걷기·달리기 진동(STEP)만 스컬크가 못 느낌. 착지·블록·아이템·공격 진동은 그대로 |
 | 211 | thorn_manners | 가시의 예절 | SELF | 미몹+애드온 | 20초간 달콤한 열매 덤불의 감속·피해 무시 (자신만, 덤불은 그대로) |
 | 212 | cinder_skipring | 불꽃 줄넘기 | SELF | 미몹+애드온 | 발밑 불고리 반지름 1→7 (2초, 3블록/초), 고리 띠(±0.25)에 닿은 적 1회 피해, 점프(+0.4 이상)·안쪽·다른 층은 회피 |
 | 213 | droplet_relay | 물방울 인계 | AIM | 미몹+애드온 | 물방울이 조준 지점(10블록)으로 날아가 반경 2.5 적에게 피해 + 3초 공중부양 |
 | 214 | folding_tideplane | 접히는 수면 | AIM | 미몹+애드온 | 조준 지점에 6×2 물막, 1초 뒤 시전자 반대쪽으로 1.3초 동안 책장처럼 넘어감, 움직이는 막에 닿은 적 1회 피해 |
+| 239 | thawing_heat | 해빙의 열기 | SELF | 미몹+애드온 | 얼음 봉인 3초 채널링 → thaw 트리거, 시전자 피해 시 취소 |
+| 240 | steam_ignition | 증기 점화 | SELF | 미몹+애드온 | 증기 밸브 steam 트리거 (밸브 노드 mana: out 이면 마력 신호) |
+| 241 | water_level | 수위 조절 | SELF | 미몹+애드온 | 수위 기둥 레벨 0~3 (+1 / 웅크리면 -1) |
+| 242 | stone_weight | 무게추 | SELF | 미몹+애드온 | 대지 압력판 weight 트리거 (보통 hold 짧게 + mana: out) |
+| 243 | vine_awaken | 덩굴 깨우기 | SELF | 미몹+애드온 | 씨앗 화분 grow 트리거 → 노드 climb 설정만큼 위로 덩굴(타고 오르는 블록) |
+| 244 | light_beam | 빛줄기 | SELF | 미몹+애드온 | 3초 채널링(이동 불가) 빛줄기, 거울 반사·프리즘 색 변경, 수신 수정 light 입력 |
+| 245 | mirror_tune | 반사 조율 | SELF | 미몹+애드온 | 회전 반사 거울·회전 다이얼 위치 +1 (0~3) |
+| 246 | prism_tint | 프리즘 물들이기 | SELF | 미몹+애드온 | 프리즘 색 흰색→빨강→노랑→초록→파랑→보라 순환 (웅크리면 반대) |
+| 247 | statue_wake | 석상 깨우기 | SELF | 미몹+애드온 | 잠든 석상 방향 +90° (노드 facing 조건) |
+| 248 | rewind | 되감기 | SELF | 미몹+애드온 | 마지막 변화(방향·위치·수위·색·레버) 1단계 되돌리기, 60초 이내 |
+| 249 | conduit_turn | 도관 회전 | SELF | 미몹+애드온 | 마력 도관 방향 +90° → 마력 신호 경로 재계산 |
+| 250 | dimension_mark | 차원 표식 | SELF | 미몹+애드온 | 첫 시전 = 표식(30초), 두 번째 = 다른 게이트와 연결(120초, 걸어 들어가면 이동) |
 | 300 | fox_orbit | 여우불 공전 | AIM | 미몹+애드온 | 여우불 3개가 0.8초 몸 둘레를 돌다가 조준한 적에게 휘어 날아감 (불씨 2초) |
 | 301 | curving_plumes | 곡선 불깃털 | AIM | 미몹+애드온 | 좌우로 퍼졌다가 휘어 들어오는 불깃털 3발 (불씨 2초) |
 | 302 | crystal_orbit | 결정 공전탄 | SELF | 미몹+애드온 | 얼음 결정 8개가 1초 몸 둘레를 돈 뒤 8방향으로 발사, 맞으면 1.5초 둔화 |
@@ -225,12 +232,3 @@
 | 321 | roar_leap | 포효 도약 | ENTITY | 미몹+애드온 | 대상에게 뛰어들어 착지하며 포효, 반경 4 피해 + 공포 1초 |
 | 322 | gravity_slam | 중력 강타 | SELF | 미몹+애드온 | 주변 5블록 강타 + 중력 2초 |
 | 323 | tail_spikes | 꼬리 가시 | AIM | 미몹+애드온 | 조준 지점 반경 3에 0.4초 간격 가시 3번 |
-|  | horizon_trim | horizon_trim | - | 보류 | 201 수평 나침반 - 빗자루 모드 고도 유지 |
-|  | barrelroll_stitch | barrelroll_stitch | - | 보류 | 200 회전 봉합 - 빗자루 모드 회피/롤 |
-|  | wandering_alembic | wandering_alembic | - | 보류 | 207 떠도는 연금실 - 연금술 시스템 (VFX 팩도 없음) |
-|  | wingmate_towline | wingmate_towline | - | 보류 | 204 동행 견인줄 - 빗자루 모드 견인 |
-|  | folding_broom_wings | folding_broom_wings | - | 보류 | 202 접이 날개 - 빗자루 모드 안정성 |
-|  | heartfold_wrapping | heartfold_wrapping | - | 보류 | 208 마음을 접은 포장 - ChacaNPC 플러그인 |
-|  | potion_effect_decant | potion_effect_decant | - | 보류 | 205 되담는 약효 - 연금술/물약 Bridge 시스템 |
-|  | twin_cup_draught | twin_cup_draught | - | 보류 | 206 쌍잔 기울이기 - 연금술/물약 Bridge 시스템 |
-|  | conversation_ripples | conversation_ripples | - | 보류 | 209 말끝의 물결 - ChacaNPC 플러그인 |

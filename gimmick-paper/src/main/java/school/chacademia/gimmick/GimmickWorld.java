@@ -62,8 +62,16 @@ final class GimmickWorld implements Listener {
         var sec = yaml.getConfigurationSection("gimmicks");
         if (sec != null) for (String id : sec.getKeys(false)) {
             var s = sec.getConfigurationSection(id);
-            if (s != null) gimmicks.put(id, Gimmick.load(id, s.getValues(false)));
+            if (s != null) { var g = Gimmick.load(id, s.getValues(false)); gimmicks.put(id, g); }
         }
+        for (Gimmick g : gimmicks.values()) g.place(plugin.catalog().get(g.model), null); // platform offsets are applied once Devices is up
+        cellsDirty = true;
+    }
+
+    /** After puzzles load: put moved floating platforms where they were. */
+    void applyOffsets() {
+        for (Gimmick g : gimmicks.values()) if (!g.attached()) g.place(plugin.catalog().get(g.model), plugin.devices().platformOffset(g));
+        cellsDirty = true;
     }
 
     void save() {
@@ -85,19 +93,56 @@ final class GimmickWorld implements Listener {
     }
 
     // ------------------------------------------------------------------ create / remove
-    Gimmick create(String model, Location at, float yaw, String puzzle, String node) {
-        var g = new Gimmick("g" + nextId++, model, at, yaw);
+    /** New placed gimmick on block (bx, by, bz) = the block the model stands in (its feet), facing 0..3. */
+    Gimmick create(String model, World w, int bx, int by, int bz, int facing, String puzzle, String node) {
+        var g = new Gimmick("g" + nextId++, model, w.getName(), bx, by, bz, facing);
         g.puzzle = puzzle == null ? "" : puzzle;
         g.node = node == null ? "" : node;
+        g.place(plugin.catalog().get(model), null);
         gimmicks.put(g.id, g);
+        cellsDirty = true;
         markDirty();
-        if (at.getWorld().isChunkLoaded(g.chunkX(), g.chunkZ())) spawn(g, true);
+        if (w.isChunkLoaded(g.chunkX(), g.chunkZ())) spawn(g, true);
+        plugin.collision().refresh(g);
+        plugin.mana().dirty();
         return g;
+    }
+
+    /** Placed gimmicks that already take one of these blocks (placement refuses overlaps). */
+    Gimmick overlap(String world, List<int[]> columns, int by, int layers, Gimmick except) {
+        for (int[] c : columns) for (int l = 0; l < layers; l++) { Gimmick o = at(world, c[0], by + l, c[1]); if (o != null && o != except) return o; }
+        return null;
+    }
+
+    // ------------------------------------------------------------------ block index (mana grid, beams, overlap)
+    private final Map<String, Gimmick> cells = new HashMap<>();
+    private boolean cellsDirty = true;
+    void cellsChanged() { cellsDirty = true; }
+    static String cell(String world, int x, int y, int z) { return world + ":" + x + ":" + y + ":" + z; }
+    /** The placed gimmick taking block (x, y, z): its footprint columns, from the anchor up through the model height. */
+    Gimmick at(String world, int x, int y, int z) {
+        if (cellsDirty) {
+            cells.clear();
+            for (Gimmick g : gimmicks.values()) {
+                if (g.attached()) continue;
+                var info = plugin.catalog().get(g.model);
+                int base = (int) Math.floor(g.y + 1e-6), top = (int) Math.floor(g.y + Math.max(0.2, info.height() * g.scale) - 1e-6);
+                var off = plugin.devices().platformOffset(g);
+                int dx = (int) Math.round(off.getX()), dz = (int) Math.round(off.getZ());
+                for (int[] c : g.columns(info, dx, dz)) for (int yy = base; yy <= Math.max(base, top); yy++) cells.putIfAbsent(cell(g.world, c[0], yy, c[1]), g);
+            }
+            cellsDirty = false;
+        }
+        return cells.get(cell(world, x, y, z));
     }
 
     void remove(Gimmick g) {
         despawn(g);
         gimmicks.remove(g.id);
+        cellsDirty = true;
+        plugin.collision().clear(g);
+        plugin.mana().dirty();
+        plugin.devices().forget(g);
         if (g.attached()) {
             Entity host = Bukkit.getEntity(g.host);
             if (host != null) {
@@ -192,17 +237,18 @@ final class GimmickWorld implements Listener {
 
     /** Move/rotate/scale applied to the live entities and saved. */
     void transform(Gimmick g) {
-        if(!plugin.protection().at(g.location())){
-            if(g.handle!=null){var previous=g.handle.base().getLocation();g.x=previous.getX();g.y=previous.getY();g.z=previous.getZ();g.yaw=previous.getYaw();}
-            return;
-        }
+        if(!g.attached()&&!plugin.protection().at(new Location(Bukkit.getWorld(g.world),g.bx+.5,g.by,g.bz+.5)))return;
         if (g.attached()) {
             if (g.handle != null) g.handle.scale(g.scale);
             Entity host = Bukkit.getEntity(g.host);
             if (host != null) host.getPersistentDataContainer().set(scaleKey, PersistentDataType.DOUBLE, g.scale);
             return;
         }
+        g.place(plugin.catalog().get(g.model), plugin.devices().platformOffset(g));
+        cellsDirty = true;
         markDirty();
+        plugin.collision().refresh(g);
+        plugin.mana().dirty();
         Location at = g.location();
         if (at == null || !g.live()) return;
         g.handle.teleport(at);
@@ -270,7 +316,8 @@ final class GimmickWorld implements Listener {
     Gimmick looking(Player p, double max) {
         Vector start = p.getEyeLocation().toVector(), dir = p.getEyeLocation().getDirection();
         var block=p.getWorld().rayTraceBlocks(p.getEyeLocation(),dir,max,FluidCollisionMode.NEVER,true);
-        if(block!=null)max=Math.min(max,block.getHitPosition().distance(start));
+        // our own collision barriers sit exactly where the models are: they must not hide the model behind them
+        if(block!=null&&!(block.getHitBlock()!=null&&plugin.collision().ours(block.getHitBlock())))max=Math.min(max,block.getHitPosition().distance(start));
         Gimmick best = null; double bestDist = max;
         for (Gimmick g : gimmicks.values()) {
             if (!g.live()) continue;
@@ -309,12 +356,33 @@ final class GimmickWorld implements Listener {
     /** Show the puzzle state: on -> active (or activate held), off -> idle. `fresh` plays spawn first. */
     void playState(Gimmick g, boolean fresh) {
         if (g.handle != null) g.handle.stop();
-        boolean on = g.inPuzzle() && plugin.puzzles().isOn(g.puzzle, g.node);
+        boolean on = on(g);
         var info = plugin.catalog().get(g.model);
         String steady = on ? (info.has("active") ? "active" : "activate") : "idle";
         if (fresh && info.has("spawn")) play(g, "spawn", steady);
         else play(g, steady, null);
         if (g.inPuzzle() && !on) for (String a : plugin.puzzles().collectedAnims(g.puzzle, g.node)) overlay(g, a);
+        deviceLayers(g);
+    }
+
+    /** Shown state: the puzzle node, or for a gimmick outside any puzzle the device's own on/off (lit brazier, powered conduit ...). */
+    private final Set<String> freeOn = new HashSet<>();
+    boolean on(Gimmick g) { return g.inPuzzle() ? plugin.puzzles().isOn(g.puzzle, g.node) : freeOn.contains(g.id); }
+    /** Visual on/off for gimmicks outside puzzles. */
+    void setFree(Gimmick g, boolean on) {
+        if (g.inPuzzle() || (on == freeOn.contains(g.id))) return;
+        if (on) freeOn.add(g.id); else freeOn.remove(g.id);
+        if (g.live()) { transition(g, on, null, null); Bukkit.getScheduler().runTaskLater(plugin, () -> deviceLayers(g), 2); }
+    }
+
+    /** Device pose layers that sit on top of the state animation: mirror/dial position, water level, prism colour. */
+    void deviceLayers(Gimmick g) {
+        if (g.handle == null) return;
+        var info = plugin.catalog().get(g.model);
+        if (info.is("mirror") && info.has("rot_" + g.pos)) g.handle.layer("pose", "rot_" + g.pos);
+        if (info.is("dial") && info.has("pos_" + g.pos)) g.handle.layer("pose", "pos_" + g.pos);
+        if (info.is("pillar")) g.handle.layer("level", g.level > 0 && info.has("level_" + g.level) ? "level_" + g.level : null);
+        if (info.is("prism")) g.handle.tint("prism", Colors.rgb(g.color));
     }
 
     /** Play `anim`, then `then` when it finishes (for hold/once animations). */
@@ -341,5 +409,6 @@ final class GimmickWorld implements Listener {
         var info = plugin.catalog().get(g.model);
         if (on) play(g, animOn != null ? animOn : "activate", info.has("active") ? "active" : null);
         else play(g, animOff != null ? animOff : (info.has("deactivate") ? "deactivate" : "idle"), "idle");
+        if (g.handle != null) Bukkit.getScheduler().runTaskLater(plugin, () -> deviceLayers(g), 1);
     }
 }

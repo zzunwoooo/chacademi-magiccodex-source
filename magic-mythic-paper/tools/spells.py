@@ -42,7 +42,7 @@ S = [
  # ---------------- fire ----------------
  U('hearth_touch'),
  ('ember_bolt','CHA_ember_bolt','AIM',24,2,0.25,False,['chabolt{speed=1.6;range=24;radius=0.5;ignite=40}'],'약한 불씨 탄'),
- U('rekindle'),
+ ('rekindle','CHA_rekindle','SELF',12,0,0,False,['chagimmick{type=ignite;range=12;mana=10} @self'],'원소 화로(기믹) 점화, 없으면 모닥불·초 (2026-10-20 Bridge 유틸에서 이동)'),
  ('ember_trap','CHA_ember_trap','AIM',15,6,0.4,False,['chazone{r=1.5;ticks=1200;trap=true;trapr=3;key=ember_trap;limit=2;ignite=60}'],'60초 덫, 최대 2개, 밟으면 폭발'),
  ('fire_curtain','CHA_fire_curtain','AIM',12,2,0.12,False,['chazone{wall=6;r=1.5;ticks=100;period=10;ignite=40}'],'폭 6블록 화염벽 5초'),
  ('phoenix_oath','CHA_phoenix_oath','SELF',12,0,0,False,['chaguard{type=lethal;ticks=6000;heal=6} @self'],'300초 동안 치명상 1회 무효'),
@@ -54,7 +54,7 @@ S = [
  ('ash_brand','CHA_ash_brand','ENTITY',15,5,0.4,False,['chamark{type=ash_brand;ticks=60;r=3;cooldown=200}'],'3초 뒤 폭발, 맞은 적에게 전이'),
  ('flame_leap','CHA_flame_leap','SELF',12,5,0.4,False,['chahit{center=caster;r=2.5;knock=0.8;ignite=40} @self'],'회전 발차기 근접 범위'),
  ('crimson_heart','CHA_crimson_heart','SELF',12,0,0,False,['chahit{center=caster;r=5;max=12;mult=0;hpcost=0.5;hpscale=2.5;knock=1} @self'],'현재 체력 절반 소모, 소모량 비례 폭발'),
- U('wick_trimming'),
+ ('wick_trimming','CHA_wick_trimming','SELF',12,0,0,False,['chagimmick{type=extinguish;range=12;mana=50} @self'],'원소 화로(기믹) 끄기, 없으면 불 블록 끄기 (2026-10-20 Bridge 유틸에서 이동)'),
  ('charcoal_conversion','CHA_charcoal_conversion','ENTITY',20,0,0,False,['chahit{mult=0;ignite=200}'],'10초 발화'),
  U('sponge_drying'), U('boiling_armor'),
  ('kiln_breath','CHA_kiln_breath','SELF',12,0,0,False,['chaworld{type=kiln;r=6;ticks=400} @self'],'주변 화로 20초 가공 2배속'),
@@ -180,6 +180,9 @@ S += _mob_spells.routes()
 # 168~214 최종 기획 신규 (tools/arcana_spells.py is their source of truth)
 import arcana_spells as _arcana
 S += _arcana.routes()
+# 239~250 던전 기믹 마법 (tools/gimmick_spells.py is their source of truth)
+import gimmick_spells as _gimmick
+S += _gimmick.routes()
 
 EXTRA = {
  'CHA_solar_judgment_fire': ('solar_judgment', ['chazone{r=4;ticks=60;period=5;mult=0.15}'], '태양의 심판 영창 완료 후 3초 레이저 (chachannel then=)'),
