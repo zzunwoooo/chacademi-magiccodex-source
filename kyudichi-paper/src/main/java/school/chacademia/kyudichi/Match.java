@@ -205,8 +205,12 @@ final class Match {
             Vector b = body(p);
             m.motion = m.lastBody == null ? new Vector() : b.clone().subtract(m.lastBody);
             m.lastBody = b;
-            if (!duel) plugin.hooks().clearCooldown(p, "flight"); // 큐디치: no flight cooldown (only the lock after a fall)
-            fallCheck(m, p);
+            if (!duel) {
+                plugin.hooks().clearCooldown(p, "flight"); // 큐디치: no flight cooldown
+                // owner 2026-10-20: no 낙마 in 큐디치 — balance 0 hangs the player on the broom until it recovers (motion mod).
+                // Re-sent every 2 s so a relog / respawn / late mod start still gets it (1 byte).
+                if (Math.floorMod(now + m.id.hashCode(), 40) == 0) plugin.hooks().broomHangMode(p, true);
+            }
             if (phase != Phase.PLAY) return;
         }
         if (snitch == null && !snitchCaught && elapsed >= opt.snitchAtTicks()) spawnSnitch();
@@ -266,7 +270,7 @@ final class Match {
                 }
             }
             case FLYING -> {
-                q.vel.setY(q.vel.getY() - rules.gravity);
+                // owner 2026-10-20: a thrown quaffle flies in a straight line (no gravity) for the pass time
                 q.step(world, arena.ballBox(), 0.45);
                 Team defender = goalHit(q.prev, q.pos);
                 MatchPlayer thrower = players.get(q.thrower);
@@ -280,18 +284,24 @@ final class Match {
                         catchQuaffle(m, p); return;
                     }
                 }
-                if (now - q.thrownAt >= rules.flightTicks) { q.state = Quaffle.State.FREE; q.thrower = null; }
+                if (now - q.thrownAt >= rules.flightTicks) {
+                    q.state = Quaffle.State.FREE; q.thrower = null;
+                    // keeps going the way it was thrown, then slows into the free wander
+                    q.steerTarget = q.vel.lengthSquared() > 1e-6 ? q.vel.clone().normalize().multiply(rules.quaffleDrift) : null;
+                    q.wanderTimer = 30;
+                }
                 q.visual.move(q.location(world));
             }
             case FREE -> {
-                // owner 2026-10-17: a loose quaffle falls (gravity), bounces and rolls to a stop on the ground
-                q.vel.setY(q.vel.getY() - rules.gravity);
-                q.vel.multiply(0.985);
-                q.step(world, arena.ballBox(), 0.4);
-                if (q.grounded(world, arena.ballBox())) {
-                    q.vel.setX(q.vel.getX() * 0.85); q.vel.setZ(q.vel.getZ() * 0.85);
-                    if (Math.abs(q.vel.getY()) < 0.08) q.vel.setY(0);
+                // owner 2026-10-20: a loose quaffle flies around freely like a bludger (no gravity)
+                if (--q.wanderTimer <= 0) {
+                    q.wanderTimer = 40 + random.nextInt(30);
+                    Vector d = Ball.randomDirection(random, 0.4);
+                    if (q.grounded(world, arena.ballBox()) && d.getY() < 0) d.setY(-d.getY());
+                    q.steerTarget = d.multiply(rules.quaffleDrift);
                 }
+                if (q.steerTarget != null) q.steer(q.steerTarget, rules.bludgerSteer * 0.5);
+                q.step(world, arena.ballBox(), 0.6);
                 q.visual.move(q.location(world));
             }
         }
@@ -712,24 +722,6 @@ final class Match {
         sendMatchAll();
     }
 
-    /**
-     * 낙마 (owner 2026-10-17): leaving the broom in the air (knocked off, flight ended, broom lost) and then touching the
-     * ground is a death (5 s respawn; the last enemy who hit them within the credit time gets the kill).
-     * Getting off while already standing on the ground is not a fall.
-     */
-    private void fallCheck(MatchPlayer m, Player p) {
-        if (plugin.hooks().riding(p)) { m.mounted = true; m.falling = false; return; }
-        if (m.mounted) {
-            m.mounted = false; m.falling = !p.isOnGround();
-            if (m.falling) m.flightLockUntil = now + rules.flightFallLockTicks;
-        }
-        if (m.falling && (p.isOnGround() || p.isInWater())) {
-            m.falling = false;
-            ChacaLink.notify(p, "warning", "kyudichi:fall", "낙마!", "", 1500);
-            kill(m, p, null);
-        }
-    }
-
     // ================================================================== 1:1 rounds
     /** Round time is up: the higher remaining health % wins the round; equal = a point to both. */
     private void roundTimeUp() {
@@ -901,6 +893,7 @@ final class Match {
     }
 
     void restore(Player p, MatchPlayer m) {
+        if (!duel) plugin.hooks().broomHangMode(p, false);
         plugin.hooks().stopBroomIfRiding(p);
         if (m.returnMode != null) p.setGameMode(m.returnMode);
         heal(p); p.setFireTicks(0); p.setFallDistance(0);

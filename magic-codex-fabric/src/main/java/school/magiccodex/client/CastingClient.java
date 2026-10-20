@@ -168,7 +168,8 @@ public final class CastingClient {
         if(!client.isWindowFocused()){STATE.releaseInputs();BroomClientLink.clear();}
         if(client.world==null||client.player==null)BroomClientLink.clear();
         if(client.world==null || client.player==null) STATE.reset();
-        else if(!client.player.isAlive() || client.player.isSpectator()) STATE.disable();
+        else if(!client.player.isAlive() || client.player.isSpectator()) STATE.suspend();
+        else STATE.resume();
         if(!STATE.enabled()) AimTargeting.cancel(false);
     }
 }

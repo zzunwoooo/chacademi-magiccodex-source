@@ -52,7 +52,7 @@ final class Rules {
         goalPoints = c.getInt("score.goal", 10); killPoints = c.getInt("score.kill", 3); snitchPoints = c.getInt("score.snitch", 100);
         killCreditTicks = sec(c, "score.kill-credit-seconds", 10, 1, 60);
         keyRange = num(c, "key.range", 5, 0.5, 10); keyCooldownTicks = secD(c, "key.cooldown-seconds", 1, 0, 10);
-        quaffleDrift = speed(c, "quaffle.drift-speed", 3); throwSpeed = speed(c, "quaffle.throw-speed", 30);
+        quaffleDrift = speed(c, "quaffle.drift-speed", 12); throwSpeed = speed(c, "quaffle.throw-speed", 30);
         gravity = num(c, "quaffle.gravity", 6, 0, 60) / 400.0;
         flightTicks = secD(c, "quaffle.flight-seconds", 3, 0.5, 20); holdTicks = sec(c, "quaffle.hold-seconds", 10, 1, 120);
         autoCatchRadius = num(c, "quaffle.auto-catch-radius", 1.5, 0.3, 5); rethrowBlockTicks = secD(c, "quaffle.rethrow-block-seconds", 0.5, 0, 5);
@@ -60,7 +60,7 @@ final class Rules {
         bludgerCount = (int) num(c, "bludger.count", 2, 0, 2);
         bludgerWander = speed(c, "bludger.wander-speed", 6); bludgerChase = speed(c, "bludger.chase-speed", 16);
         bludgerSteer = num(c, "bludger.steer", 2.5, 0.1, 20) / 20.0;
-        bludgerHitRadius = num(c, "bludger.hit-radius", 1.3, 0.3, 5); bludgerDamagePercent = num(c, "bludger.damage-percent", 25, 0, 100);
+        bludgerHitRadius = num(c, "bludger.hit-radius", 1.0, 0.3, 5); bludgerDamagePercent = num(c, "bludger.damage-percent", 25, 0, 100);
         bludgerKnockback = num(c, "bludger.knockback", 1.2, 0, 5);
         ignoreAfterHitTicks = secD(c, "bludger.ignore-after-hit-seconds", 2, 0, 30);
         idleTargetRadius = num(c, "bludger.idle-target-radius", 8, 0, 64);
@@ -104,7 +104,7 @@ final class Rules {
             f.put(k, mat == null || !mat.isItem() ? k.fallback : mat);
         }
         models = Map.copyOf(m); fallback = Map.copyOf(f);
-        modelScale = num(c, "models.scale", 2, 0.1, 5);
+        modelScale = num(c, "models.scale", 1.4, 0.1, 5);
     }
 
     private static Set<String> lower(List<String> list) {

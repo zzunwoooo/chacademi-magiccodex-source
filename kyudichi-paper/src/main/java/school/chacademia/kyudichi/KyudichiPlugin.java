@@ -123,28 +123,29 @@ public final class KyudichiPlugin extends JavaPlugin {
     private void migrateConfig() {
         var c = getConfig();
         int version = c.getInt("config-version", 1);
-        if (version >= 3) return;
-        if (version >= 2) {
+        if (version >= 4) return;
+        if (version < 2) {
+            Object[][] v2 = {
+                    {"quaffle.throw-speed", 44.0}, {"quaffle.gravity", 16.0},
+                    {"bludger.wander-speed", 16.0}, {"bludger.chase-speed", 30.0}, {"bludger.steer", 6.0}, {"bludger.hit-radius", 1.5},
+                    {"bludger.ignore-after-hit-seconds", 1.2}, {"bludger.idle-target-radius", 40}, {"bludger.second-delay-seconds", 0.5},
+                    {"bludger.deflect-speed", 42.0},
+                    {"snitch.speed", 30.0}, {"snitch.flee-radius", 26}, {"snitch.catch-range", 1.6},
+                    {"snitch.pause-every-seconds", java.util.List.of(10, 18)}, {"snitch.pause-seconds", 0.6}};
+            for (Object[] kv : v2) c.set((String) kv[0], kv[1]);
+            c.set("models.scale", 2.0); c.set("key.range", 5.0);
+        } else if (version < 3) {
             // 3 (owner 2026-10-19): balls twice as big, longer F reach — only when the old defaults are still there
             if (c.getDouble("models.scale", 1.0) == 1.0) c.set("models.scale", 2.0);
             if (c.getDouble("key.range", 3.0) == 3.0) c.set("key.range", 5.0);
-            c.set("config-version", 3);
-            saveConfig();
-            getLogger().info("config.yml 을 버전 3으로 바꿨어요 (공 크기 2배·F 범위 5)");
-            return;
         }
-        Object[][] v2 = {
-                {"quaffle.throw-speed", 44.0}, {"quaffle.gravity", 16.0},
-                {"bludger.wander-speed", 16.0}, {"bludger.chase-speed", 30.0}, {"bludger.steer", 6.0}, {"bludger.hit-radius", 1.5},
-                {"bludger.ignore-after-hit-seconds", 1.2}, {"bludger.idle-target-radius", 40}, {"bludger.second-delay-seconds", 0.5},
-                {"bludger.deflect-speed", 42.0},
-                {"snitch.speed", 30.0}, {"snitch.flee-radius", 26}, {"snitch.catch-range", 1.6},
-                {"snitch.pause-every-seconds", java.util.List.of(10, 18)}, {"snitch.pause-seconds", 0.6}};
-        for (Object[] kv : v2) c.set((String) kv[0], kv[1]);
-        c.set("models.scale", 2.0); c.set("key.range", 5.0);
-        c.set("config-version", 3);
+        // 4 (owner 2026-10-20): balls a bit smaller again, narrower bludger hit, the free quaffle wanders like a bludger
+        if (c.getDouble("models.scale", 2.0) == 2.0) c.set("models.scale", 1.4);
+        if (c.getDouble("bludger.hit-radius", 1.5) == 1.5) c.set("bludger.hit-radius", 1.0);
+        if (c.getDouble("quaffle.drift-speed", 3.0) == 3.0) c.set("quaffle.drift-speed", 12.0);
+        c.set("config-version", 4);
         saveConfig();
-        getLogger().info("config.yml 을 버전 3으로 바꿨어요 (공 속도·퀘이플 중력·공 크기 2배·F 범위 5)");
+        getLogger().info("config.yml 을 버전 4로 바꿨어요 (공 크기 1.4·블러저 타격 범위 1.0·퀘이플 자유 비행)");
     }
     RatingStore store() { return store; }
     Matches matches() { return matches; }

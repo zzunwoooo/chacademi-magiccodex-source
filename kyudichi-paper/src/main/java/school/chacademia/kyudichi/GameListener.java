@@ -130,6 +130,12 @@ final class GameListener implements Listener {
             if (m.ourTeleport || m.phase == Match.Phase.ENDED || !m.rules.teleportGuard) return;
             switch (e.getCause()) {
                 case PLUGIN, ENDER_PEARL, CHORUS_FRUIT, UNKNOWN, SPECTATE -> {
+                    // owner 2026-10-20: short hops that stay inside the arena (빗자루 순간이동 마법 등) are fine;
+                    // only teleports that leave the arena (귀환, 집, 다른 월드 …) are blocked
+                    var to = e.getTo();
+                    if (e.getCause() != PlayerTeleportEvent.TeleportCause.SPECTATE && to != null && to.getWorld() == m.world
+                            && m.arena.bounds != null && m.arena.bounds.contains(to.toVector())
+                            && to.distanceSquared(e.getFrom()) <= 64 * 64) return;
                     e.setCancelled(true);
                     ChacaLink.notify(p, "warning", "kyudichi:teleport", "순간이동할 수 없어요", "큐디치 경기 중이에요", 3000);
                 }
@@ -185,8 +191,6 @@ final class GameListener implements Listener {
             else if (m.quaffle != null && mp.id.equals(m.quaffle.holder)) why = "퀘이플을 들고 있을 때는 마법을 쓸 수 없어요";
             else if (m.duel && m.rules.duelBannedSpells.contains(id)) why = id.equals("flight") ? "1:1 대전에서는 비행할 수 없어요" : "1:1 대전에서 쓸 수 없는 마법이에요";
             else if (!m.duel && m.rules.bannedSpells.contains(id)) why = "큐디치에서 쓸 수 없는 마법이에요";
-            else if (!m.duel && id.equals("flight") && m.now < mp.flightLockUntil)
-                why = "낙마 후 " + Math.max(1, (mp.flightLockUntil - m.now + 19) / 20) + "초 동안 비행할 수 없어요";
             if (why != null) cancel.accept(why);
         });
         hookAimPoint(cl);

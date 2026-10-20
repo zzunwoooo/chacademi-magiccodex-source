@@ -69,10 +69,9 @@ public final class BroomPhysics {
     private boolean fellOff;
     private long ridingTicks;
     public long ridingTicks(){return ridingTicks;}
-    /** Gradual fatigue, not an expiry timer. Smooth flight can continue beyond one minute. */
+    /** 최대 균형. 오너 2026-10-20: 오래 탈수록 조금씩 줄던 피로 감소는 없앰 → 항상 안정성 단계의 최대치. */
     public float maximumBalance(){
-        double timeScale=45+15*clamp(stats.mastery,0,1)+3*(clamp(stats.stability,.3f,3)-1);
-        return (float)Math.max(5,balanceCap()*Math.exp(-(ridingTicks/20.0)/timeScale));
+        return balanceCap();
     }
     /** 안정성 단계별 최대 균형: 90 + 3×단계 (단계 = 1 + (stability−0.6)×7.5, 1~10 → 93~120). */
     public float balanceCap(){
@@ -311,6 +310,26 @@ public final class BroomPhysics {
         prevBalance = balance;
         flightPitch = Float.NaN; // 다시 잡은 순간의 시선에서 새로 시작
         fellOff = false;
+    }
+
+    /** 큐디치 매달림 시작: 균형 0, 그 자리에 멈춤 (낙마 판정은 지움). */
+    public void startHang() {
+        balance = 0;
+        prevBalance = 0;
+        vx = vy = vz = 0;
+        boostTicks = 0;
+        rollTicks = 0;
+        stress = 0;
+        fellOff = false;
+    }
+
+    /** 매달린 동안 균형 회복. @return 가득 찼으면 true (다시 올라탐). */
+    public boolean recoverHang(float amount) {
+        prevBalance = balance;
+        balance = Math.min(maximumBalance(), balance + amount);
+        stress = 0;
+        fellOff = false;
+        return balance >= maximumBalance();
     }
 
     // ---- 도구 ----

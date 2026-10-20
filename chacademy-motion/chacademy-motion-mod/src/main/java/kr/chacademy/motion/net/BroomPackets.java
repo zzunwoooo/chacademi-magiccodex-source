@@ -24,6 +24,10 @@ public final class BroomPackets {
     public static final byte STATE_ROLL_LEFT = 3;
     public static final byte STATE_ROLL_RIGHT = 4;
     public static final byte STATE_START = 5;
+    /** 큐디치: 안정성 0 → 한 팔로 매달림 (2026-10-20) */
+    public static final byte STATE_HANG = 6;
+    /** 큐디치: 회복 → 다시 올라타는 중 */
+    public static final byte STATE_CLIMB = 7;
 
     // broom_evt 의 type
     public static final byte EVT_DISMOUNT = 0;
@@ -33,6 +37,8 @@ public final class BroomPackets {
     public static final byte EVT_ROLL_LEFT = 4;
     public static final byte EVT_ROLL_RIGHT = 5;
     public static final byte EVT_CRASH = 6;
+    public static final byte EVT_HANG = 7;
+    public static final byte EVT_CLIMB = 8;
 
     private static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> typeOf(String path) {
         return new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(MotionPackets.NAMESPACE, path));
@@ -85,6 +91,9 @@ public final class BroomPackets {
 
     public static final byte FX_REFILL_BALANCE = 1;
     public static final byte FX_FREE_BOOST = 2;
+    /** 큐디치: 낙마 대신 매달림 켜기 / 끄기 */
+    public static final byte FX_HANG_MODE_ON = 3;
+    public static final byte FX_HANG_MODE_OFF = 4;
 
     /** 서버 → 나: 비행 효과 (큐디치 성소). 1 균형 가득, 2 쿨타임 없는 가속. */
     public record FxS2C(byte kind) implements CustomPacketPayload {

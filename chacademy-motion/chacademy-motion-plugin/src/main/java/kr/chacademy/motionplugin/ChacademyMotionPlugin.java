@@ -91,6 +91,14 @@ public final class ChacademyMotionPlugin extends JavaPlugin implements PluginMes
         return brooms != null && brooms.fx(player, kr.chacademy.motionplugin.broom.BroomCodec.FX_FREE_BOOST);
     }
 
+    /**
+     * 큐디치(오너 2026-10-20): 낙마 대신 매달림. 켜 두면 균형 0 → 그 자리에서 한 팔로 매달려 회복 후 다시 올라탐.
+     * 경기장 플러그인이 리플렉션으로 부른다. 모드가 없으면 false.
+     */
+    public boolean setBroomHangMode(@NotNull Player player, boolean on) {
+        return brooms != null && brooms.hangMode(player, on);
+    }
+
     public BroomService brooms() {
         return brooms;
     }

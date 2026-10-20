@@ -35,6 +35,9 @@ public final class BroomRiders {
         public float speed;              // 블록/틱
         public boolean boosting;
         public boolean wobbling;
+        /** 큐디치: 한 팔로 매달림 / 다시 올라타는 남은 틱 (모든 유저 화면에 같은 모션) */
+        public boolean hanging;
+        public int climbTicks;
         Vec3 lastPos;
         Vec3 approachFrom;
         boolean hasYaw;
@@ -62,6 +65,14 @@ public final class BroomRiders {
         }
 
         /** 0→1 소환 크기 */
+        /** 매달린 동안 빗자루가 손 높이(머리 위)로 올라가는 양 (블록). 올라타는 동안 0으로 내려옴. */
+        public float hangLift(float pt) {
+            if (hanging) return BroomRenderer.HANG_LIFT;
+            if (climbTicks <= 0) return 0f;
+            float t = Mth.clamp((climbTicks - pt) / (float) BroomFlight.CLIMB_TICKS, 0f, 1f);
+            return BroomRenderer.HANG_LIFT * t * t * (3 - 2 * t);
+        }
+
         public float summonScale(float pt) {
             return approachFrom!=null?1f:Mth.clamp((age + pt) / 6f, 0f, 1f);
         }
@@ -187,6 +198,8 @@ public final class BroomRiders {
         } else {
             r.broom = s.broom();
         }
+        if (s.reason() == BroomPackets.STATE_HANG) { r.hanging = true; r.climbTicks = 0; }
+        else if (s.reason() == BroomPackets.STATE_CLIMB) { if (r.hanging) r.climbTicks = BroomFlight.CLIMB_TICKS; r.hanging = false; }
         if (s.reason() == BroomPackets.STATE_ROLL_LEFT) r.startRoll(-1);
         if (s.reason() == BroomPackets.STATE_ROLL_RIGHT) r.startRoll(1);
     }
@@ -249,7 +262,7 @@ public final class BroomRiders {
                 // 시야 밖으로 나간 사람: 서버는 내릴 때 시야 안 유저에게만 알려주므로, 오래 안 보이면 지움
                 // (다시 보이면 서버가 "타는 중"을 다시 보내 줌)
                 r.lastPos = null;
-                if (++r.missing > 40) it.remove();
+                if (++r.missing > 40) { it.remove(); BroomPose.forget(r.id); }
                 continue;
             }
             r.missing = 0;
@@ -257,6 +270,8 @@ public final class BroomRiders {
                 BroomFlight.fillVisual(r);
             } else {
                 estimate(r, p);
+                if (r.climbTicks > 0) r.climbTicks--;
+                if (r.hanging || r.climbTicks > 0) { r.pitch = 0; r.bank = 0; r.boosting = false; }
             }
             BroomPose.update(p, r);
         }

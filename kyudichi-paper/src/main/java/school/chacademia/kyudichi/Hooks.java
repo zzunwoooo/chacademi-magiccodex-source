@@ -120,6 +120,14 @@ final class Hooks {
         catch (NoSuchMethodException e) { warnOnce("motion-" + method, "ChacademyMotion." + method + " 없음 (모션 모드/플러그인 업데이트 필요)"); return null; }
         catch (ReflectiveOperationException | RuntimeException e) { warnOnce("motion-err-" + method, "ChacademyMotion." + method + " 실패: " + e); return null; }
     }
+    /** 큐디치(2026-10-20): 낙마 대신 매달림 켜기/끄기. Needs the motion update (setBroomHangMode). */
+    void broomHangMode(Player p, boolean on) {
+        Plugin m = Bukkit.getPluginManager().getPlugin("ChacademyMotion");
+        if (m == null || !m.isEnabled()) return;
+        try { m.getClass().getMethod("setBroomHangMode", Player.class, boolean.class).invoke(m, p, on); }
+        catch (NoSuchMethodException e) { warnOnce("motion-hang", "ChacademyMotion.setBroomHangMode 없음 (모션 모드/플러그인 업데이트 필요)"); }
+        catch (ReflectiveOperationException | RuntimeException e) { warnOnce("motion-err-hang", "ChacademyMotion.setBroomHangMode 실패: " + e); }
+    }
     boolean riding(Player p) { return Boolean.TRUE.equals(motion("isRidingBroom", p)); }
     void stopBroomIfRiding(Player p) { if (riding(p)) motion("stopBroom", p); }
     String broomId(Player p) { return motion("equippedBroomId", p) instanceof String s ? s : ""; }

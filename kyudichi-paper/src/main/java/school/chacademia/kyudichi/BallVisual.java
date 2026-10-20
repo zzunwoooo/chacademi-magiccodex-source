@@ -29,7 +29,7 @@ interface BallVisual {
     static BallVisual spawn(Location at, BallKind kind, Rules rules, Logger log) {
         BallVisual v = ModelEngineVisual.spawn(at, rules.models.get(kind), rules.modelScale, log);
         // the snitch never glows (owner 2026-10-17: no way to see it through walls)
-        return v != null ? v : new ItemVisual(at, new ItemStack(rules.fallback.get(kind)), kind == BallKind.SNITCH ? 0.9f : 1.4f, kind != BallKind.SNITCH);
+        return v != null ? v : new ItemVisual(at, new ItemStack(rules.fallback.get(kind)), kind == BallKind.SNITCH ? 0.7f : 1.0f, kind != BallKind.SNITCH);
     }
 
     static void prepare(Entity e) {

@@ -6,7 +6,7 @@ class BroomEnduranceTest {
     private BroomPhysics.Input input(int roll){return new BroomPhysics.Input(true,false,false,false,false,false,false,roll,0,0,false,false,70);}
     @Test void smoothFlightIsNotForcedOffAtOneMinute(){
         var p=physics(.5f,1); for(int i=0;i<2400;i++){p.step(input(0));assertTrue(p.balance<=p.maximumBalance());}
-        assertFalse(p.fellOff());assertTrue(p.balance>0);assertTrue(p.maximumBalance()<100);
+        assertFalse(p.fellOff());assertTrue(p.balance>0);assertEquals(p.balanceCap(),p.maximumBalance(),1e-6f); // 2026-10-20: no fatigue decay
     }
     @Test void recatchPreservesElapsedAndCooldownAndCannotRecoverBeyondCurrentCap(){
         var p=physics(.5f,1);for(int i=0;i<1500;i++)p.step(input(0));
@@ -18,7 +18,7 @@ class BroomEnduranceTest {
     @Test void masteryAndStabilityImproveFatigueTolerance(){
         var novice=physics(0,.85f);var veteran=physics(1,1.6f);
         for(int i=0;i<1200;i++){novice.step(input(0));veteran.step(input(0));}
-        assertTrue(veteran.maximumBalance()>novice.maximumBalance());
+        assertTrue(veteran.maximumBalance()>novice.maximumBalance()); // higher stability = higher cap
         novice.hurt();veteran.hurt();assertTrue(veteran.balance>novice.balance);
     }
     @Test void rollRemainsCollisionBounded(){

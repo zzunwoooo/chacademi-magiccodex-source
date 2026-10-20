@@ -183,3 +183,32 @@
   결과 창은 이름 대 이름 · "라운드 승리" · 처치/데스 열(골·스니치·MVP 없음, `ResultView.Data.duel` / 마지막 경기 플래그 `KyudichiClient.lastDuel`),
   준비 창은 빗자루 칸 숨김, 모드 없는 사람의 채팅 결과도 1:1 형식. 1:1 전용 디자인은 레퍼런스가 오면 다시.
 - F3+B 히트박스: 경기(관전 포함) 중엔 켤 수 없고, 켜 둔 채 경기가 시작되면 꺼짐 (`KyudichiHitboxMixin`). 모드를 고친 클라이언트까지 막으려면 경기장 월드에 gamerule reducedDebugInfo true (F3 좌표도 숨겨짐).
+
+## 2026-10-20 저녁: 큐디치 조정 2차 (브랜치 `claude/kyudichi-tune-20261020`, 기반 claude/command-cleanup-20261020)
+
+경기장(kyudichi-paper)
+- 공 크기 2.0 → 1.4 (`models.scale`, 아이템 대체 모양 1.4→1.0 / 스니치 0.9→0.7). 블러저 타격 범위 `bludger.hit-radius` 1.5 → 1.0.
+- 퀘이플: 던지면 중력 없이 직선 (`quaffle.flight-seconds` 동안), 그 뒤·놓친 퀘이플은 블러저처럼 떠다님 (`quaffle.drift-speed` 12, 중력 안 씀).
+- config-version 4: 켜질 때 위 세 값이 옛 기본값(2.0 / 1.5 / 3.0)이면 새 값으로 바꿈.
+- 낙마 없음: 공중에서 내리거나 균형을 잃어도 죽지 않음 · 비행 잠금 없음 (이전 `fallCheck` 삭제). 대신 경기 중 2초마다
+  ChacademyMotion `setBroomHangMode(p, true)` (끝나면 false) → 아래 매달림.
+  → "비행 키로 내린 뒤 다시 누르면 '빗자루에서 내린 뒤 사용할 수 있어요'"는 공중 하차가 낙마로 잡혀 5초 잠금이 걸리던 것 (ManaClient 는
+  서버 거부(UNAVAILABLE)를 모두 이 문구로 보여 줌). 잠금 자체를 없앴음.
+- teleport-guard: 경기장 경계 안 · 64블록 이내 순간이동은 허용 (빗자루 순간이동 마법). 경계 밖(귀환·집·다른 월드)은 그대로 막음.
+
+모션 (chacademy-motion 모드 + 플러그인, 둘 다 같이 배포)
+- 균형 최대치가 오래 탈수록 줄던 피로 감소 제거 (`BroomPhysics.maximumBalance()` = 안정성 단계 최대치). 테스트 수정.
+- 매달림 모드(broom_fx 3 켜기 / 4 끄기): 균형 0 → 그 자리에 멈춰 오른팔로 머리 위 빗자루에 매달림(`broom_hang`, 흔들흔들 반복),
+  3초에 걸쳐 가득 회복(맞으면 깎임) → `broom_climb` 0.8초 다시 올라타기 → 정상 비행. 매달린 동안 이동 키 무시, 빗자루는 손 높이로 올라감.
+- 남에게도 보임: 모드 → 서버 `EVT_HANG 7 / EVT_CLIMB 8` → 주변에 broom_state `STATE_HANG 6 / STATE_CLIMB 7`, 나중에 시야에 들어온 사람에겐
+  매달린 상태로 보냄.
+- 남의 탑승 자세가 안 보이던 문제 (오너: 죽었다 살아나거나 순간이동하면 안 보임): 그 플레이어 엔티티가 새로 만들어지면 애니메이션 레이어가
+  비는데 "이미 broom_ride 틀었음" 기록만 보고 건너뛰었음 → 레이어가 비어 있으면 다시 틀고, 시야 밖으로 빠진 사람은 기록도 지움.
+  ⚠ 받는 쪽(보는 사람) 모드가 새 버전이어야 고쳐짐.
+
+클라이언트 (magic-codex-fabric)
+- 마법 모드: 죽거나 관전 상태가 되면 꺼졌다가, 살아나면 그 전에 켜져 있었으면 다시 켜짐 (`CastingState.suspend/resume`, 큐디치 밖에서도 동일).
+- 블러저 위치 표시 크기 0.62 → 0.40 (화살표·거리 글씨도 작게).
+
+빌드 확인 못 함: Fabric 모드 두 개(magic-codex-fabric, chacademy-motion-mod)는 여기서 컴파일 불가 → GPT 빌드 필요.
+`ModifierLayer.getAnimation()` / `IAnimation.isActive()` (playerAnimator) 사용. 서버 두 개는 javac 로 우리 파일 오류 없음, BroomEnduranceTest 4/4.

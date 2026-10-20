@@ -30,6 +30,8 @@ final class KyudichiHud {
     private static final String[] INDICATOR = {"hud/indicator_quaffle", "hud/indicator_bludger", "hud/indicator_snitch"};
     private static final String[] ARROW = {"hud/arrow_quaffle", "hud/arrow_bludger", "hud/arrow_snitch"};
     private static final float[] ARROW_BASE = {180, 0, 90};          // direction each arrow PNG points (clockwise from →)
+    /** On-screen scale per ball kind (owner 2026-10-20: bludger marker smaller). */
+    private static final float[] INDICATOR_SCALE = {.62f, .40f, .62f};
     private static final float[][] INDICATOR_SIZE = {{70, 72}, {76, 77}, {77, 70}}, ARROW_SIZE = {{36, 37}, {38, 43}, {37, 30}};
 
     private static HudTextureCache images; private static CodexTypography text; private static int generation = -1;
@@ -181,16 +183,16 @@ final class KyudichiHud {
             float alpha = danger && (now / 140) % 2 == 0 ? .55f : 1;
             float[] sp = AimView.toScreen(p);
             double d = p.distanceTo(cam);
-            float iw = INDICATOR_SIZE[k][0] * s * .62f, ih = INDICATOR_SIZE[k][1] * s * .62f;
+            float iw = INDICATOR_SIZE[k][0] * s * INDICATOR_SCALE[k], ih = INDICATOR_SIZE[k][1] * s * INDICATOR_SCALE[k];
             if (sp != null && onScreen(sp, w, h, iw)) {
                 float lift = ih * .9f;
                 canvas.image(INDICATOR[k], sp[0] - iw / 2, sp[1] - ih / 2 - lift, iw, ih, alpha);
-                canvas.text(Math.round(d) + "m", sp[0], sp[1] - lift + ih / 2 + 9, Math.max(9, 15 * s), Theme.WHITE, Canvas.Face.SANS_BOLD, Canvas.CENTER);
+                canvas.text(Math.round(d) + "m", sp[0], sp[1] - lift + ih / 2 + 9, Math.max(9, (k == 1 ? 12 : 15) * s), Theme.WHITE, Canvas.Face.SANS_BOLD, Canvas.CENTER);
             } else {
                 float[] e = edge(c, p, sp, w, h, Math.max(iw, ih) * .8f + 6, delta);
                 canvas.image(INDICATOR[k], e[0] - iw / 2, e[1] - ih / 2, iw, ih, alpha);
                 // arrow just outside the icon, pointing the way
-                float aw = ARROW_SIZE[k][0] * s * .62f, ah = ARROW_SIZE[k][1] * s * .62f;
+                float aw = ARROW_SIZE[k][0] * s * INDICATOR_SCALE[k], ah = ARROW_SIZE[k][1] * s * INDICATOR_SCALE[k];
                 float r = Math.max(iw, ih) / 2 + Math.max(aw, ah) / 2;
                 float deg = (float) Math.toDegrees(e[2]);
                 canvas.imageRotated(ARROW[k], e[0] + (float) Math.cos(e[2]) * r, e[1] + (float) Math.sin(e[2]) * r, aw, ah, deg - ARROW_BASE[k], alpha);

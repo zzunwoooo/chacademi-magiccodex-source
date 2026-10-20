@@ -35,6 +35,9 @@ public final class BroomCodec {
     public static final byte FX_REFILL_BALANCE = 1;
     /** 기본 가속과 같은 가속, 쿨타임은 쓰지도 시작하지도 않음 (가속 성소). */
     public static final byte FX_FREE_BOOST = 2;
+    /** 큐디치(오너 2026-10-20): 낙마 대신 매달림 켜기 / 끄기. 타고 있지 않아도 보냄 (모드가 기억). */
+    public static final byte FX_HANG_MODE_ON = 3;
+    public static final byte FX_HANG_MODE_OFF = 4;
 
     public static final int MAX_ID_BYTES = 64;
     public static final int MAX_TEXT_BYTES = 256;
@@ -50,6 +53,10 @@ public final class BroomCodec {
     public static final byte STATE_ROLL_LEFT = 3;
     public static final byte STATE_ROLL_RIGHT = 4;
     public static final byte STATE_START = 5;
+    /** 큐디치: 안정성 0 → 한 팔로 빗자루에 매달림 (빗자루는 그대로 탄 상태) */
+    public static final byte STATE_HANG = 6;
+    /** 큐디치: 회복 끝 → 다시 올라타는 중 */
+    public static final byte STATE_CLIMB = 7;
 
     // broom_evt 의 type
     public static final byte EVT_DISMOUNT = 0;
@@ -59,6 +66,8 @@ public final class BroomCodec {
     public static final byte EVT_ROLL_LEFT = 4;
     public static final byte EVT_ROLL_RIGHT = 5;
     public static final byte EVT_CRASH = 6;
+    public static final byte EVT_HANG = 7;
+    public static final byte EVT_CLIMB = 8;
 
     private BroomCodec() {}
 
