@@ -329,6 +329,25 @@ final class AffinityStore implements AutoCloseable {
         });
     }
 
+    /** 관리자 하트 단계 설정 (올리기·내리기 모두). 내리면 점수도 새 상한 안으로 줄인다. */
+    Row adminHeart(UUID owner, String npc, int level, long now) throws SQLException {
+        if (level < 0 || level > 5) throw new IllegalArgumentException("하트 단계는 0~5입니다.");
+        return tx(db -> {
+            ensureRow(db, owner, npc);
+            Row current = lockRow(db, owner, npc);
+            int score = Math.min(current.score(), gate(level));
+            try (PreparedStatement s = db.prepareStatement("UPDATE " + affinity + " SET heart=?, score=?, updated=? WHERE owner=? AND npc=?")) {
+                s.setInt(1, level);
+                s.setInt(2, score);
+                s.setLong(3, now);
+                s.setString(4, owner.toString());
+                s.setString(5, npc);
+                if (s.executeUpdate() != 1) throw new SQLException("affinity admin row missing");
+            }
+            return new Row(score, level, current.nickname());
+        });
+    }
+
     Row setNickname(UUID owner, String npc, String nickname, long now) throws SQLException {
         return tx(db -> {
             ensureRow(db, owner, npc);

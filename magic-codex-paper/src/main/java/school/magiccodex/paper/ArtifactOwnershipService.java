@@ -21,6 +21,21 @@ final class ArtifactOwnershipService implements AutoCloseable {
   catch(Exception e){healthyAt=0;plugin.getLogger().severe("Artifact receipt persistence failed; operation quarantined for reconciliation. No ownership was silently discarded.");return false;}
  }
  void admin(UUID player,String id,Boolean own,Consumer<Boolean> done){io.execute(()->{boolean ok=false;try{if(!store.migrationComplete())throw new IllegalStateException();if(id==null)store.reset(player);else store.set(player,id,Boolean.TRUE.equals(own));ok=true;}catch(Exception ignored){}boolean result=ok;main(()->{if(result){snapshots.remove(player);tick();}done.accept(result);});});}
+ /** 관리자 보기: DB의 보유 목록 (오프라인 유저도). 콜백은 메인 스레드, 실패면 null. */
+ void owned(UUID player,Consumer<Set<String>> done){if(closed){done.accept(null);return;}io.execute(()->{Set<String> rows=null;try{rows=store.owned(player);}catch(Exception e){plugin.getLogger().warning("Artifact ownership read failed: "+e);}var out=rows;main(()->done.accept(out));});}
+ /** 관리자 뽑기 기록. 실패면 null. */
+ void history(UUID player,Consumer<List<ArtifactOwnershipStore.History>> done){io.execute(()->{List<ArtifactOwnershipStore.History> rows=null;try{rows=store.history(player);}catch(Exception e){plugin.getLogger().warning("Artifact history read failed: "+e);}var out=rows;main(()->done.accept(out));});}
+ /** 관리자 완료처리: 우편 없이 지급 완료로. null = DB 실패. */
+ void markDelivered(UUID player,ArtifactOwnershipStore.History row,Consumer<Boolean> done){io.execute(()->{Boolean ok=null;try{ok=store.markDelivered(player,row.operation(),row.index());}catch(Exception e){plugin.getLogger().warning("Artifact delivery mark failed: "+e);}var out=ok;main(()->done.accept(out));});}
+ /** 관리자 다시주기: 새 우편 한 통(새 출처 키)을 보내고 지급 완료로 표시. 결과 문구(null=성공)를 메인 스레드로. */
+ void redeliver(UUID player,ArtifactOwnershipStore.History row,Consumer<String> done){
+  var mail=Bukkit.getServicesManager().load(MailService.class);var item=items.create(row.item(),row.amount());
+  if(mail==null||item==null){done.accept(mail==null?"우편 기능이 준비되지 않았어요":"아이템("+row.item()+")을 만들 수 없어요 (ItemsAdder 확인)");return;}
+  mail.sendSystem("artifact-admin-redo:"+row.operation()+":"+row.index()+":"+UUID.randomUUID(),player,mailTitle.get(),mailBody.get(),List.of(item)).whenComplete((id,error)->{
+   if(error!=null){plugin.getLogger().warning("Artifact admin redelivery mail failed: "+error);main(()->done.accept("우편을 보내지 못했어요"));return;}
+   try{markDelivered(player,row,ok->done.accept(null));}catch(java.util.concurrent.RejectedExecutionException closing){plugin.getLogger().warning("Artifact admin redelivery sent but not marked (shutting down): "+row);}
+  });
+ }
  private void tick(){if(closed||working)return;working=true;var players=Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).toList();io.execute(()->{
   try{
    if(!store.migrationComplete())throw new IllegalStateException("Artifact migration not complete");

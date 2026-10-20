@@ -4,7 +4,11 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
 import org.bukkit.*;
-import org.bukkit.command.*;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -22,7 +26,7 @@ import school.magiccodex.protocol.FishingProtocol;
  * the checked grades except locked species (owner: 잠긴 물고기는 크기·종류 무관하고 팔리지 않게). The lock tab sets
  * the locked species (per player, shared by school and wild).
  *
- * Prices live in fish-shop.yml and can be changed at any time (/물고기상점관리 가격 …, or edit + 리로드):
+ * Prices live in fish-shop.yml and can be changed at any time (/상점관리 물고기판매소 가격 …, or edit + /서버관리 새로고침 물고기판매소):
  * one fish = base x size factor, base = per-fish override or grade base (x special bonus for fish with special
  * conditions), size factor = linear from size-min (smallest of the species) to size-max (largest).
  * NPCs and the portrait work like the normal shop (Citizens NPC right click, textures/gui/dialogue/&lt;portrait&gt;.png).
@@ -30,7 +34,7 @@ import school.magiccodex.protocol.FishingProtocol;
  * (SharedConfigText row "fish_shop", owner 2026-10-20: 가격·보유·잠금은 DB로 공유). Only the NPC list is per server
  * (fish-shop-npcs.yml), because Citizens ids differ between servers. Tank and locks are already in the shared DB.
  */
-final class FishShopBridge implements PluginMessageListener, Listener, CommandExecutor, TabCompleter {
+final class FishShopBridge implements PluginMessageListener, Listener {
     private record Session(Entity anchor, String npcName) {}
 
     private final MagicCodexBridge plugin;
@@ -59,8 +63,7 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, FishShopProtocol.REQUEST, this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, FishShopProtocol.RESPONSE);
         Bukkit.getPluginManager().registerEvents(this, plugin);
-        var command = Objects.requireNonNull(plugin.getCommand("물고기상점관리"));
-        command.setExecutor(this); command.setTabCompleter(this);
+        CmdKit.register(plugin, "/상점관리 물고기판매소", this::commands);
         Bukkit.getServicesManager().register(FishShopBridge.class,this,plugin,org.bukkit.plugin.ServicePriority.Normal);
     }
 
@@ -115,11 +118,11 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
     private void save(CommandSender sender, String done) throws Exception {
         String before = localText();
         try{yaml.save(file);reload();}catch(Exception failed){applyText(before);throw failed;}
-        if (shared == null) { sender.sendMessage("§a" + done); return; }
+        if (shared == null) { CmdKit.ok(sender, done); return; }
         String attempted=localText();
         shared.publish(attempted, "command:" + sender.getName(), failed -> {
-            if (failed == null) sender.sendMessage("§a" + done + (shared.shared() ? " (학교·야생에 같이 적용)" : " (공유 DB 없음: 이 서버만)"));
-            else { if(localText().equals(attempted))applyText(before); sender.sendMessage("§c공유하지 못해서 되돌렸습니다: " + failed); }
+            if (failed == null) CmdKit.ok(sender, done + (shared.shared() ? " (학교·야생 같이 적용)" : " (공유 DB 없음: 이 서버만)"));
+            else { if(localText().equals(attempted))applyText(before); CmdKit.fail(sender, "다른 서버와 공유하지 못해서 되돌렸어요", new IllegalStateException(failed)); }
         });
     }
 
@@ -146,7 +149,7 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
     }
 
     void open(Player p, Entity anchor, String npcName) {
-        if (!modded(p)) { p.sendMessage("§c물고기 판매소를 열려면 차카데미 모드를 업데이트해 주세요."); return; }
+        if (!modded(p)) { CmdKit.notify(p, "warning", "fish-shop-mod", "물고기 판매소를 열 수 없어요", "차카데미 모드를 업데이트해 주세요", 3000); return; }
         if(!busy.contains(p.getUniqueId()))completed.remove(p.getUniqueId());
         sessions.put(p.getUniqueId(), new Session(anchor, npcName == null || npcName.isBlank() ? defaultName : cut(npcName)));
         // the lock tab lists only the species this player has caught (codex), so the codex is loaded too
@@ -308,92 +311,94 @@ final class FishShopBridge implements PluginMessageListener, Listener, CommandEx
         } catch (Exception e) { plugin.getLogger().warning("물고기 판매소 Citizens 연결 실패"); }
     }
 
-    // ------------------------------------------------------------------ commands
+    // ------------------------------------------------------------------ 명령 (2026-10-20): /상점관리 물고기판매소 …
 
-    @Override public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length == 0) {
-            sender.sendMessage("§e/물고기상점관리 열기 [플레이어] | 리로드 | 가격 <일반|고급|유일|전설|물고기ID> <G|기본> | 크기보정 <최소배율> <최대배율> | 조건보정 <배율> | NPC <citizens:ID> | NPC삭제 <citizens:ID> | 초상 <초상ID> | 이름 <NPC 이름> | 가격표 [물고기ID]");
-            return true;
+    private Map<String, String> fishNames() { var out = new LinkedHashMap<String, String>(); for (var f : fishing.config().fish) out.put(f.id(), f.name()); return out; }
+
+    private void commands() {
+        var gradeOrFish = (java.util.function.Supplier<Collection<String>>) () -> { var all = new ArrayList<String>(List.of(FishingProtocol.GRADE_LABELS)); all.addAll(AdminCommandRules.catalogChoices(fishNames())); return all; };
+        var root = CmdKit.literal("물고기판매소")
+                .then(CmdKit.literal("열기").executes(CmdKit.run(ctx -> adminOpen(CmdKit.self(ctx)))).then(CmdKit.player("닉네임").executes(CmdKit.run(ctx -> adminOpen(ChacaApi.resolveOnline(ctx, "닉네임"))))))
+                .then(CmdKit.literal("가격").then(CmdKit.word("등급또는물고기", gradeOrFish)
+                        .then(CmdKit.literal("기본값").executes(CmdKit.run(ctx -> price(ctx, null))))
+                        .then(CmdKit.argument("값", DoubleArgumentType.doubleArg(0, 1e12)).executes(CmdKit.run(ctx -> price(ctx, DoubleArgumentType.getDouble(ctx, "값")))))))
+                .then(CmdKit.literal("크기보정").then(CmdKit.argument("최소", DoubleArgumentType.doubleArg(0, 1e12)).then(CmdKit.argument("최대", DoubleArgumentType.doubleArg(0, 1e12)).executes(CmdKit.run(ctx -> {
+                    double min = DoubleArgumentType.getDouble(ctx, "최소"), max = DoubleArgumentType.getDouble(ctx, "최대");
+                    if (max < min) throw ChacaApi.error("최대 배율은 최소 배율 이상이어야 해요");
+                    yaml.set("prices.size-min", min); yaml.set("prices.size-max", max); saveChecked(CmdKit.sender(ctx), "크기 보정을 바꿨어요 (×" + AdminCommandRules.number(min) + " ~ ×" + AdminCommandRules.number(max) + ")");
+                })))))
+                .then(CmdKit.literal("조건보정").then(CmdKit.argument("배율", DoubleArgumentType.doubleArg(0, 1e12)).executes(CmdKit.run(ctx -> {
+                    double v = DoubleArgumentType.getDouble(ctx, "배율");
+                    yaml.set("prices.special-bonus", v); saveChecked(CmdKit.sender(ctx), "조건 보정을 ×" + AdminCommandRules.number(v) + "로 바꿨어요");
+                }))))
+                .then(CmdKit.literal("이름").then(CmdKit.argument("이름", com.mojang.brigadier.arguments.StringArgumentType.greedyString()).executes(CmdKit.run(ctx -> {
+                    String name = com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "이름").strip();
+                    if (name.isEmpty() || name.length() > FishShopProtocol.MAX_TEXT) throw ChacaApi.error("이름은 1~" + FishShopProtocol.MAX_TEXT + "자예요");
+                    yaml.set("npc-name", name); saveChecked(CmdKit.sender(ctx), "판매소 NPC 이름을 " + name + "(으)로 바꿨어요");
+                }))))
+                .then(CmdKit.literal("초상").then(CmdKit.word("초상", () -> List.of(portrait.isEmpty() ? "elena-neutral" : portrait)).executes(CmdKit.run(ctx -> {
+                    String id = CmdKit.text(ctx, "초상");
+                    if (!id.matches("[a-z0-9_/-]{1,120}") || id.contains("..")) throw ChacaApi.error("초상 ID는 영문 소문자·숫자·_·-·/ 만 써요 (textures/gui/dialogue/<초상>.png)");
+                    yaml.set("portrait", id); saveChecked(CmdKit.sender(ctx), "판매소 초상을 " + id + "(으)로 바꿨어요");
+                }))))
+                .then(CmdKit.literal("가격표").executes(CmdKit.run(ctx -> CmdKit.lines(CmdKit.sender(ctx), priceLines(null))))
+                        .then(CmdKit.word("물고기", () -> AdminCommandRules.catalogChoices(fishNames())).executes(CmdKit.run(ctx -> CmdKit.lines(CmdKit.sender(ctx), priceLines(CmdKit.pick(fishNames(), CmdKit.text(ctx, "물고기"), "물고기")))))));
+        ChacaApi.branch(plugin, ChacaApi.상점관리, root, "물고기 판매소 열기·가격·보정·이름·초상·가격표", "물고기판매소 가격표");
+        ChacaApi.reload(plugin, "물고기판매소", "fish-shop.yml (물고기 판매소 가격, 학교·야생 공유)", () -> {
+            String before = localText();
+            reload();
+            String attempted = localText();
+            shared.publish(attempted, "reload", failed -> {
+                if (failed == null) return;
+                if (localText().equals(attempted)) applyText(before);
+                plugin.getLogger().warning("물고기 판매소: 다른 서버와 공유하지 못해서 되돌렸습니다: " + failed);
+            });
+        });
+    }
+
+    /** 설정 저장. 설정 오류(검사 실패)는 콘솔에 남기고 유저에게는 짧은 문구. */
+    private void saveChecked(CommandSender sender, String done) throws CommandSyntaxException {
+        try { save(sender, done); }
+        catch (IllegalArgumentException invalid) { plugin.getLogger().warning("물고기 판매소 설정 거절: " + invalid.getMessage()); throw ChacaApi.error("그 값으로는 가격을 계산할 수 없어요 (자세한 내용은 콘솔)"); }
+        catch (Exception error) { throw new IllegalStateException("fish-shop.yml save failed", error); }
+    }
+
+    private void price(CommandContext<CommandSourceStack> ctx, Double value) throws CommandSyntaxException {
+        String input = CmdKit.text(ctx, "등급또는물고기");
+        int g = FishingProtocol.gradeIndex(input);
+        if (g >= 0 && Arrays.asList(FishingProtocol.GRADE_LABELS).contains(input)) {
+            if (value == null) throw ChacaApi.error("등급 가격은 숫자로 정해 주세요 (기본값은 물고기별 가격에만)");
+            yaml.set("prices.grade." + input, value);
+            saveChecked(CmdKit.sender(ctx), input + " 등급 기본 가격을 " + AdminCommandRules.number(value) + " G로 바꿨어요");
+            return;
         }
-        try {
-            switch (args[0]) {
-                case "열기" -> {
-                    Player t = args.length > 1 ? Bukkit.getPlayerExact(args[1]) : sender instanceof Player p ? p : null;
-                    if (t == null) throw new IllegalArgumentException("플레이어를 찾지 못했습니다.");
-                    open(t, null, null);
-                }
-                case "리로드" -> {
-                    String before = localText();
-                    reload();
-                    String attempted=localText();
-                    shared.publish(attempted, "reload:" + sender.getName(), failed -> {
-                        if (failed == null) sender.sendMessage("§a물고기 판매소 설정을 다시 읽었습니다." + (shared.shared() ? " (학교·야생에 같이 적용)" : ""));
-                        else { if(localText().equals(attempted))applyText(before); sender.sendMessage("§c공유하지 못해서 되돌렸습니다: " + failed); }
-                    });
-                }
-                case "가격" -> {
-                    if (args.length != 3) throw new IllegalArgumentException("가격 <일반|고급|유일|전설|물고기ID> <G|기본>");
-                    int g = FishingProtocol.gradeIndex(args[1]);
-                    if (g >= 0) yaml.set("prices.grade." + args[1], number(args[2]));
-                    else if (fishing.config().fishById.containsKey(args[1])) yaml.set("prices.fish." + args[1], args[2].equals("기본") ? null : number(args[2]));
-                    else throw new IllegalArgumentException("등급이나 물고기 ID를 확인하세요.");
-                    save(sender, "가격을 바꿨습니다. (" + args[1] + ")");
-                }
-                case "크기보정" -> {
-                    if (args.length != 3) throw new IllegalArgumentException("크기보정 <최소배율> <최대배율>");
-                    yaml.set("prices.size-min", number(args[1])); yaml.set("prices.size-max", number(args[2]));
-                    save(sender, "크기 보정을 바꿨습니다.");
-                }
-                case "조건보정" -> {
-                    if (args.length != 2) throw new IllegalArgumentException("조건보정 <배율>");
-                    yaml.set("prices.special-bonus", number(args[1])); save(sender, "조건 보정을 바꿨습니다.");
-                }
-                case "NPC", "NPC삭제" -> {
-                    if(args.length!=2||!ShopNpcTarget.validKey(args[1]))throw new IllegalArgumentException(args[0]+" <citizens:ID/tag:태그>");
-                    var common=Bukkit.getServicesManager().load(ShopBridge.class);if(common==null)throw new IllegalStateException("기존 상점 저장소가 준비되어야 NPC를 연결할 수 있습니다.");
-                    common.configureFishNpc(sender,args[1],args[0].equals("NPC삭제"));
-                }
-                case "초상" -> {
-                    if (args.length != 2 || !args[1].matches("[a-z0-9_/-]{1,120}") || args[1].contains("..")) throw new IllegalArgumentException("초상 <초상ID> (textures/gui/dialogue/<초상ID>.png)");
-                    yaml.set("portrait", args[1]); save(sender, "초상을 바꿨습니다.");
-                }
-                case "이름" -> {
-                    if (args.length < 2) throw new IllegalArgumentException("이름 <NPC 이름> (Citizens NPC 이름이 없을 때 쓰는 이름)");
-                    yaml.set("npc-name", String.join(" ", Arrays.copyOfRange(args, 1, args.length))); save(sender, "이름을 바꿨습니다.");
-                }
-                case "가격표" -> {
-                    if (args.length == 2) {
-                        var f = fishing.config().fishById.get(args[1]);
-                        if (f == null) throw new IllegalArgumentException("물고기 ID를 확인하세요.");
-                        sender.sendMessage("§e" + f.name() + " (" + FishingProtocol.GRADE_LABELS[f.grade()] + ") 기본 " + Math.round(base(f)) + " G: "
-                                + FishShopProtocol.price(base(f), f.minSize(), f.minSize(), f.maxSize(), sizeMin, sizeMax) + " G (" + f.minSize() + "cm) ~ "
-                                + FishShopProtocol.price(base(f), f.maxSize(), f.minSize(), f.maxSize(), sizeMin, sizeMax) + " G (" + f.maxSize() + "cm)");
-                    } else {
-                        for (int g = 0; g < 4; g++) sender.sendMessage("§e" + FishingProtocol.GRADE_LABELS[g] + " 기본 " + Math.round(gradeBase[g]) + " G");
-                        sender.sendMessage("§e크기 보정 ×" + sizeMin + " ~ ×" + sizeMax + ", 조건 보정 ×" + specialBonus + ", 물고기별 가격 " + overrides.size() + "종");
-                    }
-                }
-                default -> throw new IllegalArgumentException("알 수 없는 명령입니다.");
-            }
-        } catch (Exception e) { sender.sendMessage("§c" + e.getMessage()); }
-        return true;
+        String id = CmdKit.pick(fishNames(), input, "물고기");
+        yaml.set("prices.fish." + id, value);
+        saveChecked(CmdKit.sender(ctx), fishNames().get(id) + " 가격을 " + (value == null ? "등급 기본값으로" : AdminCommandRules.number(value) + " G로") + " 바꿨어요");
     }
 
-    private static double number(String s) {
-        try { double v = Double.parseDouble(s); if (v < 0 || v > 1e12 || !Double.isFinite(v)) throw new NumberFormatException(); return v; }
-        catch (NumberFormatException e) { throw new IllegalArgumentException("숫자를 확인하세요: " + s); }
+    /** /상점관리 물고기판매소 열기, /테스트 낚시 판매소: NPC 없이 창을 연다. */
+    void adminOpen(Player target) throws CommandSyntaxException {
+        if (!modded(target)) throw ChacaApi.error(plugin.names().name(target) + " 님은 차카데미 모드가 없어 판매소 창을 열 수 없어요");
+        open(target, null, null);
     }
 
-    @Override public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length == 1) return filter(List.of("열기", "리로드", "가격", "크기보정", "조건보정", "NPC", "NPC삭제", "초상", "이름", "가격표"), args[0]);
-        if (args.length == 2 && args[0].equals("열기")) return null;
-        if (args.length == 2 && (args[0].equals("가격") || args[0].equals("가격표"))) {
-            var all = new ArrayList<>(List.of(FishingProtocol.GRADE_LABELS)); all.addAll(fishing.config().fishById.keySet());
-            return filter(all, args[1]);
+    /** 가격표 (fishId null = 등급 요약). */
+    List<String> priceLines(String fishId) {
+        var out = new ArrayList<String>();
+        if (fishId != null) {
+            var f = fishing.config().fishById.get(fishId);
+            out.add("── " + f.name() + " (" + FishingProtocol.GRADE_LABELS[f.grade()] + ") 가격 ──");
+            out.add("기본 " + Math.round(base(f)) + " G" + (overrides.containsKey(f.id()) ? " (물고기별 가격)" : special(f) ? " (조건 보정 포함)" : ""));
+            out.add(FishShopProtocol.price(base(f), f.minSize(), f.minSize(), f.maxSize(), sizeMin, sizeMax) + " G (" + f.minSize() + "cm) ~ "
+                    + FishShopProtocol.price(base(f), f.maxSize(), f.minSize(), f.maxSize(), sizeMin, sizeMax) + " G (" + f.maxSize() + "cm)");
+            return out;
         }
-        if(args.length==2&&args[0].equals("NPC삭제")){var common=Bukkit.getServicesManager().load(ShopBridge.class);return common==null?List.of():filter(common.fishNpcKeys(),args[1]);}
-        return List.of();
+        out.add("── 물고기 판매소 가격표 ──");
+        for (int g = 0; g < 4; g++) out.add(FishingProtocol.GRADE_LABELS[g] + " 기본 " + Math.round(gradeBase[g]) + " G");
+        out.add("크기 보정 ×" + AdminCommandRules.number(sizeMin) + " ~ ×" + AdminCommandRules.number(sizeMax) + " · 조건 보정 ×" + AdminCommandRules.number(specialBonus) + " · 물고기별 가격 " + overrides.size() + "종");
+        return out;
     }
-    private static List<String> filter(List<String> all, String prefix) { return all.stream().filter(s -> s.startsWith(prefix)).limit(80).toList(); }
+
     private static String cut(String s) { return s == null ? "" : s.length() > FishShopProtocol.MAX_TEXT ? s.substring(0, FishShopProtocol.MAX_TEXT) : s; }
 }

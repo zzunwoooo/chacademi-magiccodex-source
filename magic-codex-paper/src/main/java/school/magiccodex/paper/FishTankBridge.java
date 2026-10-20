@@ -14,7 +14,7 @@ import school.magiccodex.protocol.FishTankProtocol.*;
 
 /**
  * 통발 아공간 수조 window (2026-10-20, owner spec + GPT tank art). Opened by the 통발 spell (fish_trap) or
- * /낚시관리 수조. Every action is decided here against the database (FishTank), never by the client:
+ * /테스트 낚시 수조. Every action is decided here against the database (FishTank), never by the client:
  *
  *  아이템화  refused when the inventory has no empty slot; the row is deleted first, then the item (same tank id and
  *            caught date in its PDC) is given. Only a row that was really deleted gives an item.
@@ -45,9 +45,9 @@ final class FishTankBridge implements PluginMessageListener, Listener {
 
     /** The 통발 spell: false (no mana spent) when the window cannot open. */
     boolean cast(Player p) {
-        if (!modded(p)) { p.sendMessage("§c통발 수조를 열려면 차카데미 모드를 업데이트해 주세요."); return false; }
-        if(!fishing.tank().loaded(p.getUniqueId())){fishing.tank().refresh(p.getUniqueId(),null);p.sendMessage("§e수조를 읽는 중이에요. 잠시 후 다시 열어 주세요.");return false;}
-        if (fishing.fishingNow(p.getUniqueId())) { p.sendActionBar(FishingGear.plain("낚시 중에는 통발 수조를 열 수 없어요.", 0xFF9E9E)); return false; }
+        if (!modded(p)) { CmdKit.notify(p, "warning", "fish-tank-open", "통발 수조를 열 수 없어요", "차카데미 모드를 업데이트해 주세요", 3000); return false; }
+        if(!fishing.tank().loaded(p.getUniqueId())){fishing.tank().refresh(p.getUniqueId(),null);CmdKit.notify(p,"warning","fish-tank-open","수조를 읽는 중이에요","잠시 뒤 다시 열어 주세요",2000);return false;}
+        if (fishing.fishingNow(p.getUniqueId())) { CmdKit.notify(p, "warning", "fish-tank-open", "낚시 중에는 통발 수조를 열 수 없어요", "", 2000); return false; }
         open(p);
         return true;
     }

@@ -21,6 +21,7 @@ final class WalletBridge implements PluginMessageListener,Listener,AutoCloseable
     private final WalletSubscriptions subscriptions;
     private Object economy;
     private Method balance;
+    private Class<?> economyType;
     private long retryAt;
     private static long now(){return System.nanoTime()/1_000_000;}
     WalletBridge(JavaPlugin plugin){
@@ -34,6 +35,53 @@ final class WalletBridge implements PluginMessageListener,Listener,AutoCloseable
         plugin.getServer().getPluginManager().registerEvents(this,plugin);
         findEconomy();
         plugin.getServer().getScheduler().runTaskTimer(plugin,this::process,1,2);
+        CmdKit.register(plugin,"/유저관리 돈",this::commands);
+    }
+
+    // ------------------------------------------------------------------ /유저관리 <닉네임> 돈 (2026-10-20)
+
+    private static final double MAX_MONEY=1e15;
+    private void commands(){
+        var root=CmdKit.literal("돈").then(CmdKit.literal("보기").executes(CmdKit.run(ctx->{
+            UUID id=ChacaApi.target(ctx);double now=money(id);
+            CmdKit.lines(CmdKit.sender(ctx),java.util.List.of("── "+CmdKit.name(id)+" 돈 ──",AdminCommandRules.number(now)+" G"));
+        })));
+        for(String change:AdminCommandRules.CHANGES)
+            root.then(CmdKit.literal(change).then(CmdKit.argument("값",com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg(0,MAX_MONEY)).executes(CmdKit.run(ctx->{
+                UUID id=ChacaApi.target(ctx);double value=com.mojang.brigadier.arguments.DoubleArgumentType.getDouble(ctx,"값");
+                double before=money(id);
+                double after=switch(change){case "설정"->value;case "추가"->before+value;default->before-value;};
+                if(after<0)throw ChacaApi.error(CmdKit.name(id)+" 님 돈이 "+AdminCommandRules.number(before)+" G라서 그만큼 뺄 수 없어요");
+                if(after>MAX_MONEY)throw ChacaApi.error("돈은 최대 "+AdminCommandRules.number(MAX_MONEY)+" G까지예요");
+                double delta=after-before;
+                if(delta!=0)transfer(id,Math.abs(delta),delta>0);
+                double result=money(id);
+                plugin.getLogger().info("WALLET ADMIN admin="+CmdKit.sender(ctx).getName()+" player="+id+" action="+change+" value="+value+" before="+before+" after="+result);
+                CmdKit.ok(CmdKit.sender(ctx),CmdKit.name(id)+" 님 돈 "+AdminCommandRules.number(result)+" G ("+(delta>=0?"+":"")+AdminCommandRules.number(delta)+")");
+            }))));
+        ChacaApi.branch(plugin,ChacaApi.유저관리,root,"돈 보기·설정·추가·빼기 (Vault)","돈 보기");
+        ChacaApi.summary(plugin,"돈",id->{var p=plugin.getServer().getPlayer(id);if(p==null||economy==null||balance==null)return "";try{return AdminCommandRules.number(((Number)balance.invoke(economy,p)).doubleValue())+" G";}catch(ReflectiveOperationException|RuntimeException e){return "";}});
+    }
+    private Object economy()throws com.mojang.brigadier.exceptions.CommandSyntaxException{
+        if(economy==null)findEconomy();
+        if(economy==null||balance==null)throw ChacaApi.error("경제 플러그인(Vault)이 연결되지 않았어요");
+        return economy;
+    }
+    private double money(UUID id)throws com.mojang.brigadier.exceptions.CommandSyntaxException{
+        Object e=economy();
+        try{double v=((Number)balance.invoke(e,plugin.getServer().getOfflinePlayer(id))).doubleValue();if(!Double.isFinite(v))throw new IllegalStateException("balance "+v);return v;}
+        catch(ReflectiveOperationException error){throw new IllegalStateException("Vault getBalance failed",error);}
+    }
+    /** Vault depositPlayer / withdrawPlayer. 거절되면 유저 실패, 결과를 알 수 없으면 예외(허브가 콘솔에 남김). */
+    private void transfer(UUID id,double amount,boolean deposit)throws com.mojang.brigadier.exceptions.CommandSyntaxException{
+        Object e=economy();
+        Object response;
+        try{response=economyType.getMethod(deposit?"depositPlayer":"withdrawPlayer",OfflinePlayer.class,double.class).invoke(e,plugin.getServer().getOfflinePlayer(id),amount);}
+        catch(ReflectiveOperationException error){throw new IllegalStateException("Vault "+(deposit?"deposit":"withdraw")+" failed for "+id,error);}
+        boolean success;
+        try{success=(boolean)response.getClass().getMethod("transactionSuccess").invoke(response);}
+        catch(ReflectiveOperationException error){throw new IllegalStateException("Vault response unreadable for "+id,error);}
+        if(!success){String why="";try{why=String.valueOf(response.getClass().getField("errorMessage").get(response));}catch(ReflectiveOperationException ignored){}plugin.getLogger().warning("WALLET ADMIN refused player="+id+" amount="+amount+" deposit="+deposit+" reason="+why);throw ChacaApi.error("경제 플러그인이 돈 변경을 거절했어요");}
     }
     private void migrateSettings(){
         var config=plugin.getConfig();
@@ -58,7 +106,7 @@ final class WalletBridge implements PluginMessageListener,Listener,AutoCloseable
             if(!service.getName().equals(ECONOMY))continue;
             var registration=plugin.getServer().getServicesManager().getRegistration((Class)service);
             if(registration==null)continue;
-            try{balance=service.getMethod("getBalance",OfflinePlayer.class);economy=registration.getProvider();}
+            try{balance=service.getMethod("getBalance",OfflinePlayer.class);economy=registration.getProvider();economyType=service;}
             catch(ReflectiveOperationException ignored){/* Optional provider unavailable. */}
             break;
         }

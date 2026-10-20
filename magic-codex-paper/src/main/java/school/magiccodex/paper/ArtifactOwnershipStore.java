@@ -9,6 +9,8 @@ final class ArtifactOwnershipStore {
     record Choice(String id,int grade,int shards,boolean temporaryAccess) { Choice(String id,int grade,int shards){this(id,grade,shards,false);} }
     record Pull(String id,int grade,boolean fresh,int shards) {}
     record Delivery(String operation,int index,UUID player,String item,int amount) {}
+    /** 관리자 뽑기 기록 한 줄 (중복 조각 우편). */
+    record History(String operation,int index,String item,int amount,boolean delivered) {}
     private final Connections connections;
     ArtifactOwnershipStore(Connections connections) { this.connections=connections; }
     void initialize() throws Exception {
@@ -62,6 +64,14 @@ final class ArtifactOwnershipStore {
     }
     List<Delivery> pendingDeliveries() throws Exception {
         try(var c=connections.open();var p=c.prepareStatement("SELECT operation_id,pull_index,player,item,amount FROM codex_artifact_delivery WHERE delivered=FALSE LIMIT 100");var r=p.executeQuery()){var rows=new ArrayList<Delivery>();while(r.next())rows.add(new Delivery(r.getString(1),r.getInt(2),UUID.fromString(r.getString(3)),r.getString(4),r.getInt(5)));return rows;}
+    }
+    /** 이 유저의 중복 조각 우편 기록 (operation, index 순서: 관리자 번호가 매번 같다). */
+    List<History> history(UUID player) throws Exception {
+        try(var c=connections.open();var p=c.prepareStatement("SELECT operation_id,pull_index,item,amount,delivered FROM codex_artifact_delivery WHERE player=? ORDER BY operation_id,pull_index LIMIT 200")){p.setString(1,player.toString());try(var r=p.executeQuery()){var rows=new ArrayList<History>();while(r.next())rows.add(new History(r.getString(1),r.getInt(2),r.getString(3),r.getInt(4),r.getBoolean(5)));return List.copyOf(rows);}}
+    }
+    /** 관리자 완료처리: 이 유저의 그 기록을 지급 완료로. 바뀌었으면 true. */
+    boolean markDelivered(UUID player,String operation,int index) throws Exception {
+        try(var c=connections.open();var p=c.prepareStatement("UPDATE codex_artifact_delivery SET delivered=TRUE WHERE operation_id=? AND pull_index=? AND player=? AND delivered=FALSE")){p.setString(1,operation);p.setInt(2,index);p.setString(3,player.toString());return p.executeUpdate()==1;}
     }
     void delivered(Delivery row) throws Exception {try(var c=connections.open();var p=c.prepareStatement("UPDATE codex_artifact_delivery SET delivered=TRUE WHERE operation_id=? AND pull_index=?")){p.setString(1,row.operation());p.setInt(2,row.index());p.executeUpdate();}}
     private static void lock(Connection c,UUID player)throws SQLException {

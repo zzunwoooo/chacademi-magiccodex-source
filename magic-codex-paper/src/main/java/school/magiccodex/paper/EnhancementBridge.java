@@ -1,9 +1,9 @@
 package school.magiccodex.paper;
 import java.io.File;import java.util.*;import java.util.concurrent.ThreadLocalRandom;
-import org.bukkit.*;import org.bukkit.command.*;import org.bukkit.entity.Player;import org.bukkit.event.*;import org.bukkit.event.player.*;import org.bukkit.configuration.file.YamlConfiguration;import org.bukkit.inventory.ItemStack;import org.bukkit.persistence.PersistentDataType;import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.bukkit.*;import org.bukkit.entity.Player;import org.bukkit.event.*;import org.bukkit.event.player.*;import org.bukkit.configuration.file.YamlConfiguration;import org.bukkit.inventory.ItemStack;import org.bukkit.persistence.PersistentDataType;import org.bukkit.plugin.messaging.PluginMessageListener;
 import school.magiccodex.protocol.EnhancementProtocol;import school.magiccodex.protocol.EnhancementProtocol.*;
 /** Debit and base result commit before animation. Interrupted challenges keep that result, never reroll. */
-final class EnhancementBridge implements CommandExecutor,Listener,PluginMessageListener,AutoCloseable {
+final class EnhancementBridge implements Listener,PluginMessageListener,AutoCloseable {
  private final MagicCodexBridge plugin;private YamlConfiguration config;
  private final Map<UUID,Session> sessions=new HashMap<>();private final Map<UUID,Long> limits=new HashMap<>();
  private static long now(){return System.nanoTime()/1_000_000;}
@@ -11,7 +11,10 @@ final class EnhancementBridge implements CommandExecutor,Listener,PluginMessageL
   long token,created,started;int slot,coreSlot,nodes,attempts,limit,window,hit,miss,state,latency;double cost,base,bonus,roll;boolean consume,baseWin;String name,message="";ItemStack wand,core,committed;List<Double> before,gains;List<Integer> targets;
  }
  EnhancementBridge(MagicCodexBridge p){plugin=p;File f=new File(p.getDataFolder(),"enhancement.yml");if(!f.exists())p.saveResource("enhancement.yml",false);reload();
-  for(String n:new String[]{"강화","마법봉"})Objects.requireNonNull(p.getCommand(n)).setExecutor(this);
+  CmdKit.register(p,"/강화·마법봉 새로고침",()->{
+   ChacaApi.playerCommand(p,CmdKit.literal("강화").executes(CmdKit.run(ctx->open(CmdKit.self(ctx)))),"마법봉 강화 창 열기",List.of());
+   ChacaApi.reload(p,"마법봉","enhancement.yml (마법봉 강화)",this::reloadAll);
+  });
   Bukkit.getPluginManager().registerEvents(this,p);Bukkit.getMessenger().registerIncomingPluginChannel(p,EnhancementProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(p,EnhancementProtocol.RESPONSE);
   Bukkit.getScheduler().runTaskTimer(p,this::tick,2,2);
  }
@@ -26,21 +29,24 @@ final class EnhancementBridge implements CommandExecutor,Listener,PluginMessageL
   valid(c,"base-chance-override",-1,1);valid(c,"bonus-chance-override",-1,1);config=c;
  }
  private static void valid(YamlConfiguration c,String k,double lo,double hi){double v=c.getDouble(k,Double.NaN);if(!Double.isFinite(v)||v<lo||v>hi)throw new IllegalArgumentException(k);}
- @Override public boolean onCommand(CommandSender sender,Command cmd,String alias,String[] args){
-  if(cmd.getName().equals("마법봉")){
-   if(!sender.hasPermission("magiccodex.enhance.admin"))return true;
-   try{
-    if(args.length==1&&args[0].equals("reload")){reload();for(Player online:Bukkit.getOnlinePlayers())for(ItemStack item:online.getInventory().getContents())if(wand(item))lore(item);sender.sendMessage("강화 설정을 다시 읽었습니다.");return true;}
-    if(args.length==2&&args[0].equals("give")){Player target=Bukkit.getPlayerExact(args[1]);if(target==null||target.getInventory().firstEmpty()<0)throw new IllegalArgumentException();ItemStack i=new ItemStack(Material.BLAZE_ROD);var m=i.getItemMeta();m.displayName(net.kyori.adventure.text.Component.text("수습 마법봉"));i.setItemMeta(m);register(i,24,0,0);target.getInventory().addItem(i);target.saveData();sender.sendMessage("수습 마법봉 지급 완료.");return true;}
-    if(args.length==4&&args[0].equals("register")&&sender instanceof Player p){ItemStack i=p.getInventory().getItemInMainHand();if(i.getType().isAir()||i.getAmount()!=1||wand(i))throw new IllegalArgumentException();register(i,Double.parseDouble(args[1]),Double.parseDouble(args[2]),Double.parseDouble(args[3]));p.saveData();plugin.refreshEquipment(p);p.sendMessage("손에 든 아이템을 마법봉으로 등록했습니다.");return true;}
-   }catch(Exception e){sender.sendMessage("설정 또는 아이템을 확인해 주세요: "+e.getMessage());return true;}
-   sender.sendMessage("/마법봉 give <닉네임> | /마법봉 register <마력> <추가 마나> <마법 가속> | /마법봉 reload");return true;
-  }
-  if(!(sender instanceof Player p)||!p.hasPermission("magiccodex.enhance"))return true;
-  if(!p.getListeningPluginChannels().contains(EnhancementProtocol.RESPONSE)){p.sendMessage("강화 UI 모드 0.27.0 이상이 필요합니다.");return true;}
-  Session previous=sessions.get(p.getUniqueId());if(previous!=null&&previous.state==1){send(p,previous);return true;}
-  if(now()<limits.getOrDefault(p.getUniqueId(),0L))return true;limits.put(p.getUniqueId(),now()+350);
-  offer(p,-1);return true;
+ private void reloadAll(){reload();for(Player online:Bukkit.getOnlinePlayers())for(ItemStack item:online.getInventory().getContents())if(wand(item))lore(item);}
+ /** /강화: 손에 든 마법봉의 강화 창. */
+ private void open(Player p){
+  if(!p.hasPermission("magiccodex.enhance"))return;
+  if(!p.getListeningPluginChannels().contains(EnhancementProtocol.RESPONSE)){CmdKit.notify(p,"warning","enhance-mod","강화 창을 열 수 없어요","차카데미 모드를 업데이트해 주세요",3000);return;}
+  Session previous=sessions.get(p.getUniqueId());if(previous!=null&&previous.state==1){send(p,previous);return;}
+  if(now()<limits.getOrDefault(p.getUniqueId(),0L))return;limits.put(p.getUniqueId(),now()+350);
+  offer(p,-1);
+ }
+ boolean isWand(ItemStack i){return wand(i);}
+ /** /아이템관리 마법봉 주기: 기본 수습 마법봉. */
+ ItemStack apprenticeWand(){ItemStack i=new ItemStack(Material.BLAZE_ROD);var m=i.getItemMeta();m.displayName(net.kyori.adventure.text.Component.text("수습 마법봉"));i.setItemMeta(m);register(i,24,0,0);return i;}
+ /** /아이템관리 마법봉 원본설정: 손에 든 (구형) 마법봉의 강화 전 원본 수치. 현재 수치 이하만. */
+ void setBase(Player p,double[] values){
+  if(active(p))throw new IllegalArgumentException("강화를 먼저 끝내 주세요");
+  ItemStack i=p.getInventory().getItemInMainHand();if(!wand(i))throw new IllegalArgumentException("마법봉을 주 손에 들어 주세요");
+  String[] stats={"power","mana","haste"};for(int j=0;j<3;j++)if(!Double.isFinite(values[j])||values[j]<0||values[j]>number(i,"wand_"+stats[j]))throw new IllegalArgumentException("원본 수치는 지금 수치 이하여야 해요");
+  var m=i.getItemMeta();for(int j=0;j<3;j++)m.getPersistentDataContainer().set(key("wand_base_"+stats[j]),PersistentDataType.DOUBLE,values[j]);i.setItemMeta(m);p.saveData();
  }
  void register(ItemStack i,double power,double mana,double haste){for(double v:new double[]{power,mana,haste})if(!Double.isFinite(v)||v<0||v>100000)throw new IllegalArgumentException("수치 범위 0~100000");var m=i.getItemMeta();var d=m.getPersistentDataContainer();d.set(key("wand_id"),PersistentDataType.STRING,UUID.randomUUID().toString());d.set(key("wand_power"),PersistentDataType.DOUBLE,power);d.set(key("wand_mana"),PersistentDataType.DOUBLE,mana);d.set(key("wand_haste"),PersistentDataType.DOUBLE,haste);i.setItemMeta(m);captureBase(i);lore(i);}
  void lore(ItemStack item){var m=item.getItemMeta();m.getPersistentDataContainer().set(key("enhance_limit"),PersistentDataType.INTEGER,config.getInt("maximum-attempts",10));var lines=new ArrayList<net.kyori.adventure.text.Component>();lines.add(net.kyori.adventure.text.Component.text("마법봉"));if(m.lore()!=null)for(var l:m.lore()){String s=net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(l);if(!s.startsWith("[강화]")&&!s.equals("마법봉"))lines.add(l);}
@@ -52,15 +58,15 @@ final class EnhancementBridge implements CommandExecutor,Listener,PluginMessageL
  void captureBase(ItemStack i){if(hasBase(i)||integer(i,"enhance_successes",0)!=0)return;var m=i.getItemMeta();for(String n:new String[]{"power","mana","haste"})m.getPersistentDataContainer().set(key("wand_base_"+n),PersistentDataType.DOUBLE,number(i,"wand_"+n));i.setItemMeta(m);}
  private boolean usable(Player p){return !p.isDead()&&p.getGameMode()!=GameMode.SPECTATOR&&(p.getOpenInventory().getType()==org.bukkit.event.inventory.InventoryType.CRAFTING||p.getOpenInventory().getType()==org.bukkit.event.inventory.InventoryType.CREATIVE)&&p.getItemOnCursor().getType().isAir();}
  private void offer(Player p,int after){
-  if(!usable(p)){p.sendMessage("다른 보관함을 닫은 뒤 사용해 주세요.");return;}
-  var inv=p.getInventory();ItemStack w=inv.getItemInMainHand();if(!wand(w)){p.sendMessage("등록된 마법봉을 주 손에 들어 주세요.");return;}
+  if(!usable(p)){refuseOpen(p,"다른 보관함을 닫은 뒤 사용해 주세요");return;}
+  var inv=p.getInventory();ItemStack w=inv.getItemInMainHand();if(!wand(w)){refuseOpen(p,"등록된 마법봉을 주 손에 들어 주세요");return;}
   int slot=-1;for(int j=1;j<=36;j++){int i=Math.floorMod(after+j,36);if(i!=inv.getHeldItemSlot()&&core(inv.getItem(i))){slot=i;break;}}
-  if(slot<0){p.sendMessage("인벤토리에 감정된 마력코어가 필요합니다.");return;}
-  Session s=new Session();s.token=ThreadLocalRandom.current().nextLong(1,Long.MAX_VALUE);s.created=now();s.slot=inv.getHeldItemSlot();s.coreSlot=slot;captureBase(w);s.wand=w.clone();s.core=inv.getItem(slot).clone();s.nodes=integer(s.core,"core_nodes",1);s.attempts=integer(w,"enhance_attempts",0);s.limit=config.getInt("maximum-attempts");if(s.attempts>=s.limit){p.sendMessage("이 마법봉의 강화 횟수를 모두 사용했습니다.");return;}
+  if(slot<0){refuseOpen(p,"인벤토리에 감정된 마력코어가 필요해요");return;}
+  Session s=new Session();s.token=ThreadLocalRandom.current().nextLong(1,Long.MAX_VALUE);s.created=now();s.slot=inv.getHeldItemSlot();s.coreSlot=slot;captureBase(w);s.wand=w.clone();s.core=inv.getItem(slot).clone();s.nodes=integer(s.core,"core_nodes",1);s.attempts=integer(w,"enhance_attempts",0);s.limit=config.getInt("maximum-attempts");if(s.attempts>=s.limit){refuseOpen(p,"이 마법봉의 강화 횟수를 모두 썼어요");return;}
   s.cost=config.getDouble("cost");s.consume=config.getBoolean("consume-attempt-on-failure",true);s.base=Math.min(1,number(s.core,"core_base_success"));s.bonus=Math.min(1,number(s.core,"core_starcatch_bonus"));if(config.getDouble("base-chance-override")>=0)s.base=config.getDouble("base-chance-override");if(config.getDouble("bonus-chance-override")>=0)s.bonus=config.getDouble("bonus-chance-override");
   s.window=Math.max(config.getInt("starcatch.minimum-window-ms"),config.getInt("starcatch.first-window-ms")-(s.nodes-1)*config.getInt("starcatch.window-decrease-ms"));
-  s.before=List.of(number(w,"wand_power"),number(w,"wand_mana"),number(w,"wand_haste"));double factor=number(s.core,"core_stat_gain");if(factor<=0||factor>10000){p.sendMessage("코어의 상승량 정보가 올바르지 않습니다.");return;}
-  s.gains=List.of(factor*config.getDouble("gain.power")*school.magiccodex.protocol.CoreAffinity.multiplier(0,integer(s.core,"core_affinity",0)),factor*config.getDouble("gain.mana")*school.magiccodex.protocol.CoreAffinity.multiplier(1,integer(s.core,"core_affinity",0)),factor*config.getDouble("gain.haste")*school.magiccodex.protocol.CoreAffinity.multiplier(2,integer(s.core,"core_affinity",0)));for(int i=0;i<3;i++)if(s.before.get(i)+s.gains.get(i)>100000){p.sendMessage("능력치 상한을 초과합니다.");return;}
+  s.before=List.of(number(w,"wand_power"),number(w,"wand_mana"),number(w,"wand_haste"));double factor=number(s.core,"core_stat_gain");if(factor<=0||factor>10000){refuseOpen(p,"코어의 상승량 정보가 올바르지 않아요");return;}
+  s.gains=List.of(factor*config.getDouble("gain.power")*school.magiccodex.protocol.CoreAffinity.multiplier(0,integer(s.core,"core_affinity",0)),factor*config.getDouble("gain.mana")*school.magiccodex.protocol.CoreAffinity.multiplier(1,integer(s.core,"core_affinity",0)),factor*config.getDouble("gain.haste")*school.magiccodex.protocol.CoreAffinity.multiplier(2,integer(s.core,"core_affinity",0)));for(int i=0;i<3;i++)if(s.before.get(i)+s.gains.get(i)>100000){refuseOpen(p,"능력치 상한을 넘어요");return;}
   String name=net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(w.displayName());s.name=name.length()>60?name.substring(0,60):name;
   s.targets=new ArrayList<>();int t=0;for(int i=0;i<s.nodes;i++){t+=Math.max(500,config.getInt("starcatch.interval-ms")-s.nodes*20+ThreadLocalRandom.current().nextInt(-100,101));s.targets.add(t);}
   sessions.put(p.getUniqueId(),s);send(p,s);
@@ -89,6 +95,7 @@ final class EnhancementBridge implements CommandExecutor,Listener,PluginMessageL
   long elapsed=time-s.started-800;boolean changed=false;for(int i=0;i<s.nodes;i++){int bit=1<<i;if(((s.hit|s.miss)&bit)==0&&elapsed>s.targets.get(i)+s.window+s.latency+100){s.miss|=bit;changed=true;}}
   if(elapsed>s.targets.get(s.nodes-1)+s.window+s.latency+250)finish(p,s,true);else if(changed)send(p,s);
  }limits.values().removeIf(t->t<time);}
+ private static void refuseOpen(Player p,String msg){CmdKit.notify(p,"warning","enhance-open","강화할 수 없어요",msg,1500);}
  private void refuse(Player p,Session s,String msg){s.state=4;s.message=msg;send(p,s);}
  private void send(Player p,Session s){if(p.getListeningPluginChannels().contains(EnhancementProtocol.RESPONSE))p.sendPluginMessage(plugin,EnhancementProtocol.RESPONSE,EnhancementProtocol.response(new Response(s.token,s.state,s.nodes,s.attempts,s.limit,s.hit,s.miss,s.window,800,s.name,s.message,s.cost,balance(p),s.base,s.bonus,s.before,s.gains,s.targets,school.magiccodex.protocol.CoreAffinity.valid(integer(s.core,"core_affinity",0)))));}
  private record Economy(Class<?> type,Object provider){}

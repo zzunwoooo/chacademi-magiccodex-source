@@ -3,7 +3,6 @@ import java.io.File;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import org.bukkit.*;
-import org.bukkit.command.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
@@ -14,7 +13,7 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import school.magiccodex.protocol.AppraisalProtocol;
 import school.magiccodex.protocol.AppraisalProtocol.*;
 
-final class AppraisalBridge implements CommandExecutor,PluginMessageListener,Listener,AutoCloseable {
+final class AppraisalBridge implements PluginMessageListener,Listener,AutoCloseable {
  private final MagicCodexBridge plugin;
  private YamlConfiguration config;
  private final Map<UUID,Offer> offers=new HashMap<>();
@@ -22,7 +21,10 @@ final class AppraisalBridge implements CommandExecutor,PluginMessageListener,Lis
  private record Offer(long token,int slot,ItemStack item,long expires,double cost){}
  AppraisalBridge(MagicCodexBridge plugin){
   this.plugin=plugin;File file=new File(plugin.getDataFolder(),"core-appraisal.yml");if(!file.exists())plugin.saveResource("core-appraisal.yml",false);migrateFormation(file);reload();
-  for(String name:new String[]{"마력코어","코어감정"})Objects.requireNonNull(plugin.getCommand(name)).setExecutor(this);
+  CmdKit.register(plugin,"/코어감정·마력코어 새로고침",()->{
+   ChacaApi.playerCommand(plugin,CmdKit.literal("코어감정").executes(CmdKit.run(ctx->open(CmdKit.self(ctx)))),"손에 든 마력코어 감정 창 열기",List.of());
+   ChacaApi.reload(plugin,"마력코어","core-appraisal.yml (마력코어 감정)",this::reload);
+  });
   Bukkit.getMessenger().registerIncomingPluginChannel(plugin,AppraisalProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,AppraisalProtocol.RESPONSE);
   Bukkit.getPluginManager().registerEvents(this,plugin);
  }
@@ -65,28 +67,18 @@ final class AppraisalBridge implements CommandExecutor,PluginMessageListener,Lis
   data.set(key("core_affinity"),PersistentDataType.INTEGER,affinity);
   item.setItemMeta(meta);return item;
  }
- @Override public boolean onCommand(CommandSender sender,Command cmd,String label,String[] args){
-  if(cmd.getName().equals("마력코어")){
-   if(!sender.hasPermission("magiccodex.core.admin")){sender.sendMessage("권한이 없습니다.");return true;}
-   if(args.length==1&&args[0].equalsIgnoreCase("reload")){try{reload();sender.sendMessage("마력코어 설정을 다시 읽었습니다.");}catch(Exception e){sender.sendMessage("설정 오류: "+e.getMessage());}return true;}
-   if(args.length>=2&&args.length<=3&&args[0].equalsIgnoreCase("give")){
-    Player target=Bukkit.getPlayerExact(args[1]);int count=1;try{if(args.length==3)count=Integer.parseInt(args[2]);}catch(NumberFormatException e){count=0;}
-    if(target==null||count<1||count>36){sender.sendMessage("/마력코어 give <접속 유저> [1~36]");return true;}
-    long empty=Arrays.stream(target.getInventory().getStorageContents()).filter(i->i==null||i.getType().isAir()).count();
-    if(empty<count){sender.sendMessage("대상의 인벤토리 빈칸이 부족합니다.");return true;}
-    for(int i=0;i<count;i++)target.getInventory().addItem(make());target.saveData();sender.sendMessage("미감정 마력코어 "+count+"개 지급 완료.");return true;
-   }
-   sender.sendMessage("/마력코어 give <유저> [개수] 또는 /마력코어 reload");return true;
-  }
-  if(!(sender instanceof Player player))return true;
-  if(!player.hasPermission("magiccodex.core.use")||player.isDead())return true;
-  if(!player.getListeningPluginChannels().contains(AppraisalProtocol.RESPONSE)){player.sendMessage("감정 UI에는 모드 0.26.0 이상이 필요합니다.");return true;}
-  long now=System.currentTimeMillis();if(now<next.getOrDefault(player.getUniqueId(),0L))return true;next.put(player.getUniqueId(),now+500);
+ /** /아이템관리 마력코어 주기: 미감정 마력코어 한 개. */
+ ItemStack unappraisedCore(){return make();}
+ /** /코어감정: 손에 든 마력코어 감정 창. */
+ private void open(Player player){
+  if(!player.hasPermission("magiccodex.core.use")||player.isDead())return;
+  if(!player.getListeningPluginChannels().contains(AppraisalProtocol.RESPONSE)){CmdKit.notify(player,"warning","appraisal-mod","감정 창을 열 수 없어요","차카데미 모드를 업데이트해 주세요",3000);return;}
+  long now=System.currentTimeMillis();if(now<next.getOrDefault(player.getUniqueId(),0L))return;next.put(player.getUniqueId(),now+500);
   int slot=player.getInventory().getHeldItemSlot();ItemStack item=player.getInventory().getItem(slot);
-  if(!core(item)||item.getAmount()!=1){player.sendMessage("마력코어 한 개를 주 손에 들고 사용해 주세요.");return true;}
+  if(!core(item)||item.getAmount()!=1){CmdKit.notify(player,"warning","appraisal-open","감정할 수 없어요","마력코어 한 개를 주 손에 들고 사용해 주세요",1500);return;}
   int state=value(item,"core_state",0);double cost=state==0?config.getDouble("appraisal-cost"):0;
   long token=ThreadLocalRandom.current().nextLong(1,Long.MAX_VALUE);offers.put(player.getUniqueId(),new Offer(token,slot,item.clone(),now+60000,cost));
-  send(player,new Response(token,state,value(item,"core_nodes",0),false,false,cost,balance(player),0,state==2?"파괴된 코어는 사용할 수 없습니다.":""));return true;
+  send(player,new Response(token,state,value(item,"core_nodes",0),false,false,cost,balance(player),0,state==2?"파괴된 코어는 사용할 수 없습니다.":""));
  }
  @Override public void onPluginMessageReceived(String channel,Player p,byte[] bytes){
   if(!channel.equals(AppraisalProtocol.REQUEST))return;Request request;try{request=AppraisalProtocol.decodeRequest(bytes);}catch(IllegalArgumentException e){return;}

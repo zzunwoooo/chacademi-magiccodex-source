@@ -4,7 +4,12 @@ import java.io.File;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import org.bukkit.*;
-import org.bukkit.command.*;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
@@ -28,7 +33,7 @@ import school.magiccodex.protocol.FishingProtocol.*;
  * Vanilla bites and loot never happen for a hook in a session. Gear changes are refused while a bobber is out.
  * Everything runs on the main thread except the codex database (FishingStore).
  */
-final class FishingBridge implements PluginMessageListener, Listener, CommandExecutor, TabCompleter {
+final class FishingBridge implements PluginMessageListener, Listener {
     private static final int LANDING = 0, READY = 1, SINKING = 2, BITING = 3;
     private static final String[] FILES = {"fishing.yml", "fishing-fish.yml", "fishing-gear.yml", "fishing-treasure.yml"};
 
@@ -79,10 +84,7 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, FishingProtocol.REQUEST, this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, FishingProtocol.RESPONSE);
         Bukkit.getPluginManager().registerEvents(this, plugin);
-        for (String name : List.of("낚시도감", "낚시관리")) {
-            var command = Objects.requireNonNull(plugin.getCommand(name));
-            command.setExecutor(this); command.setTabCompleter(this);
-        }
+        CmdKit.register(plugin, "/낚시도감·/유저관리 낚시·/아이템관리 낚시장비·물고기·/테스트 낚시", this::commands);
         for (Player p : Bukkit.getOnlinePlayers()) { store.load(p.getUniqueId(), null); tank.refresh(p.getUniqueId(), null); preloadGear(p); }
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 2, 2);
         plugin.getLogger().info("낚시: 물고기 " + config.fish.size() + "종, 장비 " + config.gear.stream().mapToInt(Map::size).sum() + "종");
@@ -137,20 +139,20 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
                 if (!gear.ready(rod)) {
                     e.setCancelled(true);
                     gear.load(List.of(rod), null);
-                    p.sendActionBar(FishingGear.plain("낚싯대 정보를 불러오는 중이에요. 잠시 뒤 다시 던져 주세요.", 0xFFD9A0));
+                    CmdKit.notify(p, "warning", "fishing-cast", "아직 던질 수 없어요", "낚싯대 정보를 불러오는 중이에요. 잠시 뒤 다시 던져 주세요.", 2000);
                     return;
                 }
                 var l = gear.read(rod);
                 if (!l.rod().fallback() && l.rod().value() <= 0) {
                     e.setCancelled(true);
-                    p.sendActionBar(FishingGear.plain("낚싯대가 고장 났어요. 수리한 뒤 다시 던져 주세요.", 0xFF9E9E));
+                    CmdKit.notify(p, "warning", "fishing-cast", "낚싯대가 고장 났어요", "수리한 뒤 다시 던져 주세요.", 2000);
                     return;
                 }
                 if (s != null && !s.preview && (s.state == SINKING || s.state == BITING)) { e.setCancelled(true); return; }
                 if (tank.full(p.getUniqueId())) {
                     // owner 2026-10-20: a full tank blocks fishing
                     e.setCancelled(true);
-                    p.sendActionBar(FishingGear.plain("통발 수조가 가득 찼어요 (" + tank.count(p.getUniqueId()) + "/" + tank.capacity() + "). 물고기를 팔거나 꺼낸 뒤 낚시해 주세요.", 0xFF9E9E));
+                    CmdKit.notify(p, "warning", "fishing-cast", "통발 수조가 가득 찼어요 (" + tank.count(p.getUniqueId()) + "/" + tank.capacity() + ")", "물고기를 팔거나 꺼낸 뒤 낚시해 주세요.", 2000);
                 }
             }
             case BITE, CAUGHT_FISH, LURED -> {
@@ -484,7 +486,7 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
                 if (!s.preview) {
                     var r = store.record(p.getUniqueId(), f.id(), cm); fresh = r[0]; record = r[1];
                     tank.add(p.getUniqueId(),f.id(),cm,(saved,put)->{
-                        if(put!=FishTank.Put.OK&&p.isOnline())p.sendMessage("§e잡은 물고기는 안전하게 보존했어요. 수조 공간과 저장소가 준비되면 자동 복구돼요.");
+                        if(put!=FishTank.Put.OK&&p.isOnline())CmdKit.notify(p,"warning","fishing-kept","잡은 물고기는 안전하게 보존했어요","수조 공간과 저장소가 준비되면 자동으로 수조에 들어가요.",3000);
                     });
                 } else fresh = true;
             }
@@ -509,7 +511,7 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
         if (s.preview || !heldRod(p, s)) return;
         var notes = new ArrayList<String>();
         wearAndBait(p, s, FishingProtocol.ESCAPED, notes, 0, 0);
-        if (!notes.isEmpty()) p.sendActionBar(FishingGear.plain(String.join(" ", notes), 0xFFD9A0));
+        if (!notes.isEmpty()) CmdKit.notify(p, "warning", "fishing-penalty", "낚시를 멈췄어요", String.join(" ", notes), 1500);
     }
 
     /** Wear and bait use for one try, written into the held rod. Returns the loadout after it. */
@@ -806,103 +808,197 @@ final class FishingBridge implements PluginMessageListener, Listener, CommandExe
 
     // ------------------------------------------------------------------ commands
 
-    @Override public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (command.getName().equals("낚시도감")) {
-            Player target = sender instanceof Player p ? p : null;
-            if (args.length > 0 && sender.hasPermission("magiccodex.fishing.admin")) target = Bukkit.getPlayerExact(args[0]);
-            if (target == null) { sender.sendMessage("§c플레이어를 찾지 못했습니다."); return true; }
-            openCodex(target);
-            return true;
-        }
-        if (args.length == 0) { sender.sendMessage("§e/낚시관리 리로드 | 장비지급 <플레이어> <장비ID> [개수] | 물고기지급 <플레이어> <물고기ID> [cm] | 도감초기화 <플레이어> | 미리보기 [민물|바다|얼음|동굴] | 수조 [플레이어]"); return true; }
-        switch (args[0]) {
-            case "리로드" -> {
-                try {
-                    var next = FishingConfig.load(plugin.getDataFolder());
-                    config = next; gear.config(next); tank.capacity(next.tankCapacity);
-                    sender.sendMessage("§a낚시 설정을 다시 읽었습니다. (물고기 " + next.fish.size() + "종)");
-                } catch (Exception e) { sender.sendMessage("§c낚시 설정 오류 (이전 설정 유지): " + e.getMessage()); }
-            }
-            case "장비지급" -> {
-                if (args.length < 3) { sender.sendMessage("§e/낚시관리 장비지급 <플레이어> <장비ID> [개수]"); return true; }
-                Player t = Bukkit.getPlayerExact(args[1]);
-                FishingConfig.Gear g = null;
-                for (int k = 0; k < 4 && g == null; k++) g = config.gear(k, args[2]);
-                if (t == null || g == null) { sender.sendMessage("§c플레이어나 장비를 찾지 못했습니다."); return true; }
-                int n = args.length > 3 ? parse(args[3], 1) : 1;
-                var items = new ArrayList<ItemStack>();
-                if (g.kind() == 3) items.add(gear.create(g, -1, Math.clamp(n, 1, 64)));
-                else for (int i = 0; i < Math.clamp(n, 1, 36); i++) items.add(gear.create(g, -1, 1));
-                give(t, items, "fishing-admin:" + UUID.randomUUID());
-                sender.sendMessage("§a" + t.getName() + " 에게 " + g.name() + " 지급");
-            }
-            case "수조" -> {
-                Player t = args.length > 1 ? Bukkit.getPlayerExact(args[1]) : sender instanceof Player self ? self : null;
-                if (t == null || tankWindow == null) { sender.sendMessage("§c플레이어를 찾지 못했습니다."); return true; }
-                if (!FishTankBridge.modded(t)) { sender.sendMessage("§c" + t.getName() + " 은(는) 모드가 없어서 수조 창을 열 수 없습니다."); return true; }
-                tankWindow.open(t);
-            }
-            case "물고기지급" -> {
-                if (args.length < 3) { sender.sendMessage("§e/낚시관리 물고기지급 <플레이어> <물고기ID> [cm]"); return true; }
-                Player t = Bukkit.getPlayerExact(args[1]);
-                var f = config.fishById.get(args[2]);
-                if (t == null || f == null) { sender.sendMessage("§c플레이어나 물고기를 찾지 못했습니다."); return true; }
-                float cm = args.length > 3 ? (float) parseDouble(args[3], f.maxSize()) : f.maxSize();
-                var row = new FishTank.Fish(UUID.randomUUID().toString(), f.id(), cm, System.currentTimeMillis());
-                tank.registerItem(row, (saved, registered) -> {
-                    if (!registered || saved == null || saved.token() == null || saved.token().isBlank()) {
-                        sender.sendMessage("\u00a7c\ubb3c\uace0\uae30 \uc800\uc7a5\uc18c \ub4f1\ub85d\uc5d0 \uc2e4\ud328\ud574 \uc544\uc774\ud15c\uc744 \uc9c0\uae09\ud558\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4.");
-                        return;
-                    }
-                    if (!t.isOnline()) {
-                        sender.sendMessage("\u00a7c\ub4f1\ub85d \ub3c4\uc911 \ud50c\ub808\uc774\uc5b4\uac00 \uc811\uc18d\uc744 \uc885\ub8cc\ud574 \uc544\uc774\ud15c\uc744 \uc9c0\uae09\ud558\uc9c0 \ubabb\ud588\uc2b5\ub2c8\ub2e4.");
-                        return;
-                    }
-                    try {
-                        give(t, List.of(gear.fish(f, cm, saved.id(), saved.caughtAt(), saved.token())), "fishing-admin:" + saved.id());
-                        sender.sendMessage("\u00a7a" + t.getName() + " \uc5d0\uac8c " + f.name() + " (" + cm + "cm) \uc9c0\uae09");
-                    } catch (RuntimeException error) {
-                        plugin.getLogger().warning("Fishing admin delivery failed: " + error.getClass().getSimpleName());
-                        sender.sendMessage("\u00a7c\ubb3c\uace0\uae30\ub294 \ub4f1\ub85d\ub410\uc9c0\ub9cc \uc544\uc774\ud15c \uc804\ub2ec\uc744 \ud655\uc778\ud558\uc9c0 \ubabb\ud588\uc2b5\ub2c8\ub2e4. \uc7ac\uc9c0\uae09 \uc804 \uc778\ubca4\ud1a0\ub9ac\uc640 \uc6b0\ud3b8\uc744 \ud655\uc778\ud574 \uc8fc\uc138\uc694.");
-                    }
-                });
-            }
-            case "도감초기화" -> {
-                Player t = args.length > 1 ? Bukkit.getPlayerExact(args[1]) : null;
-                if (t == null) { sender.sendMessage("§c플레이어를 찾지 못했습니다."); return true; }
-                store.reset(t.getUniqueId());
-                sender.sendMessage("§a" + t.getName() + " 의 낚시 도감을 초기화했습니다.");
-            }
-            case "미리보기" -> {
-                if (!(sender instanceof Player p)) { sender.sendMessage("§c게임 안에서만 쓸 수 있습니다."); return true; }
-                int bg = args.length > 1 ? Math.max(0, List.of("민물", "바다", "얼음", "동굴").indexOf(args[1])) : 0;
-                var old = sessions.remove(p.getUniqueId());
-                if (old != null) removeHook(old);
-                var s = new Session(p.getUniqueId());
-                s.preview = true; s.previewBackground = bg; s.state = SINKING;
-                s.maxDepth = Math.min(FishingProtocol.MAX_DEPTH, gear.read(rodOf(p)).line().gear().a() * .85f);
-                s.floorDepth = FishingProtocol.MAX_DEPTH;
-                sessions.put(p.getUniqueId(), s);
-                send(p, new FishingProtocol.Session(s.id, FishingProtocol.PHASE_WATER, bg, s.maxDepth, s.floorDepth, 3, 4096, tank.count(p.getUniqueId()), tank.capacity(),
-                        gear.protocol(gear.read(rodOf(p))), "미리보기: 보상·내구도·도감 기록이 없어요."));
-            }
-            default -> sender.sendMessage("§c알 수 없는 명령입니다.");
-        }
-        return true;
+    private static final List<String> BACKGROUNDS = List.of("민물", "바다", "얼음", "동굴");
+
+    private Map<String, String> fishNames() { var out = new LinkedHashMap<String, String>(); for (var f : config.fish) out.put(f.id(), f.name()); return out; }
+    private Map<String, String> gearNames() { var out = new LinkedHashMap<String, String>(); for (var m : config.gear) for (var g : m.values()) out.put(g.id(), g.name()); return out; }
+    private FishingConfig.Gear gearById(String id) { for (int k = 0; k < 4; k++) { var g = config.gear(k, id); if (g != null) return g; } return null; }
+
+    private void commands() {
+        ChacaApi.playerCommand(plugin, CmdKit.literal("낚시도감").executes(CmdKit.run(ctx -> openCodexFor(CmdKit.sender(ctx), CmdKit.self(ctx)))), "낚시 도감 열기", List.of());
+        // /유저관리 <닉네임> 낚시
+        var number = (java.util.function.Supplier<com.mojang.brigadier.builder.RequiredArgumentBuilder<CommandSourceStack, Integer>>) () -> CmdKit.argument("번호", IntegerArgumentType.integer(1, 10000));
+        var user = CmdKit.literal("낚시")
+                .then(CmdKit.confirm(CmdKit.literal("도감초기화"), ctx -> {
+                    UUID id = ChacaApi.target(ctx);
+                    store.reset(id);
+                    plugin.getLogger().info("FISHING ADMIN codex reset admin=" + CmdKit.sender(ctx).getName() + " player=" + id);
+                    CmdKit.ok(CmdKit.sender(ctx), CmdKit.name(id) + " 님 낚시 도감을 초기화했어요");
+                }))
+                .then(CmdKit.literal("도감열기").executes(CmdKit.run(ctx -> openCodexFor(CmdKit.sender(ctx), ChacaApi.targetOnline(ctx)))))
+                .then(CmdKit.literal("수조")
+                        .then(CmdKit.literal("보기").executes(CmdKit.run(this::showTank)))
+                        .then(CmdKit.literal("빼기").then(number.get().executes(CmdKit.run(ctx -> takeFish(ctx, false)))))
+                        .then(CmdKit.literal("돌려주기").then(number.get().executes(CmdKit.run(ctx -> takeFish(ctx, true)))))
+                        .then(CmdKit.literal("잠금해제").then(CmdKit.word("물고기", () -> AdminCommandRules.catalogChoices(fishNames())).executes(CmdKit.run(this::unlock)))));
+        ChacaApi.branch(plugin, ChacaApi.유저관리, user, "낚시 도감·통발 수조 보기와 고치기", "낚시 수조 보기");
+        // /아이템관리 낚시장비 · 물고기
+        var gearArg = CmdKit.word("장비", () -> AdminCommandRules.catalogChoices(gearNames()))
+                .executes(CmdKit.run(ctx -> giveGear(ctx, 1, CmdKit.self(ctx))))
+                .then(CmdKit.argument("개수", IntegerArgumentType.integer(1, 64)).executes(CmdKit.run(ctx -> giveGear(ctx, IntegerArgumentType.getInteger(ctx, "개수"), CmdKit.self(ctx))))
+                        .then(CmdKit.player("닉네임").executes(CmdKit.run(ctx -> giveGear(ctx, IntegerArgumentType.getInteger(ctx, "개수"), ChacaApi.resolveOnline(ctx, "닉네임"))))));
+        ChacaApi.branch(plugin, ChacaApi.아이템관리, CmdKit.literal("낚시장비").then(gearArg), "낚시 장비(낚싯대·찌·줄·미끼) 주기", "낚시장비 ");
+        var fishArg = CmdKit.word("물고기", () -> AdminCommandRules.catalogChoices(fishNames()))
+                .executes(CmdKit.run(ctx -> giveFish(ctx, -1, CmdKit.self(ctx))))
+                .then(CmdKit.argument("크기cm", DoubleArgumentType.doubleArg(0.1, 100000)).executes(CmdKit.run(ctx -> giveFish(ctx, DoubleArgumentType.getDouble(ctx, "크기cm"), CmdKit.self(ctx))))
+                        .then(CmdKit.player("닉네임").executes(CmdKit.run(ctx -> giveFish(ctx, DoubleArgumentType.getDouble(ctx, "크기cm"), ChacaApi.resolveOnline(ctx, "닉네임"))))));
+        ChacaApi.branch(plugin, ChacaApi.아이템관리, CmdKit.literal("물고기").then(fishArg), "물고기 아이템 주기 (수조에 넣을 수 있음)", "물고기 ");
+        // /테스트 낚시
+        var preview = CmdKit.literal("미리보기").executes(CmdKit.run(ctx -> preview(CmdKit.self(ctx), 0)));
+        for (int i = 0; i < BACKGROUNDS.size(); i++) { int bg = i; preview.then(CmdKit.literal(BACKGROUNDS.get(i)).executes(CmdKit.run(ctx -> preview(CmdKit.self(ctx), bg)))); }
+        var test = CmdKit.literal("낚시").then(preview)
+                .then(CmdKit.literal("수조").executes(CmdKit.run(ctx -> openTank(CmdKit.self(ctx)))).then(CmdKit.player("닉네임").executes(CmdKit.run(ctx -> openTank(ChacaApi.resolveOnline(ctx, "닉네임"))))))
+                .then(CmdKit.literal("도감").executes(CmdKit.run(ctx -> openCodexFor(CmdKit.sender(ctx), CmdKit.self(ctx)))).then(CmdKit.player("닉네임").executes(CmdKit.run(ctx -> openCodexFor(CmdKit.sender(ctx), ChacaApi.resolveOnline(ctx, "닉네임"))))))
+                .then(CmdKit.literal("판매소").executes(CmdKit.run(ctx -> fishShop().adminOpen(CmdKit.self(ctx)))).then(CmdKit.player("닉네임").executes(CmdKit.run(ctx -> fishShop().adminOpen(ChacaApi.resolveOnline(ctx, "닉네임"))))))
+                .then(CmdKit.literal("가격표").executes(CmdKit.run(ctx -> CmdKit.lines(CmdKit.sender(ctx), fishShop().priceLines(null))))
+                        .then(CmdKit.word("물고기", () -> AdminCommandRules.catalogChoices(fishNames())).executes(CmdKit.run(ctx -> CmdKit.lines(CmdKit.sender(ctx), fishShop().priceLines(CmdKit.pick(fishNames(), CmdKit.text(ctx, "물고기"), "물고기")))))));
+        ChacaApi.branch(plugin, ChacaApi.테스트, test, "낚시 미니게임·수조·도감·물고기 판매소 미리보기", "낚시 미리보기");
+        ChacaApi.reload(plugin, "낚시", "fishing*.yml (물고기·장비·보물)", () -> {
+            var next = FishingConfig.load(plugin.getDataFolder());
+            config = next; gear.config(next); tank.capacity(next.tankCapacity);
+            plugin.getLogger().info("낚시 설정을 다시 읽었습니다. (물고기 " + next.fish.size() + "종)");
+        });
     }
 
-    @Override public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        if (command.getName().equals("낚시도감")) return args.length == 1 && sender.hasPermission("magiccodex.fishing.admin") ? null : List.of();
-        if (args.length == 1) return filter(List.of("리로드", "장비지급", "물고기지급", "도감초기화", "미리보기", "수조"), args[0]);
-        if (args.length == 2 && List.of("장비지급", "물고기지급", "도감초기화", "수조").contains(args[0])) return null;
-        if (args.length == 2 && args[0].equals("미리보기")) return filter(List.of("민물", "바다", "얼음", "동굴"), args[1]);
-        if (args.length == 3 && args[0].equals("장비지급")) { var ids = new ArrayList<String>(); for (var m : config.gear) ids.addAll(m.keySet()); return filter(ids, args[2]); }
-        if (args.length == 3 && args[0].equals("물고기지급")) return filter(new ArrayList<>(config.fishById.keySet()), args[2]);
-        return List.of();
+    private FishShopBridge fishShop() throws CommandSyntaxException {
+        var shop = Bukkit.getServicesManager().load(FishShopBridge.class);
+        if (shop == null) throw ChacaApi.error("물고기 판매소가 준비되지 않았어요 (fish-shop.yml 확인)");
+        return shop;
     }
-    private static List<String> filter(List<String> all, String prefix) { return all.stream().filter(s -> s.startsWith(prefix)).limit(80).toList(); }
-    private static int parse(String s, int otherwise) { try { return Integer.parseInt(s); } catch (NumberFormatException e) { return otherwise; } }
-    private static double parseDouble(String s, double otherwise) { try { return Double.parseDouble(s); } catch (NumberFormatException e) { return otherwise; } }
+
+    private void openCodexFor(CommandSender sender, Player target) throws CommandSyntaxException {
+        if (!modded(target)) {
+            if (sender == target) { CmdKit.notify(target, "warning", "fishing-mod", "낚시 도감을 열 수 없어요", "차카데미 모드를 업데이트해 주세요", 3000); return; }
+            throw ChacaApi.error(plugin.names().name(target) + " 님은 차카데미 모드가 없어 도감을 열 수 없어요");
+        }
+        openCodex(target);
+    }
+
+    private void openTank(Player target) throws CommandSyntaxException {
+        if (tankWindow == null) throw ChacaApi.error("통발 수조가 준비되지 않았어요");
+        if (!FishTankBridge.modded(target)) throw ChacaApi.error(plugin.names().name(target) + " 님은 차카데미 모드가 없어 수조 창을 열 수 없어요");
+        tankWindow.open(target);
+    }
+
+    private void preview(Player p, int bg) {
+        var old = sessions.remove(p.getUniqueId());
+        if (old != null) removeHook(old);
+        var s = new Session(p.getUniqueId());
+        s.preview = true; s.previewBackground = bg; s.state = SINKING;
+        s.maxDepth = Math.min(FishingProtocol.MAX_DEPTH, gear.read(rodOf(p)).line().gear().a() * .85f);
+        s.floorDepth = FishingProtocol.MAX_DEPTH;
+        sessions.put(p.getUniqueId(), s);
+        send(p, new FishingProtocol.Session(s.id, FishingProtocol.PHASE_WATER, bg, s.maxDepth, s.floorDepth, 3, 4096, tank.count(p.getUniqueId()), tank.capacity(),
+                gear.protocol(gear.read(rodOf(p))), "미리보기: 보상·내구도·도감 기록이 없어요."));
+    }
+
+    private void giveGear(CommandContext<CommandSourceStack> ctx, int n, Player target) throws CommandSyntaxException {
+        var g = gearById(CmdKit.pick(gearNames(), CmdKit.text(ctx, "장비"), "낚시 장비"));
+        var items = new ArrayList<ItemStack>();
+        if (g.kind() == 3) items.add(gear.create(g, -1, Math.clamp(n, 1, 64)));
+        else for (int i = 0; i < Math.clamp(n, 1, 36); i++) items.add(gear.create(g, -1, 1));
+        boolean mailed = give(target, items, "fishing-admin:" + UUID.randomUUID());
+        CmdKit.ok(CmdKit.sender(ctx), plugin.names().name(target) + " 님에게 " + g.name() + (n > 1 ? " " + n + "개" : "") + "를 주었어요" + (mailed ? " (일부 우편)" : ""));
+    }
+
+    private void giveFish(CommandContext<CommandSourceStack> ctx, double size, Player t) throws CommandSyntaxException {
+        var f = config.fishById.get(CmdKit.pick(fishNames(), CmdKit.text(ctx, "물고기"), "물고기"));
+        float cm = size > 0 ? (float) size : f.maxSize();
+        var sender = CmdKit.sender(ctx);
+        var row = new FishTank.Fish(UUID.randomUUID().toString(), f.id(), cm, System.currentTimeMillis());
+        tank.registerItem(row, (saved, registered) -> {
+            if (!registered || saved == null || saved.token() == null || saved.token().isBlank()) { CmdKit.fail(sender, "물고기 저장소에 등록하지 못해 주지 않았어요", null); return; }
+            if (!t.isOnline()) { CmdKit.userFail(sender, "등록하는 동안 대상이 나가서 주지 못했어요"); return; }
+            try {
+                give(t, List.of(gear.fish(f, cm, saved.id(), saved.caughtAt(), saved.token())), "fishing-admin:" + saved.id());
+                CmdKit.ok(sender, plugin.names().name(t) + " 님에게 " + f.name() + " (" + cm + "cm)를 주었어요");
+            } catch (RuntimeException error) {
+                CmdKit.fail(sender, "물고기는 등록됐지만 전달을 확인하지 못했어요. 다시 주기 전에 인벤토리·우편을 확인해 주세요", error);
+            }
+        });
+    }
+
+    /** 수조 줄 (번호는 잡은 시각 순서, 1부터). */
+    private String row(int index, FishTank.Fish f, Set<String> locks) {
+        var def = config.fishById.get(f.fish());
+        return index + ". " + (def == null ? f.fish() : def.name()) + " " + AdminCommandRules.number(Math.round(f.size() * 10) / 10.0) + "cm · " + QuestBridge.timeText(f.caughtAt()) + (locks.contains(f.fish()) ? " · 잠김" : "");
+    }
+
+    private void showTank(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        UUID id = ChacaApi.target(ctx);
+        var sender = CmdKit.sender(ctx);
+        String who = CmdKit.name(id);
+        tank.refresh(id, () -> {
+            if (!tank.loaded(id)) { CmdKit.fail(sender, "수조를 읽지 못했어요", null); return; }
+            var t = tank.tank(id);
+            var out = new ArrayList<String>();
+            out.add("── " + who + " 통발 수조 " + t.fish.size() + "/" + tank.capacity() + " ──");
+            for (int i = 0; i < t.fish.size() && i < 200; i++) out.add(row(i + 1, t.fish.get(i), t.locks));
+            if (t.fish.size() > 200) out.add("… (" + (t.fish.size() - 200) + "마리 더)");
+            var locked = t.locks.stream().map(l -> fishNames().getOrDefault(l, l)).sorted().toList();
+            out.add("잠긴 종류: " + (locked.isEmpty() ? "없음" : String.join(", ", locked)));
+            CmdKit.lines(sender, out);
+            if (Bukkit.getPlayer(id) == null) tank.forget(id);
+        });
+    }
+
+    /** giveBack=false: 수조에서 빼기(방생), true: 아이템으로 인벤토리(가득 차면 우편)에 돌려주기. */
+    private void takeFish(CommandContext<CommandSourceStack> ctx, boolean giveBack) throws CommandSyntaxException {
+        UUID id = ChacaApi.target(ctx);
+        Player p = giveBack ? ChacaApi.targetOnline(ctx) : Bukkit.getPlayer(id);
+        int number = IntegerArgumentType.getInteger(ctx, "번호");
+        var sender = CmdKit.sender(ctx);
+        String who = CmdKit.name(id);
+        String admin = sender.getName();
+        tank.refresh(id, () -> {
+            var list = tank.tank(id).fish;
+            if (!tank.loaded(id)) { CmdKit.fail(sender, "수조를 읽지 못했어요", null); return; }
+            if (number > list.size()) { CmdKit.userFail(sender, who + " 님 수조에 " + number + "번 물고기가 없어요 (수조 보기로 번호 확인)"); return; }
+            var f = list.get(number - 1);
+            String label = row(number, f, Set.of()).substring(String.valueOf(number).length() + 2);
+            if (!giveBack) {
+                tank.remove(id, List.of(f), removed -> {
+                    if (removed.isEmpty()) { CmdKit.userFail(sender, "그 물고기는 방금 수조에서 빠졌어요. 다시 확인해 주세요"); return; }
+                    plugin.getLogger().info("FISH TANK ADMIN release admin=" + admin + " player=" + id + " fish=" + f.fish() + " id=" + f.id());
+                    if (p == null) tank.forget(id);
+                    CmdKit.ok(sender, who + " 님 수조에서 " + label + "을(를) 뺐어요");
+                });
+                return;
+            }
+            tank.remove(id, List.of(f), FishTankSql.Action.ITEMIZE, claimed -> {
+                if (claimed.isEmpty()) { CmdKit.userFail(sender, "그 물고기는 방금 수조에서 빠졌어요. 다시 확인해 주세요"); return; }
+                var actual = claimed.getFirst();
+                ItemStack item = fishItem(actual);
+                if (item == null || !p.isOnline()) {
+                    tank.finish(id, claimed, FishTankSql.Action.ITEMIZE, false, ok -> { if (ok) CmdKit.userFail(sender, "돌려주지 못해 수조에 그대로 두었어요"); else CmdKit.fail(sender, "수조 상태 확인이 필요해요", null); });
+                    return;
+                }
+                try { give(p, List.of(item), "fish-tank-admin:" + actual.id() + ":" + actual.token()); }
+                catch (RuntimeException uncertain) { CmdKit.fail(sender, "전달 결과 확인이 필요해요 (수조 기록은 보류)", uncertain); return; }
+                tank.finish(id, claimed, FishTankSql.Action.ITEMIZE, true, ok -> {
+                    plugin.getLogger().info("FISH TANK ADMIN itemize admin=" + admin + " player=" + id + " fish=" + actual.fish() + " id=" + actual.id() + " ok=" + ok);
+                    if (ok) CmdKit.ok(sender, who + " 님에게 " + label + "을(를) 아이템으로 돌려주었어요");
+                    else CmdKit.fail(sender, "지급 기록 확인이 필요해요", null);
+                });
+            });
+        });
+    }
+
+    private void unlock(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        UUID id = ChacaApi.target(ctx);
+        String fish = CmdKit.pick(fishNames(), CmdKit.text(ctx, "물고기"), "물고기");
+        var sender = CmdKit.sender(ctx);
+        String who = CmdKit.name(id);
+        tank.refresh(id, () -> {
+            if (!tank.loaded(id)) { CmdKit.fail(sender, "수조를 읽지 못했어요", null); return; }
+            var locks = new HashSet<>(tank.tank(id).locks);
+            if (!locks.remove(fish)) { CmdKit.userFail(sender, who + " 님은 " + fishNames().get(fish) + "을(를) 잠그지 않았어요"); return; }
+            tank.locks(id, locks, ok -> {
+                if (Bukkit.getPlayer(id) == null) tank.forget(id);
+                if (ok) CmdKit.ok(sender, who + " 님 " + fishNames().get(fish) + " 잠금을 풀었어요"); else CmdKit.fail(sender, "잠금을 저장하지 못했어요", null);
+            });
+        });
+    }
 
     // ------------------------------------------------------------------ io
 

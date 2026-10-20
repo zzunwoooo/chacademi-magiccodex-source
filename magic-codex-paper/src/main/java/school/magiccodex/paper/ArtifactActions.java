@@ -167,7 +167,7 @@ final class ArtifactActions implements Listener {
         p.getWorld().playSound(p.getLocation(), Sound.EVENT_RAID_HORN, 1.2f, 1.2f);
         for (Player m : group) {
             fx.timed(m, "war_horn", 10_000, 0, 10);
-            m.sendActionBar(Component.text("전쟁 뿔피리: 10초간 스킬 가속 +10", NamedTextColor.GOLD));
+            ArtifactEffects.notice(m, "war_horn", "전쟁 뿔피리", "10초간 스킬 가속 +10");
         }
         return "";
     }

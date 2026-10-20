@@ -4,152 +4,6 @@ main: school.magiccodex.paper.MagicCodexBridge
 api-version: '1.21.4'
 description: Permission, balance, server-authoritative mana and spell casting for Magic Codex.
 softdepend: [LuckPerms, Vault, PlaceholderAPI, MCPets, MythicMobs, ModelEngine, Citizens]
-commands:
-  최초닉네임설정:
-    description: 처음 닉네임 정하기 (닫을 수 없는 창, 저장하면 first-nickname.on-complete 실행)
-    usage: /최초닉네임설정 [플레이어] [강제]
-  상점관리화면:
-    description: 운영자 상점 상품 관리 화면
-    permission: magiccodex.shop.admin
-  상점:
-    description: 관리자용 상점 열기 (/상점 <상점ID>). 유저는 상인 NPC를 눌러 연다.
-    permission: magiccodex.shop.admin
-  상점관리:
-    description: 상점 설정, 미완료 거래 조회·처리 (기록 <유저>, 처리 <거래ID> 완료|환불|취소)
-    permission: magiccodex.shop.admin
-  우편관리:
-    description: 수령 도중 멈춘 우편 첨부 조회·처리 (기록 <유저>, 처리 <유저> <수령번호> 완료|반환)
-    permission: magiccodex.mailbox.admin
-  마법:
-    description: 발견한 마법을 마나와 마법 가속을 적용해 시전합니다.
-  마법관리:
-    description: 마법 실행 목록을 다시 불러옵니다.
-    permission: magiccodex.mana.admin
-  칭호:
-    description: 보유한 접두사와 접미사를 선택합니다.
-    permission: magiccodex.titles
-  칭호관리:
-    description: 칭호 지급, 회수 및 설정 관리
-    permission: magiccodex.titles.admin
-  대화:
-    description: 관리자용 실제 NPC 대화 실행
-    permission: magiccodex.dialogue.admin
-  대화관리:
-    description: NPC 대화 편집, 미리보기 및 YAML 반영
-    permission: magiccodex.dialogue.admin
-  메인퀘스트:
-    description: 진행 중인 이야기 기록
-    permission: magiccodex.dialogue
-  의뢰:
-    description: 학교 의뢰 게시판을 엽니다.
-    aliases: [의뢰게시판, questboard]
-    permission: magiccodex.quests
-  의뢰관리:
-    description: 의뢰 초안 편집 및 공용 설정 반영
-    permission: magiccodex.quests.admin
-  이로치관리:
-    description: 바라보는 교화 대상의 이로치 설정
-    permission: magiccodex.shiny.admin
-  교화:
-    description: 바라보는 대상을 교화합니다.
-    permission: magic.learned.rainbow_collar
-  교화관리:
-    description: 교화 설정과 예시 몹 관리
-    permission: magiccodex.taming.admin
-  마력재구성:
-    description: 강화 초기화, 실패 복구, 코어 성향 변경
-    permission: magiccodex.reconfigure
-  재구성관리:
-    description: 재구성 사용권 지급 및 구형 마법봉 원본 등록
-    permission: magiccodex.reconfigure.admin
-  강화:
-    description: 마법봉 회로 강화
-    permission: magiccodex.enhance
-  마법봉:
-    description: 마법봉 등록 및 강화 설정
-    permission: magiccodex.enhance.admin
-  마력코어:
-    description: 미감정 코어 지급 및 설정 관리
-    permission: magiccodex.core.admin
-  코어감정:
-    description: 주 손 마력코어 감정
-    permission: magiccodex.core.use
-  장비설정:
-    description: Tag the held accessory and its equipment bonuses.
-    permission: magiccodex.equipment.admin
-  아티팩트관리:
-    aliases: [artifactadmin]
-    description: Reload artifacts.yml, list artifacts, check a player's artifacts.
-    permission: magiccodex.artifact.admin
-  아티팩트소환:
-    description: Open the artifact summon window (admins may open it for another player).
-    usage: /아티팩트소환 [플레이어]
-    permission: magiccodex.artifact.summon
-  연금술:
-    description: Open the alchemy window (admins, console and NPC commands may open it for another player).
-    usage: /연금술 [플레이어]
-    permission: magiccodex.alchemy.use
-  연금술관리:
-    description: Reload alchemy.yml, list recipes, discover or forget recipes for a player.
-    usage: /연금술관리 [편집|새로고침|목록|발견|잊기]
-    permission: magiccodex.alchemy.admin
-  낚시도감:
-    description: Open the fishing codex (admins may open it for another player).
-    usage: /낚시도감 [플레이어]
-    permission: magiccodex.fishing.codex
-  낚시관리:
-    description: Reload fishing ymls, give gear or fish, reset a codex, preview the fishing panel.
-    usage: /낚시관리 [리로드|장비지급|물고기지급|도감초기화|미리보기]
-    permission: magiccodex.fishing.admin
-  물고기상점관리:
-    description: Fish shop (sells fish from the 통발 tank) — open, reload, prices, NPC, portrait.
-    usage: /물고기상점관리 [열기|리로드|가격|크기보정|조건보정|NPC|NPC삭제|초상|이름|가격표]
-    permission: magiccodex.fishshop.admin
-  기숙사점수:
-    description: School house standings and administrator point adjustments.
-    aliases: [학교기증, 학교점수]
-    permission: magiccodex.school
-  기증기록:
-    description: Reset donation records or reload donation catalog.
-    permission: magiccodex.school.admin
-  계절관리:
-    description: 계절과 자동 전환 설정을 관리합니다.
-    permission: magiccodex.climate.admin
-  펫관리:
-    description: 펫 도감 등급 설정과 MCPets 연동을 다시 불러옵니다.
-    permission: magiccodex.pets.admin
-  온도관리:
-    description: 유저 HUD에 표시할 온도를 조회하거나 관리합니다.
-    permission: magiccodex.temperature.admin
-  클래스승급:
-    description: 조건을 확인하고 클래스 승급 화면을 엽니다.
-    permission: magiccodex.ascend
-  친구:
-    description: Open the friends list.
-    aliases: [친구창]
-    permission: magiccodex.friends
-  스텟창:
-    description: Open a player's public stats in Magic Codex.
-    aliases: [스탯창]
-    permission: magiccodex.stats.view
-  마나관리:
-    description: 마나 기본 설정과 등록 마법 비용을 다시 불러옵니다.
-    permission: magiccodex.mana.admin
-  유저관리:
-    description: 접속 유저의 기본 스탯, 마법 습득, 기숙사, NPC 호감도 관리
-    permission: magiccodex.mana.admin;magicdiscovery.admin;magiccodex.school.admin;magiccodex.dialogue.admin
-  점수관리:
-    description: 기숙사 점수 조회, 추가, 감소, 설정
-    permission: magiccodex.school.admin
-  아이템관리:
-    description: 지정 능력치의 마법봉과 감정된 마력코어 지급
-    permission: magiccodex.enhance.admin;magiccodex.core.admin
-  칭호추가:
-    description: 등록되어 활성화된 칭호 지급
-    permission: magiccodex.titles.admin
-  칭호삭제:
-    description: 등록 칭호 회수
-    permission: magiccodex.titles.admin
 permissions:
   magiccodex.artifact.admin:
     default: op
@@ -173,7 +27,7 @@ permissions:
     description: 통발 (아공간 수조) 마법. 낚시의 기본 마법이라 모두 처음부터 알고 있다.
     default: true
   magiccodex.nickname.admin:
-    description: 다른 플레이어에게 /최초닉네임설정 열기
+    description: (예전 명령 권한, 이제 OP가 /유저관리 <닉네임> 닉네임 으로 처리)
     default: op
   magiccodex.titles:
     default: true
@@ -259,7 +113,7 @@ permissions:
   magiccodex.mailbox:
     default: true
   magiccodex.mailbox.admin:
-    description: /우편관리 (수령 도중 멈춘 첨부 처리)
+    description: (예전 명령 권한, 이제 OP가 /유저관리 <닉네임> 우편 으로 처리)
     default: op
   magiccodex.shop:
     default: true

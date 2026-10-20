@@ -58,6 +58,8 @@ final class MailboxStore implements AutoCloseable {
  /** pending 인 첨부만 claimed(수령 완료) 또는 ready(다시 수령 가능)로 바꾼다. 같은 token 으로 두 번 불러도 한 번만 바뀐다. 바뀐 첨부 수를 돌려준다. */
  int settle(UUID owner,String token,boolean claimed)throws Exception{if(token==null||token.isEmpty())return 0;return tx(owner,()->{try(var s=db().prepareStatement("UPDATE "+item+" SET state=?,token='',origin='' WHERE token=? AND state='pending' AND EXISTS(SELECT 1 FROM "+mail+" m WHERE m.id="+item+".mail AND m.owner=?)")){s.setString(1,claimed?"claimed":"ready");s.setString(2,token);s.setString(3,owner.toString());return s.executeUpdate();}});}
  int deleteClaimed(UUID owner)throws Exception{return tx(owner,()->{try(var s=db().prepareStatement("UPDATE "+mail+" SET deleted=? WHERE owner=? AND deleted=0 AND NOT EXISTS(SELECT 1 FROM "+item+" i WHERE i.mail="+mail+".id AND i.state<>'claimed')")){s.setLong(1,System.currentTimeMillis());s.setString(2,owner.toString());return s.executeUpdate();}});}
+ /** 관리자 삭제: 받는 중(pending) 첨부가 없는 우편만 지운다(숨김). 지웠으면 true. */
+ boolean adminDelete(UUID owner,String id)throws Exception{return tx(owner,()->{try(var s=db().prepareStatement("UPDATE "+mail+" SET deleted=? WHERE id=? AND owner=? AND deleted=0 AND NOT EXISTS(SELECT 1 FROM "+item+" i WHERE i.mail="+mail+".id AND i.state='pending')")){s.setLong(1,System.currentTimeMillis());s.setString(2,id);s.setString(3,owner.toString());return s.executeUpdate()==1;}});}
  boolean restore(UUID owner,UUID id)throws Exception{return tx(owner,()->{try(var s=db().prepareStatement("UPDATE "+mail+" SET deleted=0 WHERE id=? AND owner=? AND deleted<>0")){s.setString(1,id.toString());s.setString(2,owner.toString());return s.executeUpdate()==1;}});}
  @Override public void close()throws Exception{holder.close();}
 }
