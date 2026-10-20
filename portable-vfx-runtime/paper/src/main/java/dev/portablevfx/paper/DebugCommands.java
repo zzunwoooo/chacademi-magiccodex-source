@@ -102,14 +102,14 @@ final class DebugCommands {
         var ticks = Commands.argument("틱", IntegerArgumentType.integer(1)).executes(this::play).then(yaw);
         var scale = Commands.argument("크기", FloatArgumentType.floatArg(0.01f)).executes(this::play).then(ticks);
         var z = Commands.argument("z", DoubleArgumentType.doubleArg()).executes(this::play).then(scale);
-        return Commands.literal("재생").then(Commands.argument("효과", ChacaLink.word(plugin::effectIds))
+        return Commands.literal("재생").then(effectArg()
             .then(Commands.argument("월드", ChacaLink.word(() -> Bukkit.getWorlds().stream().map(World::getName).toList()))
                 .then(Commands.argument("x", DoubleArgumentType.doubleArg()).then(Commands.argument("y", DoubleArgumentType.doubleArg()).then(z)))));
     }
 
     private int play(CommandContext<CommandSourceStack> ctx) {
         return debug(ctx, () -> {
-            var request = new EffectRequest(ctx.getArgument("효과", String.class), ctx.getArgument("월드", String.class),
+            var request = new EffectRequest(effect(ctx), ctx.getArgument("월드", String.class),
                 DoubleArgumentType.getDouble(ctx, "x"), DoubleArgumentType.getDouble(ctx, "y"), DoubleArgumentType.getDouble(ctx, "z"),
                 opt(ctx, "크기", Float.class, 1f), opt(ctx, "틱", Integer.class, Math.min(40, plugin.maxDurationTicks())),
                 opt(ctx, "요", Float.class, 0f), opt(ctx, "피치", Float.class, 0f), opt(ctx, "롤", Float.class, 0f),
@@ -131,7 +131,7 @@ final class DebugCommands {
         var anchor = Commands.argument("기준점", ChacaLink.word(() -> ANCHORS)).executes(this::follow).then(ox);
         var ticks = Commands.argument("틱", IntegerArgumentType.integer(1)).executes(this::follow).then(anchor);
         var scale = Commands.argument("크기", FloatArgumentType.floatArg(0.01f)).executes(this::follow).then(ticks);
-        return Commands.literal("따라가기").then(Commands.argument("효과", ChacaLink.word(plugin::effectIds))
+        return Commands.literal("따라가기").then(effectArg()
             .then(Commands.argument("대상", ChacaLink.word(() -> List.of("나"))).executes(this::follow).then(scale)));
     }
 
@@ -145,13 +145,24 @@ final class DebugCommands {
         if (entity == null || !entity.isValid() || entity.isDead()) throw ChacaLink.error("살아 있고 로드된 엔티티가 아니에요");
         Entity target = entity;
         return debug(ctx, () -> {
-            PlayResult result = plugin.debugFollow(ctx.getArgument("효과", String.class), target, opt(ctx, "크기", Float.class, 1f), opt(ctx, "틱", Integer.class, 100),
+            PlayResult result = plugin.debugFollow(effect(ctx), target, opt(ctx, "크기", Float.class, 1f), opt(ctx, "틱", Integer.class, 100),
                 opt(ctx, "기준점", String.class, null), opt(ctx, "x오프셋", Float.class, 0f), opt(ctx, "y오프셋", Float.class, 0f), opt(ctx, "z오프셋", Float.class, 0f));
             return List.of("[PortableVFX] follow handle=" + result.handle() + ", recipients=" + result.recipients());
         });
     }
 
     // ------------------------------------------------------------------ helpers
+
+    /** Effect IDs look like claude:pack/system: a resource-key argument, so the client does not mark ':' as an error. */
+    private com.mojang.brigadier.builder.RequiredArgumentBuilder<CommandSourceStack, net.kyori.adventure.key.Key> effectArg() {
+        return Commands.argument("효과", io.papermc.paper.command.brigadier.argument.ArgumentTypes.key()).suggests((ctx, b) -> {
+            String typed = b.getRemaining();
+            for (String id : plugin.effectIds()) if (id.startsWith(typed)) b.suggest(id);
+            return b.buildFuture();
+        });
+    }
+
+    private static String effect(CommandContext<CommandSourceStack> ctx) { return ctx.getArgument("효과", net.kyori.adventure.key.Key.class).asString(); }
 
     @FunctionalInterface private interface Debug { List<String> run(); }
 

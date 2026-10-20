@@ -3,12 +3,3 @@ version: '${version}'
 main: school.magiccodex.discovery.MagicDiscovery
 api-version: '1.21.4'
 softdepend: [LuckPerms, MagicCodexBridge]
-commands:
-  마법발견관리:
-    description: 마법 발견 조건과 칭호 보상 관리
-    permission: magicdiscovery.admin
-  칭호수령:
-    description: 등록된 마법 발견 칭호 아이템 수령
-permissions:
-  magicdiscovery.admin:
-    default: op

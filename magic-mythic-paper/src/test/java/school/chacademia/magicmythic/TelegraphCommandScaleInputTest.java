@@ -27,9 +27,9 @@ class TelegraphCommandScaleInputTest {
   when(player.getWorld()).thenReturn(world);when(player.getLocation()).thenAnswer(i->new Location(world,1,64,2,30,0));when(player.getEyeLocation()).thenAnswer(i->new Location(world,1,65.6,2,30,0));
   try(var ground=mockStatic(Telegraphs.class)){
    ground.when(()->Telegraphs.ground(any(Location.class))).thenAnswer(i->((Location)i.getArgument(0)).getY());
-   TelegraphCommand.run(plugin,player,new String[]{"seal"});
-   TelegraphCommand.run(plugin,player,new String[]{"frost_laser"});
-   String result=TelegraphCommand.run(plugin,player,new String[]{"fx","sealcircle/seal","self","7","0","24","2","2"});assertTrue(result.startsWith("예고 +"),result);
+   TelegraphCommand.run(plugin,player,"봉인진",null);
+   TelegraphCommand.run(plugin,player,"빙핵레이저",null);
+   String result=TelegraphCommand.fx(plugin,player,"sealcircle/seal","원형내발",7f,0f,24,2,2f);assertTrue(result.startsWith("예고 +"),result);
   }
   var tasks=ArgumentCaptor.forClass(Runnable.class);verify(scheduler,times(3)).runTaskLater(eq(plugin),tasks.capture(),anyLong());tasks.getAllValues().forEach(Runnable::run);
   var requests=ArgumentCaptor.forClass(EffectRequest.class);var input=ArgumentCaptor.forClass(Double.class);
