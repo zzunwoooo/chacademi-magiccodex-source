@@ -1,3 +1,5 @@
+> Claude 2026-10-20 (not built): [아티팩트 CC·원소 반응 개편 — 반응 아티팩트 4 수정 + CC 감소류 8 교체](CLAUDE_ARTIFACT_CC_20261020.md). Same branch claude/reaction-cc-vfx-20261020. MagicMythic + MagicCodexBridge + artifacts.yml together.
+
 > Claude 2026-10-20 (not built): [원소 반응 CC 개편 — VFX 팩 교체 + 반응 효과·크기 서버 코드](CLAUDE_REACTION_CC_VFX_20261020.md). Branch claude/reaction-cc-vfx-20261020 on codex/operating-final-20261019 @ 8356980. MagicMythic jar (school/wild) + client VFX pack.
 
 > Claude 2026-10-20 (not built): [원소 반응 CC 개편 — VFX 팩 교체 + 반응 효과·크기 서버 코드](CLAUDE_REACTION_CC_VFX_20261020.md). Branch claude/reaction-cc-vfx-20261020 on codex/operating-final-20261019 @ 8356980. MagicMythic jar (school/wild) + client VFX pack.

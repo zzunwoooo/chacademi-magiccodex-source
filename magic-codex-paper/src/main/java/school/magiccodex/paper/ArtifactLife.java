@@ -162,7 +162,6 @@ final class ArtifactLife implements Listener {
         if (!fx.wearsAny(p)) return;
         Material type = e.getItem().getType();
         if (has(p, "blacksmith_amulet") && tool(type)) { e.setCancelled(true); return; }
-        if (has(p, "small_shield_badge") && type == Material.SHIELD && chance(0.05)) e.setCancelled(true);
     }
 
     static boolean tool(Material m) {

@@ -26,6 +26,8 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener, Com
 
     // ---- status API (MagicCodexBridge calls this by reflection; main thread)
     /** Status effect id (stun, burn, ...) active on the entity. "burn" also counts vanilla fire (불타는 대상 마법). */
+    /** Artifact API (제압의 머리띠): the entity has a movement/action crowd control status right now. */
+    public boolean isControlled(org.bukkit.entity.LivingEntity entity){return status!=null&&entity!=null&&status.controlled(entity);}
     public boolean hasStatus(org.bukkit.entity.LivingEntity entity,String id){var s=school.magiccodex.protocol.StatusProtocol.Status.of(id);return status!=null&&s!=null&&entity!=null&&status.shows(entity,s);}
 
     // ---- artifact API (MagicCodexBridge calls these by reflection; main thread)
