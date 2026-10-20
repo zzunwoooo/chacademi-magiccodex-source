@@ -49,7 +49,15 @@ quaffle:
 bludger:
   count: 2
   wander-speed: 16.0
-  chase-speed: 30.0          # 빗자루보다 빠름: 쳐내기(F)·배럴롤로 피해야 함
+  chase-speed: 30.0          # (안 씀: 2026-10-20 돌진 방식 — 아래 approach/dash)
+  # 2026-10-20 돌진: 노린 사람에게 approach-speed 로 다가가다 dash-range 안이면 windup 동안 멈칫(예고) →
+  # dash-speed 로 그 사람이 갈 곳을 향해 일직선 돌진, 부딪혀도 멈추지 않고 dash-overshoot 블록 더 날아간 뒤 dash-recover 동안 쉼
+  approach-speed: 18.0
+  dash-speed: 44.0           # 빗자루보다 빠름: 쳐내기(F)·배럴롤·옆으로 비켜서 피함
+  dash-range: 14
+  windup-seconds: 0.4
+  dash-overshoot: 10
+  dash-recover-seconds: 1.2
   steer: 6.0                 # 방향을 바꾸는 빠르기 (클수록 급회전)
   hit-radius: 1.0            # 블러저에 맞는 거리 (2026-10-20 1.5 → 1.0)
   damage-percent: 25         # 최대 체력의 %, 모든 피해 감소 무시
@@ -71,6 +79,7 @@ snitch:                      # 위치 표시 없음 · 빛나지 않음
 shrine:
   pickup-radius: 1.6
   respawn-seconds: 20
+  scale: 0.75                # 성소 이펙트 크기 (2026-10-20 1.0 → 0.75)
   health-percent: 50
   mana-percent: 50
   vfx:                       # PortableVFX 팩 (ShrineHealth 등, PC 차카데미 vfx_Claude 폴더)
@@ -108,6 +117,10 @@ mvp:                         # MVP 점수 (레이팅 기여 보정에도 사용)
   heal-per: 10               # 파티원 회복 10당 1점
   damage-per: 20             # 적 피해 20당 1점
   save-goal-radius: 8
+
+# 스니치·블러저·떠다니는 퀘이플이 경기장 벽에서 떨어져 다니는 거리 (던지거나 쳐낸 공은 예외). y 는 바닥·천장
+ball-edge-margin: 8
+ball-edge-margin-y: 3
 
 # 큐디치에서 쓸 수 없는 마법 (준비 화면에서 회색, 경기 중 시전 막힘)
 banned-spells: []

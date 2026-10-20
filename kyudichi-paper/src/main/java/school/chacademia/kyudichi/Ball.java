@@ -42,6 +42,25 @@ class Ball {
         return hit;
     }
 
+    /**
+     * Keeps a self-moving ball away from the arena walls (owner 2026-10-20: players chasing it hit the invisible boundary).
+     * Inside `margin` of a face the outward part of `desired` fades out and an inward push of up to `speed` is added.
+     * Not used for thrown / deflected balls (they may fly to the wall).
+     */
+    Vector avoidEdges(Vector desired, Box box, double margin, double marginY, double speed) {
+        if (margin <= 0) return desired;
+        double[] p = {pos.getX(), pos.getY(), pos.getZ()}, v = {desired.getX(), desired.getY(), desired.getZ()};
+        double[] lo = {box.minX(), box.minY(), box.minZ()}, hi = {box.maxX(), box.maxY(), box.maxZ()};
+        for (int a = 0; a < 3; a++) {
+            double m = Math.min(a == 1 ? marginY : margin, (hi[a] - lo[a]) / 4);
+            if (m <= 0.01) continue;
+            double near = 1 - (p[a] - lo[a]) / m, far = 1 - (hi[a] - p[a]) / m;
+            if (near > 0) { near = Math.min(1, near); if (v[a] < 0) v[a] *= 1 - near; v[a] += speed * near; }
+            if (far > 0) { far = Math.min(1, far); if (v[a] > 0) v[a] *= 1 - far; v[a] -= speed * far; }
+        }
+        return new Vector(v[0], v[1], v[2]);
+    }
+
     /** Squared distance from point c to the segment this tick moved along (prev → pos): hits cannot be skipped at speed. */
     double sweptDistanceSquared(Vector c) {
         Vector ab = pos.clone().subtract(prev), ac = c.clone().subtract(prev);
@@ -80,10 +99,12 @@ class Ball {
     }
 
     static final class Bludger extends Ball {
-        enum State { FREE, CHASE, DEFLECT }
+        /** owner 2026-10-20: CHASE = getting into range, WINDUP = short telegraph, DASH = straight charge that flies on through. */
+        enum State { FREE, CHASE, WINDUP, DASH, DEFLECT }
         State state = State.FREE;
         UUID target; long startAt;                       // startAt: second bludger delay
         UUID deflectBy; Team deflectTeam; long deflectUntil; UUID deflectedFrom;
+        long windupUntil, dashUntil;
         final Map<UUID, Long> ignore = new HashMap<>();
         Bludger(int i, Vector p) { super(BallKind.BLUDGER, i, p); }
     }

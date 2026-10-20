@@ -51,11 +51,12 @@ final class Hooks {
     }
 
     /** Plays claude:<pack>/<system>; returns the handle (for stop) or null. */
-    UUID playVfx(String pack, String system, Location at, int ticks) {
+    UUID playVfx(String pack, String system, Location at, int ticks) { return playVfx(pack, system, at, ticks, 1f); }
+    UUID playVfx(String pack, String system, Location at, int ticks, float scale) {
         if (at.getWorld() == null || !vfx()) return null;
         try {
             Object r = request.newInstance("claude:" + pack + "/" + system, at.getWorld().getName(), at.getX(), at.getY(), at.getZ(),
-                    1f, Math.clamp(ticks, 1, 12000), 0f, 0f, 0f, 0xFFFFFF, 1f, 96.0);
+                    Math.clamp(scale, 0.1f, 4f), Math.clamp(ticks, 1, 12000), 0f, 0f, 0f, 0xFFFFFF, 1f, 96.0);
             return (UUID) handle.invoke(vfxPlay.invoke(vfx, r));
         } catch (ReflectiveOperationException | RuntimeException e) {
             Throwable c = e.getCause() != null ? e.getCause() : e;

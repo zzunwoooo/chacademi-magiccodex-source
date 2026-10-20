@@ -26,6 +26,7 @@ import java.util.UUID;
  *               · u8 n · n×(UUID · UTF nick · u8 team · u8 goals · u8 kills · u8 deaths · u8 snitch · u8 mvp)
  * S2C 7 SHRINES u8 n · n×(u8 type · f32 x · f32 y · f32 z)              type 0 체력 1 마나 2 안정성 3 가속
  * S2C 8 ROSTER  u8 n · n×(UUID · i8 house(-1 없음) · UTF broomId · i32 rating)   준비 화면용, 경기 시작·입장 때
+ * S2C 9 BOUNDS  f32 minX · f32 minY · f32 minZ · f32 maxX · f32 maxY · f32 maxZ   경기장 경계 (가까이 가면 반투명 제한선, 2026-10-20)
  * C2S 1 PING    u8 kind · f32 x · f32 y · f32 z · u8 hasTarget [· UUID target]
  * C2S 2 FORFEIT u8 yes
  * C2S 3 READY   u8 ready
@@ -36,13 +37,13 @@ import java.util.UUID;
 public final class KyudichiProtocol {
     public static final String CHANNEL = "chacademi:kyudichi";
     public static final int VERSION = 1, MAX_BYTES = 8192;
-    public static final int MATCH = 1, KEY = 2, BALLS = 3, FEED = 4, PING = 5, RESULT = 6, SHRINES = 7, ROSTER = 8;
+    public static final int MATCH = 1, KEY = 2, BALLS = 3, FEED = 4, PING = 5, RESULT = 6, SHRINES = 7, ROSTER = 8, BOUNDS = 9;
     public static final int C_PING = 1, C_FORFEIT = 2, C_READY = 3, C_AIM = 4, C_SPECTATE_LEAVE = 5;
     public static final int PING_KINDS = 15;
 
     private KyudichiProtocol() {}
 
-    public sealed interface Message permits Match, Key, Balls, Feed, Ping, Result, Shrines, Roster {}
+    public sealed interface Message permits Match, Key, Balls, Feed, Ping, Result, Shrines, Roster, Bounds {}
     public record Person(UUID id, String nick, int team, int flags) {}
     public record Match(int phase, int myTeam, int scoreA, int scoreB, int timeLeftMs, int flags, String arena, List<Person> players) implements Message {}
     public record Key(int action, int cooldownMs, int holdLeftMs) implements Message {}
@@ -56,6 +57,12 @@ public final class KyudichiProtocol {
     public record Shrines(List<Shrine> shrines) implements Message {}
     public record Entry(UUID id, int house, String broom, int rating) {}
     public record Roster(List<Entry> entries) implements Message {}
+    public record Bounds(float minX, float minY, float minZ, float maxX, float maxY, float maxZ) implements Message {
+        public Bounds {
+            for (float v : new float[]{minX, minY, minZ, maxX, maxY, maxZ}) if (!Float.isFinite(v)) throw new IllegalArgumentException("bounds");
+            if (maxX <= minX || maxY <= minY || maxZ <= minZ) throw new IllegalArgumentException("bounds");
+        }
+    }
 
     /** Client requests. */
     public sealed interface Request permits PingRequest, Forfeit, Ready, Aim, SpectateLeave {}
@@ -103,6 +110,7 @@ public final class KyudichiProtocol {
                     o.writeByte(ROSTER); count(o, x.entries.size(), 16);
                     for (Entry e : x.entries) { uuid(o, e.id); o.writeByte(Math.clamp(e.house, -1, 3)); utf(o, e.broom, 64); o.writeInt(e.rating); }
                 }
+                case Bounds x -> { o.writeByte(BOUNDS); f(o, x.minX); f(o, x.minY); f(o, x.minZ); f(o, x.maxX); f(o, x.maxY); f(o, x.maxZ); }
             }
         });
     }
@@ -166,6 +174,7 @@ public final class KyudichiProtocol {
                     }
                     yield new Roster(List.copyOf(es));
                 }
+                case BOUNDS -> new Bounds(rf(i), rf(i), rf(i), rf(i), rf(i), rf(i));
                 default -> throw new IllegalArgumentException("kind " + kind);
             };
         });

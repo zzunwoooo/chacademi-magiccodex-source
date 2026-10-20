@@ -18,6 +18,7 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
 /**
  * 큐디치 경기용 마법 6칸 (오너 결정):
  *  - 경기 중에만 우측 아래 6칸을 이 세팅으로 덮어쓴다. 키는 원래 칸의 키 그대로 (칸 순서대로).
+ *    오너 2026-10-20: 마법 세팅 창에서 칸마다 키도 따로 정할 수 있다 ({@link #setKey}). 정한 키가 있으면 그 키가 우선.
  *  - 다음 경기에도 유지 (config/magiccodex/kyudichi-loadout.yml).
  *  - 한 칸은 반드시 비행({@value #FLIGHT}). 자리는 자유, 빼거나 다른 마법으로 바꿀 수는 없다.
  * 결투장 (2026-10-18): 모드별로 따로 저장. 1:1 대전({@code kyudichi-duel-loadout.yml})은 비행 금지라 비행 칸이 없다.
@@ -30,6 +31,9 @@ public final class KyudichiLoadout {
     private static final Path[] PATHS = {FabricLoader.getInstance().getConfigDir().resolve("magiccodex/kyudichi-loadout.yml"),
             FabricLoader.getInstance().getConfigDir().resolve("magiccodex/kyudichi-duel-loadout.yml")};
     private final List<String> spells = new ArrayList<>(Collections.nCopies(SIZE, ""));
+    /** 칸별 경기 키 (-1 = 원래 칸의 키). */
+    private final int[] keys = filled();
+    private static int[] filled() { int[] k = new int[SIZE]; java.util.Arrays.fill(k, -1); return k; }
     private final int mode;
 
     private static final KyudichiLoadout[] current = new KyudichiLoadout[2];
@@ -88,18 +92,43 @@ public final class KyudichiLoadout {
         return null;
     }
 
+    /** Drag: the spells swap, the keys stay with the positions. */
     public void swap(int a, int b) { if (a != b) Collections.swap(spells, a, b); }
+
+    /** True when this mode uses keys chosen in the spell-pick window. */
+    public boolean customKeys() { for (int k : keys) if (k >= 0) return true; return false; }
+
+    /**
+     * Sets the match key of a slot. The first change copies the six keys in use now, so the others stay as they were;
+     * a key already on another slot moves there (swap).
+     * @return error message or null
+     */
+    public String setKey(int slot, int code, List<SpellKeySettings.Binding> normal) {
+        if (!KeySettingsLayout.allowed(code)) return KeySettingsLayout.reservedShortcut(code) ? KeySettingsLayout.RESERVED_MESSAGE : "이 키는 지정할 수 없어요.";
+        if (UiKeys.isUiKey(code)) return "UI 단축키로 쓰는 키예요. 다른 키를 고르세요.";
+        if (code == CastingClient.toggleCode()) return "마법 모드 켜기/끄기 키예요. 다른 키를 고르세요.";
+        if (!customKeys()) { var now = bindings(normal); for (int i = 0; i < SIZE; i++) keys[i] = now.get(i).keyCode(); }
+        for (int i = 0; i < SIZE; i++) if (i != slot && keys[i] == code) keys[i] = keys[slot];
+        keys[slot] = code;
+        return null;
+    }
+
+    /** Back to the keys of the normal six. */
+    public void resetKeys() { java.util.Arrays.fill(keys, -1); }
 
     /** Match bindings: slot i = this spell with the key of the normal slot i (HUD order). */
     List<SpellKeySettings.Binding> bindings(List<SpellKeySettings.Binding> normal) {
         var out = new ArrayList<SpellKeySettings.Binding>(SIZE);
         var used = new java.util.HashSet<Integer>();
-        for (var b : normal) if (!b.empty() && KeySettingsLayout.allowed(b.keyCode())) used.add(b.keyCode());
+        boolean custom = customKeys();
+        if (custom) { for (int k : keys) if (k >= 0) used.add(k); }
+        else for (var b : normal) if (!b.empty() && KeySettingsLayout.allowed(b.keyCode())) used.add(b.keyCode());
         var spare = new ArrayList<Integer>();
         for (int code : SPARE_KEYS) if (KeySettingsLayout.allowed(code) && !used.contains(code) && !UiKeys.isUiKey(code)) spare.add(code);
         for (int i = 0; i < SIZE; i++) {
             String id = spells.get(i);
-            int key = i < normal.size() && KeySettingsLayout.allowed(normal.get(i).keyCode()) ? normal.get(i).keyCode() : -1;
+            int key = custom ? (KeySettingsLayout.allowed(keys[i]) && !UiKeys.isUiKey(keys[i]) ? keys[i] : -1)
+                    : i < normal.size() && KeySettingsLayout.allowed(normal.get(i).keyCode()) ? normal.get(i).keyCode() : -1;
             if (id.isEmpty()) { out.add(new SpellKeySettings.Binding("", key)); continue; }
             // A normal slot without a key (fewer than six spells registered) borrows a free key so every match spell can be cast.
             if (key < 0 && !spare.isEmpty()) key = spare.remove(0);
@@ -121,12 +150,17 @@ public final class KyudichiLoadout {
             var ids = new ArrayList<String>();
             for (Object o : list) ids.add(o instanceof String s && s.matches("[a-z0-9_-]{0,64}") ? s : "");
             seed(ids);
+            resetKeys();
+            if (map.get("keys") instanceof List<?> kl && kl.size() == SIZE) {
+                for (int i = 0; i < SIZE; i++) keys[i] = kl.get(i) instanceof Integer n && KeySettingsLayout.allowed(n) ? n : -1;
+            }
             return true;
         }
     }
 
     public void save() {
         var root = new LinkedHashMap<String, Object>(); root.put("version", 1); root.put("spells", List.copyOf(spells));
+        if (customKeys()) { var kl = new ArrayList<Integer>(); for (int k : keys) kl.add(k); root.put("keys", kl); }
         var options = new DumperOptions(); options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         try {
             Path target = PATHS[mode].toAbsolutePath(); Files.createDirectories(target.getParent());

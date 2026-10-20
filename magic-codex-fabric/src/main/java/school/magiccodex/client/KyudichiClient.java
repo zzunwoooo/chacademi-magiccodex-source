@@ -67,6 +67,7 @@ public final class KyudichiClient {
             context.client().execute(() -> { KyudichiPreview.realArena(); receive(m); });
         });
         ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> reset());
+        KyudichiBoundary.initialize();
         net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.END_CLIENT_TICK.register(KyudichiClient::tick);
         HudLayerRegistrationCallback.EVENT.register(drawer -> drawer.attachLayerAfter(IdentifiedLayer.CROSSHAIR,
                 Identifier.of("magiccodex", "kyudichi"), KyudichiHud::render));
@@ -100,8 +101,9 @@ public final class KyudichiClient {
                 c.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), x.kind() == 3 ? 0.8f : 1.4f, 0.35f));
             }
             case KyudichiProtocol.Roster x -> { roster.clear(); for (var e : x.entries()) roster.put(e.id(), e); }
+            case KyudichiProtocol.Bounds x -> KyudichiBoundary.set(x);
             case KyudichiProtocol.Result x -> {
-                result = x; resultAt = now; match = null; balls = prevBalls = null; shrines = List.of(); pings.clear();
+                result = x; resultAt = now; match = null; balls = prevBalls = null; shrines = List.of(); pings.clear(); KyudichiBoundary.clear();
                 var c = MinecraftClient.getInstance();
                 if (c.currentScreen == null || HudPointer.hudVisibleUnder(c.currentScreen) || c.currentScreen instanceof KyudichiPrepareScreen
                         || c.currentScreen instanceof KyudichiSpellPickScreen) c.setScreen(new KyudichiResultScreen(x));

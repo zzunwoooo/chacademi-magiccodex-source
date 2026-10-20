@@ -13,7 +13,7 @@ import school.magiccodex.client.kui.SpellPickView;
  */
 final class KyudichiSpellPickScreen extends KyudichiViewScreen {
     private final Screen parent;
-    private int selected = 0, scroll, dragFrom = -1;
+    private int selected = 0, scroll, dragFrom = -1, listening = -1;
     private boolean dragging;
     private String notice = "";
     private long noticeAt;
@@ -39,7 +39,8 @@ final class KyudichiSpellPickScreen extends KyudichiViewScreen {
     private static SpellPickView.Cell cell(CodexData.Spell s) {
         if (s == null) return null;
         String cd = s.cooldown() % 1 == 0 ? String.valueOf((long) s.cooldown()) : String.format("%.1f", s.cooldown());
-        return new SpellPickView.Cell(s.id(), s.icon(), s.name(), "재사용 " + cd + "초" + (s.manaCost() > 0 ? " · 마나 " + s.manaCost() : ""));
+        return new SpellPickView.Cell(s.id(), s.icon(), s.name(), "재사용 " + cd + "초" + (s.manaCost() > 0 ? " · 마나 " + s.manaCost() : ""),
+                s.description() == null ? "" : s.description());
     }
 
     @Override void paint(Pen p) {
@@ -53,7 +54,7 @@ final class KyudichiSpellPickScreen extends KyudichiViewScreen {
         scroll = Math.clamp(scroll, 0, Math.max(0, rows - SpellPickView.ROWS));
         String n = net.minecraft.util.Util.getMeasuringTimeMs() - noticeAt < 3000 ? notice : "";
         if (n.isEmpty() && catalog.isEmpty()) n = PermissionClient.catalogConfirmed() ? "배운 마법이 없어요." : "배운 마법 목록을 불러오는 중… (" + CodexCatalog.status() + ")";
-        SpellPickView.paint(p, new SpellPickView.Data(equipped, keys, l.flightSlot(), catalog, selected, scroll, dragging ? dragFrom : -1, n));
+        SpellPickView.paint(p, new SpellPickView.Data(equipped, keys, l.flightSlot(), catalog, selected, scroll, dragging ? dragFrom : -1, n, listening));
     }
 
     private void say(String s) { notice = s; noticeAt = net.minecraft.util.Util.getMeasuringTimeMs(); }
@@ -79,6 +80,13 @@ final class KyudichiSpellPickScreen extends KyudichiViewScreen {
     @Override void clicked(String id, int button) {
         var l = loadout();
         if (id.equals(SpellPickView.CLOSE) || id.equals(SpellPickView.CONFIRM)) { close(); return; }
+        if (id.startsWith("key:")) {
+            int i = Integer.parseInt(id.substring(4));
+            if (button == 1) { listening = -1; if (l.customKeys()) { l.resetKeys(); changed(); say("경기 키를 원래 키로 되돌렸어요."); } return; }
+            listening = listening == i ? -1 : i; selected = i;
+            return;
+        }
+        listening = -1;
         if (id.startsWith("slot:")) {
             int i = Integer.parseInt(id.substring(5));
             if (button == 1) { String e = l.set(i, ""); if (e != null) say(e); else changed(); }
@@ -94,6 +102,26 @@ final class KyudichiSpellPickScreen extends KyudichiViewScreen {
             String e = l.set(target, list.get(idx).id());
             if (e != null) say(e); else changed();
         }
+    }
+
+    /** Choosing a match key: the next key (or mouse side button) goes to the slot. */
+    private boolean assignKey(int code) {
+        if (listening < 0) return false;
+        int slot = listening; listening = -1;
+        String e = loadout().setKey(slot, code, CastingClient.base().orderedSlots());
+        if (e != null) say(e); else { changed(); sound(1.5f, .25f); }
+        return true;
+    }
+    @Override public boolean keyPressed(int code, int scan, int modifiers) {
+        if (listening >= 0) {
+            if (code == org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE) { listening = -1; return true; }
+            return assignKey(code);
+        }
+        return super.keyPressed(code, scan, modifiers);
+    }
+    @Override public boolean mouseClicked(double x, double y, int button) {
+        if (listening >= 0 && KeySettingsLayout.mouseCode(button) >= 0) return assignKey(KeySettingsLayout.mouseCode(button));
+        return super.mouseClicked(x, y, button);
     }
 
     @Override public boolean mouseScrolled(double x, double y, double h, double v) { scroll -= (int) Math.signum(v); return true; }
