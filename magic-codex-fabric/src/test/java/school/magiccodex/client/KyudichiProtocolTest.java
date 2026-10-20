@@ -20,7 +20,8 @@ class KyudichiProtocolTest {
             new Ping(9, A, "준우", 10f, 80f, 10f, B),
             new Result(1, 80, 50, 18, 1268, 1, 2, List.of(new Line(A, "준우", 0, 3, 2, 0, 1, true))),
             new Shrines(List.of(new Shrine(3, 1f, 2f, 3f))),
-            new Roster(List.of(new Entry(A, 2, "starlight", 1250), new Entry(B, -1, "", 1000))));
+            new Roster(List.of(new Entry(A, 2, "starlight", 1250), new Entry(B, -1, "", 1000))),
+            new Bounds(-40f, 60f, -80f, 40f, 120f, 80f));
 
     @Test void roundTrip() {
         for (Message m : SAMPLES) assertEquals(m, KyudichiProtocol.decode(KyudichiProtocol.encode(m)));

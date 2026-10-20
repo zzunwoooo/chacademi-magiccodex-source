@@ -16,6 +16,8 @@ final class Rules {
     final int flightFallLockTicks;
     /** A deflected bludger flies on, then rests this long before it hunts anyone again. */
     final int deflectRestTicks;
+    /** owner 2026-10-20: bludger charges (approach → telegraph → straight dash that flies on through) and wall margins */
+    final double approachSpeed, dashSpeed, dashRange, dashOvershoot, edgeMargin, edgeMarginY; final int windupTicks, dashRecoverTicks;
     final GameMode gameMode;
     final int goalPoints, killPoints, snitchPoints, killCreditTicks;
     final double keyRange; final int keyCooldownTicks;
@@ -24,7 +26,7 @@ final class Rules {
     final int bludgerCount; final double bludgerWander, bludgerChase, bludgerSteer, bludgerHitRadius, bludgerDamagePercent, bludgerKnockback, idleTargetRadius, deflectSpeed;
     final int ignoreAfterHitTicks, secondDelayTicks, deflectTicks;
     final double snitchSpeed, snitchFlee, snitchCatch; final int pauseMin, pauseMax, pauseTicks;
-    final double shrineRadius, healthPercent, manaPercent; final int shrineRespawnTicks;
+    final double shrineRadius, healthPercent, manaPercent, shrineScale; final int shrineRespawnTicks;
     final Map<ShrineType, String> shrineVfx;
     final RatingMath rating;
     final MvpWeights mvp;
@@ -46,6 +48,10 @@ final class Rules {
         respawnInvulTicks = sec(c, "match.respawn-invulnerable-seconds", 2, 0, 30);
         flightFallLockTicks = secD(c, "match.flight-fall-cooldown-seconds", 5, 0, 60);
         deflectRestTicks = secD(c, "bludger.after-deflect-rest-seconds", 2, 0, 20);
+        approachSpeed = speed(c, "bludger.approach-speed", 18); dashSpeed = speed(c, "bludger.dash-speed", 44);
+        dashRange = num(c, "bludger.dash-range", 14, 3, 64); dashOvershoot = num(c, "bludger.dash-overshoot", 10, 0, 64);
+        windupTicks = secD(c, "bludger.windup-seconds", 0.4, 0, 3); dashRecoverTicks = secD(c, "bludger.dash-recover-seconds", 1.2, 0, 10);
+        edgeMargin = num(c, "ball-edge-margin", 8, 0, 40); edgeMarginY = num(c, "ball-edge-margin-y", 3, 0, 40);
         GameMode gm;
         try { gm = GameMode.valueOf(c.getString("match.game-mode", "ADVENTURE").toUpperCase(Locale.ROOT)); } catch (IllegalArgumentException e) { gm = GameMode.ADVENTURE; }
         gameMode = gm == GameMode.SPECTATOR ? GameMode.ADVENTURE : gm;
@@ -70,7 +76,7 @@ final class Rules {
         List<Integer> pe = c.getIntegerList("snitch.pause-every-seconds");
         pauseMin = 20 * (pe.size() > 0 ? Math.max(1, pe.get(0)) : 6); pauseMax = Math.max(pauseMin, 20 * (pe.size() > 1 ? pe.get(1) : 10));
         pauseTicks = secD(c, "snitch.pause-seconds", 1.2, 0, 10);
-        shrineRadius = num(c, "shrine.pickup-radius", 1.6, 0.5, 6); shrineRespawnTicks = sec(c, "shrine.respawn-seconds", 20, 1, 600);
+        shrineRadius = num(c, "shrine.pickup-radius", 1.6, 0.5, 6); shrineScale = num(c, "shrine.scale", 0.75, 0.2, 3); shrineRespawnTicks = sec(c, "shrine.respawn-seconds", 20, 1, 600);
         healthPercent = num(c, "shrine.health-percent", 50, 0, 100); manaPercent = num(c, "shrine.mana-percent", 50, 0, 100);
         var vfx = new TreeMap<ShrineType, String>();
         for (ShrineType t : ShrineType.values()) {

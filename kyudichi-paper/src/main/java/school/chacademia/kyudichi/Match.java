@@ -113,6 +113,7 @@ final class Match {
         if (phaseLeft <= 0) lineup(); else broadcastTitle(Component.text("경기 준비", NamedTextColor.GOLD), Component.text("마법 6칸을 세팅하세요"));
         sendMatchAll();
         sendRoster();
+        sendShrines();
     }
 
     private void prepare(Player p, MatchPlayer m) {
@@ -300,7 +301,7 @@ final class Match {
                     if (q.grounded(world, arena.ballBox()) && d.getY() < 0) d.setY(-d.getY());
                     q.steerTarget = d.multiply(rules.quaffleDrift);
                 }
-                if (q.steerTarget != null) q.steer(q.steerTarget, rules.bludgerSteer * 0.5);
+                if (q.steerTarget != null) q.steer(q.avoidEdges(q.steerTarget, arena.ballBox(), rules.edgeMargin, rules.edgeMarginY, rules.quaffleDrift), rules.bludgerSteer * 0.5);
                 q.step(world, arena.ballBox(), 0.6);
                 q.visual.move(q.location(world));
             }
@@ -391,27 +392,73 @@ final class Match {
             if (now >= b.deflectUntil) endDeflect(b);
             return;
         }
-        if (now % 10 == b.index * 5L) retarget(b);
+        Box box = arena.ballBox();
+        if (b.state == Bludger.State.DASH) {
+            // straight charge: no steering, hits whoever is in the way and keeps flying through (inertia)
+            b.step(world, box, 0.6);
+            b.visual.move(b.location(world));
+            for (var m : players.values()) {
+                if (!m.active(now) || b.ignore.containsKey(m.id) || now < m.invulnerableUntil || opt.invulnerable().contains(m.id)) continue;
+                Player p = online(m);
+                if (p != null && b.sweptDistanceSquared(body(p)) <= rules.bludgerHitRadius * rules.bludgerHitRadius) bludgerHit(b, m, p, null, true);
+            }
+            if (now >= b.dashUntil) {
+                // overshoot done: drift on, slow down, then look for the next victim after a short rest
+                b.state = Bludger.State.FREE; b.target = null; b.startAt = now + rules.dashRecoverTicks;
+                b.steerTarget = b.vel.lengthSquared() > 1e-6 ? b.vel.clone().normalize().multiply(rules.bludgerWander) : null; b.wanderTimer = rules.dashRecoverTicks;
+            }
+            return;
+        }
         Player target = null; MatchPlayer tm = b.target == null ? null : players.get(b.target);
+        if (b.state == Bludger.State.WINDUP) {
+            if (tm != null && tm.active(now)) target = online(tm);
+            if (target == null) { b.state = Bludger.State.FREE; b.target = null; }
+            else {
+                // telegraph: almost stops and shudders, then launches at where the victim is going
+                b.vel.multiply(0.75).add(Ball.randomDirection(random, 1).multiply(0.03));
+                b.step(world, box, 0.6);
+                b.visual.move(b.location(world));
+                if (now >= b.windupUntil) {
+                    double dist = body(target).distance(b.pos);
+                    double lead = Math.min(12, dist / Math.max(0.05, rules.dashSpeed));
+                    Vector to = body(target).add(tm.motion.clone().multiply(lead)).subtract(b.pos);
+                    if (to.lengthSquared() < 1e-6) to = b.vel.lengthSquared() > 1e-6 ? b.vel.clone() : new Vector(1, 0, 0);
+                    double len = to.length();
+                    b.vel = to.multiply(rules.dashSpeed / len);
+                    b.state = Bludger.State.DASH;
+                    b.dashUntil = now + (long) Math.ceil((len + rules.dashOvershoot) / Math.max(0.05, rules.dashSpeed));
+                    Sounds.at(this, b.location(world), "bludger_dash", Sound.ENTITY_BREEZE_SHOOT, 1.4f, 0.7f);
+                }
+                return;
+            }
+        }
+        if (now % 10 == b.index * 5L) retarget(b);
+        tm = b.target == null ? null : players.get(b.target);
         if (tm != null && tm.active(now)) target = online(tm);
+        Vector desired;
+        double speed;
         if (target != null && now >= b.startAt) {
             b.state = Bludger.State.CHASE;
-            // aims where the victim is going (lead up to 1 s), so flying straight does not shake it off
-            double dist = body(target).distance(b.pos);
-            double lead = Math.min(20, dist / Math.max(0.05, rules.bludgerChase));
-            Vector to = body(target).add(tm.motion.clone().multiply(lead)).subtract(b.pos);
+            Vector to = body(target).subtract(b.pos);
             double d = to.length();
-            b.steer(d < 1e-6 ? new Vector() : to.multiply(rules.bludgerChase / d), rules.bludgerSteer);
+            if (d <= rules.dashRange) {
+                b.state = Bludger.State.WINDUP; b.windupUntil = now + rules.windupTicks;
+                Sounds.at(this, b.location(world), "bludger_windup", Sound.ENTITY_IRON_GOLEM_HURT, 0.8f, 0.6f);
+                world.spawnParticle(Particle.SMOKE, b.location(world), 8, 0.3, 0.3, 0.3, 0.02);
+                b.step(world, box, 0.7); b.visual.move(b.location(world));
+                return;
+            }
+            // closes in at a moderate speed (not glued to the victim) until it is in charging range
+            desired = d < 1e-6 ? new Vector() : to.multiply(rules.approachSpeed / d);
+            speed = rules.approachSpeed;
+            b.steer(b.avoidEdges(desired, box, rules.edgeMargin, rules.edgeMarginY, speed), rules.bludgerSteer);
         } else {
             b.state = Bludger.State.FREE;
             if (--b.wanderTimer <= 0) { b.wanderTimer = 40 + random.nextInt(30); b.steerTarget = Ball.randomDirection(random, 0.4).multiply(rules.bludgerWander); }
-            if (b.steerTarget != null) b.steer(b.steerTarget, rules.bludgerSteer * 0.5);
+            if (b.steerTarget != null) b.steer(b.avoidEdges(b.steerTarget, box, rules.edgeMargin, rules.edgeMarginY, rules.bludgerWander), rules.bludgerSteer * 0.5);
         }
-        b.step(world, arena.ballBox(), 0.7);
+        b.step(world, box, 0.7);
         b.visual.move(b.location(world));
-        if (target != null && now >= b.startAt && now >= tm.invulnerableUntil && !opt.invulnerable().contains(tm.id)
-                && b.sweptDistanceSquared(body(target)) <= rules.bludgerHitRadius * rules.bludgerHitRadius)
-            bludgerHit(b, tm, target, null);
     }
 
     /** End of a deflection: it keeps drifting the way it was hit and only hunts again after a short rest (no sudden turn onto someone else). */
@@ -447,9 +494,11 @@ final class Match {
         }
     }
 
-    private void bludgerHit(Bludger b, MatchPlayer victim, Player p, MatchPlayer credit) {
+    private void bludgerHit(Bludger b, MatchPlayer victim, Player p, MatchPlayer credit) { bludgerHit(b, victim, p, credit, false); }
+    /** passThrough: a charging bludger keeps its line (slightly slowed) instead of bouncing back. */
+    private void bludgerHit(Bludger b, MatchPlayer victim, Player p, MatchPlayer credit, boolean passThrough) {
         b.ignore.put(victim.id, now + rules.ignoreAfterHitTicks);
-        b.target = null;
+        if (!passThrough) b.target = null;
         b.visual.animate("hit");
         var maxAttr = p.getAttribute(Attribute.MAX_HEALTH);
         double max = maxAttr == null ? 20 : maxAttr.getValue();
@@ -459,7 +508,8 @@ final class Match {
         push = push.lengthSquared() < 1e-6 ? new Vector(0, 0.4, 0) : push.normalize().multiply(rules.bludgerKnockback).setY(0.35);
         Sounds.at(this, p.getLocation(), "bludger_hit", Sound.ENTITY_IRON_GOLEM_ATTACK, 1.2f, 1);
         world.spawnParticle(Particle.EXPLOSION, b.location(world), 1);
-        b.vel = b.vel.multiply(-0.4);
+        if (passThrough) push = b.vel.lengthSquared() < 1e-6 ? push : b.vel.clone().normalize().multiply(rules.bludgerKnockback).setY(0.35);
+        b.vel = passThrough ? b.vel.multiply(0.85) : b.vel.multiply(-0.4);
         if (credit != null) { recordDamage(credit, victim, dmg); }
         // fixed damage: ignores armour, artifacts and every reduction (오너 결정)
         if (p.getHealth() - dmg <= 0.0001) { kill(victim, p, credit); return; }
@@ -523,6 +573,8 @@ final class Match {
                 if (--s.wanderTimer <= 0) { s.wanderTimer = 15 + random.nextInt(25); s.steerTarget = Ball.randomDirection(random, 0.8).multiply(top * 0.6); }
                 desired = s.steerTarget == null ? new Vector() : s.steerTarget;
             }
+            // owner 2026-10-20: stays away from the arena walls so a chaser is not stopped by the invisible boundary
+            desired = s.avoidEdges(desired, arena.snitchBox(), rules.edgeMargin, rules.edgeMarginY, top);
             s.steer(desired, now < s.dashUntil ? 0.5 : 0.3);
         }
         s.step(world, arena.snitchBox(), 0.9);
@@ -566,7 +618,7 @@ final class Match {
         }
         if (best == null) return;
         MatchPlayer was = best.target == null ? null : players.get(best.target);
-        if (was != null && was.team == m.team && !was.id.equals(m.id) && best.state == Bludger.State.CHASE) m.saveBludger++;
+        if (was != null && was.team == m.team && !was.id.equals(m.id) && (best.state == Bludger.State.CHASE || best.state == Bludger.State.WINDUP || best.state == Bludger.State.DASH)) m.saveBludger++;
         best.state = Bludger.State.DEFLECT; best.deflectBy = m.id; best.deflectTeam = m.team; best.deflectUntil = now + rules.deflectTicks;
         best.target = null;
         best.vel = aimDirection(m, p).multiply(rules.deflectSpeed);
@@ -616,7 +668,7 @@ final class Match {
         if (list.size() > 1 && avoid != null) for (int i = 0; i < 4 && pick.equals(avoid); i++) pick = list.get(random.nextInt(list.size()));
         s.at = pick; s.respawnAt = -1;
         Location l = pick.location();
-        if (l != null) s.vfx = plugin.hooks().playVfx(rules.shrineVfx.get(s.type), "idle", l, 12000);
+        if (l != null) s.vfx = plugin.hooks().playVfx(rules.shrineVfx.get(s.type), "idle", l, 12000, (float) rules.shrineScale);
         sendShrines();
     }
 
@@ -648,7 +700,7 @@ final class Match {
         }
         plugin.hooks().stopVfx(s.vfx); s.vfx = null;
         Location l = s.at.location();
-        if (l != null) plugin.hooks().playVfx(rules.shrineVfx.get(s.type), "pickup", l, 30);
+        if (l != null) plugin.hooks().playVfx(rules.shrineVfx.get(s.type), "pickup", l, 30, (float) rules.shrineScale);
         p.playSound(p.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1.5f);
         ChacaLink.notify(p, "system", "kyudichi:shrine", s.type.label + " 성소!", "", 1500);
         Point old = s.at; s.at = null; s.respawnAt = now + rules.shrineRespawnTicks;
@@ -956,6 +1008,12 @@ final class Match {
         for (UUID s : spectators) { Player p = Bukkit.getPlayer(s); if (p != null) plugin.net().send(p, msg); }
     }
 
+    /** Arena boundary for the client's see-through limit wall (owner 2026-10-20). */
+    KyudichiProtocol.Bounds boundsMessage() {
+        Box b = arena.bounds;
+        return b == null ? null : new KyudichiProtocol.Bounds((float) b.minX(), (float) b.minY(), (float) b.minZ(), (float) b.maxX(), (float) b.maxY(), (float) b.maxZ());
+    }
+
     KyudichiProtocol.Match matchMessage(int myTeam) {
         int wirePhase = switch (phase) { case PREPARE -> 0; case COUNTDOWN -> 1; case PLAY -> 2; case GOAL_PAUSE -> 3; case ENDED -> 5; };
         int left = phase == Phase.PLAY ? playLeft : phaseLeft;
@@ -990,8 +1048,9 @@ final class Match {
         var list = new ArrayList<KyudichiProtocol.Shrine>();
         for (var s : shrines.values()) if (s.active()) list.add(new KyudichiProtocol.Shrine(s.type.ordinal(), (float) s.at.x(), (float) s.at.y(), (float) s.at.z()));
         var msg = new KyudichiProtocol.Shrines(list);
-        for (Player p : onlinePlayers()) plugin.net().send(p, msg);
-        for (UUID s : spectators) { Player p = Bukkit.getPlayer(s); if (p != null) plugin.net().send(p, msg); }
+        var bounds = boundsMessage(); // sent along (start, rejoin, spectate, shrine changes): 25 bytes
+        for (Player p : onlinePlayers()) { plugin.net().send(p, msg); if (bounds != null) plugin.net().send(p, bounds); }
+        for (UUID s : spectators) { Player p = Bukkit.getPlayer(s); if (p != null) { plugin.net().send(p, msg); if (bounds != null) plugin.net().send(p, bounds); } }
     }
 
     private void feed(int type, int team, String actor, String target, int points) {

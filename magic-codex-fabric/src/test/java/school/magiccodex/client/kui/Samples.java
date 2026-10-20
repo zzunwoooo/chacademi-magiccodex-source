@@ -41,8 +41,9 @@ final class Samples {
             String[] n = {"가속 마법", "보호막", "흑요석 구체", "바람 제어", "섬광", "비행"};
             for (int i = 0; i < 6; i++) eq.add(new SpellPickView.Cell("s" + i, "x", n[i], ""));
             var cat = new ArrayList<SpellPickView.Cell>();
-            for (int i = 0; i < 30; i++) cat.add(new SpellPickView.Cell(i < 6 ? "s" + i : "c" + i, "x", i < 6 ? n[i] : "마법 " + (i + 1), "재사용 8초 · 마나 20"));
-            SpellPickView.paint(p, new SpellPickView.Data(eq, List.of("Q", "E", "R", "T", "G", "V"), 5, cat, 1, 0, -1, ""));
+            for (int i = 0; i < 30; i++) cat.add(new SpellPickView.Cell(i < 6 ? "s" + i : "c" + i, "x", i < 6 ? n[i] : "마법 " + (i + 1), "재사용 8초 · 마나 20",
+                    "짧은 시간 동안 이동 속도가 크게 오르고, 다음 공격이 적을 뒤로 밀쳐 냅니다. 빗자루를 타고 있을 때도 사용할 수 있어요."));
+            SpellPickView.paint(p, new SpellPickView.Data(eq, List.of("Q", "E", "R", "", "G", "V"), 5, cat, 1, 0, -1, "", 2));
         }));
         ALL.add(new View("result", 1672, 941, -1, -1, p -> {
             var mine = List.of(new ResultView.Line(id(1), "준우", "", 3, 2, 0, true), new ResultView.Line(id(2), "루나", "", 2, 1, 1, false), new ResultView.Line(id(3), "하린", "", 1, 3, 0, false));

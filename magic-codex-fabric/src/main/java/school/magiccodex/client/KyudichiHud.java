@@ -31,6 +31,7 @@ final class KyudichiHud {
     private static final String[] ARROW = {"hud/arrow_quaffle", "hud/arrow_bludger", "hud/arrow_snitch"};
     private static final float[] ARROW_BASE = {180, 0, 90};          // direction each arrow PNG points (clockwise from →)
     /** On-screen scale per ball kind (owner 2026-10-20: bludger marker smaller). */
+    private static final float FEED_SCALE = .8f;
     private static final float[] INDICATOR_SCALE = {.62f, .40f, .62f};
     private static final float[][] INDICATOR_SIZE = {{70, 72}, {76, 77}, {77, 70}}, ARROW_SIZE = {{36, 37}, {38, 43}, {37, 30}};
 
@@ -75,7 +76,9 @@ final class KyudichiHud {
             forfeit(ctx, canvas, m, w, s);
             leave(canvas, m, w, s);
             // feed
-            canvas.push(w - 1672 * s, rightTop() - 28 * s, s);
+            // owner 2026-10-20: kill feed a little smaller (80 %), still anchored top right
+            float fs = s * FEED_SCALE;
+            canvas.push(w - 1672 * fs, rightTop() - 28 * fs, fs);
             HudView.feed(new Pen(canvas, -1, -1, null), feed(now));
             canvas.pop();
             // F key

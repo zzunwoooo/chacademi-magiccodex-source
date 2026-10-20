@@ -213,3 +213,20 @@
 
 빌드 확인 못 함: Fabric 모드 두 개(magic-codex-fabric, chacademy-motion-mod)는 여기서 컴파일 불가 → GPT 빌드 필요.
 `ModifierLayer.getAnimation()` / `IAnimation.isActive()` (playerAnimator) 사용. 서버 두 개는 javac 로 우리 파일 오류 없음, BroomEnduranceTest 4/4.
+
+## 2026-10-20 밤: 큐디치 조정 3차 (같은 브랜치 `claude/kyudichi-tune-20261020`)
+
+- 마법 세팅 창(큐디치 / 1:1): 칸 아래 키 이름을 누르고 원하는 키(또는 마우스 옆 버튼)를 누르면 그 칸의 경기 키가 바뀜. 이미 다른 칸에 있는 키면 서로 바뀜.
+  처음 바꿀 때 지금 쓰는 6개 키를 그대로 복사해 두고 그 칸만 바꿈. 키 이름 우클릭 = 원래(평소 6칸) 키로. WASD·UI 단축키·마법 모드 키(Z)는 거부.
+  저장: kyudichi-loadout.yml / kyudichi-duel-loadout.yml 에 `keys:` (없으면 예전처럼 평소 키).
+- 마법 세팅 창 툴팁: 이름 · 재사용/마나 · 도감 설명(최대 5줄).
+- 공이 경기장 벽 근처로 안 감: 스니치·블러저(배회·접근)·떠다니는 퀘이플은 벽에서 `ball-edge-margin` 8블록(위아래 `ball-edge-margin-y` 3) 안으로
+  들어가면 안쪽으로 밀려남. 던진 퀘이플·쳐낸 블러저·돌진 중인 블러저는 예외.
+- 블러저 돌진: 접근(`bludger.approach-speed` 18) → `dash-range` 14블록 안이면 0.4초 멈칫(연기·소리 예고) → 그 사람이 갈 곳으로 일직선 돌진
+  (`dash-speed` 44). 부딪혀도 멈추지 않고 지나가며(맞은 사람은 돌진 방향으로 밀림) 10블록 더 날아간 뒤 1.2초 쉼. chase-speed 는 안 씀.
+- 성소 이펙트 크기 `shrine.scale` 0.75 (PortableVFX scale). 킬로그(우측 위 피드) 80%.
+- 경계 제한선: 서버가 경기 시작·재입장·관전·성소 변경 때 새 메시지 BOUNDS(9) 로 경기장 `경계` 박스를 보냄 → 클라이언트가 벽 10블록 안으로
+  다가가면 그 벽에 반투명 하늘색 격자(내 주변 9블록 원, 멀수록 흐림)를 그림. 벽 4면 + 천장, 바닥 없음 (`KyudichiBoundary`,
+  textures/kyudichi/boundary.png). ⚠ 프로토콜 추가: 경기장 플러그인과 클라이언트 모드를 같이 배포 (옛 클라이언트는 모르는 메시지를 무시하지 않고
+  decode 실패 → 그 메시지만 버림, 경기 진행엔 영향 없음).
+- 서버 javac 확인 방법 바뀜: `-XDshould-stop.ifError=FLOW` 를 줘야 의존성(롬복) 오류 뒤에도 우리 파일을 검사함. 이번 두 커밋 다 이 방식으로 오류 없음.
