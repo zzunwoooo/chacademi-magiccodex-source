@@ -1,11 +1,12 @@
 package kr.chacademy.motionplugin;
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 import kr.chacademy.motionplugin.broom.BroomCommand;
 import kr.chacademy.motionplugin.broom.BroomService;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,7 +27,7 @@ import java.util.UUID;
 /**
  * 모드 → chacademy:cast → (검증) → 주변 유저 → chacademy:anim
  */
-public final class ChacademyMotionPlugin extends JavaPlugin implements PluginMessageListener, Listener, TabCompleter {
+public final class ChacademyMotionPlugin extends JavaPlugin implements PluginMessageListener, Listener {
 
     private static ChacademyMotionPlugin instance;
 
@@ -108,18 +109,7 @@ public final class ChacademyMotionPlugin extends JavaPlugin implements PluginMes
 
         brooms = new BroomService(this);
         brooms.start();
-        var broomCmd = getCommand("빗자루");
-        if (broomCmd != null) {
-            var exec = new BroomCommand(brooms);
-            broomCmd.setExecutor(exec);
-            broomCmd.setTabCompleter(exec);
-        }
-
-        var cmd = getCommand("motion");
-        if (cmd != null) {
-            cmd.setExecutor(this);
-            cmd.setTabCompleter(this);
-        }
+        registerCommands();
         getLogger().info("모션 채널 등록 완료 (" + MotionCodec.CHANNEL_CAST + " → " + MotionCodec.CHANNEL_ANIM + ")");
     }
 
@@ -225,42 +215,41 @@ public final class ChacademyMotionPlugin extends JavaPlugin implements PluginMes
         lastCast.remove(e.getPlayer().getUniqueId());
     }
 
-    // ------------------------------------------------------------------ 명령어
+    // ------------------------------------------------------------------ 명령어 (MagicCodexBridge 명령어 허브)
 
-    @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) {
-        if (args.length >= 1 && args[0].equalsIgnoreCase("reload")) {
-            loadSettings();
-            sender.sendMessage("§a[ChacademyMotion] 설정을 다시 불러왔어요. 허용 모션: " + allowed);
-            return true;
+    private void registerCommands() {
+        if (!ChacaLink.ready()) {
+            getLogger().warning("MagicCodexBridge 명령어 허브가 없어 빗자루·모션 명령을 등록하지 않았습니다 (빗자루 비행·모션 전달은 그대로 동작).");
+            return;
         }
-        if (args.length >= 3 && args[0].equalsIgnoreCase("play")) {
-            Player target = Bukkit.getPlayerExact(args[1]);
-            if (target == null) {
-                sender.sendMessage("§c접속 중인 플레이어가 아니에요: " + args[1]);
-                return true;
-            }
-            int sent = playMotion(target, args[2], true);
-            sender.sendMessage("§a" + target.getName() + " 에게 " + args[2] + " 모션 재생 (" + sent + "명에게 전송)");
-            return true;
+        try {
+            new BroomCommand(this, brooms).register();
+            ChacaLink.branch(this, ChacaLink.테스트, motionTest(), "서버에서 모션 재생 (본인 화면 포함)", "모션 ");
+            ChacaLink.reload(this, "빗자루", "brooms.yml (빗자루 목록·수치)", () -> brooms.reload());
+            ChacaLink.reload(this, "모션", "config.yml (허용 모션·쿨타임·전달 범위)", this::loadSettings);
+        } catch (RuntimeException e) {
+            getLogger().log(java.util.logging.Level.WARNING, "명령어 허브에 빗자루·모션 명령을 등록하지 못했습니다", e);
         }
-        sender.sendMessage("§e/motion play <플레이어> <모션>  §7- 서버에서 모션 재생 (본인 포함)");
-        sender.sendMessage("§e/motion reload  §7- config.yml 다시 불러오기");
-        return true;
     }
 
-    @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String @NotNull [] args) {
-        if (args.length == 1) return filter(List.of("play", "reload"), args[0]);
-        if (args.length == 2 && args[0].equalsIgnoreCase("play")) {
-            return filter(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList(), args[1]);
-        }
-        if (args.length == 3 && args[0].equalsIgnoreCase("play")) return filter(new ArrayList<>(allowed), args[2]);
-        return List.of();
+    /** /테스트 모션 &lt;모션&gt; [닉네임] */
+    private LiteralArgumentBuilder<CommandSourceStack> motionTest() {
+        return Commands.literal("모션")
+                .then(Commands.argument("모션", ChacaLink.word(() -> new ArrayList<>(allowed)))
+                        .executes(ctx -> {
+                            if (!(ctx.getSource().getSender() instanceof Player p)) throw ChacaLink.error("닉네임을 적어 주세요");
+                            playTest(ctx.getSource().getSender(), p, ctx.getArgument("모션", String.class));
+                            return 1;
+                        })
+                        .then(Commands.argument(ChacaLink.TARGET, ChacaLink.player())
+                                .executes(ctx -> {
+                                    playTest(ctx.getSource().getSender(), ChacaLink.resolveOnline(ctx, ChacaLink.TARGET), ctx.getArgument("모션", String.class));
+                                    return 1;
+                                })));
     }
 
-    private static List<String> filter(List<String> options, String prefix) {
-        String p = prefix.toLowerCase();
-        return options.stream().filter(o -> o.toLowerCase().startsWith(p)).toList();
+    private void playTest(CommandSender sender, Player target, String animation) {
+        int sent = playMotion(target, animation, true);
+        ChacaLink.ok(sender, ChacaLink.name(target.getUniqueId()) + " 님의 " + animation + " 모션을 재생했어요 (" + sent + "명에게 전송)");
     }
 }
