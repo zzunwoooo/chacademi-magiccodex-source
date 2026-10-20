@@ -37,7 +37,7 @@ public final class KyudichiProtocol {
     public static final String CHANNEL = "chacademi:kyudichi";
     public static final int VERSION = 1, MAX_BYTES = 8192;
     public static final int MATCH = 1, KEY = 2, BALLS = 3, FEED = 4, PING = 5, RESULT = 6, SHRINES = 7, ROSTER = 8;
-    public static final int C_PING = 1, C_FORFEIT = 2, C_READY = 3, C_AIM = 4;
+    public static final int C_PING = 1, C_FORFEIT = 2, C_READY = 3, C_AIM = 4, C_SPECTATE_LEAVE = 5;
     public static final int PING_KINDS = 15;
 
     private KyudichiProtocol() {}
@@ -58,11 +58,13 @@ public final class KyudichiProtocol {
     public record Roster(List<Entry> entries) implements Message {}
 
     /** Client requests. */
-    public sealed interface Request permits PingRequest, Forfeit, Ready, Aim {}
+    public sealed interface Request permits PingRequest, Forfeit, Ready, Aim, SpectateLeave {}
     public record PingRequest(int kind, float x, float y, float z, UUID target) implements Request {}
     public record Forfeit(boolean yes) implements Request {}
     public record Ready(boolean ready) implements Request {}
     public record Aim(float x, float y, float z) implements Request {}
+    /** 관전 화면의 "나가기" 버튼 (2026-10-20 명령어 정리: /큐디치 관전 나가기 대신). */
+    public record SpectateLeave() implements Request {}
 
     // ------------------------------------------------------------------ encode
     public static byte[] encode(Message m) {
@@ -116,6 +118,7 @@ public final class KyudichiProtocol {
                 case Forfeit x -> { o.writeByte(C_FORFEIT); o.writeByte(x.yes ? 1 : 0); }
                 case Ready x -> { o.writeByte(C_READY); o.writeByte(x.ready ? 1 : 0); }
                 case Aim x -> { o.writeByte(C_AIM); f(o, x.x); f(o, x.y); f(o, x.z); }
+                case SpectateLeave x -> o.writeByte(C_SPECTATE_LEAVE);
             }
         });
     }
@@ -179,6 +182,7 @@ public final class KyudichiProtocol {
                 case C_FORFEIT -> new Forfeit(rflag(i));
                 case C_READY -> new Ready(rflag(i));
                 case C_AIM -> new Aim(rf(i), rf(i), rf(i));
+                case C_SPECTATE_LEAVE -> new SpectateLeave();
                 default -> throw new IllegalArgumentException("kind " + kind);
             };
         });
