@@ -21,6 +21,7 @@ public final class TopMenuRenderer implements AutoCloseable {
         new MenuSprite(TITLES,431,243,539,602,1402,1122)};
     private static final MenuSprite CODEX_ICON=new MenuSprite(Identifier.of("magiccodex","textures/hud/codex-menu.png"),393,282,579,614,1351,1164);
     private static final MenuSprite SOCIAL_ICON=new MenuSprite(Identifier.of("magiccodex","textures/hud/social-menu.png"),327,252,880,553,1536,1024);
+    private static final MenuSprite FISH_CODEX_ICON=new MenuSprite(Identifier.of("magiccodex","textures/hud/fish-codex-menu.png"),395,285,576,610,1351,1164);
     private static final MenuSprite ARTIFACT_ICON=new MenuSprite(Identifier.of("magiccodex","textures/hud/artifact-codex-menu.png"),439,304,473,534,1351,1164);
     private static final Identifier FONT=Identifier.of("magiccodex","hud_bold");
     private static final DateTimeFormatter CLOCK=DateTimeFormatter.ofPattern("HH:mm");
@@ -142,8 +143,8 @@ public final class TopMenuRenderer implements AutoCloseable {
         try{
             ctx.getMatrices().translate(0,-7*(1-alpha),200);
             PartyUiAtlas.nine(images,ctx,PartyUiAtlas.TOAST,x,TopMenuState.DROPDOWN_TOP,w,
-                    TopMenuState.dropdownHeight(),.075f,tint(0xFFFFFFFF,alpha));
-            for(int row=0;row<3;row++){
+                    TopMenuState.dropdownHeight(group),.075f,tint(0xFFFFFFFF,alpha));
+            for(int row=0;row<TopMenuState.rows(group);row++){
                 float y=TopMenuState.rowTop(row),cx=x+w/2;
                 if(hit==TopMenuState.childHit(group,row)){
                     HudMesh.capsule(ctx,x+5,y+2,w-10,TopMenuState.ROW_HEIGHT-4,
@@ -152,7 +153,8 @@ public final class TopMenuRenderer implements AutoCloseable {
                 float cy=y+21;
                 if(group==1)menuSprite(ctx,NEW_ICONS[row],cx,cy,22,alpha);
                 else if(group==2){
-                    if(row==2)menuSprite(ctx,ARTIFACT_ICON,cx,cy,22,alpha);
+                    if(row==3)menuSprite(ctx,FISH_CODEX_ICON,cx,cy,22,alpha);
+                    else if(row==2)menuSprite(ctx,ARTIFACT_ICON,cx,cy,22,alpha);
                     else icon(ctx,row==0?3:4,cx,cy,22,alpha);
                 }else{
                     if(row==0)icon(ctx,6,cx,cy,22,alpha);

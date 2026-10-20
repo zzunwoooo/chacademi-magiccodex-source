@@ -8,7 +8,7 @@ public final class TopMenuState {
     public static final float SEASON_SPACE=28,SEASON_CENTER=28;
     public static final float TEMPERATURE_SPACE=56;
     public static final float DROPDOWN_WIDTH=76, DROPDOWN_TOP=40, ROW_HEIGHT=64, DROPDOWN_PAD=9;
-    private static final String[][] CHILDREN={{},{"스탯","장비","칭호"},{"마법 도감","펫 도감","아티팩트 도감"},{"친구","파티","기숙사"},{},{},{}};
+    private static final String[][] CHILDREN={{},{"스탯","장비","칭호"},{"마법 도감","펫 도감","아티팩트 도감","물고기 도감"},{"친구","파티","기숙사"},{},{},{}};
     private int group=-1;
     private long groupStarted;
     private float groupProgress;
@@ -18,7 +18,10 @@ public final class TopMenuState {
     public static String childLabel(int group,int row){return CHILDREN[group][row];}
     public static int childHit(int group,int row){return 100+group*10+row;}
     public static float rowTop(int row){return DROPDOWN_TOP+DROPDOWN_PAD+ROW_HEIGHT*row;}
-    public static float dropdownHeight(){return DROPDOWN_PAD*2+ROW_HEIGHT*3;}
+    public static int rows(int group){return group<0||group>=CHILDREN.length?0:CHILDREN[group].length;}
+    public static float dropdownHeight(){return dropdownHeight(1);}
+    /** 도감 has four rows since 물고기 도감 (2026-10-20); the others three. */
+    public static float dropdownHeight(int group){return DROPDOWN_PAD*2+ROW_HEIGHT*Math.max(1,rows(group));}
     public float dropdownLeft(float base){return iconCenter(base,group)-DROPDOWN_WIDTH/2;}
     public void closeGroup(){group=-1;groupProgress=0;}
     public void toggleGroup(int index,long now){
@@ -28,7 +31,7 @@ public final class TopMenuState {
     }
     public boolean insideDropdown(float x,float y,float base){
         return group>=0&&x>=dropdownLeft(base)&&x<=dropdownLeft(base)+DROPDOWN_WIDTH
-            &&y>=DROPDOWN_TOP&&y<=DROPDOWN_TOP+dropdownHeight();
+            &&y>=DROPDOWN_TOP&&y<=DROPDOWN_TOP+dropdownHeight(group);
     }
     private HudSeason season=HudSeason.SPRING;
     private boolean expanded;
@@ -54,7 +57,7 @@ public final class TopMenuState {
     public int hit(float x,float y,float base){
         if(group>=0&&expanded&&progress>=.999f&&groupProgress>=.999f&&insideDropdown(x,y,base)){
             int row=(int)((y-DROPDOWN_TOP-DROPDOWN_PAD)/ROW_HEIGHT);
-            if(y>=DROPDOWN_TOP+DROPDOWN_PAD&&row>=0&&row<3)return childHit(group,row);
+            if(y>=DROPDOWN_TOP+DROPDOWN_PAD&&row>=0&&row<rows(group))return childHit(group,row);
             return -2;
         }
         if(y<5 || y>31)return -2;
