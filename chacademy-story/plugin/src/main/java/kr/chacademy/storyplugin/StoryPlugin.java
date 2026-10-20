@@ -892,9 +892,26 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
         }
     }
 
+    private final Set<String> legacyWarned = new HashSet<>();
+
+    /** Skript 를 쓰던 시절의 명령인지 ({@link StorySafety#legacyCommand}). */
+    static boolean legacyCommand(String command) { return StorySafety.legacyCommand(command); }
+
+    /** 서버 흐름(dialogues/&lt;id&gt;/dialogue.yml)이 있으면, 클라가 보낸 결말이 그 대화에서 끝날 수 있는 장면인지 확인한다. 흐름이 없으면 예전처럼 형식만 본다. */
+    private boolean endingAllowed(String id, String ending) {
+        StoryDef def = defs.get(id);
+        if (def == null || def.graph == null) return true;
+        StoryGraph.Scene scene = def.graph.scenes.get(ending);
+        return scene != null && scene.choices().isEmpty() && (scene.next() == null || scene.next().isEmpty());
+    }
+
     private void run(List<String> commands, Player p, Map<String, String> vars) {
         if (commands == null) return;
         for (String raw : commands) {
+            if (legacyCommand(raw)) {
+                if (legacyWarned.add(raw)) getLogger().warning("예전(Skript) 스토리 명령은 실행하지 않습니다 — 설정에서 지워 주세요: " + raw);
+                continue;
+            }
             // 명령어의 {player} 는 마인크래프트 닉네임 그대로 (명령어 대상이므로). 한글 닉네임은 {nickname}
             String c = raw.replace("{player}", p.getName()).replace("{uuid}", p.getUniqueId().toString());
             // 닉네임은 플레이어가 정한 글자라 명령어를 바꿔치기하지 못하게 글자·숫자·_·- 만 남긴다
@@ -969,6 +986,12 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
                         // and consumes the session BEFORE substitution/dispatch. String.replace is literal.
                         var cur=endingSessions.current(uuid,now);
                         boolean valid=cur!=null&&cur.ready()&&cur.id().equals(signal.id())&&cur.token().equals(signal.token())&&StorySafety.validId(signal.ending());
+                        if(valid&&!endingAllowed(signal.id(),signal.ending())){
+                            // 서버 흐름에 없는 결말: 명령({ending} 포함)을 실행하지 않고 세션을 닫는다 (다시 호출 가능)
+                            packetLog(p,p.getName()+" 대화 "+signal.id()+" 의 결말 "+signal.ending()+" 이(가) 서버 흐름의 끝 장면이 아니라 무시합니다");
+                            if(endingSessions.abort(uuid,signal.id(),signal.token(),now)){dialogueAcks.reject(uuid,signal.id());if(quests!=null)quests.dialogueAborted(uuid,signal.id());}
+                            break;
+                        }
                         var commands=endingSessions.finish(uuid,signal.id(),signal.token(),signal.ending(),now);
                         run(commands,p,Map.of("{ending}",signal.ending()));
                         // 세션이 확인된 완료만 스토리 단계에 알린다 (끝 명령 실행 뒤: tp 같은 명령이 먼저 돌게)

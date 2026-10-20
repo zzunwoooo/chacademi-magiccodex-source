@@ -22,13 +22,35 @@ import java.util.regex.Pattern;
  *     대화: ch1-8                           # 호출되면 띄울 대화 (없으면 컷신, 둘 다 없으면 바로 다음 단계)
  *     컷신: ""
  *     다음: ch1-9                           # 비우면 스토리 끝
+ *     시작명령: []                          # 단계에 들어갈 때(그리고 조건을 못 채운 채 다시 접속할 때) 콘솔로 실행 ({player} = 계정 이름)
  * </pre>
+ * 대화완료 조건의 대상은 여러 개를 | 로 묶을 수 있고, 끝의 * 는 앞부분이 같은 모든 대화 (예: ch1-14r-*|ch1-14m-*|ch1-14f-*).
  */
 final class QuestDefs {
     static final int MAX_CONDITIONS = 8;
     static final int MAX_BLOCKS = 32;
     static final double MIN_RADIUS = 1.0, MAX_RADIUS = 16.0, DEFAULT_RADIUS = 1.5;
     static final Pattern KEY = Pattern.compile("[\\p{L}\\p{N}_\\-]{1,32}");
+    static final int MAX_START_COMMANDS = 8;
+
+    /** 대화완료 대상 형식이 맞는지: "id" 또는 "앞부분*" 을 | 로 묶은 것. */
+    static boolean validDialoguePattern(String target) {
+        if (target == null || target.isBlank() || target.length() > 256) return false;
+        for (String part : target.split("\\|", -1)) {
+            String id = part.endsWith("*") ? part.substring(0, part.length() - 1) : part;
+            if (!StorySafety.validId(id)) return false;
+        }
+        return true;
+    }
+
+    /** 대화 id 가 대화완료 대상에 맞는지. */
+    static boolean dialogueMatches(String target, String dialogue) {
+        if (target == null || dialogue == null) return false;
+        for (String part : target.split("\\|")) {
+            if (part.endsWith("*") ? dialogue.startsWith(part.substring(0, part.length() - 1)) : dialogue.equals(part)) return true;
+        }
+        return false;
+    }
 
     enum CondType {
         ITEM("아이템"), SUBMIT("제출"), KILL("처치"), INTERACT("상호작용"), DIALOGUE("대화완료"), SIGNAL("신호");
@@ -117,6 +139,7 @@ final class QuestDefs {
         final String id;
         String chapter = "", description = "", dialogue = "", cutscene = "", next = "";
         final List<Cond> conds = new ArrayList<>();
+        final List<String> startCommands = new ArrayList<>();
         Trigger trigger = new Trigger();
 
         Step(String id) { this.id = id; }
@@ -167,8 +190,18 @@ final class QuestDefs {
                 if (t == null) { warnings.add(id + ": 모르는 조건 종류 " + c.get("종류")); continue; }
                 List<String> blocks = new ArrayList<>();
                 if (c.get("블록") instanceof List<?> bl) for (Object b : bl) if (b != null && blocks.size() < MAX_BLOCKS) blocks.add(String.valueOf(b));
-                s.conds.add(new Cond(t, text(c.get("대상"), 64), integer(c.get("개수"), 1), text(c.get("표시"), 64),
+                String target = text(c.get("대상"), t == CondType.DIALOGUE ? 256 : 64);
+                if (t == CondType.DIALOGUE && !validDialoguePattern(target)) { warnings.add(id + ": 대화완료 대상 형식 오류 " + target); continue; }
+                s.conds.add(new Cond(t, target, integer(c.get("개수"), 1), text(c.get("표시"), 64),
                         Boolean.TRUE.equals(c.get("숨김")), blocks));
+            }
+        }
+        if (m.get("시작명령") instanceof List<?> cmds) {
+            for (Object o : cmds) {
+                if (o == null || s.startCommands.size() >= MAX_START_COMMANDS) continue;
+                String c = text(o, 256);
+                if (c.startsWith("/")) c = c.substring(1);
+                if (!c.isBlank()) s.startCommands.add(c);
             }
         }
         if (m.get("호출") instanceof Map<?, ?> c) {
@@ -253,6 +286,7 @@ final class QuestDefs {
             m.put("대화", s.dialogue);
             m.put("컷신", s.cutscene);
             m.put("다음", s.next);
+            if (!s.startCommands.isEmpty()) m.put("시작명령", new ArrayList<>(s.startCommands));
             all.put(s.id, m);
         }
         root.put("단계", all);

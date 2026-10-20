@@ -289,17 +289,19 @@ final class TamingBridge implements Listener,PluginMessageListener,AutoCloseable
             lp.getUserManager().saveUser(user).whenComplete((v,error)->{
                 if(error!=null&&added)user.data().remove(node);
                 if(!plugin.isEnabled())return;
-                Bukkit.getScheduler().runTask(plugin,()->{if(closed)return;if(error!=null){plugin.getLogger().warning("교화 권한 저장 실패: "+c.player.getUniqueId());finish(c,false,"펫을 저장하지 못했습니다. 다시 시도해 주세요.");}else {if(PhoenixDiscovery.isPhoenix(c.profile.pet))DiscoveryLink.signal(c.player.getUniqueId(),"pet.phoenix",1);finish(c,true,"교화 성공 · "+c.profile.name);}});
+                Bukkit.getScheduler().runTask(plugin,()->{if(closed)return;if(error!=null){plugin.getLogger().warning("교화 권한 저장 실패: "+c.player.getUniqueId());finish(c,false,"펫을 저장하지 못했습니다. 다시 시도해 주세요.");}else {if(PhoenixDiscovery.isPhoenix(c.profile.pet))DiscoveryLink.signal(c.player.getUniqueId(),"pet.phoenix",1);if(finish(c,true,"교화 성공 · "+c.profile.name))StoryProgressEvent.fire(c.player,StoryProgressEvent.TAMING);}});
             });
         }catch(RuntimeException ex){c.pending=false;finish(c,false,"펫을 저장하지 못했습니다. 다시 시도해 주세요.");}
     }
-    private void finish(Cast c,boolean success,String text){
-        if(!casts.remove(c.player.getUniqueId(),c))return;locked.remove(c.entity.getUniqueId());
+    /** @return 이 호출이 실제로 결과를 냈는지 (이미 끝난 교화면 false). */
+    private boolean finish(Cast c,boolean success,String text){
+        if(!casts.remove(c.player.getUniqueId(),c))return false;locked.remove(c.entity.getUniqueId());
         // Result VFX is selected only after RNG and (on success) the real ownership save.
         TamingVfxLink.finish(plugin,c.visual,c.player,success,c.entity.getLocation().clone());
         emit(c,success?TamingProtocol.SUCCESS:TamingProtocol.FAIL,text);
         if(success){graces.remove(c.entity.getUniqueId());c.entity.remove();if(c.fx!=null)c.fx.play("success");Bukkit.getScheduler().runTaskLater(plugin,()->removeEffect(c.fx),22);}
         else{if(c.fx!=null)c.fx.play("fail");var grace=graces.get(c.entity.getUniqueId());if(grace!=null)grace.idleAfter=now()+800;Bukkit.getScheduler().runTaskLater(plugin,()->{if(grace!=null&&graces.containsKey(c.entity.getUniqueId())){if(c.fx!=null&&!locked.contains(c.entity.getUniqueId()))c.fx.play("idle");}else removeEffect(c.fx);},16);}
+        return true;
     }
     @EventHandler(priority=EventPriority.HIGHEST,ignoreCancelled=true) public void damage(EntityDamageEvent event){
         if(event instanceof EntityDamageByEntityEvent by){Entity source=by.getDamager();if(source instanceof Projectile pr&&pr.getShooter() instanceof Entity shooter)source=shooter;if(graces.containsKey(source.getUniqueId())){event.setCancelled(true);return;}}

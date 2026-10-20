@@ -486,6 +486,8 @@ final class FishingBridge implements PluginMessageListener, Listener {
                 if (!s.preview) {
                     var r = store.record(p.getUniqueId(), f.id(), cm); fresh = r[0]; record = r[1];
                     tank.add(p.getUniqueId(),f.id(),cm,(saved,put)->{
+                        // 스토리 "낚시성공": 물고기가 수조 DB 에 저장된 뒤에만 (보물상자·미리보기·보류 저장 제외)
+                        if(put==FishTank.Put.OK)StoryProgressEvent.fire(p,StoryProgressEvent.FISH);
                         if(put!=FishTank.Put.OK&&p.isOnline())CmdKit.notify(p,"warning","fishing-kept","잡은 물고기는 안전하게 보존했어요","수조 공간과 저장소가 준비되면 자동으로 수조에 들어가요.",3000);
                     });
                 } else fresh = true;

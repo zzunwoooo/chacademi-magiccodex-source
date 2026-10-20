@@ -117,6 +117,7 @@ final class QuestEngine implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 40L, TICK_CHECK);
         Bukkit.getScheduler().runTask(plugin, this::hookCitizens);
+        Bukkit.getScheduler().runTask(plugin, this::hookProgressEvents);
         for (Player p : Bukkit.getOnlinePlayers()) needStep.add(p.getUniqueId());
         scheduleSend();
     }
@@ -216,7 +217,7 @@ final class QuestEngine implements Listener {
         P st = prog.players.get(id);
         if (st != null && st.phase == Phase.PLAYING && st.waiting.equals("d:" + dialogue)) return true;
         Step s = st == null ? null : defs.get(st.step);
-        if (s != null) for (Cond c : s.conds) if (c.type() == CondType.DIALOGUE && c.target().equals(dialogue)) return true;
+        if (s != null) for (Cond c : s.conds) if (c.type() == CondType.DIALOGUE && QuestDefs.dialogueMatches(c.target(), dialogue)) return true;
         return dialogue.equals(defs.startAfterDialogue);
     }
 
@@ -246,7 +247,7 @@ final class QuestEngine implements Listener {
         boolean changed = false;
         for (int i = 0; i < s.conds.size(); i++) {
             Cond c = s.conds.get(i);
-            if (c.type() == CondType.DIALOGUE && c.target().equals(dialogue) && st.counts.getOrDefault(i, 0) < c.required()) {
+            if (c.type() == CondType.DIALOGUE && QuestDefs.dialogueMatches(c.target(), dialogue) && st.counts.getOrDefault(i, 0) < c.required()) {
                 st.counts.put(i, c.required());
                 changed = true;
             }
@@ -257,10 +258,28 @@ final class QuestEngine implements Listener {
     /** 대화가 중간에 닫힘 (중지·대기열 비우기·세션 취소). 기다리던 대화면 다시 호출할 수 있게 되돌린다. */
     void dialogueAborted(UUID uuid, String dialogue) {
         P st = prog.players.get(uuid);
+        if (st != null && st.phase == Phase.ACTIVE) restartLater(uuid, st);
         if (st == null || st.phase != Phase.PLAYING) return;
         if (dialogue != null && !st.waiting.equals("d:" + dialogue)) return;
         if (!st.waiting.startsWith("d:")) return;
         backToActive(uuid, st);
+    }
+
+    private final Map<UUID, Long> restartAt = new HashMap<>();
+
+    /** 시작명령이 띄운 대화(예: 분류 6문항)를 중간에 닫음: 조건을 아직 못 채웠으면 5초 뒤 시작명령을 한 번 더 (30초에 한 번까지). */
+    private void restartLater(UUID uuid, P st) {
+        Step s = defs.get(st.step);
+        if (s == null || s.startCommands.isEmpty()) return;
+        long now = System.currentTimeMillis();
+        if (now - restartAt.getOrDefault(uuid, 0L) < 30_000) return;
+        restartAt.put(uuid, now);
+        int run = st.run;
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            Player p = Bukkit.getPlayer(uuid);
+            if (p == null || st.run != run || isReady(p, st, s)) return;
+            runStartCommands(p, st, run);
+        }, 100L);
     }
 
     /** 서버가 재생시킨 컷신이 끝남 (StoryPlugin 의 CUTSCENE_END 효과). */
@@ -312,6 +331,24 @@ final class QuestEngine implements Listener {
         scheduleSend();
         Step s = defs.get(stepId);
         if (tell && s != null && !s.description.isBlank()) ChacaLink.notify(p, "system", "story-step-" + st.run, "새 목표", s.description, 0);
+        if (s != null && !s.startCommands.isEmpty()) {
+            int run = st.run;
+            // 다음 틱: 앞 대화의 끝 명령·세션 정리가 끝난 뒤
+            Bukkit.getScheduler().runTask(plugin, () -> runStartCommands(p, st, run));
+        }
+    }
+
+    /** 단계의 시작명령 (steps.yml, 서버 설정). 그 단계·회차 그대로이고 기다리는 중이 아닐 때만. */
+    private void runStartCommands(Player p, P st, int run) {
+        if (!ready || !p.isOnline() || st.run != run || st.phase != Phase.ACTIVE) return;
+        Step s = defs.get(st.step);
+        if (s == null) return;
+        for (String raw : s.startCommands) {
+            String c = raw.replace("{player}", p.getName()).replace("{uuid}", p.getUniqueId().toString());
+            if (StoryPlugin.legacyCommand(c)) { plugin.getLogger().warning("[스토리 단계] " + s.id + " 시작명령의 예전(Skript) 명령은 실행하지 않습니다: " + c); continue; }
+            try { Bukkit.dispatchCommand(Bukkit.getConsoleSender(), c); }
+            catch (RuntimeException ex) { plugin.getLogger().log(Level.SEVERE, "[스토리 단계] 시작명령 실행 실패: " + c, ex); }
+        }
     }
 
     private void advance(Player p, P st, Step s) {
@@ -512,6 +549,16 @@ final class QuestEngine implements Listener {
         if (st != null && st.phase == Phase.PLAYING && st.waiting.startsWith("d:")) { st.phase = Phase.ACTIVE; st.waiting = ""; saveSoon(null); }
         // 접속 직후에는 모드 채널이 늦게 잡히므로 조금 뒤에 보낸다
         Bukkit.getScheduler().runTaskLater(plugin, () -> { if (p.isOnline()) { needStep.add(uuid); scheduleSend(); } }, 60L);
+        // 시작명령이 있는 단계(예: 분류의 거울)를 끝내지 못하고 나갔으면 다시 실행 (조건을 이미 채웠으면 하지 않는다)
+        P cur = st;
+        if (cur != null && !cur.step.isEmpty()) {
+            int run = cur.run;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                Step s = defs.get(cur.step);
+                if (s == null || s.startCommands.isEmpty() || !p.isOnline() || cur.run != run || isReady(p, cur, s)) return;
+                runStartCommands(p, cur, run);
+            }, 120L);
+        }
     }
 
     @EventHandler
@@ -699,6 +746,39 @@ final class QuestEngine implements Listener {
         }
     }
 
+    // ================================================================ 다른 기능의 성공 신호 (Bukkit 이벤트, 리플렉션)
+
+    /** 플러그인 이름 → 성공 이벤트 클래스. 각 기능이 저장·지급이 끝난 뒤에만 부른다 (getPlayer/getKey/getAmount). */
+    private static final String[][] PROGRESS_EVENTS = {
+            {"MagicCodexBridge", "school.magiccodex.paper.StoryProgressEvent"},   // 교화성공 · 낚시성공 · 연금술성공
+            {"ChacaHousing", "school.chacademia.housing.StoryProgressEvent"},     // 내방열기
+    };
+    private final List<String> progressHooks = new ArrayList<>();
+
+    private void hookProgressEvents() {
+        for (String[] e : PROGRESS_EVENTS) {
+            Plugin owner = Bukkit.getPluginManager().getPlugin(e[0]);
+            if (owner == null || !owner.isEnabled()) { plugin.getLogger().warning("[스토리 단계] " + e[0] + " 이(가) 없어 그 기능의 성공 신호를 받을 수 없습니다"); continue; }
+            try {
+                Class<? extends Event> type = Class.forName(e[1], true, owner.getClass().getClassLoader()).asSubclass(Event.class);
+                Method player = type.getMethod("getPlayer"), key = type.getMethod("getKey"), amount = type.getMethod("getAmount");
+                Bukkit.getPluginManager().registerEvent(type, this, EventPriority.MONITOR, (listener, event) -> {
+                    if (!type.isInstance(event)) return;
+                    try {
+                        if (player.invoke(event) instanceof Player p && key.invoke(event) instanceof String k && amount.invoke(event) instanceof Integer n)
+                            signal(p, k, n);
+                    } catch (ReflectiveOperationException | RuntimeException ex) {
+                        plugin.getLogger().log(Level.WARNING, "[스토리 단계] 성공 신호 처리 실패", ex);
+                    }
+                }, plugin, false);
+                progressHooks.add(e[0]);
+            } catch (ReflectiveOperationException | RuntimeException ex) {
+                plugin.getLogger().warning("[스토리 단계] " + e[0] + " 성공 신호 연결 실패 (버전이 낮음?): " + ex);
+            }
+        }
+        if (!progressHooks.isEmpty()) plugin.getLogger().info("[스토리 단계] 성공 신호 연결: " + String.join(", ", progressHooks));
+    }
+
     private Object npcById(int id) {
         if (!citizens || id < 0) return null;
         try { return registryById.invoke(registry, id); } catch (ReflectiveOperationException | RuntimeException e) { return null; }
@@ -846,6 +926,7 @@ final class QuestEngine implements Listener {
                 .executes(ctx -> cmdStart(ctx, ""))
                 .then(Commands.literal("대화완료").then(Commands.argument("대화ID", ChacaLink.word(List::of))
                         .executes(ctx -> cmdStart(ctx, ctx.getArgument("대화ID", String.class)))))));
+        root.then(Commands.literal("점검").executes(this::cmdCheck));
         root.then(Commands.literal("지정끝").executes(ctx -> { Player p = self(ctx); picks.remove(p.getUniqueId()); ChacaLink.ok(p, "지정을 끝냈어요"); return 1; }));
         root.then(Commands.literal("미리보기끝").executes(ctx -> { endPreview(self(ctx)); ChacaLink.ok(ctx.getSource().getSender(), "미리보기를 끝내고 내 진행 상태로 돌아왔어요"); return 1; }));
 
@@ -893,6 +974,15 @@ final class QuestEngine implements Listener {
             return setTrigger(ctx, t);
         })));
         one.then(call);
+        one.then(Commands.literal("시작명령")
+                .then(Commands.literal("추가").then(Commands.argument("명령", StringArgumentType.greedyString()).executes(ctx -> edit(ctx, s -> {
+                    if (s.startCommands.size() >= QuestDefs.MAX_START_COMMANDS) throw ChacaLink.error("시작명령은 " + QuestDefs.MAX_START_COMMANDS + "개까지예요");
+                    String c = ctx.getArgument("명령", String.class).strip();
+                    if (c.startsWith("/")) c = c.substring(1);
+                    if (c.isBlank() || StoryPlugin.legacyCommand(c)) throw ChacaLink.error("빈 명령이나 예전(Skript) 명령은 넣을 수 없어요");
+                    s.startCommands.add(c);
+                }, "시작명령"))))
+                .then(Commands.literal("비우기").executes(ctx -> edit(ctx, s -> s.startCommands.clear(), "시작명령"))));
         one.then(Commands.literal("이동").executes(this::cmdGoto));
         one.then(Commands.literal("미리보기").executes(ctx -> { Player p = self(ctx); preview(p, step(ctx)); ChacaLink.ok(p, "미리보기 중 · 끝내려면 /대화관리 단계 미리보기끝"); return 1; }));
         root.then(one);
@@ -909,10 +999,11 @@ final class QuestEngine implements Listener {
         ChacaLink.branch(plugin, ChacaLink.유저관리, Commands.literal("스토리진행")
                 .then(Commands.literal("보기").executes(this::cmdUserView))
                 .then(Commands.literal("다음").executes(this::cmdUserNext))
+                .then(Commands.literal("다시").executes(this::cmdUserRestart))
                 .then(Commands.literal("단계").then(stepArg("이동단계").executes(this::cmdUserSet)))
                 .then(Commands.literal("초기화").executes(ctx -> { throw ChacaLink.error("되돌릴 수 없어요. 끝에 '확인'을 붙여 다시 입력해 주세요"); })
                         .then(Commands.literal("확인").executes(this::cmdUserReset))),
-                "스토리 단계 진행 보기·강제 진행·단계 지정·초기화", "스토리진행 보기");
+                "스토리 단계 진행 보기·강제 진행·시작명령 다시·단계 지정·초기화", "스토리진행 보기");
     }
 
     private com.mojang.brigadier.builder.RequiredArgumentBuilder<CommandSourceStack, String> stepArg(String name) {
@@ -1009,6 +1100,47 @@ final class QuestEngine implements Listener {
         return 1;
     }
 
+    /** 이 단계에서 운영자가 아직 정하지 않았거나 잘못된 것. 이것이 있는 단계는 그 부분에서 진행이 멈춘다 (임의로 넘기지 않음). */
+    List<String> problems(Step s) {
+        List<String> out = new ArrayList<>();
+        Trigger t = s.trigger;
+        switch (t.type) {
+            case NONE -> out.add("호출 미설정 — 조건을 채워도 다음으로 가지 않음 (/대화관리 단계 " + s.id + " 호출 …)");
+            case NPC -> {
+                if (t.npc < 0) out.add("NPC 미지정");
+                else if (!t.server.isEmpty() && !t.server.equals(serverId())) out.add("다른 서버(" + t.server + ")의 NPC — 이 서버에서는 호출되지 않음");
+                else if (citizens && npcById(t.npc) == null) out.add("Citizens " + t.npc + "번 NPC가 없음");
+                else if (!citizens) out.add("Citizens 연결 없음");
+            }
+            case LOCATION -> { if (Bukkit.getWorld(t.world) == null) out.add("포탈 월드 " + (t.world.isEmpty() ? "(없음)" : t.world) + " 를 찾을 수 없음"); }
+            case CUTSCENE -> { if (t.cutscene.isEmpty()) out.add("호출 컷신 미지정"); }
+            default -> { }
+        }
+        for (int i = 0; i < s.conds.size(); i++) {
+            Cond c = s.conds.get(i);
+            if (c.type() == CondType.INTERACT && c.blocks().isEmpty()) out.add("조건 " + (i + 1) + " 상호작용 블록 미지정 (/대화관리 단계 " + s.id + " 조건 블록지정 " + (i + 1) + ")");
+            if (c.type() == CondType.SIGNAL && !List.of("교화성공", "낚시성공", "연금술성공", "내방열기").contains(c.target()))
+                out.add("조건 " + (i + 1) + " 신호 " + c.target() + " 는 자동으로 보내는 기능이 없음 (관리자 /대화관리 신호 로만 채워짐)");
+        }
+        if (!s.next.isEmpty() && defs.get(s.next) == null) out.add("다음 단계 " + s.next + " 없음");
+        return out;
+    }
+
+    private int cmdCheck(CommandContext<CommandSourceStack> ctx) {
+        List<String> out = new ArrayList<>();
+        if (defs.startStep.isEmpty() || defs.get(defs.startStep) == null) out.add("⚠ 시작 단계 미설정/없음 (/대화관리 단계 시작설정 …)");
+        int n = 0;
+        for (Step s : defs.steps.values()) {
+            List<String> p = problems(s);
+            if (p.isEmpty()) continue;
+            n++;
+            out.add(s.id + ": " + String.join(" · ", p));
+        }
+        out.add(0, "스토리 단계 점검: 손볼 단계 " + n + "개 / 전체 " + defs.steps.size() + "개 · 성공 신호 " + (progressHooks.isEmpty() ? "연결 없음" : String.join(", ", progressHooks)));
+        ChacaLink.lines(ctx.getSource().getSender(), out);
+        return 1;
+    }
+
     private int cmdCreate(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         String id = ctx.getArgument(ID, String.class);
         if (!StorySafety.validId(id)) throw ChacaLink.error("단계 ID는 영문 소문자·숫자·_·-만 쓸 수 있어요 (예: ch1-8)");
@@ -1042,6 +1174,8 @@ final class QuestEngine implements Listener {
         if (s.conds.isEmpty()) out.add("조건: 없음 (바로 준비 완료)");
         out.add("호출: " + s.trigger.describe());
         out.add("대화: " + (s.dialogue.isEmpty() ? "-" : s.dialogue) + " · 컷신: " + (s.cutscene.isEmpty() ? "-" : s.cutscene) + " · 다음: " + (s.next.isEmpty() ? "(끝)" : s.next));
+        if (!s.startCommands.isEmpty()) out.add("시작명령: " + String.join(" / ", s.startCommands));
+        for (String problem : problems(s)) out.add("⚠ " + problem);
         ChacaLink.lines(ctx.getSource().getSender(), out);
         return 1;
     }
@@ -1068,7 +1202,7 @@ final class QuestEngine implements Listener {
                     throw ChacaLink.error("아이템은 '손'(들고 있는 것), 재료 이름(예: DIAMOND), 또는 이름:글자 로 적어 주세요");
                 }
             }
-            case DIALOGUE -> { if (!StorySafety.validId(target)) throw ChacaLink.error("대화 ID는 영문 소문자·숫자·_·-만 쓸 수 있어요"); }
+            case DIALOGUE -> { if (!QuestDefs.validDialoguePattern(target)) throw ChacaLink.error("대화 ID는 영문 소문자·숫자·_·-만 (여러 개는 | 로, 앞부분이 같은 것은 끝에 *)"); }
             case SIGNAL -> { if (!QuestDefs.KEY.matcher(target).matches()) throw ChacaLink.error("신호 이름은 글자·숫자·_·- 1~32자예요"); }
             case INTERACT -> target = "블록지정";
             case KILL -> { }
@@ -1218,6 +1352,18 @@ final class QuestEngine implements Listener {
         return 1;
     }
 
+    /** 지금 단계의 시작명령을 다시 실행 (예: 분류 6문항을 닫아 버린 유저). 조건·기록은 그대로. */
+    private int cmdUserRestart(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Player p = ChacaLink.targetOnline(ctx);
+        P st = prog.players.get(p.getUniqueId());
+        Step s = st == null ? null : defs.get(st.step);
+        if (s == null || s.startCommands.isEmpty()) throw ChacaLink.error("지금 단계에 다시 실행할 시작명령이 없어요");
+        if (st.phase != Phase.ACTIVE) throw ChacaLink.error("지금은 대화·컷신을 기다리는 중이에요");
+        runStartCommands(p, st, st.run);
+        ChacaLink.ok(ctx.getSource().getSender(), ChacaLink.name(p.getUniqueId()) + " 님의 " + s.id + " 시작명령을 다시 실행했어요");
+        return 1;
+    }
+
     private int cmdUserSet(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         Player p = ChacaLink.targetOnline(ctx);
         String id = ctx.getArgument("이동단계", String.class);
@@ -1241,6 +1387,8 @@ final class QuestEngine implements Listener {
     String statusLine() {
         int active = 0;
         for (Player p : Bukkit.getOnlinePlayers()) { P st = prog.players.get(p.getUniqueId()); if (st != null && !st.step.isEmpty()) active++; }
-        return "단계 " + defs.steps.size() + "개 · 진행 중 접속자 " + active + "명 · Citizens " + (citizens ? "연결" : "없음");
+        int unset = 0;
+        for (Step s : defs.steps.values()) if (!problems(s).isEmpty()) unset++;
+        return "단계 " + defs.steps.size() + "개 (손볼 곳 " + unset + ") · 진행 중 접속자 " + active + "명 · Citizens " + (citizens ? "연결" : "없음");
     }
 }
