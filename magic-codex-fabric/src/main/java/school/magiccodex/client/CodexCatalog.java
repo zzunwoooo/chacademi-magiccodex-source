@@ -30,7 +30,7 @@ public final class CodexCatalog {
     public static int reload(boolean notify) {
         var result = LOADER.load(DIRECTORY);
         if (!result.success()) {
-            loadError = "YAML 오류 · /UI reload로 확인";
+            loadError = "YAML 오류 · /화면 새로고침으로 확인";
             result.errors().forEach(LOG::error);
             if (notify) {
                 message("YAML 오류 " + result.errors().size() + "개: 기존 마법 목록을 유지합니다.");

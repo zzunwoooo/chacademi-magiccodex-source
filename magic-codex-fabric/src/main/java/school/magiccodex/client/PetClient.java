@@ -51,7 +51,7 @@ public final class PetClient {
     public static void initialize(){
         IO.execute(()->{try{
             Files.createDirectories(modelRoot().resolve("textures"));
-            Path readme=ROOT.resolve("모델-넣는법.txt");if(!Files.exists(readme))Files.writeString(readme,"models/<MCPets의 펫ID>.bbmodel\n텍스처는 bbmodel에 포함해 저장하거나 models/textures/에 PNG를 넣으세요.\n/petcodex reload : 모델 다시 읽기\n큐브 모델, 그룹, 면 UV, 숫자 position/rotation/scale 키프레임을 지원합니다.\nidle 이름의 애니메이션 우선, 없으면 첫 애니메이션. Molang과 메시(mesh)는 지원하지 않습니다.\n");
+            Path readme=ROOT.resolve("모델-넣는법.txt");if(!Files.exists(readme))Files.writeString(readme,"models/<MCPets의 펫ID>.bbmodel\n텍스처는 bbmodel에 포함해 저장하거나 models/textures/에 PNG를 넣으세요.\n/펫도감 새로고침 : 모델 다시 읽기\n큐브 모델, 그룹, 면 UV, 숫자 position/rotation/scale 키프레임을 지원합니다.\nidle 이름의 애니메이션 우선, 없으면 첫 애니메이션. Molang과 메시(mesh)는 지원하지 않습니다.\n");
         }catch(Exception e){log(e);}});
         PayloadTypeRegistry.playC2S().register(RequestPayload.ID,RequestPayload.CODEC);PayloadTypeRegistry.playS2C().register(ResponsePayload.ID,ResponsePayload.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(ResponsePayload.ID,(p,ctx)->{
@@ -60,9 +60,9 @@ public final class PetClient {
             catch(IllegalArgumentException e){waiting=0;notice("펫 목록을 읽지 못했습니다. 다시 열어 주세요.");}
         });
         ClientCommandRegistrationCallback.EVENT.register((d,registry)->{
-            for(String alias:new String[]{"펫도감","petcodex"})d.register(ClientCommandManager.literal(alias)
+            d.register(ClientCommandManager.literal("펫도감")
                 .executes(c->{open();return 1;})
-                .then(ClientCommandManager.literal("reload").executes(c->{reload();c.getSource().sendFeedback(Text.literal("펫 모델과 도감 정보를 다시 불러옵니다."));return 1;}))
+                .then(ClientCommandManager.literal("새로고침").executes(c->{reload();c.getSource().sendFeedback(Text.literal("펫 모델과 도감 정보를 다시 불러옵니다."));return 1;}))
             );
         });
         ClientPlayConnectionEvents.JOIN.register((h,s,c)->{reset();loadFavorites(c);});

@@ -1,12 +1,8 @@
 package school.magiccodex.client;
 
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.MinecraftClient;
@@ -16,7 +12,7 @@ import school.magiccodex.protocol.KyudichiProtocol;
 import school.magiccodex.protocol.KyudichiQueueProtocol;
 
 /**
- * /큐디치미리보기 — 서버·다른 사람 없이 큐디치 화면을 가짜 데이터로 띄워 보는 UI 테스트용 (클라이언트 전용, 아무것도 서버로 안 보냄).
+ * 큐디치 화면 미리보기 — 서버 /테스트 큐디치 화면 (magiccodex:preview)으로 열고, 가짜 데이터로 띄워 보는 UI 테스트용 (아무것도 서버로 안 보냄).
  * 로비(결투장) · 준비 · 경기 · 결투(1:1 경기 HUD) · 결과 · 수락 · 매칭 · 끄기. 미리보기 중에는 매칭/수락/준비 버튼이 화면 안에서만 반응한다.
  */
 final class KyudichiPreview {
@@ -34,25 +30,28 @@ final class KyudichiPreview {
 
     static void initialize() {
         for (int i = 0; i < FAKE.length; i++) FAKE[i] = new UUID(0x6b79756469636869L, i + 1);
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, access) -> {
-            LiteralArgumentBuilder<FabricClientCommandSource> root = ClientCommandManager.literal("큐디치미리보기")
-                    .executes(c -> { c.getSource().sendFeedback(Text.literal("/큐디치미리보기 로비 · 로비1대1 · 매칭 · 수락 · 준비 · 경기 · 결투 · 결과 · 끄기  (가짜 데이터, 서버로 아무것도 안 보냄)")); return 1; });
-            // A command runs inside ChatScreen, which closes itself right after: open the windows on the next task, not now.
-            root.then(ClientCommandManager.literal("로비").executes(c -> later(() -> lobby(0))));
-            root.then(ClientCommandManager.literal("로비1대1").executes(c -> later(() -> lobby(1))));
-            root.then(ClientCommandManager.literal("신청").executes(c -> later(() -> lobby(0))));
-            root.then(ClientCommandManager.literal("결투").executes(c -> later(KyudichiPreview::duel)));
-            root.then(ClientCommandManager.literal("준비").executes(c -> later(KyudichiPreview::prepare)));
-            root.then(ClientCommandManager.literal("경기").executes(c -> later(KyudichiPreview::match)));
-            root.then(ClientCommandManager.literal("결과").executes(c -> later(KyudichiPreview::result)));
-            root.then(ClientCommandManager.literal("수락").executes(c -> later(() -> queue(KyudichiQueueProtocol.S_OFFER))));
-            root.then(ClientCommandManager.literal("매칭").executes(c -> later(() -> queue(KyudichiQueueProtocol.S_SEARCHING))));
-            root.then(ClientCommandManager.literal("대시보드").executes(c -> later(() -> lobby(0))));
-            root.then(ClientCommandManager.literal("끄기").executes(c -> { stop(); c.getSource().sendFeedback(Text.literal("미리보기를 껐어요.")); return 1; }));
-            dispatcher.register(root);
-        });
         ClientTickEvents.END_CLIENT_TICK.register(KyudichiPreview::tick);
         ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> mode = Mode.NONE);
+    }
+
+    /**
+     * Server preview (/테스트 큐디치 화면 → magiccodex:preview "kyudichi &lt;값&gt;").
+     * lobby · duel_lobby · apply · duel · prepare · match · result · accept · matching · dashboard · off. False when unknown.
+     */
+    static boolean show(String value) {
+        switch (value) {
+            case "lobby", "apply", "dashboard" -> later(() -> lobby(0));
+            case "duel_lobby" -> later(() -> lobby(1));
+            case "duel" -> later(KyudichiPreview::duel);
+            case "prepare" -> later(KyudichiPreview::prepare);
+            case "match" -> later(KyudichiPreview::match);
+            case "result" -> later(KyudichiPreview::result);
+            case "accept" -> later(() -> queue(KyudichiQueueProtocol.S_OFFER));
+            case "matching" -> later(() -> queue(KyudichiQueueProtocol.S_SEARCHING));
+            case "off" -> stop();
+            default -> { return false; }
+        }
+        return true;
     }
 
     private static int later(Runnable r) { var c = MinecraftClient.getInstance(); c.send(() -> c.send(r)); return 1; }

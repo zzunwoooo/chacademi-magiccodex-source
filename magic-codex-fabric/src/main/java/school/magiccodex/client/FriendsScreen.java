@@ -137,7 +137,7 @@ public final class FriendsScreen extends SocialScreen {
                 if(a==2)deleting=e;
                 else if(!e.online())notice("접속 중인 친구에게 사용할 수 있습니다.");
                 else if(a==0)busy=SocialClient.request(this,SocialProtocol.WHISPER,e.id(),0,"");
-                else{client.setScreen(null);client.getNetworkHandler().sendChatCommand("스텟창 "+e.id());}return true;
+                else{client.setScreen(null);client.getNetworkHandler().sendChatCommand("스탯창 "+e.id());}return true;
             }
             dragging=true;scrollbar=false;dragY=my;return true;
         }

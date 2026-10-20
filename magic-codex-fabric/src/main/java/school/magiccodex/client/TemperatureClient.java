@@ -1,7 +1,6 @@
 package school.magiccodex.client;
 
 import java.util.function.Function;
-import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.fabric.api.client.command.v2.*;
 import net.fabricmc.fabric.api.client.networking.v1.*;
@@ -69,16 +68,15 @@ public final class TemperatureClient {
             ClientPlayNetworking.send(new Request(TemperatureProtocol.request()));nextRequest=now+20000;
         }
     }
+    /** /화면표시 온도효과 켜기|끄기 (온도 미리보기는 서버 /테스트 화면 온도 → magiccodex:preview). */
     static LiteralArgumentBuilder<FabricClientCommandSource> command(){
-        return ClientCommandManager.literal("temperature")
-            .executes(ctx->{ctx.getSource().sendFeedback(Text.literal("온도: "+label+" · /hud temperature <온도> 또는 auto · effects on|off"));return 1;})
-            .then(ClientCommandManager.argument("celsius",FloatArgumentType.floatArg(-100,100)).executes(ctx->{
-                STATE.preview(FloatArgumentType.getFloat(ctx,"celsius"));refreshLabel();
-                ctx.getSource().sendFeedback(Text.literal("온도 연출 미리보기: "+label+" · /hud temperature auto로 서버 값 복귀"));return 1;
-            }))
-            .then(ClientCommandManager.literal("auto").executes(ctx->{STATE.live();refreshLabel();nextRequest=0;ctx.getSource().sendFeedback(Text.literal("서버 온도 표시로 복귀했습니다."));return 1;}))
-            .then(ClientCommandManager.literal("effects")
-                .then(ClientCommandManager.literal("on").executes(ctx->{effects=true;ctx.getSource().sendFeedback(Text.literal("온도 화면 효과 ON"));return 1;}))
-                .then(ClientCommandManager.literal("off").executes(ctx->{effects=false;TemperatureVfxRenderer.reset();ctx.getSource().sendFeedback(Text.literal("온도 화면 효과 OFF"));return 1;})));
+        return ClientCommandManager.literal("온도효과")
+            .executes(ctx->{ctx.getSource().sendFeedback(Text.literal("온도 화면 효과: "+(effects?"켜짐":"꺼짐")+" · /화면표시 온도효과 켜기|끄기"));return 1;})
+            .then(ClientCommandManager.literal("켜기").executes(ctx->{effects=true;ctx.getSource().sendFeedback(Text.literal("온도 화면 효과를 켰습니다."));return 1;}))
+            .then(ClientCommandManager.literal("끄기").executes(ctx->{effects=false;TemperatureVfxRenderer.reset();ctx.getSource().sendFeedback(Text.literal("온도 화면 효과를 껐습니다."));return 1;}));
     }
+    /** Server preview: a local-only temperature (−100..100 °C). */
+    static void preview(float celsius){STATE.preview(Math.clamp(celsius,-100f,100f));refreshLabel();}
+    /** Server preview "auto": back to the live server value. */
+    static void auto(){STATE.live();refreshLabel();nextRequest=0;}
 }

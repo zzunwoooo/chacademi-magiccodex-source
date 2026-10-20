@@ -313,7 +313,7 @@ public final class CodexScreen extends Screen {
         if (spells.isEmpty()) {
             context.fill(379, 480, 990, 563, 0xEEEEE0C5);
             centered(context, state.total() == 0 ? "등록된 마법이 없습니다" : "검색 결과가 없습니다", 680, 508, 24, INK, HEADING_FONT);
-            centered(context, state.total() == 0 ? "마법 YAML을 확인하고 /UI reload를 입력하세요."
+            centered(context, state.total() == 0 ? "마법 YAML을 확인하고 /화면 새로고침을 입력하세요."
                     : "검색어나 선택한 분류를 바꿔 보세요.", 680, 541, 20, MUTED, BODY_FONT);
         }
     }

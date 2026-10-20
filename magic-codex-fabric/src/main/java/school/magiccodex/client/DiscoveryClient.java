@@ -1,7 +1,6 @@
 package school.magiccodex.client;
 
 import java.util.function.Function;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.fabric.api.client.command.v2.*;
 import net.fabricmc.fabric.api.client.networking.v1.*;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -45,8 +44,6 @@ public final class DiscoveryClient {
         ClientPlayConnectionEvents.JOIN.register((handler,sender,c)->reset());ClientPlayConnectionEvents.DISCONNECT.register((handler,c)->reset());
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener(){public Identifier getFabricId(){return Identifier.of("magiccodex","discovery_toast");}public void reload(ResourceManager manager){close();}});
         ClientTickEvents.END_CLIENT_TICK.register(c->{if(c.player==null||c.world==null)return;long now=Util.getMeasuringTimeMs();if(now>=nextHello&&ClientPlayNetworking.canSend(Ack.ID)){ack(0);nextHello=now+15000;}});
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher,registry)->dispatcher.register(ClientCommandManager.literal("discoverypreview")
-            .executes(ctx->preview("harvest_wind")).then(ClientCommandManager.argument("spell",StringArgumentType.greedyString()).suggests((ctx,b)->{for(var s:CodexCatalog.spells())if(s.id().startsWith(b.getRemaining()))b.suggest(s.id());return b.buildFuture();}).executes(ctx->preview(StringArgumentType.getString(ctx,"spell"))))));
     }
     public static int preview(String id){var s=CodexCatalog.spells().stream().filter(v->v.id().equals(id)||v.name().equals(id)).findFirst().orElse(null);
         if(s==null&&!id.equals("harvest_wind"))return 0;QUEUE.offer(new Notice(previewToken--,s==null?id:s.id(),s==null?"수확의 바람":s.name(),s==null?"magiccodex:textures/spells/novice/harvest_wind.png":s.icon(),false));return 1;}

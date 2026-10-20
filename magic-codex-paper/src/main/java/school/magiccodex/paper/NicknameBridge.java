@@ -48,6 +48,15 @@ final class NicknameBridge implements Listener,PluginMessageListener,org.bukkit.
         if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){var manager=me.clip.placeholderapi.PlaceholderAPIPlugin.getInstance().getLocalExpansionManager();for(String id:List.of("magiccodex","user")){if(manager.getExpansion(id)!=null)continue;var expansion=new NicknameExpansion(this,id,plugin.getDescription().getVersion());if(expansion.register())expansions.add(expansion);}}
     }
     String stored(UUID id){var state=profiles.get(id);return state==null?"":state.nickname();}
+    /** 저장된 닉네임으로 주인 찾기 (접속하지 않은 유저 포함, 대소문자·전각 무시). 없으면 null. 메인 스레드. */
+    UUID ownerOf(String nickname){
+        String key;try{key=NicknameStore.key(nickname.strip());}catch(IllegalArgumentException e){return null;}
+        UUID found=null;
+        for(var e:profiles.entrySet()){String saved=e.getValue().nickname();if(saved==null||saved.isEmpty())continue;String k;try{k=NicknameStore.key(saved);}catch(IllegalArgumentException ignored){continue;}if(k.equals(key)){if(found!=null)return null;found=e.getKey();}}
+        return found;
+    }
+    /** 자동완성용: 저장된 닉네임 전체 (접속하지 않은 유저 포함). */
+    java.util.List<String> nicknames(){var out=new java.util.ArrayList<String>(profiles.size());for(var s:profiles.values())if(s.nickname()!=null&&!s.nickname().isEmpty())out.add(s.nickname());return out;}
     String placeholder(OfflinePlayer p){String value=stored(p.getUniqueId());return value.isEmpty()?(p.getName()==null?"":p.getName()):value;}
     /** nickname/account 자리 표시자 값. 그 밖의 키는 null. */
     String answer(OfflinePlayer p,String params){if(p==null)return "";return params.equals("nickname")?placeholder(p):params.equals("account")?(p.getName()==null?"":p.getName()):null;}

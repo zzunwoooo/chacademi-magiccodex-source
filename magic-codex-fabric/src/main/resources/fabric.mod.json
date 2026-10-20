@@ -3,7 +3,7 @@
   "id": "magiccodex",
   "version": "${version}",
   "name": "Magic Codex UI",
-  "description": "Local magic catalog, live mana HUD and server-authorized casting through the Paper bridge. Toggle with /UI.",
+  "description": "Local magic catalog, live mana HUD and server-authorized casting through the Paper bridge. Toggle with /화면.",
   "environment": "client",
   "mixins": ["magiccodex.mixins.json"],
   "entrypoints": {

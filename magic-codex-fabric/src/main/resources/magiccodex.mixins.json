@@ -20,7 +20,8 @@
     "ChatIconGlyphMixin",
     "CodexMouseMixin",
     "ShoulderCameraMixin",
-    "ShoulderCrosshairMixin", "KyudichiRenderDistanceMixin", "KyudichiHitboxMixin"
+    "ShoulderCrosshairMixin", "KyudichiRenderDistanceMixin", "KyudichiHitboxMixin",
+    "BrigadierUnicodeWordMixin"
   ],
   "injectors": {
     "defaultRequire": 1

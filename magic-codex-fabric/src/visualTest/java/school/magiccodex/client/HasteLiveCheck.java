@@ -28,7 +28,7 @@ public final class HasteLiveCheck {
                 case 1->EquipmentClient.open();
                 case 2->{check(ManaClient.haste()==25,"Base haste synchronized");check(EquipmentClient.request(1,4,0),"Equip request");}
                 case 3->{check(EquipmentClient.data.haste()==75&&ManaClient.haste()==100,"Base + gear haste");shot(c,"01-equipment");c.setScreen(new StatsScreen());}
-                case 4->{check(((StatsScreen)c.currentScreen).displayedValues().haste()==100,"Self stat haste");shot(c,"02-stats");c.currentScreen.close();server(c,"스텟창 별하");}
+                case 4->{check(((StatsScreen)c.currentScreen).displayedValues().haste()==100,"Self stat haste");shot(c,"02-stats");c.currentScreen.close();server(c,"스탯창 별하");}
                 case 5->{check(c.currentScreen instanceof StatsScreen&&((StatsScreen)c.currentScreen).displayedValues().haste()==100,"Remote profile haste");shot(c,"03-remote-stats");c.currentScreen.close();MagicCodexClient.openFromMenu();var codex=new CodexScreen(List.of(SPELL));c.setScreen(codex);codex.state().selectSlot(0);}
                 case 6->{shot(c,"04-codex");c.currentScreen.close();ManaClient.cast(SPELL);}
                 case 7->{long remaining=CastingClient.state().remaining("haste_test",Util.getMeasuringTimeMs());check(remaining>1000&&remaining<3000,"10 seconds / haste 100 = 5 second cooldown");EquipmentClient.open();}

@@ -44,15 +44,14 @@ public final class PlayerHudClient {
     }
     public static void initialize(){
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,access)->{
-            dispatcher.register(ClientCommandManager.literal("hud")
-                .executes(ctx->{ctx.getSource().sendFeedback(Text.literal("/hud frame 1~9 · /hud season 봄|여름|가을|겨울 · /hud 파티 · /hud on · /hud off"));return 1;})
-                .then(seasonCommand())
+            dispatcher.register(ClientCommandManager.literal("화면표시")
+                .executes(ctx->{ctx.getSource().sendFeedback(Text.literal("/화면표시 테두리 1~9 · 켜기 · 끄기 · 파티 · 온도효과"));return 1;})
                 .then(TemperatureClient.command())
                 .then(PartyHudClient.command())
-                .then(ClientCommandManager.literal("frame").then(ClientCommandManager.argument("number",IntegerArgumentType.integer(1,9))
-                    .executes(ctx->{frame(IntegerArgumentType.getInteger(ctx,"number"));ctx.getSource().sendFeedback(Text.literal("HUD 프레임: "+frame+"번"));return 1;})))
-                .then(ClientCommandManager.literal("on").executes(ctx->{enabled=true;return 1;}))
-                .then(ClientCommandManager.literal("off").executes(ctx->{
+                .then(ClientCommandManager.literal("테두리").then(ClientCommandManager.argument("번호",IntegerArgumentType.integer(1,9))
+                    .executes(ctx->{frame(IntegerArgumentType.getInteger(ctx,"번호"));ctx.getSource().sendFeedback(Text.literal("HUD 테두리: "+frame+"번"));return 1;})))
+                .then(ClientCommandManager.literal("켜기").executes(ctx->{enabled=true;return 1;}))
+                .then(ClientCommandManager.literal("끄기").executes(ctx->{
                     enabled=false;var c=MinecraftClient.getInstance();
                     if(c.currentScreen instanceof HudCursorScreen)c.setScreen(null);
                     close();return 1;
@@ -79,18 +78,12 @@ public final class PlayerHudClient {
             TopMenuClient.renderTooltip(context);
         }));
     }
-    private static com.mojang.brigadier.builder.LiteralArgumentBuilder<FabricClientCommandSource> seasonCommand(){
-        var command=ClientCommandManager.literal("season");
-        command.executes(ctx->{ctx.getSource().sendFeedback(Text.literal(SeasonClient.status()));return 1;});
+    /** Server preview (/테스트 화면 계절): spring|summer|autumn|winter or a season id/label. Returns false when unknown. */
+    static boolean previewSeason(String value){
         for(var season:HudSeason.values()){
-            for(String name:new String[]{season.label(),season.id()}){
-                command.then(ClientCommandManager.literal(name).executes(ctx->{
-                    TopMenuClient.season(season);
-                    ctx.getSource().sendFeedback(Text.literal("HUD 계절: "+season.label()+" (임시 표시)"));return 1;
-                }));
-            }
+            if(season.id().equalsIgnoreCase(value)||season.label().equals(value)||season.name().equalsIgnoreCase(value)){TopMenuClient.season(season);return true;}
         }
-        return command;
+        return false;
     }
     private static PlayerHudRenderer renderer(){
         if(renderer==null)renderer=new PlayerHudRenderer(MinecraftClient.getInstance());

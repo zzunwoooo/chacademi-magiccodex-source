@@ -310,7 +310,7 @@ public final class PartyScreen extends SocialScreen {
         if(p.id().equals(self())){MagicCodexClient.dismiss();client.setScreen(new StatsScreen());return;}
         if(!p.online()){notice("접속 중인 동료만 정보를 볼 수 있어요.");return;}
         sound(1.13f,.2f);client.setScreen(null);
-        if(client.getNetworkHandler()!=null)client.getNetworkHandler().sendChatCommand("스텟창 "+p.id());
+        if(client.getNetworkHandler()!=null)client.getNetworkHandler().sendChatCommand("스탯창 "+p.id());
     }
     private void toggleInvite(){
         inviteOpen=!inviteOpen;sound(1.1f,.2f);

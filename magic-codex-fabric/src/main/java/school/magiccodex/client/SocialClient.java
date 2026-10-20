@@ -93,7 +93,7 @@ public final class SocialClient {
         ClientPlayNetworking.registerGlobalReceiver(Reply.ID,(p,c)->{try{var r=SocialProtocol.response(p.bytes());c.client().execute(()->receive(r));}catch(IllegalArgumentException ignored){}});
         ClientPlayConnectionEvents.JOIN.register((h,s,c)->reset());ClientPlayConnectionEvents.DISCONNECT.register((h,c)->reset());
         FriendRequestToast.initialize();
-        ClientCommandRegistrationCallback.EVENT.register((d,a)->{for(String alias:new String[]{"친구","친구창"})d.register(ClientCommandManager.literal(alias).executes(c->{open();return 1;}));});
+        // /친구 is the server's command now (2026-10-20); the window opens from the server reply, the L key or the top menu.
         ClientTickEvents.END_CLIENT_TICK.register(c->{
             if(c.player==null||c.world==null){reset();return;}
             if(pendingOpen!=null&&c.getOverlay()==null){String message=pendingOpen;pendingOpen=null;MagicCodexClient.dismiss();var screen=new FriendsScreen();c.setScreen(screen);screen.notice(message);}

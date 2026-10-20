@@ -1,7 +1,6 @@
 package school.magiccodex.client;
 
 import java.util.function.Function;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.fabricmc.fabric.api.client.command.v2.*;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.*;
@@ -49,8 +48,6 @@ public final class AscensionClient {
         PayloadTypeRegistry.playC2S().register(Query.ID,Query.CODEC);PayloadTypeRegistry.playS2C().register(Reply.ID,Reply.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(Reply.ID,(p,ctx)->{try{var r=AscensionProtocol.decodeResponse(p.bytes());ctx.client().execute(()->receive(r));}catch(IllegalArgumentException ignored){}});
         ClientPlayConnectionEvents.JOIN.register((h,s,c)->reset());ClientPlayConnectionEvents.DISCONNECT.register((h,c)->reset());
-        ClientCommandRegistrationCallback.EVENT.register((d,a)->d.register(ClientCommandManager.literal("ascensionpreview")
-            .executes(ctx->preview(5)).then(ClientCommandManager.argument("circle",IntegerArgumentType.integer(2,9)).executes(ctx->preview(IntegerArgumentType.getInteger(ctx,"circle"))))));
         ClientTickEvents.END_CLIENT_TICK.register(c->{
             if(c.player==null||c.world==null)return;
             long now=Util.getMeasuringTimeMs();
@@ -62,7 +59,8 @@ public final class AscensionClient {
             }
         });
     }
-    private static int preview(int to){pending=new Response(AscensionProtocol.OFFER,0,to-1,to,true,"");return 1;}
+    /** Server preview (/테스트 마법 승급화면 → "ascension [2..9]"). */
+    static int preview(int to){to=Math.clamp(to,2,9);pending=new Response(AscensionProtocol.OFFER,0,to-1,to,true,"");return 1;}
     private static void reset(){circle=0;nextHello=lastSuccess=0;pending=null;}
     private AscensionClient(){}
 }

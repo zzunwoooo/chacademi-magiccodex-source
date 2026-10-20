@@ -70,19 +70,18 @@ public final class MagicCodexClient implements ClientModInitializer {
         KyudichiClient.initialize();
         KyudichiQueueClient.initialize();
         KyudichiPreview.initialize();
+        PreviewClient.initialize();
         HudChatClicks.initialize();
         PartyHudClient.initialize();
         PartyUiClient.initialize();
         HousingClient.initialize();
         ScreenVfxClient.initialize();
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-            for (String alias : new String[]{"UI", "ui"}) {
-                dispatcher.register(ClientCommandManager.literal(alias)
-                        .executes(context -> setVisible(!visible))
-                        .then(ClientCommandManager.literal("on").executes(context -> setVisible(true)))
-                        .then(ClientCommandManager.literal("off").executes(context -> setVisible(false)))
-                        .then(ClientCommandManager.literal("reload").executes(context -> CodexCatalog.reload(true))));
-            }
+            dispatcher.register(ClientCommandManager.literal("화면")
+                    .executes(context -> setVisible(!visible))
+                    .then(ClientCommandManager.literal("켜기").executes(context -> setVisible(true)))
+                    .then(ClientCommandManager.literal("끄기").executes(context -> setVisible(false)))
+                    .then(ClientCommandManager.literal("새로고침").executes(context -> CodexCatalog.reload(true))));
         });
 
         // A command runs inside ChatScreen, which closes itself after sending. Open on the

@@ -138,7 +138,7 @@ final class StatsVisualCheck {
                     var helmet=new ItemStack(Items.DIAMOND_HELMET);var nbt=(net.minecraft.nbt.NbtCompound)helmet.toNbt(c.world.getRegistryManager());nbt.putInt("DataVersion",4189);
                     var bytes=new java.io.ByteArrayOutputStream();net.minecraft.nbt.NbtIo.writeCompressed(nbt,bytes);
                     remoteProfile=new StatsProtocol.Profile(REMOTE,"RemoteMage",5,"바람의 기숙사",24.0,12.0,40,12,140.0,240.0,8.0,157,200,"","",java.util.List.of(new byte[0],new byte[0],new byte[0],new byte[0],new byte[0],bytes.toByteArray()));
-                    c.setScreen(new ChatScreen("/스텟창 RemoteMage"));remoteReply(c,StatsProtocol.OPEN,73,REMOTE,remoteProfile);phase[0]=10;
+                    c.setScreen(new ChatScreen("/스탯창 RemoteMage"));remoteReply(c,StatsProtocol.OPEN,73,REMOTE,remoteProfile);phase[0]=10;
                 }else if(phase[0]==10){
                     var screen=(StatsScreen)c.currentScreen;var v=screen.displayedValues();
                     check(v.nickname().equals("RemoteMage")&&v.mana()==140&&v.learned()==157,"Wrong remote values");
