@@ -9,9 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import school.magiccodex.protocol.KyudichiQueueProtocol;
@@ -35,6 +34,10 @@ final class Link implements PluginMessageListener {
     private final Set<UUID> networked = new HashSet<>();
     private final Set<UUID> keepOnLeave = new HashSet<>();               // spectate left because a match was assigned
     private long tick;
+    /** 관리 요청 (/유저관리 … 대기열에서빼기 · 매칭상태초기화 · 파티) → 요청한 사람, 답을 기다리는 동안. */
+    private record Pending(CommandSender to, long sentAt) {}
+    private final Map<UUID, Pending> adminPending = new HashMap<>();
+    static final int ADMIN_TIMEOUT_TICKS = 5 * 20;
 
     Link(KyudichiPlugin plugin) { this.plugin = plugin; }
 
@@ -53,6 +56,7 @@ final class Link implements PluginMessageListener {
         try { via.sendPluginMessage(plugin, KyudichiQueueProtocol.LINK, KyudichiQueueProtocol.encode(m)); }
         catch (IllegalArgumentException e) { plugin.getLogger().warning("큐디치 링크 인코딩 실패: " + e.getMessage()); }
     }
+    static void notice(Player p, String kind, String title, String body) { ChacaLink.notify(p, kind, "kyudichi:" + title, title, body, 1500); }
     private Player anyone() { for (Player p : Bukkit.getOnlinePlayers()) return p; return null; }
 
     // ================================================================== join / quit
@@ -77,7 +81,26 @@ final class Link implements PluginMessageListener {
             case Assign a -> assign(a);
             case KyudichiQueueProtocol.Spectate s -> spectate(s);
             case Practice x -> practice(x);
+            case AdminReply r -> adminReply(r);
         }
+    }
+
+    // ================================================================== admin requests (state on the proxy)
+    /** Sends an admin request through any online player (plugin messages need a connection); the reply comes back as AdminReply. */
+    void admin(CommandSender to, int action, UUID target, int mode) {
+        Player via = anyone();
+        if (via == null) { ChacaLink.fail(to, "이 서버에 접속한 사람이 없어 프록시에 요청을 보낼 수 없어요", null); return; }
+        UUID request = UUID.randomUUID();
+        adminPending.put(request, new Pending(to, tick));
+        send(via, new AdminRequest(request, action, target, mode));
+    }
+
+    private void adminReply(AdminReply r) {
+        var p = adminPending.remove(r.request());
+        if (p == null) return;
+        if (!r.ok()) { ChacaLink.fail(p.to(), r.message().isBlank() ? "명령어 사용에 실패했습니다" : r.message(), null); return; }
+        if (!r.lines().isEmpty()) ChacaLink.lines(p.to(), r.lines());
+        else ChacaLink.ok(p.to(), r.message());
     }
 
     private void assign(Assign a) {
@@ -89,7 +112,7 @@ final class Link implements PluginMessageListener {
             plugin.store().loadAll(id, plugin.hooks().nick(Bukkit.getOfflinePlayer(id)));
             Player p = Bukkit.getPlayer(id);
             if (p != null && plugin.spectate().spectating(id)) { keepOnLeave.add(id); plugin.spectate().leave(p); keepOnLeave.remove(id); }
-            if (p != null) p.sendMessage(Component.text("큐디치 경기 준비 중… 모두 모이면 시작해요.", NamedTextColor.GOLD));
+            if (p != null) notice(p, "system", "경기 준비 중", "모두 모이면 시작해요");
         }
         tryStart(a.match(), false);
     }
@@ -99,7 +122,7 @@ final class Link implements PluginMessageListener {
         networked.add(p.getUniqueId());
         Match m = s.arena().isBlank() ? plugin.matches().all().stream().filter(x -> !x.opt.test()).findFirst().orElse(null) : plugin.matches().inArena(s.arena());
         String err = m == null ? "관전할 경기가 없어요." : plugin.spectate().enter(p, m);
-        if (err != null) { p.sendMessage(Component.text(err, NamedTextColor.RED)); done(p.getUniqueId()); }
+        if (err != null) { notice(p, "warning", "관전할 수 없어요", err); done(p.getUniqueId()); }
     }
 
     private void practice(Practice x) {
@@ -114,9 +137,9 @@ final class Link implements PluginMessageListener {
             teams.put(Team.A, List.of(p)); teams.put(Team.B, List.of());
             err = plugin.matches().start(ar, teams, new Match.Options(false, true, 0, plugin.rules().playTicks, 0, true, Set.of()));
         }
-        if (err != null) { p.sendMessage(Component.text(err, NamedTextColor.RED)); done(p.getUniqueId()); }
-        else p.sendMessage(Component.text(duel ? "1:1 연습장에 들어왔어요. 마법을 자유롭게 연습해 보세요. 끝내려면 /큐디치 포기"
-                : "연습 시작! F로 퀘이플 잡기·던지기, 블러저 쳐내기, 스니치 잡기를 해 보세요. 끝내려면 /큐디치 포기", NamedTextColor.GREEN));
+        if (err != null) { notice(p, "warning", "연습장에 들어갈 수 없어요", err); done(p.getUniqueId()); }
+        else notice(p, "system", duel ? "1:1 연습장" : "큐디치 연습장", duel ? "마법을 자유롭게 연습해 보세요. 끝내려면 경기 창에서 포기"
+                : "F로 퀘이플 잡기·던지기, 블러저 쳐내기, 스니치 잡기를 해 보세요. 끝내려면 경기 창에서 포기");
     }
 
     // ================================================================== starting assigned matches
@@ -136,7 +159,7 @@ final class Link implements PluginMessageListener {
         gathering.remove(id);
         if (present.get(Team.A).isEmpty() || present.get(Team.B).isEmpty()) {
             plugin.getLogger().info("큐디치 매칭 경기 무효: 한 팀이 오지 않음");
-            for (var l : present.values()) for (Player p : l) { p.sendMessage(Component.text("상대가 오지 않아 경기가 취소됐어요.", NamedTextColor.RED)); done(p.getUniqueId()); }
+            for (var l : present.values()) for (Player p : l) { notice(p, "warning", "경기 취소", "상대가 오지 않아 경기가 취소됐어요"); done(p.getUniqueId()); }
             send(anyone(), new Ended(id));
             return;
         }
@@ -147,7 +170,7 @@ final class Link implements PluginMessageListener {
                 duel ? r.duelPrepareTicks : r.prepareTicks, duel ? r.duelRoundTicks : r.playTicks, r.snitchAtTicks, !duel, Set.of()), absent);
         if (err != null) {
             plugin.getLogger().warning("큐디치 매칭 경기 시작 실패: " + err);
-            for (var l : present.values()) for (Player p : l) { p.sendMessage(Component.text("경기를 시작하지 못했어요 (" + err + "). 원래 서버로 돌아가요.", NamedTextColor.RED)); done(p.getUniqueId()); }
+            for (var l : present.values()) for (Player p : l) { notice(p, "warning", "경기를 시작하지 못했어요", "원래 서버로 돌아가요"); done(p.getUniqueId()); }
             send(anyone(), new Ended(id));
             return;
         }
@@ -185,6 +208,13 @@ final class Link implements PluginMessageListener {
     // ================================================================== periodic
     private void tick() {
         tick += 20;
+        for (var it = adminPending.entrySet().iterator(); it.hasNext(); ) {
+            var e = it.next();
+            if (tick - e.getValue().sentAt() < ADMIN_TIMEOUT_TICKS) continue;
+            it.remove();
+            plugin.getLogger().warning("큐디치 관리 요청에 프록시 답이 없음 (Velocity chacademi-party 버전 확인)");
+            ChacaLink.fail(e.getValue().to(), "프록시가 답하지 않아요", null);
+        }
         for (UUID id : List.copyOf(gathering.keySet())) {
             var g = gathering.get(id);
             if (g != null) tryStart(id, tick - g.firstAt >= GATHER_TICKS);

@@ -38,8 +38,9 @@ class NetworkChatIntegrationTest {
  void drain()throws Exception {((ExecutorService)field("worker").get(plugin)).submit(()->{}).get(3,TimeUnit.SECONDS);}
  void identity(Person p,int house)throws Exception {plugin.identity(new PluginMessageEvent(p.connection,p.player,MinecraftChannelIdentifier.from("chacademi:party_identity"),NetworkChatTest.wire(2,"별빛",house)));drain();}
  void send(Person p,String channel,String text)throws Throwable {
-  var method=PartyPlugin.class.getDeclaredMethod("networkMessage",Player.class,String[].class);method.setAccessible(true);
-  try{method.invoke(plugin,p.player,new String[]{channel,text});}catch(InvocationTargetException e){throw e.getCause();}
+  var method=PartyPlugin.class.getDeclaredMethod("networkMessage",Player.class,String.class,String.class);method.setAccessible(true);
+  String name=switch(channel){case "g"->"전체";case "h"->"기숙사";default->channel;};
+  try{method.invoke(plugin,p.player,name,text);}catch(InvocationTargetException e){throw e.getCause();}
  }
  static String plain(Component c){String own=c instanceof TextComponent t?t.content():"";for(Component child:c.children())own+=plain(child);return own;}
  @AfterEach void close(){plugin.shutdown(new ProxyShutdownEvent());}
@@ -64,10 +65,8 @@ class NetworkChatIntegrationTest {
  }
  @Test void explicitDenyBlocksNetworkAndUndefinedPreservesPartyDefaultAllow()throws Exception {
   var a=new Person("school");identity(a,0);a.denied.add("chacademi.chat.global");assertThrows(IllegalArgumentException.class,()->send(a,"g","denied"));assertTrue(a.received.isEmpty());
-  Class<?> type=Arrays.stream(PartyPlugin.class.getDeclaredClasses()).filter(c->c.getSimpleName().equals("Commands")).findFirst().orElseThrow();var ctor=type.getDeclaredConstructor(PartyPlugin.class);ctor.setAccessible(true);
-  var commands=(com.velocitypowered.api.command.SimpleCommand)ctor.newInstance(plugin);
-  var invocation=mock(com.velocitypowered.api.command.SimpleCommand.Invocation.class,(method,args)->method.equals("source")?a.player:method.equals("arguments")?new String[0]:null);
-  assertTrue(commands.hasPermission(invocation));a.denied.add("chacademi.party");assertFalse(commands.hasPermission(invocation));
+  // /파티 노드의 requires: 명시적 false 만 막는다.
+  assertTrue(plugin.partyAllowed(a.player));a.denied.add("chacademi.party");assertFalse(plugin.partyAllowed(a.player));
  }
 
  @Test void arenaCanSendGlobalAndReceiveSameHouseWithoutWildServerLabel()throws Throwable {

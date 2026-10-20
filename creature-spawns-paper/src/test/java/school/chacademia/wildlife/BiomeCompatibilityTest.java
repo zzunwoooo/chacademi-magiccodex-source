@@ -36,11 +36,11 @@ class BiomeCompatibilityTest {
   var rows=resource("biome-compatibility.yml").getConfigurationSection("vanilla-biomes");assertEquals(54,rows.getKeys(false).size());
   for(String id:rows.getKeys(false)){assertTrue(id.matches("minecraft:[a-z0-9_]+"));for(String value:rows.getStringList(id))assertTrue(allowed.contains(value),value);}
  }
- @Test void operatorDiagnosticsKeepTheOriginalAliasAndTheBuiltVersion(){
+ @Test void builtVersionAndCommandsMovedToTheHub(){
+  // 2026-10-20: /야생관리 moved to /월드관리 야생몹 · /테스트 몹 작물몹 (MagicCodexBridge command hub); no plugin.yml commands remain.
   var plugin=resource("plugin.yml");assertEquals("0.4.1-integrated-20261020.3-spawngate.1",plugin.getString("version"));
-  var commands=plugin.getConfigurationSection("commands");assertEquals(1,commands.getKeys(false).size());String name=commands.getKeys(false).iterator().next();
-  assertEquals(Set.of("wildlifeadmin","wildlife"),new HashSet<>(commands.getStringList(name+".aliases")));
-  assertTrue(commands.getString(name+".usage").contains("diagnose [online-player]"));
+  assertNull(plugin.getConfigurationSection("commands"));
+  assertTrue(plugin.getStringList("softdepend").contains("MagicCodexBridge"));
  }
  @Test void malformedOrWildcardMappingsAreRejectedInsteadOfOpeningAllHabitats(){
   assertThrows(IllegalArgumentException.class,()->BiomeCompatibility.parse(null));

@@ -17,7 +17,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 /**
  * Placing like an ItemsAdder furniture (owner 2026-10-20): every gimmick sits on the block grid, centred on its block,
- * turned in 90° steps. `/기믹 소환` = the block the admin stands in; the placement item (`/기믹 아이템`) = the block next to the
+ * turned in 90° steps. `/던전관리 소환` = the block the admin stands in; the placement item (`/던전관리 아이템`) = the block next to the
  * clicked face, facing the admin. Overlapping another gimmick or replacing non-air blocks is refused.
  */
 final class Placer implements Listener {
@@ -40,19 +40,24 @@ final class Placer implements Listener {
 
     boolean isItem(ItemStack it) { return it != null && it.hasItemMeta() && it.getItemMeta().getPersistentDataContainer().has(modelKey, PersistentDataType.STRING); }
 
-    /** Place on block `feet` (the model's feet). @return the gimmick, or null (reason sent to the player). */
+    /** Place on block `feet` (the model's feet). @return the gimmick, or null (reason sent to the player as a warning card). */
     Gimmick place(Player p, String model, Block feet, int facing, String puzzle, String node) {
+        return place(p, model, feet, facing, puzzle, node, reason -> ChacaLink.notify(p, "warning", "gimmick-place", reason, "", 1000));
+    }
+
+    /** Same as above; the refusal reason goes to `refused` instead. */
+    Gimmick place(Player p, String model, Block feet, int facing, String puzzle, String node, java.util.function.Consumer<String> refused) {
         var info = plugin.catalog().get(model);
-        if (!plugin.catalog().known(model)) p.sendMessage("알림: models.yml 에 없는 모델입니다. 렌더러에 등록돼 있으면 그대로 소환됩니다.");
-        if (!plugin.protection().pair(p, feet.getLocation())) { p.sendActionBar(Component.text("보호 구역이라 설치할 수 없습니다.", NamedTextColor.RED)); return null; }
+        if (!plugin.catalog().known(model)) plugin.getLogger().info("models.yml에 없는 모델 설치: " + model + " (렌더러에 등록돼 있으면 그대로 그림)");
+        if (!plugin.protection().pair(p, feet.getLocation())) { refused.accept("보호 구역이라 설치할 수 없어요"); return null; }
         var probe = new Gimmick("probe", model, feet.getWorld().getName(), feet.getX(), feet.getY(), feet.getZ(), facing);
         Gimmick other = plugin.world().overlap(probe.world, probe.columns(info), probe.by, probe.layers(info), null);
-        if (other != null) { p.sendActionBar(Component.text("그 자리에는 이미 다른 기믹(" + other.id + ")이 있습니다.", NamedTextColor.RED)); return null; }
+        if (other != null) { refused.accept("그 자리에는 이미 다른 기믹(" + other.id + ")이 있어요"); return null; }
         if (!info.collision().equals("none") && !info.collision().equals("floor")) {
             int layers = info.collision().equals("platform") ? 1 : probe.layers(info);
             for (int[] c : probe.columns(info)) for (int l = 0; l < layers; l++) {
                 Block b = feet.getWorld().getBlockAt(c[0], feet.getY() + l, c[1]);
-                if (!b.getType().isAir() && !b.isPassable()) { p.sendActionBar(Component.text("모델이 들어갈 자리가 막혀 있습니다 (" + b.getX() + ", " + b.getY() + ", " + b.getZ() + ").", NamedTextColor.RED)); return null; }
+                if (!b.getType().isAir() && !b.isPassable()) { refused.accept("모델이 들어갈 자리가 막혀 있어요 (" + b.getX() + ", " + b.getY() + ", " + b.getZ() + ")"); return null; }
             }
         }
         Gimmick g = plugin.world().create(model, feet.getWorld(), feet.getX(), feet.getY(), feet.getZ(), facing, puzzle, node);
@@ -67,7 +72,7 @@ final class Placer implements Listener {
         if (model == null) return;
         e.setCancelled(true);
         Player p = e.getPlayer();
-        if (!p.hasPermission("chacademia.gimmick.admin")) return;
+        if (!p.isOp()) return;
         Block clicked = e.getClickedBlock();
         if (clicked == null) return;
         Block feet = clicked.isPassable() && !clicked.getType().isAir() ? clicked : clicked.getRelative(e.getBlockFace());
@@ -75,6 +80,6 @@ final class Placer implements Listener {
         Gimmick g = place(p, model, feet, facing, "", "");
         if (g == null) return;
         if (p.getGameMode() != GameMode.CREATIVE) e.getItem().setAmount(e.getItem().getAmount() - 1);
-        p.sendActionBar(Component.text(g.id + " 설치 (" + plugin.catalog().get(model).name() + ")", NamedTextColor.GREEN));
+        ChacaLink.notify(p, "system", "gimmick-placed", g.id + " 설치 (" + plugin.catalog().get(model).name() + ")", "", 0);
     }
 }

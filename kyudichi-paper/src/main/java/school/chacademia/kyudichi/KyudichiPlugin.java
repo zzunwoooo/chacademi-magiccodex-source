@@ -44,10 +44,7 @@ public final class KyudichiPlugin extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(selections, this);
         // Bridge / MagicMythic events after every plugin is enabled
         Bukkit.getScheduler().runTask(this, () -> { listener.hookBridge(); listener.hookHeal(); });
-        var admin = new AdminCommand(this);
-        var cmd = getCommand("큐디치관리"); cmd.setExecutor(admin); cmd.setTabCompleter(admin);
-        var player = new PlayerCommand(this);
-        var pc = getCommand("큐디치"); pc.setExecutor(player); pc.setTabCompleter(player);
+        registerCommands();
         matches.startTicking();
         Bukkit.getScheduler().runTaskTimer(this, () -> { selections.tick(); spectate.tick(); }, 10, 10);
         // weekly seasons: an ended season resets that mode and the next one starts (checked every minute)
@@ -65,6 +62,25 @@ public final class KyudichiPlugin extends JavaPlugin {
         if (net != null) net.unregister();
         if (link != null) link.unregister();
         if (store != null) store.close();
+    }
+
+    /** /큐디치관리 · /유저관리 … 큐디치·결투·파티 · /테스트 큐디치·결투 → MagicCodexBridge 명령어 허브. */
+    private void registerCommands() {
+        if (!ChacaLink.ready()) { getLogger().warning("MagicCodexBridge 명령어 허브가 없어 큐디치 명령을 등록하지 않았어요"); return; }
+        try {
+            new KyudichiCommands(this).register();
+            ChacaLink.reload(this, "큐디치", "큐디치 config.yml · arenas.yml (진행 중인 경기는 이전 규칙 유지)", this::reload);
+            ChacaLink.summary(this, "큐디치", id -> line(id, RatingStore.MODE));
+            ChacaLink.summary(this, "결투", id -> line(id, RatingStore.DUEL));
+            ChacaLink.status(this, "큐디치 경기장", () -> "정상 · 경기장 " + arenas.all().size() + "개 · 진행 중 " + matches.all().size() + "경기");
+        } catch (RuntimeException e) { getLogger().log(java.util.logging.Level.WARNING, "큐디치 명령 등록 실패", e); }
+    }
+
+    /** /유저관리 요약 한 줄: 이 서버가 캐시에 가진 값만 (없으면 줄 생략). */
+    private String line(java.util.UUID id, String mode) {
+        var r = store.peek(id, mode);
+        if (r == null) return "";
+        return rules.rating.tier(r.rating(), store.rank(id, mode)).label + " " + r.rating() + " · " + r.wins() + "승 " + r.losses() + "패";
     }
 
     void reload() {

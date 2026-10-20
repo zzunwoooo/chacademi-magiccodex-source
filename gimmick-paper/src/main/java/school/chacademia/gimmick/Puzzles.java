@@ -200,7 +200,7 @@ final class Puzzles {
                     Location l = g.location();
                     if (l == null) continue;
                     for (Player p : l.getWorld().getPlayers())
-                        if (p.getLocation().distanceSquared(l) < 24 * 24) p.sendActionBar(net.kyori.adventure.text.Component.text(def.message()));
+                        if (p.getLocation().distanceSquared(l) < 24 * 24) ChacaLink.notify(p, "system", "puzzle:" + puzzle + "." + node, def.message(), "", 3000);
                     break;
                 }
             }

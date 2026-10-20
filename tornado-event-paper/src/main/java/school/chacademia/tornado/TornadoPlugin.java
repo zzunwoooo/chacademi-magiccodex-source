@@ -17,8 +17,6 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.BlockDisplay;
@@ -86,6 +84,10 @@ public final class TornadoPlugin extends JavaPlugin implements Listener {
         if(Bukkit.getPluginManager().isPluginEnabled("MagicCodexBridge")){
             seasonalSkills=new SeasonalSpellMechanics(this);Bukkit.getPluginManager().registerEvents(seasonalSkills,this);
         }
+        if (ChacaLink.ready()) {
+            try { registerCommands(); }
+            catch (RuntimeException e) { getLogger().log(java.util.logging.Level.WARNING, "명령어 허브에 /월드관리 토네이도 갈래를 붙이지 못했습니다", e); }
+        } else getLogger().warning("MagicCodexBridge 명령어 허브가 없어 /월드관리 토네이도 명령을 등록하지 않았습니다 (회오리는 그대로 동작).");
         getLogger().info("Tornado controller ready for MythicMob " + mobId);
     }
 
@@ -137,32 +139,33 @@ public final class TornadoPlugin extends JavaPlugin implements Listener {
         }
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length == 0 || args[0].equalsIgnoreCase("status")) {
-            sender.sendMessage("활성 회오리: " + active.size() + "/" + maxActive);
-            var climate=climate();sender.sendMessage("계절: "+(climate==null?"연동 없음":climate.season().label)+" · 가을 자동 소환 "+getConfig().getBoolean("random-spawn.enabled",true));
-            return true;
-        }
-        if (args[0].equalsIgnoreCase("stop")) {
-            Tornado chosen = null;
-            double nearest = Double.MAX_VALUE;
-            for (Tornado tornado : active.values()) {
-                if(sender instanceof Player p&&!p.getWorld().equals(tornado.world))continue;
-                double distance = sender instanceof Player player && player.getWorld().equals(tornado.world)
-                        ? player.getLocation().distanceSquared(tornado.stand.getLocation()) : 0;
-                if (distance < nearest) { nearest = distance; chosen = tornado; }
-            }
-            if (chosen == null) sender.sendMessage("활성 회오리가 없습니다.");
-            else {
+    /** /월드관리 토네이도 &lt;보기|멈추기&gt; (예전 /chatornado status|stop). */
+    private void registerCommands() {
+        ChacaLink.branch(this, ChacaLink.월드관리, io.papermc.paper.command.brigadier.Commands.literal("토네이도")
+            .then(io.papermc.paper.command.brigadier.Commands.literal("보기").executes(ctx -> {
+                var climate = climate();
+                ChacaLink.lines(ctx.getSource().getSender(), List.of("── 토네이도 ──",
+                    " 활성 회오리: " + active.size() + "/" + maxActive,
+                    " 계절: " + (climate == null ? "연동 없음" : climate.season().label) + " · 가을 자동 소환 " + (getConfig().getBoolean("random-spawn.enabled", true) ? "켜짐" : "꺼짐")));
+                return 1;
+            }))
+            .then(io.papermc.paper.command.brigadier.Commands.literal("멈추기").executes(ctx -> {
+                var sender = ctx.getSource().getSender();
+                Tornado chosen = null;
+                double nearest = Double.MAX_VALUE;
+                for (Tornado tornado : active.values()) {
+                    if (sender instanceof Player p && !p.getWorld().equals(tornado.world)) continue;
+                    double distance = sender instanceof Player player ? player.getLocation().distanceSquared(tornado.stand.getLocation()) : 0;
+                    if (distance < nearest) { nearest = distance; chosen = tornado; }
+                }
+                if (chosen == null) throw ChacaLink.error(sender instanceof Player ? "이 월드에 활성 회오리가 없어요" : "활성 회오리가 없어요");
                 active.remove(chosen.stand.getUniqueId());
                 spawnGuard.remove(chosen.stand.getUniqueId());
                 chosen.stop(true);
-                sender.sendMessage("회오리를 종료했습니다.");
-            }
-            return true;
-        }
-        return false;
+                ChacaLink.ok(sender, "가장 가까운 회오리를 멈췄어요 (남은 " + active.size() + "개)");
+                return 1;
+            })),
+            "회오리 현황 보기·가장 가까운 회오리 멈추기", "토네이도 보기");
     }
 
     boolean isUnprotected(Block block) {

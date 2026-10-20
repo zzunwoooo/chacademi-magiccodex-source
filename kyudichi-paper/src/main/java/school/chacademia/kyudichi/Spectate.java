@@ -3,8 +3,6 @@ package school.chacademia.kyudichi;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -36,7 +34,7 @@ final class Spectate {
         p.showBossBar(m.bar);
         plugin.net().send(p, m.matchMessage(2));
         m.sendShrines();
-        p.sendMessage(Component.text("관전 중 · 선수를 좌클릭하면 그 사람 시점, Shift로 나오기 · /큐디치 관전 나가기", NamedTextColor.GRAY));
+        Link.notice(p, "system", "관전 중", "선수를 좌클릭하면 그 사람 시점, Shift로 나오기 · 관전 화면의 나가기 버튼으로 끝내기");
         return null;
     }
 

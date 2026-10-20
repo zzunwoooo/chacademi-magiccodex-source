@@ -261,7 +261,7 @@ final class Match {
                 Team defender = goalHit(q.prev, hp.getLocation().toVector().add(new Vector(0, 0.9, 0)));
                 if (defender != null && defender != h.team) { goal(h, false); return; }
                 if (now - q.heldSince >= rules.holdTicks) {
-                    hp.sendActionBar(Component.text("10초가 지나 퀘이플을 놓쳤어요", NamedTextColor.RED));
+                    ChacaLink.notify(hp, "warning", "kyudichi:hold", "퀘이플을 놓쳤어요", "10초가 지났어요", 1500);
                     dropQuaffle(null, null);
                 }
             }
@@ -308,7 +308,7 @@ final class Match {
         quaffle.heldSince = now;
         setHolder(m.id);
         Sounds.at(this, p.getLocation(), "catch", Sound.ENTITY_ITEM_PICKUP, 1, 1);
-        p.sendActionBar(Component.text("퀘이플 소유! 10초 안에 F로 던지세요 (소유 중 마법 사용 불가)", NamedTextColor.GOLD));
+        ChacaLink.notify(p, "system", "kyudichi:catch", "퀘이플 소유!", "10초 안에 F로 던지세요 (소유 중 마법 사용 불가)", 1500);
     }
 
     private void setHolder(UUID id) {
@@ -640,7 +640,7 @@ final class Match {
         Location l = s.at.location();
         if (l != null) plugin.hooks().playVfx(rules.shrineVfx.get(s.type), "pickup", l, 30);
         p.playSound(p.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1.5f);
-        p.sendActionBar(Component.text(s.type.label + " 성소!", NamedTextColor.AQUA));
+        ChacaLink.notify(p, "system", "kyudichi:shrine", s.type.label + " 성소!", "", 1500);
         Point old = s.at; s.at = null; s.respawnAt = now + rules.shrineRespawnTicks;
         sendShrines();
         // next one appears elsewhere (if there is another candidate)
@@ -725,7 +725,7 @@ final class Match {
         }
         if (m.falling && (p.isOnGround() || p.isInWater())) {
             m.falling = false;
-            p.sendActionBar(Component.text("낙마!", NamedTextColor.RED));
+            ChacaLink.notify(p, "warning", "kyudichi:fall", "낙마!", "", 1500);
             kill(m, p, null);
         }
     }
@@ -785,7 +785,7 @@ final class Match {
                 Location to = new Location(world, in.getX(), in.getY(), in.getZ(), l.getYaw(), l.getPitch());
                 tp(p, to);
                 p.setVelocity(b.center().subtract(in).normalize().multiply(0.6));
-                p.sendActionBar(Component.text("경기장 밖으로 나갈 수 없어요", NamedTextColor.RED));
+                ChacaLink.notify(p, "warning", "kyudichi:bounds", "경기장 밖으로 나갈 수 없어요", "", 3000);
             } else if (!forbidden) m.lastSafe = l.clone();
         }
     }
@@ -808,7 +808,7 @@ final class Match {
         p.showBossBar(bar);
         prepare(p, m);
         tp(p, (frozen() ? arena.starts.get(m.team)[m.slot] : arena.respawn(m.team, m.slot)).location());
-        p.sendMessage(Component.text("큐디치 경기에 다시 들어왔어요.", NamedTextColor.GOLD));
+        ChacaLink.notify(p, "system", "kyudichi:rejoin", "경기에 다시 들어왔어요", "", 1500);
         sendMatchAll();
         sendRoster();
         return true;
@@ -863,7 +863,7 @@ final class Match {
             if (!yes) return "진행 중인 포기 투표가 없어요.";
             if (now < voteRetryAt.getOrDefault(m.team, 0L)) return "포기 투표는 1분 뒤에 다시 할 수 있어요.";
             voteTeam = m.team; voteUntil = now + FORFEIT_WINDOW; voteYes.clear();
-            for (var o : players.values()) if (o.team == m.team) { Player op = online(o); if (op != null) op.sendMessage(Component.text(m.nick + " 님이 경기 포기를 제안했어요. /큐디치 포기 찬성 · 반대 (15초)", NamedTextColor.YELLOW)); }
+            for (var o : players.values()) if (o.team == m.team) { Player op = online(o); if (op != null) ChacaLink.notify(op, "system", "kyudichi:vote", "포기 투표", m.nick + " 님이 경기 포기를 제안했어요. 경기 창에서 찬성 · 반대 (15초)", 0); }
         } else if (voteTeam != m.team) return "상대 팀 투표 중이에요.";
         if (yes) voteYes.add(m.id); else voteYes.remove(m.id);
         long members = players.values().stream().filter(o -> o.team == m.team && o.online && !o.left).count();
@@ -874,7 +874,7 @@ final class Match {
     }
 
     private void voteFailed() {
-        for (var o : players.values()) if (o.team == voteTeam) { Player op = online(o); if (op != null) op.sendMessage(Component.text("포기 투표가 부결됐어요.", NamedTextColor.GRAY)); }
+        for (var o : players.values()) if (o.team == voteTeam) { Player op = online(o); if (op != null) ChacaLink.notify(op, "system", "kyudichi:vote", "포기 투표가 부결됐어요", "", 0); }
         voteRetryAt.put(voteTeam, now + FORFEIT_RETRY);
         voteTeam = null; voteYes.clear();
         sendMatchAll();

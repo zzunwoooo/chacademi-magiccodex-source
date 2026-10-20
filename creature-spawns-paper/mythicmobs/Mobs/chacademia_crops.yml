@@ -1,5 +1,5 @@
 # 살아나는 작물 몹 (2026-10-20)
-# 소환: ChAcademiaWildlife 플러그인 crop-awakening (다 자란 작물 수확 시 5%) / 테스트: /야생관리 crop <작물ID> [shiny]
+# 소환: ChAcademiaWildlife 플러그인 crop-awakening (다 자란 작물 수확 시 5%) / 테스트: /테스트 몹 작물몹 <작물> [이로치]
 # 모델: ModelEngine blueprint crop_<작물>.bbmodel, crop_<작물>_shiny.bbmodel (애니: spawn idle walk attack death)
 # 보상(Drops)은 나중에 정함. 지금은 아무것도 안 떨어짐.
 "CA_Crop_wheat":

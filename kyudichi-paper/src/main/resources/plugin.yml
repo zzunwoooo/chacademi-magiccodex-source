@@ -4,19 +4,5 @@ main: school.chacademia.kyudichi.KyudichiPlugin
 api-version: '1.21.4'
 description: 큐디치 3:3 공중 PvP (차카데미 아레나 서버)
 softdepend: [MagicCodexBridge, ChAcademiaMagicMythic, ChacademyMotion, ModelEngine, PortableVFX]
-commands:
-  큐디치관리:
-    description: 큐디치 경기장 설정·테스트·경기·유저 관리
-    usage: /큐디치관리
-    aliases: [kyudichi-admin, qa]
-    permission: chacademi.kyudichi.admin
-  큐디치:
-    description: 큐디치 정보·랭킹·포기·준비·관전·연습
-    usage: /큐디치
-    aliases: [kyudichi]
-    permission: chacademi.kyudichi.play
-permissions:
-  chacademi.kyudichi.admin:
-    default: op
-  chacademi.kyudichi.play:
-    default: true
+# 명령어는 MagicCodexBridge 명령어 허브에 붙는다: /큐디치관리 · /유저관리 <닉네임> 큐디치|결투|파티 · /테스트 큐디치|결투
+# 유저용 /큐디치 · /결투 는 Velocity 프록시(chacademi-party)가 로비 창을 연다.

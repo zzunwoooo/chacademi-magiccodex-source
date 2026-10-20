@@ -239,14 +239,14 @@ final class KyudichiCommands {
     private Collection<String> names(Boolean duel) {
         return plugin.arenas().all().stream().filter(a -> duel == null || a.duel == duel).map(a -> a.name).toList();
     }
-    /** 닉,닉,닉 칸: 마지막 쉼표 뒤 글자로 접속자 한글 닉네임을 제안한다. */
+    /** 닉+닉+닉 칸: 마지막 + 뒤 글자로 접속자 한글 닉네임을 제안한다. (쉼표는 클라이언트 입력 칸이 단어 끝으로 보므로 + 를 쓴다. 서버는 쉼표도 받는다) */
     private java.util.concurrent.CompletableFuture<com.mojang.brigadier.suggestion.Suggestions> teamSuggest(CommandContext<CommandSourceStack> ctx,
             com.mojang.brigadier.suggestion.SuggestionsBuilder b) {
         String typed = b.getRemaining();
-        int comma = typed.lastIndexOf(',');
+        int comma = Math.max(typed.lastIndexOf('+'), typed.lastIndexOf(','));
         var sub = b.createOffset(b.getStart() + comma + 1);
         String last = typed.substring(comma + 1).toLowerCase(Locale.ROOT);
-        var used = new HashSet<>(Arrays.asList(typed.substring(0, comma + 1).split(",")));
+        var used = new HashSet<>(Arrays.asList(typed.substring(0, comma + 1).split("[+,]")));
         for (String n : onlineNames()) if (n.indexOf(' ') < 0 && !used.contains(n) && n.toLowerCase(Locale.ROOT).startsWith(last)) sub.suggest(n);
         return sub.buildFuture();
     }
@@ -443,7 +443,7 @@ final class KyudichiCommands {
 
     private List<Player> team(String list) throws CommandSyntaxException {
         var out = new ArrayList<Player>();
-        for (String n : list.split(",")) {
+        for (String n : list.split("[+,]")) {
             if (n.isBlank()) continue;
             UUID id = ChacaLink.find(n.strip());
             if (id == null) throw ChacaLink.error(n.strip() + " 님을 찾을 수 없어요");
@@ -452,7 +452,7 @@ final class KyudichiCommands {
             if (out.contains(p)) throw ChacaLink.error(ChacaLink.name(id) + " 님을 두 번 적었어요");
             out.add(p);
         }
-        if (out.isEmpty() || out.size() > 3) throw ChacaLink.error("팀은 1~3명이에요 (닉,닉,닉)");
+        if (out.isEmpty() || out.size() > 3) throw ChacaLink.error("팀은 1~3명이에요 (닉+닉+닉)");
         return out;
     }
 
