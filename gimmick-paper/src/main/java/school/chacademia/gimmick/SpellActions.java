@@ -154,8 +154,17 @@ final class SpellActions implements Listener {
         if (g.live()) plugin.world().overlay(g, "fire_in");
         plugin.devices().remember(g);
         if (g.inPuzzle()) plugin.puzzles().trigger(g, "steam", p);
-        else { plugin.world().setFree(g, true); Bukkit.getScheduler().runTaskLater(plugin, () -> plugin.world().setFree(g, false), 100); }
+        else freePulse(g, 100);
         return true;
+    }
+
+    /** Free device on for `ticks`; a newer cast extends it instead of being cut short by the older timer. */
+    private final Map<String, Long> freeUntil = new HashMap<>();
+    private void freePulse(Gimmick g, int ticks) {
+        long until = tick + ticks;
+        freeUntil.put(g.id, until);
+        plugin.world().setFree(g, true);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> { if (Objects.equals(freeUntil.get(g.id), until)) { freeUntil.remove(g.id); plugin.world().setFree(g, false); } }, ticks);
     }
 
     // ================================================================== 241 수위 조절
@@ -173,7 +182,7 @@ final class SpellActions implements Listener {
             if (plugin.world().get(g.id) == null) return;
             plugin.devices().remember(g);
             if (g.inPuzzle()) plugin.puzzles().trigger(g, "weight", p.isOnline() ? p : null);
-            else { plugin.world().setFree(g, true); Bukkit.getScheduler().runTaskLater(plugin, () -> plugin.world().setFree(g, false), 40); }
+            else freePulse(g, 40);
         }, 13);
         return true;
     }
@@ -250,7 +259,8 @@ final class SpellActions implements Listener {
             var inst = p.getAttribute(a);
             if (inst == null) continue;
             inst.removeModifier(freezeKey);
-            if (on) inst.addModifier(new AttributeModifier(freezeKey, -1, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.ANY));
+            // transient: never saved with the player, so a crash mid-beam cannot leave anyone frozen
+            if (on) inst.addTransientModifier(new AttributeModifier(freezeKey, -1, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.ANY));
         }
     }
     private void beamTick(Set<String> lit) {
@@ -269,7 +279,8 @@ final class SpellActions implements Listener {
         var segs = new ArrayList<Seg>();
         double max = plugin.getConfig().getDouble("light-beam-range", 32);
         double yaw = Math.toRadians(p.getLocation().getYaw());
-        Vector dir = new Vector(-Math.sin(yaw), 0, Math.cos(yaw)).normalize();
+        // grid puzzles: the beam leaves along the nearest axis (also keeps the drawn path stable while the caster turns slightly)
+        Vector dir = axis(new Vector(-Math.sin(yaw), 0, Math.cos(yaw)));
         Location from = p.getLocation().add(0, 1.2, 0).add(dir.clone().multiply(0.4));
         Location pos = from.clone(); String color = "white"; double total = 0, segLen = 0; Gimmick last = null; boolean hit = false;
         World w = p.getWorld(); int turns = 0;
@@ -362,6 +373,8 @@ final class SpellActions implements Listener {
         applyLight(lit);
         if (tick % 200 == 0) marks.values().removeIf(m -> (long) m[1] < tick);
     }
+    @EventHandler public void join(org.bukkit.event.player.PlayerJoinEvent e) { root(e.getPlayer(), false); } // older saves
+
     @EventHandler public void quit(PlayerQuitEvent e) {
         UUID id = e.getPlayer().getUniqueId();
         var b = beams.remove(id); if (b != null) { b.shown.forEach(plugin.vfx()::stop); root(e.getPlayer(), false); }

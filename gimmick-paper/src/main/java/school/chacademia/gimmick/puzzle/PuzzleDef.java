@@ -94,7 +94,15 @@ public record PuzzleDef(String id, Map<String, NodeDef> nodes, boolean persist) 
     }
     private static Integer opt(Object o, int min, int max) { return o == null ? null : Math.clamp(i(o, min), min, max); }
     /** 0..3 or south/west/north/east (남/서/북/동), or degrees. */
-    public static Integer facingOf(Object o) { return facing(o); }
+    /** Strict: compass word or a number, else null. */
+    public static Integer facingOf(Object o) {
+        if (o == null) return null;
+        String s = String.valueOf(o).trim();
+        try { Double.parseDouble(s); } catch (NumberFormatException e) {
+            if (!Set.of("south", "s", "남", "남쪽", "west", "w", "서", "서쪽", "north", "n", "북", "북쪽", "east", "e", "동", "동쪽").contains(s.toLowerCase(Locale.ROOT))) return null;
+        }
+        return facing(o);
+    }
     static Integer facing(Object o) {
         if (o == null) return null;
         String s = String.valueOf(o).trim().toLowerCase(Locale.ROOT);

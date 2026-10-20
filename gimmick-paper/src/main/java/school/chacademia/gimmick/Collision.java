@@ -43,22 +43,27 @@ final class Collision implements Listener {
     void load() {
         placed.clear();
         var yaml = AtomicYaml.load(file);
-        for (String owner : yaml.getKeys(false)) {
-            var sec = yaml.getConfigurationSection(owner);
-            if (sec == null) continue;
+        var owners = yaml.getConfigurationSection("owners");
+        if (owners != null) for (String owner : owners.getKeys(false)) {
             var m = new LinkedHashMap<String, Material>();
-            for (String k : sec.getKeys(false)) { Material mat = Material.matchMaterial(String.valueOf(sec.getString(k))); if (mat != null) m.put(k.replace('|', ':'), mat); }
-            placed.put(owner, m);
+            for (String line : owners.getStringList(owner)) {
+                int eq = line.lastIndexOf('=');
+                if (eq <= 0) continue;
+                Material mat = Material.matchMaterial(line.substring(eq + 1));
+                if (mat != null) m.put(line.substring(0, eq), mat);
+            }
+            if (!m.isEmpty()) placed.put(owner, m);
         }
         // owners that no longer exist: take their blocks back
         for (String owner : List.copyOf(placed.keySet())) if (plugin.world().get(owner) == null) reconcile(owner, Map.of());
     }
 
-    private void save() {
+    /** owners.<gimmick id>: ["world:x:y:z=MATERIAL", ...] (a list, so world names with dots stay intact). */
+    private boolean save() {
         var yaml = new YamlConfiguration();
-        placed.forEach((owner, m) -> m.forEach((k, mat) -> yaml.set(owner + "." + k.replace(':', '|'), mat.name())));
-        try { AtomicYaml.save(yaml, file); dirty = false; }
-        catch (IOException e) { plugin.getLogger().warning("collision.yml 저장 실패: " + e.getMessage()); }
+        placed.forEach((owner, m) -> yaml.set("owners." + owner, m.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue().name()).toList()));
+        try { AtomicYaml.save(yaml, file); dirty = false; return true; }
+        catch (IOException e) { plugin.getLogger().warning("collision.yml 저장 실패: " + e.getMessage()); return false; }
     }
 
     /** Blocks this gimmick should hold right now. */
@@ -72,8 +77,9 @@ final class Collision implements Listener {
         int dx = (int) Math.round(off.getX()), dy = (int) Math.round(off.getY()), dz = (int) Math.round(off.getZ());
         if (!open) {
             switch (info.collision()) {
-                case "solid" -> { for (int[] c : g.columns(info)) for (int l = 0; l < info.layers(); l++) out.put(key(g.world, c[0], g.by + l, c[1]), Material.BARRIER); }
-                case "platform" -> { for (int[] c : g.columns(info, dx, dz)) out.put(key(g.world, c[0], g.by + dy, c[1]), Material.BARRIER); }
+                case "solid" -> { for (int[] c : g.columns(info)) for (int l = 0; l < g.layers(info); l++) out.put(key(g.world, c[0], g.by + l, c[1]), Material.BARRIER); }
+                // a moving platform has no barrier while it travels (riders are carried by Devices); it lands on whole blocks
+                case "platform" -> { if (g.travel <= 0 || g.travel >= 1) for (int[] c : g.columns(info, dx, dz)) out.put(key(g.world, c[0], g.by + dy, c[1]), Material.BARRIER); }
                 default -> {}
             }
         }
@@ -103,18 +109,23 @@ final class Collision implements Listener {
             dirty = true;
         }
         boolean waiting = false;
+        var add = new ArrayList<Block>();
         for (var e : want.entrySet()) {
             if (next.containsKey(e.getKey())) continue;
             Block b = block(e.getKey());
             if (b == null) { waiting = true; continue; }
             if (!b.getType().isAir() || !plugin.protection().at(b.getLocation())) continue; // never replace the build
             if (occupied(b)) { waiting = true; continue; }
-            b.setType(e.getValue(), false);
+            add.add(b);
             next.put(e.getKey(), e.getValue());
-            dirty = true;
         }
         if (next.isEmpty()) placed.remove(owner); else placed.put(owner, next);
         if (waiting) pending.add(owner);
+        if (!add.isEmpty()) {
+            // write-ahead: the record is on disk before any block appears, so a crash never leaves unrecorded barriers
+            if (!save()) { for (Block b : add) next.remove(key(b.getWorld().getName(), b.getX(), b.getY(), b.getZ())); if (next.isEmpty()) placed.remove(owner); pending.add(owner); return; }
+            for (Block b : add) b.setType(want.get(key(b.getWorld().getName(), b.getX(), b.getY(), b.getZ())), false);
+        }
     }
 
     private static boolean occupied(Block b) {
@@ -144,6 +155,8 @@ final class Collision implements Listener {
 
     @EventHandler public void chunkLoad(ChunkLoadEvent e) {
         String w = e.getWorld().getName();
+        // records of deleted gimmicks whose blocks were in an unloaded chunk
+        for (String owner : List.copyOf(placed.keySet())) if (plugin.world().get(owner) == null) reconcile(owner, Map.of());
         for (Gimmick g : plugin.world().all())
             if (!g.attached() && g.world.equals(w) && g.chunkX() == e.getChunk().getX() && g.chunkZ() == e.getChunk().getZ()) pending.add(g.id);
     }

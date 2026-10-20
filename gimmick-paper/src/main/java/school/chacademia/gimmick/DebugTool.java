@@ -149,8 +149,8 @@ final class DebugTool implements Listener {
     static final String[] FACING = {"남(0°)", "서(90°)", "북(180°)", "동(270°)"};
 
     /** Another gimmick already takes one of the blocks (the grid is one model per block). */
-    private boolean blocked(Player p, Gimmick g, ModelCatalog.Info info) {
-        Gimmick other = plugin.world().overlap(g.world, g.columns(info), g.by, info.layers(), g);
+    boolean blocked(Player p, Gimmick g, ModelCatalog.Info info) {
+        Gimmick other = plugin.world().overlap(g.world, g.columns(info), g.by, g.layers(info), g);
         if (other == null) return false;
         bar(p, "그 자리에는 이미 다른 기믹(" + other.id + ")이 있습니다.");
         return true;

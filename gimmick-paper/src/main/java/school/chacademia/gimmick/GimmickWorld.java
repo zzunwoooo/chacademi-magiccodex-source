@@ -126,7 +126,7 @@ final class GimmickWorld implements Listener {
             for (Gimmick g : gimmicks.values()) {
                 if (g.attached()) continue;
                 var info = plugin.catalog().get(g.model);
-                int base = (int) Math.floor(g.y + 1e-6), top = (int) Math.floor(g.y + Math.max(0.2, info.height() * g.scale) - 1e-6);
+                int base = (int) Math.floor(g.y + 1e-6), top = base + g.layers(info) - 1;
                 var off = plugin.devices().platformOffset(g);
                 int dx = (int) Math.round(off.getX()), dz = (int) Math.round(off.getZ());
                 for (int[] c : g.columns(info, dx, dz)) for (int yy = base; yy <= Math.max(base, top); yy++) cells.putIfAbsent(cell(g.world, c[0], yy, c[1]), g);
@@ -196,6 +196,11 @@ final class GimmickWorld implements Listener {
             }
         }
         markDirty();
+        freeOn.remove(g.id);
+        plugin.collision().refresh(g);
+        plugin.solids().refresh(g);
+        plugin.mana().dirty();
+        plugin.puzzles().deviceChanged(g);
         if (g.live()) playState(g, false);
     }
 
@@ -372,6 +377,7 @@ final class GimmickWorld implements Listener {
     void setFree(Gimmick g, boolean on) {
         if (g.inPuzzle() || (on == freeOn.contains(g.id))) return;
         if (on) freeOn.add(g.id); else freeOn.remove(g.id);
+        plugin.collision().refresh(g);
         if (g.live()) { transition(g, on, null, null); Bukkit.getScheduler().runTaskLater(plugin, () -> deviceLayers(g), 2); }
     }
 

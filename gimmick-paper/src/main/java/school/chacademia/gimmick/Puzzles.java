@@ -131,8 +131,11 @@ final class Puzzles {
         if (e == null) return;
         Boolean before = heldInputs.put(puzzle + ":" + node + ":" + key, on);
         String name = who == null ? null : who.getName();
+        boolean wasOn = e.on(node);
         e.held(node, key, on, name, tick);
-        if (on && !Boolean.TRUE.equals(before) && !key.equals("state")) e.trigger(node, key, name, tick);
+        // rising edge; an input already present when the server starts (first 5 s) is a state, not an event (no timed door opening at boot)
+        boolean first = before == null;
+        if (on && !Boolean.TRUE.equals(before) && !key.equals("state") && !(first && (tick < 100 || wasOn))) e.trigger(node, key, name, tick);
     }
     /** Re-check a device condition (water level, mirror/dial position, statue facing) after the device changed. */
     void deviceChanged(Gimmick g) {
@@ -157,6 +160,8 @@ final class Puzzles {
         e.reset();
         heldInputs.keySet().removeIf(k -> k.startsWith(puzzle + ":"));
         for (Gimmick g : plugin.world().all()) if (g.puzzle.equals(puzzle)) plugin.devices().reset(g);
+        for (Gimmick g : plugin.world().all()) if (g.puzzle.equals(puzzle)) deviceChanged(g); // devices keep their pose: re-check level/position/facing
+        plugin.mana().dirty();
         dirty = true;
         return true;
     }

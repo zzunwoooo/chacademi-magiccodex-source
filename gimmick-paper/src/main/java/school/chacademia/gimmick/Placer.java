@@ -46,10 +46,10 @@ final class Placer implements Listener {
         if (!plugin.catalog().known(model)) p.sendMessage("알림: models.yml 에 없는 모델입니다. 렌더러에 등록돼 있으면 그대로 소환됩니다.");
         if (!plugin.protection().pair(p, feet.getLocation())) { p.sendActionBar(Component.text("보호 구역이라 설치할 수 없습니다.", NamedTextColor.RED)); return null; }
         var probe = new Gimmick("probe", model, feet.getWorld().getName(), feet.getX(), feet.getY(), feet.getZ(), facing);
-        Gimmick other = plugin.world().overlap(probe.world, probe.columns(info), probe.by, info.layers(), null);
+        Gimmick other = plugin.world().overlap(probe.world, probe.columns(info), probe.by, probe.layers(info), null);
         if (other != null) { p.sendActionBar(Component.text("그 자리에는 이미 다른 기믹(" + other.id + ")이 있습니다.", NamedTextColor.RED)); return null; }
         if (!info.collision().equals("none") && !info.collision().equals("floor")) {
-            int layers = info.collision().equals("platform") ? 1 : info.layers();
+            int layers = info.collision().equals("platform") ? 1 : probe.layers(info);
             for (int[] c : probe.columns(info)) for (int l = 0; l < layers; l++) {
                 Block b = feet.getWorld().getBlockAt(c[0], feet.getY() + l, c[1]);
                 if (!b.getType().isAir() && !b.isPassable()) { p.sendActionBar(Component.text("모델이 들어갈 자리가 막혀 있습니다 (" + b.getX() + ", " + b.getY() + ", " + b.getZ() + ").", NamedTextColor.RED)); return null; }

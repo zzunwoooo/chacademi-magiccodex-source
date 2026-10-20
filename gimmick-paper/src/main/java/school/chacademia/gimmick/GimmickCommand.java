@@ -95,6 +95,7 @@ final class GimmickCommand implements CommandExecutor, TabCompleter {
                 if (p == null || a.length < 3) return usage(s, "/기믹 설정 <방향|크기|높이|위치> <값>   (위치는 x y z)");
                 Gimmick g = target(p, a, 99);
                 if (g == null||p!=null&&!plugin.protection().pair(p,g.location())) return fail(s, "선택된 기믹이 없습니다.");
+                int[] old = {g.bx, g.by, g.bz, g.facing};
                 switch (a[1]) {
                     case "방향", "yaw" -> { Integer v = facingArg(a[2]); if (v == null) return usage(s, "방향: 남/서/북/동 또는 0/90/180/270"); if (g.attached()) g.yaw = v * 90f; else g.facing = v; }
                     case "크기", "scale" -> g.scale = Math.clamp(parse(a[2], g.scale), 0.1, 8);
@@ -111,6 +112,10 @@ final class GimmickCommand implements CommandExecutor, TabCompleter {
                         else plugin.devices().position(g, (int) parse(a[2], g.pos) - g.pos);
                     }
                     default -> { return usage(s, "/기믹 설정 <방향|크기|높이|위치|상태> <값>"); }
+                }
+                if (!g.attached() && p != null && plugin.tool().blocked(p, g, plugin.catalog().get(g.model))) {
+                    g.bx = old[0]; g.by = old[1]; g.bz = old[2]; g.facing = old[3];
+                    return fail(s, "다른 기믹과 겹쳐서 바꾸지 않았습니다.");
                 }
                 plugin.world().transform(g);
                 ok(s, g.attached() ? String.format(Locale.ROOT, "%s 방향 %.0f° 크기 %.2f", g.id, g.yaw, g.scale)

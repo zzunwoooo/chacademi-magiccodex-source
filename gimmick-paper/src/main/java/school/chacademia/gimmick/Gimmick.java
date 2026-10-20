@@ -124,6 +124,9 @@ final class Gimmick {
     private double centreX(ModelCatalog.Info info) { int[] f = forward(facing), r = right(facing); return r[0] * (lo(info.footW()) + (info.footW() - 1) / 2.0) + f[0] * (lo(info.footD()) + (info.footD() - 1) / 2.0); }
     private double centreZ(ModelCatalog.Info info) { int[] f = forward(facing), r = right(facing); return r[1] * (lo(info.footW()) + (info.footW() - 1) / 2.0) + f[1] * (lo(info.footD()) + (info.footD() - 1) / 2.0); }
 
+    /** Blocks tall (model height x scale, rounded up). Collision, block index and placement all use this. */
+    int layers(ModelCatalog.Info info) { return Math.max(1, (int) Math.ceil(info.height() * scale - 1e-6)); }
+
     /** Snapshot for 248 되감기. */
     record Snapshot(int facing, int pos, int level, String color, Boolean nodeOn, long at) {}
     Snapshot snapshot(Boolean nodeOn, long now) { return new Snapshot(facing, pos, level, color, nodeOn, now); }

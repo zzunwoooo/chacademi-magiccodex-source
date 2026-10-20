@@ -59,7 +59,7 @@ final class Inputs implements Listener {
         // 2) portal
         if (node.teleport() != null && plugin.puzzles().isOn(g.puzzle, g.node) && teleport(p, g.puzzle, node.teleport())) return;
         // 3) plain interact (levers can be undone with 248 되감기)
-        plugin.devices().remember(g);
+        if (node.on().contains("interact") || node.off().contains("interact") || node.toggle().contains("interact")) plugin.devices().remember(g);
         plugin.puzzles().trigger(g, "interact", p);
     }
 
@@ -203,10 +203,7 @@ final class Inputs implements Listener {
             if (before != null && before == now) continue;
             String[] pn = key.split(":", 2);
             Player who = seen.get(key);
-            plugin.puzzles().standing(pn[0], pn[1], now, who);
-            if (now) {
-                for (Gimmick g : plugin.world().inNode(pn[0], pn[1])) { plugin.puzzles().trigger(g, "stand", who); break; }
-            }
+            plugin.puzzles().standing(pn[0], pn[1], now, who); // also fires turn-on/toggle "stand" once on the rising edge
         }
         standingNodes.keySet().retainAll(anyStandNode);
     }

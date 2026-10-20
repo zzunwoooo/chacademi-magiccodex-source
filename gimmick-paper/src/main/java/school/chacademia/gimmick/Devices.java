@@ -130,17 +130,18 @@ final class Devices {
             g.x += delta.getX(); g.y += delta.getY(); g.z += delta.getZ();
             if (g.handle != null) g.handle.teleport(g.location());
             if (g.hitbox != null) g.hitbox.teleport(g.location());
+            double surface = g.y + info.height() * g.scale; // model top after this step
             for (Player p : at.getWorld().getPlayers()) {
                 if (p.getGameMode() == GameMode.SPECTATOR || !top.contains(p.getLocation().toVector())) continue;
-                p.teleport(p.getLocation().add(delta));
+                var to = p.getLocation().add(delta);
+                to.setY(Math.max(to.getY(), surface)); // stand on the moving top (there is no barrier while it travels)
+                p.teleport(to);
+                p.setVelocity(p.getVelocity().setY(0));
                 p.setFallDistance(0);
             }
         }
-        if ((int) Math.round(before.getX()) != (int) Math.round(after.getX()) || (int) Math.round(before.getY()) != (int) Math.round(after.getY())
-            || (int) Math.round(before.getZ()) != (int) Math.round(after.getZ()) || g.travel >= 1) {
-            plugin.world().cellsChanged();
-            plugin.collision().refresh(g);
-        }
+        plugin.world().cellsChanged();
+        if (g.travel >= 1 || g.travel - step <= 0) plugin.collision().refresh(g); // barrier lifted when it sets off, back when it lands
         plugin.world().markDirty();
     }
 

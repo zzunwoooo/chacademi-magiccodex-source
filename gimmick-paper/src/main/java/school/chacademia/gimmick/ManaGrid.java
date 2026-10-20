@@ -50,7 +50,7 @@ final class ManaGrid {
             if (d == null || !d.device().manaOut() || !plugin.puzzles().isOn(g.puzzle, g.node)) continue;
             sources.add(g.id);
             var info = plugin.catalog().get(g.model);
-            for (int[] c : g.columns(info)) for (int l = 0; l < info.layers(); l++)
+            for (int[] c : g.columns(info)) for (int l = 0; l < g.layers(info); l++)
                 for (int[] dir : DIRS) queue.add(new Object[]{g.world, c[0] + dir[0], g.by + l + dir[1], c[1] + dir[2], -dir[0], -dir[1], -dir[2]});
         }
         int guard = 0;
