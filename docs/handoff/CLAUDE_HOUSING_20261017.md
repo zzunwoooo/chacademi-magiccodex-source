@@ -117,3 +117,19 @@
 - BGM 선택(팝업 PNG 는 받아 둠), 가구 획득 경로(상점·보상), 확장 비용 확정.
 - 가구 위에 소품 올리기, 방 랭킹·인기 방 목록은 아직 없음.
 - 정렬은 바닥 칸 합 기준이라 아주 긴 가구끼리 붙으면 앞뒤가 어긋날 수 있다(상자일 때는 거의 안 보임).
+
+## 2026-10-20 가구 100종 그림 (브랜치 `claude/housing-furniture-20261020`)
+
+기반: `codex/operating-final-20261019` @ ef55623 + 하우징 수정 8521b9e(cherry-pick, `claude/kyudichi-combat-20261019` 에만 있던 것).
+
+- 오너 납품 `chacademi_housing_100.zip`(GPT 제작) → `textures/gui/housing/furniture/<id>.png`(바닥 가구·소품·특수·벽걸이 80장, 원본 크기), `wallpaper/<id>.png`(256×1024로 축소), `floor/<id>.png`(512², 불투명). 약 12MB.
+- `furniture.yml` 을 100종으로 교체 (기획 `claude/housing-furniture-plan.md`). 크기·최대 개수는 기획대로, 높이는 그림에서 잰 값, color/accent 는 그림 평균색(불러오는 동안의 상자 색). `icon:` = 그림 경로(방·보관함 공용).
+  **운영 서버 `plugins/ChacaHousing/furniture.yml` 은 jar 로 바뀌지 않는다 → 학교·야생 모두 새 파일로 교체 후 `/하우징관리 리로드`.** 예전 임시 가구 ID(moon_rug, moon_banner, starry_wallpaper, cream_wallpaper, oak_floor, marble_floor)는 없어지므로 그 배치는 다음 접속 때 빠진다.
+- 그리기 (`HousingScreen.drawPlaced`, `art`, `artFace`, HudTextureCache.drawGrid 사용 → 밉맵 있는 UI 텍스처):
+  - 바닥 가구: 그림의 (32 + 가로칸×128, 높이-32) 점을 차지 칸의 맨 앞 꼭짓점에, 한 칸 = 가로 256px 비율로. 홀수 회전은 좌우 뒤집기(2·3 회전은 0·1 과 같은 그림).
+  - 벽걸이: 정면 그림을 벽 칸(가로칸×높이칸)에 붙임. 왼쪽 벽은 화면 왼쪽이 z 큰 쪽.
+  - 벽지: 칸마다 한 장(높이 4칸). 바닥재: 한 장이 2×2 칸.
+  - 그림이 아직 안 올라온 프레임은 예전처럼 색 상자/색으로 그린다.
+  - 마우스 판정은 여전히 `height` 상자 윤곽.
+- 특수 가구 11종은 **그림만** 들어갔다. 누르면 창 열기·미끼 받기·전시 동작은 아직 없음(다음 작업).
+- 러그도 바닥 칸을 차지하므로 러그 위에 다른 가구는 못 놓는다(겹치기 규칙 그대로).
