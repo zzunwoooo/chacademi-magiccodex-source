@@ -83,8 +83,9 @@ public final class CastingClient {
         var next=base.copy(); next.swapOrder(a,b);
         try { next.save(PATH); base=next; refreshBindings(); }
         catch(java.io.IOException error) {
-            var c=MinecraftClient.getInstance();
-            if(c.player!=null) c.player.sendMessage(Text.literal("순서를 저장하지 못했습니다: "+error.getMessage()),true);
+            // Technical detail (file path etc.) only in the log; the player sees a fixed notice.
+            org.slf4j.LoggerFactory.getLogger("magiccodex").warn("마법 슬롯 순서 저장 실패",error);
+            SharedNotifications.offer("cast:order","error","순서를 저장하지 못했어요","기존 순서를 유지합니다. 잠시 후 다시 시도해 주세요.");
         }
     }
     private static String toggleLabel() { return toggleKey==null?"Z":toggleKey.getBoundKeyLocalizedText().getString(); }
@@ -107,7 +108,7 @@ public final class CastingClient {
                     ManaClient.supported(),AimTargeting::begin,sender(client));
         } catch(RuntimeException error) {
             org.slf4j.LoggerFactory.getLogger("magiccodex").warn("마법 명령 전송 실패",error);
-            if(client.player!=null) client.player.sendMessage(Text.literal("마법 명령을 전송하지 못했습니다."),true);
+            SharedNotifications.offer("cast:send","error","마법을 사용하지 못했어요","마법 명령을 전송하지 못했습니다.");
             return true;
         }
         report(client,result);
@@ -123,7 +124,7 @@ public final class CastingClient {
         try { report(client,STATE.fire(spell.id(),Util.getMeasuringTimeMs(),ManaClient.supported(),sender(client))); }
         catch(RuntimeException error) {
             org.slf4j.LoggerFactory.getLogger("magiccodex").warn("마법 명령 전송 실패",error);
-            if(client.player!=null) client.player.sendMessage(Text.literal("마법 명령을 전송하지 못했습니다."),true);
+            SharedNotifications.offer("cast:send","error","마법을 사용하지 못했어요","마법 명령을 전송하지 못했습니다.");
         }
         finally { if(aimed) CrosshairAim.restore(client); }
     }
@@ -153,7 +154,8 @@ public final class CastingClient {
             };
             long now=Util.getMeasuringTimeMs();
             if(!message.isEmpty() && client.player!=null && now-lastNotice>1000) {
-                client.player.sendMessage(Text.literal(message),true); lastNotice=now;
+                // UNKNOWN = permissions still loading (not a failure): warning card without the 삐빅.
+                SharedNotifications.offer("cast:"+result.kind(),result.kind()==CastingState.Kind.UNKNOWN?"warning":"error","마법을 사용하지 못했어요",message); lastNotice=now;
             }
         }
     }

@@ -101,7 +101,8 @@ public final class ManaClient {
                 case ManaProtocol.LOCKED->"이 마법을 사용할 수 없습니다.";case ManaProtocol.UNKNOWN->"서버에 등록되지 않았거나 비활성화된 마법입니다.";
                 default->"마법 명령이 연결되지 않았거나 실행에 실패했습니다.";
             };
-            var client=MinecraftClient.getInstance();if(client.player!=null)client.player.sendMessage(Text.literal(text),true);
+            // Notification card + 삐빅 (no actionbar). Same id while the card is visible = no spam on repeated presses.
+            SharedNotifications.offer("mana:fail:"+response.status(),"error","마법을 사용하지 못했어요",text);
         }
     }
     public static void tick(MinecraftClient client){
