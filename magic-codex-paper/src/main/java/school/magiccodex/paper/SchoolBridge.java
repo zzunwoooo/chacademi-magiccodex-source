@@ -39,7 +39,7 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
         this.plugin=plugin;this.stats=stats;
         if(!new File(plugin.getDataFolder(),"donation-spells.yml").exists())plugin.saveResource("donation-spells.yml",false);
         loadCatalog();
-        try{var settings=DatabaseSettings.load(plugin.getDataFolder().toPath().resolve("database.properties"));shared=settings.mariaDb();store=io.submit(()->new SchoolStore(plugin.getDataFolder().toPath().resolve("school.db"),settings)).get(10,TimeUnit.SECONDS);var active=shared?activePlayers():null;data=io.submit(()->store.snapshot(active)).get(10,TimeUnit.SECONDS);}catch(Exception e){io.shutdownNow();throw e;}
+        try{var settings=GenericDatabaseFile.load(plugin.getDataFolder().toPath());shared=settings.mariaDb();store=io.submit(()->new SchoolStore(plugin.getDataFolder().toPath().resolve("school.db"),settings)).get(10,TimeUnit.SECONDS);var active=shared?activePlayers():null;data=io.submit(()->store.snapshot(active)).get(10,TimeUnit.SECONDS);}catch(Exception e){io.shutdownNow();throw e;}
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin,SchoolProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,SchoolProtocol.RESPONSE);Bukkit.getPluginManager().registerEvents(this,plugin);
         registerCommands();
         // Preserve the independently reviewed sorting command; its dialogue content is deferred.

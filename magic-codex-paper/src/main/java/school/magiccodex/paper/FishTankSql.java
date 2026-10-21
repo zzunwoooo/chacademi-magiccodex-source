@@ -12,7 +12,7 @@ final class FishTankSql {
     private final boolean maria;
     FishTankSql(Connection connection, boolean maria) { c=connection;this.maria=maria; }
     void init() throws SQLException {
-        String engine=maria?" ENGINE=InnoDB":"";
+        String engine=maria?" ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci":"";
         try(var s=c.createStatement()) {
             s.execute("CREATE TABLE IF NOT EXISTS codex_fish_tank(id VARCHAR(36) PRIMARY KEY,uuid VARCHAR(36) NOT NULL,fish VARCHAR(64) NOT NULL,size DOUBLE NOT NULL,caught_at BIGINT NOT NULL,fish_state VARCHAR(16) NOT NULL DEFAULT 'TANK',item_token VARCHAR(36) NOT NULL DEFAULT '')"+engine);
             s.execute("CREATE TABLE IF NOT EXISTS codex_fish_lock(uuid VARCHAR(36) NOT NULL,fish VARCHAR(64) NOT NULL,PRIMARY KEY(uuid,fish))"+engine);

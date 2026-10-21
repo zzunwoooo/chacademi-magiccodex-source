@@ -71,7 +71,7 @@ final class NpcSocialService implements Listener, AutoCloseable {
         zone = ZoneId.of(cfg.getString("timezone", "Asia/Seoul"));
         int recoverMinutes = Math.max(2, cfg.getInt("recover-pending-gift-minutes", 10));
 
-        var settings = DatabaseSettings.load(folder.resolve("database.properties"));
+        var settings = GenericDatabaseFile.load(folder);
         // SQLite fallback 경로를 명시: plugins/MagicCodexBridge/affinity.db
         Path sqlite = folder.resolve("affinity.db");
         try {

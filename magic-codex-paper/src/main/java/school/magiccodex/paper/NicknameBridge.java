@@ -37,7 +37,7 @@ final class NicknameBridge implements Listener,PluginMessageListener,AutoCloseab
 
     NicknameBridge(MagicCodexBridge plugin,DisplayNames names)throws Exception{
         this.plugin=plugin;this.names=names;
-        try{var settings=DatabaseSettings.load(plugin.getDataFolder().toPath().resolve("database.properties"));store=io.submit(()->new NicknameStore(plugin.getDataFolder().toPath().resolve("friends.db"),settings)).get(10,TimeUnit.SECONDS);profiles.putAll(io.submit(store::all).get(10,TimeUnit.SECONDS));}catch(Exception e){io.shutdownNow();throw e;}
+        try{var settings=GenericDatabaseFile.load(plugin.getDataFolder().toPath());store=io.submit(()->new NicknameStore(plugin.getDataFolder().toPath().resolve("friends.db"),settings)).get(10,TimeUnit.SECONDS);profiles.putAll(io.submit(store::all).get(10,TimeUnit.SECONDS));}catch(Exception e){io.shutdownNow();throw e;}
         for(String warning:store.warnings())plugin.getLogger().warning("[닉네임] "+warning);
         firstFile=new java.io.File(plugin.getDataFolder(),"first-nickname.yml");
         Set<UUID> initial;try{initial=io.submit(this::loadFirst).get(10,TimeUnit.SECONDS);}catch(Exception e){io.shutdownNow();throw e;}

@@ -25,10 +25,13 @@ mana:
 temperature:
   default-celsius: 18
 
-# DB 모드 안전장치. 시작할 때 설정 파일(database.properties, shop-mailbox-database.properties)마다
-# 파일이 있는지와 MariaDB/SQLite 중 무엇으로 동작하는지 로그에 한 줄씩 남긴다.
-# require-mariadb: true 로 두면, 파일이 없거나 mode=sqlite 라서 SQLite로 동작하게 될 설정이 하나라도 있을 때
-# 플러그인이 시작을 거부한다 (학교·야생 두 서버 운영용. 기본값 false = 예전처럼 SQLite로 조용히 동작).
+# DB 모드 안전장치. 시작할 때 세 가지 설정(일반 도메인, 캐릭터 저장, 상점·우편)마다
+# 어느 파일을 읽는지와 MariaDB/SQLite 중 무엇으로 동작하는지 로그에 한 줄씩 남기고,
+# SQLite로 동작하는 도메인이 있으면 WARNING 한 줄로 목록을 남긴다 (/서버관리 상태 의 "DB 공유" 줄에도 표시).
+# 일반 도메인(닉네임·친구·칭호·기숙사·기부·점수·의뢰·대화·호감도·계절 공유)은 database.properties 를 읽고,
+# 그 파일이 없을 때 player-state-database.properties 에 use-for-all-domains=true 가 있으면 그 파일을 읽는다.
+# require-mariadb: true 로 두면, SQLite로 동작하게 될 설정이 하나라도 있을 때 플러그인이 시작을 거부한다.
+# 기본값 false. SQLite → MariaDB 이관(tools/db-migrate)을 마친 뒤에만 true 로 바꿀 것 (이관 전에 켜면 서버가 시작하지 않는다).
 database:
   require-mariadb: false
 
