@@ -20,7 +20,7 @@ public final class NpcRenderTypes extends RenderType {
     private static final Map<String, RenderType> CACHE = new HashMap<>();
 
     private NpcRenderTypes(String name, boolean sort, Runnable setup, Runnable clear) {
-        super(name, DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 1536, true, sort, setup, clear);
+        super(name, DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.TRIANGLES, 1536, true, sort, setup, clear);
     }
 
     /** 불투명/컷아웃 (alphaMode OPAQUE·MASK). cull = 한 면 재질만 뒷면 제거. */

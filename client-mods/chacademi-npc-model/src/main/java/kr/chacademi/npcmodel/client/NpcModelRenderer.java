@@ -49,6 +49,7 @@ public final class NpcModelRenderer {
         ResourceLocation[] tex = inst.model().textures.get(lod);
 
         ps.pushPose();
+        try {
         ps.mulPose(Axis.YP.rotationDegrees(-state.bodyRot));
         ps.scale(scale, scale, scale);
         ps.translate(0, -m.restMinY, 0);
@@ -72,17 +73,19 @@ public final class NpcModelRenderer {
                 emit(buffers.getBuffer(rt), last, pr, sk.pos[i][p], sk.nrm[i][p], r, g, b, a, overlay, light);
             }
         }
-        ps.popPose();
+        } finally {
+            ps.popPose(); // 예외가 나도 포즈 스택 균형 유지
+        }
     }
 
-    /** 삼각형을 QUADS 버퍼에 넣는다 (넷째 정점 = 셋째 정점 반복). */
+    /** 삼각형을 TRIANGLES 버퍼에 넣는다. */
     private static void emit(VertexConsumer vc, PoseStack.Pose pose, ModelData.Primitive pr, float[] pos, float[] nrm,
                              int r, int g, int b, int a, int overlay, int light) {
         int[] idx = pr.indices;
         float[] uv = pr.uvs;
         for (int t = 0; t < idx.length; t += 3) {
-            for (int k = 0; k < 4; k++) {
-                int v = idx[t + Math.min(k, 2)];
+            for (int k = 0; k < 3; k++) {
+                int v = idx[t + k];
                 vc.addVertex(pose, pos[v * 3], pos[v * 3 + 1], pos[v * 3 + 2])
                         .setColor(r, g, b, a)
                         .setUv(uv[v * 2], uv[v * 2 + 1])

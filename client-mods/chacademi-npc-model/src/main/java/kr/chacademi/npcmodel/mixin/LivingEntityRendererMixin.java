@@ -25,7 +25,12 @@ public abstract class LivingEntityRendererMixin {
         NpcModelState ext = (NpcModelState) (Object) state;
         NpcInstance inst = ext.chacademi$npc();
         if (inst != null) {
-            NpcModelRenderer.render(inst, state, ext, poseStack, buffers, light);
+            try {
+                NpcModelRenderer.render(inst, state, ext, poseStack, buffers, light);
+            } catch (Throwable t) {
+                // 게임을 멈추지 않는다: 이 모델을 실패로 두고 다음 프레임부터 원래 외형
+                kr.chacademi.npcmodel.NpcModelClient.bindings().failModel(inst.model().entry.id(), t);
+            }
         }
     }
 }

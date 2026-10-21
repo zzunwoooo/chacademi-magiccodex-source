@@ -79,6 +79,21 @@ MagicCodex(Bridge·Fabric)·PortableVFX·스토리 모드는 **건드리지 않�
 - Citizens 홀로그램 이름표를 쓰는 설정이면 그 높이는 별도 조정 필요.
 - 얼굴 모프·립싱크·천 물리·GPU 스키닝: 범위 밖.
 
+## 11. 독립 검토 반영 (2커밋째)
+
+코드 읽기 검토(컴파일 없이)에서 나온 것 중 고친 것:
+- 컴파일 오류: `AppearanceCommands` 의 같은 서명 `scale(...)` 두 개 → 파서를 `parseScale` 로.
+- HELLO/HELLO_ACK 무한 왕복: 클라는 새 세션일 때만 HELLO, 서버는 처음 연결될 때만 HELLO_ACK.
+- 밉맵이 안 쓰이던 문제: `GL_TEXTURE_MIN_LOD/MAX_LOD` 설정 (HudArt 와 같은 처리).
+- BC7 미지원 GPU(macOS 등): 렌더 스레드에서 먼저 지원 여부를 확인해 작업 스레드가 압축을 건너뜀 (메인 스레드에서 푸는 멈춤 없음). 캐시 파일 이름에 인코더 버전.
+- 모델이 너무 빨리 내려가 다시 읽던 문제: 마지막 NPC가 사라진 시각부터 2분 세도록.
+- 그리다 예외: 게임을 멈추지 않고 그 모델을 실패로 두고 원래 외형으로 (포즈 스택은 finally 로 복구).
+- 숨긴 몸에서 화살·벌침·머리 칸 해골이 떠 보이던 것, 원래 투명한 NPC가 모델로 보이던 것.
+- GPU 업로드 실패 때 텍스처 누수, 관리자 '동작 대화' 테스트가 1초 만에 풀리던 것.
+- 삼각형 그리기 QUADS(정점 4개) → TRIANGLES(3개).
+
+남은 메모: 플러그인 핫리로드(PlugMan) 뒤에는 재접속해야 연결됨(정식 재시작은 문제없음), 반투명 재질은 Fabulous 그래픽에서 섞임이 다를 수 있음, 큰 텍스처 GPU 업로드는 한 프레임에 몰림(첫 로드 때만), NPC 수·거리 상한은 아직 없음.
+
 ## 10. GPT 빌드 때 주의
 
 - 새 Fabric 프로젝트는 단독 Gradle 프로젝트(`client-mods/chacademi-npc-model`, wrapper 포함). 루트 settings.gradle 에 넣지 않음 (chacademy-motion 과 같은 방식).

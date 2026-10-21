@@ -46,12 +46,35 @@ public final class Bindings {
         }
     }
 
-    public void onSession(long s) {
+    /** 새 세션(처음·서버 재시작·서버 이동)이면 true → 그때만 HELLO 를 보낸다. */
+    public boolean onSession(long s) {
         if (!sessionKnown || s != session) {
             clear();
             session = s;
             sessionKnown = true;
+            return true;
         }
+        return false;
+    }
+
+    /** 접속 끊김: 다음 서버의 세션을 새로 받게. */
+    public void resetSession() {
+        clear();
+        sessionKnown = false;
+    }
+
+    /** 이 모델을 그리다 예외가 남: 그 모델을 실패로 표시하고 연결된 인스턴스를 내린다 (→ 원래 외형). */
+    public void failModel(String modelId, Throwable t) {
+        models.markFailed(modelId, t);
+        for (Entry e : byEntity.values()) {
+            if (modelId.equals(e.modelId)) {
+                release(e);
+            }
+        }
+    }
+
+    public String modelIdOf(NpcInstance inst) {
+        return inst.model().entry.id();
     }
 
     public void onMessage(NpcModelProtocol.Message m) {

@@ -92,7 +92,7 @@ public final class AppearanceCommands {
         Player p = self(ctx);
         NPC npc = near(p);
         String model = model(ctx, false);
-        float scale = withScale ? scale(ctx) : currentScaleOr(npc, 1f);
+        float scale = withScale ? parseScale(ctx) : currentScaleOr(npc, 1f);
         svc().config().setNpc(npc.getId(), new AppearanceConfig.Spec(model, scale));
         save(p);
         svc().refresh(npc);
@@ -106,7 +106,7 @@ public final class AppearanceCommands {
         if (model == null) {
             svc().config().setCharacter(c.id(), null);
         } else {
-            svc().config().setCharacter(c.id(), new AppearanceConfig.Spec(model, withScale ? scale(ctx) : 1f));
+            svc().config().setCharacter(c.id(), new AppearanceConfig.Spec(model, withScale ? parseScale(ctx) : 1f));
         }
         save(ctx.getSource().getSender());
         Integer npcId = plugin.npcs().npcIdFor(c.id());
@@ -151,7 +151,7 @@ public final class AppearanceCommands {
         if (cur == null) {
             throw ChacaLink.error("이 NPC는 3D 외형이 없어요 (먼저 외형 지정)");
         }
-        float s = scale(ctx);
+        float s = parseScale(ctx);
         svc().config().setNpc(npc.getId(), new AppearanceConfig.Spec(cur.model(), s));
         save(p);
         svc().refresh(npc);
@@ -278,7 +278,7 @@ public final class AppearanceCommands {
         return in;
     }
 
-    private static float scale(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+    private static float parseScale(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         String in = ctx.getArgument("크기", String.class).trim();
         float s;
         try {

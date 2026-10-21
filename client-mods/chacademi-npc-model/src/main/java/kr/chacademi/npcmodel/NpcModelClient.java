@@ -48,24 +48,26 @@ public final class NpcModelClient implements ClientModInitializer {
             }
             context.client().execute(() -> {
                 if (m instanceof NpcModelProtocol.HelloAck ack) {
-                    bindings.onSession(ack.session());
-                    sendHello();
+                    if (bindings.onSession(ack.session())) {
+                        sendHello();
+                    }
                 } else {
                     bindings.onMessage(m);
                 }
             });
         });
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            bindings.clear();
+            bindings.resetSession();
             models.reloadRegistry();
             sendHello();
         });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> client.execute(() -> {
-            bindings.clear();
+            bindings.resetSession();
             models.scheduleIdleUnload();
         }));
         ClientEntityEvents.ENTITY_UNLOAD.register((entity, level) -> bindings.onEntityUnload(entity));
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            models.detectGpu();
             bindings.tick(client);
             models.tick();
         });

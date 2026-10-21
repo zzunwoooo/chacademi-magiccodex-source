@@ -52,6 +52,8 @@ public final class AppearanceService implements Listener, PluginMessageListener 
     private final Map<Integer, Integer> revision = new HashMap<>();
     private final Map<Integer, Integer> greetSeq = new HashMap<>();
     private Set<Integer> talking = new HashSet<>();
+    /** 관리자 동작 테스트로 켠 대화 상태 (실제 대화가 없어도 유지, '동작 대기'로 끔). */
+    private final Set<Integer> testTalking = new HashSet<>();
     private boolean enabled = true;
 
     // 측정 (/NPC관리 외형 통계)
@@ -118,9 +120,11 @@ public final class AppearanceService implements Listener, PluginMessageListener 
             }
             return;
         }
-        boolean first = capable.add(p.getUniqueId());
-        send(p, new NpcModelProtocol.HelloAck(session));
-        if (first && enabled) {
+        if (!capable.add(p.getUniqueId())) {
+            return; // 이미 연결됨: 다시 답하지 않는다 (HELLO/HELLO_ACK 무한 왕복 방지)
+        }
+        send(p, new NpcModelProtocol.HelloAck(session)); // 채널 등록 전에 온 HELLO 대비: 세션을 먼저 알려 준 뒤
+        if (enabled) {
             sendAllTrackedTo(p);
         }
     }
@@ -172,6 +176,7 @@ public final class AppearanceService implements Listener, PluginMessageListener 
         revision.remove(id);
         greetSeq.remove(id);
         talking.remove(id);
+        testTalking.remove(id);
     }
 
     private void sendAllTrackedTo(Player p) {
@@ -235,7 +240,9 @@ public final class AppearanceService implements Listener, PluginMessageListener 
     }
 
     /** 1초마다: AI 대화 중인 NPC 목록이 바뀌었으면 동작 상태를 보낸다. */
-    public void tick(Set<Integer> nowTalking) {
+    public void tick(Set<Integer> realTalking) {
+        Set<Integer> nowTalking = new HashSet<>(realTalking);
+        nowTalking.addAll(testTalking);
         if (nowTalking.equals(talking)) {
             return;
         }
@@ -253,8 +260,10 @@ public final class AppearanceService implements Listener, PluginMessageListener 
     /** 관리자 테스트: 상태를 강제로 보낸다. */
     public void testState(NPC npc, boolean talk, boolean greetOnce) {
         if (talk) {
+            testTalking.add(npc.getId());
             talking.add(npc.getId());
         } else {
+            testTalking.remove(npc.getId());
             talking.remove(npc.getId());
         }
         if (greetOnce) {

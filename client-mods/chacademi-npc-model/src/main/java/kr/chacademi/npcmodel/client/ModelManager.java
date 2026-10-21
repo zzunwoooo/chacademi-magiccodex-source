@@ -64,7 +64,8 @@ public final class ModelManager {
     private volatile ModelRegistry registry;
     private final Map<String, Handle> handles = new HashMap<>();
     private final Settings settings;
-    private Boolean bptc;
+    /** BPTC(BC7) 지원 여부. 렌더 스레드에서 한 번 알아내고, 작업 스레드는 이 값으로 압축할지 정한다. */
+    private volatile Boolean bptc;
     private int ticks;
 
     public ModelManager(Path dir) {
@@ -177,13 +178,35 @@ public final class ModelManager {
         return h.model;
     }
 
+    /** 렌더 스레드에서 첫 틱에 GPU 기능 확인 (작업 스레드가 BC7 로 만들지 결정). */
+    public void detectGpu() {
+        if (bptc == null) {
+            var caps = GL.getCapabilities();
+            bptc = caps.OpenGL42 || caps.GL_ARB_texture_compression_bptc;
+            if (!bptc) {
+                NpcModelClient.LOG.info("[npc-models] GPU가 BC7(BPTC)을 지원하지 않음 → 텍스처를 압축하지 않고 올림");
+            }
+        }
+    }
+
+    /** 그리다 예외가 난 모델: 실패로 두고 GPU 에서 내림 (다음 접속 때 다시 시도). */
+    public void markFailed(String id, Throwable t) {
+        Handle h = handles.get(id);
+        if (h != null && h.state != State.FAILED) {
+            NpcModelClient.LOG.error("[npc-models] 모델 '{}' 그리기 실패 → 원래 외형으로 되돌림", id, t);
+            h.discard();
+            h.state = State.FAILED;
+        }
+    }
+
     public void tick() {
         if (++ticks % 20 != 0) {
             return;
         }
         long now = System.currentTimeMillis();
         handles.values().removeIf(h -> {
-            if (h.state == State.READY && h.model != null && h.model.refs == 0 && now - h.lastUsed > IDLE_UNLOAD_MS) {
+            if (h.state == State.READY && h.model != null && h.model.refs == 0
+                    && now - Math.max(h.lastUsed, h.model.lastReleased) > IDLE_UNLOAD_MS) {
                 h.discard();
                 return true;
             }
@@ -195,7 +218,7 @@ public final class ModelManager {
     public void scheduleIdleUnload() {
         long now = System.currentTimeMillis();
         for (Handle h : handles.values()) {
-            h.lastUsed = Math.min(h.lastUsed, now);
+            h.lastUsed = now; // 지금부터 IDLE_UNLOAD_MS 동안 재접속하면 그대로 재사용
         }
     }
 
@@ -295,8 +318,8 @@ public final class ModelManager {
     }
 
     private CpuTexture texture(ModelData.Image img, String cacheKey) {
-        boolean wantBc7 = settings.bc7;
-        Path cache = dir.resolve(".cache").resolve(cacheKey + ".bc7");
+        boolean wantBc7 = settings.bc7 && Boolean.TRUE.equals(bptc); // BC7 미지원 GPU: 압축했다 다시 푸는 낭비·멈춤 방지
+        Path cache = dir.resolve(".cache").resolve(cacheKey + "-e1.bc7"); // e1 = 인코더 버전 (바뀌면 올림)
         if (wantBc7) {
             CpuTexture cached = readCache(cache);
             if (cached != null) {
@@ -439,13 +462,7 @@ public final class ModelManager {
     // ================================================================ 렌더 스레드: GPU
 
     private LoadedModel upload(CpuModel cpu) {
-        if (bptc == null) {
-            var caps = GL.getCapabilities();
-            bptc = caps.OpenGL42 || caps.GL_ARB_texture_compression_bptc;
-            if (!bptc) {
-                NpcModelClient.LOG.info("[npc-models] GPU가 BC7(BPTC)을 지원하지 않음 → 텍스처를 풀어서 올림");
-            }
-        }
+        detectGpu();
         List<ResourceLocation[]> locs = new ArrayList<>();
         List<ResourceLocation> all = new ArrayList<>();
         String mode = "RGBA8";
@@ -456,9 +473,9 @@ public final class ModelManager {
                 for (int i = 0; i < ts.length; i++) {
                     ResourceLocation rl = ResourceLocation.fromNamespaceAndPath(NpcModelClient.MOD_ID,
                             "npc/" + cpu.entry.id() + "/" + lod + "/" + i + "_" + Integer.toHexString(System.identityHashCode(ts[i])));
+                    all.add(rl); // 올리다 실패해도 등록된 텍스처를 풀 수 있게 먼저 기록
                     uploadTexture(rl, ts[i]);
                     arr[i] = rl;
-                    all.add(rl);
                     if (ts[i].bc7 && bptc) {
                         mode = "BC7";
                     }
@@ -502,6 +519,9 @@ public final class ModelManager {
         }
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_BASE_LEVEL, 0);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LEVEL, t.levels.length - 1);
+        // DynamicTexture 준비 단계가 MAX_LOD 를 0 으로 둬서, 안 풀면 밉맵이 안 쓰인다 (HudArt 와 같은 처리)
+        GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MIN_LOD, 0f);
+        GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LOD, t.levels.length - 1);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
         if (GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH) != t.w[0]) {
@@ -524,6 +544,8 @@ public final class ModelManager {
         final List<int[]> lodNodeMap = new ArrayList<>();
         public final String textureMode;
         int refs;
+        /** 마지막 인스턴스가 내려간 시각 (쓰는 NPC가 없어진 뒤부터 IDLE_UNLOAD_MS 를 센다). */
+        long lastReleased;
         private boolean alive = true;
 
         LoadedModel(ModelRegistry.Entry entry, ModelData base, Map<String, ModelData.Clip> clips, List<ModelData> lods,

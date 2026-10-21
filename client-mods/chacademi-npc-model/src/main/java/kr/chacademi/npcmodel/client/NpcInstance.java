@@ -185,6 +185,7 @@ public final class NpcInstance {
         if (!released) {
             released = true;
             model.refs--;
+            model.lastReleased = System.currentTimeMillis();
         }
     }
 }

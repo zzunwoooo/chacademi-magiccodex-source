@@ -25,7 +25,17 @@ public abstract class PlayerRendererMixin {
             at = @At("TAIL"))
     private void chacademi$extract(AbstractClientPlayer player, PlayerRenderState state, float partialTick, CallbackInfo ci) {
         NpcModelState ext = (NpcModelState) (Object) state;
-        NpcInstance inst = NpcModelClient.bindings() == null ? null : NpcModelClient.bindings().instanceFor(player);
+        if (state.isInvisible) {
+            ext.chacademi$set(null, 0, 0); // 원래 투명한 NPC(투명화·관전 등)는 모델도 그리지 않음
+            return;
+        }
+        NpcInstance inst;
+        try {
+            inst = NpcModelClient.bindings() == null ? null : NpcModelClient.bindings().instanceFor(player);
+        } catch (RuntimeException ex) {
+            NpcModelClient.LOG.error("[npc-models] NPC 모델 준비 실패 → 원래 외형", ex);
+            inst = null;
+        }
         if (inst == null) {
             ext.chacademi$set(null, 0, 0);
             return;
@@ -48,6 +58,9 @@ public abstract class PlayerRendererMixin {
         state.rightHandItem.clear();
         state.leftHandItem.clear();
         state.headItem.clear();
+        state.wornHeadType = null; // 머리 칸 해골 블록
+        state.arrowCount = 0;     // 몸에 박힌 화살·벌침이 허공에 뜨지 않게
+        state.stingerCount = 0;
         state.parrotOnLeftShoulder = null;
         state.parrotOnRightShoulder = null;
         // 이름표: 모델 꼭대기 (바닐라는 여기서 0.5 위에 그림)
