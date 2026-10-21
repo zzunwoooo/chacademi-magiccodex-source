@@ -33,4 +33,12 @@ class FishTankUiStateTest {
   var before=new FishTankProtocol.State(FishTankProtocol.KIND_STATE,100,false,fish.subList(0,12),List.of(),List.of(),"");var after=new FishTankProtocol.State(FishTankProtocol.KIND_STATE,100,false,fish,List.of(),List.of(),"");
   assertEquals(12,((FishTankProtocol.State)FishTankProtocol.decode(FishTankProtocol.encode(before))).fish().size());assertEquals(13,((FishTankProtocol.State)FishTankProtocol.decode(FishTankProtocol.encode(after))).fish().size());assertEquals(before.capacity(),after.capacity());
  }
+ @Test void sizesReadAcrossAndWithinSpeciesAndDepthNoLongerMasksThem(){
+  assertEquals(18,FishTankUiMath.absoluteLength(3),.01);assertTrue(FishTankUiMath.absoluteLength(10)>FishTankUiMath.absoluteLength(5)*1.3f);
+  float small=FishTankUiMath.length(8,8,15),big=FishTankUiMath.length(15,8,15);assertTrue(big/small>1.5f,"same species 8cm vs 15cm");
+  assertEquals(FishTankUiMath.absoluteLength(12),FishTankUiMath.length(12,12,12),.001);
+  assertTrue(FishTankUiMath.depthScale(0)/FishTankUiMath.depthScale(1)>.85f);assertTrue(big*FishTankUiMath.depthScale(0)>small*FishTankUiMath.depthScale(1));
+  assertTrue(Float.isFinite(FishTankUiMath.length(Float.NaN,1,2)));
+ }
 }
+
