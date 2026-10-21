@@ -74,6 +74,7 @@ import java.util.logging.Level;
  *   <li>조건: 아이템 보유 / 제출(호출 때 걷음) / 처치 / 블록 상호작용 / 대화완료 / 신호(다른 플러그인·Skript 가 /대화관리 신호 로 알림)</li>
  *   <li>호출: 자동(지연) / Citizens NPC 클릭(AI 대화보다 먼저) / 위치 포탈 / 컷신 시청 완료 / 관리자 강제 진행</li>
  *   <li>중복 방지: 호출 후 대화를 기다리는 동안(PLAYING)은 다시 호출되지 않고, 완료 신호는 기다리던 대화·컷신과 같을 때만 단계를 넘긴다</li>
+ *   <li>위치 포탈 대화를 중간에 닫으면: 포탈 밖으로 한 번 나갔다가 다시 들어와야 다시 열린다 (그 자리에 서 있어도 저절로 다시 열리지 않음)</li>
  *   <li>HUD 패킷: 단계 패킷(단계가 바뀔 때·접속 때) + 갱신 패킷(진행도·준비 상태가 바뀔 때만, 같은 틱은 하나로)</li>
  * </ul>
  */
@@ -110,6 +111,8 @@ final class QuestEngine implements Listener {
     /** 아이템 조건 개수 캐시 (주기 확인용). 인벤토리 변경 이벤트가 오면 지운다. */
     private record ItemScan(long at, Map<String, Integer> counts) {}
     private final Map<UUID, ItemScan> itemScans = new HashMap<>();
+    /** 위치 포탈 대화를 중간에 닫은 유저: 포탈 밖으로 나가야 다시 호출된다 (메모리 전용 — 단계 변경·재접속·초기화 때 지움). */
+    private final Set<UUID> mustLeave = new HashSet<>();
 
     private Class<?> npcIface, registryIface;
     private Object registry;
@@ -284,6 +287,10 @@ final class QuestEngine implements Listener {
         if (dialogue != null && !st.waiting.equals("d:" + dialogue)) return;
         if (!st.waiting.startsWith("d:")) return;
         backToActive(uuid, st);
+        // 위치 포탈이면 포탈 안에 서 있어도 바로 다시 열지 않는다 (나갔다가 다시 들어오면 열림)
+        Step s = defs.get(st.step);
+        Player p = Bukkit.getPlayer(uuid);
+        if (s != null && s.trigger.type == TrigType.LOCATION && p != null && inside(p, s.trigger)) mustLeave.add(uuid);
     }
 
     private final Map<UUID, Long> restartAt = new HashMap<>();
@@ -343,6 +350,7 @@ final class QuestEngine implements Listener {
     private void enter(Player p, P st, String stepId, boolean tell) {
         UUID uuid = p.getUniqueId();
         st.enter(stepId);
+        mustLeave.remove(uuid);
         readySince.remove(uuid);
         readyCache.remove(uuid);
         retryAt.remove(uuid);
@@ -587,6 +595,8 @@ final class QuestEngine implements Listener {
             if (st == null || st.step.isEmpty()) continue;
             Step s = defs.get(st.step);
             if (s == null) continue;
+            // 포탈 밖으로 나갔으면 (또는 호출 방식이 위치가 아니게 바뀌었으면) 다시 들어올 때 호출되게
+            if (mustLeave.contains(uuid) && (s.trigger.type != TrigType.LOCATION || !inside(p, s.trigger))) mustLeave.remove(uuid);
             try {
                 if (st.phase == Phase.PLAYING) {
                     long since = playingSince.computeIfAbsent(uuid, k -> now);
@@ -611,6 +621,8 @@ final class QuestEngine implements Listener {
                 // 주기 확인의 아이템 개수는 캐시일 수 있으니 호출 직전에 한 번 새로 확인한다
                 if (t.type == TrigType.AUTO && now - readySince.getOrDefault(uuid, now) >= t.delay * 1000L && isReady(p, st, s)) fire(p, st, s, "자동");
                 else if (t.type == TrigType.LOCATION && inside(p, t) && isReady(p, st, s)) fire(p, st, s, "위치");
+                if (t.type == TrigType.AUTO && now - readySince.getOrDefault(uuid, now) >= t.delay * 1000L) fire(p, st, s, "자동");
+                else if (t.type == TrigType.LOCATION && inside(p, t) && !mustLeave.contains(uuid)) fire(p, st, s, "위치");
             } catch (RuntimeException ex) {
                 plugin.getLogger().log(Level.SEVERE, p.getName() + ": 스토리 단계 확인 중 오류", ex);
             }
@@ -680,6 +692,7 @@ final class QuestEngine implements Listener {
         sessions.remove(uuid); sentKey.remove(uuid); readyCache.remove(uuid); readySince.remove(uuid);
         hintAt.remove(uuid); clickGate.remove(uuid); picks.remove(uuid); previewing.remove(uuid);
         needStep.remove(uuid); needUpdate.remove(uuid); itemScans.remove(uuid);
+        needStep.remove(uuid); needUpdate.remove(uuid); mustLeave.remove(uuid);
     }
 
     // 아이템 조건 캐시 무효화 (가벼운 표시만, 실제 세기는 다음 주기 확인 때)
@@ -720,6 +733,7 @@ final class QuestEngine implements Listener {
         P st = prog.players.get(uuid);
         Step s = st == null ? null : defs.get(st.step);
         if (s == null || st.phase != Phase.ACTIVE || s.trigger.type != TrigType.LOCATION || !inside(p, s.trigger)) return;
+        if (mustLeave.contains(uuid)) return;
         if (isReady(p, st, s)) fire(p, st, s, "위치");
     }
 
@@ -1495,6 +1509,8 @@ final class QuestEngine implements Listener {
         Step s = st == null ? null : defs.get(st.step);
         if (s == null || s.startCommands.isEmpty()) throw ChacaLink.error("지금 단계에 다시 실행할 시작명령이 없어요");
         if (st.phase != Phase.ACTIVE) throw ChacaLink.error("지금은 대화·컷신을 기다리는 중이에요");
+
+        mustLeave.remove(p.getUniqueId());
         runStartCommands(p, st, st.run, true);
         ChacaLink.ok(ctx.getSource().getSender(), ChacaLink.name(p.getUniqueId()) + " 님의 " + s.id + " 시작명령을 다시 실행했어요");
         return 1;
@@ -1512,7 +1528,7 @@ final class QuestEngine implements Listener {
     private int cmdUserReset(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         UUID uuid = ChacaLink.target(ctx);
         prog.players.remove(uuid);
-        readyCache.remove(uuid); readySince.remove(uuid); retryAt.remove(uuid); playingSince.remove(uuid);
+        readyCache.remove(uuid); readySince.remove(uuid); retryAt.remove(uuid); playingSince.remove(uuid); mustLeave.remove(uuid);
         saveSoon(null);
         Player p = Bukkit.getPlayer(uuid);
         if (p != null) { onJoin(p); needStep.add(uuid); scheduleSend(); }
