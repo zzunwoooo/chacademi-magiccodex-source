@@ -53,14 +53,19 @@ final class HousingCommands {
         })), "어디서나 내 방 꾸미기 열기", "하우징 내방");
         ChacaLink.playerCommand(plugin, Commands.literal("방구경").then(Commands.argument("닉네임", ChacaLink.player()).executes(ctx -> {
             Player p = player(ctx);
-            boolean free = plugin.settings().visitCommand() || p.isOp();
+            // owner rule (2026-10-19, A05 2026-10-21): only friends may visit — visit-command never skips the friend check; own room · OP always ok
             String input = ctx.getArgument("닉네임", String.class);
             find(input, id -> {
                 if (id == null) { deny(p, "'" + input + "' 학생의 방을 찾을 수 없어요"); return; }
-                if (free) { if (p.isOnline()) plugin.rooms().open(p, id, false); return; }
+                if (id.equals(p.getUniqueId()) || p.isOp()) { if (p.isOnline()) plugin.rooms().open(p, id, false); return; }
                 plugin.store().isFriend(p.getUniqueId(), id, friend -> {
                     if (!p.isOnline()) return;
                     if (Boolean.TRUE.equals(friend)) plugin.rooms().open(p, id, false);
+                    else if (friend == null) {
+                        // the friend table could not be read (SQLite housing.db has none: housing must share MagicCodexBridge's MariaDB)
+                        plugin.getLogger().warning("방구경 친구 확인 실패: 친구 정보를 읽지 못했어요 (하우징 database.properties 가 MagicCodexBridge 와 같은 MariaDB인지 확인)");
+                        deny(p, "지금은 친구 정보를 확인할 수 없어요. 잠시 후 다시 시도해 주세요");
+                    }
                     else deny(p, "다른 학생의 방은 친구가 되면 구경할 수 있어요");
                 });
             });
