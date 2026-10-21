@@ -7,22 +7,14 @@
 #   예) /lp user 닉네임 permission set magiccodex.artifact.own.sturdy_vest true
 # 장착: 도감에서 [장착]/[해제]. 장착 개수는 settings.max-equipped.
 # 사용: use: true 인 아티팩트는 장착한 채 아티팩트 사용 키(기본 X)로 씁니다. cooldown = 재사용 대기(초, 0 = 없음).
-# 실제 능력(효과)은 아직 구현 전입니다. 지금은 도감 표시, 장착 기록, 사용 키 → 서버 전달(대기 시간 관리)까지만 합니다.
+# 효과: 150개 중 121개 구현 (ArtifactEffects / ArtifactActions / ArtifactLife, 2026-10-15, CC·원소 반응 개편 2026-10-20). 아이디가 효과와 묶여 있으니 아이디는 바꾸지 마세요.
+#   효과 코드가 없는 보류 29개(모션·키세팅·빗자루 연동이 필요한 것 등)는 2026-10-21부터 enabled: false (도감·뽑기에서 빠짐). 목록은 docs/handoff/CLAUDE_FIX_CONFIG_20261021.md
 
 settings:
   max-equipped: 1          # 동시에 장착할 수 있는 아티팩트 수 (1~8)
   test-owns-all: false     # true면 모든 플레이어가 전부 보유한 것으로 표시 (UI 확인용, 운영 중에는 false)
 
-# 항목 형식
-#   아이디(영문 소문자·숫자·_):
-#     name: 도감에 보이는 이름 (최대 40자)
-#     grade: common(일반) / rare(고급) / unique(유일) / legendary(전설)
-#     description: 상세 패널에 보이는 짧은 설명 (최대 3줄, 200자). 줄바꿈은 \n
-#     effect: 상세 효과. 설명에 마우스를 올리면 툴팁으로 전부 보임 (최대 600자)
-#     icon: 아이콘 이미지 경로. 비워 두면 빈칸 (예: magiccodex:textures/artifact/sturdy_vest.png)
-#     use: true면 사용형 (아티팩트 사용 키), cooldown: 재사용 대기 초 (0~86400)
-#     order: 같은 등급 안에서의 정렬 순서 (작을수록 앞). 검수 목록 번호 × 10
-#     enabled: false로 두면 도감에서 숨김 (보류 항목)
+# 유물함 소환 (/아티팩트소환 으로 창 열기 → [소환하기] 를 누르면 열쇠를 쓰고 결과는 서버가 정함)
 summon:
   item: "item:random_artifact"   # 소모 아이템 (아이템애더 네임스페이스:아이디)
   item-name: "유물함 열쇠"        # 소환 창 안내문에 보이는 이 아이템의 이름 (아이템애더 표시 이름과 맞춰 주세요)
@@ -43,7 +35,16 @@ summon:
     mail-title: "아티팩트 조각"
     mail-body: "이미 가진 아티팩트가 나와 조각으로 바꿔 드렸습니다."
 
-
+# 항목 형식
+#   아이디(영문 소문자·숫자·_):
+#     name: 도감에 보이는 이름 (최대 40자)
+#     grade: common(일반) / rare(고급) / unique(유일) / legendary(전설)
+#     description: 상세 패널에 보이는 짧은 설명 (최대 3줄, 200자). 줄바꿈은 \n
+#     effect: 상세 효과. 설명에 마우스를 올리면 툴팁으로 전부 보임 (최대 600자)
+#     icon: 아이콘 이미지 경로. 비워 두면 빈칸 (예: magiccodex:textures/artifact/sturdy_vest.png)
+#     use: true면 사용형 (아티팩트 사용 키), cooldown: 재사용 대기 초 (0~86400)
+#     order: 같은 등급 안에서의 정렬 순서 (작을수록 앞). 검수 목록 번호 × 10
+#     enabled: false로 두면 도감에서 숨김 (보류 항목)
 artifacts:
 
   # ---------------------------------------------------------------- 일반
@@ -187,6 +188,7 @@ artifacts:
     effect: "빗자루로 이륙한 뒤 3초간 가속"
     icon: "magiccodex:textures/artifact/broom_cord.png"
     order: 150
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   squeaky_shoes:
     name: "삑삑이 신발"
     grade: common
@@ -194,6 +196,7 @@ artifacts:
     effect: "걸을 때 발소리가 장난감 삑삑 소리로 바뀜"
     icon: "magiccodex:textures/artifact/squeaky_shoes.png"
     order: 160
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   dancing_ribbon:
     name: "춤추는 리본"
     grade: common
@@ -201,6 +204,7 @@ artifacts:
     effect: "맞을 때 10% 확률로 짧은 춤 모션 (효과 없음)"
     icon: "magiccodex:textures/artifact/dancing_ribbon.png"
     order: 170
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   waving_glove:
     name: "인사 장갑"
     grade: common
@@ -208,6 +212,7 @@ artifacts:
     effect: "다른 플레이어를 보고 웅크리면 손을 흔드는 모션"
     icon: "magiccodex:textures/artifact/waving_glove.png"
     order: 180
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   sleepy_pillow:
     name: "졸린 베개"
     grade: common
@@ -215,6 +220,7 @@ artifacts:
     effect: "2분 동안 가만히 있으면 앉아서 꾸벅꾸벅 조는 모션"
     icon: "magiccodex:textures/artifact/sleepy_pillow.png"
     order: 190
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   shy_mask:
     name: "수줍은 가면"
     grade: common
@@ -222,6 +228,7 @@ artifacts:
     effect: "NPC와 대화를 시작할 때 고개 숙여 인사하는 모션"
     icon: "magiccodex:textures/artifact/shy_mask.png"
     order: 200
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   lucky_coin:
     name: "행운 동전"
     grade: common
@@ -264,7 +271,6 @@ artifacts:
     effect: "나에게 걸린 독·화상 지속 시간 -30%"
     icon: "magiccodex:textures/artifact/bug_repellent_incense.png"
     order: 710
-    enabled: false        # 보류: 첫 개발 버전 제외
   breather_whistle:
     name: "숨 고르기 호루라기"
     grade: common
@@ -321,6 +327,7 @@ artifacts:
     effect: "새 마법을 발견할 때마다 경험치 보상"
     icon: "magiccodex:textures/artifact/discovery_journal.png"
     order: 790
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   sand_pouch:
     name: "모래 주머니"
     grade: common
@@ -377,6 +384,7 @@ artifacts:
     effect: "음식 먹는 속도 +20%"
     icon: "magiccodex:textures/artifact/thermos_lunchbox.png"
     order: 870
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   candy_pouch:
     name: "사탕 주머니"
     grade: common
@@ -442,6 +450,7 @@ artifacts:
     effect: "채팅에 ㅋㅋ를 치면 웃는 모션"
     icon: "magiccodex:textures/artifact/laughing_mask.png"
     order: 960
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   bubblewrap_cape:
     name: "뽁뽁이 망토"
     grade: common
@@ -456,6 +465,7 @@ artifacts:
     effect: "웅크리고 가만히 있으면 등껍질 속에 숨는 모션 (효과 없음)"
     icon: "magiccodex:textures/artifact/turtle_shell_backpack.png"
     order: 980
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   stretch_headband:
     name: "기지개 밴드"
     grade: common
@@ -463,6 +473,7 @@ artifacts:
     effect: "접속하면 기지개를 켜는 모션"
     icon: "magiccodex:textures/artifact/stretch_headband.png"
     order: 990
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   jack_in_the_box:
     name: "깜짝 상자"
     grade: common
@@ -470,6 +481,7 @@ artifacts:
     effect: "쓰러질 때 용수철 인형이 튀어나오는 연출"
     icon: "magiccodex:textures/artifact/jack_in_the_box.png"
     order: 1000
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   yum_bib:
     name: "냠냠 턱받이"
     grade: common
@@ -477,6 +489,7 @@ artifacts:
     effect: "먹는 소리가 귀여운 냠냠 소리로 바뀜"
     icon: "magiccodex:textures/artifact/yum_bib.png"
     order: 1010
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   konpeito_crown:
     name: "별사탕 왕관"
     grade: common
@@ -519,6 +532,7 @@ artifacts:
     effect: "빗자루에서 떨어질 때 받는 피해 -30%"
     icon: "magiccodex:textures/artifact/broom_cushion.png"
     order: 1070
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   pocket_crafting_table:
     name: "주머니 작업대"
     grade: common
@@ -555,6 +569,7 @@ artifacts:
     use: true
     cooldown: 0
     order: 1110
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   party_popper:
     name: "축하 폭죽통"
     grade: common
@@ -700,6 +715,7 @@ artifacts:
     effect: "맞을 때 20% 확률로 1초간 탭댄스 모션, 그동안 받는 피해 -30%"
     icon: "magiccodex:textures/artifact/tap_dance_shoes.png"
     order: 350
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   frog_crown:
     name: "개구리 왕관"
     grade: rare
@@ -714,6 +730,7 @@ artifacts:
     effect: "어깨에 앵무새가 앉아 내 마지막 채팅을 말풍선으로 따라 함"
     icon: "magiccodex:textures/artifact/chatty_parrot.png"
     order: 370
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   wish_coin:
     name: "소원 동전"
     grade: rare
@@ -835,6 +852,7 @@ artifacts:
     effect: "빗자루로 급하게 방향을 틀어도 떨어질 위험이 줄어듦"
     icon: "magiccodex:textures/artifact/pinwheel_charm.png"
     order: 1320
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   element_ink_bottle:
     name: "원소 잉크병"
     grade: rare
@@ -880,6 +898,7 @@ artifacts:
     use: true
     cooldown: 60
     order: 1370
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   war_horn:
     name: "함성 뿔피리"
     grade: rare
@@ -1005,6 +1024,7 @@ artifacts:
     effect: "키세팅 1번부터 6번까지 차례로 쓰면 마지막 마법 피해 +40%"
     icon: "magiccodex:textures/artifact/sequence_necklace.png"
     order: 1420
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   reaction_chain_orb:
     name: "반응 연쇄 구슬"
     grade: unique
@@ -1030,6 +1050,7 @@ artifacts:
     effect: "키세팅이 전부 화염 마법이면 화염 정령이 따라다니며 내 화염 마법을 따라 씀 (정령의 피해는 내 피해의 20%)"
     icon: "magiccodex:textures/artifact/fire_spirit_lantern.png"
     order: 510
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   mirror_twin:
     name: "거울 쌍둥이"
     grade: legendary
@@ -1037,6 +1058,7 @@ artifacts:
     effect: "반투명한 분신이 0.5초 늦게 내 동작을 따라 하고 내 마법도 따라 씀 (피해 30%, 원소 반응 없음)"
     icon: "magiccodex:textures/artifact/mirror_twin.png"
     order: 520
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   rainbow_prism:
     name: "무지개 프리즘"
     grade: legendary
@@ -1044,6 +1066,7 @@ artifacts:
     effect: "키세팅 6칸이 6원소 하나씩이면 내가 일으킨 원소 반응의 피해·회복·범위 2배, CC 시간 +50%"
     icon: "magiccodex:textures/artifact/rainbow_prism.png"
     order: 530
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   chaos_dice:
     name: "혼돈의 주사위"
     grade: legendary
@@ -1051,6 +1074,7 @@ artifacts:
     effect: "마법을 쓸 때마다 원소가 무작위로 바뀌어 혼자서도 반응이 일어남"
     icon: "magiccodex:textures/artifact/chaos_dice.png"
     order: 540
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   the_only_tome:
     name: "단 하나의 서"
     grade: legendary
@@ -1058,6 +1082,7 @@ artifacts:
     effect: "키세팅에 마법을 1개만 넣으면 최대 4번까지 충전해 연속으로 쓸 수 있음. 재사용 대기 30초 이하 마법만 가능하며, 마력 -50%, 그 마법의 재사용 대기 2배, 대기가 끝나면 충전이 모두 찬다."
     icon: "magiccodex:textures/artifact/the_only_tome.png"
     order: 550
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   inverted_mana_flask:
     name: "거꾸로 된 마나병"
     grade: legendary
@@ -1065,6 +1090,7 @@ artifacts:
     effect: "마나가 과열 게이지로 바뀜. 마법을 쓰면 과열이 차고 초당 5씩 식으며, 가득 차면 30초간 마법을 쓸 수 없음. 마나 재생량에 비례해 게이지 최대치가 늘어남."
     icon: "magiccodex:textures/artifact/inverted_mana_flask.png"
     order: 560
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   tilted_scales:
     name: "기울어진 천칭"
     grade: legendary
@@ -1079,6 +1105,7 @@ artifacts:
     effect: "처치한 몹이 검은 그림자로 일어나 10초간 함께 싸움. 그림자는 무적이고 나를 따라오며, 내가 공격하거나 나를 공격하는 적을 공격한다. 생전의 능력과 기술을 그대로 쓴다. 보스는 제외, 동시에 최대 10마리."
     icon: "magiccodex:textures/artifact/shadow_lord_mask.png"
     order: 580
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   philosopher_stone:
     name: "현자의 돌"
     grade: legendary
@@ -1093,7 +1120,6 @@ artifacts:
     effect: "파티에서 혼자 살아남으면 10초간 피해 2배, 이동 속도 증가"
     icon: "magiccodex:textures/artifact/comeback_medal.png"
     order: 600
-    enabled: false        # 보류: 첫 개발 버전 제외
   tactics_map:
     name: "작전 지도"
     grade: legendary
@@ -1115,6 +1141,7 @@ artifacts:
     effect: "빗자루 비행 궤적이 더 오래 남고, 그 궤적을 따라 날면 가속"
     icon: "magiccodex:textures/artifact/star_echo.png"
     order: 630
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   storm_wings:
     name: "폭풍 날개"
     grade: legendary
@@ -1122,6 +1149,7 @@ artifacts:
     effect: "빗자루 최고 속도 +15%, 비행 중 스킬 가속 +20"
     icon: "magiccodex:textures/artifact/storm_wings.png"
     order: 640
+    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   blacksmith_amulet:
     name: "대장장이의 부적"
     grade: legendary

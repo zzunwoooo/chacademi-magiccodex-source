@@ -3486,7 +3486,7 @@ spells:
     number: 101
     name: 대지 성형
     permission: magic.learned.earth_shaping
-    icon: magiccodex:textures/spells/intermediate/earth_shaping.png
+    icon: magiccodex:textures/spells/reviewed_20261020/earth_shaping.png
     mana-cost: 120
     cooldown-seconds: 25
     reviewed: true
@@ -3979,7 +3979,7 @@ spells:
     number: 114
     name: 이끼 입히기
     permission: magic.learned.moss_coating
-    icon: magiccodex:textures/spells/expansion_2/moss_coating.png
+    icon: magiccodex:textures/spells/reviewed_20261020/moss_coating.png
     mana-cost: 12
     cooldown-seconds: 5
     reviewed: true
@@ -4031,7 +4031,7 @@ spells:
     number: 116
     name: 돌 고르기
     permission: magic.learned.flint_sorting
-    icon: magiccodex:textures/spells/expansion_2/flint_sorting.png
+    icon: magiccodex:textures/spells/reviewed_20261020/flint_sorting.png
     mana-cost: 35
     cooldown-seconds: 5
     reviewed: true
@@ -4281,7 +4281,7 @@ spells:
     number: 122
     name: 동면의 씨앗
     permission: magic.learned.dormant_seed
-    icon: magiccodex:textures/spells/expansion_2/dormant_seed.png
+    icon: magiccodex:textures/spells/reviewed_20261020/dormant_seed.png
     mana-cost: 15
     cooldown-seconds: 3
     reviewed: true
@@ -4351,7 +4351,7 @@ spells:
     number: 124
     name: 자재 치환
     permission: magic.learned.material_exchange
-    icon: magiccodex:textures/spells/expansion_2/material_exchange.png
+    icon: magiccodex:textures/spells/reviewed_20261020/material_exchange.png
     mana-cost: 100
     cooldown-seconds: 60
     reviewed: true
@@ -4386,7 +4386,7 @@ spells:
     number: 125
     name: 기억하는 밭
     permission: magic.learned.remembering_field
-    icon: magiccodex:textures/spells/expansion_2/remembering_field.png
+    icon: magiccodex:textures/spells/reviewed_20261020/remembering_field.png
     mana-cost: 100
     cooldown-seconds: 30
     reviewed: true
@@ -6504,11 +6504,45 @@ spells:
     icon: magiccodex:textures/spells/intermediate/shadow_double.png
     mana-cost: 75
     cooldown-seconds: 25
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: static
+      trigger: external:form
+      effect: claude:shadowdouble/form
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 34
+    - role: static
+      trigger: external:form
+      effect: claude:shadowdouble/hold
+      anchor: impact
+      delay-ticks: 8
+      duration-ticks: 168
+    - role: static
+      trigger: external:depart
+      effect: claude:shadowdouble/depart
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+    - role: static
+      trigger: external:return
+      effect: claude:shadowdouble/return
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 28
+      stop-effects:
+      - claude:shadowdouble/hold
+    - role: static
+      trigger: external:expire
+      effect: claude:shadowdouble/expire
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 46
+      stop-effects:
+      - claude:shadowdouble/hold
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/intermediate/shadow_double.png
   echo_reading:
@@ -6518,11 +6552,17 @@ spells:
     icon: magiccodex:textures/spells/intermediate/echo_reading.png
     mana-cost: 25
     cooldown-seconds: 10
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: static
+      trigger: external:echo_reading
+      effect: claude:echoreading/echo_reading
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 86
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/intermediate/echo_reading.png
   sealing_thread:
@@ -6532,27 +6572,39 @@ spells:
     icon: magiccodex:textures/spells/intermediate/sealing_thread.png
     mana-cost: 40
     cooldown-seconds: 20
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: link
+      trigger: external:thread
+      effect: claude:sealingthread/thread
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+      link-source: caster-hand
+      link-target: event-point
+    - role: static
+      trigger: external:wrap_chest
+      effect: claude:sealingthread/wrap_chest
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 46
+    - role: static
+      trigger: external:wrap_door_r
+      effect: claude:sealingthread/wrap_door_r
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 46
+    - role: static
+      trigger: external:wrap_door_l
+      effect: claude:sealingthread/wrap_door_l
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 46
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/intermediate/sealing_thread.png
-  afterlife_gate:
-    number: 171
-    name: 사후세계의 문
-    permission: magic.learned.afterlife_gate
-    icon: magiccodex:textures/spells/advanced/afterlife_gate.png
-    mana-cost: 350
-    cooldown-seconds: 180
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/advanced/afterlife_gate.png
   shadow_exchange:
     number: 172
     name: 그림자 교환
@@ -6560,11 +6612,23 @@ spells:
     icon: magiccodex:textures/spells/advanced/shadow_exchange.png
     mana-cost: 100
     cooldown-seconds: 30
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: static
+      trigger: external:vanish
+      effect: claude:shadowexchange/vanish
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 26
+    - role: static
+      trigger: external:appear
+      effect: claude:shadowexchange/appear
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 26
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/advanced/shadow_exchange.png
   forbidden_contract:
@@ -6572,13 +6636,41 @@ spells:
     name: 금서의 계약
     permission: magic.learned.forbidden_contract
     icon: magiccodex:textures/spells/advanced/forbidden_contract.png
-    mana-cost: 200
-    cooldown-seconds: 120
-    reviewed: false
-    enabled: false
+    mana-cost: 0
+    cooldown-seconds: 180
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: attached
+      trigger: external:contract
+      effect: claude:forbiddencontract/contract
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 52
+    - role: attached
+      trigger: external:conversion
+      effect: claude:forbiddencontract/conversion
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 64
+    - role: attached
+      trigger: external:seal_lock
+      effect: claude:forbiddencontract/seal_lock
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 304
+      stop-effects:
+      - claude:forbiddencontract/conversion
+    - role: attached
+      trigger: external:seal_break
+      effect: claude:forbiddencontract/seal_break
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 22
+      stop-effects:
+      - claude:forbiddencontract/seal_lock
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/advanced/forbidden_contract.png
   life_siphon:
@@ -6586,13 +6678,41 @@ spells:
     name: 생명 갈취
     permission: magic.learned.life_siphon
     icon: magiccodex:textures/spells/expansion/life_siphon.png
-    mana-cost: 55
-    cooldown-seconds: 15
-    reviewed: false
-    enabled: false
+    mana-cost: 30
+    cooldown-seconds: 10
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: static
+      trigger: external:zone
+      effect: claude:lifesiphon/begin
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 16
+    - role: static
+      trigger: external:zone
+      effect: claude:lifesiphon/sustain
+      anchor: impact
+      delay-ticks: 4
+      duration-ticks: 64
+    - role: static
+      trigger: external:zone_end
+      effect: claude:lifesiphon/end
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 20
+      stop-effects:
+      - claude:lifesiphon/sustain
+    - role: link
+      trigger: external:drain
+      effect: claude:lifesiphon/drain
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+      link-source: event-point
+      link-target: caster
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/life_siphon.png
   drowsiness:
@@ -6600,27 +6720,45 @@ spells:
     name: 졸음
     permission: magic.learned.drowsiness
     icon: magiccodex:textures/spells/expansion/drowsiness.png
-    mana-cost: 20
-    cooldown-seconds: 10
+    mana-cost: 100
+    cooldown-seconds: 16
     reviewed: false
     enabled: false
     aliases: []
     phases: []
-    preparation-status: unreviewed-baseline
+    preparation-status: vfx-pack-missing
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/drowsiness.png
   misfortune_whisper:
     number: 176
-    name: 불운의 속삭임
+    name: 나약함의 저주
     permission: magic.learned.misfortune_whisper
     icon: magiccodex:textures/spells/expansion/misfortune_whisper.png
-    mana-cost: 35
-    cooldown-seconds: 12
-    reviewed: false
-    enabled: false
+    mana-cost: 60
+    cooldown-seconds: 20
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: attached
+      trigger: cast
+      effect: claude:misfortune_whisper/misfortune_whisper_begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 28
+    - role: attached
+      trigger: cast
+      effect: claude:misfortune_whisper/misfortune_whisper
+      anchor: target
+      delay-ticks: 6
+      duration-ticks: 160
+    - role: attached
+      trigger: cast
+      effect: claude:misfortune_whisper/misfortune_whisper_end
+      anchor: target
+      delay-ticks: 160
+      duration-ticks: 24
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/misfortune_whisper.png
   hungry_shadow:
@@ -6628,13 +6766,29 @@ spells:
     name: 굶주린 그림자
     permission: magic.learned.hungry_shadow
     icon: magiccodex:textures/spells/expansion/hungry_shadow.png
-    mana-cost: 20
-    cooldown-seconds: 15
-    reviewed: false
-    enabled: false
+    mana-cost: 0
+    cooldown-seconds: 0
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: link
+      trigger: cast
+      effect: claude:hungryshadow/maw
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 24
+      link-source: caster-hand
+      link-target: event-point
+    - role: link
+      trigger: external:devour
+      effect: claude:hungryshadow/devour
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+      link-source: event-point
+      link-target: caster
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/hungry_shadow.png
   curse_transfer:
@@ -6644,25 +6798,71 @@ spells:
     icon: magiccodex:textures/spells/expansion/curse_transfer.png
     mana-cost: 90
     cooldown-seconds: 30
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: link
+      trigger: external:spread_g1
+      effect: claude:cursetransfer/spread_g1
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 20
+      link-source: event-point
+      link-target: target
+    - role: attached
+      trigger: external:mark
+      effect: claude:cursetransfer/mark_begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 24
+    - role: attached
+      trigger: external:mark
+      effect: claude:cursetransfer/mark_hold
+      anchor: target
+      delay-ticks: 10
+      duration-ticks: 110
+    - role: attached
+      trigger: external:mark
+      effect: claude:cursetransfer/mark_end
+      anchor: target
+      delay-ticks: 110
+      duration-ticks: 14
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/curse_transfer.png
   discord:
     number: 179
-    name: 불화
+    name: 마인드컨트롤
     permission: magic.learned.discord
     icon: magiccodex:textures/spells/expansion/discord.png
     mana-cost: 110
     cooldown-seconds: 30
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: attached
+      trigger: external:discord_begin
+      effect: claude:discord/discord_begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 22
+    - role: attached
+      trigger: external:discord_begin
+      effect: claude:discord/discord_mark
+      anchor: target
+      delay-ticks: 4
+      duration-ticks: 124
+    - role: attached
+      trigger: external:discord_end
+      effect: claude:discord/discord_end
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 14
+      stop-effects:
+      - claude:discord/discord_mark
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/discord.png
   night_chain:
@@ -6672,11 +6872,61 @@ spells:
     icon: magiccodex:textures/spells/expansion/night_chain.png
     mana-cost: 200
     cooldown-seconds: 45
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: attached
+      trigger: external:bind
+      effect: claude:nightchain/bindform
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 24
+    - role: attached
+      trigger: external:bind
+      effect: claude:nightchain/bindhold
+      anchor: target
+      delay-ticks: 10
+      duration-ticks: 160
+    - role: attached
+      trigger: external:bind
+      effect: claude:nightchain/bindfade
+      anchor: target
+      delay-ticks: 160
+      duration-ticks: 30
+    - role: link
+      trigger: external:chain
+      effect: claude:nightchain/chainform
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 24
+      link-source: event-point
+      link-target: target
+    - role: link
+      trigger: external:chain
+      effect: claude:nightchain/chainhold
+      anchor: impact
+      delay-ticks: 10
+      duration-ticks: 160
+      link-source: event-point
+      link-target: target
+    - role: link
+      trigger: external:chain
+      effect: claude:nightchain/chainfade
+      anchor: impact
+      delay-ticks: 160
+      duration-ticks: 24
+      link-source: event-point
+      link-target: target
+    - role: link
+      trigger: external:relay
+      effect: claude:nightchain/relay
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+      link-source: event-point
+      link-target: target
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/night_chain.png
   pain_deferral:
@@ -6686,11 +6936,107 @@ spells:
     icon: magiccodex:textures/spells/expansion/pain_deferral.png
     mana-cost: 150
     cooldown-seconds: 45
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: attached
+      trigger: cast
+      effect: claude:paindeferral/cast
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 12
+    - role: attached
+      trigger: external:shard_slot1
+      effect: claude:paindeferral/shard_slot1
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 224
+    - role: attached
+      trigger: external:shard_slot2
+      effect: claude:paindeferral/shard_slot2
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 224
+    - role: attached
+      trigger: external:shard_slot3
+      effect: claude:paindeferral/shard_slot3
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 224
+    - role: attached
+      trigger: external:shard_slot4
+      effect: claude:paindeferral/shard_slot4
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 224
+    - role: attached
+      trigger: external:shard_slot5
+      effect: claude:paindeferral/shard_slot5
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 224
+    - role: attached
+      trigger: external:shard_slot6
+      effect: claude:paindeferral/shard_slot6
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 224
+    - role: attached
+      trigger: external:absorb_slot1
+      effect: claude:paindeferral/absorb_slot1
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 14
+      stop-effects:
+      - claude:paindeferral/shard_slot1
+    - role: attached
+      trigger: external:absorb_slot2
+      effect: claude:paindeferral/absorb_slot2
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 14
+      stop-effects:
+      - claude:paindeferral/shard_slot2
+    - role: attached
+      trigger: external:absorb_slot3
+      effect: claude:paindeferral/absorb_slot3
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 14
+      stop-effects:
+      - claude:paindeferral/shard_slot3
+    - role: attached
+      trigger: external:absorb_slot4
+      effect: claude:paindeferral/absorb_slot4
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 14
+      stop-effects:
+      - claude:paindeferral/shard_slot4
+    - role: attached
+      trigger: external:absorb_slot5
+      effect: claude:paindeferral/absorb_slot5
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 14
+      stop-effects:
+      - claude:paindeferral/shard_slot5
+    - role: attached
+      trigger: external:absorb_slot6
+      effect: claude:paindeferral/absorb_slot6
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 14
+      stop-effects:
+      - claude:paindeferral/shard_slot6
+    - role: attached
+      trigger: external:pulse
+      effect: claude:paindeferral/pulse
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 10
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/pain_deferral.png
   black_harvest:
@@ -6698,13 +7044,19 @@ spells:
     name: 검은 수확
     permission: magic.learned.black_harvest
     icon: magiccodex:textures/spells/expansion/black_harvest.png
-    mana-cost: 450
-    cooldown-seconds: 120
-    reviewed: false
-    enabled: false
+    mana-cost: 80
+    cooldown-seconds: 12
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: attached
+      trigger: cast
+      effect: claude:blackharvest/cast
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 38
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/black_harvest.png
   ink_fingertip:
@@ -6712,13 +7064,109 @@ spells:
     name: 먹물 손끝
     permission: magic.learned.ink_fingertip
     icon: magiccodex:textures/spells/expansion_2/ink_fingertip.png
-    mana-cost: 3
-    cooldown-seconds: 2
-    reviewed: false
-    enabled: false
+    mana-cost: 30
+    cooldown-seconds: 120
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: attached
+      trigger: external:ink_white
+      effect: claude:inkfingertip/ink_white
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_light_gray
+      effect: claude:inkfingertip/ink_light_gray
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_gray
+      effect: claude:inkfingertip/ink_gray
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_black
+      effect: claude:inkfingertip/ink_black
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_brown
+      effect: claude:inkfingertip/ink_brown
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_red
+      effect: claude:inkfingertip/ink_red
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_orange
+      effect: claude:inkfingertip/ink_orange
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_yellow
+      effect: claude:inkfingertip/ink_yellow
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_lime
+      effect: claude:inkfingertip/ink_lime
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_green
+      effect: claude:inkfingertip/ink_green
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_cyan
+      effect: claude:inkfingertip/ink_cyan
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_light_blue
+      effect: claude:inkfingertip/ink_light_blue
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_blue
+      effect: claude:inkfingertip/ink_blue
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_purple
+      effect: claude:inkfingertip/ink_purple
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_magenta
+      effect: claude:inkfingertip/ink_magenta
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_pink
+      effect: claude:inkfingertip/ink_pink
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/ink_fingertip.png
   shadow_nail:
@@ -6726,13 +7174,41 @@ spells:
     name: 그림자 못
     permission: magic.learned.shadow_nail
     icon: magiccodex:textures/spells/expansion_2/shadow_nail.png
-    mana-cost: 45
-    cooldown-seconds: 15
-    reviewed: false
-    enabled: false
+    mana-cost: 170
+    cooldown-seconds: 60
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: attached
+      trigger: external:nail
+      effect: claude:shadownail/shadow_nail_begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 10
+    - role: attached
+      trigger: external:nail
+      effect: claude:shadownail/shadow_nail
+      anchor: target
+      delay-ticks: 2
+      duration-ticks: 300
+    - role: attached
+      trigger: external:nail_burst
+      effect: claude:shadownail/shadow_nail_burst
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 26
+      stop-effects:
+      - claude:shadownail/shadow_nail
+    - role: attached
+      trigger: external:nail_fade
+      effect: claude:shadownail/shadow_nail_fade
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 26
+      stop-effects:
+      - claude:shadownail/shadow_nail
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/shadow_nail.png
   night_lullaby:
@@ -6740,13 +7216,39 @@ spells:
     name: 밤의 자장가
     permission: magic.learned.night_lullaby
     icon: magiccodex:textures/spells/expansion_2/night_lullaby.png
-    mana-cost: 30
-    cooldown-seconds: 30
-    reviewed: false
-    enabled: false
+    mana-cost: 130
+    cooldown-seconds: 60
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: static
+      trigger: external:rift
+      effect: claude:nightlullaby/rift
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:trail
+      effect: claude:nightlullaby/trail
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 200
+    - role: impact
+      trigger: external:hit
+      effect: claude:nightlullaby/hit
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 22
+    - role: static
+      trigger: external:dismiss
+      effect: claude:nightlullaby/dismiss
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 34
+      stop-effects:
+      - claude:nightlullaby/trail
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/night_lullaby.png
   loosen_grasp:
@@ -6756,27 +7258,39 @@ spells:
     icon: magiccodex:textures/spells/expansion_2/loosen_grasp.png
     mana-cost: 60
     cooldown-seconds: 20
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: attached
+      trigger: external:hand_ripple
+      effect: claude:loosengrasp/hand_ripple
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 18
+    - role: attached
+      trigger: external:mark
+      effect: claude:loosengrasp/mark_begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 14
+    - role: attached
+      trigger: external:mark
+      effect: claude:loosengrasp/mark
+      anchor: target
+      delay-ticks: 2
+      duration-ticks: 80
+    - role: attached
+      trigger: external:mark_break
+      effect: claude:loosengrasp/mark_break
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 18
+      stop-effects:
+      - claude:loosengrasp/mark
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/loosen_grasp.png
-  shadow_tracking:
-    number: 187
-    name: 그림자 추적
-    permission: magic.learned.shadow_tracking
-    icon: magiccodex:textures/spells/expansion_2/shadow_tracking.png
-    mana-cost: 25
-    cooldown-seconds: 20
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_2/shadow_tracking.png
   healing_seal:
     number: 188
     name: 회복 봉인
@@ -6784,11 +7298,29 @@ spells:
     icon: magiccodex:textures/spells/expansion_2/healing_seal.png
     mana-cost: 85
     cooldown-seconds: 25
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: attached
+      trigger: external:healing_seal
+      effect: claude:healingseal/healing_seal_begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 32
+    - role: attached
+      trigger: external:healing_seal
+      effect: claude:healingseal/healing_seal
+      anchor: target
+      delay-ticks: 8
+      duration-ticks: 160
+    - role: attached
+      trigger: external:healing_seal
+      effect: claude:healingseal/healing_seal_end
+      anchor: target
+      delay-ticks: 160
+      duration-ticks: 16
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/healing_seal.png
   shadow_scales:
@@ -6798,11 +7330,35 @@ spells:
     icon: magiccodex:textures/spells/expansion_2/shadow_scales.png
     mana-cost: 100
     cooldown-seconds: 20
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: static
+      trigger: external:burst
+      effect: claude:shadowscales/burst
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 62
+    - role: impact
+      trigger: external:hit_low
+      effect: claude:shadowscales/hit_low
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 20
+    - role: impact
+      trigger: external:hit_mid
+      effect: claude:shadowscales/hit_mid
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 26
+    - role: impact
+      trigger: external:hit_high
+      effect: claude:shadowscales/hit_high
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 36
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/shadow_scales.png
   warning_thread:
@@ -6810,41 +7366,71 @@ spells:
     name: 경고의 실
     permission: magic.learned.warning_thread
     icon: magiccodex:textures/spells/expansion_2/warning_thread.png
-    mana-cost: 20
-    cooldown-seconds: 15
-    reviewed: false
-    enabled: false
+    mana-cost: 200
+    cooldown-seconds: 60
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: static
+      trigger: external:cage
+      effect: claude:warningthread/begin
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 44
+    - role: static
+      trigger: external:cage
+      effect: claude:warningthread/sustain
+      anchor: impact
+      delay-ticks: 18
+      duration-ticks: 140
+    - role: static
+      trigger: external:cage_end
+      effect: claude:warningthread/end
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 38
+      stop-effects:
+      - claude:warningthread/sustain
+    - role: impact
+      trigger: external:breach
+      effect: claude:warningthread/breach
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/warning_thread.png
-  final_knot:
-    number: 191
-    name: 끝매듭
-    permission: magic.learned.final_knot
-    icon: magiccodex:textures/spells/expansion_2/final_knot.png
-    mana-cost: 35
-    cooldown-seconds: 20
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_2/final_knot.png
   wound_accounting:
     number: 192
     name: 상처 회계
     permission: magic.learned.wound_accounting
     icon: magiccodex:textures/spells/expansion_2/wound_accounting.png
-    mana-cost: 180
-    cooldown-seconds: 35
-    reviewed: false
-    enabled: false
+    mana-cost: 80
+    cooldown-seconds: 30
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: attached
+      trigger: external:gather
+      effect: claude:woundaccounting/gather
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 20
+    - role: impact
+      trigger: external:contact
+      effect: claude:woundaccounting/contact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 20
+    - role: attached
+      trigger: external:absorb
+      effect: claude:woundaccounting/absorb
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 26
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/wound_accounting.png
   inverted_offering:
@@ -6852,13 +7438,29 @@ spells:
     name: 뒤집힌 공물
     permission: magic.learned.inverted_offering
     icon: magiccodex:textures/spells/expansion_2/inverted_offering.png
-    mana-cost: 50
-    cooldown-seconds: 30
-    reviewed: false
-    enabled: false
+    mana-cost: 0
+    cooldown-seconds: 0
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: link
+      trigger: cast
+      effect: claude:invertedoffering/offering
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 16
+      link-source: event-point
+      link-target: caster
+    - role: link
+      trigger: external:offering
+      effect: claude:invertedoffering/offering
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 16
+      link-source: event-point
+      link-target: caster
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/inverted_offering.png
   ghost_tool:
@@ -6866,13 +7468,61 @@ spells:
     name: 유령 도구
     permission: magic.learned.ghost_tool
     icon: magiccodex:textures/spells/expansion_2/ghost_tool.png
-    mana-cost: 45
-    cooldown-seconds: 10
-    reviewed: false
-    enabled: false
+    mana-cost: 100
+    cooldown-seconds: 60
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: attached
+      trigger: cast
+      effect: claude:ghosttool/ghost_tool_begin
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 18
+    - role: attached
+      trigger: cast
+      effect: claude:ghosttool/ghost_tool
+      anchor: caster
+      delay-ticks: 4
+      duration-ticks: 600
+    - role: attached
+      trigger: cast
+      effect: claude:ghosttool/ghost_tool_end
+      anchor: caster
+      delay-ticks: 600
+      duration-ticks: 24
+    - role: static
+      trigger: external:ghost_tool_break
+      effect: claude:ghosttool/ghost_tool_break
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 20
+    - role: static
+      trigger: external:ghost_tool_place
+      effect: claude:ghosttool/ghost_tool_place
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 12
+    - role: static
+      trigger: external:ghost_tool_swing_pickaxe
+      effect: claude:ghosttool/ghost_tool_swing_pickaxe
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 12
+    - role: static
+      trigger: external:ghost_tool_swing_axe
+      effect: claude:ghosttool/ghost_tool_swing_axe
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 12
+    - role: static
+      trigger: external:ghost_tool_swing_shovel
+      effect: claude:ghosttool/ghost_tool_swing_shovel
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 12
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/ghost_tool.png
   bell_of_fear:
@@ -6881,12 +7531,36 @@ spells:
     permission: magic.learned.bell_of_fear
     icon: magiccodex:textures/spells/expansion_2/bell_of_fear.png
     mana-cost: 140
-    cooldown-seconds: 40
-    reviewed: false
-    enabled: false
+    cooldown-seconds: 30
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: static
+      trigger: cast
+      effect: claude:belloffear/bell
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 44
+    - role: static
+      trigger: cast
+      effect: claude:belloffear/ripple
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 26
+    - role: attached
+      trigger: external:fear
+      effect: claude:belloffear/fearapply
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 18
+    - role: attached
+      trigger: external:fear
+      effect: claude:belloffear/fearhold
+      anchor: target
+      delay-ticks: 2
+      duration-ticks: 60
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/bell_of_fear.png
   eclipse_eye:
@@ -6894,1454 +7568,884 @@ spells:
     name: 월식의 눈
     permission: magic.learned.eclipse_eye
     icon: magiccodex:textures/spells/expansion_2/eclipse_eye.png
-    mana-cost: 160
-    cooldown-seconds: 35
-    reviewed: false
-    enabled: false
+    mana-cost: 1500
+    cooldown-seconds: 300
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: static
+      trigger: cast
+      effect: claude:eclipseeye/zonebegin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 50
+    - role: static
+      trigger: cast
+      effect: claude:eclipseeye/zonesustain
+      anchor: target
+      delay-ticks: 3
+      duration-ticks: 320
+    - role: static
+      trigger: cast
+      effect: claude:eclipseeye/chant
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 106
+    - role: static
+      trigger: external:struct_cancel
+      effect: claude:eclipseeye/chantcancel
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 34
+      stop-effects:
+      - claude:eclipseeye/chant
+      - claude:eclipseeye/zonesustain
+    - role: static
+      trigger: external:struct_cancel
+      effect: claude:eclipseeye/zoneend
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 50
+    - role: static
+      trigger: external:eclipse
+      effect: claude:eclipseeye/eclipse
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 42
+    - role: static
+      trigger: external:eclipse
+      effect: claude:eclipseeye/eclipsehold
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 204
+    - role: static
+      trigger: external:eclipse_end
+      effect: claude:eclipseeye/eclipseend
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 92
+      stop-effects:
+      - claude:eclipseeye/eclipsehold
+      - claude:eclipseeye/zonesustain
+      - claude:eclipseeye/haste
+    - role: static
+      trigger: external:eclipse_end
+      effect: claude:eclipseeye/zoneend
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 50
+    - role: attached
+      trigger: external:haste
+      effect: claude:eclipseeye/haste
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 200
+    - role: impact
+      trigger: external:contact
+      effect: claude:eclipseeye/contact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 14
+    - role: impact
+      trigger: external:shardFade
+      effect: claude:eclipseeye/shardfade
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/eclipse_eye.png
-  death_ledger:
-    number: 197
-    name: 죽음의 장부
-    permission: magic.learned.death_ledger
-    icon: magiccodex:textures/spells/expansion_2/death_ledger.png
-    mana-cost: 180
-    cooldown-seconds: 45
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_2/death_ledger.png
   void_maw:
     number: 198
     name: 공허의 입
     permission: magic.learned.void_maw
     icon: magiccodex:textures/spells/expansion_2/void_maw.png
     mana-cost: 500
-    cooldown-seconds: 90
-    reviewed: false
-    enabled: false
+    cooldown-seconds: 100
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
+    phases:
+    - role: static
+      trigger: cast
+      effect: claude:voidmaw/warnbegin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 28
+    - role: static
+      trigger: cast
+      effect: claude:voidmaw/warnhold
+      anchor: target
+      delay-ticks: 4
+      duration-ticks: 22
+    - role: static
+      trigger: cast
+      effect: claude:voidmaw/bite
+      anchor: target
+      delay-ticks: 25
+      duration-ticks: 48
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/void_maw.png
-  twilight_bargain:
-    number: 199
-    name: 황혼의 거래
-    permission: magic.learned.twilight_bargain
-    icon: magiccodex:textures/spells/expansion_2/twilight_bargain.png
-    mana-cost: 0
-    cooldown-seconds: 90
-    reviewed: false
-    enabled: false
+  # ---- 300~323 몹 기술 습득 마법 (magic-mythic-paper/tools/mob_spells.py) ----
+  fox_orbit:
+    number: 300
+    name: 여우불 공전
+    permission: magic.learned.fox_orbit
+    icon: magiccodex:textures/spells/expansion_2/firefly_mark.png
+    mana-cost: 30
+    cooldown-seconds: 8
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_2/twilight_bargain.png
-  wind_courier:
-    number: 200
-    name: 바람 우편
-    permission: magic.learned.wind_courier
-    icon: ''
-    mana-cost: 12
-    cooldown-seconds: 5
-    reviewed: false
-    enabled: false
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:kitsunefox/hit_normal
+      - claude:kitsunefox/shot_normal
+    mob-vfx-pack: kitsunefox
+  curving_plumes:
+    number: 301
+    name: 곡선 불깃털
+    permission: magic.learned.curving_plumes
+    icon: magiccodex:textures/spells/expansion_2/firebird_hunt.png
+    mana-cost: 30
+    cooldown-seconds: 8
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/wind_courier.png
-  air_display:
-    number: 201
-    name: 허공 진열
-    permission: magic.learned.air_display
-    icon: ''
-    mana-cost: 8
-    cooldown-seconds: 5
-    reviewed: false
-    enabled: false
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:phoenixfeather/hit_flame
+      - claude:phoenixfeather/shot_flame
+    mob-vfx-pack: phoenixfeather
+  crystal_orbit:
+    number: 302
+    name: 결정 공전탄
+    permission: magic.learned.crystal_orbit
+    icon: magiccodex:textures/spells/expansion/frost_rupture.png
+    mana-cost: 45
+    cooldown-seconds: 14
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/air_display.png
-  sail_breeze:
-    number: 202
-    name: 돛바람
-    permission: magic.learned.sail_breeze
-    icon: ''
-    mana-cost: 18
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:glacialshards/hit_glacial
+      - claude:glacialshards/shot_glacial
+    mob-vfx-pack: glacialshards
+  venom_spit:
+    number: 303
+    name: 독 뱉기
+    permission: magic.learned.venom_spit
+    icon: magiccodex:textures/spells/expansion_2/thorn_seeds.png
+    mana-cost: 30
     cooldown-seconds: 10
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
     phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/sail_breeze.png
-  air_brake:
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:basiliskspit/hit_wild
+      - claude:basiliskspit/shot_wild
+    mob-vfx-pack: basiliskspit
+  smoke_veil:
+    number: 304
+    name: 연막 은신
+    permission: magic.learned.smoke_veil
+    icon: magiccodex:textures/spells/novice_extra/faint_veil.png
+    mana-cost: 35
+    cooldown-seconds: 20
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:smokebomb/smoke
+    mob-vfx-pack: smokebomb
+  domain_stomp:
+    number: 305
+    name: 영역 선포
+    permission: magic.learned.domain_stomp
+    icon: magiccodex:textures/spells/expansion_2/guardian_oath.png
+    mana-cost: 40
+    cooldown-seconds: 14
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:domainseal/domain_heavenly
+    mob-vfx-pack: domainseal
+  seal_circle:
+    number: 306
+    name: 봉인진
+    permission: magic.learned.seal_circle
+    icon: magiccodex:textures/spells/intermediate/sealing_thread.png
+    mana-cost: 45
+    cooldown-seconds: 16
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:sealcircle/seal
+    mob-vfx-pack: sealcircle
+  seal_talismans:
+    number: 307
+    name: 봉인 부적
+    permission: magic.learned.seal_talismans
+    icon: magiccodex:textures/spells/expansion/exorcism_flash.png
+    mana-cost: 25
+    cooldown-seconds: 7
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:sealtalisman/hit_seal
+      - claude:sealtalisman/shot_seal
+    mob-vfx-pack: sealtalisman
+  shield_slam:
+    number: 308
+    name: 방패 내려찍기
+    permission: magic.learned.shield_slam
+    icon: magiccodex:textures/spells/intermediate/protective_ward.png
+    mana-cost: 30
+    cooldown-seconds: 10
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:sealshield/shield
+    mob-vfx-pack: sealshield
+  chain_arrow:
+    number: 309
+    name: 사슬 화살
+    permission: magic.learned.chain_arrow
+    icon: magiccodex:textures/spells/expansion_2/guiding_fletching.png
+    mana-cost: 20
+    cooldown-seconds: 6
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:chainarrow/hit_chain
+      - claude:chainarrow/shot_chain
+    mob-vfx-pack: chainarrow
+  mana_drain:
+    number: 310
+    name: 마나 흡수
+    permission: magic.learned.mana_drain
+    icon: magiccodex:textures/spells/expansion_2/mana_conduit.png
+    mana-cost: 40
+    cooldown-seconds: 16
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:phantomdrain/drain_ender
+    mob-vfx-pack: phantomdrain
+  soul_scythe:
+    number: 311
+    name: 영혼 낫
+    permission: magic.learned.soul_scythe
+    icon: magiccodex:textures/spells/expansion/black_harvest.png
+    mana-cost: 25
+    cooldown-seconds: 7
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:phantomscythe/reap_ender
+    mob-vfx-pack: phantomscythe
+  oblivion_orbs:
+    number: 312
+    name: 망각의 탄환
+    permission: magic.learned.oblivion_orbs
+    icon: magiccodex:textures/spells/expansion_2/abyssal_pressure.png
+    mana-cost: 30
+    cooldown-seconds: 9
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:skelorb/hit
+      - claude:skelorb/shot
+    mob-vfx-pack: skelorb
+  bone_grasp:
+    number: 313
+    name: 뼈의 손아귀
+    permission: magic.learned.bone_grasp
+    icon: magiccodex:textures/spells/novice_extra/shadow_bind.png
+    mana-cost: 40
+    cooldown-seconds: 16
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:bonegrasp/grasp
+    mob-vfx-pack: bonegrasp
+  shadow_leap:
+    number: 314
+    name: 그림자 도약
+    permission: magic.learned.shadow_leap
+    icon: magiccodex:textures/spells/novice_extra/light_leap.png
+    mana-cost: 40
+    cooldown-seconds: 14
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:specialkitsune/in_normal
+      - claude:specialkitsune/out_normal
+    mob-vfx-pack: specialkitsune
+  binding_pull:
+    number: 315
+    name: 끌어오기
+    permission: magic.learned.binding_pull
+    icon: magiccodex:textures/spells/novice/feather_step.png
+    mana-cost: 45
+    cooldown-seconds: 18
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:specialserpent/in_jade
+      - claude:specialserpent/mark_jade
+    mob-vfx-pack: specialserpent
+  fairy_dust:
+    number: 316
+    name: 요정 가루
+    permission: magic.learned.fairy_dust
+    icon: magiccodex:textures/spells/expansion_2/night_lullaby.png
+    mana-cost: 40
+    cooldown-seconds: 20
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:fairydust/dust_flower
+    mob-vfx-pack: fairydust
+  moon_wind:
+    number: 317
+    name: 반달 바람날
+    permission: magic.learned.moon_wind
+    icon: magiccodex:textures/spells/novice/feather_step.png
+    mana-cost: 25
+    cooldown-seconds: 7
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:pegasuscrescent/moon
+    mob-vfx-pack: pegasuscrescent
+  gale_wings:
+    number: 318
+    name: 돌풍 날갯짓
+    permission: magic.learned.gale_wings
+    icon: magiccodex:textures/spells/expansion/gale_dash.png
+    mana-cost: 40
+    cooldown-seconds: 16
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:galewings/gale
+    mob-vfx-pack: galewings
+  feather_storm:
+    number: 319
+    name: 깃털 폭풍
+    permission: magic.learned.feather_storm
+    icon: magiccodex:textures/spells/expansion_2/thorn_seeds.png
+    mana-cost: 35
+    cooldown-seconds: 12
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:featherstorm/fstorm_common
+    mob-vfx-pack: featherstorm
+  hunting_pounce:
+    number: 320
+    name: 사냥 도약
+    permission: magic.learned.hunting_pounce
+    icon: magiccodex:textures/spells/novice_extra/light_leap.png
+    mana-cost: 35
+    cooldown-seconds: 14
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:sabertoothpounce/pounce_arctic
+    mob-vfx-pack: sabertoothpounce
+  roar_leap:
+    number: 321
+    name: 포효 도약
+    permission: magic.learned.roar_leap
+    icon: magiccodex:textures/spells/expansion_2/bell_of_fear.png
+    mana-cost: 40
+    cooldown-seconds: 16
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:manticoreroar/roar_aether
+    mob-vfx-pack: manticoreroar
+  gravity_slam:
+    number: 322
+    name: 중력 강타
+    permission: magic.learned.gravity_slam
+    icon: magiccodex:textures/spells/expansion/weightless_zone.png
+    mana-cost: 45
+    cooldown-seconds: 16
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:gravityslam/gravity_arcane
+    mob-vfx-pack: gravityslam
+  tail_spikes:
+    number: 323
+    name: 꼬리 가시
+    permission: magic.learned.tail_spikes
+    icon: magiccodex:textures/spells/reviewed_20261016/pressure_lance.png
+    mana-cost: 35
+    cooldown-seconds: 12
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases: []
+    preparation-status: mob-skill-vfx-direct
+    required-effects:
+      - claude:wyvernspikes/spikes_green
+    mob-vfx-pack: wyvernspikes
+  landing_airbrake:
     number: 203
-    name: 급제동
-    permission: magic.learned.air_brake
-    icon: ''
-    mana-cost: 20
-    cooldown-seconds: 12
-    reviewed: false
-    enabled: false
+    name: 빗자루 차원이동
+    permission: magic.learned.landing_airbrake
+    icon: magiccodex:textures/spells/reviewed_20261020/landing_airbrake.png
+    mana-cost: 35
+    cooldown-seconds: 16
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/air_brake.png
-  headwind_field:
-    number: 204
-    name: 역풍 지대
-    permission: magic.learned.headwind_field
-    icon: ''
-    mana-cost: 65
-    cooldown-seconds: 25
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/headwind_field.png
-  vortex_center:
-    number: 205
-    name: 소용돌이 중심
-    permission: magic.learned.vortex_center
-    icon: ''
-    mana-cost: 100
-    cooldown-seconds: 30
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/vortex_center.png
-  wall_echo_burst:
-    number: 206
-    name: 벽울림 탄
-    permission: magic.learned.wall_echo_burst
-    icon: ''
-    mana-cost: 55
-    cooldown-seconds: 15
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/wall_echo_burst.png
-  blindside_turn:
-    number: 207
-    name: 빈틈 돌리기
-    permission: magic.learned.blindside_turn
-    icon: ''
-    mana-cost: 15
-    cooldown-seconds: 10
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/blindside_turn.png
-  wind_tailoring:
-    number: 208
-    name: 바람 재단
-    permission: magic.learned.wind_tailoring
-    icon: ''
-    mana-cost: 10
-    cooldown-seconds: 4
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/wind_tailoring.png
-  whistle_procession:
-    number: 209
-    name: 휘파람 행진
-    permission: magic.learned.whistle_procession
-    icon: ''
-    mana-cost: 18
-    cooldown-seconds: 15
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/whistle_procession.png
-  wind_performance:
+    phases:
+    - role: static
+      trigger: external:depart
+      effect: claude:landingairbrake/depart
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+    - role: static
+      trigger: external:arrive
+      effect: claude:landingairbrake/arrive
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+    preparation-status: server-events-connected
+  hushed_soles:
     number: 210
-    name: 바람 연주
-    permission: magic.learned.wind_performance
-    icon: ''
-    mana-cost: 6
-    cooldown-seconds: 2
-    reviewed: false
-    enabled: false
+    name: 고요한 밑창
+    permission: magic.learned.hushed_soles
+    icon: magiccodex:textures/spells/reviewed_20261020/hushed_soles.png
+    mana-cost: 55
+    cooldown-seconds: 45
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/wind_performance.png
-  draft_closer:
+    phases:
+    - role: impact
+      trigger: external:step
+      effect: claude:hushedsoles/step
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 24
+    preparation-status: server-events-connected
+  thorn_manners:
     number: 211
-    name: 문풍지
-    permission: magic.learned.draft_closer
-    icon: ''
+    name: 가시의 예절
+    permission: magic.learned.thorn_manners
+    icon: magiccodex:textures/spells/reviewed_20261020/thorn_manners.png
     mana-cost: 10
-    cooldown-seconds: 5
-    reviewed: false
-    enabled: false
+    cooldown-seconds: 30
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/draft_closer.png
-  air_compass:
+    phases:
+    - role: impact
+      trigger: external:contact
+      effect: claude:thornmanners/contact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+    preparation-status: server-events-connected
+  cinder_skipring:
     number: 212
-    name: 허공 나침반
-    permission: magic.learned.air_compass
-    icon: ''
-    mana-cost: 5
-    cooldown-seconds: 3
-    reviewed: false
-    enabled: false
+    name: 불꽃 줄넘기
+    permission: magic.learned.cinder_skipring
+    icon: magiccodex:textures/spells/reviewed_20261020/cinder_skipring.png
+    mana-cost: 90
+    cooldown-seconds: 18
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/air_compass.png
-  experience_confluence:
+    phases:
+    - role: static
+      trigger: cast
+      effect: claude:cinderskipring/ring
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 44
+    - role: impact
+      trigger: external:hit
+      effect: claude:cinderskipring/hit
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 24
+    preparation-status: server-events-connected
+  droplet_relay:
     number: 213
-    name: 흩어진 경험
-    permission: magic.learned.experience_confluence
-    icon: ''
-    mana-cost: 15
-    cooldown-seconds: 8
-    reviewed: false
-    enabled: false
+    name: 물방울 인계
+    permission: magic.learned.droplet_relay
+    icon: magiccodex:textures/spells/reviewed_20261020/droplet_relay.png
+    mana-cost: 100
+    cooldown-seconds: 20
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/experience_confluence.png
-  melody_bottle:
+    phases:
+    - role: attached
+      trigger: external:form
+      effect: claude:dropletrelay/form
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 18
+    - role: impact
+      trigger: external:arrive
+      effect: claude:dropletrelay/arrive
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 24
+    - role: attached
+      trigger: external:capture
+      effect: claude:dropletrelay/capture
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 66
+    - role: attached
+      trigger: external:release
+      effect: claude:dropletrelay/release
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 32
+    preparation-status: server-events-connected
+  folding_tideplane:
     number: 214
-    name: 선율 담기
-    permission: magic.learned.melody_bottle
-    icon: ''
-    mana-cost: 12
-    cooldown-seconds: 8
-    reviewed: false
-    enabled: false
+    name: 접히는 수면
+    permission: magic.learned.folding_tideplane
+    icon: magiccodex:textures/spells/reviewed_20261020/folding_tideplane.png
+    mana-cost: 110
+    cooldown-seconds: 22
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/melody_bottle.png
-  copper_polish:
-    number: 215
-    name: 구리 광내기
-    permission: magic.learned.copper_polish
-    icon: ''
-    mana-cost: 15
-    cooldown-seconds: 5
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/copper_polish.png
-  wax_melting:
-    number: 216
-    name: 밀랍 녹이기
-    permission: magic.learned.wax_melting
-    icon: ''
-    mana-cost: 12
-    cooldown-seconds: 5
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/wax_melting.png
-  charcoal_scent:
-    number: 217
-    name: 숯내음
-    permission: magic.learned.charcoal_scent
-    icon: ''
-    mana-cost: 18
-    cooldown-seconds: 8
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/charcoal_scent.png
-  glass_craft:
-    number: 218
-    name: 유리 세공
-    permission: magic.learned.glass_craft
-    icon: ''
-    mana-cost: 15
-    cooldown-seconds: 5
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/glass_craft.png
-  heated_hooves:
-    number: 219
-    name: 뜨거운 발굽
-    permission: magic.learned.heated_hooves
-    icon: ''
-    mana-cost: 55
-    cooldown-seconds: 20
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/heated_hooves.png
-  residual_heat:
-    number: 220
-    name: 잔열 회수
-    permission: magic.learned.residual_heat
-    icon: ''
-    mana-cost: 35
-    cooldown-seconds: 20
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/residual_heat.png
-  searing_edge:
-    number: 221
-    name: 달궈진 칼끝
-    permission: magic.learned.searing_edge
-    icon: ''
-    mana-cost: 50
-    cooldown-seconds: 15
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/searing_edge.png
-  fuse_bond:
-    number: 222
-    name: 도화선
-    permission: magic.learned.fuse_bond
-    icon: ''
-    mana-cost: 90
-    cooldown-seconds: 25
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/fuse_bond.png
-  ember_transfer:
-    number: 223
-    name: 불씨 옮기기
-    permission: magic.learned.ember_transfer
-    icon: ''
-    mana-cost: 40
-    cooldown-seconds: 15
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/ember_transfer.png
-  flame_boundary:
-    number: 224
-    name: 화염 고리
-    permission: magic.learned.flame_boundary
-    icon: ''
-    mana-cost: 100
-    cooldown-seconds: 30
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/flame_boundary.png
-  heat_accumulation:
-    number: 225
-    name: 열기 축적
-    permission: magic.learned.heat_accumulation
-    icon: ''
-    mana-cost: 120
-    cooldown-seconds: 35
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/heat_accumulation.png
-  sulfur_cloud:
-    number: 226
-    name: 유황 구름
-    permission: magic.learned.sulfur_cloud
-    icon: ''
-    mana-cost: 75
-    cooldown-seconds: 25
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/sulfur_cloud.png
-  flame_seam:
-    number: 227
-    name: 화염 봉합선
-    permission: magic.learned.flame_seam
-    icon: ''
-    mana-cost: 85
-    cooldown-seconds: 25
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/flame_seam.png
-  flame_clap:
-    number: 228
-    name: 불꽃 박수
-    permission: magic.learned.flame_clap
-    icon: ''
-    mana-cost: 55
-    cooldown-seconds: 15
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/flame_clap.png
-  ashen_farewell:
-    number: 229
-    name: 잿빛 작별
-    permission: magic.learned.ashen_farewell
-    icon: ''
-    mana-cost: 20
-    cooldown-seconds: 10
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/ashen_farewell.png
-  bubble_plate:
-    number: 230
-    name: 거품 접시
-    permission: magic.learned.bubble_plate
-    icon: ''
-    mana-cost: 12
-    cooldown-seconds: 5
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/bubble_plate.png
-  waterweed_trim:
-    number: 231
-    name: 수초 손질
-    permission: magic.learned.waterweed_trim
-    icon: ''
-    mana-cost: 18
-    cooldown-seconds: 8
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/waterweed_trim.png
-  drain_pocket:
-    number: 232
-    name: 물 빼기
-    permission: magic.learned.drain_pocket
-    icon: ''
-    mana-cost: 45
-    cooldown-seconds: 20
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/drain_pocket.png
-  mud_kneading:
-    number: 233
-    name: 진흙 반죽
-    permission: magic.learned.mud_kneading
-    icon: ''
-    mana-cost: 10
-    cooldown-seconds: 5
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/mud_kneading.png
-  sloshing_pail:
-    number: 234
-    name: 찰랑이는 통
-    permission: magic.learned.sloshing_pail
-    icon: ''
-    mana-cost: 8
-    cooldown-seconds: 4
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/sloshing_pail.png
-  surface_walk:
-    number: 235
-    name: 수면 산책
-    permission: magic.learned.surface_walk
-    icon: ''
-    mana-cost: 35
-    cooldown-seconds: 20
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/surface_walk.png
-  diving_bell:
-    number: 236
-    name: 잠수 종
-    permission: magic.learned.diving_bell
-    icon: ''
-    mana-cost: 90
-    cooldown-seconds: 35
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/diving_bell.png
-  droplet_lens:
-    number: 237
-    name: 물방울 렌즈
-    permission: magic.learned.droplet_lens
-    icon: ''
-    mana-cost: 10
-    cooldown-seconds: 5
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/droplet_lens.png
-  cold_compress:
-    number: 238
-    name: 차가운 찜질
-    permission: magic.learned.cold_compress
-    icon: ''
-    mana-cost: 30
-    cooldown-seconds: 20
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/cold_compress.png
-  bubble_brand:
+    phases:
+    - role: static
+      trigger: external:sheet
+      effect: claude:foldingtideplane/spread
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 54
+    - role: static
+      trigger: external:sheet
+      effect: claude:foldingtideplane/axis
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 112
+    - role: static
+      trigger: external:sheet
+      effect: claude:foldingtideplane/turn
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 76
+    - role: static
+      trigger: external:sheet
+      effect: claude:foldingtideplane/disperse
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 108
+    - role: impact
+      trigger: external:contact
+      effect: claude:foldingtideplane/contact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 22
+    preparation-status: server-events-connected
+  # ---- 239~250 던전 기믹 마법 (magic-mythic-paper/tools/gimmick_spells.py) ----
+  thawing_heat:
     number: 239
-    name: 수포 낙인
-    permission: magic.learned.bubble_brand
+    name: 해빙의 열기
+    permission: magic.learned.thawing_heat
     icon: ''
     mana-cost: 40
-    cooldown-seconds: 12
-    reviewed: false
-    enabled: false
+    cooldown-seconds: 8
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/bubble_brand.png
-  ice_wedge:
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:thawingheat/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 60
+    preparation-status: server-events-connected
+  steam_ignition:
     number: 240
-    name: 얼음 쐐기
-    permission: magic.learned.ice_wedge
+    name: 증기 점화
+    permission: magic.learned.steam_ignition
     icon: ''
-    mana-cost: 65
-    cooldown-seconds: 18
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/ice_wedge.png
-  slippery_floor:
-    number: 241
-    name: 미끄러운 바닥
-    permission: magic.learned.slippery_floor
-    icon: ''
-    mana-cost: 40
-    cooldown-seconds: 20
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/slippery_floor.png
-  chain_droplet:
-    number: 242
-    name: 연쇄 물방울
-    permission: magic.learned.chain_droplet
-    icon: ''
-    mana-cost: 75
-    cooldown-seconds: 18
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/chain_droplet.png
-  splitting_lance:
-    number: 243
-    name: 갈라지는 창
-    permission: magic.learned.splitting_lance
-    icon: ''
-    mana-cost: 95
-    cooldown-seconds: 25
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/splitting_lance.png
-  healing_reserve:
-    number: 244
-    name: 물결 저금
-    permission: magic.learned.healing_reserve
-    icon: ''
-    mana-cost: 100
-    cooldown-seconds: 40
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/healing_reserve.png
-  petal_dye:
-    number: 245
-    name: 꽃잎 염색
-    permission: magic.learned.petal_dye
-    icon: ''
-    mana-cost: 10
-    cooldown-seconds: 5
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/petal_dye.png
-  mushroom_picking:
-    number: 246
-    name: 버섯 따기
-    permission: magic.learned.mushroom_picking
-    icon: ''
-    mana-cost: 8
-    cooldown-seconds: 4
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/mushroom_picking.png
-  hive_inspection:
-    number: 247
-    name: 벌집 살피기
-    permission: magic.learned.hive_inspection
-    icon: ''
-    mana-cost: 6
-    cooldown-seconds: 3
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/hive_inspection.png
-  honey_tapping:
-    number: 248
-    name: 꿀 뜨기
-    permission: magic.learned.honey_tapping
-    icon: ''
-    mana-cost: 12
-    cooldown-seconds: 8
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/honey_tapping.png
-  sapling_move:
-    number: 249
-    name: 묘목 이사
-    permission: magic.learned.sapling_move
-    icon: ''
-    mana-cost: 10
-    cooldown-seconds: 5
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/sapling_move.png
-  path_tamping:
-    number: 250
-    name: 돌길 다지기
-    permission: magic.learned.path_tamping
-    icon: ''
-    mana-cost: 12
-    cooldown-seconds: 5
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/path_tamping.png
-  soil_tilling:
-    number: 251
-    name: 밭 갈기
-    permission: magic.learned.soil_tilling
-    icon: ''
-    mana-cost: 15
+    mana-cost: 30
     cooldown-seconds: 6
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/soil_tilling.png
-  gravel_sifting:
-    number: 252
-    name: 자갈 체질
-    permission: magic.learned.gravel_sifting
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:steamignition/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    preparation-status: server-events-connected
+  water_level:
+    number: 241
+    name: 수위 조절
+    permission: magic.learned.water_level
     icon: ''
-    mana-cost: 15
+    mana-cost: 20
+    cooldown-seconds: 1.5
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:waterlevel/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    preparation-status: server-events-connected
+  stone_weight:
+    number: 242
+    name: 무게추
+    permission: magic.learned.stone_weight
+    icon: ''
+    mana-cost: 30
     cooldown-seconds: 5
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/gravel_sifting.png
-  stone_joinery:
-    number: 253
-    name: 반듯한 모서리
-    permission: magic.learned.stone_joinery
-    icon: ''
-    mana-cost: 12
-    cooldown-seconds: 5
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/stone_joinery.png
-  buried_cache:
-    number: 254
-    name: 땅속 보관
-    permission: magic.learned.buried_cache
-    icon: ''
-    mana-cost: 25
-    cooldown-seconds: 12
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/buried_cache.png
-  root_trip:
-    number: 255
-    name: 뿌리 걸림
-    permission: magic.learned.root_trip
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:stoneweight/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    preparation-status: server-events-connected
+  vine_awaken:
+    number: 243
+    name: 덩굴 깨우기
+    permission: magic.learned.vine_awaken
     icon: ''
     mana-cost: 40
-    cooldown-seconds: 15
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/root_trip.png
-  crystal_resonance:
-    number: 256
-    name: 수정 공명
-    permission: magic.learned.crystal_resonance
-    icon: ''
-    mana-cost: 75
-    cooldown-seconds: 22
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/crystal_resonance.png
-  sand_blind:
-    number: 257
-    name: 모래 눈속임
-    permission: magic.learned.sand_blind
-    icon: ''
-    mana-cost: 25
     cooldown-seconds: 10
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/sand_blind.png
-  lodestone_trace:
-    number: 258
-    name: 자철석 손길
-    permission: magic.learned.lodestone_trace
-    icon: ''
-    mana-cost: 12
-    cooldown-seconds: 8
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/lodestone_trace.png
-  crumbling_foothold:
-    number: 259
-    name: 무너지는 발판
-    permission: magic.learned.crumbling_foothold
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:vineawaken/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    preparation-status: server-events-connected
+  light_beam:
+    number: 244
+    name: 빛줄기
+    permission: magic.learned.light_beam
     icon: ''
     mana-cost: 50
-    cooldown-seconds: 18
-    reviewed: false
-    enabled: false
+    cooldown-seconds: 6
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/crumbling_foothold.png
-  luminous_signature:
-    number: 260
-    name: 빛의 서명
-    permission: magic.learned.luminous_signature
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:lightbeam/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 60
+    preparation-status: server-events-connected
+  mirror_tune:
+    number: 245
+    name: 반사 조율
+    permission: magic.learned.mirror_tune
     icon: ''
-    mana-cost: 5
-    cooldown-seconds: 3
-    reviewed: false
-    enabled: false
+    mana-cost: 15
+    cooldown-seconds: 1
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/luminous_signature.png
-  starlit_nametag:
-    number: 261
-    name: 별빛 이름표
-    permission: magic.learned.starlit_nametag
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:mirrortune/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+    preparation-status: server-events-connected
+  prism_tint:
+    number: 246
+    name: 프리즘 물들이기
+    permission: magic.learned.prism_tint
     icon: ''
-    mana-cost: 8
-    cooldown-seconds: 5
-    reviewed: false
-    enabled: false
+    mana-cost: 15
+    cooldown-seconds: 1
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/starlit_nametag.png
-  color_finder:
-    number: 262
-    name: 색 찾기
-    permission: magic.learned.color_finder
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:prismtint/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+    preparation-status: server-events-connected
+  statue_wake:
+    number: 247
+    name: 석상 깨우기
+    permission: magic.learned.statue_wake
     icon: ''
-    mana-cost: 4
+    mana-cost: 20
     cooldown-seconds: 2
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/color_finder.png
-  luminous_frame:
-    number: 263
-    name: 별빛 액자
-    permission: magic.learned.luminous_frame
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:statuewake/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    preparation-status: server-events-connected
+  rewind:
+    number: 248
+    name: 되감기
+    permission: magic.learned.rewind
     icon: ''
-    mana-cost: 12
+    mana-cost: 30
     cooldown-seconds: 5
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/luminous_frame.png
-  exhibit_anchor:
-    number: 264
-    name: 전시 고정
-    permission: magic.learned.exhibit_anchor
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:rewind/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    preparation-status: server-events-connected
+  conduit_turn:
+    number: 249
+    name: 도관 회전
+    permission: magic.learned.conduit_turn
     icon: ''
     mana-cost: 10
+    cooldown-seconds: 1
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:conduitturn/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+    preparation-status: server-events-connected
+  dimension_mark:
+    number: 250
+    name: 차원 표식
+    permission: magic.learned.dimension_mark
+    icon: ''
+    mana-cost: 40
     cooldown-seconds: 5
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/exhibit_anchor.png
-  light_portrait:
-    number: 265
-    name: 빛의 초상
-    permission: magic.learned.light_portrait
-    icon: ''
-    mana-cost: 20
-    cooldown-seconds: 12
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/light_portrait.png
-  promise_star:
-    number: 266
-    name: 약속의 별
-    permission: magic.learned.promise_star
-    icon: ''
-    mana-cost: 15
-    cooldown-seconds: 10
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/promise_star.png
-  home_check:
-    number: 267
-    name: 귀가 확인
-    permission: magic.learned.home_check
-    icon: ''
-    mana-cost: 5
-    cooldown-seconds: 3
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/home_check.png
-  clear_eyes:
-    number: 268
-    name: 맑은 눈
-    permission: magic.learned.clear_eyes
-    icon: ''
-    mana-cost: 20
-    cooldown-seconds: 12
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/clear_eyes.png
-  light_rhythm:
-    number: 269
-    name: 빛의 박자
-    permission: magic.learned.light_rhythm
-    icon: ''
-    mana-cost: 35
-    cooldown-seconds: 12
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/light_rhythm.png
-  frontal_duel:
-    number: 270
-    name: 정면 승부
-    permission: magic.learned.frontal_duel
-    icon: ''
-    mana-cost: 70
-    cooldown-seconds: 25
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/frontal_duel.png
-  last_lantern:
-    number: 271
-    name: 마지막 등불
-    permission: magic.learned.last_lantern
-    icon: ''
-    mana-cost: 65
-    cooldown-seconds: 25
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/last_lantern.png
-  star_farewell:
-    number: 272
-    name: 별의 배웅
-    permission: magic.learned.star_farewell
-    icon: ''
-    mana-cost: 80
-    cooldown-seconds: 25
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/star_farewell.png
-  light_severance:
-    number: 273
-    name: 빛의 단절
-    permission: magic.learned.light_severance
-    icon: ''
-    mana-cost: 90
-    cooldown-seconds: 30
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/light_severance.png
-  dawn_promise:
-    number: 274
-    name: 새벽의 약속
-    permission: magic.learned.dawn_promise
-    icon: ''
-    mana-cost: 75
-    cooldown-seconds: 30
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/dawn_promise.png
-  silent_steps:
-    number: 275
-    name: 조용한 발걸음
-    permission: magic.learned.silent_steps
-    icon: ''
-    mana-cost: 20
-    cooldown-seconds: 15
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/silent_steps.png
-  forgotten_name:
-    number: 276
-    name: 잊힌 이름
-    permission: magic.learned.forgotten_name
-    icon: ''
-    mana-cost: 8
-    cooldown-seconds: 4
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/forgotten_name.png
-  empty_page:
-    number: 277
-    name: 빈 페이지
-    permission: magic.learned.empty_page
-    icon: ''
-    mana-cost: 6
-    cooldown-seconds: 4
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/empty_page.png
-  night_cover:
-    number: 278
-    name: 밤의 덮개
-    permission: magic.learned.night_cover
-    icon: ''
-    mana-cost: 15
-    cooldown-seconds: 8
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/night_cover.png
-  shadow_pouch:
-    number: 279
-    name: 그림자 주머니
-    permission: magic.learned.shadow_pouch
-    icon: ''
-    mana-cost: 100
-    cooldown-seconds: 90
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/shadow_pouch.png
-  ghost_palm:
-    number: 280
-    name: 유령 손바닥
-    permission: magic.learned.ghost_palm
-    icon: ''
-    mana-cost: 12
-    cooldown-seconds: 6
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/ghost_palm.png
-  black_silence:
-    number: 281
-    name: 검은 침묵
-    permission: magic.learned.black_silence
-    icon: ''
-    mana-cost: 95
-    cooldown-seconds: 30
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/black_silence.png
-  oblivion_mark:
-    number: 282
-    name: 망각의 표식
-    permission: magic.learned.oblivion_mark
-    icon: ''
-    mana-cost: 40
-    cooldown-seconds: 20
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/oblivion_mark.png
-  delayed_fear:
-    number: 283
-    name: 뒤늦은 공포
-    permission: magic.learned.delayed_fear
-    icon: ''
-    mana-cost: 65
-    cooldown-seconds: 22
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/delayed_fear.png
-  fugitive_toll:
-    number: 284
-    name: 도망자의 대가
-    permission: magic.learned.fugitive_toll
-    icon: ''
-    mana-cost: 75
-    cooldown-seconds: 25
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/fugitive_toll.png
-  hungry_edge:
-    number: 285
-    name: 굶주린 칼끝
-    permission: magic.learned.hungry_edge
-    icon: ''
-    mana-cost: 60
-    cooldown-seconds: 18
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/hungry_edge.png
-  shadow_retrace:
-    number: 286
-    name: 되짚는 그림자
-    permission: magic.learned.shadow_retrace
-    icon: ''
-    mana-cost: 45
-    cooldown-seconds: 25
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/shadow_retrace.png
-  black_pulse:
-    number: 287
-    name: 검은 박동
-    permission: magic.learned.black_pulse
-    icon: ''
-    mana-cost: 120
-    cooldown-seconds: 40
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/black_pulse.png
-  empty_grave:
-    number: 288
-    name: 빈 무덤
-    permission: magic.learned.empty_grave
-    icon: ''
-    mana-cost: 15
-    cooldown-seconds: 10
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/empty_grave.png
-  ill_choice:
-    number: 289
-    name: 불길한 선택
-    permission: magic.learned.ill_choice
-    icon: ''
-    mana-cost: 70
-    cooldown-seconds: 25
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/ill_choice.png
-  resonance_tuning:
-    number: 290
-    name: 공명 맞추기
-    permission: magic.learned.resonance_tuning
-    icon: ''
-    mana-cost: 25
-    cooldown-seconds: 10
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/resonance_tuning.png
-  breath_reversal:
-    number: 291
-    name: 숨결 반전
-    permission: magic.learned.breath_reversal
-    icon: ''
-    mana-cost: 30
-    cooldown-seconds: 12
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/breath_reversal.png
-  heat_script:
-    number: 292
-    name: 열문자
-    permission: magic.learned.heat_script
-    icon: ''
-    mana-cost: 25
-    cooldown-seconds: 10
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/heat_script.png
-  heat_transfer:
-    number: 293
-    name: 열의 이동
-    permission: magic.learned.heat_transfer
-    icon: ''
-    mana-cost: 45
-    cooldown-seconds: 15
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/heat_transfer.png
-  level_balance:
-    number: 294
-    name: 수평 맞추기
-    permission: magic.learned.level_balance
-    icon: ''
-    mana-cost: 30
-    cooldown-seconds: 12
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/level_balance.png
-  ice_cog:
-    number: 295
-    name: 얼음 톱니
-    permission: magic.learned.ice_cog
-    icon: ''
-    mana-cost: 35
-    cooldown-seconds: 15
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/ice_cog.png
-  weight_sigil:
-    number: 296
-    name: 무게의 인장
-    permission: magic.learned.weight_sigil
-    icon: ''
-    mana-cost: 40
-    cooldown-seconds: 15
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/weight_sigil.png
-  prism_split:
-    number: 297
-    name: 프리즘 분광
-    permission: magic.learned.prism_split
-    icon: ''
-    mana-cost: 45
-    cooldown-seconds: 15
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/prism_split.png
-  light_afterimage:
-    number: 298
-    name: 빛의 잔상
-    permission: magic.learned.light_afterimage
-    icon: ''
-    mana-cost: 35
-    cooldown-seconds: 12
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/light_afterimage.png
-  shadow_passage:
-    number: 299
-    name: 그림자 통행
-    permission: magic.learned.shadow_passage
-    icon: ''
-    mana-cost: 60
-    cooldown-seconds: 20
-    reviewed: false
-    enabled: false
-    aliases: []
-    phases: []
-    preparation-status: unreviewed-baseline
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/expansion_3/shadow_passage.png
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:dimensionmark/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    preparation-status: server-events-connected

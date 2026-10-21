@@ -1174,925 +1174,494 @@ spells:
     cooldown-seconds: 20
   shadow_double:
     name: 그림자 분신
-    enabled: false
+    enabled: true
     command: 마법 shadow_double
     permission: magic.learned.shadow_double
     mana-cost: 75
     cooldown-seconds: 25
   echo_reading:
     name: 잔향 읽기
-    enabled: false
+    enabled: true
     command: 마법 echo_reading
     permission: magic.learned.echo_reading
     mana-cost: 25
     cooldown-seconds: 10
   sealing_thread:
     name: 봉인의 실
-    enabled: false
+    enabled: true
     command: 마법 sealing_thread
     permission: magic.learned.sealing_thread
     mana-cost: 40
     cooldown-seconds: 20
-  afterlife_gate:
-    name: 사후세계의 문
-    enabled: false
-    command: 마법 afterlife_gate
-    permission: magic.learned.afterlife_gate
-    mana-cost: 350
-    cooldown-seconds: 180
   shadow_exchange:
     name: 그림자 교환
-    enabled: false
+    enabled: true
     command: 마법 shadow_exchange
     permission: magic.learned.shadow_exchange
     mana-cost: 100
     cooldown-seconds: 30
   forbidden_contract:
     name: 금서의 계약
-    enabled: false
+    enabled: true
     command: 마법 forbidden_contract
     permission: magic.learned.forbidden_contract
-    mana-cost: 200
-    cooldown-seconds: 120
+    mana-cost: 0
+    cooldown-seconds: 180
   life_siphon:
     name: 생명 갈취
-    enabled: false
+    enabled: true
     command: 마법 life_siphon
     permission: magic.learned.life_siphon
-    mana-cost: 55
-    cooldown-seconds: 15
+    mana-cost: 30
+    cooldown-seconds: 10
   drowsiness:
     name: 졸음
     enabled: false
     command: 마법 drowsiness
     permission: magic.learned.drowsiness
-    mana-cost: 20
-    cooldown-seconds: 10
+    mana-cost: 100
+    cooldown-seconds: 16
   misfortune_whisper:
-    name: 불운의 속삭임
-    enabled: false
+    name: 나약함의 저주
+    enabled: true
     command: 마법 misfortune_whisper
     permission: magic.learned.misfortune_whisper
-    mana-cost: 35
-    cooldown-seconds: 12
+    mana-cost: 60
+    cooldown-seconds: 20
   hungry_shadow:
     name: 굶주린 그림자
-    enabled: false
+    enabled: true
     command: 마법 hungry_shadow
     permission: magic.learned.hungry_shadow
-    mana-cost: 20
-    cooldown-seconds: 15
+    mana-cost: 0
+    cooldown-seconds: 0
   curse_transfer:
     name: 저주의 전가
-    enabled: false
+    enabled: true
     command: 마법 curse_transfer
     permission: magic.learned.curse_transfer
     mana-cost: 90
     cooldown-seconds: 30
   discord:
-    name: 불화
-    enabled: false
+    name: 마인드컨트롤
+    enabled: true
     command: 마법 discord
     permission: magic.learned.discord
     mana-cost: 110
     cooldown-seconds: 30
   night_chain:
     name: 밤의 사슬
-    enabled: false
+    enabled: true
     command: 마법 night_chain
     permission: magic.learned.night_chain
     mana-cost: 200
     cooldown-seconds: 45
   pain_deferral:
     name: 고통 유예
-    enabled: false
+    enabled: true
     command: 마법 pain_deferral
     permission: magic.learned.pain_deferral
     mana-cost: 150
     cooldown-seconds: 45
   black_harvest:
     name: 검은 수확
-    enabled: false
+    enabled: true
     command: 마법 black_harvest
     permission: magic.learned.black_harvest
-    mana-cost: 450
-    cooldown-seconds: 120
+    mana-cost: 80
+    cooldown-seconds: 12
   ink_fingertip:
     name: 먹물 손끝
-    enabled: false
+    enabled: true
     command: 마법 ink_fingertip
     permission: magic.learned.ink_fingertip
-    mana-cost: 3
-    cooldown-seconds: 2
+    mana-cost: 30
+    cooldown-seconds: 120
   shadow_nail:
     name: 그림자 못
-    enabled: false
+    enabled: true
     command: 마법 shadow_nail
     permission: magic.learned.shadow_nail
-    mana-cost: 45
-    cooldown-seconds: 15
+    mana-cost: 170
+    cooldown-seconds: 60
   night_lullaby:
     name: 밤의 자장가
-    enabled: false
+    enabled: true
     command: 마법 night_lullaby
     permission: magic.learned.night_lullaby
-    mana-cost: 30
-    cooldown-seconds: 30
+    mana-cost: 130
+    cooldown-seconds: 60
   loosen_grasp:
     name: 손아귀 풀기
-    enabled: false
+    enabled: true
     command: 마법 loosen_grasp
     permission: magic.learned.loosen_grasp
     mana-cost: 60
     cooldown-seconds: 20
-  shadow_tracking:
-    name: 그림자 추적
-    enabled: false
-    command: 마법 shadow_tracking
-    permission: magic.learned.shadow_tracking
-    mana-cost: 25
-    cooldown-seconds: 20
   healing_seal:
     name: 회복 봉인
-    enabled: false
+    enabled: true
     command: 마법 healing_seal
     permission: magic.learned.healing_seal
     mana-cost: 85
     cooldown-seconds: 25
   shadow_scales:
     name: 어둠의 저울
-    enabled: false
+    enabled: true
     command: 마법 shadow_scales
     permission: magic.learned.shadow_scales
     mana-cost: 100
     cooldown-seconds: 20
   warning_thread:
     name: 경고의 실
-    enabled: false
+    enabled: true
     command: 마법 warning_thread
     permission: magic.learned.warning_thread
-    mana-cost: 20
-    cooldown-seconds: 15
-  final_knot:
-    name: 끝매듭
-    enabled: false
-    command: 마법 final_knot
-    permission: magic.learned.final_knot
-    mana-cost: 35
-    cooldown-seconds: 20
+    mana-cost: 200
+    cooldown-seconds: 60
   wound_accounting:
     name: 상처 회계
-    enabled: false
+    enabled: true
     command: 마법 wound_accounting
     permission: magic.learned.wound_accounting
-    mana-cost: 180
-    cooldown-seconds: 35
+    mana-cost: 80
+    cooldown-seconds: 30
   inverted_offering:
     name: 뒤집힌 공물
-    enabled: false
+    enabled: true
     command: 마법 inverted_offering
     permission: magic.learned.inverted_offering
-    mana-cost: 50
-    cooldown-seconds: 30
+    mana-cost: 0
+    cooldown-seconds: 0
   ghost_tool:
     name: 유령 도구
-    enabled: false
+    enabled: true
     command: 마법 ghost_tool
     permission: magic.learned.ghost_tool
-    mana-cost: 45
-    cooldown-seconds: 10
+    mana-cost: 100
+    cooldown-seconds: 60
   bell_of_fear:
     name: 공포의 종
-    enabled: false
+    enabled: true
     command: 마법 bell_of_fear
     permission: magic.learned.bell_of_fear
     mana-cost: 140
-    cooldown-seconds: 40
+    cooldown-seconds: 30
   eclipse_eye:
     name: 월식의 눈
-    enabled: false
+    enabled: true
     command: 마법 eclipse_eye
     permission: magic.learned.eclipse_eye
-    mana-cost: 160
-    cooldown-seconds: 35
-  death_ledger:
-    name: 죽음의 장부
-    enabled: false
-    command: 마법 death_ledger
-    permission: magic.learned.death_ledger
-    mana-cost: 180
-    cooldown-seconds: 45
+    mana-cost: 1500
+    cooldown-seconds: 300
   void_maw:
     name: 공허의 입
-    enabled: false
+    enabled: true
     command: 마법 void_maw
     permission: magic.learned.void_maw
     mana-cost: 500
-    cooldown-seconds: 90
-  twilight_bargain:
-    name: 황혼의 거래
-    enabled: false
-    command: 마법 twilight_bargain
-    permission: magic.learned.twilight_bargain
-    mana-cost: 0
-    cooldown-seconds: 90
-  wind_courier:
-    name: 바람 우편
-    enabled: false
-    command: 마법 wind_courier
-    permission: magic.learned.wind_courier
-    mana-cost: 12
-    cooldown-seconds: 5
-  air_display:
-    name: 허공 진열
-    enabled: false
-    command: 마법 air_display
-    permission: magic.learned.air_display
-    mana-cost: 8
-    cooldown-seconds: 5
-  sail_breeze:
-    name: 돛바람
-    enabled: false
-    command: 마법 sail_breeze
-    permission: magic.learned.sail_breeze
-    mana-cost: 18
-    cooldown-seconds: 10
-  air_brake:
-    name: 급제동
-    enabled: false
-    command: 마법 air_brake
-    permission: magic.learned.air_brake
-    mana-cost: 20
-    cooldown-seconds: 12
-  headwind_field:
-    name: 역풍 지대
-    enabled: false
-    command: 마법 headwind_field
-    permission: magic.learned.headwind_field
-    mana-cost: 65
-    cooldown-seconds: 25
-  vortex_center:
-    name: 소용돌이 중심
-    enabled: false
-    command: 마법 vortex_center
-    permission: magic.learned.vortex_center
-    mana-cost: 100
-    cooldown-seconds: 30
-  wall_echo_burst:
-    name: 벽울림 탄
-    enabled: false
-    command: 마법 wall_echo_burst
-    permission: magic.learned.wall_echo_burst
-    mana-cost: 55
-    cooldown-seconds: 15
-  blindside_turn:
-    name: 빈틈 돌리기
-    enabled: false
-    command: 마법 blindside_turn
-    permission: magic.learned.blindside_turn
-    mana-cost: 15
-    cooldown-seconds: 10
-  wind_tailoring:
-    name: 바람 재단
-    enabled: false
-    command: 마법 wind_tailoring
-    permission: magic.learned.wind_tailoring
-    mana-cost: 10
-    cooldown-seconds: 4
-  whistle_procession:
-    name: 휘파람 행진
-    enabled: false
-    command: 마법 whistle_procession
-    permission: magic.learned.whistle_procession
-    mana-cost: 18
-    cooldown-seconds: 15
-  wind_performance:
-    name: 바람 연주
-    enabled: false
-    command: 마법 wind_performance
-    permission: magic.learned.wind_performance
-    mana-cost: 6
-    cooldown-seconds: 2
-  draft_closer:
-    name: 문풍지
-    enabled: false
-    command: 마법 draft_closer
-    permission: magic.learned.draft_closer
-    mana-cost: 10
-    cooldown-seconds: 5
-  air_compass:
-    name: 허공 나침반
-    enabled: false
-    command: 마법 air_compass
-    permission: magic.learned.air_compass
-    mana-cost: 5
-    cooldown-seconds: 3
-  experience_confluence:
-    name: 흩어진 경험
-    enabled: false
-    command: 마법 experience_confluence
-    permission: magic.learned.experience_confluence
-    mana-cost: 15
-    cooldown-seconds: 8
-  melody_bottle:
-    name: 선율 담기
-    enabled: false
-    command: 마법 melody_bottle
-    permission: magic.learned.melody_bottle
-    mana-cost: 12
-    cooldown-seconds: 8
-  copper_polish:
-    name: 구리 광내기
-    enabled: false
-    command: 마법 copper_polish
-    permission: magic.learned.copper_polish
-    mana-cost: 15
-    cooldown-seconds: 5
-  wax_melting:
-    name: 밀랍 녹이기
-    enabled: false
-    command: 마법 wax_melting
-    permission: magic.learned.wax_melting
-    mana-cost: 12
-    cooldown-seconds: 5
-  charcoal_scent:
-    name: 숯내음
-    enabled: false
-    command: 마법 charcoal_scent
-    permission: magic.learned.charcoal_scent
-    mana-cost: 18
-    cooldown-seconds: 8
-  glass_craft:
-    name: 유리 세공
-    enabled: false
-    command: 마법 glass_craft
-    permission: magic.learned.glass_craft
-    mana-cost: 15
-    cooldown-seconds: 5
-  heated_hooves:
-    name: 뜨거운 발굽
-    enabled: false
-    command: 마법 heated_hooves
-    permission: magic.learned.heated_hooves
-    mana-cost: 55
-    cooldown-seconds: 20
-  residual_heat:
-    name: 잔열 회수
-    enabled: false
-    command: 마법 residual_heat
-    permission: magic.learned.residual_heat
-    mana-cost: 35
-    cooldown-seconds: 20
-  searing_edge:
-    name: 달궈진 칼끝
-    enabled: false
-    command: 마법 searing_edge
-    permission: magic.learned.searing_edge
-    mana-cost: 50
-    cooldown-seconds: 15
-  fuse_bond:
-    name: 도화선
-    enabled: false
-    command: 마법 fuse_bond
-    permission: magic.learned.fuse_bond
-    mana-cost: 90
-    cooldown-seconds: 25
-  ember_transfer:
-    name: 불씨 옮기기
-    enabled: false
-    command: 마법 ember_transfer
-    permission: magic.learned.ember_transfer
-    mana-cost: 40
-    cooldown-seconds: 15
-  flame_boundary:
-    name: 화염 고리
-    enabled: false
-    command: 마법 flame_boundary
-    permission: magic.learned.flame_boundary
-    mana-cost: 100
-    cooldown-seconds: 30
-  heat_accumulation:
-    name: 열기 축적
-    enabled: false
-    command: 마법 heat_accumulation
-    permission: magic.learned.heat_accumulation
-    mana-cost: 120
-    cooldown-seconds: 35
-  sulfur_cloud:
-    name: 유황 구름
-    enabled: false
-    command: 마법 sulfur_cloud
-    permission: magic.learned.sulfur_cloud
-    mana-cost: 75
-    cooldown-seconds: 25
-  flame_seam:
-    name: 화염 봉합선
-    enabled: false
-    command: 마법 flame_seam
-    permission: magic.learned.flame_seam
-    mana-cost: 85
-    cooldown-seconds: 25
-  flame_clap:
-    name: 불꽃 박수
-    enabled: false
-    command: 마법 flame_clap
-    permission: magic.learned.flame_clap
-    mana-cost: 55
-    cooldown-seconds: 15
-  ashen_farewell:
-    name: 잿빛 작별
-    enabled: false
-    command: 마법 ashen_farewell
-    permission: magic.learned.ashen_farewell
-    mana-cost: 20
-    cooldown-seconds: 10
-  bubble_plate:
-    name: 거품 접시
-    enabled: false
-    command: 마법 bubble_plate
-    permission: magic.learned.bubble_plate
-    mana-cost: 12
-    cooldown-seconds: 5
-  waterweed_trim:
-    name: 수초 손질
-    enabled: false
-    command: 마법 waterweed_trim
-    permission: magic.learned.waterweed_trim
-    mana-cost: 18
-    cooldown-seconds: 8
-  drain_pocket:
-    name: 물 빼기
-    enabled: false
-    command: 마법 drain_pocket
-    permission: magic.learned.drain_pocket
-    mana-cost: 45
-    cooldown-seconds: 20
-  mud_kneading:
-    name: 진흙 반죽
-    enabled: false
-    command: 마법 mud_kneading
-    permission: magic.learned.mud_kneading
-    mana-cost: 10
-    cooldown-seconds: 5
-  sloshing_pail:
-    name: 찰랑이는 통
-    enabled: false
-    command: 마법 sloshing_pail
-    permission: magic.learned.sloshing_pail
-    mana-cost: 8
-    cooldown-seconds: 4
-  surface_walk:
-    name: 수면 산책
-    enabled: false
-    command: 마법 surface_walk
-    permission: magic.learned.surface_walk
-    mana-cost: 35
-    cooldown-seconds: 20
-  diving_bell:
-    name: 잠수 종
-    enabled: false
-    command: 마법 diving_bell
-    permission: magic.learned.diving_bell
-    mana-cost: 90
-    cooldown-seconds: 35
-  droplet_lens:
-    name: 물방울 렌즈
-    enabled: false
-    command: 마법 droplet_lens
-    permission: magic.learned.droplet_lens
-    mana-cost: 10
-    cooldown-seconds: 5
-  cold_compress:
-    name: 차가운 찜질
-    enabled: false
-    command: 마법 cold_compress
-    permission: magic.learned.cold_compress
+    cooldown-seconds: 100
+  # ---- 300~323 몹 기술 습득 마법 (magic-mythic-paper/tools/mob_spells.py) ----
+  fox_orbit:
+    name: 여우불 공전
+    enabled: true
+    command: 마법 fox_orbit
+    permission: magic.learned.fox_orbit
     mana-cost: 30
-    cooldown-seconds: 20
-  bubble_brand:
-    name: 수포 낙인
-    enabled: false
-    command: 마법 bubble_brand
-    permission: magic.learned.bubble_brand
-    mana-cost: 40
-    cooldown-seconds: 12
-  ice_wedge:
-    name: 얼음 쐐기
-    enabled: false
-    command: 마법 ice_wedge
-    permission: magic.learned.ice_wedge
-    mana-cost: 65
-    cooldown-seconds: 18
-  slippery_floor:
-    name: 미끄러운 바닥
-    enabled: false
-    command: 마법 slippery_floor
-    permission: magic.learned.slippery_floor
-    mana-cost: 40
-    cooldown-seconds: 20
-  chain_droplet:
-    name: 연쇄 물방울
-    enabled: false
-    command: 마법 chain_droplet
-    permission: magic.learned.chain_droplet
-    mana-cost: 75
-    cooldown-seconds: 18
-  splitting_lance:
-    name: 갈라지는 창
-    enabled: false
-    command: 마법 splitting_lance
-    permission: magic.learned.splitting_lance
-    mana-cost: 95
-    cooldown-seconds: 25
-  healing_reserve:
-    name: 물결 저금
-    enabled: false
-    command: 마법 healing_reserve
-    permission: magic.learned.healing_reserve
-    mana-cost: 100
-    cooldown-seconds: 40
-  petal_dye:
-    name: 꽃잎 염색
-    enabled: false
-    command: 마법 petal_dye
-    permission: magic.learned.petal_dye
-    mana-cost: 10
-    cooldown-seconds: 5
-  mushroom_picking:
-    name: 버섯 따기
-    enabled: false
-    command: 마법 mushroom_picking
-    permission: magic.learned.mushroom_picking
-    mana-cost: 8
-    cooldown-seconds: 4
-  hive_inspection:
-    name: 벌집 살피기
-    enabled: false
-    command: 마법 hive_inspection
-    permission: magic.learned.hive_inspection
-    mana-cost: 6
-    cooldown-seconds: 3
-  honey_tapping:
-    name: 꿀 뜨기
-    enabled: false
-    command: 마법 honey_tapping
-    permission: magic.learned.honey_tapping
-    mana-cost: 12
     cooldown-seconds: 8
-  sapling_move:
-    name: 묘목 이사
-    enabled: false
-    command: 마법 sapling_move
-    permission: magic.learned.sapling_move
-    mana-cost: 10
-    cooldown-seconds: 5
-  path_tamping:
-    name: 돌길 다지기
-    enabled: false
-    command: 마법 path_tamping
-    permission: magic.learned.path_tamping
-    mana-cost: 12
-    cooldown-seconds: 5
-  soil_tilling:
-    name: 밭 갈기
-    enabled: false
-    command: 마법 soil_tilling
-    permission: magic.learned.soil_tilling
-    mana-cost: 15
+  curving_plumes:
+    name: 곡선 불깃털
+    enabled: true
+    command: 마법 curving_plumes
+    permission: magic.learned.curving_plumes
+    mana-cost: 30
+    cooldown-seconds: 8
+  crystal_orbit:
+    name: 결정 공전탄
+    enabled: true
+    command: 마법 crystal_orbit
+    permission: magic.learned.crystal_orbit
+    mana-cost: 45
+    cooldown-seconds: 14
+  venom_spit:
+    name: 독 뱉기
+    enabled: true
+    command: 마법 venom_spit
+    permission: magic.learned.venom_spit
+    mana-cost: 30
+    cooldown-seconds: 10
+  smoke_veil:
+    name: 연막 은신
+    enabled: true
+    command: 마법 smoke_veil
+    permission: magic.learned.smoke_veil
+    mana-cost: 35
+    cooldown-seconds: 20
+  domain_stomp:
+    name: 영역 선포
+    enabled: true
+    command: 마법 domain_stomp
+    permission: magic.learned.domain_stomp
+    mana-cost: 40
+    cooldown-seconds: 14
+  seal_circle:
+    name: 봉인진
+    enabled: true
+    command: 마법 seal_circle
+    permission: magic.learned.seal_circle
+    mana-cost: 45
+    cooldown-seconds: 16
+  seal_talismans:
+    name: 봉인 부적
+    enabled: true
+    command: 마법 seal_talismans
+    permission: magic.learned.seal_talismans
+    mana-cost: 25
+    cooldown-seconds: 7
+  shield_slam:
+    name: 방패 내려찍기
+    enabled: true
+    command: 마법 shield_slam
+    permission: magic.learned.shield_slam
+    mana-cost: 30
+    cooldown-seconds: 10
+  chain_arrow:
+    name: 사슬 화살
+    enabled: true
+    command: 마법 chain_arrow
+    permission: magic.learned.chain_arrow
+    mana-cost: 20
     cooldown-seconds: 6
-  gravel_sifting:
-    name: 자갈 체질
-    enabled: false
-    command: 마법 gravel_sifting
-    permission: magic.learned.gravel_sifting
-    mana-cost: 15
-    cooldown-seconds: 5
-  stone_joinery:
-    name: 반듯한 모서리
-    enabled: false
-    command: 마법 stone_joinery
-    permission: magic.learned.stone_joinery
-    mana-cost: 12
-    cooldown-seconds: 5
-  buried_cache:
-    name: 땅속 보관
-    enabled: false
-    command: 마법 buried_cache
-    permission: magic.learned.buried_cache
-    mana-cost: 25
-    cooldown-seconds: 12
-  root_trip:
-    name: 뿌리 걸림
-    enabled: false
-    command: 마법 root_trip
-    permission: magic.learned.root_trip
+  mana_drain:
+    name: 마나 흡수
+    enabled: true
+    command: 마법 mana_drain
+    permission: magic.learned.mana_drain
     mana-cost: 40
-    cooldown-seconds: 15
-  crystal_resonance:
-    name: 수정 공명
-    enabled: false
-    command: 마법 crystal_resonance
-    permission: magic.learned.crystal_resonance
-    mana-cost: 75
-    cooldown-seconds: 22
-  sand_blind:
-    name: 모래 눈속임
-    enabled: false
-    command: 마법 sand_blind
-    permission: magic.learned.sand_blind
+    cooldown-seconds: 16
+  soul_scythe:
+    name: 영혼 낫
+    enabled: true
+    command: 마법 soul_scythe
+    permission: magic.learned.soul_scythe
     mana-cost: 25
-    cooldown-seconds: 10
-  lodestone_trace:
-    name: 자철석 손길
-    enabled: false
-    command: 마법 lodestone_trace
-    permission: magic.learned.lodestone_trace
-    mana-cost: 12
-    cooldown-seconds: 8
-  crumbling_foothold:
-    name: 무너지는 발판
-    enabled: false
-    command: 마법 crumbling_foothold
-    permission: magic.learned.crumbling_foothold
-    mana-cost: 50
+    cooldown-seconds: 7
+  oblivion_orbs:
+    name: 망각의 탄환
+    enabled: true
+    command: 마법 oblivion_orbs
+    permission: magic.learned.oblivion_orbs
+    mana-cost: 30
+    cooldown-seconds: 9
+  bone_grasp:
+    name: 뼈의 손아귀
+    enabled: true
+    command: 마법 bone_grasp
+    permission: magic.learned.bone_grasp
+    mana-cost: 40
+    cooldown-seconds: 16
+  shadow_leap:
+    name: 그림자 도약
+    enabled: true
+    command: 마법 shadow_leap
+    permission: magic.learned.shadow_leap
+    mana-cost: 40
+    cooldown-seconds: 14
+  binding_pull:
+    name: 끌어오기
+    enabled: true
+    command: 마법 binding_pull
+    permission: magic.learned.binding_pull
+    mana-cost: 45
     cooldown-seconds: 18
-  luminous_signature:
-    name: 빛의 서명
-    enabled: false
-    command: 마법 luminous_signature
-    permission: magic.learned.luminous_signature
-    mana-cost: 5
-    cooldown-seconds: 3
-  starlit_nametag:
-    name: 별빛 이름표
-    enabled: false
-    command: 마법 starlit_nametag
-    permission: magic.learned.starlit_nametag
-    mana-cost: 8
-    cooldown-seconds: 5
-  color_finder:
-    name: 색 찾기
-    enabled: false
-    command: 마법 color_finder
-    permission: magic.learned.color_finder
-    mana-cost: 4
-    cooldown-seconds: 2
-  luminous_frame:
-    name: 별빛 액자
-    enabled: false
-    command: 마법 luminous_frame
-    permission: magic.learned.luminous_frame
-    mana-cost: 12
-    cooldown-seconds: 5
-  exhibit_anchor:
-    name: 전시 고정
-    enabled: false
-    command: 마법 exhibit_anchor
-    permission: magic.learned.exhibit_anchor
+  fairy_dust:
+    name: 요정 가루
+    enabled: true
+    command: 마법 fairy_dust
+    permission: magic.learned.fairy_dust
+    mana-cost: 40
+    cooldown-seconds: 20
+  moon_wind:
+    name: 반달 바람날
+    enabled: true
+    command: 마법 moon_wind
+    permission: magic.learned.moon_wind
+    mana-cost: 25
+    cooldown-seconds: 7
+  gale_wings:
+    name: 돌풍 날갯짓
+    enabled: true
+    command: 마법 gale_wings
+    permission: magic.learned.gale_wings
+    mana-cost: 40
+    cooldown-seconds: 16
+  feather_storm:
+    name: 깃털 폭풍
+    enabled: true
+    command: 마법 feather_storm
+    permission: magic.learned.feather_storm
+    mana-cost: 35
+    cooldown-seconds: 12
+  hunting_pounce:
+    name: 사냥 도약
+    enabled: true
+    command: 마법 hunting_pounce
+    permission: magic.learned.hunting_pounce
+    mana-cost: 35
+    cooldown-seconds: 14
+  roar_leap:
+    name: 포효 도약
+    enabled: true
+    command: 마법 roar_leap
+    permission: magic.learned.roar_leap
+    mana-cost: 40
+    cooldown-seconds: 16
+  gravity_slam:
+    name: 중력 강타
+    enabled: true
+    command: 마법 gravity_slam
+    permission: magic.learned.gravity_slam
+    mana-cost: 45
+    cooldown-seconds: 16
+  tail_spikes:
+    name: 꼬리 가시
+    enabled: true
+    command: 마법 tail_spikes
+    permission: magic.learned.tail_spikes
+    mana-cost: 35
+    cooldown-seconds: 12
+  landing_airbrake:
+    name: 빗자루 차원이동
+    enabled: true
+    command: 마법 landing_airbrake
+    permission: magic.learned.landing_airbrake
+    mana-cost: 35
+    cooldown-seconds: 16
+  hushed_soles:
+    name: 고요한 밑창
+    enabled: true
+    command: 마법 hushed_soles
+    permission: magic.learned.hushed_soles
+    mana-cost: 55
+    cooldown-seconds: 45
+  thorn_manners:
+    name: 가시의 예절
+    enabled: true
+    command: 마법 thorn_manners
+    permission: magic.learned.thorn_manners
     mana-cost: 10
-    cooldown-seconds: 5
-  light_portrait:
-    name: 빛의 초상
-    enabled: false
-    command: 마법 light_portrait
-    permission: magic.learned.light_portrait
-    mana-cost: 20
-    cooldown-seconds: 12
-  promise_star:
-    name: 약속의 별
-    enabled: false
-    command: 마법 promise_star
-    permission: magic.learned.promise_star
-    mana-cost: 15
-    cooldown-seconds: 10
-  home_check:
-    name: 귀가 확인
-    enabled: false
-    command: 마법 home_check
-    permission: magic.learned.home_check
-    mana-cost: 5
-    cooldown-seconds: 3
-  clear_eyes:
-    name: 맑은 눈
-    enabled: false
-    command: 마법 clear_eyes
-    permission: magic.learned.clear_eyes
-    mana-cost: 20
-    cooldown-seconds: 12
-  light_rhythm:
-    name: 빛의 박자
-    enabled: false
-    command: 마법 light_rhythm
-    permission: magic.learned.light_rhythm
-    mana-cost: 35
-    cooldown-seconds: 12
-  frontal_duel:
-    name: 정면 승부
-    enabled: false
-    command: 마법 frontal_duel
-    permission: magic.learned.frontal_duel
-    mana-cost: 70
-    cooldown-seconds: 25
-  last_lantern:
-    name: 마지막 등불
-    enabled: false
-    command: 마법 last_lantern
-    permission: magic.learned.last_lantern
-    mana-cost: 65
-    cooldown-seconds: 25
-  star_farewell:
-    name: 별의 배웅
-    enabled: false
-    command: 마법 star_farewell
-    permission: magic.learned.star_farewell
-    mana-cost: 80
-    cooldown-seconds: 25
-  light_severance:
-    name: 빛의 단절
-    enabled: false
-    command: 마법 light_severance
-    permission: magic.learned.light_severance
+    cooldown-seconds: 30
+  cinder_skipring:
+    name: 불꽃 줄넘기
+    enabled: true
+    command: 마법 cinder_skipring
+    permission: magic.learned.cinder_skipring
     mana-cost: 90
-    cooldown-seconds: 30
-  dawn_promise:
-    name: 새벽의 약속
-    enabled: false
-    command: 마법 dawn_promise
-    permission: magic.learned.dawn_promise
-    mana-cost: 75
-    cooldown-seconds: 30
-  silent_steps:
-    name: 조용한 발걸음
-    enabled: false
-    command: 마법 silent_steps
-    permission: magic.learned.silent_steps
-    mana-cost: 20
-    cooldown-seconds: 15
-  forgotten_name:
-    name: 잊힌 이름
-    enabled: false
-    command: 마법 forgotten_name
-    permission: magic.learned.forgotten_name
-    mana-cost: 8
-    cooldown-seconds: 4
-  empty_page:
-    name: 빈 페이지
-    enabled: false
-    command: 마법 empty_page
-    permission: magic.learned.empty_page
-    mana-cost: 6
-    cooldown-seconds: 4
-  night_cover:
-    name: 밤의 덮개
-    enabled: false
-    command: 마법 night_cover
-    permission: magic.learned.night_cover
-    mana-cost: 15
-    cooldown-seconds: 8
-  shadow_pouch:
-    name: 그림자 주머니
-    enabled: false
-    command: 마법 shadow_pouch
-    permission: magic.learned.shadow_pouch
-    mana-cost: 100
-    cooldown-seconds: 90
-  ghost_palm:
-    name: 유령 손바닥
-    enabled: false
-    command: 마법 ghost_palm
-    permission: magic.learned.ghost_palm
-    mana-cost: 12
-    cooldown-seconds: 6
-  black_silence:
-    name: 검은 침묵
-    enabled: false
-    command: 마법 black_silence
-    permission: magic.learned.black_silence
-    mana-cost: 95
-    cooldown-seconds: 30
-  oblivion_mark:
-    name: 망각의 표식
-    enabled: false
-    command: 마법 oblivion_mark
-    permission: magic.learned.oblivion_mark
-    mana-cost: 40
-    cooldown-seconds: 20
-  delayed_fear:
-    name: 뒤늦은 공포
-    enabled: false
-    command: 마법 delayed_fear
-    permission: magic.learned.delayed_fear
-    mana-cost: 65
-    cooldown-seconds: 22
-  fugitive_toll:
-    name: 도망자의 대가
-    enabled: false
-    command: 마법 fugitive_toll
-    permission: magic.learned.fugitive_toll
-    mana-cost: 75
-    cooldown-seconds: 25
-  hungry_edge:
-    name: 굶주린 칼끝
-    enabled: false
-    command: 마법 hungry_edge
-    permission: magic.learned.hungry_edge
-    mana-cost: 60
     cooldown-seconds: 18
-  shadow_retrace:
-    name: 되짚는 그림자
-    enabled: false
-    command: 마법 shadow_retrace
-    permission: magic.learned.shadow_retrace
-    mana-cost: 45
-    cooldown-seconds: 25
-  black_pulse:
-    name: 검은 박동
-    enabled: false
-    command: 마법 black_pulse
-    permission: magic.learned.black_pulse
-    mana-cost: 120
-    cooldown-seconds: 40
-  empty_grave:
-    name: 빈 무덤
-    enabled: false
-    command: 마법 empty_grave
-    permission: magic.learned.empty_grave
-    mana-cost: 15
-    cooldown-seconds: 10
-  ill_choice:
-    name: 불길한 선택
-    enabled: false
-    command: 마법 ill_choice
-    permission: magic.learned.ill_choice
-    mana-cost: 70
-    cooldown-seconds: 25
-  resonance_tuning:
-    name: 공명 맞추기
-    enabled: false
-    command: 마법 resonance_tuning
-    permission: magic.learned.resonance_tuning
-    mana-cost: 25
-    cooldown-seconds: 10
-  breath_reversal:
-    name: 숨결 반전
-    enabled: false
-    command: 마법 breath_reversal
-    permission: magic.learned.breath_reversal
-    mana-cost: 30
-    cooldown-seconds: 12
-  heat_script:
-    name: 열문자
-    enabled: false
-    command: 마법 heat_script
-    permission: magic.learned.heat_script
-    mana-cost: 25
-    cooldown-seconds: 10
-  heat_transfer:
-    name: 열의 이동
-    enabled: false
-    command: 마법 heat_transfer
-    permission: magic.learned.heat_transfer
-    mana-cost: 45
-    cooldown-seconds: 15
-  level_balance:
-    name: 수평 맞추기
-    enabled: false
-    command: 마법 level_balance
-    permission: magic.learned.level_balance
-    mana-cost: 30
-    cooldown-seconds: 12
-  ice_cog:
-    name: 얼음 톱니
-    enabled: false
-    command: 마법 ice_cog
-    permission: magic.learned.ice_cog
-    mana-cost: 35
-    cooldown-seconds: 15
-  weight_sigil:
-    name: 무게의 인장
-    enabled: false
-    command: 마법 weight_sigil
-    permission: magic.learned.weight_sigil
-    mana-cost: 40
-    cooldown-seconds: 15
-  prism_split:
-    name: 프리즘 분광
-    enabled: false
-    command: 마법 prism_split
-    permission: magic.learned.prism_split
-    mana-cost: 45
-    cooldown-seconds: 15
-  light_afterimage:
-    name: 빛의 잔상
-    enabled: false
-    command: 마법 light_afterimage
-    permission: magic.learned.light_afterimage
-    mana-cost: 35
-    cooldown-seconds: 12
-  shadow_passage:
-    name: 그림자 통행
-    enabled: false
-    command: 마법 shadow_passage
-    permission: magic.learned.shadow_passage
-    mana-cost: 60
+  droplet_relay:
+    name: 물방울 인계
+    enabled: true
+    command: 마법 droplet_relay
+    permission: magic.learned.droplet_relay
+    mana-cost: 100
     cooldown-seconds: 20
+  folding_tideplane:
+    name: 접히는 수면
+    enabled: true
+    command: 마법 folding_tideplane
+    permission: magic.learned.folding_tideplane
+    mana-cost: 110
+    cooldown-seconds: 22
+  fish_trap:
+    name: 통발
+    enabled: true
+    command: 마법 fish_trap
+    permission: magic.learned.fish_trap
+    aliases: [아공간 수조, 수조]
+    mana-cost: 5
+    cooldown-seconds: 2
+  # ---- 239~250 던전 기믹 마법 (magic-mythic-paper/tools/gimmick_spells.py) ----
+  thawing_heat:
+    name: 해빙의 열기
+    enabled: true
+    command: 마법 thawing_heat
+    permission: magic.learned.thawing_heat
+    mana-cost: 40
+    cooldown-seconds: 8
+  steam_ignition:
+    name: 증기 점화
+    enabled: true
+    command: 마법 steam_ignition
+    permission: magic.learned.steam_ignition
+    mana-cost: 30
+    cooldown-seconds: 6
+  water_level:
+    name: 수위 조절
+    enabled: true
+    command: 마법 water_level
+    permission: magic.learned.water_level
+    mana-cost: 20
+    cooldown-seconds: 1.5
+  stone_weight:
+    name: 무게추
+    enabled: true
+    command: 마법 stone_weight
+    permission: magic.learned.stone_weight
+    mana-cost: 30
+    cooldown-seconds: 5
+  vine_awaken:
+    name: 덩굴 깨우기
+    enabled: true
+    command: 마법 vine_awaken
+    permission: magic.learned.vine_awaken
+    mana-cost: 40
+    cooldown-seconds: 10
+  light_beam:
+    name: 빛줄기
+    enabled: true
+    command: 마법 light_beam
+    permission: magic.learned.light_beam
+    mana-cost: 50
+    cooldown-seconds: 6
+  mirror_tune:
+    name: 반사 조율
+    enabled: true
+    command: 마법 mirror_tune
+    permission: magic.learned.mirror_tune
+    mana-cost: 15
+    cooldown-seconds: 1
+  prism_tint:
+    name: 프리즘 물들이기
+    enabled: true
+    command: 마법 prism_tint
+    permission: magic.learned.prism_tint
+    mana-cost: 15
+    cooldown-seconds: 1
+  statue_wake:
+    name: 석상 깨우기
+    enabled: true
+    command: 마법 statue_wake
+    permission: magic.learned.statue_wake
+    mana-cost: 20
+    cooldown-seconds: 2
+  rewind:
+    name: 되감기
+    enabled: true
+    command: 마법 rewind
+    permission: magic.learned.rewind
+    mana-cost: 30
+    cooldown-seconds: 5
+  conduit_turn:
+    name: 도관 회전
+    enabled: true
+    command: 마법 conduit_turn
+    permission: magic.learned.conduit_turn
+    mana-cost: 10
+    cooldown-seconds: 1
+  dimension_mark:
+    name: 차원 표식
+    enabled: true
+    command: 마법 dimension_mark
+    permission: magic.learned.dimension_mark
+    mana-cost: 40
+    cooldown-seconds: 5

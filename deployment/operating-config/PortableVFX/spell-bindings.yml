@@ -3900,1662 +3900,6 @@ bindings:
     review: >-
       Targeted API suppresses automatic hold expiry; real ownership-save result selects one terminal branch.
       -1 scale uses target height. Authored stopTail is preserved.
-  earth_shaping:
-    folder: EarthShaping
-    number: 101
-    range: 7
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: world-static
-        trigger: cast
-        effect: claude:earthshaping/wave
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 52
-      - role: impact
-        trigger: external:hitBurst
-        effect: claude:earthshaping/hitburst
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 18
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  stone_wall:
-    folder: StoneWall
-    number: 102
-    range: 8
-    speed: 1
-    trajectory: server-events
-    max-ticks: 340
-    sequence:
-      sustainStart: 0
-    holdTicks: 200
-    phases:
-      - role: static
-        trigger: cast
-        effect: claude:stonewall/begin
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 38
-      - role: static
-        trigger: cast
-        effect: claude:stonewall/sustain
-        anchor: impact
-        delay-ticks: 10
-        duration-ticks: 280
-        finish-after-ticks: 190
-      - role: static
-        trigger: cast
-        effect: claude:stonewall/end
-        anchor: impact
-        delay-ticks: 200
-        duration-ticks: 30
-        stop-effects:
-          - claude:stonewall/sustain
-      - role: impact
-        trigger: external:hit
-        effect: claude:stonewall/hit
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 18
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  earth_elemental:
-    folder: EarthElemental
-    number: 104
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 1380
-    sequence:
-      sustainStart: 0
-    holdTicks: 1240
-    phases:
-      - role: virtual-attached
-        trigger: external:summon
-        effect: claude:earthelemental/summon
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 78
-      - role: virtual-attached
-        trigger: external:summon
-        effect: claude:earthelemental/idle
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 1320
-      - role: virtual-attached
-        trigger: external:walk
-        effect: claude:earthelemental/walk
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 1320
-        stop-effects:
-          - claude:earthelemental/idle
-          - claude:earthelemental/walk
-      - role: virtual-attached
-        trigger: external:idle
-        effect: claude:earthelemental/idle
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 1320
-        stop-effects:
-          - claude:earthelemental/idle
-          - claude:earthelemental/walk
-      - role: virtual-attached
-        trigger: external:attack
-        effect: claude:earthelemental/attack
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 60
-      - role: impact
-        trigger: external:impact
-        effect: claude:earthelemental/impact
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 34
-      - role: attached
-        trigger: external:dismiss
-        effect: claude:earthelemental/dismiss
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 72
-        stop-effects:
-          - claude:earthelemental/idle
-          - claude:earthelemental/walk
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  earthquake:
-    folder: Earthquake
-    number: 105
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 200
-    sequence:
-      sustainStart: 0
-    holdTicks: 60
-    phases:
-      - role: static
-        trigger: cast
-        effect: claude:earthquake/begin
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 38
-      - role: static
-        trigger: cast
-        effect: claude:earthquake/sustain
-        anchor: caster
-        delay-ticks: 9
-        duration-ticks: 140
-        finish-after-ticks: 51
-      - role: static
-        trigger: cast
-        effect: claude:earthquake/end
-        anchor: caster
-        delay-ticks: 60
-        duration-ticks: 48
-        stop-effects:
-          - claude:earthquake/sustain
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  climate_control:
-    folder: ClimateControl
-    number: 106
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:climatecontrol/cast
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 52
-      - role: attached
-        trigger: external:rain
-        effect: claude:climatecontrol/rain
-        anchor: caster
-        delay-ticks: 28
-        duration-ticks: 94
-      - role: attached
-        trigger: external:clear
-        effect: claude:climatecontrol/clear
-        anchor: caster
-        delay-ticks: 28
-        duration-ticks: 98
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  seed_row:
-    folder: SeedRow
-    number: 107
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:seedrow/gather
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 29
-      - role: attached
-        trigger: cast
-        effect: claude:seedrow/seed1
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 252
-      - role: attached
-        trigger: cast
-        effect: claude:seedrow/seed2
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 252
-      - role: attached
-        trigger: cast
-        effect: claude:seedrow/seed3
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 252
-      - role: attached
-        trigger: cast
-        effect: claude:seedrow/seed4
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 252
-      - role: attached
-        trigger: cast
-        effect: claude:seedrow/seed5
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 252
-      - role: attached
-        trigger: cast
-        effect: claude:seedrow/seed6
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 252
-      - role: impact
-        trigger: external:land
-        effect: claude:seedrow/land
-        anchor: impact
-        delay-ticks: 8
-        duration-ticks: 22
-      - role: link
-        trigger: external:land
-        effect: claude:seedrow/projectile
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 12
-        link-source: caster-hand
-        link-target: event-point
-        finish-after-ticks: 8
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  bee_calm:
-    folder: BeeCalm
-    number: 108
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:beecalm/hand
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 21
-      - role: static
-        trigger: cast
-        effect: claude:beecalm/spread
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 39
-      - role: attached
-        trigger: external:calm
-        effect: claude:beecalm/calm
-        anchor: target
-        delay-ticks: 0
-        duration-ticks: 39
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  thorn_armor:
-    folder: ThornArmor
-    number: 109
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 300
-    sequence:
-      sustainStart: 0
-    holdTicks: 160
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:thornarmor/thorn_armor_begin
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 22
-      - role: attached
-        trigger: cast
-        effect: claude:thornarmor/thorn_armor
-        anchor: caster
-        delay-ticks: 6
-        duration-ticks: 240
-        finish-after-ticks: 154
-      - role: attached
-        trigger: cast
-        effect: claude:thornarmor/thorn_armor_end
-        anchor: caster
-        delay-ticks: 160
-        duration-ticks: 38
-        stop-effects:
-          - claude:thornarmor/thorn_armor
-      - role: impact
-        trigger: external:thorn_armor_hit
-        effect: claude:thornarmor/thorn_armor_hit
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 15
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  vein_fracture:
-    folder: VeinFracture
-    number: 110
-    range: 6
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: impact
-        trigger: cast
-        effect: claude:veinfracture/mark
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 7
-      - role: world-static
-        trigger: external:fracture
-        effect: claude:veinfracture/fracture
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 29
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  earth_anchor:
-    folder: EarthAnchor
-    number: 111
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 340
-    sequence:
-      sustainStart: 0
-    holdTicks: 200
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:earthanchor/earth_anchor_begin
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 20
-      - role: attached
-        trigger: cast
-        effect: claude:earthanchor/earth_anchor
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 280
-        finish-after-ticks: 200
-      - role: attached
-        trigger: cast
-        effect: claude:earthanchor/earth_anchor_end
-        anchor: caster
-        delay-ticks: 200
-        duration-ticks: 28
-        stop-effects:
-          - claude:earthanchor/earth_anchor
-      - role: attached
-        trigger: external:earth_anchor_hit
-        effect: claude:earthanchor/earth_anchor_hit
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 36
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  weathering_touch:
-    folder: WeatheringTouch
-    number: 112
-    range: 6
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: link
-        trigger: cast
-        effect: claude:weatheringtouch/touch
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 24
-        link-source: caster-hand
-        link-target: target
-      - role: impact
-        trigger: external:weatherMoss
-        effect: claude:weatheringtouch/weathermoss
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 30
-      - role: impact
-        trigger: external:weatherCrack
-        effect: claude:weatheringtouch/weathercrack
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 30
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  iron_carapace:
-    folder: IronCarapace
-    number: 113
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 540
-    sequence:
-      sustainStart: 0
-    holdTicks: 400
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:ironcarapace/iron_carapace_begin
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 26
-      - role: attached
-        trigger: cast
-        effect: claude:ironcarapace/iron_carapace
-        anchor: caster
-        delay-ticks: 10
-        duration-ticks: 480
-        finish-after-ticks: 390
-      - role: attached
-        trigger: cast
-        effect: claude:ironcarapace/iron_carapace_end
-        anchor: caster
-        delay-ticks: 400
-        duration-ticks: 34
-        stop-effects:
-          - claude:ironcarapace/iron_carapace
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  moss_coating:
-    folder: DeepDarkDetect
-    number: 114
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: static
-        trigger: cast
-        effect: claude:deepdarkdetect/send
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 57
-      - role: static
-        trigger: external:found
-        effect: claude:deepdarkdetect/found
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 76
-      - role: static
-        trigger: external:absent
-        effect: claude:deepdarkdetect/absent
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 40
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  grass_sprouting:
-    folder: GrassSprouting
-    number: 115
-    range: 8
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: static
-        trigger: external:sprout
-        effect: claude:grasssprouting/sprout
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 32
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  flint_sorting:
-    folder: FlintSorting
-    number: 116
-    range: 15
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:flintsorting/ready1
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 222
-      - role: attached
-        trigger: cast
-        effect: claude:flintsorting/ready2
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 222
-      - role: attached
-        trigger: cast
-        effect: claude:flintsorting/ready3
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 222
-      - role: attached
-        trigger: cast
-        effect: claude:flintsorting/ready4
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 222
-      - role: attached
-        trigger: cast
-        effect: claude:flintsorting/ready5
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 222
-      - role: projectile
-        trigger: external:asset_dependency
-        effect: claude:flintsorting/projectile
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 200
-      - role: impact
-        trigger: external:launch
-        effect: claude:flintsorting/launch
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 21
-      - role: impact
-        trigger: external:contact
-        effect: claude:flintsorting/impact
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 38
-      - role: impact
-        trigger: external:block_contact
-        effect: claude:flintsorting/impact
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 38
-      - role: impact
-        trigger: external:miss
-        effect: claude:flintsorting/miss
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 37
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  bark_peeling:
-    folder: BarkPeeling
-    number: 117
-    range: 6
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: impact
-        trigger: external:peel
-        effect: claude:barkpeeling/peel
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 29
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  compost_return:
-    folder: CompostReturn
-    number: 118
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:compostreturn/compost_return
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 71
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  thorn_seeds:
-    folder: ThornSeeds
-    number: 119
-    range: 15
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:thornseeds/cast
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 40
-      - role: attached
-        trigger: cast
-        effect: claude:thornseeds/charge1
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 222
-      - role: attached
-        trigger: cast
-        effect: claude:thornseeds/charge2
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 222
-      - role: attached
-        trigger: cast
-        effect: claude:thornseeds/charge3
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 222
-      - role: attached
-        trigger: cast
-        effect: claude:thornseeds/charge4
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 222
-      - role: attached
-        trigger: cast
-        effect: claude:thornseeds/charge5
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 222
-      - role: projectile
-        trigger: external:asset_dependency
-        effect: claude:thornseeds/projectile
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 200
-      - role: impact
-        trigger: external:launch
-        effect: claude:thornseeds/launch
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 16
-      - role: impact
-        trigger: external:contact
-        effect: claude:thornseeds/impact
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 39
-      - role: impact
-        trigger: external:block_contact
-        effect: claude:thornseeds/impact
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 39
-      - role: impact
-        trigger: external:miss
-        effect: claude:thornseeds/miss
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 32
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  pollen_matchmaking:
-    folder: PollenMatchmaking
-    number: 120
-    range: 10
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:pollenmatchmaking/hand
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 20
-      - role: link
-        trigger: external:send
-        effect: claude:pollenmatchmaking/send
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 29
-        link-source: caster-hand
-        link-target: target
-      - role: link
-        trigger: external:connect
-        effect: claude:pollenmatchmaking/connect
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 43
-        link-source: event-point
-        link-target: target
-      - role: static
-        trigger: external:connect
-        effect: claude:pollenmatchmaking/bloom
-        anchor: impact
-        delay-ticks: 10
-        duration-ticks: 61
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  dormant_seed:
-    folder: DormantSeed
-    number: 122
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: static
-        trigger: cast
-        effect: claude:dormantseed/sweep
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 32
-      - role: impact
-        trigger: external:harvest
-        effect: claude:dormantseed/harvest
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 20
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  counterweight:
-    folder: Counterweight
-    number: 123
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 200
-    sequence:
-      sustainStart: 0
-    holdTicks: 60
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:counterweight/shield
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 163
-      - role: attached
-        trigger: cast
-        effect: claude:counterweight/ready
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 42
-      - role: impact
-        trigger: external:block
-        effect: claude:counterweight/block
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 15
-      - role: attached
-        trigger: external:block
-        effect: claude:counterweight/stun
-        anchor: target
-        delay-ticks: 0
-        duration-ticks: 82
-      - role: attached
-        trigger: cast
-        effect: claude:counterweight/release
-        anchor: caster
-        delay-ticks: 20
-        duration-ticks: 17
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  material_exchange:
-    folder: MaterialExchange
-    number: 124
-    range: 15
-    speed: 1
-    trajectory: server-events
-    max-ticks: 180
-    sequence:
-      sustainStart: 0
-    holdTicks: 40
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:materialexchange/bind_begin
-        anchor: target
-        delay-ticks: 0
-        duration-ticks: 31
-      - role: attached
-        trigger: cast
-        effect: claude:materialexchange/bind_hold
-        anchor: target
-        delay-ticks: 9
-        duration-ticks: 120
-        finish-after-ticks: 31
-      - role: attached
-        trigger: cast
-        effect: claude:materialexchange/bind_release
-        anchor: target
-        delay-ticks: 40
-        duration-ticks: 27
-        stop-effects:
-          - claude:materialexchange/bind_hold
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  remembering_field:
-    folder: RememberingField
-    number: 125
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: link
-        trigger: cast
-        effect: claude:rememberingfield/flow
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 19
-        link-source: caster-hand
-        link-target: target
-      - role: static
-        trigger: external:grow
-        effect: claude:rememberingfield/grow
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 26
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  little_giant:
-    folder: LittleGiant
-    number: 126
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 440
-    sequence:
-      sustainStart: 0
-    holdTicks: 300
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:littlegiant/little_giant_grow
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 56
-      - role: attached
-        trigger: cast
-        effect: claude:littlegiant/little_giant
-        anchor: caster
-        delay-ticks: 20
-        duration-ticks: 380
-        finish-after-ticks: 280
-      - role: attached
-        trigger: cast
-        effect: claude:littlegiant/little_giant_return
-        anchor: caster
-        delay-ticks: 300
-        duration-ticks: 44
-        stop-effects:
-          - claude:littlegiant/little_giant
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  spring_ground:
-    folder: SpringGround
-    number: 127
-    range: 10
-    speed: 1
-    trajectory: server-events
-    max-ticks: 740
-    sequence:
-      sustainStart: 0
-    holdTicks: 600
-    phases:
-      - role: scoped-static
-        trigger: external:place
-        effect: claude:springground/place
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 34
-      - role: scoped-static
-        trigger: external:place
-        effect: claude:springground/padrest
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 1218
-      - role: scoped-static
-        trigger: external:place
-        effect: claude:springground/idle
-        anchor: impact
-        delay-ticks: 10
-        duration-ticks: 680
-      - role: scoped-static
-        trigger: external:launch
-        effect: claude:springground/press
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 1204
-      - role: scoped-static
-        trigger: external:launch
-        effect: claude:springground/bounce
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 1214
-      - role: scoped-static
-        trigger: external:launch
-        effect: claude:springground/launch
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 20
-      - role: scoped-static
-        trigger: external:crumble
-        effect: claude:springground/crumble
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 31
-        stop-effects:
-          - claude:springground/place
-          - claude:springground/padrest
-          - claude:springground/idle
-          - claude:springground/press
-          - claude:springground/bounce
-          - claude:springground/launch
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  mountain_back:
-    folder: MountainBack
-    number: 128
-    range: 16
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: impact
-        trigger: cast
-        effect: claude:mountainback/form
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 56
-      - role: projectile
-        trigger: external:asset_dependency
-        effect: claude:mountainback/roll
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 200
-      - role: impact
-        trigger: external:contact
-        effect: claude:mountainback/contact
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 30
-      - role: impact
-        trigger: external:wallBreak
-        effect: claude:mountainback/wallbreak
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 52
-      - role: impact
-        trigger: external:miss
-        effect: claude:mountainback/vanish
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 58
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  earth_embrace:
-    folder: earth_embrace
-    number: 129
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: static
-        trigger: cast
-        effect: claude:earth_embrace/flow
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 29
-      - role: static
-        trigger: external:restore
-        effect: claude:earth_embrace/restore
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 49
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  forest_throne:
-    folder: ForestThrone
-    number: 130
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 300
-    sequence:
-      sustainStart: 0
-    holdTicks: 160
-    phases:
-      - role: static
-        trigger: cast
-        effect: claude:forestthrone/begin
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 34
-      - role: static
-        trigger: cast
-        effect: claude:forestthrone/sustain
-        anchor: caster
-        delay-ticks: 12
-        duration-ticks: 240
-        finish-after-ticks: 148
-      - role: static
-        trigger: cast
-        effect: claude:forestthrone/end
-        anchor: caster
-        delay-ticks: 160
-        duration-ticks: 24
-        stop-effects:
-          - claude:forestthrone/sustain
-      - role: impact
-        trigger: external:strike
-        effect: claude:forestthrone/strike
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 46
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  primordial_stone:
-    folder: PrimordialStone
-    number: 131
-    range: 22
-    speed: 1
-    trajectory: server-events
-    max-ticks: 6140
-    sequence:
-      sustainStart: 0
-    holdTicks: 6000
-    phases:
-      - role: attached
-        trigger: external:gather
-        effect: claude:primordialstone/gather
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 34
-      - role: attached
-        trigger: external:gather
-        effect: claude:primordialstone/compress
-        anchor: caster
-        delay-ticks: 18
-        duration-ticks: 24
-      - role: attached
-        trigger: external:gather
-        effect: claude:primordialstone/idle
-        anchor: caster
-        delay-ticks: 27
-        duration-ticks: 6080
-      - role: impact
-        trigger: external:launch
-        effect: claude:primordialstone/launch
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 22
-        stop-effects:
-          - claude:primordialstone/idle
-      - role: projectile
-        trigger: external:asset_dependency
-        effect: claude:primordialstone/projectile
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 6080
-      - role: impact
-        trigger: external:contact
-        effect: claude:primordialstone/impact
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 31
-      - role: impact
-        trigger: external:block_contact
-        effect: claude:primordialstone/impact
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 31
-      - role: impact
-        trigger: external:miss
-        effect: claude:primordialstone/dissolve
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 31
-      - role: impact
-        trigger: external:dissolve
-        effect: claude:primordialstone/dissolve
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 31
-        stop-effects:
-          - claude:primordialstone/idle
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  guiding_star:
-    folder: GuidingStar
-    number: 132
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 340
-    sequence:
-      sustainStart: 0
-    holdTicks: 200
-    phases:
-      - role: static
-        trigger: external:save
-        effect: claude:guidingstar/save
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 19
-      - role: link
-        trigger: external:form
-        effect: claude:guidingstar/form
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 19
-        link-source: caster-hand
-        link-target: event-point
-      - role: link
-        trigger: external:form
-        effect: claude:guidingstar/hold
-        anchor: impact
-        delay-ticks: 7
-        duration-ticks: 280
-        link-source: caster-hand
-        link-target: event-point
-        finish-after-ticks: 193
-      - role: link
-        trigger: external:form
-        effect: claude:guidingstar/fade
-        anchor: impact
-        delay-ticks: 200
-        duration-ticks: 18
-        link-source: caster-hand
-        link-target: event-point
-        stop-effects:
-          - claude:guidingstar/hold
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  minor_heal:
-    folder: MinorHeal
-    number: 133
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:minorheal/minor_heal_gather
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 24
-      - role: attached
-        trigger: cast
-        effect: claude:minorheal/minor_heal_pulse
-        anchor: caster
-        delay-ticks: 11
-        duration-ticks: 10
-      - role: attached
-        trigger: cast
-        effect: claude:minorheal/minor_heal_fade
-        anchor: caster
-        delay-ticks: 13
-        duration-ticks: 36
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  true_sight:
-    folder: TrueSight
-    number: 137
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 440
-    sequence:
-      sustainStart: 0
-    holdTicks: 300
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:truesight/true_sight_awaken
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 24
-      - role: attached
-        trigger: cast
-        effect: claude:truesight/true_sight_eye
-        anchor: caster
-        delay-ticks: 6
-        duration-ticks: 380
-        finish-after-ticks: 294
-      - role: attached
-        trigger: cast
-        effect: claude:truesight/true_sight_release
-        anchor: caster
-        delay-ticks: 300
-        duration-ticks: 32
-        stop-effects:
-          - claude:truesight/true_sight_eye
-      - role: attached
-        trigger: external:true_sight_enemy_reveal
-        effect: claude:truesight/true_sight_enemy_reveal
-        anchor: target
-        delay-ticks: 0
-        duration-ticks: 36
-      - role: attached
-        trigger: external:true_sight_enemy_reveal
-        effect: claude:truesight/true_sight_enemy_hold
-        anchor: target
-        delay-ticks: 6
-        duration-ticks: 340
-        finish-after-ticks: 294
-      - role: attached
-        trigger: external:true_sight_enemy_reveal
-        effect: claude:truesight/true_sight_enemy_fade
-        anchor: target
-        delay-ticks: 300
-        duration-ticks: 40
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  protective_ward:
-    folder: ProtectiveWard
-    number: 138
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 540
-    sequence:
-      sustainStart: 0
-    holdTicks: 400
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:protectiveward/ward_form
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 26
-      - role: attached
-        trigger: cast
-        effect: claude:protectiveward/ward
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 240
-        finish-after-ticks: 200
-      - role: attached
-        trigger: cast
-        effect: claude:protectiveward/ward_end
-        anchor: caster
-        delay-ticks: 200
-        duration-ticks: 34
-        stop-effects:
-          - claude:protectiveward/ward
-      - role: impact
-        trigger: external:absorb
-        effect: claude:protectiveward/ripple
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 16
-      - role: link
-        trigger: external:absorb
-        effect: claude:protectiveward/absorb
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 28
-        link-source: event-point
-        link-target: caster
-      - role: attached
-        trigger: external:shield_gain
-        effect: claude:protectiveward/shield_gain
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 22
-      - role: attached
-        trigger: external:shield_gain
-        effect: claude:protectiveward/shield
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 240
-        finish-after-ticks: 200
-        stop-effects:
-          - claude:protectiveward/shield
-      - role: attached
-        trigger: external:shield_gain
-        effect: claude:protectiveward/shield_end
-        anchor: caster
-        delay-ticks: 200
-        duration-ticks: 46
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  constellation_blessing:
-    folder: ConstellationBlessing
-    number: 139
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 780
-    sequence:
-      sustainStart: 0
-    holdTicks: 640
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:constellationblessing/constellation_blessing_form
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 70
-      - role: attached
-        trigger: external:bless
-        effect: claude:constellationblessing/constellation_blessing_bless
-        anchor: target
-        delay-ticks: 22
-        duration-ticks: 26
-      - role: attached
-        trigger: external:bless
-        effect: claude:constellationblessing/constellation_blessing_linger
-        anchor: target
-        delay-ticks: 29
-        duration-ticks: 640
-        finish-after-ticks: 571
-      - role: attached
-        trigger: external:bless
-        effect: claude:constellationblessing/constellation_blessing_release
-        anchor: target
-        delay-ticks: 600
-        duration-ticks: 31
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  arcane_imprint:
-    folder: ArcaneImprint
-    number: 140
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 540
-    sequence:
-      sustainStart: 0
-    holdTicks: 400
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:arcaneimprint/arcane_imprint_begin
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 36
-      - role: attached
-        trigger: cast
-        effect: claude:arcaneimprint/arcane_imprint
-        anchor: caster
-        delay-ticks: 12
-        duration-ticks: 480
-        finish-after-ticks: 388
-      - role: attached
-        trigger: cast
-        effect: claude:arcaneimprint/arcane_imprint_end
-        anchor: caster
-        delay-ticks: 400
-        duration-ticks: 34
-        stop-effects:
-          - claude:arcaneimprint/arcane_imprint
-      - role: impact
-        trigger: external:mine_face
-        effect: claude:arcaneimprint/mine_face
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 12
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  dawn_ritual:
-    folder: DawnRitual
-    number: 141
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 580
-    sequence:
-      sustainStart: 0
-    holdTicks: 440
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:dawnritual/gather
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 46
-      - role: static
-        trigger: cast
-        effect: claude:dawnritual/spread
-        anchor: caster
-        delay-ticks: 16
-        duration-ticks: 48
-      - role: attached
-        trigger: external:cleanse
-        effect: claude:dawnritual/cleanse
-        anchor: target
-        delay-ticks: 16
-        duration-ticks: 37
-      - role: attached
-        trigger: external:cleanse
-        effect: claude:dawnritual/afterglow
-        anchor: target
-        delay-ticks: 30
-        duration-ticks: 440
-        finish-after-ticks: 370
-      - role: attached
-        trigger: external:cleanse
-        effect: claude:dawnritual/release
-        anchor: target
-        delay-ticks: 400
-        duration-ticks: 30
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  comforting_light:
-    folder: ComfortingLight
-    number: 142
-    range: 15
-    speed: 1
-    trajectory: server-events
-    max-ticks: 280
-    sequence:
-      sustainStart: 0
-    holdTicks: 140
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:comfortinglight/gather
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 26
-      - role: link
-        trigger: external:arrive
-        effect: claude:comfortinglight/transfer
-        anchor: impact
-        delay-ticks: 12
-        duration-ticks: 30
-        link-source: caster-hand
-        link-target: target
-        finish-after-ticks: 10
-      - role: attached
-        trigger: external:arrive
-        effect: claude:comfortinglight/arrive
-        anchor: target
-        delay-ticks: 22
-        duration-ticks: 29
-      - role: attached
-        trigger: external:arrive
-        effect: claude:comfortinglight/protect
-        anchor: target
-        delay-ticks: 23
-        duration-ticks: 120
-        finish-after-ticks: 77
-      - role: attached
-        trigger: external:arrive
-        effect: claude:comfortinglight/release
-        anchor: target
-        delay-ticks: 100
-        duration-ticks: 25
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  exorcism_flash:
-    folder: ExorcismFlash
-    number: 143
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:exorcismflash/gather
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 16
-      - role: static
-        trigger: cast
-        effect: claude:exorcismflash/burst
-        anchor: caster
-        delay-ticks: 6
-        duration-ticks: 16
-      - role: attached
-        trigger: external:hit
-        effect: claude:exorcismflash/hit
-        anchor: target
-        delay-ticks: 6
-        duration-ticks: 17
-      - role: static
-        trigger: cast
-        effect: claude:exorcismflash/fade
-        anchor: caster
-        delay-ticks: 12
-        duration-ticks: 28
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  arcane_mending:
-    folder: ArcaneMending
-    number: 144
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: link
-        trigger: cast
-        effect: claude:arcanemending/arcane_mending_gather
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 30
-        link-source: caster-hand
-        link-target: caster-hand
-        target-offset:
-          - 0
-          - 0.5
-          - 0.2
-      - role: link
-        trigger: cast
-        effect: claude:arcanemending/arcane_mending_mend
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 50
-        link-source: caster-hand
-        link-target: caster-hand
-        target-offset:
-          - 0
-          - 0.5
-          - 0.2
-      - role: link
-        trigger: cast
-        effect: claude:arcanemending/arcane_mending_complete
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 43
-        link-source: caster-hand
-        link-target: caster-hand
-        target-offset:
-          - 0
-          - 0.5
-          - 0.2
-      - role: link
-        trigger: cast
-        effect: claude:arcanemending/arcane_mending_fade
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 58
-        link-source: caster-hand
-        link-target: caster-hand
-        target-offset:
-          - 0
-          - 0.5
-          - 0.2
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  companion_return:
-    folder: CompanionReturn
-    number: 145
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:companionreturn/gather
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 69
-      - role: static
-        trigger: external:depart
-        effect: claude:companionreturn/depart
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 24
-        stop-effects:
-          - claude:companionreturn/gather
-      - role: static
-        trigger: external:arrive
-        effect: claude:companionreturn/arrive
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 36
-      - role: static
-        trigger: external:arrive
-        effect: claude:companionreturn/afterglow
-        anchor: impact
-        delay-ticks: 16
-        duration-ticks: 58
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  flawless_moment:
-    folder: FlawlessMoment
-    number: 146
-    range: 12
-    speed: 1
-    trajectory: server-events
-    max-ticks: 200
-    sequence:
-      sustainStart: 0
-    holdTicks: 60
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:flawlessmoment/flawless_moment_begin
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 17
-      - role: attached
-        trigger: cast
-        effect: claude:flawlessmoment/flawless_moment
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 140
-        finish-after-ticks: 60
-      - role: attached
-        trigger: cast
-        effect: claude:flawlessmoment/flawless_moment_end
-        anchor: caster
-        delay-ticks: 60
-        duration-ticks: 30
-        stop-effects:
-          - claude:flawlessmoment/flawless_moment
-      - role: impact
-        trigger: external:flawless_moment_hit
-        effect: claude:flawlessmoment/flawless_moment_hit
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 14
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   solar_judgment:
     folder: SolarJudgment
     number: 147
@@ -5945,6 +4289,372 @@ bindings:
     review: >-
       Connected to ChannelMech/SolarJudgmentSequence; geometry and timings from delivered NOTES; game visual
       acceptance pending
+  stone_wall:
+    folder: StoneWall
+    number: 102
+    range: 8
+    speed: 1
+    trajectory: server-events
+    max-ticks: 340
+    sequence:
+      sustainStart: 0
+    holdTicks: 200
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:stonewall/begin
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 38
+      - role: static
+        trigger: cast
+        effect: claude:stonewall/sustain
+        anchor: impact
+        delay-ticks: 10
+        duration-ticks: 280
+        finish-after-ticks: 190
+      - role: static
+        trigger: cast
+        effect: claude:stonewall/end
+        anchor: impact
+        delay-ticks: 200
+        duration-ticks: 30
+        stop-effects:
+          - claude:stonewall/sustain
+      - role: impact
+        trigger: external:hit
+        effect: claude:stonewall/hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  earthquake:
+    folder: Earthquake
+    number: 105
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:earthquake/begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 38
+      - role: static
+        trigger: cast
+        effect: claude:earthquake/sustain
+        anchor: caster
+        delay-ticks: 9
+        duration-ticks: 140
+        finish-after-ticks: 51
+      - role: static
+        trigger: cast
+        effect: claude:earthquake/end
+        anchor: caster
+        delay-ticks: 60
+        duration-ticks: 48
+        stop-effects:
+          - claude:earthquake/sustain
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  thorn_armor:
+    folder: ThornArmor
+    number: 109
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 300
+    sequence:
+      sustainStart: 0
+    holdTicks: 160
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:thornarmor/thorn_armor_begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 22
+      - role: attached
+        trigger: cast
+        effect: claude:thornarmor/thorn_armor
+        anchor: caster
+        delay-ticks: 6
+        duration-ticks: 240
+        finish-after-ticks: 154
+      - role: attached
+        trigger: cast
+        effect: claude:thornarmor/thorn_armor_end
+        anchor: caster
+        delay-ticks: 160
+        duration-ticks: 38
+        stop-effects:
+          - claude:thornarmor/thorn_armor
+      - role: impact
+        trigger: external:thorn_armor_hit
+        effect: claude:thornarmor/thorn_armor_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 15
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  earth_anchor:
+    folder: EarthAnchor
+    number: 111
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 340
+    sequence:
+      sustainStart: 0
+    holdTicks: 200
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:earthanchor/earth_anchor_begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: attached
+        trigger: cast
+        effect: claude:earthanchor/earth_anchor
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 280
+        finish-after-ticks: 200
+      - role: attached
+        trigger: cast
+        effect: claude:earthanchor/earth_anchor_end
+        anchor: caster
+        delay-ticks: 200
+        duration-ticks: 28
+        stop-effects:
+          - claude:earthanchor/earth_anchor
+      - role: attached
+        trigger: external:earth_anchor_hit
+        effect: claude:earthanchor/earth_anchor_hit
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 36
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  iron_carapace:
+    folder: IronCarapace
+    number: 113
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 540
+    sequence:
+      sustainStart: 0
+    holdTicks: 400
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:ironcarapace/iron_carapace_begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 26
+      - role: attached
+        trigger: cast
+        effect: claude:ironcarapace/iron_carapace
+        anchor: caster
+        delay-ticks: 10
+        duration-ticks: 480
+        finish-after-ticks: 390
+      - role: attached
+        trigger: cast
+        effect: claude:ironcarapace/iron_carapace_end
+        anchor: caster
+        delay-ticks: 400
+        duration-ticks: 34
+        stop-effects:
+          - claude:ironcarapace/iron_carapace
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  material_exchange:
+    folder: MaterialExchange
+    number: 124
+    range: 15
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 40
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:materialexchange/bind_begin
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 31
+      - role: attached
+        trigger: cast
+        effect: claude:materialexchange/bind_hold
+        anchor: target
+        delay-ticks: 9
+        duration-ticks: 120
+        finish-after-ticks: 31
+      - role: attached
+        trigger: cast
+        effect: claude:materialexchange/bind_release
+        anchor: target
+        delay-ticks: 40
+        duration-ticks: 27
+        stop-effects:
+          - claude:materialexchange/bind_hold
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  little_giant:
+    folder: LittleGiant
+    number: 126
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 440
+    sequence:
+      sustainStart: 0
+    holdTicks: 300
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:littlegiant/little_giant_grow
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 56
+      - role: attached
+        trigger: cast
+        effect: claude:littlegiant/little_giant
+        anchor: caster
+        delay-ticks: 20
+        duration-ticks: 380
+        finish-after-ticks: 280
+      - role: attached
+        trigger: cast
+        effect: claude:littlegiant/little_giant_return
+        anchor: caster
+        delay-ticks: 300
+        duration-ticks: 44
+        stop-effects:
+          - claude:littlegiant/little_giant
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  forest_throne:
+    folder: ForestThrone
+    number: 130
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 300
+    sequence:
+      sustainStart: 0
+    holdTicks: 160
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:forestthrone/begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 34
+      - role: static
+        trigger: cast
+        effect: claude:forestthrone/sustain
+        anchor: caster
+        delay-ticks: 12
+        duration-ticks: 240
+        finish-after-ticks: 148
+      - role: static
+        trigger: cast
+        effect: claude:forestthrone/end
+        anchor: caster
+        delay-ticks: 160
+        duration-ticks: 24
+        stop-effects:
+          - claude:forestthrone/sustain
+      - role: impact
+        trigger: external:strike
+        effect: claude:forestthrone/strike
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 46
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  arcane_imprint:
+    folder: ArcaneImprint
+    number: 140
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 540
+    sequence:
+      sustainStart: 0
+    holdTicks: 400
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:arcaneimprint/arcane_imprint_begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 36
+      - role: attached
+        trigger: cast
+        effect: claude:arcaneimprint/arcane_imprint
+        anchor: caster
+        delay-ticks: 12
+        duration-ticks: 480
+        finish-after-ticks: 388
+      - role: attached
+        trigger: cast
+        effect: claude:arcaneimprint/arcane_imprint_end
+        anchor: caster
+        delay-ticks: 400
+        duration-ticks: 34
+        stop-effects:
+          - claude:arcaneimprint/arcane_imprint
+      - role: impact
+        trigger: external:mine_face
+        effect: claude:arcaneimprint/mine_face
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  flawless_moment:
+    folder: FlawlessMoment
+    number: 146
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:flawlessmoment/flawless_moment_begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 17
+      - role: attached
+        trigger: cast
+        effect: claude:flawlessmoment/flawless_moment
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 140
+        finish-after-ticks: 60
+      - role: attached
+        trigger: cast
+        effect: claude:flawlessmoment/flawless_moment_end
+        anchor: caster
+        delay-ticks: 60
+        duration-ticks: 30
+        stop-effects:
+          - claude:flawlessmoment/flawless_moment
+      - role: impact
+        trigger: external:flawless_moment_hit
+        effect: claude:flawlessmoment/flawless_moment_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 14
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   firefly_mark:
     folder: FireflyMark
     number: 148
@@ -5977,6 +4687,1362 @@ bindings:
         duration-ticks: 38
         stop-effects:
           - claude:fireflymark/firefly_mark_follow
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  shadow_bind:
+    folder: ShadowBind
+    number: 166
+    range: 10
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:shadowbind/shadow_bind_begin
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 19
+      - role: attached
+        trigger: cast
+        effect: claude:shadowbind/shadow_bind
+        anchor: target
+        delay-ticks: 8
+        duration-ticks: 140
+        finish-after-ticks: 52
+      - role: attached
+        trigger: cast
+        effect: claude:shadowbind/shadow_bind_end
+        anchor: target
+        delay-ticks: 60
+        duration-ticks: 22
+        stop-effects:
+          - claude:shadowbind/shadow_bind
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  earth_shaping:
+    folder: EarthShaping
+    number: 101
+    range: 7
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: world-static
+        trigger: cast
+        effect: claude:earthshaping/wave
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 52
+      - role: impact
+        trigger: external:hitBurst
+        effect: claude:earthshaping/hitburst
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  climate_control:
+    folder: ClimateControl
+    number: 106
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:climatecontrol/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 52
+      - role: attached
+        trigger: external:rain
+        effect: claude:climatecontrol/rain
+        anchor: caster
+        delay-ticks: 28
+        duration-ticks: 94
+      - role: attached
+        trigger: external:clear
+        effect: claude:climatecontrol/clear
+        anchor: caster
+        delay-ticks: 28
+        duration-ticks: 98
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  vein_fracture:
+    folder: VeinFracture
+    number: 110
+    range: 6
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: impact
+        trigger: cast
+        effect: claude:veinfracture/mark
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 7
+      - role: world-static
+        trigger: external:fracture
+        effect: claude:veinfracture/fracture
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 29
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  moss_coating:
+    folder: DeepDarkDetect
+    number: 114
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:deepdarkdetect/send
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 57
+      - role: static
+        trigger: external:found
+        effect: claude:deepdarkdetect/found
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 76
+      - role: static
+        trigger: external:absent
+        effect: claude:deepdarkdetect/absent
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 40
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  grass_sprouting:
+    folder: GrassSprouting
+    number: 115
+    range: 8
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: static
+        trigger: external:sprout
+        effect: claude:grasssprouting/sprout
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 32
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  bark_peeling:
+    folder: BarkPeeling
+    number: 117
+    range: 6
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: impact
+        trigger: external:peel
+        effect: claude:barkpeeling/peel
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 29
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  compost_return:
+    folder: CompostReturn
+    number: 118
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:compostreturn/compost_return
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 71
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  dormant_seed:
+    folder: DormantSeed
+    number: 122
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:dormantseed/sweep
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 32
+      - role: impact
+        trigger: external:harvest
+        effect: claude:dormantseed/harvest
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  earth_embrace:
+    folder: earth_embrace
+    number: 129
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:earth_embrace/flow
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 29
+      - role: static
+        trigger: external:restore
+        effect: claude:earth_embrace/restore
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 49
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  night_sight:
+    folder: NightSight
+    number: 165
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:nightsight/night_sight_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 35
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  faint_veil:
+    folder: FaintVeil
+    number: 167
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 300
+    sequence:
+      sustainStart: 0
+    holdTicks: 160
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:faintveil/veil_enter
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 19
+      - role: attached
+        trigger: cast
+        effect: claude:faintveil/veil_release
+        anchor: caster
+        delay-ticks: 160
+        duration-ticks: 18
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  bee_calm:
+    folder: BeeCalm
+    number: 108
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:beecalm/hand
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 21
+      - role: static
+        trigger: cast
+        effect: claude:beecalm/spread
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 39
+      - role: attached
+        trigger: external:calm
+        effect: claude:beecalm/calm
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 39
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  weathering_touch:
+    folder: WeatheringTouch
+    number: 112
+    range: 6
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: link
+        trigger: cast
+        effect: claude:weatheringtouch/touch
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+        link-source: caster-hand
+        link-target: target
+      - role: impact
+        trigger: external:weatherMoss
+        effect: claude:weatheringtouch/weathermoss
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 30
+      - role: impact
+        trigger: external:weatherCrack
+        effect: claude:weatheringtouch/weathercrack
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 30
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  pollen_matchmaking:
+    folder: PollenMatchmaking
+    number: 120
+    range: 10
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:pollenmatchmaking/hand
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: link
+        trigger: external:send
+        effect: claude:pollenmatchmaking/send
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 29
+        link-source: caster-hand
+        link-target: target
+      - role: link
+        trigger: external:connect
+        effect: claude:pollenmatchmaking/connect
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 43
+        link-source: event-point
+        link-target: target
+      - role: static
+        trigger: external:connect
+        effect: claude:pollenmatchmaking/bloom
+        anchor: impact
+        delay-ticks: 10
+        duration-ticks: 61
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  counterweight:
+    folder: Counterweight
+    number: 123
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:counterweight/shield
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 163
+      - role: attached
+        trigger: cast
+        effect: claude:counterweight/ready
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 42
+      - role: impact
+        trigger: external:block
+        effect: claude:counterweight/block
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 15
+      - role: attached
+        trigger: external:block
+        effect: claude:counterweight/stun
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 82
+      - role: attached
+        trigger: cast
+        effect: claude:counterweight/release
+        anchor: caster
+        delay-ticks: 20
+        duration-ticks: 17
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  remembering_field:
+    folder: RememberingField
+    number: 125
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: link
+        trigger: cast
+        effect: claude:rememberingfield/flow
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 19
+        link-source: caster-hand
+        link-target: target
+      - role: static
+        trigger: external:grow
+        effect: claude:rememberingfield/grow
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 26
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  spring_ground:
+    folder: SpringGround
+    number: 127
+    range: 10
+    speed: 1
+    trajectory: server-events
+    max-ticks: 740
+    sequence:
+      sustainStart: 0
+    holdTicks: 600
+    phases:
+      - role: scoped-static
+        trigger: external:place
+        effect: claude:springground/place
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 34
+      - role: scoped-static
+        trigger: external:place
+        effect: claude:springground/padrest
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 1218
+      - role: scoped-static
+        trigger: external:place
+        effect: claude:springground/idle
+        anchor: impact
+        delay-ticks: 10
+        duration-ticks: 680
+      - role: scoped-static
+        trigger: external:launch
+        effect: claude:springground/press
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 1204
+      - role: scoped-static
+        trigger: external:launch
+        effect: claude:springground/bounce
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 1214
+      - role: scoped-static
+        trigger: external:launch
+        effect: claude:springground/launch
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: scoped-static
+        trigger: external:crumble
+        effect: claude:springground/crumble
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 31
+        stop-effects:
+          - claude:springground/place
+          - claude:springground/padrest
+          - claude:springground/idle
+          - claude:springground/press
+          - claude:springground/bounce
+          - claude:springground/launch
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  flint_sorting:
+    folder: FlintSorting
+    number: 116
+    range: 15
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:flintsorting/ready1
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 222
+      - role: attached
+        trigger: cast
+        effect: claude:flintsorting/ready2
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 222
+      - role: attached
+        trigger: cast
+        effect: claude:flintsorting/ready3
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 222
+      - role: attached
+        trigger: cast
+        effect: claude:flintsorting/ready4
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 222
+      - role: attached
+        trigger: cast
+        effect: claude:flintsorting/ready5
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 222
+      - role: projectile
+        trigger: external:asset_dependency
+        effect: claude:flintsorting/projectile
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 200
+      - role: impact
+        trigger: external:launch
+        effect: claude:flintsorting/launch
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 21
+      - role: impact
+        trigger: external:contact
+        effect: claude:flintsorting/impact
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 38
+      - role: impact
+        trigger: external:block_contact
+        effect: claude:flintsorting/impact
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 38
+      - role: impact
+        trigger: external:miss
+        effect: claude:flintsorting/miss
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 37
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  thorn_seeds:
+    folder: ThornSeeds
+    number: 119
+    range: 15
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:thornseeds/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: cast
+        effect: claude:thornseeds/charge1
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 222
+      - role: attached
+        trigger: cast
+        effect: claude:thornseeds/charge2
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 222
+      - role: attached
+        trigger: cast
+        effect: claude:thornseeds/charge3
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 222
+      - role: attached
+        trigger: cast
+        effect: claude:thornseeds/charge4
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 222
+      - role: attached
+        trigger: cast
+        effect: claude:thornseeds/charge5
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 222
+      - role: projectile
+        trigger: external:asset_dependency
+        effect: claude:thornseeds/projectile
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 200
+      - role: impact
+        trigger: external:launch
+        effect: claude:thornseeds/launch
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+      - role: impact
+        trigger: external:contact
+        effect: claude:thornseeds/impact
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 39
+      - role: impact
+        trigger: external:block_contact
+        effect: claude:thornseeds/impact
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 39
+      - role: impact
+        trigger: external:miss
+        effect: claude:thornseeds/miss
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 32
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  mountain_back:
+    folder: MountainBack
+    number: 128
+    range: 16
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: impact
+        trigger: cast
+        effect: claude:mountainback/form
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 56
+      - role: projectile
+        trigger: external:asset_dependency
+        effect: claude:mountainback/roll
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 200
+      - role: impact
+        trigger: external:contact
+        effect: claude:mountainback/contact
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 30
+      - role: impact
+        trigger: external:wallBreak
+        effect: claude:mountainback/wallbreak
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 52
+      - role: impact
+        trigger: external:miss
+        effect: claude:mountainback/vanish
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 58
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  merciful_arrow:
+    folder: MercifulArrow
+    number: 158
+    range: 25
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:mercifularrow/form
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: projectile
+        trigger: external:asset_dependency
+        effect: claude:mercifularrow/projectile
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 200
+      - role: impact
+        trigger: external:launch
+        effect: claude:mercifularrow/launch
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 25
+      - role: attached
+        trigger: external:heal
+        effect: claude:mercifularrow/heal
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 60
+      - role: impact
+        trigger: external:heal
+        effect: claude:mercifularrow/unravel
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 48
+      - role: impact
+        trigger: external:miss
+        effect: claude:mercifularrow/dissolve
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 48
+      - role: impact
+        trigger: external:block_contact
+        effect: claude:mercifularrow/unravel
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 48
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  seed_row:
+    folder: SeedRow
+    number: 107
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:seedrow/gather
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 29
+      - role: attached
+        trigger: cast
+        effect: claude:seedrow/seed1
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 252
+      - role: attached
+        trigger: cast
+        effect: claude:seedrow/seed2
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 252
+      - role: attached
+        trigger: cast
+        effect: claude:seedrow/seed3
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 252
+      - role: attached
+        trigger: cast
+        effect: claude:seedrow/seed4
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 252
+      - role: attached
+        trigger: cast
+        effect: claude:seedrow/seed5
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 252
+      - role: attached
+        trigger: cast
+        effect: claude:seedrow/seed6
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 252
+      - role: impact
+        trigger: external:land
+        effect: claude:seedrow/land
+        anchor: impact
+        delay-ticks: 8
+        duration-ticks: 22
+      - role: link
+        trigger: external:land
+        effect: claude:seedrow/projectile
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+        link-source: caster-hand
+        link-target: event-point
+        finish-after-ticks: 8
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  primordial_stone:
+    folder: PrimordialStone
+    number: 131
+    range: 22
+    speed: 1
+    trajectory: server-events
+    max-ticks: 6140
+    sequence:
+      sustainStart: 0
+    holdTicks: 6000
+    phases:
+      - role: attached
+        trigger: external:gather
+        effect: claude:primordialstone/gather
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 34
+      - role: attached
+        trigger: external:gather
+        effect: claude:primordialstone/compress
+        anchor: caster
+        delay-ticks: 18
+        duration-ticks: 24
+      - role: attached
+        trigger: external:gather
+        effect: claude:primordialstone/idle
+        anchor: caster
+        delay-ticks: 27
+        duration-ticks: 6080
+      - role: impact
+        trigger: external:launch
+        effect: claude:primordialstone/launch
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 22
+        stop-effects:
+          - claude:primordialstone/idle
+      - role: projectile
+        trigger: external:asset_dependency
+        effect: claude:primordialstone/projectile
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6080
+      - role: impact
+        trigger: external:contact
+        effect: claude:primordialstone/impact
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 31
+      - role: impact
+        trigger: external:block_contact
+        effect: claude:primordialstone/impact
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 31
+      - role: impact
+        trigger: external:miss
+        effect: claude:primordialstone/dissolve
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 31
+      - role: impact
+        trigger: external:dissolve
+        effect: claude:primordialstone/dissolve
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 31
+        stop-effects:
+          - claude:primordialstone/idle
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  guiding_star:
+    folder: GuidingStar
+    number: 132
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 340
+    sequence:
+      sustainStart: 0
+    holdTicks: 200
+    phases:
+      - role: static
+        trigger: external:save
+        effect: claude:guidingstar/save
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 19
+      - role: link
+        trigger: external:form
+        effect: claude:guidingstar/form
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 19
+        link-source: caster-hand
+        link-target: event-point
+      - role: link
+        trigger: external:form
+        effect: claude:guidingstar/hold
+        anchor: impact
+        delay-ticks: 7
+        duration-ticks: 280
+        link-source: caster-hand
+        link-target: event-point
+        finish-after-ticks: 193
+      - role: link
+        trigger: external:form
+        effect: claude:guidingstar/fade
+        anchor: impact
+        delay-ticks: 200
+        duration-ticks: 18
+        link-source: caster-hand
+        link-target: event-point
+        stop-effects:
+          - claude:guidingstar/hold
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  minor_heal:
+    folder: MinorHeal
+    number: 133
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:minorheal/minor_heal_gather
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 24
+      - role: attached
+        trigger: cast
+        effect: claude:minorheal/minor_heal_pulse
+        anchor: caster
+        delay-ticks: 11
+        duration-ticks: 10
+      - role: attached
+        trigger: cast
+        effect: claude:minorheal/minor_heal_fade
+        anchor: caster
+        delay-ticks: 13
+        duration-ticks: 36
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  true_sight:
+    folder: TrueSight
+    number: 137
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 440
+    sequence:
+      sustainStart: 0
+    holdTicks: 300
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:truesight/true_sight_awaken
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 24
+      - role: attached
+        trigger: cast
+        effect: claude:truesight/true_sight_eye
+        anchor: caster
+        delay-ticks: 6
+        duration-ticks: 380
+        finish-after-ticks: 294
+      - role: attached
+        trigger: cast
+        effect: claude:truesight/true_sight_release
+        anchor: caster
+        delay-ticks: 300
+        duration-ticks: 32
+        stop-effects:
+          - claude:truesight/true_sight_eye
+      - role: attached
+        trigger: external:true_sight_enemy_reveal
+        effect: claude:truesight/true_sight_enemy_reveal
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 36
+      - role: attached
+        trigger: external:true_sight_enemy_reveal
+        effect: claude:truesight/true_sight_enemy_hold
+        anchor: target
+        delay-ticks: 6
+        duration-ticks: 340
+        finish-after-ticks: 294
+      - role: attached
+        trigger: external:true_sight_enemy_reveal
+        effect: claude:truesight/true_sight_enemy_fade
+        anchor: target
+        delay-ticks: 300
+        duration-ticks: 40
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  protective_ward:
+    folder: ProtectiveWard
+    number: 138
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 540
+    sequence:
+      sustainStart: 0
+    holdTicks: 400
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:protectiveward/ward_form
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 26
+      - role: attached
+        trigger: cast
+        effect: claude:protectiveward/ward
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 240
+        finish-after-ticks: 200
+      - role: attached
+        trigger: cast
+        effect: claude:protectiveward/ward_end
+        anchor: caster
+        delay-ticks: 200
+        duration-ticks: 34
+        stop-effects:
+          - claude:protectiveward/ward
+      - role: impact
+        trigger: external:absorb
+        effect: claude:protectiveward/ripple
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+      - role: link
+        trigger: external:absorb
+        effect: claude:protectiveward/absorb
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 28
+        link-source: event-point
+        link-target: caster
+      - role: attached
+        trigger: external:shield_gain
+        effect: claude:protectiveward/shield_gain
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 22
+      - role: attached
+        trigger: external:shield_gain
+        effect: claude:protectiveward/shield
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 240
+        finish-after-ticks: 200
+        stop-effects:
+          - claude:protectiveward/shield
+      - role: attached
+        trigger: external:shield_gain
+        effect: claude:protectiveward/shield_end
+        anchor: caster
+        delay-ticks: 200
+        duration-ticks: 46
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  constellation_blessing:
+    folder: ConstellationBlessing
+    number: 139
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 780
+    sequence:
+      sustainStart: 0
+    holdTicks: 640
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:constellationblessing/constellation_blessing_form
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 70
+      - role: attached
+        trigger: external:bless
+        effect: claude:constellationblessing/constellation_blessing_bless
+        anchor: target
+        delay-ticks: 22
+        duration-ticks: 26
+      - role: attached
+        trigger: external:bless
+        effect: claude:constellationblessing/constellation_blessing_linger
+        anchor: target
+        delay-ticks: 29
+        duration-ticks: 640
+        finish-after-ticks: 571
+      - role: attached
+        trigger: external:bless
+        effect: claude:constellationblessing/constellation_blessing_release
+        anchor: target
+        delay-ticks: 600
+        duration-ticks: 31
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  dawn_ritual:
+    folder: DawnRitual
+    number: 141
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 580
+    sequence:
+      sustainStart: 0
+    holdTicks: 440
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:dawnritual/gather
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 46
+      - role: static
+        trigger: cast
+        effect: claude:dawnritual/spread
+        anchor: caster
+        delay-ticks: 16
+        duration-ticks: 48
+      - role: attached
+        trigger: external:cleanse
+        effect: claude:dawnritual/cleanse
+        anchor: target
+        delay-ticks: 16
+        duration-ticks: 37
+      - role: attached
+        trigger: external:cleanse
+        effect: claude:dawnritual/afterglow
+        anchor: target
+        delay-ticks: 30
+        duration-ticks: 440
+        finish-after-ticks: 370
+      - role: attached
+        trigger: external:cleanse
+        effect: claude:dawnritual/release
+        anchor: target
+        delay-ticks: 400
+        duration-ticks: 30
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  comforting_light:
+    folder: ComfortingLight
+    number: 142
+    range: 15
+    speed: 1
+    trajectory: server-events
+    max-ticks: 280
+    sequence:
+      sustainStart: 0
+    holdTicks: 140
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:comfortinglight/gather
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 26
+      - role: link
+        trigger: external:arrive
+        effect: claude:comfortinglight/transfer
+        anchor: impact
+        delay-ticks: 12
+        duration-ticks: 30
+        link-source: caster-hand
+        link-target: target
+        finish-after-ticks: 10
+      - role: attached
+        trigger: external:arrive
+        effect: claude:comfortinglight/arrive
+        anchor: target
+        delay-ticks: 22
+        duration-ticks: 29
+      - role: attached
+        trigger: external:arrive
+        effect: claude:comfortinglight/protect
+        anchor: target
+        delay-ticks: 23
+        duration-ticks: 120
+        finish-after-ticks: 77
+      - role: attached
+        trigger: external:arrive
+        effect: claude:comfortinglight/release
+        anchor: target
+        delay-ticks: 100
+        duration-ticks: 25
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  exorcism_flash:
+    folder: ExorcismFlash
+    number: 143
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:exorcismflash/gather
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+      - role: static
+        trigger: cast
+        effect: claude:exorcismflash/burst
+        anchor: caster
+        delay-ticks: 6
+        duration-ticks: 16
+      - role: attached
+        trigger: external:hit
+        effect: claude:exorcismflash/hit
+        anchor: target
+        delay-ticks: 6
+        duration-ticks: 17
+      - role: static
+        trigger: cast
+        effect: claude:exorcismflash/fade
+        anchor: caster
+        delay-ticks: 12
+        duration-ticks: 28
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  arcane_mending:
+    folder: ArcaneMending
+    number: 144
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: link
+        trigger: cast
+        effect: claude:arcanemending/arcane_mending_gather
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 30
+        link-source: caster-hand
+        link-target: caster-hand
+        target-offset:
+          - 0
+          - 0.5
+          - 0.2
+      - role: link
+        trigger: cast
+        effect: claude:arcanemending/arcane_mending_mend
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 50
+        link-source: caster-hand
+        link-target: caster-hand
+        target-offset:
+          - 0
+          - 0.5
+          - 0.2
+      - role: link
+        trigger: cast
+        effect: claude:arcanemending/arcane_mending_complete
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 43
+        link-source: caster-hand
+        link-target: caster-hand
+        target-offset:
+          - 0
+          - 0.5
+          - 0.2
+      - role: link
+        trigger: cast
+        effect: claude:arcanemending/arcane_mending_fade
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 58
+        link-source: caster-hand
+        link-target: caster-hand
+        target-offset:
+          - 0
+          - 0.5
+          - 0.2
+    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
+  companion_return:
+    folder: CompanionReturn
+    number: 145
+    range: 12
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:companionreturn/gather
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 69
+      - role: static
+        trigger: external:depart
+        effect: claude:companionreturn/depart
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+        stop-effects:
+          - claude:companionreturn/gather
+      - role: static
+        trigger: external:arrive
+        effect: claude:companionreturn/arrive
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 36
+      - role: static
+        trigger: external:arrive
+        effect: claude:companionreturn/afterglow
+        anchor: impact
+        delay-ticks: 16
+        duration-ticks: 58
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   sun_drying:
     folder: SunDrying
@@ -6295,60 +6361,6 @@ bindings:
         delay-ticks: 10
         duration-ticks: 25
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  merciful_arrow:
-    folder: MercifulArrow
-    number: 158
-    range: 25
-    speed: 1
-    trajectory: server-events
-    max-ticks: 260
-    sequence:
-      sustainStart: 0
-    holdTicks: 120
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:mercifularrow/form
-        anchor: caster
-        delay-ticks: 0
-        duration-ticks: 20
-      - role: projectile
-        trigger: external:asset_dependency
-        effect: claude:mercifularrow/projectile
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 200
-      - role: impact
-        trigger: external:launch
-        effect: claude:mercifularrow/launch
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 25
-      - role: attached
-        trigger: external:heal
-        effect: claude:mercifularrow/heal
-        anchor: target
-        delay-ticks: 0
-        duration-ticks: 60
-      - role: impact
-        trigger: external:heal
-        effect: claude:mercifularrow/unravel
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 48
-      - role: impact
-        trigger: external:miss
-        effect: claude:mercifularrow/dissolve
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 48
-      - role: impact
-        trigger: external:block_contact
-        effect: claude:mercifularrow/unravel
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 48
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   mana_deposit:
     folder: ManaDeposit
     number: 159
@@ -6531,82 +6543,1584 @@ bindings:
         stop-effects:
           - claude:constellationemissary/idle
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  night_sight:
-    folder: NightSight
-    number: 165
+  earth_elemental:
+    folder: EarthElemental
+    number: 104
     range: 12
     speed: 1
     trajectory: server-events
-    max-ticks: 260
+    max-ticks: 1380
     sequence:
       sustainStart: 0
-    holdTicks: 120
+    holdTicks: 1240
     phases:
-      - role: attached
-        trigger: cast
-        effect: claude:nightsight/night_sight_cast
-        anchor: caster
+      - role: virtual-attached
+        trigger: external:summon
+        effect: claude:earthelemental/summon
+        anchor: impact
         delay-ticks: 0
-        duration-ticks: 35
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  shadow_bind:
-    folder: ShadowBind
-    number: 166
-    range: 10
-    speed: 1
-    trajectory: server-events
-    max-ticks: 200
-    sequence:
-      sustainStart: 0
-    holdTicks: 60
-    phases:
-      - role: attached
-        trigger: cast
-        effect: claude:shadowbind/shadow_bind_begin
-        anchor: target
+        duration-ticks: 78
+      - role: virtual-attached
+        trigger: external:summon
+        effect: claude:earthelemental/idle
+        anchor: impact
         delay-ticks: 0
-        duration-ticks: 19
-      - role: attached
-        trigger: cast
-        effect: claude:shadowbind/shadow_bind
-        anchor: target
-        delay-ticks: 8
-        duration-ticks: 140
-        finish-after-ticks: 52
-      - role: attached
-        trigger: cast
-        effect: claude:shadowbind/shadow_bind_end
-        anchor: target
-        delay-ticks: 60
-        duration-ticks: 22
+        duration-ticks: 1320
+      - role: virtual-attached
+        trigger: external:walk
+        effect: claude:earthelemental/walk
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 1320
         stop-effects:
-          - claude:shadowbind/shadow_bind
+          - claude:earthelemental/idle
+          - claude:earthelemental/walk
+      - role: virtual-attached
+        trigger: external:idle
+        effect: claude:earthelemental/idle
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 1320
+        stop-effects:
+          - claude:earthelemental/idle
+          - claude:earthelemental/walk
+      - role: virtual-attached
+        trigger: external:attack
+        effect: claude:earthelemental/attack
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 60
+      - role: impact
+        trigger: external:impact
+        effect: claude:earthelemental/impact
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 34
+      - role: attached
+        trigger: external:dismiss
+        effect: claude:earthelemental/dismiss
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 72
+        stop-effects:
+          - claude:earthelemental/idle
+          - claude:earthelemental/walk
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-  faint_veil:
-    folder: FaintVeil
-    number: 167
-    range: 12
+  shadow_double:
+    folder: ShadowDouble
+    number: 168
+    range: 30
     speed: 1
     trajectory: server-events
     max-ticks: 300
     sequence:
       sustainStart: 0
+    holdTicks: 200
+    phases:
+    - role: static
+      trigger: external:form
+      effect: claude:shadowdouble/form
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 34
+    - role: static
+      trigger: external:form
+      effect: claude:shadowdouble/hold
+      anchor: impact
+      delay-ticks: 8
+      duration-ticks: 168
+    - role: static
+      trigger: external:depart
+      effect: claude:shadowdouble/depart
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+    - role: static
+      trigger: external:return
+      effect: claude:shadowdouble/return
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 28
+      stop-effects:
+      - claude:shadowdouble/hold
+    - role: static
+      trigger: external:expire
+      effect: claude:shadowdouble/expire
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 46
+      stop-effects:
+      - claude:shadowdouble/hold
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  echo_reading:
+    folder: EchoReading
+    number: 169
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 120
+    sequence:
+      sustainStart: 0
+    holdTicks: 20
+    phases:
+    - role: static
+      trigger: external:echo_reading
+      effect: claude:echoreading/echo_reading
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 86
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  sealing_thread:
+    folder: SealingThread
+    number: 170
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 120
+    sequence:
+      sustainStart: 0
+    holdTicks: 20
+    phases:
+    - role: link
+      trigger: external:thread
+      effect: claude:sealingthread/thread
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+      link-source: caster-hand
+      link-target: event-point
+    - role: static
+      trigger: external:wrap_chest
+      effect: claude:sealingthread/wrap_chest
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 46
+    - role: static
+      trigger: external:wrap_door_r
+      effect: claude:sealingthread/wrap_door_r
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 46
+    - role: static
+      trigger: external:wrap_door_l
+      effect: claude:sealingthread/wrap_door_l
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 46
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  shadow_exchange:
+    folder: ShadowExchange
+    number: 172
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 120
+    sequence:
+      sustainStart: 0
+    holdTicks: 20
+    phases:
+    - role: static
+      trigger: external:vanish
+      effect: claude:shadowexchange/vanish
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 26
+    - role: static
+      trigger: external:appear
+      effect: claude:shadowexchange/appear
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 26
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  forbidden_contract:
+    folder: ForbiddenContract
+    number: 173
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 480
+    sequence:
+      sustainStart: 0
+    holdTicks: 380
+    phases:
+    - role: attached
+      trigger: external:contract
+      effect: claude:forbiddencontract/contract
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 52
+    - role: attached
+      trigger: external:conversion
+      effect: claude:forbiddencontract/conversion
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 64
+    - role: attached
+      trigger: external:seal_lock
+      effect: claude:forbiddencontract/seal_lock
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 304
+      stop-effects:
+      - claude:forbiddencontract/conversion
+    - role: attached
+      trigger: external:seal_break
+      effect: claude:forbiddencontract/seal_break
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 22
+      stop-effects:
+      - claude:forbiddencontract/seal_lock
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  life_siphon:
+    folder: LifeSiphon
+    number: 174
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 80
+    phases:
+    - role: static
+      trigger: external:zone
+      effect: claude:lifesiphon/begin
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 16
+    - role: static
+      trigger: external:zone
+      effect: claude:lifesiphon/sustain
+      anchor: impact
+      delay-ticks: 4
+      duration-ticks: 64
+    - role: static
+      trigger: external:zone_end
+      effect: claude:lifesiphon/end
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 20
+      stop-effects:
+      - claude:lifesiphon/sustain
+    - role: link
+      trigger: external:drain
+      effect: claude:lifesiphon/drain
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+      link-source: event-point
+      link-target: caster
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  misfortune_whisper:
+    folder: misfortune_whisper
+    number: 176
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 280
+    sequence:
+      sustainStart: 0
+    holdTicks: 180
+    phases:
+    - role: attached
+      trigger: cast
+      effect: claude:misfortune_whisper/misfortune_whisper_begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 28
+    - role: attached
+      trigger: cast
+      effect: claude:misfortune_whisper/misfortune_whisper
+      anchor: target
+      delay-ticks: 6
+      duration-ticks: 160
+    - role: attached
+      trigger: cast
+      effect: claude:misfortune_whisper/misfortune_whisper_end
+      anchor: target
+      delay-ticks: 160
+      duration-ticks: 24
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  hungry_shadow:
+    folder: HungryShadow
+    number: 177
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 140
+    sequence:
+      sustainStart: 0
+    holdTicks: 40
+    phases:
+    - role: link
+      trigger: cast
+      effect: claude:hungryshadow/maw
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 24
+      link-source: caster-hand
+      link-target: event-point
+    - role: link
+      trigger: external:devour
+      effect: claude:hungryshadow/devour
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+      link-source: event-point
+      link-target: caster
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  curse_transfer:
+    folder: CurseTransfer
+    number: 178
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 240
+    sequence:
+      sustainStart: 0
+    holdTicks: 140
+    phases:
+    - role: link
+      trigger: external:spread_g1
+      effect: claude:cursetransfer/spread_g1
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 20
+      link-source: event-point
+      link-target: target
+    - role: attached
+      trigger: external:mark
+      effect: claude:cursetransfer/mark_begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 24
+    - role: attached
+      trigger: external:mark
+      effect: claude:cursetransfer/mark_hold
+      anchor: target
+      delay-ticks: 10
+      duration-ticks: 110
+    - role: attached
+      trigger: external:mark
+      effect: claude:cursetransfer/mark_end
+      anchor: target
+      delay-ticks: 110
+      duration-ticks: 14
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  discord:
+    folder: Discord
+    number: 179
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 240
+    sequence:
+      sustainStart: 0
+    holdTicks: 140
+    phases:
+    - role: attached
+      trigger: external:discord_begin
+      effect: claude:discord/discord_begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 22
+    - role: attached
+      trigger: external:discord_begin
+      effect: claude:discord/discord_mark
+      anchor: target
+      delay-ticks: 4
+      duration-ticks: 124
+    - role: attached
+      trigger: external:discord_end
+      effect: claude:discord/discord_end
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 14
+      stop-effects:
+      - claude:discord/discord_mark
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  night_chain:
+    folder: NightChain
+    number: 180
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 280
+    sequence:
+      sustainStart: 0
+    holdTicks: 180
+    phases:
+    - role: attached
+      trigger: external:bind
+      effect: claude:nightchain/bindform
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 24
+    - role: attached
+      trigger: external:bind
+      effect: claude:nightchain/bindhold
+      anchor: target
+      delay-ticks: 10
+      duration-ticks: 160
+    - role: attached
+      trigger: external:bind
+      effect: claude:nightchain/bindfade
+      anchor: target
+      delay-ticks: 160
+      duration-ticks: 30
+    - role: link
+      trigger: external:chain
+      effect: claude:nightchain/chainform
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 24
+      link-source: event-point
+      link-target: target
+    - role: link
+      trigger: external:chain
+      effect: claude:nightchain/chainhold
+      anchor: impact
+      delay-ticks: 10
+      duration-ticks: 160
+      link-source: event-point
+      link-target: target
+    - role: link
+      trigger: external:chain
+      effect: claude:nightchain/chainfade
+      anchor: impact
+      delay-ticks: 160
+      duration-ticks: 24
+      link-source: event-point
+      link-target: target
+    - role: link
+      trigger: external:relay
+      effect: claude:nightchain/relay
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+      link-source: event-point
+      link-target: target
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  pain_deferral:
+    folder: PainDeferral
+    number: 181
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 340
+    sequence:
+      sustainStart: 0
+    holdTicks: 240
+    phases:
+    - role: attached
+      trigger: cast
+      effect: claude:paindeferral/cast
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 12
+    - role: attached
+      trigger: external:shard_slot1
+      effect: claude:paindeferral/shard_slot1
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 224
+    - role: attached
+      trigger: external:shard_slot2
+      effect: claude:paindeferral/shard_slot2
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 224
+    - role: attached
+      trigger: external:shard_slot3
+      effect: claude:paindeferral/shard_slot3
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 224
+    - role: attached
+      trigger: external:shard_slot4
+      effect: claude:paindeferral/shard_slot4
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 224
+    - role: attached
+      trigger: external:shard_slot5
+      effect: claude:paindeferral/shard_slot5
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 224
+    - role: attached
+      trigger: external:shard_slot6
+      effect: claude:paindeferral/shard_slot6
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 224
+    - role: attached
+      trigger: external:absorb_slot1
+      effect: claude:paindeferral/absorb_slot1
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 14
+      stop-effects:
+      - claude:paindeferral/shard_slot1
+    - role: attached
+      trigger: external:absorb_slot2
+      effect: claude:paindeferral/absorb_slot2
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 14
+      stop-effects:
+      - claude:paindeferral/shard_slot2
+    - role: attached
+      trigger: external:absorb_slot3
+      effect: claude:paindeferral/absorb_slot3
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 14
+      stop-effects:
+      - claude:paindeferral/shard_slot3
+    - role: attached
+      trigger: external:absorb_slot4
+      effect: claude:paindeferral/absorb_slot4
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 14
+      stop-effects:
+      - claude:paindeferral/shard_slot4
+    - role: attached
+      trigger: external:absorb_slot5
+      effect: claude:paindeferral/absorb_slot5
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 14
+      stop-effects:
+      - claude:paindeferral/shard_slot5
+    - role: attached
+      trigger: external:absorb_slot6
+      effect: claude:paindeferral/absorb_slot6
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 14
+      stop-effects:
+      - claude:paindeferral/shard_slot6
+    - role: attached
+      trigger: external:pulse
+      effect: claude:paindeferral/pulse
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 10
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  black_harvest:
+    folder: BlackHarvest
+    number: 182
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 140
+    sequence:
+      sustainStart: 0
+    holdTicks: 40
+    phases:
+    - role: attached
+      trigger: cast
+      effect: claude:blackharvest/cast
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 38
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  ink_fingertip:
+    folder: InkFingertip
+    number: 183
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 120
+    sequence:
+      sustainStart: 0
+    holdTicks: 20
+    phases:
+    - role: attached
+      trigger: external:ink_white
+      effect: claude:inkfingertip/ink_white
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_light_gray
+      effect: claude:inkfingertip/ink_light_gray
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_gray
+      effect: claude:inkfingertip/ink_gray
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_black
+      effect: claude:inkfingertip/ink_black
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_brown
+      effect: claude:inkfingertip/ink_brown
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_red
+      effect: claude:inkfingertip/ink_red
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_orange
+      effect: claude:inkfingertip/ink_orange
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_yellow
+      effect: claude:inkfingertip/ink_yellow
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_lime
+      effect: claude:inkfingertip/ink_lime
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_green
+      effect: claude:inkfingertip/ink_green
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_cyan
+      effect: claude:inkfingertip/ink_cyan
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_light_blue
+      effect: claude:inkfingertip/ink_light_blue
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_blue
+      effect: claude:inkfingertip/ink_blue
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_purple
+      effect: claude:inkfingertip/ink_purple
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_magenta
+      effect: claude:inkfingertip/ink_magenta
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:ink_pink
+      effect: claude:inkfingertip/ink_pink
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 40
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  shadow_nail:
+    folder: ShadowNail
+    number: 184
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 420
+    sequence:
+      sustainStart: 0
+    holdTicks: 320
+    phases:
+    - role: attached
+      trigger: external:nail
+      effect: claude:shadownail/shadow_nail_begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 10
+    - role: attached
+      trigger: external:nail
+      effect: claude:shadownail/shadow_nail
+      anchor: target
+      delay-ticks: 2
+      duration-ticks: 300
+    - role: attached
+      trigger: external:nail_burst
+      effect: claude:shadownail/shadow_nail_burst
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 26
+      stop-effects:
+      - claude:shadownail/shadow_nail
+    - role: attached
+      trigger: external:nail_fade
+      effect: claude:shadownail/shadow_nail_fade
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 26
+      stop-effects:
+      - claude:shadownail/shadow_nail
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  night_lullaby:
+    folder: NightLullaby
+    number: 185
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 320
+    sequence:
+      sustainStart: 0
+    holdTicks: 220
+    phases:
+    - role: static
+      trigger: external:rift
+      effect: claude:nightlullaby/rift
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 40
+    - role: attached
+      trigger: external:trail
+      effect: claude:nightlullaby/trail
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 200
+    - role: impact
+      trigger: external:hit
+      effect: claude:nightlullaby/hit
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 22
+    - role: static
+      trigger: external:dismiss
+      effect: claude:nightlullaby/dismiss
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 34
+      stop-effects:
+      - claude:nightlullaby/trail
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  loosen_grasp:
+    folder: LoosenGrasp
+    number: 186
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 100
+    phases:
+    - role: attached
+      trigger: external:hand_ripple
+      effect: claude:loosengrasp/hand_ripple
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 18
+    - role: attached
+      trigger: external:mark
+      effect: claude:loosengrasp/mark_begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 14
+    - role: attached
+      trigger: external:mark
+      effect: claude:loosengrasp/mark
+      anchor: target
+      delay-ticks: 2
+      duration-ticks: 80
+    - role: attached
+      trigger: external:mark_break
+      effect: claude:loosengrasp/mark_break
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 18
+      stop-effects:
+      - claude:loosengrasp/mark
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  healing_seal:
+    folder: HealingSeal
+    number: 188
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 280
+    sequence:
+      sustainStart: 0
+    holdTicks: 180
+    phases:
+    - role: attached
+      trigger: external:healing_seal
+      effect: claude:healingseal/healing_seal_begin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 32
+    - role: attached
+      trigger: external:healing_seal
+      effect: claude:healingseal/healing_seal
+      anchor: target
+      delay-ticks: 8
+      duration-ticks: 160
+    - role: attached
+      trigger: external:healing_seal
+      effect: claude:healingseal/healing_seal_end
+      anchor: target
+      delay-ticks: 160
+      duration-ticks: 16
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  shadow_scales:
+    folder: ShadowScales
+    number: 189
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 140
+    sequence:
+      sustainStart: 0
+    holdTicks: 40
+    phases:
+    - role: static
+      trigger: external:burst
+      effect: claude:shadowscales/burst
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 62
+    - role: impact
+      trigger: external:hit_low
+      effect: claude:shadowscales/hit_low
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 20
+    - role: impact
+      trigger: external:hit_mid
+      effect: claude:shadowscales/hit_mid
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 26
+    - role: impact
+      trigger: external:hit_high
+      effect: claude:shadowscales/hit_high
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 36
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  warning_thread:
+    folder: WarningThread
+    number: 190
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 260
+    sequence:
+      sustainStart: 0
     holdTicks: 160
     phases:
+    - role: static
+      trigger: external:cage
+      effect: claude:warningthread/begin
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 44
+    - role: static
+      trigger: external:cage
+      effect: claude:warningthread/sustain
+      anchor: impact
+      delay-ticks: 18
+      duration-ticks: 140
+    - role: static
+      trigger: external:cage_end
+      effect: claude:warningthread/end
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 38
+      stop-effects:
+      - claude:warningthread/sustain
+    - role: impact
+      trigger: external:breach
+      effect: claude:warningthread/breach
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  wound_accounting:
+    folder: WoundAccounting
+    number: 192
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 80
+    phases:
+    - role: attached
+      trigger: external:gather
+      effect: claude:woundaccounting/gather
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 20
+    - role: impact
+      trigger: external:contact
+      effect: claude:woundaccounting/contact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 20
+    - role: attached
+      trigger: external:absorb
+      effect: claude:woundaccounting/absorb
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 26
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  inverted_offering:
+    folder: InvertedOffering
+    number: 193
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 140
+    sequence:
+      sustainStart: 0
+    holdTicks: 40
+    phases:
+    - role: link
+      trigger: cast
+      effect: claude:invertedoffering/offering
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 16
+      link-source: event-point
+      link-target: caster
+    - role: link
+      trigger: external:offering
+      effect: claude:invertedoffering/offering
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 16
+      link-source: event-point
+      link-target: caster
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  ghost_tool:
+    folder: GhostTool
+    number: 194
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 720
+    sequence:
+      sustainStart: 0
+    holdTicks: 620
+    phases:
+    - role: attached
+      trigger: cast
+      effect: claude:ghosttool/ghost_tool_begin
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 18
+    - role: attached
+      trigger: cast
+      effect: claude:ghosttool/ghost_tool
+      anchor: caster
+      delay-ticks: 4
+      duration-ticks: 600
+    - role: attached
+      trigger: cast
+      effect: claude:ghosttool/ghost_tool_end
+      anchor: caster
+      delay-ticks: 600
+      duration-ticks: 24
+    - role: static
+      trigger: external:ghost_tool_break
+      effect: claude:ghosttool/ghost_tool_break
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 20
+    - role: static
+      trigger: external:ghost_tool_place
+      effect: claude:ghosttool/ghost_tool_place
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 12
+    - role: static
+      trigger: external:ghost_tool_swing_pickaxe
+      effect: claude:ghosttool/ghost_tool_swing_pickaxe
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 12
+    - role: static
+      trigger: external:ghost_tool_swing_axe
+      effect: claude:ghosttool/ghost_tool_swing_axe
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 12
+    - role: static
+      trigger: external:ghost_tool_swing_shovel
+      effect: claude:ghosttool/ghost_tool_swing_shovel
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 12
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  bell_of_fear:
+    folder: BellOfFear
+    number: 195
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 100
+    phases:
+    - role: static
+      trigger: cast
+      effect: claude:belloffear/bell
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 44
+    - role: static
+      trigger: cast
+      effect: claude:belloffear/ripple
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 26
+    - role: attached
+      trigger: external:fear
+      effect: claude:belloffear/fearapply
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 18
+    - role: attached
+      trigger: external:fear
+      effect: claude:belloffear/fearhold
+      anchor: target
+      delay-ticks: 2
+      duration-ticks: 60
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  eclipse_eye:
+    folder: EclipseEye
+    number: 196
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 430
+    sequence:
+      sustainStart: 0
+    holdTicks: 330
+    phases:
+    - role: static
+      trigger: cast
+      effect: claude:eclipseeye/zonebegin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 50
+    - role: static
+      trigger: cast
+      effect: claude:eclipseeye/zonesustain
+      anchor: target
+      delay-ticks: 3
+      duration-ticks: 320
+    - role: static
+      trigger: cast
+      effect: claude:eclipseeye/chant
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 106
+    - role: static
+      trigger: external:struct_cancel
+      effect: claude:eclipseeye/chantcancel
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 34
+      stop-effects:
+      - claude:eclipseeye/chant
+      - claude:eclipseeye/zonesustain
+    - role: static
+      trigger: external:struct_cancel
+      effect: claude:eclipseeye/zoneend
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 50
+    - role: static
+      trigger: external:eclipse
+      effect: claude:eclipseeye/eclipse
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 42
+    - role: static
+      trigger: external:eclipse
+      effect: claude:eclipseeye/eclipsehold
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 204
+    - role: static
+      trigger: external:eclipse_end
+      effect: claude:eclipseeye/eclipseend
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 92
+      stop-effects:
+      - claude:eclipseeye/eclipsehold
+      - claude:eclipseeye/zonesustain
+      - claude:eclipseeye/haste
+    - role: static
+      trigger: external:eclipse_end
+      effect: claude:eclipseeye/zoneend
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 50
+    - role: attached
+      trigger: external:haste
+      effect: claude:eclipseeye/haste
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 200
+    - role: impact
+      trigger: external:contact
+      effect: claude:eclipseeye/contact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 14
+    - role: impact
+      trigger: external:shardFade
+      effect: claude:eclipseeye/shardfade
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  void_maw:
+    folder: VoidMaw
+    number: 198
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 80
+    phases:
+    - role: static
+      trigger: cast
+      effect: claude:voidmaw/warnbegin
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 28
+    - role: static
+      trigger: cast
+      effect: claude:voidmaw/warnhold
+      anchor: target
+      delay-ticks: 4
+      duration-ticks: 22
+    - role: static
+      trigger: cast
+      effect: claude:voidmaw/bite
+      anchor: target
+      delay-ticks: 25
+      duration-ticks: 48
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  landing_airbrake:
+    folder: LandingAirbrake
+    number: 203
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 120
+    sequence:
+      sustainStart: 0
+    holdTicks: 20
+    phases:
+    - role: static
+      trigger: external:depart
+      effect: claude:landingairbrake/depart
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+    - role: static
+      trigger: external:arrive
+      effect: claude:landingairbrake/arrive
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  hushed_soles:
+    folder: HushedSoles
+    number: 210
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 520
+    sequence:
+      sustainStart: 0
+    holdTicks: 420
+    phases:
+    - role: impact
+      trigger: external:step
+      effect: claude:hushedsoles/step
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 24
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  thorn_manners:
+    folder: ThornManners
+    number: 211
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 520
+    sequence:
+      sustainStart: 0
+    holdTicks: 420
+    phases:
+    - role: impact
+      trigger: external:contact
+      effect: claude:thornmanners/contact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 18
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  cinder_skipring:
+    folder: CinderSkipring
+    number: 212
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 160
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+    - role: static
+      trigger: cast
+      effect: claude:cinderskipring/ring
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 44
+    - role: impact
+      trigger: external:hit
+      effect: claude:cinderskipring/hit
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 24
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  droplet_relay:
+    folder: DropletRelay
+    number: 213
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 100
+    phases:
+    - role: attached
+      trigger: external:form
+      effect: claude:dropletrelay/form
+      anchor: caster
+      delay-ticks: 0
+      duration-ticks: 18
+    - role: impact
+      trigger: external:arrive
+      effect: claude:dropletrelay/arrive
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 24
+    - role: attached
+      trigger: external:capture
+      effect: claude:dropletrelay/capture
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 66
+    - role: attached
+      trigger: external:release
+      effect: claude:dropletrelay/release
+      anchor: target
+      delay-ticks: 0
+      duration-ticks: 32
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  folding_tideplane:
+    folder: FoldingTideplane
+    number: 214
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 100
+    phases:
+    - role: static
+      trigger: external:sheet
+      effect: claude:foldingtideplane/spread
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 54
+    - role: static
+      trigger: external:sheet
+      effect: claude:foldingtideplane/axis
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 112
+    - role: static
+      trigger: external:sheet
+      effect: claude:foldingtideplane/turn
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 76
+    - role: static
+      trigger: external:sheet
+      effect: claude:foldingtideplane/disperse
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 108
+    - role: impact
+      trigger: external:contact
+      effect: claude:foldingtideplane/contact
+      anchor: impact
+      delay-ticks: 0
+      duration-ticks: 22
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  # ---- 239~250 던전 기믹 마법 (magic-mythic-paper/tools/gimmick_spells.py) ----
+  thawing_heat:
+    folder: ThawingHeat
+    number: 239
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 80
+    phases:
       - role: attached
+        follow-entity: true
         trigger: cast
-        effect: claude:faintveil/veil_enter
+        effect: claude:thawingheat/cast
         anchor: caster
         delay-ticks: 0
-        duration-ticks: 19
+        duration-ticks: 60
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  steam_ignition:
+    folder: SteamIgnition
+    number: 240
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 136
+    sequence:
+      sustainStart: 0
+    holdTicks: 36
+    phases:
       - role: attached
+        follow-entity: true
         trigger: cast
-        effect: claude:faintveil/veil_release
+        effect: claude:steamignition/cast
         anchor: caster
-        delay-ticks: 160
-        duration-ticks: 18
-    review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
-
-  light_mark: {"folder": "LightMark", "number": 134, "range": 20, "speed": 1.2, "trajectory": "server-events", "max-ticks": 480, "phases": [{"role": "attached", "trigger": "cast", "effect": "claude:lightmark/cast", "anchor": "caster", "delay-ticks": 0, "duration-ticks": 20}, {"role": "projectile", "trigger": "external:runtime_projectile", "effect": "claude:lightmark/projectile", "anchor": "projectile", "delay-ticks": 0, "duration-ticks": 440}, {"role": "impact", "trigger": "external:contact", "effect": "claude:lightmark/impact", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 28}, {"role": "impact", "trigger": "external:block_contact", "effect": "claude:lightmark/fizzle", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 32}, {"role": "impact", "trigger": "external:miss", "effect": "claude:lightmark/fizzle", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 32}], "external-events": ["external:launch", "external:contact", "external:block_contact", "external:miss"], "review": "GameplayVisual follows the real BoltMech projectile; runtime_projectile is metadata, not an independently simulated projectile."}
-
+        delay-ticks: 0
+        duration-ticks: 16
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  water_level:
+    folder: WaterLevel
+    number: 241
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 136
+    sequence:
+      sustainStart: 0
+    holdTicks: 36
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:waterlevel/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  stone_weight:
+    folder: StoneWeight
+    number: 242
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 136
+    sequence:
+      sustainStart: 0
+    holdTicks: 36
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:stoneweight/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  vine_awaken:
+    folder: VineAwaken
+    number: 243
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 136
+    sequence:
+      sustainStart: 0
+    holdTicks: 36
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:vineawaken/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  light_beam:
+    folder: LightBeam
+    number: 244
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 80
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:lightbeam/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 60
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  mirror_tune:
+    folder: MirrorTune
+    number: 245
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 134
+    sequence:
+      sustainStart: 0
+    holdTicks: 34
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:mirrortune/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  prism_tint:
+    folder: PrismTint
+    number: 246
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 134
+    sequence:
+      sustainStart: 0
+    holdTicks: 34
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:prismtint/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  statue_wake:
+    folder: StatueWake
+    number: 247
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 136
+    sequence:
+      sustainStart: 0
+    holdTicks: 36
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:statuewake/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  rewind:
+    folder: Rewind
+    number: 248
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 136
+    sequence:
+      sustainStart: 0
+    holdTicks: 36
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:rewind/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  conduit_turn:
+    folder: ConduitTurn
+    number: 249
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 134
+    sequence:
+      sustainStart: 0
+    holdTicks: 34
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:conduitturn/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  dimension_mark:
+    folder: DimensionMark
+    number: 250
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 136
+    sequence:
+      sustainStart: 0
+    holdTicks: 36
+    phases:
+      - role: attached
+        follow-entity: true
+        trigger: cast
+        effect: claude:dimensionmark/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+    review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   vine_ladder: {"folder": "VineLadder", "number": 103, "range": 5, "speed": 1, "trajectory": "server-events", "holdTicks": 600, "max-ticks": 700, "phases": [{"role": "static", "trigger": "external:grow", "effect": "claude:vineladder/begin", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 65}, {"role": "static", "trigger": "external:grow", "effect": "claude:vineladder/begin_2", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 65}, {"role": "static", "trigger": "external:grow", "effect": "claude:vineladder/sustain", "anchor": "impact", "delay-ticks": 48, "duration-ticks": 600, "finish-after-ticks": 552}, {"role": "scoped-static", "trigger": "external:ladder_end", "effect": "claude:vineladder/end", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 55, "stop-effects": ["claude:vineladder/begin", "claude:vineladder/begin_2", "claude:vineladder/sustain"]}, {"role": "scoped-static", "trigger": "external:ladder_end", "effect": "claude:vineladder/end_2", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 55, "stop-effects": ["claude:vineladder/begin", "claude:vineladder/begin_2", "claude:vineladder/sustain"]}], "external-events": ["external:grow", "external:ladder_end"], "review": "Wall placement and expiry follow SummonMech ladder events; sustain begins at 48 ticks and ends at gameplay expiry."}
+  light_mark: {"folder": "LightMark", "number": 134, "range": 20, "speed": 1.2, "trajectory": "server-events", "max-ticks": 480, "phases": [{"role": "attached", "trigger": "cast", "effect": "claude:lightmark/cast", "anchor": "caster", "delay-ticks": 0, "duration-ticks": 20}, {"role": "projectile", "trigger": "external:runtime_projectile", "effect": "claude:lightmark/projectile", "anchor": "projectile", "delay-ticks": 0, "duration-ticks": 440}, {"role": "impact", "trigger": "external:contact", "effect": "claude:lightmark/impact", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 28}, {"role": "impact", "trigger": "external:block_contact", "effect": "claude:lightmark/fizzle", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 32}, {"role": "impact", "trigger": "external:miss", "effect": "claude:lightmark/fizzle", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 32}], "external-events": ["external:launch", "external:contact", "external:block_contact", "external:miss"], "review": "GameplayVisual follows the real BoltMech projectile; runtime_projectile is metadata, not an independently simulated projectile."}
