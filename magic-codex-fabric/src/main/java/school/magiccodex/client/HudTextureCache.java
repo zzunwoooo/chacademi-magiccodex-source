@@ -42,6 +42,7 @@ public final class HudTextureCache implements AutoCloseable {
         this.client=client;
         var manager=client.getResourceManager();
         pending=asynchronous?new AsyncUiLoader<>(DECODER,4,r->decode(r,manager),NativeImage::close):null;
+        HudTextureStats.opened();
     }
     public void beginFrame() {
         endFrame();
@@ -64,7 +65,7 @@ public final class HudTextureCache implements AutoCloseable {
                 if(textures.size()<=192 && textureBytes<=128L*1024*1024)break;
                 if(entry.getValue()<frame-1) {
                     var removed=textures.remove(entry.getKey());if(removed==null)continue;
-                    removed.ifPresent(t->{textureBytes-=bytes(t);client.getTextureManager().destroyTexture(t.id());});
+                    removed.ifPresent(t->{textureBytes-=bytes(t);HudTextureStats.evicted(bytes(t));client.getTextureManager().destroyTexture(t.id());});
                     lastUsed.remove(entry.getKey());
                 }
             }
@@ -76,10 +77,14 @@ public final class HudTextureCache implements AutoCloseable {
     public boolean missedThisFrame(){return missedThisFrame;}
     public long uploadCount(){return loads;}
     public long retainedBytes(){return textureBytes;}
+    /** Totals across every instance (instances, textures, retained bytes, uploads, synchronous load time). */
+    public static String globalStats(){return HudTextureStats.snapshot().toString();}
 
     private Optional<Texture> load(Region region) {
+        long started=System.nanoTime();
         try{return upload(region,decode(region,client.getResourceManager()));}
         catch(Exception error){org.slf4j.LoggerFactory.getLogger("magiccodex").warn("UI texture failed: {}",region,error);return Optional.empty();}
+        finally{HudTextureStats.syncLoad(System.nanoTime()-started);}
     }
     private NativeImage decode(Region region,net.minecraft.resource.ResourceManager manager)throws Exception {
         var source=sources.get(region.path());
@@ -117,7 +122,7 @@ public final class HudTextureCache implements AutoCloseable {
             var layer=new HudLayer(client,id,PROGRAM);
             client.getTextureManager().registerTexture(id,texture);
             texture=null;
-            var loaded=new Texture(id,width,height,levels,layer,new HudLayer(client,id,ADDITIVE));textureBytes+=bytes(loaded);loads++;
+            var loaded=new Texture(id,width,height,levels,layer,new HudLayer(client,id,ADDITIVE));textureBytes+=bytes(loaded);loads++;HudTextureStats.uploaded(bytes(loaded));
             return Optional.of(loaded);
         } catch(Exception error) {
             if(texture!=null) texture.close();
@@ -243,6 +248,8 @@ public final class HudTextureCache implements AutoCloseable {
     @Override public void close() {
         if(closed)return;closed=true;
         if(pending!=null){pending.close();DECODER.execute(this::clearSources);}
+        long live=textures.values().stream().filter(Optional::isPresent).count();
+        HudTextureStats.closed(textureBytes,live);
         textures.values().forEach(t->t.ifPresent(v->client.getTextureManager().destroyTexture(v.id())));
         textures.clear();
         lastUsed.clear();
