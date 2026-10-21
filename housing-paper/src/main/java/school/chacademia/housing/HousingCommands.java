@@ -151,6 +151,11 @@ final class HousingCommands {
                     });
                     return 1;
                 })))
+                // A03 (2026-10-21): 방 확장 결제 기록 · 결과를 모르는(uncertain) 거래 처리
+                .then(Commands.literal("확장기록").executes(this::expandHistory))
+                .then(Commands.literal("확장처리").then(Commands.argument("번호", IntegerArgumentType.integer(1, 50))
+                        .then(Commands.literal("환불").executes(ctx -> { throw confirm(); }).then(Commands.literal(CONFIRM).executes(ctx -> resolveExpand(ctx, true))))
+                        .then(Commands.literal("완료").executes(ctx -> { throw confirm(); }).then(Commands.literal(CONFIRM).executes(ctx -> resolveExpand(ctx, false))))))
                 .then(Commands.literal("구경").executes(ctx -> {
                     UUID id = ChacaLink.target(ctx);
                     Player p = player(ctx);
@@ -190,6 +195,73 @@ final class HousingCommands {
                             });
                             return 1;
                         })));
+    }
+
+    /** 관리자가 방금 본 확장 거래 (관리자 이름|대상 → 거래 ID). */
+    private final Map<String, List<String>> expandListed = new HashMap<>();
+
+    private int expandHistory(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        UUID id = ChacaLink.target(ctx);
+        CommandSender s = ctx.getSource().getSender();
+        plugin.store().expandList(id, 20, rows -> {
+            if (rows == null) { dbFail(s, "방 확장 기록을 읽지 못했어요"); return; }
+            var ids = new ArrayList<String>();
+            var lines = new ArrayList<String>();
+            lines.add(ChacaLink.name(id) + " 님의 방 확장 결제 기록 (최근 " + rows.size() + "건)");
+            for (var t : rows) {
+                ids.add(t.id());
+                lines.add(" " + ids.size() + ". " + DATE.format(Instant.ofEpochMilli(t.created())) + " · " + t.from() + "→" + t.to() + " · " + String.format("%,d", t.cost())
+                        + " · " + stateLabel(t.state()) + " · " + t.note() + " · 서버 " + t.origin() + " · 거래 " + t.id().substring(0, 8));
+            }
+            if (rows.isEmpty()) lines.add(" 기록이 없어요");
+            else lines.add(" 확인 필요(uncertain)만 처리: 방 확장처리 <번호> 환불 확인 (돈 돌려주기) | 완료 확인 (확인 끝, 돈 이동 없음)");
+            expandListed.put(s.getName() + "|" + id, ids);
+            ChacaLink.lines(s, lines);
+        });
+        return 1;
+    }
+
+    private static String stateLabel(String state) {
+        return switch (state) {
+            case ExpandLedger.DONE -> "끝남"; case ExpandLedger.CANCELLED -> "취소(돈 안 빠짐)"; case ExpandLedger.UNCERTAIN -> "확인 필요";
+            case ExpandLedger.PREPARED -> "출금 전"; case ExpandLedger.WITHDRAWN -> "출금됨"; case ExpandLedger.APPLIED -> "넓힘"; case ExpandLedger.REFUND_PENDING -> "환불 중";
+            default -> state;
+        };
+    }
+
+    private int resolveExpand(CommandContext<CommandSourceStack> ctx, boolean refund) throws CommandSyntaxException {
+        UUID id = ChacaLink.target(ctx);
+        CommandSender s = ctx.getSource().getSender();
+        int number = IntegerArgumentType.getInteger(ctx, "번호");
+        var ids = expandListed.get(s.getName() + "|" + id);
+        if (ids == null) throw ChacaLink.error("먼저 방 확장기록 으로 번호를 확인해 주세요");
+        if (number > ids.size()) throw ChacaLink.error("그 번호의 거래가 없어요 (방 확장기록 으로 확인)");
+        String tx = ids.get(number - 1), admin = s.getName();
+        var log = plugin.getLogger();
+        plugin.store().expandGet(tx, found -> {
+            if (found == null) { dbFail(s, "거래를 읽지 못했어요"); return; }
+            var t = found.orElse(null);
+            if (t == null || !ExpandLedger.UNCERTAIN.equals(t.state())) { deny(s, "확인 필요(uncertain) 상태인 거래만 처리할 수 있어요"); return; }
+            if (!refund) {
+                plugin.store().expandMove(tx, ExpandLedger.UNCERTAIN, ExpandLedger.DONE, "관리자 완료 " + admin, ok -> {
+                    log.warning("HOUSING EXPAND ADMIN resolve tx=" + tx + " admin=" + admin + " player=" + id + " action=완료 ok=" + ok);
+                    if (Boolean.TRUE.equals(ok)) ChacaLink.ok(s, "거래 " + tx.substring(0, 8) + " 를 완료로 닫았어요 (돈 이동 없음)");
+                    else dbFail(s, "거래 상태를 바꾸지 못했어요 (이미 처리됐을 수 있어요)");
+                });
+                return;
+            }
+            // 환불: 먼저 refund_pending 으로 옮겨 두 번 환불되지 않게 한 뒤 입금한다.
+            plugin.store().expandMove(tx, ExpandLedger.UNCERTAIN, ExpandLedger.REFUND_PENDING, "관리자 환불 중 " + admin, moved -> {
+                if (!Boolean.TRUE.equals(moved)) { dbFail(s, "거래 상태를 바꾸지 못했어요 (이미 처리됐을 수 있어요)"); return; }
+                var pay = Economy.depositResult(Bukkit.getOfflinePlayer(id), t.cost());
+                log.warning("HOUSING EXPAND ADMIN resolve tx=" + tx + " admin=" + admin + " player=" + id + " action=환불 cost=" + t.cost() + " deposit=" + pay);
+                boolean paid = pay == Economy.Pay.OK;
+                plugin.store().expandMove(tx, ExpandLedger.REFUND_PENDING, paid ? ExpandLedger.DONE : ExpandLedger.UNCERTAIN, paid ? "관리자 환불 " + admin : "관리자 환불 실패(" + pay + ")", null);
+                if (paid) ChacaLink.ok(s, ChacaLink.name(id) + " 님에게 " + String.format("%,d", t.cost()) + " 를 돌려줬어요 (거래 " + tx.substring(0, 8) + ")");
+                else dbFail(s, "환불하지 못했어요 (" + (pay == Economy.Pay.REFUSED ? "거절됨" : "결과 모름 — 잔액을 확인한 뒤 처리해 주세요") + ")");
+            });
+        });
+        return 1;
     }
 
     private int resetLayouts(CommandContext<CommandSourceStack> ctx, int slot) throws CommandSyntaxException {

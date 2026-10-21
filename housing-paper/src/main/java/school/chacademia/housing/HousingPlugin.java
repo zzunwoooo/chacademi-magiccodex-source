@@ -26,6 +26,11 @@ public final class HousingPlugin extends JavaPlugin implements Listener {
         store = new HousingStore(this);
         try { store.open(getDataFolder().toPath()); }
         catch (Exception e) { getLogger().severe("하우징 DB를 열 수 없어 플러그인을 끕니다: " + e); Bukkit.getPluginManager().disablePlugin(this); return; }
+        // A03: 이 서버에서 끝나지 않은 방 확장 결제는 돈이 움직였는지 알 수 없으므로 uncertain 으로 두고 관리자에게 넘긴다 (자동 환불·재출금 없음).
+        store.expandRecover(settings.server(), r -> {
+            if (r == null) getLogger().severe("방 확장 결제 기록을 확인하지 못했어요 (DB). 끝나지 않은 거래가 있으면 /유저관리 <닉네임> 방 확장기록 으로 확인하세요.");
+            else if (r[0] > 0) getLogger().severe("방 확장 결제 " + r[0] + "건이 끝나지 않은 채 재시작됐어요 → uncertain. /유저관리 <닉네임> 방 확장기록 으로 확인하세요.");
+        });
         rooms = new Rooms(this);
         net = new Net(this); net.register();
         doors = new Doors(this); doors.load();

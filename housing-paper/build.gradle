@@ -12,6 +12,7 @@ dependencies {
     // Vault: reflection only (same as MagicCodexBridge ShopBridge).
     implementation files('../magic-codex-database/lib/mariadb-java-client-3.5.10.jar')
     testImplementation 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
+    testImplementation 'com.h2database:h2:2.3.232'   // ExpandLedgerTest (in-memory SQL)
     testImplementation platform('org.junit:junit-bom:5.11.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
