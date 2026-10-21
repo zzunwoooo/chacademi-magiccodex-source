@@ -16,7 +16,12 @@ import school.magiccodex.protocol.KyudichiProtocol;
 /** End of a match: MVP, rating changes (rated only), DB write, result screen / chat summary. */
 final class Results {
     private final KyudichiPlugin plugin;
-    Results(KyudichiPlugin plugin) { this.plugin = plugin; }
+    private final ResultOutbox outbox;
+    /** Matches whose record is in flight (outbox replays skip them). */
+    private final java.util.Set<UUID> inFlight = new java.util.HashSet<>();
+    /** Ended matches still waiting for their rating write: the result screen goes to whoever is still here once it is recorded. */
+    private final Map<UUID, Match> awaiting = new java.util.HashMap<>();
+    Results(KyudichiPlugin plugin) { this.plugin = plugin; this.outbox = new ResultOutbox(plugin.getDataFolder().toPath().resolve("outbox"), plugin.getLogger()); }
 
     void finish(Match match, Team winner, Match.EndReason reason) {
         Rules rules = match.rules;
@@ -39,7 +44,8 @@ final class Results {
             RatingMath.Result res = winner == null ? RatingMath.Result.DRAW : winner == m.team ? RatingMath.Result.WIN : RatingMath.Result.LOSS;
             double total = totals.get(m.team);
             int d = 0;
-            if (match.opt.rated() && !voided) {
+            // never reached the arena (network match, moving failed): not a leaver — no rating change, nothing recorded
+            if (match.opt.rated() && !voided && !m.neverArrived) {
                 d = rules.rating.change(avg[m.team.ordinal()], avg[m.team.other().ordinal()], res, total <= 0 ? Double.NaN : m.mvpPoints / total, count[m.team.ordinal()], m.left);
                 deltas.add(new RatingStore.Delta(m.id, m.nick, (int) m.ratingBefore, res == RatingMath.Result.WIN && !m.left, res == RatingMath.Result.DRAW && !m.left,
                         res == RatingMath.Result.LOSS && !m.left, m.left, m.goals, m.kills, m.deaths, m.assists, m.damage, m.heal, m.snitch, m.deflectHits, m.mvp,
@@ -48,20 +54,52 @@ final class Results {
             change.put(m.id, d);
         }
         int win = winner == null ? -1 : winner.ordinal();
-        if (!deltas.isEmpty()) plugin.store().record(match.duel ? RatingStore.DUEL : RatingStore.MODE, match.id, match.arena.name, match.score[0], match.score[1], win, reason.name(), teams(match), deltas, rows -> {
-            if (rows == null) return;
-            for (var m : match.players.values()) {
-                Player p = Bukkit.getPlayer(m.id);
-                var row = rows.get(m.id);
-                if (p != null && row != null) sendResult(match, p, m, winner, voided, change.get(m.id), row.rating());
-            }
-        });
+        if (!deltas.isEmpty()) {
+            // A09: persisted before the DB write; deleted only once the DB says recorded (or already recorded)
+            var entry = new ResultOutbox.Entry(match.duel ? RatingStore.DUEL : RatingStore.MODE, match.id, match.arena.name, match.score[0], match.score[1], win, reason.name(), teams(match), deltas);
+            outbox.save(entry);
+            awaiting.put(match.id, match);
+            record(entry, () -> {
+                for (var m : match.players.values()) {
+                    Player p = Bukkit.getPlayer(m.id);
+                    if (p != null) ChacaLink.notify(p, "warning", "kyudichi:saving", "경기 결과를 저장하는 중이에요", "잠시 뒤 자동으로 반영돼요", 4000);
+                }
+            });
+        }
         else for (var m : match.players.values()) {
             Player p = Bukkit.getPlayer(m.id);
             if (p != null) sendResult(match, p, m, winner, voided, 0, (int) m.ratingBefore);
         }
         plugin.getLogger().info((match.duel ? "1:1 대전 종료 " : "큐디치 경기 종료 ") + match.arena.name + " " + match.score[0] + ":" + match.score[1] + " 승리=" + (winner == null ? "무승부" : winner.key) + " 사유=" + reason
                 + (match.opt.rated() ? "" : " (레이팅 미반영)"));
+    }
+
+    /** DB write of one outbox entry; on success the file goes and the result screen is shown (if the match is still in memory). */
+    private void record(ResultOutbox.Entry e, Runnable failed) {
+        if (!inFlight.add(e.match())) return;
+        plugin.store().record(e.mode(), e.match(), e.arena(), e.scoreA(), e.scoreB(), e.winner(), e.reason(), e.teams(), e.deltas(), rows -> {
+            inFlight.remove(e.match());
+            if (rows == null) { plugin.getLogger().warning("큐디치 결과 저장 실패, outbox 에 남겨 1분 뒤 다시 시도: " + e.match()); if (failed != null) failed.run(); return; }
+            outbox.delete(e.match());
+            Match match = awaiting.remove(e.match());
+            if (match == null) { plugin.getLogger().info("큐디치 결과 다시 저장 완료: " + e.match()); return; }
+            Team winner = e.winner() < 0 ? null : Team.values()[e.winner()];
+            for (var d : e.deltas()) {
+                Player p = Bukkit.getPlayer(d.id()); MatchPlayer m = match.players.get(d.id()); var row = rows.get(d.id());
+                if (p != null && m != null && row != null) sendResult(match, p, m, winner, false, d.delta(), row.rating());
+            }
+            // players without a delta (never arrived) still see the outcome
+            for (var m : match.players.values()) {
+                if (rows.containsKey(m.id)) continue;
+                Player p = Bukkit.getPlayer(m.id);
+                if (p != null) sendResult(match, p, m, winner, false, 0, (int) m.ratingBefore);
+            }
+        });
+    }
+
+    /** Start-up and every minute: replays results the DB did not confirm (idempotent per match ID). */
+    void retryOutbox() {
+        for (var e : outbox.all()) if (!inFlight.contains(e.match())) record(e, null);
     }
 
     /** 전적 table: each team as "<first player> 파티" with that player's house (matches have no team names). */

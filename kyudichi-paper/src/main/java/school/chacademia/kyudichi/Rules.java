@@ -12,8 +12,6 @@ import org.bukkit.configuration.ConfigurationSection;
 /** Immutable snapshot of config.yml. A running match keeps the Rules it started with. Times are ticks, speeds blocks/tick. */
 final class Rules {
     final int prepareTicks, countdownTicks, goalPauseTicks, playTicks, overtimeTicks, snitchAtTicks, respawnTicks, respawnInvulTicks;
-    /** 큐디치: flight has no cooldown, except this lock after leaving the broom in the air (owner 2026-10-19). */
-    final int flightFallLockTicks;
     /** A deflected bludger flies on, then rests this long before it hunts anyone again. */
     final int deflectRestTicks;
     /** owner 2026-10-20: bludger charges (approach → telegraph → straight dash that flies on through) and wall margins */
@@ -46,7 +44,6 @@ final class Rules {
         snitchAtTicks = sec(c, "match.snitch-at-seconds", 300, 0, 7200);
         respawnTicks = sec(c, "match.respawn-seconds", 5, 0, 60);
         respawnInvulTicks = sec(c, "match.respawn-invulnerable-seconds", 2, 0, 30);
-        flightFallLockTicks = secD(c, "match.flight-fall-cooldown-seconds", 5, 0, 60);
         deflectRestTicks = secD(c, "bludger.after-deflect-rest-seconds", 2, 0, 20);
         approachSpeed = speed(c, "bludger.approach-speed", 18); dashSpeed = speed(c, "bludger.dash-speed", 44);
         dashRange = num(c, "bludger.dash-range", 14, 3, 64); dashOvershoot = num(c, "bludger.dash-overshoot", 10, 0, 64);

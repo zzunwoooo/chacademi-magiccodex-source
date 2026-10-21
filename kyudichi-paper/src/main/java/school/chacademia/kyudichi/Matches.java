@@ -91,7 +91,7 @@ final class Matches {
     /** Join: back into a running match, or restore after a match that ended while offline. */
     void joined(Player p) {
         Match m = of(p.getUniqueId());
-        if (m != null && m.rejoin(p)) return;
+        if (m != null && (m.rejoin(p) || m.lateReturn(p))) return;
         var back = pending.remove(p.getUniqueId());
         if (back != null) Bukkit.getScheduler().runTask(plugin, () -> {
             if (back.mode() != null) p.setGameMode(back.mode());

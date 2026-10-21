@@ -86,7 +86,7 @@ final class Match {
     MatchPlayer addAbsent(UUID id, String nick, Team team, double rating) {
         int slot = (int) players.values().stream().filter(m -> m.team == team).count();
         var mp = new MatchPlayer(id, nick, team, Math.min(2, slot), rating);
-        mp.online = false; mp.leftAt = 0;
+        mp.online = false; mp.leftAt = 0; mp.neverArrived = true;
         players.put(id, mp);
         return mp;
     }
@@ -202,7 +202,7 @@ final class Match {
         }
         for (var m : players.values()) {
             Player p = m.active(now) ? online(m) : null;
-            if (p == null) { m.lastBody = null; m.motion = new Vector(); m.mounted = m.falling = false; continue; }
+            if (p == null) { m.lastBody = null; m.motion = new Vector(); continue; }
             Vector b = body(p);
             m.motion = m.lastBody == null ? new Vector() : b.clone().subtract(m.lastBody);
             m.lastBody = b;
@@ -847,7 +847,7 @@ final class Match {
     boolean rejoin(Player p) {
         MatchPlayer m = players.get(p.getUniqueId());
         if (m == null || m.left || m.online) return false;
-        m.online = true; m.leftAt = -1;
+        m.online = true; m.leftAt = -1; m.neverArrived = false;
         m.house = plugin.hooks().house(p); m.broom = plugin.hooks().broomId(p);
         p.showBossBar(bar);
         prepare(p, m);
@@ -857,6 +857,23 @@ final class Match {
         sendRoster();
         return true;
     }
+
+    /**
+     * Came back after the 60 s reconnect window (already counted as left): not put back in the match, but no longer kept
+     * on the arena either — restored and sent back to their own server (network players) right away.
+     */
+    boolean lateReturn(Player p) {
+        MatchPlayer m = players.get(p.getUniqueId());
+        if (m == null || !m.left) return false;
+        p.hideBossBar(bar);
+        restore(p, m);
+        ChacaLink.notify(p, "warning", "kyudichi:late", "경기에 다시 들어갈 수 없어요", "다시 접속할 수 있는 시간(60초)이 지났어요", 3000);
+        plugin.link().done(p.getUniqueId());
+        return true;
+    }
+
+    /** In the match and still playing (a player counted as left only waits for the end to be recorded). */
+    boolean playing(UUID id) { MatchPlayer m = players.get(id); return m != null && !m.left; }
 
     /** Test join after the start (테스트 참가). */
     void rejoinAs(Player p, MatchPlayer m) {
@@ -885,9 +902,12 @@ final class Match {
             if (started && players.values().stream().allMatch(m -> m.left)) end(null, EndReason.ABANDONED);
             return;
         }
+        if (!started) return;
+        // both teams gone (e.g. the arena connection dropped for everyone): nobody wins and nothing is recorded (VOID, no leaver penalty)
+        if (players.values().stream().allMatch(m -> m.left)) { end(null, EndReason.VOID); return; }
         for (Team t : Team.values()) {
             boolean any = players.values().stream().anyMatch(m -> m.team == t && !m.left);
-            if (!any && started) { end(t.other(), EndReason.ABANDONED); return; }
+            if (!any) { end(t.other(), EndReason.ABANDONED); return; }
         }
     }
 

@@ -51,6 +51,8 @@ public final class KyudichiPlugin extends JavaPlugin {
         Bukkit.getScheduler().runTaskTimer(this, () -> store.rollSeasons(rolled -> {
             if (rolled != null) for (var s : rolled) getLogger().info("시즌 종료 → " + (s.mode().equals(RatingStore.DUEL) ? "1:1" : "큐디치") + " 시즌 " + s.number() + " 시작 (레이팅·전적 초기화)");
         }), 200, 1200);
+        // A09: rated results the DB did not confirm (outbox/) are replayed shortly after start-up and every minute
+        Bukkit.getScheduler().runTaskTimer(this, () -> results.retryOutbox(), 100, 1200);
         installBlueprints();
         removeStrays();
         for (var p : Bukkit.getOnlinePlayers()) store.loadAll(p.getUniqueId(), hooks.nick(p));

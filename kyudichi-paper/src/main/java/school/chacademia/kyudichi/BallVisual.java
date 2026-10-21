@@ -32,6 +32,26 @@ interface BallVisual {
         return v != null ? v : new ItemVisual(at, new ItemStack(rules.fallback.get(kind)), kind == BallKind.SNITCH ? 0.7f : 1.0f, kind != BallKind.SNITCH);
     }
 
+    /**
+     * Ball entity moves were the biggest packet source (4 balls × 20 Hz × every viewer). The match still simulates every tick,
+     * but the entity is only teleported every {@link #MOVE_EVERY_TICKS} ticks (the client interpolates in between: item display
+     * teleport duration, armor stand / ModelEngine lerp), not at all while resting, and at once on a big jump (line-up reset).
+     */
+    int MOVE_EVERY_TICKS = 2;
+    double JUMP_SQ = 8 * 8, REST_SQ = 0.01 * 0.01;
+
+    final class Throttle {
+        private Location sent; private int sentTick = Integer.MIN_VALUE / 2;
+        /** True when `to` should be sent now (and remembers it as sent). */
+        boolean due(Location to) {
+            int t = Bukkit.getCurrentTick();
+            boolean jump = sent == null || sent.getWorld() != to.getWorld() || sent.distanceSquared(to) > JUMP_SQ;
+            if (!jump && (t - sentTick < MOVE_EVERY_TICKS || sent.distanceSquared(to) < REST_SQ)) return false;
+            sent = to.clone(); sentTick = t;
+            return true;
+        }
+    }
+
     static void prepare(Entity e) {
         e.setPersistent(false);
         e.addScoreboardTag(TAG);
@@ -40,19 +60,19 @@ interface BallVisual {
     }
 
     final class ItemVisual implements BallVisual {
-        private final ItemDisplay display;
+        private final ItemDisplay display; private final Throttle throttle = new Throttle();
         ItemVisual(Location at, ItemStack item, float scale, boolean glow) {
             display = at.getWorld().spawn(at, ItemDisplay.class, d -> {
                 prepare(d);
                 d.setItemStack(item);
                 d.setBillboard(Display.Billboard.CENTER);
-                d.setTeleportDuration(1);
+                d.setTeleportDuration(MOVE_EVERY_TICKS);
                 d.setViewRange(4f);
                 d.setGlowing(glow);
                 d.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(), new Vector3f(scale, scale, scale), new AxisAngle4f()));
             });
         }
-        public void move(Location to) { if (display.isValid()) display.teleport(to); }
+        public void move(Location to) { if (display.isValid() && throttle.due(to)) display.teleport(to); }
         public void animate(String animation) { }
         public void remove() { display.remove(); }
     }
@@ -61,7 +81,7 @@ interface BallVisual {
         private static boolean resolved, ok, warned;
         private static Method createActive, createModeled, removeModeled, setBaseVisible, setScale, addModel, destroy, animHandler, play;
 
-        private final ArmorStand base; private final Object modeled, model;
+        private final ArmorStand base; private final Object modeled, model; private final Throttle throttle = new Throttle();
 
         private ModelEngineVisual(ArmorStand base, Object modeled, Object model) { this.base = base; this.modeled = modeled; this.model = model; }
 
@@ -119,7 +139,7 @@ interface BallVisual {
             }
         }
 
-        public void move(Location to) { if (base.isValid()) base.teleport(to); }
+        public void move(Location to) { if (base.isValid() && throttle.due(to)) base.teleport(to); }
         public void animate(String animation) {
             try { play.invoke(animHandler.invoke(model), animation, 0.1, 0.1, 1.0, true); } catch (ReflectiveOperationException | RuntimeException ignored) { }
         }

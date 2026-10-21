@@ -14,6 +14,7 @@ final class MatchPlayer {
     Location returnTo; GameMode returnMode;
     // live state
     boolean online = true, ready, left;
+    boolean neverArrived;                   // matched over the network but never reached the arena (no leaver penalty, not recorded)
     long leftAt = -1;                       // match tick of the disconnect (reconnect grace)
     long deadUntil = -1;                    // > now while waiting to respawn
     long invulnerableUntil;
@@ -26,8 +27,6 @@ final class MatchPlayer {
     int house = -1; String broom = "";   // 준비 화면 (ROSTER)
     org.bukkit.util.Vector aim; long aimAt = -1000;   // 공중 조준점 (C2S AIM), 바로 뒤 시전 하나 · F 던지기/쳐내기 하나에만
     org.bukkit.util.Vector lastBody, motion = new org.bukkit.util.Vector();   // body movement per tick (bludger lead)
-    boolean mounted, falling;
-    long flightLockUntil;       // 낙마 후 비행 잠금 (match tick)   // 낙마: left the broom in the air → touching the ground is a death (owner 2026-10-17)
     // stats
     int goals, kills, deaths, assists, snitch, passes, carrierStops, saveGoal, saveBludger, deflectHits;
     double damage, heal;

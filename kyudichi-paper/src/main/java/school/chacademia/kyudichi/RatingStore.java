@@ -173,7 +173,11 @@ final class RatingStore {
         cache(w.mode()).computeIfPresent(w.id(), (k, v) -> w);
     }
 
-    /** One finished rated match: match row, per-player rows and the cumulative rows, in one transaction. */
+    /**
+     * One finished rated match: match row, per-player rows and the cumulative rows, in one transaction.
+     * Idempotent per match ID (A09): when the match row already exists (a retry from the result outbox after a lost answer)
+     * nothing is written again and the stored rows are returned as success. `done` gets null only when nothing was recorded.
+     */
     void record(UUID match, String arena, int scoreA, int scoreB, int winner, String reason, List<Delta> deltas, Consumer<Map<UUID, Row>> done) {
         record(MODE, match, arena, scoreA, scoreB, winner, reason, new Teams("", "", -1, -1), deltas, done);
     }
@@ -184,6 +188,7 @@ final class RatingStore {
             Connection c = db.begin();
             boolean ok = false;
             try {
+                if (recorded(c, match, mode, deltas, out)) { c.commit(); ok = true; log.info("큐디치 결과 " + match + " 는 이미 기록돼 있어요 (재시도 → 저장된 값 사용)"); return out; }
                 try (PreparedStatement s = c.prepareStatement("INSERT INTO " + tMatch + "(id,mode,arena,ended_at,score_a,score_b,winner,reason,name_a,name_b,house_a,house_b) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)")) {
                     s.setString(1, match.toString()); s.setString(2, mode); s.setString(3, arena); s.setLong(4, at);
                     s.setInt(5, scoreA); s.setInt(6, scoreB); s.setInt(7, winner); s.setString(8, reason);
@@ -206,9 +211,30 @@ final class RatingStore {
                 }
                 c.commit(); ok = true;
             } finally { if (!ok) db.rollback(); db.end(); }
-            refreshChallengersNow(mode);
+            // already committed: a failing challenger refresh must not turn the recorded result into a failure (retried next record / admin edit)
+            try { refreshChallengersNow(mode); }
+            catch (SQLException | RuntimeException e) { log.warning("큐디치 챌린저 갱신 실패 (결과는 저장됨): " + e.getMessage()); }
             return out;
         }, done);
+    }
+
+    /** True when the match row exists; then `out` gets each player's stored row with the rating right after that match. */
+    private boolean recorded(Connection c, UUID match, String mode, List<Delta> deltas, Map<UUID, Row> out) throws SQLException {
+        try (PreparedStatement s = c.prepareStatement("SELECT id FROM " + tMatch + " WHERE id=?")) {
+            s.setString(1, match.toString());
+            try (ResultSet r = s.executeQuery()) { if (!r.next()) return false; }
+        }
+        for (Delta d : deltas) {
+            Row o = read(c, d.id(), d.name(), mode);
+            int after = o.rating();
+            try (PreparedStatement s = c.prepareStatement("SELECT rating_after FROM " + tPlayer + " WHERE match_id=? AND player=?")) {
+                s.setString(1, match.toString()); s.setString(2, d.id().toString());
+                try (ResultSet r = s.executeQuery()) { if (r.next() && r.getInt(1) > 0) after = r.getInt(1); }
+            }
+            out.put(d.id(), new Row(o.id(), o.name(), o.mode(), after, o.games(), o.wins(), o.losses(), o.draws(), o.goals(), o.kills(), o.deaths(), o.assists(),
+                    o.damage(), o.heal(), o.snitch(), o.deflectHits(), o.mvp(), o.reachedAt(), o.bannedUntil(), o.leaves()));
+        }
+        return true;
     }
 
     /** Admin edits in one mode (큐디치 = {@link #MODE}, 결투 = {@link #DUEL}). `edit` receives the current row and returns the new one. */

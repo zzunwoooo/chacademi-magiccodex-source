@@ -60,11 +60,13 @@ public final class ManaService {
      */
     public boolean clearCooldown(UUID id,String spell){
         main();
-        if(spell==null||!spell.matches("[a-z0-9_-]{1,64}"))return false;
+        if(spell==null||!SPELL_ID.matcher(spell).matches())return false;
         var a=account(id);boolean had=a.cooldowns.remove(spell)!=null;
         if(had){dirty.add(id);if(cooldownCleared!=null)cooldownCleared.accept(id,spell);}
         return had;
     }
+    /** Compiled once: clearCooldown runs every tick per player during 큐디치 (no per-call regex compile). */
+    private static final java.util.regex.Pattern SPELL_ID=java.util.regex.Pattern.compile("[a-z0-9_-]{1,64}");
     java.util.function.BiConsumer<UUID,String> cooldownCleared;
     void tick(){
         main();for(var e:accounts.entrySet()){

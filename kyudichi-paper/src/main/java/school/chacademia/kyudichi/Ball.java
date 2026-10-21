@@ -74,8 +74,11 @@ class Ball {
         return pos.getY() - 0.45 <= box.minY() + 0.3 || solid(world, pos.getX(), pos.getY() - 0.45, pos.getZ());
     }
 
+    /** An unloaded chunk counts as solid: the ball bounces off instead of forcing a synchronous chunk load on the main thread. */
     static boolean solid(World w, double x, double y, double z) {
-        Block b = w.getBlockAt((int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z));
+        int bx = (int) Math.floor(x), bz = (int) Math.floor(z);
+        if (!w.isChunkLoaded(bx >> 4, bz >> 4)) return true;
+        Block b = w.getBlockAt(bx, (int) Math.floor(y), bz);
         return !b.isPassable();
     }
 

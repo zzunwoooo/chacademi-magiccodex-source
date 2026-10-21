@@ -23,7 +23,6 @@ match:
   snitch-at-seconds: 300     # 스니치 등장 (멈춘 시간 제외한 실제 경기 시간)
   respawn-seconds: 5         # 사망 후 부활까지
   respawn-invulnerable-seconds: 2
-  flight-fall-cooldown-seconds: 5  # (안 씀: 2026-10-20 큐디치는 낙마 없음 — 안정성 0이면 빗자루에 매달려 회복까지 정지)
   game-mode: ADVENTURE       # 경기 중 게임모드 (ADVENTURE 권장: 블록 파괴 불가)
 
 score:

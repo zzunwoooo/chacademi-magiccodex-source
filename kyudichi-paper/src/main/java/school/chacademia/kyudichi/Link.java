@@ -192,7 +192,8 @@ final class Link implements PluginMessageListener {
     void done(UUID id) {
         if (!networked.contains(id) || keepOnLeave.contains(id)) return;
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (plugin.matches().of(id) != null || plugin.spectate().spectating(id) || inGather(id)) return;
+            Match mm = plugin.matches().of(id);
+            if ((mm != null && mm.playing(id)) || plugin.spectate().spectating(id) || inGather(id)) return;
             Player p = Bukkit.getPlayer(id);
             if (p == null) { networked.remove(id); return; }
             networked.remove(id);
