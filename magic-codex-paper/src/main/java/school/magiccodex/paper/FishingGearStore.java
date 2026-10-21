@@ -48,7 +48,7 @@ final class FishingGearStore implements AutoCloseable {
             try (var st = db().createStatement()) {
                 st.execute("CREATE TABLE IF NOT EXISTS codex_fishing_gear(uid VARCHAR(36) PRIMARY KEY,kind INT NOT NULL,gear_id VARCHAR(64) NOT NULL,"
                         + "durability INT NOT NULL,float_id VARCHAR(64) NOT NULL,float_dur INT NOT NULL,line_id VARCHAR(64) NOT NULL,line_dur INT NOT NULL,"
-                        + "bait_id VARCHAR(64) NOT NULL,bait_count INT NOT NULL,updated_at BIGINT NOT NULL)");
+                        + "bait_id VARCHAR(64) NOT NULL,bait_count INT NOT NULL,updated_at BIGINT NOT NULL)" + (settings.mariaDb() ? " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci" : ""));
             } catch (Exception e) { plugin.getLogger().warning("낚시 장비 테이블 준비 실패: " + e.getMessage()); }
         });
     }

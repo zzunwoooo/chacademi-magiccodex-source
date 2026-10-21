@@ -69,7 +69,7 @@ public final class ClimateService implements Listener, PluginMessageListener, Au
         this.plugin=plugin;this.mana=mana;this.temperature=temperature;this.coldKey=new NamespacedKey(plugin,"climate_cold");
         if(!new File(plugin.getDataFolder(),"climate.yml").exists())plugin.saveResource("climate.yml",false);
         config=readConfig();enabled=config.getBoolean("enabled",true);worlds=Set.copyOf(config.getStringList("worlds"));
-        seasonSettings=DatabaseSettings.load(plugin.getDataFolder().toPath().resolve("database.properties"));shared=seasonSettings.mariaDb();
+        seasonSettings=GenericDatabaseFile.load(plugin.getDataFolder().toPath());shared=seasonSettings.mariaDb();
         seasonIo=shared?Executors.newSingleThreadExecutor(r->{var t=new Thread(r,"MagicCodex-climate-io");t.setDaemon(true);return t;}):null;
         long now=clockTime(),world=worldTime();var state=YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(),"climate-state.yml"));
         int start=Season.parse(state.getString("season",config.getString("initial-season","spring"))).ordinal();

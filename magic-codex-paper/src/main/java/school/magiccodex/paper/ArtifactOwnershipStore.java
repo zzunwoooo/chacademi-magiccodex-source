@@ -15,11 +15,12 @@ final class ArtifactOwnershipStore {
     ArtifactOwnershipStore(Connections connections) { this.connections=connections; }
     void initialize() throws Exception {
         try(var c=connections.open();var s=c.createStatement()) {
-            s.execute("CREATE TABLE IF NOT EXISTS codex_artifact_accounts(player VARCHAR(36) PRIMARY KEY)");
-            s.execute("CREATE TABLE IF NOT EXISTS codex_artifact_ownership(player VARCHAR(36) NOT NULL,artifact VARCHAR(64) NOT NULL,owned BOOLEAN NOT NULL,PRIMARY KEY(player,artifact))");
-            s.execute("CREATE TABLE IF NOT EXISTS codex_artifact_operations(operation_id VARCHAR(64) PRIMARY KEY,player VARCHAR(36) NOT NULL,result TEXT NOT NULL)");
-            s.execute("CREATE TABLE IF NOT EXISTS codex_artifact_delivery(operation_id VARCHAR(64) NOT NULL,pull_index INT NOT NULL,player VARCHAR(36) NOT NULL,item VARCHAR(128) NOT NULL,amount INT NOT NULL,delivered BOOLEAN NOT NULL DEFAULT FALSE,PRIMARY KEY(operation_id,pull_index))");
-            s.execute("CREATE TABLE IF NOT EXISTS codex_artifact_migration(source VARCHAR(32) PRIMARY KEY,checksum VARCHAR(64) NOT NULL,imported_count INT NOT NULL)");
+            String tail=" ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci"; // MariaDB 전용 저장소: 한글이 깨지지 않도록 문자셋 명시
+            s.execute("CREATE TABLE IF NOT EXISTS codex_artifact_accounts(player VARCHAR(36) PRIMARY KEY)"+tail);
+            s.execute("CREATE TABLE IF NOT EXISTS codex_artifact_ownership(player VARCHAR(36) NOT NULL,artifact VARCHAR(64) NOT NULL,owned BOOLEAN NOT NULL,PRIMARY KEY(player,artifact))"+tail);
+            s.execute("CREATE TABLE IF NOT EXISTS codex_artifact_operations(operation_id VARCHAR(64) PRIMARY KEY,player VARCHAR(36) NOT NULL,result TEXT NOT NULL)"+tail);
+            s.execute("CREATE TABLE IF NOT EXISTS codex_artifact_delivery(operation_id VARCHAR(64) NOT NULL,pull_index INT NOT NULL,player VARCHAR(36) NOT NULL,item VARCHAR(128) NOT NULL,amount INT NOT NULL,delivered BOOLEAN NOT NULL DEFAULT FALSE,PRIMARY KEY(operation_id,pull_index))"+tail);
+            s.execute("CREATE TABLE IF NOT EXISTS codex_artifact_migration(source VARCHAR(32) PRIMARY KEY,checksum VARCHAR(64) NOT NULL,imported_count INT NOT NULL)"+tail);
         }
     }
     boolean migrationComplete() throws Exception {

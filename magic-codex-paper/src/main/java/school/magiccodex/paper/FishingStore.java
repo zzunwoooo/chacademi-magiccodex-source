@@ -47,8 +47,8 @@ final class FishingStore implements AutoCloseable {
         if (!settings.mariaDb()) plugin.getLogger().warning("낚시 도감: MariaDB 공유 연결이 없어 이 서버의 fishing.db 에만 저장합니다 (학교·야생 공유 안 됨).");
         io.execute(() -> {
             try (var st = db().createStatement()) {
-                st.execute("CREATE TABLE IF NOT EXISTS codex_fishing(uuid VARCHAR(36) NOT NULL,fish VARCHAR(64) NOT NULL,first_at BIGINT NOT NULL,best DOUBLE NOT NULL,count INT NOT NULL,PRIMARY KEY(uuid,fish))");
-                st.execute("CREATE TABLE IF NOT EXISTS codex_fishing_claim(uuid VARCHAR(36) NOT NULL,tier INT NOT NULL,at BIGINT NOT NULL,PRIMARY KEY(uuid,tier))");
+                st.execute("CREATE TABLE IF NOT EXISTS codex_fishing(uuid VARCHAR(36) NOT NULL,fish VARCHAR(64) NOT NULL,first_at BIGINT NOT NULL,best DOUBLE NOT NULL,count INT NOT NULL,PRIMARY KEY(uuid,fish))" + (settings.mariaDb() ? " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci" : ""));
+                st.execute("CREATE TABLE IF NOT EXISTS codex_fishing_claim(uuid VARCHAR(36) NOT NULL,tier INT NOT NULL,at BIGINT NOT NULL,PRIMARY KEY(uuid,tier))" + (settings.mariaDb() ? " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci" : ""));
             } catch (Exception e) { plugin.getLogger().warning("낚시 도감 테이블 준비 실패: " + e.getMessage()); }
         });
     }

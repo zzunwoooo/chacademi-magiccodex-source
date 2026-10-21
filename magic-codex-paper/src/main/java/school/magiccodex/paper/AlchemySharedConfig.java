@@ -45,7 +45,7 @@ final class AlchemySharedConfig implements AutoCloseable {
         }
         // one-time start: create/seed the row and take the shared text
         try (var c = open(); var st = c.createStatement()) {
-            st.execute("CREATE TABLE IF NOT EXISTS codex_alchemy_config(id VARCHAR(32) PRIMARY KEY,revision BIGINT NOT NULL,content MEDIUMTEXT NOT NULL,updated_by VARCHAR(64) NOT NULL,updated_at BIGINT NOT NULL)");
+            st.execute("CREATE TABLE IF NOT EXISTS codex_alchemy_config(id VARCHAR(32) PRIMARY KEY,revision BIGINT NOT NULL,content MEDIUMTEXT NOT NULL,updated_by VARCHAR(64) NOT NULL,updated_at BIGINT NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci");
             try (var p = c.prepareStatement("INSERT IGNORE INTO codex_alchemy_config(id,revision,content,updated_by,updated_at) VALUES(?,1,?,?,?)")) {
                 p.setString(1, ID); p.setString(2, localText); p.setString(3, "seed:" + Bukkit.getServer().getPort()); p.setLong(4, System.currentTimeMillis());
                 if (p.executeUpdate() == 1) plugin.getLogger().info("연금술 설정을 공유 DB에 처음 올렸습니다 (이 서버의 alchemy.yml 기준).");

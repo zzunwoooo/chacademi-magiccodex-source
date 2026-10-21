@@ -139,17 +139,34 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private boolean immediateScheduled;
     private static long now() { return System.nanoTime() / 1_000_000L; }
 
-    /** 시작 시 DB 설정 파일마다 한 줄(파일 유무·모드)을 남긴다. database.require-mariadb: true면 SQLite로 동작할 파일이 하나라도 있을 때 시작을 거부한다. */
+    /** /서버관리 상태 "DB 공유" 줄 (시작 시 한 번 계산). */
+    private String databaseStatus = "확인 전";
+    /**
+     * 시작 시 DB 설정마다 한 줄(파일 유무·모드)을 남긴다: 일반 도메인(GenericDatabaseFile), 캐릭터 저장(전용 → 일반), 상점·우편.
+     * SQLite로 동작하는 도메인이 있으면 WARNING으로 목록을 남긴다. database.require-mariadb: true면 그런 설정이 하나라도 있을 때 시작을 거부한다.
+     */
     private boolean databaseModeAccepted() {
         boolean require = getConfig().getBoolean("database.require-mariadb", false), accepted = true;
-        for (String name : java.util.List.of("database.properties", ShopMailboxDatabaseSettings.FILE_NAME)) {
-            var file = getDataFolder().toPath().resolve(name);
+        var folder = getDataFolder().toPath();
+        var playerState = folder.resolve(GenericDatabaseFile.DEDICATED);
+        var checks = new java.util.LinkedHashMap<String, java.nio.file.Path>();
+        checks.put(String.join("·", GenericDatabaseFile.DOMAINS), GenericDatabaseFile.resolve(folder));
+        checks.put("캐릭터 저장·아티팩트·연금술·낚시", java.nio.file.Files.exists(playerState) ? playerState : folder.resolve(GenericDatabaseFile.GENERIC));
+        checks.put("상점·우편", folder.resolve(ShopMailboxDatabaseSettings.FILE_NAME));
+        var local = new java.util.ArrayList<String>();
+        for (var check : checks.entrySet()) {
+            var file = check.getValue();
             try {
                 var settings = DatabaseSettings.load(file);
-                getLogger().info(DatabaseSettings.describe(file, settings));
-                if (!settings.mariaDb()) accepted = false;
-            } catch (IOException error) { getLogger().severe("DB 설정 " + name + " 오류: " + error.getMessage()); accepted = false; }
+                getLogger().info(DatabaseSettings.describe(file, settings) + " ← " + check.getKey()
+                        + (file.getFileName().toString().equals(GenericDatabaseFile.DEDICATED) && check.getKey().startsWith("닉네임") ? " (" + GenericDatabaseFile.OPT_IN + "=true)" : ""));
+                if (!settings.mariaDb()) { accepted = false; local.add(check.getKey()); }
+            } catch (IOException error) { getLogger().severe("DB 설정 " + file.getFileName() + " 오류: " + error.getMessage()); accepted = false; local.add(check.getKey() + "(설정 오류)"); }
         }
+        if (!local.isEmpty()) getLogger().warning("SQLite(이 서버 파일)로 동작하는 도메인: " + String.join(" / ", local)
+                + ". 이 데이터는 다른 서버(학교·야생·아레나)와 공유되지 않습니다. 일반 도메인 로컬 파일: " + GenericDatabaseFile.SQLITE_FILES
+                + ". 공유 DB로 옮기려면 먼저 tools/db-migrate 이관 도구를 실행하세요 (docs/handoff/CLAUDE_FIX_DBTOOL_20261021.md).");
+        databaseStatus = local.isEmpty() ? "정상 · 모든 도메인 MariaDB 공유" : "주의 · SQLite(서버 로컬): " + String.join(" / ", local);
         if (!require || accepted) return true;
         getLogger().severe("database.require-mariadb=true 인데 MariaDB가 아닌(SQLite 기본값 또는 잘못된) DB 설정 파일이 있습니다. 서버 간 데이터가 갈라지지 않도록 플러그인을 시작하지 않습니다. 위 'DB 설정' 줄을 확인하세요.");
         getServer().getPluginManager().disablePlugin(this);
@@ -160,6 +177,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if (!databaseModeAccepted()) return;
         names=new DisplayNames(this);
         commandHub=new CommandHub(this);
+        commandHub.status(this,"DB 공유",()->databaseStatus);
         wallet=new WalletBridge(this);
         long refresh = Math.clamp(getConfig().getLong("refresh-interval-ticks", 200), 20, 1200) * 50;
         long timeout = Math.clamp(getConfig().getLong("session-timeout-seconds", 45), 30, 120) * 1000;

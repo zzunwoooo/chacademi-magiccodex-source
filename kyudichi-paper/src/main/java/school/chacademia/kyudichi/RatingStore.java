@@ -63,18 +63,20 @@ final class RatingStore {
             tMatch = settings.table("kyudichi_match", "kyudichi_match");
             tPlayer = settings.table("kyudichi_match_player", "kyudichi_match_player");
             tSeason = settings.table("kyudichi_season", "kyudichi_season");
+            // MariaDB: 한글 이름(name, name_a/b)이 깨지지 않도록 문자셋을 명시한다 (SQLite는 해당 없음).
+            String tail = settings.mariaDb() ? " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci" : "";
             try (var s = db.get().createStatement()) {
                 s.execute("CREATE TABLE IF NOT EXISTS " + tRating + "(player CHAR(36) NOT NULL, mode VARCHAR(16) NOT NULL, name VARCHAR(32) NOT NULL,"
                         + " rating INT NOT NULL, games INT NOT NULL, wins INT NOT NULL, losses INT NOT NULL, draws INT NOT NULL, goals INT NOT NULL,"
                         + " kills INT NOT NULL, deaths INT NOT NULL, assists INT NOT NULL, damage DOUBLE NOT NULL, heal DOUBLE NOT NULL, snitch INT NOT NULL,"
                         + " deflect_hits INT NOT NULL, mvp INT NOT NULL, reached_at BIGINT NOT NULL, banned_until BIGINT NOT NULL, leaves INT NOT NULL,"
-                        + " PRIMARY KEY(player, mode))");
+                        + " PRIMARY KEY(player, mode))" + tail);
                 s.execute("CREATE TABLE IF NOT EXISTS " + tMatch + "(id CHAR(36) NOT NULL PRIMARY KEY, mode VARCHAR(16) NOT NULL, arena VARCHAR(32) NOT NULL,"
-                        + " ended_at BIGINT NOT NULL, score_a INT NOT NULL, score_b INT NOT NULL, winner INT NOT NULL, reason VARCHAR(16) NOT NULL)");
+                        + " ended_at BIGINT NOT NULL, score_a INT NOT NULL, score_b INT NOT NULL, winner INT NOT NULL, reason VARCHAR(16) NOT NULL)" + tail);
                 s.execute("CREATE TABLE IF NOT EXISTS " + tPlayer + "(match_id CHAR(36) NOT NULL, player CHAR(36) NOT NULL, team INT NOT NULL,"
                         + " outcome INT NOT NULL, goals INT NOT NULL, kills INT NOT NULL, deaths INT NOT NULL, mvp INT NOT NULL, delta INT NOT NULL,"
-                        + " ended_at BIGINT NOT NULL, PRIMARY KEY(match_id, player))");
-                s.execute("CREATE TABLE IF NOT EXISTS " + tSeason + "(mode VARCHAR(16) NOT NULL PRIMARY KEY, season INT NOT NULL, started_at BIGINT NOT NULL, ends_at BIGINT NOT NULL)");
+                        + " ended_at BIGINT NOT NULL, PRIMARY KEY(match_id, player))" + tail);
+                s.execute("CREATE TABLE IF NOT EXISTS " + tSeason + "(mode VARCHAR(16) NOT NULL PRIMARY KEY, season INT NOT NULL, started_at BIGINT NOT NULL, ends_at BIGINT NOT NULL)" + tail);
             }
             // 2026-10-18 결투장: columns added to the history tables (ignored when they already exist)
             for (String alter : List.of(
@@ -84,12 +86,19 @@ final class RatingStore {
                     "ALTER TABLE " + tMatch + " ADD COLUMN name_b VARCHAR(32) NOT NULL DEFAULT ''",
                     "ALTER TABLE " + tMatch + " ADD COLUMN house_a INT NOT NULL DEFAULT -1",
                     "ALTER TABLE " + tMatch + " ADD COLUMN house_b INT NOT NULL DEFAULT -1")) {
-                try (var s = db.get().createStatement()) { s.execute(alter); } catch (SQLException exists) { /* column already there */ }
+                try (var s = db.get().createStatement()) { s.execute(alter); }
+                catch (SQLException e) { if (!duplicateColumn(e)) log.severe("큐디치 DB 열 추가 실패 (이후 기록 저장이 실패할 수 있음): " + alter + " → " + e.getMessage()); }
             }
             loadSeasonsNow();
             for (String m : MODES) refreshChallengersNow(m);
             return null;
         }).get(15, TimeUnit.SECONDS);
+    }
+
+    /** "이미 있는 열" 오류만 true: MariaDB/MySQL 1060(ER_DUP_FIELDNAME, SQLState 42S21), SQLite "duplicate column name". 권한 부족 등 다른 오류는 false. */
+    static boolean duplicateColumn(SQLException e) {
+        String message = e.getMessage() == null ? "" : e.getMessage().toLowerCase(java.util.Locale.ROOT);
+        return e.getErrorCode() == 1060 || "42S21".equals(e.getSQLState()) || message.contains("duplicate column");
     }
 
     void close() {

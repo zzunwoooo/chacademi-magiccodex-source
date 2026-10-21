@@ -40,7 +40,7 @@ final class SocialBridge implements Listener,PluginMessageListener,AutoCloseable
     private record Outcome(FriendStore.Result result,FriendStore.Snapshot book){}
     SocialBridge(MagicCodexBridge plugin,ManaBridge mana,StatsService stats)throws Exception{
         this.plugin=plugin;this.mana=mana;this.stats=stats;
-        try{var settings=DatabaseSettings.load(plugin.getDataFolder().toPath().resolve("database.properties"));shared=settings.mariaDb();store=io.submit(()->new FriendStore(plugin.getDataFolder().toPath().resolve("friends.db"),settings)).get(10,TimeUnit.SECONDS);}
+        try{var settings=GenericDatabaseFile.load(plugin.getDataFolder().toPath());shared=settings.mariaDb();store=io.submit(()->new FriendStore(plugin.getDataFolder().toPath().resolve("friends.db"),settings)).get(10,TimeUnit.SECONDS);}
         catch(Exception e){io.shutdownNow();throw e;}
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin,SocialProtocol.REQUEST,this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,SocialProtocol.RESPONSE);

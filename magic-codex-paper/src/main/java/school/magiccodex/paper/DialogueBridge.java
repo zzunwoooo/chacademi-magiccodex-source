@@ -68,7 +68,7 @@ final class DialogueBridge implements Listener,PluginMessageListener,AutoCloseab
         this.plugin=plugin;directory=plugin.getDataFolder().toPath().resolve("dialogues");Files.createDirectories(directory);
         if(!Files.exists(directory.resolve("elena.yml")))plugin.saveResource("dialogues/elena.yml",false);
         if(!Files.exists(directory.resolve("arden.yml")))plugin.saveResource("dialogues/arden.yml",false);
-        var settings=DatabaseSettings.load(plugin.getDataFolder().toPath().resolve("database.properties"));
+        var settings=GenericDatabaseFile.load(plugin.getDataFolder().toPath());
         try{store=io.submit(()->new DialogueStore(settings,plugin.getDataFolder().toPath().resolve("dialogue.db"))).get(15,TimeUnit.SECONDS);
             var initial=io.submit(()->{var map=store.catalog();if(map.isEmpty()){for(String id:List.of("elena","arden"))store.edit(id,"",read(id));}return store.snapshot(null);}).get(15,TimeUnit.SECONDS);install(initial);
         }catch(Exception e){io.shutdownNow();throw e;}

@@ -26,7 +26,7 @@ final class TitleBridge implements Listener,PluginMessageListener,AutoCloseable 
     private final Set<UUID> busy=new HashSet<>();private int pending;private volatile boolean closing;private TitleExpansion expansion;
     TitleBridge(MagicCodexBridge plugin)throws Exception{
         this.plugin=plugin;if(!new File(plugin.getDataFolder(),"titles.yml").exists())plugin.saveResource("titles.yml",false);reload();
-        try{var settings=DatabaseSettings.load(plugin.getDataFolder().toPath().resolve("database.properties"));store=io.submit(()->new TitleStore(settings,plugin.getDataFolder().toPath().resolve("titles.db"))).get(15,TimeUnit.SECONDS);}catch(Exception e){io.shutdownNow();throw e;}
+        try{var settings=GenericDatabaseFile.load(plugin.getDataFolder().toPath());store=io.submit(()->new TitleStore(settings,plugin.getDataFolder().toPath().resolve("titles.db"))).get(15,TimeUnit.SECONDS);}catch(Exception e){io.shutdownNow();throw e;}
         Bukkit.getPluginManager().registerEvents(this,plugin);Bukkit.getMessenger().registerIncomingPluginChannel(plugin,TitleProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,TitleProtocol.RESPONSE);
         CmdKit.register(plugin,"/칭호·/유저관리 칭호·/컨텐츠관리 칭호",this::commands);
         if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){expansion=new TitleExpansion(this,plugin.getDescription().getVersion());if(!expansion.register())plugin.getLogger().warning("chacademiatitle 플레이스홀더 등록 실패");}
