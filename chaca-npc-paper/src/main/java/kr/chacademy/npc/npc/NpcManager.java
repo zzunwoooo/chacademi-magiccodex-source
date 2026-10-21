@@ -106,8 +106,9 @@ public final class NpcManager implements Listener {
      * 연결된 NPC 클릭의 유일한 진입점. 우선순위: (1) Shift+아이템 = 선물 → (2) 열 수 있는 고정(스토리) 대화
      * → (3) AI 대화. MagicCodexBridge의 Citizens 클릭 처리에서는 이 NPC들이 제외된다(claim).
      * 다른 유저 스텟 보기(실제 Player만 대상, NPC 메타데이터 제외)는 건드리지 않는다.
+     * 다른 플러그인이 먼저 취소한 클릭은 처리하지 않는다 (스토리 단계의 NPC 호출이 AI 대화·선물보다 먼저).
      */
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onRightClick(NPCRightClickEvent e) {
         NPC npc = e.getNPC();
         String charId = charByNpc.get(npc.getId());

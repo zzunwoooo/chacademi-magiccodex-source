@@ -78,6 +78,8 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         kr.chacademy.story.dialogue.StoryJournal.install();
+        // 스토리 진행 단계 HUD · 목표 포탈 · NPC 징표 (서버 ChacademyStory 의 quest_step / quest_update)
+        kr.chacademy.story.quest.QuestClient.install();
         PayloadTypeRegistry.playS2C().register(CutscenePackets.ReloadRequestS2C.TYPE,CutscenePackets.ReloadRequestS2C.CODEC);
         PayloadTypeRegistry.playC2S().register(CutscenePackets.ReloadResultC2S.TYPE,CutscenePackets.ReloadResultC2S.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(CutscenePackets.ReloadRequestS2C.TYPE,(payload,context)->context.client().execute(()->{
@@ -269,9 +271,11 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
             for(String warning:DialogueLoader.warnings(DialogueLoader.rootDir(),id))client.player.displayClientMessage(Component.literal(id+": "+warning).withStyle(ChatFormatting.YELLOW),false);
             var ledger=new kr.chacademy.story.dialogue.LocalDialogueStore(DialogueLoader.rootDir().resolve("_progress").resolve(client.player.getUUID()+".properties"));
             var signals=new kr.chacademy.story.dialogue.DialogueOpenSignals();
-            var localVars=TextVars.withLocal(vars);
+            // 선택지 조건(need)은 서버가 보낸 MagicCodex 호감도만 쓴다 (이 PC 에 저장한 값 없음)
+            var serverAffinity=kr.chacademy.story.dialogue.Affinity.fromVars(vars);
+            var localVars=TextVars.withLocal(kr.chacademy.story.dialogue.Affinity.withoutAffinity(vars));
             var queuedAffinity=new java.util.HashSet<String>();
-            var runner=new DialogueRunner(dialogue,DialogueLoader.folder(id),ledger.affinity(),localVars,new DialogueRunner.Listener(){
+            var runner=new DialogueRunner(dialogue,DialogueLoader.folder(id),serverAffinity,localVars,new DialogueRunner.Listener(){
                 @Override public boolean affinity(String dialogueId,String key,java.util.List<Dialogue.AffinityChange> changes){
                     // Defer writes until UI accepted; constructor-time changes still affect this frame's local branches.
                     if(ledger.done(dialogueId)||ledger.hasAffinity(dialogueId,key)||!queuedAffinity.add(key))return false;

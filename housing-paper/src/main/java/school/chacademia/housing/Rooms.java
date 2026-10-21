@@ -112,6 +112,8 @@ final class Rooms {
             knownRev.put(s.owner(), data.row().rev());
             size(s.owner(), data.row().size());
             plugin.net().send(p, new RoomMessage(room(data, s, open, p)));
+            // 스토리 "내방열기": 내 방을 DB 에서 읽어 창을 연 뒤에만 (남의 방 구경·갱신 재전송 제외)
+            if (open && s.owner().equals(id)) StoryProgressEvent.fire(p, StoryProgressEvent.OWN_ROOM);
             if (guestbook) sendGuestbook(p, s);
             var viewers = lastViewers.get(s.owner());
             if (viewers != null) sendViewers(p, s.owner(), viewers);
