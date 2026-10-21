@@ -1,5 +1,6 @@
 # Server-authoritative donation catalog. Points may be 0; donation records are globally unique.
-# Reload: /기증기록 reload
+# Reload: /서버관리 새로고침 기증
+# 서버는 켤 때·새로고침 때 이 기본 목록에서 빠진 항목만 plugins/MagicCodexBridge/donation-spells.yml 에 덧붙입니다 (기존 항목 값은 그대로).
 spells:
   wind_basket:
     name: "바람 바구니"
@@ -780,4 +781,180 @@ spells:
   void_maw:
     name: "공허의 입"
     permission: "magic.learned.void_maw"
+    points: 1
+  # 2026-10-21 추가: 몹 습득 마법 300~323 — 배울 수 있는 마법이라 기증 대상. 점수는 기존 마법과 같은 1점(오너가 등급별 점수를 정하면 바꿈)
+  fox_orbit:
+    name: "여우불 공전"
+    permission: "magic.learned.fox_orbit"
+    points: 1
+  curving_plumes:
+    name: "곡선 불깃털"
+    permission: "magic.learned.curving_plumes"
+    points: 1
+  crystal_orbit:
+    name: "결정 공전탄"
+    permission: "magic.learned.crystal_orbit"
+    points: 1
+  venom_spit:
+    name: "독 뱉기"
+    permission: "magic.learned.venom_spit"
+    points: 1
+  smoke_veil:
+    name: "연막 은신"
+    permission: "magic.learned.smoke_veil"
+    points: 1
+  domain_stomp:
+    name: "영역 선포"
+    permission: "magic.learned.domain_stomp"
+    points: 1
+  seal_circle:
+    name: "봉인진"
+    permission: "magic.learned.seal_circle"
+    points: 1
+  seal_talismans:
+    name: "봉인 부적"
+    permission: "magic.learned.seal_talismans"
+    points: 1
+  shield_slam:
+    name: "방패 내려찍기"
+    permission: "magic.learned.shield_slam"
+    points: 1
+  chain_arrow:
+    name: "사슬 화살"
+    permission: "magic.learned.chain_arrow"
+    points: 1
+  mana_drain:
+    name: "마나 흡수"
+    permission: "magic.learned.mana_drain"
+    points: 1
+  soul_scythe:
+    name: "영혼 낫"
+    permission: "magic.learned.soul_scythe"
+    points: 1
+  oblivion_orbs:
+    name: "망각의 탄환"
+    permission: "magic.learned.oblivion_orbs"
+    points: 1
+  bone_grasp:
+    name: "뼈의 손아귀"
+    permission: "magic.learned.bone_grasp"
+    points: 1
+  shadow_leap:
+    name: "그림자 도약"
+    permission: "magic.learned.shadow_leap"
+    points: 1
+  binding_pull:
+    name: "끌어오기"
+    permission: "magic.learned.binding_pull"
+    points: 1
+  fairy_dust:
+    name: "요정 가루"
+    permission: "magic.learned.fairy_dust"
+    points: 1
+  moon_wind:
+    name: "반달 바람날"
+    permission: "magic.learned.moon_wind"
+    points: 1
+  gale_wings:
+    name: "돌풍 날갯짓"
+    permission: "magic.learned.gale_wings"
+    points: 1
+  feather_storm:
+    name: "깃털 폭풍"
+    permission: "magic.learned.feather_storm"
+    points: 1
+  hunting_pounce:
+    name: "사냥 도약"
+    permission: "magic.learned.hunting_pounce"
+    points: 1
+  roar_leap:
+    name: "포효 도약"
+    permission: "magic.learned.roar_leap"
+    points: 1
+  gravity_slam:
+    name: "중력 강타"
+    permission: "magic.learned.gravity_slam"
+    points: 1
+  tail_spikes:
+    name: "꼬리 가시"
+    permission: "magic.learned.tail_spikes"
+    points: 1
+  # 2026-10-21 추가: 아르카나 203~214 (가격 미정이던 6종) — 배울 수 있는 마법이라 기증 대상. 점수는 기존 마법과 같은 1점(오너가 등급별 점수를 정하면 바꿈)
+  landing_airbrake:
+    name: "빗자루 차원이동"
+    permission: "magic.learned.landing_airbrake"
+    points: 1
+  hushed_soles:
+    name: "고요한 밑창"
+    permission: "magic.learned.hushed_soles"
+    points: 1
+  thorn_manners:
+    name: "가시의 예절"
+    permission: "magic.learned.thorn_manners"
+    points: 1
+  cinder_skipring:
+    name: "불꽃 줄넘기"
+    permission: "magic.learned.cinder_skipring"
+    points: 1
+  droplet_relay:
+    name: "물방울 인계"
+    permission: "magic.learned.droplet_relay"
+    points: 1
+  folding_tideplane:
+    name: "접히는 수면"
+    permission: "magic.learned.folding_tideplane"
+    points: 1
+  # 2026-10-21 추가: 아공간 수조 마법 324 — 배울 수 있는 마법이라 기증 대상. 점수는 기존 마법과 같은 1점(오너가 등급별 점수를 정하면 바꿈)
+  fish_trap:
+    name: "통발"
+    permission: "magic.learned.fish_trap"
+    points: 1
+  # 2026-10-21 추가: 던전 기믹 마법 239~250 — 배울 수 있는 마법이라 기증 대상. 점수는 기존 마법과 같은 1점(오너가 등급별 점수를 정하면 바꿈)
+  thawing_heat:
+    name: "해빙의 열기"
+    permission: "magic.learned.thawing_heat"
+    points: 1
+  steam_ignition:
+    name: "증기 점화"
+    permission: "magic.learned.steam_ignition"
+    points: 1
+  water_level:
+    name: "수위 조절"
+    permission: "magic.learned.water_level"
+    points: 1
+  stone_weight:
+    name: "무게추"
+    permission: "magic.learned.stone_weight"
+    points: 1
+  vine_awaken:
+    name: "덩굴 깨우기"
+    permission: "magic.learned.vine_awaken"
+    points: 1
+  light_beam:
+    name: "빛줄기"
+    permission: "magic.learned.light_beam"
+    points: 1
+  mirror_tune:
+    name: "반사 조율"
+    permission: "magic.learned.mirror_tune"
+    points: 1
+  prism_tint:
+    name: "프리즘 물들이기"
+    permission: "magic.learned.prism_tint"
+    points: 1
+  statue_wake:
+    name: "석상 깨우기"
+    permission: "magic.learned.statue_wake"
+    points: 1
+  rewind:
+    name: "되감기"
+    permission: "magic.learned.rewind"
+    points: 1
+  conduit_turn:
+    name: "도관 회전"
+    permission: "magic.learned.conduit_turn"
+    points: 1
+  dimension_mark:
+    name: "차원 표식"
+    permission: "magic.learned.dimension_mark"
     points: 1

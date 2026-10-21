@@ -52,12 +52,26 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
     private void refreshShared(){
         if(closing||refreshing)return;refreshing=true;
         var active=activePlayers();
-        io.execute(()->{try{var snapshot=store.snapshot(active);main(()->{refreshing=false;if(!snapshot.equals(data)){data=snapshot;revision++;push();}});}
+        io.execute(()->{try{var snapshot=store.snapshot(active);main(()->{refreshing=false;if(!snapshot.equals(data)){replaceData(snapshot);push();}});}
             catch(Exception error){plugin.getLogger().warning("공용 기숙사 기록 갱신 실패: "+error.getMessage());main(()->refreshing=false);}});
     }
     private Set<UUID> activePlayers(){var ids=new HashSet<UUID>();for(Player p:Bukkit.getOnlinePlayers())ids.add(p.getUniqueId());return Set.copyOf(ids);}
+    /** jar 안 기본 목록에서 빠진 마법만 서버 파일에 덧붙인다 (예전 300종 파일 대응). 이미 있는 항목의 이름·점수는 그대로. */
+    private void mergeBundledCatalog(File file){
+        try(var in=plugin.getResource("donation-spells.yml")){
+            if(in==null)return;
+            var bundled=YamlConfiguration.loadConfiguration(new java.io.InputStreamReader(in,java.nio.charset.StandardCharsets.UTF_8)).getConfigurationSection("spells");
+            var y=new YamlConfiguration();y.load(file);var root=y.getConfigurationSection("spells");
+            if(bundled==null||root==null)return;
+            var added=new ArrayList<String>();
+            for(String id:bundled.getKeys(false)){var s=bundled.getConfigurationSection(id);if(root.contains(id)||s==null)continue;root.createSection(id,s.getValues(false));added.add(id);}
+            if(added.isEmpty())return;
+            y.save(file);plugin.getLogger().info("donation-spells.yml: 기본 목록에서 빠진 기증 마법 "+added.size()+"개를 덧붙였습니다 "+added);
+        }catch(Exception e){plugin.getLogger().warning("donation-spells.yml 병합 실패, 기존 파일 그대로 사용: "+e);}
+    }
     private void loadCatalog()throws Exception{
-        var y=new YamlConfiguration();y.load(new File(plugin.getDataFolder(),"donation-spells.yml"));var root=y.getConfigurationSection("spells");if(root==null||root.getKeys(false).size()>4096)throw new IllegalArgumentException("Donation catalog size");var next=new HashMap<String,Spell>();
+        File file=new File(plugin.getDataFolder(),"donation-spells.yml");mergeBundledCatalog(file);
+        var y=new YamlConfiguration();y.load(file);var root=y.getConfigurationSection("spells");if(root==null||root.getKeys(false).size()>4096)throw new IllegalArgumentException("Donation catalog size");var next=new HashMap<String,Spell>();
         for(String id:root.getKeys(false)){var s=root.getConfigurationSection(id);if(s==null)throw new IllegalArgumentException(id);String name=s.getString("name",id),permission=s.getString("permission","");long points=s.getLong("points",1);
             if(!id.matches("[a-z0-9_-]{1,64}")||name.length()>100||name.isBlank()||!permission.matches("[a-z0-9_.-]{1,100}")||points<0||points>1000000)throw new IllegalArgumentException("Invalid donation: "+id);next.put(id,new Spell(name,permission,points));}
         spells=Map.copyOf(next);
@@ -85,7 +99,36 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
         int h=house(p);if(h<0){reply(p,r,"소속 기숙사가 지정되지 않았습니다.");return;}
         if(p.isDead()||p.getGameMode()==GameMode.SPECTATOR){reply(p,r,"지금은 기증할 수 없습니다.");return;}
         var record=new Donation(r.spell(),spell.name(),p.getUniqueId(),plugin.names().name(p),h,now);
-        work(()->store.donate(record,spell.points()),ok->reply(p,r,ok?"학교에 기증했습니다. +"+spell.points()+"점":"누군가 이미 기증한 마법입니다."),error->reply(p,r,error));
+        // 기증 기록 INSERT와 점수는 SchoolStore.donate 한 트랜잭션. 공지는 커밋이 끝난 뒤 메인 스레드에서만.
+        work(()->store.donate(record,spell.points()),ok->{if(ok)announce(record);reply(p,r,ok?"학교에 기증했습니다. +"+spell.points()+"점":"누군가 이미 기증한 마법입니다.");},error->reply(p,r,error));
+    }
+    // ------------------------------------------------------------------ 첫 기증 전체 공지 (7-5 #3)
+    private static final long ANNOUNCE_WINDOW=120_000L;
+    private final Set<String> announced=new LinkedHashSet<>();
+    /** 새 스냅샷으로 바꾸고, 이전에 없던 최근 기증 기록을 알린다. 공유(MariaDB) 모드에서는 다른 서버의 기증도 기존 2초 갱신으로 들어와 같은 카드가 뜬다. */
+    private void replaceData(SchoolStore.Snapshot next){
+        var before=data;data=next;revision++;
+        if(before==null)return;
+        var old=new HashSet<String>();for(var e:before.records())old.add(e.spell()+"@"+e.time());
+        long cutoff=System.currentTimeMillis()-ANNOUNCE_WINDOW;
+        for(var e:next.records())if(e.time()>=cutoff&&!old.contains(e.spell()+"@"+e.time()))announce(e);
+    }
+    /** 접속자 전원에게 알림 카드. 같은 기록(마법+시각)은 한 번만. */
+    private void announce(Donation e){
+        if(!announced.add(e.spell()+"@"+e.time()))return;
+        if(announced.size()>512){var it=announced.iterator();it.next();it.remove();}
+        if(e.house()<0||e.house()>=SchoolProtocol.HOUSES.size())return;
+        Spell spell=spells.get(e.spell());
+        String who=plugin.names().name(Bukkit.getOfflinePlayer(e.donor()),e.nickname());
+        String title=who+"님이 「"+e.spellName()+"」"+objectParticle(e.spellName())+" 학교에 처음 기증했습니다! ("+SchoolProtocol.HOUSES.get(e.house())+(spell==null?"":" +"+spell.points())+")";
+        for(Player online:Bukkit.getOnlinePlayers())CodexCommands.notify(online,"system","school-donation-"+e.spell(),title,0);
+    }
+    /** 받침이 있으면 "을", 없으면 "를". 한글로 끝나지 않으면 "을(를)". */
+    static String objectParticle(String word){
+        if(word==null||word.isEmpty())return "을(를)";
+        char c=word.charAt(word.length()-1);
+        if(c<0xAC00||c>0xD7A3)return "을(를)";
+        return (c-0xAC00)%28==0?"를":"을";
     }
     private void reply(Player p,Request r,String message){
         if(!p.isOnline()||!p.getListeningPluginChannels().contains(SchoolProtocol.RESPONSE))return;
@@ -103,7 +146,7 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
         var active=shared?activePlayers():null;
         io.execute(()->{try{T value=task.run();SchoolStore.Snapshot refreshed=null;
                 try{refreshed=store.snapshot(active);}catch(Exception refreshError){plugin.getLogger().warning("학교 기록 처리 완료, 화면 갱신 실패: "+refreshError);}
-                var snapshot=refreshed;main(()->{pending--;if(snapshot!=null){data=snapshot;revision++;}done.accept(value);push();});}
+                var snapshot=refreshed;main(()->{pending--;if(snapshot!=null)replaceData(snapshot);done.accept(value);push();});}
             catch(Exception e){plugin.getLogger().warning("학교 기록 저장 실패: "+e);main(()->{pending--;fail.accept(e instanceof SchoolStore.DonationBlocked?"관리자가 기증을 금지한 마법입니다.":"저장하지 못했습니다. 점수 범위 또는 서버 로그를 확인해 주세요.");});}});
     }
     private void main(Runnable r){if(!closing&&plugin.isEnabled())Bukkit.getScheduler().runTask(plugin,()->{if(!closing)r.run();});}

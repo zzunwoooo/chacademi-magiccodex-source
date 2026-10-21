@@ -11,7 +11,12 @@ final class ArtifactOwnershipStore {
     record Delivery(String operation,int index,UUID player,String item,int amount) {}
     /** 관리자 뽑기 기록 한 줄 (중복 조각 우편). */
     record History(String operation,int index,String item,int amount,boolean delivered) {}
+    /** 2초 주기 갱신 결과: 접속자별 보유 목록(행이 없으면 빈 목록) + 미지급 조각 우편. */
+    record Poll(Map<UUID,Set<String>> owned,List<Delivery> deliveries) {}
+    private static final String PENDING_DELIVERIES="SELECT operation_id,pull_index,player,item,amount FROM codex_artifact_delivery WHERE delivered=FALSE LIMIT 100";
     private final Connections connections;
+    /** 두 서버 마이그레이션 표식은 한 번 확인되면 지워지지 않으므로 이후 주기에는 다시 묻지 않는다. */
+    private volatile boolean migrated;
     ArtifactOwnershipStore(Connections connections) { this.connections=connections; }
     void initialize() throws Exception {
         try(var c=connections.open();var s=c.createStatement()) {
@@ -24,7 +29,25 @@ final class ArtifactOwnershipStore {
         }
     }
     boolean migrationComplete() throws Exception {
-        try(var c=connections.open();var p=c.prepareStatement("SELECT COUNT(*) FROM codex_artifact_migration WHERE source IN ('school-v1','wild-v1')");var r=p.executeQuery()){r.next();return r.getInt(1)==2;}
+        if(migrated)return true;
+        try(var c=connections.open();var p=c.prepareStatement("SELECT COUNT(*) FROM codex_artifact_migration WHERE source IN ('school-v1','wild-v1')");var r=p.executeQuery()){r.next();boolean done=r.getInt(1)==2;if(done)migrated=true;return done;}
+    }
+    /** 연결 하나로 접속자 전원의 보유 목록을 WHERE player IN (...) 한 번(200명 단위)에 읽고, 같은 연결로 미지급 우편도 읽는다. */
+    Poll poll(Collection<UUID> players) throws Exception {
+        var owned=new HashMap<UUID,Set<String>>();for(UUID id:players)owned.put(id,new HashSet<>());
+        var ids=List.copyOf(owned.keySet());var rows=new ArrayList<Delivery>();
+        try(var c=connections.open()){
+            for(int from=0;from<ids.size();from+=200){
+                var batch=ids.subList(from,Math.min(from+200,ids.size()));
+                try(var p=c.prepareStatement("SELECT player,artifact FROM codex_artifact_ownership WHERE owned=TRUE AND player IN ("+String.join(",",Collections.nCopies(batch.size(),"?"))+")")){
+                    for(int i=0;i<batch.size();i++)p.setString(i+1,batch.get(i).toString());
+                    try(var r=p.executeQuery()){while(r.next()){var set=owned.get(UUID.fromString(r.getString(1)));if(set!=null)set.add(r.getString(2));}}
+                }
+            }
+            try(var p=c.prepareStatement(PENDING_DELIVERIES);var r=p.executeQuery()){while(r.next())rows.add(new Delivery(r.getString(1),r.getInt(2),UUID.fromString(r.getString(3)),r.getString(4),r.getInt(5)));}
+        }
+        var frozen=new HashMap<UUID,Set<String>>();owned.forEach((id,set)->frozen.put(id,Set.copyOf(set)));
+        return new Poll(Map.copyOf(frozen),List.copyOf(rows));
     }
     /** Each source is imported exactly once; a later revoke can never be undone by rerunning import. */
     boolean migrate(String source,String checksum,Map<UUID,Set<String>> ownership) throws Exception {
@@ -64,7 +87,7 @@ final class ArtifactOwnershipStore {
         }catch(Exception e){c.rollback();throw e;}}
     }
     List<Delivery> pendingDeliveries() throws Exception {
-        try(var c=connections.open();var p=c.prepareStatement("SELECT operation_id,pull_index,player,item,amount FROM codex_artifact_delivery WHERE delivered=FALSE LIMIT 100");var r=p.executeQuery()){var rows=new ArrayList<Delivery>();while(r.next())rows.add(new Delivery(r.getString(1),r.getInt(2),UUID.fromString(r.getString(3)),r.getString(4),r.getInt(5)));return rows;}
+        try(var c=connections.open();var p=c.prepareStatement(PENDING_DELIVERIES);var r=p.executeQuery()){var rows=new ArrayList<Delivery>();while(r.next())rows.add(new Delivery(r.getString(1),r.getInt(2),UUID.fromString(r.getString(3)),r.getString(4),r.getInt(5)));return rows;}
     }
     /** 이 유저의 중복 조각 우편 기록 (operation, index 순서: 관리자 번호가 매번 같다). */
     List<History> history(UUID player) throws Exception {
