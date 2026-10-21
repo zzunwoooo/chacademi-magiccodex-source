@@ -23,7 +23,7 @@ public final class PortableVfxClient implements ClientModInitializer {
             dev.portablevfx.client.claude.ClaudeBloomConfig.load(
                     net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDir().resolve("portablevfx/bloom.properties"));
         } catch (java.io.IOException error) {
-            LOG.warn("Could not load PortableVFX bloom settings; using strength 0.65", error);
+            LOG.warn("Could not load PortableVFX bloom settings; using strength 0.40", error);
         }
         MinecraftClient client = MinecraftClient.getInstance();
         EffectLibrary library = new EffectLibrary(() -> client.execute(() -> {

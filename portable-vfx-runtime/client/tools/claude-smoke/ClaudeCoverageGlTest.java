@@ -22,17 +22,17 @@ public final class ClaudeCoverageGlTest {
     }
     var config=java.nio.file.Files.createTempFile("pvfx-bloom-test", ".properties");
     try {
-     java.nio.file.Files.writeString(config,"strength=1");ClaudeBloomConfig.load(config);
+     java.nio.file.Files.writeString(config,"version=2\nstrength=1");ClaudeBloomConfig.load(config);
      float original=draw(post,f,0,true),originalCore=draw(post,f,0,false);
-     java.nio.file.Files.writeString(config,"strength=0.65");ClaudeBloomConfig.load(config);
+     java.nio.file.Files.writeString(config,"version=2\nstrength=0.4");ClaudeBloomConfig.load(config);
      float reduced=draw(post,f,0,true),reducedCore=draw(post,f,0,false);
-     java.nio.file.Files.writeString(config,"strength=0");ClaudeBloomConfig.load(config);
+     java.nio.file.Files.writeString(config,"version=2\nstrength=0");ClaudeBloomConfig.load(config);
      float disabled=draw(post,f,0,true);
      if(!(original>reduced&&reduced>disabled))throw new AssertionError("Bloom gain is not monotonic: "+original+" / "+reduced+" / "+disabled);
      if(Math.abs(originalCore-reducedCore)>1e-6f||Math.abs(disabled-originalCore)>1e-6f)throw new AssertionError("Bloom multiplier changed core-only output");
      System.out.println("PASS global bloom: original="+original+" reduced="+reduced+" off="+disabled+" unchanged core="+originalCore);
     } finally {
-     java.nio.file.Files.writeString(config,"strength=0.65");ClaudeBloomConfig.load(config);java.nio.file.Files.delete(config);
+     java.nio.file.Files.writeString(config,"version=2\nstrength=0.4");ClaudeBloomConfig.load(config);java.nio.file.Files.delete(config);
     }
     if(glGetError()!=GL_NO_ERROR)throw new AssertionError("Coverage GL error");
     System.out.println("PASS ClaudeCoverageGlTest: alpha coverage independent of additive HDR light");

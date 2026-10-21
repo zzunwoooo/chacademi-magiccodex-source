@@ -20,7 +20,7 @@ public final class AimSettings {
     /** Blocks behind the eyes (vanilla third person is 4). */
     public float distance = 5f;
     /** Blocks to the side of the eyes. */
-    public float sideOffset = 1.5f;
+    public float sideOffset = DEFAULT_SIDE;
     /** Blocks above the eyes. */
     public float height = 1f;
     /** Magic mode in third person: freeze the view and aim with a separate cursor. */
@@ -29,6 +29,13 @@ public final class AimSettings {
     public float cursorSpeed = 1f;
     /** LoL "smart cast": cast at the cursor on key press instead of showing the preview first. */
     public boolean smartCast = false;
+
+    /** Default shoulder offset; {@link #LEGACY_DEFAULT_SIDE} was the shipped default before aim-version 2. */
+    public static final float DEFAULT_SIDE = 1f, LEGACY_DEFAULT_SIDE = 1.5f;
+    /** Written on every save. Files without it were saved before the 1.5 -> 1.0 default change. */
+    static final int VERSION = 2;
+    /** Set by {@link #load} when an unversioned file still held the old default; {@link #get} then records the version once. */
+    boolean migrated;
 
     public static final float MIN_DISTANCE = 1.5f, MAX_DISTANCE = 6f, MAX_SIDE = 2f, MIN_SPEED = .2f, MAX_SPEED = 3f;
 
@@ -40,6 +47,7 @@ public final class AimSettings {
             try { path = net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDir().resolve("magiccodex/aim.properties"); }
             catch (RuntimeException | LinkageError noLoader) { path = null; }
             current = path == null ? new AimSettings() : load(path);
+            if (current.migrated && path != null && current.persist(path)) current.migrated = false;
         }
         return current;
     }
@@ -54,6 +62,8 @@ public final class AimSettings {
         s.side = "left".equalsIgnoreCase(p.getProperty("side", "right").trim()) ? -1 : 1;
         s.distance = num(p, "distance", s.distance, MIN_DISTANCE, MAX_DISTANCE);
         s.sideOffset = num(p, "side-offset", s.sideOffset, 0, MAX_SIDE);
+        // One-time migration: an unversioned file still holding exactly the old default gets the new default.
+        if (p.getProperty("aim-version") == null && s.sideOffset == LEGACY_DEFAULT_SIDE) { s.sideOffset = DEFAULT_SIDE; s.migrated = true; }
         s.height = num(p, "height", s.height, -.5f, 1.5f);
         s.aimCursor = false;
         s.cursorSpeed = num(p, "cursor-speed", s.cursorSpeed, MIN_SPEED, MAX_SPEED);
@@ -82,6 +92,7 @@ public final class AimSettings {
         p.setProperty("aim-cursor", "false");
         p.setProperty("cursor-speed", Float.toString(cursorSpeed));
         p.setProperty("smart-cast", Boolean.toString(smartCast));
+        p.setProperty("aim-version", Integer.toString(VERSION));
         try {
             Path target=destination.toAbsolutePath(); Files.createDirectories(target.getParent());
             Path temp=Files.createTempFile(target.getParent(),"aim-",".tmp");
