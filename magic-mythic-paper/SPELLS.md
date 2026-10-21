@@ -40,7 +40,7 @@
 | 38 | fire_curtain | 플레어 월 | AIM | 미몹+애드온 | 폭 6블록 화염벽 5초 |
 | 39 | phoenix_oath | 불사조의 서약 | SELF | 미몹+애드온 | 300초 동안 치명상 1회 무효 |
 | 40 | living_furnace | 살아 있는 화로 | SELF | Bridge 유틸 | MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸) |
-| 41 | falling_star | 메테오 스트라이크 | AIM | 미몹+애드온 | 운석 낙하 반경 4블록 |
+| 41 | falling_star | 메테오 스트라이크 | AIM | 미몹+애드온 | 운석 낙하 반경 4블록 (A16: 서버가 착지 틱에 한 번 피해, charge/speed/sky 는 spell-bindings 운석 단계와 같아야 함) |
 | 42 | flame_lash | 화염 채찍 | ENTITY | 미몹+애드온 | 끌어당기며 피해 |
 | 43 | cinder_detonation | 스타 퓨리 | BURNING_ENTITY | 미몹+애드온 | (기존 라우트 유지) 불타는 대상 폭발 |
 | 44 | palm_fireworks | 손바닥 폭죽 | SELF | 미몹 기본 | 장식 마법, 게임 효과 없음 |

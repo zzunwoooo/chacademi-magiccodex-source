@@ -223,12 +223,11 @@ CHA_living_furnace:
   Skills:
   - chanote{n=1;element=fire;spell=living_furnace} @self
 
-# 41 메테오 스트라이크 - 운석 낙하 반경 4블록
+# 41 메테오 스트라이크 - 운석 낙하 반경 4블록 (A16: 서버가 착지 틱에 한 번 피해, charge/speed/sky 는 spell-bindings 운석 단계와 같아야 함)
 CHA_falling_star:
   Cooldown: 0
   Skills:
-  - delay 25
-  - chahit{r=4;max=12;knock=0.8;up=0.4;ignite=60;element=fire;spell=falling_star}
+  - chameteor{r=4;max=12;knock=0.8;up=0.4;ignite=60;charge=68;speed=0.6;skyx=-3;skyy=24;skyz=19;element=fire;spell=falling_star}
 
 # 42 화염 채찍 - 끌어당기며 피해
 CHA_flame_lash:

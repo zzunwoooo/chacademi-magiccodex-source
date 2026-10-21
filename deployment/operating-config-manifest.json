@@ -25,13 +25,13 @@
   },
   {
     "path": "deployment/operating-config/PortableVFX/spell-bindings.yml",
-    "sha256": "8790a96da2984cf1e905bdf03e2f81367e670ae59088dc9e6a1834b7dba10486",
+    "sha256": "5de15794206ce4707639b9152e16c95d19a73d8f00f1aafbee7345a67d7339ad",
     "sameOnSchoolAndWild": true,
     "role": "non-secret gameplay configuration; deployment overlay, not player data"
   },
   {
     "path": "deployment/operating-config/MythicMobs/Skills/chacademi_spells.yml",
-    "sha256": "2991a65b165f56d8f1a0d9c424fff00766dfb7bf9b4125631b3f9b43c6482282",
+    "sha256": "0d9f7b7619a06b5343ccd0ff11c5a6a526d5ba11921a051aeff3e6e9984f6991",
     "sameOnSchoolAndWild": true,
     "role": "non-secret gameplay configuration; deployment overlay, not player data"
   },

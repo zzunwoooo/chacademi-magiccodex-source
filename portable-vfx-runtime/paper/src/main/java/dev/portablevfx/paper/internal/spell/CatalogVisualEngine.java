@@ -156,9 +156,10 @@ public final class CatalogVisualEngine {
             c.aim=hit==null?player.getEyeLocation().add(c.direction.clone().multiply(safeRange)):hit.getHitPosition().toLocation(player.getWorld());
             if(plan.trajectory().equals("targeted-meteor")) {
                 // The aim ray selects X/Z; this spell always fixes a ground point, even when looking at air or a wall.
+                // A16: no ground under the aim = the meteor lands at the aim point in the air (same rule as chameteor).
+                // A gameplay chameteor then sends external:land_at with the server's landing point before the mark shows.
                 Location ground=TargetedMeteorPath.groundBelow(c.aim);
-                if(ground==null)return rejected(pid,"no loaded ground below meteor target");
-                c.aim=ground;c.normal=new Vector(0,1,0);
+                if(ground!=null)c.aim=ground;c.normal=new Vector(0,1,0);
             } else if(hit!=null&&hit.getHitEntity()!=null)c.target=hit.getHitEntity().getUniqueId();
             if(c.target==null&&plan.phases().stream().anyMatch(ph->ph.trigger().equals(initialEvent)&&ph.anchor().equals("target")&&ph.role().equals("attached")))return rejected(pid,"requires living target");
             if(!plan.trajectory().equals("targeted-meteor")&&hit!=null&&hit.getHitBlockFace()!=null)c.normal=hit.getHitBlockFace().getDirection();
@@ -367,16 +368,21 @@ public final class CatalogVisualEngine {
     }
     private void moveMeteor(Cast c,Active a){
         // Targeting range is not flight distance: the authored sky offset is over 30 blocks long.
+        // A16 (owner decision 3): the meteor passes through roofs/trees and lands on the fixed target point.
+        // When the binding's impact phases wait for external:impact, the server (chameteor) owns the impact tick:
+        // arriving here only ends the falling body.
         Vector delta=c.aim.toVector().subtract(a.position.toVector());double remaining=delta.length();
-        if(remaining<1e-6){impact(c,a,c.aim,new Vector(0,1,0));return;}
+        if(remaining<1e-6){if(serverImpact(c.plan))finish(a,true);else impact(c,a,c.aim,new Vector(0,1,0));return;}
         a.direction=delta.clone().normalize();double step=Math.min(c.plan.speed(),remaining);
         Location next=a.position.clone().add(a.direction.clone().multiply(step));
         if(!loadedSegment(a.position,next)){finish(a,true);return;}
-        RayTraceResult hit=a.position.getWorld().rayTraceBlocks(a.position,a.direction,step,FluidCollisionMode.NEVER,true);
-        if(hit!=null){impact(c,a,hit.getHitPosition().toLocation(a.position.getWorld()),hit.getHitBlockFace()==null?new Vector(0,1,0):hit.getHitBlockFace().getDirection());return;}
-        if(step>=remaining-1e-6){impact(c,a,c.aim,new Vector(0,1,0));return;}
+        if(step>=remaining-1e-6){if(serverImpact(c.plan))finish(a,true);else impact(c,a,c.aim,new Vector(0,1,0));return;}
         a.position=next;a.travelled+=step;
         service.updateCast(a.handle,next.getX(),next.getY(),next.getZ(),EffectBasis.projectile(a.direction.getX(),a.direction.getY(),a.direction.getZ()));
+    }
+    /** A16: the impact of this plan comes from the gameplay server (external:impact), not from the visual flight. */
+    static boolean serverImpact(Plan plan){
+        return plan.phases().stream().anyMatch(p->p.trigger().equals("external:impact"))&&plan.phases().stream().noneMatch(p->p.trigger().equals("impact"));
     }
     private void moveChain(Cast c,Active a){
         double t=Math.min(1,(double)++a.arcTick/a.arcTicks);
@@ -525,6 +531,9 @@ public final class CatalogVisualEngine {
         }
         if(c.plan.phases().stream().noneMatch(p->p.trigger().equals(event)))return false;
         if(event.equals("external:trigger")){if(c.expired)return false;c.expired=true;}
+        // A16: the server landing ends a falling body that has not arrived yet (impact VFX follows the server tick).
+        if(event.equals("external:impact")&&c.plan.trajectory().equals("targeted-meteor"))
+            for(Active active:c.active)if(!active.finished&&active.phase.anchor().equals("projectile"))finish(active,true);
         // 호출자(게임플레이 어댑터)에게 예외를 던지지 않는다: 대기열 초과 같은 실패는 그 시전만 정리한다.
         try{enqueue(c,event);runPending(c);return true;}
         catch(RuntimeException failure){tickFailures++;noteFailure(c,"event "+event,failure);cancel(c.id);return false;}
@@ -533,6 +542,11 @@ public final class CatalogVisualEngine {
         if(!Bukkit.isPrimaryThread())throw new IllegalStateException("Visual events require server thread");
         int delivered=0;
         for(Cast c:List.copyOf(casts.values()))if(!c.serverControlled&&c.owner.equals(owner)&&c.plan.id().equals(spellId)){
+            // A16: chameteor fixes the landing point at cast; the mark and the falling body use it (not this engine's own ray).
+            if(event.equals("external:land_at")){
+                if(!c.plan.trajectory().equals("targeted-meteor")||point==null||!validPoint(c,point))continue;
+                c.aim=point.clone();c.normal=new Vector(0,1,0);delivered++;continue;
+            }
             if(point!=null){if(!point.getWorld().getUID().equals(c.world)||!loaded(point)||point.distanceSquared(c.origin)>256*256)continue;c.impact=point.clone();}
             if(target==null&&c.plan.trajectory().equals("server-events"))c.target=null;
             if(target!=null){Entity e=Bukkit.getEntity(target);if(e==null||!e.getWorld().getUID().equals(c.world))continue;c.target=target;}

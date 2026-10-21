@@ -60,10 +60,22 @@ class CatalogMeteorCastTest {
             var meteor=played.stream().filter(r->r.effectId().endsWith("/meteor")).findFirst().orElseThrow();
             assertEquals(-3,meteor.x(),1e-8);assertEquals(88,meteor.y(),1e-8);assertEquals(39,meteor.z(),1e-8);
             assertTrue(bases.stream().anyMatch(b->b.forwardY()<-.5),"meteor must descend");
+            // A16: the falling body ends at the target, but the impact belongs to the gameplay server (chameteor).
+            assertTrue(cleared.contains(handles.get("claude:fallingstar/meteor")));
+            assertEquals(0,played.stream().filter(r->r.effectId().equals("claude:fallingstar/impact")).count(),"no visual-only impact");
+            assertEquals(1,engine.trigger(owner,"falling_star","external:impact",new Location(world,0,64,20),null));
             var impact=played.stream().filter(r->r.effectId().equals("claude:fallingstar/impact")).findFirst().orElseThrow();
             assertEquals(0,impact.x(),1e-8);assertEquals(64,impact.y(),1e-8);assertEquals(20,impact.z(),1e-8);
-            assertTrue(cleared.contains(handles.get("claude:fallingstar/meteor")));
             assertEquals(1,played.stream().filter(r->r.effectId().equals("claude:fallingstar/impact")).count());
+            // The server's landing point (external:land_at at cast) moves the mark and the falling body there.
+            played.clear();
+            assertEquals(true,engine.cast(player,"falling_star"));
+            assertEquals(1,engine.trigger(owner,"falling_star","external:land_at",new Location(world,5,70,25),null));
+            for(int i=0;i<80;i++)engine.tick();
+            var mark=played.stream().filter(r->r.effectId().equals("claude:fallingstar/mark")).findFirst().orElseThrow();
+            assertEquals(5,mark.x(),1e-8);assertEquals(70,mark.y(),1e-8);assertEquals(25,mark.z(),1e-8);
+            var moved=played.stream().filter(r->r.effectId().endsWith("/meteor")).findFirst().orElseThrow();
+            assertEquals(2,moved.x(),1e-8);assertEquals(94,moved.y(),1e-8);assertEquals(44,moved.z(),1e-8);
             // A missed generic projectile must clear its long-lived local core at range exhaustion too.
             var shortRange=new org.bukkit.configuration.MemoryConfiguration();
             var section=shortRange.createSection("test");section.set("range",1);section.set("speed",1);

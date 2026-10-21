@@ -157,8 +157,7 @@ CHA_living_furnace:
 CHA_falling_star:
   Cooldown: 0
   Skills:
-    - delay 25
-    - chahit{r=4;max=12;knock=0.8;up=0.4;ignite=60;element=fire}
+    - chameteor{r=4;max=12;knock=0.8;up=0.4;ignite=60;charge=68;speed=0.6;skyx=-3;skyy=24;skyz=19;element=fire;spell=falling_star}
 CHA_flame_lash:
   Cooldown: 0
   Skills:

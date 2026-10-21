@@ -124,6 +124,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
             case "chaselfpotion" -> new SelfMech(this,p,true);
             case "chaselfvelocity" -> new SelfMech(this,p,false);
             case "chahit" -> new HitMech(this, p);
+            case "chameteor" -> new MeteorMech(this, p);
             case "chabolt" -> new BoltMech(this, p);
             case "chazone" -> new ZoneMech(this, p);
             case "chaguard" -> new GuardMech(this, p);
