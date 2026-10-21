@@ -60,6 +60,9 @@ final class FishShopScreen extends Screen {
     private final boolean[] checked = {true, true, true, true};
     private final Set<String> pending = new HashSet<>();     // lock tab edits until 적용
     private boolean dirty;
+    /** Lock set sent with 적용 and not yet confirmed by the server's state (null = nothing in flight). */
+    private Set<String> savingLocks;
+    private long savingAt, savedAt;
     private int scroll;
     private TextFieldWidget search;
     private String query = "", notice = "";
@@ -80,7 +83,14 @@ final class FishShopScreen extends Screen {
     void onState(State s) {
         state = s;
         if (!s.species().isEmpty()) species = s.species();
-        if (!dirty) { pending.clear(); pending.addAll(s.locks()); }
+        if (savingLocks != null) {
+            if (new HashSet<>(s.locks()).equals(savingLocks)) {
+                // server ack: the stored locks are exactly what we sent ("저장됨" only now)
+                boolean editedSince = !pending.equals(savingLocks);
+                savingLocks = null; dirty = editedSince; if (!editedSince) savedAt = Util.getMeasuringTimeMs();
+            } else if (!s.notice().isBlank()) savingLocks = null; // failure notice: keep the edits, still unsaved
+        }
+        if (!dirty && savingLocks == null) { pending.clear(); pending.addAll(s.locks()); }
         if (!s.notice().isBlank()) say(s.notice());
     }
     void onResult(Result r) {
@@ -93,6 +103,7 @@ final class FishShopScreen extends Screen {
 
     @Override public void tick() {
         if (busy && Util.getMeasuringTimeMs() - pendingAt > 10000) { busy = false; pendingOp = 0; say("서버 응답이 늦어요. 다시 시도해 주세요."); FishShopClient.query(); }
+        if (savingLocks != null && Util.getMeasuringTimeMs() - savingAt > 10000) { savingLocks = null; say("잠금 저장 응답이 늦어요. 「적용」을 다시 눌러 주세요."); FishShopClient.query(); }
     }
 
     // ------------------------------------------------------------------ model
@@ -132,7 +143,11 @@ final class FishShopScreen extends Screen {
         double mx = l.localX(mouseX), my = l.localY(mouseY);
         if (button != GLFW.GLFW_MOUSE_BUTTON_LEFT) return super.mouseClicked(mouseX, mouseY, button);
         if (in(mx, my, CLOSE_X, CLOSE_Y, CLOSE_S, CLOSE_S)) { close(); return true; }
-        if (in(mx, my, TAB_SALE_X, TAB_Y, TAB_W, TAB_H) && lockTab) { lockTab = false; search.setFocused(false); click(); return true; }
+        if (in(mx, my, TAB_SALE_X, TAB_Y, TAB_W, TAB_H) && lockTab) {
+            // unsaved lock edits are applied automatically; selling waits for the server to confirm them
+            if (dirty && savingLocks == null && applyLocks()) say("바뀐 잠금을 저장하고 있어요.");
+            lockTab = false; search.setFocused(false); click(); return true;
+        }
         if (in(mx, my, TAB_LOCK_X, TAB_Y, TAB_W, TAB_H) && !lockTab) { lockTab = true; scroll = 0; click(); return true; }
         if (!lockTab) {
             if (in(mx, my, ALL_X, BTN_Y, ALL_W, BTN_H)) { Arrays.fill(checked, true); click(); return true; }
@@ -158,7 +173,7 @@ final class FishShopScreen extends Screen {
             if (in(mx, my, BAR_X - 10, BAR_Y, 22, BAR_H)) { scroll = Math.round((float) ((my - BAR_Y) / BAR_H) * maxScroll()); return true; }
             if (in(mx, my, CLOSE_BTN_X, FOOT_BTN_Y, FOOT_BTN_W, FOOT_BTN_H)) { close(); return true; }
             if (in(mx, my, APPLY_X, FOOT_BTN_Y, FOOT_BTN_W, FOOT_BTN_H)) {
-                FishShopClient.locks(pending); dirty = false; click();
+                if (dirty && savingLocks == null && applyLocks()) click();
                 return true;
             }
         }
@@ -176,8 +191,16 @@ final class FishShopScreen extends Screen {
     }
     @Override public boolean charTyped(char chr, int mods) { return search.isFocused() ? search.charTyped(chr, mods) : super.charTyped(chr, mods); }
 
+    /** Sends the whole lock set; it counts as saved only when a state with exactly these locks comes back. */
+    private boolean applyLocks() {
+        if (!FishShopClient.locks(pending)) { say("서버에 연결되어 있지 않아요."); return false; }
+        savingLocks = Set.copyOf(pending); savingAt = Util.getMeasuringTimeMs();
+        return true;
+    }
     private void sell() {
         if (busy || state == null) return;
+        if (savingLocks != null) { say("잠금을 저장하는 중이에요. 저장된 뒤 판매해 주세요."); return; }
+        if (dirty) { say("바뀐 잠금이 아직 저장되지 않았어요. 잠금 설정에서 「적용」을 눌러 주세요."); return; }
         if (selectedCount() == 0) { say("판매할 물고기가 없어요."); return; }
         long op = FishShopClient.sell(mask(), selectedTotal());
         if (op == 0) { say("서버에 연결되어 있지 않아요."); return; }
@@ -390,9 +413,11 @@ final class FishShopScreen extends Screen {
         nine(c, "footer_panel", 1328, 154, i(60, 45, 60, 45), FOOT_X, FOOT_Y, FOOT_W, FOOT_H, 0xFFFFFFFF);
         float cy = FOOT_Y + FOOT_H / 2 + 1;
         whole(c, "lock_closed_gold", 128, 160, 642, cy - 13, 21, 27, 0xFFFFFFFF);
-        text(c, dirty ? "바뀐 잠금은 「적용」을 눌러야 저장돼요" : "잠긴 종류는 판매에서 제외됩니다", 682, cy, 19, dirty ? GOLD : TEXT, BODY, false);
+        boolean saving = savingLocks != null, saved = !dirty && !saving && savedAt != 0 && Util.getMeasuringTimeMs() - savedAt < 4000;
+        String footer = saving ? "잠금을 저장하는 중…" : dirty ? "바뀐 잠금은 「적용」을 눌러야 저장돼요" : saved ? "저장됨 · 잠긴 종류는 판매에서 제외됩니다" : "잠긴 종류는 판매에서 제외됩니다";
+        text(c, footer, 682, cy, 19, saving || dirty ? GOLD : TEXT, BODY, false);
         navyButton(c, mx, my, CLOSE_BTN_X, FOOT_BTN_Y, FOOT_BTN_W, FOOT_BTN_H, "닫기");
-        goldButton(c, mx, my, APPLY_X, FOOT_BTN_Y, FOOT_BTN_W, FOOT_BTN_H, "적용", dirty);
+        goldButton(c, mx, my, APPLY_X, FOOT_BTN_Y, FOOT_BTN_W, FOOT_BTN_H, saving ? "저장 중" : "적용", dirty && !saving);
     }
 
     private void card(DrawContext c, double mx, double my, Species s, float x, float y) {

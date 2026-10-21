@@ -67,7 +67,7 @@ public final class FishShopClient {
     }
     static void query() { send(FishShopProtocol.Request.of(FishShopProtocol.QUERY)); }
     static void close() { send(FishShopProtocol.Request.of(FishShopProtocol.CLOSE)); }
-    static void locks(Collection<String> ids) { send(FishShopProtocol.Request.locks(ids)); }
+    static boolean locks(Collection<String> ids) { return send(FishShopProtocol.Request.locks(ids)); }
     /** Returns the operation id (0 = not sent). */
     static long sell(int mask, long expected) {
         long op = ThreadLocalRandom.current().nextLong(1, Long.MAX_VALUE);
