@@ -86,9 +86,15 @@ final class FishingScreen extends Screen {
     private final int[] wear = new int[2];
     private long attackAt;
     private int attackKind, attackDamage;
-    // panel shake: thump at a pull's start, attack hit
-    private long thumpAt;
-    private float thumpAmp;
+    // panel shake: thump at a pull's start, attack hit, one-shot jolts (hook set, catch)
+    private long thumpAt, joltAt;
+    private float thumpAmp, joltAmp;
+    /** Overall shake strength (2026-10-21: halved; only the hook, the catch and a line about to snap shake hard). */
+    static final float SHAKE = .5f;
+    // fish mood (2026-10-21): resisting = a pull (winding raises tension), tired = a short rest after a pull or low stamina
+    static final int MOOD_NORMAL = FishMood.NORMAL, MOOD_RESIST = FishMood.RESIST, MOOD_TIRED = FishMood.TIRED;
+    private int mood;
+    private long moodAt;
     // result tooltip (drawn last, in screen coordinates)
     private ItemStack hoverStack = ItemStack.EMPTY;
     private String hoverLabel;
@@ -446,7 +452,8 @@ final class FishingScreen extends Screen {
     private void startReel() {
         // the button is still down from the hooking click: winding starts right away
         fishDepth = bobberDepth; stamina = 1; tension = .2f; overFor = 0; slackFor = 0; heat = 0; graceUsed = false; holding = true;
-        fishX = BOBBER_X; wobble = 0; pulling = false; thumpAt = 0; attackAt = 0;
+        fishX = BOBBER_X; wobble = 0; pulling = false; thumpAt = 0; attackAt = 0; mood = MOOD_NORMAL; moodAt = 0;
+        jolt(6); // the hook is set: one firm jolt
         attacksDone = 0; heldMask = 0; wear[0] = wear[1] = 0;
         nextEvent = 1.5f + rng.nextFloat() * 2; eventEnd = 0; eventKind = 0;
         sound(SoundEvents.ENTITY_FISHING_BOBBER_SPLASH, .7f, .6f);
@@ -490,6 +497,12 @@ final class FishingScreen extends Screen {
         float mod = pattern(t);
         boolean event = t < eventEnd;
         float st = stamina;
+        int nextMood = fishMood(t, event, mod, st);
+        if (nextMood == MOOD_TIRED) mod = Math.min(mod, .6f); // a tired fish really pulls less
+        if (nextMood != mood) {
+            mood = nextMood; moodAt = Util.getMeasuringTimeMs();
+            if (mood == MOOD_TIRED) sound(SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, 1.5f, .55f);
+        }
         float force = (.20f + .075f * p) * strain * (.4f + .6f * st) * mod;
         float reelPower = gear == null ? 10 : gear.reelPower();
         float reel = FishingProtocol.reelSpeed(reelPower);
@@ -500,9 +513,10 @@ final class FishingScreen extends Screen {
         float rise = special(FishingProtocol.ROD, "tension_rise") ? effect(FishingProtocol.ROD, "tension_rise") : 1;
         if (holding) {
             if (event && mod > 1.25f) fishDepth += down * .35f * dt;          // it takes line even while you wind
-            else fishDepth -= reel * .75f * Math.max(.15f, 1 - .8f * force) * dt;
+            else fishDepth -= reel * .75f * (mood == MOOD_TIRED ? 1.3f : 1) * Math.max(.15f, 1 - .8f * force) * dt;
             heat += .18f * strain * dt;
-            float target = ((.30f + force) * 100f / maxT + heat) * rise;
+            // winding into a pull strains the line; winding while it rests is cheap
+            float target = ((.30f + force) * 100f / maxT + heat) * rise * (mood == MOOD_TIRED ? .8f : 1) + (mood == MOOD_RESIST ? .12f : 0);
             tension += (target - tension) * Math.min(1, 2.2f * dt);
         } else {
             fishDepth += down * dt;
@@ -549,8 +563,14 @@ final class FishingScreen extends Screen {
         } else slackFor = 0;
         float length = gear == null ? 15 : gear.lineLength();
         if (fishDepth >= length) { fishDepth = length; reelFlee(); report(FishingProtocol.ESCAPED); return; }
-        if (fishDepth <= 0) { fishDepth = 0; report(FishingProtocol.CAUGHT); }
+        if (fishDepth <= 0) { fishDepth = 0; jolt(6); report(FishingProtocol.CAUGHT); }
     }
+
+    /** Resisting while it pulls; tired for a moment after each pull (and for good once stamina runs low). */
+    private int fishMood(float t, boolean event, float mod, float st) {
+        return FishMood.of(bite.pattern() == FishingProtocol.SURGE, t, event, mod, st, eventEnd, nextEvent);
+    }
+    private void jolt(float amp) { joltAt = Util.getMeasuringTimeMs(); joltAmp = amp; }
 
     /** Plays the bite's attacks that are due. Winding at that moment doubles the wear (heldMask bit i). */
     private void attacks(float t) {
@@ -583,7 +603,7 @@ final class FishingScreen extends Screen {
 
     @Override public void tick() {
         if (client == null || client.player == null || !client.player.isAlive()) { close(); return; }
-        if (phase == WAIT_RESULT && since(phaseAt) > 8) { client.inGameHud.setOverlayMessage(Text.literal("서버 응답이 늦어서 낚시를 멈췄어요."), false); close(); return; }
+        if (phase == WAIT_RESULT && since(phaseAt) > 8) { SharedNotifications.offer("fishing:timeout", "error", "낚시를 멈췄어요", "서버 응답이 늦어서 낚시를 멈췄어요."); close(); return; }
         if (phase == CASTING && since(phaseAt) > 10) { say("찌를 던지지 못했어요. 다시 클릭해 주세요."); setPhase(READY); }
     }
 
@@ -683,17 +703,19 @@ final class FishingScreen extends Screen {
     private float[] shake() {
         float ox = 0, oy = 0;
         if (phase != REEL && phase != WAIT_RESULT) return new float[]{0, 0};
+        // one-shot jolt: hook set (start of REEL) and the catch (decays within .3 s; nothing else while waiting for the result)
+        float j = since(joltAt);
+        if (joltAt != 0 && j < .3f) { float k = 1 - j / .3f, a = joltAmp * k * k; ox += a * (float) Math.sin(j * 60); oy += a * .8f * (float) Math.cos(j * 47); }
+        if (phase != REEL) return new float[]{ox, oy};
         float time = Util.getMeasuringTimeMs() / 1000f;
         float u = since(thumpAt);
-        if (thumpAt != 0 && u < .25f) { float k = 1 - u / .25f, a = thumpAmp * k * k; ox += a * .55f * (float) Math.sin(u * 70); oy += a * (float) Math.cos(u * 52); }
+        if (thumpAt != 0 && u < .25f) { float k = 1 - u / .25f, a = SHAKE * thumpAmp * k * k; ox += a * .55f * (float) Math.sin(u * 70); oy += a * (float) Math.cos(u * 52); }
         float v = since(attackAt);
-        if (attackAt != 0 && v < .35f) { float k = 1 - v / .35f, a = 11 * k * k; ox += a * (float) Math.sin(v * 64); oy += a * .8f * (float) Math.cos(v * 49); }
-        if (phase == REEL) {
-            if (pulling) { ox += 1.1f * (float) Math.sin(time * 38); oy += .9f * (float) Math.cos(time * 31); }
-            if (tension >= .85f) {
-                float r = Math.clamp((tension - .85f) / .15f, 0, 1), a = .5f + 1.9f * r;
-                ox += a * (float) Math.sin(time * (70 + 40 * r)); oy += a * .6f * (float) Math.cos(time * (83 + 40 * r));
-            }
+        if (attackAt != 0 && v < .35f) { float k = 1 - v / .35f, a = SHAKE * 11 * k * k; ox += a * (float) Math.sin(v * 64); oy += a * .8f * (float) Math.cos(v * 49); }
+        // no constant tremble while a pull lasts; only a line about to snap trembles
+        if (tension >= .92f) {
+            float r = Math.clamp((tension - .92f) / .08f, 0, 1), a = SHAKE * (.5f + 1.9f * r);
+            ox += a * (float) Math.sin(time * (70 + 40 * r)); oy += a * .6f * (float) Math.cos(time * (83 + 40 * r));
         }
         return new float[]{ox, oy};
     }
@@ -1050,10 +1072,11 @@ final class FishingScreen extends Screen {
         float t = since(phaseAt);
         boolean chest = bite.shape() == FishingProtocol.SHAPE_CHEST;
         float fy = screenY(fishDepth);
-        float shake = (float) Math.sin(t * (holding ? 26 : 12)) * (2 + tension * 5);
-        // an attack jolts the fish hard
+        // gentle sway only (was a constant ±2..7 px tremble); stronger only near the snapping point
+        float shake = (float) Math.sin(t * (holding ? 14 : 8)) * (.6f + Math.max(0, tension - .85f) * 10);
+        // an attack jolts the fish
         float hit = since(attackAt);
-        if (attackAt != 0 && hit < .35f) shake += 22 * (1 - hit / .35f) * (float) Math.sin(hit * 50);
+        if (attackAt != 0 && hit < .35f) shake += SHAKE * 22 * (1 - hit / .35f) * (float) Math.sin(hit * 50);
         boolean vanished = bite.pattern() == FishingProtocol.TELEPORT && t < eventEnd && eventEnd - t > .25f;
         // decoys
         if (bite.pattern() == FishingProtocol.DECOY) for (int i = 0; i < 2; i++) {
@@ -1066,8 +1089,18 @@ final class FishingScreen extends Screen {
             if (bite.grade() >= 0) bloom(c, fishX, fy, fishW * .6f, GRADE[bite.grade()] & 0xFFFFFF, .2f);
             float rot = (float) Math.sin(t * 9) * (.05f + tension * .06f);
             if (attackAt != 0 && hit < .35f) rot += .35f * (1 - hit / .35f) * (float) Math.sin(hit * 38);
+            // mood: tired = pale blue glow + calm silhouette, resisting = red glow (the label below says it in words)
+            float moodIn = Math.min(1, since(moodAt) / .2f);
+            if (mood == MOOD_TIRED) bloom(c, fishX, fy, fishW * .75f, 0x7FD8FF, .45f * moodIn);
+            else if (mood == MOOD_RESIST) bloom(c, fishX, fy, fishW * .7f, 0xFF4A3A, .35f * moodIn);
+            int body = mood == MOOD_TIRED ? 0xF2223A55 : mood == MOOD_RESIST ? 0xF2330A0C : 0xF2040C1A;
             if (chest) drawCentered(c, SHAPES[FishingProtocol.SHAPE_CHEST], fishX + shake, fy, fishW, fishW, 0xEE050B16, false, rot, false);
-            else drawCentered(c, SHAPES[bite.shape()], fishX + shake, fy, fishW, fishW, 0xF2040C1A, fishSide > 0, rot, false);
+            else drawCentered(c, SHAPES[bite.shape()], fishX + shake, fy, fishW, fishW, body, fishSide > 0, rot, false);
+            if (!chest && mood != MOOD_NORMAL) {
+                boolean tired = mood == MOOD_TIRED;
+                float pop = since(moodAt) < .15f ? 1.25f - since(moodAt) * 1.6f : 1;
+                outlined(c, tired ? "지쳤다! 지금 감기" : "저항 중 · 풀어 주기", fishX, fy - fishW * .55f - 18, 17 * pop, tired ? 0xFF9FEAFF : 0xFFFF8C7E, BOLD);
+            }
             // struggle lines
             if (!chest) for (int i = 0; i < 3; i++) {
                 float a = .25f + .35f * (float) Math.max(0, Math.sin(t * 10 + i * 2));
@@ -1147,7 +1180,7 @@ final class FishingScreen extends Screen {
     /** Tension gauge (left side). In the red zone it shakes and blinks, faster towards 100%. */
     private void tensionGauge(DrawContext c, float t) {
         float red = tension >= .85f ? Math.clamp((tension - .85f) / .15f, 0, 1) : -1;
-        float x = GAUGE_X + (red >= 0 ? (float) Math.sin(t * (60 + 30 * red)) * (1 + 2 * red) : 0), top = GAUGE_TOP, bottom = GAUGE_BOTTOM, h = bottom - top;
+        float x = GAUGE_X + (red >= 0 ? (float) Math.sin(t * (60 + 30 * red)) * SHAKE * (1 + 2 * red) : 0), top = GAUGE_TOP, bottom = GAUGE_BOTTOM, h = bottom - top;
         text(c, "장력", x, top - 26, 17, TEXT, BOLD, true);
         // zones: 안전 (bottom 40%), 주의, 위험 (top 25%)
         rect(c, x - 2.2f, top + h * .25f, 4.4f, h * .35f, 0xFFE7C24E);
