@@ -157,6 +157,22 @@ public final class MagicCodexLink implements Listener {
         return future("commitGift", player, npc, token);
     }
 
+    /** 이 Bridge 가 선물 영수증(takeGift)을 지원하는지 (A08, 2026-10-21). 없으면 선물을 하지 않는다. */
+    public boolean giftReceipts() {
+        return facade != null && methods.containsKey("takeGift");
+    }
+
+    /** 1 = 차감+영수증 저장, 0 = 칸이 바뀌어 차감 안 함, -1 = 결과 모름 (차감됐을 수 있음: 취소·환불하지 않는다). */
+    public int takeGift(Player player, int slot, org.bukkit.inventory.ItemStack one, String token) {
+        try {
+            Object r = call("takeGift", player, slot, one, token);
+            return r instanceof Number n ? n.intValue() : -1;
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            log.warning("[ChacaNPC] 선물 차감 결과 확인 실패 (토큰 " + token + "): " + e.getClass().getSimpleName());
+            return -1;
+        }
+    }
+
     public CompletableFuture<Boolean> cancelGift(String token) {
         return future("cancelGift", token);
     }

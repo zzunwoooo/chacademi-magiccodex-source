@@ -60,6 +60,12 @@ final class AffinityStore implements AutoCloseable {
                     + " npc VARCHAR(48) NOT NULL, day CHAR(10) NOT NULL, delta INT NOT NULL, status VARCHAR(12) NOT NULL,"
                     + " created BIGINT NOT NULL)" + engine);
         }
+        // A08 (2026-10-21): 선물을 시작한 서버(origin). 추가 전용. 옛 행은 '' (자동 처리하지 않고 관리자 확인).
+        try (var s = holder.get().createStatement(); var r = s.executeQuery("SELECT origin FROM " + gift + " WHERE 1=0")) {
+            // 이미 있음
+        } catch (SQLException missing) {
+            try (var s = holder.get().createStatement()) { s.execute("ALTER TABLE " + gift + " ADD COLUMN origin VARCHAR(36) NOT NULL DEFAULT ''"); }
+        }
     }
 
     private String lock() {
@@ -369,7 +375,7 @@ final class AffinityStore implements AutoCloseable {
      * 1단계: 하루 선물 횟수를 예약하고 pending 기록을 만든다. 아이템은 아직 차감하지 않는다.
      * 같은 토큰은 한 번만 처리된다.
      */
-    GiftBegin beginGift(String token, UUID owner, String npc, int delta, String day, int dailyCount, long now)
+    GiftBegin beginGift(String token, UUID owner, String npc, int delta, String day, int dailyCount, long now, String origin)
             throws SQLException {
         return tx(db -> {
             try (PreparedStatement s = db.prepareStatement("SELECT status FROM " + gift + " WHERE token=?")) {
@@ -386,13 +392,14 @@ final class AffinityStore implements AutoCloseable {
                 return GiftBegin.CAP;
             }
             try (PreparedStatement s = db.prepareStatement("INSERT INTO " + gift
-                    + " (token, owner, npc, day, delta, status, created) VALUES (?,?,?,?,?,'pending',?)")) {
+                    + " (token, owner, npc, day, delta, status, created, origin) VALUES (?,?,?,?,?,'pending',?,?)")) {
                 s.setString(1, token);
                 s.setString(2, owner.toString());
                 s.setString(3, npc);
                 s.setString(4, day);
                 s.setInt(5, delta);
                 s.setLong(6, now);
+                s.setString(7, origin == null ? "" : origin);
                 s.executeUpdate();
             }
             return GiftBegin.OK;
@@ -458,28 +465,49 @@ final class AffinityStore implements AutoCloseable {
         });
     }
 
+    // ------------------------------------------------------------------ 선물 복구 (A08, 2026-10-21)
+
+    /** 끝나지 않은 선물 한 건. origin = 선물을 시작한 서버 ('' = 옛 기록). */
+    record PendingGift(String token, UUID owner, String npc, int delta, String origin, long created) {
+    }
+
+    enum Recovery { COMMIT, CANCEL, WAIT, SKIP, REVIEW }
+
     /**
-     * 서버가 선물 도중 꺼졌을 때: 오래된 pending은 "아이템이 이미 차감됐다"고 보고 확정한다.
-     * (환불하지 않으므로 아이템 복제가 없고, 토큰당 한 번만 점수가 오른다.)
+     * 접속한 서버에서 pending 선물 하나를 어떻게 할지 (우편 수령과 같은 "같은 스냅샷 영수증" 규칙).
+     * 아이템 차감과 영수증(PDC)은 같은 틱에 같은 플레이어 데이터에 저장되므로:
+     * 영수증이 없으면 차감 전에 멈춘 것 → 취소(하루 횟수 돌려줌) / 영수증이 디스크에도 있으면 차감 확정 → 확정 /
+     * 메모리에만 있으면 저장을 기다림 / 다른 서버 기록은 그 서버가 처리 / origin 이 없는 옛 기록은 관리자 확인.
      */
-    int recoverPendingGifts(long olderThan, long now) throws SQLException {
-        java.util.List<String> tokens = new java.util.ArrayList<>();
-        try (PreparedStatement s = holder.get().prepareStatement("SELECT token FROM " + gift
-                + " WHERE status='pending' AND created<?")) {
-            s.setLong(1, olderThan);
+    static Recovery recovery(String origin, String here, boolean pdcReceipt, boolean diskReceipt) {
+        if (origin == null || origin.isEmpty()) return Recovery.REVIEW;
+        if (!origin.equals(here)) return Recovery.SKIP;
+        if (!pdcReceipt) return Recovery.CANCEL;
+        return diskReceipt ? Recovery.COMMIT : Recovery.WAIT;
+    }
+
+    /** 이 플레이어의 pending 선물 (createdBefore 보다 먼저 시작된 것만: 지금 진행 중인 선물은 건드리지 않는다). */
+    java.util.List<PendingGift> pendingGifts(UUID owner, long createdBefore) throws SQLException {
+        var out = new java.util.ArrayList<PendingGift>();
+        try (PreparedStatement s = holder.get().prepareStatement("SELECT token, owner, npc, delta, origin, created FROM " + gift
+                + " WHERE owner=? AND status='pending' AND created<? ORDER BY created")) {
+            s.setString(1, owner.toString());
+            s.setLong(2, createdBefore);
             try (ResultSet r = s.executeQuery()) {
                 while (r.next()) {
-                    tokens.add(r.getString(1));
+                    out.add(new PendingGift(r.getString(1), UUID.fromString(r.getString(2)), r.getString(3), r.getInt(4), r.getString(5), r.getLong(6)));
                 }
             }
         }
-        int n = 0;
-        for (String t : tokens) {
-            if (commitGift(t, now) != null) {
-                n++;
-            }
+        return out;
+    }
+
+    /** origin 이 없는 옛 pending 수 (시작 시 관리자 안내용). 자동으로 확정하지 않는다. */
+    int legacyPendingGifts() throws SQLException {
+        try (PreparedStatement s = holder.get().prepareStatement("SELECT COUNT(*) FROM " + gift + " WHERE status='pending' AND origin=''");
+             ResultSet r = s.executeQuery()) {
+            return r.next() ? r.getInt(1) : 0;
         }
-        return n;
     }
 
     @Override
