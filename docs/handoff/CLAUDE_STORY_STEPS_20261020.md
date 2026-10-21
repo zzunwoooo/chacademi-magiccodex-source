@@ -130,3 +130,16 @@ NPC 는 Citizens 로 소환한 NPC 를 클릭해 지정 (서버 ID `quest-server
 
 - JAR: ChacademyStory · 스토리 모드 · MagicCodexBridge (학교·야생) · ChacaHousing · ChacaNPC
 - 설정: 위 5절 표 + 6절은 운영자가 게임 안에서.
+
+## 11. 추가 수정 (2026-10-21) — 위치 포탈 대화를 닫았을 때
+
+오너 결정: 위치 포탈로 연 대화를 중간에 닫으면, 포탈 밖으로 **한 번 나갔다가 다시 들어와야** 다시 열린다.
+그 전에는 포탈 안에 서 있기만 해도 3초 뒤 저절로 다시 열렸다.
+
+- 파일: `chacademy-story/plugin/.../QuestEngine.java` 하나
+- `mustLeave`(메모리 전용 Set): `dialogueAborted` → `backToActive` 뒤, 호출이 위치이고 유저가 포탈 안이면 추가
+- `tick` 과 `checkLocation`: `mustLeave` 이면 위치 호출 안 함. `tick` 에서 포탈 밖이거나 호출 방식이 위치가 아니면 지움
+- 지우는 곳: `enter`(단계 변경), `onQuit`, `/유저관리 … 스토리진행 다시`·`초기화`. 관리자 `다음`(강제 호출)은 막지 않음
+- NPC 클릭·자동·컷신·시작명령 동작은 그대로. 30분 시간 초과·컷신 취소로 되돌릴 때는 표시를 붙이지 않음
+- 빌드 확인 못 함 (기존 클래스와 같은 import·타입만 사용, 새 의존 없음)
+- 실서버 확인: 포탈 대화 ESC → 그 자리 대기(안 열려야 함) → 포탈 밖 → 다시 들어감(열려야 함)
