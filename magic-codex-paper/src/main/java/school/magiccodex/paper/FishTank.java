@@ -25,7 +25,7 @@ final class FishTank implements AutoCloseable {
   try{var folder=plugin.getDataFolder().toPath();var dedicated=folder.resolve("player-state-database.properties");s=DatabaseSettings.load(java.nio.file.Files.exists(dedicated)?dedicated:folder.resolve("database.properties"));}
   catch(Exception e){s=new DatabaseSettings(false,"","","");}
   settings=s;sqlite=plugin.getDataFolder().toPath().resolve("fishing.db");
-  io.execute(()->{try{db();}catch(Exception e){failure("schema",e);}});
+  io.execute(()->{try{db();int stuck=db().stuckCount();if(stuck>0)plugin.getLogger().warning("FISH TANK 판매·꺼내기 도중 멈춘 물고기 "+stuck+"마리 (수조 칸 차지). /유저관리 <닉네임> 낚시 수조 멈춘처리 로 확인하세요");}catch(Exception e){failure("schema",e);}});
   io.scheduleWithFixedDelay(()->{try{recover();}catch(Exception e){failure("catch recovery (records retained)",e);}},5,5,TimeUnit.SECONDS);
  }
  private FishTankSql db()throws Exception{
@@ -80,6 +80,10 @@ final class FishTank implements AutoCloseable {
   io.execute(()->{boolean ok=false;try{ok=db().finish(id,fish,action,success);}catch(Exception e){failure("finalize (claim retained for reconciliation)",e);}boolean out=ok;
    main(()->{refresh(id,()->{if(done!=null)done.accept(out);});});
   });
+ }
+ /** 판매·꺼내기 도중 멈춘 물고기 목록 (실패하면 null). */
+ void stuck(UUID id,Consumer<List<FishTankSql.Stuck>> done){
+  io.execute(()->{List<FishTankSql.Stuck> rows=null;try{rows=db().stuck(id);}catch(Exception e){failure("stuck claims",e);}var out=rows;main(()->done.accept(out));});
  }
  void locks(UUID id,Set<String> species,Consumer<Boolean> done){
   var copy=Set.copyOf(species);io.execute(()->{boolean ok=false;try{db().locks(id,copy);ok=true;}catch(Exception e){failure("locks",e);}boolean out=ok;
