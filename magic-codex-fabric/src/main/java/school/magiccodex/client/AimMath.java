@@ -45,6 +45,12 @@ public final class AimMath {
     }
 
     /** Pulls (x,z) toward (cx,cz) so that the horizontal distance is at most {@code max}. Returns {x,z,clampedFlag}. */
+    /** 1-6 #6: ground spells measure range horizontally (caster above the ground). */
+    public static boolean horizontalWithin(double cx, double cz, double x, double z, double max) {
+        double dx = x - cx, dz = z - cz;
+        return max > 0 && dx * dx + dz * dz <= max * max;
+    }
+
     public static double[] clampHorizontal(double cx, double cz, double x, double z, double max) {
         double dx = x - cx, dz = z - cz, d = Math.sqrt(dx * dx + dz * dz);
         if (d <= max || d < 1e-9) return new double[]{x, z, 0};

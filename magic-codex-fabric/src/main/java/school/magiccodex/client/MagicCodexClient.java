@@ -38,6 +38,7 @@ public final class MagicCodexClient implements ClientModInitializer {
         TemperatureClient.initialize();
         SeasonClient.initialize();
         ManaClient.initialize();
+        CastAimClient.initialize();
         StatsClient.initialize();
         AscensionClient.initialize();
         AppraisalClient.initialize();EnhancementClient.initialize();ReconfigurationClient.initialize();

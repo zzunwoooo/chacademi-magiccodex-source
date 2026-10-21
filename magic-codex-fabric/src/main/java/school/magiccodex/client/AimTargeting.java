@@ -96,10 +96,14 @@ public final class AimTargeting {
         float[] look = AimMath.yawPitch(aim.x - eye.x, aim.y - eye.y, aim.z - eye.z);
         // One rotation update for the server only; the local vanilla mouse view is not snapped.
         c.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(look[0], look[1], player.isOnGround(), player.horizontalCollision));
-        if (airPoint && KyudichiClient.airAim()) KyudichiClient.sendAim(aim);
+        boolean air = airPoint && KyudichiClient.airAim();
+        if (air) KyudichiClient.sendAim(aim);
         var chosen = spell;
+        // C04: the server uses this point/target (after its range, sight and direction checks) instead of re-tracing.
+        CastAimClient.send(chosen.id(), p.target() == null ? aim : inside(p.target().getBoundingBox(), aim), p.target(), air);
         cancel(false);
-        CastingClient.fire(chosen);
+        try { CastingClient.fire(chosen); }
+        finally { CrosshairAim.restore(c); } // put the server-side head back to the real view (others saw it stuck)
         return true;
     }
 
@@ -164,13 +168,14 @@ public final class AimTargeting {
         else if(grounded(shape.mode())&&target==null&&hit.getType()==HitResult.Type.MISS){
             // Zones and walls belong on the ground: a ray into the air is moved down onto the ground under the aim
             // (pulled in toward the caster until it is within range and in sight), never left floating.
+            // 1-6 #6: no ground under the aim (high above it) = the zone stays at the aim point in the air (server: same rule).
             Vec3d ground=groundUnder(world,player,eye,end,reach);
-            if(ground==null)reason="바닥을 조준해 주세요.";else{castPoint=ground;snapped=true;}
+            if(ground!=null){castPoint=ground;snapped=true;}
         }
         if(shape.mode()==Mode.UNIT){
             if(target==null)reason="사거리 안의 대상을 조준해 주세요.";
             else if(shape.filter()==SpellTargets.Filter.AIR&&target.isOnGround())reason="공중에 있는 대상에게 사용해 주세요.";
-            else if(shape.filter()==SpellTargets.Filter.BURNING&&!target.isOnFire())reason="불타는 대상에게 사용해 주세요.";
+            else if(shape.filter()==SpellTargets.Filter.BURNING&&!burning(target))reason="화상 상태인 대상에게 사용해 주세요.";
             if(target!=null)candidates.add(target);
         }
         Vec3d point=castPoint,origin=eye;
@@ -186,25 +191,41 @@ public final class AimTargeting {
         return new Preview(shape,feet,eye,point,target,candidates,reason==null,reason,snapped||hit.getType()!=HitResult.Type.MISS,castPoint,origin);
     }
 
+    /** The point of the box closest to {@code v} (a ModelEngine hitbox hit is reported on the mob's own box). */
+    static Vec3d inside(Box b, Vec3d v) {
+        return new Vec3d(MathHelper.clamp(v.x, b.minX, b.maxX), MathHelper.clamp(v.y, b.minY, b.maxY), MathHelper.clamp(v.z, b.minZ, b.maxZ));
+    }
+
+    /** 화상 (status BURN from the server's status icons; 10-19 화상 sets no vanilla fire) or vanilla fire. */
+    static boolean burning(LivingEntity target) {
+        if (target.isOnFire()) return true;
+        for (var line : StatusClient.of(target.getId())) if (line.status() == school.magiccodex.protocol.StatusProtocol.Status.BURN) return true;
+        return false;
+    }
+
     /** Area, point and wall spells are placed on the ground; lines, cones and unit spells are not. */
     static boolean grounded(Mode mode){return mode==Mode.AREA||mode==Mode.POINT||mode==Mode.WALL;}
 
     /**
      * Ground point for an aim that hit nothing: straight down from the end of the ray, pulled back toward the caster
-     * in small steps until the point is inside the server ray length and nothing blocks the eyes' line to it.
+     * in small steps until the point is inside the range and nothing blocks the eyes' line to it.
+     * 1-6 #6: the range is horizontal (the server checks ground spells the same way), so a caster high in the air
+     * can still place a zone on the ground below; the search goes {@link #GROUND_DEPTH} blocks down.
      */
     private static Vec3d groundUnder(World world,Entity player,Vec3d eye,Vec3d end,double range){
         double dx=end.x-eye.x,dz=end.z-eye.z,top=Math.max(end.y,eye.y)+.5;
         for(int i=0;i<=16;i++){
             double f=1-i*.05;if(f<.15)break;
             double x=eye.x+dx*f,z=eye.z+dz*f;
-            Double y=Ground.top(world,x,top,z,48);
+            Double y=Ground.top(world,x,top,z,GROUND_DEPTH);
             if(y==null)continue;
             Vec3d p=new Vec3d(x,y,z);
-            if(eye.squaredDistanceTo(p)<=(range-.1)*(range-.1)&&sight(world,player,eye,p))return p;
+            if(AimMath.horizontalWithin(eye.x,eye.z,p.x,p.z,range-.1)&&sight(world,player,eye,p))return p;
         }
         return null;
     }
+    /** How far below the aim the ground is searched (server AimCheck.GROUND_DEPTH allows a little more). */
+    static final int GROUND_DEPTH=32;
 
     /**
      * ModelEngine mobs are sent to clients with the invisible flag (the model is drawn by display entities), so

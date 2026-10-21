@@ -65,6 +65,7 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.45
+    ground: true
   vacuum_cleave:
     name: "윈드 커터"
     skill: "CHA_vacuum_cleave"
@@ -105,6 +106,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   dust_duster:
     name: "클린"
     skill: "CHA_dust_duster"
@@ -161,6 +163,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   air_step:
     name: "허공 디딤"
     skill: "CHA_air_step"
@@ -177,6 +180,7 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.5
+    ground: true
   air_stacking:
     name: "허공 쌓기"
     skill: "CHA_air_stacking"
@@ -185,6 +189,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   arrested_orbit:
     name: "퍼붓는 화살"
     skill: "CHA_arrested_orbit"
@@ -249,6 +254,7 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.4
+    ground: true
   fire_curtain:
     name: "플레어 월"
     skill: "CHA_fire_curtain"
@@ -257,6 +263,7 @@ spells:
     utility: false
     base-damage: 2
     power-ratio: 0.12
+    ground: true
   phoenix_oath:
     name: "불사조의 서약"
     skill: "CHA_phoenix_oath"
@@ -281,6 +288,7 @@ spells:
     utility: false
     base-damage: 14
     power-ratio: 0.9
+    ground: true
   flame_lash:
     name: "화염 채찍"
     skill: "CHA_flame_lash"
@@ -481,6 +489,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   water_elemental:
     name: "운디네"
     skill: "CHA_water_elemental"
@@ -505,6 +514,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   dye_rinse:
     name: "염색 씻기"
     skill: "CHA_dye_rinse"
@@ -529,6 +539,7 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.45
+    ground: true
   pressure_lance:
     name: "수압창"
     skill: "CHA_pressure_lance"
@@ -553,6 +564,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   wash_letters:
     name: "글씨 씻기"
     skill: "CHA_wash_letters"
@@ -561,6 +573,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   healing_rain:
     name: "치유의 비"
     skill: "CHA_healing_rain"
@@ -569,6 +582,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   dew_gathering:
     name: "이슬 모으기"
     skill: "CHA_dew_gathering"
@@ -601,6 +615,7 @@ spells:
     utility: false
     base-damage: 9
     power-ratio: 0.6
+    ground: true
   waterspout:
     name: "용오름"
     skill: "CHA_waterspout"
@@ -609,6 +624,7 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.45
+    ground: true
   current_sorting:
     name: "사금 추출"
     skill: "CHA_current_sorting"
@@ -641,6 +657,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   ripple_guard:
     name: "파문방벽"
     skill: "CHA_ripple_guard"
@@ -673,6 +690,7 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.35
+    ground: true
   verdant_touch:
     name: "풍요의 손길"
     skill: "CHA_verdant_touch"
@@ -737,6 +755,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   vine_ladder:
     name: "덩굴 사다리"
     skill: "CHA_vine_ladder"
@@ -801,6 +820,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   earth_anchor:
     name: "대지의 닻"
     skill: "CHA_earth_anchor"
@@ -817,6 +837,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   iron_carapace:
     name: "철의 외피"
     skill: "CHA_iron_carapace"
@@ -841,6 +862,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   flint_sorting:
     name: "돌 고르기"
     skill: "CHA_flint_sorting"
@@ -857,6 +879,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   compost_return:
     name: "퇴비 환원"
     skill: "CHA_compost_return"
@@ -881,6 +904,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   dormant_seed:
     name: "동면의 씨앗"
     skill: "CHA_dormant_seed"
@@ -929,6 +953,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   mountain_back:
     name: "산맥의 등"
     skill: "CHA_mountain_back"
@@ -1073,6 +1098,7 @@ spells:
     utility: false
     base-damage: 10
     power-ratio: 0.6
+    ground: true
   firefly_mark:
     name: "반딧불 표식"
     skill: "CHA_firefly_mark"
@@ -1097,6 +1123,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   guiding_fletching:
     name: "유도 깃"
     skill: "CHA_guiding_fletching"
@@ -1273,6 +1300,7 @@ spells:
     utility: false
     base-damage: 4
     power-ratio: 0.3
+    ground: true
   seal_talismans:
     name: "봉인 부적"
     skill: "CHA_seal_talismans"
@@ -1305,6 +1333,7 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.2
+    ground: true
   soul_scythe:
     name: "영혼 낫"
     skill: "CHA_soul_scythe"
@@ -1329,6 +1358,7 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.2
+    ground: true
   shadow_leap:
     name: "그림자 도약"
     skill: "CHA_shadow_leap"
@@ -1409,6 +1439,7 @@ spells:
     utility: false
     base-damage: 2
     power-ratio: 0.15
+    ground: true
   shadow_double:
     name: "그림자 분신"
     skill: "CHA_shadow_double"
@@ -1457,6 +1488,7 @@ spells:
     utility: false
     base-damage: 2
     power-ratio: 0.15
+    ground: true
   drowsiness:
     name: "졸음"
     skill: "CHA_drowsiness"
@@ -1465,6 +1497,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   misfortune_whisper:
     name: "나약함의 저주"
     skill: "CHA_misfortune_whisper"
@@ -1497,6 +1530,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   pain_deferral:
     name: "고통 유예"
     skill: "CHA_pain_deferral"
@@ -1561,6 +1595,7 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.45
+    ground: true
   warning_thread:
     name: "경고의 실"
     skill: "CHA_warning_thread"
@@ -1569,6 +1604,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   wound_accounting:
     name: "상처 회계"
     skill: "CHA_wound_accounting"
@@ -1601,6 +1637,7 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.2
+    ground: true
   void_maw:
     name: "공허의 입"
     skill: "CHA_void_maw"
@@ -1609,6 +1646,7 @@ spells:
     utility: false
     base-damage: 14
     power-ratio: 0.9
+    ground: true
   landing_airbrake:
     name: "빗자루 차원이동"
     skill: "CHA_landing_airbrake"
@@ -1649,6 +1687,7 @@ spells:
     utility: false
     base-damage: 4
     power-ratio: 0.3
+    ground: true
   folding_tideplane:
     name: "접히는 수면"
     skill: "CHA_folding_tideplane"
@@ -1657,6 +1696,7 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.4
+    ground: true
   thawing_heat:
     name: "해빙의 열기"
     skill: "CHA_thawing_heat"

@@ -31,6 +31,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   pressure_press:
     name: 윈드 프레스
     skill: CHA_pressure_press
@@ -103,6 +104,7 @@ spells:
     utility: false
     base-damage: 2
     power-ratio: 0.12
+    ground: true
   flame_lash:
     name: 화염 채찍
     skill: CHA_flame_lash
@@ -271,6 +273,7 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.45
+    ground: true
   returning_wind:
     name: 되받는 바람
     skill: CHA_returning_wind
@@ -287,6 +290,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   air_step:
     name: 허공 디딤
     skill: CHA_air_step
@@ -303,6 +307,7 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.5
+    ground: true
   air_stacking:
     name: 허공 쌓기
     skill: CHA_air_stacking
@@ -311,6 +316,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   crossfire:
     name: 크로스 애로우
     skill: CHA_crossfire
@@ -335,6 +341,7 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.4
+    ground: true
   phoenix_oath:
     name: 불사조의 서약
     skill: CHA_phoenix_oath
@@ -351,6 +358,7 @@ spells:
     utility: false
     base-damage: 14
     power-ratio: 0.9
+    ground: true
   ash_brand:
     name: 재의 낙인
     skill: CHA_ash_brand
@@ -487,6 +495,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   water_elemental:
     name: 운디네
     skill: CHA_water_elemental
@@ -511,6 +520,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   dye_rinse:
     name: 염색 씻기
     skill: CHA_dye_rinse
@@ -535,6 +545,7 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.45
+    ground: true
   pressure_lance:
     name: 수압창
     skill: CHA_pressure_lance
@@ -559,6 +570,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   wash_letters:
     name: 글씨 씻기
     skill: CHA_wash_letters
@@ -567,6 +579,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   healing_rain:
     name: 치유의 비
     skill: CHA_healing_rain
@@ -575,6 +588,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   dew_gathering:
     name: 이슬 모으기
     skill: CHA_dew_gathering
@@ -607,6 +621,7 @@ spells:
     utility: false
     base-damage: 9
     power-ratio: 0.6
+    ground: true
   waterspout:
     name: 용오름
     skill: CHA_waterspout
@@ -615,6 +630,7 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.45
+    ground: true
   current_sorting:
     name: 사금 추출
     skill: CHA_current_sorting
@@ -647,6 +663,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   ripple_guard:
     name: 파문방벽
     skill: CHA_ripple_guard
@@ -679,6 +696,7 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.35
+    ground: true
   verdant_touch:
     name: 풍요의 손길
     skill: CHA_verdant_touch
@@ -727,6 +745,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   vine_ladder:
     name: 덩굴 사다리
     skill: CHA_vine_ladder
@@ -791,6 +810,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   earth_anchor:
     name: 대지의 닻
     skill: CHA_earth_anchor
@@ -807,6 +827,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   iron_carapace:
     name: 철의 외피
     skill: CHA_iron_carapace
@@ -831,6 +852,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   flint_sorting:
     name: 돌 고르기
     skill: CHA_flint_sorting
@@ -847,6 +869,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   compost_return:
     name: 퇴비 환원
     skill: CHA_compost_return
@@ -871,6 +894,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   dormant_seed:
     name: 동면의 씨앗
     skill: CHA_dormant_seed
@@ -919,6 +943,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   mountain_back:
     name: 산맥의 등
     skill: CHA_mountain_back
@@ -1063,6 +1088,7 @@ spells:
     utility: false
     base-damage: 10
     power-ratio: 0.6
+    ground: true
   firefly_mark:
     name: 반딧불 표식
     skill: CHA_firefly_mark
@@ -1087,6 +1113,7 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+    ground: true
   guiding_fletching:
     name: 유도 깃
     skill: CHA_guiding_fletching

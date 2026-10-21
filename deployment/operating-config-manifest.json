@@ -7,7 +7,7 @@
   },
   {
     "path": "deployment/operating-config/MagicCodexBridge/spell-runtime.yml",
-    "sha256": "1565f34b399a76903727165c7bb93d4e0f76f0ba6ac532a31838a6c959d89b1a",
+    "sha256": "b04daa2d5ae9d7d11314cdf5f5437e64006d104ee196ab0c505656d61fa411d1",
     "sameOnSchoolAndWild": true,
     "role": "non-secret gameplay configuration; deployment overlay, not player data"
   },

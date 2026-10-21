@@ -241,6 +241,9 @@ def main():
         out.append('')
         rt += [f'  {i}:', f'    name: "{name}"', f'    skill: "{sk}"', f'    target: "{tgt}"', f'    range: {rng}',
                f'    utility: {"true" if util else "false"}', f'    base-damage: {base}', f'    power-ratio: {ratio}']
+        # 1-6 #6: ground zones (same shapes the client snaps to the ground) - horizontal range, dropped onto the ground
+        shape = aim_shape((i, sk, tgt, rng, base, ratio, util, lines, note)) if tgt == 'AIM' else None
+        if shape and shape['mode'] in ('area', 'point', 'wall'): rt.append('    ground: true')
     for sk, (owner, lines, note) in EXTRA.items():
         cat = D.get(owner, {}).get('category', '')
         lines = [l.replace('}', f';element={cat};spell={owner}}}', 1) if l.startswith(('chahit{', 'chabolt{', 'chazone{')) else l for l in lines]
