@@ -6,6 +6,7 @@ import kr.chacademy.npc.core.BudgetMath;
 import kr.chacademy.npc.data.Storage;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
@@ -15,6 +16,9 @@ import java.util.function.Supplier;
  * 사용량을 모르는 경우(스트림 끊김)는 예약 금액 그대로 정산해 누락을 막는다.
  *
  * <p>OpenAI 프로젝트 지출 한도는 별개의 마지막 안전장치다 (반영 지연으로 소폭 초과할 수 있음).
+ *
+ * <p>2026-10-21 (오너 결정 6): 금액 한도는 budget.limit-enabled=false 로 꺼져 있다 (예약·정산·사용량 기록은 그대로).
+ * 대신 플레이어 1인 하루 대화 횟수를 공유 DB 의 한 행(cnpc_usage)에 조건부 UPDATE 로 원자적으로 센다 → 같은 DB를 쓰는 서버끼리 합산.
  */
 public final class BudgetService {
 
@@ -119,9 +123,13 @@ public final class BudgetService {
         storage.db().run(() -> storage.setMeta(META_AI, enabled ? "1" : "0"));
     }
 
+    /** 그날 금액 한도. 금액 한도를 끈 상태(limit-enabled=false)면 무한대. */
     public synchronized double allowance() {
         rollDay();
         Settings s = settings.get();
+        if (!s.budgetLimitEnabled) {
+            return Double.POSITIVE_INFINITY;
+        }
         return BudgetMath.dailyAllowance(s.budgetTotalUsd, spentBeforeToday, s.budgetDays,
                 s.dayIndex(s.today()), s.testDailyUsd);
     }
@@ -148,6 +156,10 @@ public final class BudgetService {
         }
         rollDay();
         Settings s = settings.get();
+        if (!s.budgetLimitEnabled) {
+            reserved += amount;
+            return new Reservation(player, amount, today);
+        }
         double total = spentBeforeToday + spentToday + reserved;
         if (total + amount > s.budgetTotalUsd) {
             return null;
@@ -190,24 +202,20 @@ public final class BudgetService {
         return cost;
     }
 
-    /** 이 플레이어가 오늘 더 부를 수 있는지. 부를 수 있으면 횟수를 1 올린다. */
-    public boolean tryUseCall(String player) {
+    /**
+     * 이 플레이어가 오늘 더 부를 수 있는지. 부를 수 있으면 횟수를 1 올린다 (DB 스레드에서 원자적으로, 서버 간 공유).
+     * 완료 값: true = 허용(횟수 올림), false = 오늘 한도 도달, null = DB 오류(부르지 말 것).
+     */
+    public CompletableFuture<Boolean> tryUseCall(String player) {
         rollDay();
+        String day = today;
         int limit = settings.get().perPlayerDailyCalls;
-        boolean[] ok = {false};
-        callsToday.compute(player, (k, v) -> {
-            int n = v == null ? 0 : v;
-            if (n >= limit) {
-                return n;
+        return storage.db().async(() -> storage.tryAddCall(day, player, limit)).thenApply(ok -> {
+            if (Boolean.TRUE.equals(ok)) {
+                callsToday.merge(player, 1, Integer::sum); // 표시용 (/서버관리 AI)
             }
-            ok[0] = true;
-            return n + 1;
+            return ok;
         });
-        if (ok[0]) {
-            String day = today;
-            storage.db().run(() -> storage.addUsage(day, player, 1, 0, 0, 0, 0));
-        }
-        return ok[0];
     }
 
     /** AI를 부르지 못했거나 과금 없이 실패한 호출 되돌리기 (예약 실패·대화가 그새 닫힘·대기열 가득·API 오류). */
@@ -224,7 +232,7 @@ public final class BudgetService {
             return; // 날짜가 바뀌었거나 이미 0: DB에 음수 줄이 생기지 않게 한다
         }
         String day = today;
-        storage.db().run(() -> storage.addUsage(day, player, -1, 0, 0, 0, 0));
+        storage.db().run(() -> storage.refundCall(day, player));
     }
 
     public int callsToday(String player) {

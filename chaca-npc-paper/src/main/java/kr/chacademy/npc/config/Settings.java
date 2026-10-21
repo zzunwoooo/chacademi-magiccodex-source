@@ -48,6 +48,8 @@ public final class Settings {
 
     // 예산
     public final double budgetTotalUsd;
+    /** 오너 결정 6 (2026-10-21): 전체·하루 금액 한도는 끔(false). 켜면 예전처럼 total-usd 를 기간에 나눠 하루 한도로 쓴다. */
+    public final boolean budgetLimitEnabled;
     public final LocalDate budgetStartDate;
     public final int budgetDays;
     public final double testDailyUsd;
@@ -161,9 +163,10 @@ public final class Settings {
 
         zone = ZoneId.of(c.getString("budget.timezone", "Asia/Seoul"));
         budgetTotalUsd = c.getDouble("budget.total-usd", 170);
+        budgetLimitEnabled = c.getBoolean("budget.limit-enabled", false);
         LocalDate start;
         try {
-            start = LocalDate.parse(c.getString("budget.start-date", "2026-12-01"));
+            start = LocalDate.parse(c.getString("budget.start-date", "2026-10-26"));
         } catch (Exception ex) {
             start = LocalDate.now(zone).plusDays(30);
         }

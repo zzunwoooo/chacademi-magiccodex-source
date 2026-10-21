@@ -611,12 +611,16 @@ public final class NpcCommands {
         var b = plugin.budget();
         var st = plugin.settings();
         int day = st.dayIndex(st.today());
-        String period = day < 0 ? "운영 시작 전 (테스트 한도 $" + st.testDailyUsd + "/일)"
+        String period = day < 0 ? (st.budgetLimitEnabled ? "운영 시작 전 (테스트 한도 $" + st.testDailyUsd + "/일)" : "운영 시작 전")
                 : day >= st.budgetDays ? "운영 기간 종료" : "운영 " + (day + 1) + "일차 / " + st.budgetDays + "일";
         List<String> out = new ArrayList<>();
         out.add("AI NPC 예산 · " + period);
-        out.add(String.format("오늘: $%.3f / 한도 $%.3f · 상태 %s", b.spentToday(), b.allowance(), statusName(b.status())));
-        out.add(String.format("전체: $%.3f / $%.0f (진행 중 예약 $%.4f)", b.spentTotal(), st.budgetTotalUsd, b.reserved()));
+        if (st.budgetLimitEnabled) {
+            out.add(String.format("오늘: $%.3f / 한도 $%.3f · 상태 %s", b.spentToday(), b.allowance(), statusName(b.status())));
+            out.add(String.format("전체: $%.3f / $%.0f (진행 중 예약 $%.4f)", b.spentTotal(), st.budgetTotalUsd, b.reserved()));
+        } else {
+            out.add(String.format("오늘: $%.3f · 전체: $%.3f (금액 한도 없음 · 진행 중 예약 $%.4f)", b.spentToday(), b.spentTotal(), b.reserved()));
+        }
         out.add("AI: " + (b.isAiEnabled() ? "켜짐" : "꺼짐") + " · MagicCodex 연결: " + (plugin.link().available() ? "연결됨" : "없음 (호감도 기본값, 퀘스트·선물 꺼짐)"));
         out.add("오늘 플레이어 대화 호출: " + b.totalCallsToday() + "회 (1인 한도 " + st.perPlayerDailyCalls + ")");
         out.add("응답 속도: " + b.latencySummary());
@@ -647,6 +651,9 @@ public final class NpcCommands {
         }
         if (!b.isAiEnabled()) {
             return "꺼짐 (고정 대사)";
+        }
+        if (!plugin.settings().budgetLimitEnabled) {
+            return String.format("AI 켜짐 · 오늘 $%.2f (금액 한도 없음) · 대화 중 %d명", b.spentToday(), plugin.dialogue().sessions().size());
         }
         return String.format("AI 켜짐 · 오늘 $%.2f / $%.2f (%s) · 대화 중 %d명", b.spentToday(), b.allowance(),
                 statusName(b.status()), plugin.dialogue().sessions().size());

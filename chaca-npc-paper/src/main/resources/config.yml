@@ -45,15 +45,19 @@ openai:
 
 budget:
   timezone: "Asia/Seoul"
-  # 3주 전체 예산(달러). 플러그인이 모든 AI 호출(대화·버튼 미리 생성·NPC 잡담·분위기 요약)을
+  # 금액 한도 사용 여부 (2026-10-21 오너 결정: 끔). false 면 아래 total-usd · test-daily-usd 로 막지 않고
+  # 플레이어 1인 하루 대화 횟수(per-player-daily-calls)만 적용합니다. 사용량·비용 기록은 그대로 남습니다.
+  limit-enabled: false
+  # (limit-enabled: true 일 때) 3주 전체 예산(달러). 플러그인이 모든 AI 호출(대화·버튼 미리 생성·NPC 잡담·분위기 요약)을
   # 요청 전에 예약하고 끝나면 실제 사용량으로 정산해서 이 금액을 넘지 않게 관리합니다.
   # OpenAI 프로젝트 지출 한도는 별개의 안전장치이며, 반영 지연으로 소폭 초과할 수 있습니다.
   total-usd: 170
   # 서버 운영 시작일과 기간. 시작 전에는 test-daily-usd 가 하루 한도
-  start-date: "2026-12-01"
+  start-date: "2026-10-26"
   days: 21
   test-daily-usd: 2.0
-  # 플레이어 1명이 하루에 AI 대답을 받을 수 있는 횟수 (넘으면 'tired' 고정 대사)
+  # 플레이어 1명이 하루에 AI 대답을 받을 수 있는 횟수 (넘으면 'tired' 고정 대사).
+  # 같은 DB(database.properties)를 쓰는 서버끼리 합산 — DB의 오늘 횟수를 한도 미만일 때만 원자적으로 1 올림
   per-player-daily-calls: 60
   # 그날 한도의 몇 %를 쓰면 대답을 짧게 할지
   reduce-at-percent: 80

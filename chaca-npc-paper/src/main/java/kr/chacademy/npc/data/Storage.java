@@ -304,6 +304,39 @@ public final class Storage {
         });
     }
 
+    /**
+     * 하루 대화 횟수를 한도 미만일 때만 1 올린다. 행이 없으면 0으로 만든 뒤 조건부 UPDATE 한 번 — MariaDB·SQLite 모두
+     * 한 문장이 원자적이라 여러 서버가 동시에 불러도 한도를 넘지 않는다. @return 올렸으면 true
+     */
+    public boolean tryAddCall(String day, String player, int limit) {
+        return exec(c -> {
+            try (PreparedStatement ps = c.prepareStatement((db.isMariaDb() ? "INSERT IGNORE INTO" : "INSERT OR IGNORE INTO")
+                    + " cnpc_usage (day, player_uuid, calls, input_tokens, cached_tokens, output_tokens, cost_usd) VALUES (?,?,0,0,0,0,0)")) {
+                ps.setString(1, day);
+                ps.setString(2, player);
+                ps.executeUpdate();
+            }
+            try (PreparedStatement ps = c.prepareStatement("UPDATE cnpc_usage SET calls=calls+1 WHERE day=? AND player_uuid=? AND calls<?")) {
+                ps.setString(1, day);
+                ps.setString(2, player);
+                ps.setInt(3, limit);
+                return ps.executeUpdate() == 1;
+            }
+        });
+    }
+
+    /** AI를 부르지 못한 호출의 횟수 되돌리기 (0 아래로는 내려가지 않음). */
+    public void refundCall(String day, String player) {
+        exec(c -> {
+            try (PreparedStatement ps = c.prepareStatement("UPDATE cnpc_usage SET calls=calls-1 WHERE day=? AND player_uuid=? AND calls>0")) {
+                ps.setString(1, day);
+                ps.setString(2, player);
+                ps.executeUpdate();
+            }
+            return null;
+        });
+    }
+
     public record UsageSnapshot(double spentBeforeToday, double spentToday, Map<String, Integer> callsToday) {
     }
 

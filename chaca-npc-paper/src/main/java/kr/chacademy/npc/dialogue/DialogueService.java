@@ -70,6 +70,8 @@ public final class DialogueService {
         final int seq;
         final String pid;
         final boolean charged;
+        /** 하루 횟수가 공유 DB에서 실제로 1 올라갔는지 (올라간 것만 돌려준다). */
+        boolean counted;
         boolean refunded;
         boolean aiSent;
         /** 이 요청에 대한 대사(AI 또는 고정)를 화면에 보냈는지. */
@@ -456,11 +458,6 @@ public final class DialogueService {
             say(p, s, seq, text, c.fallback("tired", st.defaultFallbacks, random), false);
             return;
         }
-        if (!s.adminTest() && !plugin.budget().tryUseCall(pid)) {
-            say(p, s, seq, text, c.fallback("tired", st.defaultFallbacks, random), false);
-            return;
-        }
-
         s.busy = true;
         s.busySince = now;
         TurnState turn = new TurnState(seq, pid, !s.adminTest());
@@ -477,7 +474,28 @@ public final class DialogueService {
             }
         }, Math.max(1, st.stallSeconds) * 20L).getTaskId();
         armTimeout(p, s, turn, (Math.max(2, st.timeoutSeconds) + LOAD_ALLOWANCE_SECONDS) * 1000L);
-        s.loading.whenComplete((v, ex) -> plugin.sync(() -> proceedSafely(p, s, turn, finalText, buttonId, slot)));
+        // 1인 하루 횟수: 공유 DB 의 오늘 행을 한도 미만일 때만 원자적으로 +1 (서버 간 합산). 관리자 테스트는 세지 않음
+        java.util.concurrent.CompletableFuture<Boolean> gate = s.adminTest()
+                ? java.util.concurrent.CompletableFuture.completedFuture(Boolean.TRUE) : plugin.budget().tryUseCall(pid);
+        gate.whenComplete((ok, gex) -> plugin.sync(() -> {
+            boolean allowed = gex == null && Boolean.TRUE.equals(ok);
+            if (allowed && turn.charged) {
+                turn.counted = true;
+            }
+            boolean active = s.busy && s.activeSeq == turn.seq && sessions.get(s.player()) == s;
+            if (!active) {
+                refund(turn); // 그사이 기한이 지나거나 대화가 닫힘: 올린 횟수는 돌려준다
+                return;
+            }
+            if (!allowed) {
+                if (gex != null || ok == null) {
+                    plugin.getLogger().warning("[ChacaNPC] 하루 대화 횟수 확인 실패 (DB) — 이번 대화는 고정 대사");
+                }
+                failTurn(p, s, turn, ok == null ? "busy" : "tired");
+                return;
+            }
+            s.loading.whenComplete((v, ex) -> plugin.sync(() -> proceedSafely(p, s, turn, finalText, buttonId, slot)));
+        }));
     }
 
     /** 이 요청의 화면 기한. 지나면 고정 대사로 넘기고 늦게 온 결과는 버린다 (비용 정산은 그대로). */
@@ -495,7 +513,7 @@ public final class DialogueService {
 
     /** 하루 횟수 되돌리기 (요청당 한 번만). */
     private void refund(TurnState turn) {
-        if (turn != null && turn.charged && !turn.refunded) {
+        if (turn != null && turn.charged && turn.counted && !turn.refunded) {
             turn.refunded = true;
             plugin.budget().refundCall(turn.pid);
         }
