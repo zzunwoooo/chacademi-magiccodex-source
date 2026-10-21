@@ -67,8 +67,11 @@ class FishingProtocolTest {
         assertTrue(FishingProtocol.minimumCatchMillis(hard, 10, 1) > e);
         assertTrue(FishingProtocol.minimumCatchMillis(deep, 10, 1) > e);
         assertTrue(FishingProtocol.minimumCatchMillis(easy, 10, 1.5f) < e);
-        // easy: wait 3 s + approach/tease/warning/needle 4.1 s = 7.1 s, reel 10 m at 3.5 m/s * .75 * (1 - .8*.11) = 4.2 s -> 11.3 s * .9 - .4 = 9.8 s
-        assertTrue(e > 9000 && e < 10500, "minimum " + e);
+        // easy: wait 3 s + approach/tease/warning/needle 4.1 s = 7.1 s, reel 10 m at 3.5 m/s * .975 * (1 - .8*.066) = 3.1 s -> 10.2 s * .9 - .4 = 8.8 s
+        assertTrue(e > 8300 && e < 9300, "minimum " + e);
+        // a legit catch winding at .975 x reelSpeed the whole time (tired fish, weakest pull) is never refused
+        double legit = 7125 + 10 / (FishingProtocol.reelSpeed(10) * FishingProtocol.MAX_WIND * (1 - .8 * (.275 * .4 * .6))) * 1000;
+        assertTrue(e < legit, "minimum " + e + " legit " + legit);
     }
 
     @Test void tiers() {

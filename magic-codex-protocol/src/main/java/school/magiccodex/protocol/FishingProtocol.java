@@ -195,20 +195,24 @@ public final class FishingProtocol {
     public static float reelSpeed(float reelPower) { return Math.max(.5f, reelPower * .35f); }
     /** Hook gauge zones narrower than this make the needle rush near the zone (the narrowest, legendary zone .12). v3: derived on the client, not sent. */
     public static final float RUSH_ZONE = .135f;
+    /** Fastest winding the client allows, as a share of reelSpeed (tired fish: .75 x 1.3). The server's minimum assumes it. */
+    public static final double MAX_WIND = .975;
     public static boolean rushes(float zone) { return zone < RUSH_ZONE; }
     /**
      * v3 (2026-10-21): the fastest an honest catch can end after the bite frame arrived (ms). Mirrors the client's shortest
      * possible timings: approach (1.25 s, none for a chest) + .5 s + 1.25 s per tease + .25 s warning + .2 s sensitivity +
-     * the needle reaching the earliest zone (.25 of the sweep), then winding non-stop at full speed against the weakest pull
-     * this fish can have (power, strain, its pattern's lowest pull, stamina 0). reelBonus = the rod's best reel multiplier
-     * (sea / magic rod effects). The server measures from sending, so the round trip only adds; 10% + 400 ms slack on top.
+     * the needle reaching the earliest zone (.25 of the sweep), then winding non-stop at the client's top winding speed
+     * (.975 x reelSpeed: .75 x 1.3 while the fish is tired, client FishMood 2026-10-21) against the weakest pull this fish
+     * can have (power, strain, its pattern's lowest pull capped at the tired .6, stamina 0). reelBonus = the rod's best reel
+     * multiplier (sea / magic rod effects). The server measures from sending, so the round trip only adds.
+     * Margin: the result is (that time x 0.9) - 400 ms, i.e. 10% + 400 ms below the fastest possible honest catch.
      */
     public static int minimumCatchMillis(Bite b, float reelPower, float reelBonus) {
         boolean chest = b.shape() == SHAPE_CHEST;
         double before = b.waitMs() + (chest ? 0 : 1250 + b.teases() * 1250) + 500 + 250 + 200 + .25 * b.sweepMs();
-        double low = switch (b.pattern()) { case ZIGZAG -> .75; case DASH -> .9; case DIVE -> .95; case SURGE -> .35; default -> 1; };
+        double low = Math.min(.6, switch (b.pattern()) { case ZIGZAG -> .75; case DASH -> .9; case DIVE -> .95; case SURGE -> .35; default -> 1; });
         double force = (.20 + .075 * b.power()) * b.strain() * .4 * low;
-        double speed = reelSpeed(reelPower) * Math.max(1, reelBonus) * .75 * Math.max(.15, 1 - .8 * force);
+        double speed = reelSpeed(reelPower) * Math.max(1, reelBonus) * MAX_WIND * Math.max(.15, 1 - .8 * force);
         return (int) Math.max(0, (before + b.depth() / speed * 1000) * .9 - 400);
     }
     /** Completion tier reached: 0..4 tiers at 25/50/75/100%. */
