@@ -7,6 +7,17 @@ import org.bukkit.util.Vector;
 final class Geometry {
     private Geometry() {}
 
+    /** Longest sub-step a travelling hit checks at once (blocks). */
+    static final double MAX_STEP = 0.4;
+    /**
+     * A04: one tick's travel split into equal sub-steps of at most {@link #MAX_STEP}, so the total moved is exactly
+     * `distance` (the old loop added whole 0.4 steps and overshot: speed 0.5 moved 0.8).
+     */
+    static int steps(double distance) {
+        if (!(distance > 0) || !Double.isFinite(distance)) return 1;
+        return Math.max(1, (int) Math.ceil(distance / MAX_STEP - 1e-9));
+    }
+
     /** Horizontal cone test. `to` is the offset from apex to the point. */
     static boolean inCone(Vector facing, Vector to, double angleDeg) {
         Vector a = facing.clone().setY(0), b = to.clone().setY(0);

@@ -118,9 +118,18 @@ final class MobShotMech extends Mech {
             if (rise > 0) vel.setY(vel.getY() - 0.04);
             double len = vel.length(); int steps = Math.max(1, (int) Math.ceil(len / 0.4)); Vector step = vel.clone().multiply(1.0 / steps);
             for (int i = 0; i < steps; i++) {
+                Location prev = pos.clone();
                 pos.add(step); travelled += len / steps;
                 if (!pos.getWorld().isChunkLoaded(pos.getBlockX() >> 4, pos.getBlockZ() >> 4) || !plugin.protection().pair(c.caster(), pos)) return end(false);
-                if (!pos.getBlock().isPassable()) return end(true);
+                // real collision shapes (slabs, fences, panes), same rule as chabolt
+                if (len > 1e-6) {
+                    var wall = pos.getWorld().rayTraceBlocks(prev, step, len / steps, org.bukkit.FluidCollisionMode.NEVER, true);
+                    if (wall != null && wall.getHitBlock() != null) {
+                        var at = wall.getHitPosition().subtract(step.clone().normalize().multiply(0.05));
+                        pos.setX(at.getX()); pos.setY(at.getY()); pos.setZ(at.getZ());
+                        return end(true);
+                    }
+                }
                 for (Entity e : pos.getWorld().getNearbyEntities(pos, radius + 1, radius + 1, radius + 1)) {
                     if (!(e instanceof LivingEntity t) || !valid(t) || Targets.closestDistance(e, pos) > radius) continue;
                     if (burst <= 0) strike(t);
