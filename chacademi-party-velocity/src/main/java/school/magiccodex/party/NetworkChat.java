@@ -10,9 +10,11 @@ final class NetworkChat {
     record Connection(Object source,String server) {}
     record Identity(String nickname,int house,Object source,String server,long until) {}
     record WireIdentity(String nickname,int house) {}
-    private final Set<String> trusted;
+    private final Set<String> trusted,chatServers;
     private final Map<UUID,Identity> identities=new HashMap<>();
-    NetworkChat(Set<String> trusted){this.trusted=Set.copyOf(trusted);}
+    NetworkChat(Set<String> trusted){this(trusted,Set.of("school","wild","arena"));}
+    /** chatServers: 전체·기숙사 채팅을 쓰는 서버 이름 (party.properties chat-servers, 2026-10-21 하드코딩 제거). trusted 이기도 해야 한다. */
+    NetworkChat(Set<String> trusted,Set<String> chatServers){this.trusted=Set.copyOf(trusted);this.chatServers=Set.copyOf(chatServers);}
     static WireIdentity decode(byte[] data)throws IOException {
         if(data.length>256)throw new IOException("Identity size");
         try(var in=new DataInputStream(new ByteArrayInputStream(data))){
@@ -31,7 +33,7 @@ final class NetworkChat {
     Identity identity(UUID player,Object active,long now){
         var identity=identities.get(player);return identity!=null&&identity.source()==active&&identity.until()>now?identity:null;
     }
-    boolean networkServer(String server){return trusted.contains(server)&&Set.of("school","wild","arena").contains(server);}
+    boolean networkServer(String server){return trusted.contains(server)&&chatServers.contains(server);}
     Identity sender(UUID actor,Map<UUID,Connection> online,long now){
         var connection=online.get(actor);
         if(connection==null||!networkServer(connection.server()))throw new IllegalArgumentException("학교·야생·아레나 서버에서 사용할 수 있습니다.");
