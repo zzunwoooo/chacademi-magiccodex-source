@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
  * 야생몹 명령 (명령어 허브 갈래). 예전 /야생관리.
  * <pre>
  * /월드관리 야생몹 &lt;상태|진단 [닉네임]|확인 &lt;몹&gt;|구조물&gt;
- * /테스트 몹 작물몹 &lt;작물&gt; [이로치]
+ * /테스트 몹 작물몹 &lt;작물&gt; [변색종]
  * /서버관리 새로고침 야생 · /서버관리 상태 (야생몹)
  * </pre>
  */
@@ -60,7 +60,7 @@ final class WildlifeCommands {
         ChacaLink.branch(plugin, ChacaLink.테스트, Commands.literal("몹").then(Commands.literal("작물몹")
             .then(Commands.argument("작물", ChacaLink.word(crops::ids))
                 .executes(ctx -> crop(ctx, false))
-                .then(Commands.literal("이로치").executes(ctx -> crop(ctx, true))))),
+                .then(Commands.literal("변색종").executes(ctx -> crop(ctx, true))))),
             "살아나는 작물 몹을 내 앞에 소환", "몹 작물몹 ");
 
         ChacaLink.reload(plugin, "야생", "config.yml·habitats.yml·biome-compatibility.yml (RandomSpawns를 고쳤다면 /mm reload도)", plugin::reloadAll);
@@ -91,7 +91,7 @@ final class WildlifeCommands {
         String r = crops.spawn(p, id, shiny, at);
         if (r.startsWith("미몹 없음")) throw new IllegalStateException("작물 몹 소환 실패: " + r);
         if (!r.equals("OK")) throw ChacaLink.error(r.equals("동시 작물 개체 제한") ? "동시에 소환할 수 있는 작물 몹 수를 넘었어요" : "작물 몹을 소환하지 못했어요");
-        ChacaLink.ok(p, "작물 몹 소환: " + id + (shiny ? " (이로치)" : ""));
+        ChacaLink.ok(p, "작물 몹 소환: " + id + (shiny ? " (변색종)" : ""));
         return 1;
     }
 }

@@ -28,7 +28,7 @@ final class PreviewSender {
         String[][] k = {{"로비", "lobby"}, {"결투로비", "duel_lobby"}, {"신청", "apply"}, {"결투", "duel"}, {"준비", "prepare"}, {"경기", "match"},
                 {"결과", "result"}, {"수락", "accept"}, {"매칭", "matching"}, {"대시보드", "dashboard"}, {"끄기", "off"}};
         for (var e : k) KYUDICHI.put(e[0], e[1]);
-        String[][] t = {{"일반", "normal"}, {"이로치", "shiny"}, {"플레이어", "player"}, {"보스", "boss"}, {"끄기", "off"}};
+        String[][] t = {{"일반", "normal"}, {"변색종", "shiny"}, {"플레이어", "player"}, {"보스", "boss"}, {"끄기", "off"}};
         for (var e : t) TARGET_HUD.put(e[0], e[1]);
         String[][] s = {{"봄", "spring"}, {"여름", "summer"}, {"가을", "autumn"}, {"겨울", "winter"}};
         for (var e : s) SEASONS.put(e[0], e[1]);

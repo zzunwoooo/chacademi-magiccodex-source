@@ -22,7 +22,7 @@ import school.magiccodex.protocol.FishingProtocol;
 /**
  * 물고기 판매소 (2026-10-20, owner reference "물고기 판매소 / 물고기 매입상 에드윈").
  *
- * A shop of its own (not a ShopStore shop): it buys fish straight out of the 통발 tank. The sale tab sells every fish of
+ * A shop of its own (not a ShopStore shop): it buys fish straight out of the 아공간 수조 tank. The sale tab sells every fish of
  * the checked grades except locked species (owner: 잠긴 물고기는 크기·종류 무관하고 팔리지 않게). The lock tab sets
  * the locked species (per player, shared by school and wild).
  *

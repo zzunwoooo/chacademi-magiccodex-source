@@ -85,7 +85,7 @@ public final class FishingProtocol {
     /**
      * maxDepth = how deep the bobber can sink here (line length and the water's real depth). floorDepth = the water's
      * real bottom (m); MAX_DEPTH = deeper than anything measurable. The bobber stopped by the line (floorDepth > maxDepth)
-     * hangs in open water: no sea floor is drawn. tankCount / tankCapacity = the 통발 tank, shown next to the title.
+     * hangs in open water: no sea floor is drawn. tankCount / tankCapacity = the 아공간 수조 tank, shown next to the title.
      */
     public record Session(long session, int phase, int background, float maxDepth, float floorDepth, int waterClass, int waterBlocks,
                           int tankCount, int tankCapacity, Gear gear, String notice) implements Frame {

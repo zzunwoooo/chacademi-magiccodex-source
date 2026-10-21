@@ -7,12 +7,15 @@ import java.util.*;
 
 /** Updates only recognized shipped defaults. Local edits and extra files remain untouched. */
 final class DefaultSpellMigration {
-    static final String VERSION="spells-gimmick-239-250-20261020";
+    static final String VERSION="spells-fish-trap-324-20261021";
     private static final String ROOT="/assets/magiccodex/default-spells/";
     private static final Set<String> ARCANA_IDS=Set.of("shadow_double","echo_reading","sealing_thread","shadow_exchange","forbidden_contract","life_siphon","drowsiness","misfortune_whisper","hungry_shadow","curse_transfer","discord","night_chain","pain_deferral","black_harvest","ink_fingertip","shadow_nail","night_lullaby","loosen_grasp","healing_seal","shadow_scales","warning_thread","wound_accounting","inverted_offering","ghost_tool","bell_of_fear","eclipse_eye","void_maw","landing_airbrake","hushed_soles","thorn_manners","cinder_skipring","droplet_relay","folding_tideplane");
     /** 239~250 dungeon gimmick spells (2026-10-20). */
     private static final Set<String> GIMMICK_IDS=Set.of("thawing_heat","steam_ignition","water_level","stone_weight","vine_awaken","light_beam","mirror_tune","prism_tint","statue_wake","rewind","conduit_turn","dimension_mark");
+    /** Shipped defaults outside the numbered blocks whose display text was updated (2026-10-21: 통발 -> 아공간 수조). */
+    private static final Set<String> RENAMED_FILES=Set.of("324_fish_trap.yml");
     static boolean managedHistoryName(String name){
+        if(RENAMED_FILES.contains(name))return true;
         if(name.matches("(?:239|24[0-9]|250)_.*\\.yml")&&GIMMICK_IDS.contains(name.substring(name.indexOf('_')+1,name.length()-4)))return true;
         if(name.startsWith("149_"))return false;
         if(name.matches("(?:10[1-9]|1[1-5][0-9]|16[0-7])_.*\\.yml"))return true;

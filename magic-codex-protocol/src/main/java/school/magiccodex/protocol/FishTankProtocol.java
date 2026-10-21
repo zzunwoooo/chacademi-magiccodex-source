@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * 통발 아공간 수조 window (2026-10-20). The tank lives in the shared player-state DB; the server decides everything.
+ * 아공간 수조 window (2026-10-20). The tank lives in the shared player-state DB; the server decides everything.
  *
  * C2S: int version, byte action, then
  *   QUERY / CLOSE                     -- nothing

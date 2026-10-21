@@ -58,7 +58,7 @@ final class CommandHub {
         ROOTS.put(ChacaApi.NPC관리, "AI NPC 배치·설정");
         ROOTS.put(ChacaApi.큐디치관리, "큐디치·결투 경기장, 경기, 시즌");
         ROOTS.put(ChacaApi.하우징관리, "기숙사실 문·가구 목록");
-        ROOTS.put(ChacaApi.월드관리, "계절·토네이도·야생 몹·이로치");
+        ROOTS.put(ChacaApi.월드관리, "계절·토네이도·야생 몹·변색종");
         ROOTS.put(ChacaApi.던전관리, "던전 기믹 모델·퍼즐");
         ROOTS.put(ChacaApi.컨텐츠관리, "등록된 칭호·아티팩트·연금술 레시피 보기·편집");
         ROOTS.put(ChacaApi.서버관리, "설정 새로고침·연결 상태·예산");

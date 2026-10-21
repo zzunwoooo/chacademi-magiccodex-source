@@ -16,7 +16,7 @@ import school.magiccodex.protocol.FishTankProtocol;
 import school.magiccodex.protocol.FishTankProtocol.*;
 
 /**
- * 통발 아공간 수조 (2026-10-20, owner spec + GPT's approved tank references and art in textures/gui/fish_tank).
+ * 아공간 수조 (2026-10-20, owner spec + GPT's approved tank references and art in textures/gui/fish_tank).
  *
  * Fullscreen water: the caught fish swim freely (depth, smooth turns, tail wobble). Sunlight comes from above: the
  * light rays sway and flicker and two caustic layers move over the sand and under the surface like real water.

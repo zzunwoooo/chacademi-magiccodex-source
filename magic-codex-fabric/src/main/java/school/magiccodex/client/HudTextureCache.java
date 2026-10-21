@@ -194,7 +194,7 @@ public final class HudTextureCache implements AutoCloseable {
         get(new Region(path.toString(),u,v,sw,sh)).ifPresent(t->ctx.drawTexture(id->t.additive(),t.id(),x,y,0,0,w,h,t.width(),t.height(),t.width(),t.height(),tint));
     }
     /**
-     * A deformable mesh over a whole file (2026-10-20, 통발 수조: swaying light, moving caustics, the radial zoom mask).
+     * A deformable mesh over a whole file (2026-10-20, 아공간 수조: swaying light, moving caustics, the radial zoom mask).
      * Grid points (i 0..cols, j 0..rows) give x, y (screen space before the matrix), u, v and an ARGB tint through the
      * arrays (index j*(cols+1)+i). wrap: u, v are in tile units of a texture holding 2x2 copies of one seamless tile,
      * and every cell is shifted by whole tiles so it stays inside the texture (no GL repeat needed). A cell may span

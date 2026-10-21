@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * 물고기 판매소 (2026-10-20): sells fish straight from the 통발 tank by grade, skipping locked species.
+ * 물고기 판매소 (2026-10-20): sells fish straight from the 아공간 수조 tank by grade, skipping locked species.
  * The server owns prices (fish-shop.yml), the tank and the money; the client only shows what it got and asks.
  *
  * C2S: int version, byte action, then

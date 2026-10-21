@@ -93,7 +93,7 @@ final class FishingBridge implements PluginMessageListener, Listener {
     private FishTankBridge tankWindow;
     void tankWindow(FishTankBridge w) { tankWindow = w; }
     FishTank tank() { return tank; }
-    /** A line is in the water (cast, sinking or a fish on it): the 통발 window waits until it is done. */
+    /** A line is in the water (cast, sinking or a fish on it): the 아공간 수조 window waits until it is done. */
     boolean fishingNow(UUID player) {
         var s = sessions.get(player);
         return s != null && blocksTank(s.preview,s.state);
@@ -152,7 +152,7 @@ final class FishingBridge implements PluginMessageListener, Listener {
                 if (tank.full(p.getUniqueId())) {
                     // owner 2026-10-20: a full tank blocks fishing
                     e.setCancelled(true);
-                    CmdKit.notify(p, "warning", "fishing-cast", "통발 수조가 가득 찼어요 (" + tank.count(p.getUniqueId()) + "/" + tank.capacity() + ")", "물고기를 팔거나 꺼낸 뒤 낚시해 주세요.", 2000);
+                    CmdKit.notify(p, "warning", "fishing-cast", "아공간 수조가 가득 찼어요 (" + tank.count(p.getUniqueId()) + "/" + tank.capacity() + ")", "물고기를 팔거나 꺼낸 뒤 낚시해 주세요.", 2000);
                 }
             }
             case BITE, CAUGHT_FISH, LURED -> {
@@ -482,7 +482,7 @@ final class FishingBridge implements PluginMessageListener, Listener {
             } else {
                 var f = s.fish;
                 fishId = f.id(); name = f.name(); grade = f.grade(); shape = f.shape(); cm = s.size;
-                // owner 2026-10-20: fish go into the 통발 tank, not the inventory
+                // owner 2026-10-20: fish go into the 아공간 수조 tank, not the inventory
                 if (!s.preview) {
                     var r = store.record(p.getUniqueId(), f.id(), cm); fresh = r[0]; record = r[1];
                     tank.add(p.getUniqueId(),f.id(),cm,(saved,put)->{
@@ -831,7 +831,7 @@ final class FishingBridge implements PluginMessageListener, Listener {
                         .then(CmdKit.literal("빼기").then(number.get().executes(CmdKit.run(ctx -> takeFish(ctx, false)))))
                         .then(CmdKit.literal("돌려주기").then(number.get().executes(CmdKit.run(ctx -> takeFish(ctx, true)))))
                         .then(CmdKit.literal("잠금해제").then(CmdKit.word("물고기", () -> AdminCommandRules.catalogChoices(fishNames())).executes(CmdKit.run(this::unlock)))));
-        ChacaApi.branch(plugin, ChacaApi.유저관리, user, "낚시 도감·통발 수조 보기와 고치기", "낚시 수조 보기");
+        ChacaApi.branch(plugin, ChacaApi.유저관리, user, "낚시 도감·아공간 수조 보기와 고치기", "낚시 수조 보기");
         // /아이템관리 낚시장비 · 물고기
         var gearArg = CmdKit.word("장비", () -> AdminCommandRules.catalogChoices(gearNames()))
                 .executes(CmdKit.run(ctx -> giveGear(ctx, 1, CmdKit.self(ctx))))
@@ -875,7 +875,7 @@ final class FishingBridge implements PluginMessageListener, Listener {
     }
 
     private void openTank(Player target) throws CommandSyntaxException {
-        if (tankWindow == null) throw ChacaApi.error("통발 수조가 준비되지 않았어요");
+        if (tankWindow == null) throw ChacaApi.error("아공간 수조가 준비되지 않았어요");
         if (!FishTankBridge.modded(target)) throw ChacaApi.error(plugin.names().name(target) + " 님은 차카데미 모드가 없어 수조 창을 열 수 없어요");
         tankWindow.open(target);
     }
@@ -932,7 +932,7 @@ final class FishingBridge implements PluginMessageListener, Listener {
             if (!tank.loaded(id)) { CmdKit.fail(sender, "수조를 읽지 못했어요", null); return; }
             var t = tank.tank(id);
             var out = new ArrayList<String>();
-            out.add("── " + who + " 통발 수조 " + t.fish.size() + "/" + tank.capacity() + " ──");
+            out.add("── " + who + " 아공간 수조 " + t.fish.size() + "/" + tank.capacity() + " ──");
             for (int i = 0; i < t.fish.size() && i < 200; i++) out.add(row(i + 1, t.fish.get(i), t.locks));
             if (t.fish.size() > 200) out.add("… (" + (t.fish.size() - 200) + "마리 더)");
             var locked = t.locks.stream().map(l -> fishNames().getOrDefault(l, l)).sorted().toList();
