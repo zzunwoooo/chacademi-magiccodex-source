@@ -29,6 +29,9 @@ import school.magiccodex.protocol.TargetHudProtocol;
  *
  * Cost: one pass every 5 ticks over players that registered the channel; the ray only runs for players without a
  * combat target; a packet only when something changed (or once a second as keepalive).
+ * Perf (2026-10-21, 04-mobs D1/D2): bosses are looked for once a second only around HUD players (64 blocks), with the
+ * boss decision (reflection: Mythic type, taming profile) cached per entity; the crosshair ray (ModelEngine sub-hitboxes)
+ * is reused for up to 10 ticks while the player's aim and position have not changed.
  */
 final class TargetHudBridge implements Listener, AutoCloseable {
     private static final long COMBAT_TICKS = 200, DAMAGE_KEEP_TICKS = 20 * 600;
@@ -53,8 +56,14 @@ final class TargetHudBridge implements Listener, AutoCloseable {
     /** player -> target -> {damage, lastTick} */
     private final Map<UUID, Map<UUID, double[]>> dealt = new HashMap<>();
     private final Map<UUID, Sent> sent = new HashMap<>();
-    /** Loaded boss entities, rescanned once a second. */
+    /** Loaded boss entities near HUD players, rescanned once a second. */
     private final List<LivingEntity> bosses = new ArrayList<>();
+    /** entity -> boss decision (tags, Mythic type and taming profile do not change while it lives); dropped on death/limit. */
+    private final Map<UUID, Boolean> bossCache = new HashMap<>();
+    /** Last crosshair result per player, reused while the aim and position are unchanged. */
+    private record Looked(TargetHudProtocol.Aim ray, double x, double y, double z, float yaw, float pitch, UUID target, long tick) {}
+    private final Map<UUID, Looked> looked = new HashMap<>();
+    private static final long LOOK_REUSE_TICKS = 10;
     private Set<String> bossTags = Set.of("chacademia_boss");
     private List<String> bossPrefixes = List.of("BOSS_");
     private final BukkitTask task;
@@ -104,6 +113,7 @@ final class TargetHudBridge implements Listener, AutoCloseable {
 
     @EventHandler public void death(EntityDeathEvent e) {
         UUID id = e.getEntity().getUniqueId();
+        bossCache.remove(id);
         for (var m : dealt.values()) m.remove(id);
         combat.values().removeIf(c -> c.target().equals(id));
         combat.remove(id);
@@ -111,7 +121,7 @@ final class TargetHudBridge implements Listener, AutoCloseable {
 
     @EventHandler public void quit(PlayerQuitEvent e) {
         UUID id = e.getPlayer().getUniqueId();
-        combat.remove(id); dealt.remove(id); sent.remove(id); aims.remove(id);
+        combat.remove(id); dealt.remove(id); sent.remove(id); aims.remove(id); looked.remove(id); bossCache.remove(id);
         combat.values().removeIf(c -> c.target().equals(id));
     }
 
@@ -120,6 +130,16 @@ final class TargetHudBridge implements Listener, AutoCloseable {
     /** Same rule as MagicMythic Targets.boss: vanilla bosses, boss tag, MythicMobs BOSS_ prefix, taming boss profile. */
     boolean boss(LivingEntity e) {
         if (e instanceof Boss || e instanceof Warden || e instanceof ElderGuardian) return true;
+        if (e instanceof Player) return bossUncached(e);
+        Boolean known = bossCache.get(e.getUniqueId());
+        if (known != null) return known;
+        if (bossCache.size() > 4096) bossCache.clear();
+        boolean b = bossUncached(e);
+        if (b || e.getTicksLived() > 40) bossCache.put(e.getUniqueId(), b); // a fresh spawn may not be registered as a Mythic mob yet
+        return b;
+    }
+
+    private boolean bossUncached(LivingEntity e) {
         for (String tag : e.getScoreboardTags()) if (bossTags.contains(tag)) return true;
         String type = taming.mythicType(e);
         if (type != null) for (String prefix : bossPrefixes) if (type.startsWith(prefix)) return true;
@@ -128,8 +148,12 @@ final class TargetHudBridge implements Listener, AutoCloseable {
 
     private void scanBosses() {
         bosses.clear();
-        for (var w : Bukkit.getWorlds()) for (LivingEntity e : w.getLivingEntities())
-            if (!(e instanceof Player) && e.isValid() && !e.isDead() && boss(e)) bosses.add(e);
+        var seen = new HashSet<UUID>();
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (!p.getListeningPluginChannels().contains(TargetHudProtocol.CHANNEL) || p.isDead()) continue;
+            for (LivingEntity e : p.getWorld().getNearbyLivingEntities(p.getLocation(), BOSS_RANGE))
+                if (!(e instanceof Player) && seen.add(e.getUniqueId()) && e.isValid() && !e.isDead() && boss(e)) bosses.add(e);
+        }
     }
 
     /** The boss for the top bar: the one I fought last (10 s), else the nearest within 64 blocks. */
@@ -150,14 +174,24 @@ final class TargetHudBridge implements Listener, AutoCloseable {
     private LivingEntity look(Player p) {
         LivingEntity look;
         Aim a = aims.get(p.getUniqueId());
+        long now = now();
+        var ray = a != null && now - a.tick() <= AIM_STALE_TICKS ? a.ray() : null;
+        var eye = p.getEyeLocation();
+        Looked last = looked.get(p.getUniqueId());
+        if (last != null && now - last.tick() < LOOK_REUSE_TICKS && Objects.equals(last.ray(), ray) && last.yaw() == eye.getYaw() && last.pitch() == eye.getPitch()
+                && Math.abs(last.x() - eye.getX()) < 0.05 && Math.abs(last.y() - eye.getY()) < 0.05 && Math.abs(last.z() - eye.getZ()) < 0.05) {
+            Entity again = last.target() == null ? null : Bukkit.getEntity(last.target());
+            return again instanceof LivingEntity le && shown(p, le, LOOK_RANGE + 2, false) ? le : null;
+        }
         try {
-            if (a != null && now() - a.tick() <= AIM_STALE_TICKS) {
+            if (ray != null) {
                 var r = a.ray();
                 var origin = p.getEyeLocation().add(r.dx(), r.dy(), r.dz());
                 origin.setYaw(r.yaw()); origin.setPitch(r.pitch());
                 look = taming.lookTarget(p, origin, origin.getDirection(), LOOK_RANGE);
             } else look = taming.lookTarget(p, LOOK_RANGE);
         } catch (RuntimeException | LinkageError ex) { look = null; }
+        looked.put(p.getUniqueId(), new Looked(ray, eye.getX(), eye.getY(), eye.getZ(), eye.getYaw(), eye.getPitch(), look == null ? null : look.getUniqueId(), now));
         return look != null && shown(p, look, LOOK_RANGE + 2, false) ? look : null;
     }
 
@@ -261,7 +295,7 @@ final class TargetHudBridge implements Listener, AutoCloseable {
     @Override public void close() {
         task.cancel();
         HandlerList.unregisterAll(this);
-        combat.clear(); dealt.clear(); sent.clear(); bosses.clear(); aims.clear();
+        combat.clear(); dealt.clear(); sent.clear(); bosses.clear(); aims.clear(); looked.clear(); bossCache.clear();
         plugin.getServer().getMessenger().unregisterOutgoingPluginChannel(plugin, TargetHudProtocol.CHANNEL);
         plugin.getServer().getMessenger().unregisterIncomingPluginChannel(plugin, TargetHudProtocol.AIM_CHANNEL, aimListener);
     }
