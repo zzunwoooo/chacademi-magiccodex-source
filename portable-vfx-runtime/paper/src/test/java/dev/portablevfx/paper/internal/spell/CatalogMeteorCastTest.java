@@ -69,9 +69,10 @@ class CatalogMeteorCastTest {
             assertEquals(1,played.stream().filter(r->r.effectId().equals("claude:fallingstar/impact")).count());
             // The server's landing point (external:land_at at cast) moves the mark and the falling body there.
             played.clear();
-            assertEquals(true,engine.cast(player,"falling_star"));
-            assertEquals(1,engine.trigger(owner,"falling_star","external:land_at",new Location(world,5,70,25),null));
-            for(int i=0;i<80;i++)engine.tick();
+            var fresh=new CatalogVisualEngine(service,CatalogVisualEngine.read(yaml.getConfigurationSection("bindings")));
+            assertEquals(true,fresh.cast(player,"falling_star"));
+            assertEquals(1,fresh.trigger(owner,"falling_star","external:land_at",new Location(world,5,70,25),null));
+            for(int i=0;i<80;i++)fresh.tick();
             var mark=played.stream().filter(r->r.effectId().equals("claude:fallingstar/mark")).findFirst().orElseThrow();
             assertEquals(5,mark.x(),1e-8);assertEquals(70,mark.y(),1e-8);assertEquals(25,mark.z(),1e-8);
             var moved=played.stream().filter(r->r.effectId().endsWith("/meteor")).findFirst().orElseThrow();
