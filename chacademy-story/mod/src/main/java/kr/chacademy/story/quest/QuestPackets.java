@@ -23,7 +23,9 @@ public final class QuestPackets {
     public record StepS2C(int session, String step, int run, String chapter, String description, boolean ready, List<Cond> conds,
                           int targetType, String world, double x, double y, double z, double radius, String npcEntity) implements CustomPacketPayload {
         public static final Type<StepS2C> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath("chacademy", "quest_step"));
-        public static final StreamCodec<RegistryFriendlyByteBuf, StepS2C> CODEC = StreamCodec.of((buf, v) -> {
+        /** 깨진·모르는 형식의 패킷 (핸들러가 무시). */
+        public static final StepS2C INVALID = new StepS2C(0, "", 0, "", "", false, List.of(), TARGET_NONE, "", 0, 0, 0, 0, "");
+        public static final StreamCodec<RegistryFriendlyByteBuf, StepS2C> CODEC = SafeCodec.failSafe("quest_step", StreamCodec.of((buf, v) -> {
             buf.writeVarInt(v.session()); buf.writeUtf(v.step()); buf.writeVarInt(v.run()); buf.writeUtf(v.chapter()); buf.writeUtf(v.description());
             buf.writeBoolean(v.ready()); buf.writeVarInt(v.conds().size());
             for (Cond c : v.conds()) { buf.writeUtf(c.label()); buf.writeVarInt(c.current()); buf.writeVarInt(c.required()); }
@@ -45,7 +47,7 @@ public final class QuestPackets {
             double x = buf.readDouble(), y = buf.readDouble(), z = buf.readDouble(), radius = buf.readDouble();
             String npc = buf.readUtf(64);
             return new StepS2C(session, step, run, chapter, description, ready, List.copyOf(conds), type, world, x, y, z, radius, npc);
-        });
+        }), INVALID);
 
         @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
     }
@@ -53,7 +55,9 @@ public final class QuestPackets {
     /** 같은 단계 안의 진행도·준비 상태 변경. 같은 session·step·run 의 단계에만 적용한다. */
     public record UpdateS2C(int session, String step, int run, boolean ready, int[] current) implements CustomPacketPayload {
         public static final Type<UpdateS2C> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath("chacademy", "quest_update"));
-        public static final StreamCodec<RegistryFriendlyByteBuf, UpdateS2C> CODEC = StreamCodec.of((buf, v) -> {
+        /** 깨진·모르는 형식의 패킷 (핸들러가 무시). */
+        public static final UpdateS2C INVALID = new UpdateS2C(0, "", 0, false, new int[0]);
+        public static final StreamCodec<RegistryFriendlyByteBuf, UpdateS2C> CODEC = SafeCodec.failSafe("quest_update", StreamCodec.of((buf, v) -> {
             buf.writeVarInt(v.session()); buf.writeUtf(v.step()); buf.writeVarInt(v.run()); buf.writeBoolean(v.ready());
             buf.writeVarInt(v.current().length);
             for (int c : v.current()) buf.writeVarInt(c);
@@ -67,7 +71,7 @@ public final class QuestPackets {
             int[] cur = new int[n];
             for (int i = 0; i < n; i++) cur[i] = buf.readVarInt();
             return new UpdateS2C(session, step, run, ready, cur);
-        });
+        }), INVALID);
 
         @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
     }

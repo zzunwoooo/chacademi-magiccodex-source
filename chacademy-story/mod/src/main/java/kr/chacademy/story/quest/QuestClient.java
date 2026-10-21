@@ -58,8 +58,8 @@ public final class QuestClient {
     public static void install() {
         PayloadTypeRegistry.playS2C().register(QuestPackets.StepS2C.TYPE, QuestPackets.StepS2C.CODEC);
         PayloadTypeRegistry.playS2C().register(QuestPackets.UpdateS2C.TYPE, QuestPackets.UpdateS2C.CODEC);
-        ClientPlayNetworking.registerGlobalReceiver(QuestPackets.StepS2C.TYPE, (p, ctx) -> ctx.client().execute(() -> onStep(p)));
-        ClientPlayNetworking.registerGlobalReceiver(QuestPackets.UpdateS2C.TYPE, (p, ctx) -> ctx.client().execute(() -> onUpdate(p)));
+        ClientPlayNetworking.registerGlobalReceiver(QuestPackets.StepS2C.TYPE, (p, ctx) -> { if (p != QuestPackets.StepS2C.INVALID) ctx.client().execute(() -> onStep(p)); });
+        ClientPlayNetworking.registerGlobalReceiver(QuestPackets.UpdateS2C.TYPE, (p, ctx) -> { if (p != QuestPackets.UpdateS2C.INVALID) ctx.client().execute(() -> onUpdate(p)); });
         ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> c.execute(() -> { view = new View(); vanishing = null; QuestWorld.reset(); }));
         HudRenderCallback.EVENT.register(QuestHud::render);
         WorldRenderEvents.AFTER_ENTITIES.register(QuestWorld::render);

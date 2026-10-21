@@ -104,6 +104,13 @@
 
 ---
 
+## 9. (후속) 스토리 단계 HUD 패킷 디코더 보호 (`SM/story/quest/QuestPackets.java`, `SafeCodec.java`, `QuestClient.java`)
+
+- 서버→클라 `chacademy:quest_step` / `chacademy:quest_update` 디코더를 `SafeCodec.failSafe` 로 감쌈 (모션 모드 47de688 과 같은 방식, 이 모드 안의 별도 사본).
+- 깨진 패킷(모자란 필드·조건 수 초과·잘못된 글자 길이 등): 예외로 접속이 끊기지 않고 남은 바이트를 버린 뒤 `INVALID` 를 돌려줌 → 핸들러가 무시. 종류별 콘솔 경고 1번.
+- 뒤에 붙은 모르는 필드(더 새 서버): 버리고 앞부분은 정상 처리, 경고 1번.
+- **바이트 형식은 그대로** (플러그인 QuestCodec 변경 없음). 테스트 `QuestSafeCodecTest`.
+
 ## GPT 가 돌릴 테스트
 
 ```
@@ -112,7 +119,7 @@
 (cd chacademy-story/mod && ./gradlew test)        # 스토리 모드 (따로 빌드)
 ```
 (스토리 플러그인·모드는 루트 settings.gradle 에 없어 각 폴더의 빌드로 돌립니다 — 평소 쓰는 방법에 맞춰 주세요)
-- 새 테스트: `StoryFix20261021Test`(보상 묶기·영수증 저장/불러오기·초기화, 시작명령-한번 기본값·왕복, startedRun/submitted/skipped 저장), `SchoolHouseFixTest`(미리 정함/일반 분류 구분, 재시작 유지, 권한 소속 adopt, 초기화), 모드 `AffinityVarsTest`.
+- 새 테스트: `StoryFix20261021Test`(보상 묶기·영수증 저장/불러오기·초기화, 시작명령-한번 기본값·왕복, startedRun/submitted/skipped 저장), `SchoolHouseFixTest`(미리 정함/일반 분류 구분, 재시작 유지, 권한 소속 adopt, 초기화), 모드 `AffinityVarsTest`, 모드 `QuestSafeCodecTest`(후속).
 - 고친 테스트(로컬 호감도 값 검사 → "저장하지 않음" 검사): `LocalDialogueTest`, `RepeatedEndingRewardTest`, `JournalLedgerTest`.
 
 ## 실게임 확인 절차
