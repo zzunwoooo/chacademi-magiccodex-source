@@ -36,4 +36,8 @@ class SchoolTest {
         assertEquals(response,SchoolProtocol.response(SchoolProtocol.encode(response)));
         byte[] bytes=SchoolProtocol.encode(response);assertThrows(IllegalArgumentException.class,()->SchoolProtocol.response(Arrays.copyOf(bytes,bytes.length+1)));
     }
+    @Test void donationAnnouncementUsesCorrectObjectParticle(){
+        assertEquals("을",SchoolBridge.objectParticle("수확의 바람"));assertEquals("를",SchoolBridge.objectParticle("요정 가루"));
+        assertEquals("을",SchoolBridge.objectParticle("봉인진"));assertEquals("를",SchoolBridge.objectParticle("바람바구니"));assertEquals("을(를)",SchoolBridge.objectParticle("feather fall"));
+    }
 }

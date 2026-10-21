@@ -275,7 +275,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         return List.of(" 자연 스폰 조건 결과="+naturalChecks+" 확정="+naturalSpawned,
             " 메인 스레드 게이트="+(naturalGate==null?"시작 전":naturalGate.diagnostic()));
     }
-    @Override public void onDisable(){if(naturalGate!=null)naturalGate.close();}
+    @Override public void onDisable(){if(naturalGate!=null)naturalGate.close();crops.close();}
     /** Read-only, bounded sampling of already loaded chunks. Never teleports or spawns. */
     List<String> diagnose(Player player){
         var out=new ArrayList<String>();

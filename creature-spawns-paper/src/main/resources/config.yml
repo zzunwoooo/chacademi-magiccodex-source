@@ -24,7 +24,7 @@
                                       ],
                            "max-per-player":  3,
                            "lifetime-seconds":  30,
-                           "cancel-drops":  true,
+                           "cancel-drops":  false,
                            "shiny-denominator":  4096,
                            "crops":  {
                                          "WHEAT":  "wheat",
