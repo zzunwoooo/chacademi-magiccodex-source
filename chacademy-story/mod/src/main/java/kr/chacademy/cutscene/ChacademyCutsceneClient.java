@@ -271,9 +271,11 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
             for(String warning:DialogueLoader.warnings(DialogueLoader.rootDir(),id))client.player.displayClientMessage(Component.literal(id+": "+warning).withStyle(ChatFormatting.YELLOW),false);
             var ledger=new kr.chacademy.story.dialogue.LocalDialogueStore(DialogueLoader.rootDir().resolve("_progress").resolve(client.player.getUUID()+".properties"));
             var signals=new kr.chacademy.story.dialogue.DialogueOpenSignals();
-            var localVars=TextVars.withLocal(vars);
+            // 선택지 조건(need)은 서버가 보낸 MagicCodex 호감도만 쓴다 (이 PC 에 저장한 값 없음)
+            var serverAffinity=kr.chacademy.story.dialogue.Affinity.fromVars(vars);
+            var localVars=TextVars.withLocal(kr.chacademy.story.dialogue.Affinity.withoutAffinity(vars));
             var queuedAffinity=new java.util.HashSet<String>();
-            var runner=new DialogueRunner(dialogue,DialogueLoader.folder(id),ledger.affinity(),localVars,new DialogueRunner.Listener(){
+            var runner=new DialogueRunner(dialogue,DialogueLoader.folder(id),serverAffinity,localVars,new DialogueRunner.Listener(){
                 @Override public boolean affinity(String dialogueId,String key,java.util.List<Dialogue.AffinityChange> changes){
                     // Defer writes until UI accepted; constructor-time changes still affect this frame's local branches.
                     if(ledger.done(dialogueId)||ledger.hasAffinity(dialogueId,key)||!queuedAffinity.add(key))return false;

@@ -32,6 +32,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerItemBreakEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -72,6 +81,10 @@ final class QuestEngine implements Listener {
     private static final long TICK_CHECK = 10L;
     private static final long PICK_MS = 120_000L;
     private static final long PLAYING_TIMEOUT_MS = 30 * 60_000L;
+    /** 컷신 요청이 실패·취소된 뒤 컷신만 다시 요청하는 횟수. 넘으면 건너뛰고 다음 단계로 (대화부터 다시 반복하지 않음). */
+    static final int CUTSCENE_RETRIES = 3;
+    /** 아이템 조건: 인벤토리 변경 이벤트가 없어도 이 간격마다 한 번은 다시 센다 (명령·다른 플러그인이 넣은 아이템). */
+    static final long ITEM_RESCAN_MS = 5_000L;
 
     private final StoryPlugin plugin;
     private QuestDefs defs = new QuestDefs();
@@ -89,6 +102,14 @@ final class QuestEngine implements Listener {
             clickGate = new HashMap<>(), playingSince = new HashMap<>();
     private final Map<UUID, Pick> picks = new HashMap<>();
     private final Set<UUID> previewing = new HashSet<>();
+    /** 제출 아이템을 걷는 중 (진행 저장이 끝나기를 기다림). */
+    private final Set<UUID> submitting = new HashSet<>();
+    /** 컷신 실패 횟수 (단계 회차별). */
+    private record CutFail(int run, int count) {}
+    private final Map<UUID, CutFail> cutFails = new HashMap<>();
+    /** 아이템 조건 개수 캐시 (주기 확인용). 인벤토리 변경 이벤트가 오면 지운다. */
+    private record ItemScan(long at, Map<String, Integer> counts) {}
+    private final Map<UUID, ItemScan> itemScans = new HashMap<>();
 
     private Class<?> npcIface, registryIface;
     private Object registry;
@@ -278,7 +299,7 @@ final class QuestEngine implements Listener {
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             Player p = Bukkit.getPlayer(uuid);
             if (p == null || st.run != run || isReady(p, st, s)) return;
-            runStartCommands(p, st, run);
+            runStartCommands(p, st, run, false);
         }, 100L);
     }
 
@@ -334,15 +355,39 @@ final class QuestEngine implements Listener {
         if (s != null && !s.startCommands.isEmpty()) {
             int run = st.run;
             // 다음 틱: 앞 대화의 끝 명령·세션 정리가 끝난 뒤
-            Bukkit.getScheduler().runTask(plugin, () -> runStartCommands(p, st, run));
+            Bukkit.getScheduler().runTask(plugin, () -> runStartCommands(p, st, run, false));
         }
     }
 
-    /** 단계의 시작명령 (steps.yml, 서버 설정). 그 단계·회차 그대로이고 기다리는 중이 아닐 때만. */
-    private void runStartCommands(Player p, P st, int run) {
+    /**
+     * 단계의 시작명령 (steps.yml, 서버 설정). 그 단계·회차 그대로이고 기다리는 중이 아닐 때만.
+     * 시작명령-한번 단계는 "이 회차에 실행함"(startedRun)을 먼저 디스크에 저장한 뒤 실행하고, 같은 회차에는 다시 실행하지 않는다
+     * (재접속·대화 닫기·서버 재시작 모두). manual = 관리자 /유저관리 스토리진행 다시 (한번 표시를 무시하고 실행).
+     */
+    private void runStartCommands(Player p, P st, int run, boolean manual) {
         if (!ready || !p.isOnline() || st.run != run || st.phase != Phase.ACTIVE) return;
         Step s = defs.get(st.step);
         if (s == null) return;
+        if (!manual && s.startOnce()) {
+            if (st.startedRun == run) return;
+            st.startedRun = run;
+            UUID uuid = p.getUniqueId();
+            saveSoon(() -> {
+                Player now = Bukkit.getPlayer(uuid);
+                if (st.run != run || !st.step.equals(s.id)) return;
+                if (now == null || !now.isOnline() || st.phase != Phase.ACTIVE) {
+                    // 아직 아무것도 실행하지 않았다: 표시를 되돌려 다음 접속 때 실행
+                    if (st.startedRun == run) { st.startedRun = 0; saveSoon(null); }
+                    return;
+                }
+                dispatchStartCommands(now, s);
+            });
+            return;
+        }
+        dispatchStartCommands(p, s);
+    }
+
+    private void dispatchStartCommands(Player p, Step s) {
         for (String raw : s.startCommands) {
             String c = raw.replace("{player}", p.getName()).replace("{uuid}", p.getUniqueId().toString());
             if (StoryPlugin.legacyCommand(c)) { plugin.getLogger().warning("[스토리 단계] " + s.id + " 시작명령의 예전(Skript) 명령은 실행하지 않습니다: " + c); continue; }
@@ -375,9 +420,15 @@ final class QuestEngine implements Listener {
         long now = System.currentTimeMillis();
         if (now < retryAt.getOrDefault(uuid, 0L)) return;
         if (!st.submitted && hasSubmit(s)) {
+            if (submitting.contains(uuid)) return;
             for (Cond c : s.conds) if (c.type() == CondType.SUBMIT && countItems(p, c.target()) < c.required()) return;
-            for (Cond c : s.conds) if (c.type() == CondType.SUBMIT) takeItems(p, c.target(), c.required());
+            // 제출: "걷었음"을 먼저 디스크에 저장하고, 저장이 끝난 뒤 개수를 다시 세서 걷는다 (이중 차감 없음).
+            // 저장 뒤 ~ 걷기 전에 서버가 멈추면 아이템은 남고 단계는 진행된다 (손해는 서버 쪽).
             st.submitted = true;
+            submitting.add(uuid);
+            int submitRun = st.run;
+            saveSoon(() -> afterSubmitSaved(uuid, st, s, submitRun, why));
+            return;
         }
         int run = st.run;
         if (!s.dialogue.isEmpty()) {
@@ -412,6 +463,27 @@ final class QuestEngine implements Listener {
         if (plugin.getConfig().getBoolean("story-debug", false)) plugin.getLogger().info("[스토리 단계] " + p.getName() + " " + s.id + " 호출 (" + why + ")");
     }
 
+    /** 제출 기록이 저장된 뒤 (메인 스레드): 다시 세고 걷은 다음 원래 호출을 이어 간다. 모자라면 기록을 되돌린다. */
+    private void afterSubmitSaved(UUID uuid, P st, Step s, int run, String why) {
+        submitting.remove(uuid);
+        if (st.run != run || !st.submitted || !st.step.equals(s.id)) return;
+        Player p = Bukkit.getPlayer(uuid);
+        boolean enough = p != null && p.isOnline();
+        if (enough) for (Cond c : s.conds) if (c.type() == CondType.SUBMIT && countItems(p, c.target()) < c.required()) { enough = false; break; }
+        if (!enough) {
+            st.submitted = false;
+            saveSoon(null);
+            needUpdate.add(uuid);
+            scheduleSend();
+            if (p != null && p.isOnline()) ChacaLink.fail(p, "가져갈 아이템이 부족해요", null);
+            return;
+        }
+        for (Cond c : s.conds) if (c.type() == CondType.SUBMIT) takeItems(p, c.target(), c.required());
+        try { p.saveData(); } catch (RuntimeException ex) { plugin.getLogger().log(Level.WARNING, "[스토리 단계] " + p.getName() + " 제출 뒤 플레이어 데이터 저장 실패", ex); }
+        itemScans.remove(uuid);
+        if (st.phase == Phase.ACTIVE) fire(p, st, s, why);
+    }
+
     private static boolean hasSubmit(Step s) {
         for (Cond c : s.conds) if (c.type() == CondType.SUBMIT) return true;
         return false;
@@ -419,13 +491,24 @@ final class QuestEngine implements Listener {
 
     // ================================================================ 조건 계산
 
-    private int[] currents(Player p, P st, Step s) {
+    private int[] currents(Player p, P st, Step s) { return currents(p, st, s, false); }
+
+    /** cached = 0.5초 주기 확인: 아이템 개수는 인벤토리가 바뀌었거나 {@value #ITEM_RESCAN_MS}ms 가 지났을 때만 다시 센다. */
+    private int[] currents(Player p, P st, Step s, boolean cached) {
         int[] out = new int[s.conds.size()];
+        Map<String, Integer> scan = null;
+        if (cached && p != null) {
+            long now = System.currentTimeMillis();
+            ItemScan old = itemScans.get(p.getUniqueId());
+            if (old == null || now - old.at() > ITEM_RESCAN_MS) itemScans.put(p.getUniqueId(), old = new ItemScan(now, new HashMap<>()));
+            scan = old.counts();
+        }
         for (int i = 0; i < out.length; i++) {
             Cond c = s.conds.get(i);
+            Map<String, Integer> sc = scan;
             int v = switch (c.type()) {
-                case ITEM -> p == null ? 0 : countItems(p, c.target());
-                case SUBMIT -> st.submitted ? c.required() : p == null ? 0 : countItems(p, c.target());
+                case ITEM -> p == null ? 0 : sc == null ? countItems(p, c.target()) : sc.computeIfAbsent(c.target(), t -> countItems(p, t));
+                case SUBMIT -> st.submitted ? c.required() : p == null ? 0 : sc == null ? countItems(p, c.target()) : sc.computeIfAbsent(c.target(), t -> countItems(p, t));
                 case INTERACT -> st.hits.getOrDefault(i, Set.of()).size();
                 default -> st.counts.getOrDefault(i, 0);
             };
@@ -511,12 +594,12 @@ final class QuestEngine implements Listener {
                         plugin.getLogger().warning("[스토리 단계] " + p.getName() + ": " + st.waiting + " 이(가) 30분 넘게 끝나지 않아 다시 호출할 수 있게 되돌립니다");
                         backToActive(uuid, st);
                     } else if (st.waiting.startsWith("c:") && now - since > 10_000 && !plugin.hasStory(uuid, false, st.waiting.substring(2))) {
-                        // 컷신 요청이 재시도 한도·실패로 취소됨
-                        backToActive(uuid, st);
+                        // 컷신 요청이 재시도 한도·실패로 취소됨: 대화부터 다시 반복하지 않고 컷신만 몇 번 다시, 그래도 안 되면 건너뛴다
+                        cutsceneFailed(p, st, s, now);
                     }
                     continue;
                 }
-                int[] cur = currents(p, st, s);
+                int[] cur = currents(p, st, s, true);
                 boolean r = true;
                 for (int i = 0; i < cur.length; i++) if (cur[i] < s.conds.get(i).required()) { r = false; break; }
                 String key = st.run + ":" + r + ":" + java.util.Arrays.toString(cur);
@@ -525,12 +608,33 @@ final class QuestEngine implements Listener {
                 if (r && !Boolean.TRUE.equals(was)) readySince.put(uuid, now);
                 if (!r) { readySince.remove(uuid); continue; }
                 Trigger t = s.trigger;
-                if (t.type == TrigType.AUTO && now - readySince.getOrDefault(uuid, now) >= t.delay * 1000L) fire(p, st, s, "자동");
-                else if (t.type == TrigType.LOCATION && inside(p, t)) fire(p, st, s, "위치");
+                // 주기 확인의 아이템 개수는 캐시일 수 있으니 호출 직전에 한 번 새로 확인한다
+                if (t.type == TrigType.AUTO && now - readySince.getOrDefault(uuid, now) >= t.delay * 1000L && isReady(p, st, s)) fire(p, st, s, "자동");
+                else if (t.type == TrigType.LOCATION && inside(p, t) && isReady(p, st, s)) fire(p, st, s, "위치");
             } catch (RuntimeException ex) {
                 plugin.getLogger().log(Level.SEVERE, p.getName() + ": 스토리 단계 확인 중 오류", ex);
             }
         }
+    }
+
+    private void cutsceneFailed(Player p, P st, Step s, long now) {
+        UUID uuid = p.getUniqueId();
+        String cutscene = st.waiting.substring(2);
+        CutFail f = cutFails.get(uuid);
+        int n = f != null && f.run() == st.run ? f.count() + 1 : 1;
+        cutFails.put(uuid, new CutFail(st.run, n));
+        if (n <= CUTSCENE_RETRIES) {
+            plugin.getLogger().warning("[스토리 단계] " + p.getName() + ": " + s.id + " 의 컷신 " + cutscene + " 을(를) 재생하지 못했습니다 — 컷신만 다시 요청 (" + n + "/" + CUTSCENE_RETRIES + ")");
+            playingSince.put(uuid, now);
+            plugin.playCutscene(p, cutscene, StoryCodec.MODE_AUTO);
+            return;
+        }
+        cutFails.remove(uuid);
+        st.skippedCutscene = s.id + ":" + cutscene;
+        plugin.getLogger().severe("[스토리 단계] " + p.getName() + "(" + uuid + "): " + s.id + " 의 컷신 " + cutscene + " 을(를) " + CUTSCENE_RETRIES
+                + "번 더 시도해도 재생하지 못해 건너뛰고 다음 단계로 넘깁니다 (클라이언트 컷신 파일 확인 · /유저관리 <닉네임> 스토리진행 보기)");
+        ChacaLink.notify(p, "warning", "story-cutscene-skip", "장면을 불러오지 못해 건너뛰었어요", "관리자에게 알려 주세요", 5000);
+        advance(p, st, s);
     }
 
     // ================================================================ 이벤트
@@ -544,6 +648,12 @@ final class QuestEngine implements Listener {
             st = prog.of(uuid);
             st.enter(defs.startStep);
             saveSoon(null);
+        } else if ((st == null || !st.started) && !defs.startStep.isEmpty() && defs.get(defs.startStep) != null
+                && !defs.startAfterDialogue.isEmpty() && plugin.dialogueDone(uuid, defs.startAfterDialogue)) {
+            // 단계 모듈 배포 전에 시작 대화(ch1-5)를 끝낸 유저: 그 완료 신호를 다시 받을 수 없으니 접속 때 첫 단계를 시작한다
+            plugin.getLogger().info("[스토리 단계] " + p.getName() + ": 대화 " + defs.startAfterDialogue + " 을(를) 이미 끝낸 기록이 있어 첫 단계 " + defs.startStep + " 을(를) 시작합니다");
+            st = prog.of(uuid);
+            enter(p, st, defs.startStep, true);
         }
         // 대화를 보다가 나갔으면 다시 호출할 수 있게 (컷신은 스토리 대기열이 이어서 재생하므로 기다린다)
         if (st != null && st.phase == Phase.PLAYING && st.waiting.startsWith("d:")) { st.phase = Phase.ACTIVE; st.waiting = ""; saveSoon(null); }
@@ -556,7 +666,7 @@ final class QuestEngine implements Listener {
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 Step s = defs.get(cur.step);
                 if (s == null || s.startCommands.isEmpty() || !p.isOnline() || cur.run != run || isReady(p, cur, s)) return;
-                runStartCommands(p, cur, run);
+                runStartCommands(p, cur, run, false);
             }, 120L);
         }
     }
@@ -569,8 +679,20 @@ final class QuestEngine implements Listener {
         UUID uuid = e.getPlayer().getUniqueId();
         sessions.remove(uuid); sentKey.remove(uuid); readyCache.remove(uuid); readySince.remove(uuid);
         hintAt.remove(uuid); clickGate.remove(uuid); picks.remove(uuid); previewing.remove(uuid);
-        needStep.remove(uuid); needUpdate.remove(uuid);
+        needStep.remove(uuid); needUpdate.remove(uuid); itemScans.remove(uuid);
     }
+
+    // 아이템 조건 캐시 무효화 (가벼운 표시만, 실제 세기는 다음 주기 확인 때)
+    private void inventoryChanged(Entity e) { if (e instanceof Player p) itemScans.remove(p.getUniqueId()); }
+    @EventHandler(priority = EventPriority.MONITOR) public void onInvClick(InventoryClickEvent e) { inventoryChanged(e.getWhoClicked()); }
+    @EventHandler(priority = EventPriority.MONITOR) public void onInvDrag(InventoryDragEvent e) { inventoryChanged(e.getWhoClicked()); }
+    @EventHandler(priority = EventPriority.MONITOR) public void onInvClose(InventoryCloseEvent e) { inventoryChanged(e.getPlayer()); }
+    @EventHandler(priority = EventPriority.MONITOR) public void onPickup(EntityPickupItemEvent e) { inventoryChanged(e.getEntity()); }
+    @EventHandler(priority = EventPriority.MONITOR) public void onDrop(PlayerDropItemEvent e) { inventoryChanged(e.getPlayer()); }
+    @EventHandler(priority = EventPriority.MONITOR) public void onConsume(PlayerItemConsumeEvent e) { inventoryChanged(e.getPlayer()); }
+    @EventHandler(priority = EventPriority.MONITOR) public void onBreak(PlayerItemBreakEvent e) { inventoryChanged(e.getPlayer()); }
+    @EventHandler(priority = EventPriority.MONITOR) public void onPlace(BlockPlaceEvent e) { inventoryChanged(e.getPlayer()); }
+    @EventHandler(priority = EventPriority.MONITOR) public void onPlayerDeath(PlayerDeathEvent e) { inventoryChanged(e.getEntity()); }
 
     @EventHandler(ignoreCancelled = true)
     public void onMove(PlayerMoveEvent e) {
@@ -840,7 +962,7 @@ final class QuestEngine implements Listener {
             sentKey.put(uuid, "");
             return;
         }
-        int[] cur = currents(p, st, s);
+        int[] cur = currents(p, st, s, true);
         boolean r = isReadyFrom(s, cur) && st.phase == Phase.ACTIVE;
         p.sendPluginMessage(plugin, QuestCodec.STEP, QuestCodec.step(view(session, s, st.run, cur, r)));
         sentKey.put(uuid, st.run + ":" + isReadyFrom(s, cur) + ":" + java.util.Arrays.toString(cur));
@@ -852,7 +974,7 @@ final class QuestEngine implements Listener {
         Step s = st == null ? null : defs.get(st.step);
         Integer session = sessions.get(uuid);
         if (s == null || session == null || !hasMod(p)) return;
-        int[] cur = currents(p, st, s);
+        int[] cur = currents(p, st, s, true);
         boolean full = isReadyFrom(s, cur);
         int[] visible = visible(s, cur);
         p.sendPluginMessage(plugin, QuestCodec.UPDATE, QuestCodec.update(session, s.id, st.run, full && st.phase == Phase.ACTIVE, visible));
@@ -917,6 +1039,8 @@ final class QuestEngine implements Listener {
     // ================================================================ 명령어
 
     private static final String ID = "단계ID";
+    /** 기숙사 분류 6문항 대화 ID (SchoolBridge 가 띄움). */
+    static final String SORTING_DIALOGUE = "ch1-14";
 
     void registerCommands() {
         if (!ChacaLink.ready()) return;
@@ -1123,6 +1247,16 @@ final class QuestEngine implements Listener {
                 out.add("조건 " + (i + 1) + " 신호 " + c.target() + " 는 자동으로 보내는 기능이 없음 (관리자 /대화관리 신호 로만 채워짐)");
         }
         if (!s.next.isEmpty() && defs.get(s.next) == null) out.add("다음 단계 " + s.next + " 없음");
+        // 기숙사 분류: 6문항 대화(ch1-14)의 끝 명령이 결정을 실행해야 배정된다 (dialogues/server_command.yml)
+        for (String c : s.startCommands) {
+            if (!c.startsWith("기숙사분류 시작")) continue;
+            List<String> end = plugin.endingCommandsOf(SORTING_DIALOGUE);
+            boolean decide = false;
+            if (end != null) for (String e : end) if (e.contains("기숙사분류 결정") && e.contains("{ending}")) decide = true;
+            if (!decide) out.add("dialogues/server_command.yml 의 " + SORTING_DIALOGUE + " 에 \"기숙사분류 결정 {player} {ending}\" 이 없음 — 6문항을 끝내도 배정되지 않아 멈춤");
+        }
+        if (s.startOnce() && s.startCommands.stream().anyMatch(c -> c.startsWith("기숙사분류 시작")))
+            out.add("시작명령-한번 이 켜져 있어 분류 대화를 닫은 유저에게 다시 열어 주지 않음 (시작명령-한번: false 권장)");
         return out;
     }
 
@@ -1174,7 +1308,7 @@ final class QuestEngine implements Listener {
         if (s.conds.isEmpty()) out.add("조건: 없음 (바로 준비 완료)");
         out.add("호출: " + s.trigger.describe());
         out.add("대화: " + (s.dialogue.isEmpty() ? "-" : s.dialogue) + " · 컷신: " + (s.cutscene.isEmpty() ? "-" : s.cutscene) + " · 다음: " + (s.next.isEmpty() ? "(끝)" : s.next));
-        if (!s.startCommands.isEmpty()) out.add("시작명령: " + String.join(" / ", s.startCommands));
+        if (!s.startCommands.isEmpty()) out.add("시작명령" + (s.startOnce() ? " (한번)" : " (반복 가능)") + ": " + String.join(" / ", s.startCommands));
         for (String problem : problems(s)) out.add("⚠ " + problem);
         ChacaLink.lines(ctx.getSource().getSender(), out);
         return 1;
@@ -1329,6 +1463,8 @@ final class QuestEngine implements Listener {
             int[] cur = currents(p, st, s);
             for (int i = 0; i < cur.length; i++) out.add("  " + (i + 1) + ". " + s.conds.get(i).display() + " " + cur[i] + "/" + s.conds.get(i).required());
         }
+        if (!st.skippedCutscene.isEmpty()) out.add("⚠ 컷신을 불러오지 못해 건너뜀: " + st.skippedCutscene);
+        if (st.startedRun == st.run && s != null && s.startOnce() && !s.startCommands.isEmpty()) out.add("시작명령: 이 회차에 실행함 (한번)");
         if (!st.history.isEmpty()) out.add("끝낸 단계: " + String.join(", ", st.history.subList(0, Math.min(10, st.history.size()))));
         ChacaLink.lines(ctx.getSource().getSender(), out);
         return 1;
@@ -1359,7 +1495,7 @@ final class QuestEngine implements Listener {
         Step s = st == null ? null : defs.get(st.step);
         if (s == null || s.startCommands.isEmpty()) throw ChacaLink.error("지금 단계에 다시 실행할 시작명령이 없어요");
         if (st.phase != Phase.ACTIVE) throw ChacaLink.error("지금은 대화·컷신을 기다리는 중이에요");
-        runStartCommands(p, st, st.run);
+        runStartCommands(p, st, st.run, true);
         ChacaLink.ok(ctx.getSource().getSender(), ChacaLink.name(p.getUniqueId()) + " 님의 " + s.id + " 시작명령을 다시 실행했어요");
         return 1;
     }

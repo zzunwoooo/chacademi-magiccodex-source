@@ -12,12 +12,12 @@ class LocalDialogueTest {
   assertTrue(s.claimEvent("ch1-2","hello"));assertFalse(s.claimEvent("ch1-2","hello"));
   assertTrue(s.claimAffinity("ch1-2","scene.a",List.of(new Dialogue.AffinityChange("teacher",-1))));
   assertFalse(s.claimAffinity("ch1-2","scene.a",List.of(new Dialogue.AffinityChange("teacher",-1))));
-  assertEquals(Affinity.DEFAULT-1,s.affinity().get("teacher"));
+  assertFalse(Files.readString(file).contains("affinity."),"호감도 값은 이 PC 에 저장하지 않는다 (MagicCodex 하나)");
   assertTrue(s.complete("ch1-2"));assertFalse(s.complete("ch1-2"));
   var reloaded=new LocalDialogueStore(file);
   assertTrue(reloaded.done("ch1-2"));assertFalse(reloaded.claimEvent("ch1-2","different_route"));
   assertFalse(reloaded.claimAffinity("ch1-2","scene.b",List.of(new Dialogue.AffinityChange("teacher",3))));
-  assertEquals(Affinity.DEFAULT-1,reloaded.affinity().get("teacher"));
+  assertFalse(Files.readString(file).contains("affinity."));
   assertTrue(reloaded.claimEvent("ch1-3","hello"));
  }
  @Test void failedWriteDoesNotIssueAClaimOrMarkComplete()throws Exception{

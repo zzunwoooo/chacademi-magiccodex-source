@@ -34,6 +34,10 @@ final class QuestProgress {
         /** 끝낸 단계 (최근 순). */
         final List<String> history = new ArrayList<>();
         boolean started;
+        /** 시작명령-한번 단계에서 시작명령을 이미 실행한(실행하려고 저장한) 회차. */
+        int startedRun;
+        /** 컷신을 여러 번 불러오지 못해 건너뛴 기록 "단계:컷신" (관리자 확인용, 마지막 것). */
+        String skippedCutscene = "";
 
         void enter(String id) {
             step = id == null ? "" : id;
@@ -71,6 +75,8 @@ final class QuestProgress {
             m.put("run", p.run);
             m.put("started", p.started);
             if (p.submitted) m.put("submitted", true);
+            if (p.startedRun != 0) m.put("started-run", p.startedRun);
+            if (!p.skippedCutscene.isEmpty()) m.put("skipped-cutscene", p.skippedCutscene);
             if (p.phase == Phase.PLAYING) { m.put("phase", "playing"); m.put("waiting", p.waiting); }
             if (!p.counts.isEmpty()) {
                 Map<String, Object> c = new LinkedHashMap<>();
@@ -102,6 +108,8 @@ final class QuestProgress {
             p.run = m.get("run") instanceof Number n ? n.intValue() : 0;
             p.started = Boolean.TRUE.equals(m.get("started")) || !p.step.isEmpty();
             p.submitted = Boolean.TRUE.equals(m.get("submitted"));
+            p.startedRun = m.get("started-run") instanceof Number sr ? sr.intValue() : 0;
+            p.skippedCutscene = m.get("skipped-cutscene") == null ? "" : String.valueOf(m.get("skipped-cutscene"));
             if ("playing".equals(m.get("phase"))) {
                 p.phase = Phase.PLAYING;
                 p.waiting = m.get("waiting") == null ? "" : String.valueOf(m.get("waiting"));

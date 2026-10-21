@@ -23,6 +23,9 @@ import java.util.regex.Pattern;
  *     컷신: ""
  *     다음: ch1-9                           # 비우면 스토리 끝
  *     시작명령: []                          # 단계에 들어갈 때(그리고 조건을 못 채운 채 다시 접속할 때) 콘솔로 실행 ({player} = 계정 이름)
+ *     시작명령-한번: true                   # true = 그 단계 회차에 딱 한 번 (실행 전에 기록을 저장, 재접속·대화 닫기로 다시 실행 안 함)
+ *                                          # false = 지금처럼 여러 번 (예: 기숙사분류 시작 — 다시 열어 줘야 함, 여러 번 실행해도 결과가 같은 명령만)
+ *                                          # 생략 = 명령에 지급·칭호·권한 같은 말이 있으면 true, 아니면 false ({@link #grantLike})
  * </pre>
  * 대화완료 조건의 대상은 여러 개를 | 로 묶을 수 있고, 끝의 * 는 앞부분이 같은 모든 대화 (예: ch1-14r-*|ch1-14m-*|ch1-14f-*).
  */
@@ -140,10 +143,25 @@ final class QuestDefs {
         String chapter = "", description = "", dialogue = "", cutscene = "", next = "";
         final List<Cond> conds = new ArrayList<>();
         final List<String> startCommands = new ArrayList<>();
+        /** 시작명령-한번. null = 생략 (명령 내용으로 정함). */
+        Boolean startOnce;
         Trigger trigger = new Trigger();
 
         Step(String id) { this.id = id; }
+
+        /** 시작명령을 그 회차에 한 번만 실행하는지. */
+        boolean startOnce() { return startOnce != null ? startOnce : grantLike(startCommands); }
     }
+
+    /** 아이템·칭호·권한·재화를 주는 것처럼 보이는 명령 (시작명령-한번 을 생략했을 때 한 번만 실행). */
+    static boolean grantLike(List<String> commands) {
+        for (String c : commands) {
+            String l = c.toLowerCase(Locale.ROOT);
+            for (String w : GRANT_WORDS) if (l.contains(w)) return true;
+        }
+        return false;
+    }
+    static final List<String> GRANT_WORDS = List.of("give", "지급", "주기", "칭호", "아이템관리", "permission set", "parent add", "eco ", "money", "돈", "재화");
 
     final Map<String, Step> steps = new LinkedHashMap<>();
     String startStep = "";
@@ -204,6 +222,8 @@ final class QuestDefs {
                 if (!c.isBlank()) s.startCommands.add(c);
             }
         }
+        if (m.get("시작명령-한번") instanceof Boolean once) s.startOnce = once;
+        else if (m.get("시작명령-한번") != null) warnings.add(id + ": 시작명령-한번 은 true/false 여야 함 (생략으로 봄)");
         if (m.get("호출") instanceof Map<?, ?> c) {
             Trigger t = s.trigger;
             TrigType type = TrigType.of(String.valueOf(c.get("종류")));
@@ -287,6 +307,7 @@ final class QuestDefs {
             m.put("컷신", s.cutscene);
             m.put("다음", s.next);
             if (!s.startCommands.isEmpty()) m.put("시작명령", new ArrayList<>(s.startCommands));
+            if (s.startOnce != null) m.put("시작명령-한번", s.startOnce);
             all.put(s.id, m);
         }
         root.put("단계", all);
