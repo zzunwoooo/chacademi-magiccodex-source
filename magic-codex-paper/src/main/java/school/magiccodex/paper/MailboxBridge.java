@@ -127,21 +127,30 @@ final class MailboxBridge implements MailService,PluginMessageListener,Listener,
   UUID owner=ChacaApi.target(ctx);String title=com.mojang.brigadier.arguments.StringArgumentType.getString(ctx,"제목").strip();
   if(title.isEmpty()||title.length()>80)throw ChacaApi.error("제목은 1~80자예요");
   var sender=CmdKit.sender(ctx);var attachments=new ArrayList<ItemStack>();
-  // 손에 든 아이템을 첨부한다 (보낸 사람 인벤토리에서 빠짐). 콘솔이나 빈손이면 글만.
+  // 손에 든 아이템의 사본을 첨부한다. 손에서는 우편 저장이 확인된 뒤에만 뺀다 (실패해도 아이템이 사라지지 않음). 콘솔이나 빈손이면 글만.
   ItemStack hand=null;int slot=-1;
   if(sender instanceof Player p){slot=p.getInventory().getHeldItemSlot();ItemStack held=p.getInventory().getItemInMainHand();if(!held.getType().isAir()){if(held.getAmount()>99||held.serializeAsBytes().length>32768)throw ChacaApi.error("손에 든 아이템이 너무 커서 첨부할 수 없어요");hand=held.clone();attachments.add(hand);}}
   final ItemStack attached=hand;final int heldSlot=slot;Player admin=sender instanceof Player p?p:null;
-  if(admin!=null&&attached!=null)admin.getInventory().setItem(heldSlot,null);
   String who=CmdKit.name(owner);String body=attached==null?"관리자가 보낸 우편입니다.":"관리자가 보낸 우편입니다. 첨부를 받아 주세요.";
+  String item=attached==null?"-":attached.getType()+"x"+attached.getAmount();
   CompletableFuture<UUID> sent;
   try{sent=sendSystem("admin:"+UUID.randomUUID(),owner,title,body,attachments);}
-  catch(RuntimeException e){if(admin!=null&&attached!=null)admin.getInventory().addItem(attached);throw e;}
-  plugin.getLogger().info("MAIL ADMIN send admin="+sender.getName()+" player="+owner+" title="+title+" item="+(attached==null?"-":attached.getType()+"x"+attached.getAmount()));
+  catch(RuntimeException e){plugin.getLogger().warning("MAIL ADMIN send-failed admin="+sender.getName()+" player="+owner+" title="+title+" item="+item+" error="+e);throw ChacaApi.error(adminSendResult(false,attached!=null,false));}
   sent.whenComplete((id,error)->main(()->{
-   if(error==null){CmdKit.ok(sender,who+" 님에게 우편을 보냈어요"+(attached==null?"":" (첨부 1개)"));return;}
-   if(admin!=null&&attached!=null&&admin.isOnline()){var left=admin.getInventory().addItem(attached);left.values().forEach(i->admin.getWorld().dropItemNaturally(admin.getLocation(),i));}
-   CmdKit.fail(sender,"우편을 보내지 못했어요"+(attached==null?"":" (첨부는 돌려드렸어요)"),error);
+   if(error!=null){plugin.getLogger().warning("MAIL ADMIN send-failed admin="+sender.getName()+" player="+owner+" title="+title+" item="+item+" error="+error);CmdKit.fail(sender,adminSendResult(false,attached!=null,false),error);return;}
+   boolean taken=false;
+   if(admin!=null&&attached!=null){ItemStack now=admin.isOnline()?admin.getInventory().getItem(heldSlot):null;
+    if(now!=null&&!now.getType().isAir()&&Arrays.equals(now.serializeAsBytes(),attached.serializeAsBytes())){admin.getInventory().setItem(heldSlot,null);taken=true;}
+    else plugin.getLogger().warning("MAIL ADMIN copy-retained admin="+sender.getName()+" player="+owner+" mail="+id+" item="+item+" (보낸 뒤 손의 아이템이 바뀌었거나 오프라인이라 빼지 못함)");}
+   plugin.getLogger().info("MAIL ADMIN send admin="+sender.getName()+" player="+owner+" mail="+id+" title="+title+" item="+item+" taken="+taken);
+   CmdKit.ok(sender,who+" 님에게 "+adminSendResult(true,attached!=null,taken));
   }));
+ }
+ /** 관리자 우편 결과 문구: 실제 결과(성공 여부·첨부 여부·손에서 뺐는지)대로만 말한다. */
+ static String adminSendResult(boolean ok,boolean attachment,boolean taken){
+  if(!ok)return "우편을 보내지 못했어요"+(attachment?" (첨부는 손에 그대로 있어요)":"");
+  if(!attachment)return "우편을 보냈어요";
+  return taken?"우편을 보냈어요 (첨부 1개)":"우편을 보냈어요 (첨부 1개, 손의 아이템이 바뀌어 빼지 못했어요 — 사본이 남았는지 확인해 주세요)";
  }
  private void listMail(com.mojang.brigadier.context.CommandContext<io.papermc.paper.command.brigadier.CommandSourceStack> ctx)throws com.mojang.brigadier.exceptions.CommandSyntaxException{
   UUID owner=ChacaApi.target(ctx);var sender=CmdKit.sender(ctx);String who=CmdKit.name(owner);

@@ -75,6 +75,15 @@ public final class NpcSocialFacade {
                 .thenApply(r -> r == null ? null : new int[]{r.row().score(), r.row().heart(), r.applied()});
     }
 
+    /**
+     * 1.5단계 (A08, 2026-10-21): 손 칸의 선물 아이템 1개 차감 + 영수증(PDC) + saveData 를 같은 틱에 한다.
+     * 1 = 차감함, 0 = 칸의 아이템이 바뀌어 아무것도 안 함. 예외 = 결과 모름 (pending 은 다음 접속 때 영수증으로 정해짐).
+     * 이 메서드가 없는 옛 Bridge 와는 선물을 하지 않는다 (ChacaNPC 가 확인).
+     */
+    public int takeGift(Player player, int slot, org.bukkit.inventory.ItemStack one, String token) {
+        return service.takeGift(player, slot, one, token);
+    }
+
     /** 아이템 차감 전 취소. 하루 횟수를 돌려준다. */
     public CompletableFuture<Boolean> cancelGift(String token) {
         return service.cancelGift(token);

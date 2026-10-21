@@ -48,24 +48,52 @@ class AffinityStoreTest {
     @Test void giftIsOnceOnlyAndRecoverable() throws Exception {
         try (var s = new AffinityStore(SQLITE, dir.resolve("affinity.db"))) {
             String t1 = UUID.randomUUID().toString();
-            assertEquals(AffinityStore.GiftBegin.OK, s.beginGift(t1, p, "mina", 6, "2026-10-05", 1, 10));
-            assertEquals(AffinityStore.GiftBegin.DUPLICATE, s.beginGift(t1, p, "mina", 6, "2026-10-05", 1, 11));
+            assertEquals(AffinityStore.GiftBegin.OK, s.beginGift(t1, p, "mina", 6, "2026-10-05", 1, 10, "A"));
+            assertEquals(AffinityStore.GiftBegin.DUPLICATE, s.beginGift(t1, p, "mina", 6, "2026-10-05", 1, 11, "A"));
             String t2 = UUID.randomUUID().toString();
-            assertEquals(AffinityStore.GiftBegin.CAP, s.beginGift(t2, p, "mina", 6, "2026-10-05", 1, 12), "하루 1번");
+            assertEquals(AffinityStore.GiftBegin.CAP, s.beginGift(t2, p, "mina", 6, "2026-10-05", 1, 12, "A"), "하루 1번");
             assertEquals(6, s.commitGift(t1, 13).row().score());
             assertNull(s.commitGift(t1, 14), "같은 토큰 두 번 확정 안 됨");
             assertEquals(6, s.load(p, "mina").score());
 
             String t3 = UUID.randomUUID().toString();
-            assertEquals(AffinityStore.GiftBegin.OK, s.beginGift(t3, p, "mina", 6, "2026-10-06", 1, 20));
+            assertEquals(AffinityStore.GiftBegin.OK, s.beginGift(t3, p, "mina", 6, "2026-10-06", 1, 20, "A"));
             assertTrue(s.cancelGift(t3));
             assertFalse(s.cancelGift(t3));
             assertNull(s.commitGift(t3, 21), "취소된 선물은 확정 안 됨");
             String t4 = UUID.randomUUID().toString();
-            assertEquals(AffinityStore.GiftBegin.OK, s.beginGift(t4, p, "mina", 6, "2026-10-06", 1, 22), "취소하면 횟수 돌려받음");
-            assertEquals(1, s.recoverPendingGifts(100, 200), "꺼짐 복구: 미확정은 한 번만 확정");
-            assertEquals(0, s.recoverPendingGifts(100, 300));
+            assertEquals(AffinityStore.GiftBegin.OK, s.beginGift(t4, p, "mina", 6, "2026-10-06", 1, 22, "A"), "취소하면 횟수 돌려받음");
+            // A08 (2026-10-21): 시간만 지난 pending 은 자동 확정되지 않는다 (영수증으로만 정함)
+            assertEquals(6, s.load(p, "mina").score());
+            var pending = s.pendingGifts(p, 100);
+            assertEquals(1, pending.size());
+            assertEquals("A", pending.getFirst().origin());
+            assertTrue(s.pendingGifts(p, 22).isEmpty(), "지금 진행 중인(이후에 시작한) 선물은 건드리지 않음");
+            assertEquals(0, s.legacyPendingGifts());
+            // 영수증이 있으면 확정 (한 번만), 다시 해도 바뀌지 않음
+            assertEquals(12, s.commitGift(t4, 30).row().score());
+            assertNull(s.commitGift(t4, 31));
             assertEquals(12, s.load(p, "mina").score());
+        }
+    }
+
+    @Test void giftRecoveryPolicy() {
+        assertEquals(AffinityStore.Recovery.CANCEL, AffinityStore.recovery("A", "A", false, false), "영수증 없음 → 취소");
+        assertEquals(AffinityStore.Recovery.COMMIT, AffinityStore.recovery("A", "A", true, true), "영수증 저장됨 → 확정");
+        assertEquals(AffinityStore.Recovery.WAIT, AffinityStore.recovery("A", "A", true, false), "메모리에만 → 기다림");
+        assertEquals(AffinityStore.Recovery.SKIP, AffinityStore.recovery("B", "A", true, true), "다른 서버 → 건드리지 않음");
+        assertEquals(AffinityStore.Recovery.REVIEW, AffinityStore.recovery("", "A", true, true), "옛 기록 → 관리자");
+    }
+
+    @Test void receiptlessGiftCancelsAndReturnsDailyCount() throws Exception {
+        try (var s = new AffinityStore(SQLITE, dir.resolve("affinity.db"))) {
+            String t = UUID.randomUUID().toString();
+            assertEquals(AffinityStore.GiftBegin.OK, s.beginGift(t, p, "ella", 5, "2026-10-21", 1, 10, "A"));
+            // 차감 전에 멈춤(영수증 없음) → 접속 해결 = 취소
+            assertEquals(AffinityStore.Recovery.CANCEL, AffinityStore.recovery(s.pendingGifts(p, 100).getFirst().origin(), "A", false, false));
+            assertTrue(s.cancelGift(t));
+            assertEquals(0, s.load(p, "ella").score());
+            assertEquals(AffinityStore.GiftBegin.OK, s.beginGift(UUID.randomUUID().toString(), p, "ella", 5, "2026-10-21", 1, 20, "A"), "같은 날 다시 선물 가능");
         }
     }
 

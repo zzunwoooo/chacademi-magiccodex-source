@@ -66,6 +66,7 @@ final class FishingBridge implements PluginMessageListener, Listener {
     private final FishingGear gear;
     private final FishingStore store;
     private final FishTank tank;
+    private final FishMailOutbox outbox;
     private final FishingGearStore gearStore;
     private final ItemsAdderItems itemsAdder;
     private final Map<UUID, Session> sessions = new HashMap<>();
@@ -80,6 +81,7 @@ final class FishingBridge implements PluginMessageListener, Listener {
         gear = new FishingGear(plugin, config, itemsAdder, gearStore);
         store = new FishingStore(plugin);
         tank = new FishTank(plugin);
+        outbox = new FishMailOutbox(plugin.getDataFolder().toPath().resolve("fish-mail-outbox"));
         tank.capacity(config.tankCapacity);
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, FishingProtocol.REQUEST, this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, FishingProtocol.RESPONSE);
@@ -87,6 +89,7 @@ final class FishingBridge implements PluginMessageListener, Listener {
         CmdKit.register(plugin, "/낚시도감·/유저관리 낚시·/아이템관리 낚시장비·물고기·/테스트 낚시", this::commands);
         for (Player p : Bukkit.getOnlinePlayers()) { store.load(p.getUniqueId(), null); tank.refresh(p.getUniqueId(), null); preloadGear(p); }
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 2, 2);
+        Bukkit.getScheduler().runTask(plugin, this::recoverOutbox);   // 다른 플러그인(우편)까지 켜진 뒤
         plugin.getLogger().info("낚시: 물고기 " + config.fish.size() + "종, 장비 " + config.gear.stream().mapToInt(Map::size).sum() + "종");
     }
 
@@ -270,7 +273,7 @@ final class FishingBridge implements PluginMessageListener, Listener {
         store.forget(e.getPlayer().getUniqueId());
         tank.forget(e.getPlayer().getUniqueId());
     }
-    @EventHandler public void join(PlayerJoinEvent e) { store.load(e.getPlayer().getUniqueId(), null); tank.refresh(e.getPlayer().getUniqueId(), null); preloadGear(e.getPlayer()); }
+    @EventHandler public void join(PlayerJoinEvent e) { store.load(e.getPlayer().getUniqueId(), null); tank.refresh(e.getPlayer().getUniqueId(), null); preloadGear(e.getPlayer()); resolveOutbox(e.getPlayer()); }
     @EventHandler public void changedWorld(PlayerChangedWorldEvent e) {
         var s = sessions.get(e.getPlayer().getUniqueId());
         if (s != null && !s.preview) end(e.getPlayer(), s, "");
@@ -423,8 +426,12 @@ final class FishingBridge implements PluginMessageListener, Listener {
         s.attacks = List.copyOf(attacks);
         s.waitMs = Math.round(Math.min(wait, 59) * 1000);
         var b = new Bite(s.id, s.token, shape, size, grade, s.waitMs, teases, window, power, pattern, rnd.nextLong(), depth,
-                s.fish != null && s.fish.magic(), sweep, zones[realGrade], realGrade == 3, strain, attacks);
-        s.minimum = FishingProtocol.minimumCatchMillis(b, l.rod().gear().a());
+                s.fish != null && s.fish.magic(), sweep, zones[realGrade], strain, attacks);
+        // C09 (2026-10-21): the fish is fixed here on the server; the bite frame no longer carries a legendary flag (v3), and the
+        // catch must take at least as long as the fastest honest minigame for this fish (difficulty, depth, rod reel bonuses).
+        var rodGear = l.rod().gear();
+        float reelBonus = Math.max(1, rodGear.effect("sea_reel", 1)) * Math.max(1, rodGear.effect("magic_reel", 1));
+        s.minimum = FishingProtocol.minimumCatchMillis(b, rodGear.a(), reelBonus);
         s.sentAt = System.currentTimeMillis();
         s.rodSlot = p.getInventory().getHeldItemSlot();
         if (send(p, b)) s.state = BITING; else end(p, s, "낚시 정보를 보내지 못했어요.");
@@ -445,7 +452,7 @@ final class FishingBridge implements PluginMessageListener, Listener {
     private void result(Player p, Session s, int outcome, int heldMask) {
         long elapsed = System.currentTimeMillis() - s.sentAt;
         if (outcome == FishingProtocol.CAUGHT && elapsed < s.minimum) {
-            plugin.getLogger().warning("FISHING too fast player=" + p.getName() + " elapsed=" + elapsed + "ms min=" + s.minimum + "ms");
+            plugin.getLogger().warning("FISHING too fast player=" + p.getName() + " session=" + s.id + " fish=" + (s.fish != null ? s.fish.id() : "chest" + s.chest) + " elapsed=" + elapsed + "ms min=" + s.minimum + "ms");
             outcome = FishingProtocol.REFUSED;
         }
         if (s.preview) s.rodSlot = p.getInventory().getHeldItemSlot();
@@ -520,7 +527,8 @@ final class FishingBridge implements PluginMessageListener, Listener {
         var l = gear.read(rod);
         if (s.preview || rod == null || outcome == FishingProtocol.REFUSED) return l;
         boolean tug = outcome == FishingProtocol.CAUGHT || outcome == FishingProtocol.SNAPPED || outcome == FishingProtocol.ESCAPED;
-        boolean baitUsed = tug || outcome == FishingProtocol.MISSED;
+        // C09 (2026-10-21): scaring the fish off after the bite also uses the bait, so re-rolling bites is never free
+        boolean baitUsed = tug || outcome == FishingProtocol.MISSED || outcome == FishingProtocol.SPOOKED;
         var returned = new ArrayList<ItemStack>();
         var rodPart = wear(l.rod(), tug ? 1 + rodHit : 0);
         var flt = wear(l.flt(), 1);
@@ -568,25 +576,149 @@ final class FishingBridge implements PluginMessageListener, Listener {
         } catch (RuntimeException e) { return new byte[0]; }
     }
 
-    /** Inventory first, the rest by mail (else at the feet). Returns true when something went to the mailbox. */
-    boolean give(Player p, List<ItemStack> items, String source) {
+    // ------------------------------------------------------------------ 보상 우편 대기열 (A01 안 B, 2026-10-21)
+
+    enum Given { INVENTORY, MAIL, DROPPED }
+    private static final String OUTBOX_TITLE = "낚시 보상", OUTBOX_BODY = "인벤토리가 가득 차서 낚시 보상을 우편으로 보내 드립니다.";
+    /** 대기 중인 레코드 (source -> 레코드). 메인 스레드 전용. */
+    private final Map<String, FishMailOutbox.Entry> outboxIndex = new LinkedHashMap<>();
+    private final Set<String> outboxSending = new HashSet<>();
+    private final Map<String, Integer> outboxRetries = new HashMap<>();
+    private final List<java.nio.file.Path> outboxBroken = new ArrayList<>();
+
+    /** Inventory first, the rest by durable mail. Returns true when something went to the mailbox. */
+    boolean give(Player p, List<ItemStack> items, String source) { return deliver(p, items, source, null, null) == Given.MAIL; }
+
+    /**
+     * 인벤토리에 먼저 넣고, 남는 것은 우편 대기열 파일에 먼저 남긴 뒤 같은 틱에 영수증(PDC)과 saveData 를 하고 우편으로 보낸다.
+     * 우편 DB 저장이 확인돼야 대기열에서 지운다. 실패·종료 중이면 레코드를 남겨 두고 다시 보낸다(시작·접속·1분 뒤 최대 3번).
+     * 같은 source 로 다시 보내도 우편 source_key 가 UNIQUE 라 우편은 한 통만 생긴다.
+     * tankClaim: 수조 꺼내기(TAKING)라면 우편 저장이 확인된 뒤에만 수조 기록을 ITEM 으로 닫는다.
+     * mailed: 이번에 보낸 우편이 모두 저장됐는지(true) 아닌지(false, 레코드는 남음). MAIL 일 때만 불린다. 메인 스레드.
+     */
+    Given deliver(Player p, List<ItemStack> items, String source, FishTank.Fish tankClaim, java.util.function.Consumer<Boolean> mailed) {
         var leftover = new ArrayList<ItemStack>();
         for (ItemStack it : items) leftover.addAll(p.getInventory().addItem(it.clone()).values());
-        if (leftover.isEmpty()) return false;
-        var service = Bukkit.getServicesManager().load(MailService.class);
-        if (service == null) { for (ItemStack it : leftover) p.getWorld().dropItemNaturally(p.getLocation(), it); return false; }
-        for (int part = 0; part * 9 < leftover.size(); part++) {
-            var chunk = List.copyOf(leftover.subList(part * 9, Math.min(leftover.size(), part * 9 + 9)));
-            try {
-                service.sendSystem(source + ":" + part, p.getUniqueId(), "낚시 보상", "인벤토리가 가득 차서 낚시 보상을 우편으로 보내 드립니다.", chunk)
-                        .whenComplete((id, error) -> { if (error != null) Bukkit.getScheduler().runTask(plugin, () -> drop(p, chunk)); });
-            } catch (RuntimeException e) { drop(p, chunk); }
+        if (leftover.isEmpty()) return Given.INVENTORY;
+        String receipt = receiptName(source);
+        var entries = new ArrayList<FishMailOutbox.Entry>();
+        try {
+            if (outbox == null) throw new java.io.IOException("outbox unavailable");
+            for (int part = 0; part * 9 < leftover.size(); part++) {
+                var bytes = new ArrayList<byte[]>();
+                for (ItemStack it : leftover.subList(part * 9, Math.min(leftover.size(), part * 9 + 9))) bytes.add(it.serializeAsBytes());
+                entries.add(outbox.save(source + ":" + part, p.getUniqueId(), receipt, OUTBOX_TITLE, OUTBOX_BODY, bytes,
+                        tankClaim == null ? "" : tankClaim.id(), tankClaim == null ? "" : tankClaim.token()));
+            }
+        } catch (java.io.IOException | RuntimeException e) {
+            // 대기열에 남기지 못했다: 우편 없이 발밑에 떨어뜨린다 (사라지지 않게). 이미 쓴 레코드는 지운다.
+            for (var en : entries) try { outbox.acknowledge(en); } catch (java.io.IOException ignored) {}
+            plugin.getLogger().severe("FISHING OUTBOX write failed player=" + p.getUniqueId() + " source=" + source + " (" + e + "); dropped at feet: " + leftover);
+            for (ItemStack it : leftover) p.getWorld().dropItemNaturally(p.getLocation(), it);
+            CmdKit.notify(p, "warning", "fishing-drop", "보상을 발밑에 떨어뜨렸어요", "우편함에 넣지 못했어요. 바로 주워 주세요.", 0);
+            return Given.DROPPED;
         }
-        return true;
+        // 인벤토리 변화와 영수증을 같은 플레이어 데이터 스냅샷에 저장한다. 영수증이 디스크에 없으면 이 지급은 일어나지 않은 것이다.
+        p.getPersistentDataContainer().set(receiptKey(receipt), org.bukkit.persistence.PersistentDataType.BYTE, (byte) 1);
+        try { p.saveData(); } catch (RuntimeException e) { plugin.getLogger().warning("FISHING OUTBOX saveData failed player=" + p.getUniqueId() + " source=" + source + " (" + e + "); 다음 저장 때 함께 저장됨"); }
+        int[] left = {entries.size()}; boolean[] all = {true};
+        for (var en : entries) {
+            outboxIndex.put(en.source(), en);
+            sendOutbox(en, ok -> { all[0] &= ok; if (--left[0] == 0 && mailed != null) mailed.accept(all[0]); });
+        }
+        plugin.getLogger().info("FISHING OUTBOX queued player=" + p.getUniqueId() + " source=" + source + " parts=" + entries.size() + (tankClaim == null ? "" : " tank=" + tankClaim.id()));
+        return Given.MAIL;
     }
-    private void drop(Player p, List<ItemStack> items) {
-        plugin.getLogger().warning("FISHING MAIL FAILED player=" + p.getUniqueId() + " items=" + items);
-        if (p.isOnline()) for (ItemStack it : items) p.getWorld().dropItemNaturally(p.getLocation(), it);
+
+    static String receiptName(String source) { return "fish_mail_" + UUID.nameUUIDFromBytes(source.getBytes(java.nio.charset.StandardCharsets.UTF_8)).toString().replace("-", ""); }
+    private NamespacedKey receiptKey(String receipt) { return new NamespacedKey(plugin, receipt); }
+    private static java.nio.file.Path playerFile(UUID id) { return Bukkit.getWorlds().getFirst().getWorldFolder().toPath().resolve("playerdata").resolve(id + ".dat"); }
+
+    /** 한 레코드를 우편으로 보낸다(메인 스레드). done 은 메인 스레드에서 한 번 불린다(종료 중이면 불리지 않을 수 있음). */
+    private void sendOutbox(FishMailOutbox.Entry e, java.util.function.Consumer<Boolean> done) {
+        java.util.function.Consumer<Boolean> finish = done == null ? ok -> {} : done;
+        if (!outboxIndex.containsKey(e.source()) || !outboxSending.add(e.source())) { finish.accept(false); return; }
+        var service = Bukkit.getServicesManager().load(MailService.class);
+        var stacks = new ArrayList<ItemStack>();
+        try { for (byte[] b : e.items()) stacks.add(ItemStack.deserializeBytes(b)); }
+        catch (RuntimeException bad) { outboxSending.remove(e.source()); plugin.getLogger().severe("FISHING OUTBOX unreadable item; kept for admin source=" + e.source() + " (" + bad + ")"); finish.accept(false); return; }
+        java.util.concurrent.CompletableFuture<UUID> sent;
+        try {
+            if (service == null) throw new IllegalStateException("mail service unavailable");
+            sent = service.sendSystem(e.source(), e.recipient(), e.title(), e.body(), stacks);
+        } catch (RuntimeException failed) { outboxSending.remove(e.source()); outboxFailed(e, failed); finish.accept(false); return; }
+        sent.whenComplete((id, error) -> {
+            // 우편 DB 저장이 확인된 경우에만 레코드를 지운다. 종료 중이라 메인으로 못 돌아가도 지우기는 끝낸다(다음 시작 때 다시 보내지 않게).
+            boolean acked = false;
+            if (error == null) try { outbox.acknowledge(e); acked = true; } catch (java.io.IOException io) { plugin.getLogger().warning("FISHING OUTBOX acknowledge failed source=" + e.source() + " (" + io + "); 다시 보내도 같은 우편으로 처리됨"); }
+            boolean removed = acked;
+            if (!plugin.isEnabled()) return;
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                outboxSending.remove(e.source());
+                if (error != null) { outboxFailed(e, error); finish.accept(false); return; }
+                if (removed) { outboxIndex.remove(e.source()); outboxRetries.remove(e.source()); }
+                plugin.getLogger().info("FISHING OUTBOX delivered player=" + e.recipient() + " source=" + e.source() + " mail=" + id);
+                Player online = Bukkit.getPlayer(e.recipient());
+                if (online != null && outboxIndex.values().stream().noneMatch(x -> x.receipt().equals(e.receipt()))) online.getPersistentDataContainer().remove(receiptKey(e.receipt()));
+                if (!e.tankFish().isEmpty()) {
+                    tank.finish(e.recipient(), List.of(new FishTank.Fish(e.tankFish(), "", 0, 0, e.tankToken())), FishTankSql.Action.ITEMIZE, true, ok -> {
+                        if (ok) plugin.getLogger().info("FISHING OUTBOX tank itemized player=" + e.recipient() + " fish=" + e.tankFish());
+                        else plugin.getLogger().severe("FISHING OUTBOX tank finish failed player=" + e.recipient() + " fish=" + e.tankFish() + " (우편은 저장됨; /유저관리 <닉네임> 낚시 수조 멈춘처리 로 확인)");
+                        if (Bukkit.getPlayer(e.recipient()) == null) tank.forget(e.recipient());
+                    });
+                }
+                finish.accept(true);
+            });
+        });
+    }
+
+    private void outboxFailed(FishMailOutbox.Entry e, Throwable error) {
+        int n = outboxRetries.merge(e.source(), 1, Integer::sum);
+        plugin.getLogger().warning("FISHING OUTBOX send failed (kept) player=" + e.recipient() + " source=" + e.source() + " try=" + n + " (" + error + ")");
+        Player online = Bukkit.getPlayer(e.recipient());
+        if (online != null && n == 1) CmdKit.notify(online, "warning", "fishing-mail-wait", "낚시 보상 우편이 늦어지고 있어요", "보상은 안전하게 보관 중이고 자동으로 다시 보내요.", 3000);
+        if (n <= 3 && plugin.isEnabled()) Bukkit.getScheduler().runTaskLater(plugin, () -> { var cur = outboxIndex.get(e.source()); if (cur != null) sendOutbox(cur, null); }, 1200L);
+    }
+
+    /** 시작: 접속 중인 사람은 접속 규칙으로, 아닌 사람은 디스크 영수증이 있을 때만 다시 보낸다(없으면 접속 때 판정). */
+    private void recoverOutbox() {
+        if (outbox == null) return;
+        outboxBroken.clear();
+        try { for (var e : outbox.pending(outboxBroken)) outboxIndex.putIfAbsent(e.source(), e); }
+        catch (java.io.IOException e) { plugin.getLogger().severe("FISHING OUTBOX read failed (" + e + "); records kept"); return; }
+        if (!outboxBroken.isEmpty()) plugin.getLogger().severe("FISHING OUTBOX 읽을 수 없는 레코드 " + outboxBroken.size() + "개 (자동 처리 안 함, 관리자 확인 필요): " + outboxBroken);
+        if (!outboxIndex.isEmpty()) plugin.getLogger().warning("FISHING OUTBOX 대기 중인 낚시 보상 우편 " + outboxIndex.size() + "건 다시 확인");
+        for (var e : List.copyOf(outboxIndex.values())) {
+            if (Bukkit.getPlayer(e.recipient()) != null) continue;
+            boolean saved;
+            try { saved = DeliveryReceipt.saved(playerFile(e.recipient()), receiptKey(e.receipt()).toString()); }
+            catch (java.io.IOException | RuntimeException x) { plugin.getLogger().warning("FISHING OUTBOX receipt check failed source=" + e.source() + " (" + x + "); 접속 때 다시 확인"); continue; }
+            if (saved) sendOutbox(e, null);
+        }
+        for (Player p : Bukkit.getOnlinePlayers()) resolveOutbox(p);
+    }
+
+    /** 접속(이 서버): 영수증이 플레이어 데이터에 있으면 다시 보내고, 없으면 지급 전에 멈춘 것이므로 레코드를 버린다. 남은 영수증은 지운다. */
+    private void resolveOutbox(Player p) {
+        if (outbox == null) return;
+        var pdc = p.getPersistentDataContainer();
+        for (var e : List.copyOf(outboxIndex.values())) {
+            if (!e.recipient().equals(p.getUniqueId()) || outboxSending.contains(e.source())) continue;
+            if (pdc.has(receiptKey(e.receipt()), org.bukkit.persistence.PersistentDataType.BYTE)) { sendOutbox(e, null); continue; }
+            try { outbox.acknowledge(e); outboxIndex.remove(e.source()); plugin.getLogger().warning("FISHING OUTBOX discarded (영수증 없음: 지급 전에 멈춤) player=" + p.getUniqueId() + " source=" + e.source()); }
+            catch (java.io.IOException x) { plugin.getLogger().warning("FISHING OUTBOX discard failed source=" + e.source() + " (" + x + ")"); }
+        }
+        String ns = plugin.getName().toLowerCase(Locale.ROOT);
+        for (var key : List.copyOf(pdc.getKeys()))
+            if (key.getNamespace().equals(ns) && key.getKey().startsWith("fish_mail_") && outboxIndex.values().stream().noneMatch(x -> x.receipt().equals(key.getKey()))) pdc.remove(key);
+    }
+
+    /** 관리자 확인용: 이 플레이어의 대기 중인 보상 우편 줄. */
+    private List<String> outboxLines(UUID id) {
+        var out = new ArrayList<String>();
+        for (var e : outboxIndex.values()) if (e.recipient().equals(id))
+            out.add(e.source() + " · " + QuestBridge.timeText(e.created()) + " · 아이템 " + e.items().size() + "칸" + (e.tankFish().isEmpty() ? "" : " · 수조 꺼내기") + (outboxSending.contains(e.source()) ? " · 보내는 중" : " · 재시도 " + outboxRetries.getOrDefault(e.source(), 0) + "회"));
+        return out;
     }
 
     // ------------------------------------------------------------------ recast
@@ -830,8 +962,15 @@ final class FishingBridge implements PluginMessageListener, Listener {
                         .then(CmdKit.literal("보기").executes(CmdKit.run(this::showTank)))
                         .then(CmdKit.literal("빼기").then(number.get().executes(CmdKit.run(ctx -> takeFish(ctx, false)))))
                         .then(CmdKit.literal("돌려주기").then(number.get().executes(CmdKit.run(ctx -> takeFish(ctx, true)))))
-                        .then(CmdKit.literal("잠금해제").then(CmdKit.word("물고기", () -> AdminCommandRules.catalogChoices(fishNames())).executes(CmdKit.run(this::unlock)))));
-        ChacaApi.branch(plugin, ChacaApi.유저관리, user, "낚시 도감·아공간 수조 보기와 고치기", "낚시 수조 보기");
+                        .then(CmdKit.literal("잠금해제").then(CmdKit.word("물고기", () -> AdminCommandRules.catalogChoices(fishNames())).executes(CmdKit.run(this::unlock))))
+                        // 판매(SELLING)·꺼내기(TAKING) 도중 멈춘 물고기 보기·정리 (2026-10-21)
+                        .then(CmdKit.literal("멈춘처리").executes(CmdKit.run(this::showStuck))
+                                .then(number.get()
+                                        .then(CmdKit.confirm(CmdKit.literal("지급완료"), ctx -> resolveStuck(ctx, true)))
+                                        .then(CmdKit.confirm(CmdKit.literal("수조로"), ctx -> resolveStuck(ctx, false))))))
+                .then(CmdKit.literal("우편대기").executes(CmdKit.run(this::showOutbox))
+                        .then(CmdKit.literal("다시보내기").executes(CmdKit.run(this::resendOutbox))));
+        ChacaApi.branch(plugin, ChacaApi.유저관리, user, "낚시 도감·아공간 수조 보기와 고치기·멈춘 판매/꺼내기 정리·보상 우편 대기", "낚시 수조 보기");
         // /아이템관리 낚시장비 · 물고기
         var gearArg = CmdKit.word("장비", () -> AdminCommandRules.catalogChoices(gearNames()))
                 .executes(CmdKit.run(ctx -> giveGear(ctx, 1, CmdKit.self(ctx))))
@@ -937,8 +1076,12 @@ final class FishingBridge implements PluginMessageListener, Listener {
             if (t.fish.size() > 200) out.add("… (" + (t.fish.size() - 200) + "마리 더)");
             var locked = t.locks.stream().map(l -> fishNames().getOrDefault(l, l)).sorted().toList();
             out.add("잠긴 종류: " + (locked.isEmpty() ? "없음" : String.join(", ", locked)));
-            CmdKit.lines(sender, out);
             if (Bukkit.getPlayer(id) == null) tank.forget(id);
+            tank.stuck(id, rows -> {
+                if (rows == null) out.add("판매·꺼내기 도중 멈춘 물고기: 읽지 못함");
+                else if (!rows.isEmpty()) out.add("판매·꺼내기 도중 멈춘 물고기 " + rows.size() + "마리 (수조 칸 차지) → 낚시 수조 멈춘처리");
+                CmdKit.lines(sender, out);
+            });
         });
     }
 
@@ -973,8 +1116,17 @@ final class FishingBridge implements PluginMessageListener, Listener {
                     tank.finish(id, claimed, FishTankSql.Action.ITEMIZE, false, ok -> { if (ok) CmdKit.userFail(sender, "돌려주지 못해 수조에 그대로 두었어요"); else CmdKit.fail(sender, "수조 상태 확인이 필요해요", null); });
                     return;
                 }
-                try { give(p, List.of(item), "fish-tank-admin:" + actual.id() + ":" + actual.token()); }
+                Given given;
+                try {
+                    // 우편으로 가면 수조 기록(ITEM)은 우편 저장이 확인된 뒤 대기열이 닫는다. 여기서 먼저 완료로 적지 않는다.
+                    given = deliver(p, List.of(item), "fish-tank-admin:" + actual.id() + ":" + actual.token(), actual, ok -> {
+                        plugin.getLogger().info("FISH TANK ADMIN itemize-mail admin=" + admin + " player=" + id + " fish=" + actual.fish() + " id=" + actual.id() + " mailed=" + ok);
+                        if (ok) CmdKit.ok(sender, who + " 님에게 " + label + "을(를) 우편으로 돌려주었어요");
+                        else CmdKit.userFail(sender, "우편 저장이 늦어지고 있어요. 보상 대기열에 남아 자동으로 다시 보내요 (수조 기록은 우편 확인 뒤 닫힘)");
+                    });
+                }
                 catch (RuntimeException uncertain) { CmdKit.fail(sender, "전달 결과 확인이 필요해요 (수조 기록은 보류)", uncertain); return; }
+                if (given == Given.MAIL) return;
                 tank.finish(id, claimed, FishTankSql.Action.ITEMIZE, true, ok -> {
                     plugin.getLogger().info("FISH TANK ADMIN itemize admin=" + admin + " player=" + id + " fish=" + actual.fish() + " id=" + actual.id() + " ok=" + ok);
                     if (ok) CmdKit.ok(sender, who + " 님에게 " + label + "을(를) 아이템으로 돌려주었어요");
@@ -982,6 +1134,79 @@ final class FishingBridge implements PluginMessageListener, Listener {
                 });
             });
         });
+    }
+
+    /** 관리자가 방금 본 멈춘 목록 (관리자 이름|대상 → 목록). */
+    private final Map<String, List<FishTankSql.Stuck>> stuckListed = new HashMap<>();
+    private boolean pendingMailFor(String fishId) { return outboxIndex.values().stream().anyMatch(e -> e.tankFish().equals(fishId)); }
+
+    private void showStuck(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        UUID id = ChacaApi.target(ctx);
+        var sender = CmdKit.sender(ctx);
+        String who = CmdKit.name(id);
+        tank.stuck(id, rows -> {
+            if (rows == null) { CmdKit.fail(sender, "수조 기록을 읽지 못했어요", null); return; }
+            stuckListed.put(sender.getName() + "|" + id, rows);
+            var out = new ArrayList<String>();
+            out.add("── " + who + " 판매·꺼내기 도중 멈춘 물고기 " + rows.size() + "마리 (수조 칸 차지) ──");
+            for (int i = 0; i < rows.size(); i++) {
+                var r = rows.get(i);
+                out.add(row(i + 1, r.fish(), Set.of()) + " · " + (r.action() == FishTankSql.Action.SELL ? "판매 중" : "꺼내는 중") + (pendingMailFor(r.fish().id()) ? " · 보상 우편 대기열에 있음" : ""));
+            }
+            if (rows.isEmpty()) out.add("(없음)");
+            else out.add("판매 중: 돈이 들어갔으면(콘솔 PAYMENT_RESULT confirmed=true) 지급완료, 아니면 수조로 · 꺼내는 중: 아이템을 받았으면 지급완료, 아니면 수조로 — 멈춘처리 <번호> 지급완료|수조로 확인");
+            CmdKit.lines(sender, out);
+        });
+    }
+
+    private void resolveStuck(CommandContext<CommandSourceStack> ctx, boolean paid) throws CommandSyntaxException {
+        UUID id = ChacaApi.target(ctx);
+        var sender = CmdKit.sender(ctx);
+        int number = IntegerArgumentType.getInteger(ctx, "번호");
+        var rows = stuckListed.get(sender.getName() + "|" + id);
+        if (rows == null) throw ChacaApi.error("먼저 낚시 수조 멈춘처리 로 목록을 확인해 주세요");
+        if (number > rows.size()) throw ChacaApi.error("그 번호가 없어요 (멈춘처리 목록으로 확인)");
+        var st = rows.get(number - 1);
+        if (!paid && st.action() == FishTankSql.Action.ITEMIZE && pendingMailFor(st.fish().id()))
+            throw ChacaApi.error("이 물고기는 보상 우편 대기열에 있어요. 우편이 저장되면 자동으로 정리돼요 (수조로 되돌리면 복제돼요)");
+        String admin = sender.getName(), who = CmdKit.name(id);
+        String was = st.action() == FishTankSql.Action.SELL ? "SELLING" : "TAKING";
+        String to = paid ? (st.action() == FishTankSql.Action.SELL ? "SOLD" : "ITEM") : "TANK";
+        tank.finish(id, List.of(st.fish()), st.action(), paid, ok -> {
+            plugin.getLogger().warning("FISH TANK ADMIN resolve admin=" + admin + " player=" + id + " fish=" + st.fish().fish() + " id=" + st.fish().id() + " " + was + "->" + to + " ok=" + ok);
+            stuckListed.remove(admin + "|" + id);
+            if (Bukkit.getPlayer(id) == null) tank.forget(id);
+            if (ok) CmdKit.ok(sender, who + " 님 " + number + "번 물고기를 " + (paid ? "지급 완료로 닫았어요" : "수조로 되돌렸어요"));
+            else CmdKit.userFail(sender, "이미 처리됐거나 상태가 바뀌었어요. 멈춘처리 목록을 다시 확인해 주세요");
+        });
+    }
+
+    private void showOutbox(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        UUID id = ChacaApi.target(ctx);
+        var lines = outboxLines(id);
+        var out = new ArrayList<String>();
+        out.add("── " + CmdKit.name(id) + " 낚시 보상 우편 대기 " + lines.size() + "건 ──");
+        out.addAll(lines);
+        if (lines.isEmpty()) out.add("(대기 없음)");
+        else out.add("서버 시작·접속·1분 뒤 자동으로 다시 보내요 (같은 우편은 두 번 생기지 않음). 지금 보내기: 낚시 우편대기 다시보내기");
+        if (!outboxBroken.isEmpty()) out.add("읽을 수 없는 대기 파일 " + outboxBroken.size() + "개 (서버 전체, 자동 처리 안 함 — 콘솔 FISHING OUTBOX 로그 확인)");
+        CmdKit.lines(CmdKit.sender(ctx), out);
+    }
+
+    private void resendOutbox(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        UUID id = ChacaApi.target(ctx);
+        var sender = CmdKit.sender(ctx);
+        Player online = Bukkit.getPlayer(id);
+        int before = outboxLines(id).size();
+        if (before == 0) throw ChacaApi.error("대기 중인 낚시 보상 우편이 없어요");
+        if (online != null) resolveOutbox(online);
+        else for (var e : List.copyOf(outboxIndex.values())) {
+            if (!e.recipient().equals(id)) continue;
+            try { if (DeliveryReceipt.saved(playerFile(id), receiptKey(e.receipt()).toString())) sendOutbox(e, null); }
+            catch (java.io.IOException | RuntimeException x) { plugin.getLogger().warning("FISHING OUTBOX receipt check failed source=" + e.source() + " (" + x + ")"); }
+        }
+        plugin.getLogger().info("FISHING OUTBOX ADMIN resend admin=" + sender.getName() + " player=" + id + " pending=" + before);
+        CmdKit.ok(sender, CmdKit.name(id) + " 님 대기 중인 보상 우편 " + before + "건을 다시 보냈어요. 결과는 우편대기로 확인해 주세요");
     }
 
     private void unlock(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {

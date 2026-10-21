@@ -19,10 +19,11 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * NPC에게 선물하기 (Shift+우클릭, 손에 든 아이템 1개).
  *
- * <p>순서: (1) MagicCodex에 하루 횟수 예약 + pending 기록 → (2) 같은 칸에 같은 아이템이 그대로 있으면 1개 차감
- * → (3) 확정. 차감 전에 아이템이 바뀌면 취소, 확정이 DB 오류로 실패하면 아이템을 돌려주고 취소한다.
- * 같은 플레이어의 선물은 한 번에 하나만 처리한다 (중복 클릭 방지). 토큰당 점수는 한 번만 오른다.
- * 서버가 (2)와 (3) 사이에 꺼지면 MagicCodex가 다음 시작 때 pending을 확정한다 (아이템 복제 없음).
+ * <p>순서 (A08, 2026-10-21): (1) MagicCodex에 하루 횟수 예약 + pending 기록(시작한 서버 origin 포함)
+ * → (2) MagicCodex takeGift: 같은 칸에 같은 아이템이 그대로 있으면 1개 차감 + 영수증(PDC) + saveData 를 같은 틱에
+ * → (3) 확정. 차감 전에 아이템이 바뀌면 취소(결과 확인, 실패하면 다음 접속 때 영수증 없음 → 취소).
+ * 확정이 실패하면 환불하지 않고 확정을 다시 시도한다 (차감은 이미 확정이므로). 끝내 실패하면 pending+영수증이 남고,
+ * 다음 접속 때 시작한 서버에서 영수증으로 확정된다. 같은 플레이어의 선물은 한 번에 하나만, 토큰당 점수는 한 번만.
  */
 public final class GiftService {
 
@@ -41,7 +42,7 @@ public final class GiftService {
 
     public void give(Player p, CharacterSheet c) {
         DialogueView view = plugin.dialogue().viewFor(p);
-        if (!plugin.link().available()) {
+        if (!plugin.link().available() || !plugin.link().giftReceipts()) {
             view.info(p, plugin.dialogue().session(p.getUniqueId()), "(지금은 선물을 줄 수 없어요)");
             return;
         }
@@ -98,64 +99,61 @@ public final class GiftService {
                     return;
                 }
             }
-            ItemStack cur = p.isOnline() ? p.getInventory().getItem(slot) : null;
-            if (cur == null || !cur.isSimilar(one) || cur.getAmount() < 1) {
-                plugin.link().cancelGift(token);
-                inFlight.remove(uuid);
+            int taken = p.isOnline() ? plugin.link().takeGift(p, slot, one, token) : 0;
+            if (taken == 0) {
+                // 아이템이 바뀌어 차감하지 않음: 취소 결과를 확인한다. 실패해도 영수증이 없으니 다음 접속 때 취소된다.
+                plugin.link().cancelGift(token).whenComplete((cancelled, exc) -> {
+                    inFlight.remove(uuid);
+                    if (!Boolean.TRUE.equals(cancelled)) {
+                        plugin.getLogger().warning("[ChacaNPC] 선물 취소 실패 (토큰 " + token + ") — 영수증이 없으므로 다음 접속 때 취소됩니다");
+                    }
+                });
                 return;
             }
-            if (cur.getAmount() == 1) {
-                p.getInventory().setItem(slot, null);
-            } else {
-                cur.setAmount(cur.getAmount() - 1);
-                p.getInventory().setItem(slot, cur);
-            }
-            plugin.link().commitGift(uuid, c.id(), token).whenComplete((r2, ex2) -> {
-                if (ex2 != null) {
-                    // 확정 실패: 취소가 확실히 성공했을 때만 아이템을 돌려준다.
-                    // 취소도 실패하면 pending으로 남고, 다음 시작 때 "아이템 차감됨"으로 확정된다 (환불+점수 중복 없음).
-                    plugin.link().cancelGift(token).whenComplete((cancelled, ex3) -> {
-                        inFlight.remove(uuid);
-                        if (Boolean.TRUE.equals(cancelled)) {
-                            refund(p, one, token);
-                        } else {
-                            plugin.getLogger().warning("[ChacaNPC] 선물 확정·취소 모두 실패 (토큰 " + token
-                                    + ") — 아이템은 차감된 상태로 두고 다음 시작 때 확정됩니다");
-                            if (p.isOnline()) {
-                                plugin.dialogue().viewFor(p).info(p, plugin.dialogue().session(uuid),
-                                        "(선물 처리를 확인 중이에요. 잠시 후 반영돼요)");
-                            }
-                        }
-                    });
-                    return;
-                }
+            if (taken < 0) {
+                // 차감 결과를 모름: 취소도 확정도 하지 않는다. 다음 접속 때 영수증으로 정해진다.
                 inFlight.remove(uuid);
-                if (r2 == null) {
-                    return; // 이미 처리된 토큰 (중복 확정 없음)
+                if (p.isOnline()) {
+                    view.info(p, plugin.dialogue().session(uuid), "(선물 처리를 확인 중이에요. 다시 접속하면 반영돼요)");
                 }
-                DialogueSession s = plugin.dialogue().session(uuid);
-                if (s != null && s.character().id().equals(c.id()) && r2.length >= 2) {
-                    s.score = r2[0];
-                    s.heart = r2[1];
-                }
-                say(p, c, c.fallback(reaction, st.defaultFallbacks, random));
-                plugin.social().recordEvent(uuid, p.getName(), c.id(), "gift",
-                        p.getName() + "이(가) " + c.name() + "에게 선물(" + key + ")을 줌");
-            });
+                return;
+            }
+            commit(p, c, token, reaction, key, 0);
         });
     }
 
-    private void refund(Player p, ItemStack item, String token) {
-        if (p.isOnline() && plugin.isEnabled()) {
-            for (ItemStack left : p.getInventory().addItem(item).values()) {
-                p.getWorld().dropItemNaturally(p.getLocation(), left);
+    /** 차감이 확정된 선물의 확정. 실패하면 환불하지 않고 3초 뒤 다시 확정한다 (최대 3번). */
+    private void commit(Player p, CharacterSheet c, String token, String reaction, String key, int attempt) {
+        UUID uuid = p.getUniqueId();
+        Settings st = plugin.settings();
+        plugin.link().commitGift(uuid, c.id(), token).whenComplete((r2, ex2) -> {
+            if (ex2 != null) {
+                if (attempt < 2 && plugin.isEnabled()) {
+                    plugin.getServer().getScheduler().runTaskLater(plugin, () -> commit(p, c, token, reaction, key, attempt + 1), 60L);
+                    return;
+                }
+                inFlight.remove(uuid);
+                plugin.getLogger().warning("[ChacaNPC] 선물 확정 실패 (토큰 " + token
+                        + ") — 아이템은 차감됨, 영수증이 남아 다음 접속 때 이 서버에서 확정됩니다 (환불 없음)");
+                if (p.isOnline()) {
+                    plugin.dialogue().viewFor(p).info(p, plugin.dialogue().session(uuid),
+                            "(선물 처리를 확인 중이에요. 다시 접속하면 반영돼요)");
+                }
+                return;
             }
-            plugin.dialogue().viewFor(p).info(p, plugin.dialogue().session(p.getUniqueId()),
-                    "(선물을 전하지 못해 아이템을 돌려드렸어요)");
-        } else {
-            plugin.getLogger().severe("[ChacaNPC] 선물 확정 실패 후 아이템 반환 불가: " + p.getName() + " " + item.getType()
-                    + " x1 (토큰 " + token + ") — 관리자 확인 필요");
-        }
+            inFlight.remove(uuid);
+            if (r2 == null) {
+                return; // 이미 처리된 토큰 (중복 확정 없음)
+            }
+            DialogueSession s = plugin.dialogue().session(uuid);
+            if (s != null && s.character().id().equals(c.id()) && r2.length >= 2) {
+                s.score = r2[0];
+                s.heart = r2[1];
+            }
+            say(p, c, c.fallback(reaction, st.defaultFallbacks, random));
+            plugin.social().recordEvent(uuid, p.getName(), c.id(), "gift",
+                    p.getName() + "이(가) " + c.name() + "에게 선물(" + key + ")을 줌");
+        });
     }
 
     private void say(Player p, CharacterSheet c, String line) {

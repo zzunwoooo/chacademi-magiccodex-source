@@ -389,13 +389,13 @@ final class FishingScreen extends Screen {
     private float rushLo() { return Math.max(0, zoneStart - .12f); }
     private float rushHi() { return Math.min(1, zoneStart + zoneWidth + .12f); }
     private float gaugeDuration() {
-        if (bite == null || !bite.rush()) return sweep;
+        if (bite == null || !FishingProtocol.rushes(bite.zone())) return sweep;
         float a = rushLo(), b = rushHi();
         return sweep * (a + (b - a) / 1.6f + (1 - b));
     }
     private float cursorAt(float e) {
         if (e <= 0) return 0;
-        if (bite == null || !bite.rush()) return Math.min(1, e / sweep);
+        if (bite == null || !FishingProtocol.rushes(bite.zone())) return Math.min(1, e / sweep);
         float a = rushLo(), b = rushHi(), ta = a * sweep, tb = ta + (b - a) * sweep / 1.6f;
         if (e < ta) return e / sweep;
         if (e < tb) return a + (e - ta) * 1.6f / sweep;

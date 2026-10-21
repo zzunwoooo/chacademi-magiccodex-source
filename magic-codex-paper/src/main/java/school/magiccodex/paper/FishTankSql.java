@@ -90,6 +90,18 @@ final class FishTankSql {
             }return List.copyOf(out);
         });
     }
+    /** 판매(SELLING)·꺼내기(TAKING) 도중 멈춘 물고기. 수조 용량을 계속 차지하므로 관리자가 보고 정리한다 (2026-10-21). */
+    record Stuck(Fish fish,Action action){}
+    List<Stuck> stuck(UUID owner)throws SQLException {
+        var out=new ArrayList<Stuck>();
+        try(var p=c.prepareStatement("SELECT id,fish,size,caught_at,item_token,fish_state FROM codex_fish_tank WHERE uuid=? AND fish_state IN ('SELLING','TAKING') ORDER BY caught_at,id")){
+            p.setString(1,owner.toString());try(var r=p.executeQuery()){while(r.next())out.add(new Stuck(row(r),r.getString(6).equals("SELLING")?Action.SELL:Action.ITEMIZE));}
+        }return List.copyOf(out);
+    }
+    /** 서버 전체에서 멈춘 판매·꺼내기 수 (시작 시 콘솔 경고용). */
+    int stuckCount()throws SQLException {
+        try(var s=c.createStatement();var r=s.executeQuery("SELECT COUNT(*) FROM codex_fish_tank WHERE fish_state IN ('SELLING','TAKING')")){return r.next()?r.getInt(1):0;}
+    }
     boolean finish(UUID owner,List<Fish> fish,Action action,boolean success)throws SQLException {
         return tx(owner,()->{
             String before=action==Action.ITEMIZE?"TAKING":"SELLING",after=success?(action==Action.ITEMIZE?"ITEM":"SOLD"):"TANK";

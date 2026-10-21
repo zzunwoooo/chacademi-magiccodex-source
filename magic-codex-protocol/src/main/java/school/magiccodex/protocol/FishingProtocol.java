@@ -18,7 +18,8 @@ import java.util.*;
  */
 public final class FishingProtocol {
     public static final String REQUEST = "magiccodex:fishing_request", RESPONSE = "magiccodex:fishing_response";
-    public static final int VERSION = 2;   // 2026-10-20 v2: floor depth, tank count, hook gauge, strain, attacks, codex tier rewards
+    public static final int VERSION = 3;   // 2026-10-20 v2: floor depth, tank count, hook gauge, strain, attacks, codex tier rewards
+                                           // 2026-10-21 v3: BITE no longer carries rush (the legendary flag); the client derives the needle rush from the zone width
     public static final int MAX_REQUEST_BYTES = 256, MAX_BYTES = 262144;
 
     // C2S actions
@@ -104,13 +105,13 @@ public final class FishingProtocol {
      * What will bite. waitMs = until it starts coming, teases = fake nibbles before the real one, hookWindowMs = the
      * reaction window, size = 0..1 within the silhouette range, grade = -1 unless the float reveals it, magic = a magic fish
      * (the mana-amplifier rod reels it faster).
-     * v2: sweepMs = how long the hook gauge needle takes across the bar, zone = width of the success zone (0..1), rush = the
-     * needle speeds up near the zone (legendary); strain = how hard this fish is for this gear at this depth (1 = normal,
+     * v2: sweepMs = how long the hook gauge needle takes across the bar, zone = width of the success zone (0..1); strain = how hard this fish is for this gear at this depth (1 = normal,
      * higher = stronger pull / lower tension room: low-grade gear deep down); attacks = what the fish does to the gear
      * while it is reeled (the server charges the wear of the attacks that happened before the reported end).
+     * v3: no rush flag on the wire (it told a modded client "legendary" before the catch); see {@link #rushes(float)}.
      */
     public record Bite(long session, int token, int shape, float size, int grade, int waitMs, int teases, int hookWindowMs,
-                       int power, int pattern, long seed, float depth, boolean magic, int sweepMs, float zone, boolean rush, float strain,
+                       int power, int pattern, long seed, float depth, boolean magic, int sweepMs, float zone, float strain,
                        List<Attack> attacks) implements Frame {
         public Bite {
             if (shape < 0 || shape > SHAPE_CHEST || !Float.isFinite(size) || size < 0 || size > 1 || grade < -1 || grade > 3 || waitMs < 0 || waitMs > 60000
@@ -192,10 +193,27 @@ public final class FishingProtocol {
     }
     /** Reeling speed in m/s at full winding (both sides use this so the server can check the elapsed time). */
     public static float reelSpeed(float reelPower) { return Math.max(.5f, reelPower * .35f); }
-    /** The fastest an honest catch can end after the bite frame arrived (ms), with slack for lag. */
-    public static int minimumCatchMillis(Bite b, float reelPower) {
-        double reel = b.depth() / reelSpeed(reelPower) * 1000;
-        return (int) Math.max(0, b.waitMs() * .8 + b.teases() * 350 + reel * .7 - 600);
+    /** Hook gauge zones narrower than this make the needle rush near the zone (the narrowest, legendary zone .12). v3: derived on the client, not sent. */
+    public static final float RUSH_ZONE = .135f;
+    /** Fastest winding the client allows, as a share of reelSpeed (tired fish: .75 x 1.3). The server's minimum assumes it. */
+    public static final double MAX_WIND = .975;
+    public static boolean rushes(float zone) { return zone < RUSH_ZONE; }
+    /**
+     * v3 (2026-10-21): the fastest an honest catch can end after the bite frame arrived (ms). Mirrors the client's shortest
+     * possible timings: approach (1.25 s, none for a chest) + .5 s + 1.25 s per tease + .25 s warning + .2 s sensitivity +
+     * the needle reaching the earliest zone (.25 of the sweep), then winding non-stop at the client's top winding speed
+     * (.975 x reelSpeed: .75 x 1.3 while the fish is tired, client FishMood 2026-10-21) against the weakest pull this fish
+     * can have (power, strain, its pattern's lowest pull capped at the tired .6, stamina 0). reelBonus = the rod's best reel
+     * multiplier (sea / magic rod effects). The server measures from sending, so the round trip only adds.
+     * Margin: the result is (that time x 0.9) - 400 ms, i.e. 10% + 400 ms below the fastest possible honest catch.
+     */
+    public static int minimumCatchMillis(Bite b, float reelPower, float reelBonus) {
+        boolean chest = b.shape() == SHAPE_CHEST;
+        double before = b.waitMs() + (chest ? 0 : 1250 + b.teases() * 1250) + 500 + 250 + 200 + .25 * b.sweepMs();
+        double low = Math.min(.6, switch (b.pattern()) { case ZIGZAG -> .75; case DASH -> .9; case DIVE -> .95; case SURGE -> .35; default -> 1; });
+        double force = (.20 + .075 * b.power()) * b.strain() * .4 * low;
+        double speed = reelSpeed(reelPower) * Math.max(1, reelBonus) * MAX_WIND * Math.max(.15, 1 - .8 * force);
+        return (int) Math.max(0, (before + b.depth() / speed * 1000) * .9 - 400);
     }
     /** Completion tier reached: 0..4 tiers at 25/50/75/100%. */
     public static int tiersReached(int caught, int total) {
@@ -248,7 +266,7 @@ public final class FishingProtocol {
                     d.writeByte(FRAME_BITE); d.writeLong(b.session()); d.writeInt(b.token()); d.writeByte(b.shape()); d.writeFloat(b.size());
                     d.writeByte(b.grade() + 1); d.writeInt(b.waitMs()); d.writeByte(b.teases()); d.writeInt(b.hookWindowMs()); d.writeByte(b.power());
                     d.writeByte(b.pattern()); d.writeLong(b.seed()); d.writeFloat(b.depth()); d.writeBoolean(b.magic());
-                    d.writeInt(b.sweepMs()); d.writeFloat(b.zone()); d.writeBoolean(b.rush()); d.writeFloat(b.strain());
+                    d.writeInt(b.sweepMs()); d.writeFloat(b.zone()); d.writeFloat(b.strain());
                     d.writeByte(b.attacks().size()); for (Attack a : b.attacks()) { d.writeInt(a.atMs()); d.writeByte(a.kind()); d.writeShort(a.damage()); }
                 }
                 case Result r -> {
@@ -296,11 +314,11 @@ public final class FishingProtocol {
                     int grade = d.readUnsignedByte() - 1, wait = d.readInt(), teases = d.readUnsignedByte(), window = d.readInt(), power = d.readUnsignedByte(),
                             pattern = d.readUnsignedByte();
                     long seed = d.readLong(); float depth = d.readFloat(); boolean magic = d.readBoolean();
-                    int sweep = d.readInt(); float zone = d.readFloat(); boolean rush = d.readBoolean(); float strain = d.readFloat();
+                    int sweep = d.readInt(); float zone = d.readFloat(); float strain = d.readFloat();
                     int n = d.readUnsignedByte(); if (n > MAX_ATTACKS) throw new IOException("attacks");
                     var attacks = new ArrayList<Attack>();
                     for (int i = 0; i < n; i++) attacks.add(new Attack(d.readInt(), d.readUnsignedByte(), d.readUnsignedShort()));
-                    yield new Bite(session, token, shape, size, grade, wait, teases, window, power, pattern, seed, depth, magic, sweep, zone, rush, strain, attacks);
+                    yield new Bite(session, token, shape, size, grade, wait, teases, window, power, pattern, seed, depth, magic, sweep, zone, strain, attacks);
                 }
                 case FRAME_RESULT -> {
                     long session = d.readLong(); int outcome = d.readUnsignedByte(); String id = d.readUTF(), name = d.readUTF();

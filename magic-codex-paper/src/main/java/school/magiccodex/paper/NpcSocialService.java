@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.IntPredicate;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -28,6 +29,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import school.magiccodex.database.DatabaseSettings;
 
 /**
@@ -52,6 +55,8 @@ final class NpcSocialService implements Listener, AutoCloseable {
     private volatile boolean closing;
     private boolean catalogFailureReported;
     private NpcSocialFacade facade;
+    /** 이 서버 ID (우편과 같은 mailbox-origin.txt). 선물 pending 은 시작한 서버에서만 영수증으로 확정·취소한다 (A08). */
+    private final String origin;
 
     NpcSocialService(MagicCodexBridge plugin) throws Exception {
         this.plugin = plugin;
@@ -69,17 +74,17 @@ final class NpcSocialService implements Listener, AutoCloseable {
         defaultCap = Math.max(0, cfg.getInt("default-daily-cap", 5));
         giftDailyCount = Math.max(1, cfg.getInt("gift-daily-count", 1));
         zone = ZoneId.of(cfg.getString("timezone", "Asia/Seoul"));
-        int recoverMinutes = Math.max(2, cfg.getInt("recover-pending-gift-minutes", 10));
+        origin = serverOrigin(folder);
 
         var settings = GenericDatabaseFile.load(folder);
         // SQLite fallback 경로를 명시: plugins/MagicCodexBridge/affinity.db
         Path sqlite = folder.resolve("affinity.db");
         try {
             store = io.submit(() -> new AffinityStore(settings, sqlite)).get(15, TimeUnit.SECONDS);
-            long now = System.currentTimeMillis();
-            int recovered = io.submit(() -> store.recoverPendingGifts(now - recoverMinutes * 60_000L, now)).get(15, TimeUnit.SECONDS);
-            if (recovered > 0) {
-                plugin.getLogger().warning("NPC 선물 미확정 " + recovered + "건을 확정 처리했습니다 (아이템 차감된 것으로 간주).");
+            // A08 (2026-10-21): 시작 시 일괄 확정은 하지 않는다. pending 은 접속할 때 시작한 서버에서 영수증으로 정한다.
+            int legacy = io.submit(store::legacyPendingGifts).get(15, TimeUnit.SECONDS);
+            if (legacy > 0) {
+                plugin.getLogger().warning("NPC 선물 미확정 옛 기록(서버 정보 없음) " + legacy + "건: 자동 처리하지 않아요. /유저관리 <닉네임> 호감도 선물기록 으로 확인하세요.");
             }
         } catch (Exception e) {
             io.shutdownNow();
@@ -88,6 +93,7 @@ final class NpcSocialService implements Listener, AutoCloseable {
         Bukkit.getPluginManager().registerEvents(this, plugin);
         for (Player p : Bukkit.getOnlinePlayers()) {
             load(p.getUniqueId());
+            resolveGifts(p);
         }
         registerDialogueHooks();
         facade = new NpcSocialFacade(this);
@@ -167,6 +173,125 @@ final class NpcSocialService implements Listener, AutoCloseable {
     @EventHandler
     public void join(PlayerJoinEvent e) {
         load(e.getPlayer().getUniqueId());
+        resolveGifts(e.getPlayer());
+    }
+
+    // ------------------------------------------------------------------ 선물 영수증 (A08, 2026-10-21)
+
+    static String serverOrigin(Path folder) throws java.io.IOException {
+        Path identity = folder.resolve("mailbox-origin.txt");
+        if (!Files.exists(identity)) {
+            try { Files.writeString(identity, UUID.randomUUID().toString(), java.nio.file.StandardOpenOption.CREATE_NEW); }
+            catch (java.nio.file.FileAlreadyExistsException ignored) { /* 우편이 먼저 만듦 */ }
+        }
+        return UUID.fromString(Files.readString(identity).strip()).toString();
+    }
+
+    private NamespacedKey giftReceipt(String token) {
+        return new NamespacedKey(plugin, "gift_receipt_" + token.replace("-", ""));
+    }
+
+    /**
+     * 선물 아이템 1개 차감 + 영수증(PDC) + saveData 를 같은 틱에 한다 (우편 수령과 같은 방식). 메인 스레드.
+     * @return 1 = 차감하고 영수증 저장, 0 = 칸의 아이템이 바뀌어 아무것도 안 함
+     */
+    int takeGift(Player p, int slot, ItemStack one, String token) {
+        if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("server thread required");
+        UUID.fromString(token);
+        if (!p.isOnline() || one == null) {
+            return 0;
+        }
+        var inv = p.getInventory();
+        ItemStack cur = inv.getItem(slot);
+        if (cur == null || !cur.isSimilar(one) || cur.getAmount() < 1) {
+            return 0;
+        }
+        if (cur.getAmount() == 1) {
+            inv.setItem(slot, null);
+        } else {
+            cur.setAmount(cur.getAmount() - 1);
+            inv.setItem(slot, cur);
+        }
+        p.getPersistentDataContainer().set(giftReceipt(token), PersistentDataType.BYTE, (byte) 1);
+        try {
+            p.saveData();
+        } catch (RuntimeException e) {
+            plugin.getLogger().warning("NPC 선물 saveData 실패 (토큰 " + token + "): 다음 저장 때 차감·영수증이 함께 저장됩니다");
+        }
+        return 1;
+    }
+
+    private record GiftSweep(List<String> settled, java.util.Set<String> pending, int committed, int cancelled, int waiting, int review) {
+    }
+
+    /** 접속(이 서버): 이 서버에서 시작한 pending 선물을 영수증으로 확정·취소한다. 다른 서버·옛 기록은 건드리지 않는다. */
+    private void resolveGifts(Player p) {
+        UUID id = p.getUniqueId();
+        long before = System.currentTimeMillis();
+        String ns = plugin.getName().toLowerCase(Locale.ROOT);
+        var receipts = new java.util.HashSet<String>();
+        for (var key : p.getPersistentDataContainer().getKeys()) {
+            if (key.getNamespace().equals(ns) && key.getKey().startsWith("gift_receipt_")) {
+                receipts.add(key.getKey().substring("gift_receipt_".length()));
+            }
+        }
+        Path file = MailboxBridge.playerFile(p);
+        work(() -> {
+            var settled = new java.util.ArrayList<String>();
+            var pending = new java.util.HashSet<String>();
+            int committed = 0, cancelled = 0, waiting = 0, review = 0;
+            for (var g : store.pendingGifts(id, before)) {
+                String hex = g.token().replace("-", "");
+                pending.add(hex);
+                boolean pdc = receipts.contains(hex);
+                boolean disk = pdc && DeliveryReceipt.saved(file, giftReceipt(g.token()).toString());
+                switch (AffinityStore.recovery(g.origin(), origin, pdc, disk)) {
+                    case COMMIT -> {
+                        if (store.commitGift(g.token(), System.currentTimeMillis()) != null) committed++;
+                        settled.add(hex);
+                    }
+                    case CANCEL -> {
+                        if (store.cancelGift(g.token())) cancelled++;
+                    }
+                    case WAIT -> waiting++;
+                    case REVIEW -> review++;
+                    case SKIP -> { }
+                }
+            }
+            return new GiftSweep(settled, pending, committed, cancelled, waiting, review);
+        }).whenComplete((r, error) -> {
+            if (error != null || r == null) {
+                return;   // 다음 접속 때 다시
+            }
+            if (r.committed() + r.cancelled() + r.review() > 0) {
+                plugin.getLogger().info("NPC 선물 복구 player=" + id + " 확정=" + r.committed() + " 취소=" + r.cancelled() + " 대기=" + r.waiting() + " 관리자확인=" + r.review());
+            }
+            Player online = Bukkit.getPlayer(id);
+            if (online == null) {
+                return;
+            }
+            // 확정한 영수증과, pending 이 없는 오래된 영수증(이미 처리됨)은 지운다. 대기(WAIT) 중인 것은 남긴다.
+            for (String hex : receipts) {
+                if (r.settled().contains(hex) || !r.pending().contains(hex)) {
+                    online.getPersistentDataContainer().remove(new NamespacedKey(plugin, "gift_receipt_" + hex));
+                }
+            }
+        });
+    }
+
+    String origin() {
+        return origin;
+    }
+
+    /** 관리 명령: 이 플레이어의 끝나지 않은 선물 전부. */
+    CompletableFuture<List<AffinityStore.PendingGift>> adminPendingGifts(UUID owner) {
+        return work(() -> store.pendingGifts(owner, Long.MAX_VALUE));
+    }
+
+    /** 관리 명령: 확정(점수 반영) 또는 취소(하루 횟수 돌려줌). 이미 처리됐으면 false. */
+    CompletableFuture<Boolean> adminResolveGift(String token, boolean commit) {
+        long now = System.currentTimeMillis();
+        return work(() -> commit ? store.commitGift(token, now) != null : store.cancelGift(token));
     }
 
     @EventHandler
@@ -315,7 +440,7 @@ final class NpcSocialService implements Listener, AutoCloseable {
         final int value = modified(player, delta);
         String day = today();
         long now = System.currentTimeMillis();
-        return work(() -> store.beginGift(token, player, npc, value, day, giftDailyCount, now));
+        return work(() -> store.beginGift(token, player, npc, value, day, giftDailyCount, now, origin));
     }
 
     CompletableFuture<AffinityStore.AddResult> commitGift(UUID player, String npc, String token) {
@@ -323,6 +448,11 @@ final class NpcSocialService implements Listener, AutoCloseable {
         return work(() -> store.commitGift(token, now)).thenApply(r -> {
             if (r != null) {
                 remember(player, npc, r.row());
+            }
+            // 확정됐거나(이번 또는 이전에) 이미 처리된 토큰: 영수증은 더 필요 없다.
+            Player online = Bukkit.getPlayer(player);
+            if (online != null) {
+                online.getPersistentDataContainer().remove(giftReceipt(token));
             }
             return r;
         });

@@ -171,8 +171,11 @@ final class FishTankBridge implements PluginMessageListener, Listener {
             if(!p.isOnline()||p.getInventory().firstEmpty()<0||item==null){
                 fishing.tank().finish(p.getUniqueId(),claimed,FishTankSql.Action.ITEMIZE,false,ok->done(p,r,false,ok?"꺼내기를 취소하고 수조에 보존했어요.":"수조 상태를 확인해야 해요. 관리자에게 알려 주세요."));return;
             }
-            try{fishing.give(p,List.of(item),"fish-tank:"+actual.id()+":"+actual.token());}
+            FishingBridge.Given given;
+            try{given=fishing.deliver(p,List.of(item),"fish-tank:"+actual.id()+":"+actual.token(),actual,null);}
             catch(RuntimeException uncertain){plugin.getLogger().severe("FISH TANK delivery outcome uncertain; claim retained id="+actual.id());done(p,r,false,"지급 결과 확인이 필요해요. 관리자에게 알려 주세요.");return;}
+            // 빈 칸을 확인했으므로 보통 인벤토리로 들어간다. 우편으로 갔다면 수조 기록은 우편 저장 확인 뒤 대기열이 닫는다.
+            if(given==FishingBridge.Given.MAIL){done(p,r,true,"인벤토리가 가득 차서 우편으로 보냈어요.");return;}
             fishing.tank().finish(p.getUniqueId(),claimed,FishTankSql.Action.ITEMIZE,true,ok->{
                 if(p.isOnline())p.playSound(p.getLocation(),Sound.ENTITY_ITEM_PICKUP,.7f,1.2f);
                 done(p,r,ok,ok?"아이템으로 꺼냈어요.":"지급 기록 확인이 필요해요. 관리자에게 알려 주세요.");

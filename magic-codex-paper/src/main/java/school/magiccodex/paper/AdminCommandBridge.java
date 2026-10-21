@@ -163,7 +163,55 @@ final class AdminCommandBridge {
                 .then(literal("보기").executes(run(ctx -> affinityChange(ctx, "보기", 0))))
                 .then(literal("설정").then(word("호칭", List::of).executes(run(ctx -> nickname(ctx, text(ctx, "호칭"))))))
                 .then(literal("초기화").executes(run(ctx -> nickname(ctx, "")))));
-        return literal("호감도").then(npc);
+        // A08 (2026-10-21): 끝나지 않은 NPC 선물 보기·처리 (옛 기록·다른 서버 기록 포함)
+        return literal("호감도").then(npc)
+                .then(literal("선물기록").executes(run(this::giftPending)))
+                .then(literal("선물처리").then(argument("번호", IntegerArgumentType.integer(1, 100))
+                        .then(confirm(literal("확정"), ctx -> resolveGift(ctx, true)))
+                        .then(confirm(literal("취소"), ctx -> resolveGift(ctx, false)))));
+    }
+
+    /** 관리자가 방금 본 선물 목록 (관리자 이름|대상 → 토큰). */
+    private final Map<String, List<String>> giftListed = new HashMap<>();
+
+    private void giftPending(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        if (social == null) throw ChacaApi.error("NPC 호감도 기능이 준비되지 않았어요");
+        UUID target = ChacaApi.target(ctx);
+        var sender = sender(ctx);
+        String who = CmdKit.name(target);
+        social.adminPendingGifts(target).whenComplete((rows, error) -> {
+            if (error != null) { fail(sender, "선물 기록을 읽지 못했어요", error); return; }
+            var out = new ArrayList<String>();
+            var tokens = new ArrayList<String>();
+            out.add("── " + who + " 끝나지 않은 NPC 선물 " + rows.size() + "건 ──");
+            for (var g : rows) {
+                tokens.add(g.token());
+                String where = g.origin().isEmpty() ? "옛 기록(서버 정보 없음)" : g.origin().equals(social.origin()) ? "이 서버" : "다른 서버";
+                out.add(tokens.size() + ". " + g.npc() + " · +" + g.delta() + " · " + QuestBridge.timeText(g.created()) + " · " + where + " · " + g.token().substring(0, 8));
+            }
+            if (rows.isEmpty()) out.add("(없음)");
+            else out.add("시작한 서버에 유저가 접속하면 영수증으로 자동 처리돼요. 옛 기록은 직접: 선물처리 <번호> 확정(아이템 빠짐, 점수 반영) | 취소(아이템 그대로, 횟수 돌려줌) 확인");
+            giftListed.put(sender.getName() + "|" + target, List.copyOf(tokens));
+            lines(sender, out);
+        });
+    }
+
+    private void resolveGift(CommandContext<CommandSourceStack> ctx, boolean commit) throws CommandSyntaxException {
+        if (social == null) throw ChacaApi.error("NPC 호감도 기능이 준비되지 않았어요");
+        UUID target = ChacaApi.target(ctx);
+        var sender = sender(ctx);
+        int number = IntegerArgumentType.getInteger(ctx, "번호");
+        var tokens = giftListed.get(sender.getName() + "|" + target);
+        if (tokens == null) throw ChacaApi.error("먼저 호감도 선물기록 으로 번호를 확인해 주세요");
+        if (number > tokens.size()) throw ChacaApi.error("그 번호의 선물이 없어요 (선물기록 으로 확인)");
+        String token = tokens.get(number - 1), admin = sender.getName();
+        social.adminResolveGift(token, commit).whenComplete((done, error) -> {
+            plugin.getLogger().warning("NPC GIFT ADMIN admin=" + admin + " player=" + target + " token=" + token + " action=" + (commit ? "확정" : "취소") + " ok=" + done + (error == null ? "" : " error=" + error));
+            if (error != null) { fail(sender, "선물을 처리하지 못했어요", error); return; }
+            giftListed.remove(admin + "|" + target);
+            if (Boolean.TRUE.equals(done)) ok(sender, "선물 " + token.substring(0, 8) + " 를 " + (commit ? "확정했어요 (점수 반영)" : "취소했어요 (하루 횟수 돌려줌)"));
+            else userFail(sender, "이미 처리된 선물이에요. 선물기록 으로 다시 확인해 주세요");
+        });
     }
 
     private String npc(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {

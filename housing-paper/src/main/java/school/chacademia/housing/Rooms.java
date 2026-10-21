@@ -196,26 +196,82 @@ final class Rooms {
         });
     }
 
+    /** 확장 결제 진행 중인 방 (두 번 눌러 두 번 결제되지 않게). */
+    private final Set<UUID> expanding = new HashSet<>();
+
+    /**
+     * 방 확장 (A03, 2026-10-21): 원장에 거래를 먼저 기록 → Vault 출금 → 한 트랜잭션으로 방 반영 → 완료.
+     * 크기가 이미 바뀌었으면 입금으로 환불하고, 입금이 확인될 때만 "돌려드렸어요"라고 말한다. 결과를 모르면 uncertain 으로 두고 관리자에게 넘긴다.
+     */
     private void expand(Player p, Session s, int from) {
         if (!s.edit()) { plugin.net().result(p, false, "내 방에서만 넓힐 수 있어요."); return; }
         var next = plugin.settings().next(from);
         if (next == null) { plugin.net().result(p, false, "더 넓힐 수 없어요."); return; }
-        long cost = next.getValue();
+        long cost = next.getValue(); int to = next.getKey();
         if (cost > 0 && !Economy.available()) { plugin.net().result(p, false, "경제 서비스 연결이 필요해요. 관리자에게 알려 주세요."); return; }
-        if (!Economy.withdraw(p, cost)) { plugin.net().result(p, false, "돈이 부족해요. (필요: " + String.format("%,d", cost) + ")"); return; }
+        double balance = cost > 0 ? Economy.balance(p) : 0;
+        if (balance >= 0 && balance < cost) { plugin.net().result(p, false, ExpandLedger.message(ExpandLedger.CANCELLED, to, cost)); return; }
         UUID owner = s.owner();
-        plugin.store().expand(owner, from, next.getKey(), ok -> {
-            if (Boolean.TRUE.equals(ok)) {
-                size(owner, next.getKey());
-                plugin.net().result(p, true, "방이 " + next.getKey() + "×" + next.getKey() + " 크기로 넓어졌어요!");
-                refresh(owner);
+        if (!expanding.add(owner)) { plugin.net().result(p, false, "방을 넓히는 중이에요. 잠시만 기다려 주세요."); return; }
+        String tx = UUID.randomUUID().toString(), origin = plugin.settings().server();
+        var log = plugin.getLogger();
+        plugin.store().expandPrepare(tx, owner, from, to, cost, origin, prepared -> {
+            if (!Boolean.TRUE.equals(prepared)) { expanding.remove(owner); plugin.net().result(p, false, "지금은 넓힐 수 없어요. 잠시 후 다시 시도해 주세요. (돈은 빠지지 않았어요)"); return; }
+            if (!p.isOnline() || plugin.store().closing()) { expanding.remove(owner); plugin.store().expandMove(tx, ExpandLedger.PREPARED, ExpandLedger.CANCELLED, "출금 전 접속 종료", null); return; }
+            var pay = Economy.withdrawResult(p, cost);
+            log.info("HOUSING EXPAND tx=" + tx + " player=" + owner + " " + from + "->" + to + " cost=" + cost + " withdraw=" + pay);
+            if (pay == Economy.Pay.REFUSED) {
+                expanding.remove(owner);
+                plugin.store().expandMove(tx, ExpandLedger.PREPARED, ExpandLedger.CANCELLED, "출금 거절", null);
+                plugin.net().result(p, false, ExpandLedger.message(ExpandLedger.CANCELLED, to, cost));
                 return;
             }
-            boolean refunded = Economy.deposit(p, cost);
-            if (!refunded) plugin.getLogger().severe("방 확장 환불 실패: " + p.getName() + " " + cost + " (직접 돌려주세요)");
-            plugin.net().result(p, false, ok == null ? "넓히지 못했어요. 돈은 돌려드렸어요." : "방 크기가 이미 바뀌었어요. 돈은 돌려드렸어요.");
-            refresh(owner);
+            if (pay == Economy.Pay.UNCERTAIN) {
+                expanding.remove(owner);
+                log.severe("HOUSING EXPAND tx=" + tx + " 출금 결과 모름 (Vault 예외) → uncertain, 관리자 확인 필요");
+                plugin.store().expandMove(tx, ExpandLedger.PREPARED, ExpandLedger.UNCERTAIN, "출금 결과 모름", null);
+                plugin.net().result(p, false, "결제 결과를 확인하지 못했어요. 다시 시도하지 말고 관리자에게 알려 주세요. (거래 " + tx.substring(0, 8) + ")");
+                return;
+            }
+            plugin.store().expandMove(tx, ExpandLedger.PREPARED, ExpandLedger.WITHDRAWN, "출금됨", moved ->
+                plugin.store().expandApply(tx, state -> finishExpand(p, owner, tx, to, cost, state)));
         });
+    }
+
+    private void finishExpand(Player p, UUID owner, String tx, int to, long cost, String state) {
+        var log = plugin.getLogger();
+        if (ExpandLedger.APPLIED.equals(state)) {
+            expanding.remove(owner);
+            plugin.store().expandMove(tx, ExpandLedger.APPLIED, ExpandLedger.DONE, "넓힘", null);
+            size(owner, to);
+            if (p.isOnline()) plugin.net().result(p, true, ExpandLedger.message(ExpandLedger.APPLIED, to, cost));
+            refresh(owner);
+            return;
+        }
+        if (!ExpandLedger.REFUND_PENDING.equals(state)) {
+            // null = DB 오류(반영됐는지 모름), 그 밖 = 이미 다른 단계: 돈을 더 움직이지 않는다.
+            expanding.remove(owner);
+            log.severe("HOUSING EXPAND tx=" + tx + " 반영 결과 모름 (state=" + state + ") → uncertain, 관리자 확인 필요");
+            plugin.store().expandMove(tx, ExpandLedger.WITHDRAWN, ExpandLedger.UNCERTAIN, "출금됨, 반영 결과 모름", moved -> {
+                if (!Boolean.TRUE.equals(moved)) plugin.store().expandMove(tx, ExpandLedger.PREPARED, ExpandLedger.UNCERTAIN, "출금됨, 반영 결과 모름", null);
+            });
+            if (p.isOnline()) plugin.net().result(p, false, ExpandLedger.message(ExpandLedger.UNCERTAIN, to, cost) + " (거래 " + tx.substring(0, 8) + ")");
+            refresh(owner);
+            return;
+        }
+        if (plugin.store().closing()) { expanding.remove(owner); log.severe("HOUSING EXPAND tx=" + tx + " 종료 중이라 환불하지 않음 → 다음 시작 때 uncertain"); return; }
+        var refund = Economy.depositResult(p, cost);
+        expanding.remove(owner);
+        log.info("HOUSING EXPAND tx=" + tx + " refund=" + refund);
+        if (refund == Economy.Pay.OK) {
+            plugin.store().expandMove(tx, ExpandLedger.REFUND_PENDING, ExpandLedger.DONE, "환불함", null);
+            if (p.isOnline()) plugin.net().result(p, false, ExpandLedger.message("refunded", to, cost));
+        } else {
+            log.severe("HOUSING EXPAND tx=" + tx + " 환불 실패 (" + refund + ") " + p.getName() + " " + cost + " → uncertain, 관리자 확인 필요");
+            plugin.store().expandMove(tx, ExpandLedger.REFUND_PENDING, ExpandLedger.UNCERTAIN, "환불 " + (refund == Economy.Pay.REFUSED ? "거절" : "결과 모름"), null);
+            if (p.isOnline()) plugin.net().result(p, false, ExpandLedger.message(ExpandLedger.UNCERTAIN, to, cost) + " (거래 " + tx.substring(0, 8) + ")");
+        }
+        refresh(owner);
     }
 
     private void post(Player p, Session s, Post post) {

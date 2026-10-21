@@ -43,7 +43,6 @@ final class AlchemyBridge implements PluginMessageListener, Listener {
     private Set<String> categories = Set.of("재료"), materialItems = Set.of();
     private int slots = 6;
     private boolean nearHint = true;
-    private String mailTitle = "연금술 결과물", mailBody = "인벤토리가 가득 차서 연금술 결과물을 우편으로 보내 드립니다.";
     private final Map<String, String> messages = new HashMap<>();
     /** key -> serialized icon (canonical item from ItemsAdder / vanilla, else the first stack seen). Cleared on reload. */
     private final Map<String, byte[]> previews = new HashMap<>();
@@ -91,7 +90,7 @@ final class AlchemyBridge implements PluginMessageListener, Listener {
         for (String k : yaml.getStringList("settings.material-items")) items.add(key(k, "settings.material-items"));
         var msg = new HashMap<String, String>();
         var ms = yaml.getConfigurationSection("messages");
-        for (String k : List.of("near", "near-amount", "nothing", "crafted", "discovered", "mailed", "no-exp", "no-exp-locked", "missing", "empty"))
+        for (String k : List.of("near", "near-amount", "nothing", "crafted", "discovered", "no-room", "no-exp", "no-exp-locked", "missing", "empty"))
             msg.put(k, ms == null ? "" : ms.getString(k, ""));
         var list = new ArrayList<Recipe>();
         var seen = new HashMap<Map<String, Integer>, String>();
@@ -127,7 +126,6 @@ final class AlchemyBridge implements PluginMessageListener, Listener {
         // commit only after everything parsed
         recipes = List.copyOf(list); slots = count; categories = Set.copyOf(cats); materialItems = Set.copyOf(items);
         nearHint = yaml.getBoolean("settings.near-hint", true);
-        mailTitle = yaml.getString("settings.mail-title", mailTitle); mailBody = yaml.getString("settings.mail-body", mailBody);
         messages.clear(); messages.putAll(msg);
         previews.clear();
     }
@@ -352,8 +350,17 @@ final class AlchemyBridge implements PluginMessageListener, Listener {
             if (stack == null) { plugin.getLogger().warning("ALCHEMY RESULT MISSING recipe=" + match.id() + " result=" + match.result()); result(p, seq, AlchemyProtocol.REFUSED, null, 0, false, "결과 아이템을 만들 수 없습니다. 관리자에게 문의해 주세요."); return; }
             outputs.add(stack); left -= stack.getAmount();
         }
-        // take ingredients (verified above) and experience
+        // 결과물이 인벤토리에 다 들어가지 않으면 제작하지 않는다 (재료·경험치 차감 없음, 우편 대체 없음 — 2026-10-21 오너 결정)
         var storage = p.getInventory();
+        if (!fitsAfterTaking(storage, want, outputs)) {
+            plugin.getLogger().info("ALCHEMY NO-ROOM player=" + p.getName() + " recipe=" + match.id() + " amount=" + match.amount());
+            String m = message("no-room", match, match.amount(), "");
+            if (m.isBlank()) m = "인벤토리에 결과물을 넣을 자리가 없어요. 공간을 비운 뒤 다시 시도해 주세요.";
+            result(p, seq, AlchemyProtocol.REFUSED, null, 0, false, m);
+            CmdKit.notify(p, "warning", "alchemy-no-room", "인벤토리 공간이 부족해요", "결과물이 들어갈 자리를 비운 뒤 다시 제작해 주세요.", 0);
+            send(p, AlchemyProtocol.KIND_STATE, ""); return;
+        }
+        // take ingredients (verified above) and experience
         for (var e : want.entrySet()) {
             int need = e.getValue();
             for (int i = 0; i < 36 && need > 0; i++) {
@@ -367,40 +374,47 @@ final class AlchemyBridge implements PluginMessageListener, Listener {
         long after = total - match.exp();
         float[] level = AlchemyRules.fromTotal(after);
         p.setLevel((int) level[0]); p.setExp(Math.min(level[1], 0.9999f)); p.setTotalExperience((int) Math.min(Integer.MAX_VALUE, after));
-        var leftover = new ArrayList<ItemStack>(storage.addItem(outputs.toArray(ItemStack[]::new)).values());
-        boolean mailed = !leftover.isEmpty();
+        var leftover = storage.addItem(outputs.toArray(ItemStack[]::new)).values();
         String craftId = UUID.randomUUID().toString();
-        if (mailed) mail(p, leftover, craftId, match);
+        // fitsAfterTaking 이 자리를 확인했으므로 남는 양은 없어야 한다. 그래도 남으면(다른 플러그인 개입 등) 버리지 않고 기록만 남긴다.
+        if (!leftover.isEmpty()) plugin.getLogger().severe("ALCHEMY LEFTOVER (자리 계산과 실제 지급이 다름) player=" + p.getUniqueId() + " craft=" + craftId + " items=" + leftover);
         p.updateInventory();
         plugin.getLogger().info("ALCHEMY CRAFT player=" + p.getName() + " recipe=" + match.id() + " amount=" + match.amount() + " exp=" + match.exp()
-                + (isNew ? " new" : "") + (mailed ? " mailed=" + leftover.stream().mapToInt(ItemStack::getAmount).sum() : "") + " craft=" + craftId);
+                + (isNew ? " new" : "") + " craft=" + craftId);
         String notice = message(isNew ? "discovered" : "crafted", match, match.amount(), "");
-        if (mailed) { String m = message("mailed", match, match.amount(), ""); notice = (notice + " " + m).strip(); if (notice.length() > AlchemyProtocol.MAX_NOTICE) notice = notice.substring(0, AlchemyProtocol.MAX_NOTICE); }
         if (isNew) discover(p, match);
-        result(p, seq, isNew ? AlchemyProtocol.DISCOVERED : AlchemyProtocol.CRAFTED, match, match.amount(), mailed, notice);
+        result(p, seq, isNew ? AlchemyProtocol.DISCOVERED : AlchemyProtocol.CRAFTED, match, match.amount(), false, notice);
         send(p, AlchemyProtocol.KIND_STATE, "");
     }
 
-    /** Results that did not fit: mailbox (9 attachments per mail). Without a mailbox they drop at the player's feet. */
-    private void mail(Player p, List<ItemStack> items, String craftId, Recipe r) {
-        var service = Bukkit.getServicesManager().load(MailService.class);
-        if (service == null) { drop(p, items, "우편 기능 없음", craftId); return; }
-        for (int part = 0; part * 9 < items.size(); part++) {
-            var chunk = List.copyOf(items.subList(part * 9, Math.min(items.size(), part * 9 + 9)));
-            String body = mailBody + " (" + r.name() + ")";
-            try {
-                service.sendSystem("alchemy:" + craftId + ":" + part, p.getUniqueId(), mailTitle, body, chunk).whenComplete((id, error) -> {
-                    if (error != null) Bukkit.getScheduler().runTask(plugin, () -> drop(p, chunk, "우편 저장 실패 " + error.getClass().getSimpleName(), craftId));
-                });
-            } catch (RuntimeException e) { drop(p, chunk, "우편 거절 " + e.getMessage(), craftId); }
+    /** 재료를 뺀 뒤의 인벤토리(0~35칸)에 결과물이 전부 들어가는지. 실제 인벤토리는 건드리지 않는다. */
+    private boolean fitsAfterTaking(org.bukkit.inventory.PlayerInventory storage, Map<String, Integer> want, List<ItemStack> outputs) {
+        if (outputs.isEmpty()) return true;
+        int[] after = new int[36], max = new int[36]; boolean[] similar = new boolean[36];
+        var need = new HashMap<String, Integer>(want);
+        ItemStack sample = outputs.getFirst();
+        int total = outputs.stream().mapToInt(ItemStack::getAmount).sum();
+        for (int i = 0; i < 36; i++) {
+            ItemStack item = storage.getItem(i);
+            if (item == null || item.getType().isAir() || item.getAmount() <= 0) continue;
+            int amount = item.getAmount();
+            String key = keyOf(item); Integer left = key == null ? null : need.get(key);
+            if (left != null && left > 0) { int take = Math.min(left, amount); need.put(key, left - take); amount -= take; }
+            after[i] = amount; max[i] = item.getMaxStackSize(); similar[i] = amount > 0 && item.isSimilar(sample);
         }
+        return roomFor(after, max, similar, total, sample.getMaxStackSize());
     }
 
-    private void drop(Player p, List<ItemStack> items, String why, String craftId) {
-        plugin.getLogger().warning("ALCHEMY MAIL FAILED (" + why + ") player=" + p.getUniqueId() + " craft=" + craftId + " items=" + items);
-        if (!p.isOnline()) return;
-        for (ItemStack item : items) p.getWorld().dropItemNaturally(p.getLocation(), item);
-        CmdKit.notify(p, "warning", "alchemy-drop", "연금술 결과물을 발밑에 떨어뜨렸어요", "우편으로 보내지 못했어요", 0);
+    /** 순수 계산: after[i]=재료를 뺀 뒤 칸 수량(0=빈칸), similar[i]=결과물과 합쳐지는 칸. 결과물 total 개가 들어갈 자리가 있는지. */
+    static boolean roomFor(int[] after, int[] max, boolean[] similar, int total, int stack) {
+        int size = Math.min(64, stack); if (total <= 0) return true; if (size <= 0) return false;
+        long room = 0;
+        for (int i = 0; i < after.length; i++) {
+            if (after[i] <= 0) room += size;
+            else if (similar[i]) room += Math.max(0, Math.min(size, Math.min(64, max[i])) - after[i]);
+            if (room >= total) return true;
+        }
+        return false;
     }
 
     @EventHandler public void quit(PlayerQuitEvent e) {

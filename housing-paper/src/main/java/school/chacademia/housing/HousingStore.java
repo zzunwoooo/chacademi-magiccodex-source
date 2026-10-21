@@ -47,6 +47,9 @@ final class HousingStore {
     private final ExecutorService io = Executors.newSingleThreadExecutor(r -> { var t = new Thread(r, "ChacaHousing-db"); t.setDaemon(true); return t; });
     private ConnectionHolder db; private DatabaseSettings settings; private boolean maria;
     private String tRoom, tLayout, tLike, tVisit, tBook, tPresence, tOnline, tFriends, tNick, tHouse;
+    private ExpandLedger ledger;
+    /** 종료 중(onDisable)에 끝난 작업의 콜백: 메인 스레드로 보낼 수 없으므로 close() 가 작업 스레드를 기다린 뒤 메인 스레드에서 실행한다. */
+    private final java.util.concurrent.ConcurrentLinkedQueue<Runnable> late = new java.util.concurrent.ConcurrentLinkedQueue<>();
 
     HousingStore(Plugin plugin) { this.plugin = plugin; this.log = plugin.getLogger(); }
 
@@ -68,6 +71,7 @@ final class HousingStore {
             tFriends = settings.table("friends", "friends");
             tNick = settings.table("nicknames", "nicknames");
             tHouse = settings.table("houses", "houses");
+            ledger = new ExpandLedger(settings.table("housing_expand_tx", "housing_expand_tx"), tRoom);
             String engine = maria ? " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" : "";
             try (var s = db.get().createStatement()) {
                 s.execute("CREATE TABLE IF NOT EXISTS " + tRoom + "(owner CHAR(36) NOT NULL PRIMARY KEY, name VARCHAR(32) NOT NULL, house INT NOT NULL,"
@@ -85,6 +89,7 @@ final class HousingStore {
                 if (!maria) s.execute("CREATE INDEX IF NOT EXISTS ix_housing_presence ON " + tPresence + "(owner)");
                 s.execute("CREATE TABLE IF NOT EXISTS " + tOnline + "(player CHAR(36) NOT NULL PRIMARY KEY, server VARCHAR(32) NOT NULL, seen BIGINT NOT NULL)" + engine);
             }
+            ledger.create(db.get(), engine);
             return null;
         }).get(15, TimeUnit.SECONDS);
     }
@@ -92,20 +97,33 @@ final class HousingStore {
     void close() {
         io.shutdown();
         try { io.awaitTermination(10, TimeUnit.SECONDS); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+        // 종료 중에 끝난 작업의 콜백을 버리지 않는다 (onDisable = 메인 스레드). 여기서 새로 부르는 DB 작업은 closing() 이라 바로 null 로 끝난다.
+        for (Runnable r; (r = late.poll()) != null; ) {
+            try { r.run(); } catch (RuntimeException e) { log.warning("하우징 종료 중 콜백 실패: " + e); }
+        }
         try { if (db != null) db.close(); } catch (Exception ignored) { }
     }
+    /** 종료 중이면 true: 돈을 움직이는 후속 처리(환불 등)는 하지 않고 다음 시작 때 관리자 확인으로 넘긴다. */
+    boolean closing() { return io.isShutdown(); }
 
     interface Sql<T> { T run(Connection c) throws SQLException; }
 
     private <T> void async(String what, Sql<T> work, Consumer<T> done) {
-        if (io.isShutdown()) return;
-        io.execute(() -> {
-            T v;
-            try { v = work.run(db.get()); }
-            catch (SQLException | RuntimeException e) { log.warning("하우징 DB 작업 실패 (" + what + "): " + e.getMessage()); v = null; }
-            T out = v;
-            if (done != null && plugin.isEnabled()) Bukkit.getScheduler().runTask(plugin, () -> done.accept(out));
-        });
+        // 종료 중: 작업은 하지 않고, 콜백은 "DB 오류(null)"로 바로 알린다 (이전에는 아무 말 없이 버렸음).
+        if (io.isShutdown()) { log.warning("하우징 DB 작업을 하지 않음 (종료 중): " + what); if (done != null) done.accept(null); return; }
+        try {
+            io.execute(() -> {
+                T v;
+                try { v = work.run(db.get()); }
+                catch (SQLException | RuntimeException e) { log.warning("하우징 DB 작업 실패 (" + what + "): " + e.getMessage()); v = null; }
+                T out = v;
+                if (done == null) return;
+                Runnable r = () -> done.accept(out);
+                // onDisable 중에는 isEnabled()=false 라 runTask 를 쓸 수 없다: close() 가 메인 스레드에서 실행한다.
+                if (plugin.isEnabled()) try { Bukkit.getScheduler().runTask(plugin, r); return; } catch (RuntimeException disabling) { /* 아래 late 로 */ }
+                late.add(r);
+            });
+        } catch (java.util.concurrent.RejectedExecutionException e) { log.warning("하우징 DB 작업을 하지 않음 (종료 중): " + what); if (done != null) done.accept(null); }
     }
     private <T> T tx(Sql<T> work) throws SQLException {
         Connection c = db.begin();
@@ -204,6 +222,31 @@ final class HousingStore {
                 s.setInt(1, to); s.setString(2, owner.toString()); s.setInt(3, from); return s.executeUpdate() > 0;
             }
         }, done);
+    }
+
+    // ------------------------------------------------------------ 방 확장 결제 원장 (A03, 2026-10-21)
+    /** 출금 전에 거래를 기록한다. @return true = 기록됨 (null = 기록 못 함 → 출금하지 않는다) */
+    void expandPrepare(String id, UUID owner, int from, int to, long cost, String origin, Consumer<Boolean> done) {
+        async("방 확장 기록", c -> { ledger.prepare(c, id, owner, from, to, cost, origin); return true; }, done);
+    }
+    /** 거래 단계 옮기기. @return true = 옮김, false = 이미 다른 단계, null = DB 오류 */
+    void expandMove(String id, String from, String to, String note, Consumer<Boolean> done) {
+        async("방 확장 단계 " + from + "→" + to, c -> ledger.move(c, id, from, to, note), done);
+    }
+    /** 출금된 거래를 한 트랜잭션으로 방에 반영. @return applied / refund_pending (이미 처리됐으면 지금 단계), null = DB 오류(결과 모름) */
+    void expandApply(String id, Consumer<String> done) {
+        async("방 확장 반영", c -> tx(t -> ledger.apply(t, id, maria)), done);
+    }
+    /** 시작 시: 이 서버의 끝나지 않은 거래를 uncertain 으로 (돈을 자동으로 움직이지 않음). */
+    void expandRecover(String origin, Consumer<int[]> done) {
+        async("방 확장 기록 복구", c -> ledger.recover(c, origin), done);
+    }
+    void expandList(UUID owner, int limit, Consumer<List<ExpandLedger.Tx>> done) {
+        async("방 확장 기록 읽기", c -> ledger.list(c, owner, limit), done);
+    }
+    /** @return 거래 (없으면 빈 Optional), null = DB 오류 */
+    void expandGet(String id, Consumer<Optional<ExpandLedger.Tx>> done) {
+        async("방 확장 기록 읽기", c -> Optional.ofNullable(ledger.get(c, id, false)), done);
     }
 
     /** 관리자: 크기 바꾸기 (줄이면 밖으로 나간 가구는 보관함으로). */
