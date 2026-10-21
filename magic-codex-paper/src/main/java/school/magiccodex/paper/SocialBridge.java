@@ -74,7 +74,7 @@ final class SocialBridge implements Listener,PluginMessageListener,AutoCloseable
         boolean first=!b.ready;var before=ids(b.entries);b.loading=false;apply(b,s);b.ready=true;String text=message==null?"":message;
         if(message==null&&!first)for(var e:b.entries)if(!before.contains(e.id())){text=shown(p,e).name()+"님과 친구가 되었습니다.";break;}
         if(!first)snapshot(p,0,text);
-        lists(p,b);deliverFirstFriend(p,b,0);
+        lists(p,b);deliverFirstFriend(p,b,0);friendState(p,b,0);
         if(b.stale){b.stale=false;refresh(p,b,"");}
     }
     private static Set<UUID> ids(List<Entry> list){var set=new HashSet<UUID>();for(var e:list)set.add(e.id());return set;}
@@ -125,11 +125,20 @@ final class SocialBridge implements Listener,PluginMessageListener,AutoCloseable
     /** 친구 관계를 바꾸는 작업 공통 처리: 결과와 함께 최신 목록을 다시 읽어 반영한다. */
     private void mutate(Player p,Book b,long seq,Job<FriendStore.Result> job,Consumer<FriendStore.Result> done){
         UUID id=p.getUniqueId();b.busy=true;
-        work(()->new Outcome(job.run(),store.snapshot(id,wall())),o->{if(books.get(id)!=b)return;b.busy=false;apply(b,o.book());done.accept(o.result());lists(p,b);},
+        work(()->new Outcome(job.run(),store.snapshot(id,wall())),o->{if(books.get(id)!=b)return;b.busy=false;apply(b,o.book());done.accept(o.result());lists(p,b);friendState(p,b,0);},
             e->{if(books.get(id)==b){b.busy=false;notice(p,seq,"저장하지 못했습니다. 잠시 후 다시 시도해 주세요.");}});
     }
-    /** 수호자의 서약(guardian_oath) 획득 조건 "친구 20명": 새 친구 관계마다 두 사람 모두 friend.made +1 (온라인일 때만). */
-    private void friendMade(UUID a,UUID b){DiscoveryLink.signal(a,"friend.made",1);if(Bukkit.getPlayer(b)!=null)DiscoveryLink.signal(b,"friend.made",1);}
+    /**
+     * 수호자의 서약(guardian_oath) "친구 20명" (오너 결정 4, 2026-10-21): 누적 +1 신호 대신 현재 등록된 서로 다른 친구 수를 상태값
+     * state.friends 로 보낸다. 끊었다 다시 맺어도 늘지 않고, 같은 값을 다시 보내도 멱등이다. 목록을 새로 읽을 때마다(접속·변경·
+     * 다른 서버 변화를 감지한 pulse) 보내므로 상대가 오프라인·다른 서버·사망 상태였어도 다음 로드 때 따라잡는다.
+     * 발견 세션이 아직 안 불러와졌으면(false) 2초 간격으로 5번까지 다시 보낸다.
+     */
+    private void friendState(Player p,Book b,int retry){
+        if(!p.isOnline()||books.get(p.getUniqueId())!=b||!b.ready)return;
+        if(DiscoveryLink.state(p.getUniqueId(),"state.friends",ids(b.entries).size()))return;
+        if(retry<5)Bukkit.getScheduler().runTaskLater(plugin,()->friendState(p,b,retry+1),40);
+    }
     private void deliverFirstFriend(Player p,Book book,int retry){
         if(book.checkingSignal)return;book.checkingSignal=true;
         UUID id=p.getUniqueId();work(()->store.pendingSignal(id),pending->{
@@ -162,7 +171,7 @@ final class SocialBridge implements Listener,PluginMessageListener,AutoCloseable
         if(!p.hasPermission("magiccodex.friends")){notice(p,r.sequence(),"친구 기능을 사용할 권한이 없습니다.");return;}
         if(r.action()==SocialProtocol.LIST){if(n<b.nextList){notice(p,r.sequence(),"잠시 후 다시 시도해 주세요.");return;}b.nextList=n+1000;
             if(shared||!b.ready){if(b.busy||b.loading){snapshot(p,r.sequence(),"");return;}b.loading=true;
-                work(()->store.snapshot(p.getUniqueId(),wall()),s->{if(books.get(p.getUniqueId())==b){b.loading=false;apply(b,s);b.ready=true;snapshot(p,r.sequence(),"");lists(p,b);deliverFirstFriend(p,b,0);if(b.stale){b.stale=false;refresh(p,b,"");}}},e->{if(books.get(p.getUniqueId())==b)b.loading=false;notice(p,r.sequence(),"친구 목록을 불러오지 못했습니다.");});}
+                work(()->store.snapshot(p.getUniqueId(),wall()),s->{if(books.get(p.getUniqueId())==b){b.loading=false;apply(b,s);b.ready=true;snapshot(p,r.sequence(),"");lists(p,b);deliverFirstFriend(p,b,0);friendState(p,b,0);if(b.stale){b.stale=false;refresh(p,b,"");}}},e->{if(books.get(p.getUniqueId())==b)b.loading=false;notice(p,r.sequence(),"친구 목록을 불러오지 못했습니다.");});}
             else{snapshot(p,r.sequence(),"");lists(p,b);}return;}
         if(r.action()!=SocialProtocol.SEND&&r.action()!=SocialProtocol.WHISPER&&n<b.nextAction){notice(p,r.sequence(),"잠시 후 다시 시도해 주세요.");return;}b.nextAction=n+400;
         if(!b.ready||b.busy){notice(p,r.sequence(),"친구 목록을 처리하고 있습니다. 잠시 후 다시 시도해 주세요.");return;}
@@ -190,7 +199,7 @@ final class SocialBridge implements Listener,PluginMessageListener,AutoCloseable
         mutate(owner,b,seq,()->store.request(id,name,dorm,entry,at),result->{
             switch(result){
                 case SENT->{snapshot(owner,seq,entry.name()+"님에게 친구 신청을 보냈습니다.");peer(other,"");}
-                case ACCEPTED->{snapshot(owner,seq,entry.name()+"님과 친구가 되었습니다.");deliverFirstFriend(owner,b,0);peer(other,name+"님과 친구가 되었습니다.");friendMade(id,other);}
+                case ACCEPTED->{snapshot(owner,seq,entry.name()+"님과 친구가 되었습니다.");deliverFirstFriend(owner,b,0);peer(other,name+"님과 친구가 되었습니다.");}
                 default->notice(owner,seq,message(result));
             }
         });
@@ -200,7 +209,7 @@ final class SocialBridge implements Listener,PluginMessageListener,AutoCloseable
         UUID id=p.getUniqueId();String name=plugin.names().name(p),dorm=dorm(p),from=requester(p,b.incoming,other);long at=wall();
         mutate(p,b,seq,()->store.accept(id,name,dorm,other,at),result->{
             if(result!=FriendStore.Result.ACCEPTED){notice(p,seq,message(result));return;}
-            snapshot(p,seq,from+"님과 친구가 되었습니다.");deliverFirstFriend(p,b,0);peer(other,name+"님이 친구 신청을 수락했습니다.");friendMade(id,other);
+            snapshot(p,seq,from+"님과 친구가 되었습니다.");deliverFirstFriend(p,b,0);peer(other,name+"님이 친구 신청을 수락했습니다.");
         });
     }
     private void decline(Player p,Book b,UUID other,long seq){

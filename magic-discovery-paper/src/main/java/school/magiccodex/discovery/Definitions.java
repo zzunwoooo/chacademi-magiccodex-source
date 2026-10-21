@@ -15,7 +15,9 @@ final class Definitions {
         for(String id:root.getKeys(false)){
             var s=Objects.requireNonNull(root.getConfigurationSection(id));var req=s.getConfigurationSection("requirements");Map<String,Double> metrics=new LinkedHashMap<>();
             if(req!=null)for(String key:req.getKeys(true))if(!req.isConfigurationSection(key)){
-                Object raw=req.get(key);double v=raw instanceof Number number?number.doubleValue():Double.NaN;if(!key.matches("[a-z0-9_.-]{1,100}")||!Double.isFinite(v)||v<=0||v>1e9)throw new IOException("Bad requirement: "+id+"/"+key);metrics.put(key,v);
+                Object raw=req.get(key);double v=raw instanceof Number number?number.doubleValue():Double.NaN;if(!key.matches("[a-z0-9_.-]{1,100}")||!Double.isFinite(v)||v<=0||v>1e9)throw new IOException("Bad requirement: "+id+"/"+key);
+                // 오너 결정 4 (2026-10-21): "친구 N명" = 현재 등록된 서로 다른 친구 수(상태값). 서버에 남아 있는 예전 discoveries.yml 의 friend.made 도 같은 뜻으로 읽는다.
+                metrics.put(key.equals("friend.made")?"state.friends":key,v);
             }
             String name=s.getString("name",""),perm=s.getString("permission",""),icon=s.getString("icon","");double chance=s.getDouble("chance",1);
             var prerequisites=s.getStringList("prerequisites");

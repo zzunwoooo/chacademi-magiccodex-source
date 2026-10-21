@@ -764,7 +764,7 @@ spells:
 
 # 2026-10-14 101~167 자연 조건 (서버 검증 행동만). 카운터 위치: magic-discovery-paper ExpansionConditions,
 # kill.spell.* / kill.light_undead / cleanse.* / heal.magic* / mana.exactly_zero / cast.six_elements 는 ChAcademiaMagicMythic,
-# friend.made 는 MagicCodexBridge 제안 패치(BRIDGE_SPELL_COOLDOWN_API_20261014.patch)가 보냅니다. lesson.*.applied 는 관리자 이벤트 명령(낮은 확률 0.1).
+# state.friends(현재 등록된 서로 다른 친구 수, 2026-10-21 오너 결정 4)는 MagicCodexBridge 가 친구 목록을 읽을 때마다 상태값으로 보냅니다 (예전 friend.made 는 같은 뜻으로 읽음). lesson.*.applied 는 관리자 이벤트 명령(낮은 확률 0.1).
   earth_shaping:
     name: "대지 성형"
     permission: "magic.learned.earth_shaping"
@@ -1189,7 +1189,7 @@ spells:
     category: "light"
     condition-text: "친구 20명을 만듭니다."
     requirements:
-      "friend.made": 20
+      "state.friends": 20
     chance: 1.0
     prerequisites: []
   experience_exchange:
