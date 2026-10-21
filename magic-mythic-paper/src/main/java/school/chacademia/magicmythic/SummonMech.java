@@ -77,7 +77,7 @@ final class SummonMech extends Mech {
                     vfx(pl, "external:impact", hit, null);
                     for (LivingEntity t : plugin.targets().enemiesNear(pl, hit, hitR, 8))
                         if (plugin.targets().hurt(pl, t, dmg)) plugin.targets().knock(t, pos, pos.getDirection(), p.d("knock", 0.6), 0.25);
-                    MagicImpactEvent.fire(pl, p.s("element", "earth"), hit, hitR, MagicImpactEvent.Kind.HIT);
+                    MagicImpactEvent.fire(pl, p.s("element", "earth"), hit, hitR, MagicImpactEvent.Kind.HIT); // result unused (HIT contract: damage is never cancelled)
                 }
                 if (age % 10 == 1 && (target == null || !target.isValid() || target.isDead() || target.getLocation().distanceSquared(pl.getLocation()) > range * range * 2.25)) {
                     var near = plugin.targets().enemiesNear(pl, pl.getLocation(), range, 1);

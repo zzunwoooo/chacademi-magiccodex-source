@@ -8,8 +8,16 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Fired where a spell lands: instant hits (HIT), every step of a travelling bolt (BOLT) and every zone pulse (ZONE).
- * Lets other plugins (dungeon gimmicks) react to magic without guessing. Cancelling a BOLT stops that bolt there.
+ * Lets other plugins (dungeon gimmicks) react to magic without guessing.
  * `element` comes from the mechanic's element= option (catalogue category: wind, fire, water, earth, light, dark).
+ * <p>Cancel contract (2026-10-21):
+ * <ul>
+ *  <li>HIT: cancel = "a gimmick consumed this hit as an input". The cast then counts as successful even with no entity
+ *      hit (no refund). Entity damage of the same hit is NOT affected (mobs next to a gimmick still take damage).
+ *      Listeners should cancel only when an input really fired. Passives and summons ignore the result.</li>
+ *  <li>BOLT: cancel = the bolt ends at that position (its end burst aoe= still applies there).</li>
+ *  <li>ZONE: cancelling is ignored.</li>
+ * </ul>
  */
 public final class MagicImpactEvent extends Event implements Cancellable {
     public enum Kind { HIT, BOLT, ZONE }

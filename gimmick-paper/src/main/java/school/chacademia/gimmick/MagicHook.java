@@ -21,6 +21,9 @@ final class MagicHook implements Listener {
     }
     SpellActions actions() { return actions; }
 
+    /** A HIT is consumed (cancelled) only when a puzzle input actually fired. BOLT/ZONE are not decided here. */
+    static boolean consumesHit(MagicImpactEvent.Kind kind, boolean fired) { return kind == MagicImpactEvent.Kind.HIT && fired; }
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void impact(MagicImpactEvent e) {
         var hits = plugin.world().near(e.getLocation(), Math.max(0.3, e.getRadius()));
@@ -32,12 +35,14 @@ final class MagicHook implements Listener {
         String element = e.getElement() == null || e.getElement().isBlank() ? "any" : e.getElement().toLowerCase(Locale.ROOT);
         for (Gimmick g : hits) {
             if(who==null||!plugin.protection().pair(who,g.location()))continue;
-            if(e.getKind()==MagicImpactEvent.Kind.HIT)e.setCancelled(true);
             if (e.getKind() == MagicImpactEvent.Kind.BOLT && plugin.getConfig().getBoolean("magic-blocks-bolts", true)) e.setCancelled(true);
             Long last = lastHit.get(g.id);
             if (last != null && now - last < gap) continue;
             lastHit.put(g.id, now);
-            plugin.puzzles().trigger(g, "magic:" + element, who);
+            boolean fired = plugin.puzzles().trigger(g, "magic:" + element, who);
+            // HIT contract (MagicImpactEvent): cancel = "this hit was used as a puzzle input". Only when an input really
+            // fired (after the gap check); mob damage of the same hit is never affected.
+            if (consumesHit(e.getKind(), fired)) e.setCancelled(true);
             if (plugin.debug()) plugin.getLogger().info("[마법] " + g.id + " <- " + element + " (" + e.getKind() + ")");
         }
     }
