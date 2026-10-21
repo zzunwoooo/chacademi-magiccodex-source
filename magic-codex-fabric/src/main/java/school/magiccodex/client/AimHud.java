@@ -53,10 +53,11 @@ public final class AimHud {
         if (text == null) text = new CodexTypography(c);
         images.beginFrame();
         text.beginFrame();
-        float scale, centerY;
+        float scale, centerY, centerX = width / 2f;
         if (PlayerHudClient.active()) {
-            var l = PlayerHudLayout.of(width, height);
+            var l = PlayerHudLayout.player(width, height, PlayerHudSettings.get().percent()); // same dock as the chips
             scale = l.scale();
+            centerX = (l.hotbarLeft() + 238) * scale; // follows the dock when it moves aside for the portrait
             // Chips: centre hotbarTop-25, 28 tall -> top at hotbarTop-39. Pill (24 tall) sits 7 units above that.
             centerY = (l.hotbarTop() - 39 - 7 - 12) * scale;
         } else {
@@ -69,7 +70,7 @@ public final class AimHud {
         float total = icon + gap * 2 + mouse + 4 + castW + gap * 2 + mouse + 4 + cancelW;
         ctx.getMatrices().push();
         try {
-            ctx.getMatrices().translate(width / 2f, centerY, 200);
+            ctx.getMatrices().translate(centerX, centerY, 200);
             ctx.getMatrices().scale(scale, scale, 1);
             HudMesh.capsule(ctx, -total / 2 - 12, -12, total + 24, 24, 0x90101925, 0x90101925);
             float x = -total / 2;

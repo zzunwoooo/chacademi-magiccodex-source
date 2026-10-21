@@ -40,12 +40,21 @@ class PlayerHudScaleTest {
     var base=PlayerHudLayout.of(w,h);float skills=Math.min(w/1672f,h/941f);
     for(int percent:new int[]{1,25,50,75,100}){var l=PlayerHudLayout.player(w,h,percent);float z=l.scale();
      assertTrue(l.hotbarLeft()>=0);assertTrue((l.hotbarLeft()+476)*z<=w+.01);assertTrue((l.hotbarTop()+60)*z<h);
-     assertTrue(l.frameX()-90>=0);assertTrue((l.frameY()-90)*z>=43*base.scale()-.01);assertTrue((l.frameY()+90)*z<h);
-     assertTrue((l.vitalX()+PlayerHudLayout.VITAL_WIDTH)*z<=w);assertTrue((l.healthY()-28)*z>=0);assertTrue((l.manaY()+16)*z<h);
+     // Portrait and vitals never move or scale with the HUD size setting (they always use of()).
+     float bz=base.scale();assertEquals(base.frameY(),PlayerHudLayout.of(w,h).frameY());
+     assertTrue(base.frameX()-90>=0);assertTrue((base.frameY()-90)*bz>=43*bz-.01);assertTrue((base.frameY()+90)*bz<h);
+     assertTrue((base.vitalX()+PlayerHudLayout.VITAL_WIDTH)*bz<=w);assertTrue((base.healthY()-28)*bz>=0);assertTrue((base.manaY()+16)*bz<h);
      if((l.hotbarLeft()+476)*z>w-402*skills&&percent>50)assertTrue((l.hotbarTop()+60)*z<=h-76*skills+.01);
-     if(l.vitalX()+PlayerHudLayout.VITAL_WIDTH>=l.hotbarLeft())assertTrue(l.frameY()+90<l.hotbarTop()-39);
+     // The enlarged dock either clears the portrait sideways or sits above it.
+     if(percent>50&&l.hotbarLeft()*z<PlayerHudLayout.PORTRAIT_RIGHT*bz-.01)assertTrue((l.hotbarTop()+60)*z<=h-(l.hotbarLeft()*z<PlayerHudLayout.FRAME_RIGHT*bz?PlayerHudLayout.PORTRAIT_TOP:PlayerHudLayout.VITALS_TOP)*bz+.01||l.dockLift()>=h/z-68-39-.01);
     }
    }
   }
+ }
+ @Test void portraitStaysPutWhileDockGrows(){
+  int w=960,h=540;var base=PlayerHudLayout.of(w,h);
+  for(int percent:new int[]{50,75,100}){var l=PlayerHudLayout.player(w,h,percent);
+   assertTrue(l.dockShift()>=0);
+   assertTrue(l.hotbarLeft()*l.scale()>=PlayerHudLayout.PORTRAIT_RIGHT*base.scale()-.01||l.dockLift()>0,"dock clears portrait at "+percent);}
  }
 }

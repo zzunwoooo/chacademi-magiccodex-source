@@ -17,8 +17,9 @@ public final class HeldItemNameHud {
         float scale=layout.scale()*1.65f;
         int max=Math.max(1,(int)Math.min(600,(window.getScaledWidth()-32)/scale));
         float titleY=(layout.hotbarTop()-39-14*1.65f)*layout.scale();
-        if(titleY<(layout.frameY()+90)*layout.scale()&&titleY+14*scale>(layout.frameY()-90)*layout.scale())
-            max=Math.max(1,Math.min(max,(int)(2*(window.getScaledWidth()/2f-(layout.frameX()+90)*layout.scale()-8)/scale)));
+        var portrait=PlayerHudLayout.of(window.getScaledWidth(),window.getScaledHeight()); // fixed size, never scaled
+        if(titleY<(portrait.frameY()+90)*portrait.scale()&&titleY+14*scale>(portrait.frameY()-90)*portrait.scale())
+            max=Math.max(1,Math.min(max,(int)(2*(window.getScaledWidth()/2f-(portrait.frameX()+90)*portrait.scale()-8)/scale)));
         Text display=name;
         if(renderer.getWidth(name)>max){
             var trimmed=renderer.trimToWidth(name,Math.max(1,max-renderer.getWidth("…")));
@@ -27,7 +28,7 @@ public final class HeldItemNameHud {
             display=out.append(Text.literal("…").setStyle(name.getStyle()));
         }
         int width=renderer.getWidth(display);
-        float x=(window.getScaledWidth()/scale-width)/2;
+        float x=(layout.hotbarLeft()+238)*layout.scale()/scale-width/2f;
         // Chips extend 14 logical pixels above hotbarTop-25; keep the whole text above them.
         float y=(layout.hotbarTop()-39)*layout.scale()/scale-14;
         c.getMatrices().push();

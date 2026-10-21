@@ -56,7 +56,7 @@ public final class SettingsScreen extends Screen {
     // ---------- rows ----------
     private int rows(){return page==Page.GUI?1:page==Page.CAMERA?3:page==Page.EFFECT?(bloomAvailable?3:2):0;}
     private static int rowY(int row){return 193+row*91;}
-    private String label(int row){return page==Page.GUI?"플레이어 HUD 크기":page==Page.EFFECT?(row==0?"내 스킬 이펙트":row==1?"다른 사람 스킬 이펙트":"이펙트 빛 번짐"):switch(row){case 0->"어깨 좌우 거리";case 1->"카메라 높이";default->"카메라 거리";};}
+    private String label(int row){return page==Page.GUI?"핫바 크기":page==Page.EFFECT?(row==0?"내 스킬 이펙트":row==1?"다른 사람 스킬 이펙트":"이펙트 빛 번짐"):switch(row){case 0->"어깨 좌우 거리";case 1->"카메라 높이";default->"카메라 거리";};}
     private float min(int row){return (page==Page.EFFECT||page==Page.GUI)?0:switch(row){case 0->0;case 1->-.5f;default->AimSettings.MIN_DISTANCE;};}
     private float max(int row){return (page==Page.EFFECT||page==Page.GUI)?1:switch(row){case 0->AimSettings.MAX_SIDE;case 1->1.5f;default->AimSettings.MAX_DISTANCE;};}
     private float value(int row){return page==Page.GUI?PlayerHudSettings.get().percent()/100f:page==Page.EFFECT?(row==0?own:row==1?other:bloom):switch(row){case 0->camera.sideOffset;case 1->camera.height;default->camera.distance;};}
@@ -80,7 +80,7 @@ public final class SettingsScreen extends Screen {
                     sprite(c,camera.side<0?"checkbox_checked":"checkbox",145,491,35,35,camera.side<0?95:88,90);text(c,"반대쪽 어깨",198,509,23,false,false);
                     sprite(c,camera.smartCast?"toggle_on":"toggle_off",589,485,92,52,camera.smartCast?185:169,camera.smartCast?106:98);text(c,"스마트 시전",706,509,23,false,false);
                     text(c,"일반 마우스 조준 · F5의 1인칭과 정면 시점은 유지됩니다",500,566,20,false,true);
-                }else if(page==Page.GUI){text(c,"0% 숨김 · 50% 현재 크기 · 100% 2배",500,449,23,false,true);text(c,"기본 플레이어 HUD만 즉시 적용하고 자동 저장합니다",500,484,20,false,true);}else{int ty=rows()>2?475:449;text(c,"화면에 보이는 효과만 조절합니다",500,ty,23,false,true);text(c,"마나 · 피해 · 판정 · 지속시간은 바뀌지 않습니다",500,ty+35,20,false,true);}
+                }else if(page==Page.GUI){text(c,"0% 숨김 · 50% 현재 크기 · 100% 2배",500,449,23,false,true);text(c,"핫바만 바뀌고 초상화·체력·마나는 그대로입니다 (자동 저장)",500,484,20,false,true);}else{int ty=rows()>2?475:449;text(c,"화면에 보이는 효과만 조절합니다",500,ty,23,false,true);text(c,"마나 · 피해 · 판정 · 지속시간은 바뀌지 않습니다",500,ty+35,20,false,true);}
                 text(c,notice,500,603,18,false,true);button(c,"초기화",125,640,205,false);button(c,page==Page.GUI?"뒤로":"취소",397,640,205,false);button(c,page==Page.GUI?"완료":"저장",670,640,205,true);
             }
         }finally{c.getMatrices().pop();images.endFrame();}
