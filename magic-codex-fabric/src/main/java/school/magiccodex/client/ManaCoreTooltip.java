@@ -29,10 +29,11 @@ final class ManaCoreTooltip {
     static int height(List<OrderedText> names,List<OrderedText> types,List<OrderedText> body){
         return 176+names.size()*11+types.size()*9+body.size()*10;
     }
-    static void render(DrawContext c,TextRenderer font,int x,int y,int w,List<OrderedText> names,List<OrderedText> types,List<OrderedText> body,long now,ItemStack item){
+    static void render(DrawContext c,TextRenderer font,int x,int y,int w,List<OrderedText> names,List<OrderedText> types,List<OrderedText> body,long now,ItemStack item,TooltipRarity.Grade rarity){
         boolean unidentified=unidentified(item);var saved=stored(item);boolean server=saved.contains("magiccodexbridge:core_state");boolean broken=server&&saved.getInt("magiccodexbridge:core_state")==2;int count=server?Math.clamp(saved.getInt("magiccodexbridge:core_nodes"),0,10):3;
         int left=x+10,inner=w-20,cy=y+12;
         for(var line:names){c.drawText(font,line,left,cy,0xFFEBD19F,false);cy+=11;}
+        ItemTooltipRenderer.drawRarity(c,font,x,cy,w,rarity);
         for(var line:types){c.drawText(font,line,left,cy,0xFF9DA5B2,false);cy+=9;}
         divider(c,left,cy+3,inner);cy+=15;
         int[] icons={0,2,7};String[] labels=new String[3];for(int j=0;j<3;j++)labels[j]=school.magiccodex.protocol.CoreAffinity.label(j,saved.getInt("magiccodexbridge:core_affinity"));

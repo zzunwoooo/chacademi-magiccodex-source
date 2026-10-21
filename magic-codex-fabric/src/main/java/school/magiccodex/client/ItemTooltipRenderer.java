@@ -10,21 +10,23 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.*;
 import net.minecraft.util.*;
 
-/** Client-only item tooltips: preserve vanilla rich information, lift only the first lore line. */
+/** Client-only item tooltips: preserve vanilla rich information, lift the type and an exact second-lore rarity. */
 public final class ItemTooltipRenderer {
     private static final Identifier PANEL=Identifier.of("magiccodex","textures/gui/tooltip/tooltip-panel-v2.png");
     private static final Identifier ORBIT=Identifier.of("magiccodex","textures/gui/tooltip/item-orbit.png");
     private static ItemStack cached=ItemStack.EMPTY;
     private static List<Text> lines=List.of();
     private static List<OrderedText> title=List.of(),type=List.of(),body=List.of();
-    private static int cachedWidth=-1,epoch=-1,offset,maxScroll;
+    private static int cachedWidth=-1,cachedHeight=-1,epoch=-1,offset,maxScroll;
+    private static TooltipRarity.Grade rarity;
+    private static boolean rarityBadge;
     private static long lastRender;
     private static Screen owner;
     private static final Map<String,String> korean=new HashMap<>();
     private static boolean koreanLoaded;
     private ItemTooltipRenderer(){}
     static boolean renderedOn(Screen screen){return owner==screen&&Util.getMeasuringTimeMs()-lastRender<500;}
-    static void reset(){korean.clear();koreanLoaded=false;cached=ItemStack.EMPTY;owner=null;lines=List.of();title=List.of();type=List.of();body=List.of();offset=maxScroll=0;lastRender=0;epoch=-1;}
+    static void reset(){korean.clear();koreanLoaded=false;cached=ItemStack.EMPTY;owner=null;lines=List.of();title=List.of();type=List.of();body=List.of();offset=maxScroll=0;lastRender=0;epoch=-1;rarity=null;rarityBadge=false;}
     public static boolean render(DrawContext c,TextRenderer font,ItemStack stack,int mouseX,int mouseY){
         return render(c,font,stack,mouseX,mouseY,Screen.getTooltipFromItem(MinecraftClient.getInstance(),stack));
     }
@@ -47,26 +49,27 @@ public final class ItemTooltipRenderer {
         int w=Math.min(info.size()==1?124:148,sw-12),textWidth=w-20;
         long now=Util.getMeasuringTimeMs();
         boolean changed=owner!=client.currentScreen||!ItemStack.areItemsAndComponentsEqual(stack,cached)||now-lastRender>250;
-        if(changed||cachedWidth!=w||epoch!=UiResources.generation()||!lines.equals(info)){
-            cached=stack.copy();owner=client.currentScreen;cachedWidth=w;epoch=UiResources.generation();lines=List.copyOf(info);
+        if(changed||cachedWidth!=w||cachedHeight!=sh||epoch!=UiResources.generation()||!lines.equals(info)){
+            cached=stack.copy();owner=client.currentScreen;cachedWidth=w;cachedHeight=sh;epoch=UiResources.generation();lines=List.copyOf(info);
             if(changed)offset=0;
             title=font.wrapLines(styled(localName(stack,info.getFirst()),"tooltip_name"),textWidth);
             var rest=new ArrayList<>(info.subList(1,info.size()));
-            var lore=stack.get(DataComponentTypes.LORE);Text itemType=null;
-            if(lore!=null&&!lore.styledLines().isEmpty()){
-                Text first=lore.styledLines().getFirst();
-                // Match the full styled lore sequence, avoiding identical enchantment/attribute text.
-                int index=Collections.indexOfSubList(rest,lore.styledLines());
-                if(index>=0){
-                    itemType=lore.styledLines().getFirst();
-                    for(int i=0;i<lore.lines().size();i++){
-                        rest.set(index+i,lore.styledLines().get(i));
-                    }
-                    rest.remove(index);
-                }
+            var lore=stack.get(DataComponentTypes.LORE);
+            var lifted=TooltipRarity.find(rest,lore==null?List.of():lore.styledLines());
+            Text itemType=lifted.type();rarity=lifted.grade();rarityBadge=false;
+            type=itemType==null||itemType.getString().isBlank()?List.of():font.wrapLines(styled(itemType,"tooltip_type"),textWidth);
+            if(rarity!=null&&!type.isEmpty()){
+                int preview=WandTooltip.matches(stack)?76:60;
+                int header=preview+title.size()*10+type.size()*10+12+(WandTooltip.matches(stack)?55:0);
+                boolean compact=!ManaCoreTooltip.matches(stack)&&header>sh-60;
+                rarityBadge=!compact&&TooltipRarity.fits(textWidth,font.getWidth(type.getFirst()),font.getWidth(rarityText(rarity)));
+            }
+            if(lifted.index()>=0){
+                // Remove only confirmed lore entries; retain a grade in the body if the row is full.
+                if(rarityBadge)rest.remove(lifted.index()+1);
+                rest.remove(lifted.index());
             }
             if(WandTooltip.matches(stack))rest.removeIf(line->line.getString().startsWith("[강화] 사용 횟수 ")||line.getString().startsWith("[강화] 마력 "));
-            type=itemType==null||itemType.getString().isBlank()?List.of():font.wrapLines(styled(itemType,"tooltip_type"),textWidth);
             var wrapped=new ArrayList<OrderedText>();
             for(Text line:rest){if(line.getString().isEmpty())wrapped.add(OrderedText.EMPTY);else wrapped.addAll(font.wrapLines(styled(line,"tooltip"),textWidth));}
             body=List.copyOf(wrapped);
@@ -82,7 +85,7 @@ public final class ItemTooltipRenderer {
             try{
                 c.getMatrices().translate(0,0,600);panel(c,images,x,y,w,h);
                 c.enableScissor(x+3,y+4,x+w-3,y+h-4);
-                try{itemPreview(c,images,stack,x,y-offset,w,now);ManaCoreTooltip.render(c,font,x,y-offset+48,w,title,type,body,now,stack);c.draw();}
+                try{itemPreview(c,images,stack,x,y-offset,w,now);ManaCoreTooltip.render(c,font,x,y-offset+48,w,title,type,body,now,stack,rarityBadge?rarity:null);c.draw();}
                 finally{c.disableScissor();}
                 if(maxScroll>0){c.fill(x+w-5,y+6,x+w-4,y+h-6,0x403A667F);int thumb=Math.max(8,view*view/content);int py=y+6+(view-thumb)*offset/maxScroll;c.fill(x+w-5,py,x+w-4,py+thumb,0xFFA8CFD5);}
             }finally{c.getMatrices().pop();images.endFrame();}
@@ -117,7 +120,7 @@ public final class ItemTooltipRenderer {
             int ty=y+preview;
             if(!compact){
                 for(var line:title){c.drawText(font,line,x+10,ty,0xFFEBD19F,false);ty+=10;}
-                if(!type.isEmpty()){for(var line:type){c.drawText(font,line,x+10,ty,0xFF9DA5B2,false);ty+=10;}}
+                if(!type.isEmpty()){drawRarity(c,font,x,ty,w,rarityBadge?rarity:null);for(var line:type){c.drawText(font,line,x+10,ty,0xFF9DA5B2,false);ty+=10;}}
             }
             if(wand&&!compact){WandTooltip.stats(c,font,stack,x,ty+9,w);divider(c,x+10,y+header-9,w-20);}
             if(!displayed.isEmpty()){
@@ -155,6 +158,7 @@ public final class ItemTooltipRenderer {
     }
     private static void itemPreview(DrawContext c,HudTextureCache images,ItemStack stack,int x,int y,int w,long now){
             galaxy(c,x+10,y+8,w-20,45,now);
+            rarityEffect(c,x+w/2f,y+30,now,rarity);
             images.drawTexture(c,ORBIT,x+w/2-43,y+23,80,190,86,25,1610,485,1774,887,0x40FFFFFF);
             c.draw();
             c.getMatrices().push();
@@ -164,6 +168,42 @@ public final class ItemTooltipRenderer {
             c.getMatrices().multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotation(angle));
             c.getMatrices().scale(2.2f*(.86f+.14f*(float)Math.cos(now/2100.0)),2.2f,1);
             c.drawItem(stack,-8,-8);c.draw();c.getMatrices().pop();
+    }
+    private static Text rarityText(TooltipRarity.Grade grade){
+        return styled(Text.literal(grade.label).withColor(grade.color),"tooltip_type");
+    }
+    static void drawRarity(DrawContext c,TextRenderer font,int x,int y,int w,TooltipRarity.Grade grade){
+        if(grade==null)return;
+        Text label=rarityText(grade);
+        c.drawText(font,label,x+w-10-font.getWidth(label),y,0xFF000000|grade.color,false);
+    }
+    private static void rarityEffect(DrawContext c,float x,float y,long now,TooltipRarity.Grade grade){
+        if(grade==null||grade==TooltipRarity.Grade.GENERAL)return;
+        double t=now/5000.0;
+        int color=grade.color;
+        int pulse=14+(int)(5*Math.sin(t*2));
+        // Fixed geometry budget, entirely above the first text row and behind the item.
+        HudMesh.disk(c,x,y,19,(pulse<<24)|color);
+        if(grade==TooltipRarity.Grade.HIGH){
+            for(int i=0;i<7;i++){
+                double a=i*2.399+t*.35;
+                float px=x+(float)Math.cos(a)*(19+i%3*5);
+                float py=y+(float)Math.sin(a)*13;
+                HudMesh.star(c,px,py,.65f,((48+(int)(18*Math.sin(t+i)))<<24)|color);
+            }
+        }else{
+            HudMesh.arc(c,x,y,18,.65f,(float)(t*.25),(float)(Math.PI*2),0x38000000|color);
+            int count=grade==TooltipRarity.Grade.UNIQUE?4:6;
+            for(int i=0;i<count;i++){
+                double a=i*Math.PI*2/count+t*.22;
+                float dx=(float)Math.cos(a),dy=(float)Math.sin(a);
+                if(grade==TooltipRarity.Grade.UNIQUE){
+                    HudMesh.star(c,x+dx*27,y+dy*16,1.15f,0x80000000|color);
+                }else{
+                    HudMesh.line(c,x+dx*21,y+dy*16,x+dx*27,y+dy*20,.7f,0x60000000|color);
+                }
+            }
+        }
     }
     private static void galaxy(DrawContext c,int x,int y,int w,int h,long now){
         double t=now/5500.0;
