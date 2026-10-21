@@ -91,10 +91,18 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
     private final ServerCommandRegistry endingCommands=new ServerCommandRegistry();
     private final LocalEndingSessions endingSessions=new LocalEndingSessions();
     private final DialogueAcks dialogueAcks = new DialogueAcks();
+    /** 서버가 결말까지 확인한 마지막 로컬 대화 완료 (보상 패킷을 이 완료에 묶는다). 메모리만, 나가면 지운다. */
+    private record Finished(String id, String ending, long at) {}
+    private final Map<UUID, Finished> recentFinish = new HashMap<>();
+    static final long REWARD_WINDOW_MS = 60_000;
+    /** 로컬 대화에 함께 보내는 MagicCodex 호감도 글자 키 앞부분 (모드 Affinity.fromVars 와 같게). */
+    static final String AFFINITY_VAR = "@affinity:";
     private final Set<UUID> helloSent = new HashSet<>();
     private final Map<UUID, Long> lastPacketLog = new HashMap<>();
     private MagicCodexLink codex;
     private StoryProtection protection;
+    /** 스토리 진행 단계 (조건 → 호출 → 다음 대화, HUD). */
+    private QuestEngine quests;
 
     private File progressFile;
     private boolean ready;
@@ -133,6 +141,8 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
                 StoryCodec.CUTSCENE_ABORT, StoryCodec.STORY_FAIL, StoryCodec.DIALOGUE_READY, StoryCodec.DIALOGUE_REWARD, StoryCodec.STORY_CATALOG, StoryCodec.DIALOGUE_SESSION_SIGNAL, StoryCodec.RELOAD_RESULT)) {
             m.registerIncomingPluginChannel(this, in, this);
         }
+        quests = new QuestEngine(this);
+        quests.enable();
         registerCommands();
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(protection, this);
@@ -152,6 +162,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
 
     @Override
     public void onDisable() {
+        if (quests != null) quests.disable();
         dialogueAcks.clear();endingSessions.clear();reloadTickets.clear();
         clientCatalogs.clear();catalogUpdated.clear();
         Messenger m = getServer().getMessenger();
@@ -196,7 +207,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
     }
 
     /** 키에 점(.)이 있어도 쪼개지지 않게 읽는다. 아무 스레드에서나 부를 수 있다. */
-    private static Map<?, ?> readYaml(File f) throws Exception {
+    static Map<?, ?> readYaml(File f) throws Exception {
         if (f.length() > MAX_YML_BYTES) throw new java.io.IOException("파일이 너무 큼 (" + f.length() + " 바이트)");
         YamlConfiguration y = new YamlConfiguration();
         y.options().pathSeparator(NO_PATH_SEPARATOR);
@@ -365,6 +376,21 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
 
     // ================================================================ 모드 확인
 
+    /** 이 플레이어의 스토리 대기열(재생 중 포함)에 이 대화·컷신이 있는지. */
+    /** 이 서버의 progress.yml 에 이 대화를 끝낸 기록이 있는지 (서버 흐름으로 본 대화). 스토리 단계의 기존 유저 시작 판정용. */
+    boolean dialogueDone(UUID player, String id) {
+        PlayerStory ps = state.players.get(player);
+        return ps != null && id != null && ps.done.containsKey(id);
+    }
+
+    /** dialogues/server_command.yml 의 그 대화 끝 명령 (없으면 null). 스토리 단계 점검용. */
+    List<String> endingCommandsOf(String id) { return endingCommands.commands(id); }
+
+    boolean hasStory(UUID player, boolean dialogue, String id) {
+        PlayerStory ps = state.players.get(player);
+        return ps != null && ps.has(dialogue ? Kind.DIALOGUE : Kind.CUTSCENE, id);
+    }
+
     public boolean hasMod(Player p) {
         return p.getListeningPluginChannels().contains(StoryCodec.CUTSCENE_PLAY);
     }
@@ -420,26 +446,63 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
         requestNicknameDialogue(p, id);
     }
 
-    /** Client completion is trusted for these two fixed effects only; no server story file/ledger lookup. */
-    private void applyLocalReward(Player p,String key) {
+    /**
+     * 클라 고정 보상 (LocalStoryRewards). 서버 세션에 묶인 것만 받고 (이벤트 = 열린 세션, end/결말 = 방금 서버가 확인한 완료),
+     * 플레이어·키마다 한 번만: 영수증 pending 을 디스크에 저장한 뒤에 효과를 적용하고 applied/failed 로 바꾼다.
+     * pending·applied·failed 가 이미 있으면 무시한다 (failed 는 /유저관리 스토리기록 초기화로만 다시 받을 수 있음).
+     */
+    private void claimLocalReward(Player p,String key) {
+        UUID uuid=p.getUniqueId();long now=System.currentTimeMillis();
         var effect=LocalStoryRewards.resolve(key);
-        if(effect==null)return;
+        if(effect==null){packetLog(p,p.getName()+" 의 알 수 없는 스토리 보상 키를 버립니다");return;}
+        var live=endingSessions.current(uuid,now);
+        Finished fin=recentFinish.get(uuid);
+        if(fin!=null&&now-fin.at()>REWARD_WINDOW_MS){recentFinish.remove(uuid);fin=null;}
+        StoryDef def=defs.get(LocalStoryRewards.dialogue(key));
+        Set<String> events=def==null||def.graph==null?null:def.graph.events();
+        if(!LocalStoryRewards.bound(key,live==null?null:live.id(),live!=null&&live.ready(),fin==null?null:fin.id(),fin==null?null:fin.ending(),events)){
+            packetLog(p,p.getName()+" 스토리 보상 "+key+" 이(가) 서버 대화 세션에 묶여 있지 않아 무시합니다");return;
+        }
+        PlayerStory ps=state.of(uuid);ps.name=p.getName();
+        if(ps.rewards.containsKey(key))return;
+        ps.rewards.put(key,LocalStoryRewards.PENDING);
+        String name=p.getName();
+        // 영수증이 디스크에 저장된 뒤에만 효과 (저장 전에 서버가 멈추면 효과 0회, 다시 와도 영수증 때문에 1회 이하)
+        saveSoon(()->applyLocalReward(uuid,name,key,effect));
+    }
+
+    private void applyLocalReward(UUID uuid,String name,String key,LocalStoryRewards.Effect effect) {
         if(effect.affinityNpc()!=null) {
-            if(!codex.available()){getLogger().warning("[LocalStoryReward] "+p.getName()+" "+key+": MagicCodex 호감도 연결 없음");rewardFailed(p);return;}
-            codex.addAffinity(p.getUniqueId(),effect.affinityNpc(),effect.affinityDelta()).thenAccept(score->{
-                if(score==null){getLogger().warning("[LocalStoryReward] "+p.getName()+" "+key+": 호감도 적용 실패");rewardFailed(p);}
-                else getLogger().info("[LocalStoryReward] "+p.getUniqueId()+" "+key+" applied score="+score);
+            if(!codex.available()){getLogger().warning("[LocalStoryReward] "+name+" "+key+": MagicCodex 호감도 연결 없음");rewardDone(uuid,key,false);return;}
+            codex.addAffinity(uuid,effect.affinityNpc(),effect.affinityDelta()).whenComplete((score,error)->{
+                boolean ok=error==null&&score!=null;
+                if(ok)getLogger().info("[LocalStoryReward] "+uuid+" "+key+" applied score="+score);
+                else getLogger().warning("[LocalStoryReward] "+name+" "+key+": 호감도 적용 실패"+(error==null?"":" ("+error+")"));
+                if(Bukkit.isPrimaryThread())rewardDone(uuid,key,ok);
+                else if(isEnabled())Bukkit.getScheduler().runTask(this,()->rewardDone(uuid,key,ok));
             });
         } else {
-            var discovery=Bukkit.getPluginManager().getPlugin("MagicDiscovery");
-            try {
-                if(discovery==null||!discovery.isEnabled())throw new IllegalStateException("discovery unavailable");
-                boolean applied=Boolean.TRUE.equals(discovery.getClass().getMethod("signal",UUID.class,String.class,double.class)
-                        .invoke(discovery,p.getUniqueId(),effect.discoveryEvent(),effect.discoveryAmount()));
-                if(!applied)throw new IllegalStateException("discovery not ready");
-                getLogger().info("[LocalStoryReward] "+p.getUniqueId()+" "+key+" applied");
-            }catch(ReflectiveOperationException|RuntimeException e){rewardFailed(p);getLogger().warning("Local story discovery effect unavailable: "+e);}
+            rewardDone(uuid,key,applyDiscovery(uuid,key,effect));
         }
+    }
+
+    private boolean applyDiscovery(UUID uuid,String key,LocalStoryRewards.Effect effect) {
+        var discovery=Bukkit.getPluginManager().getPlugin("MagicDiscovery");
+        try {
+            if(discovery==null||!discovery.isEnabled())throw new IllegalStateException("discovery unavailable");
+            boolean applied=Boolean.TRUE.equals(discovery.getClass().getMethod("signal",UUID.class,String.class,double.class)
+                    .invoke(discovery,uuid,effect.discoveryEvent(),effect.discoveryAmount()));
+            if(!applied)throw new IllegalStateException("discovery not ready");
+            getLogger().info("[LocalStoryReward] "+uuid+" "+key+" applied");
+            return true;
+        }catch(ReflectiveOperationException|RuntimeException e){getLogger().warning("Local story discovery effect unavailable: "+e);return false;}
+    }
+
+    /** 영수증 pending → applied / failed (failed 는 자동으로 다시 시도하지 않는다). */
+    private void rewardDone(UUID uuid,String key,boolean ok) {
+        PlayerStory ps=state.players.get(uuid);
+        if(ps!=null&&LocalStoryRewards.PENDING.equals(ps.rewards.get(key))){ps.rewards.put(key,ok?LocalStoryRewards.APPLIED:LocalStoryRewards.FAILED);saveSoon(null);}
+        if(!ok){Player p=Bukkit.getPlayer(uuid);if(p!=null)rewardFailed(p);}
     }
 
     private static void rewardFailed(Player p) {
@@ -460,14 +523,47 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
         if(existing!=null)return existing;
         var future=dialogueAcks.begin(uuid,id);
         var commands=endingCommands.commands(id);
+        // 스토리 단계가 띄우는 대화는 끝 명령이 없어도 완료 신호를 받아야 한다 (빈 명령 세션)
+        if(commands==null&&quests!=null&&quests.wantsSession(uuid,id))commands=List.of();
+        // 클라 고정 보상이 있는 대화도 세션을 연다 (보상을 이 세션·완료에 묶는다)
+        if(commands==null&&LocalStoryRewards.hasRewards(id))commands=List.of();
         var session=p.getListeningPluginChannels().contains(StoryCodec.DIALOGUE_SESSION)
                 ?endingSessions.begin(uuid,id,commands,System.currentTimeMillis()):null;
-        if(session!=null)p.sendPluginMessage(this,StoryCodec.DIALOGUE_SESSION,StoryCodec.dialogueSession(id,StoryCodec.encodeVars(textVars(p)),session.token()));
-        else p.sendPluginMessage(this,StoryCodec.DIALOGUE_VIEW,StoryCodec.dialogueView(id,StoryCodec.encodeVars(textVars(p))));
+        withServerAffinity(p,id,vars->{
+            if(!isEnabled()||!p.isOnline()||Bukkit.getPlayer(uuid)!=p||dialogueAcks.pending(uuid,id)!=future)return;
+            if(session!=null){
+                var cur=endingSessions.current(uuid,System.currentTimeMillis());
+                if(cur==null||!cur.token().equals(session.token()))return;
+                p.sendPluginMessage(this,StoryCodec.DIALOGUE_SESSION,StoryCodec.dialogueSession(id,StoryCodec.encodeVars(vars),session.token()));
+            }
+            else p.sendPluginMessage(this,StoryCodec.DIALOGUE_VIEW,StoryCodec.dialogueView(id,StoryCodec.encodeVars(vars)));
+        });
         Bukkit.getScheduler().runTaskLater(this,()->{
             if(dialogueAcks.pending(uuid,id)==future){dialogueAcks.reject(uuid,id);if(session!=null)endingSessions.abort(uuid,id,session.token(),System.currentTimeMillis());}
         },400L);
         return future;
+    }
+
+    /**
+     * 로컬 대화의 선택지 조건(need)도 MagicCodex 호감도만 쓰도록 (호감도는 MagicCodex 하나), 서버 흐름(dialogues/&lt;id&gt;)의 npcs 점수를
+     * "@affinity:&lt;npc&gt;" 글자로 함께 보낸다. 서버 흐름이 없거나 MagicCodex 연결이 없으면 점수 없이 (모드는 기본값으로 판단).
+     */
+    private void withServerAffinity(Player p,String id,java.util.function.Consumer<Map<String,String>> send) {
+        Map<String,String> vars=textVars(p);
+        StoryDef def=defs.get(id);
+        List<String> npcs=def==null?List.of():def.npcs;
+        if(npcs.isEmpty()||!codex.available()){send.accept(vars);return;}
+        UUID uuid=p.getUniqueId();
+        Map<String,Integer> scores=new java.util.concurrent.ConcurrentHashMap<>();
+        CompletableFuture<?>[] all=npcs.stream().map(n->codex.affinity(uuid,n).thenAccept(v->{if(v!=null)scores.put(n,v);})).toArray(CompletableFuture[]::new);
+        CompletableFuture.allOf(all).orTimeout(3,TimeUnit.SECONDS).handle((r,e)->{
+            if(!isEnabled())return null;
+            Bukkit.getScheduler().runTask(this,()->{
+                for(var sc:new TreeMap<>(scores).entrySet())if(StorySafety.NPC.matcher(sc.getKey()).matches())vars.put(AFFINITY_VAR+sc.getKey(),String.valueOf(sc.getValue()));
+                send.accept(vars);
+            });
+            return null;
+        });
     }
 
     private boolean requestDialogue(CommandSender who, Player p, String id, boolean replayArg) {
@@ -720,6 +816,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
     /** 지금 진행 중인 대화를 닫는다 (끝 명령은 실행하지 않음, 완료로 기록하지 않음). 대기 중인 다음 요청이 있으면 이어서 시작한다. */
     public void stopDialogue(Player p) {
         endingSessions.cancel(p.getUniqueId());dialogueAcks.disconnect(p.getUniqueId());
+        if (quests != null) quests.dialogueAborted(p.getUniqueId(), null);
         PlayerStory ps = state.players.get(p.getUniqueId());
         if (ps != null && ps.active != null && ps.active.kind == Kind.DIALOGUE) {
             ps.active = null;
@@ -825,6 +922,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
                 StoryDef def = defs.get(e.id);
                 if (def == null) {
                     if (!e.missing) getLogger().warning(p.getName() + ": 대화 " + e.id + " 의 서버 파일이 없어 끝 명령을 실행하지 못했습니다");
+                    if (quests != null) quests.dialogueFinished(p, e.id);
                     return;
                 }
                 if (!e.name.isEmpty()) applyAffinity(p, ps, e.id, def.affinityEndings.get(e.name), e.id + " 결말 " + e.name);
@@ -832,10 +930,12 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
                 Map<String, String> vars = Map.of("{id}", e.id, "{scene}", e.name);
                 if (!e.name.isEmpty()) run(def.endings.get(e.name), p, vars);
                 run(def.end, p, vars);
+                if (quests != null) quests.dialogueFinished(p, e.id);
             }
             case Effect.CUTSCENE_END -> {
                 Bukkit.getPluginManager().callEvent(new StoryEvents.CutsceneFinish(p, e.id, e.skipped, e.missing));
                 run(getConfig().getStringList("on-finish." + e.id), p, Map.of("{id}", e.id, "{skipped}", String.valueOf(e.skipped)));
+                if (quests != null) quests.cutsceneFinished(p, e.id);
             }
             default -> {
             }
@@ -875,9 +975,26 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
         }
     }
 
+    private final Set<String> legacyWarned = new HashSet<>();
+
+    /** Skript 를 쓰던 시절의 명령인지 ({@link StorySafety#legacyCommand}). */
+    static boolean legacyCommand(String command) { return StorySafety.legacyCommand(command); }
+
+    /** 서버 흐름(dialogues/&lt;id&gt;/dialogue.yml)이 있으면, 클라가 보낸 결말이 그 대화에서 끝날 수 있는 장면인지 확인한다. 흐름이 없으면 예전처럼 형식만 본다. */
+    private boolean endingAllowed(String id, String ending) {
+        StoryDef def = defs.get(id);
+        if (def == null || def.graph == null) return true;
+        StoryGraph.Scene scene = def.graph.scenes.get(ending);
+        return scene != null && scene.choices().isEmpty() && (scene.next() == null || scene.next().isEmpty());
+    }
+
     private void run(List<String> commands, Player p, Map<String, String> vars) {
         if (commands == null) return;
         for (String raw : commands) {
+            if (legacyCommand(raw)) {
+                if (legacyWarned.add(raw)) getLogger().warning("예전(Skript) 스토리 명령은 실행하지 않습니다 — 설정에서 지워 주세요: " + raw);
+                continue;
+            }
             // 명령어의 {player} 는 마인크래프트 닉네임 그대로 (명령어 대상이므로). 한글 닉네임은 {nickname}
             String c = raw.replace("{player}", p.getName()).replace("{uuid}", p.getUniqueId().toString());
             // 닉네임은 플레이어가 정한 글자라 명령어를 바꿔치기하지 못하게 글자·숫자·_·- 만 남긴다
@@ -950,13 +1067,25 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
                     else if(signal.action()==1){
                         // Codec validates a non-null [a-z0-9_-]{1,64} ending; finish authenticates
                         // and consumes the session BEFORE substitution/dispatch. String.replace is literal.
+                        var cur=endingSessions.current(uuid,now);
+                        boolean valid=cur!=null&&cur.ready()&&cur.id().equals(signal.id())&&cur.token().equals(signal.token())&&StorySafety.validId(signal.ending());
+                        if(valid&&!endingAllowed(signal.id(),signal.ending())){
+                            // 서버 흐름에 없는 결말: 명령({ending} 포함)을 실행하지 않고 세션을 닫는다 (다시 호출 가능)
+                            packetLog(p,p.getName()+" 대화 "+signal.id()+" 의 결말 "+signal.ending()+" 이(가) 서버 흐름의 끝 장면이 아니라 무시합니다");
+                            if(endingSessions.abort(uuid,signal.id(),signal.token(),now)){dialogueAcks.reject(uuid,signal.id());if(quests!=null)quests.dialogueAborted(uuid,signal.id());}
+                            break;
+                        }
                         var commands=endingSessions.finish(uuid,signal.id(),signal.token(),signal.ending(),now);
+                        // 보상 패킷(end·결말)은 이 확인된 완료에만 묶인다
+                        if(valid)recentFinish.put(uuid,new Finished(signal.id(),signal.ending(),now));
                         run(commands,p,Map.of("{ending}",signal.ending()));
+                        // 세션이 확인된 완료만 스토리 단계에 알린다 (끝 명령 실행 뒤: tp 같은 명령이 먼저 돌게)
+                        if(valid&&quests!=null)quests.dialogueFinished(p,signal.id());
                     }
-                    else if(endingSessions.abort(uuid,signal.id(),signal.token(),now))dialogueAcks.reject(uuid,signal.id());
+                    else if(endingSessions.abort(uuid,signal.id(),signal.token(),now)){dialogueAcks.reject(uuid,signal.id());if(quests!=null)quests.dialogueAborted(uuid,signal.id());}
                 }
                 case StoryCodec.DIALOGUE_REWARD -> {
-                    applyLocalReward(p,StoryCodec.dialogueId(message));
+                    claimLocalReward(p,StoryCodec.dialogueId(message));
                 }
                 case StoryCodec.DIALOGUE_READY -> {
                     String id=StoryCodec.dialogueId(message);
@@ -1113,6 +1242,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
     public void onQuit(PlayerQuitEvent e) {
         dialogueAcks.disconnect(e.getPlayer().getUniqueId());endingSessions.cancel(e.getPlayer().getUniqueId());reloadTickets.cancel(e.getPlayer().getUniqueId());
         UUID uuid = e.getPlayer().getUniqueId();
+        recentFinish.remove(uuid);
         joinedAt.remove(uuid);
         helloSent.remove(uuid);
         buckets.remove(uuid);
@@ -1249,15 +1379,17 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
                             .then(Commands.argument(NICK, ChacaLink.player()).executes(ctx -> previewCutscene(ctx, true))))),
                     "스토리 대화·컷신 미리보기 (조건·기록 무시, 보상 없음)", "스토리 대화 ");
 
-            ChacaLink.reload(this, "스토리", "스토리 서버 설정 + 대화 파일", () -> {
+            quests.registerCommands();
+            ChacaLink.reload(this, "스토리", "스토리 서버 설정 + 대화 파일 + 진행 단계(steps.yml)", () -> {
                 reloadServerSettings();
                 File dialogues = new File(getDataFolder(), "dialogues");
                 applyDefs(loadDefs(dialogues), null);
+                quests.reload();
             });
             ChacaLink.status(this, "스토리", () -> {
                 int mod = 0, online = 0;
                 for (Player p : Bukkit.getOnlinePlayers()) { online++; if (hasMod(p)) mod++; }
-                return "정상 · 스토리 모드 " + mod + "/" + online + "명 · 호감도 " + (codex.available() ? "MagicCodex 연결" : "대기 (MagicCodex 연결 없음)");
+                return "정상 · 스토리 모드 " + mod + "/" + online + "명 · 호감도 " + (codex.available() ? "MagicCodex 연결" : "대기 (MagicCodex 연결 없음)") + " · " + quests.statusLine();
             });
         } catch (RuntimeException e) {
             getLogger().log(Level.WARNING, "스토리 명령을 허브에 등록하지 못했습니다", e);
@@ -1408,6 +1540,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
     /** 재생 중인 것과 대기열을 모두 버린다 (막힌 플레이어를 풀 때). 완료 기록과 실행 대기 효과는 건드리지 않는다. */
     private void clearStory(Player p) {
         endingSessions.cancel(p.getUniqueId());dialogueAcks.disconnect(p.getUniqueId());
+        if (quests != null) quests.dialogueAborted(p.getUniqueId(), null);
         PlayerStory ps = state.players.get(p.getUniqueId());
         if (ps != null) {
             ps.active = null;
@@ -1482,6 +1615,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
             Set<String> fired = ps.fired.get(id);
             out.add("실행된 이벤트: " + (fired == null || fired.isEmpty() ? "없음" : String.join(", ", fired)));
             out.add("이 대화로 오른 호감도 합: " + ps.gained.getOrDefault(id, 0));
+            for (var r : ps.rewards.entrySet()) if (LocalStoryRewards.dialogue(r.getKey()).equals(id)) out.add("고정 보상 " + r.getKey() + ": " + rewardState(r.getValue()));
             ChacaLink.lines(s, out);
             return 1;
         }
@@ -1494,11 +1628,24 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
             out.add("대기: " + String.join(", ", q));
         }
         if (!ps.effects.isEmpty()) out.add("실행 대기 효과: " + ps.effects.size() + "개");
+        if (!ps.rewards.isEmpty()) {
+            List<String> rw = new ArrayList<>();
+            for (var r : ps.rewards.entrySet()) rw.add(r.getKey() + " " + rewardState(r.getValue()));
+            out.add("고정 보상: " + String.join(", ", rw));
+        }
         List<String> done = new ArrayList<>();
         for (var e : ps.done.entrySet()) done.add(e.getKey() + (e.getValue().scene.isEmpty() ? "" : "(" + e.getValue().scene + ")"));
         out.add("끝낸 대화 " + done.size() + "개: " + (done.isEmpty() ? "-" : String.join(", ", done)));
         ChacaLink.lines(s, out);
         return 1;
+    }
+
+    private static String rewardState(String s) {
+        return switch (s) {
+            case LocalStoryRewards.APPLIED -> "받음";
+            case LocalStoryRewards.FAILED -> "실패 (초기화하면 다시 받을 수 있음)";
+            default -> "처리 중/불확실 (다시 주지 않음)";
+        };
     }
 
     /** 완료 기록 지우기 (다시 처음부터 보상까지 받을 수 있게 됨). id null = 전체. */
@@ -1514,6 +1661,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
             ps.done.clear();
             ps.fired.clear();
             ps.gained.clear();
+            ps.rewards.clear();
             getLogger().info(s.getName() + " 이(가) " + name + "(" + uuid + ") 의 대화 완료 기록 전체 (" + n + "개) 를 지웠습니다");
             ChacaLink.ok(s, name + " 님의 대화 완료 기록 " + n + "개를 모두 지웠어요");
         } else {

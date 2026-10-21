@@ -14,13 +14,13 @@ class RepeatedEndingRewardTest {
   int[] counts={0,0};
   for(int play=0;play<2;play++){
    var session=sessions.begin(player,"ch1-3",registry.commands("ch1-3"),0);sessions.ready(player,session.id(),session.token(),0);
-   var runner=new DialogueRunner(dialogue,null,ledger.affinity(),Map.of(),new DialogueRunner.Listener(){
+   var runner=new DialogueRunner(dialogue,null,Affinity.fromVars(Map.of(Affinity.VAR_PREFIX+"teacher","30")),Map.of(),new DialogueRunner.Listener(){
     public boolean affinity(String id,String key,List<Dialogue.AffinityChange> changes){try{return ledger.claimAffinity(id,key,changes);}catch(Exception e){throw new RuntimeException(e);}}
     public void event(String id,String event,String npc,int add){}
     public void done(String id,String ending){counts[0]+=sessions.finish(player,id,session.token(),ending,0).size();try{if(ledger.complete(id))counts[1]++;}catch(Exception e){throw new RuntimeException(e);}}
    });runner.choose("");runner.choose("");runner.stop();
   }
-  assertArrayEquals(new int[]{2,1},counts);assertEquals(Affinity.DEFAULT+5,ledger.affinity().get("teacher"));assertTrue(ledger.done("ch1-3"));
+  assertArrayEquals(new int[]{2,1},counts);assertTrue(ledger.hasAffinity("ch1-3","scene.s20"),"호감도 변화는 한 번 처리 표시만 (값은 서버)");assertTrue(ledger.done("ch1-3"));
  }
  @Test void cancelDoesNotCompleteOrClaimFirstReward() throws Exception {
   var ledger=new LocalDialogueStore(temp.resolve("progress.properties"));

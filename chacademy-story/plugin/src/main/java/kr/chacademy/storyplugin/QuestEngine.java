@@ -1,0 +1,1530 @@
+package kr.chacademy.storyplugin;
+
+import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
+import kr.chacademy.storyplugin.QuestDefs.Cond;
+import kr.chacademy.storyplugin.QuestDefs.CondType;
+import kr.chacademy.storyplugin.QuestDefs.Step;
+import kr.chacademy.storyplugin.QuestDefs.TrigType;
+import kr.chacademy.storyplugin.QuestDefs.Trigger;
+import kr.chacademy.storyplugin.QuestProgress.P;
+import kr.chacademy.storyplugin.QuestProgress.Phase;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerItemBreakEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
+
+import java.io.File;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.logging.Level;
+
+/**
+ * 스토리 진행 단계 (조건 → 호출 → 다음 대화). 플러그인 안의 별도 부품. 모든 상태는 메인 스레드에서만.
+ * <ul>
+ *   <li>단계 정의: steps.yml (명령어로 고치면 바로 저장, 직접 고친 뒤 /서버관리 새로고침 스토리)</li>
+ *   <li>진행: quest-progress.yml (이 서버 로컬 — 진행 기준 서버는 학교 서버 하나)</li>
+ *   <li>조건: 아이템 보유 / 제출(호출 때 걷음) / 처치 / 블록 상호작용 / 대화완료 / 신호(다른 플러그인·Skript 가 /대화관리 신호 로 알림)</li>
+ *   <li>호출: 자동(지연) / Citizens NPC 클릭(AI 대화보다 먼저) / 위치 포탈 / 컷신 시청 완료 / 관리자 강제 진행</li>
+ *   <li>중복 방지: 호출 후 대화를 기다리는 동안(PLAYING)은 다시 호출되지 않고, 완료 신호는 기다리던 대화·컷신과 같을 때만 단계를 넘긴다</li>
+ *   <li>HUD 패킷: 단계 패킷(단계가 바뀔 때·접속 때) + 갱신 패킷(진행도·준비 상태가 바뀔 때만, 같은 틱은 하나로)</li>
+ * </ul>
+ */
+final class QuestEngine implements Listener {
+    private static final long TICK_CHECK = 10L;
+    private static final long PICK_MS = 120_000L;
+    private static final long PLAYING_TIMEOUT_MS = 30 * 60_000L;
+    /** 컷신 요청이 실패·취소된 뒤 컷신만 다시 요청하는 횟수. 넘으면 건너뛰고 다음 단계로 (대화부터 다시 반복하지 않음). */
+    static final int CUTSCENE_RETRIES = 3;
+    /** 아이템 조건: 인벤토리 변경 이벤트가 없어도 이 간격마다 한 번은 다시 센다 (명령·다른 플러그인이 넣은 아이템). */
+    static final long ITEM_RESCAN_MS = 5_000L;
+
+    private final StoryPlugin plugin;
+    private QuestDefs defs = new QuestDefs();
+    private QuestProgress prog = new QuestProgress();
+    private File defsFile, progFile;
+    private StoryStore progStore, defsStore;
+    private boolean ready, dirty, flushScheduled, sendScheduled;
+    private final List<Runnable> afterDurable = new ArrayList<>();
+
+    private final Map<UUID, Integer> sessions = new HashMap<>();
+    private final Map<UUID, String> sentKey = new HashMap<>();
+    private final Set<UUID> needStep = new HashSet<>(), needUpdate = new HashSet<>();
+    private final Map<UUID, Boolean> readyCache = new HashMap<>();
+    private final Map<UUID, Long> readySince = new HashMap<>(), retryAt = new HashMap<>(), hintAt = new HashMap<>(),
+            clickGate = new HashMap<>(), playingSince = new HashMap<>();
+    private final Map<UUID, Pick> picks = new HashMap<>();
+    private final Set<UUID> previewing = new HashSet<>();
+    /** 제출 아이템을 걷는 중 (진행 저장이 끝나기를 기다림). */
+    private final Set<UUID> submitting = new HashSet<>();
+    /** 컷신 실패 횟수 (단계 회차별). */
+    private record CutFail(int run, int count) {}
+    private final Map<UUID, CutFail> cutFails = new HashMap<>();
+    /** 아이템 조건 개수 캐시 (주기 확인용). 인벤토리 변경 이벤트가 오면 지운다. */
+    private record ItemScan(long at, Map<String, Integer> counts) {}
+    private final Map<UUID, ItemScan> itemScans = new HashMap<>();
+
+    private Class<?> npcIface, registryIface;
+    private Object registry;
+    private Method npcId, npcEntity, npcStored, npcName, registryById;
+    private boolean citizens;
+
+    /** cond = -1 → NPC 지정, 그 밖 = 상호작용 조건 번호에 블록 추가. */
+    private record Pick(String step, int cond, long expires) {}
+
+    QuestEngine(StoryPlugin plugin) { this.plugin = plugin; }
+
+    // ================================================================ 켜기 / 끄기 / 새로고침
+
+    void enable() {
+        defsFile = new File(plugin.getDataFolder(), "steps.yml");
+        progFile = new File(plugin.getDataFolder(), "quest-progress.yml");
+        if (!defsFile.isFile()) plugin.saveResource("steps.yml", false);
+        loadDefs(null);
+        loadProgress();
+        progStore = new StoryStore(text -> StorySafety.atomicWrite(progFile.toPath(), text), StoryStore.newWorker(),
+                r -> Bukkit.getScheduler().runTask(plugin, r), plugin.getLogger());
+        defsStore = new StoryStore(text -> StorySafety.atomicWrite(defsFile.toPath(), text), StoryStore.newWorker(),
+                r -> Bukkit.getScheduler().runTask(plugin, r), plugin.getLogger());
+        ready = true;
+        for (String out : List.of(QuestCodec.STEP, QuestCodec.UPDATE)) plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, out);
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 40L, TICK_CHECK);
+        Bukkit.getScheduler().runTask(plugin, this::hookCitizens);
+        Bukkit.getScheduler().runTask(plugin, this::hookProgressEvents);
+        for (Player p : Bukkit.getOnlinePlayers()) needStep.add(p.getUniqueId());
+        scheduleSend();
+    }
+
+    void disable() {
+        if (ready && progStore != null) {
+            Map<String, Object> snap = prog.snapshot();
+            progStore.flushNow(() -> render(snap));
+        }
+        ready = false;
+    }
+
+    String serverId() {
+        String s = plugin.getConfig().getString("quest-server-id", "school");
+        return s == null || s.isBlank() ? "school" : s.strip();
+    }
+
+    /** /서버관리 새로고침 스토리: steps.yml 다시 읽기 (진행 기록은 그대로). */
+    void reload() {
+        loadDefs(null);
+        for (Player p : Bukkit.getOnlinePlayers()) needStep.add(p.getUniqueId());
+        scheduleSend();
+    }
+
+    private void loadDefs(CommandSender tell) {
+        List<String> warnings = new ArrayList<>();
+        try {
+            Map<?, ?> root = defsFile.isFile() ? StoryPlugin.readYaml(defsFile) : Map.of();
+            defs = QuestDefs.parse(root, warnings);
+        } catch (Exception e) {
+            plugin.getLogger().log(Level.SEVERE, "steps.yml 을 읽지 못했습니다 — 예전 단계 정의를 그대로 씁니다", e);
+            return;
+        }
+        for (String w : warnings) plugin.getLogger().warning("[스토리 단계] " + w);
+        plugin.getLogger().info("[스토리 단계] " + defs.steps.size() + "개 (시작 " + (defs.startStep.isEmpty() ? "-" : defs.startStep) + ")");
+    }
+
+    private void loadProgress() {
+        prog = new QuestProgress();
+        if (!progFile.isFile()) return;
+        try {
+            List<String> notes = new ArrayList<>();
+            prog = QuestProgress.fromMap(StoryPlugin.readYaml(progFile), notes);
+            notes.forEach(n -> plugin.getLogger().info("[스토리 단계] " + n));
+        } catch (Exception e) {
+            throw new IllegalStateException("quest-progress.yml 을 읽을 수 없어 기존 파일을 지키기 위해 멈춥니다", e);
+        }
+    }
+
+    private static String render(Map<String, Object> snap) {
+        YamlConfiguration y = new YamlConfiguration();
+        y.options().pathSeparator('\u0001');
+        y.options().setHeader(List.of("스토리 단계 진행 기록 (서버가 켜져 있을 때 직접 고치지 마세요). 진행 기준 서버 = 이 서버."));
+        y.set("format", snap.get("format"));
+        y.createSection("players", (Map<?, ?>) snap.get("players"));
+        return y.saveToString();
+    }
+
+    private void saveSoon(Runnable after) {
+        dirty = true;
+        if (after != null) afterDurable.add(after);
+        if (flushScheduled || !ready) return;
+        flushScheduled = true;
+        Bukkit.getScheduler().runTask(plugin, this::flush);
+    }
+
+    private void flush() {
+        flushScheduled = false;
+        if (!ready || (!dirty && afterDurable.isEmpty())) return;
+        dirty = false;
+        Map<String, Object> snap = prog.snapshot();
+        List<Runnable> cb = new ArrayList<>(afterDurable);
+        afterDurable.clear();
+        progStore.submit(() -> render(snap), cb);
+    }
+
+    private void saveDefs() {
+        Map<String, Object> map = defs.toMap();
+        defsStore.submit(() -> {
+            YamlConfiguration y = new YamlConfiguration();
+            y.options().pathSeparator('\u0001');
+            y.options().setHeader(List.of(
+                    "차카데미 스토리 진행 단계. 명령어(/대화관리 단계 ...)로 고치면 이 파일이 바로 저장됩니다.",
+                    "직접 고친 뒤에는 /서버관리 새로고침 스토리. 키 설명은 플러그인 README 참고."));
+            for (var e : map.entrySet()) {
+                if (e.getValue() instanceof Map<?, ?> m) y.createSection(e.getKey(), m);
+                else y.set(e.getKey(), e.getValue());
+            }
+            return y.saveToString();
+        }, List.of());
+    }
+
+    // ================================================================ 다른 부품이 부르는 곳 (StoryPlugin)
+
+    /** 이 대화를 스토리 단계가 띄우는 중이면, 서버 끝 명령이 없어도 완료 신호를 받을 세션이 필요하다. */
+    boolean wantsSession(UUID id, String dialogue) {
+        P st = prog.players.get(id);
+        if (st != null && st.phase == Phase.PLAYING && st.waiting.equals("d:" + dialogue)) return true;
+        Step s = st == null ? null : defs.get(st.step);
+        if (s != null) for (Cond c : s.conds) if (c.type() == CondType.DIALOGUE && QuestDefs.dialogueMatches(c.target(), dialogue)) return true;
+        return dialogue.equals(defs.startAfterDialogue);
+    }
+
+    /** 서버가 확인한 대화 완료 (서버 흐름 대화의 DIALOGUE_END 효과 / 로컬 대화 세션 finish 두 경로 모두 여기로). */
+    void dialogueFinished(Player p, String dialogue) {
+        if (!ready || dialogue == null) return;
+        UUID uuid = p.getUniqueId();
+        P st = prog.players.get(uuid);
+        if ((st == null || !st.started) && !defs.startStep.isEmpty() && dialogue.equals(defs.startAfterDialogue)) {
+            enter(p, prog.of(uuid), defs.startStep, true);
+            return;
+        }
+        if (st == null || st.step.isEmpty()) return;
+        Step s = defs.get(st.step);
+        if (s == null) return;
+        if (st.phase == Phase.PLAYING && st.waiting.equals("d:" + dialogue)) {
+            if (!s.cutscene.isEmpty()) {
+                st.waiting = "c:" + s.cutscene;
+                playingSince.put(uuid, System.currentTimeMillis());
+                saveSoon(null);
+                plugin.playCutscene(p, s.cutscene, StoryCodec.MODE_AUTO);
+            } else {
+                advance(p, st, s);
+            }
+            return;
+        }
+        boolean changed = false;
+        for (int i = 0; i < s.conds.size(); i++) {
+            Cond c = s.conds.get(i);
+            if (c.type() == CondType.DIALOGUE && QuestDefs.dialogueMatches(c.target(), dialogue) && st.counts.getOrDefault(i, 0) < c.required()) {
+                st.counts.put(i, c.required());
+                changed = true;
+            }
+        }
+        if (changed) { saveSoon(null); needUpdate.add(uuid); scheduleSend(); }
+    }
+
+    /** 대화가 중간에 닫힘 (중지·대기열 비우기·세션 취소). 기다리던 대화면 다시 호출할 수 있게 되돌린다. */
+    void dialogueAborted(UUID uuid, String dialogue) {
+        P st = prog.players.get(uuid);
+        if (st != null && st.phase == Phase.ACTIVE) restartLater(uuid, st);
+        if (st == null || st.phase != Phase.PLAYING) return;
+        if (dialogue != null && !st.waiting.equals("d:" + dialogue)) return;
+        if (!st.waiting.startsWith("d:")) return;
+        backToActive(uuid, st);
+    }
+
+    private final Map<UUID, Long> restartAt = new HashMap<>();
+
+    /** 시작명령이 띄운 대화(예: 분류 6문항)를 중간에 닫음: 조건을 아직 못 채웠으면 5초 뒤 시작명령을 한 번 더 (30초에 한 번까지). */
+    private void restartLater(UUID uuid, P st) {
+        Step s = defs.get(st.step);
+        if (s == null || s.startCommands.isEmpty()) return;
+        long now = System.currentTimeMillis();
+        if (now - restartAt.getOrDefault(uuid, 0L) < 30_000) return;
+        restartAt.put(uuid, now);
+        int run = st.run;
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            Player p = Bukkit.getPlayer(uuid);
+            if (p == null || st.run != run || isReady(p, st, s)) return;
+            runStartCommands(p, st, run, false);
+        }, 100L);
+    }
+
+    /** 서버가 재생시킨 컷신이 끝남 (StoryPlugin 의 CUTSCENE_END 효과). */
+    void cutsceneFinished(Player p, String cutscene) {
+        if (!ready) return;
+        P st = prog.players.get(p.getUniqueId());
+        if (st == null || st.step.isEmpty()) return;
+        Step s = defs.get(st.step);
+        if (s == null) return;
+        if (st.phase == Phase.PLAYING && st.waiting.equals("c:" + cutscene)) {
+            advance(p, st, s);
+            return;
+        }
+        if (st.phase == Phase.ACTIVE && s.trigger.type == TrigType.CUTSCENE && s.trigger.cutscene.equals(cutscene) && isReady(p, st, s)) {
+            fire(p, st, s, "컷신");
+        }
+    }
+
+    /** 다른 플러그인·Skript 의 신호 (/대화관리 신호 &lt;닉네임&gt; &lt;키&gt; [개수]). 지금 단계에 같은 신호 조건이 있을 때만 센다. */
+    boolean signal(Player p, String key, int amount) {
+        if (!ready || p == null || key == null) return false;
+        P st = prog.players.get(p.getUniqueId());
+        Step s = st == null ? null : defs.get(st.step);
+        if (s == null || st.phase != Phase.ACTIVE) return false;
+        boolean changed = false;
+        for (int i = 0; i < s.conds.size(); i++) {
+            Cond c = s.conds.get(i);
+            if (c.type() != CondType.SIGNAL || !c.target().equals(key)) continue;
+            int cur = st.counts.getOrDefault(i, 0);
+            if (cur >= c.required()) continue;
+            st.counts.put(i, Math.min(c.required(), cur + Math.max(1, amount)));
+            changed = true;
+        }
+        if (changed) { saveSoon(null); needUpdate.add(p.getUniqueId()); scheduleSend(); }
+        return changed;
+    }
+
+    // ================================================================ 단계 진행
+
+    private void enter(Player p, P st, String stepId, boolean tell) {
+        UUID uuid = p.getUniqueId();
+        st.enter(stepId);
+        readySince.remove(uuid);
+        readyCache.remove(uuid);
+        retryAt.remove(uuid);
+        playingSince.remove(uuid);
+        saveSoon(null);
+        needStep.add(uuid);
+        scheduleSend();
+        Step s = defs.get(stepId);
+        if (tell && s != null && !s.description.isBlank()) ChacaLink.notify(p, "system", "story-step-" + st.run, "새 목표", s.description, 0);
+        if (s != null && !s.startCommands.isEmpty()) {
+            int run = st.run;
+            // 다음 틱: 앞 대화의 끝 명령·세션 정리가 끝난 뒤
+            Bukkit.getScheduler().runTask(plugin, () -> runStartCommands(p, st, run, false));
+        }
+    }
+
+    /**
+     * 단계의 시작명령 (steps.yml, 서버 설정). 그 단계·회차 그대로이고 기다리는 중이 아닐 때만.
+     * 시작명령-한번 단계는 "이 회차에 실행함"(startedRun)을 먼저 디스크에 저장한 뒤 실행하고, 같은 회차에는 다시 실행하지 않는다
+     * (재접속·대화 닫기·서버 재시작 모두). manual = 관리자 /유저관리 스토리진행 다시 (한번 표시를 무시하고 실행).
+     */
+    private void runStartCommands(Player p, P st, int run, boolean manual) {
+        if (!ready || !p.isOnline() || st.run != run || st.phase != Phase.ACTIVE) return;
+        Step s = defs.get(st.step);
+        if (s == null) return;
+        if (!manual && s.startOnce()) {
+            if (st.startedRun == run) return;
+            st.startedRun = run;
+            UUID uuid = p.getUniqueId();
+            saveSoon(() -> {
+                Player now = Bukkit.getPlayer(uuid);
+                if (st.run != run || !st.step.equals(s.id)) return;
+                if (now == null || !now.isOnline() || st.phase != Phase.ACTIVE) {
+                    // 아직 아무것도 실행하지 않았다: 표시를 되돌려 다음 접속 때 실행
+                    if (st.startedRun == run) { st.startedRun = 0; saveSoon(null); }
+                    return;
+                }
+                dispatchStartCommands(now, s);
+            });
+            return;
+        }
+        dispatchStartCommands(p, s);
+    }
+
+    private void dispatchStartCommands(Player p, Step s) {
+        for (String raw : s.startCommands) {
+            String c = raw.replace("{player}", p.getName()).replace("{uuid}", p.getUniqueId().toString());
+            if (StoryPlugin.legacyCommand(c)) { plugin.getLogger().warning("[스토리 단계] " + s.id + " 시작명령의 예전(Skript) 명령은 실행하지 않습니다: " + c); continue; }
+            try { Bukkit.dispatchCommand(Bukkit.getConsoleSender(), c); }
+            catch (RuntimeException ex) { plugin.getLogger().log(Level.SEVERE, "[스토리 단계] 시작명령 실행 실패: " + c, ex); }
+        }
+    }
+
+    private void advance(Player p, P st, Step s) {
+        st.finished(s.id);
+        String next = s.next.isEmpty() || defs.get(s.next) == null ? "" : s.next;
+        if (!s.next.isEmpty() && next.isEmpty()) plugin.getLogger().warning("[스토리 단계] " + s.id + " 의 다음 단계 " + s.next + " 이(가) 없어 스토리를 여기서 멈춥니다");
+        enter(p, st, next, true);
+    }
+
+    private void backToActive(UUID uuid, P st) {
+        st.phase = Phase.ACTIVE;
+        st.waiting = "";
+        playingSince.remove(uuid);
+        retryAt.put(uuid, System.currentTimeMillis() + 3000);
+        saveSoon(null);
+        needUpdate.add(uuid);
+        scheduleSend();
+    }
+
+    /** 호출. 조건이 다 찼는지는 부르는 쪽이 확인한다. 기다리는 중이면 아무것도 하지 않는다 (연속 클릭·포탈 재진입·재접속 중복 방지). */
+    private void fire(Player p, P st, Step s, String why) {
+        UUID uuid = p.getUniqueId();
+        if (st.phase != Phase.ACTIVE) return;
+        long now = System.currentTimeMillis();
+        if (now < retryAt.getOrDefault(uuid, 0L)) return;
+        if (!st.submitted && hasSubmit(s)) {
+            if (submitting.contains(uuid)) return;
+            for (Cond c : s.conds) if (c.type() == CondType.SUBMIT && countItems(p, c.target()) < c.required()) return;
+            // 제출: "걷었음"을 먼저 디스크에 저장하고, 저장이 끝난 뒤 개수를 다시 세서 걷는다 (이중 차감 없음).
+            // 저장 뒤 ~ 걷기 전에 서버가 멈추면 아이템은 남고 단계는 진행된다 (손해는 서버 쪽).
+            st.submitted = true;
+            submitting.add(uuid);
+            int submitRun = st.run;
+            saveSoon(() -> afterSubmitSaved(uuid, st, s, submitRun, why));
+            return;
+        }
+        int run = st.run;
+        if (!s.dialogue.isEmpty()) {
+            st.phase = Phase.PLAYING;
+            st.waiting = "d:" + s.dialogue;
+            playingSince.put(uuid, now);
+            saveSoon(null);
+            needUpdate.add(uuid);
+            scheduleSend();
+            String dialogue = s.dialogue;
+            plugin.requestNicknameDialogue(p, dialogue).thenAccept(ok -> {
+                Runnable check = () -> {
+                    if (Boolean.TRUE.equals(ok)) return;
+                    if (st.run == run && st.phase == Phase.PLAYING && st.waiting.equals("d:" + dialogue)) {
+                        plugin.getLogger().warning("[스토리 단계] " + p.getName() + ": " + s.id + " 의 대화 " + dialogue + " 을(를) 열지 못했습니다 (다른 스토리 재생 중이거나 모드 없음) — 잠시 뒤 다시 호출할 수 있습니다");
+                        backToActive(uuid, st);
+                    }
+                };
+                if (Bukkit.isPrimaryThread()) check.run(); else Bukkit.getScheduler().runTask(plugin, check);
+            });
+        } else if (!s.cutscene.isEmpty()) {
+            st.phase = Phase.PLAYING;
+            st.waiting = "c:" + s.cutscene;
+            playingSince.put(uuid, now);
+            saveSoon(null);
+            needUpdate.add(uuid);
+            scheduleSend();
+            plugin.playCutscene(p, s.cutscene, StoryCodec.MODE_AUTO);
+        } else {
+            advance(p, st, s);
+        }
+        if (plugin.getConfig().getBoolean("story-debug", false)) plugin.getLogger().info("[스토리 단계] " + p.getName() + " " + s.id + " 호출 (" + why + ")");
+    }
+
+    /** 제출 기록이 저장된 뒤 (메인 스레드): 다시 세고 걷은 다음 원래 호출을 이어 간다. 모자라면 기록을 되돌린다. */
+    private void afterSubmitSaved(UUID uuid, P st, Step s, int run, String why) {
+        submitting.remove(uuid);
+        if (st.run != run || !st.submitted || !st.step.equals(s.id)) return;
+        Player p = Bukkit.getPlayer(uuid);
+        boolean enough = p != null && p.isOnline();
+        if (enough) for (Cond c : s.conds) if (c.type() == CondType.SUBMIT && countItems(p, c.target()) < c.required()) { enough = false; break; }
+        if (!enough) {
+            st.submitted = false;
+            saveSoon(null);
+            needUpdate.add(uuid);
+            scheduleSend();
+            if (p != null && p.isOnline()) ChacaLink.fail(p, "가져갈 아이템이 부족해요", null);
+            return;
+        }
+        for (Cond c : s.conds) if (c.type() == CondType.SUBMIT) takeItems(p, c.target(), c.required());
+        try { p.saveData(); } catch (RuntimeException ex) { plugin.getLogger().log(Level.WARNING, "[스토리 단계] " + p.getName() + " 제출 뒤 플레이어 데이터 저장 실패", ex); }
+        itemScans.remove(uuid);
+        if (st.phase == Phase.ACTIVE) fire(p, st, s, why);
+    }
+
+    private static boolean hasSubmit(Step s) {
+        for (Cond c : s.conds) if (c.type() == CondType.SUBMIT) return true;
+        return false;
+    }
+
+    // ================================================================ 조건 계산
+
+    private int[] currents(Player p, P st, Step s) { return currents(p, st, s, false); }
+
+    /** cached = 0.5초 주기 확인: 아이템 개수는 인벤토리가 바뀌었거나 {@value #ITEM_RESCAN_MS}ms 가 지났을 때만 다시 센다. */
+    private int[] currents(Player p, P st, Step s, boolean cached) {
+        int[] out = new int[s.conds.size()];
+        Map<String, Integer> scan = null;
+        if (cached && p != null) {
+            long now = System.currentTimeMillis();
+            ItemScan old = itemScans.get(p.getUniqueId());
+            if (old == null || now - old.at() > ITEM_RESCAN_MS) itemScans.put(p.getUniqueId(), old = new ItemScan(now, new HashMap<>()));
+            scan = old.counts();
+        }
+        for (int i = 0; i < out.length; i++) {
+            Cond c = s.conds.get(i);
+            Map<String, Integer> sc = scan;
+            int v = switch (c.type()) {
+                case ITEM -> p == null ? 0 : sc == null ? countItems(p, c.target()) : sc.computeIfAbsent(c.target(), t -> countItems(p, t));
+                case SUBMIT -> st.submitted ? c.required() : p == null ? 0 : sc == null ? countItems(p, c.target()) : sc.computeIfAbsent(c.target(), t -> countItems(p, t));
+                case INTERACT -> st.hits.getOrDefault(i, Set.of()).size();
+                default -> st.counts.getOrDefault(i, 0);
+            };
+            out[i] = Math.min(v, c.required());
+        }
+        return out;
+    }
+
+    private boolean isReady(Player p, P st, Step s) {
+        int[] cur = currents(p, st, s);
+        for (int i = 0; i < cur.length; i++) if (cur[i] < s.conds.get(i).required()) return false;
+        return true;
+    }
+
+    /** 대상: "재료" · "재료|이름(포함)" · "이름:글자" (재료 상관없이 이름에 글자가 들어 있으면). */
+    static boolean matches(ItemStack it, String target) {
+        if (it == null || it.getType().isAir() || target == null || target.isBlank()) return false;
+        String mat = target, name = "";
+        if (target.startsWith("이름:")) { mat = "*"; name = target.substring(3); }
+        else {
+            int bar = target.indexOf('|');
+            if (bar >= 0) { mat = target.substring(0, bar); name = target.substring(bar + 1); }
+        }
+        if (!mat.equals("*") && !mat.isEmpty() && !it.getType().name().equalsIgnoreCase(mat)) return false;
+        if (name.isEmpty()) return true;
+        return itemName(it).contains(name);
+    }
+
+    static String itemName(ItemStack it) {
+        ItemMeta meta = it.getItemMeta();
+        if (meta == null) return "";
+        var plain = PlainTextComponentSerializer.plainText();
+        StringBuilder sb = new StringBuilder();
+        try { if (meta.hasDisplayName() && meta.displayName() != null) sb.append(plain.serialize(meta.displayName())); } catch (RuntimeException ignored) { }
+        try { if (meta.hasItemName()) sb.append('\u0001').append(plain.serialize(meta.itemName())); } catch (RuntimeException | NoSuchMethodError ignored) { }
+        return sb.toString();
+    }
+
+    private static int countItems(Player p, String target) {
+        int n = 0;
+        for (ItemStack it : p.getInventory().getContents()) if (matches(it, target)) n += it.getAmount();
+        return n;
+    }
+
+    private static void takeItems(Player p, String target, int amount) {
+        ItemStack[] contents = p.getInventory().getContents();
+        int left = amount;
+        for (int i = 0; i < contents.length && left > 0; i++) {
+            ItemStack it = contents[i];
+            if (!matches(it, target)) continue;
+            int take = Math.min(left, it.getAmount());
+            left -= take;
+            if (take >= it.getAmount()) p.getInventory().setItem(i, null);
+            else { it.setAmount(it.getAmount() - take); p.getInventory().setItem(i, it); }
+        }
+    }
+
+    private static boolean inside(Player p, Trigger t) {
+        Location l = p.getLocation();
+        if (l.getWorld() == null || !l.getWorld().getName().equals(t.world)) return false;
+        double dx = l.getX() - t.x, dz = l.getZ() - t.z, dy = l.getY() - t.y;
+        return dx * dx + dz * dz <= t.radius * t.radius && dy > -1.5 && dy < 2.5;
+    }
+
+    // ================================================================ 주기 확인 (0.5초)
+
+    private void tick() {
+        if (!ready) return;
+        long now = System.currentTimeMillis();
+        picks.entrySet().removeIf(e -> e.getValue().expires() < now);
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            UUID uuid = p.getUniqueId();
+            // 모드 채널이 늦게 잡힌 사람: 첫 단계 패킷을 아직 못 보냈으면 지금 보낸다
+            if (!sessions.containsKey(uuid) && !previewing.contains(uuid) && hasMod(p)) { needStep.add(uuid); scheduleSend(); }
+            P st = prog.players.get(uuid);
+            if (st == null || st.step.isEmpty()) continue;
+            Step s = defs.get(st.step);
+            if (s == null) continue;
+            try {
+                if (st.phase == Phase.PLAYING) {
+                    long since = playingSince.computeIfAbsent(uuid, k -> now);
+                    if (now - since > PLAYING_TIMEOUT_MS) {
+                        plugin.getLogger().warning("[스토리 단계] " + p.getName() + ": " + st.waiting + " 이(가) 30분 넘게 끝나지 않아 다시 호출할 수 있게 되돌립니다");
+                        backToActive(uuid, st);
+                    } else if (st.waiting.startsWith("c:") && now - since > 10_000 && !plugin.hasStory(uuid, false, st.waiting.substring(2))) {
+                        // 컷신 요청이 재시도 한도·실패로 취소됨: 대화부터 다시 반복하지 않고 컷신만 몇 번 다시, 그래도 안 되면 건너뛴다
+                        cutsceneFailed(p, st, s, now);
+                    }
+                    continue;
+                }
+                int[] cur = currents(p, st, s, true);
+                boolean r = true;
+                for (int i = 0; i < cur.length; i++) if (cur[i] < s.conds.get(i).required()) { r = false; break; }
+                String key = st.run + ":" + r + ":" + java.util.Arrays.toString(cur);
+                if (!key.equals(sentKey.get(uuid))) { needUpdate.add(uuid); scheduleSend(); }
+                Boolean was = readyCache.put(uuid, r);
+                if (r && !Boolean.TRUE.equals(was)) readySince.put(uuid, now);
+                if (!r) { readySince.remove(uuid); continue; }
+                Trigger t = s.trigger;
+                // 주기 확인의 아이템 개수는 캐시일 수 있으니 호출 직전에 한 번 새로 확인한다
+                if (t.type == TrigType.AUTO && now - readySince.getOrDefault(uuid, now) >= t.delay * 1000L && isReady(p, st, s)) fire(p, st, s, "자동");
+                else if (t.type == TrigType.LOCATION && inside(p, t) && isReady(p, st, s)) fire(p, st, s, "위치");
+            } catch (RuntimeException ex) {
+                plugin.getLogger().log(Level.SEVERE, p.getName() + ": 스토리 단계 확인 중 오류", ex);
+            }
+        }
+    }
+
+    private void cutsceneFailed(Player p, P st, Step s, long now) {
+        UUID uuid = p.getUniqueId();
+        String cutscene = st.waiting.substring(2);
+        CutFail f = cutFails.get(uuid);
+        int n = f != null && f.run() == st.run ? f.count() + 1 : 1;
+        cutFails.put(uuid, new CutFail(st.run, n));
+        if (n <= CUTSCENE_RETRIES) {
+            plugin.getLogger().warning("[스토리 단계] " + p.getName() + ": " + s.id + " 의 컷신 " + cutscene + " 을(를) 재생하지 못했습니다 — 컷신만 다시 요청 (" + n + "/" + CUTSCENE_RETRIES + ")");
+            playingSince.put(uuid, now);
+            plugin.playCutscene(p, cutscene, StoryCodec.MODE_AUTO);
+            return;
+        }
+        cutFails.remove(uuid);
+        st.skippedCutscene = s.id + ":" + cutscene;
+        plugin.getLogger().severe("[스토리 단계] " + p.getName() + "(" + uuid + "): " + s.id + " 의 컷신 " + cutscene + " 을(를) " + CUTSCENE_RETRIES
+                + "번 더 시도해도 재생하지 못해 건너뛰고 다음 단계로 넘깁니다 (클라이언트 컷신 파일 확인 · /유저관리 <닉네임> 스토리진행 보기)");
+        ChacaLink.notify(p, "warning", "story-cutscene-skip", "장면을 불러오지 못해 건너뛰었어요", "관리자에게 알려 주세요", 5000);
+        advance(p, st, s);
+    }
+
+    // ================================================================ 이벤트
+
+    void onJoin(Player p) {
+        UUID uuid = p.getUniqueId();
+        sessions.remove(uuid);
+        sentKey.remove(uuid);
+        P st = prog.players.get(uuid);
+        if (st == null && !defs.startStep.isEmpty() && defs.startAfterDialogue.isEmpty()) {
+            st = prog.of(uuid);
+            st.enter(defs.startStep);
+            saveSoon(null);
+        } else if ((st == null || !st.started) && !defs.startStep.isEmpty() && defs.get(defs.startStep) != null
+                && !defs.startAfterDialogue.isEmpty() && plugin.dialogueDone(uuid, defs.startAfterDialogue)) {
+            // 단계 모듈 배포 전에 시작 대화(ch1-5)를 끝낸 유저: 그 완료 신호를 다시 받을 수 없으니 접속 때 첫 단계를 시작한다
+            plugin.getLogger().info("[스토리 단계] " + p.getName() + ": 대화 " + defs.startAfterDialogue + " 을(를) 이미 끝낸 기록이 있어 첫 단계 " + defs.startStep + " 을(를) 시작합니다");
+            st = prog.of(uuid);
+            enter(p, st, defs.startStep, true);
+        }
+        // 대화를 보다가 나갔으면 다시 호출할 수 있게 (컷신은 스토리 대기열이 이어서 재생하므로 기다린다)
+        if (st != null && st.phase == Phase.PLAYING && st.waiting.startsWith("d:")) { st.phase = Phase.ACTIVE; st.waiting = ""; saveSoon(null); }
+        // 접속 직후에는 모드 채널이 늦게 잡히므로 조금 뒤에 보낸다
+        Bukkit.getScheduler().runTaskLater(plugin, () -> { if (p.isOnline()) { needStep.add(uuid); scheduleSend(); } }, 60L);
+        // 시작명령이 있는 단계(예: 분류의 거울)를 끝내지 못하고 나갔으면 다시 실행 (조건을 이미 채웠으면 하지 않는다)
+        P cur = st;
+        if (cur != null && !cur.step.isEmpty()) {
+            int run = cur.run;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                Step s = defs.get(cur.step);
+                if (s == null || s.startCommands.isEmpty() || !p.isOnline() || cur.run != run || isReady(p, cur, s)) return;
+                runStartCommands(p, cur, run, false);
+            }, 120L);
+        }
+    }
+
+    @EventHandler
+    public void onJoinEvent(PlayerJoinEvent e) { if (ready) onJoin(e.getPlayer()); }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e) {
+        UUID uuid = e.getPlayer().getUniqueId();
+        sessions.remove(uuid); sentKey.remove(uuid); readyCache.remove(uuid); readySince.remove(uuid);
+        hintAt.remove(uuid); clickGate.remove(uuid); picks.remove(uuid); previewing.remove(uuid);
+        needStep.remove(uuid); needUpdate.remove(uuid); itemScans.remove(uuid);
+    }
+
+    // 아이템 조건 캐시 무효화 (가벼운 표시만, 실제 세기는 다음 주기 확인 때)
+    private void inventoryChanged(Entity e) { if (e instanceof Player p) itemScans.remove(p.getUniqueId()); }
+    @EventHandler(priority = EventPriority.MONITOR) public void onInvClick(InventoryClickEvent e) { inventoryChanged(e.getWhoClicked()); }
+    @EventHandler(priority = EventPriority.MONITOR) public void onInvDrag(InventoryDragEvent e) { inventoryChanged(e.getWhoClicked()); }
+    @EventHandler(priority = EventPriority.MONITOR) public void onInvClose(InventoryCloseEvent e) { inventoryChanged(e.getPlayer()); }
+    @EventHandler(priority = EventPriority.MONITOR) public void onPickup(EntityPickupItemEvent e) { inventoryChanged(e.getEntity()); }
+    @EventHandler(priority = EventPriority.MONITOR) public void onDrop(PlayerDropItemEvent e) { inventoryChanged(e.getPlayer()); }
+    @EventHandler(priority = EventPriority.MONITOR) public void onConsume(PlayerItemConsumeEvent e) { inventoryChanged(e.getPlayer()); }
+    @EventHandler(priority = EventPriority.MONITOR) public void onBreak(PlayerItemBreakEvent e) { inventoryChanged(e.getPlayer()); }
+    @EventHandler(priority = EventPriority.MONITOR) public void onPlace(BlockPlaceEvent e) { inventoryChanged(e.getPlayer()); }
+    @EventHandler(priority = EventPriority.MONITOR) public void onPlayerDeath(PlayerDeathEvent e) { inventoryChanged(e.getEntity()); }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onMove(PlayerMoveEvent e) {
+        Location to = e.getTo();
+        if (to == null || (e.getFrom().getBlockX() == to.getBlockX() && e.getFrom().getBlockY() == to.getBlockY() && e.getFrom().getBlockZ() == to.getBlockZ())) return;
+        checkLocation(e.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onTeleport(PlayerTeleportEvent e) {
+        Player p = e.getPlayer();
+        Bukkit.getScheduler().runTask(plugin, () -> { if (p.isOnline()) checkLocation(p); });
+    }
+
+    @EventHandler
+    public void onWorld(PlayerChangedWorldEvent e) {
+        UUID uuid = e.getPlayer().getUniqueId();
+        needStep.add(uuid);
+        scheduleSend();
+    }
+
+    private void checkLocation(Player p) {
+        UUID uuid = p.getUniqueId();
+        if (!Boolean.TRUE.equals(readyCache.get(uuid))) return;
+        P st = prog.players.get(uuid);
+        Step s = st == null ? null : defs.get(st.step);
+        if (s == null || st.phase != Phase.ACTIVE || s.trigger.type != TrigType.LOCATION || !inside(p, s.trigger)) return;
+        if (isReady(p, st, s)) fire(p, st, s, "위치");
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onDeath(EntityDeathEvent e) {
+        LivingEntity dead = e.getEntity();
+        Player killer = dead.getKiller();
+        if (killer == null) return;
+        P st = prog.players.get(killer.getUniqueId());
+        Step s = st == null ? null : defs.get(st.step);
+        if (s == null || st.phase != Phase.ACTIVE) return;
+        boolean changed = false;
+        for (int i = 0; i < s.conds.size(); i++) {
+            Cond c = s.conds.get(i);
+            if (c.type() != CondType.KILL || !mobMatches(dead, c.target())) continue;
+            int cur = st.counts.getOrDefault(i, 0);
+            if (cur >= c.required()) continue;
+            st.counts.put(i, cur + 1);
+            changed = true;
+        }
+        if (changed) { saveSoon(null); needUpdate.add(killer.getUniqueId()); scheduleSend(); }
+    }
+
+    private static boolean mobMatches(Entity e, String target) {
+        if (target.equals("*") || target.isBlank()) return !(e instanceof Player);
+        if (target.startsWith("이름:")) {
+            var name = e.customName();
+            return name != null && PlainTextComponentSerializer.plainText().serialize(name).contains(target.substring(3));
+        }
+        return e.getType().name().equalsIgnoreCase(target);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onInteract(PlayerInteractEvent e) {
+        if (e.getAction() != Action.RIGHT_CLICK_BLOCK || e.getHand() != EquipmentSlot.HAND || e.getClickedBlock() == null) return;
+        Player p = e.getPlayer();
+        UUID uuid = p.getUniqueId();
+        String key = blockKey(e.getClickedBlock());
+        Pick pick = picks.get(uuid);
+        if (pick != null && pick.cond() >= 0) {
+            e.setCancelled(true);
+            Step s = defs.get(pick.step());
+            if (s == null || pick.cond() >= s.conds.size()) { picks.remove(uuid); return; }
+            Cond c = s.conds.get(pick.cond());
+            List<String> blocks = new ArrayList<>(c.blocks());
+            if (blocks.contains(key)) { blocks.remove(key); ChacaLink.ok(p, "블록을 뺐어요 (" + blocks.size() + "개) · " + key); }
+            else if (blocks.size() >= QuestDefs.MAX_BLOCKS) { ChacaLink.fail(p, "블록은 " + QuestDefs.MAX_BLOCKS + "개까지예요", null); return; }
+            else { blocks.add(key); ChacaLink.ok(p, "블록을 넣었어요 (" + blocks.size() + "개) · " + key + " · 끝나면 /대화관리 단계 지정끝"); }
+            s.conds.set(pick.cond(), c.withBlocks(blocks));
+            picks.put(uuid, new Pick(pick.step(), pick.cond(), System.currentTimeMillis() + PICK_MS));
+            saveDefs();
+            return;
+        }
+        P st = prog.players.get(uuid);
+        Step s = st == null ? null : defs.get(st.step);
+        if (s == null || st.phase != Phase.ACTIVE) return;
+        boolean changed = false;
+        for (int i = 0; i < s.conds.size(); i++) {
+            Cond c = s.conds.get(i);
+            if (c.type() != CondType.INTERACT || !c.blocks().contains(key)) continue;
+            Set<String> hit = st.hits.computeIfAbsent(i, k -> new LinkedHashSet<>());
+            if (hit.size() >= c.required() || !hit.add(key)) continue;
+            changed = true;
+        }
+        if (changed) { saveSoon(null); needUpdate.add(uuid); scheduleSend(); }
+    }
+
+    static String blockKey(Block b) { return b.getWorld().getName() + "," + b.getX() + "," + b.getY() + "," + b.getZ(); }
+
+    // ================================================================ Citizens NPC 클릭 (AI 대화·선물·상점보다 먼저)
+
+    private void hookCitizens() {
+        Plugin c = Bukkit.getPluginManager().getPlugin("Citizens");
+        if (c == null || !c.isEnabled()) {
+            plugin.getLogger().warning("[스토리 단계] Citizens 가 없어 NPC클릭 호출을 쓸 수 없습니다");
+            return;
+        }
+        try {
+            ClassLoader cl = c.getClass().getClassLoader();
+            Class<? extends Event> click = Class.forName("net.citizensnpcs.api.event.NPCRightClickEvent", true, cl).asSubclass(Event.class);
+            npcIface = Class.forName("net.citizensnpcs.api.npc.NPC", true, cl);
+            registryIface = Class.forName("net.citizensnpcs.api.npc.NPCRegistry", true, cl);
+            npcId = npcIface.getMethod("getId");
+            npcEntity = npcIface.getMethod("getEntity");
+            npcStored = npcIface.getMethod("getStoredLocation");
+            npcName = npcIface.getMethod("getName");
+            registryById = registryIface.getMethod("getById", int.class);
+            registry = Class.forName("net.citizensnpcs.api.CitizensAPI", true, cl).getMethod("getNPCRegistry").invoke(null);
+            Method getNpc = click.getMethod("getNPC"), getClicker = click.getMethod("getClicker");
+            Bukkit.getPluginManager().registerEvent(click, this, EventPriority.LOWEST, (listener, event) -> {
+                if (!click.isInstance(event)) return;
+                try {
+                    onNpcClick(event, getNpc.invoke(event), (Player) getClicker.invoke(event));
+                } catch (ReflectiveOperationException | RuntimeException ex) {
+                    plugin.getLogger().log(Level.WARNING, "[스토리 단계] NPC 클릭 처리 실패", ex);
+                }
+            }, plugin, false);
+            citizens = true;
+            plugin.getLogger().info("[스토리 단계] Citizens NPC 클릭 연결 (서버 ID " + serverId() + ")");
+        } catch (ReflectiveOperationException | RuntimeException ex) {
+            plugin.getLogger().log(Level.WARNING, "[스토리 단계] Citizens 연결 실패 — NPC클릭 호출을 쓸 수 없습니다", ex);
+        }
+    }
+
+    private void onNpcClick(Event event, Object npc, Player p) throws ReflectiveOperationException {
+        if (p == null || npc == null) return;
+        int id = (int) npcId.invoke(npc);
+        UUID uuid = p.getUniqueId();
+        Pick pick = picks.get(uuid);
+        if (pick != null && pick.cond() < 0) {
+            ((Cancellable) event).setCancelled(true);
+            picks.remove(uuid);
+            Step s = defs.get(pick.step());
+            if (s == null) return;
+            Trigger t = new Trigger();
+            t.type = TrigType.NPC;
+            t.server = serverId();
+            t.npc = id;
+            s.trigger = t;
+            saveDefs();
+            ChacaLink.ok(p, s.id + " 호출을 NPC " + String.valueOf(npcName.invoke(npc)) + " (" + id + "번)로 정했어요");
+            preview(p, s);
+            return;
+        }
+        P st = prog.players.get(uuid);
+        Step s = st == null ? null : defs.get(st.step);
+        if (s == null || s.trigger.type != TrigType.NPC || s.trigger.npc != id) return;
+        if (!s.trigger.server.isEmpty() && !s.trigger.server.equals(serverId())) return;
+        long now = System.currentTimeMillis();
+        if (st.phase == Phase.PLAYING) { ((Cancellable) event).setCancelled(true); return; }
+        if (isReady(p, st, s)) {
+            ((Cancellable) event).setCancelled(true);
+            Long last = clickGate.get(uuid);
+            if (last != null && now - last < 400) return;
+            clickGate.put(uuid, now);
+            fire(p, st, s, "NPC클릭");
+            return;
+        }
+        // 아직 준비가 안 됨: 막지 않는다 (평소대로 선물 → 고정 대화 → AI 대화). 할 일만 한 번 알려 준다
+        if (now - hintAt.getOrDefault(uuid, 0L) > 5000) {
+            hintAt.put(uuid, now);
+            int[] cur = currents(p, st, s);
+            String todo = "";
+            for (int i = 0; i < cur.length; i++) if (cur[i] < s.conds.get(i).required() && !s.conds.get(i).hidden()) { todo = s.conds.get(i).display() + " " + cur[i] + "/" + s.conds.get(i).required(); break; }
+            ChacaLink.notify(p, "system", "story-step-hint", "아직 할 일이 남았어요", todo, 5000);
+        }
+    }
+
+    // ================================================================ 다른 기능의 성공 신호 (Bukkit 이벤트, 리플렉션)
+
+    /** 플러그인 이름 → 성공 이벤트 클래스. 각 기능이 저장·지급이 끝난 뒤에만 부른다 (getPlayer/getKey/getAmount). */
+    private static final String[][] PROGRESS_EVENTS = {
+            {"MagicCodexBridge", "school.magiccodex.paper.StoryProgressEvent"},   // 교화성공 · 낚시성공 · 연금술성공
+            {"ChacaHousing", "school.chacademia.housing.StoryProgressEvent"},     // 내방열기
+    };
+    private final List<String> progressHooks = new ArrayList<>();
+
+    private void hookProgressEvents() {
+        for (String[] e : PROGRESS_EVENTS) {
+            Plugin owner = Bukkit.getPluginManager().getPlugin(e[0]);
+            if (owner == null || !owner.isEnabled()) { plugin.getLogger().warning("[스토리 단계] " + e[0] + " 이(가) 없어 그 기능의 성공 신호를 받을 수 없습니다"); continue; }
+            try {
+                Class<? extends Event> type = Class.forName(e[1], true, owner.getClass().getClassLoader()).asSubclass(Event.class);
+                Method player = type.getMethod("getPlayer"), key = type.getMethod("getKey"), amount = type.getMethod("getAmount");
+                Bukkit.getPluginManager().registerEvent(type, this, EventPriority.MONITOR, (listener, event) -> {
+                    if (!type.isInstance(event)) return;
+                    try {
+                        if (player.invoke(event) instanceof Player p && key.invoke(event) instanceof String k && amount.invoke(event) instanceof Integer n)
+                            signal(p, k, n);
+                    } catch (ReflectiveOperationException | RuntimeException ex) {
+                        plugin.getLogger().log(Level.WARNING, "[스토리 단계] 성공 신호 처리 실패", ex);
+                    }
+                }, plugin, false);
+                progressHooks.add(e[0]);
+            } catch (ReflectiveOperationException | RuntimeException ex) {
+                plugin.getLogger().warning("[스토리 단계] " + e[0] + " 성공 신호 연결 실패 (버전이 낮음?): " + ex);
+            }
+        }
+        if (!progressHooks.isEmpty()) plugin.getLogger().info("[스토리 단계] 성공 신호 연결: " + String.join(", ", progressHooks));
+    }
+
+    private Object npcById(int id) {
+        if (!citizens || id < 0) return null;
+        try { return registryById.invoke(registry, id); } catch (ReflectiveOperationException | RuntimeException e) { return null; }
+    }
+
+    private Location npcLocation(Object npc) {
+        try {
+            Object ent = npcEntity.invoke(npc);
+            if (ent instanceof Entity en) return en.getLocation();
+            Object loc = npcStored.invoke(npc);
+            return loc instanceof Location l ? l : null;
+        } catch (ReflectiveOperationException | RuntimeException e) { return null; }
+    }
+
+    private String npcEntityId(Object npc) {
+        try {
+            Object ent = npcEntity.invoke(npc);
+            return ent instanceof Entity en ? en.getUniqueId().toString() : "";
+        } catch (ReflectiveOperationException | RuntimeException e) { return ""; }
+    }
+
+    // ================================================================ 패킷
+
+    private void scheduleSend() {
+        if (sendScheduled || !ready) return;
+        sendScheduled = true;
+        Bukkit.getScheduler().runTask(plugin, this::sendAll);
+    }
+
+    private boolean hasMod(Player p) { return p.getListeningPluginChannels().contains(QuestCodec.STEP); }
+
+    private void sendAll() {
+        sendScheduled = false;
+        for (UUID uuid : new ArrayList<>(needStep)) {
+            Player p = Bukkit.getPlayer(uuid);
+            needUpdate.remove(uuid);
+            if (p == null || !p.isOnline() || previewing.contains(uuid)) continue;
+            sendStep(p);
+        }
+        needStep.clear();
+        for (UUID uuid : new ArrayList<>(needUpdate)) {
+            Player p = Bukkit.getPlayer(uuid);
+            if (p == null || !p.isOnline() || previewing.contains(uuid)) continue;
+            sendUpdate(p);
+        }
+        needUpdate.clear();
+        // 준비가 막 끝난 자동 호출(지연 0)은 다음 확인(0.5초)을 기다리지 않는다
+    }
+
+    private void sendStep(Player p) {
+        UUID uuid = p.getUniqueId();
+        P st = prog.players.get(uuid);
+        Step s = st == null ? null : defs.get(st.step);
+        if (!hasMod(p)) return;
+        int session = sessions.merge(uuid, 1, Integer::sum);
+        if (s == null) {
+            p.sendPluginMessage(plugin, QuestCodec.STEP, QuestCodec.step(new QuestCodec.StepView(session, "", 0, "", "", false, List.of(),
+                    QuestCodec.TARGET_NONE, "", 0, 0, 0, 0, "")));
+            sentKey.put(uuid, "");
+            return;
+        }
+        int[] cur = currents(p, st, s, true);
+        boolean r = isReadyFrom(s, cur) && st.phase == Phase.ACTIVE;
+        p.sendPluginMessage(plugin, QuestCodec.STEP, QuestCodec.step(view(session, s, st.run, cur, r)));
+        sentKey.put(uuid, st.run + ":" + isReadyFrom(s, cur) + ":" + java.util.Arrays.toString(cur));
+    }
+
+    private void sendUpdate(Player p) {
+        UUID uuid = p.getUniqueId();
+        P st = prog.players.get(uuid);
+        Step s = st == null ? null : defs.get(st.step);
+        Integer session = sessions.get(uuid);
+        if (s == null || session == null || !hasMod(p)) return;
+        int[] cur = currents(p, st, s, true);
+        boolean full = isReadyFrom(s, cur);
+        int[] visible = visible(s, cur);
+        p.sendPluginMessage(plugin, QuestCodec.UPDATE, QuestCodec.update(session, s.id, st.run, full && st.phase == Phase.ACTIVE, visible));
+        sentKey.put(uuid, st.run + ":" + full + ":" + java.util.Arrays.toString(cur));
+    }
+
+    private static boolean isReadyFrom(Step s, int[] cur) {
+        for (int i = 0; i < cur.length; i++) if (cur[i] < s.conds.get(i).required()) return false;
+        return true;
+    }
+
+    private static int[] visible(Step s, int[] cur) {
+        int n = 0;
+        for (Cond c : s.conds) if (!c.hidden()) n++;
+        int[] out = new int[n];
+        int j = 0;
+        for (int i = 0; i < cur.length; i++) if (!s.conds.get(i).hidden()) out[j++] = cur[i];
+        return out;
+    }
+
+    private QuestCodec.StepView view(int session, Step s, int run, int[] cur, boolean readyFlag) {
+        List<QuestCodec.CondView> conds = new ArrayList<>();
+        for (int i = 0; i < s.conds.size(); i++) {
+            Cond c = s.conds.get(i);
+            if (!c.hidden()) conds.add(new QuestCodec.CondView(c.display(), cur.length > i ? cur[i] : 0, c.required()));
+        }
+        Trigger t = s.trigger;
+        int type = QuestCodec.TARGET_NONE;
+        String world = "", entity = "";
+        double x = 0, y = 0, z = 0, radius = 0;
+        if (t.type == TrigType.LOCATION) {
+            World w = Bukkit.getWorld(t.world);
+            if (w != null) { type = QuestCodec.TARGET_LOCATION; world = w.getKey().toString(); x = t.x; y = t.y; z = t.z; radius = t.radius; }
+        } else if (t.type == TrigType.NPC && (t.server.isEmpty() || t.server.equals(serverId()))) {
+            Object npc = npcById(t.npc);
+            Location l = npc == null ? null : npcLocation(npc);
+            if (l != null && l.getWorld() != null) {
+                type = QuestCodec.TARGET_NPC; world = l.getWorld().getKey().toString();
+                x = l.getX(); y = l.getY(); z = l.getZ(); entity = npcEntityId(npc);
+            }
+        }
+        String chapter = s.chapter.isBlank() ? "스토리" : s.chapter;
+        return new QuestCodec.StepView(session, s.id, run, chapter, s.description, readyFlag, conds, type, world, x, y, z, radius, entity);
+    }
+
+    /** 운영자 화면에 이 단계를 "준비 완료" 상태로 보여 준다 (포탈·징표 위치 확인용). 진행 기록은 건드리지 않는다. */
+    private void preview(Player p, Step s) {
+        if (!hasMod(p)) { ChacaLink.ok(p, "스토리 모드가 없어 미리보기를 보여 줄 수 없어요"); return; }
+        previewing.add(p.getUniqueId());
+        int session = sessions.merge(p.getUniqueId(), 1, Integer::sum);
+        int[] cur = new int[s.conds.size()];
+        for (int i = 0; i < cur.length; i++) cur[i] = s.conds.get(i).required();
+        p.sendPluginMessage(plugin, QuestCodec.STEP, QuestCodec.step(view(session, s, 0, cur, true)));
+    }
+
+    private void endPreview(Player p) {
+        previewing.remove(p.getUniqueId());
+        needStep.add(p.getUniqueId());
+        scheduleSend();
+    }
+
+    // ================================================================ 명령어
+
+    private static final String ID = "단계ID";
+    /** 기숙사 분류 6문항 대화 ID (SchoolBridge 가 띄움). */
+    static final String SORTING_DIALOGUE = "ch1-14";
+
+    void registerCommands() {
+        if (!ChacaLink.ready()) return;
+        var root = Commands.literal("단계");
+        root.then(Commands.literal("목록").executes(this::cmdList));
+        root.then(Commands.literal("시작설정").then(stepArg("시작단계")
+                .executes(ctx -> cmdStart(ctx, ""))
+                .then(Commands.literal("대화완료").then(Commands.argument("대화ID", ChacaLink.word(List::of))
+                        .executes(ctx -> cmdStart(ctx, ctx.getArgument("대화ID", String.class)))))));
+        root.then(Commands.literal("점검").executes(this::cmdCheck));
+        root.then(Commands.literal("지정끝").executes(ctx -> { Player p = self(ctx); picks.remove(p.getUniqueId()); ChacaLink.ok(p, "지정을 끝냈어요"); return 1; }));
+        root.then(Commands.literal("미리보기끝").executes(ctx -> { endPreview(self(ctx)); ChacaLink.ok(ctx.getSource().getSender(), "미리보기를 끝내고 내 진행 상태로 돌아왔어요"); return 1; }));
+
+        var one = stepArg(ID);
+        one.then(Commands.literal("만들기").executes(this::cmdCreate));
+        one.then(Commands.literal("삭제").executes(ctx -> { throw ChacaLink.error("되돌릴 수 없어요. 끝에 '확인'을 붙여 다시 입력해 주세요"); })
+                .then(Commands.literal("확인").executes(this::cmdDelete)));
+        one.then(Commands.literal("정보").executes(this::cmdInfo));
+        one.then(Commands.literal("장").then(Commands.argument("문구", StringArgumentType.greedyString()).executes(ctx -> edit(ctx, s -> s.chapter = clip(ctx, 64), "장 이름"))));
+        one.then(Commands.literal("설명").then(Commands.argument("문구", StringArgumentType.greedyString()).executes(ctx -> edit(ctx, s -> s.description = clip(ctx, 200), "설명"))));
+        one.then(Commands.literal("대화").then(idOrNone("대화ID").executes(ctx -> edit(ctx, s -> s.dialogue = idArg(ctx, "대화ID"), "대화"))));
+        one.then(Commands.literal("컷신").then(idOrNone("컷신ID").executes(ctx -> edit(ctx, s -> s.cutscene = idArg(ctx, "컷신ID"), "컷신"))));
+        one.then(Commands.literal("다음").then(Commands.argument("다음단계", ChacaLink.word(this::stepIdsAndNone))
+                .executes(ctx -> edit(ctx, s -> s.next = idArg(ctx, "다음단계"), "다음 단계"))));
+
+        var cond = Commands.literal("조건");
+        cond.then(Commands.literal("추가").then(Commands.argument("종류", ChacaLink.word(() -> List.of("아이템", "제출", "처치", "상호작용", "대화완료", "신호")))
+                .then(Commands.argument("대상", ChacaLink.word(() -> List.of("손", "*", "블록지정", "교화성공", "낚시성공", "연금술성공", "기숙사배정", "내방열기")))
+                        .then(Commands.argument("개수", IntegerArgumentType.integer(1, 10000))
+                                .executes(ctx -> cmdCondAdd(ctx, ""))
+                                .then(Commands.argument("표시", StringArgumentType.greedyString())
+                                        .executes(ctx -> cmdCondAdd(ctx, ctx.getArgument("표시", String.class))))))));
+        cond.then(Commands.literal("삭제").then(Commands.argument("번호", IntegerArgumentType.integer(1, QuestDefs.MAX_CONDITIONS)).executes(this::cmdCondDelete)));
+        cond.then(Commands.literal("숨김").then(Commands.argument("번호", IntegerArgumentType.integer(1, QuestDefs.MAX_CONDITIONS)).executes(this::cmdCondHide)));
+        cond.then(Commands.literal("블록지정").then(Commands.argument("번호", IntegerArgumentType.integer(1, QuestDefs.MAX_CONDITIONS)).executes(this::cmdCondPick)));
+        cond.then(Commands.literal("목록").executes(this::cmdInfo));
+        one.then(cond);
+
+        var call = Commands.literal("호출");
+        call.then(Commands.literal("없음").executes(ctx -> setTrigger(ctx, new Trigger())));
+        call.then(Commands.literal("자동").executes(ctx -> setTrigger(ctx, auto(0)))
+                .then(Commands.argument("지연초", IntegerArgumentType.integer(0, 600)).executes(ctx -> setTrigger(ctx, auto(ctx.getArgument("지연초", Integer.class))))));
+        call.then(Commands.literal("NPC클릭").executes(this::cmdPickNpc));
+        call.then(Commands.literal("NPC").then(Commands.argument("NPC번호", IntegerArgumentType.integer(0)).executes(ctx -> {
+            Trigger t = new Trigger(); t.type = TrigType.NPC; t.server = serverId(); t.npc = ctx.getArgument("NPC번호", Integer.class);
+            if (citizens && npcById(t.npc) == null) throw ChacaLink.error("Citizens " + t.npc + "번 NPC가 없어요");
+            return setTrigger(ctx, t);
+        })));
+        call.then(Commands.literal("위치").executes(ctx -> setTrigger(ctx, here(ctx, QuestDefs.DEFAULT_RADIUS)))
+                .then(Commands.argument("반경", DoubleArgumentType.doubleArg(QuestDefs.MIN_RADIUS, QuestDefs.MAX_RADIUS))
+                        .executes(ctx -> setTrigger(ctx, here(ctx, ctx.getArgument("반경", Double.class))))));
+        call.then(Commands.literal("컷신").then(Commands.argument("컷신ID", ChacaLink.word(List::of)).executes(ctx -> {
+            Trigger t = new Trigger(); t.type = TrigType.CUTSCENE; t.cutscene = idArg(ctx, "컷신ID");
+            if (t.cutscene.isEmpty()) throw ChacaLink.error("컷신 ID는 영문 소문자·숫자·_·-만 쓸 수 있어요");
+            return setTrigger(ctx, t);
+        })));
+        one.then(call);
+        one.then(Commands.literal("시작명령")
+                .then(Commands.literal("추가").then(Commands.argument("명령", StringArgumentType.greedyString()).executes(ctx -> edit(ctx, s -> {
+                    if (s.startCommands.size() >= QuestDefs.MAX_START_COMMANDS) throw ChacaLink.error("시작명령은 " + QuestDefs.MAX_START_COMMANDS + "개까지예요");
+                    String c = ctx.getArgument("명령", String.class).strip();
+                    if (c.startsWith("/")) c = c.substring(1);
+                    if (c.isBlank() || StoryPlugin.legacyCommand(c)) throw ChacaLink.error("빈 명령이나 예전(Skript) 명령은 넣을 수 없어요");
+                    s.startCommands.add(c);
+                }, "시작명령"))))
+                .then(Commands.literal("비우기").executes(ctx -> edit(ctx, s -> s.startCommands.clear(), "시작명령"))));
+        one.then(Commands.literal("이동").executes(this::cmdGoto));
+        one.then(Commands.literal("미리보기").executes(ctx -> { Player p = self(ctx); preview(p, step(ctx)); ChacaLink.ok(p, "미리보기 중 · 끝내려면 /대화관리 단계 미리보기끝"); return 1; }));
+        root.then(one);
+        ChacaLink.branch(plugin, ChacaLink.대화관리, root, "스토리 진행 단계 (조건·호출·다음 대화) 만들기·수정", "단계 목록");
+
+        ChacaLink.branch(plugin, ChacaLink.대화관리, Commands.literal("신호")
+                .then(Commands.argument("닉네임", ChacaLink.player())
+                        .then(Commands.argument("키", ChacaLink.word(() -> List.of("교화성공", "낚시성공", "연금술성공", "기숙사배정", "내방열기")))
+                                .executes(ctx -> cmdSignal(ctx, 1))
+                                .then(Commands.argument("개수", IntegerArgumentType.integer(1, 10000))
+                                        .executes(ctx -> cmdSignal(ctx, ctx.getArgument("개수", Integer.class)))))),
+                "스토리 단계 신호 조건 채우기 (다른 기능·Skript 연결용, 콘솔 가능)", "신호 ");
+
+        ChacaLink.branch(plugin, ChacaLink.유저관리, Commands.literal("스토리진행")
+                .then(Commands.literal("보기").executes(this::cmdUserView))
+                .then(Commands.literal("다음").executes(this::cmdUserNext))
+                .then(Commands.literal("다시").executes(this::cmdUserRestart))
+                .then(Commands.literal("단계").then(stepArg("이동단계").executes(this::cmdUserSet)))
+                .then(Commands.literal("초기화").executes(ctx -> { throw ChacaLink.error("되돌릴 수 없어요. 끝에 '확인'을 붙여 다시 입력해 주세요"); })
+                        .then(Commands.literal("확인").executes(this::cmdUserReset))),
+                "스토리 단계 진행 보기·강제 진행·시작명령 다시·단계 지정·초기화", "스토리진행 보기");
+    }
+
+    private com.mojang.brigadier.builder.RequiredArgumentBuilder<CommandSourceStack, String> stepArg(String name) {
+        return Commands.argument(name, ChacaLink.word(() -> new ArrayList<>(defs.steps.keySet())));
+    }
+
+    private com.mojang.brigadier.builder.RequiredArgumentBuilder<CommandSourceStack, String> idOrNone(String name) {
+        return Commands.argument(name, ChacaLink.word(() -> List.of("없음")));
+    }
+
+    private List<String> stepIdsAndNone() {
+        List<String> l = new ArrayList<>(defs.steps.keySet());
+        l.add("없음");
+        return l;
+    }
+
+    private static Trigger auto(int delay) { Trigger t = new Trigger(); t.type = TrigType.AUTO; t.delay = delay; return t; }
+
+    private Trigger here(CommandContext<CommandSourceStack> ctx, double radius) throws CommandSyntaxException {
+        Player p = self(ctx);
+        Location l = p.getLocation();
+        Trigger t = new Trigger();
+        t.type = TrigType.LOCATION;
+        t.world = l.getWorld().getName();
+        t.x = l.getBlockX() + 0.5; t.y = l.getBlockY(); t.z = l.getBlockZ() + 0.5;
+        t.radius = QuestDefs.clampRadius(radius);
+        return t;
+    }
+
+    private static Player self(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        if (ctx.getSource().getSender() instanceof Player p) return p;
+        throw ChacaLink.error("게임 안에서 써 주세요");
+    }
+
+    private static String clip(CommandContext<CommandSourceStack> ctx, int max) {
+        String s = ctx.getArgument("문구", String.class).strip();
+        return s.length() > max ? s.substring(0, max) : s;
+    }
+
+    /** "없음" = 빈 값. 그 밖은 ID 규칙을 지켜야 한다 (아니면 빈 값). */
+    private static String idArg(CommandContext<CommandSourceStack> ctx, String name) {
+        String s = ctx.getArgument(name, String.class).strip();
+        if (s.equals("없음")) return "";
+        return StorySafety.validId(s) ? s : "";
+    }
+
+    private Step step(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        String id = ctx.getArgument(ID, String.class);
+        Step s = defs.get(id);
+        if (s == null) throw ChacaLink.error("단계 " + id + " 이(가) 없어요 (/대화관리 단계 " + id + " 만들기)");
+        return s;
+    }
+
+    @FunctionalInterface private interface StepEdit { void apply(Step s) throws CommandSyntaxException; }
+
+    private int edit(CommandContext<CommandSourceStack> ctx, StepEdit change, String what) throws CommandSyntaxException {
+        Step s = step(ctx);
+        change.apply(s);
+        changed(s);
+        ChacaLink.ok(ctx.getSource().getSender(), s.id + " 의 " + what + "을(를) 바꿨어요");
+        return 1;
+    }
+
+    /** 정의가 바뀜: 저장하고, 이 단계를 진행 중인 접속자에게 새 단계 패킷을 보낸다. */
+    private void changed(Step s) {
+        saveDefs();
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            P st = prog.players.get(p.getUniqueId());
+            if (st != null && st.step.equals(s.id)) needStep.add(p.getUniqueId());
+        }
+        scheduleSend();
+    }
+
+    private int cmdList(CommandContext<CommandSourceStack> ctx) {
+        List<String> out = new ArrayList<>();
+        out.add("스토리 단계 " + defs.steps.size() + "개 · 시작 " + (defs.startStep.isEmpty() ? "-" : defs.startStep)
+                + (defs.startAfterDialogue.isEmpty() ? " (첫 접속 때)" : " (대화 " + defs.startAfterDialogue + " 끝나면)"));
+        for (Step s : defs.steps.values()) {
+            out.add(s.id + " · " + s.trigger.type.ko + (s.dialogue.isEmpty() ? "" : " → 대화 " + s.dialogue) + (s.next.isEmpty() ? "" : " → " + s.next)
+                    + (s.trigger.type == TrigType.NONE ? " (호출 미정)" : ""));
+        }
+        ChacaLink.lines(ctx.getSource().getSender(), out);
+        return 1;
+    }
+
+    private int cmdStart(CommandContext<CommandSourceStack> ctx, String afterDialogue) throws CommandSyntaxException {
+        String id = ctx.getArgument("시작단계", String.class);
+        if (defs.get(id) == null) throw ChacaLink.error("단계 " + id + " 이(가) 없어요");
+        if (!afterDialogue.isEmpty() && !StorySafety.validId(afterDialogue)) throw ChacaLink.error("대화 ID는 영문 소문자·숫자·_·-만 쓸 수 있어요");
+        defs.startStep = id;
+        defs.startAfterDialogue = afterDialogue;
+        saveDefs();
+        ChacaLink.ok(ctx.getSource().getSender(), "시작 단계를 " + id + " (으)로 정했어요" + (afterDialogue.isEmpty() ? " · 처음 접속하면 시작" : " · 대화 " + afterDialogue + " 이(가) 끝나면 시작"));
+        return 1;
+    }
+
+    /** 이 단계에서 운영자가 아직 정하지 않았거나 잘못된 것. 이것이 있는 단계는 그 부분에서 진행이 멈춘다 (임의로 넘기지 않음). */
+    List<String> problems(Step s) {
+        List<String> out = new ArrayList<>();
+        Trigger t = s.trigger;
+        switch (t.type) {
+            case NONE -> out.add("호출 미설정 — 조건을 채워도 다음으로 가지 않음 (/대화관리 단계 " + s.id + " 호출 …)");
+            case NPC -> {
+                if (t.npc < 0) out.add("NPC 미지정");
+                else if (!t.server.isEmpty() && !t.server.equals(serverId())) out.add("다른 서버(" + t.server + ")의 NPC — 이 서버에서는 호출되지 않음");
+                else if (citizens && npcById(t.npc) == null) out.add("Citizens " + t.npc + "번 NPC가 없음");
+                else if (!citizens) out.add("Citizens 연결 없음");
+            }
+            case LOCATION -> { if (Bukkit.getWorld(t.world) == null) out.add("포탈 월드 " + (t.world.isEmpty() ? "(없음)" : t.world) + " 를 찾을 수 없음"); }
+            case CUTSCENE -> { if (t.cutscene.isEmpty()) out.add("호출 컷신 미지정"); }
+            default -> { }
+        }
+        for (int i = 0; i < s.conds.size(); i++) {
+            Cond c = s.conds.get(i);
+            if (c.type() == CondType.INTERACT && c.blocks().isEmpty()) out.add("조건 " + (i + 1) + " 상호작용 블록 미지정 (/대화관리 단계 " + s.id + " 조건 블록지정 " + (i + 1) + ")");
+            if (c.type() == CondType.SIGNAL && !List.of("교화성공", "낚시성공", "연금술성공", "내방열기").contains(c.target()))
+                out.add("조건 " + (i + 1) + " 신호 " + c.target() + " 는 자동으로 보내는 기능이 없음 (관리자 /대화관리 신호 로만 채워짐)");
+        }
+        if (!s.next.isEmpty() && defs.get(s.next) == null) out.add("다음 단계 " + s.next + " 없음");
+        // 기숙사 분류: 6문항 대화(ch1-14)의 끝 명령이 결정을 실행해야 배정된다 (dialogues/server_command.yml)
+        for (String c : s.startCommands) {
+            if (!c.startsWith("기숙사분류 시작")) continue;
+            List<String> end = plugin.endingCommandsOf(SORTING_DIALOGUE);
+            boolean decide = false;
+            if (end != null) for (String e : end) if (e.contains("기숙사분류 결정") && e.contains("{ending}")) decide = true;
+            if (!decide) out.add("dialogues/server_command.yml 의 " + SORTING_DIALOGUE + " 에 \"기숙사분류 결정 {player} {ending}\" 이 없음 — 6문항을 끝내도 배정되지 않아 멈춤");
+        }
+        if (s.startOnce() && s.startCommands.stream().anyMatch(c -> c.startsWith("기숙사분류 시작")))
+            out.add("시작명령-한번 이 켜져 있어 분류 대화를 닫은 유저에게 다시 열어 주지 않음 (시작명령-한번: false 권장)");
+        return out;
+    }
+
+    private int cmdCheck(CommandContext<CommandSourceStack> ctx) {
+        List<String> out = new ArrayList<>();
+        if (defs.startStep.isEmpty() || defs.get(defs.startStep) == null) out.add("⚠ 시작 단계 미설정/없음 (/대화관리 단계 시작설정 …)");
+        int n = 0;
+        for (Step s : defs.steps.values()) {
+            List<String> p = problems(s);
+            if (p.isEmpty()) continue;
+            n++;
+            out.add(s.id + ": " + String.join(" · ", p));
+        }
+        out.add(0, "스토리 단계 점검: 손볼 단계 " + n + "개 / 전체 " + defs.steps.size() + "개 · 성공 신호 " + (progressHooks.isEmpty() ? "연결 없음" : String.join(", ", progressHooks)));
+        ChacaLink.lines(ctx.getSource().getSender(), out);
+        return 1;
+    }
+
+    private int cmdCreate(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        String id = ctx.getArgument(ID, String.class);
+        if (!StorySafety.validId(id)) throw ChacaLink.error("단계 ID는 영문 소문자·숫자·_·-만 쓸 수 있어요 (예: ch1-8)");
+        if (defs.get(id) != null) throw ChacaLink.error("단계 " + id + " 이(가) 이미 있어요");
+        Step s = new Step(id);
+        s.dialogue = id;
+        defs.steps.put(id, s);
+        saveDefs();
+        ChacaLink.ok(ctx.getSource().getSender(), "단계 " + id + " 을(를) 만들었어요 (대화 " + id + " 를 띄우도록 기본 설정)");
+        return 1;
+    }
+
+    private int cmdDelete(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Step s = step(ctx);
+        defs.steps.remove(s.id);
+        saveDefs();
+        ChacaLink.ok(ctx.getSource().getSender(), "단계 " + s.id + " 을(를) 지웠어요 (이 단계를 진행 중인 유저는 다음 단계를 지정해 주세요)");
+        return 1;
+    }
+
+    private int cmdInfo(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Step s = step(ctx);
+        List<String> out = new ArrayList<>();
+        out.add("단계 " + s.id + " · " + (s.chapter.isEmpty() ? "(장 이름 없음)" : s.chapter));
+        out.add("설명: " + (s.description.isEmpty() ? "-" : s.description));
+        for (int i = 0; i < s.conds.size(); i++) {
+            Cond c = s.conds.get(i);
+            out.add("조건 " + (i + 1) + ": " + c.type().ko + " " + c.target() + " ×" + c.amount() + " · \"" + c.display() + "\""
+                    + (c.hidden() ? " (숨김)" : "") + (c.type() == CondType.INTERACT ? " · 블록 " + c.blocks().size() + "개" : ""));
+        }
+        if (s.conds.isEmpty()) out.add("조건: 없음 (바로 준비 완료)");
+        out.add("호출: " + s.trigger.describe());
+        out.add("대화: " + (s.dialogue.isEmpty() ? "-" : s.dialogue) + " · 컷신: " + (s.cutscene.isEmpty() ? "-" : s.cutscene) + " · 다음: " + (s.next.isEmpty() ? "(끝)" : s.next));
+        if (!s.startCommands.isEmpty()) out.add("시작명령" + (s.startOnce() ? " (한번)" : " (반복 가능)") + ": " + String.join(" / ", s.startCommands));
+        for (String problem : problems(s)) out.add("⚠ " + problem);
+        ChacaLink.lines(ctx.getSource().getSender(), out);
+        return 1;
+    }
+
+    private int cmdCondAdd(CommandContext<CommandSourceStack> ctx, String label) throws CommandSyntaxException {
+        Step s = step(ctx);
+        if (s.conds.size() >= QuestDefs.MAX_CONDITIONS) throw ChacaLink.error("조건은 " + QuestDefs.MAX_CONDITIONS + "개까지예요");
+        CondType type = CondType.of(ctx.getArgument("종류", String.class));
+        if (type == null) throw ChacaLink.error("종류는 아이템·제출·처치·상호작용·대화완료·신호 중 하나예요");
+        String target = ctx.getArgument("대상", String.class).strip();
+        int amount = ctx.getArgument("개수", Integer.class);
+        CommandSender sender = ctx.getSource().getSender();
+        switch (type) {
+            case ITEM, SUBMIT -> {
+                if (target.equals("손")) {
+                    Player p = self(ctx);
+                    ItemStack hand = p.getInventory().getItemInMainHand();
+                    if (hand.getType().isAir()) throw ChacaLink.error("손에 아이템을 들고 써 주세요");
+                    String name = itemName(hand);
+                    int cut = name.indexOf('\u0001');
+                    String display = cut >= 0 ? (cut == 0 ? name.substring(1) : name.substring(0, cut)) : name;
+                    target = hand.getType().name() + (display.isBlank() ? "" : "|" + display);
+                } else if (!target.startsWith("이름:") && !target.contains("|") && Material.matchMaterial(target) == null) {
+                    throw ChacaLink.error("아이템은 '손'(들고 있는 것), 재료 이름(예: DIAMOND), 또는 이름:글자 로 적어 주세요");
+                }
+            }
+            case DIALOGUE -> { if (!QuestDefs.validDialoguePattern(target)) throw ChacaLink.error("대화 ID는 영문 소문자·숫자·_·-만 (여러 개는 | 로, 앞부분이 같은 것은 끝에 *)"); }
+            case SIGNAL -> { if (!QuestDefs.KEY.matcher(target).matches()) throw ChacaLink.error("신호 이름은 글자·숫자·_·- 1~32자예요"); }
+            case INTERACT -> target = "블록지정";
+            case KILL -> { }
+        }
+        Cond c = new Cond(type, target, amount, label.strip(), false, List.of());
+        s.conds.add(c);
+        changed(s);
+        ChacaLink.ok(sender, s.id + " 조건 " + s.conds.size() + "번: " + type.ko + " " + target + " ×" + amount + " · \"" + c.display() + "\"");
+        if (type == CondType.INTERACT && sender instanceof Player p) {
+            picks.put(p.getUniqueId(), new Pick(s.id, s.conds.size() - 1, System.currentTimeMillis() + PICK_MS));
+            ChacaLink.ok(p, "조사할 블록을 우클릭해서 넣어 주세요 (다시 누르면 빠짐) · 끝나면 /대화관리 단계 지정끝");
+        }
+        return 1;
+    }
+
+    private Cond condArg(CommandContext<CommandSourceStack> ctx, Step s) throws CommandSyntaxException {
+        int n = ctx.getArgument("번호", Integer.class);
+        if (n < 1 || n > s.conds.size()) throw ChacaLink.error("조건 " + n + "번이 없어요 (지금 " + s.conds.size() + "개)");
+        return s.conds.get(n - 1);
+    }
+
+    private int cmdCondDelete(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Step s = step(ctx);
+        Cond c = condArg(ctx, s);
+        int idx = s.conds.indexOf(c);
+        s.conds.remove(idx);
+        // 진행 중인 유저의 번호가 밀리므로 이 단계 진행도를 번호에 맞게 당긴다
+        for (P st : prog.players.values()) {
+            if (!st.step.equals(s.id)) continue;
+            Map<Integer, Integer> counts = new HashMap<>();
+            Map<Integer, Set<String>> hits = new HashMap<>();
+            st.counts.forEach((k, v) -> { if (k < idx) counts.put(k, v); else if (k > idx) counts.put(k - 1, v); });
+            st.hits.forEach((k, v) -> { if (k < idx) hits.put(k, v); else if (k > idx) hits.put(k - 1, v); });
+            st.counts.clear(); st.counts.putAll(counts);
+            st.hits.clear(); st.hits.putAll(hits);
+        }
+        saveSoon(null);
+        changed(s);
+        ChacaLink.ok(ctx.getSource().getSender(), s.id + " 조건 " + (idx + 1) + "번을 지웠어요");
+        return 1;
+    }
+
+    private int cmdCondHide(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Step s = step(ctx);
+        Cond c = condArg(ctx, s);
+        int idx = s.conds.indexOf(c);
+        s.conds.set(idx, new Cond(c.type(), c.target(), c.amount(), c.label(), !c.hidden(), c.blocks()));
+        changed(s);
+        ChacaLink.ok(ctx.getSource().getSender(), s.id + " 조건 " + (idx + 1) + "번을 HUD에서 " + (c.hidden() ? "보이게" : "숨겼어요"));
+        return 1;
+    }
+
+    private int cmdCondPick(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Step s = step(ctx);
+        Cond c = condArg(ctx, s);
+        if (c.type() != CondType.INTERACT) throw ChacaLink.error("상호작용 조건만 블록을 지정할 수 있어요");
+        Player p = self(ctx);
+        picks.put(p.getUniqueId(), new Pick(s.id, s.conds.indexOf(c), System.currentTimeMillis() + PICK_MS));
+        ChacaLink.ok(p, "조사할 블록을 우클릭해서 넣어 주세요 (다시 누르면 빠짐) · 끝나면 /대화관리 단계 지정끝");
+        return 1;
+    }
+
+    private int setTrigger(CommandContext<CommandSourceStack> ctx, Trigger t) throws CommandSyntaxException {
+        Step s = step(ctx);
+        s.trigger = t;
+        changed(s);
+        CommandSender sender = ctx.getSource().getSender();
+        ChacaLink.ok(sender, s.id + " 호출: " + t.describe());
+        if (sender instanceof Player p && (t.type == TrigType.LOCATION || t.type == TrigType.NPC)) {
+            preview(p, s);
+            ChacaLink.ok(p, "내 화면에 미리보기로 표시했어요 · 끝내려면 /대화관리 단계 미리보기끝");
+        }
+        return 1;
+    }
+
+    private int cmdPickNpc(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Step s = step(ctx);
+        if (!citizens) throw ChacaLink.error("Citizens 연결이 없어 NPC를 지정할 수 없어요");
+        Player p = self(ctx);
+        picks.put(p.getUniqueId(), new Pick(s.id, -1, System.currentTimeMillis() + 30_000));
+        ChacaLink.ok(p, "30초 안에 지정할 NPC를 우클릭해 주세요 (그 클릭은 대화를 열지 않아요)");
+        return 1;
+    }
+
+    private int cmdGoto(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Step s = step(ctx);
+        Player p = self(ctx);
+        Trigger t = s.trigger;
+        Location to = null;
+        if (t.type == TrigType.LOCATION) {
+            World w = Bukkit.getWorld(t.world);
+            if (w != null) to = new Location(w, t.x, t.y, t.z, p.getLocation().getYaw(), p.getLocation().getPitch());
+        } else if (t.type == TrigType.NPC) {
+            Object npc = npcById(t.npc);
+            to = npc == null ? null : npcLocation(npc);
+        }
+        if (to == null) throw ChacaLink.error(s.id + " 은(는) 이동할 위치가 없어요 (호출이 위치·NPC클릭일 때만)");
+        p.teleport(to);
+        ChacaLink.ok(p, s.id + " 호출 위치로 이동했어요");
+        return 1;
+    }
+
+    private int cmdSignal(CommandContext<CommandSourceStack> ctx, int amount) throws CommandSyntaxException {
+        Player p = ChacaLink.resolveOnline(ctx, "닉네임");
+        String key = ctx.getArgument("키", String.class);
+        if (!QuestDefs.KEY.matcher(key).matches()) throw ChacaLink.error("신호 이름은 글자·숫자·_·- 1~32자예요");
+        boolean used = signal(p, key, amount);
+        CommandSender s = ctx.getSource().getSender();
+        if (!(s instanceof org.bukkit.command.ConsoleCommandSender))
+            ChacaLink.ok(s, ChacaLink.name(p.getUniqueId()) + " 님 신호 " + key + (used ? " 반영" : " (지금 단계에 해당 조건 없음)"));
+        return 1;
+    }
+
+    private int cmdUserView(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        UUID uuid = ChacaLink.target(ctx);
+        P st = prog.players.get(uuid);
+        List<String> out = new ArrayList<>();
+        out.add(ChacaLink.name(uuid) + " 스토리 단계 (이 서버)");
+        if (st == null) { out.add("기록 없음"); ChacaLink.lines(ctx.getSource().getSender(), out); return 1; }
+        Step s = defs.get(st.step);
+        out.add("지금: " + (st.step.isEmpty() ? "없음" : st.step + (s == null ? " (정의 없음)" : "")) + " · " + (st.phase == Phase.PLAYING ? "재생 기다리는 중 " + st.waiting : "진행 중") + " · " + st.run + "번째");
+        if (s != null) {
+            Player p = Bukkit.getPlayer(uuid);
+            int[] cur = currents(p, st, s);
+            for (int i = 0; i < cur.length; i++) out.add("  " + (i + 1) + ". " + s.conds.get(i).display() + " " + cur[i] + "/" + s.conds.get(i).required());
+        }
+        if (!st.skippedCutscene.isEmpty()) out.add("⚠ 컷신을 불러오지 못해 건너뜀: " + st.skippedCutscene);
+        if (st.startedRun == st.run && s != null && s.startOnce() && !s.startCommands.isEmpty()) out.add("시작명령: 이 회차에 실행함 (한번)");
+        if (!st.history.isEmpty()) out.add("끝낸 단계: " + String.join(", ", st.history.subList(0, Math.min(10, st.history.size()))));
+        ChacaLink.lines(ctx.getSource().getSender(), out);
+        return 1;
+    }
+
+    /** 강제 진행: 조건·호출을 건너뛰고 지금 단계의 대화(있으면)를 띄운다. 기다리는 중이면 다음 단계로 바로 넘긴다. */
+    private int cmdUserNext(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Player p = ChacaLink.targetOnline(ctx);
+        P st = prog.players.get(p.getUniqueId());
+        Step s = st == null ? null : defs.get(st.step);
+        if (s == null) throw ChacaLink.error(ChacaLink.name(p.getUniqueId()) + " 님은 진행 중인 스토리 단계가 없어요");
+        if (st.phase == Phase.PLAYING) {
+            advance(p, st, s);
+            ChacaLink.ok(ctx.getSource().getSender(), ChacaLink.name(p.getUniqueId()) + " 님을 다음 단계로 넘겼어요 (기다리던 " + st.waiting + " 건너뜀)");
+            return 1;
+        }
+        retryAt.remove(p.getUniqueId());
+        st.submitted = true; // 강제 진행은 아이템을 걷지 않는다
+        fire(p, st, s, "관리자");
+        ChacaLink.ok(ctx.getSource().getSender(), ChacaLink.name(p.getUniqueId()) + " 님의 " + s.id + " 을(를) 강제로 호출했어요");
+        return 1;
+    }
+
+    /** 지금 단계의 시작명령을 다시 실행 (예: 분류 6문항을 닫아 버린 유저). 조건·기록은 그대로. */
+    private int cmdUserRestart(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Player p = ChacaLink.targetOnline(ctx);
+        P st = prog.players.get(p.getUniqueId());
+        Step s = st == null ? null : defs.get(st.step);
+        if (s == null || s.startCommands.isEmpty()) throw ChacaLink.error("지금 단계에 다시 실행할 시작명령이 없어요");
+        if (st.phase != Phase.ACTIVE) throw ChacaLink.error("지금은 대화·컷신을 기다리는 중이에요");
+        runStartCommands(p, st, st.run, true);
+        ChacaLink.ok(ctx.getSource().getSender(), ChacaLink.name(p.getUniqueId()) + " 님의 " + s.id + " 시작명령을 다시 실행했어요");
+        return 1;
+    }
+
+    private int cmdUserSet(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Player p = ChacaLink.targetOnline(ctx);
+        String id = ctx.getArgument("이동단계", String.class);
+        if (defs.get(id) == null) throw ChacaLink.error("단계 " + id + " 이(가) 없어요");
+        enter(p, prog.of(p.getUniqueId()), id, true);
+        ChacaLink.ok(ctx.getSource().getSender(), ChacaLink.name(p.getUniqueId()) + " 님을 단계 " + id + " (으)로 옮겼어요");
+        return 1;
+    }
+
+    private int cmdUserReset(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        UUID uuid = ChacaLink.target(ctx);
+        prog.players.remove(uuid);
+        readyCache.remove(uuid); readySince.remove(uuid); retryAt.remove(uuid); playingSince.remove(uuid);
+        saveSoon(null);
+        Player p = Bukkit.getPlayer(uuid);
+        if (p != null) { onJoin(p); needStep.add(uuid); scheduleSend(); }
+        ChacaLink.ok(ctx.getSource().getSender(), ChacaLink.name(uuid) + " 님의 스토리 단계 기록을 지웠어요");
+        return 1;
+    }
+
+    String statusLine() {
+        int active = 0;
+        for (Player p : Bukkit.getOnlinePlayers()) { P st = prog.players.get(p.getUniqueId()); if (st != null && !st.step.isEmpty()) active++; }
+        int unset = 0;
+        for (Step s : defs.steps.values()) if (!problems(s).isEmpty()) unset++;
+        return "단계 " + defs.steps.size() + "개 (손볼 곳 " + unset + ") · 진행 중 접속자 " + active + "명 · Citizens " + (citizens ? "연결" : "없음");
+    }
+}

@@ -83,4 +83,19 @@ final class StorySafety {
             Files.move(temp,target,StandardCopyOption.ATOMIC_MOVE,StandardCopyOption.REPLACE_EXISTING);
         } finally { Files.deleteIfExists(temp); }
     }
+
+    /**
+     * Skript 를 쓰던 시절의 명령 (story_ch1.sk · 예전 스토리 명령). Skript 없이 돌아가므로 실행하지 않는다.
+     * 운영 config 의 on-finish 에 "스토리이어 …" 가 남아 있어도 진행은 스토리 단계가 맡는다.
+     */
+    private static final Set<String> LEGACY = Set.of("스토리완료", "스토리이어", "분류시작", "분류결정", "분류응답", "기숙사지정", "스토리초기화", "분류초기화",
+            "storydialogue", "cutscene", "스토리대화", "컷신");
+
+    static boolean legacyCommand(String command) {
+        String c = command == null ? "" : command.strip();
+        if (c.startsWith("/")) c = c.substring(1);
+        int sp = c.indexOf(' ');
+        String head = (sp < 0 ? c : c.substring(0, sp)).toLowerCase(java.util.Locale.ROOT);
+        return LEGACY.contains(head);
+    }
 }

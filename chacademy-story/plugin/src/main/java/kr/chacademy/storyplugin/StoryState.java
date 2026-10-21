@@ -160,6 +160,8 @@ final class StoryState {
         final Map<String, Set<String>> fired = new TreeMap<>();
         final Map<String, Integer> gained = new TreeMap<>();
         final List<Effect> effects = new ArrayList<>();
+        /** 클라 고정 보상(LocalStoryRewards) 영수증: 키 → pending|applied|failed. 한 번 생기면 다시 주지 않는다 (관리자 초기화로만 지움). */
+        final Map<String, String> rewards = new TreeMap<>();
         /** 효과 실행 중 (명령어가 다시 스토리 명령을 불러도 겹쳐 돌지 않게). 저장하지 않는다. */
         boolean running;
 
@@ -168,7 +170,7 @@ final class StoryState {
         }
 
         boolean empty() {
-            return active == null && queue.isEmpty() && done.isEmpty() && fired.isEmpty() && gained.isEmpty() && effects.isEmpty();
+            return active == null && queue.isEmpty() && done.isEmpty() && fired.isEmpty() && gained.isEmpty() && effects.isEmpty() && rewards.isEmpty();
         }
 
         boolean has(Kind kind, String id) {
@@ -238,6 +240,7 @@ final class StoryState {
             boolean had = done.remove(id) != null;
             had |= fired.remove(id) != null;
             had |= gained.remove(id) != null;
+            had |= rewards.keySet().removeIf(k -> LocalStoryRewards.dialogue(k).equals(id));
             return had;
         }
 
@@ -268,6 +271,7 @@ final class StoryState {
                 if (!f.isEmpty()) m.put("fired", f);
             }
             if (!gained.isEmpty()) m.put("gained", new LinkedHashMap<>(gained));
+            if (!rewards.isEmpty()) m.put("rewards", new LinkedHashMap<>(rewards));
             if (!effects.isEmpty()) {
                 List<Object> l = new ArrayList<>();
                 for (Effect e : effects) l.add(e.toMap());
@@ -312,6 +316,12 @@ final class StoryState {
                 for (var e : g.entrySet()) {
                     String id = String.valueOf(e.getKey());
                     if (StorySafety.validId(id)) ps.gained.put(id, (int) Math.max(0, Math.min(1_000_000, num(e.getValue()))));
+                }
+            }
+            if (m.get("rewards") instanceof Map<?, ?> rw) {
+                for (var e : rw.entrySet()) {
+                    String key = String.valueOf(e.getKey());
+                    if (LocalStoryRewards.resolve(key) != null && LocalStoryRewards.validState(e.getValue())) ps.rewards.put(key, String.valueOf(e.getValue()));
                 }
             }
             if (m.get("effects") instanceof List<?> l) {

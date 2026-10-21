@@ -385,6 +385,8 @@ final class AlchemyBridge implements PluginMessageListener, Listener {
         if (isNew) discover(p, match);
         result(p, seq, isNew ? AlchemyProtocol.DISCOVERED : AlchemyProtocol.CRAFTED, match, match.amount(), false, notice);
         send(p, AlchemyProtocol.KIND_STATE, "");
+        // 스토리 "연금술성공": 재료·경험치를 걷고 결과물을 지급(인벤토리/우편)한 뒤에만. 경험치 부족·틀린 조합·결과 아이템 오류는 위에서 끝난다.
+        StoryProgressEvent.fire(p, StoryProgressEvent.ALCHEMY);
     }
 
     /** 재료를 뺀 뒤의 인벤토리(0~35칸)에 결과물이 전부 들어가는지. 실제 인벤토리는 건드리지 않는다. */
