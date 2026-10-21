@@ -64,6 +64,10 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
     }
     int house(Player p){
         Integer saved=data.houses().get(p.getUniqueId());if(saved!=null)return saved;
+        return outsideHouse(p);
+    }
+    /** DB 밖의 소속 (스탯 기숙사 또는 LuckPerms magiccodex.house.*). 없으면 -1. */
+    private int outsideHouse(Player p){
         String dorm=stats.get(p.getUniqueId()).dormitory();int i=dorm==null?-1:SchoolProtocol.HOUSES.indexOf(dorm);if(i>=0)return i;
         for(i=0;i<4;i++)if(p.hasPermission("magiccodex.house."+HOUSE_IDS.get(i)))return i;
         return -1;
@@ -111,56 +115,90 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
     void adminHouse(Player player,int house,Consumer<String> done){
         if(house<0||house>=SchoolProtocol.HOUSES.size()){done.accept("등록된 기숙사를 선택해 주세요.");return;}
         UUID id=player.getUniqueId();
-        work(()->{store.house(id,house);return true;},ok->{DiscoveryLink.signal(id,"dormitory.assigned",1);reply(player,new Request(SchoolProtocol.IDENTITY,0,0,""),"");done.accept(null);},done);
+        work(()->{store.presetHouse(id,house);return true;},ok->{DiscoveryLink.signal(id,"dormitory.assigned",1);reply(player,new Request(SchoolProtocol.IDENTITY,0,0,""),"");done.accept(null);},done);
     }
     void adminScore(int house,String action,long amount,Consumer<String> done){
         if(house<0||house>=SchoolProtocol.HOUSES.size())throw new IllegalArgumentException("등록된 기숙사를 선택해 주세요.");
         long delta=AdminCommandRules.scoreValue(action,amount);
         work(()->{if(!action.equals("조회"))store.change(house,delta,action.equals("설정"));return true;},ok->done.accept(SchoolProtocol.HOUSES.get(house)+" "+data.scores().get(house)+"점"),done);
     }
-    private boolean sortingAdmin(CommandSender sender){return sender instanceof ConsoleCommandSender||sender instanceof Player&&sender.hasPermission("magiccodex.school.admin");}
+    /** 관리 명령 규칙: OP 또는 콘솔만. */
+    private boolean sortingAdmin(CommandSender sender){return sender instanceof ConsoleCommandSender||sender.isOp();}
+    /** 유저가 고칠 수 있는 입력 오류 (이 문구만 보여 준다). */
+    private static final class SortingInput extends IllegalArgumentException{SortingInput(String m){super(m);}}
+    /** 결과 안내: 허브가 있으면 알림(실패는 삐빅), 없으면 채팅. 기술적 원인은 콘솔에만. */
+    private void sortOk(CommandSender to,String message){if(ChacaApi.ready())ChacaApi.ok(to,message);else to.sendMessage(message);}
+    private void sortFail(CommandSender to,String message,Throwable cause){
+        if(ChacaApi.ready())ChacaApi.fail(to,message,cause);
+        else{to.sendMessage(message);if(cause!=null)plugin.getLogger().log(java.util.logging.Level.WARNING,"[기숙사분류] "+message,cause);}
+    }
     private int sortingTolerance(){
         Object raw=plugin.getConfig().get("house-sorting.population-tolerance",2);
-        if(!(raw instanceof Integer value))throw new IllegalArgumentException("house-sorting.population-tolerance은 정수여야 합니다.");
+        if(!(raw instanceof Integer value))throw new SortingInput("config 의 house-sorting.population-tolerance 는 정수여야 해요");
         HouseSorting.tolerance(value);return value;
     }
     private boolean sortingCommand(CommandSender sender,String[] a){
-        if(!sortingAdmin(sender)){sender.sendMessage("관리자와 콘솔만 사용할 수 있습니다.");return true;}
+        if(!sortingAdmin(sender)){sortFail(sender,"관리자(OP)와 콘솔만 사용할 수 있어요",null);return true;}
         try{
             if(a.length==2&&a[0].equals("허용치")){
-                int value=Integer.parseInt(a[1]);HouseSorting.tolerance(value);var config=plugin.getConfig();
+                int value;try{value=Integer.parseInt(a[1]);HouseSorting.tolerance(value);}catch(IllegalArgumentException bad){throw new SortingInput("허용치는 0~1000000 사이의 정수예요");}
+                var config=plugin.getConfig();
                 Object before=config.get("house-sorting.population-tolerance");config.set("house-sorting.population-tolerance",value);
-                try{config.save(new File(plugin.getDataFolder(),"config.yml"));}catch(Exception error){config.set("house-sorting.population-tolerance",before);throw error;}
-                sender.sendMessage("배정 전 최소 인원 + "+value+"명까지 허용합니다. (배정 후 차이는 허용치+1일 수 있습니다.)");return true;
+                try{config.save(new File(plugin.getDataFolder(),"config.yml"));}catch(Exception error){config.set("house-sorting.population-tolerance",before);sortFail(sender,"허용치를 저장하지 못했어요",error);return true;}
+                sortOk(sender,"배정 전 최소 인원 + "+value+"명까지 허용해요 (배정 후 차이는 허용치+1일 수 있어요)");return true;
             }
             if(a.length==1&&a[0].equals("현황")){
-                work(store::houseCounts,counts->{for(int h=0;h<4;h++)sender.sendMessage(SchoolProtocol.HOUSES.get(h)+": "+counts[h]+"명");
+                work(store::houseCounts,counts->{var rows=new ArrayList<String>();for(int h=0;h<4;h++)rows.add(" "+SchoolProtocol.HOUSES.get(h)+": "+counts[h]+"명");
                     long gap=Arrays.stream(counts).max().orElseThrow()-Arrays.stream(counts).min().orElseThrow();
-                    sender.sendMessage("최대-최소 차이: "+gap+"명"+(gap>5?" · 경고: 기숙사 인원 차이가 5명을 초과했습니다.":""));},sender::sendMessage);return true;
+                    rows.add(" 최대-최소 차이: "+gap+"명"+(gap>5?" · 경고: 기숙사 인원 차이가 5명을 넘었어요":""));
+                    if(ChacaApi.ready())CodexCommands.lines(sender,"── 기숙사 인원 ──",rows);else rows.forEach(sender::sendMessage);},failTo(sender));return true;
             }
             if(a.length==2&&a[0].equals("시작")||a.length==3&&a[0].equals("결정")){
-                Player player=plugin.names().resolve(a[1]);if(player==null||!player.isOnline())throw new IllegalArgumentException("현재 서버에 접속한 유저를 지정해 주세요.");
+                Player player=plugin.names().resolve(a[1]);if(player==null||!player.isOnline())throw new SortingInput("현재 서버에 접속한 유저를 지정해 주세요");
                 UUID id=player.getUniqueId();
-                if(a[0].equals("시작"))work(()->store.savedHouse(id),h->sortingDialogue(sender,player,h==null?"ch1-14":"ch1-14f-"+HouseSorting.IDS.get(h),false),sender::sendMessage);
+                // 권한·스탯으로만 소속이 있는 유저는 다른 기숙사로 다시 분류하지 않고 그 소속을 DB 에 옮긴다
+                int outside=outsideHouse(player);
+                if(a[0].equals("시작")){
+                    work(()->store.sortingStart(id),start->{
+                        // 창시자 연출은 관리자가 미리 정한 유저만. 이미 분류된 일반 유저(발표 중 접속 끊김 등)는 결과 발표를 다시
+                        if(start.house()!=null)sortingDialogue(sender,player,(start.preset()?"ch1-14f-":"ch1-14r-")+HouseSorting.IDS.get(start.house()),false);
+                        else if(outside>=0)adopt(sender,player,outside);
+                        else sortingDialogue(sender,player,"ch1-14",false);
+                    },failTo(sender));
+                }
                 else{
-                    if(!a[2].matches("p_[0-3][0-3]"))throw new IllegalArgumentException("결과는 p_00~p_33 형식이며 T,D는 각각 0~3입니다.");
+                    if(!a[2].matches("p_[0-3][0-3]"))throw new SortingInput("결과는 p_00~p_33 형식이며 T,D는 각각 0~3이에요");
                     int t=a[2].charAt(2)-'0',d=a[2].charAt(3)-'0',tolerance=sortingTolerance();
+                    if(outside>=0){adopt(sender,player,outside);return true;}
                     work(()->store.assignHouse(id,t,d,tolerance),result->{
                         // Database has committed before signals or Bukkit commands run on the main thread.
-                        if(result.created())try{DiscoveryLink.signal(id,"dormitory.assigned",1);}catch(RuntimeException error){plugin.getLogger().warning("기숙사 저장 완료, 배정 신호 실패: "+error);sender.sendMessage("소속은 저장됐지만 배정 신호 처리에 실패했습니다. 로그를 확인해 주세요.");}
+                        if(result.created())assigned(sender,id);
                         reply(player,new Request(SchoolProtocol.IDENTITY,0,0,""),"");
                         sortingDialogue(sender,player,"ch1-14"+(!result.created()||result.house()==result.preferred()?"r-":"m-")+HouseSorting.IDS.get(result.house()),true);
-                    },sender::sendMessage);
+                    },failTo(sender));
                 }return true;
             }
-        }catch(Exception error){sender.sendMessage("입력 또는 설정 저장 실패: "+error.getMessage());return true;}
-        sender.sendMessage("/기숙사분류 시작 <유저> · 결정 <유저> <p_TD> · 현황 · 허용치 <0~1000000>");return true;
+        }catch(SortingInput input){sortFail(sender,input.getMessage(),null);return true;}
+        catch(Exception error){sortFail(sender,"명령어 사용에 실패했습니다",error);return true;}
+        sortFail(sender,"/기숙사분류 시작 <유저> · 결정 <유저> <p_TD> · 현황 · 허용치 <0~1000000>",null);return true;
+    }
+    private void assigned(CommandSender sender,UUID id){
+        try{DiscoveryLink.signal(id,"dormitory.assigned",1);}catch(RuntimeException error){sortFail(sender,"소속은 저장됐지만 배정 신호 처리에 실패했어요",error);}
+    }
+    /** 권한·스탯 소속을 DB 로 옮기고 그 기숙사의 결과 발표를 띄운다. */
+    private void adopt(CommandSender sender,Player player,int house){
+        UUID id=player.getUniqueId();
+        work(()->store.adoptHouse(id,house),result->{
+            if(result.created())assigned(sender,id);
+            reply(player,new Request(SchoolProtocol.IDENTITY,0,0,""),"");
+            sortingDialogue(sender,player,"ch1-14r-"+HouseSorting.IDS.get(result.house()),true);
+        },failTo(sender));
     }
     private void sortingDialogue(CommandSender sender,Player player,String dialogue,boolean saved){
-        String state=saved?"소속은 저장되어 있습니다. 결정 명령을 다시 실행하면 기존 소속으로 결과 대사를 재시도합니다.":"";
-        if(!player.isOnline()){sender.sendMessage("유저가 접속을 종료하여 대사를 실행하지 못했습니다. "+state);return;}
-        try{if(!Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"대화관리 재생 "+player.getName()+" 대화 "+dialogue))sender.sendMessage("스토리 명령을 실행하지 못했습니다. "+state);}
-        catch(RuntimeException error){plugin.getLogger().warning("기숙사 대사 실행 실패: "+error);sender.sendMessage("기숙사 대사를 실행하지 못했습니다. "+state);}
+        String state=saved?" (소속은 저장돼 있어요. 결정 명령을 다시 실행하면 기존 소속으로 결과 대사를 다시 띄워요)":"";
+        if(!player.isOnline()){sortFail(sender,"유저가 접속을 종료해 대사를 띄우지 못했어요"+state,null);return;}
+        try{if(!Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"대화관리 재생 "+player.getName()+" 대화 "+dialogue))sortFail(sender,"스토리 명령을 실행하지 못했어요"+state,null);}
+        catch(RuntimeException error){sortFail(sender,"기숙사 대사를 띄우지 못했어요"+state,error);}
     }
     private List<String> sortingTabs(CommandSender sender,String[] a){
         if(!sortingAdmin(sender)||a.length==0)return List.of();Collection<String> choices=List.of();
@@ -191,7 +229,7 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
         try{return resolveDonation(ctx.getArgument("마법",String.class));}catch(IllegalArgumentException e){throw ChacaApi.error(e.getMessage());}
     }
     /** work() 실패 문구는 이미 유저용(기술 원인은 콘솔에 남김). */
-    private Consumer<String> failTo(CommandSender sender){return m->ChacaApi.fail(sender,m==null||m.isBlank()?"명령어 사용에 실패했습니다":m,null);}
+    private Consumer<String> failTo(CommandSender sender){return m->sortFail(sender,m==null||m.isBlank()?"명령어 사용에 실패했습니다":m,null);}
     private void score(CommandSender sender,int h,String action,long value){
         long delta=action.equals("빼기")?-value:value;boolean set=action.equals("설정");
         work(()->{store.change(h,delta,set);return true;},v->ChacaApi.ok(sender,SchoolProtocol.HOUSES.get(h)+" 점수 "+data.scores().get(h)+"점"),failTo(sender));
@@ -215,13 +253,23 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
                 if(rows.isEmpty())rows.add(" 기증한 마법이 없어요");
                 CodexCommands.lines(CodexCommands.sender(ctx),"── "+ChacaApi.name(id)+" 님의 학교 기증 ──",rows);return Command.SINGLE_SUCCESS;
             }))
+            // /유저관리 <닉네임> 기숙사 초기화 확인: DB 소속·미리 정함 표시 지우기 (테스트 계정이 인원 집계에 남지 않게)
+            .then(CodexCommands.confirmed(Commands.literal("초기화"),ctx->{
+                UUID id=ChacaApi.target(ctx);var sender=CodexCommands.sender(ctx);
+                work(()->store.clearHouse(id),had->{
+                    Player online=Bukkit.getPlayer(id);if(online!=null)reply(online,new Request(SchoolProtocol.IDENTITY,0,0,""),"");
+                    if(!had){ChacaApi.fail(sender,ChacaApi.name(id)+" 님은 DB에 저장된 기숙사가 없어요",null);return;}
+                    int outside=online==null?-1:outsideHouse(online);
+                    ChacaApi.ok(sender,ChacaApi.name(id)+" 님의 기숙사 소속을 지웠어요"+(outside>=0?" · 권한/스탯 기숙사("+SchoolProtocol.HOUSES.get(outside)+")는 그대로라 따로 지워야 해요":"")+" · 스토리 단계는 그대로예요");
+                },failTo(sender));return Command.SINGLE_SUCCESS;
+            }))
             .then(Commands.argument("기숙사",ChacaApi.word(()->SchoolProtocol.HOUSES)).executes(ctx->{
                 UUID id=ChacaApi.target(ctx);int h=house(ctx,"기숙사");var sender=CodexCommands.sender(ctx);
-                work(()->{store.house(id,h);return true;},ok->{
+                work(()->{store.presetHouse(id,h);return true;},ok->{
                     DiscoveryLink.signal(id,"dormitory.assigned",1);Player online=Bukkit.getPlayer(id);if(online!=null)reply(online,new Request(SchoolProtocol.IDENTITY,0,0,""),"");
-                    ChacaApi.ok(sender,ChacaApi.name(id)+" 님의 기숙사를 "+SchoolProtocol.HOUSES.get(h)+"(으)로 정했어요");
+                    ChacaApi.ok(sender,ChacaApi.name(id)+" 님의 기숙사를 "+SchoolProtocol.HOUSES.get(h)+"(으)로 미리 정했어요 (분류 거울에서 창시자 연출)");
                 },failTo(sender));return Command.SINGLE_SUCCESS;
-            })),"소속 기숙사 정하기·기증 기록 보기","기숙사 루미나");
+            })),"소속 기숙사 미리 정하기·초기화·기증 기록 보기","기숙사 루미나");
 
         // /기숙사관리 점수 [<기숙사> <보기|설정|추가|빼기> [값]]
         var houseArg=Commands.argument("기숙사",ChacaApi.word(()->SchoolProtocol.HOUSES))

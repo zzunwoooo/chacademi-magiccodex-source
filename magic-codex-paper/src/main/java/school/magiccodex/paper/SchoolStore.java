@@ -17,12 +17,12 @@ final class SchoolStore implements AutoCloseable {
     private final ConnectionHolder holder;
     private Connection db()throws SQLException{return holder.get();}
     private final boolean maria;
-    private final String points,donations,houses,policy;
+    private final String points,donations,houses,policy,presets;
     static final class DonationBlocked extends SQLException {DonationBlocked(){super("Donation is blocked by administrator policy");}}
     SchoolStore(Path file)throws Exception{this(file,new DatabaseSettings(false,"","",""));}
     SchoolStore(Path file,DatabaseSettings settings)throws Exception{
         maria=settings.mariaDb();points=settings.table("house_points","house_points");donations=settings.table("donations","donations");houses=settings.table("houses","houses");
-        policy=settings.table("donation_policy","donation_policy");
+        policy=settings.table("donation_policy","donation_policy");presets=settings.table("house_presets","house_presets");
         holder=settings.holder(file);
         try(var s=db().createStatement()){
             s.execute("CREATE TABLE IF NOT EXISTS "+policy+"(spell VARCHAR(64) PRIMARY KEY,blocked INT NOT NULL DEFAULT 0)"+(maria?" ENGINE=InnoDB DEFAULT CHARSET=utf8mb4":""));
@@ -35,6 +35,8 @@ final class SchoolStore implements AutoCloseable {
                 s.execute("CREATE TABLE IF NOT EXISTS donations(spell TEXT PRIMARY KEY,spell_name TEXT NOT NULL,donor TEXT NOT NULL,nickname TEXT NOT NULL,house INTEGER NOT NULL,created INTEGER NOT NULL)");
                 s.execute("CREATE TABLE IF NOT EXISTS houses(player TEXT PRIMARY KEY,house INTEGER NOT NULL)");
             }
+            // 관리자가 미리 정한 소속 (/유저관리 <닉네임> 기숙사 <기숙사>). 이 표에 있는 유저만 분류 거울의 창시자 연출(ch1-14f-)을 본다.
+            s.execute("CREATE TABLE IF NOT EXISTS "+presets+"(player "+(maria?"CHAR(36)":"TEXT")+" PRIMARY KEY)"+(maria?" ENGINE=InnoDB":""));
             s.execute("CREATE TABLE IF NOT EXISTS codex_house_assignment_lock(id INT PRIMARY KEY,revision INT NOT NULL)"+(maria?" ENGINE=InnoDB":""));
             s.execute((maria?"INSERT IGNORE INTO ":"INSERT OR IGNORE INTO ")+"codex_house_assignment_lock VALUES(1,0)");
             s.execute("CREATE TABLE IF NOT EXISTS codex_quest_house_awards(token VARCHAR(36) PRIMARY KEY,house INT NOT NULL,points BIGINT NOT NULL)"+(maria?" ENGINE=InnoDB":""));
@@ -123,6 +125,38 @@ final class SchoolStore implements AutoCloseable {
             if(existing!=null){db().commit();return new Assignment(existing,preferred,false);}
             int chosen=HouseSorting.choose(t,d,houseCounts(),tolerance);
             writeHouse(id,chosen);db().commit();return new Assignment(chosen,preferred,true);
+        }catch(SQLException|RuntimeException error){holder.rollback();throw error;}finally{holder.end();}
+    }
+    /** 분류 시작 판단용: DB 소속과 "관리자가 미리 정함" 표시. */
+    record Start(Integer house,boolean preset) {}
+    Start sortingStart(UUID id)throws SQLException{
+        Integer h=savedHouse(id);if(h==null)return new Start(null,false);
+        try(var q=db().prepareStatement("SELECT 1 FROM "+presets+" WHERE player=?")){q.setString(1,id.toString());try(var r=q.executeQuery()){return new Start(h,r.next());}}
+    }
+    /** 관리자가 미리 정함: 소속 저장과 미리 정함 표시를 한 트랜잭션에. */
+    void presetHouse(UUID id,int house)throws SQLException{
+        if(house<0||house>3)throw new IllegalArgumentException("House");
+        holder.begin();try{lockHouses();writeHouse(id,house);
+            try(var s=db().prepareStatement((maria?"INSERT IGNORE INTO ":"INSERT OR IGNORE INTO ")+presets+"(player) VALUES(?)")){s.setString(1,id.toString());s.executeUpdate();}
+            db().commit();}
+        catch(SQLException|RuntimeException error){holder.rollback();throw error;}finally{holder.end();}
+    }
+    /** 권한·스탯으로만 소속이 있는 유저: 그 소속을 DB 에 그대로 옮긴다 (다른 기숙사로 다시 분류하지 않음). 이미 DB 소속이 있으면 그것. */
+    Assignment adoptHouse(UUID id,int house)throws SQLException{
+        if(house<0||house>3)throw new IllegalArgumentException("House");
+        holder.begin();try{
+            lockHouses();Integer existing=savedHouse(id);
+            if(existing!=null){db().commit();return new Assignment(existing,existing,false);}
+            writeHouse(id,house);db().commit();return new Assignment(house,house,true);
+        }catch(SQLException|RuntimeException error){holder.rollback();throw error;}finally{holder.end();}
+    }
+    /** 소속 초기화 (테스트 계정 등): DB 소속과 미리 정함 표시를 지운다. 지운 소속이 있으면 true. */
+    boolean clearHouse(UUID id)throws SQLException{
+        holder.begin();try{
+            lockHouses();int n;
+            try(var s=db().prepareStatement("DELETE FROM "+houses+" WHERE player=?")){s.setString(1,id.toString());n=s.executeUpdate();}
+            try(var s=db().prepareStatement("DELETE FROM "+presets+" WHERE player=?")){s.setString(1,id.toString());s.executeUpdate();}
+            db().commit();return n>0;
         }catch(SQLException|RuntimeException error){holder.rollback();throw error;}finally{holder.end();}
     }
     void house(UUID id,int house)throws SQLException{
