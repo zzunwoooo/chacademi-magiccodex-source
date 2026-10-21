@@ -192,8 +192,9 @@ final class KyudichiQueue {
             if (pendingPractice.contains(m)) { host.notice(p, host.name(m) + " 님이 연습장으로 가는 중이에요."); return; }
         }
         joining.addAll(members);
-        db.standings(members, KyudichiDb.mode(md), standings -> host.enqueue(() -> {
+        db.rankedStandings(members, KyudichiDb.mode(md), standings -> host.enqueue(() -> {
             joining.removeAll(members);
+            if (standings == null) { sayAll(members, modeName(md) + " 매칭을 지금 신청할 수 없어요 (레이팅 정보를 불러오지 못했어요). 관리자에게 알려 주세요."); return; }
             long now = System.currentTimeMillis();
             for (UUID m : members) {
                 var st = standings.get(m);
@@ -385,11 +386,21 @@ final class KyudichiQueue {
         playing.remove(id); pendingSpectate.remove(id); pendingPractice.remove(id);
         String to = origin.remove(id);
         Player p = online(id); if (p == null || !onArena(p)) return;
-        var server = proxy.getServer(to != null && !to.equals(arenaServer) ? to : fallbackServer).orElse(null);
-        if (server == null) { host.notice(p, "돌아갈 서버를 찾을 수 없어요."); return; }
+        String home = to != null && !to.equals(arenaServer) ? to : fallbackServer;
+        // origin server, once more 2 s later, then the fallback (lobby) server — one failed connect never leaves them on the arena
+        connectHome(p, home.equals(fallbackServer) ? List.of(home, home) : List.of(home, home, fallbackServer), 0);
+    }
+
+    private void connectHome(Player p, List<String> targets, int i) {
+        if (online(p.getUniqueId()) != p || !onArena(p)) return;
+        if (i >= targets.size()) { host.notice(p, "원래 서버로 돌아가지 못했어요. /서버 로 이동해 주세요."); return; }
+        String name = targets.get(i);
+        var server = proxy.getServer(name).orElse(null);
+        if (server == null) { log.warn("큐디치 복귀: 서버 " + name + " 를 찾을 수 없어요 (" + p.getUsername() + ")"); connectHome(p, targets, i + 1); return; }
         p.createConnectionRequest(server).connect().whenComplete((r, err) -> host.enqueue(() -> {
             if (err == null && r.isSuccessful()) { toClient(p, idle()); return; }
-            host.notice(p, "원래 서버로 돌아가지 못했어요. /서버 로 이동해 주세요.");
+            log.warn("큐디치 복귀 실패 (" + name + "): " + p.getUsername() + (err != null ? " " + err : " " + r.getStatus()));
+            proxy.getScheduler().buildTask(plugin, () -> host.enqueue(() -> connectHome(p, targets, i + 1))).delay(2, TimeUnit.SECONDS).schedule();
         }));
     }
 

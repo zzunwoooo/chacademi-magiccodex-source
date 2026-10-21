@@ -53,13 +53,20 @@ final class KyudichiDb {
             try {
                 var s = DatabaseSettings.load(file);
                 log.info(DatabaseSettings.describe(file, s));
-                if (!s.mariaDb()) { log.warn("큐디치: MariaDB 설정이 없어 레이팅 없이(모두 " + start + ") 매칭합니다. 경기장 서버와 같은 DB를 " + file.getFileName() + " 에 넣으세요."); return; }
+                if (!s.mariaDb()) {
+                    // 2026-10-21: no silent 1000-for-everyone matching (bans were skipped too) — ranked sign-up is refused until this is fixed
+                    log.error("==================================================================");
+                    log.error("큐디치: " + file.getFileName() + " 에 MariaDB 설정이 없어요. 레이팅·신청 금지를 읽을 수 없어 큐디치·1:1 랭크 매칭 신청을 막습니다.");
+                    log.error("경기장 서버 plugins/ChacaKyudichi/database.properties 와 같은 MariaDB를 넣고 Velocity를 재시작하세요.");
+                    log.error("==================================================================");
+                    return;
+                }
                 db = s.holder(file.resolveSibling("unused.db"));
                 table = s.table("kyudichi_rating", "kyudichi_rating");
                 matches = s.table("kyudichi_match", "kyudichi_match");
                 players = s.table("kyudichi_match_player", "kyudichi_match_player");
                 seasons = s.table("kyudichi_season", "kyudichi_season");
-            } catch (Exception e) { log.error("큐디치 DB 연결 실패: 레이팅 없이 매칭합니다", e); db = null; }
+            } catch (Exception e) { log.error("큐디치 DB 연결 실패: 랭크 매칭 신청을 막습니다 (로비·랭킹은 빈 화면)", e); db = null; }
         });
     }
     void close() { io.shutdown(); try { if (db != null) db.close(); } catch (Exception ignored) { } }
@@ -97,6 +104,20 @@ final class KyudichiDb {
             }
         }
         return out;
+    }
+
+    /**
+     * Ranked sign-up: the real ratings and bans, or null when they cannot be read (no shared MariaDB, or a read error) —
+     * never the start-rating fallback, which would match everyone at the start rating and skip bans. Callback on the DB thread.
+     */
+    void rankedStandings(List<UUID> ids, String mode, Consumer<Map<UUID, Standing>> done) {
+        io.execute(() -> {
+            Map<UUID, Standing> v = null;
+            if (db == null) log.error("큐디치 랭크 매칭 신청 거절: 레이팅 DB(MariaDB)가 연결돼 있지 않아요 (kyudichi-database.properties 확인)");
+            else try { v = standings(db.get(), ids, mode); }
+            catch (SQLException | RuntimeException e) { log.error("큐디치 랭크 매칭 신청 거절: 레이팅 DB 읽기 실패 " + e.getMessage()); }
+            done.accept(v);
+        });
     }
 
     /** 로비: standings of `ids` in both modes ([0] 큐디치, [1] 1:1) and both seasons. */
