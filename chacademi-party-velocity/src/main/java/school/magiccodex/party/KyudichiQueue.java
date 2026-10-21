@@ -131,6 +131,10 @@ final class KyudichiQueue {
     private Player online(UUID id) { return proxy.getPlayer(id).orElse(null); }
     private String serverOf(Player p) { return p.getCurrentServer().map(s -> s.getServerInfo().getName()).orElse(""); }
     private boolean onArena(Player p) { return serverOf(p).equals(arenaServer); }
+    /** C12 (2026-10-21): on the arena server but not a match participant (spectator · practice). Worker thread. */
+    boolean arenaBystander(Player p) { return onArena(p) && !playing.containsKey(p.getUniqueId()); }
+    /** A participant of an assigned match (any server). Worker thread. */
+    boolean inMatch(UUID id) { return playing.containsKey(id); }
     private void say(UUID id, String text) { var p = online(id); if (p != null) host.notice(p, text); }
     private void sayAll(List<UUID> ids, String text) { for (UUID id : ids) say(id, text); }
     private void toClient(Player p, ToClient m) { if (modded.contains(p.getUniqueId())) p.sendPluginMessage(QUEUE, KyudichiQueueProtocol.encode(m)); }

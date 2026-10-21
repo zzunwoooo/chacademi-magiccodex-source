@@ -101,6 +101,8 @@ public final class PartyPlugin {
             @Override public List<String> onlineNames(){return onlineNames;}
         },this);
         try{kyudichi.initialize(directory);}catch(RuntimeException e){logger.error("Kyudichi queue initialization failed; queue unavailable",e);}
+        // C12: 통합 채팅 뮤트는 Velocity 권한 chacademi.chat.muted 뿐 — 권한 플러그인이 없으면 아무도 뮤트되지 않는다
+        if(!proxy.getPluginManager().isLoaded("luckperms"))logger.warn("Velocity 에 LuckPerms 가 없어 통합 채팅(전체·기숙사) 뮤트 권한 chacademi.chat.muted 가 동작하지 않습니다");
     }
     @Subscribe public void shutdown(ProxyShutdownEvent event){
         ready=false;if(kyudichi!=null)kyudichi.shutdown();worker.shutdown();try{if(!worker.awaitTermination(10,TimeUnit.SECONDS))logger.warn("Party worker still draining during shutdown");}catch(InterruptedException e){Thread.currentThread().interrupt();}
@@ -299,19 +301,23 @@ public final class PartyPlugin {
         var online=onlineConnections();var sender=network.sender(actor,online,now);var recipients=network.recipients(channel,actor,online,now);
         NetworkChat.claimChat(nextChat,actor,now);
         String tag=channel==NetworkChat.Channel.GLOBAL?"[전체] ":"[기숙사] ";
+        // C12: this chat never passes the Paper chat event, so the arena's spectator isolation is applied here —
+        // a spectator (on the arena, not in a match) does not reach players who are in a match; and every message is logged on the proxy.
+        boolean bystander=kyudichi!=null&&kyudichi.arenaBystander(player);
+        logger.info("[통합채팅] "+tag.strip()+" "+sender.nickname()+" ("+player.getUsername()+") @"+sender.server()+(bystander?" 관전/연습":"")+": "+text);
         var message=Component.text(tag,NamedTextColor.AQUA)
                 .append(sender.server().equals(schoolServer)?icon("\uE114"):sender.server().equals(wildServer)?icon("\uE115"):Component.text("[아레나]",NamedTextColor.GRAY))
                 .append(Component.text(" ")).append(icon(channel==NetworkChat.Channel.GLOBAL?"\uE110":"\uE111"))
                 .append(Component.text(" "+sender.nickname()+" : ",NamedTextColor.AQUA))
                 .append(Component.text(text,NamedTextColor.WHITE));
-        for(UUID id:recipients)proxy.getPlayer(id).ifPresent(target->{
+        for(UUID id:recipients){if(bystander&&!id.equals(actor)&&kyudichi.inMatch(id))continue;proxy.getPlayer(id).ifPresent(target->{
             // A transfer during audience construction must not leak a house message to the new connection.
             var original=online.get(id);long deliveryNow=System.currentTimeMillis();
             if(original==null||target.getCurrentServer().orElse(null)!=original.source()||player.getCurrentServer().orElse(null)!=sender.source())return;
             var currentSender=network.identity(actor,sender.source(),deliveryNow);if(currentSender==null)return;
             if(channel==NetworkChat.Channel.HOUSE){var currentTarget=network.identity(id,original.source(),deliveryNow);if(currentTarget==null||currentSender.house()<0||currentTarget.house()!=currentSender.house())return;}
             target.sendMessage(message);
-        });
+        });}
     }
 
     // ---------- 관리 요청 (경기장 서버 /유저관리 <닉네임> 파티 …, KyudichiQueue 를 거쳐 작업 스레드에서) ----------
