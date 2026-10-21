@@ -51,7 +51,7 @@ class TargetHudAimTest {
  Object look(Scene s,TargetHudProtocol.Aim ray,long tick)throws Exception{
   TargetHudBridge hud=mock(TargetHudBridge.class,CALLS_REAL_METHODS);Map<UUID,Object> aims=new HashMap<>();
   if(ray!=null){Class<?> c=Class.forName(TargetHudBridge.class.getName()+"$Aim");Constructor<?> ctor=c.getDeclaredConstructors()[0];ctor.setAccessible(true);aims.put(s.player().getUniqueId(),ctor.newInstance(ray,tick));}
-  for(var pair:Map.of("aims",(Object)aims,"taming",s.taming()).entrySet()){Field f=TargetHudBridge.class.getDeclaredField(pair.getKey());f.setAccessible(true);f.set(hud,pair.getValue());}
+  for(var pair:Map.of("aims",(Object)aims,"taming",s.taming(),"looked",new HashMap<>()).entrySet()){Field f=TargetHudBridge.class.getDeclaredField(pair.getKey());f.setAccessible(true);f.set(hud,pair.getValue());}
   Method look=TargetHudBridge.class.getDeclaredMethod("look",Player.class);look.setAccessible(true);
   try(var ignored=mockStatic(Bukkit.class)){when(Bukkit.getCurrentTick()).thenReturn(100);return look.invoke(hud,s.player());}
  }

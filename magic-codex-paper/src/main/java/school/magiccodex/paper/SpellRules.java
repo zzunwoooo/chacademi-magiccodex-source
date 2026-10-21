@@ -7,7 +7,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 /** Operator-owned runtime routes. No arbitrary command or client-supplied statistic is accepted. */
 final class SpellRules {
     enum Target {SELF, AIM, ENTITY, AIR_ENTITY, BURNING_ENTITY, BLOCK}
-    record Rule(String id,String name,String skill,Target target,boolean utility,int range,double base,double ratio){
+    /** ground = an area/point/wall spell placed on the ground (spells.py; 1-6 #6): range is horizontal, the point drops onto the ground. */
+    record Rule(String id,String name,String skill,Target target,boolean utility,int range,double base,double ratio,boolean ground){
+        Rule(String id,String name,String skill,Target target,boolean utility,int range,double base,double ratio){this(id,name,skill,target,utility,range,base,ratio,false);}
         double damage(double power){return Math.clamp(base+ratio*Math.clamp(power,0,1_000_000),0,1_000_000);}
     }
     static Map<String,Rule> load(File file)throws Exception {
@@ -21,7 +23,7 @@ final class SpellRules {
             var target=Target.valueOf(s.getString("target","SELF"));int range=s.getInt("range",24);
             double base=s.getDouble("base-damage",0),ratio=s.getDouble("power-ratio",0);
             if(range<1||range>48||!Double.isFinite(base)||!Double.isFinite(ratio)||base<0||base>10000||ratio<0||ratio>100)throw new IllegalArgumentException(id+" 수치");
-            result.put(id,new Rule(id,name,skill,target,s.getBoolean("utility",false),range,base,ratio));
+            result.put(id,new Rule(id,name,skill,target,s.getBoolean("utility",false),range,base,ratio,target==Target.AIM&&s.getBoolean("ground",false)));
         }
         return Collections.unmodifiableMap(result);
     }

@@ -179,5 +179,28 @@ final class Hooks {
     }
     interface HealHandler { void heal(LivingEntity caster, Player target, double amount, java.util.function.DoubleConsumer setAmount); }
 
+    /**
+     * C03 (owner decision 7): MagicMythic asks "are these two players on the same side?" (MagicAllyEvent). During a match
+     * the match team answers (party ignored); outside matches this plugin stays silent and the party decides.
+     */
+    void listenAlly(Listener owner, AllyHandler handler) {
+        Plugin m = Bukkit.getPluginManager().getPlugin("ChAcademiaMagicMythic");
+        if (m == null) { warnOnce("ally", "ChAcademiaMagicMythic 없음: 경기 팀 아군 판정 안 됨"); return; }
+        try {
+            @SuppressWarnings("unchecked")
+            Class<? extends Event> type = (Class<? extends Event>) Class.forName("school.chacademia.magicmythic.MagicAllyEvent", true, m.getClass().getClassLoader());
+            Method first = type.getMethod("getFirst"), second = type.getMethod("getSecond"), set = type.getMethod("setAlly", boolean.class);
+            Bukkit.getPluginManager().registerEvent(type, owner, EventPriority.NORMAL, (l, e) -> {
+                if (!type.isInstance(e)) return;
+                try {
+                    Boolean ally = handler.ally((Player) first.invoke(e), (Player) second.invoke(e));
+                    if (ally != null) set.invoke(e, ally.booleanValue());
+                } catch (ReflectiveOperationException | RuntimeException ex) { warnOnce("ally-run", "아군 판정 이벤트 처리 실패: " + ex); }
+            }, plugin, false);
+        } catch (ReflectiveOperationException | RuntimeException | LinkageError e) { warnOnce("ally-reg", "MagicAllyEvent 연결 실패 (MagicMythic 업데이트 필요): " + e); }
+    }
+    /** null = not a match question (let the party decide). */
+    interface AllyHandler { Boolean ally(Player first, Player second); }
+
     static boolean isOurs(org.bukkit.entity.Entity e) { return e.getScoreboardTags().contains(BallVisual.TAG); }
 }

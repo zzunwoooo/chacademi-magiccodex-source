@@ -47,7 +47,7 @@ S = [
  ('fire_curtain','CHA_fire_curtain','AIM',12,2,0.12,False,['chazone{wall=6;r=1.5;ticks=100;period=10;ignite=40}'],'폭 6블록 화염벽 5초'),
  ('phoenix_oath','CHA_phoenix_oath','SELF',12,0,0,False,['chaguard{type=lethal;ticks=6000;heal=6} @self'],'300초 동안 치명상 1회 무효'),
  U('living_furnace'),
- ('falling_star','CHA_falling_star','AIM',20,14,0.9,False,['delay 25','chahit{r=4;max=12;knock=0.8;up=0.4;ignite=60}'],'운석 낙하 반경 4블록'),
+ ('falling_star','CHA_falling_star','AIM',20,14,0.9,False,['chameteor{r=4;max=12;knock=0.8;up=0.4;ignite=60;charge=68;speed=0.6;skyx=-3;skyy=24;skyz=19}'],'운석 낙하 반경 4블록 (A16: 서버가 착지 틱에 한 번 피해, charge/speed/sky 는 spell-bindings 운석 단계와 같아야 함)'),
  ('flame_lash','CHA_flame_lash','ENTITY',8,6,0.5,False,['chahit{pull=1.4;ignite=40}'],'끌어당기며 피해'),
  ('cinder_detonation','CHA_cinder_detonation','BURNING_ENTITY',18,8,0.6,False,['chahit{r=3;max=6;ignite=60}'],'(기존 라우트 유지) 불타는 대상 폭발'),
  ('palm_fireworks','CHA_palm_fireworks','SELF',12,0,0,False,['chanote{n=1} @self'],'장식 마법, 게임 효과 없음'),
@@ -241,6 +241,9 @@ def main():
         out.append('')
         rt += [f'  {i}:', f'    name: "{name}"', f'    skill: "{sk}"', f'    target: "{tgt}"', f'    range: {rng}',
                f'    utility: {"true" if util else "false"}', f'    base-damage: {base}', f'    power-ratio: {ratio}']
+        # 1-6 #6: ground zones (same shapes the client snaps to the ground) - horizontal range, dropped onto the ground
+        shape = aim_shape((i, sk, tgt, rng, base, ratio, util, lines, note)) if tgt == 'AIM' else None
+        if shape and shape['mode'] in ('area', 'point', 'wall'): rt.append('    ground: true')
     for sk, (owner, lines, note) in EXTRA.items():
         cat = D.get(owner, {}).get('category', '')
         lines = [l.replace('}', f';element={cat};spell={owner}}}', 1) if l.startswith(('chahit{', 'chabolt{', 'chazone{')) else l for l in lines]
@@ -283,7 +286,7 @@ def aim_shape(spec):
         if first and 'r' in _params(first): d['radius'] = float(_params(first)['r'])
         return d
     if tgt == 'BLOCK': return {'mode': 'point', 'range': rng, 'radius': 0.6}
-    first = next((l for l in lines if l.startswith(('chahit{', 'chabolt{', 'chazone{', 'chaworld{', 'chafarm{', 'chautil{', 'chasummon{', 'chachannel{', 'chatelegraph{', 'chamobshot{'))), None)
+    first = next((l for l in lines if l.startswith(('chahit{', 'chameteor{', 'chabolt{', 'chazone{', 'chaworld{', 'chafarm{', 'chautil{', 'chasummon{', 'chachannel{', 'chatelegraph{', 'chamobshot{'))), None)
     if first is None: return {'mode': 'point', 'range': rng, 'radius': 0.6}
     if first.startswith('chamobshot{'):
         q = _params(first)

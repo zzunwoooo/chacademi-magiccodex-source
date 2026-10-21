@@ -115,19 +115,30 @@ final class BoltMech extends Mech {
             return advance(dir, speed, true);
         }
 
-        /** along 방향으로 distance 만큼 0.4블록씩 나아가며 판정. false = 투사체 끝. */
+        /**
+         * along 방향으로 정확히 distance 만큼, 0.4블록 이하의 같은 간격으로 나눠 나아가며 판정 (A04). false = 투사체 끝.
+         * 블록은 칸 전체가 아니라 실제 충돌 모양으로 막힌다: 반블록·계단·울타리·판유리 위 빈 공간은 지나간다.
+         */
         private boolean advance(Vector along, double distance, boolean counts) {
-            double step = 0.4;
-            for (double moved = 0; moved < distance; moved += step) {
+            int n = Geometry.steps(distance);
+            double step = distance / n;
+            for (int i = 0; i < n; i++) {
+                Location prev = pos.clone();
                 pos.add(along.clone().multiply(step));
                 if (counts) travelled += step;
                 if(!plugin.protection().pair(c.caster(),pos))return false;
                 if (!pos.getWorld().isChunkLoaded(pos.getBlockX() >> 4, pos.getBlockZ() >> 4)) return false;
-                Block b = pos.getBlock();
-                if (!b.isPassable()) {
+                var wall = pos.getWorld().rayTraceBlocks(prev, along, step, FluidCollisionMode.NEVER, true);
+                Block b = wall == null ? null : wall.getHitBlock();
+                if (b != null) {
                     if (breaks.contains(b.getType().name()) && c.caster() instanceof Player pl && Targets.canBreak(pl, b)) {
                         b.breakNaturally();
-                    } else if (!turnBack()) { vfx(p.s("missevent", "external:block_contact"), pos, null); burst(); return false; } else continue;
+                    } else if (!turnBack()) {
+                        // stop on the block's surface (not inside it) so the end burst and VFX start where it touched
+                        var at = wall.getHitPosition().subtract(along.clone().multiply(0.05));
+                        pos.setX(at.getX()); pos.setY(at.getY()); pos.setZ(at.getZ());
+                        vfx(p.s("missevent", "external:block_contact"), pos, null); burst(); return false;
+                    } else continue;
                 }
                 if (!MagicImpactEvent.fire(c.caster(), p.s("element", ""), pos, radius, MagicImpactEvent.Kind.BOLT)) { burst(); return false; }
                 for (Entity e : pos.getWorld().getNearbyEntities(pos, radius + 1, radius + 1, radius + 1)) {

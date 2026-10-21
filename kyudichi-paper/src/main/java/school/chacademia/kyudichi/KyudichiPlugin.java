@@ -43,7 +43,7 @@ public final class KyudichiPlugin extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(listener, this);
         Bukkit.getPluginManager().registerEvents(selections, this);
         // Bridge / MagicMythic events after every plugin is enabled
-        Bukkit.getScheduler().runTask(this, () -> { listener.hookBridge(); listener.hookHeal(); });
+        Bukkit.getScheduler().runTask(this, () -> { listener.hookBridge(); listener.hookHeal(); listener.hookAlly(); });
         registerCommands();
         matches.startTicking();
         Bukkit.getScheduler().runTaskTimer(this, () -> { selections.tick(); spectate.tick(); }, 10, 10);

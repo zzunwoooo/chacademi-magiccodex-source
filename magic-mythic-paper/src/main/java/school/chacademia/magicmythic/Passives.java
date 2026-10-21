@@ -204,7 +204,7 @@ final class Passives implements Listener {
     private void explode(Player p, Location at, ConfigurationSection c) {
         if (!plugin.protection().pair(p, at)) return;
         double r = c.getDouble("radius", 1.5), dmg = damage(p, c);
-        MagicImpactEvent.fire(p, "fire", at, r, MagicImpactEvent.Kind.HIT);
+        MagicImpactEvent.fire(p, "fire", at, r, MagicImpactEvent.Kind.HIT); // result unused: a passive needs no cast success (HIT contract)
         Links.vfx(p, "flame_footprints", "external:explode", at, null);
         for (LivingEntity t : plugin.targets().enemiesNear(p, at, r, 8)) {
             if (plugin.targets().hurt(p, t, dmg)) {

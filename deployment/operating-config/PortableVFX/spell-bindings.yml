@@ -1530,7 +1530,7 @@ bindings:
           - claude:fallingstar/chant
       - role: impact
         follow-entity: false
-        trigger: impact
+        trigger: external:impact
         effect: claude:fallingstar/impact
         anchor: impact
         delay-ticks: 0
@@ -1540,7 +1540,7 @@ bindings:
           - claude:fallingstar/mark
       - role: static
         follow-entity: false
-        trigger: impact
+        trigger: external:impact
         effect: claude:fallingstar/afterglow
         anchor: impact
         delay-ticks: 16

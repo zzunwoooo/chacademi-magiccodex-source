@@ -38,8 +38,9 @@ final class HitMech extends Mech {
         else hits = targets.enemiesNear(c.caster(), center, r, p.i("max", 16));
         if (p.b("undead", false)) hits = hits.stream().filter(Targets::undead).toList();
         Location impactAt = cone > 0 ? c.caster().getEyeLocation().add(c.caster().getEyeLocation().getDirection().multiply(r / 2)) : center;
-        boolean gimmick = MagicImpactEvent.fire(c.caster(), p.s("element", ""), impactAt, Math.max(cone > 0 ? r / 2 : r, 0.8), MagicImpactEvent.Kind.HIT);
-        if (hits.isEmpty()) return !gimmick; // a cancelled impact (gimmick took it) still counts as a successful hit
+        boolean consumed = !MagicImpactEvent.fire(c.caster(), p.s("element", ""), impactAt, Math.max(cone > 0 ? r / 2 : r, 0.8), MagicImpactEvent.Kind.HIT);
+        if (hits.isEmpty()) return result(true, consumed); // a consumed impact (gimmick took it) still counts as a successful hit
+        // HIT cancel contract (MagicImpactEvent): damage below is applied whether or not a gimmick consumed the hit.
         String spell = p.s("spell", "");
         for (LivingEntity t : hits) {
             apply(c, t, center, dmg);
@@ -47,6 +48,9 @@ final class HitMech extends Mech {
         }
         return true;
     }
+
+    /** Cast success for a HIT: something was hit, or a gimmick consumed the impact as an input. */
+    static boolean result(boolean hitsEmpty, boolean consumed) { return !hitsEmpty || consumed; }
 
     private List<LivingEntity> inCone(Ctx c, double length, double angle, int max) {
         Location eye = c.caster().getEyeLocation();

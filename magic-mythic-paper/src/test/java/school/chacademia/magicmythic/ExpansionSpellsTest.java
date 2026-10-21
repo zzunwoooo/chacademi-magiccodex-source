@@ -22,7 +22,7 @@ class ExpansionSpellsTest {
         "chaally", Set.of("quench", "cleanse", "share", "potion", "heal", "buff", "feed", "comfort", "dawn", "oath"),
         "chagimmick", Set.of("ignite","extinguish","thaw","steam","level","weight","grow","beam","tune","tint","wake","rewind","conduit","mark"),
         "chaarcana", Set.of("double", "echo", "thread", "swap", "contract", "siphon", "drowse", "spread", "discord", "chain", "defer", "ink", "nail", "lullaby", "loosen", "seal", "scales", "cage", "wound", "ghosttool", "bell", "eclipse", "airbrake", "hushed", "thorns", "skipring", "droplet", "tideplane"));
-    static final Set<String> UNTYPED = Set.of("chahit", "chabolt", "chazone", "chachannel", "chanote", "chaselfpotion", "chaselfvelocity", "chamobshot", "chatelegraph");
+    static final Set<String> UNTYPED = Set.of("chahit", "chameteor", "chabolt", "chazone", "chachannel", "chanote", "chaselfpotion", "chaselfvelocity", "chamobshot", "chatelegraph");
 
     @Test void everyGeneratedLineUsesAnImplementedMechanic() throws Exception {
         var yaml = YamlConfiguration.loadConfiguration(Path.of("mythicmobs/Skills/chacademi_spells.yml").toFile());

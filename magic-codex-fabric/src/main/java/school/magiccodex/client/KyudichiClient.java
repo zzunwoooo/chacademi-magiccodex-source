@@ -130,6 +130,14 @@ public final class KyudichiClient {
     static boolean duel() { return match != null && (match.flags() & 16) != 0 && Util.getMeasuringTimeMs() - matchAt < 4000; }
     static boolean playing() { return active() && match.myTeam() != 2; }
     public static boolean airAim() { return playing(); }
+    /** In a match (playing or spectating): the match HUD knows every player's team. */
+    static boolean inMatch() { return active(); }
+    /** C03: same team as me in the current match (match teams replace the party during a match). */
+    static boolean teammate(UUID id) {
+        if (!playing() || id == null) return false;
+        Integer t = teams.get(id);
+        return t != null && t == match.myTeam();
+    }
 
     private static int lastPhase = -1;
     /** Every client tick: switch the magic bar to the match loadout and open the setup window when a match's preparation starts. */

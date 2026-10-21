@@ -74,6 +74,7 @@ final class Reactions implements Listener, AutoCloseable {
         if (!enabled || applying || caster == null || target == null || !target.isValid() || target.isDead()) return;
         Element element = Element.of(elementId);
         if (element == null) return;
+        if (!plugin.targets().enemy(caster, target)) return; // C03: never mark (or react on) a party member / teammate
         long now = Bukkit.getCurrentTick();
         int ticks = book.markTicks();
         if (caster instanceof Player && MagicMarkEvent.listened() && !book.coolingDown(target.getUniqueId(), now)) {
@@ -150,6 +151,7 @@ final class Reactions implements Listener, AutoCloseable {
             case WILDFIRE -> {
                 vfx.area(reaction, at, wildfireRadius, target, 16);
                 for (LivingEntity t : targets.enemiesNear(caster, at, wildfireRadius, 12)) {
+                    if (!targets.hurt(caster, t, 0)) continue; // C03: same protection probe as other CC (match teams, outsiders)
                     cc(caster, t, BURN, ccTicks, 0, bonus);
                     vfx.body("wildfire_burn", t, 12);
                 }
@@ -197,6 +199,7 @@ final class Reactions implements Listener, AutoCloseable {
                 double r = sandRadius + bonus.radius();
                 vfx.area(reaction, at, r, target, 16);
                 for (LivingEntity t : targets.enemiesNear(caster, at, r, 12)) {
+                    if (!targets.hurt(caster, t, 0)) continue; // C03: no pull/lock on teammates or protected players
                     if (!t.equals(target) && !targets.boss(t) && !t.getScoreboardTags().contains(ANCHOR_TAG)) {
                         Vector v = at.toVector().subtract(t.getLocation().toVector()).setY(0);
                         if (v.lengthSquared() > 0.36) t.setVelocity(v.normalize().multiply(Math.min(0.7, v.length() * 0.3)).setY(0.08));

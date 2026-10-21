@@ -79,6 +79,12 @@ public final class PartyHudClient {
             public void reload(ResourceManager manager){close();}
         });
     }
+    /** C03: the player is in my party (last roster from Velocity, not stale). Aim assist skips party members. */
+    static boolean member(java.util.UUID id){
+        if(id==null||members.isEmpty()||received!=0&&Util.getMeasuringTimeMs()-received>STALE_MILLIS)return false;
+        for(var m:members)if(id.equals(m.id()))return true;
+        return false;
+    }
     private static void receive(List<Member> next){members=next;received=Util.getMeasuringTimeMs();anims.keySet().retainAll(next.stream().map(Member::id).toList());}
     private static void reset(){members=List.of();received=0;anims.clear();gesture=null;close();}
     private static void close(){if(images!=null){images.close();images=null;}if(text!=null){text.close();text=null;}}

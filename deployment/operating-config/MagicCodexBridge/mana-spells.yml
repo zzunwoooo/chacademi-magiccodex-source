@@ -1573,7 +1573,7 @@ spells:
     mana-cost: 110
     cooldown-seconds: 22
   fish_trap:
-    name: 통발
+    name: 아공간 수조
     enabled: true
     command: 마법 fish_trap
     permission: magic.learned.fish_trap
