@@ -27,6 +27,11 @@ class ReadinessUploadTest {
         assertNull(other.accept(u.peek(ids(1245)),3).complete());u.sent();assertEquals(ids(1245),other.accept(u.peek(ids(1245)),4).complete());u.sent();
         u.disconnect();assertFalse(u.hasEpoch());assertNull(u.peek(ids(1)));assertEquals(-1,u.sentCount());
     }
+    @Test void sameEpochAndUnchangedInventoryNeedsNoNewGenerationAfterPeriodicReannounce(){
+        var u=new ReadinessUpload();UUID epoch=UUID.randomUUID();u.epoch(epoch);var ready=ids(1245);
+        while(u.peek(ready)!=null)u.sent();u.epoch(epoch);assertNull(u.peek(ready));assertEquals(1245,u.sentCount());
+        u.epoch(UUID.randomUUID());assertNotNull(u.peek(ready));
+    }
     @Test void rejectedOversizeSnapshotCannotCorruptThePreviousUpload(){
         var u=new ReadinessUpload();u.epoch(UUID.randomUUID());byte[] first=u.peek(ids(1245));
         assertThrows(IllegalArgumentException.class,()->u.peek(ids(4097)));assertSame(first,u.peek(ids(1245)));

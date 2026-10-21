@@ -22,7 +22,16 @@ class ReadinessRelayTest {
         engine.catalogReadyV2(p,frames.get(1));assertFalse(engine.supportsCatalogCast(p));engine.catalogReadyV2(p,frames.get(1));assertFalse(engine.supportsCatalogCast(p));
         engine.catalogReadyV2(p,frames.get(0));assertTrue(engine.supportsCatalogCast(p));assertTrue(engine.catalogDiagnostic(p).contains("received=1245, required=1245, missing=0, ready=true"));
         engine.catalogReady(p,CatalogReadiness.encode(Set.of()));assertTrue(engine.supportsCatalogCast(p));
-        var changed=new HashSet<>(inventory);changed.add("claude:readiness_fixture/additional");engine.catalogReadyV2(p,CatalogReadinessV2.encode(epoch,2,changed).getFirst());assertFalse(engine.supportsCatalogCast(p));
+        var changed=new HashSet<>(inventory);changed.add("claude:readiness_fixture/additional");engine.catalogReadyV2(p,CatalogReadinessV2.encode(epoch,2,changed).getFirst());assertTrue(engine.supportsCatalogCast(p));
+    }
+    @Test void reannouncedGenerationKeepsPreviousReadinessUntilCompleteThenSwaps(){
+        var inventory=ids(1245);engine.catalogRequirements(inventory);UUID p=join(),epoch=engine.catalogEpoch(p);upload(p,epoch,1,inventory);assertTrue(engine.supportsCatalogCast(p));
+        var frames=CatalogReadinessV2.encode(epoch,2,inventory);engine.catalogReadyV2(p,frames.getFirst());assertTrue(engine.supportsCatalogCast(p));
+        engine.catalogReadyV2(p,frames.getLast());assertTrue(engine.supportsCatalogCast(p));
+        var missing=ids(1244);var partial=CatalogReadinessV2.encode(epoch,3,missing);engine.catalogReadyV2(p,partial.getFirst());assertTrue(engine.supportsCatalogCast(p));
+        for(int i=1;i<partial.size();i++)engine.catalogReadyV2(p,partial.get(i));assertFalse(engine.supportsCatalogCast(p));
+        upload(p,epoch,4,inventory);assertTrue(engine.supportsCatalogCast(p));
+        engine.catalogReadyV2(p,CatalogReadinessV2.encode(epoch,5,inventory).getFirst());wire.tick=500;engine.tick();assertFalse(engine.supportsCatalogCast(p));
     }
     @Test void catalogReloadAndReconnectRotateServerNonceAndRejectEveryOldGeneration(){
         var inventory=ids(2);engine.catalogRequirements(inventory);UUID p=join(),old=engine.catalogEpoch(p);upload(p,old,1,inventory);assertTrue(engine.supportsCatalogCast(p));

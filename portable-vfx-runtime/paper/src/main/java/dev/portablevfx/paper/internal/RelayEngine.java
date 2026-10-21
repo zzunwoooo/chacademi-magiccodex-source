@@ -374,7 +374,8 @@ public final class RelayEngine {
         }
         try{
             var result=receiver.accept(payload,transport.currentTick());
-            if(result.started()){withdrawCatalogReady(player);readyTransfers.add(player);}
+            // 새 세대 조립 중에는 이전에 검증된 목록으로 준비 상태를 유지하고, 완성되면 그때 교체한다(실패·시간 초과·크기 위반만 철회).
+            if(result.started())readyTransfers.add(player);
             if(result.complete()!=null){
                 readyEffects.put(player,result.complete());readyTransfers.remove(player);readinessRejection.remove(player);refreshCatalogReady(player);
             }
