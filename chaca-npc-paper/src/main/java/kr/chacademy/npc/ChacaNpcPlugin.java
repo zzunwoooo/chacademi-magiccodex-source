@@ -1,7 +1,9 @@
 package kr.chacademy.npc;
 
 import kr.chacademy.npc.ai.OpenAiClient;
+import kr.chacademy.npc.appearance.AppearanceService;
 import kr.chacademy.npc.budget.BudgetService;
+import kr.chacademy.npc.cmd.AppearanceCommands;
 import kr.chacademy.npc.cmd.NpcCommands;
 import kr.chacademy.npc.config.CharacterRepository;
 import kr.chacademy.npc.config.ContentRepository;
@@ -51,6 +53,7 @@ public final class ChacaNpcPlugin extends JavaPlugin implements Listener {
     private MagicCodexLink link;
     private NpcTalkChannel talkChannel;
     private GiftService gifts;
+    private AppearanceService appearance;
     private final Consumer<Map<String, String>> socialListener = ev -> {
         if (social != null) {
             social.onMagicCodexEvent(ev);
@@ -110,6 +113,8 @@ public final class ChacaNpcPlugin extends JavaPlugin implements Listener {
         vibe.refreshCache();
 
         talkChannel.register();
+        appearance = new AppearanceService(this);
+        appearance.register();
         Bukkit.getPluginManager().registerEvents(npcs, this);
         Bukkit.getPluginManager().registerEvents(link, this);
         Bukkit.getPluginManager().registerEvents(this, this);
@@ -124,11 +129,13 @@ public final class ChacaNpcPlugin extends JavaPlugin implements Listener {
         }
 
         new NpcCommands(this).register();
+        new AppearanceCommands(this).register();
 
         Bukkit.getScheduler().runTaskLater(this, npcs::scan, 40L);
         Bukkit.getScheduler().runTaskTimer(this, () -> {
             dialogue.tick();
             movement.tick();
+            appearance.tick(dialogue.talkingNpcIds());
         }, 60L, 20L);
         Bukkit.getScheduler().runTaskTimer(this, () -> {
             social.propagate();
@@ -144,6 +151,9 @@ public final class ChacaNpcPlugin extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+        if (appearance != null) {
+            appearance.unregister();
+        }
         if (link != null && link.available()) {
             link.claim(null);
             link.removeSocialListener(socialListener);
@@ -206,6 +216,7 @@ public final class ChacaNpcPlugin extends JavaPlugin implements Listener {
         movement.reset();
         vibe.refreshCache();
         npcs.scan();
+        appearance.reload();
         if (!link.available()) {
             link.connect();
         }
@@ -272,6 +283,10 @@ public final class ChacaNpcPlugin extends JavaPlugin implements Listener {
 
     public NpcManager npcs() {
         return npcs;
+    }
+
+    public AppearanceService appearance() {
+        return appearance;
     }
 
     public MovementController movement() {

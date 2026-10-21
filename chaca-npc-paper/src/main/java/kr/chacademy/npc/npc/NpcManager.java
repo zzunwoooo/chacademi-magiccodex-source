@@ -153,6 +153,8 @@ public final class NpcManager implements Listener {
                 }
                 if ("NONE".equals(res) && p.isOnline() && c.openOnRightClick()) {
                     plugin.dialogue().open(p, c, npcId, false);
+                } else if ("OPENED".equals(res) && plugin.appearance() != null) {
+                    plugin.appearance().greet(npcId); // 스토리 대화가 열림: 3D 외형 인사 동작만 (클릭 처리 순서는 그대로)
                 }
             });
         } else if (Bukkit.getPluginManager().isPluginEnabled("MagicCodexBridge")) {
