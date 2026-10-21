@@ -620,9 +620,7 @@ final class QuestEngine implements Listener {
                 Trigger t = s.trigger;
                 // 주기 확인의 아이템 개수는 캐시일 수 있으니 호출 직전에 한 번 새로 확인한다
                 if (t.type == TrigType.AUTO && now - readySince.getOrDefault(uuid, now) >= t.delay * 1000L && isReady(p, st, s)) fire(p, st, s, "자동");
-                else if (t.type == TrigType.LOCATION && inside(p, t) && isReady(p, st, s)) fire(p, st, s, "위치");
-                if (t.type == TrigType.AUTO && now - readySince.getOrDefault(uuid, now) >= t.delay * 1000L) fire(p, st, s, "자동");
-                else if (t.type == TrigType.LOCATION && inside(p, t) && !mustLeave.contains(uuid)) fire(p, st, s, "위치");
+                else if (t.type == TrigType.LOCATION && inside(p, t) && !mustLeave.contains(uuid) && isReady(p, st, s)) fire(p, st, s, "위치");
             } catch (RuntimeException ex) {
                 plugin.getLogger().log(Level.SEVERE, p.getName() + ": 스토리 단계 확인 중 오류", ex);
             }
@@ -692,7 +690,7 @@ final class QuestEngine implements Listener {
         sessions.remove(uuid); sentKey.remove(uuid); readyCache.remove(uuid); readySince.remove(uuid);
         hintAt.remove(uuid); clickGate.remove(uuid); picks.remove(uuid); previewing.remove(uuid);
         needStep.remove(uuid); needUpdate.remove(uuid); itemScans.remove(uuid);
-        needStep.remove(uuid); needUpdate.remove(uuid); mustLeave.remove(uuid);
+        mustLeave.remove(uuid);
     }
 
     // 아이템 조건 캐시 무효화 (가벼운 표시만, 실제 세기는 다음 주기 확인 때)
