@@ -124,6 +124,17 @@ public final class DialogueService {
         return plugin.talkChannel().isCapable(p) ? plugin.talkChannel() : chatView;
     }
 
+    /** 지금 AI 대화 중인 Citizens NPC 번호 (3D 외형 대화 동작용). */
+    public java.util.Set<Integer> talkingNpcIds() {
+        java.util.Set<Integer> out = new java.util.HashSet<>();
+        for (DialogueSession s : sessions.values()) {
+            if (s.citizensId() != null && !s.adminTest()) {
+                out.add(s.citizensId());
+            }
+        }
+        return out;
+    }
+
     public boolean isTalkingWith(int citizensId) {
         for (DialogueSession s : sessions.values()) {
             if (s.citizensId() != null && s.citizensId() == citizensId) {
@@ -158,6 +169,9 @@ public final class DialogueService {
         loadContext(p, s);
         if (citizensId != null) {
             plugin.npcs().face(citizensId, p);
+            if (!adminTest && plugin.appearance() != null) {
+                plugin.appearance().greet(citizensId); // 3D 외형: 인사 동작 한 번 (표시용, 판정과 무관)
+            }
         }
         String greeting = c.fallback("greeting", plugin.settings().defaultFallbacks, random);
         // 호감도(하트 표시)를 불러온 뒤 화면을 연다. 늦어져도 1초 뒤에는 연다.

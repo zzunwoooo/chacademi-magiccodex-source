@@ -1,0 +1,41 @@
+--- a/chacademy-story/mod/src/main/java/kr/chacademy/story/quest/QuestWorld.java
++++ b/chacademy-story/mod/src/main/java/kr/chacademy/story/quest/QuestWorld.java
+@@ -107,6 +107,29 @@
+         if (buffers instanceof MultiBufferSource.BufferSource src) for (RenderType type : used) src.endBatch(type);
+     }
+ 
++    /** NPC 3D 외형 모드(chacademi-npc-model)가 그 NPC를 모델로 그리는 중이면 모델 꼭대기, 아니면 히트박스 높이. 모드가 없어도 동작. */
++    private static java.lang.reflect.Method npcModelTop;
++    private static boolean npcModelLooked;
++
++    private static double headHeight(Entity e) {
++        if (!npcModelLooked) {
++            npcModelLooked = true;
++            try {
++                npcModelTop = Class.forName("kr.chacademi.npcmodel.NpcModelClient").getMethod("modelTopHeight", Entity.class);
++            } catch (ReflectiveOperationException | LinkageError ignored) {
++                npcModelTop = null;
++            }
++        }
++        if (npcModelTop != null) {
++            try {
++                double h = (double) npcModelTop.invoke(null, e);
++                if (h >= 0) return h;
++            } catch (ReflectiveOperationException | RuntimeException ignored) {
++            }
++        }
++        return e.getBbHeight();
++    }
++
+     private static Vec3 markerPos(Minecraft mc, QuestClient.View v, float pt) {
+         if (v.npc != null) {
+             if (npcCache == null || npcCache.isRemoved() || !v.npc.equals(npcCacheId)) {
+@@ -117,7 +140,7 @@
+                     for (Entity e : mc.level.entitiesForRendering()) if (v.npc.equals(e.getUUID())) { npcCache = e; break; }
+                 }
+             }
+-            if (npcCache != null && !npcCache.isRemoved()) return npcCache.getPosition(pt).add(0, npcCache.getBbHeight() + 0.75, 0);
++            if (npcCache != null && !npcCache.isRemoved()) return npcCache.getPosition(pt).add(0, headHeight(npcCache) + 0.75, 0);
+         }
+         return new Vec3(v.x, v.y + 2.55, v.z);
+     }

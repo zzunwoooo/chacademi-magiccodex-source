@@ -1,3 +1,5 @@
+> 후속 NPC 보존 통합 및 재검증 결과는 [NPC_PRESERVATION_VERIFICATION_20261021_TASK15.md](NPC_PRESERVATION_VERIFICATION_20261021_TASK15.md)를 참조. 아래는 c6364d95 기준 최초 검증 기록이다.
+
 # 통합 수정본 빌드 및 격리 리허설 결과
 
 ## 기준과 보존
