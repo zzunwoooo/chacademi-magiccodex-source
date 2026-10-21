@@ -84,7 +84,7 @@ final class SpellRuntime implements AutoCloseable {
         var got=aims.remove(p.getUniqueId());
         return got==null||!got.aim().spell().equals(id)||Bukkit.getCurrentTick()-got.tick()>10?null:got.aim();
     }
-    private final class AimInbox implements PluginMessageListener,Listener{
+    final class AimInbox implements PluginMessageListener,Listener{
         @Override public void onPluginMessageReceived(String channel,Player player,byte[] data){
             if(!CastAimProtocol.CHANNEL.equals(channel))return;
             try{aims.put(player.getUniqueId(),new Received(CastAimProtocol.decode(data),Bukkit.getCurrentTick()));}catch(IllegalArgumentException ignored){}
