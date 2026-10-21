@@ -64,10 +64,10 @@ public class ChacademyMotionClient implements ClientModInitializer {
         BroomTrails.init(); // 빗자루 비행 궤적 (PortableVFX 있을 때만)
 
         // 빗자루: 서버가 "타라"(나만) / "누가 탔다·내렸다"(나와 주변)를 알려줌. 둘 다 클라 스레드에서 실행됨.
-        ClientPlayNetworking.registerGlobalReceiver(BroomPackets.RideS2C.TYPE, (payload, context) -> BroomFlight.onRide(payload));
-        ClientPlayNetworking.registerGlobalReceiver(BroomPackets.StateS2C.TYPE, (payload, context) -> BroomRiders.onState(payload));
-        ClientPlayNetworking.registerGlobalReceiver(BroomPackets.ListS2C.TYPE, (payload, context) -> BroomApi.onList(payload));
-        ClientPlayNetworking.registerGlobalReceiver(BroomPackets.FxS2C.TYPE, (payload, context) -> context.client().execute(() -> BroomFlight.onFx(payload.kind())));
+        ClientPlayNetworking.registerGlobalReceiver(BroomPackets.RideS2C.TYPE, (payload, context) -> { if (payload != BroomPackets.RideS2C.INVALID) BroomFlight.onRide(payload); });
+        ClientPlayNetworking.registerGlobalReceiver(BroomPackets.StateS2C.TYPE, (payload, context) -> { if (payload != BroomPackets.StateS2C.INVALID) BroomRiders.onState(payload); });
+        ClientPlayNetworking.registerGlobalReceiver(BroomPackets.ListS2C.TYPE, (payload, context) -> { if (payload != BroomPackets.ListS2C.INVALID) BroomApi.onList(payload); });
+        ClientPlayNetworking.registerGlobalReceiver(BroomPackets.FxS2C.TYPE, (payload, context) -> { if (payload != BroomPackets.FxS2C.INVALID) context.client().execute(() -> BroomFlight.onFx(payload.kind())); });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> client.execute(() -> {
             BroomFlight.reset();
             BroomRiders.clear();
@@ -81,23 +81,26 @@ public class ChacademyMotionClient implements ClientModInitializer {
         // 서버(플러그인)가 "이 플레이어가 이 모션을 재생했다"고 알려줌. 렌더 스레드에서 호출됨.
         ClientPlayNetworking.registerGlobalReceiver(MotionPackets.PlayAnimS2C.TYPE, (payload, context) -> {
             var level = context.client().level;
-            if (level == null) return;
+            if (level == null || payload == MotionPackets.PlayAnimS2C.INVALID) return;
             if (level.getPlayerByUUID(payload.player()) instanceof AbstractClientPlayer target) {
                 MotionPlayer.play(target, payload.animation());
             }
         });
 
-        castKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
-                "key." + MOD_ID + ".cast",
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_R,
-                "key.category." + MOD_ID));
+        // 모션 테스트 키(R)는 개발 환경에서만 등록한다. 배포본에서는 누구나 모션을 재생·전송할 수 없게 한다 (2026-10-21).
+        if (net.fabricmc.loader.api.FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            castKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+                    "key." + MOD_ID + ".cast",
+                    InputConstants.Type.KEYSYM,
+                    GLFW.GLFW_KEY_R,
+                    "key.category." + MOD_ID));
+        }
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             BroomFlight.tick(client);
             BroomRiders.tick(client);
             if (cooldown > 0) cooldown--;
-            while (castKey.consumeClick()) {
+            while (castKey != null && castKey.consumeClick()) {
                 cast("wand_cast");
             }
         });
