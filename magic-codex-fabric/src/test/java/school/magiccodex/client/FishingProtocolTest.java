@@ -19,7 +19,7 @@ class FishingProtocolTest {
     @Test void roundTrip() {
         var frames = List.<Frame>of(
                 new Session(7, FishingProtocol.PHASE_WATER, FishingProtocol.BG_OCEAN, 12.75f, FishingProtocol.MAX_DEPTH, 3, 4096, 10, 100, gear(), ""),
-                new Bite(7, 99, FishingProtocol.SHAPE_EEL, .4f, -1, 3000, 2, 600, 3, FishingProtocol.DIVE, 1234L, 12.5f, true, 2700, .22f, false, 1.4f,
+                new Bite(7, 99, FishingProtocol.SHAPE_EEL, .4f, -1, 3000, 2, 600, 3, FishingProtocol.DIVE, 1234L, 12.5f, true, 2700, .22f, 1.4f,
                         List.of(new Attack(4200, FishingProtocol.ATTACK_LINE, 3), new Attack(9000, FishingProtocol.ATTACK_ROD, 4))),
                 new Result(7, FishingProtocol.CAUGHT, "fish_001", "붕어", 0, 0, 21.4f, true, false,
                         List.of(new Reward("붕어", 1, new byte[]{1, 2, 3})), false, gear(), 11, 100, "알림"),
@@ -49,6 +49,26 @@ class FishingProtocolTest {
     @Test void bottomless() {
         assertTrue(new Session(1, 1, 0, 12.75f, FishingProtocol.MAX_DEPTH, 3, 1, 0, 100, gear(), "").bottomless());
         assertFalse(new Session(1, 1, 0, 10, 10, 3, 1, 0, 100, gear(), "").bottomless());
+    }
+
+    /** v3: the needle rush follows the zone width (legendary .12 rushes, 유일 .15 does not); no flag on the wire. */
+    @Test void rushFromZone() {
+        assertTrue(FishingProtocol.rushes(.12f));
+        assertFalse(FishingProtocol.rushes(.15f));
+        assertFalse(FishingProtocol.rushes(.22f));
+    }
+
+    /** v3: a harder fish (more power / strain) and a deeper bite need a longer honest catch; a chest skips the approach and teases. */
+    @Test void minimumCatchScalesWithDifficulty() {
+        var easy = new Bite(1, 1, FishingProtocol.SHAPE_FISH, .3f, -1, 3000, 1, 600, 1, FishingProtocol.CALM, 1L, 10, false, 2700, .22f, 1, List.of());
+        var hard = new Bite(1, 1, FishingProtocol.SHAPE_FISH, .3f, -1, 3000, 1, 600, 9, FishingProtocol.CALM, 1L, 10, false, 2700, .22f, 3, List.of());
+        var deep = new Bite(1, 1, FishingProtocol.SHAPE_FISH, .3f, -1, 3000, 1, 600, 1, FishingProtocol.CALM, 1L, 40, false, 2700, .22f, 1, List.of());
+        int e = FishingProtocol.minimumCatchMillis(easy, 10, 1);
+        assertTrue(FishingProtocol.minimumCatchMillis(hard, 10, 1) > e);
+        assertTrue(FishingProtocol.minimumCatchMillis(deep, 10, 1) > e);
+        assertTrue(FishingProtocol.minimumCatchMillis(easy, 10, 1.5f) < e);
+        // easy: wait 3 s + approach/tease/warning/needle 4.1 s = 7.1 s, reel 10 m at 3.5 m/s * .75 * (1 - .8*.11) = 4.2 s -> 11.3 s * .9 - .4 = 9.8 s
+        assertTrue(e > 9000 && e < 10500, "minimum " + e);
     }
 
     @Test void tiers() {

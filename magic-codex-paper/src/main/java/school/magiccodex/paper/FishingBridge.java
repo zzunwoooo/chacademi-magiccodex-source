@@ -426,8 +426,12 @@ final class FishingBridge implements PluginMessageListener, Listener {
         s.attacks = List.copyOf(attacks);
         s.waitMs = Math.round(Math.min(wait, 59) * 1000);
         var b = new Bite(s.id, s.token, shape, size, grade, s.waitMs, teases, window, power, pattern, rnd.nextLong(), depth,
-                s.fish != null && s.fish.magic(), sweep, zones[realGrade], realGrade == 3, strain, attacks);
-        s.minimum = FishingProtocol.minimumCatchMillis(b, l.rod().gear().a());
+                s.fish != null && s.fish.magic(), sweep, zones[realGrade], strain, attacks);
+        // C09 (2026-10-21): the fish is fixed here on the server; the bite frame no longer carries a legendary flag (v3), and the
+        // catch must take at least as long as the fastest honest minigame for this fish (difficulty, depth, rod reel bonuses).
+        var rodGear = l.rod().gear();
+        float reelBonus = Math.max(1, rodGear.effect("sea_reel", 1)) * Math.max(1, rodGear.effect("magic_reel", 1));
+        s.minimum = FishingProtocol.minimumCatchMillis(b, rodGear.a(), reelBonus);
         s.sentAt = System.currentTimeMillis();
         s.rodSlot = p.getInventory().getHeldItemSlot();
         if (send(p, b)) s.state = BITING; else end(p, s, "낚시 정보를 보내지 못했어요.");
@@ -448,7 +452,7 @@ final class FishingBridge implements PluginMessageListener, Listener {
     private void result(Player p, Session s, int outcome, int heldMask) {
         long elapsed = System.currentTimeMillis() - s.sentAt;
         if (outcome == FishingProtocol.CAUGHT && elapsed < s.minimum) {
-            plugin.getLogger().warning("FISHING too fast player=" + p.getName() + " elapsed=" + elapsed + "ms min=" + s.minimum + "ms");
+            plugin.getLogger().warning("FISHING too fast player=" + p.getName() + " session=" + s.id + " fish=" + (s.fish != null ? s.fish.id() : "chest" + s.chest) + " elapsed=" + elapsed + "ms min=" + s.minimum + "ms");
             outcome = FishingProtocol.REFUSED;
         }
         if (s.preview) s.rodSlot = p.getInventory().getHeldItemSlot();
@@ -523,7 +527,8 @@ final class FishingBridge implements PluginMessageListener, Listener {
         var l = gear.read(rod);
         if (s.preview || rod == null || outcome == FishingProtocol.REFUSED) return l;
         boolean tug = outcome == FishingProtocol.CAUGHT || outcome == FishingProtocol.SNAPPED || outcome == FishingProtocol.ESCAPED;
-        boolean baitUsed = tug || outcome == FishingProtocol.MISSED;
+        // C09 (2026-10-21): scaring the fish off after the bite also uses the bait, so re-rolling bites is never free
+        boolean baitUsed = tug || outcome == FishingProtocol.MISSED || outcome == FishingProtocol.SPOOKED;
         var returned = new ArrayList<ItemStack>();
         var rodPart = wear(l.rod(), tug ? 1 + rodHit : 0);
         var flt = wear(l.flt(), 1);
