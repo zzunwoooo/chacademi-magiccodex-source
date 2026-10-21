@@ -211,7 +211,16 @@ public final class AimTargeting {
      * "invisible" alone must not hide a mob from targeting. Invisible players (옅은 은신) stay untargetable.
      */
     static boolean targetable(Entity e) {
-        return e instanceof LivingEntity living && AimEntityPolicy.allowed(living.isAlive(),e instanceof ArmorStandEntity,e.isSpectator(),e instanceof PlayerEntity,e.isInvisible());
+        return e instanceof LivingEntity living && AimEntityPolicy.allowed(living.isAlive(),e instanceof ArmorStandEntity,e.isSpectator(),e instanceof PlayerEntity,e.isInvisible())
+            && !(e instanceof PlayerEntity && friendly(e.getUuid()));
+    }
+
+    /**
+     * C03 (owner decision 7): aim assist never locks onto a friend. In a 큐디치/결투 match the match team decides
+     * (party ignored); otherwise party members (party HUD roster). The server makes the same decision (AllyResolver).
+     */
+    static boolean friendly(java.util.UUID id) {
+        return KyudichiClient.inMatch() ? KyudichiClient.teammate(id) : PartyHudClient.member(id);
     }
 
     /** The modeled mob a ModelEngine hitbox belongs to: the entity it rides, else the living mob whose base sits inside it. */

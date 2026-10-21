@@ -44,7 +44,14 @@ final class Targets {
         if (excluded(e)||!plugin.protection().harm(caster,le)) return false;
         // Animals, owned pets, summons and custom mobs are valid attack targets.
         // Creative/spectator players remain outside gameplay combat; WG handles region PvP.
-        return !(e instanceof Player p) || playable(p);
+        // C03: party members (match: teammates) never take damage, CC, element marks, knockback or pulls from each other.
+        return !(e instanceof Player p) || playable(p) && !friends(caster, p);
+    }
+
+    /** C03 {@link AllyResolver}: both players and on the same side (party, or match team during a match). */
+    private boolean friends(LivingEntity caster, Player p) {
+        var allies = plugin.allies();
+        return allies != null && caster instanceof Player cp && allies.allied(cp, p);
     }
 
     boolean excluded(Entity e){
@@ -53,7 +60,8 @@ final class Targets {
 
     boolean ally(LivingEntity caster, Entity e) {
         if (!(e instanceof Player p) || !playable(p)||excluded(e)||!plugin.protection().pair(caster,p.getLocation())) return false;
-        return caster instanceof Player || e.equals(caster);
+        // C03 (owner decision 7): only the caster itself and its party (match: its team) are allies, anywhere.
+        return e.equals(caster) || friends(caster, p);
     }
 
     boolean boss(LivingEntity e) {

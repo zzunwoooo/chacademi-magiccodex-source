@@ -244,6 +244,17 @@ final class GameListener implements Listener {
         }
     }
 
+    /** C03: in a match only the match team is friendly (random matching included); a player outside the match is never an ally. */
+    void hookAlly() {
+        plugin.hooks().listenAlly(this, (a, b) -> {
+            Match ma = match(a), mb = match(b);
+            if (ma == null && mb == null) return null;
+            if (ma != mb) return false;
+            MatchPlayer pa = ma.get(a.getUniqueId()), pb = ma.get(b.getUniqueId());
+            return pa != null && pb != null && pa.team == pb.team;
+        });
+    }
+
     void hookHeal() {
         plugin.hooks().listenHeal(this, (caster, target, amount, set) -> {
             if (!(caster instanceof Player c)) return;

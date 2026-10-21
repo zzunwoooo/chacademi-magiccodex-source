@@ -14,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public final class MagicMythicPlugin extends JavaPlugin implements Listener {
     private Targets targets;
+    private final AllyResolver allies=new AllyResolver();
     private final MagicProtection protection=new MagicProtection();
     private boolean protectionReady;
     @Override public void onLoad(){try{protection.register();protectionReady=true;}catch(RuntimeException|LinkageError e){getLogger().severe("Magic protection unavailable; all magic denied: "+e.getClass().getSimpleName());}}
@@ -55,6 +56,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
         if(!protectionReady){getServer().getPluginManager().disablePlugin(this);return;}
         saveDefaultConfig();
         getServer().getPluginManager().registerEvents(protection,this);
+        getServer().getPluginManager().registerEvents(allies,this);
         targets = new Targets(this);
         tempBlocks = new TempBlocks(this);
         tempBlocks.restoreLeftovers();
@@ -164,6 +166,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
     SpellRoutes spellNames() { return spellRoutes; }
 
     Targets targets() { return targets; }
+    AllyResolver allies() { return allies; }
     Ticker ticker() { return ticker; }
     TempBlocks tempBlocks() { return tempBlocks; }
     Guards guards() { return guards; }
