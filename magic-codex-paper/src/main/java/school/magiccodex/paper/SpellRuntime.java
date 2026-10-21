@@ -22,8 +22,8 @@ final class SpellRuntime implements AutoCloseable {
         this.plugin=plugin;utility=new SpellUtility(plugin);
         if(!new File(plugin.getDataFolder(),"spell-runtime.yml").exists())plugin.saveResource("spell-runtime.yml",false);
         reload();
-        Bukkit.getMessenger().registerIncomingPluginChannel(plugin,CastAimProtocol.CHANNEL,inbox);
-        Bukkit.getPluginManager().registerEvents(inbox,plugin);
+        plugin.getServer().getMessenger().registerIncomingPluginChannel(plugin,CastAimProtocol.CHANNEL,inbox);
+        plugin.getServer().getPluginManager().registerEvents(inbox,plugin);
         ManaBridge.runtime=new ManaBridge.Runtime(this::reload,this::routeCount,this);
     }
     int routeCount(){return rules.size();}
@@ -168,7 +168,7 @@ final class SpellRuntime implements AutoCloseable {
         return plan.ok()&&execute(p,plan);
     }
     public void close(){
-        try{Bukkit.getMessenger().unregisterIncomingPluginChannel(plugin,CastAimProtocol.CHANNEL,inbox);}catch(RuntimeException ignored){}
+        try{plugin.getServer().getMessenger().unregisterIncomingPluginChannel(plugin,CastAimProtocol.CHANNEL,inbox);}catch(RuntimeException ignored){}
         HandlerList.unregisterAll(inbox);aims.clear();
         var r=ManaBridge.runtime;if(r!=null&&r.owner()==this)ManaBridge.runtime=null;utility.close();rules=Map.of();}
 }
