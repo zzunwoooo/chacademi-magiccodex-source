@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 import school.magiccodex.protocol.FishTankProtocol;
 import school.magiccodex.protocol.FishTankProtocol.*;
 
-/** 통발 아공간 수조 networking (2026-10-20): the server opens the window (통발 spell) and decides every action. */
+/** 아공간 수조 networking (2026-10-20): the server opens the window (아공간 수조 spell) and decides every action. */
 public final class FishTankClient {
     private FishTankClient() {}
 

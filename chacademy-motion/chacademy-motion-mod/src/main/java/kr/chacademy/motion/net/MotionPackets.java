@@ -41,10 +41,12 @@ public final class MotionPackets {
     public record PlayAnimS2C(UUID player, String animation) implements CustomPacketPayload {
         public static final Type<PlayAnimS2C> TYPE =
                 new Type<>(ResourceLocation.fromNamespaceAndPath(NAMESPACE, "anim"));
-        public static final StreamCodec<RegistryFriendlyByteBuf, PlayAnimS2C> CODEC = StreamCodec.composite(
+        /** 깨진·모르는 형식의 패킷 (핸들러가 무시). */
+        public static final PlayAnimS2C INVALID = new PlayAnimS2C(new UUID(0, 0), "");
+        public static final StreamCodec<RegistryFriendlyByteBuf, PlayAnimS2C> CODEC = SafeCodec.failSafe("anim", StreamCodec.composite(
                 UUIDUtil.STREAM_CODEC, PlayAnimS2C::player,
                 ByteBufCodecs.STRING_UTF8, PlayAnimS2C::animation,
-                PlayAnimS2C::new);
+                PlayAnimS2C::new), INVALID);
 
         @Override
         public Type<? extends CustomPacketPayload> type() {

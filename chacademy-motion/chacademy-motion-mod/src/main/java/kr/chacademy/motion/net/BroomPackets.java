@@ -49,7 +49,9 @@ public final class BroomPackets {
                           float climb, float mastery, int limitTicks, int boostCooldown, int rollCooldown)
             implements CustomPacketPayload {
         public static final Type<RideS2C> TYPE = typeOf("broom_ride");
-        public static final StreamCodec<RegistryFriendlyByteBuf, RideS2C> CODEC = StreamCodec.of(
+        /** 깨진·모르는 형식의 패킷 (핸들러가 무시). */
+        public static final RideS2C INVALID = new RideS2C("", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        public static final StreamCodec<RegistryFriendlyByteBuf, RideS2C> CODEC = SafeCodec.failSafe("broom_ride", StreamCodec.of(
                 (buf, r) -> {
                     ByteBufCodecs.STRING_UTF8.encode(buf, r.broom);
                     buf.writeFloat(r.maxSpeed);
@@ -64,7 +66,7 @@ public final class BroomPackets {
                     buf.writeInt(r.rollCooldown);
                 },
                 buf -> new RideS2C(ByteBufCodecs.STRING_UTF8.decode(buf), buf.readFloat(), buf.readFloat(), buf.readFloat(),
-                        buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readInt(), buf.readInt(), buf.readInt()));
+                        buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readInt(), buf.readInt(), buf.readInt())), INVALID);
 
         @Override
         public Type<? extends CustomPacketPayload> type() {
@@ -75,13 +77,15 @@ public final class BroomPackets {
     /** 서버 → 나와 주변: 누가 어떤 빗자루를 탔는지. broom 이 빈 문자열이면 내림. */
     public record StateS2C(UUID player, String broom, byte reason) implements CustomPacketPayload {
         public static final Type<StateS2C> TYPE = typeOf("broom_state");
-        public static final StreamCodec<RegistryFriendlyByteBuf, StateS2C> CODEC = StreamCodec.of(
+        /** 깨진·모르는 형식의 패킷 (핸들러가 무시). */
+        public static final StateS2C INVALID = new StateS2C(new UUID(0, 0), "", STATE_NORMAL);
+        public static final StreamCodec<RegistryFriendlyByteBuf, StateS2C> CODEC = SafeCodec.failSafe("broom_state", StreamCodec.of(
                 (buf, s) -> {
                     UUIDUtil.STREAM_CODEC.encode(buf, s.player);
                     ByteBufCodecs.STRING_UTF8.encode(buf, s.broom);
                     buf.writeByte(s.reason);
                 },
-                buf -> new StateS2C(UUIDUtil.STREAM_CODEC.decode(buf), ByteBufCodecs.STRING_UTF8.decode(buf), buf.readByte()));
+                buf -> new StateS2C(UUIDUtil.STREAM_CODEC.decode(buf), ByteBufCodecs.STRING_UTF8.decode(buf), buf.readByte())), INVALID);
 
         @Override
         public Type<? extends CustomPacketPayload> type() {
@@ -98,9 +102,11 @@ public final class BroomPackets {
     /** 서버 → 나: 비행 효과 (큐디치 성소). 1 균형 가득, 2 쿨타임 없는 가속. */
     public record FxS2C(byte kind) implements CustomPacketPayload {
         public static final Type<FxS2C> TYPE = typeOf("broom_fx");
-        public static final StreamCodec<RegistryFriendlyByteBuf, FxS2C> CODEC = StreamCodec.of(
+        /** 깨진·모르는 형식의 패킷 (핸들러가 무시). */
+        public static final FxS2C INVALID = new FxS2C((byte) 0);
+        public static final StreamCodec<RegistryFriendlyByteBuf, FxS2C> CODEC = SafeCodec.failSafe("broom_fx", StreamCodec.of(
                 (buf, f) -> buf.writeByte(f.kind),
-                buf -> new FxS2C(buf.readByte()));
+                buf -> new FxS2C(buf.readByte())), INVALID);
 
         @Override
         public Type<? extends CustomPacketPayload> type() {
@@ -131,7 +137,9 @@ public final class BroomPackets {
     /** 서버 → 나: 가진 빗자루와 장착 중인 빗자루. equipped 가 빈 문자열이면 없음. */
     public record ListS2C(String equipped, float mastery, java.util.List<Owned> brooms) implements CustomPacketPayload {
         public static final Type<ListS2C> TYPE = typeOf("broom_list");
-        public static final StreamCodec<RegistryFriendlyByteBuf, ListS2C> CODEC = StreamCodec.of(
+        /** 깨진·모르는 형식의 패킷 (핸들러가 무시). */
+        public static final ListS2C INVALID = new ListS2C("", 0, List.of());
+        public static final StreamCodec<RegistryFriendlyByteBuf, ListS2C> CODEC = SafeCodec.failSafe("broom_list", StreamCodec.of(
                 (buf, m) -> {
                     ByteBufCodecs.STRING_UTF8.encode(buf, m.equipped);
                     buf.writeFloat(m.mastery);
@@ -160,7 +168,7 @@ public final class BroomPackets {
                                 buf.readFloat(), buf.readFloat(), buf.readFloat()));
                     }
                     return new ListS2C(eq, mastery, List.copyOf(list));
-                });
+                }), INVALID);
 
         @Override
         public Type<? extends CustomPacketPayload> type() {

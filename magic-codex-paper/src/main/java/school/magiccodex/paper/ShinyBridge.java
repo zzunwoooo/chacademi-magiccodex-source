@@ -34,7 +34,7 @@ final class ShinyBridge implements Listener,AutoCloseable {
    if(e.getCustomName()!=null)e.setCustomName((shiny?"§e":"§f")+ChatColor.stripColor(e.getCustomName()));
   }
  }
- private void remember(LivingEntity e){if(isShiny(e)){e.getPersistentDataContainer().set(key,PersistentDataType.BYTE,(byte)1);loaded.put(e.getUniqueId(),e);try{appearance(e,true);}catch(RuntimeException|LinkageError ex){plugin.getLogger().warning("이로치 모델 연결: "+ex.getMessage());}}}
+ private void remember(LivingEntity e){if(isShiny(e)){e.getPersistentDataContainer().set(key,PersistentDataType.BYTE,(byte)1);loaded.put(e.getUniqueId(),e);try{appearance(e,true);}catch(RuntimeException|LinkageError ex){plugin.getLogger().warning("변색종 모델 연결: "+ex.getMessage());}}}
  void mark(LivingEntity e,boolean shiny){appearance(e,shiny);e.getPersistentDataContainer().set(key,PersistentDataType.BYTE,(byte)(shiny?1:0));if(shiny){e.addScoreboardTag("chacademia_shiny");loaded.put(e.getUniqueId(),e);}else{e.removeScoreboardTag("chacademia_shiny");loaded.remove(e.getUniqueId());}for(var p:e.getTrackedBy())send(p,e,shiny);}
  private void send(Player p,LivingEntity e,boolean value){if(p.getListeningPluginChannels().contains(ShinyProtocol.CHANNEL))p.sendPluginMessage(plugin,ShinyProtocol.CHANNEL,ShinyProtocol.encode(new ShinyProtocol.State(e.getEntityId(),e.getUniqueId(),value)));}
  @EventHandler(ignoreCancelled=true,priority=EventPriority.MONITOR) public void spawn(CreatureSpawnEvent event){
@@ -79,17 +79,17 @@ final class ShinyBridge implements Listener,AutoCloseable {
  }
  // ------------------------------------------------------------------ 명령 (2026-10-20 명령어 정리)
  private void registerCommands(){
-  if(!CodexCommands.ready(plugin,"/월드관리 이로치"))return;
-  ChacaApi.reload(plugin,"이로치","이로치 확률·연출(shiny.yml)",this::reload);
-  var node=Commands.literal("이로치");
+  if(!CodexCommands.ready(plugin,"/월드관리 변색종"))return;
+  ChacaApi.reload(plugin,"변색종","변색종 확률·연출(shiny.yml)",this::reload);
+  var node=Commands.literal("변색종");
   for(String action:List.of("지정","해제"))node.then(Commands.literal(action).executes(ctx->{
    var p=CodexCommands.self(ctx);
    LivingEntity e=taming.target(p,16);if(e==null||taming.profileId(e)==null)throw ChacaApi.error("등록된 야생 교화 대상을 바라봐 주세요");
    if(taming.captureLocked(e))throw ChacaApi.error("교화가 끝난 뒤 바꿔 주세요");
-   try{mark(e,action.equals("지정"));}catch(RuntimeException|LinkageError ex){plugin.getLogger().warning("이로치 모델 변경 실패: "+ex);throw ChacaApi.error("이로치 전용 모델을 확인해 주세요");}
-   ChacaApi.ok(p,action.equals("지정")?"바라보는 몹을 이로치로 바꿨어요":"바라보는 몹을 일반 개체로 바꿨어요");return Command.SINGLE_SUCCESS;
+   try{mark(e,action.equals("지정"));}catch(RuntimeException|LinkageError ex){plugin.getLogger().warning("변색종 모델 변경 실패: "+ex);throw ChacaApi.error("변색종 전용 모델을 확인해 주세요");}
+   ChacaApi.ok(p,action.equals("지정")?"바라보는 몹을 변색종로 바꿨어요":"바라보는 몹을 일반 개체로 바꿨어요");return Command.SINGLE_SUCCESS;
   }));
-  ChacaApi.branch(plugin,ChacaApi.월드관리,node,"바라보는 몹을 이로치로 지정·해제","이로치 지정");
+  ChacaApi.branch(plugin,ChacaApi.월드관리,node,"바라보는 몹을 변색종로 지정·해제","변색종 지정");
  }
  public void close(){if(task!=null)task.cancel();loaded.clear();}
 }

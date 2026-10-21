@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import school.magiccodex.protocol.FishTankProtocol;
 import school.magiccodex.protocol.FishTankProtocol.*;
 
-/** Round trip of the 통발 수조 frames; a full tank (100 fish + full inventory) fits one packet. */
+/** Round trip of the 아공간 수조 frames; a full tank (100 fish + full inventory) fits one packet. */
 class FishTankProtocolTest {
     static final String ID = "3f2a9c1e-7b44-4c1d-9a0e-5d2c8b1f6a77";
 

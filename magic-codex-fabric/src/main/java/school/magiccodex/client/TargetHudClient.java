@@ -24,7 +24,7 @@ import school.magiccodex.protocol.TargetHudProtocol;
  * Target health HUD at the top of the screen (HUD v4 reference, owner 2026-10-19) and the player's own status
  * icons at the top right (where vanilla effect icons were; vanilla effect icons are hidden).
  *
- *              별숲의 수호자                     name (rare/이로치 = lavender, rare gauge)
+ *              별숲의 수호자                     name (rare/변색종 = lavender, rare gauge)
  *              ───◇───                  280     title divider · damage I dealt to it
  *   ◆[██████████████720 / 1000█████        ]◆   one HP gauge clipped to the ratio (gold frame on top)
  *    [=================                      ]   mana gauge (players / mobs with mana only; otherwise the HP

@@ -48,7 +48,7 @@ final class KyudichiHud {
     /** Bottom edge (GUI px) the F key may use: above the action bar and the 차카데미 hotbar status chips. */
     static float keysBottom(float w, float h) {
         float bottom = h - 76;
-        if (PlayerHudClient.active()) { var l = PlayerHudLayout.of((int) w, (int) h); bottom = Math.min(bottom, (l.hotbarTop() - 25 - 16) * l.scale()); }
+        if (PlayerHudClient.active()) { var l = PlayerHudLayout.player((int) w, (int) h, PlayerHudSettings.get().percent()); bottom = Math.min(bottom, (l.hotbarTop() - 25 - 16) * l.scale()); }
         return bottom;
     }
     /** Feed / queue card top (GUI px): below the vanilla status-effect icons. */

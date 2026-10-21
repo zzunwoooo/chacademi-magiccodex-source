@@ -265,7 +265,7 @@ final class FishingGear {
                 plain("크기 " + String.format(Locale.ROOT, "%.1f", cm) + "cm", 0xAFC2D6),
                 plain("잡은 날짜 " + new java.text.SimpleDateFormat("yyyy.MM.dd").format(new Date(caughtAt)), 0xAFC2D6),
                 plain(f.description(), 0x8D9AAD),
-                plain("통발 수조에 다시 넣을 수 있어요 (판매소에서는 팔 수 없어요)", 0x7E8BA0)));
+                plain("아공간 수조에 다시 넣을 수 있어요 (판매소에서는 팔 수 없어요)", 0x7E8BA0)));
         var pdc = meta.getPersistentDataContainer();
         pdc.set(fish, PersistentDataType.STRING, f.id());
         pdc.set(tankId, PersistentDataType.STRING, tank);

@@ -65,7 +65,7 @@ public final class FishingClient {
             case Result r -> { if (client.currentScreen instanceof FishingScreen screen) screen.onResult(r); }
             case Close c -> {
                 if (client.currentScreen instanceof FishingScreen screen && screen.session() == c.session()) screen.closeFromServer();
-                if (!c.notice().isBlank()) client.inGameHud.setOverlayMessage(Text.literal(c.notice()), false);
+                if (!c.notice().isBlank()) SharedNotifications.offer("fishing:close", "warning", "낚시", c.notice());
             }
             case GearList g -> {
                 if (client.currentScreen instanceof FishingScreen screen) screen.onGear(g);

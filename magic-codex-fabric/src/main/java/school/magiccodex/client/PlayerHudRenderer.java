@@ -70,7 +70,8 @@ public final class PlayerHudRenderer implements AutoCloseable {
     }
     public void renderStatus(DrawContext ctx,PlayerEntity player,int rank,float mana,float maxMana,boolean cursor,long now){
         if(player==null||!PlayerHudSettings.get().visible())return;
-        var l=layout();images.beginFrame();text.beginFrame();
+        // Portrait and vitals keep the base size; only the hotbar dock (chips) follows the HUD size setting.
+        var l=PlayerHudLayout.of(client.getWindow().getScaledWidth(),client.getWindow().getScaledHeight());var dock=layout();images.beginFrame();text.beginFrame();
         float dt=lastTime==0?0:Math.min(.1f,(now-lastTime)/1000f);lastTime=now;
         float mx=(float)(client.mouse.getX()*client.getWindow().getScaledWidth()/client.getWindow().getWidth())/l.scale();
         float my=(float)(client.mouse.getY()*client.getWindow().getScaledHeight()/client.getWindow().getHeight())/l.scale();
@@ -94,9 +95,13 @@ public final class PlayerHudRenderer implements AutoCloseable {
             else if(player.hasStatusEffect(StatusEffects.WITHER)){healthFrom=0xFF716B79;healthTo=0xFFAEA7B8;}
             vitalGauge(ctx,true,l.vitalX(),l.healthY(),player.getHealth(),player.getMaxHealth(),healthFrom,healthTo);
             vitalGauge(ctx,false,l.vitalX(),l.manaY(),mana,maxMana,0xFF29BED4,0xFF9DEFF1);
-            secondaryStatus(ctx,l,player);
             if(player.getAbsorptionAmount()>0)text.draw(ctx,"+"+number(player.getAbsorptionAmount()),l.vitalX()+133,l.healthY()-17,11,0xFFE8D38E,FONT,false);
             ctx.getMatrices().pop();
+        }finally{ctx.getMatrices().pop();}
+        ctx.getMatrices().push();
+        try{
+            ctx.getMatrices().translate(0,0,110);ctx.getMatrices().scale(dock.scale(),dock.scale(),1);
+            secondaryStatus(ctx,dock,player);
         }finally{ctx.getMatrices().pop();images.endFrame();}
     }
     private void vitalGauge(DrawContext ctx,boolean health,float x,float y,float value,float max,int from,int to){
@@ -115,7 +120,7 @@ public final class PlayerHudRenderer implements AutoCloseable {
         text.draw(ctx,label,x+44,y-20,12,0xFFF0F3F5,FONT,false);
     }
     private void secondaryStatus(DrawContext ctx,PlayerHudLayout l,PlayerEntity player){
-        float center=l.width()/2,y=l.hotbarTop()-25;
+        float center=l.hotbarLeft()+238,y=l.hotbarTop()-25;
         statusChip(ctx,center-49,y,true,number(player.getHungerManager().getFoodLevel())+" / 20");
         statusChip(ctx,center+49,y,false,number(player.getArmor())+" / 20");
     }

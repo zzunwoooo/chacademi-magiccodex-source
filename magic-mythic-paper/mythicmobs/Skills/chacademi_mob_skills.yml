@@ -6,7 +6,7 @@
 #   "CA_Wild_mf_warden_mage_shiny":  - "skill{s=CHA_MOB_seal_circle_shiny} @target ~onTimer:100 0.5"
 #   "CA_Wild_glacialcore":          - "skill{s=CHA_MOB_frost_laser} @target ~onTimer:120 0.5"
 #   "CA_Wild_glacialcore_shiny":    - "skill{s=CHA_MOB_frost_laser_shiny} @target ~onTimer:120 0.5"
-# 이로치는 같은 스킬에 VFX 시스템만 이로치 색(seal_ruby / laser_obsidian).
+# 변색종는 같은 스킬에 VFX 시스템만 변색종 색(seal_ruby / laser_obsidian).
 
 # 봉인의 술사 - 봉인진: 대상 발밑 반경 4 원형 예고 1.2초 -> 봉인 발동, 피해 4 + 무장해제 1.5초
 # 시전 모션: seal_cast (1.6초, 1.2초에 내려찍기 = 봉인 발동). 모델 ca_mf_warden_mage(_s).bbmodel 에 추가됨.

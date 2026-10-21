@@ -22,7 +22,10 @@ public final class SettingsScreen extends Screen {
     private final Screen parent;
     private final Page page;
     private final AimSettings camera;
-    private float own=1,other=1;
+    private float own=1,other=1,bloom=BLOOM_DEFAULT;
+    /** Bloom row only when the installed PortableVFX exposes it (older builds keep the two opacity rows). */
+    private boolean bloomAvailable;
+    static final float BLOOM_DEFAULT=.4f;
     private String notice="";
     private int dragging=-1, editing=-1;
     private String buffer="";
@@ -35,6 +38,8 @@ public final class SettingsScreen extends Screen {
     private SettingsScreen(Screen parent,Page page){super(Text.literal("설정"));this.parent=parent;this.page=page;camera=AimSettings.get().copy();
         if(page==Page.EFFECT)try{float[] v=(float[])Class.forName("dev.portablevfx.client.api.VfxPreferences").getMethod("values").invoke(null);own=v[0];other=v[1];}
         catch(ReflectiveOperationException|LinkageError e){notice="스킬 이펙트 모드를 확인해 주세요.";}
+        if(page==Page.EFFECT)try{bloom=(Float)Class.forName("dev.portablevfx.client.api.VfxPreferences").getMethod("bloom").invoke(null);bloomAvailable=true;}
+        catch(ReflectiveOperationException|LinkageError|ClassCastException e){bloomAvailable=false;}
     }
 
     /** Knob centre (panel units) for a 0..1 position, and the inverse used by dragging. */
@@ -49,13 +54,13 @@ public final class SettingsScreen extends Screen {
     private void click(){client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK.value(),1f,.25f));}
 
     // ---------- rows ----------
-    private int rows(){return page==Page.GUI?1:page==Page.CAMERA?3:page==Page.EFFECT?2:0;}
+    private int rows(){return page==Page.GUI?1:page==Page.CAMERA?3:page==Page.EFFECT?(bloomAvailable?3:2):0;}
     private static int rowY(int row){return 193+row*91;}
-    private String label(int row){return page==Page.GUI?"플레이어 HUD 크기":page==Page.EFFECT?(row==0?"내 스킬 이펙트":"다른 사람 스킬 이펙트"):switch(row){case 0->"어깨 좌우 거리";case 1->"카메라 높이";default->"카메라 거리";};}
+    private String label(int row){return page==Page.GUI?"핫바 크기":page==Page.EFFECT?(row==0?"내 스킬 이펙트":row==1?"다른 사람 스킬 이펙트":"이펙트 빛 번짐"):switch(row){case 0->"어깨 좌우 거리";case 1->"카메라 높이";default->"카메라 거리";};}
     private float min(int row){return (page==Page.EFFECT||page==Page.GUI)?0:switch(row){case 0->0;case 1->-.5f;default->AimSettings.MIN_DISTANCE;};}
     private float max(int row){return (page==Page.EFFECT||page==Page.GUI)?1:switch(row){case 0->AimSettings.MAX_SIDE;case 1->1.5f;default->AimSettings.MAX_DISTANCE;};}
-    private float value(int row){return page==Page.GUI?PlayerHudSettings.get().percent()/100f:page==Page.EFFECT?(row==0?own:other):switch(row){case 0->camera.sideOffset;case 1->camera.height;default->camera.distance;};}
-    private void set(int row,float v){v=Math.clamp(v,min(row),max(row));if(page==Page.GUI){if(!PlayerHudSettings.get().update(Math.round(v*100)))notice="설정 저장에 실패했습니다. 크기는 현재 화면에 적용됩니다.";return;}if(page==Page.EFFECT){if(row==0)own=v;else other=v;}else switch(row){case 0->camera.sideOffset=v;case 1->camera.height=v;default->camera.distance=v;}}
+    private float value(int row){return page==Page.GUI?PlayerHudSettings.get().percent()/100f:page==Page.EFFECT?(row==0?own:row==1?other:bloom):switch(row){case 0->camera.sideOffset;case 1->camera.height;default->camera.distance;};}
+    private void set(int row,float v){v=Math.clamp(v,min(row),max(row));if(page==Page.GUI){if(!PlayerHudSettings.get().update(Math.round(v*100)))notice="설정 저장에 실패했습니다. 크기는 현재 화면에 적용됩니다.";return;}if(page==Page.EFFECT){if(row==0)own=v;else if(row==1)other=v;else bloom=v;}else switch(row){case 0->camera.sideOffset=v;case 1->camera.height=v;default->camera.distance=v;}}
     private String format(int row,float v){return (page==Page.EFFECT||page==Page.GUI)?Math.round(v*100)+"%":String.format(java.util.Locale.ROOT,"%.1f",v);}
     /** Framed value box right after the label (panel units). */
     private float boxX(int row){return TRACK_X+UiResources.text().width(label(row),22,FONT)+18;}
@@ -75,7 +80,7 @@ public final class SettingsScreen extends Screen {
                     sprite(c,camera.side<0?"checkbox_checked":"checkbox",145,491,35,35,camera.side<0?95:88,90);text(c,"반대쪽 어깨",198,509,23,false,false);
                     sprite(c,camera.smartCast?"toggle_on":"toggle_off",589,485,92,52,camera.smartCast?185:169,camera.smartCast?106:98);text(c,"스마트 시전",706,509,23,false,false);
                     text(c,"일반 마우스 조준 · F5의 1인칭과 정면 시점은 유지됩니다",500,566,20,false,true);
-                }else if(page==Page.GUI){text(c,"0% 숨김 · 50% 현재 크기 · 100% 2배",500,449,23,false,true);text(c,"기본 플레이어 HUD만 즉시 적용하고 자동 저장합니다",500,484,20,false,true);}else{text(c,"화면에 보이는 효과만 조절합니다",500,449,23,false,true);text(c,"마나 · 피해 · 판정 · 지속시간은 바뀌지 않습니다",500,484,20,false,true);}
+                }else if(page==Page.GUI){text(c,"0% 숨김 · 50% 현재 크기 · 100% 2배",500,449,23,false,true);text(c,"핫바만 바뀌고 초상화·체력·마나는 그대로입니다 (자동 저장)",500,484,20,false,true);}else{int ty=rows()>2?475:449;text(c,"화면에 보이는 효과만 조절합니다",500,ty,23,false,true);text(c,"마나 · 피해 · 판정 · 지속시간은 바뀌지 않습니다",500,ty+35,20,false,true);}
                 text(c,notice,500,603,18,false,true);button(c,"초기화",125,640,205,false);button(c,page==Page.GUI?"뒤로":"취소",397,640,205,false);button(c,page==Page.GUI?"완료":"저장",670,640,205,true);
             }
         }finally{c.getMatrices().pop();images.endFrame();}
@@ -125,7 +130,7 @@ public final class SettingsScreen extends Screen {
             if(hit(TRACK_X-19,rowY(i)+16,TRACK_W+38,44)){dragging=i;lastStep=Integer.MIN_VALUE;adjust();return true;}
         }
         if(page==Page.CAMERA){if(hit(140,480,300,53)){click();camera.side=-camera.side;}if(hit(580,480,275,53)){click();camera.smartCast=!camera.smartCast;}}
-        if(hit(125,640,205,56)){click();if(page==Page.GUI){set(0,.5f);}else if(page==Page.CAMERA){camera.sideOffset=1.5f;camera.height=1;camera.distance=5;camera.side=1;camera.smartCast=false;camera.shoulder=true;}else{own=other=1;}}
+        if(hit(125,640,205,56)){click();if(page==Page.GUI){set(0,.5f);}else if(page==Page.CAMERA){camera.sideOffset=AimSettings.DEFAULT_SIDE;camera.height=1;camera.distance=5;camera.side=1;camera.smartCast=false;camera.shoulder=true;}else{own=other=1;bloom=BLOOM_DEFAULT;}}
         else if(hit(397,640,205,56)){click();close();}else if(hit(670,640,205,56)){click();save();}return true;
     }
     /** Typed value: number in the row's unit ("%" optional on the effect page); clamped; invalid input is ignored. */
@@ -136,7 +141,7 @@ public final class SettingsScreen extends Screen {
         if((Character.isDigit(chr)||chr=='.'||chr=='-'||chr=='%'||chr==',')&&buffer.length()<7)buffer+=chr;
         return true;
     }
-    private void save(){commitEdit();if(page==Page.GUI){close();return;}try{if(page==Page.CAMERA){if(!camera.commit())throw new java.io.IOException("camera save failed");}else Class.forName("dev.portablevfx.client.api.VfxPreferences").getMethod("save",float.class,float.class).invoke(null,own,other);close();SharedNotifications.offer("settings:saved","system","설정을 저장했습니다","변경한 화면 설정이 적용되었습니다.");}catch(Exception|LinkageError error){notice="저장하지 못했습니다. 기존 설정은 유지됩니다.";}}
+    private void save(){commitEdit();if(page==Page.GUI){close();return;}try{if(page==Page.CAMERA){if(!camera.commit())throw new java.io.IOException("camera save failed");}else{var prefs=Class.forName("dev.portablevfx.client.api.VfxPreferences");prefs.getMethod("save",float.class,float.class).invoke(null,own,other);if(bloomAvailable)prefs.getMethod("saveBloom",float.class).invoke(null,bloom);}close();SharedNotifications.offer("settings:saved","system","설정을 저장했습니다","변경한 화면 설정이 적용되었습니다.");}catch(Exception|LinkageError error){notice="저장하지 못했습니다. 기존 설정은 유지됩니다.";}}
     @Override public boolean mouseDragged(double x,double y,int button,double dx,double dy){if(button==0&&dragging>=0){fit(x,y);adjust();return true;}return super.mouseDragged(x,y,button,dx,dy);}
     @Override public boolean mouseReleased(double x,double y,int button){dragging=-1;return true;}
     @Override public boolean keyPressed(int key,int scan,int mods){

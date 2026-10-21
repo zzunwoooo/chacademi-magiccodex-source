@@ -19,7 +19,7 @@ final class ManaBridge implements Listener,PluginMessageListener,AutoCloseable {
     final ManaService mana;
     private ManaSpells spells;
     java.util.function.Consumer<Player> windCast;
-    /** 통발 (fish_trap, 2026-10-20): opens the tank window; false = not opened, no mana spent. */
+    /** 아공간 수조 (fish_trap, 2026-10-20): opens the tank window; false = not opened, no mana spent. */
     java.util.function.Predicate<Player> fishTrapCast;
     Response castWindForFriend(Player p){var result=cast(p,0,spells.byId.get("wind_message"),()->true);send(p,result);return result;}
     List<String> discoveryPermissions(){var result=new ArrayList<>(spells.discoveryPermissions);if(!result.contains("magiccodex.taming"))result.add("magiccodex.taming");return List.copyOf(result);}

@@ -9,16 +9,16 @@ import school.magiccodex.protocol.TelegraphProtocol.Shape;
 import school.magiccodex.protocol.TelegraphProtocol.Show;
 
 /**
- * 테스트용 (피해 없음, 보이기만): /테스트 몹 예고 <원형|직선|부채꼴|전부|봉인진|봉인진이로치|빙핵레이저|빙핵레이저이로치> [초=1]
+ * 테스트용 (피해 없음, 보이기만): /테스트 몹 예고 <원형|직선|부채꼴|전부|봉인진|봉인진변색종|빙핵레이저|빙핵레이저변색종> [초=1]
  *  원형 = 바라보는 블록(최대 24칸) 중심 반경 3, 직선 = 내 발에서 바라보는 방향 길이 8 폭 2, 부채꼴 = 반경 6 각도 70.
- *  빙핵레이저(이로치) = 빙핵의 수호자 스킬과 같은 직선 24x3 예고 1.2초 + FrostLaser VFX (내 발에서 바라보는 방향).
- *  봉인진(이로치) = 봉인의 술사 스킬과 같은 반경 7 예고 1.2초 + SealCircle VFX (PortableVFX에 sealcircle 팩이 있어야 보임).
+ *  빙핵레이저(변색종) = 빙핵의 수호자 스킬과 같은 직선 24x3 예고 1.2초 + FrostLaser VFX (내 발에서 바라보는 방향).
+ *  봉인진(변색종) = 봉인의 술사 스킬과 같은 반경 7 예고 1.2초 + SealCircle VFX (PortableVFX에 sealcircle 팩이 있어야 보임).
  * /테스트 몹 예고효과 <효과> <원형|원형내발|직선|부채꼴> <크기> [각도·폭] [틱=24] [선행=2] [배율=1]
  */
 final class TelegraphCommand {
     private TelegraphCommand() {}
 
-    static final java.util.List<String> KINDS = java.util.List.of("원형", "직선", "부채꼴", "전부", "봉인진", "봉인진이로치", "빙핵레이저", "빙핵레이저이로치");
+    static final java.util.List<String> KINDS = java.util.List.of("원형", "직선", "부채꼴", "전부", "봉인진", "봉인진변색종", "빙핵레이저", "빙핵레이저변색종");
     static final java.util.List<String> SHAPES = java.util.List.of("원형", "원형내발", "직선", "부채꼴");
 
     /** @param secondsOrNull null = 기본 (봉인진·빙핵레이저는 실제 스킬과 같은 1.2초, 나머지 1초) */
@@ -40,22 +40,22 @@ final class TelegraphCommand {
                 show(plugin, p, new Show(t.id(), Shape.LINE, feet.getX(), Telegraphs.ground(feet), feet.getZ(), yaw + 35, 8, 2, 0, ticks, TelegraphProtocol.RED));
                 show(plugin, p, new Show(t.id(), Shape.CONE, left.getX(), Telegraphs.ground(left), left.getZ(), yaw, 6, 0, 70, ticks, TelegraphProtocol.RED));
             }
-            case "봉인진", "봉인진이로치" -> {
+            case "봉인진", "봉인진변색종" -> {
                 int warn = secondsOrNull == null ? 24 : ticks; // 초를 안 적으면 실제 스킬과 같은 1.2초
                 var s = circle(t, look, 7, warn);
                 show(plugin, p, s);
                 var at = new Location(p.getWorld(), s.x(), s.y(), s.z());
-                String id = kind.endsWith("이로치") ? "claude:sealcircle/seal_ruby" : "claude:sealcircle/seal";
+                String id = kind.endsWith("변색종") ? "claude:sealcircle/seal_ruby" : "claude:sealcircle/seal";
                 plugin.getServer().getScheduler().runTaskLater(plugin,
                     () -> plugin.reactions().vfx().effect(id, at, 7f / 4, 0, 40, 0xFFFFFF), Math.max(1, warn - 2));
                 seconds = warn / 20.0;
             }
-            case "빙핵레이저", "빙핵레이저이로치" -> {
+            case "빙핵레이저", "빙핵레이저변색종" -> {
                 int warn = secondsOrNull == null ? 24 : ticks; // 초를 안 적으면 실제 스킬과 같은 1.2초
                 var s = new Show(t.id(), Shape.LINE, feet.getX(), Telegraphs.ground(feet), feet.getZ(), yaw, 24, 3, 0, warn, TelegraphProtocol.RED);
                 show(plugin, p, s);
                 var at = new Location(p.getWorld(), s.x(), s.y(), s.z());
-                String id = kind.endsWith("이로치") ? "claude:frostlaser/laser_obsidian" : "claude:frostlaser/laser";
+                String id = kind.endsWith("변색종") ? "claude:frostlaser/laser_obsidian" : "claude:frostlaser/laser";
                 plugin.getServer().getScheduler().runTaskLater(plugin,
                     () -> plugin.reactions().vfx().effect(id, at, 1.5f, yaw, 40, 0xFFFFFF), Math.max(1, warn - 2));
                 seconds = warn / 20.0;

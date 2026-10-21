@@ -63,4 +63,18 @@ class DefaultSpellMigrationTest {
   assertFalse(DefaultSpellMigration.managedHistoryName("239_bubble_brand.yml"));
   assertTrue(DefaultSpellMigration.allHistory("a.yml\th1\r\nb.yml\th2\n").get("a.yml").contains("h1"));
  }
+ @Test void fishTrapRenameReachesShippedCopiesButNotEdits()throws Exception {
+  assertTrue(DefaultSpellMigration.managedHistoryName("324_fish_trap.yml"));assertFalse(DefaultSpellMigration.managedHistoryName("324_other.yml"));
+  byte[] next=DefaultSpellMigration.resource("324_fish_trap.yml");String text=new String(next,java.nio.charset.StandardCharsets.UTF_8);
+  assertTrue(text.contains("name: 아공간 수조"));assertFalse(text.contains("통발"));
+  byte[] old=text.replace("name: 아공간 수조","name: 통발").getBytes(java.nio.charset.StandardCharsets.UTF_8);
+  var history=DefaultSpellMigration.allHistory(new String(DefaultSpellMigration.resource("known-hashes.tsv"),java.nio.charset.StandardCharsets.UTF_8));
+  assertTrue(history.get("324_fish_trap.yml").contains(DefaultSpellMigration.hash(old)),"previous shipped 324 hash must be known");
+  Files.write(dir.resolve("324_fish_trap.yml"),old);
+  DefaultSpellMigration.migrate(dir,Map.of("324_fish_trap.yml",next),history,"t");
+  assertArrayEquals(next,Files.readAllBytes(dir.resolve("324_fish_trap.yml")));
+  Files.write(dir.resolve("324_fish_trap.yml"),bytes("player edit\n"));
+  DefaultSpellMigration.migrate(dir,Map.of("324_fish_trap.yml",next),history,"t");
+  assertArrayEquals(bytes("player edit\n"),Files.readAllBytes(dir.resolve("324_fish_trap.yml")));
+ }
 }

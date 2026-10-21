@@ -16,7 +16,7 @@ import school.magiccodex.protocol.FishTankProtocol;
 import school.magiccodex.protocol.FishTankProtocol.*;
 
 /**
- * 통발 아공간 수조 (2026-10-20, owner spec + GPT's approved tank references and art in textures/gui/fish_tank).
+ * 아공간 수조 (2026-10-20, owner spec + GPT's approved tank references and art in textures/gui/fish_tank).
  *
  * Fullscreen water: the caught fish swim freely (depth, smooth turns, tail wobble). Sunlight comes from above: the
  * light rays sway and flicker and two caustic layers move over the sand and under the surface like real water.
@@ -120,6 +120,10 @@ final class FishTankScreen extends Screen {
             if (sw == null) { sw = spawn(f, first); swimmers.put(f.id(), sw); }
             sw.data = f; sw.info = infos.get(f.fish());
         }
+        // sizes: species base size + rank within that species among the fish in the tank (ranges change as fish come and go)
+        Map<String, float[]> range = new HashMap<>();
+        for (Fish f : s.fish()) range.merge(f.fish(), new float[]{f.size(), f.size()}, (a, b) -> new float[]{Math.min(a[0], b[0]), Math.max(a[1], b[1])});
+        for (Fish f : s.fish()) { var sw = swimmers.get(f.id()); float[] r = range.get(f.fish()); if (sw != null && r != null) sw.length = FishTankUiMath.length(f.size(), r[0], r[1]); }
         for (var sw : swimmers.values()) if (!fish.containsKey(sw.id) && sw.leave < 0) { sw.leave = 0; sw.leaveKind = FishTankProtocol.QUERY; }
         if (selected != null && !fish.containsKey(selected) && deselectAt == 0) deselect();
         if (popup != null && inventory.stream().noneMatch(h -> h.slot() == popup.slot() && h.id().equals(popup.id()))) popup = null;
@@ -159,7 +163,7 @@ final class FishTankScreen extends Screen {
         var s = new Swimmer(f.id());
         s.data = f; s.info = infos.get(f.fish());
         int shape = s.info == null ? 0 : s.info.shape();
-        s.length = Math.clamp(20 * (float) Math.pow(Math.max(1, f.size()), .36), 40, 128);
+        s.length = FishTankUiMath.length(f.size(), f.size(), f.size()); // refined in onState once the species range is known
         s.speed = (24 + random.nextFloat() * 22) * switch (shape) { case 1 -> .8f; case 2 -> .6f; case 3 -> .7f; case 4 -> .55f; default -> 1f; };
         s.phase = random.nextFloat() * 6.283f;
         s.z = s.tz = random.nextFloat();
@@ -294,7 +298,7 @@ final class FishTankScreen extends Screen {
         m[0] = random.nextFloat(); m[1] = anywhere ? random.nextFloat() : 1.05f; m[2] = .8f + random.nextFloat() * 1.8f;
         m[3] = .006f + random.nextFloat() * .014f; m[4] = random.nextFloat();
     }
-    private float scaleOf(float z) { return .62f + .38f * z; }
+    private float scaleOf(float z) { return FishTankUiMath.depthScale(z); }
 
     // ------------------------------------------------------------------ selection
 

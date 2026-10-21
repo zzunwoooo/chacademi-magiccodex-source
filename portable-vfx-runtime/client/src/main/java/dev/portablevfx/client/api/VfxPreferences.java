@@ -11,6 +11,9 @@ public final class VfxPreferences {
     public float opacity(boolean mine){return mine?own:other;}
     public static float[] values(){var p=get();return new float[]{p.own,p.other};}
     public static void save(float own,float other)throws IOException{var next=new VfxPreferences();next.own=bounded(own);next.other=bounded(other);next.save(path());current=next;}
+    /** Global effect-only bloom strength (0..1, default 0.4); applies immediately. Used by the MagicCodex settings screen. */
+    public static float bloom(){return (float)dev.portablevfx.client.claude.ClaudeBloomConfig.strength();}
+    public static void saveBloom(float value)throws IOException{dev.portablevfx.client.claude.ClaudeBloomConfig.save(value);}
     public static float bounded(float value){return Float.isFinite(value)?Math.clamp(value,0,1):1;}
     public static VfxPreferences load(Path path){
         var result=new VfxPreferences();var p=new Properties();

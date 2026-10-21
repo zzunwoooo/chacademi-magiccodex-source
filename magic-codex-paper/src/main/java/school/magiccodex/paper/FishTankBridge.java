@@ -13,7 +13,7 @@ import school.magiccodex.protocol.FishTankProtocol;
 import school.magiccodex.protocol.FishTankProtocol.*;
 
 /**
- * 통발 아공간 수조 window (2026-10-20, owner spec + GPT tank art). Opened by the 통발 spell (fish_trap) or
+ * 아공간 수조 window (2026-10-20, owner spec + GPT tank art). Opened by the 아공간 수조 spell (fish_trap) or
  * /테스트 낚시 수조. Every action is decided here against the database (FishTank), never by the client:
  *
  *  아이템화  refused when the inventory has no empty slot; the row is deleted first, then the item (same tank id and
@@ -43,11 +43,11 @@ final class FishTankBridge implements PluginMessageListener, Listener {
 
     static boolean modded(Player p) { return p.getListeningPluginChannels().contains(FishTankProtocol.RESPONSE); }
 
-    /** The 통발 spell: false (no mana spent) when the window cannot open. */
+    /** The 아공간 수조 spell: false (no mana spent) when the window cannot open. */
     boolean cast(Player p) {
-        if (!modded(p)) { CmdKit.notify(p, "warning", "fish-tank-open", "통발 수조를 열 수 없어요", "차카데미 모드를 업데이트해 주세요", 3000); return false; }
+        if (!modded(p)) { CmdKit.notify(p, "warning", "fish-tank-open", "아공간 수조를 열 수 없어요", "차카데미 모드를 업데이트해 주세요", 3000); return false; }
         if(!fishing.tank().loaded(p.getUniqueId())){fishing.tank().refresh(p.getUniqueId(),null);CmdKit.notify(p,"warning","fish-tank-open","수조를 읽는 중이에요","잠시 뒤 다시 열어 주세요",2000);return false;}
-        if (fishing.fishingNow(p.getUniqueId())) { CmdKit.notify(p, "warning", "fish-tank-open", "낚시 중에는 통발 수조를 열 수 없어요", "", 2000); return false; }
+        if (fishing.fishingNow(p.getUniqueId())) { CmdKit.notify(p, "warning", "fish-tank-open", "낚시 중에는 아공간 수조를 열 수 없어요", "", 2000); return false; }
         open(p);
         return true;
     }
@@ -101,7 +101,7 @@ final class FishTankBridge implements PluginMessageListener, Listener {
         try {
             p.sendPluginMessage(plugin, FishTankProtocol.RESPONSE, FishTankProtocol.encode(new State(kind, fishing.tank().capacity(), inv.firstEmpty() < 0,
                     fish, held, List.copyOf(species.values()), cut(notice))));
-        } catch (IllegalArgumentException e) { plugin.getLogger().warning("통발 수조 패킷 실패: " + e.getMessage()); }
+        } catch (IllegalArgumentException e) { plugin.getLogger().warning("아공간 수조 패킷 실패: " + e.getMessage()); }
     }
     /** Pre-DB admin gifts already had an identity, positive size/date, and no withdrawal token. */
     private static boolean legacyMetadata(FishingGear.HeldFish held){

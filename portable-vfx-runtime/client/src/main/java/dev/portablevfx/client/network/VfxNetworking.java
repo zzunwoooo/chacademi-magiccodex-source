@@ -99,13 +99,13 @@ public final class VfxNetworking {
         // when a re-enabled PortableVFX plugin re-sends minecraft:register, whose relay has lost all
         // hello/capability/readiness state. Server-side hellos are idempotent, so duplicates are safe.
         C2SPlayChannelEvents.REGISTER.register((handler, sender, client, channels) -> {
-            if (channels.contains(HelloPayload.ID.id())) client.execute(this::rehandshake);
+            if (channels.contains(HelloPayload.ID.id())) client.execute(()->rehandshake(true));
         });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (BUDGET.takeClearRequest()) { deferredPoses.clear(); runtime.clear(); }
             deferredPoses.drain(runtime::poseFromServer);
             // Fallback for relays that could not re-advertise channels after a plugin reload.
-            if (helloSent && client.getNetworkHandler() != null && ++reannounceTicks >= REANNOUNCE_TICKS) rehandshake();
+            if (helloSent && client.getNetworkHandler() != null && ++reannounceTicks >= REANNOUNCE_TICKS) rehandshake(false);
             publishReadiness(runtime);
             // Paper may advertise plugin channels shortly after JOIN. Bounded retry, no requests to
             // unadvertised channels, and no connection requirement on single-player/other servers.
@@ -128,11 +128,15 @@ public final class VfxNetworking {
         if (pose != null) runtime.poseFromServer(pose);
     }
 
-    /** Re-sends every advertised hello and, on the next tick end, the full catalog_ready inventory. */
-    private void rehandshake() {
+    /**
+     * Re-sends every advertised hello. The channel re-advertise path (plugin re-enabled) also re-sends the
+     * full v2 catalog_ready inventory. The periodic 30 s fallback keeps the already-sent v2 generation: a
+     * relay that really lost its state issues a new epoch, and {@link ReadinessUpload#epoch} invalidates then.
+     */
+    private void rehandshake(boolean resendReadiness) {
         reannounceTicks = 0;
         helloSent = false; orientationHelloSent = false; extendedPlayHelloSent = false; authoritativeHelloSent = false; widthPlayHelloSent = false; stopIntentHelloSent = false;
-        lastReady = null;readinessUpload.invalidate();
+        lastReady = null; if (resendReadiness) readinessUpload.invalidate();
         sendHelloIfAdvertised();
     }
 
