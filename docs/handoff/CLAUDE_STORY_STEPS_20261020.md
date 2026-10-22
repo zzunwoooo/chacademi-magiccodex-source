@@ -167,3 +167,4 @@ NPC 는 Citizens 로 소환한 NPC 를 클릭해 지정 (서버 ID `quest-server
 - 고정 보상 키 `ch1-2.e_s11`, `ch1-3.end` 는 그대로 (ch1-3 = 인사 대화 끝).
 - 테스트의 ch1-14 문자열은 패턴 로직 검사라 그대로 둠.
 - 2026-10-22 추가 (셰이더팩): Iris 셰이더팩이 켜져 있으면(`IrisApi.isShaderPackInUse()`, 리플렉션 — 의존 없음) 포탈·글자·징표를 셰이더팩이 아는 바닐라 `RenderType.entityTranslucentEmissive` 로 그리고, 빛 더하기(블룸) 패스는 건너뛴다 (셰이더팩 자체 블룸). 직접 만든 POSITION_TEX_COLOR 레이어는 셰이더팩이 섞기를 바꿔 빛 띠가 하얀 조각으로 깨져 보였다. 정점은 두 레이어 모두에 맞게 색·UV·오버레이·빛·법선을 다 쓴다 (없는 속성은 BufferBuilder 가 무시). 확인할 것: 셰이더 켬/끔 둘 다 포탈 모양, 게임 중 셰이더 전환.
+- 2026-10-22 추가 (Ctrl): MagicCodex Ctrl 마우스 포인터(`school.magiccodex.client.HudCursorScreen`, 클래스 이름으로 확인 — 의존 없음) 중에도 오른쪽 퀘스트 HUD 를 숨기지 않고, 접기 버튼 클릭도 받는다 (`QuestClient.hudScreen`, 채팅창과 같은 취급).

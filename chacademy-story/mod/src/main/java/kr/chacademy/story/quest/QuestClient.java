@@ -66,7 +66,7 @@ public final class QuestClient {
         WorldRenderEvents.AFTER_TRANSLUCENT.register(QuestWorld::render);
         ClientTickEvents.END_CLIENT_TICK.register(QuestWorld::tick);
         ScreenEvents.AFTER_INIT.register((client, screen, w, h) -> {
-            if (!(screen instanceof ChatScreen)) return;
+            if (!hudScreen(screen)) return;
             ScreenMouseEvents.allowMouseClick(screen).register((s, mx, my, button) -> {
                 if (button == 0 && QuestHud.hitToggle(mx, my)) { toggle(); return false; }
                 return true;
@@ -75,6 +75,11 @@ public final class QuestClient {
         try {
             if (Files.isRegularFile(PREFS)) collapsed = Files.readString(PREFS).contains("collapsed=true");
         } catch (Exception ignored) { }
+    }
+
+    /** 퀘스트 HUD 를 계속 보여 주는 화면: 채팅창, MagicCodex Ctrl 마우스 포인터(HudCursorScreen — 의존 없이 이름으로 확인). */
+    static boolean hudScreen(net.minecraft.client.gui.screens.Screen screen) {
+        return screen instanceof ChatScreen || screen.getClass().getName().equals("school.magiccodex.client.HudCursorScreen");
     }
 
     static void toggle() {
