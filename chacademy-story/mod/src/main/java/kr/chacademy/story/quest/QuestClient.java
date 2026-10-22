@@ -66,7 +66,7 @@ public final class QuestClient {
         WorldRenderEvents.AFTER_TRANSLUCENT.register(QuestWorld::render);
         ClientTickEvents.END_CLIENT_TICK.register(QuestWorld::tick);
         ScreenEvents.AFTER_INIT.register((client, screen, w, h) -> {
-            if (!(screen instanceof ChatScreen)) return;
+            if (!hudScreen(screen)) return;
             ScreenMouseEvents.allowMouseClick(screen).register((s, mx, my, button) -> {
                 if (button == 0 && QuestHud.hitToggle(mx, my)) { toggle(); return false; }
                 return true;
@@ -75,6 +75,11 @@ public final class QuestClient {
         try {
             if (Files.isRegularFile(PREFS)) collapsed = Files.readString(PREFS).contains("collapsed=true");
         } catch (Exception ignored) { }
+    }
+
+    /** Same policy for HUD visibility and fold-button input, without a hard MagicCodex dependency. */
+    static boolean hudScreen(net.minecraft.client.gui.screens.Screen screen) {
+        return QuestHudScreenPolicy.visible(screen instanceof ChatScreen,screen==null?"":screen.getClass().getName());
     }
 
     static void toggle() {

@@ -166,3 +166,7 @@ NPC 는 Citizens 로 소환한 NPC 를 클릭해 지정 (서버 ID `quest-server
 - `chacademy-story/plugin/src/main/resources/steps.yml` 기본값을 1장 최신본과 맞춤 (tutorial → ch1-1 … ch1-21, ch1-4 끝 컷신 `magic_tutorial`).
 - 고정 보상 키 `ch1-2.e_s11`, `ch1-3.end` 는 그대로 (ch1-3 = 인사 대화 끝).
 - 테스트의 ch1-14 문자열은 패턴 로직 검사라 그대로 둠.
+
+
+### 73dd9db 패치 통합 검증 (task7)
+Ctrl HudCursorScreen에서도 퀘스트 HUD와 접기 버튼을 유지하는 부분만 최신 통합에 반영했다. 기존 AFTER_TRANSLUCENT 포털 렌더 및 cdca568 단계 ID는 그대로다. 정책 단위 테스트를 위해 화면 판정을 작은 순수 헬퍼로 분리했으며 MagicCodex 강제 의존은 추가하지 않았다. 배포 전 검토용이며 운영 교체는 하지 않는다.

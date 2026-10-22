@@ -5,7 +5,6 @@ import java.util.List;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.util.Mth;
 
 /**
@@ -29,7 +28,7 @@ final class QuestHud {
         var mc = Minecraft.getInstance();
         var v = QuestClient.view;
         if (!v.active() || mc.player == null || mc.options.hideGui) { toggleX = -100; return; }
-        if (mc.screen != null && !(mc.screen instanceof ChatScreen)) { toggleX = -100; return; }
+        if (mc.screen != null && !QuestClient.hudScreen(mc.screen)) { toggleX = -100; return; }
         long now = QuestClient.now();
         float fade = Mth.clamp((now - v.shownAt) / 350f, 0, 1);
         int a = Math.round(255 * fade);
