@@ -157,3 +157,12 @@ NPC 는 Citizens 로 소환한 NPC 를 클릭해 지정 (서버 ID `quest-server
 - 모드 전용 버퍼 `MultiBufferSource.immediate(new ByteBufferBuilder(1<<16))` 에 그리고 끝에 `endBatch()` — 겹치는 순서가 매번 같다.
 - 확인 못 함 (빌드 필요): 컴파일 (`ByteBufferBuilder`, `MultiBufferSource.immediate`, `CoreShaders.POSITION_TEX_COLOR`, `Font.drawInBatch(Component,…)`), **글자가 좌우로 뒤집혀 보이지 않는지** (카메라 회전 기준 +x = 화면 오른쪽으로 가정, 뒤집히면 `billboardTex` 의 `mirror` 를 true 로), 셰이더 팩·Fabulous 그래픽에서 보이는지.
 - 2026-10-22 추가: 포탈·글자·징표를 `WorldRenderEvents.AFTER_TRANSLUCENT` 에서 그린다 (`QuestClient`). 예전 `AFTER_ENTITIES` 는 물·유리·반투명 엔티티가 나중에 그려져, 그 앞에 있는 글자·포탈이 뒤에 있는 것처럼 덮여 보였다. 확인할 것: Fabulous 그래픽에서도 보이는지.
+
+## 13. 1장 번호 밀기 (2026-10-22)
+
+오너 결정: 1-3 을 인사(→ `하수구 {player}` 이동)와 구덩이 테스트로 나누면서, 뒤 번호를 하나씩 밀어 1-21 까지로 함.
+- **MagicCodexBridge `SchoolBridge.java` 2줄**: 분류 대화 ID `ch1-14` / `ch1-14f-` / `ch1-14r-·m-` → `ch1-15…` (학교·야생 Bridge JAR 다시 빌드·배포 필요).
+  운영 대화 파일과 steps.yml 도 같은 시점에 바꿔야 한다 (새 Bridge + 예전 파일이면 분류 대화를 못 연다).
+- `chacademy-story/plugin/src/main/resources/steps.yml` 기본값을 1장 최신본과 맞춤 (tutorial → ch1-1 … ch1-21, ch1-4 끝 컷신 `magic_tutorial`).
+- 고정 보상 키 `ch1-2.e_s11`, `ch1-3.end` 는 그대로 (ch1-3 = 인사 대화 끝).
+- 테스트의 ch1-14 문자열은 패턴 로직 검사라 그대로 둠.

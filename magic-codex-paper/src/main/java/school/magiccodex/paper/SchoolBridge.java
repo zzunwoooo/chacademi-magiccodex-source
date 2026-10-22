@@ -141,7 +141,7 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
             if(a.length==2&&a[0].equals("시작")||a.length==3&&a[0].equals("결정")){
                 Player player=plugin.names().resolve(a[1]);if(player==null||!player.isOnline())throw new IllegalArgumentException("현재 서버에 접속한 유저를 지정해 주세요.");
                 UUID id=player.getUniqueId();
-                if(a[0].equals("시작"))work(()->store.savedHouse(id),h->sortingDialogue(sender,player,h==null?"ch1-14":"ch1-14f-"+HouseSorting.IDS.get(h),false),sender::sendMessage);
+                if(a[0].equals("시작"))work(()->store.savedHouse(id),h->sortingDialogue(sender,player,h==null?"ch1-15":"ch1-15f-"+HouseSorting.IDS.get(h),false),sender::sendMessage);
                 else{
                     if(!a[2].matches("p_[0-3][0-3]"))throw new IllegalArgumentException("결과는 p_00~p_33 형식이며 T,D는 각각 0~3입니다.");
                     int t=a[2].charAt(2)-'0',d=a[2].charAt(3)-'0',tolerance=sortingTolerance();
@@ -149,7 +149,7 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
                         // Database has committed before signals or Bukkit commands run on the main thread.
                         if(result.created())try{DiscoveryLink.signal(id,"dormitory.assigned",1);}catch(RuntimeException error){plugin.getLogger().warning("기숙사 저장 완료, 배정 신호 실패: "+error);sender.sendMessage("소속은 저장됐지만 배정 신호 처리에 실패했습니다. 로그를 확인해 주세요.");}
                         reply(player,new Request(SchoolProtocol.IDENTITY,0,0,""),"");
-                        sortingDialogue(sender,player,"ch1-14"+(!result.created()||result.house()==result.preferred()?"r-":"m-")+HouseSorting.IDS.get(result.house()),true);
+                        sortingDialogue(sender,player,"ch1-15"+(!result.created()||result.house()==result.preferred()?"r-":"m-")+HouseSorting.IDS.get(result.house()),true);
                     },sender::sendMessage);
                 }return true;
             }
