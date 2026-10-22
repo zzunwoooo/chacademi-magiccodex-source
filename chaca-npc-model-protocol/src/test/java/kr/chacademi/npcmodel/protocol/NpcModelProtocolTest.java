@@ -41,7 +41,9 @@ class NpcModelProtocolTest {
     @Test
     void rejectsBadModelIdAndScale() {
         assertThrows(IllegalArgumentException.class, () -> new NpcModelProtocol.Appear(1, u, 1, "../x", 1, 0, 0));
-        assertThrows(IllegalArgumentException.class, () -> new NpcModelProtocol.Appear(1, u, 1, "luka", 10, 0, 0));
+        assertThrows(IllegalArgumentException.class, () -> new NpcModelProtocol.Appear(1, u, 1, "luka", 10.5f, 0, 0));
+        assertThrows(IllegalArgumentException.class, () -> new NpcModelProtocol.Appear(1, u, 1, "luka", 0.2f, 0, 0));
+        new NpcModelProtocol.Appear(1, u, 1, "luka", 10, 0, 0); // 10배까지 허용
         // 잘못된 모델 ID 를 담은 바이트도 해석 단계에서 버린다
         byte[] b = NpcModelProtocol.encode(new NpcModelProtocol.Appear(1, u, 1, "luka", 1, 0, 0));
         int at = new String(b, java.nio.charset.StandardCharsets.ISO_8859_1).indexOf("luka");

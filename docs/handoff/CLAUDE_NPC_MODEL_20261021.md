@@ -130,3 +130,12 @@ MagicCodex(Bridge·Fabric)·PortableVFX·스토리 모드는 **건드리지 않�
 - 리깅·애니메이션 없는 트리포 FBX (사용자 확인: 정상). 받침대 포함 `wizard_statue.glb` (sha256 def88e0f…, 1.7MB, 텍스처 1장).
 - 스킨 없는 메쉬는 노드 행렬로만 그려짐(기존 코드 그대로 지원), 클립 전부 null → 항상 기본 자세(rest). 비율(proportion) 미적용, 키 3.0.
 - 서버 `npc-models.yml` models 목록에만 추가 (캐릭터 연결 없음 — NPC에 `/NPC관리 외형 지정 wizard_statue`).
+
+## 16. 2026-10-22 — 크기 한도 4배 → 10배 + 큰 모델 컬링 (모드 0.1.1-npcmodel.3 / ChacaNPC 0.3.0-npcmodel.2)
+
+- 프로토콜 `MAX_SCALE` 4 → 10 (서버 `/NPC관리 외형 크기·지정·캐릭터`, npc-models.yml 검사가 이 값을 씀). 최소 0.25 그대로.
+- 클라이언트 models.json: `scale` 0.05~8 → 0.05~20, `height` 0.5~5 → 0.5~25 블록. `/npc모델 키` 도 0.5~25.
+- **모드·플러그인 둘 다 새로 배포해야 함**: 프로토콜 검사가 양쪽에 들어 있어, 옛 모드는 4배 넘는 APPEAR 를 버리고 원래 외형으로 보임.
+- 새 믹스인 `EntityRendererCullMixin` (EntityRenderer.shouldRender HEAD): 모델이 붙은 NPC는 히트박스 대신 모델 키 기준 상자(폭 = 키×0.4 이상)로 화면 밖 판정, 보이는 거리도 모델 키 × 64 × 엔티티 거리 설정. 모델 없는 엔티티는 바닐라 그대로.
+- 서버의 엔티티 추적 거리(spigot.yml entity-tracking-range players) 밖에서는 NPC 자체가 클라이언트에 없으므로 큰 동상도 그 거리에서 사라짐.
+- 프로토콜 테스트를 10배 허용 / 10.5·0.2 거부로 갱신.

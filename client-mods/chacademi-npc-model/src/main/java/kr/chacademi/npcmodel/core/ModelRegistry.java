@@ -123,8 +123,8 @@ public final class ModelRegistry {
             throw new ModelFormatException("walkSpeed 범위 (0~20)");
         }
         float scale = (float) Json.num(m, "scale", 1);
-        if (scale < 0.05f || scale > 8) {
-            throw new ModelFormatException("scale 범위 (0.05~8)");
+        if (scale < 0.05f || scale > 20) {
+            throw new ModelFormatException("scale 범위 (0.05~20)");
         }
         Map<String, String> boneMap = new LinkedHashMap<>();
         if (m.containsKey("boneMap")) {
@@ -157,8 +157,8 @@ public final class ModelRegistry {
             prop = new Proportion.Factors(factor(pr, "legs"), factor(pr, "torso"), factor(pr, "arms"));
         }
         float height = (float) Json.num(m, "height", 0);
-        if (height != 0 && (height < 0.5f || height > 5f)) {
-            throw new ModelFormatException("height 범위 (0.5~5 블록, 0 = scale 사용)");
+        if (height != 0 && (height < 0.5f || height > 25f)) {
+            throw new ModelFormatException("height 범위 (0.5~25 블록, 0 = scale 사용)");
         }
         return new Entry(id, main, idle, walk, talk, greet, List.copyOf(variants), walkSpeed, scale,
                 Map.copyOf(boneMap), List.copyOf(clipFiles), List.copyOf(lods), Math.max(-2, Math.min(2, plate)), prop, height);

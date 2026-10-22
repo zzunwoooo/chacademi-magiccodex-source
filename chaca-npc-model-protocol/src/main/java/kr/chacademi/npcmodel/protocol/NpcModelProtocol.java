@@ -24,7 +24,7 @@ public final class NpcModelProtocol {
 
     public static final int STATE_IDLE = 0, STATE_TALK = 1;
     public static final int MAX_MESSAGE = 256;
-    public static final float MIN_SCALE = 0.25f, MAX_SCALE = 4f;
+    public static final float MIN_SCALE = 0.25f, MAX_SCALE = 10f;
     public static final Pattern MODEL_ID = Pattern.compile("[a-z0-9_-]{1,32}");
 
     private NpcModelProtocol() {

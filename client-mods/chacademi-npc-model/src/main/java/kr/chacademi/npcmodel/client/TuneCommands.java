@@ -20,7 +20,7 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
  * <pre>
  * /npc모델 정보 [모델]
  * /npc모델 비율 &lt;모델&gt; &lt;다리|몸통|팔&gt; &lt;0.5~1.5&gt;
- * /npc모델 키 &lt;모델&gt; &lt;블록 0.5~5 | 0 = models.json scale 사용&gt;
+ * /npc모델 키 &lt;모델&gt; &lt;블록 0.5~25 | 0 = models.json scale 사용&gt;
  * /npc모델 저장 &lt;모델&gt;      지금 값을 models.json 에 기록 (런처가 다시 덮어쓰면 사라지니 결과를 배포본에도 반영)
  * /npc모델 되돌리기          models.json 다시 읽기
  * </pre>
@@ -38,7 +38,7 @@ public final class TuneCommands {
                         .then(literal("비율").then(argument("모델", StringArgumentType.word()).suggests(TuneCommands::models)
                                 .then(part("다리")).then(part("몸통")).then(part("팔"))))
                         .then(literal("키").then(argument("모델", StringArgumentType.word()).suggests(TuneCommands::models)
-                                .then(argument("블록", FloatArgumentType.floatArg(0, 5)).executes(TuneCommands::height))))
+                                .then(argument("블록", FloatArgumentType.floatArg(0, 25)).executes(TuneCommands::height))))
                         .then(literal("저장").then(argument("모델", StringArgumentType.word()).suggests(TuneCommands::models)
                                 .executes(TuneCommands::save)))
                         .then(literal("되돌리기").executes(ctx -> {
@@ -90,7 +90,7 @@ public final class TuneCommands {
         }
         float h = FloatArgumentType.getFloat(ctx, "블록");
         if (h != 0 && h < 0.5f) {
-            ctx.getSource().sendError(Component.literal("키는 0.5~5 블록이에요 (0 = models.json 의 scale 사용)"));
+            ctx.getSource().sendError(Component.literal("키는 0.5~25 블록이에요 (0 = models.json 의 scale 사용)"));
             return 0;
         }
         apply(ctx, e, e.proportion(), h);
