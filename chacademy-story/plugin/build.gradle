@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'kr.chacademy'
-version = '0.1.4-quest.1'
+version = '0.1.4-quest.3-portal.1'
 
 repositories {
     mavenCentral()
@@ -38,3 +38,5 @@ dependencies {
 }
 test { useJUnitPlatform() }
 dependencies { testImplementation 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT' }
+
+dependencies { testImplementation 'org.mockito:mockito-core:5.14.2' }

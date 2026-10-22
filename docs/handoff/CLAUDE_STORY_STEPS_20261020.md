@@ -130,3 +130,29 @@ NPC 는 Citizens 로 소환한 NPC 를 클릭해 지정 (서버 ID `quest-server
 
 - JAR: ChacademyStory · 스토리 모드 · MagicCodexBridge (학교·야생) · ChacaHousing · ChacaNPC
 - 설정: 위 5절 표 + 6절은 운영자가 게임 안에서.
+
+## 11. 추가 수정 (2026-10-21) — 위치 포탈 대화를 닫았을 때
+
+오너 결정: 위치 포탈로 연 대화를 중간에 닫으면, 포탈 밖으로 **한 번 나갔다가 다시 들어와야** 다시 열린다.
+그 전에는 포탈 안에 서 있기만 해도 3초 뒤 저절로 다시 열렸다.
+
+- 파일: `chacademy-story/plugin/.../QuestEngine.java` 하나
+- `mustLeave`(메모리 전용 Set): `dialogueAborted` → `backToActive` 뒤, 호출이 위치이고 유저가 포탈 안이면 추가
+- `tick` 과 `checkLocation`: `mustLeave` 이면 위치 호출 안 함. `tick` 에서 포탈 밖이거나 호출 방식이 위치가 아니면 지움
+- 지우는 곳: `enter`(단계 변경), `onQuit`, `/유저관리 … 스토리진행 다시`·`초기화`. 관리자 `다음`(강제 호출)은 막지 않음
+- NPC 클릭·자동·컷신·시작명령 동작은 그대로. 30분 시간 초과·컷신 취소로 되돌릴 때는 표시를 붙이지 않음
+- 빌드 확인 못 함 (기존 클래스와 같은 import·타입만 사용, 새 의존 없음)
+- 실서버 확인: 포탈 대화 ESC → 그 자리 대기(안 열려야 함) → 포탈 밖 → 다시 들어감(열려야 함)
+
+## 12. 포탈 표시 개선 (2026-10-22) — 스토리 모드만
+
+오너 요청: 포탈 깜빡임, 일렁이는 빛 띠 더 밝게, 블룸("우웅" 느낌), 포탈 위 "퀘스트 목표 지점" 글자.
+
+- 파일: `chacademy-story/mod/.../story/quest/QuestWorld.java`, `QuestArt.java`, 텍스처 3개 추가 (`textures/quest/portal_ring_glow.png`, `portal_glow.png`, `halo.png`)
+- **깜빡임 원인**: 바닐라 `RenderType.entityTranslucentEmissive` 는 그림을 최근접 필터·밉맵 없이 묶어서, 링의 1~2px 금색 선이 비스듬히 보이며 돌 때 반짝반짝 깜빡였다.
+  → 포탈·징표 그림을 `QuestArt.image()`(밉맵) 로 올리고 새 `QuestArt.worldLayer(tex, additive)` 로 그린다 (POSITION_TEX_COLOR, 선형+밉맵, 깊이 검사만·쓰기 없음, 컬링 끔). 바닥에서 0.04 띄움.
+- **블룸**: 후처리 없이 흐린 빛 그림을 빛 더하기(SRC_ALPHA, ONE)로 겹침 — 바닥 빛, 링 번짐, 빛 띠 더하기 2겹, 별 뒤 빛, 글자 뒤 빛. 1.25 rad/s 로 천천히 숨 쉼.
+- **별**: 예전엔 완전히 꺼졌다 켜져서 깜빡여 보였음 → 최소 밝기를 남기고 부드럽게 커짐.
+- **글자**: 포탈 중심 위 약 2.1블록에 "퀘스트 목표 지점" (Pretendard, 밉맵, 검은 외곽선 + 채운 글자, 나를 바라봄, 살짝 둥실, 36~48블록에서 서서히 사라짐). MagicCodex 폰트가 없으면 바닐라 글꼴.
+- 모드 전용 버퍼 `MultiBufferSource.immediate(new ByteBufferBuilder(1<<16))` 에 그리고 끝에 `endBatch()` — 겹치는 순서가 매번 같다.
+- 확인 못 함 (빌드 필요): 컴파일 (`ByteBufferBuilder`, `MultiBufferSource.immediate`, `CoreShaders.POSITION_TEX_COLOR`, `Font.drawInBatch(Component,…)`), **글자가 좌우로 뒤집혀 보이지 않는지** (카메라 회전 기준 +x = 화면 오른쪽으로 가정, 뒤집히면 `billboardTex` 의 `mirror` 를 true 로), 셰이더 팩·Fabulous 그래픽에서 보이는지.
