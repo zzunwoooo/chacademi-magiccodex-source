@@ -48,6 +48,12 @@ final class NicknameBridge implements Listener,PluginMessageListener,AutoCloseab
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin,NicknameProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,NicknameProtocol.RESPONSE);Bukkit.getPluginManager().registerEvents(this,plugin);
         if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){var manager=me.clip.placeholderapi.PlaceholderAPIPlugin.getInstance().getLocalExpansionManager();for(String id:List.of("magiccodex","user")){if(manager.getExpansion(id)!=null)continue;var expansion=new NicknameExpansion(this,id,plugin.getDescription().getVersion());if(expansion.register())expansions.add(expansion);}}
     }
+    private final Map<UUID,Long> displayReads=new HashMap<>();private final Set<UUID> displayReading=new HashSet<>();
+    /** Display-only asynchronous refresh; never creates/grants/renames a nickname. Main-thread entry point. */
+    void requestStored(UUID id){long now=System.currentTimeMillis();if(closed||busy.contains(id)||displayReading.contains(id)||displayReads.getOrDefault(id,0L)>now)return;
+        displayReads.put(id,now+5000);displayReading.add(id);if(displayReads.size()>4096)displayReads.entrySet().removeIf(e->e.getValue()<now);
+        try{io.execute(()->{NicknameStore.State loaded=null;boolean ok=false;try{loaded=store.load(id);ok=true;}catch(Exception ignored){}var state=loaded;boolean success=ok;main(()->{displayReading.remove(id);if(success&&!busy.contains(id))apply(id,state);});});}catch(RejectedExecutionException e){displayReading.remove(id);}
+    }
     String stored(UUID id){var state=profiles.get(id);return state==null?"":state.nickname();}
     /** 저장된 닉네임으로 주인 찾기 (접속하지 않은 유저 포함, 대소문자·전각 무시). 없으면 null. 메인 스레드. */
     UUID ownerOf(String nickname){

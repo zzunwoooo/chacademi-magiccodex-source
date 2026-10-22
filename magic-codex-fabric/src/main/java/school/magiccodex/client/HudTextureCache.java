@@ -242,6 +242,11 @@ public final class HudTextureCache implements AutoCloseable {
         v.vertex(m,width/2,-height/2,0).texture(1,1).color(0xFFFFFFFF).light(0xF000F0);
         v.vertex(m,width/2,height/2,0).texture(1,0).color(0xFFFFFFFF).light(0xF000F0);
     }
+    /** Unassigned players reuse only the approved right-hand panel; no invented house or NPC book emblem. */
+    public void drawWorldPanel(net.minecraft.client.util.math.MatrixStack matrices,VertexConsumerProvider out,String path,float width,float height,float uMin){
+        var value=get(new Region(path,0,0,0,0));if(value.isEmpty())return;var t=value.get();var v=out.getBuffer(RenderLayer.getText(t.id()));var m=matrices.peek().getPositionMatrix();float x=(uMin-.5f)*width;
+        v.vertex(m,x,height/2,0).texture(uMin,0).color(0xFFFFFFFF).light(0xF000F0);v.vertex(m,x,-height/2,0).texture(uMin,1).color(0xFFFFFFFF).light(0xF000F0);v.vertex(m,width/2,-height/2,0).texture(1,1).color(0xFFFFFFFF).light(0xF000F0);v.vertex(m,width/2,height/2,0).texture(1,0).color(0xFFFFFFFF).light(0xF000F0);
+    }
     private void render(DrawContext ctx,Texture t,int x,int y,int w,int h,int tint) {
         ctx.drawTexture(id->t.layer(),t.id(),x,y,0,0,w,h,t.width(),t.height(),t.width(),t.height(),tint);
     }

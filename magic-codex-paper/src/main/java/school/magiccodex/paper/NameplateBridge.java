@@ -49,7 +49,7 @@ final class NameplateBridge {
    if(!viewer.getListeningPluginChannels().contains(NameplateProtocol.CHANNEL))continue;
    var out=new ArrayList<NameplateProtocol.Entry>();
    var self=playerEntry(viewer);if(self!=null)out.add(self);
-   var entities=new ArrayList<Entity>(viewer.getNearbyEntities(48,48,48));entities.sort(Comparator.comparingDouble(e->e.getLocation().distanceSquared(viewer.getLocation())));
+   var entities=new ArrayList<Entity>(viewer.getNearbyEntities(48,48,48));entities.sort(Comparator.<Entity>comparingInt(e->e instanceof Player?0:1).thenComparingDouble(e->e.getLocation().distanceSquared(viewer.getLocation())));
    for(Entity e:entities){if(out.size()==NameplateProtocol.MAX_ENTRIES)break;if(e.equals(viewer)||e.getLocation().distanceSquared(viewer.getLocation())>48*48)continue;
     try{Npc n=npc(e);Label label=n==null?null:labels.get(n.key);if(label!=null){var runs=NameplateTitles.npcRuns(label,plugin.titleService());out.add(new NameplateProtocol.Entry(e.getEntityId(),e.getUniqueId(),4,label.name(),runs));continue;}
      if(n!=null||!(e instanceof Player p)||p.hasMetadata("NPC")||!viewer.canSee(p))continue;
@@ -60,8 +60,8 @@ final class NameplateBridge {
   }
  }
  NameplateProtocol.Entry playerEntry(Player p){
-  try{int house=plugin.questHouse(p);if(house<0||house>3)return null;var service=plugin.titleService();var titles=service==null?List.<TitleDefinition>of():service.nameplateTitles(p.getUniqueId());
-  return new NameplateProtocol.Entry(p.getEntityId(),p.getUniqueId(),house,NameplateTitles.plainName(plugin.names().name(p),titles),NameplateTitles.runs(titles));}catch(IllegalArgumentException ex){return null;}
+  try{int house=plugin.questHouse(p);if(house<0||house>3)house=5;var service=plugin.titleService();var titles=service==null?List.<TitleDefinition>of():service.nameplateTitles(p.getUniqueId());
+  return new NameplateProtocol.Entry(p.getEntityId(),p.getUniqueId(),house,plugin.names().registered(p.getUniqueId()),NameplateTitles.runs(titles));}catch(IllegalArgumentException ex){return null;}
  }
  private List<Npc> nearby(Player p){var list=new ArrayList<Npc>();for(Entity e:p.getNearbyEntities(24,24,24)){if(e.getLocation().distanceSquared(p.getLocation())>24*24)continue;Npc n=npc(e);if(n!=null)list.add(n);}list.sort(Comparator.comparingDouble(n->n.entity.getLocation().distanceSquared(p.getLocation())));return list;}
  Npc target(Player p,String query)throws com.mojang.brigadier.exceptions.CommandSyntaxException{

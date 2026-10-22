@@ -118,7 +118,7 @@ public final class PartyPlugin {
         if(!trusted.contains(source.getServerInfo().getName())||source.getPlayer()!=target||target.getCurrentServer().orElse(null)!=source)return;
         byte[] data=event.getData();if(data.length>256)return;
         enqueue(()->{if(network!=null&&proxy.getPlayer(target.getUniqueId()).orElse(null)==target){
-            long now=System.currentTimeMillis();if(network.accept(target.getUniqueId(),source,target.getCurrentServer().orElse(null),source.getServerInfo().getName(),true,data,now)&&kyudichi!=null){var identity=network.identity(target.getUniqueId(),source,now);if(identity!=null)kyudichi.rememberName(target.getUniqueId(),identity.nickname());}}});
+            long now=System.currentTimeMillis();if(network.accept(target.getUniqueId(),source,target.getCurrentServer().orElse(null),source.getServerInfo().getName(),true,data,now)&&kyudichi!=null){try{String original=NetworkChat.decode(data).registeredNickname();if(!original.isBlank())kyudichi.rememberName(target.getUniqueId(),original);}catch(IOException impossible){throw new IllegalStateException(impossible);}}}});
     }
     @Subscribe public void vitals(PluginMessageEvent event){
         if(!event.getIdentifier().equals(VITALS))return;

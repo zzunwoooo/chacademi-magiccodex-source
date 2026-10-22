@@ -13,10 +13,10 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.*;
 import school.magiccodex.protocol.NameplateProtocol;
 public final class NameplateClient {
- private static Map<Integer,NameplateProtocol.Entry> entries=Map.of();private static long received;
+ private static Map<Integer,NameplateProtocol.Entry> entries=Map.of();private static long received;private static boolean serverReady;
  private static HudTextureCache textures;private static CodexTypography text;private static boolean ready;
  private static Object world;private static Method height;private static boolean heightChecked;
- private static final String[] STYLES={"arkeon","lumina","bestiaz","noxer","professor"};
+ private static final String[] STYLES={"arkeon","lumina","bestiaz","noxer","professor","professor"};
  public record Snapshot(byte[] bytes) implements CustomPayload {
   public static final Id<Snapshot> ID=new Id<>(Identifier.of(NameplateProtocol.CHANNEL));
   public static final PacketCodec<RegistryByteBuf,Snapshot> CODEC=new PacketCodec<>(){
@@ -30,18 +30,18 @@ public final class NameplateClient {
    public void reload(net.minecraft.resource.ResourceManager manager){clear();}
   });
   PayloadTypeRegistry.playS2C().register(Snapshot.ID,Snapshot.CODEC);
-  ClientPlayNetworking.registerGlobalReceiver(Snapshot.ID,(p,c)->{try{var list=NameplateProtocol.decode(p.bytes);c.client().execute(()->{var map=new HashMap<Integer,NameplateProtocol.Entry>();for(var e:list)map.put(e.entity(),e);entries=Map.copyOf(map);received=Util.getMeasuringTimeMs();world=c.client().world;});}catch(IllegalArgumentException ignored){}});
+  ClientPlayNetworking.registerGlobalReceiver(Snapshot.ID,(p,c)->{try{var list=NameplateProtocol.decode(p.bytes);c.client().execute(()->{var map=new HashMap<Integer,NameplateProtocol.Entry>();for(var e:list)map.put(e.entity(),e);entries=Map.copyOf(map);serverReady=true;received=Util.getMeasuringTimeMs();world=c.client().world;});}catch(IllegalArgumentException ignored){}});
   ClientPlayConnectionEvents.DISCONNECT.register((h,c)->clear());
-  WorldRenderEvents.START.register(ctx->{var c=MinecraftClient.getInstance();if(c.world!=world){entries=Map.of();world=c.world;}if(textures==null){textures=new HudTextureCache(c,true,true);text=new CodexTypography(c);}textures.beginFrame();text.beginFrame();ready=true;for(var s:STYLES)ready&=textures.worldReady(path(s));});
+  WorldRenderEvents.START.register(ctx->{var c=MinecraftClient.getInstance();if(c.world!=world){entries=Map.of();serverReady=false;world=c.world;}if(textures==null){textures=new HudTextureCache(c,true,true);text=new CodexTypography(c);}textures.beginFrame();text.beginFrame();ready=true;for(var s:STYLES)ready&=textures.worldReady(path(s));});
   WorldRenderEvents.AFTER_ENTITIES.register(ctx->{var c=MinecraftClient.getInstance();if(!ready||c.world==null||c.player==null||c.options.hudHidden)return;var matrices=ctx.matrixStack();var out=ctx.consumers();if(matrices==null||out==null)return;
-   for(var data:entries.values()){Entity e=c.world.getEntityById(data.entity());if(e==null||!replacement(e)||!visible(e))continue;
+   for(var data:entries.values()){Entity e=c.world.getEntityById(data.entity());if(e==null||data.name().isBlank()||!replacement(e)||!visible(e))continue;
     boolean self=e==c.player,firstSelf=NameplatePolicy.selfCameraRelative(self,c.options.getPerspective().isFirstPerson());
     float delta=ctx.tickCounter().getTickDelta(false);var pos=e.getLerpedPos(delta).subtract(ctx.camera().getPos());double top=top(e);
-    float h=NameplatePolicy.WORLD_WIDTH*768/(data.style()==4?2046:2048);
+    float h=NameplatePolicy.WORLD_WIDTH*768/(data.style()>=4?2046:2048);
     matrices.push();
     if(firstSelf){var preview=ctx.camera().getRotation().transform(new org.joml.Vector3f(0,NameplatePolicy.SELF_UP,-NameplatePolicy.SELF_FORWARD));matrices.translate(preview.x,preview.y,preview.z);matrices.multiply(ctx.camera().getRotation());matrices.scale(NameplatePolicy.SELF_SCALE,NameplatePolicy.SELF_SCALE,NameplatePolicy.SELF_SCALE);}
     else{matrices.translate(pos.x,pos.y+top+.10+h/2,pos.z);matrices.multiply(ctx.camera().getRotation());}
-    textures.drawWorld(matrices,out,path(STYLES[data.style()]),NameplatePolicy.WORLD_WIDTH,h);
+    if(data.style()==5)textures.drawWorldPanel(matrices,out,path(STYLES[5]),NameplatePolicy.WORLD_WIDTH,h,660f/2046f);else textures.drawWorld(matrices,out,path(STYLES[data.style()]),NameplatePolicy.WORLD_WIDTH,h);
     // Safe rectangle is on the right of the flag: x=660..1830, y=205..505. Do not center text on the whole image.
     boolean titled=!data.titles().isEmpty();
     text.drawWorld(matrices,out,data.name(),221,NameplatePolicy.nameCenterY(titled),NameplatePolicy.NAME_SIZE,1100,0xFFF9F2DF);
@@ -51,7 +51,9 @@ public final class NameplateClient {
   });
  }
  private static String path(String style){return "magiccodex:textures/nameplates/nameplate_"+style+".png";}
- private static void clear(){entries=Map.of();ready=false;world=null;if(textures!=null)textures.close();if(text!=null)text.close();textures=null;text=null;}
+ private static void clear(){entries=Map.of();serverReady=false;ready=false;world=null;if(textures!=null)textures.close();if(text!=null)text.close();textures=null;text=null;}
+ /** Pending/stale tracked players must not leak an English vanilla account label while nickname data loads. */
+ public static boolean suppressVanilla(Entity e){var c=MinecraftClient.getInstance();if(serverReady&&c.world==world&&c.getNetworkHandler()!=null&&e instanceof PlayerEntity&&c.getNetworkHandler().getPlayerListEntry(e.getUuid())!=null)return e!=c.player||selfPreview(c,e);var d=entries.get(e.getId());return c.world==world&&d!=null&&d.uuid().equals(e.getUuid())&&(e!=c.player||selfPreview(c,e));}
  public static boolean replacement(Entity e){var c=MinecraftClient.getInstance();var d=entries.get(e.getId());return ready&&c.world==world&&c.player!=null&&(e!=c.player||selfPreview(c,e))&&d!=null&&d.uuid().equals(e.getUuid())&&Util.getMeasuringTimeMs()-received<3000;}
  private static boolean selfPreview(MinecraftClient c,Entity e){return NameplatePolicy.selfPreview(c.currentScreen instanceof HudCursorScreen,c.options.hudHidden,e.isAlive(),e.isInvisibleTo(c.player),e.isSpectator());}
  private static boolean visible(Entity e){

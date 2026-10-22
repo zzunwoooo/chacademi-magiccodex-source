@@ -320,7 +320,7 @@ final class KyudichiDb {
         return out;
     }
     void rememberName(UUID id,String name){io.execute(()->{if(nameCache!=null)try{nameCache.remember(id,name);}catch(java.io.IOException|IllegalArgumentException e){log.warn("Could not preserve trusted ranking display name; previous cache retained");}});}
-    private String displayName(Connection c,UUID id,String fallback){try{return KyudichiNames.display(c,nicknames,id,nameCache==null?fallback:nameCache.name(id,fallback));}catch(SQLException e){warnNames();return nameCache==null?fallback:nameCache.name(id,fallback);}}
+    private String displayName(Connection c,UUID id,String ignoredAccountSnapshot){String pending="닉네임 확인 중";String previous=nameCache==null?pending:nameCache.name(id,pending);try{return KyudichiNames.display(c,nicknames,id,previous);}catch(SQLException e){warnNames();return previous;}}
     private UUID findName(Connection c,String text,boolean prefix){if(text==null||text.isBlank())return null;try{UUID found=KyudichiNames.find(c,nicknames,text,prefix);if(found!=null)return found;}catch(SQLException e){warnNames();}return nameCache==null?null:nameCache.find(text,prefix);}
     private void warnNames(){if(!nicknameWarning){nicknameWarning=true;log.warn("Ranking nickname directory unavailable; verify shared nickname database configuration. Existing account names retained.");}}
     private UUID opponent(Connection c, String match, UUID me) throws SQLException {

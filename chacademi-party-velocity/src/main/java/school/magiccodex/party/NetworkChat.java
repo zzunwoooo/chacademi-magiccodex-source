@@ -9,7 +9,7 @@ final class NetworkChat {
     enum Channel { GLOBAL, HOUSE }
     record Connection(Object source,String server) {}
     record Identity(String nickname,int house,Object source,String server,long until) {}
-    record WireIdentity(String nickname,int house) {}
+    record WireIdentity(String nickname,int house,String registeredNickname) {WireIdentity(String nickname,int house){this(nickname,house,"");}}
     private final Set<String> trusted,chatServers;
     private final Map<UUID,Identity> identities=new HashMap<>();
     NetworkChat(Set<String> trusted){this(trusted,Set.of("school","wild","arena"));}
@@ -18,10 +18,10 @@ final class NetworkChat {
     static WireIdentity decode(byte[] data)throws IOException {
         if(data.length>256)throw new IOException("Identity size");
         try(var in=new DataInputStream(new ByteArrayInputStream(data))){
-            int version=in.readUnsignedByte();if(version!=1&&version!=2)throw new IOException("Identity version");
-            String nickname=in.readUTF();int house=version==2?in.readByte():-1;
-            if(in.available()!=0||house< -1||house>3||nickname.isBlank()||nickname.length()>32||nickname.codePoints().anyMatch(c->Character.isISOControl(c)||Character.getType(c)==Character.FORMAT||c==0xA7))throw new IOException("Identity values");
-            return new WireIdentity(nickname,house);
+            int version=in.readUnsignedByte();if(version!=1&&version!=2&&version!=3)throw new IOException("Identity version");
+            String nickname=in.readUTF();int house=version>=2?in.readByte():-1;String registered=version==3?in.readUTF():"";
+            if(registered.length()>32||registered.codePoints().anyMatch(c->Character.isISOControl(c)||Character.getType(c)==Character.FORMAT||c==0xA7)||in.available()!=0||house< -1||house>3||nickname.isBlank()||nickname.length()>32||nickname.codePoints().anyMatch(c->Character.isISOControl(c)||Character.getType(c)==Character.FORMAT||c==0xA7))throw new IOException("Identity values");
+            return new WireIdentity(nickname,house,registered);
         }
     }
     boolean accept(UUID player,Object source,Object active,String server,boolean backendOwned,byte[] data,long now) {

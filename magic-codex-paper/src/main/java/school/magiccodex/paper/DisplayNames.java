@@ -27,6 +27,8 @@ final class DisplayNames {
         if(cache.size()>4096)cache.entrySet().removeIf(e->e.getValue().until()<now);
         cache.put(player.getUniqueId(),new Cached(value,now+2000));return value;
     }
+    /** Strict original nickname for nameplates/identity: no account/placeholder fallback. */
+    String registered(UUID id){String value=nicknames.stored(id);if(value.isEmpty())nicknames.requestStored(id);return value;}
     String name(Player player){return name(player,player.getName());}
     /** 명령어 공용: 닉네임 저장소 (오프라인 닉네임 찾기·자동완성). */
     NicknameBridge nicknames(){return nicknames;}
