@@ -112,7 +112,8 @@ MagicCodex(Bridge·Fabric)·PortableVFX·스토리 모드는 **건드리지 않�
 
 ## 13. 2026-10-22 — 피피 + 다른 모델 동작 빌려 쓰기 (모드 0.1.1-npcmodel.2 에 포함)
 
-- 피피(`pipi`, 블렌더 GLB): 클립 greet_02·walk 만 있고 대기 없음 → `clipFiles` 로 teacher_ellna.glb 의 idle 사용 (`"idle": "teacher_ellna:idle"`), 인사 = greet_02.
+- 피피(`pipi`, 블렌더 GLB): 처음엔 greet_02·walk 만 있어 teacher_ellna 의 idle 을 빌렸으나, 이후 사용자가 대기 클립 `look_around`(15.6초)를 넣은 새 GLB 로 교체 → 대기 = look_around, 인사 = greet_02, 걷기 = walk. `clipFiles` 제거 (sha256 28800e9c…).
+- 다른 모델 동작 빌려 쓰기(`clipFiles`) 기능 자체는 그대로 남아 있음.
 - 클립 가져오기: 회전 채널만 쓰고 위치·크기 채널은 버림. 뼈대 맨 위(Hips)는 파일마다 부모 좌표가 달라 기본 자세 대비 회전량으로 옮김 (안 하면 눕는 문제 확인).
 - 가져온 클립은 항상 `<파일>:<클립>` 이름, 자기 클립과 안 겹치면 원래 이름으로도 (자기 클립 우선 — 예전엔 클립 파일이 덮었음).
 - 비율 조정이 위치 채널을 가진 클립(블렌더 내보내기)도 처리: 바뀐 뼈 길이만큼 채널 값을 옮김 (안 하면 다리 길이가 원래대로 돌아감). 변환 도구도 동일.
