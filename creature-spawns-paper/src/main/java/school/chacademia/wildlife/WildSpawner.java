@@ -128,7 +128,8 @@ final class WildSpawner {
             roll-=h.weight()>0?h.weight():settings.rarityWeights().getOrDefault(h.rarity(),0d);
             if(roll<0) { pick=h; break; }
         }
-        String result=plugin.check(pick.id(),point,true);
+        // 청크 개체 수는 위에서 이미 셌으므로 다시 세지 않는다.
+        String result=plugin.checkChunkCounted(pick.id(),point);
         if(!result.equals("OK")) return result;
         boolean shiny=random.nextInt(plugin.shinyDenominator())==0;
         String type="CA_Wild_"+pick.id()+(shiny?"_shiny":"");

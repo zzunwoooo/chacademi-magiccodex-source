@@ -17,3 +17,7 @@
 
 ## 배포
 `creature-spawns-paper/deployment/README.txt` 참고. 야생 서버만. 핵심: 새 JAR, RandomSpawns `chacademia_wildlife.yml` 제거, 운영 config.yml `chunk-cap` 4로.
+
+## 2차 (부하 최적화)
+- `WildlifePlugin.check()` 순서 변경: 보호 구역 → 청크 개체 수 → 플레이어 거리·동종·지역 개체 수(캐시)를 **블록 검사보다 먼저**. 주변이 꽉 찬 평상시엔 블록을 읽기 전에 실패. 결과 문자열은 같고, 실패 이유가 겹칠 때 어떤 이유로 집계되는지만 바뀜.
+- 자체 스폰 루프는 시도 앞부분에서 청크를 이미 세므로 `checkChunkCounted()`로 청크 재계산을 건너뜀(한 시도에 한 번만 셈). 스폰 이벤트 재검사·무리 추가는 기존처럼 청크를 셈.

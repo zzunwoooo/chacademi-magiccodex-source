@@ -125,9 +125,16 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
     }
     private static final Set<Material> BAD_FLOORS=Set.of(Material.MAGMA_BLOCK,Material.CACTUS,Material.CAMPFIRE,Material.SOUL_CAMPFIRE);
     public String check(String id,Location l,boolean population) {
-        return check(id,l,population,null);
+        return check(id,l,population,null,false);
+    }
+    /** 자체 스폰 루프 전용: 청크 개체 수는 호출 측에서 이미 확인함. */
+    String checkChunkCounted(String id,Location l) {
+        return check(id,l,true,null,true);
     }
     private String check(String id,Location l,boolean population,UUID pendingEntity) {
+        return check(id,l,population,pendingEntity,false);
+    }
+    private String check(String id,Location l,boolean population,UUID pendingEntity,boolean chunkCounted) {
         if(!Bukkit.isPrimaryThread()) return "메인 스레드 외 호출";
         Habitat h=habitats.get(id);
         if(h==null) return "등록되지 않은 몹";
@@ -145,6 +152,26 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         if(h.time()==Habitat.DAY&&(t>12000) || h.time()==Habitat.NIGHT&&(t<13000||t>23000)) return "시간대";
         if(h.thunder()&&!w.isThundering()) return "뇌우 아님";
         if(h.fullMoon()&&Math.floorMod(w.getFullTime()/24000,8)!=0) return "보름달 아님";
+        // 싼 검사(보호 구역·청크·개체 수, 개체 수는 캐시)를 블록 검사보다 먼저 한다:
+        // 주변이 이미 꽉 찬 평상시에는 블록을 읽기 전에 바로 실패한다.
+        for(Excluded a:cfg.excluded()) {
+            if(w.getName().equals(a.world())&&Math.hypot(l.getX()-a.x(),l.getZ()-a.z())<a.radius()) return "보호 구역";
+        }
+        // Fresh loaded-chunk count: do not reuse a TTL population snapshot here.
+        // 자체 스폰 루프는 시도 앞부분에서 이미 같은 청크를 셌으므로 건너뛴다(한 시도에 한 번만 셈).
+        if(!chunkCounted&&chunkLimit.full(w.getChunkAt(x>>4,z>>4),pendingEntity,uuid ->
+                MythicBukkit.inst().getMobManager().getActiveMob(uuid)
+                    .map(m -> m.getType().getInternalName()).orElse(null))) return "청크 개체 제한";
+        if(population) {
+            double nearest=Double.POSITIVE_INFINITY;
+            for(Player p:w.getPlayers()) if(p.getGameMode()==GameMode.SURVIVAL||p.getGameMode()==GameMode.ADVENTURE) nearest=Math.min(nearest,p.getLocation(scratch).distanceSquared(l));
+            if(nearest<cfg.playerMinSquared()) return "플레이어 너무 가까움";
+            if(nearest>cfg.playerMaxSquared()) return "활성 플레이어 없음";
+            // 후보마다 주변 엔티티를 훑지 않고, 격자 칸별로 약 40틱 동안 공유하는 스캔 결과에서 센다.
+            int[] counts=this.population.count(w,l,"CA_Wild_"+id,h.capRadius());
+            if(counts[0]>=h.cap()) return "동종 개체 제한";
+            if(counts[1]>=cfg.areaCap()) return "지역 개체 제한";
+        }
         boolean water=h.water();
         int height=h.clearanceHeight(),r=h.clearanceRadius();
         if(!w.isChunkLoaded((x-r)>>4,(z-r)>>4)||!w.isChunkLoaded((x+r)>>4,(z+r)>>4)
@@ -166,23 +193,6 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         if(h.nearWater()&&!waterNearby(w,x,y,z)) return "물가 아님";
         // 구조물 색인은 structures를 지정한 서식지만 건드린다(지연 계산, 로드된 청크만).
         if(!h.structures().isEmpty()&&structures.nearby(l,h.structures(),h.structureRadius()).isEmpty()) return "구조물 없음";
-        for(Excluded a:cfg.excluded()) {
-            if(w.getName().equals(a.world())&&Math.hypot(l.getX()-a.x(),l.getZ()-a.z())<a.radius()) return "보호 구역";
-        }
-        // Fresh loaded-chunk count: do not reuse a TTL population snapshot here.
-        if(chunkLimit.full(w.getChunkAt(x>>4,z>>4),pendingEntity,uuid ->
-                MythicBukkit.inst().getMobManager().getActiveMob(uuid)
-                    .map(m -> m.getType().getInternalName()).orElse(null))) return "청크 개체 제한";
-        if(population) {
-            double nearest=Double.POSITIVE_INFINITY;
-            for(Player p:w.getPlayers()) if(p.getGameMode()==GameMode.SURVIVAL||p.getGameMode()==GameMode.ADVENTURE) nearest=Math.min(nearest,p.getLocation(scratch).distanceSquared(l));
-            if(nearest<cfg.playerMinSquared()) return "플레이어 너무 가까움";
-            if(nearest>cfg.playerMaxSquared()) return "활성 플레이어 없음";
-            // 후보마다 주변 엔티티를 훑지 않고, 격자 칸별로 약 40틱 동안 공유하는 스캔 결과에서 센다.
-            int[] counts=this.population.count(w,l,"CA_Wild_"+id,h.capRadius());
-            if(counts[0]>=h.cap()) return "동종 개체 제한";
-            if(counts[1]>=cfg.areaCap()) return "지역 개체 제한";
-        }
         return "OK";
     }
     static boolean naturalGround(Material m) {
