@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
     compileOnly fileTree('lib') { include '*.jar' }
     compileOnly files('../magic-codex-paper/build/libs/magic-codex-bridge-0.13.0.jar')
     testImplementation platform('org.junit:junit-bom:5.11.4')

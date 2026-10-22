@@ -13,7 +13,7 @@ class EventIndexTest {
         assertEquals(50d,d.spells.get("frost_rupture").requirements().get("hit.snowball_monster"));
         assertEquals(5d,d.spells.get("quiet_mooring").requirements().get("place.boat"));
         assertEquals(List.of("falling_star"),d.meta.stream().map(Definitions.Spell::id).toList());
-        assertEquals(Set.of("aerial_haul","crimson_breath"),new HashSet<>(d.stateOnly.stream().map(Definitions.Spell::id).toList()));
+        assertEquals(Set.of("aerial_haul","crimson_breath","guardian_oath"),new HashSet<>(d.stateOnly.stream().map(Definitions.Spell::id).toList()));
     }
     @Test void full299CatalogCanBeIndexedWithoutBroadcastingAnEvent()throws Exception{
         var yaml=new StringBuilder("spells:\n");
