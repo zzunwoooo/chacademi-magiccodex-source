@@ -45,6 +45,20 @@
       "walkSpeed": 1.23,
       "scale": 1.0,
       "nameplateOffset": 0.0
+    },
+    "teacher_ellna": {
+      "file": "teacher_ellna.glb",
+      "sha256": "a0540634047d6e21485e51267fa26c09617f1b1b45f90d2fd04cd5e552fafdbe",
+      "clips": {
+        "idle": "idle",
+        "idleVariants": [],
+        "walk": "walk",
+        "talk": "wait",
+        "greet": null
+      },
+      "walkSpeed": 1.2,
+      "scale": 1.0,
+      "nameplateOffset": 0.0
     }
   }
 }
