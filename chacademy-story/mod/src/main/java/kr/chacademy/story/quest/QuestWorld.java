@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -224,19 +225,20 @@ final class QuestWorld {
 
     /** 바닥에 눕힌 정사각형 (양면이 한 번에 보인다 — 컬링 끔). */
     private static void flat(PoseStack pose, String name, boolean additive, float half, int color) {
+        if (additive && QuestArt.shaderPack()) return;
         var tex = QuestArt.image(name).orElse(null);
         if (tex == null || (color >>> 24) == 0) return;
         VertexConsumer vc = OWN.getBuffer(QuestArt.worldLayer(tex, additive));
         var last = pose.last();
-        vertex(vc, last, -half, 0, -half, 0, 0, color);
-        vertex(vc, last, -half, 0, half, 0, 1, color);
-        vertex(vc, last, half, 0, half, 1, 1, color);
-        vertex(vc, last, half, 0, -half, 1, 0, color);
+        vertex(vc, last, -half, 0, -half, 0, 0, color, 0, 1, 0);
+        vertex(vc, last, -half, 0, half, 0, 1, color, 0, 1, 0);
+        vertex(vc, last, half, 0, half, 1, 1, color, 0, 1, 0);
+        vertex(vc, last, half, 0, -half, 1, 0, color, 0, 1, 0);
     }
 
     /** 링 둘레의 원통. 아래는 진하고 위로 갈수록 사라진다. 둘레를 따라 그림이 두 번 반복된다. */
     private static void band(PoseStack pose, boolean additive, float radius, float height, float alpha) {
-        if (alpha <= 0.01f) return;
+        if (alpha <= 0.01f || (additive && QuestArt.shaderPack())) return;
         var tex = QuestArt.image(BAND).orElse(null);
         if (tex == null) return;
         VertexConsumer vc = OWN.getBuffer(QuestArt.worldLayer(tex, additive));
@@ -246,10 +248,11 @@ final class QuestWorld {
             float a0 = (float) (i * Math.PI * 2 / SEGMENTS), a1 = (float) ((i + 1) * Math.PI * 2 / SEGMENTS);
             float x0 = Mth.cos(a0) * radius, z0 = Mth.sin(a0) * radius, x1 = Mth.cos(a1) * radius, z1 = Mth.sin(a1) * radius;
             float u0 = (float) i / SEGMENTS * 2f, u1 = (float) (i + 1) / SEGMENTS * 2f;
-            vertex(vc, last, x0, 0, z0, u0, 1, bottom);
-            vertex(vc, last, x1, 0, z1, u1, 1, bottom);
-            vertex(vc, last, x1, height, z1, u1, 0, top);
-            vertex(vc, last, x0, height, z0, u0, 0, top);
+            float nx = Mth.cos((a0 + a1) / 2), nz = Mth.sin((a0 + a1) / 2);
+            vertex(vc, last, x0, 0, z0, u0, 1, bottom, nx, 0, nz);
+            vertex(vc, last, x1, 0, z1, u1, 1, bottom, nx, 0, nz);
+            vertex(vc, last, x1, height, z1, u1, 0, top, nx, 0, nz);
+            vertex(vc, last, x0, height, z0, u0, 0, top, nx, 0, nz);
         }
     }
 
@@ -266,7 +269,7 @@ final class QuestWorld {
     /** 나를 바라보는 사각형. 화면 기준 오른쪽 +x, 위 +y (글자가 뒤집히지 않게). dx·dy = 화면 기준 밀기 (외곽선). */
     private static void billboardTex(PoseStack pose, org.joml.Quaternionf camRot, QuestArt.Tex tex, boolean additive,
                                      double x, double y, double z, float w, float h, int color, boolean mirror, float dx, float dy) {
-        if (tex == null || (color >>> 24) == 0) return;
+        if (tex == null || (color >>> 24) == 0 || (additive && QuestArt.shaderPack())) return;
         pose.pushPose();
         pose.translate(x, y, z);
         pose.mulPose(camRot);
@@ -274,15 +277,17 @@ final class QuestWorld {
         var last = pose.last();
         float hw = w / 2, hh = h / 2;
         float uL = mirror ? 1 : 0, uR = mirror ? 0 : 1;
-        vertex(vc, last, dx - hw, dy - hh, 0, uL, 1, color);
-        vertex(vc, last, dx + hw, dy - hh, 0, uR, 1, color);
-        vertex(vc, last, dx + hw, dy + hh, 0, uR, 0, color);
-        vertex(vc, last, dx - hw, dy + hh, 0, uL, 0, color);
+        vertex(vc, last, dx - hw, dy - hh, 0, uL, 1, color, 0, 0, 1);
+        vertex(vc, last, dx + hw, dy - hh, 0, uR, 1, color, 0, 0, 1);
+        vertex(vc, last, dx + hw, dy + hh, 0, uR, 0, color, 0, 0, 1);
+        vertex(vc, last, dx - hw, dy + hh, 0, uL, 0, color, 0, 0, 1);
         pose.popPose();
     }
 
-    private static void vertex(VertexConsumer vc, PoseStack.Pose last, float x, float y, float z, float u, float v, int color) {
-        vc.addVertex(last, x, y, z).setUv(u, v).setColor(color);
+    /** 두 레이어 모두에 맞게 쓴다: 직접 만든 레이어(위치·UV·색)는 나머지 값을 무시, 셰이더팩용 바닐라 발광 레이어는 오버레이·빛·법선까지 필요. */
+    private static void vertex(VertexConsumer vc, PoseStack.Pose last, float x, float y, float z, float u, float v, int color, float nx, float ny, float nz) {
+        vc.addVertex(last, x, y, z).setColor(color).setUv(u, v)
+                .setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT).setNormal(last, nx, ny, nz);
     }
 
     private static int white(float alpha) { return argb(alpha, 1f, 1f, 1f); }
