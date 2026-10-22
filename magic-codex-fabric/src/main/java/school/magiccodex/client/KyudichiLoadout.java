@@ -28,8 +28,7 @@ public final class KyudichiLoadout {
     public static final String FLIGHT = "flight";
     public static final int SIZE = SpellKeySettings.LIMIT;
     public static final int KYUDICHI = 0, DUEL = 1;
-    private static final Path[] PATHS = {FabricLoader.getInstance().getConfigDir().resolve("magiccodex/kyudichi-loadout.yml"),
-            FabricLoader.getInstance().getConfigDir().resolve("magiccodex/kyudichi-duel-loadout.yml")};
+    private static Path path(int mode){return FabricLoader.getInstance().getConfigDir().resolve(mode==DUEL?"magiccodex/kyudichi-duel-loadout.yml":"magiccodex/kyudichi-loadout.yml");}
     private final List<String> spells = new ArrayList<>(Collections.nCopies(SIZE, ""));
     /** 칸별 경기 키 (-1 = 원래 칸의 키). */
     private final int[] keys = filled();
@@ -49,7 +48,7 @@ public final class KyudichiLoadout {
         int m = mode == DUEL ? DUEL : KYUDICHI;
         if (current[m] == null) {
             var l = new KyudichiLoadout(m);
-            try { if (!l.load(PATHS[m])) l.seed(CastingClient.legacyCombatSeed().orderedSlots().stream().map(SpellKeySettings.Binding::spellId).toList()); }
+            try { if (!l.load(path(m))) l.seed(CastingClient.legacyCombatSeed().orderedSlots().stream().map(SpellKeySettings.Binding::spellId).toList()); }
             catch (IOException | RuntimeException e) { l.seed(CastingClient.legacyCombatSeed().orderedSlots().stream().map(SpellKeySettings.Binding::spellId).toList()); }
             current[m] = l;
         }
@@ -114,22 +113,24 @@ public final class KyudichiLoadout {
     }
 
     /** One-time migration of legacy inherited keys. Existing explicit duel/Quidditch overrides win. */
-    boolean freezeNormalKeys(List<SpellKeySettings.Binding> normal){if(customKeys())return false;var inherited=bindings(normal);for(int i=0;i<SIZE;i++)keys[i]=inherited.get(i).keyCode();return true;}
+    boolean freezeNormalKeys(List<SpellKeySettings.Binding> normal){return freezeNormalKeys(normal,UiKeys::isUiKey);}
+    boolean freezeNormalKeys(List<SpellKeySettings.Binding> normal,java.util.function.IntPredicate reserved){if(customKeys())return false;var inherited=bindings(normal,reserved);for(int i=0;i<SIZE;i++)keys[i]=inherited.get(i).keyCode();return true;}
     /** Back to the legacy first-preset keys, captured independently on refresh. */
     public void resetKeys() { java.util.Arrays.fill(keys, -1); }
 
     /** Match bindings: slot i = this spell with the key of the normal slot i (HUD order). */
-    List<SpellKeySettings.Binding> bindings(List<SpellKeySettings.Binding> normal) {
+    List<SpellKeySettings.Binding> bindings(List<SpellKeySettings.Binding> normal) {return bindings(normal,UiKeys::isUiKey);}
+    List<SpellKeySettings.Binding> bindings(List<SpellKeySettings.Binding> normal,java.util.function.IntPredicate reserved) {
         var out = new ArrayList<SpellKeySettings.Binding>(SIZE);
         var used = new java.util.HashSet<Integer>();
         boolean custom = customKeys();
         if (custom) { for (int k : keys) if (k >= 0) used.add(k); }
         else for (var b : normal) if (!b.empty() && KeySettingsLayout.allowed(b.keyCode())) used.add(b.keyCode());
         var spare = new ArrayList<Integer>();
-        for (int code : SPARE_KEYS) if (KeySettingsLayout.allowed(code) && !used.contains(code) && !UiKeys.isUiKey(code)) spare.add(code);
+        for (int code : SPARE_KEYS) if (KeySettingsLayout.allowed(code) && !used.contains(code) && !reserved.test(code)) spare.add(code);
         for (int i = 0; i < SIZE; i++) {
             String id = spells.get(i);
-            int key = custom ? (KeySettingsLayout.allowed(keys[i]) && !UiKeys.isUiKey(keys[i]) ? keys[i] : -1)
+            int key = custom ? (KeySettingsLayout.allowed(keys[i]) && !reserved.test(keys[i]) ? keys[i] : -1)
                     : i < normal.size() && KeySettingsLayout.allowed(normal.get(i).keyCode()) ? normal.get(i).keyCode() : -1;
             if (id.isEmpty()) { out.add(new SpellKeySettings.Binding("", key)); continue; }
             // A normal slot without a key (fewer than six spells registered) borrows a free key so every match spell can be cast.
@@ -165,7 +166,7 @@ public final class KyudichiLoadout {
         if (customKeys()) { var kl = new ArrayList<Integer>(); for (int k : keys) kl.add(k); root.put("keys", kl); }
         var options = new DumperOptions(); options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         try {
-            Path target = PATHS[mode].toAbsolutePath(); Files.createDirectories(target.getParent());
+            Path target = path(mode).toAbsolutePath(); Files.createDirectories(target.getParent());
             Path temp = Files.createTempFile(target.getParent(), "kyudichi-loadout-", ".tmp");
             try { Files.writeString(temp, new Yaml(options).dump(root)); Files.move(temp, target, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING); }
             finally { Files.deleteIfExists(temp); }

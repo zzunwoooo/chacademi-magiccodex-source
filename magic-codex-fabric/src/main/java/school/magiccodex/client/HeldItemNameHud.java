@@ -31,10 +31,11 @@ public final class HeldItemNameHud {
         float x=(layout.hotbarLeft()+238)*layout.scale()/scale-width/2f;
         // Chips extend 14 logical pixels above hotbarTop-25; keep the whole text above them.
         float y=(layout.hotbarTop()-39)*layout.scale()/scale-14;
+        var customization=HudCustomization.begin(c,"held-item-name",x*scale,y*scale,Math.max(1,width*scale),14*scale);
         c.getMatrices().push();
         try{
             c.getMatrices().scale(scale,scale,1);
             return c.drawTextWithBackground(renderer,display,Math.round(x),Math.round(y),width,color);
-        }finally{c.getMatrices().pop();}
+        }finally{c.getMatrices().pop();customization.close();}
     }
 }

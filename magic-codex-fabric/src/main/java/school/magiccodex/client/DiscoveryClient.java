@@ -61,6 +61,7 @@ public final class DiscoveryClient {
         if(images==null)images=new HudTextureCache(c);if(text==null)text=new CodexTypography(c);
         float alpha=Math.min(1,Math.min(age/240f,(4500-age)/600f));int tint=((int)(255*alpha)<<24)|0xFFFFFF;
         int width=c.getWindow().getScaledWidth(),height=c.getWindow().getScaledHeight();float scale=Math.min(width/1920f,height/1080f)*.38f;
+        var customization=HudCustomization.begin(ctx,"discovery",width/2f-1040*scale,height*.025f,2048*scale,623*scale);
         images.beginFrame();text.beginFrame();ctx.getMatrices().push();
         try{
             ctx.getMatrices().translate(width/2f-1040*scale,height*.025f-145*scale-(1-alpha)*12*scale,350);ctx.getMatrices().scale(scale,scale,1);
@@ -71,6 +72,6 @@ public final class DiscoveryClient {
             text.draw(ctx,name,1235,405,size,tint,FONT,true);
             text.draw(ctx,"마법 도감에 기록되었습니다",1235,488,35,((int)(255*alpha)<<24)|0xBED5E8,BODY,true);
             for(int i=0;i<4;i++){double a=age*.0007+i*Math.PI/2;float x=618+(float)Math.cos(a)*206,y=382+(float)Math.sin(a)*206;HudMesh.star(ctx,x,y,6+2*(float)Math.sin(age*.006+i),((int)(170*alpha)<<24)|0xBDF8F3);}
-        }finally{ctx.getMatrices().pop();images.endFrame();}
+        }finally{ctx.getMatrices().pop();images.endFrame();customization.close();}
     }
 }
