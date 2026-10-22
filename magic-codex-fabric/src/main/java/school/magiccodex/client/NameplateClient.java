@@ -32,7 +32,7 @@ public final class NameplateClient {
   PayloadTypeRegistry.playS2C().register(Snapshot.ID,Snapshot.CODEC);
   ClientPlayNetworking.registerGlobalReceiver(Snapshot.ID,(p,c)->{try{var list=NameplateProtocol.decode(p.bytes);c.client().execute(()->{var map=new HashMap<Integer,NameplateProtocol.Entry>();for(var e:list)map.put(e.entity(),e);entries=Map.copyOf(map);received=Util.getMeasuringTimeMs();world=c.client().world;});}catch(IllegalArgumentException ignored){}});
   ClientPlayConnectionEvents.DISCONNECT.register((h,c)->clear());
-  WorldRenderEvents.START.register(ctx->{var c=MinecraftClient.getInstance();if(c.world!=world){entries=Map.of();world=c.world;}if(textures==null){textures=new HudTextureCache(c,true);text=new CodexTypography(c);}textures.beginFrame();text.beginFrame();ready=true;for(var s:STYLES)ready&=textures.worldReady(path(s));});
+  WorldRenderEvents.START.register(ctx->{var c=MinecraftClient.getInstance();if(c.world!=world){entries=Map.of();world=c.world;}if(textures==null){textures=new HudTextureCache(c,true,true);text=new CodexTypography(c);}textures.beginFrame();text.beginFrame();ready=true;for(var s:STYLES)ready&=textures.worldReady(path(s));});
   WorldRenderEvents.AFTER_ENTITIES.register(ctx->{var c=MinecraftClient.getInstance();if(!ready||c.world==null||c.player==null||c.options.hudHidden)return;var matrices=ctx.matrixStack();var out=ctx.consumers();if(matrices==null||out==null)return;
    for(var data:entries.values()){Entity e=c.world.getEntityById(data.entity());if(e==null||!replacement(e)||!visible(e))continue;
     boolean self=e==c.player,firstSelf=NameplatePolicy.selfCameraRelative(self,c.options.getPerspective().isFirstPerson());

@@ -24,6 +24,7 @@ public final class HudTextureCache implements AutoCloseable {
     private static final ShaderProgramKey ADDITIVE=new ShaderProgramKey(
             Identifier.of("magiccodex","core/hud_additive"),VertexFormats.POSITION_TEXTURE_COLOR,Defines.EMPTY);
     private final MinecraftClient client;
+    private final boolean straightWorld;
     private final long instance=NEXT.getAndIncrement();
     private int serial;
     private record Texture(Identifier id,int width,int height,int levels,RenderLayer layer,RenderLayer additive) {}
@@ -38,8 +39,9 @@ public final class HudTextureCache implements AutoCloseable {
     private boolean closed,missedThisFrame;
     private static final java.util.concurrent.ExecutorService DECODER=java.util.concurrent.Executors.newSingleThreadExecutor(r->{var t=new Thread(r,"magiccodex-ui-images");t.setDaemon(true);return t;});
     public HudTextureCache(MinecraftClient client) { this(client,false); }
-    public HudTextureCache(MinecraftClient client,boolean asynchronous) {
-        this.client=client;
+    public HudTextureCache(MinecraftClient client,boolean asynchronous) {this(client,asynchronous,false);}
+    public HudTextureCache(MinecraftClient client,boolean asynchronous,boolean straightWorld) {
+        this.client=client;this.straightWorld=straightWorld;
         var manager=client.getResourceManager();
         pending=asynchronous?new AsyncUiLoader<>(DECODER,4,r->decode(r,manager),NativeImage::close):null;
         HudTextureStats.opened();
@@ -97,7 +99,7 @@ public final class HudTextureCache implements AutoCloseable {
         int w=region.width()==0?source.getWidth():region.width(),h=region.height()==0?source.getHeight():region.height();
         if(region.x()<0||region.y()<0||w<=0||h<=0||region.x()+w>source.getWidth()||region.y()+h>source.getHeight())throw new IllegalArgumentException("Image region outside source: "+region);
         NativeImage image=new NativeImage(w,h,false);
-        try{source.copyRect(image,region.x(),region.y(),0,0,w,h,false,false);image.apply(PremultipliedAlpha::pixel);return image;}
+        try{source.copyRect(image,region.x(),region.y(),0,0,w,h,false,false);if(!straightWorld)image.apply(PremultipliedAlpha::pixel);return image;}
         catch(Exception error){image.close();throw error;}
     }
     private Optional<Texture> upload(Region region,NativeImage prepared) {
@@ -234,11 +236,11 @@ public final class HudTextureCache implements AutoCloseable {
     public boolean worldReady(String path){return get(new Region(path,0,0,0,0)).isPresent();}
     public void drawWorld(net.minecraft.client.util.math.MatrixStack matrices,VertexConsumerProvider out,String path,float width,float height){
         var value=get(new Region(path,0,0,0,0));if(value.isEmpty())return;var t=value.get();
-        var v=out.getBuffer(t.layer());var m=matrices.peek().getPositionMatrix();
-        v.vertex(m,-width/2,height/2,0).texture(0,0).color(0xFFFFFFFF);
-        v.vertex(m,-width/2,-height/2,0).texture(0,1).color(0xFFFFFFFF);
-        v.vertex(m,width/2,-height/2,0).texture(1,1).color(0xFFFFFFFF);
-        v.vertex(m,width/2,height/2,0).texture(1,0).color(0xFFFFFFFF);
+        var v=out.getBuffer(RenderLayer.getText(t.id()));var m=matrices.peek().getPositionMatrix();
+        v.vertex(m,-width/2,height/2,0).texture(0,0).color(0xFFFFFFFF).light(0xF000F0);
+        v.vertex(m,-width/2,-height/2,0).texture(0,1).color(0xFFFFFFFF).light(0xF000F0);
+        v.vertex(m,width/2,-height/2,0).texture(1,1).color(0xFFFFFFFF).light(0xF000F0);
+        v.vertex(m,width/2,height/2,0).texture(1,0).color(0xFFFFFFFF).light(0xF000F0);
     }
     private void render(DrawContext ctx,Texture t,int x,int y,int w,int h,int tint) {
         ctx.drawTexture(id->t.layer(),t.id(),x,y,0,0,w,h,t.width(),t.height(),t.width(),t.height(),tint);
