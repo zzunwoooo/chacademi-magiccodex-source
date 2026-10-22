@@ -156,3 +156,4 @@ NPC 는 Citizens 로 소환한 NPC 를 클릭해 지정 (서버 ID `quest-server
 - **글자**: 포탈 중심 위 약 2.1블록에 "퀘스트 목표 지점" (Pretendard, 밉맵, 검은 외곽선 + 채운 글자, 나를 바라봄, 살짝 둥실, 36~48블록에서 서서히 사라짐). MagicCodex 폰트가 없으면 바닐라 글꼴.
 - 모드 전용 버퍼 `MultiBufferSource.immediate(new ByteBufferBuilder(1<<16))` 에 그리고 끝에 `endBatch()` — 겹치는 순서가 매번 같다.
 - 확인 못 함 (빌드 필요): 컴파일 (`ByteBufferBuilder`, `MultiBufferSource.immediate`, `CoreShaders.POSITION_TEX_COLOR`, `Font.drawInBatch(Component,…)`), **글자가 좌우로 뒤집혀 보이지 않는지** (카메라 회전 기준 +x = 화면 오른쪽으로 가정, 뒤집히면 `billboardTex` 의 `mirror` 를 true 로), 셰이더 팩·Fabulous 그래픽에서 보이는지.
+- 2026-10-22 추가: 포탈·글자·징표를 `WorldRenderEvents.AFTER_TRANSLUCENT` 에서 그린다 (`QuestClient`). 예전 `AFTER_ENTITIES` 는 물·유리·반투명 엔티티가 나중에 그려져, 그 앞에 있는 글자·포탈이 뒤에 있는 것처럼 덮여 보였다. 확인할 것: Fabulous 그래픽에서도 보이는지.

@@ -62,7 +62,8 @@ public final class QuestClient {
         ClientPlayNetworking.registerGlobalReceiver(QuestPackets.UpdateS2C.TYPE, (p, ctx) -> ctx.client().execute(() -> onUpdate(p)));
         ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> c.execute(() -> { view = new View(); vanishing = null; QuestWorld.reset(); }));
         HudRenderCallback.EVENT.register(QuestHud::render);
-        WorldRenderEvents.AFTER_ENTITIES.register(QuestWorld::render);
+        // 물·유리·반투명 블록을 다 그린 뒤에 그린다 (AFTER_ENTITIES 면 뒤의 물·유리가 글자·포탈 위에 덮여 흐려 보였음)
+        WorldRenderEvents.AFTER_TRANSLUCENT.register(QuestWorld::render);
         ClientTickEvents.END_CLIENT_TICK.register(QuestWorld::tick);
         ScreenEvents.AFTER_INIT.register((client, screen, w, h) -> {
             if (!(screen instanceof ChatScreen)) return;
