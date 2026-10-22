@@ -320,6 +320,16 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         if(h.fullMoon()&&Math.floorMod(w.getFullTime()/24000,8)!=0) return false;
         return seasonCheck(h.seasons(),w).equals("OK");
     }
+    /** 확률 명령용: 이 자리 기준 청크·지역 야생 몹 수. */
+    String crowdLine(Location l){
+        World w=l.getWorld();
+        int chunk=chunkLimit.count(w.getChunkAt(l.getBlockX()>>4,l.getBlockZ()>>4),null,uuid->MythicBukkit.inst().getMobManager().getActiveMob(uuid).map(m->m.getType().getInternalName()).orElse(null));
+        int area=population.count(w,l,"",0)[1];
+        return " 이 청크 야생 몹 "+chunk+"/"+chunkLimit.cap()+" · 주변 지역 "+area+"/"+settings.areaCap()
+            +(chunk>=chunkLimit.cap()||area>=settings.areaCap()?" (꽉 차서 지금은 새로 안 나옴)":"");
+    }
+    List<String> chanceAt(Player p){return spawner.chanceAt(p);}
+    String displayName(String id){Habitat h=habitats.get(id);return h==null||h.name()==null||h.name().isBlank()?id:h.name();}
     void warnOnce(String message,Throwable error){
         long now=System.currentTimeMillis();
         if(now-lastSpawnerWarn<60000)return;

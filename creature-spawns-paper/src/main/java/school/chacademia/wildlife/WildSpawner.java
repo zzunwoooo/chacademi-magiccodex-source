@@ -164,6 +164,50 @@ final class WildSpawner {
         });
     }
 
+    /**
+     * /월드관리 야생몹 확률: 이 자리에 스폰 시도가 걸렸을 때 어떤 종이 몇 % 확률로 뽑히는지 + 각 종이 여기서 실제로 나올 수 있는지.
+     * 읽기 전용(소환·청크 로드 없음). 플레이어 거리 조건은 '본인이 서 있는 자리'라 빼고 본다.
+     */
+    List<String> chanceAt(Player p) {
+        var out=new ArrayList<String>();
+        World w=p.getWorld(); Location at=p.getLocation();
+        int x=at.getBlockX(),y=at.getBlockY(),z=at.getBlockZ();
+        boolean waterPoint=w.getBlockAt(x,y,z).getType()==Material.WATER;
+        String biome=w.getBiome(x,y,z).getKey().toString();
+        out.add(" 위치 "+w.getName()+" "+x+" "+y+" "+z+" · 바이옴 "+biome+" · "+(waterPoint?"물속":"지상")+" · 시간 "+w.getTime());
+        if(!plugin.spawnWorlds().contains(w.getName())) { out.add(" 이 월드는 야생 스폰 월드가 아니에요 (config worlds)"); return out; }
+        out.add(plugin.crowdLine(at));
+        var rows=new ArrayList<Object[]>(); double total=0; int other=0;
+        for(Habitat h:candidates(biome)) {
+            if(h.water()!=waterPoint) { other++; continue; }
+            String why=y<h.minY()||y>h.maxY()?"높이":!plugin.timeAndSeasonOk(h,w)?"시간·계절·날씨":null;
+            double weight=h.weight()>0?h.weight():settings.rarityWeights().getOrDefault(h.rarity(),0d);
+            if(why==null&&weight<=0) why="가중치 0";
+            if(why==null) total+=weight;
+            rows.add(new Object[]{h,weight,why});
+        }
+        if(rows.isEmpty()) { out.add(" 이 바이옴"+(waterPoint?"(물속)":"(지상)")+"에 사는 야생 몹이 없어요"+(other>0?" ("+(waterPoint?"지상":"물속")+" "+other+"종은 있음)":"")); return out; }
+        final double sum=total;
+        rows.sort((a,b)->{
+            boolean oa=a[2]==null, ob=b[2]==null;
+            if(oa!=ob) return oa?-1:1;
+            return Double.compare((double)b[1],(double)a[1]);
+        });
+        out.add(" 스폰 시도가 여기 걸리면 뽑힐 확률 (변색종은 그중 1/"+plugin.shinyDenominator()+"):");
+        for(Object[] r:rows) {
+            Habitat h=(Habitat)r[0]; double weight=(double)r[1]; String why=(String)r[2];
+            String grade=h.rarity().equals("boss")?"보스":h.rarity()+"성";
+            String name=plugin.displayName(h.id());
+            if(why!=null) { out.add("  ✖ "+name+" ("+grade+") 지금 안 나옴: "+why); continue; }
+            String here=plugin.check(h.id(),at,false);
+            String pct=String.format(Locale.ROOT,"%.1f%%",weight*100/sum);
+            out.add("  "+(here.equals("OK")?"✔ ":"△ ")+pct+" "+name+" ("+grade+") · 이 자리 "+(here.equals("OK")?"가능":"불가: "+here));
+        }
+        if(other>0) out.add(" ("+(waterPoint?"지상":"물속")+"형 "+other+"종은 "+(waterPoint?"물 밖":"물속")+"에서 확인하세요)");
+        out.add(" ※ 실제 스폰은 플레이어에게서 "+(int)plugin.playerMinDistance()+"~"+(int)plugin.playerMaxDistance()+"칸 떨어진 곳에서만 일어나요");
+        return out;
+    }
+
     List<String> diagnostics() {
         var s=settings;
         return List.of(" 자체 스폰 루프 "+(s.enabled()&&task!=null?"켜짐":"꺼짐")+" · 주기 "+(s.periodTicks()/20.0)+"초 · 플레이어당 "+s.attemptsPerPlayer()+"회 · 틱당 최대 "+s.maxAttemptsPerTick()+"회 · 등급 가중치 "+new TreeMap<>(s.rarityWeights()),
