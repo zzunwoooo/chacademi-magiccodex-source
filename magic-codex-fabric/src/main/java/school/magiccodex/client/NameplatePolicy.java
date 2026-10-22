@@ -3,9 +3,7 @@ package school.magiccodex.client;
 public final class NameplatePolicy {
  public static final float WORLD_WIDTH=1.1f,NAME_SIZE=210;
  public static float nameCenterY(boolean titled){return titled?85:29;}
- public static final float SELF_SCALE=.2f,SELF_FORWARD=.9f,SELF_UP=.20f;
- public static boolean selfCameraRelative(boolean self,boolean firstPerson){return self&&firstPerson;}
- public static boolean selfPreview(boolean cursorScreen,boolean hiddenHud,boolean alive,boolean invisible,boolean spectator){return cursorScreen&&!hiddenHud&&alive&&!invisible&&!spectator;}
+ public static boolean selfPreview(boolean firstPerson,boolean cursorScreen,boolean hiddenHud,boolean alive,boolean invisible,boolean spectator){return !firstPerson&&cursorScreen&&!hiddenHud&&alive&&!invisible&&!spectator;}
  private NameplatePolicy(){}
  public static boolean visible(boolean self,boolean camera,boolean hiddenHud,boolean alive,boolean invisible,boolean spectator,boolean passengers,boolean sneaky,double distance,String rule,boolean viewerHasTeam,boolean sameTeam){
   if(self||camera||hiddenHud||!alive||invisible||spectator||passengers||!Double.isFinite(distance)||distance>48*48||(sneaky&&distance>=32*32))return false;
