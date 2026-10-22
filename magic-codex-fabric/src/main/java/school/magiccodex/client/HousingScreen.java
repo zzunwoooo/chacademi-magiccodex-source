@@ -583,7 +583,7 @@ public final class HousingScreen extends SocialScreen {
         var d=visibleItems.get(index);int have=owned(d.id()),used=layout().usage().getOrDefault(d.id(),0);
         String kind=switch(d.category()){case HousingRules.CAT_FURNITURE->"가구 · "+d.w()+"×"+d.d();case HousingRules.CAT_PROP->"소품 · "+d.w()+"×"+d.d();
             case HousingRules.CAT_WALL->"벽걸이 · "+d.w()+"×"+d.wallCells();default->d.sub()==HousingRules.SURFACE_WALLPAPER?"벽지":"바닥재";};
-        String line=d.surface()?kind+" · 누르면 적용/해제":kind+" · 놓을 수 있는 수 "+Math.max(0,have-used)+" / "+have;
+        String line=d.surface()?kind+" · 누르면 적용/해제":kind+" · 설치 가능 "+Math.max(0,have-used)+" / "+have;
         float w=Math.max(type.width(d.name(),19,BOLD),type.width(line,15,BODY))+40,x=(float)Math.clamp(mx+16,10,VW-w-10),y=(float)my-76;
         c.getMatrices().push();c.getMatrices().translate(0,0,60);
         try{
