@@ -29,6 +29,22 @@
       "walkSpeed": 0.945,
       "scale": 1.0,
       "nameplateOffset": 0.0
+    },
+    "captain_bram": {
+      "file": "captain_bram.glb",
+      "sha256": "6ca32b58d299b4716e6c3540bd7a18fbe0dad6d85373fd386dbfce374a7cf52a",
+      "clips": {
+        "idle": "standing_relax",
+        "idleVariants": [
+          "look_around"
+        ],
+        "walk": "walk",
+        "talk": null,
+        "greet": null
+      },
+      "walkSpeed": 1.23,
+      "scale": 1.0,
+      "nameplateOffset": 0.0
     }
   }
 }

@@ -184,11 +184,17 @@ def dilate(img: Image.Image, mask: Image.Image, pixels: int) -> Image.Image:
 def find_texture(tex_dir: Path | None, node_name: str):
     if not tex_dir:
         return None
+    import re
     key = node_name.replace("tripo_node_", "").lower()
-    for f in sorted(tex_dir.iterdir()):
-        if f.suffix.lower() in (".jpg", ".jpeg", ".png") and key and key in f.name.lower():
-            return f
-    return None
+    if not key:
+        return None
+    imgs = [f for f in sorted(tex_dir.iterdir()) if f.suffix.lower() in (".jpg", ".jpeg", ".png")]
+    # 1순위: "…_<노드이름>_basecolor" 처럼 이름이 통째로 맞는 것 (Mesh 가 Mesh_001 그림에 붙지 않게)
+    exact = [f for f in imgs if re.search(r"(^|[_.\-])" + re.escape(key) + r"_basecolor", f.stem.lower())]
+    if len(exact) == 1:
+        return exact[0]
+    loose = [f for f in imgs if key in f.name.lower()]
+    return loose[0] if len(loose) == 1 else (exact[0] if exact else None)
 
 
 # ---------------------------------------------------------------- 본 작업
