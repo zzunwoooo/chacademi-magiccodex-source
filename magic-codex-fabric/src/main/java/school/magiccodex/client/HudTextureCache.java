@@ -231,6 +231,15 @@ public final class HudTextureCache implements AutoCloseable {
     public void prepareRegion(Identifier path,int x,int y,int width,int height){
         get(new Region(path.toString(),x,y,width,height));
     }
+    public boolean worldReady(String path){return get(new Region(path,0,0,0,0)).isPresent();}
+    public void drawWorld(net.minecraft.client.util.math.MatrixStack matrices,VertexConsumerProvider out,String path,float width,float height){
+        var value=get(new Region(path,0,0,0,0));if(value.isEmpty())return;var t=value.get();
+        var v=out.getBuffer(t.layer());var m=matrices.peek().getPositionMatrix();
+        v.vertex(m,-width/2,height/2,0).texture(0,0).color(0xFFFFFFFF);
+        v.vertex(m,-width/2,-height/2,0).texture(0,1).color(0xFFFFFFFF);
+        v.vertex(m,width/2,-height/2,0).texture(1,1).color(0xFFFFFFFF);
+        v.vertex(m,width/2,height/2,0).texture(1,0).color(0xFFFFFFFF);
+    }
     private void render(DrawContext ctx,Texture t,int x,int y,int w,int h,int tint) {
         ctx.drawTexture(id->t.layer(),t.id(),x,y,0,0,w,h,t.width(),t.height(),t.width(),t.height(),tint);
     }

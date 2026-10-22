@@ -9,6 +9,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class TamingNameMixin {
     @Inject(method="hasLabel(Lnet/minecraft/entity/LivingEntity;D)Z",at=@At("HEAD"),cancellable=true)
     private void magiccodex$tamingName(LivingEntity entity,double distance,CallbackInfoReturnable<Boolean> result){
-        if(school.magiccodex.client.TamingClient.hidesVanillaName(entity.getId()))result.setReturnValue(false);
+        if(school.magiccodex.client.NameplateClient.replacement(entity)||school.magiccodex.client.TamingClient.hidesVanillaName(entity.getId()))result.setReturnValue(false);
     }
 }

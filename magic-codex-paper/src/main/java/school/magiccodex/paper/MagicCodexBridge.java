@@ -217,6 +217,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(fishing!=null)try{fishShop=new FishShopBridge(this,fishing);}catch(Exception error){getLogger().severe("물고기 판매소 초기화 실패 (fish-shop.yml 확인): "+error.getMessage());}
         if(fishing!=null){fishTank=new FishTankBridge(this,fishing,fishShop);fishing.tankWindow(fishTank);if(mana!=null)mana.fishTrapCast=fishTank::cast;}
         new AdminCommandBridge(this,mana,school,enhancement,appraisal,titles,npcSocial);
+        try{new NameplateBridge(this);}catch(RuntimeException error){getLogger().warning("명찰 초기화 실패 (기존 이름표 유지): "+error);}
         getLogger().info("권한 연동 준비 완료. 활성 도감만 조회, 작업당 최대 " + budget + "회, 보조 확인 " + refresh / 1000 + "초.");
     }
     private void markDirty(UUID player) {

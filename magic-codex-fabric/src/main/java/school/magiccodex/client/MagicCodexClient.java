@@ -34,6 +34,7 @@ public final class MagicCodexClient implements ClientModInitializer {
         openKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.magiccodex.open", GLFW.GLFW_KEY_K, "category.magiccodex"));
         CodexCatalog.initialize();
         PermissionClient.initialize();
+        NameplateClient.initialize();
         WalletClient.initialize();
         TemperatureClient.initialize();
         SeasonClient.initialize();

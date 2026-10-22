@@ -94,6 +94,19 @@ public final class CodexTypography implements AutoCloseable {
         } finally { context.getMatrices().pop(); }
     }
 
+    /** Fixed high-resolution glyph raster shared with Codex UI; no GUI pixel snapping in world coordinates. */
+    public void drawWorld(net.minecraft.client.util.math.MatrixStack matrices,net.minecraft.client.render.VertexConsumerProvider out,String value,float cx,float cy,float size,float maxWidth,int color){
+        if(value.isBlank())return;
+        float scale=Math.min(1,maxWidth/Math.max(1,width(value,size,Identifier.of("magiccodex","hud_bold"))));
+        var sprite=sprites.computeIfAbsent(new Key(value,"hud_bold",Math.max(64,Math.round(size*scale*64)),false),this::bake);
+        float factor=1f/2048f*NameplatePolicy.WORLD_WIDTH;float w=Math.min(maxWidth,sprite.width())*factor,h=sprite.height()*factor;
+        var m=matrices.peek().getPositionMatrix();var v=out.getBuffer(RenderLayer.getText(sprite.id()));
+        float x=cx*factor,y=cy*factor;
+        v.vertex(m,x-w/2,y+h/2,.001f).color(color).texture(0,0).light(0xF000F0);
+        v.vertex(m,x-w/2,y-h/2,.001f).color(color).texture(0,1).light(0xF000F0);
+        v.vertex(m,x+w/2,y-h/2,.001f).color(color).texture(1,1).light(0xF000F0);
+        v.vertex(m,x+w/2,y+h/2,.001f).color(color).texture(1,0).light(0xF000F0);
+    }
     private Sprite bake(Key key) {
         var image = CodexTextRasterizer.rasterize(fonts.get(key.face()), key.value(), key.pixelSize64() / 64f,key.outline());
         var nativeImage = new NativeImage(image.getWidth(), image.getHeight(), false);

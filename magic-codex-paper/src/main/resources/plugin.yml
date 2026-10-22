@@ -10,6 +10,8 @@ commands:
     permission: magiccodex.school.admin
     usage: /기숙사분류 시작|결정|현황|허용치
 permissions:
+  magiccodex.nameplates.admin:
+    default: op
   magiccodex.artifact.admin:
     default: op
   magiccodex.artifact.summon:

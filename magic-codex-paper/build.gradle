@@ -1,6 +1,6 @@
 plugins { id 'java' }
 group = 'school.magiccodex'
-version = '0.31.3-integrated-20261020.1-gimmick.1-houses.1-commands.1-followups.1'
+version = '0.31.3-integrated-20261020.1-gimmick.1-houses.1-commands.1-followups.1-nameplates.1'
 base { archivesName = 'magic-codex-bridge' }
 repositories {
     if (findProperty('localDependencyRepo')) maven { url = uri(property('localDependencyRepo')) }
@@ -8,6 +8,7 @@ repositories {
     maven { url = 'https://repo.papermc.io/repository/maven-public/' }
 }
 dependencies {
+    testImplementation files('../plugins/Citizens-2.0.37-b3725.jar')
     testImplementation "com.h2database:h2:2.3.232"
     compileOnly files('../plugins/ModelEngine-4.0.8.jar')
     compileOnly files('../plugins/MythicMobs-5.9.0.jar')
