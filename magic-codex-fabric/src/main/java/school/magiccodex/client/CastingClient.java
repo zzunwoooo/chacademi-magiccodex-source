@@ -74,9 +74,10 @@ public final class CastingClient {
     public static boolean matchLoadout() { return matchLoadout; }
     /** KyudichiClient: entering / leaving a match as a player. */
     public static void setMatchLoadout(boolean on) { if(matchLoadout!=on){ matchLoadout=on; refreshBindings(); } }
-    private static java.util.List<SpellKeySettings.Binding> combatKeys(){try{return SpellKeySettings.load(PRESETS.path(1)).orderedSlots();}catch(java.io.IOException e){return new SpellKeySettings().orderedSlots();}}
+    static SpellKeySettings legacyCombatSeed(){try{return SpellKeySettings.load(PRESETS.path(1));}catch(java.io.IOException e){return new SpellKeySettings();}}
+    private static java.util.List<SpellKeySettings.Binding> combatKeys(){return legacyCombatSeed().orderedSlots();}
     public static void refreshBindings() {
-        if(matchLoadout) STATE.setBindingsDirect(KyudichiLoadout.get().bindings(combatKeys()));
+        if(matchLoadout){var combat=KyudichiLoadout.get();var initialKeys=combatKeys();if(combat.freezeNormalKeys(initialKeys))combat.save();STATE.setBindingsDirect(combat.bindings(initialKeys));}
         else STATE.setBindings(base);
     }
     /**

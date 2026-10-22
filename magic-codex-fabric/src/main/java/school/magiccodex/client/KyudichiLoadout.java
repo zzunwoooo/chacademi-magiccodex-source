@@ -49,8 +49,8 @@ public final class KyudichiLoadout {
         int m = mode == DUEL ? DUEL : KYUDICHI;
         if (current[m] == null) {
             var l = new KyudichiLoadout(m);
-            try { if (!l.load(PATHS[m])) l.seed(CastingClient.base().orderedSlots().stream().map(SpellKeySettings.Binding::spellId).toList()); }
-            catch (IOException | RuntimeException e) { l.seed(CastingClient.base().orderedSlots().stream().map(SpellKeySettings.Binding::spellId).toList()); }
+            try { if (!l.load(PATHS[m])) l.seed(CastingClient.legacyCombatSeed().orderedSlots().stream().map(SpellKeySettings.Binding::spellId).toList()); }
+            catch (IOException | RuntimeException e) { l.seed(CastingClient.legacyCombatSeed().orderedSlots().stream().map(SpellKeySettings.Binding::spellId).toList()); }
             current[m] = l;
         }
         return current[m];
@@ -113,7 +113,9 @@ public final class KyudichiLoadout {
         return null;
     }
 
-    /** Back to the keys of the normal six. */
+    /** One-time migration of legacy inherited keys. Existing explicit duel/Quidditch overrides win. */
+    boolean freezeNormalKeys(List<SpellKeySettings.Binding> normal){if(customKeys())return false;var inherited=bindings(normal);for(int i=0;i<SIZE;i++)keys[i]=inherited.get(i).keyCode();return true;}
+    /** Back to the legacy first-preset keys, captured independently on refresh. */
     public void resetKeys() { java.util.Arrays.fill(keys, -1); }
 
     /** Match bindings: slot i = this spell with the key of the normal slot i (HUD order). */
