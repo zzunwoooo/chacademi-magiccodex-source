@@ -7,11 +7,20 @@ import org.bukkit.configuration.ConfigurationSection;
 record Habitat(String id,Set<String> biomes,Set<String> seasons,boolean water,int minY,int maxY,int time,
                boolean thunder,boolean fullMoon,boolean nearWater,boolean naturalGround,
                int clearanceRadius,int clearanceHeight,int maxBlockLight,
-               Set<String> structures,double structureRadius,int groupMin,int groupMax,int cap,double capRadius) {
+               Set<String> structures,double structureRadius,int groupMin,int groupMax,int cap,double capRadius,
+               String rarity,double weight) {
     static final int ANY=0,DAY=1,NIGHT=2;
 
     /** 필수 값이 잘못되면 예외, medium/time 오타는 경고 후 안전한 기본값(land/any)으로 둔다. */
-    static Habitat parse(String id,ConfigurationSection s,List<String> warnings) {
+    static final Set<String> RARITIES=Set.of("1","2","3","boss");
+
+    static Habitat parse(String id,ConfigurationSection s,List<String> warnings) { return parse(id,s,warnings,Map.of()); }
+
+    /**
+     * defaultRarity: 운영 서버의 habitats.yml에 rarity가 아직 없을 때 쓰는 값(플러그인에 들어 있는 기본 habitats.yml에서 읽음).
+     * weight가 0보다 크면 등급 가중치 대신 이 값으로 추첨한다(종 하나만 따로 조절할 때).
+     */
+    static Habitat parse(String id,ConfigurationSection s,List<String> warnings,Map<String,String> defaultRarity) {
         if(s==null) throw new IllegalArgumentException("잘못된 서식지: "+id);
         if(s.getStringList("biomes").isEmpty() || s.getInt("group-min")<1 || s.getInt("group-max")>6
             || s.getInt("group-max")<s.getInt("group-min") || s.getInt("cap")<s.getInt("group-max")
@@ -25,11 +34,17 @@ record Habitat(String id,Set<String> biomes,Set<String> seasons,boolean water,in
         String period=String.valueOf(s.getString("time","any")).toLowerCase(Locale.ROOT).trim();
         int time=switch(period) { case "day" -> DAY; case "night" -> NIGHT; default -> ANY; };
         if(time==ANY&&!period.equals("any")) warnings.add(id+": time '"+period+"' → any");
+        String rarity=String.valueOf(s.getString("rarity",defaultRarity.getOrDefault(id,"1"))).toLowerCase(Locale.ROOT).trim();
+        if(rarity.equals("보스"))rarity="boss";
+        if(!RARITIES.contains(rarity)) { warnings.add(id+": rarity '"+rarity+"' → 1"); rarity="1"; }
+        double weight=s.getDouble("weight",0);
+        if(weight<0) { warnings.add(id+": weight "+weight+" → 등급 기본"); weight=0; }
         return new Habitat(id,Set.copyOf(s.getStringList("biomes")),Collections.unmodifiableSet(normalized),medium.equals("water"),
             s.getInt("min-y"),s.getInt("max-y"),time,s.getBoolean("thunder"),s.getBoolean("full-moon"),
             s.getBoolean("near-water"),s.getBoolean("natural-ground"),
             (s.getInt("clearance-width",1)-1)/2,s.getInt("clearance-height",2),s.getInt("max-block-light",7),
             Set.copyOf(s.getStringList("structures")),s.getDouble("structure-radius",48),
-            s.getInt("group-min"),s.getInt("group-max"),s.getInt("cap"),s.getDouble("cap-radius",64));
+            s.getInt("group-min"),s.getInt("group-max"),s.getInt("cap"),s.getDouble("cap-radius",64),
+            rarity,weight);
     }
 }

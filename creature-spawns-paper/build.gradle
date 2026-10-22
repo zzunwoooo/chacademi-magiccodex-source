@@ -1,6 +1,6 @@
 plugins { id 'java' }
 group = 'school.chacademia'
-version = '0.4.1-integrated-20261020.3-spawngate.1-commands.1'
+version = '0.5.0-spawner-20261023'
 base { archivesName = 'chacademia-wildlife' }
 repositories { mavenCentral(); maven { url = 'https://repo.papermc.io/repository/maven-public/' } }
 dependencies {

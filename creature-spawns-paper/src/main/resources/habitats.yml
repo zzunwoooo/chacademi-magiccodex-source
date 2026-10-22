@@ -2,6 +2,7 @@
   "habitats": {
     "squirrel": {
       "name": "도토리 다람쥐",
+      "rarity": "1",
       "biomes": [
         "terralith:forested_highlands",
         "terralith:birch_taiga"
@@ -27,6 +28,7 @@
     },
     "owl": {
       "name": "밤눈 올빼미",
+      "rarity": "1",
       "biomes": [
         "terralith:siberian_taiga",
         "terralith:moonlight_grove"
@@ -52,6 +54,7 @@
     },
     "skunk": {
       "name": "줄무늬 스컹크",
+      "rarity": "1",
       "biomes": [
         "terralith:brushland",
         "terralith:forested_highlands"
@@ -77,6 +80,7 @@
     },
     "hedgehog": {
       "name": "낙엽 고슴도치",
+      "rarity": "1",
       "biomes": [
         "terralith:birch_taiga",
         "terralith:lavender_forest"
@@ -104,6 +108,7 @@
     },
     "elk": {
       "name": "고산 엘크",
+      "rarity": "2",
       "biomes": [
         "terralith:alpine_grove",
         "terralith:alpine_highlands"
@@ -129,6 +134,7 @@
     },
     "lil_bird": {
       "name": "꽃숲 작은새",
+      "rarity": "1",
       "biomes": [
         "terralith:blooming_valley",
         "terralith:sakura_grove"
@@ -156,6 +162,7 @@
     },
     "raccoon": {
       "name": "개울 너구리",
+      "rarity": "1",
       "biomes": [
         "terralith:lush_valley",
         "terralith:forested_highlands"
@@ -181,6 +188,7 @@
     },
     "frog": {
       "name": "난초 개구리",
+      "rarity": "1",
       "biomes": [
         "terralith:orchid_swamp",
         "terralith:warm_river"
@@ -209,6 +217,7 @@
     },
     "bear": {
       "name": "산림 불곰",
+      "rarity": "2",
       "biomes": [
         "terralith:siberian_taiga",
         "terralith:alpine_grove"
@@ -234,6 +243,7 @@
     },
     "bear_black": {
       "name": "그늘 흑곰",
+      "rarity": "2",
       "biomes": [
         "terralith:forested_highlands",
         "terralith:shield"
@@ -259,6 +269,7 @@
     },
     "bear_polar": {
       "name": "빙하 백곰",
+      "rarity": "2",
       "biomes": [
         "terralith:frozen_cliffs",
         "terralith:glacial_chasm"
@@ -284,6 +295,7 @@
     },
     "timber_wolf": {
       "name": "침엽 숲늑대",
+      "rarity": "2",
       "biomes": [
         "terralith:siberian_taiga",
         "terralith:birch_taiga"
@@ -309,6 +321,7 @@
     },
     "tortoise": {
       "name": "초원 육지거북",
+      "rarity": "1",
       "biomes": [
         "terralith:steppe",
         "terralith:brushland"
@@ -334,6 +347,7 @@
     },
     "catfish": {
       "name": "온수 메기",
+      "rarity": "1",
       "biomes": [
         "terralith:warm_river",
         "terralith:orchid_swamp"
@@ -359,6 +373,7 @@
     },
     "butterfly": {
       "name": "라벤더 나비",
+      "rarity": "1",
       "biomes": [
         "terralith:lavender_valley",
         "terralith:blooming_valley"
@@ -387,6 +402,7 @@
     },
     "buffalo": {
       "name": "고원 버팔로",
+      "rarity": "2",
       "biomes": [
         "terralith:steppe",
         "terralith:temperate_highlands"
@@ -412,6 +428,7 @@
     },
     "boar": {
       "name": "덤불 멧돼지",
+      "rarity": "1",
       "biomes": [
         "terralith:brushland",
         "terralith:forested_highlands"
@@ -437,6 +454,7 @@
     },
     "alpha_boar": {
       "name": "송곳니 우두머리",
+      "rarity": "2",
       "biomes": [
         "terralith:forested_highlands",
         "terralith:shield"
@@ -462,6 +480,7 @@
     },
     "crocodile": {
       "name": "난초늪 악어",
+      "rarity": "2",
       "biomes": [
         "terralith:orchid_swamp",
         "terralith:warm_river"
@@ -487,6 +506,7 @@
     },
     "buffalo_alpha": {
       "name": "고원의 우두머리",
+      "rarity": "2",
       "biomes": [
         "terralith:steppe",
         "terralith:temperate_highlands"
@@ -512,6 +532,7 @@
     },
     "lostasset_mob1_chicken": {
       "name": "아침볕 수탉",
+      "rarity": "1",
       "biomes": [
         "terralith:blooming_plateau",
         "terralith:temperate_highlands"
@@ -537,6 +558,7 @@
     },
     "lostasset_mob1_rabbit": {
       "name": "꽃밭 흰토끼",
+      "rarity": "1",
       "biomes": [
         "terralith:blooming_valley",
         "terralith:sakura_valley"
@@ -564,6 +586,7 @@
     },
     "lostasset_mob1_sheep": {
       "name": "구름 양",
+      "rarity": "1",
       "biomes": [
         "terralith:alpine_highlands",
         "terralith:temperate_highlands"
@@ -589,6 +612,7 @@
     },
     "lostasset_mob1_wolf": {
       "name": "목초지 양치기",
+      "rarity": "2",
       "biomes": [
         "terralith:temperate_highlands",
         "terralith:shield_clearing"
@@ -614,6 +638,7 @@
     },
     "lostasset_mob2_flowersprite": {
       "name": "꽃망울 정령",
+      "rarity": "2",
       "biomes": [
         "terralith:blooming_valley",
         "terralith:lavender_valley"
@@ -641,6 +666,7 @@
     },
     "lostasset_mob2_lakefairy": {
       "name": "달물결 요정",
+      "rarity": "2",
       "biomes": [
         "terralith:moonlight_valley",
         "terralith:orchid_swamp"
@@ -669,6 +695,7 @@
     },
     "lostasset_mob2_leaffairy": {
       "name": "잎새 요정",
+      "rarity": "2",
       "biomes": [
         "terralith:amethyst_rainforest",
         "terralith:moonlight_grove"
@@ -696,6 +723,7 @@
     },
     "lostasset_mob2_mushroomfairy": {
       "name": "포자 요정",
+      "rarity": "2",
       "biomes": [
         "terralith:cave/fungal_caves",
         "terralith:moonlight_grove"
@@ -723,6 +751,7 @@
     },
     "lostasset_mob3_herbgolem": {
       "name": "약초 수호골렘",
+      "rarity": "3",
       "biomes": [
         "terralith:amethyst_rainforest",
         "terralith:lavender_forest"
@@ -751,6 +780,7 @@
     },
     "lostasset_mob3_herbthief": {
       "name": "약초 도둑",
+      "rarity": "1",
       "biomes": [
         "terralith:lavender_forest",
         "terralith:blooming_valley"
@@ -776,6 +806,7 @@
     },
     "lostasset_mob3_mossyboar": {
       "name": "이끼 등멧돼지",
+      "rarity": "2",
       "biomes": [
         "terralith:cloud_forest",
         "terralith:amethyst_rainforest"
@@ -801,6 +832,7 @@
     },
     "lostasset_mob3_timberpile": {
       "name": "장작 꼬마",
+      "rarity": "1",
       "biomes": [
         "terralith:forested_highlands",
         "terralith:birch_taiga"
@@ -826,6 +858,7 @@
     },
     "bulb_amethyst": {
       "name": "자수정 새싹",
+      "rarity": "2",
       "biomes": [
         "terralith:amethyst_canyon",
         "terralith:amethyst_rainforest"
@@ -851,6 +884,7 @@
     },
     "bulb_crimsonspore": {
       "name": "진홍 포자",
+      "rarity": "2",
       "biomes": [
         "terralith:warped_mesa",
         "terralith:cave/thermal_caves"
@@ -876,6 +910,7 @@
     },
     "bulb_dripleaf": {
       "name": "물잎 새싹",
+      "rarity": "1",
       "biomes": [
         "terralith:cave/underground_jungle",
         "terralith:lush_valley"
@@ -904,6 +939,7 @@
     },
     "bulb_lilypad": {
       "name": "수련잎 새싹",
+      "rarity": "1",
       "biomes": [
         "terralith:orchid_swamp",
         "terralith:warm_river"
@@ -932,6 +968,7 @@
     },
     "bulb_warpedfungus": {
       "name": "뒤틀린 균새싹",
+      "rarity": "2",
       "biomes": [
         "terralith:warped_mesa",
         "terralith:cave/fungal_caves"
@@ -957,6 +994,7 @@
     },
     "crab": {
       "name": "자갈집게 게",
+      "rarity": "1",
       "biomes": [
         "terralith:gravel_beach",
         "terralith:white_cliffs"
@@ -982,6 +1020,7 @@
     },
     "piranha": {
       "name": "붉은이빨 피라냐",
+      "rarity": "2",
       "biomes": [
         "terralith:warm_river",
         "terralith:desert_oasis"
@@ -1007,6 +1046,7 @@
     },
     "swordfish": {
       "name": "푸른창 황새치",
+      "rarity": "2",
       "biomes": [
         "terralith:deep_warm_ocean"
       ],
@@ -1031,6 +1071,7 @@
     },
     "jellyfish_blue": {
       "name": "청빛 해파리",
+      "rarity": "1",
       "biomes": [
         "terralith:deep_warm_ocean"
       ],
@@ -1055,6 +1096,7 @@
     },
     "jellyfish_green": {
       "name": "비취 해파리",
+      "rarity": "1",
       "biomes": [
         "terralith:deep_warm_ocean"
       ],
@@ -1079,6 +1121,7 @@
     },
     "jellyfish_pink": {
       "name": "분홍 해파리",
+      "rarity": "2",
       "biomes": [
         "terralith:deep_warm_ocean"
       ],
@@ -1103,6 +1146,7 @@
     },
     "jellyfish_yellow": {
       "name": "금빛 해파리",
+      "rarity": "2",
       "biomes": [
         "terralith:deep_warm_ocean"
       ],
@@ -1127,6 +1171,7 @@
     },
     "seahorse_blue": {
       "name": "청빛 해마",
+      "rarity": "1",
       "biomes": [
         "terralith:deep_warm_ocean"
       ],
@@ -1151,6 +1196,7 @@
     },
     "seahorse_green": {
       "name": "비취 해마",
+      "rarity": "1",
       "biomes": [
         "terralith:deep_warm_ocean"
       ],
@@ -1175,6 +1221,7 @@
     },
     "seahorse_pink": {
       "name": "분홍 해마",
+      "rarity": "2",
       "biomes": [
         "terralith:deep_warm_ocean"
       ],
@@ -1199,6 +1246,7 @@
     },
     "seahorse_yellow": {
       "name": "금빛 해마",
+      "rarity": "2",
       "biomes": [
         "terralith:deep_warm_ocean"
       ],
@@ -1223,6 +1271,7 @@
     },
     "ogre_club": {
       "name": "숲몽둥이 오우거",
+      "rarity": "2",
       "biomes": [
         "terralith:forested_highlands",
         "terralith:shield"
@@ -1248,6 +1297,7 @@
     },
     "ogre_axe": {
       "name": "벌목꾼 오우거",
+      "rarity": "2",
       "biomes": [
         "terralith:siberian_taiga",
         "terralith:forested_highlands"
@@ -1273,6 +1323,7 @@
     },
     "ogre_hammer": {
       "name": "산울림 오우거",
+      "rarity": "3",
       "biomes": [
         "terralith:forested_highlands",
         "terralith:shield"
@@ -1300,6 +1351,7 @@
     },
     "ncr_spear_skeleton": {
       "name": "유적의 창병",
+      "rarity": "2",
       "biomes": [
         "terralith:cave/deep_caves",
         "terralith:cave/andesite_caves"
@@ -1325,6 +1377,7 @@
     },
     "ncr_warrior_skeleton": {
       "name": "유적의 검병",
+      "rarity": "2",
       "biomes": [
         "terralith:cave/deep_caves",
         "terralith:cave/granite_caves"
@@ -1350,6 +1403,7 @@
     },
     "ncr_archer_skeleton": {
       "name": "유적의 궁수",
+      "rarity": "2",
       "biomes": [
         "terralith:cave/deep_caves",
         "terralith:cave/tuff_caves"
@@ -1375,6 +1429,7 @@
     },
     "ncr_mage_skeleton": {
       "name": "망각의 해골술사",
+      "rarity": "3",
       "biomes": [
         "terralith:cave/infested_caves",
         "terralith:cave/deep_caves"
@@ -1400,6 +1455,7 @@
     },
     "mf_warden_knight": {
       "name": "봉인의 기사",
+      "rarity": "3",
       "biomes": [
         "terralith:cave/deep_caves"
       ],
@@ -1424,6 +1480,7 @@
     },
     "mf_warden_archer": {
       "name": "봉인의 궁수",
+      "rarity": "3",
       "biomes": [
         "terralith:cave/deep_caves"
       ],
@@ -1448,6 +1505,7 @@
     },
     "mf_warden_tank": {
       "name": "봉인의 거벽",
+      "rarity": "3",
       "biomes": [
         "terralith:cave/deep_caves"
       ],
@@ -1472,6 +1530,7 @@
     },
     "mf_warden_mage": {
       "name": "봉인의 술사",
+      "rarity": "3",
       "biomes": [
         "terralith:cave/deep_caves"
       ],
@@ -1496,6 +1555,7 @@
     },
     "glacialcore": {
       "name": "빙핵의 수호자",
+      "rarity": "boss",
       "biomes": [
         "terralith:glacial_chasm",
         "terralith:cave/frostfire_caves"
@@ -1521,6 +1581,7 @@
     },
     "nocsy_cat1": {
       "name": "햇살 고양이",
+      "rarity": "1",
       "biomes": [
         "terralith:sakura_grove",
         "terralith:blooming_valley"
@@ -1546,6 +1607,7 @@
     },
     "nocsy_cat2": {
       "name": "꽃길 고양이",
+      "rarity": "1",
       "biomes": [
         "terralith:sakura_grove",
         "terralith:blooming_valley"
@@ -1573,6 +1635,7 @@
     },
     "nocsy_cat3": {
       "name": "책방 고양이",
+      "rarity": "1",
       "biomes": [
         "terralith:sakura_grove",
         "terralith:blooming_valley"
@@ -1598,6 +1661,7 @@
     },
     "nocsy_cat4": {
       "name": "나른한 고양이",
+      "rarity": "1",
       "biomes": [
         "terralith:sakura_grove",
         "terralith:blooming_valley"
@@ -1623,6 +1687,7 @@
     },
     "nocsy_cat5": {
       "name": "장난꾸러기 고양이",
+      "rarity": "1",
       "biomes": [
         "terralith:sakura_grove",
         "terralith:blooming_valley"
@@ -1648,6 +1713,7 @@
     },
     "nocsy_cat6": {
       "name": "산들 고양이",
+      "rarity": "1",
       "biomes": [
         "terralith:sakura_grove",
         "terralith:blooming_valley"
@@ -1673,6 +1739,7 @@
     },
     "nocsy_cat_fallen": {
       "name": "달그늘 고양이",
+      "rarity": "3",
       "biomes": [
         "terralith:moonlight_grove",
         "terralith:moonlight_valley"
@@ -1701,6 +1768,7 @@
     },
     "voxelspawns_pug": {
       "name": "산책 퍼그",
+      "rarity": "1",
       "biomes": [
         "terralith:sakura_valley",
         "terralith:blooming_valley"
@@ -1726,6 +1794,7 @@
     },
     "baby_polar_bear": {
       "name": "눈송이 아기곰",
+      "rarity": "1",
       "biomes": [
         "terralith:ice_marsh",
         "terralith:snowy_shield"
@@ -1751,6 +1820,7 @@
     },
     "baby_yeti": {
       "name": "눈산 꼬마예티",
+      "rarity": "2",
       "biomes": [
         "terralith:glacial_chasm",
         "terralith:frozen_cliffs"
@@ -1778,6 +1848,7 @@
     },
     "frost_ferret": {
       "name": "서리 족제비",
+      "rarity": "2",
       "biomes": [
         "terralith:snowy_maple_forest",
         "terralith:wintry_forest"
@@ -1805,6 +1876,7 @@
     },
     "gangster_snowman": {
       "name": "심술 눈사람",
+      "rarity": "2",
       "biomes": [
         "terralith:wintry_forest",
         "terralith:snowy_cherry_grove"
@@ -1832,6 +1904,7 @@
     },
     "ice_knight": {
       "name": "서리 기사",
+      "rarity": "3",
       "biomes": [
         "terralith:glacial_chasm",
         "terralith:cave/frostfire_caves"
@@ -1859,6 +1932,7 @@
     },
     "dragon_desert": {
       "name": "사막 드래곤",
+      "rarity": "3",
       "biomes": [
         "terralith:ancient_sands",
         "terralith:desert_spires"
@@ -1884,6 +1958,7 @@
     },
     "dragon_glacial": {
       "name": "빙하 드래곤",
+      "rarity": "3",
       "biomes": [
         "terralith:glacial_chasm",
         "terralith:frozen_cliffs"
@@ -1909,6 +1984,7 @@
     },
     "dragon_nether": {
       "name": "화산 드래곤",
+      "rarity": "3",
       "biomes": [
         "terralith:volcanic_crater",
         "terralith:volcanic_peaks"
@@ -1934,6 +2010,7 @@
     },
     "dragon_sculk": {
       "name": "스컬크 드래곤",
+      "rarity": "3",
       "biomes": [
         "terralith:cave/deep_caves"
       ],
@@ -1958,6 +2035,7 @@
     },
     "lizard_aqua": {
       "name": "물가 왕도마뱀",
+      "rarity": "2",
       "biomes": [
         "terralith:warm_river",
         "terralith:orchid_swamp"
@@ -1983,6 +2061,7 @@
     },
     "lizard_lava": {
       "name": "용암 왕도마뱀",
+      "rarity": "2",
       "biomes": [
         "terralith:volcanic_crater",
         "terralith:cave/thermal_caves"
@@ -2008,6 +2087,7 @@
     },
     "manticore_aether": {
       "name": "창공 만티코어",
+      "rarity": "3",
       "biomes": [
         "terralith:skylands_spring",
         "terralith:skylands_summer"
@@ -2033,6 +2113,7 @@
     },
     "manticore_dusk": {
       "name": "황혼 만티코어",
+      "rarity": "3",
       "biomes": [
         "terralith:moonlight_valley",
         "terralith:desert_canyon"
@@ -2058,6 +2139,7 @@
     },
     "manticore_soul": {
       "name": "혼령 만티코어",
+      "rarity": "3",
       "biomes": [
         "terralith:cave/deep_caves",
         "terralith:moonlight_valley"
@@ -2083,6 +2165,7 @@
     },
     "manticore_venom": {
       "name": "맹독 만티코어",
+      "rarity": "3",
       "biomes": [
         "terralith:desert_canyon",
         "terralith:ancient_sands"
@@ -2108,6 +2191,7 @@
     },
     "panda_normal": {
       "name": "대나무 판다",
+      "rarity": "1",
       "biomes": [
         "terralith:tropical_jungle"
       ],
@@ -2132,6 +2216,7 @@
     },
     "sabertooth_arctic": {
       "name": "설원 검치호",
+      "rarity": "2",
       "biomes": [
         "terralith:snowy_shield",
         "terralith:wintry_forest"
@@ -2157,6 +2242,7 @@
     },
     "sabertooth_midnight": {
       "name": "한밤 검치호",
+      "rarity": "2",
       "biomes": [
         "terralith:moonlight_grove"
       ],
@@ -2181,6 +2267,7 @@
     },
     "sabertooth_savanna": {
       "name": "초원 검치호",
+      "rarity": "2",
       "biomes": [
         "terralith:fractured_savanna",
         "terralith:savanna_slopes"
@@ -2206,6 +2293,7 @@
     },
     "capybara": {
       "name": "물가 카피바라",
+      "rarity": "1",
       "biomes": [
         "terralith:warm_river",
         "terralith:lush_valley"
@@ -2231,6 +2319,7 @@
     },
     "horse_glacial": {
       "name": "빙하 준마",
+      "rarity": "2",
       "biomes": [
         "terralith:glacial_chasm",
         "terralith:frozen_cliffs"
@@ -2258,6 +2347,7 @@
     },
     "horse_magma": {
       "name": "마그마 준마",
+      "rarity": "2",
       "biomes": [
         "terralith:volcanic_peaks",
         "terralith:basalt_cliffs"
@@ -2283,6 +2373,7 @@
     },
     "horse_pegasus": {
       "name": "페가수스",
+      "rarity": "3",
       "biomes": [
         "terralith:skylands_spring",
         "terralith:alpine_highlands"
@@ -2308,6 +2399,7 @@
     },
     "horse_spartan": {
       "name": "철갑 준마",
+      "rarity": "2",
       "biomes": [
         "terralith:steppe",
         "terralith:temperate_highlands"
@@ -2333,6 +2425,7 @@
     },
     "horse_unicorn": {
       "name": "유니콘",
+      "rarity": "3",
       "biomes": [
         "terralith:sakura_grove",
         "terralith:lavender_forest"
@@ -2363,6 +2456,7 @@
     },
     "kitsune_demonic": {
       "name": "마성 키츠네",
+      "rarity": "3",
       "biomes": [
         "terralith:warped_mesa",
         "terralith:cave/mantle_caves"
@@ -2388,6 +2482,7 @@
     },
     "kitsune_inferno": {
       "name": "업화 키츠네",
+      "rarity": "3",
       "biomes": [
         "terralith:volcanic_crater"
       ],
@@ -2412,6 +2507,7 @@
     },
     "kitsune_normal": {
       "name": "키츠네",
+      "rarity": "3",
       "biomes": [
         "terralith:sakura_grove",
         "terralith:moonlight_grove"
@@ -2440,6 +2536,7 @@
     },
     "phantom_ender": {
       "name": "공허 팬텀",
+      "rarity": "3",
       "biomes": [
         "terralith:warped_mesa",
         "terralith:mirage_isles"
@@ -2465,6 +2562,7 @@
     },
     "phantom_ghost": {
       "name": "망령 팬텀",
+      "rarity": "3",
       "biomes": [
         "terralith:cave/deep_caves",
         "terralith:moonlight_valley"
@@ -2490,6 +2588,7 @@
     },
     "phoenix_darkflame": {
       "name": "흑염 피닉스",
+      "rarity": "3",
       "biomes": [
         "terralith:basalt_cliffs",
         "terralith:volcanic_crater"
@@ -2515,6 +2614,7 @@
     },
     "phoenix_flame": {
       "name": "불꽃 피닉스",
+      "rarity": "3",
       "biomes": [
         "terralith:volcanic_peaks"
       ],
@@ -2541,6 +2641,7 @@
     },
     "phoenix_light": {
       "name": "광휘 피닉스",
+      "rarity": "3",
       "biomes": [
         "terralith:skylands_spring"
       ],
@@ -2565,6 +2666,7 @@
     },
     "phoenix_thunder": {
       "name": "뇌광 피닉스",
+      "rarity": "3",
       "biomes": [
         "terralith:windswept_spires"
       ],
@@ -2591,6 +2693,7 @@
     },
     "basilisk_obsidian": {
       "name": "흑요 바실리스크",
+      "rarity": "3",
       "biomes": [
         "terralith:basalt_cliffs",
         "terralith:volcanic_peaks"
@@ -2616,6 +2719,7 @@
     },
     "basilisk_snowstorm": {
       "name": "눈보라 바실리스크",
+      "rarity": "3",
       "biomes": [
         "terralith:glacial_chasm",
         "terralith:skylands_winter"
@@ -2643,6 +2747,7 @@
     },
     "basilisk_wild": {
       "name": "야생 바실리스크",
+      "rarity": "3",
       "biomes": [
         "terralith:rocky_jungle",
         "terralith:jungle_mountains"
@@ -2668,6 +2773,7 @@
     },
     "hippogryph_common": {
       "name": "산악 히포그리프",
+      "rarity": "3",
       "biomes": [
         "terralith:emerald_peaks",
         "terralith:alpine_highlands"
@@ -2693,6 +2799,7 @@
     },
     "hippogryph_crystal": {
       "name": "수정 히포그리프",
+      "rarity": "3",
       "biomes": [
         "terralith:amethyst_canyon",
         "terralith:emerald_peaks"
@@ -2718,6 +2825,7 @@
     },
     "hippogryph_fallen": {
       "name": "타락 히포그리프",
+      "rarity": "3",
       "biomes": [
         "terralith:moonlight_grove",
         "terralith:cave/deep_caves"
@@ -2743,6 +2851,7 @@
     },
     "hippogryph_royal": {
       "name": "왕실 히포그리프",
+      "rarity": "3",
       "biomes": [
         "terralith:sakura_valley"
       ],
@@ -2769,6 +2878,7 @@
     },
     "raptor_nightmare": {
       "name": "악몽 랩터",
+      "rarity": "3",
       "biomes": [
         "terralith:moonlight_grove",
         "terralith:moonlight_valley"
@@ -2797,6 +2907,7 @@
     },
     "raptor_red": {
       "name": "적갈 랩터",
+      "rarity": "2",
       "biomes": [
         "terralith:tropical_jungle",
         "terralith:rocky_jungle"
@@ -2822,6 +2933,7 @@
     },
     "raptor_undead": {
       "name": "불사 랩터",
+      "rarity": "3",
       "biomes": [
         "terralith:cave/infested_caves",
         "terralith:cave/deep_caves"
@@ -2847,6 +2959,7 @@
     },
     "sky_serpent_jade": {
       "name": "비취 하늘뱀",
+      "rarity": "3",
       "biomes": [
         "terralith:skylands_spring",
         "terralith:windswept_spires"
@@ -2872,6 +2985,7 @@
     },
     "sky_serpent_magma": {
       "name": "마그마 하늘뱀",
+      "rarity": "3",
       "biomes": [
         "terralith:volcanic_peaks",
         "terralith:basalt_cliffs"
@@ -2897,6 +3011,7 @@
     },
     "sky_serpent_solar": {
       "name": "태양 하늘뱀",
+      "rarity": "3",
       "biomes": [
         "terralith:skylands_summer"
       ],
@@ -2923,6 +3038,7 @@
     },
     "sky_serpent_spectral": {
       "name": "영체 하늘뱀",
+      "rarity": "3",
       "biomes": [
         "terralith:moonlight_valley",
         "terralith:skylands_autumn"
@@ -2948,6 +3064,7 @@
     },
     "stag_demonic": {
       "name": "마성 영록",
+      "rarity": "3",
       "biomes": [
         "terralith:warped_mesa",
         "terralith:cave/mantle_caves"
@@ -2973,6 +3090,7 @@
     },
     "stag_heavenly": {
       "name": "천상 영록",
+      "rarity": "3",
       "biomes": [
         "terralith:skylands_spring"
       ],
@@ -2999,6 +3117,7 @@
     },
     "stag_rune": {
       "name": "룬 영록",
+      "rarity": "3",
       "biomes": [
         "terralith:amethyst_rainforest",
         "terralith:moonlight_grove"
@@ -3029,6 +3148,7 @@
     },
     "stag_void": {
       "name": "심연 영록",
+      "rarity": "3",
       "biomes": [
         "terralith:mirage_isles",
         "terralith:warped_mesa"
@@ -3054,6 +3174,7 @@
     },
     "frog_green": {
       "name": "녹빛 왕개구리",
+      "rarity": "2",
       "biomes": [
         "terralith:orchid_swamp",
         "terralith:lush_valley"
@@ -3081,6 +3202,7 @@
     },
     "frog_permafrost": {
       "name": "영구동토 왕개구리",
+      "rarity": "2",
       "biomes": [
         "terralith:ice_marsh",
         "terralith:frozen_cliffs"
@@ -3106,6 +3228,7 @@
     },
     "frog_royal": {
       "name": "왕실 왕개구리",
+      "rarity": "3",
       "biomes": [
         "terralith:sakura_valley"
       ],
@@ -3130,6 +3253,7 @@
     },
     "golem_arcane": {
       "name": "비전 고대 골렘",
+      "rarity": "3",
       "biomes": [
         "terralith:amethyst_canyon",
         "terralith:cave/deep_caves"
@@ -3155,6 +3279,7 @@
     },
     "golem_corrupted": {
       "name": "오염 고대 골렘",
+      "rarity": "3",
       "biomes": [
         "terralith:cave/infested_caves"
       ],
@@ -3179,6 +3304,7 @@
     },
     "golem_magma": {
       "name": "마그마 고대 골렘",
+      "rarity": "3",
       "biomes": [
         "terralith:volcanic_peaks",
         "terralith:basalt_cliffs"
@@ -3204,6 +3330,7 @@
     },
     "golem_royal": {
       "name": "왕실 고대 골렘",
+      "rarity": "3",
       "biomes": [
         "terralith:sakura_valley"
       ],
@@ -3230,6 +3357,7 @@
     },
     "tusker_demonic": {
       "name": "마성 터스커",
+      "rarity": "3",
       "biomes": [
         "terralith:warped_mesa",
         "terralith:cave/mantle_caves"
@@ -3255,6 +3383,7 @@
     },
     "tusker_dreamlight": {
       "name": "꿈빛 터스커",
+      "rarity": "2",
       "biomes": [
         "terralith:lavender_valley",
         "terralith:moonlight_valley"
@@ -3282,6 +3411,7 @@
     },
     "tusker_forest": {
       "name": "숲 터스커",
+      "rarity": "2",
       "biomes": [
         "terralith:forested_highlands",
         "terralith:cloud_forest"
@@ -3307,6 +3437,7 @@
     },
     "wolfhawk_dire": {
       "name": "거친 울프호크",
+      "rarity": "3",
       "biomes": [
         "terralith:windswept_spires",
         "terralith:rocky_mountains"
@@ -3332,6 +3463,7 @@
     },
     "wolfhawk_fallen": {
       "name": "타락 울프호크",
+      "rarity": "3",
       "biomes": [
         "terralith:moonlight_grove",
         "terralith:cave/deep_caves"
@@ -3357,6 +3489,7 @@
     },
     "wolfhawk_fullmoon": {
       "name": "만월 울프호크",
+      "rarity": "3",
       "biomes": [
         "terralith:moonlight_valley"
       ],
@@ -3384,6 +3517,7 @@
     },
     "wolfhawk_stormcloud": {
       "name": "먹구름 울프호크",
+      "rarity": "3",
       "biomes": [
         "terralith:windswept_spires",
         "terralith:rocky_mountains"
@@ -3409,6 +3543,7 @@
     },
     "wyvern_ender": {
       "name": "공허 와이번",
+      "rarity": "3",
       "biomes": [
         "terralith:warped_mesa",
         "terralith:mirage_isles"
@@ -3434,6 +3569,7 @@
     },
     "wyvern_green": {
       "name": "녹빛 와이번",
+      "rarity": "3",
       "biomes": [
         "terralith:rocky_mountains",
         "terralith:stony_spires"
@@ -3459,6 +3595,7 @@
     },
     "wyvern_inferno": {
       "name": "업화 와이번",
+      "rarity": "3",
       "biomes": [
         "terralith:volcanic_crater"
       ],
@@ -3483,6 +3620,7 @@
     },
     "wyvern_undead": {
       "name": "불사 와이번",
+      "rarity": "3",
       "biomes": [
         "terralith:cave/infested_caves",
         "terralith:cave/deep_caves"

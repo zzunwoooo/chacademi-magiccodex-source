@@ -6,7 +6,19 @@
     "player-min-distance":  24,
     "player-max-distance":  80,
     "area-cap":  24,
-    "chunk-cap":  6,
+    "chunk-cap":  4,
+    "spawner":  {
+                    "enabled":  true,
+                    "period-seconds":  5,
+                    "attempts-per-player":  3,
+                    "max-attempts-per-tick":  40,
+                    "rarity-weights":  {
+                                           "1":  4.5,
+                                           "2":  1.8,
+                                           "3":  0.4,
+                                           "boss":  0.06
+                                       }
+                },
     "shiny-denominator":  4096,
     "excluded-areas":  {
                            "spawn":  {

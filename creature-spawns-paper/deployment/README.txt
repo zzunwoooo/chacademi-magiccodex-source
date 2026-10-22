@@ -1,40 +1,42 @@
-Wildlife 0.3.1-chunkcap.1 -- coordinated deployment only
+Wildlife 0.5.0-spawner-20261023 -- 자체 스폰 루프 (MythicMobs RandomSpawns 대체)
 
-Initial chunk-cap is 6, the existing maximum group size. A chunk is the full
-16x16 vertical column. Only valid living CA_Wild_ Mythic mobs count; players,
-items, vanilla mobs, other custom types and chacademia_pet entities do not.
-Existing mobs are never removed by this new check. An overfull chunk rejects
-new natural spawns until its population drops. Moving entities are not removed.
-The candidate UUID is excluded during its spawn-event recheck.
+무엇이 바뀌었나
+- 야생 몹 첫 스폰을 MythicMobs RandomSpawns가 아니라 이 플러그인이 직접 한다.
+  몹은 그대로 미몹 몹(CA_Wild_<id> / CA_Wild_<id>_shiny)으로 소환(SpawnReason.NATURAL)되므로
+  모델·스킬·무리 추가·자연 표시·디스폰 정리는 전부 기존 그대로.
+- 루프: 야생 월드(config worlds)의 생존·모험 플레이어마다 5초에 한 번 차례, 차례마다 3번 시도.
+  시도 1번 = 플레이어 24~80칸 링의 로드된 청크 한 지점 → 청크 상한(4) → 지표/물속/동굴 바닥 높이
+  → 그 바이옴 종 중 시간·계절·높이·지상/수중이 맞는 종만 남겨 등급 가중치로 1종 추첨
+  → 기존 서식지 전체 검사(동종 상한·지역 24·보호 구역·구조물 포함) → 소환.
+  한 틱 전체 시도는 최대 40번(서버 부담 상한). 청크 로드·생성·구조물 탐색 없음. 전부 메인 스레드.
+- 등급(habitats.yml 각 종의 rarity: 1 / 2 / 3 / boss). 예전 RandomSpawns 시도확률을 그대로 비율로 사용:
+  1성 4.5 : 2성 1.8 : 3성 0.4 : boss 0.06 (config spawner.rarity-weights). 종 하나만 따로 조절하려면
+  habitats.yml 그 종에 weight: <숫자> 를 넣으면 등급 가중치 대신 그 값으로 추첨.
+  운영 habitats.yml에 rarity가 없으면 플러그인에 들어 있는 기본 habitats.yml의 등급을 자동으로 씀.
+- 청크(16x16 세로 기둥)당 커스텀 야생 몹 최대 4마리 (chunk-cap 6 → 4).
 
-The common cahabitat check covers leaders and additional group members.
-The spawn event rechecks it synchronously even after a generator queued requests.
-Existing area-cap 24, species caps, biomes, distance, seasons and rates remain.
+배포 (야생 서버만)
+1. 야생 서버 종료.
+2. plugins의 예전 chacademia-wildlife JAR 제거 → 새 JAR 설치.
+3. MythicMobs RandomSpawns에서 야생 규칙 파일 제거(이중 스폰 방지):
+   plugins/MythicMobs/RandomSpawns/chacademia_wildlife.yml (CA_Natural_* 138개) 를 서버 밖으로 옮겨 보관.
+   다른 RandomSpawns 파일은 건드리지 않는다.
+4. plugins/ChAcademiaWildlife/config.yml 수정 (기존 파일은 자동으로 덮어쓰지 않음):
+   - "chunk-cap": 6 → 4
+   - spawner 항목은 없어도 기본값(켜짐, 5초, 3회, 틱당 40, 4.5/1.8/0.4/0.06)으로 동작.
+     값을 바꾸고 싶으면 레포 src/main/resources/config.yml의 "spawner" 블록을 복사해 넣고 수정.
+5. (선택) habitats.yml을 레포 최신본으로 교체하면 rarity 줄이 파일에 보여서 운영자가 직접 고치기 쉬움.
+   교체 안 해도 등급은 자동 적용됨.
+6. 서버 시작.
 
-DEPLOYMENT (owner must coordinate with Bridge/client/Velocity changes):
-1. Stop wild in the single agreed deployment window. This package does not stop it.
-2. Move its old Wildlife JAR out of plugins; install the bundled new JAR.
-3. Run PowerShell 7: ./Apply-WildlifeConfig.ps1
-   It refuses a running wild process, wrong JAR hash, duplicate Wildlife JAR,
-   unexpected area cap or changed spawn-pack layout. -WhatIf validates only.
-4. Start wild as part of the coordinated deployment.
-5. Console: wildlifeadmin status (expect version 0.3.1-chunkcap.1, chunk-cap=6,
-   area-cap=24). In game: /mm utility getspawnstate and /wildlifeadmin check <id>.
-   Observe natural CA_Wild_ spawning while in survival/adventure in valid habitats.
-   Do not use a forced spawn as evidence of natural spawning.
+확인
+- /서버관리 상태 → "야생몹 0.5.0-spawner-20261023 · 켜짐 · 자체 스폰 켜짐 · 청크 제한 4"
+- 야생 서식지(바이옴 맞는 곳)에서 생존 모드로 몇 분 돌아다닌 뒤
+  /월드관리 야생몹 상태 → "자체 스폰 시도=… 소환=… 결과={OK=…, 바이옴/시간대/… 실패 이유별 개수}"
+  /월드관리 야생몹 진단 → 내 주변 48칸에서 나올 수 있는 몹 목록
+- "(구) 미몹 랜덤스폰 조건 호출=…" 줄이 보이면 3번 RandomSpawns 파일이 아직 남아 있는 것.
+- 더 이상 필요 없는 예전 확인 항목: Mythic SpawningLimit / GenerateSpawnPoints / MaxLocalMobs
+  (자체 루프는 이 값들을 거치지 않음). 야생 몹 기본 타입이 HUSK이므로 난이도 Peaceful에서는
+  여전히 안 나올 수 있음 → /difficulty easy 이상 확인.
 
-Paired configuration changes:
-- Wildlife chunk-cap: 6 (area-cap stays 24).
-- Mythic SpawningLimit: 48 -> 0. This old gate counts vanilla NMS monsters.
-- LocalGroupMultiplier: 0.1 -> 1.33, the installed 5.9.0 packaged default.
-- Only the 138 CA_Natural_* rules get MaxLocalMobs: 0. The old inherited local
-  limit counted every chunk entity, including vanilla mobs/items. Wildlife's
-  selective region 24/species/now-chunk limits replace that duplicate gate.
-  The global LocalSpawningLimit 24 stays unchanged for other spawn rules.
-- Retain the existing Multiverse-Core/worlds.yml reductions; this script never
-  touches Multiverse, ownership databases, pets, Bridge, school or arena.
-
-Rollback: only while wild is stopped, restore its previous JAR and all three
-configuration backups together. Never keep the old unprotected JAR with the
-global 0 configuration. No server restart or runtime deployment has been
-performed by the author of this package.
+롤백: 서버를 멈춘 상태에서 예전 JAR, 예전 config.yml, 보관해 둔 chacademia_wildlife.yml을 함께 되돌린다.
