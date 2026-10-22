@@ -103,6 +103,26 @@
         "arms": 0.92
       },
       "height": 1.9
+    },
+    "dorm_lowell": {
+      "file": "dorm_lowell.glb",
+      "sha256": "3369e416d8d7d6cd9295951ec56a1c2f30e424ace1c0c6d668073b19019a1ad9",
+      "clips": {
+        "idle": "standing_relax",
+        "idleVariants": [],
+        "walk": "walk",
+        "talk": null,
+        "greet": null
+      },
+      "walkSpeed": 1.23,
+      "scale": 1.0,
+      "nameplateOffset": 0.0,
+      "proportion": {
+        "legs": 0.82,
+        "torso": 0.95,
+        "arms": 0.92
+      },
+      "height": 2.1
     }
   }
 }
