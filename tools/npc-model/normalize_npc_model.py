@@ -476,6 +476,125 @@ def compact(g: Gltf):
     g.bin = new_bin
 
 
+# ---------------------------------------------------------------- 비율 조정 (다리·몸통·팔 길이)
+
+PROPORTION_SEGMENTS = {"legs": ("UpLeg", "Leg"), "torso": ("Spine", "Spine1", "Spine2"), "arms": ("Arm", "ForeArm")}
+
+
+def reproportion(g: Gltf, factors: dict, report: dict):
+    """뼈 길이를 바꿔 비율을 고친다 (예: 다리 0.85). 애니메이션은 회전만 쓰므로 그대로 맞는다.
+
+    바인드 자세 기준으로 관절 위치를 새로 잡고, 정점은 붙은 뼈의 '길이 방향으로만' 줄인다(두께 유지).
+    노드 로컬 위치·inverse bind 를 같이 고쳐서 기본 자세·애니메이션·스킨이 모두 새 길이를 쓴다.
+    """
+    js = g.js
+    if not js.get("skins") or not any(abs(v - 1) > 1e-6 for v in factors.values()):
+        return
+    seg_k = {}
+    for group, k in factors.items():
+        for bone in PROPORTION_SEGMENTS[group]:
+            seg_k[bone] = k
+    nodes = js["nodes"]
+    bare = {i: n.get("name", "").split(":")[-1] for i, n in enumerate(nodes)}
+    joints = sorted({j for s in js["skins"] for j in s["joints"]})
+    jset = set(joints)
+    parent = {c: i for i, n in enumerate(nodes) for c in n.get("children", [])}
+    skin0 = js["skins"][0]
+    ibm0 = g.accessor(skin0["inverseBindMatrices"]).reshape(-1, 4, 4).transpose(0, 2, 1).astype(np.float64)
+    B = {j: np.linalg.inv(ibm0[k]) for k, j in enumerate(skin0["joints"])}
+    # 스킨마다 메쉬 좌표계가 다를 수 있음: T_s = B0_j @ IBM_s,j (메쉬_s → 메쉬0) 가 모든 관절에서 같아야 함
+    skinT = []
+    for s in js["skins"]:
+        ib = g.accessor(s["inverseBindMatrices"]).reshape(-1, 4, 4).transpose(0, 2, 1).astype(np.float64)
+        Ts = [B[j] @ ib[k] for k, j in enumerate(s["joints"]) if j in B]
+        T = Ts[0]
+        if max(np.abs(t - T).max() for t in Ts) > 1e-3 * max(1.0, np.abs(T).max()):
+            raise SystemExit("스킨마다 바인드 자세가 달라 비율 조정을 할 수 없음")
+        skinT.append(T)
+    pos = {j: B[j][:3, 3].copy() for j in B}
+    # 뼈 방향: 같은 이름 계열의 대표 자식 쪽
+    def main_child(j):
+        kids = [c for c in nodes[j].get("children", []) if c in pos]
+        if not kids:
+            return None
+        nm_ = bare[j]
+        prefer = {"UpLeg": "Leg", "Leg": "Foot", "Spine": "Spine1", "Spine1": "Spine2", "Spine2": "Neck", "Arm": "ForeArm", "ForeArm": "Hand"}.get(
+            nm_.replace("Left", "").replace("Right", ""))
+        for c in kids:
+            if prefer and bare[c].replace("Left", "").replace("Right", "") == prefer:
+                return c
+        return max(kids, key=lambda c: np.linalg.norm(pos[c] - pos[j]))
+    A = {}
+    for j in pos:
+        k = seg_k.get(bare[j].replace("Left", "").replace("Right", ""), 1.0)
+        c = main_child(j)
+        if abs(k - 1) < 1e-9 or c is None:
+            A[j] = np.eye(3)
+            continue
+        d = pos[c] - pos[j]
+        d /= np.linalg.norm(d)
+        A[j] = np.eye(3) + (k - 1) * np.outer(d, d)
+    # 새 관절 위치 (부모부터)
+    newpos = {}
+    order = []
+    def visit(j):
+        order.append(j)
+        for c in nodes[j].get("children", []):
+            if c in pos:
+                visit(c)
+    for r in [j for j in pos if parent.get(j) not in pos]:
+        visit(r)
+    for j in order:
+        p = parent.get(j)
+        newpos[j] = pos[j].copy() if p not in pos else newpos[p] + A[p] @ (pos[j] - pos[p])
+    # 노드 로컬 위치 = 부모 바인드 회전 기준 새 오프셋
+    for j in order:
+        p = parent.get(j)
+        if p in pos:
+            t = np.linalg.solve(B[p][:3, :3], newpos[j] - newpos[p])
+            nodes[j]["translation"] = [float(x) for x in t]
+            nodes[j].pop("matrix", None)
+    # 정점·법선
+    for ni, node in enumerate(nodes):
+        if "mesh" not in node or "skin" not in node:
+            continue
+        sk = js["skins"][node["skin"]]
+        jl = sk["joints"]
+        T = skinT[node["skin"]]
+        Ti = np.linalg.inv(T)
+        for prim in js["meshes"][node["mesh"]]["primitives"]:
+            at = prim["attributes"]
+            P = g.accessor(at["POSITION"]).astype(np.float64) @ T[:3, :3].T + T[:3, 3]  # 메쉬0 좌표로
+            N = (g.accessor(at["NORMAL"]).astype(np.float64) @ np.linalg.inv(T[:3, :3])) if "NORMAL" in at else None
+            J = g.accessor(at["JOINTS_0"]).astype(int)
+            W = g.accessor(at["WEIGHTS_0"]).astype(np.float64)
+            W /= np.maximum(W.sum(1, keepdims=True), 1e-12)
+            P2 = np.zeros_like(P)
+            N2 = np.zeros_like(P) if N is not None else None
+            for kk in range(4):
+                nodes_k = np.array([jl[x] for x in J[:, kk]])
+                for j in np.unique(nodes_k):
+                    m = nodes_k == j
+                    w = W[m, kk:kk + 1]
+                    P2[m] += w * (newpos[j] + (P[m] - pos[j]) @ A[j].T)
+                    if N is not None:
+                        N2[m] += w * (N[m] @ np.linalg.inv(A[j]))
+            at["POSITION"] = g.add_accessor(P2 @ Ti[:3, :3].T + Ti[:3, 3], "VEC3")  # 원래 메쉬 좌표로
+            if N is not None:
+                N2 = N2 @ T[:3, :3]
+                N2 /= np.maximum(np.linalg.norm(N2, axis=1, keepdims=True), 1e-12)
+                at["NORMAL"] = g.add_accessor(N2, "VEC3")
+    # inverse bind
+    for si, s in enumerate(js["skins"]):
+        mats = []
+        for j in s["joints"]:
+            Bn = B[j].copy()
+            Bn[:3, 3] = newpos[j]
+            mats.append((np.linalg.inv(Bn) @ skinT[si]).T.reshape(16))
+        s["inverseBindMatrices"] = g.add_accessor(np.array(mats, np.float32), "MAT4")
+    report["proportion"] = factors
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description="차카데미 NPC 모델 정리 (FBX/GLB → 배포용 GLB)")
     ap.add_argument("--input", required=True, type=Path, help=".fbx 또는 .glb")
@@ -490,6 +609,9 @@ def main(argv=None):
     ap.add_argument("--yaw", type=float, help="정면 보정 각(도)을 직접 지정. 생략하면 골반 축으로 자동 계산")
     ap.add_argument("--root-bone", default="Hips", help="루트 이동을 지울 뼈 이름(접두어 제외)")
     ap.add_argument("--report", type=Path, help="결과 JSON 저장 위치")
+    ap.add_argument("--legs", type=float, default=1.0, help="다리 길이 배율 (예: 0.85 = 15%% 짧게)")
+    ap.add_argument("--torso", type=float, default=1.0, help="몸통(허리~목) 길이 배율")
+    ap.add_argument("--arms", type=float, default=1.0, help="팔 길이 배율")
     a = ap.parse_args(argv)
 
     src = a.input
@@ -504,8 +626,20 @@ def main(argv=None):
                 sys.stderr.write(r.stdout + r.stderr)
                 raise SystemExit("FBX2glTF 변환 실패")
             src = base.with_suffix(".glb")
+        factors = {"legs": a.legs, "torso": a.torso, "arms": a.arms}
+        if any(abs(v - 1) > 1e-6 for v in factors.values()):
+            # 비율 먼저 바꾼 GLB 를 만든 뒤 그걸 정리 (키·발바닥·정면은 바뀐 비율 기준으로 다시 계산)
+            js0, bin0 = read_glb(src)
+            g0 = Gltf(js0, bin0)
+            rep0 = {}
+            reproportion(g0, factors, rep0)
+            compact(g0)
+            js0["buffers"] = [{"byteLength": len(g0.bin)}]
+            src = Path(tmp) / "reproportioned.glb"
+            write_glb(src, js0, g0.bin)
         report = normalize(src, a.out, a.textures, None if a.scale else a.height, a.scale,
                            a.max_texture, a.root_bone, a.jpeg_quality, a.pad, a.yaw)
+        report["proportion"] = factors
     report["input"] = str(a.input)
     text = json.dumps(report, ensure_ascii=False, indent=2)
     if a.report:
