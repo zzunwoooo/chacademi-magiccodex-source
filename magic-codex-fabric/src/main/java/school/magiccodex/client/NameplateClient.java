@@ -35,9 +35,12 @@ public final class NameplateClient {
   WorldRenderEvents.START.register(ctx->{var c=MinecraftClient.getInstance();if(c.world!=world){entries=Map.of();world=c.world;}if(textures==null){textures=new HudTextureCache(c,true);text=new CodexTypography(c);}textures.beginFrame();text.beginFrame();ready=true;for(var s:STYLES)ready&=textures.worldReady(path(s));});
   WorldRenderEvents.AFTER_ENTITIES.register(ctx->{var c=MinecraftClient.getInstance();if(!ready||c.world==null||c.player==null||c.options.hudHidden)return;var matrices=ctx.matrixStack();var out=ctx.consumers();if(matrices==null||out==null)return;
    for(var data:entries.values()){Entity e=c.world.getEntityById(data.entity());if(e==null||!replacement(e)||!visible(e))continue;
+    boolean self=e==c.player,firstSelf=NameplatePolicy.selfCameraRelative(self,c.options.getPerspective().isFirstPerson());
     float delta=ctx.tickCounter().getTickDelta(false);var pos=e.getLerpedPos(delta).subtract(ctx.camera().getPos());double top=top(e);
     float h=NameplatePolicy.WORLD_WIDTH*768/(data.style()==4?2046:2048);
-    matrices.push();matrices.translate(pos.x,pos.y+top+.10+h/2,pos.z);matrices.multiply(ctx.camera().getRotation());
+    matrices.push();
+    if(firstSelf){var preview=ctx.camera().getRotation().transform(new org.joml.Vector3f(0,NameplatePolicy.SELF_UP,-NameplatePolicy.SELF_FORWARD));matrices.translate(preview.x,preview.y,preview.z);matrices.multiply(ctx.camera().getRotation());matrices.scale(NameplatePolicy.SELF_SCALE,NameplatePolicy.SELF_SCALE,NameplatePolicy.SELF_SCALE);}
+    else{matrices.translate(pos.x,pos.y+top+.10+h/2,pos.z);matrices.multiply(ctx.camera().getRotation());}
     textures.drawWorld(matrices,out,path(STYLES[data.style()]),NameplatePolicy.WORLD_WIDTH,h);
     // Safe rectangle is on the right of the flag: x=660..1830, y=205..505. Do not center text on the whole image.
     boolean titled=!data.titles().isEmpty();
@@ -49,9 +52,10 @@ public final class NameplateClient {
  }
  private static String path(String style){return "magiccodex:textures/nameplates/nameplate_"+style+".png";}
  private static void clear(){entries=Map.of();ready=false;world=null;if(textures!=null)textures.close();if(text!=null)text.close();textures=null;text=null;}
- public static boolean replacement(Entity e){var c=MinecraftClient.getInstance();var d=entries.get(e.getId());return ready&&c.world==world&&c.player!=null&&e!=c.player&&d!=null&&d.uuid().equals(e.getUuid())&&Util.getMeasuringTimeMs()-received<3000;}
+ public static boolean replacement(Entity e){var c=MinecraftClient.getInstance();var d=entries.get(e.getId());return ready&&c.world==world&&c.player!=null&&(e!=c.player||selfPreview(c,e))&&d!=null&&d.uuid().equals(e.getUuid())&&Util.getMeasuringTimeMs()-received<3000;}
+ private static boolean selfPreview(MinecraftClient c,Entity e){return NameplatePolicy.selfPreview(c.currentScreen instanceof HudCursorScreen,c.options.hudHidden,e.isAlive(),e.isInvisibleTo(c.player),e.isSpectator());}
  private static boolean visible(Entity e){
-  var c=MinecraftClient.getInstance();var team=e.getScoreboardTeam();var own=c.player.getScoreboardTeam();
+  var c=MinecraftClient.getInstance();if(e==c.player)return selfPreview(c,e);var team=e.getScoreboardTeam();var own=c.player.getScoreboardTeam();
   return NameplatePolicy.visible(e==c.player,e==c.getCameraEntity(),c.options.hudHidden,e.isAlive(),e.isInvisibleTo(c.player),e.isSpectator(),e.hasPassengers(),e.isSneaky(),e.squaredDistanceTo(c.gameRenderer.getCamera().getPos()),team==null?"ALWAYS":team.getNameTagVisibilityRule().name(),own!=null,team!=null&&team.isEqual(own));
  }
  private static double top(Entity e){
