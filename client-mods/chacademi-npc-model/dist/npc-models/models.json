@@ -123,6 +123,20 @@
         "arms": 0.92
       },
       "height": 2.1
+    },
+    "wizard_statue": {
+      "file": "wizard_statue.glb",
+      "sha256": "def88e0f01b095b82185990a3ceb725ba816154d3b3fee7fa3faf0d03f7bd743",
+      "clips": {
+        "idle": null,
+        "idleVariants": [],
+        "walk": null,
+        "talk": null,
+        "greet": null
+      },
+      "scale": 1.0,
+      "nameplateOffset": 0.0,
+      "height": 3.0
     }
   }
 }

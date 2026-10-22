@@ -124,3 +124,9 @@ MagicCodex(Bridge·Fabric)·PortableVFX·스토리 모드는 **건드리지 않�
 - 트리포 FBX(코트 뒷자락 웨이트 수정본) → `dorm_lowell.glb` (sha256 3369e416…, 2.7MB, 키 1.8 정규화, 경고 없음).
 - 클립: 대기 = standing_relax, 걷기 = walk, 인사·대화 없음. 비율·키·걷기 속도는 선장과 같은 값(다리 0.82 / 몸통 0.95 / 팔 0.92, 키 2.1, walkSpeed 1.23).
 - 서버 `npc-models.yml`: models 목록 + 캐릭터 `dorm_lowell` 기본값 추가.
+
+## 15. 2026-10-22 — 마법사 동상 (`wizard_statue`, 정적 모델)
+
+- 리깅·애니메이션 없는 트리포 FBX (사용자 확인: 정상). 받침대 포함 `wizard_statue.glb` (sha256 def88e0f…, 1.7MB, 텍스처 1장).
+- 스킨 없는 메쉬는 노드 행렬로만 그려짐(기존 코드 그대로 지원), 클립 전부 null → 항상 기본 자세(rest). 비율(proportion) 미적용, 키 3.0.
+- 서버 `npc-models.yml` models 목록에만 추가 (캐릭터 연결 없음 — NPC에 `/NPC관리 외형 지정 wizard_statue`).
