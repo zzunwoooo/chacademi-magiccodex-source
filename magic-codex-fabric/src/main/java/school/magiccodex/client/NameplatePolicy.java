@@ -2,6 +2,7 @@ package school.magiccodex.client;
 /** Deliberately depth-only: unlike vanilla's faint through-wall pass, flags never reveal through solid walls. */
 public final class NameplatePolicy {
  public static final float WORLD_WIDTH=1.1f,NAME_SIZE=210;
+ public static int textureWidth(int style){return style==4?2046:2048;}
  public static float nameCenterY(boolean titled){return titled?85:29;}
  public static boolean selfPreview(boolean firstPerson,boolean cursorScreen,boolean hiddenHud,boolean alive,boolean invisible,boolean spectator){return !firstPerson&&cursorScreen&&!hiddenHud&&alive&&!invisible&&!spectator;}
  private NameplatePolicy(){}

@@ -16,7 +16,7 @@ public final class NameplateClient {
  private static Map<Integer,NameplateProtocol.Entry> entries=Map.of();private static long received;private static boolean serverReady;
  private static HudTextureCache textures;private static CodexTypography text;private static boolean ready;
  private static Object world;private static Method height;private static boolean heightChecked;
- private static final String[] STYLES={"arkeon","lumina","bestiaz","noxer","professor","professor"};
+ private static final String[] STYLES={"arkeon","lumina","bestiaz","noxer","professor","unassigned"};
  public record Snapshot(byte[] bytes) implements CustomPayload {
   public static final Id<Snapshot> ID=new Id<>(Identifier.of(NameplateProtocol.CHANNEL));
   public static final PacketCodec<RegistryByteBuf,Snapshot> CODEC=new PacketCodec<>(){
@@ -36,10 +36,10 @@ public final class NameplateClient {
   WorldRenderEvents.AFTER_ENTITIES.register(ctx->{var c=MinecraftClient.getInstance();if(!ready||c.world==null||c.player==null||c.options.hudHidden)return;var matrices=ctx.matrixStack();var out=ctx.consumers();if(matrices==null||out==null)return;
    for(var data:entries.values()){Entity e=c.world.getEntityById(data.entity());if(e==null||data.name().isBlank()||!replacement(e)||!visible(e))continue;
     float delta=ctx.tickCounter().getTickDelta(false);var pos=e.getLerpedPos(delta).subtract(ctx.camera().getPos());double top=top(e);
-    float h=NameplatePolicy.WORLD_WIDTH*768/(data.style()>=4?2046:2048);
+    float h=NameplatePolicy.WORLD_WIDTH*768/NameplatePolicy.textureWidth(data.style());
     matrices.push();
     matrices.translate(pos.x,pos.y+top+.10+h/2,pos.z);matrices.multiply(ctx.camera().getRotation());
-    if(data.style()==5)textures.drawWorldPanel(matrices,out,path(STYLES[5]),NameplatePolicy.WORLD_WIDTH,h,660f/2046f);else textures.drawWorld(matrices,out,path(STYLES[data.style()]),NameplatePolicy.WORLD_WIDTH,h);
+    textures.drawWorld(matrices,out,path(STYLES[data.style()]),NameplatePolicy.WORLD_WIDTH,h);
     // Safe rectangle is on the right of the flag: x=660..1830, y=205..505. Do not center text on the whole image.
     boolean titled=!data.titles().isEmpty();
     text.drawWorld(matrices,out,data.name(),221,NameplatePolicy.nameCenterY(titled),NameplatePolicy.NAME_SIZE,1100,0xFFF9F2DF);
