@@ -15,7 +15,8 @@ public final class CastingState {
     private final Map<String,Cooldown> cooldowns = new HashMap<>();
     private final Set<Integer> captured = new HashSet<>();
     private final Map<String,Long> pending=new HashMap<>();
-    private boolean enabled;
+    private boolean enabled,alwaysActive;
+    public void alwaysActive(){alwaysActive=true;enabled=true;}
     /** Riding a broom (motion mod). The flight key then means "get off": no local cooldown or pending wait (owner 2026-10-19). */
     private java.util.function.BooleanSupplier riding = () -> false;
     public void ridingCheck(java.util.function.BooleanSupplier value) { riding = value == null ? () -> false : value; }
@@ -48,9 +49,9 @@ public final class CastingState {
     /** Dead / spectating: turn magic off but remember it was on (owner 2026-10-20: respawn keeps magic mode). */
     public void suspend() { if(enabled) { enabled=false; suspended=true; } }
     /** Alive again: magic mode comes back if it was on before death. */
-    public void resume() { if(suspended) { suspended=false; enabled=true; } }
+    public void resume() { if(suspended||alwaysActive) { suspended=false; enabled=true; } }
     private boolean suspended;
-    public void reset() { enabled=false; suspended=false; captured.clear(); cooldowns.clear(); pending.clear(); }
+    public void reset() { enabled=alwaysActive; suspended=false; captured.clear(); cooldowns.clear(); pending.clear(); }
     public void serverResult(String id,int remaining,long now) {
         pending.remove(id);
         if(id.equals("wind_message")&&remaining==0)cooldowns.remove(id);
@@ -68,7 +69,7 @@ public final class CastingState {
         if(action==0) { captured.remove(key); return result(Kind.PASS,""); }
         if(captured.contains(key)) return result(Kind.CONSUME,"");
         if(action!=1 || !gameplay || key<0) return result(Kind.PASS,"");
-        if(toggleKey) { captured.add(key); enabled=!enabled; suspended=false; return result(Kind.MODE,""); }
+        if(toggleKey) { captured.add(key); if(alwaysActive)return result(Kind.CONSUME,"");enabled=!enabled; suspended=false; return result(Kind.MODE,""); }
         if(!enabled) return result(Kind.PASS,"");
         var binding=bindings.stream().filter(b -> !b.empty() && KeySettingsLayout.allowed(key) && b.keyCode()==key).findFirst().orElse(null);
         if(binding==null) return result(Kind.PASS,"");

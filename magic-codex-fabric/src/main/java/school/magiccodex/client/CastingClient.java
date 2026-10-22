@@ -22,7 +22,12 @@ import java.util.List;
 public final class CastingClient {
     private CastingClient() {}
     private static final CastingState STATE=new CastingState();
-    private static final Path PATH=FabricLoader.getInstance().getConfigDir().resolve("magiccodex/key-settings.yml");
+    private static final NormalSpellPresets PRESETS=new NormalSpellPresets(FabricLoader.getInstance().getConfigDir().resolve("magiccodex"));
+    static void validatePreset(int index)throws java.io.IOException{PRESETS.prepare(index);}
+    public static Path activePath(){return PRESETS.path();} public static int preset(){return PRESETS.selected();} static int preferredPreset(){return PRESETS.preferred();}
+    static void resetPresetSession(){PRESETS.resetSession();reloadBindings();}
+    static void confirmPreset(int index)throws java.io.IOException{base=PRESETS.confirmed(index);refreshBindings();TamingClient.bindingsChanged();if(PRESETS.saveFailure()!=null)org.slf4j.LoggerFactory.getLogger("magiccodex").warn("Confirmed normal preset applied; preference persistence failed",PRESETS.saveFailure());STATE.releaseInputs();AimTargeting.cancel(false);}
+    public static void switchPreset(Runnable callback){GeneralPresetClient.request(preset()==1?2:1,callback);}
     private static KeyBinding toggleKey;
     private static SkillHudRenderer hud;
     private static long lastNotice;
@@ -35,7 +40,7 @@ public final class CastingClient {
     /** GLFW code of the magic-mode key (Z by default), or -1. */
     static int toggleCode() { return toggleKey==null?-1:KeyBindingHelper.getBoundKeyOf(toggleKey).getCode(); }
     public static List<String> permissions() { return state().permissions(); }
-    public static void initialize() {STATE.ridingCheck(BroomClientLink::riding);
+    public static void initialize() {STATE.alwaysActive();GeneralPresetClient.initialize();STATE.ridingCheck(BroomClientLink::riding);
         toggleKey=KeyBindingHelper.registerKeyBinding(new KeyBinding("key.magiccodex.magic_mode",GLFW.GLFW_KEY_Z,"category.magiccodex"));
         reloadBindings();
         ClientPlayConnectionEvents.JOIN.register((handler,sender,client)->{ STATE.reset(); reloadBindings(); });
@@ -61,7 +66,7 @@ public final class CastingClient {
     }
     private static void closeHud() { if(hud!=null) { hud.close(); hud=null; } }
     public static void reloadBindings() {
-        try { base=SpellKeySettings.load(PATH); refreshBindings(); TamingClient.bindingsChanged(); }
+        try { base=PRESETS.load(); refreshBindings(); TamingClient.bindingsChanged(); }
         catch(Exception error) { org.slf4j.LoggerFactory.getLogger("magiccodex").warn("마법 단축키 읽기 실패; 기존 배치 유지",error); }
     }
     public static void saved(SpellKeySettings settings) { base=settings.copy(); refreshBindings(); TamingClient.bindingsChanged(); }
@@ -69,8 +74,9 @@ public final class CastingClient {
     public static boolean matchLoadout() { return matchLoadout; }
     /** KyudichiClient: entering / leaving a match as a player. */
     public static void setMatchLoadout(boolean on) { if(matchLoadout!=on){ matchLoadout=on; refreshBindings(); } }
+    private static java.util.List<SpellKeySettings.Binding> combatKeys(){try{return SpellKeySettings.load(PRESETS.path(1)).orderedSlots();}catch(java.io.IOException e){return new SpellKeySettings().orderedSlots();}}
     public static void refreshBindings() {
-        if(matchLoadout) STATE.setBindingsDirect(KyudichiLoadout.get().bindings(base.orderedSlots()));
+        if(matchLoadout) STATE.setBindingsDirect(KyudichiLoadout.get().bindings(combatKeys()));
         else STATE.setBindings(base);
     }
     /**
@@ -81,7 +87,7 @@ public final class CastingClient {
         if(a==b) return;
         if(matchLoadout) { var l=KyudichiLoadout.get(); l.swap(a,b); l.save(); refreshBindings(); return; }
         var next=base.copy(); next.swapOrder(a,b);
-        try { next.save(PATH); base=next; refreshBindings(); }
+        try { next.save(activePath()); base=next; refreshBindings(); }
         catch(java.io.IOException error) {
             // Technical detail (file path etc.) only in the log; the player sees a fixed notice.
             org.slf4j.LoggerFactory.getLogger("magiccodex").warn("마법 슬롯 순서 저장 실패",error);
@@ -102,6 +108,7 @@ public final class CastingClient {
         if(BroomClientLink.reserve(client,client.options.sneakKey.matchesKey(key,scan),action)){STATE.releaseInputs();return false;}
         state();
         boolean toggle=toggleKey!=null && toggleKey.matchesKey(key,scan);
+        if(toggle){if(action==GLFW.GLFW_PRESS&&gameplay(client))switchPreset(null);return gameplay(client);}
         CastingState.Result result;
         try {
             result=STATE.input(key,action,toggle,gameplay(client) && client.getNetworkHandler()!=null,Util.getMeasuringTimeMs(),
@@ -112,7 +119,7 @@ public final class CastingClient {
             return true;
         }
         report(client,result);
-        return result.consumed();
+        return false;
     }
     /** Cast confirmed from the aim preview (left click). Same checks and messages as a key press. */
     public static void fire(CodexData.Spell spell) {
@@ -160,14 +167,9 @@ public final class CastingClient {
         }
     }
     /** Covers vanilla continuous inputs and queued actions, including focus/GUI-close key resampling. */
-    public static boolean suppressed(KeyBinding key) {
-        if(key==MinecraftClient.getInstance().options.sneakKey&&BroomClientLink.reserved())return false;
-        if(!STATE.enabled() || !gameplay(MinecraftClient.getInstance()) || key==toggleKey) return false;
-        if(key.getTranslationKey().startsWith("key.magiccodex.")) return false;
-        for(var binding:STATE.bindings()) if(!binding.empty() && KeySettingsLayout.allowed(binding.keyCode()) && (KeySettingsLayout.mouse(binding.keyCode())?key.matchesMouse(KeySettingsLayout.mouseButton(binding.keyCode())):key.matchesKey(binding.keyCode(),0))) return true;
-        return false;
-    }
+    public static boolean suppressed(KeyBinding key) { return false; }
     public static void tick(MinecraftClient client) {
+        GeneralPresetClient.tick();
         if(toggleKey!=null) while(toggleKey.wasPressed()) { }
         if(!client.isWindowFocused()){STATE.releaseInputs();BroomClientLink.clear();}
         if(client.world==null||client.player==null)BroomClientLink.clear();

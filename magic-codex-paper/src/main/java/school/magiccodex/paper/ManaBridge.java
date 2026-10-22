@@ -18,6 +18,7 @@ final class ManaBridge implements Listener,PluginMessageListener,AutoCloseable {
     private final MagicCodexBridge plugin;
     final ManaService mana;
     private ManaSpells spells;
+    private final GeneralPresetBridge presets;
     java.util.function.Consumer<Player> windCast;
     /** 아공간 수조 (fish_trap, 2026-10-20): opens the tank window; false = not opened, no mana spent. */
     java.util.function.Predicate<Player> fishTrapCast;
@@ -36,7 +37,7 @@ final class ManaBridge implements Listener,PluginMessageListener,AutoCloseable {
     }
     private static long now(){return System.nanoTime()/1_000_000;}
     ManaBridge(MagicCodexBridge plugin)throws Exception{
-        this.plugin=plugin;mana=new ManaService(plugin);
+        this.plugin=plugin;mana=new ManaService(plugin);presets=new GeneralPresetBridge(plugin,mana,casting::contains);
         if(!new File(plugin.getDataFolder(),"mana-spells.yml").exists())plugin.saveResource("mana-spells.yml",false);
         spells=ManaSpells.load(new File(plugin.getDataFolder(),"mana-spells.yml"));
         plugin.getServer().getMessenger().registerIncomingPluginChannel(plugin,ManaProtocol.REQUEST,this);
@@ -222,5 +223,5 @@ final class ManaBridge implements Listener,PluginMessageListener,AutoCloseable {
             })),"마법 쿨타임 보기·초기화","마법쿨타임 보기");
     }
     private String spellName(String id){var info=spells.registeredCatalog.get(id);return info==null?id:info.getOrDefault("name",id);}
-    public void close(){if(expansion!=null){if(expansionRegistered)expansion.unregister();else if(plugin.names()!=null)plugin.names().delegatePlaceholders(null);}mana.close();Bukkit.getServicesManager().unregister(ManaService.class,mana);sessions.clear();}
+    public void close(){presets.close();if(expansion!=null){if(expansionRegistered)expansion.unregister();else if(plugin.names()!=null)plugin.names().delegatePlaceholders(null);}mana.close();Bukkit.getServicesManager().unregister(ManaService.class,mana);sessions.clear();}
 }

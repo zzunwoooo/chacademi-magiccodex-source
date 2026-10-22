@@ -13,6 +13,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class KyudichiPlugin extends JavaPlugin {
     private static final List<String> BLUEPRINTS = List.of("kyudichi_quaffle", "kyudichi_bludger", "kyudichi_snitch");
 
+    /** Both duel and team matches own their independent loadout until restoration completes. */
+    public boolean generalPresetLocked(java.util.UUID id){return matches!=null&&matches.of(id)!=null;}
     private Rules rules;
     private ArenaStore arenas;
     private Hooks hooks;

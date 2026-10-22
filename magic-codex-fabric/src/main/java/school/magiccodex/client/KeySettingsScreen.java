@@ -47,7 +47,7 @@ public final class KeySettingsScreen extends Screen {
     private final UiResources.Entrance entrance=new UiResources.Entrance();
 
     public KeySettingsScreen(Screen parent) {
-        this(parent,CodexCatalog::spells,true,FabricLoader.getInstance().getConfigDir().resolve("magiccodex/key-settings.yml"));
+        this(parent,CodexCatalog::spells,true,CastingClient.activePath());
     }
     /** Development fixture uses the same event/render paths and a separate temporary settings file. */
     public KeySettingsScreen(Screen parent,Supplier<List<Spell>> catalog,boolean catalogBacked,Path path) {
@@ -84,6 +84,9 @@ public final class KeySettingsScreen extends Screen {
             text(ctx,"화면의 키를 클릭해 마법(최대 6개)이나 UI 단축키를 등록하세요",836,140,19,GOLD,BODY);
             for(var key:KeySettingsLayout.KEYS) drawKey(ctx,key);
             drawMouse(ctx);
+            text(ctx,"현재 사용중인 프리셋에 적용됩니다.",836,166,17,GOLD,BODY);
+            if(catalogBacked){label(ctx,"프리셋 "+CastingClient.preset()+" · 변경",1270,139,19,TEAL);}
+
             text(ctx,waiting()?"서버에서 배운 마법을 확인하고 있습니다…":!notice.isEmpty()?notice:
                     "우클릭으로 등록 해제 · 처음 등록한 마법부터 왼쪽에 표시됩니다",836,567,17,GOLD,BODY);
             int cursor=uiDraft.get(UiKeys.Action.CURSOR);
@@ -270,6 +273,7 @@ public final class KeySettingsScreen extends Screen {
     }
     @Override public boolean mouseClicked(double x,double y,int button) {
         var layout=layoutFor(width,height); mx=layout.localX(x); my=layout.localY(y);
+        if(catalogBacked&&!pickerOpen()&&!confirmDiscard&&button==0&&mx>=1250&&mx<=1520&&my>=115&&my<=158){if(dirty()){notice="변경 내용을 저장하거나 취소한 뒤 프리셋을 변경해 주세요.";sound(true);}else CastingClient.switchPreset(()->{if(client.currentScreen==this)client.setScreen(new KeySettingsScreen(parent));});return true;}
         if(pickerOpen()&&!confirmDiscard) my-=PICKER_DY;
         // Physical side buttons never open the editor. Click the drawn controls.
         if(button!=0 && button!=1) return false;
