@@ -38,6 +38,10 @@ final class QuestArt {
 
     private static final Map<String, Optional<Tex>> IMAGES = new HashMap<>();
     private static final Map<TextKey, Sprite> TEXT = new LinkedHashMap<>(64, .75f, true);
+    /** 월드에 띄우는 글자 (목표 지점 이름 등): 밉맵을 켠 고정 크기 그림. 종류가 몇 개뿐이라 지우지 않는다. */
+    private static final Map<String, Optional<Tex>> WORLD_TEXT = new HashMap<>();
+    /** 월드용 레이어 (그림 하나당 일반·더하기 두 개). */
+    private static final Map<String, RenderType> WORLD_LAYERS = new HashMap<>();
     private static final FontRenderContext CONTEXT = new FontRenderContext(null, true, true);
     private static final int PADDING = 2;
     private static Font font;
@@ -53,6 +57,9 @@ final class QuestArt {
         IMAGES.clear();
         TEXT.values().forEach(s -> textures.release(s.tex().id()));
         TEXT.clear();
+        WORLD_TEXT.values().forEach(t -> t.ifPresent(v -> textures.release(v.id())));
+        WORLD_TEXT.clear();
+        WORLD_LAYERS.clear();
         font = null; fontTried = false;
     }
 
@@ -215,7 +222,27 @@ final class QuestArt {
         return w - PADDING * 2 / ppu;
     }
 
-    private static Sprite bake(Font f, TextKey key) {
+    /** 월드용 글자 그림 (흰색, 밉맵). MagicCodex 폰트가 없으면 비어 있다 (부르는 쪽이 바닐라 글꼴로 그림). */
+    static Optional<Tex> worldText(String value) {
+        if (value == null || value.isBlank()) return Optional.empty();
+        return WORLD_TEXT.computeIfAbsent(value, v -> {
+            var f = font();
+            return f == null ? Optional.empty() : Optional.of(bake(f, new TextKey(v, 72 * 64), true).tex());
+        });
+    }
+
+    /**
+     * 월드에 그리는 레이어. 그림 자체의 밉맵·선형 필터를 그대로 쓴다 (바닐라 엔티티 레이어는 최근접 필터로 바꿔 버려서
+     * 가는 선이 비스듬히 보일 때 반짝반짝 깜빡였다). 깊이는 검사만 하고 쓰지 않는다.
+     * additive=true 는 빛을 더하는 블룸용 (겹칠수록 밝아짐).
+     */
+    static RenderType worldLayer(Tex t, boolean additive) {
+        return WORLD_LAYERS.computeIfAbsent(t.id() + (additive ? "+" : ""), k -> new WorldLayer(t.id(), additive));
+    }
+
+    private static Sprite bake(Font f, TextKey key) { return bake(f, key, false); }
+
+    private static Sprite bake(Font f, TextKey key, boolean mipmap) {
         float pixelSize = key.pixelSize64() / 64f;
         var layout = new TextLayout(key.value(), f.deriveFont(pixelSize), CONTEXT);
         var bounds = layout.getPixelBounds(CONTEXT, 0, 0);
@@ -231,7 +258,32 @@ final class QuestArt {
         for (int y = 0; y < image.getHeight(); y++)
             for (int x = 0; x < image.getWidth(); x++)
                 pixels.setPixel(x, y, (image.getRGB(x, y) & 0xFF000000) | 0x00FFFFFF);
-        return new Sprite(upload(pixels, false));
+        return new Sprite(upload(pixels, mipmap));
+    }
+
+    private static final class WorldLayer extends RenderType {
+        WorldLayer(ResourceLocation id, boolean additive) {
+            super(additive ? "chaca_story_quest_world_add" : "chaca_story_quest_world", DefaultVertexFormat.POSITION_TEX_COLOR,
+                VertexFormat.Mode.QUADS, 1536, false, false,
+                () -> {
+                    RenderSystem.enableBlend();
+                    if (additive) RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO, GL11.GL_ONE);
+                    else RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                    RenderSystem.disableCull();
+                    RenderSystem.enableDepthTest();
+                    RenderSystem.depthFunc(GL11.GL_LEQUAL);
+                    RenderSystem.depthMask(false);
+                    RenderSystem.setShader(CoreShaders.POSITION_TEX_COLOR);
+                    RenderSystem.setShaderTexture(0, id);
+                    Minecraft.getInstance().getTextureManager().getTexture(id).setFilter(true, true);
+                },
+                () -> {
+                    RenderSystem.depthMask(true);
+                    RenderSystem.enableCull();
+                    RenderSystem.disableBlend();
+                    RenderSystem.defaultBlendFunc();
+                });
+        }
     }
 
     /** Straight-alpha textured GUI layer that keeps the texture's own (trilinear) filter instead of forcing nearest. */
