@@ -3,11 +3,12 @@ $ErrorActionPreference='Stop'
 $env:JAVA_HOME='C:\Program Files\Java\jdk-21.0.10'
 $env:Path=$env:JAVA_HOME+'\bin;'+$env:Path
 $env:GRADLE_USER_HOME='C:\Chacademi\tools\gradle-cache'
-Set-Location -LiteralPath 'C:\Chacademi\staging\integrated-verify-20261021-task15'
+$BuildRoot=$PSScriptRoot
+Set-Location -LiteralPath $BuildRoot
 $tasks=if($Verify){@('verifyServer','assembleServer',':magic-mythic-paper:build',':chacademi-party-velocity:build',':kyudichi-paper:build')}else{@('assembleServer')}
-& '.\gradlew.bat' --no-daemon --console=plain --max-workers=2 --continue "-PmythicJar=C:/Chacademi/staging/integrated-verify-20261021-task15/plugins/MythicMobs-5.9.0.jar" "-PmagicCodexBridgeJar=C:/Chacademi/staging/integrated-verify-20261021-task15/magic-codex-paper/build/libs/magic-codex-bridge-0.31.3-integrated-20261020.1-gimmick.1-houses.1-commands.1-followups.1.jar" @tasks
+& '.\gradlew.bat' --no-daemon --console=plain --max-workers=2 --continue "-PmythicJar=$BuildRoot/plugins/MythicMobs-5.9.0.jar" "-PmagicCodexBridgeJar=$BuildRoot/magic-codex-paper/build/libs/magic-codex-bridge-0.31.3-integrated-20261020.1-gimmick.1-houses.1-commands.1-followups.1-nameplates.2-titles.1-storych1.1.jar" @tasks
 if($LASTEXITCODE -ne 0){throw 'Remote server plugin build failed'}
-$dest='C:\Chacademi\staging\integrated-verify-20261021-task15\verification\artifacts'
+$dest=Join-Path $BuildRoot 'verification/artifacts'
 New-Item -ItemType Directory -Path $dest -Force|Out-Null
 foreach($project in @('magic-codex-paper','magic-discovery-paper','creature-spawns-paper','tornado-event-paper')){
     Get-ChildItem -LiteralPath "$project\build\libs" -File -Filter '*.jar'|Where-Object {$_.Name -notmatch '-sources|-javadoc'}|Copy-Item -Destination $dest -Force

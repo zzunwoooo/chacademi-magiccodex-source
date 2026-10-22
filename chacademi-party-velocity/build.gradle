@@ -10,6 +10,7 @@ dependencies {
     testImplementation files(velocityJar)
     testImplementation platform('org.junit:junit-bom:5.11.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'com.h2database:h2:2.3.232'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 java { toolchain.languageVersion = JavaLanguageVersion.of(21) }

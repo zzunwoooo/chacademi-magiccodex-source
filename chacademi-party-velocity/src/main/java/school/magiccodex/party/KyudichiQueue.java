@@ -547,6 +547,8 @@ final class KyudichiQueue {
     }
     private static String first(List<Fighter> f) { return f.isEmpty() ? "" : f.getFirst().nick(); }
 
+    void rememberName(UUID id,String name){db.rememberName(id,name);}
+
     private void ranks(Player p, int mode, int page, String search) {
         final int md = clampMode(mode);
         db.ranks(p.getUniqueId(), KyudichiDb.mode(md), Math.max(1, page), search, KyudichiQueueProtocol.RANK_PAGE, pg -> host.enqueue(() -> {

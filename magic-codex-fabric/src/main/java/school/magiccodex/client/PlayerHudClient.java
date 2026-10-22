@@ -75,7 +75,7 @@ public final class PlayerHudClient {
             if(!active() || c.options.hudHidden || !HudPointer.hudVisibleUnder(screenNow()))return;
             renderer().renderStatus(context,c.player,frame,(float)ManaClient.current(),(float)ManaClient.maximum(),HudPointer.active(),Util.getMeasuringTimeMs());
             TopMenuClient.render(context,Util.getMeasuringTimeMs());
-            TopMenuClient.renderTooltip(context);
+            if(!(screenNow() instanceof net.minecraft.client.gui.screen.ChatScreen))TopMenuClient.renderTooltip(context);
         }));
     }
     /** Server preview (/테스트 화면 계절): spring|summer|autumn|winter or a season id/label. Returns false when unknown. */

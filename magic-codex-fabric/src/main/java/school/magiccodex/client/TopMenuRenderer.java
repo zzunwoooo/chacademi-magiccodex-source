@@ -19,9 +19,11 @@ public final class TopMenuRenderer implements AutoCloseable {
         new MenuSprite(STATS,404,308,539,592,1351,1164),
         new MenuSprite(EQUIPMENT,384,298,546,608,1312,1199),
         new MenuSprite(TITLES,431,243,539,602,1402,1122)};
-    private static final MenuSprite CODEX_ICON=new MenuSprite(Identifier.of("magiccodex","textures/hud/codex-menu.png"),393,282,579,614,1351,1164);
+    private static final MenuSprite CODEX_ICON=new MenuSprite(Identifier.of("magiccodex","textures/hud/codex-menu.png"),306,275,647,710,1254,1254);
     private static final MenuSprite SOCIAL_ICON=new MenuSprite(Identifier.of("magiccodex","textures/hud/social-menu.png"),327,252,880,553,1536,1024);
-    private static final MenuSprite FISH_CODEX_ICON=new MenuSprite(Identifier.of("magiccodex","textures/hud/fish-codex-menu.png"),395,285,576,610,1351,1164);
+    private static final MenuSprite FISH_CODEX_ICON=new MenuSprite(Identifier.of("magiccodex","textures/hud/fish-codex-menu.png"),304,289,667,682,1254,1254);
+    private static final MenuSprite TRAVEL_ICON=new MenuSprite(Identifier.of("magiccodex","textures/hud/travel-menu.png"),219,233,814,807,1254,1254);
+    private static final MenuSprite PVP_ICON=new MenuSprite(Identifier.of("magiccodex","textures/hud/pvp-menu.png"),237,252,779,742,1254,1254);
     private static final MenuSprite ARTIFACT_ICON=new MenuSprite(Identifier.of("magiccodex","textures/hud/artifact-codex-menu.png"),439,304,473,534,1351,1164);
     private static final Identifier FONT=Identifier.of("magiccodex","hud_bold");
     private static final DateTimeFormatter CLOCK=DateTimeFormatter.ofPattern("HH:mm");
@@ -32,7 +34,7 @@ public final class TopMenuRenderer implements AutoCloseable {
     private static final int[][] ICONS={{125,433,199,195},{451,436,199,194},{785,458,210,150},
         {1110,415,233,211},{1470,438,165,191},{142,655,166,191},{461,680,180,155},
         {798,676,175,166},{1194,691,87,133},{1505,691,87,133}};
-    private static final int[] MENU_ATLAS_ICONS={5,0,3,6,7,2,0};
+    private static final int[] MENU_ATLAS_ICONS={5,0,6,0,3,0,7,2,0};
     private final CodexTypography text;
     private final HudTextureCache images;
     private final HudTextureCache seasons;
@@ -44,7 +46,7 @@ public final class TopMenuRenderer implements AutoCloseable {
         this.state=state;text=new CodexTypography(client);images=new HudTextureCache(client);
         seasons=new HudTextureCache(client,true);
         images.prepareRegion(HOUSE,440,454,374,344);
-        for(var sprite:new MenuSprite[]{CODEX_ICON,SOCIAL_ICON,ARTIFACT_ICON})images.prepareRegion(sprite.texture(),sprite.x(),sprite.y(),sprite.width(),sprite.height());
+        for(var sprite:new MenuSprite[]{CODEX_ICON,SOCIAL_ICON,ARTIFACT_ICON,FISH_CODEX_ICON,TRAVEL_ICON,PVP_ICON})images.prepareRegion(sprite.texture(),sprite.x(),sprite.y(),sprite.width(),sprite.height());
         for(var sprite:NEW_ICONS)images.prepareRegion(sprite.texture(),sprite.x(),sprite.y(),sprite.width(),sprite.height());
         // Decode off-thread once; only four cached sprites, no per-tick IO or server polling.
         for(var season:SEASONS){var r=season.crop();seasons.prepareRegion(SEASON_TEXTURES[season.ordinal()],r.x(),r.y(),r.width(),r.height());}
@@ -87,10 +89,13 @@ public final class TopMenuRenderer implements AutoCloseable {
                 if(alpha<=0)continue;
                 float x=state.iconCenter(base,i);
                 glow(ctx,x,hover[i+1]*alpha);
-                if(i==6){images.drawTexture(ctx,Identifier.of("magiccodex","textures/gui/followup/settings_icon.png"),Math.round(x-9),9,0,0,18,18,676,650,676,650,tint(0xFFFFFFFF,alpha));
+                if(!TopMenuState.enabled(i))alpha*=.45f;
+                if(i==8){images.drawTexture(ctx,Identifier.of("magiccodex","textures/gui/followup/settings_icon.png"),Math.round(x-9),9,0,0,18,18,676,650,676,650,tint(0xFFFFFFFF,alpha));
                 }else if(i==1){menuSprite(ctx,NEW_ICONS[0],x,18,19,alpha);
-                }else if(i==2){menuSprite(ctx,CODEX_ICON,x,18,22,alpha);
-                }else if(i==3){menuSprite(ctx,SOCIAL_ICON,x,18,22,alpha);
+                }else if(i==4){menuSprite(ctx,CODEX_ICON,x,18,22,alpha);
+                }else if(i==2){menuSprite(ctx,SOCIAL_ICON,x,18,22,alpha);
+                }else if(i==3){menuSprite(ctx,TRAVEL_ICON,x,18,22,alpha);
+                }else if(i==5){menuSprite(ctx,PVP_ICON,x,18,22,alpha);
                 }else icon(ctx,MENU_ATLAS_ICONS[i],x,18,22,alpha);
                 if(state.group()==i){
                     HudMesh.line(ctx,x-3,32,x,35,1,0xFFE7C77E);
@@ -111,7 +116,7 @@ public final class TopMenuRenderer implements AutoCloseable {
         try{
             ctx.getMatrices().scale(scale,scale,1);ctx.getMatrices().translate(6,3,300);
             if(hit>=0&&hit<TopMenuState.LABELS.length&&state.group()!=hit){
-                String label=TopMenuState.LABELS[hit];float tw=text.width(label,11,FONT)+18;
+                String label=TopMenuState.LABELS[hit]+(TopMenuState.enabled(hit)?"":" (준비 중)");float tw=text.width(label,11,FONT)+18;
                 float x=state.iconCenter(base,hit);
                 HudMesh.capsule(ctx,x-tw/2,41,tw,23,0xE6101E2C,0xE6101E2C);
                 text.draw(ctx,label,x,52.5f,11,0xFFF1ECE0,FONT,true);
@@ -152,7 +157,7 @@ public final class TopMenuRenderer implements AutoCloseable {
                 }
                 float cy=y+21;
                 if(group==1)menuSprite(ctx,NEW_ICONS[row],cx,cy,22,alpha);
-                else if(group==2){
+                else if(group==4){
                     if(row==3)menuSprite(ctx,FISH_CODEX_ICON,cx,cy,22,alpha);
                     else if(row==2)menuSprite(ctx,ARTIFACT_ICON,cx,cy,22,alpha);
                     else icon(ctx,row==0?3:4,cx,cy,22,alpha);

@@ -44,12 +44,13 @@ final class KyudichiDb {
 
     private final Logger log; private final int start; private final int[] floors;
     private final ExecutorService io = Executors.newSingleThreadExecutor(r -> { var t = new Thread(r, "Chacademi-kyudichi-db"); t.setDaemon(true); return t; });
-    private ConnectionHolder db; private String table, matches, players, seasons;
+    private ConnectionHolder db; private String table, matches, players, seasons, nicknames;private boolean nicknameWarning;private RankingNameCache nameCache;
 
     KyudichiDb(Logger log, int start, int[] floors) { this.log = log; this.start = start; this.floors = floors; }
 
     void open(Path file) {
         io.execute(() -> {
+            try{nameCache=new RankingNameCache(file.resolveSibling("ranking-display-names.properties"));}catch(java.io.IOException e){log.warn("Ranking display cache unavailable; file preserved");}
             try {
                 var s = DatabaseSettings.load(file);
                 log.info(DatabaseSettings.describe(file, s));
@@ -63,6 +64,7 @@ final class KyudichiDb {
                 }
                 db = s.holder(file.resolveSibling("unused.db"));
                 table = s.table("kyudichi_rating", "kyudichi_rating");
+                nicknames=s.table("nicknames","nicknames");
                 matches = s.table("kyudichi_match", "kyudichi_match");
                 players = s.table("kyudichi_match_player", "kyudichi_match_player");
                 seasons = s.table("kyudichi_season", "kyudichi_season");
@@ -170,7 +172,7 @@ final class KyudichiDb {
                     int i = 1;
                     while (r.next()) {
                         int rating = r.getInt(3);
-                        var row = new Rank(i, UUID.fromString(r.getString(1)), r.getString(2), "", rating, tier(rating, i), r.getInt(4), r.getInt(5), r.getInt(6));
+                        var row = new Rank(i, UUID.fromString(r.getString(1)), displayName(c,UUID.fromString(r.getString(1)),r.getString(2)), "", rating, tier(rating, i), r.getInt(4), r.getInt(5), r.getInt(6));
                         top.add(row); if (row.id().equals(viewer)) mine = row; i++;
                     }
                 }
@@ -179,7 +181,7 @@ final class KyudichiDb {
                 try (PreparedStatement s = c.prepareStatement("SELECT name,rating,games,wins,losses,reached_at FROM " + table + " WHERE player=? AND mode=? AND games>0")) {
                     s.setString(1, viewer.toString()); s.setString(2, MODE);
                     try (ResultSet r = s.executeQuery()) {
-                        if (r.next()) { int rating = r.getInt(2); int rk = rank(c, rating, r.getLong(6)); mine = new Rank(rk, viewer, r.getString(1), "", rating, tier(rating, rk), r.getInt(3), r.getInt(4), r.getInt(5)); }
+                        if (r.next()) { int rating = r.getInt(2); int rk = rank(c, rating, r.getLong(6)); mine = new Rank(rk, viewer, displayName(c,viewer,r.getString(1)), "", rating, tier(rating, rk), r.getInt(3), r.getInt(4), r.getInt(5)); }
                     }
                 }
             }
@@ -190,14 +192,15 @@ final class KyudichiDb {
     /** Full record by player id, or by the last stored nickname when id is null. */
     void record(UUID id, String nick, Consumer<PlayerRecord> done) {
         async(c -> {
-            String sql = "SELECT * FROM " + table + " WHERE mode=? AND " + (id != null ? "player=?" : "LOWER(name)=LOWER(?)") + " LIMIT 1";
+            UUID resolved=id!=null?id:findName(c,nick,false);
+            String sql = "SELECT * FROM " + table + " WHERE mode=? AND " + (resolved != null ? "player=?" : "LOWER(name)=LOWER(?)") + " LIMIT 1";
             try (PreparedStatement s = c.prepareStatement(sql)) {
-                s.setString(1, MODE); s.setString(2, id != null ? id.toString() : nick);
+                s.setString(1, MODE); s.setString(2, resolved != null ? resolved.toString() : nick);
                 try (ResultSet r = s.executeQuery()) {
                     if (!r.next()) return null;
                     UUID who = UUID.fromString(r.getString("player"));
                     int rating = r.getInt("rating"); int rk = r.getInt("games") > 0 ? rank(c, rating, r.getLong("reached_at")) : 0;
-                    return new PlayerRecord(who, r.getString("name"), "", rating, tier(rating, rk), rk, r.getInt("games"), r.getInt("wins"), r.getInt("losses"), r.getInt("draws"),
+                    return new PlayerRecord(who, displayName(c,who,r.getString("name")), "", rating, tier(rating, rk), rk, r.getInt("games"), r.getInt("wins"), r.getInt("losses"), r.getInt("draws"),
                             r.getInt("goals"), r.getInt("kills"), r.getInt("deaths"), r.getInt("assists"), r.getInt("snitch"), r.getInt("deflect_hits"), r.getInt("mvp"),
                             (float) r.getDouble("damage"), (float) r.getDouble("heal"), recent(c, who));
                 }
@@ -245,7 +248,7 @@ final class KyudichiDb {
                     int i = (want - 1) * perPage + 1;
                     while (r.next()) {
                         int rating = r.getInt(3);
-                        var row = new Row(i, UUID.fromString(r.getString(1)), r.getString(2), "", rating, tier(rating, i), r.getInt(4), r.getInt(5), r.getInt(6));
+                        var row = new Row(i, UUID.fromString(r.getString(1)), displayName(c,UUID.fromString(r.getString(1)),r.getString(2)), "", rating, tier(rating, i), r.getInt(4), r.getInt(5), r.getInt(6));
                         rows.add(row); if (row.id().equals(viewer)) mine = row; i++;
                     }
                 }
@@ -255,7 +258,8 @@ final class KyudichiDb {
         }, new Page(1, 1, List.of(), null, 0, db == null ? "랭킹을 불러올 수 없어요." : ""), done);
     }
     private Row find(Connection c, String mode, String nick) throws SQLException {
-        Row r = row(c, mode, "LOWER(name)=LOWER(?)", nick);
+        UUID owner=findName(c,nick,false);if(owner==null)owner=findName(c,nick,true);
+        Row r = owner==null?null:row(c,mode,"player=?",owner.toString());if(r==null)r = row(c, mode, "LOWER(name)=LOWER(?)", nick);
         if (r == null) r = row(c, mode, "LOWER(name) LIKE LOWER(?)", nick.replace("%", "").replace("_", "") + "%");
         return r;
     }
@@ -267,7 +271,7 @@ final class KyudichiDb {
             try (ResultSet r = s.executeQuery()) {
                 if (!r.next()) return null;
                 int rating = r.getInt(3), rk = rank(c, mode, rating, r.getLong(7));
-                return new Row(rk, UUID.fromString(r.getString(1)), r.getString(2), "", rating, tier(rating, rk), r.getInt(4), r.getInt(5), r.getInt(6));
+                return new Row(rk, UUID.fromString(r.getString(1)), displayName(c,UUID.fromString(r.getString(1)),r.getString(2)), "", rating, tier(rating, rk), r.getInt(4), r.getInt(5), r.getInt(6));
             }
         }
     }
@@ -275,16 +279,17 @@ final class KyudichiDb {
     /** 전적: by id, or by the last stored nickname when id is null. Recent games are this season's (the season reset clears stats). */
     void profile(UUID id, String nick, String mode, Consumer<Found> done) {
         async(c -> {
-            String sql = "SELECT * FROM " + table + " WHERE mode=? AND " + (id != null ? "player=?" : "LOWER(name)=LOWER(?)") + " LIMIT 1";
+            UUID resolved=id!=null?id:findName(c,nick,false);
+            String sql = "SELECT * FROM " + table + " WHERE mode=? AND " + (resolved != null ? "player=?" : "LOWER(name)=LOWER(?)") + " LIMIT 1";
             try (PreparedStatement s = c.prepareStatement(sql)) {
-                s.setString(1, mode); s.setString(2, id != null ? id.toString() : nick);
+                s.setString(1, mode); s.setString(2, resolved != null ? resolved.toString() : nick);
                 try (ResultSet r = s.executeQuery()) {
                     if (!r.next()) return null;
                     UUID who = UUID.fromString(r.getString("player"));
                     int rating = r.getInt("rating"); int rk = r.getInt("games") > 0 ? rank(c, mode, rating, r.getLong("reached_at")) : 0;
                     var opponents = new ArrayList<UUID>();
                     var games = games(c, who, mode, opponents);
-                    var p = new Profile(who, r.getString("name"), "", rating, tier(rating, rk), rk, r.getInt("games"), r.getInt("wins"), r.getInt("losses"), r.getInt("draws"),
+                    var p = new Profile(who, displayName(c,who,r.getString("name")), "", rating, tier(rating, rk), rk, r.getInt("games"), r.getInt("wins"), r.getInt("losses"), r.getInt("draws"),
                             r.getInt("goals"), r.getInt("kills"), r.getInt("deaths"), r.getInt("snitch"), r.getInt("deflect_hits"),
                             (float) r.getDouble("damage"), (float) r.getDouble("heal"), games);
                     return new Found(p, opponents);
@@ -306,7 +311,7 @@ final class KyudichiDb {
                     String opp = team == 0 ? r.getString(13) : r.getString(12);
                     int house = team == 0 ? r.getInt(15) : r.getInt(14);
                     UUID other = DUEL.equals(mode) ? opponent(c, r.getString(16), id) : null;
-                    opponents.add(other);
+                    opponents.add(other);if(other!=null)opp=displayName(c,other,opp==null?"":opp);
                     out.add(new Game(r.getLong(1), Math.clamp(r.getInt(2), 0, 2), r.getInt(9), r.getInt(10), Math.clamp(r.getInt(6), 0, 255), Math.clamp(r.getInt(7), 0, 255),
                             Math.clamp(r.getInt(8), 0, 255), (float) r.getDouble(11), mine, theirs, opp == null ? "" : opp, "", Math.clamp(house, -1, 3)));
                 }
@@ -314,6 +319,10 @@ final class KyudichiDb {
         }
         return out;
     }
+    void rememberName(UUID id,String name){io.execute(()->{if(nameCache!=null)try{nameCache.remember(id,name);}catch(java.io.IOException|IllegalArgumentException e){log.warn("Could not preserve trusted ranking display name; previous cache retained");}});}
+    private String displayName(Connection c,UUID id,String fallback){try{return KyudichiNames.display(c,nicknames,id,nameCache==null?fallback:nameCache.name(id,fallback));}catch(SQLException e){warnNames();return nameCache==null?fallback:nameCache.name(id,fallback);}}
+    private UUID findName(Connection c,String text,boolean prefix){if(text==null||text.isBlank())return null;try{UUID found=KyudichiNames.find(c,nicknames,text,prefix);if(found!=null)return found;}catch(SQLException e){warnNames();}return nameCache==null?null:nameCache.find(text,prefix);}
+    private void warnNames(){if(!nicknameWarning){nicknameWarning=true;log.warn("Ranking nickname directory unavailable; verify shared nickname database configuration. Existing account names retained.");}}
     private UUID opponent(Connection c, String match, UUID me) throws SQLException {
         try (PreparedStatement s = c.prepareStatement("SELECT player FROM " + players + " WHERE match_id=? AND player<>? LIMIT 1")) {
             s.setString(1, match); s.setString(2, me.toString());

@@ -35,6 +35,7 @@ public final class TopMenuClient {
             if(state.group()>=0){state.closeGroup();return true;}
             return false;
         }
+        if(hit>=0&&hit<TopMenuState.LABELS.length&&!TopMenuState.enabled(hit))return true;
         c.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK.value(),1.15f,.23f));
         if(hit==-1){state.toggle(Util.getMeasuringTimeMs());return true;}
         if(TopMenuState.isGroup(hit)){state.toggleGroup(hit,Util.getMeasuringTimeMs());return true;}
@@ -43,16 +44,17 @@ public final class TopMenuClient {
             case 110 -> {MagicCodexClient.dismiss();c.setScreen(new StatsScreen());}
             case 111 -> EquipmentClient.open();
             case 112 -> TitleClient.open();
-            case 120 -> MagicCodexClient.openFromMenu();
-            case 121 -> PetClient.open();
-            case 122 -> {MagicCodexClient.dismiss();c.setScreen(new ArtifactCodexScreen(null));}
-            case 123 -> FishingClient.openCodex();   // 물고기 도감 (the server answers with the codex frame)
-            case 130 -> SocialClient.open();
-            case 131 -> {MagicCodexClient.dismiss();c.setScreen(new PartyScreen());}
-            case 132 -> SchoolClient.open();
-            case 4 -> QuestClient.open();
-            case 5 -> MailboxClient.open(null);
-            case 6 -> {MagicCodexClient.dismiss();c.setScreen(new SettingsScreen(null));}
+            case 140 -> MagicCodexClient.openFromMenu();
+            case 141 -> PetClient.open();
+            case 142 -> {MagicCodexClient.dismiss();c.setScreen(new ArtifactCodexScreen(null));}
+            case 143 -> FishingClient.openCodex();   // 물고기 도감 (the server answers with the codex frame)
+            case 120 -> SocialClient.open();
+            case 121 -> {MagicCodexClient.dismiss();c.setScreen(new PartyScreen());}
+            case 122 -> SchoolClient.open();
+            case 6 -> QuestClient.open();
+            case 7 -> MailboxClient.open(null);
+            case 8 -> {MagicCodexClient.dismiss();c.setScreen(new SettingsScreen(null));}
+            case 5 -> {if(c.getNetworkHandler()!=null){c.setScreen(null);c.getNetworkHandler().sendChatCommand("큐디치");}}
             case 0 -> {if(c.getNetworkHandler()!=null){c.setScreen(null);c.getNetworkHandler().sendChatCommand("캐시샵");}}
             default -> {return false;}
         }

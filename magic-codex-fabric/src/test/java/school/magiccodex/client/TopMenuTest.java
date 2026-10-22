@@ -38,13 +38,14 @@ class TopMenuTest {
             assertTrue(state.arrowCenter(base)-state.iconCenter(base,TopMenuState.LABELS.length-1)>29);
         }
         assertEquals("캐시샵",TopMenuState.command(0));
-        assertEquals("우편함",TopMenuState.command(5));
-        assertEquals("의뢰",TopMenuState.command(4));
-        assertArrayEquals(new String[]{"캐시샵","내 정보","도감","소셜","퀘스트","우편함","설정"},TopMenuState.LABELS);
+        assertEquals("우편함",TopMenuState.command(7));
+        assertEquals("의뢰",TopMenuState.command(6));
+        assertEquals("큐디치",TopMenuState.command(5));assertFalse(TopMenuState.enabled(3));assertEquals("",TopMenuState.command(3));
+        assertArrayEquals(new String[]{"마일리지샵","내 정보","소셜","이동","도감","PVP","퀘스트","우편함","설정"},TopMenuState.LABELS);
     }
     @Test void groupsHaveFixedOrderAndRoomyVerticalTargets(){
         var state=new TopMenuState();state.toggle(0);state.update(240);
-        for(int group=1;group<=3;group++){
+        for(int group:new int[]{1,2,4}){
             state.toggleGroup(group,300);state.update(480);
             float x=state.iconCenter(300,group);
             for(int row=0;row<TopMenuState.rows(group);row++){
@@ -57,25 +58,25 @@ class TopMenuTest {
         assertEquals("스탯",TopMenuState.childLabel(1,0));
         assertEquals("장비",TopMenuState.childLabel(1,1));
         assertEquals("칭호",TopMenuState.childLabel(1,2));
-        assertEquals("아티팩트 도감",TopMenuState.childLabel(2,2));
-        assertEquals("물고기 도감",TopMenuState.childLabel(2,3));
-        assertEquals(4,TopMenuState.rows(2));assertEquals(3,TopMenuState.rows(1));
-        assertEquals("파티",TopMenuState.childLabel(3,1));
-        assertEquals("기숙사",TopMenuState.childLabel(3,2));
+        assertEquals("아티팩트 도감",TopMenuState.childLabel(4,2));
+        assertEquals("물고기 도감",TopMenuState.childLabel(4,3));
+        assertEquals(4,TopMenuState.rows(4));assertEquals(3,TopMenuState.rows(1));
+        assertEquals("파티",TopMenuState.childLabel(2,1));
+        assertEquals("기숙사",TopMenuState.childLabel(2,2));
         assertTrue(TopMenuState.ROW_HEIGHT>=64);
     }
     @Test void dropdownDoesNotClickDuringAnimationAndToggleClosesIt(){
         var state=new TopMenuState();state.toggle(0);state.update(240);
-        state.toggleGroup(2,300);state.update(390);
-        assertEquals(-2,state.hit(state.iconCenter(300,2),TopMenuState.rowTop(0)+20,300));
-        state.update(480);assertEquals(120,state.hit(state.iconCenter(300,2),TopMenuState.rowTop(0)+20,300));
-        state.toggleGroup(2,500);assertEquals(-1,state.group());
+        state.toggleGroup(4,300);state.update(390);
+        assertEquals(-2,state.hit(state.iconCenter(300,4),TopMenuState.rowTop(0)+20,300));
+        state.update(480);assertEquals(140,state.hit(state.iconCenter(300,4),TopMenuState.rowTop(0)+20,300));
+        state.toggleGroup(4,500);assertEquals(-1,state.group());
         state.toggleGroup(1,600);state.toggle(650);assertEquals(-1,state.group());
         state.toggleGroup(3,700);assertEquals(-1,state.group());
     }
     @Test void nonGroupCannotOpenDropdownAndBlankPaddingIsNotAnItem(){
         var state=new TopMenuState();state.toggle(0);state.update(240);
-        for(int index:new int[]{-1,0,4,5,6,100}){state.toggleGroup(index,300);assertEquals(-1,state.group());}
+        for(int index:new int[]{-1,0,3,5,6,7,8,100}){state.toggleGroup(index,300);assertEquals(-1,state.group());}
         state.toggleGroup(1,300);state.update(480);float x=state.iconCenter(300,1);
         assertEquals(-2,state.hit(x,TopMenuState.DROPDOWN_TOP+1,300));
         assertEquals(-2,state.hit(x,TopMenuState.DROPDOWN_TOP+TopMenuState.dropdownHeight()-1,300));

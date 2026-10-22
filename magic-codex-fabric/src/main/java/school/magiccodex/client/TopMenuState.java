@@ -2,17 +2,18 @@ package school.magiccodex.client;
 
 /** Layout and animation share one coordinate system, including all hit targets. */
 public final class TopMenuState {
-    public static final String[] LABELS={"캐시샵","내 정보","도감","소셜","퀘스트","우편함","설정"};
-    private static final String[] COMMANDS={"캐시샵","","","","의뢰","우편함",""};
+    public static final String[] LABELS={"마일리지샵","내 정보","소셜","이동","도감","PVP","퀘스트","우편함","설정"};
+    private static final String[] COMMANDS={"캐시샵","","","","","큐디치","의뢰","우편함",""};
+    public static boolean enabled(int index){return index!=3;}
     public static final float STEP=38,HEIGHT=36;
     public static final float SEASON_SPACE=28,SEASON_CENTER=28;
     public static final float TEMPERATURE_SPACE=56;
     public static final float DROPDOWN_WIDTH=76, DROPDOWN_TOP=40, ROW_HEIGHT=64, DROPDOWN_PAD=9;
-    private static final String[][] CHILDREN={{},{"스탯","장비","칭호"},{"마법 도감","펫 도감","아티팩트 도감","물고기 도감"},{"친구","파티","기숙사"},{},{},{}};
+    private static final String[][] CHILDREN={{},{"스탯","장비","칭호"},{"친구","파티","기숙사"},{},{"마법 도감","펫 도감","아티팩트 도감","물고기 도감"},{},{},{},{}};
     private int group=-1;
     private long groupStarted;
     private float groupProgress;
-    public static boolean isGroup(int index){return index>=1&&index<=3;}
+    public static boolean isGroup(int index){return index==1||index==2||index==4;}
     public int group(){return group;}
     public float groupProgress(){return groupProgress;}
     public static String childLabel(int group,int row){return CHILDREN[group][row];}
