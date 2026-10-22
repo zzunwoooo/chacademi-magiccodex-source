@@ -283,11 +283,12 @@ public final class ModelManager {
         Map<String, ModelData.Clip> clips = new LinkedHashMap<>(cpu.base.clips);
         for (ModelRegistry.FileRef f : e.clipFiles()) {
             ModelData src = parse(f);
+            String stem = f.name().substring(0, f.name().length() - 4); // "teacher_ellna.glb" → "teacher_ellna"
             for (ModelData.Clip c : src.clips.values()) {
-                if (clips.containsKey(c.name)) {
-                    cpu.diagnostics.add("클립 파일 " + f.name() + ": '" + c.name + "' 이름 중복 → 클립 파일 쪽 사용");
-                }
-                clips.put(c.name, ModelRegistry.retarget(c, src, cpu.base, e.boneMap(), cpu.diagnostics));
+                ModelData.Clip moved = ModelRegistry.retarget(c, src, cpu.base, e.boneMap(), cpu.diagnostics);
+                // 항상 "<파일>:<클립>" 이름으로 쓸 수 있고, 모델 자기 클립과 이름이 겹치지 않으면 원래 이름으로도 (자기 클립 우선)
+                clips.put(stem + ":" + c.name, new ModelData.Clip(stem + ":" + c.name, moved.duration, moved.channels));
+                clips.putIfAbsent(c.name, moved);
             }
         }
         for (String need : new String[]{e.idleClip(), e.walkClip(), e.talkClip(), e.greetClip()}) {

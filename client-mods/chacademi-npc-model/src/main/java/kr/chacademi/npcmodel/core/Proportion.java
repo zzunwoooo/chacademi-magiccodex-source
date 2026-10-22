@@ -203,12 +203,38 @@ public final class Proportion {
             }
             skins[si] = new ModelData.Skin(s.joints, ibm);
         }
-        ModelData tmp = new ModelData(nodes, m.roots, m.parent, m.order, meshNodes, skins, m.materials, m.images, m.clips,
+        // 애니메이션의 위치 채널(블렌더 내보내기는 모든 뼈에 고정 위치를 넣음)도 바뀐 길이만큼 옮긴다
+        Map<String, ModelData.Clip> clips = new java.util.LinkedHashMap<>();
+        int moved = 0;
+        for (Map.Entry<String, ModelData.Clip> ce : m.clips.entrySet()) {
+            ModelData.Clip c = ce.getValue();
+            ModelData.Channel[] chs = c.channels.clone();
+            for (int i = 0; i < chs.length; i++) {
+                ModelData.Channel ch = chs[i];
+                if (ch.path != ModelData.PATH_T || nodes[ch.node] == m.nodes[ch.node]) {
+                    continue;
+                }
+                float[] d = {nodes[ch.node].t[0] - m.nodes[ch.node].t[0], nodes[ch.node].t[1] - m.nodes[ch.node].t[1],
+                        nodes[ch.node].t[2] - m.nodes[ch.node].t[2]};
+                float[] v = ch.values.clone();
+                int stride = ch.interpolation == ModelData.INTERP_CUBIC ? 9 : 3;
+                int off = ch.interpolation == ModelData.INTERP_CUBIC ? 3 : 0; // CUBIC: 접선은 그대로, 값만
+                for (int k = off; k + 2 < v.length; k += stride) {
+                    v[k] += d[0];
+                    v[k + 1] += d[1];
+                    v[k + 2] += d[2];
+                }
+                chs[i] = new ModelData.Channel(ch.node, ch.path, ch.interpolation, ch.times, v);
+                moved++;
+            }
+            clips.put(ce.getKey(), moved > 0 ? new ModelData.Clip(c.name, c.duration, chs) : c);
+        }
+        ModelData tmp = new ModelData(nodes, m.roots, m.parent, m.order, meshNodes, skins, m.materials, m.images, clips,
                 m.diagnostics, 0, 0, m.clipRootSpeed, m.triangleCount, m.vertexCount);
         float[] range = Skinner.restHeightRange(tmp);
         List<String> d2 = new ArrayList<>(m.diagnostics);
         d2.add(String.format("비율 조정: 다리 %.2f · 몸통 %.2f · 팔 %.2f", f.legs(), f.torso(), f.arms()));
-        return new ModelData(nodes, m.roots, m.parent, m.order, meshNodes, skins, m.materials, m.images, m.clips,
+        return new ModelData(nodes, m.roots, m.parent, m.order, meshNodes, skins, m.materials, m.images, clips,
                 List.copyOf(d2), range[0], range[1], m.clipRootSpeed, m.triangleCount, m.vertexCount);
     }
 

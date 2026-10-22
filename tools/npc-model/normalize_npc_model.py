@@ -548,12 +548,27 @@ def reproportion(g: Gltf, factors: dict, report: dict):
         p = parent.get(j)
         newpos[j] = pos[j].copy() if p not in pos else newpos[p] + A[p] @ (pos[j] - pos[p])
     # 노드 로컬 위치 = 부모 바인드 회전 기준 새 오프셋
+    delta_t = {}
     for j in order:
         p = parent.get(j)
         if p in pos:
             t = np.linalg.solve(B[p][:3, :3], newpos[j] - newpos[p])
+            delta_t[j] = t - np.array(local_matrix(nodes[j])[:3, 3])
             nodes[j]["translation"] = [float(x) for x in t]
             nodes[j].pop("matrix", None)
+    # 애니메이션 위치 채널(블렌더 내보내기는 모든 뼈에 고정 위치를 넣음)도 바뀐 길이만큼 옮긴다
+    for a in js.get("animations", []):
+        for ch in a["channels"]:
+            j = ch["target"].get("node")
+            if ch["target"]["path"] != "translation" or j not in delta_t:
+                continue
+            smp = a["samplers"][ch["sampler"]]
+            v = g.accessor(smp["output"]).astype(np.float64).copy()
+            if smp.get("interpolation") == "CUBICSPLINE":
+                v.reshape(-1, 3, 3)[:, 1, :] += delta_t[j]
+            else:
+                v += delta_t[j]
+            smp["output"] = g.add_accessor(v, "VEC3")
     # 정점·법선
     for ni, node in enumerate(nodes):
         if "mesh" not in node or "skin" not in node:

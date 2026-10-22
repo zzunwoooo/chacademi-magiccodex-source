@@ -275,7 +275,7 @@ class CoreTest {
         float h0 = m.restMaxY - m.restMinY, h1 = q.restMaxY - q.restMinY;
         assertTrue(h1 < h0 * 0.95f && h1 > h0 * 0.8f, "다리 0.8 → 키가 줄어듦 " + h0 + " → " + h1);
         assertEquals(m.triangleCount, q.triangleCount);
-        assertTrue(q.clips == m.clips, "클립은 그대로 공유");
+        assertEquals(m.clips.keySet(), q.clips.keySet(), "클립 목록 그대로");
         // 걷기 한 프레임이 문제없이 계산되는지 (NaN 없음)
         Pose pose = new Pose(q.nodes.length);
         pose.setRest(q);
@@ -308,6 +308,19 @@ class CoreTest {
         assertTrue(Files.readString(dir.resolve("models.json")).contains("\"memo\": \"그대로\""), "다른 키는 보존");
         assertEquals(0, ModelRegistry.parse(dir, "{\"models\":{\"x\":{\"file\":\"x.glb\",\"sha256\":\"" + sha
                 + "\",\"proportion\":{\"legs\":0.2}}}}").models.size(), "범위 밖 비율 거부");
+    }
+
+    @Test
+    void retargetKeepsRotationsDropsMoves() {
+        ModelData m = GlbReader.read(tinyGlb(null, null, true), ModelLimits.DEFAULT);
+        java.util.List<String> diag = new java.util.ArrayList<>();
+        ModelData.Clip c = m.clips.get("wave");
+        ModelData.Channel[] chs = {c.channels[0], new ModelData.Channel(c.channels[0].node, ModelData.PATH_T, 0, new float[]{0}, new float[]{5, 5, 5})};
+        ModelData.Clip moved = ModelRegistry.retarget(new ModelData.Clip("x", 1, chs), m, m, java.util.Map.of(), diag);
+        assertEquals(1, moved.channels.length, "위치 채널은 버림");
+        assertEquals(ModelData.PATH_R, moved.channels[0].path);
+        // 같은 모델끼리면 뿌리 뼈 보정이 항등이라 값이 그대로
+        assertEquals(c.channels[0].values[6], moved.channels[0].values[6], 1e-6);
     }
 
     @SuppressWarnings("unused")

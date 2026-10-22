@@ -83,6 +83,32 @@
         "arms": 0.92
       },
       "height": 2.5
+    },
+    "pipi": {
+      "file": "pipi.glb",
+      "sha256": "a45625cbd5313bb1a622b07afc63ce8edaf5f7d04026811a18096d0ba3050131",
+      "clips": {
+        "idle": "teacher_ellna:idle",
+        "idleVariants": [],
+        "walk": "walk",
+        "talk": null,
+        "greet": "greet_02"
+      },
+      "clipFiles": [
+        {
+          "file": "teacher_ellna.glb",
+          "sha256": "a0540634047d6e21485e51267fa26c09617f1b1b45f90d2fd04cd5e552fafdbe"
+        }
+      ],
+      "walkSpeed": 1.2,
+      "scale": 1.0,
+      "nameplateOffset": 0.0,
+      "proportion": {
+        "legs": 0.82,
+        "torso": 0.95,
+        "arms": 0.92
+      },
+      "height": 1.9
     }
   }
 }

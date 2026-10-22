@@ -209,7 +209,13 @@ public final class ModelRegistry {
     public static ModelData.Clip retarget(ModelData.Clip clip, ModelData source, ModelData target, Map<String, String> boneMap,
                                           List<String> diag) {
         List<ModelData.Channel> chs = new ArrayList<>();
-        int dropped = 0;
+        int dropped = 0, moves = 0;
+        java.util.Set<Integer> targetJoints = new java.util.HashSet<>();
+        for (ModelData.Skin s : target.skins) {
+            for (int j : s.joints) {
+                targetJoints.add(j);
+            }
+        }
         for (ModelData.Channel c : clip.channels) {
             String srcName = source.nodes[c.node].name;
             int dst = findNode(target, boneMap.getOrDefault(srcName, srcName));
@@ -217,10 +223,29 @@ public final class ModelRegistry {
                 dropped++;
                 continue;
             }
-            chs.add(new ModelData.Channel(dst, c.path, c.interpolation, c.times, c.values));
+            if (c.path != ModelData.PATH_R) {
+                moves++; // 위치·크기 채널은 버린다: 모델마다 단위·뼈 길이가 달라서 그대로 쓰면 몸이 뜨거나 늘어남
+                continue;
+            }
+            float[] values = c.values;
+            boolean root = targetJoints.contains(dst) && (target.parent[dst] < 0 || !targetJoints.contains(target.parent[dst]));
+            if (root) {
+                // 뼈대 맨 위(Hips)는 파일마다 부모 좌표가 달라서(FBX 축 보정 등) 기본 자세 대비 회전량으로 옮긴다
+                float[] rt = target.nodes[dst].r, rs = source.nodes[c.node].r;
+                float[] rel = new float[4];
+                MathUtil.quatMul(rt, 0, new float[]{-rs[0], -rs[1], -rs[2], rs[3]}, 0, rel, 0);
+                values = new float[c.values.length];
+                for (int k = 0; k + 3 < values.length; k += 4) {
+                    MathUtil.quatMul(rel, 0, c.values, k, values, k);
+                }
+            }
+            chs.add(new ModelData.Channel(dst, c.path, c.interpolation, c.times, values));
         }
         if (dropped > 0) {
             diag.add("클립 '" + clip.name + "': 맞는 뼈가 없는 채널 " + dropped + "개 제외");
+        }
+        if (moves > 0) {
+            diag.add("클립 '" + clip.name + "': 다른 파일에서 가져와 위치·크기 채널 " + moves + "개 제외 (회전만 사용)");
         }
         return new ModelData.Clip(clip.name, clip.duration, chs.toArray(new ModelData.Channel[0]));
     }
