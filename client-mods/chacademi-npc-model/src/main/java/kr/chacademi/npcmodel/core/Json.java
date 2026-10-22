@@ -207,6 +207,74 @@ public final class Json {
         }
     }
 
+    // ---- 쓰기 (models.json 저장용, 2칸 들여쓰기)
+
+    public static String write(Object v) {
+        StringBuilder b = new StringBuilder();
+        write(b, v, 0);
+        return b.append('\n').toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void write(StringBuilder b, Object v, int ind) {
+        if (v == null) {
+            b.append("null");
+        } else if (v instanceof String s) {
+            b.append('"');
+            for (char c : s.toCharArray()) {
+                switch (c) {
+                    case '"' -> b.append("\\\"");
+                    case '\\' -> b.append("\\\\");
+                    case '\n' -> b.append("\\n");
+                    case '\r' -> b.append("\\r");
+                    case '\t' -> b.append("\\t");
+                    default -> {
+                        if (c < 0x20) {
+                            b.append(String.format("\\u%04x", (int) c));
+                        } else {
+                            b.append(c);
+                        }
+                    }
+                }
+            }
+            b.append('"');
+        } else if (v instanceof Double d) {
+            b.append(d == Math.rint(d) && Math.abs(d) < 1e15 ? String.valueOf(d.longValue()) : String.valueOf(d));
+        } else if (v instanceof Number || v instanceof Boolean) {
+            b.append(v);
+        } else if (v instanceof Map<?, ?> m) {
+            if (m.isEmpty()) {
+                b.append("{}");
+                return;
+            }
+            b.append("{\n");
+            int i = 0;
+            for (Map.Entry<?, ?> e : ((Map<Object, Object>) m).entrySet()) {
+                b.append("  ".repeat(ind + 1));
+                write(b, String.valueOf(e.getKey()), ind + 1);
+                b.append(": ");
+                write(b, e.getValue(), ind + 1);
+                b.append(++i < m.size() ? ",\n" : "\n");
+            }
+            b.append("  ".repeat(ind)).append('}');
+        } else if (v instanceof List<?> l) {
+            if (l.isEmpty()) {
+                b.append("[]");
+                return;
+            }
+            b.append('[');
+            for (int i = 0; i < l.size(); i++) {
+                write(b, l.get(i), ind + 1);
+                if (i + 1 < l.size()) {
+                    b.append(", ");
+                }
+            }
+            b.append(']');
+        } else {
+            throw new IllegalArgumentException("JSON 으로 쓸 수 없는 값: " + v.getClass());
+        }
+    }
+
     // ---- 읽기 도우미 (형식이 틀리면 ModelFormatException)
 
     @SuppressWarnings("unchecked")

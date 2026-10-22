@@ -35,6 +35,33 @@ public final class ModelRegistry {
         this.diagnostics = diagnostics;
     }
 
+    /** 항목 하나만 바꾼 복사본 (게임 안 조절 명령). */
+    public ModelRegistry replace(Entry e) {
+        Map<String, Entry> m = new LinkedHashMap<>(models);
+        m.put(e.id(), e);
+        return new ModelRegistry(dir, Map.copyOf(m), diagnostics);
+    }
+
+    /** 지금 값(비율·키)을 models.json 에 저장. 다른 항목·키는 그대로 둔다. */
+    public void save(Entry e) throws java.io.IOException {
+        Path f = dir.resolve("models.json");
+        Map<String, Object> root = Json.obj(Json.parse(Files.readString(f, StandardCharsets.UTF_8)), "models.json");
+        Map<String, Object> entry = Json.obj(Json.obj(root.get("models"), "models").get(e.id()), e.id());
+        Map<String, Object> pr = new LinkedHashMap<>();
+        pr.put("legs", round(e.proportion().legs()));
+        pr.put("torso", round(e.proportion().torso()));
+        pr.put("arms", round(e.proportion().arms()));
+        entry.put("proportion", pr);
+        entry.put("height", round(e.height()));
+        Path tmp = f.resolveSibling("models.json.tmp");
+        Files.writeString(tmp, Json.write(root), StandardCharsets.UTF_8);
+        Files.move(tmp, f, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    private static Double round(float v) {
+        return Math.round(v * 1000) / 1000.0;
+    }
+
     public static ModelRegistry empty(Path dir, String why) {
         return new ModelRegistry(dir, Map.of(), List.of(why));
     }
@@ -124,8 +151,25 @@ public final class ModelRegistry {
             lods.add(new Lod(file(dir, l, "file", "sha256"), from));
         }
         float plate = (float) Json.num(m, "nameplateOffset", 0);
+        Proportion.Factors prop = Proportion.Factors.NONE;
+        if (m.containsKey("proportion")) {
+            Map<String, Object> pr = Json.obj(m.get("proportion"), "proportion");
+            prop = new Proportion.Factors(factor(pr, "legs"), factor(pr, "torso"), factor(pr, "arms"));
+        }
+        float height = (float) Json.num(m, "height", 0);
+        if (height != 0 && (height < 0.5f || height > 5f)) {
+            throw new ModelFormatException("height 범위 (0.5~5 블록, 0 = scale 사용)");
+        }
         return new Entry(id, main, idle, walk, talk, greet, List.copyOf(variants), walkSpeed, scale,
-                Map.copyOf(boneMap), List.copyOf(clipFiles), List.copyOf(lods), Math.max(-2, Math.min(2, plate)));
+                Map.copyOf(boneMap), List.copyOf(clipFiles), List.copyOf(lods), Math.max(-2, Math.min(2, plate)), prop, height);
+    }
+
+    private static float factor(Map<String, Object> m, String key) {
+        float v = (float) Json.num(m, key, 1);
+        if (v < 0.5f || v > 1.5f) {
+            throw new ModelFormatException("proportion." + key + " 범위 (0.5~1.5)");
+        }
+        return v;
     }
 
     private static FileRef file(Path dir, Map<String, Object> m, String fileKey, String shaKey) {
@@ -152,7 +196,13 @@ public final class ModelRegistry {
 
     public record Entry(String id, FileRef file, String idleClip, String walkClip, String talkClip, String greetClip,
                         List<String> idleVariants, float walkSpeed, float scale, Map<String, String> boneMap,
-                        List<FileRef> clipFiles, List<Lod> lods, float nameplateOffset) {
+                        List<FileRef> clipFiles, List<Lod> lods, float nameplateOffset,
+                        Proportion.Factors proportion, float height) {
+        /** 게임 안 조절 명령용: 비율·키만 바꾼 복사본. */
+        public Entry with(Proportion.Factors p, float h) {
+            return new Entry(id, file, idleClip, walkClip, talkClip, greetClip, idleVariants, walkSpeed, scale, boneMap,
+                    clipFiles, lods, nameplateOffset, p, h);
+        }
     }
 
     /** 다른 GLB의 클립을 이 모델 노드 이름에 맞춰 옮긴다 (같은 골격 가정, 이름만 맞춤). */

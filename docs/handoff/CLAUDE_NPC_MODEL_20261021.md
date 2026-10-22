@@ -100,3 +100,12 @@ MagicCodex(Bridge·Fabric)·PortableVFX·스토리 모드는 **건드리지 않�
 - `chaca-npc-paper` 는 `../chaca-npc-model-protocol/src` 를 소스 폴더로 포함 (클라이언트 모드도 `../../chaca-npc-model-protocol/src`).
 - 테스트: `chaca-npc-paper:test` 에 프로토콜 테스트 3개 추가, 모드 `test` 에 CoreTest 11개 (실제 GLB 가 `dist/npc-models/` 에 없으면 그 1개는 그냥 통과).
 - `Bc7Codec.java` 는 PortableVFX `ClaudeTextureCodec` 복사본(패키지·이름만 변경).
+
+## 12. 2026-10-22 추가 — 모델 비율 조정 (모드 0.1.1-npcmodel.2, 클라이언트만)
+
+- 사람 비율 모델이 마크 캐릭터 옆에서 작아 보이는 문제 → 키를 크게 올리는 대신 다리·몸통·팔 길이를 줄이고 키를 조금만 올림.
+- `core/Proportion.java`: 읽을 때 바인드 자세 기준으로 뼈 길이를 바꿈 (정점은 뼈 길이 방향으로만, 노드 위치·inverse bind 같이 수정). 동작은 회전만 쓰므로 그대로. 변환 도구 `--legs/--torso/--arms` 와 같은 계산 (루카로 비교: 차이 2e-7).
+- models.json 새 키: `proportion {legs, torso, arms}` (0.5~1.5), `height` (블록, 0 = scale). 시작값 루카 1.95 · 리아 1.9 · 선장 2.1 · 엘레나 2.5(모자 포함), 비율 모두 0.82/0.95/0.92.
+- 클라이언트 명령 `/npc모델 정보|비율|키|저장|되돌리기` (내 화면만, 서버 영향 없음). `저장`은 내 models.json 만 바꿈 → 확정값은 런처 배포본 models.json 에 반영.
+- 테스트 16개 통과 (비율 조정·models.json 저장/보존 추가). 빌드: `client-mods/chacademi-npc-model` 만 다시 빌드. 서버 ChacaNPC 변경 없음.
+- 주의: 클립 파일(clipFiles)에 다리·몸통 뼈의 위치(translation) 채널이 있으면 줄인 길이를 덮어씀 (지금 모델들은 골반만 있음).

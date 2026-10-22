@@ -73,6 +73,22 @@ public final class Bindings {
         }
     }
 
+    /** 연결은 두고 인스턴스만 전부 내린다 (models.json 다시 읽기). */
+    public void clearInstances() {
+        for (Entry e : byEntity.values()) {
+            release(e);
+        }
+    }
+
+    /** 조절 명령으로 모델을 다시 읽을 때: 그 모델을 쓰는 인스턴스만 내린다 (다음 프레임에 새로 만듦). */
+    public void reloadModel(String modelId) {
+        for (Entry e : byEntity.values()) {
+            if (modelId.equals(e.modelId)) {
+                release(e);
+            }
+        }
+    }
+
     public String modelIdOf(NpcInstance inst) {
         return inst.model().entry.id();
     }

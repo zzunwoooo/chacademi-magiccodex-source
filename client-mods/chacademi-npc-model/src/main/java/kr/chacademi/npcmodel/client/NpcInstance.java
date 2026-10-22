@@ -77,7 +77,9 @@ public final class NpcInstance {
 
     /** 최종 크기 = models.json scale × 서버 지정 scale. */
     public float totalScale() {
-        return model.entry.scale() * scale;
+        float h = model.entry.height();
+        float base = h > 0 ? h / Math.max(1e-3f, model.restHeight()) : model.entry.scale();
+        return base * scale;
     }
 
     /** 발바닥 기준 모델 꼭대기 (블록). 이름표·머리 위 표시용. */

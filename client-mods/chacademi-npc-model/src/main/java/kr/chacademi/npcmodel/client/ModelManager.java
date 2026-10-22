@@ -7,6 +7,7 @@ import kr.chacademi.npcmodel.core.ModelData;
 import kr.chacademi.npcmodel.core.ModelFormatException;
 import kr.chacademi.npcmodel.core.ModelLimits;
 import kr.chacademi.npcmodel.core.ModelRegistry;
+import kr.chacademi.npcmodel.core.Proportion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
@@ -178,6 +179,28 @@ public final class ModelManager {
         return h.model;
     }
 
+    /** 지금 쓰는 모델 목록 (조절 명령 포함). */
+    public ModelRegistry registry() {
+        return registry;
+    }
+
+    /**
+     * 게임 안 조절: 이 모델의 비율·키를 바꾸고 다시 읽는다 (models.json 은 '저장' 전까지 그대로).
+     * 텍스처는 BC7 캐시를 다시 써서 빠르다.
+     */
+    public boolean override(String id, Proportion.Factors p, float height) {
+        ModelRegistry.Entry e = registry.models.get(id);
+        if (e == null) {
+            return false;
+        }
+        registry = registry.replace(e.with(p, height));
+        Handle h = handles.remove(id);
+        if (h != null) {
+            h.discard();
+        }
+        return true;
+    }
+
     /** 렌더 스레드에서 첫 틱에 GPU 기능 확인 (작업 스레드가 BC7 로 만들지 결정). */
     public void detectGpu() {
         if (bptc == null) {
@@ -255,7 +278,7 @@ public final class ModelManager {
     private CpuModel prepare(ModelRegistry.Entry e) {
         CpuModel cpu = new CpuModel();
         cpu.entry = e;
-        cpu.base = parse(e.file());
+        cpu.base = Proportion.apply(parse(e.file()), e.proportion(), cpu.diagnostics);
         cpu.diagnostics.addAll(cpu.base.diagnostics);
         Map<String, ModelData.Clip> clips = new LinkedHashMap<>(cpu.base.clips);
         for (ModelRegistry.FileRef f : e.clipFiles()) {
@@ -276,7 +299,7 @@ public final class ModelManager {
         cpu.textures.add(textures(cpu.base, e.file().sha256(), 0));
         int li = 1;
         for (ModelRegistry.Lod l : e.lods()) {
-            ModelData m = parse(l.file());
+            ModelData m = Proportion.apply(parse(l.file()), e.proportion(), cpu.diagnostics);
             cpu.lods.add(m);
             cpu.lodFrom.add(l.fromBlocks());
             cpu.textures.add(textures(m, l.file().sha256(), li++));
