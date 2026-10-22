@@ -40,8 +40,8 @@ final class KyudichiHud {
     private static float leaveX, leaveY, leaveW, leaveH; private static boolean leaveShown;
 
     static void close() { if (images != null) { images.close(); images = null; } if (text != null) { text.close(); text = null; } }
-    static boolean forfeitHit(double x, double y) { return forfeitShown && x >= forfeitX && x <= forfeitX + forfeitW && y >= forfeitY && y <= forfeitY + forfeitH; }
-    static boolean leaveHit(double x, double y) { return leaveShown && x >= leaveX && x <= leaveX + leaveW && y >= leaveY && y <= leaveY + leaveH; }
+    static boolean forfeitHit(double x, double y) { if(HudCustomization.editingGesture())return false;var p=HudCustomization.pointer("battle-action",x,y);x=p[0];y=p[1];return forfeitShown && x >= forfeitX && x <= forfeitX + forfeitW && y >= forfeitY && y <= forfeitY + forfeitH; }
+    static boolean leaveHit(double x, double y) { if(HudCustomization.editingGesture())return false;var p=HudCustomization.pointer("battle-action",x,y);x=p[0];y=p[1];return leaveShown && x >= leaveX && x <= leaveX + leaveW && y >= leaveY && y <= leaveY + leaveH; }
 
     static float scale(float w, float h) { return Math.min(w / 1672f, h / 941f); }
     static final float KEYS_SCALE = .7f;
@@ -70,24 +70,33 @@ final class KyudichiHud {
             ctx.getMatrices().push(); ctx.getMatrices().translate(0, 0, 130);
             if (m.phase() != 0) markers(canvas, c, w, h, s, now, ticks.getTickDelta(false));
             // score board
+            try(var customization=HudCustomization.begin(ctx,"battle-score",w/2f-322*s,14*s,646*s,(KyudichiClient.duel()?84:193)*s)){
             canvas.push(w / 2f - 836 * s, 0, s);
             HudView.score(new Pen(canvas, -1, -1, null), score(m, now));
             canvas.pop();
+            }
+            try(var customization=HudCustomization.begin(ctx,"battle-action",w/2f+338*s,38*s,186*s,48*s)){
             forfeit(ctx, canvas, m, w, s);
             leave(canvas, m, w, s);
+            }
             // feed
             // owner 2026-10-20: kill feed a little smaller (80 %), still anchored top right
             float fs = s * FEED_SCALE;
+            var feedLines=feed(now);
+            if(!feedLines.isEmpty())try(var customization=HudCustomization.begin(ctx,"battle-feed",w-292*fs,rightTop(),277*fs,(67+63*(feedLines.size()-1))*fs)){
             canvas.push(w - 1672 * fs, rightTop() - 28 * fs, fs);
-            HudView.feed(new Pen(canvas, -1, -1, null), feed(now));
+            HudView.feed(new Pen(canvas, -1, -1, null), feedLines);
             canvas.pop();
+            }
             // F key
             if (!KyudichiClient.spectator() && !KyudichiClient.duel()) {
                 // owner 2026-10-17: 70 % of the reference size, 24 px (design) higher
                 float ks = s * KEYS_SCALE;
+                try(var customization=HudCustomization.begin(ctx,"battle-keys",w/2f-124*ks,keysBottom(w,h)-24*s-128*ks,248*ks,128*ks)){
                 canvas.push(w / 2f - 836 * ks, keysBottom(w, h) - 24 * s - 924 * ks, ks);
                 HudView.keys(new Pen(canvas, -1, -1, null), keys(now));
                 canvas.pop();
+                }
             }
             magnetAndWheel(ctx, c, s, now);
         } finally { ctx.getMatrices().pop(); images.endFrame(); }

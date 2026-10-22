@@ -21,6 +21,7 @@ final class QuestHud {
     private static float toggleX = -100, toggleY = -100;
 
     static boolean hitToggle(double mx, double my) {
+        if(HudEditing.editing())return false;var point=HudEditing.pointer(mx,my);mx=point[0];my=point[1];
         return QuestClient.view.active() && mx >= toggleX - 2 && mx <= toggleX + TOGGLE + 2 && my >= toggleY - 2 && my <= toggleY + TOGGLE + 2;
     }
 
@@ -36,6 +37,8 @@ final class QuestHud {
 
         float sw = g.guiWidth(), sh = g.guiHeight();
         float right = sw - 8, x0 = right - WIDTH, y0 = Math.round(sh * 0.30f);
+        float estimatedHeight=TOGGLE+12;if(!QuestClient.collapsed){estimatedHeight+=wrap(g,v.description,DESC_SIZE,WIDTH-TOGGLE-5).size()*DESC_SIZE*1.32f+5;for(var condition:v.conds)estimatedHeight+=(wrap(g,condition.label()+" "+condition.current()+"/"+condition.required(),COND_SIZE,WIDTH-TOGGLE-5).size()+.3f)*COND_SIZE*1.55f;}
+        try(var customization=HudEditing.begin(g,x0,y0-9,WIDTH,estimatedHeight)){
         toggleX = x0; toggleY = y0;
 
         // 장식선: 왼쪽 꺾임(버튼에서 시작) · 가운데 늘림 · 오른쪽 마름모
@@ -96,7 +99,9 @@ final class QuestHud {
             QuestArt.textLeft(g, text, tx, y + ch / 2f, COND_SIZE, argb(a, done ? COND_DONE : COND));
             y += ch;
         }
-    }
+
+        }
+}
 
     private static int argb(int a, int rgb) { return (Mth.clamp(a, 0, 255) << 24) | (rgb & 0xFFFFFF); }
 

@@ -152,6 +152,7 @@ public final class KyudichiQueueClient {
         offX = Math.clamp(offX, -(baseX + 1307 * s), w - (baseX + 1651 * s));
         offY = Math.clamp(offY, -(baseY + 35 * s), h - (baseY + 348 * s));
         panelX = baseX + offX; panelY = baseY + offY; panelS = s;
+        try(var customization=HudCustomization.begin(ctx,"queue",panelX+1307*s,panelY+35*s,344*s,313*s)){
         var canvas = new KyudichiCanvas(ctx, images, text);
         try {
             ctx.getMatrices().push(); ctx.getMatrices().translate(0, 0, 150);
@@ -163,18 +164,21 @@ public final class KyudichiQueueClient {
             canvas.pop();
             panelHits = pen.hits();
         } finally { ctx.getMatrices().pop(); images.endFrame(); }
-    }
+
+        }
+}
 
     /** Ctrl cursor / chat click on the card: 취소, drag to move, right click = back to the default place. */
     public static boolean click(double x, double y, int button) {
+        if(HudCustomization.editingGesture())return false;var hudPoint=HudCustomization.pointer("queue",x,y);x=hudPoint[0];y=hudPoint[1];
         if (panelHits.isEmpty()) return false;
         float dx = (float) ((x - panelX) / panelS), dy = (float) ((y - panelY) / panelS);
         boolean onCard = dx >= 1307 && dx <= 1651 && dy >= 35 && dy <= 348;
         if (!onCard) return false;
-        if (button == 1) { offX = offY = 0; saveCard(); return true; }
+        if (button == 1) return false;
         if (button != 0) return false;
         for (var hit : panelHits) if (hit.contains(dx, dy) && hit.id().equals(ApplicationView.CANCEL)) { send(new Leave()); return true; }
-        dragging = true; grabX = x - offX; grabY = y - offY;
+        // Position/size editing is exclusively managed by HudCustomization.
         return true;
     }
     public static boolean release(double x, double y, int button) {

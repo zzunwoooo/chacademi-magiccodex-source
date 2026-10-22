@@ -31,6 +31,7 @@ public final class PlayerHudRenderer implements AutoCloseable {
     public void renderHotbar(DrawContext ctx,PlayerEntity player){
         if(player==null||!PlayerHudSettings.get().visible())return;
         var l=layout();images.beginFrame();text.beginFrame();
+        try(var customization=HudCustomization.beginHotbar(ctx)){
         ctx.getMatrices().push();
         try{
             ctx.getMatrices().scale(l.scale(),l.scale(),1);
@@ -43,7 +44,9 @@ public final class PlayerHudRenderer implements AutoCloseable {
                 if(charge<1)HudMesh.capsule(ctx,left,top-5,PlayerHudLayout.CELL*charge,2,0xCCB8DCD8,0xFFE9FFFF);
             }
         }finally{ctx.getMatrices().pop();images.endFrame();}
-    }
+
+        }
+}
     private void cell(DrawContext ctx,float x,float y,ItemStack stack,boolean selected,String label){
         // Reuse the standalone offhand cell so every inventory cell has exactly equal geometry.
         int size=PlayerHudLayout.CELL;
@@ -80,6 +83,7 @@ public final class PlayerHudRenderer implements AutoCloseable {
         float targetY=cursor?Math.clamp((my-l.frameY())*.25f,-16,16):0;
         float smoothing=1-(float)Math.exp(-dt*10);
         lookX+=(targetX-lookX)*smoothing;lookY+=(targetY-lookY)*smoothing;
+        var vitalsScope=HudCustomization.begin(ctx,"vitals",6*l.scale(),client.getWindow().getScaledHeight()-190*l.scale(),372*l.scale(),190*l.scale());
         ctx.getMatrices().push();
         try{
             ctx.getMatrices().scale(l.scale(),l.scale(),1);
@@ -97,12 +101,13 @@ public final class PlayerHudRenderer implements AutoCloseable {
             vitalGauge(ctx,false,l.vitalX(),l.manaY(),mana,maxMana,0xFF29BED4,0xFF9DEFF1);
             if(player.getAbsorptionAmount()>0)text.draw(ctx,"+"+number(player.getAbsorptionAmount()),l.vitalX()+133,l.healthY()-17,11,0xFFE8D38E,FONT,false);
             ctx.getMatrices().pop();
-        }finally{ctx.getMatrices().pop();}
+        }finally{ctx.getMatrices().pop();vitalsScope.close();}
+        var dockScope=HudCustomization.beginHotbar(ctx);
         ctx.getMatrices().push();
         try{
             ctx.getMatrices().translate(0,0,110);ctx.getMatrices().scale(dock.scale(),dock.scale(),1);
             secondaryStatus(ctx,dock,player);
-        }finally{ctx.getMatrices().pop();images.endFrame();}
+        }finally{ctx.getMatrices().pop();images.endFrame();dockScope.close();}
     }
     private void vitalGauge(DrawContext ctx,boolean health,float x,float y,float value,float max,int from,int to){
         int frameHeight=32;

@@ -17,13 +17,20 @@ public final class TopMenuClient {
     }
     public static void render(DrawContext ctx,long now){
         var c=MinecraftClient.getInstance();var w=c.getWindow();
+        try(var customization=menuFrame(ctx)){
         renderer().render(ctx,w.getScaledWidth(),w.getScaledHeight(),HudPointer.x(),HudPointer.y(),HudPointer.active(),now);
-    }
+
+        }
+}
     public static void renderTooltip(DrawContext ctx){
         var c=MinecraftClient.getInstance();var w=c.getWindow();
+        try(var customization=menuFrame(ctx)){
         renderer().renderTooltip(ctx,w.getScaledWidth(),w.getScaledHeight(),HudPointer.x(),HudPointer.y(),HudPointer.active());
-    }
+
+        }
+}
     public static boolean click(double x,double y,int button){
+        if(HudCustomization.editingGesture())return false;var hudPoint=HudCustomization.pointer("menu",x,y);x=hudPoint[0];y=hudPoint[1];
         var c=MinecraftClient.getInstance();
         if(button!=0 || !PlayerHudClient.active() || c.options.hudHidden || !HudPointer.active())return false;
         float scale=PlayerHudLayout.of(c.getWindow().getScaledWidth(),c.getWindow().getScaledHeight()).scale();
@@ -60,6 +67,7 @@ public final class TopMenuClient {
         }
         return true;
     }
+    private static HudCustomization.Frame menuFrame(DrawContext ctx){var c=MinecraftClient.getInstance();float s=PlayerHudLayout.of(c.getWindow().getScaledWidth(),c.getWindow().getScaledHeight()).scale();return HudCustomization.begin(ctx,"menu",6*s,3*s,state.width(renderer().baseWidth())*s,(state.group()<0?36:40+TopMenuState.dropdownHeight(state.group()))*s);}
     public static void verify(){if(renderer!=null)renderer.verify();}
     public static void close(){state.closeGroup();if(renderer!=null){renderer.close();renderer=null;}}
     public static void reset(){close();state=new TopMenuState();}

@@ -193,6 +193,7 @@ public final class TargetHudClient {
             float w = width(sw);
             float y = 8;
             if (KyudichiClient.active()) y += 215 * KyudichiHud.scale(sw, c.getWindow().getScaledHeight());
+            if(!list.isEmpty())try(var customization=HudCustomization.begin(ctx,"target",(sw-w)/2,y,w,(337*w/FRAME_W+6)*(list.size()>1?1.78f:1))){
             for (int i = 0; i < bars.length; i++) {
                 Bar bar = bars[i];
                 if (i >= list.size()) { bar.id = Integer.MIN_VALUE; continue; }
@@ -201,6 +202,7 @@ public final class TargetHudClient {
                 float alpha = Math.clamp((now - bar.shownAt) / (float) FADE_MS, 0, 1);
                 float bw = i == 0 ? w : w * SECOND_SCALE;
                 y = drawTarget(ctx, c, t, bar, now, alpha, bw, y) + 6;
+            }
             }
             if (self) drawSelf(ctx, c, now);
             // Hover popup: only while the mouse pointer is out (Ctrl cursor / chat).
@@ -273,12 +275,12 @@ public final class TargetHudClient {
             for (var line : statuses) {
                 float ix = TargetHudLayout.iconX(ICON_RIGHT, ICON_D, ICON_STEP, slot++);
                 StatusIcons.status(ctx, images, line, ix, iconY, ICON_D, now, alpha);
-                hits.add(new StatusIcons.Hit(fx + ix * s, fy + iconY * s, ICON_D / 2 * s, line, null));
+                rememberHit(new StatusIcons.Hit(fx + ix * s, fy + iconY * s, ICON_D / 2 * s, line, null));
             }
             if (mark != null) {
                 float ix = TargetHudLayout.iconX(ICON_RIGHT, ICON_D, ICON_STEP, slot);
                 StatusIcons.element(ctx, images, mark, ix, iconY, ICON_D, now, alpha);
-                hits.add(new StatusIcons.Hit(fx + ix * s, fy + iconY * s, ICON_D / 2 * s, null, mark));
+                rememberHit(new StatusIcons.Hit(fx + ix * s, fy + iconY * s, ICON_D / 2 * s, null, mark));
             }
         } finally {
             m.pop();
@@ -334,20 +336,24 @@ public final class TargetHudClient {
         var lines = StatusClient.of(c.player.getId());
         var mark = ElementMarkClient.markOf(c.player.getId());
         int n = lines.size() + (mark == null ? 0 : 1);
+        try(var customization=HudCustomization.begin(ctx,"self-status",sw-6-d-(Math.min(10,n)-1)*step,6,d+(Math.min(10,n)-1)*step,Math.max(1,(n+9)/10)*rowH)){
         for (int i = 0; i < n; i++) {
             int row = i / 10, col = i % 10;
             float cx = sw - 6 - d / 2 - col * step, cy = 6 + d / 2 + row * rowH, ty = cy + d / 2 + 2 * ui + ts / 2;
             if (i < lines.size()) {
-                StatusIcons.status(ctx, images, lines.get(i), cx, cy, d, now, 1); hits.add(new StatusIcons.Hit(cx, cy, d / 2, lines.get(i), null));
+                StatusIcons.status(ctx, images, lines.get(i), cx, cy, d, now, 1); rememberHit(new StatusIcons.Hit(cx, cy, d / 2, lines.get(i), null));
                 String left = StatusIcons.timeLeft(lines.get(i), now);
                 if (!left.isEmpty()) label(ctx, left, cx, ty, ts, 0xFFFFFFFF, TITLE, true);
             } else {
-                StatusIcons.element(ctx, images, mark, cx, cy, d, now, 1); hits.add(new StatusIcons.Hit(cx, cy, d / 2, null, mark));
+                StatusIcons.element(ctx, images, mark, cx, cy, d, now, 1); rememberHit(new StatusIcons.Hit(cx, cy, d / 2, null, mark));
                 label(ctx, StatusIcons.timeLeft(mark, now), cx, ty, ts, 0xFFFFFFFF, TITLE, true);
             }
         }
-    }
 
+        }
+}
+
+    private static void rememberHit(StatusIcons.Hit hit){var p=HudCustomization.screenPoint(hit.cx(),hit.cy(),hit.r());hits.add(new StatusIcons.Hit(p[0],p[1],p[2],hit.line(),hit.mark()));}
     static String number(float v) {
         if (!Float.isFinite(v)) return "0";
         long r = Math.round(v);

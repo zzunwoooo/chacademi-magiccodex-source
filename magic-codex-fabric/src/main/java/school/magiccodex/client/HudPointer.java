@@ -22,12 +22,12 @@ public final class HudPointer {
     public static double x() {
         var c = MinecraftClient.getInstance();
         var w = c.getWindow();
-        return c.mouse.getX() * w.getScaledWidth() / Math.max(1, w.getWidth());
+        return HudCustomization.pointer(HudCustomization.rawX(),HudCustomization.rawY())[0];
     }
 
     public static double y() {
         var c = MinecraftClient.getInstance();
         var w = c.getWindow();
-        return c.mouse.getY() * w.getScaledHeight() / Math.max(1, w.getHeight());
+        return HudCustomization.pointer(HudCustomization.rawX(),HudCustomization.rawY())[1];
     }
 }

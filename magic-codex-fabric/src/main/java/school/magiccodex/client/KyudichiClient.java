@@ -237,6 +237,7 @@ public final class KyudichiClient {
 
     /** HudCursorScreen.mouseClicked, after the other HUD widgets. */
     public static boolean cursorPress(double x, double y, int button) {
+        if(HudCustomization.editingGesture())return false;
         if (!active() || spectator() || button != 0) return false;
         if (KyudichiHud.forfeitHit(x, y)) {
             if (ClientPlayNetworking.canSend(Payload.ID)) ClientPlayNetworking.send(new Payload(KyudichiProtocol.encode(new KyudichiProtocol.Forfeit(true))));

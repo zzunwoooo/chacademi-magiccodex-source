@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screen.ChatScreen;
 final class HudChatClicks {
     private HudChatClicks() {}
     static void initialize() {
+        HudCustomization.initialize();
         ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
             if (screen instanceof ChatScreen) {
                 ScreenEvents.afterRender(screen).register((s,ctx,x,y,delta)->{if(PlayerHudClient.active()&&!client.options.hudHidden){ctx.getMatrices().push();try{ctx.getMatrices().translate(0,0,800);TopMenuClient.renderTooltip(ctx);}finally{ctx.getMatrices().pop();}}});

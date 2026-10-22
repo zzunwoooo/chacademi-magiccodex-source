@@ -7,7 +7,8 @@ import net.minecraft.client.MinecraftClient;import net.minecraft.util.*;
 public final class SharedNotifications {
  private static final NotificationQueue QUEUE=new NotificationQueue(); private static final NotificationPresentation PRESENTATION=new NotificationPresentation(); private static boolean initialized; private static HudTextureCache images; private static CodexTypography text; private static int resourceGeneration=-1; private record Hit(String id,float x,float y,float w,float h){} private static final java.util.List<Hit> hits=new java.util.ArrayList<>();
 private static boolean dialogue(net.minecraft.client.gui.screen.Screen s){return s instanceof DialogueScreen || s!=null&&s.getClass().getName().equals("kr.chacademy.cutscene.client.CutsceneScreen");}
-static boolean click(double x,double y,int button){if(button!=0)return false;for(var h:java.util.List.copyOf(hits))if(x>=h.x&&x<h.x+h.w&&y>=h.y&&y<h.y+h.h){QUEUE.dismiss(h.id);hits.remove(h);return true;}return false;}
+static boolean click(double x,double y,int button){
+        if(HudCustomization.editingGesture())return false;var hudPoint=HudCustomization.pointer("notifications",x,y);x=hudPoint[0];y=hudPoint[1];if(button!=0)return false;for(var h:java.util.List.copyOf(hits))if(x>=h.x&&x<h.x+h.w&&y>=h.y&&y<h.y+h.h){QUEUE.dismiss(h.id);hits.remove(h);return true;}return false;}
  private static final Identifier PANEL=Identifier.of("magiccodex","textures/gui/notification_card.png"),FONT=Identifier.of("magiccodex",NotificationPresentation.BODY_FACE),BOLD=Identifier.of("magiccodex",NotificationPresentation.TITLE_FACE);
  public static void offer(String id,String kind,String title,String body){if(kind==null||kind.isBlank())kind="system";enqueue(new NotificationQueue.Notice(id,kind,school.magiccodex.protocol.JournalProtocol.cut(title,140),school.magiccodex.protocol.JournalProtocol.cut(body,500),3500));}
  /** Item icons for notices (e.g. shop receipts), keyed by notice id; bounded like the queue. */
@@ -36,6 +37,7 @@ static boolean click(double x,double y,int button){if(button!=0)return false;for
  static void render(net.minecraft.client.gui.DrawContext ctx,MinecraftClient c,boolean show,long now){
   hits.clear(); int sw=c.getWindow().getScaledWidth(),sh=c.getWindow().getScaledHeight();float scale=Math.min(sw/1920f,sh/1080f)*.9f;float w=560*scale,h=116*scale,gap=12*scale,bottom=230*scale;int capacity=(int)((sh-bottom-24*scale)/(h+gap));
   var notices=QUEUE.frame(now,show,capacity);if(notices.isEmpty())return;ctx.draw();prepare(c);images.beginFrame();text.beginFrame();
+        try(var customization=HudCustomization.begin(ctx,"notifications",sw-24*scale-w,sh-bottom-h-(notices.size()-1)*(h+gap),w,notices.size()*h+(notices.size()-1)*gap)){
   try{for(var v:notices){if(v.announce())NotificationPresentation.playSound(c,v.notice().kind(),now);float enter=Math.min(1,v.age()/260f),alpha=NotificationPresentation.alpha(v.age(),v.notice().duration());float x=sw-24*scale-w+(1-enter)*(w+24*scale),y=sh-bottom-h-(float)v.slot()*(h+gap);
    if(alpha>.1f)hits.add(new Hit(v.notice().id(),x,y,w,h)); int tint=((int)(alpha*255)<<24)|0xFFFFFF;ctx.getMatrices().push();ctx.getMatrices().translate(x,y,400);ctx.getMatrices().scale(scale,scale,1);
    // Crop to authoritative nontransparent bounds; no transparent-margin hit/anchor offset.
@@ -53,5 +55,7 @@ static boolean click(double x,double y,int button){if(button!=0)return false;for
    else if(!warning)images.drawCentered(ctx,"minecraft:textures/item/"+icon+".png",61,58,54,tint);
    String title=v.notice().kind().equals("quest")?"\uc0c8\ub85c\uc6b4 \ud018\uc2a4\ud2b8":v.notice().title();while(title.length()>1&&text.width(title,23,BOLD)>418)title=title.substring(0,title.offsetByCodePoints(title.length(),-1));text.draw(ctx,title,110,35,23,tint,BOLD,false);String body=(v.notice().kind().equals("quest")?v.notice().title():v.notice().body()).replace('\n',' ');while(body.length()>1&&text.width(body,18,FONT)>418)body=body.substring(0,body.offsetByCodePoints(body.length(),-1));text.draw(ctx,body,110,77,18,tint,FONT,false);ctx.getMatrices().pop();}
   }finally{ctx.draw();images.endFrame();}
- }
+
+        }
+}
 }

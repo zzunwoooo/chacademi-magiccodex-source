@@ -79,6 +79,7 @@ public final class FriendRequestToast {
     private static float partyX(MinecraftClient c,double x){float s=scale(c);return (float)((x-(c.getWindow().getScaledWidth()-(1920-P_X)*s))/s);}
     /** @return 클릭을 소비했으면 true */
     static boolean click(double x,double y,int button){
+        if(HudCustomization.editingGesture())return false;var hudPoint=HudCustomization.pointer("requests",x,y);x=hudPoint[0];y=hudPoint[1];
         var c=MinecraftClient.getInstance();
         if(button!=0||current==null&&party==null||!visible(c)||!HudPointer.active())return false;
         if(party!=null){
@@ -111,6 +112,7 @@ public final class FriendRequestToast {
         if(text==null)text=new CodexTypography(c);
         boolean cursor=HudPointer.active();var w=c.getWindow();
         float s=scale(c),alpha=Math.min(1,Math.min(age/220f,(SHOW_MILLIS-age)/500f));
+        try(var customization=HudCustomization.begin(ctx,"requests",w.getScaledWidth()-(1920-X)*s,Y*s,W*s,H*s)){
         int hot=cursor?hitInside(localX(c,HudPointer.x()),localY(c,HudPointer.y())):0;
         text.beginFrame();ctx.getMatrices().push();
         try{
@@ -129,13 +131,16 @@ public final class FriendRequestToast {
             // 남은 표시 시간
             HudMesh.quad(ctx,2,H-5,(W-4)*(1-age/(float)SHOW_MILLIS),3,color(alpha,0xB0,0x92E7F2),color(alpha,0xB0,0x92E7F2));
         }finally{ctx.getMatrices().pop();}
-    }
+
+        }
+}
     private static void renderParty(DrawContext ctx,MinecraftClient c,long now){
         long age=now-started;
         if(age>=SHOW_MILLIS){party=null;return;}
         if(text==null)text=new CodexTypography(c);if(images==null)images=new HudTextureCache(c);
         boolean cursor=HudPointer.active();var w=c.getWindow();
         float s=scale(c),alpha=Math.min(1,Math.min(age/220f,(SHOW_MILLIS-age)/500f));
+        try(var customization=HudCustomization.begin(ctx,"requests",w.getScaledWidth()-(1920-P_X)*s,Y*s,P_W*s,P_H*s)){
         int hot=cursor?partyHitInside(partyX(c,HudPointer.x()),localY(c,HudPointer.y())):0;
         int white=color(alpha,0xFF,0xFFFFFF);
         text.beginFrame();images.beginFrame();ctx.getMatrices().push();
@@ -161,7 +166,9 @@ public final class FriendRequestToast {
             // 남은 표시 시간
             HudMesh.quad(ctx,24,P_H-17,(P_W-48)*(1-age/(float)SHOW_MILLIS),2,color(alpha,0x90,0x92E7F2),color(alpha,0x90,0x92E7F2));
         }finally{ctx.getMatrices().pop();images.endFrame();}
-    }
+
+        }
+}
     private static int partyHitInside(float x,float y){return x<0||x>=P_W||y<0||y>=P_H?0:partyHit(x,y);}
     private static void partyButton(DrawContext ctx,String label,float x,boolean accept,boolean hover,float alpha){
         if(accept)PartyUiAtlas.nine(images,ctx,hover?PartyUiAtlas.BLUE_HOVER:PartyUiAtlas.BLUE,x,P_BUTTON_Y,P_BUTTON_W,P_BUTTON_H,P_BUTTON_H/93f,color(alpha,0xFF,0xFFFFFF));

@@ -140,17 +140,7 @@ public final class PartyHudClient {
     private static double mouseY(MinecraftClient c){var w=c.getWindow();return c.mouse.getY()*w.getScaledHeight()/w.getHeight();}
 
     // ---------- Ctrl 커서 조작 (HudCursorScreen 에서 호출) ----------
-    static boolean click(double x,double y,int button){
-        var c=MinecraftClient.getInstance();
-        if(!(c.currentScreen instanceof HudCursorScreen)||!visible(c))return false;
-        var f=frame(c);int hit=hit(f.lx(x),f.ly(y),f.count());
-        if(hit==NONE)return false;
-        if(button==1){resetLayout();sound(c);return true;}
-        if(button!=0)return true;
-        settings().x=f.ox()/f.screenW();settings().y=f.oy()/f.screenH();settings().defaultAnchor=false;
-        gesture=new Gesture(hit==GRIP_HIT,x,y,settings().x,settings().y,settings().scale,f.ox(),f.oy());
-        return true;
-    }
+    static boolean click(double x,double y,int button){return false;}
     static boolean release(double x,double y,int button){
         if(gesture==null||button!=0)return false;
         apply(MinecraftClient.getInstance(),x,y);finish();return true;
@@ -181,7 +171,9 @@ public final class PartyHudClient {
         if(UiResources.generation()!=generation){close();generation=UiResources.generation();}
         if(images==null)images=new HudTextureCache(c);if(text==null)text=new CodexTypography(c);
         images.beginFrame();text.beginFrame();
-        var f=frame(c);double mx=mouseX(c),my=mouseY(c);float lx=f.lx(mx),ly=f.ly(my);
+        var f=frame(c);
+        try(var customization=HudCustomization.begin(ctx,"party",f.ox()-8*f.scale(),f.oy()-6*f.scale(),(WIDTH+16)*f.scale(),(height(f.count())+12)*f.scale())){
+        double mx=HudPointer.x(),my=HudPointer.y();float lx=f.lx(mx),ly=f.ly(my);
         int hot=pointer?hit(lx,ly,f.count()):NONE;
         var self=c.player.getUuid();
         ctx.getMatrices().push();
@@ -205,6 +197,7 @@ public final class PartyHudClient {
                 text.draw(ctx,"끌어서 이동 · 모서리로 크기 · 우클릭 초기화",0,h+20,15,0xFFE7CE91,BODY_FONT,false);
             }
         }finally{ctx.getMatrices().pop();images.endFrame();}
+        }
     }
     private static void header(DrawContext ctx){
         images.drawTexture(ctx,Identifier.of("magiccodex","textures/gui/party/house_star.png"),0,9,0,0,26,26,128,128,128,128,0xFFFFFFFF);

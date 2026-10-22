@@ -14,6 +14,7 @@ public final class HudSlotDrag {
 
     /** @return true when the press picked a slot (nothing else should see it). */
     public static boolean press(double x, double y, int button) {
+        if(HudCustomization.editingGesture())return false;
         if (button != 0) return false;
         var c = MinecraftClient.getInstance();
         int slot = SkillHudRenderer.slotAt(x, y, c.getWindow().getScaledWidth(), c.getWindow().getScaledHeight());

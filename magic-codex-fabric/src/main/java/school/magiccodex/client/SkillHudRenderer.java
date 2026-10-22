@@ -30,6 +30,7 @@ public final class SkillHudRenderer implements AutoCloseable {
         textures.beginFrame();
         float[] o=origin(width,height);
         float scale=o[2],left=o[0],top=o[1];
+        try(var customization=HudCustomization.begin(ctx,"skills",left-4*scale,top-35*scale,394*scale,100*scale)){
         ctx.getMatrices().push();
         try {
             ctx.getMatrices().translate(left,top+GeneralPresetClient.lift(now),0); ctx.getMatrices().scale(scale,scale,1);
@@ -70,7 +71,9 @@ public final class SkillHudRenderer implements AutoCloseable {
             }
             drag(ctx,state,left,top,scale);
         } finally { ctx.getMatrices().pop(); }
-    }
+
+        }
+}
     /** {left, top, scale} of the six-slot bar in GUI pixels. */
     static float[] origin(int width,int height) {
         float scale=(PlayerHudClient.active()?1f:1.25f)*Math.min(width/1672f,height/941f);
@@ -81,6 +84,7 @@ public final class SkillHudRenderer implements AutoCloseable {
     }
     /** Slot index under a GUI-pixel point, or -1. */
     static int slotAt(double x,double y,int width,int height) {
+        var p=HudCustomization.pointer("skills",x,y);x=p[0];y=p[1];
         float[] o=origin(width,height);
         for(int i=0;i<6;i++) {
             double cx=o[0]+(i*65+26)*o[2],cy=o[1]+26*o[2],r=29*o[2];

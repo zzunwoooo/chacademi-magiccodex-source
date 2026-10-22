@@ -72,7 +72,7 @@ public final class SettingsScreen extends Screen {
             sprite(c,"settings_panel",0,0,1000,730,1162,846);
             text(c,page==Page.HOME?"설정":page==Page.GUI?"GUI 비율":page==Page.EFFECT?"스킬 이펙트":"시점 · 조작",500,85,34,true,true);
             sprite(c,"close",915,37,47,45,106,100);
-            if(page==Page.HOME){String[] labels={"스킬 이펙트","시점 · 조작","키세팅","GUI 비율"};String[] icons={"effect_icon","camera_icon","keyboard_icon","effect_icon"};int[] iw={146,135,143,146},ih={149,120,125,149};
+            if(page==Page.HOME){String[] labels={"스킬 이펙트","시점 · 조작","키세팅",HudCustomization.locked()?"HUD 잠금: 켜짐":"HUD 잠금: 꺼짐"};String[] icons={"effect_icon","camera_icon","keyboard_icon","effect_icon"};int[] iw={146,135,143,146},ih={149,120,125,149};
                 for(int i=0;i<4;i++){int yy=193+i*123;sprite(c,hit(155,yy,690,103)?"category_hover":"category",155,yy,690,103,665,hit(155,yy,690,103)?144:140);sprite(c,icons[i],191,yy+23,58,58,iw[i],ih[i]);text(c,labels[i],300,yy+52,28,false,false);}
             }else{
                 for(int i=0;i<rows();i++)slider(c,i);
@@ -124,7 +124,7 @@ public final class SettingsScreen extends Screen {
     @Override public boolean mouseClicked(double x,double y,int button){if(button!=0)return true;fit(x,y);
         if(editing>=0&&!hit(boxX(editing),rowY(editing)-BOX_H/2,BOX_W,BOX_H))commitEdit();
         if(hit(915,37,47,45)){click();close();return true;}
-        if(page==Page.HOME){for(int i=0;i<4;i++)if(hit(155,193+i*123,690,103)){click();client.setScreen(i==2?new KeySettingsScreen(this):new SettingsScreen(this,i==0?Page.EFFECT:i==3?Page.GUI:Page.CAMERA));return true;}return true;}
+        if(page==Page.HOME){for(int i=0;i<4;i++)if(hit(155,193+i*123,690,103)){click();if(i==3){HudCustomization.toggle();return true;}client.setScreen(i==2?new KeySettingsScreen(this):new SettingsScreen(this,i==0?Page.EFFECT:i==3?Page.GUI:Page.CAMERA));return true;}return true;}
         for(int i=0;i<rows();i++){
             if(hit(boxX(i),rowY(i)-BOX_H/2,BOX_W,BOX_H)){click();editing=i;buffer=(page==Page.EFFECT||page==Page.GUI)?Integer.toString(Math.round(value(i)*100)):format(i,value(i));return true;}
             if(hit(TRACK_X-19,rowY(i)+16,TRACK_W+38,44)){dragging=i;lastStep=Integer.MIN_VALUE;adjust();return true;}

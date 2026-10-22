@@ -102,11 +102,13 @@ public final class TamingClient {
     private static void panel(DrawContext ctx,String file,int x,int y,int w,int h,int sw,int sh){images.drawTexture(ctx,Identifier.of("magiccodex","textures/gui/taming/"+file+".png"),x,y,0,0,w,h,sw,sh,sw,sh,0xffffffff);}
     private static void label(DrawContext ctx,String value,float x,float y,float size,int color,boolean bold){text.draw(ctx,value.replaceAll("§[0-9a-fk-orA-FK-OR]",""),x,y,size,value.startsWith("§e")?0xffffff55:color,bold?FONT:BODY,true);}
     private static void render(DrawContext ctx){
-        var c=MinecraftClient.getInstance();if(state==null||stateWorld!=c.world||state.status()==0||state.status()==TamingProtocol.TARGET||c.world==null||c.player==null||c.options.hudHidden||c.currentScreen!=null)return;
+        var c=MinecraftClient.getInstance();if(state==null||stateWorld!=c.world||state.status()==0||state.status()==TamingProtocol.TARGET||c.world==null||c.player==null||c.options.hudHidden||!HudPointer.hudVisibleUnder(c.currentScreen))return;
         long age=Util.getMeasuringTimeMs()-received;boolean target=state.status()==TamingProtocol.TARGET;
         if(age>(target?1200:state.status()==TamingProtocol.PENDING?15000:state.status()==TamingProtocol.CHANNEL?1800:2400))return;
         if(generation!=UiResources.generation()){close();generation=UiResources.generation();}if(images==null)images=new HudTextureCache(c,true);if(text==null)text=new CodexTypography(c);
-        images.beginFrame();text.beginFrame();ctx.getMatrices().push();
+        images.beginFrame();text.beginFrame();
+        float hs=Math.max(.20f,Math.min(1f,Math.min(c.getWindow().getScaledWidth()/1100f,c.getWindow().getScaledHeight()/750f))*.78f);
+        try(var customization=HudCustomization.begin(ctx,"taming",c.getWindow().getScaledWidth()/2f-240*hs,c.getWindow().getScaledHeight()*.68f,480*hs,88*hs)){ctx.getMatrices().push();
         try{
             int width=c.getWindow().getScaledWidth(),height=c.getWindow().getScaledHeight();float scale=Math.min(1f,Math.min(width/1100f,height/750f));scale=Math.max(.20f,scale*.78f);
             if(!target){ctx.getMatrices().translate(width/2f-240*scale,height*.68f,270);ctx.getMatrices().scale(scale,scale,1);panel(ctx,"channel_panel",0,0,480,88,480,88);images.drawCentered(ctx,"magiccodex:textures/gui/taming/taming_icon.png",45,44,50,0xffffffff);
@@ -116,5 +118,7 @@ public final class TamingClient {
                 if(state.status()==TamingProtocol.SUCCESS){float flash=(float)Math.max(0,1-age/900f);for(int i=0;i<8;i++){double a=i*Math.PI/4;HudMesh.star(ctx,240+(float)Math.cos(a)*(70+age*.1f),44+(float)Math.sin(a)*(25+age*.05f),4+flash*5,((int)(200*flash)<<24)|0xb5faff);}}
             }
         }finally{ctx.getMatrices().pop();images.endFrame();}
-    }
+
+        }
+}
 }
