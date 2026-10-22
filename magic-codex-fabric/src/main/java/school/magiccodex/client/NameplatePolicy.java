@@ -1,7 +1,8 @@
 package school.magiccodex.client;
 /** Deliberately depth-only: unlike vanilla's faint through-wall pass, flags never reveal through solid walls. */
 public final class NameplatePolicy {
- public static final float WORLD_WIDTH=1.1f;
+ public static final float WORLD_WIDTH=1.1f,NAME_SIZE=210;
+ public static float nameCenterY(boolean titled){return titled?85:29;}
  private NameplatePolicy(){}
  public static boolean visible(boolean self,boolean camera,boolean hiddenHud,boolean alive,boolean invisible,boolean spectator,boolean passengers,boolean sneaky,double distance,String rule,boolean viewerHasTeam,boolean sameTeam){
   if(self||camera||hiddenHud||!alive||invisible||spectator||passengers||!Double.isFinite(distance)||distance>48*48||(sneaky&&distance>=32*32))return false;

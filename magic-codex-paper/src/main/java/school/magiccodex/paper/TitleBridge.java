@@ -72,6 +72,13 @@ final class TitleBridge implements Listener,PluginMessageListener,AutoCloseable 
         var s=cached.state();var entries=catalog.values().stream().filter(d->d.enabled()&&s.owned().contains(d.id())).map(d->new TitleProtocol.Entry(d.id(),d.side(),d.name(),d.color())).toList();
         p.sendPluginMessage(plugin,TitleProtocol.RESPONSE,TitleProtocol.encode(new TitleProtocol.Response(open,sequence,token,s.revision(),plugin.names().name(p),selected(s,s.prefix(),0),selected(s,s.suffix(),1),message,entries)));
     }
+    /** Read-only view of the same validated equipped slots used by placeholders and the title screen. */
+    List<TitleDefinition> nameplateTitles(UUID id){
+        var c=cache.get(id);if(c==null)return List.of();var state=c.state();var out=new ArrayList<TitleDefinition>();
+        for(var slot:List.of(Map.entry(state.prefix(),0),Map.entry(state.suffix(),1))){String valid=selected(state,slot.getKey(),slot.getValue());var definition=catalog.get(valid);if(definition!=null)out.add(definition);}
+        return List.copyOf(out);
+    }
+    TitleDefinition nameplateDefinition(String id){var d=catalog.get(id);return d!=null&&d.enabled()?d:null;}
     String placeholder(UUID id,String field){var c=cache.get(id);if(c==null)return "";var s=c.state();var prefix=catalog.get(selected(s,s.prefix(),0));var suffix=catalog.get(selected(s,s.suffix(),1));String a=prefix==null?"":prefix.name(),b=suffix==null?"":suffix.name();return switch(field){case "prefix"->a;case "suffix"->b;case "nickname"->c.nickname();case "full"->TitleDefinition.composed(a,c.nickname(),b);case "prefix_id"->prefix==null?"":prefix.id();case "suffix_id"->suffix==null?"":suffix.id();case "full_colored"->TitleDefinition.composed(prefix==null?"":colored(prefix),"§r"+c.nickname(),suffix==null?"":colored(suffix))+"§r";default->null;};}
     private static String colored(TitleDefinition d){var out=new StringBuilder("§x");for(char c:String.format(Locale.ROOT,"%06x",d.color()).toCharArray())out.append('§').append(c);return out.append(d.name()).append("§r").toString();}
     /** Trusted server-thread hook; return callback after durable commit. */

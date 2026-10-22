@@ -126,6 +126,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     void markPlayerStateDirty(Player p){if(playerState!=null)playerState.markDirty(p);}
     Double equipmentPower(UUID id,Double base){return equipment==null?base:equipment.power(id,base);}
     DisplayNames names(){return names;}
+    TitleBridge titleService(){return titles;}
     private CommandHub commandHub;
     CommandHub commandHub(){return commandHub;}
     int questHouse(Player p){return school==null?-1:school.house(p);}

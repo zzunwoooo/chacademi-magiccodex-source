@@ -40,8 +40,9 @@ public final class NameplateClient {
     matrices.push();matrices.translate(pos.x,pos.y+top+.10+h/2,pos.z);matrices.multiply(ctx.camera().getRotation());
     textures.drawWorld(matrices,out,path(STYLES[data.style()]),NameplatePolicy.WORLD_WIDTH,h);
     // Safe rectangle is on the right of the flag: x=660..1830, y=205..505. Do not center text on the whole image.
-    text.drawWorld(matrices,out,data.name(),221,data.style()==4?85:40,data.style()==4?210:250,1100,0xFFF9F2DF);
-    if(data.style()==4)text.drawWorld(matrices,out,data.title(),221,-65,96,1080,0xFFF0D7A0);
+    boolean titled=!data.titles().isEmpty();
+    text.drawWorld(matrices,out,data.name(),221,NameplatePolicy.nameCenterY(titled),NameplatePolicy.NAME_SIZE,1100,0xFFF9F2DF);
+    text.drawWorldTitles(matrices,out,data.titles(),221,-65);
     matrices.pop();
    }textures.endFrame();
   });

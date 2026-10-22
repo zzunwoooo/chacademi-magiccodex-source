@@ -23,7 +23,9 @@ public final class CodexTypography implements AutoCloseable {
     private final Map<Key, Sprite> sprites = new java.util.LinkedHashMap<>(128,.75f,true);
     private final Map<WidthKey, Float> widths = new java.util.LinkedHashMap<>(256,.75f,true);
     private int serial;
-    private long spriteBytes;
+    private long spriteBytes,titleSpriteBytes;
+    private record TitleKey(java.util.List<school.magiccodex.protocol.NameplateProtocol.TitleRun> runs,int size64){TitleKey{runs=java.util.List.copyOf(runs);}}
+    private final Map<TitleKey,Sprite> titleSprites=new java.util.LinkedHashMap<>(64,.75f,true);
 
     public CodexTypography(MinecraftClient client) {
         this.client = client;
@@ -54,6 +56,7 @@ public final class CodexTypography implements AutoCloseable {
             var sprite=it.next().getValue();spriteBytes-=(long)sprite.width()*sprite.height()*4;
             client.getTextureManager().destroyTexture(sprite.id());it.remove();
         }
+        var titlesIt=titleSprites.entrySet().iterator();while(titlesIt.hasNext()&&(titleSprites.size()>128||titleSpriteBytes>8L*1024*1024)){var old=titlesIt.next().getValue();titleSpriteBytes-=(long)old.width()*old.height()*4;client.getTextureManager().destroyTexture(old.id());titlesIt.remove();}
         var widthsIt=widths.keySet().iterator();while(widths.size()>4096&&widthsIt.hasNext()){widthsIt.next();widthsIt.remove();}
     }
 
@@ -94,6 +97,16 @@ public final class CodexTypography implements AutoCloseable {
         } finally { context.getMatrices().pop(); }
     }
 
+    public void drawWorldTitles(net.minecraft.client.util.math.MatrixStack matrices,net.minecraft.client.render.VertexConsumerProvider out,java.util.List<school.magiccodex.protocol.NameplateProtocol.TitleRun> runs,float cx,float cy){
+        if(runs.isEmpty())return;var font=fonts.get("hud_bold");float measured=CodexTextRasterizer.titleWidth(font,runs,96);
+        float size=NameplateTitleLayout.fittedSize(measured,96,1080);var key=new TitleKey(runs,Math.max(64,Math.round(size*64)));var sprite=titleSprites.computeIfAbsent(key,k->{
+            var image=CodexTextRasterizer.rasterizeTitles(font,k.runs(),k.size64()/64f);var nativeImage=new NativeImage(image.getWidth(),image.getHeight(),false);
+            for(int y=0;y<image.getHeight();y++)for(int x=0;x<image.getWidth();x++)nativeImage.setColorArgb(x,y,image.getRGB(x,y));
+            var id=Identifier.of("magiccodex","runtime_title/"+instance+"/"+serial++);var texture=new NativeImageBackedTexture(nativeImage);texture.setFilter(true,false);client.getTextureManager().registerTexture(id,texture);titleSpriteBytes+=(long)image.getWidth()*image.getHeight()*4;return new Sprite(id,image.getWidth(),image.getHeight());
+        });
+        float factor=NameplatePolicy.WORLD_WIDTH/2048f,w=Math.min(1080,sprite.width())*factor,h=sprite.height()*factor,x=cx*factor,y=cy*factor;var m=matrices.peek().getPositionMatrix();var v=out.getBuffer(RenderLayer.getText(sprite.id()));
+        v.vertex(m,x-w/2,y+h/2,.001f).color(0xFFFFFFFF).texture(0,0).light(0xF000F0);v.vertex(m,x-w/2,y-h/2,.001f).color(0xFFFFFFFF).texture(0,1).light(0xF000F0);v.vertex(m,x+w/2,y-h/2,.001f).color(0xFFFFFFFF).texture(1,1).light(0xF000F0);v.vertex(m,x+w/2,y+h/2,.001f).color(0xFFFFFFFF).texture(1,0).light(0xF000F0);
+    }
     /** Fixed high-resolution glyph raster shared with Codex UI; no GUI pixel snapping in world coordinates. */
     public void drawWorld(net.minecraft.client.util.math.MatrixStack matrices,net.minecraft.client.render.VertexConsumerProvider out,String value,float cx,float cy,float size,float maxWidth,int color){
         if(value.isBlank())return;
@@ -126,6 +139,7 @@ public final class CodexTypography implements AutoCloseable {
     private void clearSprites() {
         sprites.values().forEach(sprite -> client.getTextureManager().destroyTexture(sprite.id()));
         sprites.clear();
+        titleSprites.values().forEach(sprite->client.getTextureManager().destroyTexture(sprite.id()));titleSprites.clear();titleSpriteBytes=0;
         spriteBytes=0;
     }
 
