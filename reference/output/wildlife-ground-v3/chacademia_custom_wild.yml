@@ -12,7 +12,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -40,7 +40,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -69,7 +69,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -97,7 +97,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -126,7 +126,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -154,7 +154,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -183,7 +183,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -211,7 +211,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -240,7 +240,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -268,7 +268,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -297,7 +297,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -325,7 +325,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -354,7 +354,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -382,7 +382,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -411,7 +411,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -439,7 +439,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -468,7 +468,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -499,7 +499,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -531,7 +531,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -562,7 +562,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -594,7 +594,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -625,7 +625,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -657,7 +657,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -688,7 +688,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -720,7 +720,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -748,7 +748,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -777,7 +777,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -801,7 +801,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -826,7 +826,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -854,7 +854,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -883,7 +883,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -911,7 +911,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -940,7 +940,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -968,7 +968,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -997,7 +997,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1029,7 +1029,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1062,7 +1062,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1094,7 +1094,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1127,7 +1127,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1157,7 +1157,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1188,7 +1188,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1216,7 +1216,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1245,7 +1245,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1273,7 +1273,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1302,7 +1302,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1330,7 +1330,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1359,7 +1359,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1390,7 +1390,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1422,7 +1422,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1453,7 +1453,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1485,7 +1485,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1516,7 +1516,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1548,7 +1548,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1579,7 +1579,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1611,7 +1611,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1642,7 +1642,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1674,7 +1674,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -1705,7 +1705,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -1737,7 +1737,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1765,7 +1765,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1794,7 +1794,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1825,7 +1825,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1857,7 +1857,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1885,7 +1885,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1914,7 +1914,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1942,7 +1942,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1971,7 +1971,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -1999,7 +1999,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2028,7 +2028,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2056,7 +2056,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2085,7 +2085,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2113,7 +2113,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2142,7 +2142,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2170,7 +2170,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2199,7 +2199,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2227,7 +2227,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2256,7 +2256,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2283,7 +2283,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2311,7 +2311,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2337,7 +2337,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2364,7 +2364,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2388,7 +2388,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2413,7 +2413,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2437,7 +2437,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2462,7 +2462,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2486,7 +2486,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2511,7 +2511,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2535,7 +2535,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2560,7 +2560,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2584,7 +2584,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2609,7 +2609,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2633,7 +2633,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2658,7 +2658,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2682,7 +2682,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2707,7 +2707,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2731,7 +2731,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2756,7 +2756,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2788,7 +2788,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2821,7 +2821,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2853,7 +2853,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2886,7 +2886,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -2918,7 +2918,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -2951,7 +2951,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -2983,7 +2983,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -3016,7 +3016,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -3048,7 +3048,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -3081,7 +3081,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -3113,7 +3113,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -3146,7 +3146,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -3178,7 +3178,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -3211,7 +3211,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -3243,7 +3243,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -3276,7 +3276,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -3308,7 +3308,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -3341,7 +3341,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -3373,7 +3373,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -3406,7 +3406,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -3438,7 +3438,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -3471,7 +3471,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -3503,7 +3503,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -3536,7 +3536,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -3564,7 +3564,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -3593,7 +3593,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -3621,7 +3621,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -3650,7 +3650,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -3678,7 +3678,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -3707,7 +3707,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -3735,7 +3735,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -3764,7 +3764,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -3792,7 +3792,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -3821,7 +3821,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -3849,7 +3849,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -3878,7 +3878,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -3906,7 +3906,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -3935,7 +3935,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -3963,7 +3963,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -3992,7 +3992,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -4020,7 +4020,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -4049,7 +4049,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -4080,7 +4080,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -4112,7 +4112,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -4140,7 +4140,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -4169,7 +4169,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -4200,7 +4200,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -4232,7 +4232,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -4263,7 +4263,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -4295,7 +4295,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -4327,7 +4327,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -4360,7 +4360,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -4392,7 +4392,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -4425,7 +4425,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -4457,7 +4457,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -4490,7 +4490,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -4522,7 +4522,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -4555,7 +4555,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -4586,7 +4586,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -4618,7 +4618,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -4649,7 +4649,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -4681,7 +4681,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -4713,7 +4713,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -4746,7 +4746,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -4778,7 +4778,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -4811,7 +4811,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -4843,7 +4843,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -4876,7 +4876,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -4908,7 +4908,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -4941,7 +4941,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -4969,7 +4969,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -4998,7 +4998,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -5029,7 +5029,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -5061,7 +5061,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -5092,7 +5092,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -5124,7 +5124,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -5155,7 +5155,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -5187,7 +5187,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -5215,7 +5215,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -5244,7 +5244,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -5275,7 +5275,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -5307,7 +5307,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -5338,7 +5338,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -5370,7 +5370,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -5401,7 +5401,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -5433,7 +5433,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -5464,7 +5464,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -5496,7 +5496,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -5527,7 +5527,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -5559,7 +5559,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -5590,7 +5590,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -5622,7 +5622,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -5653,7 +5653,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -5685,7 +5685,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -5716,7 +5716,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -5748,7 +5748,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -5779,7 +5779,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -5811,7 +5811,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -5842,7 +5842,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -5874,7 +5874,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -5905,7 +5905,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -5937,7 +5937,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -5968,7 +5968,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6000,7 +6000,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6031,7 +6031,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6063,7 +6063,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6094,7 +6094,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6126,7 +6126,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6158,7 +6158,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6191,7 +6191,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6223,7 +6223,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6256,7 +6256,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6288,7 +6288,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6321,7 +6321,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6352,7 +6352,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6384,7 +6384,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6415,7 +6415,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6447,7 +6447,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6478,7 +6478,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6510,7 +6510,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6541,7 +6541,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6573,7 +6573,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6605,7 +6605,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6638,7 +6638,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -6670,7 +6670,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -6703,7 +6703,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6735,7 +6735,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6768,7 +6768,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6799,7 +6799,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6831,7 +6831,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6862,7 +6862,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6894,7 +6894,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6925,7 +6925,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6957,7 +6957,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -6988,7 +6988,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7020,7 +7020,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7051,7 +7051,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7083,7 +7083,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7114,7 +7114,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7146,7 +7146,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7177,7 +7177,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7209,7 +7209,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7240,7 +7240,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7272,7 +7272,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -7303,7 +7303,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -7335,7 +7335,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -7366,7 +7366,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -7398,7 +7398,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7429,7 +7429,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7461,7 +7461,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7492,7 +7492,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7524,7 +7524,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7555,7 +7555,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7587,7 +7587,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7618,7 +7618,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7650,7 +7650,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7681,7 +7681,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7713,7 +7713,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7744,7 +7744,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7776,7 +7776,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -7807,7 +7807,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -7839,7 +7839,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -7870,7 +7870,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.324
     "AlwaysShowName": false
     "Despawn": true
@@ -7902,7 +7902,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7933,7 +7933,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7965,7 +7965,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -7996,7 +7996,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -8028,7 +8028,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -8059,7 +8059,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -8091,7 +8091,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -8122,7 +8122,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -8154,7 +8154,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -8186,7 +8186,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -8219,7 +8219,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -8251,7 +8251,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -8284,7 +8284,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -8316,7 +8316,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -8349,7 +8349,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true
@@ -8381,7 +8381,7 @@
     "PreventItemPickup": true
     "PreventRenaming": true
     "Silent": true
-    "FollowRange": 20
+    "FollowRange": 32
     "MovementSpeed": 0.389
     "AlwaysShowName": false
     "Despawn": true

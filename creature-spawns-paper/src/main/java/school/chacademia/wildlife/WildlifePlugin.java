@@ -38,6 +38,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
     private long lastCleanupLog;
     private final CropAwakening crops=new CropAwakening(this);
     private final WildSpawner spawner=new WildSpawner(this);
+    private final WildCombat combat=new WildCombat(this);
     private long lastSpawnerWarn;
     @Override public void onEnable() {
         naturalGate=new MainThreadSpawnGate(Bukkit::isPrimaryThread,action->{var task=Bukkit.getScheduler().runTask(this,action);return task::cancel;},16,250);
@@ -45,6 +46,9 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         spawner.apply(spawnerSettings);
         getServer().getPluginManager().registerEvents(this,this);
         getServer().getPluginManager().registerEvents(new NoHuskHunger(),this);
+        combat.reload(getConfig().getConfigurationSection("combat"));
+        getServer().getPluginManager().registerEvents(combat,this);
+        Bukkit.getScheduler().runTaskTimer(this,combat::regenTick,40,40);
         // 구조물 색인은 지연 방식이다: 청크 로드 때가 아니라 구조물 조건이 있는 서식지가 물을 때만 계산한다.
         getServer().getPluginManager().registerEvents(structures,this);
         crops.reload(); getServer().getPluginManager().registerEvents(crops,this);
@@ -319,6 +323,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
     }
     List<String> globalDiagnostics(){
         var out=new ArrayList<String>(spawner.diagnostics());
+        out.add(combat.diagnostic());
         out.add(" 자연 스폰 확정(무리 우두머리)="+naturalSpawned);
         if(!naturalChecks.isEmpty()) out.add(" (구) 미몹 랜덤스폰 조건 호출="+naturalChecks+" ← 0이 아니면 RandomSpawns 파일이 아직 남아 있음");
         return out;
@@ -391,7 +396,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         return out;
     }
     /** /서버관리 새로고침 야생: 실패하면 예외(이전 설정 유지). */
-    void reloadAll(){reloadConfig();reloadSettings();reloadHabitats();crops.reload();spawner.apply(spawnerSettings);}
+    void reloadAll(){reloadConfig();reloadSettings();reloadHabitats();crops.reload();spawner.apply(spawnerSettings);combat.reload(getConfig().getConfigurationSection("combat"));}
     String statusLine(){return "야생몹 "+getDescription().getVersion()+" · "+(settings.enabled()?"켜짐":"꺼짐")+" · 자체 스폰 "+(spawnerSettings.enabled()?"켜짐":"꺼짐")+" · 청크 제한 "+chunkLimit.cap()+" · 지역 제한 "+settings.areaCap()+" · 서식지 "+habitats.size()+"종";}
     StructureIndex structureIndex(){return structures;}
 }

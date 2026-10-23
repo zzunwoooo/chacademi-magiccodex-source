@@ -28,6 +28,14 @@
                                        }
                 },
     "shiny-denominator":  2048,
+    "combat":  {
+                   "enabled":  true,
+                   "far-distance":  8,
+                   "chase-max":  96,
+                   "skill-cooldown":  4,
+                   "out-of-combat-seconds":  10,
+                   "regen-percent":  5
+               },
     "rarity-model-scale":  {
                                "3":  1.35
                            },

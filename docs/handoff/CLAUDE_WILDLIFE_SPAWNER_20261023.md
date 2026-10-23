@@ -48,3 +48,18 @@ magic-mythic-paper:
 
 reference/output/wildlife-ground-v3/chacademia_custom_wild.yml (야생 몹 Mobs):
 - `MovementSpeed` 전부 ×1.35 (0.24 → 0.324, 0.288 → 0.389). 운영 `MythicMobs/Mobs` 야생 몹 파일에 병합 필요.
+
+## 6차 (사거리·추적·원거리 스킬·비전투 회복)
+Wildlife: 새 `WildCombat` 리스너 + `ranged-skills.yml`(새 리소스) + config `combat` 블록
+- 플레이어가 CA_Wild 몹을 때리면(직접·투사체, 마법 피해도 EntityDamageByEntityEvent로 오면 포함) 그 플레이어를 대상으로 잡고 FOLLOW_RANGE를 거리+16(최대 96)까지 올림 → 멀리서 때려도 쫓아옴. 관전·크리에이티브 공격자는 제외(바닐라 AI가 크리에이티브를 대상으로 못 잡음).
+- 8칸 넘게 떨어져 맞으면 `ranged-skills.yml` 순서(투사체 먼저, 사거리 긴 순)로 `MythicBukkit.getAPIHelper().castSkill(mob, skill)` 1개, 몹당 4초 쿨. 스킬 자체 Conditions(targetwithin)는 그대로 적용.
+- 비전투(10초 동안 주고받은 피해 없음) 몹은 2초마다 최대 체력 5% 회복. AI 꺼짐·무적 개체(교화 봉인 등)는 제외.
+- 상태 명령에 "전투 보정" 한 줄.
+
+magic-mythic-paper `chacademi_mob_skills.yml`:
+- 모든 CHA_MOB 스킬 `targetwithin{d}` ×1.3 (최대 32) — 몹이 더 먼 거리에서 스킬을 씀.
+- `chamobshot range` ×1.3 (최대 40), 예고 있는 직선기(조준 사격·돌진 등) `length` ×1.3.
+- (위 5차의 기본기 ×1.5와 별개로 누적)
+
+reference/output/wildlife-ground-v3/chacademia_custom_wild.yml:
+- `FollowRange` 20 → 32 (인식 범위).
