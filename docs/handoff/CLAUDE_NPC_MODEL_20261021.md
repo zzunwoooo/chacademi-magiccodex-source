@@ -139,3 +139,9 @@ MagicCodex(Bridge·Fabric)·PortableVFX·스토리 모드는 **건드리지 않�
 - 새 믹스인 `EntityRendererCullMixin` (EntityRenderer.shouldRender HEAD): 모델이 붙은 NPC는 히트박스 대신 모델 키 기준 상자(폭 = 키×0.4 이상)로 화면 밖 판정, 보이는 거리도 모델 키 × 64 × 엔티티 거리 설정. 모델 없는 엔티티는 바닐라 그대로.
 - 서버의 엔티티 추적 거리(spigot.yml entity-tracking-range players) 밖에서는 NPC 자체가 클라이언트에 없으므로 큰 동상도 그 거리에서 사라짐.
 - 프로토콜 테스트를 10배 허용 / 10.5·0.2 거부로 갱신.
+
+## 17. 2026-10-24 — 비율 조정 되돌림 (데이터만)
+
+- 사용자 결정: 다리·몸통·팔 비율 조정이 일부 모델에서 어색 → 원래대로.
+- models.json 에서 캐릭터 6개(luka, ria, captain_bram, teacher_ellna, pipi, dorm_lowell)의 `proportion`·`height` 제거 → GLB 원래 비율, 키 1.8블록(scale 1.0). wizard_statue 는 원래 비율 미적용이라 height 3.0 유지.
+- 비율 기능 코드(Proportion, `/npc모델 비율·키`)는 그대로 남겨 둠 — 필요하면 모델별로 다시 켤 수 있음. 모드·플러그인 재빌드 불필요, models.json 만 교체.

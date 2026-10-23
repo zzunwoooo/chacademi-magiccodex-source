@@ -14,13 +14,7 @@
         "greet": null
       },
       "scale": 1.0,
-      "nameplateOffset": 0.0,
-      "proportion": {
-        "legs": 0.82,
-        "torso": 0.95,
-        "arms": 0.92
-      },
-      "height": 1.95
+      "nameplateOffset": 0.0
     },
     "ria": {
       "file": "ria.glb",
@@ -34,13 +28,7 @@
       },
       "walkSpeed": 0.945,
       "scale": 1.0,
-      "nameplateOffset": 0.0,
-      "proportion": {
-        "legs": 0.82,
-        "torso": 0.95,
-        "arms": 0.92
-      },
-      "height": 1.9
+      "nameplateOffset": 0.0
     },
     "captain_bram": {
       "file": "captain_bram.glb",
@@ -56,13 +44,7 @@
       },
       "walkSpeed": 1.23,
       "scale": 1.0,
-      "nameplateOffset": 0.0,
-      "proportion": {
-        "legs": 0.82,
-        "torso": 0.95,
-        "arms": 0.92
-      },
-      "height": 2.1
+      "nameplateOffset": 0.0
     },
     "teacher_ellna": {
       "file": "teacher_ellna.glb",
@@ -76,13 +58,7 @@
       },
       "walkSpeed": 1.2,
       "scale": 1.0,
-      "nameplateOffset": 0.0,
-      "proportion": {
-        "legs": 0.82,
-        "torso": 0.95,
-        "arms": 0.92
-      },
-      "height": 2.5
+      "nameplateOffset": 0.0
     },
     "pipi": {
       "file": "pipi.glb",
@@ -96,13 +72,7 @@
       },
       "walkSpeed": 1.2,
       "scale": 1.0,
-      "nameplateOffset": 0.0,
-      "proportion": {
-        "legs": 0.82,
-        "torso": 0.95,
-        "arms": 0.92
-      },
-      "height": 1.9
+      "nameplateOffset": 0.0
     },
     "dorm_lowell": {
       "file": "dorm_lowell.glb",
@@ -116,13 +86,7 @@
       },
       "walkSpeed": 1.23,
       "scale": 1.0,
-      "nameplateOffset": 0.0,
-      "proportion": {
-        "legs": 0.82,
-        "torso": 0.95,
-        "arms": 0.92
-      },
-      "height": 2.1
+      "nameplateOffset": 0.0
     },
     "wizard_statue": {
       "file": "wizard_statue.glb",
