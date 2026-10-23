@@ -47,7 +47,7 @@ import school.magiccodex.protocol.TravelProtocol;
  * Rows are never removed because a server or point left travel.yml: they show as unavailable with the reason.
  */
 public final class TravelBridge implements Listener, PluginMessageListener, AutoCloseable {
-    static final long TICKET_MS = 90_000, ORIGIN_TIMEOUT_TICKS = 20 * 20, ARRIVAL_WAIT_TRIES = 180;
+    static final long TICKET_MS = 90_000, ORIGIN_TIMEOUT_TICKS = 45 * 20, ARRIVAL_WAIT_TRIES = 180;
     private final MagicCodexBridge plugin;
     private final File file;
     private TravelModel.Config config;
@@ -469,12 +469,22 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
         if (!store.usable()) return;
         if (!p.isOnline()) return;
         if (!store.ready() || !plugin.playerStateReady(p)) {
-            if (tries >= ARRIVAL_WAIT_TRIES) { plugin.getLogger().warning("지도 이동 도착 확인 포기 (캐릭터 정보 미준비): " + p.getName()); return; }
+            if (tries >= ARRIVAL_WAIT_TRIES) {
+                plugin.getLogger().warning("지도 이동 도착 확인 포기 (캐릭터 정보 미준비): " + p.getName());
+                if (store.ready()) store.failPending(p.getUniqueId(), config.self(), "도착 서버에서 캐릭터 정보를 불러오지 못했어요", null);
+                return;
+            }
             Bukkit.getScheduler().runTaskLater(plugin, () -> awaitArrival(p, tries + 1), 10);
             return;
         }
         UUID id = p.getUniqueId();
-        store.claimArrival(id, config.self(), ticket -> ticket.ifPresent(t -> arrive(p, t)));
+        store.claimArrival(id, config.self(), arrival -> {
+            if (arrival.ticket() != null) arrive(p, arrival.ticket());
+            else if (arrival.expired() != null && TravelProtocol.PERSONAL_ID.equals(arrival.expired().point()) && p.isOnline()) {
+                refund(p);   // a move to the personal point that never arrived: mana and cooldown back
+                CmdKit.notify(p, "warning", "travel-arrive", "개인 지점 이동이 끝나지 않았어요", "마나·재사용 대기는 돌려받았어요", 0);
+            }
+        });
     }
     private void arrive(Player p, TravelStore.Ticket t) {
         UUID id = p.getUniqueId();

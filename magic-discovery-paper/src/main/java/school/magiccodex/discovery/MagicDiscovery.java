@@ -336,7 +336,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
     List<String> progressKeys(){
         var out=new TreeSet<String>(definitions.index.keySet());
         for(String id:definitions.manual.keySet())out.add(Definitions.conditionKey(id));
-        out.addAll(List.of("state.circle","state.temperature","state.flight_prohibited","state.mana_maximum","state.friends"));
+        out.addAll(List.of("state.circle","state.temperature","state.flight_prohibited","state.mana_maximum","state.friends","state.travel_waypoints"));
         return List.copyOf(out);
     }
 

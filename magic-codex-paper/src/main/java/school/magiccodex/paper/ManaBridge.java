@@ -37,12 +37,21 @@ final class ManaBridge implements Listener,PluginMessageListener,AutoCloseable {
      */
     Integer chargeSpatialLeapTravel(Player p){
         var spell=spells.byId.get(SPATIAL_LEAP);if(spell==null)return null;
-        var r=cast(p,0,spell,()->true);send(p,r);return r.status();
+        UUID id=p.getUniqueId();
+        if(!plugin.playerStateReady(p)||casting.contains(id))return ManaProtocol.FAILED;
+        var a=mana.account(id);
+        // only the mana transaction: a map move is not a cast (no discovery cast counter, no artifact on-cast effects)
+        var r=ManaCasting.attempt(a,spell,!p.isDead()&&p.hasPermission(spell.permission()),System.currentTimeMillis(),()->true);
+        mana.publish(id);
+        if(r.status()==ManaProtocol.OK){mana.save(p);plugin.markPlayerStateDirty(p);}
+        send(p,new Response(0,r.status(),r.cooldownMillis(),a.snapshot()));
+        return r.status();
     }
     /** Gives back one spatial_leap charge (the move or the save failed afterwards): mana back and the cooldown cleared. */
     void refundSpatialLeap(Player p){
         var spell=spells.byId.get(SPATIAL_LEAP);if(spell==null||!p.isOnline())return;
         try{mana.add(p.getUniqueId(),spell.cost());mana.clearCooldown(p.getUniqueId(),SPATIAL_LEAP);}catch(IllegalArgumentException notLoaded){return;}
+        mana.save(p);plugin.markPlayerStateDirty(p);
         var a=mana.snapshot(p.getUniqueId());if(a.isPresent())send(p,new Response(0,ManaProtocol.SNAPSHOT,0,a.get()));
     }
     List<String> discoveryPermissions(){var result=new ArrayList<>(spells.discoveryPermissions);if(!result.contains("magiccodex.taming"))result.add("magiccodex.taming");return List.copyOf(result);}

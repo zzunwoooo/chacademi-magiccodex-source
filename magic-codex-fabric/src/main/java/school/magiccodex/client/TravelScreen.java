@@ -124,7 +124,7 @@ final class TravelScreen extends Screen {
         long now = Util.getMeasuringTimeMs();
         if (closeAt != 0 && now >= closeAt) { closeAt = 0; close(); return; }
         // a remote move waits for the server switch; a local one answers at once
-        long limit = pendingStage == TravelProtocol.STAGE_ACCEPTED ? 30000 : 10000;
+        long limit = pendingStage == TravelProtocol.STAGE_ACCEPTED ? 55000 : 10000;
         if (busy() && now - pendingAt > limit) { pendingOp = 0; pendingStage = -1; say("서버 응답이 늦어요. 다시 시도해 주세요."); TravelClient.query(); }
     }
 
@@ -221,7 +221,7 @@ final class TravelScreen extends Screen {
             if (in(mx, my, tx - 80, TAB_Y - 26, 160, 52)) { if (!id.equals(tab)) { tab = id; hovered = null; click(); } return true; }
         }
         // list toggle (on the frame's right edge) and the list itself
-        if (in(mx, my, toggleX(), TravelMapMath.viewCy() - TravelMapMath.TOGGLE_H / 2, TravelMapMath.TOGGLE_W, TravelMapMath.TOGGLE_H)) { listOpen = !listOpen; click(); return true; }
+        if (in(mx, my, toggleX(), (float) TravelMapMath.viewCy() - TravelMapMath.TOGGLE_H / 2, TravelMapMath.TOGGLE_W, TravelMapMath.TOGGLE_H)) { listOpen = !listOpen; click(); return true; }
         if (listOpen && list > .5f && mx >= panelX()) { listClick(mx, my); return true; }
         // footer
         if (in(mx, my, ZOOM_X - ICON / 2, FOOT_Y - ICON / 2, ICON, ICON)) { zoomButton(1 / 1.5); return true; }
@@ -323,7 +323,7 @@ final class TravelScreen extends Screen {
         String best = null; double bestD = 24 * 24;
         for (Point p : points) {
             if (!p.tab().equals(tab)) continue;
-            double x = TravelMapMath.screenX(cam, a.u(p.x(), p.z())), y = TravelMapMath.screenY(cam, a.v(p.x(), p.z())) - 14;   // icons sit above their spot
+            double x = TravelMapMath.screenX(cam, a.u(p.x(), p.z())), y = TravelMapMath.screenY(cam, a.v(p.x(), p.z())) - (p.kind() == TravelProtocol.POINT_PERSONAL ? 16 : 0);   // only the pin sits above its spot
             double d = (x - mx) * (x - mx) + (y - my) * (y - my);
             if (d < bestD) { bestD = d; best = p.id(); }
         }

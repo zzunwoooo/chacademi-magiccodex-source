@@ -26,6 +26,8 @@ import school.magiccodex.database.DatabaseSettings;
  */
 final class TravelStore implements AutoCloseable {
     enum Claim { CLAIMED, ALREADY, ERROR }
+    /** Destination read: ticket = to move now; expired = a ticket this call just failed because it timed out (refund it). */
+    record Arrival(Ticket ticket, Ticket expired) { static final Arrival NONE = new Arrival(null, null); }
     record Ticket(long ticket, String point, String from, String to, String world, String worldUid, double x, double y, double z,
                   float yaw, float pitch, long created, long expires, String state, String reason) {}
 
@@ -114,7 +116,7 @@ final class TravelStore implements AutoCloseable {
                 T v = value;
                 if (done != null) later(() -> done.accept(v));
             });
-        } catch (RejectedExecutionException e) { if (done != null) done.accept(failed); }
+        } catch (RejectedExecutionException e) { if (done != null) later(() -> done.accept(failed)); }   // never inside the caller's transaction
     }
 
     // ------------------------------------------------------------------ unlocks
@@ -203,6 +205,14 @@ final class TravelStore implements AutoCloseable {
     void openTicket(UUID player, Ticket t, Consumer<Boolean> done) {
         submit("이동 표 쓰기", c -> {
             long now = System.currentTimeMillis();
+            // an expired live ticket gets its FAILED log row before it is replaced
+            try (var q = c.prepareStatement("SELECT ticket,point,from_server,to_server,world,world_uid,x,y,z,yaw,pitch,created_at,expires_at,state,reason FROM codex_travel_ticket WHERE uuid=?")) {
+                q.setString(1, player.toString());
+                try (var r = q.executeQuery()) {
+                    if (r.next()) { var old = ticket(r); if ((PENDING.equals(old.state()) || ARRIVING.equals(old.state())) && old.expires() < now)
+                        finish(c, player, old.ticket(), old.state(), FAILED, "이동 시간이 지났어요 (도착하지 못함)", old); }
+                }
+            }
             String set = "ticket=?,point=?,from_server=?,to_server=?,world=?,world_uid=?,x=?,y=?,z=?,yaw=?,pitch=?,created_at=?,expires_at=?,state=?,reason=?,finished_at=0";
             try (var q = c.prepareStatement("UPDATE codex_travel_ticket SET " + set + " WHERE uuid=? AND (state IN ('DONE','FAILED') OR expires_at<?)")) {
                 int i = bind(q, t); q.setString(i++, player.toString()); q.setLong(i, now);
@@ -223,25 +233,36 @@ final class TravelStore implements AutoCloseable {
     }
 
     /** Destination: takes this player's PENDING ticket for `server` (expired ones are failed instead). Empty = nothing to do. */
-    void claimArrival(UUID player, String server, Consumer<Optional<Ticket>> done) {
+    void claimArrival(UUID player, String server, Consumer<Arrival> done) {
         submit("도착 표 읽기", c -> {
             long now = System.currentTimeMillis();
             Ticket t;
             try (var q = c.prepareStatement("SELECT ticket,point,from_server,to_server,world,world_uid,x,y,z,yaw,pitch,created_at,expires_at,state,reason FROM codex_travel_ticket WHERE uuid=?")) {
                 q.setString(1, player.toString());
-                try (var r = q.executeQuery()) { if (!r.next()) return Optional.<Ticket>empty(); t = ticket(r); }
+                try (var r = q.executeQuery()) { if (!r.next()) return Arrival.NONE; t = ticket(r); }
             }
-            if (!PENDING.equals(t.state())) return Optional.<Ticket>empty();
+            if (!PENDING.equals(t.state())) return Arrival.NONE;
             if (t.expires() < now) {   // logged out on the way / landed elsewhere: it never arrived
-                finish(c, player, t.ticket(), PENDING, FAILED, "이동 시간이 지났어요 (도착하지 못함)", t);
-                return Optional.<Ticket>empty();
+                return finish(c, player, t.ticket(), PENDING, FAILED, "이동 시간이 지났어요 (도착하지 못함)", t) ? new Arrival(null, t) : Arrival.NONE;
             }
-            if (!server.equals(t.to())) return Optional.<Ticket>empty();
+            if (!server.equals(t.to())) return Arrival.NONE;
             try (var q = c.prepareStatement("UPDATE codex_travel_ticket SET state='ARRIVING' WHERE uuid=? AND ticket=? AND state='PENDING'")) {
                 q.setString(1, player.toString()); q.setLong(2, t.ticket());
-                return q.executeUpdate() == 1 ? Optional.of(t) : Optional.<Ticket>empty();
+                return q.executeUpdate() == 1 ? new Arrival(t, null) : Arrival.NONE;
             }
-        }, Optional.empty(), done);
+        }, Arrival.NONE, done);
+    }
+
+    /** Destination gave up waiting for the character data: fail this server's pending ticket so it is never left open. */
+    void failPending(UUID player, String server, String reason, Consumer<Boolean> done) {
+        submit("도착 포기 기록", c -> {
+            Ticket t;
+            try (var q = c.prepareStatement("SELECT ticket,point,from_server,to_server,world,world_uid,x,y,z,yaw,pitch,created_at,expires_at,state,reason FROM codex_travel_ticket WHERE uuid=? AND state='PENDING' AND to_server=?")) {
+                q.setString(1, player.toString()); q.setString(2, server);
+                try (var r = q.executeQuery()) { if (!r.next()) return false; t = ticket(r); }
+            }
+            return finish(c, player, t.ticket(), PENDING, FAILED, reason, t);
+        }, false, done);
     }
     private static Ticket ticket(ResultSet r) throws java.sql.SQLException {
         return new Ticket(r.getLong(1), r.getString(2), r.getString(3), r.getString(4), r.getString(5), r.getString(6), r.getDouble(7), r.getDouble(8), r.getDouble(9),

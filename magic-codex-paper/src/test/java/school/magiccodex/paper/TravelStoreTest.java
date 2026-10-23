@@ -57,10 +57,11 @@ class TravelStoreTest {
             assertTrue(await(d -> school.openTicket(p, ticket(1, "wild", later, TravelStore.PENDING), d)));
             assertFalse(await(d -> school.openTicket(p, ticket(2, "wild", later, TravelStore.PENDING), d)));   // double click / second server
             // the wrong destination does not take it
-            assertEquals(Optional.empty(), await(d -> school.claimArrival(p, "school", d)));
-            var t = await((Consumer<Consumer<Optional<TravelStore.Ticket>>>) d -> wild.claimArrival(p, "wild", d)).orElseThrow();
+            assertNull(await((Consumer<Consumer<TravelStore.Arrival>>) d -> school.claimArrival(p, "school", d)).ticket());
+            var t = await((Consumer<Consumer<TravelStore.Arrival>>) d -> wild.claimArrival(p, "wild", d)).ticket();
+            assertNotNull(t);
             assertEquals(1, t.ticket());
-            assertEquals(Optional.empty(), await(d -> wild.claimArrival(p, "wild", d)));                       // taken once
+            assertNull(await((Consumer<Consumer<TravelStore.Arrival>>) d -> wild.claimArrival(p, "wild", d)).ticket());   // taken once
             assertTrue(await(d -> wild.finish(p, t, TravelStore.ARRIVING, TravelStore.DONE, "", d)));
             // a late origin timeout cannot turn the arrival into a failure
             assertFalse(await(d -> school.fail(p, 1, "서버 연결 응답이 없어요", d)));
@@ -68,7 +69,7 @@ class TravelStoreTest {
             assertTrue(await(d -> school.openTicket(p, ticket(3, "wild", later, TravelStore.PENDING), d)));
             assertTrue(await(d -> school.fail(p, 3, "도착 서버가 닫혀 있어요", d)));
             // a failed ticket is never claimed as an arrival
-            assertEquals(Optional.empty(), await(d -> wild.claimArrival(p, "wild", d)));
+            assertNull(await((Consumer<Consumer<TravelStore.Arrival>>) d -> wild.claimArrival(p, "wild", d)).ticket());
             var log = await((Consumer<Consumer<List<String>>>) d -> school.history(p, 10, d));
             assertEquals(2, log.size());
             assertTrue(log.get(0).contains("실패")); assertTrue(log.get(1).contains("성공"));
@@ -79,7 +80,8 @@ class TravelStoreTest {
         UUID p = UUID.randomUUID();
         try (var school = store(); var wild = store()) {
             assertTrue(await(d -> school.openTicket(p, ticket(5, "wild", System.currentTimeMillis() - 1, TravelStore.PENDING), d)));
-            assertEquals(Optional.empty(), await(d -> wild.claimArrival(p, "wild", d)));   // logged out on the way
+            var expired = await((Consumer<Consumer<TravelStore.Arrival>>) d -> wild.claimArrival(p, "wild", d));   // logged out on the way
+            assertNull(expired.ticket()); assertNotNull(expired.expired());   // reported so a personal-point move is refunded
             var log = await((Consumer<Consumer<List<String>>>) d -> school.history(p, 10, d));
             assertEquals(1, log.size()); assertTrue(log.getFirst().contains("실패"));
             // an expired live ticket does not block a new move

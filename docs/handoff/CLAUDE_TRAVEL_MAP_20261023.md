@@ -10,6 +10,11 @@
 - `TravelStoreTest`(SQLite 상태 기계 5개)는 sqlite-jdbc 가 없어 여기서 못 돌렸습니다 — 호스팅 `:magic-codex-paper:test` 에서 확인해 주세요.
 - Yarn 1.21.4 API 가정: `DrawContext.enableScissor` 가 현재 행렬을 적용함(다른 화면들과 같은 방식), `TextRenderer.draw(String, …, TextLayerType, bg, light)`, `Camera.getRotation()`.
 
+## 0-1. 2차 검토 반영 (같은 브랜치 두 번째 커밋)
+
+별도 검토에서 나온 것 반영: 창 컴파일 오류 1곳(double→float), 월드 포탈을 AFTER_ENTITIES 로(공용 버퍼가 그 뒤에 그려지도록), 개인 지점 이동 과금은 마나 트랜잭션만(발견 시전 카운트·아티팩트 시전 효과 안 탐), 환불 시 저장·dirty 표시, 만료된 개인 지점 이동 표는 도착 서버에서 환불, 도착 서버가 90초 기다려도 캐릭터 정보가 안 오면 표 FAILED, 덮어쓰는 만료 표도 실패 로그, 출발 서버 응답 대기 20→45초, 지도 클릭 판정 위치, 저장소 거절 콜백은 항상 다음 틱, 프록시 '이동 중' 표시는 60초 지나면 무효, 발견 관리 자동완성에 state.travel_waypoints.
+남은 한계(문서화): 과금 직후~이동 전 사이에 접속이 끊기면 그 1회 마나·쿨은 돌려주지 않음 (온라인일 때만 환불 가능).
+
 ## 1. 바뀐 파일
 
 | 영역 | 파일 | 내용 |

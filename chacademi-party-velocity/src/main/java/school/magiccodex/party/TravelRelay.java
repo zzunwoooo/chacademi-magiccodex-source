@@ -34,8 +34,8 @@ final class TravelRelay {
     private final Host host;
     private final Object plugin;
     private final Set<String> targets = new HashSet<>();
-    /** Players being connected right now (worker thread). */
-    private final Set<UUID> moving = new HashSet<>();
+    /** Players being connected right now → since when (worker thread). Entries older than a minute are stale (a lost callback). */
+    private final Map<UUID, Long> moving = new HashMap<>();
 
     TravelRelay(ProxyServer proxy, Logger log, Host host, Object plugin) { this.proxy = proxy; this.log = log; this.host = host; this.plugin = plugin; }
 
@@ -69,7 +69,10 @@ final class TravelRelay {
         if (!targets.contains(t.server())) { fail(p, origin, t, TravelLinkProtocol.NO_SERVER, ""); return; }
         if (origin.getServerInfo().getName().equals(t.server())) { fail(p, origin, t, TravelLinkProtocol.OTHER, "이미 그 서버에 있어요"); return; }
         if (host.blocked(id)) { fail(p, origin, t, TravelLinkProtocol.BUSY, "큐디치 경기·매칭 중에는 서버를 옮길 수 없어요"); return; }
-        if (!moving.add(id)) { fail(p, origin, t, TravelLinkProtocol.BUSY, "이미 서버를 옮기는 중이에요"); return; }
+        long now = System.currentTimeMillis();
+        Long since = moving.get(id);
+        if (since != null && now - since < 60_000) { fail(p, origin, t, TravelLinkProtocol.BUSY, "이미 서버를 옮기는 중이에요"); return; }
+        moving.put(id, now);
         Optional<RegisteredServer> target = proxy.getServer(t.server());
         if (target.isEmpty()) { moving.remove(id); fail(p, origin, t, TravelLinkProtocol.NO_SERVER, ""); return; }
         RegisteredServer server = target.get();

@@ -38,7 +38,8 @@ final class TravelWorldMarks {
     private static final int SEGMENTS = 20;
     private static final Map<String, Long> flashAt = new HashMap<>();
 
-    static void initialize() { WorldRenderEvents.AFTER_TRANSLUCENT.register(TravelWorldMarks::render); }
+    /** AFTER_ENTITIES like the other world marks of this mod: the shared entity buffer is still drawn after this. */
+    static void initialize() { WorldRenderEvents.AFTER_ENTITIES.register(TravelWorldMarks::render); }
 
     /** A point that just became unlocked flashes once. */
     static void changed(TravelProtocol.Markers before, TravelProtocol.Markers after) {
