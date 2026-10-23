@@ -48,6 +48,10 @@ public final class QuestClient {
     }
 
     static View view = new View();
+    /** 길잡이 별 화살표: 켜진 단계 session, 켠 시각, 끄기 시작한 시각(0 = 켜져 있음). guideSession 0 = 꺼짐. */
+    static int guideSession;
+    static long guideAt, guideEndAt;
+
     /** 방금 끝난 포탈 (들어가는 연출용). */
     static View vanishing;
     static long vanishAt;
@@ -58,9 +62,11 @@ public final class QuestClient {
     public static void install() {
         PayloadTypeRegistry.playS2C().register(QuestPackets.StepS2C.TYPE, QuestPackets.StepS2C.CODEC);
         PayloadTypeRegistry.playS2C().register(QuestPackets.UpdateS2C.TYPE, QuestPackets.UpdateS2C.CODEC);
+        PayloadTypeRegistry.playS2C().register(QuestPackets.GuideS2C.TYPE, QuestPackets.GuideS2C.CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(QuestPackets.GuideS2C.TYPE, (p, ctx) -> ctx.client().execute(() -> onGuide(p)));
         ClientPlayNetworking.registerGlobalReceiver(QuestPackets.StepS2C.TYPE, (p, ctx) -> ctx.client().execute(() -> onStep(p)));
         ClientPlayNetworking.registerGlobalReceiver(QuestPackets.UpdateS2C.TYPE, (p, ctx) -> ctx.client().execute(() -> onUpdate(p)));
-        ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> c.execute(() -> { view = new View(); vanishing = null; QuestWorld.reset(); }));
+        ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> c.execute(() -> { view = new View(); vanishing = null; guideSession = 0; QuestWorld.reset(); }));
         HudRenderCallback.EVENT.register(QuestHud::render);
         // 물·유리·반투명 블록을 다 그린 뒤에 그린다 (AFTER_ENTITIES 면 뒤의 물·유리가 글자·포탈 위에 덮여 흐려 보였음)
         WorldRenderEvents.AFTER_TRANSLUCENT.register(QuestWorld::render);
@@ -80,6 +86,13 @@ public final class QuestClient {
     /** 퀘스트 HUD 를 계속 보여 주는 화면: 채팅창, MagicCodex Ctrl 마우스 포인터(HudCursorScreen — 의존 없이 이름으로 확인). */
     static boolean hudScreen(net.minecraft.client.gui.screens.Screen screen) {
         return screen instanceof ChatScreen || screen.getClass().getName().equals("school.magiccodex.client.HudCursorScreen");
+    }
+
+    private static void onGuide(QuestPackets.GuideS2C g) {
+        if (!view.active() || g.session() != view.session) return;
+        guideSession = g.session();
+        guideAt = now();
+        guideEndAt = 0;
     }
 
     static void toggle() {

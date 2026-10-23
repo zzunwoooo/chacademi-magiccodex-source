@@ -116,7 +116,7 @@ final class QuestEngine implements Listener {
         defsStore = new StoryStore(text -> StorySafety.atomicWrite(defsFile.toPath(), text), StoryStore.newWorker(),
                 r -> Bukkit.getScheduler().runTask(plugin, r), plugin.getLogger());
         ready = true;
-        for (String out : List.of(QuestCodec.STEP, QuestCodec.UPDATE)) plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, out);
+        for (String out : List.of(QuestCodec.STEP, QuestCodec.UPDATE, QuestCodec.GUIDE)) plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, out);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 40L, TICK_CHECK);
         Bukkit.getScheduler().runTask(plugin, this::hookCitizens);
@@ -907,6 +907,40 @@ final class QuestEngine implements Listener {
         }
         String chapter = s.chapter.isBlank() ? "스토리" : s.chapter;
         return new QuestCodec.StepView(session, s.id, run, chapter, s.description, readyFlag, conds, type, world, x, y, z, radius, entity);
+    }
+
+    /** 길잡이 별 결과 (MagicMythic 132 guiding_star 가 리플렉션으로 부른다). */
+    static final int GUIDE_NONE = 0, GUIDE_OK = 1, GUIDE_OTHER_WORLD = 2, GUIDE_NEAR = 3;
+    /** 길잡이 별을 따라갈 수 있다고 보는 거리 — 이 안이면 화살표를 띄우지 않는다 (클라도 같은 값에서 끈다). */
+    static final double GUIDE_NEAR_DISTANCE = 10;
+
+    /**
+     * 길잡이 별: 지금 단계의 목표(위치 포탈 / 말 걸 NPC)를 머리 위 화살표로 가리키게 한다.
+     * 조건을 아직 못 채운 단계도 가리킨다 (어디로 가야 하는지 알려 주는 것이 목적). 목표가 없는 단계(자동·컷신·미지정)는 GUIDE_NONE.
+     */
+    int guide(Player p) {
+        if (!ready || p == null || !p.isOnline() || !p.getListeningPluginChannels().contains(QuestCodec.GUIDE)) return GUIDE_NONE;
+        UUID uuid = p.getUniqueId();
+        P st = prog.players.get(uuid);
+        Step s = st == null ? null : defs.get(st.step);
+        Integer session = sessions.get(uuid);
+        if (s == null || session == null || previewing.contains(uuid)) return GUIDE_NONE;
+        Location target = null;
+        Trigger t = s.trigger;
+        if (t.type == TrigType.LOCATION) {
+            World w = Bukkit.getWorld(t.world);
+            if (w != null) target = new Location(w, t.x, t.y, t.z);
+        } else if (t.type == TrigType.NPC && (t.server.isEmpty() || t.server.equals(serverId()))) {
+            Object npc = npcById(t.npc);
+            target = npc == null ? null : npcLocation(npc);
+        }
+        if (target == null || target.getWorld() == null) return GUIDE_NONE;
+        if (!target.getWorld().equals(p.getWorld())) return GUIDE_OTHER_WORLD;
+        Location at = p.getLocation();
+        double dx = target.getX() - at.getX(), dz = target.getZ() - at.getZ();
+        if (dx * dx + dz * dz <= GUIDE_NEAR_DISTANCE * GUIDE_NEAR_DISTANCE) return GUIDE_NEAR;
+        p.sendPluginMessage(plugin, QuestCodec.GUIDE, QuestCodec.guide(session));
+        return GUIDE_OK;
     }
 
     /** 운영자 화면에 이 단계를 "준비 완료" 상태로 보여 준다 (포탈·징표 위치 확인용). 진행 기록은 건드리지 않는다. */

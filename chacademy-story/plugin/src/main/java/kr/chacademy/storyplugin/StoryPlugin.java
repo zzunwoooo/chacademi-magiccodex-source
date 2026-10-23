@@ -376,6 +376,14 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
         return ps != null && ps.has(dialogue ? Kind.DIALOGUE : Kind.CUTSCENE, id);
     }
 
+    /**
+     * 길잡이 별 (MagicMythic 가 리플렉션으로 부른다): 0 = 가리킬 퀘스트 목표 없음 (예전 동작으로), 1 = 화살표 표시 시작,
+     * 2 = 목표가 다른 세계, 3 = 이미 목표 근처 (10블록).
+     */
+    public int questGuide(Player p) {
+        return quests == null ? 0 : quests.guide(p);
+    }
+
     public boolean hasMod(Player p) {
         return p.getListeningPluginChannels().contains(StoryCodec.CUTSCENE_PLAY);
     }

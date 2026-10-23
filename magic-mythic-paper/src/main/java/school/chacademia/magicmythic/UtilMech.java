@@ -31,7 +31,7 @@ import org.bukkit.util.Vector;
  *                          restores config mana-potion.restore mana (159 마력 예금)
  *  exp ratio=0.5         - spend all current mana, gain mana x ratio experience points (161 경험의 환전)
  *  deepdark depth=64     - is there a Deep Dark biome below the caster? answer only by VFX event found/absent (114)
- *  star ticks=200        - sneaking: save this spot. otherwise: point at the saved spot (VFX + action bar) (132 길잡이 별)
+ *  star ticks=200        - sneaking: save this spot. otherwise: quest target first (ChacademyStory arrow), else the saved spot (VFX + action bar) (132 길잡이 별)
  *  reprise               - reset the cooldown of one random other equipped spell (163 별빛 재현; needs the Bridge
  *                          cooldown API and the client slot report, see handoff)
  *  core ticks=6000 speed range radius aoe - first cast gathers a stone core, the next cast fires it (131 원초의 돌)
@@ -292,6 +292,13 @@ final class UtilMech extends Mech {
             vfx(pl, "external:save", l, null);
             info(pl, "길잡이 별: 이 위치를 기억했습니다.");
             return true;
+        }
+        // 진행 중인 퀘스트에 목표(포탈·NPC)가 있으면 그쪽을 먼저 가리킨다 — 머리 위 화살표 (스토리 모드), 목표 10블록 안에서 사라짐
+        switch (StoryLink.guide(pl)) {
+            case StoryLink.OK -> { vfx(pl, "external:form", pl.getLocation().add(0, 1.2, 0), null); info(pl, "길잡이 별이 퀘스트 목표를 가리킵니다."); return true; }
+            case StoryLink.NEAR -> { bar(pl, "길잡이 별: 퀘스트 목표가 바로 근처에 있어요."); return false; }
+            case StoryLink.OTHER_WORLD -> { bar(pl, "길잡이 별: 퀘스트 목표가 다른 세계에 있어요."); return false; }
+            default -> { }
         }
         String raw = pdc.get(starKey(), PersistentDataType.STRING);
         if (raw == null) { bar(pl, "길잡이 별: 기억한 위치가 없습니다. 웅크린 채 시전하세요."); return false; }

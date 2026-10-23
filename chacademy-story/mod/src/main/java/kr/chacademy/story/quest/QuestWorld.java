@@ -32,7 +32,9 @@ final class QuestWorld {
     private QuestWorld() {}
 
     private static final String RING = "portal_ring", RING_GLOW = "portal_ring_glow", GROUND_GLOW = "portal_glow", BAND = "portal_band",
-            MARKER = "marker", GLINT = "glint", HALO = "halo";
+            MARKER = "marker", GLINT = "glint", HALO = "halo", ARROW = "guide_arrow";
+    /** 길잡이 별: 목표 수평 거리가 이 안이면 화살표를 끈다 (서버 QuestEngine.GUIDE_NEAR_DISTANCE 와 같게). */
+    private static final double GUIDE_NEAR = 10;
     private static final String LABEL = "퀘스트 목표 지점";
     /** 이 모드 전용 버퍼 (그리는 순서대로 바로 그린다 → 겹치는 순서가 매번 같다). */
     private static final MultiBufferSource.BufferSource OWN = MultiBufferSource.immediate(new ByteBufferBuilder(1 << 16));
@@ -78,7 +80,8 @@ final class QuestWorld {
         QuestClient.View gone = QuestClient.vanishing;
         float vanish = gone == null ? 1 : (now - QuestClient.vanishAt) / 800f;
         if (gone != null && vanish >= 1) { QuestClient.vanishing = null; gone = null; }
-        if (!portal && !marker && gone == null) return;
+        boolean guide = QuestClient.guideSession != 0;
+        if (!portal && !marker && gone == null && !guide) return;
 
         PoseStack pose = ctx.matrixStack() != null ? ctx.matrixStack() : new PoseStack();
         var camera = ctx.camera();
@@ -110,7 +113,97 @@ final class QuestWorld {
                 billboard(pose, camRot, MARKER, false, at.x - cam.x, at.y + bob - cam.y, at.z - cam.z, s, s, white(appear), false);
             }
         }
+        if (guide) drawGuide(mc, pose, camera, cam, v, now, pt, t);
         OWN.endBatch();
+    }
+
+    // ---------------------------------------------------------------- 길잡이 별 화살표
+
+    /**
+     * 길잡이 별: 목표 쪽을 가리키는 화살표. 3인칭은 내 머리 위, 1인칭은 눈앞 조금 아래(머리 위는 1인칭에서 안 보임).
+     * 화살표 판은 바닥과 나란히 두되 카메라 쪽으로 기울여 어느 시점에서도 읽히게 한다. 아래에 남은 거리(m).
+     * 목표 수평 10블록 안 · 단계 변경 · 다른 세계 · 목표 없음 → 서서히 사라지고 끝.
+     */
+    private static void drawGuide(Minecraft mc, PoseStack pose, net.minecraft.client.Camera camera, Vec3 cam, QuestClient.View v, long now, float pt, float t) {
+        boolean valid = v.active() && v.session == QuestClient.guideSession && v.targetType != QuestPackets.TARGET_NONE && sameWorld(v);
+        Vec3 target = null;
+        if (valid) {
+            Vec3 npc = v.targetType == QuestPackets.TARGET_NPC ? markerPos(mc, v, pt) : null;
+            target = npc != null ? npc : new Vec3(v.x, v.y, v.z);
+            Vec3 me = mc.player.getPosition(pt);
+            double dx = target.x - me.x, dz = target.z - me.z;
+            if (dx * dx + dz * dz <= GUIDE_NEAR * GUIDE_NEAR) valid = false;
+        }
+        if (!valid && QuestClient.guideEndAt == 0) QuestClient.guideEndAt = now;
+        float fadeOut = QuestClient.guideEndAt == 0 ? 1 : 1 - (now - QuestClient.guideEndAt) / 450f;
+        if (fadeOut <= 0) { QuestClient.guideSession = 0; QuestClient.guideEndAt = 0; return; }
+        if (target == null) return; // 사라지는 중인데 목표를 잃음: 그릴 방향이 없다
+        float alpha = Mth.clamp((now - QuestClient.guideAt) / 300f, 0, 1) * fadeOut;
+
+        boolean firstPerson = mc.options.getCameraType().isFirstPerson();
+        Vec3 anchor;
+        float size;
+        if (firstPerson) {
+            float yaw = camera.getYRot() * Mth.DEG_TO_RAD;
+            Vec3 look = new Vec3(-Mth.sin(yaw), 0, Mth.cos(yaw));
+            anchor = cam.add(look.scale(1.5)).add(0, -0.48, 0);
+            size = 0.34f;
+        } else {
+            Vec3 me = mc.player.getPosition(pt);
+            anchor = me.add(0, mc.player.getBbHeight() + 0.7 + Mth.sin(t * 2.2f) * 0.05, 0);
+            size = 0.6f;
+        }
+        Vec3 f = new Vec3(target.x - anchor.x, 0, target.z - anchor.z);
+        if (f.lengthSqr() < 1e-6) return;
+        f = f.normalize();
+        // 판의 법선 = 위쪽 + 카메라 쪽 → 바닥과 비슷하게 누워 있으면서도 내 쪽으로 기울어 보인다
+        Vec3 toCam = cam.subtract(anchor);
+        toCam = toCam.lengthSqr() < 1e-6 ? new Vec3(0, 1, 0) : toCam.normalize();
+        Vec3 n = new Vec3(0, 1, 0).add(toCam.scale(0.9)).normalize();
+        Vec3 fw = f.subtract(n.scale(f.dot(n)));
+        if (fw.lengthSqr() < 1e-6) return;
+        fw = fw.normalize();
+        Vec3 right = fw.cross(n).normalize();
+        float nudge = Mth.sin(t * 3.4f) * 0.06f * size;
+        Vec3 c = anchor.add(fw.scale(nudge)).subtract(cam);
+        float pulse = 0.85f + 0.15f * Mth.sin(t * 3.4f);
+
+        // 뒤쪽 빛 (블룸, 셰이더팩이면 건너뜀) → 화살표
+        plane(pose, HALO, true, c, fw, right, size * 1.7f, size * 1.7f, argb(alpha * 0.45f * pulse, 0.55f, 0.85f, 1f));
+        plane(pose, ARROW, false, c, fw, right, size, size, white(alpha));
+        plane(pose, ARROW, true, c, fw, right, size, size, white(alpha * 0.25f * pulse));
+
+        // 남은 거리
+        Vec3 me = mc.player.getPosition(pt);
+        long meters = Math.round(Math.sqrt((target.x - me.x) * (target.x - me.x) + (target.z - me.z) * (target.z - me.z)));
+        var label = Component.literal(meters + "m").getVisualOrderText();
+        Vec3 at = c.subtract(fw.scale(size * 0.62)).add(0, firstPerson ? -0.02 : -0.12, 0);
+        pose.pushPose();
+        pose.translate(at.x, at.y, at.z);
+        pose.mulPose(camera.rotation());
+        float k = firstPerson ? 0.0085f : 0.016f;
+        pose.scale(k, -k, k);
+        int textColor = argb(alpha, 1f, 0.95f, 0.82f), outline = argb(alpha * 0.9f, 0.04f, 0.05f, 0.08f);
+        if ((textColor >>> 24) > 4) {
+            mc.font.drawInBatch8xOutline(label, -mc.font.width(label) / 2f, -4, textColor, outline, pose.last().pose(), OWN, LightTexture.FULL_BRIGHT);
+        }
+        pose.popPose();
+    }
+
+    /** 중심 c(카메라 기준), 앞 방향 fw(그림 위쪽 = 화살표 끝), 오른쪽 right 로 놓인 사각형. */
+    private static void plane(PoseStack pose, String name, boolean additive, Vec3 c, Vec3 fw, Vec3 right, float w, float h, int color) {
+        if ((color >>> 24) == 0 || (additive && QuestArt.shaderPack())) return;
+        var tex = QuestArt.image(name).orElse(null);
+        if (tex == null) return;
+        VertexConsumer vc = OWN.getBuffer(QuestArt.worldLayer(tex, additive));
+        var last = pose.last();
+        Vec3 hf = fw.scale(h / 2), hr = right.scale(w / 2);
+        Vec3 n = right.cross(fw);
+        Vec3 tl = c.add(hf).subtract(hr), tr = c.add(hf).add(hr), br = c.subtract(hf).add(hr), bl = c.subtract(hf).subtract(hr);
+        vertex(vc, last, (float) tl.x, (float) tl.y, (float) tl.z, 0, 0, color, (float) n.x, (float) n.y, (float) n.z);
+        vertex(vc, last, (float) bl.x, (float) bl.y, (float) bl.z, 0, 1, color, (float) n.x, (float) n.y, (float) n.z);
+        vertex(vc, last, (float) br.x, (float) br.y, (float) br.z, 1, 1, color, (float) n.x, (float) n.y, (float) n.z);
+        vertex(vc, last, (float) tr.x, (float) tr.y, (float) tr.z, 1, 0, color, (float) n.x, (float) n.y, (float) n.z);
     }
 
     private static Vec3 markerPos(Minecraft mc, QuestClient.View v, float pt) {

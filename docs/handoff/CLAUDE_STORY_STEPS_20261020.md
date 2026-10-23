@@ -168,3 +168,21 @@ NPC 는 Citizens 로 소환한 NPC 를 클릭해 지정 (서버 ID `quest-server
 - 테스트의 ch1-14 문자열은 패턴 로직 검사라 그대로 둠.
 - 2026-10-22 추가 (셰이더팩): Iris 셰이더팩이 켜져 있으면(`IrisApi.isShaderPackInUse()`, 리플렉션 — 의존 없음) 포탈·글자·징표를 셰이더팩이 아는 바닐라 `RenderType.entityTranslucentEmissive` 로 그리고, 빛 더하기(블룸) 패스는 건너뛴다 (셰이더팩 자체 블룸). 직접 만든 POSITION_TEX_COLOR 레이어는 셰이더팩이 섞기를 바꿔 빛 띠가 하얀 조각으로 깨져 보였다. 정점은 두 레이어 모두에 맞게 색·UV·오버레이·빛·법선을 다 쓴다 (없는 속성은 BufferBuilder 가 무시). 확인할 것: 셰이더 켬/끔 둘 다 포탈 모양, 게임 중 셰이더 전환.
 - 2026-10-22 추가 (Ctrl): MagicCodex Ctrl 마우스 포인터(`school.magiccodex.client.HudCursorScreen`, 클래스 이름으로 확인 — 의존 없음) 중에도 오른쪽 퀘스트 HUD 를 숨기지 않고, 접기 버튼 클릭도 받는다 (`QuestClient.hudScreen`, 채팅창과 같은 취급).
+
+## 14. 길잡이 별 → 퀘스트 목표 화살표 (2026-10-23)
+
+오너 결정(2026-10-20 기획): 기존 132 길잡이 별을 재활용 — 시전하면 머리 위 화살표가 퀘스트 목표 방향을 가리키고, 목표 반경 10블록 안에 들어가면 사라진다.
+
+| 모듈 | 바뀐 곳 |
+|---|---|
+| MagicMythic (`magic-mythic-paper`) | `StoryLink.java`(새, 리플렉션) · `UtilMech.star` — 웅크림 = 위치 저장(그대로). 일반 시전 = **퀘스트 목표가 있으면 그쪽**(1 시작 / 3 이미 10블록 안 → 알림·시전 실패 / 2 다른 세계 → 알림·실패), 없으면 예전처럼 기억한 위치 |
+| ChacademyStory 플러그인 | `StoryPlugin.questGuide(Player)` 공개 → `QuestEngine.guide` (단계 목표 = 위치 포탈 또는 NPC클릭 NPC, 조건 미충족이어도 가리킴, 미리보기 중·목표 없음 = 0), 새 채널 `chacademy:quest_guide` (VarInt session) |
+| 스토리 모드 | `QuestPackets.GuideS2C`, `QuestClient.onGuide`, `QuestWorld.drawGuide` + `textures/quest/guide_arrow.png` |
+
+- 화살표: 3인칭 = 머리 위, **1인칭 = 눈앞 1.5블록·조금 아래** (1인칭에서는 머리 위가 안 보여서). 판은 바닥과 나란히 두고 카메라 쪽으로 기울임. 아래에 남은 수평 거리(m, 바닐라 글꼴 외곽선). 뒤쪽 빛(블룸)은 셰이더팩이면 생략.
+- NPC 목표는 그 NPC 엔티티가 로드돼 있으면 실시간 위치, 아니면 서버가 보낸 좌표.
+- 끄는 조건(클라): 목표 수평 10블록 안 · 단계(session) 변경 · 다른 세계 · 목표 없음 · 접속 끊김 → 0.45초 페이드. 서버는 계속 신경 쓰지 않음 (매 틱 작업·위치 패킷 없음, 시전 때 1회 수 바이트).
+- 서버 10블록 판정(`QuestEngine.GUIDE_NEAR_DISTANCE`)과 클라(`QuestWorld.GUIDE_NEAR`)는 같은 값이어야 함.
+- 예전 버전 섞임: 스토리 플러그인이 예전이면 MagicMythic 은 예전 동작. 모드가 예전이면 채널을 안 들어서 0 → 예전 동작.
+- 확인 못 함 (빌드 필요): 컴파일 (`Font.drawInBatch8xOutline`, `Camera.getYRot`, `CameraType.isFirstPerson`), 화살표가 목표 쪽을 맞게 가리키는지(앞뒤·좌우 뒤집힘), 1·3인칭 위치·크기.
+- 마법 설명 문구(도감 "저장된 길잡이 표식 방향을 10초 동안…")는 바꾸지 않음.

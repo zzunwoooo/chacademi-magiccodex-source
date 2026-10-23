@@ -71,4 +71,13 @@ public final class QuestPackets {
 
         @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
     }
+
+    /** 길잡이 별: 이 session 의 단계 목표를 화살표로 가리키기 시작. 목표 10블록 안·단계 변경·다른 세계면 클라가 끈다. */
+    public record GuideS2C(int session) implements CustomPacketPayload {
+        public static final Type<GuideS2C> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath("chacademy", "quest_guide"));
+        public static final StreamCodec<RegistryFriendlyByteBuf, GuideS2C> CODEC = StreamCodec.of(
+                (buf, v) -> buf.writeVarInt(v.session()), buf -> new GuideS2C(buf.readVarInt()));
+
+        @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
+    }
 }

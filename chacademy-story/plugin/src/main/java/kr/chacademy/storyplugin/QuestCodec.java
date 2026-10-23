@@ -16,6 +16,8 @@ import java.util.List;
 final class QuestCodec {
     static final String STEP = "chacademy:quest_step";
     static final String UPDATE = "chacademy:quest_update";
+    /** 길잡이 별: 지금 단계(session)의 목표를 머리 위 화살표로 가리키기 시작 (목표 10블록 안 / 단계가 바뀌면 클라가 스스로 끈다). */
+    static final String GUIDE = "chacademy:quest_guide";
 
     static final int TARGET_NONE = 0, TARGET_LOCATION = 1, TARGET_NPC = 2;
 
@@ -59,6 +61,12 @@ final class QuestCodec {
         writeBool(out, ready);
         StoryCodec.writeVarInt(out, current.length);
         for (int c : current) StoryCodec.writeVarInt(out, Math.max(0, c));
+        return out.toByteArray();
+    }
+
+    static byte[] guide(int session) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StoryCodec.writeVarInt(out, session);
         return out.toByteArray();
     }
 
