@@ -57,6 +57,22 @@ public final class DialogueRunner {
 
     private final Map<String, String> faces = new HashMap<>();
     private String lastPortrait = null;
+
+    /**
+     * 초상화 리소스(리소스팩 chacademia_npc → magiccodex:textures/gui/dialogue/&lt;이름&gt;.png)에 그 이름이 있는지.
+     * 클라이언트가 켜질 때 정해 준다. 기본값(테스트)은 없음 → 예전처럼 대화 폴더의 그림 파일.
+     */
+    public static volatile java.util.function.Predicate<String> packPortrait = name -> false;
+    private static final java.util.regex.Pattern PACK_NAME = java.util.regex.Pattern.compile("[a-z0-9_/-]{1,120}");
+
+    /** 대화 파일의 그림 이름(예: bram-neutral.png) → 리소스팩 초상화 이름(bram-neutral). 리소스팩에 없으면 null. */
+    static String packName(String file) {
+        if (file == null) return null;
+        String n = file.strip().toLowerCase(java.util.Locale.ROOT);
+        if (n.endsWith(".png")) n = n.substring(0, n.length() - 4);
+        if (!PACK_NAME.matcher(n).matches()) return null;
+        try { return packPortrait.test(n) ? n : null; } catch (RuntimeException e) { return null; }
+    }
     private List<Dialogue.Choice> visibleChoices = List.of();
     private final Set<String> enteredAffinity = new HashSet<>();
 
@@ -248,7 +264,12 @@ public final class DialogueRunner {
         m.put("text", line == null ? "" : fill(line.text()));
         // "나"가 말하면 내 일러스트. 아직 없으면 MagicCodex 가 아래 그림 파일을 대신 쓴다
         m.put("playerPortrait", sp != null && sp.isPlayer());
-        if (folder != null && lastPortrait != null) m.put("portraitFile", folder.resolve(lastPortrait));
+        // 초상화: 리소스팩(이름 하나로 스토리·AI 대화 공통)이 먼저, 없으면 예전 대화 폴더의 그림 파일
+        if (lastPortrait != null) {
+            String pack = packName(lastPortrait);
+            if (pack != null) m.put("portrait", pack);
+            else if (folder != null) m.put("portraitFile", folder.resolve(lastPortrait));
+        }
         List<List<String>> choices = new ArrayList<>();
         for (int i = 0; i < visibleChoices.size(); i++) choices.add(List.of(CHOICE + i, fill(visibleChoices.get(i).text())));
         m.put("choices", choices);
@@ -281,6 +302,7 @@ public final class DialogueRunner {
         List<Path> out = new ArrayList<>();
         for (String name : names) {
             if (out.size() >= MAX_PRELOAD) break;
+            if (packName(name) != null) continue; // 리소스팩 그림은 미리 읽을 필요 없음
             out.add(folder.resolve(name));
         }
         return out;

@@ -215,6 +215,14 @@ public final class CutscenePackets {
                 ByteBufCodecs.STRING_UTF8, DialogueViewS2C::id, ByteBufCodecs.STRING_UTF8, DialogueViewS2C::vars, DialogueViewS2C::new);
         @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
     }
+    /** 서버가 보내는 대화 내용 (dialogue.yml 글). 대화를 여는 패킷 바로 앞에 온다. */
+    public record DialogueContentS2C(String id, String text) implements CustomPacketPayload {
+        public static final Type<DialogueContentS2C> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(NAMESPACE, "dialogue_content"));
+        public static final StreamCodec<RegistryFriendlyByteBuf, DialogueContentS2C> CODEC = StreamCodec.of(
+                (buf, v) -> { buf.writeUtf(v.id(), 64); buf.writeUtf(v.text(), kr.chacademy.story.dialogue.ServerDialogues.MAX_CHARS); },
+                buf -> new DialogueContentS2C(buf.readUtf(64), buf.readUtf(kr.chacademy.story.dialogue.ServerDialogues.MAX_CHARS)));
+        @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
+    }
     public record DialogueRewardC2S(String key) implements CustomPacketPayload {
         public static final Type<DialogueRewardC2S> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(NAMESPACE, "dialogue_reward"));
         public static final StreamCodec<RegistryFriendlyByteBuf, DialogueRewardC2S> CODEC = StreamCodec.composite(SHORT_STRING, DialogueRewardC2S::key, DialogueRewardC2S::new);
