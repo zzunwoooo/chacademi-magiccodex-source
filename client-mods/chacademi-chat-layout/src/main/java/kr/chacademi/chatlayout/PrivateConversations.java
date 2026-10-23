@@ -58,7 +58,7 @@ public final class PrivateConversations {
    if(kind==5){
     ChatTab tab=ChatLayout.privateTab(peer,name,true);if(tab!=null)add(tab,name,text,id);
    }else if(kind==4){
-    ChatTab tab=ChatLayout.privateTab(peer,name,false);
+    ChatTab tab=ChatLayout.privateTab(peer,name,true);
     if(tab!=null)add(tab,"나",text,Minecraft.getInstance().player.getUUID());
    }else if(kind==2){
     ChatTab tab=ChatLayout.privateTab(peer,name,false);
@@ -72,10 +72,10 @@ public final class PrivateConversations {
   var icon=Component.literal("\uE101").withStyle(Style.EMPTY.withFont(ResourceLocation.fromNamespaceAndPath("magiccodex","whisper")));
   var line=icon.append(Component.literal(" "+sender+" : "+text).withStyle(Style.EMPTY.withFont(ResourceLocation.withDefaultNamespace("default"))));
   tab.addNewMessage(new AddNewMessageEvent(line,line,id,null,Minecraft.getInstance().gui.getGuiTicks(),null,false));
-  // These payloads bypass vanilla chat: mirror only this client's delivered private message.
-  for(var window:Config.INSTANCE.getValues().getChatWindows())for(var aggregate:window.getTabSettings().getTabs())
-   if(aggregate!=tab&&peer(aggregate)==null&&aggregate.getName().equals("전체"))
-    aggregate.addNewMessage(new AddNewMessageEvent(line,line,id,null,Minecraft.getInstance().gui.getGuiTicks(),null,false));
+  // SocialBridge already sends the vanilla whisper component to sender and recipient.
+  // ChatPlus routes that single component into 전체/귓말 through their existing filters.
+  // The private payload belongs only to the peer tab; mirroring it duplicates aggregate history.
+
  }
  private static void notice(ChatTab tab,String text){
   var line=Component.literal(text).withStyle(net.minecraft.ChatFormatting.YELLOW);

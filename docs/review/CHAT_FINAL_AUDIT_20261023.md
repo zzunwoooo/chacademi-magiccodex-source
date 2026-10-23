@@ -1,0 +1,11 @@
+# Chat final audit — code verified, game verification outstanding
+
+Actual installed proxy JAR was placed first on the isolated test runtime classpath. InstalledOriginTest verifies PartyPlugin and NetworkChat came from that installed JAR, not newly compiled classes. 51 tests passed, including global exactly-once delivery across school/wild/arena, same-house routing, different/unassigned-house exclusion, stale/forged identities, active-backend changes during fanout, mute and explicit deny. No operating messages or test clients were used. Existing proxy logging, filtering, spectator isolation and flood controls were not changed.
+
+Two client defects were found: SocialBridge emits the vanilla whisper component and a private response payload, but PrivateConversations mirrored the payload into 전체 again; closing a private window deleted its native ChatTab and its history. Remove the redundant aggregate mirror, retain the native tab when its window closes, and create the peer tab for successful outgoing whispers. Vanilla ChatPlus filtering still feeds 전체 and 귓말; payload feeds only the peer tab. 136 client tests and remapJar build passed. Actual open/closed/other-category unread, sort, notifications and rendering require multi-client checks and are not claimed as visually verified.
+
+Scope remains proxy address/player UUID. Backend switches and reconnects under the same scope do not switch peer identity. Different address/account sending is blocked. Existing SocialBridge conversation sessions/tickets expire on disconnect and its whisper transport is local-backend; this change does not implement cross-backend whispers. Native in-memory history is retained on window close; durable history across game-process restarts is not newly promised.
+
+Deployed UI font/chat.json maps E111 to textures/font/chat_dormitory.png; the asset exists and its hash is recorded in ready.json. It is the generic dormitory-category logo. Rendering with real clients and per-house crest expectations are unverified.
+
+Deploy target is only the prepared chacademi-chat-layout-1.6.1-whisper.1.jar, after clean game shutdown. No Bridge, proxy, MCPets, launcher publication, local client replacement or restart was performed. ready.json contains exact hashes and the acceptance boundaries.

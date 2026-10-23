@@ -455,15 +455,9 @@ public final class ChatLayout {
         var tab=window.getTabSettings().getSelectedTab();
         if(PrivateConversations.peer(tab)==null)return false;
         PrivateConversations.closed(tab);
-        var tabs=window.getTabSettings().getTabs();tabs.remove(tab);
-        if(tabs.isEmpty()){
-            Config.INSTANCE.getValues().getChatWindows().remove(window);states.remove(window);panels.remove(window);
-        }else{
-            window.getTabSettings().setSelectedTabIndex(Math.min(window.getTabSettings().getSelectedTabIndex(),tabs.size()-1));
-            window.getTabSettings().setStartRenderTabIndex(0);window.updateWindowReference();
-            window.getTabSettings().resetSortedChatTabs(false);
-        }
-        ChatManager.INSTANCE.resetGlobalSortedTabs();ConfigKt.setQueueUpdateConfig(true);
+        // Keep the native tab object, history, scroll and unread state. New delivery reopens it.
+        // Its UUID/account/server scope marker still prevents replying through a different scope.
+        var saved=states.get(window);if(saved!=null)saved.close();
         refresh();ensureInputOwner(false);save();return true;
     }
     private static boolean clickPanel(ChatWindow window,LayoutMath.Panel panel,double mx,double my){
