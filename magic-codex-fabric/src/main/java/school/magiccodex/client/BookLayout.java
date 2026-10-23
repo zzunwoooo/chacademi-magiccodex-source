@@ -18,7 +18,10 @@ final class BookLayout {
     static final float FRACTION = 0.80f;
 
     // text boxes (one per side)
-    static final float LEFT_X = 185, RIGHT_X = 918, BOX_W = 567;
+    static final float LEFT_X = 185, RIGHT_X = 945, BOX_W = 567;
+    /** Right side box width: starts 70 px from its spine-side edge (~875) so the text does not hug the fold. */
+    static final float RIGHT_W = 540;
+    static float boxWidth(boolean right) { return right ? RIGHT_W : BOX_W; }
     static final float BOX_TOP = 160, BOX_BOTTOM = 780;
     // first page: title (one line, or two when long) + divider at the top of the left side, body under it
     static final float TITLE_TOP = 170, TITLE_SIZE = 46, TITLE_MIN = 30, TITLE_TWO_LINE_SIZE = 34, TITLE_TWO_LINE_MIN = 24, TITLE_LINE = 1.3f;
@@ -45,7 +48,7 @@ final class BookLayout {
         return right ? RIGHT_TOP_SLOPE + (RIGHT_BOTTOM_SLOPE - RIGHT_TOP_SLOPE) * t : LEFT_TOP_SLOPE + (LEFT_BOTTOM_SLOPE - LEFT_TOP_SLOPE) * t;
     }
     /** Shear pivot of a page (centre of its text box). */
-    static float pivot(boolean right) { return (right ? RIGHT_X : LEFT_X) + BOX_W / 2; }
+    static float pivot(boolean right) { return (right ? RIGHT_X : LEFT_X) + boxWidth(right) / 2; }
     /** Where a point drawn level at (x, y) lands on the tilted page. */
     static float tiltedY(boolean right, float x, float y) { return y + slope(right, y) * (x - pivot(right)); }
 

@@ -78,7 +78,7 @@ final class BookScreen extends Screen {
                 leftTop = dividerY + BookLayout.BODY_GAP;
             }
             var left = BookLayout.fit(p.left(), BookLayout.BOX_W, BookLayout.BOX_BOTTOM - leftTop, BookLayout.BODY_SIZE, BookLayout.BODY_MIN, BookLayout.LINE, body);
-            var right = BookLayout.fit(p.right(), BookLayout.BOX_W, BookLayout.BOX_BOTTOM - BookLayout.BOX_TOP, BookLayout.BODY_SIZE, BookLayout.BODY_MIN, BookLayout.LINE, body);
+            var right = BookLayout.fit(p.right(), BookLayout.RIGHT_W, BookLayout.BOX_BOTTOM - BookLayout.BOX_TOP, BookLayout.BODY_SIZE, BookLayout.BODY_MIN, BookLayout.LINE, body);
             return new PageLayout(head, titleTop, dividerY, left, leftTop, right);
         });
     }
