@@ -237,7 +237,9 @@ public final class HousingScreen extends SocialScreen {
         int color=over||active?0xFFFFFFFF:GOLD_TEXT;
         if(label.isEmpty()){if(icon!=null)HousingTex.icon(images,c,icon,x+w/2,y+h/2,h*.44f,0xFFFFFFFF);return;}
         float size=Math.min(19,h*.4f);
-        float tw=type.width(label,size,BODY),iw=icon==null?0:h*.44f+8,left=x+(w-tw-iw)/2;
+        float iw=icon==null?0:h*.44f+8;
+        if(label.equals("유저 검색"))size=HousingSearchTextFit.buttonSize(size,w,iw,type.width(label,size,BODY));
+        float tw=type.width(label,size,BODY),left=x+(w-tw-iw)/2;
         if(icon!=null)HousingTex.icon(images,c,icon,left+h*.22f,y+h/2,h*.44f,0xFFFFFFFF);
         type.draw(c,label,left+iw,y+h/2,size,color,BODY,false);
     }
@@ -721,7 +723,7 @@ public final class HousingScreen extends SocialScreen {
                 type.draw(c,fit(p.name(),21,w-230,BOLD),x+82,ty+30,21,f.online()?0xFFFFFFFF:0xFFB4BCC4,BOLD,false);
                 if(f.online())icon(images,c,ICON_ONLINE,x+88,ty+57,12,0xFFFFFFFF);else HudMesh.disk(c,x+88,ty+57,4.5f,0xFF7D8894);
                 String info=(f.online()?"온라인":"오프라인")+(f.friend()?" · 친구":"")+(p.house()>=0?" · "+SchoolProtocol.HOUSES.get(p.house()):"")+(f.size()>0?" · 방 "+f.size()+"×"+f.size():"");
-                type.draw(c,info,x+100,ty+57,15,f.online()?GREEN:OFF,BODY,false);
+                type.draw(c,fit(info,15,w-220,BODY),x+100,ty+57,15,f.online()?GREEN:OFF,BODY,false);
                 boolean can=f.size()>0&&(f.friend()||p.id().equals(me)||client.player.hasPermissionLevel(2));
                 boolean over=can&&live&&in(mx,my,x+w-108,ty+20,96,42);if(over)hit=H_VISIT+i;
                 button(c,can?"방문":f.size()==0?"방 없음":"친구 전용",null,x+w-108,ty+20,96,42,over,false);
