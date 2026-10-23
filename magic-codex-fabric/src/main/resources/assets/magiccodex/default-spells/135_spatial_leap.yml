@@ -1,11 +1,11 @@
 id: spatial_leap
 name: 공간 도약
 category: light
-description: 이미 발견한 전이석으로 공간을 넘어 이동합니다.
+description: 지금 서 있는 곳을 개인 지점으로 새깁니다. 지도에서 개인 지점으로 이동할 때도 같은 마나와 재사용 대기가 듭니다.
 icon: magiccodex:textures/spells/intermediate/spatial_leap.png
 permission: magic.learned.spatial_leap
 discovery:
-  description: 서로 다른 전이석 3곳에 처음 방문하기.
+  description: 지도 이동의 서로 다른 공개 지점 3곳을 발견하기.
 research: 먼 거리를 접는 데에는 목적지를 분명하게 떠올리는 일이 먼저다.
 cast:
   command: ''

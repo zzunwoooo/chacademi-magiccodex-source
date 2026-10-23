@@ -101,6 +101,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private FishingBridge fishing;
     private FishShopBridge fishShop;
     private BookBridge books;
+    private TravelBridge travel;
     private FishTankBridge fishTank;
     private ArtifactEffects artifactEffects;
     private PartyRoster partyRoster;
@@ -122,6 +123,10 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     void artifactCast(Player p,String spell,double cost){if(artifactEffects!=null)artifactEffects.cast(p,spell,cost);}
     private PlayerStateBridge playerState;
     boolean playerStateReady(Player p){return playerState==null||playerState.ready(p);}
+    /** Combat tag (artifact effects: dealt or took hostile damage in the last 5 s). */
+    boolean inCombat(Player p){return artifactEffects!=null&&artifactEffects.inCombat(p);}
+    /** 지도 이동 (null when travel.yml failed to load). Personal point API: travel().setPersonal(player, location, source, done). */
+    public TravelBridge travel(){return travel;}
     void savePlayerState(Player p){if(playerState!=null)playerState.save(p);}
     /** 잦은 변경(마법 시전)용: 표시만 하고 다음 주기 저장에 묶는다. 종료·서버 이동 시에는 항상 저장된다. */
     void markPlayerStateDirty(Player p){if(playerState!=null)playerState.markDirty(p);}
@@ -219,6 +224,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(fishing!=null)try{fishShop=new FishShopBridge(this,fishing);}catch(Exception error){getLogger().severe("물고기 판매소 초기화 실패 (fish-shop.yml 확인): "+error.getMessage());}
         if(fishing!=null){fishTank=new FishTankBridge(this,fishing,fishShop);fishing.tankWindow(fishTank);if(mana!=null)mana.fishTrapCast=fishTank::cast;}
         try{books=new BookBridge(this);}catch(Exception error){getLogger().severe("책 읽기 초기화 실패 (books.yml·book-blocks.yml 확인): "+error.getMessage());}
+        try{travel=new TravelBridge(this);}catch(Exception error){getLogger().severe("지도 이동 초기화 실패 (travel.yml 확인): "+error.getMessage());}
+        if(travel!=null&&mana!=null){mana.spatialLeapCast=travel::castSpatialLeap;travel.mana(mana);}
         new AdminCommandBridge(this,mana,school,enhancement,appraisal,titles,npcSocial);
         NameplateBootstrap.initialize(this);
         getLogger().info("권한 연동 준비 완료. 활성 도감만 조회, 작업당 최대 " + budget + "회, 보조 확인 " + refresh / 1000 + "초.");
@@ -282,6 +289,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(fishTank!=null){fishTank.close();fishTank=null;}
         if(fishShop!=null){fishShop.close();fishShop=null;}
         if(books!=null){books.close();books=null;}
+        if(travel!=null){travel.close();travel=null;}
         if(fishing!=null){fishing.close();fishing=null;}
         if(shopAdmin!=null)shopAdmin.close(); if(shops!=null)shops.close(); if(mailbox!=null)mailbox.close();
         if(spellRuntime!=null){spellRuntime.close();spellRuntime=null;}

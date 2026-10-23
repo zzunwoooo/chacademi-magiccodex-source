@@ -58,6 +58,7 @@ public final class PartyPlugin {
     private PartyStore store;
     private volatile boolean ready;
     private KyudichiQueue kyudichi;
+    private TravelRelay travel;
     /** 자동완성용 접속자 한글 닉네임 (작업 스레드가 0.25초마다 갱신, 명령 스레드가 읽는다). */
     private volatile List<String> onlineNames=List.of();
 
@@ -101,6 +102,16 @@ public final class PartyPlugin {
             @Override public List<String> onlineNames(){return onlineNames;}
         },this);
         try{kyudichi.initialize(directory);}catch(RuntimeException e){logger.error("Kyudichi queue initialization failed; queue unavailable",e);}
+        // 지도 이동: 게임 서버가 확인·기록한 이동 표대로 서버만 옮긴다 (TravelRelay).
+        try{
+            travel=new TravelRelay(proxy,logger,new TravelRelay.Host(){
+                @Override public boolean enqueue(Runnable task){return PartyPlugin.this.enqueue(task);}
+                @Override public boolean trusted(String server){return trusted.contains(server);}
+                @Override public boolean blocked(UUID player){return kyudichi!=null&&kyudichi.travelBlocked(player);}
+            },this);
+            travel.initialize(directory);
+            proxy.getEventManager().register(this,travel);
+        }catch(RuntimeException e){logger.error("Travel relay initialization failed; map travel between servers unavailable",e);travel=null;}
         // C12: 통합 채팅 뮤트는 Velocity 권한 chacademi.chat.muted 뿐 — 권한 플러그인이 없으면 아무도 뮤트되지 않는다
         if(!proxy.getPluginManager().isLoaded("luckperms"))logger.warn("Velocity 에 LuckPerms 가 없어 통합 채팅(전체·기숙사) 뮤트 권한 chacademi.chat.muted 가 동작하지 않습니다");
     }
@@ -108,7 +119,7 @@ public final class PartyPlugin {
         ready=false;if(kyudichi!=null)kyudichi.shutdown();worker.shutdown();try{if(!worker.awaitTermination(10,TimeUnit.SECONDS))logger.warn("Party worker still draining during shutdown");}catch(InterruptedException e){Thread.currentThread().interrupt();}
     }
     @Subscribe public void disconnect(DisconnectEvent event){
-        UUID id=event.getPlayer().getUniqueId();enqueue(()->{if(network!=null)network.disconnect(id);if(hud!=null)hud.disconnect(id);roster.disconnect(id);ui.disconnect(id);nextChat.remove(id);nextCommand.remove(id);});
+        UUID id=event.getPlayer().getUniqueId();if(travel!=null)travel.disconnect(id);enqueue(()->{if(network!=null)network.disconnect(id);if(hud!=null)hud.disconnect(id);roster.disconnect(id);ui.disconnect(id);nextChat.remove(id);nextCommand.remove(id);});
         // Disconnect/server transfer does not change durable membership.
     }
     @Subscribe public void identity(PluginMessageEvent event){

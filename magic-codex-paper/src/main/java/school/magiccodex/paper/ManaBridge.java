@@ -23,6 +23,28 @@ final class ManaBridge implements Listener,PluginMessageListener,AutoCloseable {
     /** 아공간 수조 (fish_trap, 2026-10-20): opens the tank window; false = not opened, no mana spent. */
     java.util.function.Predicate<Player> fishTrapCast;
     Response castWindForFriend(Player p){var result=cast(p,0,spells.byId.get("wind_message"),()->true);send(p,result);return result;}
+    /**
+     * 공간 도약 (spatial_leap, owner 2026-10-23): casting it saves the current location as the personal point
+     * (TravelBridge). Must answer synchronously: true = accepted (mana and cooldown are charged); if the save then fails
+     * TravelBridge refunds with {@link #refundSpatialLeap}.
+     */
+    java.util.function.Predicate<Player> spatialLeapCast;
+    static final String SPATIAL_LEAP="spatial_leap";
+    /**
+     * 지도에서 개인 지점으로 이동 = 공간 도약 시전과 같은 마나·같은 재사용 대기 (owner 2026-10-23). Same transaction as a cast
+     * (permission, cooldown, mana), without the register dispatch. null = the spell is not enabled in mana-spells.yml.
+     * The returned status is ManaProtocol.OK when charged; message(status) explains the rest.
+     */
+    Integer chargeSpatialLeapTravel(Player p){
+        var spell=spells.byId.get(SPATIAL_LEAP);if(spell==null)return null;
+        var r=cast(p,0,spell,()->true);send(p,r);return r.status();
+    }
+    /** Gives back one spatial_leap charge (the move or the save failed afterwards): mana back and the cooldown cleared. */
+    void refundSpatialLeap(Player p){
+        var spell=spells.byId.get(SPATIAL_LEAP);if(spell==null||!p.isOnline())return;
+        try{mana.add(p.getUniqueId(),spell.cost());mana.clearCooldown(p.getUniqueId(),SPATIAL_LEAP);}catch(IllegalArgumentException notLoaded){return;}
+        var a=mana.snapshot(p.getUniqueId());if(a.isPresent())send(p,new Response(0,ManaProtocol.SNAPSHOT,0,a.get()));
+    }
     List<String> discoveryPermissions(){var result=new ArrayList<>(spells.discoveryPermissions);if(!result.contains("magiccodex.taming"))result.add("magiccodex.taming");return List.copyOf(result);}
     /** MythicMobs 실행 경로(SpellRuntime)가 켜져 있으면 그 새로고침·경로 수. MythicMobs 클래스를 여기서 직접 부르지 않으려고 따로 둔다. */
     record Runtime(ChacaApi.ThrowingRunnable reload,java.util.function.IntSupplier routes,Object owner){}
@@ -135,6 +157,7 @@ final class ManaBridge implements Listener,PluginMessageListener,AutoCloseable {
                     windCast.accept(p);return true;
                 }
                 if(spell.id().equals("fish_trap"))return fishTrapCast!=null&&fishTrapCast.test(p);
+                if(spell.id().equals(SPATIAL_LEAP))return spatialLeapCast!=null&&spatialLeapCast.test(p);
                 Boolean handled=plugin.runtimeCast(p,spell.id());
                 if(handled!=null)return handled;
                 String label=spell.command().split("\\s+",2)[0];

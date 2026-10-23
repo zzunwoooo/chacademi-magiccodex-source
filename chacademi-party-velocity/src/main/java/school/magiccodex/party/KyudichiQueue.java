@@ -135,6 +135,8 @@ final class KyudichiQueue {
     boolean arenaBystander(Player p) { return onArena(p) && !playing.containsKey(p.getUniqueId()); }
     /** A participant of an assigned match (any server). Worker thread. */
     boolean inMatch(UUID id) { return playing.containsKey(id); }
+    /** 지도 이동 (TravelRelay, worker thread): in a match, a match offer, or on the way to the arena — don't move servers. */
+    boolean travelBlocked(UUID id) { return playing.containsKey(id) || offerOf.containsKey(id) || pendingSpectate.containsKey(id) || pendingPractice.contains(id); }
     private void say(UUID id, String text) { var p = online(id); if (p != null) host.notice(p, text); }
     private void sayAll(List<UUID> ids, String text) { for (UUID id : ids) say(id, text); }
     private void toClient(Player p, ToClient m) { if (modded.contains(p.getUniqueId())) p.sendPluginMessage(QUEUE, KyudichiQueueProtocol.encode(m)); }

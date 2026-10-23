@@ -235,7 +235,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
     }
     public boolean state(UUID id,String key,double value){return state(id,key,value,false);}
     boolean state(UUID id,String key,double value,boolean verifiedAction){
-        main();if(!Set.of("state.circle","state.temperature","state.flight_prohibited","state.mana_maximum","state.friends").contains(key)||!Double.isFinite(value)||Math.abs(value)>1e6)return false;
+        main();if(!Set.of("state.circle","state.temperature","state.flight_prohibited","state.mana_maximum","state.friends","state.travel_waypoints").contains(key)||!Double.isFinite(value)||Math.abs(value)>1e6)return false;
         if(key.equals("state.circle")&&(value<1||value>9||value!=Math.floor(value)))return false;
         var s=sessions.get(id);if(s==null||!s.loaded)return false;Double previous=s.progress.put(key,value);if(key.equals("state.circle")){s.circleTouched=true;if(!Objects.equals(previous,value))s.dirtyKeys.add(key);}var p=Bukkit.getPlayer(id);
         if(p!=null)for(var spell:definitions.index.getOrDefault(key,List.of()))if(s.learned.meets(spell,s.progress,verifiedAction))acquire(p,s,spell);return true;

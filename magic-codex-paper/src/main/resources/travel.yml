@@ -1,0 +1,87 @@
+# 지도 이동 (/지도) 설정 — 학교·야생 모든 서버에 "같은 파일"을 두고, server-id 한 줄만 서버마다 다르게 씁니다.
+# 고친 뒤: /서버관리 새로고침 이동   (서버마다 한 번씩)
+# 파일이 서버끼리 다르면 /서버관리 상태 · /컨텐츠관리 이동지점 목록 에 "travel.yml 다름" 이 표시됩니다.
+
+# 이 서버의 서버 ID (아래 servers 의 키). 학교 서버 = school, 야생1 서버 = wild, 야생2 서버 = wild2 ...
+server-id: school
+
+# 서버 목록. 키 = DB 에 저장되는 서버 ID (바꾸지 마세요 — 바꾸면 저장된 개인 지점이 "지도에서 빠진 서버" 가 됩니다).
+#   proxy   = Velocity 서버 이름 (velocity.toml [servers] 의 이름)
+#   enabled = false 면 그 서버로의 이동만 막고 지점·기록은 그대로 둡니다 ("이동할 수 없어요" 로 표시).
+# 서버를 빼고 싶으면 지우지 말고 enabled: false 로 두는 걸 권장합니다 (지우면 그 서버 지점은 "지도에서 빠진 서버" 로 표시).
+servers:
+  school:
+    proxy: school
+    label: 학교
+  wild:
+    proxy: wild
+    label: 야생1
+  wild2:
+    proxy: wild2
+    label: 야생2
+    enabled: false   # 야생2 서버가 아직 없으면 false (Velocity 에 wild2 를 만든 뒤 true)
+
+# 지도 탭 (위에서부터 순서대로, 오너 결정: 학교 / 야생1 / 야생2).
+#   server, world = 그 탭이 보여 주는 서버·세계
+#   map: image   = 고정 그림 지도 (학교 타운맵). 그림은 리소스팩에, 아래 image 설정만 바꾸면 교체 끝 (코드 수정 없음)
+#   map: terrain = 실제 지형 지도 (야생). 지형 그리기는 아직 미구현 — 지금은 좌표 격자 위에 지점만 표시
+#   map: none    = 좌표 격자 위에 지점만 표시
+#   bounds (선택) = 지도에서 볼 수 있는 범위 (월드 보더 등). image 는 그림 범위를 씁니다.
+tabs:
+  school:
+    label: 학교
+    server: school
+    world: world
+    map: none
+    # 학교 타운맵 그림이 준비되면 map: image 로 바꾸고 아래 주석을 풉니다.
+    # image:
+    #   texture: magiccodex:textures/gui/travel/maps/school.png   # 리소스팩 안 경로 (PNG)
+    #   size: [2048, 2048]                                         # 그림 가로·세로 픽셀
+    #   # 그림 모서리 3곳이 가리키는 월드 좌표 [x, z] (그림의 왼쪽 위 / 오른쪽 위 / 왼쪽 아래 모서리).
+    #   # 북쪽이 위인 보통 지도:  top-left [minX, minZ]  top-right [maxX, minZ]  bottom-left [minX, maxZ]
+    #   # 회전·뒤집힌 그림도 이 세 점만 맞으면 됩니다.
+    #   top-left: [-512, -512]
+    #   top-right: [512, -512]
+    #   bottom-left: [-512, 512]
+  wild1:
+    label: 야생1
+    server: wild
+    world: world
+    map: terrain
+    # bounds: { min-x: -5000, min-z: -5000, max-x: 5000, max-z: 5000 }
+  wild2:
+    label: 야생2
+    server: wild2
+    world: world
+    map: terrain
+
+# 공개 이동 지점. 키 = 지점 ID (영문 소문자·숫자·_·-, DB 해금 기록에 쓰이니 바꾸지 마세요).
+#   name   = 표시 이름 (32자까지)
+#   server, world, x, y, z, yaw, pitch = 도착 위치이자 발견(해금) 위치
+#   radius = 처음 이만큼(블록) 가까이 오면 해금 (1~32, 기본 3)
+#   enabled: false = 지도에서 이동 막기 (해금 기록은 남음)
+# 게임 안에서: /컨텐츠관리 이동지점 추가 <ID> <반경> <이름>  (지금 서 있는 곳, 이 서버 파일만 바뀜)
+points: {}
+#  harbor_town:
+#    name: 항구 마을
+#    server: school
+#    world: world
+#    x: 120.5
+#    y: 64
+#    z: -340.5
+#    yaw: 90
+#    radius: 4
+
+# 이동 규칙 — 오너 미정 사항이라 기본은 모두 꺼짐 (켜려면 오너 확인 후).
+rules:
+  block-in-combat: false   # true = 전투 중(최근 5초 몬스터·플레이어와 피해 주고받음) 이동 막기
+  cooldown-seconds: 0      # 이동 뒤 다음 이동까지 대기 (0 = 없음)
+# 큐디치 경기 중 이동, 사망·관전 상태 이동, 캐릭터 정보 로딩 전 이동은 항상 막습니다 (기존 제한).
+
+display:
+  reveal-locked-names: false   # false = 미발견 지점은 "미발견 지점" 으로 표시
+
+storage:
+  # 해금·개인 지점은 공유 MariaDB(player-state-database.properties 또는 database.properties)에만 저장합니다.
+  # MariaDB 가 없으면 지도 이동은 꺼집니다. 서버 한 대 테스트에만 true (로컬 travel.db, 다른 서버와 공유 안 됨).
+  allow-local-test-db: false
