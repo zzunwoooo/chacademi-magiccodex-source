@@ -18,6 +18,7 @@
     "ItemIconMixin",
     "ItemModelManagerMixin",
     "ItemRenderStateMixin",
+    "ItemLayerAccessor",
     "WhisperGlyphMixin",
     "ChatIconGlyphMixin",
     "CodexMouseMixin",

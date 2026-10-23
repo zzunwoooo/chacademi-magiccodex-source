@@ -56,3 +56,4 @@
 - 반짝임(마법 부여) 아이템은 월드에서 바닐라로 남는다.
 - 정사각형이 아닌 텍스처는 GUI·월드 모두 비율을 유지해 가운데 정렬한다.
 - 자세한 내용·확인 목록: `docs/handoff/CLAUDE_HIRES_ITEM_WORLD_20261023.md`.
+- 2026-10-23 2차: JSON 체인으로 판정 못 하는 아이템(ItemsAdder `range_dispatch` 등)도, 바닐라가 고른 모델이 평면 단일 스프라이트(33px 이상)면 인벤토리·손·바닥 모두 매끈 카드로 그린다 (`ItemIconTextures.stateKey/flatSpriteKey`).
