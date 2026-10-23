@@ -60,7 +60,7 @@ final class CommandHub {
         ROOTS.put(ChacaApi.하우징관리, "기숙사실 문·가구 목록");
         ROOTS.put(ChacaApi.월드관리, "계절·토네이도·야생 몹·변색종");
         ROOTS.put(ChacaApi.던전관리, "던전 기믹 모델·퍼즐");
-        ROOTS.put(ChacaApi.컨텐츠관리, "등록된 칭호·아티팩트·연금술 레시피 보기·편집");
+        ROOTS.put(ChacaApi.컨텐츠관리, "등록된 칭호·아티팩트·연금술 레시피·책 보기·편집");
         ROOTS.put(ChacaApi.서버관리, "설정 새로고침·연결 상태·예산");
         ROOTS.put(ChacaApi.테스트, "미리보기·테스트 플레이");
         ROOTS.put(ChacaApi.개발, "개발자용 이펙트 디버그");
