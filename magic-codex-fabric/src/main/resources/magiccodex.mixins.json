@@ -16,6 +16,8 @@
     "TooltipScrollMixin",
     "HandledItemTooltipMixin",
     "ItemIconMixin",
+    "ItemModelManagerMixin",
+    "ItemRenderStateMixin",
     "WhisperGlyphMixin",
     "ChatIconGlyphMixin",
     "CodexMouseMixin",
