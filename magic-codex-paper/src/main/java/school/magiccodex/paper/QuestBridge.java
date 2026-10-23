@@ -43,7 +43,7 @@ final class QuestBridge implements Listener,PluginMessageListener,AutoCloseable 
     private final Map<UUID,Batch> deltas=new HashMap<>();private final Map<UUID,Integer> flushing=new HashMap<>();private final Map<UUID,Long> notices=new HashMap<>();
     QuestBridge(MagicCodexBridge plugin)throws Exception{
         this.plugin=plugin;file=new File(plugin.getDataFolder(),"quests.yml");if(!file.exists())plugin.saveResource("quests.yml",false);
-        var local=read();var settings=GenericDatabaseFile.load(plugin.getDataFolder().toPath());
+        var local=read();var settings=school.magiccodex.database.DatabaseSettings.load(plugin.getDataFolder().toPath().resolve("database.properties"));
         try{store=io.submit(()->new QuestStore(settings,plugin.getDataFolder().toPath().resolve("quests.db"))).get(15,TimeUnit.SECONDS);io.submit(()->{store.seed(local);return null;}).get(15,TimeUnit.SECONDS);catalog=io.submit(store::catalog).get(15,TimeUnit.SECONDS);}catch(Exception e){io.shutdownNow();throw e;}
         Bukkit.getPluginManager().registerEvents(this,plugin);Bukkit.getMessenger().registerIncomingPluginChannel(plugin,QuestProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,QuestProtocol.RESPONSE);
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin,QuestAdminProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,QuestAdminProtocol.RESPONSE);
