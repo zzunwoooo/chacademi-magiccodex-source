@@ -157,7 +157,7 @@ public final class DialogueService {
                 old.lastActivity = System.currentTimeMillis();
                 if (old.opened) {
                     old.view.open(p, old, c.fallback("greeting_again", plugin.settings().defaultFallbacks, random),
-                            plugin.settings().buttons, hearts(old));
+                            c.buttonsOr(plugin.settings().buttons), hearts(old));
                 }
                 return;
             }
@@ -190,7 +190,7 @@ public final class DialogueService {
             return;
         }
         s.opened = true;
-        s.view.open(p, s, greeting, plugin.settings().buttons, hearts(s));
+        s.view.open(p, s, greeting, s.character().buttonsOr(plugin.settings().buttons), hearts(s));
     }
 
     private int hearts(DialogueSession s) {
@@ -417,7 +417,7 @@ public final class DialogueService {
         String text;
         if (buttonId != null) {
             Button b = null;
-            for (Button x : st.buttons) {
+            for (Button x : s.character().buttonsOr(st.buttons)) {
                 if (x.id().equals(buttonId)) {
                     b = x;
                 }
@@ -1110,7 +1110,7 @@ public final class DialogueService {
         }
         warmupAt.put(key, now);
         int delay = 0;
-        for (Button b : st.buttons) {
+        for (Button b : c.buttonsOr(st.buttons)) {  // NPC 전용 버튼이면 그 버튼으로 미리 만든다
             int have = buttonCache.size(today, c.id(), slot, b.id());
             int need = Math.min(2, st.buttonCacheVariants - have);
             for (int i = 0; i < need; i++) {
