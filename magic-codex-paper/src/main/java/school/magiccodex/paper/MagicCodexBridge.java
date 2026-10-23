@@ -100,6 +100,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private AlchemyBridge alchemy;
     private FishingBridge fishing;
     private FishShopBridge fishShop;
+    private MileageBridge mileage;
     private FishTankBridge fishTank;
     private ArtifactEffects artifactEffects;
     private PartyRoster partyRoster;
@@ -207,6 +208,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(spellRuntime==null)getLogger().warning("Spell gameplay runtime unavailable: MythicMobs is not enabled; existing fallback routes remain active.");
         mana.bindSpellCommand();
         try { mailbox=new MailboxBridge(this); shops=new ShopBridge(this); shopAdmin=new ShopAdminBridge(this); } catch(Exception e) { getLogger().severe("Mailbox initialization failed: "+e.getClass().getSimpleName()); getServer().getPluginManager().disablePlugin(this); return; }
+        try{mileage=new MileageBridge(this);}catch(Exception error){getLogger().severe("마일리지 상점 초기화 실패 (shop-mailbox DB 확인): "+error);}
         journal=new JournalBridge(this);
         partyRoster=new PartyRoster(this);
         try{artifacts=new ArtifactBridge(this);}catch(Exception error){getLogger().severe("아티팩트 도감 초기화 실패 (artifacts.yml 확인): "+error.getMessage());}
@@ -279,6 +281,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(alchemy!=null){alchemy.close();alchemy=null;}
         if(fishTank!=null){fishTank.close();fishTank=null;}
         if(fishShop!=null){fishShop.close();fishShop=null;}
+        if(mileage!=null){mileage.close();mileage=null;}
         if(fishing!=null){fishing.close();fishing=null;}
         if(shopAdmin!=null)shopAdmin.close(); if(shops!=null)shops.close(); if(mailbox!=null)mailbox.close();
         if(spellRuntime!=null){spellRuntime.close();spellRuntime=null;}
