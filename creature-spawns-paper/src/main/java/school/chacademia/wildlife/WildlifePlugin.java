@@ -34,11 +34,15 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
     private NamespacedKey naturalKey;
     private boolean groupSpawning;
     private ChunkMobLimit chunkLimit;
+    private WildSpawner.Settings spawnerSettings=WildSpawner.Settings.OFF;
     private long lastCleanupLog;
     private final CropAwakening crops=new CropAwakening(this);
+    private final WildSpawner spawner=new WildSpawner(this);
+    private long lastSpawnerWarn;
     @Override public void onEnable() {
         naturalGate=new MainThreadSpawnGate(Bukkit::isPrimaryThread,action->{var task=Bukkit.getScheduler().runTask(this,action);return task::cancel;},16,250);
         saveDefaultConfig(); reloadSettings(); reloadHabitats(); naturalKey=new NamespacedKey(this,"natural");
+        spawner.apply(spawnerSettings);
         getServer().getPluginManager().registerEvents(this,this);
         // 구조물 색인은 지연 방식이다: 청크 로드 때가 아니라 구조물 조건이 있는 서식지가 물을 때만 계산한다.
         getServer().getPluginManager().registerEvents(structures,this);
@@ -64,6 +68,9 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         var nextChunkLimit=new ChunkMobLimit(cap);
         settings=new Settings(c.getBoolean("enabled",true),Set.copyOf(c.getStringList("worlds")),min*min,max*max,
             c.getInt("area-cap",24),Math.max(1,c.getInt("shiny-denominator",4096)),List.copyOf(excluded));
+        var spawnerWarnings=new ArrayList<String>();
+        spawnerSettings=WildSpawner.Settings.parse(c.getConfigurationSection("spawner"),spawnerWarnings);
+        if(!spawnerWarnings.isEmpty()) getLogger().warning("config.yml spawner 값을 기본값으로 대체: "+String.join(", ",spawnerWarnings));
         chunkLimit=nextChunkLimit;
         population.clear();
     }
@@ -81,11 +88,19 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         var entries=next.getConfigurationSection("habitats");
         if(entries==null||entries.getKeys(false).isEmpty()) throw new IllegalArgumentException("habitats 누락");
         var parsed=new LinkedHashMap<String,Habitat>(); var warnings=new ArrayList<String>();
-        for(String id:entries.getKeys(false)) parsed.put(id,Habitat.parse(id,entries.getConfigurationSection(id),warnings));
+        // 운영 서버의 habitats.yml에 rarity가 아직 없으면 플러그인에 들어 있는 기본 파일의 등급을 쓴다.
+        var defaultRarity=new HashMap<String,String>();
+        try(var in=getResource("habitats.yml")) {
+            if(in!=null) {
+                var bundled=YamlConfiguration.loadConfiguration(new java.io.InputStreamReader(in,java.nio.charset.StandardCharsets.UTF_8)).getConfigurationSection("habitats");
+                if(bundled!=null) for(String id:bundled.getKeys(false)) { String r=bundled.getString(id+".rarity"); if(r!=null) defaultRarity.put(id,r); }
+            }
+        } catch(java.io.IOException ignored) {}
+        for(String id:entries.getKeys(false)) parsed.put(id,Habitat.parse(id,entries.getConfigurationSection(id),warnings,defaultRarity));
         habitats=Collections.unmodifiableMap(parsed); biomeCompatibility=nextCompatibility;
         if(naturalGate!=null)naturalGate.invalidate();
         if(!warnings.isEmpty()) getLogger().warning("habitats.yml 값 "+warnings.size()+"건을 기본값으로 대체했습니다: "+String.join(", ",warnings.subList(0,Math.min(10,warnings.size())))+(warnings.size()>10?" …":""));
-        structures.clear(); population.clear();
+        structures.clear(); population.clear(); spawner.invalidate();
     }
     @EventHandler public void condition(MythicConditionLoadEvent e) {
         if(e.getConditionName().equalsIgnoreCase("cahabitat")) e.register(new HabitatCondition(this,e.getContainer().getLine(),e.getConfig().getString("id","")));
@@ -110,9 +125,16 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
     }
     private static final Set<Material> BAD_FLOORS=Set.of(Material.MAGMA_BLOCK,Material.CACTUS,Material.CAMPFIRE,Material.SOUL_CAMPFIRE);
     public String check(String id,Location l,boolean population) {
-        return check(id,l,population,null);
+        return check(id,l,population,null,false);
+    }
+    /** 자체 스폰 루프 전용: 청크 개체 수는 호출 측에서 이미 확인함. */
+    String checkChunkCounted(String id,Location l) {
+        return check(id,l,true,null,true);
     }
     private String check(String id,Location l,boolean population,UUID pendingEntity) {
+        return check(id,l,population,pendingEntity,false);
+    }
+    private String check(String id,Location l,boolean population,UUID pendingEntity,boolean chunkCounted) {
         if(!Bukkit.isPrimaryThread()) return "메인 스레드 외 호출";
         Habitat h=habitats.get(id);
         if(h==null) return "등록되지 않은 몹";
@@ -130,6 +152,26 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         if(h.time()==Habitat.DAY&&(t>12000) || h.time()==Habitat.NIGHT&&(t<13000||t>23000)) return "시간대";
         if(h.thunder()&&!w.isThundering()) return "뇌우 아님";
         if(h.fullMoon()&&Math.floorMod(w.getFullTime()/24000,8)!=0) return "보름달 아님";
+        // 싼 검사(보호 구역·청크·개체 수, 개체 수는 캐시)를 블록 검사보다 먼저 한다:
+        // 주변이 이미 꽉 찬 평상시에는 블록을 읽기 전에 바로 실패한다.
+        for(Excluded a:cfg.excluded()) {
+            if(w.getName().equals(a.world())&&Math.hypot(l.getX()-a.x(),l.getZ()-a.z())<a.radius()) return "보호 구역";
+        }
+        // Fresh loaded-chunk count: do not reuse a TTL population snapshot here.
+        // 자체 스폰 루프는 시도 앞부분에서 이미 같은 청크를 셌으므로 건너뛴다(한 시도에 한 번만 셈).
+        if(!chunkCounted&&chunkLimit.full(w.getChunkAt(x>>4,z>>4),pendingEntity,uuid ->
+                MythicBukkit.inst().getMobManager().getActiveMob(uuid)
+                    .map(m -> m.getType().getInternalName()).orElse(null))) return "청크 개체 제한";
+        if(population) {
+            double nearest=Double.POSITIVE_INFINITY;
+            for(Player p:w.getPlayers()) if(p.getGameMode()==GameMode.SURVIVAL||p.getGameMode()==GameMode.ADVENTURE) nearest=Math.min(nearest,p.getLocation(scratch).distanceSquared(l));
+            if(nearest<cfg.playerMinSquared()) return "플레이어 너무 가까움";
+            if(nearest>cfg.playerMaxSquared()) return "활성 플레이어 없음";
+            // 후보마다 주변 엔티티를 훑지 않고, 격자 칸별로 약 40틱 동안 공유하는 스캔 결과에서 센다.
+            int[] counts=this.population.count(w,l,"CA_Wild_"+id,h.capRadius());
+            if(counts[0]>=h.cap()) return "동종 개체 제한";
+            if(counts[1]>=cfg.areaCap()) return "지역 개체 제한";
+        }
         boolean water=h.water();
         int height=h.clearanceHeight(),r=h.clearanceRadius();
         if(!w.isChunkLoaded((x-r)>>4,(z-r)>>4)||!w.isChunkLoaded((x+r)>>4,(z+r)>>4)
@@ -151,23 +193,6 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         if(h.nearWater()&&!waterNearby(w,x,y,z)) return "물가 아님";
         // 구조물 색인은 structures를 지정한 서식지만 건드린다(지연 계산, 로드된 청크만).
         if(!h.structures().isEmpty()&&structures.nearby(l,h.structures(),h.structureRadius()).isEmpty()) return "구조물 없음";
-        for(Excluded a:cfg.excluded()) {
-            if(w.getName().equals(a.world())&&Math.hypot(l.getX()-a.x(),l.getZ()-a.z())<a.radius()) return "보호 구역";
-        }
-        // Fresh loaded-chunk count: do not reuse a TTL population snapshot here.
-        if(chunkLimit.full(w.getChunkAt(x>>4,z>>4),pendingEntity,uuid ->
-                MythicBukkit.inst().getMobManager().getActiveMob(uuid)
-                    .map(m -> m.getType().getInternalName()).orElse(null))) return "청크 개체 제한";
-        if(population) {
-            double nearest=Double.POSITIVE_INFINITY;
-            for(Player p:w.getPlayers()) if(p.getGameMode()==GameMode.SURVIVAL||p.getGameMode()==GameMode.ADVENTURE) nearest=Math.min(nearest,p.getLocation(scratch).distanceSquared(l));
-            if(nearest<cfg.playerMinSquared()) return "플레이어 너무 가까움";
-            if(nearest>cfg.playerMaxSquared()) return "활성 플레이어 없음";
-            // 후보마다 주변 엔티티를 훑지 않고, 격자 칸별로 약 40틱 동안 공유하는 스캔 결과에서 센다.
-            int[] counts=this.population.count(w,l,"CA_Wild_"+id,h.capRadius());
-            if(counts[0]>=h.cap()) return "동종 개체 제한";
-            if(counts[1]>=cfg.areaCap()) return "지역 개체 제한";
-        }
         return "OK";
     }
     static boolean naturalGround(Material m) {
@@ -186,9 +211,8 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         String id=type.substring(8).replaceFirst("_shiny$","");
         if(!habitats.containsKey(id)) return;
         // 기존 지역·종별·플레이어 거리 제한은 여기서 다시 보지 않는다(설계 의도):
-        // 우두머리는 RandomSpawn의 cahabitat 조건(check(...,true))을, 무리는 group()의 check(...,true)를 이미 통과했고,
+        // 우두머리는 WildSpawner의 check(...,true)를(예전엔 RandomSpawn cahabitat), 무리는 group()의 check(...,true)를 이미 통과했고,
         // 이 시점에는 방금 만들어진 자기 자신이 세어져 제한 직전 스폰이 스스로 취소될 수 있다.
-        // 따라서 RandomSpawn 항목에는 반드시 cahabitat 조건이 있어야 제한이 적용된다.
         if(!check(id,e.getLocation(),false,e.getEntity().getUniqueId()).equals("OK")) { e.setCancelled();return; }
         e.getEntity().getPersistentDataContainer().set(naturalKey,PersistentDataType.LONG,System.currentTimeMillis());
         // 같은 틱·같은 스캔 주기 안의 다음 후보가 이 개체를 세도록 살아 있는 스캔 결과에 바로 더한다.
@@ -272,10 +296,45 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         });
     }
     List<String> globalDiagnostics(){
-        return List.of(" 자연 스폰 조건 결과="+naturalChecks+" 확정="+naturalSpawned,
-            " 메인 스레드 게이트="+(naturalGate==null?"시작 전":naturalGate.diagnostic()));
+        var out=new ArrayList<String>(spawner.diagnostics());
+        out.add(" 자연 스폰 확정(무리 우두머리)="+naturalSpawned);
+        if(!naturalChecks.isEmpty()) out.add(" (구) 미몹 랜덤스폰 조건 호출="+naturalChecks+" ← 0이 아니면 RandomSpawns 파일이 아직 남아 있음");
+        return out;
     }
-    @Override public void onDisable(){if(naturalGate!=null)naturalGate.close();crops.close();}
+    @Override public void onDisable(){spawner.stop();if(naturalGate!=null)naturalGate.close();crops.close();}
+    // ── 자체 스폰 루프(WildSpawner)용 ──
+    Set<String> spawnWorlds(){return settings.enabled()?settings.worlds():Set.of();}
+    double playerMinDistance(){return Math.sqrt(settings.playerMinSquared());}
+    double playerMaxDistance(){return Math.sqrt(settings.playerMaxSquared());}
+    int shinyDenominator(){return settings.shinyDenominator();}
+    Collection<Habitat> habitatList(){return habitats.values();}
+    boolean biomeMatches(Habitat h,String biome){return biomeCompatibility.matches(h.biomes(),biome);}
+    boolean chunkFull(Chunk chunk){
+        return chunkLimit.full(chunk,null,uuid->MythicBukkit.inst().getMobManager().getActiveMob(uuid).map(m->m.getType().getInternalName()).orElse(null));
+    }
+    /** check()와 같은 시간대·계절 규칙. 추첨 전에 걸러서 지금 나올 수 없는 종이 확률을 먹지 않게 한다. */
+    boolean timeAndSeasonOk(Habitat h,World w){
+        long t=w.getTime();
+        if(h.time()==Habitat.DAY&&(t>12000) || h.time()==Habitat.NIGHT&&(t<13000||t>23000)) return false;
+        if(h.thunder()&&!w.isThundering()) return false;
+        if(h.fullMoon()&&Math.floorMod(w.getFullTime()/24000,8)!=0) return false;
+        return seasonCheck(h.seasons(),w).equals("OK");
+    }
+    /** 확률 명령용: 이 자리 기준 청크·지역 야생 몹 수. */
+    String crowdLine(Location l){
+        World w=l.getWorld();
+        int chunk=chunkLimit.count(w.getChunkAt(l.getBlockX()>>4,l.getBlockZ()>>4),null,uuid->MythicBukkit.inst().getMobManager().getActiveMob(uuid).map(m->m.getType().getInternalName()).orElse(null));
+        int area=population.count(w,l,"",0)[1];
+        return " 이 청크 야생 몹 "+chunk+"/"+chunkLimit.cap()+" · 주변 지역 "+area+"/"+settings.areaCap()
+            +(chunk>=chunkLimit.cap()||area>=settings.areaCap()?" (꽉 차서 지금은 새로 안 나옴)":"");
+    }
+    List<String> chanceAt(Player p){return spawner.chanceAt(p);}
+    String displayName(String id){Habitat h=habitats.get(id);return h==null||h.name()==null||h.name().isBlank()?id:h.name();}
+    void warnOnce(String message,Throwable error){
+        long now=System.currentTimeMillis();
+        if(now-lastSpawnerWarn<60000)return;
+        lastSpawnerWarn=now;getLogger().log(java.util.logging.Level.WARNING,message+" (로그는 1분에 한 번)",error);
+    }
     /** Read-only, bounded sampling of already loaded chunks. Never teleports or spawns. */
     List<String> diagnose(Player player){
         var out=new ArrayList<String>();
@@ -300,7 +359,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         return out;
     }
     /** /서버관리 새로고침 야생: 실패하면 예외(이전 설정 유지). */
-    void reloadAll(){reloadConfig();reloadSettings();reloadHabitats();crops.reload();}
-    String statusLine(){return "야생몹 "+getDescription().getVersion()+" · "+(settings.enabled()?"켜짐":"꺼짐")+" · 청크 제한 "+chunkLimit.cap()+" · 지역 제한 "+settings.areaCap()+" · 서식지 "+habitats.size()+"종";}
+    void reloadAll(){reloadConfig();reloadSettings();reloadHabitats();crops.reload();spawner.apply(spawnerSettings);}
+    String statusLine(){return "야생몹 "+getDescription().getVersion()+" · "+(settings.enabled()?"켜짐":"꺼짐")+" · 자체 스폰 "+(spawnerSettings.enabled()?"켜짐":"꺼짐")+" · 청크 제한 "+chunkLimit.cap()+" · 지역 제한 "+settings.areaCap()+" · 서식지 "+habitats.size()+"종";}
     StructureIndex structureIndex(){return structures;}
 }

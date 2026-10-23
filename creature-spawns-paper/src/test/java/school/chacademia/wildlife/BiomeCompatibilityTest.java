@@ -38,7 +38,7 @@ class BiomeCompatibilityTest {
  }
  @Test void builtVersionAndCommandsMovedToTheHub(){
   // 2026-10-20: /야생관리 moved to /월드관리 야생몹 · /테스트 몹 작물몹 (MagicCodexBridge command hub); no plugin.yml commands remain.
-  var plugin=resource("plugin.yml");assertEquals("0.4.1-integrated-20261020.3-spawngate.1",plugin.getString("version"));
+  var plugin=resource("plugin.yml");assertEquals("0.5.0-spawner-20261023",plugin.getString("version"));
   assertNull(plugin.getConfigurationSection("commands"));
   assertTrue(plugin.getStringList("softdepend").contains("MagicCodexBridge"));
  }
