@@ -11,7 +11,7 @@ import school.magiccodex.database.DatabaseSettings;
  * One row per (player, book) whose close commands already ran. The row is inserted BEFORE the commands run, and only the
  * call whose INSERT actually created the row may run them, so two servers / two packets can never both pay out.
  * Same DB file choice as the fishing codex: player-state-database.properties (shared MariaDB), else database.properties,
- * else the local books.db (SQLite, this server only — logged at start).
+ * missing/invalid/shared-SQLite configuration is rejected (no local fallback; — logged at start).
  */
 final class BookReadStore implements AutoCloseable {
     enum Claim { CLAIMED, ALREADY, ERROR }
@@ -23,17 +23,13 @@ final class BookReadStore implements AutoCloseable {
     private Connection connection;
     private volatile boolean closed;
 
-    BookReadStore(MagicCodexBridge plugin) {
+    BookReadStore(MagicCodexBridge plugin) throws java.io.IOException {
         this.plugin = plugin;
-        DatabaseSettings s;
-        try {
-            var folder = plugin.getDataFolder().toPath();
-            var dedicated = folder.resolve("player-state-database.properties");
-            s = DatabaseSettings.load(java.nio.file.Files.exists(dedicated) ? dedicated : folder.resolve("database.properties"));
-        } catch (Exception e) { s = new DatabaseSettings(false, "", "", ""); }
-        settings = s;
+        var folder = plugin.getDataFolder().toPath();
+        var dedicated = folder.resolve("player-state-database.properties");
+        settings = DatabaseSettings.loadShared(java.nio.file.Files.exists(dedicated)
+                ? dedicated : folder.resolve("database.properties"), "book-read");
         sqlite = plugin.getDataFolder().toPath().resolve("books.db");
-        if (!settings.mariaDb()) plugin.getLogger().warning("책 보상 기록: MariaDB 공유 연결이 없어 이 서버의 books.db 에만 저장합니다 (학교·야생 공유 안 됨).");
         io.execute(() -> {
             try (var st = db().createStatement()) {
                 st.execute("CREATE TABLE IF NOT EXISTS codex_book_read(uuid VARCHAR(36) NOT NULL,book VARCHAR(48) NOT NULL,at BIGINT NOT NULL,PRIMARY KEY(uuid,book))"
