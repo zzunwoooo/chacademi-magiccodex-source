@@ -9,6 +9,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import school.magiccodex.protocol.BookProtocol;
 
@@ -17,6 +18,9 @@ import school.magiccodex.protocol.BookProtocol;
  * and the page number are drawn with the MagicCodex fonts (CodexTypography: rasterised at the real pixel size, so they stay
  * sharp at every GUI scale / resolution). The whole canvas is scaled as one piece ({@link BookLayout#fit}), so the
  * proportions never change. The panel is drawn translucent (hologram, {@link BookLayout#PANEL_ALPHA}).
+ *
+ * The pages are drawn slightly closed (trapezoids), so every text line is sheared to the paper's slope at its height
+ * ({@link BookLayout#slope}); the buttons and the page number under the book stay level.
  *
  * One page = one open spread (left + right side). Closing in any way (X, ESC, another screen) sends the server's token
  * once; the server decides whether anything runs.
@@ -118,10 +122,23 @@ final class BookScreen extends Screen {
         UiResources.images().drawTexture(c, Identifier.of("magiccodex", ROOT + name + ".png"), x0, y0, 0, 0, w0, h0, tw, th, tw, th, argb(alpha, 0xFFFFFF));
     }
 
-    private static void lines(DrawContext c, BookLayout.Block block, float x, float top, int rgb, float alpha, Identifier face) {
+    /** Shear the matrix so things drawn level around height y follow the tilted paper of that page. */
+    private static void tilt(DrawContext c, boolean right, float y) {
+        float px = BookLayout.pivot(right), k = BookLayout.slope(right, y);
+        var m = c.getMatrices();
+        m.translate(px, y, 0);
+        m.peek().getPositionMatrix().mul(new Matrix4f().m01(k));
+        m.translate(-px, -y, 0);
+    }
+
+    private static void lines(DrawContext c, BookLayout.Block block, boolean right, float x, float top, int rgb, float alpha, Identifier face) {
         float y = top + block.size() / 2;
         for (String line : block.lines()) {
-            if (!line.isBlank()) UiResources.text().draw(c, line, x, y, block.size(), argb(alpha, rgb), face, false);
+            if (!line.isBlank()) {
+                c.getMatrices().push();
+                try { tilt(c, right, y); UiResources.text().draw(c, line, x, y, block.size(), argb(alpha, rgb), face, false); }
+                finally { c.getMatrices().pop(); }
+            }
             y += block.lineHeight();
         }
     }
@@ -141,13 +158,17 @@ final class BookScreen extends Screen {
             if (p.title() != null && !p.title().lines().isEmpty()) {
                 float cx = BookLayout.LEFT_X + BookLayout.BOX_W / 2, y = p.titleTop() + p.title().size() / 2;
                 for (String line : p.title().lines()) {
-                    type.draw(c, line, cx, y, p.title().size(), argb(1, TITLE_COLOR), TITLE, true);
+                    m.push();
+                    try { tilt(c, false, y); type.draw(c, line, cx, y, p.title().size(), argb(1, TITLE_COLOR), TITLE, true); }
+                    finally { m.pop(); }
                     y += p.title().lineHeight();
                 }
-                divider(c, cx, p.dividerY());
+                m.push();
+                try { tilt(c, false, p.dividerY()); divider(c, cx, p.dividerY()); }
+                finally { m.pop(); }
             }
-            lines(c, p.left(), BookLayout.LEFT_X, p.leftTop(), BODY_COLOR, .94f, BODY);
-            lines(c, p.right(), BookLayout.RIGHT_X, BookLayout.BOX_TOP, BODY_COLOR, .94f, BODY);
+            lines(c, p.left(), false, BookLayout.LEFT_X, p.leftTop(), BODY_COLOR, .94f, BODY);
+            lines(c, p.right(), true, BookLayout.RIGHT_X, BookLayout.BOX_TOP, BODY_COLOR, .94f, BODY);
 
             boolean overClose = in(mx, my, BookLayout.CLOSE_X, BookLayout.CLOSE_Y, BookLayout.CLOSE_S, BookLayout.CLOSE_S);
             image(c, "close", BookLayout.CLOSE_X, BookLayout.CLOSE_Y, BookLayout.CLOSE_S, BookLayout.CLOSE_S, 256, 256, overClose ? 1 : BookLayout.BUTTON_ALPHA);
