@@ -21,7 +21,9 @@ Wildlife 0.5.0-spawner-20261023 -- 자체 스폰 루프 (MythicMobs RandomSpawns
 3. MythicMobs RandomSpawns에서 야생 규칙 파일 제거(이중 스폰 방지):
    plugins/MythicMobs/RandomSpawns/chacademia_wildlife.yml (CA_Natural_* 138개) 를 서버 밖으로 옮겨 보관.
    다른 RandomSpawns 파일은 건드리지 않는다.
-4. plugins/ChAcademiaWildlife/config.yml 수정 (기존 파일은 자동으로 덮어쓰지 않음):
+4. plugins/ChAcademiaWildlife/config.yml 을 레포 config.yml로 교체하고 worlds·excluded-areas만 운영 값으로 되돌림
+   (2026-10-23 바뀐 값: area-cap 12, chunk-cap 4, shiny-denominator 2048, rarity-model-scale, spawner의
+    rarity-attempt-chance·similar-nearby-*). 교체가 어렵다면 아래 최소 수정:
    - "chunk-cap": 6 → 4
    - spawner 항목은 없어도 기본값(켜짐, 5초, 3회, 틱당 40, 4.5/1.8/0.4/0.06)으로 동작.
      값을 바꾸고 싶으면 레포 src/main/resources/config.yml의 "spawner" 블록을 복사해 넣고 수정.

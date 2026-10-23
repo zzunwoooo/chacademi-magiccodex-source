@@ -6,6 +6,7 @@ repositories { mavenCentral(); maven { url = 'https://repo.papermc.io/repository
 dependencies {
  compileOnly 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
  compileOnly files(providers.gradleProperty('mythicJar').getOrElse('../plugins/MythicMobs-5.9.0.jar'))
+ compileOnly files(providers.gradleProperty('modelEngineJar').getOrElse('../plugins/ModelEngine-4.0.8.jar'))
  compileOnly files(providers.gradleProperty('magicCodexBridgeJar').getOrElse('../magic-codex-paper/build/libs/magic-codex-bridge-0.26.0.jar'))
  testImplementation 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
  testImplementation files(providers.gradleProperty('mythicJar').getOrElse('../plugins/MythicMobs-5.9.0.jar'))

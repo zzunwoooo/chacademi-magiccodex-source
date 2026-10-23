@@ -1271,7 +1271,7 @@ CHA_MOB_club_swing_ogre_club:
   - targetwithin{d=10} true
   Skills:
   - state{s=attack1;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=5;angle=160;ticks=8;flat=4;knock=0.6;vfxref=5;vfxlead=2;warn=false;vfx=ogreswing/swing_club;spell=mob_club_swing} @target
+  - chatelegraph{shape=cone;at=caster;r=7.5;angle=160;ticks=8;flat=4;knock=0.6;vfxref=5;vfxlead=2;warn=false;vfx=ogreswing/swing_club;spell=mob_club_swing} @target
 
 CHA_MOB_club_swing_ogre_club_shiny:
   Cooldown: 3
@@ -1279,7 +1279,7 @@ CHA_MOB_club_swing_ogre_club_shiny:
   - targetwithin{d=10} true
   Skills:
   - state{s=attack1;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=5;angle=160;ticks=8;flat=4;knock=0.6;vfxref=5;vfxlead=2;warn=false;vfx=ogreswing/swing_club_s;spell=mob_club_swing} @target
+  - chatelegraph{shape=cone;at=caster;r=7.5;angle=160;ticks=8;flat=4;knock=0.6;vfxref=5;vfxlead=2;warn=false;vfx=ogreswing/swing_club_s;spell=mob_club_swing} @target
 
 CHA_MOB_club_swing_ogre_axe:
   Cooldown: 3
@@ -1287,7 +1287,7 @@ CHA_MOB_club_swing_ogre_axe:
   - targetwithin{d=10} true
   Skills:
   - state{s=attack1;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=5;angle=160;ticks=8;flat=4;knock=0.6;vfxref=5;vfxlead=2;warn=false;vfx=ogreswing/swing_axe;spell=mob_club_swing} @target
+  - chatelegraph{shape=cone;at=caster;r=7.5;angle=160;ticks=8;flat=4;knock=0.6;vfxref=5;vfxlead=2;warn=false;vfx=ogreswing/swing_axe;spell=mob_club_swing} @target
 
 CHA_MOB_club_swing_ogre_axe_shiny:
   Cooldown: 3
@@ -1295,7 +1295,7 @@ CHA_MOB_club_swing_ogre_axe_shiny:
   - targetwithin{d=10} true
   Skills:
   - state{s=attack1;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=5;angle=160;ticks=8;flat=4;knock=0.6;vfxref=5;vfxlead=2;warn=false;vfx=ogreswing/swing_axe_s;spell=mob_club_swing} @target
+  - chatelegraph{shape=cone;at=caster;r=7.5;angle=160;ticks=8;flat=4;knock=0.6;vfxref=5;vfxlead=2;warn=false;vfx=ogreswing/swing_axe_s;spell=mob_club_swing} @target
 
 CHA_MOB_club_swing_ogre_hammer:
   Cooldown: 3
@@ -1303,7 +1303,7 @@ CHA_MOB_club_swing_ogre_hammer:
   - targetwithin{d=10} true
   Skills:
   - state{s=attack1;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=5;angle=160;ticks=8;flat=4;knock=0.6;vfxref=5;vfxlead=2;warn=false;vfx=ogreswing/swing_hammer;spell=mob_club_swing} @target
+  - chatelegraph{shape=cone;at=caster;r=7.5;angle=160;ticks=8;flat=4;knock=0.6;vfxref=5;vfxlead=2;warn=false;vfx=ogreswing/swing_hammer;spell=mob_club_swing} @target
 
 CHA_MOB_club_swing_ogre_hammer_shiny:
   Cooldown: 3
@@ -1311,7 +1311,7 @@ CHA_MOB_club_swing_ogre_hammer_shiny:
   - targetwithin{d=10} true
   Skills:
   - state{s=attack1;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=5;angle=160;ticks=8;flat=4;knock=0.6;vfxref=5;vfxlead=2;warn=false;vfx=ogreswing/swing_hammer_s;spell=mob_club_swing} @target
+  - chatelegraph{shape=cone;at=caster;r=7.5;angle=160;ticks=8;flat=4;knock=0.6;vfxref=5;vfxlead=2;warn=false;vfx=ogreswing/swing_hammer_s;spell=mob_club_swing} @target
 
 
 # ---- 고대 골렘 4종 - 기본기 rune_boulder (투사체 chamobshot)
@@ -1387,7 +1387,7 @@ CHA_MOB_tail_spin_dragon_desert:
   - targetwithin{d=10} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=caster;r=5.5;ticks=8;flat=5;knock=1.0;up=0.2;vfxref=5.5;vfxlead=2;element=earth;status=poison:40;warn=false;vfx=dragontail/tail_desert;spell=mob_tail_spin} @target
+  - chatelegraph{shape=circle;at=caster;r=8.25;ticks=8;flat=5;knock=1.0;up=0.2;vfxref=5.5;vfxlead=2;element=earth;status=poison:40;warn=false;vfx=dragontail/tail_desert;spell=mob_tail_spin} @target
 
 CHA_MOB_tail_spin_dragon_desert_shiny:
   Cooldown: 3
@@ -1395,7 +1395,7 @@ CHA_MOB_tail_spin_dragon_desert_shiny:
   - targetwithin{d=10} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=caster;r=5.5;ticks=8;flat=5;knock=1.0;up=0.2;vfxref=5.5;vfxlead=2;element=earth;status=poison:40;warn=false;vfx=dragontail/tail_desert_s;spell=mob_tail_spin} @target
+  - chatelegraph{shape=circle;at=caster;r=8.25;ticks=8;flat=5;knock=1.0;up=0.2;vfxref=5.5;vfxlead=2;element=earth;status=poison:40;warn=false;vfx=dragontail/tail_desert_s;spell=mob_tail_spin} @target
 
 CHA_MOB_tail_spin_dragon_glacial:
   Cooldown: 3
@@ -1403,7 +1403,7 @@ CHA_MOB_tail_spin_dragon_glacial:
   - targetwithin{d=10} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=caster;r=5.5;ticks=8;flat=5;knock=1.0;up=0.2;vfxref=5.5;vfxlead=2;element=water;status=slow:40:0.4;warn=false;vfx=dragontail/tail_glacial;spell=mob_tail_spin} @target
+  - chatelegraph{shape=circle;at=caster;r=8.25;ticks=8;flat=5;knock=1.0;up=0.2;vfxref=5.5;vfxlead=2;element=water;status=slow:40:0.4;warn=false;vfx=dragontail/tail_glacial;spell=mob_tail_spin} @target
 
 CHA_MOB_tail_spin_dragon_glacial_shiny:
   Cooldown: 3
@@ -1411,7 +1411,7 @@ CHA_MOB_tail_spin_dragon_glacial_shiny:
   - targetwithin{d=10} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=caster;r=5.5;ticks=8;flat=5;knock=1.0;up=0.2;vfxref=5.5;vfxlead=2;element=water;status=slow:40:0.4;warn=false;vfx=dragontail/tail_glacial_s;spell=mob_tail_spin} @target
+  - chatelegraph{shape=circle;at=caster;r=8.25;ticks=8;flat=5;knock=1.0;up=0.2;vfxref=5.5;vfxlead=2;element=water;status=slow:40:0.4;warn=false;vfx=dragontail/tail_glacial_s;spell=mob_tail_spin} @target
 
 CHA_MOB_tail_spin_dragon_nether:
   Cooldown: 3
@@ -1419,7 +1419,7 @@ CHA_MOB_tail_spin_dragon_nether:
   - targetwithin{d=10} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=caster;r=5.5;ticks=8;flat=5;knock=1.0;up=0.2;vfxref=5.5;vfxlead=2;element=fire;status=burn:60;warn=false;vfx=dragontail/tail_nether;spell=mob_tail_spin} @target
+  - chatelegraph{shape=circle;at=caster;r=8.25;ticks=8;flat=5;knock=1.0;up=0.2;vfxref=5.5;vfxlead=2;element=fire;status=burn:60;warn=false;vfx=dragontail/tail_nether;spell=mob_tail_spin} @target
 
 CHA_MOB_tail_spin_dragon_nether_shiny:
   Cooldown: 3
@@ -1427,7 +1427,7 @@ CHA_MOB_tail_spin_dragon_nether_shiny:
   - targetwithin{d=10} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=caster;r=5.5;ticks=8;flat=5;knock=1.0;up=0.2;vfxref=5.5;vfxlead=2;element=fire;status=burn:60;warn=false;vfx=dragontail/tail_nether_s;spell=mob_tail_spin} @target
+  - chatelegraph{shape=circle;at=caster;r=8.25;ticks=8;flat=5;knock=1.0;up=0.2;vfxref=5.5;vfxlead=2;element=fire;status=burn:60;warn=false;vfx=dragontail/tail_nether_s;spell=mob_tail_spin} @target
 
 CHA_MOB_tail_spin_dragon_sculk:
   Cooldown: 3
@@ -1435,7 +1435,7 @@ CHA_MOB_tail_spin_dragon_sculk:
   - targetwithin{d=10} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=caster;r=5.5;ticks=8;flat=5;knock=1.0;up=0.2;vfxref=5.5;vfxlead=2;element=dark;status=blindness:30;warn=false;vfx=dragontail/tail_sculk;spell=mob_tail_spin} @target
+  - chatelegraph{shape=circle;at=caster;r=8.25;ticks=8;flat=5;knock=1.0;up=0.2;vfxref=5.5;vfxlead=2;element=dark;status=blindness:30;warn=false;vfx=dragontail/tail_sculk;spell=mob_tail_spin} @target
 
 CHA_MOB_tail_spin_dragon_sculk_shiny:
   Cooldown: 3
@@ -1443,7 +1443,7 @@ CHA_MOB_tail_spin_dragon_sculk_shiny:
   - targetwithin{d=10} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=caster;r=5.5;ticks=8;flat=5;knock=1.0;up=0.2;vfxref=5.5;vfxlead=2;element=dark;status=blindness:30;warn=false;vfx=dragontail/tail_sculk_s;spell=mob_tail_spin} @target
+  - chatelegraph{shape=circle;at=caster;r=8.25;ticks=8;flat=5;knock=1.0;up=0.2;vfxref=5.5;vfxlead=2;element=dark;status=blindness:30;warn=false;vfx=dragontail/tail_sculk_s;spell=mob_tail_spin} @target
 
 
 # ---- 서리 기사 - 기본기 frost_cross (예고 없음, 0.4초 뒤 판정)
@@ -1453,9 +1453,9 @@ CHA_MOB_frost_cross_ice_knight:
   - targetwithin{d=9} true
   Skills:
   - state{s=slash;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4.5;angle=120;ticks=8;flat=3;element=water;status=slow:20:0.3;vfxref=4.5;vfxlead=2;warn=false;vfx=frostcross/cross;spell=mob_frost_cross} @target
+  - chatelegraph{shape=cone;at=caster;r=6.75;angle=120;ticks=8;flat=3;element=water;status=slow:20:0.3;vfxref=4.5;vfxlead=2;warn=false;vfx=frostcross/cross;spell=mob_frost_cross} @target
   - delay 6
-  - chatelegraph{shape=cone;at=caster;r=4.5;angle=120;ticks=8;flat=3;element=water;status=slow:20:0.3;vfxref=4.5;vfxlead=2;warn=false;spell=mob_frost_cross} @target
+  - chatelegraph{shape=cone;at=caster;r=6.75;angle=120;ticks=8;flat=3;element=water;status=slow:20:0.3;vfxref=4.5;vfxlead=2;warn=false;spell=mob_frost_cross} @target
 
 CHA_MOB_frost_cross_ice_knight_shiny:
   Cooldown: 3
@@ -1463,9 +1463,9 @@ CHA_MOB_frost_cross_ice_knight_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=slash;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4.5;angle=120;ticks=8;flat=3;element=water;status=slow:20:0.3;vfxref=4.5;vfxlead=2;warn=false;vfx=frostcross/cross_s;spell=mob_frost_cross} @target
+  - chatelegraph{shape=cone;at=caster;r=6.75;angle=120;ticks=8;flat=3;element=water;status=slow:20:0.3;vfxref=4.5;vfxlead=2;warn=false;vfx=frostcross/cross_s;spell=mob_frost_cross} @target
   - delay 6
-  - chatelegraph{shape=cone;at=caster;r=4.5;angle=120;ticks=8;flat=3;element=water;status=slow:20:0.3;vfxref=4.5;vfxlead=2;warn=false;spell=mob_frost_cross} @target
+  - chatelegraph{shape=cone;at=caster;r=6.75;angle=120;ticks=8;flat=3;element=water;status=slow:20:0.3;vfxref=4.5;vfxlead=2;warn=false;spell=mob_frost_cross} @target
 
 
 # ---- 터스커 3종 - 기본기 tusk_upper (예고 없음, 0.4초 뒤 판정)
@@ -1475,7 +1475,7 @@ CHA_MOB_tusk_upper_tusker_demonic:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=90;ticks=8;flat=4;up=0.6;vfxref=4;vfxlead=2;warn=false;vfx=tuskerupper/upper_demonic;spell=mob_tusk_upper} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=90;ticks=8;flat=4;up=0.6;vfxref=4;vfxlead=2;warn=false;vfx=tuskerupper/upper_demonic;spell=mob_tusk_upper} @target
 
 CHA_MOB_tusk_upper_tusker_demonic_shiny:
   Cooldown: 3
@@ -1483,7 +1483,7 @@ CHA_MOB_tusk_upper_tusker_demonic_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=90;ticks=8;flat=4;up=0.6;vfxref=4;vfxlead=2;warn=false;vfx=tuskerupper/upper_demonic_s;spell=mob_tusk_upper} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=90;ticks=8;flat=4;up=0.6;vfxref=4;vfxlead=2;warn=false;vfx=tuskerupper/upper_demonic_s;spell=mob_tusk_upper} @target
 
 CHA_MOB_tusk_upper_tusker_dreamlight:
   Cooldown: 3
@@ -1491,7 +1491,7 @@ CHA_MOB_tusk_upper_tusker_dreamlight:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=90;ticks=8;flat=4;up=0.6;vfxref=4;vfxlead=2;warn=false;vfx=tuskerupper/upper_dreamlight;spell=mob_tusk_upper} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=90;ticks=8;flat=4;up=0.6;vfxref=4;vfxlead=2;warn=false;vfx=tuskerupper/upper_dreamlight;spell=mob_tusk_upper} @target
 
 CHA_MOB_tusk_upper_tusker_dreamlight_shiny:
   Cooldown: 3
@@ -1499,7 +1499,7 @@ CHA_MOB_tusk_upper_tusker_dreamlight_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=90;ticks=8;flat=4;up=0.6;vfxref=4;vfxlead=2;warn=false;vfx=tuskerupper/upper_dreamlight_s;spell=mob_tusk_upper} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=90;ticks=8;flat=4;up=0.6;vfxref=4;vfxlead=2;warn=false;vfx=tuskerupper/upper_dreamlight_s;spell=mob_tusk_upper} @target
 
 CHA_MOB_tusk_upper_tusker_forest:
   Cooldown: 3
@@ -1507,7 +1507,7 @@ CHA_MOB_tusk_upper_tusker_forest:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=90;ticks=8;flat=4;up=0.6;vfxref=4;vfxlead=2;warn=false;vfx=tuskerupper/upper_forest;spell=mob_tusk_upper} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=90;ticks=8;flat=4;up=0.6;vfxref=4;vfxlead=2;warn=false;vfx=tuskerupper/upper_forest;spell=mob_tusk_upper} @target
 
 CHA_MOB_tusk_upper_tusker_forest_shiny:
   Cooldown: 3
@@ -1515,7 +1515,7 @@ CHA_MOB_tusk_upper_tusker_forest_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=90;ticks=8;flat=4;up=0.6;vfxref=4;vfxlead=2;warn=false;vfx=tuskerupper/upper_forest_s;spell=mob_tusk_upper} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=90;ticks=8;flat=4;up=0.6;vfxref=4;vfxlead=2;warn=false;vfx=tuskerupper/upper_forest_s;spell=mob_tusk_upper} @target
 
 
 # ---- 영록 4종 - 기본기 light_horns (투사체 chamobshot)
@@ -1591,7 +1591,7 @@ CHA_MOB_coil_spin_sky_serpent_jade:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=caster;r=4.5;ticks=8;flat=4;pull=0.6;vfxref=4.5;vfxlead=2;element=wind;status=slow:30:0.3;warn=false;vfx=serpentcoil/coil_jade;spell=mob_coil_spin} @target
+  - chatelegraph{shape=circle;at=caster;r=6.75;ticks=8;flat=4;pull=0.6;vfxref=4.5;vfxlead=2;element=wind;status=slow:30:0.3;warn=false;vfx=serpentcoil/coil_jade;spell=mob_coil_spin} @target
 
 CHA_MOB_coil_spin_sky_serpent_jade_shiny:
   Cooldown: 3
@@ -1599,7 +1599,7 @@ CHA_MOB_coil_spin_sky_serpent_jade_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=caster;r=4.5;ticks=8;flat=4;pull=0.6;vfxref=4.5;vfxlead=2;element=wind;status=slow:30:0.3;warn=false;vfx=serpentcoil/coil_jade_s;spell=mob_coil_spin} @target
+  - chatelegraph{shape=circle;at=caster;r=6.75;ticks=8;flat=4;pull=0.6;vfxref=4.5;vfxlead=2;element=wind;status=slow:30:0.3;warn=false;vfx=serpentcoil/coil_jade_s;spell=mob_coil_spin} @target
 
 CHA_MOB_coil_spin_sky_serpent_magma:
   Cooldown: 3
@@ -1607,7 +1607,7 @@ CHA_MOB_coil_spin_sky_serpent_magma:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=caster;r=4.5;ticks=8;flat=4;pull=0.6;vfxref=4.5;vfxlead=2;element=fire;status=burn:40;warn=false;vfx=serpentcoil/coil_magma;spell=mob_coil_spin} @target
+  - chatelegraph{shape=circle;at=caster;r=6.75;ticks=8;flat=4;pull=0.6;vfxref=4.5;vfxlead=2;element=fire;status=burn:40;warn=false;vfx=serpentcoil/coil_magma;spell=mob_coil_spin} @target
 
 CHA_MOB_coil_spin_sky_serpent_magma_shiny:
   Cooldown: 3
@@ -1615,7 +1615,7 @@ CHA_MOB_coil_spin_sky_serpent_magma_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=caster;r=4.5;ticks=8;flat=4;pull=0.6;vfxref=4.5;vfxlead=2;element=fire;status=burn:40;warn=false;vfx=serpentcoil/coil_magma_s;spell=mob_coil_spin} @target
+  - chatelegraph{shape=circle;at=caster;r=6.75;ticks=8;flat=4;pull=0.6;vfxref=4.5;vfxlead=2;element=fire;status=burn:40;warn=false;vfx=serpentcoil/coil_magma_s;spell=mob_coil_spin} @target
 
 CHA_MOB_coil_spin_sky_serpent_solar:
   Cooldown: 3
@@ -1623,7 +1623,7 @@ CHA_MOB_coil_spin_sky_serpent_solar:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=caster;r=4.5;ticks=8;flat=4;pull=0.6;vfxref=4.5;vfxlead=2;element=light;status=blindness:20;warn=false;vfx=serpentcoil/coil_solar;spell=mob_coil_spin} @target
+  - chatelegraph{shape=circle;at=caster;r=6.75;ticks=8;flat=4;pull=0.6;vfxref=4.5;vfxlead=2;element=light;status=blindness:20;warn=false;vfx=serpentcoil/coil_solar;spell=mob_coil_spin} @target
 
 CHA_MOB_coil_spin_sky_serpent_solar_shiny:
   Cooldown: 3
@@ -1631,7 +1631,7 @@ CHA_MOB_coil_spin_sky_serpent_solar_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=caster;r=4.5;ticks=8;flat=4;pull=0.6;vfxref=4.5;vfxlead=2;element=light;status=blindness:20;warn=false;vfx=serpentcoil/coil_solar_s;spell=mob_coil_spin} @target
+  - chatelegraph{shape=circle;at=caster;r=6.75;ticks=8;flat=4;pull=0.6;vfxref=4.5;vfxlead=2;element=light;status=blindness:20;warn=false;vfx=serpentcoil/coil_solar_s;spell=mob_coil_spin} @target
 
 CHA_MOB_coil_spin_sky_serpent_spectral:
   Cooldown: 3
@@ -1639,7 +1639,7 @@ CHA_MOB_coil_spin_sky_serpent_spectral:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=caster;r=4.5;ticks=8;flat=4;pull=0.6;vfxref=4.5;vfxlead=2;element=dark;status=magic_weakness:40;warn=false;vfx=serpentcoil/coil_spectral;spell=mob_coil_spin} @target
+  - chatelegraph{shape=circle;at=caster;r=6.75;ticks=8;flat=4;pull=0.6;vfxref=4.5;vfxlead=2;element=dark;status=magic_weakness:40;warn=false;vfx=serpentcoil/coil_spectral;spell=mob_coil_spin} @target
 
 CHA_MOB_coil_spin_sky_serpent_spectral_shiny:
   Cooldown: 3
@@ -1647,7 +1647,7 @@ CHA_MOB_coil_spin_sky_serpent_spectral_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=caster;r=4.5;ticks=8;flat=4;pull=0.6;vfxref=4.5;vfxlead=2;element=dark;status=magic_weakness:40;warn=false;vfx=serpentcoil/coil_spectral_s;spell=mob_coil_spin} @target
+  - chatelegraph{shape=circle;at=caster;r=6.75;ticks=8;flat=4;pull=0.6;vfxref=4.5;vfxlead=2;element=dark;status=magic_weakness:40;warn=false;vfx=serpentcoil/coil_spectral_s;spell=mob_coil_spin} @target
 
 # ---- 하늘뱀 4종 - 특수기 serpent_pull (희귀 몹 전용)
 CHA_MOB_serpent_pull_sky_serpent_jade:
@@ -1788,7 +1788,7 @@ CHA_MOB_moon_wind_horse_pegasus:
   - targetwithin{d=15} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=line;at=caster;length=10;width=3;ticks=8;flat=4;element=wind;knock=0.8;vfxref=5;vfxlead=2;warn=false;vfx=pegasuscrescent/moon;spell=mob_moon_wind} @target
+  - chatelegraph{shape=line;at=caster;length=15;width=3;ticks=8;flat=4;element=wind;knock=0.8;vfxref=5;vfxlead=2;warn=false;vfx=pegasuscrescent/moon;spell=mob_moon_wind} @target
 
 CHA_MOB_moon_wind_horse_pegasus_shiny:
   Cooldown: 3
@@ -1796,7 +1796,7 @@ CHA_MOB_moon_wind_horse_pegasus_shiny:
   - targetwithin{d=15} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=line;at=caster;length=10;width=3;ticks=8;flat=4;element=wind;knock=0.8;vfxref=5;vfxlead=2;warn=false;vfx=pegasuscrescent/moon_s;spell=mob_moon_wind} @target
+  - chatelegraph{shape=line;at=caster;length=15;width=3;ticks=8;flat=4;element=wind;knock=0.8;vfxref=5;vfxlead=2;warn=false;vfx=pegasuscrescent/moon_s;spell=mob_moon_wind} @target
 
 
 # ---- 히포그리프 4종 - 기본기 talon_rake (예고 없음, 0.4초 뒤 판정)
@@ -1806,9 +1806,9 @@ CHA_MOB_talon_rake_hippogryph_common:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=wind;warn=false;vfx=hippoclaw/claw_common;spell=mob_talon_rake} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=wind;warn=false;vfx=hippoclaw/claw_common;spell=mob_talon_rake} @target
   - delay 5
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=wind;warn=false;spell=mob_talon_rake} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=wind;warn=false;spell=mob_talon_rake} @target
 
 CHA_MOB_talon_rake_hippogryph_common_shiny:
   Cooldown: 3
@@ -1816,9 +1816,9 @@ CHA_MOB_talon_rake_hippogryph_common_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=wind;warn=false;vfx=hippoclaw/claw_common_s;spell=mob_talon_rake} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=wind;warn=false;vfx=hippoclaw/claw_common_s;spell=mob_talon_rake} @target
   - delay 5
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=wind;warn=false;spell=mob_talon_rake} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=wind;warn=false;spell=mob_talon_rake} @target
 
 CHA_MOB_talon_rake_hippogryph_crystal:
   Cooldown: 3
@@ -1826,9 +1826,9 @@ CHA_MOB_talon_rake_hippogryph_crystal:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=light;warn=false;vfx=hippoclaw/claw_crystal;spell=mob_talon_rake} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=light;warn=false;vfx=hippoclaw/claw_crystal;spell=mob_talon_rake} @target
   - delay 5
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=light;warn=false;spell=mob_talon_rake} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=light;warn=false;spell=mob_talon_rake} @target
 
 CHA_MOB_talon_rake_hippogryph_crystal_shiny:
   Cooldown: 3
@@ -1836,9 +1836,9 @@ CHA_MOB_talon_rake_hippogryph_crystal_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=light;warn=false;vfx=hippoclaw/claw_crystal_s;spell=mob_talon_rake} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=light;warn=false;vfx=hippoclaw/claw_crystal_s;spell=mob_talon_rake} @target
   - delay 5
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=light;warn=false;spell=mob_talon_rake} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=light;warn=false;spell=mob_talon_rake} @target
 
 CHA_MOB_talon_rake_hippogryph_fallen:
   Cooldown: 3
@@ -1846,9 +1846,9 @@ CHA_MOB_talon_rake_hippogryph_fallen:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;vfx=hippoclaw/claw_fallen;spell=mob_talon_rake} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;vfx=hippoclaw/claw_fallen;spell=mob_talon_rake} @target
   - delay 5
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;spell=mob_talon_rake} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;spell=mob_talon_rake} @target
 
 CHA_MOB_talon_rake_hippogryph_fallen_shiny:
   Cooldown: 3
@@ -1856,9 +1856,9 @@ CHA_MOB_talon_rake_hippogryph_fallen_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;vfx=hippoclaw/claw_fallen_s;spell=mob_talon_rake} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;vfx=hippoclaw/claw_fallen_s;spell=mob_talon_rake} @target
   - delay 5
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;spell=mob_talon_rake} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;spell=mob_talon_rake} @target
 
 CHA_MOB_talon_rake_hippogryph_royal:
   Cooldown: 3
@@ -1866,9 +1866,9 @@ CHA_MOB_talon_rake_hippogryph_royal:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=light;warn=false;vfx=hippoclaw/claw_royal;spell=mob_talon_rake} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=light;warn=false;vfx=hippoclaw/claw_royal;spell=mob_talon_rake} @target
   - delay 5
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=light;warn=false;spell=mob_talon_rake} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=light;warn=false;spell=mob_talon_rake} @target
 
 CHA_MOB_talon_rake_hippogryph_royal_shiny:
   Cooldown: 3
@@ -1876,9 +1876,9 @@ CHA_MOB_talon_rake_hippogryph_royal_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=light;warn=false;vfx=hippoclaw/claw_royal_s;spell=mob_talon_rake} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=light;warn=false;vfx=hippoclaw/claw_royal_s;spell=mob_talon_rake} @target
   - delay 5
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=light;warn=false;spell=mob_talon_rake} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=3;vfxref=4;vfxlead=2;element=light;warn=false;spell=mob_talon_rake} @target
 
 
 # ---- 키츠네 3종 - 기본기 foxfire_orbit (투사체 chamobshot)
@@ -1987,7 +1987,7 @@ CHA_MOB_star_fall_horse_unicorn:
   - targetwithin{d=7} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=target;r=2.5;ticks=14;flat=5;element=light;vfxref=2.5;vfxlead=14;warn=false;vfx=unicornstar/star;spell=mob_star_fall} @target
+  - chatelegraph{shape=circle;at=target;r=3.75;ticks=14;flat=5;element=light;vfxref=2.5;vfxlead=14;warn=false;vfx=unicornstar/star;spell=mob_star_fall} @target
 
 CHA_MOB_star_fall_horse_unicorn_shiny:
   Cooldown: 3
@@ -1995,7 +1995,7 @@ CHA_MOB_star_fall_horse_unicorn_shiny:
   - targetwithin{d=7} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=target;r=2.5;ticks=14;flat=5;element=light;vfxref=2.5;vfxlead=14;warn=false;vfx=unicornstar/star_s;spell=mob_star_fall} @target
+  - chatelegraph{shape=circle;at=target;r=3.75;ticks=14;flat=5;element=light;vfxref=2.5;vfxlead=14;warn=false;vfx=unicornstar/star_s;spell=mob_star_fall} @target
 
 
 # ---- 바실리스크 3종 - 기본기 venom_spit (투사체 chamobshot)
@@ -2186,7 +2186,7 @@ CHA_MOB_claw_roar_manticore_aether:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4.5;angle=110;ticks=8;flat=4;knock=0.8;vfxref=4.5;vfxlead=2;element=wind;warn=false;vfx=manticoreclaw/claw_aether;spell=mob_claw_roar} @target
+  - chatelegraph{shape=cone;at=caster;r=6.75;angle=110;ticks=8;flat=4;knock=0.8;vfxref=4.5;vfxlead=2;element=wind;warn=false;vfx=manticoreclaw/claw_aether;spell=mob_claw_roar} @target
 
 CHA_MOB_claw_roar_manticore_aether_shiny:
   Cooldown: 3
@@ -2194,7 +2194,7 @@ CHA_MOB_claw_roar_manticore_aether_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4.5;angle=110;ticks=8;flat=4;knock=0.8;vfxref=4.5;vfxlead=2;element=wind;warn=false;vfx=manticoreclaw/claw_aether_s;spell=mob_claw_roar} @target
+  - chatelegraph{shape=cone;at=caster;r=6.75;angle=110;ticks=8;flat=4;knock=0.8;vfxref=4.5;vfxlead=2;element=wind;warn=false;vfx=manticoreclaw/claw_aether_s;spell=mob_claw_roar} @target
 
 CHA_MOB_claw_roar_manticore_dusk:
   Cooldown: 3
@@ -2202,7 +2202,7 @@ CHA_MOB_claw_roar_manticore_dusk:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4.5;angle=110;ticks=8;flat=4;knock=0.8;vfxref=4.5;vfxlead=2;element=light;warn=false;vfx=manticoreclaw/claw_dusk;spell=mob_claw_roar} @target
+  - chatelegraph{shape=cone;at=caster;r=6.75;angle=110;ticks=8;flat=4;knock=0.8;vfxref=4.5;vfxlead=2;element=light;warn=false;vfx=manticoreclaw/claw_dusk;spell=mob_claw_roar} @target
 
 CHA_MOB_claw_roar_manticore_dusk_shiny:
   Cooldown: 3
@@ -2210,7 +2210,7 @@ CHA_MOB_claw_roar_manticore_dusk_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4.5;angle=110;ticks=8;flat=4;knock=0.8;vfxref=4.5;vfxlead=2;element=light;warn=false;vfx=manticoreclaw/claw_dusk_s;spell=mob_claw_roar} @target
+  - chatelegraph{shape=cone;at=caster;r=6.75;angle=110;ticks=8;flat=4;knock=0.8;vfxref=4.5;vfxlead=2;element=light;warn=false;vfx=manticoreclaw/claw_dusk_s;spell=mob_claw_roar} @target
 
 CHA_MOB_claw_roar_manticore_soul:
   Cooldown: 3
@@ -2218,7 +2218,7 @@ CHA_MOB_claw_roar_manticore_soul:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4.5;angle=110;ticks=8;flat=4;knock=0.8;vfxref=4.5;vfxlead=2;element=dark;warn=false;vfx=manticoreclaw/claw_soul;spell=mob_claw_roar} @target
+  - chatelegraph{shape=cone;at=caster;r=6.75;angle=110;ticks=8;flat=4;knock=0.8;vfxref=4.5;vfxlead=2;element=dark;warn=false;vfx=manticoreclaw/claw_soul;spell=mob_claw_roar} @target
 
 CHA_MOB_claw_roar_manticore_soul_shiny:
   Cooldown: 3
@@ -2226,7 +2226,7 @@ CHA_MOB_claw_roar_manticore_soul_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4.5;angle=110;ticks=8;flat=4;knock=0.8;vfxref=4.5;vfxlead=2;element=dark;warn=false;vfx=manticoreclaw/claw_soul_s;spell=mob_claw_roar} @target
+  - chatelegraph{shape=cone;at=caster;r=6.75;angle=110;ticks=8;flat=4;knock=0.8;vfxref=4.5;vfxlead=2;element=dark;warn=false;vfx=manticoreclaw/claw_soul_s;spell=mob_claw_roar} @target
 
 CHA_MOB_claw_roar_manticore_venom:
   Cooldown: 3
@@ -2234,7 +2234,7 @@ CHA_MOB_claw_roar_manticore_venom:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4.5;angle=110;ticks=8;flat=4;knock=0.8;vfxref=4.5;vfxlead=2;element=earth;status=poison:40;warn=false;vfx=manticoreclaw/claw_venom;spell=mob_claw_roar} @target
+  - chatelegraph{shape=cone;at=caster;r=6.75;angle=110;ticks=8;flat=4;knock=0.8;vfxref=4.5;vfxlead=2;element=earth;status=poison:40;warn=false;vfx=manticoreclaw/claw_venom;spell=mob_claw_roar} @target
 
 CHA_MOB_claw_roar_manticore_venom_shiny:
   Cooldown: 3
@@ -2242,7 +2242,7 @@ CHA_MOB_claw_roar_manticore_venom_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4.5;angle=110;ticks=8;flat=4;knock=0.8;vfxref=4.5;vfxlead=2;element=earth;status=poison:40;warn=false;vfx=manticoreclaw/claw_venom_s;spell=mob_claw_roar} @target
+  - chatelegraph{shape=cone;at=caster;r=6.75;angle=110;ticks=8;flat=4;knock=0.8;vfxref=4.5;vfxlead=2;element=earth;status=poison:40;warn=false;vfx=manticoreclaw/claw_venom_s;spell=mob_claw_roar} @target
 
 
 # ---- 팬텀 2종 - 기본기 soul_scythe (예고 없음, 0.4초 뒤 판정)
@@ -2252,7 +2252,7 @@ CHA_MOB_soul_scythe_phantom_ender:
   - targetwithin{d=10} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=5;angle=150;ticks=8;flat=4;element=dark;vfxref=5;vfxlead=2;warn=false;vfx=phantomscythe/reap_ender;spell=mob_soul_scythe} @target
+  - chatelegraph{shape=cone;at=caster;r=7.5;angle=150;ticks=8;flat=4;element=dark;vfxref=5;vfxlead=2;warn=false;vfx=phantomscythe/reap_ender;spell=mob_soul_scythe} @target
 
 CHA_MOB_soul_scythe_phantom_ender_shiny:
   Cooldown: 3
@@ -2260,7 +2260,7 @@ CHA_MOB_soul_scythe_phantom_ender_shiny:
   - targetwithin{d=10} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=5;angle=150;ticks=8;flat=4;element=dark;vfxref=5;vfxlead=2;warn=false;vfx=phantomscythe/reap_ender_s;spell=mob_soul_scythe} @target
+  - chatelegraph{shape=cone;at=caster;r=7.5;angle=150;ticks=8;flat=4;element=dark;vfxref=5;vfxlead=2;warn=false;vfx=phantomscythe/reap_ender_s;spell=mob_soul_scythe} @target
 
 CHA_MOB_soul_scythe_phantom_ghost:
   Cooldown: 3
@@ -2268,7 +2268,7 @@ CHA_MOB_soul_scythe_phantom_ghost:
   - targetwithin{d=10} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=5;angle=150;ticks=8;flat=4;element=dark;vfxref=5;vfxlead=2;warn=false;vfx=phantomscythe/reap_ghost;spell=mob_soul_scythe} @target
+  - chatelegraph{shape=cone;at=caster;r=7.5;angle=150;ticks=8;flat=4;element=dark;vfxref=5;vfxlead=2;warn=false;vfx=phantomscythe/reap_ghost;spell=mob_soul_scythe} @target
 
 CHA_MOB_soul_scythe_phantom_ghost_shiny:
   Cooldown: 3
@@ -2276,7 +2276,7 @@ CHA_MOB_soul_scythe_phantom_ghost_shiny:
   - targetwithin{d=10} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=5;angle=150;ticks=8;flat=4;element=dark;vfxref=5;vfxlead=2;warn=false;vfx=phantomscythe/reap_ghost_s;spell=mob_soul_scythe} @target
+  - chatelegraph{shape=cone;at=caster;r=7.5;angle=150;ticks=8;flat=4;element=dark;vfxref=5;vfxlead=2;warn=false;vfx=phantomscythe/reap_ghost_s;spell=mob_soul_scythe} @target
 
 # ---- 팬텀 2종 - 특수기 soul_blink (희귀 몹 전용)
 CHA_MOB_soul_blink_phantom_ender:
@@ -2319,11 +2319,11 @@ CHA_MOB_triple_claw_sabertooth_arctic:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=water;warn=false;vfx=saberclaw/claw_arctic;spell=mob_triple_claw} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=water;warn=false;vfx=saberclaw/claw_arctic;spell=mob_triple_claw} @target
   - delay 4
-  - chatelegraph{shape=cone;at=caster;r=4;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=water;warn=false;spell=mob_triple_claw} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=water;warn=false;spell=mob_triple_claw} @target
   - delay 4
-  - chatelegraph{shape=cone;at=caster;r=4;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=water;warn=false;spell=mob_triple_claw} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=water;warn=false;spell=mob_triple_claw} @target
 
 CHA_MOB_triple_claw_sabertooth_arctic_shiny:
   Cooldown: 3
@@ -2331,11 +2331,11 @@ CHA_MOB_triple_claw_sabertooth_arctic_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=water;warn=false;vfx=saberclaw/claw_arctic_s;spell=mob_triple_claw} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=water;warn=false;vfx=saberclaw/claw_arctic_s;spell=mob_triple_claw} @target
   - delay 4
-  - chatelegraph{shape=cone;at=caster;r=4;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=water;warn=false;spell=mob_triple_claw} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=water;warn=false;spell=mob_triple_claw} @target
   - delay 4
-  - chatelegraph{shape=cone;at=caster;r=4;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=water;warn=false;spell=mob_triple_claw} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=water;warn=false;spell=mob_triple_claw} @target
 
 CHA_MOB_triple_claw_sabertooth_midnight:
   Cooldown: 3
@@ -2343,11 +2343,11 @@ CHA_MOB_triple_claw_sabertooth_midnight:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;vfx=saberclaw/claw_midnight;spell=mob_triple_claw} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;vfx=saberclaw/claw_midnight;spell=mob_triple_claw} @target
   - delay 4
-  - chatelegraph{shape=cone;at=caster;r=4;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;spell=mob_triple_claw} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;spell=mob_triple_claw} @target
   - delay 4
-  - chatelegraph{shape=cone;at=caster;r=4;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;spell=mob_triple_claw} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;spell=mob_triple_claw} @target
 
 CHA_MOB_triple_claw_sabertooth_midnight_shiny:
   Cooldown: 3
@@ -2355,11 +2355,11 @@ CHA_MOB_triple_claw_sabertooth_midnight_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;vfx=saberclaw/claw_midnight_s;spell=mob_triple_claw} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;vfx=saberclaw/claw_midnight_s;spell=mob_triple_claw} @target
   - delay 4
-  - chatelegraph{shape=cone;at=caster;r=4;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;spell=mob_triple_claw} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;spell=mob_triple_claw} @target
   - delay 4
-  - chatelegraph{shape=cone;at=caster;r=4;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;spell=mob_triple_claw} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=dark;warn=false;spell=mob_triple_claw} @target
 
 CHA_MOB_triple_claw_sabertooth_savanna:
   Cooldown: 3
@@ -2367,11 +2367,11 @@ CHA_MOB_triple_claw_sabertooth_savanna:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=earth;warn=false;vfx=saberclaw/claw_savanna;spell=mob_triple_claw} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=earth;warn=false;vfx=saberclaw/claw_savanna;spell=mob_triple_claw} @target
   - delay 4
-  - chatelegraph{shape=cone;at=caster;r=4;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=earth;warn=false;spell=mob_triple_claw} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=earth;warn=false;spell=mob_triple_claw} @target
   - delay 4
-  - chatelegraph{shape=cone;at=caster;r=4;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=earth;warn=false;spell=mob_triple_claw} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=earth;warn=false;spell=mob_triple_claw} @target
 
 CHA_MOB_triple_claw_sabertooth_savanna_shiny:
   Cooldown: 3
@@ -2379,11 +2379,11 @@ CHA_MOB_triple_claw_sabertooth_savanna_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=earth;warn=false;vfx=saberclaw/claw_savanna_s;spell=mob_triple_claw} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=earth;warn=false;vfx=saberclaw/claw_savanna_s;spell=mob_triple_claw} @target
   - delay 4
-  - chatelegraph{shape=cone;at=caster;r=4;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=earth;warn=false;spell=mob_triple_claw} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=earth;warn=false;spell=mob_triple_claw} @target
   - delay 4
-  - chatelegraph{shape=cone;at=caster;r=4;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=earth;warn=false;spell=mob_triple_claw} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=110;ticks=8;flat=3;vfxref=4;vfxlead=2;element=earth;warn=false;spell=mob_triple_claw} @target
 
 
 # ---- 울프호크 4종 - 기본기 wind_blade (투사체 chamobshot)
@@ -2540,7 +2540,7 @@ CHA_MOB_vine_whip_lostasset_mob3_herbgolem:
   - targetwithin{d=12} true
   Skills:
   - state{s=attack;li=0;lo=3} @self
-  - chatelegraph{shape=line;at=caster;length=7;width=2.5;ticks=8;flat=4;element=earth;vfxref=3.5;vfxlead=2;warn=false;vfx=herbwhip/whip;spell=mob_vine_whip} @target
+  - chatelegraph{shape=line;at=caster;length=10.5;width=2.5;ticks=8;flat=4;element=earth;vfxref=3.5;vfxlead=2;warn=false;vfx=herbwhip/whip;spell=mob_vine_whip} @target
 
 CHA_MOB_vine_whip_lostasset_mob3_herbgolem_shiny:
   Cooldown: 3
@@ -2548,7 +2548,7 @@ CHA_MOB_vine_whip_lostasset_mob3_herbgolem_shiny:
   - targetwithin{d=12} true
   Skills:
   - state{s=attack;li=0;lo=3} @self
-  - chatelegraph{shape=line;at=caster;length=7;width=2.5;ticks=8;flat=4;element=earth;vfxref=3.5;vfxlead=2;warn=false;vfx=herbwhip/whip_s;spell=mob_vine_whip} @target
+  - chatelegraph{shape=line;at=caster;length=10.5;width=2.5;ticks=8;flat=4;element=earth;vfxref=3.5;vfxlead=2;warn=false;vfx=herbwhip/whip_s;spell=mob_vine_whip} @target
 
 
 # ---- 약초 도둑 - 기본기 poison_flask (투사체 chamobshot)
@@ -2699,7 +2699,7 @@ CHA_MOB_spear_spin_ncr_spear_skeleton:
   - targetwithin{d=9} true
   Skills:
   - state{s=attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=caster;r=4;ticks=8;flat=4;knock=0.8;vfxref=4;vfxlead=2;warn=false;vfx=ruinspin/spin_spear;spell=mob_spear_spin} @target
+  - chatelegraph{shape=circle;at=caster;r=6;ticks=8;flat=4;knock=0.8;vfxref=4;vfxlead=2;warn=false;vfx=ruinspin/spin_spear;spell=mob_spear_spin} @target
 
 CHA_MOB_spear_spin_ncr_spear_skeleton_shiny:
   Cooldown: 3
@@ -2707,7 +2707,7 @@ CHA_MOB_spear_spin_ncr_spear_skeleton_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=attack;li=0;lo=3} @self
-  - chatelegraph{shape=circle;at=caster;r=4;ticks=8;flat=4;knock=0.8;vfxref=4;vfxlead=2;warn=false;vfx=ruinspin/spin_spear_s;spell=mob_spear_spin} @target
+  - chatelegraph{shape=circle;at=caster;r=6;ticks=8;flat=4;knock=0.8;vfxref=4;vfxlead=2;warn=false;vfx=ruinspin/spin_spear_s;spell=mob_spear_spin} @target
 
 
 # ---- 유적 검병 - 기본기 triple_slash (예고 없음, 0.4초 뒤 판정)
@@ -2717,11 +2717,11 @@ CHA_MOB_triple_slash_ncr_warrior_skeleton:
   - targetwithin{d=8} true
   Skills:
   - state{s=attack2;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=3.5;angle=120;ticks=8;flat=3;vfxref=3.5;vfxlead=2;warn=false;vfx=ruintriple/tri_slash;spell=mob_triple_slash} @target
+  - chatelegraph{shape=cone;at=caster;r=5.25;angle=120;ticks=8;flat=3;vfxref=3.5;vfxlead=2;warn=false;vfx=ruintriple/tri_slash;spell=mob_triple_slash} @target
   - delay 4
-  - chatelegraph{shape=cone;at=caster;r=3.5;angle=120;ticks=8;flat=3;vfxref=3.5;vfxlead=2;warn=false;spell=mob_triple_slash} @target
+  - chatelegraph{shape=cone;at=caster;r=5.25;angle=120;ticks=8;flat=3;vfxref=3.5;vfxlead=2;warn=false;spell=mob_triple_slash} @target
   - delay 4
-  - chatelegraph{shape=cone;at=caster;r=3.5;angle=120;ticks=8;flat=3;vfxref=3.5;vfxlead=2;warn=false;spell=mob_triple_slash} @target
+  - chatelegraph{shape=cone;at=caster;r=5.25;angle=120;ticks=8;flat=3;vfxref=3.5;vfxlead=2;warn=false;spell=mob_triple_slash} @target
 
 CHA_MOB_triple_slash_ncr_warrior_skeleton_shiny:
   Cooldown: 3
@@ -2729,11 +2729,11 @@ CHA_MOB_triple_slash_ncr_warrior_skeleton_shiny:
   - targetwithin{d=8} true
   Skills:
   - state{s=attack2;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=3.5;angle=120;ticks=8;flat=3;vfxref=3.5;vfxlead=2;warn=false;vfx=ruintriple/tri_slash_s;spell=mob_triple_slash} @target
+  - chatelegraph{shape=cone;at=caster;r=5.25;angle=120;ticks=8;flat=3;vfxref=3.5;vfxlead=2;warn=false;vfx=ruintriple/tri_slash_s;spell=mob_triple_slash} @target
   - delay 4
-  - chatelegraph{shape=cone;at=caster;r=3.5;angle=120;ticks=8;flat=3;vfxref=3.5;vfxlead=2;warn=false;spell=mob_triple_slash} @target
+  - chatelegraph{shape=cone;at=caster;r=5.25;angle=120;ticks=8;flat=3;vfxref=3.5;vfxlead=2;warn=false;spell=mob_triple_slash} @target
   - delay 4
-  - chatelegraph{shape=cone;at=caster;r=3.5;angle=120;ticks=8;flat=3;vfxref=3.5;vfxlead=2;warn=false;spell=mob_triple_slash} @target
+  - chatelegraph{shape=cone;at=caster;r=5.25;angle=120;ticks=8;flat=3;vfxref=3.5;vfxlead=2;warn=false;spell=mob_triple_slash} @target
 
 
 # ---- 봉인의 기사 - 기본기 shield_slam (예고 없음, 0.4초 뒤 판정)
@@ -2743,7 +2743,7 @@ CHA_MOB_shield_slam_mf_warden_knight:
   - targetwithin{d=9} true
   Skills:
   - state{s=attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4.5;angle=120;ticks=8;flat=5;element=light;status=stun:8;vfxref=3;vfxlead=2;warn=false;vfx=sealshield/shield;spell=mob_shield_slam} @target
+  - chatelegraph{shape=cone;at=caster;r=6.75;angle=120;ticks=8;flat=5;element=light;status=stun:8;vfxref=3;vfxlead=2;warn=false;vfx=sealshield/shield;spell=mob_shield_slam} @target
 
 CHA_MOB_shield_slam_mf_warden_knight_shiny:
   Cooldown: 3
@@ -2751,7 +2751,7 @@ CHA_MOB_shield_slam_mf_warden_knight_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4.5;angle=120;ticks=8;flat=5;element=light;status=stun:8;vfxref=3;vfxlead=2;warn=false;vfx=sealshield/shield_s;spell=mob_shield_slam} @target
+  - chatelegraph{shape=cone;at=caster;r=6.75;angle=120;ticks=8;flat=5;element=light;status=stun:8;vfxref=3;vfxlead=2;warn=false;vfx=sealshield/shield_s;spell=mob_shield_slam} @target
 
 
 # ---- 봉인의 술사 - 기본기 seal_talismans (투사체 chamobshot)
@@ -2814,7 +2814,7 @@ CHA_MOB_jaw_bite_raptor_nightmare:
   - targetwithin{d=8} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=line;at=caster;length=3.5;width=2;ticks=8;flat=4;vfxref=1.75;vfxlead=2;element=dark;warn=false;vfx=beastjaw/jaw_nightmare;spell=mob_jaw_bite} @target
+  - chatelegraph{shape=line;at=caster;length=5.25;width=2;ticks=8;flat=4;vfxref=1.75;vfxlead=2;element=dark;warn=false;vfx=beastjaw/jaw_nightmare;spell=mob_jaw_bite} @target
   - delay 6
   - lunge{velocity=1.2;velocityY=0.2} @target
 
@@ -2824,7 +2824,7 @@ CHA_MOB_jaw_bite_raptor_nightmare_shiny:
   - targetwithin{d=8} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=line;at=caster;length=3.5;width=2;ticks=8;flat=4;vfxref=1.75;vfxlead=2;element=dark;warn=false;vfx=beastjaw/jaw_nightmare_s;spell=mob_jaw_bite} @target
+  - chatelegraph{shape=line;at=caster;length=5.25;width=2;ticks=8;flat=4;vfxref=1.75;vfxlead=2;element=dark;warn=false;vfx=beastjaw/jaw_nightmare_s;spell=mob_jaw_bite} @target
   - delay 6
   - lunge{velocity=1.2;velocityY=0.2} @target
 
@@ -2834,7 +2834,7 @@ CHA_MOB_jaw_bite_raptor_red:
   - targetwithin{d=8} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=line;at=caster;length=3.5;width=2;ticks=8;flat=4;vfxref=1.75;vfxlead=2;warn=false;vfx=beastjaw/jaw_red;spell=mob_jaw_bite} @target
+  - chatelegraph{shape=line;at=caster;length=5.25;width=2;ticks=8;flat=4;vfxref=1.75;vfxlead=2;warn=false;vfx=beastjaw/jaw_red;spell=mob_jaw_bite} @target
   - delay 6
   - lunge{velocity=1.2;velocityY=0.2} @target
 
@@ -2844,7 +2844,7 @@ CHA_MOB_jaw_bite_raptor_red_shiny:
   - targetwithin{d=8} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=line;at=caster;length=3.5;width=2;ticks=8;flat=4;vfxref=1.75;vfxlead=2;warn=false;vfx=beastjaw/jaw_red_s;spell=mob_jaw_bite} @target
+  - chatelegraph{shape=line;at=caster;length=5.25;width=2;ticks=8;flat=4;vfxref=1.75;vfxlead=2;warn=false;vfx=beastjaw/jaw_red_s;spell=mob_jaw_bite} @target
   - delay 6
   - lunge{velocity=1.2;velocityY=0.2} @target
 
@@ -2854,7 +2854,7 @@ CHA_MOB_jaw_bite_raptor_undead:
   - targetwithin{d=8} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=line;at=caster;length=3.5;width=2;ticks=8;flat=4;vfxref=1.75;vfxlead=2;element=dark;warn=false;vfx=beastjaw/jaw_undead;spell=mob_jaw_bite} @target
+  - chatelegraph{shape=line;at=caster;length=5.25;width=2;ticks=8;flat=4;vfxref=1.75;vfxlead=2;element=dark;warn=false;vfx=beastjaw/jaw_undead;spell=mob_jaw_bite} @target
   - delay 6
   - lunge{velocity=1.2;velocityY=0.2} @target
 
@@ -2864,7 +2864,7 @@ CHA_MOB_jaw_bite_raptor_undead_shiny:
   - targetwithin{d=8} true
   Skills:
   - state{s=ca_attack;li=0;lo=3} @self
-  - chatelegraph{shape=line;at=caster;length=3.5;width=2;ticks=8;flat=4;vfxref=1.75;vfxlead=2;element=dark;warn=false;vfx=beastjaw/jaw_undead_s;spell=mob_jaw_bite} @target
+  - chatelegraph{shape=line;at=caster;length=5.25;width=2;ticks=8;flat=4;vfxref=1.75;vfxlead=2;element=dark;warn=false;vfx=beastjaw/jaw_undead_s;spell=mob_jaw_bite} @target
   - delay 6
   - lunge{velocity=1.2;velocityY=0.2} @target
 
@@ -2876,7 +2876,7 @@ CHA_MOB_jaw_bite_crocodile:
   - targetwithin{d=8} true
   Skills:
   - state{s=attack_1;li=0;lo=3} @self
-  - chatelegraph{shape=line;at=caster;length=3.5;width=2;ticks=8;flat=5;status=root:10;vfxref=1.75;vfxlead=2;warn=false;vfx=beastjaw/jaw_croc;spell=mob_jaw_bite} @target
+  - chatelegraph{shape=line;at=caster;length=5.25;width=2;ticks=8;flat=5;status=root:10;vfxref=1.75;vfxlead=2;warn=false;vfx=beastjaw/jaw_croc;spell=mob_jaw_bite} @target
 
 CHA_MOB_jaw_bite_crocodile_shiny:
   Cooldown: 3
@@ -2884,7 +2884,7 @@ CHA_MOB_jaw_bite_crocodile_shiny:
   - targetwithin{d=8} true
   Skills:
   - state{s=attack_1;li=0;lo=3} @self
-  - chatelegraph{shape=line;at=caster;length=3.5;width=2;ticks=8;flat=5;status=root:10;vfxref=1.75;vfxlead=2;warn=false;vfx=beastjaw/jaw_croc_s;spell=mob_jaw_bite} @target
+  - chatelegraph{shape=line;at=caster;length=5.25;width=2;ticks=8;flat=5;status=root:10;vfxref=1.75;vfxlead=2;warn=false;vfx=beastjaw/jaw_croc_s;spell=mob_jaw_bite} @target
 
 
 # ---- 곰 3종 - 기본기 paw_maul (예고 없음, 0.4초 뒤 판정)
@@ -2894,7 +2894,7 @@ CHA_MOB_paw_maul_bear:
   - targetwithin{d=9} true
   Skills:
   - state{s=attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=5;knock=0.8;vfxref=4;vfxlead=2;warn=false;vfx=bearmaul/maul_brown;spell=mob_paw_maul} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=5;knock=0.8;vfxref=4;vfxlead=2;warn=false;vfx=bearmaul/maul_brown;spell=mob_paw_maul} @target
 
 CHA_MOB_paw_maul_bear_shiny:
   Cooldown: 3
@@ -2902,7 +2902,7 @@ CHA_MOB_paw_maul_bear_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=5;knock=0.8;vfxref=4;vfxlead=2;warn=false;vfx=bearmaul/maul_brown_s;spell=mob_paw_maul} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=5;knock=0.8;vfxref=4;vfxlead=2;warn=false;vfx=bearmaul/maul_brown_s;spell=mob_paw_maul} @target
 
 CHA_MOB_paw_maul_bear_black:
   Cooldown: 3
@@ -2910,7 +2910,7 @@ CHA_MOB_paw_maul_bear_black:
   - targetwithin{d=9} true
   Skills:
   - state{s=attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=5;knock=0.8;vfxref=4;vfxlead=2;warn=false;vfx=bearmaul/maul_black;spell=mob_paw_maul} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=5;knock=0.8;vfxref=4;vfxlead=2;warn=false;vfx=bearmaul/maul_black;spell=mob_paw_maul} @target
 
 CHA_MOB_paw_maul_bear_black_shiny:
   Cooldown: 3
@@ -2918,7 +2918,7 @@ CHA_MOB_paw_maul_bear_black_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=5;knock=0.8;vfxref=4;vfxlead=2;warn=false;vfx=bearmaul/maul_black_s;spell=mob_paw_maul} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=5;knock=0.8;vfxref=4;vfxlead=2;warn=false;vfx=bearmaul/maul_black_s;spell=mob_paw_maul} @target
 
 CHA_MOB_paw_maul_bear_polar:
   Cooldown: 3
@@ -2926,7 +2926,7 @@ CHA_MOB_paw_maul_bear_polar:
   - targetwithin{d=9} true
   Skills:
   - state{s=attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=5;knock=0.8;vfxref=4;vfxlead=2;element=water;status=slow:20:0.3;warn=false;vfx=bearmaul/maul_polar;spell=mob_paw_maul} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=5;knock=0.8;vfxref=4;vfxlead=2;element=water;status=slow:20:0.3;warn=false;vfx=bearmaul/maul_polar;spell=mob_paw_maul} @target
 
 CHA_MOB_paw_maul_bear_polar_shiny:
   Cooldown: 3
@@ -2934,7 +2934,7 @@ CHA_MOB_paw_maul_bear_polar_shiny:
   - targetwithin{d=9} true
   Skills:
   - state{s=attack;li=0;lo=3} @self
-  - chatelegraph{shape=cone;at=caster;r=4;angle=100;ticks=8;flat=5;knock=0.8;vfxref=4;vfxlead=2;element=water;status=slow:20:0.3;warn=false;vfx=bearmaul/maul_polar_s;spell=mob_paw_maul} @target
+  - chatelegraph{shape=cone;at=caster;r=6;angle=100;ticks=8;flat=5;knock=0.8;vfxref=4;vfxlead=2;element=water;status=slow:20:0.3;warn=false;vfx=bearmaul/maul_polar_s;spell=mob_paw_maul} @target
 
 
 # ---- 봉인의 궁수 - 기본기 chain_arrow (투사체 chamobshot)
@@ -2962,7 +2962,7 @@ CHA_MOB_shield_rush_mf_warden_tank:
   - targetwithin{d=10} true
   Skills:
   - state{s=attack;li=0;lo=3} @self
-  - chatelegraph{shape=line;at=caster;length=5;width=2.5;ticks=8;flat=4;element=light;knock=1.6;up=0.2;vfxref=2.5;vfxlead=2;warn=false;vfx=shieldbash/bash_bash;spell=mob_shield_rush} @target
+  - chatelegraph{shape=line;at=caster;length=7.5;width=2.5;ticks=8;flat=4;element=light;knock=1.6;up=0.2;vfxref=2.5;vfxlead=2;warn=false;vfx=shieldbash/bash_bash;spell=mob_shield_rush} @target
   - lunge{velocity=1.4;velocityY=0.1} @target
 
 CHA_MOB_shield_rush_mf_warden_tank_shiny:
@@ -2971,6 +2971,6 @@ CHA_MOB_shield_rush_mf_warden_tank_shiny:
   - targetwithin{d=10} true
   Skills:
   - state{s=attack;li=0;lo=3} @self
-  - chatelegraph{shape=line;at=caster;length=5;width=2.5;ticks=8;flat=4;element=light;knock=1.6;up=0.2;vfxref=2.5;vfxlead=2;warn=false;vfx=shieldbash/bash_bash_s;spell=mob_shield_rush} @target
+  - chatelegraph{shape=line;at=caster;length=7.5;width=2.5;ticks=8;flat=4;element=light;knock=1.6;up=0.2;vfxref=2.5;vfxlead=2;warn=false;vfx=shieldbash/bash_bash_s;spell=mob_shield_rush} @target
   - lunge{velocity=1.4;velocityY=0.1} @target
 

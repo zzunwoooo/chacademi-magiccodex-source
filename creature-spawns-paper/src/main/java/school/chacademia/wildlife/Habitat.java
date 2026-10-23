@@ -4,7 +4,7 @@ import java.util.*;
 import org.bukkit.configuration.ConfigurationSection;
 
 /** habitats.yml 한 항목을 로드/리로드 때 한 번만 해석해 둔 불변 값. 스폰 후보마다 설정을 다시 읽지 않는다. */
-record Habitat(String id,String name,Set<String> biomes,Set<String> seasons,boolean water,int minY,int maxY,int time,
+record Habitat(String id,String name,String family,Set<String> biomes,Set<String> seasons,boolean water,int minY,int maxY,int time,
                boolean thunder,boolean fullMoon,boolean nearWater,boolean naturalGround,
                int clearanceRadius,int clearanceHeight,int maxBlockLight,
                Set<String> structures,double structureRadius,int groupMin,int groupMax,int cap,double capRadius,
@@ -13,6 +13,25 @@ record Habitat(String id,String name,Set<String> biomes,Set<String> seasons,bool
 
     /** 필수 값이 잘못되면 예외, medium/time 오타는 경고 후 안전한 기본값(land/any)으로 둔다. */
     static final Set<String> RARITIES=Set.of("1","2","3","boss");
+
+    /**
+     * 비슷한 몹 묶음(인접 청크 중복 억제용). habitats.yml family로 직접 지정 가능.
+     * 기본: 첫 단어(golem_arcane·golem_royal → golem, bear·bear_black → bear),
+     * lostasset_mobN_xxx → xxx(요정 4종은 fairy), mf_warden_* → mf_warden, ncr_*_skeleton → ncr, baby_polar_bear → bear, baby_yeti → yeti.
+     */
+    static String family(String id) {
+        if(id.startsWith("lostasset_mob")) {
+            String rest=id.replaceFirst("^lostasset_mob\\d+_","");
+            return rest.endsWith("fairy")||rest.endsWith("sprite")?"fairy":rest;
+        }
+        if(id.startsWith("mf_warden")) return "mf_warden";
+        if(id.startsWith("ncr_")) return "ncr";
+        if(id.equals("baby_polar_bear")) return "bear";
+        if(id.equals("baby_yeti")) return "yeti";
+        if(id.startsWith("voxelspawns_")) return id.substring(12);
+        int cut=id.indexOf('_');
+        return cut<0?id:id.substring(0,cut);
+    }
 
     static Habitat parse(String id,ConfigurationSection s,List<String> warnings) { return parse(id,s,warnings,Map.of()); }
 
@@ -39,7 +58,7 @@ record Habitat(String id,String name,Set<String> biomes,Set<String> seasons,bool
         if(!RARITIES.contains(rarity)) { warnings.add(id+": rarity '"+rarity+"' → 1"); rarity="1"; }
         double weight=s.getDouble("weight",0);
         if(weight<0) { warnings.add(id+": weight "+weight+" → 등급 기본"); weight=0; }
-        return new Habitat(id,s.getString("name",id),Set.copyOf(s.getStringList("biomes")),Collections.unmodifiableSet(normalized),medium.equals("water"),
+        return new Habitat(id,s.getString("name",id),s.getString("family",family(id)),Set.copyOf(s.getStringList("biomes")),Collections.unmodifiableSet(normalized),medium.equals("water"),
             s.getInt("min-y"),s.getInt("max-y"),time,s.getBoolean("thunder"),s.getBoolean("full-moon"),
             s.getBoolean("near-water"),s.getBoolean("natural-ground"),
             (s.getInt("clearance-width",1)-1)/2,s.getInt("clearance-height",2),s.getInt("max-block-light",7),
