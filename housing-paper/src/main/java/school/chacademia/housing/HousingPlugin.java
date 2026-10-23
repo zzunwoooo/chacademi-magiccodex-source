@@ -17,6 +17,7 @@ public final class HousingPlugin extends JavaPlugin implements Listener {
     private Rooms rooms;
     private Net net;
     private Doors doors;
+    private HousingSearchServer search;
 
     @Override public void onEnable() {
         saveDefaultConfig();
@@ -33,6 +34,7 @@ public final class HousingPlugin extends JavaPlugin implements Listener {
         });
         rooms = new Rooms(this);
         net = new Net(this); net.register();
+        search=new HousingSearchServer(this);
         doors = new Doors(this); doors.load();
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(doors, this);
@@ -45,6 +47,7 @@ public final class HousingPlugin extends JavaPlugin implements Listener {
     }
 
     @Override public void onDisable() {
+        if(search!=null)search.close();
         if (rooms != null) rooms.shutdown();
         if (net != null) net.unregister();
         if (store != null) store.close();

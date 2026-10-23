@@ -45,6 +45,7 @@ public final class HousingClient {
     private HousingClient(){}
 
     static void initialize(){
+        HousingSearchClient.initialize();
         PayloadTypeRegistry.playS2C().register(Payload.ID,Payload.CODEC);
         PayloadTypeRegistry.playC2S().register(Payload.ID,Payload.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(Payload.ID,(payload,context)->{
@@ -99,7 +100,7 @@ public final class HousingClient {
         ClientPlayNetworking.send(new Payload(HousingProtocol.encode(r)));return true;
     }
     /** 창을 닫을 때: 지금 방 정보는 지운다 (다음에 열 때 서버가 다시 보낸다). */
-    static void closed(){send(new Close());room=null;viewers=null;guestbook=null;friends=null;}
+    static void closed(){HousingSearchClient.invalidate();send(new Close());room=null;viewers=null;guestbook=null;friends=null;}
 
     /** 얼굴 텍스처 (파티 창과 같은 방식: 같은 서버면 탭 목록 스킨, 아니면 스킨 해시로 내려받기, 없으면 기본 스킨). */
     static Identifier face(Person p){

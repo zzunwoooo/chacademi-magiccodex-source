@@ -41,7 +41,7 @@ final class Rooms {
     }
     void quit(Player p) {
         UUID id = p.getUniqueId();
-        sessions.remove(id); catalogSent.remove(id); people.remove(id); sizes.remove(id); lastAction.remove(id); lastPost.remove(id);
+        openRequests.remove(id);sessions.remove(id); catalogSent.remove(id); people.remove(id); sizes.remove(id); lastAction.remove(id); lastPost.remove(id);
         plugin.store().offline(id, plugin.settings().server());
     }
     /** 기숙사 문 검사용 (아직 못 읽었으면 -2, 기숙사 없음 -1). */
@@ -77,11 +77,18 @@ final class Rooms {
         var skin = Skins.of(p);
         return new Person(p.getUniqueId(), "닉네임 확인 중", -1, skin.hash(), skin.slim());
     }
+    boolean searchSession(Player p){return sessions.containsKey(p.getUniqueId());}
     void catalogChanged() { catalogSent.clear(); }
 
     // ------------------------------------------------------------ 열기·닫기
     /** @param home 기숙사실 문·/테스트 하우징 내방 으로 열었는지 (또는 그렇게 연 창 안에서 이동했는지) */
-    void open(Player p, UUID owner, boolean home) {
+    private final Map<UUID,Long> openRequests=new HashMap<>();
+    void open(Player p,UUID owner,boolean home){
+        UUID viewer=p.getUniqueId();long request=++tokens;openRequests.put(viewer,request);
+        if(HousingVisitPolicy.immediate(viewer,owner,p.isOp())){openAllowed(p,owner,home);return;}
+        plugin.store().isFriend(viewer,owner,friend->{if(Bukkit.getPlayer(viewer)!=p||!Objects.equals(openRequests.get(viewer),request))return;openRequests.remove(viewer);if(HousingVisitPolicy.allowed(viewer,owner,p.isOp(),friend))openAllowed(p,owner,home);else plugin.net().result(p,false,friend==null?"친구 방문 권한을 확인하지 못했어요.":"친구의 방만 방문할 수 있어요.");});
+    }
+    private void openAllowed(Player p, UUID owner, boolean home) {
         if (!plugin.net().hasMod(p)) { ChacaLink.notify(p, "warning", "housing-nomod", "방 꾸미기를 열 수 없어요", "차카데미 클라이언트에서만 열 수 있어요", 2000); return; }
         UUID id = p.getUniqueId();
         var catalog = plugin.catalog();
@@ -93,6 +100,7 @@ final class Rooms {
         load(p, session, true, true, previous);
     }
     void close(Player p) {
+        openRequests.remove(p.getUniqueId());
         if (sessions.remove(p.getUniqueId()) != null) plugin.store().leave(p.getUniqueId());
     }
     Session session(UUID viewer) { return sessions.get(viewer); }

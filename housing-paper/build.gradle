@@ -1,6 +1,6 @@
 plugins { id 'java' }
 group = 'school.chacademia'
-version = '0.1.1-commands.1-followups.1-nickname.2'
+version = '0.1.2-usersearch.1'
 base { archivesName = 'chaca-housing' }
 repositories {
     if (findProperty('localDependencyRepo')) maven { url = uri(property('localDependencyRepo')) }
@@ -11,6 +11,7 @@ dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
     // Vault: reflection only (same as MagicCodexBridge ShopBridge).
     implementation files('../magic-codex-database/lib/mariadb-java-client-3.5.10.jar')
+    testImplementation files('C:/Chacademi/network/school/libraries/org/xerial/sqlite-jdbc/3.47.0.0/sqlite-jdbc-3.47.0.0.jar')
     testImplementation 'com.h2database:h2:2.3.232'
     testImplementation 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
     testImplementation 'com.h2database:h2:2.3.232'   // ExpandLedgerTest (in-memory SQL)

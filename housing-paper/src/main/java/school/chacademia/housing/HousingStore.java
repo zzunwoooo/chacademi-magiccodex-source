@@ -47,6 +47,7 @@ final class HousingStore {
     private final ExecutorService io = Executors.newSingleThreadExecutor(r -> { var t = new Thread(r, "ChacaHousing-db"); t.setDaemon(true); return t; });
     private ConnectionHolder db; private DatabaseSettings settings; private boolean maria;
     private HousingNames displayNames;
+    private HousingDirectory directory;
     private String tRoom, tLayout, tLike, tVisit, tBook, tPresence, tOnline, tFriends, tNick, tHouse;
     private ExpandLedger ledger;
     /** 종료 중(onDisable)에 끝난 작업의 콜백: 메인 스레드로 보낼 수 없으므로 close() 가 작업 스레드를 기다린 뒤 메인 스레드에서 실행한다. */
@@ -58,6 +59,7 @@ final class HousingStore {
         var bridge=Bukkit.getPluginManager().getPlugin("MagicCodexBridge");
         if(bridge==null)throw new IllegalStateException("MagicCodexBridge nickname domain unavailable");
         displayNames=new HousingNames(bridge.getDataFolder().toPath());
+        directory=new HousingDirectory(bridge.getDataFolder().toPath());
         io.submit(() -> {
             Path file = dataFolder.resolve("database.properties");
             settings = DatabaseSettings.load(file);
@@ -99,7 +101,7 @@ final class HousingStore {
     }
 
     void close() {
-        io.execute(()->{try{if(displayNames!=null)displayNames.close();}catch(Exception ignored){}});
+        io.execute(()->{try{if(displayNames!=null)displayNames.close();if(directory!=null)directory.close();}catch(Exception ignored){}});
         io.shutdown();
         try { io.awaitTermination(10, TimeUnit.SECONDS); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
         // 종료 중에 끝난 작업의 콜백을 버리지 않는다 (onDisable = 메인 스레드). 여기서 새로 부르는 DB 작업은 closing() 이라 바로 null 로 끝난다.
@@ -362,15 +364,12 @@ final class HousingStore {
     }
 
     /** viewer has target in their friend list (Bridge friends table). null = could not read. */
-    void isFriend(UUID viewer, UUID target, Consumer<Boolean> done) {
-        async("친구 확인", c -> {
-            try (var s = c.prepareStatement("SELECT 1 FROM " + tFriends + " WHERE owner=? AND target=?")) {
-                s.setString(1, viewer.toString()); s.setString(2, target.toString());
-                try (var r = s.executeQuery()) { return r.next(); }
-            }
-        }, done);
-    }
+    void isFriend(UUID viewer,UUID target,Consumer<Boolean> done){async("친구 방문 권한",c->{try{return directory.friends(viewer).contains(target);}catch(Exception e){throw new SQLException("Authoritative friendship unavailable",e);}},done);}
 
+
+    void search(UUID viewer,school.magiccodex.protocol.HousingSearchProtocol.Query query,Set<UUID> online,Consumer<school.magiccodex.protocol.HousingSearchProtocol.Page> done){
+        async("유저 검색",c->{try{var slice=directory.search(viewer,query.text(),query.page(),online);var out=new ArrayList<school.magiccodex.protocol.HousingSearchProtocol.User>();for(var hit:slice.hits()){var row=room(c,hit.id());var person=new Person(hit.id(),hit.name(),row==null?-1:row.house(),row==null?"":row.skin(),row!=null&&row.slim());out.add(new school.magiccodex.protocol.HousingSearchProtocol.User(person,hit.online(),hit.friend(),row==null?0:row.size()));}return new school.magiccodex.protocol.HousingSearchProtocol.Page(query.generation(),query.page(),slice.more(),out,"");}catch(Exception e){throw new SQLException("Global user directory lookup failed",e);}},done);
+    }
     // ------------------------------------------------------------ 친구 방 목록
     void friends(UUID viewer, int limit, Consumer<List<Friend>> done) {
         async("친구 목록", c -> {

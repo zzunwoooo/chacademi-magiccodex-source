@@ -11,3 +11,5 @@ include "kyudichi-paper"
 include "housing-paper"
 
 include 'pet-interactions-paper'
+
+include 'housing-presence-velocity'

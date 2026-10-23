@@ -33,7 +33,7 @@ public final class HousingScreen extends SocialScreen {
     private static final int UNDO_LIMIT=60;
     // hot ids
     private static final int H_CLOSE=1,H_EXPAND=2,H_BGM=3,H_GUESTBOOK=4,H_FRIENDS=5,H_HOME=6,H_ROTATE=10,H_RETRIEVE=11,H_UNDO=12,H_SAVE=13,H_SLOT=20,H_TAB=30,
-            H_ZOOM_IN=50,H_ZOOM_OUT=51,H_LIKE=60,H_SEND=70,H_POP_OK=80,H_POP_CANCEL=81,H_POP_CLOSE=82,H_ITEM=100,H_MORE=1000,H_DELETE=2000,H_VISIT=3000,H_GO_HOME=3999;
+            H_ZOOM_IN=50,H_ZOOM_OUT=51,H_LIKE=60,H_SEND=70,H_POP_OK=80,H_POP_CANCEL=81,H_POP_CLOSE=82,H_SEARCH_PREV=83,H_SEARCH_NEXT=84,H_ITEM=100,H_MORE=1000,H_DELETE=2000,H_VISIT=3000,H_GO_HOME=3999;
 
     private enum Popup { NONE, FRIENDS, EXPAND, CONFIRM_CLOSE }
     /** 들고 있는 가구. origin = 방에서 집었으면 원래 자리 (취소하면 되돌림), before = 집기 전 레이아웃 (되돌리기용). */
@@ -43,7 +43,8 @@ public final class HousingScreen extends SocialScreen {
     private Popup popup=Popup.NONE;
     private boolean guestbookOpen;
     private int tab,slot,hot,hoverItem=-1;
-    private Input search,post;
+    private Input search,post,userSearch;
+    private int searchPage;private boolean queryDirty;private long queryAt;
     private float invScroll,bookScroll,friendScroll,zoom=1,panX,panY;
     private boolean panning,mouseDown;private double lastX,lastY,mouseX,mouseY;
     private final Layout[] edit=new Layout[HousingRules.SLOTS];
@@ -79,9 +80,12 @@ public final class HousingScreen extends SocialScreen {
     @Override protected void init(){
         String q=search==null?"":search.text(),t=post==null?"":post.text();
         super.init();search=new Input("가구 검색",16,q);post=new Input("한마디",HousingProtocol.GUESTBOOK_CHARS,t);
+        userSearch=new Input("유저 검색",32,userSearch==null?"":userSearch.text());userSearch.widget.setChangedListener(value->queueUserSearch());
         if(owner==null){var room=HousingClient.room();if(room!=null)adopt(room,true);}
     }
 
+    boolean searchVisible(){return popup==Popup.FRIENDS;}
+    private void queueUserSearch(){searchPage=0;friendScroll=0;queryDirty=true;queryAt=Util.getMeasuringTimeMs()+300;HousingSearchClient.invalidate();}
     // ---------------------------------------------------------------- 서버에서 온 것
     void roomChanged(Room previous,Room room){
         boolean newRoom=previous==null||owner==null||!room.owner().id().equals(owner);
@@ -125,8 +129,9 @@ public final class HousingScreen extends SocialScreen {
     private void change(Layout next){undo[slot].push(edit[slot]);while(undo[slot].size()>UNDO_LIMIT)undo[slot].removeLast();edit[slot]=next;dirty[slot]=true;}
 
     @Override public void tick(){
-        super.tick();if(client.currentScreen!=this)return;
+        super.tick();if(client.currentScreen!=this)return;HousingSearchClient.tick();
         if(room()==null){Arrays.fill(dirty,false);popup=Popup.NONE;super.close();return;}
+        if(popup==Popup.FRIENDS&&queryDirty&&Util.getMeasuringTimeMs()>=queryAt){queryDirty=false;HousingSearchClient.send(userSearch.text(),searchPage);}
         if(busy&&Util.getMeasuringTimeMs()-busyAt>5000){busy=false;savingSlot=-1;}
     }
 
@@ -212,10 +217,10 @@ public final class HousingScreen extends SocialScreen {
         var list=new ArrayList<Btn>();
         if(edit){
             list.add(new Btn(H_EXPAND,"방 확장",ICON_EXPAND,1142,103));list.add(new Btn(H_BGM,"BGM",ICON_BGM,1256,99));
-            list.add(new Btn(H_GUESTBOOK,"방명록",ICON_GUESTBOOK,1366,97));list.add(new Btn(H_FRIENDS,"친구 방",ICON_FRIENDS,1473,94));
+            list.add(new Btn(H_GUESTBOOK,"방명록",ICON_GUESTBOOK,1366,97));list.add(new Btn(H_FRIENDS,"유저 검색",ICON_FRIENDS,1473,94));
         }else{
             if(room.home()&&!room.owner().id().equals(self()))list.add(new Btn(H_HOME,"내 방",ICON_TITLE_STAR,1212,110));
-            list.add(new Btn(H_BGM,"BGM",ICON_BGM,1337,103));list.add(new Btn(H_FRIENDS,"친구 방",ICON_FRIENDS,1452,115));
+            list.add(new Btn(H_BGM,"BGM",ICON_BGM,1337,103));list.add(new Btn(H_FRIENDS,"유저 검색",ICON_FRIENDS,1452,115));
         }
         list.add(new Btn(H_CLOSE,"",ICON_CLOSE,1578,70));
         int hit=0;
@@ -681,14 +686,16 @@ public final class HousingScreen extends SocialScreen {
         int hit=0;float px=566,py=110,pw=540,ph=720;
         nine(images,c,PANEL_ROOM_INFO,px,py,pw,ph,30,0xFFFFFFFF);
         icon(images,c,ICON_TITLE_STAR,px+50,py+52,44,0xFFFFFFFF);
-        type.draw(c,"친구 방",px+82,py+52,32,TITLE_GOLD,TITLE,false);
+        type.draw(c,"유저 검색",px+82,py+52,32,TITLE_GOLD,TITLE,false);
         boolean overClose=in(mx,my,px+pw-62,py+30,40,40);if(overClose)hit=H_POP_CLOSE;
         icon(images,c,ICON_CLOSE,px+pw-42,py+50,26,overClose?0xFFFFFFFF:0xFFD0D4DA);
         HudMesh.line(c,px+28,py+94,px+pw-28,py+94,1f,0x66E1B866);
-        float top=py+108,bottom=py+ph-30,x=px+26,w=pw-52,step=92,h=82;
-        var rows=new ArrayList<Friend>();
-        UUID me=self();boolean homeRow=room.home()&&!room.owner().id().equals(me);
-        var friends=HousingClient.friends();
+        nine(images,c,INPUT_FIELD,px+26,py+106,pw-52,46,10,0xFFFFFFFF);
+        userSearch.draw(c,px+26,py+106,pw-52,46,"등록 닉네임 검색");
+        float top=py+166,bottom=py+ph-76,x=px+26,w=pw-52,step=92,h=82;
+        var rows=new ArrayList<school.magiccodex.protocol.HousingSearchProtocol.User>();
+        UUID me=self();boolean homeRow=false;
+        var page=HousingSearchClient.page;var friends=page==null?null:page.users();
         if(friends!=null)rows.addAll(friends);
         int count=rows.size()+(homeRow?1:0);
         float max=Math.max(0,count*step-(step-h)-(bottom-top));friendScroll=Math.clamp(friendScroll,0,max);
@@ -713,15 +720,21 @@ public final class HousingScreen extends SocialScreen {
                 face(c,p,x+12,ty+12,58);
                 type.draw(c,fit(p.name(),21,w-230,BOLD),x+82,ty+30,21,f.online()?0xFFFFFFFF:0xFFB4BCC4,BOLD,false);
                 if(f.online())icon(images,c,ICON_ONLINE,x+88,ty+57,12,0xFFFFFFFF);else HudMesh.disk(c,x+88,ty+57,4.5f,0xFF7D8894);
-                String info=(f.online()?"온라인":"오프라인")+(p.house()>=0?" · "+SchoolProtocol.HOUSES.get(p.house()):"")+(f.size()>0?" · 방 "+f.size()+"×"+f.size():"");
+                String info=(f.online()?"온라인":"오프라인")+(f.friend()?" · 친구":"")+(p.house()>=0?" · "+SchoolProtocol.HOUSES.get(p.house()):"")+(f.size()>0?" · 방 "+f.size()+"×"+f.size():"");
                 type.draw(c,info,x+100,ty+57,15,f.online()?GREEN:OFF,BODY,false);
-                boolean can=f.size()>0;
+                boolean can=f.size()>0&&(f.friend()||p.id().equals(me)||client.player.hasPermissionLevel(2));
                 boolean over=can&&live&&in(mx,my,x+w-108,ty+20,96,42);if(over)hit=H_VISIT+i;
-                button(c,can?"방문":"방 없음",null,x+w-108,ty+20,96,42,over,false);
+                button(c,can?"방문":f.size()==0?"방 없음":"친구 전용",null,x+w-108,ty+20,96,42,over,false);
             }
         }finally{c.disableScissor();}
-        if(friends==null)type.draw(c,"친구 목록을 불러오는 중…",px+pw/2,top+120,19,MUTED,BODY,true);
-        else if(rows.isEmpty())type.draw(c,"아직 친구가 없어요. 친구 창에서 친구를 추가해 보세요.",px+pw/2,top+(homeRow?140:60),17,MUTED,BODY,true);
+        if(page==null)type.draw(c,"검색 중…",px+pw/2,top+100,19,MUTED,BODY,true);
+        else if(!page.error().isEmpty())type.draw(c,fit(page.error(),17,pw-50,BODY),px+pw/2,top+100,17,MUTED,BODY,true);
+        else if(rows.isEmpty())type.draw(c,"검색 결과가 없어요.",px+pw/2,top+60,17,MUTED,BODY,true);
+        boolean prev=page!=null&&page.error().isEmpty()&&searchPage>0,next=page!=null&&page.error().isEmpty()&&page.more();
+        boolean overPrev=prev&&in(mx,my,px+26,py+ph-60,110,38),overNext=next&&in(mx,my,px+pw-136,py+ph-60,110,38);
+        if(overPrev)hit=H_SEARCH_PREV;if(overNext)hit=H_SEARCH_NEXT;
+        button(c,"이전",null,px+26,py+ph-60,110,38,overPrev,false);button(c,"다음",null,px+pw-136,py+ph-60,110,38,overNext,false);
+        type.draw(c,(searchPage+1)+"쪽",px+pw/2,py+ph-41,18,SUB,BODY,true);
         return hit;
     }
     private int expandPopup(DrawContext c,Room room,double mx,double my){
@@ -844,9 +857,11 @@ public final class HousingScreen extends SocialScreen {
         int h=hot;
         switch(popup){
             case FRIENDS->{
+                if(userSearch.click(mx-dx/2,my))return;
+                if(h==H_SEARCH_PREV||h==H_SEARCH_NEXT){var page=HousingSearchClient.page;if(page!=null&&page.error().isEmpty()&&(h==H_SEARCH_PREV&&searchPage>0||h==H_SEARCH_NEXT&&page.more())){searchPage+=h==H_SEARCH_PREV?-1:1;friendScroll=0;HousingSearchClient.send(userSearch.text(),searchPage);}return;}
                 if(h==H_POP_CLOSE){popup=Popup.NONE;sound(1,.15f);}
                 else if(h==H_GO_HOME){popup=Popup.NONE;visit(self());}
-                else if(h>=H_VISIT&&h<H_GO_HOME){var list=HousingClient.friends();int i=h-H_VISIT;if(list!=null&&i<list.size()){popup=Popup.NONE;visit(list.get(i).person().id());}}
+                else if(h>=H_VISIT&&h<H_GO_HOME){var result=HousingSearchClient.page;var list=result==null?null:result.users();int i=h-H_VISIT;if(list!=null&&i<list.size()){popup=Popup.NONE;visit(list.get(i).person().id());}}
                 else if(!in(mx,my,566+dx/2,110,540,720)){popup=Popup.NONE;sound(1,.15f);}
             }
             case EXPAND->{
@@ -862,7 +877,7 @@ public final class HousingScreen extends SocialScreen {
     }
     private void openFriends(){
         popup=Popup.FRIENDS;friendScroll=0;cancelHeld();sound(1.1f,.2f);
-        if(!HousingClient.send(new Friends()))say("하우징 서버에 연결되어 있지 않아요.",false);
+        search.focus(false);post.focus(false);userSearch.focus(true);queueUserSearch();queryAt=0;
     }
     private void visit(UUID target){
         if(target==null)return;
@@ -968,19 +983,21 @@ public final class HousingScreen extends SocialScreen {
         return false;
     }
     @Override public boolean charTyped(char ch,int mods){
+        if(popup==Popup.FRIENDS)return userSearch.focus()&&userSearch.typed(ch,mods);
         if(search.focus()){invScroll=0;return search.typed(ch,mods);}
         if(post.focus())return post.typed(ch,mods);
         return super.charTyped(ch,mods);
     }
     @Override public boolean keyPressed(int key,int scan,int mods){
         if(key==GLFW.GLFW_KEY_ESCAPE){
-            if(popup!=Popup.NONE){popup=Popup.NONE;return true;}
+            if(popup!=Popup.NONE){popup=Popup.NONE;HousingSearchClient.invalidate();return true;}
             if(search.focus()||post.focus()){search.focus(false);post.focus(false);return true;}
             if(held!=null){cancelHeld();return true;}
             if(moreEntry>=0){moreEntry=-1;return true;}
             if(guestbookOpen&&editing()){guestbookOpen=false;return true;}
             requestClose();return true;
         }
+        if(popup==Popup.FRIENDS){if(key==GLFW.GLFW_KEY_ENTER||key==GLFW.GLFW_KEY_KP_ENTER){queryDirty=false;searchPage=0;friendScroll=0;HousingSearchClient.send(userSearch.text(),0);return true;}return userSearch.key(key,scan,mods);}
         if(popup!=Popup.NONE){
             if((key==GLFW.GLFW_KEY_ENTER||key==GLFW.GLFW_KEY_KP_ENTER)&&popup!=Popup.FRIENDS){hot=H_POP_OK;popupClick(room(),-1,-1);}
             return true;
