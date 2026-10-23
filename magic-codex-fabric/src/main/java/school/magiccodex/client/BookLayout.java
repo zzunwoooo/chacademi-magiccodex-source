@@ -30,6 +30,25 @@ final class BookLayout {
     // page row under the book, centred on the spine (as in the reference)
     static final float NAV_Y = 942, NAV_S = 74, PREV_CX = 663, NEXT_CX = 1011, LABEL_CX = 837, LABEL_SIZE = 26;
 
+    /**
+     * The pages are not fully open: each page is a trapezoid, higher at the outer edge and lower at the spine at the top,
+     * almost flat at the bottom (measured on book_panel.png: top edge slope +0.042 left / -0.047 right, bottom edge
+     * -0.009 left / +0.009 right, edges at y ~60 / ~860). Text lines are sheared by the slope at their height, around the
+     * centre of their page, so they follow the paper instead of sitting level on a tilted page.
+     */
+    static final float LEFT_TOP_SLOPE = 0.042f, LEFT_BOTTOM_SLOPE = -0.009f, RIGHT_TOP_SLOPE = -0.047f, RIGHT_BOTTOM_SLOPE = 0.009f;
+    static final float SLOPE_TOP_Y = 60, SLOPE_BOTTOM_Y = 860;
+
+    /** dy/dx of the paper at height y on the left or right page. */
+    static float slope(boolean right, float y) {
+        float t = Math.clamp((y - SLOPE_TOP_Y) / (SLOPE_BOTTOM_Y - SLOPE_TOP_Y), 0f, 1f);
+        return right ? RIGHT_TOP_SLOPE + (RIGHT_BOTTOM_SLOPE - RIGHT_TOP_SLOPE) * t : LEFT_TOP_SLOPE + (LEFT_BOTTOM_SLOPE - LEFT_TOP_SLOPE) * t;
+    }
+    /** Shear pivot of a page (centre of its text box). */
+    static float pivot(boolean right) { return (right ? RIGHT_X : LEFT_X) + BOX_W / 2; }
+    /** Where a point drawn level at (x, y) lands on the tilted page. */
+    static float tiltedY(boolean right, float x, float y) { return y + slope(right, y) * (x - pivot(right)); }
+
     /** Panel opacity (hologram). README: about 0.75~0.85. Buttons are a little more solid so they stay readable. */
     static final float PANEL_ALPHA = 0.82f, BUTTON_ALPHA = 0.92f, DISABLED_ALPHA = 0.32f;
 

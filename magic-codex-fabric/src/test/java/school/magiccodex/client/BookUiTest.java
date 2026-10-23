@@ -58,6 +58,16 @@ class BookUiTest {
         // boxes stay clear of the spine fold (x 790..875) and the gold lines (x 127 / 1535)
         assertTrue(BookLayout.LEFT_X > 127 + 40 && BookLayout.LEFT_X + BookLayout.BOX_W < 790 - 30);
         assertTrue(BookLayout.RIGHT_X > 875 + 30 && BookLayout.RIGHT_X + BookLayout.BOX_W < 1535 - 40);
+        // tilted text (pages not fully open) still stays between the gold top / bottom lines (~y 72..80 / ~822..825)
+        for (boolean right : new boolean[]{false, true}) {
+            float x0 = right ? BookLayout.RIGHT_X : BookLayout.LEFT_X, x1 = x0 + BookLayout.BOX_W;
+            for (float x : new float[]{x0, x1}) {
+                assertTrue(BookLayout.tiltedY(right, x, BookLayout.BOX_TOP) > 130, "top corner too high");
+                assertTrue(BookLayout.tiltedY(right, x, BookLayout.BOX_BOTTOM) < 800, "bottom corner too low");
+            }
+            // the outer side of each page is higher at the top (paper slopes down toward the spine)
+            assertTrue(BookLayout.tiltedY(right, right ? x1 : x0, BookLayout.BOX_TOP) < BookLayout.tiltedY(right, right ? x0 : x1, BookLayout.BOX_TOP));
+        }
     }
 
     @Test void titleFitsOneOrTwoLines() throws Exception {
