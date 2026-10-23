@@ -42,6 +42,10 @@ public final class Settings {
     public final int giftLiked;
     public final int giftDisliked;
     public final int giftNeutral;
+    /** 좋아하는 선물(gift_likes.liked)일 때 등급별 점수 — 일반·고급·유일·전설 (2026-10-23). */
+    public final Map<String, Integer> giftGrades;
+    /** 좋아하지 않는 선물일 때 점수. */
+    public final int giftNotLiked;
 
     // 마법 발견 여부 권한 (MagicDiscovery)
     public final String discoveryPermission;
@@ -157,6 +161,15 @@ public final class Settings {
         giftLiked = c.getInt("gifts.liked", 3);
         giftDisliked = c.getInt("gifts.disliked", -3);
         giftNeutral = c.getInt("gifts.neutral", 1);
+        Map<String, Integer> grades = new HashMap<>(Map.of("일반", 1, "고급", 2, "유일", 3, "전설", 10));
+        ConfigurationSection gs = c.getConfigurationSection("gifts.grades");
+        if (gs != null) {
+            for (String k : gs.getKeys(false)) {
+                grades.put(k, gs.getInt(k));
+            }
+        }
+        giftGrades = Map.copyOf(grades);
+        giftNotLiked = c.getInt("gifts.not-liked", -1);
         discoveryPermission = c.getString("discovery-permission", "magic.learned.%s");
 
         zone = ZoneId.of(c.getString("budget.timezone", "Asia/Seoul"));

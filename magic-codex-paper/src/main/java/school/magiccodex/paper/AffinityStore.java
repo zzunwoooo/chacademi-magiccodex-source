@@ -21,9 +21,14 @@ import school.magiccodex.database.DatabaseSettings;
  */
 final class AffinityStore implements AutoCloseable {
 
-    /** 하트 이벤트를 몇 단계 봤는지에 따른 점수 상한: heart 0 → 20, 1 → 40 ... 4 이상 → 100. */
+    /**
+     * 점수 상한 (오너 결정 2026-10-23): 기본 0·최대 100, 30·60·90 에서 그 NPC 퀘스트를 깨야 다음 구간이 열린다.
+     * heart = 깬 호감도 퀘스트 단계 (고정 대화 동작 "custom heart <npc> <단계>"): 0 → 30, 1 → 60, 2 → 90, 3 이상 → 100.
+     * ChacaNPC AffinityStage·선물 상한 판단도 이 값과 같아야 한다.
+     */
     static int gate(int heart) {
-        return 20 * (Math.max(0, Math.min(4, heart)) + 1);
+        int h = Math.max(0, Math.min(3, heart));
+        return h >= 3 ? 100 : 30 * (h + 1);
     }
 
     record Row(int score, int heart, String nickname) {
@@ -33,7 +38,8 @@ final class AffinityStore implements AutoCloseable {
     record AddResult(Row row, int applied) {
     }
 
-    enum GiftBegin { OK, CAP, DUPLICATE }
+    /** OK = 예약됨 · CAP = 오늘 선물 횟수 다 씀 · FULL = 호감도 상한(퀘스트 미완료)이라 받지 않음 (횟수 차감 없음) · DUPLICATE = 같은 토큰 */
+    enum GiftBegin { OK, CAP, DUPLICATE, FULL }
 
     private final ConnectionHolder holder;
     private final boolean maria;
@@ -381,7 +387,11 @@ final class AffinityStore implements AutoCloseable {
                 }
             }
             ensureRow(db, owner, npc);
-            lockRow(db, owner, npc);
+            Row cur = lockRow(db, owner, npc);
+            // 상한에 닿아 있으면(그 NPC 퀘스트를 아직 안 깸) 받지 않는다 — 하루 횟수도 쓰지 않는다
+            if (cur.score() >= gate(cur.heart())) {
+                return GiftBegin.FULL;
+            }
             if (consumeDaily(db, owner, npc, day, "gift", 1, dailyCount) == 0) {
                 return GiftBegin.CAP;
             }

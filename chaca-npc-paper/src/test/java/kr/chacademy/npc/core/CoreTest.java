@@ -223,10 +223,10 @@ class CoreTest {
     @Test
     void affinityStages() {
         assertEquals(AffinityStage.ACQUAINTANCE, AffinityStage.of(25, false));
+        assertEquals(AffinityStage.FRIEND, AffinityStage.of(30, false));       // 첫 상한 30 = 친한 사이 (마법 힌트 시작)
         assertEquals(AffinityStage.BEST_FRIEND, AffinityStage.of(90, false));
         assertEquals(AffinityStage.SPECIAL, AffinityStage.of(90, true));
-        assertEquals(AffinityStage.STRANGER, AffinityStage.of(20, 0, true));   // 하트 이벤트 전에는 단계가 오르지 않음
-        assertEquals(AffinityStage.ACQUAINTANCE, AffinityStage.of(20, 1, true));
+        assertEquals(AffinityStage.FRIEND, AffinityStage.of(30, 0, true));    // 상한은 Bridge 가 점수로 막는다
         assertEquals(AffinityStage.BEST_FRIEND, AffinityStage.of(100, 5, false));
     }
 

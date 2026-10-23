@@ -395,6 +395,17 @@ public final class DialogueService {
         input(p, rawText, buttonId, ++s.chatSeq);
     }
 
+    /** 선물 창에서 칸을 골랐다 (HUD C_GIFT 또는 채팅 /대화선택 선물). seq &lt; 0 이면 새 순번. */
+    public void gift(Player p, int slot, int seq) {
+        DialogueSession s = sessions.get(p.getUniqueId());
+        if (s == null) {
+            return;
+        }
+        s.replySeq = seq < 0 ? ++s.chatSeq : seq;
+        s.lastActivity = System.currentTimeMillis();
+        plugin.gifts().giveSlot(p, s.character(), slot);
+    }
+
     /** 플레이어가 말했다. buttonId가 있으면 추천 버튼. seq = 요청 순번. */
     public void input(Player p, String rawText, String buttonId, int seq) {
         DialogueSession s = sessions.get(p.getUniqueId());
@@ -406,6 +417,12 @@ public final class DialogueService {
         s.replySeq = seq;
         if (s.busy) {
             s.view.info(p, s, "(" + s.character().name() + "이(가) 아직 대답하는 중이에요)");
+            return;
+        }
+        // 대화 버튼 3번 = 선물 창 (대사 대신)
+        if (NpcTalkProtocol.GIFT_BUTTON.equals(buttonId)) {
+            s.lastActivity = now;
+            plugin.gifts().offer(p, s, seq);
             return;
         }
         if (now - s.lastInputAt < st.cooldownSeconds * 1000L) {

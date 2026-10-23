@@ -136,12 +136,7 @@ public final class NpcManager implements Listener {
         }
         clickGate.put(p.getUniqueId(), now);
 
-        // (1) 선물
-        if (p.isSneaking() && p.getInventory().getItemInMainHand().getType() != org.bukkit.Material.AIR
-                && plugin.gifts().accepts(c)) {
-            plugin.gifts().give(p, c);
-            return;
-        }
+        // (1) 선물은 대화 버튼 3번 "선물 줄 거 있어" → 선물 창 (Shift+우클릭 선물은 2026-10-23 오너 결정으로 없앰)
         int npcId = npc.getId();
         org.bukkit.entity.Entity anchor = npc.getEntity();
         // (2) 고정 대화 → NONE 일 때만 (3) AI

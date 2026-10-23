@@ -64,7 +64,7 @@ public final class NpcSocialFacade {
 
     // ------------------------------------------------------------------ 선물 (2단계)
 
-    /** 1단계: 하루 횟수 예약 + pending 기록. "OK" / "CAP" / "DUPLICATE" */
+    /** 1단계: 하루 횟수 예약 + pending 기록. "OK" / "CAP"(오늘 횟수 다 씀) / "FULL"(호감도 상한, 횟수 안 씀) / "DUPLICATE" */
     public CompletableFuture<String> beginGift(UUID player, String npc, String token, int delta) {
         return service.beginGift(player, npc, token, delta).thenApply(Enum::name);
     }

@@ -25,6 +25,9 @@ public interface DialogueView {
 
     void questOffer(Player player, DialogueSession session, int seq, String title, String token);
 
+    /** 선물 창 열기 (대화 버튼 3번). slots = 선물로 줄 수 있는 인벤토리 칸과 등급 (서버가 고른 것). */
+    void gifts(Player player, DialogueSession session, int seq, List<GiftService.GiftItem> slots);
+
     /** 시스템 안내 (회색 글씨 등). session이 없으면 null. */
     void info(Player player, DialogueSession session, String message);
 

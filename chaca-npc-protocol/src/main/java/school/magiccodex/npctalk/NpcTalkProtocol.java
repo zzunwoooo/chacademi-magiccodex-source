@@ -19,7 +19,7 @@ import java.util.List;
 public final class NpcTalkProtocol {
 
     /** 패킷 계약 버전. HELLO / HELLO_ACK 로 양쪽이 같을 때만 HUD 대화를 쓴다. */
-    public static final int VERSION = 1;
+    public static final int VERSION = 2; // 2 = 선물 창 (C_GIFT / S_GIFTS)
 
     public static final String REQUEST = "magiccodex:npc_talk_request";
     public static final String RESPONSE = "magiccodex:npc_talk_response";
@@ -38,6 +38,8 @@ public final class NpcTalkProtocol {
     public static final int C_BUTTON = 2;
     public static final int C_QUEST = 3;
     public static final int C_CLOSE = 4;
+    /** 선물 창에서 고른 인벤토리 칸 번호 (text = "0"~"35" 또는 "40" 왼손). 서버가 아이템·수량·받을 수 있는지 다시 검사한다. */
+    public static final int C_GIFT = 5;
 
     // 서버 → 클라이언트
     public static final int S_HELLO_ACK = 0;
@@ -48,6 +50,12 @@ public final class NpcTalkProtocol {
     public static final int S_QUEST_OFFER = 5;
     public static final int S_CLOSE = 6;
     public static final int S_INFO = 7;
+    /** 선물 창 열기: text = "칸:등급,칸:등급,…" (등급 1 일반 · 2 고급 · 3 유일 · 4 전설). 클라는 자기 인벤토리 그 칸의 아이템을 그린다. */
+    public static final int S_GIFTS = 8;
+    /** 선물 버튼 id (대화 버튼 3번). 이 버튼은 대사 대신 선물 창을 연다. */
+    public static final String GIFT_BUTTON = "gift";
+    private static final String GIFT_SLOT_RE = "[0-9]|[12][0-9]|3[0-5]|40";
+    private static final String GIFT_LIST_RE = "((" + GIFT_SLOT_RE + "):[1-4](,(" + GIFT_SLOT_RE + "):[1-4])*)?";
 
     private static final String SESSION_RE = "[a-f0-9-]{36}";
     private static final String ID_RE = "[a-z0-9_-]{1,32}";
@@ -108,6 +116,33 @@ public final class NpcTalkProtocol {
         return true;
     }
 
+    /** 선물 창 한 칸. grade 1 일반 · 2 고급 · 3 유일 · 4 전설. */
+    public record GiftSlot(int slot, int grade) {
+    }
+
+    public static String giftList(List<GiftSlot> slots) {
+        StringBuilder b = new StringBuilder();
+        for (GiftSlot g : slots) {
+            if (b.length() > 0) {
+                b.append(',');
+            }
+            b.append(g.slot()).append(':').append(g.grade());
+        }
+        return b.toString();
+    }
+
+    public static List<GiftSlot> giftSlots(String text) {
+        List<GiftSlot> out = new ArrayList<>();
+        if (text == null || text.isEmpty() || !text.matches(GIFT_LIST_RE)) {
+            return out;
+        }
+        for (String part : text.split(",")) {
+            String[] a = part.split(":");
+            out.add(new GiftSlot(Integer.parseInt(a[0]), Integer.parseInt(a[1])));
+        }
+        return out;
+    }
+
     // ------------------------------------------------------------------ 인코딩
 
     public static byte[] encode(Request r) {
@@ -151,6 +186,11 @@ public final class NpcTalkProtocol {
                         throw new IOException("quest");
                     }
                 }
+                case C_GIFT -> {
+                    if (!session.matches(SESSION_RE) || !text.matches(GIFT_SLOT_RE)) {
+                        throw new IOException("gift");
+                    }
+                }
                 case C_CLOSE -> {
                     if (!session.matches(SESSION_RE) || !text.isEmpty()) {
                         throw new IOException("close");
@@ -190,7 +230,7 @@ public final class NpcTalkProtocol {
             String portrait = i.readUTF();
             String text = i.readUTF();
             int n = i.readUnsignedByte();
-            if (op > S_INFO || seq < 0 || n > MAX_BUTTONS || speaker.length() > 64 || !portrait.matches(PORTRAIT_RE)
+            if (op > S_GIFTS || seq < 0 || n > MAX_BUTTONS || speaker.length() > 64 || !portrait.matches(PORTRAIT_RE)
                     || text.length() > MAX_LINE_CHARS) {
                 throw new IOException("response");
             }
@@ -211,6 +251,9 @@ public final class NpcTalkProtocol {
             String token = i.readUTF();
             if (hearts > MAX_HEARTS || !(token.isEmpty() || token.matches(TOKEN_RE))) {
                 throw new IOException("tail");
+            }
+            if (op == S_GIFTS && !text.matches(GIFT_LIST_RE)) {
+                throw new IOException("gifts");
             }
             return new Response(op, session, seq, speaker, portrait, text, List.copyOf(buttons), hearts, input, token);
         });
