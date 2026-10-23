@@ -133,7 +133,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
         registeredCutscenes=getConfig().getStringList("cutscenes").stream().filter(StorySafety::validId).toList();
 
         Messenger m = getServer().getMessenger();
-        for (String out : List.of(StoryCodec.CUTSCENE_PLAY, StoryCodec.CUTSCENE_STOP, StoryCodec.DIALOGUE_OPEN, StoryCodec.DIALOGUE_VIEW, StoryCodec.DIALOGUE_STOP,
+        for (String out : List.of(StoryCodec.CUTSCENE_PLAY, StoryCodec.CUTSCENE_STOP, StoryCodec.DIALOGUE_OPEN, StoryCodec.DIALOGUE_VIEW, StoryCodec.DIALOGUE_CONTENT, StoryCodec.DIALOGUE_STOP,
                 StoryCodec.STORY_HELLO, StoryCodec.STORY_RELOAD, StoryCodec.DIALOGUE_SESSION, StoryCodec.RELOAD_REQUEST)) {
             m.registerOutgoingPluginChannel(this, out);
         }
@@ -283,7 +283,17 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
 
     // ================================================================ 대화 정의 읽기 (서버 켤 때 / reload)
 
-    private record DefLoad(Map<String, StoryDef> defs, Map<String, String> broken, List<String> warnings) {}
+    private record DefLoad(Map<String, StoryDef> defs, Map<String, String> broken, List<String> warnings, Map<String, String> texts) {}
+
+    /** 대화 id → 서버 dialogue.yml 글 (클라이언트에 그대로 보낸다). */
+    private Map<String, String> dialogueTexts = Map.of();
+
+    /** 대화를 열기 직전에 내용을 보낸다 (최신 스토리 모드만 받음). 예전 모드는 자기 config/chaca_dialogue 파일을 쓴다. */
+    private void sendContent(Player p, String id) {
+        String text = dialogueTexts.get(id);
+        if (text == null || !p.getListeningPluginChannels().contains(StoryCodec.DIALOGUE_CONTENT)) return;
+        p.sendPluginMessage(this, StoryCodec.DIALOGUE_CONTENT, StoryCodec.dialogueContent(id, text));
+    }
 
     /**
      * dialogues 폴더를 읽는다 (파일 I/O — 서버를 켤 때와 reload 의 비동기 작업에서만 부른다).
@@ -297,6 +307,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
         Map<String, StoryDef> out = new TreeMap<>();
         Map<String, String> broken = new TreeMap<>();
         List<String> warnings = new ArrayList<>();
+        Map<String, String> texts = new TreeMap<>();
         Set<String> ids = new TreeSet<>();
         File[] files = dir.listFiles();
         if (files != null) {
@@ -343,9 +354,19 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
                 continue;
             }
             out.put(id, StoryDef.parse(id, commands, graph, notes));
+            if (graph != null) {
+                try {
+                    String text = Files.readString(graphFile.toPath(), java.nio.charset.StandardCharsets.UTF_8);
+                    if (text.length() > StoryCodec.DIALOGUE_CONTENT_MAX_CHARS || text.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 1_000_000)
+                        warnings.add(id + ": dialogue.yml 이 너무 커서 클라이언트에 보내지 않습니다 (클라 파일을 씀)");
+                    else texts.put(id, text);
+                } catch (Exception e) {
+                    warnings.add(id + ": dialogue.yml 글을 읽지 못해 클라이언트에 보내지 않습니다: " + e.getMessage());
+                }
+            }
             if (!notes.isEmpty()) warnings.add(id + ": " + summarize(notes));
         }
-        return new DefLoad(out, broken, warnings);
+        return new DefLoad(out, broken, warnings, texts);
     }
 
     private static String summarize(List<String> problems) {
@@ -358,6 +379,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
         endingSessions.clear();dialogueAcks.clear();
         defs = load.defs();
         brokenDefs = load.broken();
+        dialogueTexts = load.texts();
         boolean require = getConfig().getBoolean("require-server-graph", true);
         List<String> noGraph = new ArrayList<>();
         for (StoryDef d : defs.values()) if (d.graph == null) noGraph.add(d.id);
@@ -534,9 +556,10 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
             if(session!=null){
                 var cur=endingSessions.current(uuid,System.currentTimeMillis());
                 if(cur==null||!cur.token().equals(session.token()))return;
+                sendContent(p,id);
                 p.sendPluginMessage(this,StoryCodec.DIALOGUE_SESSION,StoryCodec.dialogueSession(id,StoryCodec.encodeVars(vars),session.token()));
             }
-            else p.sendPluginMessage(this,StoryCodec.DIALOGUE_VIEW,StoryCodec.dialogueView(id,StoryCodec.encodeVars(vars)));
+            else {sendContent(p,id);p.sendPluginMessage(this,StoryCodec.DIALOGUE_VIEW,StoryCodec.dialogueView(id,StoryCodec.encodeVars(vars)));}
         });
         Bukkit.getScheduler().runTaskLater(this,()->{
             if(dialogueAcks.pending(uuid,id)==future){dialogueAcks.reject(uuid,id);if(session!=null)endingSessions.abort(uuid,id,session.token(),System.currentTimeMillis());}
@@ -797,6 +820,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
         }
         // 서버도 모드와 같은 호감도에서 시작해 같은 규칙으로 흐름을 따라간다
         a.walk = def != null && def.graph != null ? new StoryGraph.Walk(def.graph, sent, a.scene, a.line) : null;
+        sendContent(p, a.id);
         p.sendPluginMessage(this, StoryCodec.DIALOGUE_OPEN, StoryCodec.dialogueOpen(a.id, sb.toString(), vars, a.scene, a.line));
     }
 
@@ -1569,6 +1593,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
         PlayerStory ps = state.players.get(p.getUniqueId());
         if ((ps != null && ps.active != null && ps.active.sent) || endingSessions.current(p.getUniqueId(), System.currentTimeMillis()) != null)
             throw ChacaLink.error(nick(p) + " 님은 지금 다른 스토리를 보는 중이에요");
+        sendContent(p, id);
         p.sendPluginMessage(this, StoryCodec.DIALOGUE_OPEN, StoryCodec.dialogueOpen(id, "", StoryCodec.encodeVars(textVars(p)), "", 0));
         getLogger().info("[스토리 미리보기] " + ctx.getSource().getSender().getName() + " → " + p.getName() + " 대화 " + id);
         ChacaLink.ok(ctx.getSource().getSender(), nick(p) + " 님에게 대화 " + id + " 미리보기를 열었어요");

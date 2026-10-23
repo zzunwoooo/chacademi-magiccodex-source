@@ -89,6 +89,14 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
             if(reloadContent(CutscenePackets.KIND_CUTSCENE,feedback)==0)failures++;
             if(ClientPlayNetworking.canSend(CutscenePackets.ReloadResultC2S.TYPE))ClientPlayNetworking.send(new CutscenePackets.ReloadResultC2S(payload.token(),failures));
         }));
+        // 서버가 보내는 대화 내용 (대사는 서버에서만 관리) · 초상화는 리소스팩 chacademia_npc (magiccodex:textures/gui/dialogue/<이름>.png)
+        PayloadTypeRegistry.playS2C().register(CutscenePackets.DialogueContentS2C.TYPE,CutscenePackets.DialogueContentS2C.CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(CutscenePackets.DialogueContentS2C.TYPE,(payload,context)->
+                kr.chacademy.story.dialogue.ServerDialogues.put(payload.id(),payload.text())); // 바로 넣는다 (뒤따르는 여는 패킷보다 먼저 있어야 함, 맵은 스레드 안전)
+        kr.chacademy.story.dialogue.DialogueRunner.packPortrait=name->{
+            var mc=Minecraft.getInstance();
+            return mc.getResourceManager().getResource(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("magiccodex","textures/gui/dialogue/"+name+".png")).isPresent();
+        };
         PayloadTypeRegistry.playS2C().register(CutscenePackets.DialogueSessionS2C.TYPE,CutscenePackets.DialogueSessionS2C.CODEC);
         PayloadTypeRegistry.playC2S().register(CutscenePackets.DialogueSessionSignalC2S.TYPE,CutscenePackets.DialogueSessionSignalC2S.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(CutscenePackets.DialogueSessionS2C.TYPE,(payload,context)->{
@@ -135,6 +143,7 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
                 (handler, client) -> client.execute(() -> {
                     pendingLocal = null;
                     catalogSent=false;
+                    kr.chacademy.story.dialogue.ServerDialogues.clear();
                     stopDialogue();
                     CutscenePlayback.disconnect();
                 }));
@@ -350,7 +359,7 @@ public class ChacademyCutsceneClient implements ClientModInitializer {
             LOGGER.warn("대화 {} 불러오기 실패", id, e);
             error("대화를 찾을 수 없어요: " + id);
             if (fromServer) {
-                boolean missing = !Files.isRegularFile(DialogueLoader.folder(id).resolve("dialogue.yml"));
+                boolean missing = !DialogueLoader.exists(id);
                 reportDialogueFailure(id, missing ? CutscenePackets.FAIL_MISSING : CutscenePackets.FAIL_BROKEN);
             }
             return;

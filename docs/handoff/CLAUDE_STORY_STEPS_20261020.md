@@ -170,3 +170,20 @@ NPC 는 Citizens 로 소환한 NPC 를 클릭해 지정 (서버 ID `quest-server
 
 ### 73dd9db 패치 통합 검증 (task7)
 Ctrl HudCursorScreen에서도 퀘스트 HUD와 접기 버튼을 유지하는 부분만 최신 통합에 반영했다. 기존 AFTER_TRANSLUCENT 포털 렌더 및 cdca568 단계 ID는 그대로다. 정책 단위 테스트를 위해 화면 판정을 작은 순수 헬퍼로 분리했으며 MagicCodex 강제 의존은 추가하지 않았다. 배포 전 검토용이며 운영 교체는 하지 않는다.
+
+## 15. 대사는 서버, 그림은 리소스팩 하나 (2026-10-23)
+
+오너 결정: 스토리·퀘스트·AI 대화 내용은 서버에서만 고치고, 런처는 리소스만 가진다. 초상화는 런처 `resourcepacks/chacademia_npc` 하나에 이름별 한 장, 스토리·AI 둘 다 거기서 읽는다.
+
+**대사 (서버 → 클라)**
+- 플러그인: 새 채널 `chacademy:dialogue_content` (String id + String dialogue.yml 글, 최대 30만 자·1MB). `loadDefs` 가 `dialogues/<id>/dialogue.yml` 글을 같이 읽어 `dialogueTexts` 에 두고(새로고침 때 갱신), 대화를 여는 세 곳(`requestNicknameDialogue` 의 SESSION/VIEW, 예전 `DIALOGUE_OPEN`, `/테스트 스토리 대화`) 바로 앞에서 `sendContent`.
+- 모드: `CutscenePackets.DialogueContentS2C` → `ServerDialogues`(메모리, 접속 끊기면 지움). `DialogueLoader.load/warnings/listIds/exists`, `StoryJournal.content` 가 서버 내용을 먼저 쓰고, 없으면 예전 `config/chaca_dialogue` 파일 (개발용 `/스토리도구`, 예전 서버).
+- 예전 모드는 이 채널을 안 들어서 서버가 보내지 않음 → 자기 파일 사용 (섞여도 안전).
+- 대화 안의 `commands:`(플레이어 명령·고정 보상)는 그대로 클라가 실행 (서버가 보낸 글 안에 있음).
+
+**그림 (리소스팩)**
+- 위치: `magiccodex:textures/gui/dialogue/<이름>.png` — ChacaNPC AI 대화·상점·물고기 판매소가 이미 쓰던 자리라 MagicCodex·ChacaNPC 코드 변경 없음. 리소스팩 이름 `chacademia_npc` 안에 `assets/magiccodex/...` 로 넣는다 (chacademi-server `resourcepacks/chacademia_npc/`, pack_format 46).
+- 모드 `DialogueRunner`: 대화 파일의 그림 이름(`bram-neutral.png`) → 리소스팩에 같은 이름이 있으면 프레임 `portrait`(이름), 없으면 예전 `portraitFile`(대화 폴더). 미리 읽기는 파일 그림만. 판정은 `DialogueRunner.packPortrait`(클라 초기화에서 ResourceManager 로 정함, 테스트 기본 false → 기존 테스트 그대로).
+- 런처: `options.txt` `resourcePacks` 에 `"file/chacademia_npc"` 켜 두기.
+
+확인 못 함 (빌드 필요): 컴파일, 실서버에서 런처 `config/chaca_dialogue` 를 지운 상태로 1장 진행, 리소스팩 초상화 표시(1024×1536 엘레나 포함), `/서버관리 새로고침 스토리` 뒤 대사 바뀜.

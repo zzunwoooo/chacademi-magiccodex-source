@@ -24,6 +24,10 @@ public final class StoryCodec {
     public static final String RELOAD_REQUEST="chacademy:story_reload_request", RELOAD_RESULT="chacademy:story_reload_result";
     public static final String DIALOGUE_SESSION="chacademy:dialogue_session", DIALOGUE_SESSION_SIGNAL="chacademy:dialogue_session_signal";
     public static final String DIALOGUE_VIEW = "chacademy:dialogue_view";
+    /** 대화 내용 (서버의 dialogues/&lt;id&gt;/dialogue.yml 글 그대로). 대화를 여는 패킷 바로 앞에 보낸다. 대사는 서버에서만 관리. */
+    public static final String DIALOGUE_CONTENT = "chacademy:dialogue_content";
+    /** 대화 글 최대 길이 (모드 ServerDialogues.MAX_CHARS 와 같게). */
+    public static final int DIALOGUE_CONTENT_MAX_CHARS = 300_000;
     public static final String DIALOGUE_REWARD = "chacademy:dialogue_reward";
     public static final String STORY_CATALOG="chacademy:story_catalog", STORY_RELOAD="chacademy:story_reload";
     public static final String DIALOGUE_READY = "chacademy:dialogue_ready";
@@ -125,6 +129,14 @@ public final class StoryCodec {
     public static byte[] dialogueView(String id, String vars) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         writeString(out,id);writeString(out,vars);return out.toByteArray();
+    }
+    public static byte[] dialogueContent(String id, String text) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        if(id==null||!id.matches("[a-z0-9_-]{1,64}")||text==null||text.length()>DIALOGUE_CONTENT_MAX_CHARS)
+            throw new IllegalArgumentException("Invalid dialogue content");
+        byte[] bytes=text.getBytes(StandardCharsets.UTF_8);
+        if(bytes.length>1_000_000)throw new IllegalArgumentException("Dialogue content too large");
+        writeString(out,id);writeVarInt(out,bytes.length);out.writeBytes(bytes);return out.toByteArray();
     }
     public static byte[] reloadContent(int kind) {
         ByteArrayOutputStream out=new ByteArrayOutputStream();writeVarInt(out,kind);return out.toByteArray();
