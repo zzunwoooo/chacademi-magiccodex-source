@@ -25,3 +25,9 @@
 ## 3차 (확률 확인 명령)
 - `/월드관리 야생몹 확률 [닉네임]`: 서 있는 자리(바이옴, 물속/지상) 기준으로 스폰 시도가 걸렸을 때 각 종이 뽑힐 % (등급 가중치 비율), 각 종이 이 자리에서 지형 조건상 가능한지, 지금 안 나오는 종과 이유(높이/시간·계절·날씨), 청크·지역 개체 수를 보여 줌. 읽기 전용.
 - `Habitat`에 `name` 필드 추가(habitats.yml `name`, 없으면 id).
+
+## 4차 (빈 바이옴 + 크리에이티브)
+- 서식지가 하나도 없던 Terralith 바이옴 34개(yellowstone, highlands, shrubland, yosemite_*, painted_mountains, cave/ice_caves 등, Terralith 2.5 바이옴 목록 기준) + 지상 몹이 없던 desert_oasis를 `biome-compatibility.yml`의 새 `terralith-biomes` 섹션으로 비슷한 바이옴 서식지에 연결. 원래 서식지는 그대로 정확히 일치, 연결은 명시적 목록만(와일드카드 없음). 이제 Terralith 바이옴 99개 모두 지상(동굴 포함) 몹이 1종 이상.
+- 운영 서버의 `plugins/ChAcademiaWildlife/biome-compatibility.yml`은 파일이 있으면 자동 갱신 안 됨 → **레포 최신 파일로 교체 필수**. 없으면 콘솔에 경고.
+- 스폰 대상 플레이어: 생존·모험 → 관전 제외 전부(크리에이티브 포함). 루프 대상과 check()의 플레이어 거리 조건 둘 다. (살아나는 작물은 그대로 생존·모험만)
+- 테스트 `terralithBiomesWithoutOwnHabitatReuseSimilarHabitats` 추가.

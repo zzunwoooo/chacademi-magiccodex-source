@@ -80,7 +80,8 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         if(!compatibilityFile.exists())saveResource("biome-compatibility.yml",false);
         var aliases=new YamlConfiguration();
         try{aliases.load(compatibilityFile);}catch(Exception error){throw new IllegalArgumentException("biome-compatibility.yml error",error);}
-        var nextCompatibility=BiomeCompatibility.parse(aliases.getConfigurationSection("vanilla-biomes"));
+        var nextCompatibility=BiomeCompatibility.parse(aliases.getConfigurationSection("vanilla-biomes"),aliases.getConfigurationSection("terralith-biomes"));
+        if(aliases.getConfigurationSection("terralith-biomes")==null) getLogger().warning("biome-compatibility.yml에 terralith-biomes가 없습니다 → yellowstone 등 서식지 없는 Terralith 바이옴에서는 몹이 안 나와요. 레포 최신 파일로 교체하세요.");
         if(!new File(getDataFolder(),"habitats.yml").exists()) saveResource("habitats.yml",false);
         var next=new YamlConfiguration();
         try { next.load(new File(getDataFolder(),"habitats.yml")); }
@@ -164,7 +165,8 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
                     .map(m -> m.getType().getInternalName()).orElse(null))) return "청크 개체 제한";
         if(population) {
             double nearest=Double.POSITIVE_INFINITY;
-            for(Player p:w.getPlayers()) if(p.getGameMode()==GameMode.SURVIVAL||p.getGameMode()==GameMode.ADVENTURE) nearest=Math.min(nearest,p.getLocation(scratch).distanceSquared(l));
+            // 관전 모드만 제외(크리에이티브도 포함).
+            for(Player p:w.getPlayers()) if(p.getGameMode()!=GameMode.SPECTATOR) nearest=Math.min(nearest,p.getLocation(scratch).distanceSquared(l));
             if(nearest<cfg.playerMinSquared()) return "플레이어 너무 가까움";
             if(nearest>cfg.playerMaxSquared()) return "활성 플레이어 없음";
             // 후보마다 주변 엔티티를 훑지 않고, 격자 칸별로 약 40틱 동안 공유하는 스캔 결과에서 센다.

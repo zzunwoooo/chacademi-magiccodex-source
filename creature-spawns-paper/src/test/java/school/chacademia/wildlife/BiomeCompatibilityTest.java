@@ -36,6 +36,14 @@ class BiomeCompatibilityTest {
   var rows=resource("biome-compatibility.yml").getConfigurationSection("vanilla-biomes");assertEquals(54,rows.getKeys(false).size());
   for(String id:rows.getKeys(false)){assertTrue(id.matches("minecraft:[a-z0-9_]+"));for(String value:rows.getStringList(id))assertTrue(allowed.contains(value),value);}
  }
+ @Test void terralithBiomesWithoutOwnHabitatReuseSimilarHabitats(){
+  var y=resource("biome-compatibility.yml");var c=BiomeCompatibility.parse(y.getConfigurationSection("vanilla-biomes"),y.getConfigurationSection("terralith-biomes"));
+  assertTrue(c.matches(habitat("elk").biomes(),"terralith:yellowstone"));
+  assertFalse(c.matches(habitat("owl").biomes(),"terralith:yellowstone"));
+  var original=resource("habitats.yml").getConfigurationSection("habitats");var allowed=new HashSet<String>();for(String id:original.getKeys(false))allowed.addAll(habitat(id).biomes());
+  var rows=y.getConfigurationSection("terralith-biomes");
+  for(String id:rows.getKeys(false)){assertTrue(id.matches("terralith:[a-z0-9_/]+"));for(String value:rows.getStringList(id))assertTrue(allowed.contains(value),value);}
+ }
  @Test void builtVersionAndCommandsMovedToTheHub(){
   // 2026-10-20: /야생관리 moved to /월드관리 야생몹 · /테스트 몹 작물몹 (MagicCodexBridge command hub); no plugin.yml commands remain.
   var plugin=resource("plugin.yml");assertEquals("0.4.1-integrated-20261020.3-spawngate.1",plugin.getString("version"));

@@ -5,12 +5,19 @@ import org.bukkit.configuration.ConfigurationSection;
 final class BiomeCompatibility {
     private final Map<String,Set<String>> aliases;
     BiomeCompatibility(Map<String,Set<String>> aliases){this.aliases=Map.copyOf(aliases);}
-    static BiomeCompatibility parse(ConfigurationSection section){
+    static BiomeCompatibility parse(ConfigurationSection section){return parse(section,null);}
+    /** terralith: 자기 서식지가 없는 Terralith 바이옴(예: yellowstone)을 비슷한 바이옴의 서식지로 잇는 표. 없어도 됨. */
+    static BiomeCompatibility parse(ConfigurationSection section,ConfigurationSection terralith){
         if(section==null)throw new IllegalArgumentException("vanilla-biomes section missing");
         var rows=new LinkedHashMap<String,Set<String>>();
+        read(section,"minecraft:[a-z0-9_]+",rows);
+        if(terralith!=null)read(terralith,"terralith:[a-z0-9_/]+",rows);
+        return new BiomeCompatibility(rows);
+    }
+    private static void read(ConfigurationSection section,String keyPattern,Map<String,Set<String>> rows){
         for(String biome:section.getKeys(false)){
             Object raw=section.get(biome);
-            if(!biome.matches("minecraft:[a-z0-9_]+")||!(raw instanceof List<?> list)||list.isEmpty()||list.size()>16)
+            if(!biome.matches(keyPattern)||rows.containsKey(biome)||!(raw instanceof List<?> list)||list.isEmpty()||list.size()>16)
                 throw new IllegalArgumentException("Invalid vanilla biome compatibility: "+biome);
             var values=new LinkedHashSet<String>();
             for(Object value:list){
@@ -19,7 +26,6 @@ final class BiomeCompatibility {
             }
             rows.put(biome,Set.copyOf(values));
         }
-        return new BiomeCompatibility(rows);
     }
     boolean matches(Set<String> habitat,String actual){
         if(habitat.contains(actual))return true;

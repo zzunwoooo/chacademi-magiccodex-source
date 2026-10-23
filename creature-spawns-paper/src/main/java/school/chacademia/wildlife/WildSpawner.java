@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitTask;
 /**
  * 차카데미 자체 야생 스폰 루프 (MythicMobs RandomSpawns 대체).
  * <p>
+ * 대상: 관전 모드를 뺀 모든 플레이어(생존·모험·크리에이티브).
  * 매 틱 플레이어 일부만 처리해서 부하를 고르게 나눈다: 플레이어 한 명은 period-seconds마다 한 번 차례가 오고,
  * 차례마다 attempts-per-player번 시도한다. 한 틱의 전체 시도는 max-attempts-per-tick을 넘지 않는다.
  * <p>
@@ -76,7 +77,7 @@ final class WildSpawner {
             if(w==null) continue;
             for(Player p:w.getPlayers()) {
                 if(budget<=0) return;
-                if(p.getGameMode()!=GameMode.SURVIVAL&&p.getGameMode()!=GameMode.ADVENTURE) continue;
+                if(p.getGameMode()==GameMode.SPECTATOR) continue; // 크리에이티브도 스폰 대상
                 // 플레이어마다 다른 틱에 차례가 오게 엔티티 번호로 흩는다.
                 if(Math.floorMod(p.getEntityId(),period)!=Math.floorMod(tick,period)) continue;
                 for(int i=0;i<settings.attemptsPerPlayer()&&budget>0;i++,budget--) {
