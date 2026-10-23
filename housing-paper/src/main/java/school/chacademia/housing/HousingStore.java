@@ -46,6 +46,7 @@ final class HousingStore {
     private final Plugin plugin; private final Logger log;
     private final ExecutorService io = Executors.newSingleThreadExecutor(r -> { var t = new Thread(r, "ChacaHousing-db"); t.setDaemon(true); return t; });
     private ConnectionHolder db; private DatabaseSettings settings; private boolean maria;
+    private HousingNames displayNames;
     private String tRoom, tLayout, tLike, tVisit, tBook, tPresence, tOnline, tFriends, tNick, tHouse;
     private ExpandLedger ledger;
     /** 종료 중(onDisable)에 끝난 작업의 콜백: 메인 스레드로 보낼 수 없으므로 close() 가 작업 스레드를 기다린 뒤 메인 스레드에서 실행한다. */
@@ -54,6 +55,9 @@ final class HousingStore {
     HousingStore(Plugin plugin) { this.plugin = plugin; this.log = plugin.getLogger(); }
 
     void open(Path dataFolder) throws Exception {
+        var bridge=Bukkit.getPluginManager().getPlugin("MagicCodexBridge");
+        if(bridge==null)throw new IllegalStateException("MagicCodexBridge nickname domain unavailable");
+        displayNames=new HousingNames(bridge.getDataFolder().toPath());
         io.submit(() -> {
             Path file = dataFolder.resolve("database.properties");
             settings = DatabaseSettings.load(file);
@@ -95,6 +99,7 @@ final class HousingStore {
     }
 
     void close() {
+        io.execute(()->{try{if(displayNames!=null)displayNames.close();}catch(Exception ignored){}});
         io.shutdown();
         try { io.awaitTermination(10, TimeUnit.SECONDS); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
         // 종료 중에 끝난 작업의 콜백을 버리지 않는다 (onDisable = 메인 스레드). 여기서 새로 부르는 DB 작업은 closing() 이라 바로 null 로 끝난다.
@@ -153,7 +158,8 @@ final class HousingStore {
      */
     void touch(UUID id, String fallback, int fallbackHouse, String skin, boolean slim, int startSize, Function<String, Def> defs, Map<String, Integer> allowed, Consumer<RoomRow> done) {
         async("접속 갱신", c -> {
-            String name = nickname(c, id); if (name == null || name.isBlank()) name = fallback;
+            RoomRow existing = room(c,id);
+            String name = existing == null ? fallback : existing.name();
             int house = house(c, id); if (house < 0) house = fallbackHouse;
             RoomRow row = room(c, id);
             if (row == null) {
@@ -168,7 +174,7 @@ final class HousingStore {
             }
             RoomRow now = room(c, id);
             if (now != null) pruneAll(c, id, now.size(), defs, allowed);
-            return now;
+            return display(now);
         }, done);
     }
 
@@ -196,7 +202,7 @@ final class HousingStore {
                 s.setString(1, owner.toString()); s.setString(2, viewer.toString());
                 try (var r = s.executeQuery()) { liked = r.next(); }
             }
-            return new RoomData(row, layouts, today, liked);
+            return new RoomData(display(row), layouts, today, liked);
         }, done);
     }
 
@@ -277,7 +283,7 @@ final class HousingStore {
     }
 
     /** 관리자: 방 정보 한 줄 (요약·보기용). 방이 없으면 null. */
-    void row(UUID owner, Consumer<RoomRow> done) { async("방 정보", c -> room(c, owner), done); }
+    void row(UUID owner, Consumer<RoomRow> done) { async("방 정보", c -> display(room(c, owner)), done); }
 
     /** 관리자: 레이아웃 지우기. slot &lt; 0 이면 전부. @return 지운 레이아웃 수 (방이 없으면 -1, DB 오류 null) */
     void resetLayouts(UUID owner, int slot, Consumer<Integer> done) {
@@ -350,7 +356,8 @@ final class HousingStore {
                     }
                 }
             }
-            return list;
+            var names=displayNames.read(list.stream().map(e->e.author().id()).toList());
+            return list.stream().map(e->new Entry(e.id(),HousingNames.resolve(e.author(),names.get(e.author().id())),e.time(),e.text())).toList();
         }, done);
     }
 
@@ -395,10 +402,11 @@ final class HousingStore {
                 for (int i = 0; i < ids.size(); i++) s.setString(i + 2, ids.get(i));
                 try (var r = s.executeQuery()) { while (r.next()) online.add(UUID.fromString(r.getString(1))); }
             } catch (SQLException e) { log.warning("하우징 친구 목록: 접속 정보 읽기 실패 " + e.getMessage()); }
+            var names=displayNames.read(list.stream().map(F::id).toList());
             var out = new ArrayList<Friend>();
             for (var f : list) {
                 var room = rooms.get(f.id());
-                String name = room != null && !room.name().isBlank() ? room.name() : f.name();
+                String name = HousingNames.shown(names.get(f.id()));
                 try {
                     String shown = name == null || name.isBlank() ? "학생" : cut(name);
                     Person p;
@@ -451,6 +459,8 @@ final class HousingStore {
                 for (int i = 0; i < ids.size(); i++) s.setString(i + 1, ids.get(i));
                 try (var r = s.executeQuery()) { while (r.next()) revs.put(UUID.fromString(r.getString(1)), r.getLong(2)); }
             }
+            var names=displayNames.read(viewers.values().stream().flatMap(List::stream).map(Viewer::id).toList());
+            viewers.replaceAll((owner,list)->list.stream().map(v->new Viewer(v.id(),HousingNames.shown(names.get(v.id())))).toList());
             return new Sync(viewers, revs);
         }, done);
     }
@@ -480,6 +490,10 @@ final class HousingStore {
     }
 
     // ------------------------------------------------------------ 내부
+    private RoomRow display(RoomRow row) throws SQLException {
+        if(row==null)return null;String name=HousingNames.shown(displayNames.read(List.of(row.owner())).get(row.owner()));
+        return new RoomRow(row.owner(),name,row.house(),row.skin(),row.slim(),row.size(),row.active(),row.likes(),row.visits(),row.rev());
+    }
     private void bump(Connection c, UUID owner) throws SQLException {
         try (var s = c.prepareStatement("UPDATE " + tRoom + " SET rev=rev+1 WHERE owner=?")) { s.setString(1, owner.toString()); s.executeUpdate(); }
     }

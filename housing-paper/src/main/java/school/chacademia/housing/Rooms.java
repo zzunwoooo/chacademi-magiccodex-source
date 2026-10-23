@@ -75,7 +75,7 @@ final class Rooms {
         var known = people.get(p.getUniqueId());
         if (known != null) return known;
         var skin = Skins.of(p);
-        return new Person(p.getUniqueId(), p.getName(), -1, skin.hash(), skin.slim());
+        return new Person(p.getUniqueId(), "닉네임 확인 중", -1, skin.hash(), skin.slim());
     }
     void catalogChanged() { catalogSent.clear(); }
 
@@ -106,7 +106,7 @@ final class Rooms {
             if (!p.isOnline() || sessions.get(id) != s) return;
             if (data == null) {
                 if (previous != null) sessions.put(id, previous); else sessions.remove(id);
-                plugin.net().result(p, false, "방을 찾을 수 없어요. 아직 서버에 들어온 적이 없는 학생일 수 있어요.");
+                plugin.net().result(p, false, "방 또는 등록 닉네임을 불러오지 못했어요. 다시 시도해 주세요.");
                 return;
             }
             knownRev.put(s.owner(), data.row().rev());
@@ -121,7 +121,7 @@ final class Rooms {
     }
     private void sendGuestbook(Player p, Session s) {
         plugin.store().guestbook(s.owner(), HousingProtocol.MAX_GUESTBOOK, entries -> {
-            if (entries != null && p.isOnline() && sessions.get(p.getUniqueId()) == s) plugin.net().send(p, new Guestbook(s.owner(), entries));
+            if(p.isOnline()&&sessions.get(p.getUniqueId())==s){if(entries==null)plugin.net().result(p,false,"방명록 이름을 불러오지 못했어요. 다시 시도해 주세요.");else plugin.net().send(p,new Guestbook(s.owner(),entries));}
         });
     }
     private Room room(HousingStore.RoomData d, Session s, boolean open, Player viewer) {
@@ -184,7 +184,7 @@ final class Rooms {
                 });
             }
             case Friends f -> plugin.store().friends(id, HousingProtocol.MAX_FRIENDS, list -> {
-                if (p.isOnline()) plugin.net().send(p, new FriendList(list == null ? List.of() : list));
+                if (p.isOnline() && sessions.get(id)==s) { if(list==null)plugin.net().result(p,false,"유저 이름을 불러오지 못했어요. 다시 시도해 주세요.");else plugin.net().send(p,new FriendList(list)); }
             });
             case Close c -> close(p);
         }
