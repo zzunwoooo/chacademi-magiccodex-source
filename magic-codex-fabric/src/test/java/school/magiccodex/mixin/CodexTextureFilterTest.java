@@ -36,4 +36,19 @@ class CodexTextureFilterTest {
             assertEquals(requested,filter("other:pet_model/0",requested));
         }
     }
+
+    private static boolean mipmap(String id, boolean requested) throws Exception {
+        Method method = CodexTextureFilterMixin.class.getDeclaredMethod("magiccodex$mipmapItemIcons",
+                boolean.class, Identifier.class, TriState.class, boolean.class);
+        method.setAccessible(true);
+        return (boolean) method.invoke(null, requested, Identifier.of(id), TriState.FALSE, requested);
+    }
+    @Test void runtimeItemIconsAlwaysUseTheirMipChain() throws Exception {
+        assertTrue(mipmap("magiccodex:runtime_item_icon/0/12", false));
+        assertTrue(mipmap("magiccodex:runtime_item_icon/3/0", true));
+        assertFalse(mipmap("magiccodex:textures/gui/codex_base.png", false));
+        assertFalse(mipmap("other:runtime_item_icon/0/1", false));
+        assertTrue(mipmap("minecraft:textures/atlas/blocks.png", true));
+        assertEquals(school.magiccodex.client.ItemIconTextures.RUNTIME_PREFIX, "runtime_item_icon/");
+    }
 }

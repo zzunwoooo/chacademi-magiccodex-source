@@ -8,7 +8,7 @@
 
 ## 동작
 
-- `ItemIconMixin`이 `DrawContext.drawItem(LivingEntity, World, ItemStack, int, int, int, int)` HEAD에서 `ItemIconTextures.draw`를 호출한다. 인벤토리·핫바·툴팁·magiccodex 화면 등 GUI에서 그리는 모든 아이템이 이 경로를 거친다. 손에 든 아이템, 바닥에 떨어진 아이템, 아이템 액자는 바닐라 그대로다.
+- `ItemIconMixin`이 `DrawContext.drawItem(LivingEntity, World, ItemStack, int, int, int, int)` HEAD에서 `ItemIconTextures.draw`를 호출한다. 인벤토리·핫바·툴팁·magiccodex 화면 등 GUI에서 그리는 모든 아이템이 이 경로를 거친다. 손에 든 아이템, 3인칭, 바닥, 액자는 2026-10-23부터 아래 "월드 렌더" 절을 따른다.
 - 적용 조건 (하나라도 아니면 바닐라):
   - `assets/<ns>/items/<id>.json`이 `minecraft:model` 타입이고 `tints`가 없음
   - 모델 parent 체인이 `minecraft:item/generated`(또는 `item/handheld`, `builtin/generated`)로 끝남, `elements`·`display.gui` 없음
@@ -48,3 +48,11 @@
 - 반짝임 UV 폭은 `GLINT_UV = 0.03`이다. 바닐라 GLINT 텍스처링이 UV에 8을 곱한다.
 - 예외가 나면 반짝임만 끄고(`High-res item glint disabled` 로그) 아이콘은 유지한다.
 - Chacademi 서바이벌 인벤토리는 GUI 행렬만 키워서 `drawItem`을 호출한다. 그래서 같은 경로로 원본 128px 텍스처를 최종 크기에서 한 번만 샘플링한다(`docs/handoff/CLAUDE_SURVIVAL_INVENTORY_20261012.md`).
+
+## 월드 렌더 (손·3인칭·바닥·액자) — 2026-10-23 추가
+
+- `ItemModelManagerMixin`이 렌더 상태에 고해상도 모델을 표시하고, `ItemRenderStateMixin`이 `render`에서 바닐라 돌출 메시 대신 평면 카드 1장(앞뒤)을 그린다. 위치·회전은 모델 display 변환 그대로.
+- 레이어는 바닐라 `getItemEntityTranslucentCull`, 텍스처는 아이콘별 월드용 사본(알파 미리곱 없음, 투명 텍셀 색 번짐 처리, 밉맵). 확대는 LINEAR, 축소는 트릴리니어.
+- 반짝임(마법 부여) 아이템은 월드에서 바닐라로 남는다.
+- 정사각형이 아닌 텍스처는 GUI·월드 모두 비율을 유지해 가운데 정렬한다.
+- 자세한 내용·확인 목록: `docs/handoff/CLAUDE_HIRES_ITEM_WORLD_20261023.md`.

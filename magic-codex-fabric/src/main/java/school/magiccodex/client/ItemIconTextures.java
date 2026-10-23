@@ -33,7 +33,10 @@ import org.lwjgl.opengl.GL30;
  * pixels and gradients alias. Matching items are instead drawn smoothly, the same way as other
  * magiccodex UI images: a private GPU copy with premultiplied alpha, a full mip chain and
  * trilinear filtering, so the artwork looks like a scaled picture rather than a pixel grid.
- * Hand-held, dropped and framed items keep the vanilla renderer.
+ * Hand-held, third-person, dropped and framed items use {@link #renderWorld}: one flat, smoothly
+ * filtered quad instead of vanilla's per-pixel extruded {@code item/generated} mesh (which, at 128px+,
+ * shows a stair-stepped silhouette up close and a fringe of hairline side faces).
+ * Non-square textures keep their aspect ratio (fitted and centred in the 16x16 item square).
  *
  * Only simple definitions qualify: {@code items/<id>.json} of type {@code minecraft:model}
  * without tints, whose model chain ends in {@code item/generated} with a single {@code layer0},
@@ -51,8 +54,9 @@ public final class ItemIconTextures {
         var t = new Thread(r, "magiccodex-item-icons"); t.setDaemon(true); return t;
     });
 
-    record Decoded(Identifier texture, int width, int height, int[] argb) {}
-    private record Loaded(Identifier id, int width, int height, RenderLayer layer) {}
+    record Decoded(Identifier texture, int width, int height, int[] argb, int[] worldArgb) {}
+    /** {@code id}: premultiplied GUI copy. {@code worldId}: straight-alpha copy for vanilla entity shaders. */
+    private record Loaded(Identifier id, int width, int height, RenderLayer layer, Identifier worldId, RenderLayer worldLayer) {}
 
     /** Empty = this item model stays vanilla until the next resource reload. */
     private static final Map<Identifier, Optional<Loaded>> ICONS = new HashMap<>();
@@ -77,12 +81,81 @@ public final class ItemIconTextures {
         m.push();
         try {
             m.translate(x, y, 150);
+            // Fit non-square art inside the 16x16 slot square instead of stretching it.
+            float fw = fitW(t), fh = fitH(t);
+            m.translate((1 - fw) * 8, (1 - fh) * 8, 0);
+            m.scale(fw, fh, 1);
             ctx.drawTexture(id -> t.layer(), t.id(), 0, 0, 0, 0, 16, 16, t.width(), t.height(), t.width(), t.height(), 0xFFFFFFFF);
             ctx.draw(); // vanilla flushes each GUI item too; keeps painter's order with later slot overlays
             if (stack.hasGlint()) drawGlint(ctx, m.peek().getPositionMatrix());
         } finally { m.pop(); }
         if (!announced) { announced = true; org.slf4j.LoggerFactory.getLogger("magiccodex").info("High-res item icons active ({})", model); }
         return true;
+    }
+
+    private static float fitW(Loaded t) { return t.width() >= t.height() ? 1f : (float) t.width() / t.height(); }
+    private static float fitH(Loaded t) { return t.height() >= t.width() ? 1f : (float) t.height() / t.width(); }
+
+    // ---------------------------------------------------------------- hand / third person / dropped / frame
+
+    /**
+     * Called from the ItemModelManager mixin after vanilla filled an ItemRenderState.
+     * @return the item model to draw as a smooth flat card, or null to keep vanilla.
+     */
+    public static Identifier worldModel(ItemStack stack, net.minecraft.item.ModelTransformationMode mode) {
+        if (stack == null || stack.isEmpty() || stack.hasGlint() || mode == net.minecraft.item.ModelTransformationMode.GUI) return null;
+        Identifier model = stack.get(DataComponentTypes.ITEM_MODEL);
+        if (model == null) return null;
+        var known = ICONS.get(model);
+        if (known == null) { request(model); return model; } // vanilla until the upload lands
+        return known.isPresent() ? model : null;
+    }
+
+    /**
+     * Draws the icon as one double-sided quad on the item plane (z = 8/16), using the model's own
+     * display transform, so hand, head, third-person, ground and frame placement match vanilla.
+     * @return false when the icon is not ready (caller renders vanilla this frame).
+     */
+    public static boolean renderWorld(Identifier model, net.minecraft.client.util.math.MatrixStack matrices,
+                                      net.minecraft.client.render.VertexConsumerProvider consumers, int light, int overlay,
+                                      net.minecraft.client.render.model.json.Transformation transform, boolean leftHand) {
+        var known = ICONS.get(model);
+        if (known == null || known.isEmpty() || worldFailed) return false;
+        var t = known.get();
+        float fw = fitW(t), fh = fitH(t);
+        float x0 = (1 - fw) / 2, x1 = x0 + fw, y0 = (1 - fh) / 2, y1 = y0 + fh;
+        matrices.push();
+        try {
+            transform.apply(leftHand, matrices);
+            matrices.translate(-0.5f, -0.5f, -0.5f);
+            var entry = matrices.peek();
+            var pos = entry.getPositionMatrix();
+            var v = consumers.getBuffer(t.worldLayer());
+            float zf = 0.5f + WORLD_HALF_GAP, zb = 0.5f - WORLD_HALF_GAP;
+            // Front (+Z, south): texture reads normally. v=0 is the top row of the PNG.
+            vertex(v, pos, entry, x0, y0, zf, 0, 1, light, overlay, 1);
+            vertex(v, pos, entry, x1, y0, zf, 1, 1, light, overlay, 1);
+            vertex(v, pos, entry, x1, y1, zf, 1, 0, light, overlay, 1);
+            vertex(v, pos, entry, x0, y1, zf, 0, 0, light, overlay, 1);
+            // Back (-Z, north): same texels, so it reads mirrored from behind like a vanilla item.
+            vertex(v, pos, entry, x0, y1, zb, 0, 0, light, overlay, -1);
+            vertex(v, pos, entry, x1, y1, zb, 1, 0, light, overlay, -1);
+            vertex(v, pos, entry, x1, y0, zb, 1, 1, light, overlay, -1);
+            vertex(v, pos, entry, x0, y0, zb, 0, 1, light, overlay, -1);
+        } catch (RuntimeException error) {
+            worldFailed = true; // GUI icons stay; world items fall back to vanilla
+            org.slf4j.LoggerFactory.getLogger("magiccodex").warn("High-res held/world items disabled", error);
+            return false;
+        } finally { matrices.pop(); }
+        return true;
+    }
+    /** Two faces 1/1000 block apart: no z-fighting, visually a paper-thin card. */
+    static final float WORLD_HALF_GAP = 0.0005f;
+    private static boolean worldFailed;
+    private static void vertex(net.minecraft.client.render.VertexConsumer v, org.joml.Matrix4f pos,
+                               net.minecraft.client.util.math.MatrixStack.Entry entry, float x, float y, float z,
+                               float u, float tv, int light, int overlay, float nz) {
+        v.vertex(pos, x, y, z).color(0xFFFFFFFF).texture(u, tv).overlay(overlay).light(light).normal(entry, 0, 0, nz);
     }
 
     /** Glint texture span per icon; the vanilla glint texturing multiplies UVs by 8. */
@@ -165,10 +238,11 @@ public final class ItemIconTextures {
         clearIcons();
         generation++;
         announced = false;
+        worldFailed = false;
     }
     private static void clearIcons() {
         var textures = MinecraftClient.getInstance().getTextureManager();
-        for (var icon : ICONS.values()) icon.ifPresent(t -> textures.destroyTexture(t.id()));
+        for (var icon : ICONS.values()) icon.ifPresent(t -> { textures.destroyTexture(t.id()); textures.destroyTexture(t.worldId()); });
         ICONS.clear();whisperGlyph=null;CHAT_GLYPHS.clear();
     }
 
@@ -187,7 +261,32 @@ public final class ItemIconTextures {
         int w = image.getWidth(), h = image.getHeight();
         if (Math.max(w, h) < MIN_SIZE || Math.max(w, h) > MAX_SIZE) return Optional.empty();
         int[] argb = image.getRGB(0, 0, w, h, null, 0, w);
-        return Optional.of(new Decoded(png, w, h, argb));
+        return Optional.of(new Decoded(png, w, h, argb, bleed(argb, w, h)));
+    }
+
+    /**
+     * Straight-alpha copy whose fully clear texels take the colour of the nearest visible texel.
+     * Vanilla entity shaders blend non-premultiplied colour; without this, bilinear/mip sampling at
+     * the silhouette mixes in the PNG's black transparent RGB and draws a dark rim.
+     */
+    static int[] bleed(int[] argb, int w, int h) {
+        int[] out = argb.clone();
+        boolean[] done = new boolean[w * h];
+        int[] queue = new int[w * h];
+        int head = 0, tail = 0;
+        for (int i = 0; i < out.length; i++) if ((out[i] >>> 24) != 0) { done[i] = true; queue[tail++] = i; }
+        if (tail == 0) return out;
+        while (head < tail) {
+            int i = queue[head++], x = i % w, y = i / w, rgb = out[i] & 0xFFFFFF;
+            for (int k = 0; k < 4; k++) {
+                int nx = x + (k == 0 ? 1 : k == 1 ? -1 : 0), ny = y + (k == 2 ? 1 : k == 3 ? -1 : 0);
+                if (nx < 0 || ny < 0 || nx >= w || ny >= h) continue;
+                int n = ny * w + nx;
+                if (done[n]) continue;
+                done[n] = true; out[n] = rgb; queue[tail++] = n; // alpha stays 0
+            }
+        }
+        return out;
     }
 
     /** items/&lt;id&gt;.json → model chain → layer0, only for flat single-layer icons. */
@@ -243,12 +342,23 @@ public final class ItemIconTextures {
     /** Same treatment as magiccodex UI images: premultiplied alpha, full GPU mip chain, trilinear. */
     private static Optional<Loaded> upload(Decoded d) {
         RenderSystem.assertOnRenderThread();
+        var gui = texture(d, true);
+        if (gui.isEmpty()) return Optional.empty();
+        var world = texture(d, false);
+        if (world.isEmpty()) { MinecraftClient.getInstance().getTextureManager().destroyTexture(gui.get()); return Optional.empty(); }
+        return Optional.of(new Loaded(gui.get(), d.width(), d.height(), new IconLayer(gui.get()),
+                world.get(), RenderLayer.getItemEntityTranslucentCull(world.get())));
+    }
+
+    private static Optional<Identifier> texture(Decoded d, boolean premultiplied) {
         NativeImage base = new NativeImage(d.width(), d.height(), false);
         NativeImageBackedTexture texture = null;
         try {
-            int[] argb = d.argb();
-            for (int y = 0; y < d.height(); y++) for (int x = 0; x < d.width(); x++)
-                base.setColorArgb(x, y, PremultipliedAlpha.pixel(argb[y * d.width() + x]));
+            int[] argb = premultiplied ? d.argb() : d.worldArgb();
+            for (int y = 0; y < d.height(); y++) for (int x = 0; x < d.width(); x++) {
+                int c = argb[y * d.width() + x];
+                base.setColorArgb(x, y, premultiplied ? PremultipliedAlpha.pixel(c) : c);
+            }
             texture = new NativeImageBackedTexture(base); base = null;
             int levels = 31 - Integer.numberOfLeadingZeros(Math.max(d.width(), d.height()));
             texture.bindTexture();
@@ -256,16 +366,17 @@ public final class ItemIconTextures {
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LEVEL, levels);
             GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MIN_LOD, 0);
             GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LOD, levels);
-            // Averaging premultiplied texels keeps transparent edges free of dark fringes.
+            // GUI copy: averaging premultiplied texels keeps edges fringe-free.
+            // World copy: straight alpha, but clear texels carry bled edge colour (see bleed()).
             GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
             texture.setClamp(true);
             applyFilter(texture);
             if (GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, levels, GL11.GL_TEXTURE_WIDTH) != 1)
                 throw new IllegalStateException("Incomplete item icon mip chain");
-            var id = Identifier.of("magiccodex", "runtime_item_icon/" + generation + "/" + serial++);
+            var id = Identifier.of("magiccodex", RUNTIME_PREFIX + generation + "/" + serial++);
             MinecraftClient.getInstance().getTextureManager().registerTexture(id, texture);
             texture = null;
-            return Optional.of(new Loaded(id, d.width(), d.height(), new IconLayer(id)));
+            return Optional.of(id);
         } catch (Exception error) {
             if (texture != null) texture.close();
             if (base != null) base.close();
@@ -273,6 +384,9 @@ public final class ItemIconTextures {
             return Optional.empty();
         }
     }
+
+    /** Texture path prefix; CodexTextureFilterMixin also forces mipmapped sampling for it in vanilla layers. */
+    public static final String RUNTIME_PREFIX = "runtime_item_icon/";
 
     /** Smooth like other UI images: trilinear when shrinking, bilinear when enlarged. */
     private static void applyFilter(net.minecraft.client.texture.AbstractTexture texture) {
