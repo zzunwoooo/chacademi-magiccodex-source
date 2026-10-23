@@ -24,7 +24,8 @@ public abstract class ItemModelManagerMixin {
             at = @At("RETURN"), require = 0)
     private void magiccodex$tagHiRes(ItemRenderState state, ItemStack stack, ModelTransformationMode mode, boolean leftHand,
                                      World world, LivingEntity entity, int seed, CallbackInfo ci) {
-        ((HiResItemState) state).magiccodex$setHiResModel(ItemIconTextures.worldModel(stack, mode));
+        var duck = (HiResItemState) state;
+        duck.magiccodex$setHiResModel(ItemIconTextures.stateKey(stack, mode, duck.magiccodex$singleFlatModel()));
     }
 
     /** Same for the overload without leftHand, in case it does not delegate in this version. */
@@ -32,6 +33,7 @@ public abstract class ItemModelManagerMixin {
             at = @At("RETURN"), require = 0)
     private void magiccodex$tagHiResNoHand(ItemRenderState state, ItemStack stack, ModelTransformationMode mode,
                                            World world, LivingEntity entity, int seed, CallbackInfo ci) {
-        ((HiResItemState) state).magiccodex$setHiResModel(ItemIconTextures.worldModel(stack, mode));
+        var duck = (HiResItemState) state;
+        duck.magiccodex$setHiResModel(ItemIconTextures.stateKey(stack, mode, duck.magiccodex$singleFlatModel()));
     }
 }

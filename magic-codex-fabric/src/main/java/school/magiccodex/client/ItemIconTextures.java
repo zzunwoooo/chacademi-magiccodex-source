@@ -89,8 +89,11 @@ public final class ItemIconTextures {
             ctx.draw(); // vanilla flushes each GUI item too; keeps painter's order with later slot overlays
             if (stack.hasGlint()) drawGlint(ctx, m.peek().getPositionMatrix());
         } finally { m.pop(); }
-        if (!announced) { announced = true; org.slf4j.LoggerFactory.getLogger("magiccodex").info("High-res item icons active ({})", model); }
+        announce(model);
         return true;
+    }
+    private static void announce(Identifier key) {
+        if (!announced) { announced = true; org.slf4j.LoggerFactory.getLogger("magiccodex").info("High-res item icons active ({})", key); }
     }
 
     private static float fitW(Loaded t) { return t.width() >= t.height() ? 1f : (float) t.width() / t.height(); }
@@ -100,15 +103,74 @@ public final class ItemIconTextures {
 
     /**
      * Called from the ItemModelManager mixin after vanilla filled an ItemRenderState.
-     * @return the item model to draw as a smooth flat card, or null to keep vanilla.
+     * 1) items/&lt;id&gt;.json path (same rules as the GUI path; GUI itself is drawn by ItemIconMixin).
+     * 2) Otherwise the model vanilla actually resolved: one layer, flat item/generated-like quads,
+     *    one texture larger than 32px. This also catches range_dispatch / custom_model_data
+     *    definitions (ItemsAdder) that the JSON path cannot follow, in every mode including GUI.
+     * @return icon key to draw as a smooth flat card, or null to keep vanilla.
      */
-    public static Identifier worldModel(ItemStack stack, net.minecraft.item.ModelTransformationMode mode) {
-        if (stack == null || stack.isEmpty() || stack.hasGlint() || mode == net.minecraft.item.ModelTransformationMode.GUI) return null;
+    public static Identifier stateKey(ItemStack stack, net.minecraft.item.ModelTransformationMode mode,
+                                      net.minecraft.client.render.model.BakedModel resolved) {
+        if (stack == null || stack.isEmpty() || stack.hasGlint()) return null;
+        boolean gui = mode == net.minecraft.item.ModelTransformationMode.GUI;
         Identifier model = stack.get(DataComponentTypes.ITEM_MODEL);
+        if (model != null && !gui) {
+            var known = ICONS.get(model);
+            if (known == null) request(model);
+            else if (known.isPresent()) return model;
+        }
+        Identifier sprite = flatSpriteKey(resolved);
+        if (sprite == null) return null;
+        var known = ICONS.get(sprite);
+        if (known == null) { request(sprite); return null; } // vanilla until the upload lands
+        return known.isPresent() ? sprite : null;
+    }
+
+    /** Namespace of icon keys that point straight at an atlas sprite's PNG rather than an items/ JSON. */
+    static final String SPRITE_NS = "magiccodex-sprite";
+    private static final Map<net.minecraft.client.render.model.BakedModel, Identifier> FLAT = new IdentityHashMap<>();
+    private static final Identifier NOT_FLAT = Identifier.of("magiccodex", "not_flat");
+    private static final net.minecraft.util.math.random.Random QUAD_RANDOM = net.minecraft.util.math.random.Random.create(42);
+
+    /** Cached per baked model (models are rebuilt on resource reload, when the cache is cleared). */
+    static Identifier flatSpriteKey(net.minecraft.client.render.model.BakedModel model) {
         if (model == null) return null;
-        var known = ICONS.get(model);
-        if (known == null) { request(model); return model; } // vanilla until the upload lands
-        return known.isPresent() ? model : null;
+        var cached = FLAT.get(model);
+        if (cached == null) {
+            cached = NOT_FLAT;
+            try { var k = computeFlatSpriteKey(model); if (k != null) cached = k; }
+            catch (RuntimeException error) { org.slf4j.LoggerFactory.getLogger("magiccodex").debug("Flat item check failed", error); }
+            FLAT.put(model, cached);
+        }
+        return cached == NOT_FLAT ? null : cached;
+    }
+
+    private static Identifier computeFlatSpriteKey(net.minecraft.client.render.model.BakedModel model) {
+        var sprite = model.getParticleSprite();
+        if (sprite == null) return null;
+        var contents = sprite.getContents();
+        if (Math.max(contents.getWidth(), contents.getHeight()) < MIN_SIZE) return null; // vanilla 16px stays pixel art
+        int quads = 0;
+        for (int d = 0; d <= 6; d++) {
+            var face = d < 6 ? net.minecraft.util.math.Direction.values()[d] : null;
+            for (var quad : model.getQuads(null, face, QUAD_RANDOM)) {
+                if (quad.getSprite() != sprite || quad.hasTint()) return null;
+                if (!flatZ(quad.getVertexData())) return null; // 3D element model (furniture etc.)
+                quads++;
+            }
+        }
+        if (quads == 0) return null;
+        var id = contents.getId();
+        return Identifier.of(SPRITE_NS, id.getNamespace() + "/" + id.getPath());
+    }
+
+    /** item/generated: every vertex lies between z = 7.5/16 and 8.5/16. Vertex stride 8 ints, xyz first. */
+    static boolean flatZ(int[] data) {
+        for (int i = 2; i < data.length; i += 8) {
+            float z = Float.intBitsToFloat(data[i]);
+            if (z < 7.4f / 16 || z > 8.6f / 16) return false;
+        }
+        return true;
     }
 
     /**
@@ -147,6 +209,7 @@ public final class ItemIconTextures {
             org.slf4j.LoggerFactory.getLogger("magiccodex").warn("High-res held/world items disabled", error);
             return false;
         } finally { matrices.pop(); }
+        announce(model);
         return true;
     }
     /** Two faces 1/1000 block apart: no z-fighting, visually a paper-thin card. */
@@ -243,13 +306,13 @@ public final class ItemIconTextures {
     private static void clearIcons() {
         var textures = MinecraftClient.getInstance().getTextureManager();
         for (var icon : ICONS.values()) icon.ifPresent(t -> { textures.destroyTexture(t.id()); textures.destroyTexture(t.worldId()); });
-        ICONS.clear();whisperGlyph=null;CHAT_GLYPHS.clear();
+        ICONS.clear();FLAT.clear();whisperGlyph=null;CHAT_GLYPHS.clear();
     }
 
     // ---------------------------------------------------------------- worker thread
 
     static Optional<Decoded> decode(ResourceManager manager, Identifier model) throws Exception {
-        var texture = resolveTexture(manager, model);
+        var texture = model.getNamespace().equals(SPRITE_NS) ? spriteTexture(model) : resolveTexture(manager, model);
         if (texture.isEmpty()) return Optional.empty();
         Identifier png = Identifier.of(texture.get().getNamespace(), "textures/" + texture.get().getPath() + ".png");
         if (manager.getResource(Identifier.of(png.getNamespace(), png.getPath() + ".mcmeta")).isPresent()) return Optional.empty();
@@ -287,6 +350,14 @@ public final class ItemIconTextures {
             }
         }
         return out;
+    }
+
+    /** magiccodex-sprite:&lt;ns&gt;/&lt;path&gt; → &lt;ns&gt;:&lt;path&gt; (the atlas sprite id, e.g. minecraft:item/x). */
+    static Optional<Identifier> spriteTexture(Identifier key) {
+        String p = key.getPath();
+        int slash = p.indexOf('/');
+        if (slash <= 0 || slash == p.length() - 1) return Optional.empty();
+        return Optional.ofNullable(Identifier.tryParse(p.substring(0, slash), p.substring(slash + 1)));
     }
 
     /** items/&lt;id&gt;.json → model chain → layer0, only for flat single-layer icons. */
