@@ -37,6 +37,7 @@ public final class PromptBuilder {
         public boolean jealousWithPromise;
         public List<String> promises = new ArrayList<>();
         public boolean generic;            // 버튼 대답 캐시용: 개인 정보 없이 만든다
+        public boolean magicAsked;         // 학생이 마법 이야기를 물었다 (마법 버튼 또는 마법 낱말)
     }
 
     /** 공통 규칙 + 캐릭터 = instructions (캐시되는 앞부분). */
@@ -138,8 +139,14 @@ public final class PromptBuilder {
         }
         if (x.allowedHints.isEmpty()) {
             sb.append("- 마법 힌트: 이번에는 주지 않는다. hint는 null.\n");
+            if (x.magicAsked) {
+                // 아직 친하지 않거나(호감도 낮음·보통), 들려줄 마법 이야기가 남아 있지 않다
+                sb.append("- 학생이 마법 이야기를 물었지만 지금 너는 들려줄 마법 이야기가 떠오르지 않는다. '음… 잘 모르겠는데?'처럼 네 말투로 가볍게 얼버무린다."
+                        + " 마법 이름·발견 방법·재료·장소를 지어내지 않는다.\n");
+            }
         } else {
-            sb.append("- 마법 힌트를 줘도 된다. 정답을 직접 말하지 말고 목격담·소문·수수께끼처럼 돌려 말한다. 줬다면 hint에 id. 목록에 없는 재료는 지어내지 않는다.\n");
+            sb.append("- 마법 힌트를 줘도 된다. 마법 이름은 말하지 말고, '그러고 보니 예전에 어떤 마법사가 마법을 쓰는 걸 봤어… 그때 ~해서 ~하더라'처럼"
+                    + " 네가 본 목격담으로 네 말투에 맞게 돌려 말한다. 아래 목격담에 없는 내용은 지어내지 않는다. 줬다면 hint에 id.\n");
             for (HintDef h : x.allowedHints) {
                 sb.append("  - ").append(h.id()).append(": ").append(hintText(h, x.stage)).append('\n');
             }
@@ -199,7 +206,7 @@ public final class PromptBuilder {
             String v = h.vague() == null || h.vague().isBlank() ? VAGUE_HINT_FALLBACK : h.vague().trim();
             return "막연한 소문 = " + v + " (이 이상은 너도 모른다. 재료·장소·방법을 지어내지 말고 아주 막연하게)";
         }
-        return "재료 = " + h.materials()
+        return "목격담 = " + h.materials()
                 + (h.difficulty() <= 1 ? " (꽤 구체적으로)" : h.difficulty() >= 3 ? " (아주 막연하게)" : " (적당히 돌려서)");
     }
 

@@ -642,6 +642,7 @@ public final class DialogueService {
         List<QuestDef> quests = pickQuests(p, s, x.todayMood);
         x.allowedQuests.addAll(quests);
         HintDef hint = pickHint(p, s, stage, text, buttonId);
+        x.magicAsked = magicAsked(text, buttonId);
         if (hint != null) {
             x.allowedHints.add(hint);
             // 힌트를 프롬프트에 넣는 순간 서버가 기록한다. 대사가 플레이어에게 나가면 AI의 hint 값과 상관없이 횟수에 넣는다
@@ -943,6 +944,20 @@ public final class DialogueService {
         return out.size() > 2 ? out.subList(0, 2) : out;
     }
 
+    /** 마법 이야기를 물었는지: 마법 버튼(id magic) 또는 말 속의 마법 낱말. */
+    private static boolean magicAsked(String text, String buttonId) {
+        if ("magic".equals(buttonId)) {
+            return true;
+        }
+        String lower = text == null ? "" : text.toLowerCase(Locale.ROOT);
+        for (String w : MAGIC_WORDS) {
+            if (lower.contains(w)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private HintDef pickHint(Player p, DialogueSession s, AffinityStage stage, String text, String buttonId) {
         Settings st = plugin.settings();
         CharacterSheet c = s.character();
@@ -950,20 +965,15 @@ public final class DialogueService {
                 || c.hintTopics().isEmpty()) {
             return null;
         }
-        boolean asked = "magic".equals(buttonId);
-        if (!asked) {
-            String lower = text.toLowerCase(Locale.ROOT);
-            for (String w : MAGIC_WORDS) {
-                if (lower.contains(w)) {
-                    asked = true;
-                    break;
-                }
-            }
+        // 호감도가 낮거나 보통(모르는 사이·아는 사이)이면 힌트를 주지 않는다 → "잘 모르겠는데?" (오너 결정 2026-10-23)
+        if (stage.ordinal() <= AffinityStage.ACQUAINTANCE.ordinal()) {
+            return null;
         }
+        boolean asked = magicAsked(text, buttonId);
         if (!asked && random.nextDouble() >= 0.25) {
             return null;
         }
-        int minDifficulty = stage.ordinal() <= 1 ? 3 : stage.ordinal() == 2 ? 2 : 1;
+        int minDifficulty = stage.ordinal() == 2 ? 2 : 1;
         List<HintDef> candidates = new ArrayList<>();
         for (HintDef h : plugin.content().hints()) {
             if (!c.hintTopics().contains(h.topic()) || s.hints.given().contains(h.id()) || h.difficulty() < minDifficulty) {
@@ -1127,6 +1137,7 @@ public final class DialogueService {
         }
         PromptBuilder.Context x = new PromptBuilder.Context();
         x.generic = true;
+        x.magicAsked = "magic".equals(b.id()); // 미리 만드는 대답에는 힌트가 없다 → 마법 버튼이면 얼버무리는 대답
         x.nowMillis = System.currentTimeMillis();
         fillPlace(x, c, slot);
         x.todayMood = moodOfDay(c.id());
