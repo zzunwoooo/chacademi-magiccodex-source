@@ -23,7 +23,8 @@ public record CharacterSheet(
         Map<String, Relation> relations,
         Map<String, List<String>> fallbackLines,
         Map<Integer, List<String>> sampleLinesByStage,
-        Map<String, List<String>> giftLikes    // loved / liked / disliked → 아이템 키 목록
+        Map<String, List<String>> giftLikes,   // loved / liked / disliked → 아이템 키 목록
+        List<Defs.Button> buttons              // 이 NPC 전용 추천 버튼 (말투·역할에 맞게). 비어 있으면 config.yml 공통 버튼
 ) {
 
     public record Persona(
@@ -40,6 +41,11 @@ public record CharacterSheet(
 
     /** 다른 NPC와의 관계. gossip = 소문을 전할 확률(0~1) */
     public record Relation(String type, double gossip) {
+    }
+
+    /** 이 NPC 에게 보여 줄 추천 버튼: 전용 버튼이 있으면 그것, 없으면 공통 버튼. */
+    public List<Defs.Button> buttonsOr(List<Defs.Button> common) {
+        return buttons == null || buttons.isEmpty() ? common : buttons;
     }
 
     public boolean hasSchedule() {

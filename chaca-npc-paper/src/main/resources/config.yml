@@ -77,6 +77,7 @@ dialogue:
   memo-max-lines: 5
   # 스토리 진행도 연결 전 기본값
   default-story-chapter: "1장"
+  # 공통 추천 버튼 (3개까지). NPC 마다 다르게 하려면 캐릭터 파일(npcs/<id>.yml)에 buttons: 를 적는다 — 적은 NPC 는 그것만 쓴다.
   buttons:
     - { id: daily, label: "요즘 뭐 해?" }
     - { id: help, label: "도울 일 있어?" }

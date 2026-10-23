@@ -38,6 +38,12 @@ schedule:
   - { time: "13:00", place: library, activity: 대출 업무 중 }
   - { time: "20:00", place: dorm_east, activity: 쉬는 중 }
 
+# 추천 버튼 (3개까지, 이 NPC 말투·관계에 맞게). 없으면 config.yml 의 공통 버튼
+buttons:
+  - { id: daily, label: "엘라, 오늘은 뭐 해?" }
+  - { id: help,  label: "도서관 일 도와줄까?" }
+  - { id: magic, label: "재밌는 마법책 있어?" }
+
 quests: [lost_book, tea_leaves]   # 제안할 수 있는 MagicCodex 의뢰 id (가능 여부·보상은 MagicCodex가 판단)
 hint_topics: [light]              # 힌트를 줄 수 있는 마법 계열 (hints.yml의 topic)
 

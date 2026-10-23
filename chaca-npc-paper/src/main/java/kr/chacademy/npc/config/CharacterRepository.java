@@ -151,6 +151,38 @@ public final class CharacterRepository {
                 relations,
                 fallback,
                 byStage,
-                giftLikes(y));
+                giftLikes(y),
+                buttons(id, y));
+    }
+
+    /**
+     * buttons: 이 NPC 전용 추천 버튼 (최대 3개). 없으면 config.yml dialogue.buttons 공통 버튼.
+     * <pre>
+     * buttons:
+     *   - { id: daily, label: "교수님, 요즘 어떠세요?" }
+     *   - { id: help,  label: "제가 도울 일이 있을까요?" }
+     *   - { id: magic, label: "마법 이야기 들려주세요" }
+     * </pre>
+     * id 는 소문자·숫자·_·- 1~32자 (같은 NPC 안에서 겹치지 않게). 미리 만드는 대답(캐시)은 NPC·버튼 id 별로 따로 쌓인다.
+     */
+    private static List<kr.chacademy.npc.core.Defs.Button> buttons(String id, YamlConfiguration y) {
+        Logger log = Logger.getLogger("ChacaNPC");
+        List<kr.chacademy.npc.core.Defs.Button> out = new ArrayList<>();
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        for (Map<?, ?> m : y.getMapList("buttons")) {
+            Object bid = m.get("id"), label = m.get("label");
+            if (bid == null || label == null) continue;
+            String b = bid.toString().strip(), l = label.toString().strip();
+            if (!b.matches("[a-z0-9_-]{1,32}") || l.isEmpty() || !seen.add(b)) {
+                log.warning("[ChacaNPC] " + id + " 의 버튼 " + b + " 을(를) 건너뜀 (id 형식·빈 글·중복)");
+                continue;
+            }
+            if (out.size() >= 3) {
+                log.warning("[ChacaNPC] " + id + " 의 버튼은 3개까지만 씁니다 (나머지 무시)");
+                break;
+            }
+            out.add(new kr.chacademy.npc.core.Defs.Button(b, l));
+        }
+        return List.copyOf(out);
     }
 }
