@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitTask;
 /**
  * 차카데미 자체 야생 스폰 루프 (MythicMobs RandomSpawns 대체).
  * <p>
+ * 대상: 관전 모드를 뺀 모든 플레이어(생존·모험·크리에이티브).
  * 매 틱 플레이어 일부만 처리해서 부하를 고르게 나눈다: 플레이어 한 명은 period-seconds마다 한 번 차례가 오고,
  * 차례마다 attempts-per-player번 시도한다. 한 틱의 전체 시도는 max-attempts-per-tick을 넘지 않는다.
  * <p>
@@ -24,10 +25,10 @@ import org.bukkit.scheduler.BukkitTask;
  * 청크 로드·생성, 구조물 탐색은 하지 않는다. 메인 스레드 전용.
  */
 final class WildSpawner {
-    record Settings(boolean enabled,int periodTicks,int attemptsPerPlayer,int maxAttemptsPerTick,Map<String,Double> rarityWeights) {
-        static final Settings OFF=new Settings(false,100,3,40,Map.of());
+    record Settings(boolean enabled,int periodTicks,int attemptsPerPlayer,int maxAttemptsPerTick,Map<String,Double> rarityWeights,Map<String,Double> rarityChance,double similarWeight,double similarRadius) {
+        static final Settings OFF=new Settings(false,100,3,40,Map.of(),Map.of(),0.2,24);
         static Settings parse(ConfigurationSection s,List<String> warnings) {
-            if(s==null) return new Settings(true,100,3,40,defaultWeights());
+            if(s==null) return new Settings(true,100,3,40,defaultWeights(),defaultChance(),0.2,24);
             double seconds=s.getDouble("period-seconds",5);
             if(seconds<0.5) { warnings.add("spawner.period-seconds "+seconds+" → 0.5"); seconds=0.5; }
             int per=s.getInt("attempts-per-player",3), max=s.getInt("max-attempts-per-tick",40);
@@ -42,10 +43,24 @@ final class WildSpawner {
                 if(value<0) { warnings.add("spawner.rarity-weights."+key+" → 0"); value=0; }
                 weights.put(rarity,value);
             }
-            return new Settings(s.getBoolean("enabled",true),(int)Math.round(seconds*20),per,max,Map.copyOf(weights));
+            var chance=new HashMap<>(defaultChance());
+            var cs=s.getConfigurationSection("rarity-attempt-chance");
+            if(cs!=null) for(String key:cs.getKeys(false)) {
+                String rarity=key.equals("보스")?"boss":key.toLowerCase(Locale.ROOT);
+                if(!Habitat.RARITIES.contains(rarity)) { warnings.add("spawner.rarity-attempt-chance."+key+" (알 수 없는 등급) 무시"); continue; }
+                double value=cs.getDouble(key);
+                if(value<0||value>1) { warnings.add("spawner.rarity-attempt-chance."+key+" "+value+" → 0~1로 자름"); value=Math.clamp(value,0,1); }
+                chance.put(rarity,value);
+            }
+            double similar=s.getDouble("similar-nearby-weight",0.2), radius=s.getDouble("similar-nearby-radius",24);
+            if(similar<0||similar>1) { warnings.add("spawner.similar-nearby-weight "+similar+" → 0.2"); similar=0.2; }
+            if(radius<0||radius>96) { warnings.add("spawner.similar-nearby-radius "+radius+" → 24"); radius=24; }
+            return new Settings(s.getBoolean("enabled",true),(int)Math.round(seconds*20),per,max,Map.copyOf(weights),Map.copyOf(chance),similar,radius);
         }
         /** 예전 RandomSpawns 시도확률(4.5% / 1.8% / 0.4% / 0.06%)을 그대로 비율로 쓴다. */
         static Map<String,Double> defaultWeights() { return Map.of("1",4.5,"2",1.8,"3",0.4,"boss",0.06); }
+        /** 뽑힌 뒤 한 번 더 굴리는 등급별 통과 확률: 3성·보스만 사는 바이옴에서도 시도당 소환이 드물게. */
+        static Map<String,Double> defaultChance() { return Map.of("1",1.0,"2",0.5,"3",0.08,"boss",0.01); }
     }
 
     private final WildlifePlugin plugin;
@@ -76,7 +91,7 @@ final class WildSpawner {
             if(w==null) continue;
             for(Player p:w.getPlayers()) {
                 if(budget<=0) return;
-                if(p.getGameMode()!=GameMode.SURVIVAL&&p.getGameMode()!=GameMode.ADVENTURE) continue;
+                if(p.getGameMode()==GameMode.SPECTATOR) continue; // 크리에이티브도 스폰 대상
                 // 플레이어마다 다른 틱에 차례가 오게 엔티티 번호로 흩는다.
                 if(Math.floorMod(p.getEntityId(),period)!=Math.floorMod(tick,period)) continue;
                 for(int i=0;i<settings.attemptsPerPlayer()&&budget>0;i++,budget--) {
@@ -115,20 +130,22 @@ final class WildSpawner {
         }
         Location point=new Location(w,x+.5,y,z+.5);
         String biome=w.getBiome(x,y,z).getKey().toString();
-        var candidates=new ArrayList<Habitat>(); double total=0;
+        var nearby=plugin.familiesNear(point,settings.similarRadius());
+        var candidates=new ArrayList<Habitat>(); var weights=new ArrayList<Double>(); double total=0;
         for(Habitat h:candidates(biome)) {
             if(h.water()!=waterPoint||y<h.minY()||y>h.maxY()||!plugin.timeAndSeasonOk(h,w)) continue;
-            double weight=h.weight()>0?h.weight():settings.rarityWeights().getOrDefault(h.rarity(),0d);
+            double weight=weight(h,nearby);
             if(weight<=0) continue;
-            candidates.add(h); total+=weight;
+            candidates.add(h); weights.add(weight); total+=weight;
         }
         if(candidates.isEmpty()) return "나올 종 없음";
         double roll=random.nextDouble(total); Habitat pick=candidates.get(candidates.size()-1);
-        for(Habitat h:candidates) {
-            roll-=h.weight()>0?h.weight():settings.rarityWeights().getOrDefault(h.rarity(),0d);
-            if(roll<0) { pick=h; break; }
+        for(int i=0;i<candidates.size();i++) {
+            roll-=weights.get(i);
+            if(roll<0) { pick=candidates.get(i); break; }
         }
         // 청크 개체 수는 위에서 이미 셌으므로 다시 세지 않는다.
+        if(random.nextDouble()>=settings.rarityChance().getOrDefault(pick.rarity(),1d)) return "등급 판정 실패("+pick.rarity()+")";
         String result=plugin.checkChunkCounted(pick.id(),point);
         if(!result.equals("OK")) return result;
         boolean shiny=random.nextInt(plugin.shinyDenominator())==0;
@@ -139,6 +156,12 @@ final class WildSpawner {
         if(active==null||active.getEntity()==null||!active.getEntity().getBukkitEntity().isValid()) return "소환 취소";
         spawned++;
         return "OK";
+    }
+
+    /** 등급(또는 종별 weight) 가중치. 주변(인접 청크)에 같은 묶음 몹이 이미 있으면 similar-nearby-weight배로 낮춘다. */
+    private double weight(Habitat h,Set<String> nearbyFamilies) {
+        double weight=h.weight()>0?h.weight():settings.rarityWeights().getOrDefault(h.rarity(),0d);
+        return nearbyFamilies.contains(h.family())?weight*settings.similarWeight():weight;
     }
 
     /** 플레이어 높이 ±16칸에서 '단단한 바닥 + 위로 빈 공간 2칸 + 하늘빛 0'인 칸을 모아 하나 고른다. 없으면 MIN_VALUE. */
@@ -177,11 +200,12 @@ final class WildSpawner {
         out.add(" 위치 "+w.getName()+" "+x+" "+y+" "+z+" · 바이옴 "+biome+" · "+(waterPoint?"물속":"지상")+" · 시간 "+w.getTime());
         if(!plugin.spawnWorlds().contains(w.getName())) { out.add(" 이 월드는 야생 스폰 월드가 아니에요 (config worlds)"); return out; }
         out.add(plugin.crowdLine(at));
+        var nearby=plugin.familiesNear(at,settings.similarRadius());
         var rows=new ArrayList<Object[]>(); double total=0; int other=0;
         for(Habitat h:candidates(biome)) {
             if(h.water()!=waterPoint) { other++; continue; }
             String why=y<h.minY()||y>h.maxY()?"높이":!plugin.timeAndSeasonOk(h,w)?"시간·계절·날씨":null;
-            double weight=h.weight()>0?h.weight():settings.rarityWeights().getOrDefault(h.rarity(),0d);
+            double weight=weight(h,nearby);
             if(why==null&&weight<=0) why="가중치 0";
             if(why==null) total+=weight;
             rows.add(new Object[]{h,weight,why});
@@ -193,15 +217,16 @@ final class WildSpawner {
             if(oa!=ob) return oa?-1:1;
             return Double.compare((double)b[1],(double)a[1]);
         });
-        out.add(" 스폰 시도가 여기 걸리면 뽑힐 확률 (변색종은 그중 1/"+plugin.shinyDenominator()+"):");
+        out.add(" 스폰 시도가 여기 걸리면 뽑힐 확률 · 괄호는 등급 판정까지 친 시도당 소환 확률 (변색종은 그중 1/"+plugin.shinyDenominator()+"):");
         for(Object[] r:rows) {
             Habitat h=(Habitat)r[0]; double weight=(double)r[1]; String why=(String)r[2];
             String grade=h.rarity().equals("boss")?"보스":h.rarity()+"성";
             String name=plugin.displayName(h.id());
             if(why!=null) { out.add("  ✖ "+name+" ("+grade+") 지금 안 나옴: "+why); continue; }
             String here=plugin.check(h.id(),at,false);
-            String pct=String.format(Locale.ROOT,"%.1f%%",weight*100/sum);
-            out.add("  "+(here.equals("OK")?"✔ ":"△ ")+pct+" "+name+" ("+grade+") · 이 자리 "+(here.equals("OK")?"가능":"불가: "+here));
+            double pass=settings.rarityChance().getOrDefault(h.rarity(),1d);
+            String pct=String.format(Locale.ROOT,pass<1?"%.1f%%(시도당 %.2f%%)":"%.1f%%",weight*100/sum,weight*100/sum*pass);
+            out.add("  "+(here.equals("OK")?"✔ ":"△ ")+pct+" "+name+" ("+grade+")"+(nearby.contains(h.family())?" ↓근처에 비슷한 몹":"")+" · 이 자리 "+(here.equals("OK")?"가능":"불가: "+here));
         }
         if(other>0) out.add(" ("+(waterPoint?"지상":"물속")+"형 "+other+"종은 "+(waterPoint?"물 밖":"물속")+"에서 확인하세요)");
         out.add(" ※ 실제 스폰은 플레이어에게서 "+(int)plugin.playerMinDistance()+"~"+(int)plugin.playerMaxDistance()+"칸 떨어진 곳에서만 일어나요");
@@ -210,7 +235,7 @@ final class WildSpawner {
 
     List<String> diagnostics() {
         var s=settings;
-        return List.of(" 자체 스폰 루프 "+(s.enabled()&&task!=null?"켜짐":"꺼짐")+" · 주기 "+(s.periodTicks()/20.0)+"초 · 플레이어당 "+s.attemptsPerPlayer()+"회 · 틱당 최대 "+s.maxAttemptsPerTick()+"회 · 등급 가중치 "+new TreeMap<>(s.rarityWeights()),
+        return List.of(" 자체 스폰 루프 "+(s.enabled()&&task!=null?"켜짐":"꺼짐")+" · 주기 "+(s.periodTicks()/20.0)+"초 · 플레이어당 "+s.attemptsPerPlayer()+"회 · 틱당 최대 "+s.maxAttemptsPerTick()+"회 · 등급 가중치 "+new TreeMap<>(s.rarityWeights())+" · 등급 통과 "+new TreeMap<>(s.rarityChance())+" · 근처 비슷한 몹 ×"+s.similarWeight()+"("+(int)s.similarRadius()+"칸)",
             " 자체 스폰 시도="+attempts+" 소환="+spawned+" 결과="+outcomes);
     }
 }

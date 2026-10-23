@@ -94,7 +94,8 @@ final class TelegraphMech extends Mech {
             if (!plugin.targets().enemy(caster, t)) continue;
             double feet = t.getLocation().getY();
             if (feet < s.y() - 1 || feet > s.y() + height) continue;
-            if (!TelegraphProtocol.inside(s, t.getLocation().getX(), t.getLocation().getZ(), t.getWidth() / 2)) continue;
+            // 오너 2026-10-23: 실제 판정 = 그려진 예고 범위. 몸 폭 여유(pad) 없이 발 위치가 모양 안에 있어야 맞음.
+            if (!TelegraphProtocol.inside(s, t.getLocation().getX(), t.getLocation().getZ(), 0)) continue;
             if (!plugin.targets().hurt(caster, t, dmg, p.s("element", ""))) continue; // 0 = protection probe only
             plugin.targets().sideEffects(caster, t, p);
             if (p.b("tpme", false)) pullTo(caster, t);

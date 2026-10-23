@@ -67,7 +67,7 @@ final class WildlifeCommands {
                 .then(Commands.literal("변색종").executes(ctx -> crop(ctx, true))))),
             "살아나는 작물 몹을 내 앞에 소환", "몹 작물몹 ");
 
-        ChacaLink.reload(plugin, "야생", "config.yml·habitats.yml·biome-compatibility.yml (자체 스폰 루프 설정 포함)", plugin::reloadAll);
+        ChacaLink.reload(plugin, "야생", "config.yml·habitats.yml·biome-compatibility.yml·ranged-skills.yml", plugin::reloadAll);
         ChacaLink.status(plugin, "야생몹", plugin::statusLine);
     }
 

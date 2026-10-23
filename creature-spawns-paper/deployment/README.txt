@@ -4,7 +4,7 @@ Wildlife 0.5.0-spawner-20261023 -- 자체 스폰 루프 (MythicMobs RandomSpawns
 - 야생 몹 첫 스폰을 MythicMobs RandomSpawns가 아니라 이 플러그인이 직접 한다.
   몹은 그대로 미몹 몹(CA_Wild_<id> / CA_Wild_<id>_shiny)으로 소환(SpawnReason.NATURAL)되므로
   모델·스킬·무리 추가·자연 표시·디스폰 정리는 전부 기존 그대로.
-- 루프: 야생 월드(config worlds)의 생존·모험 플레이어마다 5초에 한 번 차례, 차례마다 3번 시도.
+- 루프: 야생 월드(config worlds)의 플레이어(관전 모드 제외, 크리에이티브 포함)마다 5초에 한 번 차례, 차례마다 3번 시도.
   시도 1번 = 플레이어 24~80칸 링의 로드된 청크 한 지점 → 청크 상한(4) → 지표/물속/동굴 바닥 높이
   → 그 바이옴 종 중 시간·계절·높이·지상/수중이 맞는 종만 남겨 등급 가중치로 1종 추첨
   → 기존 서식지 전체 검사(동종 상한·지역 24·보호 구역·구조물 포함) → 소환.
@@ -21,11 +21,16 @@ Wildlife 0.5.0-spawner-20261023 -- 자체 스폰 루프 (MythicMobs RandomSpawns
 3. MythicMobs RandomSpawns에서 야생 규칙 파일 제거(이중 스폰 방지):
    plugins/MythicMobs/RandomSpawns/chacademia_wildlife.yml (CA_Natural_* 138개) 를 서버 밖으로 옮겨 보관.
    다른 RandomSpawns 파일은 건드리지 않는다.
-4. plugins/ChAcademiaWildlife/config.yml 수정 (기존 파일은 자동으로 덮어쓰지 않음):
+4. plugins/ChAcademiaWildlife/config.yml 을 레포 config.yml로 교체하고 worlds·excluded-areas만 운영 값으로 되돌림
+   (2026-10-23 바뀐 값: area-cap 12, chunk-cap 4, shiny-denominator 2048, rarity-model-scale, spawner의
+    rarity-attempt-chance·similar-nearby-*). 교체가 어렵다면 아래 최소 수정:
    - "chunk-cap": 6 → 4
    - spawner 항목은 없어도 기본값(켜짐, 5초, 3회, 틱당 40, 4.5/1.8/0.4/0.06)으로 동작.
      값을 바꾸고 싶으면 레포 src/main/resources/config.yml의 "spawner" 블록을 복사해 넣고 수정.
-5. (선택) habitats.yml을 레포 최신본으로 교체하면 rarity 줄이 파일에 보여서 운영자가 직접 고치기 쉬움.
+5. plugins/ChAcademiaWildlife/biome-compatibility.yml 을 레포 최신 파일로 교체 (필수).
+   새 terralith-biomes 섹션이 yellowstone 등 서식지 없던 Terralith 바이옴 35개를 비슷한 바이옴에 연결함.
+   기존 파일은 자동으로 덮어쓰지 않음.
+5-1. (선택) habitats.yml을 레포 최신본으로 교체하면 rarity 줄이 파일에 보여서 운영자가 직접 고치기 쉬움.
    교체 안 해도 등급은 자동 적용됨.
 6. 서버 시작.
 

@@ -1,12 +1,14 @@
 plugins { id 'java' }
 group = 'school.chacademia'
-version = '0.5.0-spawner-20261023'
+version = '0.5.1-feedback-20261023'
 base { archivesName = 'chacademia-wildlife' }
 repositories { mavenCentral(); maven { url = 'https://repo.papermc.io/repository/maven-public/' } }
 dependencies {
  compileOnly 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
  compileOnly files(providers.gradleProperty('mythicJar').getOrElse('../plugins/MythicMobs-5.9.0.jar'))
+ compileOnly files(providers.gradleProperty('modelEngineJar').getOrElse('../plugins/ModelEngine-4.0.8.jar'))
  compileOnly files(providers.gradleProperty('magicCodexBridgeJar').getOrElse('../magic-codex-paper/build/libs/magic-codex-bridge-0.26.0.jar'))
+ testImplementation files(providers.gradleProperty('modelEngineJar').getOrElse('../plugins/ModelEngine-4.0.8.jar'))
  testImplementation 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
  testImplementation files(providers.gradleProperty('mythicJar').getOrElse('../plugins/MythicMobs-5.9.0.jar'))
  testImplementation platform('org.junit:junit-bom:5.11.4')

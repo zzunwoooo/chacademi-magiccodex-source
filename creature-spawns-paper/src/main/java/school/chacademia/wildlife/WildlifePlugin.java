@@ -21,13 +21,13 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
     public final StructureIndex structures=new StructureIndex();
     /** config.yml에서 스폰 후보마다 읽던 값을 로드/리로드 때 한 번만 읽어 둔다. */
     private record Excluded(String world,double x,double z,double radius) {}
-    private record Settings(boolean enabled,Set<String> worlds,double playerMinSquared,double playerMaxSquared,int areaCap,int shinyDenominator,List<Excluded> excluded) {}
+    private record Settings(boolean enabled,Set<String> worlds,double playerMinSquared,double playerMaxSquared,int areaCap,int shinyDenominator,List<Excluded> excluded,Map<String,Double> rarityScale) {}
     private Map<String,Habitat> habitats=Map.of();
     private BiomeCompatibility biomeCompatibility=new BiomeCompatibility(Map.of());
     private final Map<String,Long> naturalChecks=new TreeMap<>();
     private long naturalSpawned,lastNaturalSpawnLog;
     private MainThreadSpawnGate naturalGate;
-    private Settings settings=new Settings(false,Set.of(),0,0,0,1,List.of());
+    private Settings settings=new Settings(false,Set.of(),0,0,0,1,List.of(),Map.of());
     private final PopulationCache population=new PopulationCache();
     // 메인 스레드 전용 임시 좌표: 비교할 때마다 Location을 새로 만들지 않는다.
     private final Location scratch=new Location(null,0,0,0);
@@ -38,12 +38,17 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
     private long lastCleanupLog;
     private final CropAwakening crops=new CropAwakening(this);
     private final WildSpawner spawner=new WildSpawner(this);
+    private final WildCombat combat=new WildCombat(this);
     private long lastSpawnerWarn;
     @Override public void onEnable() {
         naturalGate=new MainThreadSpawnGate(Bukkit::isPrimaryThread,action->{var task=Bukkit.getScheduler().runTask(this,action);return task::cancel;},16,250);
         saveDefaultConfig(); reloadSettings(); reloadHabitats(); naturalKey=new NamespacedKey(this,"natural");
         spawner.apply(spawnerSettings);
         getServer().getPluginManager().registerEvents(this,this);
+        getServer().getPluginManager().registerEvents(new NoHuskHunger(),this);
+        combat.reload(getConfig().getConfigurationSection("combat"));
+        getServer().getPluginManager().registerEvents(combat,this);
+        Bukkit.getScheduler().runTaskTimer(this,combat::regenTick,40,40);
         // 구조물 색인은 지연 방식이다: 청크 로드 때가 아니라 구조물 조건이 있는 서식지가 물을 때만 계산한다.
         getServer().getPluginManager().registerEvents(structures,this);
         crops.reload(); getServer().getPluginManager().registerEvents(crops,this);
@@ -55,6 +60,22 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         Bukkit.getScheduler().runTaskTimer(this,this::cleanup,200,200);
     }
     /** excluded-areas가 없거나 항목이 잘못돼도 스폰 검사에서 NPE가 나지 않도록 여기서 걸러 둔다. */
+    /** rarity-model-scale: 등급별 모델 크기. 없으면 3성 1.35배(오너 2026-10-23), 나머지 1. */
+    private Map<String,Double> rarityScale(org.bukkit.configuration.ConfigurationSection c) {
+        var out=new HashMap<String,Double>(Map.of("3",1.35));
+        var s=c.getConfigurationSection("rarity-model-scale");
+        if(s!=null) for(String key:s.getKeys(false)) {
+            String r=key.equals("보스")?"boss":key.toLowerCase(Locale.ROOT);
+            double v=s.getDouble(key,1);
+            if(Habitat.RARITIES.contains(r)&&v>=0.3&&v<=3) out.put(r,v); else getLogger().warning("rarity-model-scale."+key+" 값을 무시합니다: "+v);
+        }
+        return Map.copyOf(out);
+    }
+    /** 자연 스폰 몹의 등급에 맞는 모델 크기. */
+    double scaleFor(String mythicType) {
+        Habitat h=habitats.get(mythicType.substring(8).replaceFirst("_shiny$",""));
+        return h==null?1:settings.rarityScale().getOrDefault(h.rarity(),1d);
+    }
     void reloadSettings() {
         var c=getConfig(); var excluded=new ArrayList<Excluded>(); var areas=c.getConfigurationSection("excluded-areas");
         if(areas!=null) for(String area:areas.getKeys(false)) {
@@ -67,7 +88,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         if(!(configuredCap instanceof Integer cap)) throw new IllegalArgumentException("chunk-cap must be a positive integer");
         var nextChunkLimit=new ChunkMobLimit(cap);
         settings=new Settings(c.getBoolean("enabled",true),Set.copyOf(c.getStringList("worlds")),min*min,max*max,
-            c.getInt("area-cap",24),Math.max(1,c.getInt("shiny-denominator",4096)),List.copyOf(excluded));
+            c.getInt("area-cap",24),Math.max(1,c.getInt("shiny-denominator",2048)),List.copyOf(excluded),rarityScale(c));
         var spawnerWarnings=new ArrayList<String>();
         spawnerSettings=WildSpawner.Settings.parse(c.getConfigurationSection("spawner"),spawnerWarnings);
         if(!spawnerWarnings.isEmpty()) getLogger().warning("config.yml spawner 값을 기본값으로 대체: "+String.join(", ",spawnerWarnings));
@@ -80,7 +101,8 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         if(!compatibilityFile.exists())saveResource("biome-compatibility.yml",false);
         var aliases=new YamlConfiguration();
         try{aliases.load(compatibilityFile);}catch(Exception error){throw new IllegalArgumentException("biome-compatibility.yml error",error);}
-        var nextCompatibility=BiomeCompatibility.parse(aliases.getConfigurationSection("vanilla-biomes"));
+        var nextCompatibility=BiomeCompatibility.parse(aliases.getConfigurationSection("vanilla-biomes"),aliases.getConfigurationSection("terralith-biomes"));
+        if(aliases.getConfigurationSection("terralith-biomes")==null) getLogger().warning("biome-compatibility.yml에 terralith-biomes가 없습니다 → yellowstone 등 서식지 없는 Terralith 바이옴에서는 몹이 안 나와요. 레포 최신 파일로 교체하세요.");
         if(!new File(getDataFolder(),"habitats.yml").exists()) saveResource("habitats.yml",false);
         var next=new YamlConfiguration();
         try { next.load(new File(getDataFolder(),"habitats.yml")); }
@@ -164,7 +186,8 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
                     .map(m -> m.getType().getInternalName()).orElse(null))) return "청크 개체 제한";
         if(population) {
             double nearest=Double.POSITIVE_INFINITY;
-            for(Player p:w.getPlayers()) if(p.getGameMode()==GameMode.SURVIVAL||p.getGameMode()==GameMode.ADVENTURE) nearest=Math.min(nearest,p.getLocation(scratch).distanceSquared(l));
+            // 관전 모드만 제외(크리에이티브도 포함).
+            for(Player p:w.getPlayers()) if(p.getGameMode()!=GameMode.SPECTATOR) nearest=Math.min(nearest,p.getLocation(scratch).distanceSquared(l));
             if(nearest<cfg.playerMinSquared()) return "플레이어 너무 가까움";
             if(nearest>cfg.playerMaxSquared()) return "활성 플레이어 없음";
             // 후보마다 주변 엔티티를 훑지 않고, 격자 칸별로 약 40틱 동안 공유하는 스캔 결과에서 센다.
@@ -217,6 +240,8 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         e.getEntity().getPersistentDataContainer().set(naturalKey,PersistentDataType.LONG,System.currentTimeMillis());
         // 같은 틱·같은 스캔 주기 안의 다음 후보가 이 개체를 세도록 살아 있는 스캔 결과에 바로 더한다.
         Location at=e.getLocation(); if(at.getWorld()!=null) population.noteSpawn(at.getWorld(),type,at);
+        double scale=scaleFor(type); Entity spawnedEntity=e.getEntity();
+        if(Math.abs(scale-1)>1e-3) Bukkit.getScheduler().runTaskLater(this,()->{ if(spawnedEntity.isValid()) MobScale.apply(spawnedEntity,scale); },2);
         if(groupSpawning) return;
         Entity leader=e.getEntity();
         Bukkit.getScheduler().runTask(this,()-> {
@@ -278,6 +303,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
                 e.getLocation(scratch); double x=scratch.getX(),y=scratch.getY(),z=scratch.getZ(); boolean near=false;
                 for(int n=0;n<at.length;n+=3) { double dx=at[n]-x,dy=at[n+1]-y,dz=at[n+2]-z; if(dx*dx+dy*dy+dz*dz<128*128) { near=true; break; } }
                 if(!near) e.remove();
+                else { double scale=scaleFor(mob.getType().getInternalName()); if(Math.abs(scale-1)>1e-3) MobScale.apply(e,scale); }
             } catch(RuntimeException|LinkageError error) { failures++; if(firstFailure==null) firstFailure=error; }
         }
         if(failures>0&&now-lastCleanupLog>=60000) {
@@ -297,6 +323,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
     }
     List<String> globalDiagnostics(){
         var out=new ArrayList<String>(spawner.diagnostics());
+        out.add(combat.diagnostic());
         out.add(" 자연 스폰 확정(무리 우두머리)="+naturalSpawned);
         if(!naturalChecks.isEmpty()) out.add(" (구) 미몹 랜덤스폰 조건 호출="+naturalChecks+" ← 0이 아니면 RandomSpawns 파일이 아직 남아 있음");
         return out;
@@ -329,6 +356,16 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
             +(chunk>=chunkLimit.cap()||area>=settings.areaCap()?" (꽉 차서 지금은 새로 안 나옴)":"");
     }
     List<String> chanceAt(Player p){return spawner.chanceAt(p);}
+    /** 주변(수평 radius) 야생 몹의 묶음(family) 목록. 개체 수 캐시를 재사용한다. */
+    Set<String> familiesNear(Location l,double radius){
+        if(radius<=0||l.getWorld()==null) return Set.of();
+        var out=new HashSet<String>();
+        for(String type:population.typesNear(l.getWorld(),l,radius)){
+            Habitat h=habitats.get(type.substring(8).replaceFirst("_shiny$",""));
+            if(h!=null) out.add(h.family());
+        }
+        return out;
+    }
     String displayName(String id){Habitat h=habitats.get(id);return h==null||h.name()==null||h.name().isBlank()?id:h.name();}
     void warnOnce(String message,Throwable error){
         long now=System.currentTimeMillis();
@@ -359,7 +396,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         return out;
     }
     /** /서버관리 새로고침 야생: 실패하면 예외(이전 설정 유지). */
-    void reloadAll(){reloadConfig();reloadSettings();reloadHabitats();crops.reload();spawner.apply(spawnerSettings);}
+    void reloadAll(){reloadConfig();reloadSettings();reloadHabitats();crops.reload();spawner.apply(spawnerSettings);combat.reload(getConfig().getConfigurationSection("combat"));}
     String statusLine(){return "야생몹 "+getDescription().getVersion()+" · "+(settings.enabled()?"켜짐":"꺼짐")+" · 자체 스폰 "+(spawnerSettings.enabled()?"켜짐":"꺼짐")+" · 청크 제한 "+chunkLimit.cap()+" · 지역 제한 "+settings.areaCap()+" · 서식지 "+habitats.size()+"종";}
     StructureIndex structureIndex(){return structures;}
 }

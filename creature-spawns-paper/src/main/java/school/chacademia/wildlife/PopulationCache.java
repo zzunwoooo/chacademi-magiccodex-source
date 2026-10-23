@@ -65,5 +65,18 @@ final class PopulationCache {
         }
     }
 
+    /** 인접 청크 비슷한 몹 판정용: l 기준 수평 radius 안(세로 ±16)의 야생 몹 미몹 이름. count()와 같은 캐시 스캔을 쓴다. */
+    Set<String> typesNear(World w,Location l,double radius) {
+        count(w,l,"",0); // 캐시 스캔 준비(없거나 만료면 새로)
+        Scan scan=scans.get(new Key(w.getUID(),l.getBlockX()>>SHIFT,l.getBlockY()>>SHIFT,l.getBlockZ()>>SHIFT));
+        if(scan==null) return Set.of();
+        var out=new HashSet<String>(); double x=l.getX(),y=l.getY(),z=l.getZ(),r2=radius*radius;
+        for(Wild mob:scan.mobs()) {
+            double dx=mob.x()-x,dz=mob.z()-z;
+            if(Math.abs(mob.y()-y)<=16&&dx*dx+dz*dz<=r2) out.add(mob.type());
+        }
+        return out;
+    }
+
     void clear() { scans.clear(); }
 }
