@@ -9,3 +9,5 @@ include "gimmick-paper"
 include "kyudichi-paper"
 
 include "housing-paper"
+
+include 'pet-interactions-paper'
