@@ -11,6 +11,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import org.lwjgl.glfw.GLFW;
 import school.magiccodex.npctalk.NpcTalkProtocol;
+import net.minecraft.item.ItemStack;
 
 /** Existing dialogue artwork/fonts, explicit direct-input mode and modal scrollable history. */
 public final class NpcTalkScreen extends Screen {
@@ -28,6 +29,10 @@ public final class NpcTalkScreen extends Screen {
  private char suppressedShortcut;private TextFieldWidget input;private Identifier portrait;private boolean portraitPresent;private int resourceGeneration=-1;
  // 내 차례 (버튼·직접 말하기 직후 내 일러스트 + 내 문장). 그동안 도착한 NPC 대사는 끝난 뒤 처음부터 타이핑, 작별(닫기)은 끝난 뒤 처리.
  private PlayerTurn turn;private boolean lineDuringTurn,heldClose;private String heldFarewell="";
+ // 선물 창 (대화 버튼 3번): 서버가 보낸 칸·등급. null 이면 닫힘. 아이템 그림은 내 인벤토리 그 칸에서 그린다
+ private List<NpcTalkProtocol.GiftSlot> gifts;private int giftPage;
+ private static final int GIFT_COLS=6,GIFT_ROWS=2,GIFT_PER_PAGE=GIFT_COLS*GIFT_ROWS,GIFT_CELL=96,GIFT_GAP=18,GIFT_X=800-(GIFT_COLS*GIFT_CELL+(GIFT_COLS-1)*GIFT_GAP)/2,GIFT_Y=338;
+ private static final int GOLD=0xFFC9A24B;private static final String[] GRADE_NAMES={"","일반","고급","유일","전설"};private static final int[] GRADE_COLORS={0,0xFF9AA3B2,0xFF5F9DEA,0xFFB184F0,0xFFE8A93C};
  public NpcTalkScreen(NpcTalkProtocol.Response open,Screen parent){super(Text.literal("NPC 대화"));this.parent=parent;session=open.session();apply(open);}
  private static Identifier asset(String name){return Identifier.of("magiccodex","textures/gui/dialogue/"+name+".png");}
  String session(){return session;}
@@ -46,6 +51,7 @@ public final class NpcTalkScreen extends Screen {
    case NpcTalkProtocol.S_STALL->{if(flow.matches(r.seq()))stallText=r.text();}
    case NpcTalkProtocol.S_LINE->{if(!flow.line(r.seq()))return;offerTitle=offerToken=null;history.add("npc:"+r.seq(),speaker,r.text());setText(r.text());if(turn!=null)lineDuringTurn=true;}
    case NpcTalkProtocol.S_QUEST_OFFER->{if(!flow.current(r.seq()))return;offerTitle=r.text();offerToken=r.token();directInput=false;if(input!=null)input.setFocused(false);}
+   case NpcTalkProtocol.S_GIFTS->{if(!flow.line(r.seq()))return;gifts=NpcTalkProtocol.giftSlots(r.text());giftPage=0;directInput=false;if(input!=null)input.setFocused(false);}
    case NpcTalkProtocol.S_INFO->{if(r.seq()!=0&&!flow.current(r.seq()))return;flow.rejected(r.seq());stallText="";note(r.text());}
    case NpcTalkProtocol.S_CLOSE->{if(turn!=null){heldClose=true;heldFarewell=r.text()==null?"":r.text();}else serverClose(r.text());}
    default->{}
@@ -71,7 +77,10 @@ public final class NpcTalkScreen extends Screen {
   if(!NpcTalkProtocol.validInput(value)){note(value.isEmpty()?"할 말을 입력해 주세요.":"100자 이내의 문장으로 입력해 주세요.");return;}
   if(dispatch(NpcTalkProtocol.C_SAY,value,false)){history.add("player:"+flow.pending(),"나",value);input.setText("");directInput=false;input.setFocused(false);click();beginTurn(value);}
  }
- private void pressButton(NpcTalkProtocol.Button button){if(dispatch(NpcTalkProtocol.C_BUTTON,button.id(),false)){history.add("player:"+flow.pending(),"나",button.label());click();beginTurn(button.label());}}
+ private void pressButton(NpcTalkProtocol.Button button){
+  // 선물 버튼: 대사 대신 서버가 선물 창(S_GIFTS)이나 "지금은 괜찮아~" 대사로 대답한다
+  if(NpcTalkProtocol.GIFT_BUTTON.equals(button.id())){if(dispatch(NpcTalkProtocol.C_BUTTON,button.id(),false))click();return;}
+  if(dispatch(NpcTalkProtocol.C_BUTTON,button.id(),false)){history.add("player:"+flow.pending(),"나",button.label());click();beginTurn(button.label());}}
  private void beginTurn(String said){turn=PlayerTurn.start(said,sound);lineDuringTurn=heldClose=false;heldFarewell="";}
  private void finishTurn(){turn=null;if(heldClose){heldClose=false;serverClose(heldFarewell);return;}if(lineDuringTurn){lineDuringTurn=false;page=shown=0;start=Util.getMeasuringTimeMs();}}
  private void answerQuest(boolean accept){if(offerToken!=null&&dispatch(NpcTalkProtocol.C_QUEST,offerToken,accept)){history.add("player:"+flow.pending(),"나",accept?"부탁을 수락했어요.":"부탁을 거절했어요.");offerTitle=offerToken=null;click();beginTurn(accept?"부탁, 제가 해 볼게요.":"이번에는 어려울 것 같아요.");}}
@@ -80,7 +89,7 @@ public final class NpcTalkScreen extends Screen {
   shown=count();while(!lastPage()){page++;}shown=count();directInput=true;input.setFocused(true);trace("input-open",0);click();
  }
  private List<Option> options(){
-  if(log||directInput||closed||turn!=null||flow.waiting())return List.of();
+  if(log||directInput||closed||turn!=null||flow.waiting()||gifts!=null)return List.of();
   if(offerToken!=null)return List.of(new Option(1,"부탁 수락: "+offerTitle,()->answerQuest(true)),new Option(2,"거절",()->answerQuest(false)));
   if(!complete()||!lastPage())return List.of();
   var out=new ArrayList<Option>();int n=1;
@@ -122,9 +131,48 @@ public final class NpcTalkScreen extends Screen {
    else{int remaining=shown;for(int i=page*3;i<Math.min(page*3+3,lines.size());i++){var row=lines.get(i);int n=Math.min(remaining,row.ends.length-1);remaining-=n;if(n>0){int y=704+(i-page*3)*43;boolean partial=n<row.ends.length-1;if(partial)c.enableScissor(115,y-24,120+(int)Math.ceil(row.ends[n])+1,y+26);label(c,row.text,120,y,29,0xFFF0F1F4,false,false,1330);if(partial)c.disableScissor();}}}
    }
    var opts=options();for(int i=0;i<opts.size();i++){int y=590-opts.size()*75+i*75;boolean hovered=hit(mx,my,962,y,545,67);images.drawTexture(c,CHOICE,962,y,73,270,545,67,1952,210,2098,749,hovered?0xFFFFFFFF:0xE8D5E1EE);String option=opts.get(i).number()+". "+opts.get(i).label();label(c,option,1006,y+34,24,0xE8000000,false,false,465);label(c,option,1005,y+33,24,hovered?0xFF92E7F2:0xFFEEF1F5,false,false,465);if(hovered)HudMesh.line(c,1005,y+53,1490,y+53,1,0x8092E7F2);}
-   String hint=turn!=null?turn.hint("Enter"):closed||directInput?"":flow.waiting()?"처리 중…":!complete()?"Enter  바로 보기":!lastPage()?"Enter  다음":"4  직접 말하기 · Esc  닫기";
+   if(gifts!=null)drawGifts(c,mx,my,f);
+   String hint=gifts!=null?"":turn!=null?turn.hint("Enter"):closed||directInput?"":flow.waiting()?"처리 중…":!complete()?"Enter  바로 보기":!lastPage()?"Enter  다음":"4  직접 말하기 · Esc  닫기";
    label(c,hint,800,825,20,0xFFC1CEDD,false,true,520);if(!message.isEmpty()&&now-messageAt<7000)label(c,message,800,874,19,0xFFE8D19B,false,true,1300);
   }finally{c.getMatrices().pop();images.endFrame();}
+ }
+ private ItemStack giftStack(int slot){return client==null||client.player==null?ItemStack.EMPTY:client.player.getInventory().getStack(slot);}
+ private int giftPages(){return Math.max(1,(gifts.size()+GIFT_PER_PAGE-1)/GIFT_PER_PAGE);}
+ private int[] giftCell(int i){int k=i%GIFT_PER_PAGE;return new int[]{GIFT_X+(k%GIFT_COLS)*(GIFT_CELL+GIFT_GAP),GIFT_Y+(k/GIFT_COLS)*(GIFT_CELL+GIFT_GAP)};}
+ /** 선물 창: 어둡게 깐 위에 금색 실 테두리 창, 등급 색 칸, 아래 쪽수. */
+ private void drawGifts(DrawContext c,double mx,double my,CodexLayout f){
+  c.draw();c.getMatrices().push();c.getMatrices().translate(0,0,400);
+  try{
+   var dim=f.viewportBounds(width,height);c.fill(dim.left(),dim.top(),dim.right(),dim.bottom(),0xA0050A13);
+   c.fill(380,250,1220,660,0xF2101823);c.drawBorder(380,250,840,410,GOLD);c.drawBorder(386,256,828,398,0x66C9A24B);
+   label(c,"선물 고르기",800,292,28,0xFFE8D19B,true,true,500);FriendsScreen.cross(c,1180,282,hit(mx,my,1164,266,32,32)?0xFF92E7F2:0xFFF0F3F5);
+   int from=giftPage*GIFT_PER_PAGE;String hovered="";int hoveredGrade=0;
+   for(int i=from;i<Math.min(gifts.size(),from+GIFT_PER_PAGE);i++){
+    var g=gifts.get(i);int[] at=giftCell(i);var stack=giftStack(g.slot());boolean over=hit(mx,my,at[0],at[1],GIFT_CELL,GIFT_CELL);
+    c.fill(at[0],at[1],at[0]+GIFT_CELL,at[1]+GIFT_CELL,over?0x40FFFFFF:0x26FFFFFF);c.drawBorder(at[0],at[1],GIFT_CELL,GIFT_CELL,GRADE_COLORS[g.grade()]);
+    if(!stack.isEmpty()){c.getMatrices().push();c.getMatrices().translate(at[0]+16,at[1]+16,0);c.getMatrices().scale(4,4,1);c.drawItem(stack,0,0);c.getMatrices().pop();if(stack.getCount()>1)label(c,String.valueOf(stack.getCount()),at[0]+GIFT_CELL-30,at[1]+GIFT_CELL-14,20,0xFFF0F1F4,true,false,60);}
+    if(over&&!stack.isEmpty()){hovered=stack.getName().getString();hoveredGrade=g.grade();}
+   }
+   if(!hovered.isEmpty()){label(c,hovered,800,578,25,0xFFF0F1F4,true,true,700);label(c,GRADE_NAMES[hoveredGrade],800,606,20,GRADE_COLORS[hoveredGrade],false,true,200);}
+   else label(c,"줄 선물을 눌러 주세요",800,590,21,0xFFB8C4D0,false,true,700);
+   int pages=giftPages();
+   if(pages>1){label(c,"‹",730,636,30,giftPage>0?(hit(mx,my,710,616,40,40)?0xFF92E7F2:0xFFE8D19B):0x55E8D19B,true,true,40);label(c,(giftPage+1)+" / "+pages,800,636,21,0xFFE8D19B,false,true,120);label(c,"›",870,636,30,giftPage<pages-1?(hit(mx,my,850,616,40,40)?0xFF92E7F2:0xFFE8D19B):0x55E8D19B,true,true,40);}
+  }finally{c.draw();c.getMatrices().pop();}
+ }
+ private boolean giftClick(double mx,double my){
+  if(hit(mx,my,1164,266,32,32)||!hit(mx,my,380,250,840,410)){gifts=null;click();return true;}
+  int pages=giftPages();
+  if(pages>1&&hit(mx,my,710,616,40,40)&&giftPage>0){giftPage--;click();return true;}
+  if(pages>1&&hit(mx,my,850,616,40,40)&&giftPage<pages-1){giftPage++;click();return true;}
+  int from=giftPage*GIFT_PER_PAGE;
+  for(int i=from;i<Math.min(gifts.size(),from+GIFT_PER_PAGE);i++){int[] at=giftCell(i);if(hit(mx,my,at[0],at[1],GIFT_CELL,GIFT_CELL)){giveGift(gifts.get(i).slot());return true;}}
+  return true;
+ }
+ /** 고른 칸 번호만 보낸다. 아이템·수량·받을 수 있는지는 서버가 다시 확인한다. */
+ private void giveGift(int slot){
+  var stack=giftStack(slot);if(stack.isEmpty())return;String name=stack.getName().getString();
+  gifts=null;
+  if(dispatch(NpcTalkProtocol.C_GIFT,String.valueOf(slot),false)){history.add("player:"+flow.pending(),"나",name+" (선물)");click();beginTurn("("+name+"을(를) 건넸다)");}
  }
  private void drawInput(DrawContext c,long now){
   String value=input.getText();if(value.isEmpty()){inputOffset=0;label(c,"할 말을 입력하세요",476,420,23,0xFF9FB0C0,false,false,395);if(input.isFocused()&&now/500%2==0)c.fill(476,406,478,434,0xFF91E8F5);return;}
@@ -153,6 +201,7 @@ public final class NpcTalkScreen extends Screen {
  private void advanceText(){if(turn!=null){if(turn.advance())finishTurn();return;}if(closed)return;if(!complete()){shown=count();return;}if(!lastPage()){page++;start=Util.getMeasuringTimeMs();shown=0;}}
  @Override public boolean keyPressed(int key,int scan,int mods){
   if(log){if(key==GLFW.GLFW_KEY_ESCAPE){log=false;input.setFocused(directInput);}return true;}
+  if(gifts!=null){if(key==GLFW.GLFW_KEY_ESCAPE){gifts=null;click();}return true;}
   if(key==GLFW.GLFW_KEY_ESCAPE){if(directInput){directInput=false;input.setFocused(false);}else close();return true;}
   if(key==GLFW.GLFW_KEY_ENTER||key==GLFW.GLFW_KEY_KP_ENTER){if(directInput)submit();else advanceText();return true;}
   if(directInput){return input!=null&&input.isFocused()&&input.keyPressed(key,scan,mods)||super.keyPressed(key,scan,mods);}
@@ -163,6 +212,7 @@ public final class NpcTalkScreen extends Screen {
  @Override public boolean mouseClicked(double x,double y,int button){
   if(button!=0)return false;var f=fit();double mx=f.localX(x),my=f.localY(y);
   if(log){if(hit(mx,my,1280,24,280,60)){log=false;input.setFocused(directInput);}return true;}
+  if(gifts!=null)return giftClick(mx,my);
   if(directInput){if(hit(mx,my,1038,390,128,60)){submit();return true;}if(hit(mx,my,1114,318,32,32)){directInput=false;input.setFocused(false);click();return true;}boolean focused=hit(mx,my,454,390,570,60);input.setFocused(focused);if(focused){String value=input.getText();inputOffset=Math.min(inputOffset,value.length());int at=inputOffset;while(at<value.length()&&UiResources.text().width(value.substring(inputOffset,at+1),23,FONT)<mx-476)at++;input.setCursor(at,false);}trace("focus",0);return true;}
   if(hit(mx,my,1090,24,180,60)){sound=!sound;click();return true;}
   if(hit(mx,my,1280,24,130,60)){log=true;historyScroll=Integer.MAX_VALUE;if(input!=null)input.setFocused(false);trace("history-open",0);return true;}

@@ -112,6 +112,13 @@ public final class NpcCommands {
                     plugin.dialogue().input(self(ctx), null, ctx.getArgument("버튼", String.class));
                     return 1;
                 })))
+                .then(Commands.literal("선물").then(Commands.argument("칸", ChacaLink.word(List::of)).executes(ctx -> {
+                    String slot = ctx.getArgument("칸", String.class);
+                    if (slot.matches("[0-9]|[12][0-9]|3[0-5]|40")) {
+                        plugin.dialogue().gift(self(ctx), Integer.parseInt(slot), -1);
+                    }
+                    return 1;
+                })))
                 .then(Commands.literal("부탁")
                         .then(Commands.literal("수락").then(Commands.argument("번호", ChacaLink.word(List::of))
                                 .executes(ctx -> quest(ctx, true))))

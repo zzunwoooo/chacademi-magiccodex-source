@@ -107,6 +107,7 @@ final class QuestBridge implements Listener,PluginMessageListener,AutoCloseable 
         }
         var q=new QuestDefinition(id,s.getString("title",id),s.getString("description",""),s.getString("permission",""),s.getBoolean("daily",true),s.getBoolean("enabled",true),goals,s.getString("reward.label",""),s.getStringList("reward.commands"),s.getStringList("reward.items"),s.getString("rank","F").toUpperCase(Locale.ROOT),s.getInt("completion-limit",1),parseTime(s.getString("opens-at","")),s.getDouble("reward.money",0),s.getInt("reward.house-points",0),s.getBoolean("main",false),s.getStringList("requires"));
         for(String item:q.items())if(Material.matchMaterial(item.split(":")[0])==null)throw new IllegalArgumentException("보상 아이템 오류");if(q.encode().length()>60000)throw new IllegalArgumentException("의뢰 데이터가 너무 큽니다: "+id);result.put(id,q);}
+        var npcs=new HashMap<String,String>();for(String id:result.keySet()){String n=root.getString(id+".npc","").trim();if(!n.isEmpty()){if(n.length()>30)throw new IllegalArgumentException(id+" npc 이름이 너무 깁니다");npcs.put(id,n);}}npcGroups=Map.copyOf(npcs);
         server=sid;draftIds=Set.copyOf(result.keySet());return Map.copyOf(result);
     }
     @EventHandler public void join(PlayerJoinEvent e){load(e.getPlayer(),false,"");}
@@ -222,12 +223,15 @@ final class QuestBridge implements Listener,PluginMessageListener,AutoCloseable 
         return slots;
     }
     static ItemStack submissionItem(String target){ItemStack item=target.startsWith("stack:")?ItemStack.deserializeBytes(Base64.getDecoder().decode(target.substring(6))):new ItemStack(Objects.requireNonNull(Material.matchMaterial(target),"제출 아이템 종류 오류"));if(item.isEmpty())throw new IllegalArgumentException("빈 아이템");item.setAmount(1);return item;}
-    List<school.magiccodex.protocol.JournalProtocol.Entry> journalDefinitions(){return catalog.values().stream().map(q->new school.magiccodex.protocol.JournalProtocol.Entry("quest",q.id(),q.title(),q.description(),"available",q.main(),"","")).toList();}
+    List<school.magiccodex.protocol.JournalProtocol.Entry> journalDefinitions(){return catalog.values().stream().map(q->new school.magiccodex.protocol.JournalProtocol.Entry("quest",q.id(),q.title(),q.description(),"available",q.main(),"","",npcGroup(q.id()))).toList();}
+    /** quests.yml 의 npc: 키(표시 전용). 일지에서 "NPC <이름>" 카테고리로 묶인다. */
+    private volatile Map<String,String> npcGroups=Map.of();
+    String npcGroup(String id){String n=npcGroups.get(id);return n==null?"":"NPC "+n;}
     Map<String,String> journalCatalog(){var map=new TreeMap<String,String>();catalog.values().forEach(q->map.put("quest:"+q.id(),q.title()));return map;}
     void journalRows(Player player,java.util.function.Consumer<List<school.magiccodex.protocol.JournalProtocol.Entry>> callback){
         flush(player.getUniqueId(),true);work(()->store.journalEntries(player.getUniqueId()),entries->{var rows=new ArrayList<school.magiccodex.protocol.JournalProtocol.Entry>();
             for(var e:entries){if(e.status().equals("ready")||(!e.current(System.currentTimeMillis())&&e.status().equals("active")))continue;var q=e.quest();String details=java.util.stream.IntStream.range(0,q.objectives().size()).mapToObj(i->q.objectives().get(i).label()+" "+e.progress()[i]+" / "+q.objectives().get(i).amount()).collect(java.util.stream.Collectors.joining("\n"));
-                rows.add(new school.magiccodex.protocol.JournalProtocol.Entry("quest",q.id(),q.title(),q.description(),e.status(),q.main(),school.magiccodex.protocol.JournalProtocol.cut(details,1200),school.magiccodex.protocol.JournalProtocol.cut(rewardText(q),500)));}
+                rows.add(new school.magiccodex.protocol.JournalProtocol.Entry("quest",q.id(),q.title(),q.description(),e.status(),q.main(),school.magiccodex.protocol.JournalProtocol.cut(details,1200),school.magiccodex.protocol.JournalProtocol.cut(rewardText(q),500),npcGroup(q.id())));}
             callback.accept(List.copyOf(rows));},m->{plugin.getLogger().warning("의뢰 기록 읽기 실패 ("+player.getName()+"): "+m);callback.accept(List.of());});
     }
     void journalEdit(CommandSender sender,Player target,String id,String operation){

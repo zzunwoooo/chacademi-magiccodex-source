@@ -105,11 +105,20 @@ hints:
   daily-per-player: 3
 
 affinity:
-  # MagicCodexBridge 연결이 없을 때만 쓰는 임시 점수. 25 = 아는 사이
-  default-score: 25
+  # MagicCodexBridge 연결이 없을 때만 쓰는 임시 점수 (0~100, 10 이상 아는 사이 · 30 친한 사이 · 60 단짝 · 90 특별)
+  default-score: 10
 
-# 선물 (Shift+우클릭). 호감도 변화량. 하루 횟수 한도는 MagicCodexBridge affinity.yml 의 gift-daily-count
+# 선물 (대화 버튼 3번 "선물 줄 거 있어" → 선물 창). 하루 횟수 한도는 MagicCodexBridge affinity.yml 의 gift-daily-count
+# 선물 아이템 = lore 첫 줄 "선물", 둘째 줄 등급 (색 코드 무시). 캐릭터 파일 gift_likes.liked 에 있으면 등급 점수, 없으면 not-liked.
+# 호감도 상한(30·60·90, 그 NPC 퀘스트 미완료)이면 받지 않음 — 대사 gift_full, 아이템·횟수 그대로.
 gifts:
+  grades:
+    일반: 1
+    고급: 2
+    유일: 3
+    전설: 10
+  not-liked: -1
+  # 예전 Shift+우클릭 선물 값 (지금은 쓰지 않음)
   loved: 6
   liked: 3
   disliked: -3
@@ -194,6 +203,7 @@ default-fallback-lines:
   gift_neutral: ["응? 고마워. 잘 쓸게!"]
   gift_disliked: ["음… 마음만 받을게."]
   gift_cap: ["오늘은 이미 선물 받았는걸~ 내일 또 줘!"]
+  gift_full: ["지금은 괜찮아~"]
   quest_decline: ["그래, 괜찮아. 바쁘면 어쩔 수 없지!"]
 
 debug: false

@@ -95,7 +95,7 @@ public final class NpcTalkChannel implements PluginMessageListener, Listener, Di
         } catch (IllegalArgumentException e) {
             return; // 형식·길이·버전이 맞지 않으면 버림
         }
-        if (r.op() == NpcTalkProtocol.C_SAY || r.op() == NpcTalkProtocol.C_BUTTON) {
+        if (r.op() == NpcTalkProtocol.C_SAY || r.op() == NpcTalkProtocol.C_BUTTON || r.op() == NpcTalkProtocol.C_GIFT) {
             // 말하기·버튼만 도배 방지 (닫기·퀘스트 응답·handshake는 항상 처리)
             long now = System.currentTimeMillis();
             Long last = gate.get(p.getUniqueId());
@@ -133,6 +133,7 @@ public final class NpcTalkChannel implements PluginMessageListener, Listener, Di
             case NpcTalkProtocol.C_SAY -> plugin.dialogue().input(p, r.text(), null, r.seq());
             case NpcTalkProtocol.C_BUTTON -> plugin.dialogue().input(p, null, r.text(), r.seq());
             case NpcTalkProtocol.C_QUEST -> plugin.dialogue().answerQuest(p, r.text(), r.accept(), r.seq());
+            case NpcTalkProtocol.C_GIFT -> plugin.dialogue().gift(p, Integer.parseInt(r.text()), r.seq());
             default -> {
             }
         }
@@ -176,6 +177,15 @@ public final class NpcTalkChannel implements PluginMessageListener, Listener, Di
     public void questOffer(Player player, DialogueSession s, int seq, String title, String token) {
         send(player, new NpcTalkProtocol.Response(NpcTalkProtocol.S_QUEST_OFFER, s.token(), seq, "", "",
                 title.length() > 60 ? title.substring(0, 60) : title, List.of(), 0, false, token));
+    }
+
+    @Override
+    public void gifts(Player player, DialogueSession s, int seq, List<GiftService.GiftItem> slots) {
+        List<NpcTalkProtocol.GiftSlot> out = new java.util.ArrayList<>();
+        for (GiftService.GiftItem g : slots) {
+            out.add(new NpcTalkProtocol.GiftSlot(g.slot(), g.grade()));
+        }
+        send(player, NpcTalkProtocol.Response.simple(NpcTalkProtocol.S_GIFTS, s.token(), seq, NpcTalkProtocol.giftList(out)));
     }
 
     @Override
