@@ -12,8 +12,8 @@ public class Preview {
   var rows=new ArrayList<ShopView.Row>();String[][] d={{"마나 물약","250","120"},{"체력 물약","200",""},{"낡은 마법서","1200",""},{"귀환권","300",""},{"사과","4","1"},{"빵","20",""},{"마력 코어","800",""},{"약초","40","8"},{"빈 병","10",""},{"깃펜","60",""},{"낚싯줄","150",""},{"랜턴","350",""}};
   for(int i=0;i<d.length;i++)rows.add(new ShopView.Row("p"+i,d[i][0],i==0?List.of("마력을 회복하는 물약."):List.of(),d[i][1],d[i][2],i==7?12:0,true,i!=1,i));
   for(int i=12;i<90;i++)rows.add(new ShopView.Row("p"+i,"상품 "+i,List.of(),"100","",0,true,false,i%12));
-  boolean sortOpen=a.length>5;
-  var m=new ShopView.Model("에드윈의 잡화점","상점 주인","에드윈",true,1024f/1536f,"988100",ShopView.Tab.ALL,new boolean[]{true,true,true},rows,0,"p0",false,"",64,"750",true,true,true,true,ShopView.Sort.PRICE_LOW,sortOpen,false,"",0,-100,-100,false,941);
+  boolean sortOpen=a.length>5&&a[5].equals("open");
+  var m=new ShopView.Model(a.length>6?"피피의 잡화점":"에드윈의 잡화점",a.length>6?"잡화상인":"상점 주인",a.length>6?"피피":"에드윈",true,(float)img(PORTRAIT).getWidth()/img(PORTRAIT).getHeight(),"988100",ShopView.Tab.ALL,new boolean[]{true,true,true},rows,0,"p0",false,"",64,"750",true,true,true,true,a.length>6?ShopView.Sort.DEFAULT:ShopView.Sort.PRICE_LOW,sortOpen,false,"",0,-100,-100,false,941);
   var im=new BufferedImage(ShopView.W*scale,ShopView.H*scale,BufferedImage.TYPE_INT_ARGB);var g=im.createGraphics();g.scale(scale,scale);
   g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BICUBIC);
   // blurred world stand-in: the reference background, darkened

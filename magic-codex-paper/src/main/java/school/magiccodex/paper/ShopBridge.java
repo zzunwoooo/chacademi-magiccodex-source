@@ -77,7 +77,10 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
    list.add(new Product(item.id(),item.name(),item.buy(),item.sell(),held.contains(stack.getType())?owned(p,stack):0,preview));bytes+=cost;
   }
   if(limited&&message.isEmpty())message="검색으로 상품을 좁혀 주세요. 전체 아이템 정보를 유지해 목록을 제한합니다.";
-  p.sendPluginMessage(plugin,ShopProtocol.RESPONSE,ShopProtocol.encode(new Response(sequence,s.token,shop.id(),shop.title(),shop.portrait(),shop.revision(),cash,message,List.copyOf(list),completedOperation,npcName(s.anchor))));
+  p.sendPluginMessage(plugin,ShopProtocol.RESPONSE,ShopProtocol.encode(new Response(sequence,s.token,shop.id(),shop.title(),shop.portrait(),shop.revision(),cash,message,List.copyOf(list),completedOperation,shownName(s,shop),shop.role())));
+ }
+ /** NPC 이름이 있으면 그것, 없으면(명령으로 연 상점) 상점 설정의 주인 이름. */
+ private String shownName(Session s,ShopStore.Shop shop){String n=npcName(s.anchor);return n.isBlank()?shop.owner():n;
  }
  private String npcName(Entity anchor){
   if(anchor==null)return "";
@@ -263,7 +266,7 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
   ChacaApi.branch(plugin,ChacaApi.상점관리,add,"손에 든 아이템을 상품으로 올리기","상품추가 ");
   ChacaApi.branch(plugin,ChacaApi.상점관리,CmdKit.literal("가져오기").then(CmdKit.word("파일",()->ShopImportFile.names(plugin)).executes(CmdKit.run(ctx->{
    var file=ShopImportFile.load(plugin,CmdKit.text(ctx,"파일"));
-   admin(CmdKit.sender(ctx),()->{var result=store.importProducts(file.shop(),file.title(),file.portrait(),file.entries());return file.title()+"("+file.shop()+") "+(result.created()?"상점을 만들고 ":"")+"상품 "+result.added()+"개 추가 · "+result.updated()+"개 갱신"+(file.portrait().isEmpty()?" · 초상은 /상점관리 초상 "+file.shop()+" <이름> 으로 지정":"");});
+   admin(CmdKit.sender(ctx),()->{var result=store.importProducts(file.shop(),file.title(),file.portrait(),file.owner(),file.role(),file.entries());return file.title()+"("+file.shop()+") "+(result.created()?"상점을 만들고 ":"")+"상품 "+result.added()+"개 추가 · "+result.updated()+"개 갱신"+(file.portrait().isEmpty()?" · 초상은 /상점관리 초상 "+file.shop()+" <이름> 으로 지정":"");});
   }))),"shops 폴더의 상품 목록 파일 한 번에 등록 (같은 이름은 가격·분류·순서만 갱신)","가져오기 ");
   var product=CmdKit.wordIn("상품",ctx->{var sh=catalog.get(CmdKit.text(ctx,"상점"));return sh==null?List.of():AdminCommandRules.catalogChoices(productNames(sh));});
   ChacaApi.branch(plugin,ChacaApi.상점관리,CmdKit.literal("가격").then(shopArg.get().then(product.then(CmdKit.word("구매가",()->PRICE_HINTS).then(CmdKit.word("판매가",()->PRICE_HINTS).executes(CmdKit.run(ctx->{

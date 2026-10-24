@@ -16,7 +16,9 @@ import org.bukkit.inventory.ItemStack;
  * 상점:
  *   아이디: pipi
  *   이름: 피피의 잡화점
- *   초상: ""            # 비우면 기존 초상 유지 (새 상점은 elena-neutral)
+ *   초상: pipi-neutral  # 비우면 기존 초상 유지 (새 상점은 elena-neutral)
+ *   주인: 피피          # NPC 없이 열었을 때 보일 이름 (NPC로 열면 NPC 이름)
+ *   역할: 잡화상인      # 이름 위 문구 (비우면 "상점 주인")
  * 상품:
  *   - { 분류: 광물, 아이템: coal, 이름: 석탄, 구매: 100, 판매: 20 }
  *   - { 분류: 광물, 아이템: ancient_debris, 이름: 고대 잔해, 구매: 없음, 판매: 2000 }
@@ -27,7 +29,7 @@ import org.bukkit.inventory.ItemStack;
  * 파일 읽기와 아이템 만들기는 명령을 실행한 메인 스레드에서 한다.
  */
 final class ShopImportFile {
-    record Loaded(String shop, String title, String portrait, List<ShopStore.ImportEntry> entries) {}
+    record Loaded(String shop, String title, String portrait, String owner, String role, List<ShopStore.ImportEntry> entries) {}
 
     private static final List<String> BUNDLED = List.of("pipi");
 
@@ -71,6 +73,8 @@ final class ShopImportFile {
         String shop = yml.getString("상점.아이디", "").strip();
         String title = yml.getString("상점.이름", "").strip();
         String portrait = yml.getString("상점.초상", "").strip();
+        String owner = yml.getString("상점.주인", "").strip();
+        String role = yml.getString("상점.역할", "").strip();
         if (!shop.matches("[a-z0-9_-]{1,48}")) throw ChacaApi.error("상점.아이디 를 영문 소문자·숫자·_·- 로 적어 주세요");
         if (title.isEmpty() || title.length() > 80) throw ChacaApi.error("상점.이름 을 1~80자로 적어 주세요");
         var rows = yml.getMapList("상품");
@@ -106,7 +110,7 @@ final class ShopImportFile {
         if (!problems.isEmpty()) {
             throw ChacaApi.error("고칠 곳 " + problems.size() + "개: " + String.join(", ", problems.subList(0, Math.min(5, problems.size()))) + (problems.size() > 5 ? " …" : ""));
         }
-        return new Loaded(shop, title, portrait, List.copyOf(entries));
+        return new Loaded(shop, title, portrait, owner, role, List.copyOf(entries));
     }
 
     private static String text(Map<?, ?> row, String key) {

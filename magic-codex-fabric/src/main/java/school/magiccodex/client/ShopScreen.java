@@ -250,7 +250,7 @@ public final class ShopScreen extends SocialScreen {
         long age = Util.getMeasuringTimeMs() - noticeAt;
         float alpha = notice.isEmpty() || age > 5000 ? 0 : age > 4500 ? (5000 - age) / 500f : 1;
         var f = fit();
-        return new ShopView.Model(data == null ? "상점" : data.title(), "상점 주인",
+        return new ShopView.Model(data == null ? "상점" : data.title(), data == null || data.role().isBlank() ? "상점 주인" : data.role(),
                 data == null || data.npcName().isBlank() ? "상점" : data.npcName(), size != null, size == null ? 1 : size[0] / size[1],
                 data == null ? "" : data.balance(), tab, tabs, rows, page, selected, selling, empty, max, total(),
                 n > 1, n < max, selected() != null && n > 0 && n <= max, canSwitch(), sort, sortOpen, busy, notice, alpha, mx, my, pressed,

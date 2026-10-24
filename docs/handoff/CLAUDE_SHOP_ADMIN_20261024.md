@@ -121,3 +121,27 @@ Branch `claude/shop-admin-inventory-20261024`, based on `review/integrated-relea
   - The Paper and Fabric files (`ShopImportFile`, `ShopAdminBridge`, `ShopBridge`, `ShopAdminScreen`) need a real build.
 - The import matches existing products **by name**. Renaming a product in the admin screen and then re-importing adds a second copy.
 - Iron and gold stay sellable at 40 / 80 as the owner approved. If farms make them a problem, switch `판매` to `없음` in the yml and import again.
+
+## 6. 2026-10-24 follow-up: 피피 잡화점 nameplate (portrait · owner · role)
+
+- `shops/pipi.yml` sets three shop fields:
+  - `초상: pipi-neutral` (the `chacademia_npc` pack's `textures/gui/dialogue/pipi-neutral.png`)
+  - `주인: 피피`
+  - `역할: 잡화상인`
+- Products and prices are unchanged: 195 items, fish-grade balance.
+- **New shop fields `owner` and `role`**:
+  - `ShopStore` adds the `codex_shops` columns `owner VARCHAR(40)` and `role VARCHAR(40)` (default `''`), with the same `ALTER ADD COLUMN` pattern as before.
+  - `importProducts(..., owner, role, ...)` saves them.
+  - `ShopBridge` sends:
+    - the name: the NPC's name when the shop is opened from an NPC, otherwise the shop's `owner`
+    - `role`
+  - `ShopProtocol.Response` gained a trailing `role` field.
+    - Decoding is lenient: an older server's packet without it reads as `""`.
+    - The client shows `role`, or 「상점 주인」 when it is blank.
+- **Deploy**: Bridge (school/wild) and the client mod, together with the earlier shop changes on this branch.
+- **Apply in game (OP)**:
+  1. `/상점관리 가져오기 pipi` creates the shop with the portrait, owner, role and 195 products.
+  2. `/상점관리 NPC연결 pipi <피피 NPC>`
+  3. Open it from 피피 and check that the left illustration is 피피 and the label reads 「잡화상인 / 피피」.
+  - If `plugins/MagicCodexBridge/shops/pipi.yml` already exists on a server from an earlier build, replace it with the jar's version first. The bundled file is only extracted when it is missing.
+- Preview with the real illustration: `docs/handoff/img/shop/p_v3_pipi.jpg`. The product icons there are placeholders.
