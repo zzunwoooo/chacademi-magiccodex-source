@@ -169,3 +169,10 @@ The overlay check against reference.png is in `docs/handoff/img/shop/compare_v3.
 - **The footer bar is back at x416.5** (the mockup's box). The footer icon and name are back at the measured spots: icon centre x468, text x543, width 186.
 - **The dark band** behind the role / name is kept. Its fade is now 24 steps of 3px, so it has no visible bands.
 - Everything else is unchanged, including the remaining runtime geometry from the README (cards, fields, tabs, stepper, switch, dividers, arrows).
+
+## 9. 6th pass — the shade behind the name covers only the name, as in the mockup
+
+- The full-width dark band is replaced by **`textures/gui/shop/v3/shop_name_shade.png`**.
+  - It is a 400×150 soft oval: colour `#080E18`, alpha up to 0.62, fading out on every side (smoothstep from 35% of the radius).
+  - It is centred on the role / name: x NAME_CX ± 200, y around the midpoint of ROLE_CY and NAME_CY.
+- Nothing else changed.

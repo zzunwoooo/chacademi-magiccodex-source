@@ -109,7 +109,7 @@ final class ShopView {
             SUM_LABEL_X = 1171, SUM_LABEL_CY = 835, SUM_COIN_X = 1182, SUM_X = 1209, SUM_CY = 866, SUM_MAX = 120,
             SWITCH_X = 1337, SWITCH_Y = 830, SWITCH_W = 104, SWITCH_H = 57, TRADE_X = 1452, TRADE_Y = 826, TRADE_W = 171, TRADE_H = 64;
     // illustration and the role / name label (mockup: portrait at x≈-3, full screen height)
-    static final float NAME_BAND_Y = 796, NPC_X = -3, NPC_H = 942, ROLE_CX = 166, ROLE_CY = 827.5f, NAME_CX = 166, NAME_CY = 865.5f;
+    static final float NPC_X = -3, NPC_H = 942, ROLE_CX = 166, ROLE_CY = 827.5f, NAME_CX = 166, NAME_CY = 865.5f;
 
     static float cardX(int slot) { return CARD_X0 + (slot % COLS) * CARD_PITCH_X; }
     static float cardY(int slot) { return CARD_Y0 + (slot / COLS) * CARD_PITCH_Y; }
@@ -225,9 +225,8 @@ final class ShopView {
             c.portrait(NPC_X, Math.max(H, m.screenBottom()) - h, w, h);
         }
 
-        // soft dark band behind the role / name (fades in from above)
-        for (int i = 0; i < 24; i++) c.fill(0, NAME_BAND_Y - 72 + i * 3, FOOT_L, 3, (Math.round((i + 1) * 0xA8 / 25f)) << 24 | 0x08111E);
-        c.fill(0, NAME_BAND_Y, FOOT_L, H - NAME_BAND_Y, 0xA808111E);
+        // soft dark shade only behind the role / name (oval, fades out on every side)
+        c.image(ROOT + "shop_name_shade.png", NAME_CX - 200, (ROLE_CY + NAME_CY) / 2 - 75, 400, 150, 0, 0, 400, 150, 400, 150);
         // footer bar over the illustration, then the mockup's own thin lines and stars on top
         c.fill(FOOT_L, FOOT_T, PANEL_R - FOOT_L, FOOT_B - FOOT_T, FOOTER);
         c.image(ROOT + "shop_deco_front.png", 0, 0, W, H, 0, 0, W, H, W, H);
