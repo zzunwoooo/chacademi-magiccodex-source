@@ -50,7 +50,7 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
             MEDIUM = Identifier.of("magiccodex", "label"), BODY = Identifier.of("magiccodex", "body");
 
     // Colours sampled from the reference: navy-violet glass, lavender rings, white text.
-    private static final int FILL = 0xD81A1946, RING = 0xB8C7B2FF, RING_HOVER = 0xFFEDE4FF, RING_DIM = 0x55C7B2FF,
+    private static final int FILL = 0xFF1E2152, RING = 0xB8C7B2FF, RING_HOVER = 0xFFEDE4FF, RING_DIM = 0x55C7B2FF,
             DOT = 0xE6F2EEFF, DOT_DIM = 0x66F2EEFF, TEXT = 0xFFF4F1FF, TEXT_SOFT = 0xD9DCD5F5, TEXT_HINT = 0x99C9C2E6,
             RULE = 0xA6C7B2FF, ACCENT = 0xFF8F6BFF, GLOW = 0x669C7BFF, CARD_FILL = 0x3A2A2470, CARD_RING = 0x99A891F0,
             CARD_SELECTED = 0xFFC9B6FF, VIOLET = 0xFF7C5CF0;
@@ -359,6 +359,7 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
         try {
             m.translate(s, 0, 0);
             image(c, BAG_FILL, GalaxyBagLayout.BAG_X, GalaxyBagLayout.BAG_Y, GalaxyBagLayout.BAG_W, GalaxyBagLayout.BAG_H, BAG_FILL_W, BAG_FILL_H, FILL);
+            stars(c, BAG_STARS);
             image(c, BAG, GalaxyBagLayout.BAG_X, GalaxyBagLayout.BAG_Y, GalaxyBagLayout.BAG_W, GalaxyBagLayout.BAG_H, GalaxyBagLayout.BAG_PNG_W, GalaxyBagLayout.BAG_PNG_H, 0xFFFFFFFF);
             var text = UiResources.text();
             boolean locked = lockedView();
@@ -370,12 +371,12 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
             }
             if (locked) {
                 float cx = GalaxyBagLayout.MAIN_X0 + 4 * GalaxyBagLayout.MAIN_STEP_X, size = GalaxyBagLayout.LOCK_ICON;
-                text.draw(c, "아공간 배낭", cx, GalaxyBagLayout.LOCK_TITLE_Y, 38, TEXT, SERIF, true);
+                text.draw(c, "아공간 배낭", cx, GalaxyBagLayout.LOCK_TITLE_Y, 34, TEXT, SERIF, true);
                 // Like the lock reference: the dim rings fade out behind the padlock and the two lines of text.
                 float top = GalaxyBagLayout.LOCK_ICON_Y - size * 0.5f, bottom = GalaxyBagLayout.LOCK_HINT_Y + 18;
                 for (int k = 0; k < 4; k++) {
                     float grow = 26 - k * 8;
-                    roundRect(c, cx - 128 - grow, top - grow, 256 + grow * 2, bottom - top + grow * 2, 30 + grow, 0x401A1946);
+                    roundRect(c, cx - 128 - grow, top - grow, 256 + grow * 2, bottom - top + grow * 2, 30 + grow, 0x401E2152);
                 }
                 image(c, PADLOCK, cx - size / 2, GalaxyBagLayout.LOCK_ICON_Y - size / 2, size, size, PADLOCK_PNG, PADLOCK_PNG, 0xFFFFFFFF);
                 text.draw(c, "잠긴 공간", cx, GalaxyBagLayout.LOCK_TEXT_Y, 30, TEXT, SERIF, true);
@@ -409,6 +410,7 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
         try {
             m.translate(s, 0, 0);
             image(c, PANEL_FILL, GalaxyBagLayout.PANEL_X, GalaxyBagLayout.PANEL_Y, GalaxyBagLayout.PANEL_W, GalaxyBagLayout.PANEL_H, PANEL_FILL_W, PANEL_FILL_H, fade(FILL, alpha));
+            if (alpha > 0.5f) stars(c, PANEL_STARS);
             image(c, PANEL, GalaxyBagLayout.PANEL_X, GalaxyBagLayout.PANEL_Y, GalaxyBagLayout.PANEL_W, GalaxyBagLayout.PANEL_H, GalaxyBagLayout.PANEL_PNG_W, GalaxyBagLayout.PANEL_PNG_H, fade(0xFFFFFFFF, alpha));
             var text = UiResources.text();
             text.draw(c, "제작", GalaxyBagLayout.CRAFT_TITLE_X, GalaxyBagLayout.CRAFT_TITLE_Y, 32, fade(TEXT, alpha), BOLD, true);
@@ -662,6 +664,27 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
     }
 
     // ------------------------------------------------------------------ shapes
+
+    /** Faint fixed star dust inside the glass, as in the reference (x, y, radius, alpha) — same every frame. */
+    private static final float[][] BAG_STARS = starField(7, 70, GalaxyBagLayout.BAG_LEFT + 60, GalaxyBagLayout.BAG_TOP + 40,
+            GalaxyBagLayout.BAG_RIGHT - 60, GalaxyBagLayout.BAG_BOTTOM - 40, false),
+            PANEL_STARS = starField(11, 26, GalaxyBagLayout.PANEL_LEFT + 24, GalaxyBagLayout.PANEL_TOP + 24,
+            GalaxyBagLayout.PANEL_RIGHT - 24, GalaxyBagLayout.PANEL_BOTTOM - 24, true);
+
+    private static float[][] starField(long seed, int count, float x0, float y0, float x1, float y1, boolean panel) {
+        var random = new java.util.Random(seed);
+        var out = new java.util.ArrayList<float[]>();
+        while (out.size() < count) {
+            float x = x0 + random.nextFloat() * (x1 - x0), y = y0 + random.nextFloat() * (y1 - y0);
+            if (!panel && !GalaxyBagLayout.insideBag(x + GalaxyBagLayout.bagShift(1), y, 1)) continue;
+            out.add(new float[]{x, y, 0.7f + random.nextFloat() * 0.9f, 0.18f + random.nextFloat() * 0.4f});
+        }
+        return out.toArray(float[][]::new);
+    }
+
+    private static void stars(DrawContext c, float[][] stars) {
+        for (float[] s : stars) HudMesh.disk(c, s[0], s[1], s[2], (Math.round(s[3] * 255) << 24) | 0xDCD8FF);
+    }
 
     private void roundButton(DrawContext c, float cx, float cy, Identifier icon, boolean lit, double mx, double my) {
         float r = GalaxyBagLayout.ROUND_BTN_R;

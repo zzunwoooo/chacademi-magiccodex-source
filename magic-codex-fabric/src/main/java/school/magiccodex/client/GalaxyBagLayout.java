@@ -3,62 +3,62 @@ package school.magiccodex.client;
 /**
  * 아공간 배낭 inventory layout (2026-10-24). No Minecraft types: placement, animation and hit tests only.
  *
- * Design canvas 1932x1087 (16:9). Slot sizes, spacing and the crafting panel's contents are the owner's reference
- * picture's (bag + crafting panel open, 1672x941), shifted onto this canvas. The galaxy band of bag_galaxy_border.png
- * is thicker than in that picture, so the bag PNG is drawn larger (scale 0.8, found from the PNG's alpha interior so
- * every ring, number and the pager stay inside the dark area; the two round buttons sit on the band, top right).
- * The bag sits top-centre; when the crafting panel opens the bag slides left and the panel slides in on its right so
- * the pair is centred, as in the reference. Both borders keep their PNG aspect ratio (uniform scale, no nine-slice).
+ * Owner rule (2026-10-24): exactly the reference picture (1672x941, bag + crafting panel open). Every position and
+ * size is measured from it; the two border PNGs are laid on the reference outlines (visible box to visible box).
+ * The bag sits top-centre; when the crafting panel opens the bag slides left and the panel slides in on its right,
+ * ending exactly at the reference layout.
  */
 final class GalaxyBagLayout {
     private GalaxyBagLayout() {}
 
-    static final int CANVAS_W = 1932, CANVAS_H = 1087;
+    static final int CANVAS_W = 1672, CANVAS_H = 941;
 
     // ---- bag border (bag_galaxy_border.png 1817x866, visible 13..1804 x 33..842) placed on the reference bag
     static final int BAG_PNG_W = 1817, BAG_PNG_H = 866;
-    static final float BAG_SCALE = 0.8f, BAG_X = 9.6f, BAG_Y = -6f;
-    static final float BAG_W = BAG_PNG_W * BAG_SCALE, BAG_H = BAG_PNG_H * BAG_SCALE;
+    /** PNG visible box (13..1804 x 33..842) laid exactly on the reference bag outline (45..1182 x 44..580). */
+    static final float BAG_SX = 1137f / 1791f, BAG_SY = 536f / 809f, BAG_X = 45 - 13 * BAG_SX, BAG_Y = 44 - 33 * BAG_SY;
+    static final float BAG_W = BAG_PNG_W * BAG_SX, BAG_H = BAG_PNG_H * BAG_SY;
     /** Visible outline of the bag on the canvas (PNG visible bbox at this scale). */
-    static final float BAG_LEFT = 20, BAG_RIGHT = 1452.8f, BAG_TOP = 20.4f, BAG_BOTTOM = 667.6f;
+    static final float BAG_LEFT = 45, BAG_RIGHT = 1182, BAG_TOP = 44, BAG_BOTTOM = 580;
     /** Shift that centres the bag alone (crafting closed): canvas centre minus the bag's visible centre. */
     static final float BAG_ALONE_SHIFT = CANVAS_W / 2f - (BAG_LEFT + BAG_RIGHT) / 2f;
 
     // ---- crafting panel (craft_panel_border.png 1108x1420, visible 34..1075 x 43..1380)
     static final int PANEL_PNG_W = 1108, PANEL_PNG_H = 1420;
-    static final float PANEL_SCALE = 0.43f, PANEL_X = 1452.4f, PANEL_Y = 36.5f;
-    static final float PANEL_W = PANEL_PNG_W * PANEL_SCALE, PANEL_H = PANEL_PNG_H * PANEL_SCALE;
-    static final float PANEL_LEFT = 1467, PANEL_RIGHT = 1912, PANEL_TOP = 55, PANEL_BOTTOM = 633;
+    /** PNG visible box (34..1075 x 43..1380) laid exactly on the reference panel outline (1185..1630 x 52..630). */
+    static final float PANEL_SX = 445f / 1041f, PANEL_SY = 578f / 1337f, PANEL_X = 1185 - 34 * PANEL_SX, PANEL_Y = 52 - 43 * PANEL_SY;
+    static final float PANEL_W = PANEL_PNG_W * PANEL_SX, PANEL_H = PANEL_PNG_H * PANEL_SY;
+    static final float PANEL_LEFT = 1185, PANEL_RIGHT = 1630, PANEL_TOP = 52, PANEL_BOTTOM = 630;
     /** Panel enters from the right by this much while it fades in. */
     static final float PANEL_SLIDE = 48;
     static final float OPEN_SECONDS = 0.24f;
 
     // ---- bag contents
-    static final float MAIN_X0 = 346, MAIN_STEP_X = 97.6f, MAIN_Y0 = 195.5f, MAIN_STEP_Y = 87.75f, MAIN_R = 39, MAIN_ITEM = 62;
-    static final float HOTBAR_X0 = 384.5f, HOTBAR_STEP = 89f, HOTBAR_Y = 476, HOTBAR_R = 35, HOTBAR_ITEM = 54, HOTBAR_NUMBER_Y = 526;
-    static final float DIVIDER_Y = 424.5f, DIVIDER_X0 = 306, DIVIDER_X1 = 1174.5f;
-    static final float PAGER_Y = 571.5f, PAGER_PREV_X = 644.5f, PAGER_NEXT_X = 825.5f, PAGER_LABEL_X = 735, PAGER_R = 22.5f;
-    static final float EQUIP_X = 1201.6f, EQUIP_Y = 106, CRAFT_BTN_X = 1257.6f, CRAFT_BTN_Y = 150, ROUND_BTN_R = 29;
+    static final float MAIN_X0 = 234, MAIN_STEP_X = 97.6f, MAIN_Y0 = 163.5f, MAIN_STEP_Y = 87.75f, MAIN_R = 39, MAIN_ITEM = 62;
+    static final float HOTBAR_X0 = 272.5f, HOTBAR_STEP = 89f, HOTBAR_Y = 444, HOTBAR_R = 35, HOTBAR_ITEM = 54, HOTBAR_NUMBER_Y = 494;
+    static final float DIVIDER_Y = 392.5f, DIVIDER_X0 = 194, DIVIDER_X1 = 1062.5f;
+    static final float PAGER_Y = 539.5f, PAGER_PREV_X = 532.5f, PAGER_NEXT_X = 713.5f, PAGER_LABEL_X = 623, PAGER_R = 22.5f;
+    static final float EQUIP_X = 1059, EQUIP_Y = 106, CRAFT_BTN_X = 1115, CRAFT_BTN_Y = 150, ROUND_BTN_R = 29;
     // locked page (owner's lock reference, rescaled to this bag's row spacing)
-    static final float LOCK_TITLE_Y = 108, LOCK_ICON_Y = 251, LOCK_ICON = 120, LOCK_TEXT_Y = 332, LOCK_HINT_Y = 363;
+    static final float LOCK_TITLE_Y = 103, LOCK_ICON_Y = 216, LOCK_ICON = 120, LOCK_TEXT_Y = 300, LOCK_HINT_Y = 331;
 
     // ---- crafting panel contents
-    static final float CRAFT_TITLE_X = 1532, CRAFT_TITLE_Y = 103, BOOK_X = 1643, BOOK_Y = 99, BOOK_SIZE = 52;
-    static final float CLOSE_X = 1861, CLOSE_Y = 103, CLOSE_R = 23;
-    static final float TITLE_RULE_Y = 130, TITLE_RULE_X0 = 1499, TITLE_RULE_X1 = 1607;
-    static final float[][] INPUTS = {{1555, 180}, {1640, 180}, {1555, 265}, {1640, 265}};
+    static final float CRAFT_TITLE_X = 1250, CRAFT_TITLE_Y = 100, BOOK_X = 1361, BOOK_Y = 96, BOOK_SIZE = 52;
+    static final float CLOSE_X = 1579, CLOSE_Y = 100, CLOSE_R = 23;
+    static final float TITLE_RULE_Y = 127, TITLE_RULE_X0 = 1217, TITLE_RULE_X1 = 1325;
+    static final float[][] INPUTS = {{1273, 177}, {1358, 177}, {1273, 262}, {1358, 262}};
     static final float INPUT_R = 37.5f, INPUT_ITEM = 52;
-    static final float RESULT_X = 1824, RESULT_Y = 220, RESULT_R = 51, RESULT_ITEM = 70;
-    static final float ARROW_X = 1726, ARROW_Y = 220, ARROW_LEN = 55;
-    static final float SECTION_RULE_Y = 318, SECTION_RULE_X0 = 1499, SECTION_RULE_X1 = 1887;
-    static final float RECIPE_TITLE_X = 1534, RECIPE_TITLE_Y = 355;
-    static final float SEARCH_X0 = 1597, SEARCH_X1 = 1747, SEARCH_Y0 = 335, SEARCH_Y1 = 370;
-    static final float CRAFTABLE_LABEL_X = 1797, CRAFTABLE_LABEL_Y = 354;
-    static final float TOGGLE_X0 = 1846, TOGGLE_X1 = 1892, TOGGLE_Y0 = 343, TOGGLE_Y1 = 367;
-    static final float[] CARD_X = {1509, 1637, 1764}, CARD_Y = {389, 490};
-    static final float CARD_W = 116, CARD_H = 88, CARD_ITEM = 58;
+    static final float RESULT_X = 1542, RESULT_Y = 217, RESULT_R = 51, RESULT_ITEM = 70;
+    static final float ARROW_X = 1444, ARROW_Y = 217, ARROW_LEN = 55;
+    static final float SECTION_RULE_Y = 315, SECTION_RULE_X0 = 1217, SECTION_RULE_X1 = 1605;
+    static final float RECIPE_TITLE_X = 1252, RECIPE_TITLE_Y = 352;
+    static final float SEARCH_X0 = 1315, SEARCH_X1 = 1465, SEARCH_Y0 = 332, SEARCH_Y1 = 367;
+    static final float CRAFTABLE_LABEL_X = 1515, CRAFTABLE_LABEL_Y = 351;
+    static final float TOGGLE_X0 = 1564, TOGGLE_X1 = 1610, TOGGLE_Y0 = 340, TOGGLE_Y1 = 364;
+    static final float[] CARD_X = {1227, 1355, 1482}, CARD_Y = {386, 487};
+    static final float CARD_W = 116, CARD_H = 88, CARD_ITEM = 66;
     static final int CARDS_PER_PAGE = 6;
-    static final float RECIPE_PAGER_Y = 603, RECIPE_PREV_X = 1627, RECIPE_NEXT_X = 1757, RECIPE_LABEL_X = 1692, RECIPE_PAGER_R = 17;
+    static final float RECIPE_PAGER_Y = 600, RECIPE_PREV_X = 1345, RECIPE_NEXT_X = 1475, RECIPE_LABEL_X = 1410, RECIPE_PAGER_R = 17;
 
     // ---- PlayerScreenHandler slot ids
     static final int RESULT_SLOT = 0, INPUT_START = 1, MAIN_START = 9, HOTBAR_START = 36;
