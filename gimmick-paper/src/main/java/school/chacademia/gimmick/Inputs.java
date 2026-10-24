@@ -1,7 +1,6 @@
 package school.chacademia.gimmick;
 
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
-import java.lang.reflect.Method;
 import java.util.*;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -11,17 +10,16 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
-/** Player inputs: right click (interact / insert item / use portal), left click (attack), standing on, walking into portals. */
+/**
+ * Player inputs: right click (lever, open teleport gate), standing on pressure plates, walking into open gates.
+ * Left clicks on placed gimmicks are swallowed (they are not mobs).
+ */
 final class Inputs implements Listener {
     private final GimmickPlugin plugin;
     private final Map<UUID, Long> teleportCooldown = new HashMap<>();
-    private final Map<String, Boolean> standingNodes = new HashMap<>(); // puzzle:node -> last state
-    private Method iaByItem, iaId;
-    private boolean iaResolved;
 
     Inputs(GimmickPlugin plugin) {
         this.plugin = plugin;
@@ -35,32 +33,18 @@ final class Inputs implements Listener {
         Gimmick g = plugin.world().byEntity(e.getRightClicked());
         if (g == null) return;
         Player p = e.getPlayer();
-        if(!plugin.protection().pair(p,g.location()))return;
+        if (!plugin.protection().pair(p, g.location())) return;
         if (plugin.tool().isTool(p.getInventory().getItemInMainHand())) { e.setCancelled(true); plugin.tool().use(p, g, true); return; }
-        if (!g.inPuzzle()) return;
+        if (g.attached()) return;
         e.setCancelled(true);
         interact(p, g);
     }
 
     /** Right click on a gimmick (its model, its collision barrier, or from afar with 194 유령 도구). */
     void interact(Player p, Gimmick g) {
-        if (!g.inPuzzle()) return;
-        var node = plugin.puzzles().node(g.puzzle, g.node);
-        if (node == null) return;
-        // 1) item insert
-        ItemStack hand = p.getInventory().getItemInMainHand();
-        if (!node.collect().isEmpty() && !hand.getType().isAir()) {
-            String item = itemId(hand);
-            if (plugin.puzzles().collect(g, item, p)) {
-                if (p.getGameMode() != GameMode.CREATIVE) hand.setAmount(hand.getAmount() - 1);
-                return;
-            }
-        }
-        // 2) portal
-        if (node.teleport() != null && plugin.puzzles().isOn(g.puzzle, g.node) && teleport(p, g.puzzle, node.teleport())) return;
-        // 3) plain interact (levers can be undone with 248 되감기)
-        if (node.on().contains("interact") || node.off().contains("interact") || node.toggle().contains("interact")) plugin.devices().remember(g);
-        plugin.puzzles().trigger(g, "interact", p);
+        if (g.attached()) return;
+        if (plugin.catalog().get(g.model).is("gate")) { Gimmick to = plugin.signals().partner(g); if (to != null) teleportTo(p, to); return; }
+        plugin.signals().interact(g);
     }
 
     /**
@@ -83,10 +67,9 @@ final class Inputs implements Listener {
             if (r > 6) { Gimmick far = plugin.world().looking(p, r); if (far != null && far.location() != null && far.location().distance(p.getEyeLocation()) > 3) g = far; }
         }
         if (g == null || !plugin.protection().pair(p, g.location())) return;
-        if (plugin.tool().isTool(p.getInventory().getItemInMainHand()) || plugin.placer().isItem(p.getInventory().getItemInMainHand())) return; // tool / placer handle it
+        if (plugin.tool().isTool(p.getInventory().getItemInMainHand())) return; // the tool handles it
         e.setCancelled(true);
         if (right) interact(p, g);
-        else if (!g.attached()) plugin.puzzles().trigger(g, "attack", p);
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -94,117 +77,49 @@ final class Inputs implements Listener {
         Gimmick g = plugin.world().byEntity(e.getAttacked());
         if (g == null) return;
         Player p = e.getPlayer();
-        if(!plugin.protection().pair(p,g.location()))return;
+        if (!plugin.protection().pair(p, g.location())) return;
         if (plugin.tool().isTool(p.getInventory().getItemInMainHand())) { e.setCancelled(true); plugin.tool().use(p, g, false); return; }
         if (g.attached()) return; // a real mob: let the hit through
         e.setCancelled(true);
-        plugin.puzzles().trigger(g, "attack", p);
-    }
-
-    /** ItemsAdder id (namespace:id) when it is a custom item, else minecraft:material. */
-    String itemId(ItemStack item) {
-        if (!iaResolved) {
-            iaResolved = true;
-            try {
-                Class<?> cs = Class.forName("dev.lone.itemsadder.api.CustomStack");
-                iaByItem = cs.getMethod("byItemStack", ItemStack.class);
-                iaId = cs.getMethod("getNamespacedID");
-            } catch (ReflectiveOperationException | LinkageError ignored) {}
-        }
-        if (iaByItem != null && Bukkit.getPluginManager().isPluginEnabled("ItemsAdder")) {
-            try {
-                Object stack = iaByItem.invoke(null, item);
-                if (stack != null) return String.valueOf(iaId.invoke(stack)).toLowerCase(Locale.ROOT);
-            } catch (ReflectiveOperationException | RuntimeException ignored) {}
-        }
-        return item.getType().getKey().toString();
-    }
-
-    /** Teleport to the first gimmick of the target node, in front of it. */
-    boolean teleport(Player p, String puzzle, String targetNode) {
-        long now = plugin.puzzles().now();
-        if (teleportCooldown.getOrDefault(p.getUniqueId(), -1L) > now) return false;
-        var targets = plugin.world().inNode(puzzle, targetNode);
-        if (targets.isEmpty()) return false;
-        Gimmick t = targets.getFirst();
-        Location to = t.location();
-        if (to == null||!plugin.protection().pair(p,to)) return false;
-        Vector f = t.forward().multiply(1.5);
-        to = to.clone().add(f.getX(), 0.1, f.getZ());
-        to.setYaw(t.yaw); to.setPitch(0);
-        if(!plugin.protection().pair(p,to)||!to.getBlock().isPassable()||!to.clone().add(0,1,0).getBlock().isPassable())return false;
-        teleportCooldown.put(p.getUniqueId(), now + plugin.getConfig().getLong("teleport-cooldown-ticks", 60));
-        p.teleport(to);
-        return true;
     }
 
     /** Extra things that hold plates down (set by MagicHook: shadow doubles). */
     static java.util.function.Supplier<List<Location>> extraStanders = List::of;
 
-    /** Gates linked by 250 차원 표식: walking in goes to the other gate. */
-    private void linkedGates() {
-        for (Gimmick g : plugin.world().all()) {
-            if (!g.live() || !plugin.catalog().get(g.model).is("gate")) continue;
-            Gimmick other = plugin.devices().linked(g);
-            if (other == null) continue;
-            Location l = g.location();
-            if (l == null) continue;
-            BoundingBox box = g.box(plugin.catalog().get(g.model));
-            for (Player p : l.getWorld().getPlayers()) {
-                if (p.getGameMode() == GameMode.SPECTATOR || !box.contains(p.getLocation().toVector()) || !plugin.protection().pair(p, l)) continue;
-                teleportTo(p, other);
-            }
-        }
-    }
     private boolean teleportTo(Player p, Gimmick t) {
-        long now = plugin.puzzles().now();
+        long now = plugin.signals().now();
         if (teleportCooldown.getOrDefault(p.getUniqueId(), -1L) > now) return false;
         Location to = t.location();
         if (to == null || !plugin.protection().pair(p, to)) return false;
         Vector f = t.forward().multiply(1.5);
         to = to.clone().add(f.getX(), 0.1, f.getZ()); to.setY(t.by + 0.05); to.setYaw(t.yaw); to.setPitch(0);
-        if (!to.getBlock().isPassable() || !to.clone().add(0, 1, 0).getBlock().isPassable()) return false;
+        if (!plugin.protection().pair(p, to) || !to.getBlock().isPassable() || !to.clone().add(0, 1, 0).getBlock().isPassable()) return false;
         teleportCooldown.put(p.getUniqueId(), now + plugin.getConfig().getLong("teleport-cooldown-ticks", 60));
         p.teleport(to);
         return true;
     }
 
-    /** Pressure plates ("while: stand" / "turn-on: stand") and walk-in portals. */
+    /** Pressure plates held down by players (or 168 그림자 분신), and walk-in teleport gates. */
     private void standCheck() {
-        var seen = new HashMap<String, Player>();
-        var anyStandNode = new HashSet<String>();
+        var pressed = new HashSet<String>();
         for (Gimmick g : plugin.world().all()) {
-            if (!g.live() || !g.inPuzzle()) continue;
-            var node = plugin.puzzles().node(g.puzzle, g.node);
-            if (node == null) continue;
-            boolean plate = node.whileTriggers().contains("stand") || node.on().contains("stand") || node.toggle().contains("stand");
-            boolean portal = node.teleport() != null && plugin.puzzles().isOn(g.puzzle, g.node);
-            if (!plate && !portal) continue;
-            String key = g.puzzle + ":" + g.node;
-            if (plate) anyStandNode.add(key);
+            if (!g.live() || g.attached()) continue;
+            var info = plugin.catalog().get(g.model);
+            boolean plate = info.is("plate");
+            Gimmick gateTo = info.is("gate") ? plugin.signals().partner(g) : null;
+            if (!plate && gateTo == null) continue;
             Location l = g.location();
             if (l == null) continue;
-            var info = plugin.catalog().get(g.model);
             BoundingBox box = g.box(info);
             BoundingBox feet = plate ? new BoundingBox(box.getMinX() - 0.2, box.getMinY() - 0.3, box.getMinZ() - 0.2, box.getMaxX() + 0.2, box.getMaxY() + 1.0, box.getMaxZ() + 0.2) : box;
             for (Player p : l.getWorld().getPlayers()) {
-                if (!plugin.protection().pair(p,l) || p.getGameMode() == GameMode.SPECTATOR || !feet.contains(p.getLocation().toVector())) continue;
-                if (plate) seen.putIfAbsent(key, p);
-                if (portal && teleport(p, g.puzzle, node.teleport())) break;
+                if (!plugin.protection().pair(p, l) || p.getGameMode() == GameMode.SPECTATOR || !feet.contains(p.getLocation().toVector())) continue;
+                if (plate) pressed.add(g.id);
+                if (gateTo != null) teleportTo(p, gateTo);
             }
-            // 168 그림자 분신: a shadow double standing on a plate holds it down too
-            if (plate && !seen.containsKey(key)) for (Location d : extraStanders.get())
-                if (d.getWorld() == l.getWorld() && feet.contains(d.toVector())) { seen.put(key, null); break; }
+            if (plate && !pressed.contains(g.id)) for (Location d : extraStanders.get())
+                if (d.getWorld() == l.getWorld() && feet.contains(d.toVector())) { pressed.add(g.id); break; }
         }
-        linkedGates();
-        for (String key : anyStandNode) {
-            boolean now = seen.containsKey(key);
-            Boolean before = standingNodes.put(key, now);
-            if (before != null && before == now) continue;
-            String[] pn = key.split(":", 2);
-            Player who = seen.get(key);
-            plugin.puzzles().standing(pn[0], pn[1], now, who); // also fires turn-on/toggle "stand" once on the rising edge
-        }
-        standingNodes.keySet().retainAll(anyStandNode);
+        plugin.signals().standing(pressed);
     }
 }

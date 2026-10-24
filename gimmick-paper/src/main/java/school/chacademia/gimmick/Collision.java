@@ -17,8 +17,8 @@ import org.bukkit.util.BoundingBox;
  * barriers (models.yml `collision`):
  *  solid    - footprint x model height (rounded up)       platform - one layer at the anchor (model top = block top, walk on it)
  *  floor    - nothing (thin plates, conduits, vents)       none     - nothing (water wheel over a channel, teleport gate)
- * `open: on|off` lifts the barrier while the puzzle node is in that state (doors, sluice, thawed ice seal; light bridge = off).
- * A vine pot whose node is on (and has `climb`) puts twisting vines in front of it to climb.
+ * `open: on|off` lifts the barrier while the gimmick is in that state (doors, sluice, thawed ice seal; light bridge = off).
+ * A grown vine pot puts twisting vines in front of it to climb (config vine-pot-climb).
  *
  * Only air is ever replaced, and only blocks we placed (recorded in collision.yml) are removed, so the build is never touched.
  * A block a player stands in is skipped and retried every second (no one is shut inside a barrier).
@@ -84,8 +84,7 @@ final class Collision implements Listener {
             }
         }
         if (info.is("pot") && on) {
-            var d = g.inPuzzle() ? plugin.puzzles().node(g.puzzle, g.node) : null;
-            int climb = d != null && d.device().climb() > 0 ? d.device().climb() : plugin.getConfig().getInt("vine-pot-climb", 5);
+            int climb = Math.clamp(plugin.getConfig().getInt("vine-pot-climb", 5), 0, 32);
             int[] f = Gimmick.forward(g.facing);
             for (int l = 0; l < climb; l++) out.put(key(g.world, g.bx + f[0], g.by + l, g.bz + f[1]), Material.TWISTING_VINES_PLANT);
             if (climb > 0) out.put(key(g.world, g.bx + f[0], g.by + climb - 1, g.bz + f[1]), Material.TWISTING_VINES);
