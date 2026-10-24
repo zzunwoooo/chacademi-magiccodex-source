@@ -30,13 +30,12 @@ class GalaxyBagLayoutTest {
         assertTrue(GalaxyBagLayout.PANEL_LEFT > GalaxyBagLayout.BAG_RIGHT, "panel never covers the bag");
     }
 
-    @Test void bordersLieOnTheReferenceOutlines() {
-        // PNG visible boxes (bag 13..1804 x 33..842, panel 34..1075 x 43..1380) land on the reference outlines.
-        assertEquals(45, GalaxyBagLayout.BAG_X + 13 * GalaxyBagLayout.BAG_SX, 0.01);
-        assertEquals(1182, GalaxyBagLayout.BAG_X + 1804 * GalaxyBagLayout.BAG_SX, 0.01);
-        assertEquals(580, GalaxyBagLayout.BAG_Y + 842 * GalaxyBagLayout.BAG_SY, 0.01);
-        assertEquals(1630, GalaxyBagLayout.PANEL_X + 1075 * GalaxyBagLayout.PANEL_SX, 0.01);
-        assertEquals(630, GalaxyBagLayout.PANEL_Y + 1380 * GalaxyBagLayout.PANEL_SY, 0.01);
+    @Test void bordersKeepPngAspectAndPanelSitsBesideTheBag() {
+        assertEquals(GalaxyBagLayout.BAG_SX, GalaxyBagLayout.BAG_SY, 1e-6);
+        assertTrue(GalaxyBagLayout.PANEL_LEFT > GalaxyBagLayout.BAG_RIGHT);
+        assertTrue(GalaxyBagLayout.PANEL_LEFT - GalaxyBagLayout.BAG_RIGHT < 20);
+        assertTrue(GalaxyBagLayout.PANEL_RIGHT <= GalaxyBagLayout.CANVAS_W);
+        assertTrue(GalaxyBagLayout.BAG_LEFT >= 0);
     }
 
     @Test void fitIsUniformTopAlignedAndInsideTheWindow() {
@@ -63,8 +62,8 @@ class GalaxyBagLayoutTest {
         assertFalse(GalaxyBagLayout.hit(e, e.cx(), e.cy(), 0));
         assertTrue(GalaxyBagLayout.insideBag(GalaxyBagLayout.CANVAS_W / 2.0, 300, 0));
         assertFalse(GalaxyBagLayout.insideBag(10, 900, 0));
-        assertFalse(GalaxyBagLayout.insidePanel(1400, 300, 0));
-        assertTrue(GalaxyBagLayout.insidePanel(1400, 300, 1));
+        assertFalse(GalaxyBagLayout.insidePanel(1500, 300, 0));
+        assertTrue(GalaxyBagLayout.insidePanel(1500, 300, 1));
         assertEquals(0, GalaxyBagLayout.card(GalaxyBagLayout.CARD_X[0] + 5, GalaxyBagLayout.CARD_Y[0] + 5, 1));
         assertEquals(5, GalaxyBagLayout.card(GalaxyBagLayout.CARD_X[2] + 5, GalaxyBagLayout.CARD_Y[1] + 5, 1));
         assertEquals(-1, GalaxyBagLayout.card(GalaxyBagLayout.CARD_X[0] - 6, GalaxyBagLayout.CARD_Y[0], 1));

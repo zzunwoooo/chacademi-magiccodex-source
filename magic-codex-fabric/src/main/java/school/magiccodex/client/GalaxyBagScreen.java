@@ -417,9 +417,13 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
             // Recipe book toggle: rounded square, lit while the recipe list is open.
             float h = GalaxyBagLayout.BOOK_SIZE / 2, bxc = GalaxyBagLayout.BOOK_X, byc = GalaxyBagLayout.BOOK_Y;
             boolean bookHover = GalaxyBagLayout.rect(mx, my, bxc - h, byc - h, bxc + h, byc + h);
-            if (recipesWanted) roundRect(c, bxc - h, byc - h, 2 * h, 2 * h, 12, fade(0x553A1FA0, alpha));
-            roundRectOutline(c, bxc - h, byc - h, 2 * h, 2 * h, 12, recipesWanted ? 3.2f : 1.6f, fade(recipesWanted ? 0xFFB79CFF : bookHover ? RING_HOVER : RING, alpha));
-            if (recipesWanted) roundRectOutline(c, bxc - h - 3, byc - h - 3, 2 * h + 6, 2 * h + 6, 15, 3f, fade(0x449C7BFF, alpha));
+            // Reference: dark square with a bright lavender frame and violet glow while the recipe list is open.
+            roundRect(c, bxc - h, byc - h, 2 * h, 2 * h, 12, fade(0xFF2A2468, alpha));
+            if (recipesWanted) {
+                roundRectOutline(c, bxc - h - 4, byc - h - 4, 2 * h + 8, 2 * h + 8, 16, 5f, fade(0x667C5CF0, alpha));
+                roundRectOutline(c, bxc - h - 1.5f, byc - h - 1.5f, 2 * h + 3, 2 * h + 3, 13.5f, 2.5f, fade(0xAA9C7BFF, alpha));
+            }
+            roundRectOutline(c, bxc - h, byc - h, 2 * h, 2 * h, 12, recipesWanted ? 3.2f : 1.8f, fade(recipesWanted ? 0xFFEDE6FF : bookHover ? RING_HOVER : RING, alpha));
             image(c, BOOK, bxc - 30, byc - 30, 60, 60, ICON_PNG, ICON_PNG, fade(0xFFFFFFFF, alpha));
             // Close.
             boolean closeHover = GalaxyBagLayout.circle(mx, my, GalaxyBagLayout.CLOSE_X, GalaxyBagLayout.CLOSE_Y, GalaxyBagLayout.CLOSE_R);
