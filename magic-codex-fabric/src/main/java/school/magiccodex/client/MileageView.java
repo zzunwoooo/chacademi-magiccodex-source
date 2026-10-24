@@ -301,7 +301,6 @@ final class MileageView {
         boolean sel = card.id().equals(m.selected()), hover = in(m.mx(), m.my(), x, y, CARD_W, CARD_H);
         if (sel) { stroke(c, round(x - 3, y - 3, CARD_W + 6, CARD_H + 6, 11), 3, 0x30E4C47C); stroke(c, round(x - 6, y - 6, CARD_W + 12, CARD_H + 12, 14), 3, 0x14E4C47C); }
         c.polygon(round(x, y, CARD_W, CARD_H, 8), sel ? 0xFF182640 : CARD_FILL);
-        c.gradient(x + 4, y + CARD_H * .55f, CARD_W - 8, CARD_H * .45f - 4, 0x300A1220, 0x300A1220);
         stroke(c, round(x, y, CARD_W, CARD_H, 8), sel ? 2.2f : 1.3f, sel ? SELECT : hover ? CARD_HOVER : CARD_EDGE);
         float cx = x + CARD_W / 2, inner = CARD_W - 28;
         if (card.add()) {
