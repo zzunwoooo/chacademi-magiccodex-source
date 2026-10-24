@@ -22,28 +22,30 @@ class ShopViewTest {
         return a[0] < b[0] + b[2] && b[0] < a[0] + a[2] && a[1] < b[1] + b[3] && b[1] < a[1] + a[3];
     }
 
-    @Test void footerControlsNeverOverlapAndStayInsideTheFooterBand() {
+    @Test void footerControlsNeverOverlapAndStayInsideTheFooterBar() {
         var boxes = List.of(ShopView.minusBox(), ShopView.quantityBox(), ShopView.plusBox(), ShopView.switchBox(), ShopView.tradeBox());
         for (int i = 0; i < boxes.size(); i++)
             for (int j = i + 1; j < boxes.size(); j++) assertFalse(overlap(boxes.get(i), boxes.get(j)), i + "/" + j);
         for (var b : boxes) {
-            assertTrue(b[1] >= ShopView.FOOT_TOP && b[1] + b[3] <= ShopView.FOOT_BOTTOM);
-            assertTrue(b[0] >= ShopView.CX && b[0] + b[2] <= ShopView.CR);
+            assertTrue(b[1] > ShopView.FOOT_T && b[1] + b[3] < ShopView.FOOT_B);
+            assertTrue(b[0] > ShopView.FOOT_L && b[0] + b[2] < ShopView.PANEL_R);
         }
         assertTrue(ShopView.SUM_X + ShopView.SUM_MAX < ShopView.SWITCH_X);
         assertTrue(ShopView.F_TEXT_X + ShopView.F_TEXT_MAX < ShopView.F_DIV1);
     }
 
-    @Test void headerRowAndGridFitInsideTheFrame() {
-        assertTrue(ShopView.SEARCH_X + ShopView.SEARCH_W < ShopView.TAB_X);
-        assertTrue(ShopView.tabX(2) + ShopView.TAB_W < ShopView.DIVIDER_X);
-        assertTrue(ShopView.SORT_X + ShopView.SORT_W <= ShopView.CR);
-        assertTrue(ShopView.BAR_Y > ShopView.sy(178), "search row sits below the header line");
+    @Test void headerRowAndGridFitInsideThePanel() {
+        assertTrue(ShopView.SEARCH_X + ShopView.SEARCH_W < ShopView.tabX(0));
+        for (int i = 0; i < 2; i++) assertTrue(ShopView.tabX(i) + ShopView.TAB_WS[i] < ShopView.tabX(i + 1));
+        assertTrue(ShopView.tabX(2) + ShopView.TAB_WS[2] < ShopView.DIVIDER_X && ShopView.DIVIDER_X < ShopView.SORT_X);
+        assertTrue(ShopView.SORT_X + ShopView.SORT_W < ShopView.PANEL_R);
+        assertTrue(ShopView.BAR_Y > ShopView.fyTop(178), "search row sits below the header line");
         assertTrue(ShopView.gridBottom() < ShopView.PAGER_Y - ShopView.ARROW_S / 2);
-        assertTrue(ShopView.PAGER_Y + ShopView.ARROW_S / 2 < ShopView.sy(886), "pager stays above the footer line");
-        assertTrue(ShopView.cardX(ShopView.COLS - 1) + ShopView.CARD_W <= ShopView.CR + .01f);
-        assertTrue(ShopView.CX > ShopView.OUT_L && ShopView.CR < ShopView.OUT_R);
-        assertTrue(ShopView.NPC_CENTER + ShopView.NPC_MAX_W / 2 <= ShopView.CX, "illustration never reaches the cards");
+        assertTrue(ShopView.PAGER_Y + ShopView.ARROW_S / 2 < ShopView.FOOT_T);
+        assertTrue(ShopView.cardX(ShopView.COLS - 1) + ShopView.CARD_W < ShopView.PANEL_R);
+        assertTrue(ShopView.CARD_X0 > ShopView.PANEL_L);
+        assertEquals(ShopView.FOOT_T, ShopView.fyTop(887.5f), .01f);
+        assertEquals(ShopView.FOOT_B, ShopView.fyFoot(1017), .01f);
     }
 
     @Test void cardsHitThePageTheyShow() {

@@ -290,6 +290,8 @@ public final class ShopScreen extends SocialScreen {
             images.drawTexture(c, Identifier.of("magiccodex", tex), x0, y0, u, v, Math.round(x + w) - x0, Math.round(y + h) - y0, sw, sh, tw, th, tint);
         }
         public void line(float ax, float ay, float bx, float by, float thickness, int color) { HudMesh.line(c, ax, ay, bx, by, thickness, color); }
+        public void gradient(float x, float y, float w, float h, int top, int bottom) { HudMesh.vertical(c, x, y, w, h, top, bottom); }
+        public void chamfer(float x, float y, float w, float h, float r, int color) { ShopScreen.this.chamfer(c, x, y, w, h, r, color); }
         public void diamond(float cx, float cy, float rx, float ry, int color) { HudMesh.diamond(c, cx, cy, rx, ry, color); }
         public void text(String s, float x, float cy, float size, int color, ShopView.Face f, boolean centered) {
             type.draw(c, s, x, cy, size, color, face(f), centered);
@@ -349,7 +351,7 @@ public final class ShopScreen extends SocialScreen {
             ShopView.draw(new GameCanvas(c), m);
             var hit = ShopView.hit(m, mx, my);
             if (hit.kind() == ShopView.Kind.ICON) hovered = icons.getOrDefault(m.rows().get(hit.index()).id(), ItemStack.EMPTY);
-            else if (m.chosen() != null && ShopView.in(mx, my, ShopView.F_ICON_X, ShopView.FOOT_CY - ShopView.F_ICON / 2, ShopView.F_ICON, ShopView.F_ICON))
+            else if (m.chosen() != null && !m.sortOpen() && ShopView.in(mx, my, ShopView.footIconBox()))
                 hovered = icons.getOrDefault(m.chosen().id(), ItemStack.EMPTY);
         } finally { end(c); }
         // Native item-tooltip entrypoint uses the existing rich MagicCodex renderer and Shift+wheel scrolling.

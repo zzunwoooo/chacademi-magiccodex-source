@@ -71,7 +71,7 @@ The README rules this follows:
 `tools/shop-preview/Preview.java` draws `ShopView` with Java2D, using the real fonts and PNGs. Args: `<assets dir> <font dir> <icon dir> <portrait png> <out png> [open]`.
 
 - Icons in the preview are crops of `reference.png`.
-- `docs/handoff/img/shop/p_v3.jpg` and `p_v3_sort.jpg` are the previews.
+- `docs/handoff/img/shop/p_v3.jpg` is the preview.
 - `compare_v3.jpg` puts the reference on top and the preview below.
 
 ## 4. Not done / check in game
@@ -86,3 +86,35 @@ The README rules this follows:
   - 200+ products (피피 잡화점)
 - Categories are still not shown to players. The sort list's 기본순 keeps the admin order, which is grouped by category.
   - Adding categories to the dropdown later needs `category` in `ShopProtocol.Product`.
+
+## 5. 2nd pass (same day) — owner: "레퍼런스 그대로만, 판단하지 말 것"
+
+The first pass added its own choices (smaller NPC, dark band behind the name, glow on the selected card, inner tab line, wrong text sizes, bright card borders). They are all removed. `ShopView` now copies `reference.png` measurement by measurement:
+
+- **Positions**: every box, line and text centre was measured from reference.png pixels.
+  - Panel lines: x488.5..1650, top y21.5, footer line y799, bottom y914.5.
+  - Footer bar starts at x416.5.
+  - Cards: x517 + 279n, y199 + 191.5n, 268×181.
+  - Tabs: x1062/1186/1307. Sort box: x1481. Stepper: x958..1118. Switch: x1337. Buy button: x1452..1623 × 826..890.
+- **Text sizes and faces**: each size was solved from the text's pixel width in the mockup.
+  - Maruburi: title 41, gold amount 28.2, NPC name 37.8.
+  - Pretendard bold: card name 21.7, card price 17.3, footer name 28.7, prices 17.5, total 25.5, buy label 23.4, tabs 17.9.
+  - Pretendard medium / regular: the rest.
+- **Colours**: all sampled from the mockup.
+  - Panel backing is `0xE00E1D31`, solved from inside vs. outside pixels (alpha ≈ 0.88).
+  - Footer bar is near opaque (`0xF20C1C30`), so the illustration is hidden under it as in the mockup.
+  - Card borders are 1px `#242F40`; the selected card is 2.5px `#F2D184`.
+  - Fields and tabs use `#6A5F57` / `#615C5C` lines and small cut corners.
+- **Illustration**: full screen height (942) at x = -3, as SIFT matching of `elena-neutral.png` against the mockup gives (scale 0.6135).
+  - Drawn after the cards, so it overlaps the panel's left edge, and before the footer bar, as in the mockup.
+- **Mockup decorations, drawn as geometry**:
+  - role and name with the star and the underline
+  - the thin gold line at x22 with stars at its two ends and the short bottom line
+  - the four-point star before the title
+- **Frame**: `shop_frame.png` is stretched onto the mockup's panel lines.
+  - x scale 0.851; y scale 0.942 above the footer line and 0.892 below it.
+  - Frame rows below v880 (without the left 120 source px) are drawn again over the footer fill, and the footer bar's left end (x416.5) is drawn as 3.5px gold lines.
+  - The lines inside `shop_frame.png` are thicker and brighter than the mockup's. That is the asset itself and is left unchanged.
+- **Sort labels**: the closed box shows the chosen sort. The labels are 기본순 / 가격순 / 가격 높은순 / 이름순 (the mockup shows 「가격순」).
+
+The overlay check against reference.png is in `docs/handoff/img/shop/compare_v3.jpg`. The text, boxes and lines line up within a few px.

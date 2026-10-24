@@ -25,6 +25,15 @@ final class HudMesh {
             v.vertex(m,bx+nx,by+ny,0).color(color);v.vertex(m,bx-nx,by-ny,0).color(color);
         });
     }
+    /** Rectangle with a top-to-bottom colour gradient. */
+    static void vertical(DrawContext c,float x,float y,float w,float h,int top,int bottom){
+        var m=c.getMatrices().peek().getPositionMatrix();
+        c.draw(p->{
+            var v=p.getBuffer(RenderLayer.getGui());
+            v.vertex(m,x,y+h,0).color(bottom);v.vertex(m,x+w,y+h,0).color(bottom);
+            v.vertex(m,x+w,y,0).color(top);v.vertex(m,x,y,0).color(top);
+        });
+    }
     /** Diamond with separate half-width (rx) and half-height (ry); a thin one makes a star point. */
     static void diamond(DrawContext c,float x,float y,float rx,float ry,int color){
         var m=c.getMatrices().peek().getPositionMatrix();
