@@ -56,10 +56,12 @@ final class MileageView {
             CARD_FILL = 0xFF13213A, CARD_FILL_LOW = 0xFF0F1A2D, CARD_EDGE = 0xFF2F3E57, CARD_HOVER = 0xFF4C607E, SELECT = 0xFFE4C47C;
 
     // ---------------------------------------------------------------- layout (shop_panel.png pixels)
-    static final float EMBLEM_X = 119, EMBLEM_Y = 75, EMBLEM_R = 40;
-    static final float TITLE_X = 190, TITLE_Y = 75, TITLE_SIZE = 44;
-    static final float CAP_X = 1120, CAP_Y = 41, CAP_W = 366, CAP_H = 62, COIN_X = 1159, COIN_D = 38;
-    static final float REFRESH_X = 1504, REFRESH_Y = 47, REFRESH_S = 49, HEAD_DIVIDER_X = 1577, CLOSE_X = 1617, CLOSE_Y = 72;
+    /** Header band = frame inner edge y27 .. header line y138; everything in it is centred on HEAD_CY. */
+    static final float HEAD_CY = 82.5f;
+    static final float EMBLEM_X = 112, EMBLEM_Y = HEAD_CY, EMBLEM_R = 32;
+    static final float TITLE_X = 168, TITLE_Y = HEAD_CY, TITLE_SIZE = 44;
+    static final float BALANCE_RIGHT = 1484, COIN_D = 36;
+    static final float REFRESH_X = 1508, REFRESH_Y = HEAD_CY - 22, REFRESH_S = 44, HEAD_DIVIDER_X = 1572, CLOSE_X = 1614, CLOSE_Y = HEAD_CY;
     static final float TAB_X = 44, TAB_W = 239, TAB_Y = 162, TAB_H = 84, TAB_STEP = 90, TAB_ICON_X = 92, TAB_LABEL_X = 132;
     static final float CARD_ICON = 176, CARD_ICON_Y = 30, DETAIL_ICON = 240, DETAIL_ICON_Y = 180;
     static final float GRID_X = 321, GRID_Y = 162, CARD_W = 270, CARD_H = 306, COL_STEP = 288, ROW_STEP = 324;
@@ -175,28 +177,26 @@ final class MileageView {
 
     private static void header(Canvas c, Model m) {
         emblem(c, EMBLEM_X, EMBLEM_Y, EMBLEM_R);
-        // title alone, centred on the emblem (owner 2026-10-24: 차카데미 글씨·안내 문구 삭제)
-        var title = fit(c, m.admin() ? "마일리지 상점 관리" : "마일리지 상점", TITLE_SIZE, Face.TITLE, CAP_X - 40 - TITLE_X, .7f);
+
+        // balance (owner 2026-10-24: no capsule / button frames): [coin] label  amount, right-aligned before the refresh icon
+        float cy = HEAD_CY;
+        String label = m.admin() ? "등록 상품" : "보유 마일리지";
+        String value = m.admin() ? m.productCount() + "개" : m.balance();
+        float size = amountSize(c, value, 31, Face.TITLE, 300);
+        float valueX = BALANCE_RIGHT - c.width(value, size, Face.TITLE);
+        amount(c, value, valueX, cy, size, CREAM, false);
+        float labelW = Math.min(c.width(label, 21, Face.LABEL), 140), labelX = valueX - 16 - labelW;
+        textIn(c, label, labelX, cy, 21, 0xFFD9C79A, Face.LABEL, 140, false);
+        float left = labelX;
+        if (!m.admin()) { left = labelX - 10 - COIN_D; coin(c, left + COIN_D / 2, cy, COIN_D); }
+
+        // title alone, centred on the band like the emblem (차카데미 글씨·안내 문구 삭제)
+        var title = fit(c, m.admin() ? "마일리지 상점 관리" : "마일리지 상점", TITLE_SIZE, Face.TITLE, left - 40 - TITLE_X, .7f);
         c.text(title.text(), TITLE_X, TITLE_Y, title.size(), TITLE_GOLD, Face.TITLE, false);
 
-        // balance capsule (code-rendered per README): label left, amount right, diamond on the right tip
-        box(c, CAP_X, CAP_Y, CAP_W, CAP_H, CAP_H / 2, 0xCC0C1727, 0xFFB8975A, 1.6f);
-        diamond(c, CAP_X + CAP_W, CAP_Y + CAP_H / 2, 4.5f, 6.5f, GOLD);
-        float cy = CAP_Y + CAP_H / 2, labelX;
-        if (m.admin()) labelX = CAP_X + 32;
-        else { coin(c, COIN_X, cy, COIN_D); labelX = COIN_X + COIN_D / 2 + 13; }
-        String label = m.admin() ? "등록 상품" : "보유 마일리지";
-        float labelW = Math.min(c.width(label, 20, Face.LABEL), 130);
-        textIn(c, label, labelX, cy, 20, 0xFFD9C79A, Face.LABEL, 130, false);
-        String value = m.admin() ? m.productCount() + "개" : m.balance();
-        float right = CAP_X + CAP_W - 30, max = right - (labelX + labelW + 18);
-        float size = amountSize(c, value, 31, Face.TITLE, max);
-        amount(c, value, right - c.width(value, size, Face.TITLE), cy, size, CREAM, false);
-
         boolean hr = in(m.mx(), m.my(), REFRESH_X, REFRESH_Y, REFRESH_S, REFRESH_S);
-        box(c, REFRESH_X, REFRESH_Y, REFRESH_S, REFRESH_S, 7, hr ? 0x33E4C47C : 0x660C1727, hr ? GOLD : 0xFF5E6F88, 1.4f);
-        refreshIcon(c, REFRESH_X + REFRESH_S / 2, REFRESH_Y + REFRESH_S / 2, 11.5f, hr ? CREAM : 0xFFC9D2DE);
-        c.gradient(HEAD_DIVIDER_X, 44, 1.5f, 62, 0x88B8975A, 0x88B8975A);
+        refreshIcon(c, REFRESH_X + REFRESH_S / 2, REFRESH_Y + REFRESH_S / 2 + 2, 12, hr ? CREAM : 0xFFC9D2DE);
+        c.gradient(HEAD_DIVIDER_X, cy - 26, 1.5f, 52, 0x88B8975A, 0x88B8975A);
         boolean hc = in(m.mx(), m.my(), CLOSE_X - 22, CLOSE_Y - 22, 44, 44);
         int xc = hc ? CREAM : 0xFFC9C0A6;
         c.line(CLOSE_X - 12, CLOSE_Y - 12, CLOSE_X + 12, CLOSE_Y + 12, 2.2f, xc);
