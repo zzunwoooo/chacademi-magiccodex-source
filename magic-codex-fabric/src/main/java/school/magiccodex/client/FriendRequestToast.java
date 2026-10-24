@@ -24,9 +24,10 @@ public final class FriendRequestToast {
     /** 1920x1080 기준 좌표. */
     static final float W=600,H=168,X=1920-W-28,Y=236,BUTTON_W=150,BUTTON_H=46,BUTTON_Y=104,ACCEPT_X=W-2*BUTTON_W-36,DECLINE_X=W-BUTTON_W-22;
     static final long SHOW_MILLIS=20000;
+    /** 원형 받침 오른쪽 글자 시작 (카드 기준). */
+    static final float TEXT_X=108;
     /** 파티 초대 카드 (1920x1080 기준, 레퍼런스 크기 그대로). */
     static final float P_W=563,P_H=148,P_X=1920-P_W-28,P_ACCEPT_X=337,P_DECLINE_X=446,P_BUTTON_Y=73,P_BUTTON_W=95,P_BUTTON_H=43,P_CLOSE_X=526,P_CLOSE_Y=37;
-    private static final Identifier SERIF_TITLE=Identifier.of("magiccodex","section"),STAR=Identifier.of("magiccodex","textures/gui/party/house_star.png");
     private static final ArrayDeque<Person> PARTY=new ArrayDeque<>();
     private static Person party;
     private static HudTextureCache images;
@@ -109,28 +110,37 @@ public final class FriendRequestToast {
         long age=now-started;
         // 시간이 지나면 거절하지 않고 닫는다. 신청은 친구창의 받은 신청 목록에 남는다.
         if(age>=SHOW_MILLIS){current=null;return;}
-        if(text==null)text=new CodexTypography(c);
+        if(text==null)text=new CodexTypography(c);if(images==null)images=new HudTextureCache(c);
         boolean cursor=HudPointer.active();var w=c.getWindow();
         float s=scale(c),alpha=Math.min(1,Math.min(age/220f,(SHOW_MILLIS-age)/500f));
         try(var customization=HudCustomization.begin(ctx,"requests",w.getScaledWidth()-(1920-X)*s,Y*s,W*s,H*s)){
         int hot=cursor?hitInside(localX(c,HudPointer.x()),localY(c,HudPointer.y())):0;
-        text.beginFrame();ctx.getMatrices().push();
+        int white=color(alpha,0xFF,0xFFFFFF);
+        text.beginFrame();images.beginFrame();ctx.getMatrices().push();
         try{
             ctx.getMatrices().translate(w.getScaledWidth()-(1920-X)*s+(1-alpha)*24*s,Y*s,340);ctx.getMatrices().scale(s,s,1);
-            HudMesh.quad(ctx,0,0,W,H,color(alpha,0xD8,0xA99770),color(alpha,0xD8,0x758A9C));
-            HudMesh.quad(ctx,2,2,W-4,H-4,color(alpha,0xF2,0x102536),color(alpha,0xF2,0x0C1F32));
-            HudMesh.quad(ctx,2,2,6,H-4,color(alpha,0xFF,0xE7CE91),color(alpha,0xFF,0xE7CE91));
-            text.draw(ctx,"친구 신청",28,32,24,color(alpha,0xFF,0xE7CE91),BODY,false);
-            if(QUEUE.size()>0)text.draw(ctx,"+"+QUEUE.size()+"건 대기",W-24-text.width("+"+QUEUE.size()+"건 대기",20,BODY),32,20,color(alpha,0xFF,0xA5B8C8),BODY,false);
+            // 2026-10-24 승인 알림 외형: 공용 바탕 + 원형 받침(social) + 라벨 없는 버튼 PNG. 문구·버튼 위치·동작은 그대로.
+            NotificationSkin.background(images,ctx,0,0,W,H,white);
+            NotificationSkin.seat(images,ctx,TEXT_X/2,H/2-4,70,white);NotificationSkin.icon(images,ctx,"social",TEXT_X/2,H/2-4,42,white);
+            text.draw(ctx,"친구 신청",TEXT_X,36,24,color(alpha,0xFF,NotificationSkin.TITLE),BOLD,false);
+            if(QUEUE.size()>0){String more="+"+QUEUE.size()+"건 대기";text.draw(ctx,more,W-30-text.width(more,18,BODY),36,18,color(alpha,0xFF,NotificationSkin.GOLD),BODY,false);}
             String name=current.name(),tail=" 님이 친구 신청을 보냈습니다";
-            float tailWidth=text.width(tail,26,BODY),size=Math.max(10,Math.min(28,28*(W-56-tailWidth)/Math.max(1,text.width(name,28,BOLD)))),nameWidth=text.width(name,size,BOLD);
-            text.draw(ctx,name,28,72,size,color(alpha,0xFF,SocialLayout.color(current.dormitory())&0xFFFFFF),BOLD,false);
-            text.draw(ctx,tail,28+nameWidth,72,26,color(alpha,0xFF,0xF0F3F5),BODY,false);
-            text.draw(ctx,cursor?"버튼을 눌러 주세요":UiKeys.cursorHint()+" 클릭",28,BUTTON_Y+BUTTON_H/2,20,color(alpha,0xFF,0xA5B8C8),BODY,false);
-            button(ctx,"수락",ACCEPT_X,hot==1,alpha);button(ctx,"거절",DECLINE_X,hot==2,alpha);
-            // 남은 표시 시간
-            HudMesh.quad(ctx,2,H-5,(W-4)*(1-age/(float)SHOW_MILLIS),3,color(alpha,0xB0,0x92E7F2),color(alpha,0xB0,0x92E7F2));
-        }finally{ctx.getMatrices().pop();}
+            float room=W-TEXT_X-30,tailWidth=text.width(tail,20,BODY),size=Math.max(10,Math.min(22,22*(room-tailWidth)/Math.max(1,text.width(name,22,BOLD)))),nameWidth=text.width(name,size,BOLD);
+            if(nameWidth+tailWidth<=room){
+                text.draw(ctx,name,TEXT_X,70,size,color(alpha,0xFF,SocialLayout.color(current.dormitory())&0xFFFFFF),BOLD,false);
+                text.draw(ctx,tail,TEXT_X+nameWidth,70,20,color(alpha,0xFF,NotificationSkin.BODY),BODY,false);
+            }else{
+                // 아주 긴 이름: 줄을 나눠 버튼과 겹치지 않게 한다.
+                float fit=Math.max(10,Math.min(22,22*room/Math.max(1,text.width(name,22,BOLD))));
+                text.draw(ctx,name,TEXT_X,62,fit,color(alpha,0xFF,SocialLayout.color(current.dormitory())&0xFFFFFF),BOLD,false);
+                text.draw(ctx,tail.strip(),TEXT_X,84,17,color(alpha,0xFF,NotificationSkin.BODY),BODY,false);
+            }
+            String hint=cursor?"버튼을 눌러 주세요":UiKeys.cursorHint()+" 클릭";float hintSize=Math.max(11,Math.min(16,16*(ACCEPT_X-TEXT_X-12)/Math.max(1,text.width(hint,16,BODY))));
+            text.draw(ctx,hint,TEXT_X,BUTTON_Y+BUTTON_H/2,hintSize,color(alpha,0xFF,NotificationSkin.MUTED),BODY,false);
+            button(ctx,"수락",ACCEPT_X,true,hot==1,alpha);button(ctx,"거절",DECLINE_X,false,hot==2,alpha);
+            // 남은 표시 시간 (테두리 안쪽, 금색)
+            HudMesh.quad(ctx,24,H-13,(W-48)*(1-age/(float)SHOW_MILLIS),2,color(alpha,0x90,NotificationSkin.GOLD),color(alpha,0x90,NotificationSkin.GOLD));
+        }finally{ctx.getMatrices().pop();images.endFrame();}
 
         }
 }
@@ -146,44 +156,41 @@ public final class FriendRequestToast {
         text.beginFrame();images.beginFrame();ctx.getMatrices().push();
         try{
             ctx.getMatrices().translate(w.getScaledWidth()-(1920-P_X)*s+(1-alpha)*24*s,Y*s,340);ctx.getMatrices().scale(s,s,1);
-            PartyUiAtlas.stretch(images,ctx,PartyUiAtlas.TOAST,0,0,P_W,P_H,white);
-            // 얼굴 + 금테
+            // 2026-10-24 승인 알림 외형으로 통일: 공용 바탕 + 원형 받침 안에 초대한 사람 얼굴 + 버튼/닫기 PNG.
+            NotificationSkin.background(images,ctx,0,0,P_W,P_H,white);
+            NotificationSkin.seat(images,ctx,57,P_H/2,70,white);
             var skin=PartyUiClient.face(party);
-            ctx.drawTexture(net.minecraft.client.render.RenderLayer::getGuiTextured,skin,31,49,8,8,52,52,8,8,64,64);
-            ctx.drawTexture(net.minecraft.client.render.RenderLayer::getGuiTextured,skin,31,49,40,8,52,52,8,8,64,64);
-            PartyUiAtlas.stretch(images,ctx,PartyUiAtlas.AVATAR_FRAME,26,44,62,62,white);
-            HudMesh.line(ctx,103,48,103,103,1.2f,color(alpha,0x88,0xD8BB7A));
-            images.drawTexture(ctx,STAR,116,41,0,0,26,26,128,128,128,128,white);
-            text.draw(ctx,"파티 초대",152,54,21,color(alpha,0xFF,0xF0D293),SERIF_TITLE,false);
-            if(PARTY.size()>0)text.draw(ctx,"+"+PARTY.size(),152+text.width("파티 초대",21,SERIF_TITLE)+10,54,15,color(alpha,0xFF,0xA5B8C8),BODY,false);
-            if(!cursor){String hint=UiKeys.cursorHint()+" 클릭";text.draw(ctx,hint,P_CLOSE_X-22-text.width(hint,14,BODY),P_CLOSE_Y,14,color(alpha,0xFF,0x8FA3B5),BODY,false);}
+            ctx.drawTexture(net.minecraft.client.render.RenderLayer::getGuiTextured,skin,35,P_H/2-22,8,8,44,44,8,8,64,64);
+            ctx.drawTexture(net.minecraft.client.render.RenderLayer::getGuiTextured,skin,35,P_H/2-22,40,8,44,44,8,8,64,64);
+            text.draw(ctx,"파티 초대",116,46,22,color(alpha,0xFF,NotificationSkin.TITLE),BOLD,false);
+            if(PARTY.size()>0)text.draw(ctx,"+"+PARTY.size(),116+text.width("파티 초대",22,BOLD)+10,46,16,color(alpha,0xFF,NotificationSkin.GOLD),BODY,false);
+            if(!cursor){String hint=UiKeys.cursorHint()+" 클릭";text.draw(ctx,hint,P_CLOSE_X-22-text.width(hint,14,BODY),P_CLOSE_Y,14,color(alpha,0xFF,NotificationSkin.MUTED),BODY,false);}
             String name=party.nickname(),tail="님이 파티에 초대했어요.";
-            float room=P_ACCEPT_X-116-14,size=Math.max(10,Math.min(16,16*room/Math.max(1,text.width(name+tail,16,BODY))));
-            text.draw(ctx,name+tail,116,P_BUTTON_Y+P_BUTTON_H/2,size,color(alpha,0xFF,0xE6E9EE),BODY,false);
+            float room=P_ACCEPT_X-116-14,full=text.width(name+tail,16,BODY);
+            if(full<=room)text.draw(ctx,name+tail,116,P_BUTTON_Y+P_BUTTON_H/2,16,color(alpha,0xFF,NotificationSkin.BODY),BODY,false);
+            else{
+                // 긴 이름은 두 줄로 나눠 버튼과 겹치지 않게 한다.
+                float fit=Math.max(10,Math.min(16,16*room/Math.max(1,text.width(name,16,BOLD))));
+                text.draw(ctx,name,116,P_BUTTON_Y+P_BUTTON_H/2-10,fit,color(alpha,0xFF,NotificationSkin.TITLE),BOLD,false);
+                text.draw(ctx,tail,116,P_BUTTON_Y+P_BUTTON_H/2+11,Math.min(15,15*room/Math.max(1,text.width(tail,15,BODY))),color(alpha,0xFF,NotificationSkin.BODY),BODY,false);
+            }
             partyButton(ctx,"수락",P_ACCEPT_X,true,hot==1,alpha);partyButton(ctx,"거절",P_DECLINE_X,false,hot==2,alpha);
-            int x=hot==3?color(alpha,0xFF,0xFFFFFF):color(alpha,0xFF,0xC9D1DA);
-            HudMesh.line(ctx,P_CLOSE_X-8,P_CLOSE_Y-8,P_CLOSE_X+8,P_CLOSE_Y+8,1.6f,x);HudMesh.line(ctx,P_CLOSE_X+8,P_CLOSE_Y-8,P_CLOSE_X-8,P_CLOSE_Y+8,1.6f,x);
+            NotificationSkin.close(images,ctx,P_CLOSE_X,P_CLOSE_Y,18,hot==3,white);
             // 남은 표시 시간
-            HudMesh.quad(ctx,24,P_H-17,(P_W-48)*(1-age/(float)SHOW_MILLIS),2,color(alpha,0x90,0x92E7F2),color(alpha,0x90,0x92E7F2));
+            HudMesh.quad(ctx,24,P_H-13,(P_W-48)*(1-age/(float)SHOW_MILLIS),2,color(alpha,0x90,NotificationSkin.GOLD),color(alpha,0x90,NotificationSkin.GOLD));
         }finally{ctx.getMatrices().pop();images.endFrame();}
 
         }
 }
     private static int partyHitInside(float x,float y){return x<0||x>=P_W||y<0||y>=P_H?0:partyHit(x,y);}
     private static void partyButton(DrawContext ctx,String label,float x,boolean accept,boolean hover,float alpha){
-        if(accept)PartyUiAtlas.nine(images,ctx,hover?PartyUiAtlas.BLUE_HOVER:PartyUiAtlas.BLUE,x,P_BUTTON_Y,P_BUTTON_W,P_BUTTON_H,P_BUTTON_H/93f,color(alpha,0xFF,0xFFFFFF));
-        else{
-            // 거절: 레퍼런스처럼 어두운 회색 버튼
-            int edge=color(alpha,0xFF,hover?0x9AA6B2:0x6B7580),fill=color(alpha,0xF0,hover?0x26303A:0x1A222B);
-            HudMesh.capsule(ctx,x,P_BUTTON_Y,P_BUTTON_W,P_BUTTON_H,edge,edge);HudMesh.capsule(ctx,x+1.5f,P_BUTTON_Y+1.5f,P_BUTTON_W-3,P_BUTTON_H-3,fill,fill);
-        }
-        text.draw(ctx,label,x+P_BUTTON_W/2,P_BUTTON_Y+P_BUTTON_H/2,18,color(alpha,0xFF,hover?0xFFFFFF:accept?0xDCEBFA:0xD4DAE0),BODY,true);
+        NotificationSkin.button(images,ctx,accept,x,P_BUTTON_Y,P_BUTTON_W,P_BUTTON_H,hover,color(alpha,0xFF,0xFFFFFF));
+        text.draw(ctx,label,x+P_BUTTON_W/2,P_BUTTON_Y+P_BUTTON_H/2,18,NotificationSkin.labelColor(accept,alpha),BOLD,true);
     }
     private static int hitInside(float x,float y){return x<0||x>=W||y<0||y>=H?0:hit(x,y);}
     private static int color(float alpha,int a,int rgb){return ((int)(a*alpha)<<24)|(rgb&0xFFFFFF);}
-    private static void button(DrawContext ctx,String label,float x,boolean hover,float alpha){
-        int edge=color(alpha,0xFF,hover?0x4BADC2:0x6A839A),fill=color(alpha,0xFF,hover?0x16394B:0x0C1F32);
-        HudMesh.capsule(ctx,x,BUTTON_Y,BUTTON_W,BUTTON_H,edge,edge);HudMesh.capsule(ctx,x+1.5f,BUTTON_Y+1.5f,BUTTON_W-3,BUTTON_H-3,fill,fill);
-        text.draw(ctx,label,x+BUTTON_W/2,BUTTON_Y+BUTTON_H/2,22,color(alpha,0xFF,hover?0x92E7F2:0xE7CE91),BODY,true);
+    private static void button(DrawContext ctx,String label,float x,boolean accept,boolean hover,float alpha){
+        NotificationSkin.button(images,ctx,accept,x,BUTTON_Y,BUTTON_W,BUTTON_H,hover,color(alpha,0xFF,0xFFFFFF));
+        text.draw(ctx,label,x+BUTTON_W/2,BUTTON_Y+BUTTON_H/2,21,NotificationSkin.labelColor(accept,alpha),BOLD,true);
     }
 }
