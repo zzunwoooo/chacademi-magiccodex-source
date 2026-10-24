@@ -27,7 +27,7 @@ class MileageViewTest {
 
     static MileageView.Model model(boolean admin, List<MileageView.Card> cards, String selected, String name, String desc, String total) {
         return new MileageView.Model(admin, "1,000,000,000,000", cards.size(), 0, cards, 0, 3, selected, name, desc, total, true, true, true,
-                admin ? "저장하기" : "구매하기", 0, true, true, false, true, true, "판매 중인 상품이 없어요", false, -1, -1, false);
+                admin ? "저장하기" : "구매하기", 0, true, true, false, true, true, false, new boolean[36], -1, "판매 중인 상품이 없어요", false, -1, -1, false);
     }
 
     @Test void fitNeverExceedsMax() {
@@ -72,6 +72,19 @@ class MileageViewTest {
         var cat = MileageView.hit(admin, MileageView.chipX(2, 3) + 5, MileageView.EDIT_ROWS[3] + 5);
         assertEquals(MileageView.Kind.CATEGORY, cat.kind());
         assertEquals(2, cat.index());
+        // inventory picker is modal: slots hit, everything under it does not
+        var picking = new MileageView.Model(true, "", 6, 0, cards, 0, 1, "#new", "", "", "", false, false, false, "추가하기", 0, true, false, false, false, false,
+                true, new boolean[36], -1, "", false, -1, -1, false);
+        var slot = MileageView.hit(picking, MileageView.slotX(20) + 5, MileageView.slotY(20) + 5);
+        assertEquals(MileageView.Kind.PICK, slot.kind());
+        assertEquals(20, slot.index());
+        assertEquals(4, MileageView.hit(picking, MileageView.slotX(4) + 5, MileageView.slotY(4) + 5).index());
+        assertEquals(MileageView.Kind.NONE, MileageView.hit(picking, MileageView.cardX(0) + 5, MileageView.cardY(0) + 5).kind());
+        assertEquals(MileageView.Kind.PICK_CLOSE, MileageView.hit(picking, MileageView.FIELD_X + 5, MileageView.EDIT_ROWS[0] + 5).kind());
+        for (int i = 0; i < 36; i++) {
+            assertTrue(MileageView.slotX(i) >= MileageView.PICK_X && MileageView.slotX(i) + MileageView.SLOT <= MileageView.PICK_X + MileageView.PICK_W);
+            assertTrue(MileageView.slotY(i) + MileageView.SLOT <= MileageView.PICK_Y + MileageView.PICK_H);
+        }
         // the last edit row ends above the save button
         assertTrue(MileageView.EDIT_ROWS[6] + MileageView.FIELD_H < MileageView.BUY_Y);
     }

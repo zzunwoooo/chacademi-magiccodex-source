@@ -35,6 +35,10 @@ public final class MileageScreen extends SocialScreen {
     private boolean editEnabled = true, pressed;
     private String selected = "";
     private long pending, busyAt, armedAt;
+    /** Admin inventory picker (owner 2026-10-24: 아이템은 내 인벤토리에서 선택). picked = chosen slot for a new product. */
+    private boolean picker;
+    private int picked = -1;
+    private String autoName = "";
 
     MileageScreen(boolean admin) { super(admin ? "마일리지 상점 관리" : "마일리지 상점"); this.admin = admin; }
     boolean admin() { return admin; }
@@ -69,7 +73,7 @@ public final class MileageScreen extends SocialScreen {
         pageToSelection();
         boolean changed = !selected.equals(before);
         if (changed) qty.widget.setText("1");
-        if (admin && (changed || !s.notice().isEmpty())) loadEdit();
+        if (admin && (changed || !s.notice().isEmpty() && product(selected) != null)) loadEdit();
     }
     void onResult(Result r) {
         if (data != null) data = new State(data.kind(), data.admin(), r.balance(), data.products(), "", "");
@@ -177,13 +181,32 @@ public final class MileageScreen extends SocialScreen {
             name.widget.setText(p.name()); desc.widget.setText(p.description()); price.widget.setText(Long.toString(p.price()));
             editCategory = p.category(); editEnabled = p.enabled();
         } else if (selected.equals("#new")) {
-            var hand = client.player == null ? ItemStack.EMPTY : client.player.getMainHandStack();
-            String n = hand.isEmpty() ? "" : ItemTooltipRenderer.localName(hand, hand.getName()).getString().strip();
-            name.widget.setText(n.length() > MileageProtocol.MAX_NAME ? n.substring(0, MileageProtocol.MAX_NAME) : n);
-            desc.widget.setText(""); price.widget.setText("0");
+            name.widget.setText(""); desc.widget.setText(""); price.widget.setText("0");
             editCategory = tab; editEnabled = true;
         }
+        picked = -1; autoName = ""; picker = false;
         name.widget.setCursorToStart(false); desc.widget.setCursorToStart(false);
+    }
+    /** Player inventory slot 0..35 (0..8 hotbar, 9..35 main — the same numbers the server reads). */
+    private ItemStack slotStack(int slot) {
+        if (client.player == null || slot < 0 || slot >= MileageProtocol.SLOTS) return ItemStack.EMPTY;
+        return client.player.getInventory().getStack(slot);
+    }
+    private void openPicker() { unfocus(); picker = true; sound(1.1f, .16f); }
+    /** A slot was clicked in the picker: a new product takes it (name filled from the item if still untouched); an existing one is replaced now. */
+    private void pick(int slot) {
+        var stack = slotStack(slot);
+        if (stack.isEmpty()) return;
+        picker = false;
+        if (product(selected) != null) { adminSend(MileageProtocol.Request.replace(selected, slot)); return; }
+        picked = slot;
+        sound(1.1f, .16f);
+        if (name.text().isBlank() || name.text().equals(autoName)) {
+            String n = ItemTooltipRenderer.localName(stack, stack.getName()).getString().strip();
+            autoName = n.length() > MileageProtocol.MAX_NAME ? n.substring(0, MileageProtocol.MAX_NAME) : n;
+            name.widget.setText(autoName);
+            name.widget.setCursorToStart(false);
+        }
     }
     private long priceValue() { try { return Long.parseLong(price.text()); } catch (NumberFormatException e) { return -1; } }
     private boolean editValid() { return !name.text().isBlank() && priceValue() >= 0 && priceValue() <= MileageProtocol.MAX_PRICE; }
@@ -196,9 +219,9 @@ public final class MileageScreen extends SocialScreen {
     private void save() {
         if (!editValid()) { warn(name.text().isBlank() ? "상품 이름을 입력해 주세요" : "가격은 0 ~ " + MileageProtocol.amount(MileageProtocol.MAX_PRICE) + " 사이로 입력해 주세요"); return; }
         boolean add = selected.equals("#new");
-        if (add && (client.player == null || client.player.getMainHandStack().isEmpty())) { warn("등록할 아이템을 손에 들어 주세요"); return; }
+        if (add && slotStack(picked).isEmpty()) { picked = -1; warn("인벤토리에서 아이템을 골라 주세요"); openPicker(); return; }
         var e = new Edit(add ? "" : selected, editCategory, name.text().strip(), desc.text().strip(), priceValue(), editEnabled);
-        adminSend(MileageProtocol.Request.edit(add ? MileageProtocol.ADMIN_ADD : MileageProtocol.ADMIN_SAVE, e));
+        adminSend(add ? MileageProtocol.Request.add(e, picked) : MileageProtocol.Request.save(e));
     }
     private void unfocus() { qty.focus(false); name.focus(false); desc.focus(false); price.focus(false); }
 
@@ -219,15 +242,17 @@ public final class MileageScreen extends SocialScreen {
             boolean can = p != null && !busy && n >= 1 && n <= max && total >= 0 && total <= data.balance();
             return new MileageView.Model(false, data == null ? "-" : MileageProtocol.amount(data.balance()), 0, tab, cards, page, pages(), selected,
                     p == null ? "" : p.name(), p == null ? "" : p.description(), total < 0 ? "" : MileageProtocol.amount(total),
-                    n > 1, p != null && n < max, can, busy ? "처리 중…" : "구매하기", 0, true, true, false, false, false, empty, busy, mx, my, pressed);
+                    n > 1, p != null && n < max, can, busy ? "처리 중…" : "구매하기", 0, true, true, false, false, false, false, new boolean[0], -1, empty, busy, mx, my, pressed);
         }
+        boolean[] filled = new boolean[MileageProtocol.SLOTS];
+        for (int i = 0; i < filled.length; i++) filled[i] = !slotStack(i).isEmpty();
         boolean existing = p != null;
         int index = -1, size = 0;
         if (existing) { var all = list(); for (int i = 0; i < all.size(); i++) if (all.get(i).id().equals(selected)) index = i; size = all.size() - 1; }
         return new MileageView.Model(true, "", data == null ? 0 : data.products().size(), tab, cards, page, pages(), selected,
-                "", "", "", false, false, !busy && (existing || selected.equals("#new")) && editValid(),
+                "", "", "", false, false, !busy && (existing || selected.equals("#new") && picked >= 0) && editValid(),
                 busy ? "처리 중…" : existing ? "저장하기" : "추가하기", editCategory, editEnabled, existing, armedAt != 0,
-                existing && index > 0, existing && index >= 0 && index < size - 1, empty, busy, mx, my, pressed);
+                existing && index > 0, existing && index >= 0 && index < size - 1, picker, filled, picked, empty, busy, mx, my, pressed);
     }
 
     private final class GameCanvas implements MileageView.Canvas {
@@ -259,7 +284,7 @@ public final class MileageScreen extends SocialScreen {
             });
         }
         public void item(String key, float x, float y, float size) {
-            var stack = key.equals("#hand") ? client.player == null ? ItemStack.EMPTY : client.player.getMainHandStack() : icons.getOrDefault(key, ItemStack.EMPTY);
+            var stack = key.startsWith("#slot:") ? slotStack(Integer.parseInt(key.substring(6))) : icons.getOrDefault(key, ItemStack.EMPTY);
             if (stack.isEmpty()) return;
             c.getMatrices().push();
             c.getMatrices().translate(x, y, 20);
@@ -295,6 +320,7 @@ public final class MileageScreen extends SocialScreen {
                 var card = m.cards().get(hit.index());
                 if (!card.add() && MileageView.in(mx, my, x, y, s, s)) hovered = icons.getOrDefault(card.id(), ItemStack.EMPTY);
             }
+            if (hit.kind() == MileageView.Kind.PICK) hovered = slotStack(hit.index());
         } finally { end(c); }
         if (!hovered.isEmpty() && entrance.ready()) c.drawItemTooltip(textRenderer, hovered, mouseX, mouseY);
     }
@@ -316,7 +342,13 @@ public final class MileageScreen extends SocialScreen {
         switch (hit.kind()) {
             case REFRESH -> { if (!busy) { sound(1.1f, .14f); MileageClient.send(MileageProtocol.Request.of(admin ? MileageProtocol.ADMIN_OPEN : MileageProtocol.OPEN)); } }
             case TAB -> { if (hit.index() != tab) { switchTab(hit.index()); sound(1.1f, .16f); } }
-            case CARD -> { select(m.cards().get(hit.index()).id()); sound(1.1f, .14f); }
+            case CARD -> {
+                var card = m.cards().get(hit.index());
+                select(card.id());
+                if (card.add()) openPicker(); else sound(1.1f, .14f);
+            }
+            case PICK -> pick(hit.index());
+            case PICK_CLOSE -> { picker = false; sound(1.1f, .14f); }
             case PREV -> { if (page > 0) { page--; sound(1.1f, .14f); } }
             case NEXT -> { if (page < pages() - 1) { page++; sound(1.1f, .14f); } }
             case MINUS -> { if (number() > 1) { qty.widget.setText(Integer.toString(number() - 1)); sound(1.1f, .14f); } }
@@ -334,15 +366,11 @@ public final class MileageScreen extends SocialScreen {
                 if (product(selected) != null && (hit.index() == 0 ? m.moveEarlier() : m.moveLater()))
                     adminSend(MileageProtocol.Request.move(selected, hit.index() == 1));
             }
-            case REPLACE -> {
-                if (product(selected) == null) break;
-                if (client.player == null || client.player.getMainHandStack().isEmpty()) warn("바꿀 아이템을 손에 들어 주세요");
-                else adminSend(MileageProtocol.Request.target(MileageProtocol.ADMIN_ITEM, selected));
-            }
+            case REPLACE -> { if (!busy && (product(selected) != null || selected.equals("#new"))) openPicker(); }
             case DELETE -> {
                 if (product(selected) == null) break;
                 if (armedAt == 0) { armedAt = Util.getMeasuringTimeMs(); sound(.8f, .16f); }
-                else { armedAt = 0; adminSend(MileageProtocol.Request.target(MileageProtocol.ADMIN_DELETE, selected)); }
+                else { armedAt = 0; adminSend(MileageProtocol.Request.delete(selected)); }
             }
             default -> {}
         }
@@ -353,6 +381,7 @@ public final class MileageScreen extends SocialScreen {
         return super.mouseReleased(x, y, button);
     }
     @Override public boolean mouseScrolled(double x, double y, double horizontal, double vertical) {
+        if (picker) return true;
         int next = Math.clamp(page - (int) Math.signum(vertical), 0, pages() - 1);
         if (next != page) { page = next; sound(1.1f, .12f); }
         return true;
@@ -362,6 +391,7 @@ public final class MileageScreen extends SocialScreen {
         return null;
     }
     @Override public boolean keyPressed(int key, int scan, int mods) {
+        if (picker && key == GLFW.GLFW_KEY_ESCAPE) { picker = false; return true; }
         var f = focused();
         if (f != null && (key == GLFW.GLFW_KEY_ESCAPE || key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER)) {
             if (f == qty) commitQuantity(); else unfocus();

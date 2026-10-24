@@ -32,8 +32,8 @@ class MileageProtocolTest {
     @Test void requestRoundTrip() {
         var edit = new Edit("p1", 1, "이벤트 상자", "설명", 1000, true);
         for (var r : List.of(Request.of(MileageProtocol.OPEN), Request.of(MileageProtocol.CLOSE), Request.of(MileageProtocol.ADMIN_OPEN),
-                Request.buy("p1", 3, 300, 99), Request.edit(MileageProtocol.ADMIN_ADD, edit), Request.edit(MileageProtocol.ADMIN_SAVE, edit),
-                Request.target(MileageProtocol.ADMIN_ITEM, "p1"), Request.target(MileageProtocol.ADMIN_DELETE, "p1"), Request.move("p1", true), Request.move("p1", false)))
+                Request.buy("p1", 3, 300, 99), Request.add(edit, 0), Request.add(edit, 35), Request.save(edit),
+                Request.replace("p1", 12), Request.delete("p1"), Request.move("p1", true), Request.move("p1", false)))
             assertEquals(r, MileageProtocol.request(MileageProtocol.request(r)));
     }
 
@@ -44,6 +44,8 @@ class MileageProtocolTest {
         assertThrows(IllegalArgumentException.class, () -> new Edit("", 0, " ", "", 1, true));
         assertThrows(IllegalArgumentException.class, () -> new Edit("", 0, "x", "", -1, true));
         assertThrows(IllegalArgumentException.class, () -> MileageProtocol.request(new byte[]{0, 0, 0, 9, 0}));
+        assertThrows(IllegalArgumentException.class, () -> Request.add(new Edit("", 0, "x", "", 1, true), 36));
+        assertThrows(IllegalArgumentException.class, () -> Request.replace("p1", -1));
         byte[] ok = MileageProtocol.request(Request.of(MileageProtocol.OPEN));
         byte[] trailing = java.util.Arrays.copyOf(ok, ok.length + 1);
         assertThrows(IllegalArgumentException.class, () -> MileageProtocol.request(trailing));

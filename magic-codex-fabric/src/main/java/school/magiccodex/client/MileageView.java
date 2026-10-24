@@ -31,7 +31,7 @@ final class MileageView {
         void line(float ax, float ay, float bx, float by, float thickness, int color);
         /** Convex polygon (x0,y0,x1,y1,…). */
         void polygon(float[] points, int color);
-        /** Product icon ("#hand" = admin's main-hand item). Nothing when there is no stack. */
+        /** Product icon ("#slot:N" = the admin's inventory slot N). Nothing when there is no stack. */
         void item(String key, float x, float y, float size);
         /** Text input boxes owned by the screen: "qty", "name", "desc", "price". */
         void field(String key, float x, float y, float w, float h);
@@ -44,10 +44,10 @@ final class MileageView {
     record Model(boolean admin, String balance, int productCount, int tab, List<Card> cards, int page, int pages, String selected,
                  String detailName, String detailText, String total, boolean minus, boolean plus, boolean actionEnabled, String actionLabel,
                  int editCategory, boolean editEnabled, boolean editExisting, boolean deleteArmed, boolean moveEarlier, boolean moveLater,
-                 String empty, boolean busy, double mx, double my, boolean pressed) {}
+                 boolean picker, boolean[] filled, int picked, String empty, boolean busy, double mx, double my, boolean pressed) {}
 
     enum Kind { NONE, CLOSE, REFRESH, TAB, CARD, PREV, NEXT, MINUS, PLUS, QUANTITY, ACTION,
-        NAME, DESC, PRICE, CATEGORY, ENABLED, MOVE, REPLACE, DELETE }
+        NAME, DESC, PRICE, CATEGORY, ENABLED, MOVE, REPLACE, DELETE, PICK, PICK_CLOSE }
     record Hit(Kind kind, int index) { static final Hit NONE = new Hit(Kind.NONE, -1); }
 
     // ---------------------------------------------------------------- colours
@@ -170,6 +170,7 @@ final class MileageView {
         tabs(c, m);
         grid(c, m);
         if (m.admin()) editor(c, m); else detail(c, m);
+        if (m.admin() && m.picker()) picker(c, m);
     }
 
     private static void header(Canvas c, Model m) {
@@ -310,7 +311,7 @@ final class MileageView {
             c.line(cx - 16, py, cx + 16, py, 2.2f, col);
             c.line(cx, py - 16, cx, py + 16, 2.2f, col);
             textIn(c, "새 상품 추가", cx, y + 222, 23, col, Face.LABEL, inner, true);
-            textIn(c, "손에 든 아이템으로 등록", cx, y + 256, 18, DIM, Face.BODY, inner, true);
+            textIn(c, "인벤토리에서 골라 등록", cx, y + 256, 18, DIM, Face.BODY, inner, true);
             return;
         }
         c.item(card.id(), cx - CARD_ICON / 2, y + CARD_ICON_Y, CARD_ICON);
@@ -403,7 +404,9 @@ final class MileageView {
     /** Admin editor in the detail panel. */
     private static void editor(Canvas c, Model m) {
         boolean add = !m.editExisting();
-        c.item(add ? "#hand" : m.selected(), DETAIL_CX - 75, 225, 150);
+        if (!add) c.item(m.selected(), DETAIL_CX - 75, 225, 150);
+        else if (m.picked() >= 0) c.item("#slot:" + m.picked(), DETAIL_CX - 75, 225, 150);
+        else if (!m.selected().isEmpty()) textIn(c, "아이템을 골라 주세요", DETAIL_CX, 300, 22, MUTED, Face.LABEL, 300, true);
         if (add && m.selected().isEmpty()) {
             textIn(c, "상품을 선택하거나", DETAIL_CX, 520, 22, MUTED, Face.LABEL, 400, true);
             textIn(c, "새 상품 추가를 누르세요", DETAIL_CX, 552, 22, MUTED, Face.LABEL, 400, true);
@@ -423,7 +426,7 @@ final class MileageView {
                 case 4 -> { chip(c, m, 0, 2, y, "판매 중", m.editEnabled(), true); chip(c, m, 1, 2, y, "숨김", !m.editEnabled(), true); }
                 case 5 -> { chip(c, m, 0, 2, y, "앞으로", false, !add && m.moveEarlier()); chip(c, m, 1, 2, y, "뒤로", false, !add && m.moveLater()); }
                 default -> {
-                    chip(c, m, 0, 2, y, "손에 든 것으로 교체", false, !add);
+                    chip(c, m, 0, 2, y, add ? "인벤토리에서 선택" : "인벤토리에서 교체", false, true);
                     chip(c, m, 1, 2, y, m.deleteArmed() ? "한 번 더 누르면 삭제" : "삭제", m.deleteArmed(), !add);
                 }
             }
@@ -447,10 +450,47 @@ final class MileageView {
         textIn(c, label, x + w / 2, y + FIELD_H / 2, 19, !enabled ? 0xFF4E5C72 : on ? 0xFFF3E6C4 : 0xFFC9D2DE, Face.LABEL, w - 14, true);
     }
 
+    // ---------------------------------------------------------------- inventory picker (admin)
+
+    /** Covers the product grid and the pager; slots 9..35 (main) in three rows, the hotbar 0..8 below. */
+    static final float PICK_X = 312, PICK_Y = 152, PICK_W = 862, PICK_H = 648, PICK_TITLE_Y = 202, PICK_CLOSE_X = PICK_X + PICK_W - 44;
+    static final float SLOT = 84, SLOT_GAP = 10, SLOTS_X = PICK_X + (PICK_W - (9 * SLOT + 8 * SLOT_GAP)) / 2, MAIN_Y = 262, HOTBAR_Y = 568;
+    static final int SLOTS = 36;
+    static float slotX(int slot) { return SLOTS_X + (SLOT + SLOT_GAP) * (slot % 9); }
+    static float slotY(int slot) { return slot < 9 ? HOTBAR_Y : MAIN_Y + (SLOT + SLOT_GAP) * ((slot - 9) / 9); }
+
+    private static void picker(Canvas c, Model m) {
+        c.pushLayer(200);
+        box(c, PICK_X, PICK_Y, PICK_W, PICK_H, 12, 0xFF0B1626, 0xFFB8975A, 1.6f);
+        textIn(c, "인벤토리에서 아이템 선택", PICK_X + PICK_W / 2, PICK_TITLE_Y, 30, TITLE_GOLD, Face.TITLE, PICK_W - 200, true);
+        boolean hc = in(m.mx(), m.my(), PICK_CLOSE_X - 22, PICK_TITLE_Y - 22, 44, 44);
+        int xc = hc ? CREAM : 0xFFC9C0A6;
+        c.line(PICK_CLOSE_X - 11, PICK_TITLE_Y - 11, PICK_CLOSE_X + 11, PICK_TITLE_Y + 11, 2.2f, xc);
+        c.line(PICK_CLOSE_X - 11, PICK_TITLE_Y + 11, PICK_CLOSE_X + 11, PICK_TITLE_Y - 11, 2.2f, xc);
+        c.gradient(PICK_X + 40, PICK_TITLE_Y + 34, (PICK_W - 80) / 2, 1, 0x00C9A86A, 0x99C9A86A);
+        c.gradient(PICK_X + PICK_W / 2, PICK_TITLE_Y + 34, (PICK_W - 80) / 2, 1, 0x99C9A86A, 0x00C9A86A);
+        // thin divider between the main inventory and the hotbar, like the vanilla inventory gap
+        float gapY = (MAIN_Y + 3 * (SLOT + SLOT_GAP) - SLOT_GAP + HOTBAR_Y) / 2;
+        c.gradient(SLOTS_X, gapY, 9 * SLOT + 8 * SLOT_GAP, 1, 0x40A8B4C8, 0x40A8B4C8);
+        for (int i = 0; i < SLOTS; i++) {
+            float x = slotX(i), y = slotY(i);
+            boolean has = m.filled() != null && i < m.filled().length && m.filled()[i], picked = i == m.picked(), hover = has && in(m.mx(), m.my(), x, y, SLOT, SLOT);
+            box(c, x, y, SLOT, SLOT, 7, has ? (hover ? 0xFF1A2B47 : CARD_FILL) : 0x99101B2D, picked ? SELECT : hover ? CARD_HOVER : has ? CARD_EDGE : 0xFF1F2B3E, picked ? 2.2f : 1.2f);
+            if (has) c.item("#slot:" + i, x + 10, y + 10, SLOT - 20);
+        }
+        textIn(c, "아이템을 누르면 선택돼요 · 인벤토리에서 빠지지 않아요", PICK_X + PICK_W / 2, (HOTBAR_Y + SLOT + PICK_Y + PICK_H) / 2, 20, MUTED, Face.LABEL, PICK_W - 80, true);
+        c.popLayer();
+    }
+
     // ---------------------------------------------------------------- hit testing
 
     static Hit hit(Model m, double x, double y) {
         if (in(x, y, CLOSE_X - 22, CLOSE_Y - 22, 44, 44)) return new Hit(Kind.CLOSE, 0);
+        if (m.admin() && m.picker()) {   // the picker is modal: only its slots and its close button
+            if (in(x, y, PICK_CLOSE_X - 22, PICK_TITLE_Y - 22, 44, 44)) return new Hit(Kind.PICK_CLOSE, 0);
+            for (int i = 0; i < SLOTS; i++) if (in(x, y, slotX(i), slotY(i), SLOT, SLOT)) return new Hit(Kind.PICK, i);
+            return in(x, y, PICK_X, PICK_Y, PICK_W, PICK_H) ? Hit.NONE : new Hit(Kind.PICK_CLOSE, 0);
+        }
         if (in(x, y, REFRESH_X, REFRESH_Y, REFRESH_S, REFRESH_S)) return new Hit(Kind.REFRESH, 0);
         for (int i = 0; i < TABS.length; i++) if (in(x, y, TAB_X, tabY(i), TAB_W, TAB_H)) return new Hit(Kind.TAB, i);
         for (int i = 0; i < m.cards().size() && i < PER_PAGE; i++) if (in(x, y, cardX(i), cardY(i), CARD_W, CARD_H)) return new Hit(Kind.CARD, i);

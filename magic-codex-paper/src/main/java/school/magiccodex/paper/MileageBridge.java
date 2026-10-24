@@ -25,7 +25,7 @@ import school.magiccodex.protocol.MileageProtocol.*;
  *
  * <ul>
  *   <li>Players: top menu 「마일리지샵」 or /마일리지상점 opens the window. A purchase debits mileage and the item arrives as system mail.</li>
- *   <li>Admins (OP): /상점관리 마일리지 opens the management window (add the held item, name/description/price/category,
+ *   <li>Admins (OP): /상점관리 마일리지 opens the management window (add an item picked from the inventory, name/description/price/category,
  *       on sale or hidden, order, swap item, delete). /유저관리 &lt;닉네임&gt; 마일리지 보기·설정·추가·빼기·기록.</li>
  * </ul>
  * Storage is {@link MileageStore} on the shop/mailbox DB. All DB work runs on one IO thread; Bukkit calls return to the main thread.
@@ -226,45 +226,49 @@ final class MileageBridge implements PluginMessageListener, Listener {
         String admin = p.getName();
         switch (r.action()) {
             case MileageProtocol.ADMIN_ADD -> {
-                byte[] bytes = held(p);
+                byte[] bytes = slotItem(p, r.slot());
                 if (bytes == null) return;
                 var e = r.edit();
                 work(() -> store.add(e.category(), e.name().strip(), e.description().strip(), e.price(), e.enabled(), bytes), id -> {
                     plugin.getLogger().info("MILEAGE ADMIN add admin=" + admin + " product=" + id + " name=" + e.name() + " price=" + e.price());
                     refreshAll(p, id, "상품을 추가했어요");
-                }, m -> notify(p, m));
+                }, m -> push(p, MileageProtocol.KIND_STATE, "", m));
             }
             case MileageProtocol.ADMIN_SAVE -> {
                 var e = r.edit();
                 work(() -> store.save(e.id(), e.category(), e.name().strip(), e.description().strip(), e.price(), e.enabled()), ok -> {
                     plugin.getLogger().info("MILEAGE ADMIN save admin=" + admin + " product=" + e.id() + " name=" + e.name() + " price=" + e.price() + " enabled=" + e.enabled() + " category=" + e.category());
                     refreshAll(p, e.id(), ok ? "저장했어요" : "이미 삭제된 상품이에요");
-                }, m -> notify(p, m));
+                }, m -> push(p, MileageProtocol.KIND_STATE, "", m));
             }
             case MileageProtocol.ADMIN_ITEM -> {
-                byte[] bytes = held(p);
+                byte[] bytes = slotItem(p, r.slot());
                 if (bytes == null) return;
                 work(() -> store.replaceItem(r.product(), bytes), ok -> {
                     plugin.getLogger().info("MILEAGE ADMIN item admin=" + admin + " product=" + r.product());
-                    refreshAll(p, r.product(), ok ? "손에 든 아이템으로 바꿨어요" : "이미 삭제된 상품이에요");
-                }, m -> notify(p, m));
+                    refreshAll(p, r.product(), ok ? "아이템을 바꿨어요" : "이미 삭제된 상품이에요");
+                }, m -> push(p, MileageProtocol.KIND_STATE, "", m));
             }
             case MileageProtocol.ADMIN_DELETE -> work(() -> store.delete(r.product()), ok -> {
                 plugin.getLogger().info("MILEAGE ADMIN delete admin=" + admin + " product=" + r.product());
                 refreshAll(p, "", ok ? "상품을 삭제했어요" : "이미 삭제된 상품이에요");
-            }, m -> notify(p, m));
-            case MileageProtocol.ADMIN_MOVE -> work(() -> store.move(r.product(), r.step() == 1), ok -> refreshAll(p, r.product(), ""), m -> notify(p, m));
+            }, m -> push(p, MileageProtocol.KIND_STATE, "", m));
+            case MileageProtocol.ADMIN_MOVE -> work(() -> store.move(r.product(), r.step() == 1), ok -> refreshAll(p, r.product(), ""), m -> push(p, MileageProtocol.KIND_STATE, "", m));
             default -> {}
         }
     }
-    /** The admin's main-hand item as a one-item template, or null (with a notice). Not consumed. */
-    private byte[] held(Player p) {
-        var hand = p.getInventory().getItemInMainHand();
-        if (hand.getType().isAir()) { notify(p, "등록할 아이템을 손에 들어 주세요"); return null; }
-        var copy = hand.clone();
+    /**
+     * The item in the admin's inventory slot (0..8 hotbar, 9..35 main — owner 2026-10-24: 내 인벤토리에서 선택) as a
+     * one-item template, or null (the window gets a fresh state with the reason, which also clears its busy flag).
+     * The item stays in the inventory.
+     */
+    private byte[] slotItem(Player p, int slot) {
+        var item = slot >= 0 && slot < MileageProtocol.SLOTS ? p.getInventory().getItem(slot) : null;
+        if (item == null || item.getType().isAir()) { push(p, MileageProtocol.KIND_STATE, "", "고른 칸에 아이템이 없어요. 다시 골라 주세요"); return null; }
+        var copy = item.clone();
         copy.setAmount(1);
         byte[] bytes = copy.serializeAsBytes();
-        if (bytes.length > MileageProtocol.MAX_PREVIEW_BYTES) { notify(p, "아이템 데이터가 너무 커요"); return null; }
+        if (bytes.length > MileageProtocol.MAX_PREVIEW_BYTES) { push(p, MileageProtocol.KIND_STATE, "", "아이템 데이터가 너무 커요"); return null; }
         return bytes;
     }
     /** After a catalogue change: the admin gets the new state, every open shop window too. */
@@ -284,7 +288,7 @@ final class MileageBridge implements PluginMessageListener, Listener {
     }
     private void adminCommands() {
         ChacaApi.branch(plugin, ChacaApi.상점관리, CmdKit.literal("마일리지").executes(CmdKit.run(ctx -> open(CmdKit.self(ctx), true))),
-                "마일리지 상점 관리 창 (손에 든 아이템 추가·가격·분류·판매 여부·순서)", "마일리지");
+                "마일리지 상점 관리 창 (인벤토리 아이템 추가·가격·분류·판매 여부·순서)", "마일리지");
     }
     private void userCommands() {
         var root = CmdKit.literal("마일리지")

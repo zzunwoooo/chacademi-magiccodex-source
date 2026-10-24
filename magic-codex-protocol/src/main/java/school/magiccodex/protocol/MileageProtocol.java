@@ -11,9 +11,10 @@ import java.util.*;
  * C2S: int version, byte action, then
  *   OPEN / CLOSE / ADMIN_OPEN          nothing
  *   BUY                                String product, int quantity, long expectedPrice, long operation
- *   ADMIN_ADD                          Edit (product id ignored; the item is the admin's main-hand item)
+ *   ADMIN_ADD                          Edit (product id ignored), byte slot (admin's inventory slot 0..35 holding the item)
  *   ADMIN_SAVE                         Edit
- *   ADMIN_ITEM / ADMIN_DELETE          String product
+ *   ADMIN_ITEM                         String product, byte slot (replace the item with the one in that inventory slot)
+ *   ADMIN_DELETE                       String product
  *   ADMIN_MOVE                         String product, byte step (0 = earlier, 1 = later)
  * S2C frames:
  *   STATE   kind, admin, balance, products, select (product the window should pick, "" = keep), notice
@@ -29,6 +30,8 @@ public final class MileageProtocol {
     public static final String[] CATEGORIES = {"편의", "이벤트", "이용권"};
     public static final int MAX_PRODUCTS = 120, MAX_NAME = 40, MAX_DESCRIPTION = 80, MAX_TEXT = 160, MAX_PREVIEW_BYTES = 32768;
     public static final int MAX_QUANTITY = 99;
+    /** Player inventory slots an admin can pick from: 0..8 hotbar, 9..35 main (same numbers on Bukkit and the client). */
+    public static final int SLOTS = 36;
     public static final long MAX_PRICE = 1_000_000_000L, MAX_BALANCE = 1_000_000_000_000L;
 
     /** Admin edit of one product. */
@@ -38,20 +41,23 @@ public final class MileageProtocol {
                     || description.length() > MAX_DESCRIPTION || price < 0 || price > MAX_PRICE) throw new IllegalArgumentException("mileage edit");
         }
     }
-    public record Request(int action, String product, int quantity, long expected, long operation, int step, Edit edit) {
+    public record Request(int action, String product, int quantity, long expected, long operation, int step, Edit edit, int slot) {
         public Request {
+            if ((action == ADMIN_ADD || action == ADMIN_ITEM) != (slot >= 0) || slot >= SLOTS) throw new IllegalArgumentException("mileage request slot");
             if (!validAction(action) || product == null || product.length() > 36 || quantity < 0 || quantity > MAX_QUANTITY || expected < 0 || step < 0 || step > 1)
                 throw new IllegalArgumentException("mileage request");
             if ((action == ADMIN_ADD || action == ADMIN_SAVE) != (edit != null)) throw new IllegalArgumentException("mileage request edit");
         }
-        public static Request of(int action) { return new Request(action, "", 0, 0, 0, 0, null); }
+        public static Request of(int action) { return new Request(action, "", 0, 0, 0, 0, null, -1); }
         public static Request buy(String product, int quantity, long expected, long operation) {
             if (quantity < 1) throw new IllegalArgumentException("mileage quantity");
-            return new Request(BUY, product, quantity, expected, operation, 0, null);
+            return new Request(BUY, product, quantity, expected, operation, 0, null, -1);
         }
-        public static Request edit(int action, Edit edit) { return new Request(action, edit.id(), 0, 0, 0, 0, edit); }
-        public static Request target(int action, String product) { return new Request(action, product, 0, 0, 0, 0, null); }
-        public static Request move(String product, boolean later) { return new Request(ADMIN_MOVE, product, 0, 0, 0, later ? 1 : 0, null); }
+        public static Request save(Edit edit) { return new Request(ADMIN_SAVE, edit.id(), 0, 0, 0, 0, edit, -1); }
+        public static Request add(Edit edit, int slot) { return new Request(ADMIN_ADD, edit.id(), 0, 0, 0, 0, edit, slot); }
+        public static Request replace(String product, int slot) { return new Request(ADMIN_ITEM, product, 0, 0, 0, 0, null, slot); }
+        public static Request delete(String product) { return new Request(ADMIN_DELETE, product, 0, 0, 0, 0, null, -1); }
+        public static Request move(String product, boolean later) { return new Request(ADMIN_MOVE, product, 0, 0, 0, later ? 1 : 0, null, -1); }
     }
     private static boolean validAction(int a) { return a == OPEN || a == BUY || a == CLOSE || a >= ADMIN_OPEN && a <= ADMIN_MOVE; }
     public static boolean validName(String s) { return s != null && !s.isBlank() && s.length() <= MAX_NAME; }
@@ -94,8 +100,12 @@ public final class MileageProtocol {
             d.writeInt(VERSION); d.writeByte(r.action());
             switch (r.action()) {
                 case BUY -> { d.writeUTF(r.product()); d.writeShort(r.quantity()); d.writeLong(r.expected()); d.writeLong(r.operation()); }
-                case ADMIN_ADD, ADMIN_SAVE -> { var e = r.edit(); d.writeUTF(e.id()); d.writeByte(e.category()); d.writeUTF(e.name()); d.writeUTF(e.description()); d.writeLong(e.price()); d.writeBoolean(e.enabled()); }
-                case ADMIN_ITEM, ADMIN_DELETE -> d.writeUTF(r.product());
+                case ADMIN_ADD, ADMIN_SAVE -> {
+                    var e = r.edit(); d.writeUTF(e.id()); d.writeByte(e.category()); d.writeUTF(e.name()); d.writeUTF(e.description()); d.writeLong(e.price()); d.writeBoolean(e.enabled());
+                    if (r.action() == ADMIN_ADD) d.writeByte(r.slot());
+                }
+                case ADMIN_ITEM -> { d.writeUTF(r.product()); d.writeByte(r.slot()); }
+                case ADMIN_DELETE -> d.writeUTF(r.product());
                 case ADMIN_MOVE -> { d.writeUTF(r.product()); d.writeByte(r.step()); }
                 default -> {}
             }
@@ -107,8 +117,10 @@ public final class MileageProtocol {
             int action = d.readUnsignedByte();
             return switch (action) {
                 case BUY -> Request.buy(d.readUTF(), d.readUnsignedShort(), d.readLong(), d.readLong());
-                case ADMIN_ADD, ADMIN_SAVE -> Request.edit(action, new Edit(d.readUTF(), d.readUnsignedByte(), d.readUTF(), d.readUTF(), d.readLong(), d.readBoolean()));
-                case ADMIN_ITEM, ADMIN_DELETE -> Request.target(action, d.readUTF());
+                case ADMIN_ADD -> { var e = new Edit(d.readUTF(), d.readUnsignedByte(), d.readUTF(), d.readUTF(), d.readLong(), d.readBoolean()); yield Request.add(e, d.readUnsignedByte()); }
+                case ADMIN_SAVE -> Request.save(new Edit(d.readUTF(), d.readUnsignedByte(), d.readUTF(), d.readUTF(), d.readLong(), d.readBoolean()));
+                case ADMIN_ITEM -> { String id = d.readUTF(); yield Request.replace(id, d.readUnsignedByte()); }
+                case ADMIN_DELETE -> Request.delete(d.readUTF());
                 case ADMIN_MOVE -> { String id = d.readUTF(); int step = d.readUnsignedByte(); if (step > 1) throw new IOException("step"); yield Request.move(id, step == 1); }
                 default -> Request.of(action);
             };
