@@ -47,6 +47,13 @@ public final class UiResources {
             cache.prepareRegion(Identifier.of("magiccodex","textures/gui/equipment/broom_equip_slot.png"),72,186,2029,312);
             cache.prepareRegion(Identifier.of("magiccodex","textures/gui/equipment/broom_selection_card.png"),57,89,731,1652);
             cache.prepareRegion(Identifier.of("magiccodex","textures/gui/equipment/broom_selection_panel.png"),0,0,1672,941);
+            // 아공간 배낭 (survival inventory, 2026-10-24): opened often, so warmed like the other panels.
+            cache.prepareRegion(GalaxyBagScreen.BAG,0,0,GalaxyBagLayout.BAG_PNG_W,GalaxyBagLayout.BAG_PNG_H);
+            cache.prepareRegion(GalaxyBagScreen.BAG_FILL,0,0,GalaxyBagScreen.BAG_FILL_W,GalaxyBagScreen.BAG_FILL_H);
+            cache.prepareRegion(GalaxyBagScreen.PANEL,0,0,GalaxyBagLayout.PANEL_PNG_W,GalaxyBagLayout.PANEL_PNG_H);
+            cache.prepareRegion(GalaxyBagScreen.PANEL_FILL,0,0,GalaxyBagScreen.PANEL_FILL_W,GalaxyBagScreen.PANEL_FILL_H);
+            for(var icon:new Identifier[]{GalaxyBagScreen.SHIRT,GalaxyBagScreen.TABLE,GalaxyBagScreen.BOOK})cache.prepareRegion(icon,0,0,GalaxyBagScreen.ICON_PNG,GalaxyBagScreen.ICON_PNG);
+            cache.prepareRegion(GalaxyBagScreen.PADLOCK,0,0,GalaxyBagScreen.PADLOCK_PNG,GalaxyBagScreen.PADLOCK_PNG);
             cache.endFrame();
         });
     }

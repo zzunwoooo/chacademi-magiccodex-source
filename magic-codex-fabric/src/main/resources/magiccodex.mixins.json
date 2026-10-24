@@ -24,7 +24,8 @@
     "CodexMouseMixin",
     "ShoulderCameraMixin",
     "ShoulderCrosshairMixin", "KyudichiRenderDistanceMixin", "KyudichiHitboxMixin",
-    "BrigadierUnicodeWordMixin"
+    "BrigadierUnicodeWordMixin",
+    "GalaxyBagSwapMixin", "GalaxyBagHooksMixin", "HandledScreenAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

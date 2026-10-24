@@ -48,7 +48,7 @@ public final class ItemIconTextures {
 
     static final int MIN_SIZE = 33;
     private static final int MAX_SIZE = 1024, MAX_TEXTURES = 256, UPLOADS_PER_TICK = 4;
-    private static final ShaderProgramKey PROGRAM = new ShaderProgramKey(
+    static final ShaderProgramKey PROGRAM = new ShaderProgramKey(
             Identifier.of("magiccodex", "core/item_icon"), VertexFormats.POSITION_TEXTURE_COLOR, Defines.EMPTY);
     private static final ExecutorService DECODER = Executors.newSingleThreadExecutor(r -> {
         var t = new Thread(r, "magiccodex-item-icons"); t.setDaemon(true); return t;
@@ -66,7 +66,25 @@ public final class ItemIconTextures {
 
     static void initialize() {
         net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.END_CLIENT_TICK.register(c -> pump());
+        ExactItemIcons.initialize();
     }
+
+    /** True when this icon key has an uploaded high-res texture (requests it otherwise). Render thread. */
+    static boolean present(Identifier key) {
+        var known = ICONS.get(key);
+        if (known == null) { request(key); return false; }
+        return known.isPresent();
+    }
+
+    /** {fitW, fitH} of a present icon (non-square art keeps its ratio), or null. */
+    static float[] aspect(Identifier key) {
+        var known = ICONS.get(key);
+        if (known == null || known.isEmpty()) return null;
+        return new float[]{fitW(known.get()), fitH(known.get())};
+    }
+
+    /** Vanilla glint over a 16x16 square in the given matrix (used by ExactItemIcons). */
+    static void glint(DrawContext ctx, org.joml.Matrix4f matrix) { drawGlint(ctx, matrix); }
 
     /** Called from the DrawContext mixin. @return true when the vanilla item draw must be skipped. */
     public static boolean draw(DrawContext ctx, ItemStack stack, int x, int y) {
@@ -299,6 +317,7 @@ public final class ItemIconTextures {
         if (!RenderSystem.isOnRenderThread()) { MinecraftClient.getInstance().execute(ItemIconTextures::reset); return; }
         if (pending != null) { pending.close(); pending = null; }
         clearIcons();
+        ExactItemIcons.reset();
         generation++;
         announced = false;
         worldFailed = false;
