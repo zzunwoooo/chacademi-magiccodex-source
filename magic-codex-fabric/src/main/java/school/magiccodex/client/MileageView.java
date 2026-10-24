@@ -60,7 +60,7 @@ final class MileageView {
     static final float HEAD_CY = 82.5f;
     static final float EMBLEM_X = 112, EMBLEM_Y = HEAD_CY, EMBLEM_R = 32;
     static final float TITLE_X = 168, TITLE_Y = HEAD_CY, TITLE_SIZE = 44;
-    static final float BALANCE_RIGHT = 1484, COIN_D = 36;
+    static final float BALANCE_RIGHT = 1458, COIN_D = 36;
     static final float REFRESH_X = 1508, REFRESH_Y = HEAD_CY - 22, REFRESH_S = 44, HEAD_DIVIDER_X = 1572, CLOSE_X = 1614, CLOSE_Y = HEAD_CY;
     static final float TAB_X = 44, TAB_W = 239, TAB_Y = 162, TAB_H = 84, TAB_STEP = 90, TAB_ICON_X = 92, TAB_LABEL_X = 132;
     static final float CARD_ICON = 176, CARD_ICON_Y = 30, DETAIL_ICON = 240, DETAIL_ICON_Y = 180;
@@ -177,30 +177,57 @@ final class MileageView {
 
     private static void header(Canvas c, Model m) {
         emblem(c, EMBLEM_X, EMBLEM_Y, EMBLEM_R);
-
-        // balance (owner 2026-10-24: no capsule / button frames): [coin] label  amount, right-aligned before the refresh icon
         float cy = HEAD_CY;
+
+        // Balance "wallet" (owner 2026-10-24: no capsule/box frames). Same language as the selected tab: a soft gold wash
+        // with hairlines that fade out at both ends, coin on the left, small label over a large number.
         String label = m.admin() ? "등록 상품" : "보유 마일리지";
         String value = m.admin() ? m.productCount() + "개" : m.balance();
-        float size = amountSize(c, value, 31, Face.TITLE, 300);
-        float valueX = BALANCE_RIGHT - c.width(value, size, Face.TITLE);
-        amount(c, value, valueX, cy, size, CREAM, false);
-        float labelW = Math.min(c.width(label, 21, Face.LABEL), 140), labelX = valueX - 16 - labelW;
-        textIn(c, label, labelX, cy, 21, 0xFFD9C79A, Face.LABEL, 140, false);
-        float left = labelX;
-        if (!m.admin()) { left = labelX - 10 - COIN_D; coin(c, left + COIN_D / 2, cy, COIN_D); }
+        float size = amountSize(c, value, 34, Face.TITLE, 260);
+        float labelW = Math.min(c.width(label, 18, Face.LABEL), 160), valueW = c.width(value, size, Face.TITLE);
+        float textW = Math.max(labelW, valueW), coinD = m.admin() ? 0 : 48, gap = m.admin() ? 0 : 16;
+        float textX = BALANCE_RIGHT - textW, left = textX - gap - coinD;
+        float bandL = left - 44, bandR = BALANCE_RIGHT + 44, bandT = cy - 36, bandH = 72, half = (bandR - bandL) / 2;
+        c.gradient(bandL, bandT, half, bandH, 0x00AE8A52, 0x2EAE8A52);
+        c.gradient(bandL + half, bandT, half, bandH, 0x2EAE8A52, 0x00AE8A52);
+        c.gradient(bandL, bandT, half, 1.2f, 0x00C9A86A, 0xCCC9A86A);
+        c.gradient(bandL + half, bandT, half, 1.2f, 0xCCC9A86A, 0x00C9A86A);
+        c.gradient(bandL, bandT + bandH - 1.2f, half, 1.2f, 0x00C9A86A, 0xCCC9A86A);
+        c.gradient(bandL + half, bandT + bandH - 1.2f, half, 1.2f, 0xCCC9A86A, 0x00C9A86A);
+        diamond(c, bandL + half, bandT, 3.5f, 3.5f, 0xFFE3C789);
+        diamond(c, bandL + half, bandT + bandH, 3.5f, 3.5f, 0xFFE3C789);
+        if (!m.admin()) coin(c, left + coinD / 2, cy, coinD);
+        textIn(c, label, textX, cy - 15, 18, 0xFFC9B486, Face.LABEL, 160, false);
+        amount(c, value, textX, cy + 14, size, CREAM, false);
 
         // title alone, centred on the band like the emblem (차카데미 글씨·안내 문구 삭제)
-        var title = fit(c, m.admin() ? "마일리지 상점 관리" : "마일리지 상점", TITLE_SIZE, Face.TITLE, left - 40 - TITLE_X, .7f);
+        var title = fit(c, m.admin() ? "마일리지 상점 관리" : "마일리지 상점", TITLE_SIZE, Face.TITLE, bandL - 30 - TITLE_X, .7f);
         c.text(title.text(), TITLE_X, TITLE_Y, title.size(), TITLE_GOLD, Face.TITLE, false);
 
+        // refresh: icon only, a soft gold glow on hover instead of a frame
         boolean hr = in(m.mx(), m.my(), REFRESH_X, REFRESH_Y, REFRESH_S, REFRESH_S);
-        refreshIcon(c, REFRESH_X + REFRESH_S / 2, REFRESH_Y + REFRESH_S / 2 + 2, 12, hr ? CREAM : 0xFFC9D2DE);
-        c.gradient(HEAD_DIVIDER_X, cy - 26, 1.5f, 52, 0x88B8975A, 0x88B8975A);
+        float rx = REFRESH_X + REFRESH_S / 2, ry = REFRESH_Y + REFRESH_S / 2;
+        if (hr) { disk(c, rx, ry, 22, 0x26E4C47C); disk(c, rx, ry, 15, 0x1FE4C47C); }
+        refreshIcon(c, rx, ry + 2, 12, hr ? CREAM : 0xFFB9C3D0);
+        fadedVLine(c, HEAD_DIVIDER_X, cy - 30, 60, 0xB8975A);
         boolean hc = in(m.mx(), m.my(), CLOSE_X - 22, CLOSE_Y - 22, 44, 44);
+        if (hc) disk(c, CLOSE_X, CLOSE_Y, 22, 0x26E4C47C);
         int xc = hc ? CREAM : 0xFFC9C0A6;
         c.line(CLOSE_X - 12, CLOSE_Y - 12, CLOSE_X + 12, CLOSE_Y + 12, 2.2f, xc);
         c.line(CLOSE_X - 12, CLOSE_Y + 12, CLOSE_X + 12, CLOSE_Y - 12, 2.2f, xc);
+    }
+    static void disk(Canvas c, float cx, float cy, float r, int color) {
+        int n = 32; float[] p = new float[n * 2];
+        for (int i = 0; i < n; i++) { double a = 2 * Math.PI * i / n; p[2 * i] = cx + (float) Math.cos(a) * r; p[2 * i + 1] = cy + (float) Math.sin(a) * r; }
+        c.polygon(p, color);
+    }
+    /** Vertical hairline that fades out at both ends (rgb = 0xRRGGBB). */
+    static void fadedVLine(Canvas c, float x, float y, float h, int rgb) {
+        int n = 12; float step = h / n;
+        for (int i = 0; i < n; i++) {
+            float t = (i + .5f) / n, a = 1 - Math.abs(t - .5f) * 2;
+            c.gradient(x, y + i * step, 1.4f, step, ((int) (a * 200) << 24) | rgb, ((int) (a * 200) << 24) | rgb);
+        }
     }
 
     /** Compass emblem left of the title (reference): two rings, long north/south and shorter east/west points. */
