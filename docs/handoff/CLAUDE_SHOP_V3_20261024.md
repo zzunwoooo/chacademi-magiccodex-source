@@ -137,3 +137,13 @@ The overlay check against reference.png is in `docs/handoff/img/shop/compare_v3.
   - search and sort fields
   - tabs, stepper, the 판매/구매 switch
   - thin dividers
+
+## 7. 4th pass — owner: remove the thick yellow lines; keep the dark band behind the name
+
+- **`shop_frame.png` is not drawn at all.**
+  - Its thick yellow border, the ornament line under the title and the header line do not match the approved mockup's thin lines. The owner asked to remove them.
+  - The panel and the footer are now only the navy fills: panel `0xE00E1D31`, footer `0xF20C1C30`.
+  - The PNG stays in the jar (v3/) but nothing loads it. If thin lines are wanted later, they need a new frame PNG that matches the mockup.
+- **The soft dark band behind the role / name is back**, as in the first pass and the mockup's darker lower-left:
+  - six 6px fade steps from y760, then `0xA808111E` from y796 down
+  - it spans x0..488.5

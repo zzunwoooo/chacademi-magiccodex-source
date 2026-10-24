@@ -7,7 +7,7 @@ import java.util.List;
  * 1672x941). Every position, size and colour below was measured from reference.png; nothing is added.
  * Pure Java: ShopScreen supplies a Minecraft {@link Canvas}; the review preview supplies a Java2D one.
  *
- * Textures: shop_frame.png (stretched onto the mockup's panel lines) and button_primary.png. Only what the bundle
+ * Texture: button_primary.png only (shop_frame.png is not drawn, see draw()). Only what the bundle
  * README lists is geometry (card borders, selection line, arrows, search field, secondary buttons); no other
  * lines or ornaments are drawn. Order: panel, catalogue, the illustration (it overlaps the panel's left edge),
  * the frame's footer area over it, then the role / name text.
@@ -107,7 +107,7 @@ final class ShopView {
             SUM_LABEL_X = 1171, SUM_LABEL_CY = 835, SUM_COIN_X = 1182, SUM_X = 1209, SUM_CY = 866, SUM_MAX = 120,
             SWITCH_X = 1337, SWITCH_Y = 830, SWITCH_W = 104, SWITCH_H = 57, TRADE_X = 1452, TRADE_Y = 826, TRADE_W = 171, TRADE_H = 64;
     // illustration and the role / name label (mockup: portrait at x≈-3, full screen height)
-    static final float NPC_X = -3, NPC_H = 942, ROLE_CX = 166, ROLE_CY = 827.5f, NAME_CX = 166, NAME_CY = 865.5f;
+    static final float NAME_BAND_Y = 796, NPC_X = -3, NPC_H = 942, ROLE_CX = 166, ROLE_CY = 827.5f, NAME_CX = 166, NAME_CY = 865.5f;
 
     static float cardX(int slot) { return CARD_X0 + (slot % COLS) * CARD_PITCH_X; }
     static float cardY(int slot) { return CARD_Y0 + (slot / COLS) * CARD_PITCH_Y; }
@@ -186,9 +186,9 @@ final class ShopView {
     static boolean cardSells(Model m, Row r) { return m.tab() == Tab.SELL || !r.buys(); }
     // ---- frame ----------------------------------------------------------------------------------------------
     static void draw(Canvas c, Model m) {
-        // panel backing + frame (rows above the footer)
+        // panel backing only. shop_frame.png is not drawn: its thick yellow border / ornament lines do not match the
+        // approved mockup (owner 2026-10-24: remove them).
         c.fill(PANEL_L, PANEL_T, PANEL_R - PANEL_L, FOOT_T - PANEL_T, PANEL);
-        c.image(ROOT + "shop_frame.png", fx(0), fyTop(0), 1440 * KX, FRAME_SPLIT * KY_TOP, 0, 0, 1440, FRAME_SPLIT, 1440, 1092);
 
         // title · gold
         float labelW = c.width("보유 골드", 21.4f, Face.LABEL);
@@ -223,14 +223,13 @@ final class ShopView {
             c.portrait(NPC_X, Math.max(H, m.screenBottom()) - h, w, h);
         }
 
-        // footer area of the frame: fill inside the frame's own footer lines, then the frame's footer rows on top
+        // footer area (over the illustration, as in the mockup)
         c.fill(PANEL_L, FOOT_T, PANEL_R - PANEL_L, FOOT_B - FOOT_T, FOOTER);
-        float splitY = fyFoot(FRAME_SPLIT);
-        c.image(ROOT + "shop_frame.png", fx(0), splitY, 1440 * KX, (1092 - FRAME_SPLIT) * KY_FOOT,
-                0, FRAME_SPLIT, 1440, 1092 - FRAME_SPLIT, 1440, 1092);
         footer(c, m);
 
-        // role / name text (no drawn ornaments: only the supplied PNGs are decoration)
+        // role / name over a soft dark band (fades in from above) so it stays readable over the illustration
+        for (int i = 0; i < 6; i++) c.fill(0, NAME_BAND_Y - 36 + i * 6, PANEL_L, 6, ((i + 1) * 0x18) << 24 | 0x08111E);
+        c.fill(0, NAME_BAND_Y, PANEL_L, H - NAME_BAND_Y, 0xA808111E);
         fitted(c, m.role(), ROLE_CX, ROLE_CY, 19.5f, 220, ROLE, Face.LABEL, true);
         fitted(c, m.npcName(), NAME_CX, NAME_CY, 37.8f, 300, WHITE, Face.TITLE, true);
 
