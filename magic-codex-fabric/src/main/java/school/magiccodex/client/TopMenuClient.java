@@ -58,6 +58,7 @@ public final class TopMenuClient {
             case 120 -> SocialClient.open();
             case 121 -> {MagicCodexClient.dismiss();c.setScreen(new PartyScreen());}
             case 122 -> SchoolClient.open();
+            case 3 -> TravelClient.open();   // 이동: the server opens the map window (same as /지도 · J)
             case 6 -> QuestClient.open();
             case 7 -> MailboxClient.open(null);
             case 8 -> {MagicCodexClient.dismiss();c.setScreen(new SettingsScreen(null));}

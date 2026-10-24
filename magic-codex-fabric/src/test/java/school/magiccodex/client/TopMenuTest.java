@@ -40,7 +40,7 @@ class TopMenuTest {
         assertEquals("캐시샵",TopMenuState.command(0));
         assertEquals("우편함",TopMenuState.command(7));
         assertEquals("의뢰",TopMenuState.command(6));
-        assertEquals("큐디치",TopMenuState.command(5));assertFalse(TopMenuState.enabled(3));assertEquals("",TopMenuState.command(3));
+        assertEquals("큐디치",TopMenuState.command(5));assertTrue(TopMenuState.enabled(3));assertEquals("지도",TopMenuState.command(3));
         assertArrayEquals(new String[]{"마일리지샵","내 정보","소셜","이동","도감","PVP","퀘스트","우편함","설정"},TopMenuState.LABELS);
     }
     @Test void groupsHaveFixedOrderAndRoomyVerticalTargets(){
