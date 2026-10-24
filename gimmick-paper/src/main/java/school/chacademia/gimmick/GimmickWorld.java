@@ -25,7 +25,7 @@ final class GimmickWorld implements Listener {
     private final File file;
     private final Map<String, Gimmick> gimmicks = new LinkedHashMap<>();
     private final Map<UUID, Gimmick> byEntity = new HashMap<>();
-    private final NamespacedKey idKey, modelKey, puzzleKey, nodeKey, scaleKey;
+    private final NamespacedKey idKey, modelKey, scaleKey;
     private int nextId = 1;
     private boolean dirty;
 
@@ -34,8 +34,6 @@ final class GimmickWorld implements Listener {
         this.file = new File(plugin.getDataFolder(), "gimmicks.yml");
         idKey = new NamespacedKey(plugin, "gimmick_id");
         modelKey = new NamespacedKey(plugin, "model");
-        puzzleKey = new NamespacedKey(plugin, "puzzle");
-        nodeKey = new NamespacedKey(plugin, "node");
         scaleKey = new NamespacedKey(plugin, "scale");
         Bukkit.getScheduler().runTaskTimer(plugin, () -> { if (dirty) save(); }, 40, 40);
     }
@@ -64,11 +62,15 @@ final class GimmickWorld implements Listener {
             var s = sec.getConfigurationSection(id);
             if (s != null) { var g = Gimmick.load(id, s.getValues(false)); gimmicks.put(id, g); }
         }
-        for (Gimmick g : gimmicks.values()) g.place(plugin.catalog().get(g.model), null); // platform offsets are applied once Devices is up
+        for (Gimmick g : gimmicks.values()) {
+            var info = plugin.catalog().get(g.model);
+            if (g.answer < 0 && Signals.hasAnswer(info.kind())) { g.answer = Signals.defaultAnswer(info.kind(), g.facing); dirty = true; }
+            g.place(info, null); // platform offsets are applied once Devices is up
+        }
         cellsDirty = true;
     }
 
-    /** After puzzles load: put moved floating platforms where they were. */
+    /** After loading: put moved floating platforms where they were. */
     void applyOffsets() {
         for (Gimmick g : gimmicks.values()) if (!g.attached()) g.place(plugin.catalog().get(g.model), plugin.devices().platformOffset(g));
         cellsDirty = true;
@@ -86,25 +88,20 @@ final class GimmickWorld implements Listener {
     Collection<Gimmick> all() { return Collections.unmodifiableCollection(gimmicks.values()); }
     Gimmick get(String id) { return gimmicks.get(id); }
     Gimmick byEntity(Entity e) { return e == null ? null : byEntity.get(e.getUniqueId()); }
-    List<Gimmick> inNode(String puzzle, String node) {
-        var out = new ArrayList<Gimmick>();
-        for (Gimmick g : gimmicks.values()) if (g.puzzle.equals(puzzle) && g.node.equals(node)) out.add(g);
-        return out;
-    }
 
     // ------------------------------------------------------------------ create / remove
     /** New placed gimmick on block (bx, by, bz) = the block the model stands in (its feet), facing 0..3. */
-    Gimmick create(String model, World w, int bx, int by, int bz, int facing, String puzzle, String node) {
+    Gimmick create(String model, World w, int bx, int by, int bz, int facing) {
         var g = new Gimmick("g" + nextId++, model, w.getName(), bx, by, bz, facing);
-        g.puzzle = puzzle == null ? "" : puzzle;
-        g.node = node == null ? "" : node;
-        g.place(plugin.catalog().get(model), null);
+        var info = plugin.catalog().get(model);
+        if (Signals.hasAnswer(info.kind())) g.answer = Signals.defaultAnswer(info.kind(), facing);
+        g.place(info, null);
         gimmicks.put(g.id, g);
         cellsDirty = true;
         markDirty();
         if (w.isChunkLoaded(g.chunkX(), g.chunkZ())) spawn(g, true);
         plugin.collision().refresh(g);
-        plugin.mana().dirty();
+        plugin.signals().dirty();
         return g;
     }
 
@@ -141,16 +138,15 @@ final class GimmickWorld implements Listener {
         gimmicks.remove(g.id);
         cellsDirty = true;
         plugin.collision().clear(g);
-        plugin.mana().dirty();
+        plugin.signals().forget(g);
         plugin.devices().forget(g);
         if (g.attached()) {
             Entity host = Bukkit.getEntity(g.host);
             if (host != null) {
                 var pdc = host.getPersistentDataContainer();
-                for (var k : List.of(modelKey, puzzleKey, nodeKey, scaleKey)) pdc.remove(k);
+                for (var k : List.of(modelKey, scaleKey)) pdc.remove(k);
             }
         }
-        plugin.solids().clear(g);
         markDirty();
     }
 
@@ -172,8 +168,6 @@ final class GimmickWorld implements Listener {
         if (model == null||GimmickProtection.excluded(host)) return null;
         var g = new Gimmick("m" + host.getUniqueId().toString(), model, host.getUniqueId());
         g.scale = Optional.ofNullable(pdc.get(scaleKey, PersistentDataType.DOUBLE)).orElse(1.0);
-        g.puzzle = Optional.ofNullable(pdc.get(puzzleKey, PersistentDataType.STRING)).orElse("");
-        g.node = Optional.ofNullable(pdc.get(nodeKey, PersistentDataType.STRING)).orElse("");
         var r = plugin.renderer();
         g.handle = r.hasModel(host) ? null : r.attach(plugin.fullId(model), host, g.scale);
         if (g.handle == null) { plugin.getLogger().warning("모델을 씌우지 못했습니다: " + model + " (렌더러 " + r.name() + ")"); return null; }
@@ -181,27 +175,6 @@ final class GimmickWorld implements Listener {
         byEntity.put(host.getUniqueId(), g);
         playState(g, false);
         return g;
-    }
-
-    void setPuzzle(Gimmick g, String puzzle, String node) {
-        plugin.solids().clear(g);
-        g.puzzle = puzzle == null ? "" : puzzle;
-        g.node = node == null ? "" : node;
-        if (g.attached()) {
-            Entity host = Bukkit.getEntity(g.host);
-            if (host != null) {
-                var pdc = host.getPersistentDataContainer();
-                if (g.puzzle.isEmpty()) { pdc.remove(puzzleKey); pdc.remove(nodeKey); }
-                else { pdc.set(puzzleKey, PersistentDataType.STRING, g.puzzle); pdc.set(nodeKey, PersistentDataType.STRING, g.node); }
-            }
-        }
-        markDirty();
-        freeOn.remove(g.id);
-        plugin.collision().refresh(g);
-        plugin.solids().refresh(g);
-        plugin.mana().dirty();
-        plugin.puzzles().deviceChanged(g);
-        if (g.live()) playState(g, false);
     }
 
     // ------------------------------------------------------------------ live entities
@@ -226,7 +199,6 @@ final class GimmickWorld implements Listener {
         });
         byEntity.put(g.hitbox.getUniqueId(), g);
         playState(g, fresh);
-        plugin.solids().refresh(g);
     }
 
     void despawn(Gimmick g) {
@@ -253,7 +225,7 @@ final class GimmickWorld implements Listener {
         cellsDirty = true;
         markDirty();
         plugin.collision().refresh(g);
-        plugin.mana().dirty();
+        plugin.signals().dirty();
         Location at = g.location();
         if (at == null || !g.live()) return;
         g.handle.teleport(at);
@@ -264,7 +236,6 @@ final class GimmickWorld implements Listener {
             g.hitbox.setInteractionWidth((float) (info.width() * g.scale));
             g.hitbox.setInteractionHeight((float) (info.height() * g.scale));
         }
-        plugin.solids().refresh(g);
     }
 
     void spawnLoaded() {
@@ -358,7 +329,7 @@ final class GimmickWorld implements Listener {
     }
 
     // ------------------------------------------------------------------ animation
-    /** Show the puzzle state: on -> active (or activate held), off -> idle. `fresh` plays spawn first. */
+    /** Show the state: on -> active (or activate held), off -> idle. `fresh` plays spawn first. */
     void playState(Gimmick g, boolean fresh) {
         if (g.handle != null) g.handle.stop();
         boolean on = on(g);
@@ -366,17 +337,13 @@ final class GimmickWorld implements Listener {
         String steady = on ? (info.has("active") ? "active" : "activate") : "idle";
         if (fresh && info.has("spawn")) play(g, "spawn", steady);
         else play(g, steady, null);
-        if (g.inPuzzle() && !on) for (String a : plugin.puzzles().collectedAnims(g.puzzle, g.node)) overlay(g, a);
         deviceLayers(g);
     }
 
-    /** Shown state: the puzzle node, or for a gimmick outside any puzzle the device's own on/off (lit brazier, powered conduit ...). */
-    private final Set<String> freeOn = new HashSet<>();
-    boolean on(Gimmick g) { return g.inPuzzle() ? plugin.puzzles().isOn(g.puzzle, g.node) : freeOn.contains(g.id); }
-    /** Visual on/off for gimmicks outside puzzles. */
-    void setFree(Gimmick g, boolean on) {
-        if (g.inPuzzle() || (on == freeOn.contains(g.id))) return;
-        if (on) freeOn.add(g.id); else freeOn.remove(g.id);
+    /** Shown state (Signals: own rule for inputs, wiring for outputs, flow for conduits, beam for mirrors / prisms). */
+    boolean on(Gimmick g) { return plugin.signals().on(g); }
+    /** Signals changed this gimmick's state: barrier + animation. */
+    void display(Gimmick g, boolean on) {
         plugin.collision().refresh(g);
         if (g.live()) { transition(g, on, null, null); Bukkit.getScheduler().runTaskLater(plugin, () -> deviceLayers(g), 2); }
     }
@@ -410,7 +377,7 @@ final class GimmickWorld implements Listener {
         if (g.handle != null && anim != null) { g.handle.overlay(anim); g.lastAnim = anim; }
     }
 
-    /** Node turned on/off. */
+    /** Turned on/off. */
     void transition(Gimmick g, boolean on, String animOn, String animOff) {
         var info = plugin.catalog().get(g.model);
         if (on) play(g, animOn != null ? animOn : "activate", info.has("active") ? "active" : null);

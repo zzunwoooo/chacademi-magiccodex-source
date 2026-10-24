@@ -101,11 +101,9 @@ final class SpellActions implements Listener {
         };
     }
 
-    /** Puzzle trigger, or the device's own on/off when it is not in a puzzle. */
+    /** The device's own reaction (Signals.action); a brazier already in that state still counts as a valid target. */
     private boolean device(Player p, Gimmick g, String trigger, boolean freeOn) {
-        plugin.devices().remember(g);
-        if (g.inPuzzle()) plugin.puzzles().trigger(g, trigger, p);
-        else plugin.world().setFree(g, freeOn);
+        plugin.signals().action(g, trigger);
         return true;
     }
 
@@ -131,8 +129,7 @@ final class SpellActions implements Listener {
             if (++t.age >= 60) {
                 it.remove();
                 plugin.vfx().play(fx("thawingheat", "thaw"), floor(t.g), yawTo(floor(t.g), p.getLocation()), 24);
-                plugin.devices().remember(t.g);
-                if (t.g.inPuzzle()) plugin.puzzles().trigger(t.g, "thaw", p); else plugin.world().setFree(t.g, true);
+                plugin.signals().action(t.g, "thaw");
                 bar(p, "얼음 봉인이 녹았습니다.");
             }
         }
@@ -151,19 +148,8 @@ final class SpellActions implements Listener {
     private boolean steam(Player p, Gimmick g) {
         plugin.vfx().play(fx("steamignition", "ignite"), floor(g), yawTo(floor(g), p.getLocation()), 32);
         if (g.live()) plugin.world().overlay(g, "fire_in");
-        plugin.devices().remember(g);
-        if (g.inPuzzle()) plugin.puzzles().trigger(g, "steam", p);
-        else freePulse(g, 100);
+        plugin.signals().action(g, "steam");
         return true;
-    }
-
-    /** Free device on for `ticks`; a newer cast extends it instead of being cut short by the older timer. */
-    private final Map<String, Long> freeUntil = new HashMap<>();
-    private void freePulse(Gimmick g, int ticks) {
-        long until = tick + ticks;
-        freeUntil.put(g.id, until);
-        plugin.world().setFree(g, true);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> { if (Objects.equals(freeUntil.get(g.id), until)) { freeUntil.remove(g.id); plugin.world().setFree(g, false); } }, ticks);
     }
 
     // ================================================================== 241 수위 조절
@@ -179,9 +165,7 @@ final class SpellActions implements Listener {
         plugin.vfx().play(fx("stoneweight", "drop"), floor(g), yawTo(floor(g), p.getLocation()), 32);
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (plugin.world().get(g.id) == null) return;
-            plugin.devices().remember(g);
-            if (g.inPuzzle()) plugin.puzzles().trigger(g, "weight", p.isOnline() ? p : null);
-            else freePulse(g, 40);
+            plugin.signals().action(g, "weight");
         }, 13);
         return true;
     }
@@ -338,29 +322,17 @@ final class SpellActions implements Listener {
     }
     private static Vector axis(Vector v) { return Math.abs(v.getX()) > Math.abs(v.getZ()) ? new Vector(Math.signum(v.getX()), 0, 0) : new Vector(0, 0, Math.signum(v.getZ())); }
 
-    /** Receivers / mirrors / prisms lit by any beam this tick -> puzzle input "light" (colour checked per node) or free visuals. */
+    /** Receivers (with the colours reaching them) and mirrors / prisms a beam passes, this tick -> Signals. */
     private void applyLight(Set<String> lit) {
         if (lit.equals(litBefore)) return;
-        var nodes = new HashMap<String, Boolean>();
-        var freeLit = new HashSet<String>();
+        var receivers = new HashMap<String, Set<String>>();
+        var passed = new HashSet<String>();
         for (String k : lit) {
             String[] f = k.split("\\|");
-            Gimmick g = plugin.world().get(f[1]);
-            if (g == null) continue;
-            if (!f[0].equals("r") || !g.inPuzzle()) { freeLit.add(g.id); continue; }
-            var d = plugin.puzzles().node(g.puzzle, g.node);
-            String want = d == null ? null : d.device().color();
-            boolean match = want == null || want.isBlank() || Colors.norm(want).equals(Colors.norm(f[2]));
-            nodes.merge(g.puzzle + "\u0000" + g.node, match, Boolean::logicalOr);
+            if (f[0].equals("r")) receivers.computeIfAbsent(f[1], x -> new HashSet<>()).add(Colors.norm(f[2]));
+            else passed.add(f[1]);
         }
-        for (String k : litBefore) {
-            String[] f = k.split("\\|"); Gimmick g = plugin.world().get(f[1]);
-            if (g == null) continue;
-            if (f[0].equals("r") && g.inPuzzle()) nodes.putIfAbsent(g.puzzle + "\u0000" + g.node, false);
-            else if (!freeLit.contains(g.id)) plugin.world().setFree(g, false);
-        }
-        for (String id : freeLit) { Gimmick g = plugin.world().get(id); if (g != null) plugin.world().setFree(g, true); }
-        for (var e : nodes.entrySet()) { String[] pn = e.getKey().split("\u0000", 2); plugin.puzzles().held(pn[0], pn[1], "light", e.getValue(), null); }
+        plugin.signals().light(receivers, passed);
         litBefore = Set.copyOf(lit);
     }
 

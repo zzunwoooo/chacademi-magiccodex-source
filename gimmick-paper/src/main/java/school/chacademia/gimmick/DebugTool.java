@@ -18,17 +18,18 @@ import org.bukkit.util.Vector;
  * Admin wand. Click a model (or look at it and click air) to select and edit it.
  *  right click = + / next      left click = - / previous
  *  sneak + right click = next mode      sneak + left click = previous mode
- * Modes: 정보, 회전(90도), 크기, 이동(바라보는 방향 축으로 1칸), 높이(1칸), 애니메이션, 삭제
+ * Modes: 정보, 회전(90도), 크기, 이동(바라보는 방향 축으로 1칸), 높이(1칸), 정답, 삭제
+ * 정답 = what an adjustable device has to show to count as on (수위 기둥 수위, 회전 다이얼 위치, 잠든 석상 방향,
+ * 빛 수신 수정 색) or where a floating platform goes (앞으로/위로 N칸).
  */
 final class DebugTool implements Listener {
-    enum Mode { INFO("정보"), ROTATE("회전"), SCALE("크기"), MOVE("이동"), HEIGHT("높이"), ANIM("애니메이션"), DELETE("삭제");
+    enum Mode { INFO("정보"), ROTATE("회전"), SCALE("크기"), MOVE("이동"), HEIGHT("높이"), ANSWER("정답"), DELETE("삭제");
         final String label; Mode(String l) { label = l; } }
 
     private final GimmickPlugin plugin;
     private final NamespacedKey toolKey;
     private final Map<UUID, Mode> modes = new HashMap<>();
     private final Map<UUID, String> selected = new HashMap<>();
-    private final Map<UUID, Integer> animIndex = new HashMap<>();
     private final Map<UUID, Long> deleteArm = new HashMap<>();
 
     DebugTool(GimmickPlugin plugin) {
@@ -125,9 +126,9 @@ final class DebugTool implements Listener {
                 g.by += sign;
                 if (blocked(p, g, plugin.catalog().get(g.model))) { g.by -= sign; return; }
             }
-            case ANIM -> { cycleAnim(p, g, sign); return; }
+            case ANSWER -> { answer(p, g, sign); return; }
             case DELETE -> {
-                long now = plugin.puzzles().now();
+                long now = plugin.signals().now();
                 Long armed = deleteArm.get(p.getUniqueId());
                 if (!right) { deleteArm.remove(p.getUniqueId()); bar(p, "삭제 취소"); return; }
                 if (armed == null || armed < now || changedSelection) {
@@ -156,30 +157,43 @@ final class DebugTool implements Listener {
         return true;
     }
 
-    private void cycleAnim(Player p, Gimmick g, int sign) {
-        var anims = new ArrayList<>(plugin.catalog().get(g.model).anims().keySet());
-        if (anims.isEmpty()) { bar(p, "애니메이션 목록이 없는 모델입니다 (models.yml)"); return; }
-        int i = Math.floorMod(animIndex.getOrDefault(p.getUniqueId(), -1) + sign, anims.size());
-        animIndex.put(p.getUniqueId(), i);
-        plugin.world().play(g, anims.get(i), null);
-        bar(p, "재생: " + anims.get(i) + " (" + (i + 1) + "/" + anims.size() + ")");
+    private void answer(Player p, Gimmick g, int sign) {
+        String kind = plugin.catalog().get(g.model).kind();
+        if (g.attached() || !Signals.hasAnswer(kind)) { bar(p, "정답이 있는 기믹이 아닙니다 (수위 기둥·회전 다이얼·잠든 석상·빛 수신 수정·부유 발판)"); return; }
+        if (kind.equals("platform") && g.travel > 0) { bar(p, "움직인 발판입니다. /던전관리 초기화 로 제자리에 돌린 뒤 바꾸세요."); return; }
+        g.answer = Math.floorMod(g.answer + sign, Signals.answerCount(kind));
+        plugin.world().markDirty();
+        plugin.signals().dirty();
+        bar(p, "정답  " + g.id + "  " + Signals.answerLabel(kind, g.answer));
     }
 
     void info(Player p, Gimmick g) {
         var info = plugin.catalog().get(g.model);
-        String state = g.inPuzzle() ? (plugin.puzzles().isOn(g.puzzle, g.node) ? "켜짐" : "꺼짐") : "-";
-        p.sendMessage(Component.text("[기믹] " + g.id + " " + info.name() + " (" + g.model + ")", NamedTextColor.GOLD));
+        var sig = plugin.signals();
+        p.sendMessage(Component.text("[기믹] " + g.id + " " + info.name() + " (" + g.model + ")  " + Signals.role(info.kind()) + "  "
+            + (sig.on(g) ? "켜짐" : "꺼짐"), NamedTextColor.GOLD));
         p.sendMessage(Component.text(g.attached() ? String.format(Locale.ROOT, " (몹에 씌움)  방향 %.0f°  크기 %.2f", g.yaw, g.scale)
             : String.format(Locale.ROOT, " 블록 %s %d, %d, %d  방향 %s  크기 %.2f  차지 %dx%d칸 (%s)", g.world, g.bx, g.by, g.bz, FACING[g.facing], g.scale,
                 info.footW(), info.footD(), info.collision()), NamedTextColor.GRAY));
-        String dev = switch (info.kind()) {
-            case "mirror", "dial" -> "위치 " + g.pos; case "pillar" -> "수위 " + g.level; case "prism" -> "색 " + Colors.ko(g.color);
-            case "conduit" -> "포트 " + info.ports() + (plugin.mana().powered(g) ? "  마력 흐름" : "");
-            default -> plugin.mana().powered(g) ? "마력 받는 중" : "";
-        };
-        if (!dev.isEmpty()) p.sendMessage(Component.text(" 장치 " + dev, NamedTextColor.GRAY));
-        p.sendMessage(Component.text(" 퍼즐 " + (g.puzzle.isEmpty() ? "-" : g.puzzle) + " / 노드 " + (g.node.isEmpty() ? "-" : g.node)
-            + "  상태 " + state + "  재생 중 " + (g.lastAnim.isEmpty() ? "-" : g.lastAnim), NamedTextColor.GRAY));
+        var lines = new ArrayList<String>();
+        switch (info.kind()) {
+            case "mirror", "dial" -> lines.add("위치 " + g.pos);
+            case "pillar" -> lines.add("수위 " + g.level);
+            case "prism" -> lines.add("색 " + Colors.ko(g.color));
+            case "conduit" -> lines.add("포트 " + info.ports() + (sig.powered(g) ? "  신호 흐름" : ""));
+            default -> {}
+        }
+        if (Signals.hasAnswer(info.kind())) lines.add("정답 " + Signals.answerLabel(info.kind(), g.answer));
+        if (Signals.OUTPUTS.contains(info.kind())) {
+            var ins = sig.inputsOf(g);
+            long onCount = ins.stream().map(plugin.world()::get).filter(o -> o != null && sig.on(o)).count();
+            lines.add(ins.isEmpty() ? "연결된 입력 없음 (입력 블럭이나 도관을 붙이세요)" : "연결된 입력 " + ins.size() + "개 중 " + onCount + "개 켜짐  " + ins);
+        }
+        if (Signals.INPUTS.contains(info.kind())) {
+            var outs = sig.outputsOf(g);
+            lines.add(outs.isEmpty() ? "연결된 출력 없음" : "연결된 출력 " + outs);
+        }
+        if (!lines.isEmpty()) p.sendMessage(Component.text(" " + String.join("  ·  ", lines), NamedTextColor.GRAY));
     }
 
     private static Vector axis(Vector look) {
@@ -191,6 +205,6 @@ final class DebugTool implements Listener {
 
     @EventHandler public void quit(PlayerQuitEvent e) {
         UUID id = e.getPlayer().getUniqueId();
-        modes.remove(id); selected.remove(id); animIndex.remove(id); deleteArm.remove(id);
+        modes.remove(id); selected.remove(id); deleteArm.remove(id);
     }
 }

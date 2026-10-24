@@ -1,52 +1,20 @@
 package school.chacademia.gimmick;
 
-import java.util.List;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 
 /**
  * Placing like an ItemsAdder furniture (owner 2026-10-20): every gimmick sits on the block grid, centred on its block,
- * turned in 90° steps. `/던전관리 소환` = the block the admin stands in; the placement item (`/던전관리 아이템`) = the block next to the
- * clicked face, facing the admin. Overlapping another gimmick or replacing non-air blocks is refused.
+ * turned in 90° steps. `/던전관리 소환` = the block the admin stands in, facing where the admin looks.
+ * Overlapping another gimmick or replacing non-air blocks is refused.
  */
-final class Placer implements Listener {
+final class Placer {
     private final GimmickPlugin plugin;
-    private final NamespacedKey modelKey;
 
-    Placer(GimmickPlugin plugin) { this.plugin = plugin; this.modelKey = new NamespacedKey(plugin, "place_model"); }
+    Placer(GimmickPlugin plugin) { this.plugin = plugin; }
 
-    ItemStack item(String model) {
-        var info = plugin.catalog().get(model);
-        ItemStack it = new ItemStack(Material.ARMOR_STAND);
-        var meta = it.getItemMeta();
-        meta.displayName(Component.text("기믹 설치: " + info.name(), NamedTextColor.AQUA));
-        meta.lore(List.of(Component.text(model, NamedTextColor.DARK_GRAY), Component.text("블록 면을 우클릭하면 그 칸에 설치 (나를 바라봄)", NamedTextColor.GRAY),
-            Component.text("차지: " + info.footW() + "x" + info.footD() + "칸", NamedTextColor.GRAY)));
-        meta.getPersistentDataContainer().set(modelKey, PersistentDataType.STRING, model);
-        it.setItemMeta(meta);
-        return it;
-    }
-
-    boolean isItem(ItemStack it) { return it != null && it.hasItemMeta() && it.getItemMeta().getPersistentDataContainer().has(modelKey, PersistentDataType.STRING); }
-
-    /** Place on block `feet` (the model's feet). @return the gimmick, or null (reason sent to the player as a warning card). */
-    Gimmick place(Player p, String model, Block feet, int facing, String puzzle, String node) {
-        return place(p, model, feet, facing, puzzle, node, reason -> ChacaLink.notify(p, "warning", "gimmick-place", reason, "", 1000));
-    }
-
-    /** Same as above; the refusal reason goes to `refused` instead. */
-    Gimmick place(Player p, String model, Block feet, int facing, String puzzle, String node, java.util.function.Consumer<String> refused) {
+    /** Place on block `feet` (the model's feet). @return the gimmick, or null (reason given to `refused`). */
+    Gimmick place(Player p, String model, Block feet, int facing, java.util.function.Consumer<String> refused) {
         var info = plugin.catalog().get(model);
         if (!plugin.catalog().known(model)) plugin.getLogger().info("models.yml에 없는 모델 설치: " + model + " (렌더러에 등록돼 있으면 그대로 그림)");
         if (!plugin.protection().pair(p, feet.getLocation())) { refused.accept("보호 구역이라 설치할 수 없어요"); return null; }
@@ -60,26 +28,8 @@ final class Placer implements Listener {
                 if (!b.getType().isAir() && !b.isPassable()) { refused.accept("모델이 들어갈 자리가 막혀 있어요 (" + b.getX() + ", " + b.getY() + ", " + b.getZ() + ")"); return null; }
             }
         }
-        Gimmick g = plugin.world().create(model, feet.getWorld(), feet.getX(), feet.getY(), feet.getZ(), facing, puzzle, node);
+        Gimmick g = plugin.world().create(model, feet.getWorld(), feet.getX(), feet.getY(), feet.getZ(), facing);
         plugin.tool().select(p, g);
         return g;
-    }
-
-    @EventHandler(priority = EventPriority.HIGH)
-    public void use(PlayerInteractEvent e) {
-        if (e.getHand() != EquipmentSlot.HAND || e.getAction() != Action.RIGHT_CLICK_BLOCK || e.getItem() == null || !e.getItem().hasItemMeta()) return;
-        String model = e.getItem().getItemMeta().getPersistentDataContainer().get(modelKey, PersistentDataType.STRING);
-        if (model == null) return;
-        e.setCancelled(true);
-        Player p = e.getPlayer();
-        if (!p.isOp()) return;
-        Block clicked = e.getClickedBlock();
-        if (clicked == null) return;
-        Block feet = clicked.isPassable() && !clicked.getType().isAir() ? clicked : clicked.getRelative(e.getBlockFace());
-        int facing = Gimmick.facingOf(p.getLocation().getYaw() + 180); // face the player
-        Gimmick g = place(p, model, feet, facing, "", "");
-        if (g == null) return;
-        if (p.getGameMode() != GameMode.CREATIVE) e.getItem().setAmount(e.getItem().getAmount() - 1);
-        ChacaLink.notify(p, "system", "gimmick-placed", g.id + " 설치 (" + plugin.catalog().get(model).name() + ")", "", 0);
     }
 }

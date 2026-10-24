@@ -20,8 +20,6 @@ final class Gimmick {
     double x, y, z;
     float yaw;
     double scale = 1;
-    String puzzle = "";
-    String node = "";
     /** Mob-attached: no saved position, follows the host. */
     final UUID host;
 
@@ -31,7 +29,9 @@ final class Gimmick {
     int pos;              // mirror / dial position 0..3
     int level;            // water pillar 0..3
     String color = "white"; // prism colour
-    double travel;        // floating platform: 0 = start, 1 = moved by the node's `move`
+    double travel;        // floating platform: 0 = start, 1 = moved by its 정답 (앞으로/위로 N칸)
+    boolean latched;      // own saved on/off: lever pulled, brazier lit, ice thawed, door opened ... (Signals.LATCHED)
+    int answer = -1;      // 정답: water level / dial position / statue facing / receiver colour / platform route (-1 = default)
 
     // live (not saved)
     Renderer.Handle handle;
@@ -49,7 +49,6 @@ final class Gimmick {
 
     boolean attached() { return host != null; }
     boolean live() { return handle != null; }
-    boolean inPuzzle() { return !puzzle.isEmpty() && !node.isEmpty(); }
 
     // ------------------------------------------------------------------ grid
     static int[] forward(int facing) {
@@ -128,16 +127,16 @@ final class Gimmick {
     int layers(ModelCatalog.Info info) { return Math.max(1, (int) Math.ceil(info.height() * scale - 1e-6)); }
 
     /** Snapshot for 248 되감기. */
-    record Snapshot(int facing, int pos, int level, String color, Boolean nodeOn, long at) {}
-    Snapshot snapshot(Boolean nodeOn, long now) { return new Snapshot(facing, pos, level, color, nodeOn, now); }
+    record Snapshot(int facing, int pos, int level, String color, boolean latched, long at) {}
+    Snapshot snapshot(long now) { return new Snapshot(facing, pos, level, color, latched, now); }
 
     Map<String, Object> save() {
         var m = new LinkedHashMap<String, Object>();
         m.put("model", model); m.put("world", world);
         m.put("block", List.of(bx, by, bz)); m.put("facing", facing);
         m.put("scale", round(scale));
-        if (!puzzle.isEmpty()) m.put("puzzle", puzzle);
-        if (!node.isEmpty()) m.put("node", node);
+        if (latched) m.put("on", true);
+        if (answer >= 0) m.put("answer", answer);
         if (pos != 0) m.put("pos", pos);
         if (level != 0) m.put("level", level);
         if (!"white".equals(color)) m.put("color", color);
@@ -157,8 +156,8 @@ final class Gimmick {
         }
         var g = new Gimmick(id, String.valueOf(m.get("model")), String.valueOf(m.get("world")), bx, by, bz, facing);
         g.scale = m.containsKey("scale") ? num(m.get("scale")) : 1;
-        g.puzzle = m.get("puzzle") == null ? "" : String.valueOf(m.get("puzzle"));
-        g.node = m.get("node") == null ? "" : String.valueOf(m.get("node"));
+        g.latched = Boolean.TRUE.equals(m.get("on"));
+        g.answer = m.containsKey("answer") ? (int) num(m.get("answer")) : -1;
         g.pos = Math.floorMod((int) num(m.get("pos")), 4);
         g.level = Math.clamp((int) num(m.get("level")), 0, 3);
         g.color = m.get("color") == null ? "white" : String.valueOf(m.get("color"));

@@ -11,9 +11,9 @@ import org.bukkit.util.Vector;
 /**
  * Device behaviour that does not need the magic plugin:
  *  - device state changes (mirror/dial position, water level, prism colour, facing) with a one-step history for 248 되감기,
- *  - floating platform: travels its node's `move` one way when the node turns on (riders move with it), back on puzzle reset,
- *  - wind vent: while on, throws players standing on it upward (`launch`, default config vent-launch),
- *  - water wheel: water flowing in or under its blocks = continuous input "water",
+ *  - floating platform: once opened travels its 정답 route (앞으로/위로 N칸) one way (riders move with it), back on 초기화,
+ *  - wind vent: while on, throws players standing on it upward (config vent-launch),
+ *  - water wheel: water flowing in or under its blocks turns it on,
  *  - teleport gates linked by 250 차원 표식 (walk in = go to the other gate).
  */
 final class Devices {
@@ -29,10 +29,7 @@ final class Devices {
     }
 
     // ------------------------------------------------------------------ state changes (+ history)
-    void remember(Gimmick g) {
-        Boolean nodeOn = g.inPuzzle() ? plugin.puzzles().isOn(g.puzzle, g.node) : null;
-        history.put(g.id, g.snapshot(nodeOn, tick));
-    }
+    void remember(Gimmick g) { history.put(g.id, g.snapshot(tick)); }
     /** 248 되감기: undo the last change made within `seconds`. */
     boolean rewind(Gimmick g, double seconds) {
         var s = history.remove(g.id);
@@ -40,10 +37,9 @@ final class Devices {
         boolean turned = s.facing() != g.facing;
         g.facing = s.facing(); g.pos = s.pos(); g.level = s.level(); g.color = s.color();
         if (turned) plugin.world().transform(g);
+        if (Signals.INPUTS.contains(plugin.catalog().get(g.model).kind())) g.latched = s.latched(); // outputs that opened stay open
         plugin.world().markDirty();
-        if (g.live()) plugin.world().playState(g, false);
-        if (s.nodeOn() != null && g.inPuzzle() && plugin.puzzles().isOn(g.puzzle, g.node) != s.nodeOn())
-            plugin.puzzles().force(g.puzzle, g.node, s.nodeOn(), null);
+        plugin.world().deviceLayers(g);
         changed(g);
         return true;
     }
@@ -56,27 +52,25 @@ final class Devices {
         return true;
     }
     void color(Gimmick g, String color) { remember(g); g.color = Colors.norm(color); plugin.world().markDirty(); plugin.world().deviceLayers(g); changed(g); }
-    private void changed(Gimmick g) { plugin.puzzles().deviceChanged(g); plugin.mana().dirty(); }
+    private void changed(Gimmick g) { plugin.signals().dirty(); }
 
     void forget(Gimmick g) { history.remove(g.id); String o = links.remove(g.id); if (o != null) { links.remove(o); linkUntil.remove(o); } linkUntil.remove(g.id); }
 
     // ------------------------------------------------------------------ platform
-    private PuzzleMove move(Gimmick g) {
-        if (!g.inPuzzle()) return null;
-        var d = plugin.puzzles().node(g.puzzle, g.node);
-        if (d == null || d.device().move() == null) return null;
-        var m = d.device().move();
-        return new PuzzleMove(new Vector(m[0], m[1], m[2]), d.device().speed());
+    /** Route from the 정답: 앞으로 2/4/6/8칸 (facing) or 위로 2/4/6/8칸. */
+    private Vector route(Gimmick g) {
+        if (!plugin.catalog().get(g.model).is("platform")) return null;
+        int a = Math.floorMod(g.answer < 0 ? 1 : g.answer, Signals.PLATFORM_ANSWERS.size());
+        int n = (a % 4 + 1) * 2;
+        if (a >= 4) return new Vector(0, n, 0);
+        int[] f = Gimmick.forward(g.facing);
+        return new Vector(f[0] * n, 0, f[1] * n);
     }
-    private record PuzzleMove(Vector delta, double speed) {}
     /** Current offset of a floating platform from its anchor (zero for everything else). */
     Vector platformOffset(Gimmick g) {
         if (g.travel <= 0) return new Vector();
-        var m = move(g);
-        return m == null ? new Vector() : m.delta().clone().multiply(g.travel);
-    }
-    void nodeChanged(Gimmick g, boolean on) {
-        // nothing to do immediately: tick() moves platforms toward their target and runs vents while on
+        var m = route(g);
+        return m == null ? new Vector() : m.clone().multiply(g.travel);
     }
     void reset(Gimmick g) {
         if (g.travel != 0) { g.travel = 0; plugin.world().transform(g); }
@@ -92,7 +86,7 @@ final class Devices {
         show(a.id, true); show(b.id, true);
     }
     Gimmick linked(Gimmick g) { String o = links.get(g.id); return o == null ? null : plugin.world().get(o); }
-    private void show(String id, boolean on) { Gimmick g = plugin.world().get(id); if (g != null && !g.inPuzzle()) plugin.world().setFree(g, on); else if (g != null && g.live() && on) plugin.world().transition(g, true, null, null); else if (g != null && g.live()) plugin.world().playState(g, false); }
+    private void show(String id, boolean on) { plugin.signals().dirty(); }
 
     // ------------------------------------------------------------------ tick
     private void tick() {
@@ -107,19 +101,22 @@ final class Devices {
             switch (info.kind()) {
                 case "platform" -> platform(g, info);
                 case "vent" -> { if (tick % 4 == 0 && plugin.world().on(g)) vent(g, info); }
-                case "wheel" -> { if (tick % 10 == 0) wheel(g, info); }
                 default -> {}
             }
+        }
+        if (tick % 10 == 0) {
+            var wet = new HashSet<String>();
+            for (Gimmick g : plugin.world().all()) if (!g.attached() && plugin.catalog().get(g.model).is("wheel") && wheel(g, plugin.catalog().get(g.model))) wet.add(g.id);
+            plugin.signals().water(wet);
         }
     }
 
     private void platform(Gimmick g, ModelCatalog.Info info) {
-        var m = move(g);
+        var m = route(g);
         if (m == null) return;
-        boolean on = plugin.puzzles().isOn(g.puzzle, g.node);
-        if (!on || g.travel >= 1) return; // one way: once it started it finishes, and stays (puzzle reset brings it back)
-        double len = Math.max(0.1, m.delta().length());
-        double step = Math.min(1 - g.travel, m.speed() / 20 / len);
+        if (!plugin.signals().on(g) || g.travel >= 1) return; // one way: once it started it finishes, and stays (초기화 brings it back)
+        double len = Math.max(0.1, m.length());
+        double step = Math.min(1 - g.travel, plugin.getConfig().getDouble("platform-speed", 2) / 20 / len);
         Vector before = platformOffset(g);
         BoundingBox top = g.box(info).expand(0, 0, 0, 0, 1.2, 0);
         g.travel += step;
@@ -147,7 +144,6 @@ final class Devices {
 
     private void vent(Gimmick g, ModelCatalog.Info info) {
         double launch = plugin.getConfig().getDouble("vent-launch", 1.3);
-        if (g.inPuzzle()) { var d = plugin.puzzles().node(g.puzzle, g.node); if (d != null && d.device().launch() > 0) launch = d.device().launch(); }
         var box = g.box(info).expand(0, 0, 0, 0, 2.5, 0);
         var at = g.location();
         if (at == null) return;
@@ -159,16 +155,15 @@ final class Devices {
         }
     }
 
-    private void wheel(Gimmick g, ModelCatalog.Info info) {
+    private boolean wheel(Gimmick g, ModelCatalog.Info info) {
         World w = Bukkit.getWorld(g.world);
-        if (w == null) return;
+        if (w == null) return false;
         boolean water = false;
         for (int[] c : g.columns(info)) for (int dy = -1; dy <= 0 && !water; dy++) {
             if (!w.isChunkLoaded(c[0] >> 4, c[1] >> 4)) continue;
             Block b = w.getBlockAt(c[0], g.by + dy, c[1]);
             water = b.getType() == Material.WATER || b.getBlockData() instanceof Waterlogged wl && wl.isWaterlogged();
         }
-        if (g.inPuzzle()) plugin.puzzles().held(g.puzzle, g.node, "water", water, null);
-        else plugin.world().setFree(g, water);
+        return water;
     }
 }
