@@ -190,7 +190,7 @@ final class MileageBridge implements PluginMessageListener, Listener {
             if (mail == null) throw new IllegalStateException("mail service missing");
             String title = cut(o.title(), 70) + " 구매";
             sent = mail.sendSystem("mileage:" + o.id(), o.owner(), title,
-                    "마일리지 상점에서 " + o.quantity() + "개를 구매했어요. (" + MileageProtocol.amount(o.total()) + " M 사용)", stacks(o));
+                    "마일리지 상점에서 " + o.quantity() + "개를 구매했어요. (마일리지 " + MileageProtocol.amount(o.total()) + " 사용)", stacks(o));
         } catch (RuntimeException e) {
             delivering.remove(o.id());
             plugin.getLogger().log(Level.WARNING, "Mileage mail failed for order " + o.id() + " (will retry)", e);
@@ -290,7 +290,7 @@ final class MileageBridge implements PluginMessageListener, Listener {
         var root = CmdKit.literal("마일리지")
                 .then(CmdKit.literal("보기").executes(CmdKit.run(ctx -> {
                     UUID id = ChacaApi.target(ctx); var to = CmdKit.sender(ctx);
-                    work(() -> store.balance(id), v -> { cached.computeIfPresent(id, (k, o) -> v); CmdKit.lines(to, List.of("── " + CmdKit.name(id) + " 마일리지 ──", MileageProtocol.amount(v) + " M")); },
+                    work(() -> store.balance(id), v -> { cached.computeIfPresent(id, (k, o) -> v); CmdKit.lines(to, List.of("── " + CmdKit.name(id) + " 마일리지 ──", MileageProtocol.amount(v))); },
                             m -> CmdKit.userFail(to, m));
                 })))
                 .then(CmdKit.literal("기록").executes(CmdKit.run(ctx -> {
@@ -299,7 +299,7 @@ final class MileageBridge implements PluginMessageListener, Listener {
                         var lines = new ArrayList<String>();
                         lines.add("── " + CmdKit.name(id) + " 마일리지 구매 기록 (최근 10건) ──");
                         if (list.isEmpty()) lines.add("기록이 없어요");
-                        for (var o : list) lines.add(QuestBridge.timeText(o.created()) + " | " + o.title() + " ×" + o.quantity() + " | " + MileageProtocol.amount(o.total()) + " M | "
+                        for (var o : list) lines.add(QuestBridge.timeText(o.created()) + " | " + o.title() + " ×" + o.quantity() + " | " + "마일리지 " + MileageProtocol.amount(o.total()) + " | "
                                 + (o.state().equals("done") ? "우편 보냄" : "우편 대기(자동 재전송)"));
                         CmdKit.lines(to, lines);
                     }, m -> CmdKit.userFail(to, m));
@@ -307,7 +307,7 @@ final class MileageBridge implements PluginMessageListener, Listener {
         for (String change : AdminCommandRules.CHANGES)
             root.then(CmdKit.literal(change).then(CmdKit.argument("값", LongArgumentType.longArg(0, MileageProtocol.MAX_BALANCE)).executes(CmdKit.run(ctx -> changeBalance(ctx, change)))));
         ChacaApi.branch(plugin, ChacaApi.유저관리, root, "마일리지 보기·설정·추가·빼기·구매 기록", "마일리지 보기");
-        ChacaApi.summary(plugin, "마일리지", id -> { Long v = cached.get(id); return v == null ? "" : MileageProtocol.amount(v) + " M"; });
+        ChacaApi.summary(plugin, "마일리지", id -> { Long v = cached.get(id); return v == null ? "" : MileageProtocol.amount(v); });
     }
     private void changeBalance(CommandContext<CommandSourceStack> ctx, String change) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         UUID id = ChacaApi.target(ctx);
@@ -316,7 +316,7 @@ final class MileageBridge implements PluginMessageListener, Listener {
         work(() -> store.change(id, change, value), v -> {
             plugin.getLogger().info("MILEAGE ADMIN admin=" + to.getName() + " player=" + id + " action=" + change + " value=" + value + " before=" + v[0] + " after=" + v[1]);
             long delta = v[1] - v[0];
-            CmdKit.ok(to, CmdKit.name(id) + " 님 마일리지 " + MileageProtocol.amount(v[1]) + " M (" + (delta >= 0 ? "+" : "") + MileageProtocol.amount(delta) + ")");
+            CmdKit.ok(to, CmdKit.name(id) + " 님 마일리지 " + MileageProtocol.amount(v[1]) + " (" + (delta >= 0 ? "+" : "") + MileageProtocol.amount(delta) + ")");
             var p = Bukkit.getPlayer(id);
             if (p != null) { cached.put(id, v[1]); if (sessions.containsKey(id)) push(p, MileageProtocol.KIND_STATE, "", ""); }
         }, m -> CmdKit.userFail(to, m));

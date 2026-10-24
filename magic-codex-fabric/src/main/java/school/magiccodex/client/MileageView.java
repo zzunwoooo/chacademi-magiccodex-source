@@ -25,6 +25,8 @@ final class MileageView {
         /** left x (or center x when centered); cy = vertical centre of the glyphs. */
         void text(String value, float x, float cy, float size, int color, Face face, boolean centered);
         float width(String value, float size, Face face);
+        /** Glyph ink top/bottom relative to the baseline (negative = above). */
+        float[] ink(String value, float size, Face face);
         void gradient(float x, float y, float w, float h, int left, int right);
         void line(float ax, float ay, float bx, float by, float thickness, int color);
         /** Convex polygon (x0,y0,x1,y1,…). */
@@ -55,7 +57,7 @@ final class MileageView {
 
     // ---------------------------------------------------------------- layout (shop_panel.png pixels)
     static final float EMBLEM_X = 119, EMBLEM_Y = 75, EMBLEM_R = 40;
-    static final float TITLE_X = 190, TITLE_Y = 64, TITLE_SIZE = 44, SUB_Y = 104, DIVIDER_X = 476, TAG_X = 502, TAG_Y = 80;
+    static final float TITLE_X = 190, TITLE_Y = 75, TITLE_SIZE = 44;
     static final float CAP_X = 1120, CAP_Y = 41, CAP_W = 366, CAP_H = 62, COIN_X = 1159, COIN_D = 38;
     static final float REFRESH_X = 1504, REFRESH_Y = 47, REFRESH_S = 49, HEAD_DIVIDER_X = 1577, CLOSE_X = 1617, CLOSE_Y = 72;
     static final float TAB_X = 44, TAB_W = 239, TAB_Y = 162, TAB_H = 84, TAB_STEP = 90, TAB_ICON_X = 92, TAB_LABEL_X = 132;
@@ -172,13 +174,9 @@ final class MileageView {
 
     private static void header(Canvas c, Model m) {
         emblem(c, EMBLEM_X, EMBLEM_Y, EMBLEM_R);
-        float titleMax = DIVIDER_X - 22 - TITLE_X;
-        var title = fit(c, m.admin() ? "마일리지 상점 관리" : "마일리지 상점", TITLE_SIZE, Face.TITLE, titleMax, .7f);
+        // title alone, centred on the emblem (owner 2026-10-24: 차카데미 글씨·안내 문구 삭제)
+        var title = fit(c, m.admin() ? "마일리지 상점 관리" : "마일리지 상점", TITLE_SIZE, Face.TITLE, CAP_X - 40 - TITLE_X, .7f);
         c.text(title.text(), TITLE_X, TITLE_Y, title.size(), TITLE_GOLD, Face.TITLE, false);
-        textIn(c, "차 카 데 미", TITLE_X + 2, SUB_Y, 19, SUB_GOLD, Face.LABEL, titleMax, false);
-        c.gradient(DIVIDER_X, 48, 1.5f, 62, 0x88B8975A, 0x88B8975A);
-        textIn(c, m.admin() ? "손에 든 아이템을 등록하고 가격·분류·판매 여부를 정합니다" : "후원으로 적립한 마일리지로 구매하세요",
-                TAG_X, TAG_Y, 20, MUTED, Face.BODY, CAP_X - 26 - TAG_X, false);
 
         // balance capsule (code-rendered per README): label left, amount right, diamond on the right tip
         box(c, CAP_X, CAP_Y, CAP_W, CAP_H, CAP_H / 2, 0xCC0C1727, 0xFFB8975A, 1.6f);
@@ -189,10 +187,10 @@ final class MileageView {
         String label = m.admin() ? "등록 상품" : "보유 마일리지";
         float labelW = Math.min(c.width(label, 20, Face.LABEL), 130);
         textIn(c, label, labelX, cy, 20, 0xFFD9C79A, Face.LABEL, 130, false);
-        String value = m.admin() ? m.productCount() + "개" : m.balance() + " M";
+        String value = m.admin() ? m.productCount() + "개" : m.balance();
         float right = CAP_X + CAP_W - 30, max = right - (labelX + labelW + 18);
         float size = amountSize(c, value, 31, Face.TITLE, max);
-        c.text(value, right - c.width(value, size, Face.TITLE), cy, size, CREAM, Face.TITLE, false);
+        amount(c, value, right - c.width(value, size, Face.TITLE), cy, size, CREAM, false);
 
         boolean hr = in(m.mx(), m.my(), REFRESH_X, REFRESH_Y, REFRESH_S, REFRESH_S);
         box(c, REFRESH_X, REFRESH_Y, REFRESH_S, REFRESH_S, 7, hr ? 0x33E4C47C : 0x660C1727, hr ? GOLD : 0xFF5E6F88, 1.4f);
@@ -325,14 +323,24 @@ final class MileageView {
             textIn(c, "숨김", x + 12 + bw / 2, y + 26, 17, SOFT, Face.LABEL, bw - 12, true);
         }
     }
-    /** coin + "300 M", centred on cx, shrunk (never cut) to max. */
-    static void priceLine(Canvas c, String amount, float cx, float cy, float size, float coin, float max) {
-        String s = amount + " M";
+    /** coin + "300", centred on cx, shrunk (never cut) to max. */
+    static void priceLine(Canvas c, String s, float cx, float cy, float size, float coin, float max) {
         float gap = coin * .3f;
         float sz = amountSize(c, s, size, Face.TITLE, max - coin - gap);
         float w = coin + gap + c.width(s, sz, Face.TITLE), left = cx - w / 2;
         coin(c, left + coin / 2, cy, coin);
-        c.text(s, left + coin + gap, cy, sz, CREAM, Face.TITLE, false);
+        amount(c, s, left + coin + gap, cy, sz, CREAM, false);
+    }
+    /**
+     * Number whose digits are centred on cy. Plain centring uses the ink box, and a comma hangs below the baseline,
+     * which would lift "12,500" above "500" and above the label next to it; so the digits alone decide the height.
+     */
+    static void amount(Canvas c, String s, float x, float cy, float size, int color, boolean centered) {
+        if (s.isEmpty()) return;
+        String digits = s.replace(",", "").replace(".", "");
+        float[] d = c.ink(digits.isEmpty() ? s : digits, size, Face.TITLE), f = c.ink(s, size, Face.TITLE);
+        float baseline = cy - (d[0] + d[1]) / 2;
+        c.text(s, x, baseline + (f[0] + f[1]) / 2, size, color, Face.TITLE, centered);
     }
 
     /** Player detail panel: large icon, name, ornament, description, quantity, total, buy button. */
@@ -353,10 +361,10 @@ final class MileageView {
         c.gradient(ROW_L - 4, 709, ROW_R - ROW_L + 4, 1, 0x40A8B4C8, 0x40A8B4C8);
         textIn(c, "합계", ROW_L, 742, 22, 0xFFB4C0CF, Face.LABEL, 80, false);
         if (!m.total().isEmpty()) {
-            String s = m.total() + " M";
+            String s = m.total();
             float size = amountSize(c, s, 30, Face.TITLE, ROW_R - (ROW_L + 80) - 40);
             float w = c.width(s, size, Face.TITLE);
-            c.text(s, ROW_R - w, 742, size, CREAM, Face.TITLE, false);
+            amount(c, s, ROW_R - w, 742, size, CREAM, false);
             coin(c, ROW_R - w - 10 - 15, 742, 30);
         }
         actionButton(c, m, m.actionLabel(), m.actionEnabled());
@@ -409,8 +417,7 @@ final class MileageView {
                 case 1 -> fieldBox(c, m, "desc", y);
                 case 2 -> {
                     fieldBox(c, m, "price", y);
-                    coin(c, FIELD_X + FIELD_W - 50, cy, 24);
-                    c.text("M", FIELD_X + FIELD_W - 32, cy, 21, CREAM, Face.TITLE, false);
+                    coin(c, FIELD_X + FIELD_W - 24, cy, 24);
                 }
                 case 3 -> { for (int k = 0; k < 3; k++) chip(c, m, k, 3, y, TABS[k], m.editCategory() == k, true); }
                 case 4 -> { chip(c, m, 0, 2, y, "판매 중", m.editEnabled(), true); chip(c, m, 1, 2, y, "숨김", !m.editEnabled(), true); }
@@ -426,7 +433,7 @@ final class MileageView {
     private static void fieldBox(Canvas c, Model m, String key, float y) {
         boolean hover = in(m.mx(), m.my(), FIELD_X, y, FIELD_W, FIELD_H);
         box(c, FIELD_X, y, FIELD_W, FIELD_H, 6, 0x990A1424, hover ? 0xFF8293AC : 0xFF52637C, 1.3f);
-        float right = key.equals("price") ? 66 : 4;
+        float right = key.equals("price") ? 44 : 4;
         c.field(key, FIELD_X + 2, y + 1, FIELD_W - right - 2, FIELD_H - 2);
     }
     static float chipX(int index, int count) { float gap = 8, w = (FIELD_W - gap * (count - 1)) / count; return FIELD_X + (w + gap) * index; }

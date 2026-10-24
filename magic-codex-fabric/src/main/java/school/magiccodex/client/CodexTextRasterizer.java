@@ -17,6 +17,13 @@ public final class CodexTextRasterizer {
         return text.isEmpty() ? 0 : new TextLayout(text, font.deriveFont(size), CONTEXT).getAdvance();
     }
 
+    /** Glyph ink top/bottom relative to the baseline (negative = above), for lining up text of different sizes. */
+    public static float[] ink(Font font, String text, float size) {
+        if (text.isEmpty()) return new float[]{0, 0};
+        var r = new TextLayout(text, font.deriveFont(size), CONTEXT).getBounds();
+        return new float[]{(float) r.getMinY(), (float) r.getMaxY()};
+    }
+
     public static BufferedImage rasterize(Font font, String text, float pixelSize) {
         return rasterize(font,text,pixelSize,false);
     }

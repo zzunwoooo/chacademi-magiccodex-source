@@ -88,8 +88,8 @@ final class MileageStore implements AutoCloseable {
                 case "빼기" -> before - value;
                 default -> throw new IllegalArgumentException("mode");
             };
-            if (after < 0) throw new IllegalStateException("마일리지가 " + MileageProtocol.amount(before) + " M라서 그만큼 뺄 수 없어요");
-            if (after > MileageProtocol.MAX_BALANCE) throw new IllegalStateException("마일리지는 최대 " + MileageProtocol.amount(MileageProtocol.MAX_BALANCE) + " M까지예요");
+            if (after < 0) throw new IllegalStateException("마일리지가 " + MileageProtocol.amount(before) + "라서 그만큼 뺄 수 없어요");
+            if (after > MileageProtocol.MAX_BALANCE) throw new IllegalStateException("마일리지는 최대 " + MileageProtocol.amount(MileageProtocol.MAX_BALANCE) + "까지예요");
             put(c, owner, after);
             return new long[]{before, after};
         });

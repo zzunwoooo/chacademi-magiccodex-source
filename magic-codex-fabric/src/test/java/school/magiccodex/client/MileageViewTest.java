@@ -15,6 +15,7 @@ class MileageViewTest {
             float w = width(s, size, f); float left = centered ? x - w / 2 : x; texts.add(new float[]{left, left + w});
         }
         public float width(String s, float size, MileageView.Face f) { return s.length() * size * .9f; }
+        public float[] ink(String s, float size, MileageView.Face f) { return new float[]{-size * .7f, s.contains(",") ? size * .15f : 0}; }
         public void gradient(float x, float y, float w, float h, int l, int r) {}
         public void line(float ax, float ay, float bx, float by, float t, int c) {}
         public void polygon(float[] p, int c) {}

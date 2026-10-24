@@ -65,6 +65,9 @@ public final class CodexTypography implements AutoCloseable {
                 key -> CodexTextRasterizer.width(fonts.get(key.face()), value, size));
     }
 
+    /** Ink top/bottom of the text relative to its baseline (see {@link CodexTextRasterizer#ink}). */
+    public float[] ink(String value, float size, Identifier face) { return CodexTextRasterizer.ink(fonts.get(face.getPath()), value, size); }
+
     public void draw(DrawContext context, String value, float x, float y, float size, int color,
                      Identifier face, boolean centered) {
         draw(context,value,x,y,size,color,face,centered,false);

@@ -163,7 +163,7 @@ public final class MileageScreen extends SocialScreen {
         sound(1.1f, .16f);
         busy = true; busyAt = Util.getMeasuringTimeMs(); pending = op;
         ItemStack icon = icons.getOrDefault(p.id(), ItemStack.EMPTY).copy();
-        String title = p.name() + " ×" + n + " 구매 완료", body = "우편함으로 보냈어요 · " + MileageProtocol.amount(total) + " M 사용";
+        String title = p.name() + " ×" + n + " 구매 완료", body = "우편함으로 보냈어요 · 마일리지 " + MileageProtocol.amount(total) + " 사용";
         RECEIPTS.put(op, () -> SharedNotifications.item("mileage:" + op, title, body, icon));
         if (RECEIPTS.size() > 32) RECEIPTS.remove(RECEIPTS.keySet().iterator().next());
     }
