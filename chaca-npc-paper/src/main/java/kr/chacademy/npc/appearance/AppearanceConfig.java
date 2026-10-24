@@ -28,6 +28,8 @@ import java.util.logging.Logger;
  *   luka: {model: luka, scale: 1.0}
  * npcs:                      # Citizens NPC 하나만 따로 (기본값보다 우선). model: none = 이 NPC는 원래 외형
  *   "school:12": {model: ria, scale: 1.05}
+ * facing:                    # 모델 고정 방향 (마인크래프트 yaw 0~360, 0=남 90=서 180=북 270=동). 없으면 NPC 몸 방향을 따라감
+ *   "school:12": 90
  * </pre>
  */
 public final class AppearanceConfig {
@@ -42,6 +44,7 @@ public final class AppearanceConfig {
     private final Set<String> models = new LinkedHashSet<>();
     private final Map<String, Spec> characters = new LinkedHashMap<>();
     private final Map<String, Spec> npcs = new LinkedHashMap<>();
+    private final Map<String, Float> facing = new LinkedHashMap<>();
 
     public AppearanceConfig(File file, Logger log) {
         this.file = file;
@@ -52,6 +55,7 @@ public final class AppearanceConfig {
         models.clear();
         characters.clear();
         npcs.clear();
+        facing.clear();
         if (!file.exists()) {
             serverId = "school";
             return;
@@ -73,6 +77,28 @@ public final class AppearanceConfig {
         }
         readSection(y.getConfigurationSection("characters"), characters, "characters");
         readSection(y.getConfigurationSection("npcs"), npcs, "npcs");
+        ConfigurationSection f = y.getConfigurationSection("facing");
+        if (f != null) {
+            for (String key : f.getKeys(false)) {
+                if (!f.isDouble(key) && !f.isInt(key)) {
+                    log.warning("[ChacaNPC] npc-models.yml facing." + key + ": 숫자가 아님 → 무시");
+                    continue;
+                }
+                facing.put(key, normalizeYaw((float) f.getDouble(key)));
+            }
+        }
+    }
+
+    /** 아무 각도 → [0, 360). */
+    public static float normalizeYaw(float yaw) {
+        if (!Float.isFinite(yaw)) {
+            return 0f;
+        }
+        float r = Math.round(yaw * 10) / 10f % 360f; // 소수 첫째 자리로 반올림한 뒤 감음 (359.97 → 0, 360 이 되지 않게)
+        if (r < 0) {
+            r += 360f;
+        }
+        return r >= 360f ? 0f : r;
     }
 
     private void readSection(ConfigurationSection sec, Map<String, Spec> into, String where) {
@@ -108,6 +134,10 @@ public final class AppearanceConfig {
         y.set("models", new ArrayList<>(models));
         write(y, "characters", characters);
         write(y, "npcs", npcs);
+        y.createSection("facing");
+        for (Map.Entry<String, Float> e : facing.entrySet()) {
+            y.set("facing." + e.getKey(), (double) e.getValue());
+        }
         File tmp = new File(file.getParentFile(), file.getName() + ".tmp");
         Files.writeString(tmp.toPath(), y.saveToString(), StandardCharsets.UTF_8);
         try {
@@ -167,6 +197,23 @@ public final class AppearanceConfig {
         } else {
             npcs.put(serverId + ":" + citizensId, s);
         }
+    }
+
+    /** 이 NPC 모델의 고정 방향, 없으면 null. */
+    public synchronized Float facing(int citizensId) {
+        return facing.get(serverId + ":" + citizensId);
+    }
+
+    public synchronized void setFacing(int citizensId, Float yaw) {
+        if (yaw == null) {
+            facing.remove(serverId + ":" + citizensId);
+        } else {
+            facing.put(serverId + ":" + citizensId, normalizeYaw(yaw));
+        }
+    }
+
+    public synchronized Map<String, Float> facingSpecs() {
+        return Map.copyOf(facing);
     }
 
     public synchronized Map<String, Spec> characterSpecs() {

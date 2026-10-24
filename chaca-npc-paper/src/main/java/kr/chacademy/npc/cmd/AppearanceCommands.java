@@ -31,12 +31,14 @@ import java.util.Set;
  * 끄기                           가장 가까운 NPC만 원래 외형으로 고정
  * 크기 &lt;크기&gt;                    가장 가까운 NPC의 지금 모델 크기 변경 (0.25~10)
  * 동작 &lt;대기|대화|인사&gt;           보는 사람에게 동작 테스트 (서버 판정과 무관)
+ * 방향 &lt;0~360|나|지금|해제&gt;      가장 가까운 NPC 모델을 그 각도로 고정 (마인크래프트 yaw: 0=남 90=서 180=북 270=동)
  * 정보 · 목록 · 모델등록 &lt;ID&gt; · 모델삭제 &lt;ID&gt; · 통계 · 새로고침
  * </pre>
  */
 public final class AppearanceCommands {
     private static final String NONE_KO = "없음";
     private static final List<String> SCALES = List.of("0.8", "0.9", "1.0", "1.1", "1.2");
+    private static final List<String> FACINGS = List.of("0", "90", "180", "270", "나", "지금", "해제");
 
     private final ChacaNpcPlugin plugin;
 
@@ -68,6 +70,7 @@ public final class AppearanceCommands {
                         .then(Commands.literal("대기").executes(ctx -> motion(ctx, false, false)))
                         .then(Commands.literal("대화").executes(ctx -> motion(ctx, true, false)))
                         .then(Commands.literal("인사").executes(ctx -> motion(ctx, false, true))))
+                .then(Commands.literal("방향").then(Commands.argument("각도", ChacaLink.word(() -> FACINGS)).executes(this::facing)))
                 .then(Commands.literal("정보").executes(this::info))
                 .then(Commands.literal("목록").executes(this::list))
                 .then(Commands.literal("모델등록").then(Commands.argument("모델ID", ChacaLink.word(List::of)).executes(ctx -> registerModel(ctx, true))))
@@ -81,7 +84,7 @@ public final class AppearanceCommands {
                     ChacaLink.ok(ctx.getSource().getSender(), "npc-models.yml 을 다시 읽고 보는 사람에게 다시 보냈어요");
                     return 1;
                 }));
-        ChacaLink.branch(plugin, ChacaLink.NPC관리, root, "NPC 3D 외형 지정·해제·크기·동작 테스트", "외형 정보");
+        ChacaLink.branch(plugin, ChacaLink.NPC관리, root, "NPC 3D 외형 지정·해제·크기·방향·동작 테스트", "외형 정보");
         ChacaLink.reload(plugin, "NPC외형", "NPC 3D 외형 설정(npc-models.yml)", () -> svc().reload());
         ChacaLink.status(plugin, "NPC 외형", () -> svc().stats());
     }
@@ -159,6 +162,47 @@ public final class AppearanceCommands {
         return 1;
     }
 
+    /** 모델 방향 고정: 숫자(yaw) · 나(나를 바라봄) · 지금(NPC의 지금 방향) · 해제(몸 방향을 따라감). */
+    private int facing(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Player p = self(ctx);
+        NPC npc = near(p);
+        String in = ctx.getArgument("각도", String.class).trim();
+        Float yaw;
+        switch (in) {
+            case "해제" -> yaw = null;
+            case "나" -> {
+                org.bukkit.Location n = npc.getEntity().getLocation(), me = p.getLocation();
+                double dx = me.getX() - n.getX(), dz = me.getZ() - n.getZ();
+                if (dx * dx + dz * dz < 1e-4) {
+                    throw ChacaLink.error("NPC와 같은 자리에 서 있어요 — 조금 떨어져서 다시");
+                }
+                yaw = (float) Math.toDegrees(Math.atan2(-dx, dz)); // 마인크래프트 yaw: +Z(남)=0, 시계 방향
+            }
+            case "지금" -> yaw = npc.getEntity().getLocation().getYaw();
+            default -> {
+                try {
+                    yaw = Float.parseFloat(in);
+                } catch (NumberFormatException e) {
+                    throw ChacaLink.error("방향은 0~360 숫자, 나, 지금, 해제 중 하나예요 (0=남 90=서 180=북 270=동)");
+                }
+                if (!Float.isFinite(yaw)) {
+                    throw ChacaLink.error("방향은 0~360 숫자예요");
+                }
+            }
+        }
+        svc().config().setFacing(npc.getId(), yaw);
+        save(p);
+        svc().refresh(npc);
+        Float now = svc().config().facing(npc.getId());
+        ChacaLink.ok(p, "NPC #" + npc.getId() + " 모델 방향 → " + (now == null ? "NPC 몸 방향 따라감" : now + "° 고정 (" + compass(now) + ")"));
+        return 1;
+    }
+
+    private static String compass(float yaw) {
+        String[] d = {"남", "남서", "서", "북서", "북", "북동", "동", "남동"};
+        return d[Math.round(yaw / 45f) % 8];
+    }
+
     private int motion(CommandContext<CommandSourceStack> ctx, boolean talk, boolean greet) throws CommandSyntaxException {
         Player p = self(ctx);
         NPC npc = near(p);
@@ -195,6 +239,8 @@ public final class AppearanceCommands {
         out.add("NPC #" + npc.getId() + " (" + svc().config().serverId() + ":" + npc.getId() + ") · 캐릭터 " + (charId == null ? "연결 없음" : charId));
         out.add("지금 외형: " + (now == null ? "원래 외형" : now.model() + " ×" + now.scale()));
         out.add("개별 지정: " + (own == null ? "없음" : own.model() + " ×" + own.scale()) + " · 캐릭터 기본값: " + (chr == null ? "없음" : chr.model() + " ×" + chr.scale()));
+        Float face = svc().config().facing(npc.getId());
+        out.add("모델 방향: " + (face == null ? "NPC 몸 방향 따라감" : face + "° 고정 (" + compass(face) + ")"));
         out.add("보는 사람 " + viewers + "명 (모드 연결 " + modViewers + "명) · 내 모드 연결: " + (svc().isCapable(p) ? "됨" : "안 됨"));
         if (now != null && !svc().config().knowsModel(now.model())) {
             out.add("주의: '" + now.model() + "' 는 models 목록에 없어요 (클라이언트 models.json 과 맞는지 확인)");
@@ -212,6 +258,9 @@ public final class AppearanceCommands {
         }
         for (Map.Entry<String, AppearanceConfig.Spec> e : cfg.npcSpecs().entrySet()) {
             out.add("NPC " + e.getKey() + " → " + (AppearanceConfig.NONE.equals(e.getValue().model()) ? "원래 외형" : e.getValue().model() + " ×" + e.getValue().scale()));
+        }
+        for (Map.Entry<String, Float> e : cfg.facingSpecs().entrySet()) {
+            out.add("방향 " + e.getKey() + " → " + e.getValue() + "°");
         }
         ChacaLink.lines(ctx.getSource().getSender(), out);
         return 1;

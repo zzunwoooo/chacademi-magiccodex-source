@@ -145,3 +145,13 @@ MagicCodex(Bridge·Fabric)·PortableVFX·스토리 모드는 **건드리지 않�
 - 사용자 결정: 다리·몸통·팔 비율 조정이 일부 모델에서 어색 → 원래대로.
 - models.json 에서 캐릭터 6개(luka, ria, captain_bram, teacher_ellna, pipi, dorm_lowell)의 `proportion`·`height` 제거 → GLB 원래 비율, 키 1.8블록(scale 1.0). wizard_statue 는 원래 비율 미적용이라 height 3.0 유지.
 - 비율 기능 코드(Proportion, `/npc모델 비율·키`)는 그대로 남겨 둠 — 필요하면 모델별로 다시 켤 수 있음. 모드·플러그인 재빌드 불필요, models.json 만 교체.
+
+## 18. 2026-10-24 — NPC별 모델 방향 고정 (모드 0.1.1-npcmodel.4 / ChacaNPC 0.3.0-npcmodel.3, 프로토콜 v2)
+
+- 문제: 동상처럼 세워둔 모델이 Citizens lookclose 를 꺼도 돌아감. 모델이 클라이언트의 플레이어 몸 회전(bodyRot)을 따르는데, 이 값은 클라이언트가 머리 방향 기준으로 계속 보정하고, 멀리 갔다 오면(재추적) 다시 잡혀서 흔들림.
+- 해결: 서버가 NPC별 고정 방향을 APPEAR 에 실어 보냄 → 클라이언트는 그 각도로만 그림 (bodyRot 무시). 히트박스·클릭·이름표는 그대로.
+- 프로토콜 **v2**: APPEAR = … modelId, scale, **yaw(float, NaN = 몸 방향 따라감, 아니면 0≤yaw<360)**, base, greetSeq. 버전이 달라 옛 모드↔새 플러그인은 서로 무시(원래 외형) → **모드·플러그인 같이 배포**.
+- 서버 `npc-models.yml` 새 칸 `facing: {"서버ID:번호": 각도}` (모델 지정과 별개라 모델을 바꿔도 방향 유지).
+- 명령 `/NPC관리 외형 방향 <0~360|나|지금|해제>` — 가장 가까운 NPC(5칸). 각도 = 마인크래프트 yaw(F3 의 Facing 값과 같음: 0=남 90=서 180=북 270=동). `나` = 지금 내 쪽을 보게, `지금` = NPC 엔티티의 현재 yaw. `외형 정보`·`목록` 에 방향 표시.
+- 각도는 소수 첫째 자리로 반올림 후 [0,360) 로 감음 (359.97 → 0).
+- 프로토콜 테스트: yaw 왕복(NaN·270), 360·-1·무한대 거부.

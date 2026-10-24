@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  * 엔티티는 (entityId, UUID) 둘 다 맞아야 연결되고, revision 이 낮은 패킷은 버린다 (재사용된 엔티티 번호에 예전 외형이 붙지 않게).</p>
  */
 public final class NpcModelProtocol {
-    public static final int VERSION = 1;
+    public static final int VERSION = 2; // 2: APPEAR 에 고정 방향(yaw) 추가
     public static final String CHANNEL_S2C = "chacademi:npc_model";
     public static final String CHANNEL_C2S = "chacademi:npc_model_c";
 
@@ -39,8 +39,12 @@ public final class NpcModelProtocol {
     public record HelloAck(long session) implements Message {
     }
 
-    public record Appear(int entityId, UUID uuid, int revision, String modelId, float scale, int base, int greetSeq) implements Message {
+    /** yaw: 모델 고정 방향(마인크래프트 yaw, 0=남 90=서 180=북 270=동). NaN = 엔티티 몸 방향을 따라감. */
+    public record Appear(int entityId, UUID uuid, int revision, String modelId, float scale, float yaw, int base, int greetSeq) implements Message {
         public Appear {
+            if (!Float.isNaN(yaw) && !(yaw >= 0 && yaw < 360)) {
+                throw new IllegalArgumentException("yaw");
+            }
             if (!MODEL_ID.matcher(modelId).matches()) {
                 throw new IllegalArgumentException("modelId");
             }
@@ -81,6 +85,7 @@ public final class NpcModelProtocol {
                 o.varInt(a.revision());
                 o.string(a.modelId());
                 o.floatBE(a.scale());
+                o.floatBE(a.yaw());
                 o.b.write(a.base());
                 o.varInt(a.greetSeq());
             }
@@ -117,7 +122,7 @@ public final class NpcModelProtocol {
             int type = in.u8();
             Message m = switch (type) {
                 case S2C_HELLO_ACK -> new HelloAck(in.longBE());
-                case S2C_APPEAR -> new Appear(in.varInt(), in.uuid(), in.varInt(), in.string(32), in.floatBE(), base(in.u8()), in.varInt());
+                case S2C_APPEAR -> new Appear(in.varInt(), in.uuid(), in.varInt(), in.string(32), in.floatBE(), in.floatBE(), base(in.u8()), in.varInt());
                 case S2C_STATE -> new State(in.varInt(), in.uuid(), in.varInt(), base(in.u8()), in.varInt());
                 case S2C_CLEAR -> new Clear(in.varInt(), in.uuid(), in.varInt());
                 case S2C_RESET -> new Reset();

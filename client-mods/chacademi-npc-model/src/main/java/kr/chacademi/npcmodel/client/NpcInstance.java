@@ -71,6 +71,17 @@ public final class NpcInstance {
         this.scale = s;
     }
 
+    private float fixedYaw = Float.NaN;
+
+    /** 서버가 정한 고정 방향 (마인크래프트 yaw). NaN = 엔티티 몸 방향을 따라감. */
+    void setFixedYaw(float yaw) {
+        this.fixedYaw = yaw;
+    }
+
+    public float fixedYaw() {
+        return fixedYaw;
+    }
+
     void setServerState(int base, int greetSeq) {
         anim.setServerState(base, greetSeq);
     }

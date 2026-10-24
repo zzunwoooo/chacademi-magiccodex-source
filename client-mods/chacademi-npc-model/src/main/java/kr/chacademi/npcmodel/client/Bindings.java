@@ -36,6 +36,7 @@ public final class Bindings {
         int revision;
         String modelId;
         float scale;
+        float yaw = Float.NaN; // 서버 고정 방향 (NaN = 엔티티 몸 방향)
         int base, greetSeq;
         NpcInstance instance;
         int missingSince = -1;
@@ -113,10 +114,12 @@ public final class Bindings {
                 e.revision = a.revision();
                 e.modelId = a.modelId();
                 e.scale = a.scale();
+                e.yaw = a.yaw();
                 e.base = a.base();
                 e.greetSeq = a.greetSeq();
                 if (e.instance != null) {
                     e.instance.setScale(a.scale());
+                    e.instance.setFixedYaw(a.yaw());
                     e.instance.setServerState(a.base(), a.greetSeq());
                 }
                 models.request(a.modelId()); // 미리 읽기 시작 (비동기)
@@ -166,6 +169,7 @@ public final class Bindings {
             }
             e.instance = new NpcInstance(m, entity.getId());
             e.instance.setScale(e.scale);
+            e.instance.setFixedYaw(e.yaw);
             e.instance.setServerState(e.base, e.greetSeq);
         } else if (!e.instance.model().alive()) {
             release(e); // 모델이 내려감(새로고침) → 다음 프레임에 다시
