@@ -7,7 +7,9 @@ import java.util.List;
  * 1672x941). Every position, size and colour below was measured from reference.png; nothing is added.
  * Pure Java: ShopScreen supplies a Minecraft {@link Canvas}; the review preview supplies a Java2D one.
  *
- * Texture: button_primary.png only (shop_frame.png is not drawn, see draw()). Only what the bundle
+ * Textures: button_primary.png, and shop_deco_panel.png / shop_deco_front.png — the mockup's own thin gold lines
+ * and stars, lifted out of reference.png (tools/shop-preview/extract_deco.py) because shop_frame.png's thick lines
+ * do not match it. shop_frame.png is not drawn. Only what the bundle
  * README lists is geometry (card borders, selection line, arrows, search field, secondary buttons); no other
  * lines or ornaments are drawn. Order: panel, catalogue, the illustration (it overlaps the panel's left edge),
  * the frame's footer area over it, then the role / name text.
@@ -81,7 +83,7 @@ final class ShopView {
     // ---- geometry (reference.png pixels) ----------------------------------------------------------------------
     // Panel lines in the mockup: outer x488.5..1650, top y21.5, footer line y799, bottom y914.5.
     // shop_frame.png 1440x1092 lines: outer x37..1402, top y62, footer y887.5, bottom y1017 → mapped onto them.
-    static final float PANEL_L = 488.5f, PANEL_R = 1650, PANEL_T = 21.5f, FOOT_T = 799, FOOT_B = 914.5f;
+    static final float PANEL_L = 488.5f, PANEL_R = 1650, PANEL_T = 21.5f, FOOT_T = 799, FOOT_B = 914.5f, FOOT_L = 416.5f;
     static final float KX = (PANEL_R - PANEL_L) / (1402 - 37), KY_TOP = (FOOT_T - PANEL_T) / (887.5f - 62), KY_FOOT = (FOOT_B - FOOT_T) / (1017 - 887.5f);
     static float fx(float u) { return PANEL_L + (u - 37) * KX; }
     static float fyTop(float v) { return PANEL_T + (v - 62) * KY_TOP; }
@@ -101,7 +103,7 @@ final class ShopView {
     // pager
     static final float PAGER_X = 1069, PAGER_Y = 785, ARROW_DX = 74, ARROW_S = 26;
     // footer (mockup bar 416.5..1650 x 799..914.5)
-    static final float FOOT_CY = 857.5f, F_ICON_CX = 538, F_ICON = 84, F_TEXT_X = 590, F_NAME_CY = 839, F_DESC_CY = 874.5f, F_TEXT_MAX = 140,
+    static final float FOOT_CY = 857.5f, F_ICON_CX = 468, F_ICON = 84, F_TEXT_X = 543, F_NAME_CY = 839, F_DESC_CY = 874.5f, F_TEXT_MAX = 186,
             F_DIV1 = 738, F_LABEL_X = 759, F_VALUE_RIGHT = 864, F_BUY_CY = 841, F_SELL_CY = 877, F_DIV2 = 893,
             QTY_LABEL_X = 914, QTY_X = 958, QTY_Y = 829, QTY_W = 160, QTY_H = 58, STEP = 48, F_DIV3 = 1144.5f,
             SUM_LABEL_X = 1171, SUM_LABEL_CY = 835, SUM_COIN_X = 1182, SUM_X = 1209, SUM_CY = 866, SUM_MAX = 120,
@@ -186,9 +188,9 @@ final class ShopView {
     static boolean cardSells(Model m, Row r) { return m.tab() == Tab.SELL || !r.buys(); }
     // ---- frame ----------------------------------------------------------------------------------------------
     static void draw(Canvas c, Model m) {
-        // panel backing only. shop_frame.png is not drawn: its thick yellow border / ornament lines do not match the
-        // approved mockup (owner 2026-10-24: remove them).
+        // panel backing, then the mockup's thin border / title star / header lines (shop_frame.png is not drawn)
         c.fill(PANEL_L, PANEL_T, PANEL_R - PANEL_L, FOOT_T - PANEL_T, PANEL);
+        c.image(ROOT + "shop_deco_panel.png", 0, 0, W, H, 0, 0, W, H, W, H);
 
         // title · gold
         float labelW = c.width("보유 골드", 21.4f, Face.LABEL);
@@ -223,13 +225,13 @@ final class ShopView {
             c.portrait(NPC_X, Math.max(H, m.screenBottom()) - h, w, h);
         }
 
-        // footer area (over the illustration, as in the mockup)
-        c.fill(PANEL_L, FOOT_T, PANEL_R - PANEL_L, FOOT_B - FOOT_T, FOOTER);
+        // soft dark band behind the role / name (fades in from above)
+        for (int i = 0; i < 24; i++) c.fill(0, NAME_BAND_Y - 72 + i * 3, FOOT_L, 3, (Math.round((i + 1) * 0xA8 / 25f)) << 24 | 0x08111E);
+        c.fill(0, NAME_BAND_Y, FOOT_L, H - NAME_BAND_Y, 0xA808111E);
+        // footer bar over the illustration, then the mockup's own thin lines and stars on top
+        c.fill(FOOT_L, FOOT_T, PANEL_R - FOOT_L, FOOT_B - FOOT_T, FOOTER);
+        c.image(ROOT + "shop_deco_front.png", 0, 0, W, H, 0, 0, W, H, W, H);
         footer(c, m);
-
-        // role / name over a soft dark band (fades in from above) so it stays readable over the illustration
-        for (int i = 0; i < 6; i++) c.fill(0, NAME_BAND_Y - 36 + i * 6, PANEL_L, 6, ((i + 1) * 0x18) << 24 | 0x08111E);
-        c.fill(0, NAME_BAND_Y, PANEL_L, H - NAME_BAND_Y, 0xA808111E);
         fitted(c, m.role(), ROLE_CX, ROLE_CY, 19.5f, 220, ROLE, Face.LABEL, true);
         fitted(c, m.npcName(), NAME_CX, NAME_CY, 37.8f, 300, WHITE, Face.TITLE, true);
 

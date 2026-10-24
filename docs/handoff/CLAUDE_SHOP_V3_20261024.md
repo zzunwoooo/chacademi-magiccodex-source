@@ -147,3 +147,25 @@ The overlay check against reference.png is in `docs/handoff/img/shop/compare_v3.
 - **The soft dark band behind the role / name is back**, as in the first pass and the mockup's darker lower-left:
   - six 6px fade steps from y760, then `0xA808111E` from y796 down
   - it spans x0..488.5
+
+## 8. 5th pass — owner: the mockup's thin gold lines must be there, exactly as in the mockup
+
+`shop_frame.png` draws thick, bright lines that the mockup does not have. Code-drawn lines did not look like the mockup either. So the mockup's own lines and stars are lifted out of `reference.png` into two overlays:
+
+- **`textures/gui/shop/v3/shop_deco_panel.png`** (1672×941, drawn right after the panel fill, before the cards and the illustration):
+  - thin panel border (top, right, upper left)
+  - the two top corner ornaments
+  - the four-point star before the title
+  - the small dotted ornament line and the faint header line
+- **`textures/gui/shop/v3/shop_deco_front.png`** (1672×941, drawn after the illustration and the footer fill):
+  - footer bar border (x416.5..1650 × 799..914.5) with its right star and corners
+  - the thin left-edge line with its two stars and the short bottom line
+  - the star, the underline and the small star by the NPC name
+- **How the overlays are made** (`tools/shop-preview/extract_deco.py`):
+  - Each piece is masked to its own rectangle.
+  - The gold pixels are inpainted away to get the background, and the line is unmixed as colour + alpha over that background.
+  - Straight runs that cross the illustration are copied from one clean sample, so no gold trim from the character leaks in.
+  - Both overlays are about 50 KB.
+- **The footer bar is back at x416.5** (the mockup's box). The footer icon and name are back at the measured spots: icon centre x468, text x543, width 186.
+- **The dark band** behind the role / name is kept. Its fade is now 24 steps of 3px, so it has no visible bands.
+- Everything else is unchanged, including the remaining runtime geometry from the README (cards, fields, tabs, stepper, switch, dividers, arrows).
