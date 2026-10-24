@@ -10,6 +10,23 @@
 - `TravelStoreTest`(SQLite 상태 기계 5개)는 sqlite-jdbc 가 없어 여기서 못 돌렸습니다 — 호스팅 `:magic-codex-paper:test` 에서 확인해 주세요.
 - Yarn 1.21.4 API 가정: `DrawContext.enableScissor` 가 현재 행렬을 적용함(다른 화면들과 같은 방식), `TextRenderer.draw(String, …, TextLayerType, bg, light)`, `Camera.getRotation()`.
 
+## 0-2. 2026-10-24 오너 추가 결정 반영 (세 번째 커밋)
+
+| 결정 | 반영 |
+|---|---|
+| 웨이포인트 VFX = 오너 PC `차카데미 vfx_Claude\WaypointGlobe` | 팩을 `portable-vfx-runtime/assets/WaypointGlobe/` 에 넣음 (vfx.json + textures + NOTES). 클라가 PortableVFX **클라이언트 API**(빗자루 궤적과 같은 방식, 리플렉션)로 `claude:waypointglobe/idle` 을 48블록 안 웨이포인트에만 로컬 재생(56블록 밖 끔), 등록 순간 `claude:waypointglobe/activate` 1회. 서버는 재생하지 않음. **클라이언트 PortableVFX 효과 폴더에 WaypointGlobe 팩 배포 필요** |
+| 미등록 유저에게 "웨이포인트" 글씨 | 퀘스트 목표 지점 글씨처럼(MagicCodex 폰트, 검은 외곽선, 은은한 빛) 지구본 위 2.95 m, 32블록 안. 등록한 지점에는 안 뜸. 이전 링 표시는 VFX 로 교체 |
+| 가까이 가면 자동 등록 + 이름 알림, 지도 열려 있어도 | 알림 카드 "웨이포인트 등록 · <설정한 이름>", 지도 창이 열려 있으면 창 안 알림 줄에도 같은 문구 |
+| 학교 타운맵 대신 미니맵, 지도 모드 없음 | 새 `TravelTerrain`: 청크가 로드될 때 틱당 3청크씩 지형 색(바닐라 지도 색 + 높이 음영 + 물 깊이)을 512×512 타일에 기록, 백그라운드로 `config/magiccodex/travel-map/<서버주소>/<서버/세계/세계UID>/r.X.Z.png` 저장. 학교·야생 탭 모두 `map: terrain`. 가 본 곳만 그려지고 나머지는 격자. 월드 스캔·큰 이미지 생성 없음 |
+| 개인 지점은 야생·학교에서만 | 지도 탭이 있는 세계(학교·야생)만 허용 — 아레나·던전 세계는 거절 (기존 규칙 그대로) |
+| 지도 단축키 기본 J | `UiKeys.Action.MAP`(키 설정에서 변경 가능, UI 단축키 칸 10개로 간격 조정), 누르면 서버에 OPEN 요청 → `/지도` 와 같은 창 |
+| 야생2 는 아직 없음 → 준비 중 | `servers.wild2: enabled: false, closed-text: 준비 중입니다` → 탭 화면·지점에 "야생2 · 준비 중입니다" |
+| 공간 도약 조건 = 공개 웨이포인트 **1곳** | discoveries.yml `state.travel_waypoints: 1`, 도감 파일(135) 문구, condition-inventory 갱신 |
+| 위치 지정은 마나·쿨 없음, 이동시에만 | mana-spells.yml(소스·운영본) spatial_leap `mana-cost: 0, cooldown-seconds: 0` (PortableVFX spell-catalog 135 도 0/0, 도감 파일 cast 0/0). 개인 지점 이동만 `travel.yml rules.personal-travel-mana: 100`, `personal-travel-cooldown-seconds: 60` — 별도 쿨 키 `spatial_leap_travel` 이라 마법 칸은 안 잠김. 이동 실패 시 환불 |
+| 야생 기본 스폰 1곳: 쿨 없음, 학교에서만, 야생에서는 불가, Multiverse setspawn | travel.yml `points.wild_spawn: {server: wild, world: world, spawn: true, from: [school]}` — 발견 필요 없음, 월드 포탈·공간 도약 개수에 안 들어감, 이동 쿨 없음, 도착 위치 = 도착 순간의 그 세계 스폰(`World#getSpawnLocation`, MV setspawn 이 바꾸는 값). 지도 위 위치는 각 서버가 15초마다 공유 DB 에 올리는 세계 스폰. **야생 월드 이름이 world 가 아니면 travel.yml 의 world 를 바꿔야 함** |
+
+추가 테스트: 야생 스폰(학교에서만·발견 불필요·포탈 없음), 야생2 준비 중 문구, 세계 스폰 공유 포맷, OPEN 요청·닫힌 탭 패킷 → 순수 테스트 21개 통과.
+
 ## 0-1. 2차 검토 반영 (같은 브랜치 두 번째 커밋)
 
 별도 검토에서 나온 것 반영: 창 컴파일 오류 1곳(double→float), 월드 포탈을 AFTER_ENTITIES 로(공용 버퍼가 그 뒤에 그려지도록), 개인 지점 이동 과금은 마나 트랜잭션만(발견 시전 카운트·아티팩트 시전 효과 안 탐), 환불 시 저장·dirty 표시, 만료된 개인 지점 이동 표는 도착 서버에서 환불, 도착 서버가 90초 기다려도 캐릭터 정보가 안 오면 표 FAILED, 덮어쓰는 만료 표도 실패 로그, 출발 서버 응답 대기 20→45초, 지도 클릭 판정 위치, 저장소 거절 콜백은 항상 다음 틱, 프록시 '이동 중' 표시는 60초 지나면 무효, 발견 관리 자동완성에 state.travel_waypoints.

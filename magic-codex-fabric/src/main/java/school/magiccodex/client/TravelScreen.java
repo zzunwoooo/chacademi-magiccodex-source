@@ -159,6 +159,8 @@ final class TravelScreen extends Screen {
             boolean any = false;
             for (Point p : points) if (p.tab().equals(t.id())) { any = true; x0 = Math.min(x0, p.x()); z0 = Math.min(z0, p.z()); x1 = Math.max(x1, p.x()); z1 = Math.max(z1, p.z()); }
             if (state != null && state.player().tab().equals(t.id())) { any = true; double x = state.player().x(), z = state.player().z(); x0 = Math.min(x0, x); z0 = Math.min(z0, z); x1 = Math.max(x1, x); z1 = Math.max(z1, z); }
+            double[] seen = t.map() == TravelProtocol.MAP_TERRAIN ? TravelTerrain.knownBounds(t.cacheKey()) : null;   // explored minimap tiles
+            if (seen != null) { any = true; x0 = Math.min(x0, seen[0]); z0 = Math.min(z0, seen[1]); x1 = Math.max(x1, seen[2]); z1 = Math.max(z1, seen[3]); }
             if (!any) { x0 = -256; z0 = -256; x1 = 256; z1 = 256; }
             double cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, half = Math.max(256, Math.max(x1 - x0, z1 - z0) / 2 + 160);
             BOUNDS.put(t.id(), new double[]{cx - half, cz - half, cx + half, cz + half});
@@ -396,7 +398,10 @@ final class TravelScreen extends Screen {
             var a = affine(t);
             boolean image = hasImage(t);
             if (image) drawImage(c, t, cam);
-            else grid(c, t, cam, a);
+            else {
+                if (t.map() == TravelProtocol.MAP_TERRAIN) terrain(c, t, cam, a);
+                grid(c, t, cam, a);
+            }
             // points: locked first (under), then public, personal, selected last
             var order = new ArrayList<Point>();
             for (Point p : points) if (p.tab().equals(tab)) order.add(p);
@@ -415,14 +420,32 @@ final class TravelScreen extends Screen {
                 } finally { m.pop(); }
             }
             if (!image) {
-                String note = t.map() == TravelProtocol.MAP_IMAGE ? "지도 그림이 아직 없어요" : t.map() == TravelProtocol.MAP_TERRAIN ? "지형 지도 준비 중 · 좌표 격자" : "좌표 격자";
+                String note = t.map() == TravelProtocol.MAP_IMAGE ? "지도 그림이 아직 없어요"
+                        : t.map() == TravelProtocol.MAP_TERRAIN && TravelTerrain.known(t.cacheKey()).isEmpty() ? "아직 둘러본 곳이 없어요 · 다니면 지도가 그려져요" : "";
                 text(c, note, TravelMapMath.MAP_L + 16, TravelMapMath.MAP_B - 22, 17, 0x99A9BCD2, BODY, false);
             }
             if (!t.online()) {
-                FishingArt.rect(c, TravelMapMath.MAP_L, TravelMapMath.MAP_T, TravelMapMath.MAP_R - TravelMapMath.MAP_L, TravelMapMath.MAP_B - TravelMapMath.MAP_T, 0x66040A14);
-                text(c, t.label() + " 서버가 지금 닫혀 있어요", (float) TravelMapMath.viewCx(), TravelMapMath.MAP_T + 34, 20, WARN, BODY, true);
+                // e.g. 야생2 "준비 중입니다" (travel.yml servers.wild2.closed-text)
+                FishingArt.rect(c, TravelMapMath.MAP_L, TravelMapMath.MAP_T, TravelMapMath.MAP_R - TravelMapMath.MAP_L, TravelMapMath.MAP_B - TravelMapMath.MAP_T, 0x8C040A14);
+                String why = t.status().isBlank() ? t.label() + " 서버가 지금 닫혀 있어요" : t.status();
+                text(c, cut(why, 26, SECTION, 900), (float) TravelMapMath.viewCx(), (float) TravelMapMath.viewCy(), 26, TEXT, SECTION, true);
             }
         } finally { c.disableScissor(); }
+    }
+
+    /** Minimap tiles of this tab (TravelTerrain), drawn 1 unit = 1 block around a nearby whole-block origin. */
+    private void terrain(DrawContext c, Tab t, TravelMapMath.Camera cam, TravelMapMath.Affine a) {
+        if (t.cacheKey().isBlank()) return;
+        double u0 = TravelMapMath.mapU(cam, TravelMapMath.MAP_L), u1 = TravelMapMath.mapU(cam, TravelMapMath.MAP_R);
+        double v0 = TravelMapMath.mapV(cam, TravelMapMath.MAP_T), v1 = TravelMapMath.mapV(cam, TravelMapMath.MAP_B);
+        double x0 = a.worldX(u0, v0), z0 = a.worldZ(u0, v0), x1 = a.worldX(u1, v1), z1 = a.worldZ(u1, v1);
+        int ox = (int) Math.floor((x0 + x1) / 2), oz = (int) Math.floor((z0 + z1) / 2);
+        var m = c.getMatrices(); m.push();
+        try {
+            m.translate((float) TravelMapMath.screenX(cam, a.u(ox, oz)), (float) TravelMapMath.screenY(cam, a.v(ox, oz)), 0);
+            m.scale((float) cam.zoom, (float) cam.zoom, 1);
+            TravelTerrain.draw(c, t.cacheKey(), Math.min(x0, x1), Math.min(z0, z1), Math.max(x0, x1), Math.max(z0, z1), ox, oz);
+        } finally { m.pop(); }
     }
 
     private void drawImage(DrawContext c, Tab t, TravelMapMath.Camera cam) {

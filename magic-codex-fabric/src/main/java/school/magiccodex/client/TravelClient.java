@@ -40,7 +40,7 @@ public final class TravelClient {
     }
 
     /** Portal marks of the world the player is in (server sends them; drawn by TravelWorldMarks). */
-    static volatile Markers markers = new Markers("", List.of());
+    static volatile Markers markers = new Markers("", "", List.of());
 
     static void initialize() {
         PayloadTypeRegistry.playC2S().register(Request.ID, Request.CODEC);
@@ -50,9 +50,10 @@ public final class TravelClient {
             try { frame = TravelProtocol.decode(payload.bytes()); } catch (IllegalArgumentException ignored) { return; }
             context.client().execute(() -> accept(frame));
         });
-        ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> markers = new Markers("", List.of()));
-        ClientPlayConnectionEvents.JOIN.register((h, s, c) -> markers = new Markers("", List.of()));
+        ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> { markers = new Markers("", "", List.of()); TravelTerrain.key(""); });
+        ClientPlayConnectionEvents.JOIN.register((h, s, c) -> { markers = new Markers("", "", List.of()); TravelTerrain.key(""); });
         TravelWorldMarks.initialize();
+        TravelTerrain.initialize();
     }
 
     private static void accept(Frame frame) {
@@ -64,7 +65,7 @@ public final class TravelClient {
                 else if (s.kind() == TravelProtocol.KIND_OPEN) { MagicCodexClient.dismiss(); var screen = new TravelScreen(); client.setScreen(screen); screen.onState(s); }
             }
             case Result r -> { if (client.currentScreen instanceof TravelScreen screen) screen.onResult(r); }
-            case Markers m -> { TravelWorldMarks.changed(markers, m); markers = m; }
+            case Markers m -> { TravelWorldMarks.changed(markers, m); markers = m; TravelTerrain.key(m.cache()); }
         }
     }
 
@@ -73,6 +74,8 @@ public final class TravelClient {
         ClientPlayNetworking.send(new Request(TravelProtocol.request(r)));
         return true;
     }
+    /** The map key (UI 단축키, default J): asks the server to open the window (same as /지도). */
+    static void open() { if (!send(TravelProtocol.Request.of(TravelProtocol.OPEN))) MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(net.minecraft.text.Text.literal("지도를 열 수 없어요 (서버에 연결되어 있지 않아요)")); }
     static void query() { send(TravelProtocol.Request.of(TravelProtocol.QUERY)); }
     static void close() { send(TravelProtocol.Request.of(TravelProtocol.CLOSE)); }
     /** Returns the operation id (0 = not sent). */

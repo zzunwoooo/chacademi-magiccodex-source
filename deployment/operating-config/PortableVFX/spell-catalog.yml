@@ -4789,8 +4789,8 @@ spells:
     name: 공간 도약
     permission: magic.learned.spatial_leap
     icon: magiccodex:textures/spells/intermediate/spatial_leap.png
-    mana-cost: 100
-    cooldown-seconds: 60
+    mana-cost: 0
+    cooldown-seconds: 0
     reviewed: false
     enabled: false
     aliases: []

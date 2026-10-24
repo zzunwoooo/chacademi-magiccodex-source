@@ -12,7 +12,7 @@ class TravelModelTest {
 
     static Map<String, Object> yml(String self) {
         return m("server-id", self,
-                "servers", m("school", m("proxy", "school", "label", "학교"), "wild", m("proxy", "wild", "label", "야생1"), "wild2", m("proxy", "wild2", "label", "야생2", "enabled", false)),
+                "servers", m("school", m("proxy", "school", "label", "학교"), "wild", m("proxy", "wild", "label", "야생1"), "wild2", m("proxy", "wild2", "label", "야생2", "enabled", false, "closed-text", "준비 중입니다")),
                 "tabs", m("school", m("label", "학교", "server", "school", "world", "world", "map", "image",
                                 "image", m("texture", "magiccodex:textures/gui/travel/maps/school.png", "size", List.of(1024, 512),
                                         "top-left", List.of(-512, -256), "top-right", List.of(512, -256), "bottom-left", List.of(-512, 256))),
@@ -20,14 +20,16 @@ class TravelModelTest {
                         "wild2", m("label", "야생2", "server", "wild2", "world", "world", "map", "terrain")),
                 "points", m("harbor", m("name", "항구 마을", "server", "school", "world", "world", "x", 10, "y", 64, "z", 20, "radius", 4),
                         "camp", m("name", "야생 야영지", "server", "wild", "world", "world", "x", 10, "y", 64, "z", 20),
-                        "camp2", m("name", "두 번째 야생 야영지", "server", "wild2", "world", "world", "x", 10, "y", 64, "z", 20)));
+                        "camp2", m("name", "두 번째 야생 야영지", "server", "wild2", "world", "world", "x", 10, "y", 64, "z", 20),
+                        "wild_spawn", m("name", "야생 스폰", "server", "wild", "world", "world", "spawn", true, "from", List.of("school"))),
+                "rules", m("personal-travel-mana", 100, "personal-travel-cooldown-seconds", 60));
     }
 
     @Test void parsesTabsInOrderAndPoints() {
         var c = TravelModel.parse(yml("school"));
         assertEquals(List.of("school", "wild1", "wild2"), c.tabs().stream().map(TravelModel.TabDef::id).toList());
         assertEquals(TravelProtocol.MAP_IMAGE, c.tabs().getFirst().map());
-        assertEquals(3, c.points().size());
+        assertEquals(4, c.points().size());
         assertEquals(3, c.points().get("camp").radius());   // default radius
         assertEquals("wild1", c.tab("wild", "world").id());
         // the same coordinates on two wilds are two different places
@@ -89,6 +91,38 @@ class TravelModelTest {
         assertEquals(TravelProtocol.UNAVAILABLE, v.state()); assertTrue(v.reason().contains("old_server"));   // shown, never deleted
         var noWorld = new TravelModel.Personal("school", "world_nether", "", 0, 64, 0, 0, 0, 1, "s");
         assertEquals(TravelProtocol.UNAVAILABLE, TravelModel.personal(c, noWorld, Map.of(), local, now).state());
+    }
+
+    @Test void wildSpawnOnlyFromSchoolAlwaysOpenNoPortal() {
+        var school = TravelModel.parse(yml("school")); var wild = TravelModel.parse(yml("wild"));
+        var sp = school.points().get("wild_spawn");
+        assertTrue(sp.spawn()); assertEquals(List.of("school"), sp.from());
+        long now = 10_000;
+        var status = Map.of("wild", new TravelModel.ServerStatus("wild", now, 1, 100, Map.of("world", "u"), "", Map.of("world", new double[]{5, 70, -3})));
+        // from school: open without any discovery
+        assertEquals(TravelModel.Verdict.OK, TravelModel.publicPoint(school, sp, false, status, Map.of("world", "s"), now));
+        // from the wild itself: refused
+        var v = TravelModel.publicPoint(wild, wild.points().get("wild_spawn"), false, Map.of(), Map.of("world", "u"), now);
+        assertEquals(TravelProtocol.UNAVAILABLE, v.state()); assertTrue(v.reason().contains("학교에서만"));
+        // no portal / no unlock check on the wild server
+        assertTrue(wild.localPoints("world").stream().noneMatch(TravelModel.PointDef::spawn));
+        // no travel cooldown is decided by the bridge (spawn flag); personal-travel numbers parsed
+        assertEquals(100, school.rules().personalMana()); assertEquals(60, school.rules().personalCooldownSeconds());
+    }
+
+    @Test void preparingServerText() {
+        var c = TravelModel.parse(yml("school"));
+        var v = TravelModel.destination(c, "wild2", "world", "", Map.of(), Map.of(), 0);
+        assertEquals("야생2 · 준비 중입니다", v.reason());
+    }
+
+    @Test void heartbeatWorldsRoundTrip() {
+        var uids = new java.util.LinkedHashMap<String, String>(); uids.put("world", "u1"); uids.put("world_nether", "u2");
+        var spawns = Map.of("world", new double[]{1.5, 64, -2.25});
+        String packed = TravelModel.packWorlds(uids, spawns);
+        var u = new HashMap<String, String>(); var s = new HashMap<String, double[]>();
+        TravelModel.unpackWorlds(packed, u, s);
+        assertEquals(uids, u); assertEquals(1, s.size()); assertEquals(-2.25, s.get("world")[2], 0.06);
     }
 
     @Test void insideAndCooldown() {

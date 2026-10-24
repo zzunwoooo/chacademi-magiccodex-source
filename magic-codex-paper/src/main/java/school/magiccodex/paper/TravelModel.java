@@ -15,13 +15,28 @@ import school.magiccodex.protocol.TravelProtocol;
 final class TravelModel {
     private TravelModel() {}
 
-    record ServerDef(String id, String proxy, String label, boolean enabled) {}
+    /** closedText: shown instead of the generic reason while enabled = false (e.g. 야생2 "준비 중입니다"). */
+    record ServerDef(String id, String proxy, String label, boolean enabled, String closedText) {
+        String closedReason() { return closedText.isBlank() ? label + " 서버는 지금 이동할 수 없어요" : label + " · " + closedText; }
+    }
     /** One map tab. map: none / image / terrain. Image corners: world x,z of the image's top-left, top-right, bottom-left. */
     record TabDef(String id, String label, String server, String world, int map, String texture, int imageW, int imageH,
                   double[] corners, double[] bounds) {}
+    /**
+     * spawn = the destination is that world's spawn (Multiverse setspawn), read when the player arrives; always open (no
+     * discovery, no portal in the world, not counted for 공간 도약) and no travel cooldown. from = servers a player may
+     * leave from to use it (empty = any).
+     */
     record PointDef(String id, String name, String server, String world, double x, double y, double z, float yaw, float pitch,
-                    double radius, boolean enabled) {}
-    record Rules(boolean blockInCombat, int cooldownSeconds) {}
+                    double radius, boolean enabled, boolean spawn, List<String> from) {
+        PointDef(String id, String name, String server, String world, double x, double y, double z, float yaw, float pitch, double radius, boolean enabled) {
+            this(id, name, server, world, x, y, z, yaw, pitch, radius, enabled, false, List.of());
+        }
+    }
+    /** personalMana / personalCooldownSeconds: moving to the personal point (owner 2026-10-24: 지정은 무료, 이동만 마나·쿨). */
+    record Rules(boolean blockInCombat, int cooldownSeconds, double personalMana, int personalCooldownSeconds) {
+        Rules(boolean blockInCombat, int cooldownSeconds) { this(blockInCombat, cooldownSeconds, 100, 60); }
+    }
     record Config(String self, Map<String, ServerDef> servers, List<TabDef> tabs, Map<String, PointDef> points, Rules rules,
                   boolean revealLockedNames, boolean allowLocalDb, String hash) {
         ServerDef server(String id) { return servers.get(id); }
@@ -31,7 +46,7 @@ final class TravelModel {
         }
         List<PointDef> localPoints(String world) {
             var out = new ArrayList<PointDef>();
-            for (PointDef p : points.values()) if (p.enabled() && p.server().equals(self) && p.world().equals(world)) out.add(p);
+            for (PointDef p : points.values()) if (p.enabled() && !p.spawn() && p.server().equals(self) && p.world().equals(world)) out.add(p);
             return out;
         }
     }
@@ -39,8 +54,28 @@ final class TravelModel {
     /** Saved personal point (one per player, every server). worldUid = the world folder's UID when it was set ("" unknown). */
     record Personal(String server, String world, String worldUid, double x, double y, double z, float yaw, float pitch, long at, String source) {}
     /** What a server last published (heartbeat). worlds: world name -> UID. */
-    record ServerStatus(String server, long heartbeat, int online, int max, Map<String, String> worlds, String configHash) {
+    /** spawns: world name -> spawn x, y, z (for drawing spawn points on the map). */
+    record ServerStatus(String server, long heartbeat, int online, int max, Map<String, String> worlds, String configHash, Map<String, double[]> spawns) {
+        ServerStatus(String server, long heartbeat, int online, int max, Map<String, String> worlds, String configHash) { this(server, heartbeat, online, max, worlds, configHash, Map.of()); }
         boolean alive(long now) { return now - heartbeat <= STALE_MS; }
+    }
+    /** "name=uid,x,y,z;..." (heartbeat column) <-> maps. */
+    static String packWorlds(Map<String, String> uids, Map<String, double[]> spawns) {
+        var sb = new StringBuilder();
+        uids.forEach((w, uid) -> {
+            double[] s = spawns.get(w);
+            String part = w + "=" + uid + (s == null ? "" : "," + Math.round(s[0] * 10) / 10.0 + "," + Math.round(s[1] * 10) / 10.0 + "," + Math.round(s[2] * 10) / 10.0) + ";";
+            if (sb.length() + part.length() <= 2000) sb.append(part);
+        });
+        return sb.toString();
+    }
+    static void unpackWorlds(String packed, Map<String, String> uids, Map<String, double[]> spawns) {
+        for (String part : packed.split(";")) {
+            int eq = part.indexOf('='); if (eq <= 0) continue;
+            String[] v = part.substring(eq + 1).split(",");
+            uids.put(part.substring(0, eq), v[0]);
+            if (v.length == 4) try { spawns.put(part.substring(0, eq), new double[]{Double.parseDouble(v[1]), Double.parseDouble(v[2]), Double.parseDouble(v[3])}); } catch (NumberFormatException ignored) {}
+        }
     }
     static final long STALE_MS = 45_000;
 
@@ -59,7 +94,7 @@ final class TravelModel {
                                Map<String, String> localWorlds, long now) {
         ServerDef def = c.server(server);
         if (def == null) return Verdict.no("지도에서 빠진 서버예요 (" + server + ")");
-        if (!def.enabled()) return Verdict.no(def.label() + " 서버는 지금 이동할 수 없어요");
+        if (!def.enabled()) return Verdict.no(def.closedReason());
         Map<String, String> worlds;
         if (server.equals(c.self())) worlds = localWorlds;
         else {
@@ -75,8 +110,13 @@ final class TravelModel {
     }
 
     static Verdict publicPoint(Config c, PointDef p, boolean unlocked, Map<String, ServerStatus> status, Map<String, String> localWorlds, long now) {
-        if (!unlocked) return new Verdict(TravelProtocol.LOCKED, "아직 발견하지 못한 지점이에요");
+        if (!unlocked && !p.spawn()) return new Verdict(TravelProtocol.LOCKED, "아직 발견하지 못한 지점이에요");
         if (!p.enabled()) return Verdict.no("지금은 닫힌 지점이에요");
+        if (!p.from().isEmpty() && !p.from().contains(c.self())) {
+            var names = new ArrayList<String>();
+            for (String f : p.from()) { var d = c.server(f); names.add(d == null ? f : d.label()); }
+            return Verdict.no(String.join("·", names) + "에서만 갈 수 있어요");
+        }
         return destination(c, p.server(), p.world(), "", status, localWorlds, now);
     }
 
@@ -114,7 +154,9 @@ final class TravelModel {
             var m = map(e.getValue(), "servers." + id);
             String proxy = str(m.get("proxy"), id);
             if (!proxy.matches("[A-Za-z0-9_\\-]{1,48}")) throw new IllegalArgumentException("servers." + id + ".proxy 는 Velocity 서버 이름");
-            servers.put(id, new ServerDef(id, proxy, label(m.get("label"), id, "servers." + id), bool(m.get("enabled"), true)));
+            String closed = str(m.get("closed-text"), "");
+            if (closed.length() > 60) throw new IllegalArgumentException("servers." + id + ".closed-text 는 60자까지");
+            servers.put(id, new ServerDef(id, proxy, label(m.get("label"), id, "servers." + id), bool(m.get("enabled"), true), closed));
         }
         if (!servers.containsKey(self)) throw new IllegalArgumentException("travel.yml servers 에 이 서버(" + self + ")가 없어요");
         var tabs = new ArrayList<TabDef>();
@@ -171,19 +213,32 @@ final class TravelModel {
             if (!TravelProtocol.validWorld(world)) throw new IllegalArgumentException(at + ".world 형식");
             double radius = m.get("radius") == null ? 3 : num(m.get("radius"), at + ".radius");
             if (!(radius >= 1 && radius <= 32)) throw new IllegalArgumentException(at + ".radius 는 1~32");
-            double x = num(m.get("x"), at + ".x"), y = num(m.get("y"), at + ".y"), z = num(m.get("z"), at + ".z");
+            boolean spawn = bool(m.get("spawn"), false);
+            // a spawn point's real place is the world spawn when the player arrives; x/y/z are optional (map position until the server publishes it)
+            double x = spawn && m.get("x") == null ? 0 : num(m.get("x"), at + ".x"), y = spawn && m.get("y") == null ? 64 : num(m.get("y"), at + ".y"),
+                    z = spawn && m.get("z") == null ? 0 : num(m.get("z"), at + ".z");
             float yaw = m.get("yaw") == null ? 0 : (float) num(m.get("yaw"), at + ".yaw"), pitch = m.get("pitch") == null ? 0 : (float) num(m.get("pitch"), at + ".pitch");
-            points.put(id, new PointDef(id, label(m.get("name"), null, at + ".name"), server, world, x, y, z, yaw, pitch, radius, bool(m.get("enabled"), true)));
+            var from = new ArrayList<String>();
+            if (m.get("from") != null) for (Object f : list(m.get("from"), at + ".from")) {
+                String sid = String.valueOf(f).strip();
+                if (!servers.containsKey(sid)) throw new IllegalArgumentException(at + ".from 의 서버가 servers 에 없어요: " + sid);
+                from.add(sid);
+            }
+            points.put(id, new PointDef(id, label(m.get("name"), null, at + ".name"), server, world, x, y, z, yaw, pitch, radius, bool(m.get("enabled"), true), spawn, List.copyOf(from)));
         }
         if (points.size() > TravelProtocol.MAX_POINTS - 1) throw new IllegalArgumentException("지점은 " + (TravelProtocol.MAX_POINTS - 1) + "개까지");
         var rules = map(root.getOrDefault("rules", Map.of()), "rules");
         int cooldown = rules.get("cooldown-seconds") == null ? 0 : (int) num(rules.get("cooldown-seconds"), "rules.cooldown-seconds");
         if (cooldown < 0 || cooldown > 86400) throw new IllegalArgumentException("rules.cooldown-seconds 는 0~86400");
+        double personalMana = rules.get("personal-travel-mana") == null ? 100 : num(rules.get("personal-travel-mana"), "rules.personal-travel-mana");
+        int personalCooldown = rules.get("personal-travel-cooldown-seconds") == null ? 60 : (int) num(rules.get("personal-travel-cooldown-seconds"), "rules.personal-travel-cooldown-seconds");
+        if (personalMana < 0 || personalMana > 100_000) throw new IllegalArgumentException("rules.personal-travel-mana 는 0~100000");
+        if (personalCooldown < 0 || personalCooldown > 86400) throw new IllegalArgumentException("rules.personal-travel-cooldown-seconds 는 0~86400");
         var display = map(root.getOrDefault("display", Map.of()), "display");
         var storage = map(root.getOrDefault("storage", Map.of()), "storage");
         var copy = new LinkedHashMap<>(root); copy.remove("server-id");
         return new Config(self, Collections.unmodifiableMap(servers), List.copyOf(tabs), Collections.unmodifiableMap(points),
-                new Rules(bool(rules.get("block-in-combat"), false), cooldown), bool(display.get("reveal-locked-names"), false),
+                new Rules(bool(rules.get("block-in-combat"), false), cooldown, personalMana, personalCooldown), bool(display.get("reveal-locked-names"), false),
                 bool(storage.get("allow-local-test-db"), false), hash(canonical(copy)));
     }
 

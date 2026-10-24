@@ -1015,10 +1015,10 @@ spells:
     permission: "magic.learned.spatial_leap"
     icon: "magiccodex:textures/spells/intermediate/spatial_leap.png"
     category: "light"
-    condition-text: "지도 이동의 서로 다른 공개 지점 3곳을 발견하기."
+    condition-text: "지도 이동의 공개 웨이포인트 1곳을 발견하기."
     requirements:
-      # 오너 결정 (2026-10-23): 서버가 판정·저장한 공개 지점 해금 수 (MagicCodexBridge 지도 이동, 공유 DB 기준, 개인 지점 제외)
-      "state.travel_waypoints": 3
+      # 오너 결정 (2026-10-24, 3곳 → 1곳): 서버가 판정·저장한 공개 웨이포인트 해금 수 (공유 DB 기준, 개인 지점·야생 스폰 제외)
+      "state.travel_waypoints": 1
     chance: 1.0
     prerequisites: []
   true_sight:

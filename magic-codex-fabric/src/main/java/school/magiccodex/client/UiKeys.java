@@ -15,7 +15,7 @@ import org.lwjgl.glfw.GLFW;
 
 /**
  * UI shortcut keys (owner 2026-10-17), edited in the 키 설정 screen next to the spell keys.
- * Defaults: P 파티창 · I 내 정보 · O 장비창 · K 마법도감 · L 친구창 · \ 키 설정 · 왼쪽 Ctrl 마우스 포인터 (HUD cursor) · Z 마법 모드 · X 아티팩트.
+ * Defaults: P 파티창 · I 내 정보 · O 장비창 · K 마법도감 · L 친구창 · \ 키 설정 · 왼쪽 Ctrl 마우스 포인터 (HUD cursor) · Z 마법 모드 · X 아티팩트 · J 지도.
  * Stored in config/magiccodex/ui-keys.properties. A key is used by one thing only (one UI action or one spell).
  * 마법도감 · 내 정보 · 장비창 · 마법 모드 · 아티팩트 keep their vanilla KeyBinding (their handlers read it); this class sets
  * those bindings' keys. 파티창 · 친구창 · 키 설정 · 마우스 포인터 are handled here / in PlayerHudClient by key code.
@@ -32,7 +32,9 @@ public final class UiKeys {
         KEY_SETTINGS("키 설정", "키 설정", GLFW.GLFW_KEY_BACKSLASH),
         CURSOR("마우스 포인터", "포인터", GLFW.GLFW_KEY_LEFT_CONTROL),
         MAGIC_MODE("마법 모드", "마법 모드", GLFW.GLFW_KEY_Z),
-        ARTIFACT("아티팩트 사용", "아티팩트", GLFW.GLFW_KEY_X);
+        ARTIFACT("아티팩트 사용", "아티팩트", GLFW.GLFW_KEY_X),
+        /** 지도 이동 창 (owner 2026-10-24: 기본 J). */
+        MAP("지도", "지도", GLFW.GLFW_KEY_J);
         public final String label, shortLabel; public final int defaultCode;
         Action(String label, String shortLabel, int defaultCode) { this.label = label; this.shortLabel = shortLabel; this.defaultCode = defaultCode; }
     }
@@ -123,7 +125,7 @@ public final class UiKeys {
     /** CodexKeyboardMixin: 파티창 · 친구창 · 키 설정 (the others have their own handlers). */
     public static boolean handleKey(MinecraftClient c, int key, int scan, int action) {
         Action a = current.actionOf(key);
-        boolean mine = a == Action.PARTY || a == Action.FRIENDS || a == Action.KEY_SETTINGS;
+        boolean mine = a == Action.PARTY || a == Action.FRIENDS || a == Action.KEY_SETTINGS || a == Action.MAP;
         boolean ready = c.world != null && c.player != null && c.currentScreen == null && c.getOverlay() == null && c.isWindowFocused();
         var result = SHORTCUT.handle(key, action, mine, ready);
         if (result == CodexShortcut.Result.OPEN) {
@@ -132,6 +134,7 @@ public final class UiKeys {
                 case PARTY -> c.setScreen(new PartyScreen());
                 case FRIENDS -> SocialClient.open();
                 case KEY_SETTINGS -> c.setScreen(new KeySettingsScreen(null));
+                case MAP -> TravelClient.open();
                 default -> { }
             }
         }

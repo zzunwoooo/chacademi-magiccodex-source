@@ -940,12 +940,12 @@ spells:
     cooldown-seconds: 5
   spatial_leap:
     name: 공간 도약
-    # 2026-10-23 오너 확정: 시전 = 현재 위치를 개인 지점으로 (TravelBridge). 지도에서 개인 지점 이동도 같은 마나·쿨타임.
+    # 2026-10-24 오너 확정: 시전 = 현재 위치를 개인 지점으로 (TravelBridge), 마나·쿨 없음. 개인 지점 이동의 마나·쿨은 travel.yml rules.personal-travel-*
     enabled: true
     command: 마법 spatial_leap
     permission: magic.learned.spatial_leap
-    mana-cost: 100
-    cooldown-seconds: 60
+    mana-cost: 0
+    cooldown-seconds: 0
   luminous_archive:
     name: 빛의 서고
     enabled: false

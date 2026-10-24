@@ -24,33 +24,37 @@ final class ManaBridge implements Listener,PluginMessageListener,AutoCloseable {
     java.util.function.Predicate<Player> fishTrapCast;
     Response castWindForFriend(Player p){var result=cast(p,0,spells.byId.get("wind_message"),()->true);send(p,result);return result;}
     /**
-     * 공간 도약 (spatial_leap, owner 2026-10-23): casting it saves the current location as the personal point
-     * (TravelBridge). Must answer synchronously: true = accepted (mana and cooldown are charged); if the save then fails
-     * TravelBridge refunds with {@link #refundSpatialLeap}.
+     * 공간 도약 (spatial_leap): casting it saves the current location as the personal point (TravelBridge). Owner
+     * 2026-10-24: 위치 지정은 마나·쿨 없음 — mana-spells.yml gives the spell mana-cost 0 / cooldown 0, so this cast charges
+     * nothing. Must answer synchronously: true = accepted.
      */
     java.util.function.Predicate<Player> spatialLeapCast;
     static final String SPATIAL_LEAP="spatial_leap";
+    /** Cooldown key of moving to the personal point (its own timer: it does not lock the spell itself). */
+    static final String PERSONAL_TRAVEL="spatial_leap_travel";
     /**
-     * 지도에서 개인 지점으로 이동 = 공간 도약 시전과 같은 마나·같은 재사용 대기 (owner 2026-10-23). Same transaction as a cast
-     * (permission, cooldown, mana), without the register dispatch. null = the spell is not enabled in mana-spells.yml.
-     * The returned status is ManaProtocol.OK when charged; message(status) explains the rest.
+     * 지도에서 개인 지점으로 이동 (owner 2026-10-24: 이동시에만 마나·쿨). The same mana transaction a cast uses (spell learned,
+     * cooldown, mana) with the travel.yml cost/cooldown under its own cooldown key; not a cast (no discovery cast
+     * counter, no artifact on-cast effects). Returns a ManaProtocol status (OK = charged); null = the spell is unknown.
      */
-    Integer chargeSpatialLeapTravel(Player p){
+    Integer chargePersonalTravel(Player p,double cost,int cooldownSeconds){
         var spell=spells.byId.get(SPATIAL_LEAP);if(spell==null)return null;
         UUID id=p.getUniqueId();
         if(!plugin.playerStateReady(p)||casting.contains(id))return ManaProtocol.FAILED;
         var a=mana.account(id);
-        // only the mana transaction: a map move is not a cast (no discovery cast counter, no artifact on-cast effects)
-        var r=ManaCasting.attempt(a,spell,!p.isDead()&&p.hasPermission(spell.permission()),System.currentTimeMillis(),()->true);
+        var travel=new ManaSpells.Spell(PERSONAL_TRAVEL,spell.command(),spell.permission(),cost,cooldownSeconds*1000);
+        var r=ManaCasting.attempt(a,travel,!p.isDead()&&p.hasPermission(spell.permission()),System.currentTimeMillis(),()->true);
         mana.publish(id);
         if(r.status()==ManaProtocol.OK){mana.save(p);plugin.markPlayerStateDirty(p);}
-        send(p,new Response(0,r.status(),r.cooldownMillis(),a.snapshot()));
+        var snap=mana.snapshot(id);if(snap.isPresent())send(p,new Response(0,ManaProtocol.SNAPSHOT,0,snap.get()));
         return r.status();
     }
-    /** Gives back one spatial_leap charge (the move or the save failed afterwards): mana back and the cooldown cleared. */
-    void refundSpatialLeap(Player p){
-        var spell=spells.byId.get(SPATIAL_LEAP);if(spell==null||!p.isOnline())return;
-        try{mana.add(p.getUniqueId(),spell.cost());mana.clearCooldown(p.getUniqueId(),SPATIAL_LEAP);}catch(IllegalArgumentException notLoaded){return;}
+    /** Seconds left before the personal point can be used again (for the message). */
+    long personalTravelCooldown(Player p){try{return mana.cooldownRemaining(p.getUniqueId(),PERSONAL_TRAVEL);}catch(IllegalArgumentException notLoaded){return 0;}}
+    /** Gives back one personal-point move (it failed afterwards): mana back and its cooldown cleared. */
+    void refundPersonalTravel(Player p,double cost){
+        if(!p.isOnline())return;
+        try{mana.add(p.getUniqueId(),cost);mana.clearCooldown(p.getUniqueId(),PERSONAL_TRAVEL);}catch(IllegalArgumentException notLoaded){return;}
         mana.save(p);plugin.markPlayerStateDirty(p);
         var a=mana.snapshot(p.getUniqueId());if(a.isPresent())send(p,new Response(0,ManaProtocol.SNAPSHOT,0,a.get()));
     }

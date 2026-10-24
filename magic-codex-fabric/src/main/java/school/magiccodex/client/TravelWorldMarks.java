@@ -1,154 +1,193 @@
 package school.magiccodex.client;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.RotationAxis;
+import net.minecraft.util.math.Vec3d;
 import org.joml.Matrix4f;
 import school.magiccodex.protocol.TravelProtocol;
 
 /**
- * 공개 이동 지점의 포탈 표시 (2026-10-23, owner: 포탈 형태 VFX, 멀리 있는 지점까지 계속 재생하지 않기).
+ * 웨이포인트 월드 표시 (2026-10-24, owner: WaypointGlobe VFX + 아직 등록 안 한 유저에게는 "웨이포인트" 글씨).
  *
- * Reuses the story mod's approved portal look (its ring / glow / band textures, copied to textures/gui/travel/world)
- * as a client-only mark: ground glow, two counter-rotating rings and light rising along the rim, plus the point name.
- * Only the points of the world the player is in (sent by the server) within {@value #MAX_DIST} blocks are drawn,
- * nothing at all beyond that and no server work per tick. Found points glow blue-gold; 미발견 points are a dim grey ring.
- * When a point gets unlocked it flashes once.
+ * <ul>
+ *   <li>The approved PortableVFX pack WaypointGlobe (portable-vfx-runtime/assets/WaypointGlobe): {@code idle} loops on
+ *       every public waypoint of the world the player is in, played locally by this client only while the player is
+ *       within {@value #START} blocks (stopped past {@value #STOP}) — nothing plays for far points and the server sends
+ *       nothing per tick. {@code activate} plays once on the spot when the server records the player's registration.</li>
+ *   <li>Waypoints this player has not registered yet show "웨이포인트" above the globe like the story's
+ *       "퀘스트 목표 지점" label (MagicCodex font, dark outline, soft glow), within {@value #LABEL_DIST} blocks.</li>
+ * </ul>
+ * PortableVFX is reached by reflection (its client API, same contract the broom trails use); without it only the label shows.
  */
 final class TravelWorldMarks {
     private TravelWorldMarks() {}
 
-    static final double MAX_DIST = 64, LABEL_DIST = 24;
-    private static final Identifier RING = tex("portal_ring"), RING_GLOW = tex("portal_ring_glow"), GROUND = tex("portal_glow"), BAND = tex("portal_band");
-    private static Identifier tex(String n) { return Identifier.of("magiccodex", "textures/gui/travel/world/" + n + ".png"); }
-    /** portal_ring.png: the ring radius is this fraction of half the image (same art as the story portal). */
-    private static final float RING_IN_IMAGE = .66f;
-    private static final int SEGMENTS = 20;
-    private static final Map<String, Long> flashAt = new HashMap<>();
+    static final double START = 48, STOP = 56, LABEL_DIST = 32;
+    static final String IDLE = "claude:waypointglobe/idle", ACTIVATE = "claude:waypointglobe/activate";
+    /** The pack's loop default is 12000 ticks; restart a little before it ends. */
+    static final long LOOP_MS = 9 * 60_000;
+    private static final Identifier HALO = Identifier.of("magiccodex", "textures/gui/travel/world/halo.png");
+    /** Label height above the waypoint floor: the globe centre is 1.85 m, the globe about 0.5 m across. */
+    private static final double LABEL_Y = 2.95;
+    private static final String LABEL = "웨이포인트";
 
-    /** AFTER_ENTITIES like the other world marks of this mod: the shared entity buffer is still drawn after this. */
-    static void initialize() { WorldRenderEvents.AFTER_ENTITIES.register(TravelWorldMarks::render); }
+    private record Playing(UUID handle, long since) {}
+    private static final Map<String, Playing> playing = new HashMap<>();
+    private static String world = "";
+    private static CodexTypography text;
 
-    /** A point that just became unlocked flashes once. */
-    static void changed(TravelProtocol.Markers before, TravelProtocol.Markers after) {
-        if (!before.world().equals(after.world())) { flashAt.clear(); return; }
-        var was = new HashMap<String, Boolean>();
-        before.markers().forEach(m -> was.put(m.id(), m.unlocked()));
-        long now = Util.getMeasuringTimeMs();
-        for (var m : after.markers()) if (m.unlocked() && Boolean.FALSE.equals(was.get(m.id()))) flashAt.put(m.id(), now);
+    static void initialize() {
+        ClientTickEvents.END_CLIENT_TICK.register(c -> tick());
+        ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> stopAll());
+        WorldRenderEvents.START.register(ctx -> { if (text != null) text.beginFrame(); });
+        WorldRenderEvents.AFTER_ENTITIES.register(TravelWorldMarks::render);
     }
 
-    private static void render(WorldRenderContext ctx) {
-        var mc = MinecraftClient.getInstance();
+    /** New marker list from the server: a point that just became registered plays {@code activate} once. */
+    static void changed(TravelProtocol.Markers before, TravelProtocol.Markers after) {
+        if (!before.world().equals(after.world())) { stopAll(); return; }
+        var was = new HashMap<String, Boolean>();
+        before.markers().forEach(m -> was.put(m.id(), m.unlocked()));
+        var c = MinecraftClient.getInstance();
+        for (var m : after.markers())
+            if (m.unlocked() && Boolean.FALSE.equals(was.get(m.id())) && c.player != null && c.player.squaredDistanceTo(m.x(), m.y(), m.z()) < STOP * STOP)
+                Vfx.play(ACTIVATE, new Vec3d(m.x(), m.y(), m.z()), 0);
+        var ids = new HashSet<String>(); after.markers().forEach(m -> ids.add(m.id()));
+        for (var it = playing.entrySet().iterator(); it.hasNext(); ) { var e = it.next(); if (!ids.contains(e.getKey())) { Vfx.finish(e.getValue().handle()); it.remove(); } }
+    }
+
+    private static void stopAll() {
+        playing.values().forEach(p -> Vfx.stop(p.handle()));
+        playing.clear();
+    }
+
+    /** Starts / stops the idle loops by distance (client tick, a handful of points at most). */
+    private static void tick() {
+        var c = MinecraftClient.getInstance();
         var data = TravelClient.markers;
-        if (mc.world == null || mc.player == null || data.markers().isEmpty() || mc.options.hudHidden) return;
-        // the server names its own world (same name the plugin uses); the client only knows the dimension, so the server
-        // re-sends on every world change and an empty / stale list just draws nothing
-        var consumers = ctx.consumers(); var matrices = ctx.matrixStack();
-        if (consumers == null || matrices == null) return;
-        var cam = ctx.camera().getPos();
+        if (c.world == null || c.player == null) { if (!playing.isEmpty()) stopAll(); return; }
+        if (!data.world().equals(world)) { stopAll(); world = data.world(); }
+        if (!Vfx.ready()) return;
         long now = Util.getMeasuringTimeMs();
-        float t = (now % 3_600_000L) / 1000f;
+        var active = Vfx.active();
         for (var m : data.markers()) {
-            double dx = m.x() - cam.x, dy = m.y() - cam.y, dz = m.z() - cam.z;
-            double d2 = dx * dx + dy * dy + dz * dz;
-            if (d2 > MAX_DIST * MAX_DIST) continue;
-            float fade = (float) Math.clamp((MAX_DIST - Math.sqrt(d2)) / 12, 0, 1);
-            Long flash = flashAt.get(m.id());
-            float burst = 0;
-            if (flash != null) { float k = (now - flash) / 1200f; if (k >= 1) flashAt.remove(m.id()); else burst = (1 - k) * (1 - k); }
+            double d2 = c.player.squaredDistanceTo(m.x(), m.y(), m.z());
+            Playing p = playing.get(m.id());
+            if (d2 > STOP * STOP) { if (p != null) { Vfx.finish(p.handle()); playing.remove(m.id()); } continue; }
+            if (d2 > START * START && p == null) continue;
+            if (p != null && active.contains(p.handle()) && now - p.since() < LOOP_MS) continue;
+            if (p != null) Vfx.stop(p.handle());
+            UUID handle = Vfx.play(IDLE, new Vec3d(m.x(), m.y(), m.z()), 0);
+            if (handle != null) playing.put(m.id(), new Playing(handle, now)); else playing.remove(m.id());
+        }
+    }
+
+    // ------------------------------------------------------------------ "웨이포인트" label (not registered yet)
+
+    private static void render(WorldRenderContext ctx) {
+        var c = MinecraftClient.getInstance();
+        var data = TravelClient.markers;
+        if (c.world == null || c.player == null || c.options.hudHidden || data.markers().isEmpty()) return;
+        var matrices = ctx.matrixStack(); var out = ctx.consumers();
+        if (matrices == null || out == null) return;
+        if (text == null) { text = new CodexTypography(c); text.beginFrame(); }
+        var cam = ctx.camera().getPos();
+        float t = (Util.getMeasuringTimeMs() % 3_600_000L) / 1000f;
+        for (var m : data.markers()) {
+            if (m.unlocked()) continue;
+            double dx = m.x() - cam.x, dy = m.y() + LABEL_Y + Math.sin(t * 1.6f) * .05 - cam.y, dz = m.z() - cam.z;
+            double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            if (dist > LABEL_DIST) continue;
+            float alpha = (float) Math.clamp((LABEL_DIST - dist) / 8, 0, 1);
+            float hum = .5f + .5f * (float) Math.sin(t * 1.25f);
             matrices.push();
             try {
                 matrices.translate(dx, dy, dz);
-                portal(matrices, consumers, m.radius(), t, fade, m.unlocked(), burst);
-                if (d2 < LABEL_DIST * LABEL_DIST) label(mc, matrices, consumers, ctx, m, t, fade * (float) Math.clamp((LABEL_DIST - Math.sqrt(d2)) / 6, 0, 1));
+                matrices.multiply(ctx.camera().getRotation());
+                // soft glow behind (bloom), then dark outline copies, then the warm ivory fill (차카데미 글자 규칙)
+                halo(out.getBuffer(RenderLayer.getEntityTranslucentEmissive(HALO)), matrices.peek().getPositionMatrix(), .85f, .34f, argb(alpha * (.22f + .12f * hum), 0x80D1FF));
+                int outline = argb(alpha * .85f, 0x0A0A0F);
+                float o = 9;
+                float[][] offs = {{-o, 0}, {o, 0}, {0, -o}, {0, o}, {-o * .7f, -o * .7f}, {o * .7f, -o * .7f}, {-o * .7f, o * .7f}, {o * .7f, o * .7f}};
+                for (float[] off : offs) text.drawWorld(matrices, out, LABEL, off[0], off[1], 250, 1600, outline);
+                text.drawWorld(matrices, out, LABEL, 0, 0, 250, 1600, argb(alpha, 0xFFF2CC));
             } finally { matrices.pop(); }
         }
     }
-
-    private static void portal(MatrixStack ms, VertexConsumerProvider consumers, float radius, float t, float alpha, boolean found, float burst) {
-        float r = Math.max(.8f, Math.min(radius, 6)) * (1 + .3f * burst), half = r / RING_IN_IMAGE;
-        float breath = .86f + .14f * (float) Math.sin(t * 1.7f);
-        int glowRgb = found ? 0x8CD9FF : 0x8A93A0, ringRgb = found ? 0xFFFFFF : 0xA9B2BE;
-        float strength = found ? 1 : .45f;
-        ms.push();
-        ms.translate(0, .04, 0);
-        flat(ms, consumers, GROUND, half * 1.02f, argb(alpha * (.45f * strength + .5f * burst), glowRgb));
-        ms.push();
-        ms.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(t * 12f));
-        flat(ms, consumers, RING_GLOW, half * 1.03f, argb(alpha * (.4f * strength + .5f * burst), glowRgb));
-        ms.translate(0, .005, 0);
-        flat(ms, consumers, RING, half, argb(alpha * breath * (found ? 1 : .7f), ringRgb));
-        ms.pop();
-        ms.push();
-        ms.translate(0, .01, 0);
-        ms.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-t * 20f + 45f));
-        flat(ms, consumers, RING, half * .78f, argb(alpha * .4f * strength, ringRgb));
-        ms.pop();
-        if (found || burst > 0) for (int k = 0; k < 2; k++) {
-            float phase = ((t * .32f) + k * .5f) % 1f;
-            float a = (float) Math.sin(phase * Math.PI) * alpha * (.75f + burst);
-            ms.push();
-            ms.translate(0, phase * .45f, 0);
-            band(ms, consumers, r * .93f, 1.6f, a, glowRgb);
-            ms.pop();
-        }
-        ms.pop();
-    }
-
-    private static void flat(MatrixStack ms, VertexConsumerProvider consumers, Identifier id, float half, int color) {
+    private static void halo(VertexConsumer vc, Matrix4f m, float w, float h, int color) {
         if ((color >>> 24) == 0) return;
-        VertexConsumer vc = consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(id));
-        Matrix4f m = ms.peek().getPositionMatrix();
-        // both faces (seen from above and, on a slope, from below)
-        emit(vc, m, -half, 0, -half, 0, 0, color, 1); emit(vc, m, -half, 0, half, 0, 1, color, 1); emit(vc, m, half, 0, half, 1, 1, color, 1); emit(vc, m, half, 0, -half, 1, 0, color, 1);
-        emit(vc, m, half, 0, -half, 1, 0, color, -1); emit(vc, m, half, 0, half, 1, 1, color, -1); emit(vc, m, -half, 0, half, 0, 1, color, -1); emit(vc, m, -half, 0, -half, 0, 0, color, -1);
+        float x = w / 2, y = h / 2;
+        vc.vertex(m, -x, -y, -.01f).color(color).texture(0, 1).overlay(OverlayTexture.DEFAULT_UV).light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(0, 0, 1);
+        vc.vertex(m, x, -y, -.01f).color(color).texture(1, 1).overlay(OverlayTexture.DEFAULT_UV).light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(0, 0, 1);
+        vc.vertex(m, x, y, -.01f).color(color).texture(1, 0).overlay(OverlayTexture.DEFAULT_UV).light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(0, 0, 1);
+        vc.vertex(m, -x, y, -.01f).color(color).texture(0, 0).overlay(OverlayTexture.DEFAULT_UV).light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(0, 0, 1);
     }
-    /** Light along the rim: strong at the bottom, gone at the top; the texture repeats twice around. */
-    private static void band(MatrixStack ms, VertexConsumerProvider consumers, float radius, float height, float alpha, int rgb) {
-        if (alpha <= .01f) return;
-        VertexConsumer vc = consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(BAND));
-        Matrix4f m = ms.peek().getPositionMatrix();
-        int bottom = argb(Math.min(1, alpha), rgb), top = argb(0, rgb);
-        for (int i = 0; i < SEGMENTS; i++) {
-            double a0 = i * Math.PI * 2 / SEGMENTS, a1 = (i + 1) * Math.PI * 2 / SEGMENTS;
-            float x0 = (float) Math.cos(a0) * radius, z0 = (float) Math.sin(a0) * radius, x1 = (float) Math.cos(a1) * radius, z1 = (float) Math.sin(a1) * radius;
-            float u0 = (float) i / SEGMENTS * 2, u1 = (float) (i + 1) / SEGMENTS * 2;
-            emit(vc, m, x0, 0, z0, u0, 1, bottom, 1); emit(vc, m, x1, 0, z1, u1, 1, bottom, 1); emit(vc, m, x1, height, z1, u1, 0, top, 1); emit(vc, m, x0, height, z0, u0, 0, top, 1);
-            emit(vc, m, x0, height, z0, u0, 0, top, 1); emit(vc, m, x1, height, z1, u1, 0, top, 1); emit(vc, m, x1, 0, z1, u1, 1, bottom, 1); emit(vc, m, x0, 0, z0, u0, 1, bottom, 1);
-        }
-    }
-    private static void emit(VertexConsumer vc, Matrix4f m, float x, float y, float z, float u, float v, int color, float ny) {
-        vc.vertex(m, x, y, z).color(color).texture(u, v).overlay(OverlayTexture.DEFAULT_UV).light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(0, ny, 0);
-    }
-
-    /** Point name above the portal, facing the camera (vanilla font in the world; MagicCodex font is for screens). */
-    private static void label(MinecraftClient mc, MatrixStack ms, VertexConsumerProvider consumers, WorldRenderContext ctx, TravelProtocol.Marker m, float t, float alpha) {
-        if (alpha <= .03f) return;
-        ms.push();
-        try {
-            ms.translate(0, 2.2 + Math.sin(t * 1.6f) * .05, 0);
-            ms.multiply(ctx.camera().getRotation());
-            ms.scale(.025f, -.025f, .025f);
-            TextRenderer font = mc.textRenderer;
-            String name = m.unlocked() ? m.name() : m.name() + " (미발견)";
-            float x = -font.getWidth(name) / 2f;
-            int color = argb(alpha, m.unlocked() ? 0xFFF2D8 : 0xC3CBD6);
-            font.draw(name, x, 0, color, false, ms.peek().getPositionMatrix(), consumers, TextRenderer.TextLayerType.NORMAL, argb(alpha * .45f, 0x061428), LightmapTextureManager.MAX_LIGHT_COORDINATE);
-        } finally { ms.pop(); }
-    }
-
     private static int argb(float alpha, int rgb) { return (Math.round(Math.clamp(alpha, 0f, 1f) * 255) << 24) | (rgb & 0xFFFFFF); }
+
+    // ------------------------------------------------------------------ PortableVFX client API (reflection, optional)
+
+    /**
+     * Contract (PortableVFX client dev.portablevfx.client.api.PortableVfxApi, same as chacademy-motion's broom trails):
+     * PortableVfxClient.api(); play(Identifier, Vec3d, float scale, int durationTicks) → Optional&lt;UUID&gt; (0 = pack
+     * default, loop systems 12000 ticks); finish(UUID) / stop(UUID) → boolean; activeInstances() → Set&lt;UUID&gt;.
+     * Client thread only. A broken contract turns the globe off (one log line), the label stays.
+     */
+    private static final class Vfx {
+        private enum State { UNRESOLVED, READY, UNAVAILABLE }
+        private static State state = State.UNRESOLVED;
+        private static Object api;
+        private static Method play, finish, stop, active;
+
+        static boolean ready() { if (state == State.UNRESOLVED) resolve(); return state == State.READY; }
+
+        private static void resolve() {
+            if (!FabricLoader.getInstance().isModLoaded("portablevfx")) { off("PortableVFX 모드 없음 → 웨이포인트 VFX 끔", null); return; }
+            try {
+                Class<?> client = Class.forName("dev.portablevfx.client.PortableVfxClient");
+                Object a;
+                try { a = client.getMethod("api").invoke(null); } catch (InvocationTargetException notYet) { return; }   // not initialised yet: next tick
+                Method p = null, f = null, s = null;
+                for (Method m : a.getClass().getMethods()) {
+                    Class<?>[] t = m.getParameterTypes();
+                    if (m.getName().equals("play") && t.length == 4 && t[2] == float.class && t[3] == int.class && Optional.class.isAssignableFrom(m.getReturnType())) p = m;
+                    if (m.getName().equals("finish") && t.length == 1 && t[0] == UUID.class) f = m;
+                    if (m.getName().equals("stop") && t.length == 1 && t[0] == UUID.class) s = m;
+                }
+                Method ac = a.getClass().getMethod("activeInstances");
+                if (p == null || f == null || s == null) { off("PortableVFX API 형식이 다름 → 웨이포인트 VFX 끔", null); return; }
+                api = a; play = p; finish = f; stop = s; active = ac; state = State.READY;
+            } catch (ReflectiveOperationException | LinkageError | RuntimeException e) { off("PortableVFX 연결 실패 → 웨이포인트 VFX 끔", e); }
+        }
+        private static void off(String why, Throwable e) {
+            state = State.UNAVAILABLE; api = null;
+            if (e == null) org.slf4j.LoggerFactory.getLogger("magiccodex").info(why);
+            else org.slf4j.LoggerFactory.getLogger("magiccodex").warn("{} ({})", why, e.toString());
+        }
+        private static Object call(Method m, Object... args) {
+            try { return m.invoke(api, args); }
+            catch (ReflectiveOperationException | RuntimeException e) { off("PortableVFX 호출 오류 → 웨이포인트 VFX 끔", e instanceof InvocationTargetException i && i.getCause() != null ? i.getCause() : e); return null; }
+        }
+        static UUID play(String effect, Vec3d at, int ticks) {
+            if (!ready()) return null;
+            Object r = call(play, Identifier.of(effect), at, 1f, ticks);
+            return r instanceof Optional<?> o && o.isPresent() && o.get() instanceof UUID id ? id : null;
+        }
+        static void finish(UUID id) { if (id != null && ready()) call(finish, id); }
+        static void stop(UUID id) { if (id != null && ready()) call(stop, id); }
+        @SuppressWarnings("unchecked")
+        static Set<UUID> active() { if (!ready()) return Set.of(); Object r = call(active); return r instanceof Set<?> s ? (Set<UUID>) s : Set.of(); }
+    }
 }

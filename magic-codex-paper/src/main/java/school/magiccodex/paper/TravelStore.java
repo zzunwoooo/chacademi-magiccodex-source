@@ -319,10 +319,8 @@ final class TravelStore implements AutoCloseable {
 
     // ------------------------------------------------------------------ server heartbeat
 
-    void heartbeat(String server, int online, int max, Map<String, String> worlds, String configHash) {
-        var sb = new StringBuilder();
-        worlds.forEach((w, uid) -> { if (sb.length() < 1900) sb.append(w).append('=').append(uid).append(';'); });
-        String packed = sb.toString();
+    void heartbeat(String server, int online, int max, Map<String, String> worlds, Map<String, double[]> spawns, String configHash) {
+        String packed = TravelModel.packWorlds(worlds, spawns);
         submit("서버 상태 쓰기", c -> {
             String sql = settings.mariaDb()
                     ? "INSERT INTO codex_travel_server(server,heartbeat,online,max_players,worlds,config_hash) VALUES(?,?,?,?,?,?) ON DUPLICATE KEY UPDATE heartbeat=VALUES(heartbeat),online=VALUES(online),max_players=VALUES(max_players),worlds=VALUES(worlds),config_hash=VALUES(config_hash)"
@@ -349,9 +347,9 @@ final class TravelStore implements AutoCloseable {
             var out = new HashMap<String, TravelModel.ServerStatus>();
             try (var q = c.prepareStatement("SELECT server,heartbeat,online,max_players,worlds,config_hash FROM codex_travel_server"); var r = q.executeQuery()) {
                 while (r.next()) {
-                    var worlds = new HashMap<String, String>();
-                    for (String part : r.getString(5).split(";")) { int eq = part.indexOf('='); if (eq > 0) worlds.put(part.substring(0, eq), part.substring(eq + 1)); }
-                    out.put(r.getString(1), new TravelModel.ServerStatus(r.getString(1), r.getLong(2), r.getInt(3), r.getInt(4), worlds, r.getString(6)));
+                    var worlds = new HashMap<String, String>(); var spawns = new HashMap<String, double[]>();
+                    TravelModel.unpackWorlds(r.getString(5), worlds, spawns);
+                    out.put(r.getString(1), new TravelModel.ServerStatus(r.getString(1), r.getLong(2), r.getInt(3), r.getInt(4), worlds, r.getString(6), spawns));
                 }
             }
             return out;

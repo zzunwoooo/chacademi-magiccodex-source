@@ -12,7 +12,7 @@ import school.magiccodex.protocol.TravelProtocol.*;
 class TravelProtocolTest {
     static Tab tab(String id, int map) {
         return new Tab(id, "학교", "school", "world", map, map == TravelProtocol.MAP_IMAGE ? "magiccodex:textures/gui/travel/maps/school.png" : "",
-                map == TravelProtocol.MAP_IMAGE ? 1024 : 0, map == TravelProtocol.MAP_IMAGE ? 512 : 0, -512, -256, 512, -256, -512, 256, "school/world/u", -1000, -1000, 1000, 1000, true);
+                map == TravelProtocol.MAP_IMAGE ? 1024 : 0, map == TravelProtocol.MAP_IMAGE ? 512 : 0, -512, -256, 512, -256, -512, 256, "school/world/u", -1000, -1000, 1000, 1000, true, "");
     }
 
     @Test void stateRoundTrip() {
@@ -33,7 +33,7 @@ class TravelProtocolTest {
         assertThrows(IllegalArgumentException.class, () -> TravelProtocol.Request.travel("harbor", 0));
         var res = new Result(9, TravelProtocol.STAGE_FAILED, "도착 서버가 닫혀 있어요");
         assertEquals(res, TravelProtocol.decode(TravelProtocol.encode(res)));
-        var mk = new Markers("world", List.of(new Marker("harbor", "항구", 1, 2, 3, 4, true)));
+        var mk = new Markers("world", "wild/world/uid", List.of(new Marker("harbor", "항구", 1, 2, 3, 4, true)));
         assertEquals(mk, TravelProtocol.decode(TravelProtocol.encode(mk)));
     }
 
@@ -46,6 +46,14 @@ class TravelProtocolTest {
         // a point on a tab the state does not have
         assertThrows(IllegalArgumentException.class, () -> new State(0, new Position("", 0, 0, 0), List.of(tab("school", 0)),
                 List.of(new Point("a", "A", "wild9", 0, 0, 0, 0, 0, "")), ""));
+    }
+
+    @Test void openActionAndClosedTab() {
+        var open = TravelProtocol.Request.of(TravelProtocol.OPEN);
+        assertEquals(open, TravelProtocol.request(TravelProtocol.request(open)));
+        var closed = new Tab("wild2", "야생2", "wild2", "world", TravelProtocol.MAP_TERRAIN, "", 0, 0, 0, 0, 0, 0, 0, 0, "", -1, -1, 1, 1, false, "야생2 · 준비 중입니다");
+        var s = new State(0, new Position("", 0, 0, 0), List.of(closed), List.of(), "웨이포인트 등록 · 항구 마을");
+        assertEquals(s, TravelProtocol.decode(TravelProtocol.encode(s)));
     }
 
     @Test void link() {

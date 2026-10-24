@@ -13,20 +13,20 @@ import java.util.*;
  * of that server+world (야생), or nothing but a coordinate grid when neither exists yet.
  *
  * C2S  int version, byte action, then
- *        QUERY / CLOSE    nothing
+ *        QUERY / CLOSE / OPEN   nothing (OPEN = the map key; the server decides whether to open)
  *        TRAVEL           UTF pointId, long operation
  * S2C  int version, byte frame, then
  *        STATE    byte kind (OPEN also opens the window), UTF currentTab, player (UTF tab, double x, double z, float yaw),
  *                 short tabs n x Tab, short points n x Point, UTF notice
  *        RESULT   long operation, byte stage (ACCEPTED / DONE / FAILED), UTF notice
- *        MARKERS  UTF world, short n x (UTF id, UTF name, double x, y, z, float radius, boolean unlocked)
+ *        MARKERS  UTF world, UTF cache (minimap cache key of this world, "" = no map tab), short n x (UTF id, UTF name, double x, y, z, float radius, boolean unlocked)
  *                 -- the public points of the world the player is in on this server, for the portal marks drawn in
  *                 the world (only near ones are drawn). Sent on join, world change, unlock and reload.
  */
 public final class TravelProtocol {
     public static final String REQUEST = "magiccodex:travel_request", RESPONSE = "magiccodex:travel_response";
     public static final int VERSION = 1, MAX_REQUEST_BYTES = 256, MAX_BYTES = 131072;
-    public static final int QUERY = 0, TRAVEL = 1, CLOSE = 2;
+    public static final int QUERY = 0, TRAVEL = 1, CLOSE = 2, OPEN = 3;
     public static final int KIND_OPEN = 0, KIND_STATE = 1;
     public static final int FRAME_STATE = 1, FRAME_RESULT = 2, FRAME_MARKERS = 3;
     public static final int MAP_NONE = 0, MAP_IMAGE = 1, MAP_TERRAIN = 2;
@@ -47,7 +47,7 @@ public final class TravelProtocol {
 
     public record Request(int action, String pointId, long operation) {
         public Request {
-            if (action < QUERY || action > CLOSE || pointId == null) throw new IllegalArgumentException("travel request");
+            if (action < QUERY || action > OPEN || pointId == null) throw new IllegalArgumentException("travel request");
             if (action == TRAVEL && (!validPointId(pointId) || operation == 0)) throw new IllegalArgumentException("travel request point");
         }
         public static Request of(int action) { return new Request(action, "", 0); }
@@ -62,12 +62,12 @@ public final class TravelProtocol {
      */
     public record Tab(String id, String label, String server, String world, int map, String texture, int imageW, int imageH,
                       double tlX, double tlZ, double trX, double trZ, double blX, double blZ,
-                      String cacheKey, double minX, double minZ, double maxX, double maxZ, boolean online) {
+                      String cacheKey, double minX, double minZ, double maxX, double maxZ, boolean online, String status) {
         public Tab {
             if (!validId(id) || label == null || label.isBlank() || label.length() > MAX_NAME || !validId(server) || !validWorld(world)
                     || map < MAP_NONE || map > MAP_TERRAIN || !text(texture, MAX_TEXTURE) || !text(cacheKey, MAX_TEXTURE)
                     || imageW < 0 || imageH < 0 || imageW > 16384 || imageH > 16384
-                    || !finite(tlX, tlZ, trX, trZ, blX, blZ, minX, minZ, maxX, maxZ) || minX > maxX || minZ > maxZ)
+                    || !finite(tlX, tlZ, trX, trZ, blX, blZ, minX, minZ, maxX, maxZ) || minX > maxX || minZ > maxZ || !text(status, MAX_TEXT))
                 throw new IllegalArgumentException("travel tab");
             if (map == MAP_IMAGE && (texture.isBlank() || imageW < 1 || imageH < 1)) throw new IllegalArgumentException("travel tab image");
         }
@@ -101,9 +101,9 @@ public final class TravelProtocol {
                 throw new IllegalArgumentException("travel marker");
         }
     }
-    public record Markers(String world, List<Marker> markers) implements Frame {
+    public record Markers(String world, String cache, List<Marker> markers) implements Frame {
         public Markers {
-            if (world == null || !(world.isEmpty() || validWorld(world)) || markers == null || markers.size() > MAX_POINTS) throw new IllegalArgumentException("travel markers");
+            if (world == null || !(world.isEmpty() || validWorld(world)) || !text(cache, MAX_TEXTURE) || markers == null || markers.size() > MAX_POINTS) throw new IllegalArgumentException("travel markers");
             markers = List.copyOf(markers);
         }
     }
@@ -155,7 +155,7 @@ public final class TravelProtocol {
                         for (double v : new double[]{t.tlX(), t.tlZ(), t.trX(), t.trZ(), t.blX(), t.blZ()}) d.writeDouble(v);
                         d.writeUTF(t.cacheKey());
                         for (double v : new double[]{t.minX(), t.minZ(), t.maxX(), t.maxZ()}) d.writeDouble(v);
-                        d.writeBoolean(t.online());
+                        d.writeBoolean(t.online()); d.writeUTF(t.status());
                     }
                     d.writeShort(s.points().size());
                     for (Point q : s.points()) {
@@ -166,7 +166,7 @@ public final class TravelProtocol {
                 }
                 case Result r -> { d.writeByte(FRAME_RESULT); d.writeLong(r.operation()); d.writeByte(r.stage()); d.writeUTF(r.notice()); }
                 case Markers m -> {
-                    d.writeByte(FRAME_MARKERS); d.writeUTF(m.world()); d.writeShort(m.markers().size());
+                    d.writeByte(FRAME_MARKERS); d.writeUTF(m.world()); d.writeUTF(m.cache()); d.writeShort(m.markers().size());
                     for (Marker k : m.markers()) { d.writeUTF(k.id()); d.writeUTF(k.name()); d.writeDouble(k.x()); d.writeDouble(k.y()); d.writeDouble(k.z()); d.writeFloat(k.radius()); d.writeBoolean(k.unlocked()); }
                 }
             }
@@ -187,7 +187,7 @@ public final class TravelProtocol {
                     double[] c = new double[6]; for (int k = 0; k < 6; k++) c[k] = d.readDouble();
                     String cache = d.readUTF();
                     double[] b = new double[4]; for (int k = 0; k < 4; k++) b[k] = d.readDouble();
-                    tabs.add(new Tab(id, label, server, world, map, texture, w, h, c[0], c[1], c[2], c[3], c[4], c[5], cache, b[0], b[1], b[2], b[3], d.readBoolean()));
+                    tabs.add(new Tab(id, label, server, world, map, texture, w, h, c[0], c[1], c[2], c[3], c[4], c[5], cache, b[0], b[1], b[2], b[3], d.readBoolean(), d.readUTF()));
                 }
                 int m = d.readUnsignedShort(); if (m > MAX_POINTS) throw new IOException("points");
                 var points = new ArrayList<Point>();
@@ -197,10 +197,10 @@ public final class TravelProtocol {
             }
             if (type == FRAME_RESULT) return new Result(d.readLong(), d.readUnsignedByte(), d.readUTF());
             if (type == FRAME_MARKERS) {
-                String world = d.readUTF(); int n = d.readUnsignedShort(); if (n > MAX_POINTS) throw new IOException("markers");
+                String world = d.readUTF(), cache = d.readUTF(); int n = d.readUnsignedShort(); if (n > MAX_POINTS) throw new IOException("markers");
                 var list = new ArrayList<Marker>();
                 for (int i = 0; i < n; i++) list.add(new Marker(d.readUTF(), d.readUTF(), d.readDouble(), d.readDouble(), d.readDouble(), d.readFloat(), d.readBoolean()));
-                return new Markers(world, list);
+                return new Markers(world, cache, list);
             }
             throw new IOException("frame " + type);
         });
