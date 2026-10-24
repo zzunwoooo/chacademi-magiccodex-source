@@ -75,7 +75,17 @@ public final class TravelClient {
         return true;
     }
     /** The map key (UI 단축키, default J): asks the server to open the window (same as /지도). */
-    static void open() { if (!send(TravelProtocol.Request.of(TravelProtocol.OPEN))) MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(net.minecraft.text.Text.literal("지도를 열 수 없어요 (서버에 연결되어 있지 않아요)")); }
+    /**
+     * Opens the window at once (it shows "불러오는 중…" for the moment the server needs) and asks the server for the
+     * map; the server still decides — if it refuses, the window says so and closes (owner 2026-10-24: J 가 1초 늦게 열림).
+     */
+    static void open() {
+        var c = MinecraftClient.getInstance();
+        if (!send(TravelProtocol.Request.of(TravelProtocol.OPEN))) { c.inGameHud.getChatHud().addMessage(net.minecraft.text.Text.literal("지도를 열 수 없어요 (서버에 연결되어 있지 않아요)")); return; }
+        if (c.currentScreen instanceof TravelScreen) return;
+        MagicCodexClient.dismiss();
+        c.setScreen(new TravelScreen());
+    }
     static void query() { send(TravelProtocol.Request.of(TravelProtocol.QUERY)); }
     static void close() { send(TravelProtocol.Request.of(TravelProtocol.CLOSE)); }
     /** Returns the operation id (0 = not sent). */

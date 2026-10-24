@@ -23,6 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.bukkit.scheduler.BukkitTask;
@@ -62,7 +63,7 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
     /** One move at a time per player on this server: op from the client + ticket; charged = spatial_leap mana/cooldown taken. */
     private record Move(long op, long ticket, boolean remote, BukkitTask timeout, boolean charged) {}
     private final Map<UUID, Move> moves = new HashMap<>();
-    private final Map<UUID, Long> lastTravel = new HashMap<>(), lastAsk = new HashMap<>();
+    private final Map<UUID, Long> lastTravel = new HashMap<>(), lastAsk = new HashMap<>(), lastOpen = new HashMap<>();
     private final Set<UUID> viewers = new HashSet<>();
     private Map<String, TravelModel.ServerStatus> status = Map.of();
     private ManaBridge mana;
@@ -159,8 +160,26 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
 
     // ------------------------------------------------------------------ players
 
+    /**
+     * The client registers our channel a moment AFTER join, so markers sent at join (portal marks + the minimap key) were
+     * dropped (modded() false). Send them again as soon as the channel is registered (same fix as ShinyBridge).
+     */
+    @EventHandler public void onChannel(PlayerRegisterChannelEvent e) {
+        if (!TravelProtocol.RESPONSE.equals(e.getChannel())) return;
+        Player p = e.getPlayer();
+        Bukkit.getScheduler().runTask(plugin, () -> { if (p.isOnline()) sendMarkers(p); });
+    }
+
+    /** Personal point per online player, so opening the map needs no DB round trip (filled on join, kept on every change). */
+    private final Map<UUID, Optional<TravelModel.Personal>> personalCache = new HashMap<>();
+    private void loadPersonal(Player p) {
+        UUID id = p.getUniqueId();
+        store.personal(id, v -> { if (v != null && Bukkit.getPlayer(id) == p) personalCache.put(id, v); });
+    }
+
     private void load(Player p) {
         UUID id = p.getUniqueId();
+        loadPersonal(p);
         store.unlocks(id, set -> {
             if (Bukkit.getPlayer(id) != p) return;
             if (set == null) { unlockRetryAt.put(id, System.currentTimeMillis() + 10_000); return; }
@@ -191,7 +210,7 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
     }
     @EventHandler public void onQuit(PlayerQuitEvent e) {
         UUID id = e.getPlayer().getUniqueId();
-        unlocked.remove(id); unlockRetryAt.remove(id); viewers.remove(id); lastAsk.remove(id);
+        unlocked.remove(id); unlockRetryAt.remove(id); viewers.remove(id); lastAsk.remove(id); lastOpen.remove(id); personalCache.remove(id);
         unlocking.removeIf(k -> k.startsWith(id + "|"));
         // a move in progress keeps its ticket: the destination finishes it (or it expires as FAILED)
         Move m = moves.remove(id);
@@ -260,22 +279,32 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
         if (!modded(p)) { CmdKit.notify(p, "warning", "travel-mod", "지도를 열 수 없어요", "차카데미 모드를 업데이트해 주세요", 3000); return false; }
         if (!store.usable()) { CmdKit.notify(p, "error", "travel-db", "지도 이동을 쓸 수 없어요", "관리자에게 알려 주세요 (공유 저장소 연결 없음)", 3000); return false; }
         viewers.add(p.getUniqueId());
+        sendMarkers(p);   // also repairs a minimap key lost at join
         send(p, TravelProtocol.KIND_OPEN, "");
         return true;
     }
 
-    /** Builds the state from fresh DB reads (personal point, unlocks) and the cached server status. */
+    /**
+     * Builds the state from the cached unlocks / personal point (filled on join, kept current on every change) and the
+     * cached server status, in this tick — no DB round trip when the window opens. Only a player whose cache is not
+     * loaded yet waits for one read.
+     */
     private void send(Player p, int kind, String notice) {
         UUID id = p.getUniqueId();
+        var cached = personalCache.get(id);
+        if (cached != null) { build(p, kind, notice, cached); return; }
         store.personal(id, personal -> {
             if (!p.isOnline()) return;
-            Set<String> set = unlocked.get(id);
-            String note = notice;
-            if (set == null) { set = Set.of(); if (note.isEmpty()) note = "발견한 지점을 불러오는 중이에요…"; load(p); }
-            if (personal == null && note.isEmpty()) note = "개인 지점을 불러오지 못했어요";
-            try { frame(p, state(p, kind, set, personal == null ? Optional.<TravelModel.Personal>empty() : personal, note)); }
-            catch (IllegalArgumentException bad) { plugin.getLogger().warning("지도 상태 만들기 실패: " + bad.getMessage()); }
+            if (personal != null) personalCache.put(id, personal);
+            build(p, kind, personal == null && notice.isEmpty() ? "개인 지점을 불러오지 못했어요" : notice, personal == null ? Optional.<TravelModel.Personal>empty() : personal);
         });
+    }
+    private void build(Player p, int kind, String notice, Optional<TravelModel.Personal> personal) {
+        Set<String> set = unlocked.get(p.getUniqueId());
+        String note = notice;
+        if (set == null) { set = Set.of(); if (note.isEmpty()) note = "발견한 지점을 불러오는 중이에요…"; load(p); }
+        try { frame(p, state(p, kind, set, personal, note)); }
+        catch (IllegalArgumentException bad) { plugin.getLogger().warning("지도 상태 만들기 실패: " + bad.getMessage()); }
     }
 
     TravelProtocol.State state(Player p, int kind, Set<String> set, Optional<TravelModel.Personal> personal, String notice) {
@@ -331,9 +360,9 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
         long now = System.currentTimeMillis();
         switch (r.action()) {
             case TravelProtocol.CLOSE -> viewers.remove(id);
-            case TravelProtocol.OPEN -> {   // the map key (J): same as /지도
-                if (now - lastAsk.getOrDefault(id, 0L) < 1000) return;
-                lastAsk.put(id, now);
+            case TravelProtocol.OPEN -> {   // the map key (J) / top menu 이동: same as /지도 (the client already shows the window)
+                if (now - lastOpen.getOrDefault(id, 0L) < 200) return;   // only a key-repeat guard: a quick reopen must still answer
+                lastOpen.put(id, now);
                 open(p);
             }
             case TravelProtocol.QUERY -> {
@@ -590,6 +619,7 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
         var personal = new TravelModel.Personal(config.self(), world, at.getWorld().getUID().toString(), at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch(),
                 System.currentTimeMillis(), src);
         store.savePersonal(p.getUniqueId(), personal, ok -> {
+            if (ok) personalCache.put(p.getUniqueId(), Optional.of(personal));
             if (!ok) { answer.accept("개인 지점을 저장하지 못했어요"); return; }
             plugin.getLogger().info("개인 지점 지정: " + p.getName() + " → " + config.self() + "/" + world + " " + Math.round(at.getX()) + "," + Math.round(at.getY()) + "," + Math.round(at.getZ()) + " (" + src + ")");
             if (p.isOnline() && viewers.contains(p.getUniqueId())) send(p, TravelProtocol.KIND_STATE, "개인 지점을 바꿨어요");
@@ -793,6 +823,6 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
     }
     private void userPersonalDelete(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         UUID target = ChacaApi.target(ctx); var sender = CmdKit.sender(ctx);
-        store.deletePersonal(target, ok -> { if (ok) CmdKit.ok(sender, CmdKit.name(target) + " 님 개인 지점을 지웠어요"); else CmdKit.userFail(sender, "개인 지점이 없어요 (또는 DB 오류)"); });
+        store.deletePersonal(target, ok -> { if (ok) personalCache.put(target, Optional.empty()); if (ok) CmdKit.ok(sender, CmdKit.name(target) + " 님 개인 지점을 지웠어요"); else CmdKit.userFail(sender, "개인 지점이 없어요 (또는 DB 오류)"); });
     }
 }

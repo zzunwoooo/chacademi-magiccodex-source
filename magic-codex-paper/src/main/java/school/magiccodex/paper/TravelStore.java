@@ -94,8 +94,13 @@ final class TravelStore implements AutoCloseable {
         } catch (Exception e) { log.severe("지도 이동 테이블 준비 실패: " + e.getMessage()); }
     }
 
+    private long lastUse;
+    /** One connection; a validity round trip only after 5 s idle (not before every query: /지도 must answer at once). */
     private Connection db() throws Exception {
-        if (connection == null || connection.isClosed() || !connection.isValid(2)) {
+        long now = System.currentTimeMillis();
+        boolean check = now - lastUse > 5000;
+        lastUse = now;
+        if (connection == null || connection.isClosed() || (check && !connection.isValid(2))) {
             if (connection != null) try { connection.close(); } catch (Exception ignored) {}
             connection = settings.connect(sqlite);
             settings.configure(connection);

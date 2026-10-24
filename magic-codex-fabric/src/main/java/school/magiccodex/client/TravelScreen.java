@@ -69,6 +69,7 @@ final class TravelScreen extends Screen {
     private long noticeAt, closeAt;
     private final UiResources.Entrance entrance = new UiResources.Entrance();
 
+    private final long openedAt = Util.getMeasuringTimeMs();
     TravelScreen() { super(Text.literal("지도")); }
 
     @Override public boolean shouldPause() { return false; }
@@ -105,6 +106,9 @@ final class TravelScreen extends Screen {
             }
         }
         if (selected != null && point(selected) == null) selected = null;
+        // minimap fallback: the key of the world the player stands in, in case its marker frame was missed
+        var here = tabs.get(s.player().tab());
+        if (here != null && here.map() == TravelProtocol.MAP_TERRAIN && TravelClient.markers.cache().isEmpty()) TravelTerrain.key(here.cacheKey());
         if (!s.notice().isBlank()) say(s.notice());
     }
     void onResult(Result r) {
@@ -122,6 +126,8 @@ final class TravelScreen extends Screen {
 
     @Override public void tick() {
         long now = Util.getMeasuringTimeMs();
+        // opened by the key before the server answered: give up if it never does (refused: no mod / no shared DB …)
+        if (!loaded && now - openedAt > 5000) { close(); return; }
         if (closeAt != 0 && now >= closeAt) { closeAt = 0; close(); return; }
         // a remote move waits for the server switch; a local one answers at once
         long limit = pendingStage == TravelProtocol.STAGE_ACCEPTED ? 55000 : 10000;
@@ -467,12 +473,12 @@ final class TravelScreen extends Screen {
         double x0 = a.worldX(u0, v0), x1 = a.worldX(u1, v0), z0 = a.worldZ(u0, v0), z1 = a.worldZ(u0, v1);
         for (double x = Math.floor(Math.min(x0, x1) / step) * step; x <= Math.max(x0, x1); x += step) {
             float sx = (float) TravelMapMath.screenX(cam, a.u(x, z0));
-            FishingArt.rect(c, sx, TravelMapMath.MAP_T, x == 0 ? 1.6f : 1, TravelMapMath.MAP_B - TravelMapMath.MAP_T, x == 0 ? 0x40C9D6E6 : 0x1FC9D6E6);
+            FishingArt.rect(c, sx, TravelMapMath.MAP_T, x == 0 ? 1.6f : 1, TravelMapMath.MAP_B - TravelMapMath.MAP_T, x == 0 ? 0x30C9D6E6 : 0x14C9D6E6);
             text(c, String.valueOf((long) x), sx + 5, TravelMapMath.MAP_T + 14, 13, 0x66A9BCD2, BODY, false);
         }
         for (double z = Math.floor(Math.min(z0, z1) / step) * step; z <= Math.max(z0, z1); z += step) {
             float sy = (float) TravelMapMath.screenY(cam, a.v(x0, z));
-            FishingArt.rect(c, TravelMapMath.MAP_L, sy, TravelMapMath.MAP_R - TravelMapMath.MAP_L, z == 0 ? 1.6f : 1, z == 0 ? 0x40C9D6E6 : 0x1FC9D6E6);
+            FishingArt.rect(c, TravelMapMath.MAP_L, sy, TravelMapMath.MAP_R - TravelMapMath.MAP_L, z == 0 ? 1.6f : 1, z == 0 ? 0x30C9D6E6 : 0x14C9D6E6);
             text(c, String.valueOf((long) z), TravelMapMath.MAP_L + 6, sy - 9, 13, 0x66A9BCD2, BODY, false);
         }
     }

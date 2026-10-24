@@ -35,7 +35,9 @@ import net.minecraft.world.chunk.WorldChunk;
 final class TravelTerrain {
     private TravelTerrain() {}
 
-    static final int SIZE = 512, CHUNKS = SIZE / 16, PER_TICK = 3, MAX_REGIONS = 32;
+    static final int SIZE = 512, CHUNKS = SIZE / 16, PER_TICK = 48, MAX_REGIONS = 32;
+    /** Sampling budget per client tick (a chunk takes well under 0.1 ms): the area around the player fills in a second or two. */
+    static final long BUDGET_NS = 2_500_000;
     private static final ExecutorService IO = Executors.newSingleThreadExecutor(r -> { var t = new Thread(r, "magiccodex-travel-map"); t.setDaemon(true); return t; });
     private static final Path ROOT = FabricLoader.getInstance().getConfigDir().resolve("magiccodex/travel-map");
 
@@ -44,7 +46,7 @@ final class TravelTerrain {
         int[] px;                      // ARGB, 0 = unexplored; null while loading
         boolean dirty, texDirty, loading;
         NativeImageBackedTexture texture; Identifier id;
-        long used;
+        long used, uploaded;
         Region(String key, int rx, int rz) { this.key = key; this.rx = rx; this.rz = rz; }
     }
     private static final Map<String, Region> regions = new LinkedHashMap<>();
@@ -80,7 +82,8 @@ final class TravelTerrain {
     private static void tick(MinecraftClient c) {
         if (c.world == null) { if (!regions.isEmpty()) { saveAll(); clear(); } return; }
         if (!key.isEmpty()) {
-            for (int n = 0; n < PER_TICK && !queue.isEmpty(); n++) {
+            long until = System.nanoTime() + BUDGET_NS;
+            for (int n = 0; n < PER_TICK && !queue.isEmpty() && System.nanoTime() < until; n++) {
                 ChunkPos p = queue.poll();
                 Region r = region(key, Math.floorDiv(p.x, CHUNKS), Math.floorDiv(p.z, CHUNKS), true);
                 if (r.px == null) { queue.add(p); break; }   // tile still loading from disk: try again later
@@ -258,7 +261,10 @@ final class TravelTerrain {
             if (!exists) continue;
             Region r = region(key, rx, rz, true);
             if (r.px == null) continue;
-            if (r.texDirty && uploads < 2) {   // a couple of uploads per frame at most
+            long nowMs = System.currentTimeMillis();
+            // a couple of uploads per frame, and a tile that is still being filled at most ~4 times a second
+            if (r.texDirty && uploads < 2 && (r.texture == null || nowMs - r.uploaded > 250)) {
+                r.uploaded = nowMs;
                 uploads++;
                 if (r.texture == null) {
                     var img = new NativeImage(SIZE, SIZE, false);
