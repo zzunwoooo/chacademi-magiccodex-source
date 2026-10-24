@@ -70,8 +70,9 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
   var held=EnumSet.noneOf(Material.class);for(var i:p.getInventory().getStorageContents())if(i!=null)held.add(i.getType());
   for(var item:shop.products())if(item.name().toLowerCase(Locale.ROOT).contains(q)){
    // Keep the complete original serialized stack. Limit the catalogue page, never strip lore/components.
-   byte[] preview=item.bytes();int cost=preview.length+1000;
-   if(preview.length>ShopProtocol.MAX_PREVIEW_BYTES||bytes+cost>ShopProtocol.MAX_BYTES-4096||list.size()==40){limited=true;break;}
+   // 실제로 쓰는 바이트(이름·ID·가격 UTF-8 + 숫자 칸)에 여유를 더해 계산한다. 개수 제한은 프로토콜 한도(256)만.
+   byte[] preview=item.bytes();int cost=preview.length+item.name().getBytes(java.nio.charset.StandardCharsets.UTF_8).length+item.id().length()+item.buy().length()+item.sell().length()+64;
+   if(preview.length>ShopProtocol.MAX_PREVIEW_BYTES||bytes+cost>ShopProtocol.MAX_BYTES-4096||list.size()==256){limited=true;break;}
    ItemStack stack;try{stack=sample(item);}catch(RuntimeException e){continue;/* 읽을 수 없는 상품 데이터는 목록에서만 뺀다 */}
    list.add(new Product(item.id(),item.name(),item.buy(),item.sell(),held.contains(stack.getType())?owned(p,stack):0,preview));bytes+=cost;
   }
@@ -243,7 +244,7 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
  private void commands(){
   var shopArg=(java.util.function.Supplier<com.mojang.brigadier.builder.RequiredArgumentBuilder<io.papermc.paper.command.brigadier.CommandSourceStack,String>>)()->CmdKit.word("상점",this::shopIds);
   var root=CmdKit.literal("목록").executes(CmdKit.run(ctx->{var out=new ArrayList<String>();out.add("── 상점 ("+catalog.size()+"개) ──");catalog.values().stream().sorted(Comparator.comparing(ShopStore.Shop::id)).forEach(sh->out.add(sh.id()+" · "+sh.title()+" · 상품 "+sh.products().size()+"개 · 초상 "+sh.portrait()));CmdKit.lines(CmdKit.sender(ctx),out);}))
-   .then(shopArg.get().executes(CmdKit.run(ctx->{var sh=shop(ctx);var out=new ArrayList<String>();out.add("── "+sh.title()+" ("+sh.id()+") 상품 ──");for(var pr:sh.products())out.add(pr.name()+" · 구매 "+(pr.buy().isEmpty()?"없음":pr.buy())+" · 판매 "+(pr.sell().isEmpty()?"없음":pr.sell())+" · "+pr.id());if(sh.products().isEmpty())out.add("(상품 없음)");CmdKit.lines(CmdKit.sender(ctx),out);})));
+   .then(shopArg.get().executes(CmdKit.run(ctx->{var sh=shop(ctx);var out=new ArrayList<String>();out.add("── "+sh.title()+" ("+sh.id()+") 상품 ──");for(var pr:sh.products())out.add((pr.category().isEmpty()?"":"["+pr.category()+" "+pr.sort()+"] ")+pr.name()+" · 구매 "+(pr.buy().isEmpty()?"없음":pr.buy())+" · 판매 "+(pr.sell().isEmpty()?"없음":pr.sell())+" · "+pr.id());if(sh.products().isEmpty())out.add("(상품 없음)");CmdKit.lines(CmdKit.sender(ctx),out);})));
   ChacaApi.branch(plugin,ChacaApi.상점관리,root,"상점 목록·상품 목록","목록");
   ChacaApi.branch(plugin,ChacaApi.상점관리,CmdKit.literal("만들기").then(CmdKit.word("상점ID",List::of).then(CmdKit.argument("이름",com.mojang.brigadier.arguments.StringArgumentType.greedyString()).executes(CmdKit.run(ctx->{
    String id=CmdKit.text(ctx,"상점ID"),title=com.mojang.brigadier.arguments.StringArgumentType.getString(ctx,"이름").strip();
@@ -260,6 +261,10 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
    admin(CmdKit.sender(ctx),()->{store.add(sh.id(),finalName,bytes,buy,sell);return sh.title()+"에 "+finalName+"을(를) 올렸어요";});
   })))));
   ChacaApi.branch(plugin,ChacaApi.상점관리,add,"손에 든 아이템을 상품으로 올리기","상품추가 ");
+  ChacaApi.branch(plugin,ChacaApi.상점관리,CmdKit.literal("가져오기").then(CmdKit.word("파일",()->ShopImportFile.names(plugin)).executes(CmdKit.run(ctx->{
+   var file=ShopImportFile.load(plugin,CmdKit.text(ctx,"파일"));
+   admin(CmdKit.sender(ctx),()->{var result=store.importProducts(file.shop(),file.title(),file.portrait(),file.entries());return file.title()+"("+file.shop()+") "+(result.created()?"상점을 만들고 ":"")+"상품 "+result.added()+"개 추가 · "+result.updated()+"개 갱신"+(file.portrait().isEmpty()?" · 초상은 /상점관리 초상 "+file.shop()+" <이름> 으로 지정":"");});
+  }))),"shops 폴더의 상품 목록 파일 한 번에 등록 (같은 이름은 가격·분류·순서만 갱신)","가져오기 ");
   var product=CmdKit.wordIn("상품",ctx->{var sh=catalog.get(CmdKit.text(ctx,"상점"));return sh==null?List.of():AdminCommandRules.catalogChoices(productNames(sh));});
   ChacaApi.branch(plugin,ChacaApi.상점관리,CmdKit.literal("가격").then(shopArg.get().then(product.then(CmdKit.word("구매가",()->PRICE_HINTS).then(CmdKit.word("판매가",()->PRICE_HINTS).executes(CmdKit.run(ctx->{
    var sh=shop(ctx);String id=CmdKit.pick(productNames(sh),CmdKit.text(ctx,"상품"),"상품");String buy=price(CmdKit.text(ctx,"구매가")),sell=price(CmdKit.text(ctx,"판매가"));

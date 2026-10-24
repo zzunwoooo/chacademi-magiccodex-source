@@ -15,7 +15,7 @@ public final class ShopAdminClient {
  }
  private static void reset(){sequence=waiting=session=deadline=0;owner=null;}
  static boolean request(ShopAdminScreen s,Request r){if(waiting!=0||!ClientPlayNetworking.canSend(Query.ID))return false;long seq=++sequence;if(r.action()!=ShopAdminProtocol.CLOSE){waiting=seq;session=r.session();owner=s;deadline=Util.getMeasuringTimeMs()+15000;}
-  ClientPlayNetworking.send(new Query(ShopAdminProtocol.encode(new Request(r.action(),seq,r.session(),r.shop(),r.revision(),r.product(),r.name(),r.buy(),r.sell(),r.search(),r.offset()))));return true;
+  ClientPlayNetworking.send(new Query(ShopAdminProtocol.encode(new Request(r.action(),seq,r.session(),r.shop(),r.revision(),r.product(),r.name(),r.buy(),r.sell(),r.search(),r.offset(),r.category(),r.sort(),r.slot(),r.slotItem()))));return true;
  }
  static void detach(ShopAdminScreen s){if(owner==s)owner=null;}
 }

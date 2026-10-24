@@ -25,28 +25,35 @@ final class ShopAdminBridge implements PluginMessageListener,Listener,AutoClosea
   if(!p.getListeningPluginChannels().contains(ShopAdminProtocol.RESPONSE))throw ChacaApi.error("상점 편집 창이 있는 차카데미 모드가 필요해요");
   if(busy.contains(p.getUniqueId()))throw ChacaApi.error("앞의 관리 요청을 처리하는 중이에요");
   var s=new Session(p,ThreadLocalRandom.current().nextLong(1,Long.MAX_VALUE),0,System.currentTimeMillis()+600000);sessions.put(p.getUniqueId(),s);
-  Request r=new Request(ShopAdminProtocol.LIST,0,s.token,shop,0,"","","off","off","",0);read(p,s,r,"");
+  Request r=new Request(ShopAdminProtocol.LIST,0,s.token,shop,0,"","","off","off","",0,"",0,-1,"");read(p,s,r,"");
  }
  @Override public void onPluginMessageReceived(String channel,Player p,byte[] bytes){if(!channel.equals(ShopAdminProtocol.REQUEST)||!allowed(p))return;Request r;try{r=ShopAdminProtocol.request(bytes);}catch(IllegalArgumentException ignored){return;}var s=sessions.get(p.getUniqueId());if(s==null||s.player!=p||s.token!=r.session()||r.sequence()<=s.sequence||System.currentTimeMillis()>s.expires)return;
   if(busy.contains(p.getUniqueId()))return;s=new Session(p,s.token,r.sequence(),System.currentTimeMillis()+600000);sessions.put(p.getUniqueId(),s);
   if(r.action()==ShopAdminProtocol.CLOSE){sessions.remove(p.getUniqueId());return;}
   if(r.action()==ShopAdminProtocol.LIST){read(p,s,r,"");return;}
   ItemStack held=null;String buy,sell;
-  try{buy=r.action()==ShopAdminProtocol.DELETE?"":ShopStore.price(r.buy());sell=r.action()==ShopAdminProtocol.DELETE?"":ShopStore.price(r.sell());if(r.action()==ShopAdminProtocol.ADD){held=p.getInventory().getItemInMainHand().clone();if(held.getType().isAir())throw new IllegalArgumentException("등록할 커스텀 아이템을 주 손에 들어 주세요.");held.setAmount(1);}}
+  try{buy=r.action()==ShopAdminProtocol.DELETE?"":ShopStore.price(r.buy());sell=r.action()==ShopAdminProtocol.DELETE?"":ShopStore.price(r.sell());if(r.action()==ShopAdminProtocol.ADD){held=picked(p,r);held.setAmount(1);}}
   catch(IllegalArgumentException e){read(p,s,r,e.getMessage());return;}
   byte[] payload=held==null?null:held.serializeAsBytes();if(payload!=null&&payload.length>ShopAdminProtocol.MAX_PREVIEW){read(p,s,r,"아이템 데이터가 너무 큽니다. 원본을 줄이지 않고 등록을 중단했습니다.");return;}
   Session accepted=s;busy.add(p.getUniqueId());
-  work(()->{switch(r.action()){case ShopAdminProtocol.ADD->store.adminAdd(r.shop(),r.revision(),r.name(),payload,buy,sell);case ShopAdminProtocol.EDIT->store.adminEdit(r.shop(),r.revision(),r.product(),r.name(),buy,sell);case ShopAdminProtocol.DELETE->store.adminDelete(r.shop(),r.revision(),r.product());default->throw new IllegalArgumentException("관리 동작");}return snapshot(accepted,r,"상품 "+(r.action()==ShopAdminProtocol.DELETE?"삭제":"저장")+" 완료");},v->deliver(p,accepted,v),m->{busy.remove(p.getUniqueId());read(p,accepted,r,m);});
+  work(()->{switch(r.action()){case ShopAdminProtocol.ADD->store.adminAdd(r.shop(),r.revision(),r.name(),payload,buy,sell,r.category(),r.sort());case ShopAdminProtocol.EDIT->store.adminEdit(r.shop(),r.revision(),r.product(),r.name(),buy,sell,r.category(),r.sort());case ShopAdminProtocol.DELETE->store.adminDelete(r.shop(),r.revision(),r.product());default->throw new IllegalArgumentException("관리 동작");}return snapshot(accepted,r,"상품 "+(r.action()==ShopAdminProtocol.DELETE?"삭제":"저장")+" 완료");},v->deliver(p,accepted,v),m->{busy.remove(p.getUniqueId());read(p,accepted,r,m);});
+ }
+ /** 등록할 아이템: 관리 창에서 고른 내 인벤토리 칸(서버의 실제 칸을 읽음). 고른 뒤 그 칸이 바뀌었으면 거절. slot -1 = 주 손(예전 방식). */
+ private static ItemStack picked(Player p,Request r){
+  if(r.slot()<0){var held=p.getInventory().getItemInMainHand().clone();if(held.getType().isAir())throw new IllegalArgumentException("등록할 아이템을 주 손에 들어 주세요.");return held;}
+  var item=p.getInventory().getItem(r.slot());if(item==null||item.getType().isAir())throw new IllegalArgumentException("고른 칸이 비어 있어요. 인벤토리를 다시 열어 골라 주세요.");
+  if(!item.getType().getKey().toString().equals(r.slotItem()))throw new IllegalArgumentException("고른 칸의 아이템이 바뀌었어요. 다시 골라 주세요.");
+  return item.clone();
  }
  private void read(Player p,Session s,Request r,String message){busy.add(p.getUniqueId());work(()->snapshot(s,r,message),v->deliver(p,s,v),m->{busy.remove(p.getUniqueId());if(allowed(p)){p.sendPluginMessage(plugin,ShopAdminProtocol.RESPONSE,ShopAdminProtocol.encode(new Response(r.sequence(),s.token,r.shop(),r.revision(),m,List.of(),List.of(),0,-1)));}});}
  private Response snapshot(Session session,Request r,String message)throws Exception{
   var catalog=store.catalog();var sorted=catalog.values().stream().sorted(Comparator.comparing(ShopStore.Shop::id)).toList();var shops=new ArrayList<Shop>();int metadata=0;for(var entry:sorted){int cost=(entry.id().length()+entry.title().length())*3+8;if(shops.size()==128||metadata+cost>12000)break;metadata+=cost;shops.add(new Shop(entry.id(),entry.title()));}
   String id=r.shop().isEmpty()?(sorted.isEmpty()?"":sorted.getFirst().id()):r.shop();var shop=catalog.get(id);
   if(shop==null)return new Response(r.sequence(),session.token,id,0,message.isEmpty()?"등록된 상점을 선택하세요. /상점관리 만들기 로 상점을 먼저 만들 수 있습니다.":message,shops,List.of(),0,-1);
-  String q=r.search().toLowerCase(Locale.ROOT);var matching=shop.products().stream().filter(p->p.name().toLowerCase(Locale.ROOT).contains(q)||p.id().contains(q)).toList();
+  String q=r.search().toLowerCase(Locale.ROOT);var matching=shop.products().stream().filter(p->p.name().toLowerCase(Locale.ROOT).contains(q)||p.category().toLowerCase(Locale.ROOT).contains(q)||p.id().contains(q)).toList();
   int offset=r.offset()<matching.size()?r.offset():0,index=offset,size=0;var products=new ArrayList<Product>();
   // Budget for UTF-8 shop/title metadata plus the original, unmodified ItemStack previews.
-  for(;index<matching.size()&&products.size()<20;index++){var p=matching.get(index);int cost=p.bytes().length+700;if(p.bytes().length>ShopAdminProtocol.MAX_PREVIEW)throw new IllegalStateException("기존 상품 데이터가 UI 허용 크기를 초과합니다.");if(size+cost>38000&&!products.isEmpty())break;size+=cost;products.add(new Product(p.id(),p.name(),p.buy(),p.sell(),p.bytes()));}
+  for(;index<matching.size()&&products.size()<20;index++){var p=matching.get(index);int cost=p.bytes().length+700;if(p.bytes().length>ShopAdminProtocol.MAX_PREVIEW)throw new IllegalStateException("기존 상품 데이터가 UI 허용 크기를 초과합니다.");if(size+cost>38000&&!products.isEmpty())break;size+=cost;products.add(new Product(p.id(),p.name(),p.buy(),p.sell(),p.category(),p.sort(),p.bytes()));}
   if(sorted.size()>shops.size()&&message.isEmpty())message="상점 목록은 패킷 크기에 맞춰 일부 표시합니다. /상점관리 편집 <상점> 으로 직접 열 수 있습니다.";
   return new Response(r.sequence(),session.token,id,shop.revision(),message,shops,List.copyOf(products),offset,index<matching.size()?index:-1);
  }
