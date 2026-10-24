@@ -139,6 +139,16 @@ public final class MathUtil {
         q[o + 3] /= l;
     }
 
+    /** out = a * b (쿼터니언 x,y,z,w). out 은 a/b 와 겹치면 안 된다. */
+    public static void quatMul(float[] a, int ao, float[] b, int bo, float[] out, int oo) {
+        float x1 = a[ao], y1 = a[ao + 1], z1 = a[ao + 2], w1 = a[ao + 3];
+        float x2 = b[bo], y2 = b[bo + 1], z2 = b[bo + 2], w2 = b[bo + 3];
+        out[oo] = w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2;
+        out[oo + 1] = w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2;
+        out[oo + 2] = w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2;
+        out[oo + 3] = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2;
+    }
+
     /** out = slerp(a, b, f). 짧은 경로. out 은 a/b 와 겹쳐도 된다. */
     public static void slerp(float[] a, int ao, float[] b, int bo, float f, float[] out, int oo) {
         float ax = a[ao], ay = a[ao + 1], az = a[ao + 2], aw = a[ao + 3];

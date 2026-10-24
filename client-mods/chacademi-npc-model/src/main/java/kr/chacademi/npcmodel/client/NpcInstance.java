@@ -71,13 +71,26 @@ public final class NpcInstance {
         this.scale = s;
     }
 
+    private float fixedYaw = Float.NaN;
+
+    /** 서버가 정한 고정 방향 (마인크래프트 yaw). NaN = 엔티티 몸 방향을 따라감. */
+    void setFixedYaw(float yaw) {
+        this.fixedYaw = yaw;
+    }
+
+    public float fixedYaw() {
+        return fixedYaw;
+    }
+
     void setServerState(int base, int greetSeq) {
         anim.setServerState(base, greetSeq);
     }
 
     /** 최종 크기 = models.json scale × 서버 지정 scale. */
     public float totalScale() {
-        return model.entry.scale() * scale;
+        float h = model.entry.height();
+        float base = h > 0 ? h / Math.max(1e-3f, model.restHeight()) : model.entry.scale();
+        return base * scale;
     }
 
     /** 발바닥 기준 모델 꼭대기 (블록). 이름표·머리 위 표시용. */

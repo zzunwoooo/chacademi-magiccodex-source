@@ -302,7 +302,9 @@ public final class AppearanceService implements Listener, PluginMessageListener 
             return;
         }
         int rev = revision.computeIfAbsent(npc.getId(), k -> 1);
+        Float yaw = config.facing(npc.getId());
         send(p, new NpcModelProtocol.Appear(ent.getEntityId(), uuid, rev, spec.model(), spec.scale(),
+                yaw == null ? Float.NaN : yaw,
                 talking.contains(npc.getId()) ? NpcModelProtocol.STATE_TALK : NpcModelProtocol.STATE_IDLE,
                 greetSeq.getOrDefault(npc.getId(), 0)));
     }

@@ -35,6 +35,33 @@ public final class ModelRegistry {
         this.diagnostics = diagnostics;
     }
 
+    /** 항목 하나만 바꾼 복사본 (게임 안 조절 명령). */
+    public ModelRegistry replace(Entry e) {
+        Map<String, Entry> m = new LinkedHashMap<>(models);
+        m.put(e.id(), e);
+        return new ModelRegistry(dir, Map.copyOf(m), diagnostics);
+    }
+
+    /** 지금 값(비율·키)을 models.json 에 저장. 다른 항목·키는 그대로 둔다. */
+    public void save(Entry e) throws java.io.IOException {
+        Path f = dir.resolve("models.json");
+        Map<String, Object> root = Json.obj(Json.parse(Files.readString(f, StandardCharsets.UTF_8)), "models.json");
+        Map<String, Object> entry = Json.obj(Json.obj(root.get("models"), "models").get(e.id()), e.id());
+        Map<String, Object> pr = new LinkedHashMap<>();
+        pr.put("legs", round(e.proportion().legs()));
+        pr.put("torso", round(e.proportion().torso()));
+        pr.put("arms", round(e.proportion().arms()));
+        entry.put("proportion", pr);
+        entry.put("height", round(e.height()));
+        Path tmp = f.resolveSibling("models.json.tmp");
+        Files.writeString(tmp, Json.write(root), StandardCharsets.UTF_8);
+        Files.move(tmp, f, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    private static Double round(float v) {
+        return Math.round(v * 1000) / 1000.0;
+    }
+
     public static ModelRegistry empty(Path dir, String why) {
         return new ModelRegistry(dir, Map.of(), List.of(why));
     }
@@ -96,8 +123,8 @@ public final class ModelRegistry {
             throw new ModelFormatException("walkSpeed 범위 (0~20)");
         }
         float scale = (float) Json.num(m, "scale", 1);
-        if (scale < 0.05f || scale > 8) {
-            throw new ModelFormatException("scale 범위 (0.05~8)");
+        if (scale < 0.05f || scale > 20) {
+            throw new ModelFormatException("scale 범위 (0.05~20)");
         }
         Map<String, String> boneMap = new LinkedHashMap<>();
         if (m.containsKey("boneMap")) {
@@ -124,8 +151,25 @@ public final class ModelRegistry {
             lods.add(new Lod(file(dir, l, "file", "sha256"), from));
         }
         float plate = (float) Json.num(m, "nameplateOffset", 0);
+        Proportion.Factors prop = Proportion.Factors.NONE;
+        if (m.containsKey("proportion")) {
+            Map<String, Object> pr = Json.obj(m.get("proportion"), "proportion");
+            prop = new Proportion.Factors(factor(pr, "legs"), factor(pr, "torso"), factor(pr, "arms"));
+        }
+        float height = (float) Json.num(m, "height", 0);
+        if (height != 0 && (height < 0.5f || height > 25f)) {
+            throw new ModelFormatException("height 범위 (0.5~25 블록, 0 = scale 사용)");
+        }
         return new Entry(id, main, idle, walk, talk, greet, List.copyOf(variants), walkSpeed, scale,
-                Map.copyOf(boneMap), List.copyOf(clipFiles), List.copyOf(lods), Math.max(-2, Math.min(2, plate)));
+                Map.copyOf(boneMap), List.copyOf(clipFiles), List.copyOf(lods), Math.max(-2, Math.min(2, plate)), prop, height);
+    }
+
+    private static float factor(Map<String, Object> m, String key) {
+        float v = (float) Json.num(m, key, 1);
+        if (v < 0.5f || v > 1.5f) {
+            throw new ModelFormatException("proportion." + key + " 범위 (0.5~1.5)");
+        }
+        return v;
     }
 
     private static FileRef file(Path dir, Map<String, Object> m, String fileKey, String shaKey) {
@@ -152,14 +196,26 @@ public final class ModelRegistry {
 
     public record Entry(String id, FileRef file, String idleClip, String walkClip, String talkClip, String greetClip,
                         List<String> idleVariants, float walkSpeed, float scale, Map<String, String> boneMap,
-                        List<FileRef> clipFiles, List<Lod> lods, float nameplateOffset) {
+                        List<FileRef> clipFiles, List<Lod> lods, float nameplateOffset,
+                        Proportion.Factors proportion, float height) {
+        /** 게임 안 조절 명령용: 비율·키만 바꾼 복사본. */
+        public Entry with(Proportion.Factors p, float h) {
+            return new Entry(id, file, idleClip, walkClip, talkClip, greetClip, idleVariants, walkSpeed, scale, boneMap,
+                    clipFiles, lods, nameplateOffset, p, h);
+        }
     }
 
     /** 다른 GLB의 클립을 이 모델 노드 이름에 맞춰 옮긴다 (같은 골격 가정, 이름만 맞춤). */
     public static ModelData.Clip retarget(ModelData.Clip clip, ModelData source, ModelData target, Map<String, String> boneMap,
                                           List<String> diag) {
         List<ModelData.Channel> chs = new ArrayList<>();
-        int dropped = 0;
+        int dropped = 0, moves = 0;
+        java.util.Set<Integer> targetJoints = new java.util.HashSet<>();
+        for (ModelData.Skin s : target.skins) {
+            for (int j : s.joints) {
+                targetJoints.add(j);
+            }
+        }
         for (ModelData.Channel c : clip.channels) {
             String srcName = source.nodes[c.node].name;
             int dst = findNode(target, boneMap.getOrDefault(srcName, srcName));
@@ -167,10 +223,29 @@ public final class ModelRegistry {
                 dropped++;
                 continue;
             }
-            chs.add(new ModelData.Channel(dst, c.path, c.interpolation, c.times, c.values));
+            if (c.path != ModelData.PATH_R) {
+                moves++; // 위치·크기 채널은 버린다: 모델마다 단위·뼈 길이가 달라서 그대로 쓰면 몸이 뜨거나 늘어남
+                continue;
+            }
+            float[] values = c.values;
+            boolean root = targetJoints.contains(dst) && (target.parent[dst] < 0 || !targetJoints.contains(target.parent[dst]));
+            if (root) {
+                // 뼈대 맨 위(Hips)는 파일마다 부모 좌표가 달라서(FBX 축 보정 등) 기본 자세 대비 회전량으로 옮긴다
+                float[] rt = target.nodes[dst].r, rs = source.nodes[c.node].r;
+                float[] rel = new float[4];
+                MathUtil.quatMul(rt, 0, new float[]{-rs[0], -rs[1], -rs[2], rs[3]}, 0, rel, 0);
+                values = new float[c.values.length];
+                for (int k = 0; k + 3 < values.length; k += 4) {
+                    MathUtil.quatMul(rel, 0, c.values, k, values, k);
+                }
+            }
+            chs.add(new ModelData.Channel(dst, c.path, c.interpolation, c.times, values));
         }
         if (dropped > 0) {
             diag.add("클립 '" + clip.name + "': 맞는 뼈가 없는 채널 " + dropped + "개 제외");
+        }
+        if (moves > 0) {
+            diag.add("클립 '" + clip.name + "': 다른 파일에서 가져와 위치·크기 채널 " + moves + "개 제외 (회전만 사용)");
         }
         return new ModelData.Clip(clip.name, clip.duration, chs.toArray(new ModelData.Channel[0]));
     }

@@ -145,7 +145,8 @@ def main():
     tiles = []
     for t in times:
         tris, cols = posed_points(g, sample(g, anim, t) if anim else {})
-        tiles.append([draw(tris, cols, v) for v in views])
+        h = max(2.0, float(tris[:, :, 1].max()) * 1.05)  # 큰 모델(모자 등)도 잘리지 않게
+        tiles.append([draw(tris, cols, v, height=h) for v in views])
     W = 420
     sheet = Image.new("RGB", (W * len(times), W * len(views)), "white")
     dd = ImageDraw.Draw(sheet)

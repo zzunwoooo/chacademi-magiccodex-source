@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 
 /**
  * 변형된 정점을 바닐라 엔티티 버퍼로 그린다 (블록·하늘빛, 깊이, 피격 붉은빛, 셰이더팩 엔티티 처리 그대로).
- * 위치는 엔티티 렌더 위치(발밑), 방향은 몸 회전(bodyRot). 모델 정면 +Z 가 마인크래프트 yaw 0(남쪽)에 맞는다.
+ * 위치는 엔티티 렌더 위치(발밑), 방향은 서버 고정 방향(있으면) 아니면 몸 회전(bodyRot). 모델 정면 +Z 가 마인크래프트 yaw 0(남쪽)에 맞는다.
  */
 public final class NpcModelRenderer {
     private static long frameNanos;
@@ -50,7 +50,9 @@ public final class NpcModelRenderer {
 
         ps.pushPose();
         try {
-        ps.mulPose(Axis.YP.rotationDegrees(-state.bodyRot));
+        // 고정 방향이 있으면 그 각도 (동상 등: 클라이언트 몸 회전 보정·재추적에 흔들리지 않게), 없으면 몸 방향
+        float yaw = Float.isNaN(inst.fixedYaw()) ? state.bodyRot : inst.fixedYaw();
+        ps.mulPose(Axis.YP.rotationDegrees(-yaw));
         ps.scale(scale, scale, scale);
         ps.translate(0, -m.restMinY, 0);
         PoseStack.Pose last = ps.last();

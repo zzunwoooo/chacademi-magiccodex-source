@@ -72,6 +72,7 @@ public final class NpcModelClient implements ClientModInitializer {
             models.tick();
         });
         WorldRenderEvents.START.register(ctx -> NpcModelRenderer.beginFrame());
+        kr.chacademi.npcmodel.client.TuneCommands.register();
     }
 
     private static void sendHello() {

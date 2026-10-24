@@ -260,6 +260,69 @@ class CoreTest {
         assertThrows(ModelFormatException.class, () -> Json.parse("[".repeat(100) + "]".repeat(100)));
     }
 
+    // ---------------------------------------------------------------- 비율 조정 · models.json 저장
+
+    @Test
+    void proportionShortensLegsKeepsAnimation() throws Exception {
+        Path p = dist("luka.glb");
+        if (p == null) {
+            return;
+        }
+        ModelData m = GlbReader.read(Files.readAllBytes(p), ModelLimits.DEFAULT);
+        java.util.List<String> diag = new java.util.ArrayList<>();
+        assertTrue(Proportion.apply(m, Proportion.Factors.NONE, diag) == m, "배율 1 이면 그대로");
+        ModelData q = Proportion.apply(m, new Proportion.Factors(0.8f, 1f, 1f), diag);
+        float h0 = m.restMaxY - m.restMinY, h1 = q.restMaxY - q.restMinY;
+        assertTrue(h1 < h0 * 0.95f && h1 > h0 * 0.8f, "다리 0.8 → 키가 줄어듦 " + h0 + " → " + h1);
+        assertEquals(m.triangleCount, q.triangleCount);
+        assertEquals(m.clips.keySet(), q.clips.keySet(), "클립 목록 그대로");
+        // 걷기 한 프레임이 문제없이 계산되는지 (NaN 없음)
+        Pose pose = new Pose(q.nodes.length);
+        pose.setRest(q);
+        ClipSampler.sample(q.clips.get("walk"), 0.5f, pose);
+        float[] w = new float[q.nodes.length * 16];
+        Skinner.worldMatrices(q, pose, w);
+        ModelData.MeshNode mn = q.meshNodes[0];
+        float[] jm = new float[q.skins[mn.skin].joints.length * 16];
+        Skinner.jointMatrices(q.skins[mn.skin], w, jm);
+        float[] pos = new float[mn.primitives[0].positions.length], nrm = new float[pos.length];
+        Skinner.skin(mn.primitives[0], jm, w, mn.node * 16, pos, nrm);
+        for (float f : pos) assertTrue(Float.isFinite(f));
+    }
+
+    @Test
+    void registryParsesAndSavesProportion() throws Exception {
+        Path dir = Files.createTempDirectory("npcmodels");
+        String sha = "b".repeat(64);
+        Files.writeString(dir.resolve("models.json"), "{\"formatVersion\":1,\"models\":{\"ria\":{\"file\":\"ria.glb\",\"sha256\":\"" + sha
+                + "\",\"clips\":{\"idle\":\"wait\"},\"proportion\":{\"legs\":0.82,\"torso\":0.95},\"height\":1.95,\"memo\":\"그대로\"}}}");
+        ModelRegistry r = ModelRegistry.load(dir);
+        ModelRegistry.Entry e = r.models.get("ria");
+        assertEquals(0.82f, e.proportion().legs(), 1e-6);
+        assertEquals(1f, e.proportion().arms(), 1e-6);
+        assertEquals(1.95f, e.height(), 1e-6);
+        r.save(e.with(new Proportion.Factors(0.8f, 0.93f, 0.9f), 2.1f));
+        ModelRegistry r2 = ModelRegistry.load(dir);
+        assertEquals(0.9f, r2.models.get("ria").proportion().arms(), 1e-6);
+        assertEquals(2.1f, r2.models.get("ria").height(), 1e-6);
+        assertTrue(Files.readString(dir.resolve("models.json")).contains("\"memo\": \"그대로\""), "다른 키는 보존");
+        assertEquals(0, ModelRegistry.parse(dir, "{\"models\":{\"x\":{\"file\":\"x.glb\",\"sha256\":\"" + sha
+                + "\",\"proportion\":{\"legs\":0.2}}}}").models.size(), "범위 밖 비율 거부");
+    }
+
+    @Test
+    void retargetKeepsRotationsDropsMoves() {
+        ModelData m = GlbReader.read(tinyGlb(null, null, true), ModelLimits.DEFAULT);
+        java.util.List<String> diag = new java.util.ArrayList<>();
+        ModelData.Clip c = m.clips.get("wave");
+        ModelData.Channel[] chs = {c.channels[0], new ModelData.Channel(c.channels[0].node, ModelData.PATH_T, 0, new float[]{0}, new float[]{5, 5, 5})};
+        ModelData.Clip moved = ModelRegistry.retarget(new ModelData.Clip("x", 1, chs), m, m, java.util.Map.of(), diag);
+        assertEquals(1, moved.channels.length, "위치 채널은 버림");
+        assertEquals(ModelData.PATH_R, moved.channels[0].path);
+        // 같은 모델끼리면 뿌리 뼈 보정이 항등이라 값이 그대로
+        assertEquals(c.channels[0].values[6], moved.channels[0].values[6], 1e-6);
+    }
+
     @SuppressWarnings("unused")
     private static byte[] concat(byte[]... parts) {
         ByteArrayOutputStream o = new ByteArrayOutputStream();

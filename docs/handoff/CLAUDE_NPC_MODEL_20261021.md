@@ -100,3 +100,58 @@ MagicCodex(Bridge·Fabric)·PortableVFX·스토리 모드는 **건드리지 않�
 - `chaca-npc-paper` 는 `../chaca-npc-model-protocol/src` 를 소스 폴더로 포함 (클라이언트 모드도 `../../chaca-npc-model-protocol/src`).
 - 테스트: `chaca-npc-paper:test` 에 프로토콜 테스트 3개 추가, 모드 `test` 에 CoreTest 11개 (실제 GLB 가 `dist/npc-models/` 에 없으면 그 1개는 그냥 통과).
 - `Bc7Codec.java` 는 PortableVFX `ClaudeTextureCodec` 복사본(패키지·이름만 변경).
+
+## 12. 2026-10-22 추가 — 모델 비율 조정 (모드 0.1.1-npcmodel.2, 클라이언트만)
+
+- 사람 비율 모델이 마크 캐릭터 옆에서 작아 보이는 문제 → 키를 크게 올리는 대신 다리·몸통·팔 길이를 줄이고 키를 조금만 올림.
+- `core/Proportion.java`: 읽을 때 바인드 자세 기준으로 뼈 길이를 바꿈 (정점은 뼈 길이 방향으로만, 노드 위치·inverse bind 같이 수정). 동작은 회전만 쓰므로 그대로. 변환 도구 `--legs/--torso/--arms` 와 같은 계산 (루카로 비교: 차이 2e-7).
+- models.json 새 키: `proportion {legs, torso, arms}` (0.5~1.5), `height` (블록, 0 = scale). 시작값 루카 1.95 · 리아 1.9 · 선장 2.1 · 엘레나 2.5(모자 포함), 비율 모두 0.82/0.95/0.92.
+- 클라이언트 명령 `/npc모델 정보|비율|키|저장|되돌리기` (내 화면만, 서버 영향 없음). `저장`은 내 models.json 만 바꿈 → 확정값은 런처 배포본 models.json 에 반영.
+- 테스트 16개 통과 (비율 조정·models.json 저장/보존 추가). 빌드: `client-mods/chacademi-npc-model` 만 다시 빌드. 서버 ChacaNPC 변경 없음.
+- 주의: 클립 파일(clipFiles)에 다리·몸통 뼈의 위치(translation) 채널이 있으면 줄인 길이를 덮어씀 (지금 모델들은 골반만 있음).
+
+## 13. 2026-10-22 — 피피 + 다른 모델 동작 빌려 쓰기 (모드 0.1.1-npcmodel.2 에 포함)
+
+- 피피(`pipi`, 블렌더 GLB): 처음엔 greet_02·walk 만 있어 teacher_ellna 의 idle 을 빌렸으나, 이후 사용자가 대기 클립 `look_around`(15.6초)를 넣은 새 GLB 로 교체 → 대기 = look_around, 인사 = greet_02, 걷기 = walk. `clipFiles` 제거 (sha256 28800e9c…).
+- 다른 모델 동작 빌려 쓰기(`clipFiles`) 기능 자체는 그대로 남아 있음.
+- 클립 가져오기: 회전 채널만 쓰고 위치·크기 채널은 버림. 뼈대 맨 위(Hips)는 파일마다 부모 좌표가 달라 기본 자세 대비 회전량으로 옮김 (안 하면 눕는 문제 확인).
+- 가져온 클립은 항상 `<파일>:<클립>` 이름, 자기 클립과 안 겹치면 원래 이름으로도 (자기 클립 우선 — 예전엔 클립 파일이 덮었음).
+- 비율 조정이 위치 채널을 가진 클립(블렌더 내보내기)도 처리: 바뀐 뼈 길이만큼 채널 값을 옮김 (안 하면 다리 길이가 원래대로 돌아감). 변환 도구도 동일.
+- 테스트 17개 통과.
+
+## 14. 2026-10-22 — 로웰 사감 (`dorm_lowell`)
+
+- 트리포 FBX(코트 뒷자락 웨이트 수정본) → `dorm_lowell.glb` (sha256 3369e416…, 2.7MB, 키 1.8 정규화, 경고 없음).
+- 클립: 대기 = standing_relax, 걷기 = walk, 인사·대화 없음. 비율·키·걷기 속도는 선장과 같은 값(다리 0.82 / 몸통 0.95 / 팔 0.92, 키 2.1, walkSpeed 1.23).
+- 서버 `npc-models.yml`: models 목록 + 캐릭터 `dorm_lowell` 기본값 추가.
+
+## 15. 2026-10-22 — 마법사 동상 (`wizard_statue`, 정적 모델)
+
+- 리깅·애니메이션 없는 트리포 FBX (사용자 확인: 정상). 받침대 포함 `wizard_statue.glb` (sha256 def88e0f…, 1.7MB, 텍스처 1장).
+- 스킨 없는 메쉬는 노드 행렬로만 그려짐(기존 코드 그대로 지원), 클립 전부 null → 항상 기본 자세(rest). 비율(proportion) 미적용, 키 3.0.
+- 서버 `npc-models.yml` models 목록에만 추가 (캐릭터 연결 없음 — NPC에 `/NPC관리 외형 지정 wizard_statue`).
+
+## 16. 2026-10-22 — 크기 한도 4배 → 10배 + 큰 모델 컬링 (모드 0.1.1-npcmodel.3 / ChacaNPC 0.3.0-npcmodel.2)
+
+- 프로토콜 `MAX_SCALE` 4 → 10 (서버 `/NPC관리 외형 크기·지정·캐릭터`, npc-models.yml 검사가 이 값을 씀). 최소 0.25 그대로.
+- 클라이언트 models.json: `scale` 0.05~8 → 0.05~20, `height` 0.5~5 → 0.5~25 블록. `/npc모델 키` 도 0.5~25.
+- **모드·플러그인 둘 다 새로 배포해야 함**: 프로토콜 검사가 양쪽에 들어 있어, 옛 모드는 4배 넘는 APPEAR 를 버리고 원래 외형으로 보임.
+- 새 믹스인 `EntityRendererCullMixin` (EntityRenderer.shouldRender HEAD): 모델이 붙은 NPC는 히트박스 대신 모델 키 기준 상자(폭 = 키×0.4 이상)로 화면 밖 판정, 보이는 거리도 모델 키 × 64 × 엔티티 거리 설정. 모델 없는 엔티티는 바닐라 그대로.
+- 서버의 엔티티 추적 거리(spigot.yml entity-tracking-range players) 밖에서는 NPC 자체가 클라이언트에 없으므로 큰 동상도 그 거리에서 사라짐.
+- 프로토콜 테스트를 10배 허용 / 10.5·0.2 거부로 갱신.
+
+## 17. 2026-10-24 — 비율 조정 되돌림 (데이터만)
+
+- 사용자 결정: 다리·몸통·팔 비율 조정이 일부 모델에서 어색 → 원래대로.
+- models.json 에서 캐릭터 6개(luka, ria, captain_bram, teacher_ellna, pipi, dorm_lowell)의 `proportion`·`height` 제거 → GLB 원래 비율, 키 1.8블록(scale 1.0). wizard_statue 는 원래 비율 미적용이라 height 3.0 유지.
+- 비율 기능 코드(Proportion, `/npc모델 비율·키`)는 그대로 남겨 둠 — 필요하면 모델별로 다시 켤 수 있음. 모드·플러그인 재빌드 불필요, models.json 만 교체.
+
+## 18. 2026-10-24 — NPC별 모델 방향 고정 (모드 0.1.1-npcmodel.4 / ChacaNPC 0.3.0-npcmodel.3, 프로토콜 v2)
+
+- 문제: 동상처럼 세워둔 모델이 Citizens lookclose 를 꺼도 돌아감. 모델이 클라이언트의 플레이어 몸 회전(bodyRot)을 따르는데, 이 값은 클라이언트가 머리 방향 기준으로 계속 보정하고, 멀리 갔다 오면(재추적) 다시 잡혀서 흔들림.
+- 해결: 서버가 NPC별 고정 방향을 APPEAR 에 실어 보냄 → 클라이언트는 그 각도로만 그림 (bodyRot 무시). 히트박스·클릭·이름표는 그대로.
+- 프로토콜 **v2**: APPEAR = … modelId, scale, **yaw(float, NaN = 몸 방향 따라감, 아니면 0≤yaw<360)**, base, greetSeq. 버전이 달라 옛 모드↔새 플러그인은 서로 무시(원래 외형) → **모드·플러그인 같이 배포**.
+- 서버 `npc-models.yml` 새 칸 `facing: {"서버ID:번호": 각도}` (모델 지정과 별개라 모델을 바꿔도 방향 유지).
+- 명령 `/NPC관리 외형 방향 <0~360|나|지금|해제>` — 가장 가까운 NPC(5칸). 각도 = 마인크래프트 yaw(F3 의 Facing 값과 같음: 0=남 90=서 180=북 270=동). `나` = 지금 내 쪽을 보게, `지금` = NPC 엔티티의 현재 yaw. `외형 정보`·`목록` 에 방향 표시.
+- 각도는 소수 첫째 자리로 반올림 후 [0,360) 로 감음 (359.97 → 0).
+- 프로토콜 테스트: yaw 왕복(NaN·270), 360·-1·무한대 거부.
