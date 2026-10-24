@@ -565,7 +565,7 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
     private void ghostStack(DrawContext c, ItemStack stack, float cx, float cy, float size, int veil) {
         var m = c.getMatrices();
         m.push();
-        try { m.translate(cx - size / 2, cy - size / 2, 0); m.scale(size / 16f, size / 16f, 1); c.drawItem(stack, 0, 0); }
+        try { if (!ExactItemIcons.draw(c, stack, cx - size / 2, cy - size / 2, size)) { m.translate(cx - size / 2, cy - size / 2, 0); m.scale(size / 16f, size / 16f, 1); c.drawItem(stack, 0, 0); } }
         finally { m.pop(); }
         m.push();
         try { m.translate(0, 0, 210); HudMesh.disk(c, cx, cy, size * 0.62f, veil); }
@@ -608,10 +608,13 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
         float left = cx - size / 2, top = cy - size / 2;
         m.push();
         try {
-            // Scale the GUI matrix, not the image: high-resolution icons are sampled once at the final size.
-            m.translate(left, top, 0);
-            m.scale(size / 16f, size / 16f, 1);
-            c.drawItem(stack, 0, 0, seed);
+            // High-res art: resampled once to the exact device pixel size and drawn 1:1 (ExactItemIcons).
+            // Vanilla 16px / block items (and high-res art for the first frames) take the normal item draw.
+            if (!ExactItemIcons.draw(c, stack, left, top, size)) {
+                m.translate(left, top, 0);
+                m.scale(size / 16f, size / 16f, 1);
+                c.drawItem(stack, 0, 0, seed);
+            }
         } finally { m.pop(); }
         m.push();
         try {
@@ -647,9 +650,11 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
         m.push();
         try {
             m.translate(0, 0, 232);
-            m.translate(cx - size / 2, cy - size / 2, 0);
-            m.scale(size / 16f, size / 16f, 1);
-            c.drawItem(stack, 0, 0);
+            if (!ExactItemIcons.draw(c, stack, cx - size / 2, cy - size / 2, size)) {
+                m.translate(cx - size / 2, cy - size / 2, 0);
+                m.scale(size / 16f, size / 16f, 1);
+                c.drawItem(stack, 0, 0);
+            }
         } finally { m.pop(); }
         String count = amount != null ? amount.replace("§e", "") : GalaxyBagLayout.count(stack.getCount());
         if (count.isEmpty()) return;

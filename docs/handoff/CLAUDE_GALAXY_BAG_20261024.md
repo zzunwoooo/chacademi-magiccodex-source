@@ -128,3 +128,18 @@ git merge --no-ff origin/claude/galaxy-bag-20261024
 - [ ] 학교 ↔ 야생 이동: 쪽 내용은 서버별, 해금 수는 공유.
 - [ ] 크리에이티브 전환 시 크리에이티브 화면으로 넘어감.
 - [ ] 로그: 믹스인 오류 없음, `BAG PAGES ... failed` 없음.
+
+## 6. 4차 (2026-10-24): 아이템 아이콘 크게 + 정확한 픽셀 크기로 새로 그리기
+
+오너: "아이콘 72px는 되어야 256px짜리 부드럽게 줄였을 때 이쁘게 나온다. 16px로 줄였다 키우는 게 아니고, 아예 저 위치에 새로 그려서 픽셀 깨짐 없이."
+
+- 아이템 크기(설계 단위, 1920×1080에서 약 1.1px/단위): 배낭 66, 핫바 64, 조합칸 64, 결과 76, 조합법 카드 68, 커서 66 → 1080p에서 약 70~84px.
+- 새 `client/ExactItemIcons.java` + `client/IconResampler.java`(+ 테스트 2개):
+  고해상도 아이콘(32px 초과 아이템 그림, `ItemIconTextures`가 다루는 것)을 그 자리의 **실제 화면 픽셀 크기**(GUI 행렬 × 창 배율)로
+  워커 스레드에서 원본 PNG를 Lanczos-3(premultiplied)로 한 번 줄여 올리고, **화면 픽셀 격자에 1:1, nearest**로 그린다. GPU가 다시 늘이거나 줄이지 않는다.
+  크기별로 캐시(최대 384장, 오래된 것부터 버림), 리소스 다시 읽기·접속 해제 때 비움. 준비되기 전 첫 프레임들은 기존 경로(트릴리니어)로 그린다.
+  ItemsAdder처럼 items JSON으로 못 따라가는 아이템은 GUI 모드 아이템 상태(ItemModelManager.update + 기존 태그)로 키를 찾는다. 반짝임(마법 부여)은 그 위에 바닐라 글린트.
+  바닐라 16px 아이템·블록(3D) 아이템은 바닐라 렌더 그대로.
+- `ItemIconTextures`: `present/aspect/glint` 도우미, `PROGRAM` 패키지 공개, `reset`에서 `ExactItemIcons.reset()`.
+  `HiResItemState`/`ItemRenderStateMixin`: 키 getter 추가.
+- 지금은 아공간 배낭 화면에서만 쓴다(다른 화면은 그대로).

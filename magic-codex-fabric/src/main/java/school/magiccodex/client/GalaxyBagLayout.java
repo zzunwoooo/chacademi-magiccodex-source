@@ -38,9 +38,9 @@ final class GalaxyBagLayout {
     static final float PANEL_SLIDE = 48;
     static final float OPEN_SECONDS = 0.24f;
 
-    // ---- bag contents
-    static final float MAIN_X0 = 234, MAIN_STEP_X = 97.6f, MAIN_Y0 = 163.5f, MAIN_STEP_Y = 87.75f, MAIN_R = 39, MAIN_ITEM = 62;
-    static final float HOTBAR_X0 = 272.5f, HOTBAR_STEP = 89f, HOTBAR_Y = 444, HOTBAR_R = 35, HOTBAR_ITEM = 54, HOTBAR_NUMBER_Y = 494;
+    // ---- bag contents (item sizes: >= 72 device px at 1920x1080 so 256px art shrinks cleanly, owner 2026-10-24)
+    static final float MAIN_X0 = 234, MAIN_STEP_X = 97.6f, MAIN_Y0 = 163.5f, MAIN_STEP_Y = 87.75f, MAIN_R = 39, MAIN_ITEM = 66;
+    static final float HOTBAR_X0 = 272.5f, HOTBAR_STEP = 89f, HOTBAR_Y = 444, HOTBAR_R = 35, HOTBAR_ITEM = 64, HOTBAR_NUMBER_Y = 494;
     static final float DIVIDER_Y = 392.5f, DIVIDER_X0 = 194, DIVIDER_X1 = 1062.5f;
     static final float PAGER_Y = 539.5f, PAGER_PREV_X = 532.5f, PAGER_NEXT_X = 713.5f, PAGER_LABEL_X = 623, PAGER_R = 22.5f;
     static final float EQUIP_X = 1059, EQUIP_Y = 106, CRAFT_BTN_X = 1115, CRAFT_BTN_Y = 150, ROUND_BTN_R = 29;
@@ -52,8 +52,8 @@ final class GalaxyBagLayout {
     static final float CLOSE_X = 1579 + PANEL_DX, CLOSE_Y = 100, CLOSE_R = 23;
     static final float TITLE_RULE_Y = 127, TITLE_RULE_X0 = 1217 + PANEL_DX, TITLE_RULE_X1 = 1325 + PANEL_DX;
     static final float[][] INPUTS = {{1273 + PANEL_DX, 177}, {1358 + PANEL_DX, 177}, {1273 + PANEL_DX, 262}, {1358 + PANEL_DX, 262}};
-    static final float INPUT_R = 37.5f, INPUT_ITEM = 52;
-    static final float RESULT_X = 1542 + PANEL_DX, RESULT_Y = 217, RESULT_R = 51, RESULT_ITEM = 70;
+    static final float INPUT_R = 37.5f, INPUT_ITEM = 64;
+    static final float RESULT_X = 1542 + PANEL_DX, RESULT_Y = 217, RESULT_R = 51, RESULT_ITEM = 76;
     static final float ARROW_X = 1444 + PANEL_DX, ARROW_Y = 217, ARROW_LEN = 55;
     static final float SECTION_RULE_Y = 315, SECTION_RULE_X0 = 1217 + PANEL_DX, SECTION_RULE_X1 = 1605 + PANEL_DX;
     static final float RECIPE_TITLE_X = 1252 + PANEL_DX, RECIPE_TITLE_Y = 352;
@@ -61,7 +61,7 @@ final class GalaxyBagLayout {
     static final float CRAFTABLE_LABEL_X = 1515 + PANEL_DX, CRAFTABLE_LABEL_Y = 351;
     static final float TOGGLE_X0 = 1564 + PANEL_DX, TOGGLE_X1 = 1610 + PANEL_DX, TOGGLE_Y0 = 340, TOGGLE_Y1 = 364;
     static final float[] CARD_X = {1227 + PANEL_DX, 1355 + PANEL_DX, 1482 + PANEL_DX}, CARD_Y = {386, 487};
-    static final float CARD_W = 116, CARD_H = 88, CARD_ITEM = 66;
+    static final float CARD_W = 116, CARD_H = 88, CARD_ITEM = 68;
     static final int CARDS_PER_PAGE = 6;
     static final float RECIPE_PAGER_Y = 600, RECIPE_PREV_X = 1345 + PANEL_DX, RECIPE_NEXT_X = 1475 + PANEL_DX, RECIPE_LABEL_X = 1410 + PANEL_DX, RECIPE_PAGER_R = 17;
 

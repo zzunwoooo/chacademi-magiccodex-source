@@ -31,6 +31,7 @@ public abstract class ItemRenderStateMixin implements HiResItemState {
     @Unique private Identifier magiccodex$hiRes;
 
     @Override public void magiccodex$setHiResModel(Identifier model) { this.magiccodex$hiRes = model; }
+    @Override public Identifier magiccodex$hiResModel() { return this.magiccodex$hiRes; }
 
     @Override public net.minecraft.client.render.model.BakedModel magiccodex$singleFlatModel() {
         if (layerCount != 1 || layers == null || layers.length == 0 || layers[0] == null) return null;
