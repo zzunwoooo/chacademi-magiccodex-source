@@ -35,6 +35,19 @@ public record DatabaseSettings(boolean mariaDb, String url, String user, String 
                         + (sslMode.isEmpty() ? "" : "&sslMode=" + sslMode), user, password);
     }
 
+    /** Required shared domains must never silently create a new per-server SQLite store. */
+    public static DatabaseSettings loadShared(Path file, String domain) throws IOException {
+        if (domain == null || !domain.matches("[a-z0-9_-]{1,64}"))
+            throw new IllegalArgumentException("Invalid shared storage domain");
+        if (!Files.isRegularFile(file))
+            throw new IOException("Shared DB configuration missing for " + domain + ": " + file.getFileName()
+                    + "; local SQLite fallback refused");
+        DatabaseSettings settings = load(file);
+        if (!settings.mariaDb())
+            throw new IOException("Shared DB domain " + domain + " requires MariaDB; local SQLite fallback refused");
+        return settings;
+    }
+
     /** Human-readable active mode: {@code "MariaDB"} or {@code "SQLite"}. Never touches the database. */
     public String modeName() {
         return mariaDb ? "MariaDB" : "SQLite";

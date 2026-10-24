@@ -32,16 +32,16 @@ class AffinityStoreTest {
             r = s.add(p, "ella", "chat", 2, 3, "2026-10-06", 4);
             assertEquals(2, r.applied(), "다음 날은 다시 오름");
             r = s.add(p, "ella", "quest", 50, 0, "2026-10-06", 5);
-            assertEquals(20, r.row().score(), "하트 0단계 상한 20");
-            assertEquals(15, r.applied());
+            assertEquals(30, r.row().score(), "퀘스트 0단계 상한 30");
+            assertEquals(25, r.applied());
             s.setHeart(p, "ella", 1, 6);
             r = s.add(p, "ella", "quest", 50, 0, "2026-10-06", 7);
-            assertEquals(40, r.row().score(), "하트 1단계 상한 40");
+            assertEquals(60, r.row().score(), "퀘스트 1단계 상한 60");
             s.setHeart(p, "ella", 0, 8);
             assertEquals(1, s.load(p, "ella").heart(), "하트 단계는 내려가지 않음");
             r = s.add(p, "ella", "strike", -3, 3, "2026-10-06", 9);
-            assertEquals(37, r.row().score(), "음수는 한도 없이 적용");
-            assertEquals(37, s.loadAll(p).get("ella").score());
+            assertEquals(57, r.row().score(), "음수는 한도 없이 적용");
+            assertEquals(57, s.loadAll(p).get("ella").score());
         }
     }
 
@@ -97,24 +97,36 @@ class AffinityStoreTest {
         }
     }
 
+    @Test void giftRefusedAtGateWithoutUsingDailyCount() throws Exception {
+        try (var s = new AffinityStore(SQLITE, dir.resolve("affinity.db"))) {
+            s.add(p, "luka", "quest", 50, 0, "2026-10-05", 1); // 상한 30
+            assertEquals(AffinityStore.GiftBegin.FULL, s.beginGift(UUID.randomUUID().toString(), p, "luka", 10, "2026-10-05", 1, 2, "A"));
+            assertEquals(AffinityStore.GiftBegin.FULL, s.beginGift(UUID.randomUUID().toString(), p, "luka", -1, "2026-10-05", 1, 3, "A"), "싫은 선물도 받지 않음");
+            s.setHeart(p, "luka", 1, 4); // 퀘스트 1 완료 → 상한 60
+            assertEquals(AffinityStore.GiftBegin.OK, s.beginGift(UUID.randomUUID().toString(), p, "luka", 10, "2026-10-05", 1, 5, "A"), "횟수를 안 썼으니 같은 날 줄 수 있음");
+        }
+    }
+
     @Test void nicknameStored() throws Exception {
         try (var s = new AffinityStore(SQLITE, dir.resolve("affinity.db"))) {
             assertEquals("책벌레", s.setNickname(p, "ella", "책벌레", 1).nickname());
             assertEquals("책벌레", s.load(p, "ella").nickname());
-            assertEquals(20, AffinityStore.gate(0));
-            assertEquals(100, AffinityStore.gate(4));
+            assertEquals(30, AffinityStore.gate(0));
+            assertEquals(60, AffinityStore.gate(1));
+            assertEquals(90, AffinityStore.gate(2));
+            assertEquals(100, AffinityStore.gate(3));
             assertEquals(100, AffinityStore.gate(5));
             assertEquals(100, AffinityStore.gate(Integer.MAX_VALUE));
-            assertEquals(20, AffinityStore.gate(Integer.MIN_VALUE));
+            assertEquals(30, AffinityStore.gate(Integer.MIN_VALUE));
         }
     }
 
     @Test void adminScorePreservesHeartNicknameAndBounds() throws Exception {
         try (var s = new AffinityStore(SQLITE, dir.resolve("affinity.db"))) {
-            assertEquals(20, s.adminChange(p, "ella", "set", 100, 1).score());
+            assertEquals(30, s.adminChange(p, "ella", "set", 100, 1).score());
             s.setHeart(p, "ella", 2, 2);
             s.setNickname(p, "ella", "책벌레", 3);
-            assertEquals(new AffinityStore.Row(60, 2, "책벌레"),
+            assertEquals(new AffinityStore.Row(90, 2, "책벌레"),
                     s.adminChange(p, "ella", "add", Integer.MAX_VALUE, 4));
             assertEquals(new AffinityStore.Row(0, 2, "책벌레"),
                     s.adminChange(p, "ella", "remove", Integer.MAX_VALUE, 5));

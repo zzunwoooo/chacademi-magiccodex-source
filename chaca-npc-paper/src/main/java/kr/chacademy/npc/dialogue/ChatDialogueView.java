@@ -74,6 +74,17 @@ public final class ChatDialogueView implements DialogueView {
     }
 
     @Override
+    public void gifts(Player player, DialogueSession session, int seq, List<GiftService.GiftItem> slots) {
+        // 채팅 화면: 줄 수 있는 선물을 눌러서 고른다 (서버가 다시 검사)
+        Component row = Component.text("  선물 고르기: ", NamedTextColor.GOLD);
+        for (GiftService.GiftItem g : slots) {
+            row = row.append(Component.text("[" + g.name() + "]", NamedTextColor.YELLOW)
+                    .clickEvent(ClickEvent.runCommand("/대화선택 선물 " + g.slot()))).append(Component.text(" "));
+        }
+        player.sendMessage(row);
+    }
+
+    @Override
     public void info(Player player, DialogueSession session, String message) {
         player.sendMessage(Component.text(message, NamedTextColor.GRAY));
     }
