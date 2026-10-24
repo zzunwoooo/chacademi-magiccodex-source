@@ -19,9 +19,9 @@ import school.magiccodex.protocol.ShopProtocol;
 import school.magiccodex.protocol.ShopProtocol.*;
 
 /**
- * NPC shop (reference: CHACADEMI_SHOP_REDESIGN approved.png). Layout, art and hit testing live in
- * {@link ShopView}; this class owns the server data, filter/selection/quantity state and the single
- * trade path ({@link #trade()}) that both the row buttons and the footer button go through.
+ * NPC shop (reference: 일반 NPC 상점 12칸 UI v2, 4x3 cards + pages). Layout, art and hit testing live in
+ * {@link ShopView}; this class owns the server data, filter/sort/page/selection/quantity state and the single
+ * trade path ({@link #trade()}) the footer button goes through.
  * Protocol, prices, validation and sounds are unchanged.
  */
 public final class ShopScreen extends SocialScreen {
@@ -33,8 +33,9 @@ public final class ShopScreen extends SocialScreen {
     private Input search, quantity;
     private String selected = "", sentSearch = "";
     private ShopView.Tab tab = ShopView.Tab.ALL;
-    private boolean selling, pressed, dragging;
-    private int scroll;
+    private ShopView.Sort sort = ShopView.Sort.DEFAULT;
+    private boolean selling, pressed, sortOpen;
+    private int page;
     private double lastMouseX = -1, lastMouseY = -1;
     private long searchAt;
     private Map<String, ItemStack> icons = Map.of();
@@ -122,8 +123,21 @@ public final class ShopScreen extends SocialScreen {
     private List<Product> visible() {
         if (data == null) return List.of();
         String q = search == null ? "" : search.text().toLowerCase(Locale.ROOT);
-        return data.products().stream().filter(p -> shows(p)
+        var list = data.products().stream().filter(p -> shows(p)
                 && (name(p).toLowerCase(Locale.ROOT).contains(q) || p.name().toLowerCase(Locale.ROOT).contains(q))).toList();
+        // 기본순 = the server order (category / sort set by the admin); the others only reorder on screen.
+        Comparator<Product> order = switch (sort) {
+            case DEFAULT -> null;
+            case PRICE_LOW -> Comparator.<Product, BigDecimal>comparing(this::shownPrice);
+            case PRICE_HIGH -> Comparator.<Product, BigDecimal>comparing(this::shownPrice).reversed();
+            case NAME -> Comparator.<Product, String>comparing(this::name);
+        };
+        return order == null ? list : list.stream().sorted(order).toList();
+    }
+    /** The price a card shows in the current tab (same rule as ShopView.cardSells). */
+    private BigDecimal shownPrice(Product p) {
+        String v = tab == ShopView.Tab.SELL || p.buy().isEmpty() ? p.sell() : p.buy();
+        try { return new BigDecimal(v); } catch (RuntimeException e) { return BigDecimal.ZERO; }
     }
     private Product selected() {
         return data == null ? null : visible().stream().filter(p -> p.id().equals(selected)).findFirst().orElse(null);
@@ -134,9 +148,9 @@ public final class ShopScreen extends SocialScreen {
 
     /**
      * Re-validates after data, search or tab changes: the selection must be a visible product with
-     * a trade direction it supports, the quantity resets when either changes, and scroll stays in range.
+     * a trade direction it supports, the quantity resets when either changes, and the page stays in range.
      */
-    private void normalize(boolean resetScroll) {
+    private void normalize(boolean resetPage) {
         var list = visible();
         String before = selected;
         boolean sellBefore = selling;
@@ -146,8 +160,8 @@ public final class ShopScreen extends SocialScreen {
         else if (tab == ShopView.Tab.SELL) selling = true;
         else if (current != null && !tradable(current, selling)) selling = defaultSelling(current);
         if (quantity != null && (!selected.equals(before) || selling != sellBefore)) quantity.widget.setText("1");
-        if (resetScroll) scroll = 0;
-        scroll = Math.clamp(scroll, 0, Math.max(0, list.size() - ShopView.ROWS));
+        if (resetPage) page = 0;
+        page = Math.clamp(page, 0, Math.max(0, (list.size() - 1) / ShopView.PER_PAGE));
     }
     private void choose(Product p, boolean sell) {
         boolean changed = !p.id().equals(selected) || sell != selling;
@@ -236,10 +250,16 @@ public final class ShopScreen extends SocialScreen {
         long age = Util.getMeasuringTimeMs() - noticeAt;
         float alpha = notice.isEmpty() || age > 5000 ? 0 : age > 4500 ? (5000 - age) / 500f : 1;
         var f = fit();
-        return new ShopView.Model(data == null ? "상점" : data.title(), "상점 주인",
+        return new ShopView.Model(data == null ? "상점" : data.title(), data == null || data.role().isBlank() ? "상점 주인" : data.role(),
                 data == null || data.npcName().isBlank() ? "상점" : data.npcName(), size != null, size == null ? 1 : size[0] / size[1],
-                data == null ? "" : data.balance(), tab, tabs, rows, scroll, selected, selling, empty, max, total(),
-                n > 1, n < max, selected() != null && n > 0 && n <= max, busy, notice, alpha, mx, my, pressed, (float) f.y(height));
+                data == null ? "" : data.balance(), tab, tabs, rows, page, selected, selling, empty, max, total(),
+                n > 1, n < max, selected() != null && n > 0 && n <= max, canSwitch(), sort, sortOpen, busy, notice, alpha, mx, my, pressed,
+                (float) f.y(height));
+    }
+    /** The footer 판매/구매 button: only in 전체 when the chosen product also trades the other way. */
+    private boolean canSwitch() {
+        var p = selected();
+        return p != null && tab == ShopView.Tab.ALL && tradable(p, !selling);
     }
     private Identifier portrait() {
         if (data == null || data.portrait().isBlank()) return null;
@@ -265,10 +285,13 @@ public final class ShopScreen extends SocialScreen {
         Identifier face(ShopView.Face f) {
             return switch (f) { case TITLE -> FACE_TITLE; case SECTION -> FACE_SECTION; case BODY -> FACE_BODY; case LABEL -> BODY; case BOLD -> BOLD; };
         }
-        public void image(String tex, float x, float y, float w, float h, int u, int v, int sw, int sh, int tw, int th) {
+        public void image(String tex, float x, float y, float w, float h, int u, int v, int sw, int sh, int tw, int th, int tint) {
             int x0 = Math.round(x), y0 = Math.round(y);
-            images.drawTexture(c, Identifier.of("magiccodex", tex), x0, y0, u, v, Math.round(x + w) - x0, Math.round(y + h) - y0, sw, sh, tw, th, 0xFFFFFFFF);
+            images.drawTexture(c, Identifier.of("magiccodex", tex), x0, y0, u, v, Math.round(x + w) - x0, Math.round(y + h) - y0, sw, sh, tw, th, tint);
         }
+        public void line(float ax, float ay, float bx, float by, float thickness, int color) { HudMesh.line(c, ax, ay, bx, by, thickness, color); }
+        public void gradient(float x, float y, float w, float h, int top, int bottom) { HudMesh.vertical(c, x, y, w, h, top, bottom); }
+        public void chamfer(float x, float y, float w, float h, float r, int color) { ShopScreen.this.chamfer(c, x, y, w, h, r, color); }
         public void text(String s, float x, float cy, float size, int color, ShopView.Face f, boolean centered) {
             type.draw(c, s, x, cy, size, color, face(f), centered);
         }
@@ -327,6 +350,8 @@ public final class ShopScreen extends SocialScreen {
             ShopView.draw(new GameCanvas(c), m);
             var hit = ShopView.hit(m, mx, my);
             if (hit.kind() == ShopView.Kind.ICON) hovered = icons.getOrDefault(m.rows().get(hit.index()).id(), ItemStack.EMPTY);
+            else if (m.chosen() != null && !m.sortOpen() && ShopView.in(mx, my, ShopView.footIconBox()))
+                hovered = icons.getOrDefault(m.chosen().id(), ItemStack.EMPTY);
         } finally { end(c); }
         // Native item-tooltip entrypoint uses the existing rich MagicCodex renderer and Shift+wheel scrolling.
         if (!hovered.isEmpty() && entrance.ready()) c.drawItemTooltip(textRenderer, hovered, mouseX, mouseY);
@@ -340,9 +365,14 @@ public final class ShopScreen extends SocialScreen {
         double mx = f.x(x), my = f.y(y);
         var m = model(mx, my);
         var hit = ShopView.hit(m, mx, my);
-        if (hit.kind() == ShopView.Kind.CLOSE) { sound(1.1f, .16f); close(); return true; }
         if (hit.kind() != ShopView.Kind.SEARCH) search.focus(false);
         if (hit.kind() != ShopView.Kind.QUANTITY && quantity.focus()) commitQuantity();
+        if (sortOpen) {                           // the open list takes the click: pick an order or just close
+            sortOpen = false;
+            if (hit.kind() == ShopView.Kind.SORT_OPTION) { sort = ShopView.Sort.values()[hit.index()]; normalize(true); }
+            sound(1.1f, .14f);
+            return true;
+        }
         if (busy) return true;
         var list = visible();
         switch (hit.kind()) {
@@ -351,21 +381,15 @@ public final class ShopScreen extends SocialScreen {
                 if (m.tabEnabled()[hit.index()] && next != tab) { tab = next; normalize(true); sound(1.1f, .16f); }
             }
             case SEARCH -> search.click(mx, my);
-            case ROW, ICON -> {
+            case SORT -> { sortOpen = true; sound(1.1f, .14f); }
+            case CARD, ICON -> {
                 var p = list.get(hit.index());
                 boolean sell = tab == ShopView.Tab.SELL || tab == ShopView.Tab.ALL && (p.id().equals(selected) ? tradable(p, selling) ? selling : defaultSelling(p) : defaultSelling(p));
                 choose(p, sell);
                 sound(1.1f, .14f);
             }
-            case ROW_BUY, ROW_SELL -> {
-                var p = list.get(hit.index());
-                boolean sell = hit.kind() == ShopView.Kind.ROW_SELL;
-                // First press picks the product and direction; pressing it again on the chosen row trades
-                // through the same path as the footer button (busy-guarded, one operation id per request).
-                if (p.id().equals(selected) && sell == selling && possible(p, sell) > 0) trade();
-                else { choose(p, sell); sound(1.1f, .14f); }
-            }
-            case SCROLL -> { dragging = true; scroll = ShopView.scrollAt(m, my); }
+            case PREV -> { if (page > 0) { page--; sound(1.1f, .14f); } }
+            case NEXT -> { if (page < m.pages() - 1) { page++; sound(1.1f, .14f); } }
             case MINUS -> { if (number() > 1) { quantity.widget.setText(Integer.toString(number() - 1)); sound(1.1f, .14f); } }
             case PLUS -> { if (number() < possible()) { quantity.widget.setText(Integer.toString(Math.max(1, number() + 1))); sound(1.1f, .14f); } }
             case QUANTITY -> {
@@ -375,24 +399,25 @@ public final class ShopScreen extends SocialScreen {
                     quantity.widget.setSelectionEnd(0);
                 } else quantity.click(Math.clamp(mx, quantity.x, quantity.x + quantity.w - .1), Math.clamp(my, quantity.y, quantity.y + quantity.h - .1));
             }
+            case SWITCH -> { var p = selected(); if (m.switchOk() && p != null) { choose(p, !selling); sound(1.1f, .14f); } }
             case TRADE -> trade();
             default -> {}
         }
         return true;
     }
     @Override public boolean mouseReleased(double x, double y, int button) {
-        if (button == 0) { pressed = false; dragging = false; }
+        if (button == 0) pressed = false;
         return super.mouseReleased(x, y, button);
     }
-    @Override public boolean mouseDragged(double x, double y, int button, double dx, double dy) {
-        if (dragging && button == 0) { var f = fit(); scroll = ShopView.scrollAt(model(f.x(x), f.y(y)), f.y(y)); return true; }
-        return super.mouseDragged(x, y, button, dx, dy);
-    }
+    /** Wheel over the cards turns pages (one notch = one page). */
     @Override public boolean mouseScrolled(double x, double y, double horizontal, double vertical) {
-        scroll = Math.clamp(scroll - (int) Math.signum(vertical), 0, Math.max(0, visible().size() - ShopView.ROWS));
+        if (sortOpen || vertical == 0) return true;
+        int last = Math.max(0, (visible().size() - 1) / ShopView.PER_PAGE);
+        page = Math.clamp(page - (int) Math.signum(vertical), 0, last);
         return true;
     }
     @Override public boolean keyPressed(int key, int scan, int mods) {
+        if (key == GLFW.GLFW_KEY_ESCAPE && sortOpen) { sortOpen = false; return true; }
         if ((key == GLFW.GLFW_KEY_ESCAPE || key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER) && (search.focus() || quantity.focus())) {
             search.focus(false);
             if (quantity.focus()) commitQuantity();

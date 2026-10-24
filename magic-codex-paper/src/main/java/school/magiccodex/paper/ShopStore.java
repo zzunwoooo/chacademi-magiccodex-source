@@ -2,8 +2,17 @@ package school.magiccodex.paper;
 import java.math.BigDecimal;import java.nio.file.Path;import java.sql.*;import java.util.*;
 import school.magiccodex.database.*;
 final class ShopStore implements AutoCloseable {
- record Product(String id,String name,byte[] bytes,String buy,String sell){}
- record Shop(String id,String title,String portrait,long revision,List<Product> products){}
+ /** category·sort: 상점 화면 정렬용. 목록은 순서(sort) → 이름 순. */
+ record Product(String id,String name,byte[] bytes,String buy,String sell,String category,int sort){
+  Product(String id,String name,byte[] bytes,String buy,String sell){this(id,name,bytes,buy,sell,"",0);}
+ }
+ /** 파일 일괄 등록 한 줄. bytes = 1개짜리 아이템 원본. */
+ record ImportEntry(String name,byte[] bytes,String buy,String sell,String category,int sort){}
+ record ImportResult(boolean created,int added,int updated){}
+ /** owner·role: 상점 창 이름표(NPC 이름이 없을 때의 주인 이름, 이름 위 역할 문구). 빈 값이면 기본값. */
+ record Shop(String id,String title,String portrait,long revision,List<Product> products,String owner,String role){
+  Shop(String id,String title,String portrait,long revision,List<Product> products){this(id,title,portrait,revision,products,"","");}
+ }
  /** origin: 거래를 시작한 서버(mailbox-origin.txt). 빈 값은 이 열이 생기기 전의 기록이며 자동 복구 대상에서 제외한다. */
  record Order(String id,UUID owner,String state,String mode,String product,int quantity,String total,byte[] bytes,String title,String origin,long created){}
  private final ConnectionHolder holder;private final String shops,products,orders,bindings,version;
@@ -17,6 +26,8 @@ final class ShopStore implements AutoCloseable {
  // 추가 전용 스키마 변경: 이미 있으면 건너뛴다 (SQLite·MariaDB 공통).
  boolean hasOrigin=true;try(var s=db().createStatement();var r=s.executeQuery("SELECT origin FROM "+orders+" WHERE 1=0")){r.next();}catch(SQLException e){hasOrigin=false;}
  if(!hasOrigin)try(var s=db().createStatement()){s.execute("ALTER TABLE "+orders+" ADD COLUMN origin VARCHAR(36) NOT NULL DEFAULT ''");}catch(SQLException e){try(var s=db().createStatement();var r=s.executeQuery("SELECT origin FROM "+orders+" WHERE 1=0")){r.next();}catch(SQLException again){throw e;}}
+ for(String[] tc:List.of(new String[]{products,"category VARCHAR(40) NOT NULL DEFAULT ''"},new String[]{products,"sort_order INTEGER NOT NULL DEFAULT 0"},new String[]{shops,"owner VARCHAR(40) NOT NULL DEFAULT ''"},new String[]{shops,"role VARCHAR(40) NOT NULL DEFAULT ''"})){String table=tc[0],col=tc[1],name=col.substring(0,col.indexOf(' '));boolean has=true;try(var s=db().createStatement();var r=s.executeQuery("SELECT "+name+" FROM "+table+" WHERE 1=0")){r.next();}catch(SQLException e){has=false;}
+  if(!has)try(var s=db().createStatement()){s.execute("ALTER TABLE "+table+" ADD COLUMN "+col);}catch(SQLException e){try(var s=db().createStatement();var r=s.executeQuery("SELECT "+name+" FROM "+table+" WHERE 1=0")){r.next();}catch(SQLException again){throw e;}}}
  for(String sql:List.of("CREATE INDEX IF NOT EXISTS "+orders+"_owner_state ON "+orders+"(owner,state)","CREATE INDEX IF NOT EXISTS "+products+"_shop ON "+products+"(shop)"))try(var s=db().createStatement()){s.execute(sql);}catch(SQLException ignored){/* 색인은 성능용이라 만들지 못해도 동작한다 */}
  try(var s=db().prepareStatement("INSERT INTO "+version+"(id,revision) VALUES(1,0)")){try{s.executeUpdate();}catch(SQLException e){if(e.getErrorCode()!=19&&e.getErrorCode()!=1062)throw e;}}}
  private Connection db()throws SQLException{return holder.get();}private interface Work<T>{T run()throws Exception;}
@@ -26,7 +37,7 @@ final class ShopStore implements AutoCloseable {
  private <T>T tx(boolean bump,Work<T> work)throws Exception{var c=holder.begin();try{try(var s=c.createStatement()){s.executeUpdate("UPDATE "+version+" SET revision=revision"+(bump?"+1":"")+" WHERE id=1");}T out=work.run();c.commit();return out;}catch(Exception e){holder.rollback();throw e;}finally{holder.end();}}
  static String price(String value){if(value.equalsIgnoreCase("off"))return "";var p=new BigDecimal(value);if(p.signum()<0||p.compareTo(new BigDecimal("1000000000000"))>0||p.scale()>6)throw new IllegalArgumentException("가격은 0 이상, 소수점 6자리 이하로 입력하세요.");return p.stripTrailingZeros().toPlainString();}
  long version()throws SQLException{try(var s=db().createStatement();var r=s.executeQuery("SELECT revision FROM "+version+" WHERE id=1")){r.next();return r.getLong(1);}}
- Map<String,Shop> catalog()throws SQLException{var out=new HashMap<String,Shop>();try(var s=db().createStatement();var r=s.executeQuery("SELECT id,title,portrait,revision FROM "+shops+" ORDER BY id")){while(r.next()){String id=r.getString(1);var list=new ArrayList<Product>();try(var p=db().prepareStatement("SELECT id,name,payload,buy,sell FROM "+products+" WHERE shop=? ORDER BY name,id")){p.setString(1,id);try(var q=p.executeQuery()){while(q.next())list.add(new Product(q.getString(1),q.getString(2),q.getBytes(3),q.getString(4),q.getString(5)));}}out.put(id,new Shop(id,r.getString(2),r.getString(3),r.getLong(4),List.copyOf(list)));}}return Map.copyOf(out);}
+ Map<String,Shop> catalog()throws SQLException{var out=new HashMap<String,Shop>();try(var s=db().createStatement();var r=s.executeQuery("SELECT id,title,portrait,revision,owner,role FROM "+shops+" ORDER BY id")){while(r.next()){String id=r.getString(1);var list=new ArrayList<Product>();try(var p=db().prepareStatement("SELECT id,name,payload,buy,sell,category,sort_order FROM "+products+" WHERE shop=? ORDER BY sort_order,name,id")){p.setString(1,id);try(var q=p.executeQuery()){while(q.next())list.add(new Product(q.getString(1),q.getString(2),q.getBytes(3),q.getString(4),q.getString(5),q.getString(6),q.getInt(7)));}}out.put(id,new Shop(id,r.getString(2),r.getString(3),r.getLong(4),List.copyOf(list),r.getString(5),r.getString(6)));}}return Map.copyOf(out);}
  /** 탭 완성용: 상품 payload 를 읽지 않고 ID만. */
  List<String> shopIds()throws SQLException{var out=new ArrayList<String>();try(var s=db().createStatement();var r=s.executeQuery("SELECT id FROM "+shops+" ORDER BY id")){while(r.next())out.add(r.getString(1));}return List.copyOf(out);}
  Map<String,String> bindings(String origin)throws SQLException{var out=new HashMap<String,String>();try(var s=db().prepareStatement("SELECT npc,shop FROM "+bindings+" WHERE origin=?")){s.setString(1,origin);try(var r=s.executeQuery()){while(r.next())out.put(r.getString(1),r.getString(2));}}return Map.copyOf(out);}
@@ -44,10 +55,34 @@ final class ShopStore implements AutoCloseable {
 
  /** The shared version row is locked by tx before this comparison. */
  private void adminRevision(String shop,long expected)throws SQLException{try(var s=db().prepareStatement("SELECT revision FROM "+shops+" WHERE id=?")){s.setString(1,shop);try(var q=s.executeQuery()){if(!q.next())throw new IllegalArgumentException("상점 없음");if(q.getLong(1)!=expected)throw new IllegalStateException("다른 관리자가 상품을 변경했습니다. 새로고침 후 다시 확인하세요.");}}}
+ private static void sortValues(String category,int sort){if(category.length()>40||category.codePoints().anyMatch(Character::isISOControl))throw new IllegalArgumentException("분류는 40자 이하로 입력하세요.");if(sort<0||sort>99999)throw new IllegalArgumentException("순서는 0~99999 사이 숫자예요.");}
  private static void adminValues(String name,byte[] payload,String buy,String sell){if(name.isBlank()||name.length()>120||name.codePoints().anyMatch(Character::isISOControl))throw new IllegalArgumentException("상품 이름 확인");if(payload==null||payload.length<1||payload.length>32768)throw new IllegalArgumentException("아이템 데이터 크기 확인");for(String v:List.of(buy,sell))if(!v.isEmpty()&&!price(v).equals(v))throw new IllegalArgumentException("가격 확인");}
- String adminAdd(String shop,long expected,String name,byte[] payload,String buy,String sell)throws Exception{adminValues(name,payload,buy,sell);return tx(()->{adminRevision(shop,expected);bump(shop);String id=UUID.randomUUID().toString();try(var s=db().prepareStatement("INSERT INTO "+products+"(id,shop,name,payload,buy,sell) VALUES(?,?,?,?,?,?)")){s.setString(1,id);s.setString(2,shop);s.setString(3,name);s.setBytes(4,payload);s.setString(5,buy);s.setString(6,sell);s.executeUpdate();}return id;});}
+ String adminAdd(String shop,long expected,String name,byte[] payload,String buy,String sell)throws Exception{return adminAdd(shop,expected,name,payload,buy,sell,"",0);}
+ String adminAdd(String shop,long expected,String name,byte[] payload,String buy,String sell,String category,int sort)throws Exception{adminValues(name,payload,buy,sell);sortValues(category,sort);return tx(()->{adminRevision(shop,expected);bump(shop);return insert(shop,name,payload,buy,sell,category.strip(),sort);});}
+ private String insert(String shop,String name,byte[] payload,String buy,String sell,String category,int sort)throws SQLException{String id=UUID.randomUUID().toString();try(var s=db().prepareStatement("INSERT INTO "+products+"(id,shop,name,payload,buy,sell,category,sort_order) VALUES(?,?,?,?,?,?,?,?)")){s.setString(1,id);s.setString(2,shop);s.setString(3,name);s.setBytes(4,payload);s.setString(5,buy);s.setString(6,sell);s.setString(7,category);s.setInt(8,sort);s.executeUpdate();}return id;}
  void adminEdit(String shop,long expected,String id,String name,String buy,String sell)throws Exception{adminValues(name,new byte[]{1},buy,sell);tx(()->{adminRevision(shop,expected);try(var s=db().prepareStatement("UPDATE "+products+" SET name=?,buy=?,sell=? WHERE shop=? AND id=?")){s.setString(1,name);s.setString(2,buy);s.setString(3,sell);s.setString(4,shop);s.setString(5,id);if(s.executeUpdate()!=1)throw new IllegalArgumentException("상품 없음");}bump(shop);return null;});}
+ void adminEdit(String shop,long expected,String id,String name,String buy,String sell,String category,int sort)throws Exception{adminValues(name,new byte[]{1},buy,sell);sortValues(category,sort);tx(()->{adminRevision(shop,expected);try(var s=db().prepareStatement("UPDATE "+products+" SET name=?,buy=?,sell=?,category=?,sort_order=? WHERE shop=? AND id=?")){s.setString(1,name);s.setString(2,buy);s.setString(3,sell);s.setString(4,category.strip());s.setInt(5,sort);s.setString(6,shop);s.setString(7,id);if(s.executeUpdate()!=1)throw new IllegalArgumentException("상품 없음");}bump(shop);return null;});}
  void adminDelete(String shop,long expected,String id)throws Exception{tx(()->{adminRevision(shop,expected);try(var s=db().prepareStatement("DELETE FROM "+products+" WHERE shop=? AND id=?")){s.setString(1,shop);s.setString(2,id);if(s.executeUpdate()!=1)throw new IllegalArgumentException("상품 없음");}bump(shop);return null;});}
+ /**
+  * 파일 일괄 등록: 상점이 없으면 만들고, 같은 이름의 상품은 가격·분류·순서만 갱신(아이템 원본은 그대로), 없으면 새로 넣는다.
+  * 한 트랜잭션이라 중간에 실패하면 아무것도 바뀌지 않는다. 파일에 없는 기존 상품은 지우지 않는다.
+  */
+ ImportResult importProducts(String shop,String title,String portrait,List<ImportEntry> entries)throws Exception{return importProducts(shop,title,portrait,"","",entries);}
+ ImportResult importProducts(String shop,String title,String portrait,String owner,String role,List<ImportEntry> entries)throws Exception{
+  for(String v:List.of(owner,role))if(v.length()>40||v.codePoints().anyMatch(Character::isISOControl))throw new IllegalArgumentException("주인 이름·역할은 40자 이하로 적어 주세요.");
+  if(!shop.matches("[a-z0-9_-]{1,48}"))throw new IllegalArgumentException("상점 ID는 영문 소문자·숫자·_·- 로 48자까지예요.");
+  if(title.isBlank()||title.length()>80)throw new IllegalArgumentException("상점 이름은 1~80자예요.");
+  if(!portrait.isEmpty()&&(!portrait.matches("[a-z0-9_/-]{1,120}")||portrait.contains("..")))throw new IllegalArgumentException("초상 ID는 영문 소문자·숫자·_·-·/ 만 써요.");
+  var names=new HashSet<String>();for(var e:entries){adminValues(e.name(),e.bytes(),e.buy(),e.sell());sortValues(e.category(),e.sort());if(!names.add(e.name()))throw new IllegalArgumentException("파일 안에 같은 이름이 두 번 있어요: "+e.name());}
+  return tx(()->{boolean created;try(var s=db().prepareStatement("SELECT id FROM "+shops+" WHERE id=?")){s.setString(1,shop);try(var q=s.executeQuery()){created=!q.next();}}
+   if(created)try(var s=db().prepareStatement("INSERT INTO "+shops+"(id,title,portrait,revision) VALUES(?,?,?,1)")){s.setString(1,shop);s.setString(2,title);s.setString(3,portrait.isEmpty()?"elena-neutral":portrait);s.executeUpdate();}
+   else{try(var s=db().prepareStatement("UPDATE "+shops+" SET title=? WHERE id=?")){s.setString(1,title);s.setString(2,shop);s.executeUpdate();}if(!portrait.isEmpty())try(var s=db().prepareStatement("UPDATE "+shops+" SET portrait=? WHERE id=?")){s.setString(1,portrait);s.setString(2,shop);s.executeUpdate();}}
+   try(var s=db().prepareStatement("UPDATE "+shops+" SET owner=?,role=? WHERE id=?")){s.setString(1,owner.strip());s.setString(2,role.strip());s.setString(3,shop);s.executeUpdate();}
+   bump(shop);var existing=new HashMap<String,String>();try(var s=db().prepareStatement("SELECT id,name FROM "+products+" WHERE shop=?")){s.setString(1,shop);try(var q=s.executeQuery()){while(q.next())existing.putIfAbsent(q.getString(2),q.getString(1));}}
+   int added=0,updated=0;for(var e:entries){String id=existing.get(e.name());if(id==null){insert(shop,e.name(),e.bytes(),e.buy(),e.sell(),e.category().strip(),e.sort());added++;continue;}
+    try(var s=db().prepareStatement("UPDATE "+products+" SET buy=?,sell=?,category=?,sort_order=? WHERE shop=? AND id=?")){s.setString(1,e.buy());s.setString(2,e.sell());s.setString(3,e.category().strip());s.setInt(4,e.sort());s.setString(5,shop);s.setString(6,id);s.executeUpdate();}updated++;}
+   return new ImportResult(created,added,updated);});
+ }
  Order prepare(UUID owner,String request,String shop,long revision,String product,int quantity,boolean selling)throws Exception{return prepare(owner,request,shop,revision,product,quantity,selling,"");}
  /** 거래 기록만 만든다(부작용 없음). 카탈로그 버전은 올리지 않고, 필요한 상점·상품 한 건만 읽는다. */
  Order prepare(UUID owner,String request,String shop,long revision,String product,int quantity,boolean selling,String origin)throws Exception{return tx(false,()->{
