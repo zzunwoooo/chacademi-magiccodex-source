@@ -292,7 +292,6 @@ public final class ShopScreen extends SocialScreen {
         public void line(float ax, float ay, float bx, float by, float thickness, int color) { HudMesh.line(c, ax, ay, bx, by, thickness, color); }
         public void gradient(float x, float y, float w, float h, int top, int bottom) { HudMesh.vertical(c, x, y, w, h, top, bottom); }
         public void chamfer(float x, float y, float w, float h, float r, int color) { ShopScreen.this.chamfer(c, x, y, w, h, r, color); }
-        public void diamond(float cx, float cy, float rx, float ry, int color) { HudMesh.diamond(c, cx, cy, rx, ry, color); }
         public void text(String s, float x, float cy, float size, int color, ShopView.Face f, boolean centered) {
             type.draw(c, s, x, cy, size, color, face(f), centered);
         }

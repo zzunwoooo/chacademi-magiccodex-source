@@ -118,3 +118,22 @@ The first pass added its own choices (smaller NPC, dark band behind the name, gl
 - **Sort labels**: the closed box shows the chosen sort. The labels are 기본순 / 가격순 / 가격 높은순 / 이름순 (the mockup shows 「가격순」).
 
 The overlay check against reference.png is in `docs/handoff/img/shop/compare_v3.jpg`. The text, boxes and lines line up within a few px.
+
+## 6. 3rd pass — owner: no code-drawn lines or ornaments beyond the supplied PNGs
+
+- **Removed** every code-drawn ornament:
+  - the star before the title
+  - the star and underline by the NPC name
+  - the thin left-edge line and its stars
+  - the gold lines that extended the footer bar to x416.5
+  - `HudMesh.diamond` and `Canvas.diamond`
+- **Footer** stays inside `shop_frame.png`'s own footer lines (x488.5..1650).
+  - The fill sits under the frame's footer rows (the frame is drawn again over it).
+  - The item icon and name moved inside the frame: icon centre x538, text x590, max width 140.
+  - Everything else in the footer keeps the measured positions.
+- **What remains as geometry** is only what the bundle README lists:
+  - card borders and the selection line
+  - pager and sort arrows
+  - search and sort fields
+  - tabs, stepper, the 판매/구매 switch
+  - thin dividers

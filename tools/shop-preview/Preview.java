@@ -28,7 +28,6 @@ public class Preview {
    public void gradient(float x,float y,float w,float h,int top,int bottom){g.setPaint(new GradientPaint(0,y,col(top),0,y+h,col(bottom)));g.fill(new Rectangle2D.Float(x,y,w,h));}
    public void chamfer(float x,float y,float w,float h,float r,int color){var p=new Path2D.Float();p.moveTo(x+r,y);p.lineTo(x+w-r,y);p.lineTo(x+w,y+r);p.lineTo(x+w,y+h-r);p.lineTo(x+w-r,y+h);p.lineTo(x+r,y+h);p.lineTo(x,y+h-r);p.lineTo(x,y+r);p.closePath();g.setColor(col(color));g.fill(p);}
    public void line(float ax,float ay,float bx,float by,float t,int color){g.setColor(col(color));g.setStroke(new BasicStroke(t,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));g.draw(new Line2D.Float(ax,ay,bx,by));}
-   public void diamond(float x,float y,float rx,float r,int color){var p=new Path2D.Float();p.moveTo(x,y-r);p.lineTo(x-rx,y);p.lineTo(x,y+r);p.lineTo(x+rx,y);p.closePath();g.setColor(col(color));g.fill(p);}
    public void item(ShopView.Row r,float x,float y,float size){if(r.icon()==null)return;g.drawImage(img(ICONS+"/"+r.icon()+".png"),Math.round(x),Math.round(y),Math.round(size),Math.round(size),null);}
    public void portrait(float x,float y,float w,float h){g.drawImage(img(PORTRAIT),Math.round(x),Math.round(y),Math.round(w),Math.round(h),null);}
    public void searchField(float x,float y,float w,float h){text("아이템 검색",x+6,y+h/2,19,ShopView.HINT,ShopView.Face.BODY,false);}

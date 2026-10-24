@@ -7,10 +7,10 @@ import java.util.List;
  * 1672x941). Every position, size and colour below was measured from reference.png; nothing is added.
  * Pure Java: ShopScreen supplies a Minecraft {@link Canvas}; the review preview supplies a Java2D one.
  *
- * Textures: shop_frame.png (stretched onto the mockup's panel lines) and button_primary.png. Everything else
- * (cards, fields, tabs, stepper, switch button, arrows, the small stars and lines) is geometry, as the
- * bundle README asks. Order follows the mockup: panel, catalogue, then the illustration (it overlaps the
- * panel's left edge), then the footer bar on top of the illustration, then the role / name label.
+ * Textures: shop_frame.png (stretched onto the mockup's panel lines) and button_primary.png. Only what the bundle
+ * README lists is geometry (card borders, selection line, arrows, search field, secondary buttons); no other
+ * lines or ornaments are drawn. Order: panel, catalogue, the illustration (it overlaps the panel's left edge),
+ * the frame's footer area over it, then the role / name text.
  */
 final class ShopView {
     static final int W = 1672, H = 941;
@@ -22,7 +22,7 @@ final class ShopView {
             SELECTED_LINE = 0xFFF2D184, FIELD = 0xFF0A192C, FIELD_LINE = 0xFF6A5F57, TAB = 0xFF0C1D34, TAB_LINE = 0xFF615C5C,
             TAB_TOP = 0xFFFAE2AD, TAB_BOTTOM = 0xFFE9C58A, TAB_EDGE = 0xFFEFCF96, HEAD_DIVIDER = 0xFF9B8D7B,
             FOOT_DIVIDER = 0xFF474648, STEP_LINE = 0xFF4E4C4A, STEP_FILL = 0xFF0D1D31, SWITCH = 0xFF16273F, SWITCH_LINE = 0xFFC2A976,
-            FRAME_GOLD = 0xFFEDBE48, DECO = 0x99D9B36A, ARROW = 0xFFD9B36A;
+            ARROW = 0xFFD9B36A;
     static final String ROOT = "textures/gui/shop/v3/", OLD = "textures/gui/shop/v2/";
 
     enum Face { TITLE, SECTION, BODY, LABEL, BOLD }
@@ -48,8 +48,6 @@ final class ShopView {
         /** Octagon with corners cut by r (the mockup's small rounded corners). */
         void chamfer(float x, float y, float w, float h, float r, int color);
         void line(float ax, float ay, float bx, float by, float thickness, int color);
-        /** Diamond with half-width rx and half-height ry (thin ones make star points). */
-        void diamond(float cx, float cy, float rx, float ry, int color);
         /** Item icon (real ItemStack) drawn as a square; nothing when the row has no stack. */
         void item(Row row, float x, float y, float size);
         /** NPC illustration, full source, any size. */
@@ -83,14 +81,14 @@ final class ShopView {
     // ---- geometry (reference.png pixels) ----------------------------------------------------------------------
     // Panel lines in the mockup: outer x488.5..1650, top y21.5, footer line y799, bottom y914.5.
     // shop_frame.png 1440x1092 lines: outer x37..1402, top y62, footer y887.5, bottom y1017 → mapped onto them.
-    static final float PANEL_L = 488.5f, PANEL_R = 1650, PANEL_T = 21.5f, FOOT_T = 799, FOOT_B = 914.5f, FOOT_L = 416.5f;
+    static final float PANEL_L = 488.5f, PANEL_R = 1650, PANEL_T = 21.5f, FOOT_T = 799, FOOT_B = 914.5f;
     static final float KX = (PANEL_R - PANEL_L) / (1402 - 37), KY_TOP = (FOOT_T - PANEL_T) / (887.5f - 62), KY_FOOT = (FOOT_B - FOOT_T) / (1017 - 887.5f);
     static float fx(float u) { return PANEL_L + (u - 37) * KX; }
     static float fyTop(float v) { return PANEL_T + (v - 62) * KY_TOP; }
     static float fyFoot(float v) { return FOOT_T + (v - 887.5f) * KY_FOOT; }
-    static final int FRAME_SPLIT = 880, FRAME_FOOT_U = 120;             // frame rows below 880 are redrawn over the footer fill
+    static final int FRAME_SPLIT = 880;                                 // frame rows below 880 are drawn over the footer fill
     // header
-    static final float TITLE_X = 576, HEAD_CY = 76.5f, STAR_X = 533.5f, AMOUNT_RIGHT = 1614, AMOUNT_CY = 81,
+    static final float TITLE_X = 576, HEAD_CY = 76.5f, AMOUNT_RIGHT = 1614, AMOUNT_CY = 81,
             GOLD_LABEL_X = 1377, GOLD_LABEL_CY = 78.5f, COIN_HEAD_X = 1344, COIN_HEAD_CY = 77;
     // search row
     static final float BAR_Y = 136, BAR_H = 48, SEARCH_X = 517, SEARCH_W = 517;
@@ -103,7 +101,7 @@ final class ShopView {
     // pager
     static final float PAGER_X = 1069, PAGER_Y = 785, ARROW_DX = 74, ARROW_S = 26;
     // footer (mockup bar 416.5..1650 x 799..914.5)
-    static final float FOOT_CY = 857.5f, F_ICON_CX = 468, F_ICON = 84, F_TEXT_X = 543, F_NAME_CY = 839, F_DESC_CY = 874.5f, F_TEXT_MAX = 186,
+    static final float FOOT_CY = 857.5f, F_ICON_CX = 538, F_ICON = 84, F_TEXT_X = 590, F_NAME_CY = 839, F_DESC_CY = 874.5f, F_TEXT_MAX = 140,
             F_DIV1 = 738, F_LABEL_X = 759, F_VALUE_RIGHT = 864, F_BUY_CY = 841, F_SELL_CY = 877, F_DIV2 = 893,
             QTY_LABEL_X = 914, QTY_X = 958, QTY_Y = 829, QTY_W = 160, QTY_H = 58, STEP = 48, F_DIV3 = 1144.5f,
             SUM_LABEL_X = 1171, SUM_LABEL_CY = 835, SUM_COIN_X = 1182, SUM_X = 1209, SUM_CY = 866, SUM_MAX = 120,
@@ -186,16 +184,6 @@ final class ShopView {
     static boolean hover(Model m, float[] b) { return !m.sortOpen() && in(m.mouseX(), m.mouseY(), b); }
     /** Price a card shows: buyable products show the buy price, the 판매 tab and sell-only products the sell price. */
     static boolean cardSells(Model m, Row r) { return m.tab() == Tab.SELL || !r.buys(); }
-    /** The mockup's star: four long points, four short diagonal ones. */
-    static void star(Canvas c, float cx, float cy, float rx, float ry, int color) {
-        c.diamond(cx, cy, rx * .2f, ry, color);
-        c.diamond(cx, cy, rx, ry * .2f, color);
-        float d = Math.min(rx, ry) * .45f;
-        c.diamond(cx, cy, d * .35f, d * .35f, color);
-        c.line(cx - d, cy - d, cx + d, cy + d, 1.2f, color);
-        c.line(cx - d, cy + d, cx + d, cy - d, 1.2f, color);
-    }
-
     // ---- frame ----------------------------------------------------------------------------------------------
     static void draw(Canvas c, Model m) {
         // panel backing + frame (rows above the footer)
@@ -203,7 +191,6 @@ final class ShopView {
         c.image(ROOT + "shop_frame.png", fx(0), fyTop(0), 1440 * KX, FRAME_SPLIT * KY_TOP, 0, 0, 1440, FRAME_SPLIT, 1440, 1092);
 
         // title · gold
-        star(c, STAR_X, HEAD_CY - 1, 24.5f, 22.5f, GOLD);
         float labelW = c.width("보유 골드", 21.4f, Face.LABEL);
         fitted(c, m.title(), TITLE_X, HEAD_CY, 41, COIN_HEAD_X - 40 - TITLE_X, GOLD, Face.TITLE, false);
         coin(c, COIN_HEAD_X, COIN_HEAD_CY, 28);
@@ -236,28 +223,16 @@ final class ShopView {
             c.portrait(NPC_X, Math.max(H, m.screenBottom()) - h, w, h);
         }
 
-        // footer bar: fill, then the frame's footer rows and the bar's left end on top
-        c.fill(FOOT_L, FOOT_T, PANEL_R - FOOT_L, FOOT_B - FOOT_T, FOOTER);
+        // footer area of the frame: fill inside the frame's own footer lines, then the frame's footer rows on top
+        c.fill(PANEL_L, FOOT_T, PANEL_R - PANEL_L, FOOT_B - FOOT_T, FOOTER);
         float splitY = fyFoot(FRAME_SPLIT);
-        c.image(ROOT + "shop_frame.png", fx(FRAME_FOOT_U), splitY, (1440 - FRAME_FOOT_U) * KX, (1092 - FRAME_SPLIT) * KY_FOOT,
-                FRAME_FOOT_U, FRAME_SPLIT, 1440 - FRAME_FOOT_U, 1092 - FRAME_SPLIT, 1440, 1092);
-        float lineT = 3.5f, joint = fx(FRAME_FOOT_U) + 1;
-        c.fill(FOOT_L, FOOT_T - lineT / 2, joint - FOOT_L, lineT, FRAME_GOLD);
-        c.fill(FOOT_L, FOOT_B - lineT / 2, joint - FOOT_L, lineT, FRAME_GOLD);
-        c.fill(FOOT_L - lineT / 2, FOOT_T - lineT / 2, lineT, FOOT_B - FOOT_T + lineT, FRAME_GOLD);
+        c.image(ROOT + "shop_frame.png", fx(0), splitY, 1440 * KX, (1092 - FRAME_SPLIT) * KY_FOOT,
+                0, FRAME_SPLIT, 1440, 1092 - FRAME_SPLIT, 1440, 1092);
         footer(c, m);
 
-        // role / name label and the thin left-edge line with its stars
-        c.fill(21.5f, 20, 1.2f, 899, DECO);
-        star(c, 22, 20, 9, 9, GOLD);
-        star(c, 22, 919, 10, 10, GOLD);
-        c.fill(22, 918.5f, 330, 1.2f, DECO);
+        // role / name text (no drawn ornaments: only the supplied PNGs are decoration)
         fitted(c, m.role(), ROLE_CX, ROLE_CY, 19.5f, 220, ROLE, Face.LABEL, true);
         fitted(c, m.npcName(), NAME_CX, NAME_CY, 37.8f, 300, WHITE, Face.TITLE, true);
-        star(c, 71, 875.5f, 16, 19.5f, GOLD);
-        c.fill(85, 894, 163, 1.5f, 0xCCD9B36A);
-        c.fill(248, 894, 52, 1.5f, 0x55D9B36A);
-        star(c, 245.5f, 887, 10.5f, 9, GOLD);
 
         if (m.sortOpen()) {
             c.pushLayer(300);

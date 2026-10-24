@@ -28,10 +28,11 @@ class ShopViewTest {
             for (int j = i + 1; j < boxes.size(); j++) assertFalse(overlap(boxes.get(i), boxes.get(j)), i + "/" + j);
         for (var b : boxes) {
             assertTrue(b[1] > ShopView.FOOT_T && b[1] + b[3] < ShopView.FOOT_B);
-            assertTrue(b[0] > ShopView.FOOT_L && b[0] + b[2] < ShopView.PANEL_R);
+            assertTrue(b[0] > ShopView.PANEL_L + 4 && b[0] + b[2] < ShopView.PANEL_R);
         }
         assertTrue(ShopView.SUM_X + ShopView.SUM_MAX < ShopView.SWITCH_X);
         assertTrue(ShopView.F_TEXT_X + ShopView.F_TEXT_MAX < ShopView.F_DIV1);
+        assertTrue(ShopView.footIconBox()[0] > ShopView.PANEL_L + 4, "footer icon stays inside the frame");
     }
 
     @Test void headerRowAndGridFitInsideThePanel() {
