@@ -25,6 +25,15 @@ final class HudMesh {
             v.vertex(m,bx+nx,by+ny,0).color(color);v.vertex(m,bx-nx,by-ny,0).color(color);
         });
     }
+    /** Diamond with separate half-width (rx) and half-height (ry); a thin one makes a star point. */
+    static void diamond(DrawContext c,float x,float y,float rx,float ry,int color){
+        var m=c.getMatrices().peek().getPositionMatrix();
+        c.draw(p->{
+            var v=p.getBuffer(RenderLayer.getGui());
+            v.vertex(m,x,y-ry,0).color(color);v.vertex(m,x-rx,y,0).color(color);
+            v.vertex(m,x,y+ry,0).color(color);v.vertex(m,x+rx,y,0).color(color);
+        });
+    }
     static void star(DrawContext c,float x,float y,float radius,int color){
         var m=c.getMatrices().peek().getPositionMatrix();
         c.draw(p->{

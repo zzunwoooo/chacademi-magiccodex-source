@@ -3,29 +3,47 @@ package school.magiccodex.client;
 import java.util.List;
 
 /**
- * Shop window layout, drawing order and hit testing in the 1672x941 reference space
- * (CHACADEMI_SHOP_REDESIGN reference/approved.png). Pure Java: ShopScreen supplies a Minecraft
- * {@link Canvas}; the review preview supplies a Java2D one, so both run this exact code.
+ * NPC shop window, v3 (일반 NPC 상점 12칸 UI v2 묶음: reference.png 승인 시안), in the 1672x941 reference space.
+ * Pure Java: ShopScreen supplies a Minecraft {@link Canvas}; the review preview supplies a Java2D one, so both
+ * run this exact code.
  *
- * Art is never stretched freely: shop_frame keeps one horizontal scale and only its plain middle
- * band grows vertically; every other panel/button is a horizontal 3-slice at a uniform height
- * scale, so corners and gold lines keep their drawn proportions.
+ * Drawing order from the bundle README: game screen → light blur (screen) → navy backing (code, alpha ~0.8)
+ * → shop_frame.png (alpha 1) → products / text / buttons (alpha 1). No overall opacity is applied.
+ * Only the frame and the gold trade button are textures; card borders, the selection line, arrows, the search
+ * field and secondary buttons are drawn as geometry. The NPC illustration stays left of the frame so it never
+ * covers products.
  */
 final class ShopView {
     static final int W = 1672, H = 941;
     static final int WHITE = 0xFFF0F3F5, GOLD = 0xFFE7CE91, MUTED = 0xFFA5B8C8, DARK = 0xFF2A2112,
             DISABLED = 0xFF8C9298, DISABLED_ON_GOLD = 0xFF4E5257, CYAN = 0xFF92E7F2;
-    static final String ROOT = "textures/gui/shop/v2/";
+    static final String ROOT = "textures/gui/shop/v3/", OLD = "textures/gui/shop/v2/";
+    // geometry colours
+    static final int BACKING = 0xCC0B1828, CARD = 0x8C10223A, CARD_HOVER = 0xB3182E4A, LINE = 0x59E7CE91,
+            LINE_HOVER = 0x99E7CE91, LINE_SELECTED = 0xFFE2C27E, GLOW = 0x26E7CE91, FIELD = 0x8C0A1626,
+            TAB_GOLD = 0xFFDDBD78, TAB_GOLD_EDGE = 0xFFF6E2AE;
 
     enum Face { TITLE, SECTION, BODY, LABEL, BOLD }
     enum Tab { ALL, BUY, SELL }
+    /** 정렬: 기본순 = 상점에 등록된 순서(분류·순서), 나머지는 화면에서만 다시 정렬한다. */
+    enum Sort {
+        DEFAULT("기본순"), PRICE_LOW("가격 낮은순"), PRICE_HIGH("가격 높은순"), NAME("이름순");
+        final String label;
+        Sort(String label) { this.label = label; }
+    }
 
     interface Canvas {
-        /** Draws source region (u,v,sw,sh) of a texture with size (tw,th) into the destination box. */
-        void image(String texture, float x, float y, float w, float h, int u, int v, int sw, int sh, int tw, int th);
+        /** Draws source region (u,v,sw,sh) of a texture with size (tw,th) into the destination box, tinted (ARGB). */
+        void image(String texture, float x, float y, float w, float h, int u, int v, int sw, int sh, int tw, int th, int tint);
+        default void image(String texture, float x, float y, float w, float h, int u, int v, int sw, int sh, int tw, int th) {
+            image(texture, x, y, w, h, u, v, sw, sh, tw, th, 0xFFFFFFFF);
+        }
         void text(String value, float x, float centerY, float size, int color, Face face, boolean centered);
         float width(String value, float size, Face face);
         void fill(float x, float y, float w, float h, int color);
+        void line(float ax, float ay, float bx, float by, float thickness, int color);
+        /** Diamond with half-width rx and half-height ry (thin ones make star points). */
+        void diamond(float cx, float cy, float rx, float ry, int color);
         /** Item icon (real ItemStack) drawn as a square; nothing when the row has no stack. */
         void item(Row row, float x, float y, float size);
         /** NPC illustration, full source, any size. */
@@ -45,106 +63,89 @@ final class ShopView {
 
     /** Everything one frame needs; built by the screen from the server response. */
     record Model(String title, String role, String npcName, boolean hasPortrait, float portraitAspect,
-                 String balance, Tab tab, boolean[] tabEnabled, List<Row> rows, int scroll, String selected,
+                 String balance, Tab tab, boolean[] tabEnabled, List<Row> rows, int page, String selected,
                  boolean selling, String empty, int max, String total, boolean minusOk, boolean plusOk,
-                 boolean tradeOk, boolean busy, String notice, float noticeAlpha, double mouseX, double mouseY,
-                 boolean mouseDown, float screenBottom) {}
+                 boolean tradeOk, boolean switchOk, Sort sort, boolean sortOpen, boolean busy, String notice,
+                 float noticeAlpha, double mouseX, double mouseY, boolean mouseDown, float screenBottom) {
+        int pages() { return Math.max(1, (rows.size() + PER_PAGE - 1) / PER_PAGE); }
+        Row chosen() { return rows.stream().filter(r -> r.id().equals(selected)).findFirst().orElse(null); }
+    }
 
-    enum Kind { NONE, CLOSE, TAB, SEARCH, ROW, ROW_BUY, ROW_SELL, ICON, MINUS, PLUS, QUANTITY, TRADE, SCROLL }
+    enum Kind { NONE, TAB, SEARCH, SORT, SORT_OPTION, CARD, ICON, PREV, NEXT, MINUS, PLUS, QUANTITY, SWITCH, TRADE }
     record Hit(Kind kind, int index) { static final Hit NONE = new Hit(Kind.NONE, -1); }
 
     // ---- geometry -------------------------------------------------------------------------------------------
-    // shop_frame.png 1318x1118: outer gold line x8..1307, inner panel x40..1278 / y235..1089.
-    static final float FRAME_X = 588, FRAME_Y = 12, FRAME_K = 1047f / 1318f, FRAME_H = 917;
-    static final int FRAME_TOP = 300, FRAME_BOTTOM = 1000;           // source rows kept at uniform scale
-    static final float CX = 632, CR = 1591;                           // content left / right
-    static final float BAR_Y = 211, BAR_H = 52;
-    static final float BAL_X = 632, BAL_W = 372, SEARCH_X = 1020, SEARCH_W = 296;
-    static final float TAB_X = 1327, TAB_W = 84, TAB_GAP = 6, TAB_Y = 214, TAB_H = 46;
-    static final float LIST_Y = 275, ROW_W = 938, ROW_H = 124, ROW_GAP = 8;
-    static final int ROWS = 4;
-    static final float BAR_X = 1579, BAR_W = 12;                      // scrollbar
-    static final float FOOT_Y = 807, FOOT_H = 74;
-    static final float CLOSE_X = 1556, CLOSE_Y = 90, CLOSE_S = 44;
-    // nameplate.png 1707x794 at a uniform 0.247 scale
-    static final float PLATE_X = 78, PLATE_Y = 722, PLATE_W = 422, PLATE_H = 422f * 794 / 1707;
-    static final float NPC_CENTER = 300, NPC_MAX_H = 1000, NPC_MAX_W = 640;
+    // shop_frame.png 1440x1092: outer line x37..1402 / y62..1017, ornament line y140 (star x720),
+    // header line y176, footer line y887. Drawn at one uniform scale K so lines and stars keep their shape.
+    static final float K = .9f, OUT_L = 421, OUT_T = 41;
+    static float sx(float u) { return OUT_L + (u - 37) * K; }
+    static float sy(float v) { return OUT_T + (v - 62) * K; }
+    static final float OUT_R = sx(1402), OUT_B = sy(1017);
+    static final float CX = 449, CR = 1622;                              // content left / right
+    static final float HEAD_Y = (sy(66) + sy(140)) / 2;                  // title / gold row centre
+    static final float BAR_Y = 160, BAR_H = 48;
+    static final float SORT_W = 150, SORT_X = CR - SORT_W, DIVIDER_X = SORT_X - 22;
+    static final float TAB_W = 116, TAB_GAP = 8, TAB_X = DIVIDER_X - 22 - 3 * TAB_W - 2 * TAB_GAP;
+    static final float SEARCH_X = CX, SEARCH_W = TAB_X - 24 - CX;
+    static final int COLS = 4, ROWS = 3, PER_PAGE = COLS * ROWS;
+    static final float GRID_Y = 222, CARD_GAP_X = 12, CARD_GAP_Y = 10, CARD_W = (CR - CX - (COLS - 1) * CARD_GAP_X) / COLS, CARD_H = 160;
+    static final float CARD_ICON = 84;
+    static final float PAGER_Y = 752, ARROW_DX = 74, ARROW_S = 36;
+    static final float FOOT_TOP = sy(889), FOOT_BOTTOM = sy(1012), FOOT_CY = (FOOT_TOP + FOOT_BOTTOM) / 2;
+    // footer columns
+    static final float F_ICON_X = CX + 6, F_ICON = 78, F_TEXT_X = CX + 102, F_TEXT_MAX = 186,
+            F_DIV1 = 750, F_LABEL_X = 768, F_VALUE_RIGHT = 900, F_DIV2 = 918,
+            QTY_LABEL_X = 934, QTY_X = 984, QTY_W = 188, QTY_H = 50, STEP = 44,
+            F_DIV3 = 1190, SUM_X = 1206, SUM_MAX = 118,
+            TRADE_H = 58, TRADE_W = TRADE_H * 2131f / 633f, TRADE_X = CR - TRADE_W,
+            SWITCH_W = 88, SWITCH_H = 48, SWITCH_X = TRADE_X - 10 - SWITCH_W;
+    // NPC: drawn first, so the navy backing and the cards sit over any part that reaches the frame.
+    static final float NPC_CENTER = 224, NPC_MAX_H = 940, NPC_MAX_W = 448;
+    // role / name label bottom-left (reference: small star, gold role, white name, thin line)
+    static final float NAME_X = 104, ROLE_Y = 826, NAME_Y = 866, NAME_LINE_Y = 896, NAME_BAND_Y = 796;
 
-    static float rowY(int i) { return LIST_Y + i * (ROW_H + ROW_GAP); }
-    static float listBottom() { return rowY(ROWS - 1) + ROW_H; }
+    static float cardX(int slot) { return CX + (slot % COLS) * (CARD_W + CARD_GAP_X); }
+    static float cardY(int slot) { return GRID_Y + (slot / COLS) * (CARD_H + CARD_GAP_Y); }
+    static float gridBottom() { return cardY(PER_PAGE - 1) + CARD_H; }
     static float tabX(int i) { return TAB_X + i * (TAB_W + TAB_GAP); }
-    // row-relative
-    static final float SLOT_DX = 10, SLOT_DY = 8, SLOT_W = 132, SLOT_H = 108, ICON = 96, TEXT_DX = 162,
-            LABEL_DX = 500, COIN_DX = 562, AMOUNT_RIGHT = ROW_W - 14 - 144 - 22, BTN_W = 144, BTN_DX = ROW_W - 14 - BTN_W;
-    // footer
-    static final float QTY_LABEL_X = 656, QTY_X = 706, QTY_W = 226, QTY_H = 50, STEP = 44,
-            MAX_X = 942, DIVIDER_X = 1012, SUM_LABEL_X = 1030, SUM_COIN_X = 1080, SUM_X = 1118, SUM_MAX = 184,
-            TRADE_X = 1316, TRADE_W = 263, TRADE_H = 58;
-
-    static float qtyY() { return FOOT_Y + (FOOT_H - QTY_H) / 2; }
-    static float footCenter() { return FOOT_Y + FOOT_H / 2; }
-    static float[] minusBox() { return new float[]{QTY_X + 17, qtyY() + 3, STEP, STEP}; }
-    static float[] plusBox() { return new float[]{QTY_X + QTY_W - 17 - STEP, qtyY() + 3, STEP, STEP}; }
-    static float[] quantityBox() { return new float[]{QTY_X + 21 + STEP, qtyY() + 3, QTY_W - 42 - 2 * STEP, STEP}; }
-    static float[] tradeBox() { return new float[]{TRADE_X, FOOT_Y + (FOOT_H - TRADE_H) / 2, TRADE_W, TRADE_H}; }
+    static float qtyY() { return FOOT_CY - QTY_H / 2; }
+    static float[] minusBox() { return new float[]{QTY_X + 3, qtyY() + 3, STEP, STEP}; }
+    static float[] plusBox() { return new float[]{QTY_X + QTY_W - 3 - STEP, qtyY() + 3, STEP, STEP}; }
+    static float[] quantityBox() { return new float[]{QTY_X + 6 + STEP, qtyY() + 3, QTY_W - 12 - 2 * STEP, STEP}; }
+    static float[] tradeBox() { return new float[]{TRADE_X, FOOT_CY - TRADE_H / 2, TRADE_W, TRADE_H}; }
+    static float[] switchBox() { return new float[]{SWITCH_X, FOOT_CY - SWITCH_H / 2, SWITCH_W, SWITCH_H}; }
     static float[] searchBox() { return new float[]{SEARCH_X, BAR_Y, SEARCH_W, BAR_H}; }
-
-    /** Row action buttons: one centred button, or buy over sell when the 전체 tab shows both. */
-    static float[] buyButton(Row r, boolean both, int i) {
-        float y = rowY(i);
-        return both ? new float[]{CX + BTN_DX, y + 17, BTN_W, 42} : new float[]{CX + BTN_DX, y + 35, BTN_W, 54};
-    }
-    static float[] sellButton(Row r, boolean both, int i) {
-        float y = rowY(i);
-        return both ? new float[]{CX + BTN_DX, y + 65, BTN_W, 42} : new float[]{CX + BTN_DX, y + 35, BTN_W, 54};
-    }
-    static boolean both(Model m, Row r) { return m.tab() == Tab.ALL && r.buys() && r.sells(); }
-    /** Which single action a row offers outside the "both" case. */
-    static boolean rowSells(Model m, Row r) { return m.tab() == Tab.SELL || m.tab() == Tab.ALL && !r.buys(); }
+    static float[] sortBox() { return new float[]{SORT_X, BAR_Y, SORT_W, BAR_H}; }
+    static float[] sortOption(int i) { return new float[]{SORT_X, BAR_Y + BAR_H + 6 + i * 44, SORT_W, 44}; }
+    static float[] prevBox() { return new float[]{(CX + CR) / 2 - ARROW_DX - ARROW_S / 2, PAGER_Y - ARROW_S / 2, ARROW_S, ARROW_S}; }
+    static float[] nextBox() { return new float[]{(CX + CR) / 2 + ARROW_DX - ARROW_S / 2, PAGER_Y - ARROW_S / 2, ARROW_S, ARROW_S}; }
+    static float[] iconBox(int slot) { return new float[]{cardX(slot) + (CARD_W - CARD_ICON) / 2, cardY(slot) + 14, CARD_ICON, CARD_ICON}; }
 
     static boolean in(double x, double y, float[] b) { return in(x, y, b[0], b[1], b[2], b[3]); }
     static boolean in(double x, double y, float bx, float by, float bw, float bh) {
         return x >= bx && x < bx + bw && y >= by && y < by + bh;
     }
 
-    // ---- art ------------------------------------------------------------------------------------------------
-    /** name, width, height, left cap, right cap (source pixels). Caps measured from the PNG ornaments. */
-    record Art(String name, int w, int h, int left, int right) {
-        String path() { return ROOT + name + ".png"; }
-    }
-    static final Art ROW = new Art("item_row", 2080, 306, 90, 90), ROW_HOVER = new Art("item_row_hover", 2080, 306, 90, 90),
-            ROW_SELECTED = new Art("item_row_selected", 2080, 306, 90, 90), SLOT = new Art("item_slot", 993, 928, 130, 130),
-            FOOTER = new Art("footer_panel", 1328, 154, 70, 70), BALANCE = new Art("balance_field", 1958, 262, 80, 80),
-            SEARCH = new Art("search_field", 2039, 266, 90, 90);
-    static Art gold(String state) { return new Art("gold_button" + state, 1793, 468, 180, 180); }
-    static Art navy(String state) { return new Art("navy_button" + state, 712, 672, 130, 130); }
-    static Art tab(boolean selected, String state) {
-        return selected ? new Art("tab_selected" + state, 190, 64, 22, 22) : new Art("tab_idle" + state, 180, 62, 21, 21);
-    }
-
-    /** Horizontal 3-slice at a uniform height scale (vertical proportions never change). */
-    static void slice(Canvas c, Art a, float x, float y, float w, float h) {
-        float s = h / a.h();
-        float l = a.left() * s, r = a.right() * s;
-        if (l + r > w) { float k = w / (l + r); l *= k; r *= k; }
-        c.image(a.path(), x, y, l, h, 0, 0, a.left(), a.h(), a.w(), a.h());
-        c.image(a.path(), x + l, y, w - l - r, h, a.left(), 0, a.w() - a.left() - a.right(), a.h(), a.w(), a.h());
-        c.image(a.path(), x + w - r, y, r, h, a.w() - a.right(), 0, a.right(), a.h(), a.w(), a.h());
-    }
-    static void slice(Canvas c, Art a, float[] b) { slice(c, a, b[0], b[1], b[2], b[3]); }
-
+    // ---- art helpers ----------------------------------------------------------------------------------------
     static void frame(Canvas c) {
-        String p = ROOT + "shop_frame.png";
-        float w = 1318 * FRAME_K, top = FRAME_TOP * FRAME_K, bottom = (1118 - FRAME_BOTTOM) * FRAME_K;
-        c.image(p, FRAME_X, FRAME_Y, w, top, 0, 0, 1318, FRAME_TOP, 1318, 1118);
-        c.image(p, FRAME_X, FRAME_Y + top, w, FRAME_H - top - bottom, 0, FRAME_TOP, 1318, FRAME_BOTTOM - FRAME_TOP, 1318, 1118);
-        c.image(p, FRAME_X, FRAME_Y + FRAME_H - bottom, w, bottom, 0, FRAME_BOTTOM, 1318, 1118 - FRAME_BOTTOM, 1318, 1118);
+        c.image(ROOT + "shop_frame.png", sx(0), sy(0), 1440 * K, 1092 * K, 0, 0, 1440, 1092, 1440, 1092);
     }
-    static void icon(Canvas c, String name, float cx, float cy, float size, int tw, int th) {
-        c.image(ROOT + name + ".png", cx - size / 2, cy - size / 2, size, size, 0, 0, tw, th, tw, th);
+    static void outline(Canvas c, float x, float y, float w, float h, float t, int color) {
+        c.fill(x, y, w, t, color);
+        c.fill(x, y + h - t, w, t, color);
+        c.fill(x, y + t, t, h - 2 * t, color);
+        c.fill(x + w - t, y + t, t, h - 2 * t, color);
+    }
+    /** Runtime box: filled body + thin line (search field, secondary buttons, cards). */
+    static void box(Canvas c, float x, float y, float w, float h, int body, int edge, float t) {
+        c.fill(x + t, y + t, w - 2 * t, h - 2 * t, body);
+        outline(c, x, y, w, h, t, edge);
+    }
+    static void icon(Canvas c, String path, float cx, float cy, float size, int tw, int th) {
+        c.image(path, cx - size / 2, cy - size / 2, size, size, 0, 0, tw, th, tw, th);
     }
     /** coin.png's disc fills ~53% of its 128px canvas, so the box is enlarged to give a disc of {@code size}. */
-    static void coin(Canvas c, float cx, float cy, float size) { icon(c, "coin", cx, cy, size * 1.9f, 128, 128); }
+    static void coin(Canvas c, float cx, float cy, float size) { icon(c, OLD + "coin.png", cx, cy, size * 1.9f, 128, 128); }
     /** Display-only grouping ("1200" -> "1,200"); the server value itself is never changed or re-sent. */
     static String money(String plain) {
         if (plain == null || plain.isEmpty()) return "—";
@@ -166,7 +167,6 @@ final class ShopView {
         float w = c.width(s, size, f);
         return w <= max ? size : Math.max(size * .45f, size * max / w);
     }
-
     /** Shrinks to 82% first, then cuts with an ellipsis so text never leaves its box. */
     static String fit(Canvas c, String s, float size, Face f, float max, float[] out) {
         out[0] = size;
@@ -184,200 +184,221 @@ final class ShopView {
         String v = fit(c, s, size, f, max, k);
         c.text(v, x, cy, k[0], color, f, centered);
     }
-
-    static String state(Model m, float[] b, boolean enabled) {
-        if (!enabled) return "_disabled";
-        if (!in(m.mouseX(), m.mouseY(), b)) return "";
-        return m.mouseDown() ? "_pressed" : "_hover";
-    }
+    static boolean hover(Model m, float[] b) { return in(m.mouseX(), m.mouseY(), b); }
+    /** Price a card shows: the 구매 tab and buyable products show the buy price, otherwise the sell price. */
+    static boolean cardSells(Model m, Row r) { return m.tab() == Tab.SELL || !r.buys(); }
 
     // ---- frame ----------------------------------------------------------------------------------------------
     static void draw(Canvas c, Model m) {
         if (m.hasPortrait()) {
-            // Bottom of the illustration sits at (or below) the real screen bottom, so its own cut edge
-            // is never visible; the nameplate covers the waist like the reference.
+            // Left of the frame only; the bottom sits at (or below) the real screen bottom so its cut edge never shows.
             float h = Math.min(NPC_MAX_H, NPC_MAX_W / Math.max(.1f, m.portraitAspect()));
             float w = h * m.portraitAspect();
             float bottom = Math.max(H, m.screenBottom());
             c.portrait(NPC_CENTER - w / 2, bottom - h, w, h);
         }
-        c.image(ROOT + "nameplate.png", PLATE_X, PLATE_Y, PLATE_W, PLATE_H, 0, 0, 1707, 794, 1707, 794);
-        float plateCx = PLATE_X + PLATE_W / 2;
-        // role sits between the top star's tip and the divider line, the name below the line
-        fitted(c, m.role(), plateCx, PLATE_Y + 85, 18, 230, GOLD, Face.LABEL, true);
-        fitted(c, m.npcName(), plateCx, PLATE_Y + 131, 38, 270, WHITE, Face.SECTION, true);
 
+        c.fill(OUT_L, OUT_T, OUT_R - OUT_L, OUT_B - OUT_T, BACKING);
         frame(c);
-        fitted(c, m.title(), FRAME_X + 1318 * FRAME_K / 2, 131, 46, 300, GOLD, Face.SECTION, true);
-        float[] close = {CLOSE_X, CLOSE_Y, CLOSE_S, CLOSE_S};
-        String cs = in(m.mouseX(), m.mouseY(), close) ? m.mouseDown() ? "_pressed" : "_hover" : "";
-        icon(c, "close_button" + cs, CLOSE_X + CLOSE_S / 2, CLOSE_Y + CLOSE_S / 2, 116, 96, 96);
+        // role / name, over the illustration's lower left
+        // soft dark band so the label stays readable over any illustration (fades in from above)
+        for (int i = 0; i < 6; i++) c.fill(0, NAME_BAND_Y - 36 + i * 6, OUT_L - 4, 6, ((i + 1) * 0x18) << 24 | 0x08111E);
+        c.fill(0, NAME_BAND_Y, OUT_L - 4, H - NAME_BAND_Y, 0xA808111E);
+        fitted(c, m.role(), NAME_X, ROLE_Y, 19, 200, GOLD, Face.LABEL, false);
+        compass(c, NAME_X - 34, NAME_Y + 2, 18);
+        fitted(c, m.npcName(), NAME_X, NAME_Y, 40, OUT_L - 30 - NAME_X, WHITE, Face.SECTION, false);
+        c.fill(NAME_X - 50, NAME_LINE_Y, 300, 1.5f, 0x99E7CE91);
 
-        // balance · search · tabs
-        slice(c, BALANCE, BAL_X, BAR_Y, BAL_W, BAR_H);
-        float mid = BAR_Y + BAR_H / 2;
-        coin(c, BAL_X + 44, mid, 28);
-        c.text("보유 골드", BAL_X + 68, mid, 21, WHITE, Face.LABEL, false);
-        float labelEnd = BAL_X + 68 + c.width("보유 골드", 21, Face.LABEL) + 18;
-        String bal = m.balance().isEmpty() ? "—" : money(m.balance()) + " G";
-        float bs = shrink(c, bal, 26, Face.BOLD, BAL_X + BAL_W - 34 - labelEnd);
-        c.text(bal, BAL_X + BAL_W - 34 - c.width(bal, bs, Face.BOLD), mid, bs, WHITE, Face.BOLD, false);
-        slice(c, SEARCH, searchBox());
-        icon(c, "search", SEARCH_X + 36, mid, 32, 128, 128);
-        c.searchField(SEARCH_X + 54, BAR_Y + 5, SEARCH_W - 70, BAR_H - 10);
+        // title · gold
+        compass(c, CX + 20, HEAD_Y, 26);
+        String gold = m.balance().isEmpty() ? "—" : money(m.balance()) + " G";
+        float gs = shrink(c, gold, 30, Face.BOLD, 260);
+        float goldX = CR - c.width(gold, gs, Face.BOLD);
+        c.text(gold, goldX, HEAD_Y, gs, WHITE, Face.BOLD, false);
+        float labelX = goldX - 22 - c.width("보유 골드", 20, Face.LABEL);
+        c.text("보유 골드", labelX, HEAD_Y, 20, WHITE, Face.LABEL, false);
+        coin(c, labelX - 26, HEAD_Y, 30);
+        fitted(c, m.title(), CX + 50, HEAD_Y, 40, labelX - 60 - (CX + 50), GOLD, Face.SECTION, false);
+
+        // search · tabs · sort
+        box(c, SEARCH_X, BAR_Y, SEARCH_W, BAR_H, FIELD, hover(m, searchBox()) ? LINE_HOVER : LINE, 1.5f);
+        icon(c, OLD + "search.png", SEARCH_X + 30, BAR_Y + BAR_H / 2, 30, 128, 128);
+        c.searchField(SEARCH_X + 52, BAR_Y + 4, SEARCH_W - 64, BAR_H - 8);
         String[] tabs = {"전체", "구매", "판매"};
         for (int i = 0; i < 3; i++) {
-            float[] b = {tabX(i), TAB_Y, TAB_W, TAB_H};
+            float[] b = {tabX(i), BAR_Y, TAB_W, BAR_H};
             boolean sel = m.tab().ordinal() == i, ok = m.tabEnabled()[i];
-            slice(c, tab(sel, state(m, b, ok)), b);
-            c.text(tabs[i], b[0] + TAB_W / 2, TAB_Y + TAB_H / 2, 19, !ok ? DISABLED : sel ? DARK : GOLD, Face.BOLD, true);
+            secondary(c, m, b, tabs[i], sel, ok);
         }
+        c.fill(DIVIDER_X, BAR_Y + 4, 1.5f, BAR_H - 8, LINE);
+        float[] sb = sortBox();
+        box(c, sb[0], sb[1], sb[2], sb[3], FIELD, m.sortOpen() || hover(m, sb) ? LINE_HOVER : LINE, 1.5f);
+        fitted(c, m.sort().label, sb[0] + 18, BAR_Y + BAR_H / 2, 19, SORT_W - 56, WHITE, Face.LABEL, false);
+        chevron(c, sb[0] + sb[2] - 24, BAR_Y + BAR_H / 2, m.sortOpen(), GOLD);
 
-        // rows
-        for (int i = 0; i < ROWS && i + m.scroll() < m.rows().size(); i++) row(c, m, m.rows().get(i + m.scroll()), i);
-        if (m.rows().isEmpty()) c.text(m.empty(), CX + ROW_W / 2, (LIST_Y + listBottom()) / 2, 24, MUTED, Face.LABEL, true);
-        scrollbar(c, m);
+        // catalogue: 4 x 3 cards, one page
+        int from = m.page() * PER_PAGE;
+        for (int s = 0; s < PER_PAGE && from + s < m.rows().size(); s++) card(c, m, m.rows().get(from + s), s);
+        if (m.rows().isEmpty()) c.text(m.empty(), (CX + CR) / 2, (GRID_Y + gridBottom()) / 2, 24, MUTED, Face.LABEL, true);
+        pager(c, m);
 
         footer(c, m);
+
+        if (m.sortOpen()) {
+            c.pushLayer(300);
+            for (int i = 0; i < Sort.values().length; i++) {
+                float[] b = sortOption(i);
+                boolean on = m.sort().ordinal() == i, h = hover(m, b);
+                box(c, b[0], b[1], b[2], b[3], h ? 0xF2182E4A : 0xF20C1A2C, on ? LINE_SELECTED : LINE_HOVER, 1.5f);
+                fitted(c, Sort.values()[i].label, b[0] + 18, b[1] + b[3] / 2, 18, b[2] - 30, on ? GOLD : WHITE, Face.LABEL, false);
+            }
+            c.popLayer();
+        }
         if (!m.notice().isEmpty() && m.noticeAlpha() > 0) {
             c.pushLayer(400);
-            float y = listBottom() - 150;
-            slice(c, BALANCE, CX + 40, y, ROW_W - 80, 52);
+            float y = gridBottom() - 70, w = 760, x = (CX + CR) / 2 - w / 2;
             int a = Math.round(255 * Math.min(1, m.noticeAlpha()));
-            fitted(c, m.notice(), CX + ROW_W / 2, y + 26, 21, ROW_W - 130, (a << 24) | (WHITE & 0xFFFFFF), Face.LABEL, true);
+            box(c, x, y, w, 52, (Math.round(a * .94f) << 24) | 0x0C1A2C, (a << 24) | (LINE_HOVER & 0xFFFFFF), 1.5f);
+            fitted(c, m.notice(), x + w / 2, y + 26, 21, w - 50, (a << 24) | (WHITE & 0xFFFFFF), Face.LABEL, true);
             c.popLayer();
         }
     }
 
-    static void row(Canvas c, Model m, Row r, int i) {
-        float x = CX, y = rowY(i);
-        boolean selected = r.id().equals(m.selected()), hover = in(m.mouseX(), m.mouseY(), x, y, ROW_W, ROW_H);
-        slice(c, selected ? ROW_SELECTED : hover ? ROW_HOVER : ROW, x, y, ROW_W, ROW_H);
-        slice(c, SLOT, x + SLOT_DX, y + SLOT_DY, SLOT_W, SLOT_H);
-        c.item(r, x + SLOT_DX + (SLOT_W - ICON) / 2, y + SLOT_DY + (SLOT_H - ICON) / 2, ICON);
+    /** Title emblem from the reference: four long points, four short diagonal points, a light core. */
+    static void compass(Canvas c, float cx, float cy, float r) {
+        float d = r * .42f;
+        c.line(cx - d, cy - d, cx + d, cy + d, 2.2f, 0xCCE7CE91);
+        c.line(cx - d, cy + d, cx + d, cy - d, 2.2f, 0xCCE7CE91);
+        c.diamond(cx, cy, r * .2f, r, GOLD);
+        c.diamond(cx, cy, r, r * .2f, GOLD);
+        c.diamond(cx, cy, r * .09f, r * .55f, 0xFFFFF4D6);
+        c.diamond(cx, cy, r * .55f, r * .09f, 0xFFFFF4D6);
+    }
+    static void chevron(Canvas c, float cx, float cy, boolean up, int color) {
+        float d = up ? -1 : 1;
+        c.line(cx - 7, cy - 3.5f * d, cx, cy + 3.5f * d, 2, color);
+        c.line(cx, cy + 3.5f * d, cx + 7, cy - 3.5f * d, 2, color);
+    }
 
-        boolean both = both(m, r), sells = !both && rowSells(m, r);
-        float tx = x + TEXT_DX, textMax = x + (both ? LABEL_DX - 14 : COIN_DX - 32) - tx;
-        boolean lore = !r.lore().isEmpty();
-        fitted(c, r.name(), tx, y + (lore ? 37 : 62), 30, textMax, WHITE, Face.SECTION, false);
-        for (int l = 0; l < Math.min(2, r.lore().size()); l++)
-            fitted(c, r.lore().get(l), tx, y + 74 + l * 25, 18, textMax, MUTED, Face.BODY, false);
+    /** Tabs and the footer switch: gold when selected, navy outline otherwise. */
+    static void secondary(Canvas c, Model m, float[] b, String label, boolean selected, boolean ok) {
+        boolean h = ok && hover(m, b) && !m.sortOpen();
+        if (selected) {
+            box(c, b[0], b[1], b[2], b[3], h ? 0xFFE8CB88 : TAB_GOLD, TAB_GOLD_EDGE, 1.5f);
+            outline(c, b[0] + 3, b[1] + 3, b[2] - 6, b[3] - 6, 1, 0x66FFF4D6);
+        } else box(c, b[0], b[1], b[2], b[3], h ? CARD_HOVER : FIELD, h ? LINE_HOVER : LINE, 1.5f);
+        c.text(label, b[0] + b[2] / 2, b[1] + b[3] / 2, 20, !ok ? DISABLED : selected ? DARK : WHITE, Face.BOLD, true);
+    }
 
-        // Price column: label and coin left-aligned on fixed columns, amount right-aligned before the button.
-        if (both) {
-            c.text("구매가", x + LABEL_DX, y + 38, 16, MUTED, Face.LABEL, false);
-            c.text("판매가", x + LABEL_DX, y + 86, 16, MUTED, Face.LABEL, false);
-            price(c, r.buy(), x, y + 38, 23);
-            price(c, r.sell(), x, y + 86, 23);
-            action(c, m, buyButton(r, true, i), "구매", true, r.canBuy());
-            action(c, m, sellButton(r, true, i), "판매", false, r.canSell());
-        } else if (sells) {
-            price(c, r.sell(), x, y + 50, 26);
-            String owned = "보유 " + money(Integer.toString(r.owned())) + "개";
-            c.text(owned, x + AMOUNT_RIGHT - c.width(owned, 16, Face.LABEL), y + 84, 16, MUTED, Face.LABEL, false);
-            action(c, m, sellButton(r, false, i), "판매", m.tab() == Tab.SELL, r.canSell());
-        } else {
-            price(c, r.buy(), x, y + 62, 26);
-            action(c, m, buyButton(r, false, i), "구매", true, r.canBuy());
+    static void card(Canvas c, Model m, Row r, int slot) {
+        float x = cardX(slot), y = cardY(slot);
+        boolean selected = r.id().equals(m.selected()), h = !m.sortOpen() && in(m.mouseX(), m.mouseY(), x, y, CARD_W, CARD_H);
+        box(c, x, y, CARD_W, CARD_H, h ? CARD_HOVER : CARD, selected ? LINE_SELECTED : h ? LINE_HOVER : LINE, selected ? 2.5f : 1.5f);
+        if (selected) outline(c, x + 4, y + 4, CARD_W - 8, CARD_H - 8, 3, GLOW);
+        float[] ib = iconBox(slot);
+        c.item(r, ib[0], ib[1], ib[2]);
+        fitted(c, r.name(), x + CARD_W / 2, y + 118, 21, CARD_W - 24, WHITE, Face.BOLD, true);
+        boolean sells = cardSells(m, r);
+        String v = money(sells ? r.sell() : r.buy()) + " G";
+        String tag = sells && m.tab() != Tab.SELL ? "판매 " : "";
+        float size = shrink(c, v, 21, Face.BOLD, CARD_W - 80);
+        float tw = c.width(tag, 16, Face.LABEL), vw = c.width(v, size, Face.BOLD), total = 26 + tw + vw;
+        float left = x + CARD_W / 2 - total / 2, cy = y + 145;
+        coin(c, left + 10, cy, 20);
+        if (!tag.isEmpty()) c.text(tag, left + 26, cy, 16, CYAN, Face.LABEL, false);
+        c.text(v, left + 26 + tw, cy, size, WHITE, Face.BOLD, false);
+        if (sells) {
+            String owned = "보유 " + money(Integer.toString(r.owned()));
+            c.text(owned, x + CARD_W - 12 - c.width(owned, 15, Face.LABEL), y + 18, 15, MUTED, Face.LABEL, false);
         }
     }
-    /** Coin on the fixed left column, amount right-aligned; long amounts only shrink (never cut). */
-    static void price(Canvas c, String value, float x, float cy, float size) {
-        String v = money(value) + " G";
-        coin(c, x + COIN_DX, cy, size);
-        float left = x + COIN_DX + size / 2 + 10, right = x + AMOUNT_RIGHT;
-        float k = shrink(c, v, size, Face.BOLD, right - left);
-        c.text(v, right - c.width(v, k, Face.BOLD), cy, k, WHITE, Face.BOLD, false);
-    }
-    static void action(Canvas c, Model m, float[] b, String label, boolean goldStyle, boolean ok) {
-        ok = ok && !m.busy();
-        String st = state(m, b, ok);
-        slice(c, goldStyle ? gold(st) : navy(st), b);
-        c.text(label, b[0] + b[2] / 2, b[1] + b[3] / 2, b[3] > 48 ? 22 : 20, !ok ? goldStyle ? DISABLED_ON_GOLD : DISABLED : goldStyle ? DARK : GOLD, Face.BOLD, true);
-    }
 
-    static float[] track() { return new float[]{BAR_X, LIST_Y, BAR_W, listBottom() - LIST_Y}; }
-    static float[] thumb(Model m) {
-        float[] t = track();
-        int n = m.rows().size();
-        float inner = t[3] - 8, len = n <= ROWS ? inner : Math.max(40, inner * ROWS / n);
-        int max = Math.max(0, n - ROWS);
-        float y = t[1] + 4 + (max == 0 ? 0 : (inner - len) * m.scroll() / max);
-        return new float[]{t[0], y, t[2], len};
-    }
-    /** scrollbar.png 25x512: caps 0..4 / 488..512, thumb 4..132, track 132..488. */
-    static void scrollbar(Canvas c, Model m) {
-        String p = ROOT + "scrollbar.png";
-        float[] t = track();
-        float k = t[2] / 25f;
-        c.image(p, t[0], t[1], t[2], 4 * k, 0, 0, 25, 4, 25, 512);
-        c.image(p, t[0], t[1] + 4 * k, t[2], t[3] - 28 * k, 0, 132, 25, 356, 25, 512);
-        c.image(p, t[0], t[1] + t[3] - 24 * k, t[2], 24 * k, 0, 488, 25, 24, 25, 512);
-        float[] h = thumb(m);
-        float cap = Math.min(18 * k, h[3] / 2);
-        c.image(p, h[0], h[1], h[2], cap, 0, 4, 25, 18, 25, 512);
-        c.image(p, h[0], h[1] + cap, h[2], h[3] - 2 * cap, 0, 22, 25, 90, 25, 512);
-        c.image(p, h[0], h[1] + h[3] - cap, h[2], cap, 0, 112, 25, 20, 25, 512);
+    static void pager(Canvas c, Model m) {
+        float mid = (CX + CR) / 2;
+        boolean prev = m.page() > 0, next = m.page() < m.pages() - 1;
+        float[] p = prevBox(), n = nextBox();
+        int pc = !prev ? 0x55E7CE91 : hover(m, p) ? CYAN : GOLD, nc = !next ? 0x55E7CE91 : hover(m, n) ? CYAN : GOLD;
+        float pcx = p[0] + p[2] / 2, ncx = n[0] + n[2] / 2;
+        c.line(pcx + 4, PAGER_Y - 9, pcx - 5, PAGER_Y, 2.4f, pc);
+        c.line(pcx - 5, PAGER_Y, pcx + 4, PAGER_Y + 9, 2.4f, pc);
+        c.line(ncx - 4, PAGER_Y - 9, ncx + 5, PAGER_Y, 2.4f, nc);
+        c.line(ncx + 5, PAGER_Y, ncx - 4, PAGER_Y + 9, 2.4f, nc);
+        c.text((m.page() + 1) + " / " + m.pages(), mid, PAGER_Y, 19, WHITE, Face.LABEL, true);
     }
 
     static void footer(Canvas c, Model m) {
-        slice(c, FOOTER, CX, FOOT_Y, CR - CX, FOOT_H);
-        float cy = footCenter();
-        c.text("수량", QTY_LABEL_X, cy, 22, WHITE, Face.LABEL, false);
-        slice(c, BALANCE, QTY_X, qtyY(), QTY_W, QTY_H);
+        float cy = FOOT_CY;
+        Row r = m.chosen();
+        if (r != null) {
+            box(c, F_ICON_X, cy - F_ICON / 2, F_ICON, F_ICON, CARD, LINE, 1.5f);
+            c.item(r, F_ICON_X + 9, cy - F_ICON / 2 + 9, F_ICON - 18);
+            boolean lore = !r.lore().isEmpty();
+            fitted(c, r.name(), F_TEXT_X, cy - (lore ? 16 : 0), 26, F_TEXT_MAX, WHITE, Face.BOLD, false);
+            if (lore) fitted(c, r.lore().getFirst(), F_TEXT_X, cy + 20, 17, F_TEXT_MAX, MUTED, Face.BODY, false);
+            c.text("구매", F_LABEL_X, cy - 18, 18, MUTED, Face.LABEL, false);
+            c.text("판매", F_LABEL_X, cy + 18, 18, MUTED, Face.LABEL, false);
+            footPrice(c, r.buys() ? money(r.buy()) + " G" : "—", cy - 18);
+            footPrice(c, r.sells() ? money(r.sell()) + " G" : "—", cy + 18);
+        } else c.text(m.rows().isEmpty() ? "" : "상품을 골라 주세요", F_TEXT_X, cy, 20, MUTED, Face.LABEL, false);
+        c.fill(F_DIV1, cy - 30, 1.5f, 60, LINE);
+        c.fill(F_DIV2, cy - 30, 1.5f, 60, LINE);
+
+        c.text("수량", QTY_LABEL_X, cy, 20, WHITE, Face.LABEL, false);
+        box(c, QTY_X, qtyY(), QTY_W, QTY_H, FIELD, LINE, 1.5f);
         step(c, m, minusBox(), "−", m.minusOk());
         step(c, m, plusBox(), "+", m.plusOk());
         float[] q = quantityBox();
         c.quantityField(q[0], q[1], q[2], q[3]);
-        fitted(c, "최대 " + money(Integer.toString(m.max())), MAX_X, cy, 15, DIVIDER_X - MAX_X - 8, MUTED, Face.LABEL, false);
-        c.fill(DIVIDER_X, cy - 22, 1.5f, 44, 0x66E7CE91);
-        c.text("합계", SUM_LABEL_X, cy, 22, WHITE, Face.LABEL, false);
-        coin(c, SUM_COIN_X + 14, cy, 30);
+        c.fill(F_DIV3, cy - 30, 1.5f, 60, LINE);
+
+        c.text("합계", SUM_X, cy - 20, 18, GOLD, Face.LABEL, false);
+        coin(c, SUM_X + 13, cy + 15, 26);
         String sum = m.total().isEmpty() ? "—" : money(m.total()) + " G";
-        c.text(sum, SUM_X, cy, shrink(c, sum, 30, Face.BOLD, SUM_MAX), GOLD, Face.BOLD, false);
+        c.text(sum, SUM_X + 34, cy + 15, shrink(c, sum, 28, Face.BOLD, SUM_MAX - 34), GOLD, Face.BOLD, false);
+
+        // switch: the other direction for the chosen product (판매 while buying, 구매 while selling)
+        float[] sw = switchBox();
+        secondary(c, m, sw, m.selling() ? "구매" : "판매", false, m.switchOk() && !m.busy());
         float[] b = tradeBox();
-        boolean ok = m.tradeOk() && !m.busy();
-        slice(c, gold(state(m, b, ok)), b);
+        boolean ok = m.tradeOk() && !m.busy(), h = ok && hover(m, b);
+        int tint = !ok ? 0xFF7C7C7C : h && m.mouseDown() ? 0xFFD2D2D2 : h ? 0xFFFFFFFF : 0xFFEDEDED;
+        c.image(ROOT + "button_primary.png", b[0], b[1], b[2], b[3], 38, 23, 2131, 633, 2206, 713, tint);
         String label = m.busy() ? "처리 중…" : m.selling() ? "판매하기" : "구매하기";
-        c.text(label, b[0] + b[2] / 2, b[1] + b[3] / 2, 26, ok ? DARK : DISABLED_ON_GOLD, Face.SECTION, true);
+        c.text(label, b[0] + b[2] / 2, b[1] + b[3] / 2, 24, ok ? DARK : DISABLED_ON_GOLD, Face.SECTION, true);
+    }
+    static void footPrice(Canvas c, String v, float cy) {
+        float size = shrink(c, v, 21, Face.BOLD, F_VALUE_RIGHT - F_LABEL_X - 50);
+        c.text(v, F_VALUE_RIGHT - c.width(v, size, Face.BOLD), cy, size, WHITE, Face.BOLD, false);
     }
     static void step(Canvas c, Model m, float[] b, String glyph, boolean ok) {
         ok = ok && !m.busy();
-        slice(c, navy(state(m, b, ok)), b);
-        c.text(glyph, b[0] + b[2] / 2, b[1] + b[3] / 2, 26, ok ? GOLD : DISABLED, Face.BOLD, true);
+        boolean h = ok && hover(m, b);
+        box(c, b[0], b[1], b[2], b[3], h ? CARD_HOVER : 0x00000000, h ? LINE_HOVER : LINE, 1.5f);
+        c.text(glyph, b[0] + b[2] / 2, b[1] + b[3] / 2, 26, ok ? WHITE : DISABLED, Face.BOLD, true);
     }
 
     // ---- input ----------------------------------------------------------------------------------------------
     static Hit hit(Model m, double x, double y) {
-        if (in(x, y, CLOSE_X, CLOSE_Y, CLOSE_S, CLOSE_S)) return new Hit(Kind.CLOSE, 0);
-        for (int i = 0; i < 3; i++) if (in(x, y, tabX(i), TAB_Y, TAB_W, TAB_H)) return new Hit(Kind.TAB, i);
-        if (in(x, y, searchBox())) return new Hit(Kind.SEARCH, 0);
-        for (int i = 0; i < ROWS && i + m.scroll() < m.rows().size(); i++) {
-            int index = i + m.scroll();
-            Row r = m.rows().get(index);
-            boolean both = both(m, r);
-            if (both) {
-                if (in(x, y, buyButton(r, true, i))) return new Hit(Kind.ROW_BUY, index);
-                if (in(x, y, sellButton(r, true, i))) return new Hit(Kind.ROW_SELL, index);
-            } else if (rowSells(m, r) ? in(x, y, sellButton(r, false, i)) : in(x, y, buyButton(r, false, i)))
-                return new Hit(rowSells(m, r) ? Kind.ROW_SELL : Kind.ROW_BUY, index);
-            if (in(x, y, CX + SLOT_DX, rowY(i) + SLOT_DY, SLOT_W, SLOT_H)) return new Hit(Kind.ICON, index);
-            if (in(x, y, CX, rowY(i), ROW_W, ROW_H)) return new Hit(Kind.ROW, index);
+        if (m.sortOpen()) {
+            for (int i = 0; i < Sort.values().length; i++) if (in(x, y, sortOption(i))) return new Hit(Kind.SORT_OPTION, i);
+            if (in(x, y, sortBox())) return new Hit(Kind.SORT, 0);
+            return Hit.NONE;                       // any other click just closes the list
         }
-        if (in(x, y, BAR_X - 4, LIST_Y, BAR_W + 8, listBottom() - LIST_Y)) return new Hit(Kind.SCROLL, 0);
+        for (int i = 0; i < 3; i++) if (in(x, y, tabX(i), BAR_Y, TAB_W, BAR_H)) return new Hit(Kind.TAB, i);
+        if (in(x, y, searchBox())) return new Hit(Kind.SEARCH, 0);
+        if (in(x, y, sortBox())) return new Hit(Kind.SORT, 0);
+        int from = m.page() * PER_PAGE;
+        for (int s = 0; s < PER_PAGE && from + s < m.rows().size(); s++) {
+            if (in(x, y, iconBox(s))) return new Hit(Kind.ICON, from + s);
+            if (in(x, y, cardX(s), cardY(s), CARD_W, CARD_H)) return new Hit(Kind.CARD, from + s);
+        }
+        if (in(x, y, prevBox())) return new Hit(Kind.PREV, 0);
+        if (in(x, y, nextBox())) return new Hit(Kind.NEXT, 0);
         if (in(x, y, minusBox())) return new Hit(Kind.MINUS, 0);
         if (in(x, y, plusBox())) return new Hit(Kind.PLUS, 0);
         if (in(x, y, quantityBox())) return new Hit(Kind.QUANTITY, 0);
+        if (in(x, y, switchBox())) return new Hit(Kind.SWITCH, 0);
         if (in(x, y, tradeBox())) return new Hit(Kind.TRADE, 0);
         return Hit.NONE;
-    }
-    /** Scroll position for a thumb dragged / track clicked at logical y. */
-    static int scrollAt(Model m, double y) {
-        int max = Math.max(0, m.rows().size() - ROWS);
-        if (max == 0) return 0;
-        float[] t = track(), h = thumb(m);
-        float inner = t[3] - 8 - h[3];
-        double f = (y - t[1] - 4 - h[3] / 2) / Math.max(1, inner);
-        return (int) Math.round(Math.max(0, Math.min(1, f)) * max);
     }
 }
