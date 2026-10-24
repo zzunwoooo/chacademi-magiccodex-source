@@ -3,8 +3,8 @@ package school.magiccodex.client;
 /** Layout and animation share one coordinate system, including all hit targets. */
 public final class TopMenuState {
     public static final String[] LABELS={"마일리지샵","내 정보","소셜","이동","도감","PVP","퀘스트","우편함","설정"};
-    private static final String[] COMMANDS={"캐시샵","","","지도","","큐디치","의뢰","우편함",""};
-    /** Every item is live; 이동 (3) opens the 지도 이동 window (2026-10-24, was "준비 중"). */
+    private static final String[] COMMANDS={"마일리지상점","","","지도","","큐디치","의뢰","우편함",""};
+    /** Every item is live; 이동 (3) opens the 지도 이동 window (2026-10-24), 0 = 마일리지 상점. */
     public static boolean enabled(int index){return true;}
     public static final float STEP=38,HEIGHT=36;
     public static final float SEASON_SPACE=28,SEASON_CENTER=28;

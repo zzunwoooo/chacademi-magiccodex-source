@@ -37,7 +37,7 @@ class TopMenuTest {
             assertEquals(base+TopMenuState.LABELS.length*TopMenuState.STEP,state.width(base));
             assertTrue(state.arrowCenter(base)-state.iconCenter(base,TopMenuState.LABELS.length-1)>29);
         }
-        assertEquals("캐시샵",TopMenuState.command(0));
+        assertEquals("마일리지상점",TopMenuState.command(0));
         assertEquals("우편함",TopMenuState.command(7));
         assertEquals("의뢰",TopMenuState.command(6));
         assertEquals("큐디치",TopMenuState.command(5));assertTrue(TopMenuState.enabled(3));assertEquals("지도",TopMenuState.command(3));

@@ -63,7 +63,7 @@ public final class TopMenuClient {
             case 7 -> MailboxClient.open(null);
             case 8 -> {MagicCodexClient.dismiss();c.setScreen(new SettingsScreen(null));}
             case 5 -> {if(c.getNetworkHandler()!=null){c.setScreen(null);c.getNetworkHandler().sendChatCommand("큐디치");}}
-            case 0 -> {if(c.getNetworkHandler()!=null){c.setScreen(null);c.getNetworkHandler().sendChatCommand("캐시샵");}}
+            case 0 -> MileageClient.open();   // 마일리지샵 (2026-10-24): 마일리지 상점 창
             default -> {return false;}
         }
         return true;

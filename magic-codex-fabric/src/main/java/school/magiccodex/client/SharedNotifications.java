@@ -17,14 +17,14 @@ static boolean click(double x,double y,int button){
  public static void item(String id,String title,String body,net.minecraft.item.ItemStack icon){var stack=icon==null?net.minecraft.item.ItemStack.EMPTY:icon.copy();MinecraftClient.getInstance().execute(()->{if(!stack.isEmpty())ICONS.put(id,stack);QUEUE.offerIfAbsent(new NotificationQueue.Notice(id,"shop",school.magiccodex.protocol.JournalProtocol.cut(title,140),school.magiccodex.protocol.JournalProtocol.cut(body,500),4500));});}
  public static void unavailable(){enqueue(new NotificationQueue.Notice("broom:unavailable","warning","사용할 수 없는 마법","빗자루에서 내린 뒤 사용할 수 있어요.",2800));}
  private static void enqueue(NotificationQueue.Notice notice){MinecraftClient.getInstance().execute(()->QUEUE.offerIfAbsent(notice));}
- private static NotificationPresentation.Surface surface(MinecraftClient c){return c.currentScreen==null?NotificationPresentation.Surface.WORLD:c.currentScreen instanceof HudCursorScreen||c.currentScreen instanceof ShopScreen||c.currentScreen instanceof net.minecraft.client.gui.screen.ChatScreen?NotificationPresentation.Surface.CURSOR:dialogue(c.currentScreen)?NotificationPresentation.Surface.DIALOGUE:NotificationPresentation.Surface.HIDDEN;}
+ private static NotificationPresentation.Surface surface(MinecraftClient c){return c.currentScreen==null?NotificationPresentation.Surface.WORLD:c.currentScreen instanceof HudCursorScreen||c.currentScreen instanceof ShopScreen||c.currentScreen instanceof MileageScreen||c.currentScreen instanceof net.minecraft.client.gui.screen.ChatScreen?NotificationPresentation.Surface.CURSOR:dialogue(c.currentScreen)?NotificationPresentation.Surface.DIALOGUE:NotificationPresentation.Surface.HIDDEN;}
  private static boolean visible(MinecraftClient c){return c.world!=null&&c.player!=null&&c.player.isAlive()&&!c.options.hudHidden&&c.getOverlay()==null&&surface(c)!=NotificationPresentation.Surface.HIDDEN;}
  private static void closeResources(){if(images!=null)images.close();if(text!=null)text.close();images=null;text=null;resourceGeneration=-1;}
  private static void prepare(MinecraftClient c){if(resourceGeneration!=UiResources.generation()){closeResources();resourceGeneration=UiResources.generation();}if(images==null)images=new HudTextureCache(c);if(text==null)text=new CodexTypography(c);}
  public static void initialize(){
   if(initialized)return;initialized=true;
   ScreenEvents.AFTER_INIT.register((client,screen,width,height)->{
-   if(dialogue(screen)||screen instanceof HudCursorScreen||screen instanceof ShopScreen||screen instanceof net.minecraft.client.gui.screen.ChatScreen){
+   if(dialogue(screen)||screen instanceof HudCursorScreen||screen instanceof ShopScreen||screen instanceof MileageScreen||screen instanceof net.minecraft.client.gui.screen.ChatScreen){
     ScreenEvents.afterRender(screen).register((s,ctx,x,y,delta)->{if(client.currentScreen==s&&PRESENTATION.owns(ctx,true,surface(client)))render(ctx,client,visible(client),Util.getMeasuringTimeMs());});
     ScreenMouseEvents.allowMouseClick(screen).register((s,x,y,b)->!click(x,y,b));
    }
