@@ -50,7 +50,8 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
             MEDIUM = Identifier.of("magiccodex", "label"), BODY = Identifier.of("magiccodex", "body");
 
     // Colours sampled from the reference: navy-violet glass, lavender rings, white text.
-    private static final int FILL = 0xFF1E2152, RING = 0xB8C7B2FF, RING_HOVER = 0xFFEDE4FF, RING_DIM = 0x55C7B2FF,
+    private static final int FILL = 0xE61E2152,   // 90%: barely see-through (owner 2026-10-24)
+            RING = 0xB8C7B2FF, RING_HOVER = 0xFFEDE4FF, RING_DIM = 0x55C7B2FF,
             DOT = 0xE6F2EEFF, DOT_DIM = 0x66F2EEFF, TEXT = 0xFFF4F1FF, TEXT_SOFT = 0xD9DCD5F5, TEXT_HINT = 0x99C9C2E6,
             RULE = 0xA6C7B2FF, ACCENT = 0xFF8F6BFF, GLOW = 0x669C7BFF, CARD_FILL = 0x3A2A2470, CARD_RING = 0x99A891F0,
             CARD_SELECTED = 0xFFC9B6FF, VIOLET = 0xFF7C5CF0;
