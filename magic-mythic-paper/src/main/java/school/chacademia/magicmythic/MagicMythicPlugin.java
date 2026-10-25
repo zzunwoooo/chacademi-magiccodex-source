@@ -48,6 +48,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
     private StatusEffects status;
     private Telegraphs telegraphs;
     private SpellSlots slots;
+    private ChargeInput charge;
     private Passives passives;
     private UtilMech.State utilState;
     private ArcanaMech.State arcanaState;
@@ -80,12 +81,14 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(telegraphs, this);
         slots = new SpellSlots(this);
         slots.register();
+        charge = new ChargeInput(this); charge.register(); // 338 화염 투창 충전 (클라이언트 보고)
         getServer().getPluginManager().registerEvents(slots, this);
         passives = new Passives(this);
         getServer().getPluginManager().registerEvents(passives, this);
         utilState = new UtilMech.State(this);
         getServer().getPluginManager().registerEvents(utilState, this);
         arcanaState = new ArcanaMech.State(this);
+        NovaMech.enable(this); // 325~387 신규 마법 (tools/nova_spells.py)
         getServer().getPluginManager().registerEvents(arcanaState, this);
         getServer().getPluginManager().registerEvents(new ChannelMech.Hooks(), this);
         getServer().getPluginManager().registerEvents(new SummonMech.Hooks(this), this);
@@ -108,6 +111,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
         if (status != null) { status.close(); status = null; }
         if (telegraphs != null) { telegraphs.close(); telegraphs = null; }
         if (slots != null) slots.unregister();
+        if (charge != null) { charge.unregister(); charge = null; }
         if (utilState != null) utilState.closeAll();
         if (arcanaState != null) { arcanaState.closeAll(); arcanaState = null; }
         if (guards != null) guards.closeAll();
@@ -146,6 +150,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
             case "chatelegraph" -> new TelegraphMech(this, p);
             case "chamobshot" -> new MobShotMech(this, p);
             case "chaarcana" -> new ArcanaMech(this, p);
+            case "chanova" -> new NovaMech(this, p);
             case "chagimmick" -> new GimmickMech(this, p);
             default -> null;
         };

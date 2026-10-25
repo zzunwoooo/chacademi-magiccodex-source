@@ -73,6 +73,10 @@ class DefaultSpellMigrationTest {
    assertTrue(history.get(name).contains(DefaultSpellMigration.hash(old.getBytes(java.nio.charset.StandardCharsets.UTF_8))),"previous shipped "+name+" hash must be known");
   }
  }
+ @Test void novaSpells325To387AreManaged() {
+  for(String name:java.util.List.of("325_spark_flick.yml","370_heaven_cyclone.yml","387_crop_snare.yml"))assertTrue(DefaultSpellMigration.managedHistoryName(name),name);
+  for(String name:java.util.List.of("324_other.yml","388_future.yml"))assertFalse(DefaultSpellMigration.managedHistoryName(name),name);
+ }
  @Test void fishTrapRenameReachesShippedCopiesButNotEdits()throws Exception {
   assertTrue(DefaultSpellMigration.managedHistoryName("324_fish_trap.yml"));assertFalse(DefaultSpellMigration.managedHistoryName("324_other.yml"));
   byte[] next=DefaultSpellMigration.resource("324_fish_trap.yml");String text=new String(next,java.nio.charset.StandardCharsets.UTF_8);

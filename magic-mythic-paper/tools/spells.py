@@ -183,11 +183,15 @@ S += _arcana.routes()
 # 239~250 던전 기믹 마법 (tools/gimmick_spells.py is their source of truth)
 import gimmick_spells as _gimmick
 S += _gimmick.routes()
+# 325~387 신규 63종 (tools/nova_spells.py + tools/nova/*.py are their source of truth)
+import nova_spells as _nova
+S += _nova.routes()
 
 EXTRA = {
  'CHA_solar_judgment_fire': ('solar_judgment', ['chazone{r=4;ticks=60;period=5;mult=0.15}'], '태양의 심판 영창 완료 후 3초 레이저 (chachannel then=)'),
 }
 EXTRA.update(_arcana.EXTRA)
+EXTRA.update(_nova.EXTRA)
 SKIP = {
  'wind_message':'Bridge가 직접 처리하는 귓속말 마법',
  'rainbow_collar':'교화(HolyTaming): TamingBridge가 별도 처리',
@@ -246,7 +250,7 @@ def main():
         if shape and shape['mode'] in ('area', 'point', 'wall'): rt.append('    ground: true')
     for sk, (owner, lines, note) in EXTRA.items():
         cat = D.get(owner, {}).get('category', '')
-        lines = [l.replace('}', f';element={cat};spell={owner}}}', 1) if l.startswith(('chahit{', 'chabolt{', 'chazone{')) else l for l in lines]
+        lines = [l.replace('}', f';element={cat};spell={owner}}}', 1) if l.startswith(('chahit{', 'chabolt{', 'chazone{', 'chanova{')) else l for l in lines]
         out += [f'# (추가 스킬) {note}', f'{sk}:', '  Cooldown: 0', '  Skills:'] + [f'  - {l}' for l in lines] + ['']
     os.makedirs(os.path.join(ROOT,'mythicmobs/Skills'), exist_ok=True); os.makedirs(os.path.join(ROOT,'server-config'), exist_ok=True)
     open(os.path.join(ROOT,'mythicmobs/Skills/chacademi_spells.yml'),'w',encoding='utf-8').write('\n'.join(out))
@@ -286,6 +290,15 @@ def aim_shape(spec):
         if first and 'r' in _params(first): d['radius'] = float(_params(first)['r'])
         return d
     if tgt == 'BLOCK': return {'mode': 'point', 'range': rng, 'radius': 0.6}
+    nova = next((l for l in lines if l.startswith('chanova{')), None)
+    if nova is not None and 'aim' in _params(nova):
+        # 325~387: aim=area:<r> | line:<length>:<width> | cone:<length>:<angle> | point | wall:<width>:<depth>
+        a = _params(nova)['aim'].split(':')
+        if a[0] == 'area': return {'mode': 'area', 'range': rng, 'radius': float(a[1])}
+        if a[0] == 'line': return {'mode': 'line', 'range': rng, 'length': float(a[1]), 'width': float(a[2]), 'origin': 'eye'}
+        if a[0] == 'cone': return {'mode': 'cone', 'range': rng, 'length': float(a[1]), 'angle': float(a[2])}
+        if a[0] == 'wall': return {'mode': 'wall', 'range': rng, 'width': float(a[1]), 'depth': float(a[2])}
+        return {'mode': 'point', 'range': rng, 'radius': 0.6}
     first = next((l for l in lines if l.startswith(('chahit{', 'chameteor{', 'chabolt{', 'chazone{', 'chaworld{', 'chafarm{', 'chautil{', 'chasummon{', 'chachannel{', 'chatelegraph{', 'chamobshot{'))), None)
     if first is None: return {'mode': 'point', 'range': rng, 'radius': 0.6}
     if first.startswith('chamobshot{'):

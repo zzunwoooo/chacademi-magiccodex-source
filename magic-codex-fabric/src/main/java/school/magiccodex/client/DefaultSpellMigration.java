@@ -7,7 +7,7 @@ import java.util.*;
 
 /** Updates only recognized shipped defaults. Local edits and extra files remain untouched. */
 final class DefaultSpellMigration {
-    static final String VERSION="spells-spatial-leap-135-20261024";
+    static final String VERSION="spells-nova-325-387-20261025";
     private static final String ROOT="/assets/magiccodex/default-spells/";
     private static final Set<String> ARCANA_IDS=Set.of("shadow_double","echo_reading","sealing_thread","shadow_exchange","forbidden_contract","life_siphon","drowsiness","misfortune_whisper","hungry_shadow","curse_transfer","discord","night_chain","pain_deferral","black_harvest","ink_fingertip","shadow_nail","night_lullaby","loosen_grasp","healing_seal","shadow_scales","warning_thread","wound_accounting","inverted_offering","ghost_tool","bell_of_fear","eclipse_eye","void_maw","landing_airbrake","hushed_soles","thorn_manners","cinder_skipring","droplet_relay","folding_tideplane");
     /** 239~250 dungeon gimmick spells (2026-10-20). */
@@ -18,6 +18,7 @@ final class DefaultSpellMigration {
         if(RENAMED_FILES.contains(name))return true;
         if(name.matches("(?:239|24[0-9]|250)_.*\\.yml")&&GIMMICK_IDS.contains(name.substring(name.indexOf('_')+1,name.length()-4)))return true;
         if(name.startsWith("149_"))return false;
+        if(name.matches("(?:32[5-9]|3[3-7][0-9]|38[0-7])_.*\\.yml"))return true; // 325~387 신규 마법 (2026-10-25, tools/nova_spells.py)
         if(name.matches("(?:10[1-9]|1[1-5][0-9]|16[0-7])_.*\\.yml"))return true;
         if(!name.matches("(?:16[89]|1[7-9][0-9]|20[0-9]|21[0-4])_.*\\.yml"))return false;
         String id=name.substring(name.indexOf('_')+1,name.length()-4);
