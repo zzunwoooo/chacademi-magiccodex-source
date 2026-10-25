@@ -76,6 +76,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     DialogueBridge dialogueBridge(){return dialogues;}
     QuestBridge questBridge(){return quests;}
     private TitleBridge titles;
+    /** #47 마법 효과음 (마크 기본 사운드 층). */
+    private SpellSounds spellSounds;
     /** Trusted server-thread API; the callback runs after database commit. */
     public void grantTitle(UUID player,String id,java.util.function.Consumer<Boolean> result){if(titles==null)result.accept(false);else titles.grant(player,id,false,result);}
     public void revokeTitle(UUID player,String id,java.util.function.Consumer<Boolean> result){if(titles==null)result.accept(false);else titles.grant(player,id,true,result);}
@@ -87,6 +89,12 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     void acceptDialogueQuest(Player p,String id,java.util.function.Consumer<Boolean> result){if(quests==null)result.accept(false);else quests.acceptFromDialogue(p,id,result);}
     void dialogueQuestEvent(Player p,String id,java.util.function.Consumer<Boolean> result){if(quests==null)result.accept(false);else quests.eventFromDialogue(p,id,result);}
     /** Trusted server integrations only; not a client-authoritative progress endpoint. */
+    /**
+     * #47 마법 효과음: 이 마법의 사건(cast·hit·end 또는 VFX 사건 이름 external:hit 등) 소리를 그 자리에서 재생. 서버 스레드.
+     * MagicMythic 이 VFX 사건을 낼 때 리플렉션으로 부른다 (없으면 조용히 건너뜀).
+     */
+    public void spellSound(Player caster,String spell,String event,org.bukkit.Location at){if(spellSounds!=null&&org.bukkit.Bukkit.isPrimaryThread())spellSounds.play(caster,spell,event,at);}
+    SpellSounds spellSounds(){return spellSounds;}
     public void questEvent(Player player,String eventId,int amount){if(quests!=null)quests.event(player,QuestDefinition.Type.EVENT,eventId,amount);}
     /** Server-thread API for a spell/NPC integration. Server validates aim, mana, cooldown and permission. */
     public boolean castTaming(Player player){return castTamingResult(player).status()==ManaProtocol.OK;}
@@ -213,6 +221,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         try{quests=new QuestBridge(this);}catch(Exception error){getLogger().severe("의뢰 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
         try{dialogues=new DialogueBridge(this);}catch(Exception error){getLogger().severe("대화 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
         try{npcSocial=new NpcSocialService(this);}catch(Exception error){npcSocial=null;getLogger().warning("NPC 호감도 초기화 실패 (AI NPC 연결 없이 계속): "+error.getMessage());}
+        spellSounds=new SpellSounds(this);
+        ChacaApi.reload(this,"마법소리","spell-sounds.yml (마법 효과음)",()->spellSounds.reload());
         try{titles=new TitleBridge(this);}catch(Exception error){getLogger().severe("칭호 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
         if(getServer().getPluginManager().isPluginEnabled("MythicMobs"))try{spellRuntime=new SpellRuntime(this);getLogger().info("Spell gameplay runtime ready: "+spellRuntime.routeCount()+" routes; catalog="+mana.isCatalogMode());}catch(Exception error){getLogger().severe("마법 실행 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
         if(spellRuntime==null)getLogger().warning("Spell gameplay runtime unavailable: MythicMobs is not enabled; existing fallback routes remain active.");

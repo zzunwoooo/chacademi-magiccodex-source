@@ -18,7 +18,8 @@ public final class ScreenVfxClient {
     }
     /** Server preview (/테스트 마법 효과음 → magiccodex:preview "sound &lt;id|stop&gt;"). False when the cue is unknown. */
     static boolean previewSound(String name){if(name.equals("stop")){stop();return true;}var cue=SpellCastSounds.find(name);if(cue==null)return false;play(cue);return true;}
-    public static void onCast(String id) { var cue=SpellCastSounds.byId(id);if(cue!=null)play(cue); }
+    /** #47 (2026-10-25): 시전 효과음은 이제 서버가 마크 기본 사운드로 재생한다 (주변 사람도 들림). 예전 클라 시전음은 끔. */
+    public static void onCast(String id) { }
     private static void play(SpellCastSounds.Cue cue) {
         var client=MinecraftClient.getInstance();if(client.world==null||client.player==null||!client.player.isAlive())return;
         stop();sound=PositionedSoundInstance.master(SoundEvent.of(Identifier.of("magiccodex",cue.event())),1f,cue.volume());

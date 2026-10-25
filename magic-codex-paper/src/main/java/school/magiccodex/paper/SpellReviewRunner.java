@@ -261,8 +261,7 @@ final class SpellReviewRunner implements AutoCloseable {
             mana.setCurrent(u, mana.snapshot(u).map(s -> s.maximum()).orElse(before.maximum()));
             if (!p.hasPermission(spell.permission())) grant = p.addAttachment(plugin, spell.permission(), true);
             int status = bridge.castForReview(p, id);
-            if (status == ManaProtocol.OK && !id.equals("wind_message") && p.getListeningPluginChannels().contains(PreviewProtocol.CHANNEL))
-                p.sendPluginMessage(plugin, PreviewProtocol.CHANNEL, PreviewProtocol.encode("sound", id)); // 키로 쓴 것처럼 시전 효과음
+            // 시전 효과음은 서버가 시전 성공 때 직접 재생 (#47 SpellSounds)
             return status;
         } catch (RuntimeException error) {
             plugin.getLogger().warning("자동 시전 검수 실패: " + id + " (" + error.getClass().getSimpleName() + ": " + error.getMessage() + ")");
