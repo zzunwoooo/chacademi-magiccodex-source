@@ -540,6 +540,14 @@ final class NpcSocialService implements Listener, AutoCloseable {
         return row.score() >= gate ? byGate.get(gate) : null;
     }
 
+    enum GateAction { NONE, OFFER, UNLOCK }
+
+    /** 상한에 닿았을 때: 이미 깬 퀘스트면 다음 상한 열기, 받을 수 있으면 지급, 그 밖(진행 중 등)은 아무 일 없음. */
+    static GateAction gateAction(boolean completedEver, boolean offerable) {
+        if (completedEver) return GateAction.UNLOCK;
+        return offerable ? GateAction.OFFER : GateAction.NONE;
+    }
+
     private void reachedGate(UUID player, String npc, AffinityStore.AddResult r) {
         if (r != null && r.applied() > 0) {
             offerGateQuest(player, npc, r.row());
@@ -551,8 +559,18 @@ final class NpcSocialService implements Listener, AutoCloseable {
         String quest = gateQuest(gateQuests.get(npc), row);
         QuestBridge q = plugin.questBridge();
         Player p = Bukkit.getPlayer(player);
-        if (quest == null || q == null || p == null || !q.npcOfferable(p, quest)) {
-            return;   // 이미 진행 중·완료, 권한 없음, 공개 전 → 다음 대화·선물 때 다시 확인
+        if (quest == null || q == null || p == null) {
+            return;
+        }
+        GateAction action = gateAction(q.completedEver(p, quest), q.npcOfferable(p, quest));
+        if (action == GateAction.UNLOCK) {
+            // #100: 이미 깬 상한 퀘스트인데 하트가 안 올라 상한에 갇힌 경우 (다른 서버에서 보상 받음·하트 기록 실패·설정을 나중에 넣음)
+            // → 다시 주지 않고 바로 다음 상한을 연다 (하트는 내려가지 않으므로 여러 번 불려도 같음)
+            questCompleted(player, quest);
+            return;
+        }
+        if (action == GateAction.NONE) {
+            return;   // 진행 중, 권한 없음, 공개 전 → 다음 대화·선물 때 다시 확인
         }
         String key = player + "|" + quest;
         if (!gateOffering.add(key)) {
