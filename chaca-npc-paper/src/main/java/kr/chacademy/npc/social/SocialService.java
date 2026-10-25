@@ -314,6 +314,9 @@ public final class SocialService {
         List<String> playerNames = new ArrayList<>();
         for (Player online : Bukkit.getOnlinePlayers()) {
             playerNames.add(online.getName());
+            // 한글 닉네임이 들어간 줄도 막는다 (#94: 유저에게는 닉네임이 보이는 이름)
+            String nick = plugin.link().playerName(online);
+            if (!nick.equals(online.getName())) playerNames.add(nick);
         }
         List<String[]> ok = new ArrayList<>();
         for (Object o : lines) {

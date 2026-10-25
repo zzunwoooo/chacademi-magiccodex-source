@@ -274,8 +274,10 @@ public final class GiftService {
                 s.heart = r2[1];
             }
             say(p, c, c.fallback(reaction, st.defaultFallbacks, random));
-            plugin.social().recordEvent(uuid, p.getName(), c.id(), "gift",
-                    p.getName() + "이(가) " + c.name() + "에게 선물(" + key + ")을 줌");
+            // NPC 기억 문장에도 계정 이름 대신 한글 닉네임 (#94)
+            String who = plugin.link().playerName(p);
+            plugin.social().recordEvent(uuid, who, c.id(), "gift",
+                    who + "이(가) " + c.name() + "에게 선물(" + key + ")을 줌");
         });
     }
 

@@ -48,6 +48,8 @@ public final class NameplateClient {
    }textures.endFrame();
   });
  }
+ /** 이름표 자료에 실린 등록 닉네임 (#94: 닉네임 응답이 오기 전 화면 표시용). 없으면 "". */
+ static String nickname(java.util.UUID id){if(id==null)return "";for(var d:entries.values())if(id.equals(d.uuid())&&d.name()!=null&&!d.name().isBlank())return d.name();return "";}
  private static String path(String style){return "magiccodex:textures/nameplates/nameplate_"+style+".png";}
  private static void clear(){entries=Map.of();serverReady=false;ready=false;world=null;if(textures!=null)textures.close();if(text!=null)text.close();textures=null;text=null;}
  /** Pending/stale tracked players must not leak an English vanilla account label while nickname data loads. */

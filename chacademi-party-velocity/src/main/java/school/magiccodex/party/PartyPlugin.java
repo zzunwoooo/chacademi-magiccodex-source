@@ -199,11 +199,14 @@ public final class PartyPlugin {
         }catch(IOException impossible){throw new IllegalStateException(impossible);}});
     }
     private boolean enqueue(Runnable task){try{worker.execute(task);return true;}catch(RejectedExecutionException e){return false;}}
+    /** 표시 이름: 서버가 알려 준 한글 닉네임 → 기억해 둔 닉네임 → 계정 이름. 오프라인이면 UUID 대신 기억한 닉네임 (#94). */
     private String name(UUID id){
-        var online=proxy.getPlayer(id);if(online.isEmpty())return id.toString();
-        var identity=network==null?null:network.identity(id,online.get().getCurrentServer().orElse(null),System.currentTimeMillis());
+        var online=proxy.getPlayer(id);
+        var identity=online.isEmpty()||network==null?null:network.identity(id,online.get().getCurrentServer().orElse(null),System.currentTimeMillis());
         if(identity!=null)return identity.nickname();
-        return online.get().getUsername();
+        String remembered=hud==null?null:hud.rememberedName(id);
+        if(remembered!=null&&!remembered.isBlank())return remembered;
+        return online.isPresent()?online.get().getUsername():"파티원";
     }
     private UUID resolve(String text,boolean onlineOnly){
         try{UUID id=UUID.fromString(text);if(!onlineOnly||proxy.getPlayer(id).isPresent())return id;}catch(IllegalArgumentException ignored){}

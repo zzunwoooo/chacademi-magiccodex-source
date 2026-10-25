@@ -54,7 +54,17 @@ public final class NicknameClient {
     static boolean firstRequired(){return firstRequired;}
     private static void openFirst(){DeferredScreens.openWhenIdle(()->new NicknameScreen(null,true));}
     public static boolean supported(){return MinecraftClient.getInstance().getNetworkHandler()!=null&&ClientPlayNetworking.canSend(Query.ID);}
-    public static String display(String fallback){return identity==null?fallback:identity.nickname();}
+    /** 마지막으로 받은 내 닉네임. 서버를 옮겨 identity가 비워져도 같은 계정이면 계정 이름 대신 이걸 보인다 (#94). */
+    private static java.util.UUID lastOwner;private static String lastNickname="";
+    public static String display(String fallback){
+        if(identity!=null)return identity.nickname();
+        var c=MinecraftClient.getInstance();var me=c.player==null?null:c.player.getUuid();
+        if(me!=null&&me.equals(lastOwner)&&!lastNickname.isBlank())return lastNickname;
+        // 처음 접속해 닉네임 응답(약 1.5초 뒤)을 기다리는 동안: 이름표 자료에 실린 내 등록 닉네임
+        String plate=me==null?"":NameplateClient.nickname(me);
+        return plate.isBlank()?fallback:plate;
+    }
+    private static void remember(Response r){if(r!=null&&r.nickname()!=null&&!r.nickname().isBlank()){lastOwner=r.owner();lastNickname=r.nickname();}}
     public static void open(Screen parent){DeferredScreens.open(()->new NicknameScreen(parent));}
     static boolean waiting(NicknameScreen screen){return waiting!=0&&owner==screen;}
     static boolean request(NicknameScreen screen,int action,long session,long revision,String value){
@@ -70,12 +80,12 @@ public final class NicknameClient {
             return;
         }
         if(r.kind()==NicknameProtocol.FIRST_DONE){
-            firstRequired=false;identity=r;
+            firstRequired=false;identity=r;remember(r);
             if(c.currentScreen instanceof NicknameScreen s&&s.first())s.finishFirst();
             return;
         }
         if(r.sequence()!=waiting)return;
-        var screen=owner;waiting=0;owner=null;identity=r;
+        var screen=owner;waiting=0;owner=null;identity=r;remember(r);
         if(screen!=null&&c.currentScreen==screen)screen.receive(r);
         else if(r.session()!=0&&supported())request(null,NicknameProtocol.CLOSE,r.session(),r.revision(),"");
     }

@@ -22,7 +22,11 @@ final class DisplayNames {
         String value="";
         if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))try{value=me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player,plugin.getConfig().getString("display-name-placeholder","%user_nickname%"));}catch(RuntimeException ignored){}
         value=clean(value);
+        // #94: 닉네임 자리 표시자는 저장된 닉이 없으면 계정 이름을 돌려준다. 호출한 쪽이 따로 저장해 둔 이름(친구 목록 등)이 있으면 그쪽이 낫다.
+        String saidAccount=player.getName();if(saidAccount!=null&&value.equalsIgnoreCase(saidAccount)&&!clean(fallback).isBlank())value=clean(fallback);
         if(value.isBlank()||value.contains("%")||value.equalsIgnoreCase("<none>")||value.equalsIgnoreCase("null"))value=clean(fallback);
+        // 다른 서버에 있는 사람이 막 정한 닉네임처럼 캐시에 없으면 DB에서 한 번 읽어 둔다 (표시 전용, 45초 새로고침 전에 반영)
+        if(!player.isOnline())nicknames.requestStored(player.getUniqueId());
         if(value.isBlank())value="기록 없음";
         if(cache.size()>4096)cache.entrySet().removeIf(e->e.getValue().until()<now);
         cache.put(player.getUniqueId(),new Cached(value,now+2000));return value;

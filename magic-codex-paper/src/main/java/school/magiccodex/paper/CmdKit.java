@@ -142,7 +142,14 @@ final class CmdKit {
         return id;
     }
 
-    static String name(UUID id) { return ChacaApi.ready() ? ChacaApi.name(id) : Optional.ofNullable(Bukkit.getOfflinePlayer(id).getName()).orElse(id.toString()); }
+    /** 표시용 한글 닉네임. 허브가 준비되기 전에도 닉네임 저장소에서 먼저 찾고, 그래도 없으면 계정 이름 (#94). */
+    static String name(UUID id) {
+        if (ChacaApi.ready()) return ChacaApi.name(id);
+        var offline = Bukkit.getOfflinePlayer(id);
+        try { var plugin = org.bukkit.plugin.java.JavaPlugin.getPlugin(MagicCodexBridge.class); if (plugin.names() != null) return plugin.nicknameOf(offline); }
+        catch (RuntimeException ignored) { }
+        return Optional.ofNullable(offline.getName()).orElse(id.toString());
+    }
 
     static String compact(String s) { return AdminCommandRules.compact(s); }
 }

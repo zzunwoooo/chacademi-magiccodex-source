@@ -474,11 +474,11 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
         PlayerStory ps = state.of(p.getUniqueId());
         ps.name = p.getName();
         if (ps.has(Kind.CUTSCENE, id)) {
-            note(who, p.getName() + ": 컷신 " + id + " 은(는) 이미 재생 중이거나 대기 중입니다 (요청 무시)");
+            note(who, nick(p) + ": 컷신 " + id + " 은(는) 이미 재생 중이거나 대기 중입니다 (요청 무시)");
             return false;
         }
         if (ps.queue.size() >= StoryState.MAX_QUEUE) {
-            refuse(who, p.getName() + ": 스토리 대기열이 가득 찼습니다 (" + StoryState.MAX_QUEUE + "개). 컷신 " + id + " 요청을 버립니다");
+            refuse(who, nick(p) + ": 스토리 대기열이 가득 찼습니다 (" + StoryState.MAX_QUEUE + "개). 컷신 " + id + " 요청을 버립니다");
             return false;
         }
         Request r = new Request(Kind.CUTSCENE, id, ps.nextSeq());
@@ -635,16 +635,16 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
         StoryState.Open open = ps.decideOpen(id, replayArg, def == null ? null : def.allowReplay, getConfig().getBoolean("allow-replay", false));
         switch (open) {
             case DUPLICATE -> {
-                note(who, p.getName() + ": 대화 " + id + " 은(는) 이미 진행 중이거나 대기 중입니다 (요청 무시)");
+                note(who, nick(p) + ": 대화 " + id + " 은(는) 이미 진행 중이거나 대기 중입니다 (요청 무시)");
                 return false;
             }
             case ALREADY_DONE -> {
-                note(who, p.getName() + ": 대화 " + id + " 은(는) 이미 끝냈습니다 — 다시 열지 않고 명령어도 실행하지 않습니다 (다시 보여 주려면 /테스트 스토리 대화 "
+                note(who, nick(p) + ": 대화 " + id + " 은(는) 이미 끝냈습니다 — 다시 열지 않고 명령어도 실행하지 않습니다 (다시 보여 주려면 /테스트 스토리 대화 "
                         + id + " " + p.getName() + ")");
                 return false;
             }
             case QUEUE_FULL -> {
-                refuse(who, p.getName() + ": 스토리 대기열이 가득 찼습니다 (" + StoryState.MAX_QUEUE + "개). 대화 " + id + " 요청을 버립니다");
+                refuse(who, nick(p) + ": 스토리 대기열이 가득 찼습니다 (" + StoryState.MAX_QUEUE + "개). 대화 " + id + " 요청을 버립니다");
                 return false;
             }
             default -> {
