@@ -51,7 +51,7 @@ public final class PetClient {
     public static void initialize(){
         IO.execute(()->{try{
             Files.createDirectories(modelRoot().resolve("textures"));
-            Path readme=ROOT.resolve("모델-넣는법.txt");if(!Files.exists(readme))Files.writeString(readme,"models/<MCPets의 펫ID>.bbmodel\n파일 이름이 펫ID와 다르면 models/aliases.json 에 {\"펫ID\":\"파일이름\"} 으로 연결할 수 있습니다(영문·숫자·_ . - 만).\n텍스처는 bbmodel에 포함해 저장하거나 models/textures/에 PNG를 넣으세요.\n/펫도감 새로고침 : 모델 다시 읽기\n큐브 모델, 그룹, 면 UV, 숫자 position/rotation/scale 키프레임을 지원합니다.\nidle 이름의 애니메이션 우선, 없으면 첫 애니메이션. Molang과 메시(mesh)는 지원하지 않습니다.\n");
+            Path readme=ROOT.resolve("모델-넣는법.txt");if(!Files.exists(readme))Files.writeString(readme,"models/<MCPets의 펫ID>.bbmodel\n파일 이름이 펫ID와 다르면 models/aliases.json 에 {\"펫ID\":\"파일이름\"} 으로 연결할 수 있습니다(영문·숫자·_ . - 만).\n텍스처는 bbmodel에 포함해 저장하거나 models/textures/에 PNG를 넣으세요.\n/펫도감 새로고침 : 모델 다시 읽기\n큐브 모델, 그룹, 면 UV, 숫자 position/rotation/scale 키프레임을 지원합니다.\nidle 이름의 애니메이션 우선, 없으면 첫 애니메이션. 월드의 동행 펫은 걸을 때 walk/move/run, 날 때 fly/flying/glide 이름의 애니메이션을 씁니다(없으면 idle). Molang과 메시(mesh)는 지원하지 않습니다.\n");
         }catch(Exception e){log(e);}});
         PayloadTypeRegistry.playC2S().register(RequestPayload.ID,RequestPayload.CODEC);PayloadTypeRegistry.playS2C().register(ResponsePayload.ID,ResponsePayload.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(ResponsePayload.ID,(p,ctx)->{
@@ -116,7 +116,7 @@ public final class PetClient {
         }catch(Exception e){log(e);favoritesReady=false;}
     }
     private static void reset(){epoch++;STATE.reset();waiting=0;preview=false;known=false;pendingOpen=false;favoritesReady=false;lastRefresh=0;lastRequest=0;notice="";if(models!=null){models.close();models=null;}}
-    static void reload(){if(models!=null){models.close();models=null;}if(!preview)request(PetProtocol.LIST,"",true);}
+    static void reload(){if(models!=null){models.close();models=null;}PetCompanions.reloadModels();if(!preview)request(PetProtocol.LIST,"",true);}
     public static void preview(){fixture(List.of(new Entry("preview_fox","붉은 여우",3,true,false,new byte[0]),new Entry("preview_cat","검은 고양이",1,true,false,new byte[0]),new Entry("preview_wolf","회색 늑대",2,false,false,new byte[0])));}
     public static void fixture(List<Entry> entries){waiting=0;preview=true;known=true;STATE.expect(++sequence);for(var r:PetProtocol.split(sequence,"",entries))STATE.accept(r);}
     static void log(Exception e){org.slf4j.LoggerFactory.getLogger("magiccodex").warn("Pet config",e);}

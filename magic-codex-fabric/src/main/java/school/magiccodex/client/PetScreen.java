@@ -95,6 +95,8 @@ public final class PetScreen extends Screen {
                 label(c,PetClient.busy()?"처리 중…":entry.active()?"소환 해제":entry.owned()?"소환하기":"소환 불가",660,671,25,0xFFF4EED9,true);
                 if(hover.equals("model"))label(c,"드래그 회전 · 휠 확대",640,193,15,0xFFC4D2DF,false);
                 if(hover.equals("favorite"))tooltip(c,PetClient.STATE.favorite(entry.id())?"즐겨찾기 해제":"즐겨찾기 추가",891,183);
+                // 펫 카드(모델·이름)에 마우스를 올리면 능력 설명 (오너 2026-10-26). 바닐라 펫처럼 info 가 비면 없음.
+                if(!dragging&&(hover.equals("model")||in(mx,my,382,566,516,40)))info(c,entry,(float)mx,(float)my);
             }
             label(c,"새로고침",1133,685,17,hover.equals("refresh")?0xFF9BE4EF:0xFFB4C4D4,false);
             if(PetClient.previewing())label(c,"미리보기",143,62,16,0xFFBBD0DE,false);
@@ -129,6 +131,36 @@ public final class PetScreen extends Screen {
         PetAssets.draw(c,glyph,x+w*.35f,y+h*.29f,w*.30f,h*.42f,0xFFFFFFFF);c.getMatrices().pop();
     }
     private void label(DrawContext c,String s,float x,float y,float size,int color,boolean bold){UiResources.text().draw(c,s,x,y,size,color,bold?BOLD:BODY,true);}
+    private Entry infoSource;private List<String> infoLines=List.of();private float infoWidth;
+    /** 여러 줄 능력 설명: 이 창의 툴팁과 같은 색(0xED0A1C2A)·글꼴·글자색으로, 모서리만 둥근 카드(FishingArt.card) — 마우스 오른쪽 아래. */
+    private void info(DrawContext c,Entry entry,float mx,float my){
+        if(entry.info().isBlank())return;
+        if(infoSource!=entry){infoSource=entry;infoLines=wrap(entry.info(),17,620);infoWidth=0;for(var l:infoLines)infoWidth=Math.max(infoWidth,UiResources.text().width(l,17,BODY));}
+        float w=infoWidth+30,h=infoLines.size()*24+12;
+        float x=Math.min(mx+16,1280-8-w),y=Math.min(my+16,720-8-h);
+        c.getMatrices().push();
+        try{
+            c.getMatrices().translate(0,0,300);
+            FishingArt.card(c,x,y,w,h,0xED0A1C2A,0,1);
+            for(int i=0;i<infoLines.size();i++)UiResources.text().draw(c,infoLines.get(i),x+15,y+18+i*24,17,0xFFE4EDF0,BODY,false);
+        }finally{c.getMatrices().pop();}
+    }
+    /** \n 으로 나누고, 너무 긴 줄은 띄어쓰기에서 (없으면 글자 단위로) 접는다. */
+    private static List<String> wrap(String text,float size,float max){
+        var out=new ArrayList<String>();var t=UiResources.text();
+        for(String line:text.split("\n",-1)){
+            line=line.strip();if(line.isEmpty())continue;
+            while(t.width(line,size,BODY)>max){
+                int cut=line.length()-1;while(cut>1&&t.width(line.substring(0,cut),size,BODY)>max)cut--;
+                int space=line.lastIndexOf(' ',cut);if(space>cut/2)cut=space;
+                out.add(line.substring(0,cut).strip());line=line.substring(cut).strip();
+                if(out.size()>24)break;
+            }
+            if(!line.isEmpty())out.add(line);
+            if(out.size()>24)break;
+        }
+        return List.copyOf(out);
+    }
     private void tooltip(DrawContext c,String s,float x,float y){float w=Math.min(790,UiResources.text().width(s,17,BODY)+30);HudMesh.capsule(c,x-w/2,y-18,w,36,0xED0A1C2A,0xED0A1C2A);label(c,s,x,y,17,0xFFE4EDF0,false);}
     private void sound(float pitch,float volume){client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK.value(),pitch,volume));}
     @Override public boolean mouseClicked(double x,double y,int button){

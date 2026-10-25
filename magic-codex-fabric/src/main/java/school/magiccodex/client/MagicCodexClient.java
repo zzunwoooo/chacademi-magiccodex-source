@@ -66,6 +66,7 @@ public final class MagicCodexClient implements ClientModInitializer {
         FishTankClient.initialize();
         BagPagesClient.initialize();
         PetClient.initialize();
+        PetCompanions.initialize();
         TamingClient.initialize();
         ShinyClient.initialize();
         CastingClient.initialize();

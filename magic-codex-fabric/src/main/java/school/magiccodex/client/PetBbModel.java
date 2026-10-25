@@ -12,9 +12,37 @@ public final class PetBbModel {
     public record Track(String node,String channel,List<Key> keys){}
     public record Node(String id,float[] origin,float[] rotation,List<Node> children,Cube cube){}
     public record Texture(byte[] png,int uvWidth,int uvHeight){}
+    /** 애니메이션 하나: 길이(초)와 트랙들. {@link #byNode}: 노드 id → [rotation, position, scale] 트랙 (없으면 null). */
+    public record Clip(float length,List<Track> tracks,Map<String,Track[]> byNode){
+        static final Clip EMPTY=new Clip(0,List.of(),Map.of());
+        static Clip of(float length,List<Track> tracks){
+            var map=new HashMap<String,Track[]>();
+            for(var t:tracks){int i=channelIndex(t.channel());if(i>=0)map.computeIfAbsent(t.node(),k->new Track[3])[i]=t;}
+            return new Clip(length,List.copyOf(tracks),Map.copyOf(map));
+        }
+    }
+    /** 상태별 애니메이션 종류 (동행 펫, 2026-10-26). */
+    public static final int IDLE=0,WALK=1,FLY=2;
     public final List<Node> roots;public final List<Texture> textures;public final List<Track> tracks;
     public final float length;public final List<String> warnings;public final float[] center;public final float span;
-    private PetBbModel(List<Node> r,List<Texture> t,List<Track> a,float len,List<String> w,float[] center,float span){roots=r;textures=t;tracks=a;length=len;warnings=w;this.center=center;this.span=span;}
+    /** idle 은 항상 있음(애니메이션이 없으면 빈 Clip). walk / fly 는 해당 이름이 없으면 idle 과 같은 객체. */
+    public final Clip idle,walk,fly;
+    /** 모델 바닥(가장 낮은 y, 픽셀 단위) — 월드에서 발밑을 땅에 붙일 때 씀. */
+    public final float bottom;
+    private PetBbModel(List<Node> r,List<Texture> t,Clip idle,Clip walk,Clip fly,List<String> w,float[] center,float span,float bottom){roots=r;textures=t;tracks=idle.tracks();length=idle.length();this.idle=idle;this.walk=walk;this.fly=fly;warnings=w;this.center=center;this.span=span;this.bottom=bottom;}
+    public Clip clip(int kind){return kind==WALK?walk:kind==FLY?fly:idle;}
+    static int channelIndex(String channel){return switch(channel){case "rotation"->0;case "position"->1;case "scale"->2;default->-1;};}
+    /**
+     * 애니메이션 이름 → 종류. fly/flying/glide 가 들어가면 FLY, walk/move/run 이면 WALK, idle 이면 IDLE, 그 밖은 -1.
+     * (fly_move 처럼 둘 다 있으면 FLY 가 먼저.)
+     */
+    public static int kind(String name){
+        String n=name==null?"":name.toLowerCase(Locale.ROOT);
+        if(n.contains("fly")||n.contains("glide"))return FLY;
+        if(n.contains("walk")||n.contains("move")||n.contains("run"))return WALK;
+        if(n.contains("idle"))return IDLE;
+        return -1;
+    }
     private static final long MAX_FILE=16L*1024*1024;
     public static PetBbModel load(Path root,String id)throws Exception{
         if(!school.magiccodex.protocol.PetProtocol.validId(id))throw new IllegalArgumentException("잘못된 펫 ID");
@@ -98,39 +126,54 @@ public final class PetBbModel {
         var visited=new HashSet<String>();var nodes=new ArrayList<Node>();
         for(var e:array(json,"outliner")){var n=node(e,cubes,groups,visited,hidden,0);if(n!=null)nodes.add(n);}
         for(var e:cubes.entrySet())if(!visited.contains(e.getKey()))nodes.add(new Node(e.getKey(),new float[]{0,0,0},new float[]{0,0,0},List.of(),e.getValue()));
-        var tracks=new ArrayList<Track>();float len=0;
-        JsonObject animation=null;
-        for(var a:array(json,"animations")){var o=a.getAsJsonObject();if(animation==null)animation=o;if(str(o,"name","").toLowerCase(Locale.ROOT).contains("idle")){animation=o;break;}}
-        boolean legacy=!str(obj(json,"meta"),"format_version","4").startsWith("5");
-        if(animation!=null){
-            len=Math.clamp(num(animation,"length",0),0,3600);
-            var animators=obj(animation,"animators");
-            if(animators.size()>1024)throw new IllegalArgumentException("애니메이터 개수 초과");
-            for(var entry:animators.entrySet()){
-                var channels=new HashMap<String,List<Key>>();
-                var keys=array(entry.getValue().getAsJsonObject(),"keyframes");
-                if(keys.size()>4096)throw new IllegalArgumentException("키프레임 개수 초과");
-                for(var key:keys){
-                    var k=key.getAsJsonObject();String channel=str(k,"channel","");
-                    if(!Set.of("rotation","position","scale").contains(channel))continue;
-                    var data=array(k,"data_points");if(data.isEmpty())continue;
-                    try{
-                        var point=data.get(0).getAsJsonObject();float[] v={finite(point.get("x")),finite(point.get("y")),finite(point.get("z"))};
-                        if(legacy){if(channel.equals("position"))v[0]*=-1;if(channel.equals("rotation")){v[0]*=-1;v[1]*=-1;}}
-                        String interpolation=str(k,"interpolation","linear");
-                        if(!Set.of("linear","step").contains(interpolation))warnings.add("곡선 보간은 선형으로 표시됩니다.");
-                        if(data.size()>1)warnings.add("복수 data_points는 첫 값으로 표시됩니다.");
-                        channels.computeIfAbsent(channel,s->new ArrayList<>()).add(new Key(num(k,"time",0),v,interpolation));
-                    }catch(IllegalArgumentException ex){warnings.add("Molang 수식 키프레임은 생략됩니다.");}
-                }
-                for(var c:channels.entrySet()){c.getValue().sort(Comparator.comparing(Key::time));tracks.add(new Track(entry.getKey(),c.getKey(),List.copyOf(c.getValue())));}
+        // idle: 이름에 idle 이 들어간 첫 애니메이션, 없으면 첫 애니메이션 (예전과 같음). walk / fly: 이름이 맞는 첫 애니메이션.
+        JsonObject idleAnim=null,walkAnim=null,flyAnim=null,first=null;
+        for(var a:array(json,"animations")){
+            var o=a.getAsJsonObject();if(first==null)first=o;
+            switch(kind(str(o,"name",""))){
+                case IDLE->{if(idleAnim==null)idleAnim=o;}
+                case WALK->{if(walkAnim==null)walkAnim=o;}
+                case FLY->{if(flyAnim==null)flyAnim=o;}
+                default->{}
             }
         }
+        if(idleAnim==null)idleAnim=first;
+        boolean legacy=!str(obj(json,"meta"),"format_version","4").startsWith("5");
+        Clip idle=clip(idleAnim,legacy,warnings);
+        Clip walk=walkAnim==null||walkAnim==idleAnim?idle:clip(walkAnim,legacy,warnings);
+        Clip fly=flyAnim==null||flyAnim==idleAnim?idle:clip(flyAnim,legacy,warnings);
         Arrays.fill(min,Float.POSITIVE_INFINITY);Arrays.fill(max,Float.NEGATIVE_INFINITY);
         for(var n:nodes)bounds(n,new org.joml.Matrix4f(),min,max);
         float[] center={(min[0]+max[0])/2,(min[1]+max[1])/2,(min[2]+max[2])/2};
         float span=Math.max(1,Math.max(max[0]-min[0],Math.max(max[1]-min[1],max[2]-min[2])));
-        return new PetBbModel(List.copyOf(nodes),List.copyOf(textures),List.copyOf(tracks),len,List.copyOf(warnings),center,span);
+        return new PetBbModel(List.copyOf(nodes),List.copyOf(textures),idle,walk,fly,List.copyOf(warnings),center,span,Float.isFinite(min[1])?min[1]:0);
+    }
+    private static Clip clip(JsonObject animation,boolean legacy,Set<String> warnings){
+        if(animation==null)return Clip.EMPTY;
+        var tracks=new ArrayList<Track>();
+        float len=Math.clamp(num(animation,"length",0),0,3600);
+        var animators=obj(animation,"animators");
+        if(animators.size()>1024)throw new IllegalArgumentException("애니메이터 개수 초과");
+        for(var entry:animators.entrySet()){
+            var channels=new HashMap<String,List<Key>>();
+            var keys=array(entry.getValue().getAsJsonObject(),"keyframes");
+            if(keys.size()>4096)throw new IllegalArgumentException("키프레임 개수 초과");
+            for(var key:keys){
+                var k=key.getAsJsonObject();String channel=str(k,"channel","");
+                if(!Set.of("rotation","position","scale").contains(channel))continue;
+                var data=array(k,"data_points");if(data.isEmpty())continue;
+                try{
+                    var point=data.get(0).getAsJsonObject();float[] v={finite(point.get("x")),finite(point.get("y")),finite(point.get("z"))};
+                    if(legacy){if(channel.equals("position"))v[0]*=-1;if(channel.equals("rotation")){v[0]*=-1;v[1]*=-1;}}
+                    String interpolation=str(k,"interpolation","linear");
+                    if(!Set.of("linear","step").contains(interpolation))warnings.add("곡선 보간은 선형으로 표시됩니다.");
+                    if(data.size()>1)warnings.add("복수 data_points는 첫 값으로 표시됩니다.");
+                    channels.computeIfAbsent(channel,s->new ArrayList<>()).add(new Key(num(k,"time",0),v,interpolation));
+                }catch(IllegalArgumentException ex){warnings.add("Molang 수식 키프레임은 생략됩니다.");}
+            }
+            for(var c:channels.entrySet()){c.getValue().sort(Comparator.comparing(Key::time));tracks.add(new Track(entry.getKey(),c.getKey(),List.copyOf(c.getValue())));}
+        }
+        return Clip.of(len,tracks);
     }
     private static void bounds(Node n,org.joml.Matrix4f parent,float[] min,float[] max){
         var m=transform(new org.joml.Matrix4f(parent),n.origin,n.rotation);
@@ -157,11 +200,14 @@ public final class PetBbModel {
         for(var child:array(o,"children")){var n=node(child,cubes,groups,seen,hidden,depth+1);if(n!=null)children.add(n);}
         return new Node(id,vec(data.get("origin"),new float[]{0,0,0}),vec(data.get("rotation"),new float[]{0,0,0}),List.copyOf(children),null);
     }
-    public static float[] sample(List<Key> keys,float time){
-        if(keys.isEmpty())return new float[]{0,0,0};Key a=keys.getFirst(),b=a;
-        for(var k:keys){if(k.time<=time)a=k;else{b=k;break;}b=a;}
+    public static float[] sample(List<Key> keys,float time){return sample(keys,time,new float[3]);}
+    /** 할당 없는 버전: out 에 써서 돌려줌. 키가 없으면 0,0,0. */
+    public static float[] sample(List<Key> keys,float time,float[] out){
+        if(keys.isEmpty()){out[0]=out[1]=out[2]=0;return out;}Key a=keys.getFirst(),b=a;
+        for(int i=0,n=keys.size();i<n;i++){var k=keys.get(i);if(k.time<=time)a=k;else{b=k;break;}b=a;}
         float mix=b.time<=a.time||a.interpolation.equals("step")?0:Math.clamp((time-a.time)/(b.time-a.time),0,1);
-        return new float[]{a.value[0]+(b.value[0]-a.value[0])*mix,a.value[1]+(b.value[1]-a.value[1])*mix,a.value[2]+(b.value[2]-a.value[2])*mix};
+        out[0]=a.value[0]+(b.value[0]-a.value[0])*mix;out[1]=a.value[1]+(b.value[1]-a.value[1])*mix;out[2]=a.value[2]+(b.value[2]-a.value[2])*mix;
+        return out;
     }
     private static JsonObject obj(JsonObject o,String key){return o.has(key)&&o.get(key).isJsonObject()?o.getAsJsonObject(key):new JsonObject();}
     private static JsonArray array(JsonObject o,String key){return o.has(key)&&o.get(key).isJsonArray()?o.getAsJsonArray(key):new JsonArray();}
