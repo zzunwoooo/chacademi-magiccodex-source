@@ -201,7 +201,11 @@ public final class StatsScreen extends Screen {
     private void illustration(DrawContext c,int iw,int ih,Painter painter){
         var r=PORTRAIT;int w=Math.max(1,Math.round(r.h()*(float)iw/Math.max(1,ih)));
         c.enableScissor(r.x(),r.y(),r.right(),r.bottom());
-        try{painter.paint(Math.round(r.centerX()-w/2f),w);}finally{c.disableScissor();}
+        try{
+            painter.paint(Math.round(r.centerX()-w/2f),w);
+            // 일러스트마다 배경·밝기가 달라 칸 아래 경계가 튀지 않게, 아래 90px 를 창 바탕색(#0B1B30)으로 살짝 흐리게 (오너 2026-10-26)
+            c.fillGradient(r.x(),r.bottom()-90,r.right(),r.bottom(),0x000B1B30,0xB00B1B30);
+        }finally{c.disableScissor();}
     }
     private void skin(DrawContext c){
         var p=portraitPlayer();if(!(p instanceof LivingEntity entity))return;var r=PORTRAIT;
@@ -211,13 +215,13 @@ public final class StatsScreen extends Screen {
     }
     private void identity(DrawContext c,StatsValues v,List<Action> actions,float w){
         String name=remote!=null&&!live?remote.profile().name():v.nickname();
-        draw(c,name,IDENTITY.x(),NAME_Y,FONT_NAME,TEXT,BOLD,0,IDENTITY.w()+10);
+        draw(c,name,IDENTITY.x(),NAME_Y,FONT_NAME,TEXT,BOLD,0,IDENTITY.w());
         var ext=extended();String title=ext==null?"":ext.extra().title();
-        if(!title.isEmpty())draw(c,title,IDENTITY.x(),TITLE_LINE_Y,FONT_BODY,GOLD,BODY,0,IDENTITY.w()+10);
+        if(!title.isEmpty())draw(c,title,IDENTITY.x(),TITLE_LINE_Y,FONT_BODY,GOLD,BODY,0,IDENTITY.w());
         icon(c,"action-icons/class-attainment",ROW_ICON_X,CLASS_Y,ROW_ICON_SIZE,1);
         draw(c,v.circle()<=0?"클래스 미정":"클래스 "+v.circle(),ROW_TEXT_X,CLASS_Y,FONT_BODY,TEXT,BODY,0,528-ROW_TEXT_X);
         icon(c,"action-icons/house-school",ROW_ICON_X,HOUSE_Y,ROW_ICON_SIZE,1);
-        draw(c,"기숙사 · "+(v.dormitory().isBlank()?"미정":v.dormitory()),ROW_TEXT_X,HOUSE_Y,FONT_BODY,TEXT,BODY,0,528-ROW_TEXT_X);
+        draw(c,v.dormitory().isBlank()?"기숙사 미정":v.dormitory(),ROW_TEXT_X,HOUSE_Y,FONT_BODY,TEXT,BODY,0,528-ROW_TEXT_X);
         link(c,actions,1,"칭호 자세히",TITLE_LINK.x()+6,TITLE_LINK.centerY(),false);
         // 인기도 · 하우징 좋아요
         icon(c,"action-icons/popularity",POP_STAR_X,POP_Y,26,1);
@@ -405,7 +409,7 @@ public final class StatsScreen extends Screen {
         }
         if(tip==null){
             var ext=extended();String title=ext==null?"":ext.extra().title();
-            if(!title.isEmpty()&&mx>=IDENTITY.x()&&mx<IDENTITY.right()+10&&my>=TITLE_LINE_Y-16&&my<TITLE_LINE_Y+16&&text.width(title,FONT_BODY,BODY)>IDENTITY.w()+10)tip=title;
+            if(!title.isEmpty()&&mx>=IDENTITY.x()&&mx<IDENTITY.right()+10&&my>=TITLE_LINE_Y-16&&my<TITLE_LINE_Y+16&&text.width(title,FONT_BODY,BODY)>IDENTITY.w())tip=title;
             else if(mx>=1298&&mx<1609&&my>=586&&my<682){Double r=StatsLayout.hasteReduction(v.haste());if(r!=null)tip="재사용 대기시간 "+String.format(java.util.Locale.ROOT,"%.1f",r)+"% 감소";}
         }
         if(tip==null||tip.isBlank())return;

@@ -46,19 +46,19 @@ public record StatsLayout(float x, float y, float scale) {
     /** "칭호 자세히 >" 클릭 영역. */
     public static final Box TITLE_LINK=new Box(362,466,170,32);
     /** 인기도 줄 (가운데 y 757): 별 · "인기도 n" · 버튼 · 세로 구분선 · 하우징 아이콘 · "하우징" · 하트 · 합계 */
-    public static final int POP_Y=757, POP_STAR_X=70, POP_TEXT_X=96, POP_DIVIDER_X=323, HOUSING_ICON_X=358, HOUSING_TEXT_X=388, LIKE_ICON_X=466, LIKE_TEXT_X=486;
+    public static final int POP_Y=757, POP_STAR_X=70, POP_TEXT_X=96, POP_DIVIDER_X=323, HOUSING_ICON_X=346, HOUSING_TEXT_X=372, LIKE_ICON_X=452, LIKE_TEXT_X=470;
     public static final int LEFT_DIVIDER_1=716, LEFT_DIVIDER_2=790;
-    /** 카드 안: 머리글 x·y, 머리글 아래 구분선 y, 경지 이름·레이팅 라벨·레이팅·랭킹 (카드 왼쪽에서의 x, y). */
-    public static final int CARD_TITLE_DX=71, CARD_TITLE_Y=156, CARD_HEADER_LINE_Y=186, CARD_TEXT_DX=191, CARD_TIER_Y=228, CARD_RATING_LABEL_Y=266, CARD_RATING_Y=303, CARD_RANK_LINE_Y=337, CARD_RANK_Y=358;
+    /** 머리글 x (오너 2026-10-26: 머리글 아이콘 PNG 가 없어 "모험 기록·장착 장비·능력치·카드 제목" 을 칸 왼쪽 끝으로 붙임). 카드 안: 머리글 x·y, 머리글 아래 구분선 y, 경지 이름·레이팅 라벨·레이팅·랭킹 (카드 왼쪽에서의 x, y). */
+    public static final int CARD_TITLE_DX=20, CARD_TITLE_Y=156, CARD_HEADER_LINE_Y=186, CARD_TEXT_DX=191, CARD_TIER_Y=228, CARD_RATING_LABEL_Y=266, CARD_RATING_Y=303, CARD_RANK_LINE_Y=337, CARD_RANK_Y=358;
     /** 모험 기록: 머리글, 발견한 마법 행(막대), 진행 중 퀘스트 행, 추적 퀘스트 칸(06_quest_row). */
-    public static final int SECTION_TEXT_X=633, ADVENTURE_TITLE_Y=417, SPELL_ROW_Y=471, QUEST_ROW_Y=518, ADVENTURE_VALUE_RIGHT=1240;
+    public static final int SECTION_TEXT_X=580, ADVENTURE_TITLE_Y=417, SPELL_ROW_Y=471, QUEST_ROW_Y=518, ADVENTURE_VALUE_RIGHT=1240;
     public static final Box SPELL_BAR=new Box(764,465,360,13), QUEST_PANEL=new Box(564,543,692,70), TRACK_BAR=new Box(925,584,305,13);
-    public static final int TRACK_LABEL_Y=566, TRACK_NAME_Y=592, TRACK_TEXT_X=637, TRACK_VALUE_RIGHT=1229;
+    public static final int TRACK_LABEL_Y=566, TRACK_NAME_Y=592, TRACK_TEXT_X=584, TRACK_VALUE_RIGHT=1229;
     /** 장착 장비: 머리글 y, "장비 자세히 >" 클릭 영역, 칸 이름 y (윗줄·아랫줄). */
     public static final int EQUIPMENT_TITLE_Y=645, ARMOR_LABEL_Y=683, ACCESSORY_LABEL_Y=790;
     public static final Box EQUIPMENT_LINK=new Box(1120,632,130,32);
     /** 능력치 머리글, 마법 가속 행의 이름·아랫줄(재사용 대기시간 감소) y. */
-    public static final int STATS_TITLE_X=1352, STATS_TITLE_Y=161, HASTE_LABEL_Y=627, HASTE_NOTE_Y=663;
+    public static final int STATS_TITLE_X=1306, STATS_TITLE_Y=161, HASTE_LABEL_Y=627, HASTE_NOTE_Y=663;
     /** 구분선 (실제 PNG 조립 미리보기): 머리 아래, 세로 기둥 두 개, 오른쪽 행 사이, 가운데 섹션 머리글 위아래. */
     public static final int HEADER_LINE_Y=118, COLUMN_LINE_1=542, COLUMN_LINE_2=1278;
     public static final int[] RIGHT_LINES={197,298,394,490,586,682,778};
