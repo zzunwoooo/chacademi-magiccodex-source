@@ -43,7 +43,7 @@
   },
   {
     "path": "deployment/operating-config/MagicCodexBridge/pet-companions.yml",
-    "sha256": "302a9bf6bd5d6352c366c8fc73e69f41a728a7927612f9bc3a52930bc2a9940b",
+    "sha256": "6df097c87b6c22e3e477683b09c6863a3557985674949dad4a81e66d52cf55c3",
     "sameOnSchoolAndWild": true,
     "role": "non-secret gameplay configuration; deployment overlay, not player data"
   },

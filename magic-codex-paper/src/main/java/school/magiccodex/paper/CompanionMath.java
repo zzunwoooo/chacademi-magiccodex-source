@@ -7,6 +7,16 @@ final class CompanionMath {
     /** codex_player_state.artifact_runtime 앞에 붙는 꺼낸 펫 토큰 ("cpet=&lt;펫ID&gt;;"). */
     static final String TOKEN = "cpet=";
 
+    /**
+     * 도감 체력 (오너 2026-10-26): 교화해 보유한 펫 점수가 많을수록 누적으로 오르는 최대 체력.
+     * max × (have / full)^curve 를 반올림. full 이 0 이하면 0, have 가 full 을 넘으면 max.
+     */
+    static int collectionHealth(double have, double full, double max, double curve) {
+        if (!(full > 0) || !(have > 0) || !(max > 0)) return 0;
+        double ratio = Math.min(1, have / full);
+        return (int) Math.round(max * Math.pow(ratio, Math.clamp(curve, 0.05, 3)));
+    }
+
     static String token(String pet) {
         return pet == null || !school.magiccodex.protocol.PetProtocol.validId(pet) ? "" : TOKEN + pet + ";";
     }

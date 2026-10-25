@@ -140,6 +140,19 @@ final class PetBridge implements PluginMessageListener,Listener,AutoCloseable {
     private List<Entry> snapshot(Player player)throws Exception{
         var result=companionEntries(player,new ArrayList<>());
         if(!connect())return result;
+        refreshCatalog();
+        var active=new HashSet<String>();for(Object pet:hook.active(player.getUniqueId()))active.add(hook.idOf(pet));
+        var stars=config.getConfigurationSection("stars");int fallback=Math.clamp(config.getInt("default-stars",1),1,3);
+        for(var p:catalog){
+            Object configured=stars==null?null:stars.getValues(false).get(p.id);
+            int grade=configured instanceof Number n?Math.clamp(n.intValue(),1,3):fallback;
+            boolean owned=!p.checked||(p.permission!=null&&player.hasPermission(p.permission));
+            if(owned&&!companion(p.id)&&result.size()<PetProtocol.MAX_PETS)result.add(new Entry(p.id,p.name,grade,true,active.contains(p.id),p.icon));
+        }
+        return result;
+    }
+    /** MCPets 바닐라 펫 목록 (30초마다·바뀌면 다시 읽음). connect() 가 참일 때만. */
+    private void refreshCatalog()throws Exception{
         List<?> current=(List<?>)hook.list.invoke(null);
         if(now()>=catalogAt||current.size()!=objects.size()||!current.equals(objects)){
             var list=new ArrayList<Descriptor>();var seen=new HashSet<String>();
@@ -157,15 +170,23 @@ final class PetBridge implements PluginMessageListener,Listener,AutoCloseable {
             }
             catalog=List.copyOf(list);objects=List.copyOf(current);catalogAt=now()+30000;
         }
-        var active=new HashSet<String>();for(Object pet:hook.active(player.getUniqueId()))active.add(hook.idOf(pet));
-        var stars=config.getConfigurationSection("stars");int fallback=Math.clamp(config.getInt("default-stars",1),1,3);
-        for(var p:catalog){
-            Object configured=stars==null?null:stars.getValues(false).get(p.id);
-            int grade=configured instanceof Number n?Math.clamp(n.intValue(),1,3):fallback;
-            boolean owned=!p.checked||(p.permission!=null&&player.hasPermission(p.permission));
-            if(owned&&!companion(p.id)&&result.size()<PetProtocol.MAX_PETS)result.add(new Entry(p.id,p.name,grade,true,active.contains(p.id),p.icon));
-        }
-        return result;
+    }
+    private int grade(String id){var stars=config.getConfigurationSection("stars");Object v=stars==null?null:stars.getValues(false).get(id);return v instanceof Number n?Math.clamp(n.intValue(),1,3):Math.clamp(config.getInt("default-stars",1),1,3);}
+    private static boolean shiny(String id){return id.toLowerCase(java.util.Locale.ROOT).endsWith("_shiny");}
+    /**
+     * 도감 체력 (오너 2026-10-26): {보유 펫 점수 합, 전체 점수 합(변색종 제외)}. 동행 펫(yml) + MCPets 바닐라 펫(권한 확인하는 것만).
+     * 메인 스레드. 접속·서버 이동·교화 성공·펫 주기/회수 때 PlayerStats 새로고침에서 부른다.
+     */
+    double[] collection(Player p,java.util.function.IntToDoubleFunction points){
+        double have=0,full=0;
+        if(companions!=null)for(var d:companions.all()){double v=points.applyAsDouble(d.stars());if(!shiny(d.id()))full+=v;if(p.hasPermission(d.permission()))have+=v;}
+        try{
+            if(connect()){refreshCatalog();for(var c:catalog){
+                if(companion(c.id)||!c.checked||c.permission==null)continue;
+                double v=points.applyAsDouble(grade(c.id));if(!shiny(c.id))full+=v;if(p.hasPermission(c.permission))have+=v;
+            }}
+        }catch(Exception|LinkageError e){plugin.getLogger().warning("도감 체력: MCPets 펫 목록 실패 "+e);}
+        return new double[]{have,full};
     }
     private void send(Player p,long seq,String msg,List<Entry> list){for(var part:PetProtocol.split(seq,msg,list))p.sendPluginMessage(plugin,PetProtocol.RESPONSE,PetProtocol.encode(part));}
     @EventHandler public void quit(PlayerQuitEvent e){requests.remove(e.getPlayer().getUniqueId());actions.remove(e.getPlayer().getUniqueId());}
@@ -219,6 +240,7 @@ final class PetBridge implements PluginMessageListener,Listener,AutoCloseable {
             ChacaApi.permission(id,perm,grant).whenComplete((v,error)->{
                 if(error!=null){ChacaApi.fail(sender,"펫 보유를 바꾸지 못했어요",error);return;}
                 ChacaApi.ok(sender,ChacaApi.name(id)+" 님에게 "+petName(pet)+(grant?" 펫을 주었어요":" 펫을 회수했어요"));
+                Bukkit.getScheduler().runTask(plugin,()->{var target=Bukkit.getPlayer(id);if(target!=null&&plugin.stats()!=null)plugin.stats().refresh(target);}); // 도감 체력
             });return Command.SINGLE_SUCCESS;
         })));
         ChacaApi.branch(plugin,ChacaApi.유저관리,node,"펫 보유 보기·주기·회수 (MCPets 권한)","펫 보기");

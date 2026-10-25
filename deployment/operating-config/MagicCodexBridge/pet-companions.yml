@@ -1,13 +1,17 @@
 # 동행 펫 (오너 2026-10-26, 메모 #81) - 자동 생성: magic-mythic-paper/tools/pet_companions.py
 # 여기 있는 펫은 MCPets 몹을 소환하지 않고 클라가 작게 그립니다 (모든 사람에게 보임). 없는 펫(바닐라)은 예전 그대로.
-# health: 등급별 최대 체력 증가 / interval-seconds: 전투 중 스킬·특수 능력 주기 / combat-seconds: 마지막으로 때리거나 맞은 뒤 이만큼 = 전투 중
+# collection-health: 도감 체력 — 교화해 보유한 펫 등급 점수(points) 합이 많을수록 최대 체력 증가. 체력 = max × (보유 점수 / 전체 점수)^curve (전체 = 변색종 뺀 모든 펫)
+# interval-seconds: 전투 중 스킬·특수 능력 주기 / combat-seconds: 마지막으로 때리거나 맞은 뒤 이만큼 = 전투 중
 # blocked-matches: 이 경기 중에는 펫을 꺼낼 수 없음 (꺼내 둔 펫은 경기 시작 때 들어감)
-# pets.<펫ID>: stars · motion(ground/fly/swim) · size(보이는 크기, 블록) · health · skills(CHA_PET_*, 무작위 1개) 또는 special · info(펫 창 설명)
+# pets.<펫ID>: stars · motion(ground/fly/swim) · size(보이는 크기, 블록) · skills(CHA_PET_*, 무작위 1개) 또는 special · info(펫 창 설명)
 #   permission(보유 권한) · mythic(예전 MCPets MythicMob, 변신 가면용) · icon(펫 창 아이콘: material·name·lore) — MCPets 없이 동작 (2026-10-26)
-health:
-  '1': 3
-  '2': 6
-  '3': 10
+collection-health:
+  points:
+    '1': 1
+    '2': 3
+    '3': 6
+  max: 20
+  curve: 0.38
 interval-seconds:
   '2': 60
   '3': 40
@@ -22,7 +26,6 @@ pets:
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_squirrel
     mythic: CA_Pet_squirrel
     icon:
@@ -32,13 +35,12 @@ pets:
       - 나무 사이를 오가며 도토리를 숨기는 작은 숲 주민.
       - '서식지: 숲 우거진 고지 / 자작나무 타이가'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_squirrel_shiny:
     name: 도토리 다람쥐 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_squirrel_shiny
     mythic: CA_Pet_squirrel_shiny
     icon:
@@ -48,13 +50,12 @@ pets:
       - 나무 사이를 오가며 도토리를 숨기는 작은 숲 주민.
       - '서식지: 숲 우거진 고지 / 자작나무 타이가'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_owl:
     name: 밤눈 올빼미
     stars: 1
     motion: fly
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_owl
     mythic: CA_Pet_owl
     icon:
@@ -64,13 +65,12 @@ pets:
       - 어두운 숲길을 지켜보다 밤에 모습을 드러내는 새.
       - '서식지: 시베리아 타이가 / 달빛 숲'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_owl_shiny:
     name: 밤눈 올빼미 (변색종)
     stars: 1
     motion: fly
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_owl_shiny
     mythic: CA_Pet_owl_shiny
     icon:
@@ -80,13 +80,12 @@ pets:
       - 어두운 숲길을 지켜보다 밤에 모습을 드러내는 새.
       - '서식지: 시베리아 타이가 / 달빛 숲'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_skunk:
     name: 줄무늬 스컹크
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_skunk
     mythic: CA_Pet_skunk
     icon:
@@ -96,13 +95,12 @@ pets:
       - 수풀에 숨어 지내며 낯선 발소리에 경계하는 동물.
       - '서식지: 관목 초원 / 숲 우거진 고지'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_skunk_shiny:
     name: 줄무늬 스컹크 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_skunk_shiny
     mythic: CA_Pet_skunk_shiny
     icon:
@@ -112,13 +110,12 @@ pets:
       - 수풀에 숨어 지내며 낯선 발소리에 경계하는 동물.
       - '서식지: 관목 초원 / 숲 우거진 고지'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_hedgehog:
     name: 낙엽 고슴도치
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_hedgehog
     mythic: CA_Pet_hedgehog
     icon:
@@ -128,13 +125,12 @@ pets:
       - 낙엽 아래에서 먹이를 찾는 조심스러운 숲 주민.
       - '서식지: 자작나무 타이가 / 라벤더 숲'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_hedgehog_shiny:
     name: 낙엽 고슴도치 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_hedgehog_shiny
     mythic: CA_Pet_hedgehog_shiny
     icon:
@@ -144,13 +140,12 @@ pets:
       - 낙엽 아래에서 먹이를 찾는 조심스러운 숲 주민.
       - '서식지: 자작나무 타이가 / 라벤더 숲'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_elk:
     name: 고산 엘크
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_elk
     mythic: CA_Pet_elk
     icon:
@@ -165,14 +160,13 @@ pets:
       effects: &id001
         speed: 0.1
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 이동속도 +10%
   ca_elk_shiny:
     name: 고산 엘크 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_elk_shiny
     mythic: CA_Pet_elk_shiny
     icon:
@@ -186,14 +180,13 @@ pets:
       kind: passive
       effects: *id001
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 이동속도 +10%
   ca_lil_bird:
     name: 꽃숲 작은새
     stars: 1
     motion: fly
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_lil_bird
     mythic: CA_Pet_lil_bird
     icon:
@@ -203,13 +196,12 @@ pets:
       - 꽃피는 계곡의 가지 위에 모이는 작은 새.
       - '서식지: 꽃피는 계곡 / 벚꽃 숲'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_lil_bird_shiny:
     name: 꽃숲 작은새 (변색종)
     stars: 1
     motion: fly
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_lil_bird_shiny
     mythic: CA_Pet_lil_bird_shiny
     icon:
@@ -219,13 +211,12 @@ pets:
       - 꽃피는 계곡의 가지 위에 모이는 작은 새.
       - '서식지: 꽃피는 계곡 / 벚꽃 숲'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_raccoon:
     name: 개울 너구리
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_raccoon
     mythic: CA_Pet_raccoon
     icon:
@@ -235,13 +226,12 @@ pets:
       - 개울과 숲의 경계를 오가며 먹이를 찾는다.
       - '서식지: 푸른 계곡 / 숲 우거진 고지'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_raccoon_shiny:
     name: 개울 너구리 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_raccoon_shiny
     mythic: CA_Pet_raccoon_shiny
     icon:
@@ -251,13 +241,12 @@ pets:
       - 개울과 숲의 경계를 오가며 먹이를 찾는다.
       - '서식지: 푸른 계곡 / 숲 우거진 고지'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_frog:
     name: 난초 개구리
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_frog
     mythic: CA_Pet_frog
     icon:
@@ -267,13 +256,12 @@ pets:
       - 난초가 핀 늪의 얕은 물가에 숨어 산다.
       - '서식지: 난초 늪 / 따뜻한 강'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_frog_shiny:
     name: 난초 개구리 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_frog_shiny
     mythic: CA_Pet_frog_shiny
     icon:
@@ -283,13 +271,12 @@ pets:
       - 난초가 핀 늪의 얕은 물가에 숨어 산다.
       - '서식지: 난초 늪 / 따뜻한 강'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_bear:
     name: 산림 불곰
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_bear
     mythic: CA_Pet_bear
     icon:
@@ -304,14 +291,13 @@ pets:
       effects: &id002
         absorb: 4
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 곰의 가호: 흡수 하트 4칸
   ca_bear_shiny:
     name: 산림 불곰 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_bear_shiny
     mythic: CA_Pet_bear_shiny
     icon:
@@ -325,14 +311,13 @@ pets:
       kind: combat
       effects: *id002
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 곰의 가호: 흡수 하트 4칸
   ca_bear_black:
     name: 그늘 흑곰
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_bear_black
     mythic: CA_Pet_bear_black
     icon:
@@ -347,14 +332,13 @@ pets:
       effects: &id003
         absorb: 4
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 곰의 가호: 흡수 하트 4칸
   ca_bear_black_shiny:
     name: 그늘 흑곰 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_bear_black_shiny
     mythic: CA_Pet_bear_black_shiny
     icon:
@@ -368,14 +352,13 @@ pets:
       kind: combat
       effects: *id003
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 곰의 가호: 흡수 하트 4칸
   ca_bear_polar:
     name: 빙하 백곰
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_bear_polar
     mythic: CA_Pet_bear_polar
     icon:
@@ -390,14 +373,13 @@ pets:
       effects: &id004
         absorb: 4
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 곰의 가호: 흡수 하트 4칸
   ca_bear_polar_shiny:
     name: 빙하 백곰 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_bear_polar_shiny
     mythic: CA_Pet_bear_polar_shiny
     icon:
@@ -411,14 +393,13 @@ pets:
       kind: combat
       effects: *id004
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 곰의 가호: 흡수 하트 4칸
   ca_timber_wolf:
     name: 침엽 숲늑대
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_timber_wolf
     mythic: CA_Pet_timber_wolf
     icon:
@@ -434,14 +415,13 @@ pets:
         intelligence: 0.15
       seconds: 10
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 무리 울음: 10초간 지능 +15%
   ca_timber_wolf_shiny:
     name: 침엽 숲늑대 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_timber_wolf_shiny
     mythic: CA_Pet_timber_wolf_shiny
     icon:
@@ -456,14 +436,13 @@ pets:
       effects: *id005
       seconds: 10
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 무리 울음: 10초간 지능 +15%
   ca_tortoise:
     name: 초원 육지거북
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_tortoise
     mythic: CA_Pet_tortoise
     icon:
@@ -473,13 +452,12 @@ pets:
       - 마른 초원의 풀 사이를 느긋하게 걷는다.
       - '서식지: 대초원 / 관목 초원'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_tortoise_shiny:
     name: 초원 육지거북 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_tortoise_shiny
     mythic: CA_Pet_tortoise_shiny
     icon:
@@ -489,13 +467,12 @@ pets:
       - 마른 초원의 풀 사이를 느긋하게 걷는다.
       - '서식지: 대초원 / 관목 초원'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_catfish:
     name: 온수 메기
     stars: 1
     motion: swim
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_catfish
     mythic: CA_Pet_catfish
     icon:
@@ -505,13 +482,12 @@ pets:
       - 따뜻한 강의 바닥 가까이에서 헤엄친다.
       - '서식지: 따뜻한 강 / 난초 늪'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_catfish_shiny:
     name: 온수 메기 (변색종)
     stars: 1
     motion: swim
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_catfish_shiny
     mythic: CA_Pet_catfish_shiny
     icon:
@@ -521,13 +497,12 @@ pets:
       - 따뜻한 강의 바닥 가까이에서 헤엄친다.
       - '서식지: 따뜻한 강 / 난초 늪'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_butterfly:
     name: 라벤더 나비
     stars: 1
     motion: fly
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_butterfly
     mythic: CA_Pet_butterfly
     icon:
@@ -537,13 +512,12 @@ pets:
       - 라벤더와 계곡의 꽃을 따라 날아다닌다.
       - '서식지: 라벤더 계곡 / 꽃피는 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_butterfly_shiny:
     name: 라벤더 나비 (변색종)
     stars: 1
     motion: fly
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_butterfly_shiny
     mythic: CA_Pet_butterfly_shiny
     icon:
@@ -553,13 +527,12 @@ pets:
       - 라벤더와 계곡의 꽃을 따라 날아다닌다.
       - '서식지: 라벤더 계곡 / 꽃피는 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_buffalo:
     name: 고원 버팔로
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_buffalo
     mythic: CA_Pet_buffalo
     icon:
@@ -576,14 +549,13 @@ pets:
         knockback: 1
       seconds: 8
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 버티기: 8초간 저항 I + 밀려나지 않음
   ca_buffalo_shiny:
     name: 고원 버팔로 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_buffalo_shiny
     mythic: CA_Pet_buffalo_shiny
     icon:
@@ -598,14 +570,13 @@ pets:
       effects: *id006
       seconds: 8
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 버티기: 8초간 저항 I + 밀려나지 않음
   ca_boar:
     name: 덤불 멧돼지
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_boar
     mythic: CA_Pet_boar
     icon:
@@ -615,13 +586,12 @@ pets:
       - 덤불을 헤치며 뿌리와 열매를 찾는다.
       - '서식지: 관목 초원 / 숲 우거진 고지'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_boar_shiny:
     name: 덤불 멧돼지 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_boar_shiny
     mythic: CA_Pet_boar_shiny
     icon:
@@ -631,13 +601,12 @@ pets:
       - 덤불을 헤치며 뿌리와 열매를 찾는다.
       - '서식지: 관목 초원 / 숲 우거진 고지'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_alpha_boar:
     name: 송곳니 우두머리
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_alpha_boar
     mythic: CA_Pet_alpha_boar
     icon:
@@ -652,14 +621,13 @@ pets:
       effects: &id007
         knockback: 1
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 밀려나지 않음
   ca_alpha_boar_shiny:
     name: 송곳니 우두머리 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_alpha_boar_shiny
     mythic: CA_Pet_alpha_boar_shiny
     icon:
@@ -673,14 +641,13 @@ pets:
       kind: passive
       effects: *id007
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 밀려나지 않음
   ca_crocodile:
     name: 난초늪 악어
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_crocodile
     mythic: CA_Pet_crocodile
     icon:
@@ -696,14 +663,13 @@ pets:
         resistance: 1
       seconds: 8
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 단단한 비늘: 8초간 저항 I
   ca_crocodile_shiny:
     name: 난초늪 악어 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_crocodile_shiny
     mythic: CA_Pet_crocodile_shiny
     icon:
@@ -718,14 +684,13 @@ pets:
       effects: *id008
       seconds: 8
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 단단한 비늘: 8초간 저항 I
   ca_buffalo_alpha:
     name: 고원의 우두머리
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_buffalo_alpha
     mythic: CA_Pet_buffalo_alpha
     icon:
@@ -742,14 +707,13 @@ pets:
         knockback: 1
       seconds: 8
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 버티기: 8초간 저항 I + 밀려나지 않음
   ca_buffalo_alpha_shiny:
     name: 고원의 우두머리 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_buffalo_alpha_shiny
     mythic: CA_Pet_buffalo_alpha_shiny
     icon:
@@ -764,14 +728,13 @@ pets:
       effects: *id009
       seconds: 8
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 버티기: 8초간 저항 I + 밀려나지 않음
   ca_lostasset_mob1_chicken:
     name: 아침볕 수탉
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_lostasset_mob1_chicken
     mythic: CA_Pet_lostasset_mob1_chicken
     icon:
@@ -781,13 +744,12 @@ pets:
       - 학교 외곽 목초지에서 아침을 알리는 새.
       - '서식지: 꽃피는 고원 / 온대 고지'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_lostasset_mob1_chicken_shiny:
     name: 아침볕 수탉 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_lostasset_mob1_chicken_shiny
     mythic: CA_Pet_lostasset_mob1_chicken_shiny
     icon:
@@ -797,13 +759,12 @@ pets:
       - 학교 외곽 목초지에서 아침을 알리는 새.
       - '서식지: 꽃피는 고원 / 온대 고지'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_lostasset_mob1_rabbit:
     name: 꽃밭 흰토끼
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_lostasset_mob1_rabbit
     mythic: CA_Pet_lostasset_mob1_rabbit
     icon:
@@ -813,13 +774,12 @@ pets:
       - 꽃밭과 벚나무 아래를 뛰어다니는 흰토끼.
       - '서식지: 꽃피는 계곡 / 벚꽃 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_lostasset_mob1_rabbit_shiny:
     name: 꽃밭 흰토끼 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_lostasset_mob1_rabbit_shiny
     mythic: CA_Pet_lostasset_mob1_rabbit_shiny
     icon:
@@ -829,13 +789,12 @@ pets:
       - 꽃밭과 벚나무 아래를 뛰어다니는 흰토끼.
       - '서식지: 꽃피는 계곡 / 벚꽃 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_lostasset_mob1_sheep:
     name: 구름 양
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_lostasset_mob1_sheep
     mythic: CA_Pet_lostasset_mob1_sheep
     icon:
@@ -845,13 +804,12 @@ pets:
       - 구름처럼 포근한 모습으로 고원 풀밭을 거닌다.
       - '서식지: 고산 고지 / 온대 고지'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_lostasset_mob1_sheep_shiny:
     name: 구름 양 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_lostasset_mob1_sheep_shiny
     mythic: CA_Pet_lostasset_mob1_sheep_shiny
     icon:
@@ -861,13 +819,12 @@ pets:
       - 구름처럼 포근한 모습으로 고원 풀밭을 거닌다.
       - '서식지: 고산 고지 / 온대 고지'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_lostasset_mob1_wolf:
     name: 목초지 양치기
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_lostasset_mob1_wolf
     mythic: CA_Pet_lostasset_mob1_wolf
     icon:
@@ -883,14 +840,13 @@ pets:
         intelligence: 0.15
       seconds: 10
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 무리 울음: 10초간 지능 +15%
   ca_lostasset_mob1_wolf_shiny:
     name: 목초지 양치기 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_lostasset_mob1_wolf_shiny
     mythic: CA_Pet_lostasset_mob1_wolf_shiny
     icon:
@@ -905,14 +861,13 @@ pets:
       effects: *id010
       seconds: 10
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 무리 울음: 10초간 지능 +15%
   ca_lostasset_mob2_flowersprite:
     name: 꽃망울 정령
     stars: 2
     motion: fly
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_lostasset_mob2_flowersprite
     mythic: CA_Pet_lostasset_mob2_flowersprite
     icon:
@@ -925,7 +880,7 @@ pets:
     skills:
     - CHA_PET_fairy_orbs_lostasset_mob2_flowersprite
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 요정 구슬
       피해 1 (펫 고정, 지능 무관)
   ca_lostasset_mob2_flowersprite_shiny:
@@ -933,7 +888,6 @@ pets:
     stars: 2
     motion: fly
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_lostasset_mob2_flowersprite_shiny
     mythic: CA_Pet_lostasset_mob2_flowersprite_shiny
     icon:
@@ -946,7 +900,7 @@ pets:
     skills:
     - CHA_PET_fairy_orbs_lostasset_mob2_flowersprite_shiny
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 요정 구슬
       피해 1 (펫 고정, 지능 무관)
   ca_lostasset_mob2_lakefairy:
@@ -954,7 +908,6 @@ pets:
     stars: 2
     motion: fly
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_lostasset_mob2_lakefairy
     mythic: CA_Pet_lostasset_mob2_lakefairy
     icon:
@@ -967,7 +920,7 @@ pets:
     skills:
     - CHA_PET_fairy_orbs_lostasset_mob2_lakefairy
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 요정 구슬
       피해 1 (펫 고정, 지능 무관)
   ca_lostasset_mob2_lakefairy_shiny:
@@ -975,7 +928,6 @@ pets:
     stars: 2
     motion: fly
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_lostasset_mob2_lakefairy_shiny
     mythic: CA_Pet_lostasset_mob2_lakefairy_shiny
     icon:
@@ -988,7 +940,7 @@ pets:
     skills:
     - CHA_PET_fairy_orbs_lostasset_mob2_lakefairy_shiny
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 요정 구슬
       피해 1 (펫 고정, 지능 무관)
   ca_lostasset_mob2_leaffairy:
@@ -996,7 +948,6 @@ pets:
     stars: 2
     motion: fly
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_lostasset_mob2_leaffairy
     mythic: CA_Pet_lostasset_mob2_leaffairy
     icon:
@@ -1009,7 +960,7 @@ pets:
     skills:
     - CHA_PET_fairy_orbs_lostasset_mob2_leaffairy
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 요정 구슬
       피해 1 (펫 고정, 지능 무관)
   ca_lostasset_mob2_leaffairy_shiny:
@@ -1017,7 +968,6 @@ pets:
     stars: 2
     motion: fly
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_lostasset_mob2_leaffairy_shiny
     mythic: CA_Pet_lostasset_mob2_leaffairy_shiny
     icon:
@@ -1030,7 +980,7 @@ pets:
     skills:
     - CHA_PET_fairy_orbs_lostasset_mob2_leaffairy_shiny
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 요정 구슬
       피해 1 (펫 고정, 지능 무관)
   ca_lostasset_mob2_mushroomfairy:
@@ -1038,7 +988,6 @@ pets:
     stars: 2
     motion: fly
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_lostasset_mob2_mushroomfairy
     mythic: CA_Pet_lostasset_mob2_mushroomfairy
     icon:
@@ -1051,7 +1000,7 @@ pets:
     skills:
     - CHA_PET_fairy_orbs_lostasset_mob2_mushroomfairy
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 요정 구슬
       피해 1 (펫 고정, 지능 무관)
   ca_lostasset_mob2_mushroomfairy_shiny:
@@ -1059,7 +1008,6 @@ pets:
     stars: 2
     motion: fly
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_lostasset_mob2_mushroomfairy_shiny
     mythic: CA_Pet_lostasset_mob2_mushroomfairy_shiny
     icon:
@@ -1072,7 +1020,7 @@ pets:
     skills:
     - CHA_PET_fairy_orbs_lostasset_mob2_mushroomfairy_shiny
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 요정 구슬
       피해 1 (펫 고정, 지능 무관)
   ca_lostasset_mob3_herbgolem:
@@ -1080,7 +1028,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_lostasset_mob3_herbgolem
     mythic: CA_Pet_lostasset_mob3_herbgolem
     icon:
@@ -1094,7 +1041,7 @@ pets:
     - CHA_PET_root_bind_lostasset_mob3_herbgolem
     - CHA_PET_vine_whip_lostasset_mob3_herbgolem
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 뿌리 묶기 / 덩굴 채찍
       피해 2 (펫 고정, 지능 무관)
   ca_lostasset_mob3_herbgolem_shiny:
@@ -1102,7 +1049,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_lostasset_mob3_herbgolem_shiny
     mythic: CA_Pet_lostasset_mob3_herbgolem_shiny
     icon:
@@ -1116,7 +1062,7 @@ pets:
     - CHA_PET_vine_whip_lostasset_mob3_herbgolem_shiny
     - CHA_PET_root_bind_lostasset_mob3_herbgolem_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 덩굴 채찍 / 뿌리 묶기
       피해 2 (펫 고정, 지능 무관)
   ca_lostasset_mob3_herbthief:
@@ -1124,7 +1070,6 @@ pets:
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_lostasset_mob3_herbthief
     mythic: CA_Pet_lostasset_mob3_herbthief
     icon:
@@ -1134,13 +1079,12 @@ pets:
       - 숲 가장자리에서 약초를 모아 숨기는 작은 생물.
       - '서식지: 라벤더 숲 / 꽃피는 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_lostasset_mob3_herbthief_shiny:
     name: 약초 도둑 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_lostasset_mob3_herbthief_shiny
     mythic: CA_Pet_lostasset_mob3_herbthief_shiny
     icon:
@@ -1150,13 +1094,12 @@ pets:
       - 숲 가장자리에서 약초를 모아 숨기는 작은 생물.
       - '서식지: 라벤더 숲 / 꽃피는 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_lostasset_mob3_mossyboar:
     name: 이끼 등멧돼지
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_lostasset_mob3_mossyboar
     mythic: CA_Pet_lostasset_mob3_mossyboar
     icon:
@@ -1171,14 +1114,13 @@ pets:
       effects: &id011
         knockback: 1
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 밀려나지 않음
   ca_lostasset_mob3_mossyboar_shiny:
     name: 이끼 등멧돼지 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_lostasset_mob3_mossyboar_shiny
     mythic: CA_Pet_lostasset_mob3_mossyboar_shiny
     icon:
@@ -1192,14 +1134,13 @@ pets:
       kind: passive
       effects: *id011
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 밀려나지 않음
   ca_lostasset_mob3_timberpile:
     name: 장작 꼬마
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_lostasset_mob3_timberpile
     mythic: CA_Pet_lostasset_mob3_timberpile
     icon:
@@ -1209,13 +1150,12 @@ pets:
       - 쓰러진 나무 주변에서 움직이는 작은 나무 정령.
       - '서식지: 숲 우거진 고지 / 자작나무 타이가'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_lostasset_mob3_timberpile_shiny:
     name: 장작 꼬마 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_lostasset_mob3_timberpile_shiny
     mythic: CA_Pet_lostasset_mob3_timberpile_shiny
     icon:
@@ -1225,13 +1165,12 @@ pets:
       - 쓰러진 나무 주변에서 움직이는 작은 나무 정령.
       - '서식지: 숲 우거진 고지 / 자작나무 타이가'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_bulb_amethyst:
     name: 자수정 새싹
     stars: 2
     motion: fly
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_bulb_amethyst
     mythic: CA_Pet_bulb_amethyst
     icon:
@@ -1246,14 +1185,13 @@ pets:
       effects: &id012
         max_mana: 80
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 최대 마나 +80
   ca_bulb_amethyst_shiny:
     name: 자수정 새싹 (변색종)
     stars: 2
     motion: fly
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_bulb_amethyst_shiny
     mythic: CA_Pet_bulb_amethyst_shiny
     icon:
@@ -1267,14 +1205,13 @@ pets:
       kind: passive
       effects: *id012
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 최대 마나 +80
   ca_bulb_crimsonspore:
     name: 진홍 포자
     stars: 2
     motion: fly
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_bulb_crimsonspore
     mythic: CA_Pet_bulb_crimsonspore
     icon:
@@ -1289,14 +1226,13 @@ pets:
       effects: &id013
         mana_regen: 0.2
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 마나 자연 회복 +20%
   ca_bulb_crimsonspore_shiny:
     name: 진홍 포자 (변색종)
     stars: 2
     motion: fly
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_bulb_crimsonspore_shiny
     mythic: CA_Pet_bulb_crimsonspore_shiny
     icon:
@@ -1310,14 +1246,13 @@ pets:
       kind: passive
       effects: *id013
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 마나 자연 회복 +20%
   ca_bulb_dripleaf:
     name: 물잎 새싹
     stars: 1
     motion: fly
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_bulb_dripleaf
     mythic: CA_Pet_bulb_dripleaf
     icon:
@@ -1327,13 +1262,12 @@ pets:
       - 습한 지하 정글의 잎사귀 사이에 숨어 산다.
       - '서식지: 지하 정글 / 푸른 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_bulb_dripleaf_shiny:
     name: 물잎 새싹 (변색종)
     stars: 1
     motion: fly
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_bulb_dripleaf_shiny
     mythic: CA_Pet_bulb_dripleaf_shiny
     icon:
@@ -1343,13 +1277,12 @@ pets:
       - 습한 지하 정글의 잎사귀 사이에 숨어 산다.
       - '서식지: 지하 정글 / 푸른 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_bulb_lilypad:
     name: 수련잎 새싹
     stars: 1
     motion: fly
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_bulb_lilypad
     mythic: CA_Pet_bulb_lilypad
     icon:
@@ -1359,13 +1292,12 @@ pets:
       - 늪 가장자리의 수련잎 주변을 떠도는 정령.
       - '서식지: 난초 늪 / 따뜻한 강'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_bulb_lilypad_shiny:
     name: 수련잎 새싹 (변색종)
     stars: 1
     motion: fly
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_bulb_lilypad_shiny
     mythic: CA_Pet_bulb_lilypad_shiny
     icon:
@@ -1375,13 +1307,12 @@ pets:
       - 늪 가장자리의 수련잎 주변을 떠도는 정령.
       - '서식지: 난초 늪 / 따뜻한 강'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_bulb_warpedfungus:
     name: 뒤틀린 균새싹
     stars: 2
     motion: fly
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_bulb_warpedfungus
     mythic: CA_Pet_bulb_warpedfungus
     icon:
@@ -1396,14 +1327,13 @@ pets:
       effects: &id014
         haste: 1
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 채집 속도 증가 (성급함 I)
   ca_bulb_warpedfungus_shiny:
     name: 뒤틀린 균새싹 (변색종)
     stars: 2
     motion: fly
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_bulb_warpedfungus_shiny
     mythic: CA_Pet_bulb_warpedfungus_shiny
     icon:
@@ -1417,14 +1347,13 @@ pets:
       kind: passive
       effects: *id014
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 채집 속도 증가 (성급함 I)
   ca_crab:
     name: 자갈집게 게
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_crab
     mythic: CA_Pet_crab
     icon:
@@ -1434,13 +1363,12 @@ pets:
       - 자갈 해변과 바닷물의 경계에서 먹이를 찾는다.
       - '서식지: 자갈 해변 / 흰 절벽'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_crab_shiny:
     name: 자갈집게 게 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_crab_shiny
     mythic: CA_Pet_crab_shiny
     icon:
@@ -1450,13 +1378,12 @@ pets:
       - 자갈 해변과 바닷물의 경계에서 먹이를 찾는다.
       - '서식지: 자갈 해변 / 흰 절벽'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_piranha:
     name: 붉은이빨 피라냐
     stars: 2
     motion: swim
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_piranha
     mythic: CA_Pet_piranha
     icon:
@@ -1471,14 +1398,13 @@ pets:
       effects: &id015
         dolphin: 1
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 물속 이동 빠름
   ca_piranha_shiny:
     name: 붉은이빨 피라냐 (변색종)
     stars: 2
     motion: swim
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_piranha_shiny
     mythic: CA_Pet_piranha_shiny
     icon:
@@ -1492,14 +1418,13 @@ pets:
       kind: passive
       effects: *id015
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 물속 이동 빠름
   ca_swordfish:
     name: 푸른창 황새치
     stars: 2
     motion: swim
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_swordfish
     mythic: CA_Pet_swordfish
     icon:
@@ -1514,14 +1439,13 @@ pets:
       effects: &id016
         fishing: 0.1
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 낚시 운 증가 (희귀 물고기 +10%)
   ca_swordfish_shiny:
     name: 푸른창 황새치 (변색종)
     stars: 2
     motion: swim
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_swordfish_shiny
     mythic: CA_Pet_swordfish_shiny
     icon:
@@ -1535,14 +1459,13 @@ pets:
       kind: passive
       effects: *id016
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 낚시 운 증가 (희귀 물고기 +10%)
   ca_jellyfish_blue:
     name: 청빛 해파리
     stars: 1
     motion: swim
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_jellyfish_blue
     mythic: CA_Pet_jellyfish_blue
     icon:
@@ -1552,13 +1475,12 @@ pets:
       - 따뜻한 바다 속에서 물결을 따라 천천히 떠다닌다.
       - '서식지: 따뜻한 심해'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_jellyfish_blue_shiny:
     name: 청빛 해파리 (변색종)
     stars: 1
     motion: swim
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_jellyfish_blue_shiny
     mythic: CA_Pet_jellyfish_blue_shiny
     icon:
@@ -1568,13 +1490,12 @@ pets:
       - 따뜻한 바다 속에서 물결을 따라 천천히 떠다닌다.
       - '서식지: 따뜻한 심해'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_jellyfish_green:
     name: 비취 해파리
     stars: 1
     motion: swim
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_jellyfish_green
     mythic: CA_Pet_jellyfish_green
     icon:
@@ -1584,13 +1505,12 @@ pets:
       - 따뜻한 바다 속에서 물결을 따라 천천히 떠다닌다.
       - '서식지: 따뜻한 심해'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_jellyfish_green_shiny:
     name: 비취 해파리 (변색종)
     stars: 1
     motion: swim
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_jellyfish_green_shiny
     mythic: CA_Pet_jellyfish_green_shiny
     icon:
@@ -1600,13 +1520,12 @@ pets:
       - 따뜻한 바다 속에서 물결을 따라 천천히 떠다닌다.
       - '서식지: 따뜻한 심해'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_jellyfish_pink:
     name: 분홍 해파리
     stars: 2
     motion: swim
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_jellyfish_pink
     mythic: CA_Pet_jellyfish_pink
     icon:
@@ -1621,14 +1540,13 @@ pets:
       effects: &id017
         night_vision: 1
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 야간 투시
   ca_jellyfish_pink_shiny:
     name: 분홍 해파리 (변색종)
     stars: 2
     motion: swim
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_jellyfish_pink_shiny
     mythic: CA_Pet_jellyfish_pink_shiny
     icon:
@@ -1642,14 +1560,13 @@ pets:
       kind: passive
       effects: *id017
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 야간 투시
   ca_jellyfish_yellow:
     name: 금빛 해파리
     stars: 2
     motion: swim
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_jellyfish_yellow
     mythic: CA_Pet_jellyfish_yellow
     icon:
@@ -1664,14 +1581,13 @@ pets:
       effects: &id018
         night_vision: 1
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 야간 투시
   ca_jellyfish_yellow_shiny:
     name: 금빛 해파리 (변색종)
     stars: 2
     motion: swim
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_jellyfish_yellow_shiny
     mythic: CA_Pet_jellyfish_yellow_shiny
     icon:
@@ -1685,14 +1601,13 @@ pets:
       kind: passive
       effects: *id018
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 야간 투시
   ca_seahorse_blue:
     name: 청빛 해마
     stars: 1
     motion: swim
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_seahorse_blue
     mythic: CA_Pet_seahorse_blue
     icon:
@@ -1702,13 +1617,12 @@ pets:
       - 따뜻한 바다의 산호·해초 주변에 몸을 숨긴다.
       - '서식지: 따뜻한 심해'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_seahorse_blue_shiny:
     name: 청빛 해마 (변색종)
     stars: 1
     motion: swim
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_seahorse_blue_shiny
     mythic: CA_Pet_seahorse_blue_shiny
     icon:
@@ -1718,13 +1632,12 @@ pets:
       - 따뜻한 바다의 산호·해초 주변에 몸을 숨긴다.
       - '서식지: 따뜻한 심해'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_seahorse_green:
     name: 비취 해마
     stars: 1
     motion: swim
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_seahorse_green
     mythic: CA_Pet_seahorse_green
     icon:
@@ -1734,13 +1647,12 @@ pets:
       - 따뜻한 바다의 산호·해초 주변에 몸을 숨긴다.
       - '서식지: 따뜻한 심해'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_seahorse_green_shiny:
     name: 비취 해마 (변색종)
     stars: 1
     motion: swim
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_seahorse_green_shiny
     mythic: CA_Pet_seahorse_green_shiny
     icon:
@@ -1750,13 +1662,12 @@ pets:
       - 따뜻한 바다의 산호·해초 주변에 몸을 숨긴다.
       - '서식지: 따뜻한 심해'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_seahorse_pink:
     name: 분홍 해마
     stars: 2
     motion: swim
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_seahorse_pink
     mythic: CA_Pet_seahorse_pink
     icon:
@@ -1771,14 +1682,13 @@ pets:
       effects: &id019
         water_breathing: 1
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 물속 숨
   ca_seahorse_pink_shiny:
     name: 분홍 해마 (변색종)
     stars: 2
     motion: swim
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_seahorse_pink_shiny
     mythic: CA_Pet_seahorse_pink_shiny
     icon:
@@ -1792,14 +1702,13 @@ pets:
       kind: passive
       effects: *id019
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 물속 숨
   ca_seahorse_yellow:
     name: 금빛 해마
     stars: 2
     motion: swim
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_seahorse_yellow
     mythic: CA_Pet_seahorse_yellow
     icon:
@@ -1814,14 +1723,13 @@ pets:
       effects: &id020
         water_breathing: 1
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 물속 숨
   ca_seahorse_yellow_shiny:
     name: 금빛 해마 (변색종)
     stars: 2
     motion: swim
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_seahorse_yellow_shiny
     mythic: CA_Pet_seahorse_yellow_shiny
     icon:
@@ -1835,14 +1743,13 @@ pets:
       kind: passive
       effects: *id020
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 물속 숨
   ca_ogre_club:
     name: 숲몽둥이 오우거
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_ogre_club
     mythic: CA_Pet_ogre_club
     icon:
@@ -1855,7 +1762,7 @@ pets:
     skills:
     - CHA_PET_ground_quake_ogre_club
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 땅 울림
       피해 4 (펫 고정, 지능 무관)
   ca_ogre_club_shiny:
@@ -1863,7 +1770,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_ogre_club_shiny
     mythic: CA_Pet_ogre_club_shiny
     icon:
@@ -1876,7 +1782,7 @@ pets:
     skills:
     - CHA_PET_ground_quake_ogre_club_shiny
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 땅 울림
       피해 4 (펫 고정, 지능 무관)
   ca_ogre_axe:
@@ -1884,7 +1790,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_ogre_axe
     mythic: CA_Pet_ogre_axe
     icon:
@@ -1897,7 +1802,7 @@ pets:
     skills:
     - CHA_PET_ground_quake_ogre_axe
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 땅 울림
       피해 4 (펫 고정, 지능 무관)
   ca_ogre_axe_shiny:
@@ -1905,7 +1810,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_ogre_axe_shiny
     mythic: CA_Pet_ogre_axe_shiny
     icon:
@@ -1918,7 +1822,7 @@ pets:
     skills:
     - CHA_PET_ground_quake_ogre_axe_shiny
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 땅 울림
       피해 4 (펫 고정, 지능 무관)
   ca_ogre_hammer:
@@ -1926,7 +1830,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_ogre_hammer
     mythic: CA_Pet_ogre_hammer
     icon:
@@ -1939,7 +1842,7 @@ pets:
     skills:
     - CHA_PET_ground_quake_ogre_hammer
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 땅 울림
       피해 4 (펫 고정, 지능 무관)
   ca_ogre_hammer_shiny:
@@ -1947,7 +1850,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_ogre_hammer_shiny
     mythic: CA_Pet_ogre_hammer_shiny
     icon:
@@ -1960,7 +1862,7 @@ pets:
     skills:
     - CHA_PET_ground_quake_ogre_hammer_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 땅 울림
       피해 4 (펫 고정, 지능 무관)
   ca_ncr_spear_skeleton:
@@ -1968,7 +1870,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_ncr_spear_skeleton
     mythic: CA_Pet_ncr_spear_skeleton
     icon:
@@ -1981,7 +1882,7 @@ pets:
     skills:
     - CHA_PET_spear_throw_ncr_spear_skeleton
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 창 던지기
       피해 3 (펫 고정, 지능 무관)
   ca_ncr_spear_skeleton_shiny:
@@ -1989,7 +1890,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_ncr_spear_skeleton_shiny
     mythic: CA_Pet_ncr_spear_skeleton_shiny
     icon:
@@ -2002,7 +1902,7 @@ pets:
     skills:
     - CHA_PET_spear_throw_ncr_spear_skeleton_shiny
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 창 던지기
       피해 3 (펫 고정, 지능 무관)
   ca_ncr_warrior_skeleton:
@@ -2010,7 +1910,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_ncr_warrior_skeleton
     mythic: CA_Pet_ncr_warrior_skeleton
     icon:
@@ -2023,7 +1922,7 @@ pets:
     skills:
     - CHA_PET_dash_slash_ncr_warrior_skeleton
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 돌진 베기
       피해 3 (펫 고정, 지능 무관)
   ca_ncr_warrior_skeleton_shiny:
@@ -2031,7 +1930,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_ncr_warrior_skeleton_shiny
     mythic: CA_Pet_ncr_warrior_skeleton_shiny
     icon:
@@ -2044,7 +1942,7 @@ pets:
     skills:
     - CHA_PET_dash_slash_ncr_warrior_skeleton_shiny
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 돌진 베기
       피해 3 (펫 고정, 지능 무관)
   ca_ncr_archer_skeleton:
@@ -2052,7 +1950,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_ncr_archer_skeleton
     mythic: CA_Pet_ncr_archer_skeleton
     icon:
@@ -2066,7 +1963,7 @@ pets:
     - CHA_PET_bone_arrows_ncr_archer_skeleton
     - CHA_PET_aim_shot_ncr_archer_skeleton
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 뼈 화살 / 조준 사격
       피해 4 (펫 고정, 지능 무관)
   ca_ncr_archer_skeleton_shiny:
@@ -2074,7 +1971,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_ncr_archer_skeleton_shiny
     mythic: CA_Pet_ncr_archer_skeleton_shiny
     icon:
@@ -2088,7 +1984,7 @@ pets:
     - CHA_PET_bone_arrows_ncr_archer_skeleton_shiny
     - CHA_PET_aim_shot_ncr_archer_skeleton_shiny
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 뼈 화살 / 조준 사격
       피해 4 (펫 고정, 지능 무관)
   ca_ncr_mage_skeleton:
@@ -2096,7 +1992,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_ncr_mage_skeleton
     mythic: CA_Pet_ncr_mage_skeleton
     icon:
@@ -2110,7 +2005,7 @@ pets:
     - CHA_PET_oblivion_orbs_ncr_mage_skeleton
     - CHA_PET_bone_grasp_ncr_mage_skeleton
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 망각의 탄환 / 뼈의 손아귀
       피해 2 (펫 고정, 지능 무관)
   ca_ncr_mage_skeleton_shiny:
@@ -2118,7 +2013,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_ncr_mage_skeleton_shiny
     mythic: CA_Pet_ncr_mage_skeleton_shiny
     icon:
@@ -2132,7 +2026,7 @@ pets:
     - CHA_PET_oblivion_orbs_ncr_mage_skeleton_shiny
     - CHA_PET_bone_grasp_ncr_mage_skeleton_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 망각의 탄환 / 뼈의 손아귀
       피해 2 (펫 고정, 지능 무관)
   ca_mf_warden_knight:
@@ -2140,7 +2034,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_mf_warden_knight
     mythic: CA_Pet_mf_warden_knight
     icon:
@@ -2153,7 +2046,7 @@ pets:
     skills:
     - CHA_PET_seal_charge_mf_warden_knight
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 봉인 돌격
       피해 4 (펫 고정, 지능 무관)
   ca_mf_warden_knight_shiny:
@@ -2161,7 +2054,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_mf_warden_knight_shiny
     mythic: CA_Pet_mf_warden_knight_shiny
     icon:
@@ -2174,7 +2066,7 @@ pets:
     skills:
     - CHA_PET_seal_charge_mf_warden_knight_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 봉인 돌격
       피해 4 (펫 고정, 지능 무관)
   ca_mf_warden_archer:
@@ -2182,7 +2074,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_mf_warden_archer
     mythic: CA_Pet_mf_warden_archer
     icon:
@@ -2195,7 +2086,7 @@ pets:
     skills:
     - CHA_PET_chain_arrow_mf_warden_archer
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 사슬 화살
       피해 2 (펫 고정, 지능 무관)
   ca_mf_warden_archer_shiny:
@@ -2203,7 +2094,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_mf_warden_archer_shiny
     mythic: CA_Pet_mf_warden_archer_shiny
     icon:
@@ -2216,7 +2106,7 @@ pets:
     skills:
     - CHA_PET_chain_arrow_mf_warden_archer_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 사슬 화살
       피해 2 (펫 고정, 지능 무관)
   ca_mf_warden_tank:
@@ -2224,7 +2114,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_mf_warden_tank
     mythic: CA_Pet_mf_warden_tank
     icon:
@@ -2241,14 +2130,13 @@ pets:
         resistance: 1
       seconds: 8
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 철벽: 흡수 하트 6칸 + 8초간 저항 I
   ca_mf_warden_tank_shiny:
     name: 봉인의 거벽 (변색종)
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_mf_warden_tank_shiny
     mythic: CA_Pet_mf_warden_tank_shiny
     icon:
@@ -2263,14 +2151,13 @@ pets:
       effects: *id021
       seconds: 8
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 철벽: 흡수 하트 6칸 + 8초간 저항 I
   ca_mf_warden_mage:
     name: 봉인의 술사
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_mf_warden_mage
     mythic: CA_Pet_mf_warden_mage
     icon:
@@ -2284,7 +2171,7 @@ pets:
     - CHA_PET_seal_talismans_mf_warden_mage
     - CHA_PET_seal_circle
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 봉인 부적 / 봉인진
       피해 2 (펫 고정, 지능 무관)
   ca_mf_warden_mage_shiny:
@@ -2292,7 +2179,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_mf_warden_mage_shiny
     mythic: CA_Pet_mf_warden_mage_shiny
     icon:
@@ -2306,7 +2192,7 @@ pets:
     - CHA_PET_seal_talismans_mf_warden_mage_shiny
     - CHA_PET_seal_circle_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 봉인 부적 / 봉인진
       피해 2 (펫 고정, 지능 무관)
   ca_glacialcore:
@@ -2314,7 +2200,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_glacialcore
     mythic: CA_Pet_glacialcore
     icon:
@@ -2328,7 +2213,7 @@ pets:
     - CHA_PET_ice_shards_glacialcore
     - CHA_PET_frost_laser
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 얼음 파편 / 빙핵 레이저
       피해 4 (펫 고정, 지능 무관)
   ca_glacialcore_shiny:
@@ -2336,7 +2221,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_glacialcore_shiny
     mythic: CA_Pet_glacialcore_shiny
     icon:
@@ -2350,7 +2234,7 @@ pets:
     - CHA_PET_ice_shards_glacialcore_shiny
     - CHA_PET_frost_laser_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 얼음 파편 / 빙핵 레이저
       피해 4 (펫 고정, 지능 무관)
   ca_nocsy_cat1:
@@ -2358,7 +2242,6 @@ pets:
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_nocsy_cat1
     mythic: CA_Pet_nocsy_cat1
     icon:
@@ -2368,13 +2251,12 @@ pets:
       - 햇볕 드는 공터에서 쉬기를 좋아한다.
       - '서식지: 벚꽃 숲 / 꽃피는 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_nocsy_cat1_shiny:
     name: 햇살 고양이 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_nocsy_cat1_shiny
     mythic: CA_Pet_nocsy_cat1_shiny
     icon:
@@ -2384,13 +2266,12 @@ pets:
       - 햇볕 드는 공터에서 쉬기를 좋아한다.
       - '서식지: 벚꽃 숲 / 꽃피는 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_nocsy_cat2:
     name: 꽃길 고양이
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_nocsy_cat2
     mythic: CA_Pet_nocsy_cat2
     icon:
@@ -2400,13 +2281,12 @@ pets:
       - 꽃밭 가장자리를 조용히 산책한다.
       - '서식지: 벚꽃 숲 / 꽃피는 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_nocsy_cat2_shiny:
     name: 꽃길 고양이 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_nocsy_cat2_shiny
     mythic: CA_Pet_nocsy_cat2_shiny
     icon:
@@ -2416,13 +2296,12 @@ pets:
       - 꽃밭 가장자리를 조용히 산책한다.
       - '서식지: 벚꽃 숲 / 꽃피는 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_nocsy_cat3:
     name: 책방 고양이
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_nocsy_cat3
     mythic: CA_Pet_nocsy_cat3
     icon:
@@ -2432,13 +2311,12 @@ pets:
       - 학교 외곽 길목에 머무르는 호기심 많은 고양이.
       - '서식지: 벚꽃 숲 / 꽃피는 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_nocsy_cat3_shiny:
     name: 책방 고양이 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_nocsy_cat3_shiny
     mythic: CA_Pet_nocsy_cat3_shiny
     icon:
@@ -2448,13 +2326,12 @@ pets:
       - 학교 외곽 길목에 머무르는 호기심 많은 고양이.
       - '서식지: 벚꽃 숲 / 꽃피는 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_nocsy_cat4:
     name: 나른한 고양이
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_nocsy_cat4
     mythic: CA_Pet_nocsy_cat4
     icon:
@@ -2464,13 +2341,12 @@ pets:
       - 벚나무 그늘에서 낮잠을 즐긴다.
       - '서식지: 벚꽃 숲 / 꽃피는 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_nocsy_cat4_shiny:
     name: 나른한 고양이 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_nocsy_cat4_shiny
     mythic: CA_Pet_nocsy_cat4_shiny
     icon:
@@ -2480,13 +2356,12 @@ pets:
       - 벚나무 그늘에서 낮잠을 즐긴다.
       - '서식지: 벚꽃 숲 / 꽃피는 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_nocsy_cat5:
     name: 장난꾸러기 고양이
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_nocsy_cat5
     mythic: CA_Pet_nocsy_cat5
     icon:
@@ -2496,13 +2371,12 @@ pets:
       - 떨어지는 꽃잎을 따라 뛰어다닌다.
       - '서식지: 벚꽃 숲 / 꽃피는 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_nocsy_cat5_shiny:
     name: 장난꾸러기 고양이 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_nocsy_cat5_shiny
     mythic: CA_Pet_nocsy_cat5_shiny
     icon:
@@ -2512,13 +2386,12 @@ pets:
       - 떨어지는 꽃잎을 따라 뛰어다닌다.
       - '서식지: 벚꽃 숲 / 꽃피는 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_nocsy_cat6:
     name: 산들 고양이
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_nocsy_cat6
     mythic: CA_Pet_nocsy_cat6
     icon:
@@ -2528,13 +2401,12 @@ pets:
       - 잔잔한 계곡의 바람을 즐기는 고양이.
       - '서식지: 벚꽃 숲 / 꽃피는 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_nocsy_cat6_shiny:
     name: 산들 고양이 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_nocsy_cat6_shiny
     mythic: CA_Pet_nocsy_cat6_shiny
     icon:
@@ -2544,13 +2416,12 @@ pets:
       - 잔잔한 계곡의 바람을 즐기는 고양이.
       - '서식지: 벚꽃 숲 / 꽃피는 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_nocsy_cat_fallen:
     name: 달그늘 고양이
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_nocsy_cat_fallen
     mythic: CA_Pet_nocsy_cat_fallen
     icon:
@@ -2568,14 +2439,13 @@ pets:
         intelligence: 0.15
       seconds: 10
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 달빛 축복: 체력 6·마나 60 회복 + 10초간 지능 +15%
   ca_nocsy_cat_fallen_shiny:
     name: 달그늘 고양이 (변색종)
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_nocsy_cat_fallen_shiny
     mythic: CA_Pet_nocsy_cat_fallen_shiny
     icon:
@@ -2590,14 +2460,13 @@ pets:
       effects: *id022
       seconds: 10
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 달빛 축복: 체력 6·마나 60 회복 + 10초간 지능 +15%
   ca_voxelspawns_pug:
     name: 산책 퍼그
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_voxelspawns_pug
     mythic: CA_Pet_voxelspawns_pug
     icon:
@@ -2607,13 +2476,12 @@ pets:
       - 학교 외곽 벚꽃길을 산책하는 작은 개.
       - '서식지: 벚꽃 계곡 / 꽃피는 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_voxelspawns_pug_shiny:
     name: 산책 퍼그 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_voxelspawns_pug_shiny
     mythic: CA_Pet_voxelspawns_pug_shiny
     icon:
@@ -2623,13 +2491,12 @@ pets:
       - 학교 외곽 벚꽃길을 산책하는 작은 개.
       - '서식지: 벚꽃 계곡 / 꽃피는 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_baby_polar_bear:
     name: 눈송이 아기곰
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_baby_polar_bear
     mythic: CA_Pet_baby_polar_bear
     icon:
@@ -2639,13 +2506,12 @@ pets:
       - 얼음 늪 가장자리에서 노는 어린 곰.
       - '서식지: 얼음 늪 / 눈 덮인 방패암 지대'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_baby_polar_bear_shiny:
     name: 눈송이 아기곰 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_baby_polar_bear_shiny
     mythic: CA_Pet_baby_polar_bear_shiny
     icon:
@@ -2655,13 +2521,12 @@ pets:
       - 얼음 늪 가장자리에서 노는 어린 곰.
       - '서식지: 얼음 늪 / 눈 덮인 방패암 지대'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_baby_yeti:
     name: 눈산 꼬마예티
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_baby_yeti
     mythic: CA_Pet_baby_yeti
     icon:
@@ -2676,14 +2541,13 @@ pets:
       effects: &id023
         climate_immune: 1
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 서버 날씨·기후 영향 받지 않음 (좋은 효과·나쁜 효과 모두)
   ca_baby_yeti_shiny:
     name: 눈산 꼬마예티 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_baby_yeti_shiny
     mythic: CA_Pet_baby_yeti_shiny
     icon:
@@ -2697,14 +2561,13 @@ pets:
       kind: passive
       effects: *id023
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 서버 날씨·기후 영향 받지 않음 (좋은 효과·나쁜 효과 모두)
   ca_frost_ferret:
     name: 서리 족제비
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_frost_ferret
     mythic: CA_Pet_frost_ferret
     icon:
@@ -2719,14 +2582,13 @@ pets:
       effects: &id024
         climate_immune: 1
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 서버 날씨·기후 영향 받지 않음 (좋은 효과·나쁜 효과 모두)
   ca_frost_ferret_shiny:
     name: 서리 족제비 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_frost_ferret_shiny
     mythic: CA_Pet_frost_ferret_shiny
     icon:
@@ -2740,14 +2602,13 @@ pets:
       kind: passive
       effects: *id024
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 서버 날씨·기후 영향 받지 않음 (좋은 효과·나쁜 효과 모두)
   ca_gangster_snowman:
     name: 심술 눈사람
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_gangster_snowman
     mythic: CA_Pet_gangster_snowman
     icon:
@@ -2762,14 +2623,13 @@ pets:
       effects: &id025
         absorb: 3
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 얼음 방패: 흡수 하트 3칸
   ca_gangster_snowman_shiny:
     name: 심술 눈사람 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_gangster_snowman_shiny
     mythic: CA_Pet_gangster_snowman_shiny
     icon:
@@ -2783,14 +2643,13 @@ pets:
       kind: combat
       effects: *id025
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 얼음 방패: 흡수 하트 3칸
   ca_ice_knight:
     name: 서리 기사
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_ice_knight
     mythic: CA_Pet_ice_knight
     icon:
@@ -2803,7 +2662,7 @@ pets:
     skills:
     - CHA_PET_frost_field_ice_knight
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 서리 진
       피해 3 (펫 고정, 지능 무관)
   ca_ice_knight_shiny:
@@ -2811,7 +2670,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_ice_knight_shiny
     mythic: CA_Pet_ice_knight_shiny
     icon:
@@ -2824,7 +2682,7 @@ pets:
     skills:
     - CHA_PET_frost_field_ice_knight_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 서리 진
       피해 3 (펫 고정, 지능 무관)
   ca_dragon_desert:
@@ -2832,7 +2690,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_dragon_desert
     mythic: CA_Pet_dragon_desert
     icon:
@@ -2845,7 +2702,7 @@ pets:
     skills:
     - CHA_PET_dragon_breath_dragon_desert
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 드래곤 브레스
       피해 2 (펫 고정, 지능 무관)
   ca_dragon_desert_shiny:
@@ -2853,7 +2710,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_dragon_desert_shiny
     mythic: CA_Pet_dragon_desert_shiny
     icon:
@@ -2866,7 +2722,7 @@ pets:
     skills:
     - CHA_PET_dragon_breath_dragon_desert_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 드래곤 브레스
       피해 2 (펫 고정, 지능 무관)
   ca_dragon_glacial:
@@ -2874,7 +2730,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_dragon_glacial
     mythic: CA_Pet_dragon_glacial
     icon:
@@ -2887,7 +2742,7 @@ pets:
     skills:
     - CHA_PET_dragon_breath_dragon_glacial
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 드래곤 브레스
       피해 2 (펫 고정, 지능 무관)
   ca_dragon_glacial_shiny:
@@ -2895,7 +2750,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_dragon_glacial_shiny
     mythic: CA_Pet_dragon_glacial_shiny
     icon:
@@ -2908,7 +2762,7 @@ pets:
     skills:
     - CHA_PET_dragon_breath_dragon_glacial_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 드래곤 브레스
       피해 2 (펫 고정, 지능 무관)
   ca_dragon_nether:
@@ -2916,7 +2770,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_dragon_nether
     mythic: CA_Pet_dragon_nether
     icon:
@@ -2929,7 +2782,7 @@ pets:
     skills:
     - CHA_PET_dragon_breath_dragon_nether
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 드래곤 브레스
       피해 2 (펫 고정, 지능 무관)
   ca_dragon_nether_shiny:
@@ -2937,7 +2790,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_dragon_nether_shiny
     mythic: CA_Pet_dragon_nether_shiny
     icon:
@@ -2950,7 +2802,7 @@ pets:
     skills:
     - CHA_PET_dragon_breath_dragon_nether_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 드래곤 브레스
       피해 2 (펫 고정, 지능 무관)
   ca_dragon_sculk:
@@ -2958,7 +2810,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_dragon_sculk
     mythic: CA_Pet_dragon_sculk
     icon:
@@ -2971,7 +2822,7 @@ pets:
     skills:
     - CHA_PET_dragon_breath_dragon_sculk
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 드래곤 브레스
       피해 2 (펫 고정, 지능 무관)
   ca_dragon_sculk_shiny:
@@ -2979,7 +2830,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_dragon_sculk_shiny
     mythic: CA_Pet_dragon_sculk_shiny
     icon:
@@ -2992,7 +2842,7 @@ pets:
     skills:
     - CHA_PET_dragon_breath_dragon_sculk_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 드래곤 브레스
       피해 2 (펫 고정, 지능 무관)
   ca_lizard_aqua:
@@ -3000,7 +2850,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_lizard_aqua
     mythic: CA_Pet_lizard_aqua
     icon:
@@ -3017,14 +2866,13 @@ pets:
         regen: 1
       seconds: 5
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 탈피: 해로운 효과 제거 + 5초간 재생
   ca_lizard_aqua_shiny:
     name: 물가 왕도마뱀 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_lizard_aqua_shiny
     mythic: CA_Pet_lizard_aqua_shiny
     icon:
@@ -3039,14 +2887,13 @@ pets:
       effects: *id026
       seconds: 5
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 탈피: 해로운 효과 제거 + 5초간 재생
   ca_lizard_lava:
     name: 용암 왕도마뱀
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_lizard_lava
     mythic: CA_Pet_lizard_lava
     icon:
@@ -3061,14 +2908,13 @@ pets:
       effects: &id027
         fire_resist: 1
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 화염 저항
   ca_lizard_lava_shiny:
     name: 용암 왕도마뱀 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_lizard_lava_shiny
     mythic: CA_Pet_lizard_lava_shiny
     icon:
@@ -3082,14 +2928,13 @@ pets:
       kind: passive
       effects: *id027
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 화염 저항
   ca_manticore_aether:
     name: 창공 만티코어
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_manticore_aether
     mythic: CA_Pet_manticore_aether
     icon:
@@ -3102,7 +2947,7 @@ pets:
     skills:
     - CHA_PET_roar_leap_manticore_aether
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 포효 도약
       피해 4 (펫 고정, 지능 무관)
   ca_manticore_aether_shiny:
@@ -3110,7 +2955,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_manticore_aether_shiny
     mythic: CA_Pet_manticore_aether_shiny
     icon:
@@ -3123,7 +2967,7 @@ pets:
     skills:
     - CHA_PET_roar_leap_manticore_aether_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 포효 도약
       피해 4 (펫 고정, 지능 무관)
   ca_manticore_dusk:
@@ -3131,7 +2975,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_manticore_dusk
     mythic: CA_Pet_manticore_dusk
     icon:
@@ -3144,7 +2987,7 @@ pets:
     skills:
     - CHA_PET_roar_leap_manticore_dusk
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 포효 도약
       피해 4 (펫 고정, 지능 무관)
   ca_manticore_dusk_shiny:
@@ -3152,7 +2995,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_manticore_dusk_shiny
     mythic: CA_Pet_manticore_dusk_shiny
     icon:
@@ -3165,7 +3007,7 @@ pets:
     skills:
     - CHA_PET_roar_leap_manticore_dusk_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 포효 도약
       피해 4 (펫 고정, 지능 무관)
   ca_manticore_soul:
@@ -3173,7 +3015,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_manticore_soul
     mythic: CA_Pet_manticore_soul
     icon:
@@ -3186,7 +3027,7 @@ pets:
     skills:
     - CHA_PET_roar_leap_manticore_soul
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 포효 도약
       피해 4 (펫 고정, 지능 무관)
   ca_manticore_soul_shiny:
@@ -3194,7 +3035,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_manticore_soul_shiny
     mythic: CA_Pet_manticore_soul_shiny
     icon:
@@ -3207,7 +3047,7 @@ pets:
     skills:
     - CHA_PET_roar_leap_manticore_soul_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 포효 도약
       피해 4 (펫 고정, 지능 무관)
   ca_manticore_venom:
@@ -3215,7 +3055,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_manticore_venom
     mythic: CA_Pet_manticore_venom
     icon:
@@ -3228,7 +3067,7 @@ pets:
     skills:
     - CHA_PET_roar_leap_manticore_venom
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 포효 도약
       피해 4 (펫 고정, 지능 무관)
   ca_manticore_venom_shiny:
@@ -3236,7 +3075,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_manticore_venom_shiny
     mythic: CA_Pet_manticore_venom_shiny
     icon:
@@ -3249,7 +3087,7 @@ pets:
     skills:
     - CHA_PET_roar_leap_manticore_venom_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 포효 도약
       피해 4 (펫 고정, 지능 무관)
   ca_panda_normal:
@@ -3257,7 +3095,6 @@ pets:
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_panda_normal
     mythic: CA_Pet_panda_normal
     icon:
@@ -3267,13 +3104,12 @@ pets:
       - 정글의 대나무 군락에서 느긋하게 지낸다.
       - '서식지: 열대 정글'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_panda_normal_shiny:
     name: 대나무 판다 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_panda_normal_shiny
     mythic: CA_Pet_panda_normal_shiny
     icon:
@@ -3283,13 +3119,12 @@ pets:
       - 정글의 대나무 군락에서 느긋하게 지낸다.
       - '서식지: 열대 정글'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_sabertooth_arctic:
     name: 설원 검치호
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_sabertooth_arctic
     mythic: CA_Pet_sabertooth_arctic
     icon:
@@ -3302,7 +3137,7 @@ pets:
     skills:
     - CHA_PET_pounce_sabertooth_arctic
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 사냥 도약
       피해 4 (펫 고정, 지능 무관)
   ca_sabertooth_arctic_shiny:
@@ -3310,7 +3145,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_sabertooth_arctic_shiny
     mythic: CA_Pet_sabertooth_arctic_shiny
     icon:
@@ -3323,7 +3157,7 @@ pets:
     skills:
     - CHA_PET_pounce_sabertooth_arctic_shiny
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 사냥 도약
       피해 4 (펫 고정, 지능 무관)
   ca_sabertooth_midnight:
@@ -3331,7 +3165,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_sabertooth_midnight
     mythic: CA_Pet_sabertooth_midnight
     icon:
@@ -3344,7 +3177,7 @@ pets:
     skills:
     - CHA_PET_pounce_sabertooth_midnight
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 사냥 도약
       피해 4 (펫 고정, 지능 무관)
   ca_sabertooth_midnight_shiny:
@@ -3352,7 +3185,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_sabertooth_midnight_shiny
     mythic: CA_Pet_sabertooth_midnight_shiny
     icon:
@@ -3365,7 +3197,7 @@ pets:
     skills:
     - CHA_PET_pounce_sabertooth_midnight_shiny
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 사냥 도약
       피해 4 (펫 고정, 지능 무관)
   ca_sabertooth_savanna:
@@ -3373,7 +3205,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_sabertooth_savanna
     mythic: CA_Pet_sabertooth_savanna
     icon:
@@ -3386,7 +3217,7 @@ pets:
     skills:
     - CHA_PET_pounce_sabertooth_savanna
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 사냥 도약
       피해 4 (펫 고정, 지능 무관)
   ca_sabertooth_savanna_shiny:
@@ -3394,7 +3225,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_sabertooth_savanna_shiny
     mythic: CA_Pet_sabertooth_savanna_shiny
     icon:
@@ -3407,7 +3237,7 @@ pets:
     skills:
     - CHA_PET_pounce_sabertooth_savanna_shiny
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 사냥 도약
       피해 4 (펫 고정, 지능 무관)
   ca_capybara:
@@ -3415,7 +3245,6 @@ pets:
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_capybara
     mythic: CA_Pet_capybara
     icon:
@@ -3425,13 +3254,12 @@ pets:
       - 잔잔한 강가에서 무리와 함께 쉬는 동물.
       - '서식지: 따뜻한 강 / 푸른 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_capybara_shiny:
     name: 물가 카피바라 (변색종)
     stars: 1
     motion: ground
     size: 0.55
-    health: 3
     permission: chacademia.pet.ca_capybara_shiny
     mythic: CA_Pet_capybara_shiny
     icon:
@@ -3441,13 +3269,12 @@ pets:
       - 잔잔한 강가에서 무리와 함께 쉬는 동물.
       - '서식지: 따뜻한 강 / 푸른 계곡'
       - 1성
-    info: 1성 · 최대 체력 +3
+    info: 1성 · 교화하면 도감 체력 점수 +1
   ca_horse_glacial:
     name: 빙하 준마
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_horse_glacial
     mythic: CA_Pet_horse_glacial
     icon:
@@ -3462,14 +3289,13 @@ pets:
       effects: &id028
         speed: 0.15
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 이동속도 +15%
   ca_horse_glacial_shiny:
     name: 빙하 준마 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_horse_glacial_shiny
     mythic: CA_Pet_horse_glacial_shiny
     icon:
@@ -3483,14 +3309,13 @@ pets:
       kind: passive
       effects: *id028
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 이동속도 +15%
   ca_horse_magma:
     name: 마그마 준마
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_horse_magma
     mythic: CA_Pet_horse_magma
     icon:
@@ -3505,14 +3330,13 @@ pets:
       effects: &id029
         speed: 0.15
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 이동속도 +15%
   ca_horse_magma_shiny:
     name: 마그마 준마 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_horse_magma_shiny
     mythic: CA_Pet_horse_magma_shiny
     icon:
@@ -3526,14 +3350,13 @@ pets:
       kind: passive
       effects: *id029
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 이동속도 +15%
   ca_horse_pegasus:
     name: 페가수스
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_horse_pegasus
     mythic: CA_Pet_horse_pegasus
     icon:
@@ -3547,7 +3370,7 @@ pets:
     - CHA_PET_moon_wind_horse_pegasus
     - CHA_PET_gale_wings_horse_pegasus
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 달바람 / 돌풍 날갯짓
       피해 2 (펫 고정, 지능 무관)
   ca_horse_pegasus_shiny:
@@ -3555,7 +3378,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_horse_pegasus_shiny
     mythic: CA_Pet_horse_pegasus_shiny
     icon:
@@ -3569,7 +3391,7 @@ pets:
     - CHA_PET_moon_wind_horse_pegasus_shiny
     - CHA_PET_gale_wings_horse_pegasus_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 달바람 / 돌풍 날갯짓
       피해 2 (펫 고정, 지능 무관)
   ca_horse_spartan:
@@ -3577,7 +3399,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_horse_spartan
     mythic: CA_Pet_horse_spartan
     icon:
@@ -3592,14 +3413,13 @@ pets:
       effects: &id030
         speed: 0.15
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 이동속도 +15%
   ca_horse_spartan_shiny:
     name: 철갑 준마 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_horse_spartan_shiny
     mythic: CA_Pet_horse_spartan_shiny
     icon:
@@ -3613,14 +3433,13 @@ pets:
       kind: passive
       effects: *id030
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 이동속도 +15%
   ca_horse_unicorn:
     name: 유니콘
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_horse_unicorn
     mythic: CA_Pet_horse_unicorn
     icon:
@@ -3633,7 +3452,7 @@ pets:
     skills:
     - CHA_PET_horn_ray_horse_unicorn
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 뿔 광선
       피해 4 (펫 고정, 지능 무관)
   ca_horse_unicorn_shiny:
@@ -3641,7 +3460,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_horse_unicorn_shiny
     mythic: CA_Pet_horse_unicorn_shiny
     icon:
@@ -3654,7 +3472,7 @@ pets:
     skills:
     - CHA_PET_horn_ray_horse_unicorn_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 뿔 광선
       피해 4 (펫 고정, 지능 무관)
   ca_kitsune_demonic:
@@ -3662,7 +3480,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_kitsune_demonic
     mythic: CA_Pet_kitsune_demonic
     icon:
@@ -3676,7 +3493,7 @@ pets:
     - CHA_PET_foxfire_orbit_kitsune_demonic
     - CHA_PET_fox_charm_kitsune_demonic
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 여우불 공전 / 현혹
       피해 2 (펫 고정, 지능 무관)
   ca_kitsune_demonic_shiny:
@@ -3684,7 +3501,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_kitsune_demonic_shiny
     mythic: CA_Pet_kitsune_demonic_shiny
     icon:
@@ -3698,7 +3514,7 @@ pets:
     - CHA_PET_foxfire_orbit_kitsune_demonic_shiny
     - CHA_PET_fox_charm_kitsune_demonic_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 여우불 공전 / 현혹
       피해 2 (펫 고정, 지능 무관)
   ca_kitsune_inferno:
@@ -3706,7 +3522,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_kitsune_inferno
     mythic: CA_Pet_kitsune_inferno
     icon:
@@ -3720,7 +3535,7 @@ pets:
     - CHA_PET_foxfire_orbit_kitsune_inferno
     - CHA_PET_fox_charm_kitsune_inferno
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 여우불 공전 / 현혹
       피해 2 (펫 고정, 지능 무관)
   ca_kitsune_inferno_shiny:
@@ -3728,7 +3543,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_kitsune_inferno_shiny
     mythic: CA_Pet_kitsune_inferno_shiny
     icon:
@@ -3742,7 +3556,7 @@ pets:
     - CHA_PET_foxfire_orbit_kitsune_inferno_shiny
     - CHA_PET_fox_charm_kitsune_inferno_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 여우불 공전 / 현혹
       피해 2 (펫 고정, 지능 무관)
   ca_kitsune_normal:
@@ -3750,7 +3564,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_kitsune_normal
     mythic: CA_Pet_kitsune_normal
     icon:
@@ -3764,7 +3577,7 @@ pets:
     - CHA_PET_foxfire_orbit_kitsune_normal
     - CHA_PET_fox_charm_kitsune_normal
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 여우불 공전 / 현혹
       피해 2 (펫 고정, 지능 무관)
   ca_kitsune_normal_shiny:
@@ -3772,7 +3585,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_kitsune_normal_shiny
     mythic: CA_Pet_kitsune_normal_shiny
     icon:
@@ -3786,7 +3598,7 @@ pets:
     - CHA_PET_foxfire_orbit_kitsune_normal_shiny
     - CHA_PET_fox_charm_kitsune_normal_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 여우불 공전 / 현혹
       피해 2 (펫 고정, 지능 무관)
   ca_phantom_ender:
@@ -3794,7 +3606,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_phantom_ender
     mythic: CA_Pet_phantom_ender
     icon:
@@ -3807,7 +3618,7 @@ pets:
     skills:
     - CHA_PET_soul_drain_phantom_ender
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 혼 흡수
       피해 2 (펫 고정, 지능 무관)
   ca_phantom_ender_shiny:
@@ -3815,7 +3626,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_phantom_ender_shiny
     mythic: CA_Pet_phantom_ender_shiny
     icon:
@@ -3828,7 +3638,7 @@ pets:
     skills:
     - CHA_PET_soul_drain_phantom_ender_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 혼 흡수
       피해 2 (펫 고정, 지능 무관)
   ca_phantom_ghost:
@@ -3836,7 +3646,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_phantom_ghost
     mythic: CA_Pet_phantom_ghost
     icon:
@@ -3849,7 +3658,7 @@ pets:
     skills:
     - CHA_PET_soul_drain_phantom_ghost
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 혼 흡수
       피해 2 (펫 고정, 지능 무관)
   ca_phantom_ghost_shiny:
@@ -3857,7 +3666,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_phantom_ghost_shiny
     mythic: CA_Pet_phantom_ghost_shiny
     icon:
@@ -3870,7 +3678,7 @@ pets:
     skills:
     - CHA_PET_soul_drain_phantom_ghost_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 혼 흡수
       피해 2 (펫 고정, 지능 무관)
   ca_phoenix_darkflame:
@@ -3878,7 +3686,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_phoenix_darkflame
     mythic: CA_Pet_phoenix_darkflame
     icon:
@@ -3892,7 +3699,7 @@ pets:
     - CHA_PET_fire_feathers_phoenix_darkflame
     - CHA_PET_feather_barrage_phoenix_darkflame
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 불깃털 / 깃털 탄막
       피해 4 (펫 고정, 지능 무관)
   ca_phoenix_darkflame_shiny:
@@ -3900,7 +3707,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_phoenix_darkflame_shiny
     mythic: CA_Pet_phoenix_darkflame_shiny
     icon:
@@ -3914,7 +3720,7 @@ pets:
     - CHA_PET_fire_feathers_phoenix_darkflame_shiny
     - CHA_PET_feather_barrage_phoenix_darkflame_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 불깃털 / 깃털 탄막
       피해 4 (펫 고정, 지능 무관)
   ca_phoenix_flame:
@@ -3922,7 +3728,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_phoenix_flame
     mythic: CA_Pet_phoenix_flame
     icon:
@@ -3936,7 +3741,7 @@ pets:
     - CHA_PET_fire_feathers_phoenix_flame
     - CHA_PET_feather_barrage_phoenix_flame
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 불깃털 / 깃털 탄막
       피해 4 (펫 고정, 지능 무관)
   ca_phoenix_flame_shiny:
@@ -3944,7 +3749,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_phoenix_flame_shiny
     mythic: CA_Pet_phoenix_flame_shiny
     icon:
@@ -3958,7 +3762,7 @@ pets:
     - CHA_PET_fire_feathers_phoenix_flame_shiny
     - CHA_PET_feather_barrage_phoenix_flame_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 불깃털 / 깃털 탄막
       피해 4 (펫 고정, 지능 무관)
   ca_phoenix_light:
@@ -3966,7 +3770,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_phoenix_light
     mythic: CA_Pet_phoenix_light
     icon:
@@ -3980,7 +3783,7 @@ pets:
     - CHA_PET_fire_feathers_phoenix_light
     - CHA_PET_feather_barrage_phoenix_light
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 불깃털 / 깃털 탄막
       피해 4 (펫 고정, 지능 무관)
   ca_phoenix_light_shiny:
@@ -3988,7 +3791,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_phoenix_light_shiny
     mythic: CA_Pet_phoenix_light_shiny
     icon:
@@ -4002,7 +3804,7 @@ pets:
     - CHA_PET_fire_feathers_phoenix_light_shiny
     - CHA_PET_feather_barrage_phoenix_light_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 불깃털 / 깃털 탄막
       피해 4 (펫 고정, 지능 무관)
   ca_phoenix_thunder:
@@ -4010,7 +3812,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_phoenix_thunder
     mythic: CA_Pet_phoenix_thunder
     icon:
@@ -4024,7 +3825,7 @@ pets:
     - CHA_PET_fire_feathers_phoenix_thunder
     - CHA_PET_feather_barrage_phoenix_thunder
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 불깃털 / 깃털 탄막
       피해 4 (펫 고정, 지능 무관)
   ca_phoenix_thunder_shiny:
@@ -4032,7 +3833,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_phoenix_thunder_shiny
     mythic: CA_Pet_phoenix_thunder_shiny
     icon:
@@ -4046,7 +3846,7 @@ pets:
     - CHA_PET_fire_feathers_phoenix_thunder_shiny
     - CHA_PET_feather_barrage_phoenix_thunder_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 불깃털 / 깃털 탄막
       피해 4 (펫 고정, 지능 무관)
   ca_basilisk_obsidian:
@@ -4054,7 +3854,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_basilisk_obsidian
     mythic: CA_Pet_basilisk_obsidian
     icon:
@@ -4068,7 +3867,7 @@ pets:
     - CHA_PET_venom_spit_basilisk_obsidian
     - CHA_PET_tail_sweep_basilisk_obsidian
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 독 뱉기 / 꼬리 휩쓸기
       피해 3 (펫 고정, 지능 무관)
   ca_basilisk_obsidian_shiny:
@@ -4076,7 +3875,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_basilisk_obsidian_shiny
     mythic: CA_Pet_basilisk_obsidian_shiny
     icon:
@@ -4090,7 +3888,7 @@ pets:
     - CHA_PET_venom_spit_basilisk_obsidian_shiny
     - CHA_PET_tail_sweep_basilisk_obsidian_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 독 뱉기 / 꼬리 휩쓸기
       피해 3 (펫 고정, 지능 무관)
   ca_basilisk_snowstorm:
@@ -4098,7 +3896,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_basilisk_snowstorm
     mythic: CA_Pet_basilisk_snowstorm
     icon:
@@ -4112,7 +3909,7 @@ pets:
     - CHA_PET_venom_spit_basilisk_snowstorm
     - CHA_PET_tail_sweep_basilisk_snowstorm
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 독 뱉기 / 꼬리 휩쓸기
       피해 3 (펫 고정, 지능 무관)
   ca_basilisk_snowstorm_shiny:
@@ -4120,7 +3917,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_basilisk_snowstorm_shiny
     mythic: CA_Pet_basilisk_snowstorm_shiny
     icon:
@@ -4134,7 +3930,7 @@ pets:
     - CHA_PET_venom_spit_basilisk_snowstorm_shiny
     - CHA_PET_tail_sweep_basilisk_snowstorm_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 독 뱉기 / 꼬리 휩쓸기
       피해 3 (펫 고정, 지능 무관)
   ca_basilisk_wild:
@@ -4142,7 +3938,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_basilisk_wild
     mythic: CA_Pet_basilisk_wild
     icon:
@@ -4156,7 +3951,7 @@ pets:
     - CHA_PET_venom_spit_basilisk_wild
     - CHA_PET_tail_sweep_basilisk_wild
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 독 뱉기 / 꼬리 휩쓸기
       피해 3 (펫 고정, 지능 무관)
   ca_basilisk_wild_shiny:
@@ -4164,7 +3959,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_basilisk_wild_shiny
     mythic: CA_Pet_basilisk_wild_shiny
     icon:
@@ -4178,7 +3972,7 @@ pets:
     - CHA_PET_venom_spit_basilisk_wild_shiny
     - CHA_PET_tail_sweep_basilisk_wild_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 독 뱉기 / 꼬리 휩쓸기
       피해 3 (펫 고정, 지능 무관)
   ca_hippogryph_common:
@@ -4186,7 +3980,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_hippogryph_common
     mythic: CA_Pet_hippogryph_common
     icon:
@@ -4199,7 +3992,7 @@ pets:
     skills:
     - CHA_PET_feather_storm_hippogryph_common
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 깃털 폭풍
       피해 3 (펫 고정, 지능 무관)
   ca_hippogryph_common_shiny:
@@ -4207,7 +4000,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_hippogryph_common_shiny
     mythic: CA_Pet_hippogryph_common_shiny
     icon:
@@ -4220,7 +4012,7 @@ pets:
     skills:
     - CHA_PET_feather_storm_hippogryph_common_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 깃털 폭풍
       피해 3 (펫 고정, 지능 무관)
   ca_hippogryph_crystal:
@@ -4228,7 +4020,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_hippogryph_crystal
     mythic: CA_Pet_hippogryph_crystal
     icon:
@@ -4241,7 +4032,7 @@ pets:
     skills:
     - CHA_PET_feather_storm_hippogryph_crystal
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 깃털 폭풍
       피해 3 (펫 고정, 지능 무관)
   ca_hippogryph_crystal_shiny:
@@ -4249,7 +4040,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_hippogryph_crystal_shiny
     mythic: CA_Pet_hippogryph_crystal_shiny
     icon:
@@ -4262,7 +4052,7 @@ pets:
     skills:
     - CHA_PET_feather_storm_hippogryph_crystal_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 깃털 폭풍
       피해 3 (펫 고정, 지능 무관)
   ca_hippogryph_fallen:
@@ -4270,7 +4060,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_hippogryph_fallen
     mythic: CA_Pet_hippogryph_fallen
     icon:
@@ -4283,7 +4072,7 @@ pets:
     skills:
     - CHA_PET_feather_storm_hippogryph_fallen
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 깃털 폭풍
       피해 3 (펫 고정, 지능 무관)
   ca_hippogryph_fallen_shiny:
@@ -4291,7 +4080,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_hippogryph_fallen_shiny
     mythic: CA_Pet_hippogryph_fallen_shiny
     icon:
@@ -4304,7 +4092,7 @@ pets:
     skills:
     - CHA_PET_feather_storm_hippogryph_fallen_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 깃털 폭풍
       피해 3 (펫 고정, 지능 무관)
   ca_hippogryph_royal:
@@ -4312,7 +4100,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_hippogryph_royal
     mythic: CA_Pet_hippogryph_royal
     icon:
@@ -4325,7 +4112,7 @@ pets:
     skills:
     - CHA_PET_feather_storm_hippogryph_royal
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 깃털 폭풍
       피해 3 (펫 고정, 지능 무관)
   ca_hippogryph_royal_shiny:
@@ -4333,7 +4120,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_hippogryph_royal_shiny
     mythic: CA_Pet_hippogryph_royal_shiny
     icon:
@@ -4346,7 +4132,7 @@ pets:
     skills:
     - CHA_PET_feather_storm_hippogryph_royal_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 깃털 폭풍
       피해 3 (펫 고정, 지능 무관)
   ca_raptor_nightmare:
@@ -4354,7 +4140,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_raptor_nightmare
     mythic: CA_Pet_raptor_nightmare
     icon:
@@ -4371,14 +4156,13 @@ pets:
         intelligence: 0.15
       seconds: 10
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 악몽의 질주: 10초간 신속 II + 지능 +15%
   ca_raptor_nightmare_shiny:
     name: 악몽 랩터 (변색종)
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_raptor_nightmare_shiny
     mythic: CA_Pet_raptor_nightmare_shiny
     icon:
@@ -4393,14 +4177,13 @@ pets:
       effects: *id031
       seconds: 10
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 악몽의 질주: 10초간 신속 II + 지능 +15%
   ca_raptor_red:
     name: 적갈 랩터
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_raptor_red
     mythic: CA_Pet_raptor_red
     icon:
@@ -4417,14 +4200,13 @@ pets:
         intelligence: 0.15
       seconds: 8
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 사냥 본능: 8초간 신속 + 지능 +15%
   ca_raptor_red_shiny:
     name: 적갈 랩터 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_raptor_red_shiny
     mythic: CA_Pet_raptor_red_shiny
     icon:
@@ -4439,14 +4221,13 @@ pets:
       effects: *id032
       seconds: 8
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 사냥 본능: 8초간 신속 + 지능 +15%
   ca_raptor_undead:
     name: 불사 랩터
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_raptor_undead
     mythic: CA_Pet_raptor_undead
     icon:
@@ -4463,14 +4244,13 @@ pets:
         intelligence: 0.15
       seconds: 10
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 악몽의 질주: 10초간 신속 II + 지능 +15%
   ca_raptor_undead_shiny:
     name: 불사 랩터 (변색종)
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_raptor_undead_shiny
     mythic: CA_Pet_raptor_undead_shiny
     icon:
@@ -4485,14 +4265,13 @@ pets:
       effects: *id033
       seconds: 10
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 악몽의 질주: 10초간 신속 II + 지능 +15%
   ca_sky_serpent_jade:
     name: 비취 하늘뱀
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_sky_serpent_jade
     mythic: CA_Pet_sky_serpent_jade
     icon:
@@ -4505,7 +4284,7 @@ pets:
     skills:
     - CHA_PET_serpent_breath_sky_serpent_jade
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 하늘뱀 브레스
       피해 2 (펫 고정, 지능 무관)
   ca_sky_serpent_jade_shiny:
@@ -4513,7 +4292,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_sky_serpent_jade_shiny
     mythic: CA_Pet_sky_serpent_jade_shiny
     icon:
@@ -4526,7 +4304,7 @@ pets:
     skills:
     - CHA_PET_serpent_breath_sky_serpent_jade_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 하늘뱀 브레스
       피해 2 (펫 고정, 지능 무관)
   ca_sky_serpent_magma:
@@ -4534,7 +4312,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_sky_serpent_magma
     mythic: CA_Pet_sky_serpent_magma
     icon:
@@ -4547,7 +4324,7 @@ pets:
     skills:
     - CHA_PET_serpent_breath_sky_serpent_magma
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 하늘뱀 브레스
       피해 2 (펫 고정, 지능 무관)
   ca_sky_serpent_magma_shiny:
@@ -4555,7 +4332,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_sky_serpent_magma_shiny
     mythic: CA_Pet_sky_serpent_magma_shiny
     icon:
@@ -4568,7 +4344,7 @@ pets:
     skills:
     - CHA_PET_serpent_breath_sky_serpent_magma_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 하늘뱀 브레스
       피해 2 (펫 고정, 지능 무관)
   ca_sky_serpent_solar:
@@ -4576,7 +4352,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_sky_serpent_solar
     mythic: CA_Pet_sky_serpent_solar
     icon:
@@ -4589,7 +4364,7 @@ pets:
     skills:
     - CHA_PET_serpent_breath_sky_serpent_solar
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 하늘뱀 브레스
       피해 2 (펫 고정, 지능 무관)
   ca_sky_serpent_solar_shiny:
@@ -4597,7 +4372,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_sky_serpent_solar_shiny
     mythic: CA_Pet_sky_serpent_solar_shiny
     icon:
@@ -4610,7 +4384,7 @@ pets:
     skills:
     - CHA_PET_serpent_breath_sky_serpent_solar_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 하늘뱀 브레스
       피해 2 (펫 고정, 지능 무관)
   ca_sky_serpent_spectral:
@@ -4618,7 +4392,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_sky_serpent_spectral
     mythic: CA_Pet_sky_serpent_spectral
     icon:
@@ -4631,7 +4404,7 @@ pets:
     skills:
     - CHA_PET_serpent_breath_sky_serpent_spectral
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 하늘뱀 브레스
       피해 2 (펫 고정, 지능 무관)
   ca_sky_serpent_spectral_shiny:
@@ -4639,7 +4412,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_sky_serpent_spectral_shiny
     mythic: CA_Pet_sky_serpent_spectral_shiny
     icon:
@@ -4652,7 +4424,7 @@ pets:
     skills:
     - CHA_PET_serpent_breath_sky_serpent_spectral_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 하늘뱀 브레스
       피해 2 (펫 고정, 지능 무관)
   ca_stag_demonic:
@@ -4660,7 +4432,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_stag_demonic
     mythic: CA_Pet_stag_demonic
     icon:
@@ -4674,7 +4445,7 @@ pets:
     - CHA_PET_light_horns_stag_demonic
     - CHA_PET_domain_seal_stag_demonic
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 빛의 뿔 / 영역 선포
       피해 3 (펫 고정, 지능 무관)
   ca_stag_demonic_shiny:
@@ -4682,7 +4453,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_stag_demonic_shiny
     mythic: CA_Pet_stag_demonic_shiny
     icon:
@@ -4696,7 +4466,7 @@ pets:
     - CHA_PET_light_horns_stag_demonic_shiny
     - CHA_PET_domain_seal_stag_demonic_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 빛의 뿔 / 영역 선포
       피해 3 (펫 고정, 지능 무관)
   ca_stag_heavenly:
@@ -4704,7 +4474,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_stag_heavenly
     mythic: CA_Pet_stag_heavenly
     icon:
@@ -4718,7 +4487,7 @@ pets:
     - CHA_PET_light_horns_stag_heavenly
     - CHA_PET_domain_seal_stag_heavenly
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 빛의 뿔 / 영역 선포
       피해 3 (펫 고정, 지능 무관)
   ca_stag_heavenly_shiny:
@@ -4726,7 +4495,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_stag_heavenly_shiny
     mythic: CA_Pet_stag_heavenly_shiny
     icon:
@@ -4740,7 +4508,7 @@ pets:
     - CHA_PET_light_horns_stag_heavenly_shiny
     - CHA_PET_domain_seal_stag_heavenly_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 빛의 뿔 / 영역 선포
       피해 3 (펫 고정, 지능 무관)
   ca_stag_rune:
@@ -4748,7 +4516,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_stag_rune
     mythic: CA_Pet_stag_rune
     icon:
@@ -4762,7 +4529,7 @@ pets:
     - CHA_PET_light_horns_stag_rune
     - CHA_PET_domain_seal_stag_rune
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 빛의 뿔 / 영역 선포
       피해 3 (펫 고정, 지능 무관)
   ca_stag_rune_shiny:
@@ -4770,7 +4537,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_stag_rune_shiny
     mythic: CA_Pet_stag_rune_shiny
     icon:
@@ -4784,7 +4550,7 @@ pets:
     - CHA_PET_light_horns_stag_rune_shiny
     - CHA_PET_domain_seal_stag_rune_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 빛의 뿔 / 영역 선포
       피해 3 (펫 고정, 지능 무관)
   ca_stag_void:
@@ -4792,7 +4558,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_stag_void
     mythic: CA_Pet_stag_void
     icon:
@@ -4806,7 +4571,7 @@ pets:
     - CHA_PET_light_horns_stag_void
     - CHA_PET_domain_seal_stag_void
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 빛의 뿔 / 영역 선포
       피해 3 (펫 고정, 지능 무관)
   ca_stag_void_shiny:
@@ -4814,7 +4579,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_stag_void_shiny
     mythic: CA_Pet_stag_void_shiny
     icon:
@@ -4828,7 +4592,7 @@ pets:
     - CHA_PET_light_horns_stag_void_shiny
     - CHA_PET_domain_seal_stag_void_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 빛의 뿔 / 영역 선포
       피해 3 (펫 고정, 지능 무관)
   ca_frog_green:
@@ -4836,7 +4600,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_frog_green
     mythic: CA_Pet_frog_green
     icon:
@@ -4852,14 +4615,13 @@ pets:
         jump: 1
         fall: 0.5
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 점프 강화 + 낙하 피해 50% 감소
   ca_frog_green_shiny:
     name: 녹빛 왕개구리 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_frog_green_shiny
     mythic: CA_Pet_frog_green_shiny
     icon:
@@ -4873,14 +4635,13 @@ pets:
       kind: passive
       effects: *id034
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 점프 강화 + 낙하 피해 50% 감소
   ca_frog_permafrost:
     name: 영구동토 왕개구리
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_frog_permafrost
     mythic: CA_Pet_frog_permafrost
     icon:
@@ -4896,14 +4657,13 @@ pets:
         jump: 1
         fall: 0.5
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 점프 강화 + 낙하 피해 50% 감소
   ca_frog_permafrost_shiny:
     name: 영구동토 왕개구리 (변색종)
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_frog_permafrost_shiny
     mythic: CA_Pet_frog_permafrost_shiny
     icon:
@@ -4917,14 +4677,13 @@ pets:
       kind: passive
       effects: *id035
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       장착 중: 점프 강화 + 낙하 피해 50% 감소
   ca_frog_royal:
     name: 왕실 왕개구리
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_frog_royal
     mythic: CA_Pet_frog_royal
     icon:
@@ -4940,14 +4699,13 @@ pets:
         jump: 2
         fall: 1
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       장착 중: 점프 강화 II + 낙하 피해 없음
   ca_frog_royal_shiny:
     name: 왕실 왕개구리 (변색종)
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_frog_royal_shiny
     mythic: CA_Pet_frog_royal_shiny
     icon:
@@ -4961,14 +4719,13 @@ pets:
       kind: passive
       effects: *id036
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       장착 중: 점프 강화 II + 낙하 피해 없음
   ca_golem_arcane:
     name: 비전 고대 골렘
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_golem_arcane
     mythic: CA_Pet_golem_arcane
     icon:
@@ -4982,7 +4739,7 @@ pets:
     - CHA_PET_rune_boulder_golem_arcane
     - CHA_PET_gravity_slam_golem_arcane
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 룬 바위 / 중력 강타
       피해 4 (펫 고정, 지능 무관)
   ca_golem_arcane_shiny:
@@ -4990,7 +4747,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_golem_arcane_shiny
     mythic: CA_Pet_golem_arcane_shiny
     icon:
@@ -5004,7 +4760,7 @@ pets:
     - CHA_PET_rune_boulder_golem_arcane_shiny
     - CHA_PET_gravity_slam_golem_arcane_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 룬 바위 / 중력 강타
       피해 4 (펫 고정, 지능 무관)
   ca_golem_corrupted:
@@ -5012,7 +4768,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_golem_corrupted
     mythic: CA_Pet_golem_corrupted
     icon:
@@ -5026,7 +4781,7 @@ pets:
     - CHA_PET_rune_boulder_golem_corrupted
     - CHA_PET_gravity_slam_golem_corrupted
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 룬 바위 / 중력 강타
       피해 4 (펫 고정, 지능 무관)
   ca_golem_corrupted_shiny:
@@ -5034,7 +4789,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_golem_corrupted_shiny
     mythic: CA_Pet_golem_corrupted_shiny
     icon:
@@ -5048,7 +4802,7 @@ pets:
     - CHA_PET_rune_boulder_golem_corrupted_shiny
     - CHA_PET_gravity_slam_golem_corrupted_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 룬 바위 / 중력 강타
       피해 4 (펫 고정, 지능 무관)
   ca_golem_magma:
@@ -5056,7 +4810,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_golem_magma
     mythic: CA_Pet_golem_magma
     icon:
@@ -5070,7 +4823,7 @@ pets:
     - CHA_PET_rune_boulder_golem_magma
     - CHA_PET_gravity_slam_golem_magma
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 룬 바위 / 중력 강타
       피해 4 (펫 고정, 지능 무관)
   ca_golem_magma_shiny:
@@ -5078,7 +4831,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_golem_magma_shiny
     mythic: CA_Pet_golem_magma_shiny
     icon:
@@ -5092,7 +4844,7 @@ pets:
     - CHA_PET_rune_boulder_golem_magma_shiny
     - CHA_PET_gravity_slam_golem_magma_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 룬 바위 / 중력 강타
       피해 4 (펫 고정, 지능 무관)
   ca_golem_royal:
@@ -5100,7 +4852,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_golem_royal
     mythic: CA_Pet_golem_royal
     icon:
@@ -5114,7 +4865,7 @@ pets:
     - CHA_PET_rune_boulder_golem_royal
     - CHA_PET_gravity_slam_golem_royal
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 룬 바위 / 중력 강타
       피해 4 (펫 고정, 지능 무관)
   ca_golem_royal_shiny:
@@ -5122,7 +4873,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_golem_royal_shiny
     mythic: CA_Pet_golem_royal_shiny
     icon:
@@ -5136,7 +4886,7 @@ pets:
     - CHA_PET_rune_boulder_golem_royal_shiny
     - CHA_PET_gravity_slam_golem_royal_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 룬 바위 / 중력 강타
       피해 4 (펫 고정, 지능 무관)
   ca_tusker_demonic:
@@ -5144,7 +4894,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_tusker_demonic
     mythic: CA_Pet_tusker_demonic
     icon:
@@ -5157,7 +4906,7 @@ pets:
     skills:
     - CHA_PET_earth_stomp_tusker_demonic
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 대지 짓밟기
       피해 3 (펫 고정, 지능 무관)
   ca_tusker_demonic_shiny:
@@ -5165,7 +4914,6 @@ pets:
     stars: 3
     motion: ground
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_tusker_demonic_shiny
     mythic: CA_Pet_tusker_demonic_shiny
     icon:
@@ -5178,7 +4926,7 @@ pets:
     skills:
     - CHA_PET_earth_stomp_tusker_demonic_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 대지 짓밟기
       피해 3 (펫 고정, 지능 무관)
   ca_tusker_dreamlight:
@@ -5186,7 +4934,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_tusker_dreamlight
     mythic: CA_Pet_tusker_dreamlight
     icon:
@@ -5199,7 +4946,7 @@ pets:
     skills:
     - CHA_PET_earth_stomp_tusker_dreamlight
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 대지 짓밟기
       피해 3 (펫 고정, 지능 무관)
   ca_tusker_dreamlight_shiny:
@@ -5207,7 +4954,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_tusker_dreamlight_shiny
     mythic: CA_Pet_tusker_dreamlight_shiny
     icon:
@@ -5220,7 +4966,7 @@ pets:
     skills:
     - CHA_PET_earth_stomp_tusker_dreamlight_shiny
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 대지 짓밟기
       피해 3 (펫 고정, 지능 무관)
   ca_tusker_forest:
@@ -5228,7 +4974,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_tusker_forest
     mythic: CA_Pet_tusker_forest
     icon:
@@ -5241,7 +4986,7 @@ pets:
     skills:
     - CHA_PET_earth_stomp_tusker_forest
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 대지 짓밟기
       피해 3 (펫 고정, 지능 무관)
   ca_tusker_forest_shiny:
@@ -5249,7 +4994,6 @@ pets:
     stars: 2
     motion: ground
     size: 0.7
-    health: 6
     permission: chacademia.pet.ca_tusker_forest_shiny
     mythic: CA_Pet_tusker_forest_shiny
     icon:
@@ -5262,7 +5006,7 @@ pets:
     skills:
     - CHA_PET_earth_stomp_tusker_forest_shiny
     info: |-
-      2성 · 최대 체력 +6
+      2성 · 교화하면 도감 체력 점수 +3
       전투 중 60초마다 스킬: 대지 짓밟기
       피해 3 (펫 고정, 지능 무관)
   ca_wolfhawk_dire:
@@ -5270,7 +5014,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_wolfhawk_dire
     mythic: CA_Pet_wolfhawk_dire
     icon:
@@ -5284,7 +5027,7 @@ pets:
     - CHA_PET_wind_blade_wolfhawk_dire
     - CHA_PET_glide_dive_wolfhawk_dire
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 바람 칼날 / 활강 습격
       피해 3 (펫 고정, 지능 무관)
   ca_wolfhawk_dire_shiny:
@@ -5292,7 +5035,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_wolfhawk_dire_shiny
     mythic: CA_Pet_wolfhawk_dire_shiny
     icon:
@@ -5306,7 +5048,7 @@ pets:
     - CHA_PET_wind_blade_wolfhawk_dire_shiny
     - CHA_PET_glide_dive_wolfhawk_dire_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 바람 칼날 / 활강 습격
       피해 3 (펫 고정, 지능 무관)
   ca_wolfhawk_fallen:
@@ -5314,7 +5056,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_wolfhawk_fallen
     mythic: CA_Pet_wolfhawk_fallen
     icon:
@@ -5328,7 +5069,7 @@ pets:
     - CHA_PET_wind_blade_wolfhawk_fallen
     - CHA_PET_glide_dive_wolfhawk_fallen
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 바람 칼날 / 활강 습격
       피해 3 (펫 고정, 지능 무관)
   ca_wolfhawk_fallen_shiny:
@@ -5336,7 +5077,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_wolfhawk_fallen_shiny
     mythic: CA_Pet_wolfhawk_fallen_shiny
     icon:
@@ -5350,7 +5090,7 @@ pets:
     - CHA_PET_wind_blade_wolfhawk_fallen_shiny
     - CHA_PET_glide_dive_wolfhawk_fallen_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 바람 칼날 / 활강 습격
       피해 3 (펫 고정, 지능 무관)
   ca_wolfhawk_fullmoon:
@@ -5358,7 +5098,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_wolfhawk_fullmoon
     mythic: CA_Pet_wolfhawk_fullmoon
     icon:
@@ -5372,7 +5111,7 @@ pets:
     - CHA_PET_wind_blade_wolfhawk_fullmoon
     - CHA_PET_glide_dive_wolfhawk_fullmoon
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 바람 칼날 / 활강 습격
       피해 3 (펫 고정, 지능 무관)
   ca_wolfhawk_fullmoon_shiny:
@@ -5380,7 +5119,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_wolfhawk_fullmoon_shiny
     mythic: CA_Pet_wolfhawk_fullmoon_shiny
     icon:
@@ -5394,7 +5132,7 @@ pets:
     - CHA_PET_wind_blade_wolfhawk_fullmoon_shiny
     - CHA_PET_glide_dive_wolfhawk_fullmoon_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 바람 칼날 / 활강 습격
       피해 3 (펫 고정, 지능 무관)
   ca_wolfhawk_stormcloud:
@@ -5402,7 +5140,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_wolfhawk_stormcloud
     mythic: CA_Pet_wolfhawk_stormcloud
     icon:
@@ -5416,7 +5153,7 @@ pets:
     - CHA_PET_wind_blade_wolfhawk_stormcloud
     - CHA_PET_glide_dive_wolfhawk_stormcloud
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 바람 칼날 / 활강 습격
       피해 3 (펫 고정, 지능 무관)
   ca_wolfhawk_stormcloud_shiny:
@@ -5424,7 +5161,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_wolfhawk_stormcloud_shiny
     mythic: CA_Pet_wolfhawk_stormcloud_shiny
     icon:
@@ -5438,7 +5174,7 @@ pets:
     - CHA_PET_wind_blade_wolfhawk_stormcloud_shiny
     - CHA_PET_glide_dive_wolfhawk_stormcloud_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 바람 칼날 / 활강 습격
       피해 3 (펫 고정, 지능 무관)
   ca_wyvern_ender:
@@ -5446,7 +5182,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_wyvern_ender
     mythic: CA_Pet_wyvern_ender
     icon:
@@ -5460,7 +5195,7 @@ pets:
     - CHA_PET_spike_volley_wyvern_ender
     - CHA_PET_tail_spikes_wyvern_ender
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 가시 탄막 / 꼬리 가시
       피해 6 (펫 고정, 지능 무관)
   ca_wyvern_ender_shiny:
@@ -5468,7 +5203,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_wyvern_ender_shiny
     mythic: CA_Pet_wyvern_ender_shiny
     icon:
@@ -5482,7 +5216,7 @@ pets:
     - CHA_PET_spike_volley_wyvern_ender_shiny
     - CHA_PET_tail_spikes_wyvern_ender_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 가시 탄막 / 꼬리 가시
       피해 6 (펫 고정, 지능 무관)
   ca_wyvern_green:
@@ -5490,7 +5224,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_wyvern_green
     mythic: CA_Pet_wyvern_green
     icon:
@@ -5504,7 +5237,7 @@ pets:
     - CHA_PET_spike_volley_wyvern_green
     - CHA_PET_tail_spikes_wyvern_green
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 가시 탄막 / 꼬리 가시
       피해 6 (펫 고정, 지능 무관)
   ca_wyvern_green_shiny:
@@ -5512,7 +5245,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_wyvern_green_shiny
     mythic: CA_Pet_wyvern_green_shiny
     icon:
@@ -5526,7 +5258,7 @@ pets:
     - CHA_PET_spike_volley_wyvern_green_shiny
     - CHA_PET_tail_spikes_wyvern_green_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 가시 탄막 / 꼬리 가시
       피해 6 (펫 고정, 지능 무관)
   ca_wyvern_inferno:
@@ -5534,7 +5266,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_wyvern_inferno
     mythic: CA_Pet_wyvern_inferno
     icon:
@@ -5548,7 +5279,7 @@ pets:
     - CHA_PET_spike_volley_wyvern_inferno
     - CHA_PET_tail_spikes_wyvern_inferno
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 가시 탄막 / 꼬리 가시
       피해 6 (펫 고정, 지능 무관)
   ca_wyvern_inferno_shiny:
@@ -5556,7 +5287,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_wyvern_inferno_shiny
     mythic: CA_Pet_wyvern_inferno_shiny
     icon:
@@ -5570,7 +5300,7 @@ pets:
     - CHA_PET_spike_volley_wyvern_inferno_shiny
     - CHA_PET_tail_spikes_wyvern_inferno_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 가시 탄막 / 꼬리 가시
       피해 6 (펫 고정, 지능 무관)
   ca_wyvern_undead:
@@ -5578,7 +5308,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_wyvern_undead
     mythic: CA_Pet_wyvern_undead
     icon:
@@ -5592,7 +5321,7 @@ pets:
     - CHA_PET_spike_volley_wyvern_undead
     - CHA_PET_tail_spikes_wyvern_undead
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 가시 탄막 / 꼬리 가시
       피해 6 (펫 고정, 지능 무관)
   ca_wyvern_undead_shiny:
@@ -5600,7 +5329,6 @@ pets:
     stars: 3
     motion: fly
     size: 0.85
-    health: 10
     permission: chacademia.pet.ca_wyvern_undead_shiny
     mythic: CA_Pet_wyvern_undead_shiny
     icon:
@@ -5614,6 +5342,6 @@ pets:
     - CHA_PET_spike_volley_wyvern_undead_shiny
     - CHA_PET_tail_spikes_wyvern_undead_shiny
     info: |-
-      3성 · 최대 체력 +10
+      3성 · 교화하면 도감 체력 점수 +6
       전투 중 40초마다 스킬: 가시 탄막 / 꼬리 가시
       피해 6 (펫 고정, 지능 무관)

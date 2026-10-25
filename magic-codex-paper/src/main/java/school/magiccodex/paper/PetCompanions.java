@@ -48,7 +48,7 @@ final class PetCompanions implements Listener, AutoCloseable {
     record Def(String id, String name, int stars, int motion, float scale, double health, List<String> skills,
                boolean passive, boolean combat, Map<String, Double> effects, int seconds, String info,
                String permission, String mythic, byte[] icon) {}
-    private record Settings(double[] health, int[] interval, long combatMs, double range, Set<String> blocked) {
+    private record Settings(double[] points, double maxHealth, double curve, int[] interval, long combatMs, double range, Set<String> blocked) {
         long intervalMs(int stars) { return Math.max(5, interval[Math.clamp(stars, 1, 3)]) * 1000L; }
     }
     /** 꺼낸 펫 하나의 실행 상태 (저장하지 않음, 펫 ID만 저장). */
@@ -95,14 +95,15 @@ final class PetCompanions implements Listener, AutoCloseable {
         if (!file.exists()) plugin.saveResource(FILE, false);
         var y = new YamlConfiguration();
         y.load(file);
-        double[] health = new double[4]; int[] interval = new int[4];
+        double[] health = new double[4], points = new double[4]; int[] interval = new int[4];
         for (int s = 1; s <= 3; s++) {
-            health[s] = Math.clamp(y.getDouble("health." + s, s == 1 ? 3 : s == 2 ? 6 : 10), 0, 100);
+            points[s] = Math.clamp(y.getDouble("collection-health.points." + s, s == 1 ? 1 : s == 2 ? 3 : 6), 0, 1000);
             interval[s] = Math.clamp(y.getInt("interval-seconds." + s, s == 3 ? 40 : 60), 5, 3600);
         }
         var blocked = new HashSet<String>();
         for (String m : y.getStringList("blocked-matches")) blocked.add(m.toLowerCase(Locale.ROOT));
-        var next = new Settings(health, interval, Math.clamp(y.getLong("combat-seconds", 8), 1, 120) * 1000L,
+        var next = new Settings(points, Math.clamp(y.getDouble("collection-health.max", 20), 0, 200),
+                Math.clamp(y.getDouble("collection-health.curve", 0.38), 0.05, 3), interval, Math.clamp(y.getLong("combat-seconds", 8), 1, 120) * 1000L,
                 Math.clamp(y.getDouble("skill-range", 24), 2, 64), Set.copyOf(blocked));
         var pets = y.getConfigurationSection("pets");
         var out = new LinkedHashMap<String, Def>();
@@ -128,7 +129,7 @@ final class PetCompanions implements Listener, AutoCloseable {
             String mythic = s.getString("mythic", "");
             if (!mythic.matches("[A-Za-z0-9_.-]{1,128}")) mythic = null;
             out.put(id, new Def(id, name, stars, CompanionMath.motion(s.getString("motion")), scale,
-                    Math.clamp(s.getDouble("health", health[stars]), 0, 100), special2 ? List.copyOf(skills) : List.of(),
+                    0, special2 ? List.copyOf(skills) : List.of(),
                     special2 && kind.equals("passive"), special2 && kind.equals("combat"), Map.copyOf(effects),
                     Math.clamp(special == null ? 0 : special.getInt("seconds", 0), 0, 600), info, permission, mythic,
                     icon(s.getConfigurationSection("icon"), name)));
@@ -238,12 +239,15 @@ final class PetCompanions implements Listener, AutoCloseable {
         UUID id = p.getUniqueId();
         var o = owners.get(id);
         var d = o == null ? null : defs.get(o.pet);
-        if (d == null && !applied.containsKey(id)) return;   // 펫을 꺼낸 적 없는 사람: 할 일 없음
-        boolean special = d != null && d.passive() && !o.suppressed;
-        Map<String, Double> e = special ? d.effects() : Map.of();
-        modifier(p.getAttribute(Attribute.MAX_HEALTH), healthKey, d == null ? 0 : d.health(), AttributeModifier.Operation.ADD_NUMBER);
+        // 도감 체력 (오너 2026-10-26): 꺼낸 펫과 무관하게, 교화해 보유한 펫 등급 점수가 많을수록 최대 체력 누적 증가
+        var cfg = settings;
+        double[] score = bridge.collection(p, stars -> cfg.points()[Math.clamp(stars, 1, 3)]);
+        modifier(p.getAttribute(Attribute.MAX_HEALTH), healthKey, CompanionMath.collectionHealth(score[0], score[1], cfg.maxHealth(), cfg.curve()), AttributeModifier.Operation.ADD_NUMBER);
         var max = p.getAttribute(Attribute.MAX_HEALTH);
         if (max != null && p.getHealth() > max.getValue()) p.setHealth(max.getValue());
+        if (d == null && !applied.containsKey(id)) return;   // 펫을 꺼낸 적 없는 사람: 나머지는 할 일 없음
+        boolean special = d != null && d.passive() && !o.suppressed;
+        Map<String, Double> e = special ? d.effects() : Map.of();
         modifier(p.getAttribute(Attribute.MOVEMENT_SPEED), speedKey, Math.clamp(e.getOrDefault("speed", 0d), 0, 2), AttributeModifier.Operation.MULTIPLY_SCALAR_1);
         modifier(p.getAttribute(Attribute.KNOCKBACK_RESISTANCE), knockKey, Math.clamp(e.getOrDefault("knockback", 0d), 0, 1), AttributeModifier.Operation.ADD_NUMBER);
         modifier(p.getAttribute(Attribute.FALL_DAMAGE_MULTIPLIER), fallKey, CompanionMath.fall(e.getOrDefault("fall", 0d)), AttributeModifier.Operation.MULTIPLY_SCALAR_1);

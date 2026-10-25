@@ -59,4 +59,14 @@ class CompanionMathTest {
         assertEquals(1, CompanionMath.factor(-1));
         assertEquals(1, CompanionMath.factor(Double.NaN));
     }
+    @org.junit.jupiter.api.Test void collectionHealthMatchesOwnerTargets() {
+        // 전체 점수 612 (커스텀 528 + 바닐라 84), 곡선 0.38, 최대 20
+        org.junit.jupiter.api.Assertions.assertEquals(5, CompanionMath.collectionHealth(15, 612, 20, 0.38));
+        org.junit.jupiter.api.Assertions.assertEquals(8, CompanionMath.collectionHealth(51, 612, 20, 0.38));
+        org.junit.jupiter.api.Assertions.assertEquals(13, CompanionMath.collectionHealth(195, 612, 20, 0.38));
+        org.junit.jupiter.api.Assertions.assertEquals(20, CompanionMath.collectionHealth(612, 612, 20, 0.38));
+        org.junit.jupiter.api.Assertions.assertEquals(20, CompanionMath.collectionHealth(900, 612, 20, 0.38));
+        org.junit.jupiter.api.Assertions.assertEquals(0, CompanionMath.collectionHealth(0, 612, 20, 0.38));
+        org.junit.jupiter.api.Assertions.assertEquals(0, CompanionMath.collectionHealth(5, 0, 20, 0.38));
+    }
 }

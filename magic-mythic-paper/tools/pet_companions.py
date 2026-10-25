@@ -20,7 +20,12 @@ MCPETS = os.path.join(REPO, 'reference/output/custom-creatures-v1/server/plugins
 MOBSK = yaml.safe_load(open(os.path.join(ROOT, 'mythicmobs/Skills/chacademi_mob_skills.yml'), encoding='utf-8'))
 
 DAMAGE_SCALE = 0.5            # 펫 피해 = 원래 몹 스킬 flat × 이 값 (올림, 최소 1)
-HEALTH = {1: 3, 2: 6, 3: 10}
+# 도감 체력 (오너 2026-10-26 수정): 꺼낸 펫이 아니라 '교화해 보유한 펫'이 많을수록 최대 체력이 누적으로 오름.
+# 점수 = 보유 펫 등급 점수 합 (변색종도 같은 점수, 바닐라 펫은 pets.yml 별 기준). 체력 = 최대 × (점수 / 전체 점수)^곡선, 반올림.
+# 전체 점수 = 변색종을 뺀 모든 펫(커스텀 + 바닐라) 점수 합 → 이걸 다 모으면 +20.
+# 기준: 보이는 것만 대충(≈10마리, 거의 1성 ≈15점) +5 · 라이트(≈25마리 ≈51점) +8 · 헤비(≈70마리 ≈195점) +13 · 올클리어 +20.
+POINTS = {1: 1, 2: 3, 3: 6}
+COLLECTION = {'max': 20, 'curve': 0.38}
 INTERVAL = {2: 60, 3: 40}
 
 # 날아다니는 펫 / 물 펫 (나머지는 땅)
@@ -120,7 +125,7 @@ def main():
     for key, h in HABITATS.items():
         stars = 3 if h['rarity'] == 'boss' else int(h['rarity'])
         motion = 'swim' if h.get('medium') == 'water' else ('fly' if FLY.match(key) else 'ground')
-        base = {'name': h['name'], 'stars': stars, 'motion': motion, 'size': SIZE[stars], 'health': HEALTH[stars]}
+        base = {'name': h['name'], 'stars': stars, 'motion': motion, 'size': SIZE[stars]}
         for shiny in (False, True):
             pid = 'ca_' + key + ('_shiny' if shiny else '')
             entry = dict(base)
@@ -132,7 +137,7 @@ def main():
             icon = src.get('Icon') or {}
             entry['icon'] = {'material': icon.get('Material', 'AMETHYST_SHARD'), 'name': icon.get('Name', '§f' + entry['name']),
                              'lore': [str(x).rstrip() for x in icon.get('Description', [])]}
-            info = [f'{stars}성 · 최대 체력 +{HEALTH[stars]}']
+            info = [f'{stars}성 · 교화하면 도감 체력 점수 +{POINTS[stars]}']
             if stars >= 2:
                 mob = 'CA_Wild_' + key + ('_shiny' if shiny else '')
                 ranged = RANGED.get(mob, [])
@@ -160,15 +165,17 @@ def main():
             entry['info'] = '\n'.join(info)
             pets[pid] = entry
     doc = {
-        'health': {str(k): v for k, v in HEALTH.items()}, 'interval-seconds': {str(k): v for k, v in INTERVAL.items()}, 'combat-seconds': 8, 'skill-range': 24,
+        'collection-health': {'points': {str(k): v for k, v in POINTS.items()}, **COLLECTION},
+        'interval-seconds': {str(k): v for k, v in INTERVAL.items()}, 'combat-seconds': 8, 'skill-range': 24,
         'blocked-matches': ['quidditch', 'duel'],
         'pets': pets,
     }
     head = ('# 동행 펫 (오너 2026-10-26, 메모 #81) - 자동 생성: magic-mythic-paper/tools/pet_companions.py\n'
             '# 여기 있는 펫은 MCPets 몹을 소환하지 않고 클라가 작게 그립니다 (모든 사람에게 보임). 없는 펫(바닐라)은 예전 그대로.\n'
-            '# health: 등급별 최대 체력 증가 / interval-seconds: 전투 중 스킬·특수 능력 주기 / combat-seconds: 마지막으로 때리거나 맞은 뒤 이만큼 = 전투 중\n'
+            '# collection-health: 도감 체력 — 교화해 보유한 펫 등급 점수(points) 합이 많을수록 최대 체력 증가. 체력 = max × (보유 점수 / 전체 점수)^curve (전체 = 변색종 뺀 모든 펫)\n'
+            '# interval-seconds: 전투 중 스킬·특수 능력 주기 / combat-seconds: 마지막으로 때리거나 맞은 뒤 이만큼 = 전투 중\n'
             '# blocked-matches: 이 경기 중에는 펫을 꺼낼 수 없음 (꺼내 둔 펫은 경기 시작 때 들어감)\n'
-            '# pets.<펫ID>: stars · motion(ground/fly/swim) · size(보이는 크기, 블록) · health · skills(CHA_PET_*, 무작위 1개) 또는 special · info(펫 창 설명)\n'
+            '# pets.<펫ID>: stars · motion(ground/fly/swim) · size(보이는 크기, 블록) · skills(CHA_PET_*, 무작위 1개) 또는 special · info(펫 창 설명)\n'
             '#   permission(보유 권한) · mythic(예전 MCPets MythicMob, 변신 가면용) · icon(펫 창 아이콘: material·name·lore) — MCPets 없이 동작 (2026-10-26)\n')
     for out in ('magic-codex-paper/src/main/resources/pet-companions.yml', 'deployment/operating-config/MagicCodexBridge/pet-companions.yml'):
         with open(os.path.join(REPO, out), 'w', encoding='utf-8') as f:
