@@ -156,6 +156,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     /** 단 하나의 서: may change the cooldown of a successful cast before the client hears it. */
     ManaCasting.Result artifactCooldown(Player p,ManaSpells.Spell spell,ManaCasting.Result result){return artifactEffects==null?result:artifactEffects.rules.cooldown(p,spell,result);}
     DisplayNames names(){return names;}
+    /** 아티팩트(그림자 군주의 가면·변신 가면)가 펫 판정에 쓴다. null 일 수 있음. */
+    PetBridge pets(){return pets;}
     TitleBridge titleService(){return titles;}
     SchoolBridge schoolBridge(){return school;}
     private CommandHub commandHub;

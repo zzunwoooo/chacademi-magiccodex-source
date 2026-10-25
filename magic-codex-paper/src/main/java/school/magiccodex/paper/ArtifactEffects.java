@@ -68,6 +68,10 @@ final class ArtifactEffects implements Listener {
     /** 마법 규칙 아티팩트 5종 (순서의 목걸이·무지개 프리즘·혼돈의 주사위·단 하나의 서·거꾸로 된 마나병). */
     final ArtifactMagicRules rules;
     final ArtifactMotions motions;
+    /** 그룹 D (2026-10-26): 화염 정령·거울 쌍둥이·수다 앵무새 / 그림자 군주의 가면 / 변신 가면 (null = ModelEngine 없음). */
+    final ArtifactCompanions companions;
+    final ArtifactShadows shadows;
+    final ArtifactShapeshift shapeshift;
 
     /** Time-limited bonus from one source (refreshing the same source replaces it). */
     record Timed(long until, double speed, double haste) {}
@@ -113,6 +117,9 @@ final class ArtifactEffects implements Listener {
         Bukkit.getPluginManager().registerEvents(actions, plugin);
         Bukkit.getPluginManager().registerEvents(life, plugin);
         Bukkit.getPluginManager().registerEvents(comfort, plugin);
+        companions = new ArtifactCompanions(this);
+        shadows = new ArtifactShadows(this);
+        shapeshift = new ArtifactShapeshift(this);
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 20, 20);
         Bukkit.getScheduler().runTaskTimer(plugin, this::fastTick, 2, 2);
         Bukkit.getScheduler().runTask(plugin, hooks::connect);
@@ -737,5 +744,9 @@ final class ArtifactEffects implements Listener {
         actions.quit(id); life.quit(id); comfort.quit(id); broom.quit(id); rules.quit(id);
     }
 
-    void close() { for (Player p : Bukkit.getOnlinePlayers()) clear(p); rules.close(); motions.close(); }
+    void close() {
+        for (Player p : Bukkit.getOnlinePlayers()) clear(p);
+        rules.close(); motions.close();
+        shapeshift.close(); shadows.close(); companions.close();   // 변신 원상 복구 · 그림자 제거
+    }
 }

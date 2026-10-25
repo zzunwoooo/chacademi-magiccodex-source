@@ -26,7 +26,8 @@
     "ShoulderCrosshairMixin", "KyudichiRenderDistanceMixin", "KyudichiHitboxMixin",
     "BrigadierUnicodeWordMixin",
     "GalaxyBagSwapMixin", "GalaxyBagHooksMixin", "HandledScreenAccessor",
-    "SpyglassFovMixin", "SpyglassMouseMixin"
+    "SpyglassFovMixin", "SpyglassMouseMixin",
+    "ArtifactParrotMixin"
   ],
   "injectors": {
     "defaultRequire": 1

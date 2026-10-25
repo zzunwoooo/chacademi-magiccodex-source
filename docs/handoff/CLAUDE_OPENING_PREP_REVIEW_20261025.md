@@ -86,7 +86,7 @@ buttons:
 | 61 | 인벤세이브·부활 지점 | 인벤세이브 플러그인 없음(바닐라 손실). 부활 = 바닐라 | 에센셜 스폰은 서버 간 이동 못 함 → **사망 귀환 새 기능**: travel.yml `death-return` (from [wild, wild2] → school/world 스폰, Multiverse setspawn). 침대·리스폰 앵커 무시, 무조건. 아레나·학교는 from 에 없어 영향 없음, 경기 중(GeneralPresetBridge.combat)이면 건너뜀. 실패 시 5번 재시도 후 알림. 귀환권과 같은 이동(표·프록시), 쿨타임 없음 | 완료 — 서버 travel.yml 에 death-return 블록 복사 필요 |
 | 62 | 큐디치·결투 커스텀 경기·관전 제한 | 이미 구현: `/큐디치관리 경기 커스텀 <큐디치|결투> <닉+닉> <닉+닉>`, 레이팅 없음, 커스텀만 관전 제한 없음(일반 20명) | 확인 (예시 명령 전달, 오너 게임 확인) | 완료 |
 | 63 | 큐디치 시즌 우승 보상 | 시즌·티어 있음, 시즌 끝 보상 기능 없음 | 패스 | 보류 |
-| 64 | 아티팩트 미구현 | 150개 중 121 구현·29 꺼짐(전설 9) | **29개 전부 제작** (모션 = mc-player-motion, 소환·분신 = VFX, 말풍선 = PNG) | 진행 중 (4묶음) |
+| 64 | 아티팩트 미구현 | 150개 중 121 구현·29 꺼짐(전설 9) | **29개 전부 제작·합침** (A 모션 9 · B 생활·빗자루 10 · C 마법 규칙 5 · D 소환·분신·말풍선 5, 각 docs/handoff/CLAUDE_ARTIFACTS29_A~D.md). artifacts.yml(리소스·운영 사본) 150개 모두 켬. 빗자루 아티팩트는 큐디치에서도 허용(오너). **같이 배포**: MagicCodexBridge · ChAcademiaMagicMythic · MagicDiscovery · ChacademyMotion 모드+플러그인(config allowed-animations 수동 추가) · MagicCodex 모드 · PortableVFX 팩 JackInTheBox·ArtifactCompanions(클라 효과 폴더). 수치는 추정값 — 게임에서 조정 | 완료(빌드·게임 확인 전) |
 | 65 | 타로 마법 힌트 아이템 | 없음 | 기획: 카드 등급 **1성 50% · 2성 40% · 3성 10%**. 3성 = 무조건 알 수 있게(사실상 조건 그대로), 2성 = 애매하게, 1성 = 막연하게. 아직 안 배운 마법 중 무작위. **NPC 마법 힌트는 2성 수준으로 통일**. UI 레퍼런스는 GPT(프롬프트 전달) | 레퍼런스 대기 |
 | 66 | 던전 타임어택 순위 | 던전 미룸 | 패스 | 보류 |
 | 67 | 구조물 다이아몬드 블록 | deployment/structures/diamond_filter.py (개수 세기·지운 사본) | **비움(공기)** 으로 바꾸기(기본값 변경), 야생은 새로 밀 예정이라 기존 청크 무시. 적용은 호스팅 GPT | 완료(도구) / GPT 적용 |

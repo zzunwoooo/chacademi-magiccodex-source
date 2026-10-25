@@ -19,7 +19,7 @@ import org.joml.Vector3f;
 /**
  * Use-key artifacts (아티팩트 사용 키, default X). ArtifactBridge already checked ownership, equipment and the cooldown
  * and fires {@link ArtifactUseEvent}; here we do the effect and call setUsed(true) (only then the cooldown starts).
- * Not handled here (held, see the handoff doc): folding_spyglass (client zoom), shapeshift_mask (pet disguise).
+ * Not handled here (held, see the handoff doc): folding_spyglass (client zoom). shapeshift_mask → {@link ArtifactShapeshift}.
  */
 final class ArtifactActions implements Listener {
     private final ArtifactEffects fx;
@@ -52,6 +52,7 @@ final class ArtifactActions implements Listener {
             case "wish_coin" -> wishCoin(p);
             // 접이식 망원경: 새 MagicCodex 모드는 사용 키를 누르고 있는 동안 직접 확대하고 서버에 보내지 않는다 (옛 모드만 여기로 옴)
             case "folding_spyglass" -> "!접이식 망원경은 최신 MagicCodex 모드에서 사용 키를 누르고 있으면 확대됩니다.";
+            case "shapeshift_mask" -> fx.shapeshift.use(p);          // 변신 가면 (ArtifactShapeshift)
             default -> null;
         };
         if (result == null) return;                       // not ours / held: ArtifactBridge shows "준비 중"
