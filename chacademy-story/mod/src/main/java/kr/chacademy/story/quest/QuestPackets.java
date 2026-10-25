@@ -95,7 +95,12 @@ public final class QuestPackets {
             int n = buf.readVarInt();
             if (n < 0 || n > MAX_POINTS) throw new IllegalArgumentException("too many quest points: " + n);
             List<Point> points = new ArrayList<>(n);
-            for (int i = 0; i < n; i++) points.add(new Point(buf.readUtf(256), buf.readDouble(), buf.readDouble(), buf.readDouble()));
+            for (int i = 0; i < n; i++) {
+                String world = buf.readUtf(256);
+                double x = buf.readDouble(), y = buf.readDouble(), z = buf.readDouble();
+                if (!QuestGuidePolicy.finite(x, y, z)) throw new IllegalArgumentException("invalid quest point");
+                points.add(new Point(world, x, y, z));
+            }
             return new PointsS2C(session, List.copyOf(points));
         }), INVALID);
 
@@ -111,7 +116,12 @@ public final class QuestPackets {
         /** 깨진 패킷 (핸들러가 무시). */
         public static final GuideS2C INVALID = new GuideS2C(-1);
         public static final StreamCodec<RegistryFriendlyByteBuf, GuideS2C> CODEC = SafeCodec.failSafe("quest_guide", StreamCodec.of(
-                (buf, v) -> buf.writeVarInt(v.session()), buf -> new GuideS2C(buf.readVarInt())), INVALID);
+                (buf, v) -> buf.writeVarInt(v.session()), buf -> {
+                    int session = buf.readVarInt();
+                    // Zero is the opening-prep toggle-off frame; malformed negative sessions remain invalid.
+                    if (session < 0) throw new IllegalArgumentException("invalid guide session");
+                    return new GuideS2C(session);
+                }), INVALID);
 
         @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
     }

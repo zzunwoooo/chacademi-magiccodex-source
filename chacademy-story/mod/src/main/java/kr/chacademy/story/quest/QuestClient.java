@@ -69,12 +69,12 @@ public final class QuestClient {
         ClientPlayNetworking.registerGlobalReceiver(QuestPackets.GuideS2C.TYPE, (p, ctx) -> { if (p != QuestPackets.GuideS2C.INVALID) ctx.client().execute(() -> onGuide(p)); });
         PayloadTypeRegistry.playS2C().register(QuestPackets.PointsS2C.TYPE, QuestPackets.PointsS2C.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(QuestPackets.PointsS2C.TYPE, (p, ctx) -> { if (p != QuestPackets.PointsS2C.INVALID) ctx.client().execute(() -> onPoints(p)); });
-        ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> c.execute(() -> { view = new View(); vanishing = null; guideSession = 0; QuestWorld.reset(); }));
+        ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> c.execute(() -> { view = new View(); vanishing = null; guideSession = 0; guideAt = guideEndAt = 0; QuestWorld.reset(); }));
         // 프록시로 서버를 옮길 때 (학교 → 야생, 둘 다 minecraft:overworld): 예전 서버 좌표의 포탈·징표·화살표가 새 서버 세계에 그려지지 않게
         // 목표만 지운다 (HUD 글은 남김 — 스토리 서버로 돌아오면 서버가 단계를 다시 보낸다). TravelClient 와 같은 JOIN 시점.
         ClientPlayConnectionEvents.JOIN.register((h, s, c) -> c.execute(() -> {
             view.targetType = QuestPackets.TARGET_NONE; view.ready = false; view.npc = null; view.points.clear();
-            vanishing = null; guideSession = 0; QuestWorld.reset();
+            vanishing = null; guideSession = 0; guideAt = guideEndAt = 0; QuestWorld.reset();
         }));
         HudRenderCallback.EVENT.register(QuestHud::render);
         // 물·유리·반투명 블록을 다 그린 뒤에 그린다 (AFTER_ENTITIES 면 뒤의 물·유리가 글자·포탈 위에 덮여 흐려 보였음)
@@ -113,7 +113,7 @@ public final class QuestClient {
             if (guideSession != 0 && guideEndAt == 0) guideEndAt = now();
             return;
         }
-        if (!view.active() || g.session() != view.session) return;
+        if (!QuestGuidePolicy.accepts(view.active(), view.session, g.session())) return;
         guideSession = g.session();
         guideAt = now();
         guideEndAt = 0;
