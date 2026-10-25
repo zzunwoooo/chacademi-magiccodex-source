@@ -40,11 +40,11 @@ class CatalogStartupRuntimeTest {
    java.util.function.Consumer<SkillMetadata> callback=i.getArgument(7);callback.accept(metadata);order.add("execute");return true;
   });
   var scopes=new ArrayList<AutoCloseable>();
-  try(var bukkit=mockStatic(Bukkit.class);var mythic=mockStatic(MythicBukkit.class);var protection=mockStatic(MagicProtectionLink.class);var visual=mockStatic(CatalogVfxLink.class)){
+  try(var bukkit=mockStatic(Bukkit.class);var mythic=mockStatic(MythicBukkit.class);var protection=mockStatic(MagicProtectionLink.class);var visual=mockStatic(CatalogVfxLink.class);var commands=mockStatic(ChacaApi.class)){
    bukkit.when(Bukkit::getPluginManager).thenReturn(manager);mythic.when(MythicBukkit::inst).thenReturn(mm);
    protection.when(()->MagicProtectionLink.cast(player)).thenReturn(true);protection.when(()->MagicProtectionLink.at(player,location)).thenReturn(true);
    visual.when(()->CatalogVfxLink.cast(plugin,player,"light_leap",null)).thenAnswer(i->{order.add("vfx");return true;});
-   for(String name:List.of("NameplateBridge","CommandHub","PartyRoster","PlayerStats","JournalBridge","DisplayNames","WalletBridge","StatsBridge","SchoolBridge","SocialBridge","PartyIdentityBridge","PartyVitalsBridge","AscensionBridge","TemperatureBridge","PetBridge","ClimateService","EquipmentBridge","AppraisalBridge","EnhancementBridge","ReconfigurationBridge","PlayerStateBridge","TamingBridge","QuestBridge","DialogueBridge","NpcSocialService","TitleBridge","MailboxBridge","ShopBridge","ShopAdminBridge","MileageBridge","AdminCommandBridge","SpellUtility"))
+   for(String name:List.of("NameplateBridge","CommandHub","PartyRoster","PlayerStats","JournalBridge","DisplayNames","WalletBridge","StatsBridge","SchoolBridge","SocialBridge","PartyIdentityBridge","PartyVitalsBridge","AscensionBridge","TemperatureBridge","PetBridge","ClimateService","EquipmentBridge","AppraisalBridge","EnhancementBridge","ReconfigurationBridge","PlayerStateBridge","TamingBridge","QuestBridge","DialogueBridge","NpcSocialService","TitleBridge","MailboxBridge","ShopBridge","ShopAdminBridge","MileageBridge","AdminCommandBridge","SpellUtility","SpellSounds"))
     scopes.add(mockConstruction(Class.forName("school.magiccodex.paper."+name)));
    try(var mana=mockConstruction(ManaBridge.class,(m,c)->when(m.isCatalogMode()).thenReturn(catalog))){
     plugin.onEnable();verify(manager,never()).disablePlugin(plugin);assertEquals(1,mana.constructed().size());verify(mana.constructed().getFirst()).bindSpellCommand();
