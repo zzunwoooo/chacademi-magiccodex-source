@@ -1,0 +1,27 @@
+{
+  "verifiedUTC": "2026-10-25T15:23:55.809903+00:00",
+  "launcherCommit": "c023a10c2fb379c7898717cffa0fc59917f84e6c",
+  "publicDefaultFeed": "PASS",
+  "publicFiles": {
+    "distribution.json": "151ae4ef550ec20f622aeda95d5e5b8329f8d09ed555d44bf28309167ba3c9e4",
+    "manifests/payload-sha256.json": "864d91cbbc4b6f2f85890b3a5101092a4e5caf9a68427419b5693c0a2d719825"
+  },
+  "modules": [
+    {
+      "name": "mods/magic-codex-ui-opening-safe-20261025-v2+mc1.21.4.jar",
+      "SHA256": "0c36beb76c7d3326c8d44e67c63dcaddabc64ec934d743fd8274b3671b337b5f",
+      "url": "https://github.com/zzunwoooo/chacademi-launcher/releases/download/content-opening-final-20261025-task3/magic-codex-ui-opening-safe-20261025-v2%2Bmc1.21.4.jar"
+    },
+    {
+      "name": "mods/portable-vfx-runtime-client-client-opening-safe-20261025.jar",
+      "SHA256": "dbca428a16f35b17a3e71ff327f74690c3ad2ca40e1da0e4cf9b25b142278a5f",
+      "url": "https://github.com/zzunwoooo/chacademi-launcher/releases/download/content-opening-final-20261025-task3/portable-vfx-runtime-client-client-opening-safe-20261025.jar"
+    },
+    {
+      "name": "mods/chacademy-story-mod-client-opening-safe-20261025.jar",
+      "SHA256": "6aeb8e6a406a5d85bca60b35dc83eaa4da00a4f1619e2ac638a15d767d4ef46e",
+      "url": "https://github.com/zzunwoooo/chacademi-launcher/releases/download/content-opening-final-20261025-task3/chacademy-story-mod-client-opening-safe-20261025.jar"
+    }
+  ],
+  "hashBasis": "Git committed LF bytes; Windows staging CRLF hash is not public artifact hash"
+}

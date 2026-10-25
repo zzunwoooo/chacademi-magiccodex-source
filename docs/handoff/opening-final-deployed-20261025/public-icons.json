@@ -1,0 +1,177 @@
+{
+  "publicUI": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\public-check\\magic-codex-ui-opening-safe-20261025-v2+mc1.21.4.jar",
+  "publicUISHA256": "0c36beb76c7d3326c8d44e67c63dcaddabc64ec934d743fd8274b3671b337b5f",
+  "icons": [
+    {
+      "number": 87,
+      "entry": "assets/magiccodex/textures/spells/reviewed_20261016/pressure_hammer.png",
+      "sha256": "d08f4277bd9a49deaa1410b3fe266e7294445dd910654ccae8a1358b5144a79e",
+      "result": "PASS"
+    },
+    {
+      "number": 88,
+      "entry": "assets/magiccodex/textures/spells/reviewed_20261016/waterspout.png",
+      "sha256": "8688dc1cfcc6d7d6469287afd000ca64bff555339ec2e76abbc48470c6598386",
+      "result": "PASS"
+    },
+    {
+      "number": 300,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/fox_orbit.png",
+      "sha256": "1a7aca77354c1e2a0ee2e9fd65c581388ab43102342b97f746acf45843456a6d",
+      "result": "PASS"
+    },
+    {
+      "number": 301,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/curving_plumes.png",
+      "sha256": "b08f13abde2e3003e6dcb0197fba7a45307dbe72d8e7f1d6aa34aea45f390c83",
+      "result": "PASS"
+    },
+    {
+      "number": 302,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/crystal_orbit.png",
+      "sha256": "eb0f1edf3bcd66a6de6191bd6e82707c1fbae7bd380a63534d9d8e341b05a73b",
+      "result": "PASS"
+    },
+    {
+      "number": 303,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/venom_spit.png",
+      "sha256": "82353ef69411d72b09f63149cc2d446a2401a78746c9828cbead48c5bd04d956",
+      "result": "PASS"
+    },
+    {
+      "number": 304,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/smoke_veil.png",
+      "sha256": "02918b86bf0223f8524b975c136804205b21da2e0bf0dcc66ba78c7fc79e36ec",
+      "result": "PASS"
+    },
+    {
+      "number": 305,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/domain_stomp.png",
+      "sha256": "c5f7bd31ef626288301899f9454ef9bcf5e9ba14d6f28e4591b3c8f90e6a399d",
+      "result": "PASS"
+    },
+    {
+      "number": 306,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/seal_circle.png",
+      "sha256": "fe08b57079928f271864b11fd231f57cc190730b8276e8c793b4a106e0eb99c1",
+      "result": "PASS"
+    },
+    {
+      "number": 307,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/seal_talismans.png",
+      "sha256": "2964261dd3a109e97f22066797fcc26b2c02c60202b9ba2af59908a0d0275aa8",
+      "result": "PASS"
+    },
+    {
+      "number": 308,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/shield_slam.png",
+      "sha256": "fe7c74fac3a26a62aeee8cab2d4b7eb91afcdddac43b645d8158bf7745e977d2",
+      "result": "PASS"
+    },
+    {
+      "number": 309,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/chain_arrow.png",
+      "sha256": "1f19dcb52e4988ba0ebb2b8fdb0a02282c49f40eebd9ff4aef07391257593c1b",
+      "result": "PASS"
+    },
+    {
+      "number": 310,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/mana_drain.png",
+      "sha256": "22c8300868a7d0a370b380b04034d30fab3f286961bb2d461aa7b49f6456a171",
+      "result": "PASS"
+    },
+    {
+      "number": 311,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/soul_scythe.png",
+      "sha256": "82e1711385bddb82129ff8c6489ace4a386a1297587518e044adcbf9b7fd9e2d",
+      "result": "PASS"
+    },
+    {
+      "number": 312,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/oblivion_orbs.png",
+      "sha256": "256d6c392af8bf385135e74cc7e9b4fce0dd5fbb71c841260652923d6eab7359",
+      "result": "PASS"
+    },
+    {
+      "number": 313,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/bone_grasp.png",
+      "sha256": "4861d2fc42eb2b4bddff982e72dc2e9d98b92d24fed41e6405ca58086608472c",
+      "result": "PASS"
+    },
+    {
+      "number": 314,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/shadow_leap.png",
+      "sha256": "a5bc693766a0bfa79d9a9ba2fa6ff529d4b3b37a787ab6da8dff85796799237f",
+      "result": "PASS"
+    },
+    {
+      "number": 315,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/binding_pull.png",
+      "sha256": "c1826bc4bda0a24f30cb907cfc6b6303012eeed8fadb29a3e70784270dd03ac4",
+      "result": "PASS"
+    },
+    {
+      "number": 316,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/fairy_dust.png",
+      "sha256": "fe03ac6d7456628259ce1dd949aa22e8df9e403c0026397c148c9af1dbea7426",
+      "result": "PASS"
+    },
+    {
+      "number": 317,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/moon_wind.png",
+      "sha256": "cbecb2b01b9f69816d2f0631020e4590163fbf4e66485b3f410c642b68ef6978",
+      "result": "PASS"
+    },
+    {
+      "number": 318,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/gale_wings.png",
+      "sha256": "7fb2922d552ca2254b81f2b0c7c2b4780216b9de239a491051f0926997d22a68",
+      "result": "PASS"
+    },
+    {
+      "number": 319,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/feather_storm.png",
+      "sha256": "b152ca4febfb572d6993f4334d503551e15658d3ec06d61ea54126e71e32b090",
+      "result": "PASS"
+    },
+    {
+      "number": 320,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/hunting_pounce.png",
+      "sha256": "21dfd8bff1746382bacfa77db91afdfa2d8b3695bd1da7d5dfe1e2d31d34df23",
+      "result": "PASS"
+    },
+    {
+      "number": 321,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/roar_leap.png",
+      "sha256": "edb3ef318b129361fd2c188e1f291274e1671bb73f447fe85ae3283e863721d6",
+      "result": "PASS"
+    },
+    {
+      "number": 322,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/gravity_slam.png",
+      "sha256": "aea611b56feac31d1fbd092e9ae2f40e4f1a9b1d1e39065a999f3e90cc902180",
+      "result": "PASS"
+    },
+    {
+      "number": 323,
+      "entry": "assets/magiccodex/textures/spells/mob_skill/tail_spikes.png",
+      "sha256": "77d0b97f25a7910630b98b3865b17052ac3f74657a150a66e3edc0ac508ecb29",
+      "result": "PASS"
+    }
+  ],
+  "gimmickImagesPreserved": [
+    "assets/magiccodex/textures/spells/gimmick/conduit_turn.png",
+    "assets/magiccodex/textures/spells/gimmick/dimension_mark.png",
+    "assets/magiccodex/textures/spells/gimmick/light_beam.png",
+    "assets/magiccodex/textures/spells/gimmick/mirror_tune.png",
+    "assets/magiccodex/textures/spells/gimmick/prism_tint.png",
+    "assets/magiccodex/textures/spells/gimmick/rewind.png",
+    "assets/magiccodex/textures/spells/gimmick/statue_wake.png",
+    "assets/magiccodex/textures/spells/gimmick/steam_ignition.png",
+    "assets/magiccodex/textures/spells/gimmick/stone_weight.png",
+    "assets/magiccodex/textures/spells/gimmick/thawing_heat.png",
+    "assets/magiccodex/textures/spells/gimmick/vine_awaken.png",
+    "assets/magiccodex/textures/spells/gimmick/water_level.png"
+  ],
+  "townmapPNG": "PASS"
+}

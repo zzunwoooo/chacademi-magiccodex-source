@@ -1,0 +1,39 @@
+{
+  "completedUTC": "2026-10-25T15:28:53.208466+00:00",
+  "status": "DEPLOYED_HEALTHY",
+  "sourceCommit": "70044a79232b22b37c5e024f3fc0bcaf808a04cc",
+  "manifestSHA256": "dc320cf1d2a91e7ce16a5ad2028ece0d10f2ad69b38da6ec387490c67df19d5e",
+  "stopStartedUTC": "2026-10-25T15:19:25.304210+00:00",
+  "startRequestedUTC": "2026-10-25T15:22:48.007655+00:00",
+  "doneHostKST": {
+    "school": "[00:24:00] [Server thread/INFO]: Done (72.689s)! For help, type \"help\"",
+    "wild": "[00:23:57] [Server thread/INFO]: Done (69.558s)! For help, type \"help\"",
+    "arena": "[00:23:58] [Server thread/INFO]: Done (69.245s)! For help, type \"help\""
+  },
+  "proxyPIDUnchanged": 9392,
+  "fileMatches": 58,
+  "archivedOldSortingFiles": 29,
+  "minecraftStatusPassed": 5,
+  "newDbOrLinkErrors": 0,
+  "launcherCommit": "c023a10c2fb379c7898717cffa0fc59917f84e6c",
+  "releaseTag": "content-opening-final-20261025-task3",
+  "publicDistributionSHA256": "151ae4ef550ec20f622aeda95d5e5b8329f8d09ed555d44bf28309167ba3c9e4",
+  "publicPayloadManifestSHA256": "864d91cbbc4b6f2f85890b3a5101092a4e5caf9a68427419b5693c0a2d719825",
+  "installerLatestUnchanged": "v0.1.28",
+  "publicClientHashes": {
+    "mods/magic-codex-ui-opening-safe-20261025-v2+mc1.21.4.jar": "0c36beb76c7d3326c8d44e67c63dcaddabc64ec934d743fd8274b3671b337b5f",
+    "mods/portable-vfx-runtime-client-client-opening-safe-20261025.jar": "dbca428a16f35b17a3e71ff327f74690c3ad2ca40e1da0e4cf9b25b142278a5f",
+    "mods/chacademy-story-mod-client-opening-safe-20261025.jar": "6aeb8e6a406a5d85bca60b35dc83eaa4da00a4f1619e2ac638a15d767d4ef46e"
+  },
+  "sourceOnlyReproduction": false,
+  "manualInGameTested": false,
+  "mapInitialScaleNeedsInGameConfirmation": true,
+  "excluded": [
+    "personal launcher",
+    "dungeon",
+    "nonexistent tutorial servers",
+    "cancelled harbor cutscene",
+    "new loot 151 followup"
+  ],
+  "temporaryLauncherFeedReservationReleased": true
+}

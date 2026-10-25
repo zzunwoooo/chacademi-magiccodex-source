@@ -1,0 +1,72 @@
+{
+  "status": "PRIVATE_STAGE_ONLY_NOT_INSTALLED",
+  "sourceCommit": "70044a79232b22b37c5e024f3fc0bcaf808a04cc",
+  "codeCommit": "77eedda9",
+  "base42LedgerSHA256": "3f87b22f5b5f647fcd5fddb6f3b7da67121bcb82fee1fd184f7e1a8004138c10",
+  "combinedPrivateLedgerSHA256": "c1099f6743c922f8c08f26ee87a4b2d61847c08894db99270a20be40c7c26f1c",
+  "combinedFileCount": 44,
+  "townmapTargets": [
+    {
+      "relativeTarget": "school/plugins/MagicCodexBridge/travel.yml",
+      "beforeSHA256": "21aca2fb8b2c31c3baf0fc838fc63a95396746faf7030bc618935ecd15312fc9",
+      "stagedSHA256": "414554bfea0349b6d5039719baf8d00c9d5cdcd412a7f4c137ddc75e1c3d3f6a"
+    },
+    {
+      "relativeTarget": "wild/plugins/MagicCodexBridge/travel.yml",
+      "beforeSHA256": "e7bffa2be0ffd9ff25bf30f96393530eea604d61281aaf6353462d5a8e08e5ed",
+      "stagedSHA256": "a7ed09fafc4ce112b3ab80a65ba72cef52c3a94fd543c30cb35fe81350978de4"
+    }
+  ],
+  "changedLeafScope": [
+    "tabs.school.map",
+    "tabs.school.image.texture",
+    "tabs.school.image.size",
+    "tabs.school.image.top-left",
+    "tabs.school.image.top-right",
+    "tabs.school.image.bottom-left",
+    "tabs.school.image.anchor"
+  ],
+  "otherSettingsPointsRulesServerIdsPreserved": true,
+  "arenaTravelNotCreated": true,
+  "schoolPNG": {
+    "asset": "assets/magiccodex/textures/gui/travel/maps/school.png",
+    "size": [
+      1479,
+      1064
+    ],
+    "sha256": "9f3aca34b73cb83951dadc5ffd189a52cfcc974639fbadeb22d0b57106baee04"
+  },
+  "anchor": {
+    "pixel": [
+      493,
+      432
+    ],
+    "worldXZ": [
+      32.5,
+      12.5
+    ],
+    "blocksPerPixel": 0.25,
+    "topLeft": [
+      -90.75,
+      -95.5
+    ],
+    "topRight": [
+      279.0,
+      -95.5
+    ],
+    "bottomLeft": [
+      -90.75,
+      170.5
+    ]
+  },
+  "mathAndWireProbe": "PASS ACTUAL_SERVER_CONFIG_PARSE; MAP_IMAGE_1479x1064; ANCHOR_WORLD_32.5_12.5=PIXEL_493_432; SCALE_0.25; WIRE_ROUNDTRIP_BYTES=209; ACTUAL_CLIENT_AFFINE_INVERSE",
+  "rollback": {
+    "originalFiles": 43,
+    "newCandidateFilesRemoveOnlyIfInstalledSHAEquals": 30,
+    "noPlayerDataOrDBIncluded": true
+  },
+  "noOperatingFileBodiesIncluded": true,
+  "operatingChanged": false,
+  "launcherChanged": false,
+  "restartPerformed": false
+}
