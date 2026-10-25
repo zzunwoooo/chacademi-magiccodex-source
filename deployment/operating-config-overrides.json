@@ -1,117 +1,129 @@
 {
-  "_comment": "tools/operating_overlay.py 설정. files = overlay ↔ 원본. keep = 의도된 운영 값(재생성해도 overlay 값 유지). pending = 다른 작업 묶음이 고치는 항목(재생성 시 overlay 그대로, 검사 시 경고만). 배포 전: python3 tools/operating_overlay.py check",
-  "files": [
-    {
-      "overlay": "deployment/operating-config/MagicCodexBridge/mana-spells.yml",
-      "source": "magic-codex-paper/src/main/resources/mana-spells.yml",
-      "entries": "spells"
-    },
-    {
-      "overlay": "deployment/operating-config/MagicCodexBridge/spell-runtime.yml",
-      "source": "magic-mythic-paper/server-config/spell-runtime.yml",
-      "entries": "spells",
-      "generator": "magic-mythic-paper/tools/spells.py"
-    },
-    {
-      "overlay": "deployment/operating-config/MagicCodexBridge/artifacts.yml",
-      "source": "magic-codex-paper/src/main/resources/artifacts.yml",
-      "entries": "artifacts"
-    },
-    {
-      "overlay": "deployment/operating-config/MagicCodexBridge/climate.yml",
-      "source": "magic-codex-paper/src/main/resources/climate.yml"
-    },
-    {
-      "overlay": "deployment/operating-config/PortableVFX/spell-catalog.yml",
-      "source": "portable-vfx-runtime/paper/src/main/resources/spell-catalog.yml",
-      "entries": "spells"
-    },
-    {
-      "overlay": "deployment/operating-config/PortableVFX/spell-bindings.yml",
-      "source": "portable-vfx-runtime/paper/src/main/resources/spell-bindings.yml",
-      "entries": "bindings"
-    },
-    {
-      "overlay": "deployment/operating-config/MythicMobs/Skills/chacademi_spells.yml",
-      "source": "magic-mythic-paper/mythicmobs/Skills/chacademi_spells.yml",
-      "kind": "mythic",
-      "generator": "magic-mythic-paper/tools/spells.py"
-    }
-  ],
-  "keep": [
-    {
-      "file": "deployment/operating-config/MagicCodexBridge/mana-spells.yml",
-      "path": [
-        "spells",
-        "vine_ladder",
-        "enabled"
-      ],
-      "reason": "103 덩굴 사다리: 운영에서만 켠 서버 이벤트 연동(CODEX_OPERATING_ALCHEMY_CARRIER_20261016 '103/134 runtime-only bindings')"
-    },
-    {
-      "file": "deployment/operating-config/MagicCodexBridge/mana-spells.yml",
-      "path": [
-        "spells",
-        "light_mark",
-        "enabled"
-      ],
-      "reason": "134 빛의 낙인: 운영에서만 켠 서버 이벤트 연동"
-    },
-    {
-      "file": "deployment/operating-config/PortableVFX/spell-catalog.yml",
-      "path": [
-        "spells",
-        "vine_ladder"
-      ],
-      "reason": "103 운영 연출 단계(phases)·enabled·reviewed"
-    },
-    {
-      "file": "deployment/operating-config/PortableVFX/spell-catalog.yml",
-      "path": [
-        "spells",
-        "light_mark"
-      ],
-      "reason": "134 운영 연출 단계(phases)·enabled·reviewed"
-    },
-    {
-      "file": "deployment/operating-config/PortableVFX/spell-bindings.yml",
-      "path": [
-        "bindings",
-        "vine_ladder"
-      ],
-      "reason": "103 운영 전용 바인딩 (원본에 없음)"
-    },
-    {
-      "file": "deployment/operating-config/PortableVFX/spell-bindings.yml",
-      "path": [
-        "bindings",
-        "light_mark"
-      ],
-      "reason": "134 운영 전용 바인딩 (원본에 없음)"
-    },
-    {
-      "file": "deployment/operating-config/MagicCodexBridge/climate.yml",
-      "path": [
-        "season-clock"
-      ],
-      "reason": "운영은 실시간 계절(realtime)"
-    },
-    {
-      "file": "deployment/operating-config/MagicCodexBridge/climate.yml",
-      "path": [
-        "real-time-season",
-        "epoch"
-      ],
-      "reason": "운영에 적용된 계절 기준 시각 (바꾸면 계절이 튐)"
-    }
-  ],
-  "pending": [],
-  "donation": {
-    "catalog": "magic-codex-paper/src/main/resources/donation-spells.yml",
-    "spells": "magic-codex-paper/src/main/resources/mana-spells.yml",
-    "exclude": [],
-    "orphans": [
-      "wind_vault"
-    ]
+ "_comment": "tools/operating_overlay.py 설정. files = overlay ↔ 원본. keep = 의도된 운영 값(재생성해도 overlay 값 유지). pending = 다른 작업 묶음이 고치는 항목(재생성 시 overlay 그대로, 검사 시 경고만). 배포 전: python3 tools/operating_overlay.py check",
+ "files": [
+  {
+   "overlay": "deployment/operating-config/MagicCodexBridge/mana-spells.yml",
+   "source": "magic-codex-paper/src/main/resources/mana-spells.yml",
+   "entries": "spells"
+  },
+  {
+   "overlay": "deployment/operating-config/MagicCodexBridge/spell-runtime.yml",
+   "source": "magic-mythic-paper/server-config/spell-runtime.yml",
+   "entries": "spells",
+   "generator": "magic-mythic-paper/tools/spells.py"
+  },
+  {
+   "overlay": "deployment/operating-config/MagicCodexBridge/artifacts.yml",
+   "source": "magic-codex-paper/src/main/resources/artifacts.yml",
+   "entries": "artifacts"
+  },
+  {
+   "overlay": "deployment/operating-config/MagicCodexBridge/climate.yml",
+   "source": "magic-codex-paper/src/main/resources/climate.yml"
+  },
+  {
+   "overlay": "deployment/operating-config/PortableVFX/spell-catalog.yml",
+   "source": "portable-vfx-runtime/paper/src/main/resources/spell-catalog.yml",
+   "entries": "spells"
+  },
+  {
+   "overlay": "deployment/operating-config/PortableVFX/spell-bindings.yml",
+   "source": "portable-vfx-runtime/paper/src/main/resources/spell-bindings.yml",
+   "entries": "bindings"
+  },
+  {
+   "overlay": "deployment/operating-config/MythicMobs/Skills/chacademi_spells.yml",
+   "source": "magic-mythic-paper/mythicmobs/Skills/chacademi_spells.yml",
+   "kind": "mythic",
+   "generator": "magic-mythic-paper/tools/spells.py"
+  },
+  {
+   "overlay": "deployment/operating-config/MagicCodexBridge/pet-companions.yml",
+   "source": "magic-codex-paper/src/main/resources/pet-companions.yml",
+   "entries": "pets",
+   "generator": "magic-mythic-paper/tools/pet_companions.py"
+  },
+  {
+   "overlay": "deployment/operating-config/MythicMobs/Skills/chacademi_pet_skills.yml",
+   "source": "magic-mythic-paper/mythicmobs/Skills/chacademi_pet_skills.yml",
+   "kind": "mythic",
+   "generator": "magic-mythic-paper/tools/pet_companions.py"
   }
+ ],
+ "keep": [
+  {
+   "file": "deployment/operating-config/MagicCodexBridge/mana-spells.yml",
+   "path": [
+    "spells",
+    "vine_ladder",
+    "enabled"
+   ],
+   "reason": "103 덩굴 사다리: 운영에서만 켠 서버 이벤트 연동(CODEX_OPERATING_ALCHEMY_CARRIER_20261016 '103/134 runtime-only bindings')"
+  },
+  {
+   "file": "deployment/operating-config/MagicCodexBridge/mana-spells.yml",
+   "path": [
+    "spells",
+    "light_mark",
+    "enabled"
+   ],
+   "reason": "134 빛의 낙인: 운영에서만 켠 서버 이벤트 연동"
+  },
+  {
+   "file": "deployment/operating-config/PortableVFX/spell-catalog.yml",
+   "path": [
+    "spells",
+    "vine_ladder"
+   ],
+   "reason": "103 운영 연출 단계(phases)·enabled·reviewed"
+  },
+  {
+   "file": "deployment/operating-config/PortableVFX/spell-catalog.yml",
+   "path": [
+    "spells",
+    "light_mark"
+   ],
+   "reason": "134 운영 연출 단계(phases)·enabled·reviewed"
+  },
+  {
+   "file": "deployment/operating-config/PortableVFX/spell-bindings.yml",
+   "path": [
+    "bindings",
+    "vine_ladder"
+   ],
+   "reason": "103 운영 전용 바인딩 (원본에 없음)"
+  },
+  {
+   "file": "deployment/operating-config/PortableVFX/spell-bindings.yml",
+   "path": [
+    "bindings",
+    "light_mark"
+   ],
+   "reason": "134 운영 전용 바인딩 (원본에 없음)"
+  },
+  {
+   "file": "deployment/operating-config/MagicCodexBridge/climate.yml",
+   "path": [
+    "season-clock"
+   ],
+   "reason": "운영은 실시간 계절(realtime)"
+  },
+  {
+   "file": "deployment/operating-config/MagicCodexBridge/climate.yml",
+   "path": [
+    "real-time-season",
+    "epoch"
+   ],
+   "reason": "운영에 적용된 계절 기준 시각 (바꾸면 계절이 튐)"
+  }
+ ],
+ "pending": [],
+ "donation": {
+  "catalog": "magic-codex-paper/src/main/resources/donation-spells.yml",
+  "spells": "magic-codex-paper/src/main/resources/mana-spells.yml",
+  "exclude": [],
+  "orphans": [
+   "wind_vault"
+  ]
+ }
 }

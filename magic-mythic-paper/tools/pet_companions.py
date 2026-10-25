@@ -16,6 +16,7 @@ HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE);
 
 HABITATS = json.load(open(os.path.join(REPO, 'creature-spawns-paper/src/main/resources/habitats.yml'), encoding='utf-8'))['habitats']
 RANGED = yaml.safe_load(open(os.path.join(REPO, 'creature-spawns-paper/src/main/resources/ranged-skills.yml'), encoding='utf-8'))['ranged-skills']
+MCPETS = os.path.join(REPO, 'reference/output/custom-creatures-v1/server/plugins/MCPets/Pets/ChAcademiaCustom')  # 예전 MCPets 정의 (이름·아이콘·권한·MythicMob 을 옮겨 옴)
 MOBSK = yaml.safe_load(open(os.path.join(ROOT, 'mythicmobs/Skills/chacademi_mob_skills.yml'), encoding='utf-8'))
 
 DAMAGE_SCALE = 0.5            # 펫 피해 = 원래 몹 스킬 flat × 이 값 (올림, 최소 1)
@@ -106,6 +107,11 @@ def pet_skill_lines(name):
     while out and out[-1].startswith('delay'): out.pop()
     return (out, int(dmg)) if out else None
 
+class _Dumper(yaml.SafeDumper):
+    pass
+# 여러 줄 설명은 | 블록으로 (운영 overlay 검사 도구의 작은 YAML 파서가 읽을 수 있게)
+_Dumper.add_representer(str, lambda d, v: d.represent_scalar('tag:yaml.org,2002:str', v, style='|' if '\n' in v else None))
+
 def main():
     skills_out = ['# 차카데미 동행 펫 스킬 (자동 생성: magic-mythic-paper/tools/pet_companions.py) - 손으로 고치지 마세요',
                   '# 원래 몹 스킬(chacademi_mob_skills.yml)의 펫판: 상태이상·밀치기·이동·소환 없음, 예고 장판 없음, 펫 고정 피해(flat).',
@@ -119,6 +125,13 @@ def main():
             pid = 'ca_' + key + ('_shiny' if shiny else '')
             entry = dict(base)
             if shiny: entry['name'] = h['name'] + ' (변색종)'
+            src = yaml.safe_load(open(os.path.join(MCPETS, pid + '.yml'), encoding='utf-8'))
+            assert src['Id'] == pid, pid
+            entry['permission'] = src['Permission']
+            entry['mythic'] = src['MythicMob']
+            icon = src.get('Icon') or {}
+            entry['icon'] = {'material': icon.get('Material', 'AMETHYST_SHARD'), 'name': icon.get('Name', '§f' + entry['name']),
+                             'lore': [str(x).rstrip() for x in icon.get('Description', [])]}
             info = [f'{stars}성 · 최대 체력 +{HEALTH[stars]}']
             if stars >= 2:
                 mob = 'CA_Wild_' + key + ('_shiny' if shiny else '')
@@ -147,7 +160,7 @@ def main():
             entry['info'] = '\n'.join(info)
             pets[pid] = entry
     doc = {
-        'health': HEALTH, 'interval-seconds': INTERVAL, 'combat-seconds': 8, 'skill-range': 24,
+        'health': {str(k): v for k, v in HEALTH.items()}, 'interval-seconds': {str(k): v for k, v in INTERVAL.items()}, 'combat-seconds': 8, 'skill-range': 24,
         'blocked-matches': ['quidditch', 'duel'],
         'pets': pets,
     }
@@ -155,9 +168,19 @@ def main():
             '# 여기 있는 펫은 MCPets 몹을 소환하지 않고 클라가 작게 그립니다 (모든 사람에게 보임). 없는 펫(바닐라)은 예전 그대로.\n'
             '# health: 등급별 최대 체력 증가 / interval-seconds: 전투 중 스킬·특수 능력 주기 / combat-seconds: 마지막으로 때리거나 맞은 뒤 이만큼 = 전투 중\n'
             '# blocked-matches: 이 경기 중에는 펫을 꺼낼 수 없음 (꺼내 둔 펫은 경기 시작 때 들어감)\n'
-            '# pets.<펫ID>: stars · motion(ground/fly/swim) · size(보이는 크기, 블록) · health · skills(CHA_PET_*, 무작위 1개) 또는 special · info(펫 창 설명)\n')
-    with open(os.path.join(REPO, 'magic-codex-paper/src/main/resources/pet-companions.yml'), 'w', encoding='utf-8') as f:
-        f.write(head); yaml.safe_dump(doc, f, allow_unicode=True, sort_keys=False, width=200)
+            '# pets.<펫ID>: stars · motion(ground/fly/swim) · size(보이는 크기, 블록) · health · skills(CHA_PET_*, 무작위 1개) 또는 special · info(펫 창 설명)\n'
+            '#   permission(보유 권한) · mythic(예전 MCPets MythicMob, 변신 가면용) · icon(펫 창 아이콘: material·name·lore) — MCPets 없이 동작 (2026-10-26)\n')
+    for out in ('magic-codex-paper/src/main/resources/pet-companions.yml', 'deployment/operating-config/MagicCodexBridge/pet-companions.yml'):
+        with open(os.path.join(REPO, out), 'w', encoding='utf-8') as f:
+            f.write(head); yaml.dump(doc, f, Dumper=_Dumper, allow_unicode=True, sort_keys=False, width=200)
+    # 서버 파일 교체 때 지울 MCPets 정의 (동행 펫으로 옮겨 감)
+    removal = {'reason': '동행 펫 전환 (오너 2026-10-26, 메모 #81): 커스텀 펫은 MCPets 없이 MagicCodexBridge pet-companions.yml 로 동작',
+               'servers': ['school', 'wild', 'arena'],
+               'delete': sorted(f'plugins/MCPets/Pets/ChAcademiaCustom/{pid}.yml' for pid in pets),
+               'keep': ['plugins/MCPets/Pets/ChAcademiaTaming (바닐라 펫)', 'plugins/MCPets/Pets/ChAcademiaShiny (바닐라 변색종 펫)',
+                        'MythicMobs CA_Pet_* 몹 정의 (변신 가면이 씀)', '플레이어 보유 권한 chacademia.pet.* (그대로 이어서 씀)']}
+    with open(os.path.join(REPO, 'deployment/mcpets-companion-removal.json'), 'w', encoding='utf-8') as f:
+        json.dump(removal, f, ensure_ascii=False, indent=1); f.write('\n')
     text = '\n'.join(skills_out) + '\n'
     for p in (os.path.join(ROOT, 'mythicmobs/Skills/chacademi_pet_skills.yml'), os.path.join(REPO, 'deployment/operating-config/MythicMobs/Skills/chacademi_pet_skills.yml')):
         open(p, 'w', encoding='utf-8').write(text)
