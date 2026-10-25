@@ -65,7 +65,7 @@ bindings:
   wind_push:
     folder: WindPush
     number: 4
-    range: 10
+    range: 17
     speed: 0.6
     holdTicks: 100
     numeric-provenance: preserved approved range; other unspecified numbers editable defaults
@@ -178,7 +178,7 @@ bindings:
   storm_command:
     folder: StormCommand
     number: 10
-    range: 10
+    range: 17
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -207,7 +207,7 @@ bindings:
   vacuum_cleave:
     folder: VacuumCleave
     number: 11
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -318,7 +318,7 @@ bindings:
   weightless_zone:
     folder: WeightlessZone
     number: 15
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 60
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -494,7 +494,7 @@ bindings:
   cross_breeze:
     folder: CrossBreeze
     number: 21
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -554,7 +554,7 @@ bindings:
   returning_blade:
     folder: ReturningBlade
     number: 22
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -601,7 +601,7 @@ bindings:
   pressure_press:
     folder: PressurePress
     number: 23
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 8
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -751,7 +751,7 @@ bindings:
   lightning_needle:
     folder: LightningNeedle
     number: 26
-    range: 20
+    range: 34
     speed: 0.6
     holdTicks: 100
     numeric-provenance: preserved approved range; other unspecified numbers editable defaults
@@ -793,7 +793,7 @@ bindings:
   arrested_orbit:
     folder: ArrestedOrbit
     number: 28
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -937,7 +937,7 @@ bindings:
   crossfire:
     folder: Crossfire
     number: 29
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 16
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -1081,7 +1081,7 @@ bindings:
   storm_crown:
     folder: StormCrown
     number: 32
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -1247,7 +1247,7 @@ bindings:
   ember_bolt:
     folder: Fireball
     number: 34
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -1316,7 +1316,7 @@ bindings:
   ember_trap:
     folder: EmberTrap
     number: 37
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 1200
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -1380,7 +1380,7 @@ bindings:
   fire_curtain:
     folder: FireCurtain
     number: 38
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -1482,7 +1482,7 @@ bindings:
   falling_star:
     folder: FallingStar
     number: 41
-    range: 20
+    range: 34
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -1669,7 +1669,7 @@ bindings:
   ash_brand:
     folder: AshBrand
     number: 45
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -1800,7 +1800,7 @@ bindings:
   charcoal_conversion:
     folder: CharcoalConversion
     number: 50
-    range: 20
+    range: 34
     speed: 0.6
     holdTicks: 100
     numeric-provenance: preserved approved range; other unspecified numbers editable defaults
@@ -1998,7 +1998,7 @@ bindings:
   explosive_wedge:
     folder: ExplosiveWedge
     number: 56
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -2053,7 +2053,7 @@ bindings:
   firebird_hunt:
     folder: FirebirdHunt
     number: 59
-    range: 10
+    range: 17
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -2265,7 +2265,7 @@ bindings:
   incandescent_break:
     folder: IncandescentBreak
     number: 62
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -2367,7 +2367,7 @@ bindings:
   crimson_breath:
     folder: CrimsonBreath
     number: 64
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -2459,7 +2459,7 @@ bindings:
   water_bolt:
     folder: WaterBolt
     number: 67
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -2721,7 +2721,7 @@ bindings:
   eternal_ice_prison:
     folder: EternalIcePrison
     number: 74
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -2836,7 +2836,7 @@ bindings:
   frost_rupture:
     folder: FrostRupture
     number: 78
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -2865,7 +2865,7 @@ bindings:
   pressure_lance:
     folder: PressureLance
     number: 79
-    range: 15
+    range: 26
     speed: 1.25
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -3026,7 +3026,7 @@ bindings:
   healing_rain:
     folder: HealingRain
     number: 83
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 60
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -3140,7 +3140,7 @@ bindings:
   bubble_aria:
     folder: BubbleAria
     number: 86
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -3183,7 +3183,7 @@ bindings:
   pressure_hammer:
     folder: PressureHammer
     number: 87
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -3204,7 +3204,7 @@ bindings:
   waterspout:
     folder: Waterspout
     number: 88
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 38
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -3483,7 +3483,7 @@ bindings:
   tidal_wave:
     folder: TidalWave
     number: 94
-    range: 12
+    range: 20
     speed: 0.4
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -3530,7 +3530,7 @@ bindings:
   bouncing_droplet:
     folder: BouncingDroplet
     number: 95
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -3596,7 +3596,7 @@ bindings:
   abyssal_pressure:
     folder: AbyssalPressure
     number: 96
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 84
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -3701,7 +3701,7 @@ bindings:
   pebble_toss:
     folder: PebbleToss
     number: 99
-    range: 15
+    range: 26
     speed: 0.6
     holdTicks: 100
     numeric-provenance: editable project defaults unless overridden; user authorized defaults
@@ -3903,7 +3903,7 @@ bindings:
   solar_judgment:
     folder: SolarJudgment
     number: 147
-    range: 30
+    range: 51
     speed: 1
     max-ticks: 440
     sequence:
@@ -4475,7 +4475,7 @@ bindings:
   material_exchange:
     folder: MaterialExchange
     number: 124
-    range: 15
+    range: 26
     speed: 1
     trajectory: server-events
     max-ticks: 180
@@ -4691,7 +4691,7 @@ bindings:
   shadow_bind:
     folder: ShadowBind
     number: 166
-    range: 10
+    range: 17
     speed: 1
     trajectory: server-events
     max-ticks: 200
@@ -5207,7 +5207,7 @@ bindings:
   flint_sorting:
     folder: FlintSorting
     number: 116
-    range: 15
+    range: 26
     speed: 1
     trajectory: server-events
     max-ticks: 260
@@ -5279,7 +5279,7 @@ bindings:
   thorn_seeds:
     folder: ThornSeeds
     number: 119
-    range: 15
+    range: 26
     speed: 1
     trajectory: server-events
     max-ticks: 260
@@ -5357,7 +5357,7 @@ bindings:
   mountain_back:
     folder: MountainBack
     number: 128
-    range: 16
+    range: 27
     speed: 1
     trajectory: server-events
     max-ticks: 260
@@ -5399,7 +5399,7 @@ bindings:
   merciful_arrow:
     folder: MercifulArrow
     number: 158
-    range: 25
+    range: 42
     speed: 1
     trajectory: server-events
     max-ticks: 260
@@ -6711,7 +6711,7 @@ bindings:
   shadow_exchange:
     folder: ShadowExchange
     number: 172
-    range: 30
+    range: 51
     speed: 1
     trajectory: server-events
     max-ticks: 120
@@ -6775,7 +6775,7 @@ bindings:
   life_siphon:
     folder: LifeSiphon
     number: 174
-    range: 30
+    range: 51
     speed: 1
     trajectory: server-events
     max-ticks: 180
@@ -6815,7 +6815,7 @@ bindings:
   misfortune_whisper:
     folder: misfortune_whisper
     number: 176
-    range: 30
+    range: 51
     speed: 1
     trajectory: server-events
     max-ticks: 280
@@ -6873,7 +6873,7 @@ bindings:
   curse_transfer:
     folder: CurseTransfer
     number: 178
-    range: 30
+    range: 51
     speed: 1
     trajectory: server-events
     max-ticks: 240
@@ -6911,7 +6911,7 @@ bindings:
   discord:
     folder: Discord
     number: 179
-    range: 30
+    range: 51
     speed: 1
     trajectory: server-events
     max-ticks: 240
@@ -6943,7 +6943,7 @@ bindings:
   night_chain:
     folder: NightChain
     number: 180
-    range: 30
+    range: 51
     speed: 1
     trajectory: server-events
     max-ticks: 280
@@ -7239,7 +7239,7 @@ bindings:
   shadow_nail:
     folder: ShadowNail
     number: 184
-    range: 30
+    range: 51
     speed: 1
     trajectory: server-events
     max-ticks: 420
@@ -7279,7 +7279,7 @@ bindings:
   night_lullaby:
     folder: NightLullaby
     number: 185
-    range: 30
+    range: 51
     speed: 1
     trajectory: server-events
     max-ticks: 320
@@ -7317,7 +7317,7 @@ bindings:
   loosen_grasp:
     folder: LoosenGrasp
     number: 186
-    range: 30
+    range: 51
     speed: 1
     trajectory: server-events
     max-ticks: 200
@@ -7355,7 +7355,7 @@ bindings:
   healing_seal:
     folder: HealingSeal
     number: 188
-    range: 30
+    range: 51
     speed: 1
     trajectory: server-events
     max-ticks: 280
@@ -7385,7 +7385,7 @@ bindings:
   shadow_scales:
     folder: ShadowScales
     number: 189
-    range: 30
+    range: 51
     speed: 1
     trajectory: server-events
     max-ticks: 140
@@ -7421,7 +7421,7 @@ bindings:
   warning_thread:
     folder: WarningThread
     number: 190
-    range: 30
+    range: 51
     speed: 1
     trajectory: server-events
     max-ticks: 260
@@ -7459,7 +7459,7 @@ bindings:
   wound_accounting:
     folder: WoundAccounting
     number: 192
-    range: 30
+    range: 51
     speed: 1
     trajectory: server-events
     max-ticks: 180
@@ -7613,7 +7613,7 @@ bindings:
   eclipse_eye:
     folder: EclipseEye
     number: 196
-    range: 30
+    range: 51
     speed: 1
     trajectory: server-events
     max-ticks: 430
@@ -7704,7 +7704,7 @@ bindings:
   void_maw:
     folder: VoidMaw
     number: 198
-    range: 30
+    range: 51
     speed: 1
     trajectory: server-events
     max-ticks: 180
@@ -7818,7 +7818,7 @@ bindings:
   droplet_relay:
     folder: DropletRelay
     number: 213
-    range: 30
+    range: 51
     speed: 1
     trajectory: server-events
     max-ticks: 200
@@ -7854,7 +7854,7 @@ bindings:
   folding_tideplane:
     folder: FoldingTideplane
     number: 214
-    range: 30
+    range: 51
     speed: 1
     trajectory: server-events
     max-ticks: 200

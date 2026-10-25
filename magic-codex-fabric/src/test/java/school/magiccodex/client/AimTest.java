@@ -54,7 +54,7 @@ class AimTest {
         var shapes = SpellTargets.parse(Files.readString(file, StandardCharsets.UTF_8));
         assertEquals(SpellTargets.Mode.AREA, shapes.get("falling_star").mode());
         assertEquals(4, shapes.get("falling_star").radius(), 1e-9);
-        assertEquals(20, shapes.get("falling_star").range(), 1e-9);
+        assertEquals(34, shapes.get("falling_star").range(), 1e-9); // #80 사거리 1.7배
         assertEquals(SpellTargets.Mode.UNIT, shapes.get("flame_lash").mode());
         assertEquals(8, shapes.get("flame_lash").range(), 1e-9);
         assertEquals(SpellTargets.Mode.LINE, shapes.get("ember_bolt").mode());

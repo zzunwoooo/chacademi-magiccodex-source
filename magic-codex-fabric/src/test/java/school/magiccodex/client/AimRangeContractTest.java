@@ -20,8 +20,8 @@ class AimRangeContractTest {
  }
  @Test void coneAndWaveKeepMechanicalEnvelopeSeparateFromTargetRay()throws Exception{
   var shapes=SpellTargets.parse(Files.readString(Path.of("src/main/resources/assets/magiccodex/spell-targeting.json")));
-  var cone=shapes.get("crimson_breath");assertEquals(15,cone.range());assertEquals(9,cone.length());assertEquals(50,cone.width());
-  var firebird=shapes.get("firebird_hunt");assertEquals(10,firebird.range());assertEquals(12,firebird.length());assertEquals(3.2,firebird.width());
+  var cone=shapes.get("crimson_breath");assertEquals(26,cone.range());assertEquals(9,cone.length());assertEquals(50,cone.width());
+  var firebird=shapes.get("firebird_hunt");assertEquals(17,firebird.range());assertEquals(20,firebird.length());assertEquals(3.2,firebird.width());
   assertTrue(shapes.get("tidal_wave").casterOrigin());assertFalse(shapes.get("ember_bolt").casterOrigin());
  }
 }

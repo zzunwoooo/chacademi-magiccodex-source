@@ -188,6 +188,39 @@ EXTRA = {
  'CHA_solar_judgment_fire': ('solar_judgment', ['chazone{r=4;ticks=60;period=5;mult=0.15}'], '태양의 심판 영창 완료 후 3초 레이저 (chachannel then=)'),
 }
 EXTRA.update(_arcana.EXTRA)
+
+# ---- #80 사거리 (오너 2026-10-26): 큐디치가 주 컨텐츠라 직선·원거리 마법이 너무 짧음 → 우선 1.7배.
+# 바뀌는 것: 전투 마법(대상/조준)의 시전 거리(route range, 10 이상만 — 그보다 짧은 근접기·생활 마법은 그대로),
+#           투사체·원거리 메커닉의 range= (chabolt·chamobshot·chaarcana, 10 이상만). 범위 크기(r·radius·length 등)는 그대로.
+# 상한: route 48 (아래 assert), chabolt 64, chamobshot 48. 원래 값으로 되돌리려면 RANGE_SCALE = 1.0.
+RANGE_SCALE = 1.7
+RANGE_MECHS = ('chabolt{', 'chamobshot{', 'chaarcana{')
+def _scaled(v, cap):
+    return v if v < 10 else min(cap, int(round(v * RANGE_SCALE)))
+def _scale_line(l):
+    if not l.startswith(RANGE_MECHS): return l
+    import re
+    cap = 64 if l.startswith('chabolt{') else 48
+    def rep(m):
+        v = float(m.group(2)); n = _scaled(v, cap)
+        return m.group(1) + 'range=' + (str(n) if n != v else m.group(2))
+    head, body = l[:l.index('{')+1], l[l.index('{')+1:]
+    end = body.index('}')
+    inner = body[:end]
+    # range= 를 안 적은 투사체는 메커닉 기본값(chabolt 24 · chamobshot 20)을 넣고 늘린다.
+    if not re.search(r'(^|;)range=', inner):
+        dflt = {'chabolt{': 24, 'chamobshot{': 20}.get(head)
+        if dflt: inner = f'range={dflt};' + inner if inner else f'range={dflt}'
+    return head + re.sub(r'(^|;)range=([\d.]+)', rep, inner) + body[end:]
+COMBAT_MECHS = ('chabolt{', 'chamobshot{', 'chaarcana{', 'chazone{', 'chahit{', 'chameteor{', 'chamark{', 'chatelegraph{', 'chachannel{')
+def _scale_route(spec):
+    i, sk, tgt, rng, base, ratio, util, lines, note = spec
+    # 전투 마법만 (생활·건축·농사·기믹 마법의 조준 거리는 그대로)
+    if tgt != 'SELF' and not util and any(l.startswith(COMBAT_MECHS) for l in lines): rng = _scaled(rng, 48)
+    return (i, sk, tgt, rng, base, ratio, util, [_scale_line(l) for l in lines], note)
+if RANGE_SCALE != 1.0:
+    S = [_scale_route(x) for x in S]
+    EXTRA = {k: (o, [_scale_line(l) for l in ls], n) for k, (o, ls, n) in EXTRA.items()}
 SKIP = {
  'wind_message':'Bridge가 직접 처리하는 귓속말 마법',
  'rainbow_collar':'교화(HolyTaming): TamingBridge가 별도 처리',
@@ -223,7 +256,12 @@ def main():
            '# 피해량 <skill.var.damage> 는 MagicCodexBridge spell-runtime.yml 의 base-damage + power-ratio x 마력 으로 전달됩니다.',
            '# cha* 메커닉은 ChAcademiaMagicMythic 플러그인이 제공합니다.', '']
     rt = ['# 서버 마력 스냅샷: 피해 = base-damage + power-ratio * 마력. (자동 생성: magic-mythic-paper/tools/spells.py)',
-          '# 피해 수치는 밸런스 검토 전 임시값입니다.', 'spells:']
+          '# 피해 수치는 밸런스 검토 전 임시값입니다.',
+          f'# 사거리는 tools/spells.py RANGE_SCALE={RANGE_SCALE} 가 이미 반영된 값 (#80). 아래 배율은 서버 판정 전체에 한 번 더 곱해집니다.',
+          '# 전체 마법 사거리 배율 (#80). 1.0 = 아래 range 그대로. 0.25~3. 서버 판정(조준 확인·대상 탐색)에만 적용됩니다.',
+          '# 주의: 클라이언트 조준 미리보기(spell-targeting.json)·이펙트(PortableVFX spell-bindings.yml range)·미몹 투사체(range=) 는 따로라',
+          '#       1.0 이 아니면 미리보기 원보다 멀리/가까이 판정될 수 있습니다. 바꾸기 전에 개발자에게 클라이언트 동기화를 요청하세요.',
+          'range-multiplier: 1.0', 'spells:']
     for (i, sk, tgt, rng, base, ratio, util, lines, note) in S:
         d = D.get(i, {}); name = d.get('name', i)
         cat = d.get('category', '')

@@ -48,7 +48,7 @@ spells:
     name: 윈드 커터
     skill: CHA_vacuum_cleave
     target: AIM
-    range: 24
+    range: 41
     utility: false
     base-damage: 4
     power-ratio: 0.35
@@ -56,7 +56,7 @@ spells:
     name: 바람 화살
     skill: CHA_cross_breeze
     target: AIM
-    range: 30
+    range: 48
     utility: false
     base-damage: 7
     power-ratio: 0.55
@@ -64,7 +64,7 @@ spells:
     name: 되돌이 칼날
     skill: CHA_returning_blade
     target: AIM
-    range: 18
+    range: 31
     utility: false
     base-damage: 4
     power-ratio: 0.3
@@ -72,7 +72,7 @@ spells:
     name: 퍼붓는 화살
     skill: CHA_arrested_orbit
     target: AIM
-    range: 25
+    range: 42
     utility: false
     base-damage: 3
     power-ratio: 0.2
@@ -88,7 +88,7 @@ spells:
     name: 파이어 볼
     skill: CHA_ember_bolt
     target: AIM
-    range: 24
+    range: 41
     utility: false
     base-damage: 2
     power-ratio: 0.25
@@ -104,7 +104,7 @@ spells:
     name: 플레어 월
     skill: CHA_fire_curtain
     target: AIM
-    range: 12
+    range: 20
     utility: false
     base-damage: 2
     power-ratio: 0.12
@@ -121,7 +121,7 @@ spells:
     name: 스타 퓨리
     skill: CHA_cinder_detonation
     target: BURNING_ENTITY
-    range: 18
+    range: 31
     utility: false
     base-damage: 8
     power-ratio: 0.6
@@ -257,7 +257,7 @@ spells:
     name: 여우불 공전
     skill: CHA_fox_orbit
     target: AIM
-    range: 20
+    range: 34
     utility: false
     base-damage: 3
     power-ratio: 0.25
@@ -265,7 +265,7 @@ spells:
     name: 곡선 불깃털
     skill: CHA_curving_plumes
     target: AIM
-    range: 20
+    range: 34
     utility: false
     base-damage: 3
     power-ratio: 0.25
@@ -281,7 +281,7 @@ spells:
     name: 독 뱉기
     skill: CHA_venom_spit
     target: AIM
-    range: 18
+    range: 31
     utility: false
     base-damage: 3
     power-ratio: 0.2
@@ -305,7 +305,7 @@ spells:
     name: 봉인진
     skill: CHA_seal_circle
     target: AIM
-    range: 16
+    range: 27
     utility: false
     base-damage: 4
     power-ratio: 0.3
@@ -314,7 +314,7 @@ spells:
     name: 봉인 부적
     skill: CHA_seal_talismans
     target: AIM
-    range: 20
+    range: 34
     utility: false
     base-damage: 3
     power-ratio: 0.2
@@ -330,7 +330,7 @@ spells:
     name: 사슬 화살
     skill: CHA_chain_arrow
     target: AIM
-    range: 22
+    range: 37
     utility: false
     base-damage: 4
     power-ratio: 0.3
@@ -338,7 +338,7 @@ spells:
     name: 마나 흡수
     skill: CHA_mana_drain
     target: AIM
-    range: 14
+    range: 24
     utility: false
     base-damage: 3
     power-ratio: 0.2
@@ -355,7 +355,7 @@ spells:
     name: 망각의 탄환
     skill: CHA_oblivion_orbs
     target: AIM
-    range: 20
+    range: 34
     utility: false
     base-damage: 3
     power-ratio: 0.2
@@ -363,7 +363,7 @@ spells:
     name: 뼈의 손아귀
     skill: CHA_bone_grasp
     target: AIM
-    range: 15
+    range: 26
     utility: false
     base-damage: 3
     power-ratio: 0.2
@@ -372,7 +372,7 @@ spells:
     name: 그림자 도약
     skill: CHA_shadow_leap
     target: ENTITY
-    range: 14
+    range: 24
     utility: false
     base-damage: 5
     power-ratio: 0.4
@@ -380,7 +380,7 @@ spells:
     name: 끌어오기
     skill: CHA_binding_pull
     target: ENTITY
-    range: 14
+    range: 24
     utility: false
     base-damage: 2
     power-ratio: 0.15
@@ -420,7 +420,7 @@ spells:
     name: 사냥 도약
     skill: CHA_hunting_pounce
     target: ENTITY
-    range: 12
+    range: 20
     utility: false
     base-damage: 5
     power-ratio: 0.4
@@ -428,7 +428,7 @@ spells:
     name: 포효 도약
     skill: CHA_roar_leap
     target: ENTITY
-    range: 14
+    range: 24
     utility: false
     base-damage: 5
     power-ratio: 0.4
@@ -444,7 +444,7 @@ spells:
     name: 꼬리 가시
     skill: CHA_tail_spikes
     target: AIM
-    range: 16
+    range: 27
     utility: false
     base-damage: 2
     power-ratio: 0.15
@@ -477,7 +477,7 @@ spells:
     name: 그림자 교환
     skill: CHA_shadow_exchange
     target: ENTITY
-    range: 15
+    range: 26
     utility: false
     base-damage: 0
     power-ratio: 0
@@ -493,7 +493,7 @@ spells:
     name: 생명 갈취
     skill: CHA_life_siphon
     target: AIM
-    range: 12
+    range: 20
     utility: false
     base-damage: 2
     power-ratio: 0.15
@@ -502,7 +502,7 @@ spells:
     name: 졸음
     skill: CHA_drowsiness
     target: AIM
-    range: 16
+    range: 27
     utility: false
     base-damage: 0
     power-ratio: 0
@@ -511,7 +511,7 @@ spells:
     name: 나약함의 저주
     skill: CHA_misfortune_whisper
     target: ENTITY
-    range: 12
+    range: 20
     utility: false
     base-damage: 0
     power-ratio: 0
@@ -519,7 +519,7 @@ spells:
     name: 저주의 전가
     skill: CHA_curse_transfer
     target: ENTITY
-    range: 12
+    range: 20
     utility: false
     base-damage: 0
     power-ratio: 0
@@ -527,7 +527,7 @@ spells:
     name: 마인드컨트롤
     skill: CHA_discord
     target: ENTITY
-    range: 12
+    range: 20
     utility: false
     base-damage: 0
     power-ratio: 0
@@ -535,7 +535,7 @@ spells:
     name: 밤의 사슬
     skill: CHA_night_chain
     target: AIM
-    range: 12
+    range: 20
     utility: false
     base-damage: 0
     power-ratio: 0
@@ -568,7 +568,7 @@ spells:
     name: 그림자 못
     skill: CHA_shadow_nail
     target: ENTITY
-    range: 20
+    range: 34
     utility: false
     base-damage: 12
     power-ratio: 0.8
@@ -584,7 +584,7 @@ spells:
     name: 손아귀 풀기
     skill: CHA_loosen_grasp
     target: ENTITY
-    range: 12
+    range: 20
     utility: false
     base-damage: 0
     power-ratio: 0
@@ -592,7 +592,7 @@ spells:
     name: 회복 봉인
     skill: CHA_healing_seal
     target: ENTITY
-    range: 12
+    range: 20
     utility: false
     base-damage: 0
     power-ratio: 0
@@ -600,7 +600,7 @@ spells:
     name: 어둠의 저울
     skill: CHA_shadow_scales
     target: AIM
-    range: 12
+    range: 20
     utility: false
     base-damage: 6
     power-ratio: 0.45
@@ -609,7 +609,7 @@ spells:
     name: 경고의 실
     skill: CHA_warning_thread
     target: AIM
-    range: 15
+    range: 26
     utility: false
     base-damage: 0
     power-ratio: 0
@@ -618,7 +618,7 @@ spells:
     name: 상처 회계
     skill: CHA_wound_accounting
     target: ENTITY
-    range: 20
+    range: 34
     utility: false
     base-damage: 0
     power-ratio: 0
@@ -642,7 +642,7 @@ spells:
     name: 월식의 눈
     skill: CHA_eclipse_eye
     target: AIM
-    range: 30
+    range: 48
     utility: false
     base-damage: 3
     power-ratio: 0.2
@@ -651,7 +651,7 @@ spells:
     name: 공허의 입
     skill: CHA_void_maw
     target: AIM
-    range: 16
+    range: 27
     utility: false
     base-damage: 14
     power-ratio: 0.9
@@ -692,7 +692,7 @@ spells:
     name: 물방울 인계
     skill: CHA_droplet_relay
     target: AIM
-    range: 10
+    range: 17
     utility: false
     base-damage: 4
     power-ratio: 0.3
@@ -701,7 +701,7 @@ spells:
     name: 접히는 수면
     skill: CHA_folding_tideplane
     target: AIM
-    range: 10
+    range: 17
     utility: false
     base-damage: 5
     power-ratio: 0.4
