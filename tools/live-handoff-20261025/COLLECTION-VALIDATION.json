@@ -1,0 +1,18 @@
+{
+  "operatingOutputGuardPASS": true,
+  "copiedScriptHashPASS": 30,
+  "pythonSyntaxPASS": [
+    "reproduce_offline.py",
+    "bounded-packaging/bounded_package.py",
+    "bounded-packaging/probe_bridge.py",
+    "bounded-packaging/probe_ui.py",
+    "bounded-packaging/resource_merge.py",
+    "bounded-packaging/stage_bridge.py",
+    "npc-preservation/package_npc_candidate.py"
+  ],
+  "forbiddenExtensionCount": 0,
+  "credentialPatternCount": 0,
+  "openingHooksExact": true,
+  "driverCheckOnly": "PASS input SHA gates; no writes",
+  "fullOfflineRebuildPerformed": false
+}

@@ -36,7 +36,8 @@ public final class PortableVfxClient implements ClientModInitializer {
         library.warmup(renderer);
         runtime.readiness(renderer::readyEffectIds);
         var claude=new dev.portablevfx.client.claude.ClaudePreviewController(client,runtime,api,library);
-        ClientTickEvents.END_CLIENT_TICK.register(ignored -> { runtime.tick(); claude.tick(); renderer.synchronizeLifecycle(); });
+        var drops=new dev.portablevfx.client.drop.DropRarityVfx(client,api);
+        ClientTickEvents.END_CLIENT_TICK.register(ignored -> { runtime.tick(); claude.tick(); drops.tick(); renderer.synchronizeLifecycle(); });
         ClientLifecycleEvents.CLIENT_STOPPING.register(ignored -> renderer.close());
         // END is after Iris composite/final, unlike LAST inside the world framegraph pass.
         WorldRenderEvents.END.register(renderer::render);

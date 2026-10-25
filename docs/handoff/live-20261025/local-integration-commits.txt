@@ -1,0 +1,13 @@
+abb7edb43a8fd275920e898033f08d175ac8077d Fix client canvas compilation and Windows bloom migration
+ee16a4184d26f7fd747d476e1b4e53ded59b99d2 Fix travel callback compilation and verify approved waypoint discovery
+c6d8e41ecf225c4eac53080670e7cafd42b010e6 Integrate lag step1 and retain follow restoration records on failure
+cd7bed561f4223d073d56cc298ad5a8eef55f4c8 Initialize Paper registry safely in follow restore regression tests
+3a85d7bf98d4bcf5a95e4fc9b22965a4cedc61a3 Preserve malformed bloom config error handling after closing reader
+4f314ca3a291f5c24030502da2a39c6c0cb89ce0 Preserve safe quest guide wire with opening story and tutorial routing
+838532e349fb6e5021a69982d99f4fad50666025 Preserve operating GUI renderer with opening travel and guide changes
+23ea6712f996e596a39e319d4a2e0c1ec2837c65 Restore deployed shared bag, preset modes, core visuals and preserved UI sources
+88c5c9f2eb663ce6a4692a065ee1905d917470a3 Align runtime and storage regression fixtures with integrated contracts
+5ec8ebea852e364ab34241d0dfa74dbd61e97be4 Deduplicate quest guide renderer while preserving shader compatibility
+0255dd666832219310976faeeec5826e2bc6e27e Test NPC gift receipt API compatibility and unknown outcomes
+81e652932e2b04d8ac12f2eae1cce4aca68a7474 Use dependency-free proxy in gift receipt API regression
+40e2f6944bd15a2c23f0d08b42c8dba4dcdc0e31 Integrate approved title catalogue and v2 transport with compatibility guards

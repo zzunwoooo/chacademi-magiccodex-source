@@ -1,0 +1,130 @@
+{
+  "preservationRequirements": [
+    "Exact original binary baseline SHA required",
+    "raw7d baseline and raw40e final build required",
+    "helper-source/MagicCodexBridge and ArtifactOwnershipStore are compile stubs, excluded from normal product compilation",
+    "Only OpeningHooks is copied byte-identical into normal src"
+  ],
+  "scripts": [
+    {
+      "path": "bounded-packaging/AuditFinalLinkage.java",
+      "sha256": "bc86c9750fae9d2c7d5cdd48d38b4c6dc9eea8907b053537f822abd40937dd2a"
+    },
+    {
+      "path": "bounded-packaging/bounded_package.py",
+      "sha256": "d41140449faa6e7702144ed28e796a0e07a189cda4927a2a3a02627b9ee5d8fe"
+    },
+    {
+      "path": "bounded-packaging/FinalArtifactPityHookCheck.java",
+      "sha256": "1558f3c970c538139efdddf858736f3ccb7e6ba6604ad3c0b50477d96fea9d10"
+    },
+    {
+      "path": "bounded-packaging/FinalJvmVerify.java",
+      "sha256": "3ec59cc79ba8bfc45f63e7c02951a851193e0c64be6d0869763d9f21cdc49ebe"
+    },
+    {
+      "path": "bounded-packaging/FinalProtocolRoundTrip.java",
+      "sha256": "70815fcaa1c2113c708fb6f789b60aff4c58828ba11c431eab12d80ad3d7b946"
+    },
+    {
+      "path": "bounded-packaging/OpeningClassEquivalent.java",
+      "sha256": "65498d50f2dd2a2d37b863406d230771afb096afa771c845831c73ccf0027ea4"
+    },
+    {
+      "path": "bounded-packaging/OpeningDelta.java",
+      "sha256": "e61307d571f8fa7dac5e0b23e9d2c42ef871f456baa38fceb3ef98640aa97102"
+    },
+    {
+      "path": "bounded-packaging/OpeningDump.java",
+      "sha256": "fafd92a51005e1413c1be528a9fa47a72b3110dd4b1f46a2fa46949661f79ffc"
+    },
+    {
+      "path": "bounded-packaging/OpeningSpecial.java",
+      "sha256": "2a6f061aecce6c3b3bf219cf413b0dd2cd4d15a9df48a4f77496ebef53d5126e"
+    },
+    {
+      "path": "bounded-packaging/probe_bridge.py",
+      "sha256": "a078d1df417de105a0dd328b7b301ce1dfd9cd04c8655f2680a09add8f299fdd"
+    },
+    {
+      "path": "bounded-packaging/probe_ui.py",
+      "sha256": "5cedc016349789b062066d53825c6683aabb3d13ade2a5eaf845716c27649700"
+    },
+    {
+      "path": "bounded-packaging/ProtocolApiEquivalent.java",
+      "sha256": "04a6eb9179583d631c08430a7674868c67cf09663f44c4017c5fdae2dfd0786a"
+    },
+    {
+      "path": "bounded-packaging/resource_merge.py",
+      "sha256": "fe9b74b4e010f230deba3e089fb257e0db288b80361e67cf214af36b96d2eba8"
+    },
+    {
+      "path": "bounded-packaging/stage_bridge.py",
+      "sha256": "a761698853e75a3c88a54d0ef88dd34c0fa30151f83a9af46991868265981a5d"
+    },
+    {
+      "path": "bounded-packaging/helper-source/school/magiccodex/paper/ArtifactOwnershipStore.java",
+      "sha256": "2e7875ad60d51aade735768f362c2705028f669c94c83b24648e18e91f5c9088"
+    },
+    {
+      "path": "bounded-packaging/helper-source/school/magiccodex/paper/MagicCodexBridge.java",
+      "sha256": "5a205a89ed7de5ae799f3692e1049c97237f6c858568e7b928878d430807985d"
+    },
+    {
+      "path": "bounded-packaging/helper-source/school/magiccodex/paper/OpeningHooks.java",
+      "sha256": "925d37d8dbccc5e752ecc86e308ff43f66e26ce9c99186b39891b86bc37fc5ff"
+    },
+    {
+      "path": "other-preservation/OtherHousingCommandsPatch.java",
+      "sha256": "1daa61222251b0f1306566d5440a3307bf35bcca3d098071374a030c56eb1258"
+    },
+    {
+      "path": "other-preservation/OtherLambdaAlign.java",
+      "sha256": "d14384ffafd1565ec902323ccd63fa9bda3b38989d1fcd2cd8492d3a69f0156b"
+    },
+    {
+      "path": "other-preservation/OtherLifecyclePatch.java",
+      "sha256": "a0dfb63e1269f91c5ad56193a557549410d60b91e2d85e4d498ac62b699bdc74"
+    },
+    {
+      "path": "other-preservation/OtherMethodOverlay.java",
+      "sha256": "c1a9fe7163988d3489b709b46523870db006726d9277b4d43790df78c1d7e407"
+    },
+    {
+      "path": "other-preservation/OtherRequiredApi.java",
+      "sha256": "766bdfdb06f9e34c86d3dfc7bdea58c9604eee8f4873e31816aebc9912646d0f"
+    },
+    {
+      "path": "other-preservation/metadata-sealed-20261025/MetadataOnlyVerify.java",
+      "sha256": "f7611259a3fd8a3e1f5c1ef7b042aeee432c7b395e28743aaeec7302c00dc335"
+    },
+    {
+      "path": "npc-preservation/AuditAffinityLinkage.java",
+      "sha256": "a1732d6debe913b97049b3e5caf1533a4a4fb838601d8280c0470780633a762f"
+    },
+    {
+      "path": "npc-preservation/BoundedReleasePatch.java",
+      "sha256": "619884d76f5d1304db5f351ac616776edba683b7f1be3f65284966dba0a19a69"
+    },
+    {
+      "path": "npc-preservation/BudgetDescriptorAudit.java",
+      "sha256": "152d2deed0f46d02fb213daa5d40ccbf4e837c3a4b8f08eca76f0b57651d05dc"
+    },
+    {
+      "path": "npc-preservation/package_npc_candidate.py",
+      "sha256": "9b06e68c6ee5c11481079531e4fe6e8f99f45a9eec1cf28e987f6498c4223b14"
+    },
+    {
+      "path": "meteor-followup/MeteorRegistrationPatch.java",
+      "sha256": "b94f59e151fcbc47454aa42b5d2b3b2db53bf71bd3011c77c0fff4307958e267"
+    },
+    {
+      "path": "meteor-followup/RegistrationProbe.java",
+      "sha256": "060453acb6bdbd7f965a41a5de5c2badc0001ef656973070e4618e300091b68c"
+    },
+    {
+      "path": "kyudichi-preservation/KyudichiPatch.java",
+      "sha256": "086f15d0d555506ce0394639489eb370ef1611903851a82696c59952d4e409e5"
+    }
+  ]
+}

@@ -1,0 +1,516 @@
+{
+  "schema": 1,
+  "purpose": "Actual operating deployment handoff; source-only build is not claimed byte-identical to preserved operating JARs",
+  "handoffBranch": "review/live-source-handoff-20261025-task3",
+  "baseSourceCommit": "40e2f6944bd15a2c23f0d08b42c8dba4dcdc0e31",
+  "sourceInputs": {
+    "openingBase": "227ce1e076f404fb1a17e489e6231d8be388c067",
+    "titlePatch": "1c02a5635458c31517d17f1e4724d8cc412b1fe4",
+    "operatingPreservation": "7d8ec6e1d1e7aa1d9539b799a4149020cb229bdf",
+    "optimizationPrerequisite": "4d0ff79befaa20ad2b283432c660f41927b4ec91",
+    "optimizationPatch": "d0b7be4f36148a6278047ac8d438189187d35431",
+    "storyContent": "f970c69808718bbf05e442a6b2e6df09058de22d"
+  },
+  "checkedUTC": "2026-10-25T11:32:46.124340+00:00",
+  "serverFiles": [
+    {
+      "target": "school/plugins/chaca-portrait-0.1.0-commands.1.jar",
+      "kind": "jar",
+      "sha256": "5546fc75e3ae9c1c782281e2eb6eb67e4e8661f49f4356346c62a58183f7b37e"
+    },
+    {
+      "target": "wild/plugins/chaca-portrait-0.1.0-commands.1.jar",
+      "kind": "jar",
+      "sha256": "5546fc75e3ae9c1c782281e2eb6eb67e4e8661f49f4356346c62a58183f7b37e"
+    },
+    {
+      "target": "arena/plugins/chaca-portrait-0.1.0-commands.1.jar",
+      "kind": "jar",
+      "sha256": "5546fc75e3ae9c1c782281e2eb6eb67e4e8661f49f4356346c62a58183f7b37e"
+    },
+    {
+      "target": "school/plugins/magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "kind": "jar",
+      "sha256": "144a8d52645255038d0f675c429be82fb74642defaaea25ef56d07e66ee79d43"
+    },
+    {
+      "target": "wild/plugins/magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "kind": "jar",
+      "sha256": "144a8d52645255038d0f675c429be82fb74642defaaea25ef56d07e66ee79d43"
+    },
+    {
+      "target": "velocity/plugins/chacademi-party-velocity-0.2.2-integrated-20261019.2-arenachat.1-commands.1.jar",
+      "kind": "jar",
+      "sha256": "5438fc98daf363884711f6d16da7d24f48e83f4b5bbbca4bc00a9be59e7d536c"
+    },
+    {
+      "target": "wild/plugins/chacademia-wildlife-0.5.1-feedback-20261023.jar",
+      "kind": "jar",
+      "sha256": "a45418e247f5cb20116e477925b791312a5f3b0acde46251bd6b9d88e36b36a9"
+    },
+    {
+      "target": "school/plugins/chacademy-story-plugin-final-guide-20261024.jar",
+      "kind": "jar",
+      "sha256": "a03db9a9ba28501fda8bc0996fd30e79b198313e29346de6bf3077dccf95ca5f"
+    },
+    {
+      "target": "arena/plugins/magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "kind": "jar",
+      "sha256": "858713c4ffc1077898f8b014fe9404c9a19e8bb648c87f0f18fd395a325d27bb"
+    },
+    {
+      "target": "school/plugins/chacademia-magic-mythic-final-20261024-school.jar",
+      "kind": "jar",
+      "sha256": "8fb1951552cbf61f84ec8724a9f7ab884a2689a133f4e9124ffef0171caf62ee"
+    },
+    {
+      "target": "wild/plugins/chacademia-magic-mythic-final-20261024-wild.jar",
+      "kind": "jar",
+      "sha256": "6b96ae27abfef104c9f5c49490043b1f75fa34b922b0ec5be3979c22dfb4ffca"
+    },
+    {
+      "target": "arena/plugins/chacademia-magic-mythic-final-20261024-arena.jar",
+      "kind": "jar",
+      "sha256": "4438a07902f8db71865ab739534a3467172520bb194781806904f45efd11afce"
+    },
+    {
+      "target": "school/plugins/chaca-housing-0.1.2-usersearch.1-school.jar",
+      "kind": "jar",
+      "sha256": "2bfbba912cb27b30ac0b3d7a1c333e0740357824d3525da5cda39d6ac1ea76b5"
+    },
+    {
+      "target": "wild/plugins/chaca-housing-0.1.2-usersearch.1-wild.jar",
+      "kind": "jar",
+      "sha256": "9cf96ac8ffe33f9a4bd97dcb5da4dc6ab4bccc9fba0e422412b093d6204cea5c"
+    },
+    {
+      "target": "arena/plugins/chaca-kyudichi-0.1.2-presets-api.2.jar",
+      "kind": "jar",
+      "sha256": "1cd2271a7694a0e25ae70d9e209580a9975b94b9a853cdc8d5a22470f719be11"
+    },
+    {
+      "target": "school/plugins/portable-vfx-paper-3.2.3-integrated-20261020.1-gimmick.1.jar",
+      "kind": "jar",
+      "sha256": "0e0d32595bc0dcc23b134d89ef02ade6122b6150dca666d65e7d7de01090f189"
+    },
+    {
+      "target": "wild/plugins/portable-vfx-paper-3.2.3-integrated-20261020.1-gimmick.1.jar",
+      "kind": "jar",
+      "sha256": "0e0d32595bc0dcc23b134d89ef02ade6122b6150dca666d65e7d7de01090f189"
+    },
+    {
+      "target": "arena/plugins/portable-vfx-paper-3.2.3-integrated-20261020.1-gimmick.1.jar",
+      "kind": "jar",
+      "sha256": "0e0d32595bc0dcc23b134d89ef02ade6122b6150dca666d65e7d7de01090f189"
+    },
+    {
+      "target": "school/plugins/magic-codex-bridge-final-20261024-school.jar",
+      "kind": "jar",
+      "sha256": "4b90ebb14e331f108d01469f4c6b9a97385936e7bb58ac2669a80a603341e93f"
+    },
+    {
+      "target": "wild/plugins/magic-codex-bridge-final-20261024-wild.jar",
+      "kind": "jar",
+      "sha256": "40ff5a0e716c5f482d0e76c9921bcf4faa4922df0368cf0674dade6f373edc29"
+    },
+    {
+      "target": "arena/plugins/magic-codex-bridge-final-20261024-arena.jar",
+      "kind": "jar",
+      "sha256": "6b2633cbc792e92992306cce212bbe411830be7ec5ace941f6c875a7583e49c7"
+    },
+    {
+      "target": "school/plugins/chaca-npc-0.3.0-npcmodel.3.jar",
+      "kind": "jar",
+      "sha256": "22c7038dc5c632f876cc94d7118f8d835445d9393239765dab7c582137425b21"
+    },
+    {
+      "target": "school/plugins/ChacademyStory/dialogues/ch1-10/dialogue.yml",
+      "kind": "config-content",
+      "sha256": "00147ed0b3f25f4b72358edf203c99bd2de96d1b517408225619f9f9cf4b0eef"
+    },
+    {
+      "target": "school/plugins/ChacademyStory/dialogues/ch1-11/dialogue.yml",
+      "kind": "config-content",
+      "sha256": "efe0b0c1e831599efa8fedc06ff25597d0c021111c41bf7c97d12abf694db9c1"
+    },
+    {
+      "target": "school/plugins/ChacademyStory/dialogues/ch1-12/dialogue.yml",
+      "kind": "config-content",
+      "sha256": "8fea8d80e5f6a011597be62dfd06ce4ae96745242724e56d999c2f229339271b"
+    },
+    {
+      "target": "school/plugins/ChacademyStory/dialogues/ch1-12w-ole/dialogue.yml",
+      "kind": "config-content",
+      "sha256": "c7914b88d2eea3aa2abb763103aeb1b6c27ec6682f38c2007965db76c7a20e7b"
+    },
+    {
+      "target": "school/plugins/ChacademyStory/dialogues/ch1-12w-pipi/dialogue.yml",
+      "kind": "config-content",
+      "sha256": "89aabee0c9841c11723f564f8979fd783af45a43ce550bd079f48d9aec77f1c3"
+    },
+    {
+      "target": "school/plugins/ChacademyStory/dialogues/ch1-13w-pipi/dialogue.yml",
+      "kind": "config-content",
+      "sha256": "9047a4e316acd0d31ca2475ceef7c5fd217554a57f4523f1c1debf16b0fb52d8"
+    },
+    {
+      "target": "school/plugins/ChacademyStory/dialogues/ch1-14w-pipi/dialogue.yml",
+      "kind": "config-content",
+      "sha256": "d3dbbe105b6cf65449dc2e6ae119b855099dee02edaa066fafe7b6909bab618c"
+    },
+    {
+      "target": "school/plugins/ChacademyStory/dialogues/ch1-16-waypoint/dialogue.yml",
+      "kind": "config-content",
+      "sha256": "938a793077c9df74e6143d7d0d4f02631af46784fbc69a2b2f2288ffb5009fb6"
+    },
+    {
+      "target": "school/plugins/ChacademyStory/dialogues/ch1-23w-isolde/dialogue.yml",
+      "kind": "config-content",
+      "sha256": "225d7834ba7221b9565f1eb91fa6f02c5d4a6e7fdd1b7373086d719a928549ad"
+    },
+    {
+      "target": "school/plugins/ChacademyStory/dialogues/server_command.yml",
+      "kind": "config-content",
+      "sha256": "df2655dde29386d370c13e8bbf526249f05159dcf6687580cf1ae30e7c2ffc90"
+    },
+    {
+      "target": "school/plugins/ChacademyStory/steps.yml",
+      "kind": "config-content",
+      "sha256": "3f1b8c058fb89a9a7cafdb796c97e9e8d5a2e5cff29b0f6bc0058479e4d2dcd7"
+    },
+    {
+      "target": "school/plugins/MagicCodexBridge/tutorial-shop.yml",
+      "kind": "config-content",
+      "sha256": "a9f8aee8ee8a8a3d70e8b03a39bfdef188667db3a8afd9b776a529cfb8149ac7"
+    },
+    {
+      "target": "school/plugins/ChacaPortrait/config.yml",
+      "kind": "config-content",
+      "sha256": "0897fdcecc0adb9d472ce75b0f6cf463f72a88ae5afd0386b8cda3c25c3e3085"
+    },
+    {
+      "target": "school/plugins/ChacaHousing/config.yml",
+      "kind": "config-content",
+      "sha256": "e9003a529c0e3b7798411d1959bb8480d704a5beb9178c076ab492a705de8f40"
+    },
+    {
+      "target": "wild/plugins/ChacaPortrait/config.yml",
+      "kind": "config-content",
+      "sha256": "ca135d332c0eb7618b03f215a317047388fc8fc8c86c05568c5a75bc3ba8e526"
+    },
+    {
+      "target": "wild/plugins/ChacaHousing/config.yml",
+      "kind": "config-content",
+      "sha256": "a0c476da0461ef4ed27231f3877efbdcdec41dec5f43ac32643b2ffb6692cb37"
+    },
+    {
+      "target": "arena/plugins/ChacaPortrait/config.yml",
+      "kind": "config-content",
+      "sha256": "0897fdcecc0adb9d472ce75b0f6cf463f72a88ae5afd0386b8cda3c25c3e3085"
+    },
+    {
+      "target": "school/plugins/MagicCodexBridge/titles.yml",
+      "kind": "config-content",
+      "sha256": "8256713bcc4638df76a7ac1316259e1440ea7179bcd81e2dcda71aff5bc6ab47"
+    },
+    {
+      "target": "wild/plugins/MagicCodexBridge/titles.yml",
+      "kind": "config-content",
+      "sha256": "8256713bcc4638df76a7ac1316259e1440ea7179bcd81e2dcda71aff5bc6ab47"
+    },
+    {
+      "target": "arena/plugins/MagicCodexBridge/titles.yml",
+      "kind": "config-content",
+      "sha256": "8256713bcc4638df76a7ac1316259e1440ea7179bcd81e2dcda71aff5bc6ab47"
+    },
+    {
+      "target": "school/plugins/MagicCodexBridge/title-awards.yml",
+      "kind": "config-content",
+      "sha256": "0a2e9f248efa9e31aa1bfda170252206cb5041f62cb6fee9f831f5e2a2e20390"
+    },
+    {
+      "target": "wild/plugins/MagicCodexBridge/title-awards.yml",
+      "kind": "config-content",
+      "sha256": "0a2e9f248efa9e31aa1bfda170252206cb5041f62cb6fee9f831f5e2a2e20390"
+    },
+    {
+      "target": "arena/plugins/MagicCodexBridge/title-awards.yml",
+      "kind": "config-content",
+      "sha256": "0a2e9f248efa9e31aa1bfda170252206cb5041f62cb6fee9f831f5e2a2e20390"
+    },
+    {
+      "target": "school/plugins/MagicCodexBridge/artifacts.yml",
+      "kind": "config-content",
+      "sha256": "746177dc47a40bb545e6093cabdbd1cd960346bae85087b5649c0a3824d39cb5"
+    },
+    {
+      "target": "wild/plugins/MagicCodexBridge/artifacts.yml",
+      "kind": "config-content",
+      "sha256": "746177dc47a40bb545e6093cabdbd1cd960346bae85087b5649c0a3824d39cb5"
+    },
+    {
+      "target": "arena/plugins/MagicCodexBridge/artifacts.yml",
+      "kind": "config-content",
+      "sha256": "746177dc47a40bb545e6093cabdbd1cd960346bae85087b5649c0a3824d39cb5"
+    },
+    {
+      "target": "school/plugins/MagicCodexBridge/mana-spells.yml",
+      "kind": "config-content",
+      "sha256": "33aed6ea86e108ba657f407d62d355ff15116016cae1729e0d057aa6a71e18d8"
+    },
+    {
+      "target": "wild/plugins/MagicCodexBridge/mana-spells.yml",
+      "kind": "config-content",
+      "sha256": "33aed6ea86e108ba657f407d62d355ff15116016cae1729e0d057aa6a71e18d8"
+    },
+    {
+      "target": "arena/plugins/MagicCodexBridge/mana-spells.yml",
+      "kind": "config-content",
+      "sha256": "c0d12e05a90638f7d3aa0c7239cf1d950515a5fdbc7ea9d35767ba3061650372"
+    },
+    {
+      "target": "school/plugins/MagicCodexBridge/spell-runtime.yml",
+      "kind": "content-config",
+      "sha256": "06c5414747645644f23ba730336511b91daee682dc9ec7dcb663afc902fa1894"
+    },
+    {
+      "target": "wild/plugins/MagicCodexBridge/spell-runtime.yml",
+      "kind": "content-config",
+      "sha256": "06c5414747645644f23ba730336511b91daee682dc9ec7dcb663afc902fa1894"
+    },
+    {
+      "target": "arena/plugins/MagicCodexBridge/spell-runtime.yml",
+      "kind": "content-config",
+      "sha256": "06c5414747645644f23ba730336511b91daee682dc9ec7dcb663afc902fa1894"
+    },
+    {
+      "target": "school/plugins/MythicMobs/Skills/chacademi_spells.yml",
+      "kind": "content-config",
+      "sha256": "67f680553827925c7962af2de5805b4b5905c0f1221660f791833d64df9d6bdf"
+    },
+    {
+      "target": "school/plugins/PortableVFX/spell-bindings.yml",
+      "kind": "content-config",
+      "sha256": "76af6c34bb267c9746ee2012132c42bbb9aa8b8c31389c8fbefdbd9fdf799d03"
+    },
+    {
+      "target": "wild/plugins/MythicMobs/Skills/chacademi_spells.yml",
+      "kind": "content-config",
+      "sha256": "67f680553827925c7962af2de5805b4b5905c0f1221660f791833d64df9d6bdf"
+    },
+    {
+      "target": "wild/plugins/PortableVFX/spell-bindings.yml",
+      "kind": "content-config",
+      "sha256": "76af6c34bb267c9746ee2012132c42bbb9aa8b8c31389c8fbefdbd9fdf799d03"
+    },
+    {
+      "target": "arena/plugins/MythicMobs/Skills/chacademi_spells.yml",
+      "kind": "content-config",
+      "sha256": "67f680553827925c7962af2de5805b4b5905c0f1221660f791833d64df9d6bdf"
+    },
+    {
+      "target": "arena/plugins/PortableVFX/spell-bindings.yml",
+      "kind": "content-config",
+      "sha256": "76af6c34bb267c9746ee2012132c42bbb9aa8b8c31389c8fbefdbd9fdf799d03"
+    }
+  ],
+  "changesSinceDeploymentReceipt": [
+    {
+      "target": "school/plugins/ChacademyStory/steps.yml",
+      "kind": "config-content",
+      "sha256": "3f1b8c058fb89a9a7cafdb796c97e9e8d5a2e5cff29b0f6bc0058479e4d2dcd7",
+      "previousDeploymentSHA256": "25f923b89a9d1b4f01f983f3c359daa905d39c57fff03ea267477c7fe10c7792"
+    }
+  ],
+  "temporaryLauncherClients": [
+    {
+      "label": "chacademy-story-mod-client",
+      "modId": "chaca_story",
+      "modVersion": "opening-safe-20261025.1",
+      "relativeTarget": "mods/chacademy-story-mod-client-opening-safe-20261025.jar",
+      "sha256": "e99f92db9328e77effe19e1317a47d2eedec6f2eb04df9fe234fe9bf0466626e"
+    },
+    {
+      "label": "portable-vfx-runtime-client-client",
+      "modId": "portablevfx",
+      "modVersion": "opening-safe-20261025.1",
+      "relativeTarget": "mods/portable-vfx-runtime-client-client-opening-safe-20261025.jar",
+      "sha256": "aea5599784daa39d315f6114380d0a016a7db6c7119067fbbf65d04824e67f91"
+    },
+    {
+      "label": "MagicCodex-client",
+      "modId": "magiccodex",
+      "modVersion": "0.41.0-opening-safe-v2-20261025+mc1.21.4",
+      "relativeTarget": "mods/magic-codex-ui-opening-safe-20261025-v2+mc1.21.4.jar",
+      "sha256": "11754cca8f1d8cdd34aa1e4958f9aa732e3a18b3384eda8af733315fd78ffc96"
+    }
+  ],
+  "launcherRepository": "zzunwoooo/chacademi-launcher",
+  "launcherDeployedCommit": "3aa870a2314dcb7f42a19350e8b25ee071fda278",
+  "launcherDistributionSHA256": "ade2ddb49c6a182574d0379e9048396013e61bf2a9a2a8ac8a994917d57ab4aa",
+  "launcherPayloadSHA256": "bf7bae4f5b5a9d4e14b869baecc61ffd647fd10e15a7a28588e7d5be61045e30",
+  "baselineJars": [
+    {
+      "label": "chaca-portrait-paper-school",
+      "baselineFilename": "chaca-portrait-0.1.0-commands.1.jar",
+      "baselineSHA256": "0fa6c8aea1bfd770d63809c7705165fb9afa93757a021fad011444e553a59926",
+      "initialCandidateSHA256": "5546fc75e3ae9c1c782281e2eb6eb67e4e8661f49f4356346c62a58183f7b37e"
+    },
+    {
+      "label": "chaca-portrait-paper-wild",
+      "baselineFilename": "chaca-portrait-0.1.0-commands.1.jar",
+      "baselineSHA256": "0fa6c8aea1bfd770d63809c7705165fb9afa93757a021fad011444e553a59926",
+      "initialCandidateSHA256": "5546fc75e3ae9c1c782281e2eb6eb67e4e8661f49f4356346c62a58183f7b37e"
+    },
+    {
+      "label": "chaca-portrait-paper-arena",
+      "baselineFilename": "chaca-portrait-0.1.0-commands.1.jar",
+      "baselineSHA256": "0fa6c8aea1bfd770d63809c7705165fb9afa93757a021fad011444e553a59926",
+      "initialCandidateSHA256": "5546fc75e3ae9c1c782281e2eb6eb67e4e8661f49f4356346c62a58183f7b37e"
+    },
+    {
+      "label": "magic-discovery-paper-school",
+      "baselineFilename": "magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "baselineSHA256": "ccd1a42806b0a21f61ac81bffb91431b7154c8e88a39bcdce95880908711fddf",
+      "initialCandidateSHA256": "144a8d52645255038d0f675c429be82fb74642defaaea25ef56d07e66ee79d43"
+    },
+    {
+      "label": "magic-discovery-paper-wild",
+      "baselineFilename": "magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "baselineSHA256": "ccd1a42806b0a21f61ac81bffb91431b7154c8e88a39bcdce95880908711fddf",
+      "initialCandidateSHA256": "144a8d52645255038d0f675c429be82fb74642defaaea25ef56d07e66ee79d43"
+    },
+    {
+      "label": "chacademi-party-velocity-velocity",
+      "baselineFilename": "chacademi-party-velocity-0.2.2-integrated-20261019.2-arenachat.1-commands.1.jar",
+      "baselineSHA256": "400d47fc7a0de870c45c4391d0c177b03f731d2f7f258aad9643dc9912b3e7a5",
+      "initialCandidateSHA256": "5438fc98daf363884711f6d16da7d24f48e83f4b5bbbca4bc00a9be59e7d536c"
+    },
+    {
+      "label": "creature-spawns-paper-wild",
+      "baselineFilename": "chacademia-wildlife-0.5.1-feedback-20261023.jar",
+      "baselineSHA256": "6d95a552e143be40a14a629dbc2e29565157fe63f4a6699e587928d496016119",
+      "initialCandidateSHA256": "a45418e247f5cb20116e477925b791312a5f3b0acde46251bd6b9d88e36b36a9"
+    },
+    {
+      "label": "chacademy-story-plugin-school",
+      "baselineFilename": "chacademy-story-plugin-final-guide-20261024.jar",
+      "baselineSHA256": "e9fd40ee17093dc753afb38ab7a8e9c9b984c9f7fc9eb68b3a0c55980e1b9a95",
+      "initialCandidateSHA256": "a03db9a9ba28501fda8bc0996fd30e79b198313e29346de6bf3077dccf95ca5f"
+    },
+    {
+      "label": "chacademy-story-mod-client",
+      "baselineFilename": "chacademy-story-final-guide-20261024.jar",
+      "baselineSHA256": "feaf0eada6b9a474e8b9a83621b6c286720d3d073c0680c476d93cff5da45c1f",
+      "initialCandidateSHA256": "e99f92db9328e77effe19e1317a47d2eedec6f2eb04df9fe234fe9bf0466626e"
+    },
+    {
+      "label": "magic-discovery-paper-arena",
+      "baselineFilename": "magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "baselineSHA256": "4896eacb0d75115e8ebaeb44c40c22cf6b812722dd4b44fbc8724617d706e929",
+      "initialCandidateSHA256": "858713c4ffc1077898f8b014fe9404c9a19e8bb648c87f0f18fd395a325d27bb"
+    },
+    {
+      "label": "magic-mythic-paper-school",
+      "baselineFilename": "chacademia-magic-mythic-final-20261024-school.jar",
+      "baselineSHA256": "96af4ff498e69b86ef6a08b934b0a72861f53dca19b7050df21cf9f7f4106f04",
+      "initialCandidateSHA256": "1c7cae40da9264bcabfef0f627172832c833dd268e823b46cba53d7721deb05b"
+    },
+    {
+      "label": "magic-mythic-paper-wild",
+      "baselineFilename": "chacademia-magic-mythic-final-20261024-wild.jar",
+      "baselineSHA256": "a9d18b6c7de442ec92c99a8552643ccd1a371fa6e6d6eacf485123940f2420ff",
+      "initialCandidateSHA256": "7dad1c8597d7795a06ab4d9bbe4cb01df5fc9c6f4b3b54e1b79d2d95a9a3816b"
+    },
+    {
+      "label": "magic-mythic-paper-arena",
+      "baselineFilename": "chacademia-magic-mythic-final-20261024-arena.jar",
+      "baselineSHA256": "96af4ff498e69b86ef6a08b934b0a72861f53dca19b7050df21cf9f7f4106f04",
+      "initialCandidateSHA256": "46f9b64448383ea9aa0430cfbe37d50f41a25cbb5df46b3ba7605a6e5387578b"
+    },
+    {
+      "label": "housing-paper-school",
+      "baselineFilename": "chaca-housing-0.1.2-usersearch.1-school.jar",
+      "baselineSHA256": "c2aa240b16d516a842e4175afa86d08a0251391864ac6eda7e7c6e93e2702a14",
+      "initialCandidateSHA256": "2bfbba912cb27b30ac0b3d7a1c333e0740357824d3525da5cda39d6ac1ea76b5"
+    },
+    {
+      "label": "housing-paper-wild",
+      "baselineFilename": "chaca-housing-0.1.2-usersearch.1-wild.jar",
+      "baselineSHA256": "40cd7c1009365d54a03397fd11cb0f5c3a26092323063924b9961dceec13afc2",
+      "initialCandidateSHA256": "9cf96ac8ffe33f9a4bd97dcb5da4dc6ab4bccc9fba0e422412b093d6204cea5c"
+    },
+    {
+      "label": "kyudichi-paper-arena",
+      "baselineFilename": "chaca-kyudichi-0.1.2-presets-api.2.jar",
+      "baselineSHA256": "c3023e42c9f9786dd2b6524ace3e49d45a015a3bf881c256f6e933c812339f34",
+      "initialCandidateSHA256": "1cd2271a7694a0e25ae70d9e209580a9975b94b9a853cdc8d5a22470f719be11"
+    },
+    {
+      "label": "portable-vfx-runtime-client-client",
+      "baselineFilename": "portable-vfx-client-3.2.4-drop-rarity.1-warmup.1.jar",
+      "baselineSHA256": "6088bbfd8c844512f6015eccfb496ae55bb84989c459f2834682b4f8bf24a318",
+      "initialCandidateSHA256": "aea5599784daa39d315f6114380d0a016a7db6c7119067fbbf65d04824e67f91"
+    },
+    {
+      "label": "portable-vfx-runtime-paper-school",
+      "baselineFilename": "portable-vfx-paper-3.2.3-integrated-20261020.1-gimmick.1.jar",
+      "baselineSHA256": "d19ef3b9e4a5b4e85f9793c1bc9d98052c82a0af0daf03e023040044718c1696",
+      "initialCandidateSHA256": "0e0d32595bc0dcc23b134d89ef02ade6122b6150dca666d65e7d7de01090f189"
+    },
+    {
+      "label": "portable-vfx-runtime-paper-wild",
+      "baselineFilename": "portable-vfx-paper-3.2.3-integrated-20261020.1-gimmick.1.jar",
+      "baselineSHA256": "d19ef3b9e4a5b4e85f9793c1bc9d98052c82a0af0daf03e023040044718c1696",
+      "initialCandidateSHA256": "0e0d32595bc0dcc23b134d89ef02ade6122b6150dca666d65e7d7de01090f189"
+    },
+    {
+      "label": "portable-vfx-runtime-paper-arena",
+      "baselineFilename": "portable-vfx-paper-3.2.3-integrated-20261020.1-gimmick.1.jar",
+      "baselineSHA256": "d19ef3b9e4a5b4e85f9793c1bc9d98052c82a0af0daf03e023040044718c1696",
+      "initialCandidateSHA256": "0e0d32595bc0dcc23b134d89ef02ade6122b6150dca666d65e7d7de01090f189"
+    },
+    {
+      "label": "MagicCodexBridge-school",
+      "baselineFilename": "magic-codex-bridge-final-20261024-school.jar",
+      "baselineSHA256": "20679f928c3266de5259ad2028d45b42b88c271fcb20e33c5cae15163ff7d6fb",
+      "initialCandidateSHA256": "4b90ebb14e331f108d01469f4c6b9a97385936e7bb58ac2669a80a603341e93f"
+    },
+    {
+      "label": "MagicCodexBridge-wild",
+      "baselineFilename": "magic-codex-bridge-final-20261024-wild.jar",
+      "baselineSHA256": "3ca64c52377170ca87e1201f4c51da220de56daaadae93cb758fd9ce787a2311",
+      "initialCandidateSHA256": "40ff5a0e716c5f482d0e76c9921bcf4faa4922df0368cf0674dade6f373edc29"
+    },
+    {
+      "label": "MagicCodexBridge-arena",
+      "baselineFilename": "magic-codex-bridge-final-20261024-arena.jar",
+      "baselineSHA256": "333cb54fba161ca81c40fe36b9e6a6b9970bdc88c381488410df587b0b407694",
+      "initialCandidateSHA256": "6b2633cbc792e92992306cce212bbe411830be7ec5ace941f6c875a7583e49c7"
+    },
+    {
+      "label": "MagicCodex-client",
+      "baselineFilename": "magic-codex-ui-integrated-offline-20261024+mc1.21.4.jar",
+      "baselineSHA256": "9e22f1e1161fd67d1f8cf28b0df8cff32494345ecfe48f3d8a21c4419ea6dbdc",
+      "initialCandidateSHA256": "11754cca8f1d8cdd34aa1e4958f9aa732e3a18b3384eda8af733315fd78ffc96"
+    },
+    {
+      "label": "ChacaNPC-school",
+      "baselineFilename": "chaca-npc-0.3.0-npcmodel.3.jar",
+      "baselineSHA256": "8b83629b167dfe5d4222367d362cb3837b4f2ca3e5baca079dcb74e3631445ee",
+      "initialCandidateSHA256": "22c7038dc5c632f876cc94d7118f8d835445d9393239765dab7c582137425b21"
+    }
+  ],
+  "excludedDevelopmentHead": "f897040676ed9d583292ac3b8d19e486e72e91b1",
+  "excludedDevelopmentReason": "29 later commits after title input: opacity revert, quidditch combat, operator helper, icon corrections, spell sounds; not deployed or merged here",
+  "cancelledHarborCutscene": "Not deployed/committed; original ZIP only copied to private artifact directory then cancelled",
+  "excluded": [
+    "personal launcher",
+    "dungeon server",
+    "nonexistent tutorial servers",
+    "unapproved bag polish"
+  ],
+  "originalBinaryBaselineRequired": true,
+  "userDataOrCredentialsIncluded": false,
+  "thisHandoffDeployedAnything": false
+}

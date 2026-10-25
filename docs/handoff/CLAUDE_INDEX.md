@@ -1,3 +1,5 @@
+> 현재 운영 기준: [LIVE_SOURCE_HANDOFF_20261025](LIVE_SOURCE_HANDOFF_20261025.md) — 운영 상태와 재현 한계를 먼저 확인하세요.
+
 > Claude 2026-10-25 (not built, NOT committed): [오픈 전 메모 1차 개선 — 마법 자동시전 검수·지능 명칭·감정 성향·책 지능·칭호 지급·사전 설정·AI 대화 호감도·천장·파티 아군·대상 마법·허수아비·하우징 좋아요·장 잠금·길잡이·커스텀 경기·재접속·설정창·귀환권·튜토리얼 상점 등](CLAUDE_OPENING_PREP_20261025.md). Local branch work/opening-prep-20261025 (merge of latest claude/* branches).
 > Claude 2026-10-24 (not built): [던전 기믹 자동 연결 — 퍼즐·노드·puzzles.yml 삭제, 붙어 있는 블럭끼리 연결, 명령은 소환·도구·목록·모델·초기화, 막대 정답 모드](CLAUDE_GIMMICK_AUTOWIRE_20261024.md). Branch claude/gimmick-simplify-20261024 on claude/travel-map-20261023. ChacaGimmick jar only (+ config.yml keys).
 > Claude 2026-10-24 (not built): 지도 이동 2차 — WaypointGlobe VFX(클라 PortableVFX 팩 배포 필요)·미니맵·J 키·야생 스폰·공간 도약 1곳/지정 무료. Same branch, see §0-2 of the doc below.

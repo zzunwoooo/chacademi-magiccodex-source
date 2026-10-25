@@ -1,0 +1,15 @@
+{
+  "path": "deployment/operating-config/ChacademyStory/steps.yml",
+  "sha256": "3f1b8c058fb89a9a7cafdb796c97e9e8d5a2e5cff29b0f6bc0058479e4d2dcd7",
+  "source": "read-only current school ChacademyStory steps.yml",
+  "explicitUserApproval": "school steps.yml snapshot inclusion approved after previous hold",
+  "review": "story content, fictional NPC IDs, commands with {player} placeholders; no account/player records or credentials found",
+  "checks": {
+    "credentialKey": 0,
+    "email": 0,
+    "playerUUID": 0,
+    "privateKey": 0,
+    "accessToken": 0
+  },
+  "serverOriginalModified": false
+}

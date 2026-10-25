@@ -1,0 +1,569 @@
+[
+  {
+    "report": "bounded-packaging/bridge-final-arena-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\arena\\plugins\\magic-codex-bridge-final-20261024-arena.jar",
+      "liveSHA256": "333cb54fba161ca81c40fe36b9e6a6b9970bdc88c381488410df587b0b407694",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\magic-codex-paper\\build\\libs\\magic-codex-bridge-0.31.3-integrated-20261020.1-gimmick.1-houses.1-commands.1-followups.1-nameplates.2-titles.1-storych1.1.jar",
+      "newRawSHA256": "07aa9995c477dfb2b4b626f459a649d9c31461a7d496634586669d3b83f02360",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\magic-codex-paper\\build\\libs\\magic-codex-bridge-0.31.3-integrated-20261020.1-gimmick.1-houses.1-commands.1-followups.1-nameplates.2-titles.1-storych1.1.jar",
+      "sourceBaselineRawSHA256": "6e4f8010c4e35a002b0e99702e4991395cc1edb377825afeec092f22741b6230"
+    }
+  },
+  {
+    "report": "bounded-packaging/bridge-final-school-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\school\\plugins\\magic-codex-bridge-final-20261024-school.jar",
+      "liveSHA256": "20679f928c3266de5259ad2028d45b42b88c271fcb20e33c5cae15163ff7d6fb",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\magic-codex-paper\\build\\libs\\magic-codex-bridge-0.31.3-integrated-20261020.1-gimmick.1-houses.1-commands.1-followups.1-nameplates.2-titles.1-storych1.1.jar",
+      "newRawSHA256": "07aa9995c477dfb2b4b626f459a649d9c31461a7d496634586669d3b83f02360",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\magic-codex-paper\\build\\libs\\magic-codex-bridge-0.31.3-integrated-20261020.1-gimmick.1-houses.1-commands.1-followups.1-nameplates.2-titles.1-storych1.1.jar",
+      "sourceBaselineRawSHA256": "6e4f8010c4e35a002b0e99702e4991395cc1edb377825afeec092f22741b6230"
+    }
+  },
+  {
+    "report": "bounded-packaging/bridge-final-wild-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\wild\\plugins\\magic-codex-bridge-final-20261024-wild.jar",
+      "liveSHA256": "3ca64c52377170ca87e1201f4c51da220de56daaadae93cb758fd9ce787a2311",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\magic-codex-paper\\build\\libs\\magic-codex-bridge-0.31.3-integrated-20261020.1-gimmick.1-houses.1-commands.1-followups.1-nameplates.2-titles.1-storych1.1.jar",
+      "newRawSHA256": "07aa9995c477dfb2b4b626f459a649d9c31461a7d496634586669d3b83f02360",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\magic-codex-paper\\build\\libs\\magic-codex-bridge-0.31.3-integrated-20261020.1-gimmick.1-houses.1-commands.1-followups.1-nameplates.2-titles.1-storych1.1.jar",
+      "sourceBaselineRawSHA256": "6e4f8010c4e35a002b0e99702e4991395cc1edb377825afeec092f22741b6230"
+    }
+  },
+  {
+    "report": "bounded-packaging/bridge-school-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\school\\plugins\\magic-codex-bridge-final-20261024-school.jar",
+      "liveSHA256": "20679f928c3266de5259ad2028d45b42b88c271fcb20e33c5cae15163ff7d6fb",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\magic-codex-paper\\build\\libs\\magic-codex-bridge-0.31.3-integrated-20261020.1-gimmick.1-houses.1-commands.1-followups.1-nameplates.2-titles.1-storych1.1.jar",
+      "newRawSHA256": "b6c0067809a7d0e696180022754b80a759a75f602b5908f35c6c63e9e7bd7de9",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\magic-codex-paper\\build\\libs\\magic-codex-bridge-0.31.3-integrated-20261020.1-gimmick.1-houses.1-commands.1-followups.1-nameplates.2-titles.1-storych1.1.jar",
+      "sourceBaselineRawSHA256": "6e4f8010c4e35a002b0e99702e4991395cc1edb377825afeec092f22741b6230"
+    }
+  },
+  {
+    "report": "bounded-packaging/magic-codex-bridge-opening-safe-20261025-arena-v2.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\bounded-packaging\\magic-codex-bridge-opening-safe-20261025-arena-v2.jar",
+      "sha256": "6b2633cbc792e92992306cce212bbe411830be7ec5ace941f6c875a7583e49c7",
+      "baseline": "C:\\Chacademi\\network\\arena\\plugins\\magic-codex-bridge-final-20261024-arena.jar",
+      "baselineSHA256": "333cb54fba161ca81c40fe36b9e6a6b9970bdc88c381488410df587b0b407694"
+    }
+  },
+  {
+    "report": "bounded-packaging/magic-codex-bridge-opening-safe-20261025-school-v2.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\bounded-packaging\\magic-codex-bridge-opening-safe-20261025-school-v2.jar",
+      "sha256": "4b90ebb14e331f108d01469f4c6b9a97385936e7bb58ac2669a80a603341e93f",
+      "baseline": "C:\\Chacademi\\network\\school\\plugins\\magic-codex-bridge-final-20261024-school.jar",
+      "baselineSHA256": "20679f928c3266de5259ad2028d45b42b88c271fcb20e33c5cae15163ff7d6fb"
+    }
+  },
+  {
+    "report": "bounded-packaging/magic-codex-bridge-opening-safe-20261025-school.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\bounded-packaging\\magic-codex-bridge-opening-safe-20261025-school.jar",
+      "sha256": "52e2e50db88887bbe6e92266f2e2955802a1890716b4f8dc00492300c4c14184",
+      "baseline": "C:\\Chacademi\\network\\school\\plugins\\magic-codex-bridge-final-20261024-school.jar",
+      "baselineSHA256": "20679f928c3266de5259ad2028d45b42b88c271fcb20e33c5cae15163ff7d6fb"
+    }
+  },
+  {
+    "report": "bounded-packaging/magic-codex-bridge-opening-safe-20261025-wild-v2.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\bounded-packaging\\magic-codex-bridge-opening-safe-20261025-wild-v2.jar",
+      "sha256": "40ff5a0e716c5f482d0e76c9921bcf4faa4922df0368cf0674dade6f373edc29",
+      "baseline": "C:\\Chacademi\\network\\wild\\plugins\\magic-codex-bridge-final-20261024-wild.jar",
+      "baselineSHA256": "3ca64c52377170ca87e1201f4c51da220de56daaadae93cb758fd9ce787a2311"
+    }
+  },
+  {
+    "report": "bounded-packaging/magic-codex-bridge-opening-safe-20261025-wild.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\bounded-packaging\\magic-codex-bridge-opening-safe-20261025-wild.jar",
+      "sha256": "9d773c98a929cba3c600e4a2f75b28f01aa10d72d2219a80b22245f9920bb71f",
+      "baseline": "C:\\Chacademi\\network\\wild\\plugins\\magic-codex-bridge-final-20261024-wild.jar",
+      "baselineSHA256": "3ca64c52377170ca87e1201f4c51da220de56daaadae93cb758fd9ce787a2311"
+    }
+  },
+  {
+    "report": "bounded-packaging/magic-codex-ui-opening-safe-20261025+mc1.21.4.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\bounded-packaging\\magic-codex-ui-opening-safe-20261025+mc1.21.4.jar",
+      "sha256": "b1d646ad5bb23a696f79cbcb718fde2e1012f482148e0421a420c2e05d869b69",
+      "baseline": "C:\\Chacademi\\artifacts\\offline-integrated-20261024-task9\\magic-codex-ui-integrated-offline-20261024+mc1.21.4.jar",
+      "baselineSHA256": "9e22f1e1161fd67d1f8cf28b0df8cff32494345ecfe48f3d8a21c4419ea6dbdc"
+    }
+  },
+  {
+    "report": "bounded-packaging/magic-codex-ui-opening-safe-20261025-v2+mc1.21.4.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\bounded-packaging\\magic-codex-ui-opening-safe-20261025-v2+mc1.21.4.jar",
+      "sha256": "11754cca8f1d8cdd34aa1e4958f9aa732e3a18b3384eda8af733315fd78ffc96",
+      "baseline": "C:\\Chacademi\\artifacts\\offline-integrated-20261024-task9\\magic-codex-ui-integrated-offline-20261024+mc1.21.4.jar",
+      "baselineSHA256": "9e22f1e1161fd67d1f8cf28b0df8cff32494345ecfe48f3d8a21c4419ea6dbdc"
+    }
+  },
+  {
+    "report": "bounded-packaging/pretitle-arena-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\arena\\plugins\\magic-codex-bridge-final-20261024-arena.jar",
+      "liveSHA256": "333cb54fba161ca81c40fe36b9e6a6b9970bdc88c381488410df587b0b407694",
+      "newRaw": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\bounded-packaging\\bridge-input-before-final-title.jar",
+      "newRawSHA256": "07aa9995c477dfb2b4b626f459a649d9c31461a7d496634586669d3b83f02360",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\magic-codex-paper\\build\\libs\\magic-codex-bridge-0.31.3-integrated-20261020.1-gimmick.1-houses.1-commands.1-followups.1-nameplates.2-titles.1-storych1.1.jar",
+      "sourceBaselineRawSHA256": "6e4f8010c4e35a002b0e99702e4991395cc1edb377825afeec092f22741b6230"
+    }
+  },
+  {
+    "report": "bounded-packaging/pretitle-wild-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\wild\\plugins\\magic-codex-bridge-final-20261024-wild.jar",
+      "liveSHA256": "3ca64c52377170ca87e1201f4c51da220de56daaadae93cb758fd9ce787a2311",
+      "newRaw": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\bounded-packaging\\bridge-input-before-final-title.jar",
+      "newRawSHA256": "07aa9995c477dfb2b4b626f459a649d9c31461a7d496634586669d3b83f02360",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\magic-codex-paper\\build\\libs\\magic-codex-bridge-0.31.3-integrated-20261020.1-gimmick.1-houses.1-commands.1-followups.1-nameplates.2-titles.1-storych1.1.jar",
+      "sourceBaselineRawSHA256": "6e4f8010c4e35a002b0e99702e4991395cc1edb377825afeec092f22741b6230"
+    }
+  },
+  {
+    "report": "bounded-packaging/ui-final-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\artifacts\\offline-integrated-20261024-task9\\magic-codex-ui-integrated-offline-20261024+mc1.21.4.jar",
+      "liveSHA256": "9e22f1e1161fd67d1f8cf28b0df8cff32494345ecfe48f3d8a21c4419ea6dbdc",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\magic-codex-fabric\\build\\libs\\magic-codex-ui-0.40.3-integrated-20261020.1-gimmick.1-commands.1-followups.1-tooltip.1-nameplates.2-titles.1+mc1.21.4.jar",
+      "newRawSHA256": "8ca0fdc13e71818f13bc86220d5395bcc7cf92b879b94d91eb7b780b1b377631",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\opening-baseline-7d8ec6e1-20261025-task3\\magic-codex-fabric\\build\\libs\\magic-codex-ui-0.40.3-integrated-20261020.1-gimmick.1-commands.1-followups.1-tooltip.1-nameplates.2-titles.1+mc1.21.4.jar",
+      "sourceBaselineRawSHA256": "0a30de44d2e0a07703254ff802314e43936b04c827a145abeaceb084db36f10f"
+    }
+  },
+  {
+    "report": "other-preservation/chaca-portrait-paper-arena-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\chaca-portrait-paper-arena-opening-safe-20261025.jar",
+      "sha256": "5546fc75e3ae9c1c782281e2eb6eb67e4e8661f49f4356346c62a58183f7b37e",
+      "baseline": "C:\\Chacademi\\network\\arena\\plugins\\chaca-portrait-0.1.0-commands.1.jar",
+      "baselineSHA256": "0fa6c8aea1bfd770d63809c7705165fb9afa93757a021fad011444e553a59926"
+    }
+  },
+  {
+    "report": "other-preservation/chaca-portrait-paper-arena-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\arena\\plugins\\chaca-portrait-0.1.0-commands.1.jar",
+      "liveSHA256": "0fa6c8aea1bfd770d63809c7705165fb9afa93757a021fad011444e553a59926",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\chaca-portrait-paper\\build\\libs\\chaca-portrait-0.1.0-commands.1.jar",
+      "newRawSHA256": "d36bd0a442434561f72cb5383e04bbe732e65c70fd4ca5192698f03d8eab2969",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\chaca-portrait-paper\\build\\libs\\chaca-portrait-0.1.0-commands.1.jar",
+      "sourceBaselineRawSHA256": "f380466dad42b9d02168a6030170ba3477bcb07271cdfb4aff24bfff4a93090d"
+    }
+  },
+  {
+    "report": "other-preservation/chaca-portrait-paper-school-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\chaca-portrait-paper-school-opening-safe-20261025.jar",
+      "sha256": "5546fc75e3ae9c1c782281e2eb6eb67e4e8661f49f4356346c62a58183f7b37e",
+      "baseline": "C:\\Chacademi\\network\\school\\plugins\\chaca-portrait-0.1.0-commands.1.jar",
+      "baselineSHA256": "0fa6c8aea1bfd770d63809c7705165fb9afa93757a021fad011444e553a59926"
+    }
+  },
+  {
+    "report": "other-preservation/chaca-portrait-paper-school-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\school\\plugins\\chaca-portrait-0.1.0-commands.1.jar",
+      "liveSHA256": "0fa6c8aea1bfd770d63809c7705165fb9afa93757a021fad011444e553a59926",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\chaca-portrait-paper\\build\\libs\\chaca-portrait-0.1.0-commands.1.jar",
+      "newRawSHA256": "d36bd0a442434561f72cb5383e04bbe732e65c70fd4ca5192698f03d8eab2969",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\chaca-portrait-paper\\build\\libs\\chaca-portrait-0.1.0-commands.1.jar",
+      "sourceBaselineRawSHA256": "f380466dad42b9d02168a6030170ba3477bcb07271cdfb4aff24bfff4a93090d"
+    }
+  },
+  {
+    "report": "other-preservation/chaca-portrait-paper-wild-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\chaca-portrait-paper-wild-opening-safe-20261025.jar",
+      "sha256": "5546fc75e3ae9c1c782281e2eb6eb67e4e8661f49f4356346c62a58183f7b37e",
+      "baseline": "C:\\Chacademi\\network\\wild\\plugins\\chaca-portrait-0.1.0-commands.1.jar",
+      "baselineSHA256": "0fa6c8aea1bfd770d63809c7705165fb9afa93757a021fad011444e553a59926"
+    }
+  },
+  {
+    "report": "other-preservation/chaca-portrait-paper-wild-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\wild\\plugins\\chaca-portrait-0.1.0-commands.1.jar",
+      "liveSHA256": "0fa6c8aea1bfd770d63809c7705165fb9afa93757a021fad011444e553a59926",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\chaca-portrait-paper\\build\\libs\\chaca-portrait-0.1.0-commands.1.jar",
+      "newRawSHA256": "d36bd0a442434561f72cb5383e04bbe732e65c70fd4ca5192698f03d8eab2969",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\chaca-portrait-paper\\build\\libs\\chaca-portrait-0.1.0-commands.1.jar",
+      "sourceBaselineRawSHA256": "f380466dad42b9d02168a6030170ba3477bcb07271cdfb4aff24bfff4a93090d"
+    }
+  },
+  {
+    "report": "other-preservation/chacademi-party-velocity-velocity-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\chacademi-party-velocity-velocity-opening-safe-20261025.jar",
+      "sha256": "5438fc98daf363884711f6d16da7d24f48e83f4b5bbbca4bc00a9be59e7d536c",
+      "baseline": "C:\\Chacademi\\network\\velocity\\plugins\\chacademi-party-velocity-0.2.2-integrated-20261019.2-arenachat.1-commands.1.jar",
+      "baselineSHA256": "400d47fc7a0de870c45c4391d0c177b03f731d2f7f258aad9643dc9912b3e7a5"
+    }
+  },
+  {
+    "report": "other-preservation/chacademi-party-velocity-velocity-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\velocity\\plugins\\chacademi-party-velocity-0.2.2-integrated-20261019.2-arenachat.1-commands.1.jar",
+      "liveSHA256": "400d47fc7a0de870c45c4391d0c177b03f731d2f7f258aad9643dc9912b3e7a5",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\chacademi-party-velocity\\build\\libs\\chacademi-party-velocity-0.2.2-integrated-20261019.2-arenachat.1-commands.1.jar",
+      "newRawSHA256": "39d87fb96fec429d8e6c5baa0435c9d737ecd2d37e8252cc62224fbb2e37c635",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\chacademi-party-velocity\\build\\libs\\chacademi-party-velocity-0.2.2-integrated-20261019.2-arenachat.1-commands.1.jar",
+      "sourceBaselineRawSHA256": "89d6ee1746dc54516b2b2127adeaabce68bb509840e6a58c884de78ececd7308"
+    }
+  },
+  {
+    "report": "other-preservation/chacademy-story-mod-client-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\chacademy-story-mod-client-opening-safe-20261025.jar",
+      "sha256": "e99f92db9328e77effe19e1317a47d2eedec6f2eb04df9fe234fe9bf0466626e",
+      "baseline": "C:\\Chacademi\\artifacts\\final-release-20261024-task9\\chacademy-story-final-guide-20261024.jar",
+      "baselineSHA256": "feaf0eada6b9a474e8b9a83621b6c286720d3d073c0680c476d93cff5da45c1f"
+    }
+  },
+  {
+    "report": "other-preservation/chacademy-story-mod-client-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\artifacts\\final-release-20261024-task9\\chacademy-story-final-guide-20261024.jar",
+      "liveSHA256": "feaf0eada6b9a474e8b9a83621b6c286720d3d073c0680c476d93cff5da45c1f",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\chacademy-story\\mod\\build\\libs\\chacademy-story-0.1.4-quest.5-ch1.1-serverdialogue.1.jar",
+      "newRawSHA256": "26cf30eb8904c2ac95ba9ffb10fad7925629233228d949f5fc4c226d53676342",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\quest-guide-20261024-task9\\chacademy-story\\mod\\build\\libs\\chacademy-story-0.1.4-quest.5-ch1.1-serverdialogue.1.jar",
+      "sourceBaselineRawSHA256": "83e30b3416b012e8db0db8717985857363d3fabd16a944a2b97e64822aceea57"
+    }
+  },
+  {
+    "report": "other-preservation/chacademy-story-plugin-school-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\chacademy-story-plugin-school-opening-safe-20261025.jar",
+      "sha256": "a03db9a9ba28501fda8bc0996fd30e79b198313e29346de6bf3077dccf95ca5f",
+      "baseline": "C:\\Chacademi\\network\\school\\plugins\\chacademy-story-plugin-final-guide-20261024.jar",
+      "baselineSHA256": "e9fd40ee17093dc753afb38ab7a8e9c9b984c9f7fc9eb68b3a0c55980e1b9a95"
+    }
+  },
+  {
+    "report": "other-preservation/chacademy-story-plugin-school-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\school\\plugins\\chacademy-story-plugin-final-guide-20261024.jar",
+      "liveSHA256": "e9fd40ee17093dc753afb38ab7a8e9c9b984c9f7fc9eb68b3a0c55980e1b9a95",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\chacademy-story\\plugin\\build\\libs\\chacademy-story-plugin-0.1.4-quest.5-ch1.1-serverdialogue.1.jar",
+      "newRawSHA256": "ff133b401b9d1ec0cc3fa9691cfc338f379a6c1a9561527a2f38f0877c4f3911",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\quest-guide-20261024-task9\\chacademy-story\\plugin\\build\\libs\\chacademy-story-plugin-0.1.4-quest.5-ch1.1-serverdialogue.1.jar",
+      "sourceBaselineRawSHA256": "49b1487ced611fc794b4eb898e0c1427e92678f15b2ba5bc5d26c08238cadd43"
+    }
+  },
+  {
+    "report": "other-preservation/creature-spawns-paper-wild-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\creature-spawns-paper-wild-opening-safe-20261025.jar",
+      "sha256": "a45418e247f5cb20116e477925b791312a5f3b0acde46251bd6b9d88e36b36a9",
+      "baseline": "C:\\Chacademi\\network\\wild\\plugins\\chacademia-wildlife-0.5.1-feedback-20261023.jar",
+      "baselineSHA256": "6d95a552e143be40a14a629dbc2e29565157fe63f4a6699e587928d496016119"
+    }
+  },
+  {
+    "report": "other-preservation/creature-spawns-paper-wild-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\wild\\plugins\\chacademia-wildlife-0.5.1-feedback-20261023.jar",
+      "liveSHA256": "6d95a552e143be40a14a629dbc2e29565157fe63f4a6699e587928d496016119",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\creature-spawns-paper\\build\\libs\\chacademia-wildlife-0.5.1-feedback-20261023.jar",
+      "newRawSHA256": "670a554c2db73513698f0c114cb8e64817c5edb2bdbf66cabda6762bd33015d1",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\creature-spawns-paper\\build\\libs\\chacademia-wildlife-0.5.1-feedback-20261023.jar",
+      "sourceBaselineRawSHA256": "318c52a6b7461bb6dbb5e20f97df99b4750826be31e4fc34f639cbc77aac95c7"
+    }
+  },
+  {
+    "report": "other-preservation/housing-paper-school-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\housing-paper-school-opening-safe-20261025.jar",
+      "sha256": "2bfbba912cb27b30ac0b3d7a1c333e0740357824d3525da5cda39d6ac1ea76b5",
+      "baseline": "C:\\Chacademi\\network\\school\\plugins\\chaca-housing-0.1.2-usersearch.1-school.jar",
+      "baselineSHA256": "c2aa240b16d516a842e4175afa86d08a0251391864ac6eda7e7c6e93e2702a14"
+    }
+  },
+  {
+    "report": "other-preservation/housing-paper-school-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\school\\plugins\\chaca-housing-0.1.2-usersearch.1-school.jar",
+      "liveSHA256": "c2aa240b16d516a842e4175afa86d08a0251391864ac6eda7e7c6e93e2702a14",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\housing-paper\\build\\libs\\chaca-housing-0.1.2-usersearch.1.jar",
+      "newRawSHA256": "f73e1f876d13879e53ca83af8a5e83064966e738b0a8bc7739fa1f3ac3b83119",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\housing-paper\\build\\libs\\chaca-housing-0.1.2-usersearch.1.jar",
+      "sourceBaselineRawSHA256": "858aff586996f0160758149cf10aa1e07ee43b6b9080b840fd95fd7a8840d0ea"
+    }
+  },
+  {
+    "report": "other-preservation/housing-paper-wild-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\housing-paper-wild-opening-safe-20261025.jar",
+      "sha256": "9cf96ac8ffe33f9a4bd97dcb5da4dc6ab4bccc9fba0e422412b093d6204cea5c",
+      "baseline": "C:\\Chacademi\\network\\wild\\plugins\\chaca-housing-0.1.2-usersearch.1-wild.jar",
+      "baselineSHA256": "40cd7c1009365d54a03397fd11cb0f5c3a26092323063924b9961dceec13afc2"
+    }
+  },
+  {
+    "report": "other-preservation/housing-paper-wild-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\wild\\plugins\\chaca-housing-0.1.2-usersearch.1-wild.jar",
+      "liveSHA256": "40cd7c1009365d54a03397fd11cb0f5c3a26092323063924b9961dceec13afc2",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\housing-paper\\build\\libs\\chaca-housing-0.1.2-usersearch.1.jar",
+      "newRawSHA256": "f73e1f876d13879e53ca83af8a5e83064966e738b0a8bc7739fa1f3ac3b83119",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\housing-paper\\build\\libs\\chaca-housing-0.1.2-usersearch.1.jar",
+      "sourceBaselineRawSHA256": "858aff586996f0160758149cf10aa1e07ee43b6b9080b840fd95fd7a8840d0ea"
+    }
+  },
+  {
+    "report": "other-preservation/kyudichi-paper-arena-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\kyudichi-paper-arena-opening-safe-20261025.jar",
+      "sha256": "1cd2271a7694a0e25ae70d9e209580a9975b94b9a853cdc8d5a22470f719be11",
+      "baseline": "C:\\Chacademi\\network\\arena\\plugins\\chaca-kyudichi-0.1.2-presets-api.2.jar",
+      "baselineSHA256": "c3023e42c9f9786dd2b6524ace3e49d45a015a3bf881c256f6e933c812339f34"
+    }
+  },
+  {
+    "report": "other-preservation/kyudichi-paper-arena-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\arena\\plugins\\chaca-kyudichi-0.1.2-presets-api.2.jar",
+      "liveSHA256": "c3023e42c9f9786dd2b6524ace3e49d45a015a3bf881c256f6e933c812339f34",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\kyudichi-paper\\build\\libs\\chaca-kyudichi-0.1.2-integrated-20261019.1-combat.1-commands.1-followups.1.jar",
+      "newRawSHA256": "54801b8424a7a88d863aaf3b8db50b6e5596998eff075e65984ea8f82cc9a325",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\kyudichi-paper\\build\\libs\\chaca-kyudichi-0.1.2-integrated-20261019.1-combat.1-commands.1-followups.1.jar",
+      "sourceBaselineRawSHA256": "634aa445a1611867863d9cbbc63531e5c2c9057ef18e223aed6810b47af084aa"
+    }
+  },
+  {
+    "report": "other-preservation/magic-discovery-paper-arena-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\magic-discovery-paper-arena-opening-safe-20261025.jar",
+      "sha256": "858713c4ffc1077898f8b014fe9404c9a19e8bb648c87f0f18fd395a325d27bb",
+      "baseline": "C:\\Chacademi\\network\\arena\\plugins\\magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "baselineSHA256": "4896eacb0d75115e8ebaeb44c40c22cf6b812722dd4b44fbc8724617d706e929"
+    }
+  },
+  {
+    "report": "other-preservation/magic-discovery-paper-arena-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\arena\\plugins\\magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "liveSHA256": "4896eacb0d75115e8ebaeb44c40c22cf6b812722dd4b44fbc8724617d706e929",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\magic-discovery-paper\\build\\libs\\magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "newRawSHA256": "645aebe84fb8a174ea13dacd20ec5d9c95992bd0c70d8cf68378faa5a5fd925c",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\magic-discovery-paper\\build\\libs\\magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "sourceBaselineRawSHA256": "2a28a8fcb3fe134b714b6cc3a368aa1e7782ae29e9de47620c91e6c01ce59805"
+    }
+  },
+  {
+    "report": "other-preservation/magic-discovery-paper-school-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\magic-discovery-paper-school-opening-safe-20261025.jar",
+      "sha256": "144a8d52645255038d0f675c429be82fb74642defaaea25ef56d07e66ee79d43",
+      "baseline": "C:\\Chacademi\\network\\school\\plugins\\magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "baselineSHA256": "ccd1a42806b0a21f61ac81bffb91431b7154c8e88a39bcdce95880908711fddf"
+    }
+  },
+  {
+    "report": "other-preservation/magic-discovery-paper-school-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\school\\plugins\\magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "liveSHA256": "ccd1a42806b0a21f61ac81bffb91431b7154c8e88a39bcdce95880908711fddf",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\magic-discovery-paper\\build\\libs\\magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "newRawSHA256": "645aebe84fb8a174ea13dacd20ec5d9c95992bd0c70d8cf68378faa5a5fd925c",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\magic-discovery-paper\\build\\libs\\magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "sourceBaselineRawSHA256": "2a28a8fcb3fe134b714b6cc3a368aa1e7782ae29e9de47620c91e6c01ce59805"
+    }
+  },
+  {
+    "report": "other-preservation/magic-discovery-paper-wild-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\magic-discovery-paper-wild-opening-safe-20261025.jar",
+      "sha256": "144a8d52645255038d0f675c429be82fb74642defaaea25ef56d07e66ee79d43",
+      "baseline": "C:\\Chacademi\\network\\wild\\plugins\\magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "baselineSHA256": "ccd1a42806b0a21f61ac81bffb91431b7154c8e88a39bcdce95880908711fddf"
+    }
+  },
+  {
+    "report": "other-preservation/magic-discovery-paper-wild-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\wild\\plugins\\magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "liveSHA256": "ccd1a42806b0a21f61ac81bffb91431b7154c8e88a39bcdce95880908711fddf",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\magic-discovery-paper\\build\\libs\\magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "newRawSHA256": "645aebe84fb8a174ea13dacd20ec5d9c95992bd0c70d8cf68378faa5a5fd925c",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\magic-discovery-paper\\build\\libs\\magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "sourceBaselineRawSHA256": "2a28a8fcb3fe134b714b6cc3a368aa1e7782ae29e9de47620c91e6c01ce59805"
+    }
+  },
+  {
+    "report": "other-preservation/magic-mythic-paper-arena-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\magic-mythic-paper-arena-opening-safe-20261025.jar",
+      "sha256": "46f9b64448383ea9aa0430cfbe37d50f41a25cbb5df46b3ba7605a6e5387578b",
+      "baseline": "C:\\Chacademi\\network\\arena\\plugins\\chacademia-magic-mythic-final-20261024-arena.jar",
+      "baselineSHA256": "96af4ff498e69b86ef6a08b934b0a72861f53dca19b7050df21cf9f7f4106f04"
+    }
+  },
+  {
+    "report": "other-preservation/magic-mythic-paper-arena-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\arena\\plugins\\chacademia-magic-mythic-final-20261024-arena.jar",
+      "liveSHA256": "96af4ff498e69b86ef6a08b934b0a72861f53dca19b7050df21cf9f7f4106f04",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\magic-mythic-paper\\build\\libs\\chacademia-magic-mythic-0.2.2-wildlife-20261023.jar",
+      "newRawSHA256": "68b8c4f423580cda5699bb8499c7c41cbbd38f2809a5dc23241be26cf8b3bff5",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\magic-mythic-paper\\build\\libs\\chacademia-magic-mythic-0.2.2-wildlife-20261023.jar",
+      "sourceBaselineRawSHA256": "2a328aabb8edea1ae619523e8ca2a9be2a08d8a0bf9e3fddcf61e458bba409de"
+    }
+  },
+  {
+    "report": "other-preservation/magic-mythic-paper-school-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\magic-mythic-paper-school-opening-safe-20261025.jar",
+      "sha256": "1c7cae40da9264bcabfef0f627172832c833dd268e823b46cba53d7721deb05b",
+      "baseline": "C:\\Chacademi\\network\\school\\plugins\\chacademia-magic-mythic-final-20261024-school.jar",
+      "baselineSHA256": "96af4ff498e69b86ef6a08b934b0a72861f53dca19b7050df21cf9f7f4106f04"
+    }
+  },
+  {
+    "report": "other-preservation/magic-mythic-paper-school-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\school\\plugins\\chacademia-magic-mythic-final-20261024-school.jar",
+      "liveSHA256": "96af4ff498e69b86ef6a08b934b0a72861f53dca19b7050df21cf9f7f4106f04",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\magic-mythic-paper\\build\\libs\\chacademia-magic-mythic-0.2.2-wildlife-20261023.jar",
+      "newRawSHA256": "68b8c4f423580cda5699bb8499c7c41cbbd38f2809a5dc23241be26cf8b3bff5",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\magic-mythic-paper\\build\\libs\\chacademia-magic-mythic-0.2.2-wildlife-20261023.jar",
+      "sourceBaselineRawSHA256": "2a328aabb8edea1ae619523e8ca2a9be2a08d8a0bf9e3fddcf61e458bba409de"
+    }
+  },
+  {
+    "report": "other-preservation/magic-mythic-paper-wild-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\magic-mythic-paper-wild-opening-safe-20261025.jar",
+      "sha256": "7dad1c8597d7795a06ab4d9bbe4cb01df5fc9c6f4b3b54e1b79d2d95a9a3816b",
+      "baseline": "C:\\Chacademi\\network\\wild\\plugins\\chacademia-magic-mythic-final-20261024-wild.jar",
+      "baselineSHA256": "a9d18b6c7de442ec92c99a8552643ccd1a371fa6e6d6eacf485123940f2420ff"
+    }
+  },
+  {
+    "report": "other-preservation/magic-mythic-paper-wild-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\wild\\plugins\\chacademia-magic-mythic-final-20261024-wild.jar",
+      "liveSHA256": "a9d18b6c7de442ec92c99a8552643ccd1a371fa6e6d6eacf485123940f2420ff",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\magic-mythic-paper\\build\\libs\\chacademia-magic-mythic-0.2.2-wildlife-20261023.jar",
+      "newRawSHA256": "68b8c4f423580cda5699bb8499c7c41cbbd38f2809a5dc23241be26cf8b3bff5",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\release-bag-travel-off-20261024-task9\\magic-mythic-paper\\build\\libs\\chacademia-magic-mythic-0.2.2-wildlife-20261023.jar",
+      "sourceBaselineRawSHA256": "2a328aabb8edea1ae619523e8ca2a9be2a08d8a0bf9e3fddcf61e458bba409de"
+    }
+  },
+  {
+    "report": "other-preservation/portable-vfx-runtime-client-client-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\portable-vfx-runtime-client-client-opening-safe-20261025.jar",
+      "sha256": "aea5599784daa39d315f6114380d0a016a7db6c7119067fbbf65d04824e67f91",
+      "baseline": "C:\\Chacademi\\artifacts\\vfx-warmup-reuse-20261023\\portable-vfx-client-3.2.4-drop-rarity.1-warmup.1.jar",
+      "baselineSHA256": "6088bbfd8c844512f6015eccfb496ae55bb84989c459f2834682b4f8bf24a318"
+    }
+  },
+  {
+    "report": "other-preservation/portable-vfx-runtime-client-client-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\artifacts\\vfx-warmup-reuse-20261023\\portable-vfx-client-3.2.4-drop-rarity.1-warmup.1.jar",
+      "liveSHA256": "6088bbfd8c844512f6015eccfb496ae55bb84989c459f2834682b4f8bf24a318",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\portable-vfx-runtime\\client\\build\\libs\\portable-vfx-client-3.2.2-integrated-20261020.1-readychunks.1.jar",
+      "newRawSHA256": "94bf22dd1ac1d42cb6a20c43c1067a906855e7d369495f3899968bd542e84bbd",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\opening-baseline-7d8ec6e1-20261025-task3\\portable-vfx-runtime\\client\\build\\libs\\portable-vfx-client-3.2.2-integrated-20261020.1-readychunks.1.jar",
+      "sourceBaselineRawSHA256": "ee99692cf5d51ac9c94f69e769cb3f890fb162cd6897ae551ee694fd31fbf0c1"
+    }
+  },
+  {
+    "report": "other-preservation/portable-vfx-runtime-paper-arena-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\portable-vfx-runtime-paper-arena-opening-safe-20261025.jar",
+      "sha256": "0e0d32595bc0dcc23b134d89ef02ade6122b6150dca666d65e7d7de01090f189",
+      "baseline": "C:\\Chacademi\\network\\arena\\plugins\\portable-vfx-paper-3.2.3-integrated-20261020.1-gimmick.1.jar",
+      "baselineSHA256": "d19ef3b9e4a5b4e85f9793c1bc9d98052c82a0af0daf03e023040044718c1696"
+    }
+  },
+  {
+    "report": "other-preservation/portable-vfx-runtime-paper-arena-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\arena\\plugins\\portable-vfx-paper-3.2.3-integrated-20261020.1-gimmick.1.jar",
+      "liveSHA256": "d19ef3b9e4a5b4e85f9793c1bc9d98052c82a0af0daf03e023040044718c1696",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\portable-vfx-runtime\\paper\\build\\libs\\portable-vfx-paper-3.2.3-integrated-20261020.1-gimmick.1.jar",
+      "newRawSHA256": "7fc86a5d0d91bb447e3f310b4fc6c7d491c0932864d6f78247c2310cae47e053",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\opening-baseline-7d8ec6e1-20261025-task3\\portable-vfx-runtime\\paper\\build\\libs\\portable-vfx-paper-3.2.3-integrated-20261020.1-gimmick.1.jar",
+      "sourceBaselineRawSHA256": "3bbc718224aa5efcc384ea11df0cb49105f6a24cfd01dbd4809cb6fa195b75bb"
+    }
+  },
+  {
+    "report": "other-preservation/portable-vfx-runtime-paper-school-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\portable-vfx-runtime-paper-school-opening-safe-20261025.jar",
+      "sha256": "0e0d32595bc0dcc23b134d89ef02ade6122b6150dca666d65e7d7de01090f189",
+      "baseline": "C:\\Chacademi\\network\\school\\plugins\\portable-vfx-paper-3.2.3-integrated-20261020.1-gimmick.1.jar",
+      "baselineSHA256": "d19ef3b9e4a5b4e85f9793c1bc9d98052c82a0af0daf03e023040044718c1696"
+    }
+  },
+  {
+    "report": "other-preservation/portable-vfx-runtime-paper-school-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\school\\plugins\\portable-vfx-paper-3.2.3-integrated-20261020.1-gimmick.1.jar",
+      "liveSHA256": "d19ef3b9e4a5b4e85f9793c1bc9d98052c82a0af0daf03e023040044718c1696",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\portable-vfx-runtime\\paper\\build\\libs\\portable-vfx-paper-3.2.3-integrated-20261020.1-gimmick.1.jar",
+      "newRawSHA256": "7fc86a5d0d91bb447e3f310b4fc6c7d491c0932864d6f78247c2310cae47e053",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\opening-baseline-7d8ec6e1-20261025-task3\\portable-vfx-runtime\\paper\\build\\libs\\portable-vfx-paper-3.2.3-integrated-20261020.1-gimmick.1.jar",
+      "sourceBaselineRawSHA256": "3bbc718224aa5efcc384ea11df0cb49105f6a24cfd01dbd4809cb6fa195b75bb"
+    }
+  },
+  {
+    "report": "other-preservation/portable-vfx-runtime-paper-wild-opening-safe-20261025.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\portable-vfx-runtime-paper-wild-opening-safe-20261025.jar",
+      "sha256": "0e0d32595bc0dcc23b134d89ef02ade6122b6150dca666d65e7d7de01090f189",
+      "baseline": "C:\\Chacademi\\network\\wild\\plugins\\portable-vfx-paper-3.2.3-integrated-20261020.1-gimmick.1.jar",
+      "baselineSHA256": "d19ef3b9e4a5b4e85f9793c1bc9d98052c82a0af0daf03e023040044718c1696"
+    }
+  },
+  {
+    "report": "other-preservation/portable-vfx-runtime-paper-wild-probe.json",
+    "roles": {
+      "live": "C:\\Chacademi\\network\\wild\\plugins\\portable-vfx-paper-3.2.3-integrated-20261020.1-gimmick.1.jar",
+      "liveSHA256": "d19ef3b9e4a5b4e85f9793c1bc9d98052c82a0af0daf03e023040044718c1696",
+      "newRaw": "C:\\Chacademi\\staging\\opening-prep-safe-integration-20261025-task3\\portable-vfx-runtime\\paper\\build\\libs\\portable-vfx-paper-3.2.3-integrated-20261020.1-gimmick.1.jar",
+      "newRawSHA256": "7fc86a5d0d91bb447e3f310b4fc6c7d491c0932864d6f78247c2310cae47e053",
+      "sourceBaselineRaw": "C:\\Chacademi\\staging\\opening-baseline-7d8ec6e1-20261025-task3\\portable-vfx-runtime\\paper\\build\\libs\\portable-vfx-paper-3.2.3-integrated-20261020.1-gimmick.1.jar",
+      "sourceBaselineRawSHA256": "3bbc718224aa5efcc384ea11df0cb49105f6a24cfd01dbd4809cb6fa195b75bb"
+    }
+  },
+  {
+    "report": "meteor-followup/magic-mythic-arena-meteor-safe.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\meteor-followup\\magic-mythic-arena-meteor-safe.jar",
+      "sha256": "4438a07902f8db71865ab739534a3467172520bb194781806904f45efd11afce",
+      "baseline": "C:\\Chacademi\\network\\arena\\plugins\\chacademia-magic-mythic-final-20261024-arena.jar",
+      "baselineSHA256": "46f9b64448383ea9aa0430cfbe37d50f41a25cbb5df46b3ba7605a6e5387578b"
+    }
+  },
+  {
+    "report": "meteor-followup/magic-mythic-school-meteor-safe.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\meteor-followup\\magic-mythic-school-meteor-safe.jar",
+      "sha256": "8fb1951552cbf61f84ec8724a9f7ab884a2689a133f4e9124ffef0171caf62ee",
+      "baseline": "C:\\Chacademi\\network\\school\\plugins\\chacademia-magic-mythic-final-20261024-school.jar",
+      "baselineSHA256": "1c7cae40da9264bcabfef0f627172832c833dd268e823b46cba53d7721deb05b"
+    }
+  },
+  {
+    "report": "meteor-followup/magic-mythic-wild-meteor-safe.jar.preservation.json",
+    "roles": {
+      "path": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\meteor-followup\\magic-mythic-wild-meteor-safe.jar",
+      "sha256": "6b96ae27abfef104c9f5c49490043b1f75fa34b922b0ec5be3979c22dfb4ffca",
+      "baseline": "C:\\Chacademi\\network\\wild\\plugins\\chacademia-magic-mythic-final-20261024-wild.jar",
+      "baselineSHA256": "7dad1c8597d7795a06ab4d9bbe4cb01df5fc9c6f4b3b54e1b79d2d95a9a3816b"
+    }
+  }
+]
