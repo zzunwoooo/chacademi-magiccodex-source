@@ -5,7 +5,7 @@ description: 진행 중인 이야기의 목표 지점을 가리키는 화살표�
 icon: magiccodex:textures/spells/novice/guiding_star.png
 permission: magic.learned.guiding_star
 discovery:
-  description: 나침반을 들고 누적 1,000블록 걷습니다.
+  description: 1장에서 어부 올레 아저씨에게 배웁니다.
 research: 길을 잃은 아이에게 별 하나가 집으로 가는 방향을 알려 주었다.
 cast:
   command: 마법 guiding_star

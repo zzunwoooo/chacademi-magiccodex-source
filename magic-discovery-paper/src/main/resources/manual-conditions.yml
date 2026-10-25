@@ -902,3 +902,14 @@ spells:
       "trace.condition.shadow_bind": 1
     chance: 1.0
     prerequisites: []
+  # 2026-10-25 오너: 1장 어부 올레가 가르쳐 주는 마법 — 스토리 끝 명령 "유저관리 {player} 마법조건 주기 guiding_star" 로 발견
+  guiding_star:
+    name: "길잡이 별"
+    permission: "magic.learned.guiding_star"
+    icon: "magiccodex:textures/spells/novice/guiding_star.png"
+    category: "light"
+    condition-text: "1장에서 어부 올레 아저씨에게 배웁니다."
+    requirements:
+      "trace.condition.guiding_star": 1
+    chance: 1.0
+    prerequisites: []
