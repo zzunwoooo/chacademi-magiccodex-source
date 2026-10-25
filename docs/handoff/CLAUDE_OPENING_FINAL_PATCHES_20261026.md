@@ -229,3 +229,34 @@ python3 tools/operating_overlay.py regenerate && python3 tools/operating_overlay
 - 바꾼 파일: `CombatTag.java`·`CombatLockRules.java`(새), `CombatLockRulesTest.java`(새), `combat-lock.yml`(새), `MagicCodexBridge.java`(등록 3줄), `TravelBridge.java`, `ReturnTicketBridge.java`, `plugin.yml`(권한 1개), `travel.yml`·`return-ticket.yml`(주석).
 - 그대로 둔 것: travel.yml `rules.block-in-combat`(아티팩트 5초 판정, 기본 꺼짐) — 켜면 이것도 같이 막음. 동행 펫(PetCompanions)의 자체 전투 판정은 상대 엔티티·8초 설정(combat-seconds)이 따로 있어 바꾸면 동작이 달라지므로 안 바꿈.
 - 확인 필요: HuskHomes 실제 명령·한글 별칭 이름(서버 HuskHomes config·commands.yml 별칭과 맞추기). 상대가 /tpa 를 나중에 수락해 내가 끌려가는 경우·HuskHomes 창 클릭 이동은 명령을 거치지 않아 못 막음. 옛 MCPets 소환 펫이 때린 건 주인 전투로 안 셈.
+
+## 16. 야생 청크 점유 — 땅문서 (2026-10-26, 메모 #88)
+- **어디에 만들었나**: 새 플러그인이 아니라 MagicCodexBridge 안의 기능 하나(`ChunkClaimBridge`). 이유: 땅문서(ItemsAdder)·알림창(CmdKit.notify)·한글 닉네임·관리 명령 허브(ChacaApi)·DB 설정(database.properties)·클라 모드 채널이 전부 여기 있고, 야생 서버에도 이미 이 플러그인이 돈다. 켜는 곳은 `chunk-claims.yml servers`(travel.yml `server-id`) — 기본 `wild`·`wild2`. 학교·아레나 등 다른 서버는 이벤트·작업·DB 를 하나도 열지 않는다 (명령만 등록, "꺼져 있어요").
+- **저장 방식 — 청크 NBT(PDC) 대신 DB 표 + 서버 메모리 표**: 청크 PDC 는 그 청크가 로드돼야 읽혀서 "내 땅 목록·1인 최대 수·관리자 조회"가 안 되고, 사람 기준 허용 명단을 넣을 곳이 없고, 월드 백업·재생성과 운명을 같이 한다. 그래서
+  - 표 `codex_chunk_claim (world, cx, cz) PK · owner · claimed_at · server` (+INDEX owner), `codex_chunk_trust (owner, trusted) PK · added_at`.
+  - DB 는 칭호 장부(TitleStore)와 같은 방식: `database.properties`(일반 도메인, GenericDatabaseFile)가 MariaDB 면 공유 표, 아니면 그 서버의 `chunk-claims.db`(SQLite). 연결 하나 + 전용 작업 스레드 하나, 서버 스레드에서는 DB 를 부르지 않음.
+  - 서버 시작 때 이 서버에 있는 대상 세계의 점유 전부 + 허용 명단 전부를 메모리 표(`ChunkClaimRules.Index`, 세계 → 청크 키 → 주인)로 읽고, **블록 이벤트 판정은 전부 메모리에서** (DB 0번). 허용 명단은 1분마다 한 번 다시 읽음 (다른 서버에서 바꾼 것 반영).
+  - 동시 점유 방지: PK + `INSERT IGNORE`(SQLite `OR IGNORE`)로 넣고 넣은 줄 수로 성공 판정 → 같은 청크는 먼저 넣은 한 사람만. 1인 최대 수는 같은 거래 안에서 셈 (모든 서버 합계). 판매·해제는 주인까지 맞아야 지움 (지운 줄 수로 판정 → 땅문서 두 장 방지).
+  - 땅문서는 먼저 1장 가져가고 저장(`saveData`) → DB 가 거절하면 돌려줌 (접속 중이면 인벤토리·꽉 차면 발밑, 나갔으면 우편). 판매는 DB 에서 지운 뒤에만 1장 줌.
+- **허용 명단 범위**: "내 땅" 전체 — 주인 기준 명단 하나가 그 주인의 모든 청크(모든 서버)에 적용.
+- **땅문서를 든 동안**: 서버가 0.5초마다 접속자를 훑어 (손 아이템 종류가 땅문서 재료일 때만 ItemsAdder id 확인) 주변 청크 상태를 계산하고 **지난번 보낸 것과 다를 때만** 보냄 (들었을 때·놓았을 때·청크를 옮길 때·주변 주인이 바뀔 때). 클라: 서 있는 청크 + 바로 옆(`view-radius: 1`, 3×3) 경계에 반투명 홀로그램 벽 (큐디치 경기장 경계 그림 `textures/kyudichi/boundary.png` 재사용; 내 땅 초록·허용됨 파랑·남의 땅 금색·제한 분홍·소유 가능 하늘색), 청크 가운데 **내 눈높이**에 글씨 (주인 한글 닉 / "소유 가능" / "제한", 웨이포인트 글씨와 같은 글자 규칙). 늘어나는 건 클라 그리기뿐.
+- **우클릭** = 땅문서 1장 쓰고 서 있는 청크가 내 땅. 주인 있음·제한·최대 수면 아이템을 쓰지 않고 알림창으로 거절.
+- **제한**: `worlds` 밖(기본 `world` 만) · `excluded` 원(세계·중심·반경)과 겹치는 청크 · WorldGuard 지역과 겹치는 청크(`__global__` 제외, `worldguard.ignore-regions` 로 뺄 수 있음). WorldGuard 는 리플렉션으로 부르고 청크마다 결과를 기억 (새로고침 때·10분마다 비움).
+- **보호** (점유 청크에서 주인·허용 명단 말고는): 블록 부수기·놓기 (마법이 보내는 가짜 부수기·놓기 이벤트도 같이 막힘) · 보관함·문·버튼·레버 등 우클릭 · 부싯돌·뼛가루·괭이/삽/도끼·스폰알·갑옷 거치대/액자/보트 놓기 · 양동이 붓기/뜨기 · 작물 밟기·압력판 · 동물·주민·갑옷 거치대·액자 때리기/우클릭. 폭발(크리퍼·TNT·침대)·불 번짐·화염구·바깥 피스톤·바깥에서 흘러 들어오는 물/용암도 막음. 막지 않음: PvP, 몬스터, NPC, 펫·길들인 동물, 먹기·활·방패. 거절 알림은 알림창 "OO님의 땅이에요" (1.5초 도배 방지). 우회 권한 `magiccodex.chunkclaim.bypass` (OP 기본).
+- **내 땅 관리** (클라): 내 청크 안에 서 있으면 오른쪽 위에 작은 칸 "내 땅 · 청크 x, z · H 관리" (파티 UI 알림 카드 그림, 큐디치 매칭 카드가 있으면 그 아래, HUD 편집으로 옮길 수 있음). **H 키**(키 설정 UI 단축키 "내 땅 관리", 내 땅 안에서만 가로챔 — 밖에서는 H 를 막지 않음) 또는 Ctrl 커서·채팅창에서 칸을 누르면 그 자리에서 아래로 펼쳐지는 관리 창. 파티 창의 "파티 초대" 패널·줄·얼굴 틀·파랑 "허용"/분홍 "빼기" 버튼·파티 나가기 버튼·확인 창을 그대로 재사용 (새 장식 없음): 지금 이 땅에 들어온 사람(허용/빼기) · 허용 명단(빼기) · "이 땅 판매 · 땅문서 1장 돌려받기"(확인 한 번). H·ESC·창 밖 클릭으로 접힘, 내 땅 밖으로 나가면 자동으로 닫힘. 허용 넣기는 접속 중인 사람만, 명단 48명까지.
+  - 인벤토리 창 위에서는 HUD 가 그려지지 않아 칸이 안 보임 → 클릭은 Ctrl 커서·채팅창에서 (기존 HUD 클릭과 같은 규칙).
+  - 기존 `ui-keys.properties` 가 있는 사람: H 를 이미 다른 UI 키나 마법이 쓰고 있으면 "내 땅 관리"는 미지정으로 시작 (키 설정에서 지정). UI 단축키가 11개가 되어 키 설정 왼쪽 목록 간격을 50→48px 로 조금 좁힘.
+- **통신**: 새 채널 `chacademi:chunk_claim`(서버→클라: VIEW 주변 칸 상태 · LAND 내 땅 안 사람·허용 명단 · RESULT 결과 문구) / `chacademi:chunk_claim_action`(클라→서버: 허용 넣기·빼기, 판매). `ChunkClaimProtocol`. 서버가 모든 동작을 다시 검사 (내 땅인지, 그 청크에 서 있는지, 상대가 접속 중인지, 0.25초 간격).
+- **관리 명령**: `/컨텐츠관리 청크 보기` (서 있는 청크: 상태·주인·점유 시각·허용 명단) · `/컨텐츠관리 청크 해제 확인` (서 있는 청크 소유 해제, 땅문서는 안 돌려줌) · `/유저관리 <닉> 청크 목록` (모든 서버·세계, DB 에서) · `/서버관리 새로고침 청크` · `/서버관리 상태` "청크 점유" 줄 · `/유저관리 <닉> 보기` 요약 "청크".
+- **설정** `chunk-claims.yml` (처음 켤 때 자동 생성): enabled · servers(기본 wild, wild2) · worlds(기본 world) · item(`item:chunk_deed`) · item-name · max-claims-per-player(0 = 제한 없음) · view-radius(0~2) · worldguard.restrict-overlap · worldguard.ignore-regions · excluded · notify-cooldown-ms · labels.free/restricted · messages. jar 리소스라 operating-config overlay 는 만들지 않음 (overlay 검사 영향 없음).
+- **바꾼 파일**: 새 `ChunkClaimBridge.java`·`ChunkClaimRules.java`·`ChunkClaimStore.java`·`ChunkClaimWorldGuard.java`·`chunk-claims.yml`·`ChunkClaimTest.java`(규칙·메모리 표·SQLite 저장소·패킷), 새 `magic-codex-protocol/ChunkClaimProtocol.java`, 새 클라 `ChunkClaimClient.java`·`ChunkLandScreen.java`. 공유 파일은 등록 몇 줄: `MagicCodexBridge.java`(필드·생성·종료), `plugin.yml`(권한 1개), `GenericDatabaseFile.java`(로그 목록 글자), 클라 `MagicCodexClient.java`(1줄), `UiKeys.java`(LAND 키·처리 2줄·기존 파일의 겹치는 기본 키 비우기), `KeySettingsLayout.java`(목록 간격), `HudCursorScreen.java`·`HudChatClicks.java`(클릭 1개씩).
+- **배치·같이 배포**: MagicCodexBridge jar → 야생(wild, wild2) 그리고 학교·아레나에도 같은 jar (거기선 꺼짐). 클라 모드(magic-codex-fabric) 같이 배포 — 모드가 없으면 점유·보호·알림은 되지만 경계선·글씨·관리 창은 없음. 야생 서버에 ItemsAdder `item:chunk_deed` 필요. 야생 `MagicCodexBridge/database.properties` 를 학교와 같은 MariaDB 로 (권장 — SQLite 로 시작했다가 나중에 옮기면 tools/db-migrate 가 이 표를 옮기지 않음). 야생 travel.yml `server-id: wild` 확인 (아니면 "꺼짐" 로그).
+- **게임 확인 방법** (야생 서버, 모드 깐 클라 2개 A·B):
+  1. 시작 로그 "청크 점유: 켜짐 · 서버 wild · 세계 [world] · 공유 DB · 점유 0칸".
+  2. A 가 땅문서를 손에 들기 → 주변 3×3 청크 경계 홀로그램 + 가운데 "소유 가능". 스폰(WorldGuard 지역) 근처는 "제한". 놓으면 사라짐.
+  3. 우클릭 → 땅문서 1개 줄고 "이 땅은 이제 내 땅이에요", 글씨가 A 닉네임·초록. 다시 우클릭 → "이미 내 땅이에요"(아이템 그대로). 스폰 근처 우클릭 → "이 땅은 소유할 수 없어요"(아이템 그대로).
+  4. B 가 A 의 땅에서 블록 부수기·놓기·상자·문·양동이·밭 밟기·소 때리기 → 막히고 "A님의 땅이에요". 바깥에서 TNT 를 터뜨려도 A 땅 블록은 안 깨짐. B 가 A 를 때리는 PvP 는 그대로.
+  5. A 가 내 땅 안에서 오른쪽 위 "내 땅" 칸 확인 → H → 펼친 창에 B "손님" → "허용" → B 가 블록을 부술 수 있음, 허용 명단에 B. "빼기" → 다시 막힘. Ctrl 누른 채 칸 클릭·채팅창 열고 클릭으로도 열림.
+  6. "이 땅 판매" → 확인 → 땅문서 1장 돌려받음(꽉 차면 발밑), 칸 사라짐, 땅문서 들면 "소유 가능".
+  7. 관리: `/컨텐츠관리 청크 보기`, `/유저관리 A 청크 목록`, `/컨텐츠관리 청크 해제 확인`. OP 는 남의 땅에서도 활동 가능.
+- **추정한 것 (확인 필요)**: 야생 세계 이름 `world`(travel.yml 탭 기준), 야생 server-id `wild`/`wild2`, 야생 커스텀 몹(CA_Wild_*)은 몬스터 계열이라 보호 대상 아님 (동물 계열 몹이 있으면 남의 땅에서 못 때림), 야생 전체를 덮는 WorldGuard 지역이 있으면 `ignore-regions` 에 넣어야 전부 "제한"이 되지 않음.

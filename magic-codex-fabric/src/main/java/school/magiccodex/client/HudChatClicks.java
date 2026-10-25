@@ -12,7 +12,7 @@ final class HudChatClicks {
         ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
             if (screen instanceof ChatScreen) {
                 ScreenEvents.afterRender(screen).register((s,ctx,x,y,delta)->{if(PlayerHudClient.active()&&!client.options.hudHidden){ctx.getMatrices().push();try{ctx.getMatrices().translate(0,0,800);TopMenuClient.renderTooltip(ctx);}finally{ctx.getMatrices().pop();}}});
-                ScreenMouseEvents.allowMouseClick(screen).register((s, x, y, button) -> !TopMenuClient.click(x, y, button) && !HudSlotDrag.press(x, y, button)
+                ScreenMouseEvents.allowMouseClick(screen).register((s, x, y, button) -> !TopMenuClient.click(x, y, button) && !ChunkClaimClient.click(x, y, button) && !HudSlotDrag.press(x, y, button)
                         && !KyudichiQueueClient.click(x, y, button) && !KyudichiClient.leaveClick(x, y, button));
                 // A slot dragged onto another swaps the two (bottom-right magic bar).
                 ScreenMouseEvents.allowMouseRelease(screen).register((s, x, y, button) -> !(HudSlotDrag.release(x, y, button) | KyudichiQueueClient.release(x, y, button)));
