@@ -695,7 +695,7 @@ spells:
     permission: magic.learned.waterwheel_shield
     icon: magiccodex:textures/spells/expansion_2/waterwheel_shield.png
     category: water
-    condition-text: "물속에서 방패로 몬스터의 공격을 10회 막기."
+    condition-text: "엘레나 교수의 물 마법 응용 수업 듣기."
     requirements:
       "trace.condition.waterwheel_shield": 1
     chance: 1.0
@@ -755,7 +755,7 @@ spells:
     permission: magic.learned.ripple_guard
     icon: minecraft:textures/item/book.png
     category: water
-    condition-text: "방패로 해골의 화살을 20회 막기."
+    condition-text: "엘레나 교수의 물 마법 응용 수업 듣기."
     requirements:
       "trace.condition.ripple_guard": 1
     chance: 1.0
@@ -1061,5 +1061,65 @@ spells:
     condition-text: "그레고르 교감와(과) 친해진 뒤(호감도 30) 어둠 비전 수업 듣기."
     requirements:
       "trace.condition.forbidden_contract": 1
+    chance: 1.0
+    prerequisites: []
+  droplet_relay:
+    name: "물방울 인계"
+    permission: "magic.learned.droplet_relay"
+    icon: "magiccodex:textures/spells/reviewed_20261020/droplet_relay.png"
+    category: "water"
+    condition-text: "엘레나 교수의 물 마법 심화 수업 듣기."
+    requirements:
+      "trace.condition.droplet_relay": 1
+    chance: 1.0
+    prerequisites: []
+  folding_tideplane:
+    name: "접히는 수면"
+    permission: "magic.learned.folding_tideplane"
+    icon: "magiccodex:textures/spells/reviewed_20261020/folding_tideplane.png"
+    category: "water"
+    condition-text: "엘레나 교수의 물 마법 심화 수업 듣기."
+    requirements:
+      "trace.condition.folding_tideplane": 1
+    chance: 1.0
+    prerequisites: []
+  misfortune_whisper:
+    name: "나약함의 저주"
+    permission: "magic.learned.misfortune_whisper"
+    icon: "magiccodex:textures/spells/expansion/misfortune_whisper.png"
+    category: "dark"
+    condition-text: "그레고르 교감의 어둠 마법 응용 수업 듣기."
+    requirements:
+      "trace.condition.misfortune_whisper": 1
+    chance: 1.0
+    prerequisites: []
+  healing_seal:
+    name: "회복 봉인"
+    permission: "magic.learned.healing_seal"
+    icon: "magiccodex:textures/spells/expansion_2/healing_seal.png"
+    category: "dark"
+    condition-text: "그레고르 교감의 어둠 마법 응용 수업 듣기."
+    requirements:
+      "trace.condition.healing_seal": 1
+    chance: 1.0
+    prerequisites: []
+  discord:
+    name: "마인드컨트롤"
+    permission: "magic.learned.discord"
+    icon: "magiccodex:textures/spells/expansion/discord.png"
+    category: "dark"
+    condition-text: "그레고르 교감의 어둠 마법 심화 수업 듣기."
+    requirements:
+      "trace.condition.discord": 1
+    chance: 1.0
+    prerequisites: []
+  wound_accounting:
+    name: "상처 회계"
+    permission: "magic.learned.wound_accounting"
+    icon: "magiccodex:textures/spells/expansion_2/wound_accounting.png"
+    category: "dark"
+    condition-text: "그레고르 교감의 어둠 마법 심화 수업 듣기."
+    requirements:
+      "trace.condition.wound_accounting": 1
     chance: 1.0
     prerequisites: []

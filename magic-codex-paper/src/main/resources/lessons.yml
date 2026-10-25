@@ -30,6 +30,10 @@
 #   affinity: N  = 그 교수(npc)와의 호감도 N 이상이어야 열림. 그 전에는 "[비전] ??? · 호감도 N 필요" 로 보이고, 고르면 secret 대사.
 # 교수 배정: 바람 하르바 · 화염 세드릭 · 물 엘레나 · 대지 베르나 · 빛 이솔데(사서 겸 교수) · 어둠 그레고르 교감.
 # portrait 는 대화 일러스트 ID — 런처 리소스팩에 있는 이름으로 채우세요 (비우면 일러스트 없이).
+# 원소별 수업 (오너 2026-10-26): 기초 · 중급 · 고급 · 비전(교수 호감도로 해금), 마법이 적은 물·어둠은 응용 · 심화 추가. 수업 하나에 마법 여러 개 가능, 확률 없이 전부 습득.
+#   affinity: N  = 그 교수(npc)와의 호감도 N 이상이어야 열림. 그 전에는 "[비전] ??? · 호감도 N 필요" 로 보이고, 고르면 secret 대사.
+# 교수 배정: 바람 하르바 · 화염 세드릭 · 물 엘레나 · 대지 베르나 · 빛 이솔데(사서 겸 교수) · 어둠 그레고르 교감.
+# portrait 는 대화 일러스트 ID — 런처 리소스팩에 있는 이름으로 채우세요 (비우면 일러스트 없이).
 lessons:
   harva:
     teacher: "하르바 교수"
@@ -69,6 +73,8 @@ lessons:
       - { book: lesson_water_1, name: "[기초] 물방울 탄환" }
       - { book: lesson_water_2, name: "[중급] 도약하는 물방울" }
       - { book: lesson_water_3, name: "[고급] 해일" }
+      - { book: lesson_water_4, name: "[응용] 물레 방패 · 파문방벽" }
+      - { book: lesson_water_5, name: "[심화] 물방울 인계 · 접히는 수면" }
       - { book: lesson_water_secret, name: "[비전] 만년빙옥", affinity: 30 }
   berna:
     teacher: "베르나 교수"
@@ -108,4 +114,6 @@ lessons:
       - { book: lesson_dark_1, name: "[기초] 그림자 매듭" }
       - { book: lesson_dark_2, name: "[중급] 생명 갈취" }
       - { book: lesson_dark_3, name: "[고급] 밤의 사슬" }
+      - { book: lesson_dark_4, name: "[응용] 나약함의 저주 · 회복 봉인" }
+      - { book: lesson_dark_5, name: "[심화] 마인드컨트롤 · 상처 회계" }
       - { book: lesson_dark_secret, name: "[비전] 금서의 계약", affinity: 30 }

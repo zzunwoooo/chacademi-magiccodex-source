@@ -6,7 +6,7 @@ description: 2초 동안 정면에 폭 4블록, 높이 3블록의 물 파문 방
 icon: magiccodex:textures/spells/reviewed_20261016/ripple_guard.png
 permission: magic.learned.ripple_guard
 discovery:
-  description: 방패로 해골의 화살을 20회 막기.
+  description: 엘레나 교수의 물 마법 응용 수업 듣기.
 research: ''
 cast:
   command: 마법 ripple_guard
