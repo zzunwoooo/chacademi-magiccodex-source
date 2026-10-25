@@ -237,7 +237,27 @@ final class QuestArt {
      * additive=true 는 빛을 더하는 블룸용 (겹칠수록 밝아짐).
      */
     static RenderType worldLayer(Tex t, boolean additive) {
+        // 셰이더팩(Iris)이 켜져 있으면 셰이더팩이 아는 바닐라 발광 레이어로 (직접 만든 레이어는 셰이더팩이 섞기를 바꿔 깨져 보였다)
+        if (shaderPack()) return RenderType.entityTranslucentEmissive(t.id());
         return WORLD_LAYERS.computeIfAbsent(t.id() + (additive ? "+" : ""), k -> new WorldLayer(t.id(), additive));
+    }
+
+    private static java.lang.reflect.Method irisInUse;
+    private static Object irisApi;
+    private static boolean irisTried;
+
+    /** Iris 셰이더팩이 지금 켜져 있는지 (Iris 가 없으면 false). 의존 없이 리플렉션으로 확인. */
+    static boolean shaderPack() {
+        if (!irisTried) {
+            irisTried = true;
+            try {
+                var api = Class.forName("net.irisshaders.iris.api.v0.IrisApi");
+                irisApi = api.getMethod("getInstance").invoke(null);
+                irisInUse = api.getMethod("isShaderPackInUse");
+            } catch (Throwable ignored) { irisApi = null; irisInUse = null; }
+        }
+        if (irisInUse == null) return false;
+        try { return Boolean.TRUE.equals(irisInUse.invoke(irisApi)); } catch (Throwable e) { return false; }
     }
 
     private static Sprite bake(Font f, TextKey key) { return bake(f, key, false); }

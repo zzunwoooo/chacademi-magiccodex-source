@@ -201,3 +201,4 @@ Ctrl HudCursorScreen에서도 퀘스트 HUD와 접기 버튼을 유지하는 부
 - `mana-spells.yml` `guiding_star.cooldown-seconds: 10 → 0`(운영 설정 사본 포함), 도감 설명 문구 변경, known-hashes 에 예전 132 해시 추가(배포된 기본 파일만 교체).
 - 클라: `QuestClient`/`QuestWorld` 수동 이식(현재 코드에 맞춤, 거리 글자는 `drawInBatch` 그림자). 프록시 서버 이동(JOIN) 때 예전 서버 목표 좌표를 지워 다른 서버 세계에 포탈·화살표가 잘못 그려지지 않게 함.
 - 서버: 켠 사람만 0.5초 tick 에서 10블록 판정 (매 틱 전체 순회 없음).
+- 2026-10-22 추가 (셰이더팩): Iris 셰이더팩이 켜져 있으면(`IrisApi.isShaderPackInUse()`, 리플렉션 — 의존 없음) 포탈·글자·징표를 셰이더팩이 아는 바닐라 `RenderType.entityTranslucentEmissive` 로 그리고, 빛 더하기(블룸) 패스는 건너뛴다 (셰이더팩 자체 블룸). 직접 만든 POSITION_TEX_COLOR 레이어는 셰이더팩이 섞기를 바꿔 빛 띠가 하얀 조각으로 깨져 보였다. 정점은 두 레이어 모두에 맞게 색·UV·오버레이·빛·법선을 다 쓴다 (없는 속성은 BufferBuilder 가 무시). 확인할 것: 셰이더 켬/끔 둘 다 포탈 모양, 게임 중 셰이더 전환.
