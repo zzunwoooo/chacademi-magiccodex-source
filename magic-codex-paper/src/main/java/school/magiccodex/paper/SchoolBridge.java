@@ -204,9 +204,9 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
                 if(a[0].equals("시작")){
                     work(()->store.sortingStart(id),start->{
                         // 창시자 연출은 관리자가 미리 정한 유저만. 이미 분류된 일반 유저(발표 중 접속 끊김 등)는 결과 발표를 다시
-                        if(start.house()!=null)sortingDialogue(sender,player,(start.preset()?"ch1-15f-":"ch1-15r-")+HouseSorting.IDS.get(start.house()),false);
+                        if(start.house()!=null)sortingDialogue(sender,player,(start.preset()?"ch1-17f-":"ch1-17r-")+HouseSorting.IDS.get(start.house()),false);
                         else if(outside>=0)adopt(sender,player,outside);
-                        else sortingDialogue(sender,player,"ch1-15",false);
+                        else sortingDialogue(sender,player,"ch1-17",false);
                     },failTo(sender));
                 }
                 else{
@@ -217,7 +217,7 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
                         // Database has committed before signals or Bukkit commands run on the main thread.
                         if(result.created())assigned(sender,id);
                         reply(player,new Request(SchoolProtocol.IDENTITY,0,0,""),"");
-                        sortingDialogue(sender,player,"ch1-15"+(!result.created()||result.house()==result.preferred()?"r-":"m-")+HouseSorting.IDS.get(result.house()),true);
+                        sortingDialogue(sender,player,"ch1-17"+(!result.created()||result.house()==result.preferred()?"r-":"m-")+HouseSorting.IDS.get(result.house()),true);
                     },failTo(sender));
                 }return true;
             }
@@ -234,7 +234,7 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
         work(()->store.adoptHouse(id,house),result->{
             if(result.created())assigned(sender,id);
             reply(player,new Request(SchoolProtocol.IDENTITY,0,0,""),"");
-            sortingDialogue(sender,player,"ch1-15r-"+HouseSorting.IDS.get(result.house()),true);
+            sortingDialogue(sender,player,"ch1-17r-"+HouseSorting.IDS.get(result.house()),true);
         },failTo(sender));
     }
     private void sortingDialogue(CommandSender sender,Player player,String dialogue,boolean saved){
