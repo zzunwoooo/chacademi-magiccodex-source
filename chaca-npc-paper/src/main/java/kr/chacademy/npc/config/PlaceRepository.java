@@ -126,6 +126,21 @@ public final class PlaceRepository {
         return true;
     }
 
+    /** 장소 지우기 (오너 2026-10-26: 테스트 때 만든 장소 정리). 월드를 못 찾아 보류 중인 장소도 지운다. @return 지운 게 있으면 true */
+    public synchronized boolean removePlace(String name) {
+        boolean removed = places.remove(name) != null | unresolved.remove(name) != null;
+        if (removed) save();
+        return removed;
+    }
+
+    /** 모든 장소 이름 (월드를 못 찾아 보류 중인 것 포함). */
+    public synchronized List<String> allNames() {
+        var out = new ArrayList<String>(places.keySet());
+        for (String n : unresolved.keySet()) if (!out.contains(n)) out.add(n);
+        out.sort(null);
+        return out;
+    }
+
     public synchronized boolean addWaypoint(String name, Location loc) {
         Place p = places.get(name);
         if (p == null) {

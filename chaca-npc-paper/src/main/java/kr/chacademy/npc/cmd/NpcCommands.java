@@ -67,6 +67,7 @@ public final class NpcCommands {
         ChacaLink.branch(plugin, ChacaLink.NPC관리, Commands.literal("목록").executes(ctx -> list(ctx)),
                 "캐릭터·연결 상태·지금 일과", "목록");
         ChacaLink.branch(plugin, ChacaLink.NPC관리, placeBranch(), "내 위치를 NPC 일과 장소로 등록", "장소 ");
+        ChacaLink.branch(plugin, ChacaLink.NPC관리, placeAdminBranch(), "등록된 장소 목록 보기·지우기", "장소관리 목록");
         ChacaLink.branch(plugin, ChacaLink.NPC관리, waypointBranch(), "장소로 가는 중간 지점 추가·비우기", "경로 추가 ");
         ChacaLink.branch(plugin, ChacaLink.NPC관리, vibeBranch(), "서버 분위기 노트 보기·승인·삭제", "분위기노트 보기");
 
@@ -262,6 +263,39 @@ public final class NpcCommands {
         radius.then(Commands.argument("표시이름", StringArgumentType.greedyString())
                 .executes(ctx -> place(ctx, DoubleArgumentType.getDouble(ctx, "반경"), StringArgumentType.getString(ctx, "표시이름"))));
         return Commands.literal("장소").then(name.then(radius));
+    }
+
+    /** /NPC관리 장소관리 목록 | 삭제 <이름> | 전부삭제 확인 (오너 2026-10-26: 테스트 장소 정리). */
+    private LiteralArgumentBuilder<CommandSourceStack> placeAdminBranch() {
+        return Commands.literal("장소관리")
+                .then(Commands.literal("목록").executes(ctx -> {
+                    CommandSender s = ctx.getSource().getSender();
+                    var names = plugin.places().allNames();
+                    if (names.isEmpty()) { ChacaLink.ok(s, "등록된 장소가 없어요"); return 1; }
+                    var rows = new ArrayList<String>();
+                    for (String n : names) {
+                        PlaceRepository.Place p = plugin.places().get(n);
+                        rows.add(p == null ? " " + n + " (월드 없음·보류)"
+                                : " " + n + (p.label == null ? "" : " · " + p.label) + " · 반경 " + p.radius + " · 중간 지점 " + p.waypoints.size());
+                    }
+                    s.sendMessage("── NPC 장소 " + names.size() + "곳 ──");
+                    for (String r : rows) s.sendMessage(r);
+                    return 1;
+                }))
+                .then(Commands.literal("삭제").then(Commands.argument("이름", ChacaLink.word(() -> plugin.places().allNames())).executes(ctx -> {
+                    String name = ctx.getArgument("이름", String.class);
+                    if (!plugin.places().removePlace(name)) throw ChacaLink.error("'" + name + "' 장소가 없어요");
+                    plugin.movement().reset();
+                    ChacaLink.ok(ctx.getSource().getSender(), "장소 '" + name + "'를 지웠어요 (이 장소를 일과표에 쓰던 NPC는 그 시간엔 제자리)");
+                    return 1;
+                })))
+                .then(Commands.literal("전부삭제").then(Commands.literal("확인").executes(ctx -> {
+                    int n = 0;
+                    for (String name : plugin.places().allNames()) if (plugin.places().removePlace(name)) n++;
+                    plugin.movement().reset();
+                    ChacaLink.ok(ctx.getSource().getSender(), "장소 " + n + "곳을 모두 지웠어요");
+                    return 1;
+                })));
     }
 
     private Collection<String> placeNames() {
