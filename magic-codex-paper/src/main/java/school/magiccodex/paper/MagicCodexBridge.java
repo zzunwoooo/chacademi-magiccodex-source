@@ -284,6 +284,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(travel!=null&&mana!=null){mana.spatialLeapCast=travel::castSpatialLeap;travel.mana(mana);}
         try{combatTag=new CombatTag(this);}catch(Exception error){getLogger().severe("전투 중 이동 막기 초기화 실패 (combat-lock.yml 확인): "+error.getMessage());}
         if(travel!=null)try{new ReturnTicketBridge(this,travel);}catch(Exception error){getLogger().severe("귀환권 초기화 실패 (return-ticket.yml 확인): "+error.getMessage());}
+        try{new MegaphoneBridge(this);}catch(Exception|LinkageError error){getLogger().severe("확성기 초기화 실패 (megaphone.yml 확인): "+error.getMessage());}
         // 아공간 배낭 2·3쪽 (2026-10-24). 실패해도 나머지는 계속 (인벤토리는 1쪽만).
         try{bagPages=new BagPagesBridge(this);}catch(Exception|LinkageError error){bagPages=null;getLogger().severe("아공간 배낭 초기화 실패 (bag-pages.yml·DB 확인): "+error.getMessage());}
         new AdminCommandBridge(this,mana,school,enhancement,appraisal,titles,npcSocial);
