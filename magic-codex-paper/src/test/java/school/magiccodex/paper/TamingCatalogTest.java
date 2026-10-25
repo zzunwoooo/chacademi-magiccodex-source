@@ -29,7 +29,7 @@ class TamingCatalogTest {
         for(String alias:Set.of("rainbow_collar","taming","교화","무지개 목줄"))
             assertEquals(TamingSpell.ID,catalog.resolve(alias),alias);
         assertFalse(catalog.byId.containsKey("taming"));
-        assertEquals(300,catalog.registeredCatalog.size()); // 2026-10-25: +63 new spells
+        assertEquals(312,catalog.registeredCatalog.size()); // 2026-10-25: +63 new +12 life spells
         assertEquals("교화",catalog.registeredCatalog.get(TamingSpell.ID).get("name"));
     }
     @Test void aliasesCannotChargeTwiceOrAcquireIndependentCooldowns()throws Exception{
@@ -73,11 +73,11 @@ class TamingCatalogTest {
     @Test void clientAndServerMetadataKeep149WithinThe323Catalog()throws Exception{
         var defaults=Path.of("../magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells");
         var index=Files.readAllLines(defaults.resolve("index.txt")).stream().filter(s->!s.isBlank()).toList();
-        assertEquals(288,index.size());assertEquals(1,index.stream().filter("223_rainbow_collar"::equals).count()); // 2026-10-25 renumber
+        assertEquals(300,index.size());assertEquals(1,index.stream().filter("233_rainbow_collar"::equals).count()); // 2026-10-25 renumber
         assertFalse(index.contains("taming"));
-        var client=yaml(defaults.resolve("223_rainbow_collar.yml"));
+        var client=yaml(defaults.resolve("233_rainbow_collar.yml"));
         assertEquals(TamingSpell.ID,client.getString("id"));assertEquals("교화",client.getString("name"));
-        assertEquals(223,client.getInt("order"));assertEquals(TamingSpell.PERMISSION,client.getString("permission"));
+        assertEquals(233,client.getInt("order"));assertEquals(TamingSpell.PERMISSION,client.getString("permission"));
         assertEquals("교화",client.getString("cast.command"));assertEquals(150,client.getInt("cast.mana-cost"));assertEquals(60,client.getInt("cast.cooldown-seconds"));
         assertEquals("몬스터 교화 실습 수행하기",client.getString("discovery.description"));
         assertEquals("빛의 고리가 닫히자, 낯선 숨결이 내 이름에 답했다. 처음 만난 짐승의 눈동자에서 오래된 약속의 흔적이 잠깐 빛났다.",client.getString("research"));

@@ -23,7 +23,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/001_feather_fall/001_feather_fall.yml
     baseline-icon: magiccodex:textures/spells/novice/feather_step.png
   wind_basket:
-    number: 14
+    number: 15
     name: 바람바구니
     permission: magic.learned.wind_basket
     icon: magiccodex:textures/spells/novice/wind_basket.png
@@ -45,7 +45,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/002_wind_basket/002_wind_basket.yml
     baseline-icon: magiccodex:textures/spells/novice/wind_basket.png
   harvest_wind:
-    number: 15
+    number: 16
     name: 수확의 바람
     permission: magic.learned.harvest_wind
     icon: magiccodex:textures/spells/novice/harvest_wind.png
@@ -119,7 +119,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/005_light_leap/005_light_leap.yml
     baseline-icon: magiccodex:textures/spells/novice_extra/light_leap.png
   flight:
-    number: 28
+    number: 30
     name: 비행
     permission: magic.learned.flight
     icon: magiccodex:textures/spells/intermediate/flight.png
@@ -185,7 +185,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/009_wind_message/009_wind_message.yml
     baseline-icon: magiccodex:textures/spells/intermediate/wind_message.png
   storm_command:
-    number: 40
+    number: 42
     name: 폭풍의 지휘
     permission: magic.learned.storm_command
     icon: magiccodex:textures/spells/advanced/storm_command.png
@@ -215,7 +215,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/010_storm_command/010_storm_command.yml
     baseline-icon: magiccodex:textures/spells/advanced/storm_command.png
   vacuum_cleave:
-    number: 16
+    number: 17
     name: 윈드 커터
     permission: magic.learned.vacuum_cleave
     icon: magiccodex:textures/spells/advanced/vacuum_cleave.png
@@ -267,7 +267,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/012_gale_dash/012_gale_dash.yml
     baseline-icon: magiccodex:textures/spells/expansion/gale_dash.png
   returning_wind:
-    number: 29
+    number: 31
     name: 되받는 바람
     permission: magic.learned.returning_wind
     icon: magiccodex:textures/spells/expansion/returning_wind.png
@@ -327,7 +327,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/014_wind_grooming/014_wind_grooming.yml
     baseline-icon: magiccodex:textures/spells/expansion/wind_grooming.png
   weightless_zone:
-    number: 43
+    number: 45
     name: 중력지대
     permission: magic.learned.weightless_zone
     icon: magiccodex:textures/spells/expansion/weightless_zone.png
@@ -444,7 +444,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/018_dust_duster/018_dust_duster.yml
     baseline-icon: magiccodex:textures/spells/expansion_2/dust_duster.png
   leaf_cleanup:
-    number: 30
+    number: 32
     name: 잎새 청소
     permission: magic.learned.leaf_cleanup
     icon: magiccodex:textures/spells/expansion_2/leaf_cleanup.png
@@ -476,7 +476,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/019_leaf_cleanup/019_leaf_cleanup.yml
     baseline-icon: magiccodex:textures/spells/expansion_2/leaf_cleanup.png
   feather_rustle:
-    number: 17
+    number: 18
     name: 깃털 털기
     permission: magic.learned.feather_rustle
     icon: magiccodex:textures/spells/expansion_2/feather_rustle.png
@@ -498,7 +498,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/020_feather_rustle/020_feather_rustle.yml
     baseline-icon: magiccodex:textures/spells/expansion_2/feather_rustle.png
   cross_breeze:
-    number: 18
+    number: 19
     name: 바람 화살
     permission: magic.learned.cross_breeze
     icon: magiccodex:textures/spells/expansion_2/cross_breeze.png
@@ -559,7 +559,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/021_cross_breeze/021_cross_breeze.yml
     baseline-icon: magiccodex:textures/spells/expansion_2/cross_breeze.png
   returning_blade:
-    number: 19
+    number: 20
     name: 되돌이 칼날
     permission: magic.learned.returning_blade
     icon: magiccodex:textures/spells/expansion_2/returning_blade.png
@@ -601,7 +601,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/022_returning_blade/022_returning_blade.yml
     baseline-icon: magiccodex:textures/spells/expansion_2/returning_blade.png
   pressure_press:
-    number: 31
+    number: 33
     name: 윈드 프레스
     permission: magic.learned.pressure_press
     icon: magiccodex:textures/spells/expansion_2/pressure_press.png
@@ -643,7 +643,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/023_pressure_press/023_pressure_press.yml
     baseline-icon: magiccodex:textures/spells/expansion_2/pressure_press.png
   wind_decoy:
-    number: 32
+    number: 34
     name: 바람 미끼
     permission: magic.learned.wind_decoy
     icon: magiccodex:textures/spells/expansion_2/wind_decoy.png
@@ -685,7 +685,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/024_wind_decoy/024_wind_decoy.yml
     baseline-icon: magiccodex:textures/spells/expansion_2/wind_decoy.png
   air_step:
-    number: 36
+    number: 38
     name: 허공 디딤
     permission: magic.learned.air_step
     icon: magiccodex:textures/spells/expansion_2/air_step.png
@@ -727,7 +727,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/025_air_step/025_air_step.yml
     baseline-icon: magiccodex:textures/spells/expansion_2/air_step.png
   lightning_needle:
-    number: 41
+    number: 43
     name: 라이트닝 쇼크
     permission: magic.learned.lightning_needle
     icon: magiccodex:textures/spells/expansion_2/lightning_needle.png
@@ -749,7 +749,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/026_lightning_needle/026_lightning_needle.yml
     baseline-icon: magiccodex:textures/spells/expansion_2/lightning_needle.png
   air_stacking:
-    number: 37
+    number: 39
     name: 허공 쌓기
     permission: magic.learned.air_stacking
     icon: magiccodex:textures/spells/expansion_2/air_stacking.png
@@ -771,7 +771,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/027_air_stacking/027_air_stacking.yml
     baseline-icon: magiccodex:textures/spells/expansion_2/air_stacking.png
   arrested_orbit:
-    number: 42
+    number: 44
     name: 퍼붓는 화살
     permission: magic.learned.arrested_orbit
     icon: magiccodex:textures/spells/expansion_2/arrested_orbit.png
@@ -849,7 +849,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/028_arrested_orbit/028_arrested_orbit.yml
     baseline-icon: magiccodex:textures/spells/expansion_2/arrested_orbit.png
   crossfire:
-    number: 47
+    number: 49
     name: 크로스 애로우
     permission: magic.learned.crossfire
     icon: magiccodex:textures/spells/expansion_2/crossfire.png
@@ -891,7 +891,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/029_crossfire/029_crossfire.yml
     baseline-icon: magiccodex:textures/spells/expansion_2/crossfire.png
   resonant_arrow:
-    number: 25
+    number: 27
     name: 미스틱 슈터
     permission: magic.learned.resonant_arrow
     icon: magiccodex:textures/spells/expansion_2/resonant_arrow.png
@@ -937,7 +937,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/030_resonant_arrow/030_resonant_arrow.yml
     baseline-icon: magiccodex:textures/spells/expansion_2/resonant_arrow.png
   pressure_rupture:
-    number: 33
+    number: 35
     name: 토네이도 스핀
     permission: magic.learned.pressure_rupture
     icon: magiccodex:textures/spells/expansion_2/pressure_rupture.png
@@ -959,7 +959,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/031_pressure_rupture/031_pressure_rupture.yml
     baseline-icon: magiccodex:textures/spells/expansion_2/pressure_rupture.png
   storm_crown:
-    number: 44
+    number: 46
     name: 삼중 탄환
     permission: magic.learned.storm_crown
     icon: magiccodex:textures/spells/expansion_2/storm_crown.png
@@ -1053,7 +1053,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/032_storm_crown/032_storm_crown.yml
     baseline-icon: magiccodex:textures/spells/expansion_2/storm_crown.png
   hearth_touch:
-    number: 53
+    number: 55
     name: 손끝의 화로
     permission: magic.learned.hearth_touch
     icon: magiccodex:textures/spells/novice/hearth_touch.png
@@ -1075,7 +1075,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/033_hearth_touch/033_hearth_touch.yml
     baseline-icon: magiccodex:textures/spells/novice/hearth_touch.png
   ember_bolt:
-    number: 49
+    number: 51
     name: 파이어 볼
     permission: magic.learned.ember_bolt
     icon: magiccodex:textures/spells/novice_extra/ember_bolt.png
@@ -1105,7 +1105,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/034_ember_bolt/034_ember_bolt.yml
     baseline-icon: magiccodex:textures/spells/novice_extra/ember_bolt.png
   rekindle:
-    number: 50
+    number: 52
     name: 다시 타오르는 불
     permission: magic.learned.rekindle
     icon: magiccodex:textures/spells/novice_extra/rekindle.png
@@ -1127,7 +1127,7 @@ spells:
     numeric-source: spell-integration-audit/recovered/kit/catalog/035_rekindle/035_rekindle.yml
     baseline-icon: magiccodex:textures/spells/novice_extra/rekindle.png
   flame_forging:
-    number: 66
+    number: 69
     name: 불꽃 단조
     permission: magic.learned.flame_forging
     icon: magiccodex:textures/spells/intermediate/flame_forging.png
@@ -1149,7 +1149,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/intermediate/flame_forging.png
   ember_trap:
-    number: 56
+    number: 58
     name: 잿불 덫
     permission: magic.learned.ember_trap
     icon: magiccodex:textures/spells/intermediate/ember_trap.png
@@ -1203,7 +1203,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/intermediate/ember_trap.png
   fire_curtain:
-    number: 79
+    number: 83
     name: 플레어 월
     permission: magic.learned.fire_curtain
     icon: magiccodex:textures/spells/intermediate/fire_curtain.png
@@ -1245,7 +1245,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/intermediate/fire_curtain.png
   phoenix_oath:
-    number: 86
+    number: 90
     name: 불사조의 서약
     permission: magic.learned.phoenix_oath
     icon: magiccodex:textures/spells/advanced/phoenix_oath.png
@@ -1275,7 +1275,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/advanced/phoenix_oath.png
   living_furnace:
-    number: 67
+    number: 70
     name: 살아 있는 화로
     permission: magic.learned.living_furnace
     icon: magiccodex:textures/spells/advanced/living_furnace.png
@@ -1297,7 +1297,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/advanced/living_furnace.png
   falling_star:
-    number: 93
+    number: 97
     name: 메테오 스트라이크
     permission: magic.learned.falling_star
     icon: magiccodex:textures/spells/advanced/falling_star.png
@@ -1367,7 +1367,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/advanced/falling_star.png
   flame_lash:
-    number: 74
+    number: 78
     name: 화염 채찍
     permission: magic.learned.flame_lash
     icon: magiccodex:textures/spells/expansion/flame_lash.png
@@ -1444,7 +1444,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/flame_lash.png
   palm_fireworks:
-    number: 54
+    number: 56
     name: 손바닥 폭죽
     permission: magic.learned.palm_fireworks
     icon: magiccodex:textures/spells/expansion/palm_fireworks.png
@@ -1474,7 +1474,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion/palm_fireworks.png
   ash_brand:
-    number: 87
+    number: 91
     name: 재의 낙인
     permission: magic.learned.ash_brand
     icon: magiccodex:textures/spells/expansion/ash_brand.png
@@ -1512,7 +1512,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion/ash_brand.png
   flame_leap:
-    number: 81
+    number: 85
     name: 블레이즈 킥
     permission: magic.learned.flame_leap
     icon: magiccodex:textures/spells/expansion/flame_leap.png
@@ -1542,7 +1542,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion/flame_leap.png
   crimson_heart:
-    number: 88
+    number: 92
     name: 홍련의 심장
     permission: magic.learned.crimson_heart
     icon: magiccodex:textures/spells/expansion/crimson_heart.png
@@ -1564,7 +1564,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion/crimson_heart.png
   wick_trimming:
-    number: 68
+    number: 71
     name: 심지 줄이기
     permission: magic.learned.wick_trimming
     icon: magiccodex:textures/spells/expansion_2/wick_trimming.png
@@ -1586,7 +1586,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/wick_trimming.png
   glass_firing:
-    number: 57
+    number: 59
     name: 광석 재련
     permission: magic.learned.glass_firing
     icon: magiccodex:textures/spells/expansion_2/glass_firing.png
@@ -1608,7 +1608,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/glass_firing.png
   charcoal_conversion:
-    number: 69
+    number: 72
     name: 발화
     permission: magic.learned.charcoal_conversion
     icon: magiccodex:textures/spells/expansion_2/charcoal_conversion.png
@@ -1630,7 +1630,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/charcoal_conversion.png
   sponge_drying:
-    number: 58
+    number: 60
     name: 스펀지 말리기
     permission: magic.learned.sponge_drying
     icon: magiccodex:textures/spells/expansion_2/sponge_drying.png
@@ -1652,7 +1652,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/sponge_drying.png
   boiling_armor:
-    number: 75
+    number: 79
     name: 끓는 갑주
     permission: magic.learned.boiling_armor
     icon: magiccodex:textures/spells/expansion_2/boiling_armor.png
@@ -1674,7 +1674,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/boiling_armor.png
   kiln_breath:
-    number: 70
+    number: 73
     name: 가마 숨결
     permission: magic.learned.kiln_breath
     icon: magiccodex:textures/spells/expansion_2/kiln_breath.png
@@ -1716,7 +1716,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/kiln_breath.png
   glaze_coating:
-    number: 59
+    number: 61
     name: 화염의 정복자
     permission: magic.learned.glaze_coating
     icon: magiccodex:textures/spells/expansion_2/glaze_coating.png
@@ -1758,7 +1758,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/glaze_coating.png
   explosive_wedge:
-    number: 89
+    number: 93
     name: 폭발 쐐기
     permission: magic.learned.explosive_wedge
     icon: magiccodex:textures/spells/expansion_2/explosive_wedge.png
@@ -1790,7 +1790,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/explosive_wedge.png
   heat_recovery:
-    number: 90
+    number: 94
     name: 열량 보존
     permission: magic.learned.heat_recovery
     icon: magiccodex:textures/spells/expansion_2/heat_recovery.png
@@ -1812,7 +1812,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/heat_recovery.png
   firebird_hunt:
-    number: 80
+    number: 84
     name: 불새
     permission: magic.learned.firebird_hunt
     icon: magiccodex:textures/spells/expansion_2/firebird_hunt.png
@@ -1862,7 +1862,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/firebird_hunt.png
   lava_suture:
-    number: 60
+    number: 62
     name: 용암 봉합
     permission: magic.learned.lava_suture
     icon: magiccodex:textures/spells/expansion_2/lava_suture.png
@@ -1884,7 +1884,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/lava_suture.png
   flame_sword_dance:
-    number: 91
+    number: 95
     name: 화염 검무
     permission: magic.learned.flame_sword_dance
     icon: magiccodex:textures/spells/expansion_2/flame_sword_dance.png
@@ -1970,7 +1970,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/flame_sword_dance.png
   incandescent_break:
-    number: 82
+    number: 86
     name: 파이어 스트라이크
     permission: magic.learned.incandescent_break
     icon: magiccodex:textures/spells/expansion_2/incandescent_break.png
@@ -2018,7 +2018,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/incandescent_break.png
   blue_bonfire:
-    number: 83
+    number: 87
     name: 푸른 화톳불
     permission: magic.learned.blue_bonfire
     icon: magiccodex:textures/spells/expansion_2/blue_bonfire.png
@@ -2060,7 +2060,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/blue_bonfire.png
   crimson_breath:
-    number: 94
+    number: 98
     name: 드래곤 브레스
     permission: magic.learned.crimson_breath
     icon: magiccodex:textures/spells/expansion_2/crimson_breath.png
@@ -2110,7 +2110,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/crimson_breath.png
   water_breath:
-    number: 105
+    number: 110
     name: 물결 숨결
     permission: magic.learned.water_breath
     icon: magiccodex:textures/spells/novice/water_breath.png
@@ -2132,7 +2132,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/novice/water_breath.png
   tide_stride:
-    number: 106
+    number: 111
     name: 물살 타기
     permission: magic.learned.tide_stride
     icon: magiccodex:textures/spells/novice/tide_stride.png
@@ -2154,7 +2154,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/novice/tide_stride.png
   water_bolt:
-    number: 96
+    number: 100
     name: 물방울 탄환
     permission: magic.learned.water_bolt
     icon: magiccodex:textures/spells/novice_extra/water_bolt.png
@@ -2192,7 +2192,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/novice_extra/water_bolt.png
   quench:
-    number: 97
+    number: 101
     name: 불길 씻기
     permission: magic.learned.quench
     icon: magiccodex:textures/spells/novice_extra/quench.png
@@ -2214,7 +2214,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/novice_extra/quench.png
   purifying_wave:
-    number: 118
+    number: 124
     name: 정화의 물결
     permission: magic.learned.purifying_wave
     icon: magiccodex:textures/spells/intermediate/purifying_wave.png
@@ -2244,7 +2244,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/intermediate/purifying_wave.png
   ice_bridge:
-    number: 119
+    number: 125
     name: 얼음 다리
     permission: magic.learned.ice_bridge
     icon: magiccodex:textures/spells/intermediate/ice_bridge.png
@@ -2294,7 +2294,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/intermediate/ice_bridge.png
   spring_unseal:
-    number: 111
+    number: 117
     name: 수맥 개방
     permission: magic.learned.spring_unseal
     icon: magiccodex:textures/spells/intermediate/spring_unseal.png
@@ -2316,7 +2316,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/intermediate/spring_unseal.png
   water_elemental:
-    number: 133
+    number: 139
     name: 운디네
     permission: magic.learned.water_elemental
     icon: magiccodex:textures/spells/advanced/water_elemental.png
@@ -2396,7 +2396,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/advanced/water_elemental.png
   eternal_ice_prison:
-    number: 134
+    number: 140
     name: 만년빙옥
     permission: magic.learned.eternal_ice_prison
     icon: magiccodex:textures/spells/advanced/eternal_ice_prison.png
@@ -2438,7 +2438,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/advanced/eternal_ice_prison.png
   cauldron_fill:
-    number: 98
+    number: 102
     name: 가마솥 채우기
     permission: magic.learned.cauldron_fill
     icon: magiccodex:textures/spells/expansion/cauldron_fill.png
@@ -2460,7 +2460,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion/cauldron_fill.png
   dye_rinse:
-    number: 99
+    number: 103
     name: 염색 씻기
     permission: magic.learned.dye_rinse
     icon: magiccodex:textures/spells/expansion/dye_rinse.png
@@ -2482,7 +2482,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion/dye_rinse.png
   fish_lure:
-    number: 107
+    number: 112
     name: 물고기 유인
     permission: magic.learned.fish_lure
     icon: magiccodex:textures/spells/expansion/fish_lure.png
@@ -2504,7 +2504,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion/fish_lure.png
   frost_rupture:
-    number: 113
+    number: 119
     name: 서리 파열
     permission: magic.learned.frost_rupture
     icon: magiccodex:textures/spells/expansion/frost_rupture.png
@@ -2534,7 +2534,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion/frost_rupture.png
   pressure_lance:
-    number: 124
+    number: 130
     name: 수압창
     permission: magic.learned.pressure_lance
     icon: ''
@@ -2594,7 +2594,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion/dampen_powder.png
   life_distribution:
-    number: 135
+    number: 141
     name: 생명의 분배
     permission: magic.learned.life_distribution
     icon: magiccodex:textures/spells/expansion/life_distribution.png
@@ -2648,7 +2648,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion/life_distribution.png
   moist_farmland:
-    number: 108
+    number: 113
     name: 촉촉한 밭
     permission: magic.learned.moist_farmland
     icon: magiccodex:textures/spells/expansion_2/moist_farmland.png
@@ -2670,7 +2670,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/moist_farmland.png
   wash_letters:
-    number: 100
+    number: 104
     name: 글씨 씻기
     permission: magic.learned.wash_letters
     icon: magiccodex:textures/spells/expansion_2/wash_letters.png
@@ -2692,7 +2692,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/wash_letters.png
   healing_rain:
-    number: 136
+    number: 142
     name: 치유의 비
     permission: magic.learned.healing_rain
     icon: ''
@@ -2742,7 +2742,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/handful_of_snow.png
   dew_gathering:
-    number: 101
+    number: 105
     name: 이슬 모으기
     permission: magic.learned.dew_gathering
     icon: magiccodex:textures/spells/expansion_2/dew_gathering.png
@@ -2774,7 +2774,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/dew_gathering.png
   quiet_mooring:
-    number: 125
+    number: 131
     name: 노아의 방주
     permission: magic.learned.quiet_mooring
     icon: magiccodex:textures/spells/expansion_2/quiet_mooring.png
@@ -2796,7 +2796,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/quiet_mooring.png
   bubble_aria:
-    number: 120
+    number: 126
     name: 물거품 아리아
     permission: magic.learned.bubble_aria
     icon: ''
@@ -2840,7 +2840,7 @@ spells:
     numeric-source: final_vfx_delivery/VFX_044-086_References_Prompts/044-086_spell_specs.json
     baseline-icon: magiccodex:textures/spells/expansion_2/wet_footprints.png
   pressure_hammer:
-    number: 126
+    number: 132
     name: 수압해머
     permission: magic.learned.pressure_hammer
     icon: ''
@@ -2862,7 +2862,7 @@ spells:
     numeric-source: claude-handoff/087_PressureHammer_prompt.txt
     baseline-icon: magiccodex:textures/spells/expansion_2/pressure_weight.png
   waterspout:
-    number: 137
+    number: 143
     name: 용오름
     permission: magic.learned.waterspout
     icon: ''
@@ -2904,7 +2904,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/cold_storage.png
   current_sorting:
-    number: 140
+    number: 146
     name: 사금 추출
     permission: magic.learned.current_sorting
     icon: magiccodex:textures/spells/expansion_2/current_sorting.png
@@ -2926,7 +2926,7 @@ spells:
     numeric-source: Sentinel_ac53f8638bd481919ad2d251f718dbd3
     baseline-icon: magiccodex:textures/spells/expansion_2/current_sorting.png
   potion_mist:
-    number: 121
+    number: 127
     name: 약액 분무
     permission: magic.learned.potion_mist
     icon: magiccodex:textures/spells/expansion_2/potion_mist.png
@@ -2984,7 +2984,7 @@ spells:
     numeric-source: Sentinel_4d678d0d1f648191a8e6f32b2413e065
     baseline-icon: magiccodex:textures/spells/expansion_2/potion_mist.png
   waterwheel_shield:
-    number: 127
+    number: 133
     name: 물레 방패
     permission: magic.learned.waterwheel_shield
     icon: magiccodex:textures/spells/expansion_2/waterwheel_shield.png
@@ -3046,7 +3046,7 @@ spells:
     numeric-source: Sentinel_d0864c4d29808191a555823759873505
     baseline-icon: magiccodex:textures/spells/expansion_2/waterwheel_shield.png
   concrete_curing:
-    number: 128
+    number: 134
     name: 콘크리트 양생
     permission: magic.learned.concrete_curing
     icon: ''
@@ -3076,7 +3076,7 @@ spells:
     numeric-source: Sentinel_243d95bf68b4819191e33148e4f14b25
     baseline-icon: magiccodex:textures/spells/expansion_2/liquid_barrier.png
   ripple_guard:
-    number: 129
+    number: 135
     name: 파문방벽
     permission: magic.learned.ripple_guard
     icon: ''
@@ -3106,7 +3106,7 @@ spells:
     numeric-source: Sentinel_4ceff84c5c2c8191a65235aa6bd5755d
     baseline-icon: magiccodex:textures/spells/expansion_2/water_rebound.png
   tidal_wave:
-    number: 138
+    number: 144
     name: 해일
     permission: magic.learned.tidal_wave
     icon: magiccodex:textures/spells/expansion_2/tidal_wave.png
@@ -3151,7 +3151,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/tidal_wave.png
   bouncing_droplet:
-    number: 130
+    number: 136
     name: 도약하는 물방울
     permission: magic.learned.bouncing_droplet
     icon: ''
@@ -3213,7 +3213,7 @@ spells:
     numeric-source: Sentinel_e827afbf2a648191ab7ebd82e9fb09d5
     baseline-icon: magiccodex:textures/spells/expansion_2/thaw_pulse.png
   abyssal_pressure:
-    number: 141
+    number: 147
     name: 심해의 압력
     permission: magic.learned.abyssal_pressure
     icon: magiccodex:textures/spells/expansion_2/abyssal_pressure.png
@@ -3255,7 +3255,7 @@ spells:
     numeric-source: Sentinel_f0337252a5dc8191bd4ef4b49236fdd3
     baseline-icon: magiccodex:textures/spells/expansion_2/abyssal_pressure.png
   verdant_touch:
-    number: 151
+    number: 157
     name: 풍요의 손길
     permission: magic.learned.verdant_touch
     icon: magiccodex:textures/spells/novice/verdant_touch.png
@@ -3277,7 +3277,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/novice/verdant_touch.png
   ore_whisper:
-    number: 160
+    number: 167
     name: 땅의 속삭임
     permission: magic.learned.ore_whisper
     icon: magiccodex:textures/spells/novice/ore_whisper.png
@@ -3307,7 +3307,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/novice/ore_whisper.png
   pebble_toss:
-    number: 145
+    number: 151
     name: 조약돌 던지기
     permission: magic.learned.pebble_toss
     icon: magiccodex:textures/spells/novice_extra/pebble_toss.png
@@ -3345,7 +3345,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/novice_extra/pebble_toss.png
   miners_rhythm:
-    number: 152
+    number: 158
     name: 광부의 박자
     permission: magic.learned.miners_rhythm
     icon: magiccodex:textures/spells/novice_extra/miners_rhythm.png
@@ -3383,7 +3383,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/novice_extra/miners_rhythm.png
   earth_shaping:
-    number: 180
+    number: 188
     name: 대지 성형
     permission: magic.learned.earth_shaping
     icon: magiccodex:textures/spells/reviewed_20261020/earth_shaping.png
@@ -3409,7 +3409,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/intermediate/earth_shaping.png
   stone_wall:
-    number: 171
+    number: 179
     name: 석벽
     permission: magic.learned.stone_wall
     icon: magiccodex:textures/spells/intermediate/stone_wall.png
@@ -3450,7 +3450,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/intermediate/stone_wall.png
   earth_elemental:
-    number: 184
+    number: 192
     name: 그놈
     permission: magic.learned.earth_elemental
     icon: magiccodex:textures/spells/advanced/earth_elemental.png
@@ -3515,7 +3515,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/advanced/earth_elemental.png
   earthquake:
-    number: 185
+    number: 193
     name: 지진
     permission: magic.learned.earthquake
     icon: magiccodex:textures/spells/advanced/earthquake.png
@@ -3550,7 +3550,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/advanced/earthquake.png
   climate_control:
-    number: 187
+    number: 195
     name: 기후 통제
     permission: magic.learned.climate_control
     icon: magiccodex:textures/spells/advanced/climate_control.png
@@ -3582,7 +3582,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/advanced/climate_control.png
   seed_row:
-    number: 153
+    number: 159
     name: 씨앗 줄심기
     permission: magic.learned.seed_row
     icon: magiccodex:textures/spells/expansion/seed_row.png
@@ -3653,7 +3653,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/seed_row.png
   bee_calm:
-    number: 154
+    number: 160
     name: 벌떼 달래기
     permission: magic.learned.bee_calm
     icon: magiccodex:textures/spells/expansion/bee_calm.png
@@ -3685,7 +3685,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/bee_calm.png
   thorn_armor:
-    number: 172
+    number: 180
     name: 가시 갑옷
     permission: magic.learned.thorn_armor
     icon: magiccodex:textures/spells/expansion/thorn_armor.png
@@ -3726,7 +3726,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/thorn_armor.png
   vein_fracture:
-    number: 161
+    number: 168
     name: 광맥 파쇄
     permission: magic.learned.vein_fracture
     icon: magiccodex:textures/spells/expansion/vein_fracture.png
@@ -3752,7 +3752,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/vein_fracture.png
   earth_anchor:
-    number: 175
+    number: 183
     name: 대지의 닻
     permission: magic.learned.earth_anchor
     icon: magiccodex:textures/spells/expansion/earth_anchor.png
@@ -3793,7 +3793,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/earth_anchor.png
   weathering_touch:
-    number: 146
+    number: 152
     name: 풍화의 손길
     permission: magic.learned.weathering_touch
     icon: magiccodex:textures/spells/expansion/weathering_touch.png
@@ -3827,7 +3827,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/weathering_touch.png
   iron_carapace:
-    number: 181
+    number: 189
     name: 철의 외피
     permission: magic.learned.iron_carapace
     icon: magiccodex:textures/spells/expansion/iron_carapace.png
@@ -3862,7 +3862,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/iron_carapace.png
   moss_coating:
-    number: 155
+    number: 161
     name: 이끼 입히기
     permission: magic.learned.moss_coating
     icon: magiccodex:textures/spells/reviewed_20261020/moss_coating.png
@@ -3894,7 +3894,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/moss_coating.png
   grass_sprouting:
-    number: 147
+    number: 153
     name: 잔디 돋우기
     permission: magic.learned.grass_sprouting
     icon: magiccodex:textures/spells/expansion_2/grass_sprouting.png
@@ -3914,7 +3914,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/grass_sprouting.png
   flint_sorting:
-    number: 162
+    number: 169
     name: 돌 고르기
     permission: magic.learned.flint_sorting
     icon: magiccodex:textures/spells/reviewed_20261020/flint_sorting.png
@@ -3988,7 +3988,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/flint_sorting.png
   bark_peeling:
-    number: 156
+    number: 162
     name: 껍질 벗기기
     permission: magic.learned.bark_peeling
     icon: magiccodex:textures/spells/expansion_2/bark_peeling.png
@@ -4008,7 +4008,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/bark_peeling.png
   compost_return:
-    number: 157
+    number: 163
     name: 퇴비 환원
     permission: magic.learned.compost_return
     icon: magiccodex:textures/spells/expansion_2/compost_return.png
@@ -4028,7 +4028,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/compost_return.png
   thorn_seeds:
-    number: 188
+    number: 196
     name: 가시 씨앗
     permission: magic.learned.thorn_seeds
     icon: magiccodex:textures/spells/expansion_2/thorn_seeds.png
@@ -4108,7 +4108,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/thorn_seeds.png
   pollen_matchmaking:
-    number: 158
+    number: 164
     name: 꽃가루 중매
     permission: magic.learned.pollen_matchmaking
     icon: magiccodex:textures/spells/expansion_2/pollen_matchmaking.png
@@ -4150,7 +4150,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/pollen_matchmaking.png
   dormant_seed:
-    number: 159
+    number: 165
     name: 동면의 씨앗
     permission: magic.learned.dormant_seed
     icon: magiccodex:textures/spells/reviewed_20261020/dormant_seed.png
@@ -4176,7 +4176,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/dormant_seed.png
   counterweight:
-    number: 176
+    number: 184
     name: 반격의 무게추
     permission: magic.learned.counterweight
     icon: magiccodex:textures/spells/expansion_2/counterweight.png
@@ -4220,7 +4220,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/counterweight.png
   material_exchange:
-    number: 182
+    number: 190
     name: 자재 치환
     permission: magic.learned.material_exchange
     icon: magiccodex:textures/spells/reviewed_20261020/material_exchange.png
@@ -4255,7 +4255,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/material_exchange.png
   remembering_field:
-    number: 183
+    number: 191
     name: 기억하는 밭
     permission: magic.learned.remembering_field
     icon: magiccodex:textures/spells/reviewed_20261020/remembering_field.png
@@ -4283,7 +4283,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/remembering_field.png
   little_giant:
-    number: 177
+    number: 185
     name: 작은 거인
     permission: magic.learned.little_giant
     icon: magiccodex:textures/spells/expansion_2/little_giant.png
@@ -4318,7 +4318,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/little_giant.png
   spring_ground:
-    number: 178
+    number: 186
     name: 용수철 지반
     permission: magic.learned.spring_ground
     icon: magiccodex:textures/spells/expansion_2/spring_ground.png
@@ -4381,7 +4381,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/spring_ground.png
   mountain_back:
-    number: 186
+    number: 194
     name: 산맥의 등
     permission: magic.learned.mountain_back
     icon: magiccodex:textures/spells/expansion_2/mountain_back.png
@@ -4425,7 +4425,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/mountain_back.png
   earth_embrace:
-    number: 173
+    number: 181
     name: 대지의 품
     permission: magic.learned.earth_embrace
     icon: magiccodex:textures/spells/expansion_2/earth_embrace.png
@@ -4451,7 +4451,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/earth_embrace.png
   forest_throne:
-    number: 189
+    number: 197
     name: 숲의 왕좌
     permission: magic.learned.forest_throne
     icon: magiccodex:textures/spells/expansion_2/forest_throne.png
@@ -4492,7 +4492,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/forest_throne.png
   primordial_stone:
-    number: 190
+    number: 198
     name: 원초의 돌
     permission: magic.learned.primordial_stone
     icon: magiccodex:textures/spells/expansion_2/primordial_stone.png
@@ -4564,7 +4564,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/primordial_stone.png
   guiding_star:
-    number: 193
+    number: 201
     name: 길잡이 별
     permission: magic.learned.guiding_star
     icon: magiccodex:textures/spells/novice/guiding_star.png
@@ -4611,7 +4611,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/novice/guiding_star.png
   minor_heal:
-    number: 199
+    number: 207
     name: 작은 치유
     permission: magic.learned.minor_heal
     icon: magiccodex:textures/spells/novice_extra/minor_heal.png
@@ -4643,7 +4643,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/novice_extra/minor_heal.png
   spatial_leap:
-    number: 212
+    number: 222
     name: 공간 도약
     permission: magic.learned.spatial_leap
     icon: magiccodex:textures/spells/intermediate/spatial_leap.png
@@ -4657,7 +4657,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/intermediate/spatial_leap.png
   true_sight:
-    number: 219
+    number: 229
     name: 진실의 눈
     permission: magic.learned.true_sight
     icon: magiccodex:textures/spells/intermediate/true_sight.png
@@ -4711,7 +4711,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/intermediate/true_sight.png
   protective_ward:
-    number: 222
+    number: 232
     name: 보호 결계
     permission: magic.learned.protective_ward
     icon: magiccodex:textures/spells/intermediate/protective_ward.png
@@ -4781,7 +4781,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/intermediate/protective_ward.png
   constellation_blessing:
-    number: 228
+    number: 238
     name: 성좌의 가호
     permission: magic.learned.constellation_blessing
     icon: magiccodex:textures/spells/advanced/constellation_blessing.png
@@ -4820,7 +4820,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/advanced/constellation_blessing.png
   arcane_imprint:
-    number: 229
+    number: 239
     name: 마력 각인
     permission: magic.learned.arcane_imprint
     icon: magiccodex:textures/spells/advanced/arcane_imprint.png
@@ -4861,7 +4861,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/advanced/arcane_imprint.png
   dawn_ritual:
-    number: 231
+    number: 241
     name: 여명의 의식
     permission: magic.learned.dawn_ritual
     icon: magiccodex:textures/spells/advanced/dawn_ritual.png
@@ -4906,7 +4906,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/advanced/dawn_ritual.png
   comforting_light:
-    number: 205
+    number: 214
     name: 위로의 빛
     permission: magic.learned.comforting_light
     icon: magiccodex:textures/spells/expansion/comforting_light.png
@@ -4954,7 +4954,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/comforting_light.png
   exorcism_flash:
-    number: 213
+    number: 223
     name: 퇴마의 섬광
     permission: magic.learned.exorcism_flash
     icon: magiccodex:textures/spells/expansion/exorcism_flash.png
@@ -4992,7 +4992,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/exorcism_flash.png
   arcane_mending:
-    number: 232
+    number: 242
     name: 마력 봉합
     permission: magic.learned.arcane_mending
     icon: magiccodex:textures/spells/expansion/arcane_mending.png
@@ -5054,7 +5054,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/arcane_mending.png
   companion_return:
-    number: 194
+    number: 202
     name: 동행 귀환
     permission: magic.learned.companion_return
     icon: magiccodex:textures/spells/expansion/companion_return.png
@@ -5094,7 +5094,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/companion_return.png
   flawless_moment:
-    number: 230
+    number: 240
     name: 무결의 순간
     permission: magic.learned.flawless_moment
     icon: magiccodex:textures/spells/expansion/flawless_moment.png
@@ -5135,7 +5135,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/flawless_moment.png
   solar_judgment:
-    number: 236
+    number: 246
     name: 태양의 심판
     permission: magic.learned.solar_judgment
     icon: magiccodex:textures/spells/expansion/solar_judgment.png
@@ -5504,7 +5504,7 @@ spells:
     numeric-source: approved gameplay source; MP800/CD300
     baseline-icon: magiccodex:textures/spells/expansion/solar_judgment.png
   firefly_mark:
-    number: 206
+    number: 215
     name: 반딧불 표식
     permission: magic.learned.firefly_mark
     icon: magiccodex:textures/spells/expansion_2/firefly_mark.png
@@ -5539,7 +5539,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/firefly_mark.png
   rainbow_collar:
-    number: 223
+    number: 233
     name: 교화
     permission: magic.learned.rainbow_collar
     icon: magiccodex:textures/spells/expansion_2/rainbow_collar.png
@@ -5654,7 +5654,7 @@ spells:
     preparation-status: server-owned-taming-channel-and-result
     numeric-source: user-approved-2026-10-06
   sun_drying:
-    number: 200
+    number: 208
     name: 햇살 말림
     permission: magic.learned.sun_drying
     icon: magiccodex:textures/spells/expansion_2/sun_drying.png
@@ -5693,7 +5693,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/sun_drying.png
   luminous_copy:
-    number: 195
+    number: 203
     name: 빛의 필사
     permission: magic.learned.luminous_copy
     icon: magiccodex:textures/spells/expansion_2/luminous_copy.png
@@ -5736,7 +5736,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/luminous_copy.png
   guiding_fletching:
-    number: 207
+    number: 216
     name: 유도 깃
     permission: magic.learned.guiding_fletching
     icon: magiccodex:textures/spells/expansion_2/guiding_fletching.png
@@ -5769,7 +5769,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/guiding_fletching.png
   sharing_table:
-    number: 224
+    number: 234
     name: 나눔 식탁
     permission: magic.learned.sharing_table
     icon: magiccodex:textures/spells/expansion_2/sharing_table.png
@@ -5809,7 +5809,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/sharing_table.png
   summons_letter:
-    number: 225
+    number: 235
     name: 소환장
     permission: magic.learned.summons_letter
     icon: magiccodex:textures/spells/expansion_2/summons_letter.png
@@ -5865,7 +5865,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/summons_letter.png
   starlight_survey:
-    number: 196
+    number: 204
     name: 별빛 측량
     permission: magic.learned.starlight_survey
     icon: magiccodex:textures/spells/expansion_2/starlight_survey.png
@@ -5898,7 +5898,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/starlight_survey.png
   luminous_handover:
-    number: 220
+    number: 230
     name: 빛의 교대
     permission: magic.learned.luminous_handover
     icon: magiccodex:textures/spells/expansion_2/luminous_handover.png
@@ -5930,7 +5930,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/luminous_handover.png
   mana_conduit:
-    number: 233
+    number: 243
     name: 마력 전선
     permission: magic.learned.mana_conduit
     icon: magiccodex:textures/spells/expansion_2/mana_conduit.png
@@ -5987,7 +5987,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/mana_conduit.png
   merciful_arrow:
-    number: 214
+    number: 224
     name: 자비의 화살
     permission: magic.learned.merciful_arrow
     icon: magiccodex:textures/spells/expansion_2/merciful_arrow.png
@@ -6043,7 +6043,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/merciful_arrow.png
   mana_deposit:
-    number: 226
+    number: 236
     name: 마력 예금
     permission: magic.learned.mana_deposit
     icon: magiccodex:textures/spells/expansion_2/mana_deposit.png
@@ -6083,7 +6083,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/mana_deposit.png
   guardian_oath:
-    number: 227
+    number: 237
     name: 수호자의 서약
     permission: magic.learned.guardian_oath
     icon: magiccodex:textures/spells/expansion_2/guardian_oath.png
@@ -6130,7 +6130,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/guardian_oath.png
   starlight_reprise:
-    number: 237
+    number: 247
     name: 별빛 재현
     permission: magic.learned.starlight_reprise
     icon: magiccodex:textures/spells/expansion_2/starlight_reprise.png
@@ -6184,7 +6184,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/starlight_reprise.png
   constellation_emissary:
-    number: 234
+    number: 244
     name: 성좌의 대리인
     permission: magic.learned.constellation_emissary
     icon: magiccodex:textures/spells/expansion_2/constellation_emissary.png
@@ -6233,7 +6233,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/constellation_emissary.png
   night_sight:
-    number: 239
+    number: 249
     name: 밤눈
     permission: magic.learned.night_sight
     icon: magiccodex:textures/spells/novice/night_sight.png
@@ -6253,7 +6253,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/novice/night_sight.png
   shadow_bind:
-    number: 240
+    number: 250
     name: 그림자 매듭
     permission: magic.learned.shadow_bind
     icon: magiccodex:textures/spells/novice_extra/shadow_bind.png
@@ -6288,7 +6288,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/novice_extra/shadow_bind.png
   faint_veil:
-    number: 247
+    number: 258
     name: 옅은 은신
     permission: magic.learned.faint_veil
     icon: magiccodex:textures/spells/novice_extra/faint_veil.png
@@ -6314,7 +6314,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/novice_extra/faint_veil.png
   shadow_double:
-    number: 264
+    number: 276
     name: 그림자 분신
     permission: magic.learned.shadow_double
     icon: magiccodex:textures/spells/intermediate/shadow_double.png
@@ -6362,7 +6362,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/intermediate/shadow_double.png
   echo_reading:
-    number: 244
+    number: 254
     name: 잔향 읽기
     permission: magic.learned.echo_reading
     icon: magiccodex:textures/spells/intermediate/echo_reading.png
@@ -6382,7 +6382,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/intermediate/echo_reading.png
   sealing_thread:
-    number: 248
+    number: 259
     name: 봉인의 실
     permission: magic.learned.sealing_thread
     icon: magiccodex:textures/spells/intermediate/sealing_thread.png
@@ -6422,7 +6422,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/intermediate/sealing_thread.png
   shadow_exchange:
-    number: 272
+    number: 284
     name: 그림자 교환
     permission: magic.learned.shadow_exchange
     icon: magiccodex:textures/spells/advanced/shadow_exchange.png
@@ -6448,7 +6448,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/advanced/shadow_exchange.png
   forbidden_contract:
-    number: 284
+    number: 296
     name: 금서의 계약
     permission: magic.learned.forbidden_contract
     icon: magiccodex:textures/spells/advanced/forbidden_contract.png
@@ -6490,7 +6490,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/advanced/forbidden_contract.png
   life_siphon:
-    number: 249
+    number: 260
     name: 생명 갈취
     permission: magic.learned.life_siphon
     icon: magiccodex:textures/spells/expansion/life_siphon.png
@@ -6532,7 +6532,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/life_siphon.png
   drowsiness:
-    number: 273
+    number: 285
     name: 졸음
     permission: magic.learned.drowsiness
     icon: magiccodex:textures/spells/expansion/drowsiness.png
@@ -6572,7 +6572,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/drowsiness.png
   misfortune_whisper:
-    number: 260
+    number: 272
     name: 나약함의 저주
     permission: magic.learned.misfortune_whisper
     icon: magiccodex:textures/spells/expansion/misfortune_whisper.png
@@ -6604,7 +6604,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/misfortune_whisper.png
   hungry_shadow:
-    number: 250
+    number: 261
     name: 굶주린 그림자
     permission: magic.learned.hungry_shadow
     icon: magiccodex:textures/spells/expansion/hungry_shadow.png
@@ -6634,7 +6634,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/hungry_shadow.png
   curse_transfer:
-    number: 265
+    number: 277
     name: 저주의 전가
     permission: magic.learned.curse_transfer
     icon: magiccodex:textures/spells/expansion/curse_transfer.png
@@ -6674,7 +6674,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/curse_transfer.png
   discord:
-    number: 274
+    number: 286
     name: 마인드컨트롤
     permission: magic.learned.discord
     icon: magiccodex:textures/spells/expansion/discord.png
@@ -6708,7 +6708,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/discord.png
   night_chain:
-    number: 280
+    number: 292
     name: 밤의 사슬
     permission: magic.learned.night_chain
     icon: magiccodex:textures/spells/expansion/night_chain.png
@@ -6772,7 +6772,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/night_chain.png
   pain_deferral:
-    number: 275
+    number: 287
     name: 고통 유예
     permission: magic.learned.pain_deferral
     icon: magiccodex:textures/spells/expansion/pain_deferral.png
@@ -6882,7 +6882,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/pain_deferral.png
   black_harvest:
-    number: 266
+    number: 278
     name: 검은 수확
     permission: magic.learned.black_harvest
     icon: magiccodex:textures/spells/expansion/black_harvest.png
@@ -6902,7 +6902,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/black_harvest.png
   ink_fingertip:
-    number: 251
+    number: 262
     name: 먹물 손끝
     permission: magic.learned.ink_fingertip
     icon: magiccodex:textures/spells/expansion_2/ink_fingertip.png
@@ -7012,7 +7012,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/ink_fingertip.png
   shadow_nail:
-    number: 281
+    number: 293
     name: 그림자 못
     permission: magic.learned.shadow_nail
     icon: magiccodex:textures/spells/expansion_2/shadow_nail.png
@@ -7054,7 +7054,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/shadow_nail.png
   night_lullaby:
-    number: 276
+    number: 288
     name: 밤의 자장가
     permission: magic.learned.night_lullaby
     icon: magiccodex:textures/spells/expansion_2/night_lullaby.png
@@ -7094,7 +7094,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/night_lullaby.png
   loosen_grasp:
-    number: 261
+    number: 273
     name: 손아귀 풀기
     permission: magic.learned.loosen_grasp
     icon: magiccodex:textures/spells/expansion_2/loosen_grasp.png
@@ -7134,7 +7134,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/loosen_grasp.png
   healing_seal:
-    number: 267
+    number: 279
     name: 회복 봉인
     permission: magic.learned.healing_seal
     icon: magiccodex:textures/spells/expansion_2/healing_seal.png
@@ -7166,7 +7166,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/healing_seal.png
   shadow_scales:
-    number: 277
+    number: 289
     name: 어둠의 저울
     permission: magic.learned.shadow_scales
     icon: magiccodex:textures/spells/expansion_2/shadow_scales.png
@@ -7204,7 +7204,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/shadow_scales.png
   warning_thread:
-    number: 282
+    number: 294
     name: 경고의 실
     permission: magic.learned.warning_thread
     icon: magiccodex:textures/spells/expansion_2/warning_thread.png
@@ -7244,7 +7244,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/warning_thread.png
   wound_accounting:
-    number: 268
+    number: 280
     name: 상처 회계
     permission: magic.learned.wound_accounting
     icon: magiccodex:textures/spells/expansion_2/wound_accounting.png
@@ -7276,7 +7276,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/wound_accounting.png
   inverted_offering:
-    number: 252
+    number: 263
     name: 뒤집힌 공물
     permission: magic.learned.inverted_offering
     icon: magiccodex:textures/spells/expansion_2/inverted_offering.png
@@ -7306,7 +7306,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/inverted_offering.png
   ghost_tool:
-    number: 278
+    number: 290
     name: 유령 도구
     permission: magic.learned.ghost_tool
     icon: magiccodex:textures/spells/expansion_2/ghost_tool.png
@@ -7368,7 +7368,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/ghost_tool.png
   bell_of_fear:
-    number: 279
+    number: 291
     name: 공포의 종
     permission: magic.learned.bell_of_fear
     icon: magiccodex:textures/spells/expansion_2/bell_of_fear.png
@@ -7406,7 +7406,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/bell_of_fear.png
   eclipse_eye:
-    number: 287
+    number: 299
     name: 월식의 눈
     permission: magic.learned.eclipse_eye
     icon: magiccodex:textures/spells/expansion_2/eclipse_eye.png
@@ -7499,7 +7499,7 @@ spells:
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion_2/eclipse_eye.png
   void_maw:
-    number: 285
+    number: 297
     name: 공허의 입
     permission: magic.learned.void_maw
     icon: magiccodex:textures/spells/expansion_2/void_maw.png
@@ -7532,7 +7532,7 @@ spells:
     baseline-icon: magiccodex:textures/spells/expansion_2/void_maw.png
   # ---- 300~323 몹 기술 습득 마법 (magic-mythic-paper/tools/mob_spells.py) ----
   fox_orbit:
-    number: 63
+    number: 65
     name: 여우불 공전
     permission: magic.learned.fox_orbit
     icon: magiccodex:textures/spells/expansion_2/firefly_mark.png
@@ -7548,7 +7548,7 @@ spells:
       - claude:kitsunefox/shot_normal
     mob-vfx-pack: kitsunefox
   curving_plumes:
-    number: 64
+    number: 66
     name: 곡선 불깃털
     permission: magic.learned.curving_plumes
     icon: magiccodex:textures/spells/expansion_2/firebird_hunt.png
@@ -7564,7 +7564,7 @@ spells:
       - claude:phoenixfeather/shot_flame
     mob-vfx-pack: phoenixfeather
   crystal_orbit:
-    number: 114
+    number: 120
     name: 결정 공전탄
     permission: magic.learned.crystal_orbit
     icon: magiccodex:textures/spells/expansion/frost_rupture.png
@@ -7580,7 +7580,7 @@ spells:
       - claude:glacialshards/shot_glacial
     mob-vfx-pack: glacialshards
   venom_spit:
-    number: 165
+    number: 172
     name: 독 뱉기
     permission: magic.learned.venom_spit
     icon: magiccodex:textures/spells/expansion_2/thorn_seeds.png
@@ -7596,7 +7596,7 @@ spells:
       - claude:basiliskspit/shot_wild
     mob-vfx-pack: basiliskspit
   smoke_veil:
-    number: 166
+    number: 173
     name: 연막 은신
     permission: magic.learned.smoke_veil
     icon: magiccodex:textures/spells/novice_extra/faint_veil.png
@@ -7611,7 +7611,7 @@ spells:
       - claude:smokebomb/smoke
     mob-vfx-pack: smokebomb
   domain_stomp:
-    number: 208
+    number: 217
     name: 영역 선포
     permission: magic.learned.domain_stomp
     icon: magiccodex:textures/spells/expansion_2/guardian_oath.png
@@ -7626,7 +7626,7 @@ spells:
       - claude:domainseal/domain_heavenly
     mob-vfx-pack: domainseal
   seal_circle:
-    number: 216
+    number: 226
     name: 봉인진
     permission: magic.learned.seal_circle
     icon: magiccodex:textures/spells/intermediate/sealing_thread.png
@@ -7641,7 +7641,7 @@ spells:
       - claude:sealcircle/seal
     mob-vfx-pack: sealcircle
   seal_talismans:
-    number: 203
+    number: 211
     name: 봉인 부적
     permission: magic.learned.seal_talismans
     icon: magiccodex:textures/spells/expansion/exorcism_flash.png
@@ -7657,7 +7657,7 @@ spells:
       - claude:sealtalisman/shot_seal
     mob-vfx-pack: sealtalisman
   shield_slam:
-    number: 209
+    number: 218
     name: 방패 내려찍기
     permission: magic.learned.shield_slam
     icon: magiccodex:textures/spells/intermediate/protective_ward.png
@@ -7672,7 +7672,7 @@ spells:
       - claude:sealshield/shield
     mob-vfx-pack: sealshield
   chain_arrow:
-    number: 204
+    number: 212
     name: 사슬 화살
     permission: magic.learned.chain_arrow
     icon: magiccodex:textures/spells/expansion_2/guiding_fletching.png
@@ -7688,7 +7688,7 @@ spells:
       - claude:chainarrow/shot_chain
     mob-vfx-pack: chainarrow
   mana_drain:
-    number: 255
+    number: 266
     name: 마나 흡수
     permission: magic.learned.mana_drain
     icon: magiccodex:textures/spells/expansion_2/mana_conduit.png
@@ -7703,7 +7703,7 @@ spells:
       - claude:phantomdrain/drain_ender
     mob-vfx-pack: phantomdrain
   soul_scythe:
-    number: 246
+    number: 256
     name: 영혼 낫
     permission: magic.learned.soul_scythe
     icon: magiccodex:textures/spells/expansion/black_harvest.png
@@ -7718,7 +7718,7 @@ spells:
       - claude:phantomscythe/reap_ender
     mob-vfx-pack: phantomscythe
   oblivion_orbs:
-    number: 256
+    number: 267
     name: 망각의 탄환
     permission: magic.learned.oblivion_orbs
     icon: magiccodex:textures/spells/expansion_2/abyssal_pressure.png
@@ -7734,7 +7734,7 @@ spells:
       - claude:skelorb/shot
     mob-vfx-pack: skelorb
   bone_grasp:
-    number: 257
+    number: 268
     name: 뼈의 손아귀
     permission: magic.learned.bone_grasp
     icon: magiccodex:textures/spells/novice_extra/shadow_bind.png
@@ -7749,7 +7749,7 @@ spells:
       - claude:bonegrasp/grasp
     mob-vfx-pack: bonegrasp
   shadow_leap:
-    number: 258
+    number: 269
     name: 그림자 도약
     permission: magic.learned.shadow_leap
     icon: magiccodex:textures/spells/novice_extra/light_leap.png
@@ -7765,7 +7765,7 @@ spells:
       - claude:specialkitsune/out_normal
     mob-vfx-pack: specialkitsune
   binding_pull:
-    number: 26
+    number: 28
     name: 끌어오기
     permission: magic.learned.binding_pull
     icon: magiccodex:textures/spells/novice/feather_step.png
@@ -7781,7 +7781,7 @@ spells:
       - claude:specialserpent/mark_jade
     mob-vfx-pack: specialserpent
   fairy_dust:
-    number: 167
+    number: 174
     name: 요정 가루
     permission: magic.learned.fairy_dust
     icon: magiccodex:textures/spells/expansion_2/night_lullaby.png
@@ -7811,7 +7811,7 @@ spells:
       - claude:pegasuscrescent/moon
     mob-vfx-pack: pegasuscrescent
   gale_wings:
-    number: 21
+    number: 22
     name: 돌풍 날갯짓
     permission: magic.learned.gale_wings
     icon: magiccodex:textures/spells/expansion/gale_dash.png
@@ -7826,7 +7826,7 @@ spells:
       - claude:galewings/gale
     mob-vfx-pack: galewings
   feather_storm:
-    number: 22
+    number: 23
     name: 깃털 폭풍
     permission: magic.learned.feather_storm
     icon: magiccodex:textures/spells/expansion_2/thorn_seeds.png
@@ -7841,7 +7841,7 @@ spells:
       - claude:featherstorm/fstorm_common
     mob-vfx-pack: featherstorm
   hunting_pounce:
-    number: 168
+    number: 175
     name: 사냥 도약
     permission: magic.learned.hunting_pounce
     icon: magiccodex:textures/spells/novice_extra/light_leap.png
@@ -7856,7 +7856,7 @@ spells:
       - claude:sabertoothpounce/pounce_arctic
     mob-vfx-pack: sabertoothpounce
   roar_leap:
-    number: 23
+    number: 24
     name: 포효 도약
     permission: magic.learned.roar_leap
     icon: magiccodex:textures/spells/expansion_2/bell_of_fear.png
@@ -7871,7 +7871,7 @@ spells:
       - claude:manticoreroar/roar_aether
     mob-vfx-pack: manticoreroar
   gravity_slam:
-    number: 174
+    number: 182
     name: 중력 강타
     permission: magic.learned.gravity_slam
     icon: magiccodex:textures/spells/expansion/weightless_zone.png
@@ -7886,7 +7886,7 @@ spells:
       - claude:gravityslam/gravity_arcane
     mob-vfx-pack: gravityslam
   tail_spikes:
-    number: 169
+    number: 176
     name: 꼬리 가시
     permission: magic.learned.tail_spikes
     icon: magiccodex:textures/spells/reviewed_20261016/pressure_lance.png
@@ -7901,7 +7901,7 @@ spells:
       - claude:wyvernspikes/spikes_green
     mob-vfx-pack: wyvernspikes
   landing_airbrake:
-    number: 20
+    number: 21
     name: 빗자루 차원이동
     permission: magic.learned.landing_airbrake
     icon: magiccodex:textures/spells/reviewed_20261020/landing_airbrake.png
@@ -7925,7 +7925,7 @@ spells:
       duration-ticks: 18
     preparation-status: server-events-connected
   hushed_soles:
-    number: 262
+    number: 274
     name: 고요한 밑창
     permission: magic.learned.hushed_soles
     icon: magiccodex:textures/spells/reviewed_20261020/hushed_soles.png
@@ -7943,7 +7943,7 @@ spells:
       duration-ticks: 24
     preparation-status: server-events-connected
   thorn_manners:
-    number: 148
+    number: 154
     name: 가시의 예절
     permission: magic.learned.thorn_manners
     icon: magiccodex:textures/spells/reviewed_20261020/thorn_manners.png
@@ -7961,7 +7961,7 @@ spells:
       duration-ticks: 18
     preparation-status: server-events-connected
   cinder_skipring:
-    number: 76
+    number: 80
     name: 불꽃 줄넘기
     permission: magic.learned.cinder_skipring
     icon: magiccodex:textures/spells/reviewed_20261020/cinder_skipring.png
@@ -7985,7 +7985,7 @@ spells:
       duration-ticks: 24
     preparation-status: server-events-connected
   droplet_relay:
-    number: 131
+    number: 137
     name: 물방울 인계
     permission: magic.learned.droplet_relay
     icon: magiccodex:textures/spells/reviewed_20261020/droplet_relay.png
@@ -8021,7 +8021,7 @@ spells:
       duration-ticks: 32
     preparation-status: server-events-connected
   folding_tideplane:
-    number: 132
+    number: 138
     name: 접히는 수면
     permission: magic.learned.folding_tideplane
     icon: magiccodex:textures/spells/reviewed_20261020/folding_tideplane.png
@@ -8064,7 +8064,7 @@ spells:
     preparation-status: server-events-connected
   # ---- 239~250 던전 기믹 마법 (magic-mythic-paper/tools/gimmick_spells.py) ----
   thawing_heat:
-    number: 61
+    number: 63
     name: 해빙의 열기
     permission: magic.learned.thawing_heat
     icon: ''
@@ -8083,7 +8083,7 @@ spells:
         duration-ticks: 60
     preparation-status: server-events-connected
   steam_ignition:
-    number: 62
+    number: 64
     name: 증기 점화
     permission: magic.learned.steam_ignition
     icon: ''
@@ -8102,7 +8102,7 @@ spells:
         duration-ticks: 16
     preparation-status: server-events-connected
   water_level:
-    number: 109
+    number: 114
     name: 수위 조절
     permission: magic.learned.water_level
     icon: ''
@@ -8121,7 +8121,7 @@ spells:
         duration-ticks: 16
     preparation-status: server-events-connected
   stone_weight:
-    number: 163
+    number: 170
     name: 무게추
     permission: magic.learned.stone_weight
     icon: ''
@@ -8140,7 +8140,7 @@ spells:
         duration-ticks: 16
     preparation-status: server-events-connected
   vine_awaken:
-    number: 164
+    number: 171
     name: 덩굴 깨우기
     permission: magic.learned.vine_awaken
     icon: ''
@@ -8159,7 +8159,7 @@ spells:
         duration-ticks: 16
     preparation-status: server-events-connected
   light_beam:
-    number: 215
+    number: 225
     name: 빛줄기
     permission: magic.learned.light_beam
     icon: ''
@@ -8178,7 +8178,7 @@ spells:
         duration-ticks: 60
     preparation-status: server-events-connected
   mirror_tune:
-    number: 201
+    number: 209
     name: 반사 조율
     permission: magic.learned.mirror_tune
     icon: ''
@@ -8197,7 +8197,7 @@ spells:
         duration-ticks: 14
     preparation-status: server-events-connected
   prism_tint:
-    number: 202
+    number: 210
     name: 프리즘 물들이기
     permission: magic.learned.prism_tint
     icon: ''
@@ -8216,7 +8216,7 @@ spells:
         duration-ticks: 14
     preparation-status: server-events-connected
   statue_wake:
-    number: 245
+    number: 255
     name: 석상 깨우기
     permission: magic.learned.statue_wake
     icon: ''
@@ -8235,7 +8235,7 @@ spells:
         duration-ticks: 16
     preparation-status: server-events-connected
   rewind:
-    number: 253
+    number: 264
     name: 되감기
     permission: magic.learned.rewind
     icon: ''
@@ -8254,7 +8254,7 @@ spells:
         duration-ticks: 16
     preparation-status: server-events-connected
   conduit_turn:
-    number: 149
+    number: 155
     name: 도관 회전
     permission: magic.learned.conduit_turn
     icon: ''
@@ -8273,7 +8273,7 @@ spells:
         duration-ticks: 14
     preparation-status: server-events-connected
   dimension_mark:
-    number: 254
+    number: 265
     name: 차원 표식
     permission: magic.learned.dimension_mark
     icon: ''
@@ -8293,7 +8293,7 @@ spells:
     preparation-status: server-events-connected
   # ---- 325~387 신규 마법 (magic-mythic-paper/tools/nova_spells.py) ----
   spark_flick:
-    number: 51
+    number: 53
     name: 불씨 튕기기
     permission: magic.learned.spark_flick
     icon: ''
@@ -8317,7 +8317,7 @@ spells:
         duration-ticks: 20
     preparation-status: server-events-connected
   ember_puff:
-    number: 52
+    number: 54
     name: 작은 불숨
     permission: magic.learned.ember_puff
     icon: ''
@@ -8341,7 +8341,7 @@ spells:
         duration-ticks: 16
     preparation-status: server-events-connected
   tide_slash:
-    number: 103
+    number: 107
     name: 물살 베기
     permission: magic.learned.tide_slash
     icon: ''
@@ -8365,7 +8365,7 @@ spells:
         duration-ticks: 16
     preparation-status: server-events-connected
   ice_shard:
-    number: 104
+    number: 108
     name: 얼음 조각
     permission: magic.learned.ice_shard
     icon: ''
@@ -8455,7 +8455,7 @@ spells:
         duration-ticks: 22
     preparation-status: server-events-connected
   shadow_fang:
-    number: 241
+    number: 251
     name: 그림자 송곳니
     permission: magic.learned.shadow_fang
     icon: ''
@@ -8479,7 +8479,7 @@ spells:
         duration-ticks: 20
     preparation-status: server-events-connected
   dusk_orb:
-    number: 242
+    number: 252
     name: 어둠 구슬
     permission: magic.learned.dusk_orb
     icon: ''
@@ -8509,7 +8509,7 @@ spells:
         duration-ticks: 18
     preparation-status: server-events-connected
   prism_shot:
-    number: 197
+    number: 205
     name: 프리즘 탄
     permission: magic.learned.prism_shot
     icon: ''
@@ -8539,7 +8539,7 @@ spells:
         duration-ticks: 12
     preparation-status: server-events-connected
   sand_flick:
-    number: 150
+    number: 156
     name: 모래 한 줌
     permission: magic.learned.sand_flick
     icon: ''
@@ -8563,7 +8563,7 @@ spells:
         duration-ticks: 24
     preparation-status: server-events-connected
   sunlance_drop:
-    number: 198
+    number: 206
     name: 햇살 꽂기
     permission: magic.learned.sunlance_drop
     icon: ''
@@ -8587,7 +8587,7 @@ spells:
         duration-ticks: 36
     preparation-status: server-events-connected
   flame_wheel:
-    number: 65
+    number: 67
     name: 화염 원반
     permission: magic.learned.flame_wheel
     icon: ''
@@ -8623,7 +8623,7 @@ spells:
         duration-ticks: 16
     preparation-status: server-events-connected
   eruption_line:
-    number: 71
+    number: 74
     name: 분화선
     permission: magic.learned.eruption_line
     icon: ''
@@ -8647,7 +8647,7 @@ spells:
         duration-ticks: 12
     preparation-status: server-events-connected
   flame_javelin:
-    number: 72
+    number: 75
     name: 화염 투창
     permission: magic.learned.flame_javelin
     icon: ''
@@ -8677,7 +8677,7 @@ spells:
         duration-ticks: 26
     preparation-status: server-events-connected
   heat_haze:
-    number: 77
+    number: 81
     name: 아지랑이
     permission: magic.learned.heat_haze
     icon: ''
@@ -8707,7 +8707,7 @@ spells:
         duration-ticks: 16
     preparation-status: server-events-connected
   frost_path:
-    number: 115
+    number: 121
     name: 서리 길
     permission: magic.learned.frost_path
     icon: ''
@@ -8759,7 +8759,7 @@ spells:
         duration-ticks: 62
     preparation-status: server-events-connected
   hydro_burst:
-    number: 116
+    number: 122
     name: 수류 탄환
     permission: magic.learned.hydro_burst
     icon: ''
@@ -8791,7 +8791,7 @@ spells:
           - claude:hydroburst/channel
     preparation-status: server-events-connected
   crystal_coat:
-    number: 122
+    number: 128
     name: 결정 갑옷
     permission: magic.learned.crystal_coat
     icon: ''
@@ -8859,7 +8859,7 @@ spells:
         duration-ticks: 10
     preparation-status: server-events-connected
   ice_bloom:
-    number: 123
+    number: 129
     name: 얼음 꽃
     permission: magic.learned.ice_bloom
     icon: ''
@@ -8883,7 +8883,7 @@ spells:
         duration-ticks: 12
     preparation-status: server-events-connected
   vacuum_burst:
-    number: 34
+    number: 36
     name: 진공 폭발
     permission: magic.learned.vacuum_burst
     icon: ''
@@ -8901,7 +8901,7 @@ spells:
         duration-ticks: 44
     preparation-status: server-events-connected
   gale_combo:
-    number: 24
+    number: 25
     name: 질풍 연격
     permission: magic.learned.gale_combo
     icon: ''
@@ -8943,7 +8943,7 @@ spells:
         duration-ticks: 8
     preparation-status: server-events-connected
   air_choke:
-    number: 38
+    number: 40
     name: 숨 막힘
     permission: magic.learned.air_choke
     icon: ''
@@ -8983,7 +8983,7 @@ spells:
           - claude:airchoke/air_choke
     preparation-status: server-events-connected
   storm_eye:
-    number: 39
+    number: 41
     name: 폭풍의 눈
     permission: magic.learned.storm_eye
     icon: ''
@@ -9021,7 +9021,7 @@ spells:
         duration-ticks: 4
     preparation-status: server-events-connected
   shadow_mire:
-    number: 269
+    number: 281
     name: 그림자 늪
     permission: magic.learned.shadow_mire
     icon: ''
@@ -9059,7 +9059,7 @@ spells:
         duration-ticks: 56
     preparation-status: server-events-connected
   dread_dream:
-    number: 270
+    number: 282
     name: 악몽
     permission: magic.learned.dread_dream
     icon: ''
@@ -9097,7 +9097,7 @@ spells:
         duration-ticks: 20
     preparation-status: server-events-connected
   shadow_step:
-    number: 263
+    number: 275
     name: 그림자 걸음
     permission: magic.learned.shadow_step
     icon: ''
@@ -9135,7 +9135,7 @@ spells:
         duration-ticks: 28
     preparation-status: server-events-connected
   halo_throw:
-    number: 217
+    number: 227
     name: 광륜 투척
     permission: magic.learned.halo_throw
     icon: ''
@@ -9171,7 +9171,7 @@ spells:
         duration-ticks: 12
     preparation-status: server-events-connected
   flash_blink:
-    number: 221
+    number: 231
     name: 섬광 도약
     permission: magic.learned.flash_blink
     icon: ''
@@ -9209,7 +9209,7 @@ spells:
         duration-ticks: 60
     preparation-status: server-events-connected
   boulder_charge:
-    number: 179
+    number: 187
     name: 바위 돌진
     permission: magic.learned.boulder_charge
     icon: ''
@@ -9254,7 +9254,7 @@ spells:
           - claude:bouldercharge/boulder_charge_dash
     preparation-status: server-events-connected
   air_cannon:
-    number: 35
+    number: 37
     name: 공기 포탄
     permission: magic.learned.air_cannon
     icon: ''
@@ -9284,7 +9284,7 @@ spells:
         duration-ticks: 60
     preparation-status: server-events-connected
   hex_doll:
-    number: 271
+    number: 283
     name: 저주 인형
     permission: magic.learned.hex_doll
     icon: ''
@@ -9350,7 +9350,7 @@ spells:
         link-target: target
     preparation-status: server-events-connected
   crimson_spiral:
-    number: 84
+    number: 88
     name: 홍염 나선
     permission: magic.learned.crimson_spiral
     icon: ''
@@ -9386,7 +9386,7 @@ spells:
         duration-ticks: 20
     preparation-status: server-events-connected
   volcanic_barrage:
-    number: 92
+    number: 96
     name: 화산탄 세례
     permission: magic.learned.volcanic_barrage
     icon: ''
@@ -9422,7 +9422,7 @@ spells:
         duration-ticks: 52
     preparation-status: server-events-connected
   scorch_lock:
-    number: 85
+    number: 89
     name: 작열의 표적
     permission: magic.learned.scorch_lock
     icon: ''
@@ -9502,7 +9502,7 @@ spells:
           - claude:scorchlock/lockForm
     preparation-status: server-events-connected
   freeze_field:
-    number: 142
+    number: 148
     name: 빙결 지대
     permission: magic.learned.freeze_field
     icon: ''
@@ -9540,7 +9540,7 @@ spells:
         duration-ticks: 22
     preparation-status: server-events-connected
   ebb_mark:
-    number: 139
+    number: 145
     name: 썰물
     permission: magic.learned.ebb_mark
     icon: ''
@@ -9601,7 +9601,7 @@ spells:
         duration-ticks: 12
     preparation-status: server-events-connected
   ice_serpent:
-    number: 143
+    number: 149
     name: 얼음 뱀
     permission: magic.learned.ice_serpent
     icon: ''
@@ -9631,7 +9631,7 @@ spells:
         duration-ticks: 24
     preparation-status: server-events-connected
   sky_dive:
-    number: 45
+    number: 47
     name: 천공 강하
     permission: magic.learned.sky_dive
     icon: ''
@@ -9678,7 +9678,7 @@ spells:
           - claude:skydive/mark
     preparation-status: server-events-connected
   thundercloud:
-    number: 46
+    number: 48
     name: 뇌운
     permission: magic.learned.thundercloud
     icon: ''
@@ -9702,7 +9702,7 @@ spells:
         duration-ticks: 10
     preparation-status: server-events-connected
   fate_link:
-    number: 283
+    number: 295
     name: 운명의 실
     permission: magic.learned.fate_link
     icon: ''
@@ -9807,7 +9807,7 @@ spells:
           - claude:fatelink/mark
     preparation-status: server-events-connected
   prism_cage:
-    number: 235
+    number: 245
     name: 빛의 감옥
     permission: magic.learned.prism_cage
     icon: ''
@@ -9831,7 +9831,7 @@ spells:
         duration-ticks: 20
     preparation-status: server-events-connected
   wraith_march:
-    number: 286
+    number: 298
     name: 망령의 행진
     permission: magic.learned.wraith_march
     icon: ''
@@ -9855,7 +9855,7 @@ spells:
         duration-ticks: 16
     preparation-status: server-events-connected
   fault_rift:
-    number: 191
+    number: 199
     name: 단층 붕괴
     permission: magic.learned.fault_rift
     icon: ''
@@ -9879,7 +9879,7 @@ spells:
         duration-ticks: 64
     preparation-status: server-events-connected
   flame_emperor:
-    number: 95
+    number: 99
     name: 염제 강림
     permission: magic.learned.flame_emperor
     icon: ''
@@ -9925,7 +9925,7 @@ spells:
         duration-ticks: 20
     preparation-status: server-events-connected
   leviathan_rise:
-    number: 144
+    number: 150
     name: 레비아탄
     permission: magic.learned.leviathan_rise
     icon: ''
@@ -9978,7 +9978,7 @@ spells:
         duration-ticks: 20
     preparation-status: server-events-connected
   heaven_cyclone:
-    number: 48
+    number: 50
     name: 하늘의 눈
     permission: magic.learned.heaven_cyclone
     icon: ''
@@ -10024,7 +10024,7 @@ spells:
           - claude:heavencyclone/lift
     preparation-status: server-events-connected
   abyss_gate:
-    number: 288
+    number: 300
     name: 심연의 문
     permission: magic.learned.abyss_gate
     icon: ''
@@ -10095,7 +10095,7 @@ spells:
           - claude:abyssgate/pull
     preparation-status: server-events-connected
   aurora_veil:
-    number: 238
+    number: 248
     name: 오로라
     permission: magic.learned.aurora_veil
     icon: ''
@@ -10141,7 +10141,7 @@ spells:
         duration-ticks: 240
     preparation-status: server-events-connected
   titan_stride:
-    number: 192
+    number: 200
     name: 타이탄의 발걸음
     permission: magic.learned.titan_stride
     icon: ''
@@ -10177,7 +10177,7 @@ spells:
         duration-ticks: 52
     preparation-status: server-events-connected
   alchemy_preheat:
-    number: 73
+    number: 76
     name: 연금로 예열
     permission: magic.learned.alchemy_preheat
     icon: ''
@@ -10195,7 +10195,7 @@ spells:
         duration-ticks: 90
     preparation-status: server-events-connected
   broom_afterburner:
-    number: 78
+    number: 82
     name: 불꽃 추진
     permission: magic.learned.broom_afterburner
     icon: ''
@@ -10227,7 +10227,7 @@ spells:
           - claude:broomafterburner/broom_afterburner
     preparation-status: server-events-connected
   signal_flare:
-    number: 55
+    number: 57
     name: 봉화 신호
     permission: magic.learned.signal_flare
     icon: ''
@@ -10245,7 +10245,7 @@ spells:
         duration-ticks: 290
     preparation-status: server-events-connected
   water_glimpse:
-    number: 110
+    number: 115
     name: 물밑 엿보기
     permission: magic.learned.water_glimpse
     icon: ''
@@ -10269,7 +10269,7 @@ spells:
         duration-ticks: 96
     preparation-status: server-events-connected
   calm_ripple:
-    number: 112
+    number: 118
     name: 잔잔한 물결
     permission: magic.learned.calm_ripple
     icon: ''
@@ -10287,7 +10287,7 @@ spells:
         duration-ticks: 104
     preparation-status: server-events-connected
   treasure_scent:
-    number: 117
+    number: 123
     name: 보물 냄새
     permission: magic.learned.treasure_scent
     icon: ''
@@ -10305,7 +10305,7 @@ spells:
         duration-ticks: 100
     preparation-status: server-events-connected
   tailwind:
-    number: 27
+    number: 29
     name: 순풍
     permission: magic.learned.tailwind
     icon: ''
@@ -10347,7 +10347,7 @@ spells:
         duration-ticks: 70
     preparation-status: server-events-connected
   pack_sort:
-    number: 243
+    number: 253
     name: 배낭 정리
     permission: magic.learned.pack_sort
     icon: ''
@@ -10365,7 +10365,7 @@ spells:
         duration-ticks: 60
     preparation-status: server-events-connected
   heart_read:
-    number: 259
+    number: 270
     name: 마음 읽기
     permission: magic.learned.heart_read
     icon: ''
@@ -10397,7 +10397,7 @@ spells:
         duration-ticks: 56
     preparation-status: server-events-connected
   insight_flash:
-    number: 210
+    number: 219
     name: 영감의 섬광
     permission: magic.learned.insight_flash
     icon: ''
@@ -10415,7 +10415,7 @@ spells:
         duration-ticks: 72
     preparation-status: server-events-connected
   harvest_bell:
-    number: 218
+    number: 228
     name: 수확제의 종
     permission: magic.learned.harvest_bell
     icon: ''
@@ -10439,7 +10439,7 @@ spells:
         duration-ticks: 32
     preparation-status: server-events-connected
   blessed_ribbon:
-    number: 211
+    number: 220
     name: 축복의 리본
     permission: magic.learned.blessed_ribbon
     icon: ''
@@ -10457,7 +10457,7 @@ spells:
         duration-ticks: 58
     preparation-status: server-events-connected
   crop_snare:
-    number: 170
+    number: 177
     name: 작물 붙잡기
     permission: magic.learned.crop_snare
     icon: ''
@@ -10479,4 +10479,264 @@ spells:
         anchor: impact
         delay-ticks: 0
         duration-ticks: 78
+    preparation-status: server-events-connected
+  light_step:
+    number: 14
+    name: 사뿐한 발걸음
+    permission: magic.learned.light_step
+    icon: ''
+    mana-cost: 20
+    cooldown-seconds: 60
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:lightstep/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 24
+      - role: impact
+        trigger: external:step
+        effect: claude:lightstep/step
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+    preparation-status: server-events-connected
+  herding_breeze:
+    number: 26
+    name: 몰이 바람
+    permission: magic.learned.herding_breeze
+    icon: ''
+    mana-cost: 30
+    cooldown-seconds: 60
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:herdingbreeze/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 30
+      - role: attached
+        trigger: external:lead
+        effect: claude:herdingbreeze/lead
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 60
+    preparation-status: server-events-connected
+  campfire_rest:
+    number: 68
+    name: 모닥불 쉼터
+    permission: magic.learned.campfire_rest
+    icon: ''
+    mana-cost: 40
+    cooldown-seconds: 120
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:campfirerest/campfire
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 1200
+      - role: attached
+        trigger: external:warm
+        effect: claude:campfirerest/warm
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 24
+    preparation-status: server-events-connected
+  ward_candle:
+    number: 77
+    name: 결계 향초
+    permission: magic.learned.ward_candle
+    icon: ''
+    mana-cost: 60
+    cooldown-seconds: 600
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:wardcandle/candle
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 80
+    preparation-status: server-events-connected
+  bottle_fill:
+    number: 116
+    name: 물병 가득
+    permission: magic.learned.bottle_fill
+    icon: ''
+    mana-cost: 15
+    cooldown-seconds: 30
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:bottlefill/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 24
+    preparation-status: server-events-connected
+  scale_appraisal:
+    number: 109
+    name: 비늘 감정
+    permission: magic.learned.scale_appraisal
+    icon: ''
+    mana-cost: 10
+    cooldown-seconds: 5
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:scaleappraisal/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 30
+    preparation-status: server-events-connected
+  crop_survey:
+    number: 166
+    name: 작물 살피기
+    permission: magic.learned.crop_survey
+    icon: ''
+    mana-cost: 15
+    cooldown-seconds: 20
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:cropsurvey/wave
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 30
+      - role: static
+        trigger: external:ripe
+        effect: claude:cropsurvey/ripe
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 60
+    preparation-status: server-events-connected
+  replant_touch:
+    number: 178
+    name: 되심기 손길
+    permission: magic.learned.replant_touch
+    icon: ''
+    mana-cost: 30
+    cooldown-seconds: 90
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:replanttouch/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: impact
+        trigger: external:sprout
+        effect: claude:replanttouch/sprout
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+    preparation-status: server-events-connected
+  enlighten_hint:
+    number: 221
+    name: 깨달음의 빛
+    permission: magic.learned.enlighten_hint
+    icon: ''
+    mana-cost: 30
+    cooldown-seconds: 86400
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:enlightenhint/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+    preparation-status: server-events-connected
+  memory_lantern:
+    number: 213
+    name: 기억의 등불
+    permission: magic.learned.memory_lantern
+    icon: ''
+    mana-cost: 20
+    cooldown-seconds: 30
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:memorylantern/lantern
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: static
+        trigger: external:beam
+        effect: claude:memorylantern/beam
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 200
+      - role: link
+        trigger: external:guide
+        effect: claude:memorylantern/guide
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 40
+        link-source: caster
+        link-target: event-point
+    preparation-status: server-events-connected
+  shadow_vault:
+    number: 257
+    name: 그림자 금고
+    permission: magic.learned.shadow_vault
+    icon: ''
+    mana-cost: 20
+    cooldown-seconds: 10
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:shadowvault/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 24
+    preparation-status: server-events-connected
+  sweet_sleep:
+    number: 271
+    name: 단잠의 주문
+    permission: magic.learned.sweet_sleep
+    icon: ''
+    mana-cost: 30
+    cooldown-seconds: 300
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:sweetsleep/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 30
     preparation-status: server-events-connected

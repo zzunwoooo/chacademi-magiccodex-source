@@ -2109,3 +2109,87 @@ spells:
     permission: magic.learned.crop_snare
     mana-cost: 30
     cooldown-seconds: 60
+  light_step:
+    name: 사뿐한 발걸음
+    enabled: true
+    command: 마법 light_step
+    permission: magic.learned.light_step
+    mana-cost: 20
+    cooldown-seconds: 60
+  herding_breeze:
+    name: 몰이 바람
+    enabled: true
+    command: 마법 herding_breeze
+    permission: magic.learned.herding_breeze
+    mana-cost: 30
+    cooldown-seconds: 60
+  campfire_rest:
+    name: 모닥불 쉼터
+    enabled: true
+    command: 마법 campfire_rest
+    permission: magic.learned.campfire_rest
+    mana-cost: 40
+    cooldown-seconds: 120
+  ward_candle:
+    name: 결계 향초
+    enabled: true
+    command: 마법 ward_candle
+    permission: magic.learned.ward_candle
+    mana-cost: 60
+    cooldown-seconds: 600
+  bottle_fill:
+    name: 물병 가득
+    enabled: true
+    command: 마법 bottle_fill
+    permission: magic.learned.bottle_fill
+    mana-cost: 15
+    cooldown-seconds: 30
+  scale_appraisal:
+    name: 비늘 감정
+    enabled: true
+    command: 마법 scale_appraisal
+    permission: magic.learned.scale_appraisal
+    mana-cost: 10
+    cooldown-seconds: 5
+  crop_survey:
+    name: 작물 살피기
+    enabled: true
+    command: 마법 crop_survey
+    permission: magic.learned.crop_survey
+    mana-cost: 15
+    cooldown-seconds: 20
+  replant_touch:
+    name: 되심기 손길
+    enabled: true
+    command: 마법 replant_touch
+    permission: magic.learned.replant_touch
+    mana-cost: 30
+    cooldown-seconds: 90
+  enlighten_hint:
+    name: 깨달음의 빛
+    enabled: true
+    command: 마법 enlighten_hint
+    permission: magic.learned.enlighten_hint
+    mana-cost: 30
+    cooldown-seconds: 86400
+  memory_lantern:
+    name: 기억의 등불
+    enabled: true
+    command: 마법 memory_lantern
+    permission: magic.learned.memory_lantern
+    mana-cost: 20
+    cooldown-seconds: 30
+  shadow_vault:
+    name: 그림자 금고
+    enabled: true
+    command: 마법 shadow_vault
+    permission: magic.learned.shadow_vault
+    mana-cost: 20
+    cooldown-seconds: 10
+  sweet_sleep:
+    name: 단잠의 주문
+    enabled: true
+    command: 마법 sweet_sleep
+    permission: magic.learned.sweet_sleep
+    mana-cost: 30
+    cooldown-seconds: 300

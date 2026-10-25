@@ -2305,3 +2305,99 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
+  light_step:
+    name: "사뿐한 발걸음"
+    skill: "CHA_light_step"
+    target: "SELF"
+    range: 1
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  herding_breeze:
+    name: "몰이 바람"
+    skill: "CHA_herding_breeze"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  campfire_rest:
+    name: "모닥불 쉼터"
+    skill: "CHA_campfire_rest"
+    target: "SELF"
+    range: 5
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  ward_candle:
+    name: "결계 향초"
+    skill: "CHA_ward_candle"
+    target: "SELF"
+    range: 24
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  bottle_fill:
+    name: "물병 가득"
+    skill: "CHA_bottle_fill"
+    target: "SELF"
+    range: 1
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  scale_appraisal:
+    name: "비늘 감정"
+    skill: "CHA_scale_appraisal"
+    target: "SELF"
+    range: 1
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  crop_survey:
+    name: "작물 살피기"
+    skill: "CHA_crop_survey"
+    target: "SELF"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  replant_touch:
+    name: "되심기 손길"
+    skill: "CHA_replant_touch"
+    target: "SELF"
+    range: 1
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  enlighten_hint:
+    name: "깨달음의 빛"
+    skill: "CHA_enlighten_hint"
+    target: "SELF"
+    range: 1
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  memory_lantern:
+    name: "기억의 등불"
+    skill: "CHA_memory_lantern"
+    target: "SELF"
+    range: 1
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  shadow_vault:
+    name: "그림자 금고"
+    skill: "CHA_shadow_vault"
+    target: "SELF"
+    range: 1
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  sweet_sleep:
+    name: "단잠의 주문"
+    skill: "CHA_sweet_sleep"
+    target: "SELF"
+    range: 1
+    utility: false
+    base-damage: 0
+    power-ratio: 0

@@ -31,7 +31,7 @@ public final class SpellYamlLoader {
         catch (java.security.NoSuchAlgorithmException impossible) { throw new AssertionError(impossible); }
         if (!Set.of("18e5cd85e558d04c239ec8eb86c2d589236d996fd77d9786c793076a7417ac47", "a21f7fdb7b587ac125bd8e5c22a2536f4486c4378e9e5d2b40ae62bd25e291a5",
                 "160fc443d2ce915d4e65198d6bec01b8bb603b510f6ee25ba7728d86c4ff01d1").contains(hash)) return; // + shipped 149 before the 2026-10-25 renumber
-        try (var stream = SpellYamlLoader.class.getResourceAsStream("/assets/magiccodex/default-spells/223_rainbow_collar.yml") /* 2026-10-25 renumber: 149 -> 223; DefaultSpellMigration then renames the file */) {
+        try (var stream = SpellYamlLoader.class.getResourceAsStream("/assets/magiccodex/default-spells/233_rainbow_collar.yml") /* 2026-10-25 renumber: 149 -> 223; DefaultSpellMigration then renames the file */) {
             if (stream == null) throw new IOException("Missing HolyTaming default");
             byte[] updated = stream.readAllBytes();
             Path backup = directory.resolve("149_rainbow_collar.yml.pre-holytaming.bak");

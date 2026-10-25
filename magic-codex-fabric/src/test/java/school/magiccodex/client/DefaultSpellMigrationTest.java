@@ -39,9 +39,9 @@ class DefaultSpellMigrationTest {
   Files.writeString(dir.resolve("101_earth_shaping.yml"),"my custom spell");
   new SpellYamlLoader().installDefaults(dir);
   assertFalse(Files.exists(dir.resolve("147_solar_judgment.yml")));assertFalse(Files.exists(dir.resolve("101_earth_shaping.yml"))); // 2026-10-25 renumber: renamed
-  var spell=new SpellYamlLoader().parse(Files.readString(dir.resolve("236_solar_judgment.yml")));
+  var spell=new SpellYamlLoader().parse(Files.readString(dir.resolve("246_solar_judgment.yml")));
   assertEquals(800,spell.manaCost());assertEquals(300,spell.cooldown());assertFalse(spell.command().isBlank());
-  assertEquals("my custom spell",Files.readString(dir.resolve("180_earth_shaping.yml")));
+  assertEquals("my custom spell",Files.readString(dir.resolve("188_earth_shaping.yml")));
   assertTrue(Files.exists(dir.resolve(".defaults-version")));
  }
  @Test void cooldownResetUnblocksTheLocalCooldown(){
@@ -51,7 +51,7 @@ class DefaultSpellMigrationTest {
  @Test void everyShippedDefaultIsManagedExceptHolyTaming()throws Exception{
   for(String id:new String(DefaultSpellMigration.resource("index.txt"),StandardCharsets.UTF_8).lines().filter(s->!s.isBlank()).toList())
    assertEquals(!id.endsWith("_rainbow_collar"),DefaultSpellMigration.managedHistoryName(id+".yml"),id);
-  for(String name:List.of("223_rainbow_collar.yml","custom.yml","notes.txt"))assertFalse(DefaultSpellMigration.managedHistoryName(name),name);
+  for(String name:List.of("233_rainbow_collar.yml","custom.yml","notes.txt"))assertFalse(DefaultSpellMigration.managedHistoryName(name),name);
  }
  @Test void renumberMovesShippedAndEditedCopiesWithoutDuplicateIds()throws Exception{
   Files.write(dir.resolve("034_ember_bolt.yml"),bytes("shipped\n"));
@@ -81,31 +81,31 @@ class DefaultSpellMigrationTest {
   DefaultSpellMigration.removeRetired(dir,List.of("215_copper_polish.yml","216_wax_melting.yml","../x.yml"),history);
   assertFalse(Files.exists(dir.resolve("215_copper_polish.yml")));
   assertTrue(Files.exists(dir.resolve("216_wax_melting.yml")));
-  for(String name:List.of("061_thawing_heat.yml","215_light_beam.yml","254_dimension_mark.yml"))assertTrue(DefaultSpellMigration.managedHistoryName(name),name);
+  for(String name:List.of("063_thawing_heat.yml","225_light_beam.yml","265_dimension_mark.yml"))assertTrue(DefaultSpellMigration.managedHistoryName(name),name);
   assertTrue(DefaultSpellMigration.allHistory("a.yml\th1\r\nb.yml\th2\n").get("a.yml").contains("h1"));
  }
  @Test void intelligenceRenameReachesShipped157And176()throws Exception {
   var history=DefaultSpellMigration.allHistory(new String(DefaultSpellMigration.resource("known-hashes.tsv"),java.nio.charset.StandardCharsets.UTF_8));
-  for(String name:List.of("233_mana_conduit.yml","260_misfortune_whisper.yml")){ // 2026-10-25 renumber (was 157 / 176); old hashes copied to the new names
+  for(String name:List.of("243_mana_conduit.yml","272_misfortune_whisper.yml")){ // 2026-10-25 renumber (was 157 / 176); old hashes copied to the new names
    assertTrue(DefaultSpellMigration.managedHistoryName(name),name);
    String text=new String(DefaultSpellMigration.resource(name),java.nio.charset.StandardCharsets.UTF_8);
    assertTrue(text.contains("지능"),name);
-   String old=text.replace("지능 계수","마력 계수").replace("공격력과 지능","공격력과 마력").replace("order: 233","order: 157").replace("order: 260","order: 176");
+   String old=text.replace("지능 계수","마력 계수").replace("공격력과 지능","공격력과 마력").replace("order: 243","order: 157").replace("order: 272","order: 176");
    assertTrue(history.get(name).contains(DefaultSpellMigration.hash(old.getBytes(java.nio.charset.StandardCharsets.UTF_8))),"previous shipped "+name+" hash must be known");
   }
  }
  @Test void fishTrapRenameReachesShippedCopiesButNotEdits()throws Exception {
-  assertTrue(DefaultSpellMigration.managedHistoryName("102_fish_trap.yml"));
-  byte[] next=DefaultSpellMigration.resource("102_fish_trap.yml");String text=new String(next,java.nio.charset.StandardCharsets.UTF_8);
+  assertTrue(DefaultSpellMigration.managedHistoryName("106_fish_trap.yml"));
+  byte[] next=DefaultSpellMigration.resource("106_fish_trap.yml");String text=new String(next,java.nio.charset.StandardCharsets.UTF_8);
   assertTrue(text.contains("name: 아공간 수조"));assertFalse(text.contains("통발"));
-  byte[] old=text.replace("name: 아공간 수조","name: 통발").replace("order: 102","order: 324").getBytes(java.nio.charset.StandardCharsets.UTF_8);
+  byte[] old=text.replace("name: 아공간 수조","name: 통발").replace("order: 106","order: 324").getBytes(java.nio.charset.StandardCharsets.UTF_8);
   var history=DefaultSpellMigration.allHistory(new String(DefaultSpellMigration.resource("known-hashes.tsv"),java.nio.charset.StandardCharsets.UTF_8));
-  assertTrue(history.get("102_fish_trap.yml").contains(DefaultSpellMigration.hash(old)),"previous shipped 324 hash must be known under the new name");
-  Files.write(dir.resolve("102_fish_trap.yml"),old);
-  DefaultSpellMigration.migrate(dir,Map.of("102_fish_trap.yml",next),history,"t");
-  assertArrayEquals(next,Files.readAllBytes(dir.resolve("102_fish_trap.yml")));
-  Files.write(dir.resolve("102_fish_trap.yml"),bytes("player edit\n"));
-  DefaultSpellMigration.migrate(dir,Map.of("102_fish_trap.yml",next),history,"t");
-  assertArrayEquals(bytes("player edit\n"),Files.readAllBytes(dir.resolve("102_fish_trap.yml")));
+  assertTrue(history.get("106_fish_trap.yml").contains(DefaultSpellMigration.hash(old)),"previous shipped 324 hash must be known under the new name");
+  Files.write(dir.resolve("106_fish_trap.yml"),old);
+  DefaultSpellMigration.migrate(dir,Map.of("106_fish_trap.yml",next),history,"t");
+  assertArrayEquals(next,Files.readAllBytes(dir.resolve("106_fish_trap.yml")));
+  Files.write(dir.resolve("106_fish_trap.yml"),bytes("player edit\n"));
+  DefaultSpellMigration.migrate(dir,Map.of("106_fish_trap.yml",next),history,"t");
+  assertArrayEquals(bytes("player edit\n"),Files.readAllBytes(dir.resolve("106_fish_trap.yml")));
  }
 }

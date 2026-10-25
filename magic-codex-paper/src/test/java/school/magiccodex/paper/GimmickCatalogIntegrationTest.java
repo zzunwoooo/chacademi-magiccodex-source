@@ -15,7 +15,7 @@ class GimmickCatalogIntegrationTest {
    String id=IDS.get(i);assertTrue(mana.getBoolean("spells."+id+".enabled"),id);assertEquals(costs[i],mana.getDouble("spells."+id+".mana-cost"),id);assertEquals(cooldowns[i],mana.getDouble("spells."+id+".cooldown-seconds"),id);
    assertEquals("magic.learned."+id,mana.getString("spells."+id+".permission"),id);assertEquals("CHA_"+id,routes.getString("spells."+id+".skill"),id);assertFalse(routes.getBoolean("spells."+id+".utility"),id);
    assertEquals("magic.learned."+id,donor.getString("spells."+id+".permission"),id);assertFalse(discovery.contains("spells."+id),id);
-   int[] numbers={61,62,109,163,164,215,201,202,245,253,149,254}; // 2026-10-25 renumber (magic-mythic-paper/tools/spell_order.py)
+   int[] numbers={63,64,114,170,171,225,209,210,255,264,155,265}; // 2026-10-25 renumber (magic-mythic-paper/tools/spell_order.py)
    var client=load("../magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/"+String.format("%03d",numbers[i])+"_"+id+".yml");assertEquals(numbers[i],client.getInt("order"));assertEquals(elements[i],client.getString("category"),id);assertEquals(costs[i],client.getDouble("cast.mana-cost"),id);
   }
  }

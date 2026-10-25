@@ -1,0 +1,14 @@
+id: bottle_fill
+name: 물병 가득
+category: water
+description: 손 위에 물방울 구슬을 띄워 가진 빈 병을 한꺼번에 물병으로 채웁니다.
+icon: ''
+permission: magic.learned.bottle_fill
+discovery:
+  description: 유리병으로 물을 누적 30번 뜨기
+research: ''
+cast:
+  command: 마법 bottle_fill
+  cooldown-seconds: 30
+  mana-cost: 15
+order: 116

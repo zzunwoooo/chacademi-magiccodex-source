@@ -179,13 +179,13 @@ class SpellYamlLoaderTest {
         loader.installDefaults(spells);
         var result = loader.load(spells);
         assertTrue(result.success(), result.errors().toString());
-        assertEquals(288, result.spells().size()); // 2026-10-25: 288 numbered spells (tools/spell_order.py)
+        assertEquals(300, result.spells().size()); // 2026-10-25: 300 numbered spells (tools/spell_order.py)
         assertTrue(result.spells().stream().noneMatch(CodexData.Spell::permissionKnown));
         Files.writeString(spells.resolve("001_feather_fall.yml"), "user contents");
-        Files.delete(spells.resolve("014_wind_basket.yml"));
+        Files.delete(spells.resolve("015_wind_basket.yml"));
         loader.installDefaults(spells);
         assertEquals("user contents", Files.readString(spells.resolve("001_feather_fall.yml")));
-        assertTrue(Files.exists(spells.resolve("014_wind_basket.yml")));
+        assertTrue(Files.exists(spells.resolve("015_wind_basket.yml")));
     }
 
     @Test void rejectsOversizedFiles() throws Exception {
