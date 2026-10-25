@@ -698,3 +698,16 @@ items:
 - 바뀐 파일: `magic-codex-protocol` HousingProtocol(SHOWCASE) · `housing-paper` Showcases(새)·HousingStore(표·읽기/쓰기)·Rooms(입장 때 전송)·HousingPlugin(등록) · `magic-codex-paper` MagicCodexBridge(`equippedArtifactIds` 한 줄) · `magic-codex-fabric` HousingScreen·HousingClient·HousingShowcase(새)·HousingShowcaseLayout(새)·ArtifactCodexScreen(구경 모드)·KyudichiLobbyScreen(`record(mode,nick)`)·KyudichiQueueClient(답 가로채기 한 줄). 테스트: HousingProtocolTest.showcase, ShowcasesTest.
 - **같이 배포:** ChacaHousing 플러그인 + MagicCodexBridge + MagicCodex 모드 + magic-codex-protocol (학교·야생 모두). 프록시·ChacademyMotion 은 그대로.
 - 게임 확인: ① 친구 방에서 빗자루 거치대 위 빗자루 모델·이름표 이름, 클릭 알림 ② 진열장 아이콘 → 클릭 → "OO의 아티팩트" 도감(버튼 없음) → 닫으면 방으로 ③ 트로피장 티어 아이콘 → 클릭 → 결투장 전적 탭에 주인 기록 ④ 남의 연금 작업대 클릭 → "주인만 쓸 수 있어요" ⑤ 내 방 꾸미기에서 연금 작업대 두 번 클릭 → 연금술 창, 거울 옷장 → 칭호 창, 펫 쿠션 → 펫 창, 미끼 상자 → "준비 중" ⑥ 주인이 다른 서버일 때도 ①② (마지막 값) ⑦ 서버 로그에 "전시 값" DB 경고 없는지.
+
+## 부록 A. ItemsAdder 아이템 id 맞추기 (오너 2026-10-26: 아이템은 이미 있음)
+오너: 확성기 · 인기도 제한 해제권 · 아티팩트 등급 확정 뽑기권 3종 아이템은 **운영 서버 ItemsAdder 에 이미 있다**. 코드 기본 id 는 추정값이라, 배포 때 GPT 가 운영 ItemsAdder 의 실제 id(`네임스페이스:id`)를 확인해 아래 설정에 적는다 (새 아이템 정의는 만들지 않음).
+
+| 아이템 | 설정 파일 · 키 | 코드 기본값 |
+|---|---|---|
+| 확성기 | `plugins/MagicCodexBridge/megaphone.yml` 의 아이템 id 키 | `item:megaphone` |
+| 인기도 제한 해제권 | `plugins/MagicCodexBridge/popularity.yml` 의 해제권 id 키 | `item:popularity_unlock_ticket` |
+| 고급·유일·전설 확정 뽑기권 | `artifacts.yml` `summon.tickets.<rare|unique|legendary>.item` | `item:artifact_ticket_rare` · `_unique` · `_legendary` |
+| (참고) 땅문서 | `chunk-claims.yml` item | `item:chunk_deed` |
+| (참고) 가방 확장권 | `bag-pages.yml` unlock-item | `item:bag_expansion` |
+
+확인: 각 아이템을 손에 들고 `/iaget` 류 또는 `/ia` 편집기에서 id 를 보고, 설정 바꾼 뒤 `/서버관리 새로고침 …`(각 섹션 참고).
