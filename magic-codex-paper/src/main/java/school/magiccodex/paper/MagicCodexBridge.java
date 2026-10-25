@@ -65,6 +65,9 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     public void openReconfiguration(org.bukkit.entity.Player player,int mode){reconfiguration.open(player,mode);}
     private ReconfigurationBridge reconfiguration;
     void refreshEquipment(org.bukkit.entity.Player p){if(equipment!=null)equipment.refresh(p);}
+    /** 정보창(StatsBridge)이 장신구·아티팩트를 읽는다. 없으면 null. */
+    EquipmentBridge equipmentBridge(){return equipment;}
+    ArtifactBridge artifactBridge(){return artifacts;}
     private TemperatureBridge temperature;
     private PetBridge pets;
     private TamingBridge taming;

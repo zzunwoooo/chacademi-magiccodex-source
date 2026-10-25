@@ -80,6 +80,17 @@ final class QuestBridge implements Listener,PluginMessageListener,AutoCloseable 
         if(entries.stream().anyMatch(e->e.quest().id().equals(id)&&e.cycle().equals(cycle)&&e.completions()>=q.completionLimit()))return q.daily()?"오늘은 이 의뢰를 더 받을 수 없습니다.":"이미 완료한 의뢰입니다.";
         return "";
     }
+    /** 정보창 모험 기록: 진행 중 퀘스트 수 · 추적 퀘스트(진행 중 메인 퀘스트, 없으면 처음 받은 진행 중 퀘스트)와 목표 합계. 아직 못 불러왔으면 null. */
+    record Summary(int active,String tracked,int current,int required){}
+    Summary summary(Player p){
+        var entries=cache.get(p.getUniqueId());if(entries==null)return null;long now=System.currentTimeMillis();
+        var active=entries.stream().filter(e->e.current(now)&&e.status().equals("active")).toList();
+        var pick=active.stream().filter(e->e.quest().main()).findFirst().orElse(active.isEmpty()?null:active.get(0));
+        if(pick==null)return new Summary(active.size(),"",0,0);
+        long cur=0,req=0;for(int i=0;i<pick.progress().length&&i<pick.quest().objectives().size();i++){int need=Math.max(0,pick.quest().objectives().get(i).amount());req+=need;cur+=Math.min(need,Math.max(0,pick.progress()[i]));}
+        String title=pick.quest().title();if(title.length()>64)title=title.substring(0,64);
+        return new Summary(active.size(),title,(int)Math.min(cur,1_000_000),(int)Math.min(req,1_000_000));
+    }
     int activeCount(Player p){long now=System.currentTimeMillis();return QuestStore.activeSubquests(cache.getOrDefault(p.getUniqueId(),List.of()),now);}
     String title(String id){var q=catalog.get(id);return q==null?"":q.title();}
     void acceptFromDialogue(Player p,String id,Consumer<Boolean> done){

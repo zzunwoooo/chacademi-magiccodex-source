@@ -229,3 +229,48 @@ python3 tools/operating_overlay.py regenerate && python3 tools/operating_overlay
 - 바꾼 파일: `CombatTag.java`·`CombatLockRules.java`(새), `CombatLockRulesTest.java`(새), `combat-lock.yml`(새), `MagicCodexBridge.java`(등록 3줄), `TravelBridge.java`, `ReturnTicketBridge.java`, `plugin.yml`(권한 1개), `travel.yml`·`return-ticket.yml`(주석).
 - 그대로 둔 것: travel.yml `rules.block-in-combat`(아티팩트 5초 판정, 기본 꺼짐) — 켜면 이것도 같이 막음. 동행 펫(PetCompanions)의 자체 전투 판정은 상대 엔티티·8초 설정(combat-seconds)이 따로 있어 바꾸면 동작이 달라지므로 안 바꿈.
 - 확인 필요: HuskHomes 실제 명령·한글 별칭 이름(서버 HuskHomes config·commands.yml 별칭과 맞추기). 상대가 /tpa 를 나중에 수락해 내가 끌려가는 경우·HuskHomes 창 클릭 이동은 명령을 거치지 않아 못 막음. 옛 MCPets 소환 펫이 때린 건 주인 전투로 안 셈.
+
+## 16. 정보창 v4 (내 정보 · 상대 정보, 2026-10-26, 오너 납품 패키지)
+- 기준: `docs/design/profile-ui-v4/` (approved-v4.png 확정 시안 · 개발_프롬프트 · layout-metrics.json · panel-layout.json). 좌표 1672×941, min(가로비, 세로비) 균일 배율·가운데 정렬. 패널은 nine-slice(slice 값 그대로), 구분선·진행 막대·닫기 X·꺾쇠·포커스·비활성(알파 0.4)은 runtime 값으로 코드에서 그림. 레퍼런스에 없는 장식 없음. 섹션 머리 아이콘(칼·빗자루·책·옷·막대)·모험 기록 행 아이콘·방 가기 버튼 집 아이콘·인기도 버튼 색 테두리는 레퍼런스에만 있고 PNG 가 없어 **안 그림** (실제 PNG 조립 미리보기와 같음 — 필요하면 PNG 요청).
+- 같은 단축키(I)·상단 메뉴·하우징·파티에서 여는 내 정보, `/스탯창 <닉>`·웅크리고 우클릭으로 여는 상대 정보 = 모두 새 창. 제목은 둘 다 "정보창". Tab/Shift+Tab 포커스, Enter·Space 실행.
+- 자산: `magic-codex-fabric/src/main/resources/assets/magiccodex/textures/gui/profile/{panels,stat-icons,action-icons}/` (납품 PNG 20개 그대로 복사). 경지 9개는 기존 `textures/gui/kyudichi/ui/tiers/*.png` 와 SHA256 이 같아 그 파일을 그대로 씀 (복사·수정 없음).
+- 바뀐 파일 (클라): `StatsScreen`(새로 씀), `StatsLayout`(새 좌표, 순수 계산), `RemoteStatsClient`(v3 채널·내 정보 요청·인기도 결과), `StatsRanks`(새, 1:1 대전·큐디치 카드 = 기존 결투장 전적 요청 PROFILE 재사용), `OtherPortraits`(새, §18), `StatsSocialActions`(POPULARITY_DOWN), `KyudichiQueueClient`(정보창이 물은 전적 답만 가로채는 1줄), `PortraitClient`(상대 일러스트 패킷 넘기기 몇 줄), 테스트 `StatsTest`(layout-metrics.json 좌표와 비교·배율·파생 값).
+- 바뀐 파일 (서버 MagicCodexBridge): `StatsBridge`(v3), `QuestBridge`(요약 `summary()` 추가), `EquipmentBridge`(`accessoryItem()` 1줄), `MagicCodexBridge`(접근자 2줄). ChacaHousing: `HousingPlugin.likesOf()`·`HousingStore.likes()` (좋아요 합계, 비동기, Bridge 가 리플렉션으로 부름 — 옛 ChacaHousing 이면 "—").
+- **프로토콜 `StatsProtocol` v3** (`magiccodex:stats_request3` / `stats_response3`, 버전 0x53544103). v2 채널·바이트는 그대로라 옛 모드는 예전처럼 동작. 새 서버는 v3 응답 채널을 듣는 클라에만 v3, 새 클라는 서버가 v3 요청 채널을 열었을 때만 v3. v3 추가 값: 통합 칭호 한 줄(접두+접미), 하우징 좋아요 합계, 진행 중 퀘스트 수·추적 퀘스트(이름·목표 합계), 반지·귀걸이·목걸이 아이템, 장착 아티팩트·빗자루 ID, 인기도 상태(오늘 조절했는지·내 해제권 수), 요청 DOWN(5)·SELF(6), 응답 VOTED(5). 테스트 `StatsProtocolTest` 갱신(옛 테스트 그대로 + v3).
+- 값 출처: 랭킹·레이팅·경지 = 프록시 랭킹 DB (기존 결투장 전적, rank ≤ 0 → "미집계", 기록 없음 → "기록 없음"), 발견한 마법 = 기존 습득/전체(전체는 마법 목록 수, 고정값 아님), 능력치 = 기존 값, 마법 가속 아랫줄 = 100·h/(100+h) %. 모르는 값은 "—" (0 으로 꾸미지 않음).
+- 추적 퀘스트: 저장소에 "추적" 기능이 없어 **진행 중 메인 퀘스트, 없으면 처음 받은 진행 중 퀘스트**를 보여 줌 (목표 진행 = 목표 합계 current/required). 추적 기능이 생기면 `QuestBridge.summary()` 만 바꾸면 됨.
+- 비활성(이유는 마우스를 올리면 보임): 인기도 버튼 — 내 정보("자신의 인기도는 조절할 수 없어요")·옛 서버, 칭호 자세히·장비 자세히 — 상대 정보(상대용 창 없음, 내 정보에선 기존 칭호 창·장비 창 연결), 상대 방 가기 — 친구가 아닐 때(하우징 규칙 = 친구만), 친구 추가 — 이미 친구, 하우징 서버 없음 → 방 가기 비활성.
+- 배포: MagicCodexBridge + ChacaHousing + MagicCodex 모드(+ magic-codex-protocol) 같이.
+
+## 17. 인기도 (2026-10-26, 메모 #87)
+- 규칙: 다른 플레이어 인기도 올리기·내리기, 같은 상대에게 하루 1번(상대마다 따로), 자기 자신 안 됨. 오늘 이미 조절한 상대에게 한 번 더 누르면 **인기도 제한 해제권 1개를 자동으로 써서** 한 번 더, 없으면 거절 안내. 하루 기준 = `NpcSocialService.today()` (Asia/Seoul 자정, NPC 일일 제한과 같음).
+- 새 파일: `PopularityRules`(순수 규칙 + `PopularityRulesTest`), `PopularityStore`(DB), `PopularityBridge`(버튼·관리 명령·일일 제한·알림), `popularity.yml`(처음 켤 때 자동 생성). StatsBridge 가 만든다 (MagicCodexBridge.onEnable 안 고침).
+- **표** (MariaDB 공유 / SQLite 는 `plugins/MagicCodexBridge/popularity.db`, 자동 생성):
+  - `codex_popularity` (player CHAR(36) PK, score INT, updated BIGINT) — 점수 (-1,000,000 ~ 1,000,000)
+  - `codex_popularity_daily` (actor, target, day CHAR(10), seq, delta +1/-1, ticket 0/1, created BIGINT; PK actor·target·day·seq) — 오늘치 상·하락 기록 (누가·누구에게·올림/내림·해제권 사용·시각). `keep-days`(기본 30일) 지난 줄은 서버 켤 때 정리.
+  - 한 거래 안에서 대상 점수 줄 잠금 → 오늘 (행위자→대상) 기록 수 확인(FOR UPDATE) → 기록 추가 → 점수 증감. DB 는 전용 IO 스레드, 결과는 메인 스레드.
+- 해제권: 첫 시도에서 "오늘 이미 함"이면 메인 스레드에서 해제권 1개를 떼어 두고 다시 거래. DB 실패·필요 없었으면(그 사이 관리자가 오늘 기록 삭제) 돌려줌 (인벤토리 → 넘치면 발밑 → 접속 끊김이면 우편). 인벤토리에서 찾기·떼기는 ArtifactBridge 열쇠와 같은 방식(ItemsAdderItems).
+- 대상 알림(접속 중일 때, 공통 알림창): 올리기 "{player}님이 인기도를 올렸어요", 내리기 "누군가 인기도를 내렸어요" (`popularity.yml notify`). 누른 사람 문구는 `messages`.
+- 정보창 버튼 → 서버 → VOTED 응답(문구·새 점수·오늘 조절함·해제권 수)으로 창 바로 갱신. 옛 모드의 "인기도 상승"(POPULARITY) = 올리기 (문구만 받음). `StatsSocialRequestEvent` 는 이제 친구 추가에만 불림.
+- 관리: `/유저관리 <닉> 인기도 보기 | 설정 <값> | 초기화` · `/유저관리 <닉> 일일제한 보기 | 초기화 인기도` (DailyLimits 종류 "인기도": 보기 = 오늘 그 사람이 조절한 상대 목록, 초기화 = 그 사람의 오늘 기록 삭제, 점수는 그대로). `/유저관리 <닉>` 요약 줄에 "인기도".
+- 해제권 ItemsAdder 정의 예시 (아이템 그림은 오너가 따로, ID 는 `popularity.yml unlock-item` 에서 변경):
+  ```yaml
+  info:
+    namespace: item
+  items:
+    popularity_unlock_ticket:
+      display_name: "인기도 제한 해제권"
+      lore:
+        - "오늘 이미 인기도를 올리거나 내린 사람에게"
+        - "한 번 더 할 수 있어요 (1개 사용)"
+      resource:
+        material: PAPER
+        generate: false
+        model_path: item/popularity_unlock_ticket
+  ```
+
+## 18. 상대 일러스트 (2026-10-26, 오너 결정)
+- `PortraitProtocol` (버전 1 그대로, op 추가): C_OTHER(2) = 대상 UUID + 클라가 가진 SHA, S_OTHER_META(6) = 대상 UUID·SHA("" = 없음)·전체 바이트·'그대로'(flag), S_OTHER_CHUNK(7) = 대상 UUID·SHA·조각 번호, S_OTHER_BUSY(8). 어느 사람 그림인지 대상 UUID 로 구분. **원본 PNG 그대로** (줄이지 않음). 옛 서버는 C_OTHER 를 무시 → 클라는 15초 뒤 3D 스킨. `PortraitProtocolTest` 추가.
+- 서버 `PortraitChannel`: DB 읽기 비동기, 한 사람 요청 간격 250ms·같은 대상 3초, 동시에 보내는 남의 그림 2장(나머지는 32개까지 줄, 넘치면 BUSY → 클라가 잠시 뒤 다시), 조각은 2틱마다 1개, 같은 사람의 새 요청은 옛 요청을 끊음. 공유 DB 면 다른 서버 사람 그림도. 그림 없는 사람은 "없음".
+- 클라 `OtherPortraits`: 캐시 `config/magiccodex/portraits/others/<sha>.png` + `index.txt`(uuid→sha), 최근 64장만 유지, 같은 sha 면 다시 안 받음. **처음 받는 동안만 초상 칸에 "불러오는 중"**, 다음부턴 캐시를 먼저 보여 주고 바뀌었으면 새로 받아 바꿈. 디코드·해시·디스크는 IO 스레드, 텍스처 업로드는 클라 스레드 (메모리엔 최근 4장). 없음·실패 → 3D 스킨. 일러스트는 초상 칸 높이에 맞춰 비율 유지·가운데·칸 밖은 잘라냄 (내 일러스트도 같은 방식).
+- **배포 주의: ChacaPortrait 플러그인 + chaca-portrait-protocol + MagicCodex 모드 같이.**

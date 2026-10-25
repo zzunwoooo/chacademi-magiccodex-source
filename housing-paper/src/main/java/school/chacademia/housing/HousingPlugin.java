@@ -77,6 +77,14 @@ public final class HousingPlugin extends JavaPlugin implements Listener {
     Settings settings() { return settings; }
     Catalog catalog() { return catalog; }
     HousingStore store() { return store; }
+    /**
+     * 정보창 v4 (MagicCodexBridge StatsBridge 가 리플렉션으로 부른다): 이 사람 방의 하우징 좋아요 합계.
+     * 콜백은 메인 스레드, 방이 없으면 0, DB 오류·준비 안 됨이면 null.
+     */
+    public void likesOf(java.util.UUID owner, java.util.function.Consumer<Integer> done) {
+        if (store == null || owner == null) { done.accept(null); return; }
+        store.likes(owner, done);
+    }
     Rooms rooms() { return rooms; }
     Net net() { return net; }
     Doors doors() { return doors; }

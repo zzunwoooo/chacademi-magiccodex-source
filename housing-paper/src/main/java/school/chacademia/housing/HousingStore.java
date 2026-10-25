@@ -597,6 +597,14 @@ final class HousingStore {
             }
         }
     }
+    /** 정보창(MagicCodexBridge) 하우징 좋아요 합계: 방이 없으면 0, DB 오류면 null (메인 스레드 콜백). */
+    void likes(UUID owner, Consumer<Integer> done) {
+        async("likes", c -> {
+            try (var s = c.prepareStatement("SELECT likes FROM " + tRoom + " WHERE owner=?")) {
+                s.setString(1, owner.toString()); try (var r = s.executeQuery()) { return r.next() ? Math.max(0, r.getInt(1)) : 0; }
+            }
+        }, done);
+    }
     private RoomRow room(Connection c, UUID owner) throws SQLException {
         try (var s = c.prepareStatement("SELECT * FROM " + tRoom + " WHERE owner=?")) {
             s.setString(1, owner.toString()); try (var r = s.executeQuery()) { return r.next() ? row(r) : null; }

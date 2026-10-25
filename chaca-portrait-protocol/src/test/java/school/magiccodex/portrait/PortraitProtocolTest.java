@@ -34,6 +34,26 @@ class PortraitProtocolTest {
     }
 
     @Test
+    void otherPortraitPacketsCarryTargetAndSha() {
+        String id = "fedcba98-7654-4321-1234-56789abcdef0", sha = "b".repeat(64);
+        assertEquals(java.util.UUID.fromString(id), PortraitProtocol.uuid(id));
+        assertNull(PortraitProtocol.uuid("FEDCBA98-7654-4321-1234-56789ABCDEF0"));
+        assertNull(PortraitProtocol.uuid("not-a-uuid"));
+        assertNull(PortraitProtocol.uuid(null));
+        var ask = PortraitProtocol.decode(PortraitProtocol.encode(PortraitProtocol.Packet.of(PortraitProtocol.C_OTHER, id, 0, sha)));
+        assertEquals(PortraitProtocol.C_OTHER, ask.op());
+        assertEquals(id, ask.text());
+        assertEquals(sha, ask.extra());
+        var same = PortraitProtocol.decode(PortraitProtocol.encode(new PortraitProtocol.Packet(PortraitProtocol.S_OTHER_META, id, 0, sha, true, null)));
+        assertTrue(same.flag());
+        byte[] data = new byte[PortraitProtocol.CHUNK_BYTES];
+        var chunk = PortraitProtocol.decode(PortraitProtocol.encode(new PortraitProtocol.Packet(PortraitProtocol.S_OTHER_CHUNK, id, 2, sha, false, data)));
+        assertEquals(2, chunk.number());
+        assertEquals(id, chunk.text());
+        assertEquals(PortraitProtocol.CHUNK_BYTES, chunk.data().length);
+    }
+
+    @Test
     void promptLimits() {
         assertTrue(PortraitProtocol.validPrompt(""));
         assertTrue(PortraitProtocol.validPrompt("밤하늘 배경에 웃는 얼굴"));
