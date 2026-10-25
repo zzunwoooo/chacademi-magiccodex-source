@@ -23,6 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -73,6 +74,15 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
     static final String RETURN_ID = "~return";
     /** Return moves started on this server whose ticket is still ours to refund (cleared on success / refund / leaving for the destination). */
     private final Set<UUID> returning = new HashSet<>();
+    /**
+     * 사망 귀환 (오너 2026-10-26): travel.yml death-return.from 서버(야생)에서 죽으면 침대·리스폰 앵커와 상관없이 무조건
+     * to-server 의 to-world 스폰(Multiverse setspawn)으로 보낸다. from 에 없는 서버(학교·아레나 등)는 아무 일 없음 —
+     * 아레나 큐디치·결투는 바닐라 사망 대신 자체 부활을 쓰고, 경기 중(GeneralPresetBridge.combat)이면 여기서도 건너뜀.
+     * 비어 있으면 꺼짐. 귀환권과 같은 이동(표·프록시 이동·도착 확인)이지만 환불할 아이템이 없고 쿨타임을 보지 않는다.
+     */
+    private Set<String> deathFrom = Set.of();
+    private String deathServer = "", deathWorld = "world";
+    private final Set<UUID> deathMoves = new HashSet<>();
     /** The return-ticket item hook: gives the used ticket back when a return move fails (online → inventory, offline → mail). */
     interface ReturnTickets { void refund(UUID player, String why); void arrived(Player player); }
     private ReturnTickets returnTickets;
@@ -115,6 +125,11 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
         if (config != null && !next.self().equals(config.self()))
             plugin.getLogger().warning("travel.yml server-id 가 " + config.self() + " → " + next.self() + " 로 바뀌었어요 (진행 중인 이동 표의 서버 이름이 맞지 않을 수 있어요)");
         config = next;
+        deathFrom = Set.copyOf(y.getStringList("death-return.from"));
+        deathServer = y.getString("death-return.to-server", "");
+        deathWorld = y.getString("death-return.to-world", "world");
+        if (!deathFrom.isEmpty() && next.server(deathServer) == null)
+            plugin.getLogger().warning("travel.yml death-return.to-server 가 servers 에 없어요: " + deathServer + " (사망 귀환 꺼짐)");
         for (var t : next.tabs()) if (t.server().equals(next.self()) && Bukkit.getWorld(t.world()) == null)
             plugin.getLogger().warning("travel.yml 탭 " + t.id() + ": 이 서버에 세계 " + t.world() + " 가 없어요");
         for (var p : next.points().values()) if (p.server().equals(next.self()) && Bukkit.getWorld(p.world()) == null)
@@ -450,6 +465,42 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
         go(p, 0, RETURN_ID, server, world, "", 0, 64, 0, 0, 0, verdict);
         return null;
     }
+    /** 사망 귀환을 이 서버에서 쓰는지 (travel.yml death-return). */
+    boolean deathReturnHere() { return deathFrom.contains(config.self()) && config.server(deathServer) != null && !deathServer.equals(config.self()); }
+
+    /** 야생에서 죽은 뒤 되살아날 때: 일단 이 세계 스폰(침대 무시)에 세우고, 곧바로 학교 스폰으로 보낸다. */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onRespawn(PlayerRespawnEvent e) {
+        if (!deathReturnHere()) return;
+        Player p = e.getPlayer();
+        if (GeneralPresetBridge.combat(p.getUniqueId())) return;   // 경기(큐디치·결투) 중 사망은 경기 규칙대로
+        e.setRespawnLocation(e.getRespawnLocation().getWorld() != null ? e.getRespawnLocation().getWorld().getSpawnLocation() : p.getWorld().getSpawnLocation());
+        Bukkit.getScheduler().runTaskLater(plugin, () -> deathReturn(p, 0), 10);
+    }
+    private void deathReturn(Player p, int tries) {
+        if (!p.isOnline() || !deathReturnHere()) return;
+        UUID id = p.getUniqueId();
+        String why = null;
+        if (moves.containsKey(id) || returning.contains(id)) why = "이미 이동하는 중이에요";
+        else {
+            why = refusal(p, true);
+            if (why == null) {
+                var verdict = TravelModel.destination(config, deathServer, deathWorld, "", status, localWorlds(), System.currentTimeMillis());
+                if (verdict.state() != TravelProtocol.UNLOCKED) why = verdict.reason();
+                else {
+                    deathMoves.add(id);
+                    moves.put(id, new Move(0, 0, false, null, false));
+                    go(p, 0, RETURN_ID, deathServer, deathWorld, "", 0, 64, 0, 0, 0, verdict);
+                    Bukkit.getScheduler().runTaskLater(plugin, () -> deathMoves.remove(id), 20);
+                    return;
+                }
+            }
+        }
+        if (tries < 5) { Bukkit.getScheduler().runTaskLater(plugin, () -> deathReturn(p, tries + 1), 40); return; }
+        plugin.getLogger().warning("사망 귀환 실패: " + p.getName() + " — " + why);
+        CmdKit.notify(p, "system", "travel-death", "학교로 돌아가지 못했어요", why + " · 지도에서 직접 이동해 주세요", 0);
+    }
+
     private void refund(Player p) { if (mana != null && p.isOnline()) mana.refundPersonalTravel(p, config.rules().personalMana()); }
 
     /** Existing limits a move must not get around (owner: 기존 제한 우회 금지). null = fine. */
@@ -472,7 +523,7 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
         if (!p.isOnline()) { moves.remove(id); returnFailed(id, "출발 전에 접속이 끊겼어요"); return; }
         if (verdict.state() != TravelProtocol.UNLOCKED) { abort(p, op, verdict.reason()); return; }
         var pdef = config.points().get(point);
-        String again = refusal(p, pdef != null && pdef.spawn());
+        String again = refusal(p, pdef != null && pdef.spawn() || RETURN_ID.equals(point) && deathMoves.contains(id));
         if (again != null) { abort(p, op, again); return; }
         // 개인 지점으로 이동만 마나·쿨 (owner 2026-10-24: 지정은 무료; travel.yml rules.personal-travel-*); refunded if the move fails
         boolean charged = false;
