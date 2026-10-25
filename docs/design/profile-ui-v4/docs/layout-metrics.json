@@ -1,0 +1,244 @@
+{
+  "referenceCanvas": {
+    "width": 1672,
+    "height": 941
+  },
+  "coordinateRule": "px at reference canvas; scale uniformly using min(viewportWidth/1672,viewportHeight/941); centered letterbox; all rects [x,y,w,h]",
+  "outer": [
+    36,
+    53,
+    1601,
+    841
+  ],
+  "header": [
+    36,
+    53,
+    1601,
+    65
+  ],
+  "columns": {
+    "left": [
+      48,
+      128,
+      494,
+      753
+    ],
+    "center": [
+      564,
+      128,
+      692,
+      753
+    ],
+    "right": [
+      1298,
+      145,
+      311,
+      645
+    ]
+  },
+  "portrait": [
+    48,
+    128,
+    310,
+    588
+  ],
+  "identity": [
+    368,
+    210,
+    160,
+    300
+  ],
+  "pvp": [
+    564,
+    128,
+    340,
+    254
+  ],
+  "quidditch": [
+    916,
+    128,
+    340,
+    254
+  ],
+  "tierIcons": [
+    [
+      573,
+      208,
+      170,
+      160
+    ],
+    [
+      925,
+      208,
+      170,
+      160
+    ]
+  ],
+  "adventure": [
+    564,
+    395,
+    692,
+    218
+  ],
+  "equipment": [
+    564,
+    625,
+    692,
+    256
+  ],
+  "armorSlots": [
+    [
+      574,
+      699,
+      143,
+      77
+    ],
+    [
+      747,
+      699,
+      143,
+      77
+    ],
+    [
+      921,
+      699,
+      143,
+      77
+    ],
+    [
+      1095,
+      699,
+      145,
+      77
+    ]
+  ],
+  "accessorySlots": [
+    [
+      574,
+      804,
+      100,
+      76
+    ],
+    [
+      697,
+      804,
+      102,
+      76
+    ],
+    [
+      817,
+      804,
+      103,
+      76
+    ],
+    [
+      947,
+      804,
+      105,
+      76
+    ],
+    [
+      1078,
+      804,
+      168,
+      76
+    ]
+  ],
+  "bottomButtons": [
+    [
+      58,
+      807,
+      228,
+      65
+    ],
+    [
+      306,
+      807,
+      218,
+      65
+    ]
+  ],
+  "popularityButtons": [
+    [
+      220,
+      738,
+      36,
+      38
+    ],
+    [
+      265,
+      738,
+      36,
+      38
+    ]
+  ],
+  "statRowY": [
+    249,
+    345,
+    441,
+    537,
+    633,
+    729
+  ],
+  "statIcons": {
+    "x": 1304,
+    "size": 40
+  },
+  "statLabelX": 1374,
+  "statValueRight": 1602,
+  "font": {
+    "family": "Noto Sans CJK KR or existing Korean-capable game font",
+    "title": 40,
+    "playerName": 50,
+    "section": 27,
+    "body": 23,
+    "small": 19,
+    "footnote": 15
+  },
+  "runtime": {
+    "text": "#F4F7FF",
+    "muted": "#B6D9F4",
+    "gold": "#F5D18A",
+    "blue": "#80B7F8",
+    "panel": "#0B1B30",
+    "divider": {
+      "color": "#35516D",
+      "width": 1
+    },
+    "progress": {
+      "height": 13,
+      "radius": 6.5,
+      "track": "#1C3554",
+      "fill": "#80B7F8",
+      "stroke": "#48617D",
+      "strokeWidth": 1
+    },
+    "chevron": {
+      "width": 7,
+      "height": 14,
+      "stroke": "#B6D9F4",
+      "strokeWidth": 1.5
+    },
+    "close": {
+      "bounds": [
+        1584,
+        75,
+        24,
+        24
+      ],
+      "stroke": "#F5D18A",
+      "strokeWidth": 3
+    },
+    "focus": {
+      "stroke": "#B6D9F4",
+      "strokeWidth": 2
+    },
+    "disabledOpacity": 0.4
+  },
+  "notes": [
+    "Coordinates are measured placement guides, not a pixel-perfect extraction contract.",
+    "Scale decorative assets without stretching meaningful icon silhouettes. Panel nine-slice settings require visual tuning against the reference.",
+    "Keep original PNG bytes untouched; visibleBounds metadata controls placement.",
+    "Dynamic equipment art is never supplied or baked; exactly nine slot backgrounds are used."
+  ]
+}

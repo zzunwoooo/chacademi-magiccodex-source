@@ -1,0 +1,54 @@
+{
+  "method": "New code-native SVG geometric construction, exported with sharp. Not imagegen cleanup. All clean PNGs have true alpha and uniform flat fills; source SVG included.",
+  "note": "Same canvas coordinates for normal and hover. Nine-slice pixels are measured on native PNG canvas. Uniform global UI scaling preserves border weight.",
+  "panels": {
+    "01_main_window.png": {
+      "canvas": [
+        1672,
+        941
+      ],
+      "visualRect": [
+        35,
+        52,
+        1603,
+        843
+      ],
+      "slice": 16
+    },
+    "02_section_panel.png": {
+      "canvas": [
+        340,
+        254
+      ],
+      "slice": 7
+    },
+    "03_equipment_slot.png": {
+      "canvas": [
+        144,
+        78
+      ],
+      "slice": 8
+    },
+    "04_button_normal.png": {
+      "canvas": [
+        228,
+        65
+      ],
+      "slice": 12
+    },
+    "05_button_hover.png": {
+      "canvas": [
+        228,
+        65
+      ],
+      "slice": 12
+    },
+    "06_quest_row.png": {
+      "canvas": [
+        692,
+        70
+      ],
+      "slice": 7
+    }
+  }
+}

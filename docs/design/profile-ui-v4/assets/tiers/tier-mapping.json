@@ -1,0 +1,83 @@
+[
+  {
+    "tier": 0,
+    "name": "브론즈",
+    "file": "bronze.png",
+    "sourcePath": "assets/magiccodex/textures/gui/kyudichi/ui/tiers/bronze.png",
+    "width": 1254,
+    "height": 1254,
+    "sha256": "65ee003847e62817a92fc45ca23ef65d36f8ab6ef1ada2bc55e416c2a86c7fc0"
+  },
+  {
+    "tier": 1,
+    "name": "실버",
+    "file": "silver.png",
+    "sourcePath": "assets/magiccodex/textures/gui/kyudichi/ui/tiers/silver.png",
+    "width": 1254,
+    "height": 1254,
+    "sha256": "183abc5c0bb2a4d92601dd9a62fb8106f8c2b8848a506419a3ae3e6e5e3d59ea"
+  },
+  {
+    "tier": 2,
+    "name": "골드",
+    "file": "gold.png",
+    "sourcePath": "assets/magiccodex/textures/gui/kyudichi/ui/tiers/gold.png",
+    "width": 1254,
+    "height": 1254,
+    "sha256": "79ceed5be7274d5c73bec545583672ca2d35ce77d96217aab5967e8f59290214"
+  },
+  {
+    "tier": 3,
+    "name": "플래티넘",
+    "file": "platinum.png",
+    "sourcePath": "assets/magiccodex/textures/gui/kyudichi/ui/tiers/platinum.png",
+    "width": 1254,
+    "height": 1254,
+    "sha256": "bb743d95d12d54e43d33e1d606a3ec86aa7f532a4a3311ee72bb42e8ea6c8fd5"
+  },
+  {
+    "tier": 4,
+    "name": "다이아몬드",
+    "file": "diamond.png",
+    "sourcePath": "assets/magiccodex/textures/gui/kyudichi/ui/tiers/diamond.png",
+    "width": 1254,
+    "height": 1254,
+    "sha256": "d246365a9eeb2570d63a1d61a6ca61f1662b2ab93219ec2e45674057b7d338b5"
+  },
+  {
+    "tier": 5,
+    "name": "마스터",
+    "file": "master.png",
+    "sourcePath": "assets/magiccodex/textures/gui/kyudichi/ui/tiers/master.png",
+    "width": 1254,
+    "height": 1254,
+    "sha256": "4a4489b470e2ce933214c79f005ab8c870d43b78a42a5bb89c13ca7c2aadb4f5"
+  },
+  {
+    "tier": 6,
+    "name": "챌린저 1",
+    "file": "challenger_1.png",
+    "sourcePath": "assets/magiccodex/textures/gui/kyudichi/ui/tiers/challenger_1.png",
+    "width": 1254,
+    "height": 1254,
+    "sha256": "e9a59b8f593d28d96e1d8920c05d779cc526d4d884f08f9b02e1b591a635942d"
+  },
+  {
+    "tier": 7,
+    "name": "챌린저 2",
+    "file": "challenger_2.png",
+    "sourcePath": "assets/magiccodex/textures/gui/kyudichi/ui/tiers/challenger_2.png",
+    "width": 1254,
+    "height": 1254,
+    "sha256": "6812ed242026f8a45ab7a5ba8af8d87d627a11902f000ce9199a179388f97852"
+  },
+  {
+    "tier": 8,
+    "name": "챌린저 3",
+    "file": "challenger_3.png",
+    "sourcePath": "assets/magiccodex/textures/gui/kyudichi/ui/tiers/challenger_3.png",
+    "width": 1254,
+    "height": 1254,
+    "sha256": "113fd602fc2cb3f2c8772b4dbc74a1150e3f0641296e440e25d46ef429673775"
+  }
+]

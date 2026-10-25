@@ -1,0 +1,779 @@
+{
+  "assetCount": 29,
+  "equipmentSlotCount": 9,
+  "reference": "reference/approved-v4.png",
+  "assets": [
+    {
+      "file": "assets/panels/01_main_window.png",
+      "width": 1672,
+      "height": 941,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 222387,
+        "partialPixels": 1341365
+      },
+      "visibleBounds": {
+        "left": 35,
+        "top": 52,
+        "width": 1603,
+        "height": 843
+      },
+      "normalizedBounds": [
+        0.020933014354066987,
+        0.05526036131774708,
+        0.958732057416268,
+        0.895855472901169
+      ],
+      "sha256": "d59313057af0a0fbf7014322520af04f32b75c98edb4103692548191b1ce6713",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/panels/02_section_panel.png",
+      "width": 340,
+      "height": 254,
+      "alpha": {
+        "min": 0,
+        "max": 239,
+        "transparentPixels": 24,
+        "partialPixels": 86336
+      },
+      "visibleBounds": {
+        "left": 0,
+        "top": 0,
+        "width": 340,
+        "height": 254
+      },
+      "normalizedBounds": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "sha256": "ffb7e85774a31862babb63e4b3b76ae2bdc1b8051de20af56f2ca8c592f4a473",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/panels/03_equipment_slot.png",
+      "width": 144,
+      "height": 78,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 32,
+        "partialPixels": 11192
+      },
+      "visibleBounds": {
+        "left": 0,
+        "top": 0,
+        "width": 144,
+        "height": 78
+      },
+      "normalizedBounds": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "sha256": "a91df1aa927af807937cc5850c4469b5bb961c90c33e9e2780170de77e008758",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/panels/04_button_normal.png",
+      "width": 228,
+      "height": 65,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 173,
+        "partialPixels": 14611
+      },
+      "visibleBounds": {
+        "left": 0,
+        "top": 0,
+        "width": 228,
+        "height": 65
+      },
+      "normalizedBounds": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "sha256": "fe1300f9fcd832d8b11fcac84fa8d2e90b6caaff79ddcd9e436ae0ab411be3fc",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/panels/05_button_hover.png",
+      "width": 228,
+      "height": 65,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 173,
+        "partialPixels": 14611
+      },
+      "visibleBounds": {
+        "left": 0,
+        "top": 0,
+        "width": 228,
+        "height": 65
+      },
+      "normalizedBounds": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "sha256": "23a1558063d42757889e7a91df9d1ed0ee340f345d35a1aeb2e86e0e1b56773b",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/panels/06_quest_row.png",
+      "width": 692,
+      "height": 70,
+      "alpha": {
+        "min": 0,
+        "max": 239,
+        "transparentPixels": 24,
+        "partialPixels": 48416
+      },
+      "visibleBounds": {
+        "left": 0,
+        "top": 0,
+        "width": 692,
+        "height": 70
+      },
+      "normalizedBounds": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "sha256": "78fb0bed1f6176210e2c165feb2cccc69806f16428388d2d4904dd2e64f95fdd",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/stat-icons/defense.png",
+      "width": 128,
+      "height": 128,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 13209,
+        "partialPixels": 1225
+      },
+      "visibleBounds": {
+        "left": 17,
+        "top": 13,
+        "width": 94,
+        "height": 105
+      },
+      "normalizedBounds": [
+        0.1328125,
+        0.1015625,
+        0.734375,
+        0.8203125
+      ],
+      "sha256": "5a769e63d514e6e26c6460235789135349fb78f79bfc878c105c262ffdcaddbe",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/stat-icons/intelligence.png",
+      "width": 128,
+      "height": 128,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 12708,
+        "partialPixels": 1275
+      },
+      "visibleBounds": {
+        "left": 14,
+        "top": 19,
+        "width": 101,
+        "height": 90
+      },
+      "normalizedBounds": [
+        0.109375,
+        0.1484375,
+        0.7890625,
+        0.703125
+      ],
+      "sha256": "f0fb21d752d633465a1d6e284c37e5de7f39e19fd59629bf9ef50131dd591b4e",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/stat-icons/magic-haste.png",
+      "width": 128,
+      "height": 128,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 13744,
+        "partialPixels": 972
+      },
+      "visibleBounds": {
+        "left": 27,
+        "top": 16,
+        "width": 74,
+        "height": 96
+      },
+      "normalizedBounds": [
+        0.2109375,
+        0.125,
+        0.578125,
+        0.75
+      ],
+      "sha256": "8c9d9b212c96fd4a8ec7d488449e3a112682fcc01d4abfb4fd9cc310c6389efd",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/stat-icons/mana-regen.png",
+      "width": 128,
+      "height": 128,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 14300,
+        "partialPixels": 797
+      },
+      "visibleBounds": {
+        "left": 11,
+        "top": 19,
+        "width": 106,
+        "height": 91
+      },
+      "normalizedBounds": [
+        0.0859375,
+        0.1484375,
+        0.828125,
+        0.7109375
+      ],
+      "sha256": "35b31801254a9aa5e97ca3735be4c0e10b8b36952dcf53534576b6dd73df8084",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/stat-icons/mana.png",
+      "width": 128,
+      "height": 128,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 13329,
+        "partialPixels": 859
+      },
+      "visibleBounds": {
+        "left": 23,
+        "top": 13,
+        "width": 82,
+        "height": 111
+      },
+      "normalizedBounds": [
+        0.1796875,
+        0.1015625,
+        0.640625,
+        0.8671875
+      ],
+      "sha256": "cd582db169c44c4f209106a6751e562595ea39d51b018d90f5c5418b116f6d75",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/stat-icons/max-health.png",
+      "width": 128,
+      "height": 128,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 14422,
+        "partialPixels": 782
+      },
+      "visibleBounds": {
+        "left": 8,
+        "top": 17,
+        "width": 112,
+        "height": 94
+      },
+      "normalizedBounds": [
+        0.0625,
+        0.1328125,
+        0.875,
+        0.734375
+      ],
+      "sha256": "b8a10c767ae09362fc9a739024d71403256cad395439027537d816a3ed5d6aba",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/action-icons/class-attainment.png",
+      "width": 128,
+      "height": 128,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 13884,
+        "partialPixels": 928
+      },
+      "visibleBounds": {
+        "left": 10,
+        "top": 10,
+        "width": 108,
+        "height": 108
+      },
+      "normalizedBounds": [
+        0.078125,
+        0.078125,
+        0.84375,
+        0.84375
+      ],
+      "sha256": "99b149012e59811f283a94e4564e1d3ac040db67e917cd10065bc4c0999aca58",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/action-icons/friend-add.png",
+      "width": 128,
+      "height": 128,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 10927,
+        "partialPixels": 437
+      },
+      "visibleBounds": {
+        "left": 12,
+        "top": 15,
+        "width": 116,
+        "height": 99
+      },
+      "normalizedBounds": [
+        0.09375,
+        0.1171875,
+        0.90625,
+        0.7734375
+      ],
+      "sha256": "9b433676f16787ee2fe4f012e0683d4c0facc286256def7e5357ed60ca70738f",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/action-icons/friend-list.png",
+      "width": 128,
+      "height": 128,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 9179,
+        "partialPixels": 516
+      },
+      "visibleBounds": {
+        "left": 9,
+        "top": 15,
+        "width": 114,
+        "height": 99
+      },
+      "normalizedBounds": [
+        0.0703125,
+        0.1171875,
+        0.890625,
+        0.7734375
+      ],
+      "sha256": "38f0c5392ccc465f842a8c610138aa1e1a9c6e1cea631fa02d788caf09fa692c",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/action-icons/house-school.png",
+      "width": 128,
+      "height": 128,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 10615,
+        "partialPixels": 215
+      },
+      "visibleBounds": {
+        "left": 14,
+        "top": 13,
+        "width": 100,
+        "height": 101
+      },
+      "normalizedBounds": [
+        0.109375,
+        0.1015625,
+        0.78125,
+        0.7890625
+      ],
+      "sha256": "ea028fcec45a16e31b45dbfd8cae8e10e15abf6c98f221c2c165fce640e830ea",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/action-icons/housing-like.png",
+      "width": 128,
+      "height": 128,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 10190,
+        "partialPixels": 390
+      },
+      "visibleBounds": {
+        "left": 11,
+        "top": 20,
+        "width": 106,
+        "height": 88
+      },
+      "normalizedBounds": [
+        0.0859375,
+        0.15625,
+        0.828125,
+        0.6875
+      ],
+      "sha256": "ff570cf3cf9e9109a3c2dcd06070e6710449857740a80de5b84abb646abda9ae",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/action-icons/popularity.png",
+      "width": 128,
+      "height": 128,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 11902,
+        "partialPixels": 458
+      },
+      "visibleBounds": {
+        "left": 11,
+        "top": 12,
+        "width": 106,
+        "height": 103
+      },
+      "normalizedBounds": [
+        0.0859375,
+        0.09375,
+        0.828125,
+        0.8046875
+      ],
+      "sha256": "e0ad6e93d306e4402b60c077eff358f2ec72f372058cce643e4e3ed51a81d1be",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/action-icons/vote-down.png",
+      "width": 128,
+      "height": 128,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 12182,
+        "partialPixels": 180
+      },
+      "visibleBounds": {
+        "left": 16,
+        "top": 12,
+        "width": 96,
+        "height": 104
+      },
+      "normalizedBounds": [
+        0.125,
+        0.09375,
+        0.75,
+        0.8125
+      ],
+      "sha256": "dea57abbd241ff9c0af865d3cb7ac4bc5e63e21130b8b7ab0c2b169db915a12e",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/action-icons/vote-up.png",
+      "width": 128,
+      "height": 128,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 12182,
+        "partialPixels": 180
+      },
+      "visibleBounds": {
+        "left": 16,
+        "top": 12,
+        "width": 96,
+        "height": 104
+      },
+      "normalizedBounds": [
+        0.125,
+        0.09375,
+        0.75,
+        0.8125
+      ],
+      "sha256": "dde1e0ea8b50f37692174c01db6e5ef023193cf8e222675683644e858625a0bc",
+      "method": "svg_render"
+    },
+    {
+      "file": "assets/tiers/bronze.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 943450,
+        "partialPixels": 628146
+      },
+      "visibleBounds": {
+        "left": 41,
+        "top": 76,
+        "width": 1179,
+        "height": 1130
+      },
+      "normalizedBounds": [
+        0.03269537480063796,
+        0.06060606060606061,
+        0.9401913875598086,
+        0.9011164274322169
+      ],
+      "sha256": "65ee003847e62817a92fc45ca23ef65d36f8ab6ef1ada2bc55e416c2a86c7fc0",
+      "method": "original_unmodified"
+    },
+    {
+      "file": "assets/tiers/challenger_1.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 828421,
+        "partialPixels": 742673
+      },
+      "visibleBounds": {
+        "left": 0,
+        "top": 7,
+        "width": 1234,
+        "height": 1247
+      },
+      "normalizedBounds": [
+        0,
+        0.005582137161084529,
+        0.9840510366826156,
+        0.9944178628389154
+      ],
+      "sha256": "e9a59b8f593d28d96e1d8920c05d779cc526d4d884f08f9b02e1b591a635942d",
+      "method": "original_unmodified"
+    },
+    {
+      "file": "assets/tiers/challenger_2.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 863242,
+        "partialPixels": 708101
+      },
+      "visibleBounds": {
+        "left": 0,
+        "top": 73,
+        "width": 1234,
+        "height": 1157
+      },
+      "normalizedBounds": [
+        0,
+        0.058213716108452954,
+        0.9840510366826156,
+        0.9226475279106858
+      ],
+      "sha256": "6812ed242026f8a45ab7a5ba8af8d87d627a11902f000ce9199a179388f97852",
+      "method": "original_unmodified"
+    },
+    {
+      "file": "assets/tiers/challenger_3.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 817852,
+        "partialPixels": 753250
+      },
+      "visibleBounds": {
+        "left": 31,
+        "top": 20,
+        "width": 1194,
+        "height": 1210
+      },
+      "normalizedBounds": [
+        0.024720893141945772,
+        0.01594896331738437,
+        0.9521531100478469,
+        0.9649122807017544
+      ],
+      "sha256": "113fd602fc2cb3f2c8772b4dbc74a1150e3f0641296e440e25d46ef429673775",
+      "method": "original_unmodified"
+    },
+    {
+      "file": "assets/tiers/diamond.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 959425,
+        "partialPixels": 612094
+      },
+      "visibleBounds": {
+        "left": 18,
+        "top": 35,
+        "width": 1218,
+        "height": 1171
+      },
+      "normalizedBounds": [
+        0.014354066985645933,
+        0.027910685805422646,
+        0.9712918660287081,
+        0.9338118022328549
+      ],
+      "sha256": "d246365a9eeb2570d63a1d61a6ca61f1662b2ab93219ec2e45674057b7d338b5",
+      "method": "original_unmodified"
+    },
+    {
+      "file": "assets/tiers/gold.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 963281,
+        "partialPixels": 608282
+      },
+      "visibleBounds": {
+        "left": 27,
+        "top": 87,
+        "width": 1201,
+        "height": 1125
+      },
+      "normalizedBounds": [
+        0.0215311004784689,
+        0.06937799043062201,
+        0.9577352472089314,
+        0.8971291866028708
+      ],
+      "sha256": "79ceed5be7274d5c73bec545583672ca2d35ce77d96217aab5967e8f59290214",
+      "method": "original_unmodified"
+    },
+    {
+      "file": "assets/tiers/master.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 896894,
+        "partialPixels": 674542
+      },
+      "visibleBounds": {
+        "left": 13,
+        "top": 33,
+        "width": 1227,
+        "height": 1181
+      },
+      "normalizedBounds": [
+        0.01036682615629984,
+        0.02631578947368421,
+        0.9784688995215312,
+        0.9417862838915471
+      ],
+      "sha256": "4a4489b470e2ce933214c79f005ab8c870d43b78a42a5bb89c13ca7c2aadb4f5",
+      "method": "original_unmodified"
+    },
+    {
+      "file": "assets/tiers/platinum.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 1014289,
+        "partialPixels": 557314
+      },
+      "visibleBounds": {
+        "left": 0,
+        "top": 31,
+        "width": 1234,
+        "height": 1197
+      },
+      "normalizedBounds": [
+        0,
+        0.024720893141945772,
+        0.9840510366826156,
+        0.9545454545454546
+      ],
+      "sha256": "bb743d95d12d54e43d33e1d606a3ec86aa7f532a4a3311ee72bb42e8ea6c8fd5",
+      "method": "original_unmodified"
+    },
+    {
+      "file": "assets/tiers/silver.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixels": 952820,
+        "partialPixels": 618864
+      },
+      "visibleBounds": {
+        "left": 37,
+        "top": 29,
+        "width": 1216,
+        "height": 1185
+      },
+      "normalizedBounds": [
+        0.029505582137161084,
+        0.023125996810207338,
+        0.9696969696969697,
+        0.9449760765550239
+      ],
+      "sha256": "183abc5c0bb2a4d92601dd9a62fb8106f8c2b8848a506419a3ae3e6e5e3d59ea",
+      "method": "original_unmodified"
+    }
+  ],
+  "generation": {
+    "ui20": "New deterministic SVG geometric primitives; PNG exports by sharp; not image-generation raster cleanup",
+    "tiers9": "Original user/project PNGs copied byte-for-byte; mapping unchanged",
+    "reference": "Approved visual reference, copied unchanged",
+    "preview": "Actual delivered PNGs composited with runtime text and simple dividers/progress; dynamic portrait and gear placeholders; example data only"
+  },
+  "panelsCenterUniformity": [
+    {
+      "file": "assets/panels/01_main_window.png",
+      "uniqueRgba": 1,
+      "rgba": "9,26,47,184"
+    },
+    {
+      "file": "assets/panels/02_section_panel.png",
+      "uniqueRgba": 1,
+      "rgba": "10,25,47,140"
+    },
+    {
+      "file": "assets/panels/03_equipment_slot.png",
+      "uniqueRgba": 1,
+      "rgba": "10,25,47,140"
+    },
+    {
+      "file": "assets/panels/04_button_normal.png",
+      "uniqueRgba": 1,
+      "rgba": "22,51,81,184"
+    },
+    {
+      "file": "assets/panels/05_button_hover.png",
+      "uniqueRgba": 1,
+      "rgba": "39,83,134,225"
+    },
+    {
+      "file": "assets/panels/06_quest_row.png",
+      "uniqueRgba": 1,
+      "rgba": "21,51,81,140"
+    }
+  ],
+  "qa": {
+    "pngCount29": true,
+    "allRealAlpha": true,
+    "cleanUiCentersUniform": true,
+    "tierHashes9Match": true,
+    "tierMappingByteIdentical": true,
+    "equipmentSlots9": true,
+    "visualReview": "Actual PNG assembly and full asset atlas inspected; no baked checkerboard or visible random grain; no text overlaps"
+  }
+}
