@@ -1,3 +1,5 @@
+> Claude 2026-10-26 (not built): [오픈 최종 — 빌드·배포용 패치 모음 (마법 300개 합침 + 70044a79 뒤 미배포 패치 전부, 모듈·서버 배치·운영 설정·VFX 팩·지울 파일·프로토콜)](CLAUDE_OPENING_FINAL_PATCHES_20261026.md). **GPT 는 이 문서부터.**
+
 > Codex deployed 2026-10-25: [Opening-final + townmap live deployment receipt](CODEX_OPENING_FINAL_DEPLOYED_20261025.md). Product70044a79; temporary launcherc023a10; proxy preserved; manual in-game verification pending.
 
 > Codex 2026-10-25: [Opening-final actual host builds and full tests](CODEX_OPENING_FINAL_VERIFICATION_20261025.md) — source tests passed; private live-preserving staging only, **NOT deployed**.
