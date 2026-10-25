@@ -80,7 +80,12 @@ quidditch-combat:
 
 # 마법 연습장 훈련 허수아비 (#107, /컨텐츠관리 연습장 허수아비 <설치|제거|목록>, 위치는 training-dummies.yml)
 training-dummy:
-  window-seconds: 5         # 머리 위·알림의 "최근 N초 합계"와 초당 피해를 세는 시간
+  mythic-mob: CA_TrainingDummy  # 허수아비 몸 미몹 (ModelEngine 모델 training_dummy). 비우거나 없으면 바닐라 허스크
+  model-height: 2.35        # 모델 머리 꼭대기 높이(블록) = 머리 위 표시 기준점
+  reset-seconds: 10         # 이만큼 안 맞으면 누적 피해를 0으로 (머리 위 표시도 사라짐)
+  heavy-damage: 20          # 한 번에 이 이상이면 큰 피해: hit_heavy 모션 + 큰 빨간 숫자
+  show-range: 32            # 머리 위 피해 표시를 받는 거리(블록). 맞을 때만 이 안의 MagicCodex 클라에 보냄
+  notify-card: false        # 때린 사람 알림 카드(예전 방식). 머리 위 표시로 충분해 기본 끔
 
 # 2026-10-14 추가 (71종) --------------------------------------------------------
 # 아래 수치는 모두 밸런스 검토 전 임시값입니다 (소유자 결정: 마법 수치 최종 검토 전).

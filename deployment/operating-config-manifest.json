@@ -52,5 +52,17 @@
     "sha256": "f0cd318c6545001cd3f09e2a4b5635d62bdba077909a9b22ef452c453bff9e5f",
     "sameOnSchoolAndWild": true,
     "role": "non-secret gameplay configuration; deployment overlay, not player data"
+  },
+  {
+    "path": "deployment/operating-config/MythicMobs/Mobs/chacademi_training_dummy.yml",
+    "sha256": "a1d87ff0302542a3adebeab5c97cc6bf8c9ae24a5b83944bdda6b01d43ed04c1",
+    "sameOnSchoolAndWild": true,
+    "role": "non-secret gameplay configuration; deployment overlay, not player data"
+  },
+  {
+    "path": "deployment/operating-config/MythicMobs/Skills/chacademi_training_dummy.yml",
+    "sha256": "7312856dd96f02e91955ec164b121ccb55cfb5f158d138d0c7a66ee17e6bff86",
+    "sameOnSchoolAndWild": true,
+    "role": "non-secret gameplay configuration; deployment overlay, not player data"
   }
 ]
