@@ -207,7 +207,6 @@ artifacts:
     effect: "맞을 때 10% 확률로 짧은 춤 모션 (효과 없음)"
     icon: "magiccodex:textures/artifact/dancing_ribbon.png"
     order: 170
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   waving_glove:
     name: "인사 장갑"
     grade: common
@@ -215,7 +214,6 @@ artifacts:
     effect: "다른 플레이어를 보고 웅크리면 손을 흔드는 모션"
     icon: "magiccodex:textures/artifact/waving_glove.png"
     order: 180
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   sleepy_pillow:
     name: "졸린 베개"
     grade: common
@@ -223,7 +221,6 @@ artifacts:
     effect: "2분 동안 가만히 있으면 앉아서 꾸벅꾸벅 조는 모션"
     icon: "magiccodex:textures/artifact/sleepy_pillow.png"
     order: 190
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   shy_mask:
     name: "수줍은 가면"
     grade: common
@@ -231,7 +228,6 @@ artifacts:
     effect: "NPC와 대화를 시작할 때 고개 숙여 인사하는 모션"
     icon: "magiccodex:textures/artifact/shy_mask.png"
     order: 200
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   lucky_coin:
     name: "행운 동전"
     grade: common
@@ -451,7 +447,6 @@ artifacts:
     effect: "채팅에 ㅋㅋ를 치면 웃는 모션"
     icon: "magiccodex:textures/artifact/laughing_mask.png"
     order: 960
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   bubblewrap_cape:
     name: "뽁뽁이 망토"
     grade: common
@@ -466,7 +461,6 @@ artifacts:
     effect: "웅크리고 가만히 있으면 등껍질 속에 숨는 모션 (효과 없음)"
     icon: "magiccodex:textures/artifact/turtle_shell_backpack.png"
     order: 980
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   stretch_headband:
     name: "기지개 밴드"
     grade: common
@@ -474,7 +468,6 @@ artifacts:
     effect: "접속하면 기지개를 켜는 모션"
     icon: "magiccodex:textures/artifact/stretch_headband.png"
     order: 990
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   jack_in_the_box:
     name: "깜짝 상자"
     grade: common
@@ -482,7 +475,6 @@ artifacts:
     effect: "쓰러질 때 용수철 인형이 튀어나오는 연출"
     icon: "magiccodex:textures/artifact/jack_in_the_box.png"
     order: 1000
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   yum_bib:
     name: "냠냠 턱받이"
     grade: common
@@ -713,7 +705,6 @@ artifacts:
     effect: "맞을 때 20% 확률로 1초간 탭댄스 모션, 그동안 받는 피해 -30%"
     icon: "magiccodex:textures/artifact/tap_dance_shoes.png"
     order: 350
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   frog_crown:
     name: "개구리 왕관"
     grade: rare

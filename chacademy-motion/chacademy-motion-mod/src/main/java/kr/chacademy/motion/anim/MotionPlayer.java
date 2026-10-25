@@ -39,6 +39,7 @@ public final class MotionPlayer {
      */
     @SuppressWarnings("unchecked")
     public static boolean play(AbstractClientPlayer player, String name) {
+        if (STOP.equals(name)) return stop(player);
         IPlayable anim = PlayerAnimationRegistry.getAnimation(
                 ResourceLocation.fromNamespaceAndPath(ChacademyMotionClient.MOD_ID, name));
         if (anim == null) {
@@ -58,6 +59,20 @@ public final class MotionPlayer {
 
         // 이전 모션이 재생 중이면 3틱 동안 섞어서 넘어감 (재생 중이 아니면 바로 시작)
         layer.replaceAnimationWithFade(AbstractFadeModifier.standardFadeIn(3, Ease.INOUTSINE), playing);
+        return true;
+    }
+
+    /**
+     * 서버가 보내는 예약 이름. 반복 모션(아티팩트 졸기·등껍질 숨기 등)을 6틱 동안 풀며 끝낸다.
+     * 재생 중인 모션이 없으면 아무것도 하지 않는다.
+     */
+    public static final String STOP = "stop";
+
+    @SuppressWarnings("unchecked")
+    private static boolean stop(AbstractClientPlayer player) {
+        var layer = (ModifierLayer<IAnimation>) PlayerAnimationAccess.getPlayerAssociatedData(player).get(LAYER_ID);
+        if (layer == null || layer.getAnimation() == null) return false;
+        layer.replaceAnimationWithFade(AbstractFadeModifier.standardFadeIn(6, Ease.INOUTSINE), null);
         return true;
     }
 

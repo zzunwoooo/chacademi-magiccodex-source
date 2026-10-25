@@ -67,6 +67,7 @@ final class ArtifactEffects implements Listener {
     final ArtifactBroom broom;
     /** 마법 규칙 아티팩트 5종 (순서의 목걸이·무지개 프리즘·혼돈의 주사위·단 하나의 서·거꾸로 된 마나병). */
     final ArtifactMagicRules rules;
+    final ArtifactMotions motions;
 
     /** Time-limited bonus from one source (refreshing the same source replaces it). */
     record Timed(long until, double speed, double haste) {}
@@ -106,6 +107,7 @@ final class ArtifactEffects implements Listener {
         comfort = new ArtifactComfort(this);
         broom = new ArtifactBroom(this);
         rules = new ArtifactMagicRules(this);
+        motions = new ArtifactMotions(this); // 모션 아티팩트 9종 (2026-10-26), 자체 리스너·0.5초 타이머
         Bukkit.getPluginManager().registerEvents(this, plugin);
         Bukkit.getPluginManager().registerEvents(rules, plugin);
         Bukkit.getPluginManager().registerEvents(actions, plugin);
@@ -735,5 +737,5 @@ final class ArtifactEffects implements Listener {
         actions.quit(id); life.quit(id); comfort.quit(id); broom.quit(id); rules.quit(id);
     }
 
-    void close() { for (Player p : Bukkit.getOnlinePlayers()) clear(p); rules.close(); }
+    void close() { for (Player p : Bukkit.getOnlinePlayers()) clear(p); rules.close(); motions.close(); }
 }
