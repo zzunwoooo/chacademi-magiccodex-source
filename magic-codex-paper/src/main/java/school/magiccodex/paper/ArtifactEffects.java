@@ -63,6 +63,8 @@ final class ArtifactEffects implements Listener {
     private final MagicHooks hooks = new MagicHooks();
     final ArtifactActions actions;
     final ArtifactLife life;
+    /** 마법 규칙 아티팩트 5종 (순서의 목걸이·무지개 프리즘·혼돈의 주사위·단 하나의 서·거꾸로 된 마나병). */
+    final ArtifactMagicRules rules;
 
     /** Time-limited bonus from one source (refreshing the same source replaces it). */
     record Timed(long until, double speed, double haste) {}
@@ -99,7 +101,9 @@ final class ArtifactEffects implements Listener {
         jumpKey = new NamespacedKey(plugin, "artifact_jump"); stepKey = new NamespacedKey(plugin, "artifact_step");
         actions = new ArtifactActions(this);
         life = new ArtifactLife(this);
+        rules = new ArtifactMagicRules(this);
         Bukkit.getPluginManager().registerEvents(this, plugin);
+        Bukkit.getPluginManager().registerEvents(rules, plugin);
         Bukkit.getPluginManager().registerEvents(actions, plugin);
         Bukkit.getPluginManager().registerEvents(life, plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 20, 20);
@@ -161,6 +165,7 @@ final class ArtifactEffects implements Listener {
             if (r.manaSpent > 0) out.append("spent=").append(Math.round(r.manaSpent * 100) / 100.0).append(';');
             if (r.expCarry > 0) out.append("exp=").append(Math.round(r.expCarry * 1000) / 1000.0).append(';');
         }
+        out.append(rules.runtime(p));
         return out.length() > 4000 ? out.substring(0, out.lastIndexOf(";", 4000) + 1) : out.toString();
     }
 
@@ -189,7 +194,7 @@ final class ArtifactEffects implements Listener {
                     case "notes" -> r.notes = Math.clamp(Integer.parseInt(v), 0, 9);
                     case "spent" -> r.manaSpent = Math.clamp(Double.parseDouble(v), 0, 200);
                     case "exp" -> r.expCarry = Math.clamp(Double.parseDouble(v), 0, 1);
-                    default -> { }
+                    default -> rules.restore(p, k, v, now);
                 }
             } catch (RuntimeException ignored) { /* one bad entry never blocks the rest */ }
         }
@@ -302,6 +307,7 @@ final class ArtifactEffects implements Listener {
             }
             if (has(p, "love_letter") && social != null) r.lovers = Math.min(20, social.maxedCount(p.getUniqueId()));
             life.second(p, now);
+            rules.second(p, now);
             apply(p);
         }
         orbs.values().removeIf(o -> o.until() < now);
@@ -415,6 +421,7 @@ final class ArtifactEffects implements Listener {
                 }
             }
         }
+        rules.cast(p, spell, now);
         if (r.chantArmed && cost > 0) {
             r.chantArmed = false;
             if (mana.snapshot(p.getUniqueId()).isPresent()) mana.add(p.getUniqueId(), cost);
@@ -493,6 +500,7 @@ final class ArtifactEffects implements Listener {
             }
         }
         if (has(p, "reaction_chain_orb")) orbs.put(target.getUniqueId(), new Orb(p.getUniqueId(), trigger, now + 3_000));
+        rules.reaction(p, control, e);
     }
 
     /**
@@ -590,7 +598,8 @@ final class ArtifactEffects implements Listener {
             var r = runs.get(p.getUniqueId());
             if (!wearsAny(p) && (r == null || r.comebackUntil <= System.currentTimeMillis())) return;
             var t = (LivingEntity) get(e, "getTarget");
-            double mult = magicMultiplier(p, t, (String) get(e, "getElement"), (String) get(e, "getReaction"), (UUID) get(e, "getMarkCaster"));
+            String reaction = (String) get(e, "getReaction");
+            double mult = magicMultiplier(p, t, (String) get(e, "getElement"), reaction, (UUID) get(e, "getMarkCaster")) * rules.damage(p, e, reaction);
             if (mult != 1) call(e, "setDamage", (double) get(e, "getDamage") * mult);
         }
         private void reaction(Event e) {
@@ -611,7 +620,7 @@ final class ArtifactEffects implements Listener {
         }
         private void heal(Event e) {
             if (!(get(e, "getCaster") instanceof Player p) || !wearsAny(p)) return;
-            double amount = (double) get(e, "getAmount"), next = healAmount(p, (Player) get(e, "getTarget"), amount);
+            double amount = (double) get(e, "getAmount"), next = rules.heal(p, (String) get(e, "getReaction"), healAmount(p, (Player) get(e, "getTarget"), amount));
             if (next != amount) call(e, "setAmount", next);
         }
     }
@@ -716,8 +725,8 @@ final class ArtifactEffects implements Listener {
         UUID id = e.getPlayer().getUniqueId();
         clear(e.getPlayer());
         worn.remove(id); runs.remove(id);
-        actions.quit(id); life.quit(id);
+        actions.quit(id); life.quit(id); rules.quit(id);
     }
 
-    void close() { for (Player p : Bukkit.getOnlinePlayers()) clear(p); }
+    void close() { for (Player p : Bukkit.getOnlinePlayers()) clear(p); rules.close(); }
 }

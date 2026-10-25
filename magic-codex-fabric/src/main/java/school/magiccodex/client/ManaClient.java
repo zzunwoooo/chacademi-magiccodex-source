@@ -11,6 +11,7 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.text.Text;
+import school.magiccodex.protocol.ManaHeatProtocol;
 import school.magiccodex.protocol.ManaProtocol;
 
 public final class ManaClient {
@@ -25,6 +26,16 @@ public final class ManaClient {
     public static double regeneration(){return snapshot==null?0:snapshot.regeneration();}
     public static double haste(){return snapshot==null?0:snapshot.haste();}
     public static boolean available(){return snapshot!=null;}
+    /** 거꾸로 된 마나병 (아티팩트): the mana bar is an overheat gauge (heat = maximum - current). */
+    private static boolean heat;private static long heatLockUntil;
+    public static boolean heat(){return heat&&snapshot!=null;}
+    /** Milliseconds of the overheat lock left (0 = not locked). */
+    public static long heatLockRemaining(){return heat?Math.max(0,heatLockUntil-Util.getMeasuringTimeMs()):0;}
+    public record Heat(byte[] bytes) implements CustomPayload,Bytes {
+        public static final Id<Heat> ID=new Id<>(Identifier.of(ManaHeatProtocol.CHANNEL));
+        public static final PacketCodec<RegistryByteBuf,Heat> CODEC=codec(Heat::new,6,6);
+        public Id<Heat> getId(){return ID;}
+    }
     private interface Bytes{byte[] bytes();}
     public record Request(byte[] bytes) implements CustomPayload,Bytes {
         public static final Id<Request> ID=new Id<>(Identifier.of(ManaProtocol.REQUEST));
@@ -69,6 +80,11 @@ public final class ManaClient {
             catch(IllegalArgumentException ignored){}
         });
         PayloadTypeRegistry.playS2C().register(Response.ID,Response.CODEC);
+        PayloadTypeRegistry.playS2C().register(Heat.ID,Heat.CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(Heat.ID,(payload,context)->{
+            try{var h=ManaHeatProtocol.decode(payload.bytes());context.client().execute(()->{heat=h.on();heatLockUntil=Util.getMeasuringTimeMs()+h.lockMillis();});}
+            catch(IllegalArgumentException ignored){}
+        });
         ClientPlayNetworking.registerGlobalReceiver(Response.ID,(payload,context)->{
             try{var response=ManaProtocol.decode(payload.bytes());context.client().execute(()->receive(response));}
             catch(IllegalArgumentException ignored){}
@@ -76,7 +92,7 @@ public final class ManaClient {
         ClientPlayConnectionEvents.JOIN.register((handler,sender,client)->reset());
         ClientPlayConnectionEvents.DISCONNECT.register((handler,client)->reset());
     }
-    private static void reset(){sentSlots=null;nextSlots=0;snapshot=null;nextRequest=received=sequence=0;pending.clear();}
+    private static void reset(){heat=false;heatLockUntil=0;sentSlots=null;nextSlots=0;snapshot=null;nextRequest=received=sequence=0;pending.clear();}
     public static void cast(CodexData.Spell spell){
         if(!supported())throw new IllegalStateException("Mana service unavailable");
         if(pending.size()>=6)return;
@@ -97,7 +113,7 @@ public final class ManaClient {
         else {
             if(request.spell().equals("taming"))return; // Capture HUD already displays the server's precise rejection.
             String text=switch(response.status()){
-                case ManaProtocol.EMPTY->"마나가 부족합니다.";case ManaProtocol.COOLDOWN->"아직 재사용 대기 중입니다.";
+                case ManaProtocol.EMPTY->heat?"과열 중이에요. 식을 때까지 마법을 쓸 수 없어요.":"마나가 부족합니다.";case ManaProtocol.COOLDOWN->"아직 재사용 대기 중입니다.";
                 case ManaProtocol.LOCKED->"이 마법을 사용할 수 없습니다.";case ManaProtocol.UNKNOWN->"서버에 등록되지 않았거나 비활성화된 마법입니다.";
                 default->"마법 명령이 연결되지 않았거나 실행에 실패했습니다.";
             };

@@ -39,6 +39,15 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
     public String detonateMark(org.bukkit.entity.Player caster,org.bukkit.entity.LivingEntity target,double damage){return reactions==null||!targets.enemy(caster,target)||!protection.pair(caster,target.getLocation())?null:reactions.detonate(caster,target,damage);}
     /** Moves `element`'s mark to the nearest unmarked enemy around `center`. */
     public boolean spreadMark(org.bukkit.entity.Player caster,org.bukkit.Location center,org.bukkit.entity.LivingEntity exclude,String element,double radius){return reactions!=null&&protection.pair(caster,center)&&reactions.spread(caster,center,exclude,element,radius);}
+    /** Spells in the player's magic key slots (client report, 큐디치 경기 중에는 경기 프리셋), slot order, learned only. */
+    public java.util.List<String> spellSlots(org.bukkit.entity.Player player){return slots==null?java.util.List.of():slots.list(player);}
+    /** True when the slots are known (the client reported them, or an admin forced them). */
+    public boolean spellSlotsKnown(org.bukkit.entity.Player player){return slots!=null&&slots.known(player);}
+    /** 혼돈의 주사위: rolls the element of this player's next spell (marks/reactions only). @return the element id */
+    public String rollChaosElement(org.bukkit.entity.Player player){return chaos.roll(player);}
+    public void clearChaosElement(org.bukkit.entity.Player player){chaos.clear(player.getUniqueId());}
+    private final ChaosElements chaos=new ChaosElements();
+    ChaosElements chaos(){return chaos;}
     private Ticker ticker;
     private TempBlocks tempBlocks;
     private Guards guards;
@@ -82,6 +91,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
         slots = new SpellSlots(this);
         slots.register();
         getServer().getPluginManager().registerEvents(slots, this);
+        getServer().getPluginManager().registerEvents(chaos, this);
         passives = new Passives(this);
         getServer().getPluginManager().registerEvents(passives, this);
         utilState = new UtilMech.State(this);

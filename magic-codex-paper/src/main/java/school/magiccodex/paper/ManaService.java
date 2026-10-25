@@ -38,7 +38,12 @@ public final class ManaService {
     void publish(UUID id){var snapshot=account(id).snapshot();snapshots.put(id,snapshot);dirty.add(id);
         if(!Objects.equals(discoveryMaximum.get(id),snapshot.maximum())&&DiscoveryLink.state(id,"state.mana_maximum",snapshot.maximum()))discoveryMaximum.put(id,snapshot.maximum());
     }
-    public void setCurrent(UUID id,double value){ManaAccount.valid(value);var a=account(id);a.current=Math.min(value,a.snapshot().maximum());publish(id);}
+    public void setCurrent(UUID id,double value){ManaAccount.valid(value);account(id).setCurrent(value);publish(id);}
+    /** 거꾸로 된 마나병: mana works as an overheat gauge while on (see {@link ManaAccount#heat}). Server thread. */
+    void setHeatMode(UUID id,boolean on){var a=account(id);if(on==(a.heat!=null))return;a.heatMode(on);publish(id);}
+    /** Overheat lock: milliseconds until magic can be used again (0 = not locked or not in heat mode). */
+    long heatLockRemaining(UUID id){var a=accounts.get(id);return a==null||a.heat==null?0:Math.max(0,a.heat.lockUntil-System.currentTimeMillis());}
+    boolean heatMode(UUID id){var a=accounts.get(id);return a!=null&&a.heat!=null;}
     public void add(UUID id,double amount){account(id).add(amount);publish(id);}
     public boolean tryConsume(UUID id,double amount){boolean ok=account(id).consume(amount);if(ok)publish(id);return ok;}
     public void setBaseMaximum(UUID id,double value){ManaAccount.valid(value);var a=account(id);a.baseMaximum=value;a.normalize();publish(id);}
@@ -77,7 +82,7 @@ public final class ManaService {
     }
     void save(Player p){
         main();UUID id=p.getUniqueId();var a=accounts.get(id);if(a==null)return;
-        var data=p.getPersistentDataContainer();data.set(currentKey,PersistentDataType.DOUBLE,a.snapshot().current());
+        var data=p.getPersistentDataContainer();data.set(currentKey,PersistentDataType.DOUBLE,a.normalSnapshot().current());
         data.set(hasteKey,PersistentDataType.DOUBLE,a.baseHaste);
         data.set(maxKey,PersistentDataType.DOUBLE,a.baseMaximum);data.set(regenKey,PersistentDataType.DOUBLE,a.baseRegen);
         long now=System.currentTimeMillis();a.cooldowns.entrySet().removeIf(e->e.getValue()<=now);

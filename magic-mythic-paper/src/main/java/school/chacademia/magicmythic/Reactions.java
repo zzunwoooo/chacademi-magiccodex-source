@@ -75,6 +75,7 @@ final class Reactions implements Listener, AutoCloseable {
         Element element = Element.of(elementId);
         if (element == null) return;
         if (!plugin.targets().enemy(caster, target)) return; // C03: never mark (or react on) a party member / teammate
+        element = plugin.chaos().element(caster, element); // 혼돈의 주사위 (아티팩트): 이번 시전의 무작위 원소
         long now = Bukkit.getCurrentTick();
         int ticks = book.markTicks();
         if (caster instanceof Player && MagicMarkEvent.listened() && !book.coolingDown(target.getUniqueId(), now)) {
@@ -94,7 +95,7 @@ final class Reactions implements Listener, AutoCloseable {
                     var e = new MagicReactionEvent(caster, target, id(r.reaction()), markElement.id, element.id);
                     Bukkit.getPluginManager().callEvent(e);
                     if (e.isEffectCancelled()) return; // name pop only (artifact: element chalk)
-                    bonus = new Bonus(e.getRadiusBonus(), e.getBounceBonus(), e.getControlBonusTicks(), e.getNormalControlBonusTicks(), e.getControlMultiplier(), e.getHealBonus());
+                    bonus = new Bonus(e.getRadiusBonus(), e.getBounceBonus(), e.getControlBonusTicks(), e.getNormalControlBonusTicks(), e.getControlMultiplier(), e.getHealBonus(), e.getRadiusMultiplier());
                 }
                 applying = true;
                 try { apply(r.reaction(), caster, target, Math.max(damage, floor) * scale, now, bonus); }
@@ -105,8 +106,8 @@ final class Reactions implements Listener, AutoCloseable {
     }
 
     /** Artifact bonuses for one reaction ({@link MagicReactionEvent}). */
-    private record Bonus(double radius, int bounces, int control, int normalControl, double controlMul, double heal) {
-        static final Bonus NONE = new Bonus(0, 0, 0, 0, 1, 0);
+    private record Bonus(double radius, int bounces, int control, int normalControl, double controlMul, double heal, double radiusMul) {
+        static final Bonus NONE = new Bonus(0, 0, 0, 0, 1, 0, 1);
     }
 
     static String id(Reaction r) { return r.name().toLowerCase(java.util.Locale.ROOT); }
@@ -142,15 +143,17 @@ final class Reactions implements Listener, AutoCloseable {
         Location at = target.getLocation();
         switch (reaction) {
             case STEAM -> {
-                vfx.area(reaction, at, steamRadius, target, 16);
-                for (LivingEntity t : targets.enemiesNear(caster, at, steamRadius, 12)) {
+                double r = steamRadius * bonus.radiusMul();
+                vfx.area(reaction, at, r, target, 16);
+                for (LivingEntity t : targets.enemiesNear(caster, at, r, 12)) {
                     if (!targets.hurt(caster, t, ref * 0.15, "", rid)) continue;
                     if (!targets.boss(t)) t.setVelocity(t.getVelocity().setY(0.35));
                 }
             }
             case WILDFIRE -> {
-                vfx.area(reaction, at, wildfireRadius, target, 16);
-                for (LivingEntity t : targets.enemiesNear(caster, at, wildfireRadius, 12)) {
+                double r = wildfireRadius * bonus.radiusMul();
+                vfx.area(reaction, at, r, target, 16);
+                for (LivingEntity t : targets.enemiesNear(caster, at, r, 12)) {
                     if (!targets.hurt(caster, t, 0)) continue; // C03: same protection probe as other CC (match teams, outsiders)
                     cc(caster, t, BURN, ccTicks, 0, bonus);
                     vfx.body("wildfire_burn", t, 12);
@@ -172,7 +175,7 @@ final class Reactions implements Listener, AutoCloseable {
                 double amount = ref * 0.15;
                 for (int i = 0; i < 3 + bonus.bounces(); i++) {
                     LivingEntity next = null;
-                    for (LivingEntity t : targets.enemiesNear(caster, from.getLocation(), 4, 8))
+                    for (LivingEntity t : targets.enemiesNear(caster, from.getLocation(), 4 * bonus.radiusMul(), 8))
                         if (!done.contains(t.getUniqueId())) { next = t; break; }
                     if (next == null) break;
                     done.add(next.getUniqueId());
@@ -187,8 +190,8 @@ final class Reactions implements Listener, AutoCloseable {
             case MUD -> { vfx.body(reaction, target, 20); cc(caster, target, SLOW, ccTicks, mudSlow, bonus); }
             // 무지개: 시전자와 주변 4블록 아군 회복 (유일한 아군 효과)
             case RAINBOW -> {
-                vfx.area(reaction, caster.getLocation(), 4, caster, 20);
-                for (Player ally : targets.alliesNear(caster, caster.getLocation(), 4, 8)) {
+                vfx.area(reaction, caster.getLocation(), 4 * bonus.radiusMul(), caster, 20);
+                for (Player ally : targets.alliesNear(caster, caster.getLocation(), 4 * bonus.radiusMul(), 8)) {
                     targets.heal(caster, ally, 1 + bonus.heal(), rid);
                     vfx.body("rainbow_heal", ally, 16);
                 }
@@ -196,7 +199,7 @@ final class Reactions implements Listener, AutoCloseable {
             case ABYSS -> { vfx.body(reaction, target, 20); cc(caster, target, POISON, ccTicks, 0, bonus); }
             // 모래 회오리: 주변 적을 대상 쪽으로 빨아들이고 대상 포함 고정
             case SANDSTORM -> {
-                double r = sandRadius + bonus.radius();
+                double r = sandRadius * bonus.radiusMul() + bonus.radius();
                 vfx.area(reaction, at, r, target, 16);
                 for (LivingEntity t : targets.enemiesNear(caster, at, r, 12)) {
                     if (!targets.hurt(caster, t, 0)) continue; // C03: no pull/lock on teammates or protected players
@@ -212,7 +215,7 @@ final class Reactions implements Listener, AutoCloseable {
             // 섬광: 기획 미정 — 기존 효과 유지 (주변 6블록 몬스터가 노리던 플레이어를 놓침)
             case FLASH -> {
                 vfx.body(reaction, target, 10);
-                for (LivingEntity t : targets.enemiesNear(caster, at, 6, 12))
+                for (LivingEntity t : targets.enemiesNear(caster, at, 6 * bonus.radiusMul(), 12))
                     if (t instanceof Mob mob && !targets.boss(t) && mob.getTarget() instanceof Player) mob.setTarget(null);
             }
             case VOID_GUST -> { vfx.body(reaction, target, 22); cc(caster, target, FEAR, hardTicks, 0, bonus); }
