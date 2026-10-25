@@ -995,7 +995,7 @@ spells:
     permission: "magic.learned.guiding_star"
     icon: "magiccodex:textures/spells/novice/guiding_star.png"
     category: "light"
-    condition-text: "나침반을 들고 누적 1,000블록 걷습니다."
+    condition-text: "1장에서 어부 올레 아저씨에게 배웁니다."   # 2026-10-25 오너: 1장 올레가 가르쳐 줌 (manual-conditions.yml 수동 조건이 이 줄을 대신함)
     requirements:
       "walk.compass": 1000
     chance: 1.0
