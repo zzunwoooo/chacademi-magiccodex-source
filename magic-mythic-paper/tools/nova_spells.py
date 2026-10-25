@@ -17,10 +17,10 @@ HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE);
 sys.path.insert(0, HERE)
 import arcana_spells as _a
 from nova.common import N, ev, cast  # noqa: F401
-from nova import basic, mid, mid2, high, ult, life, life2   # noqa: E402  (they import N/ev/cast from here)
-M = basic.M + mid.M + mid2.M + high.M + ult.M + life.M + life2.M
+from nova import basic, mid, mid2, high, ult, life, life2, life3   # noqa: E402  (they import N/ev/cast from here)
+M = basic.M + mid.M + mid2.M + high.M + ult.M + life.M + life2.M + life3.M
 EXTRA = {}
-for _m in (basic, mid, mid2, high, ult, life, life2): EXTRA.update(getattr(_m, 'EXTRA', {}))
+for _m in (basic, mid, mid2, high, ult, life, life2, life3): EXTRA.update(getattr(_m, 'EXTRA', {}))
 
 def routes():
     # utility = the MagicCodexBridge handles it (SpellUtility / LifeSpells); the Mythic skill only notes the cast

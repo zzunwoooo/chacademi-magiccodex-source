@@ -18,9 +18,9 @@ final class NovaMech extends Mech {
     static void enable(MagicMythicPlugin plugin) {
         if (!registered) {
             registered = true;
-            NovaBasic.register(TYPES); NovaMid.register(TYPES); NovaMid2.register(TYPES); NovaHigh.register(TYPES); NovaUlt.register(TYPES); NovaLife.register(TYPES); NovaLife2.register(TYPES);
+            NovaBasic.register(TYPES); NovaMid.register(TYPES); NovaMid2.register(TYPES); NovaHigh.register(TYPES); NovaUlt.register(TYPES); NovaLife.register(TYPES); NovaLife2.register(TYPES); NovaLife3.register(TYPES);
         }
-        NovaBasic.enable(plugin); NovaMid.enable(plugin); NovaMid2.enable(plugin); NovaHigh.enable(plugin); NovaUlt.enable(plugin); NovaLife.enable(plugin); NovaLife2.enable(plugin);
+        NovaBasic.enable(plugin); NovaMid.enable(plugin); NovaMid2.enable(plugin); NovaHigh.enable(plugin); NovaUlt.enable(plugin); NovaLife.enable(plugin); NovaLife2.enable(plugin); NovaLife3.enable(plugin);
     }
 
     NovaMech(MagicMythicPlugin plugin, Params p) { super(plugin, p); }
