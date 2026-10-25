@@ -2943,7 +2943,7 @@ spells:
     number: 87
     name: 수압해머
     permission: magic.learned.pressure_hammer
-    icon: ''
+    icon: 'magiccodex:textures/spells/reviewed_20261016/pressure_hammer.png'
     mana-cost: 100
     cooldown-seconds: 15
     reviewed: true
@@ -2965,7 +2965,7 @@ spells:
     number: 88
     name: 용오름
     permission: magic.learned.waterspout
-    icon: ''
+    icon: 'magiccodex:textures/spells/reviewed_20261016/waterspout.png'
     mana-cost: 200
     cooldown-seconds: 30
     reviewed: true
@@ -7693,7 +7693,7 @@ spells:
     number: 300
     name: 여우불 공전
     permission: magic.learned.fox_orbit
-    icon: magiccodex:textures/spells/expansion_2/firefly_mark.png
+    icon: magiccodex:textures/spells/mob_skill/fox_orbit.png
     mana-cost: 30
     cooldown-seconds: 8
     reviewed: true
@@ -7709,7 +7709,7 @@ spells:
     number: 301
     name: 곡선 불깃털
     permission: magic.learned.curving_plumes
-    icon: magiccodex:textures/spells/expansion_2/firebird_hunt.png
+    icon: magiccodex:textures/spells/mob_skill/curving_plumes.png
     mana-cost: 30
     cooldown-seconds: 8
     reviewed: true
@@ -7725,7 +7725,7 @@ spells:
     number: 302
     name: 결정 공전탄
     permission: magic.learned.crystal_orbit
-    icon: magiccodex:textures/spells/expansion/frost_rupture.png
+    icon: magiccodex:textures/spells/mob_skill/crystal_orbit.png
     mana-cost: 45
     cooldown-seconds: 14
     reviewed: true
@@ -7741,7 +7741,7 @@ spells:
     number: 303
     name: 독 뱉기
     permission: magic.learned.venom_spit
-    icon: magiccodex:textures/spells/expansion_2/thorn_seeds.png
+    icon: magiccodex:textures/spells/mob_skill/venom_spit.png
     mana-cost: 30
     cooldown-seconds: 10
     reviewed: true
@@ -7757,7 +7757,7 @@ spells:
     number: 304
     name: 연막 은신
     permission: magic.learned.smoke_veil
-    icon: magiccodex:textures/spells/novice_extra/faint_veil.png
+    icon: magiccodex:textures/spells/mob_skill/smoke_veil.png
     mana-cost: 35
     cooldown-seconds: 20
     reviewed: true
@@ -7772,7 +7772,7 @@ spells:
     number: 305
     name: 영역 선포
     permission: magic.learned.domain_stomp
-    icon: magiccodex:textures/spells/expansion_2/guardian_oath.png
+    icon: magiccodex:textures/spells/mob_skill/domain_stomp.png
     mana-cost: 40
     cooldown-seconds: 14
     reviewed: true
@@ -7787,7 +7787,7 @@ spells:
     number: 306
     name: 봉인진
     permission: magic.learned.seal_circle
-    icon: magiccodex:textures/spells/intermediate/sealing_thread.png
+    icon: magiccodex:textures/spells/mob_skill/seal_circle.png
     mana-cost: 45
     cooldown-seconds: 16
     reviewed: true
@@ -7802,7 +7802,7 @@ spells:
     number: 307
     name: 봉인 부적
     permission: magic.learned.seal_talismans
-    icon: magiccodex:textures/spells/expansion/exorcism_flash.png
+    icon: magiccodex:textures/spells/mob_skill/seal_talismans.png
     mana-cost: 25
     cooldown-seconds: 7
     reviewed: true
@@ -7818,7 +7818,7 @@ spells:
     number: 308
     name: 방패 내려찍기
     permission: magic.learned.shield_slam
-    icon: magiccodex:textures/spells/intermediate/protective_ward.png
+    icon: magiccodex:textures/spells/mob_skill/shield_slam.png
     mana-cost: 30
     cooldown-seconds: 10
     reviewed: true
@@ -7833,7 +7833,7 @@ spells:
     number: 309
     name: 사슬 화살
     permission: magic.learned.chain_arrow
-    icon: magiccodex:textures/spells/expansion_2/guiding_fletching.png
+    icon: magiccodex:textures/spells/mob_skill/chain_arrow.png
     mana-cost: 20
     cooldown-seconds: 6
     reviewed: true
@@ -7849,7 +7849,7 @@ spells:
     number: 310
     name: 마나 흡수
     permission: magic.learned.mana_drain
-    icon: magiccodex:textures/spells/expansion_2/mana_conduit.png
+    icon: magiccodex:textures/spells/mob_skill/mana_drain.png
     mana-cost: 40
     cooldown-seconds: 16
     reviewed: true
@@ -7864,7 +7864,7 @@ spells:
     number: 311
     name: 영혼 낫
     permission: magic.learned.soul_scythe
-    icon: magiccodex:textures/spells/expansion/black_harvest.png
+    icon: magiccodex:textures/spells/mob_skill/soul_scythe.png
     mana-cost: 25
     cooldown-seconds: 7
     reviewed: true
@@ -7879,7 +7879,7 @@ spells:
     number: 312
     name: 망각의 탄환
     permission: magic.learned.oblivion_orbs
-    icon: magiccodex:textures/spells/expansion_2/abyssal_pressure.png
+    icon: magiccodex:textures/spells/mob_skill/oblivion_orbs.png
     mana-cost: 30
     cooldown-seconds: 9
     reviewed: true
@@ -7895,7 +7895,7 @@ spells:
     number: 313
     name: 뼈의 손아귀
     permission: magic.learned.bone_grasp
-    icon: magiccodex:textures/spells/novice_extra/shadow_bind.png
+    icon: magiccodex:textures/spells/mob_skill/bone_grasp.png
     mana-cost: 40
     cooldown-seconds: 16
     reviewed: true
@@ -7910,7 +7910,7 @@ spells:
     number: 314
     name: 그림자 도약
     permission: magic.learned.shadow_leap
-    icon: magiccodex:textures/spells/novice_extra/light_leap.png
+    icon: magiccodex:textures/spells/mob_skill/shadow_leap.png
     mana-cost: 40
     cooldown-seconds: 14
     reviewed: true
@@ -7926,7 +7926,7 @@ spells:
     number: 315
     name: 끌어오기
     permission: magic.learned.binding_pull
-    icon: magiccodex:textures/spells/novice/feather_step.png
+    icon: magiccodex:textures/spells/mob_skill/binding_pull.png
     mana-cost: 45
     cooldown-seconds: 18
     reviewed: true
@@ -7942,7 +7942,7 @@ spells:
     number: 316
     name: 요정 가루
     permission: magic.learned.fairy_dust
-    icon: magiccodex:textures/spells/expansion_2/night_lullaby.png
+    icon: magiccodex:textures/spells/mob_skill/fairy_dust.png
     mana-cost: 40
     cooldown-seconds: 20
     reviewed: true
@@ -7957,7 +7957,7 @@ spells:
     number: 317
     name: 반달 바람날
     permission: magic.learned.moon_wind
-    icon: magiccodex:textures/spells/novice/feather_step.png
+    icon: magiccodex:textures/spells/mob_skill/moon_wind.png
     mana-cost: 25
     cooldown-seconds: 7
     reviewed: true
@@ -7972,7 +7972,7 @@ spells:
     number: 318
     name: 돌풍 날갯짓
     permission: magic.learned.gale_wings
-    icon: magiccodex:textures/spells/expansion/gale_dash.png
+    icon: magiccodex:textures/spells/mob_skill/gale_wings.png
     mana-cost: 40
     cooldown-seconds: 16
     reviewed: true
@@ -7987,7 +7987,7 @@ spells:
     number: 319
     name: 깃털 폭풍
     permission: magic.learned.feather_storm
-    icon: magiccodex:textures/spells/expansion_2/thorn_seeds.png
+    icon: magiccodex:textures/spells/mob_skill/feather_storm.png
     mana-cost: 35
     cooldown-seconds: 12
     reviewed: true
@@ -8002,7 +8002,7 @@ spells:
     number: 320
     name: 사냥 도약
     permission: magic.learned.hunting_pounce
-    icon: magiccodex:textures/spells/novice_extra/light_leap.png
+    icon: magiccodex:textures/spells/mob_skill/hunting_pounce.png
     mana-cost: 35
     cooldown-seconds: 14
     reviewed: true
@@ -8017,7 +8017,7 @@ spells:
     number: 321
     name: 포효 도약
     permission: magic.learned.roar_leap
-    icon: magiccodex:textures/spells/expansion_2/bell_of_fear.png
+    icon: magiccodex:textures/spells/mob_skill/roar_leap.png
     mana-cost: 40
     cooldown-seconds: 16
     reviewed: true
@@ -8032,7 +8032,7 @@ spells:
     number: 322
     name: 중력 강타
     permission: magic.learned.gravity_slam
-    icon: magiccodex:textures/spells/expansion/weightless_zone.png
+    icon: magiccodex:textures/spells/mob_skill/gravity_slam.png
     mana-cost: 45
     cooldown-seconds: 16
     reviewed: true
@@ -8047,7 +8047,7 @@ spells:
     number: 323
     name: 꼬리 가시
     permission: magic.learned.tail_spikes
-    icon: magiccodex:textures/spells/reviewed_20261016/pressure_lance.png
+    icon: magiccodex:textures/spells/mob_skill/tail_spikes.png
     mana-cost: 35
     cooldown-seconds: 12
     reviewed: true
