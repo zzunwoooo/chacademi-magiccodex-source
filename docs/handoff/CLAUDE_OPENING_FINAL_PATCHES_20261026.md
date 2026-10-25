@@ -593,3 +593,33 @@ items:
 - 서버 `PortraitChannel`: DB 읽기 비동기, 한 사람 요청 간격 250ms·같은 대상 3초, 동시에 보내는 남의 그림 2장(나머지는 32개까지 줄, 넘치면 BUSY → 클라가 잠시 뒤 다시), 조각은 2틱마다 1개, 같은 사람의 새 요청은 옛 요청을 끊음. 공유 DB 면 다른 서버 사람 그림도. 그림 없는 사람은 "없음".
 - 클라 `OtherPortraits`: 캐시 `config/magiccodex/portraits/others/<sha>.png` + `index.txt`(uuid→sha), 최근 64장만 유지, 같은 sha 면 다시 안 받음. **처음 받는 동안만 초상 칸에 "불러오는 중"**, 다음부턴 캐시를 먼저 보여 주고 바뀌었으면 새로 받아 바꿈. 디코드·해시·디스크는 IO 스레드, 텍스처 업로드는 클라 스레드 (메모리엔 최근 4장). 없음·실패 → 3D 스킨. 일러스트는 초상 칸 높이에 맞춰 비율 유지·가운데·칸 밖은 잘라냄 (내 일러스트도 같은 방식).
 - **배포 주의: ChacaPortrait 플러그인 + chaca-portrait-protocol + MagicCodex 모드 같이.**
+
+## 29. 확성기 (2026-10-26, 메모 #102, UI v2 납품 패키지)
+- **흐름**: 확성기(ItemsAdder `item:megaphone`, `megaphone.yml item` 에서 변경)를 손에 들고 우클릭 → 서버가 입력 창 열기(OPEN, 토큰) → 클라 입력 창(제목 "확성기"·닫기·입력칸·보내기만) → 보내기(Enter·버튼) = SEND / 닫기(Esc·X) = CANCEL(소모 없음). 서버 검사: 입력 시간(기본 120초)·쿨다운(기본 30초, 서버마다)·글자 수(기본 80자, code point)·금칙어(`megaphone.yml banned-words` + ChacaNPC `filter.yml banned-words`, 띄어쓰기·기호 무시)·확성기가 아직 그 손(주 손이면 같은 칸)에 있는지 → 공지 모양 확인 → **1개 소모** → 이 서버 접속자에게 SHOW + 다른 서버로 전달. 거절이면 알림창 안내, 확성기 그대로.
+- **같이 보여 줄 아이템** = 확성기 반대 손(주 손 확성기 → 왼손, 왼손 확성기 → 주 손). 서버가 보낼 때 손에서 직접 읽어 `serializeAsBytes` (1개, 숨은 PDC 제거, 16KB 넘으면 설명 줄 빼고, 그래도 크면 재료만). 클라는 아이템을 보내지 않음. 없으면 공지만.
+- **화면 위 공지** (모드 클라): 받은 순서대로 하나씩(대기열 30, 넘치면 오래된 것부터 버림), 표시 6초(`show-seconds`, 보낸 서버 값). 화면이 보일 때(다른 창이 덮지 않을 때) 꺼내 띄운 시각 t0 부터 `remaining = clamp(1-(now-t0)/6초,0,1)` 로 금색 타이머 폭(늘이지 않고 잘라 그림). 끝나면 카드·아이템·힌트·툴팁 함께 숨김. 아이템 있음: 카드 위(16px 틈) 검정 반투명 배경 + 실제 아이템 80px(큰 아이템 그림은 그 크기로 새로 그림 `ExactItemIcons`, 아니면 GUI 아이템 렌더를 그 크기로) + "Ctrl 아이템 보기"(키 이름 = 키 설정 "마우스 포인터"). Ctrl 로 커서를 꺼내 아이템 배경에 올리면 게임 아이템 툴팁(`ItemTooltipRenderer`, 바닐라 대체)이 카드 아래 (960, 282) 에서 아래로, 화면 가장자리 16px 안으로 보정. 모드 없는 접속자: 채팅 한 줄 `[확성기] 닉: 문장`.
+- **UI**: `docs/design/megaphone-ui-v2/docs/개발_프롬프트.txt` 그대로. 좌표 1920×1080, min(가로/1920, 세로/1080) 한 배율·가운데(코너·글자 같은 배율), 9-slice 입력 패널·공지 카드 16px / 입력 필드·버튼·아이템 배경 12px, 닫기 24×24, 보내기 normal/hover PNG, 전체 암막·블러 없음(PNG 반투명 그대로), 글자 Pretendard(`body`·`label`·`hud_bold`) #F2F8FF. 닉네임 26 bold·메시지 24 가운데 한 줄 — 넘치면 닉 20·메시지 18 까지 줄이고 그래도 넘치면 말줄임(원문 보존). 글자 y = rect 위쪽 + 0.48×크기(잉크 가운데, 납품 미리보기에서 잰 값). 입력: 한 줄, 80 code point(줄바꿈 제거·넘치면 뒤 자름), 빈 값·공백만은 안 보냄, 보내기 한 번만. 배치는 전부 `MegaphoneLayout` 한 곳 (`MegaphoneLayoutTest` 가 layout.json 값과 비교).
+- **자산**: `magic-codex-fabric/src/main/resources/assets/magiccodex/textures/gui/megaphone/megaphone_*.png` (납품 PNG 9개 그대로 복사, 장식 추가 없음). 합성 미리보기(실제 PNG·좌표·Pretendard, 하늘·땅 단색 배경) 입력 / 아이템 공지 / 일반 공지 3장은 Claude 작업 폴더에서 패키지 previews 와 1~2px 안으로 맞춤 확인.
+- **프로토콜** `MegaphoneProtocol` (magic-codex-protocol, 채널 `magiccodex:megaphone_request` / `magiccodex:megaphone_response`, 버전 1): S2C OPEN(token, maxChars) · SHOW(id, 보낸 사람, 문장, 표시 ms, 아이템 바이트 0~16384) · CLOSE(token), C2S SEND(token, 문장) · CANCEL(token). 프레임 최대 18KB, 요청 1KB, 남는 바이트·모르는 종류 거부. 테스트 `MegaphoneProtocolTest`.
+- **서버 간**: Velocity BungeeCord 호환 채널 `Forward ALL`(#95 `/공지` 와 같은 방식, 하위 채널 `ChacaMegaphone`, 최대 30000바이트 — 받는 서버의 플러그인 메시지 한계 32767 안). 보낸 서버 실행 토큰(origin)으로 자기 메시지 무시, 공지 id 최근 256개로 중복 무시. 프록시 플러그인 변경 없음. **조건**: `velocity.toml` `bungee-plugin-message-channel = true`(기본값), 받는 서버에 접속자가 1명 이상(Velocity 는 접속자 없는 서버에 플러그인 메시지를 못 보냄 — 그 서버는 그 공지를 못 받음, 정상). `cross-server: false` 면 그 서버만.
+- **설정** `megaphone.yml`(처음 켤 때 자동 생성, 모든 서버에 같은 파일): item·cooldown-seconds(0~3600)·max-length(10~100)·show-seconds(2~30)·cross-server·prompt-timeout-seconds(10~600)·use-chacanpc-filter·banned-words. 바꾼 뒤 `/서버관리 새로고침 확성기`. 미리보기: `/테스트 확성기 공지`(나에게만, 왼손 아이템) · `/테스트 확성기 창`(입력 창, 소모·쿨다운·기록 없음, 나에게만).
+- **운영 기록**: `ChacaApi.audit` 종류 "확성기"(audit.yml `kinds.확성기`) — 보낸 사람·문장·같이 보인 아이템 이름·서버. 서버 로그 `MEGAPHONE 계정 (닉) [아이템] : 문장`.
+- **부담**: 매 틱 하는 일 없음. 우클릭·보내기 때만 일함, 아이템 직렬화는 공지 한 번에 한 번. 클라는 공지가 있을 때만 그림.
+- **바뀐 파일**: 서버 `MegaphoneBridge`·`MegaphoneRules`(+`MegaphoneRulesTest`)·`megaphone.yml`, `MagicCodexBridge`(등록 1줄)·`AuditLog`·`audit.yml`(종류 1개). 프로토콜 `MegaphoneProtocol`. 클라 `MegaphoneClient`·`MegaphoneScreen`·`MegaphoneLayout`(+`MegaphoneLayoutTest`·`MegaphoneProtocolTest`), `MagicCodexClient`(등록 1줄), `ItemTooltipRenderer`(`renderBelow` — 마우스 대신 위치에 붙여 그리기, 기존 동작 그대로).
+- **ItemsAdder 정의 예시** (아이템 그림은 오너가 따로, ID 는 `megaphone.yml item` 에서 변경):
+  ```yaml
+  info:
+    namespace: item
+  items:
+    megaphone:
+      display_name: "확성기"
+      lore:
+        - "손에 들고 우클릭하면 모든 서버에 한마디를 외쳐요"
+        - "반대 손에 든 아이템도 같이 보여 줘요 (1개 사용)"
+      resource:
+        material: PAPER
+        generate: false
+        model_path: item/megaphone
+  ```
+- **같이 배포**: MagicCodexBridge(모든 서버) + magic-codex-protocol + MagicCodex 클라 모드. 모든 서버에 ItemsAdder `item:megaphone`. 모드 없는 클라는 우클릭하면 "차카데미 런처로 접속했을 때 쓸 수 있어요".
+- **게임 확인**: ① `/테스트 확성기 창` → 창 모양(암막 없음)·한글 입력·붙여넣기·80자 제한·Esc 취소. ② 확성기 우클릭 → 보내기 → 1개 줄고 위쪽 카드·6초 타이머, 다른 서버 접속자에게도 뜨는지. ③ 왼손에 아이템 들고 보내기 → 카드 위 아이콘·"Ctrl 아이템 보기", Ctrl 누른 채 아이콘에 커서 → 카드 아래 툴팁, 화면 작게(가장자리) 해도 화면 안. ④ 연속 전송(쿨다운 안내)·두 사람이 연달아(대기열 하나씩)·금칙어(거절, 소모 없음)·긴 닉네임·80자 메시지(줄이고 말줄임)·UI 배율 바꿔서 같은 비율.

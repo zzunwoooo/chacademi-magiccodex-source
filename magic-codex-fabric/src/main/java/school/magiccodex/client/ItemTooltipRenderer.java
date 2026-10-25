@@ -31,6 +31,12 @@ public final class ItemTooltipRenderer {
         return render(c,font,stack,mouseX,mouseY,Screen.getTooltipFromItem(MinecraftClient.getInstance(),stack));
     }
     private static final float TOOLTIP_SCALE=.85f;
+    /** 확성기 공지(메모 #102): 마우스 대신 (가운데 x, 위쪽 y) 에 붙여 그릴 때. 화면 가장자리 margin 안으로 보정. */
+    private static boolean anchored;private static int anchorMargin=6;
+    public static boolean renderBelow(DrawContext c,TextRenderer font,ItemStack stack,int centerX,int top,int margin){
+        anchored=true;anchorMargin=Math.max(0,Math.round(margin/TOOLTIP_SCALE));
+        try{return render(c,font,stack,centerX,top);}finally{anchored=false;anchorMargin=6;}
+    }
     public static boolean render(DrawContext c,TextRenderer font,ItemStack stack,int mouseX,int mouseY,List<Text> info){
         c.getMatrices().push();
         try{
@@ -79,8 +85,8 @@ public final class ItemTooltipRenderer {
             int content=ManaCoreTooltip.height(title,type,body)+58;
             int h=Math.min(sh-12,content),view=h-12;
             maxScroll=Math.max(0,content-h);offset=Math.clamp(offset,0,maxScroll);
-            int x=mouseX+12;if(x+w>sw-6)x=mouseX-w-12;x=Math.clamp(x,6,sw-w-6);
-            int y=Math.clamp(mouseY-h/2,6,sh-h-6);
+            int x=anchored?Math.clamp(mouseX-w/2,anchorMargin,Math.max(anchorMargin,sw-w-anchorMargin)):mouseX+12;if(!anchored){if(x+w>sw-6)x=mouseX-w-12;x=Math.clamp(x,6,sw-w-6);}
+            int y=anchored?Math.clamp(mouseY,anchorMargin,Math.max(anchorMargin,sh-h-anchorMargin)):Math.clamp(mouseY-h/2,6,sh-h-6);
             var images=UiResources.images();images.beginFrame();c.getMatrices().push();
             try{
                 c.getMatrices().translate(0,0,600);panel(c,images,x,y,w,h);
@@ -102,8 +108,8 @@ public final class ItemTooltipRenderer {
         int available=Math.max(0,h-header-25);
         if(contentHeight>available)available=Math.max(0,available-12);
         maxScroll=Math.max(0,contentHeight-available);offset=Math.clamp(offset,0,maxScroll);
-        int x=mouseX+12;if(x+w>sw-6)x=mouseX-w-12;x=Math.clamp(x,6,sw-w-6);
-        int y=Math.clamp(mouseY-h/2,6,sh-h-6);
+        int x=anchored?Math.clamp(mouseX-w/2,anchorMargin,Math.max(anchorMargin,sw-w-anchorMargin)):mouseX+12;if(!anchored){if(x+w>sw-6)x=mouseX-w-12;x=Math.clamp(x,6,sw-w-6);}
+        int y=anchored?Math.clamp(mouseY,anchorMargin,Math.max(anchorMargin,sh-h-anchorMargin)):Math.clamp(mouseY-h/2,6,sh-h-6);
         var images=UiResources.images();images.beginFrame();
         c.getMatrices().push();
         try{

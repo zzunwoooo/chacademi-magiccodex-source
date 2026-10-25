@@ -16,6 +16,11 @@ final class MegaphoneRules {
     static final int VERSION = 1;
     /** 서버 간 메시지 하나의 최대 크기. 받는 서버의 "클라이언트 → 서버" 플러그인 메시지 한계(32767)보다 작게. */
     static final int MAX_WIRE = 30000;
+    /**
+     * 설정 max-length 상한 (Unicode code point). 프로토콜 글자 상한(MAX_TEXT, UTF-16 단위)의 절반이라
+     * 이모지처럼 두 칸짜리 글자만 써도 넘지 않는다 (넘으면 확성기를 쓰고도 공지를 못 만드는 일이 생김).
+     */
+    static final int MAX_LENGTH = MegaphoneProtocol.MAX_TEXT / 2;
 
     /** megaphone.yml 내용. */
     record Settings(String item, long cooldownMs, int maxLength, int showMs, boolean crossServer, long promptTimeoutMs,
@@ -24,7 +29,7 @@ final class MegaphoneRules {
                 List.of("시발", "씨발", "ㅅㅂ", "ㅆㅂ", "병신", "ㅂㅅ", "지랄", "좆", "존나", "개새끼", "미친놈", "미친년", "니애미", "느금", "섹스", "야동", "자살", "죽어버려"));
     }
 
-    /** 설정 정리. 쿨다운 0~3600초, 글자 수 10~200, 표시 2~30초, 입력 대기 10~600초. item 은 namespace:id. */
+    /** 설정 정리. 쿨다운 0~3600초, 글자 수 10~100, 표시 2~30초, 입력 대기 10~600초. item 은 namespace:id. */
     static Settings settings(String item, double cooldownSeconds, int maxLength, double showSeconds, boolean crossServer,
                              double promptTimeoutSeconds, boolean chacaNpcFilter, List<String> bannedWords) {
         var d = Settings.DEFAULT;
@@ -35,7 +40,7 @@ final class MegaphoneRules {
         double wait = Double.isFinite(promptTimeoutSeconds) ? Math.clamp(promptTimeoutSeconds, 10, 600) : d.promptTimeoutMs() / 1000.0;
         var words = new ArrayList<String>();
         for (String w : bannedWords == null ? d.bannedWords() : bannedWords) { String n = normalize(w); if (!n.isEmpty() && !words.contains(n)) words.add(n); }
-        return new Settings(i, Math.round(cd * 1000), Math.clamp(maxLength, 10, MegaphoneProtocol.MAX_TEXT), (int) Math.round(show * 1000),
+        return new Settings(i, Math.round(cd * 1000), Math.clamp(maxLength, 10, MAX_LENGTH), (int) Math.round(show * 1000),
                 crossServer, Math.round(wait * 1000), chacaNpcFilter, List.copyOf(words));
     }
 
@@ -53,8 +58,22 @@ final class MegaphoneRules {
         return false;
     }
 
-    /** 문장 다듬기: /공지 와 같은 규칙(색 코드·제어 문자 제거, 공백 하나로) 후 최대 글자 수로 자른다. */
-    static String clean(String raw, int max) { return ConvenienceRules.clean(raw, max); }
+    /** 문장 다듬기: /공지 와 같은 규칙(색 코드·제어 문자 제거, 공백 하나로) 후 최대 글자 수(code point)로 자른다. */
+    static String clean(String raw, int max) { return cutCodePoints(ConvenienceRules.clean(raw, max * 2), max).strip(); }
+
+    /** 앞에서 max 개 code point 까지 (서로게이트 쌍을 반으로 자르지 않음). */
+    static String cutCodePoints(String s, int max) {
+        if (s == null) return "";
+        if (s.codePointCount(0, s.length()) <= max) return s;
+        return s.substring(0, s.offsetByCodePoints(0, Math.max(0, max)));
+    }
+
+    /** 보낸 사람 이름: 프로토콜 상한(UTF-16 MAX_SENDER) 안으로, 글자를 반으로 자르지 않게. */
+    static String senderName(String name) {
+        String s = name == null || name.isBlank() ? "?" : name.strip();
+        while (s.length() > MegaphoneProtocol.MAX_SENDER) s = s.substring(0, s.offsetByCodePoints(s.length(), -1));
+        return s;
+    }
 
     // ------------------------------------------------------------------ 서버 간 메시지
 

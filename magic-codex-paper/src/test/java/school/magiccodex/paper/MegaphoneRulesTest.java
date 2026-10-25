@@ -14,7 +14,8 @@ class MegaphoneRulesTest {
         var s = MegaphoneRules.settings(" ITEM:Megaphone ", -5, 9999, 0.5, false, 1, true, List.of(" 시 발 ", "", "시발"));
         assertEquals("item:megaphone", s.item());
         assertEquals(0, s.cooldownMs());
-        assertEquals(MegaphoneProtocol.MAX_TEXT, s.maxLength());
+        assertEquals(MegaphoneRules.MAX_LENGTH, s.maxLength());
+        assertTrue(MegaphoneRules.MAX_LENGTH * 2 <= MegaphoneProtocol.MAX_TEXT);   // 두 칸 글자만 써도 프로토콜 안
         assertEquals(MegaphoneProtocol.MIN_DURATION_MS, s.showMs());
         assertEquals(10_000, s.promptTimeoutMs());
         assertEquals(List.of("시발"), s.bannedWords());
@@ -38,6 +39,18 @@ class MegaphoneRulesTest {
     @Test void cleanCutsAndStripsColors() {
         assertEquals("안녕 하세요", MegaphoneRules.clean("  §c안녕   \n하세요 ", 80));
         assertEquals("abc", MegaphoneRules.clean("abcdef", 3));
+        // code point 로 센다: 이모지 80개 = 80자, 반으로 자르지 않음
+        String e = MegaphoneRules.clean("😀".repeat(90), 80);
+        assertEquals(80, e.codePointCount(0, e.length()));
+        assertEquals(80, MegaphoneRules.clean("가".repeat(90), 80).length());
+    }
+
+    @Test void senderNameFitsProtocol() {
+        assertEquals("준우", MegaphoneRules.senderName(" 준우 "));
+        assertEquals("?", MegaphoneRules.senderName(" "));
+        String longName = MegaphoneRules.senderName("😀".repeat(40));
+        assertTrue(longName.length() <= MegaphoneProtocol.MAX_SENDER);
+        assertFalse(Character.isHighSurrogate(longName.charAt(longName.length() - 1)));
     }
 
     @Test void wireRoundTripThroughForward() throws Exception {

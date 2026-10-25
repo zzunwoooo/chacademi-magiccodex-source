@@ -156,7 +156,7 @@ final class MegaphoneBridge implements Listener, PluginMessageListener {
         if (MegaphoneRules.banned(text, banned)) { refuse(p, "쓸 수 없는 말이 들어 있어요. 확성기는 그대로예요"); return; }
         EquipmentSlot other = pd.hand() == EquipmentSlot.HAND ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND;
         if (pd.test()) {   // /테스트 확성기 창: 나에게만, 소모·쿨다운·기록·전달 없음
-            show(List.of(p), new MegaphoneRules.Wire(origin, UUID.randomUUID().toString(), serverId(), plugin.names().name(p), text, settings.showMs(), itemBytes(p.getInventory().getItem(other))));
+            show(List.of(p), new MegaphoneRules.Wire(origin, UUID.randomUUID().toString(), serverId(), MegaphoneRules.senderName(plugin.names().name(p)), text, settings.showMs(), itemBytes(p.getInventory().getItem(other))));
             return;
         }
         long left = cooldownLeft(p, now);
@@ -168,12 +168,15 @@ final class MegaphoneBridge implements Listener, PluginMessageListener {
         if (!isMegaphone(held)) { refuse(p, "확성기를 손에 든 채로 보내 주세요"); return; }
         ItemStack shown = inv.getItem(other);
         byte[] item = itemBytes(shown);
+        String who = MegaphoneRules.senderName(plugin.names().name(p));
+        var w = new MegaphoneRules.Wire(origin, UUID.randomUUID().toString(), serverId(), who, text, settings.showMs(), item);
+        // 공지 모양을 먼저 확인하고 나서 소모 (공지를 못 만들면 확성기는 그대로)
+        try { MegaphoneProtocol.show(new MegaphoneProtocol.Show(w.id(), w.sender(), w.text(), w.durationMs(), w.item())); }
+        catch (IllegalArgumentException e) { refuse(p, "공지를 만들지 못했어요. 확성기는 그대로예요"); return; }
         // 1개 소모 (그다음 공지)
         held.setAmount(held.getAmount() - 1);
         inv.setItem(pd.hand(), held.getAmount() <= 0 ? null : held);
         lastUse.put(p.getUniqueId(), now);
-        String who = plugin.names().name(p);
-        var w = new MegaphoneRules.Wire(origin, UUID.randomUUID().toString(), serverId(), who, text, settings.showMs(), item);
         seen(w.id());
         show(Bukkit.getOnlinePlayers(), w);
         boolean forwarded = settings.crossServer() && forward(p, w);
@@ -262,7 +265,7 @@ final class MegaphoneBridge implements Listener, PluginMessageListener {
 
     private void testNotice(Player p) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         if (!modded(p)) throw ChacaApi.error("차카데미 런처로 접속해야 볼 수 있어요");
-        show(List.of(p), new MegaphoneRules.Wire(origin, UUID.randomUUID().toString(), serverId(), plugin.names().name(p),
+        show(List.of(p), new MegaphoneRules.Wire(origin, UUID.randomUUID().toString(), serverId(), MegaphoneRules.senderName(plugin.names().name(p)),
                 "확성기 공지 미리보기예요 · 왼손에 든 아이템이 위에 보여요", settings.showMs(), itemBytes(p.getInventory().getItemInOffHand())));
         CmdKit.ok(p, "확성기 공지를 나에게만 띄웠어요");
     }

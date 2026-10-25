@@ -4,7 +4,6 @@ import static school.magiccodex.client.MegaphoneLayout.*;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayDeque;
-import java.util.List;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -28,8 +27,9 @@ import school.magiccodex.protocol.MegaphoneProtocol;
  * HudCursorScreen 이 열려 커서가 나오고, 떼면 닫혀 커서가 다시 잠긴다 (PlayerHudClient). 공지 아이콘 위에 커서가 오면 툴팁.
  * 공지가 사라지면 툴팁도 사라진다. 커서 자체는 다른 HUD(파티·알림 카드)도 쓰는 공용이라 Ctrl 을 떼야 닫힌다.
  *
- * <p>공지 시간은 화면에 보이는 동안만 흐른다 (다른 창을 열어 가려지면 멈췄다가 닫으면 이어서). 대기열 최대 {@link #QUEUE_MAX}개,
- * 넘치면 가장 오래 기다린 것부터 버린다.
+ * <p>화면 배치·자산은 UI v2 납품 패키지(MegaphoneLayout). 공지는 받은 순서대로 하나씩, 화면이 보일 때(다른 창이 덮지 않을 때)
+ * 꺼내 띄우고 그 시각 t0 부터 remaining = clamp(1 - (now - t0) / 표시 시간, 0, 1) 로 타이머 폭을 정한다 (프레임 수를 세지 않음).
+ * 표시 시간이 지나면 카드·아이템·힌트·툴팁을 함께 숨긴다. 대기열 최대 {@link #QUEUE_MAX}개, 넘치면 가장 오래 기다린 것부터 버린다.
  */
 public final class MegaphoneClient {
     private MegaphoneClient() {}
@@ -62,8 +62,10 @@ public final class MegaphoneClient {
     static final int QUEUE_MAX = 30;
     private static final ArrayDeque<Notice> QUEUE = new ArrayDeque<>();
     private static Notice current;
-    private static long shown, last;
-    private static List<String> body = List.of();
+    /** 지금 공지를 띄우기 시작한 시각 t0 (Util.getMeasuringTimeMs). */
+    private static long shownAt;
+    /** 지금 공지의 한 줄 맞춘 닉네임·메시지 (공지마다 한 번 계산). */
+    private static MegaphoneLayout.Line name, message;
     private static HudTextureCache images;
     private static CodexTypography text;
     private static int generation = -1;
@@ -106,7 +108,7 @@ public final class MegaphoneClient {
     private static ItemStack decode(MinecraftClient c, byte[] b) {
         if (b.length == 0 || c.world == null) return ItemStack.EMPTY;
         try {
-            return ItemStack.fromNbt(c.world.getRegistryManager(), NbtIo.readCompressed(new ByteArrayInputStream(b), NbtSizeTracker.of(2097152))).orElse(ItemStack.EMPTY);
+            return ItemStack.fromNbt(c.world.getRegistryManager(), NbtIo.readCompressed(new ByteArrayInputStream(b), NbtSizeTracker.of(262144))).orElse(ItemStack.EMPTY);
         } catch (Exception e) { return ItemStack.EMPTY; }
     }
 
@@ -120,74 +122,83 @@ public final class MegaphoneClient {
         } catch (IllegalArgumentException e) { return false; }
     }
 
-    private static void reset() { QUEUE.clear(); current = null; shown = last = 0; body = List.of(); close(); }
+    private static void reset() { QUEUE.clear(); current = null; shownAt = 0; name = message = null; close(); }
     private static void close() { if (text != null) { text.close(); text = null; } if (images != null) { images.close(); images = null; } generation = -1; }
 
     private static boolean visible(MinecraftClient c) {
         return c.player != null && c.world != null && !c.options.hudHidden && c.getOverlay() == null && HudPointer.hudVisibleUnder(c.currentScreen);
     }
 
-    // ------------------------------------------------------------------ 그리기
+    // ------------------------------------------------------------------ 그리기 (UI v2: MegaphoneLayout 좌표 그대로)
 
     private static void render(DrawContext ctx) {
-        var c = MinecraftClient.getInstance(); long now = Util.getMeasuringTimeMs();
-        long delta = last == 0 ? 0 : Math.max(0, Math.min(1000, now - last)); last = now;
-        if (!visible(c)) return;                    // 가려진 동안은 시간이 흐르지 않는다
+        var c = MinecraftClient.getInstance();
+        long now = Util.getMeasuringTimeMs();
+        if (current == null && QUEUE.isEmpty()) return;
+        if (!visible(c)) return;                       // 다른 창이 덮고 있으면 다음 공지를 꺼내지 않는다
         if (current == null) {
             current = QUEUE.pollFirst();
-            if (current == null) return;
-            shown = 0; body = List.of();
+            shownAt = now; name = message = null;
             NotificationPresentation.playSound(c);
-        } else shown += delta;
-        if (shown >= current.duration()) { current = null; return; }
-        if (generation != UiResources.generation()) { close(); generation = UiResources.generation(); }
+        }
+        long elapsed = now - shownAt;
+        if (elapsed >= current.duration()) { current = null; name = message = null; return; }   // 카드·아이템·힌트·툴팁 함께 숨김
+        if (generation != UiResources.generation()) { close(); generation = UiResources.generation(); name = message = null; }
         if (text == null) text = new CodexTypography(c);
         if (images == null) images = new HudTextureCache(c);
-        if (body.isEmpty()) {
-            var rows = CodexTextLayout.wrap(current.text(), CARD_W - PAD_X * 2, s -> text.width(s, BODY_SIZE, BOLD));
-            body = rows.size() > BODY_MAX_LINES ? List.copyOf(rows.subList(0, BODY_MAX_LINES)) : List.copyOf(rows);
+        if (name == null || message == null) {
+            var t = text;
+            name = MegaphoneLayout.fit(current.sender().isBlank() ? "?" : current.sender(), NICKNAME_SIZE, NICKNAME_MIN_SIZE, NICKNAME.w(),
+                    (s, size) -> t.width(s, size, NICKNAME_FACE));
+            message = MegaphoneLayout.fit(current.text(), MESSAGE_SIZE, MESSAGE_MIN_SIZE, MESSAGE.w(), (s, size) -> t.width(s, size, MESSAGE_FACE));
         }
         boolean hasItem = !current.item().isEmpty();
-        var n = MegaphoneLayout.notice(hasItem, body.size());
-        var w = c.getWindow();
-        float s = Math.min(w.getScaledWidth() / 1920f, w.getScaledHeight() / 1080f);
-        float left = w.getScaledWidth() / 2f - CARD_W * s / 2f;   // 카드 왼쪽 (화면 좌표)
-        float alpha = Math.clamp(Math.min(shown / 220f, (current.duration() - shown) / 400f), 0, 1);
-        int tint = NotificationSkin.argb(alpha, 0xFFFFFF);
-        text.beginFrame(); images.beginFrame(); ctx.getMatrices().push();
+        var window = c.getWindow();
+        var f = MegaphoneLayout.canvas(window.getScaledWidth(), window.getScaledHeight());
+        var m = ctx.getMatrices();
+        text.beginFrame(); images.beginFrame();
+        m.push();
         try {
-            ctx.getMatrices().translate(left, 0, 350); ctx.getMatrices().scale(s, s, 1);
-            NotificationSkin.nine(images, ctx, CARD, CARD_TEX_W, CARD_TEX_H, CARD_CORNER, 0, n.cardY(), CARD_W, n.cardH(), CARD_CORNER_SCALE, tint);
-            float mid = CARD_W / 2f;
-            text.draw(ctx, fitName(current.sender()), mid, n.nameY(), NAME_SIZE, NotificationSkin.argb(alpha, NAME_COLOR), TITLE_FONT, true);
-            float by = n.bodyY();
-            for (String line : body) { text.draw(ctx, line, mid, by, BODY_SIZE, NotificationSkin.argb(alpha, BODY_COLOR), BOLD, true); by += BODY_LINE; }
-            HudMesh.quad(ctx, BAR_INSET, n.cardY() + n.cardH() - BAR_BOTTOM, (CARD_W - BAR_INSET * 2) * (1 - shown / (float) current.duration()), BAR_H,
-                    NotificationSkin.argb(alpha * .56f, BAR_COLOR), NotificationSkin.argb(alpha * .56f, BAR_COLOR));
+            m.translate(f.x(), f.y(), 350);
+            m.scale(f.scale(), f.scale(), 1);
+            nine(ctx, NOTICE_CARD, 640, 110, CARD_CORNER, CARD);
+            int tx = Math.round(TIMER.x()), ty = Math.round(TIMER.y()), th = Math.round(TIMER.h());
+            images.drawStretched(ctx, TIMER_TRACK, tx, ty, Math.round(TIMER.w()), th, 0xFFFFFFFF);
+            int fill = MegaphoneLayout.timerWidth(elapsed, current.duration());
+            images.drawPart(ctx, TIMER_FILL, tx, ty, fill, th, 0, 0, fill, th, 0xFFFFFFFF);   // 늘이지 않고 왼쪽부터 잘라 그림
+            text.draw(ctx, name.text(), NICKNAME.centerX(), textY(NICKNAME, NICKNAME_SIZE), name.size(), TEXT_COLOR, NICKNAME_FACE, true);
+            text.draw(ctx, message.text(), MESSAGE.centerX(), textY(MESSAGE, MESSAGE_SIZE), message.size(), TEXT_COLOR, MESSAGE_FACE, true);
             if (hasItem) {
-                // 아이템: 카드 바깥 위 가운데. 바닐라 GUI 아이템 렌더를 ICON 크기로 그린다 (픽셀 그림을 늘리지 않고 모델을 그 크기로).
-                if (alpha > .35f) {
-                    ctx.getMatrices().push();
-                    ctx.getMatrices().translate(mid - ICON / 2f, n.iconY(), 10); ctx.getMatrices().scale(ICON / 16f, ICON / 16f, 1);
-                    ctx.drawItem(current.item(), 0, 0);
-                    ctx.getMatrices().pop();
-                }
-                if (!HudPointer.active()) {
-                    String key = UiKeys.cursorName();
-                    if (!key.isEmpty()) text.drawOutline(ctx, key + " 아이템 보기", mid + ICON / 2f + 10, n.iconY() + ICON / 2f, HINT_SIZE, NotificationSkin.argb(alpha, HINT_COLOR), BOLD, false);
-                }
+                nine(ctx, ITEM_BACKING, 96, 96, ITEM_BACKING_CORNER, ITEM_BACKING_RECT);
+                drawIcon(ctx, current.item());
+                String key = UiKeys.cursorName();
+                if (!key.isEmpty()) text.draw(ctx, key + HINT_SUFFIX, HINT.x(), textY(HINT, HINT_SIZE), HINT_SIZE, TEXT_COLOR, HINT_FACE, false);
             }
-        } finally { ctx.getMatrices().pop(); images.endFrame(); }
-        // Ctrl 커서가 아이콘 위에 있으면 실제 아이템 툴팁 (카드 아래쪽에 떨어뜨려 글씨를 가리지 않게)
-        if (hasItem && HudPointer.active()) {
-            double mx = HudPointer.x(), my = HudPointer.y();
-            float ix = left + (CARD_W / 2f - ICON / 2f) * s, iy = n.iconY() * s, size = ICON * s;
-            if (mx >= ix && mx < ix + size && my >= iy && my < iy + size) {
-                int tx = Math.round(left + (CARD_W / 2f - ICON / 2f) * s), ty = Math.round((n.cardY() + n.cardH() + TOOLTIP_GAP) * s) + 12;
-                if (!ItemTooltipRenderer.render(ctx, c.textRenderer, current.item(), tx, ty)) ctx.drawItemTooltip(c.textRenderer, current.item(), tx, ty);
-            }
+        } finally { m.pop(); images.endFrame(); }
+        // Ctrl("마우스 포인터" 키)로 꺼낸 커서가 아이템 배경 위에 있으면 게임 아이템 툴팁: 카드 아래 (960, 282) 에서 아래로, 화면 안으로 보정
+        if (hasItem && HudPointer.active()
+                && ITEM_BACKING_RECT.contains(f.localX(HudPointer.x()), f.localY(HudPointer.y()))) {
+            int cx = Math.round(f.x() + TOOLTIP_X * f.scale()), top = Math.round(f.y() + TOOLTIP_Y * f.scale());
+            int margin = Math.round(TOOLTIP_MARGIN * f.scale());
+            if (!ItemTooltipRenderer.renderBelow(ctx, c.textRenderer, current.item(), cx, top, margin))
+                ctx.drawItemTooltip(c.textRenderer, current.item(), cx - 12, top + 12);   // 바닐라 툴팁 (가방 등): 왼쪽 위가 (cx, top) 근처
         }
     }
 
-    private static String fitName(String name) { return name == null || name.isBlank() ? "?" : name; }
+    private static void nine(DrawContext ctx, Identifier id, int sw, int sh, int corner, MegaphoneLayout.Rect r) {
+        NotificationSkin.nine(images, ctx, id, sw, sh, corner, r.x(), r.y(), r.w(), r.h(), 1f, 0xFFFFFFFF);
+    }
+
+    /** 실제 아이템 아이콘 80px: 큰 아이템 그림은 그 크기로 새로 그리고(ExactItemIcons), 아니면 GUI 아이템 렌더를 그 크기로 (GalaxyBagScreen 과 같은 방식). */
+    private static void drawIcon(DrawContext ctx, ItemStack stack) {
+        var m = ctx.getMatrices();
+        m.push();
+        try {
+            if (!ExactItemIcons.draw(ctx, stack, ICON.x(), ICON.y(), ICON.w())) {
+                m.translate(ICON.x(), ICON.y(), 0);
+                m.scale(ICON.w() / 16f, ICON.h() / 16f, 1);
+                ctx.drawItem(stack, 0, 0);
+            }
+        } finally { m.pop(); }
+    }
 }
