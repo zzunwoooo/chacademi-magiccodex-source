@@ -19,6 +19,10 @@ final class Links {
     // ------------------------------------------------------------------ mana (MagicCodexBridge)
     private static Object manaService;
     private static Class<?> manaClass;
+    // Method handles are looked up once per service (DiscoveryHooks reads mana for every player every 4 ticks).
+    private static Method mSnapshot, mTryConsume, mAdd, mRegen;
+    private static Method mClearCooldown; private static boolean clearLooked; // optional API: missing must not break the rest
+    private static Class<?> snapClass; private static Method mCurrent, mMaximum; // the real Snapshot class (snapshot() returns Optional)
 
     private static Object mana() {
         try {
@@ -33,36 +37,44 @@ final class Links {
         } catch (RuntimeException | LinkageError ignored) {}
         return null;
     }
-    static void resetMana() { manaService = null; manaClass = null; }
+    static void resetMana() {
+        manaService = null; manaClass = null;
+        mSnapshot = null; mTryConsume = null; mAdd = null; mRegen = null;
+        mClearCooldown = null; clearLooked = false;
+        snapClass = null; mCurrent = null; mMaximum = null;
+    }
+    private static Method snapshotMethod() throws NoSuchMethodException {
+        Method m = mSnapshot; if (m == null) mSnapshot = m = manaClass.getMethod("snapshot", UUID.class); return m;
+    }
+    /** Snapshot accessor by name, cached for the snapshot's real class. */
+    private static Method snapAccessor(Object s, boolean maximum) throws NoSuchMethodException {
+        Class<?> c = s.getClass();
+        if (c != snapClass) { mCurrent = c.getMethod("current"); mMaximum = c.getMethod("maximum"); snapClass = c; }
+        return maximum ? mMaximum : mCurrent;
+    }
+    private static Double snapValue(Player p, boolean maximum) {
+        Object m = mana();
+        if (m == null) return null;
+        try {
+            Optional<?> snap = (Optional<?>) snapshotMethod().invoke(m, p.getUniqueId());
+            if (snap.isEmpty()) return null;
+            Object s = snap.get();
+            return ((Number) snapAccessor(s, maximum).invoke(s)).doubleValue();
+        } catch (ReflectiveOperationException | RuntimeException e) { return null; }
+    }
 
     /** Current mana or null (Bridge missing / player not loaded). */
-    static Double mana(Player p) {
-        Object m = mana();
-        if (m == null) return null;
-        try {
-            Optional<?> snap = (Optional<?>) manaClass.getMethod("snapshot", UUID.class).invoke(m, p.getUniqueId());
-            if (snap.isEmpty()) return null;
-            Object s = snap.get();
-            return ((Number) s.getClass().getMethod("current").invoke(s)).doubleValue();
-        } catch (ReflectiveOperationException | RuntimeException e) { return null; }
-    }
-    static Double maxMana(Player p) {
-        Object m = mana();
-        if (m == null) return null;
-        try {
-            Optional<?> snap = (Optional<?>) manaClass.getMethod("snapshot", UUID.class).invoke(m, p.getUniqueId());
-            if (snap.isEmpty()) return null;
-            Object s = snap.get();
-            return ((Number) s.getClass().getMethod("maximum").invoke(s)).doubleValue();
-        } catch (ReflectiveOperationException | RuntimeException e) { return null; }
-    }
+    static Double mana(Player p) { return snapValue(p, false); }
+    static Double maxMana(Player p) { return snapValue(p, true); }
     /** Spend mana; false when the Bridge is missing or the player has too little. */
     static boolean consume(Player p, double amount) {
         if (amount <= 0) return true;
         Object m = mana();
         if (m == null) return false;
-        try { return Boolean.TRUE.equals(manaClass.getMethod("tryConsume", UUID.class, double.class).invoke(m, p.getUniqueId(), amount)); }
-        catch (ReflectiveOperationException | RuntimeException e) { return false; }
+        try {
+            Method f = mTryConsume; if (f == null) mTryConsume = f = manaClass.getMethod("tryConsume", UUID.class, double.class);
+            return Boolean.TRUE.equals(f.invoke(m, p.getUniqueId(), amount));
+        } catch (ReflectiveOperationException | RuntimeException e) { return false; }
     }
     /** Set by the plugin: 회복봉인 refuses mana gains that go through here (mana potion, conduit, ...). */
     static java.util.function.Predicate<Player> manaSealed;
@@ -70,15 +82,28 @@ final class Links {
         Object m = mana();
         if (m == null || amount <= 0) return false;
         if (manaSealed != null && manaSealed.test(p)) return false;
-        try { manaClass.getMethod("add", UUID.class, double.class).invoke(m, p.getUniqueId(), amount); return true; }
-        catch (ReflectiveOperationException | RuntimeException e) { return false; }
+        try {
+            Method f = mAdd; if (f == null) mAdd = f = manaClass.getMethod("add", UUID.class, double.class);
+            f.invoke(m, p.getUniqueId(), amount); return true;
+        } catch (ReflectiveOperationException | RuntimeException e) { return false; }
     }
     /** Named regeneration multiplier (1 removes it). Same key never stacks. */
     static boolean regen(UUID id, String key, double multiplier) {
         Object m = mana();
         if (m == null) return false;
-        try { manaClass.getMethod("setRegenerationMultiplier", UUID.class, String.class, double.class).invoke(m, id, key, multiplier); return true; }
-        catch (ReflectiveOperationException | RuntimeException e) { return false; }
+        try {
+            Method f = mRegen; if (f == null) mRegen = f = manaClass.getMethod("setRegenerationMultiplier", UUID.class, String.class, double.class);
+            f.invoke(m, id, key, multiplier); return true;
+        } catch (ReflectiveOperationException | RuntimeException e) { return false; }
+    }
+    /** Optional cooldown API: null handle = this Bridge build does not have it (looked up once per service). */
+    private static Method clearCooldownMethod() {
+        if (!clearLooked) {
+            try { mClearCooldown = manaClass.getMethod("clearCooldown", UUID.class, String.class); }
+            catch (NoSuchMethodException | RuntimeException missing) { mClearCooldown = null; }
+            clearLooked = true;
+        }
+        return mClearCooldown;
     }
     /**
      * Cooldown API proposed for the Bridge (docs/handoff/proposals/BRIDGE_SPELL_COOLDOWN_API_20261014.patch).
@@ -87,17 +112,15 @@ final class Links {
     static Boolean clearCooldown(Player p, String spell) {
         Object m = mana();
         if (m == null) return null;
-        try {
-            Method method = manaClass.getMethod("clearCooldown", UUID.class, String.class);
-            return Boolean.TRUE.equals(method.invoke(m, p.getUniqueId(), spell));
-        } catch (NoSuchMethodException missing) { return null; }
+        Method method = clearCooldownMethod();
+        if (method == null) return null;
+        try { return Boolean.TRUE.equals(method.invoke(m, p.getUniqueId(), spell)); }
         catch (ReflectiveOperationException | RuntimeException e) { return false; }
     }
     static boolean hasCooldownApi() {
         Object m = mana();
         if (m == null) return false;
-        try { manaClass.getMethod("clearCooldown", UUID.class, String.class); return true; }
-        catch (NoSuchMethodException e) { return false; }
+        return clearCooldownMethod() != null;
     }
 
     /** 마력 (MagicCodexBridge.magicPower), 0 when the Bridge is missing. */

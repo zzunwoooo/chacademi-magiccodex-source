@@ -53,12 +53,14 @@ final class Guards implements Listener {
     int count() { return guards.values().stream().mapToInt(Map::size).sum(); }
 
     private Guard active(Entity e, Type type) {
-        if(!plugin.protection().at(e.getLocation()))return null;
+        // cheap map checks first: almost every damage/knockback/potion event has no guard at all,
+        // so the WorldGuard query only runs when a live guard of this type exists
         var m = guards.get(e.getUniqueId());
         if (m == null) return null;
         Guard g = m.get(type);
         if (g == null) return null;
         if (g.until() < now) { m.remove(type); return null; }
+        if(!plugin.protection().at(e.getLocation()))return null;
         return g;
     }
     private void consume(Entity e, Type type) {
@@ -143,9 +145,9 @@ final class Guards implements Listener {
     public void deflect(EntityDamageByEntityEvent e) {
         if (!(e.getEntity() instanceof LivingEntity le) || e.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
         if (!(e.getDamager() instanceof LivingEntity attacker)) return;
-        if(!plugin.targets().enemy(le,attacker)||!plugin.protection().harm(le,attacker))return;
         Guard g = active(le, Type.DEFLECT);
         if (g == null) return;
+        if(!plugin.targets().enemy(le,attacker)||!plugin.protection().harm(le,attacker))return;
         consume(le, Type.DEFLECT);
         e.setDamage(e.getDamage() * (1 - Math.clamp(g.reduce(), 0, 1)));
         Vector away = attacker.getLocation().toVector().subtract(le.getLocation().toVector()).setY(0);

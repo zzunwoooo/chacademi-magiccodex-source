@@ -57,7 +57,9 @@ final class ShinyBridge implements Listener,AutoCloseable {
   boolean value=isShiny(before);for(var after:event.getTransformedEntities())if(after instanceof LivingEntity living)Bukkit.getScheduler().runTask(plugin,()->{if(living.isValid())mark(living,value);});
  }
  @EventHandler public void unload(EntitiesUnloadEvent event){for(var e:event.getEntities())loaded.remove(e.getUniqueId());}
- @EventHandler public void track(PlayerTrackEntityEvent event){if(event.getEntity() instanceof LivingEntity e)send(event.getPlayer(),e,isShiny(e));}
+ // Only shiny mobs are announced on track: the client treats every untracked/unknown entity as normal (UUID + entity id check,
+ // cleared on unload/JOIN/DISCONNECT). mark(false) still sends an explicit false when a shiny turns normal.
+ @EventHandler public void track(PlayerTrackEntityEvent event){if(event.getEntity() instanceof LivingEntity e&&isShiny(e))send(event.getPlayer(),e,true);}
  /** Entities tracked during login were announced before the client registered our channel; resend once it does. */
  @EventHandler public void channel(PlayerRegisterChannelEvent event){
   if(!ShinyProtocol.CHANNEL.equals(event.getChannel()))return;var p=event.getPlayer();

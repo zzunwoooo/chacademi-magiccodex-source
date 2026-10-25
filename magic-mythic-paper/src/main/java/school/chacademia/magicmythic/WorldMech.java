@@ -416,12 +416,14 @@ final class WorldMech extends Mech {
             Material m = Material.matchMaterial(plugin.getConfig().getString("platform-material", "BARRIER"));
             if (m == null || !m.isBlock()) m = Material.BARRIER;
             Block under = pl.getLocation().getBlock().getRelative(BlockFace.DOWN);
-            var placed = new ArrayList<Block>();
+            var spots = new ArrayList<Block>();
             for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) {
                 Block b = under.getRelative(x, 0, z);
                 if (!b.getType().isAir() || !Targets.canPlace(pl, b, b.getRelative(BlockFace.DOWN), m)) continue;
-                if (plugin.tempBlocks().place(b, m)) placed.add(b);
+                spots.add(b);
             }
+            // one journal write for the whole platform (was one per block)
+            var placed = new ArrayList<Block>(plugin.tempBlocks().placeAll(spots, m));
             if (placed.isEmpty()) return false;
             platforms.put(pl.getUniqueId(), placed);
             pl.setFallDistance(0);
@@ -432,7 +434,7 @@ final class WorldMech extends Mech {
         }
         private void clearPlatform(UUID id) {
             var old = platforms.remove(id);
-            if (old != null) old.forEach(plugin.tempBlocks()::remove);
+            if (old != null) plugin.tempBlocks().removeAll(old); // one journal write for the whole platform
         }
 
         /**

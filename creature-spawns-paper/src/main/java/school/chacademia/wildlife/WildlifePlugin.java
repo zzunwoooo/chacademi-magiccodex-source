@@ -48,7 +48,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new NoHuskHunger(),this);
         combat.reload(getConfig().getConfigurationSection("combat"));
         getServer().getPluginManager().registerEvents(combat,this);
-        Bukkit.getScheduler().runTaskTimer(this,combat::regenTick,40,40);
+        Bukkit.getScheduler().runTaskTimer(this,combat::regenTick,43,40); // 타이밍 조정: 시작 위상을 cleanup·TargetHud와 엇갈림
         // 구조물 색인은 지연 방식이다: 청크 로드 때가 아니라 구조물 조건이 있는 서식지가 물을 때만 계산한다.
         getServer().getPluginManager().registerEvents(structures,this);
         crops.reload(); getServer().getPluginManager().registerEvents(crops,this);
@@ -57,7 +57,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
             catch(RuntimeException e){getLogger().log(java.util.logging.Level.WARNING,"명령어 허브에 야생몹 명령을 붙이지 못했습니다",e);}
         }else getLogger().warning("MagicCodexBridge 명령어 허브가 없어 야생몹 관리·테스트 명령을 등록하지 않았습니다 (스폰은 그대로 동작).");
         // Handles entities loaded after restart too; only our marked natural mobs are eligible.
-        Bukkit.getScheduler().runTaskTimer(this,this::cleanup,200,200);
+        Bukkit.getScheduler().runTaskTimer(this,this::cleanup,211,200); // 타이밍 조정: regenTick·TargetHud와 같은 틱에 겹치지 않게
     }
     /** excluded-areas가 없거나 항목이 잘못돼도 스폰 검사에서 NPE가 나지 않도록 여기서 걸러 둔다. */
     /** rarity-model-scale: 등급별 모델 크기. 없으면 3성 1.35배(오너 2026-10-23), 나머지 1. */
@@ -328,7 +328,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         if(!naturalChecks.isEmpty()) out.add(" (구) 미몹 랜덤스폰 조건 호출="+naturalChecks+" ← 0이 아니면 RandomSpawns 파일이 아직 남아 있음");
         return out;
     }
-    @Override public void onDisable(){spawner.stop();if(naturalGate!=null)naturalGate.close();crops.close();}
+    @Override public void onDisable(){combat.restoreAll();spawner.stop();if(naturalGate!=null)naturalGate.close();crops.close();}
     // ── 자체 스폰 루프(WildSpawner)용 ──
     Set<String> spawnWorlds(){return settings.enabled()?settings.worlds():Set.of();}
     double playerMinDistance(){return Math.sqrt(settings.playerMinSquared());}
