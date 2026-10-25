@@ -139,8 +139,18 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     String artifactCooldowns(UUID player){return artifacts==null?"":artifacts.cooldownText(player);}
     void restoreArtifactCooldowns(UUID player,String text){if(artifacts!=null)artifacts.restoreCooldowns(player,text);}
     /** Artifact runtime state that must survive a server switch (internal cooldowns, timed buffs, armed flags). */
-    String artifactRuntime(Player p){return artifactEffects==null?"":artifactEffects.runtimeText(p);}
-    void restoreArtifactRuntime(Player p,String text){if(artifactEffects!=null)artifactEffects.restoreRuntime(p,text);}
+    String artifactRuntime(Player p){
+        // 동행 펫 (2026-10-26): 꺼낸 펫 ID를 같은 칸 앞에 "cpet=ID;" 로 붙인다 (새 DB 컬럼 없음, 칸 최대 4096자).
+        var c=pets==null?null:pets.companions();
+        return CompanionMath.join(c==null?null:CompanionMath.pet(c.runtimeToken(p)),artifactEffects==null?"":artifactEffects.runtimeText(p),4096);
+    }
+    void restoreArtifactRuntime(Player p,String text){
+        var c=pets==null?null:pets.companions();
+        if(c!=null)c.restore(p,CompanionMath.pet(text));
+        if(artifactEffects!=null)artifactEffects.restoreRuntime(p,CompanionMath.withoutPet(text));
+    }
+    /** 동행 펫 passive fishing: 낚시 희귀 등급 배율 (1 = 없음). */
+    double petFishing(Player p){var c=pets==null?null:pets.companions();return c==null?1:c.fishingFactor(p);}
     /** A spell was cast successfully (after mana and cooldown). */
     void artifactCast(Player p,String spell,double cost){if(artifactEffects!=null)artifactEffects.cast(p,spell,cost);}
     private PlayerStateBridge playerState;
@@ -152,7 +162,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     void savePlayerState(Player p){if(playerState!=null)playerState.save(p);}
     /** 잦은 변경(마법 시전)용: 표시만 하고 다음 주기 저장에 묶는다. 종료·서버 이동 시에는 항상 저장된다. */
     void markPlayerStateDirty(Player p){if(playerState!=null)playerState.markDirty(p);}
-    Double equipmentPower(UUID id,Double base){Double v=equipment==null?base:equipment.power(id,base);return v==null||artifactEffects==null?v:v*artifactEffects.rules.powerFactor(id);} // 단 하나의 서: 지능 -50%
+    Double equipmentPower(UUID id,Double base){Double v=equipment==null?base:equipment.power(id,base);if(v!=null&&artifactEffects!=null)v=v*artifactEffects.rules.powerFactor(id); // 단 하나의 서: 지능 -50%
+        var c=pets==null?null:pets.companions();return v==null||c==null?v:v*c.powerFactor(id);} // 동행 펫 combat intelligence
     /** mana-spells.yml entry (cost, cooldown) of an enabled spell, or null. */
     ManaSpells.Spell spellRule(String id){return mana==null?null:mana.reviewSpell(id);}
     /** 단 하나의 서: may change the cooldown of a successful cast before the client hears it. */
@@ -227,7 +238,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
             catch (RuntimeException | LinkageError error) { getLogger().warning("LuckPerms 알림 연결 실패: 보조 권한 확인을 사용합니다."); }
         }
         getServer().getScheduler().runTaskTimer(this, this::process, 1L, 20L);
-        try { mana=new ManaBridge(this);stats2=new PlayerStats(this,mana.mana);stats2.register("equipment",this::refreshEquipment);stats=new StatsBridge(this,mana);school=new SchoolBridge(this,stats.service());social=new SocialBridge(this,mana,stats.service());partyIdentity=new PartyIdentityBridge(this);partyVitals=new PartyVitalsBridge(this,mana.mana);ascension=new AscensionBridge(this,stats.service());temperature=new TemperatureBridge(this);pets=new PetBridge(this);climate=new ClimateService(this,mana.mana,temperature.service());equipment=new EquipmentBridge(this,mana.mana);coreVisuals=new CoreVisualBridge(this);appraisal=new AppraisalBridge(this);enhancement=new EnhancementBridge(this);reconfiguration=new ReconfigurationBridge(this,enhancement);playerState=new PlayerStateBridge(this,mana.mana,DatabaseSettings.load(java.nio.file.Files.exists(getDataFolder().toPath().resolve("player-state-database.properties"))?getDataFolder().toPath().resolve("player-state-database.properties"):getDataFolder().toPath().resolve("database.properties"))); }
+        try { mana=new ManaBridge(this);stats2=new PlayerStats(this,mana.mana);stats2.register("equipment",this::refreshEquipment);stats=new StatsBridge(this,mana);school=new SchoolBridge(this,stats.service());social=new SocialBridge(this,mana,stats.service());partyIdentity=new PartyIdentityBridge(this);partyVitals=new PartyVitalsBridge(this,mana.mana);ascension=new AscensionBridge(this,stats.service());temperature=new TemperatureBridge(this);pets=new PetBridge(this,mana.mana);climate=new ClimateService(this,mana.mana,temperature.service());if(pets.companions()!=null)climate.immune(pets.companions()::climateImmune);equipment=new EquipmentBridge(this,mana.mana);coreVisuals=new CoreVisualBridge(this);appraisal=new AppraisalBridge(this);enhancement=new EnhancementBridge(this);reconfiguration=new ReconfigurationBridge(this,enhancement);playerState=new PlayerStateBridge(this,mana.mana,DatabaseSettings.load(java.nio.file.Files.exists(getDataFolder().toPath().resolve("player-state-database.properties"))?getDataFolder().toPath().resolve("player-state-database.properties"):getDataFolder().toPath().resolve("database.properties"))); }
         catch(Exception error) {
             getLogger().severe("마나 초기화 실패: "+error.getMessage());
             getServer().getPluginManager().disablePlugin(this);return;

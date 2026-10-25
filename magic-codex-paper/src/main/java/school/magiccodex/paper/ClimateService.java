@@ -94,6 +94,13 @@ public final class ClimateService implements Listener, PluginMessageListener, Au
     public boolean enabledIn(World world){return enabled&&world!=null&&worlds.contains(world.getName());}
     public OptionalDouble temperature(UUID id){var v=temperatures.get(id);return v==null?OptionalDouble.empty():OptionalDouble.of(v);}
     public double powerMultiplier(String element){return switch(element.toLowerCase(Locale.ROOT)){case "fire","flame","화염"->firePower;case "water","물"->waterPower;default->1;};}
+    /** 시전자 기준 원소 위력 배율: 동행 펫 climate_immune 플레이어는 1 (좋은 것·나쁜 것 모두 안 받음). 계절 마법 쪽은 이것을 부르면 된다. */
+    public double powerMultiplier(org.bukkit.entity.Entity caster,String element){return caster instanceof Player p&&immune.test(p.getUniqueId())?1:powerMultiplier(element);}
+    /** 동행 펫 climate_immune (PetCompanions). 메인 스레드. */
+    private java.util.function.Predicate<UUID> immune=id->false;
+    void immune(java.util.function.Predicate<UUID> test){immune=test==null?id->false:test;}
+    /** 다음 표본 때 이 플레이어의 계절·온도 배율을 다시 계산 (펫을 꺼내거나 넣었을 때). */
+    void resample(Player p){enqueue(p);}
     private long worldTime(){var w=Bukkit.getWorld(config.getString("clock-world","world"));return w==null?0:w.getFullTime();}
     /** 계절 시계의 현재 값: 단독 모드는 월드 시간(틱), 공유 모드는 실제 시각을 틱으로 환산한 값. */
     private boolean realtimeMode(){return config.getString("season-clock","calendar").equalsIgnoreCase("realtime");}
@@ -192,8 +199,9 @@ public final class ClimateService implements Listener, PluginMessageListener, Au
         float computed=ClimateMath.temperature(setting(prefix+"minimum",8),setting(prefix+"maximum",24),p.getWorld().getTime(),offset,p.getWorld().hasStorm(),setting("temperature.rain-cooling",2));
         temperature.computed(p,computed);float celsius=temperature.getTemperature(id);temperatures.put(id,celsius);DiscoveryLink.state(id,"state.temperature",celsius);
         boolean survival=!p.isDead()&&(p.getGameMode()==GameMode.SURVIVAL||p.getGameMode()==GameMode.ADVENTURE);
-        double speed=1,regen=setting(prefix+"mana-regeneration",1);
-        if(survival&&celsius<setting("temperature.cold-below",0)){
+        boolean immuneNow=immune.test(id); // 동행 펫 climate_immune: 계절·온도 배율 전부 1
+        double speed=1,regen=immuneNow?1:setting(prefix+"mana-regeneration",1);
+        if(!immuneNow&&survival&&celsius<setting("temperature.cold-below",0)){
             boolean severe=celsius<setting("temperature.severe-cold-below",-10);String band=severe?"severe-cold":"cold";
             speed=setting("temperature."+band+"-speed-multiplier",1);regen*=setting("temperature."+band+"-mana-multiplier",1);
         }
@@ -204,7 +212,7 @@ public final class ClimateService implements Listener, PluginMessageListener, Au
         }
         if(mana.snapshot(id).isPresent())mana.setRegenerationMultiplier(id,"climate:regeneration",regen);
         Long previous=lastSample.put(id,(long)ticks);double seconds=previous==null?0:Math.clamp((ticks-previous)/20.0,0,10);
-        if(survival&&celsius>=setting("temperature.hot-from",35)){
+        if(!immuneNow&&survival&&celsius>=setting("temperature.hot-from",35)){
             String band=celsius>=setting("temperature.severe-hot-from",40)?"severe-hot":"hot";
             double extra=Math.max(0,setting("temperature."+band+"-exhaustion-per-5-seconds",0))*seconds/5;
             p.setExhaustion((float)Math.min(40,p.getExhaustion()+extra));

@@ -365,7 +365,7 @@ final class FishingBridge implements PluginMessageListener, Listener {
             if (pool.isEmpty()) pool.add(config.fish.getFirst());
             boolean[] has = new boolean[4];
             for (var f : pool) has[f.grade()] = true;
-            float bonus = 1 + bait.a() / 100f;
+            float bonus = (1 + bait.a() / 100f) * (float) plugin.petFishing(p);   // 동행 펫 passive fishing
             int grade = pickGrade(config.rarity[zone], has, bonus);
             double total = 0;
             var weights = new double[pool.size()];

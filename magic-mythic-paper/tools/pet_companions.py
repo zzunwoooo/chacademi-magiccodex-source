@@ -103,7 +103,7 @@ def pet_skill_lines(name):
                 n = max(1, -(-float(v) * DAMAGE_SCALE // 1)); dmg += n; v = str(int(n))
             params.append(f'{k}={v}')
         params += ['mult=0', 'hits=enemies', 'warn=false', 'spell=pet_skill']
-        out.append(f"{m.group(1)}{{{';'.join(params)}}} @target")
+        out.append(f"{m.group(1)}{{{';'.join(params)}}} @trigger")
     while out and out[-1].startswith('delay'): out.pop()
     return (out, int(dmg)) if out else None
 
