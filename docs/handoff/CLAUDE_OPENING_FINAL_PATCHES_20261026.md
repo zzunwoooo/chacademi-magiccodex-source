@@ -593,3 +593,25 @@ items:
 - 서버 `PortraitChannel`: DB 읽기 비동기, 한 사람 요청 간격 250ms·같은 대상 3초, 동시에 보내는 남의 그림 2장(나머지는 32개까지 줄, 넘치면 BUSY → 클라가 잠시 뒤 다시), 조각은 2틱마다 1개, 같은 사람의 새 요청은 옛 요청을 끊음. 공유 DB 면 다른 서버 사람 그림도. 그림 없는 사람은 "없음".
 - 클라 `OtherPortraits`: 캐시 `config/magiccodex/portraits/others/<sha>.png` + `index.txt`(uuid→sha), 최근 64장만 유지, 같은 sha 면 다시 안 받음. **처음 받는 동안만 초상 칸에 "불러오는 중"**, 다음부턴 캐시를 먼저 보여 주고 바뀌었으면 새로 받아 바꿈. 디코드·해시·디스크는 IO 스레드, 텍스처 업로드는 클라 스레드 (메모리엔 최근 4장). 없음·실패 → 3D 스킨. 일러스트는 초상 칸 높이에 맞춰 비율 유지·가운데·칸 밖은 잘라냄 (내 일러스트도 같은 방식).
 - **배포 주의: ChacaPortrait 플러그인 + chaca-portrait-protocol + MagicCodex 모드 같이.**
+
+## 29. 하우징 특수 가구 클릭 (2026-10-26, 메모 #108)
+하우징 방은 실제 월드가 아니라 클라 창(`HousingScreen`, 쿼터뷰 직접 렌더). 원래 기숙사 점수판·내 정보 액자만 연결돼 있었고, 나머지를 오너 승인 표대로 **기존 창을 그대로** 열게 했다. 남의 방(구경)은 한 번 클릭, 내 방 꾸미기 중엔 **두 번 클릭**(첫 클릭은 평소처럼 집힘 → 제자리로 돌리고 엶). 이름표에 "클릭해서 보기 / 두 번 눌러 열기".
+
+| 가구 | 방문자 | 주인 |
+|---|---|---|
+| 빗자루 거치대 `broom_rack` | 주인 장착 빗자루 3D 모델이 가구 위에 걸려 보임, 이름표·클릭(방 알림)에 빗자루 이름 | 같음 (내 장착 빗자루) |
+| 아티팩트 진열장 `artifact_cabinet` | 장착 아티팩트 아이콘 최대 8개(4×2) 전시, 클릭 → 아티팩트 도감 **구경 모드**(주인 장착분만·장착/해제 버튼 없음), 닫으면 방으로 돌아옴 | 같음 |
+| 큐디치 트로피장 `trophy_case` | 주인 큐디치 티어 아이콘 전시(이름표에 티어/전적 없음), 클릭 → 결투장 로비 전적 탭(주인 닉네임 검색) | 같음 (내 전적) |
+| 기숙사 점수판 `house_scoreboard` | 기숙사 점수 창 (기존) | 같음 |
+| 내 정보 액자 `profile_frame` | `/스탯창 <주인>` (주인이 같은 서버에 접속 중일 때만 서버가 엶 — 기존) | 내 정보창 |
+| 연금 작업대 · 거울 옷장 · 펫 쿠션 · 미끼 상자(3종) | "주인만 쓸 수 있어요" 알림 | `/연금술` · 칭호 창 · 펫 창 · **"미끼 상자는 준비 중이에요"** (미끼 생성·받기 기능/수치 없음 → 오너 결정 대기) |
+| 수조 | **안 함**: furniture.yml 에 수조 가구가 없고, 아공간 수조 창은 본인만(마법으로) 여는 창이라 남의 수조를 볼 서버 경로가 없음 | — |
+
+- 데이터 (렉 없음): 방에 들어갈 때 서버가 ROOM 다음에 **SHOWCASE 한 번**(새 종류 7: 주인 UUID·빗자루 id·빗자루 이름·아티팩트 id ≤8). 값은 공용 DB 새 표 `codex_housing_showcase`(자동 생성) — 접속 30초 뒤·주인이 자기 방 열 때·이 서버에 있는 주인 방을 누가 열 때, **바뀌었을 때만** 1줄 upsert (매 틱·주기 작업 없음, 나갈 때는 안 씀: Bridge 가 아티팩트 보유 정보를 먼저 지울 수 있어서). 다른 서버에 있는 주인 = 마지막에 적힌 값. 내 방은 내 클라 값(BroomUiLink·ArtifactClient). 티어는 트로피장을 처음 그릴 때 주인당 한 번 프록시 PROFILE(정보창 StatsRanks 와 같은 요청)을 묻고 `HousingShowcase` 가 답을 가로챔.
+- 값 읽기: `Showcases`(housing-paper)가 리플렉션 — ChacademyMotion `equippedBroomId` + `brooms().brooms().get(id).name()`, MagicCodexBridge 새 public `equippedArtifactIds(Player)` (한 줄). 플러그인이 없으면 빈 값.
+- 옛 모드는 SHOWCASE 를 모르는 종류로 버림 (호환). 진열장 구경 중엔 방 세션 유지(`HousingClient.suspend`), 다른 창으로 가 버리면 그때 방 닫힘 처리.
+- 꾸미기 중 저장 안 한 배치가 있으면 다른 창으로 넘어가는 가구(연금·칭호·펫·정보·점수판·트로피)는 "먼저 저장해 주세요" 로 막음.
+- **디자인 납품 대기 (오너 2026-10-26, GPT 담당) — 교체 지점:** 빗자루 거치대 상세 카드 · 아티팩트 진열장 구경 창 · 트로피장 전적 카드 · 수조 구경 창. 좌표·그림 경로는 전부 `HousingShowcaseLayout`(가구 위 전시 크기·위치, 티어 PNG 경로, 납품 PNG 자리 `*_TEXTURE`, 구경 모드 문구)에 모았고, 화면 전환은 `HousingScreen.useFurniture` 의 `교체 지점 1~3` 주석 자리. 가구 위 전시 위치는 가구 그림마다 달라 대략값 → 게임에서 보고 `HousingShowcaseLayout` 숫자만 조정.
+- 바뀐 파일: `magic-codex-protocol` HousingProtocol(SHOWCASE) · `housing-paper` Showcases(새)·HousingStore(표·읽기/쓰기)·Rooms(입장 때 전송)·HousingPlugin(등록) · `magic-codex-paper` MagicCodexBridge(`equippedArtifactIds` 한 줄) · `magic-codex-fabric` HousingScreen·HousingClient·HousingShowcase(새)·HousingShowcaseLayout(새)·ArtifactCodexScreen(구경 모드)·KyudichiLobbyScreen(`record(mode,nick)`)·KyudichiQueueClient(답 가로채기 한 줄). 테스트: HousingProtocolTest.showcase, ShowcasesTest.
+- **같이 배포:** ChacaHousing 플러그인 + MagicCodexBridge + MagicCodex 모드 + magic-codex-protocol (학교·야생 모두). 프록시·ChacademyMotion 은 그대로.
+- 게임 확인: ① 친구 방에서 빗자루 거치대 위 빗자루 모델·이름표 이름, 클릭 알림 ② 진열장 아이콘 → 클릭 → "OO의 아티팩트" 도감(버튼 없음) → 닫으면 방으로 ③ 트로피장 티어 아이콘 → 클릭 → 결투장 전적 탭에 주인 기록 ④ 남의 연금 작업대 클릭 → "주인만 쓸 수 있어요" ⑤ 내 방 꾸미기에서 연금 작업대 두 번 클릭 → 연금술 창, 거울 옷장 → 칭호 창, 펫 쿠션 → 펫 창, 미끼 상자 → "준비 중" ⑥ 주인이 다른 서버일 때도 ①② (마지막 값) ⑦ 서버 로그에 "전시 값" DB 경고 없는지.

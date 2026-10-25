@@ -21,6 +21,9 @@ public final class HousingPlugin extends JavaPlugin implements Listener {
     /** #51 하우징 랭킹 채널. */
     private HousingRankServer rank;
     HousingRankServer rank() { return rank; }
+    /** #108 특수 가구 전시 값 (빗자루 거치대·아티팩트 진열장). */
+    private Showcases showcases;
+    Showcases showcases() { return showcases; }
 
     @Override public void onEnable() {
         saveDefaultConfig();
@@ -36,6 +39,7 @@ public final class HousingPlugin extends JavaPlugin implements Listener {
             else if (r[0] > 0) getLogger().severe("방 확장 결제 " + r[0] + "건이 끝나지 않은 채 재시작됐어요 → uncertain. /유저관리 <닉네임> 방 확장기록 으로 확인하세요.");
         });
         rooms = new Rooms(this);
+        showcases = new Showcases(this);
         net = new Net(this); net.register();
         search=new HousingSearchServer(this);
         rank=new HousingRankServer(this);
@@ -71,8 +75,8 @@ public final class HousingPlugin extends JavaPlugin implements Listener {
         return Catalog.parse(yaml, getLogger());
     }
 
-    @EventHandler public void onJoin(PlayerJoinEvent e) { rooms.join(e.getPlayer()); }
-    @EventHandler public void onQuit(PlayerQuitEvent e) { rooms.quit(e.getPlayer()); doors.forget(e.getPlayer().getUniqueId()); }
+    @EventHandler public void onJoin(PlayerJoinEvent e) { rooms.join(e.getPlayer()); showcases.joined(e.getPlayer()); }
+    @EventHandler public void onQuit(PlayerQuitEvent e) { rooms.quit(e.getPlayer()); doors.forget(e.getPlayer().getUniqueId()); showcases.quit(e.getPlayer().getUniqueId()); }
 
     Settings settings() { return settings; }
     Catalog catalog() { return catalog; }

@@ -28,6 +28,8 @@ import school.magiccodex.protocol.HousingRules.Placement;
  *   4 FRIENDS    u8 n · n×(Person · u8 온라인 · u8 방 크기)
  *   5 RESULT     u8 ok · UTF 문구
  *   6 CATALOG    i32 revision · u16 n · n×Def
+ *   7 SHOWCASE   UUID 방 주인 · UTF 빗자루 id("" 없음) · UTF 빗자루 이름 · u8 n(≤8) · n×UTF 아티팩트 id
+ *                (#108 2026-10-26: 방에 들어갈 때 ROOM 다음에 한 번. 빗자루 거치대·아티팩트 진열장 전시용. 옛 모드는 모르는 종류라 버린다)
  *   Person = UUID · UTF 닉네임 · i8 기숙사(-1~3) · UTF 스킨 해시("" 가능) · u8 slim
  *   Layout = UTF 벽지 · UTF 바닥재 · u8 n · n×(UTF id · u8 x · u8 y · u8 z · u8 rot)
  *   Entry  = i64 id · Person 작성자 · i64 작성 시각(ms) · UTF 글
@@ -39,7 +41,9 @@ public final class HousingProtocol {
     public static final String CHANNEL="chacademi:housing";
     public static final int VERSION=1,MAX_BYTES=32_000;
     public static final int VISIT=1,CLOSE=2,SAVE=3,EXPAND=4,LIKE=5,GB_POST=6,GB_DELETE=7,FRIENDS=8;
-    public static final int K_ROOM=1,K_VIEWERS=2,K_GUESTBOOK=3,K_FRIENDS=4,K_RESULT=5,K_CATALOG=6;
+    public static final int K_ROOM=1,K_VIEWERS=2,K_GUESTBOOK=3,K_FRIENDS=4,K_RESULT=5,K_CATALOG=6,K_SHOWCASE=7;
+    /** #108 전시: 아티팩트 최대 개수(ArtifactProtocol.MAX_EQUIPPED 와 같음), id·이름 최대 글자. */
+    public static final int MAX_SHOWCASE_ARTIFACTS=8,SHOWCASE_CHARS=64;
     public static final int F_OPEN=1,F_EDIT=2,F_LIKED=4,F_HOME=8;
     public static final int MAX_GUESTBOOK=30,MAX_FRIENDS=100,MAX_VIEWERS_SHOWN=16,MAX_CATALOG=400,MAX_OWNED=400,GUESTBOOK_CHARS=60;
     private HousingProtocol(){}
@@ -115,13 +119,24 @@ public final class HousingProtocol {
     }
 
     // ------------------------------------------------------------ 메시지 (서버 → 클라이언트)
-    public sealed interface Message permits RoomMessage,Viewers,Guestbook,FriendList,Result,Catalog {}
+    public sealed interface Message permits RoomMessage,Viewers,Guestbook,FriendList,Result,Catalog,Showcase {}
     public record RoomMessage(Room room) implements Message {}
     public record Viewers(UUID owner,int total,List<Viewer> shown) implements Message { public Viewers{shown=List.copyOf(shown);} }
     public record Guestbook(UUID owner,List<Entry> entries) implements Message { public Guestbook{entries=List.copyOf(entries);} }
     public record FriendList(List<Friend> friends) implements Message { public FriendList{friends=List.copyOf(friends);} }
     public record Result(boolean ok,String message) implements Message {}
     public record Catalog(int revision,List<Def> defs) implements Message { public Catalog{defs=List.copyOf(defs);} }
+    /** #108 방 주인 전시 값: 장착 빗자루(없으면 "")·그 이름·장착 아티팩트 id. 모르는 값은 빈 값 (꾸며 내지 않음). */
+    public record Showcase(UUID owner,String broom,String broomName,List<String> artifacts) implements Message {
+        public Showcase{
+            Objects.requireNonNull(owner);
+            broom=broom==null?"":broom;broomName=broomName==null?"":broomName;
+            if(broom.length()>SHOWCASE_CHARS||broomName.length()>SHOWCASE_CHARS)throw new IllegalArgumentException("broom");
+            artifacts=List.copyOf(artifacts);
+            if(artifacts.size()>MAX_SHOWCASE_ARTIFACTS)throw new IllegalArgumentException("artifacts");
+            for(String id:artifacts)if(id==null||id.isBlank()||id.length()>SHOWCASE_CHARS)throw new IllegalArgumentException("artifact id");
+        }
+    }
 
     public static byte[] encode(Message m){
         byte[] bytes=write(out->{
@@ -158,6 +173,10 @@ public final class HousingProtocol {
                         out.writeUTF(d.id());out.writeUTF(d.name());out.writeByte(d.category());out.writeByte(d.sub());out.writeByte(d.w());out.writeByte(d.d());
                         out.writeByte(d.height());out.writeInt(d.color());out.writeInt(d.accent());out.writeUTF(d.icon());out.writeByte(d.max());
                     }
+                }
+                case Showcase sc->{
+                    out.writeByte(K_SHOWCASE);uuid(out,sc.owner());out.writeUTF(sc.broom());out.writeUTF(sc.broomName());
+                    out.writeByte(sc.artifacts().size());for(String id:sc.artifacts())out.writeUTF(id);
                 }
             }
         });
@@ -205,6 +224,12 @@ public final class HousingProtocol {
                         if(!seen.add(d.id()))throw new IllegalArgumentException("Duplicate def");list.add(d);
                     }
                     yield new Catalog(rev,list);
+                }
+                case K_SHOWCASE->{
+                    UUID owner=uuid(in);String broom=in.readUTF(),name=in.readUTF();int n=in.readUnsignedByte();
+                    if(n>MAX_SHOWCASE_ARTIFACTS)throw new IllegalArgumentException("artifacts");
+                    var list=new ArrayList<String>(n);for(int i=0;i<n;i++)list.add(in.readUTF());
+                    yield new Showcase(owner,broom,name,list);
                 }
                 default->throw new IllegalArgumentException("Unknown housing kind");
             };

@@ -33,6 +33,16 @@ class HousingProtocolTest {
             assertEquals(r, HousingProtocol.decodeRequest(HousingProtocol.encode(r)));
     }
 
+    /** #108 전시 값 (빗자루 거치대·아티팩트 진열장). */
+    @Test void showcase() {
+        var s = new Showcase(A, "chacus_2000_angel", "차큐스 2000 (엔젤)", List.of("lucky_coin", "wind_charm"));
+        assertEquals(s, HousingProtocol.decode(HousingProtocol.encode(s)));
+        var empty = new Showcase(A, null, null, List.of());
+        assertEquals(new Showcase(A, "", "", List.of()), HousingProtocol.decode(HousingProtocol.encode(empty)));
+        assertThrows(IllegalArgumentException.class, () -> new Showcase(A, "", "", java.util.Collections.nCopies(HousingProtocol.MAX_SHOWCASE_ARTIFACTS + 1, "x")));
+        assertThrows(IllegalArgumentException.class, () -> new Showcase(A, "", "", List.of(" ")));
+    }
+
     /** Same strings in housing-paper HousingWireTest: both sides must produce/accept exactly these bytes. */
     static final String GOLDEN_ROOM = "010103000000000000000100000000000000020006eca480ec9ab001000000030400000000000013880000000c0000000200000028000100000977616c6c5f7374617200000200036265640100000100056672616d650201000000030003626564000100056672616d650002000977616c6c5f737461720001";
     static final String GOLDEN_SAVE = "010302000977616c6c5f7374617200000200036265640100000100056672616d6502010000";

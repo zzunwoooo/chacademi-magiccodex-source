@@ -102,7 +102,7 @@ public final class KyudichiQueueClient {
             }
             case Board x -> { board[Math.clamp(x.mode(), 0, 1)] = x; boardAt = Util.getMeasuringTimeMs(); }
             case Ranks x -> { ranks[Math.clamp(x.mode(), 0, 1)] = x; ranksAt = Util.getMeasuringTimeMs(); }
-            case ProfileReply x -> { if (StatsRanks.take(x)) return; profile[Math.clamp(x.mode(), 0, 1)] = x; profileAt = Util.getMeasuringTimeMs(); }
+            case ProfileReply x -> { if (StatsRanks.take(x) || HousingShowcase.take(x)) return; profile[Math.clamp(x.mode(), 0, 1)] = x; profileAt = Util.getMeasuringTimeMs(); }
             case Apply x -> {
                 apply = x; boolean asked = wantApply; wantApply = false;
                 if (!asked && !(c.currentScreen instanceof KyudichiApplicationScreen) && (c.currentScreen == null || HudPointer.hudVisibleUnder(c.currentScreen)))
