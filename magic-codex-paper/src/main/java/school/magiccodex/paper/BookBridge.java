@@ -18,7 +18,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.block.BlockFace;
+import school.magiccodex.protocol.BookMarkProtocol;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import school.magiccodex.protocol.BookProtocol;
@@ -54,6 +58,12 @@ final class BookBridge implements Listener, PluginMessageListener, AutoCloseable
     private Map<String, Book> books = Map.of();
     /** "world,x,y,z" → book id */
     private Map<String, String> links = Map.of();
+    /** "world,x,y,z" → 표시할 면 (0 아래 · 1 위 · 2 북 · 3 남 · 4 서 · 5 동, 없으면 -1 = 공기와 닿은 면 자동). 2026-10-26 책 블록 표시. */
+    private Map<String, Integer> faces = Map.of();
+    /** 책 블록 표시: 플레이어별로 마지막에 보낸 내용 (같으면 다시 안 보냄)과 읽은 책 (명령 실행된 책) 캐시. */
+    private final Map<UUID, Integer> sentMarks = new HashMap<>();
+    private final Map<UUID, Set<String>> readCache = new HashMap<>();
+    private static final BlockFace[] FACES = {BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.WEST, BlockFace.EAST};
     private final Map<UUID, Session> sessions = new HashMap<>();
     private final Map<UUID, Long> lastClick = new HashMap<>();
     /** "uuid|book" whose claim is in flight (a second close never starts a second claim). */
@@ -70,8 +80,12 @@ final class BookBridge implements Listener, PluginMessageListener, AutoCloseable
         store = new BookReadStore(plugin);
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, BookProtocol.REQUEST, this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, BookProtocol.RESPONSE);
+        Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, BookMarkProtocol.CHANNEL);
+        // 책 블록 표시: 지능(마법봉 바꾸기 등)으로 바뀌는 상태를 5초마다 확인, 바뀐 사람에게만 다시 보냄
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> { for (Player p : Bukkit.getOnlinePlayers()) sendMarks(p); }, 100, 100);
         Bukkit.getPluginManager().registerEvents(this, plugin);
         CmdKit.register(plugin, "/컨텐츠관리 책·/유저관리 책기록", this::commands);
+        for (Player p : Bukkit.getOnlinePlayers()) loadRead(p);   // 플러그인 다시 켜짐: 이미 접속한 사람
     }
 
     @Override public void close() { sessions.clear(); inFlight.clear(); known.clear(); store.close(); }
@@ -85,20 +99,32 @@ final class BookBridge implements Listener, PluginMessageListener, AutoCloseable
         ConfigurationSection root = y.getConfigurationSection("books");
         if (root != null) for (String id : root.getKeys(false)) next.put(id, parse(id, root.getConfigurationSection(id)));
         var nextLinks = new LinkedHashMap<String, String>();
+        var nextFaces = new HashMap<String, Integer>();
         if (blockFile.exists()) {
             var b = new YamlConfiguration();
             b.load(blockFile);
             for (String line : b.getStringList("links")) {
                 String[] p = line.split(",");
-                if (p.length != 5) throw new IllegalArgumentException("book-blocks.yml 줄 형식은 월드,x,y,z,책ID: " + line);
+                if (p.length != 5 && p.length != 6) throw new IllegalArgumentException("book-blocks.yml 줄 형식은 월드,x,y,z,책ID[,면]: " + line);
                 String key = key(p[0], Integer.parseInt(p[1].strip()), Integer.parseInt(p[2].strip()), Integer.parseInt(p[3].strip()));
                 String book = p[4].strip();
                 if (!next.containsKey(book)) plugin.getLogger().warning("book-blocks.yml: books.yml 에 없는 책 " + book + " (" + key + ") — 눌러도 열리지 않아요");
                 nextLinks.put(key, book);
+                if (p.length == 6) {
+                    int face = faceIndex(p[5].strip());
+                    if (face < 0) throw new IllegalArgumentException("book-blocks.yml 면은 DOWN/UP/NORTH/SOUTH/WEST/EAST: " + line);
+                    nextFaces.put(key, face);
+                }
             }
         }
         books = Collections.unmodifiableMap(next);
         links = Collections.unmodifiableMap(nextLinks);
+        faces = Map.copyOf(nextFaces);
+        refreshMarks();
+    }
+    static int faceIndex(String name) {
+        for (int i = 0; i < FACES.length; i++) if (FACES[i].name().equalsIgnoreCase(name)) return i;
+        return -1;
     }
 
     static Book parse(String id, ConfigurationSection s) {
@@ -138,13 +164,14 @@ final class BookBridge implements Listener, PluginMessageListener, AutoCloseable
     private void saveLinks(Map<String, String> next) throws Exception {
         var y = new YamlConfiguration();
         var lines = new ArrayList<String>();
-        next.forEach((k, book) -> lines.add(k + "," + book));
+        next.forEach((k, book) -> { Integer f = faces.get(k); lines.add(k + "," + book + (f == null ? "" : "," + FACES[f].name())); });
         y.set("links", lines);
         Path path = blockFile.toPath(), tmp = path.resolveSibling(blockFile.getName() + ".tmp");
         Files.createDirectories(path.getParent());
-        Files.writeString(tmp, "# 책 연결 블록 (이 서버만). /컨텐츠관리 책 연결·해제 로 바꾸는 걸 권장. 형식: 월드,x,y,z,책ID\n" + y.saveToString());
+        Files.writeString(tmp, "# 책 연결 블록 (이 서버만). /컨텐츠관리 책 연결·해제 로 바꾸는 걸 권장. 형식: 월드,x,y,z,책ID[,면]\n# 면 = 홀로그램 책 표시가 붙는 면 (연결할 때 바라본 면, DOWN/UP/NORTH/SOUTH/WEST/EAST). 없으면 공기와 닿은 면 자동.\n" + y.saveToString());
         Files.move(tmp, path, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
         links = Collections.unmodifiableMap(new LinkedHashMap<>(next));
+        refreshMarks();
     }
 
     // ------------------------------------------------------------------ opening
@@ -227,7 +254,13 @@ final class BookBridge implements Listener, PluginMessageListener, AutoCloseable
             }
         });
     }
-    private void remember(UUID uuid, String id) { if (Bukkit.getPlayer(uuid) != null) known.computeIfAbsent(uuid, k -> new HashSet<>()).add(id); }
+    private void remember(UUID uuid, String id) {
+        Player p = Bukkit.getPlayer(uuid);
+        if (p == null) return;
+        known.computeIfAbsent(uuid, k -> new HashSet<>()).add(id);
+        var cache = readCache.get(uuid);
+        if (cache != null && cache.add(id)) sendMarks(p);
+    }
 
     private void run(Player p, Book book) {
         var console = Bukkit.getConsoleSender();
@@ -242,7 +275,68 @@ final class BookBridge implements Listener, PluginMessageListener, AutoCloseable
 
     @EventHandler public void onQuit(PlayerQuitEvent e) {
         UUID id = e.getPlayer().getUniqueId();
-        sessions.remove(id); lastClick.remove(id); known.remove(id);
+        sessions.remove(id); lastClick.remove(id); known.remove(id); sentMarks.remove(id); readCache.remove(id);
+    }
+
+    // ------------------------------------------------------------------ 책 블록 표시 (2026-10-26, 메모 #69)
+
+    @EventHandler public void onJoin(PlayerJoinEvent e) {
+        Player p = e.getPlayer();
+        Bukkit.getScheduler().runTaskLater(plugin, () -> loadRead(p), 40);
+    }
+    @EventHandler public void onWorld(PlayerChangedWorldEvent e) { sendMarks(e.getPlayer()); }
+
+    private void loadRead(Player p) {
+        if (!p.isOnline()) return;
+        store.list(p.getUniqueId(), rows -> {
+            if (!p.isOnline()) return;
+            readCache.put(p.getUniqueId(), rows == null ? new HashSet<>() : new HashSet<>(rows.keySet()));
+            sendMarks(p);
+        });
+    }
+
+    /** 모두에게 다시 계산해서 (바뀐 사람만) 보낸다. 책 연결·새로고침 뒤. */
+    private void refreshMarks() { if (store != null) for (Player p : Bukkit.getOnlinePlayers()) sendMarks(p); }
+
+    /** 이 플레이어가 있는 세계의 책 블록 표시. 지난번과 같으면 보내지 않는다. 읽음 기록을 아직 못 읽었으면 다음에. */
+    private void sendMarks(Player p) {
+        if (!p.isOnline() || !p.getListeningPluginChannels().contains(BookMarkProtocol.CHANNEL)) return;
+        var read = readCache.get(p.getUniqueId());
+        if (read == null) return;
+        String world = p.getWorld().getName();
+        double intelligence = -1;
+        var list = new ArrayList<BookMarkProtocol.Mark>();
+        for (var e : links.entrySet()) {
+            String[] k = e.getKey().split(",");
+            if (k.length != 4 || !k[0].equals(world) || list.size() >= BookMarkProtocol.MAX_MARKS) continue;
+            Book book = books.get(e.getValue());
+            if (book == null) continue;
+            int x = Integer.parseInt(k[1]), y = Integer.parseInt(k[2]), z = Integer.parseInt(k[3]);
+            Integer face = faces.get(e.getKey());
+            int f = face != null ? face : openFace(p.getWorld(), x, y, z);
+            int state;
+            if (!book.commands().isEmpty() && read.contains(book.id())) state = BookMarkProtocol.READ;
+            else {
+                if (book.requiredIntelligence() > 0 && intelligence < 0) intelligence = plugin.magicPower(p);
+                state = book.requiredIntelligence() > 0 && !intelligenceMet(book.requiredIntelligence(), intelligence) ? BookMarkProtocol.LOCKED : BookMarkProtocol.UNREAD;
+            }
+            list.add(new BookMarkProtocol.Mark(x, y, z, f, book.title(), state, book.requiredIntelligence()));
+        }
+        byte[] bytes;
+        try { bytes = BookMarkProtocol.encode(new BookMarkProtocol.Marks(world, list)); }
+        catch (IllegalArgumentException tooLarge) { plugin.getLogger().warning("책 블록 표시를 보낼 수 없어요 (" + world + "): " + tooLarge.getMessage()); return; }
+        int hash = Arrays.hashCode(bytes);
+        Integer before = sentMarks.put(p.getUniqueId(), hash);
+        if (before != null && before == hash) return;
+        p.sendPluginMessage(plugin, BookMarkProtocol.CHANNEL, bytes);
+    }
+
+    /** 면 정보가 없는 예전 연결: 공기(또는 통과 가능한 블록)와 닿은 면 — 옆면 먼저, 없으면 위. 청크가 안 불려 있으면 위. */
+    private static int openFace(org.bukkit.World w, int x, int y, int z) {
+        if (!w.isChunkLoaded(x >> 4, z >> 4)) return 1;
+        Block b = w.getBlockAt(x, y, z);
+        for (int i : new int[]{2, 3, 4, 5, 1, 0}) if (b.getRelative(FACES[i]).isPassable()) return i;
+        return 1;
     }
 
     // ------------------------------------------------------------------ commands
@@ -299,8 +393,13 @@ final class BookBridge implements Listener, PluginMessageListener, AutoCloseable
         Block block = looked(ctx);
         var next = new LinkedHashMap<>(links);
         String before = next.put(key(block), id);
+        BlockFace seen = CmdKit.self(ctx).getTargetBlockFace(6);
+        var nextFaces = new HashMap<>(faces);
+        int fi = seen == null ? -1 : faceIndex(seen.name());
+        if (fi >= 0) nextFaces.put(key(block), fi); else nextFaces.remove(key(block));
+        faces = Map.copyOf(nextFaces);
         try { saveLinks(next); } catch (Exception e) { CmdKit.fail(CmdKit.sender(ctx), "book-blocks.yml 저장 실패", e); return; }
-        CmdKit.ok(CmdKit.sender(ctx), key(block) + " 블록에 책 " + id + " 연결" + (before != null && !before.equals(id) ? " (전에는 " + before + ")" : ""));
+        CmdKit.ok(CmdKit.sender(ctx), key(block) + " 블록에 책 " + id + " 연결" + (fi >= 0 ? " · 표시 면 " + FACES[fi].name() : "") + (before != null && !before.equals(id) ? " (전에는 " + before + ")" : ""));
     }
 
     private void unlink(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
@@ -308,6 +407,7 @@ final class BookBridge implements Listener, PluginMessageListener, AutoCloseable
         var next = new LinkedHashMap<>(links);
         String before = next.remove(key(block));
         if (before == null) throw ChacaApi.error("이 블록에는 연결된 책이 없어요");
+        var nextFaces = new HashMap<>(faces); nextFaces.remove(key(block)); faces = Map.copyOf(nextFaces);
         try { saveLinks(next); } catch (Exception e) { CmdKit.fail(CmdKit.sender(ctx), "book-blocks.yml 저장 실패", e); return; }
         CmdKit.ok(CmdKit.sender(ctx), key(block) + " 블록의 책 " + before + " 연결을 풀었어요");
     }
@@ -335,6 +435,7 @@ final class BookBridge implements Listener, PluginMessageListener, AutoCloseable
         String name = CmdKit.name(target);
         store.release(target, id, deleted -> {
             var set = known.get(target); if (set != null) set.remove(id);
+            var cache = readCache.get(target); if (cache != null && cache.remove(id)) { Player tp = Bukkit.getPlayer(target); if (tp != null) sendMarks(tp); }
             if (deleted) CmdKit.ok(sender, name + " 님 책 " + id + " 기록을 지웠어요 (다시 읽으면 명령이 한 번 더 실행돼요)");
             else CmdKit.userFail(sender, name + " 님은 책 " + id + " 기록이 없어요 (또는 DB 오류, 콘솔 확인)");
         });
