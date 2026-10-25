@@ -33,17 +33,20 @@ tabs:
     label: 학교
     server: school
     world: world
-    map: terrain   # 타운맵이 준비될 때까지 야생처럼 미니맵 (2026-10-24)
-    # 학교 타운맵 그림이 준비되면 map: image 로 바꾸고 아래 주석을 풉니다.
-    # image:
-    #   texture: magiccodex:textures/gui/travel/maps/school.png   # 리소스팩 안 경로 (PNG)
-    #   size: [2048, 2048]                                         # 그림 가로·세로 픽셀
-    #   # 그림 모서리 3곳이 가리키는 월드 좌표 [x, z] (그림의 왼쪽 위 / 오른쪽 위 / 왼쪽 아래 모서리).
-    #   # 북쪽이 위인 보통 지도:  top-left [minX, minZ]  top-right [maxX, minZ]  bottom-left [minX, maxZ]
-    #   # 회전·뒤집힌 그림도 이 세 점만 맞으면 됩니다.
-    #   top-left: [-512, -512]
-    #   top-right: [512, -512]
-    #   bottom-left: [-512, 512]
+    map: image     # 학교 타운맵 그림 (오픈 전 메모 #53, 2026-10-25)
+    image:
+      texture: magiccodex:textures/gui/travel/maps/school.png   # 리소스팩 안 경로 (PNG)
+      size: [1479, 1064]                                         # 그림 가로·세로 픽셀
+      # 그림 모서리 3곳이 가리키는 월드 좌표 [x, z] (그림의 왼쪽 위 / 오른쪽 위 / 왼쪽 아래 모서리).
+      # 손으로 고치지 말고 게임 안에서 맞추세요: /컨텐츠관리 이동지점 지도 보기 (방법 안내)
+      #   동상 한가운데 서서 → 지도 기준        (그림 동상 픽셀 493,432 = 지금 위치)
+      #   멀리 알아보기 쉬운 곳에 서서 → 지도 두번째 <그림X> <그림Y>   (크기·회전까지 맞춤)
+      #   조금씩 → 지도 밀기 <x> <z> · 지도 배율 <블록/픽셀> · 지도 회전 <도>
+      # 처음 값: 동상 = 월드 32.5, 12.5, 1픽셀 = 0.25블록 (추정), 북쪽이 위
+      top-left: [-90.75, -95.5]
+      top-right: [279.0, -95.5]
+      bottom-left: [-90.75, 170.5]
+      anchor: [493.0, 432.0]   # 기준 픽셀 (배율·회전할 때 이 점은 제자리)
   wild1:
     label: 야생1
     server: wild
