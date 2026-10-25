@@ -22,8 +22,10 @@ import org.bukkit.entity.Player;
  * </ul>
  */
 final class LessonBridge {
-    record Lesson(String book, String name) {}
-    record Teacher(String id, String name, String portrait, String ask, String locked, String allDone, List<Lesson> lessons) {}
+    /** affinity = 이 교수(npc)와의 호감도가 이만큼 있어야 열림 (0 = 제한 없음) — 비전 수업. */
+    record Lesson(String book, String name, int affinity) {}
+    /** npc = 호감도를 볼 ChacaNPC 캐릭터 ID (비전 수업이 없으면 비워도 됨). */
+    record Teacher(String id, String name, String npc, String portrait, String ask, String locked, String secret, String allDone, List<Lesson> lessons) {}
 
     static final int PER_PAGE = 4, MAX_LESSONS = 40;
     private final MagicCodexBridge plugin;
@@ -57,22 +59,31 @@ final class LessonBridge {
             if (!id.matches("[a-z0-9_-]{1,48}")) throw new IllegalArgumentException("lessons 키는 영문 소문자·숫자·_·- 1~48자: " + id);
             var s = root.getConfigurationSection(id);
             if (s == null) throw new IllegalArgumentException("lessons." + id + " 형식 확인");
-            String name = s.getString("teacher", id).strip(), portrait = s.getString("portrait", "").strip();
+            String name = s.getString("teacher", id).strip(), portrait = s.getString("portrait", "").strip(), npc = s.getString("npc", "").strip();
+            if (!npc.isEmpty() && !npc.matches("[A-Za-z0-9_-]{1,64}")) throw new IllegalArgumentException("lessons." + id + ".npc 는 ChacaNPC 캐릭터 ID");
             if (name.isEmpty() || name.length() > 64) throw new IllegalArgumentException("lessons." + id + ".teacher 는 1~64자");
             if (!portrait.isEmpty() && !portrait.matches("[a-z0-9_/-]{1,120}")) throw new IllegalArgumentException("lessons." + id + ".portrait 는 대화 일러스트 ID (영문 소문자·숫자·_·/·-)");
             var lessons = new ArrayList<Lesson>();
             for (Object raw : s.getList("classes", List.of())) {
                 String book, label = "";
-                if (raw instanceof Map<?, ?> m) { book = String.valueOf(m.get("book")).strip(); if (m.get("name") != null) label = String.valueOf(m.get("name")).strip(); }
+                int affinity = 0;
+                if (raw instanceof Map<?, ?> m) {
+                    book = String.valueOf(m.get("book")).strip();
+                    if (m.get("name") != null) label = String.valueOf(m.get("name")).strip();
+                    if (m.get("affinity") instanceof Number n) affinity = n.intValue();
+                }
                 else book = String.valueOf(raw).strip();
+                if (affinity < 0 || affinity > 100) throw new IllegalArgumentException("lessons." + id + " affinity 는 0~100: " + book);
                 if (!book.matches("[a-z0-9_-]{1,48}")) throw new IllegalArgumentException("lessons." + id + ".classes 의 book 은 books.yml 책 ID: " + book);
                 if (label.length() > 60) throw new IllegalArgumentException("lessons." + id + " 수업 이름은 60자까지: " + label);
-                lessons.add(new Lesson(book, label));
+                lessons.add(new Lesson(book, label, affinity));
             }
             if (lessons.size() > MAX_LESSONS) throw new IllegalArgumentException("lessons." + id + ".classes 는 " + MAX_LESSONS + "개까지");
-            out.put(id, new Teacher(id, name, portrait,
+            if (npc.isEmpty() && lessons.stream().anyMatch(l -> l.affinity() > 0)) throw new IllegalArgumentException("lessons." + id + ": 호감도 수업(affinity)이 있으면 npc 를 적어 주세요");
+            out.put(id, new Teacher(id, name, npc, portrait,
                     text(s, "ask", "수업 들으러 왔구나! 어떤 수업 들을래?"),
                     text(s, "locked", "이 수업은 아직 조금 어려울 거야. 지능을 더 키워서 다시 오렴."),
+                    text(s, "secret", "(교수님의 비전 마법은 조금 더 친해져야 배울 수 있을 것 같다…)"),
                     text(s, "all-done", "벌써 내 수업은 다 들었구나. 언제든 다시 펼쳐 봐도 좋아."),
                     List.copyOf(lessons)));
         }
@@ -94,12 +105,18 @@ final class LessonBridge {
         books.readBooks(p.getUniqueId(), read -> {
             if (!p.isOnline()) return;
             if (read == null) { CmdKit.notify(p, "warning", "lesson-store", "수업 기록을 불러오지 못했어요", "잠시 후 다시 말을 걸어 주세요", 3000); return; }
-            menu(p, t, read, anchor);
+            var social = plugin.npcSocial();
+            if (t.npc().isEmpty() || social == null || t.lessons().stream().noneMatch(l -> l.affinity() > 0)) { menu(p, t, read, 0, anchor); return; }
+            social.affinity(p.getUniqueId(), t.npc()).whenComplete((row, error) -> Bukkit.getScheduler().runTask(plugin, () -> {
+                if (!p.isOnline()) return;
+                if (error != null) plugin.getLogger().warning("수업 " + t.id() + ": 호감도 읽기 실패 (" + error + ") — 비전 수업은 잠김으로 표시");
+                menu(p, t, read, row == null ? 0 : row.score(), anchor);
+            }));
         });
         return true;
     }
 
-    private void menu(Player p, Teacher t, Set<String> read, Entity anchor) {
+    private void menu(Player p, Teacher t, Set<String> read, int affinity, Entity anchor) {
         var lessons = new ArrayList<Lesson>();
         for (var l : t.lessons()) if (books.book(l.book()) != null) lessons.add(l);
         double intelligence = plugin.magicPower(p);
@@ -109,7 +126,7 @@ final class LessonBridge {
         for (int page = 0; page < pages; page++) {
             var choices = new ArrayList<DialogueDefinition.Choice>();
             for (int i = page * PER_PAGE; i < Math.min(lessons.size(), (page + 1) * PER_PAGE); i++)
-                choices.add(new DialogueDefinition.Choice("l" + i, label(lessons.get(i), read, intelligence), "", List.of(), List.of()));
+                choices.add(new DialogueDefinition.Choice("l" + i, label(lessons.get(i), read, intelligence, affinity), "", List.of(), List.of()));
             if (page > 0) choices.add(new DialogueDefinition.Choice("prev", "◀ 이전 수업", "p" + (page - 1), List.of(), List.of()));
             if (page + 1 < pages) choices.add(new DialogueDefinition.Choice("next", "다음 수업 ▶", "p" + (page + 1), List.of(), List.of()));
             if (choices.size() < 6) choices.add(new DialogueDefinition.Choice("bye", "다음에 올게요", "", List.of(), List.of()));
@@ -117,13 +134,15 @@ final class LessonBridge {
             if (pages > 1) text += "\n(" + (page + 1) + " / " + pages + ")";
             nodes.put("p" + page, new DialogueDefinition.Node(t.name(), t.portrait(), text, List.of(), List.copyOf(choices)));
         }
-        dialogues.openMenu(p, anchor, t.name() + " · 수업", "p0", nodes, (who, choice) -> pick(who, t, lessons, choice));
+        dialogues.openMenu(p, anchor, t.name() + " · 수업", "p0", nodes, (who, choice) -> pick(who, t, lessons, affinity, choice));
     }
 
-    private String label(Lesson l, Set<String> read, double intelligence) {
+    private String label(Lesson l, Set<String> read, double intelligence, int affinity) {
         var book = books.book(l.book());
         String name = l.name().isEmpty() ? book.title() : l.name();
         int need = book.requiredIntelligence();
+        if (l.affinity() > affinity && !read.contains(l.book()))   // 비전 수업: 친해지기 전에는 이름을 숨긴다
+            return "[비전] ??? · 호감도 " + l.affinity() + " 필요";
         String s = name + (need > 0 ? " · 필요 지능 " + need : "");
         if (read.contains(l.book())) s += "  ✔ 들음";
         else if (!BookBridge.intelligenceMet(need, intelligence)) s += "  (지능 부족)";
@@ -131,13 +150,15 @@ final class LessonBridge {
     }
 
     /** 선택: "" = 대화창 닫기(수업이면 다음 틱에 책을 펼침), 그 밖 = 교수 대사로 막기. */
-    private String pick(Player p, Teacher t, List<Lesson> lessons, String choice) {
+    private String pick(Player p, Teacher t, List<Lesson> lessons, int affinity, String choice) {
         if (!choice.startsWith("l")) return "";
         int i;
         try { i = Integer.parseInt(choice.substring(1)); } catch (NumberFormatException e) { return ""; }
         if (i < 0 || i >= lessons.size()) return "";
-        var book = books.book(lessons.get(i).book());
+        var lesson = lessons.get(i);
+        var book = books.book(lesson.book());
         if (book == null) return "이 수업은 지금 준비 중이란다.";
+        if (lesson.affinity() > affinity) return t.secret() + " (호감도 " + lesson.affinity() + " 필요 · 지금 " + affinity + ")";
         double intelligence = plugin.magicPower(p);
         if (!BookBridge.intelligenceMet(book.requiredIntelligence(), intelligence))
             return t.locked() + " (필요 지능 " + book.requiredIntelligence() + " · 지금 " + (int) Math.floor(intelligence) + ")";
@@ -168,7 +189,7 @@ final class LessonBridge {
             out.add(" " + t.id() + " · " + t.name() + " · 수업 " + t.lessons().size() + "개 (NPC 버튼 action: \"lesson:" + t.id() + "\")");
             for (var l : t.lessons()) {
                 var b = books.book(l.book());
-                out.add("   - " + l.book() + (b == null ? " (books.yml 에 없음)" : " · " + (l.name().isEmpty() ? b.title() : l.name()) + (b.requiredIntelligence() > 0 ? " · 필요 지능 " + b.requiredIntelligence() : "") + " · 명령 " + b.commands().size() + "개"));
+                out.add("   - " + l.book() + (b == null ? " (books.yml 에 없음)" : " · " + (l.name().isEmpty() ? b.title() : l.name()) + (b.requiredIntelligence() > 0 ? " · 필요 지능 " + b.requiredIntelligence() : "") + (l.affinity() > 0 ? " · 호감도 " + l.affinity() : "") + " · 명령 " + b.commands().size() + "개"));
             }
         }
         if (teachers.isEmpty()) out.add(" (lessons.yml 에 수업이 없어요)");

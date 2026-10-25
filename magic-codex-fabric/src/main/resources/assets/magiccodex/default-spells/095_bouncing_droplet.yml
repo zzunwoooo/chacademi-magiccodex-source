@@ -5,7 +5,7 @@ description: 물방울이 서로 다른 적을 최대 4명까지 튕겨 공격�
 icon: magiccodex:textures/spells/reviewed_20261016/bouncing_droplet.png
 permission: magic.learned.bouncing_droplet
 discovery:
-  description: 획득 조건은 추후 검토합니다.
+  description: 엘레나 교수의 물 마법 중급 수업 듣기.
 research: ''
 cast:
   command: 마법 bouncing_droplet

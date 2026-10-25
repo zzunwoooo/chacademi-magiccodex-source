@@ -13,11 +13,13 @@ class ExpansionDefinitionsTest {
         assertEquals(100d, d.spells.get("earth_shaping").requirements().get("place.dirt_family"));
         assertEquals(Set.of("breed.cow", "breed.sheep", "breed.pig"), d.spells.get("pollen_matchmaking").requirements().keySet());
         assertEquals(Set.of("season.spring", "season.summer", "season.autumn", "season.winter"), d.spells.get("climate_control").requirements().keySet());
-        assertEquals(0.1, d.spells.get("primordial_stone").chance());
-        assertEquals(0.1, d.spells.get("merciful_arrow").chance());
+        // 2026-10-26: 낮은 확률 수업 없음 — 교수 수업(수동 조건)으로 100% 습득
+        assertEquals(1.0, d.spells.get("primordial_stone").chance());
+        assertEquals(1.0, d.spells.get("merciful_arrow").chance());
         // one key may feed two spells (harvest 100 / 300)
         assertEquals(2, d.index.get("harvest.crops").size());
-        for (String undecided : List.of("moss_coating", "flint_sorting", "dormant_seed", "material_exchange", "luminous_archive", "constellation_blessing", "mana_deposit"))
-            assertFalse(d.spells.containsKey(undecided) || d.manual.containsKey(undecided), undecided);
+        // 조건 미정이던 7종은 2026-10-26 교수 수업(수동 조건)으로
+        for (String lesson : List.of("moss_coating", "flint_sorting", "dormant_seed", "material_exchange", "luminous_archive", "constellation_blessing", "mana_deposit"))
+            assertEquals(Map.of(Definitions.conditionKey(lesson), 1d), d.manual.get(lesson).requirements(), lesson);
     }
 }

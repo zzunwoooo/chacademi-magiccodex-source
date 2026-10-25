@@ -5,7 +5,7 @@ description: 마나 100을 소비해 마나 포션 1개를 생성합니다. 포�
 icon: magiccodex:textures/spells/expansion_2/mana_deposit.png
 permission: magic.learned.mana_deposit
 discovery:
-  description: 획득 조건 미정
+  description: 이솔데 교수의 빛 마법 고급 수업 듣기.
 research: 마법사는 언제나 다음을 준비하는 사람이다. 오늘의 마력을 작은 병에 담아, 내일의 부족함에 대비한다.
 cast:
   command: 마법 mana_deposit

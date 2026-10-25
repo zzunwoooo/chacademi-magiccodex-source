@@ -5,7 +5,7 @@ description: 플레이어 아래에 Deep Dark 생물군계가 있는지 탐지�
 icon: magiccodex:textures/spells/reviewed_20261020/moss_coating.png
 permission: magic.learned.moss_coating
 discovery:
-  description: 획득 조건 미정
+  description: 베르나 교수의 대지 마법 중급 수업 듣기.
 research: 정원은 새로 만들었는데 너무 새것처럼 보인다는 부탁에서 시작되었다.
 cast:
   command: 마법 moss_coating

@@ -37,7 +37,7 @@ spells:
     permission: "magic.learned.wind_push"
     icon: "magiccodex:textures/spells/novice_extra/wind_push.png"
     category: "wind"
-    condition-text: "바람 마법 기초 수업을 통해 습득"
+    condition-text: "하르바 교수의 바람 마법 기초 수업 듣기."
     requirements:
       "lesson.wind.basic": 1
     chance: 1.0
@@ -97,7 +97,7 @@ spells:
     permission: "magic.learned.storm_command"
     icon: "magiccodex:textures/spells/advanced/storm_command.png"
     category: "wind"
-    condition-text: "30도 이상의 기온을 가진 공간에서, 상승기류 마법 사용 후 떨어지기 전에 한 바퀴 회전하기."
+    condition-text: "하르바 교수와(과) 친해진 뒤(호감도 30) 바람 비전 수업 듣기."
     requirements:
       "wind.hot_air_rotation": 1
     chance: 1.0
@@ -117,7 +117,7 @@ spells:
     permission: "magic.learned.vacuum_cleave"
     icon: "magiccodex:textures/spells/advanced/vacuum_cleave.png"
     category: "wind"
-    condition-text: "바람 마법 중급 수업을 통해 습득"
+    condition-text: "하르바 교수의 바람 마법 중급 수업 듣기."
     requirements:
       "lesson.wind.intermediate": 1
     chance: 1.0
@@ -177,7 +177,7 @@ spells:
     permission: "magic.learned.cross_breeze"
     icon: "magiccodex:textures/spells/expansion_2/cross_breeze.png"
     category: "wind"
-    condition-text: "바람 마법 기초 수업을 통해 낮은 확률로 습득"
+    condition-text: "하르바 교수의 바람 마법 기초 수업 듣기."
     requirements:
       "lesson.wind.basic": 1
     chance: 0.1
@@ -207,7 +207,7 @@ spells:
     permission: "magic.learned.returning_wind"
     icon: "magiccodex:textures/spells/expansion/returning_wind.png"
     category: "wind"
-    condition-text: "바람 마법 중급 수업을 통해 낮은 확률로 습득"
+    condition-text: "하르바 교수의 바람 마법 중급 수업 듣기."
     requirements:
       "lesson.wind.intermediate": 1
     chance: 0.1
@@ -237,7 +237,7 @@ spells:
     permission: "magic.learned.weightless_zone"
     icon: "magiccodex:textures/spells/expansion/weightless_zone.png"
     category: "wind"
-    condition-text: "바람 마법 고급 수업을 통해 습득"
+    condition-text: "하르바 교수와(과) 친해진 뒤(호감도 30) 바람 비전 수업 듣기."
     requirements:
       "lesson.wind.advanced": 1
     chance: 1.0
@@ -277,7 +277,7 @@ spells:
     permission: "magic.learned.arrested_orbit"
     icon: "magiccodex:textures/spells/expansion_2/arrested_orbit.png"
     category: "wind"
-    condition-text: "바람 마법 고급 수업을 통해 낮은 확률로 습득"
+    condition-text: "하르바 교수의 바람 마법 고급 수업 듣기."
     requirements:
       "lesson.wind.advanced": 1
     chance: 0.1
@@ -350,7 +350,7 @@ spells:
     permission: "magic.learned.ember_bolt"
     icon: "magiccodex:textures/spells/novice_extra/ember_bolt.png"
     category: "fire"
-    condition-text: "화염 마법 기초 수업을 통해 습득"
+    condition-text: "세드릭 교수의 화염 마법 기초 수업 듣기."
     requirements:
       "lesson.fire.basic": 1
     chance: 1.0
@@ -380,7 +380,7 @@ spells:
     permission: "magic.learned.ember_trap"
     icon: "magiccodex:textures/spells/intermediate/ember_trap.png"
     category: "fire"
-    condition-text: "화염 마법 기초 수업을 통해 낮은 확률로 습득"
+    condition-text: "세드릭 교수의 화염 마법 기초 수업 듣기."
     requirements:
       "lesson.fire.basic": 1
     chance: 0.1
@@ -390,7 +390,7 @@ spells:
     permission: "magic.learned.fire_curtain"
     icon: "magiccodex:textures/spells/intermediate/fire_curtain.png"
     category: "fire"
-    condition-text: "화염 마법 중급 수업을 통해 습득"
+    condition-text: "세드릭 교수의 화염 마법 중급 수업 듣기."
     requirements:
       "lesson.fire.intermediate": 1
     chance: 1.0
@@ -480,7 +480,7 @@ spells:
     permission: "magic.learned.glass_firing"
     icon: "magiccodex:textures/spells/expansion_2/glass_firing.png"
     category: "fire"
-    condition-text: "화염 마법 중급 수업을 통해 습득"
+    condition-text: "세드릭 교수의 화염 마법 고급 수업 듣기."
     requirements:
       "lesson.fire.intermediate": 1
     chance: 1.0
@@ -490,7 +490,7 @@ spells:
     permission: "magic.learned.charcoal_conversion"
     icon: "magiccodex:textures/spells/expansion_2/charcoal_conversion.png"
     category: "fire"
-    condition-text: "화염 마법 중급 수업을 통해 낮은 확률로 습득"
+    condition-text: "세드릭 교수의 화염 마법 중급 수업 듣기."
     requirements:
       "lesson.fire.intermediate": 1
     chance: 0.1
@@ -510,7 +510,7 @@ spells:
     permission: "magic.learned.flame_lash"
     icon: "magiccodex:textures/spells/expansion/flame_lash.png"
     category: "fire"
-    condition-text: "낚싯대로 몬스터를 5번 끌어당기기."
+    condition-text: "세드릭 교수와(과) 친해진 뒤(호감도 30) 화염 비전 수업 듣기."
     requirements:
       "fish.monster_pulled": 5
     chance: 1.0
@@ -650,7 +650,7 @@ spells:
     permission: "magic.learned.incandescent_break"
     icon: "magiccodex:textures/spells/expansion_2/incandescent_break.png"
     category: "fire"
-    condition-text: "방패를 사용하는 적과의 실습 전투를 완료하기."
+    condition-text: "세드릭 교수의 화염 마법 고급 수업 듣기."
     requirements:
       "practice.shield_completed": 1
     chance: 1.0
@@ -985,7 +985,7 @@ spells:
     permission: "magic.learned.primordial_stone"
     icon: "magiccodex:textures/spells/expansion_2/primordial_stone.png"
     category: "earth"
-    condition-text: "대지 마법 응용 수업에서 낮은 확률로 습득합니다."
+    condition-text: "베르나 교수와(과) 친해진 뒤(호감도 30) 대지 비전 수업 듣기."
     requirements:
       "lesson.earth.applied": 1
     chance: 0.1
@@ -1188,7 +1188,7 @@ spells:
     permission: "magic.learned.merciful_arrow"
     icon: "magiccodex:textures/spells/expansion_2/merciful_arrow.png"
     category: "light"
-    condition-text: "빛 마법 응용 수업을 통해 낮은 확률로 습득."
+    condition-text: "이솔데 교수의 빛 마법 고급 수업 듣기."
     requirements:
       "lesson.light.applied": 1
     chance: 0.1

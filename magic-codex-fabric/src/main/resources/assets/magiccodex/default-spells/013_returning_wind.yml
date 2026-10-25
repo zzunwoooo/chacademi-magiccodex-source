@@ -5,7 +5,7 @@ description: 시전 후 약 0.5초 동안 자신에게 날아오는 가까운 �
 icon: magiccodex:textures/spells/expansion/returning_wind.png
 permission: magic.learned.returning_wind
 discovery:
-  description: 바람 마법 중급 수업을 통해 낮은 확률로 습득.
+  description: 하르바 교수의 바람 마법 중급 수업 듣기.
 research: 학생들을 지키려던 교장은, 날아오는 힘을 바람에 실어 되돌리는 방어 마법을 고안했다.
 cast:
   command: 마법 returning_wind

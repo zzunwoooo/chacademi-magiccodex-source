@@ -119,6 +119,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private LessonBridge lessons;
     /** 수업 (NPC 대화창 수업 버튼 → NpcSocialFacade.openLesson). 없으면 null. */
     LessonBridge lessonBridge(){return lessons;}
+    /** NPC 호감도 서비스 (수업 비전 해금 등). 없으면 null. */
+    NpcSocialService npcSocial(){return npcSocial;}
     private TravelBridge travel;
     private MileageBridge mileage;
     private FishTankBridge fishTank;

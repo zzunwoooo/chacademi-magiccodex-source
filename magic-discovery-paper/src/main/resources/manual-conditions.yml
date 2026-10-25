@@ -25,7 +25,7 @@ spells:
     permission: "magic.learned.wind_push"
     icon: "magiccodex:textures/spells/novice_extra/wind_push.png"
     category: "wind"
-    condition-text: "바람 마법 기초 수업을 통해 습득"
+    condition-text: "하르바 교수의 바람 마법 기초 수업 듣기."
     requirements:
       "trace.condition.wind_push": 1
     chance: 1.0
@@ -75,7 +75,7 @@ spells:
     permission: "magic.learned.vacuum_cleave"
     icon: "magiccodex:textures/spells/advanced/vacuum_cleave.png"
     category: "wind"
-    condition-text: "바람 마법 중급 수업을 통해 습득"
+    condition-text: "하르바 교수의 바람 마법 중급 수업 듣기."
     requirements:
       "trace.condition.vacuum_cleave": 1
     chance: 1.0
@@ -95,7 +95,7 @@ spells:
     permission: "magic.learned.returning_wind"
     icon: "magiccodex:textures/spells/expansion/returning_wind.png"
     category: "wind"
-    condition-text: "바람 마법 중급 수업을 통해 낮은 확률로 습득"
+    condition-text: "하르바 교수의 바람 마법 중급 수업 듣기."
     requirements:
       "trace.condition.returning_wind": 1
     chance: 1.0
@@ -115,7 +115,7 @@ spells:
     permission: "magic.learned.weightless_zone"
     icon: "magiccodex:textures/spells/expansion/weightless_zone.png"
     category: "wind"
-    condition-text: "바람 마법 고급 수업을 통해 습득"
+    condition-text: "하르바 교수와(과) 친해진 뒤(호감도 30) 바람 비전 수업 듣기."
     requirements:
       "trace.condition.weightless_zone": 1
     chance: 1.0
@@ -155,7 +155,7 @@ spells:
     permission: "magic.learned.cross_breeze"
     icon: "magiccodex:textures/spells/expansion_2/cross_breeze.png"
     category: "wind"
-    condition-text: "바람 마법 기초 수업을 통해 낮은 확률로 습득"
+    condition-text: "하르바 교수의 바람 마법 기초 수업 듣기."
     requirements:
       "trace.condition.cross_breeze": 1
     chance: 1.0
@@ -195,7 +195,7 @@ spells:
     permission: "magic.learned.arrested_orbit"
     icon: "magiccodex:textures/spells/expansion_2/arrested_orbit.png"
     category: "wind"
-    condition-text: "바람 마법 고급 수업을 통해 낮은 확률로 습득"
+    condition-text: "하르바 교수의 바람 마법 고급 수업 듣기."
     requirements:
       "trace.condition.arrested_orbit": 1
     chance: 1.0
@@ -245,7 +245,7 @@ spells:
     permission: "magic.learned.ember_bolt"
     icon: "magiccodex:textures/spells/novice_extra/ember_bolt.png"
     category: "fire"
-    condition-text: "화염 마법 기초 수업을 통해 습득"
+    condition-text: "세드릭 교수의 화염 마법 기초 수업 듣기."
     requirements:
       "trace.condition.ember_bolt": 1
     chance: 1.0
@@ -255,7 +255,7 @@ spells:
     permission: "magic.learned.ember_trap"
     icon: "magiccodex:textures/spells/intermediate/ember_trap.png"
     category: "fire"
-    condition-text: "화염 마법 기초 수업을 통해 낮은 확률로 습득"
+    condition-text: "세드릭 교수의 화염 마법 기초 수업 듣기."
     requirements:
       "trace.condition.ember_trap": 1
     chance: 1.0
@@ -265,7 +265,7 @@ spells:
     permission: "magic.learned.fire_curtain"
     icon: "magiccodex:textures/spells/intermediate/fire_curtain.png"
     category: "fire"
-    condition-text: "화염 마법 중급 수업을 통해 습득"
+    condition-text: "세드릭 교수의 화염 마법 중급 수업 듣기."
     requirements:
       "trace.condition.fire_curtain": 1
     chance: 1.0
@@ -285,7 +285,7 @@ spells:
     permission: "magic.learned.flame_lash"
     icon: "magiccodex:textures/spells/expansion/flame_lash.png"
     category: "fire"
-    condition-text: "낚싯대로 몬스터를 5번 끌어당기기."
+    condition-text: "세드릭 교수와(과) 친해진 뒤(호감도 30) 화염 비전 수업 듣기."
     requirements:
       "trace.condition.flame_lash": 1
     chance: 1.0
@@ -345,7 +345,7 @@ spells:
     permission: "magic.learned.glass_firing"
     icon: "magiccodex:textures/spells/expansion_2/glass_firing.png"
     category: "fire"
-    condition-text: "화염 마법 중급 수업을 통해 습득"
+    condition-text: "세드릭 교수의 화염 마법 고급 수업 듣기."
     requirements:
       "trace.condition.glass_firing": 1
     chance: 1.0
@@ -355,7 +355,7 @@ spells:
     permission: "magic.learned.charcoal_conversion"
     icon: "magiccodex:textures/spells/expansion_2/charcoal_conversion.png"
     category: "fire"
-    condition-text: "화염 마법 중급 수업을 통해 낮은 확률로 습득"
+    condition-text: "세드릭 교수의 화염 마법 중급 수업 듣기."
     requirements:
       "trace.condition.charcoal_conversion": 1
     chance: 1.0
@@ -455,7 +455,7 @@ spells:
     permission: "magic.learned.incandescent_break"
     icon: "magiccodex:textures/spells/expansion_2/incandescent_break.png"
     category: "fire"
-    condition-text: "방패를 사용하는 적과의 실습 전투를 완료하기."
+    condition-text: "세드릭 교수의 화염 마법 고급 수업 듣기."
     requirements:
       "trace.condition.incandescent_break": 1
     chance: 1.0
@@ -485,7 +485,7 @@ spells:
     permission: "magic.learned.water_bolt"
     icon: "magiccodex:textures/spells/novice_extra/water_bolt.png"
     category: "water"
-    condition-text: "물 마법 기초 수업을 통해 습득."
+    condition-text: "엘레나 교수의 물 마법 기초 수업 듣기."
     requirements:
       "trace.condition.water_bolt": 1
     chance: 1.0
@@ -545,7 +545,7 @@ spells:
     permission: "magic.learned.eternal_ice_prison"
     icon: "magiccodex:textures/spells/advanced/eternal_ice_prison.png"
     category: "water"
-    condition-text: "물 마법 응용 수업을 통해 낮은 확률로 습득."
+    condition-text: "엘레나 교수와(과) 친해진 뒤(호감도 30) 물 비전 수업 듣기."
     requirements:
       "trace.condition.eternal_ice_prison": 1
     chance: 1.0
@@ -665,7 +665,7 @@ spells:
     permission: magic.learned.pebble_toss
     icon: magiccodex:textures/spells/novice_extra/pebble_toss.png
     category: earth
-    condition-text: "대지 마법 기초 수업을 통해 습득."
+    condition-text: "베르나 교수의 대지 마법 기초 수업 듣기."
     requirements:
       "trace.condition.pebble_toss": 1
     chance: 1.0
@@ -675,7 +675,7 @@ spells:
     permission: magic.learned.tidal_wave
     icon: magiccodex:textures/spells/expansion_2/tidal_wave.png
     category: water
-    condition-text: "물 마법 실전 수업을 통해 습득."
+    condition-text: "엘레나 교수의 물 마법 고급 수업 듣기."
     requirements:
       "trace.condition.tidal_wave": 1
     chance: 1.0
@@ -805,7 +805,7 @@ spells:
     permission: "magic.learned.rainbow_collar"
     icon: "magiccodex:textures/spells/expansion_2/rainbow_collar.png"
     category: "light"
-    condition-text: "몬스터 교화 실습 수행하기"
+    condition-text: "이솔데 교수의 빛 마법 기초 수업 듣기."
     requirements:
       "trace.condition.rainbow_collar": 1
     chance: 1.0
@@ -817,7 +817,7 @@ spells:
     permission: "magic.learned.stone_wall"
     icon: "magiccodex:textures/spells/intermediate/stone_wall.png"
     category: "earth"
-    condition-text: "기초 땅 마법 수업을 통해 습득합니다."
+    condition-text: "베르나 교수의 대지 마법 중급 수업 듣기."
     requirements:
       "trace.condition.stone_wall": 1
     chance: 1.0
@@ -837,7 +837,7 @@ spells:
     permission: "magic.learned.earthquake"
     icon: "magiccodex:textures/spells/advanced/earthquake.png"
     category: "earth"
-    condition-text: "대지 마법 실전 수업"
+    condition-text: "베르나 교수의 대지 마법 고급 수업 듣기."
     requirements:
       "trace.condition.earthquake": 1
     chance: 1.0
@@ -857,7 +857,7 @@ spells:
     permission: "magic.learned.minor_heal"
     icon: "magiccodex:textures/spells/novice_extra/minor_heal.png"
     category: "light"
-    condition-text: "빛 마법 기초 수업에서 습득합니다."
+    condition-text: "이솔데 교수의 빛 마법 기초 수업 듣기."
     requirements:
       "trace.condition.minor_heal": 1
     chance: 1.0
@@ -867,7 +867,7 @@ spells:
     permission: "magic.learned.protective_ward"
     icon: "magiccodex:textures/spells/intermediate/protective_ward.png"
     category: "light"
-    condition-text: "빛 마법 방어 수업을 통해 습득."
+    condition-text: "이솔데 교수의 빛 마법 중급 수업 듣기."
     requirements:
       "trace.condition.protective_ward": 1
     chance: 1.0
@@ -877,7 +877,7 @@ spells:
     permission: "magic.learned.companion_return"
     icon: "magiccodex:textures/spells/expansion/companion_return.png"
     category: "light"
-    condition-text: "마법 기초 수업에서 습득합니다."
+    condition-text: "이솔데 교수의 빛 마법 기초 수업 듣기."
     requirements:
       "trace.condition.companion_return": 1
     chance: 1.0
@@ -897,7 +897,7 @@ spells:
     permission: "magic.learned.shadow_bind"
     icon: "magiccodex:textures/spells/novice_extra/shadow_bind.png"
     category: "dark"
-    condition-text: "어둠 마법 기초 수업에서 습득합니다."
+    condition-text: "그레고르 교감의 어둠 마법 기초 수업 듣기."
     requirements:
       "trace.condition.shadow_bind": 1
     chance: 1.0
@@ -911,5 +911,155 @@ spells:
     condition-text: "1장에서 어부 올레 아저씨에게 배웁니다."
     requirements:
       "trace.condition.guiding_star": 1
+    chance: 1.0
+    prerequisites: []
+  storm_command:
+    name: "폭풍의 지휘"
+    permission: "magic.learned.storm_command"
+    icon: "magiccodex:textures/spells/advanced/storm_command.png"
+    category: "wind"
+    condition-text: "하르바 교수와(과) 친해진 뒤(호감도 30) 바람 비전 수업 듣기."
+    requirements:
+      "trace.condition.storm_command": 1
+    chance: 1.0
+    prerequisites: []
+  cinder_skipring:
+    name: "불꽃 줄넘기"
+    permission: "magic.learned.cinder_skipring"
+    icon: "magiccodex:textures/spells/reviewed_20261020/cinder_skipring.png"
+    category: "fire"
+    condition-text: "세드릭 교수와(과) 친해진 뒤(호감도 30) 화염 비전 수업 듣기."
+    requirements:
+      "trace.condition.cinder_skipring": 1
+    chance: 1.0
+    prerequisites: []
+  bouncing_droplet:
+    name: "도약하는 물방울"
+    permission: "magic.learned.bouncing_droplet"
+    icon: "magiccodex:textures/spells/reviewed_20261016/bouncing_droplet.png"
+    category: "water"
+    condition-text: "엘레나 교수의 물 마법 중급 수업 듣기."
+    requirements:
+      "trace.condition.bouncing_droplet": 1
+    chance: 1.0
+    prerequisites: []
+  flint_sorting:
+    name: "돌 고르기"
+    permission: "magic.learned.flint_sorting"
+    icon: "magiccodex:textures/spells/reviewed_20261020/flint_sorting.png"
+    category: "earth"
+    condition-text: "베르나 교수의 대지 마법 기초 수업 듣기."
+    requirements:
+      "trace.condition.flint_sorting": 1
+    chance: 1.0
+    prerequisites: []
+  dormant_seed:
+    name: "동면의 씨앗"
+    permission: "magic.learned.dormant_seed"
+    icon: "magiccodex:textures/spells/reviewed_20261020/dormant_seed.png"
+    category: "earth"
+    condition-text: "베르나 교수의 대지 마법 중급 수업 듣기."
+    requirements:
+      "trace.condition.dormant_seed": 1
+    chance: 1.0
+    prerequisites: []
+  moss_coating:
+    name: "이끼 입히기"
+    permission: "magic.learned.moss_coating"
+    icon: "magiccodex:textures/spells/reviewed_20261020/moss_coating.png"
+    category: "earth"
+    condition-text: "베르나 교수의 대지 마법 중급 수업 듣기."
+    requirements:
+      "trace.condition.moss_coating": 1
+    chance: 1.0
+    prerequisites: []
+  material_exchange:
+    name: "자재 치환"
+    permission: "magic.learned.material_exchange"
+    icon: "magiccodex:textures/spells/reviewed_20261020/material_exchange.png"
+    category: "earth"
+    condition-text: "베르나 교수의 대지 마법 고급 수업 듣기."
+    requirements:
+      "trace.condition.material_exchange": 1
+    chance: 1.0
+    prerequisites: []
+  primordial_stone:
+    name: "원초의 돌"
+    permission: "magic.learned.primordial_stone"
+    icon: "magiccodex:textures/spells/expansion_2/primordial_stone.png"
+    category: "earth"
+    condition-text: "베르나 교수와(과) 친해진 뒤(호감도 30) 대지 비전 수업 듣기."
+    requirements:
+      "trace.condition.primordial_stone": 1
+    chance: 1.0
+    prerequisites: []
+  luminous_archive:
+    name: "빛의 서고"
+    permission: "magic.learned.luminous_archive"
+    icon: "magiccodex:textures/spells/intermediate/luminous_archive.png"
+    category: "light"
+    condition-text: "이솔데 교수의 빛 마법 중급 수업 듣기."
+    requirements:
+      "trace.condition.luminous_archive": 1
+    chance: 1.0
+    prerequisites: []
+  merciful_arrow:
+    name: "자비의 화살"
+    permission: "magic.learned.merciful_arrow"
+    icon: "magiccodex:textures/spells/expansion_2/merciful_arrow.png"
+    category: "light"
+    condition-text: "이솔데 교수의 빛 마법 고급 수업 듣기."
+    requirements:
+      "trace.condition.merciful_arrow": 1
+    chance: 1.0
+    prerequisites: []
+  mana_deposit:
+    name: "마력 예금"
+    permission: "magic.learned.mana_deposit"
+    icon: "magiccodex:textures/spells/expansion_2/mana_deposit.png"
+    category: "light"
+    condition-text: "이솔데 교수의 빛 마법 고급 수업 듣기."
+    requirements:
+      "trace.condition.mana_deposit": 1
+    chance: 1.0
+    prerequisites: []
+  constellation_blessing:
+    name: "성좌의 가호"
+    permission: "magic.learned.constellation_blessing"
+    icon: "magiccodex:textures/spells/advanced/constellation_blessing.png"
+    category: "light"
+    condition-text: "이솔데 교수와(과) 친해진 뒤(호감도 30) 빛 비전 수업 듣기."
+    requirements:
+      "trace.condition.constellation_blessing": 1
+    chance: 1.0
+    prerequisites: []
+  life_siphon:
+    name: "생명 갈취"
+    permission: "magic.learned.life_siphon"
+    icon: "magiccodex:textures/spells/expansion/life_siphon.png"
+    category: "dark"
+    condition-text: "그레고르 교감의 어둠 마법 중급 수업 듣기."
+    requirements:
+      "trace.condition.life_siphon": 1
+    chance: 1.0
+    prerequisites: []
+  night_chain:
+    name: "밤의 사슬"
+    permission: "magic.learned.night_chain"
+    icon: "magiccodex:textures/spells/expansion/night_chain.png"
+    category: "dark"
+    condition-text: "그레고르 교감의 어둠 마법 고급 수업 듣기."
+    requirements:
+      "trace.condition.night_chain": 1
+    chance: 1.0
+    prerequisites: []
+  forbidden_contract:
+    name: "금서의 계약"
+    permission: "magic.learned.forbidden_contract"
+    icon: "magiccodex:textures/spells/advanced/forbidden_contract.png"
+    category: "dark"
+    condition-text: "그레고르 교감와(과) 친해진 뒤(호감도 30) 어둠 비전 수업 듣기."
+    requirements:
+      "trace.condition.forbidden_contract": 1
     chance: 1.0
     prerequisites: []

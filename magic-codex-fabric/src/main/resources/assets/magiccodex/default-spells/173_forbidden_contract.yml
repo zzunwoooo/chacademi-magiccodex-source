@@ -5,7 +5,7 @@ description: 최대 마나의 70%를 바쳐 3초 동안 마나 회복을 체력 
 icon: magiccodex:textures/spells/advanced/forbidden_contract.png
 permission: magic.learned.forbidden_contract
 discovery:
-  description: 도서관의 관련 책 읽기 (책명 최신 확인 필요)
+  description: 그레고르 교감와(과) 친해진 뒤(호감도 30) 어둠 비전 수업 듣기.
 research: 계약서의 작은 글씨를 읽지 않은 마법사는 오래 살지 못했다.
 cast:
   command: 마법 forbidden_contract

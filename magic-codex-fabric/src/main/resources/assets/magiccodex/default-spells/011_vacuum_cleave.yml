@@ -5,7 +5,7 @@ description: 빠르게 관통하는 바람의 칼날로 적을 공격하고, 투
 icon: magiccodex:textures/spells/advanced/vacuum_cleave.png
 permission: magic.learned.vacuum_cleave
 discovery:
-  description: 바람 마법 중급 수업을 통해 습득.
+  description: 하르바 교수의 바람 마법 중급 수업 듣기.
 research: 압축된 바람이 날카로운 칼날이 되어, 앞을 가로막는 적과 사슬을 베어낸다.
 cast:
   command: 마법 vacuum_cleave

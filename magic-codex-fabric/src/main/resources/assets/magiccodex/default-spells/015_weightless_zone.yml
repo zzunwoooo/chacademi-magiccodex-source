@@ -5,7 +5,7 @@ description: 바라보는 지점에 중력지대를 만들어 반경 5블록 안
 icon: magiccodex:textures/spells/expansion/weightless_zone.png
 permission: magic.learned.weightless_zone
 discovery:
-  description: 엔더 드래곤 격파
+  description: 하르바 교수와(과) 친해진 뒤(호감도 30) 바람 비전 수업 듣기.
 research: 용이 쓰러진 자리에 남은 힘은 빛마저 휘게 했다. 그 중심을 붙잡자, 주변의 모든 것이 안쪽으로 기울었다.
 cast:
   command: 마법 weightless_zone

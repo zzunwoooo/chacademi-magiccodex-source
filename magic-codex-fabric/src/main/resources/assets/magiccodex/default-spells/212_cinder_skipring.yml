@@ -5,7 +5,7 @@ description: 발밑에서 바깥으로 퍼지는 불고리를 보냅니다. 고�
 icon: magiccodex:textures/spells/reviewed_20261020/cinder_skipring.png
 permission: magic.learned.cinder_skipring
 discovery:
-  description: 전투 중 적의 지상 범위 공격을 점프로 회피 20회.
+  description: 세드릭 교수와(과) 친해진 뒤(호감도 30) 화염 비전 수업 듣기.
 research: 불길은 바닥을 달렸지만, 가볍게 떠오른 발끝에는 뜨거운 자국조차 남지 않았다.
 cast:
   command: 마법 cinder_skipring

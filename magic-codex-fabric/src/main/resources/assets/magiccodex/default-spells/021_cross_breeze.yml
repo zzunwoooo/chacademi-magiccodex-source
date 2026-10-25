@@ -5,7 +5,7 @@ description: 플레이어 주변에 바람 화살 하나를 띄워 약 2초간 �
 icon: magiccodex:textures/spells/expansion_2/cross_breeze.png
 permission: magic.learned.cross_breeze
 discovery:
-  description: 바람 마법 기초 수업을 통해 낮은 확률로 습득.
+  description: 하르바 교수의 바람 마법 기초 수업 듣기.
 research: 오래된 화살에 바람을 감싸자, 가벼운 깃 끝에서도 뜻밖의 위력이 솟아났다.
 cast:
   command: 마법 cross_breeze
