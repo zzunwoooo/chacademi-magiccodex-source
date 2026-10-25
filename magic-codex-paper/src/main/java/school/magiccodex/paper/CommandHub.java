@@ -76,6 +76,7 @@ final class CommandHub {
     private final List<Line> summaries = new ArrayList<>();
     private final List<Status> statuses = new ArrayList<>();
     private boolean built;
+    private final OperatorHelp help;
 
     CommandHub(MagicCodexBridge plugin) {
         this(plugin, handler -> plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> handler.accept(event.registrar())));
@@ -87,6 +88,7 @@ final class CommandHub {
         this.arguments = new ChacaArguments(plugin);
         this.feedback = new ChacaFeedback(plugin);
         this.permissions = new ChacaPermissions(plugin);
+        this.help = new OperatorHelp(plugin, this);
         for (String root : ROOTS.keySet()) branches.put(root, new ArrayList<>());
         binder.accept(registrar -> { register(registrar); built = true; });
         ChacaApi.hub = this;
@@ -161,7 +163,12 @@ final class CommandHub {
             registrar.register(builder.build(), entry.getValue(), List.of());
         }
         registrar.register(Commands.literal(ChacaApi.관리).requires(CommandHub::admin)
-                .executes(ctx -> { mainMenu(ctx.getSource().getSender()); return Command.SINGLE_SUCCESS; }).build(),
+                .executes(ctx -> { mainMenu(ctx.getSource().getSender()); return Command.SINGLE_SUCCESS; })
+                // #38 운영자 AI 도우미: 실제 명령 목록 + 운영 안내서를 주고 "어떤 명령을 쓰면 되는지" 묻는다 (실행은 하지 않음)
+                .then(Commands.literal("질문").executes(ctx -> { feedback.userFail(ctx.getSource().getSender(), "궁금한 것을 적어 주세요", "/관리 질문 <궁금한 것>"); return 0; })
+                        .then(Commands.argument("내용", com.mojang.brigadier.arguments.StringArgumentType.greedyString())
+                                .executes(wrap(ctx -> { help.ask(ctx.getSource().getSender(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "내용")); return Command.SINGLE_SUCCESS; }, "/관리 질문 <내용>"))))
+                .build(),
                 "차카데미 관리 명령 목록", List.of());
         for (var root : playerRoots) registrar.register(graft(root.node(), ""), root.description(), root.aliases());
         plugin.getLogger().info("[명령어] 대단원 " + ROOTS.size() + "개, 유저 명령 " + playerRoots.size() + "개 등록");
@@ -233,8 +240,52 @@ final class CommandHub {
                     .clickEvent(ClickEvent.suggestCommand(cmd))
                     .hoverEvent(HoverEvent.showText(Component.text("눌러서 " + cmd + " 입력"))));
         }
+        lines.add(Component.text(" /관리 질문 <궁금한 것>", NamedTextColor.AQUA)
+                .append(Component.text("  어떤 명령을 쓰면 되는지 AI에게 묻기 (예: 돈을 잃었다는 유저가 있어)", NamedTextColor.GRAY))
+                .clickEvent(ClickEvent.suggestCommand("/관리 질문 "))
+                .hoverEvent(HoverEvent.showText(Component.text("눌러서 /관리 질문 입력"))));
         lines.add(Component.text(" 줄을 누르면 채팅창에 명령이 들어갑니다.", NamedTextColor.DARK_GRAY));
         lines.forEach(sender::sendMessage);
+    }
+
+    // ---------------------------------------------------------------- 명령 목록 (운영자 AI 도우미용)
+
+    /** 실행할 수 있는 관리 명령 한 줄: 모양(예: /유저관리 &lt;닉네임&gt; 돈 추가 &lt;금액&gt;)과 그 갈래 설명. */
+    record CatalogLine(String path, String description) {}
+
+    /** 지금 등록된 모든 관리·유저 명령 중 실행할 수 있는 끝 칸 전부 (갈래 등록 순서). */
+    List<CatalogLine> catalog() {
+        var out = new ArrayList<CatalogLine>();
+        out.add(new CatalogLine("/관리", "차카데미 관리 명령 목록"));
+        out.add(new CatalogLine("/관리 질문 <내용…>", "어떤 명령을 쓰면 되는지 AI에게 묻기"));
+        for (var e : ROOTS.entrySet()) {
+            String root = e.getKey();
+            String head = "/" + root + (root.equals(ChacaApi.유저관리) ? " <닉네임>" : "");
+            out.add(new CatalogLine("/" + root, e.getValue() + " (메뉴)"));
+            if (root.equals(ChacaApi.유저관리)) out.add(new CatalogLine(head, "유저 요약 보기"));
+            if (root.equals(ChacaApi.서버관리)) {
+                out.add(new CatalogLine("/서버관리 새로고침 전체", "모든 설정 파일 다시 읽기"));
+                for (var r : reloads.values()) out.add(new CatalogLine("/서버관리 새로고침 " + r.key(), r.description()));
+                out.add(new CatalogLine("/서버관리 상태", "연결 상태 보기"));
+            }
+            for (var b : branches.get(root)) walk(b.node(), head + " " + b.node().getLiteral(), b.description(), out);
+        }
+        for (var r : playerRoots) walk(r.node(), "/" + r.node().getLiteral(), "(유저 명령) " + r.description(), out);
+        var seen = new HashSet<String>();
+        out.removeIf(l -> !seen.add(l.path()));
+        return out;
+    }
+
+    private static void walk(CommandNode<CommandSourceStack> node, String path, String description, List<CatalogLine> out) {
+        if (node.getCommand() != null) out.add(new CatalogLine(path, description));
+        for (var child : node.getChildren()) walk(child, path + " " + catalogToken(child), description, out);
+    }
+
+    /** 목록용 칸 이름: 띄어쓰기까지 다 받는 글 칸은 &lt;이름…&gt; 로 표시 (도우미가 뒤에 붙은 말을 그 칸으로 본다). */
+    private static String catalogToken(CommandNode<CommandSourceStack> node) {
+        if (node instanceof ArgumentCommandNode<CommandSourceStack, ?> a && a.getType() instanceof com.mojang.brigadier.arguments.StringArgumentType t
+                && t.getType() == com.mojang.brigadier.arguments.StringArgumentType.StringType.GREEDY_PHRASE) return "<" + node.getName() + "…>";
+        return token(node);
     }
 
     private void menu(CommandSender sender, String root) {

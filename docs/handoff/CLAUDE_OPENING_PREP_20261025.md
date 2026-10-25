@@ -154,7 +154,7 @@ codex_title_awards, codex_artifact_pity, codex_shop_tutorial(SQLite: shop_tutori
 #110 TAB: 플레이스홀더는 닉네임 없으면 계정명. deployment/tab/ (README, config-snippet, groups). 이름표는 TAB으로 꾸미지 말 것(invisible-nametags 끄기).
 #95 /유저관리 <닉> 게임모드|찾아가기|불러오기|좌표이동|비행|회복 (다른 서버면 HuskHomes 위임). OperatorCommands.java.
 #4 deployment/worldguard/ (protect-build.txt, README) — 학교·튜토리얼 월드만, 야생 제외. 월드 이름 결정 필요.
-#38 docs/OPERATOR_GUIDE_KO.md 상황별 안내.
+#38 docs/OPERATOR_GUIDE_KO.md 상황별 안내. + **운영자 AI 도우미 `/관리 질문 <궁금한 것>`** (오너 결정 2026-10-25): Bridge OperatorHelp 가 CommandHub.catalog()(켜질 때 실제 등록된 관리·유저 명령 끝 칸 전부)와 resources/operator-guide.md(= docs/OPERATOR_GUIDE_KO.md 사본, 안내서 고치면 같이 복사)를 지시문으로 넣어 ChacaNPC 의 OpenAI 연결(ChacaNpcApi.ask, 리플렉션)로 묻는다. 답 JSON {answer, commands[]} 의 명령은 실제 명령 모양과 맞춰 보고 안 맞으면 뺀다. 실행은 안 함(클릭하면 채팅창에 들어감). 예산 한도와 상관없이 보냄(오너), 사용량은 시스템 사용량으로 기록. **Bridge·ChacaNPC jar 같이 배포**, ChacaNPC config 에 OpenAI 키 필요. 테스트 OperatorHelpTest.
 #88 청크 점유 코드가 어디에도 없음 → 외부 플러그인/새로 만들기 결정 필요.
 #61 인벤세이브 플러그인 없음(바닐라 규칙). 부활 지점 코드 없음(바닐라). 큐디치 사망 시 장신구 소실 버그 → 내가 GameListener death 우선순위 HIGH로 수정.
 #2 일러스트 대기열 정상. 자동 생성이 server-id school에서만 → auto.server-ids 설정 추가(기본 [school]). auto.first-join 기본 false라 켜야 함. 워커2 기준 180명 약 2시간.
