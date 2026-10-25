@@ -1218,7 +1218,7 @@ spells:
     cooldown-seconds: 10
   drowsiness:
     name: 졸음
-    enabled: false
+    enabled: true
     command: 마법 drowsiness
     permission: magic.learned.drowsiness
     mana-cost: 100

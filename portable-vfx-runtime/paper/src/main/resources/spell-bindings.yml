@@ -10311,3 +10311,42 @@ bindings:
         delay-ticks: 0
         duration-ticks: 78
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  # ---- 168~214 최종 기획 신규 구현 (magic-mythic-paper/tools/arcana_spells.py) ----
+  drowsiness:
+    folder: Drowsiness
+    number: 175
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 340
+    sequence:
+      sustainStart: 0
+    holdTicks: 240
+    phases:
+      - role: static
+        trigger: external:orb
+        effect: claude:drowsiness/orb
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: static
+        trigger: external:eye
+        effect: claude:drowsiness/eye
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 200
+      - role: static
+        trigger: external:eye_end
+        effect: claude:drowsiness/eye_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+        stop-effects:
+          - claude:drowsiness/eye
+      - role: attached
+        trigger: external:latch
+        effect: claude:drowsiness/latch
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 64
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending

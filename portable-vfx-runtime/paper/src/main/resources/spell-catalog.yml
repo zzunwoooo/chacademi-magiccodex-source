@@ -6722,11 +6722,37 @@ spells:
     icon: magiccodex:textures/spells/expansion/drowsiness.png
     mana-cost: 100
     cooldown-seconds: 16
-    reviewed: false
-    enabled: false
+    reviewed: true
+    enabled: true
     aliases: []
-    phases: []
-    preparation-status: vfx-pack-missing
+    phases:
+      - role: static
+        trigger: external:orb
+        effect: claude:drowsiness/orb
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: static
+        trigger: external:eye
+        effect: claude:drowsiness/eye
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 200
+      - role: static
+        trigger: external:eye_end
+        effect: claude:drowsiness/eye_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+        stop-effects:
+          - claude:drowsiness/eye
+      - role: attached
+        trigger: external:latch
+        effect: claude:drowsiness/latch
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 64
+    preparation-status: server-events-connected
     numeric-source: magic-work/merged-input-300.json
     baseline-icon: magiccodex:textures/spells/expansion/drowsiness.png
   misfortune_whisper:

@@ -1141,7 +1141,7 @@ CHA_life_siphon:
 CHA_drowsiness:
   Cooldown: 0
   Skills:
-  - chaarcana{type=drowse;speed=0.8;r=3;wait=200;root=60;element=dark;spell=drowsiness}
+  - chaarcana{type=drowse;speed=0.8;r=3;wait=200;root=60;orbvfx=claude:drowsiness/fly;element=dark;spell=drowsiness}
 
 # 176 나약함의 저주 - 대상 8초 약화(마법 피해↓) + 물리 약화(공격 피해↓)
 CHA_misfortune_whisper:
