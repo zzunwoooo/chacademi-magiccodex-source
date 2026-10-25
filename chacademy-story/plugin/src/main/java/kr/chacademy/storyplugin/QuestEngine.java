@@ -1821,11 +1821,31 @@ final class QuestEngine implements Listener {
         return 1;
     }
 
+    /** 시작 단계에서 다음을 따라가며 id 앞에 오는 단계들 (진행 순). 그 길에 없으면 steps.yml 에 적힌 순서로. */
+    private List<String> stepsBefore(String id) {
+        List<String> path = new ArrayList<>();
+        Set<String> seen = new HashSet<>();
+        String cur = defs.startStep;
+        while (cur != null && !cur.isEmpty() && seen.add(cur) && defs.get(cur) != null) {
+            if (cur.equals(id)) return path;
+            path.add(cur);
+            cur = defs.get(cur).next;
+        }
+        List<String> order = new ArrayList<>();
+        for (String k : defs.steps.keySet()) { if (k.equals(id)) return order; order.add(k); }
+        return List.of();
+    }
+
     private int cmdUserSet(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         Player p = ChacaLink.targetOnline(ctx);
         String id = ctx.getArgument("이동단계", String.class);
         if (defs.get(id) == null) throw ChacaLink.error("단계 " + id + " 이(가) 없어요");
-        enter(p, prog.of(p.getUniqueId()), id, true);
+        P st = prog.of(p.getUniqueId());
+        // 2026-10-25 오너: 단계를 정하면 그 앞 단계는 전부 완료, 뒤 단계는 미완료로 (퀘스트창 진행중·완료가 그대로 따라옴)
+        List<String> before = stepsBefore(id);
+        st.history.clear();
+        for (int i = before.size() - 1; i >= 0; i--) st.history.add(before.get(i)); // history = 최근 순
+        enter(p, st, id, true);
         ChacaLink.ok(ctx.getSource().getSender(), ChacaLink.name(p.getUniqueId()) + " 님을 단계 " + id + " (으)로 옮겼어요"
                 + (chapterLocked(defs.get(id)) ? " (공개 전인 장이라 장이 열릴 때까지 멈춰 있어요)" : ""));
         return 1;
