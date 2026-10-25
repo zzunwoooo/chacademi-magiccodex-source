@@ -165,7 +165,7 @@ public final class Settings {
         giftLiked = c.getInt("gifts.liked", 3);
         giftDisliked = c.getInt("gifts.disliked", -3);
         giftNeutral = c.getInt("gifts.neutral", 1);
-        Map<String, Integer> grades = new HashMap<>(Map.of("일반", 1, "고급", 2, "유일", 3, "전설", 10));
+        Map<String, Integer> grades = new HashMap<>(Map.of("일반", 1, "고급", 3, "유일", 7, "전설", 15));
         ConfigurationSection gs = c.getConfigurationSection("gifts.grades");
         if (gs != null) {
             for (String k : gs.getKeys(false)) {
