@@ -50,7 +50,7 @@ final class SeasonalSpellMechanics implements Listener,AutoCloseable {
         public SkillResult castAtEntity(SkillMetadata data,AbstractEntity abstractTarget){
             Entity entity=abstractTarget.getBukkitEntity();if(!(entity instanceof LivingEntity living)||!living.isValid()||living.isDead())return SkillResult.INVALID_TARGET;
             var climate=plugin.climate();Entity source=data.getCaster().getEntity().getBukkitEntity();
-            double multiplier=climate!=null&&climate.enabledIn(entity.getWorld())?climate.powerMultiplier(element):1;
+            double multiplier=climate!=null&&climate.enabledIn(entity.getWorld())?climate.powerMultiplier(source,element):1;
             if(amount>0)living.damage(amount*multiplier,source);
             impact(entity.getLocation(),element,source);return SkillResult.SUCCESS;
         }

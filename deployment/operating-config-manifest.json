@@ -49,7 +49,7 @@
   },
   {
     "path": "deployment/operating-config/MythicMobs/Skills/chacademi_pet_skills.yml",
-    "sha256": "c64e196b153d8d7f3641c9d467b451a629bcb7683c9de6f8566e998c6eb49318",
+    "sha256": "f0cd318c6545001cd3f09e2a4b5635d62bdba077909a9b22ef452c453bff9e5f",
     "sameOnSchoolAndWild": true,
     "role": "non-secret gameplay configuration; deployment overlay, not player data"
   }
