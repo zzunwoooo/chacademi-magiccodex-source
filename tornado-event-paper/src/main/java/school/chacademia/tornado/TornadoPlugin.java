@@ -184,6 +184,22 @@ public final class TornadoPlugin extends JavaPlugin implements Listener {
         }
     }
 
+    /**
+     * 마법 381 계절 예보 (MagicCodexBridge LifeSpells 가 리플렉션으로 부름, 메인 스레드): 이 서버의 회오리 이벤트 안내 한 줄.
+     * 회오리는 가을에만, 바깥에 있는 플레이어 근처에 무작위로 생긴다 (tryRandomSpawn): 정해진 시각은 없고 쿨타임만 알려 준다.
+     */
+    public String seasonForecast(){
+        var c=getConfig();
+        String now=!active.isEmpty()?"지금 회오리 "+active.size()+"개가 돌아다니고 있어요 · ":"";
+        if(!c.getBoolean("random-spawn.enabled",true))return now+"이 서버에는 회오리가 저절로 생기지 않아요";
+        var climate=climate();
+        if(climate==null)return now+"계절 정보를 읽지 못했어요";
+        if(climate.season()!=ClimateService.Season.AUTUMN)return now+"회오리는 가을에만 나타나요";
+        if(spawnGuard.full())return now+"회오리가 많아서 당분간 새로 생기지 않아요";
+        long left=nextRandomSpawn-System.currentTimeMillis();
+        return now+(left>0?"약 "+Math.max(1,(left+59_999)/60_000)+"분 뒤부터 바깥에서 회오리가 나타날 수 있어요":"지금 바깥에 있으면 언제든 회오리가 나타날 수 있어요");
+    }
+
     ClimateService climate(){return Bukkit.getPluginManager().isPluginEnabled("MagicCodexBridge")?Bukkit.getServicesManager().load(ClimateService.class):null;}
     private void tryRandomSpawn(){
         var c=getConfig();if(!c.getBoolean("random-spawn.enabled",true)||spawnGuard.full())return;

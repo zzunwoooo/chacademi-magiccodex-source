@@ -190,3 +190,5 @@ See [artifact catalogue and unit ring integration](CODEX_ARTIFACT_CATALOG_UNITRI
 
 > Claude 2026-10-20 (not built): [원소 반응 CC 개편 — VFX 팩 교체 + 반응 효과·크기 서버 코드](CLAUDE_REACTION_CC_VFX_20261020.md). Branch claude/reaction-cc-vfx-20261020 on codex/operating-final-20261019 @ 8356980. MagicMythic jar (school/wild) + client VFX pack.
 > Claude 2026-10-20 (not built): [원소 반응 CC 개편 — VFX 팩 교체 + 반응 효과·크기 서버 코드](CLAUDE_REACTION_CC_VFX_20261020.md). Branch claude/reaction-cc-vfx-20261020 on codex/operating-final-20261019 @ 8356980. MagicMythic jar (school/wild) + client VFX pack.
+
+> Claude 2026-10-25 (not built): [신규 마법 63종 325~387 실제 기능 + 어둠 마법 VFX 재제작](CLAUDE_NOVA_325_387_20261025.md). Branch claude/magic-325-387-20261025 on review/live-source-handoff-20261025-task3 @ c96c5ae3. magic-mythic / magic-codex paper+fabric / motion mod+plugin / creature-spawns / chaca-npc / tornado + client VFX packs.

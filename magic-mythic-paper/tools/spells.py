@@ -183,11 +183,15 @@ S += _arcana.routes()
 # 239~250 던전 기믹 마법 (tools/gimmick_spells.py is their source of truth)
 import gimmick_spells as _gimmick
 S += _gimmick.routes()
+# 325~387 신규 63종 (tools/nova_spells.py + tools/nova/*.py are their source of truth)
+import nova_spells as _nova
+S += _nova.routes()
 
 EXTRA = {
  'CHA_solar_judgment_fire': ('solar_judgment', ['chazone{r=4;ticks=60;period=5;mult=0.15}'], '태양의 심판 영창 완료 후 3초 레이저 (chachannel then=)'),
 }
 EXTRA.update(_arcana.EXTRA)
+EXTRA.update(_nova.EXTRA)
 
 # ---- #80 사거리 (오너 2026-10-26): 큐디치가 주 컨텐츠라 직선·원거리 마법이 너무 짧음 → 우선 1.7배.
 # 바뀌는 것: 전투 마법(대상/조준)의 시전 거리(route range, 10 이상만 — 그보다 짧은 근접기·생활 마법은 그대로),
@@ -213,8 +217,38 @@ def _scale_line(l):
         if dflt: inner = f'range={dflt};' + inner if inner else f'range={dflt}'
     return head + re.sub(r'(^|;)range=([\d.]+)', rep, inner) + body[end:]
 COMBAT_MECHS = ('chabolt{', 'chamobshot{', 'chaarcana{', 'chazone{', 'chahit{', 'chameteor{', 'chamark{', 'chatelegraph{', 'chachannel{')
+# 325~387 신규 전투 마법 (chanova, 2026-10-26 합치기): 같은 규칙 — 조준 거리(route range, 10 이상) 1.7배, 투사체 비행 거리·
+# 대상 확인 거리(아래 표: Java NovaBasic/Mid/Mid2/High 의 n.d(...) 기본값)도 1.7배. 투사체 aim=line:<길이> 미리보기도 같이.
+# 시전자 앞 고정 모양(갈라짐·행진·균열·거인 발걸음)과 돌진 거리(천공 강하)는 범위 크기라 그대로.
+NOVA_RANGE_PARAMS = {
+    'ice_shard': {'range': 16}, 'wind_needle': {'range': 24}, 'prism_shot': {'range': 20}, 'flame_wheel': {'range': 12},
+    'hydro_burst': {'range': 14}, 'flame_javelin': {'min': 10, 'max': 30}, 'halo_throw': {'range': 20}, 'air_cannon': {'range': 20},
+    'crimson_spiral': {'range': 18}, 'ice_serpent': {'range': 20}, 'scorch_lock': {'range': 25}, 'fate_link': {'range': 16},
+    'shadow_fang': {'range': 12}, 'dusk_orb': {'range': 16}, 'sunlance_drop': {'range': 16}, 'air_choke': {'keep': 20},
+}
+NOVA_FIXED_SHAPE = {'eruption_line', 'titan_stride', 'sky_dive', 'wraith_march', 'fault_rift'}
+def _scale_nova_line(l, i):
+    if not l.startswith('chanova{') or i not in NOVA_RANGE_PARAMS: return l
+    head, body = l[:l.index('{')+1], l[l.index('{')+1:]
+    end = body.index('}'); kv = [p for p in body[:end].split(';') if p]
+    have = {p.split('=', 1)[0]: n for n, p in enumerate(kv) if '=' in p}
+    proj = None
+    for k, dflt in NOVA_RANGE_PARAMS[i].items():
+        v = float(kv[have[k]].split('=', 1)[1]) if k in have else float(dflt)
+        n = _scaled(v, 64)
+        if k in ('range', 'max'): proj = (v, n)
+        if k in have: kv[have[k]] = f'{k}={n}'
+        else: kv.append(f'{k}={n}')
+    if proj and 'aim' in have:
+        a = kv[have['aim']].split('=', 1)[1].split(':')
+        if a[0] == 'line' and abs(float(a[1]) - proj[0]) < 0.01:
+            a[1] = str(proj[1]); kv[have['aim']] = 'aim=' + ':'.join(a)
+    return head + ';'.join(kv) + body[end:]
 def _scale_route(spec):
     i, sk, tgt, rng, base, ratio, util, lines, note = spec
+    if i in _nova.COMBAT:
+        if tgt != 'SELF' and not util and i not in NOVA_FIXED_SHAPE: rng = _scaled(rng, 48)
+        return (i, sk, tgt, rng, base, ratio, util, [_scale_line(_scale_nova_line(l, i)) for l in lines], note)
     # 전투 마법만 (생활·건축·농사·기믹 마법의 조준 거리는 그대로)
     if tgt != 'SELF' and not util and any(l.startswith(COMBAT_MECHS) for l in lines): rng = _scaled(rng, 48)
     return (i, sk, tgt, rng, base, ratio, util, [_scale_line(l) for l in lines], note)
@@ -243,6 +277,8 @@ def catalog():
     D = {}
     for f in glob.glob(os.path.join(REPO,'magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/*.yml')):
         d = yaml.safe_load(open(f, encoding='utf-8')); D[d['id']] = d
+    import spell_order   # 2026-10-25: dropped spells left the codex; keep their name/element for the (disabled) routes
+    for i, (nm, cat, o) in spell_order.DROPPED_INFO.items(): D.setdefault(i, {'id': i, 'name': nm, 'category': cat, 'order': 900 + o})
     return D
 
 def main():
@@ -284,7 +320,7 @@ def main():
         if shape and shape['mode'] in ('area', 'point', 'wall'): rt.append('    ground: true')
     for sk, (owner, lines, note) in EXTRA.items():
         cat = D.get(owner, {}).get('category', '')
-        lines = [l.replace('}', f';element={cat};spell={owner}}}', 1) if l.startswith(('chahit{', 'chabolt{', 'chazone{')) else l for l in lines]
+        lines = [l.replace('}', f';element={cat};spell={owner}}}', 1) if l.startswith(('chahit{', 'chabolt{', 'chazone{', 'chanova{')) else l for l in lines]
         out += [f'# (추가 스킬) {note}', f'{sk}:', '  Cooldown: 0', '  Skills:'] + [f'  - {l}' for l in lines] + ['']
     os.makedirs(os.path.join(ROOT,'mythicmobs/Skills'), exist_ok=True); os.makedirs(os.path.join(ROOT,'server-config'), exist_ok=True)
     open(os.path.join(ROOT,'mythicmobs/Skills/chacademi_spells.yml'),'w',encoding='utf-8').write('\n'.join(out))
@@ -324,6 +360,15 @@ def aim_shape(spec):
         if first and 'r' in _params(first): d['radius'] = float(_params(first)['r'])
         return d
     if tgt == 'BLOCK': return {'mode': 'point', 'range': rng, 'radius': 0.6}
+    nova = next((l for l in lines if l.startswith('chanova{')), None)
+    if nova is not None and 'aim' in _params(nova):
+        # 325~387: aim=area:<r> | line:<length>:<width> | cone:<length>:<angle> | point | wall:<width>:<depth>
+        a = _params(nova)['aim'].split(':')
+        if a[0] == 'area': return {'mode': 'area', 'range': rng, 'radius': float(a[1])}
+        if a[0] == 'line': return {'mode': 'line', 'range': rng, 'length': float(a[1]), 'width': float(a[2]), 'origin': 'eye'}
+        if a[0] == 'cone': return {'mode': 'cone', 'range': rng, 'length': float(a[1]), 'angle': float(a[2])}
+        if a[0] == 'wall': return {'mode': 'wall', 'range': rng, 'width': float(a[1]), 'depth': float(a[2])}
+        return {'mode': 'point', 'range': rng, 'radius': 0.6}
     first = next((l for l in lines if l.startswith(('chahit{', 'chameteor{', 'chabolt{', 'chazone{', 'chaworld{', 'chafarm{', 'chautil{', 'chasummon{', 'chachannel{', 'chatelegraph{', 'chamobshot{'))), None)
     if first is None: return {'mode': 'point', 'range': rng, 'radius': 0.6}
     if first.startswith('chamobshot{'):

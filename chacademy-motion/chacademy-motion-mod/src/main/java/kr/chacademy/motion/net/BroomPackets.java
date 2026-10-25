@@ -141,6 +141,33 @@ public final class BroomPackets {
         }
     }
 
+    public static final byte BUFF_SPEED = 1;
+    public static final byte BUFF_BALANCE_DRAIN = 2;
+    public static final byte BUFF_HIDE_TRAIL = 3;
+
+    /**
+     * 서버 → 나 / 주변: 시간제 비행 버프 (2026-10-25, 마법 375 불꽃 추진 · 380 순풍). 플러그인 BroomCodec.Buff 와 같은 형식
+     * (UUID, byte kind, int ticks, float value). 1 최고 속도 × value, 2 균형 감소 × value (본인만), 3 이 사람 궤적 숨김 (주변도). ticks 0 = 끝.
+     */
+    public record BuffS2C(UUID player, byte kind, int ticks, float value) implements CustomPacketPayload {
+        public static final Type<BuffS2C> TYPE = typeOf("broom_buff");
+        /** 깨진·모르는 형식의 패킷 (핸들러가 무시). */
+        public static final BuffS2C INVALID = new BuffS2C(new UUID(0, 0), (byte) 0, 0, 0);
+        public static final StreamCodec<RegistryFriendlyByteBuf, BuffS2C> CODEC = SafeCodec.failSafe("broom_buff", StreamCodec.of(
+                (buf, b) -> {
+                    UUIDUtil.STREAM_CODEC.encode(buf, b.player);
+                    buf.writeByte(b.kind);
+                    buf.writeInt(b.ticks);
+                    buf.writeFloat(b.value);
+                },
+                buf -> new BuffS2C(UUIDUtil.STREAM_CODEC.decode(buf), buf.readByte(), buf.readInt(), buf.readFloat())), INVALID);
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
+
     /** 나 → 서버: 내리기, 낙마, 다시 잡기 등. */
     public record EventC2S(byte kind, float value) implements CustomPacketPayload {
         public static final Type<EventC2S> TYPE = typeOf("broom_evt");

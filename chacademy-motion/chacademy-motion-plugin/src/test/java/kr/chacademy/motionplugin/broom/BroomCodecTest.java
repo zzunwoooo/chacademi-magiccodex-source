@@ -97,4 +97,16 @@ class BroomCodecTest {
         assertEquals(r, BroomCodec.decodeRequest(BroomCodec.encodeRequest(r)));
         assertThrows(BroomCodec.MalformedException.class, () -> BroomCodec.decodeRequest(new byte[]{1, 50}));
     }
+
+    @Test
+    void buffIs25BytesUuidKindTicksFloat() throws Exception {
+        var id = UUID.fromString("00000000-0000-0001-0000-000000000002");
+        var b = new BroomCodec.Buff(id, BroomCodec.BUFF_SPEED, 60, 1.2f);
+        byte[] raw = BroomCodec.encodeBuff(b);
+        assertEquals(25, raw.length);
+        assertEquals(BroomCodec.BUFF_SPEED, raw[16]);
+        assertEquals(60, raw[20]);
+        assertEquals(b, BroomCodec.decodeBuff(raw));
+        assertThrows(BroomCodec.MalformedException.class, () -> BroomCodec.decodeBuff(new byte[24]));
+    }
 }

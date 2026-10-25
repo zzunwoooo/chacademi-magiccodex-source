@@ -1,13 +1,13 @@
 [
   {
     "path": "deployment/operating-config/MagicCodexBridge/mana-spells.yml",
-    "sha256": "ba21498903eee96ac7b763d2957a93d1e0b801ebdf580fe2d175ddd0c40ff860",
+    "sha256": "204aecb33c379fb96b23cef200f7840ad3df7269733e56595273b97385ca1237",
     "sameOnSchoolAndWild": true,
     "role": "non-secret gameplay configuration; deployment overlay, not player data"
   },
   {
     "path": "deployment/operating-config/MagicCodexBridge/spell-runtime.yml",
-    "sha256": "305165e759515c99b87a0d9e21bfc3334aed9c4f0d455a498a4ec2f9a5c16261",
+    "sha256": "559c1dfdcec47df99445b5773aaae5a20e80bdae6c55338b4e81378e23f6bf5f",
     "sameOnSchoolAndWild": true,
     "role": "non-secret gameplay configuration; deployment overlay, not player data"
   },
@@ -19,19 +19,19 @@
   },
   {
     "path": "deployment/operating-config/PortableVFX/spell-catalog.yml",
-    "sha256": "8d64022b805a7be726d7932bcd32b4a0f2b65565a1a21c5b6c37fe7d8b203908",
+    "sha256": "dcd455d753cd64815ca5e422cbaaf1b497890b49ee379fd34bceece159ed6599",
     "sameOnSchoolAndWild": true,
     "role": "non-secret gameplay configuration; deployment overlay, not player data"
   },
   {
     "path": "deployment/operating-config/PortableVFX/spell-bindings.yml",
-    "sha256": "ead83fc37a1a69d42e2676b353c150bfadf6be8f0bd68adfe18a9d7f864db7b4",
+    "sha256": "528fd72525a2881525624470e225bf55814c719141203d2cad87e2ebf43f3b53",
     "sameOnSchoolAndWild": true,
     "role": "non-secret gameplay configuration; deployment overlay, not player data"
   },
   {
     "path": "deployment/operating-config/MythicMobs/Skills/chacademi_spells.yml",
-    "sha256": "ccdb9cbb2b7498fb209e670ebce3b8f8806af29f36aeaaed2ce94da776f09136",
+    "sha256": "2f6e67621fa59ffbd9d0093192a382d7f07ef468dc3ae822f7b3faf641b4890c",
     "sameOnSchoolAndWild": true,
     "role": "non-secret gameplay configuration; deployment overlay, not player data"
   },

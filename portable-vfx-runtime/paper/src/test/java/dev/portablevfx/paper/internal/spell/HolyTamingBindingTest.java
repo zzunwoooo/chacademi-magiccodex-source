@@ -28,7 +28,7 @@ class HolyTamingBindingTest {
         var catalog=SpellCatalogYaml.read(catalogYaml);
         var spell=catalog.resolve(SPELL).orElseThrow();
         var binding=section(bindingsYaml,"bindings."+SPELL);
-        assertEquals(149,spell.number());assertEquals(149,binding.getInt("number"));
+        assertEquals(233,spell.number());assertEquals(233,binding.getInt("number")); // 2026-10-25 renumber
         assertEquals(150d,spell.manaCost().doubleValue());assertEquals(60d,spell.cooldownSeconds().doubleValue());
         assertTrue(spell.enabled());assertTrue(spell.reviewed());
         assertEquals("magic.learned.rainbow_collar",spell.permission());

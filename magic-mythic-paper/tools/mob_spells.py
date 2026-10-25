@@ -177,15 +177,18 @@ def _section(path, marker, body):
 def write_all():
     ds = os.path.join(REPO, 'magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells')
     idx = open(os.path.join(ds, 'index.txt'), encoding='utf-8').read().split('\n')
-    idx = [l for l in idx if l.strip() and not re.match(r'3(0\d|1\d|2[0-3])_', l)]
+    import spell_order   # 2026-10-25 renumber: number/order come from tools/spell_order.py
+    mine = {r[1] for r in M}
+    idx = [l for l in idx if l.strip() and l.split('_', 1)[1] not in mine]
     hashes = [l.rstrip('\r') for l in open(os.path.join(ds, 'known-hashes.tsv'), encoding='utf-8', newline='').read().split('\n') if l.strip()]
     for (o, i, nm, cat, fam, tgt, rng, base, ratio, mana, cd, lines, note, desc, res) in M:
+        o = spell_order.number(i, o)
         mob = FAMILIES[fam][0]
         y = (f"id: {i}\nname: {nm}\ncategory: {cat}\ndescription: {desc}\nicon: ''\npermission: magic.learned.{i}\n"
              f"discovery:\n  description: {obj(mob)} 처치하면 5% 확률로 습득합니다.\nresearch: {res}\n"
              f"cast:\n  command: 마법 {i}\n  cooldown-seconds: {cd}\n  mana-cost: {mana}\norder: {o}\n")
-        fn = f'{o}_{i}.yml'; _write_if(os.path.join(ds, fn), y)
-        idx.append(f'{o}_{i}')
+        fn = f'{o:03d}_{i}.yml'; _write_if(os.path.join(ds, fn), y)
+        idx.append(f'{o:03d}_{i}')
         h = hashlib.sha256(y.encode('utf-8')).hexdigest()
         hashes = [l for l in hashes if not l.startswith(fn + '\t')] + [f'{fn}\t{h}']
     _write_if(os.path.join(ds, 'index.txt'), '\n'.join(idx) + '\n')

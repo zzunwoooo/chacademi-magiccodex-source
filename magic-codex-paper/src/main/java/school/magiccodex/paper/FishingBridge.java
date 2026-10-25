@@ -344,6 +344,53 @@ final class FishingBridge implements PluginMessageListener, Listener {
         return true;
     }
 
+    /** 377 물밑 엿보기 (LifeSpells): surfaceY, a one-line summary and the chat lines; null = no water there. */
+    record Glimpse(int surfaceY, String summary, List<String> lines) {}
+
+    /**
+     * The water at this point (same measurement as a cast) and the fish whose PLACE rules fit it (water size, biome group,
+     * underground, height, a depth the bobber can reach). Time, weather, season and moon are not checked (they change).
+     * Fish not in this player's codex are shown as ???.
+     */
+    Glimpse glimpse(Player p, Location at) {
+        var w = FishingWater.measure(at, config);
+        if (w == null) return null;
+        int wc = config.waterClassOf(w.area());
+        float cap = config.depthCap(w.depth());
+        float reach = cap <= 0 ? FishingProtocol.MAX_DEPTH : Math.min(cap, FishingProtocol.MAX_DEPTH);
+        var book = store.book(p.getUniqueId());
+        if (!book.loaded) store.load(p.getUniqueId(), null);
+        var byGrade = new ArrayList<List<String>>();
+        for (int g = 0; g < 4; g++) byGrade.add(new ArrayList<>());
+        synchronized (book) {
+            for (var f : config.fish) {
+                if (f.minDepth() > reach || wc < f.waterMin() || wc > f.waterMax()) continue;
+                if (!f.biomes().isEmpty() && Collections.disjoint(f.biomes(), w.groups())) continue;
+                if (f.underground() && !w.underground()) continue;
+                if (f.yMin() != null && w.surfaceY() < f.yMin()) continue;
+                if (f.yMax() != null && w.surfaceY() > f.yMax()) continue;
+                byGrade.get(f.grade()).add(book.loaded && book.rows.containsKey(f.id()) ? f.name() : "???");
+            }
+        }
+        String size = FishingConfig.WATER[wc] + (w.area() >= Integer.MAX_VALUE / 4 ? " (아주 넓음)" : " (" + w.area() + "칸)");
+        String place = w.groups().isEmpty() ? w.biome().replace("minecraft:", "") : String.join("·", new TreeSet<>(w.groups()));
+        String depth = w.depth() >= 64 ? "64블록 넘게" : w.depth() + "블록";
+        var lines = new ArrayList<String>();
+        lines.add("── 물밑 엿보기 ──");
+        lines.add(" 깊이 " + depth + " · 넓이 " + size + " · " + place + (w.underground() ? " · 지하" : ""));
+        int total = 0;
+        for (int g = 0; g < 4; g++) {
+            var names = byGrade.get(g);
+            total += names.size();
+            if (names.isEmpty()) continue;
+            var shown = names.size() > 8 ? names.subList(0, 8) : names;
+            lines.add(" " + FishingProtocol.GRADE_LABELS[g] + " " + names.size() + "종: " + String.join(", ", shown) + (names.size() > 8 ? " 외 " + (names.size() - 8) + "종" : ""));
+        }
+        if (total == 0) lines.add(" 이 물에서 낚이는 물고기가 없어요");
+        else lines.add(" (시간·날씨·계절에 따라 낚이는 물고기가 달라요)");
+        return new Glimpse(w.surfaceY(), "깊이 " + depth + " · " + FishingConfig.WATER[wc] + " · 물고기 " + total + "종", lines);
+    }
+
     private void bite(Player p, Session s, float depth) {
         var rnd = ThreadLocalRandom.current();
         var l = gear.read(rodOf(p));
@@ -352,6 +399,7 @@ final class FishingBridge implements PluginMessageListener, Listener {
         int zone = config.zone(depth);
         s.depth = depth; s.fish = null; s.chest = -1;
         double chestChance = config.treasureChance + bait.effect("treasure", 0);
+        if (!s.preview && LifeSpells.active(p.getUniqueId(), "treasure_scent")) chestChance *= 2;   // 379 보물 냄새 (LifeSpells)
         int shape, power, pattern;
         float size;
         if (rnd.nextDouble() < chestChance) {
@@ -410,6 +458,11 @@ final class FishingBridge implements PluginMessageListener, Listener {
         float into = (float) Math.clamp((depth - .55 * reach) / Math.max(.1, .45 * reach), 0, 1);
         float gearGrade = (l.rod().gear().grade() + l.line().gear().grade()) / 2f;
         float strain = Math.clamp(1 + .9f * into * (1 - gearGrade / 3f * .85f), .5f, 5f);
+        // 378 잔잔한 물결 (LifeSpells): this bite's strain x0.7 (the client's tension rise, fish pull and line heat all scale with it).
+        if (!s.preview && LifeSpells.take(p.getUniqueId(), "calm_ripple")) {
+            strain = Math.max(.5f, strain * .7f);
+            CmdKit.notify(p, "system", "life-calm_ripple", "잔잔한 물결", "이번 낚시는 줄 장력이 천천히 올라요", 0);
+        }
         // fish attacks during the reel (extra wear on the line / rod)
         var attacks = new ArrayList<FishingProtocol.Attack>();
         if (s.fish != null) {

@@ -49,7 +49,7 @@ titles:
     color: '#DEC58E'
 
   # ── 마법 발견 칭호 237개 (오너 기획 chacademi-titles-all.yml, 2026-10-25). 지급: title-awards.yml discovery
-  prefix_magic_feather_fall:  # 001 feather fall (바람)
+  prefix_magic_feather_fall:  # 001 깃털 낙하 (바람)
     side: prefix
     name: '가벼운'
     color: '#96E4EC'

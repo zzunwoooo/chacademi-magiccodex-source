@@ -78,6 +78,9 @@ public final class BroomService implements Listener, PluginMessageListener {
         boolean hanging;
         /** 속도 검사 여유 배율 (아티팩트: 폭풍 날개 최고 속도, 빗자루 끈·별의 잔향 가속) */
         float guardMul = 1f;
+        /** 속도 버프 (BUFF_SPEED): 이 틱까지 속도 검사 상한 × speedMult (모드 쪽 최고 속도 버프와 같은 배수) */
+        double speedMult = 1;
+        long speedUntil;
 
         Session(UUID id, BroomType type, boolean prevAllowFlight, int limitTicks) {
             this.id = id;
@@ -173,6 +176,7 @@ public final class BroomService implements Listener, PluginMessageListener {
         messenger.registerOutgoingPluginChannel(plugin, BroomCodec.CHANNEL_LIST);
         messenger.registerOutgoingPluginChannel(plugin, BroomCodec.CHANNEL_FX);
         messenger.registerOutgoingPluginChannel(plugin, BroomCodec.CHANNEL_PERK);
+        messenger.registerOutgoingPluginChannel(plugin, BroomCodec.CHANNEL_BUFF);
         messenger.registerIncomingPluginChannel(plugin, BroomCodec.CHANNEL_EVENT, this);
         messenger.registerIncomingPluginChannel(plugin, BroomCodec.CHANNEL_REQUEST, this);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -229,6 +233,33 @@ public final class BroomService implements Listener, PluginMessageListener {
     public boolean fx(Player p, byte kind) {
         if (!isRiding(p) || !p.getListeningPluginChannels().contains(BroomCodec.CHANNEL_FX)) return false;
         p.sendPluginMessage(plugin, BroomCodec.CHANNEL_FX, new byte[]{kind});
+        return true;
+    }
+
+    /**
+     * 시간제 비행 버프 (마법 375 불꽃 추진: 최고 속도 ×1.2 + 궤적 숨김, 380 순풍: 균형 감소 ×0.7).
+     * kind = BroomCodec.BUFF_*. 타고 있지 않거나 모드가 이 채널을 모르면 false.
+     */
+    public boolean buff(Player p, byte kind, int ticks, float value) {
+        var s = sessions.get(p.getUniqueId());
+        if (s == null || !p.getListeningPluginChannels().contains(BroomCodec.CHANNEL_BUFF)) return false;
+        if (!Float.isFinite(value)) return false;
+        ticks = Math.max(0, Math.min(ticks, 20 * 60));
+        if (kind == BroomCodec.BUFF_SPEED) value = Math.max(0.5f, Math.min(value, 2f));
+        else if (kind == BroomCodec.BUFF_BALANCE_DRAIN) value = Math.max(0f, Math.min(value, 2f));
+        else if (kind != BroomCodec.BUFF_HIDE_TRAIL) return false;
+        byte[] payload = BroomCodec.encodeBuff(new BroomCodec.Buff(p.getUniqueId(), kind, ticks, value));
+        if (kind == BroomCodec.BUFF_SPEED) {
+            s.speedMult = Math.max(1, value);
+            s.speedUntil = tick + ticks + 40; // 끝난 뒤 감속하는 동안의 여유
+        } else if (kind == BroomCodec.BUFF_HIDE_TRAIL) {
+            for (Player viewer : p.getTrackedBy()) {
+                if (!viewer.equals(p) && viewer.getListeningPluginChannels().contains(BroomCodec.CHANNEL_BUFF)) {
+                    viewer.sendPluginMessage(plugin, BroomCodec.CHANNEL_BUFF, payload);
+                }
+            }
+        }
+        p.sendPluginMessage(plugin, BroomCodec.CHANNEL_BUFF, payload);
         return true;
     }
 
@@ -411,7 +442,7 @@ public final class BroomService implements Listener, PluginMessageListener {
             Location now = p.getLocation();
             if (s.last != null && s.last.getWorld() == now.getWorld()) {
                 s.carrier.sample(now.getX() - s.last.getX(), now.getY() - s.last.getY(), now.getZ() - s.last.getZ());
-                double cap = s.type.maxSpeed() * s.guardMul * 1.45 + 0.6; // 부스트·급강하·구르기 여유
+                double cap = s.type.maxSpeed() * s.guardMul * (s.speedUntil >= tick ? s.speedMult : 1) * 1.45 + 0.6; // 부스트·급강하·구르기 여유 (아티팩트 여유 + 속도 버프)
                 if (s.guard.tick(s.last.distance(now), cap)) {
                     plugin.getLogger().warning(p.getName() + " 빗자루 속도 상한 초과로 비행 종료 (" + s.type.id() + ")");
                     stop(s.id, BroomCodec.STATE_NORMAL, false);

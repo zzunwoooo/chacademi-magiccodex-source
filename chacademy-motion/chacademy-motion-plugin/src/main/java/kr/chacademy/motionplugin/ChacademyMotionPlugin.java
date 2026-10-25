@@ -107,6 +107,27 @@ public final class ChacademyMotionPlugin extends JavaPlugin implements PluginMes
         if (brooms != null) brooms.setPerks(player, perks);
     }
 
+    /**
+     * 시간제 최고 속도 버프 (마법 375 불꽃 추진, 2026-10-25): ticks 동안 최고 속도 × mult.
+     * hideTrail 이면 같은 시간 동안 본인·주변 화면에서 빗자루 궤적을 숨긴다 (마법 VFX 가 불꽃 궤적을 그림).
+     * 타고 있지 않거나 모드가 오래돼 채널이 없으면 false.
+     */
+    public boolean broomSpeedBuff(@NotNull Player player, float mult, int ticks, boolean hideTrail) {
+        if (brooms == null || !brooms.buff(player, kr.chacademy.motionplugin.broom.BroomCodec.BUFF_SPEED, ticks, mult)) return false;
+        if (hideTrail) brooms.buff(player, kr.chacademy.motionplugin.broom.BroomCodec.BUFF_HIDE_TRAIL, ticks, 0);
+        return true;
+    }
+
+    /**
+     * 시간제 균형 버프 (마법 380 순풍, 2026-10-25): refill 이면 균형 게이지를 바로 가득, ticks 동안 균형 감소 × drainMult.
+     * 타고 있지 않거나 모드가 오래돼 채널이 없으면 false.
+     */
+    public boolean broomBalanceBuff(@NotNull Player player, float drainMult, int ticks, boolean refill) {
+        if (brooms == null || !brooms.buff(player, kr.chacademy.motionplugin.broom.BroomCodec.BUFF_BALANCE_DRAIN, ticks, drainMult)) return false;
+        if (refill) brooms.fx(player, kr.chacademy.motionplugin.broom.BroomCodec.FX_REFILL_BALANCE);
+        return true;
+    }
+
     public BroomService brooms() {
         return brooms;
     }

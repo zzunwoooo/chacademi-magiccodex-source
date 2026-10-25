@@ -179,6 +179,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         for(Excluded a:cfg.excluded()) {
             if(w.getName().equals(a.world())&&Math.hypot(l.getX()-a.x(),l.getZ()-a.z())<a.radius()) return "보호 구역";
         }
+        if(warded(w,l)) return "결계 향초";
         // Fresh loaded-chunk count: do not reuse a TTL population snapshot here.
         // 자체 스폰 루프는 시도 앞부분에서 이미 같은 청크를 셌으므로 건너뛴다(한 시도에 한 번만 셈).
         if(!chunkCounted&&chunkLimit.full(w.getChunkAt(x>>4,z>>4),pendingEntity,uuid ->
@@ -217,6 +218,20 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         // 구조물 색인은 structures를 지정한 서식지만 건드린다(지연 계산, 로드된 청크만).
         if(!h.structures().isEmpty()&&structures.nearby(l,h.structures(),h.structureRadius()).isEmpty()) return "구조물 없음";
         return "OK";
+    }
+    /**
+     * 마법 결계 향초 (ChAcademiaMagicMythic NovaLife3): 월드 메타데이터 chacademia_spawn_ward 의 Predicate&lt;Location&gt; 가
+     * true 면 그 자리는 스폰 금지. 컴파일 의존 없음, 연동 쪽 오류는 무시(스폰 허용).
+     */
+    static final String SPAWN_WARD_KEY="chacademia_spawn_ward";
+    @SuppressWarnings("unchecked")
+    static boolean warded(World w,Location l) {
+        if(!w.hasMetadata(SPAWN_WARD_KEY)) return false;
+        for(org.bukkit.metadata.MetadataValue v:w.getMetadata(SPAWN_WARD_KEY)) {
+            if(!(v.value() instanceof java.util.function.Predicate<?> p)) continue;
+            try { if(((java.util.function.Predicate<Location>)p).test(l)) return true; } catch(RuntimeException ignored) {}
+        }
+        return false;
     }
     static boolean naturalGround(Material m) {
         String n=m.name();return n.contains("DIRT")||n.contains("GRASS")||n.contains("SAND")||n.contains("STONE")||n.contains("GRAVEL")||n.contains("SNOW")||n.contains("ICE")||n.contains("MOSS")||n.contains("TERRACOTTA")||n.contains("PODZOL")||n.contains("MYCELIUM")||n.contains("CLAY")||n.contains("MUD")||n.contains("CALCITE")||n.contains("TUFF")||n.contains("BASALT")||n.contains("DEEPSLATE");

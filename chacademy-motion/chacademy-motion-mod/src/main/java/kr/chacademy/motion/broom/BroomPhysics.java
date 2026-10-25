@@ -61,6 +61,12 @@ public final class BroomPhysics {
     public int rollTicks;
     public int rollDir;
     public int rollCooldown;
+    /** 서버 버프 (마법 375 불꽃 추진): speedTicks 동안 최고 속도 × speedMult. */
+    public float speedMult = 1f;
+    public int speedTicks;
+    /** 서버 버프 (마법 380 순풍): drainTicks 동안 균형 감소 × drainMult. */
+    public float drainMult = 1f;
+    public int drainTicks;
     /** 이번 틱에 실제로 돈 각도 (시각 효과용, 양수 = 왼쪽으로 돎). */
     public float turnRate;
     /** 이번 틱 균형 감소량 (경고 연출용). */
@@ -115,7 +121,7 @@ public final class BroomPhysics {
 
     /** 숙련도가 낮을수록, 안정성이 낮을수록 균형이 크게 깎인다. */
     float stressMultiplier() {
-        return (1.6f - 0.9f * stats.mastery) / stats.stability;
+        return (1.6f - 0.9f * stats.mastery) / stats.stability * (drainTicks > 0 ? drainMult : 1f);
     }
 
     /**
@@ -131,6 +137,8 @@ public final class BroomPhysics {
         if (boostCooldown > 0) boostCooldown--;
         if (rollTicks > 0) rollTicks--;
         if (rollCooldown > 0) rollCooldown--;
+        if (speedTicks > 0) speedTicks--;
+        if (drainTicks > 0) drainTicks--;
 
         float sf = Math.min(1f, speedFraction());
 
@@ -209,7 +217,7 @@ public final class BroomPhysics {
         else if (in.forward()) vf += -up * 0.03;
 
         // 6) 속도 상한
-        double cap = stats.maxSpeed * speedBonus * (boostTicks > 0 ? BOOST_MULT : 1f);
+        double cap = stats.maxSpeed * speedBonus * (boostTicks > 0 ? BOOST_MULT : 1f) * (speedTicks > 0 ? speedMult : 1f);
         vf = Math.max(-0.2, Math.min(cap, vf));
         double h = Math.sqrt(vf * vf + vr * vr);
         if (h > cap * 1.1) {

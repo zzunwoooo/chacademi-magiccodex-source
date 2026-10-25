@@ -23,7 +23,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   wind_basket:
     folder: WindBasket
-    number: 2
+    number: 15
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -43,7 +43,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   harvest_wind:
     folder: HarvestWind
-    number: 3
+    number: 16
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -64,7 +64,7 @@ bindings:
     anchor-verification: reviewed original description or included NOTES placement verified
   wind_push:
     folder: WindPush
-    number: 4
+    number: 2
     range: 17
     speed: 0.6
     holdTicks: 100
@@ -93,7 +93,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   light_leap:
     folder: LightLeap
-    number: 5
+    number: 11
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -114,7 +114,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   flight:
     folder: Flight
-    number: 6
+    number: 30
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -135,7 +135,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   far_touch:
     folder: FarTouch
-    number: 7
+    number: 12
     range: 30
     speed: 0.6
     holdTicks: 100
@@ -156,7 +156,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   wind_message:
     folder: WindMessage
-    number: 9
+    number: 3
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -177,7 +177,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   storm_command:
     folder: StormCommand
-    number: 10
+    number: 42
     range: 17
     speed: 0.6
     holdTicks: 100
@@ -206,7 +206,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   vacuum_cleave:
     folder: VacuumCleave
-    number: 11
+    number: 17
     range: 26
     speed: 0.6
     holdTicks: 100
@@ -235,7 +235,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   gale_dash:
     folder: GaleDash
-    number: 12
+    number: 4
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -256,7 +256,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   returning_wind:
     folder: ReturningWind
-    number: 13
+    number: 31
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -286,7 +286,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   wind_grooming:
     folder: WindGrooming
-    number: 14
+    number: 5
     range: 10
     speed: 0.6
     holdTicks: 100
@@ -317,7 +317,7 @@ bindings:
     pending: notcollisionprojectile; airnormaldissolve after1.25 editable duration, pathwithin10caster
   weightless_zone:
     folder: WeightlessZone
-    number: 15
+    number: 45
     range: 26
     speed: 0.6
     holdTicks: 60
@@ -367,7 +367,7 @@ bindings:
       onCancel: jumpToEnd
   trajectory_acceleration:
     folder: TrajectoryAcceleration
-    number: 17
+    number: 6
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -420,7 +420,7 @@ bindings:
     pending: idle duration30sec is editable safe cap, not normative duration; external attack bridge required
   dust_duster:
     folder: DustDuster
-    number: 18
+    number: 7
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -441,7 +441,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   leaf_cleanup:
     folder: LeafCleanup
-    number: 19
+    number: 32
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -472,7 +472,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   feather_rustle:
     folder: FeatherRustle
-    number: 20
+    number: 18
     range: 10
     speed: 0.6
     holdTicks: 100
@@ -493,7 +493,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   cross_breeze:
     folder: CrossBreeze
-    number: 21
+    number: 19
     range: 26
     speed: 0.6
     holdTicks: 100
@@ -553,7 +553,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   returning_blade:
     folder: ReturningBlade
-    number: 22
+    number: 20
     range: 26
     speed: 0.6
     holdTicks: 100
@@ -600,7 +600,7 @@ bindings:
       - 0
   pressure_press:
     folder: PressurePress
-    number: 23
+    number: 33
     range: 26
     speed: 0.6
     holdTicks: 8
@@ -650,7 +650,7 @@ bindings:
       onCancel: jumpToEnd
   wind_decoy:
     folder: WindDecoy
-    number: 24
+    number: 34
     range: 10
     speed: 0.6
     holdTicks: 58
@@ -700,7 +700,7 @@ bindings:
       onCancel: jumpToEnd
   air_step:
     folder: AirStep
-    number: 25
+    number: 38
     range: 15
     speed: 0.6
     holdTicks: 60
@@ -750,7 +750,7 @@ bindings:
       onCancel: jumpToEnd
   lightning_needle:
     folder: LightningNeedle
-    number: 26
+    number: 43
     range: 34
     speed: 0.6
     holdTicks: 100
@@ -771,7 +771,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   air_stacking:
     folder: AirStacking
-    number: 27
+    number: 39
     range: 10
     speed: 0.6
     holdTicks: 100
@@ -792,7 +792,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   arrested_orbit:
     folder: ArrestedOrbit
-    number: 28
+    number: 44
     range: 26
     speed: 0.6
     holdTicks: 100
@@ -936,7 +936,7 @@ bindings:
             - idle5
   crossfire:
     folder: Crossfire
-    number: 29
+    number: 49
     range: 26
     speed: 0.6
     holdTicks: 16
@@ -986,7 +986,7 @@ bindings:
       onCancel: jumpToEnd
   resonant_arrow:
     folder: ResonantArrow
-    number: 30
+    number: 27
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1060,7 +1060,7 @@ bindings:
     salvo-mode: external-direct-damage
   pressure_rupture:
     folder: PressureRupture
-    number: 31
+    number: 35
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1080,7 +1080,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   storm_crown:
     folder: StormCrown
-    number: 32
+    number: 46
     range: 26
     speed: 0.6
     holdTicks: 100
@@ -1226,7 +1226,7 @@ bindings:
           impactSystem: impactV
   hearth_touch:
     folder: HearthTouch
-    number: 33
+    number: 55
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1246,7 +1246,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   ember_bolt:
     folder: Fireball
-    number: 34
+    number: 51
     range: 26
     speed: 0.6
     holdTicks: 100
@@ -1274,7 +1274,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   rekindle:
     folder: Rekindle
-    number: 35
+    number: 52
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1294,7 +1294,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   flame_forging:
     folder: FlameForging
-    number: 36
+    number: 69
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1315,7 +1315,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   ember_trap:
     folder: EmberTrap
-    number: 37
+    number: 58
     range: 26
     speed: 0.6
     holdTicks: 1200
@@ -1379,7 +1379,7 @@ bindings:
       onTrigger: stopEmittingAndPlayTriggerEnd
   fire_curtain:
     folder: FireCurtain
-    number: 38
+    number: 83
     range: 26
     speed: 0.6
     holdTicks: 100
@@ -1429,7 +1429,7 @@ bindings:
       onCancel: jumpToEnd
   phoenix_oath:
     folder: PhoenixOath
-    number: 39
+    number: 90
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1461,7 +1461,7 @@ bindings:
     no-persistent-visual: true
   living_furnace:
     folder: LivingFurnace
-    number: 40
+    number: 70
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1481,7 +1481,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   falling_star:
     folder: FallingStar
-    number: 41
+    number: 97
     range: 34
     speed: 0.6
     holdTicks: 100
@@ -1552,7 +1552,7 @@ bindings:
     timing-provenance: 3.4/.6/.8 projecteditable defaults; NOTES externaltiming, not normative demo authority
   flame_lash:
     folder: FlameLash
-    number: 42
+    number: 78
     range: 8
     speed: 0.6
     holdTicks: 20
@@ -1639,7 +1639,7 @@ bindings:
       onTrigger: stopEmittingAndPlayTriggerEnd
   palm_fireworks:
     folder: PalmFireworks
-    number: 44
+    number: 56
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1668,7 +1668,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   ash_brand:
     folder: AshBrand
-    number: 45
+    number: 91
     range: 26
     speed: 0.6
     holdTicks: 100
@@ -1709,7 +1709,7 @@ bindings:
     pending: transfer target selection external
   flame_leap:
     folder: BlazeKick
-    number: 46
+    number: 85
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1739,7 +1739,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   crimson_heart:
     folder: CrimsonHeart
-    number: 47
+    number: 92
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1759,7 +1759,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   wick_trimming:
     folder: WickTrimming
-    number: 48
+    number: 71
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1779,7 +1779,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   glass_firing:
     folder: GlassFiring
-    number: 49
+    number: 59
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1799,7 +1799,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   charcoal_conversion:
     folder: CharcoalConversion
-    number: 50
+    number: 72
     range: 34
     speed: 0.6
     holdTicks: 100
@@ -1820,7 +1820,7 @@ bindings:
     anchor-verification: reviewed original description or included NOTES placement verified
   sponge_drying:
     folder: SpongeDrying
-    number: 51
+    number: 60
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1839,41 +1839,9 @@ bindings:
         finish-after-ticks: 20
     external-events: []
     review: candidate; implementer must verify anchors against catalog; demo ignored
-  flame_footprints:
-    folder: FlameFootprints
-    number: 52
-    range: 15
-    speed: 0.6
-    holdTicks: 100
-    numeric-provenance: editable project defaults unless overridden; user authorized defaults
-    evidence:
-      - received_vfx/all97/unpacked/effects/FlameFootprints/vfx.json
-      - received_vfx/all97/unpacked/effects/FlameFootprints/NOTES.md
-    phases:
-      - role: impact
-        follow-entity: false
-        trigger: external:left_step
-        effect: claude:flamefootprints/stepl
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 88
-        finish-after-ticks: 46
-      - role: impact
-        follow-entity: false
-        trigger: external:right_step
-        effect: claude:flamefootprints/stepr
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 88
-        finish-after-ticks: 46
-    external-events:
-      - left_step
-      - right_step
-    review: candidate; implementer must verify anchors against catalog; demo ignored
-    pending: movementstep event binding required; eachstep authored2sec fuse
   boiling_armor:
     folder: BoilingArmor
-    number: 53
+    number: 79
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1893,7 +1861,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   kiln_breath:
     folder: KilnBreath
-    number: 54
+    number: 73
     range: 15
     speed: 0.6
     holdTicks: 400
@@ -1945,7 +1913,7 @@ bindings:
       onTrigger: null
   glaze_coating:
     folder: GlazeCoating
-    number: 55
+    number: 61
     range: 15
     speed: 0.6
     holdTicks: 140
@@ -1997,7 +1965,7 @@ bindings:
       onTrigger: null
   explosive_wedge:
     folder: ExplosiveWedge
-    number: 56
+    number: 93
     range: 26
     speed: 0.6
     holdTicks: 100
@@ -2030,7 +1998,7 @@ bindings:
     pending: duration30sec editable cap; melee hit signal external
   heat_recovery:
     folder: HeatRecovery
-    number: 58
+    number: 94
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2052,7 +2020,7 @@ bindings:
     anchor-verification: reviewed original description or included NOTES placement verified
   firebird_hunt:
     folder: FirebirdHunt
-    number: 59
+    number: 84
     range: 17
     speed: 0.6
     holdTicks: 100
@@ -2103,7 +2071,7 @@ bindings:
     pending: impact andexpiry mutuallyexclusive
   lava_suture:
     folder: LavaSuture
-    number: 60
+    number: 62
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2124,7 +2092,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   flame_sword_dance:
     folder: FlameSwordDance
-    number: 61
+    number: 95
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2264,7 +2232,7 @@ bindings:
     salvo-mode: external-attack
   incandescent_break:
     folder: IncandescentBreak
-    number: 62
+    number: 86
     range: 26
     speed: 0.6
     holdTicks: 100
@@ -2314,7 +2282,7 @@ bindings:
     pending: shield usesimpactShield insteadimpact; sourcecast muzzle targetraycastendpoint
   blue_bonfire:
     folder: BlueBonfire
-    number: 63
+    number: 87
     range: 15
     speed: 0.6
     holdTicks: 1200
@@ -2366,7 +2334,7 @@ bindings:
       onTrigger: null
   crimson_breath:
     folder: CrimsonBreath
-    number: 64
+    number: 98
     range: 26
     speed: 0.6
     holdTicks: 100
@@ -2416,7 +2384,7 @@ bindings:
     timing-provenance: NOTES fixed dragon->breath2.4sec; chant5/hold5 projectdefaults matching original draft, editable
   water_breath:
     folder: WaterBreath
-    number: 65
+    number: 110
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2437,7 +2405,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   tide_stride:
     folder: TideStride
-    number: 66
+    number: 111
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2458,7 +2426,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   water_bolt:
     folder: WaterBolt
-    number: 67
+    number: 100
     range: 26
     speed: 0.6
     holdTicks: 100
@@ -2494,7 +2462,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   quench:
     folder: Quench
-    number: 68
+    number: 101
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2516,7 +2484,7 @@ bindings:
     anchor-verification: reviewed original description or included NOTES placement verified
   purifying_wave:
     folder: PurifyingWave
-    number: 69
+    number: 124
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2545,7 +2513,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   ice_bridge:
     folder: IceBridge
-    number: 70
+    number: 125
     range: 15
     speed: 0.6
     holdTicks: 300
@@ -2606,7 +2574,7 @@ bindings:
       onTrigger: null
   spring_unseal:
     folder: SpringUnseal
-    number: 72
+    number: 117
     range: 20
     speed: 0.6
     holdTicks: 100
@@ -2626,7 +2594,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   water_elemental:
     folder: WaterElemental
-    number: 73
+    number: 139
     range: 15
     speed: 0.6
     holdTicks: 600
@@ -2720,7 +2688,7 @@ bindings:
     activation-policy: summon/idle/follow/dismiss now; realattack hookup later; attack event operator preview available
   eternal_ice_prison:
     folder: EternalIcePrison
-    number: 74
+    number: 140
     range: 26
     speed: 0.6
     holdTicks: 100
@@ -2772,7 +2740,7 @@ bindings:
       onTrigger: null
   cauldron_fill:
     folder: CauldronFill
-    number: 75
+    number: 102
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2793,7 +2761,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   dye_rinse:
     folder: DyeRinse
-    number: 76
+    number: 103
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2814,7 +2782,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   fish_lure:
     folder: FishLure
-    number: 77
+    number: 112
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2835,7 +2803,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   frost_rupture:
     folder: FrostRupture
-    number: 78
+    number: 119
     range: 26
     speed: 0.6
     holdTicks: 100
@@ -2864,7 +2832,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   pressure_lance:
     folder: PressureLance
-    number: 79
+    number: 130
     range: 26
     speed: 1.25
     holdTicks: 100
@@ -2928,7 +2896,7 @@ bindings:
     pending: dissolve airnormal atcentre; block splash realnormal attip centre+forward1.4; stop=block orrange
   life_distribution:
     folder: LifeDistribution
-    number: 80
+    number: 141
     range: 6
     speed: 0.6
     holdTicks: 100
@@ -2983,7 +2951,7 @@ bindings:
     target-limit: 3
   moist_farmland:
     folder: MoistFarmland
-    number: 81
+    number: 113
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3004,7 +2972,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   wash_letters:
     folder: WashLetters
-    number: 82
+    number: 104
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3025,7 +2993,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   healing_rain:
     folder: HealingRain
-    number: 83
+    number: 142
     range: 26
     speed: 0.6
     holdTicks: 60
@@ -3086,7 +3054,7 @@ bindings:
       onTrigger: null
   dew_gathering:
     folder: DewGathering
-    number: 84
+    number: 105
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3117,7 +3085,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   quiet_mooring:
     folder: QuietMooring
-    number: 85
+    number: 131
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3139,7 +3107,7 @@ bindings:
     anchor-verification: reviewed original description or included NOTES placement verified
   bubble_aria:
     folder: BubbleAria
-    number: 86
+    number: 126
     range: 26
     speed: 0.6
     holdTicks: 100
@@ -3182,7 +3150,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   pressure_hammer:
     folder: PressureHammer
-    number: 87
+    number: 132
     range: 26
     speed: 0.6
     holdTicks: 100
@@ -3203,7 +3171,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   waterspout:
     folder: Waterspout
-    number: 88
+    number: 143
     range: 26
     speed: 0.6
     holdTicks: 38
@@ -3255,7 +3223,7 @@ bindings:
       onTrigger: null
   current_sorting:
     folder: CurrentSorting
-    number: 89
+    number: 146
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3277,7 +3245,7 @@ bindings:
     anchor-verification: reviewed original description or included NOTES placement verified
   potion_mist:
     folder: PotionMist
-    number: 90
+    number: 127
     range: 15
     speed: 0.6
     holdTicks: 189
@@ -3347,7 +3315,7 @@ bindings:
       onTrigger: null
   waterwheel_shield:
     folder: WaterwheelShield
-    number: 91
+    number: 133
     range: 15
     speed: 0.6
     holdTicks: 120
@@ -3420,7 +3388,7 @@ bindings:
       onTrigger: stopEmittingAndPlayTriggerEnd
   concrete_curing:
     folder: ConcreteCuring
-    number: 92
+    number: 134
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3452,7 +3420,7 @@ bindings:
     pending: BFS6neighbors; cure t=.05+depth*min(.10,.85/maxDepth), bottomfaceup. No conversion gameplay here
   ripple_guard:
     folder: RippleGuard
-    number: 93
+    number: 135
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3482,7 +3450,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   tidal_wave:
     folder: TidalWave
-    number: 94
+    number: 144
     range: 20
     speed: 0.4
     holdTicks: 100
@@ -3529,7 +3497,7 @@ bindings:
     notes: wave stop also collapse onrangeexpiry; splashoncepertarget withoutstoppingwave
   bouncing_droplet:
     folder: BouncingDroplet
-    number: 95
+    number: 136
     range: 26
     speed: 0.6
     holdTicks: 100
@@ -3595,7 +3563,7 @@ bindings:
     pending: server targetselection and distincthit logic required; never fixedpreviewtarget
   abyssal_pressure:
     folder: AbyssalPressure
-    number: 96
+    number: 147
     range: 26
     speed: 0.6
     holdTicks: 84
@@ -3647,7 +3615,7 @@ bindings:
       onTrigger: null
   verdant_touch:
     folder: VerdantTouch
-    number: 97
+    number: 157
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3668,7 +3636,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   ore_whisper:
     folder: OreWhisper
-    number: 98
+    number: 167
     range: 10
     speed: 0.6
     holdTicks: 100
@@ -3700,7 +3668,7 @@ bindings:
     pending: marker perorecentre, delay .05+dist/8, depthtestoff required
   pebble_toss:
     folder: PebbleToss
-    number: 99
+    number: 151
     range: 26
     speed: 0.6
     holdTicks: 100
@@ -3737,7 +3705,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   miners_rhythm:
     folder: MinersRhythm
-    number: 100
+    number: 158
     range: 15
     speed: 0.6
     holdTicks: 300
@@ -3786,7 +3754,7 @@ bindings:
       onTrigger: null
   rainbow_collar:
     folder: HolyTaming
-    number: 149
+    number: 233
     range: 12
     speed: 0.6
     max-ticks: 400
@@ -3902,7 +3870,7 @@ bindings:
       -1 scale uses target height. Authored stopTail is preserved.
   solar_judgment:
     folder: SolarJudgment
-    number: 147
+    number: 246
     range: 51
     speed: 1
     max-ticks: 440
@@ -4291,7 +4259,7 @@ bindings:
       acceptance pending
   stone_wall:
     folder: StoneWall
-    number: 102
+    number: 179
     range: 8
     speed: 1
     trajectory: server-events
@@ -4330,7 +4298,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   earthquake:
     folder: Earthquake
-    number: 105
+    number: 193
     range: 12
     speed: 1
     trajectory: server-events
@@ -4363,7 +4331,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   thorn_armor:
     folder: ThornArmor
-    number: 109
+    number: 180
     range: 12
     speed: 1
     trajectory: server-events
@@ -4402,7 +4370,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   earth_anchor:
     folder: EarthAnchor
-    number: 111
+    number: 183
     range: 12
     speed: 1
     trajectory: server-events
@@ -4441,7 +4409,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   iron_carapace:
     folder: IronCarapace
-    number: 113
+    number: 189
     range: 12
     speed: 1
     trajectory: server-events
@@ -4474,7 +4442,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   material_exchange:
     folder: MaterialExchange
-    number: 124
+    number: 190
     range: 26
     speed: 1
     trajectory: server-events
@@ -4507,7 +4475,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   little_giant:
     folder: LittleGiant
-    number: 126
+    number: 185
     range: 12
     speed: 1
     trajectory: server-events
@@ -4540,7 +4508,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   forest_throne:
     folder: ForestThrone
-    number: 130
+    number: 197
     range: 12
     speed: 1
     trajectory: server-events
@@ -4579,7 +4547,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   arcane_imprint:
     folder: ArcaneImprint
-    number: 140
+    number: 239
     range: 12
     speed: 1
     trajectory: server-events
@@ -4618,7 +4586,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   flawless_moment:
     folder: FlawlessMoment
-    number: 146
+    number: 240
     range: 12
     speed: 1
     trajectory: server-events
@@ -4657,7 +4625,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   firefly_mark:
     folder: FireflyMark
-    number: 148
+    number: 215
     range: 12
     speed: 1
     trajectory: server-events
@@ -4690,7 +4658,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   shadow_bind:
     folder: ShadowBind
-    number: 166
+    number: 250
     range: 17
     speed: 1
     trajectory: server-events
@@ -4723,7 +4691,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   earth_shaping:
     folder: EarthShaping
-    number: 101
+    number: 188
     range: 7
     speed: 1
     trajectory: server-events
@@ -4747,7 +4715,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   climate_control:
     folder: ClimateControl
-    number: 106
+    number: 195
     range: 12
     speed: 1
     trajectory: server-events
@@ -4777,7 +4745,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   vein_fracture:
     folder: VeinFracture
-    number: 110
+    number: 168
     range: 6
     speed: 1
     trajectory: server-events
@@ -4801,7 +4769,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   moss_coating:
     folder: DeepDarkDetect
-    number: 114
+    number: 161
     range: 12
     speed: 1
     trajectory: server-events
@@ -4831,7 +4799,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   grass_sprouting:
     folder: GrassSprouting
-    number: 115
+    number: 153
     range: 8
     speed: 1
     trajectory: server-events
@@ -4849,7 +4817,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   bark_peeling:
     folder: BarkPeeling
-    number: 117
+    number: 162
     range: 6
     speed: 1
     trajectory: server-events
@@ -4867,7 +4835,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   compost_return:
     folder: CompostReturn
-    number: 118
+    number: 163
     range: 12
     speed: 1
     trajectory: server-events
@@ -4885,7 +4853,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   dormant_seed:
     folder: DormantSeed
-    number: 122
+    number: 165
     range: 12
     speed: 1
     trajectory: server-events
@@ -4909,7 +4877,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   earth_embrace:
     folder: earth_embrace
-    number: 129
+    number: 181
     range: 12
     speed: 1
     trajectory: server-events
@@ -4933,7 +4901,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   night_sight:
     folder: NightSight
-    number: 165
+    number: 249
     range: 12
     speed: 1
     trajectory: server-events
@@ -4951,7 +4919,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   faint_veil:
     folder: FaintVeil
-    number: 167
+    number: 258
     range: 12
     speed: 1
     trajectory: server-events
@@ -4975,7 +4943,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   bee_calm:
     folder: BeeCalm
-    number: 108
+    number: 160
     range: 12
     speed: 1
     trajectory: server-events
@@ -5005,7 +4973,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   weathering_touch:
     folder: WeatheringTouch
-    number: 112
+    number: 152
     range: 6
     speed: 1
     trajectory: server-events
@@ -5037,7 +5005,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   pollen_matchmaking:
     folder: PollenMatchmaking
-    number: 120
+    number: 164
     range: 10
     speed: 1
     trajectory: server-events
@@ -5077,7 +5045,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   counterweight:
     folder: Counterweight
-    number: 123
+    number: 184
     range: 12
     speed: 1
     trajectory: server-events
@@ -5119,7 +5087,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   remembering_field:
     folder: RememberingField
-    number: 125
+    number: 191
     range: 12
     speed: 1
     trajectory: server-events
@@ -5145,7 +5113,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   spring_ground:
     folder: SpringGround
-    number: 127
+    number: 186
     range: 10
     speed: 1
     trajectory: server-events
@@ -5206,7 +5174,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   flint_sorting:
     folder: FlintSorting
-    number: 116
+    number: 169
     range: 26
     speed: 1
     trajectory: server-events
@@ -5278,7 +5246,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   thorn_seeds:
     folder: ThornSeeds
-    number: 119
+    number: 196
     range: 26
     speed: 1
     trajectory: server-events
@@ -5356,7 +5324,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   mountain_back:
     folder: MountainBack
-    number: 128
+    number: 194
     range: 27
     speed: 1
     trajectory: server-events
@@ -5398,7 +5366,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   merciful_arrow:
     folder: MercifulArrow
-    number: 158
+    number: 224
     range: 42
     speed: 1
     trajectory: server-events
@@ -5452,7 +5420,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   seed_row:
     folder: SeedRow
-    number: 107
+    number: 159
     range: 12
     speed: 1
     trajectory: server-events
@@ -5521,7 +5489,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   primordial_stone:
     folder: PrimordialStone
-    number: 131
+    number: 198
     range: 22
     speed: 1
     trajectory: server-events
@@ -5591,7 +5559,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   guiding_star:
     folder: GuidingStar
-    number: 132
+    number: 201
     range: 12
     speed: 1
     trajectory: server-events
@@ -5636,7 +5604,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   minor_heal:
     folder: MinorHeal
-    number: 133
+    number: 207
     range: 12
     speed: 1
     trajectory: server-events
@@ -5666,7 +5634,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   true_sight:
     folder: TrueSight
-    number: 137
+    number: 229
     range: 12
     speed: 1
     trajectory: server-events
@@ -5718,7 +5686,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   protective_ward:
     folder: ProtectiveWard
-    number: 138
+    number: 232
     range: 12
     speed: 1
     trajectory: server-events
@@ -5786,7 +5754,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   constellation_blessing:
     folder: ConstellationBlessing
-    number: 139
+    number: 238
     range: 12
     speed: 1
     trajectory: server-events
@@ -5823,7 +5791,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   dawn_ritual:
     folder: DawnRitual
-    number: 141
+    number: 241
     range: 12
     speed: 1
     trajectory: server-events
@@ -5866,7 +5834,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   comforting_light:
     folder: ComfortingLight
-    number: 142
+    number: 214
     range: 15
     speed: 1
     trajectory: server-events
@@ -5912,7 +5880,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   exorcism_flash:
     folder: ExorcismFlash
-    number: 143
+    number: 223
     range: 12
     speed: 1
     trajectory: server-events
@@ -5948,7 +5916,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   arcane_mending:
     folder: ArcaneMending
-    number: 144
+    number: 242
     range: 12
     speed: 1
     trajectory: server-events
@@ -6008,7 +5976,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   companion_return:
     folder: CompanionReturn
-    number: 145
+    number: 202
     range: 12
     speed: 1
     trajectory: server-events
@@ -6046,7 +6014,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   sun_drying:
     folder: SunDrying
-    number: 150
+    number: 208
     range: 12
     speed: 1
     trajectory: server-events
@@ -6083,7 +6051,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   luminous_copy:
     folder: LuminousCopy
-    number: 151
+    number: 203
     range: 12
     speed: 1
     trajectory: server-events
@@ -6124,7 +6092,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   guiding_fletching:
     folder: GuidingFletching
-    number: 152
+    number: 216
     range: 12
     speed: 1
     trajectory: server-events
@@ -6155,7 +6123,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   sharing_table:
     folder: SharingTable
-    number: 153
+    number: 234
     range: 12
     speed: 1
     trajectory: server-events
@@ -6193,7 +6161,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   summons_letter:
     folder: SummonsLetter
-    number: 154
+    number: 235
     range: 12
     speed: 1
     trajectory: server-events
@@ -6247,7 +6215,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   starlight_survey:
     folder: StarlightSurvey
-    number: 155
+    number: 204
     range: 48
     speed: 1
     trajectory: server-events
@@ -6278,7 +6246,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   luminous_handover:
     folder: LuminousHandover
-    number: 156
+    number: 230
     range: 12
     speed: 1
     trajectory: server-events
@@ -6308,7 +6276,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   mana_conduit:
     folder: ManaConduit
-    number: 157
+    number: 243
     range: 12
     speed: 1
     trajectory: server-events
@@ -6363,7 +6331,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   mana_deposit:
     folder: ManaDeposit
-    number: 159
+    number: 236
     range: 12
     speed: 1
     trajectory: server-events
@@ -6401,7 +6369,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   guardian_oath:
     folder: GuardianOath
-    number: 160
+    number: 237
     range: 10
     speed: 1
     trajectory: server-events
@@ -6446,7 +6414,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   starlight_reprise:
     folder: StarlightReprise
-    number: 163
+    number: 247
     range: 12
     speed: 1
     trajectory: server-events
@@ -6498,7 +6466,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   constellation_emissary:
     folder: ConstellationEmissary
-    number: 164
+    number: 244
     range: 12
     speed: 1
     trajectory: server-events
@@ -6545,7 +6513,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   earth_elemental:
     folder: EarthElemental
-    number: 104
+    number: 192
     range: 12
     speed: 1
     trajectory: server-events
@@ -6608,7 +6576,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   shadow_double:
     folder: ShadowDouble
-    number: 168
+    number: 276
     range: 30
     speed: 1
     trajectory: server-events
@@ -6654,7 +6622,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   echo_reading:
     folder: EchoReading
-    number: 169
+    number: 254
     range: 30
     speed: 1
     trajectory: server-events
@@ -6672,7 +6640,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   sealing_thread:
     folder: SealingThread
-    number: 170
+    number: 259
     range: 30
     speed: 1
     trajectory: server-events
@@ -6710,7 +6678,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   shadow_exchange:
     folder: ShadowExchange
-    number: 172
+    number: 284
     range: 51
     speed: 1
     trajectory: server-events
@@ -6734,7 +6702,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   forbidden_contract:
     folder: ForbiddenContract
-    number: 173
+    number: 296
     range: 30
     speed: 1
     trajectory: server-events
@@ -6774,7 +6742,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   life_siphon:
     folder: LifeSiphon
-    number: 174
+    number: 260
     range: 51
     speed: 1
     trajectory: server-events
@@ -6814,7 +6782,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   misfortune_whisper:
     folder: misfortune_whisper
-    number: 176
+    number: 272
     range: 51
     speed: 1
     trajectory: server-events
@@ -6844,7 +6812,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   hungry_shadow:
     folder: HungryShadow
-    number: 177
+    number: 261
     range: 30
     speed: 1
     trajectory: server-events
@@ -6872,7 +6840,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   curse_transfer:
     folder: CurseTransfer
-    number: 178
+    number: 277
     range: 51
     speed: 1
     trajectory: server-events
@@ -6910,7 +6878,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   discord:
     folder: Discord
-    number: 179
+    number: 286
     range: 51
     speed: 1
     trajectory: server-events
@@ -6942,7 +6910,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   night_chain:
     folder: NightChain
-    number: 180
+    number: 292
     range: 51
     speed: 1
     trajectory: server-events
@@ -7004,7 +6972,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   pain_deferral:
     folder: PainDeferral
-    number: 181
+    number: 287
     range: 30
     speed: 1
     trajectory: server-events
@@ -7112,7 +7080,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   black_harvest:
     folder: BlackHarvest
-    number: 182
+    number: 278
     range: 30
     speed: 1
     trajectory: server-events
@@ -7130,7 +7098,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   ink_fingertip:
     folder: InkFingertip
-    number: 183
+    number: 262
     range: 30
     speed: 1
     trajectory: server-events
@@ -7238,7 +7206,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   shadow_nail:
     folder: ShadowNail
-    number: 184
+    number: 293
     range: 51
     speed: 1
     trajectory: server-events
@@ -7278,7 +7246,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   night_lullaby:
     folder: NightLullaby
-    number: 185
+    number: 288
     range: 51
     speed: 1
     trajectory: server-events
@@ -7316,7 +7284,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   loosen_grasp:
     folder: LoosenGrasp
-    number: 186
+    number: 273
     range: 51
     speed: 1
     trajectory: server-events
@@ -7354,7 +7322,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   healing_seal:
     folder: HealingSeal
-    number: 188
+    number: 279
     range: 51
     speed: 1
     trajectory: server-events
@@ -7384,7 +7352,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   shadow_scales:
     folder: ShadowScales
-    number: 189
+    number: 289
     range: 51
     speed: 1
     trajectory: server-events
@@ -7420,7 +7388,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   warning_thread:
     folder: WarningThread
-    number: 190
+    number: 294
     range: 51
     speed: 1
     trajectory: server-events
@@ -7458,7 +7426,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   wound_accounting:
     folder: WoundAccounting
-    number: 192
+    number: 280
     range: 51
     speed: 1
     trajectory: server-events
@@ -7488,7 +7456,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   inverted_offering:
     folder: InvertedOffering
-    number: 193
+    number: 263
     range: 30
     speed: 1
     trajectory: server-events
@@ -7516,7 +7484,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   ghost_tool:
     folder: GhostTool
-    number: 194
+    number: 290
     range: 30
     speed: 1
     trajectory: server-events
@@ -7576,7 +7544,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   bell_of_fear:
     folder: BellOfFear
-    number: 195
+    number: 291
     range: 30
     speed: 1
     trajectory: server-events
@@ -7612,7 +7580,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   eclipse_eye:
     folder: EclipseEye
-    number: 196
+    number: 299
     range: 51
     speed: 1
     trajectory: server-events
@@ -7703,7 +7671,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   void_maw:
     folder: VoidMaw
-    number: 198
+    number: 297
     range: 51
     speed: 1
     trajectory: server-events
@@ -7733,7 +7701,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   landing_airbrake:
     folder: LandingAirbrake
-    number: 203
+    number: 21
     range: 30
     speed: 1
     trajectory: server-events
@@ -7757,7 +7725,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   hushed_soles:
     folder: HushedSoles
-    number: 210
+    number: 274
     range: 30
     speed: 1
     trajectory: server-events
@@ -7775,7 +7743,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   thorn_manners:
     folder: ThornManners
-    number: 211
+    number: 154
     range: 30
     speed: 1
     trajectory: server-events
@@ -7793,7 +7761,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   cinder_skipring:
     folder: CinderSkipring
-    number: 212
+    number: 80
     range: 30
     speed: 1
     trajectory: server-events
@@ -7817,7 +7785,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   droplet_relay:
     folder: DropletRelay
-    number: 213
+    number: 137
     range: 51
     speed: 1
     trajectory: server-events
@@ -7853,7 +7821,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   folding_tideplane:
     folder: FoldingTideplane
-    number: 214
+    number: 138
     range: 51
     speed: 1
     trajectory: server-events
@@ -7896,7 +7864,7 @@ bindings:
   # ---- 239~250 던전 기믹 마법 (magic-mythic-paper/tools/gimmick_spells.py) ----
   thawing_heat:
     folder: ThawingHeat
-    number: 239
+    number: 63
     range: 30
     speed: 1
     trajectory: server-events
@@ -7915,7 +7883,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   steam_ignition:
     folder: SteamIgnition
-    number: 240
+    number: 64
     range: 30
     speed: 1
     trajectory: server-events
@@ -7934,7 +7902,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   water_level:
     folder: WaterLevel
-    number: 241
+    number: 114
     range: 30
     speed: 1
     trajectory: server-events
@@ -7953,7 +7921,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   stone_weight:
     folder: StoneWeight
-    number: 242
+    number: 170
     range: 30
     speed: 1
     trajectory: server-events
@@ -7972,7 +7940,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   vine_awaken:
     folder: VineAwaken
-    number: 243
+    number: 171
     range: 30
     speed: 1
     trajectory: server-events
@@ -7991,7 +7959,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   light_beam:
     folder: LightBeam
-    number: 244
+    number: 225
     range: 30
     speed: 1
     trajectory: server-events
@@ -8010,7 +7978,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   mirror_tune:
     folder: MirrorTune
-    number: 245
+    number: 209
     range: 30
     speed: 1
     trajectory: server-events
@@ -8029,7 +7997,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   prism_tint:
     folder: PrismTint
-    number: 246
+    number: 210
     range: 30
     speed: 1
     trajectory: server-events
@@ -8048,7 +8016,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   statue_wake:
     folder: StatueWake
-    number: 247
+    number: 255
     range: 30
     speed: 1
     trajectory: server-events
@@ -8067,7 +8035,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   rewind:
     folder: Rewind
-    number: 248
+    number: 264
     range: 30
     speed: 1
     trajectory: server-events
@@ -8086,7 +8054,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   conduit_turn:
     folder: ConduitTurn
-    number: 249
+    number: 155
     range: 30
     speed: 1
     trajectory: server-events
@@ -8105,7 +8073,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   dimension_mark:
     folder: DimensionMark
-    number: 250
+    number: 265
     range: 30
     speed: 1
     trajectory: server-events
@@ -8122,5 +8090,2493 @@ bindings:
         delay-ticks: 0
         duration-ticks: 16
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  # ---- 325~387 신규 마법 (magic-mythic-paper/tools/nova_spells.py) ----
+  spark_flick:
+    folder: SparkFlick
+    number: 53
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 130
+    sequence:
+      sustainStart: 0
+    holdTicks: 30
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:sparkflick/spark_flick_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: impact
+        trigger: external:spark_flick_hit
+        effect: claude:sparkflick/spark_flick_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  ember_puff:
+    folder: EmberPuff
+    number: 54
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 145
+    sequence:
+      sustainStart: 0
+    holdTicks: 45
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:emberpuff/ember_puff
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: impact
+        trigger: external:ember_puff_burn
+        effect: claude:emberpuff/ember_puff_burn
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  tide_slash:
+    folder: TideSlash
+    number: 107
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 140
+    sequence:
+      sustainStart: 0
+    holdTicks: 40
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:tideslash/tide_slash
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+      - role: impact
+        trigger: external:tide_slash_hit
+        effect: claude:tideslash/tide_slash_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  ice_shard:
+    folder: IceShard
+    number: 108
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 175
+    sequence:
+      sustainStart: 0
+    holdTicks: 75
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:iceshard/ice_shard_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+      - role: impact
+        trigger: external:ice_shard_hit
+        effect: claude:iceshard/ice_shard_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: impact
+        trigger: external:ice_shard_frostbite
+        effect: claude:iceshard/ice_shard_frostbite
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 34
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  wind_needle:
+    folder: WindNeedle
+    number: 8
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 145
+    sequence:
+      sustainStart: 0
+    holdTicks: 45
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:windneedle/wind_needle_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 15
+      - role: impact
+        trigger: external:wind_needle_pierce
+        effect: claude:windneedle/wind_needle_pierce
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: impact
+        trigger: external:wind_needle_end
+        effect: claude:windneedle/wind_needle_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 14
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  mini_twister:
+    folder: MiniTwister
+    number: 9
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 190
+    sequence:
+      sustainStart: 0
+    holdTicks: 90
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:minitwister/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+      - role: impact
+        trigger: external:lift
+        effect: claude:minitwister/lift
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: impact
+        trigger: external:end
+        effect: claude:minitwister/end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 22
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  shadow_fang:
+    folder: ShadowFang
+    number: 251
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 145
+    sequence:
+      sustainStart: 0
+    holdTicks: 45
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:shadowfang/shadow_fang_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: impact
+        trigger: external:shadow_fang
+        effect: claude:shadowfang/shadow_fang
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  dusk_orb:
+    folder: DuskOrb
+    number: 252
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 275
+    sequence:
+      sustainStart: 0
+    holdTicks: 175
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:duskorb/dusk_orb_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 15
+      - role: impact
+        trigger: external:dusk_orb_hit
+        effect: claude:duskorb/dusk_orb_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+      - role: impact
+        trigger: external:dusk_orb_fizzle
+        effect: claude:duskorb/dusk_orb_fizzle
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  prism_shot:
+    folder: PrismShot
+    number: 205
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 170
+    sequence:
+      sustainStart: 0
+    holdTicks: 70
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:prismshot/prism_shot_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: impact
+        trigger: external:prism_shot_hit
+        effect: claude:prismshot/prism_shot_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+      - role: impact
+        trigger: external:prism_shot_split_hit
+        effect: claude:prismshot/prism_shot_split_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  sand_flick:
+    folder: SandFlick
+    number: 156
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 155
+    sequence:
+      sustainStart: 0
+    holdTicks: 55
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:sandflick/sand_flick
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: impact
+        trigger: external:sand_flick_eyes
+        effect: claude:sandflick/sand_flick_eyes
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  sunlance_drop:
+    folder: SunlanceDrop
+    number: 206
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 160
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:sunlancedrop/sunlance_drop_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 9
+      - role: impact
+        trigger: external:sunlance_drop
+        effect: claude:sunlancedrop/sunlance_drop
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 36
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  flame_wheel:
+    folder: FlameWheel
+    number: 67
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 170
+    sequence:
+      sustainStart: 0
+    holdTicks: 70
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:flamewheel/flame_wheel_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: impact
+        trigger: external:flame_wheel_pierce
+        effect: claude:flamewheel/flame_wheel_pierce
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: impact
+        trigger: external:flame_wheel_bounce
+        effect: claude:flamewheel/flame_wheel_bounce
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 14
+      - role: impact
+        trigger: external:flame_wheel_end
+        effect: claude:flamewheel/flame_wheel_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  eruption_line:
+    folder: EruptionLine
+    number: 74
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 190
+    sequence:
+      sustainStart: 0
+    holdTicks: 90
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:eruptionline/eruption_line
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 66
+      - role: impact
+        trigger: external:eruption_line_hit
+        effect: claude:eruptionline/eruption_line_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  flame_javelin:
+    folder: FlameJavelin
+    number: 75
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 150
+    sequence:
+      sustainStart: 0
+    holdTicks: 50
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:flamejavelin/flame_javelin_throw
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 8
+      - role: impact
+        trigger: external:flame_javelin_hit
+        effect: claude:flamejavelin/flame_javelin_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+      - role: impact
+        trigger: external:flame_javelin_hit_full
+        effect: claude:flamejavelin/flame_javelin_hit_full
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 26
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  heat_haze:
+    folder: HeatHaze
+    number: 81
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 195
+    sequence:
+      sustainStart: 0
+    holdTicks: 95
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:heathaze/heat_haze_dash
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+      - role: static
+        trigger: cast
+        effect: claude:heathaze/heat_haze_decoy
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 62
+      - role: impact
+        trigger: external:heat_haze_pop
+        effect: claude:heathaze/heat_haze_pop
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  frost_path:
+    folder: FrostPath
+    number: 121
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 245
+    sequence:
+      sustainStart: 0
+    holdTicks: 145
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:frostpath/frost_path_begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+      - role: static
+        trigger: external:frost_path
+        effect: claude:frostpath/frost_path
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 90
+      - role: static
+        trigger: external:frost_path_end
+        effect: claude:frostpath/frost_path_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 26
+        stop-effects:
+          - claude:frostpath/frost_path
+      - role: attached
+        trigger: external:frost_path_skate
+        effect: claude:frostpath/frost_path_skate
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 92
+      - role: attached
+        trigger: external:frost_path_skate_off
+        effect: claude:frostpath/frost_path_skate
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 1
+        stop-effects:
+          - claude:frostpath/frost_path_skate
+      - role: attached
+        trigger: external:frost_path_chill
+        effect: claude:frostpath/frost_path_chill
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 62
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  hydro_burst:
+    folder: HydroBurst
+    number: 122
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 170
+    sequence:
+      sustainStart: 0
+    holdTicks: 70
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:hydroburst/channel
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 32
+      - role: impact
+        trigger: external:splash
+        effect: claude:hydroburst/splash
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: impact
+        trigger: external:channel_cut
+        effect: claude:hydroburst/splash
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+        stop-effects:
+          - claude:hydroburst/channel
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  crystal_coat:
+    folder: CrystalCoat
+    number: 128
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 220
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:crystalcoat/crystal_coat_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: link
+        trigger: external:crystal_coat_link
+        effect: claude:crystalcoat/crystal_coat_link
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+        link-source: caster-hand
+        link-target: target
+      - role: attached
+        trigger: external:crystal_coat_begin
+        effect: claude:crystalcoat/crystal_coat_begin
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: attached
+        trigger: external:crystal_coat
+        effect: claude:crystalcoat/crystal_coat
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 74
+      - role: attached
+        trigger: external:crystal_coat_shatter
+        effect: claude:crystalcoat/crystal_coat_shatter
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 18
+        stop-effects:
+          - claude:crystalcoat/crystal_coat
+          - claude:crystalcoat/crystal_coat_begin
+      - role: attached
+        trigger: external:crystal_coat_fade
+        effect: claude:crystalcoat/crystal_coat_fade
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 16
+        stop-effects:
+          - claude:crystalcoat/crystal_coat
+          - claude:crystalcoat/crystal_coat_begin
+      - role: impact
+        trigger: external:crystal_coat_absorb
+        effect: claude:crystalcoat/crystal_coat_absorb
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+      - role: impact
+        trigger: external:crystal_coat_chill
+        effect: claude:crystalcoat/crystal_coat_chill
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  ice_bloom:
+    folder: IceBloom
+    number: 129
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 185
+    sequence:
+      sustainStart: 0
+    holdTicks: 85
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:icebloom/ice_bloom
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 64
+      - role: impact
+        trigger: external:ice_bloom_hit
+        effect: claude:icebloom/ice_bloom_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  vacuum_burst:
+    folder: VacuumBurst
+    number: 36
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 164
+    sequence:
+      sustainStart: 0
+    holdTicks: 64
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:vacuumburst/vacuum_burst
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 44
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  gale_combo:
+    folder: GaleCombo
+    number: 25
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 140
+    sequence:
+      sustainStart: 0
+    holdTicks: 40
+    phases:
+      - role: attached
+        trigger: external:gale_combo_slash1
+        effect: claude:galecombo/gale_combo_slash1
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: attached
+        trigger: external:gale_combo_slash2
+        effect: claude:galecombo/gale_combo_slash2
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: attached
+        trigger: external:gale_combo_push3
+        effect: claude:galecombo/gale_combo_push3
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: impact
+        trigger: external:gale_combo_hit
+        effect: claude:galecombo/gale_combo_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+      - role: impact
+        trigger: external:gale_combo_push_hit
+        effect: claude:galecombo/gale_combo_push_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  air_choke:
+    folder: AirChoke
+    number: 40
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 100
+    phases:
+      - role: link
+        trigger: external:air_choke_cast
+        effect: claude:airchoke/air_choke_cast
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+        link-source: caster-hand
+        link-target: target
+      - role: attached
+        trigger: external:air_choke_form
+        effect: claude:airchoke/air_choke_form
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 6
+      - role: attached
+        trigger: external:air_choke
+        effect: claude:airchoke/air_choke
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 62
+      - role: attached
+        trigger: external:air_choke_release
+        effect: claude:airchoke/air_choke_release
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 16
+        stop-effects:
+          - claude:airchoke/air_choke
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  storm_eye:
+    folder: StormEye
+    number: 41
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 220
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:stormeye/storm_eye_begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 9
+      - role: attached
+        trigger: external:storm_eye
+        effect: claude:stormeye/storm_eye
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 74
+      - role: attached
+        trigger: external:storm_eye_end
+        effect: claude:stormeye/storm_eye_end
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 12
+        stop-effects:
+          - claude:stormeye/storm_eye
+      - role: impact
+        trigger: external:storm_eye_catch
+        effect: claude:stormeye/storm_eye_catch
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 4
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  shadow_mire:
+    folder: ShadowMire
+    number: 281
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 220
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: static
+        trigger: external:shadow_mire_begin
+        effect: claude:shadowmire/shadow_mire_begin
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: static
+        trigger: external:shadow_mire
+        effect: claude:shadowmire/shadow_mire
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 72
+      - role: static
+        trigger: external:shadow_mire_end
+        effect: claude:shadowmire/shadow_mire_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+        stop-effects:
+          - claude:shadowmire/shadow_mire
+      - role: attached
+        trigger: external:shadow_mire_root
+        effect: claude:shadowmire/shadow_mire_root
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 56
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  dread_dream:
+    folder: DreadDream
+    number: 282
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 160
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:dreaddream/dread_dream_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: link
+        trigger: external:dread_dream_thread
+        effect: claude:dreaddream/dread_dream_thread
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+        link-source: caster-hand
+        link-target: target
+      - role: attached
+        trigger: external:dread_dream_nightmare
+        effect: claude:dreaddream/dread_dream_nightmare
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 32
+      - role: attached
+        trigger: external:dread_dream_fear
+        effect: claude:dreaddream/dread_dream_fear
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 20
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  shadow_step:
+    folder: ShadowStep
+    number: 275
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 150
+    sequence:
+      sustainStart: 0
+    holdTicks: 50
+    phases:
+      - role: static
+        trigger: external:shadow_step_depart
+        effect: claude:shadowstep/shadow_step_depart
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: attached
+        trigger: external:shadow_step
+        effect: claude:shadowstep/shadow_step
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: static
+        trigger: external:shadow_step_arrive
+        effect: claude:shadowstep/shadow_step_arrive
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+        stop-effects:
+          - claude:shadowstep/shadow_step
+      - role: attached
+        trigger: external:shadow_step_blind
+        effect: claude:shadowstep/shadow_step_blind
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 28
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  halo_throw:
+    folder: HaloThrow
+    number: 227
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 100
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:halothrow/halo_throw_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+      - role: impact
+        trigger: external:halo_throw_hit
+        effect: claude:halothrow/halo_throw_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: attached
+        trigger: external:halo_throw_slow
+        effect: claude:halothrow/halo_throw_slow
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 62
+      - role: impact
+        trigger: external:halo_throw_end
+        effect: claude:halothrow/halo_throw_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  flash_blink:
+    folder: FlashBlink
+    number: 231
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 80
+    phases:
+      - role: static
+        trigger: external:depart
+        effect: claude:flashblink/depart
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 32
+      - role: link
+        trigger: external:streak
+        effect: claude:flashblink/streak
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+        link-source: event-point
+        link-target: caster
+      - role: attached
+        trigger: external:arrive
+        effect: claude:flashblink/arrive
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 36
+      - role: attached
+        trigger: external:blind
+        effect: claude:flashblink/blind
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 60
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  boulder_charge:
+    folder: BoulderCharge
+    number: 187
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 80
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:bouldercharge/boulder_charge
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: external:boulder_charge_dash
+        effect: claude:bouldercharge/boulder_charge_dash
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: static
+        trigger: external:boulder_charge_hit
+        effect: claude:bouldercharge/boulder_charge_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 32
+      - role: attached
+        trigger: external:boulder_charge_stun
+        effect: claude:bouldercharge/boulder_charge_stun
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: attached
+        trigger: external:boulder_charge_end
+        effect: claude:bouldercharge/boulder_charge_end
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 30
+        stop-effects:
+          - claude:bouldercharge/boulder_charge
+          - claude:bouldercharge/boulder_charge_dash
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  air_cannon:
+    folder: AirCannon
+    number: 37
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 100
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:aircannon/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 31
+      - role: impact
+        trigger: external:impact
+        effect: claude:aircannon/impact
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: impact
+        trigger: external:heavy
+        effect: claude:aircannon/heavy
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 60
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  hex_doll:
+    folder: HexDoll
+    number: 283
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 220
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: static
+        trigger: external:dollIn
+        effect: claude:hexdoll/dollIn
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: link
+        trigger: external:form
+        effect: claude:hexdoll/form
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+        link-source: event-point
+        link-target: target
+      - role: static
+        trigger: external:doll
+        effect: claude:hexdoll/doll
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 72
+      - role: link
+        trigger: external:bind
+        effect: claude:hexdoll/bind
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 72
+        link-source: event-point
+        link-target: target
+      - role: static
+        trigger: external:dollOut
+        effect: claude:hexdoll/dollOut
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+        stop-effects:
+          - claude:hexdoll/doll
+      - role: link
+        trigger: external:fade
+        effect: claude:hexdoll/fade
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+        link-source: event-point
+        link-target: target
+        stop-effects:
+          - claude:hexdoll/bind
+      - role: link
+        trigger: external:strike
+        effect: claude:hexdoll/strike
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+        link-source: event-point
+        link-target: target
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  crimson_spiral:
+    folder: CrimsonSpiral
+    number: 88
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 100
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:crimsonspiral/crimson_spiral_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: impact
+        trigger: external:crimson_spiral_pierce
+        effect: claude:crimsonspiral/crimson_spiral_pierce
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+      - role: attached
+        trigger: external:crimson_spiral_burn
+        effect: claude:crimsonspiral/crimson_spiral_burn
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 60
+      - role: impact
+        trigger: external:crimson_spiral_end
+        effect: claude:crimsonspiral/crimson_spiral_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  volcanic_barrage:
+    folder: VolcanicBarrage
+    number: 96
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 100
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:volcanicbarrage/launch
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 38
+      - role: static
+        trigger: cast
+        effect: claude:volcanicbarrage/zone
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: static
+        trigger: external:mark
+        effect: claude:volcanicbarrage/mark
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 26
+      - role: impact
+        trigger: external:impact
+        effect: claude:volcanicbarrage/impact
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 52
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  scorch_lock:
+    folder: ScorchLock
+    number: 89
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 270
+    sequence:
+      sustainStart: 0
+    holdTicks: 170
+    phases:
+      - role: link
+        trigger: external:lock
+        effect: claude:scorchlock/aimForm
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 7
+        link-source: caster-hand
+        link-target: target-chest
+      - role: attached
+        trigger: external:lock
+        effect: claude:scorchlock/lockForm
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 7
+      - role: link
+        trigger: external:lock
+        effect: claude:scorchlock/aim
+        anchor: impact
+        delay-ticks: 7
+        duration-ticks: 140
+        link-source: caster-hand
+        link-target: target-chest
+      - role: attached
+        trigger: external:lock
+        effect: claude:scorchlock/lock
+        anchor: target
+        delay-ticks: 7
+        duration-ticks: 140
+      - role: link
+        trigger: external:fire
+        effect: claude:scorchlock/aimFire
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+        link-source: caster-hand
+        link-target: target-chest
+        stop-effects:
+          - claude:scorchlock/aim
+          - claude:scorchlock/aimForm
+      - role: attached
+        trigger: external:fire
+        effect: claude:scorchlock/strike
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 24
+        stop-effects:
+          - claude:scorchlock/lock
+          - claude:scorchlock/lockForm
+      - role: link
+        trigger: external:break
+        effect: claude:scorchlock/aimBreak
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+        link-source: caster-hand
+        link-target: target-chest
+        stop-effects:
+          - claude:scorchlock/aim
+          - claude:scorchlock/aimForm
+      - role: attached
+        trigger: external:break
+        effect: claude:scorchlock/fizzle
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 26
+        stop-effects:
+          - claude:scorchlock/lock
+          - claude:scorchlock/lockForm
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  freeze_field:
+    folder: FreezeField
+    number: 148
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 270
+    sequence:
+      sustainStart: 0
+    holdTicks: 170
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:freezefield/freeze_field_begin
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 19
+      - role: static
+        trigger: cast
+        effect: claude:freezefield/freeze_field
+        anchor: target
+        delay-ticks: 16
+        duration-ticks: 104
+      - role: static
+        trigger: cast
+        effect: claude:freezefield/freeze_field_end
+        anchor: target
+        delay-ticks: 120
+        duration-ticks: 30
+        stop-effects:
+          - claude:freezefield/freeze_field
+      - role: attached
+        trigger: external:freeze_field_freeze
+        effect: claude:freezefield/freeze_field_freeze
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 22
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  ebb_mark:
+    folder: EbbMark
+    number: 145
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 220
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:ebbmark/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 8
+      - role: impact
+        trigger: external:markHit
+        effect: claude:ebbmark/markHit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: static
+        trigger: external:anchor
+        effect: claude:ebbmark/anchor
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 70
+      - role: attached
+        trigger: external:brand
+        effect: claude:ebbmark/brand
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 64
+      - role: link
+        trigger: external:tether
+        effect: claude:ebbmark/tether
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 64
+        link-source: target-chest
+        link-target: event-point
+      - role: link
+        trigger: external:tide
+        effect: claude:ebbmark/tide
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+        link-source: target-chest
+        link-target: event-point
+        stop-effects:
+          - claude:ebbmark/brand
+          - claude:ebbmark/tether
+      - role: impact
+        trigger: external:ebb
+        effect: claude:ebbmark/ebb
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  ice_serpent:
+    folder: IceSerpent
+    number: 149
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 190
+    sequence:
+      sustainStart: 0
+    holdTicks: 90
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:iceserpent/ice_serpent_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: impact
+        trigger: external:ice_serpent_hit
+        effect: claude:iceserpent/ice_serpent_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+      - role: impact
+        trigger: external:ice_serpent_end
+        effect: claude:iceserpent/ice_serpent_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  sky_dive:
+    folder: SkyDive
+    number: 47
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 220
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:skydive/launch
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 26
+      - role: attached
+        trigger: cast
+        effect: claude:skydive/rise
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+      - role: static
+        trigger: external:mark
+        effect: claude:skydive/mark
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 44
+      - role: attached
+        trigger: external:dive
+        effect: claude:skydive/dive
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+        stop-effects:
+          - claude:skydive/rise
+      - role: impact
+        trigger: external:land
+        effect: claude:skydive/land
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 62
+        stop-effects:
+          - claude:skydive/dive
+          - claude:skydive/mark
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  thundercloud:
+    folder: Thundercloud
+    number: 48
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 250
+    sequence:
+      sustainStart: 0
+    holdTicks: 150
+    phases:
+      - role: attached
+        trigger: external:cloud
+        effect: claude:thundercloud/cloud
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 124
+      - role: impact
+        trigger: external:strike
+        effect: claude:thundercloud/strike
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  fate_link:
+    folder: FateLink
+    number: 295
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 250
+    sequence:
+      sustainStart: 0
+    holdTicks: 150
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:fatelink/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 6
+      - role: attached
+        trigger: external:mark
+        effect: claude:fatelink/mark
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 130
+      - role: link
+        trigger: external:form
+        effect: claude:fatelink/form
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 9
+        link-source: event-point
+        link-target: target-chest
+      - role: link
+        trigger: external:bind
+        effect: claude:fatelink/bind
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 120
+        link-source: event-point
+        link-target: target-chest
+        stop-effects:
+          - claude:fatelink/bind
+          - claude:fatelink/taut
+          - claude:fatelink/strain
+      - role: link
+        trigger: external:taut
+        effect: claude:fatelink/taut
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 120
+        link-source: event-point
+        link-target: target-chest
+        stop-effects:
+          - claude:fatelink/taut
+      - role: link
+        trigger: external:strain
+        effect: claude:fatelink/strain
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 120
+        link-source: event-point
+        link-target: target-chest
+        stop-effects:
+          - claude:fatelink/strain
+      - role: link
+        trigger: external:snap
+        effect: claude:fatelink/snap
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+        link-source: event-point
+        link-target: target-chest
+        stop-effects:
+          - claude:fatelink/form
+          - claude:fatelink/bind
+          - claude:fatelink/taut
+          - claude:fatelink/strain
+      - role: impact
+        trigger: external:snapMid
+        effect: claude:fatelink/snapMid
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: attached
+        trigger: external:snapHit
+        effect: claude:fatelink/snapHit
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 10
+        stop-effects:
+          - claude:fatelink/mark
+      - role: link
+        trigger: external:fade
+        effect: claude:fatelink/fade
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+        link-source: event-point
+        link-target: target-chest
+        stop-effects:
+          - claude:fatelink/form
+          - claude:fatelink/bind
+          - claude:fatelink/taut
+          - claude:fatelink/strain
+          - claude:fatelink/mark
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  prism_cage:
+    folder: PrismCage
+    number: 245
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 80
+    phases:
+      - role: static
+        trigger: external:cage
+        effect: claude:prismcage/cage
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 34
+      - role: attached
+        trigger: external:stun
+        effect: claude:prismcage/stun
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 20
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  wraith_march:
+    folder: WraithMarch
+    number: 298
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 100
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:wraithmarch/wraith_march
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 72
+      - role: impact
+        trigger: external:wraith_march_fear
+        effect: claude:wraithmarch/wraith_march_fear
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  fault_rift:
+    folder: FaultRift
+    number: 199
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 210
+    sequence:
+      sustainStart: 0
+    holdTicks: 110
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:faultrift/fault_rift
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 48
+      - role: impact
+        trigger: external:fault_rift_pin
+        effect: claude:faultrift/fault_rift_pin
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 64
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  flame_emperor:
+    folder: FlameEmperor
+    number: 99
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 390
+    sequence:
+      sustainStart: 0
+    holdTicks: 290
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:flameemperor/flame_emperor_chant
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 60
+      - role: attached
+        trigger: external:struct_cancel
+        effect: claude:flameemperor/flame_emperor_chant
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 1
+        stop-effects:
+          - claude:flameemperor/flame_emperor_chant
+      - role: attached
+        trigger: external:flame_emperor
+        effect: claude:flameemperor/flame_emperor
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 175
+      - role: attached
+        trigger: external:flame_emperor_end
+        effect: claude:flameemperor/flame_emperor_end
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 50
+        stop-effects:
+          - claude:flameemperor/flame_emperor
+      - role: impact
+        trigger: external:flame_emperor_fireball_hit
+        effect: claude:flameemperor/flame_emperor_fireball_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  leviathan_rise:
+    folder: LeviathanRise
+    number: 150
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 330
+    sequence:
+      sustainStart: 0
+    holdTicks: 230
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:leviathanrise/casterChant
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 100
+      - role: static
+        trigger: external:zoneChant
+        effect: claude:leviathanrise/zoneChant
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 100
+      - role: static
+        trigger: external:struct_cancel
+        effect: claude:leviathanrise/drain
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 30
+        stop-effects:
+          - claude:leviathanrise/zoneChant
+          - claude:leviathanrise/casterChant
+      - role: static
+        trigger: external:strike
+        effect: claude:leviathanrise/strike
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 90
+      - role: static
+        trigger: external:drain
+        effect: claude:leviathanrise/drain
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 30
+        stop-effects:
+          - claude:leviathanrise/strike
+      - role: impact
+        trigger: external:struck
+        effect: claude:leviathanrise/struck
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  heaven_cyclone:
+    folder: HeavenCyclone
+    number: 50
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 370
+    sequence:
+      sustainStart: 0
+    holdTicks: 270
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:heavencyclone/begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 30
+      - role: static
+        trigger: external:sustain
+        effect: claude:heavencyclone/sustain
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 210
+      - role: static
+        trigger: external:end
+        effect: claude:heavencyclone/end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 40
+        stop-effects:
+          - claude:heavencyclone/sustain
+      - role: attached
+        trigger: external:lift
+        effect: claude:heavencyclone/lift
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 220
+      - role: impact
+        trigger: external:slam
+        effect: claude:heavencyclone/slam
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+        stop-effects:
+          - claude:heavencyclone/lift
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  abyss_gate:
+    folder: AbyssGate
+    number: 300
+    range: 51
+    speed: 1
+    trajectory: server-events
+    max-ticks: 390
+    sequence:
+      sustainStart: 0
+    holdTicks: 290
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:abyssgate/chant
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 60
+      - role: static
+        trigger: external:mark
+        effect: claude:abyssgate/mark
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 70
+      - role: attached
+        trigger: external:struct_cancel
+        effect: claude:abyssgate/chant
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 1
+        stop-effects:
+          - claude:abyssgate/chant
+          - claude:abyssgate/mark
+      - role: static
+        trigger: external:begin
+        effect: claude:abyssgate/begin
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 30
+        stop-effects:
+          - claude:abyssgate/mark
+      - role: static
+        trigger: external:sustain
+        effect: claude:abyssgate/sustain
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 160
+      - role: static
+        trigger: external:end
+        effect: claude:abyssgate/end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 46
+        stop-effects:
+          - claude:abyssgate/sustain
+      - role: link
+        trigger: external:pull
+        effect: claude:abyssgate/pull
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 175
+        link-source: target-chest
+        link-target: event-point
+      - role: impact
+        trigger: external:sleep
+        effect: claude:abyssgate/sleep
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+        stop-effects:
+          - claude:abyssgate/pull
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  aurora_veil:
+    folder: AuroraVeil
+    number: 248
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 400
+    sequence:
+      sustainStart: 0
+    holdTicks: 300
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:auroraveil/aurora_veil_begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 34
+      - role: static
+        trigger: external:aurora_veil
+        effect: claude:auroraveil/aurora_veil
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 240
+      - role: static
+        trigger: external:aurora_veil_end
+        effect: claude:auroraveil/aurora_veil_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 40
+        stop-effects:
+          - claude:auroraveil/aurora_veil
+          - claude:auroraveil/aurora_veil_ally
+          - claude:auroraveil/aurora_veil_weaken
+      - role: attached
+        trigger: external:aurora_veil_ally
+        effect: claude:auroraveil/aurora_veil_ally
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 240
+      - role: attached
+        trigger: external:aurora_veil_weaken
+        effect: claude:auroraveil/aurora_veil_weaken
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 240
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  titan_stride:
+    folder: TitanStride
+    number: 200
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 230
+    sequence:
+      sustainStart: 0
+    holdTicks: 130
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:titanstride/titan_stride
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 72
+      - role: impact
+        trigger: external:titan_stride_step_l
+        effect: claude:titanstride/titan_stride_step_l
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 44
+      - role: impact
+        trigger: external:titan_stride_step_r
+        effect: claude:titanstride/titan_stride_step_r
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 44
+      - role: impact
+        trigger: external:titan_stride_final
+        effect: claude:titanstride/titan_stride_final
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 52
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  alchemy_preheat:
+    folder: AlchemyPreheat
+    number: 76
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 210
+    sequence:
+      sustainStart: 0
+    holdTicks: 110
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:alchemypreheat/alchemy_preheat
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 90
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  broom_afterburner:
+    folder: BroomAfterburner
+    number: 82
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 190
+    sequence:
+      sustainStart: 0
+    holdTicks: 90
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:broomafterburner/broom_afterburner_begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 3
+      - role: attached
+        trigger: external:broom_afterburner
+        effect: claude:broomafterburner/broom_afterburner
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 58
+      - role: attached
+        trigger: external:broom_afterburner_end
+        effect: claude:broomafterburner/broom_afterburner_end
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 8
+        stop-effects:
+          - claude:broomafterburner/broom_afterburner
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  signal_flare:
+    folder: SignalFlare
+    number: 57
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 410
+    sequence:
+      sustainStart: 0
+    holdTicks: 310
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:signalflare/signal_flare
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 290
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  water_glimpse:
+    folder: WaterGlimpse
+    number: 115
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 230
+    sequence:
+      sustainStart: 0
+    holdTicks: 130
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:waterglimpse/water_glimpse_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 29
+      - role: static
+        trigger: external:water_glimpse
+        effect: claude:waterglimpse/water_glimpse
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 96
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  calm_ripple:
+    folder: CalmRipple
+    number: 118
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 225
+    sequence:
+      sustainStart: 0
+    holdTicks: 125
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:calmripple/calm_ripple
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 104
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  treasure_scent:
+    folder: TreasureScent
+    number: 123
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 220
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:treasurescent/treasure_scent
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 100
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  tailwind:
+    folder: Tailwind
+    number: 29
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 430
+    sequence:
+      sustainStart: 0
+    holdTicks: 330
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:tailwind/tailwind
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 38
+      - role: attached
+        trigger: external:tailwind_buff
+        effect: claude:tailwind/tailwind_buff
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 300
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  season_sense:
+    folder: SeasonSense
+    number: 10
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 190
+    sequence:
+      sustainStart: 0
+    holdTicks: 90
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:seasonsense/season_sense
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 70
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  pack_sort:
+    folder: PackSort
+    number: 253
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 80
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:packsort/pack_sort
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 60
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  heart_read:
+    folder: HeartRead
+    number: 270
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 80
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:heartread/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: link
+        trigger: external:read
+        effect: claude:heartread/read
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 39
+        link-source: caster
+        link-target: target
+      - role: attached
+        trigger: external:glimmer
+        effect: claude:heartread/glimmer
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 56
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  insight_flash:
+    folder: InsightFlash
+    number: 219
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 190
+    sequence:
+      sustainStart: 0
+    holdTicks: 90
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:insightflash/insight_flash
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 72
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  harvest_bell:
+    folder: HarvestBell
+    number: 228
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 1370
+    sequence:
+      sustainStart: 0
+    holdTicks: 1270
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:harvestbell/harvest_bell
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 61
+      - role: impact
+        trigger: external:reveal
+        effect: claude:harvestbell/reveal
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 32
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  blessed_ribbon:
+    folder: BlessedRibbon
+    number: 220
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 80
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:blessedribbon/blessed_ribbon
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 58
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  crop_snare:
+    folder: CropSnare
+    number: 177
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 2600
+    sequence:
+      sustainStart: 0
+    holdTicks: 2500
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:cropsnare/crop_snare
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 90
+      - role: impact
+        trigger: external:crop_snare_bind
+        effect: claude:cropsnare/crop_snare_bind
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 78
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  # ---- 168~214 최종 기획 신규 구현 (magic-mythic-paper/tools/arcana_spells.py) ----
+  drowsiness:
+    folder: Drowsiness
+    number: 285
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 340
+    sequence:
+      sustainStart: 0
+    holdTicks: 240
+    phases:
+      - role: static
+        trigger: external:orb
+        effect: claude:drowsiness/orb
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: static
+        trigger: external:eye
+        effect: claude:drowsiness/eye
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 200
+      - role: static
+        trigger: external:eye_end
+        effect: claude:drowsiness/eye_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+        stop-effects:
+          - claude:drowsiness/eye
+      - role: attached
+        trigger: external:latch
+        effect: claude:drowsiness/latch
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 64
+    review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
+  light_step:
+    folder: LightStep
+    number: 14
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 12000
+    sequence:
+      sustainStart: 0
+    holdTicks: 11900
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:lightstep/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 24
+      - role: impact
+        trigger: external:step
+        effect: claude:lightstep/step
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  herding_breeze:
+    folder: HerdingBreeze
+    number: 26
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 720
+    sequence:
+      sustainStart: 0
+    holdTicks: 620
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:herdingbreeze/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 30
+      - role: attached
+        trigger: external:lead
+        effect: claude:herdingbreeze/lead
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 60
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  campfire_rest:
+    folder: CampfireRest
+    number: 68
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 1320
+    sequence:
+      sustainStart: 0
+    holdTicks: 1220
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:campfirerest/campfire
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 1200
+      - role: attached
+        trigger: external:warm
+        effect: claude:campfirerest/warm
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 24
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  ward_candle:
+    folder: WardCandle
+    number: 77
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 100
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:wardcandle/candle
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 80
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  bottle_fill:
+    folder: BottleFill
+    number: 116
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 144
+    sequence:
+      sustainStart: 0
+    holdTicks: 44
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:bottlefill/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 24
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  scale_appraisal:
+    folder: ScaleAppraisal
+    number: 109
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 150
+    sequence:
+      sustainStart: 0
+    holdTicks: 50
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:scaleappraisal/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 30
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  crop_survey:
+    folder: CropSurvey
+    number: 166
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 220
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:cropsurvey/wave
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 30
+      - role: static
+        trigger: external:ripe
+        effect: claude:cropsurvey/ripe
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 60
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  replant_touch:
+    folder: ReplantTouch
+    number: 178
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 1320
+    sequence:
+      sustainStart: 0
+    holdTicks: 1220
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:replanttouch/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: impact
+        trigger: external:sprout
+        effect: claude:replanttouch/sprout
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  enlighten_hint:
+    folder: EnlightenHint
+    number: 221
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 160
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:enlightenhint/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  memory_lantern:
+    folder: MemoryLantern
+    number: 213
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 320
+    sequence:
+      sustainStart: 0
+    holdTicks: 220
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:memorylantern/lantern
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: static
+        trigger: external:beam
+        effect: claude:memorylantern/beam
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 200
+      - role: link
+        trigger: external:guide
+        effect: claude:memorylantern/guide
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 40
+        link-source: caster
+        link-target: event-point
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  shadow_vault:
+    folder: ShadowVault
+    number: 257
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 144
+    sequence:
+      sustainStart: 0
+    holdTicks: 44
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:shadowvault/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 24
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  sweet_sleep:
+    folder: SweetSleep
+    number: 271
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 150
+    sequence:
+      sustainStart: 0
+    holdTicks: 50
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:sweetsleep/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 30
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   vine_ladder: {"folder": "VineLadder", "number": 103, "range": 5, "speed": 1, "trajectory": "server-events", "holdTicks": 600, "max-ticks": 700, "phases": [{"role": "static", "trigger": "external:grow", "effect": "claude:vineladder/begin", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 65}, {"role": "static", "trigger": "external:grow", "effect": "claude:vineladder/begin_2", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 65}, {"role": "static", "trigger": "external:grow", "effect": "claude:vineladder/sustain", "anchor": "impact", "delay-ticks": 48, "duration-ticks": 600, "finish-after-ticks": 552}, {"role": "scoped-static", "trigger": "external:ladder_end", "effect": "claude:vineladder/end", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 55, "stop-effects": ["claude:vineladder/begin", "claude:vineladder/begin_2", "claude:vineladder/sustain"]}, {"role": "scoped-static", "trigger": "external:ladder_end", "effect": "claude:vineladder/end_2", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 55, "stop-effects": ["claude:vineladder/begin", "claude:vineladder/begin_2", "claude:vineladder/sustain"]}], "external-events": ["external:grow", "external:ladder_end"], "review": "Wall placement and expiry follow SummonMech ladder events; sustain begins at 48 ticks and ends at gameplay expiry."}
   light_mark: {"folder": "LightMark", "number": 134, "range": 20, "speed": 1.2, "trajectory": "server-events", "max-ticks": 480, "phases": [{"role": "attached", "trigger": "cast", "effect": "claude:lightmark/cast", "anchor": "caster", "delay-ticks": 0, "duration-ticks": 20}, {"role": "projectile", "trigger": "external:runtime_projectile", "effect": "claude:lightmark/projectile", "anchor": "projectile", "delay-ticks": 0, "duration-ticks": 440}, {"role": "impact", "trigger": "external:contact", "effect": "claude:lightmark/impact", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 28}, {"role": "impact", "trigger": "external:block_contact", "effect": "claude:lightmark/fizzle", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 32}, {"role": "impact", "trigger": "external:miss", "effect": "claude:lightmark/fizzle", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 32}], "external-events": ["external:launch", "external:contact", "external:block_contact", "external:miss"], "review": "GameplayVisual follows the real BoltMech projectile; runtime_projectile is metadata, not an independently simulated projectile."}

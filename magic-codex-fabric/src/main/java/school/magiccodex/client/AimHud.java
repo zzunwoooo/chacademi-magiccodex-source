@@ -65,7 +65,8 @@ public final class AimHud {
             centerY = height - 22 - 30 - 12 - 14; // vanilla hotbar + hunger/armour rows
         }
         float textSize = 12.5f, icon = 18, mouse = 15, gap = 6;
-        String cast = "발동", cancel = "취소";
+        boolean chargeSpell = SpellChargeClient.supported(spell.id());
+        String cast = chargeSpell ? "눌러서 충전" : "발동", cancel = "취소";
         float castW = text.width(cast, textSize, BOLD), cancelW = text.width(cancel, textSize, BOLD);
         float total = icon + gap * 2 + mouse + 4 + castW + gap * 2 + mouse + 4 + cancelW;
         ctx.getMatrices().push();
@@ -83,10 +84,18 @@ public final class AimHud {
             images.drawCentered(ctx, MOUSE_RIGHT, x + mouse / 2, 0, (int) mouse, 0xFFE6E0D2);
             x += mouse + 4;
             text.draw(ctx, cancel, x, 0, textSize, 0xFFF1F3F5, BOLD, false);
+            boolean charging = SpellChargeClient.charging();
+            if (charging) {
+                // 338 충전: a thin bar in the pill's own capsule style just above it, aim colour, brighter when full
+                float k = SpellChargeClient.progress(), barW = total + 24, barX = -barW / 2, barY = -12 - 4 - 5;
+                HudMesh.capsule(ctx, barX, barY, barW, 5, 0x90101925, 0x90101925);
+                int fill = k >= 1f ? 0xFFFFF1C8 : 0xE0000000 | rgb;
+                if (k > 0) HudMesh.capsule(ctx, barX, barY, Math.max(5, barW * k), 5, fill, fill);
+            }
             if (preview != null && !preview.valid() && preview.reason() != null) {
                 float blink = .75f + .25f * (float) Math.sin(Util.getMeasuringTimeMs() / 160.0);
                 int alpha = Math.round(255 * blink) << 24;
-                text.drawOutline(ctx, preview.reason(), 0, -24, 12, alpha | 0xFFB4A8, BOLD, true);
+                text.drawOutline(ctx, preview.reason(), 0, charging ? -32 : -24, 12, alpha | 0xFFB4A8, BOLD, true);
             }
         } finally {
             ctx.getMatrices().pop();

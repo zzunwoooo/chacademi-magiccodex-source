@@ -70,11 +70,12 @@ M = [
   [sta(X('zone'), 'begin', 16), sta(X('zone'), 'sustain', 64, delay=4), sta(X('zone_end'), 'end', 20, stop=['sustain']),
    lnk(X('drain'), 'drain', 18, 'event-point', 'caster')], True),
  (175, 'drowsiness', '졸음', 'dark', 'AIM', 16, 0, 0, 100, 16,
-  [A('type=drowse;speed=0.8;r=3;wait=200;root=60')],
-  '어둠 구체가 조준 지점으로 날아가 10초 감지, 처음 들어온 적 3초 속박 후 소멸', '감지 반경 3, 대기 10초, 사거리 16, 1회 소모 / **VFX 팩 없음 → enabled:false**',
+  [A('type=drowse;speed=0.8;r=3;wait=200;root=60;orbvfx=claude:drowsiness/fly')],
+  '어둠 구체가 조준 지점으로 날아가 10초 감지, 처음 들어온 적 3초 속박 후 소멸', '감지 반경 3, 대기 10초, 사거리 16, 1회 소모 (VFX 팩 Drowsiness 2026-10-25 제작, 감지 링 반경 3 고정)',
   '몸에서 출발한 어둠 구체가 지정한 자리에 감지 영역을 만듭니다. 적이 들어오면 구체가 달라붙어 3초 동안 속박합니다.',
   '밤에 침대에 30초간 누워 있기', None,
-  None, 240, [], False),
+  'drowsiness', 240,
+  [sta(X('orb'), 'orb', 12), sta(X('eye'), 'eye', 200), sta(X('eye_end'), 'eye_end', 20, stop=['eye']), att(X('latch'), 'latch', 64, 'target')], True),
  (176, 'misfortune_whisper', '나약함의 저주', 'dark', 'ENTITY', 12, 0, 0, 60, 20,
   ['chahit{mult=0;status=magic_weakness:160+physical_weakness:160}'],
   '대상 8초 약화(마법 피해↓) + 물리 약화(공격 피해↓)', '감소율 = config status 공통 값 (magicWeakness / physicalWeakness), 사거리 12',
@@ -287,7 +288,7 @@ def _q(v):
         return '"' + v.replace('\\', '\\\\').replace('"', '\\"') + '"'
     return v
 
-FOLDERS = {f.lower(): f for f in ['ShadowDouble', 'EchoReading', 'SealingThread', 'ShadowExchange', 'ForbiddenContract', 'LifeSiphon', 'misfortune_whisper',
+FOLDERS = {f.lower(): f for f in ['Drowsiness', 'ShadowDouble', 'EchoReading', 'SealingThread', 'ShadowExchange', 'ForbiddenContract', 'LifeSiphon', 'misfortune_whisper',
     'CurseTransfer', 'Discord', 'NightChain', 'PainDeferral', 'BlackHarvest', 'InkFingertip', 'ShadowNail', 'NightLullaby', 'LoosenGrasp', 'HealingSeal',
     'ShadowScales', 'WarningThread', 'WoundAccounting', 'GhostTool', 'BellOfFear', 'EclipseEye', 'VoidMaw', 'LandingAirbrake', 'HushedSoles', 'ThornManners',
     'CinderSkipring', 'DropletRelay', 'FoldingTideplane', 'HungryShadow', 'InvertedOffering']}
@@ -325,8 +326,10 @@ def _phase_yaml(pack, P):
 
 def _rows():
     """Every spell this file owns: (order, id, name, cat, mana, cd, enabled, description, discovery, research, pack, hold, phases)."""
-    r = [(o, i, nm, cat, mana, cd, en, desc, disc, res, pack, hold, P) for (o, i, nm, cat, tgt, rng, base, ratio, mana, cd, lines, note, temp, desc, disc, res, pack, hold, P, en) in M]
-    r += [(o, i, nm, cat, 0, 0, True, desc, disc, res, pack, 40, P) for (o, i, nm, cat, note, desc, disc, res, pack, P) in PASSIVES]
+    import spell_order   # 2026-10-25 renumber: number/order come from tools/spell_order.py
+    N = spell_order.number
+    r = [(N(i, o), i, nm, cat, mana, cd, en, desc, disc, res, pack, hold, P) for (o, i, nm, cat, tgt, rng, base, ratio, mana, cd, lines, note, temp, desc, disc, res, pack, hold, P, en) in M]
+    r += [(N(i, o), i, nm, cat, 0, 0, True, desc, disc, res, pack, 40, P) for (o, i, nm, cat, note, desc, disc, res, pack, P) in PASSIVES]
     return sorted(r)
 
 def write_all():
@@ -336,7 +339,7 @@ def write_all():
     idx = [l for l in _read(os.path.join(ds, 'index.txt')).split('\n') if l.strip()]
     hashes = [l.rstrip('\r') for l in open(os.path.join(ds, 'known-hashes.tsv'), encoding='utf-8', newline='').read().split('\n') if l.strip()]
     for (o, i, nm, cat, mana, cd, en, desc, disc, res, *_r) in rows:
-        fn = f'{o}_{i}.yml'; path = os.path.join(ds, fn)
+        fn = f'{o:03d}_{i}.yml'; path = os.path.join(ds, fn)
         old = _read(path) if os.path.exists(path) else ''
         get = lambda k, d='': (re.search(r'(?m)^' + k + r': (.*)$', old) or [None, d])[1]
         icon = get('icon', "''")
@@ -346,7 +349,7 @@ def write_all():
              f"discovery:\n  description: {_q(disc) if disc else (odisc or _q('아직 알려지지 않았습니다.'))}\nresearch: {_q(res) if res else (ores or chr(39)*2)}\n"
              f"cast:\n  command: 마법 {i}\n  cooldown-seconds: {cd}\n  mana-cost: {mana}\norder: {o}\n")
         _write_if(path, y)
-        if f'{o}_{i}' not in idx: idx.append(f'{o}_{i}')
+        if f'{o:03d}_{i}' not in idx: idx.append(f'{o:03d}_{i}')
         h = hashlib.sha256(y.encode('utf-8')).hexdigest()
         if f'{fn}\t{h}' not in hashes: hashes.append(f'{fn}\t{h}')   # history: old shipped hashes stay (DefaultSpellMigration)
     idx.sort(key=lambda l: (int(l.split('_', 1)[0]) if l.split('_', 1)[0].isdigit() else 9999, l))

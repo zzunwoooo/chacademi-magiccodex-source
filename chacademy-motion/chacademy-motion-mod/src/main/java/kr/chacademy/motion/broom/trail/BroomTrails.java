@@ -79,6 +79,8 @@ public final class BroomTrails {
     private static final Map<UUID, Live> LIVE = new HashMap<>();
     private static final Map<UUID, RetryGate> GATES = new HashMap<>();
     private static final Map<UUID, String> OVERRIDES = new HashMap<>();
+    /** 궤적을 잠시 숨긴 사람 → 이 틱(ticks)까지 (서버 broom_buff HIDE_TRAIL) */
+    private static final Map<UUID, Long> HIDDEN = new HashMap<>();
     private static final Set<String> BAD_IDS = new HashSet<>();
     private static final Map<BroomModel, float[]> TIPS = new IdentityHashMap<>();
     private static Set<String> knownIds;
@@ -147,12 +149,20 @@ public final class BroomTrails {
         OVERRIDES.clear();
     }
 
+    /** 서버 broom_buff HIDE_TRAIL (마법 375 불꽃 추진): ticks 동안 이 사람의 궤적을 숨김 (마법 VFX 가 대신 그림). 0 = 바로 다시 보임. */
+    public static void hide(UUID player, int forTicks) {
+        if (player == null) return;
+        if (forTicks <= 0) HIDDEN.remove(player);
+        else HIDDEN.put(player, ticks + Math.min(forTicks, 20 * 60));
+    }
+
     // ------------------------------------------------------------------ 정리
 
     /** 접속 종료: 덮어쓰기까지 모두 잊는다. PortableVFX 도 월드가 바뀌면 스스로 전부 지움. */
     public static void reset() {
         forgetAll(true);
         OVERRIDES.clear();
+        HIDDEN.clear();
         GATES.clear();
         lastLevel = null;
     }
@@ -195,6 +205,11 @@ public final class BroomTrails {
         for (BroomRiders.Rider r : BroomRiders.riders().values()) {
             Player p = level.getPlayerByUUID(r.id);
             if (p == null || p.isInvisible() || r.age < START_AGE) continue;
+            Long hiddenUntil = HIDDEN.get(r.id);
+            if (hiddenUntil != null) {
+                if (hiddenUntil > ticks) continue; // 계획에서 빠짐 → 아래에서 꼬리 남기고 종료
+                HIDDEN.remove(r.id);
+            }
             TrailConfig.TrailType type = config.resolve(r.broom, OVERRIDES.get(r.id));
             if (type == null) continue;
             players.put(r.id, p);
@@ -213,6 +228,7 @@ public final class BroomTrails {
             }
         }
         GATES.keySet().removeIf(id -> !BroomRiders.riders().containsKey(id));
+        if (!HIDDEN.isEmpty()) HIDDEN.keySet().removeIf(id -> !BroomRiders.riders().containsKey(id));
 
         refreshKnownIds();
         int activeCount = active.size();

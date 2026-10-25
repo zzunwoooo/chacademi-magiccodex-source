@@ -73,6 +73,8 @@ final class SpellRuntime implements AutoCloseable {
             if(r.ground()&&target==null&&!air)location=groundBelow(location);
         }
         if(!MagicProtectionLink.at(p,location))return REFUSED;
+        // 생활 마법 (LifeSpells): refuse before the visual and the mana charge when there is nothing to do.
+        if(r.utility()){String why=utility.refusal(p,id);if(why!=null){CodexCommands.warn(p,"magic-target",why);return REFUSED;}}
         return new Plan(true,r,target,location);
     }
     // ------------------------------------------------------------------ C04 client aim (magiccodex:cast_aim)

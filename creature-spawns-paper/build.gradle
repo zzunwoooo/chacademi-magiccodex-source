@@ -1,6 +1,6 @@
 plugins { id 'java' }
 group = 'school.chacademia'
-version = '0.5.1-feedback-20261023'
+version = '0.5.1-feedback-20261023-nova.1'
 base { archivesName = 'chacademia-wildlife' }
 repositories { mavenCentral(); maven { url = 'https://repo.papermc.io/repository/maven-public/' } }
 dependencies {

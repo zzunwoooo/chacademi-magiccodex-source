@@ -76,4 +76,69 @@ public final class ChacaNpcApi {
         });
         return out;
     }
+
+    /**
+     * 마법 383 마음 읽기 (MagicCodexBridge LifeSpells 가 리플렉션으로 부름, 메인 스레드):
+     * 이 엔티티가 캐릭터에 연결된 Citizens NPC 면 캐릭터 id, 아니면 null.
+     */
+    public static String characterOf(org.bukkit.entity.Entity entity) {
+        ChacaNpcPlugin p = ChacaNpcPlugin.instance();
+        if (p == null || entity == null) {
+            return null;
+        }
+        net.citizensnpcs.api.npc.NPC npc = net.citizensnpcs.api.CitizensAPI.getNPCRegistry().getNPC(entity);
+        return npc == null ? null : p.npcs().charIdFor(npc.getId());
+    }
+
+    /** 캐릭터 이름, 없으면 null (마법 383). */
+    public static String characterName(String npcId) {
+        ChacaNpcPlugin p = ChacaNpcPlugin.instance();
+        CharacterSheet c = p == null || npcId == null ? null : p.characters().get(npcId);
+        return c == null ? null : c.name();
+    }
+
+    /**
+     * 마법 깨달음의 빛 (MagicCodexBridge LifeSpells 가 리플렉션으로 부름, 메인 스레드): hints.yml 의 마법 힌트
+     * spell id → 목격담 재료(materials). 같은 마법에 힌트가 여럿이면 가장 막연한(difficulty 큰) 것. 없으면 빈 맵.
+     */
+    public static java.util.Map<String, String> hintMaterials() {
+        ChacaNpcPlugin p = ChacaNpcPlugin.instance();
+        var out = new java.util.HashMap<String, String>();
+        if (p == null || p.content() == null) {
+            return out;
+        }
+        var level = new java.util.HashMap<String, Integer>();
+        for (var h : p.content().hints()) {
+            if (h.spell() == null || h.materials() == null || h.materials().isBlank()) {
+                continue;
+            }
+            Integer before = level.get(h.spell());
+            if (before == null || h.difficulty() > before) {
+                level.put(h.spell(), h.difficulty());
+                out.put(h.spell(), h.materials().strip());
+            }
+        }
+        return out;
+    }
+
+    /** 좋아하는 선물 아이템 키 (gift_likes 의 loved + liked, GiftService.keyOf 형식), 없으면 빈 목록 (마법 383). */
+    public static java.util.List<String> likedGifts(String npcId) {
+        ChacaNpcPlugin p = ChacaNpcPlugin.instance();
+        CharacterSheet c = p == null || npcId == null ? null : p.characters().get(npcId);
+        var out = new java.util.ArrayList<String>();
+        if (c == null || c.giftLikes() == null) {
+            return out;
+        }
+        for (String k : java.util.List.of("loved", "liked")) {
+            var list = c.giftLikes().get(k);
+            if (list != null) {
+                for (String key : list) {
+                    if (key != null && !key.isBlank() && !out.contains(key)) {
+                        out.add(key);
+                    }
+                }
+            }
+        }
+        return out;
+    }
 }

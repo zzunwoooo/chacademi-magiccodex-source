@@ -73,13 +73,48 @@ public final class AimTargeting {
         if (spell != null && sound)
             MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK.value(), .7f, .14f));
         spell = null; shape = null; preview = null;
+        SpellChargeClient.reset(); pendingCharge = -1;
+    }
+
+    /** Charge (0..1) to report right before the next confirmed cast, -1 = none (338 화염 투창, SpellChargeClient). */
+    private static double pendingCharge = -1;
+
+    /**
+     * Left PRESS while previewing. Charge spells (SpellChargeClient.SPELLS, server with the charge channel) start
+     * charging when the aim is valid; every other spell casts at once as before.
+     * @return true when the press was used.
+     */
+    public static boolean press() {
+        if (spell == null) return false;
+        if (!SpellChargeClient.supported(spell.id())) return confirm();
+        var c = MinecraftClient.getInstance();
+        var p = preview = compute(c, 1f);
+        if (p == null) { cancel(false); return true; }
+        if (!p.valid()) { notice(c, p.reason()); return true; }
+        if (!SpellChargeClient.charging()) {
+            SpellChargeClient.begin(spell.id());
+            c.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.BLOCK_NOTE_BLOCK_CHIME.value(), 1.4f, .2f));
+        }
+        return true;
+    }
+
+    /** Left RELEASE (or the full charge): report the charge, then cast exactly like a click. @return true when it was charging. */
+    public static boolean release() {
+        if (!SpellChargeClient.charging()) return false;
+        if (spell == null || !spell.id().equals(SpellChargeClient.spell())) { SpellChargeClient.reset(); return true; }
+        pendingCharge = SpellChargeClient.progress();
+        SpellChargeClient.reset();
+        confirm();
+        pendingCharge = -1;
+        return true;
     }
 
     /** Every client tick: drop the preview when it can no longer be used. */
     public static void tick(MinecraftClient c) {
         if (spell == null) return;
         if (!CastingClient.enabled() || c.player == null || !c.player.isAlive() || c.player.isSpectator()
-                || c.currentScreen != null && !(c.currentScreen instanceof HudCursorScreen)) cancel(false);
+                || c.currentScreen != null && !(c.currentScreen instanceof HudCursorScreen)) { cancel(false); return; }
+        if (SpellChargeClient.charging() && SpellChargeClient.progress() >= 1f) release(); // full charge: throw at once
     }
 
     /** Left click while previewing. @return true when the click was used (cast or refused with a message). */
@@ -99,6 +134,9 @@ public final class AimTargeting {
         boolean air = airPoint && KyudichiClient.airAim();
         if (air) KyudichiClient.sendAim(aim);
         var chosen = spell;
+        double charge = pendingCharge;
+        // 338: the charge report must arrive right before the cast (ChargeInput keeps it 2 s for this spell only)
+        if (charge >= 0) SpellChargeClient.send(chosen.id(), charge);
         // C04: the server uses this point/target (after its range, sight and direction checks) instead of re-tracing.
         CastAimClient.send(chosen.id(), p.target() == null ? aim : inside(p.target().getBoundingBox(), aim), p.target(), air);
         cancel(false);
