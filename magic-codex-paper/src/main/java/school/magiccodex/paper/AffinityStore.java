@@ -195,6 +195,46 @@ final class AffinityStore implements AutoCloseable {
         throw new SQLException("affinity daily limit contention");
     }
 
+    // ------------------------------------------------------------------ 일일 제한 관리 (오너 2026-10-26, 메모 #90)
+
+    record DailyRow(String npc, String source, int amount) {}
+
+    /** 이 사람의 그날 일일 기록 전부 (선물·AI 대화 보상·마음 읽기 등). */
+    java.util.List<DailyRow> dailyRows(UUID owner, String day) throws SQLException {
+        var out = new java.util.ArrayList<DailyRow>();
+        try (PreparedStatement s = holder.get().prepareStatement("SELECT npc, source, amount FROM " + daily + " WHERE owner=? AND day=? ORDER BY source, npc")) {
+            s.setString(1, owner.toString());
+            s.setString(2, day);
+            try (ResultSet r = s.executeQuery()) { while (r.next()) out.add(new DailyRow(r.getString(1), r.getString(2), r.getInt(3))); }
+        }
+        return out;
+    }
+
+    /** 그날 기록 지우기 (source 가 null 이면 전부). 반환 = 지운 줄 수. 진행 중인 선물(gift 표)은 건드리지 않는다. */
+    int resetDaily(UUID owner, String day, String source) throws SQLException {
+        String sql = "DELETE FROM " + daily + " WHERE owner=? AND day=?" + (source == null ? "" : " AND source=?");
+        try (PreparedStatement s = holder.get().prepareStatement(sql)) {
+            s.setString(1, owner.toString());
+            s.setString(2, day);
+            if (source != null) s.setString(3, source);
+            return s.executeUpdate();
+        }
+    }
+
+    /** 하루 1번짜리 기록 (예: 마음 읽기). 오늘 처음이면 true (기록함), 이미 있으면 false. 서버 간 동시에도 1번만 (기본 키). */
+    boolean markOnce(UUID owner, String npc, String day, String source) throws SQLException {
+        String sql = maria
+                ? "INSERT IGNORE INTO " + daily + " (owner, npc, day, source, amount) VALUES (?,?,?,?,1)"
+                : "INSERT OR IGNORE INTO " + daily + " (owner, npc, day, source, amount) VALUES (?,?,?,?,1)";
+        try (PreparedStatement s = holder.get().prepareStatement(sql)) {
+            s.setString(1, owner.toString());
+            s.setString(2, npc);
+            s.setString(3, day);
+            s.setString(4, source);
+            return s.executeUpdate() == 1;
+        }
+    }
+
     private void releaseDaily(Connection db, UUID owner, String npc, String day, String source, int amount) throws SQLException {
         try (PreparedStatement s = db.prepareStatement("UPDATE " + daily + " SET amount=amount-?"
                 + " WHERE owner=? AND npc=? AND day=? AND source=? AND amount>=?")) {

@@ -253,6 +253,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         try{quests=new QuestBridge(this);}catch(Exception error){getLogger().severe("의뢰 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
         try{dialogues=new DialogueBridge(this);}catch(Exception error){getLogger().severe("대화 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
         try{npcSocial=new NpcSocialService(this);}catch(Exception error){npcSocial=null;getLogger().warning("NPC 호감도 초기화 실패 (AI NPC 연결 없이 계속): "+error.getMessage());}
+        DailyLimits.registerAffinity(this,npcSocial); // 메모 #90: /유저관리 <닉> 일일제한 보기·초기화
         spellSounds=new SpellSounds(this);
         ChacaApi.reload(this,"마법소리","spell-sounds.yml (마법 효과음)",()->spellSounds.reload());
         try{titles=new TitleBridge(this);}catch(Exception error){getLogger().severe("칭호 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}

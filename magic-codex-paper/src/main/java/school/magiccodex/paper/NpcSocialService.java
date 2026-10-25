@@ -170,6 +170,11 @@ final class NpcSocialService implements Listener, AutoCloseable {
         return LocalDate.now(zone).toString();
     }
 
+    /** 일일 제한 관리 (메모 #90): 그날 기록 보기·지우기·하루 1번 기록. 완료는 메인 스레드. */
+    CompletableFuture<List<AffinityStore.DailyRow>> dailyRows(UUID player, String day) { return work(() -> store.dailyRows(player, day)); }
+    CompletableFuture<Integer> resetDaily(UUID player, String day, String source) { return work(() -> store.resetDaily(player, day, source)); }
+    CompletableFuture<Boolean> markOnce(UUID player, String npc, String source) { String day = today(); return work(() -> store.markOnce(player, npc, day, source)); }
+
     int capFor(String source) {
         return caps.getOrDefault(source, defaultCap);
     }

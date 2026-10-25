@@ -45,7 +45,9 @@ final class LifeSpells implements Listener, AutoCloseable {
     private record Perk(long until, int uses) {}
     /** player → perk id → perk. uses < 0 = 시간 동안 무제한. */
     private static final Map<UUID, Map<String, Perk>> PERKS = new HashMap<>();
-    /** 383: player → NPC 캐릭터 id → 마지막으로 읽은 날 (Asia/Seoul). 서버 메모리 (재시작·서버 이동 때 초기화). */
+    /** 383: player → NPC 캐릭터 id → 마지막으로 읽은 날 (Asia/Seoul). 판정용 캐시 — 진짜 기록은 공유 DB
+     *  (codex_affinity_daily, source {@link #HEART_READ_SOURCE}) 라 서버 이동·재시작으로 초기화되지 않는다 (메모 #90, 2026-10-26). */
+    static final String HEART_READ_SOURCE = "heart_read";
     private static final Map<UUID, Map<String, LocalDate>> READ = new HashMap<>();
     private static ItemsAdderItems itemsAdder;
 
@@ -62,7 +64,20 @@ final class LifeSpells implements Listener, AutoCloseable {
     /** 386 리본 표식 (PDC BYTE 1). ChacaNPC GiftService 가 "magiccodexbridge:gift_ribbon" 으로 읽는다. */
     static final String RIBBON_KEY = "gift_ribbon";
 
-    @EventHandler public void quit(PlayerQuitEvent e) { PERKS.remove(e.getPlayer().getUniqueId()); }
+    @EventHandler public void quit(PlayerQuitEvent e) { PERKS.remove(e.getPlayer().getUniqueId()); READ.remove(e.getPlayer().getUniqueId()); }
+    /** 접속 때 오늘 마음 읽기 기록을 공유 DB 에서 캐시로 (다른 서버에서 읽은 것도 오늘은 막힘). */
+    @EventHandler public void join(org.bukkit.event.player.PlayerJoinEvent e) {
+        var social = plugin.npcSocial(); if (social == null) return;
+        UUID id = e.getPlayer().getUniqueId(); String day = social.today();
+        social.dailyRows(id, day).thenAccept(rows -> {
+            LocalDate today = LocalDate.parse(day);
+            for (var r : rows) if (r.source().equals(HEART_READ_SOURCE)) READ.computeIfAbsent(id, k -> new HashMap<>()).put(r.npc(), today);
+        });
+    }
+    /** 관리자가 오늘 마음 읽기 제한을 지웠을 때 (DailyLimits). */
+    static void forgetReads(UUID id) { READ.remove(id); }
+    /** 마음 읽기 하루 기준 = 호감도 일일 제한과 같은 날짜 (NpcSocialService.today, 없으면 Asia/Seoul). */
+    private LocalDate readDay() { var social = plugin.npcSocial(); return social != null ? LocalDate.parse(social.today()) : LocalDate.now(DAY_ZONE); }
 
     @Override public void close() { HandlerList.unregisterAll(this); PERKS.clear(); READ.clear(); }
 
@@ -251,7 +266,7 @@ final class LifeSpells implements Listener, AutoCloseable {
         if (dep == null || !dep.isEnabled()) return "지금은 마음을 읽을 수 없어요";
         var npc = lookedNpc(p);
         if (npc == null) return "NPC를 바라봐 주세요";
-        if (LocalDate.now(DAY_ZONE).equals(READ.getOrDefault(p.getUniqueId(), Map.of()).get(npc.id()))) return "오늘은 이미 " + npc.name() + "의 마음을 읽었어요";
+        if (readDay().equals(READ.getOrDefault(p.getUniqueId(), Map.of()).get(npc.id()))) return "오늘은 이미 " + npc.name() + "의 마음을 읽었어요";
         if (npc.liked().isEmpty()) return npc.name() + "의 마음은 읽히지 않아요";
         return null;
     }
@@ -259,7 +274,9 @@ final class LifeSpells implements Listener, AutoCloseable {
     private boolean heartRead(Player p) {
         var npc = lookedNpc(p);
         if (npc == null || npc.liked().isEmpty()) return false;
-        READ.computeIfAbsent(p.getUniqueId(), k -> new HashMap<>()).put(npc.id(), LocalDate.now(DAY_ZONE));
+        READ.computeIfAbsent(p.getUniqueId(), k -> new HashMap<>()).put(npc.id(), readDay());
+        var social = plugin.npcSocial();   // 공유 DB 에도 기록 (서버 이동·재시작 뒤에도 오늘은 1번)
+        if (social != null) social.markOnce(p.getUniqueId(), npc.id(), HEART_READ_SOURCE);
         String key = npc.liked().get(new Random().nextInt(npc.liked().size()));
         Entity e = npc.entity();
         double h = e instanceof LivingEntity le ? le.getHeight() : 1.8;
