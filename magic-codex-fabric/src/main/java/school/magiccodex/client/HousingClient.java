@@ -46,6 +46,7 @@ public final class HousingClient {
 
     static void initialize(){
         HousingSearchClient.initialize();
+        HousingRankClient.initialize(); // #51 하우징 랭킹 채널
         PayloadTypeRegistry.playS2C().register(Payload.ID,Payload.CODEC);
         PayloadTypeRegistry.playC2S().register(Payload.ID,Payload.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(Payload.ID,(payload,context)->{

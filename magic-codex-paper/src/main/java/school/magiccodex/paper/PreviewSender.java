@@ -64,6 +64,22 @@ final class PreviewSender {
         return node;
     }
 
+    private int soundPreview(com.mojang.brigadier.context.CommandContext<CommandSourceStack> ctx, String event) throws CommandSyntaxException {
+        if (!(ctx.getSource().getSender() instanceof org.bukkit.entity.Player p)) throw ChacaApi.error("게임 안에서 써 주세요");
+        String id = spellId(ctx.getArgument("효과음", String.class));
+        var sounds = plugin.spellSounds();
+        if (sounds == null || sounds.events(id).isEmpty()) throw ChacaApi.error(id + " 마법의 효과음이 spell-sounds.yml 에 없어요");
+        if (event != null) { plugin.spellSound(null, id, event, p.getLocation()); return 1; }
+        int at = 0;
+        for (String e : List.of("cast", "hit", "end")) {
+            if (!sounds.events(id).contains(e)) continue;
+            int delay = at; org.bukkit.Bukkit.getScheduler().runTaskLater(plugin, () -> { if (p.isOnline()) plugin.spellSound(null, id, e, p.getLocation()); }, Math.max(1, delay));
+            at += 22;
+        }
+        ChacaApi.ok(ctx.getSource().getSender(), id + " 효과음: " + String.join(" → ", sounds.events(id)));
+        return 1;
+    }
+
     private Collection<String> spellChoices() {
         var out = new TreeSet<String>();
         try {
@@ -91,12 +107,9 @@ final class PreviewSender {
 
         // /테스트 마법 <효과음|발견화면|승급화면>
         var magic = Commands.literal("마법")
-                .then(Commands.literal("효과음").then(Commands.argument("효과음", ChacaApi.word(() -> {
-                    var list = new ArrayList<String>(); list.add("중지"); list.addAll(mana.registeredSpellCatalog().keySet()); return list;
-                })).executes(ctx -> {
-                    String v = ctx.getArgument("효과음", String.class);
-                    return preview(ctx, "sound", v.equals("중지") ? "stop" : v);
-                })))
+                // #47: 서버 효과음(마크 기본 사운드 층)을 내 자리에서 들어 보기. 사건을 안 적으면 시전 → 1초 뒤 적중 → 2초 뒤 끝.
+                .then(Commands.literal("효과음").then(Commands.argument("효과음", ChacaApi.word(this::spellChoices)).executes(ctx -> soundPreview(ctx, null))
+                        .then(Commands.argument("사건", ChacaApi.word(() -> List.of("cast", "hit", "end"))).executes(ctx -> soundPreview(ctx, ctx.getArgument("사건", String.class))))))
                 .then(Commands.literal("발견화면").executes(ctx -> preview(ctx, "discovery"))
                         .then(Commands.argument("마법", ChacaApi.word(this::spellChoices))
                                 .executes(ctx -> preview(ctx, "discovery", spellId(ctx.getArgument("마법", String.class))))))

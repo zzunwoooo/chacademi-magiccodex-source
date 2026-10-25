@@ -261,6 +261,11 @@ final class GameListener implements Listener {
         });
     }
 
+    /** #33: 경기 중 선수의 경기 종류 (큐디치 전투 보정용). 경기 밖이면 null. */
+    void hookMatch() {
+        plugin.hooks().listenMatch(this, p -> { Match m = match(p); return m == null ? null : m.duel ? "duel" : "quidditch"; });
+    }
+
     void hookHeal() {
         plugin.hooks().listenHeal(this, (caster, target, amount, set) -> {
             if (!(caster instanceof Player c)) return;

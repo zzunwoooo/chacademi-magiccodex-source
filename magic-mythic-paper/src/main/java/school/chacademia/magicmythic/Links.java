@@ -139,6 +139,7 @@ final class Links {
      * no running cast or no phase listens to that event. Visual only - gameplay never waits for it.
      */
     static int vfx(Player caster, String spell, String event, Location at, UUID target) {
+        sound(caster, spell, event, at);
         var plugin = Bukkit.getPluginManager().getPlugin("PortableVFX");
         if (plugin == null || !plugin.isEnabled() || caster == null) return 0;
         try {
@@ -146,6 +147,18 @@ final class Links {
                 .invoke(plugin, caster, spell, event, at, target);
             return r instanceof Number n ? n.intValue() : 0;
         } catch (ReflectiveOperationException | RuntimeException | LinkageError e) { return 0; }
+    }
+
+    /** #47 마법 효과음: VFX 사건과 같은 순간 Bridge 의 spell-sounds.yml 소리 (MagicCodexBridge.spellSound, 없으면 건너뜀). */
+    private static java.lang.reflect.Method soundMethod; private static org.bukkit.plugin.Plugin soundPlugin;
+    static void sound(Player caster, String spell, String event, Location at) {
+        if (spell == null || spell.isBlank() || at == null) return;
+        var bridge = Bukkit.getPluginManager().getPlugin("MagicCodexBridge");
+        if (bridge == null || !bridge.isEnabled()) return;
+        try {
+            if (bridge != soundPlugin) { soundMethod = bridge.getClass().getMethod("spellSound", Player.class, String.class, String.class, Location.class); soundPlugin = bridge; }
+            soundMethod.invoke(bridge, caster, spell, event, at);
+        } catch (ReflectiveOperationException | RuntimeException | LinkageError ignored) { soundPlugin = null; }
     }
 
     // ------------------------------------------------------------------ ItemsAdder

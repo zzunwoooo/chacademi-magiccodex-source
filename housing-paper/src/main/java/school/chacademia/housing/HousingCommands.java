@@ -27,6 +27,7 @@ import school.magiccodex.protocol.SchoolProtocol;
  *   <li>/유저관리 &lt;닉네임&gt; 방 … · 가구 …</li>
  *   <li>/테스트 하우징 내방</li>
  *   <li>/방구경 &lt;닉네임&gt; (일반 유저)</li>
+ *   <li>/하우징랭킹 (일반 유저, #51)</li>
  * </ul>
  */
 final class HousingCommands {
@@ -76,6 +77,12 @@ final class HousingCommands {
             });
             return 1;
         })), "다른 학생의 방 구경하기", List.of());
+        // #51 (2026-10-25): 하우징 랭킹 창 (일일 방문·누적 방문·하트). 화면은 차카데미 모드.
+        ChacaLink.playerCommand(plugin, Commands.literal("하우징랭킹").executes(ctx -> {
+            Player p = player(ctx);
+            if (plugin.rank() == null || !plugin.rank().open(p)) deny(p, "하우징 랭킹은 차카데미 클라이언트에서만 볼 수 있어요");
+            return 1;
+        }), "하우징 랭킹 보기 (일일 방문·누적 방문·하트)", List.of("방랭킹"));
         ChacaLink.reload(plugin, "하우징", "config.yml · furniture.yml · doors.yml", plugin::reload);
         ChacaLink.summary(plugin, "방 크기", id -> { Integer s = plugin.rooms().size(id); return s == null ? "" : s + "×" + s; });
     }

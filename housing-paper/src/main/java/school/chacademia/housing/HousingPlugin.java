@@ -18,6 +18,9 @@ public final class HousingPlugin extends JavaPlugin implements Listener {
     private Net net;
     private Doors doors;
     private HousingSearchServer search;
+    /** #51 하우징 랭킹 채널. */
+    private HousingRankServer rank;
+    HousingRankServer rank() { return rank; }
 
     @Override public void onEnable() {
         saveDefaultConfig();
@@ -35,6 +38,7 @@ public final class HousingPlugin extends JavaPlugin implements Listener {
         rooms = new Rooms(this);
         net = new Net(this); net.register();
         search=new HousingSearchServer(this);
+        rank=new HousingRankServer(this);
         doors = new Doors(this); doors.load();
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(doors, this);
@@ -48,6 +52,7 @@ public final class HousingPlugin extends JavaPlugin implements Listener {
 
     @Override public void onDisable() {
         if(search!=null)search.close();
+        if(rank!=null)rank.close();
         if (rooms != null) rooms.shutdown();
         if (net != null) net.unregister();
         if (store != null) store.close();

@@ -1,9 +1,14 @@
 package kr.chacademy.npc.api;
 
 import kr.chacademy.npc.ChacaNpcPlugin;
+import kr.chacademy.npc.ai.OpenAiClient;
+import kr.chacademy.npc.budget.BudgetService;
 import kr.chacademy.npc.core.CharacterSheet;
+import kr.chacademy.npc.core.Json;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 다른 플러그인용 공개 API (선택). MagicCodex 연결은 MagicCodexBridge의 NpcSocialFacade를
@@ -32,5 +37,43 @@ public final class ChacaNpcApi {
 
     public static CharacterSheet character(String npcId) {
         return plugin().characters().get(npcId);
+    }
+
+    /**
+     * 운영자 AI 도우미 (MagicCodexBridge {@code /관리 질문}, 오픈 전 메모 #38): 지시문 + 질문 하나 → JSON 글
+     * {@code {"answer": "...", "commands": [{"command": "/...", "note": "..."}]}}.
+     * ChacaNPC 의 OpenAI 연결·모델을 그대로 쓴다. 오너 결정(2026-10-25): 하루 예산 한도와 상관없이 보낸다 (운영자 몇 명, 한 번에 몇 원).
+     * 쓴 금액은 시스템 사용량으로 기록한다 (/서버관리 AI 예산 에 보임). 결과 future 는 HTTP 스레드에서 끝난다.
+     */
+    public static CompletableFuture<String> ask(String instructions, String question, int maxOutputTokens) {
+        ChacaNpcPlugin p = plugin();
+        var command = Json.map("type", "object",
+                "properties", Json.map("command", Json.map("type", "string"), "note", Json.map("type", "string")),
+                "required", List.of("command", "note"), "additionalProperties", false);
+        var schema = Json.map("type", "object",
+                "properties", Json.map("answer", Json.map("type", "string"),
+                        "commands", Json.map("type", "array", "items", command)),
+                "required", List.of("answer", "commands"), "additionalProperties", false);
+        var input = OpenAiClient.messages();
+        input.add(OpenAiClient.message("user", question));
+        int tokens = Math.max(200, Math.min(maxOutputTokens, 4000));
+        var req = new OpenAiClient.Request(instructions, input, schema, "operator_help", tokens, "chacanpc:operator-help");
+        // 한도 때문에 막지 않는다: 예약이 거절되면(한도 초과) 기록 없이 그냥 보낸다
+        BudgetService.Reservation reservation = p.budget().reserve(BudgetService.SYSTEM,
+                p.budget().estimate(instructions.length() + question.length(), tokens));
+        CompletableFuture<String> out = new CompletableFuture<>();
+        p.ai().player(req, System.currentTimeMillis() + 90_000L, () -> true).whenComplete((res, ex) -> {
+            if (reservation != null) p.budget().settle(reservation, res == null ? null : res.usage(), res != null && res.usageKnown());
+            if (ex != null) { out.completeExceptionally(ex); return; }
+            if (res == null) { out.completeExceptionally(new IllegalStateException("응답 없음")); return; }
+            if (res.ok()) { out.complete(res.text()); return; }
+            out.completeExceptionally(new IllegalStateException(switch (res.status()) {
+                case NO_KEY -> "ChacaNPC config 에 OpenAI 키가 없어요";
+                case TIMEOUT -> "응답이 너무 늦어요";
+                case REJECTED -> "AI 요청이 밀려 있어요. 잠시 뒤 다시";
+                default -> "AI 오류 (" + res.category() + ")";
+            }));
+        });
+        return out;
     }
 }

@@ -19,6 +19,8 @@ import org.bukkit.util.Vector;
  *  proc=false (passive extra hit: cannot trigger passives again)
  *  spell=id (VFX events: external:contact on each hit, external:block_contact where it stops on a block)
  *  빗자루 위에서 쏘면 CarrierShot: 출발점을 지연만큼 앞당기고, 쏘는 방향의 비행 속도만큼 빨라진다.
+ *  큐디치 경기 중 (#33, {@link QuidditchCombat}): 속도 ×1.5, 비행 선수 피격 범위 ×1.5, 유도(homing)는 대상을 끝까지 따라감
+ *  (순간이동·맞기 직전 회피 기동이면 놓침, 따라가는 동안 사거리 대신 최대 시간).
  */
 final class BoltMech extends Mech {
     BoltMech(MagicMythicPlugin plugin, Params p) { super(plugin, p); }
@@ -78,13 +80,20 @@ final class BoltMech extends Mech {
         int life = 0;
         GameplayVisual visual;boolean visualStarted,visualTerminal;
 
+        /** 큐디치 유도 고정 (#33): 대상의 지난 틱 위치·비행 속도. locked 가 꺼지면 곧게 날아간다. */
+        boolean locked, dropped; Vector lockPos, lockVel;
+
         /** 빗자루 지연 보정: 첫 틱에 이 구간을 판정하며 먼저 지나간다 (null = 없음). */
         Vector leadLeft;
 
         Bolt(Ctx c, Location start, Vector dir, double carrierSpeed, Vector lead) {
             this.c = c; this.pos = start.clone(); this.dir = dir; this.leadLeft = lead;
-            this.speed = Math.min(Math.clamp(p.d("speed", 1.5), 0.1, 6) + carrierSpeed, 8);
+            this.speed = Math.min(Math.clamp(p.d("speed", 1.5), 0.1, 6) * QuidditchCombat.speedFactor(c.caster()) + carrierSpeed, 8);
             this.homeTarget = c.target();
+            // 큐디치: 대상을 찍어 쏜 유도 투사체는 끝까지 따라간다 (대상도 큐디치 선수일 때)
+            this.locked = homing && QuidditchCombat.current.homingLock && homeTarget instanceof LivingEntity le
+                && QuidditchCombat.inQuidditch(c.caster()) && QuidditchCombat.inQuidditch(le);
+            if (locked) { lockPos = ((LivingEntity) homeTarget).getLocation().toVector(); lockVel = QuidditchCombat.velocity((LivingEntity) homeTarget); }
             for (String m : p.s("breaks", "").split(",")) if (!m.isBlank()) breaks.add(m.trim().toUpperCase(Locale.ROOT));
         }
         @Override public String kind() { return "bolt"; }
@@ -102,7 +111,16 @@ final class BoltMech extends Mech {
                 Vector back = c.caster().getEyeLocation().toVector().subtract(pos.toVector());
                 if (back.length() < 1.2) return false;
                 dir = back.normalize();
-            } else if ((homing || bouncing && hitCount > 0) && homeTarget instanceof LivingEntity && homeTarget.isValid()) {
+            } else if (locked) {
+                if (!(homeTarget instanceof LivingEntity t) || !t.isValid() || t.getWorld() != pos.getWorld()) { locked = false; dropped = true; }
+                else {
+                    Vector at = t.getLocation().toVector(), vel = QuidditchCombat.velocity(t);
+                    Vector to = t.getEyeLocation().subtract(0, 0.3, 0).toVector().subtract(pos.toVector());
+                    if (QuidditchCombat.lost(QuidditchCombat.current, at.distance(lockPos), lockVel, vel, to.length(), speed)) { locked = false; dropped = true; } // 놓치면 곧게
+                    else if (to.lengthSquared() > 1e-4) dir = to.normalize();   // 끝까지 정확히 따라감
+                    lockPos = at; lockVel = vel;
+                }
+            } else if ((homing && !dropped || bouncing && hitCount > 0) && homeTarget instanceof LivingEntity && homeTarget.isValid()) {
                 Vector to = ((LivingEntity) homeTarget).getEyeLocation().toVector().subtract(pos.toVector());
                 if (to.lengthSquared() > 1e-4) dir = homing ? dir.multiply(0.55).add(to.normalize().multiply(0.45)).normalize() : to.normalize();
             }
@@ -167,7 +185,7 @@ final class BoltMech extends Mech {
                         break;
                     } else if (hitCount >= pierce && !returns) { burst(); return false; }
                 }
-                if (counts && travelled >= range && !turnBack()) { burst(); return false; }
+                if (counts && (locked ? life >= QuidditchCombat.current.homingTicks : travelled >= range) && !turnBack()) { burst(); return false; }
                 if (coming && travelled >= range * 2 + 4) return false;
             }
             return true;

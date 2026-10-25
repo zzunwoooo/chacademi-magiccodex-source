@@ -14,11 +14,11 @@
 | magic-codex-fabric 클라 모드 | 스탯명, 설정창, 하우징 화면, 펫 aliases, 도감 132/157/176 |
 | magic-codex-protocol 변경 → Bridge·클라·Velocity 같이 | CoreAffinity 표시, KyudichiQueueProtocol Custom |
 | MagicMythic + chacademi_spells.yml | 파티 아군 피해, 허수아비, 길잡이 별, 잔류 VFX, 빗자루 투사체 |
-| PortableVFX paper jar + client jar | #77 대상 전달(3인자), #29 투명도 셰이더 |
+| PortableVFX paper jar + client jar | #77 대상 전달(3인자), #29 반응·기믹·성소 투명도 제외 |
 | MagicDiscovery | 발견 칭호 연결(리플렉션, 없으면 건너뜀) |
 | ChacademyStory 플러그인+모드 | 장 잠금, 길잡이, HUD |
 | chacademi-party (Velocity) | 커스텀 경기, 재접속 버그, 튜토리얼 분산 |
-| ChacaKyudichi (아레나) | 커스텀 경기·관전, 재접속, 사망 우선순위 |
+| ChacaKyudichi (아레나) | 커스텀 경기·관전, 재접속, 사망 우선순위, #33 경기 종류 답(MagicMatchEvent) |
 | ChacaHousing | 좋아요 1회, 방문순위 |
 | ChacaNPC | AI 대화 liked 보상 |
 | ChacaPortrait | auto.server-ids |
@@ -58,6 +58,7 @@ codex_title_awards, codex_artifact_pity, codex_shop_tutorial(SQLite: shop_tutori
 - tutorial-shop.yml 기본값: shop `pipi_tutorial`, required 교복·견습 지팡이·빈 마법서 각 1. **운영 서버에 상점 pipi_tutorial 을 만들고 같은 이름으로 상품 등록 필요.**
 - 아레나 큐디치 사망 처리 우선순위 HIGHEST→HIGH (경기 중 /kill 류 사망 시 장신구 소실 방지).
 - 펫 도감: `config/magiccodex/pets/models/aliases.json` 으로 펫ID ↔ bbmodel 파일 이름 연결.
+  - **GPT 할 일 (#30, 오너 지시 2026-10-25)**: 펫 도감에서 알로 보이는 바닐라 몹 펫마다 이미 만든 bbmodel 을 찾아 `aliases.json` 에 `{"<펫ID>": "<bbmodel 파일 이름(확장자 없이)>"}` 로 적고 런처 리소스에 넣기. 새 모델 제작 아님, 이름 연결만. 파일이 펫ID와 같은 이름이면 연결 없이 바로 뜸. 확인: 도감에서 해당 펫이 알 대신 모델로 보이면 끝.
 - 1장 서버 파일(steps.yml·server_command.yml·대화)은 chacademi-server 저장소 claude/ 브랜치에 따로 올림.
 - **아직 안 된 것**: 스토리 진행 공유 DB(튜토리얼 서버 → 학교 서버 진행 이어짐) — 오너가 작업을 멈춤. 이게 없으면 학교 서버 도착 시 진행이 이어지지 않음.
 
@@ -66,7 +67,8 @@ codex_title_awards, codex_artifact_pity, codex_shop_tutorial(SQLite: shop_tutori
 ### 01-magic
 #28 /테스트 마법 자동시전 [시작 [번호|ID|이름]|정지|일시정지|재개|건너뛰기|간격 <1~60초>|상태]. 기본 5초, 도감번호 순. 실제 /마법 경로(ManaBridge.cast) 사용, 시전 직전 쿨·마나·권한 잠깐 채우고 복원. 몹 앞에서 돌리기 권장. config spell-review.skip 선택. 새 SpellReviewRunner, ManaBridge/ManaSpells 수정.
 #26 활성 = 운영 mana-spells.yml enabled 226개(원본 224). 꺼진 11개.
-#40 tools/spell_audit/audit_icons.py — 확실한 누락 12개(239~250 기믹), 169개는 런처 리소스팩에서만 확인 가능(--pack). 발견 알림 아이콘 경로 다른 26개(87,88, 300~323).
+#40 tools/spell_audit/audit_icons.py — 확실한 누락 12개(239~250 기믹), 169개는 런처 리소스팩에서만 확인 가능(--pack). 발견 알림 아이콘 경로 다른 26개(87,88, 300~323). → 26개는 도감(모드) 아이콘 경로로 맞춤 (discoveries.yml·PortableVFX spell-catalog.yml 원본+운영본). **운영 서버의 MagicDiscovery discoveries.yml·PortableVFX spell-catalog.yml 에도 같은 수정 반영 필요**. GPT: `python tools/spell_audit/audit_icons.py --pack <런처 리소스팩 폴더>` 로 169개 실제 파일 확인.
+#47 마법 효과음 전면 교체 (오너 2026-10-25 "전체 다 바꿔야 해, 마크 기본 사운드로"): Bridge SpellSounds + resources/spell-sounds.yml — 237개 마법 전부 cast(237)·hit(164)·end(82), 층 1,272개, 1.21.4 기본 사운드 392종(이름 전부 공식 목록으로 검사). 서버가 재생(주변도 들림): 시전 성공 = ManaBridge, 적중·끝 = MagicMythic Links.vfx → Bridge.spellSound(리플렉션). 클라 예전 시전음(ScreenVfxClient.onCast) 끔. 미리듣기 /테스트 마법 효과음 <마법> [cast|hit|end], 새로고침 /서버관리 새로고침 마법소리. **Bridge·MagicMythic·클라 모드 같이 배포**, 운영 서버에 spell-sounds.yml 이 없으면 jar 기본 파일이 깔림. PortableVFX 만으로 도는 마법(MagicMythic 안 거침)은 시전음만 남.
 #47 audit_sounds.py — 사운드 없음 52개(1 feather fall 이름 불일치, 79/83/86/87/88/92/93/95, 203,210~214, 239~250, 300~323, 324).
 #45 docs/ELEMENT_REACTIONS_GUIDE_KO.md — 확정 14조합 코드와 일치. 바람+빛 미정(예전 효과), 물+빛 회복 1, 몹 마나번 아이콘만, 보스 CC 예외.
 배포: paper jar만.
@@ -105,7 +107,7 @@ codex_title_awards, codex_artifact_pity, codex_shop_tutorial(SQLite: shop_tutori
 
 ### 06-housing
 #78 좋아요 토글→평생 1회(공용 DB codex_housing_like, INSERT IGNORE), like.limit room(기본)/global. 클라 HousingScreen 안내. 예전 취소자는 1회 더 가능.
-#51 방문 수 집계는 이미 있음(하루 1회). visits.count-once-per day/ever, topVisited, /하우징관리 방문순위 [개수]. UI 없음.
+#51 방문 수 집계는 이미 있음(하루 1회). visits.count-once-per day/ever, topVisited, /하우징관리 방문순위 [개수]. UI 없음. → **하우징 랭킹 구현 (오너 레퍼런스 "하우징_랭킹" ZIP, 2026-10-25)**: 새 채널 chacademi:housing_rank (HousingRankProtocol), 서버 HousingStore.ranking + HousingRankServer, 유저 명령 /하우징랭킹 (별칭 /방랭킹), 클라 HousingRankClient·HousingRankScreen, 리소스 textures/gui/housing_rank/*.png 11장(분리 PNG 그대로). 탭 일일 방문(KST 오늘 owner/visitor/day 고유, 본인 제외)·누적 방문(room.visits)·하트(room.likes) — 측정 정의 그대로, 값 0 인 방 제외, 같은 값 같은 순위(1,1,3), 6줄/쪽. 방 이동 = **친구가 아니어도 가능** (오너 2026-10-25, Rooms.openFromRanking — /방구경 은 그대로 친구만), 버튼은 내 방/방 이동. 제목은 기존 UI 굵은 글꼴, 제목 밑줄 가운데·위아래 여백 맞춤. 기존 하우징 창·패킷 변경 없음. **housing-paper·Bridge(프로토콜)·클라 모드 같이 배포.** 테스트 HousingRankProtocolTest.
 #108 기숙사 점수판→SchoolScreen, 내 정보 액자→/스탯창 주인UUID(주인이 같은 서버 접속 중일 때만). 빗자루·아티팩트·트로피는 화면 없음(레퍼런스 필요). 랭크 티어 가구 없음.
 #94 하우징은 이미 한글 닉네임. 다른 곳 계정명 노출: SocialBridge:83,309 / CmdKit:145 / QuestBridge:206(로그) / kyudichi Hooks:142, ChacaLink:115 / 클라 일부 초기 표시.
 배포: chaca-housing jar + fabric 모드, config 키 손으로 추가(like.limit, visits.count-once-per)
@@ -121,12 +123,14 @@ codex_title_awards, codex_artifact_pity, codex_shop_tutorial(SQLite: shop_tutori
 #62 /큐디치관리 경기 커스텀 <큐디치|결투> <닉+닉+닉> <닉+닉+닉> — 어느 서버에서든, 10초 수락 창, 레이팅 없음, 끝나면 복귀. 커스텀 경기만 관전 20명 제한 없음. 목록 [커스텀] 표시.
 #75 원래 잘 된 것(대기·수락 중 이탈, 60초 재참가). 고친 버그 7: 튕겨서 다른 서버 간 선수 경기장 복귀, 60초 지나 빠진 사람 경기중 취급, 늦은 사망 처리로 관전 갇힘, 늦게 온 선수 복귀 위치 없음, 경기장 재시작 시 유령 경기 재시작+75초 미보고 시 무효, 경기장 서버 이름 오류 시 2분 묶임, 무효 처리 실패 시 프록시 미통보. 던전 입장 시스템은 코드에 없음.
 #33/34 작은 버그 3(결투 중 문구, 연습 기록 누수, 레이팅 캐시). 보고만: 상대 미도착 시 남은 쪽 승리, 1:1 시간 종료 오프라인 0%.
+#33 큐디치 전투 보정 (오너 결정 2026-10-25, 큐디치 경기 중 선수만 — 평소·1:1 결투 그대로): ① 투사체(chabolt, 아르카나 175·192·213) 속도 ×1.5 ② 비행 중(빗자루·겉날개·비행) 선수 피격 상자 ×1.5 — Targets.closestDistance 를 쓰는 투사체·광역 즉발기 전부 ③ homing=true 유도 투사체는 대상을 끝까지 정확히 추적, 놓치는 건 순간이동(한 틱 4블록↑) 또는 맞기 3틱 전 안에서 빗자루 속도가 한 틱에 0.6↑ 바뀐 회피 기동뿐, 추적 중엔 사거리 대신 최대 5초. 새 MagicMatchEvent(MagicMythic) ← ChacaKyudichi Hooks.listenMatch 가 "quidditch"/"duel" 답함. 설정 MagicMythic config.yml quidditch-combat (없으면 기본값). **MagicMythic·ChacaKyudichi jar 같이 배포.** 주의: 빗자루 속도가 패킷 간격 때문에 튀면 회피로 잘못 볼 수 있음 → 실게임에서 너무 자주 놓치면 dodge-speed-change 를 올릴 것. 테스트 QuidditchCombatTest.
+#43 (GPT 확인, 오너 2026-10-25): 야생 빗자루 고속 비행 청크 부하. 빗자루 최고 1.65칸/틱, 부스트 ~2.4칸/틱(초당 33~48칸). ① 야생 월드 경계 안을 오픈 전 Chunky 등으로 미리 생성 ② 월드 경계 설정 ③ simulation-distance 낮게. 테스트: 미리 생성 후 5명·10명 부스트 직선 비행 2분, /spark tps · MSPT 확인, 기준 MSPT < 50ms·TPS ≥ 19.5.
 #41 서버 이름 설정표, 코드 하드코딩(housing-presence-velocity Set.of school/wild/arena 등) — wild2 생기면 수정.
 #50 레이팅 표시는 로비·경기카드·랭킹·전적·신청·준비·결과 창에 이미 있음.
 배포: Velocity chacademi-party + 경기장 ChacaKyudichi + 클라 모드(프로토콜) 동시.
 
 ### 09-client
-#29 투명도: 연결은 정상, 원인은 가산 혼합+톤맵 때문에 체감이 거의 없음 → ClaudeBackend 셰이더에서 가산 빛에만 opacity^1.2 추가(50%→55~79%). 100%·일반 투명은 그대로. 실화면 확인 필요.
+#29 투명도: 오너 확인 결과 정상 → 1차의 셰이더 보정(opacity^1.2)은 **되돌림**. 대신 원소 반응·던전 기믹 12팩·큐디치 성소(shrine*)는 투명도 설정에서 제외(늘 100%, EffectRuntime.OPACITY_EXEMPT_PACKS). 큐디치 성소 VFX 이름을 config 에서 shrine* 아닌 이름으로 바꾸면 목록에 추가할 것.
    레이아웃: 빛 번짐 슬라이더 추가로 3줄인데 2줄 간격 그대로 → 3번째 줄이 금색 구분선과 겹침. SettingsSlider.rowY로 3줄 이상 168+76n. 테스트 추가.
    보고만: GUI(핫바 크기) 페이지가 홈에서 못 열림(HUD 잠금으로 교체됨, Shift+휠만), 저장 실패 문구 순서, 내것/남의것 분류(반응·기믹·큐디치=남의것, 남의 빗자루 궤적=내것).
 #81 펫은 MCPets+ModelEngine 서버 엔티티 → 클라만으로 불가. A: 소환 시 1회 setScale(크기만). B(권장): 서버는 소환/해제만 알리고 클라가 bbmodel로 머리 옆에 그림. 결정 필요.
@@ -152,7 +156,7 @@ codex_title_awards, codex_artifact_pity, codex_shop_tutorial(SQLite: shop_tutori
 #110 TAB: 플레이스홀더는 닉네임 없으면 계정명. deployment/tab/ (README, config-snippet, groups). 이름표는 TAB으로 꾸미지 말 것(invisible-nametags 끄기).
 #95 /유저관리 <닉> 게임모드|찾아가기|불러오기|좌표이동|비행|회복 (다른 서버면 HuskHomes 위임). OperatorCommands.java.
 #4 deployment/worldguard/ (protect-build.txt, README) — 학교·튜토리얼 월드만, 야생 제외. 월드 이름 결정 필요.
-#38 docs/OPERATOR_GUIDE_KO.md 상황별 안내.
+#38 docs/OPERATOR_GUIDE_KO.md 상황별 안내. + **운영자 AI 도우미 `/관리 질문 <궁금한 것>`** (오너 결정 2026-10-25): Bridge OperatorHelp 가 CommandHub.catalog()(켜질 때 실제 등록된 관리·유저 명령 끝 칸 전부)와 resources/operator-guide.md(= docs/OPERATOR_GUIDE_KO.md 사본, 안내서 고치면 같이 복사)를 지시문으로 넣어 ChacaNPC 의 OpenAI 연결(ChacaNpcApi.ask, 리플렉션)로 묻는다. 답 JSON {answer, commands[]} 의 명령은 실제 명령 모양과 맞춰 보고 안 맞으면 뺀다. 실행은 안 함(클릭하면 채팅창에 들어감). 예산 한도와 상관없이 보냄(오너), 사용량은 시스템 사용량으로 기록. **Bridge·ChacaNPC jar 같이 배포**, ChacaNPC config 에 OpenAI 키 필요. 테스트 OperatorHelpTest.
 #88 청크 점유 코드가 어디에도 없음 → 외부 플러그인/새로 만들기 결정 필요.
 #61 인벤세이브 플러그인 없음(바닐라 규칙). 부활 지점 코드 없음(바닐라). 큐디치 사망 시 장신구 소실 버그 → 내가 GameListener death 우선순위 HIGH로 수정.
 #2 일러스트 대기열 정상. 자동 생성이 server-id school에서만 → auto.server-ids 설정 추가(기본 [school]). auto.first-join 기본 false라 켜야 함. 워커2 기준 180명 약 2시간.

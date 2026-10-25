@@ -66,6 +66,18 @@ status:
 
 debug: false
 
+# 큐디치 전투 보정 (#33, 오너 결정 2026-10-25). 큐디치 경기 중 선수에게만 (평소·1:1 결투는 그대로). 경기 판정은 ChacaKyudichi 가 답함.
+# 운영 서버 config.yml 에 이 칸이 없으면 아래 기본값으로 동작. 바꾼 뒤 /서버관리 새로고침 몹마법
+quidditch-combat:
+  enabled: true
+  projectile-speed: 1.5     # 투사체형 마법(chabolt) 속도 배수
+  flying-hitbox: 1.5        # 비행 중인 선수 피격 범위(몸 상자) 배수 — 투사체·광역 즉발기 모두
+  homing-lock: true         # 유도 투사체(대상을 찍어 쏜 것)는 끝까지 추적
+  teleport-blocks: 4        # 대상이 한 틱에 이만큼 이상 이동 = 순간이동 → 놓침
+  dodge-ticks: 3            # 맞기 이 틱 전 안쪽에서
+  dodge-speed-change: 0.6   #   비행 속도가 한 틱에 이만큼(블록/틱) 이상 바뀌면 회피 기동 → 놓침 (급선회·대시·급정지)
+  homing-seconds: 5         # 추적하는 동안은 사거리 대신 최대 이 시간까지 난다
+
 # 마법 연습장 훈련 허수아비 (#107, /컨텐츠관리 연습장 허수아비 <설치|제거|목록>, 위치는 training-dummies.yml)
 training-dummy:
   window-seconds: 5         # 머리 위·알림의 "최근 N초 합계"와 초당 피해를 세는 시간
