@@ -123,6 +123,7 @@ codex_title_awards, codex_artifact_pity, codex_shop_tutorial(SQLite: shop_tutori
 #75 원래 잘 된 것(대기·수락 중 이탈, 60초 재참가). 고친 버그 7: 튕겨서 다른 서버 간 선수 경기장 복귀, 60초 지나 빠진 사람 경기중 취급, 늦은 사망 처리로 관전 갇힘, 늦게 온 선수 복귀 위치 없음, 경기장 재시작 시 유령 경기 재시작+75초 미보고 시 무효, 경기장 서버 이름 오류 시 2분 묶임, 무효 처리 실패 시 프록시 미통보. 던전 입장 시스템은 코드에 없음.
 #33/34 작은 버그 3(결투 중 문구, 연습 기록 누수, 레이팅 캐시). 보고만: 상대 미도착 시 남은 쪽 승리, 1:1 시간 종료 오프라인 0%.
 #33 큐디치 전투 보정 (오너 결정 2026-10-25, 큐디치 경기 중 선수만 — 평소·1:1 결투 그대로): ① 투사체(chabolt, 아르카나 175·192·213) 속도 ×1.5 ② 비행 중(빗자루·겉날개·비행) 선수 피격 상자 ×1.5 — Targets.closestDistance 를 쓰는 투사체·광역 즉발기 전부 ③ homing=true 유도 투사체는 대상을 끝까지 정확히 추적, 놓치는 건 순간이동(한 틱 4블록↑) 또는 맞기 3틱 전 안에서 빗자루 속도가 한 틱에 0.6↑ 바뀐 회피 기동뿐, 추적 중엔 사거리 대신 최대 5초. 새 MagicMatchEvent(MagicMythic) ← ChacaKyudichi Hooks.listenMatch 가 "quidditch"/"duel" 답함. 설정 MagicMythic config.yml quidditch-combat (없으면 기본값). **MagicMythic·ChacaKyudichi jar 같이 배포.** 주의: 빗자루 속도가 패킷 간격 때문에 튀면 회피로 잘못 볼 수 있음 → 실게임에서 너무 자주 놓치면 dodge-speed-change 를 올릴 것. 테스트 QuidditchCombatTest.
+#43 (GPT 확인, 오너 2026-10-25): 야생 빗자루 고속 비행 청크 부하. 빗자루 최고 1.65칸/틱, 부스트 ~2.4칸/틱(초당 33~48칸). ① 야생 월드 경계 안을 오픈 전 Chunky 등으로 미리 생성 ② 월드 경계 설정 ③ simulation-distance 낮게. 테스트: 미리 생성 후 5명·10명 부스트 직선 비행 2분, /spark tps · MSPT 확인, 기준 MSPT < 50ms·TPS ≥ 19.5.
 #41 서버 이름 설정표, 코드 하드코딩(housing-presence-velocity Set.of school/wild/arena 등) — wild2 생기면 수정.
 #50 레이팅 표시는 로비·경기카드·랭킹·전적·신청·준비·결과 창에 이미 있음.
 배포: Velocity chacademi-party + 경기장 ChacaKyudichi + 클라 모드(프로토콜) 동시.
