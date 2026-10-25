@@ -91,6 +91,21 @@ public final class ClimateService implements Listener, PluginMessageListener, Au
         else if(shared){plugin.getLogger().info("계절: MariaDB 공유 모드 (두 서버가 같은 계절, 실제 시간 기준 "+config.getLong("days-per-season",7)*20+"분마다 전환).");syncSeason();}
     }
     public Season season(){return current;}
+    /** 381 계절 예보 (LifeSpells): real time until the next season, null when the season is fixed (automatic off). Main thread. */
+    java.time.Duration untilNextSeason(){
+        if(!clock.automatic)return null;
+        var now=java.time.Instant.now();
+        if(realtimeMode())return java.time.Duration.between(now,realtimeClock(config).next(now));
+        if(calendarMode()){
+            var zone=calendarZone();var today=java.time.LocalDate.now(zone);int m=today.getMonthValue();
+            var next=m>=12?java.time.LocalDate.of(today.getYear()+1,3,1):java.time.LocalDate.of(today.getYear(),m<3?3:m<6?6:m<9?9:12,1);
+            return java.time.Duration.between(now,next.atStartOfDay(zone).toInstant());
+        }
+        long left=clock.length-Math.max(0,clock.last-clock.anchor)%clock.length;
+        return java.time.Duration.ofMillis(left*SeasonClock.MILLIS_PER_TICK);
+    }
+    /** The season follows this server's world clock (sleeping skips ahead), so {@link #untilNextSeason} is an estimate. */
+    boolean seasonByGameTime(){return !externalClock()&&!shared;}
     public boolean enabledIn(World world){return enabled&&world!=null&&worlds.contains(world.getName());}
     public OptionalDouble temperature(UUID id){var v=temperatures.get(id);return v==null?OptionalDouble.empty():OptionalDouble.of(v);}
     public double powerMultiplier(String element){return switch(element.toLowerCase(Locale.ROOT)){case "fire","flame","화염"->firePower;case "water","물"->waterPower;default->1;};}

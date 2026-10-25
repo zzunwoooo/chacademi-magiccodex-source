@@ -329,6 +329,8 @@ final class AlchemyBridge implements PluginMessageListener, Listener {
         }
         Recipe match = null;
         for (Recipe recipe : recipes) if (AlchemyRules.matches(recipe.ingredients(), want)) { match = recipe; break; }
+        // 384 영감의 섬광 (LifeSpells): this attempt tells how many of the put-in ingredient kinds are right (number only).
+        if (LifeSpells.take(p.getUniqueId(), "insight_flash")) LifeSpells.insight(p, want.size(), match != null ? want.size() : closest(want));
         if (match == null) {
             int hint = nearHint ? AlchemyRules.hint(recipes.stream().map(Recipe::ingredients).toList(), want) : AlchemyProtocol.NOTHING;
             String key = hint == AlchemyProtocol.NEAR_AMOUNT ? "near-amount" : hint == AlchemyProtocol.NEAR ? "near" : "nothing";
@@ -336,9 +338,12 @@ final class AlchemyBridge implements PluginMessageListener, Listener {
         }
         boolean isNew = !discovered(p, match.id());
         long total = AlchemyRules.total(p.getLevel(), p.getExp());
+        // 374 연금로 예열 (LifeSpells): the next craft within 10 minutes costs 30% less experience (used only by a successful craft).
+        boolean preheat = match.exp() > 0 && LifeSpells.active(p.getUniqueId(), "alchemy_preheat");
+        int cost = preheat ? LifeSpells.preheated(match.exp()) : match.exp();
         // Not enough experience: nothing happens at all (no discovery, nothing spent). A recipe is discovered only by a
         // successful craft. An undiscovered recipe's cost is not revealed.
-        if (total < match.exp()) {
+        if (total < cost) {
             plugin.getLogger().info("ALCHEMY NO-EXP player=" + p.getName() + " recipe=" + match.id() + " exp=" + total + "/" + match.exp() + (isNew ? " undiscovered" : ""));
             result(p, seq, AlchemyProtocol.REFUSED, null, 0, false, message(isNew ? "no-exp-locked" : "no-exp", isNew ? null : match, 0, ""));
             send(p, AlchemyProtocol.KIND_STATE, ""); return;
@@ -371,7 +376,7 @@ final class AlchemyBridge implements PluginMessageListener, Listener {
                 if (take == item.getAmount()) storage.setItem(i, null); else item.setAmount(item.getAmount() - take);
             }
         }
-        long after = total - match.exp();
+        long after = total - cost;
         float[] level = AlchemyRules.fromTotal(after);
         p.setLevel((int) level[0]); p.setExp(Math.min(level[1], 0.9999f)); p.setTotalExperience((int) Math.min(Integer.MAX_VALUE, after));
         var leftover = storage.addItem(outputs.toArray(ItemStack[]::new)).values();
@@ -380,13 +385,26 @@ final class AlchemyBridge implements PluginMessageListener, Listener {
         if (!leftover.isEmpty()) plugin.getLogger().severe("ALCHEMY LEFTOVER (자리 계산과 실제 지급이 다름) player=" + p.getUniqueId() + " craft=" + craftId + " items=" + leftover);
         p.updateInventory();
         plugin.getLogger().info("ALCHEMY CRAFT player=" + p.getName() + " recipe=" + match.id() + " amount=" + match.amount() + " exp=" + match.exp()
-                + (isNew ? " new" : "") + " craft=" + craftId);
+                + (isNew ? " new" : "") + (preheat ? " preheated=" + cost : "") + " craft=" + craftId);
+        if (preheat && LifeSpells.take(p.getUniqueId(), "alchemy_preheat"))
+            CmdKit.notify(p, "system", "life-alchemy_preheat", "연금로 예열 효과", "경험치를 " + match.exp() + " 대신 " + cost + "만 썼어요", 0);
         String notice = message(isNew ? "discovered" : "crafted", match, match.amount(), "");
         if (isNew) discover(p, match);
         result(p, seq, isNew ? AlchemyProtocol.DISCOVERED : AlchemyProtocol.CRAFTED, match, match.amount(), false, notice);
         send(p, AlchemyProtocol.KIND_STATE, "");
         // 스토리 "연금술성공": 재료·경험치를 걷고 결과물을 지급(인벤토리/우편)한 뒤에만. 경험치 부족·틀린 조합·결과 아이템 오류는 위에서 끝난다.
         StoryProgressEvent.fire(p, StoryProgressEvent.ALCHEMY);
+    }
+
+    /** 384: the most put-in ingredient kinds that one recipe (discovered or not) uses. */
+    private int closest(Map<String, Integer> want) {
+        int best = 0;
+        for (Recipe r : recipes) {
+            int n = 0;
+            for (String k : want.keySet()) if (r.ingredients().containsKey(k)) n++;
+            best = Math.max(best, n);
+        }
+        return best;
     }
 
     /** 재료를 뺀 뒤의 인벤토리(0~35칸)에 결과물이 전부 들어가는지. 실제 인벤토리는 건드리지 않는다. */

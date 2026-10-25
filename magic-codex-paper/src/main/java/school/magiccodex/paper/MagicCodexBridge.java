@@ -110,6 +110,9 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private MileageBridge mileage;
     private FishTankBridge fishTank;
     private BagPagesBridge bagPages;
+    /** 생활 마법 377 / 382 (LifeSpells); null before enable or when the system failed. */
+    FishingBridge fishingBridge(){return fishing;}
+    BagPagesBridge bagPagesBridge(){return bagPages;}
     private ArtifactEffects artifactEffects;
     private PartyRoster partyRoster;
     /** Party membership pushed by Velocity (also a Bukkit service). Null before enable. */

@@ -189,6 +189,52 @@ final class BagHuskCoordinator implements BagHuskSnapshotLink.Authority {
   }catch(Exception ex){block(owner,"Page CAS failed; WAL retained: "+ex.getClass().getSimpleName());}});
   return null;
  }
+ /**
+  * 382 배낭 정리 (LifeSpells): one switch-like transition whose target is the page already in the inventory. The sorted
+  * inactive pages and the sorted active page (= the incoming page, written to slots 9..35 after the CAS) go through
+  * exactly the switchPage path: input blocked + HuskSync lock, durable WAL + receipt, central CAS on lease/head/seq,
+  * player marker + saveData, committedSwitch. Every refusal happens before beginSwitch, so a refusal never blocks the bag.
+  * check = compute only. Null = started (or sortable); otherwise the refusal.
+  */
+ String sortPages(Player p,int unlocked,boolean check){
+  UUID owner=p.getUniqueId();var h=holders.get(owner);if(h==null||!inputReady(owner))return "배낭 동기화 중이에요. 잠시 뒤 다시 해 주세요";
+  var base=h.row;int active=base.active();if(active<1||active>unlocked||active>3)return "지금 쪽에서는 정리할 수 없어요";
+  org.bukkit.inventory.ItemStack[][] sorted;byte[][] next;byte[] targetBytes;
+  try{
+   var now=new org.bukkit.inventory.ItemStack[unlocked][];
+   for(int i=0;i<unlocked;i++){
+    if(i==active-1){var a=new org.bukkit.inventory.ItemStack[27];for(int s=0;s<27;s++){var it=p.getInventory().getItem(9+s);a[s]=it==null||it.getType().isAir()?null:it.clone();}now[i]=a;}
+    else now[i]=BagPagesBridge.items(base.pages()[i]);
+   }
+   sorted=LifeSpells.arrange(now);
+   if(sorted==null)return "이미 잘 정리돼 있어요";
+   next=base.pages().clone();
+   for(int i=0;i<unlocked;i++)if(i!=active-1)next[i]=BagPagesBridge.encode(sorted[i]);
+   next[active-1]=BagPageCodec.emptyPage();targetBytes=BagPagesBridge.encode(sorted[active-1]);
+  }catch(RuntimeException ex){return "배낭 쪽을 읽지 못해 정리하지 않았어요";}
+  if(check)return null;
+  var incoming=sorted[active-1];UUID op;UUID nextHead=UUID.randomUUID();long nextSeq=base.sequence()+1;
+  try{
+   op=h.session.beginSwitch(h.user.isLocked());api.getPlugin().lockPlayer(owner);bags.sharedBlocked(owner);
+   journal.save(owner,"shared",active,nextSeq,next,targetBytes);
+   Path receipt=plugin.getDataFolder().toPath().resolve("bag-shared-pending").resolve(owner+"-operation.txt");
+   Files.writeString(receipt,"lease="+h.session.lease()+"\nbase="+base.head()+"\nhead="+nextHead+"\nseq="+nextSeq+"\nsort=1\n");
+   try(var channel=java.nio.channels.FileChannel.open(receipt,StandardOpenOption.WRITE)){channel.force(true);}
+  }catch(Exception ex){block(owner,"Sort preparation failed: "+ex.getClass().getSimpleName());return "저장 확인에 실패했어요. 관리자에게 알려 주세요";}
+  io.execute(()->{try{
+   if(!shared.switchPages(owner,h.session.lease(),base.head(),nextHead,nextSeq,active,next))throw new IllegalStateException("Sort ownership CAS rejected");
+   var row=shared.load(owner);
+   main(()->{try{
+    if(h.user.hasDisconnected()||h.session.phase()!=BagSyncSession.Phase.SWITCHING)throw new IllegalStateException("Player left before sort apply");
+    for(int i=0;i<27;i++)p.getInventory().setItem(9+i,incoming[i]);
+    p.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(plugin,"bag_page_commit"),org.bukkit.persistence.PersistentDataType.LONG,nextSeq);
+    p.saveData();h.session.committedSwitch(op,nextHead,nextSeq,active);h.row=row;
+    p.updateInventory();api.getPlugin().unlockPlayer(owner);bags.sharedReady(owner,row,bags.sharedUnlocked(owner));
+    CmdKit.notify(p,"system","life-pack_sort","배낭을 정리했어요","열린 "+unlocked+"쪽을 종류별로 정리하고 같은 아이템을 합쳤어요",0);
+   }catch(RuntimeException ex){block(owner,"Sort apply incomplete; WAL retained: "+ex.getClass().getSimpleName());}});
+  }catch(Exception ex){block(owner,"Sort CAS failed; WAL retained: "+ex.getClass().getSimpleName());}});
+  return null;
+ }
  void beforeBridgeDisable(){
   closing=true;for(var h:holders.values())if(!h.drained)save(h.user,DataSnapshot.SaveCause.SERVER_SHUTDOWN);
   // A standalone plugin disable must not leave a drained no-op syncer in an otherwise running server.

@@ -190,6 +190,38 @@ final class BagPagesBridge implements PluginMessageListener, Listener {
         return coordinator.switchPage(p, target);
     }
 
+    /**
+     * 382 배낭 정리 (LifeSpells): sorts and merges every unlocked page in one shared step (BagHuskCoordinator.sortPages,
+     * the same WAL / lock / CAS / player-marker path as a page switch). check = only test (nothing changes).
+     * Null = sorted (or, with check, sortable); otherwise the reason for the player.
+     */
+    String sortPages(Player p, boolean check) {
+        var e = entries.get(p.getUniqueId());
+        if (e == null || !e.loaded) return "배낭 정보를 읽는 중이에요. 잠시 뒤 다시 해 주세요";
+        if (p.isDead()) return "지금은 정리할 수 없어요";
+        var top = p.getOpenInventory().getTopInventory().getType();
+        if (top != InventoryType.CRAFTING && top != InventoryType.CREATIVE) return "다른 창을 닫고 다시 해 주세요";
+        if (p.getItemOnCursor() != null && !p.getItemOnCursor().getType().isAir()) return "들고 있는 아이템을 내려놓고 다시 해 주세요";
+        if (unlocking.contains(p.getUniqueId())) return "배낭 공간을 여는 중이에요. 잠시 뒤 다시 해 주세요";
+        long now = System.currentTimeMillis();
+        if (now - lastSwitch.getOrDefault(p.getUniqueId(), 0L) < SWITCH_GAP_MS) return "배낭 쪽을 넘기는 중이에요. 잠시 뒤 다시 해 주세요";
+        int unlocked = Math.clamp(e.unlocked, 1, PAGES);
+        if (e.active > unlocked) return "잠긴 쪽을 보고 있어서 정리할 수 없어요";
+        String refused = coordinator.sortPages(p, unlocked, check);
+        if (refused == null && !check) lastSwitch.put(p.getUniqueId(), now);
+        return refused;
+    }
+
+    /** 27 slots → page bytes (null / air = empty slot). */
+    static byte[] encode(ItemStack[] items) {
+        var slots = new ArrayList<byte[]>(BagPageCodec.SLOTS);
+        for (int i = 0; i < BagPageCodec.SLOTS; i++) {
+            ItemStack it = i < items.length ? items[i] : null;
+            slots.add(it == null || it.getType().isAir() || it.getAmount() <= 0 ? new byte[0] : it.serializeAsBytes());
+        }
+        return BagPageCodec.encodePage(slots);
+    }
+
     static byte[] page(org.bukkit.inventory.PlayerInventory inv, int first) {
         var slots = new ArrayList<byte[]>(BagPageCodec.SLOTS);
         for (int i = 0; i < BagPageCodec.SLOTS; i++) {

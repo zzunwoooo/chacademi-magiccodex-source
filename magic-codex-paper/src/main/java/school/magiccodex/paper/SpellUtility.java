@@ -23,7 +23,11 @@ final class SpellUtility implements AutoCloseable {
     private final Map<Block,org.bukkit.block.data.BlockData> buttons=new HashMap<>();
     private org.bukkit.scheduler.BukkitTask pullTask;
     private record Pull(Player player,List<Item> items,long expires){}
-    SpellUtility(MagicCodexBridge plugin){this.plugin=plugin;}
+    /** 생활 마법 374~386 중 Bridge 시스템 연동 9종 (2026-10-25). */
+    private final LifeSpells life;
+    SpellUtility(MagicCodexBridge plugin){this.plugin=plugin;life=new LifeSpells(plugin);}
+    /** Before mana is charged (SpellRuntime.prepare): null = may cast, else the reason shown to the player (no mana, no cooldown). */
+    String refusal(Player p,String id){return LifeSpells.IDS.contains(id)?life.refusal(p,id):null;}
     void reloadRecipes(){var list=new ArrayList<FurnaceRecipe>();Bukkit.recipeIterator().forEachRemaining(r->{if(r instanceof FurnaceRecipe f)list.add(f);});recipes=List.copyOf(list);}
     boolean apply(Player p,String id){if(!MagicProtectionLink.cast(p))return false;return switch(id){
         case "wind_basket"->gather(p);
@@ -41,6 +45,7 @@ final class SpellUtility implements AutoCloseable {
         case "wick_trimming"->extinguish(p);
         case "lava_suture"->lava(p);
         case "far_touch"->switchBlock(p);
+        case "alchemy_preheat","water_glimpse","calm_ripple","treasure_scent","season_sense","pack_sort","heart_read","insight_flash","blessed_ribbon"->life.apply(p,id);
         default->false;
     };}
     private boolean gather(Player p){
@@ -156,5 +161,5 @@ final class SpellUtility implements AutoCloseable {
         var applied=data.clone();Bukkit.getScheduler().runTaskLater(plugin,()->{var restore=buttons.remove(b);if(restore!=null&&b.getBlockData().equals(applied))b.setBlockData(restore);},20);return true;
     }
     private boolean canChange(Player p,Block b){if(!MagicProtectionLink.at(p,b.getLocation()))return false;var before=b.getBlockData().clone();var event=new BlockBreakEvent(b,p);event.setDropItems(false);Bukkit.getPluginManager().callEvent(event);return !event.isCancelled()&&b.getBlockData().equals(before);}
-    public void close(){if(pullTask!=null){pullTask.cancel();pullTask=null;}pulls.clear();for(var e:buttons.entrySet()){var powered=e.getValue().clone();((Powerable)powered).setPowered(true);if(e.getKey().getBlockData().equals(powered))e.getKey().setBlockData(e.getValue());}buttons.clear();}
+    public void close(){life.close();if(pullTask!=null){pullTask.cancel();pullTask=null;}pulls.clear();for(var e:buttons.entrySet()){var powered=e.getValue().clone();((Powerable)powered).setPowered(true);if(e.getKey().getBlockData().equals(powered))e.getKey().setBlockData(e.getValue());}buttons.clear();}
 }

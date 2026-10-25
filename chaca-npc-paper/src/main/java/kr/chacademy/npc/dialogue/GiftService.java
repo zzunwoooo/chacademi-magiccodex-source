@@ -76,6 +76,14 @@ public final class GiftService {
         return GRADES.indexOf(plain(lore.get(1))) + 1;
     }
 
+    /** 마법 386 리본 표식: MagicCodexBridge PDC "magiccodexbridge:gift_ribbon" (BYTE). */
+    private static final org.bukkit.NamespacedKey RIBBON = org.bukkit.NamespacedKey.fromString("magiccodexbridge:gift_ribbon");
+
+    static boolean ribboned(ItemStack item) {
+        return item != null && item.hasItemMeta() && RIBBON != null
+                && item.getItemMeta().getPersistentDataContainer().has(RIBBON, org.bukkit.persistence.PersistentDataType.BYTE);
+    }
+
     static String plain(String s) {
         String t = org.bukkit.ChatColor.stripColor(s == null ? "" : s);
         return t == null ? "" : t.replaceAll("(?i)&[0-9a-fk-orx]", "").strip();
@@ -177,6 +185,11 @@ public final class GiftService {
         String key = keyOf(hand);
         boolean liked = contains(c.giftLikes(), "liked", key) || contains(c.giftLikes(), "loved", key);
         int delta = liked ? st.giftGrades.getOrDefault(GRADES.get(grade - 1), 1) : st.giftNotLiked;
+        // 마법 386 축복의 리본 (MagicCodexBridge LifeSpells 가 묶은 PDC 표식): 좋아하는 선물의 등급 점수 x1.2 (반올림, 최소 +1).
+        // 상한(30·60·90)·퀘스트 판정은 그대로 MagicCodexBridge 가 한다.
+        if (liked && delta > 0 && ribboned(hand)) {
+            delta = Math.max(delta + 1, Math.round(delta * 1.2f));
+        }
         String reaction = !liked ? "gift_disliked" : grade >= 3 ? "gift_loved" : "gift_liked";
         String token = UUID.randomUUID().toString();
         plugin.link().beginGift(uuid, c.id(), token, delta).whenComplete((res, ex) -> {
