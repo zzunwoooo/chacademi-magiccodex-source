@@ -1,0 +1,17 @@
+[
+  {
+    "protocol": "journal",
+    "exit": 0,
+    "output": "PASS 3 protocol classes semantically identical\r\n"
+  },
+  {
+    "protocol": "title",
+    "exit": 0,
+    "output": "PASS 5 protocol classes semantically identical\r\n"
+  },
+  {
+    "protocol": "housing",
+    "exit": 0,
+    "output": "PASS 10 protocol classes semantically identical\r\n"
+  }
+]

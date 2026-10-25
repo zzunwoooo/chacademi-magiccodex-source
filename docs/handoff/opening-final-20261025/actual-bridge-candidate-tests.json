@@ -1,0 +1,55 @@
+{
+  "candidate": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-10-magic-codex-paper.jar",
+  "candidateSHA256": "54a5da6842d7870f99eeec2654bad398f3cd380a0ee39bb6e5312b1bd101240b",
+  "mainSourceClassesExcluded": true,
+  "tests": [
+    {
+      "name": "school.magiccodex.paper.CatalogStartupRuntimeTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "school.magiccodex.paper.JournalBridgeTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "school.magiccodex.paper.OperatorHelpTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "school.magiccodex.paper.SpellSoundsTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "school.magiccodex.paper.TitleAwardsTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "school.magiccodex.paper.TitleTest",
+      "tests": "9",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    }
+  ],
+  "totals": {
+    "tests": 23,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

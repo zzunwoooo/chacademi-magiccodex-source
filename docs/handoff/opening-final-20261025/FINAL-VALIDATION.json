@@ -1,0 +1,60 @@
+{
+  "status": "PRIVATE_CANDIDATES_VALIDATED",
+  "candidateCount": 17,
+  "allSHA256Rechecked": true,
+  "internalLinkage": "PASS",
+  "deletedOriginalEntries": 0,
+  "untouchedEntriesByteIdentical": 13260,
+  "JVMChangedClassesVerified": 183,
+  "JVMExternalMissing": 0,
+  "JVMFailures": 0,
+  "protocols": [
+    {
+      "check": "server-ui-equivalence",
+      "server": 10,
+      "exit": 0,
+      "summary": [
+        "PASS protocol families all class methods equivalent count=18"
+      ]
+    },
+    {
+      "check": "server-ui-equivalence",
+      "server": 11,
+      "exit": 0,
+      "summary": [
+        "PASS protocol families all class methods equivalent count=18"
+      ]
+    },
+    {
+      "check": "server-ui-equivalence",
+      "server": 12,
+      "exit": 0,
+      "summary": [
+        "PASS protocol families all class methods equivalent count=18"
+      ]
+    },
+    {
+      "check": "actual-housing-rank-roundtrip",
+      "server": "bridge",
+      "exit": 0,
+      "summary": [
+        "PASS HousingRank actual JAR bidirectional sealed-record/version smoke"
+      ]
+    },
+    {
+      "check": "actual-housing-rank-roundtrip",
+      "server": "housing",
+      "exit": 0,
+      "summary": [
+        "PASS HousingRank actual JAR bidirectional sealed-record/version smoke"
+      ]
+    }
+  ],
+  "actualSchool23Tests": "PASS (parent report, candidate-runtime-tests-final.log)",
+  "sourceOnlyReproduction": false,
+  "deployed": false,
+  "serverStarted": false,
+  "inGameVerified": false,
+  "canonicalLedger": "FINAL-17-CANDIDATE-LEDGER.json",
+  "historicalConflictReportsSuperseded": true
+}

@@ -1,0 +1,30 @@
+import java.nio.file.*;import java.util.*;import org.objectweb.asm.*;import org.objectweb.asm.tree.*;
+public class PrepareSpecial implements Opcodes{
+ static MethodNode m(ClassNode c,String key){return c.methods.stream().filter(x->OpeningDelta.key(x).equals(key)).findFirst().orElseThrow();}
+ static MethodNode cp(MethodNode m){var shell=new ClassNode();shell.version=V21;shell.access=ACC_PUBLIC;shell.name="Fingerprint";shell.superName="java/lang/Object";shell.methods.add(m);var w=new ClassWriter(0);shell.accept(w);return OpeningDelta.read(w.toByteArray(),ClassReader.EXPAND_FRAMES).methods.getFirst();}
+ static AbstractInsnNode prev(AbstractInsnNode n){do{n=n.getPrevious();}while(n!=null&&n.getOpcode()<0);return n;}
+ static AbstractInsnNode next(AbstractInsnNode n){do{n=n.getNext();}while(n!=null&&n.getOpcode()<0);return n;}
+ static FrameNode frame(AbstractInsnNode n){for(var x=n.getPrevious();x!=null;x=x.getPrevious())if(x instanceof FrameNode f){if(f.stack!=null&&!f.stack.isEmpty())throw new IllegalStateException("Frame stack nonempty");return new FrameNode(F_NEW,f.local.size(),f.local.toArray(),0,null);}throw new IllegalStateException("Missing prior frame");}
+ static List<AbstractInsnNode> bolt(MethodNode m){
+  String owner="school/chacademia/magicmythic/BoltMech$Bolt",qc="school/chacademia/magicmythic/QuidditchCombat";var anchors=new ArrayList<AbstractInsnNode>();
+  for(var i:m.instructions.toArray())if(i instanceof FieldInsnNode f&&f.name.equals("travelled")&&f.getOpcode()==GETFIELD){var start=prev(i);var before=prev(start);if(before instanceof JumpInsnNode j&&j.getOpcode()==IFEQ&&prev(j) instanceof VarInsnNode v&&v.getOpcode()==ILOAD&&v.var==4)anchors.add(start);}
+  if(anchors.size()!=1)throw new IllegalStateException("Bolt range anchor "+anchors.size());var anchor=anchors.getFirst();var oldField=next(anchor);var self=next(oldField);var range=next(self);var compare=next(range);var jump=next(compare);var turn=next(jump);
+  if(!(range instanceof FieldInsnNode f&&f.name.equals("range"))||compare.getOpcode()!=DCMPL||!(jump instanceof JumpInsnNode j&&j.getOpcode()==IFLT))throw new IllegalStateException("Unexpected range expression");var end=((JumpInsnNode)jump).label;var normal=new LabelNode();var hit=new LabelNode();var seq=new InsnList();
+  seq.add(new VarInsnNode(ALOAD,0));seq.add(new FieldInsnNode(GETFIELD,owner,"locked","Z"));seq.add(new JumpInsnNode(IFEQ,normal));seq.add(new VarInsnNode(ALOAD,0));seq.add(new FieldInsnNode(GETFIELD,owner,"life","I"));seq.add(new FieldInsnNode(GETSTATIC,qc,"current","L"+qc+";"));seq.add(new FieldInsnNode(GETFIELD,qc,"homingTicks","I"));seq.add(new JumpInsnNode(IF_ICMPLT,end));seq.add(new JumpInsnNode(GOTO,hit));seq.add(normal);seq.add(frame(anchor));var added=new ArrayList<AbstractInsnNode>(Arrays.asList(seq.toArray()));m.instructions.insertBefore(anchor,seq);
+  var tail=new InsnList();tail.add(hit);tail.add(frame(anchor));added.addAll(Arrays.asList(tail.toArray()));m.instructions.insertBefore(turn,tail);return added;
+ }
+ static List<AbstractInsnNode> enable(MethodNode m){var returns=Arrays.stream(m.instructions.toArray()).filter(x->x.getOpcode()==RETURN).toList();if(returns.size()!=1)throw new IllegalStateException("Enable return");var a=new VarInsnNode(ALOAD,0);var b=new MethodInsnNode(INVOKEVIRTUAL,"school/chacademia/kyudichi/GameListener","hookMatch","()V",false);var l=new InsnList();l.add(a);l.add(b);m.instructions.insertBefore(returns.getFirst(),l);return List.of(a,b);}
+ static String normHeal(MethodNode original){var m=cp(original);int count=0;for(var i:m.instructions)if(i instanceof InvokeDynamicInsnNode dy)for(int j=0;j<dy.bsmArgs.length;j++)if(dy.bsmArgs[j] instanceof Handle h&&h.getName().startsWith("lambda$hookHeal$")){dy.bsmArgs[j]=new Handle(h.getTag(),h.getOwner(),"lambda$hookHeal$CANONICAL",h.getDesc(),h.isInterface());count++;}if(count!=1)throw new IllegalStateException("Heal handle count");return OpeningDelta.norm(m);}
+ static void write(ClassNode c,Path p)throws Exception{var w=new ClassWriter(ClassWriter.COMPUTE_MAXS);c.accept(w);Files.write(p,w.toByteArray());}
+ public static void main(String[]a)throws Exception{
+  var live=OpeningDelta.read(Files.readAllBytes(Path.of(a[0])),ClassReader.EXPAND_FRAMES);var old=OpeningDelta.read(Files.readAllBytes(Path.of(a[1])),ClassReader.EXPAND_FRAMES);var newer=OpeningDelta.read(Files.readAllBytes(Path.of(a[2])),ClassReader.EXPAND_FRAMES);String key=a[3];var target=m(live,key);String before=OpeningDelta.norm(target);
+  if(key.equals("hookHeal()V")){
+   String desc="(Lorg/bukkit/entity/LivingEntity;Lorg/bukkit/entity/Player;DLjava/util/function/DoubleConsumer;)V";if(!OpeningDelta.eq(m(old,"lambda$hookHeal$8"+desc),m(newer,"lambda$hookHeal$9"+desc))||!OpeningDelta.eq(m(old,"lambda$hookHeal$8"+desc),m(live,"lambda$hookHeal$7"+desc)))throw new IllegalStateException("Heal lambda bodies differ");if(!normHeal(m(old,key)).equals(normHeal(m(newer,key)))||!normHeal(target).equals(normHeal(m(old,key))))throw new IllegalStateException("Heal has semantic change beyond lambda name");System.out.println("PASS hookHeal source/operating lambda bodies exact; preserve operating handle7 without source naming churn");
+  }else{
+   var source=cp(m(old,key));if(key.startsWith("advance("))bolt(source);else enable(source);if(!OpeningDelta.eq(source,m(newer,key)))throw new IllegalStateException("Source delta mismatch "+key);System.out.println("PASS source old + bounded delta == final source exact "+key);
+   List<AbstractInsnNode> added=key.startsWith("advance(")?bolt(target):enable(target);var desired=cp(target);for(var i:added)target.instructions.remove(i);if(!OpeningDelta.norm(target).equals(before))throw new IllegalStateException("Strip did not restore operating body "+key);live.methods.set(live.methods.indexOf(target),desired);target=desired;System.out.println("PASS inserted strip == operating exact "+key);
+  }
+  for(var c:List.of(old,newer)){var x=m(c,key);c.methods.set(c.methods.indexOf(x),cp(target));}
+  Path out=Path.of(a[4]);write(live,out.resolve("special.live"));write(old,out.resolve("masked.base"));write(newer,out.resolve("masked.new"));
+ }
+}

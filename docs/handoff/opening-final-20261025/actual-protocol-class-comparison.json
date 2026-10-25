@@ -1,0 +1,226 @@
+[
+  {
+    "pair": "bridge-ui",
+    "entry": "school/magiccodex/protocol/JournalProtocol$Entry.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "5f59a5bfb8a28a2059aad5f29ed6b4058a652c1a68c9d845dca2071c16cba0e6",
+    "rightSHA256": "64166480e7dda3988a5c52d316176460ed03dc855a5e8a86ec87e6fda471195e"
+  },
+  {
+    "pair": "bridge-ui",
+    "entry": "school/magiccodex/protocol/JournalProtocol$Message.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "14c1ed37e8b4413d97996ed1dc06698fcfb77849b5751d917b05af1b7ee93005",
+    "rightSHA256": "527fe9c0c107a8e91cabe76a11f65074362993b211e63bed4f2529766eb3eed0"
+  },
+  {
+    "pair": "bridge-ui",
+    "entry": "school/magiccodex/protocol/JournalProtocol.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "c968c43e4dc94d37d0e2e492f8d0619eb803c4de9385a3737a96b61b677d0a73",
+    "rightSHA256": "f2226ea5a0fbff9f8a2d4328c7686fdf949235419ab82fb7c2a1f05fb753cea7"
+  },
+  {
+    "pair": "bridge-ui",
+    "entry": "school/magiccodex/protocol/TitleProtocol$Entry.class",
+    "bothPresent": true,
+    "byteIdentical": true,
+    "leftSHA256": "220e316418faf7c06be79f85232c7349c86444fc40d2630c7164167771d97c27",
+    "rightSHA256": "220e316418faf7c06be79f85232c7349c86444fc40d2630c7164167771d97c27"
+  },
+  {
+    "pair": "bridge-ui",
+    "entry": "school/magiccodex/protocol/TitleProtocol$Request.class",
+    "bothPresent": true,
+    "byteIdentical": true,
+    "leftSHA256": "c7064f22fbd9de1e4d85d0d8b6c9d1c5134f7b06fba542e65b8d7cd6c5e36729",
+    "rightSHA256": "c7064f22fbd9de1e4d85d0d8b6c9d1c5134f7b06fba542e65b8d7cd6c5e36729"
+  },
+  {
+    "pair": "bridge-ui",
+    "entry": "school/magiccodex/protocol/TitleProtocol$Response.class",
+    "bothPresent": true,
+    "byteIdentical": true,
+    "leftSHA256": "4d07e2e8f8afdf035a2d3dd34e83143a046647313b5735214a3741e004234775",
+    "rightSHA256": "4d07e2e8f8afdf035a2d3dd34e83143a046647313b5735214a3741e004234775"
+  },
+  {
+    "pair": "bridge-ui",
+    "entry": "school/magiccodex/protocol/TitleProtocol$Writer.class",
+    "bothPresent": true,
+    "byteIdentical": true,
+    "leftSHA256": "def8ef5faacc4d29aad2d2d5f35ca9730adb4606ceace0ac170054c5e563c956",
+    "rightSHA256": "def8ef5faacc4d29aad2d2d5f35ca9730adb4606ceace0ac170054c5e563c956"
+  },
+  {
+    "pair": "bridge-ui",
+    "entry": "school/magiccodex/protocol/TitleProtocol.class",
+    "bothPresent": true,
+    "byteIdentical": true,
+    "leftSHA256": "bdb8bef9b25cb65e5fd54269d2171e8ec920d009f6bbe3dc883a1de94ae75bba",
+    "rightSHA256": "bdb8bef9b25cb65e5fd54269d2171e8ec920d009f6bbe3dc883a1de94ae75bba"
+  },
+  {
+    "pair": "bridge-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol$Notice.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "05b7e3cc290fe94c15334e369a4e13677addf6523f61e28d0f4f1e20bbe276e4",
+    "rightSHA256": "b78e28d377df093146b73a407d892d18381e70d1204d360486dc89efc3fbece1"
+  },
+  {
+    "pair": "bridge-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol$Open.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "9f1e3d01a229b6d42ca6bc754e24928a70c03592752bd4e9c599e9fd768c5dff",
+    "rightSHA256": "6d84ffc04f6b5d33333bbedc6ed836c3f688d84bd397a849660a28a8f81b438e"
+  },
+  {
+    "pair": "bridge-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol$Page.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "f935071dd14f18491a3820b08064b6a9f5f9aa3a3711ab730039344512466783",
+    "rightSHA256": "d694da8002c95fd2d197a3119252068b35a6d68b35ce5fd9357c919ac14dace7"
+  },
+  {
+    "pair": "bridge-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol$Query.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "763a2523d9aba6310afa4f47c1daa043b90315dbbd93228604c4155c79505fef",
+    "rightSHA256": "428a83017614157244f975584ccbc7c4618ea9e2422dc1b4064628299fee906e"
+  },
+  {
+    "pair": "bridge-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol$Row.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "40d5740e942bef8bbd0773cfbc7e462a86398b28475a9b26a4cb7b0267adc8dc",
+    "rightSHA256": "440ca9f33f8a5a7c0f25bdd9b874e88f83efb19155173d19b353ce896ddc83cf"
+  },
+  {
+    "pair": "bridge-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol$ToClient.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "0f57f19948a41f9c6d4e64abcefee0e346fa1a37de723be5a0ee1ffc56100015",
+    "rightSHA256": "fc06874db86f9424182c1dd32d1386611a70905627e6e6b60674bd92f46acb19"
+  },
+  {
+    "pair": "bridge-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol$ToServer.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "6ab2159300df2deaa5d4fc4b37588a401049b03fa85edaa10a0a575c50a8513f",
+    "rightSHA256": "bd635a2f15c1e39bf318dee98ce224a672bf3a3a749fa4e49996adf3f39e2c53"
+  },
+  {
+    "pair": "bridge-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol$Visit.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "de5b287f19edad2567c22675bb7c76f9dc7597c379d65151afb55a956ec30265",
+    "rightSHA256": "ad2f9bf099f7c16842bd0b2605492ab4d34cb04f256ca36d59cc13eb38f3cea8"
+  },
+  {
+    "pair": "bridge-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol$Writer.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "455dffeadc2045c9a9b54b279744751166c09d65de48eb03ebe786c88e0e763f",
+    "rightSHA256": "56ae519bfb495567f3183b0a773048b0dc45c0a1d66bfcf0452d575ef8fe7c8b"
+  },
+  {
+    "pair": "bridge-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "d7da0b8fd83241a55de20fdef8d462304c00607f34a4083284ab41aaf5dddbd1",
+    "rightSHA256": "844f8ebd140b26da5eaa9f14f41d495495c1f9afa50a84fda8d840c7e611b7fa"
+  },
+  {
+    "pair": "housing-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol$Notice.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "05b7e3cc290fe94c15334e369a4e13677addf6523f61e28d0f4f1e20bbe276e4",
+    "rightSHA256": "b78e28d377df093146b73a407d892d18381e70d1204d360486dc89efc3fbece1"
+  },
+  {
+    "pair": "housing-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol$Open.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "9f1e3d01a229b6d42ca6bc754e24928a70c03592752bd4e9c599e9fd768c5dff",
+    "rightSHA256": "6d84ffc04f6b5d33333bbedc6ed836c3f688d84bd397a849660a28a8f81b438e"
+  },
+  {
+    "pair": "housing-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol$Page.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "f935071dd14f18491a3820b08064b6a9f5f9aa3a3711ab730039344512466783",
+    "rightSHA256": "d694da8002c95fd2d197a3119252068b35a6d68b35ce5fd9357c919ac14dace7"
+  },
+  {
+    "pair": "housing-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol$Query.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "763a2523d9aba6310afa4f47c1daa043b90315dbbd93228604c4155c79505fef",
+    "rightSHA256": "428a83017614157244f975584ccbc7c4618ea9e2422dc1b4064628299fee906e"
+  },
+  {
+    "pair": "housing-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol$Row.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "40d5740e942bef8bbd0773cfbc7e462a86398b28475a9b26a4cb7b0267adc8dc",
+    "rightSHA256": "440ca9f33f8a5a7c0f25bdd9b874e88f83efb19155173d19b353ce896ddc83cf"
+  },
+  {
+    "pair": "housing-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol$ToClient.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "0f57f19948a41f9c6d4e64abcefee0e346fa1a37de723be5a0ee1ffc56100015",
+    "rightSHA256": "fc06874db86f9424182c1dd32d1386611a70905627e6e6b60674bd92f46acb19"
+  },
+  {
+    "pair": "housing-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol$ToServer.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "6ab2159300df2deaa5d4fc4b37588a401049b03fa85edaa10a0a575c50a8513f",
+    "rightSHA256": "bd635a2f15c1e39bf318dee98ce224a672bf3a3a749fa4e49996adf3f39e2c53"
+  },
+  {
+    "pair": "housing-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol$Visit.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "de5b287f19edad2567c22675bb7c76f9dc7597c379d65151afb55a956ec30265",
+    "rightSHA256": "ad2f9bf099f7c16842bd0b2605492ab4d34cb04f256ca36d59cc13eb38f3cea8"
+  },
+  {
+    "pair": "housing-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol$Writer.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "455dffeadc2045c9a9b54b279744751166c09d65de48eb03ebe786c88e0e763f",
+    "rightSHA256": "56ae519bfb495567f3183b0a773048b0dc45c0a1d66bfcf0452d575ef8fe7c8b"
+  },
+  {
+    "pair": "housing-ui",
+    "entry": "school/magiccodex/protocol/HousingRankProtocol.class",
+    "bothPresent": true,
+    "byteIdentical": false,
+    "leftSHA256": "d7da0b8fd83241a55de20fdef8d462304c00607f34a4083284ab41aaf5dddbd1",
+    "rightSHA256": "844f8ebd140b26da5eaa9f14f41d495495c1f9afa50a84fda8d840c7e611b7fa"
+  }
+]

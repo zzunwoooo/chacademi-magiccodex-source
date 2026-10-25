@@ -1,0 +1,72 @@
+[
+  {
+    "label": "school/plugins/magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+    "exit": 0,
+    "summary": [
+      "FINAL_JVM_VERIFY artifact=C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-0-magic-discovery-paper.jar passed=0 externalMissing=0 failures=0 noInitialization=true"
+    ]
+  },
+  {
+    "label": "wild/plugins/magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+    "exit": 0,
+    "summary": [
+      "FINAL_JVM_VERIFY artifact=C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-1-magic-discovery-paper.jar passed=0 externalMissing=0 failures=0 noInitialization=true"
+    ]
+  },
+  {
+    "label": "school/plugins/chacademy-story-plugin-final-guide-20261024.jar",
+    "exit": 0,
+    "summary": [
+      "FINAL_JVM_VERIFY artifact=C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-2-chacademy-story-plugin.jar passed=12 externalMissing=0 failures=0 noInitialization=true"
+    ]
+  },
+  {
+    "label": "arena/plugins/magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+    "exit": 0,
+    "summary": [
+      "FINAL_JVM_VERIFY artifact=C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-3-magic-discovery-paper.jar passed=0 externalMissing=0 failures=0 noInitialization=true"
+    ]
+  },
+  {
+    "label": "school/plugins/chacademia-magic-mythic-final-20261024-school.jar",
+    "exit": 0,
+    "summary": [
+      "FINAL_JVM_VERIFY artifact=C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\mythic-kyu\\magic-mythic-school-opening-final-private-20261025.jar passed=9 externalMissing=0 failures=0 noInitialization=true"
+    ]
+  },
+  {
+    "label": "wild/plugins/chacademia-magic-mythic-final-20261024-wild.jar",
+    "exit": 0,
+    "summary": [
+      "FINAL_JVM_VERIFY artifact=C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\mythic-kyu\\magic-mythic-wild-opening-final-private-20261025.jar passed=9 externalMissing=0 failures=0 noInitialization=true"
+    ]
+  },
+  {
+    "label": "arena/plugins/chacademia-magic-mythic-final-20261024-arena.jar",
+    "exit": 0,
+    "summary": [
+      "FINAL_JVM_VERIFY artifact=C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\mythic-kyu\\magic-mythic-arena-opening-final-private-20261025.jar passed=9 externalMissing=0 failures=0 noInitialization=true"
+    ]
+  },
+  {
+    "label": "arena/plugins/chaca-kyudichi-0.1.2-presets-api.2.jar",
+    "exit": 0,
+    "summary": [
+      "FINAL_JVM_VERIFY artifact=C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\mythic-kyu\\chaca-kyudichi-arena-opening-final-private-20261025.jar passed=3 externalMissing=0 failures=0 noInitialization=true"
+    ]
+  },
+  {
+    "label": "school/plugins/chaca-npc-0.3.0-npcmodel.3.jar",
+    "exit": 0,
+    "summary": [
+      "FINAL_JVM_VERIFY artifact=C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-13-chaca-npc-paper.jar passed=2 externalMissing=0 failures=0 noInitialization=true"
+    ]
+  },
+  {
+    "label": "chacademy-story-mod-client",
+    "exit": 0,
+    "summary": [
+      "FINAL_JVM_VERIFY artifact=C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-14-chacademy-story-mod.jar passed=0 externalMissing=0 failures=0 noInitialization=true"
+    ]
+  }
+]

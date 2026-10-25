@@ -1,0 +1,104 @@
+[
+  {
+    "label": "school/plugins/magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+    "live": "C:\\Chacademi\\network\\school\\plugins\\magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+    "liveSHA256": "144a8d52645255038d0f675c429be82fb74642defaaea25ef56d07e66ee79d43",
+    "module": "magic-discovery-paper"
+  },
+  {
+    "label": "wild/plugins/magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+    "live": "C:\\Chacademi\\network\\wild\\plugins\\magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+    "liveSHA256": "144a8d52645255038d0f675c429be82fb74642defaaea25ef56d07e66ee79d43",
+    "module": "magic-discovery-paper"
+  },
+  {
+    "label": "school/plugins/chacademy-story-plugin-final-guide-20261024.jar",
+    "live": "C:\\Chacademi\\network\\school\\plugins\\chacademy-story-plugin-final-guide-20261024.jar",
+    "liveSHA256": "a03db9a9ba28501fda8bc0996fd30e79b198313e29346de6bf3077dccf95ca5f",
+    "module": "chacademy-story/plugin"
+  },
+  {
+    "label": "arena/plugins/magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+    "live": "C:\\Chacademi\\network\\arena\\plugins\\magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+    "liveSHA256": "858713c4ffc1077898f8b014fe9404c9a19e8bb648c87f0f18fd395a325d27bb",
+    "module": "magic-discovery-paper"
+  },
+  {
+    "label": "school/plugins/chacademia-magic-mythic-final-20261024-school.jar",
+    "live": "C:\\Chacademi\\network\\school\\plugins\\chacademia-magic-mythic-final-20261024-school.jar",
+    "liveSHA256": "8fb1951552cbf61f84ec8724a9f7ab884a2689a133f4e9124ffef0171caf62ee",
+    "module": "magic-mythic-paper"
+  },
+  {
+    "label": "wild/plugins/chacademia-magic-mythic-final-20261024-wild.jar",
+    "live": "C:\\Chacademi\\network\\wild\\plugins\\chacademia-magic-mythic-final-20261024-wild.jar",
+    "liveSHA256": "6b96ae27abfef104c9f5c49490043b1f75fa34b922b0ec5be3979c22dfb4ffca",
+    "module": "magic-mythic-paper"
+  },
+  {
+    "label": "arena/plugins/chacademia-magic-mythic-final-20261024-arena.jar",
+    "live": "C:\\Chacademi\\network\\arena\\plugins\\chacademia-magic-mythic-final-20261024-arena.jar",
+    "liveSHA256": "4438a07902f8db71865ab739534a3467172520bb194781806904f45efd11afce",
+    "module": "magic-mythic-paper"
+  },
+  {
+    "label": "school/plugins/chaca-housing-0.1.2-usersearch.1-school.jar",
+    "live": "C:\\Chacademi\\network\\school\\plugins\\chaca-housing-0.1.2-usersearch.1-school.jar",
+    "liveSHA256": "2bfbba912cb27b30ac0b3d7a1c333e0740357824d3525da5cda39d6ac1ea76b5",
+    "module": "housing-paper"
+  },
+  {
+    "label": "wild/plugins/chaca-housing-0.1.2-usersearch.1-wild.jar",
+    "live": "C:\\Chacademi\\network\\wild\\plugins\\chaca-housing-0.1.2-usersearch.1-wild.jar",
+    "liveSHA256": "9cf96ac8ffe33f9a4bd97dcb5da4dc6ab4bccc9fba0e422412b093d6204cea5c",
+    "module": "housing-paper"
+  },
+  {
+    "label": "arena/plugins/chaca-kyudichi-0.1.2-presets-api.2.jar",
+    "live": "C:\\Chacademi\\network\\arena\\plugins\\chaca-kyudichi-0.1.2-presets-api.2.jar",
+    "liveSHA256": "1cd2271a7694a0e25ae70d9e209580a9975b94b9a853cdc8d5a22470f719be11",
+    "module": "kyudichi-paper"
+  },
+  {
+    "label": "school/plugins/magic-codex-bridge-final-20261024-school.jar",
+    "live": "C:\\Chacademi\\network\\school\\plugins\\magic-codex-bridge-final-20261024-school.jar",
+    "liveSHA256": "4b90ebb14e331f108d01469f4c6b9a97385936e7bb58ac2669a80a603341e93f",
+    "module": "magic-codex-paper"
+  },
+  {
+    "label": "wild/plugins/magic-codex-bridge-final-20261024-wild.jar",
+    "live": "C:\\Chacademi\\network\\wild\\plugins\\magic-codex-bridge-final-20261024-wild.jar",
+    "liveSHA256": "40ff5a0e716c5f482d0e76c9921bcf4faa4922df0368cf0674dade6f373edc29",
+    "module": "magic-codex-paper"
+  },
+  {
+    "label": "arena/plugins/magic-codex-bridge-final-20261024-arena.jar",
+    "live": "C:\\Chacademi\\network\\arena\\plugins\\magic-codex-bridge-final-20261024-arena.jar",
+    "liveSHA256": "6b2633cbc792e92992306cce212bbe411830be7ec5ace941f6c875a7583e49c7",
+    "module": "magic-codex-paper"
+  },
+  {
+    "label": "school/plugins/chaca-npc-0.3.0-npcmodel.3.jar",
+    "live": "C:\\Chacademi\\network\\school\\plugins\\chaca-npc-0.3.0-npcmodel.3.jar",
+    "liveSHA256": "22c7038dc5c632f876cc94d7118f8d835445d9393239765dab7c582137425b21",
+    "module": "chaca-npc-paper"
+  },
+  {
+    "label": "chacademy-story-mod-client",
+    "live": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\chacademy-story-mod-client-opening-safe-20261025.jar",
+    "liveSHA256": "e99f92db9328e77effe19e1317a47d2eedec6f2eb04df9fe234fe9bf0466626e",
+    "module": "chacademy-story/mod"
+  },
+  {
+    "label": "portable-vfx-runtime-client-client",
+    "live": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\portable-vfx-runtime-client-client-opening-safe-20261025.jar",
+    "liveSHA256": "aea5599784daa39d315f6114380d0a016a7db6c7119067fbbf65d04824e67f91",
+    "module": "portable-vfx-runtime/client"
+  },
+  {
+    "label": "MagicCodex-client",
+    "live": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\bounded-packaging\\magic-codex-ui-opening-safe-20261025-v2+mc1.21.4.jar",
+    "liveSHA256": "11754cca8f1d8cdd34aa1e4958f9aa732e3a18b3384eda8af733315fd78ffc96",
+    "module": "magic-codex-fabric"
+  }
+]

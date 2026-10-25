@@ -1,3 +1,5 @@
+> Codex 2026-10-25: [Opening-final actual host builds and full tests](CODEX_OPENING_FINAL_VERIFICATION_20261025.md) — source tests passed; private live-preserving staging only, **NOT deployed**.
+
 > Claude 2026-10-25 밤 (not built): [오픈 최종 통합 — 운영본 c96c5ae3 + 검수 승인분 + 스토리 일지·올레 길잡이·낚싯대 설명](CLAUDE_OPENING_FINAL_20261025.md). Branch claude/opening-final-20261025. **빌드·전체 테스트 필수**, 1장 대화 번호 ch1-15→ch1-17 운영 파일 같이.
 
 > 현재 운영 기준: [LIVE_SOURCE_HANDOFF_20261025](LIVE_SOURCE_HANDOFF_20261025.md) — 운영 상태와 재현 한계를 먼저 확인하세요.

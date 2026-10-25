@@ -1,0 +1,42 @@
+[
+  {
+    "check": "server-ui-equivalence",
+    "server": 10,
+    "exit": 0,
+    "summary": [
+      "PASS protocol families all class methods equivalent count=18"
+    ]
+  },
+  {
+    "check": "server-ui-equivalence",
+    "server": 11,
+    "exit": 0,
+    "summary": [
+      "PASS protocol families all class methods equivalent count=18"
+    ]
+  },
+  {
+    "check": "server-ui-equivalence",
+    "server": 12,
+    "exit": 0,
+    "summary": [
+      "PASS protocol families all class methods equivalent count=18"
+    ]
+  },
+  {
+    "check": "actual-housing-rank-roundtrip",
+    "server": "bridge",
+    "exit": 0,
+    "summary": [
+      "PASS HousingRank actual JAR bidirectional sealed-record/version smoke"
+    ]
+  },
+  {
+    "check": "actual-housing-rank-roundtrip",
+    "server": "housing",
+    "exit": 0,
+    "summary": [
+      "PASS HousingRank actual JAR bidirectional sealed-record/version smoke"
+    ]
+  }
+]

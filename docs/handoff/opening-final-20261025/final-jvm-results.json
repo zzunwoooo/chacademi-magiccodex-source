@@ -1,0 +1,43 @@
+[
+  {
+    "jar": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-10-magic-codex-paper.jar",
+    "sha256": "54a5da6842d7870f99eeec2654bad398f3cd380a0ee39bb6e5312b1bd101240b",
+    "exit": 0,
+    "summary": [
+      "FINAL_JVM_VERIFY artifact=C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-10-magic-codex-paper.jar passed=26 externalMissing=0 failures=0 noInitialization=true"
+    ]
+  },
+  {
+    "jar": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-11-magic-codex-paper.jar",
+    "sha256": "9cb070cdea7ebb90a204a57d3ab46a1ccd05fc433dea7ac6a6086359bcf9b680",
+    "exit": 0,
+    "summary": [
+      "FINAL_JVM_VERIFY artifact=C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-11-magic-codex-paper.jar passed=26 externalMissing=0 failures=0 noInitialization=true"
+    ]
+  },
+  {
+    "jar": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-12-magic-codex-paper.jar",
+    "sha256": "3d1ef45722f8718f42a7fd71e3a971a1aa786011be7b036e0c74e55d5ad3ec08",
+    "exit": 0,
+    "summary": [
+      "FINAL_JVM_VERIFY artifact=C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-12-magic-codex-paper.jar passed=26 externalMissing=0 failures=0 noInitialization=true"
+    ]
+  },
+  {
+    "jar": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-16-magic-codex-fabric.jar",
+    "sha256": "4c437bc4d82907689ae64d94f8820344eb54d45be554f2482945487187a4fc13",
+    "exit": 0,
+    "summary": [
+      "FINAL_JVM_VERIFY artifact=C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-16-magic-codex-fabric.jar passed=19 externalMissing=0 failures=0 noInitialization=true"
+    ]
+  },
+  {
+    "jar": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-15-portable-vfx-runtime-client.jar",
+    "sha256": "dbca428a16f35b17a3e71ff327f74690c3ad2ca40e1da0e4cf9b25b142278a5f",
+    "exit": 0,
+    "summary": [
+      "FINAL_JVM_VERIFY artifact=C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-15-portable-vfx-runtime-client.jar passed=2 externalMissing=0 failures=0 noInitialization=true"
+    ],
+    "resolvedBy": "Actual nested common JAR from candidate, no source output fallback"
+  }
+]

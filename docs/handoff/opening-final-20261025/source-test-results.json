@@ -1,0 +1,212 @@
+{
+  "sourceCommit": "62489c281beaa176085c953d11a9a2640ac31fb3",
+  "modules": [
+    {
+      "module": "chaca-npc-paper",
+      "tests": 37,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "chaca-portrait-paper",
+      "tests": 74,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "chacademi-party-velocity",
+      "tests": 63,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "chacademy-motion/chacademy-motion-mod",
+      "tests": 34,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "chacademy-motion/chacademy-motion-plugin",
+      "tests": 27,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "chacademy-story/mod",
+      "tests": 77,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    {
+      "module": "chacademy-story/plugin",
+      "tests": 91,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client-mods/chacademi-chat-layout",
+      "tests": 160,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client-mods/chacademi-npc-model",
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "creature-spawns-paper",
+      "tests": 67,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "gimmick-paper",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "housing-paper",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "housing-presence-velocity",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "kyudichi-paper",
+      "tests": 19,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "magic-codex-fabric",
+      "tests": 549,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "magic-codex-paper",
+      "tests": 597,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2
+    },
+    {
+      "module": "magic-discovery-paper",
+      "tests": 38,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "magic-mythic-paper",
+      "tests": 93,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "pet-interactions-paper",
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2
+    },
+    {
+      "module": "portable-vfx-runtime/client",
+      "tests": 117,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 4
+    },
+    {
+      "module": "portable-vfx-runtime/paper",
+      "tests": 145,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "tornado-event-paper",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "junitTotals": {
+    "tests": 2260,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 9
+  },
+  "skippedTests": [
+    {
+      "class": "kr.chacademy.story.dialogue.StoryContentPathsTest",
+      "test": "everyChapterDialogueLoadsFromServerAndAllPortraitsResolveInNewPack()"
+    },
+    {
+      "class": "school.magiccodex.paper.FishTankMariaDbTest",
+      "test": "locksRefundAndGenerationTokensPersistAcrossConnections()"
+    },
+    {
+      "class": "school.magiccodex.paper.FishTankMariaDbTest",
+      "test": "twoServersShareAtomicCapacityAndOneWinnerClaims()"
+    },
+    {
+      "class": "school.chacademia.pets.PetCatalogAuditTest",
+      "test": "auditDefinitionCopiesOnly()"
+    },
+    {
+      "class": "school.chacademia.pets.PetConnectionValidationTest",
+      "test": "preparedOverlayClosesAllRegisteredLinksWithoutChangingExistingOwnershipIds()"
+    },
+    {
+      "class": "dev.portablevfx.client.claude.ClaudeModelBackendCacheTest",
+      "test": "mismatchedAuthoredClipRejectsAndDoesNotLeakModelLease()"
+    },
+    {
+      "class": "dev.portablevfx.client.claude.ClaudeModelBackendCacheTest",
+      "test": "sixSystemsShareModelsAndReleaseEveryLeaseWithoutGl()"
+    },
+    {
+      "class": "dev.portablevfx.client.claude.ClaudeModelLoaderTest",
+      "test": "authenticWaterModelsKeepAllPrimitivesImagesAndClips()"
+    },
+    {
+      "class": "dev.portablevfx.client.claude.HolyTamingFixtureTest",
+      "test": "authoredPackLoadsAllEightSystemsWithoutDroppingFeatures()"
+    }
+  ],
+  "vfxCommonMainHarness": {
+    "readinessAssertions": 2125,
+    "protocolAssertions": 31753,
+    "junitTask": "disabled by existing build, protocolTest executed"
+  },
+  "referenceEditorPython": {
+    "tests": 13,
+    "failures": 0
+  }
+}

@@ -1,0 +1,535 @@
+{
+  "sourceCommitReviewed": "1663065ecd1cda79d818a6d27b1f6a7504cbc09e",
+  "builtSourceCommit": "62489c281beaa176085c953d11a9a2640ac31fb3",
+  "status": "PRIVATE_STAGE_ONLY_NOT_APPLIED",
+  "privateLedgerSHA256": "3f87b22f5b5f647fcd5fddb6f3b7da67121bcb82fee1fd184f7e1a8004138c10",
+  "privateStageFileCount": 42,
+  "noOperatingFileBodiesIncluded": true,
+  "operations": [
+    {
+      "type": "preserve-collision-alias",
+      "oldDialogueId": "ch1-17",
+      "preservedAlias": "ch1-17-alchemy-preserved",
+      "contentChanges": "ID only; all existing alchemy text/assets preserved"
+    },
+    {
+      "type": "rename-sorting-family",
+      "from": "ch1-15",
+      "to": "ch1-17",
+      "resultVariants": [
+        "r",
+        "m",
+        "f"
+      ],
+      "houseCount": 4,
+      "dialogueCount": 13,
+      "folderLocalAssets": "byte-identical copies"
+    },
+    {
+      "type": "minimal-step-change",
+      "fields": [
+        "단계.ch1-17.조건.0.대상",
+        "단계.ch1-20.대화"
+      ],
+      "allOtherValuesUnchanged": true,
+      "preservedSchoolNPC": 12
+    },
+    {
+      "type": "ending-command-key",
+      "from": "ch1-15",
+      "to": "ch1-17",
+      "commandValuesChanged": false
+    },
+    {
+      "type": "manual-condition-entry",
+      "spell": "guiding_star",
+      "source": "magic-discovery-paper/src/main/resources/manual-conditions.yml",
+      "allOtherEntriesUnchanged": true
+    },
+    {
+      "type": "icon-fields-only",
+      "numbers": [
+        87,
+        88,
+        300,
+        301,
+        302,
+        303,
+        304,
+        305,
+        306,
+        307,
+        308,
+        309,
+        310,
+        311,
+        312,
+        313,
+        314,
+        315,
+        316,
+        317,
+        318,
+        319,
+        320,
+        321,
+        322,
+        323
+      ],
+      "targetFiles": [
+        "MagicDiscovery/discoveries.yml",
+        "PortableVFX/spell-catalog.yml"
+      ],
+      "allOtherFieldsUnchanged": true
+    }
+  ],
+  "targets": [
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17-alchemy-preserved/dialogue.yml",
+      "beforeSHA256": null,
+      "stagedSHA256": "ac2a2a7324b4f024ffdbb3d1e8d564f2fd11acd1027cead31db5e9add70e3739",
+      "kind": "preserve-existing-alchemy-before-replacing-ch1-17"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17-alchemy-preserved/tc_berna-neutral.png",
+      "beforeSHA256": null,
+      "stagedSHA256": "0df810a6a70902ffffb0dd6b37ee1e1171ea073e2685ecdf8d9cacabf5b0186a",
+      "kind": "preserve-existing-alchemy-before-replacing-ch1-17"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17/dialogue.yml",
+      "beforeSHA256": "09dad51a81f0c6467a12fa919a64708f627d8da43d1b40fbabd2f66e896ea8b0",
+      "stagedSHA256": "6d15eab157a033ad8baad9fe4185386eefe708761772e275a96c3b9a319026b6",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17/vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17f-arkeon/dialogue.yml",
+      "beforeSHA256": null,
+      "stagedSHA256": "36b13c08a231a3dca6568a6a0d73d87667b34d4201e545031218ad10dfd6d4c3",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17f-arkeon/vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17f-bestiaz/dialogue.yml",
+      "beforeSHA256": null,
+      "stagedSHA256": "4b8bc6ca8710b66b426c8b646f20efc76933a71dffecce37d72fcde9c45c0d5e",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17f-bestiaz/vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17f-lumina/dialogue.yml",
+      "beforeSHA256": null,
+      "stagedSHA256": "5de8a6be449c1de5a7295e34f6ea543bf3f48afed232586a935a2a56d6987f97",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17f-lumina/vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17f-noxer/dialogue.yml",
+      "beforeSHA256": null,
+      "stagedSHA256": "e51283ca4f88347c222a44fdf1372abde17e55e70461cb1322ca741a90b54b0d",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17f-noxer/luka-neutral.png",
+      "beforeSHA256": null,
+      "stagedSHA256": "4d1b4acd2827f2589872b6a7aa4dfb11044ddca9bc196f1fc00b27d64e1435ea",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17f-noxer/vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17m-arkeon/dialogue.yml",
+      "beforeSHA256": null,
+      "stagedSHA256": "5bbfddb4650bddb687a925f5f9add7ee047ff2120cdd4ce3a3370cfbc7e745d9",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17m-arkeon/vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17m-bestiaz/dialogue.yml",
+      "beforeSHA256": null,
+      "stagedSHA256": "b1c0efb44bf1b7899074c04ee9466cbff1e8d45d7e39661bce6db994981141ae",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17m-bestiaz/vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17m-lumina/dialogue.yml",
+      "beforeSHA256": null,
+      "stagedSHA256": "1eadd6b80cd9a145a1bffc03c1849f20d1c1f8c8e6ba696a8496c766e6e4f1cd",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17m-lumina/vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17m-noxer/dialogue.yml",
+      "beforeSHA256": null,
+      "stagedSHA256": "a8c528a860938ef6b04fd204c94b54b0b3b13aee574bb37593bc25a39afd674b",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17m-noxer/luka-neutral.png",
+      "beforeSHA256": null,
+      "stagedSHA256": "4d1b4acd2827f2589872b6a7aa4dfb11044ddca9bc196f1fc00b27d64e1435ea",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17m-noxer/vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17r-arkeon/dialogue.yml",
+      "beforeSHA256": null,
+      "stagedSHA256": "9ea5dacb8653a7c8fa6fea507f0b2e5277d1d6f8687be0bae819122bcc78eaff",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17r-arkeon/vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17r-bestiaz/dialogue.yml",
+      "beforeSHA256": null,
+      "stagedSHA256": "5408685eb42bda1d7b3e426eb0831e46cbd5aac12c7b2d6e72350aad011bbe8b",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17r-bestiaz/vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17r-lumina/dialogue.yml",
+      "beforeSHA256": null,
+      "stagedSHA256": "64b0a639ac200fa26e9538cfd7bc376d3762af353d31642690eb6571457f64da",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17r-lumina/vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17r-noxer/dialogue.yml",
+      "beforeSHA256": null,
+      "stagedSHA256": "420ce97885d4a16c170703aa4b6582ab6d119987558fd0c624e7acd0619c72dc",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17r-noxer/luka-neutral.png",
+      "beforeSHA256": null,
+      "stagedSHA256": "4d1b4acd2827f2589872b6a7aa4dfb11044ddca9bc196f1fc00b27d64e1435ea",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/ch1-17r-noxer/vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/steps.yml",
+      "beforeSHA256": "3f1b8c058fb89a9a7cafdb796c97e9e8d5a2e5cff29b0f6bc0058479e4d2dcd7",
+      "stagedSHA256": "2b736d2f2e234e89b4c59dea98a3a8ec2f1ab5702298fe10f6673fc87dab402b",
+      "kind": "current-live-step-minimal-patch"
+    },
+    {
+      "relativeTarget": "school/plugins/ChacademyStory/dialogues/server_command.yml",
+      "beforeSHA256": "df2655dde29386d370c13e8bbf526249f05159dcf6687580cf1ae30e7c2ffc90",
+      "stagedSHA256": "279cb26f850ec133f6e35c977245d2ad9ce7dfaef60d419bd115d693949c0e9c",
+      "kind": "sorting-ending-command-key-rename"
+    },
+    {
+      "relativeTarget": "school/plugins/MagicDiscovery/manual-conditions.yml",
+      "beforeSHA256": "df1e0e5f62607fb7f492dc298909cca1f4705508eb2224eadf1f07375e47d305",
+      "stagedSHA256": "fc32cc56a2baf54e2e3a20d27608f22b4bb166c0a295c97b1fe02f34fdb51e92",
+      "kind": "guiding-star-only"
+    },
+    {
+      "relativeTarget": "school/plugins/MagicDiscovery/discoveries.yml",
+      "beforeSHA256": "053937c691bc074b2c514d1d1403c899c0b1818f9c222ccaca729b0399e9d167",
+      "stagedSHA256": "2d81dabb769de0299173547996d7020846497b780634a4ff664e881ab669aa45",
+      "kind": "icon-fields-only"
+    },
+    {
+      "relativeTarget": "school/plugins/PortableVFX/spell-catalog.yml",
+      "beforeSHA256": "53816837b851f314d484c03c5be8eeb70e1e4a16294fc49572c42cc781307a47",
+      "stagedSHA256": "84a01b1d166432141c3e42033687a6d6096eb7998654071526a440855ac9d480",
+      "kind": "icon-fields-only"
+    },
+    {
+      "relativeTarget": "wild/plugins/MagicDiscovery/manual-conditions.yml",
+      "beforeSHA256": "df1e0e5f62607fb7f492dc298909cca1f4705508eb2224eadf1f07375e47d305",
+      "stagedSHA256": "fc32cc56a2baf54e2e3a20d27608f22b4bb166c0a295c97b1fe02f34fdb51e92",
+      "kind": "guiding-star-only"
+    },
+    {
+      "relativeTarget": "wild/plugins/MagicDiscovery/discoveries.yml",
+      "beforeSHA256": "053937c691bc074b2c514d1d1403c899c0b1818f9c222ccaca729b0399e9d167",
+      "stagedSHA256": "2d81dabb769de0299173547996d7020846497b780634a4ff664e881ab669aa45",
+      "kind": "icon-fields-only"
+    },
+    {
+      "relativeTarget": "wild/plugins/PortableVFX/spell-catalog.yml",
+      "beforeSHA256": "53816837b851f314d484c03c5be8eeb70e1e4a16294fc49572c42cc781307a47",
+      "stagedSHA256": "84a01b1d166432141c3e42033687a6d6096eb7998654071526a440855ac9d480",
+      "kind": "icon-fields-only"
+    },
+    {
+      "relativeTarget": "arena/plugins/MagicDiscovery/manual-conditions.yml",
+      "beforeSHA256": "df1e0e5f62607fb7f492dc298909cca1f4705508eb2224eadf1f07375e47d305",
+      "stagedSHA256": "fc32cc56a2baf54e2e3a20d27608f22b4bb166c0a295c97b1fe02f34fdb51e92",
+      "kind": "guiding-star-only"
+    },
+    {
+      "relativeTarget": "arena/plugins/MagicDiscovery/discoveries.yml",
+      "beforeSHA256": "6e61c15305f8b0cb761ea9fe2d2f62d22d88c443376b6b548a9ebb497ef8b53a",
+      "stagedSHA256": "570679d037f6c31d8de32cededbcb42ffa9ecfeee6d85184bfb7e8c49553d684",
+      "kind": "icon-fields-only"
+    },
+    {
+      "relativeTarget": "arena/plugins/PortableVFX/spell-catalog.yml",
+      "beforeSHA256": "afd9772dde34900dfe2f743f0918e572d2e458a7ecfbd43d3d43db25e37362f4",
+      "stagedSHA256": "1840722027e1498a28788d6cc4f7db249018283105503547932076640c28cb88",
+      "kind": "icon-fields-only"
+    }
+  ],
+  "referenceChecks": {
+    "prospectiveDialogueIds": 39,
+    "duplicateIds": 0,
+    "missingReferences": 0,
+    "externalRuntimeReferences": 0,
+    "sourceReferenceFiles": 2
+  },
+  "icons": [
+    {
+      "number": 87,
+      "spell": "pressure_hammer",
+      "icon": "magiccodex:textures/spells/reviewed_20261016/pressure_hammer.png",
+      "pngSHA256": "d08f4277bd9a49deaa1410b3fe266e7294445dd910654ccae8a1358b5144a79e",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 88,
+      "spell": "waterspout",
+      "icon": "magiccodex:textures/spells/reviewed_20261016/waterspout.png",
+      "pngSHA256": "8688dc1cfcc6d7d6469287afd000ca64bff555339ec2e76abbc48470c6598386",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 300,
+      "spell": "fox_orbit",
+      "icon": "magiccodex:textures/spells/mob_skill/fox_orbit.png",
+      "pngSHA256": "1a7aca77354c1e2a0ee2e9fd65c581388ab43102342b97f746acf45843456a6d",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 301,
+      "spell": "curving_plumes",
+      "icon": "magiccodex:textures/spells/mob_skill/curving_plumes.png",
+      "pngSHA256": "b08f13abde2e3003e6dcb0197fba7a45307dbe72d8e7f1d6aa34aea45f390c83",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 302,
+      "spell": "crystal_orbit",
+      "icon": "magiccodex:textures/spells/mob_skill/crystal_orbit.png",
+      "pngSHA256": "eb0f1edf3bcd66a6de6191bd6e82707c1fbae7bd380a63534d9d8e341b05a73b",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 303,
+      "spell": "venom_spit",
+      "icon": "magiccodex:textures/spells/mob_skill/venom_spit.png",
+      "pngSHA256": "82353ef69411d72b09f63149cc2d446a2401a78746c9828cbead48c5bd04d956",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 304,
+      "spell": "smoke_veil",
+      "icon": "magiccodex:textures/spells/mob_skill/smoke_veil.png",
+      "pngSHA256": "02918b86bf0223f8524b975c136804205b21da2e0bf0dcc66ba78c7fc79e36ec",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 305,
+      "spell": "domain_stomp",
+      "icon": "magiccodex:textures/spells/mob_skill/domain_stomp.png",
+      "pngSHA256": "c5f7bd31ef626288301899f9454ef9bcf5e9ba14d6f28e4591b3c8f90e6a399d",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 306,
+      "spell": "seal_circle",
+      "icon": "magiccodex:textures/spells/mob_skill/seal_circle.png",
+      "pngSHA256": "fe08b57079928f271864b11fd231f57cc190730b8276e8c793b4a106e0eb99c1",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 307,
+      "spell": "seal_talismans",
+      "icon": "magiccodex:textures/spells/mob_skill/seal_talismans.png",
+      "pngSHA256": "2964261dd3a109e97f22066797fcc26b2c02c60202b9ba2af59908a0d0275aa8",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 308,
+      "spell": "shield_slam",
+      "icon": "magiccodex:textures/spells/mob_skill/shield_slam.png",
+      "pngSHA256": "fe7c74fac3a26a62aeee8cab2d4b7eb91afcdddac43b645d8158bf7745e977d2",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 309,
+      "spell": "chain_arrow",
+      "icon": "magiccodex:textures/spells/mob_skill/chain_arrow.png",
+      "pngSHA256": "1f19dcb52e4988ba0ebb2b8fdb0a02282c49f40eebd9ff4aef07391257593c1b",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 310,
+      "spell": "mana_drain",
+      "icon": "magiccodex:textures/spells/mob_skill/mana_drain.png",
+      "pngSHA256": "22c8300868a7d0a370b380b04034d30fab3f286961bb2d461aa7b49f6456a171",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 311,
+      "spell": "soul_scythe",
+      "icon": "magiccodex:textures/spells/mob_skill/soul_scythe.png",
+      "pngSHA256": "82e1711385bddb82129ff8c6489ace4a386a1297587518e044adcbf9b7fd9e2d",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 312,
+      "spell": "oblivion_orbs",
+      "icon": "magiccodex:textures/spells/mob_skill/oblivion_orbs.png",
+      "pngSHA256": "256d6c392af8bf385135e74cc7e9b4fce0dd5fbb71c841260652923d6eab7359",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 313,
+      "spell": "bone_grasp",
+      "icon": "magiccodex:textures/spells/mob_skill/bone_grasp.png",
+      "pngSHA256": "4861d2fc42eb2b4bddff982e72dc2e9d98b92d24fed41e6405ca58086608472c",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 314,
+      "spell": "shadow_leap",
+      "icon": "magiccodex:textures/spells/mob_skill/shadow_leap.png",
+      "pngSHA256": "a5bc693766a0bfa79d9a9ba2fa6ff529d4b3b37a787ab6da8dff85796799237f",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 315,
+      "spell": "binding_pull",
+      "icon": "magiccodex:textures/spells/mob_skill/binding_pull.png",
+      "pngSHA256": "c1826bc4bda0a24f30cb907cfc6b6303012eeed8fadb29a3e70784270dd03ac4",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 316,
+      "spell": "fairy_dust",
+      "icon": "magiccodex:textures/spells/mob_skill/fairy_dust.png",
+      "pngSHA256": "fe03ac6d7456628259ce1dd949aa22e8df9e403c0026397c148c9af1dbea7426",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 317,
+      "spell": "moon_wind",
+      "icon": "magiccodex:textures/spells/mob_skill/moon_wind.png",
+      "pngSHA256": "cbecb2b01b9f69816d2f0631020e4590163fbf4e66485b3f410c642b68ef6978",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 318,
+      "spell": "gale_wings",
+      "icon": "magiccodex:textures/spells/mob_skill/gale_wings.png",
+      "pngSHA256": "7fb2922d552ca2254b81f2b0c7c2b4780216b9de239a491051f0926997d22a68",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 319,
+      "spell": "feather_storm",
+      "icon": "magiccodex:textures/spells/mob_skill/feather_storm.png",
+      "pngSHA256": "b152ca4febfb572d6993f4334d503551e15658d3ec06d61ea54126e71e32b090",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 320,
+      "spell": "hunting_pounce",
+      "icon": "magiccodex:textures/spells/mob_skill/hunting_pounce.png",
+      "pngSHA256": "21dfd8bff1746382bacfa77db91afdfa2d8b3695bd1da7d5dfe1e2d31d34df23",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 321,
+      "spell": "roar_leap",
+      "icon": "magiccodex:textures/spells/mob_skill/roar_leap.png",
+      "pngSHA256": "edb3ef318b129361fd2c188e1f291274e1671bb73f447fe85ae3283e863721d6",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 322,
+      "spell": "gravity_slam",
+      "icon": "magiccodex:textures/spells/mob_skill/gravity_slam.png",
+      "pngSHA256": "aea611b56feac31d1fbd092e9ae2f40e4f1a9b1d1e39065a999f3e90cc902180",
+      "currentTemporaryClientSameAsSource": true
+    },
+    {
+      "number": 323,
+      "spell": "tail_spikes",
+      "icon": "magiccodex:textures/spells/mob_skill/tail_spikes.png",
+      "pngSHA256": "77d0b97f25a7910630b98b3865b17052ac3f74657a150a66e3edc0ac508ecb29",
+      "currentTemporaryClientSameAsSource": true
+    }
+  ],
+  "runtimePlayerDataChanged": false,
+  "publicLauncherChanged": false,
+  "restartPerformed": false,
+  "dungeonStatus": "DEFERRED_BY_USER"
+}

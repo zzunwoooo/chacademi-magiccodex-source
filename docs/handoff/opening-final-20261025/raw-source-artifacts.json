@@ -1,0 +1,72 @@
+[
+  {
+    "module": "magic-codex-paper",
+    "path": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\magic-codex-paper\\build\\libs\\magic-codex-bridge-0.31.3-integrated-20261020.1-gimmick.1-houses.1-commands.1-followups.1-nameplates.2-titles.1-storych1.1.jar",
+    "bytes": 3024204,
+    "sha256": "544d8a56161faa3aee80484f289a954a8752af6be634c7ceeb913c807c19703f",
+    "scope": "raw source build; do not deploy over live baseline"
+  },
+  {
+    "module": "magic-codex-fabric",
+    "path": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\magic-codex-fabric\\build\\libs\\magic-codex-ui-0.40.3-integrated-20261020.1-gimmick.1-commands.1-followups.1-tooltip.1-nameplates.2-titles.1+mc1.21.4.jar",
+    "bytes": 370939176,
+    "sha256": "111b5c6f82525561e982812b6778e9679de9721309e1f26da8c38cfa078198b2",
+    "scope": "raw source build; do not deploy over live baseline"
+  },
+  {
+    "module": "magic-mythic-paper",
+    "path": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\magic-mythic-paper\\build\\libs\\chacademia-magic-mythic-0.2.2-wildlife-20261023.jar",
+    "bytes": 461043,
+    "sha256": "9aad91a7b1d1d1b81f3f96174a679d628ecd73fe58cef42a4be127d0a0c40dbd",
+    "scope": "raw source build; do not deploy over live baseline"
+  },
+  {
+    "module": "kyudichi-paper",
+    "path": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\kyudichi-paper\\build\\libs\\chaca-kyudichi-0.1.2-integrated-20261019.1-combat.1-commands.1-followups.1.jar",
+    "bytes": 1605784,
+    "sha256": "0665c6964bee6a3645ae12f6be031de67c218eeca3c45847af3a929b436d0151",
+    "scope": "raw source build; do not deploy over live baseline"
+  },
+  {
+    "module": "chaca-npc-paper",
+    "path": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\chaca-npc-paper\\build\\libs\\chaca-npc-0.3.0-npcmodel.3.jar",
+    "bytes": 1125738,
+    "sha256": "1acd2f7332e75c2f39f0bd8cd756d34923cca9087bcc99bb8fe8dc805951b6fc",
+    "scope": "raw source build; do not deploy over live baseline"
+  },
+  {
+    "module": "housing-paper",
+    "path": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\housing-paper\\build\\libs\\chaca-housing-0.1.2-usersearch.1.jar",
+    "bytes": 1499776,
+    "sha256": "05046841b57b607e0a53c4541be40527c368d660fa4dd6f4f7c803048ff0fbee",
+    "scope": "raw source build; do not deploy over live baseline"
+  },
+  {
+    "module": "portable-vfx-runtime/client",
+    "path": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\portable-vfx-runtime\\client\\build\\libs\\portable-vfx-client-3.2.2-integrated-20261020.1-readychunks.1.jar",
+    "bytes": 423730,
+    "sha256": "ef5ab4ab61031971c46f0c3eeb9769643e86eaa986b18e3d051044a054be400c",
+    "scope": "raw source build; do not deploy over live baseline"
+  },
+  {
+    "module": "chacademy-story/plugin",
+    "path": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\chacademy-story\\plugin\\build\\libs\\chacademy-story-plugin-0.1.4-quest.5-ch1.1-serverdialogue.1.jar",
+    "bytes": 231335,
+    "sha256": "f29a4822d5f9e40abded7e48f83fa2c77630d546a597b6346a93bf737fa75f8b",
+    "scope": "raw source build; do not deploy over live baseline"
+  },
+  {
+    "module": "chacademy-story/mod",
+    "path": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\chacademy-story\\mod\\build\\libs\\chacademy-story-0.1.4-quest.5-ch1.1-serverdialogue.1.jar",
+    "bytes": 967791,
+    "sha256": "6c1bd2a43b85c5f940acd23449c34d24d1d5e9d45a551ea5409ee168c2d451a6",
+    "scope": "raw source build; do not deploy over live baseline"
+  },
+  {
+    "module": "magic-discovery-paper",
+    "path": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\magic-discovery-paper\\build\\libs\\magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+    "bytes": 1498892,
+    "sha256": "51cbf3a2872de1eca284e878fa0a5ddcf4ac0fea79f57158596055f158c99972",
+    "scope": "raw source build; do not deploy over live baseline"
+  }
+]
