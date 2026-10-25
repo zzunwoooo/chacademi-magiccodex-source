@@ -37,6 +37,12 @@ class ClaudeBloomConfigTest {
         Files.writeString(file,"# no value\n");ClaudeBloomConfig.load(file);
         assertEquals(.4,ClaudeBloomConfig.strength());
     }
+    @Test void malformedPropertiesStillReportIoAndRetainSafeDefault() throws Exception {
+        Path file=directory.resolve("bloom.properties");
+        Files.writeString(file,"strength=" + "\\" + "uZZZZ\n");
+        assertThrows(java.io.IOException.class,()->ClaudeBloomConfig.load(file));
+        assertEquals(.4,ClaudeBloomConfig.strength());
+    }
     @Test void finiteOutOfRangeStrengthClampsInsteadOfFallingBack() throws Exception {
         Path file=directory.resolve("bloom.properties");
         try {

@@ -23,11 +23,11 @@ public final class ClaudeBloomConfig {
         file = path;
         if (!Files.exists(path)) { write(path, DEFAULT_STRENGTH); return; }
         Properties properties = new Properties();
-        try (var input = Files.newBufferedReader(path)) {
-            properties.load(input);
-        }
-        // Close the source before the migration atomically replaces it (required on Windows).
         try {
+            try (var input = Files.newBufferedReader(path)) {
+                properties.load(input);
+            }
+            // Close the source before the migration atomically replaces it (required on Windows).
             String raw = properties.getProperty("strength");
             double parsed = raw == null ? DEFAULT_STRENGTH : parse(raw);
             boolean unversioned = properties.getProperty("version") == null;
