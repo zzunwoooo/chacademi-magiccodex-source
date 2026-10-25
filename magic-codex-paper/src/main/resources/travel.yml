@@ -86,7 +86,7 @@ points:
 
 # 이동 규칙 — 오너 미정 사항이라 기본은 모두 꺼짐 (켜려면 오너 확인 후).
 rules:
-  block-in-combat: false   # true = 전투 중(최근 5초 몬스터·플레이어와 피해 주고받음) 이동 막기
+  block-in-combat: false   # (예전 설정) true = 아티팩트 전투 판정(최근 5초)으로도 막기. 전투 중 이동 막기(메모 #91)는 combat-lock.yml 에서 따로 켜고 끕니다
   cooldown-seconds: 0      # 이동 뒤 다음 이동까지 대기 (0 = 없음, 야생 스폰은 항상 없음)
   # 개인 지점으로 이동 (공간 도약으로 새긴 곳). 새기기는 무료, 이동할 때만 (오너 2026-10-24)
   personal-travel-mana: 100

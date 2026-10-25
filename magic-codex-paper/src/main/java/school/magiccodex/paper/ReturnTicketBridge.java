@@ -21,8 +21,8 @@ import school.magiccodex.protocol.TravelProtocol;
 /**
  * 귀환권 (2026-10-25, 오픈 메모 #14). Right click: one ticket is used and the player goes to the spawn of the school
  * world (return-ticket.yml server/world), through the map's move path (TravelBridge: ticket, proxy transfer, arrival
- * checks, the existing limits — match, death, spectator, loading, travel.yml rules). No combat limit of its own (owner:
- * undecided; travel.yml rules.block-in-combat applies as for the map).
+ * checks, the existing limits — match, death, spectator, loading, travel.yml rules). 전투 중(메모 #91, CombatTag ·
+ * combat-lock.yml)이면 귀환권을 쓰기 전에 막는다 (아이템 그대로, 알림창 "전투 중이라 이동할 수 없어요 · N초 뒤 가능").
  *
  * <p>The ticket is taken (and the player file saved) before the move starts. A move that fails gives it back once: the
  * player online here → inventory (overflow at the feet), otherwise → mail.
@@ -78,6 +78,8 @@ final class ReturnTicketBridge implements Listener, TravelBridge.ReturnTickets {
         event.setCancelled(true);
         UUID id = p.getUniqueId();
         if (taken.containsKey(id)) { CmdKit.notify(p, "warning", "return-ticket", "이미 이동하는 중이에요", "", 1500); return; }
+        var combat = plugin.combatTag();
+        if (combat != null && combat.refuse(p) != null) return;   // 메모 #91: 전투 중 — 아이템을 쓰기 전에 막음 (알림은 CombatTag)
         // Take one first (saved to disk), then start the move; a refusal right away gives it straight back.
         ItemStack one = held.clone(); one.setAmount(1);
         held.setAmount(held.getAmount() - 1);

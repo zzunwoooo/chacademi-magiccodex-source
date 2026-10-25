@@ -122,6 +122,9 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     /** NPC 호감도 서비스 (수업 비전 해금 등). 없으면 null. */
     NpcSocialService npcSocial(){return npcSocial;}
     private TravelBridge travel;
+    private CombatTag combatTag;
+    /** 전투 표시·전투 중 이동 막기 (메모 #91, combat-lock.yml). null = 초기화 실패. */
+    public CombatTag combatTag(){return combatTag;}
     private MileageBridge mileage;
     private FishTankBridge fishTank;
     private BagPagesBridge bagPages;
@@ -276,6 +279,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(books!=null&&dialogues!=null)try{lessons=new LessonBridge(this,books,dialogues);}catch(Exception error){getLogger().severe("수업 초기화 실패 (lessons.yml 확인): "+error.getMessage());}
         try{travel=new TravelBridge(this);}catch(Exception error){getLogger().severe("지도 이동 초기화 실패 (travel.yml 확인): "+error.getMessage());}
         if(travel!=null&&mana!=null){mana.spatialLeapCast=travel::castSpatialLeap;travel.mana(mana);}
+        try{combatTag=new CombatTag(this);}catch(Exception error){getLogger().severe("전투 중 이동 막기 초기화 실패 (combat-lock.yml 확인): "+error.getMessage());}
         if(travel!=null)try{new ReturnTicketBridge(this,travel);}catch(Exception error){getLogger().severe("귀환권 초기화 실패 (return-ticket.yml 확인): "+error.getMessage());}
         // 아공간 배낭 2·3쪽 (2026-10-24). 실패해도 나머지는 계속 (인벤토리는 1쪽만).
         try{bagPages=new BagPagesBridge(this);}catch(Exception|LinkageError error){bagPages=null;getLogger().severe("아공간 배낭 초기화 실패 (bag-pages.yml·DB 확인): "+error.getMessage());}

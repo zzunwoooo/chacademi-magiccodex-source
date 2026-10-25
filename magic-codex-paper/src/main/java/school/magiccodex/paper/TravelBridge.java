@@ -410,6 +410,8 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
     private void travel(Player p, String pointId, long op) {
         UUID id = p.getUniqueId();
         if (moves.containsKey(id)) { result(p, op, TravelProtocol.STAGE_FAILED, "이미 이동하는 중이에요"); return; }
+        String combat = combatRefusal(p);   // 메모 #91: 전투 중 지도 이동(공개·개인 지점·야생 스폰) 막기 — 마나·쿨 쓰기 전
+        if (combat != null) { result(p, op, TravelProtocol.STAGE_FAILED, combat); return; }
         var def = config.points().get(pointId);
         boolean free = def != null && def.spawn();   // 야생 스폰: no travel cooldown (owner 2026-10-24)
         String refusal = refusal(p, free);
@@ -456,6 +458,8 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
     String travelReturn(Player p, String server, String world) {
         UUID id = p.getUniqueId();
         if (moves.containsKey(id) || returning.contains(id)) return "이미 이동하는 중이에요";
+        String combat = combatRefusal(p);   // 메모 #91 (ReturnTicketBridge 가 아이템을 쓰기 전에 먼저 검사함)
+        if (combat != null) return combat;
         String refusal = refusal(p);
         if (refusal != null) return refusal;
         var verdict = TravelModel.destination(config, server, world, "", status, localWorlds(), System.currentTimeMillis());
@@ -501,6 +505,9 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
         CmdKit.notify(p, "system", "travel-death", "학교로 돌아가지 못했어요", why + " · 지도에서 직접 이동해 주세요", 0);
     }
 
+    /** 전투 중 이동 막기 (CombatTag, combat-lock.yml). 막으면 알림창에 알리고 문구, 아니면 null. */
+    private String combatRefusal(Player p) { var c = plugin.combatTag(); return c == null ? null : c.refuse(p); }
+
     private void refund(Player p) { if (mana != null && p.isOnline()) mana.refundPersonalTravel(p, config.rules().personalMana()); }
 
     /** Existing limits a move must not get around (owner: 기존 제한 우회 금지). null = fine. */
@@ -525,6 +532,11 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
         var pdef = config.points().get(point);
         String again = refusal(p, pdef != null && pdef.spawn() || RETURN_ID.equals(point) && deathMoves.contains(id));
         if (again != null) { abort(p, op, again); return; }
+        // 메모 #91: DB 확인 사이에 전투가 시작됐을 수 있어 한 번 더 (사망 귀환은 막지 않음). 개인 지점 마나는 아래에서 쓰므로 아직 안 씀.
+        if (!(RETURN_ID.equals(point) && deathMoves.contains(id))) {
+            String combat = combatRefusal(p);
+            if (combat != null) { abort(p, op, combat); return; }
+        }
         // 개인 지점으로 이동만 마나·쿨 (owner 2026-10-24: 지정은 무료; travel.yml rules.personal-travel-*); refunded if the move fails
         boolean charged = false;
         if (TravelProtocol.PERSONAL_ID.equals(point)) {
