@@ -9,13 +9,23 @@ import static org.junit.jupiter.api.Assertions.*;
 class DiscoveryTest {
     @TempDir Path dir;
     @Test void approvedDefinitionsLoadWithDottedKeysAndExactCropConjunction()throws Exception{
-        var d=new Definitions(Path.of("src/main/resources/discoveries.yml").toFile());assertEquals(143,d.spells.size());
+        var d=new Definitions(Path.of("src/main/resources/discoveries.yml").toFile());assertEquals(144,d.spells.size());
         var crop=d.spells.get("harvest_wind");assertEquals(3,crop.requirements().size());assertEquals(12,crop.requirements().get("break.young_wheat"));
         assertFalse(Definitions.meets(crop,Map.of("break.young_wheat",36d)));
         assertTrue(Definitions.meets(crop,Map.of("break.young_wheat",12d,"break.young_carrots",12d,"break.young_potatoes",12d)));
         assertEquals(.1,d.spells.get("cross_breeze").chance());assertEquals(1,d.spells.get("wind_push").chance());
         assertFalse(d.spells.get("falling_star").prerequisites().contains("magic.learned.falling_star"));assertEquals(31,d.spells.get("falling_star").prerequisites().size());
         assertEquals(4,d.spells.get("trajectory_acceleration").requirements().size());
+    }
+    @Test void spatialLeapRequiresOnePublicWaypointAndNoOtherProgress()throws Exception{
+        // Owner-approved travel-map rule (2026-10-24): one shared, public waypoint; not a personal point or wild spawn.
+        var d=new Definitions(Path.of("src/main/resources/discoveries.yml").toFile());
+        var leap=d.spells.get("spatial_leap");assertNotNull(leap);
+        assertEquals(Map.of("state.travel_waypoints",1d),leap.requirements());
+        assertEquals("magic.learned.spatial_leap",leap.permission());assertEquals(1d,leap.chance());assertTrue(leap.prerequisites().isEmpty());
+        assertFalse(Definitions.meets(leap,Map.of()));assertFalse(Definitions.meets(leap,Map.of("state.travel_waypoints",0d)));
+        assertFalse(Definitions.meets(leap,Map.of("state.personal_waypoints",1d,"visit.wild_spawn",1d)));
+        assertTrue(Definitions.meets(leap,Map.of("state.travel_waypoints",1d)));assertTrue(Definitions.meets(leap,Map.of("state.travel_waypoints",2d)));
     }
     @Test void invalidDefinitionCannotGrantUnconditionally()throws Exception{
         var p=dir.resolve("bad.yml");Files.writeString(p,"spells:\n  test:\n    name: Test\n    permission: magic.test\n    icon: magic:test.png\n    requirements: {}\n");assertThrows(Exception.class,()->new Definitions(p.toFile()));

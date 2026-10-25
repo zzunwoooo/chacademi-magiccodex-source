@@ -13,7 +13,11 @@ class EventIndexTest {
         assertEquals(50d,d.spells.get("frost_rupture").requirements().get("hit.snowball_monster"));
         assertEquals(5d,d.spells.get("quiet_mooring").requirements().get("place.boat"));
         assertEquals(List.of("falling_star"),d.meta.stream().map(Definitions.Spell::id).toList());
-        assertEquals(Set.of("aerial_haul","crimson_breath","guardian_oath"),new HashSet<>(d.stateOnly.stream().map(Definitions.Spell::id).toList()));
+        // Travel's new state-only condition must not broaden any of the reviewed native event routes.
+        assertEquals(Set.of("aerial_haul","crimson_breath","guardian_oath"),new HashSet<>(d.stateOnly.stream().map(Definitions.Spell::id).filter(id->!id.equals("spatial_leap")).toList()));
+        assertEquals(List.of("spatial_leap"),d.index.get("state.travel_waypoints").stream().map(Definitions.Spell::id).toList());
+        assertTrue(d.stateOnly.stream().anyMatch(spell->spell.id().equals("spatial_leap")));
+        assertFalse(d.meta.stream().anyMatch(spell->spell.id().equals("spatial_leap")));
     }
     @Test void full299CatalogCanBeIndexedWithoutBroadcastingAnEvent()throws Exception{
         var yaml=new StringBuilder("spells:\n");

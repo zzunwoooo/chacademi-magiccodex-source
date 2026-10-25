@@ -96,8 +96,8 @@ final class TravelRelay {
                     default -> TravelLinkProtocol.OTHER;
                 };
                 // still on the origin (a refused connect keeps the player there): tell it, so the ticket is FAILED
-                var now = p.getCurrentServer().orElse(null);
-                if (now != null) fail(p, now, t, reason, why);
+                var currentServer = p.getCurrentServer().orElse(null);
+                if (currentServer != null) fail(p, currentServer, t, reason, why);
             }));
         }));
     }
