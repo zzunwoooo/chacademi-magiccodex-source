@@ -47,7 +47,7 @@ class TitleAwardsTest {
         assertTrue(awards.affinityKeys(Map.of("ria",29)).isEmpty());
         assertEquals(Map.of("fishing.big","suffix_big"),awards.fishKeys("carp",100));assertTrue(awards.fishKeys("carp",99.9).isEmpty());
         var preset=awards.preset(UUID.randomUUID(),"junwoo");assertNotNull(preset);assertEquals(1,preset.house());assertEquals(List.of("feather_step"),preset.spells());
-        assertThrows(IllegalArgumentException.class,()->TitleAwards.parse(yaml("players:\n  x: {house: 없는곳}\n"),yaml("")));
+        assertThrows(IllegalArgumentException.class,()->TitleAwards.parse(yaml(""),yaml("players:\n  x: {house: 없는곳}\n")));
     }
 
     @Test void bundledFilesParseAndPointAtRegisteredTitles()throws Exception{

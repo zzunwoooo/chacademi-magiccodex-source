@@ -60,6 +60,10 @@ class TutorialShopTest {
             assertTrue(store.bought(owner, Set.of(a), started).isEmpty());       // 대상이 되기 전 구매는 세지 않는다
             var paid = store.prepare(owner, UUID.randomUUID().toString(), "tut", rev, a, 2, false, "s");
             store.state(paid.id(), "prepared", "paying"); store.state(paid.id(), "paying", "paid");
+            assertEquals(Map.of(a, 2), store.bought(owner, Set.of(a), started));  // paid already counts before delivery
+            assertThrows(IllegalStateException.class, () -> store.prepare(owner, UUID.randomUUID().toString(), "tut", rev, a, 5, false, "s"),
+                    "an unfinished paid order must continue to block a second purchase");
+            store.state(paid.id(), "paid", "done");
             var failed = store.prepare(owner, UUID.randomUUID().toString(), "tut", rev, a, 5, false, "s");
             store.state(failed.id(), "prepared", "failed");
             assertEquals(Map.of(a, 2), store.bought(owner, Set.of(a), started));  // 결제 안 된(failed) 구매는 빠진다

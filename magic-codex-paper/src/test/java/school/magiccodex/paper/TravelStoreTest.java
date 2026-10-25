@@ -18,7 +18,14 @@ import org.junit.jupiter.api.io.TempDir;
 class TravelStoreTest {
     @TempDir Path dir;
 
-    TravelStore store() { return new TravelStore(Logger.getLogger("travel-test"), dir, true, Runnable::run, () -> true); }
+    TravelStore store() throws Exception {
+        var store = new TravelStore(Logger.getLogger("travel-test"), dir, true, Runnable::run, () -> true);
+        // Finish this server's asynchronous schema/WAL setup before starting the next test server on the same SQLite file.
+        // MariaDB is mandatory in production; the local-only fixture must not race two journal-mode transitions.
+        assertNotNull(TravelStoreTest.<Set<String>>await(done -> store.unlocks(UUID.randomUUID(), done)));
+        assertTrue(store.ready());
+        return store;
+    }
     static <T> T await(Consumer<Consumer<T>> call) throws Exception {
         var f = new CompletableFuture<T>(); call.accept(f::complete); return f.get(10, TimeUnit.SECONDS);
     }
