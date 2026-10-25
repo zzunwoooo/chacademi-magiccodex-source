@@ -430,6 +430,33 @@ public final class DialogueService {
         // 상점 버튼 (예: 피피 "물건 좀 볼 수 있어요?", action: shop:pipi) = 대사 대신 대화창을 닫고 상점을 연다.
         // 스토리 단계 호출은 이 대화창보다 먼저 클릭을 가져가고(QuestEngine, 준비된 단계만), 튜토리얼 대상이면 Bridge 가
         // 일반 잡화점 대신 튜토리얼 재료 상점을 연다 — 그래서 여기서는 상점 ID 만 넘긴다.
+        // 수업 버튼 (교수 "수업 받으러 왔어요", action: lesson:<수업키>, 2026-10-26) = 대화창이 Bridge 의 수업 선택 창으로 바뀐다.
+        if (buttonId != null) {
+            for (Button x : s.character().buttonsOr(st.buttons)) {
+                if (!x.id().equals(buttonId) || x.lesson() == null) {
+                    continue;
+                }
+                s.lastActivity = now;
+                if (!plugin.link().lessons()) {
+                    s.view.info(p, s, "(지금은 수업을 열 수 없어요. 잠시 뒤 다시 말을 걸어 주세요)");
+                    plugin.getLogger().warning("[ChacaNPC] 수업 버튼 " + s.character().id() + "/" + x.id() + ": MagicCodexBridge 수업 연결(openLesson)이 없음");
+                    return;
+                }
+                Integer npcId = s.citizensId();
+                org.bukkit.entity.Entity anchor = null;
+                if (npcId != null) {
+                    var npc = net.citizensnpcs.api.CitizensAPI.getNPCRegistry().getById(npcId);
+                    if (npc != null && npc.isSpawned()) {
+                        anchor = npc.getEntity();
+                    }
+                }
+                close(p, false);
+                if (!plugin.link().openLesson(p, x.lesson(), anchor)) {
+                    plugin.getLogger().warning("[ChacaNPC] 수업 버튼 " + x.lesson() + " 을(를) 열지 못함");
+                }
+                return;
+            }
+        }
         if (buttonId != null) {
             for (Button x : s.character().buttonsOr(st.buttons)) {
                 if (!x.id().equals(buttonId) || x.shop() == null) {

@@ -48,6 +48,12 @@ public final class Defs {
             if (id.equals("물고기판매소") || id.equals("@fish_shop")) return "물고기판매소"; // 물고기 판매소 (셀마 등)
             return id.matches("[A-Za-z0-9_:.-]{1,64}") ? id : null;
         }
+        /** "lesson:<수업키>" 이면 수업 키 (MagicCodexBridge lessons.yml, 2026-10-26 교수 "수업 받으러 왔어요"), 아니면 null. */
+        public String lesson() {
+            if (!action.startsWith("lesson:")) return null;
+            String id = action.substring(7).strip();
+            return id.matches("[a-z0-9_-]{1,48}") ? id : null;
+        }
         public boolean aiReply() { return action.isEmpty(); }
     }
 }

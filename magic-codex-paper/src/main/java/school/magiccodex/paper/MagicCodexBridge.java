@@ -114,6 +114,9 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private FishingBridge fishing;
     private FishShopBridge fishShop;
     private BookBridge books;
+    private LessonBridge lessons;
+    /** 수업 (NPC 대화창 수업 버튼 → NpcSocialFacade.openLesson). 없으면 null. */
+    LessonBridge lessonBridge(){return lessons;}
     private TravelBridge travel;
     private MileageBridge mileage;
     private FishTankBridge fishTank;
@@ -243,6 +246,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(fishing!=null)try{fishShop=new FishShopBridge(this,fishing);}catch(Exception error){getLogger().severe("물고기 판매소 초기화 실패 (fish-shop.yml 확인): "+error.getMessage());}
         if(fishing!=null){fishTank=new FishTankBridge(this,fishing,fishShop);fishing.tankWindow(fishTank);if(mana!=null)mana.fishTrapCast=fishTank::cast;}
         try{books=new BookBridge(this);}catch(Exception error){getLogger().severe("책 읽기 초기화 실패 (books.yml·book-blocks.yml 확인): "+error.getMessage());}
+        if(books!=null&&dialogues!=null)try{lessons=new LessonBridge(this,books,dialogues);}catch(Exception error){getLogger().severe("수업 초기화 실패 (lessons.yml 확인): "+error.getMessage());}
         try{travel=new TravelBridge(this);}catch(Exception error){getLogger().severe("지도 이동 초기화 실패 (travel.yml 확인): "+error.getMessage());}
         if(travel!=null&&mana!=null){mana.spatialLeapCast=travel::castSpatialLeap;travel.mana(mana);}
         if(travel!=null)try{new ReturnTicketBridge(this,travel);}catch(Exception error){getLogger().severe("귀환권 초기화 실패 (return-ticket.yml 확인): "+error.getMessage());}

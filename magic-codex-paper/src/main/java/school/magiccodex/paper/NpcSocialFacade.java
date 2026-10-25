@@ -36,6 +36,16 @@ public final class NpcSocialFacade {
         return shops != null && shops.openFromNpc(player, shopId, anchor);
     }
 
+    /**
+     * (추가 메서드, API_VERSION 그대로) NPC 대화창의 수업 버튼 (action: lesson:&lt;수업키&gt;, 2026-10-26).
+     * 대화창이 "어떤 수업 들을래?" 선택 창으로 바뀌고, 고른 수업이 책 창으로 열린다 (lessons.yml · books.yml). 메인 스레드에서 호출.
+     */
+    public boolean openLesson(Player player, String lessonId, Entity anchor) {
+        var plugin = org.bukkit.plugin.java.JavaPlugin.getPlugin(MagicCodexBridge.class);
+        var lessons = plugin.lessonBridge();
+        return lessons != null && lessons.open(player, lessonId, anchor);
+    }
+
     public int apiVersion() {
         return API_VERSION;
     }

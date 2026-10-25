@@ -174,6 +174,11 @@ final class BookBridge implements Listener, PluginMessageListener, AutoCloseable
         return true;
     }
 
+    /** 책 정의 (없으면 null). 수업(LessonBridge)이 제목·필요 지능을 보여 줄 때 쓴다. */
+    Book book(String id) { return books.get(id); }
+    /** 이 플레이어가 명령까지 실행된(=끝까지 읽은) 책 ID 들. 실패하면 null. 메인 스레드에서 done. */
+    void readBooks(UUID player, java.util.function.Consumer<Set<String>> done) { store.list(player, rows -> done.accept(rows == null ? null : rows.keySet())); }
+
     /** 지능 = 스탯창과 같은 값 (MagicCodexBridge.magicPower: 기본 + 장신구 + 손에 든 마법봉). 0 이하 요구치는 제한 없음. */
     static boolean intelligenceMet(int required, double intelligence) { return required <= 0 || intelligence >= required; }
 

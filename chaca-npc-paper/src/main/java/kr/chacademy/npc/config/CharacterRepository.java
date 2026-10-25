@@ -213,7 +213,7 @@ public final class CharacterRepository {
                 break;
             }
             var button = new kr.chacademy.npc.core.Defs.Button(b, l, action == null ? "" : action.toString());
-            if (!button.aiReply() && button.shop() == null) {
+            if (!button.aiReply() && button.shop() == null && button.lesson() == null) {
                 log.warning("[ChacaNPC] " + id + " 의 버튼 " + b + " 의 action 을 알 수 없음 (" + button.action() + ") — 일반 대사 버튼으로 씁니다");
                 button = new kr.chacademy.npc.core.Defs.Button(b, l);
             }

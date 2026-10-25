@@ -28,4 +28,13 @@ class ButtonActionTest {
         assertNull(new Button("s", "x", "command:say hi").shop());
         assertEquals("", new Button("s", "x", null).action());
     }
+
+    @Test void lessonActionParsesLessonKey() {
+        var b = new Button("lesson", "수업 받으러 왔어요", "lesson:elena");
+        assertFalse(b.aiReply());
+        assertNull(b.shop());
+        assertEquals("elena", b.lesson());
+        assertNull(new Button("s", "x", "lesson:Bad Key").lesson());
+        assertNull(new Button("s", "x", "shop:pipi").lesson());
+    }
 }

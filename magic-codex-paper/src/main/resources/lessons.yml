@@ -1,0 +1,29 @@
+# 수업 (오픈 전 메모 #68·#70, 2026-10-26)
+#
+# 교수 NPC 대화창의 버튼으로 엽니다. ChacaNPC 캐릭터 파일(npcs/<교수>.yml) buttons 에:
+#   - { id: lesson, label: "수업 받으러 왔어요", action: "lesson:elena" }      ← elena = 아래 수업 키
+# 누르면 대화창이 바뀌어 "어떤 수업 들을래?" 와 함께 그 교수의 수업이 전부 선택지로 나옵니다
+# (수업 이름 · 필요 지능 · ✔ 들음 / (지능 부족)). 한 화면에 4개씩, 넘으면 이전/다음.
+#
+# 수업 내용 = books.yml 의 책 하나:
+#   title          책 제목 (수업 이름을 따로 안 적으면 선택지에 이 제목)
+#   pages          수업 내용 (책 UI 로 펼쳐짐)
+#   required-intelligence  필요 지능 (0 = 제한 없음). 모자라면 목록에 (지능 부족), 고르면 교수가 locked 대사로 막음
+#   commands       끝까지 읽고 닫을 때 실행 (플레이어당 평생 1번, 학교·야생 공유). 예:
+#                    - "lp user {player} permission set magic.learned.<마법ID> true"
+#                  commands 가 있어야 "✔ 들음" 이 표시됩니다.
+# 이미 들은 수업도 다시 펼쳐 볼 수 있어요 (명령은 다시 실행 안 됨).
+# 고친 뒤: /서버관리 새로고침 책 → /서버관리 새로고침 수업.  확인: /컨텐츠관리 수업 목록 · /컨텐츠관리 수업 열기 <키>
+#
+# 예시)
+# lessons:
+#   elena:
+#     teacher: 엘레나 교수            # 대화창 이름
+#     portrait: elena-neutral         # 대화창 일러스트 ID (스토리 대화와 같은 이름)
+#     ask: "오, 수업 들으러 왔구나! 오늘은 어떤 수업 들을래?"
+#     locked: "음… 이 수업은 아직 조금 어려울 거야. 지능을 더 키워서 오렴."
+#     all-done: "벌써 내 수업은 다 들었구나! 언제든 다시 펼쳐 봐도 좋아."
+#     classes:
+#       - { book: lesson_elena_1, name: "마법 이론 기초" }
+#       - { book: lesson_elena_2, name: "원소의 이해" }
+lessons: {}

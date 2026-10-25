@@ -221,6 +221,20 @@ public final class MagicCodexLink implements Listener {
         }
     }
 
+    /** 이 Bridge 가 NPC 대화창에서 수업 열기(openLesson)를 지원하는지. */
+    public boolean lessons() {
+        return facade != null && methods.containsKey("openLesson");
+    }
+
+    /** NPC 대화창 수업 버튼 → Bridge 가 "어떤 수업 들을래?" 선택 창을 연다. false = 열지 못함. */
+    public boolean openLesson(Player player, String lessonId, org.bukkit.entity.Entity anchor) {
+        try {
+            return Boolean.TRUE.equals(call("openLesson", player, lessonId, anchor));
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return false;
+        }
+    }
+
     public boolean questOfferable(Player player, String questId) {
         try {
             return Boolean.TRUE.equals(call("questOfferable", player, questId));

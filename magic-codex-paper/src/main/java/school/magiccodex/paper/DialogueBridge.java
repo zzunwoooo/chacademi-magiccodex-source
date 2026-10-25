@@ -59,6 +59,8 @@ final class DialogueBridge implements Listener,PluginMessageListener,AutoCloseab
     boolean claimed(int id){try{return claimed.test(id);}catch(RuntimeException e){return false;}}
     private static final class Session {
         final String token=UUID.randomUUID().toString();final DialogueDefinition definition;final boolean preview;final Entity anchor;boolean journal;
+        /** 코드가 만든 선택 창 (수업 고르기 등, openMenu). 다음 장면이 없는 선택지를 고르면 부른다. */
+        java.util.function.BiFunction<Player,String,String> pick;
         /** 이 세션을 연 시점의 공개본 revision (미리보기·기록 보기는 빈 값). */
         final String revision;
         DialogueStore.State state;String node;int sequence;long expires=System.currentTimeMillis()+300000;
@@ -171,6 +173,7 @@ final class DialogueBridge implements Listener,PluginMessageListener,AutoCloseab
             if(!s.preview&&!s.journal){var published=catalog.get(s.definition.id());if(published==null||!published.enabled()||!revisions.getOrDefault(published.id(),"").equals(s.revision)||(!published.permission().isEmpty()&&!p.hasPermission(published.permission()))){end(p,s,"대화가 수정되었습니다. 다시 열어 주세요.");return;}}
             var n=s.definition.nodes().get(s.node);var choice=n.choices().stream().filter(c->c.id().equals(r.choice())).findFirst().orElse(null);
             if(choice==null||!allowed(p,s,n.conditions())||!allowed(p,s,choice.conditions())){send(p,s,"선택 조건을 확인해 주세요.");return;}
+            if(s.pick!=null&&choice.next().isEmpty()){String m;try{m=s.pick.apply(p,choice.id());}catch(RuntimeException e){plugin.getLogger().warning("선택 창 처리 오류: "+e);m="";}if(m==null||m.isEmpty())end(p,s,"");else send(p,s,m);return;}
             if(s.preview||s.journal){advance(p,s,choice);return;}
             for(String a:choice.actions())if(a.startsWith("custom ")&&!handlers.containsKey(a.split(" ",3)[1])){send(p,s,"이 대화의 동작을 관리자에게 확인해 주세요.");return;}
             // (a) 받을 수 없는 의뢰가 들어 있으면 진행 상태를 바꾸기 전에 멈추고 이유를 알려 준다.
@@ -370,6 +373,20 @@ final class DialogueBridge implements Listener,PluginMessageListener,AutoCloseab
         for(int page=0;page<pages;page++){var choices=new ArrayList<DialogueDefinition.Choice>();if(page>0)choices.add(new DialogueDefinition.Choice("previous","이전 이야기","p"+(page-1),List.of(),List.of()));if(page+1<pages)choices.add(new DialogueDefinition.Choice("next","다음 이야기","p"+(page+1),List.of(),List.of()));String text=rows.isEmpty()?"아직 시작한 이야기가 없습니다.":String.join("\n\n",rows.subList(page*4,Math.min(rows.size(),page*4+4)));nodes.put("p"+page,new DialogueDefinition.Node("이야기 기록","",text,List.of(),List.copyOf(choices)));}
         var d=new DialogueDefinition("journal","메인 퀘스트","p0",true,"",List.of(),Map.copyOf(nodes),"","",Map.of());var session=new Session(d,state,false,null,"");session.journal=true;sessions.put(p.getUniqueId(),session);send(p,session,"");
     },m->CodexCommands.warn(p,"dialogue",m));}
+    /**
+     * 코드가 만든 선택 창 (2026-10-26, 수업 고르기). 기존 대화창 그대로, 진행 기록·동작 없이 선택만 받는다.
+     * pick(플레이어, 선택지 id): 빈 문자열/null = 창을 닫음, 그 밖 = 그 문구를 아래에 띄우고 창은 그대로.
+     * 다음 장면(next)이 있는 선택지(페이지 넘기기 등)는 pick 을 부르지 않고 그 장면으로 간다. 장면당 선택지 6개까지.
+     */
+    void openMenu(Player p,Entity anchor,String title,String start,Map<String,DialogueDefinition.Node> nodes,java.util.function.BiFunction<Player,String,String> pick){
+        if(!ready(p)||!gate(p))return;
+        if(!p.getListeningPluginChannels().contains(DialogueProtocol.RESPONSE)){CodexCommands.warn(p,"dialogue","대화를 열려면 최신 MagicCodex 모드가 필요해요");return;}
+        work(()->store.state(p.getUniqueId()),state->{
+            if(!current(p)||!near(p,anchor))return;
+            var d=new DialogueDefinition("menu",title,start,true,"",List.of(),Map.copyOf(nodes),"","",Map.of());
+            var session=new Session(d,state,false,anchor,"");session.journal=true;session.pick=pick;sessions.put(p.getUniqueId(),session);send(p,session,"");
+        },m->CodexCommands.warn(p,"dialogue",m));
+    }
     private void refresh(){work(()->store.snapshot(null),this::install,m->plugin.getLogger().warning(m));}
 
     private interface Job<T>{T run()throws Exception;}
