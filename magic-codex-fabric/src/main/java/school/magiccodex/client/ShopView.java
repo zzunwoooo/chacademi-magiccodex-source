@@ -60,11 +60,28 @@ final class ShopView {
         void popLayer();
     }
 
-    /** One visible product. buy/sell are "" when that trade is off for the product. */
+    /**
+     * One visible product. buy/sell are "" when that trade is off for the product.
+     * cost (교환 상품, 2026-10-26): 돈 대신 내는 아이템 이름 — 그때 buy 는 1개당 그 아이템 개수, 가격 자리는 "이름 ×개수"
+     * 와 그 아이템 아이콘(Canvas.item 에 id "cost:<상품 id>" 줄)으로 보인다. "" = 보통 상품(G).
+     */
     record Row(String id, String name, List<String> lore, String buy, String sell, int owned,
-               boolean canBuy, boolean canSell, Object icon) {
+               boolean canBuy, boolean canSell, Object icon, String cost) {
+        Row(String id, String name, List<String> lore, String buy, String sell, int owned, boolean canBuy, boolean canSell, Object icon) {
+            this(id, name, lore, buy, sell, owned, canBuy, canSell, icon, "");
+        }
         boolean buys() { return !buy.isEmpty(); }
         boolean sells() { return !sell.isEmpty(); }
+        boolean exchange() { return !cost.isEmpty(); }
+        /** 비용 아이템 아이콘을 그릴 때 Canvas.item 에 넘기는 줄. */
+        Row costRow() { return new Row("cost:" + id, cost, List.of(), "", "", 0, false, false, null, ""); }
+    }
+    /** 구매 쪽 가격 글자: 보통 "1,200 G", 교환 상품은 "아티팩트 조각 ×10". */
+    static String buyText(Row r, String amount) { return r.exchange() ? r.cost() + " ×" + money(amount) : money(amount) + " G"; }
+    /** 가격 앞 동그라미 자리: 보통은 동전, 교환 상품은 비용 아이템 아이콘 (같은 자리·같은 크기). */
+    static void priceMark(Canvas c, Row r, boolean exchange, float cx, float cy, float diameter) {
+        if (exchange) c.item(r.costRow(), cx - diameter / 2, cy - diameter / 2, diameter);
+        else coin(c, cx, cy, diameter);
     }
 
     /** Everything one frame needs; built by the screen from the server response. */
@@ -277,10 +294,10 @@ final class ShopView {
         float cx = x + CARD_W / 2;
         fitted(c, r.name(), cx, y + CARD_NAME_DY, 21.7f, CARD_W - 24, WHITE, Face.BOLD, true);
         boolean sells = cardSells(m, r);
-        String v = money(sells ? r.sell() : r.buy()) + " G";
+        String v = sells ? money(r.sell()) + " G" : buyText(r, r.buy());
         float size = shrink(c, v, 17.3f, Face.BOLD, CARD_W - 70);
         float vw = c.width(v, size, Face.BOLD), total = 20 + 14 + vw, left = cx - total / 2, py = y + CARD_PRICE_DY;
-        coin(c, left + 10, py, 20);
+        priceMark(c, r, !sells && r.exchange(), left + 10, py, 20);
         c.text(v, left + 34, py + 1, size, WHITE, Face.BOLD, false);
     }
 
@@ -305,7 +322,7 @@ final class ShopView {
             if (lore) fitted(c, r.lore().getFirst(), F_TEXT_X, F_DESC_CY, 17.2f, F_TEXT_MAX, MUTED, Face.BODY, false);
             c.text("구매", F_LABEL_X, F_BUY_CY, 16.8f, MUTED, Face.LABEL, false);
             c.text("판매", F_LABEL_X, F_SELL_CY, 16.8f, MUTED, Face.LABEL, false);
-            footPrice(c, r.buys() ? money(r.buy()) + " G" : "—", F_BUY_CY);
+            footPrice(c, r.buys() ? buyText(r, r.buy()) : "—", F_BUY_CY);
             footPrice(c, r.sells() ? money(r.sell()) + " G" : "—", F_SELL_CY);
         }
         c.fill(F_DIV1, 820, 1.5f, 76, FOOT_DIVIDER);
@@ -320,8 +337,11 @@ final class ShopView {
         c.fill(F_DIV3, 820, 1.5f, 76, FOOT_DIVIDER);
 
         c.text("합계", SUM_LABEL_X, SUM_LABEL_CY, 16.2f, SUM, Face.LABEL, false);
-        coin(c, SUM_COIN_X, 868, 26);
-        String sum = m.total().isEmpty() ? "—" : money(m.total()) + " G";
+        Row chosen = m.chosen();
+        boolean costSum = chosen != null && chosen.exchange() && !m.selling();
+        priceMark(c, chosen, costSum, SUM_COIN_X, 868, 26);
+        String sum = m.total().isEmpty() ? "—" : costSum ? buyText(chosen, m.total()) : money(m.total()) + " G";
+
         c.text(sum, SUM_X, SUM_CY, shrink(c, sum, 25.5f, Face.BOLD, SUM_MAX), SUM, Face.BOLD, false);
 
         float[] sw = switchBox();

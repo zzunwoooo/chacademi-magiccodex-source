@@ -54,6 +54,8 @@ final class ShopAdminBridge implements PluginMessageListener,Listener,AutoClosea
   int offset=r.offset()<matching.size()?r.offset():0,index=offset,size=0;var products=new ArrayList<Product>();
   // Budget for UTF-8 shop/title metadata plus the original, unmodified ItemStack previews.
   for(;index<matching.size()&&products.size()<20;index++){var p=matching.get(index);int cost=p.bytes().length+700;if(p.bytes().length>ShopAdminProtocol.MAX_PREVIEW)throw new IllegalStateException("기존 상품 데이터가 UI 허용 크기를 초과합니다.");if(size+cost>38000&&!products.isEmpty())break;size+=cost;products.add(new Product(p.id(),p.name(),p.buy(),p.sell(),p.category(),p.sort(),p.bytes()));}
+  // 교환 상품(#98)은 편집 창에 따로 칸이 없어 안내 줄로만 보여 준다. 바꾸기: /상점관리 교환 <상점> <상품> <아이템키> <개수|없음>
+  if(message.isEmpty()){var ex=shop.products().stream().filter(ShopStore.Product::exchange).map(p->p.name()+" ← "+p.costItem()+" ×"+p.costCount()).toList();if(!ex.isEmpty()){String m="교환 상품(판매 없음, 구매가·판매가 무시): "+String.join(", ",ex);message=m.length()>240?m.substring(0,237)+"…":m;}}
   if(sorted.size()>shops.size()&&message.isEmpty())message="상점 목록은 패킷 크기에 맞춰 일부 표시합니다. /상점관리 편집 <상점> 으로 직접 열 수 있습니다.";
   return new Response(r.sequence(),session.token,id,shop.revision(),message,shops,List.copyOf(products),offset,index<matching.size()?index:-1);
  }

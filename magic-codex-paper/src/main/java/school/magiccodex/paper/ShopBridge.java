@@ -9,12 +9,15 @@ import school.magiccodex.protocol.ShopProtocol;import school.magiccodex.protocol
  * 거래 상태 (shop_orders.state):
  *  구매: prepared -> paying -> paid -> done            (실패: failed)
  *  판매: prepared -> sale_removed -> credit_pending -> done (실패: failed)
+ *  교환: prepared -> paid -> done  (2026-10-26, #98: 돈 대신 비용 아이템. 비용 회수 + 영수증 shop_sale_<id> 를 같은 틱에 기록·저장한 뒤 paid)
  *  관리자 환불: (미완료 상태) -> refunding -> failed
  * 부작용(출금/아이템 회수/입금)은 항상 "그 직전 상태가 DB에 기록된 뒤"에만 실행한다. 그래서
  *  - 구매 prepared            : 출금 없음이 보장 -> 어느 서버에서든 자동 실패 처리
  *  - 구매 paid                : 우편 발송은 source key 로 멱등 -> 자동 재발송
  *  - 판매 prepared (이 서버)  : 아이템 회수와 PDC 영수증(shop_sale_<id>)이 같은 틱에 기록됨 -> 영수증 유무로 판정
  *  - 판매 sale_removed (이 서버): 입금은 credit_pending 기록 뒤에만 실행 -> 자동으로 이어서 입금
+ *  - 교환 prepared (이 서버)  : 판매처럼 영수증 유무로 판정 (있으면 paid 로 이어서 우편, 없으면 실패). 서버 시작 때 자동 실패 처리하지 않는다
+ *  - 교환 paid                : 구매 paid 와 같음 (우편 멱등 재발송)
  *  - 구매 paying / 판매 credit_pending / refunding / origin 없는 옛 기록 : 판정 불가 -> 관리자 처리(/유저관리 <닉네임> 거래기록 · /상점관리 거래처리)
  */
 final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
@@ -33,7 +36,9 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
  private final Map<String,List<String>> listed=new HashMap<>();
  /** 튜토리얼 전용 재료 상점 (메모 #12): 설정, 지금 그 상점을 연 대상 유저 → 구매를 세기 시작한 시각. */
  private TutorialShop.Config tutorial=TutorialShop.Config.OFF;private final Map<UUID,Long> tutorialOpen=new HashMap<>();
- ShopBridge(MagicCodexBridge plugin)throws Exception{this.plugin=plugin;var dir=plugin.getDataFolder().toPath();origin=Files.readString(dir.resolve("mailbox-origin.txt")).strip();try{store=io.submit(()->new ShopStore(ShopMailboxDatabaseSettings.load(dir),dir.resolve("shops.db"))).get(15,TimeUnit.SECONDS);}catch(Exception e){io.shutdownNow();throw e;}
+ /** 교환 상품 비용 아이템 판정·견본 (ItemsAdder 는 선택). */
+ private final ItemsAdderItems itemsAdder;
+ ShopBridge(MagicCodexBridge plugin)throws Exception{this.plugin=plugin;itemsAdder=new ItemsAdderItems(plugin.getLogger());var dir=plugin.getDataFolder().toPath();origin=Files.readString(dir.resolve("mailbox-origin.txt")).strip();try{store=io.submit(()->new ShopStore(ShopMailboxDatabaseSettings.load(dir),dir.resolve("shops.db"))).get(15,TimeUnit.SECONDS);}catch(Exception e){io.shutdownNow();throw e;}
   try{loadTutorial();}catch(Exception e){plugin.getLogger().severe("tutorial-shop.yml 을 읽지 못해 튜토리얼 재료 상점을 끕니다: "+e.getMessage());}catalog=io.submit(store::catalog).get(10,TimeUnit.SECONDS);bindings=io.submit(()->store.bindings(origin)).get(10,TimeUnit.SECONDS);version=io.submit(store::version).get(10,TimeUnit.SECONDS);
   try{int closed=io.submit(()->store.failPrepared(origin)).get(10,TimeUnit.SECONDS);if(closed>0)plugin.getLogger().info("Shop recovery: 출금 전 구매 기록 "+closed+"건을 실패로 닫았습니다.");}catch(Exception e){plugin.getLogger().warning("Shop recovery at startup skipped: "+e.getClass().getSimpleName());}
   Bukkit.getMessenger().registerIncomingPluginChannel(plugin,ShopProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,ShopProtocol.RESPONSE);Bukkit.getPluginManager().registerEvents(this,plugin);Bukkit.getServicesManager().register(ShopBridge.class,this,plugin,org.bukkit.plugin.ServicePriority.Normal);CmdKit.register(plugin,"/상점관리·/유저관리 거래기록",this::commands);citizens();refreshCompletionKeys();Bukkit.getScheduler().runTaskTimer(plugin,this::refresh,100,100);for(Player p:Bukkit.getOnlinePlayers())recoverLater(p,0);
@@ -57,6 +62,21 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
  private ItemStack sample(ShopStore.Product product){return plugin.coreAppearance(samples.computeIfAbsent(product.id(),k->ItemStack.deserializeBytes(product.bytes())));}
  private int owned(Player p,ItemStack sample){int n=0;for(var i:p.getInventory().getStorageContents())if(i!=null&&plugin.coreSimilar(i,sample))n+=i.getAmount();return n;}
  private NamespacedKey saleKey(String order){return new NamespacedKey(plugin,"shop_sale_"+order.replace("-",""));}
+ // ---- 교환 상품 (2026-10-26, #98) ----
+ /** 교환 비용으로 칠 수 있는 칸의 키: ItemsAdder 아이템이면 그 키, 꾸밈 없는(메타 없는) 바닐라 아이템이면 minecraft:id, 그 밖은 null(세지 않음). */
+ private String costKey(ItemStack i){if(i==null||i.getType().isAir())return null;String ia=itemsAdder.idOf(i);if(ia!=null)return ia;return i.hasItemMeta()?null:i.getType().getKey().toString();}
+ private String[] costKeys(ItemStack[] c){var out=new String[c.length];for(int i=0;i<c.length;i++)out[i]=costKey(c[i]);return out;}
+ private static int[] amounts(ItemStack[] c){var out=new int[c.length];for(int i=0;i<c.length;i++)out[i]=c[i]==null||c[i].getType().isAir()?0:c[i].getAmount();return out;}
+ /** 비용 아이템을 지금 셀 수 있는가: 바닐라는 언제나, ItemsAdder 키는 ItemsAdder 가 켜져 있을 때만. */
+ private boolean costReady(String key){return key.startsWith("minecraft:")||itemsAdder.available();}
+ /** 비용 아이템 1개짜리 견본 (카탈로그 한 판마다 캐시). 만들 수 없으면 null. */
+ private ItemStack costSample(String key){var cached=samples.get("cost:"+key);if(cached!=null)return cached;ItemStack made=null;
+  if(key.startsWith("minecraft:")){var m=Material.matchMaterial(key);if(m!=null&&m.isItem()&&!m.isAir())made=new ItemStack(m,1);}else made=itemsAdder.create(key,1);
+  if(made!=null)samples.put("cost:"+key,made);return made;}
+ private String costName(String key){var s=costSample(key);return s==null?key:AlchemyBridge.displayName(s);}
+ /** 비용 아이템 total 개를 우편 첨부용 묶음으로 (관리자 환불). 견본을 만들 수 없으면 null. */
+ private List<ItemStack> costStacks(String key,int total){var sample=costSample(key);if(sample==null)return null;var out=new ArrayList<ItemStack>();int left=total;while(left>0){var stack=sample.clone();stack.setAmount(Math.min(left,sample.getMaxStackSize()));left-=stack.getAmount();out.add(stack);}return out;}
+ private void clearReceipt(ShopStore.Order order){var live=Bukkit.getPlayer(order.owner());if(live!=null&&current(live)&&live.getPersistentDataContainer().has(saleKey(order.id()),PersistentDataType.BYTE)){live.getPersistentDataContainer().remove(saleKey(order.id()));live.saveData();}}
  /** NPC 대화창 상점 버튼 (ChacaNPC → NpcSocialFacade.openShop, 2026-10-25). 일반 NPC 클릭과 같은 open — 거리·튜토리얼 상점 분기 그대로. false = 아직 준비 안 됨(메시지는 open 이 알림). */
  boolean openFromNpc(Player p,String shop,Entity anchor){if(p==null||shop==null||shop.isBlank()||!p.isOnline())return false;open(p,shop,anchor);return true;}
  private void open(Player p,String input,Entity anchor){String id=ShopNpcTarget.canonical(input);if(!ready(p)||!near(p,anchor)||busy.contains(p.getUniqueId()))return;
@@ -81,13 +101,20 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
   var list=new ArrayList<Product>();String q=search.toLowerCase(Locale.ROOT);int bytes=0;boolean limited=false;
   // 인벤토리에 그 종류가 하나도 없으면 상품마다 36칸을 비교하지 않는다.
   var held=EnumSet.noneOf(Material.class);for(var i:p.getInventory().getStorageContents())if(i!=null)held.add(i.getType());
+  String[] invKeys=null;int[] invAmounts=null;/* 교환 비용 보유 수: 교환 상품이 있을 때만 한 번 센다 */
   for(var item:shop.products())if(item.name().toLowerCase(Locale.ROOT).contains(q)){
    // Keep the complete original serialized stack. Limit the catalogue page, never strip lore/components.
    // 실제로 쓰는 바이트(이름·ID·가격 UTF-8 + 숫자 칸)에 여유를 더해 계산한다. 개수 제한은 프로토콜 한도(256)만.
    byte[] preview=item.bytes();int cost=preview.length+item.name().getBytes(java.nio.charset.StandardCharsets.UTF_8).length+item.id().length()+item.buy().length()+item.sell().length()+64;
+   // 교환 상품: 비용 아이템 견본·이름·보유 수가 더 붙는다. 견본이 너무 크면 견본만 뺀다(이름·개수는 그대로).
+   byte[] costPreview=new byte[0];String costName="";int costHeld=0;
+   if(item.exchange()){var cs=costSample(item.costItem());if(cs!=null){byte[] b=cs.serializeAsBytes();if(b.length<=ShopProtocol.MAX_PREVIEW_BYTES)costPreview=b;}costName=costName(item.costItem());if(costName.length()>120)costName=costName.substring(0,120);if(costReady(item.costItem())){if(invKeys==null){var inv=p.getInventory().getStorageContents();invKeys=costKeys(inv);invAmounts=amounts(inv);}costHeld=ShopExchange.held(invKeys,invAmounts,item.costItem());}
+cost+=costPreview.length+costName.getBytes(java.nio.charset.StandardCharsets.UTF_8).length+24;}
    if(preview.length>ShopProtocol.MAX_PREVIEW_BYTES||bytes+cost>ShopProtocol.MAX_BYTES-4096||list.size()==256){limited=true;break;}
    ItemStack stack;try{stack=sample(item);}catch(RuntimeException e){continue;/* 읽을 수 없는 상품 데이터는 목록에서만 뺀다 */}
-   list.add(new Product(item.id(),item.name(),item.buy(),item.sell(),held.contains(stack.getType())?owned(p,stack):0,preview));bytes+=cost;
+   int have=held.contains(stack.getType())?owned(p,stack):0;
+   // 교환 상품은 buy = 1개당 비용 아이템 개수, sell = "" (판매 없음). 화면은 costCount>0 이면 "조각 ×10" 처럼 보인다.
+   list.add(item.exchange()?new Product(item.id(),item.name(),String.valueOf(item.costCount()),"",have,preview,costName,item.costCount(),costHeld,costPreview):new Product(item.id(),item.name(),item.buy(),item.sell(),have,preview));bytes+=cost;
   }
   if(limited&&message.isEmpty())message="검색으로 상품을 좁혀 주세요. 전체 아이템 정보를 유지해 목록을 제한합니다.";
   p.sendPluginMessage(plugin,ShopProtocol.RESPONSE,ShopProtocol.encode(new Response(sequence,s.token,shop.id(),shop.title(),shop.portrait(),shop.revision(),cash,message,List.copyOf(list),completedOperation,shownName(s,shop),shop.role())));
@@ -104,23 +131,37 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
   // 닫기는 거래 중·연속 요청 제한·거리와 상관없이 받는다 (세션만 지움). 튜토리얼 재료 구매 확인이 닫기에서 일어난다.
   if(r.action()==ShopProtocol.CLOSE){sessions.remove(p.getUniqueId());tutorialClosed(p,s.shop);return;}
   if(!near(p,s.anchor))return;long now=System.currentTimeMillis();if(busy.contains(p.getUniqueId())||now<limits.getOrDefault(p.getUniqueId(),0L))return;limits.put(p.getUniqueId(),now+200);s=new Session(p,s.token,r.sequence(),s.shop,s.anchor);sessions.put(p.getUniqueId(),s);if(r.action()==ShopProtocol.CLOSE){sessions.remove(p.getUniqueId());return;}if(r.action()==ShopProtocol.OPEN){send(p,s,r.sequence(),"",r.search());return;}trade(p,s,r);}
- private void trade(Player p,Session s,Request r){var shop=catalog.get(s.shop);var product=shop==null?null:shop.products().stream().filter(i->i.id().equals(r.product())).findFirst().orElse(null);if(product==null||shop.revision()!=r.revision()){send(p,s,r.sequence(),"상점 설정이 변경되었습니다. 다시 확인해 주세요.",r.search());return;}int quantity=ShopProtocol.quantity(r.quantity());boolean selling=r.action()==ShopProtocol.SELL;ItemStack sample;try{sample=sample(product);}catch(RuntimeException e){send(p,s,r.sequence(),"이 상품은 지금 거래할 수 없습니다. 관리자에게 알려 주세요.",r.search());return;}if(quantity>sample.getMaxStackSize()*9){send(p,s,r.sequence(),"한 거래의 우편 첨부 가능 수량을 초과했습니다.",r.search());return;}if(economy()==null){send(p,s,r.sequence(),"경제 서비스 연결이 필요합니다.",r.search());return;}var before=MailboxBridge.copy(p.getInventory().getStorageContents());var after=MailboxBridge.copy(before);if(selling){if(owned(p,sample)<quantity){send(p,s,r.sequence(),"판매할 아이템 수량이 부족합니다.",r.search());return;}int left=quantity;for(int i=0;i<after.length&&left>0;i++)if(after[i]!=null&&after[i].isSimilar(sample)){int n=Math.min(left,after[i].getAmount());left-=n;after[i].setAmount(after[i].getAmount()-n);if(after[i].getAmount()==0)after[i]=null;}}
+ private void trade(Player p,Session s,Request r){var shop=catalog.get(s.shop);var product=shop==null?null:shop.products().stream().filter(i->i.id().equals(r.product())).findFirst().orElse(null);if(product==null||shop.revision()!=r.revision()){send(p,s,r.sequence(),"상점 설정이 변경되었습니다. 다시 확인해 주세요.",r.search());return;}int quantity=ShopProtocol.quantity(r.quantity());boolean selling=r.action()==ShopProtocol.SELL;ItemStack sample;try{sample=sample(product);}catch(RuntimeException e){send(p,s,r.sequence(),"이 상품은 지금 거래할 수 없습니다. 관리자에게 알려 주세요.",r.search());return;}if(quantity>sample.getMaxStackSize()*9){send(p,s,r.sequence(),"한 거래의 우편 첨부 가능 수량을 초과했습니다.",r.search());return;}boolean exchange=product.exchange();if(!exchange&&economy()==null){send(p,s,r.sequence(),"경제 서비스 연결이 필요합니다.",r.search());return;}var before=MailboxBridge.copy(p.getInventory().getStorageContents());var after=MailboxBridge.copy(before);
+  // 교환 상품: 돈 대신 비용 아이템(개수 × 수량)을 인벤토리에서 낸다. 판매는 없다. 경제(Vault)는 필요 없다.
+  if(exchange){if(selling){send(p,s,r.sequence(),"교환 상품은 팔 수 없어요.",r.search());return;}if(!costReady(product.costItem())){send(p,s,r.sequence(),"아이템 정보를 확인할 수 없어 지금은 교환할 수 없어요.",r.search());return;}
+   int[] counts=amounts(after),left=ShopExchange.take(costKeys(after),counts,product.costItem(),ShopExchange.total(product.costCount(),quantity));
+   if(left==null){send(p,s,r.sequence(),costName(product.costItem())+"이(가) 부족합니다. ("+ShopExchange.total(product.costCount(),quantity)+"개 필요)",r.search());return;}
+   for(int i=0;i<after.length;i++)if(left[i]!=counts[i]){if(left[i]<=0)after[i]=null;else after[i].setAmount(left[i]);}}if(selling){if(owned(p,sample)<quantity){send(p,s,r.sequence(),"판매할 아이템 수량이 부족합니다.",r.search());return;}int left=quantity;for(int i=0;i<after.length&&left>0;i++)if(after[i]!=null&&after[i].isSimilar(sample)){int n=Math.min(left,after[i].getAmount());left-=n;after[i].setAmount(after[i].getAmount()-n);if(after[i].getAmount()==0)after[i]=null;}}
   UUID owner=p.getUniqueId();busy.add(owner);
   // 접수 단계(work): 대기열이 차 있으면 여기서 거절되고 아무 것도 바뀌지 않는다.
   work(owner,()->store.prepare(owner,r.operation(),s.shop,r.revision(),r.product(),quantity,selling,origin),order->{
-   if(!ready(p)||!near(p,s.anchor)||selling&&!MailboxBridge.same(before,p.getInventory().getStorageContents())){abort(order,List.of("prepared"),()->done(p,s,r,"접속/인벤토리가 변경되었습니다."));return;}
-   if(selling)sell(p,order,after,()->{audit(order,s.shop,sample);done(p,s,r,"판매가 완료되었습니다.",true);},m->done(p,s,r,m));else buy(p,s,r,order,sample);
+   if(!ready(p)||!near(p,s.anchor)||(selling||exchange)&&!MailboxBridge.same(before,p.getInventory().getStorageContents())){abort(order,List.of("prepared"),()->done(p,s,r,"접속/인벤토리가 변경되었습니다."));return;}
+   if(selling)sell(p,order,after,()->{audit(order,s.shop,sample);done(p,s,r,"판매가 완료되었습니다.",true);},m->done(p,s,r,m));
+   else if(exchange)exchange(p,order,after,()->{audit(order,s.shop,sample);done(p,s,r,"교환이 완료되었습니다. 우편함을 확인해 주세요.",true);},m->done(p,s,r,m));
+   else buy(p,s,r,order,sample);
   },message->done(p,s,r,message));
  }
  /** 부작용이 없었던 것이 확실한 기록을 실패로 닫는다. 이 기록마저 실패하면 prepared 는 다음에 자동으로 닫히고, paying 은 관리자 목록에 남으므로 무엇을 하면 되는지 로그에 적는다. */
  private void abort(ShopStore.Order order,List<String> from,Runnable then){must(order.owner(),()->store.move(order.id(),from,"failed"),v->then.run(),m->{if(from.contains("paying"))plugin.getLogger().severe("SHOP REVIEW order="+order.id()+" player="+order.owner()+": 돈·아이템은 움직이지 않았으나 실패 기록을 남기지 못했습니다. /상점관리 처리 "+order.id()+" 취소 로 닫으세요.");then.run();});}
  /** 운영 기록 (메모 #92): 끝까지 성공한 구매·판매만. sample = 거래한 아이템 한 개. */
  private static void audit(ShopStore.Order o,String shop,ItemStack sample){
-  boolean sell=o.mode().equals("sell");String item=sample==null?o.product():sample.getType().name();
-  AuditStats.add(o.owner(),sell?"상점판매":"상점구매",1);
-  AuditLog.log(o.owner(),AuditLog.상점,(sell?"판매":"구매")+" · "+o.title()+" · "+o.product()+" x"+o.quantity()+" · 합계 "+o.total(),
-   "방식",sell?"판매":"구매","상점",shop,"상점이름",o.title(),"상품",o.product(),"아이템",item,"수량",o.quantity(),"합계",o.total(),"거래번호",o.id());
+  boolean sell=o.mode().equals("sell");String item=sample==null?o.product():sample.getType().name();String kind=o.exchange()?"교환":sell?"판매":"구매";
+  AuditStats.add(o.owner(),"상점"+kind,1);
+  AuditLog.log(o.owner(),AuditLog.상점,kind+" · "+o.title()+" · "+o.product()+" x"+o.quantity()+" · "+(o.exchange()?"비용 "+o.cost()+" x"+o.total():"합계 "+o.total()),
+   "방식",kind,"상점",shop,"상점이름",o.title(),"상품",o.product(),"아이템",item,"수량",o.quantity(),"합계",o.total(),"비용아이템",o.cost(),"거래번호",o.id());
  }
+ /** 교환: 비용 아이템 회수와 영수증(PDC)을 같은 틱·같은 플레이어 데이터에 기록하고 저장한다 (판매와 같은 방식). 이후는 exchangeSaved. */
+ private void exchange(Player p,ShopStore.Order order,ItemStack[] after,Runnable ok,Consumer<String> fail){
+  try{p.getInventory().setStorageContents(after);p.getPersistentDataContainer().set(saleKey(order.id()),PersistentDataType.BYTE,(byte)1);p.saveData();}catch(RuntimeException e){plugin.getLogger().log(Level.WARNING,"Shop exchange save failed for order "+order.id(),e);fail.accept("교환 아이템 저장을 확인해야 합니다. 상점을 다시 열면 자동으로 확인합니다.");return;}
+  exchangeSaved(p,order,ok,fail);
+ }
+ /** 비용 회수가 디스크에 저장된 것을 확인한 뒤에만 prepared -> paid, 그다음 우편 지급(paid -> done, 멱등)과 영수증 정리. */
+ private void exchangeSaved(Player p,ShopStore.Order order,Runnable ok,Consumer<String> fail){var file=MailboxBridge.playerFile(p);String key=saleKey(order.id()).toString();must(order.owner(),()->{if(!DeliveryReceipt.saved(file,key))throw new IllegalStateException("교환 아이템 저장 확인이 필요합니다. 잠시 뒤 상점을 다시 열면 자동으로 확인합니다.");store.state(order.id(),"prepared","paid");return true;},v->deliver(order,()->{clearReceipt(order);ok.run();},m->fail.accept("교환은 기록되었습니다. 상품 우편은 상점을 다시 열거나 접속할 때 자동으로 보냅니다.")),fail);}
  private void buy(Player p,Session s,Request r,ShopStore.Order order,ItemStack sample){
   String id=order.id();UUID owner=order.owner();
   // 출금 전에 paying 을 먼저 기록한다. 이 기록이 실패하면 출금하지 않는다.
@@ -166,6 +207,12 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
   switch(o.mode()+"/"+o.state()){
    case "buy/prepared"->{if(o.origin().isEmpty()){left[0]++;next.run();}else must(owner,()->store.move(o.id(),List.of("prepared"),"failed"),v->{if(v)plugin.getLogger().info("Shop recovery: order "+o.id()+" ("+owner+") prepared -> failed (출금 전)");next.run();},held);}
    case "buy/paid"->deliver(o,()->{CmdKit.notify(p,"shop","shop-recover-paid","이전에 결제한 상품을 우편으로 보냈어요","우편함을 확인해 주세요.",0);plugin.getLogger().info("Shop recovery: order "+o.id()+" ("+owner+") paid -> done (우편 발송)");next.run();},held);
+   case "exchange/paid"->deliver(o,()->{clearReceipt(o);CmdKit.notify(p,"shop","shop-recover-paid","이전에 교환한 상품을 우편으로 보냈어요","우편함을 확인해 주세요.",0);plugin.getLogger().info("Shop recovery: order "+o.id()+" ("+owner+") exchange paid -> done (우편 발송)");next.run();},held);
+   case "exchange/prepared"->{
+    if(!mine){left[o.origin().isEmpty()?0:1]++;next.run();}
+    else if(p.getPersistentDataContainer().has(saleKey(o.id()),PersistentDataType.BYTE))exchangeSaved(p,o,()->{CmdKit.notify(p,"shop","shop-recover-paid","이전에 교환한 상품을 우편으로 보냈어요","우편함을 확인해 주세요.",0);plugin.getLogger().info("Shop recovery: order "+o.id()+" ("+owner+") exchange prepared -> done (비용 회수 확인, 우편 발송)");next.run();},held);
+    else must(owner,()->store.move(o.id(),List.of("prepared"),"failed"),v->{if(v)plugin.getLogger().info("Shop recovery: order "+o.id()+" ("+owner+") exchange prepared -> failed (비용 회수 전)");next.run();},held);
+   }
    case "sell/prepared"->{
     if(!mine){left[o.origin().isEmpty()?0:1]++;next.run();}
     else if(p.getPersistentDataContainer().has(saleKey(o.id()),PersistentDataType.BYTE))saleSaved(p,o,()->{CmdKit.notify(p,"shop","shop-recover-sale","이전 판매 대금을 받았어요",o.total()+" G",0);plugin.getLogger().info("Shop recovery: order "+o.id()+" ("+owner+") prepared -> done (판매 대금 지급)");next.run();},held);
@@ -201,8 +248,12 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
  /** 명령 칸에는 Citizens NPC 번호만 적는다 (7 → citizens:7). citizens:7·tag:이름 도 그대로 받는다. */
  static String npcKey(String input){return input.matches("[0-9]{1,9}")?"citizens:"+input:input;}
  static String npcShown(String key){return key.startsWith("citizens:")?key.substring(9):key;}
- private static String stateText(ShopStore.Order o){boolean buy=o.mode().equals("buy");return switch(o.state()){case "prepared"->buy?"출금 전":"아이템 회수 전후";case "paying"->"출금 확인 필요";case "paid"->"결제됨·상품 미지급";case "sale_removed"->"아이템 회수됨·대금 미지급";case "credit_pending"->"대금 지급 확인 필요";case "refunding"->"환불 처리 중";default->o.state();}+"("+o.state()+")";}
- private String guide(ShopStore.Order o){boolean buy=o.mode().equals("buy"),legacy=o.origin().isEmpty();return switch(o.state()){
+ private static String modeText(ShopStore.Order o){return o.exchange()?"교환":o.mode().equals("buy")?"구매":"판매";}
+ private static String stateText(ShopStore.Order o){boolean buy=o.mode().equals("buy");if(o.exchange()&&o.state().equals("paid"))return "비용 회수됨·상품 미지급(paid)";return switch(o.state()){case "prepared"->buy?"출금 전":"아이템 회수 전후";case "paying"->"출금 확인 필요";case "paid"->"결제됨·상품 미지급";case "sale_removed"->"아이템 회수됨·대금 미지급";case "credit_pending"->"대금 지급 확인 필요";case "refunding"->"환불 처리 중";default->o.state();}+"("+o.state()+")";}
+ private String guide(ShopStore.Order o){boolean buy=o.mode().equals("buy"),legacy=o.origin().isEmpty();
+  if(o.exchange()&&o.state().equals("prepared"))return "교환한 서버에 유저가 접속하면 자동으로 판정합니다. 직접 처리: 비용 아이템이 사라졌으면 완료(상품 우편 지급) 또는 환불(비용 아이템 우편 반환), 그대로면 취소.";
+  if(o.exchange()&&o.state().equals("paid"))return "비용 아이템은 회수됐습니다. 유저가 접속하거나 상점을 열면 자동으로 우편 지급합니다. 완료로 바로 지급, 환불로 비용 아이템을 돌려줄 수 있습니다.";
+  return switch(o.state()){
   case "prepared"->buy?(legacy?"옛 형식 기록입니다. 돈이 빠졌는지 확인 → 빠졌으면 완료(상품 우편 지급) 또는 환불(돈 반환), 아니면 취소.":"출금 전 기록입니다. 유저가 접속하거나 상점을 열면 자동으로 닫힙니다. 취소로 바로 닫아도 됩니다."):"거래한 서버에 유저가 접속하면 자동으로 판정합니다. 직접 처리: 아이템이 사라졌으면 환불(아이템 우편 반환), 그대로면 취소.";
   case "paying"->"출금 직전·직후에 멈췄습니다. 잔액·로그(SHOP REVIEW)로 확인 → 돈이 빠졌으면 완료(상품 우편 지급) 또는 환불(돈 반환), 안 빠졌으면 취소.";
   case "paid"->"유저가 접속하거나 상점을 열면 자동으로 우편 지급합니다. 완료로 바로 지급할 수 있습니다.";
@@ -213,7 +264,7 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
  private void records(CommandSender sender,UUID owner){work(null,()->store.open(owner),orders->{
   var out=new ArrayList<String>();out.add("── "+CmdKit.name(owner)+" 미완료 거래 "+orders.size()+"건 ──");listed.put(sender.getName(),orders.stream().map(ShopStore.Order::id).toList());
   for(var o:orders){String item;try{item=net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(ItemStack.deserializeBytes(o.bytes()).displayName());}catch(RuntimeException e){item=o.product();}
-   out.add(o.id()+" | "+(o.mode().equals("buy")?"구매":"판매")+" | "+stateText(o)+" | "+item+" "+o.quantity()+"개 · 합계 "+o.total()+" | 상점 "+o.title()+" | "+QuestBridge.timeText(o.created())+" | "+(o.origin().isEmpty()?"서버 기록 없음(옛 기록)":o.origin().equals(origin)?"이 서버":"다른 서버"));out.add("  → "+guide(o));}
+   out.add(o.id()+" | "+modeText(o)+" | "+stateText(o)+" | "+item+" "+o.quantity()+"개 · "+(o.exchange()?"비용 "+o.cost()+" ×"+o.total():"합계 "+o.total())+" | 상점 "+o.title()+" | "+QuestBridge.timeText(o.created())+" | "+(o.origin().isEmpty()?"서버 기록 없음(옛 기록)":o.origin().equals(origin)?"이 서버":"다른 서버"));out.add("  → "+guide(o));}
   if(!orders.isEmpty())out.add("처리: /상점관리 거래처리 <거래번호> 완료|환불|취소");
   CmdKit.lines(sender,out);
  },m->CmdKit.fail(sender,"거래 기록을 불러오지 못했어요",new IllegalStateException(m)));}
@@ -227,7 +278,8 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
    if(buy&&!legacy&&found.state().equals("prepared")&&(action.equals("완료")||action.equals("환불"))){CmdKit.userFail(sender,"출금 전 구매 기록이라 "+action+" 처리는 할 수 없어요. 취소로 닫아 주세요");return;}
    if(busy.contains(owner)){CmdKit.userFail(sender,"이 유저의 거래를 지금 처리하는 중이에요. 잠시 뒤 다시 해 주세요");return;}
    busy.add(owner);Consumer<String> finish=m->{busy.remove(owner);CmdKit.lines(sender,List.of("── 거래처리 "+id+" ──",m));plugin.getLogger().warning("SHOP ADMIN admin="+admin+" player="+owner+" order="+id+" action="+action+" result="+m);};
-   Consumer<ShopStore.Order> audit=o->plugin.getLogger().warning("SHOP ADMIN admin="+admin+" player="+owner+" order="+id+" action="+action+" mode="+o.mode()+" from="+o.state()+" qty="+o.quantity()+" total="+o.total());
+   Consumer<ShopStore.Order> audit=o->plugin.getLogger().warning("SHOP ADMIN admin="+admin+" player="+owner+" order="+id+" action="+action+" mode="+o.mode()+" from="+o.state()+" qty="+o.quantity()+" total="+o.total()+(o.cost().isEmpty()?"":" cost="+o.cost()));
+   if(found.exchange()){exchangeResolve(found,action,finish,audit);return;}
    switch(action){
     case "완료"->{
      if(buy)must(owner,()->store.adminMove(id,legacy?List.of("prepared","paying","paid"):List.of("paying","paid"),"paid"),o->{audit.accept(o);deliver(o,()->finish.accept("상품을 우편으로 지급하고 거래를 완료했습니다."),m->finish.accept("결제됨(paid)으로 기록했습니다. 우편 발송은 유저 접속·상점 열기 때 자동으로 다시 시도합니다: "+m));},finish);
@@ -246,6 +298,22 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
     default->finish.accept("처리 방법은 완료, 환불, 취소 중 하나입니다.");
    }
   },m->CmdKit.fail(sender,"거래 기록을 불러오지 못했어요",new IllegalStateException(m)));
+ }
+
+ /** 교환 거래 관리자 처리: 완료 = 상품 우편 지급, 환불 = 비용 아이템 우편 반환(멱등 출처 키), 취소 = 보상 없이 닫기. 상태 변경은 adminMove 한 번. */
+ private void exchangeResolve(ShopStore.Order found,String action,Consumer<String> finish,Consumer<ShopStore.Order> audit){
+  String id=found.id();UUID owner=found.owner();
+  switch(action){
+   case "완료"->must(owner,()->store.adminMove(id,List.of("prepared","paid"),"paid"),o->{audit.accept(o);deliver(o,()->{clearReceipt(o);finish.accept("상품을 우편으로 지급하고 교환을 완료했습니다.");},m->finish.accept("paid 로 기록했습니다. 우편은 유저 접속·상점 열기 때 자동으로 다시 시도합니다: "+m));},finish);
+   case "환불"->must(owner,()->store.adminMove(id,List.of("prepared","paid","refunding"),"refunding"),o->{audit.accept(o);
+     MailService mail=Bukkit.getServicesManager().load(MailService.class);int total;try{total=Integer.parseInt(o.total());}catch(NumberFormatException e){total=0;}var stacks=total>0?costStacks(o.cost(),total):null;
+     if(mail==null||stacks==null){finish.accept((mail==null?"우편 기능을 사용할 수 없습니다":"비용 아이템("+o.cost()+")을 만들 수 없습니다 (ItemsAdder 확인)")+". 기록은 '환불 처리 중'으로 남깁니다. 환불을 다시 실행하세요.");return;}
+     CompletableFuture<UUID> sent;try{sent=mail.sendSystem("shop-refund:"+id,owner,o.title().substring(0,Math.min(72,o.title().length()))+" 교환 취소","교환이 취소되어 "+costName(o.cost())+" "+total+"개를 돌려드립니다.",stacks);}catch(RuntimeException e){finish.accept("우편을 만들지 못했습니다("+e.getClass().getSimpleName()+"). 기록은 '환불 처리 중'으로 남깁니다.");return;}
+     int count=total;sent.whenComplete((mailId,error)->main(()->guard(owner,()->{if(error!=null){finish.accept("우편 저장에 실패했습니다. 기록은 '환불 처리 중'으로 남깁니다. 환불을 다시 실행하세요. (같은 우편이 두 번 생기지 않습니다)");return;}must(owner,()->{store.state(id,"refunding","failed");return true;},v->{clearReceipt(o);finish.accept("비용 아이템 "+count+"개를 우편으로 돌려주고 교환을 실패로 닫았습니다.");},m->finish.accept("비용 아이템은 돌려줬으나 기록을 닫지 못했습니다. 환불을 다시 실행하면 닫힙니다. (우편은 중복되지 않습니다)"));})));
+    },finish);
+   case "취소"->must(owner,()->store.adminMove(id,List.of("prepared","paid","refunding"),"failed"),o->{audit.accept(o);clearReceipt(o);finish.accept("보상 없이 교환 기록을 실패로 닫았습니다.");},finish);
+   default->finish.accept("처리 방법은 완료, 환불, 취소 중 하나입니다.");
+  }
  }
 
  // ------------------------------------------------------------------ 명령 (2026-10-20): /상점관리 · /유저관리 <닉네임> 거래기록
@@ -270,7 +338,7 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
  private void commands(){
   var shopArg=(java.util.function.Supplier<com.mojang.brigadier.builder.RequiredArgumentBuilder<io.papermc.paper.command.brigadier.CommandSourceStack,String>>)()->CmdKit.word("상점",this::shopIds);
   var root=CmdKit.literal("목록").executes(CmdKit.run(ctx->{var out=new ArrayList<String>();out.add("── 상점 ("+catalog.size()+"개) ──");catalog.values().stream().sorted(Comparator.comparing(ShopStore.Shop::id)).forEach(sh->out.add(sh.id()+" · "+sh.title()+" · 상품 "+sh.products().size()+"개 · 초상 "+sh.portrait()));CmdKit.lines(CmdKit.sender(ctx),out);}))
-   .then(shopArg.get().executes(CmdKit.run(ctx->{var sh=shop(ctx);var out=new ArrayList<String>();out.add("── "+sh.title()+" ("+sh.id()+") 상품 ──");for(var pr:sh.products())out.add((pr.category().isEmpty()?"":"["+pr.category()+" "+pr.sort()+"] ")+pr.name()+" · 구매 "+(pr.buy().isEmpty()?"없음":pr.buy())+" · 판매 "+(pr.sell().isEmpty()?"없음":pr.sell())+" · "+pr.id());if(sh.products().isEmpty())out.add("(상품 없음)");CmdKit.lines(CmdKit.sender(ctx),out);})));
+   .then(shopArg.get().executes(CmdKit.run(ctx->{var sh=shop(ctx);var out=new ArrayList<String>();out.add("── "+sh.title()+" ("+sh.id()+") 상품 ──");for(var pr:sh.products())out.add((pr.category().isEmpty()?"":"["+pr.category()+" "+pr.sort()+"] ")+pr.name()+(pr.exchange()?" · 교환 "+pr.costItem()+" ×"+pr.costCount()+" (판매 없음)":" · 구매 "+(pr.buy().isEmpty()?"없음":pr.buy())+" · 판매 "+(pr.sell().isEmpty()?"없음":pr.sell()))+" · "+pr.id());if(sh.products().isEmpty())out.add("(상품 없음)");CmdKit.lines(CmdKit.sender(ctx),out);})));
   ChacaApi.branch(plugin,ChacaApi.상점관리,root,"상점 목록·상품 목록","목록");
   ChacaApi.branch(plugin,ChacaApi.상점관리,CmdKit.literal("만들기").then(CmdKit.word("상점ID",List::of).then(CmdKit.argument("이름",com.mojang.brigadier.arguments.StringArgumentType.greedyString()).executes(CmdKit.run(ctx->{
    String id=CmdKit.text(ctx,"상점ID"),title=com.mojang.brigadier.arguments.StringArgumentType.getString(ctx,"이름").strip();
@@ -296,7 +364,18 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
    var sh=shop(ctx);String id=CmdKit.pick(productNames(sh),CmdKit.text(ctx,"상품"),"상품");String buy=price(CmdKit.text(ctx,"구매가")),sell=price(CmdKit.text(ctx,"판매가"));
    admin(CmdKit.sender(ctx),()->{store.prices(sh.id(),id,buy,sell);return productNames(sh).get(id)+" 가격: 구매 "+(buy.isEmpty()?"없음":buy)+" · 판매 "+(sell.isEmpty()?"없음":sell);});
   })))))),"상품 구매가·판매가 바꾸기","가격 ");
-  ChacaApi.branch(plugin,ChacaApi.상점관리,CmdKit.literal("초상").then(shopArg.get().then(CmdKit.word("초상",()->new TreeSet<>(catalog.values().stream().map(ShopStore.Shop::portrait).toList())).executes(CmdKit.run(ctx->{
+  // 교환 상품 지정·해제 (2026-10-26, #98): /상점관리 교환 <상점> <상품> <아이템키> <개수|없음>
+  var exchangeProduct=CmdKit.wordIn("상품",ctx->{var sh=catalog.get(CmdKit.text(ctx,"상점"));return sh==null?List.of():AdminCommandRules.catalogChoices(productNames(sh));});
+  ChacaApi.branch(plugin,ChacaApi.상점관리,CmdKit.literal("교환").then(shopArg.get().then(exchangeProduct.then(CmdKit.word("아이템키",()->List.of("item:artifact_shard")).then(CmdKit.word("개수",()->List.of("없음","10","30","80")).executes(CmdKit.run(ctx->{
+   var sh=shop(ctx);String id=CmdKit.pick(productNames(sh),CmdKit.text(ctx,"상품"),"상품");String countText=CmdKit.text(ctx,"개수");
+   String key;int count;
+   if(countText.equals("없음")){key="";count=0;}
+   else{try{key=ShopExchange.key(CmdKit.text(ctx,"아이템키"));count=ShopExchange.count(Integer.parseInt(countText));}catch(NumberFormatException e){throw ChacaApi.error("개수는 숫자나 '없음'으로 적어 주세요");}catch(IllegalArgumentException e){throw ChacaApi.error(e.getMessage());}}
+   String k=key;int n=count;
+   admin(CmdKit.sender(ctx),()->{store.exchange(sh.id(),id,k,n);return productNames(sh).get(id)+(n==0?" 교환 해제 (원래 구매가·판매가로)":" 교환: "+k+" ×"+n+" (판매 막힘)");});
+  })))))),"상품을 돈 대신 아이템으로 사는 교환 상품으로 (개수 '없음' = 해제)","교환 ");
+  ChacaApi.branch(plugin,ChacaApi.상점관리,CmdKit.literal("초상")
+.then(shopArg.get().then(CmdKit.word("초상",()->new TreeSet<>(catalog.values().stream().map(ShopStore.Shop::portrait).toList())).executes(CmdKit.run(ctx->{
    var sh=shop(ctx);String id=CmdKit.text(ctx,"초상");if(!id.matches("[a-z0-9_/-]{1,120}")||id.contains(".."))throw ChacaApi.error("초상 ID는 영문 소문자·숫자·_·-·/ 만 써요");
    admin(CmdKit.sender(ctx),()->{store.portrait(sh.id(),id);return sh.title()+" 초상을 "+id+"(으)로 바꿨어요";});
   })))),"상점 초상 바꾸기","초상 ");

@@ -22,16 +22,19 @@ import org.bukkit.inventory.ItemStack;
  * 상품:
  *   - { 분류: 광물, 아이템: coal, 이름: 석탄, 구매: 100, 판매: 20 }
  *   - { 분류: 광물, 아이템: ancient_debris, 이름: 고대 잔해, 구매: 없음, 판매: 2000 }
+ *   - { 아이템: "item:random_artifact", 이름: 유물함 열쇠, 교환: "item:artifact_shard 10" }
  * </pre>
  *
+ * 교환(2026-10-25): "비용아이템키 개수" — 돈 대신 그 아이템을 개수만큼(수량 1개당) 내고 산다. 있으면 구매·판매 값은 무시하고 판매는 막힌다.
+ *
  * 순서는 파일에 적힌 순서(10, 20, 30…). 「순서」 칸을 적으면 그 값을 쓴다.
- * 아이템은 바닐라 아이템 ID만 받는다(커스텀 아이템은 관리 창에서 인벤토리로 등록).
+ * 아이템은 바닐라 아이템 ID, 또는 ItemsAdder 키(namespace:id, ItemsAdder 가 켜져 있을 때). 그 밖의 커스텀 아이템은 관리 창에서 인벤토리로 등록.
  * 파일 읽기와 아이템 만들기는 명령을 실행한 메인 스레드에서 한다.
  */
 final class ShopImportFile {
     record Loaded(String shop, String title, String portrait, String owner, String role, List<ShopStore.ImportEntry> entries) {}
 
-    private static final List<String> BUNDLED = List.of("pipi");
+    private static final List<String> BUNDLED = List.of("pipi", "artifact_exchange");
 
     private ShopImportFile() {}
 
@@ -88,8 +91,8 @@ final class ShopImportFile {
             try {
                 String itemId = text(row, "아이템");
                 String itemName = text(row, "이름");
-                Material material = Material.matchMaterial(itemId);
-                if (material == null || !material.isItem() || material.isAir()) {
+                ItemStack item = item(plugin, itemId);
+                if (item == null) {
                     problems.add(label + " 아이템 ID " + itemId);
                     continue;
                 }
@@ -97,12 +100,15 @@ final class ShopImportFile {
                     problems.add(label + " 이름 없음");
                     continue;
                 }
-                String buy = price(row.get("구매"));
-                String sell = price(row.get("판매"));
+                String exchange = text(row, "교환");
+                var cost = exchange.isEmpty() ? null : ShopExchange.parse(exchange);
+                String buy = cost != null ? "" : price(row.get("구매"));
+                String sell = cost != null ? "" : price(row.get("판매"));
                 Object order = row.get("순서");
                 int sort = order == null ? line * 10 : Integer.parseInt(String.valueOf(order).strip());
-                byte[] bytes = new ItemStack(material, 1).serializeAsBytes();
-                entries.add(new ShopStore.ImportEntry(itemName, bytes, buy, sell, text(row, "분류"), sort));
+                byte[] bytes = item.serializeAsBytes();
+                entries.add(new ShopStore.ImportEntry(itemName, bytes, buy, sell, text(row, "분류"), sort,
+                        cost == null ? "" : cost.item(), cost == null ? 0 : cost.count()));
             } catch (RuntimeException e) {
                 problems.add(label + " " + (e.getMessage() == null ? "값 확인" : e.getMessage()));
             }
@@ -111,6 +117,17 @@ final class ShopImportFile {
             throw ChacaApi.error("고칠 곳 " + problems.size() + "개: " + String.join(", ", problems.subList(0, Math.min(5, problems.size()))) + (problems.size() > 5 ? " …" : ""));
         }
         return new Loaded(shop, title, portrait, owner, role, List.copyOf(entries));
+    }
+
+    /** 바닐라 ID(coal, minecraft:coal) 또는 ItemsAdder 키(item:random_artifact). 1개짜리, 없으면 null. */
+    private static ItemStack item(MagicCodexBridge plugin, String id) {
+        String key = id.strip().toLowerCase(Locale.ROOT);
+        if (key.contains(":") && !key.startsWith("minecraft:")) {
+            ItemStack custom = new ItemsAdderItems(plugin.getLogger()).create(key, 1);
+            return custom == null || custom.getType().isAir() ? null : custom;
+        }
+        Material material = Material.matchMaterial(key);
+        return material == null || !material.isItem() || material.isAir() ? null : new ItemStack(material, 1);
     }
 
     private static String text(Map<?, ?> row, String key) {
