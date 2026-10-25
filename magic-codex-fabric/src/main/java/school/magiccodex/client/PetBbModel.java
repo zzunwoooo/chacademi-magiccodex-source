@@ -38,8 +38,8 @@ public final class PetBbModel {
      */
     public static int kind(String name){
         String n=name==null?"":name.toLowerCase(Locale.ROOT);
-        if(n.contains("fly")||n.contains("glide"))return FLY;
-        if(n.contains("walk")||n.contains("move")||n.contains("run"))return WALK;
+        if(n.contains("fly")||n.contains("glide")||n.contains("swim"))return FLY;
+        if(n.contains("walk")||n.contains("move")||n.matches(".*(^|[_ .-])run([_ .-]|$).*"))return WALK;
         if(n.contains("idle"))return IDLE;
         return -1;
     }
