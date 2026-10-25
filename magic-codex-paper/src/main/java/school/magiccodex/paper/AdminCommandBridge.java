@@ -43,7 +43,9 @@ final class AdminCommandBridge {
             ChacaApi.branch(plugin, ChacaApi.아이템관리, wand(), "마법봉 주기·만들기·등록·원본설정", "마법봉 주기");
             ChacaApi.branch(plugin, ChacaApi.아이템관리, core(), "마력코어 주기·만들기", "마력코어 주기");
         });
-        new OperatorCommands(plugin); // #95 게임모드·찾아가기·불러오기·좌표이동·비행·회복
+        var operator = new OperatorCommands(plugin); // #95 게임모드·찾아가기·불러오기·좌표이동·비행·회복
+        // #95 한글 편의 명령 (/겜모 /텔포 /소환 /공지 /도움 /뒤로 /스폰 /쓰레기통 /메모리). 실패해도 나머지는 계속.
+        try { new ConvenienceCommands(plugin, operator); } catch (Exception | LinkageError error) { plugin.getLogger().severe("편의 명령 초기화 실패 (convenience-commands.yml 확인): " + error); }
     }
 
     // ------------------------------------------------------------------ /유저관리 <닉네임> 스탯

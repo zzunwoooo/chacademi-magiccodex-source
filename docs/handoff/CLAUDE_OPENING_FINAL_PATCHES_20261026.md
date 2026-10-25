@@ -345,3 +345,39 @@ SELECT SUBSTRING(stat_key,4) AS mob, SUM(count) AS kills FROM codex_player_stats
 SELECT SUBSTRING(stat_key,8) AS spell, SUM(count) AS fails FROM codex_player_stats WHERE stat_key LIKE '발견시도실패:%' GROUP BY stat_key ORDER BY fails DESC LIMIT 20;
 ```
 설정: `audit.yml stats.enabled`(기본 true), `stats.flush-minutes`(1~60, 재시작 때 적용). `/서버관리 기록 상태` 에 대기 칸 수가 같이 보임.
+## 20. 한글 편의 명령 (2026-10-26, 메모 #95)
+Essentials 비슷한 한글 명령. 새 파일 `ConvenienceCommands.java`(등록·이벤트·서버 간 전달) + 순수 규칙 `ConvenienceRules.java`(+`ConvenienceRulesTest`), 설정 `convenience-commands.yml`(처음 켤 때 자동 생성, `/서버관리 새로고침 편의명령`).
+
+| 명령 | 누가 | 하는 일 |
+|---|---|---|
+| `/겜모` · `/gm` · `/겜모 0` `1` · `/gm 0` `1` | 관리자(OP) | 서바이벌 ↔ 크리에이티브 토글 / 0 서바이벌 · 1 크리에이티브 (나 자신) |
+| `/텔포 <닉네임>` | 관리자 | 그 유저에게 이동 = `/유저관리 <닉> 찾아가기` 와 같은 코드 (한글 닉 자동완성, 다른 서버면 `huskhomes:tp`) |
+| `/소환 <닉네임>` | 관리자 | 그 유저를 내 위치로 = `불러오기` (다른 서버면 `huskhomes:tphere`) |
+| `/공지 <할말>` | 관리자·콘솔 | 모든 서버 접속자 알림창(제목 "운영자 공지") + 소리 |
+| `/뒤로` · `/back` | 관리자 | HuskHomes `huskhomes:back` 이 있으면 그것(서버 간·사망 위치는 HuskHomes 설정), 없으면 이 서버 안에서 마지막 순간이동 전 위치·죽은 곳 |
+| `/스폰` · `/spawn` | 관리자 | HuskHomes `huskhomes:spawn` 이 있으면 그것, 없으면 첫 월드 스폰 |
+| `/메모리` | 관리자·콘솔 | 메모리 사용/최대, TPS 1·5·15분, MSPT, 접속자, 로드된 청크·엔티티 수 (채팅) |
+| `/도움기록` | 관리자 | 이 서버가 받은 최근 도움 요청 20개 |
+| `/도움 <할말>` | 유저 (`magiccodex.convenience.help`, 기본 켜짐) | 운영자(OP)에게만 알림창+소리+채팅 한 줄(누르면 `/텔포 <닉>` 입력). 보낸 사람 "운영자에게 보냈어요". 쿨다운 60초(설정) |
+| `/쓰레기통` | 유저 (`magiccodex.convenience.trash`, 기본 켜짐) | 빈 6줄 보관함 창, 닫으면 넣은 아이템 삭제 (콘솔에 개수 기록) |
+
+- 오너 수정(2026-10-26): `/뒤로`·`/back`·`/스폰`·`/spawn` 도 **관리자 전용**. 유저가 쓰는 건 `/도움`·`/쓰레기통` 뿐. 그래서 전투 중 이동 막기(#91)는 해당 없음(관리자 예외). combat-lock.yml 목록은 그대로 둠 (유저가 HuskHomes 명령을 직접 치는 경우 대비).
+- `/홈`·`/셋홈` 은 만들지 않음. **오너: 필요 없음 → HuskHomes 의 home 관련 권한(`huskhomes.command.home`·`sethome` 등)을 유저에게서 끄기 권장.** `/spawn`·`/back` 도 관리자 전용이 됐으니 유저의 HuskHomes spawn·back 권한도 끄기 권장 (이름 붙은 `/huskhomes:spawn` 으로는 여전히 칠 수 있음).
+- 우리 `/spawn`·`/back` 은 Brigadier 로 등록돼 HuskHomes 의 이름 없는 `/spawn`·`/back` 을 가린다(OP 가 아니면 자동완성에도 안 보임). 위임은 이름 붙은 `huskhomes:spawn`·`huskhomes:back` 으로 하므로 서로 꼬이지 않음.
+- 도움 요청 흐름: 이 서버에 OP 가 있으면 바로 "보냈어요". 없으면 다른 서버로 전하고 3초(`ack-wait-ticks`) 동안 다른 서버 OP 의 확인을 기다림 → 확인 오면 "보냈어요", 없으면 "지금 접속한 운영자가 없어요…" + 기록. 기록 = 메모리(최근 50, 이 서버에 OP 가 들어오면 채팅으로 보여 주고 비움) + 파일 `plugins/MagicCodexBridge/help-requests.log`(모든 요청, 비동기 추가). 서버를 껐다 켜면 메모리 기록은 비고 파일은 남음.
+- 서버 간 전달: 프록시 플러그인 변경 없이 **Velocity 의 BungeeCord 호환 채널**(`BungeeCord` Forward ALL, 하위 채널 `ChacaConvenience`)로. 받는 서버에 접속자가 1명 이상 있어야 도착(없으면 받을 사람도 없음). 같은 메시지는 id 로 한 번만, 내가 보낸 것은 실행 토큰으로 거름. 접속자가 없는 서버에서 콘솔로 친 `/공지` 는 그 서버에만(결과 알림에 그렇게 나옴). `cross-server: false` 면 이 서버만.
+- 부담: 매 틱 일 없음. 순간이동·사망 이벤트에서 OP 의 위치 하나만 적음. `/메모리` 의 청크·엔티티 수는 칠 때 한 번 셈.
+- 바꾼 파일: `ConvenienceCommands.java`·`ConvenienceRules.java`·`ConvenienceRulesTest.java`·`convenience-commands.yml`(새), `AdminCommandBridge.java`(등록 3줄), `OperatorCommands.java`(`goTo`·`bring` 의 private 뗌), `plugin.yml`(권한 2개). operating-config 에는 안 넣음(combat-lock.yml 과 같은 방식, overlay check 차이 없음).
+- 빌드 때 볼 것: Paper API `Server#getTPS()`·`getAverageTickTime()`, `Player#playSound(Location, String, SoundCategory, float, float)` 는 저장소에서 처음 씀 (Paper 1.21.4 에 있음).
+
+**같이 배포할 것**: MagicCodexBridge jar → 학교·야생·아레나 등 모든 Paper 서버 (공지·도움을 전 서버에서 받으려면 전부). 서버 파일 손볼 것 없음(yml 자동 생성).
+**배포 확인**: Velocity `velocity.toml` 의 `bungee-plugin-message-channel = true` (Velocity 기본값 true — 꺼져 있으면 공지·도움이 그 서버에만 감). HuskHomes 로 서버 간 `/back`·`/spawn` 을 하려면 HuskHomes 설정(cross-server, global spawn, back·사망 위치 저장)이 켜져 있어야 함.
+
+**게임 확인 방법** (OP 1명 + 일반 유저 1명, 학교·야생 각각 접속):
+1. OP: `/겜모` → 크리에이티브, 다시 `/겜모` → 서바이벌. `/gm 1`, `/gm 0`. 일반 유저는 `/겜모`·`/스폰`·`/뒤로` 가 자동완성에 안 보임.
+2. OP(학교): `/텔포 <같은 서버 유저 한글 닉>` → 옆으로. `/소환 <닉>` → 데려옴. 야생에 있는 유저 닉으로 → HuskHomes 로 서버 이동.
+3. OP: `/텔포` 한 뒤 `/뒤로` → 원래 자리 (HuskHomes 있으면 HuskHomes 메시지). 죽은 뒤 `/뒤로` → 죽은 자리. `/스폰` → 스폰.
+4. OP(학교): `/공지 점검 10분 전이에요` → 학교·야생 접속자 모두 알림창 + 딩 소리.
+5. 유저(야생): `/도움 길을 잃었어요` → 학교 OP 에게 알림창+벨 소리+채팅 줄(누르면 `/텔포 <닉>` 입력), 유저에게 "운영자에게 보냈어요". 바로 다시 → "조금 뒤에 다시 보낼 수 있어요 · N초". OP 가 아무도 없을 때 → "지금 접속한 운영자가 없어요…", 그 서버에 OP 가 들어오면 3초 뒤 채팅으로 보임. `/도움기록` 으로 목록.
+6. 유저: `/쓰레기통` → 흙 넣고 닫기 → "아이템 N개를 버렸어요", 다시 열면 비어 있음.
+7. OP: `/메모리` → 메모리·TPS·MSPT·접속자·청크·엔티티 줄.
