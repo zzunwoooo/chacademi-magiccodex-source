@@ -159,6 +159,15 @@ public final class NpcSocialFacade {
         return q == null ? "" : q.title(questId);
     }
 
+    /**
+     * (추가 메서드, API_VERSION 그대로) 길잡이 별 (2026-10-26 메모 #93, ChacademyStory 가 부름): 진행 중 의뢰에서 아직 못 채운
+     * "NPC" 목표의 Citizens 번호 (이 서버 것만). 스토리 단계에 가리킬 목표가 없을 때 가장 가까운 것을 가리킨다. 메인 스레드.
+     */
+    public int[] questNpcTargets(Player player) {
+        QuestBridge q = service.quests();
+        return q == null || player == null ? new int[0] : q.npcTargets(player);
+    }
+
     /** 기존 의뢰 수락 경로(조건·권한·중복 검사 포함)로 수락. */
     public CompletableFuture<Boolean> acceptQuest(Player player, String questId) {
         QuestBridge q = service.quests();

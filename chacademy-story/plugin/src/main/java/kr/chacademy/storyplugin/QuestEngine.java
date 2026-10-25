@@ -120,10 +120,36 @@ final class QuestEngine implements Listener {
     private final Set<UUID> heldByGate = new HashSet<>();
     /** 길잡이 별이 켜져 있는 접속자 → 켠 단계 session (다시 시전하면 끈다). 단계가 바뀌거나 목표 10블록 안이면 지운다. 메모리 전용. */
     private final Map<UUID, Integer> guiding = new HashMap<>();
+    /**
+     * 길잡이 별이 NPC 를 가리키는 접속자 → 따라가는 NPC (2026-10-26 메모 #93). 일과표로 돌아다니는 ChacaNPC 등 움직이는 NPC 의
+     * 지금 위치를 {@link #FOLLOW_TICKS} 마다 확인해, {@link #FOLLOW_MOVE} 블록 넘게 움직였거나 상태가 바뀐 사람에게만 새 위치를 보낸다.
+     * 목표가 NPC 인 사람만 들어간다 (포탈·목표 블록은 고정이라 안 들어감). 새 클라(GUIDE_TARGET 채널)만. 메모리 전용.
+     */
+    private static final class Follow {
+        final int session, npc;
+        /** true = 스토리 단계가 아니라 MagicCodex 의뢰의 NPC 목표 (의뢰가 끝나면 끈다). */
+        final boolean quest;
+        String world = "", entity = "";
+        double x, y, z;
+        int state = -1;
+        boolean moving;
+        /** 지난 확인 때 위치 (이동 중 판단용, 보낸 위치와 따로). */
+        Location checked;
+        Follow(int session, int npc, boolean quest) { this.session = session; this.npc = npc; this.quest = quest; }
+    }
+    private final Map<UUID, Follow> follows = new HashMap<>();
+    /** 움직이는 NPC 위치 확인 주기 (2초). 매 틱 아님, 따라가는 사람이 없으면 바로 끝. */
+    static final long FOLLOW_TICKS = 40L;
+    /** 이만큼(블록) 넘게 움직였을 때만 새 위치를 보낸다. */
+    static final double FOLLOW_MOVE = 1.5;
+    /** 2초 사이 이만큼 넘게 움직이면 "이동 중" (Citizens 길찾기 중이 아니어도). */
+    static final double FOLLOW_MOVING = 0.3;
 
     private Class<?> npcIface, registryIface;
     private Object registry;
     private Method npcId, npcEntity, npcStored, npcName, registryById;
+    /** Citizens NPC.getNavigator() / Navigator.isNavigating() — 없으면 위치 변화로만 이동 중을 판단한다. */
+    private Method npcNavigator, navigatorNavigating;
     private boolean citizens;
 
     /** cond = -1 → NPC 지정, 그 밖 = 상호작용 조건 번호에 블록 추가. */
@@ -145,9 +171,10 @@ final class QuestEngine implements Listener {
         defsStore = new StoryStore(text -> StorySafety.atomicWrite(defsFile.toPath(), text), StoryStore.newWorker(),
                 r -> Bukkit.getScheduler().runTask(plugin, r), plugin.getLogger());
         ready = true;
-        for (String out : List.of(QuestCodec.STEP, QuestCodec.UPDATE, QuestCodec.GUIDE, QuestCodec.POINTS)) plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, out);
+        for (String out : List.of(QuestCodec.STEP, QuestCodec.UPDATE, QuestCodec.GUIDE, QuestCodec.POINTS, QuestCodec.GUIDE_TARGET)) plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, out);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 40L, TICK_CHECK);
+        Bukkit.getScheduler().runTaskTimer(plugin, this::followTick, 40L, FOLLOW_TICKS);
         Bukkit.getScheduler().runTask(plugin, this::hookCitizens);
         Bukkit.getScheduler().runTask(plugin, this::hookProgressEvents);
         for (Player p : Bukkit.getOnlinePlayers()) needStep.add(p.getUniqueId());
@@ -398,6 +425,7 @@ final class QuestEngine implements Listener {
         st.enter(stepId);
         mustLeave.remove(uuid);
         guiding.remove(uuid);
+        follows.remove(uuid);
         heldByGate.remove(uuid);   // 잠긴 장 → 열린 단계로 옮겨지면 tick 이 시작명령을 한 번 더 돌리지 않게
         readySince.remove(uuid);
         readyCache.remove(uuid);
@@ -657,7 +685,8 @@ final class QuestEngine implements Listener {
             Step s = defs.get(st.step);
             if (s == null) continue;
             // 길잡이 별: 목표 10블록 안에 오면 클라가 화살표를 끈다 → 서버도 꺼진 것으로 (다음 시전은 다시 켜기)
-            if (guiding.containsKey(uuid)) {
+            // 움직이는 NPC 를 따라가는 중이면 followTick 이 맡는다 (다른 세계로 가면 상태를 보내고 끈다)
+            if (guiding.containsKey(uuid) && !follows.containsKey(uuid)) {
                 Location gt = guideTarget(s);
                 if (gt == null || !gt.getWorld().equals(p.getWorld()) || flatNear(gt, p.getLocation())) guiding.remove(uuid);
             }
@@ -773,6 +802,7 @@ final class QuestEngine implements Listener {
         mustLeave.remove(uuid);
         heldByGate.remove(uuid);
         guiding.remove(uuid);
+        follows.remove(uuid);
     }
 
     // 아이템 조건 캐시 무효화 (가벼운 표시만, 실제 세기는 다음 주기 확인 때)
@@ -901,6 +931,12 @@ final class QuestEngine implements Listener {
             npcStored = npcIface.getMethod("getStoredLocation");
             npcName = npcIface.getMethod("getName");
             registryById = registryIface.getMethod("getById", int.class);
+            try {
+                npcNavigator = npcIface.getMethod("getNavigator");
+                navigatorNavigating = npcNavigator.getReturnType().getMethod("isNavigating");
+            } catch (ReflectiveOperationException | RuntimeException ignored) {
+                npcNavigator = null; navigatorNavigating = null;   // 위치 변화로만 이동 중을 판단
+            }
             registry = Class.forName("net.citizensnpcs.api.CitizensAPI", true, cl).getMethod("getNPCRegistry").invoke(null);
             Method getNpc = click.getMethod("getNPC"), getClicker = click.getMethod("getClicker");
             Bukkit.getPluginManager().registerEvent(click, this, EventPriority.LOWEST, (listener, event) -> {
@@ -1045,6 +1081,23 @@ final class QuestEngine implements Listener {
             Object loc = npcStored.invoke(npc);
             return loc instanceof Location l ? l : null;
         } catch (ReflectiveOperationException | RuntimeException e) { return null; }
+    }
+
+    /** 지금 스폰된 NPC 엔티티의 위치 (언로드·디스폰이면 null — 저장 위치는 {@link #npcLocation}). */
+    private Location npcLiveLocation(Object npc) {
+        try {
+            Object ent = npcEntity.invoke(npc);
+            return ent instanceof Entity en && en.isValid() ? en.getLocation() : null;
+        } catch (ReflectiveOperationException | RuntimeException e) { return null; }
+    }
+
+    /** Citizens 길찾기로 걷는 중인지 (API 가 없거나 실패하면 false). */
+    private boolean npcNavigating(Object npc) {
+        if (npcNavigator == null || navigatorNavigating == null || npc == null) return false;
+        try {
+            Object nav = npcNavigator.invoke(npc);
+            return nav != null && Boolean.TRUE.equals(navigatorNavigating.invoke(nav));
+        } catch (ReflectiveOperationException | RuntimeException e) { return false; }
     }
 
     private String npcEntityId(Object npc) {
@@ -1273,7 +1326,9 @@ final class QuestEngine implements Listener {
 
     /**
      * 길잡이 별 (오너 2026-10-20·10-23): 지금 단계의 목표(위치 포탈 / 말 걸 NPC)를 화살표로 가리킨다. 조건을 아직 못 채운 단계도
-     * 가리킨다. 켜져 있을 때 다시 시전하면 끈다. 목표 10블록 안에서는 클라가 스스로 끈다. 공개 전인 장·미리보기 중·목표 없는 단계 = NONE.
+     * 가리킨다. 켜져 있을 때 다시 시전하면 끈다. 목표 10블록 안에서는 클라가 스스로 끈다. 미리보기 중 = NONE.
+     * 2026-10-26 메모 #93: 목표가 NPC 면 그 NPC 의 지금 위치를 따라간다 ({@link #followTick}). 스토리에 가리킬 목표가 없으면
+     * (단계 없음·공개 전인 장·목표 없는 단계) 진행 중 의뢰의 NPC 목표를 가리킨다 ({@link #guideQuestNpc}), 그것도 없으면 NONE.
      */
     int guide(Player p) {
         if (!ready || p == null || !p.isOnline() || !p.getListeningPluginChannels().contains(QuestCodec.GUIDE)) return GUIDE_NONE;
@@ -1281,15 +1336,18 @@ final class QuestEngine implements Listener {
         P st = prog.players.get(uuid);
         Step s = st == null ? null : defs.get(st.step);
         Integer session = sessions.get(uuid);
-        if (s == null || session == null || previewing.contains(uuid) || chapterLocked(s)) return GUIDE_NONE;
+        if (session == null || previewing.contains(uuid)) return GUIDE_NONE;
         Integer on = guiding.get(uuid);
         if (on != null && on.equals(session)) {
             guiding.remove(uuid);
+            follows.remove(uuid);
             p.sendPluginMessage(plugin, QuestCodec.GUIDE, QuestCodec.guide(0));
             return GUIDE_OFF;
         }
-        Location target = guideTarget(s);
-        if (target == null && st.phase == Phase.ACTIVE) {
+        boolean story = s != null && !chapterLocked(s);
+        Location target = story ? guideTarget(s) : null;
+        int npc = story && target != null && s.trigger.type == TrigType.NPC ? s.trigger.npc : -1;
+        if (story && target == null && st.phase == Phase.ACTIVE) {
             // 호출 목표가 없는 단계(예: 이론서 세 권, 호출 자동): 아직 안 누른 목표 블록 중 같은 세계의 가장 가까운 것
             double best = Double.MAX_VALUE;
             for (QuestCodec.Point pt : pendingPoints(st, s)) {
@@ -1301,12 +1359,122 @@ final class QuestEngine implements Listener {
                 if (d < best) { best = d; target = l; }
             }
         }
-        if (target == null) return GUIDE_NONE;
+        // 스토리에 가리킬 목표가 없음 (단계 없음·다 끝냄·목표 없는 단계·공개 전인 장): 진행 중 의뢰의 NPC 목표 (#93)
+        if (target == null) return guideQuestNpc(p, session);
         if (!target.getWorld().equals(p.getWorld())) return GUIDE_OTHER_WORLD;
         if (flatNear(target, p.getLocation())) return GUIDE_NEAR;
         guiding.put(uuid, session);
+        if (npc >= 0) startFollow(p, session, npc, false);
         p.sendPluginMessage(plugin, QuestCodec.GUIDE, QuestCodec.guide(session));
         return GUIDE_OK;
+    }
+
+    /**
+     * 스토리 단계에 가리킬 목표가 없을 때 (2026-10-26 메모 #93): 진행 중인 MagicCodex 의뢰의 아직 못 채운 "NPC" 목표
+     * (ChacaNPC 캐릭터 등 이 서버의 Citizens NPC) 중 같은 세계의 가장 가까운 NPC. 새 클라(GUIDE_TARGET)만 — 화살표 위치를 이 패킷으로 받는다.
+     */
+    private int guideQuestNpc(Player p, int session) {
+        if (!citizens || !p.getListeningPluginChannels().contains(QuestCodec.GUIDE_TARGET)) return GUIDE_NONE;
+        MagicCodexLink codex = plugin.codex();
+        int[] ids = codex == null ? new int[0] : codex.questNpcTargets(p);
+        int best = -1;
+        double bestD = Double.MAX_VALUE;
+        boolean elsewhere = false;
+        Location bestAt = null;
+        for (int id : ids) {
+            Object npc = npcById(id);
+            Location l = npc == null ? null : npcLocation(npc);
+            if (l == null || l.getWorld() == null) continue;
+            if (!l.getWorld().equals(p.getWorld())) { elsewhere = true; continue; }
+            double d = l.distanceSquared(p.getLocation());
+            if (d < bestD) { bestD = d; best = id; bestAt = l; }
+        }
+        if (best < 0) return elsewhere ? GUIDE_OTHER_WORLD : GUIDE_NONE;
+        if (flatNear(bestAt, p.getLocation())) return GUIDE_NEAR;
+        guiding.put(p.getUniqueId(), session);
+        startFollow(p, session, best, true);
+        p.sendPluginMessage(plugin, QuestCodec.GUIDE, QuestCodec.guide(session));
+        return GUIDE_OK;
+    }
+
+    /** NPC 따라가기 시작: 지금 위치를 바로 한 번 보낸다 (단계 패킷의 NPC 좌표는 단계를 받은 때 것이라 낡았을 수 있음). 옛 클라는 하지 않는다. */
+    private void startFollow(Player p, int session, int npcId, boolean quest) {
+        if (!p.getListeningPluginChannels().contains(QuestCodec.GUIDE_TARGET)) return;
+        Follow f = new Follow(session, npcId, quest);
+        follows.put(p.getUniqueId(), f);
+        refreshFollow(p, f, true);
+    }
+
+    /**
+     * NPC 위치를 다시 보고 필요하면 보낸다. 반환 false = 따라가기 끝 (다른 세계 / 도착 — 클라가 스스로 화살표를 끈다).
+     * force = 바뀐 게 없어도 보냄 (시작할 때).
+     */
+    private boolean refreshFollow(Player p, Follow f, boolean force) {
+        Object npc = npcById(f.npc);
+        Location live = npc == null ? null : npcLiveLocation(npc);
+        Location l = live != null ? live : npc == null ? null : npcLocation(npc);
+        int state;
+        if (l == null || l.getWorld() == null) state = QuestCodec.FOLLOW_UNLOADED;   // 없어졌거나 위치 모름: 마지막 위치 그대로
+        else if (!l.getWorld().equals(p.getWorld())) state = QuestCodec.FOLLOW_OTHER_WORLD;
+        else state = live != null ? QuestCodec.FOLLOW_LIVE : QuestCodec.FOLLOW_UNLOADED;
+        boolean moving = false;
+        if (state == QuestCodec.FOLLOW_LIVE) {
+            Location before = f.checked;
+            moving = npcNavigating(npc) || before != null && before.getWorld() == l.getWorld() && flatDistSq(before, l) > FOLLOW_MOVING * FOLLOW_MOVING;
+        }
+        f.checked = state == QuestCodec.FOLLOW_LIVE ? l.clone() : null;
+        boolean moved = false;
+        if (state != QuestCodec.FOLLOW_OTHER_WORLD && l != null && l.getWorld() != null) {
+            String wk = l.getWorld().getKey().toString();
+            double dx = l.getX() - f.x, dy = l.getY() - f.y, dz = l.getZ() - f.z;
+            moved = !wk.equals(f.world) || dx * dx + dy * dy + dz * dz >= FOLLOW_MOVE * FOLLOW_MOVE;
+            if (moved || force) { f.world = wk; f.x = l.getX(); f.y = l.getY(); f.z = l.getZ(); }
+        }
+        if (npc != null) { String ent = npcEntityId(npc); if (!ent.isEmpty()) f.entity = ent; }
+        boolean send = force || moved || state != f.state || moving != f.moving;
+        f.state = state;
+        f.moving = moving;
+        if (send) p.sendPluginMessage(plugin, QuestCodec.GUIDE_TARGET, QuestCodec.guideTarget(f.session, f.state, f.moving, f.world, f.x, f.y, f.z, f.entity));
+        if (state == QuestCodec.FOLLOW_OTHER_WORLD) return false;
+        return state != QuestCodec.FOLLOW_LIVE || !flatNear(l, p.getLocation());
+    }
+
+    /** 2초마다: NPC 를 따라가는 사람만 (보통 몇 명). 단계가 바뀌었거나 껐거나 의뢰가 끝났으면 정리. */
+    private void followTick() {
+        if (!ready || follows.isEmpty()) return;
+        for (var iter = follows.entrySet().iterator(); iter.hasNext(); ) {
+            var e = iter.next();
+            UUID uuid = e.getKey();
+            Follow f = e.getValue();
+            Player p = Bukkit.getPlayer(uuid);
+            Integer on = guiding.get(uuid), session = sessions.get(uuid);
+            if (p == null || !p.isOnline() || on == null || on != f.session || session == null || session != f.session) { iter.remove(); continue; }
+            try {
+                if (f.quest && !questNpcStill(p, f.npc)) {
+                    // 의뢰를 끝냈거나 포기함: 화살표를 끈다
+                    iter.remove();
+                    guiding.remove(uuid);
+                    p.sendPluginMessage(plugin, QuestCodec.GUIDE, QuestCodec.guide(0));
+                    continue;
+                }
+                if (!refreshFollow(p, f, false)) { iter.remove(); guiding.remove(uuid); }
+            } catch (RuntimeException ex) {
+                iter.remove();
+                plugin.getLogger().log(Level.WARNING, p.getName() + ": 길잡이 별 NPC 위치 확인 중 오류", ex);
+            }
+        }
+    }
+
+    private boolean questNpcStill(Player p, int npcId) {
+        MagicCodexLink codex = plugin.codex();
+        if (codex == null) return false;
+        for (int id : codex.questNpcTargets(p)) if (id == npcId) return true;
+        return false;
+    }
+
+    private static double flatDistSq(Location a, Location b) {
+        double dx = a.getX() - b.getX(), dz = a.getZ() - b.getZ();
+        return dx * dx + dz * dz;
     }
 
     /** 운영자 화면에 이 단계를 "준비 완료" 상태로 보여 준다 (포탈·징표 위치 확인용). 진행 기록은 건드리지 않는다. */

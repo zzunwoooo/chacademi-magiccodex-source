@@ -53,6 +53,18 @@ public final class QuestClient {
     /** 길잡이 별 화살표: 켜진 단계 session (0 = 꺼짐), 켠 시각, 끄기 시작한 시각 (0 = 켜져 있음). */
     static int guideSession;
     static long guideAt, guideEndAt;
+
+    /** 길잡이 별이 따라가는 NPC (2026-10-26 메모 #93, GuideTargetS2C). 서버가 보낸 마지막 위치·상태. null = 고정 목표 (단계 패킷 좌표). */
+    static final class Follow {
+        int session, state;
+        boolean moving;
+        String world = "";
+        double x, y, z;
+        UUID entity;
+        /** 끄기(session 0)를 받은 뒤의 것: 사라지는 연출에만 쓰고, 다음에 켤 때는 버린다. */
+        boolean stale;
+    }
+    static Follow follow;
     /** 방금 끝난 포탈 (들어가는 연출용). */
     static View vanishing;
     static long vanishAt;
@@ -69,12 +81,14 @@ public final class QuestClient {
         ClientPlayNetworking.registerGlobalReceiver(QuestPackets.GuideS2C.TYPE, (p, ctx) -> { if (p != QuestPackets.GuideS2C.INVALID) ctx.client().execute(() -> onGuide(p)); });
         PayloadTypeRegistry.playS2C().register(QuestPackets.PointsS2C.TYPE, QuestPackets.PointsS2C.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(QuestPackets.PointsS2C.TYPE, (p, ctx) -> { if (p != QuestPackets.PointsS2C.INVALID) ctx.client().execute(() -> onPoints(p)); });
-        ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> c.execute(() -> { view = new View(); vanishing = null; guideSession = 0; guideAt = guideEndAt = 0; QuestWorld.reset(); }));
+        PayloadTypeRegistry.playS2C().register(QuestPackets.GuideTargetS2C.TYPE, QuestPackets.GuideTargetS2C.CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(QuestPackets.GuideTargetS2C.TYPE, (p, ctx) -> { if (p != QuestPackets.GuideTargetS2C.INVALID) ctx.client().execute(() -> onGuideTarget(p)); });
+        ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> c.execute(() -> { view = new View(); vanishing = null; guideSession = 0; guideAt = guideEndAt = 0; follow = null; QuestWorld.reset(); }));
         // 프록시로 서버를 옮길 때 (학교 → 야생, 둘 다 minecraft:overworld): 예전 서버 좌표의 포탈·징표·화살표가 새 서버 세계에 그려지지 않게
         // 목표만 지운다 (HUD 글은 남김 — 스토리 서버로 돌아오면 서버가 단계를 다시 보낸다). TravelClient 와 같은 JOIN 시점.
         ClientPlayConnectionEvents.JOIN.register((h, s, c) -> c.execute(() -> {
             view.targetType = QuestPackets.TARGET_NONE; view.ready = false; view.npc = null; view.points.clear();
-            vanishing = null; guideSession = 0; guideAt = guideEndAt = 0; QuestWorld.reset();
+            vanishing = null; guideSession = 0; guideAt = guideEndAt = 0; follow = null; QuestWorld.reset();
         }));
         HudRenderCallback.EVENT.register(QuestHud::render);
         // 물·유리·반투명 블록을 다 그린 뒤에 그린다 (AFTER_ENTITIES 면 뒤의 물·유리가 글자·포탈 위에 덮여 흐려 보였음)
@@ -111,12 +125,29 @@ public final class QuestClient {
     private static void onGuide(QuestPackets.GuideS2C g) {
         if (g.session() == 0) {
             if (guideSession != 0 && guideEndAt == 0) guideEndAt = now();
+            if (follow != null) follow.stale = true;
             return;
         }
-        if (!QuestGuidePolicy.accepts(view.active(), view.session, g.session())) return;
+        if (follow != null && (follow.stale || follow.session != g.session())) follow = null;
+        // 의뢰 NPC 목표 (#93): 진행 중인 스토리 단계가 없어도, 같은 session 의 NPC 위치를 먼저 받았으면 켠다
+        boolean npcTarget = follow != null && g.session() > 0 && g.session() == view.session;
+        if (!QuestGuidePolicy.accepts(view.active(), view.session, g.session()) && !npcTarget) return;
         guideSession = g.session();
         guideAt = now();
         guideEndAt = 0;
+    }
+
+    /** 길잡이 별이 따라가는 NPC 의 새 위치 (#93): 지금 session 것만. 이미 따라가는 중이면 값만 바꾼다 (화살표는 부드럽게 옮겨감). */
+    private static void onGuideTarget(QuestPackets.GuideTargetS2C t) {
+        if (t.session() != view.session) return;
+        Follow f = follow != null && !follow.stale && follow.session == t.session() ? follow : new Follow();
+        f.session = t.session();
+        f.state = t.state();
+        f.moving = t.moving();
+        f.world = t.world();
+        f.x = t.x(); f.y = t.y(); f.z = t.z();
+        try { f.entity = t.entity().isEmpty() ? null : UUID.fromString(t.entity()); } catch (IllegalArgumentException e) { f.entity = null; }
+        follow = f;
     }
 
     /** 목표 지점: 지금 단계 session 것만 (단계 패킷 바로 뒤에 온다). */
@@ -151,6 +182,7 @@ public final class QuestClient {
         v.readyAt = v.ready ? (same && old.ready ? old.readyAt : t) : 0;
         v.doneAt = new int[v.conds.size()];
         view = v;
+        follow = null;
         QuestWorld.reset();
     }
 

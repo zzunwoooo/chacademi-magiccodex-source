@@ -56,4 +56,15 @@ class QuestWireCompatibilityTest {
         assertSame(QuestPackets.PointsS2C.INVALID,QuestPackets.PointsS2C.CODEC.decode(invalid));assertEquals(0,invalid.readableBytes());invalid.release();
     }
 
+    @Test void serverGuideTargetDecodesAndRejectsBadValues() {
+        String npc="12345678-1234-1234-1234-123456789abc";
+        var b=buffer(QuestCodec.guideTarget(130,QuestCodec.FOLLOW_LIVE,true,"minecraft:overworld",12.5,64,-3.25,npc));
+        assertEquals(new QuestPackets.GuideTargetS2C(130,QuestPackets.FOLLOW_LIVE,true,"minecraft:overworld",12.5,64,-3.25,npc),QuestPackets.GuideTargetS2C.CODEC.decode(b));
+        assertEquals(0,b.readableBytes());b.release();
+        assertEquals(QuestCodec.FOLLOW_OTHER_WORLD,QuestPackets.FOLLOW_OTHER_WORLD);assertEquals(QuestCodec.FOLLOW_UNLOADED,QuestPackets.FOLLOW_UNLOADED);
+        for(byte[] bad:new byte[][]{QuestCodec.guideTarget(0,0,false,"w",0,0,0,""),QuestCodec.guideTarget(3,7,false,"w",0,0,0,""),QuestCodec.guideTarget(3,0,false,"w",Double.NaN,0,0,"")}){
+            var x=buffer(bad);assertSame(QuestPackets.GuideTargetS2C.INVALID,QuestPackets.GuideTargetS2C.CODEC.decode(x));assertEquals(0,x.readableBytes());x.release();
+        }
+    }
+
 }

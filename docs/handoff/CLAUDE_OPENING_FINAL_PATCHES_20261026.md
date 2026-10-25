@@ -229,3 +229,13 @@ python3 tools/operating_overlay.py regenerate && python3 tools/operating_overlay
 - 바꾼 파일: `CombatTag.java`·`CombatLockRules.java`(새), `CombatLockRulesTest.java`(새), `combat-lock.yml`(새), `MagicCodexBridge.java`(등록 3줄), `TravelBridge.java`, `ReturnTicketBridge.java`, `plugin.yml`(권한 1개), `travel.yml`·`return-ticket.yml`(주석).
 - 그대로 둔 것: travel.yml `rules.block-in-combat`(아티팩트 5초 판정, 기본 꺼짐) — 켜면 이것도 같이 막음. 동행 펫(PetCompanions)의 자체 전투 판정은 상대 엔티티·8초 설정(combat-seconds)이 따로 있어 바꾸면 동작이 달라지므로 안 바꿈.
 - 확인 필요: HuskHomes 실제 명령·한글 별칭 이름(서버 HuskHomes config·commands.yml 별칭과 맞추기). 상대가 /tpa 를 나중에 수락해 내가 끌려가는 경우·HuskHomes 창 클릭 이동은 명령을 거치지 않아 못 막음. 옛 MCPets 소환 펫이 때린 건 주인 전투로 안 셈.
+
+## 16. 길잡이 별 — 움직이는 NPC 따라가기 (2026-10-26, 메모 #93)
+- 길잡이 별(132/201 guiding_star → ChacademyStory `QuestEngine.guide`)의 목표가 NPC 면 그 NPC 의 **지금 위치**를 따라간다. 일과표로 돌아다니는 ChacaNPC(Citizens) 등.
+- 서버(ChacademyStory): 목표가 NPC 인 사람만 `follows` 에 넣고 **2초마다**(`FOLLOW_TICKS` 40틱, 따라가는 사람 없으면 바로 끝) NPC 위치 확인 → **1.5블록 넘게 움직였거나** 상태(이동 중 / 언로드 / 다른 세계)가 바뀐 때만 새 채널 `chacademy:quest_guide_target` 으로 보냄. 이동 중 = Citizens `getNavigator().isNavigating()` 또는 2초 사이 0.3블록 넘게 움직임. 언로드면 저장 위치(마지막 위치), 다른 세계면 마지막 위치 + 상태를 보내고 따라가기 끝(클라가 화살표를 끔). 켤 때 지금 위치를 바로 한 번 보냄(단계 패킷의 NPC 좌표가 낡았을 수 있어서).
+- 클라(스토리 모드): NPC 가 화면에 불러와져 있으면 엔티티 그대로, 멀면 서버 위치로 — 둘 다 부드럽게 옮겨감(순간이동처럼 48블록 넘게 바뀌면 바로). 걷는 중이면 화살표 거리 글씨 아래 **"이동 중"** 을 같은 글씨로 작게. 새 장식 없음.
+- 고정 목표(포탈·목표 블록·스토리 고정 NPC)는 동작 그대로 — 스토리 NPC 는 위치 확인만 2초마다 하고, 안 움직이면 아무것도 안 보냄. 옛 클라(새 채널 없음)는 예전대로.
+- **의뢰 NPC 목표 연결**: 스토리 단계에 가리킬 목표가 없으면(단계 없음·다 끝냄·목표 없는 단계·공개 전인 장) 진행 중인 MagicCodex 의뢰의 아직 못 채운 `NPC` 목표(Citizens 번호, 이 서버 것만) 중 같은 세계의 가장 가까운 NPC 를 가리키고 따라간다. 의뢰를 끝내거나 포기하면 화살표를 끔. MagicCodexBridge `NpcSocialFacade.questNpcTargets(Player)`(추가 메서드, API_VERSION 그대로) ← `QuestBridge.npcTargets`. 스토리 목표가 있으면 스토리가 먼저.
+- 바꾼 파일: ChacademyStory `QuestEngine.java`·`QuestCodec.java`·`MagicCodexLink.java`, 스토리 모드 `QuestPackets.java`·`QuestClient.java`·`QuestWorld.java`, MagicCodexBridge `QuestBridge.java`·`NpcSocialFacade.java`, 테스트 `QuestGuideTest`·`QuestWireCompatibilityTest`.
+- 배포: ChacademyStory 플러그인 + 스토리 클라 모드 + MagicCodexBridge 같이 (하나만 올려도 깨지진 않음 — 의뢰 NPC 는 셋 다 새 판일 때만).
+- 못 한 것: 호감도 30·60·90 퀘스트는 아직 내용이 없어 연결할 대상 없음 (나중에 MagicCodex 의뢰 + `NPC` 목표로 만들면 자동으로 가리킴). 의뢰 목표 중 처치·제출·바이옴은 NPC 가 아니라 대상 아님. 다른 서버의 NPC 목표는 안 가리킴(예전처럼).

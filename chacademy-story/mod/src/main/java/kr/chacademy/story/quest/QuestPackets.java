@@ -125,4 +125,31 @@ public final class QuestPackets {
 
         @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
     }
+
+    public static final int FOLLOW_LIVE = 0, FOLLOW_UNLOADED = 1, FOLLOW_OTHER_WORLD = 2;
+
+    /**
+     * 길잡이 별이 따라가는 NPC 의 지금 위치 (2026-10-26 메모 #93, 플러그인 QuestCodec.guideTarget 과 같은 형식).
+     * 움직이는 NPC 를 가리킬 때만 오고, NPC 가 1.5블록 넘게 움직였거나 상태가 바뀌었을 때 2초마다 온다. GuideS2C 보다 먼저 온다.
+     * state: 보임 / 언로드(마지막 위치) / 다른 세계(화살표 끔). moving = 걷는 중 ("이동 중" 표시). entity = NPC 엔티티 UUID (없으면 빈 글).
+     */
+    public record GuideTargetS2C(int session, int state, boolean moving, String world, double x, double y, double z, String entity) implements CustomPacketPayload {
+        public static final Type<GuideTargetS2C> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath("chacademy", "quest_guide_target"));
+        public static final GuideTargetS2C INVALID = new GuideTargetS2C(-1, FOLLOW_OTHER_WORLD, false, "", 0, 0, 0, "");
+        public static final StreamCodec<RegistryFriendlyByteBuf, GuideTargetS2C> CODEC = SafeCodec.failSafe("quest_guide_target", StreamCodec.of((buf, v) -> {
+            buf.writeVarInt(v.session()); buf.writeVarInt(v.state()); buf.writeBoolean(v.moving()); buf.writeUtf(v.world());
+            buf.writeDouble(v.x()); buf.writeDouble(v.y()); buf.writeDouble(v.z()); buf.writeUtf(v.entity());
+        }, buf -> {
+            int session = buf.readVarInt();
+            int state = buf.readVarInt();
+            boolean moving = buf.readBoolean();
+            String world = buf.readUtf(256);
+            double x = buf.readDouble(), y = buf.readDouble(), z = buf.readDouble();
+            String entity = buf.readUtf(64);
+            if (session <= 0 || state < FOLLOW_LIVE || state > FOLLOW_OTHER_WORLD || !QuestGuidePolicy.finite(x, y, z)) throw new IllegalArgumentException("invalid guide target");
+            return new GuideTargetS2C(session, state, moving, world, x, y, z, entity);
+        }), INVALID);
+
+        @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
+    }
 }

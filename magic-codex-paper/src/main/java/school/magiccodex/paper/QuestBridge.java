@@ -82,6 +82,20 @@ final class QuestBridge implements Listener,PluginMessageListener,AutoCloseable 
     }
     int activeCount(Player p){long now=System.currentTimeMillis();return QuestStore.activeSubquests(cache.getOrDefault(p.getUniqueId(),List.of()),now);}
     String title(String id){var q=catalog.get(id);return q==null?"":q.title();}
+    /** 길잡이 별 (2026-10-26 메모 #93): 진행 중 의뢰에서 아직 못 채운 "NPC" 목표의 Citizens 번호 (이 서버 것만). 캐시만 본다, 메인 스레드. */
+    int[] npcTargets(Player p){
+        long now=System.currentTimeMillis();var out=new LinkedHashSet<Integer>();
+        for(var e:cache.getOrDefault(p.getUniqueId(),List.of())){
+            if(!e.status().equals("active")||!e.current(now))continue;
+            var goals=e.quest().objectives();
+            for(int i=0;i<e.progress().length&&i<goals.size();i++){
+                var g=goals.get(i);
+                if(g.type()!=Type.NPC||e.progress()[i]>=g.amount()||(!g.server().isEmpty()&&!g.server().equals(server)))continue;
+                try{out.add(Integer.parseInt(g.target().trim()));}catch(NumberFormatException ignored){}
+            }
+        }
+        return out.stream().mapToInt(Integer::intValue).toArray();
+    }
     void acceptFromDialogue(Player p,String id,Consumer<Boolean> done){
         var q=catalog.get(id);UUID uid=p.getUniqueId();long now=System.currentTimeMillis();
         if(q==null||!q.available(now)||(!q.permission().isEmpty()&&!p.hasPermission(q.permission()))||!p.hasPermission("magiccodex.quests")){done.accept(false);return;}

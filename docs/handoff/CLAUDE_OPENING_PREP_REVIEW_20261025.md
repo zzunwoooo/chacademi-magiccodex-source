@@ -114,3 +114,4 @@ buttons:
 | 89 | 특정 유저 기숙사·칭호·마법 사전 설정 | (전날) player-presets.yml players: {} (UUID/계정명 → house/titles/spells), 접속 3초 뒤 항목별 1회 | 나중에 (대상 목록 대기) | 보류 |
 | 90 | 일일 제한 초기화·재접속 유지 | 선물·AI 대화 호감도 = 공유 DB 날짜별(Asia/Seoul 자정), 서버 이동·재접속 유지 OK. 마음 읽기(383)만 서버 메모리였음 | 마음 읽기도 공유 DB 로 고침 + `/유저관리 <닉> 일일제한 보기·초기화 <종류|전체>` 추가. 배포 때 DB·시간대 확인 | 완료 |
 | 91 | 전투 중 이동 막기 | 귀환권·지도 이동에 전투 제한 없었음 (travel.yml block-in-combat 기본 꺼짐) | 오너 2안: 전투(때리거나 맞은 뒤 10초) 중 귀환권·지도 이동·HuskHomes 명령(/home·/spawn·/warp·/tpa·/back·한글 별칭)·동행 귀환 막기, 공간 도약·빗자루·리스폰·경기·관리자 허용. 공용 CombatTag + combat-lock.yml, 알림창 "N초 뒤 가능", 소모 없음 ([FINAL_PATCHES §15](CLAUDE_OPENING_FINAL_PATCHES_20261026.md)) | 완료 (빌드 전) |
+| 93 | 길잡이 별이 움직이는 NPC 따라가기 | 길잡이 별 NPC 목표는 단계 패킷을 받은 때 좌표 고정(화면에 불러와진 NPC 만 따라감), 의뢰 NPC 목표는 대상 아님 | 목표가 NPC 인 사람에게만 2초마다·1.5블록 넘게 움직이면 새 위치(언로드·다른 세계 상태 포함), 클라 부드럽게 옮김 + "이동 중". 스토리 목표 없으면 진행 중 의뢰의 NPC 목표도 가리킴. 고정 목표 그대로 ([FINAL_PATCHES §16](CLAUDE_OPENING_FINAL_PATCHES_20261026.md)) | 완료 (빌드 전) |

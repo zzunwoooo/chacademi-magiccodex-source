@@ -24,6 +24,14 @@ final class QuestCodec {
      */
     static final String POINTS = "chacademy:quest_points";
     static final int MAX_POINTS = 16;
+    /**
+     * 길잡이 별이 따라가는 NPC 의 지금 위치 (2026-10-26 메모 #93). 목표가 NPC 인 사람에게만, NPC 가 1.5블록 넘게 움직였거나 상태가 바뀌었을 때
+     * 2초마다 보낸다. {@link #GUIDE} 보다 먼저 보낸다 (의뢰 NPC 목표는 이 패킷이 있어야 클라가 화살표를 켠다).
+     * 형식: session, 상태({@link #FOLLOW_LIVE} 등), 이동 중(참거짓), 세계키, x, y, z, 엔티티 UUID(없으면 빈 글).
+     */
+    static final String GUIDE_TARGET = "chacademy:quest_guide_target";
+    /** 보이는 NPC / 언로드(마지막 위치) / 다른 세계(마지막 위치 — 클라가 화살표를 끔). */
+    static final int FOLLOW_LIVE = 0, FOLLOW_UNLOADED = 1, FOLLOW_OTHER_WORLD = 2;
 
     record Point(String world, double x, double y, double z) {}
 
@@ -90,6 +98,19 @@ final class QuestCodec {
     static byte[] guide(int session) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         StoryCodec.writeVarInt(out, session);
+        return out.toByteArray();
+    }
+
+    static byte[] guideTarget(int session, int state, boolean moving, String world, double x, double y, double z, String entity) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StoryCodec.writeVarInt(out, session);
+        StoryCodec.writeVarInt(out, state);
+        writeBool(out, moving);
+        StoryCodec.writeString(out, world == null ? "" : world);
+        writeDouble(out, x);
+        writeDouble(out, y);
+        writeDouble(out, z);
+        StoryCodec.writeString(out, entity == null ? "" : entity);
         return out.toByteArray();
     }
 
