@@ -8,14 +8,14 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.logging.Logger;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import java.lang.reflect.Proxy;
 class GiftReceiptApiTest {
  public static final class Provider {
   int result; boolean fail; String token; int slot;
   public int takeGift(Player player,int slot,ItemStack one,String token){if(fail)throw new IllegalStateException("unavailable");this.slot=slot;this.token=token;return result;}
  }
  private static MagicCodexLink link() {
-  Plugin plugin=mock(Plugin.class);when(plugin.getLogger()).thenReturn(Logger.getAnonymousLogger());return new MagicCodexLink(plugin);
+  Plugin plugin=(Plugin)Proxy.newProxyInstance(Plugin.class.getClassLoader(),new Class<?>[]{Plugin.class},(proxy,method,args)->method.getName().equals("getLogger")?Logger.getAnonymousLogger():null);return new MagicCodexLink(plugin);
  }
  @SuppressWarnings("unchecked") private static void connect(MagicCodexLink link,Provider provider)throws Exception{
   Field facade=MagicCodexLink.class.getDeclaredField("facade");facade.setAccessible(true);facade.set(link,provider);
