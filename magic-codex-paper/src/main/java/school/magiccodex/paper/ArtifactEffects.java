@@ -63,6 +63,7 @@ final class ArtifactEffects implements Listener {
     private final MagicHooks hooks = new MagicHooks();
     final ArtifactActions actions;
     final ArtifactLife life;
+    final ArtifactMotions motions;
 
     /** Time-limited bonus from one source (refreshing the same source replaces it). */
     record Timed(long until, double speed, double haste) {}
@@ -99,6 +100,7 @@ final class ArtifactEffects implements Listener {
         jumpKey = new NamespacedKey(plugin, "artifact_jump"); stepKey = new NamespacedKey(plugin, "artifact_step");
         actions = new ArtifactActions(this);
         life = new ArtifactLife(this);
+        motions = new ArtifactMotions(this); // 모션 아티팩트 9종 (2026-10-26), 자체 리스너·0.5초 타이머
         Bukkit.getPluginManager().registerEvents(this, plugin);
         Bukkit.getPluginManager().registerEvents(actions, plugin);
         Bukkit.getPluginManager().registerEvents(life, plugin);
@@ -719,5 +721,5 @@ final class ArtifactEffects implements Listener {
         actions.quit(id); life.quit(id);
     }
 
-    void close() { for (Player p : Bukkit.getOnlinePlayers()) clear(p); }
+    void close() { for (Player p : Bukkit.getOnlinePlayers()) clear(p); motions.close(); }
 }
