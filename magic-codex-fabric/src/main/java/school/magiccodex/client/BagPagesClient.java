@@ -70,8 +70,22 @@ public final class BagPagesClient {
         return true;
     }
 
-    /** Asks for the current state (inventory opened). */
-    static void hello() { send(new BagProtocol.Request(BagProtocol.HELLO, 0)); }
+    private static long lastHello;
+
+    /** Asks for the current state (join). */
+    static void hello() { lastHello = Util.getMeasuringTimeMs(); send(new BagProtocol.Request(BagProtocol.HELLO, 0)); }
+
+    /**
+     * Inventory opened (#101, 2026-10-26). The screen never waits for this: it draws from the last state at once and
+     * follows whatever arrives. The server already pushes every change (ready / blocked / unlock / page switch / admin),
+     * so a ready state is only re-checked every 30 s; no state or not ready yet asks right away. The server answers
+     * from memory only (BagPagesBridge entries), never from the database.
+     */
+    static void helloIfNeeded() {
+        var s = state;
+        if (s != null && s.ready() && Util.getMeasuringTimeMs() - lastHello < 30_000) return;
+        hello();
+    }
 
     /** Pages the screen shows in its pager (1 when the server has no bag pages). */
     static int pages() { return state == null ? 1 : BagProtocol.PAGES; }

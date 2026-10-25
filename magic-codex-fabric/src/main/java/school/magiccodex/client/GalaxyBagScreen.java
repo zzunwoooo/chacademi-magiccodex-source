@@ -69,7 +69,8 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
     private int hoveredId = -1, hoveredCard = -1, selectedCard = -1;
     private boolean swallowRelease, searchFocused, recipesDirty = true;
     private String search = "";
-    private int recipeTick, lastChangeCount = -1;
+    private int lastChangeCount = -1;
+    private long lastGrid = Long.MIN_VALUE;
     private RecipeDisplay ghost;
     private long ghostAt;
 
@@ -95,7 +96,7 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
         lastFrame = 0;
         focusedSlot = null;
         viewPage = BagPagesClient.active();
-        BagPagesClient.hello();
+        BagPagesClient.helloIfNeeded();   // #101: never waits; the bag draws from the last state at once
         recipesDirty = true;
         updateFrame();
     }
@@ -114,13 +115,25 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
         if (viewPage > BagPagesClient.pages()) viewPage = BagPagesClient.active();
         // Ghost ends once something real is in the grid (vanilla clears it on the next slot change).
         if (ghost != null) for (int i = 0; i < 4; i++) if (handler.getSlot(GalaxyBagLayout.INPUT_START + i).hasStack()) { ghost = null; break; }
+        // #101: the recipe list (whole recipe book x RecipeFinder) is rebuilt only when something it reads changed:
+        // inventory, the 2x2 grid, or the server's recipe book (refreshRecipeBook). No more rebuild every 10 ticks.
         int changes = client.player.getInventory().getChangeCount();
-        if (changes != lastChangeCount) { lastChangeCount = changes; recipesDirty = true; }
-        if (panelWanted && recipesWanted && (recipesDirty || ++recipeTick >= 10)) {
-            recipeTick = 0;
+        long grid = gridSignature();
+        if (changes != lastChangeCount || grid != lastGrid) { lastChangeCount = changes; lastGrid = grid; recipesDirty = true; }
+        if (panelWanted && recipesWanted && recipesDirty) {
             recipesDirty = false;
             recipes.rebuild(client, handler);
         }
+    }
+
+    /** Cheap fingerprint of the 2x2 grid (grid slots are not in the player inventory's change count). */
+    private long gridSignature() {
+        long h = 1;
+        for (int i = 0; i < 4; i++) {
+            ItemStack stack = handler.getSlot(GalaxyBagLayout.INPUT_START + i).getStack();
+            h = h * 1_000_003L + (stack.isEmpty() ? 0 : System.identityHashCode(stack) * 131L + stack.getCount());
+        }
+        return h;
     }
 
     @Override public void refreshRecipeBook() { recipesDirty = true; }
@@ -312,8 +325,13 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
         for (Element e : GalaxyBagLayout.elements())
             if (visible(e) && GalaxyBagLayout.hit(e, mx, my, panel)) { hoveredId = e.slotId(); break; }
         hoveredCard = GalaxyBagLayout.panelInteractive(panel) && recipesWanted && recipeFade > 0.6f ? GalaxyBagLayout.card(mx, my, panel) : -1;
-        var images = UiResources.images();
-        var text = UiResources.text();
+        // #101: the bag's art and labels live in their own caches (UiResources.bagImages) so other screens never evict
+        // them; the shared ones still start a frame for the item tooltip / stat icons drawn over the bag.
+        var shared = UiResources.images();
+        var images = UiResources.bagImages();
+        var text = UiResources.bagText();
+        shared.beginFrame();
+        UiResources.text().beginFrame();
         images.beginFrame();
         text.beginFrame();
         try {
@@ -329,8 +347,9 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
             }
         } finally {
             images.endFrame();
+            shared.endFrame();
         }
-        entrance.draw(c, width, height);
+        entrance.draw(c, width, height, images);
     }
 
     /** No grey vanilla darkening or blur: the bag floats over the world like the reference. */
@@ -362,7 +381,7 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
             image(c, BAG_FILL, GalaxyBagLayout.BAG_X, GalaxyBagLayout.BAG_Y, GalaxyBagLayout.BAG_W, GalaxyBagLayout.BAG_H, BAG_FILL_W, BAG_FILL_H, FILL);
             stars(c, BAG_STARS);
             image(c, BAG, GalaxyBagLayout.BAG_X, GalaxyBagLayout.BAG_Y, GalaxyBagLayout.BAG_W, GalaxyBagLayout.BAG_H, GalaxyBagLayout.BAG_PNG_W, GalaxyBagLayout.BAG_PNG_H, 0xFFFFFFFF);
-            var text = UiResources.text();
+            var text = UiResources.bagText();
             boolean locked = lockedView();
             for (int i = 0; i < 27; i++) {
                 Element e = GalaxyBagLayout.element(GalaxyBagLayout.MAIN_START + i);
@@ -413,7 +432,7 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
             image(c, PANEL_FILL, GalaxyBagLayout.PANEL_X, GalaxyBagLayout.PANEL_Y, GalaxyBagLayout.PANEL_W, GalaxyBagLayout.PANEL_H, PANEL_FILL_W, PANEL_FILL_H, fade(FILL, alpha));
             if (alpha > 0.5f) stars(c, PANEL_STARS);
             image(c, PANEL, GalaxyBagLayout.PANEL_X, GalaxyBagLayout.PANEL_Y, GalaxyBagLayout.PANEL_W, GalaxyBagLayout.PANEL_H, GalaxyBagLayout.PANEL_PNG_W, GalaxyBagLayout.PANEL_PNG_H, fade(0xFFFFFFFF, alpha));
-            var text = UiResources.text();
+            var text = UiResources.bagText();
             text.draw(c, "제작", GalaxyBagLayout.CRAFT_TITLE_X, GalaxyBagLayout.CRAFT_TITLE_Y, 32, fade(TEXT, alpha), BOLD, true);
             // Recipe book toggle: rounded square, lit while the recipe list is open.
             float h = GalaxyBagLayout.BOOK_SIZE / 2, bxc = GalaxyBagLayout.BOOK_X, byc = GalaxyBagLayout.BOOK_Y;
@@ -450,7 +469,7 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
 
     private void drawRecipeSection(DrawContext c, double mx, double my, float alpha) {
         if (alpha <= 0.01f) return;
-        var text = UiResources.text();
+        var text = UiResources.bagText();
         text.draw(c, "조합법", GalaxyBagLayout.RECIPE_TITLE_X, GalaxyBagLayout.RECIPE_TITLE_Y, 30, fade(TEXT, alpha), BOLD, true);
         // Search box.
         float x0 = GalaxyBagLayout.SEARCH_X0, y0 = GalaxyBagLayout.SEARCH_Y0, w = GalaxyBagLayout.SEARCH_X1 - x0, h = GalaxyBagLayout.SEARCH_Y1 - y0;
@@ -634,7 +653,7 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
             if (!count.isEmpty()) {
                 int color = TEXT;
                 if (count.startsWith("§e")) { count = count.substring(2); color = 0xFFF6DD72; }
-                var text = UiResources.text();
+                var text = UiResources.bagText();
                 float w = text.width(count, 26, BOLD);
                 text.drawOutline(c, count, countAnchor[0] - w, countAnchor[1], 26, color, BOLD, false);
             }
@@ -661,7 +680,7 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
         m.push();
         try {
             m.translate(0, 0, 432);
-            var text = UiResources.text();
+            var text = UiResources.bagText();
             float textSize = Math.max(8, 26 * fit.scale());
             float w = text.width(count, textSize, BOLD);
             text.drawOutline(c, count, cx + size * 0.55f - w, cy + size * 0.38f, textSize, amount != null && amount.startsWith("§e") ? 0xFFF6DD72 : TEXT, BOLD, false);
@@ -806,7 +825,7 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
             // Draw at a fixed integer size and scale the remainder, so sliding stays sub-pixel smooth.
             int iw = Math.max(1, (int) Math.ceil(w)), ih = Math.max(1, (int) Math.ceil(h));
             m.scale(w / iw, h / ih, 1);
-            UiResources.images().drawTexture(c, path, 0, 0, 0, 0, iw, ih, sourceW, sourceH, sourceW, sourceH, tint);
+            UiResources.bagImages().drawTexture(c, path, 0, 0, 0, 0, iw, ih, sourceW, sourceH, sourceW, sourceH, tint);
         } finally { m.pop(); }
     }
 

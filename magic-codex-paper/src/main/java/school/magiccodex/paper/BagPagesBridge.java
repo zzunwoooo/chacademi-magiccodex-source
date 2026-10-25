@@ -169,6 +169,9 @@ final class BagPagesBridge implements PluginMessageListener, Listener {
         BagProtocol.Request r;
         try { r = BagProtocol.decodeRequest(bytes); } catch (IllegalArgumentException e) { return; }
         var e = entry(p.getUniqueId());
+        // HELLO (인벤 열기, #101 2026-10-26): memory only — entries + coordinator holders, never SQL/HuskSync on this
+        // thread. Pages/unlocks are read off-thread at join/sync (BagHuskCoordinator.verifyIncoming/complete) and after
+        // each switch. Keep it that way; SWITCH below keeps its WAL/lease/CAS path unchanged.
         if (r.action() == BagProtocol.HELLO) { if (!e.loaded && !e.loading) load(p.getUniqueId(), () -> send(p)); else send(p); return; }
         long now = System.currentTimeMillis();
         if (now - lastSwitch.getOrDefault(p.getUniqueId(), 0L) < SWITCH_GAP_MS) { send(p); return; }
