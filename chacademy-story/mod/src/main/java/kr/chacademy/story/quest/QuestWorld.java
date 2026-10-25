@@ -47,7 +47,12 @@ final class QuestWorld {
     private static UUID npcCacheId;
     private static int npcSearch;
 
-    static void reset() { npcCache = null; npcCacheId = null; npcSearch = 0; }
+    /** 길잡이 별이 따라가는 NPC 의 화면 위치 (부드럽게 옮겨감) · "이동 중" 판단용 표본 (#93). */
+    private static Vec3 followShown, moveSample;
+    private static long followShownAt, moveSampleAt;
+    private static boolean moveSeen;
+
+    static void reset() { npcCache = null; npcCacheId = null; npcSearch = 0; followShown = null; moveSample = null; moveSeen = false; }
 
     private static boolean sameWorld(QuestClient.View v) {
         var mc = Minecraft.getInstance();
@@ -140,12 +145,30 @@ final class QuestWorld {
      * 목표 수평 10블록 안 · 단계 변경 · 다른 세계 · 목표 없음 · 다시 시전 → 서서히 사라지고 끝.
      */
     private static void drawGuide(Minecraft mc, PoseStack pose, net.minecraft.client.Camera camera, Vec3 cam, QuestClient.View v, long now, float pt, float t) {
-        Vec3 nearestPoint = v.targetType == QuestPackets.TARGET_NONE ? nearestPoint(mc, v, pt) : null;
+        QuestClient.Follow follow = QuestClient.follow != null && QuestClient.follow.session == QuestClient.guideSession ? QuestClient.follow : null;
+        Vec3 nearestPoint = follow == null && v.targetType == QuestPackets.TARGET_NONE ? nearestPoint(mc, v, pt) : null;
         boolean valid = QuestClient.guideEndAt == 0
                 && (QuestGuidePolicy.tracks(v.active(), v.session, QuestClient.guideSession, v.targetType, sameWorld(v))
                     || QuestGuidePolicy.accepts(v.active(), v.session, QuestClient.guideSession) && nearestPoint != null);
         Vec3 target = null;
-        if (v.active() && nearestPoint != null) {
+        boolean moving = false;
+        if (follow != null) {
+            // 움직이는 NPC (#93): 보이면 엔티티 그대로, 멀어서 안 보이면 서버가 2초마다 보내는 위치. 둘 다 부드럽게 옮겨간다.
+            boolean same = follow.state != QuestPackets.FOLLOW_OTHER_WORLD && mc.level.dimension().location().toString().equals(follow.world);
+            valid = QuestClient.guideEndAt == 0 && same;
+            Entity e = same && follow.entity != null ? findEntity(mc, follow.entity) : null;
+            if (same) {
+                Vec3 raw = e != null ? e.getPosition(pt).add(0, headHeight(e) + 0.75, 0) : new Vec3(follow.x, follow.y + 2.55, follow.z);
+                target = smoothFollow(raw, now);
+                moving = e != null ? entityMoving(e, now) : follow.moving && follow.state == QuestPackets.FOLLOW_LIVE;
+            } else {
+                target = followShown; // 다른 세계로 감: 마지막 자리에서 서서히 사라진다
+            }
+            if (target != null) {
+                Vec3 me = mc.player.getPosition(pt);
+                if (QuestGuidePolicy.reached(target.x - me.x, target.z - me.z)) valid = false;
+            }
+        } else if (v.active() && nearestPoint != null) {
             // 호출 목표가 없는 단계: 아직 안 누른 목표 지점 중 가장 가까운 곳 (10블록 안이면 다음 가까운 곳은 다시 시전해서)
             target = nearestPoint;
             Vec3 me = mc.player.getPosition(pt);
@@ -161,7 +184,7 @@ final class QuestWorld {
         if (target != null && !QuestGuidePolicy.finite(target.x, target.y, target.z)) { valid = false; target = null; }
         if (!valid && QuestClient.guideEndAt == 0) QuestClient.guideEndAt = now;
         float fadeOut = QuestClient.guideEndAt == 0 ? 1 : 1 - (now - QuestClient.guideEndAt) / 450f;
-        if (fadeOut <= 0) { QuestClient.guideSession = 0; QuestClient.guideEndAt = 0; return; }
+        if (fadeOut <= 0) { QuestClient.guideSession = 0; QuestClient.guideEndAt = 0; QuestClient.follow = null; followShown = null; moveSample = null; return; }
         if (target == null) return; // 사라지는 중인데 목표를 잃음: 그릴 방향이 없다
         float alpha = Mth.clamp((now - QuestClient.guideAt) / 300f, 0, 1) * fadeOut;
 
@@ -211,8 +234,42 @@ final class QuestWorld {
         int textColor = argb(alpha, 1f, 0.95f, 0.82f), outline = argb(alpha * 0.9f, 0.04f, 0.05f, 0.08f);
         if ((textColor >>> 24) > 4) {
             mc.font.drawInBatch8xOutline(label, -mc.font.width(label) / 2f, -4, textColor, outline, pose.last().pose(), OWN, LightTexture.FULL_BRIGHT);
+            if (moving) {
+                // 목표 NPC 가 걷는 중 (#93): 거리 아래 작게, 같은 글씨
+                var sub = Component.literal("이동 중").getVisualOrderText();
+                pose.pushPose();
+                pose.translate(0, 9, 0);
+                pose.scale(0.8f, 0.8f, 0.8f);
+                mc.font.drawInBatch8xOutline(sub, -mc.font.width(sub) / 2f, -4, textColor, outline, pose.last().pose(), OWN, LightTexture.FULL_BRIGHT);
+                pose.popPose();
+            }
         }
         pose.popPose();
+    }
+
+    /** 서버 위치가 2초마다 한 번씩 바뀌어도 화살표가 튀지 않게 따라간다 (멀리 순간이동하면 바로). */
+    private static Vec3 smoothFollow(Vec3 raw, long now) {
+        if (followShown == null || followShown.distanceToSqr(raw) > 48 * 48) followShown = raw;
+        else {
+            long dt = Math.max(0, Math.min(200, now - followShownAt));
+            double k = 1 - Math.exp(-dt / 220.0);
+            followShown = followShown.add(raw.subtract(followShown).scale(k));
+        }
+        followShownAt = now;
+        return followShown;
+    }
+
+    /** 보이는 NPC 가 걷는 중인지: 0.5초마다 위치를 비교한다. */
+    private static boolean entityMoving(Entity e, long now) {
+        Vec3 p = e.position();
+        if (moveSample == null) { moveSample = p; moveSampleAt = now; moveSeen = false; return false; }
+        if (now - moveSampleAt >= 500) {
+            double dx = p.x - moveSample.x, dz = p.z - moveSample.z;
+            moveSeen = dx * dx + dz * dz > 0.15 * 0.15;
+            moveSample = p;
+            moveSampleAt = now;
+        }
+        return moveSeen;
     }
 
     /** 이 세계에 있는 목표 지점 중 가장 가까운 곳 (없으면 null). */
@@ -298,18 +355,23 @@ final class QuestWorld {
     }
 
     private static Vec3 markerPos(Minecraft mc, QuestClient.View v, float pt) {
-        if (v.npc != null) {
-            if (npcCache == null || npcCache.isRemoved() || !v.npc.equals(npcCacheId)) {
-                if (npcSearch-- <= 0) {
-                    npcSearch = 20;
-                    npcCache = null;
-                    npcCacheId = v.npc;
-                    for (Entity e : mc.level.entitiesForRendering()) if (v.npc.equals(e.getUUID())) { npcCache = e; break; }
-                }
-            }
-            if (npcCache != null && !npcCache.isRemoved()) return npcCache.getPosition(pt).add(0, headHeight(npcCache) + 0.75, 0);
-        }
+        Entity e = v.npc == null ? null : findEntity(mc, v.npc);
+        if (e != null) return e.getPosition(pt).add(0, headHeight(e) + 0.75, 0);
         return new Vec3(v.x, v.y + 2.55, v.z);
+    }
+
+    /** 내 화면에 불러와진 NPC 엔티티 (없으면 null). 못 찾으면 20프레임에 한 번만 다시 찾는다. */
+    private static Entity findEntity(Minecraft mc, UUID id) {
+        if (npcCache == null || npcCache.isRemoved() || !id.equals(npcCacheId)) {
+            if (!id.equals(npcCacheId)) npcSearch = 0;
+            if (npcSearch-- <= 0) {
+                npcSearch = 20;
+                npcCache = null;
+                npcCacheId = id;
+                for (Entity e : mc.level.entitiesForRendering()) if (id.equals(e.getUUID())) { npcCache = e; break; }
+            }
+        }
+        return npcCache != null && !npcCache.isRemoved() ? npcCache : null;
     }
 
     /** extraGlow: 들어갈 때 더 밝게 (0~1). */

@@ -108,6 +108,8 @@ public final class MagicCodexLink {
         methods.put("addAffinity", type.getMethod("addAffinity", UUID.class, String.class, String.class, int.class));
         try { methods.put("resolvePlayer",type.getMethod("resolvePlayer",String.class)); }
         catch(NoSuchMethodException ignored) { } // Older Bridge keeps account-name compatibility.
+        try { methods.put("questNpcTargets", type.getMethod("questNpcTargets", Player.class)); }
+        catch (NoSuchMethodException ignored) { } // 옛 Bridge: 길잡이 별이 의뢰 NPC 를 가리키지 않을 뿐 (#93)
         facade = provider;
         return true;
     }
@@ -180,6 +182,19 @@ public final class MagicCodexLink {
     public void resetPlaceholderLookup() {
         papiLooked = false;
         papi = null;
+    }
+
+    // ---------------------------------------------------------------- 의뢰 NPC 목표 (길잡이 별, 2026-10-26 메모 #93)
+
+    /** 진행 중 의뢰에서 아직 못 채운 "NPC" 목표의 Citizens 번호 (이 서버 것만, MagicCodex 캐시만 봄). 연결이 없으면 빈 배열. 메인 스레드. */
+    public int[] questNpcTargets(Player p) {
+        if (!available() || !methods.containsKey("questNpcTargets")) return new int[0];
+        try {
+            Object v = call("questNpcTargets", p);
+            return v instanceof int[] a ? a : new int[0];
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return new int[0];
+        }
     }
 
     // ---------------------------------------------------------------- 호감도
