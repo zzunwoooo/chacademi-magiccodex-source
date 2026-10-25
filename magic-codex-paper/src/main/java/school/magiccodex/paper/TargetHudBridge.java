@@ -77,7 +77,7 @@ final class TargetHudBridge implements Listener, AutoCloseable {
         var c = plugin.getConfig();
         if (c.isList("target-hud.boss-tags")) bossTags = Set.copyOf(c.getStringList("target-hud.boss-tags"));
         if (c.isList("target-hud.boss-mythic-prefixes")) bossPrefixes = List.copyOf(c.getStringList("target-hud.boss-mythic-prefixes"));
-        task = Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 5, 5);
+        task = Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 7, 5); // 타이밍 조정: 야생 regen(43)·cleanup(211)과 위상 분리
     }
 
     private static long now() { return Bukkit.getCurrentTick(); }

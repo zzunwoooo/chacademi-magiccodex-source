@@ -120,7 +120,9 @@ final class PlayerStateBridge implements Listener,AutoCloseable {
             String[] pair=part.split("=",2);if(pair.length!=2||!pair[0].matches("[a-z0-9_-]{1,64}")||account.cooldowns.size()>=256)continue;
             try{long until=Long.parseLong(pair[1]);if(until>now&&until-now<=86_400_000)account.cooldowns.put(pair[0],until);}catch(NumberFormatException ignored){}
         }
-        account.normalize();mana.publish(p.getUniqueId());p.saveData();
+        // 접속 적용 직후의 p.saveData()는 뺌(2026-10-25 렉 1단계): 상태 원본은 공유 DB이고, 이 PDC는 다음 자동저장·퇴장 때 저장된다.
+        // 우편·상점·낚시·NPC 거래의 saveData는 디스크 영수증용이라 그대로 둔다.
+        account.normalize();mana.publish(p.getUniqueId());
     }
     private void load(Player p){
         if(store==null||closing)return;UUID id=p.getUniqueId();String session=UUID.randomUUID().toString();sessions.put(id,session);ready.remove(id);dirty.remove(id);urgent.remove(id);

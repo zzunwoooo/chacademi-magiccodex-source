@@ -62,6 +62,38 @@ final class TempBlocks implements Listener {
         if (e != null && restore(e)) { entries.remove(e.key()); save(); }
     }
 
+    /**
+     * Batch place (one journal write per cast instead of one per block).
+     * Order: collect originals of the free (air) spots → save the journal once → place only if that save succeeded.
+     * @return the blocks actually placed (empty when nothing was free or the journal could not be written).
+     */
+    List<Block> placeAll(Collection<Block> blocks, Material material) {
+        var added = new ArrayList<Entry>(); var targets = new ArrayList<Block>();
+        for (Block b : blocks) {
+            if (b.getType()!=Material.AIR && b.getType()!=Material.CAVE_AIR && b.getType()!=Material.VOID_AIR) continue;
+            var e = new Entry(b.getWorld().getName(), b.getX(), b.getY(), b.getZ(), material, b.getBlockData().getAsString());
+            if (entries.containsKey(e.key())) continue; // already ours (or listed twice): never overwrite its original
+            entries.put(e.key(), e); added.add(e); targets.add(b);
+        }
+        if (added.isEmpty()) return List.of();
+        if (!save()) { for (Entry e : added) entries.remove(e.key()); return List.of(); } // journal first; never place unrecorded blocks
+        for (Block b : targets) b.setType(material, false);
+        return targets;
+    }
+
+    /**
+     * Batch remove for one cast's blocks (one journal write). Records whose block could not be restored
+     * (world not loaded) stay journaled. The no-argument {@link #removeAll()} stays the full shutdown restore.
+     */
+    void removeAll(Collection<Block> blocks) {
+        boolean changed = false;
+        for (Block b : blocks) {
+            var e = entries.get(b.getWorld().getName() + ":" + b.getX() + ":" + b.getY() + ":" + b.getZ());
+            if (e != null && restore(e)) { entries.remove(e.key()); changed = true; }
+        }
+        if (changed) save();
+    }
+
     /** Plugin disable: put back everything we can; anything in an unloaded world stays journaled. */
     void removeAll() {
         entries.values().removeIf(this::restore);

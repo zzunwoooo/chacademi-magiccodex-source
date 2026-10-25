@@ -68,13 +68,17 @@ final class Passives implements Listener {
         if (!(e.getEntity() instanceof LivingEntity victim) || e.getFinalDamage() <= 0) return;
         if (plugin.protection().inProc()) return; // the extra arrows themselves
         Player owner = owner(e.getDamager());
-        if (owner == null || !plugin.targets().enemy(owner, victim)) return;
+        if (owner == null) return;
+        // the enemy check costs WorldGuard queries: only run it when one of the two passives is actually on
+        boolean trajectory = on(owner, "trajectory_acceleration"), resonant = on(owner, "resonant_arrow");
+        if (!trajectory && !resonant) return;
+        if (!plugin.targets().enemy(owner, victim)) return;
         boolean magic = plugin.protection().magicDamaging();
         boolean direct = !magic && (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK
             || e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK
             || e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE && e.getDamager() instanceof AbstractArrow);
-        if (on(owner, "trajectory_acceleration")) arrow(owner, victim, "trajectory_acceleration");
-        if (direct && on(owner, "resonant_arrow")) arrow(owner, victim, "resonant_arrow");
+        if (trajectory) arrow(owner, victim, "trajectory_acceleration");
+        if (direct && resonant) arrow(owner, victim, "resonant_arrow");
     }
 
     private void arrow(Player owner, LivingEntity victim, String id) {
