@@ -6,7 +6,7 @@
 # 마법 발견: <마법 ID>: <칭호 ID>. 발견 직후 + 접속 때(예전에 발견한 마법 포함) 지급.
 # 오너 기획 237개 (chacademi-titles-all.yml, 2026-10-25): 접두 119 · 접미 118. 칭호 이름은 titles.yml prefix_magic_*/suffix_magic_*
 discovery:
-  feather_fall: prefix_magic_feather_fall  # 001 feather fall (바람)
+  feather_fall: prefix_magic_feather_fall  # 001 깃털 낙하 (바람)
   harvest_wind: prefix_magic_harvest_wind  # 003 수확의 바람 (바람)
   light_leap: prefix_magic_light_leap  # 005 상승기류 (바람)
   aerial_haul: prefix_magic_aerial_haul  # 008 부유 (바람)

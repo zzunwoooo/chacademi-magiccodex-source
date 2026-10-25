@@ -2,7 +2,7 @@ schema-version: 1
 spells:
   feather_fall:
     number: 1
-    name: feather fall
+    name: 깃털 낙하
     permission: magic.learned.feather_fall
     icon: magiccodex:textures/spells/novice/feather_step.png
     mana-cost: 5

@@ -1,7 +1,7 @@
 catalog-mode: true
 spells:
   feather_fall:
-    name: feather fall
+    name: 깃털 낙하
     enabled: true
     command: 마법 feather_fall
     permission: magic.learned.feather_fall

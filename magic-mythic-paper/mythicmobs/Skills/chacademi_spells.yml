@@ -2,7 +2,7 @@
 # 피해량 <skill.var.damage> 는 MagicCodexBridge spell-runtime.yml 의 base-damage + power-ratio x 마력 으로 전달됩니다.
 # cha* 메커닉은 ChAcademiaMagicMythic 플러그인이 제공합니다.
 
-# 1 feather fall - 5초 천천히 낙하
+# 1 깃털 낙하 - 5초 천천히 낙하
 CHA_feather_step:
   Cooldown: 0
   Skills:

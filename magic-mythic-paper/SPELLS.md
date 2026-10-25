@@ -2,7 +2,7 @@
 
 | # | id | 이름 | 대상 | 처리 | 내용 |
 |---|---|---|---|---|---|
-| 1 | feather_fall | feather fall | SELF | 미몹+애드온 | 5초 천천히 낙하 |
+| 1 | feather_fall | 깃털 낙하 | SELF | 미몹+애드온 | 5초 천천히 낙하 |
 | 2 | wind_push | 윈드 푸쉬 | ENTITY | 미몹+애드온 | 정면 몬스터 1체 약 4블록 밀기 |
 | 3 | wind_message | 바람의 전언 | - | 보류 | Bridge가 직접 처리하는 귓속말 마법 |
 | 4 | gale_dash | 바람 걸음 | SELF | Bridge 유틸 | MagicCodexBridge SpellUtility가 실제 처리 (기존 유틸) |

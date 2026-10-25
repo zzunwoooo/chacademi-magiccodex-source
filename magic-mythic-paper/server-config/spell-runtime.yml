@@ -2,7 +2,7 @@
 # 피해 수치는 밸런스 검토 전 임시값입니다.
 spells:
   feather_fall:
-    name: "feather fall"
+    name: "깃털 낙하"
     skill: "CHA_feather_step"
     target: "SELF"
     range: 12
