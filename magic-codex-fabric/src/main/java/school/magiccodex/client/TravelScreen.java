@@ -415,6 +415,7 @@ final class TravelScreen extends Screen {
             for (Point p : order) marker(c, p, a, cam);
             // the player
             var pos = state.player();
+            if (pos.tab().equals(tab)) pings(c, t, a, cam);
             if (pos.tab().equals(tab)) {
                 float x = (float) TravelMapMath.screenX(cam, a.u(pos.x(), pos.z())), y = (float) TravelMapMath.screenY(cam, a.v(pos.x(), pos.z()));
                 var m = c.getMatrices(); m.push();
@@ -501,6 +502,21 @@ final class TravelScreen extends Screen {
         }
         if (on || over) label(c, p, x, y - (p.kind() == TravelProtocol.POINT_PERSONAL ? 44 : 30) * grow);
     }
+    /** 376 봉화 신호: party members' flare markers (MapPingClient) in the world the player stands in, with their names. */
+    private void pings(DrawContext c, Tab t, TravelMapMath.Affine a, TravelMapMath.Camera cam) {
+        for (var p : MapPingClient.in(t.world())) {
+            float x = (float) TravelMapMath.screenX(cam, a.u(p.x(), p.z())), y = (float) TravelMapMath.screenY(cam, a.v(p.x(), p.z()));
+            if (x < TravelMapMath.MAP_L - 40 || x > TravelMapMath.MAP_R + 40 || y < TravelMapMath.MAP_T - 40 || y > TravelMapMath.MAP_B + 60) continue;
+            float pulse = .5f + .5f * (float) Math.sin(time * 4);
+            FishingArt.bloom(c, x, y, 22 + 6 * pulse, 0xFF8A3C, .22f + .12f * pulse);
+            icon(c, ACTIVE, x, y, 30, 0xFFFFB27A);
+            String name = cut(p.name(), 16, LABEL, 220);
+            float w = width(name, 16, LABEL) + 18;
+            FishingArt.card(c, x - w / 2, y - 40, w, 24, 0xD0081830, 0x80FF9A5A, 1);
+            text(c, name, x, y - 28, 16, 0xFFFFE2C8, LABEL, true);
+        }
+    }
+
     private void label(DrawContext c, Point p, float x, float y) {
         String name = cut(p.name(), 18, LABEL, 260);
         float w = width(name, 18, LABEL) + 22;

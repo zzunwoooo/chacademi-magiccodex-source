@@ -26,6 +26,7 @@ public final class AimClient {
 
     public static void initialize() {
         AimSettings.get();
+        SpellChargeClient.initialize();
         ShoulderCamera.registerCommand();
         registerCommand();
         WorldRenderEvents.AFTER_ENTITIES.register(AimRenderer::render);
@@ -47,13 +48,15 @@ public final class AimClient {
     public static boolean mouse(MinecraftClient c, int button, int action) {
         if (button < 0 || button >= swallowRelease.length) return false;
         if (action == GLFW.GLFW_RELEASE) {
+            // 338 화염 투창: releasing the held left button throws with the charge so far
+            if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT && SpellChargeClient.charging()) { swallowRelease[button] = false; AimTargeting.release(); return true; }
             if (!swallowRelease[button]) return false;
             swallowRelease[button] = false;
             return true;
         }
         if (action != GLFW.GLFW_PRESS || c.currentScreen != null || c.player == null) return false;
         boolean used = false;
-        if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT && AimTargeting.targeting()) used = AimTargeting.confirm();
+        if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT && AimTargeting.targeting()) used = AimTargeting.press();
         else if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT && AimTargeting.targeting()) { AimTargeting.cancel(true); used = true; }
         if (used) swallowRelease[button] = true;
         return used;

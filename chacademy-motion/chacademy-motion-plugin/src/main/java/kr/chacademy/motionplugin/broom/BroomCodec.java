@@ -39,6 +39,38 @@ public final class BroomCodec {
     public static final byte FX_HANG_MODE_ON = 3;
     public static final byte FX_HANG_MODE_OFF = 4;
 
+    /**
+     * 서버 → 본인 / 주변: 시간제 비행 버프 (2026-10-25, 마법 375 불꽃 추진 · 380 순풍). UUID 탄 사람, byte kind, int ticks, float value.
+     * SPEED·BALANCE_DRAIN 은 탄 사람 본인에게만, HIDE_TRAIL 은 본인과 주변에 보낸다. ticks 0 = 끝냄.
+     */
+    public static final String CHANNEL_BUFF = "chacademy:broom_buff";
+    /** 최고 속도 × value (ticks 동안). */
+    public static final byte BUFF_SPEED = 1;
+    /** 균형 감소 × value (ticks 동안, 0.7 = 30% 덜 깎임). */
+    public static final byte BUFF_BALANCE_DRAIN = 2;
+    /** 이 사람의 빗자루 궤적을 ticks 동안 숨김 (마법 VFX 가 대신 그림). */
+    public static final byte BUFF_HIDE_TRAIL = 3;
+
+    public record Buff(UUID player, byte kind, int ticks, float value) {}
+
+    public static byte[] encodeBuff(Buff b) {
+        var out = new ByteArrayOutputStream(25);
+        writeLong(out, b.player().getMostSignificantBits());
+        writeLong(out, b.player().getLeastSignificantBits());
+        out.write(b.kind());
+        writeInt(out, b.ticks());
+        writeFloat(out, b.value());
+        return out.toByteArray();
+    }
+
+    public static Buff decodeBuff(byte[] data) throws MalformedException {
+        if (data.length != 25) throw new MalformedException("길이 " + data.length);
+        var buf = ByteBuffer.wrap(data);
+        var b = new Buff(new UUID(buf.getLong(), buf.getLong()), buf.get(), buf.getInt(), buf.getFloat());
+        if (!Float.isFinite(b.value())) throw new MalformedException("값이 숫자가 아님");
+        return b;
+    }
+
     public static final int MAX_ID_BYTES = 64;
     public static final int MAX_TEXT_BYTES = 256;
     public static final int MAX_LIST = 64;

@@ -54,6 +54,7 @@ public final class TravelClient {
         ClientPlayConnectionEvents.JOIN.register((h, s, c) -> { markers = new Markers("", "", List.of()); TravelTerrain.key(""); });
         TravelWorldMarks.initialize();
         TravelTerrain.initialize();
+        MapPingClient.initialize();   // 376 봉화 신호 party markers on this map
     }
 
     private static void accept(Frame frame) {

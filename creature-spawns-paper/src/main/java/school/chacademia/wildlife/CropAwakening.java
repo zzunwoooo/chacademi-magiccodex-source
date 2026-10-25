@@ -31,8 +31,17 @@ import java.util.concurrent.ThreadLocalRandom;
  * 수확물은 절대 잃지 않는다 (2026-10-21): 기본(cancel-drops: false)은 원래 드롭이 그대로 떨어지고 몹은 보너스.
  * cancel-drops: true 이면 원래 드롭 사본을 몹이 들고 있다가 소환 실패·수확자 접속 종료·청크 언로드·사망·수명 끝 중
  * 먼저 일어난 한 번에만 돌려준다 (서버 비정상 종료 30초 창은 개체가 비영속이라 예외).
+ *
+ * <p>다른 플러그인 연동 (2026-10-25, 마법 385 수확제의 종 · 387 작물 붙잡기). 컴파일 의존 없이 수확자 Player 의 Bukkit 메타데이터로:
+ * <ul>
+ *   <li>{@value #CHANCE_KEY}: 숫자 값 → 이 사람의 깨어남 확률 × 값 (여러 플러그인이 넣으면 가장 큰 값, 1~10)</li>
+ *   <li>{@value #SPAWNED_KEY}: {@code java.util.function.Consumer<Entity>} 값 → 이 사람의 수확으로 작물 몹이 나온 그 틱에 몹을 넘겨 부름</li>
+ * </ul>
+ * 메타데이터를 넣은 플러그인이 기간이 끝나면 지운다.
  */
 final class CropAwakening implements Listener {
+    static final String CHANCE_KEY = "chacademia_crop_chance";
+    static final String SPAWNED_KEY = "chacademia_crop_spawned";
     private static final BlockFace[] SIDES = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
     private final WildlifePlugin plugin;
     private final Map<UUID, Set<UUID>> owned = new HashMap<>();
@@ -76,7 +85,7 @@ final class CropAwakening implements Listener {
         if (!worlds.isEmpty() && !worlds.contains(b.getWorld().getName())) return;
         if (!mature(b)) return;
         var random = ThreadLocalRandom.current();
-        if (random.nextDouble() >= cfg.getDouble("crop-awakening.chance", 0.05)) return;
+        if (random.nextDouble() >= cfg.getDouble("crop-awakening.chance", 0.05) * chanceMultiplier(p)) return;
 
         UUID ownerId = p.getUniqueId();
         if (activeCount(ownerId) + pending.getOrDefault(ownerId, 0) >= cfg.getInt("crop-awakening.max-per-player", 3)) return;
@@ -98,7 +107,7 @@ final class CropAwakening implements Listener {
                 try {
                     breaking.remove(key);
                     String result = p.isOnline() && at.getWorld().isChunkLoaded(at.getBlockX() >> 4, at.getBlockZ() >> 4)
-                        ? spawn(p, id, shiny, at, drops) : "수확한 사람 없음 또는 청크 언로드";
+                        ? spawn(p, id, shiny, at, drops, true) : "수확한 사람 없음 또는 청크 언로드";
                     if (!"OK".equals(result)) dropAt(at, drops);
                 } finally { releasePending(ownerId); }
             });
@@ -180,10 +189,13 @@ final class CropAwakening implements Listener {
         return mine.size();
     }
 
-    String spawn(Player owner, String id, boolean shiny, Location at) { return spawn(owner, id, shiny, at, List.of()); }
+    String spawn(Player owner, String id, boolean shiny, Location at) { return spawn(owner, id, shiny, at, List.of(), false); }
 
-    /** drops: 이 몹이 대신 들고 있을 원래 수확물(사본). 성공("OK")일 때만 몹이 맡고, 실패면 호출한 쪽이 돌려준다. */
-    String spawn(Player owner, String id, boolean shiny, Location at, List<ItemStack> drops) {
+    /**
+     * drops: 이 몹이 대신 들고 있을 원래 수확물(사본). 성공("OK")일 때만 몹이 맡고, 실패면 호출한 쪽이 돌려준다.
+     * harvested: 실제 수확으로 깨어남 → 수확자의 {@value #SPAWNED_KEY} 연동을 부른다 (테스트 명령은 부르지 않음).
+     */
+    String spawn(Player owner, String id, boolean shiny, Location at, List<ItemStack> drops, boolean harvested) {
         if (activeCount(owner.getUniqueId()) >= plugin.getConfig().getInt("crop-awakening.max-per-player", 3)) return "동시 작물 개체 제한";
         var type = MythicBukkit.inst().getMobManager().getMythicMob("CA_Crop_" + id + (shiny ? "_shiny" : ""));
         if (type.isEmpty()) return "미몹 없음: CA_Crop_" + id + (shiny ? "_shiny" : "");
@@ -209,7 +221,29 @@ final class CropAwakening implements Listener {
             if (h != null) dropAt(ent.getLocation(), h.drops());
             ent.remove();
         }, life);
+        if (harvested) notifySpawned(owner, ent);
         return "OK";
+    }
+
+    /** 수확자에게 붙은 확률 배수 메타데이터 (없으면 1). */
+    static double chanceMultiplier(Player p) {
+        double m = 1;
+        for (org.bukkit.metadata.MetadataValue v : p.getMetadata(CHANCE_KEY)) {
+            if (!(v.value() instanceof Number n)) continue;
+            double d = n.doubleValue();
+            if (Double.isFinite(d) && d > m) m = Math.min(d, 10);
+        }
+        return m;
+    }
+
+    /** 수확자에게 붙은 "작물 몹 나옴" 연동을 부른다. 연동 쪽 오류는 수확·소환에 영향을 주지 않는다. */
+    @SuppressWarnings("unchecked")
+    private void notifySpawned(Player owner, Entity crop) {
+        for (org.bukkit.metadata.MetadataValue v : owner.getMetadata(SPAWNED_KEY)) {
+            if (!(v.value() instanceof java.util.function.Consumer<?> c)) continue;
+            try { ((java.util.function.Consumer<Entity>) c).accept(crop); }
+            catch (RuntimeException error) { plugin.getLogger().warning("crop-awakening: " + SPAWNED_KEY + " 연동 오류 (" + error + ")"); }
+        }
     }
 
     Collection<String> ids() { return new TreeSet<>(crops.values()); }

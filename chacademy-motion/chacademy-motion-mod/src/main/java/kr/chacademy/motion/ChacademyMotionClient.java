@@ -57,6 +57,7 @@ public class ChacademyMotionClient implements ClientModInitializer {
         PayloadTypeRegistry.playS2C().register(BroomPackets.ListS2C.TYPE, BroomPackets.ListS2C.CODEC);
         PayloadTypeRegistry.playS2C().register(BroomPackets.FxS2C.TYPE, BroomPackets.FxS2C.CODEC);
         PayloadTypeRegistry.playC2S().register(BroomPackets.RequestC2S.TYPE, BroomPackets.RequestC2S.CODEC);
+        PayloadTypeRegistry.playS2C().register(BroomPackets.BuffS2C.TYPE, BroomPackets.BuffS2C.CODEC);
 
         MotionPlayer.init();
         BroomPose.init();
@@ -68,6 +69,15 @@ public class ChacademyMotionClient implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(BroomPackets.StateS2C.TYPE, (payload, context) -> { if (payload != BroomPackets.StateS2C.INVALID) BroomRiders.onState(payload); });
         ClientPlayNetworking.registerGlobalReceiver(BroomPackets.ListS2C.TYPE, (payload, context) -> { if (payload != BroomPackets.ListS2C.INVALID) BroomApi.onList(payload); });
         ClientPlayNetworking.registerGlobalReceiver(BroomPackets.FxS2C.TYPE, (payload, context) -> { if (payload != BroomPackets.FxS2C.INVALID) context.client().execute(() -> BroomFlight.onFx(payload.kind())); });
+        // 시간제 비행 버프 (마법 375 불꽃 추진 · 380 순풍): 속도·균형은 내 빗자루만, 궤적 숨김은 누구든
+        ClientPlayNetworking.registerGlobalReceiver(BroomPackets.BuffS2C.TYPE, (payload, context) -> {
+            if (payload == BroomPackets.BuffS2C.INVALID) return;
+            context.client().execute(() -> {
+                if (payload.kind() == BroomPackets.BUFF_HIDE_TRAIL) { BroomTrails.hide(payload.player(), payload.ticks()); return; }
+                var me = context.client().player;
+                if (me != null && me.getUUID().equals(payload.player())) BroomFlight.onBuff(payload.kind(), payload.ticks(), payload.value());
+            });
+        });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> client.execute(() -> {
             BroomFlight.reset();
             BroomRiders.clear();

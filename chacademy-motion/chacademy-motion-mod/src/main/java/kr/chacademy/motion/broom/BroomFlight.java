@@ -142,6 +142,14 @@ public final class BroomFlight {
         else if (kind == BroomPackets.FX_FREE_BOOST) physics.boostTicks = BroomPhysics.BOOST_TICKS;
     }
 
+    /** 서버 시간제 버프 (BroomPackets.BUFF_SPEED / BUFF_BALANCE_DRAIN, 마법 375·380). 타고 있지 않으면 무시. */
+    public static void onBuff(byte kind, int ticks, float value) {
+        if (physics == null || !Float.isFinite(value)) return;
+        ticks = Mth.clamp(ticks, 0, 20 * 60);
+        if (kind == BroomPackets.BUFF_SPEED) { physics.speedMult = Mth.clamp(value, 0.5f, 2f); physics.speedTicks = ticks; }
+        else if (kind == BroomPackets.BUFF_BALANCE_DRAIN) { physics.drainMult = Mth.clamp(value, 0f, 2f); physics.drainTicks = ticks; }
+    }
+
     static void serverStopped(byte reason) {
         if(reason!=BroomPackets.STATE_FALL){catchTicks=0;catchSequence=null;drop=null;fallenPhysics=null;catchRequested=false;catchLevel=null;}
         if (physics == null) return;

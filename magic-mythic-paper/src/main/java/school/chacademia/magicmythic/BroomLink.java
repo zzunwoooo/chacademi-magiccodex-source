@@ -15,10 +15,12 @@ import org.bukkit.plugin.Plugin;
  *   boolean isRidingBroom(Player)
  *   void stopBroom(Player)
  *   double[] broomVelocity(Player)                   - 비행 속도 {x,y,z} 블록/틱, 안 타면 null (0.3.0-codex.3 이후)
+ *   boolean broomSpeedBuff(Player, float, int, boolean)   - 최고 속도 × mult (ticks), 궤적 숨김 (…-nova.1 이후, 마법 375)
+ *   boolean broomBalanceBuff(Player, float, int, boolean) - 균형 감소 × mult (ticks), 균형 가득 (…-nova.1 이후, 마법 380)
  */
 final class BroomLink {
     private static Plugin cachedPlugin;
-    private static Method flight, riding, stop, velocity;
+    private static Method flight, riding, stop, velocity, speedBuff, balanceBuff;
 
     private BroomLink() {}
 
@@ -35,6 +37,8 @@ final class BroomLink {
                 } catch (NoSuchMethodException older) {
                     velocity = null; // 예전 ChacademyMotion: 투사체 보정만 꺼짐
                 }
+                speedBuff = optional(p, "broomSpeedBuff", Player.class, float.class, int.class, boolean.class);
+                balanceBuff = optional(p, "broomBalanceBuff", Player.class, float.class, int.class, boolean.class);
                 cachedPlugin = p;
             } catch (ReflectiveOperationException | LinkageError e) {
                 cachedPlugin = null;
@@ -83,5 +87,38 @@ final class BroomLink {
         } catch (ReflectiveOperationException | RuntimeException ignored) {
         }
         return null;
+    }
+
+    private static Method optional(Plugin p, String name, Class<?>... types) {
+        try {
+            return p.getClass().getMethod(name, types);
+        } catch (NoSuchMethodException older) {
+            return null; // 예전 ChacademyMotion: 이 기능만 꺼짐
+        }
+    }
+
+    /**
+     * 시간제 최고 속도 버프 (마법 375 불꽃 추진): ticks 동안 최고 속도 × mult, hideTrail 이면 빗자루 궤적을 숨김.
+     * true = 적용됨. 타고 있지 않음·모드/플러그인이 오래됨 → false.
+     */
+    static boolean speedBuff(Player player, float mult, int ticks, boolean hideTrail) {
+        Plugin p = plugin();
+        if (p == null || speedBuff == null) return false;
+        try {
+            return Boolean.TRUE.equals(speedBuff.invoke(p, player, mult, ticks, hideTrail));
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return false;
+        }
+    }
+
+    /** 시간제 균형 버프 (마법 380 순풍): refill 이면 균형 가득, ticks 동안 균형 감소 × drainMult. true = 적용됨. */
+    static boolean balanceBuff(Player player, float drainMult, int ticks, boolean refill) {
+        Plugin p = plugin();
+        if (p == null || balanceBuff == null) return false;
+        try {
+            return Boolean.TRUE.equals(balanceBuff.invoke(p, player, drainMult, ticks, refill));
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return false;
+        }
     }
 }
