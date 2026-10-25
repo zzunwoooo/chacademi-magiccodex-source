@@ -328,7 +328,7 @@ public final class WildlifePlugin extends JavaPlugin implements Listener {
         if(!naturalChecks.isEmpty()) out.add(" (구) 미몹 랜덤스폰 조건 호출="+naturalChecks+" ← 0이 아니면 RandomSpawns 파일이 아직 남아 있음");
         return out;
     }
-    @Override public void onDisable(){spawner.stop();if(naturalGate!=null)naturalGate.close();crops.close();}
+    @Override public void onDisable(){combat.restoreAll();spawner.stop();if(naturalGate!=null)naturalGate.close();crops.close();}
     // ── 자체 스폰 루프(WildSpawner)용 ──
     Set<String> spawnWorlds(){return settings.enabled()?settings.worlds():Set.of();}
     double playerMinDistance(){return Math.sqrt(settings.playerMinSquared());}
