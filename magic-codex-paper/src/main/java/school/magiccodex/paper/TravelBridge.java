@@ -718,8 +718,9 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
                 .then(CmdKit.literal("켜기").then(CmdKit.word("ID", this::pointIds).executes(CmdKit.run(ctx -> enable(ctx, true)))))
                 .then(CmdKit.literal("끄기").then(CmdKit.word("ID", this::pointIds).executes(CmdKit.run(ctx -> enable(ctx, false)))))
                 .then(CmdKit.literal("삭제").then(CmdKit.confirm(CmdKit.word("ID", this::pointIds), this::remove)))
-                .then(CmdKit.literal("서버상태").executes(CmdKit.run(ctx -> servers(CmdKit.sender(ctx)))));
-        ChacaApi.branch(plugin, ChacaApi.컨텐츠관리, root, "지도 이동 지점 목록·추가(현재 위치)·위치·반경·이름·켜기·끄기·삭제·서버상태 (이 서버 travel.yml)", "이동지점 목록");
+                .then(CmdKit.literal("서버상태").executes(CmdKit.run(ctx -> servers(CmdKit.sender(ctx)))))
+                .then(fitCommands());
+        ChacaApi.branch(plugin, ChacaApi.컨텐츠관리, root, "지도 이동 지점 목록·추가(현재 위치)·위치·반경·이름·켜기·끄기·삭제·서버상태, 타운맵 그림 맞추기(지도) (이 서버 travel.yml)", "이동지점 목록");
         ChacaApi.branch(plugin, ChacaApi.유저관리, CmdKit.literal("이동지점")
                 .then(CmdKit.literal("보기").executes(CmdKit.run(this::userView)))
                 .then(CmdKit.literal("기록").executes(CmdKit.run(this::userHistory)))
@@ -756,6 +757,93 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
                     + (st != null && !st.configHash().isEmpty() && !st.configHash().equals(config.hash()) && !s.id().equals(config.self()) ? " · travel.yml 다름" : ""));
         }
         CmdKit.lines(sender, out);
+    }
+
+    // ------------------------------------------------------------------ 타운맵 그림 맞추기 (#53)
+
+    /** 학교 타운맵 기준 픽셀 기본값 = 광장 동상 한가운데 (그림 1479×1064, 오너 2026-10-25: 동상 = 월드 32.5, 124, 12.5). */
+    static final double STATUE_PX = 493, STATUE_PY = 432;
+
+    private com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> fitCommands() {
+        var px = DoubleArgumentType.doubleArg(-16384, 32768);
+        return CmdKit.literal("지도")
+                .then(CmdKit.literal("보기").executes(CmdKit.run(this::fitView)))
+                .then(CmdKit.literal("기준").executes(CmdKit.run(ctx -> fitAnchor(ctx, false)))
+                        .then(CmdKit.argument("그림X", px).then(CmdKit.argument("그림Y", px).executes(CmdKit.run(ctx -> fitAnchor(ctx, true))))))
+                .then(CmdKit.literal("두번째").then(CmdKit.argument("그림X", px).then(CmdKit.argument("그림Y", px).executes(CmdKit.run(this::fitSecond)))))
+                .then(CmdKit.literal("배율").then(CmdKit.argument("블록", DoubleArgumentType.doubleArg(0.01, 64)).executes(CmdKit.run(this::fitScale))))
+                .then(CmdKit.literal("회전").then(CmdKit.argument("각도", DoubleArgumentType.doubleArg(-360, 360)).executes(CmdKit.run(this::fitRotate))))
+                .then(CmdKit.literal("밀기").then(CmdKit.argument("x", DoubleArgumentType.doubleArg(-100000, 100000))
+                        .then(CmdKit.argument("z", DoubleArgumentType.doubleArg(-100000, 100000)).executes(CmdKit.run(this::fitShift)))));
+    }
+
+    /** 지금 서 있는 세계의 그림 지도 탭. */
+    private TravelModel.TabDef imageTab(Player p) throws CommandSyntaxException {
+        var t = config.tab(config.self(), p.getWorld().getName());
+        if (t == null) throw ChacaApi.error("이 세계(" + p.getWorld().getName() + ")를 보여 주는 지도 탭이 없어요");
+        if (t.map() != TravelProtocol.MAP_IMAGE) throw ChacaApi.error("탭 " + t.label() + " 은 그림 지도(map: image)가 아니에요 — travel.yml 에서 map: image 로 바꿔 주세요");
+        return t;
+    }
+    /** travel.yml 에 적힌 기준 픽셀 (image.anchor, 없으면 동상). */
+    private double[] anchorPixel(TravelModel.TabDef t) {
+        try {
+            var y = new YamlConfiguration(); y.load(file);
+            var a = y.getDoubleList("tabs." + t.id() + ".image.anchor");
+            if (a.size() == 2) return new double[] { a.get(0), a.get(1) };
+        } catch (Exception ignored) {}
+        return new double[] { STATUE_PX, STATUE_PY };
+    }
+    private static String f1(double v) { return String.format(Locale.ROOT, "%.1f", v); }
+    private static String f3(double v) { return String.format(Locale.ROOT, "%.3f", v); }
+
+    private void fitSave(org.bukkit.command.CommandSender sender, TravelModel.TabDef t, TravelMapFit.Fit f, double[] anchor, String what) {
+        double[] c = f.corners(t.imageW(), t.imageH());
+        String at = "tabs." + t.id() + ".image.";
+        edit(sender, "타운맵 " + what + " (1픽셀 = " + f3(f.scale()) + "블록, 회전 " + f1(f.degrees()) + "도) — 지도를 다시 열어 확인", y -> {
+            y.set(at + "top-left", List.of(c[0], c[1])); y.set(at + "top-right", List.of(c[2], c[3])); y.set(at + "bottom-left", List.of(c[4], c[5]));
+            if (anchor != null) y.set(at + "anchor", List.of(anchor[0], anchor[1]));
+        });
+    }
+    private void fitView(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Player p = CmdKit.self(ctx); var t = imageTab(p);
+        var f = TravelMapFit.of(t.corners(), t.imageW()); double[] a = anchorPixel(t); Location l = p.getLocation();
+        CmdKit.lines(CmdKit.sender(ctx), List.of(
+                "── 타운맵 맞추기 · 탭 " + t.label() + " (그림 " + t.imageW() + "×" + t.imageH() + ") ──",
+                " 1픽셀 = " + f3(f.scale()) + "블록 · 회전 " + f1(f.degrees()) + "도",
+                " 기준 픽셀 (" + f1(a[0]) + ", " + f1(a[1]) + ") = 월드 " + f1(f.x(a[0], a[1])) + ", " + f1(f.z(a[0], a[1])),
+                " 지금 서 있는 곳 = 그림 (" + f1(f.px(l.getX(), l.getZ())) + ", " + f1(f.py(l.getX(), l.getZ())) + ")",
+                " 맞추는 법: 동상 한가운데 서서 '지도 기준' → 멀리 떨어진 알아보기 쉬운 곳(성 모서리 등)에 서서 '지도 두번째 <그림X> <그림Y>'",
+                " 조금씩: '지도 밀기 <x> <z>' (블록) · '지도 배율 <블록/픽셀>' · '지도 회전 <도>'"));
+    }
+    private void fitAnchor(CommandContext<CommandSourceStack> ctx, boolean given) throws CommandSyntaxException {
+        Player p = CmdKit.self(ctx); var t = imageTab(p); Location l = p.getLocation();
+        double[] a = given ? new double[] { ctx.getArgument("그림X", Double.class), ctx.getArgument("그림Y", Double.class) } : new double[] { STATUE_PX, STATUE_PY };
+        var f = TravelMapFit.move(TravelMapFit.of(t.corners(), t.imageW()), a[0], a[1], l.getX(), l.getZ());
+        fitSave(CmdKit.sender(ctx), t, f, a, "기준점 그림 (" + f1(a[0]) + ", " + f1(a[1]) + ") = 지금 위치 " + f1(l.getX()) + ", " + f1(l.getZ()));
+    }
+    private void fitSecond(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Player p = CmdKit.self(ctx); var t = imageTab(p); Location l = p.getLocation();
+        var f = TravelMapFit.of(t.corners(), t.imageW()); double[] a = anchorPixel(t);
+        double px = ctx.getArgument("그림X", Double.class), py = ctx.getArgument("그림Y", Double.class);
+        try {
+            var next = TravelMapFit.two(a[0], a[1], f.x(a[0], a[1]), f.z(a[0], a[1]), px, py, l.getX(), l.getZ());
+            fitSave(CmdKit.sender(ctx), t, next, null, "두 번째 기준점 그림 (" + f1(px) + ", " + f1(py) + ") = 지금 위치 " + f1(l.getX()) + ", " + f1(l.getZ()));
+        } catch (IllegalArgumentException bad) { throw ChacaApi.error(bad.getMessage()); }
+    }
+    private void fitScale(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Player p = CmdKit.self(ctx); var t = imageTab(p); double[] a = anchorPixel(t);
+        var f = TravelMapFit.scale(TravelMapFit.of(t.corners(), t.imageW()), a[0], a[1], ctx.getArgument("블록", Double.class));
+        fitSave(CmdKit.sender(ctx), t, f, null, "배율 변경");
+    }
+    private void fitRotate(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Player p = CmdKit.self(ctx); var t = imageTab(p); double[] a = anchorPixel(t);
+        var f = TravelMapFit.rotate(TravelMapFit.of(t.corners(), t.imageW()), a[0], a[1], ctx.getArgument("각도", Double.class));
+        fitSave(CmdKit.sender(ctx), t, f, null, "회전 변경");
+    }
+    private void fitShift(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Player p = CmdKit.self(ctx); var t = imageTab(p);
+        var f = TravelMapFit.shift(TravelMapFit.of(t.corners(), t.imageW()), ctx.getArgument("x", Double.class), ctx.getArgument("z", Double.class));
+        fitSave(CmdKit.sender(ctx), t, f, null, "밀기");
     }
 
     /** Edits this server's travel.yml (comments kept) and reloads. */

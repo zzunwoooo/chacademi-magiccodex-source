@@ -483,29 +483,82 @@ final class TravelScreen extends Screen {
         }
     }
 
+    /** 이동 못 하는 지점의 홀로그램 빨강 (#53). */
+    static final int HOLO = 0xFFFF5A5A, HOLO_TEXT = 0xFFFF9C9C, SPARK = 0xFFF6E7B0;
+
+    /**
+     * 지도 표시 (오픈 전 메모 #53, 오너 2026-10-25): 이동할 수 있는 곳은 반짝반짝 빛나고, 이동할 수 없는 곳(미발견·사용 불가)은
+     * 빨갛게 빛나는 홀로그램. 이름은 늘 위에 작게 (마우스를 올리거나 고르면 이름표).
+     */
     private void marker(DrawContext c, Point p, TravelMapMath.Affine a, TravelMapMath.Camera cam) {
         float x = (float) TravelMapMath.screenX(cam, a.u(p.x(), p.z())), y = (float) TravelMapMath.screenY(cam, a.v(p.x(), p.z()));
         if (x < TravelMapMath.MAP_L - 40 || x > TravelMapMath.MAP_R + 40 || y < TravelMapMath.MAP_T - 40 || y > TravelMapMath.MAP_B + 60) return;
         boolean on = p.id().equals(selected), over = p.id().equals(hovered);
-        boolean usable = p.travelable();
+        boolean usable = p.travelable(), personal = p.kind() == TravelProtocol.POINT_PERSONAL;
         float grow = on ? 1.25f : over ? 1.12f : 1;
-        int tint = usable ? WHITE : p.state() == TravelProtocol.LOCKED ? white(.92f) : 0xFF8A93A0;
-        if (on) { HudMesh.arc(c, x, y, 20 * grow, 1.4f, 0, (float) (Math.PI * 2), 0xCCE9D3A0); }
-        switch (p.kind() == TravelProtocol.POINT_PERSONAL ? 2 : p.state() == TravelProtocol.LOCKED ? 1 : 0) {
-            case 2 -> icon(c, PERSONAL, x, y - 16 * grow, 34 * grow, tint);   // pin: its tip on the spot
-            case 1 -> icon(c, LOCKED, x, y, 24 * grow, tint);
-            default -> {
-                if (usable) FishingArt.bloom(c, x, y, 18 * grow, 0x6FD8FF, .10f + .06f * (float) Math.sin(time * 2.4 + p.x()));
-                icon(c, ACTIVE, x, y, 34 * grow, tint);
-            }
+        float phase = (float) (time + (p.x() * 0.37 + p.z() * 0.71) % 7);
+        if (on) { HudMesh.arc(c, x, y, 20 * grow, 1.4f, 0, (float) (Math.PI * 2), usable ? 0xCCE9D3A0 : 0xCCFF7A7A); }
+        float iconY = personal ? y - 16 * grow : y;     // pin: its tip on the spot
+        Art art = personal ? PERSONAL : ACTIVE;
+        float box = 34 * grow;
+        if (usable) {
+            float pulse = .5f + .5f * (float) Math.sin(phase * 3.2);
+            FishingArt.bloom(c, x, iconY, 30 * grow, 0xFFE6A8, .22f + .20f * pulse);
+            FishingArt.bloom(c, x, iconY, 16 * grow, 0xFFFFFF, .18f + .16f * pulse);
+            icon(c, art, x, iconY, box, WHITE);
+            sparkles(c, x, iconY, 20 * grow, phase);
+        } else hologram(c, art, x, iconY, box, phase);
+        float top = iconY - (personal ? 20 : 16) * grow;
+        if (on || over) label(c, p, x, top - 16);
+        else {
+            String name = cut(p.name(), 14, LABEL, 200);
+            FishingArt.outlined(c, name, x, top - 8, 14, 0xE0000000, LABEL);   // 검은 테두리 먼저, 글씨는 위에
+            text(c, name, x, top - 8, 14, usable ? 0xFFFFF4D6 : HOLO_TEXT, LABEL, true);
         }
-        if (on || over) label(c, p, x, y - (p.kind() == TravelProtocol.POINT_PERSONAL ? 44 : 30) * grow);
     }
+
+    /** 반짝이: 아이콘 둘레를 도는 별 3개, 하나씩 켜졌다 꺼짐. */
+    private static void sparkles(DrawContext c, float x, float y, float r, float phase) {
+        for (int i = 0; i < 3; i++) {
+            float t = phase * 0.9f + i * 2.1f;
+            float tw = (float) Math.max(0, Math.sin(t * 2.3));          // 반짝 (0 → 1 → 0)
+            if (tw < .05f) continue;
+            float ang = (float) (t * 0.6 + i * Math.PI * 2 / 3);
+            float sx = x + (float) Math.cos(ang) * r, sy = y + (float) Math.sin(ang) * r * .85f;
+            float size = 3.5f + 4.5f * tw;
+            FishingArt.bloom(c, sx, sy, size * 1.8f, 0xFFF0C0, .35f * tw);
+            HudMesh.star(c, sx, sy, size, FishingArt.argb(.95f * tw, SPARK));
+            var m = c.getMatrices(); m.push();
+            try {
+                m.translate(sx, sy, 0); m.multiply(new Quaternionf().rotateZ((float) (Math.PI / 2)));
+                HudMesh.star(c, 0, 0, size * .7f, FishingArt.argb(.8f * tw, SPARK));
+            } finally { m.pop(); }
+        }
+    }
+
+    /** 빨간 홀로그램: 붉은 빛 + 깜빡임 + 살짝 어긋난 잔상 + 위아래로 지나가는 주사선. */
+    private static void hologram(DrawContext c, Art art, float x, float y, float box, float phase) {
+        float pulse = .5f + .5f * (float) Math.sin(phase * 2.6);
+        float flicker = (Math.sin(phase * 23) > .93) ? .55f : 1f;         // 가끔 지지직
+        FishingArt.bloom(c, x, y, box * .95f, 0xFF3030, (.20f + .18f * pulse) * flicker);
+        FishingArt.bloom(c, x, y, box * .45f, 0xFF7070, (.16f + .10f * pulse) * flicker);
+        float jitter = (float) Math.sin(phase * 17) * 1.2f;
+        icon(c, art, x + 1.6f + jitter, y, box, FishingArt.argb(.28f * flicker, HOLO));   // 잔상
+        icon(c, art, x, y, box, FishingArt.argb((.80f + .15f * pulse) * flicker, HOLO));
+        float scan = (float) ((phase * 0.8) % 1.0);                       // 주사선 0..1
+        float sy = y - box / 2 + box * scan;
+        FishingArt.rect(c, x - box * .42f, sy, box * .84f, 1.4f, FishingArt.argb(.55f * flicker, 0xFFB0B0));
+        for (int i = 0; i < 4; i++) {
+            float ly = y - box * .38f + i * box * .25f;
+            FishingArt.rect(c, x - box * .36f, ly, box * .72f, 1, FishingArt.argb(.12f, 0xFF8080));
+        }
+    }
+
     private void label(DrawContext c, Point p, float x, float y) {
         String name = cut(p.name(), 18, LABEL, 260);
         float w = width(name, 18, LABEL) + 22;
-        FishingArt.card(c, x - w / 2, y - 14, w, 28, 0xD0081830, 0x60C9B48A, 1);
-        text(c, name, x, y, 18, p.travelable() ? WHITE : p.state() == TravelProtocol.LOCKED ? MUTED : 0xFFB8C2CE, LABEL, true);
+        FishingArt.card(c, x - w / 2, y - 14, w, 28, p.travelable() ? 0xD0081830 : 0xD0300810, p.travelable() ? 0x60C9B48A : 0x80FF6A6A, 1);
+        text(c, name, x, y, 18, p.travelable() ? WHITE : HOLO_TEXT, LABEL, true);
     }
 
     // ---- header: legend (top half) and tabs (bottom half), close
@@ -515,7 +568,7 @@ final class TravelScreen extends Screen {
         icon(c, PLAYER, x, LEGEND_Y, 20, WHITE); text(c, "현재 위치", x + 16, LEGEND_Y + 1, 15, MUTED, BODY, false); x += 22 + width("현재 위치", 15, BODY) + 26;
         icon(c, ACTIVE, x, LEGEND_Y, 22, WHITE); text(c, "공개 지점", x + 16, LEGEND_Y + 1, 15, MUTED, BODY, false); x += 22 + width("공개 지점", 15, BODY) + 26;
         icon(c, PERSONAL, x, LEGEND_Y - 2, 20, WHITE); text(c, "개인 지점", x + 16, LEGEND_Y + 1, 15, MUTED, BODY, false); x += 22 + width("개인 지점", 15, BODY) + 26;
-        icon(c, LOCKED, x, LEGEND_Y, 16, WHITE); text(c, "미발견", x + 16, LEGEND_Y + 1, 15, MUTED, BODY, false);
+        icon(c, ACTIVE, x, LEGEND_Y, 22, FishingArt.argb(.9f, HOLO)); text(c, "이동 불가", x + 16, LEGEND_Y + 1, 15, MUTED, BODY, false);
         boolean overClose = in(mx, my, 1118, 70, 44, 44);
         icon(c, CLOSE, 1140, 92, 24, white(overClose ? 1 : .75f));
         int i = 0;
