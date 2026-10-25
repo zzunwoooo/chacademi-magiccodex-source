@@ -158,8 +158,11 @@ public final class ItemTooltipRenderer {
     }
     private static void itemPreview(DrawContext c,HudTextureCache images,ItemStack stack,int x,int y,int w,long now){
             galaxy(c,x+10,y+8,w-20,45,now);
-            rarityEffect(c,x+w/2f,y+30,now,rarity);
-            images.drawTexture(c,ORBIT,x+w/2-43,y+23,80,190,86,25,1610,485,1774,887,0x40FFFFFF);
+            // 등급 연출: 구름·빛가루·반짝임 (2026-10-26, 선·원 연출 대체). 일반·등급 없음은 예전 궤도 무늬만.
+            boolean aura=rarity!=null&&rarity!=TooltipRarity.Grade.GENERAL;
+            c.enableScissor(x+6,y+5,x+w-6,y+57);
+            try{if(aura)TooltipAura.back(c,x+w/2f,y+31,now,rarity);else images.drawTexture(c,ORBIT,x+w/2-43,y+23,80,190,86,25,1610,485,1774,887,0x40FFFFFF);c.draw();}
+            finally{c.disableScissor();}
             c.draw();
             c.getMatrices().push();
             c.getMatrices().translate(x+w/2f,y+31,0);
@@ -168,6 +171,7 @@ public final class ItemTooltipRenderer {
             c.getMatrices().multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotation(angle));
             c.getMatrices().scale(2.2f*(.86f+.14f*(float)Math.cos(now/2100.0)),2.2f,1);
             c.drawItem(stack,-8,-8);c.draw();c.getMatrices().pop();
+            if(aura){c.enableScissor(x+6,y+5,x+w-6,y+57);try{TooltipAura.front(c,x+w/2f,y+31,now,rarity);c.draw();}finally{c.disableScissor();}}
     }
     private static Text rarityText(TooltipRarity.Grade grade){
         return styled(Text.literal(grade.label).withColor(grade.color),"tooltip_type");
@@ -176,34 +180,6 @@ public final class ItemTooltipRenderer {
         if(grade==null)return;
         Text label=rarityText(grade);
         c.drawText(font,label,x+w-10-font.getWidth(label),y,0xFF000000|grade.color,false);
-    }
-    private static void rarityEffect(DrawContext c,float x,float y,long now,TooltipRarity.Grade grade){
-        if(grade==null||grade==TooltipRarity.Grade.GENERAL)return;
-        double t=now/5000.0;
-        int color=grade.color;
-        int pulse=14+(int)(5*Math.sin(t*2));
-        // Fixed geometry budget, entirely above the first text row and behind the item.
-        HudMesh.disk(c,x,y,19,(pulse<<24)|color);
-        if(grade==TooltipRarity.Grade.HIGH){
-            for(int i=0;i<7;i++){
-                double a=i*2.399+t*.35;
-                float px=x+(float)Math.cos(a)*(19+i%3*5);
-                float py=y+(float)Math.sin(a)*13;
-                HudMesh.star(c,px,py,.65f,((48+(int)(18*Math.sin(t+i)))<<24)|color);
-            }
-        }else{
-            HudMesh.arc(c,x,y,18,.65f,(float)(t*.25),(float)(Math.PI*2),0x38000000|color);
-            int count=grade==TooltipRarity.Grade.UNIQUE?4:6;
-            for(int i=0;i<count;i++){
-                double a=i*Math.PI*2/count+t*.22;
-                float dx=(float)Math.cos(a),dy=(float)Math.sin(a);
-                if(grade==TooltipRarity.Grade.UNIQUE){
-                    HudMesh.star(c,x+dx*27,y+dy*16,1.15f,0x80000000|color);
-                }else{
-                    HudMesh.line(c,x+dx*21,y+dy*16,x+dx*27,y+dy*20,.7f,0x60000000|color);
-                }
-            }
-        }
     }
     private static void galaxy(DrawContext c,int x,int y,int w,int h,long now){
         double t=now/5500.0;
