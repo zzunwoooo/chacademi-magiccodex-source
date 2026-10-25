@@ -4,6 +4,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -19,9 +21,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import school.magiccodex.protocol.FishingProtocol;
 
 /**
- * 생활 마법 374~386 중 Bridge 시스템에 붙는 9종 (2026-10-25, 기획 claude/magic-325-387-plan.md 생활 표).
+ * 생활 마법 374~386 중 Bridge 시스템에 붙는 9종 (2026-10-25, 기획 claude/magic-325-387-plan.md 생활 표)
+ * + 추가 생활·편의 12종 중 2종 (비늘 감정 scale_appraisal, 깨달음의 빛 enlighten_hint; 나머지 10종은 ChAcademiaMagicMythic NovaLife3).
  * SpellUtility 가 부른다: {@link #refusal} (SpellRuntime.prepare, 마나 차감 전: 쓸 수 없으면 이유 문구, 마나·쿨 없음)
  * → {@link #apply} (마나 차감 뒤, 시각 효과가 이미 시작된 같은 틱).
  *
@@ -33,7 +37,7 @@ import org.bukkit.persistence.PersistentDataType;
  */
 final class LifeSpells implements Listener, AutoCloseable {
     static final Set<String> IDS = Set.of("alchemy_preheat", "water_glimpse", "calm_ripple", "treasure_scent", "season_sense",
-            "pack_sort", "heart_read", "insight_flash", "blessed_ribbon");
+            "pack_sort", "heart_read", "insight_flash", "blessed_ribbon", "scale_appraisal", "enlighten_hint");
     static final long PREHEAT_MS = 10 * 60_000L, SCENT_MS = 10 * 60_000L;
     private static final double LOOK_RANGE = 24, NPC_RANGE = 10;
     private static final ZoneId DAY_ZONE = ZoneId.of("Asia/Seoul");
@@ -112,6 +116,8 @@ final class LifeSpells implements Listener, AutoCloseable {
             case "pack_sort" -> plugin.bagPagesBridge() == null ? "지금은 아공간 배낭을 쓸 수 없어요" : plugin.bagPagesBridge().sortPages(p, true);
             case "heart_read" -> heartRefusal(p);
             case "blessed_ribbon" -> ribbonRefusal(p);
+            case "scale_appraisal" -> appraisalRefusal(p);
+            case "enlighten_hint" -> pickHint(p) == null ? "지금은 떠오르는 마법 이야기가 없어요" : null;
             default -> null;
         };
     }
@@ -132,6 +138,8 @@ final class LifeSpells implements Listener, AutoCloseable {
             }
             case "heart_read" -> { return heartRead(p); }
             case "blessed_ribbon" -> { return ribbon(p); }
+            case "scale_appraisal" -> { return appraise(p); }
+            case "enlighten_hint" -> { return enlighten(p); }
             default -> { return false; }
         }
         return true;
@@ -326,6 +334,176 @@ final class LifeSpells implements Listener, AutoCloseable {
         p.updateInventory();
         CmdKit.notify(p, "system", "life-blessed_ribbon", "선물에 리본을 묶었어요", "이 선물은 호감도가 20% 더 올라요", 0);
         return true;
+    }
+
+    // ------------------------------------------------------------------ 비늘 감정 (scale_appraisal)
+
+    private static final Pattern LORE_SIZE = Pattern.compile("크기 ([0-9]+(?:\\.[0-9]+)?)cm");
+
+    private String appraisalRefusal(Player p) {
+        var fishing = plugin.fishingBridge();
+        if (fishing == null) return "지금은 물고기를 감정할 수 없어요";
+        var held = fishing.gear().heldFish(p.getInventory().getItemInMainHand());
+        if (held == null || fishing.config().fishById.get(held.fish()) == null) return "물고기를 손에 들어 주세요";
+        return null;
+    }
+
+    private boolean appraise(Player p) {
+        var fishing = plugin.fishingBridge();
+        ItemStack hand = p.getInventory().getItemInMainHand();
+        FishingGear.HeldFish held = fishing == null ? null : fishing.gear().heldFish(hand);
+        FishingConfig.Fish def = held == null ? null : fishing.config().fishById.get(held.fish());
+        if (def == null) return false;
+        float loreSize = 0;
+        List<Component> lore = hand.getItemMeta() == null ? null : hand.getItemMeta().lore();
+        if (lore != null) for (Component line : lore) {
+            Matcher m = LORE_SIZE.matcher(PlainTextComponentSerializer.plainText().serialize(line));
+            if (m.find()) { try { loreSize = Float.parseFloat(m.group(1)); } catch (NumberFormatException ignored) {} break; }
+        }
+        float fallback = held.size() > 0 ? held.size() : loreSize;
+        // NOTES: the lens flash at ~1.0 s; row-backed fish keep their size in the tank database (the item lore is a copy)
+        later(p, 20, () -> {
+            if (held.size() <= 0 && !held.tankId().isEmpty()) {
+                fishing.tank().itemInfo(List.of(held.tankId()), rows -> {
+                    var row = rows.get(held.tankId());
+                    if (p.isOnline()) appraisal(p, def, row != null && row.size() > 0 ? (float) row.size() : fallback);
+                });
+            } else appraisal(p, def, fallback);
+        });
+        return true;
+    }
+
+    private void appraisal(Player p, FishingConfig.Fish def, float cm) {
+        var fishing = plugin.fishingBridge();
+        if (fishing == null) return;
+        String grade = FishingProtocol.GRADE_LABELS[Math.clamp(def.grade(), 0, FishingProtocol.GRADE_LABELS.length - 1)];
+        var lines = new ArrayList<String>();
+        lines.add("── 비늘 감정: " + def.name() + " ──");
+        lines.add(" 등급: " + grade);
+        String size = cm > 0 ? String.format(Locale.ROOT, "%.1fcm", cm) : "알 수 없음";
+        String place = "";
+        if (cm > 0 && def.maxSize() > def.minSize()) {
+            int pct = (int) Math.round(Math.clamp((cm - def.minSize()) / (def.maxSize() - def.minSize()), 0, 1) * 100);
+            place = " (이 종 " + def.minSize() + "~" + def.maxSize() + "cm 중 " + pct + "% 지점)";
+        }
+        lines.add(" 크기: " + size + place);
+        var book = fishing.store().book(p.getUniqueId());
+        var rec = book.loaded ? book.rows.get(def.id()) : null;
+        String record;
+        if (rec == null || rec.best() <= 0) record = book.loaded ? "아직 기록 없음" : "기록을 불러오는 중";
+        else if (cm > 0 && cm >= rec.best() - 1e-3) record = String.format(Locale.ROOT, "내 기록 %.1fcm — 이 물고기가 최고 기록이에요", rec.best());
+        else record = String.format(Locale.ROOT, "내 기록 %.1fcm%s", rec.best(), cm > 0 ? String.format(Locale.ROOT, " (%.1fcm 모자람)", rec.best() - cm) : "");
+        lines.add(" 기록: " + record);
+        var shop = plugin.fishShopBridge();
+        String price = shop == null || cm <= 0 ? "알 수 없음" : String.format("%,d G", shop.price(new FishTank.Fish("", def.id(), cm, 0)));
+        lines.add(" 판매가: " + price + " (아공간 수조에 넣고 물고기 판매소에서 팔 때)");
+        CmdKit.notify(p, "system", "life-scale_appraisal", def.name() + " · " + grade + " · " + size, "판매가 " + price, 0);
+        CmdKit.lines(p, lines);
+    }
+
+    // ------------------------------------------------------------------ 깨달음의 빛 (enlighten_hint)
+
+    /**
+     * 힌트로 고르지 않는 마법: 궁극(tools/spell_order.py 가중치 10), 버린 12종(spell_order.DROPPED), MagicDiscovery 의
+     * 미구현 조건(Definitions.PENDING). 번호를 다시 매겨도 id 는 그대로라 여기 목록은 가중치 10 이 바뀔 때만 고친다.
+     */
+    static final Set<String> NO_HINT = Set.of(
+            "abyss_gate", "aurora_veil", "crimson_breath", "crossfire", "eclipse_eye", "flame_emperor", "heaven_cyclone", "leviathan_rise", "titan_stride",
+            "aerial_haul", "descent_command", "cinder_detonation", "flame_footprints", "fireproof_film", "water_mirror", "vine_ladder",
+            "automatic_supply", "light_mark", "luminous_archive", "experience_exchange", "white_night_sanctuary",
+            "crimson_heart", "feather_step", "wind_vault", "handful_of_snow", "wet_footprints", "pressure_weight", "cold_storage");
+
+    private record Hint(String spell, String permission, String condition) {}
+    private List<Hint> hints = List.of();
+    private long hintsStamp = -1;
+
+    /** MagicDiscovery 데이터 폴더의 discoveries.yml (서버가 실제로 쓰는 condition-text). 파일이 바뀌면 다시 읽는다. */
+    private List<Hint> discoveryHints() {
+        var md = Bukkit.getPluginManager().getPlugin("MagicDiscovery");
+        if (md == null) return List.of();
+        var file = new java.io.File(md.getDataFolder(), "discoveries.yml");
+        long stamp = file.isFile() ? file.lastModified() : 0;
+        if (stamp == hintsStamp) return hints;
+        hintsStamp = stamp;
+        var out = new ArrayList<Hint>();
+        if (stamp > 0) try {
+            var y = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(file);
+            var root = y.getConfigurationSection("spells");
+            if (root != null) for (String id : root.getKeys(false)) {
+                String perm = root.getString(id + ".permission", "magic.learned." + id), text = root.getString(id + ".condition-text", "");
+                if (!NO_HINT.contains(id) && text != null && !text.isBlank() && witness(text, null) != null) out.add(new Hint(id, perm, text.strip()));
+            }
+        } catch (RuntimeException e) { plugin.getLogger().warning("깨달음의 빛: discoveries.yml 을 읽지 못했어요 (" + e.getMessage() + ")"); }
+        hints = List.copyOf(out);
+        return hints;
+    }
+
+    private Hint pickHint(Player p) {
+        var open = new ArrayList<Hint>();
+        for (Hint h : discoveryHints()) if (!p.hasPermission(h.permission())) open.add(h);
+        return open.isEmpty() ? null : open.get(new Random().nextInt(open.size()));
+    }
+
+    private boolean enlighten(Player p) {
+        Hint h = pickHint(p);
+        if (h == null) return false;
+        Object m = npcApi("hintMaterials", new Class<?>[0]);
+        String materials = m instanceof Map<?, ?> map && map.get(h.spell()) instanceof String s && !s.isBlank() ? s : null;
+        String line = witness(h.condition(), materials);
+        // NOTES: the light book is fully open at ~1.2 s
+        later(p, 24, () -> {
+            p.sendMessage(Component.text("[깨달음의 빛] ", NamedTextColor.YELLOW).append(Component.text(line, NamedTextColor.WHITE)));
+            CmdKit.notify(p, "system", "life-enlighten_hint", "깨달음의 빛", line, 0);
+        });
+        return true;
+    }
+
+    private static final Pattern LESSON = Pattern.compile("^(\\S+) 마법 (\\S+) 수업을 통해.*습득$");
+    private static final Pattern COUNT = Pattern.compile("(\\d[\\d,]*)\\s*(개|번|회|마리|명|블록|바퀴|종|칸)");
+    /** 끝이 "~하다" 로 바뀌는 낱말 (조건 문구 "~ 사용", "~ 달성" 같은 명사 끝). */
+    private static final Set<String> HADA = Set.of("사용", "달성", "획득", "처치", "소화", "제작", "설치", "파괴", "이동", "회전", "경험", "배정",
+            "착용", "수확", "채굴", "번식", "낚시", "비행", "사냥", "완료", "방문", "구매", "판매", "승리", "연구", "수집", "발견", "탐험", "제거");
+
+    /**
+     * ChacaNPC 마법 힌트처럼 마법 이름 없이 목격담으로 돌려 말한다 (PromptBuilder: "그러고 보니 예전에 어떤 마법사가 … ~해서 ~하더라").
+     * materials (ChacaNPC hints.yml 목격담 재료) 가 있으면 그것을, 없으면 발견 조건 문구를 숫자를 흐려 "~하더니" 꼴로 바꾼다.
+     * 바꿀 수 없는 문구면 null.
+     */
+    static String witness(String condition, String materials) {
+        if (materials != null) return "그러고 보니 예전에 어떤 마법사가 마법을 쓰는 걸 봤어… " + materials + ", 그런 게 떠오르는 장면이었지.";
+        String t = condition.strip().replaceAll("[.。!]+$", "").strip();
+        Matcher lesson = LESSON.matcher(t);
+        if (lesson.matches()) return "그러고 보니 예전에 어떤 마법사가 " + lesson.group(1) + " 마법 " + lesson.group(2) + " 수업 시간에 선생님 어깨너머로 그 마법을 익혔다던데…";
+        t = t.replace("누적 ", "");
+        Matcher c = COUNT.matcher(t);
+        var sb = new StringBuilder();
+        while (c.find()) {
+            long n;
+            try { n = Long.parseLong(c.group(1).replace(",", "")); } catch (NumberFormatException e) { n = 2; }
+            String unit = c.group(2).equals("회") ? "번" : c.group(2);
+            boolean times = unit.equals("번") || unit.equals("바퀴");
+            String vague = n <= 1 ? "한 " + unit : n < 10 ? "몇 " + unit : times ? (n >= 100 ? "수없이" : "여러 " + unit) : (n >= 100 ? "잔뜩" : "여러 " + unit);
+            c.appendReplacement(sb, Matcher.quoteReplacement(vague));
+        }
+        c.appendTail(sb);
+        t = sb.toString();
+        String verb = deoni(t);
+        return verb == null ? null : "그러고 보니 예전에 어떤 마법사가 " + verb + " 새 마법을 깨쳤다던데…";
+    }
+
+    /** "~하기" / "~합니다" / "~습니다" / "~ 사용" → "~하더니". 모르는 끝이면 null. */
+    private static String deoni(String t) {
+        if (t.endsWith("기") && t.length() > 1) return t.substring(0, t.length() - 1) + "더니";
+        if (t.endsWith("습니다")) return t.substring(0, t.length() - 3) + "더니";
+        if (t.endsWith("니다") && t.length() > 2) {
+            char last = t.charAt(t.length() - 3);
+            if (last >= 0xAC00 && last <= 0xD7A3 && (last - 0xAC00) % 28 == 17)   // 받침 ㅂ (합니다, 찔립니다)
+                return t.substring(0, t.length() - 3) + (char) (last - 17) + "더니";
+            return null;
+        }
+        int sp = t.lastIndexOf(' ');
+        String word = sp < 0 ? t : t.substring(sp + 1);
+        return HADA.contains(word) ? t + "하더니" : null;
     }
 
     // ------------------------------------------------------------------ 382 배낭 정리 (pure part, BagHuskCoordinator.sortPages)

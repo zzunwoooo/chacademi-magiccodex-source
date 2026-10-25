@@ -45,7 +45,7 @@ final class SpellUtility implements AutoCloseable {
         case "wick_trimming"->extinguish(p);
         case "lava_suture"->lava(p);
         case "far_touch"->switchBlock(p);
-        case "alchemy_preheat","water_glimpse","calm_ripple","treasure_scent","season_sense","pack_sort","heart_read","insight_flash","blessed_ribbon"->life.apply(p,id);
+        case "alchemy_preheat","water_glimpse","calm_ripple","treasure_scent","season_sense","pack_sort","heart_read","insight_flash","blessed_ribbon","scale_appraisal","enlighten_hint"->life.apply(p,id);
         default->false;
     };}
     private boolean gather(Player p){
