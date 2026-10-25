@@ -1,0 +1,3272 @@
+# 동행 펫 (오너 2026-10-26, 메모 #81) - 자동 생성: magic-mythic-paper/tools/pet_companions.py
+# 여기 있는 펫은 MCPets 몹을 소환하지 않고 클라가 작게 그립니다 (모든 사람에게 보임). 없는 펫(바닐라)은 예전 그대로.
+# health: 등급별 최대 체력 증가 / interval-seconds: 전투 중 스킬·특수 능력 주기 / combat-seconds: 마지막으로 때리거나 맞은 뒤 이만큼 = 전투 중
+# blocked-matches: 이 경기 중에는 펫을 꺼낼 수 없음 (꺼내 둔 펫은 경기 시작 때 들어감)
+# pets.<펫ID>: stars · motion(ground/fly/swim) · size(보이는 크기, 블록) · health · skills(CHA_PET_*, 무작위 1개) 또는 special · info(펫 창 설명)
+health:
+  1: 3
+  2: 6
+  3: 10
+interval-seconds:
+  2: 60
+  3: 40
+combat-seconds: 8
+skill-range: 24
+blocked-matches:
+- quidditch
+- duel
+pets:
+  ca_squirrel:
+    name: 도토리 다람쥐
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_squirrel_shiny:
+    name: 도토리 다람쥐 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_owl:
+    name: 밤눈 올빼미
+    stars: 1
+    motion: fly
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_owl_shiny:
+    name: 밤눈 올빼미 (변색종)
+    stars: 1
+    motion: fly
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_skunk:
+    name: 줄무늬 스컹크
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_skunk_shiny:
+    name: 줄무늬 스컹크 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_hedgehog:
+    name: 낙엽 고슴도치
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_hedgehog_shiny:
+    name: 낙엽 고슴도치 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_elk:
+    name: 고산 엘크
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id001
+        speed: 0.1
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 이동속도 +10%'
+  ca_elk_shiny:
+    name: 고산 엘크 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id001
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 이동속도 +10%'
+  ca_lil_bird:
+    name: 꽃숲 작은새
+    stars: 1
+    motion: fly
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_lil_bird_shiny:
+    name: 꽃숲 작은새 (변색종)
+    stars: 1
+    motion: fly
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_raccoon:
+    name: 개울 너구리
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_raccoon_shiny:
+    name: 개울 너구리 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_frog:
+    name: 난초 개구리
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_frog_shiny:
+    name: 난초 개구리 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_bear:
+    name: 산림 불곰
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: &id002
+        absorb: 4
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 곰의 가호: 흡수 하트 4칸'
+  ca_bear_shiny:
+    name: 산림 불곰 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: *id002
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 곰의 가호: 흡수 하트 4칸'
+  ca_bear_black:
+    name: 그늘 흑곰
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: &id003
+        absorb: 4
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 곰의 가호: 흡수 하트 4칸'
+  ca_bear_black_shiny:
+    name: 그늘 흑곰 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: *id003
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 곰의 가호: 흡수 하트 4칸'
+  ca_bear_polar:
+    name: 빙하 백곰
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: &id004
+        absorb: 4
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 곰의 가호: 흡수 하트 4칸'
+  ca_bear_polar_shiny:
+    name: 빙하 백곰 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: *id004
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 곰의 가호: 흡수 하트 4칸'
+  ca_timber_wolf:
+    name: 침엽 숲늑대
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: &id005
+        intelligence: 0.15
+      seconds: 10
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 무리 울음: 10초간 지능 +15%'
+  ca_timber_wolf_shiny:
+    name: 침엽 숲늑대 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: *id005
+      seconds: 10
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 무리 울음: 10초간 지능 +15%'
+  ca_tortoise:
+    name: 초원 육지거북
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_tortoise_shiny:
+    name: 초원 육지거북 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_catfish:
+    name: 온수 메기
+    stars: 1
+    motion: swim
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_catfish_shiny:
+    name: 온수 메기 (변색종)
+    stars: 1
+    motion: swim
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_butterfly:
+    name: 라벤더 나비
+    stars: 1
+    motion: fly
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_butterfly_shiny:
+    name: 라벤더 나비 (변색종)
+    stars: 1
+    motion: fly
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_buffalo:
+    name: 고원 버팔로
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: &id006
+        resistance: 1
+        knockback: 1
+      seconds: 8
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 버티기: 8초간 저항 I + 밀려나지 않음'
+  ca_buffalo_shiny:
+    name: 고원 버팔로 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: *id006
+      seconds: 8
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 버티기: 8초간 저항 I + 밀려나지 않음'
+  ca_boar:
+    name: 덤불 멧돼지
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_boar_shiny:
+    name: 덤불 멧돼지 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_alpha_boar:
+    name: 송곳니 우두머리
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id007
+        knockback: 1
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 밀려나지 않음'
+  ca_alpha_boar_shiny:
+    name: 송곳니 우두머리 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id007
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 밀려나지 않음'
+  ca_crocodile:
+    name: 난초늪 악어
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: &id008
+        resistance: 1
+      seconds: 8
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 단단한 비늘: 8초간 저항 I'
+  ca_crocodile_shiny:
+    name: 난초늪 악어 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: *id008
+      seconds: 8
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 단단한 비늘: 8초간 저항 I'
+  ca_buffalo_alpha:
+    name: 고원의 우두머리
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: &id009
+        resistance: 1
+        knockback: 1
+      seconds: 8
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 버티기: 8초간 저항 I + 밀려나지 않음'
+  ca_buffalo_alpha_shiny:
+    name: 고원의 우두머리 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: *id009
+      seconds: 8
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 버티기: 8초간 저항 I + 밀려나지 않음'
+  ca_lostasset_mob1_chicken:
+    name: 아침볕 수탉
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_lostasset_mob1_chicken_shiny:
+    name: 아침볕 수탉 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_lostasset_mob1_rabbit:
+    name: 꽃밭 흰토끼
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_lostasset_mob1_rabbit_shiny:
+    name: 꽃밭 흰토끼 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_lostasset_mob1_sheep:
+    name: 구름 양
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_lostasset_mob1_sheep_shiny:
+    name: 구름 양 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_lostasset_mob1_wolf:
+    name: 목초지 양치기
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: &id010
+        intelligence: 0.15
+      seconds: 10
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 무리 울음: 10초간 지능 +15%'
+  ca_lostasset_mob1_wolf_shiny:
+    name: 목초지 양치기 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: *id010
+      seconds: 10
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 무리 울음: 10초간 지능 +15%'
+  ca_lostasset_mob2_flowersprite:
+    name: 꽃망울 정령
+    stars: 2
+    motion: fly
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_fairy_orbs_lostasset_mob2_flowersprite
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 요정 구슬
+
+      피해 1 (펫 고정, 지능 무관)'
+  ca_lostasset_mob2_flowersprite_shiny:
+    name: 꽃망울 정령 (변색종)
+    stars: 2
+    motion: fly
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_fairy_orbs_lostasset_mob2_flowersprite_shiny
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 요정 구슬
+
+      피해 1 (펫 고정, 지능 무관)'
+  ca_lostasset_mob2_lakefairy:
+    name: 달물결 요정
+    stars: 2
+    motion: fly
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_fairy_orbs_lostasset_mob2_lakefairy
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 요정 구슬
+
+      피해 1 (펫 고정, 지능 무관)'
+  ca_lostasset_mob2_lakefairy_shiny:
+    name: 달물결 요정 (변색종)
+    stars: 2
+    motion: fly
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_fairy_orbs_lostasset_mob2_lakefairy_shiny
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 요정 구슬
+
+      피해 1 (펫 고정, 지능 무관)'
+  ca_lostasset_mob2_leaffairy:
+    name: 잎새 요정
+    stars: 2
+    motion: fly
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_fairy_orbs_lostasset_mob2_leaffairy
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 요정 구슬
+
+      피해 1 (펫 고정, 지능 무관)'
+  ca_lostasset_mob2_leaffairy_shiny:
+    name: 잎새 요정 (변색종)
+    stars: 2
+    motion: fly
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_fairy_orbs_lostasset_mob2_leaffairy_shiny
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 요정 구슬
+
+      피해 1 (펫 고정, 지능 무관)'
+  ca_lostasset_mob2_mushroomfairy:
+    name: 포자 요정
+    stars: 2
+    motion: fly
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_fairy_orbs_lostasset_mob2_mushroomfairy
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 요정 구슬
+
+      피해 1 (펫 고정, 지능 무관)'
+  ca_lostasset_mob2_mushroomfairy_shiny:
+    name: 포자 요정 (변색종)
+    stars: 2
+    motion: fly
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_fairy_orbs_lostasset_mob2_mushroomfairy_shiny
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 요정 구슬
+
+      피해 1 (펫 고정, 지능 무관)'
+  ca_lostasset_mob3_herbgolem:
+    name: 약초 수호골렘
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_root_bind_lostasset_mob3_herbgolem
+    - CHA_PET_vine_whip_lostasset_mob3_herbgolem
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 뿌리 묶기 / 덩굴 채찍
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_lostasset_mob3_herbgolem_shiny:
+    name: 약초 수호골렘 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_vine_whip_lostasset_mob3_herbgolem_shiny
+    - CHA_PET_root_bind_lostasset_mob3_herbgolem_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 덩굴 채찍 / 뿌리 묶기
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_lostasset_mob3_herbthief:
+    name: 약초 도둑
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_lostasset_mob3_herbthief_shiny:
+    name: 약초 도둑 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_lostasset_mob3_mossyboar:
+    name: 이끼 등멧돼지
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id011
+        knockback: 1
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 밀려나지 않음'
+  ca_lostasset_mob3_mossyboar_shiny:
+    name: 이끼 등멧돼지 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id011
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 밀려나지 않음'
+  ca_lostasset_mob3_timberpile:
+    name: 장작 꼬마
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_lostasset_mob3_timberpile_shiny:
+    name: 장작 꼬마 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_bulb_amethyst:
+    name: 자수정 새싹
+    stars: 2
+    motion: fly
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id012
+        max_mana: 80
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 최대 마나 +80'
+  ca_bulb_amethyst_shiny:
+    name: 자수정 새싹 (변색종)
+    stars: 2
+    motion: fly
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id012
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 최대 마나 +80'
+  ca_bulb_crimsonspore:
+    name: 진홍 포자
+    stars: 2
+    motion: fly
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id013
+        mana_regen: 0.2
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 마나 자연 회복 +20%'
+  ca_bulb_crimsonspore_shiny:
+    name: 진홍 포자 (변색종)
+    stars: 2
+    motion: fly
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id013
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 마나 자연 회복 +20%'
+  ca_bulb_dripleaf:
+    name: 물잎 새싹
+    stars: 1
+    motion: fly
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_bulb_dripleaf_shiny:
+    name: 물잎 새싹 (변색종)
+    stars: 1
+    motion: fly
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_bulb_lilypad:
+    name: 수련잎 새싹
+    stars: 1
+    motion: fly
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_bulb_lilypad_shiny:
+    name: 수련잎 새싹 (변색종)
+    stars: 1
+    motion: fly
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_bulb_warpedfungus:
+    name: 뒤틀린 균새싹
+    stars: 2
+    motion: fly
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id014
+        haste: 1
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 채집 속도 증가 (성급함 I)'
+  ca_bulb_warpedfungus_shiny:
+    name: 뒤틀린 균새싹 (변색종)
+    stars: 2
+    motion: fly
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id014
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 채집 속도 증가 (성급함 I)'
+  ca_crab:
+    name: 자갈집게 게
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_crab_shiny:
+    name: 자갈집게 게 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_piranha:
+    name: 붉은이빨 피라냐
+    stars: 2
+    motion: swim
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id015
+        dolphin: 1
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 물속 이동 빠름'
+  ca_piranha_shiny:
+    name: 붉은이빨 피라냐 (변색종)
+    stars: 2
+    motion: swim
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id015
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 물속 이동 빠름'
+  ca_swordfish:
+    name: 푸른창 황새치
+    stars: 2
+    motion: swim
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id016
+        fishing: 0.1
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 낚시 운 증가 (희귀 물고기 +10%)'
+  ca_swordfish_shiny:
+    name: 푸른창 황새치 (변색종)
+    stars: 2
+    motion: swim
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id016
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 낚시 운 증가 (희귀 물고기 +10%)'
+  ca_jellyfish_blue:
+    name: 청빛 해파리
+    stars: 1
+    motion: swim
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_jellyfish_blue_shiny:
+    name: 청빛 해파리 (변색종)
+    stars: 1
+    motion: swim
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_jellyfish_green:
+    name: 비취 해파리
+    stars: 1
+    motion: swim
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_jellyfish_green_shiny:
+    name: 비취 해파리 (변색종)
+    stars: 1
+    motion: swim
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_jellyfish_pink:
+    name: 분홍 해파리
+    stars: 2
+    motion: swim
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id017
+        night_vision: 1
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 야간 투시'
+  ca_jellyfish_pink_shiny:
+    name: 분홍 해파리 (변색종)
+    stars: 2
+    motion: swim
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id017
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 야간 투시'
+  ca_jellyfish_yellow:
+    name: 금빛 해파리
+    stars: 2
+    motion: swim
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id018
+        night_vision: 1
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 야간 투시'
+  ca_jellyfish_yellow_shiny:
+    name: 금빛 해파리 (변색종)
+    stars: 2
+    motion: swim
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id018
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 야간 투시'
+  ca_seahorse_blue:
+    name: 청빛 해마
+    stars: 1
+    motion: swim
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_seahorse_blue_shiny:
+    name: 청빛 해마 (변색종)
+    stars: 1
+    motion: swim
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_seahorse_green:
+    name: 비취 해마
+    stars: 1
+    motion: swim
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_seahorse_green_shiny:
+    name: 비취 해마 (변색종)
+    stars: 1
+    motion: swim
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_seahorse_pink:
+    name: 분홍 해마
+    stars: 2
+    motion: swim
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id019
+        water_breathing: 1
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 물속 숨'
+  ca_seahorse_pink_shiny:
+    name: 분홍 해마 (변색종)
+    stars: 2
+    motion: swim
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id019
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 물속 숨'
+  ca_seahorse_yellow:
+    name: 금빛 해마
+    stars: 2
+    motion: swim
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id020
+        water_breathing: 1
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 물속 숨'
+  ca_seahorse_yellow_shiny:
+    name: 금빛 해마 (변색종)
+    stars: 2
+    motion: swim
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id020
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 물속 숨'
+  ca_ogre_club:
+    name: 숲몽둥이 오우거
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_ground_quake_ogre_club
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 땅 울림
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_ogre_club_shiny:
+    name: 숲몽둥이 오우거 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_ground_quake_ogre_club_shiny
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 땅 울림
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_ogre_axe:
+    name: 벌목꾼 오우거
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_ground_quake_ogre_axe
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 땅 울림
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_ogre_axe_shiny:
+    name: 벌목꾼 오우거 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_ground_quake_ogre_axe_shiny
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 땅 울림
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_ogre_hammer:
+    name: 산울림 오우거
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_ground_quake_ogre_hammer
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 땅 울림
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_ogre_hammer_shiny:
+    name: 산울림 오우거 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_ground_quake_ogre_hammer_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 땅 울림
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_ncr_spear_skeleton:
+    name: 유적의 창병
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_spear_throw_ncr_spear_skeleton
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 창 던지기
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_ncr_spear_skeleton_shiny:
+    name: 유적의 창병 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_spear_throw_ncr_spear_skeleton_shiny
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 창 던지기
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_ncr_warrior_skeleton:
+    name: 유적의 검병
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_dash_slash_ncr_warrior_skeleton
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 돌진 베기
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_ncr_warrior_skeleton_shiny:
+    name: 유적의 검병 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_dash_slash_ncr_warrior_skeleton_shiny
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 돌진 베기
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_ncr_archer_skeleton:
+    name: 유적의 궁수
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_bone_arrows_ncr_archer_skeleton
+    - CHA_PET_aim_shot_ncr_archer_skeleton
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 뼈 화살 / 조준 사격
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_ncr_archer_skeleton_shiny:
+    name: 유적의 궁수 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_bone_arrows_ncr_archer_skeleton_shiny
+    - CHA_PET_aim_shot_ncr_archer_skeleton_shiny
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 뼈 화살 / 조준 사격
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_ncr_mage_skeleton:
+    name: 망각의 해골술사
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_oblivion_orbs_ncr_mage_skeleton
+    - CHA_PET_bone_grasp_ncr_mage_skeleton
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 망각의 탄환 / 뼈의 손아귀
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_ncr_mage_skeleton_shiny:
+    name: 망각의 해골술사 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_oblivion_orbs_ncr_mage_skeleton_shiny
+    - CHA_PET_bone_grasp_ncr_mage_skeleton_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 망각의 탄환 / 뼈의 손아귀
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_mf_warden_knight:
+    name: 봉인의 기사
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_seal_charge_mf_warden_knight
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 봉인 돌격
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_mf_warden_knight_shiny:
+    name: 봉인의 기사 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_seal_charge_mf_warden_knight_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 봉인 돌격
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_mf_warden_archer:
+    name: 봉인의 궁수
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_chain_arrow_mf_warden_archer
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 사슬 화살
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_mf_warden_archer_shiny:
+    name: 봉인의 궁수 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_chain_arrow_mf_warden_archer_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 사슬 화살
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_mf_warden_tank:
+    name: 봉인의 거벽
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    special:
+      kind: combat
+      effects: &id021
+        absorb: 6
+        resistance: 1
+      seconds: 8
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 철벽: 흡수 하트 6칸 + 8초간 저항 I'
+  ca_mf_warden_tank_shiny:
+    name: 봉인의 거벽 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    special:
+      kind: combat
+      effects: *id021
+      seconds: 8
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 철벽: 흡수 하트 6칸 + 8초간 저항 I'
+  ca_mf_warden_mage:
+    name: 봉인의 술사
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_seal_talismans_mf_warden_mage
+    - CHA_PET_seal_circle
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 봉인 부적 / 봉인진
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_mf_warden_mage_shiny:
+    name: 봉인의 술사 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_seal_talismans_mf_warden_mage_shiny
+    - CHA_PET_seal_circle_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 봉인 부적 / 봉인진
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_glacialcore:
+    name: 빙핵의 수호자
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_ice_shards_glacialcore
+    - CHA_PET_frost_laser
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 얼음 파편 / 빙핵 레이저
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_glacialcore_shiny:
+    name: 빙핵의 수호자 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_ice_shards_glacialcore_shiny
+    - CHA_PET_frost_laser_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 얼음 파편 / 빙핵 레이저
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_nocsy_cat1:
+    name: 햇살 고양이
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_nocsy_cat1_shiny:
+    name: 햇살 고양이 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_nocsy_cat2:
+    name: 꽃길 고양이
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_nocsy_cat2_shiny:
+    name: 꽃길 고양이 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_nocsy_cat3:
+    name: 책방 고양이
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_nocsy_cat3_shiny:
+    name: 책방 고양이 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_nocsy_cat4:
+    name: 나른한 고양이
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_nocsy_cat4_shiny:
+    name: 나른한 고양이 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_nocsy_cat5:
+    name: 장난꾸러기 고양이
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_nocsy_cat5_shiny:
+    name: 장난꾸러기 고양이 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_nocsy_cat6:
+    name: 산들 고양이
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_nocsy_cat6_shiny:
+    name: 산들 고양이 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_nocsy_cat_fallen:
+    name: 달그늘 고양이
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    special:
+      kind: combat
+      effects: &id022
+        heal: 6
+        mana: 60
+        intelligence: 0.15
+      seconds: 10
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 달빛 축복: 체력 6·마나 60 회복 + 10초간 지능 +15%'
+  ca_nocsy_cat_fallen_shiny:
+    name: 달그늘 고양이 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    special:
+      kind: combat
+      effects: *id022
+      seconds: 10
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 달빛 축복: 체력 6·마나 60 회복 + 10초간 지능 +15%'
+  ca_voxelspawns_pug:
+    name: 산책 퍼그
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_voxelspawns_pug_shiny:
+    name: 산책 퍼그 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_baby_polar_bear:
+    name: 눈송이 아기곰
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_baby_polar_bear_shiny:
+    name: 눈송이 아기곰 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_baby_yeti:
+    name: 눈산 꼬마예티
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id023
+        climate_immune: 1
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 서버 날씨·기후 영향 받지 않음 (좋은 효과·나쁜 효과 모두)'
+  ca_baby_yeti_shiny:
+    name: 눈산 꼬마예티 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id023
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 서버 날씨·기후 영향 받지 않음 (좋은 효과·나쁜 효과 모두)'
+  ca_frost_ferret:
+    name: 서리 족제비
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id024
+        climate_immune: 1
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 서버 날씨·기후 영향 받지 않음 (좋은 효과·나쁜 효과 모두)'
+  ca_frost_ferret_shiny:
+    name: 서리 족제비 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id024
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 서버 날씨·기후 영향 받지 않음 (좋은 효과·나쁜 효과 모두)'
+  ca_gangster_snowman:
+    name: 심술 눈사람
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: &id025
+        absorb: 3
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 얼음 방패: 흡수 하트 3칸'
+  ca_gangster_snowman_shiny:
+    name: 심술 눈사람 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: *id025
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 얼음 방패: 흡수 하트 3칸'
+  ca_ice_knight:
+    name: 서리 기사
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_frost_field_ice_knight
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 서리 진
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_ice_knight_shiny:
+    name: 서리 기사 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_frost_field_ice_knight_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 서리 진
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_dragon_desert:
+    name: 사막 드래곤
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_dragon_breath_dragon_desert
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 드래곤 브레스
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_dragon_desert_shiny:
+    name: 사막 드래곤 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_dragon_breath_dragon_desert_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 드래곤 브레스
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_dragon_glacial:
+    name: 빙하 드래곤
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_dragon_breath_dragon_glacial
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 드래곤 브레스
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_dragon_glacial_shiny:
+    name: 빙하 드래곤 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_dragon_breath_dragon_glacial_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 드래곤 브레스
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_dragon_nether:
+    name: 화산 드래곤
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_dragon_breath_dragon_nether
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 드래곤 브레스
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_dragon_nether_shiny:
+    name: 화산 드래곤 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_dragon_breath_dragon_nether_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 드래곤 브레스
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_dragon_sculk:
+    name: 스컬크 드래곤
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_dragon_breath_dragon_sculk
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 드래곤 브레스
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_dragon_sculk_shiny:
+    name: 스컬크 드래곤 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_dragon_breath_dragon_sculk_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 드래곤 브레스
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_lizard_aqua:
+    name: 물가 왕도마뱀
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: &id026
+        cleanse: 1
+        regen: 1
+      seconds: 5
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 탈피: 해로운 효과 제거 + 5초간 재생'
+  ca_lizard_aqua_shiny:
+    name: 물가 왕도마뱀 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: *id026
+      seconds: 5
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 탈피: 해로운 효과 제거 + 5초간 재생'
+  ca_lizard_lava:
+    name: 용암 왕도마뱀
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id027
+        fire_resist: 1
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 화염 저항'
+  ca_lizard_lava_shiny:
+    name: 용암 왕도마뱀 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id027
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 화염 저항'
+  ca_manticore_aether:
+    name: 창공 만티코어
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_roar_leap_manticore_aether
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 포효 도약
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_manticore_aether_shiny:
+    name: 창공 만티코어 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_roar_leap_manticore_aether_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 포효 도약
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_manticore_dusk:
+    name: 황혼 만티코어
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_roar_leap_manticore_dusk
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 포효 도약
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_manticore_dusk_shiny:
+    name: 황혼 만티코어 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_roar_leap_manticore_dusk_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 포효 도약
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_manticore_soul:
+    name: 혼령 만티코어
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_roar_leap_manticore_soul
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 포효 도약
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_manticore_soul_shiny:
+    name: 혼령 만티코어 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_roar_leap_manticore_soul_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 포효 도약
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_manticore_venom:
+    name: 맹독 만티코어
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_roar_leap_manticore_venom
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 포효 도약
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_manticore_venom_shiny:
+    name: 맹독 만티코어 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_roar_leap_manticore_venom_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 포효 도약
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_panda_normal:
+    name: 대나무 판다
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_panda_normal_shiny:
+    name: 대나무 판다 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_sabertooth_arctic:
+    name: 설원 검치호
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_pounce_sabertooth_arctic
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 사냥 도약
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_sabertooth_arctic_shiny:
+    name: 설원 검치호 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_pounce_sabertooth_arctic_shiny
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 사냥 도약
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_sabertooth_midnight:
+    name: 한밤 검치호
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_pounce_sabertooth_midnight
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 사냥 도약
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_sabertooth_midnight_shiny:
+    name: 한밤 검치호 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_pounce_sabertooth_midnight_shiny
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 사냥 도약
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_sabertooth_savanna:
+    name: 초원 검치호
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_pounce_sabertooth_savanna
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 사냥 도약
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_sabertooth_savanna_shiny:
+    name: 초원 검치호 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_pounce_sabertooth_savanna_shiny
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 사냥 도약
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_capybara:
+    name: 물가 카피바라
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_capybara_shiny:
+    name: 물가 카피바라 (변색종)
+    stars: 1
+    motion: ground
+    size: 0.55
+    health: 3
+    info: 1성 · 최대 체력 +3
+  ca_horse_glacial:
+    name: 빙하 준마
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id028
+        speed: 0.15
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 이동속도 +15%'
+  ca_horse_glacial_shiny:
+    name: 빙하 준마 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id028
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 이동속도 +15%'
+  ca_horse_magma:
+    name: 마그마 준마
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id029
+        speed: 0.15
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 이동속도 +15%'
+  ca_horse_magma_shiny:
+    name: 마그마 준마 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id029
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 이동속도 +15%'
+  ca_horse_pegasus:
+    name: 페가수스
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_moon_wind_horse_pegasus
+    - CHA_PET_gale_wings_horse_pegasus
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 달바람 / 돌풍 날갯짓
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_horse_pegasus_shiny:
+    name: 페가수스 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_moon_wind_horse_pegasus_shiny
+    - CHA_PET_gale_wings_horse_pegasus_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 달바람 / 돌풍 날갯짓
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_horse_spartan:
+    name: 철갑 준마
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id030
+        speed: 0.15
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 이동속도 +15%'
+  ca_horse_spartan_shiny:
+    name: 철갑 준마 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id030
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 이동속도 +15%'
+  ca_horse_unicorn:
+    name: 유니콘
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_horn_ray_horse_unicorn
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 뿔 광선
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_horse_unicorn_shiny:
+    name: 유니콘 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_horn_ray_horse_unicorn_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 뿔 광선
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_kitsune_demonic:
+    name: 마성 키츠네
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_foxfire_orbit_kitsune_demonic
+    - CHA_PET_fox_charm_kitsune_demonic
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 여우불 공전 / 현혹
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_kitsune_demonic_shiny:
+    name: 마성 키츠네 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_foxfire_orbit_kitsune_demonic_shiny
+    - CHA_PET_fox_charm_kitsune_demonic_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 여우불 공전 / 현혹
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_kitsune_inferno:
+    name: 업화 키츠네
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_foxfire_orbit_kitsune_inferno
+    - CHA_PET_fox_charm_kitsune_inferno
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 여우불 공전 / 현혹
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_kitsune_inferno_shiny:
+    name: 업화 키츠네 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_foxfire_orbit_kitsune_inferno_shiny
+    - CHA_PET_fox_charm_kitsune_inferno_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 여우불 공전 / 현혹
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_kitsune_normal:
+    name: 키츠네
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_foxfire_orbit_kitsune_normal
+    - CHA_PET_fox_charm_kitsune_normal
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 여우불 공전 / 현혹
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_kitsune_normal_shiny:
+    name: 키츠네 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_foxfire_orbit_kitsune_normal_shiny
+    - CHA_PET_fox_charm_kitsune_normal_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 여우불 공전 / 현혹
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_phantom_ender:
+    name: 공허 팬텀
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_soul_drain_phantom_ender
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 혼 흡수
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_phantom_ender_shiny:
+    name: 공허 팬텀 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_soul_drain_phantom_ender_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 혼 흡수
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_phantom_ghost:
+    name: 망령 팬텀
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_soul_drain_phantom_ghost
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 혼 흡수
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_phantom_ghost_shiny:
+    name: 망령 팬텀 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_soul_drain_phantom_ghost_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 혼 흡수
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_phoenix_darkflame:
+    name: 흑염 피닉스
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_fire_feathers_phoenix_darkflame
+    - CHA_PET_feather_barrage_phoenix_darkflame
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 불깃털 / 깃털 탄막
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_phoenix_darkflame_shiny:
+    name: 흑염 피닉스 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_fire_feathers_phoenix_darkflame_shiny
+    - CHA_PET_feather_barrage_phoenix_darkflame_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 불깃털 / 깃털 탄막
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_phoenix_flame:
+    name: 불꽃 피닉스
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_fire_feathers_phoenix_flame
+    - CHA_PET_feather_barrage_phoenix_flame
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 불깃털 / 깃털 탄막
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_phoenix_flame_shiny:
+    name: 불꽃 피닉스 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_fire_feathers_phoenix_flame_shiny
+    - CHA_PET_feather_barrage_phoenix_flame_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 불깃털 / 깃털 탄막
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_phoenix_light:
+    name: 광휘 피닉스
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_fire_feathers_phoenix_light
+    - CHA_PET_feather_barrage_phoenix_light
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 불깃털 / 깃털 탄막
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_phoenix_light_shiny:
+    name: 광휘 피닉스 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_fire_feathers_phoenix_light_shiny
+    - CHA_PET_feather_barrage_phoenix_light_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 불깃털 / 깃털 탄막
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_phoenix_thunder:
+    name: 뇌광 피닉스
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_fire_feathers_phoenix_thunder
+    - CHA_PET_feather_barrage_phoenix_thunder
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 불깃털 / 깃털 탄막
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_phoenix_thunder_shiny:
+    name: 뇌광 피닉스 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_fire_feathers_phoenix_thunder_shiny
+    - CHA_PET_feather_barrage_phoenix_thunder_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 불깃털 / 깃털 탄막
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_basilisk_obsidian:
+    name: 흑요 바실리스크
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_venom_spit_basilisk_obsidian
+    - CHA_PET_tail_sweep_basilisk_obsidian
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 독 뱉기 / 꼬리 휩쓸기
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_basilisk_obsidian_shiny:
+    name: 흑요 바실리스크 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_venom_spit_basilisk_obsidian_shiny
+    - CHA_PET_tail_sweep_basilisk_obsidian_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 독 뱉기 / 꼬리 휩쓸기
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_basilisk_snowstorm:
+    name: 눈보라 바실리스크
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_venom_spit_basilisk_snowstorm
+    - CHA_PET_tail_sweep_basilisk_snowstorm
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 독 뱉기 / 꼬리 휩쓸기
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_basilisk_snowstorm_shiny:
+    name: 눈보라 바실리스크 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_venom_spit_basilisk_snowstorm_shiny
+    - CHA_PET_tail_sweep_basilisk_snowstorm_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 독 뱉기 / 꼬리 휩쓸기
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_basilisk_wild:
+    name: 야생 바실리스크
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_venom_spit_basilisk_wild
+    - CHA_PET_tail_sweep_basilisk_wild
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 독 뱉기 / 꼬리 휩쓸기
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_basilisk_wild_shiny:
+    name: 야생 바실리스크 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_venom_spit_basilisk_wild_shiny
+    - CHA_PET_tail_sweep_basilisk_wild_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 독 뱉기 / 꼬리 휩쓸기
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_hippogryph_common:
+    name: 산악 히포그리프
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_feather_storm_hippogryph_common
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 깃털 폭풍
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_hippogryph_common_shiny:
+    name: 산악 히포그리프 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_feather_storm_hippogryph_common_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 깃털 폭풍
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_hippogryph_crystal:
+    name: 수정 히포그리프
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_feather_storm_hippogryph_crystal
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 깃털 폭풍
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_hippogryph_crystal_shiny:
+    name: 수정 히포그리프 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_feather_storm_hippogryph_crystal_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 깃털 폭풍
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_hippogryph_fallen:
+    name: 타락 히포그리프
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_feather_storm_hippogryph_fallen
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 깃털 폭풍
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_hippogryph_fallen_shiny:
+    name: 타락 히포그리프 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_feather_storm_hippogryph_fallen_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 깃털 폭풍
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_hippogryph_royal:
+    name: 왕실 히포그리프
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_feather_storm_hippogryph_royal
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 깃털 폭풍
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_hippogryph_royal_shiny:
+    name: 왕실 히포그리프 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_feather_storm_hippogryph_royal_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 깃털 폭풍
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_raptor_nightmare:
+    name: 악몽 랩터
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    special:
+      kind: combat
+      effects: &id031
+        speed: 0.4
+        intelligence: 0.15
+      seconds: 10
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 악몽의 질주: 10초간 신속 II + 지능 +15%'
+  ca_raptor_nightmare_shiny:
+    name: 악몽 랩터 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    special:
+      kind: combat
+      effects: *id031
+      seconds: 10
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 악몽의 질주: 10초간 신속 II + 지능 +15%'
+  ca_raptor_red:
+    name: 적갈 랩터
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: &id032
+        speed: 0.2
+        intelligence: 0.15
+      seconds: 8
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 사냥 본능: 8초간 신속 + 지능 +15%'
+  ca_raptor_red_shiny:
+    name: 적갈 랩터 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: combat
+      effects: *id032
+      seconds: 8
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 사냥 본능: 8초간 신속 + 지능 +15%'
+  ca_raptor_undead:
+    name: 불사 랩터
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    special:
+      kind: combat
+      effects: &id033
+        speed: 0.4
+        intelligence: 0.15
+      seconds: 10
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 악몽의 질주: 10초간 신속 II + 지능 +15%'
+  ca_raptor_undead_shiny:
+    name: 불사 랩터 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    special:
+      kind: combat
+      effects: *id033
+      seconds: 10
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 악몽의 질주: 10초간 신속 II + 지능 +15%'
+  ca_sky_serpent_jade:
+    name: 비취 하늘뱀
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_serpent_breath_sky_serpent_jade
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 하늘뱀 브레스
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_sky_serpent_jade_shiny:
+    name: 비취 하늘뱀 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_serpent_breath_sky_serpent_jade_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 하늘뱀 브레스
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_sky_serpent_magma:
+    name: 마그마 하늘뱀
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_serpent_breath_sky_serpent_magma
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 하늘뱀 브레스
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_sky_serpent_magma_shiny:
+    name: 마그마 하늘뱀 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_serpent_breath_sky_serpent_magma_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 하늘뱀 브레스
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_sky_serpent_solar:
+    name: 태양 하늘뱀
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_serpent_breath_sky_serpent_solar
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 하늘뱀 브레스
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_sky_serpent_solar_shiny:
+    name: 태양 하늘뱀 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_serpent_breath_sky_serpent_solar_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 하늘뱀 브레스
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_sky_serpent_spectral:
+    name: 영체 하늘뱀
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_serpent_breath_sky_serpent_spectral
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 하늘뱀 브레스
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_sky_serpent_spectral_shiny:
+    name: 영체 하늘뱀 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_serpent_breath_sky_serpent_spectral_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 하늘뱀 브레스
+
+      피해 2 (펫 고정, 지능 무관)'
+  ca_stag_demonic:
+    name: 마성 영록
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_light_horns_stag_demonic
+    - CHA_PET_domain_seal_stag_demonic
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 빛의 뿔 / 영역 선포
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_stag_demonic_shiny:
+    name: 마성 영록 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_light_horns_stag_demonic_shiny
+    - CHA_PET_domain_seal_stag_demonic_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 빛의 뿔 / 영역 선포
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_stag_heavenly:
+    name: 천상 영록
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_light_horns_stag_heavenly
+    - CHA_PET_domain_seal_stag_heavenly
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 빛의 뿔 / 영역 선포
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_stag_heavenly_shiny:
+    name: 천상 영록 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_light_horns_stag_heavenly_shiny
+    - CHA_PET_domain_seal_stag_heavenly_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 빛의 뿔 / 영역 선포
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_stag_rune:
+    name: 룬 영록
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_light_horns_stag_rune
+    - CHA_PET_domain_seal_stag_rune
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 빛의 뿔 / 영역 선포
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_stag_rune_shiny:
+    name: 룬 영록 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_light_horns_stag_rune_shiny
+    - CHA_PET_domain_seal_stag_rune_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 빛의 뿔 / 영역 선포
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_stag_void:
+    name: 심연 영록
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_light_horns_stag_void
+    - CHA_PET_domain_seal_stag_void
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 빛의 뿔 / 영역 선포
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_stag_void_shiny:
+    name: 심연 영록 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_light_horns_stag_void_shiny
+    - CHA_PET_domain_seal_stag_void_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 빛의 뿔 / 영역 선포
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_frog_green:
+    name: 녹빛 왕개구리
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id034
+        jump: 1
+        fall: 0.5
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 점프 강화 + 낙하 피해 50% 감소'
+  ca_frog_green_shiny:
+    name: 녹빛 왕개구리 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id034
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 점프 강화 + 낙하 피해 50% 감소'
+  ca_frog_permafrost:
+    name: 영구동토 왕개구리
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: &id035
+        jump: 1
+        fall: 0.5
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 점프 강화 + 낙하 피해 50% 감소'
+  ca_frog_permafrost_shiny:
+    name: 영구동토 왕개구리 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    special:
+      kind: passive
+      effects: *id035
+    info: '2성 · 최대 체력 +6
+
+      장착 중: 점프 강화 + 낙하 피해 50% 감소'
+  ca_frog_royal:
+    name: 왕실 왕개구리
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    special:
+      kind: passive
+      effects: &id036
+        jump: 2
+        fall: 1
+    info: '3성 · 최대 체력 +10
+
+      장착 중: 점프 강화 II + 낙하 피해 없음'
+  ca_frog_royal_shiny:
+    name: 왕실 왕개구리 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    special:
+      kind: passive
+      effects: *id036
+    info: '3성 · 최대 체력 +10
+
+      장착 중: 점프 강화 II + 낙하 피해 없음'
+  ca_golem_arcane:
+    name: 비전 고대 골렘
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_rune_boulder_golem_arcane
+    - CHA_PET_gravity_slam_golem_arcane
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 룬 바위 / 중력 강타
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_golem_arcane_shiny:
+    name: 비전 고대 골렘 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_rune_boulder_golem_arcane_shiny
+    - CHA_PET_gravity_slam_golem_arcane_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 룬 바위 / 중력 강타
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_golem_corrupted:
+    name: 오염 고대 골렘
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_rune_boulder_golem_corrupted
+    - CHA_PET_gravity_slam_golem_corrupted
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 룬 바위 / 중력 강타
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_golem_corrupted_shiny:
+    name: 오염 고대 골렘 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_rune_boulder_golem_corrupted_shiny
+    - CHA_PET_gravity_slam_golem_corrupted_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 룬 바위 / 중력 강타
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_golem_magma:
+    name: 마그마 고대 골렘
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_rune_boulder_golem_magma
+    - CHA_PET_gravity_slam_golem_magma
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 룬 바위 / 중력 강타
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_golem_magma_shiny:
+    name: 마그마 고대 골렘 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_rune_boulder_golem_magma_shiny
+    - CHA_PET_gravity_slam_golem_magma_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 룬 바위 / 중력 강타
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_golem_royal:
+    name: 왕실 고대 골렘
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_rune_boulder_golem_royal
+    - CHA_PET_gravity_slam_golem_royal
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 룬 바위 / 중력 강타
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_golem_royal_shiny:
+    name: 왕실 고대 골렘 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_rune_boulder_golem_royal_shiny
+    - CHA_PET_gravity_slam_golem_royal_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 룬 바위 / 중력 강타
+
+      피해 4 (펫 고정, 지능 무관)'
+  ca_tusker_demonic:
+    name: 마성 터스커
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_earth_stomp_tusker_demonic
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 대지 짓밟기
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_tusker_demonic_shiny:
+    name: 마성 터스커 (변색종)
+    stars: 3
+    motion: ground
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_earth_stomp_tusker_demonic_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 대지 짓밟기
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_tusker_dreamlight:
+    name: 꿈빛 터스커
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_earth_stomp_tusker_dreamlight
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 대지 짓밟기
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_tusker_dreamlight_shiny:
+    name: 꿈빛 터스커 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_earth_stomp_tusker_dreamlight_shiny
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 대지 짓밟기
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_tusker_forest:
+    name: 숲 터스커
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_earth_stomp_tusker_forest
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 대지 짓밟기
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_tusker_forest_shiny:
+    name: 숲 터스커 (변색종)
+    stars: 2
+    motion: ground
+    size: 0.7
+    health: 6
+    skills:
+    - CHA_PET_earth_stomp_tusker_forest_shiny
+    info: '2성 · 최대 체력 +6
+
+      전투 중 60초마다 스킬: 대지 짓밟기
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_wolfhawk_dire:
+    name: 거친 울프호크
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_wind_blade_wolfhawk_dire
+    - CHA_PET_glide_dive_wolfhawk_dire
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 바람 칼날 / 활강 습격
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_wolfhawk_dire_shiny:
+    name: 거친 울프호크 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_wind_blade_wolfhawk_dire_shiny
+    - CHA_PET_glide_dive_wolfhawk_dire_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 바람 칼날 / 활강 습격
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_wolfhawk_fallen:
+    name: 타락 울프호크
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_wind_blade_wolfhawk_fallen
+    - CHA_PET_glide_dive_wolfhawk_fallen
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 바람 칼날 / 활강 습격
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_wolfhawk_fallen_shiny:
+    name: 타락 울프호크 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_wind_blade_wolfhawk_fallen_shiny
+    - CHA_PET_glide_dive_wolfhawk_fallen_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 바람 칼날 / 활강 습격
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_wolfhawk_fullmoon:
+    name: 만월 울프호크
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_wind_blade_wolfhawk_fullmoon
+    - CHA_PET_glide_dive_wolfhawk_fullmoon
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 바람 칼날 / 활강 습격
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_wolfhawk_fullmoon_shiny:
+    name: 만월 울프호크 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_wind_blade_wolfhawk_fullmoon_shiny
+    - CHA_PET_glide_dive_wolfhawk_fullmoon_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 바람 칼날 / 활강 습격
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_wolfhawk_stormcloud:
+    name: 먹구름 울프호크
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_wind_blade_wolfhawk_stormcloud
+    - CHA_PET_glide_dive_wolfhawk_stormcloud
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 바람 칼날 / 활강 습격
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_wolfhawk_stormcloud_shiny:
+    name: 먹구름 울프호크 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_wind_blade_wolfhawk_stormcloud_shiny
+    - CHA_PET_glide_dive_wolfhawk_stormcloud_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 바람 칼날 / 활강 습격
+
+      피해 3 (펫 고정, 지능 무관)'
+  ca_wyvern_ender:
+    name: 공허 와이번
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_spike_volley_wyvern_ender
+    - CHA_PET_tail_spikes_wyvern_ender
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 가시 탄막 / 꼬리 가시
+
+      피해 6 (펫 고정, 지능 무관)'
+  ca_wyvern_ender_shiny:
+    name: 공허 와이번 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_spike_volley_wyvern_ender_shiny
+    - CHA_PET_tail_spikes_wyvern_ender_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 가시 탄막 / 꼬리 가시
+
+      피해 6 (펫 고정, 지능 무관)'
+  ca_wyvern_green:
+    name: 녹빛 와이번
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_spike_volley_wyvern_green
+    - CHA_PET_tail_spikes_wyvern_green
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 가시 탄막 / 꼬리 가시
+
+      피해 6 (펫 고정, 지능 무관)'
+  ca_wyvern_green_shiny:
+    name: 녹빛 와이번 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_spike_volley_wyvern_green_shiny
+    - CHA_PET_tail_spikes_wyvern_green_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 가시 탄막 / 꼬리 가시
+
+      피해 6 (펫 고정, 지능 무관)'
+  ca_wyvern_inferno:
+    name: 업화 와이번
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_spike_volley_wyvern_inferno
+    - CHA_PET_tail_spikes_wyvern_inferno
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 가시 탄막 / 꼬리 가시
+
+      피해 6 (펫 고정, 지능 무관)'
+  ca_wyvern_inferno_shiny:
+    name: 업화 와이번 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_spike_volley_wyvern_inferno_shiny
+    - CHA_PET_tail_spikes_wyvern_inferno_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 가시 탄막 / 꼬리 가시
+
+      피해 6 (펫 고정, 지능 무관)'
+  ca_wyvern_undead:
+    name: 불사 와이번
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_spike_volley_wyvern_undead
+    - CHA_PET_tail_spikes_wyvern_undead
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 가시 탄막 / 꼬리 가시
+
+      피해 6 (펫 고정, 지능 무관)'
+  ca_wyvern_undead_shiny:
+    name: 불사 와이번 (변색종)
+    stars: 3
+    motion: fly
+    size: 0.85
+    health: 10
+    skills:
+    - CHA_PET_spike_volley_wyvern_undead_shiny
+    - CHA_PET_tail_spikes_wyvern_undead_shiny
+    info: '3성 · 최대 체력 +10
+
+      전투 중 40초마다 스킬: 가시 탄막 / 꼬리 가시
+
+      피해 6 (펫 고정, 지능 무관)'
