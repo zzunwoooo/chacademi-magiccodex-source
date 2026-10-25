@@ -176,7 +176,7 @@ public final class ChacaNpcPlugin extends JavaPlugin implements Listener {
     private void saveDefaults() {
         saveDefaultConfig();
         String[] files = {"places.yml", "quests.yml", "hints.yml", "filter.yml", "database.properties.example",
-                "prompts/common.txt", "prompts/ambient.txt", "prompts/vibe.txt"};
+                "prompts/common.txt", "prompts/ambient.txt", "prompts/vibe.txt", "gift-likes.yml"};
         for (String f : files) {
             if (!new File(getDataFolder(), f).exists()) {
                 saveResource(f, false);

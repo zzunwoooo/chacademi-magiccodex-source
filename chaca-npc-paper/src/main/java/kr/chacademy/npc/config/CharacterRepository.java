@@ -45,8 +45,9 @@ public final class CharacterRepository {
                 }
             }
         }
+        int gifted = applyGiftFile(map, new File(folder.getParentFile(), "gift-likes.yml"), log);
         byId = map;
-        log.info("[ChacaNPC] 캐릭터 " + map.size() + "명 불러옴");
+        log.info("[ChacaNPC] 캐릭터 " + map.size() + "명 불러옴" + (gifted > 0 ? " (선물 취향 gift-likes.yml " + gifted + "명)" : ""));
     }
 
     public CharacterSheet get(String id) {
@@ -55,6 +56,35 @@ public final class CharacterRepository {
 
     public Collection<CharacterSheet> all() {
         return byId.values();
+    }
+
+    /**
+     * 호감도 선물 공통 파일 (#58, 오너 기획 2026-10-25 "호감도 선물 100"): plugins/ChacaNPC/gift-likes.yml
+     * <pre>
+     * npcs:
+     *   ella: [item:gift_archmage_statue, item:gift_moonwell_water, ...]
+     * </pre>
+     * 여기 적힌 NPC 는 캐릭터 파일의 gift_likes 대신 이 목록을 좋아하는 선물(liked)로 쓴다 (loved 는 비움, disliked 는 캐릭터 파일 것 유지).
+     * 적히지 않은 NPC 는 캐릭터 파일 gift_likes 그대로. 없는 NPC id 는 경고만.
+     */
+    static int applyGiftFile(Map<String, CharacterSheet> map, File file, Logger log) {
+        if (!file.isFile()) return 0;
+        ConfigurationSection npcs = YamlConfiguration.loadConfiguration(file).getConfigurationSection("npcs");
+        if (npcs == null) return 0;
+        int n = 0;
+        for (String id : npcs.getKeys(false)) {
+            CharacterSheet c = map.get(id);
+            if (c == null) { log.warning("[ChacaNPC] gift-likes.yml: 없는 NPC id " + id + " — 건너뜀"); continue; }
+            List<String> liked = new ArrayList<>();
+            for (String it : npcs.getStringList(id)) liked.add(it.strip().toLowerCase(java.util.Locale.ROOT).replace("minecraft:", ""));
+            Map<String, List<String>> likes = new HashMap<>();
+            likes.put("liked", List.copyOf(liked));
+            likes.put("loved", List.of());
+            likes.put("disliked", c.giftLikes() == null ? List.of() : c.giftLikes().getOrDefault("disliked", List.of()));
+            map.put(id, c.withGiftLikes(likes));
+            n++;
+        }
+        return n;
     }
 
     private static Map<String, List<String>> giftLikes(YamlConfiguration y) {

@@ -43,6 +43,12 @@ public record CharacterSheet(
     public record Relation(String type, double gossip) {
     }
 
+    /** 선물 취향만 바꾼 사본 (gift-likes.yml 공통 파일, #58). */
+    public CharacterSheet withGiftLikes(Map<String, List<String>> likes) {
+        return new CharacterSheet(id, name, type, gender, skin, color, portrait, romanceable, openOnRightClick, persona, schedule,
+                quests, hintTopics, relations, fallbackLines, sampleLinesByStage, likes, buttons);
+    }
+
     /** 이 NPC 에게 보여 줄 추천 버튼: 전용 버튼이 있으면 그것, 없으면 공통 버튼. */
     public List<Defs.Button> buttonsOr(List<Defs.Button> common) {
         return buttons == null || buttons.isEmpty() ? common : buttons;
