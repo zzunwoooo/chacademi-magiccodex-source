@@ -27,6 +27,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private ShopAdminBridge shopAdmin;
     private ManaBridge mana;
     private SpellRuntime spellRuntime;
+    private ServerHeartbeat heartbeat; // 메모 #92 운영 대시보드 하트비트
     private final Set<String> missingRuntimeRoutes = new java.util.HashSet<>();
     Boolean runtimeCast(Player player,String id){
         if(!MagicProtectionLink.cast(player)){player.sendMessage("이 구역에서는 마법을 사용할 수 없습니다.");return false;}
@@ -281,6 +282,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         try{bagPages=new BagPagesBridge(this);}catch(Exception|LinkageError error){bagPages=null;getLogger().severe("아공간 배낭 초기화 실패 (bag-pages.yml·DB 확인): "+error.getMessage());}
         new AdminCommandBridge(this,mana,school,enhancement,appraisal,titles,npcSocial);
         NameplateBootstrap.initialize(this);
+        try{heartbeat=ServerHeartbeat.start(this);commandHub.status(this,"하트비트",()->heartbeat==null?"꺼짐":heartbeat.describe());}catch(Exception|LinkageError error){heartbeat=null;getLogger().warning("운영 하트비트 시작 실패 (게임은 계속): "+error);}
         getLogger().info("권한 연동 준비 완료. 활성 도감만 조회, 작업당 최대 " + budget + "회, 보조 확인 " + refresh / 1000 + "초.");
     }
     private void markDirty(UUID player) {
@@ -338,6 +340,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     @EventHandler public void onWorldChange(PlayerChangedWorldEvent event) { markDirty(event.getPlayer().getUniqueId()); }
     @Override public void onDisable() {
         if(commandHub!=null)commandHub.close();
+        if(heartbeat!=null){heartbeat.close();heartbeat=null;}
         if(alchemy!=null){alchemy.close();alchemy=null;}
         if(fishTank!=null){fishTank.close();fishTank=null;}
         if(bagPages!=null){bagPages.close();bagPages=null;}
