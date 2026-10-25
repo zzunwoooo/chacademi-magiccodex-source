@@ -38,6 +38,8 @@ final class Reactions implements Listener, AutoCloseable {
     private final ReactionVfx vfx;
     /** PortableVFX player shared with mob skills (chatelegraph vfx=...). */
     ReactionVfx vfx() { return vfx; }
+    /** 지금 반응 효과(반응 피해)를 적용하는 중인가 — 허수아비 피해 숫자 색 구분용 (#107). */
+    boolean applying() { return applying; }
     private boolean enabled = true, applying;
     private double floor = 2, scale = 1, sendRange = 48;
     private int ccTicks = 60, hardTicks = 20, manaBurnTicks = 100;

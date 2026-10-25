@@ -593,3 +593,27 @@ items:
 - 서버 `PortraitChannel`: DB 읽기 비동기, 한 사람 요청 간격 250ms·같은 대상 3초, 동시에 보내는 남의 그림 2장(나머지는 32개까지 줄, 넘치면 BUSY → 클라가 잠시 뒤 다시), 조각은 2틱마다 1개, 같은 사람의 새 요청은 옛 요청을 끊음. 공유 DB 면 다른 서버 사람 그림도. 그림 없는 사람은 "없음".
 - 클라 `OtherPortraits`: 캐시 `config/magiccodex/portraits/others/<sha>.png` + `index.txt`(uuid→sha), 최근 64장만 유지, 같은 sha 면 다시 안 받음. **처음 받는 동안만 초상 칸에 "불러오는 중"**, 다음부턴 캐시를 먼저 보여 주고 바뀌었으면 새로 받아 바꿈. 디코드·해시·디스크는 IO 스레드, 텍스처 업로드는 클라 스레드 (메모리엔 최근 4장). 없음·실패 → 3D 스킨. 일러스트는 초상 칸 높이에 맞춰 비율 유지·가운데·칸 밖은 잘라냄 (내 일러스트도 같은 방식).
 - **배포 주의: ChacaPortrait 플러그인 + chaca-portrait-protocol + MagicCodex 모드 같이.**
+
+## 29. 마법 연습장 훈련 허수아비 개선 (2026-10-26, 메모 #107)
+- **모델 (Blockbench, ModelEngine 용)**: `magic-mythic-paper/mythicmobs/blueprints/training_dummy.bbmodel` (모델 id `training_dummy`, 텍스처 128x64 내장, 큐브 36개). 나무 십자 받침+버팀대 / 기둥 / 짚 몸통(밧줄 두 줄) / 가슴 과녁(빨강·크림·금) / 가로대 팔(짚 소매) / 천 자루 머리(단추 눈·꿰맨 입·위 매듭). 히트박스 0.8 x 2.3 (숨김 `hitbox` 그룹, 기존 작물 몹 blueprint 와 같은 형식).
+  - 애니: `idle`(3.2초 반복, 살짝 흔들림) · `hit`(0.5초, 뒤로 13° 휘청 → 스프링처럼 -6°·+3° 복귀) · `hit_heavy`(0.65초, 24°로 더 크게). 받침은 안 흔들림(본 `sway` 아래만 움직임).
+  - 배치: 운영 서버(연습장이 있는 서버) `plugins/ModelEngine/blueprints/` 에 `training_dummy.bbmodel` 복사 → `/meg reload` → ModelEngine 리소스팩을 ItemsAdder 팩에 병합·배포(기존 blueprint 와 같은 절차).
+- **MythicMobs** (운영 overlay 규칙대로, `operating_overlay.py check` 차이 없음):
+  - `deployment/operating-config/MythicMobs/Mobs/chacademi_training_dummy.yml` — `CA_TrainingDummy` (HUSK, NoAI, `model{mid=training_dummy;n=false;drive=true} ~onSpawn`)
+  - `deployment/operating-config/MythicMobs/Skills/chacademi_training_dummy.yml` — `CA_TrainingDummy_Hit`(`state{s=hit}`) · `CA_TrainingDummy_HitHeavy`(`state{s=hit_heavy}`)
+  - 원본: `magic-mythic-paper/mythicmobs/Mobs|Skills/chacademi_training_dummy.yml`. 서버 `plugins/MythicMobs/Mobs`·`Skills` 에 넣고 `/mm reload`.
+- **서버 ChAcademiaMagicMythic** `TrainingDummies`: 허수아비 몸을 미몹 `CA_TrainingDummy` 로 세움(미몹이 없으면 예전처럼 바닐라 허스크 + 이름표, 콘솔 경고 1번). 죽지 않음·체력 다시 채움·제자리 복귀·원소/디버프 그대로는 전과 같음. 맞을 때 큰 피해(`heavy-damage` 이상)면 `CA_TrainingDummy_HitHeavy`, 보통은 `CA_TrainingDummy_Hit` 시전(0.25초 안에 또 맞으면 다시 틀지 않음). 서버 텍스트 엔티티(머리 위 글씨)는 없앰.
+  - 누적: 연속으로 맞은 피해 합. **마지막 타에서 10초 안 맞으면 0** (`reset-seconds`). 초당 피해 = 누적 / (첫 타~마지막 타, 최소 1초).
+  - 숫자 종류: 원소 반응 피해(반응 적용 중 들어온 피해, `Reactions.applying()`) / 출처 없는 지속 피해(독·화상 등) / 큰 피해 / 보통. **서버에 치명타 개념이 없어 "큰 피해"를 치명타 자리에 씀.**
+  - 때린 사람 알림 카드: 머리 위 표시로 충분해 **기본 끔** (`notify-card: true` 면 다시 켜짐).
+  - config `training-dummy:` 바뀜 — `window-seconds` 없어짐, 새 키 `mythic-mob`(CA_TrainingDummy) · `model-height`(2.35) · `reset-seconds`(10) · `heavy-damage`(20) · `show-range`(32) · `notify-card`(false). 운영 config 에 키 병합.
+- **머리 위 표시 = 클라(MagicCodex 모드)가 그림** — 이유: 서버 텍스트 엔티티로 떠오르는 숫자를 만들면 숫자마다 엔티티 소환·매 틱 위치/투명도 갱신 패킷이 필요해 렉 위험. 클라 방식은 맞을 때만 44바이트 패킷 하나.
+  - 새 채널 `magiccodex:training_dummy` (`TrainingDummyProtocol` v1: 허수아비 몸 엔티티 id · 표시 기준점 xyz(모델 머리 꼭대기) · 이번 피해 · 종류 · 누적 · 초당 · 초기화 시간). 서버는 **맞을 때만, 32블록 안 + 채널 듣는 플레이어에게만** 보냄.
+  - `TrainingDummyClient`: 머리 바로 위 "누적 1,234"(작게 "누적" 글자 + 큰 숫자), 그 아래 작은 "초당 56.7". 10초 안 맞으면 0.5초 흐려지며 사라짐. 그 위에서 맞을 때마다 숫자가 톡 커졌다(0.08초) 1.1초 동안 위로 0.55블록 올라가며 0.55초부터 투명해져 사라짐. 0.35초 안에 연달아 맞으면 위로 한 칸씩(4칸 반복) 쌓고 좌우로 번갈아 흩음. 보통 = 주황, 큰 피해 = 크고 빨강, 원소 반응 = 하늘색, 지속 피해 = 작고 보라. 숫자는 MagicCodex 폰트(잠실 엑스트라볼드)를 코드로 굵은 어두운 테두리 + 위아래 그라데이션 글자판 1장(0~9 , . 누적 초당)으로 한 번만 구워 이어 붙임(새 그림 파일 없음). 월드 공간 빌보드라 멀수록 작아짐, 48블록 밖은 안 그림.
+- 바뀐 파일: 서버 `TrainingDummies`(새로 씀), `Reactions`(`applying()` 1줄), `config.yml`(training-dummy), `magic-mythic-paper/build.gradle`(프로토콜 include 1개), 테스트 `TrainingDummyTest`. 프로토콜 `magic-codex-protocol/.../TrainingDummyProtocol`(새). 클라 `TrainingDummyClient`(새), `MagicCodexClient`(등록 1줄), `CodexTypography`(`font()` 접근자 1줄), 테스트 `TrainingDummyClientTest`. overlay 등록 `operating-config-overrides.json`·manifest.
+- **같이 배포**: ChAcademiaMagicMythic jar + MagicCodex 모드(+magic-codex-protocol) + MythicMobs yml 2개 + ModelEngine blueprint 1개(+리소스팩). 옛 모드는 채널을 안 들어서 표시만 안 보임(허수아비 기능은 그대로).
+- 게임 확인:
+  1. `/컨텐츠관리 연습장 허수아비 설치` → "(N개)" 뒤에 "모델 없음 → 허스크" 가 안 붙고 나무·짚 허수아비 모델이 서 있는지, 살짝 흔들리는지(idle). `/컨텐츠관리 연습장 허수아비 목록` 에 "(모델)".
+  2. 칼·마법으로 때리면 뒤로 휘청였다 돌아오는지, 20 이상 한 방이면 더 크게(hit_heavy). 히트박스가 몸통 크기에 맞는지(F3+B).
+  3. 머리 위 "누적" 숫자가 늘고, 10초 가만두면 사라졌다가 다시 때리면 처음부터 세는지. 숫자가 떠올라 사라지는지, 빠르게 연타(광역·연사 마법)하면 겹치지 않고 쌓이는지, 원소 반응 피해가 하늘색으로 뜨는지.
+  4. 33블록 이상 떨어진 사람에겐 안 보이는지, 때린 사람에게 알림 카드가 안 뜨는지.

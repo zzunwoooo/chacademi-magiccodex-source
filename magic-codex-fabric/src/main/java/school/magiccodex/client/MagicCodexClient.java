@@ -75,6 +75,7 @@ public final class MagicCodexClient implements ClientModInitializer {
         ElementMarkClient.initialize();
         StatusClient.initialize();
         TelegraphClient.initialize();
+        TrainingDummyClient.initialize(); // 마법 연습장 허수아비 머리 위 누적·떠오르는 피해 숫자 (#107)
         TargetHudClient.initialize();
         PlayerHudClient.initialize();
         KyudichiClient.initialize();

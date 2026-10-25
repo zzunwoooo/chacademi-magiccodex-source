@@ -48,6 +48,8 @@ public final class CodexTypography implements AutoCloseable {
         return Map.copyOf(result);
     }
     static void installFonts(Map<String,Font> fonts){sharedFonts=Map.copyOf(fonts);}
+    /** Loaded face (title, heading, section, body, label, hud_bold, ui_extra_bold) for code-drawn glyphs such as TrainingDummyClient's damage digits. */
+    Font font(String face){return fonts.get(face);}
 
     public void beginFrame() {
         // Clear only before new draw calls, never while the current frame references a texture.

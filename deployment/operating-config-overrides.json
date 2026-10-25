@@ -48,6 +48,16 @@
    "source": "magic-mythic-paper/mythicmobs/Skills/chacademi_pet_skills.yml",
    "kind": "mythic",
    "generator": "magic-mythic-paper/tools/pet_companions.py"
+  },
+  {
+   "overlay": "deployment/operating-config/MythicMobs/Mobs/chacademi_training_dummy.yml",
+   "source": "magic-mythic-paper/mythicmobs/Mobs/chacademi_training_dummy.yml",
+   "kind": "mythic"
+  },
+  {
+   "overlay": "deployment/operating-config/MythicMobs/Skills/chacademi_training_dummy.yml",
+   "source": "magic-mythic-paper/mythicmobs/Skills/chacademi_training_dummy.yml",
+   "kind": "mythic"
   }
  ],
  "keep": [

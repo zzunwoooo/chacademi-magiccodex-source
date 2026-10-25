@@ -23,7 +23,7 @@ java { toolchain.languageVersion = JavaLanguageVersion.of(21) }
 tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8'; options.release = 21 }
 test { useJUnitPlatform() }
 // Element reaction + status wire formats are shared with the MagicCodex client; only those protocol classes are compiled in.
-sourceSets.main.java { srcDir '../magic-codex-protocol/src/main/java'; include 'school/chacademia/**', 'school/magiccodex/protocol/ElementProtocol.java', 'school/magiccodex/protocol/StatusProtocol.java', 'school/magiccodex/protocol/TelegraphProtocol.java' }
+sourceSets.main.java { srcDir '../magic-codex-protocol/src/main/java'; include 'school/chacademia/**', 'school/magiccodex/protocol/ElementProtocol.java', 'school/magiccodex/protocol/StatusProtocol.java', 'school/magiccodex/protocol/TelegraphProtocol.java', 'school/magiccodex/protocol/TrainingDummyProtocol.java' }
 processResources {
     filteringCharset = 'UTF-8'
     inputs.property 'version', project.version
