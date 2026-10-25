@@ -143,6 +143,7 @@ final class PopularityBridge implements Listener, AutoCloseable {
         long now = System.currentTimeMillis();
         work(() -> store.vote(a, t, day, up, false, now), first -> {
             if (first.outcome() != PopularityRules.Outcome.LIMIT) { finish(actor, target, up, day, first, false, done); return; }
+            scores.put(t, first.score());
             if (!actor.isOnline()) { busy.remove(a); return; }
             // 오늘 이미 조절함 → 해제권 1개를 떼어 두고 한 번 더 (DB 실패·불필요하면 돌려준다)
             if (tickets(actor) <= 0 || !takeTicket(actor)) {
