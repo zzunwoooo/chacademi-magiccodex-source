@@ -1,0 +1,11 @@
+PASS: 제작용 PNG 9종 RGBA, 실제 규격 검증.
+PASS: 내부 alpha가 0과 255 사이임: 반투명 패널/아이템 배경.
+PASS: 밝은/어두운 배경 합성 육안검수 완료.
+PASS: 제작용 SVG/PNG에 문구 없음; X는 도형 아이콘.
+PASS: 3개 조립 프리뷰 1920x1080.
+PASS: 아이템+배경 아래끝 y144, 카드 상단 y160:16px 분리.
+PASS: 아이템 없는 프리뷰 아이콘/배경/힌트 없음, 카드 동일 위치.
+PASS: 전체 화면 암막 없음.
+NOTICE: 게임 적용/서버 테스트는 수행하지 않음; 9-slice 및 동작 명세는 layout.json 기준.
+NOTICE: 프리뷰 폰트 Noto Sans CJK; 실게임 Pretendard 권장.
+NOTICE: 승인 레퍼런스의 픽셀 추출이 아닌 실제 규격 SVG 재구성.

@@ -1,0 +1,4 @@
+승인된 reference-v2.png 기준. 차카데미 확성기 UI: 투명한 바깥, 실제 반투명한 남색/청록 유리 내부, 얇고 차분한 청록 윤곽 및 연금색 모서리, 가장자리만 가는 바람선. 신호등 같은 네온/공상과학 HUD/입자/그레인/글자 없음. 입력 패널1010x210, 공지 카드640x110. 아이템 backing96x96은 검정58% 불투명, 테두리 없는 round12. 글자와 게임 아이템은 런타임 별도 렌더링.
+제작 방식: 원본 픽셀을 추출한 것이 아니라, 승인 디자인을 정확한 실제 크기와 안정적인 9-slice로 사용하기 위해 SVG 벡터로 충실히 재구성하여 Inkscape로 RGBA PNG 렌더링. 원본 레퍼런스와 픽셀 동일하지 않음. SVG 소스 동봉.
+배경 생성 프롬프트: Use approved game UI reference for SCENE ONLY. Single clean 16:9 Minecraft magic school courtyard, ivory castle, blue roofs, trees and path, clear neutral daylight. Remove all UI, labels, wand and overlays. No dimming or vignette. Only for assembling previews.
+프리뷰 지팡이는 기존 빙핵 아이템을 예시로 합성했으며 실제 게임에서는 전달된 ItemStack을 80x80 영역에 렌더링한다. UI 제작 PNG에는 아이템/문구를 굽지 않는다.

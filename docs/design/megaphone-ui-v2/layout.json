@@ -1,0 +1,207 @@
+{
+  "canvas": {
+    "width": 1920,
+    "height": 1080,
+    "scaling": "uniform min(viewportWidth/1920,viewportHeight/1080), center canvas",
+    "fullscreenDim": false
+  },
+  "font": {
+    "family": "Pretendard",
+    "previewFallback": "Noto Sans CJK KR",
+    "color": "#F2F8FF"
+  },
+  "input": {
+    "rect": [
+      455,
+      435,
+      1010,
+      210
+    ],
+    "nineSlice": [
+      16,
+      16,
+      16,
+      16
+    ],
+    "title": {
+      "text": "확성기",
+      "rect": [
+        487,
+        456,
+        840,
+        40
+      ],
+      "size": 30,
+      "weight": 600
+    },
+    "close": {
+      "rect": [
+        1409,
+        456,
+        24,
+        24
+      ]
+    },
+    "field": {
+      "rect": [
+        487,
+        516,
+        786,
+        72
+      ],
+      "nineSlice": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "textRect": [
+        507,
+        534,
+        746,
+        36
+      ],
+      "fontSize": 26,
+      "maxUnicodeCodePoints": 80,
+      "singleLine": true,
+      "overflow": "horizontal scroll, clip to textRect",
+      "newlinePolicy": "remove CR LF"
+    },
+    "send": {
+      "rect": [
+        1289,
+        516,
+        144,
+        72
+      ],
+      "nineSlice": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "text": "보내기",
+      "fontSize": 26,
+      "align": "center"
+    }
+  },
+  "notice": {
+    "rect": [
+      640,
+      160,
+      640,
+      110
+    ],
+    "nineSlice": [
+      16,
+      16,
+      16,
+      16
+    ],
+    "nickname": {
+      "rect": [
+        664,
+        177,
+        592,
+        32
+      ],
+      "size": 26,
+      "weight": 700,
+      "align": "center"
+    },
+    "message": {
+      "rect": [
+        664,
+        215,
+        592,
+        30
+      ],
+      "size": 24,
+      "weight": 400,
+      "align": "center",
+      "singleLine": true,
+      "overflow": "ellipsis by measured pixel width"
+    },
+    "durationMs": 6000,
+    "timer": {
+      "rect": [
+        664,
+        257,
+        592,
+        3
+      ],
+      "fillColor": "#E8CB82",
+      "trackColor": "#B6D7DD33",
+      "fraction": "clamp(1-elapsedMs/6000,0,1)",
+      "clipFillNotScale": true
+    },
+    "item": {
+      "backingRect": [
+        912,
+        48,
+        96,
+        96
+      ],
+      "backingNineSlice": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "iconRect": [
+        920,
+        56,
+        80,
+        80
+      ],
+      "iconSource": "runtime item stack, not supplied UI asset",
+      "cardGap": 16,
+      "hint": {
+        "text": "Ctrl 아이템 보기",
+        "rect": [
+          1024,
+          90,
+          220,
+          25
+        ],
+        "size": 18
+      }
+    },
+    "tooltip": {
+      "renderer": "game native",
+      "anchor": [
+        960,
+        282
+      ],
+      "direction": "below card",
+      "clampMargin": 16,
+      "visible": "hasItem AND Ctrl held",
+      "notBaked": true
+    },
+    "noItem": {
+      "hide": [
+        "item.backing",
+        "item.icon",
+        "item.hint",
+        "tooltip"
+      ],
+      "cardRectUnchanged": true
+    }
+  },
+  "rendering": {
+    "alpha": "straight RGBA, preserve PNG alpha; composite source-over",
+    "panelInteriorAlpha": "approximately 122..179 /255, varies by position",
+    "nineSliceWind": "corners preserved; stretching decorative side strips acceptable; prefer nominal size",
+    "zOrder": [
+      "game",
+      "panels",
+      "controls",
+      "timer",
+      "runtime text",
+      "item backing",
+      "runtime icon",
+      "hint",
+      "native tooltip"
+    ]
+  }
+}

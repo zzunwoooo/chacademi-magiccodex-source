@@ -1,0 +1,244 @@
+{
+  "version": "v2-production-1",
+  "production_png_count": 9,
+  "files": [
+    {
+      "path": "assets/megaphone_close.png",
+      "bytes": 490,
+      "sha256": "7e5f0358c24f917f0a331aed06a9b55189e7df8cafdd04a5cff1cb3aa33fa315",
+      "width": 24,
+      "height": 24,
+      "mode": "RGBA",
+      "alpha_min_max": [
+        0,
+        255
+      ]
+    },
+    {
+      "path": "assets/megaphone_input_field.png",
+      "bytes": 1584,
+      "sha256": "5c8f1224da01dbb8a5d43cfbafdf26f1a6c966a6bb89fff80013c1a5ace09d8a",
+      "width": 786,
+      "height": 72,
+      "mode": "RGBA",
+      "alpha_min_max": [
+        0,
+        197
+      ]
+    },
+    {
+      "path": "assets/megaphone_input_panel.png",
+      "bytes": 8617,
+      "sha256": "83e4715a64bd06bc9dcd53dcf143b9c1e761d2818630693a081be7ff97eabb4e",
+      "width": 1010,
+      "height": 210,
+      "mode": "RGBA",
+      "alpha_min_max": [
+        0,
+        253
+      ]
+    },
+    {
+      "path": "assets/megaphone_item_backing.png",
+      "bytes": 794,
+      "sha256": "a0be3d96e703b79ac372e9a51d8aef2b33e8aaba2c518666afc700bf75f64118",
+      "width": 96,
+      "height": 96,
+      "mode": "RGBA",
+      "alpha_min_max": [
+        0,
+        148
+      ]
+    },
+    {
+      "path": "assets/megaphone_notice_card.png",
+      "bytes": 7126,
+      "sha256": "08088b45dd84a6a92cdd4712731218bfc6820dbcdc29374ecb87987e8e2185ff",
+      "width": 640,
+      "height": 110,
+      "mode": "RGBA",
+      "alpha_min_max": [
+        0,
+        253
+      ]
+    },
+    {
+      "path": "assets/megaphone_send_hover.png",
+      "bytes": 1270,
+      "sha256": "7de0b5f72d748aca84256054da01f7e25c8aca185d54f49dadd49e3e01525a6d",
+      "width": 144,
+      "height": 72,
+      "mode": "RGBA",
+      "alpha_min_max": [
+        0,
+        243
+      ]
+    },
+    {
+      "path": "assets/megaphone_send_normal.png",
+      "bytes": 1284,
+      "sha256": "725b4117aa4383c2b69cbf2853978b092b1b0475c4577bfee83308414eac4df4",
+      "width": 144,
+      "height": 72,
+      "mode": "RGBA",
+      "alpha_min_max": [
+        0,
+        241
+      ]
+    },
+    {
+      "path": "assets/megaphone_timer_fill.png",
+      "bytes": 197,
+      "sha256": "ec4bc7f2a12e532f4b265978aba5ddb005b6501a4450e253e75605b0da3c5efb",
+      "width": 592,
+      "height": 3,
+      "mode": "RGBA",
+      "alpha_min_max": [
+        127,
+        245
+      ]
+    },
+    {
+      "path": "assets/megaphone_timer_track.png",
+      "bytes": 198,
+      "sha256": "cd0de17887ef68da29618e388d1787941032a9f2d9d7daa167b20dce42521f7f",
+      "width": 592,
+      "height": 3,
+      "mode": "RGBA",
+      "alpha_min_max": [
+        26,
+        51
+      ]
+    },
+    {
+      "path": "docs/QA-alpha.json",
+      "bytes": 2444,
+      "sha256": "9e34aea8121ae01922991453f3bc944e913ac08106338f0e5412b7a1ba75ca80"
+    },
+    {
+      "path": "docs/QA.txt",
+      "bytes": 750,
+      "sha256": "42b8f49abdb4fab78de80b05771210b30b9c8c9149f4eaa10ca64ca848eb0a33"
+    },
+    {
+      "path": "docs/README_KO.txt",
+      "bytes": 3852,
+      "sha256": "5d9cc6d224a81a3a1f9b69d27309f5bf6b96bf9508089dab7966eb50788417eb"
+    },
+    {
+      "path": "docs/generation-prompt.txt",
+      "bytes": 3224,
+      "sha256": "eab8f1a976113fed44a50c44914d709c422174e4ddd2963d57f50110fdab1a3e"
+    },
+    {
+      "path": "docs/production-image-prompt.txt",
+      "bytes": 1263,
+      "sha256": "0cb1b04847ed8dc88e2958bf0cad0b37db3f466c8b46e3c77e37e8d27e186f51"
+    },
+    {
+      "path": "docs/refinement-prompt.txt",
+      "bytes": 745,
+      "sha256": "4d71c993006e2f77a2e301fa09e9754473829f96fd7bf23053b2c9fa45b26e7a"
+    },
+    {
+      "path": "docs/v2-prompt.txt",
+      "bytes": 2048,
+      "sha256": "e04cfa7fb2f55a3adcd91b46e9e10446ad1816b19984bdece199e43f5df66626"
+    },
+    {
+      "path": "docs/개발_프롬프트.txt",
+      "bytes": 4844,
+      "sha256": "760a9df1398b153469c9ee3f6fc83ac1621e7c266502466045dbb7cbb9a82bf4"
+    },
+    {
+      "path": "layout.json",
+      "bytes": 3564,
+      "sha256": "ee4d44d7054c79ebc45e95eeee6c8794a6905b2e4f4cd9db0fe755b76f579ce6"
+    },
+    {
+      "path": "previews/01-input-1920x1080.png",
+      "bytes": 3324996,
+      "sha256": "d649e39babe5962b3aea213e51f3cb08c12134426291ce08182ee83226e6da39",
+      "width": 1920,
+      "height": 1080,
+      "mode": "RGB"
+    },
+    {
+      "path": "previews/02-notice-item-1920x1080.png",
+      "bytes": 3434824,
+      "sha256": "80b54f23d0064701f00293541dc64893b949fbb5939924044ad349114af14051",
+      "width": 1920,
+      "height": 1080,
+      "mode": "RGB"
+    },
+    {
+      "path": "previews/03-notice-no-item-1920x1080.png",
+      "bytes": 3432266,
+      "sha256": "bd6125ff68791f789df82fba2ecd23bb6aabea90846f1fc38d2e59b6b3da288e",
+      "width": 1920,
+      "height": 1080,
+      "mode": "RGB"
+    },
+    {
+      "path": "previews/04-alpha-light-dark.png",
+      "bytes": 18567,
+      "sha256": "1167426d36d8a3023b024a48271bade64354b897c89299470a0a14bd8dcd1df4",
+      "width": 1400,
+      "height": 640,
+      "mode": "RGB"
+    },
+    {
+      "path": "reference/approved-reference-v2.png",
+      "bytes": 2569918,
+      "sha256": "e9df1f14f2ddf4b30edb4e677521bcb2b2ba6268ff36ffea319439f08bd1a208",
+      "width": 941,
+      "height": 1672,
+      "mode": "RGB"
+    },
+    {
+      "path": "source/megaphone_close.svg",
+      "bytes": 195,
+      "sha256": "346a570ac0db4f3ef0dcfd26195e7efaa510e1d5c36c54f2ac7c73fc15765bd9"
+    },
+    {
+      "path": "source/megaphone_input_field.svg",
+      "bytes": 233,
+      "sha256": "1e0a992f46df8c9c96d82428aa286037c1016177450082a133d391b6670a389e"
+    },
+    {
+      "path": "source/megaphone_input_panel.svg",
+      "bytes": 1006,
+      "sha256": "1798c191faf7a3e4735264d89f0bb64ceb20f9ae9712b05f2fbae39e274576ac"
+    },
+    {
+      "path": "source/megaphone_item_backing.svg",
+      "bytes": 173,
+      "sha256": "b4ec23d2c46dfd52bb7e60aadbfaf99c3e8a0cb8d5b797dd3c53619f7ffb687a"
+    },
+    {
+      "path": "source/megaphone_notice_card.svg",
+      "bytes": 989,
+      "sha256": "7ad26cc308bb6280f694e081936b676a4997cd1d2a5550f293623509fdedb4ab"
+    },
+    {
+      "path": "source/megaphone_send_hover.svg",
+      "bytes": 292,
+      "sha256": "1743f31365200e79e012b861de7fdcd16494a51a7c92a008d3ccf49022865454"
+    },
+    {
+      "path": "source/megaphone_send_normal.svg",
+      "bytes": 292,
+      "sha256": "83240880ded757277c83b7411a222f71cfab766ca3efb563c413951bba6140dc"
+    },
+    {
+      "path": "source/megaphone_timer_fill.svg",
+      "bytes": 162,
+      "sha256": "2d9ce5797b7dbcc964964a2c5b9a6d1a3b1fb86be5eb442a477677b506942923"
+    },
+    {
+      "path": "source/megaphone_timer_track.svg",
+      "bytes": 162,
+      "sha256": "6a9a2abbb2e4795673482b56b1b4930fa77870683a935d5c31bea594655f72e2"
+    }
+  ]
+}

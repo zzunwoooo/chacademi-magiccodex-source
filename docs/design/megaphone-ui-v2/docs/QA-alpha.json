@@ -1,0 +1,146 @@
+[
+  {
+    "name": "megaphone_input_panel",
+    "size": [
+      1010,
+      210
+    ],
+    "mode": "RGBA",
+    "alpha_min_max": [
+      0,
+      253
+    ],
+    "center_alpha": 171,
+    "semi_transparent_pixels": 211924,
+    "transparent_pixels": 176,
+    "opaque_pixels": 0
+  },
+  {
+    "name": "megaphone_notice_card",
+    "size": [
+      640,
+      110
+    ],
+    "mode": "RGBA",
+    "alpha_min_max": [
+      0,
+      253
+    ],
+    "center_alpha": 171,
+    "semi_transparent_pixels": 70224,
+    "transparent_pixels": 176,
+    "opaque_pixels": 0
+  },
+  {
+    "name": "megaphone_input_field",
+    "size": [
+      786,
+      72
+    ],
+    "mode": "RGBA",
+    "alpha_min_max": [
+      0,
+      197
+    ],
+    "center_alpha": 166,
+    "semi_transparent_pixels": 56484,
+    "transparent_pixels": 108,
+    "opaque_pixels": 0
+  },
+  {
+    "name": "megaphone_send_normal",
+    "size": [
+      144,
+      72
+    ],
+    "mode": "RGBA",
+    "alpha_min_max": [
+      0,
+      241
+    ],
+    "center_alpha": 204,
+    "semi_transparent_pixels": 10268,
+    "transparent_pixels": 100,
+    "opaque_pixels": 0
+  },
+  {
+    "name": "megaphone_send_hover",
+    "size": [
+      144,
+      72
+    ],
+    "mode": "RGBA",
+    "alpha_min_max": [
+      0,
+      243
+    ],
+    "center_alpha": 220,
+    "semi_transparent_pixels": 10268,
+    "transparent_pixels": 100,
+    "opaque_pixels": 0
+  },
+  {
+    "name": "megaphone_close",
+    "size": [
+      24,
+      24
+    ],
+    "mode": "RGBA",
+    "alpha_min_max": [
+      0,
+      255
+    ],
+    "center_alpha": 255,
+    "semi_transparent_pixels": 140,
+    "transparent_pixels": 404,
+    "opaque_pixels": 32
+  },
+  {
+    "name": "megaphone_item_backing",
+    "size": [
+      96,
+      96
+    ],
+    "mode": "RGBA",
+    "alpha_min_max": [
+      0,
+      148
+    ],
+    "center_alpha": 148,
+    "semi_transparent_pixels": 9124,
+    "transparent_pixels": 92,
+    "opaque_pixels": 0
+  },
+  {
+    "name": "megaphone_timer_fill",
+    "size": [
+      592,
+      3
+    ],
+    "mode": "RGBA",
+    "alpha_min_max": [
+      127,
+      245
+    ],
+    "center_alpha": 245,
+    "semi_transparent_pixels": 1776,
+    "transparent_pixels": 0,
+    "opaque_pixels": 0
+  },
+  {
+    "name": "megaphone_timer_track",
+    "size": [
+      592,
+      3
+    ],
+    "mode": "RGBA",
+    "alpha_min_max": [
+      26,
+      51
+    ],
+    "center_alpha": 51,
+    "semi_transparent_pixels": 1776,
+    "transparent_pixels": 0,
+    "opaque_pixels": 0
+  }
+]
