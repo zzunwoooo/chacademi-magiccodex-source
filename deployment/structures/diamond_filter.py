@@ -10,7 +10,7 @@
 
 사용
   python3 diamond_filter.py count  <ZIP|폴더|파일>                 # 파일별 다이아몬드 블록 개수만 출력 (아무것도 쓰지 않음)
-  python3 diamond_filter.py strip  <ZIP|폴더|파일> <출력> [--to minecraft:stone]
+  python3 diamond_filter.py strip  <ZIP|폴더|파일> <출력> [--to minecraft:air]
         ZIP  → 출력 ZIP (구조물만 바뀌고 나머지 파일은 그대로 복사)
         폴더 → 출력 폴더 (같은 상대 경로로)
         파일 → 출력 파일
@@ -296,7 +296,7 @@ def main():
     ap.add_argument('source')
     ap.add_argument('output', nargs='?')
     ap.add_argument('--block', default='minecraft:diamond_block')
-    ap.add_argument('--to', default='minecraft:stone')
+    ap.add_argument('--to', default='minecraft:air')  # 오너 2026-10-26: 비워 둠
     a = ap.parse_args()
     to = a.to if a.mode == 'strip' else None
     if a.mode == 'strip':
