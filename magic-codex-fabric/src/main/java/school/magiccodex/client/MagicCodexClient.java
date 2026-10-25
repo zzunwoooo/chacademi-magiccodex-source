@@ -53,6 +53,7 @@ public final class MagicCodexClient implements ClientModInitializer {
         NpcTalkClient.initialize();PortraitClient.initialize();
         EquipmentClient.initialize();
         ArtifactClient.initialize();
+        SpyglassZoom.initialize();
         AlchemyClient.initialize();
         AlchemyAdminClient.initialize();
         FishingClient.initialize();

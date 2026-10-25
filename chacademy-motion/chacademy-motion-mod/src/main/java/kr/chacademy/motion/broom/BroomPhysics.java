@@ -65,6 +65,12 @@ public final class BroomPhysics {
     public float turnRate;
     /** 이번 틱 균형 감소량 (경고 연출용). */
     public float stress;
+    /**
+     * 아티팩트 보정 (BroomFlight 가 틱마다 넣음, 기본 1 = 영향 없음). 2026-10-26.
+     * accelBonus·speedBonus: 빗자루 끈(이륙 3초)·별의 잔향(내 궤적 따라 날기) 가속 / 최고 속도 배율.
+     * turnStress: 바람개비 장식 — 급선회·시선 홱 돌리기로 깎이는 균형 배율.
+     */
+    public float accelBonus = 1f, speedBonus = 1f, turnStress = 1f;
     private float lastCamYaw = Float.NaN;
     private boolean fellOff;
     private long ridingTicks;
@@ -156,7 +162,7 @@ public final class BroomPhysics {
         flightPitch += clamp(pitchTarget - flightPitch, -maxTurn, maxTurn);
         float pitch = flightPitch;
         double pr = Math.toRadians(pitch);
-        float accel = stats.accel * (boostTicks > 0 ? 1.8f : 1f);
+        float accel = stats.accel * accelBonus * (boostTicks > 0 ? 1.8f : 1f);
 
         // 3) 앞뒤
         boolean vertical = in.jump() != in.shift(); // 스페이스 또는 Shift 하나만: 키가 위아래를 정함
@@ -203,7 +209,7 @@ public final class BroomPhysics {
         else if (in.forward()) vf += -up * 0.03;
 
         // 6) 속도 상한
-        double cap = stats.maxSpeed * (boostTicks > 0 ? BOOST_MULT : 1f);
+        double cap = stats.maxSpeed * speedBonus * (boostTicks > 0 ? BOOST_MULT : 1f);
         vf = Math.max(-0.2, Math.min(cap, vf));
         double h = Math.sqrt(vf * vf + vr * vr);
         if (h > cap * 1.1) {
@@ -230,17 +236,17 @@ public final class BroomPhysics {
         float safe = lerp(30f, 12f, sf);
         if (sf > 0.35f && absDiff > safe) {
             // 빗자루가 못 따라갈 만큼 크게 틀고 있으면 균형이 깎이고, 억지로 꺾느라 속도도 줄어듦
-            stress += Math.min((absDiff - safe) * 0.06f * sf, 2.2f);
+            stress += Math.min((absDiff - safe) * 0.06f * sf, 2.2f) * turnStress;
             double bleed = 1 - Math.min(0.03, absDiff / 180.0 * 0.05);
             vf *= bleed;
         }
         if (!Float.isNaN(lastCamYaw)) {
             // 한 틱에 시선을 홱 돌리는 것(급격한 방향 전환)은 한 번에 크게 깎임
             float flick = Math.abs(wrap(in.camYaw() - lastCamYaw));
-            if (flick > 30 && sf > 0.5f) stress += (flick - 30) * 0.35f * sf;
+            if (flick > 30 && sf > 0.5f) stress += (flick - 30) * 0.35f * sf * turnStress;
         }
         lastCamYaw = in.camYaw();
-        if (boostTicks > 0 && Math.abs(turn) > maxTurn * 0.8f) stress += 0.6f;
+        if (boostTicks > 0 && Math.abs(turn) > maxTurn * 0.8f) stress += 0.6f * turnStress;
 
         applyStress();
 

@@ -76,6 +76,8 @@ public final class BroomService implements Listener, PluginMessageListener {
         int secondTicks;
         /** 큐디치 매달림 중 (늦게 시야에 들어온 사람에게도 매달린 자세를 보여 주려고 기억) */
         boolean hanging;
+        /** 속도 검사 여유 배율 (아티팩트: 폭풍 날개 최고 속도, 빗자루 끈·별의 잔향 가속) */
+        float guardMul = 1f;
 
         Session(UUID id, BroomType type, boolean prevAllowFlight, int limitTicks) {
             this.id = id;
@@ -85,6 +87,14 @@ public final class BroomService implements Listener, PluginMessageListener {
             this.limited = limitTicks > 0;
         }
     }
+
+    /** 아티팩트 빗자루 효과 (BroomCodec.PERK_*). MagicCodexBridge 가 장착이 바뀔 때 알려 준다. 다음 탑승부터 적용. */
+    private final Map<UUID, Integer> perks = new HashMap<>();
+    /** 빗자루 쿠션: 공중에서 빗자루를 떠난 시각 (ms). 이 뒤 10초 안의 첫 낙하 피해를 줄인다. */
+    private final Map<UUID, Long> leftInAir = new HashMap<>();
+    static final long CUSHION_WINDOW_MS = 10_000;
+    static final double CUSHION_MULT = 0.7;
+    static final float STORM_SPEED = 1.15f;
 
     private record PendingCatch(BroomType type, int remaining, boolean prevAllowFlight, long until) {}
 
@@ -162,6 +172,7 @@ public final class BroomService implements Listener, PluginMessageListener {
         messenger.registerOutgoingPluginChannel(plugin, BroomCodec.CHANNEL_STATE);
         messenger.registerOutgoingPluginChannel(plugin, BroomCodec.CHANNEL_LIST);
         messenger.registerOutgoingPluginChannel(plugin, BroomCodec.CHANNEL_FX);
+        messenger.registerOutgoingPluginChannel(plugin, BroomCodec.CHANNEL_PERK);
         messenger.registerIncomingPluginChannel(plugin, BroomCodec.CHANNEL_EVENT, this);
         messenger.registerIncomingPluginChannel(plugin, BroomCodec.CHANNEL_REQUEST, this);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -194,6 +205,25 @@ public final class BroomService implements Listener, PluginMessageListener {
         if (!p.getListeningPluginChannels().contains(BroomCodec.CHANNEL_FX)) return false;
         p.sendPluginMessage(plugin, BroomCodec.CHANNEL_FX, new byte[]{on ? BroomCodec.FX_HANG_MODE_ON : BroomCodec.FX_HANG_MODE_OFF});
         return true;
+    }
+
+    /**
+     * 아티팩트 빗자루 효과 (BroomCodec.PERK_* 비트 묶음). MagicCodexBridge 가 리플렉션으로 부른다.
+     * 속도 수치(폭풍 날개)는 다음 탑승부터, 모드 쪽 효과는 타는 중이면 바로 알려 준다.
+     */
+    public void setPerks(Player p, int mask) {
+        Integer old = mask == 0 ? perks.remove(p.getUniqueId()) : perks.put(p.getUniqueId(), mask);
+        if ((old == null ? 0 : old) != mask && isRiding(p)) sendPerks(p, mask);
+    }
+
+    public int perks(Player p) {
+        return perks.getOrDefault(p.getUniqueId(), 0);
+    }
+
+    private void sendPerks(Player p, int mask) {
+        if (p.getListeningPluginChannels().contains(BroomCodec.CHANNEL_PERK)) {
+            p.sendPluginMessage(plugin, BroomCodec.CHANNEL_PERK, BroomCodec.encodePerks(mask));
+        }
     }
 
     public boolean fx(Player p, byte kind) {
@@ -297,6 +327,9 @@ public final class BroomService implements Listener, PluginMessageListener {
 
     private boolean begin(Player p, BroomType type, int limitTicks, boolean prevAllowFlight) {
         var s = new Session(p.getUniqueId(), type, prevAllowFlight, limitTicks);
+        int mask = perks(p);
+        float speedMul = (mask & BroomCodec.PERK_STORM) != 0 ? STORM_SPEED : 1f;
+        s.guardMul = speedMul * ((mask & (BroomCodec.PERK_CORD | BroomCodec.PERK_STAR_ECHO)) != 0 ? 1.1f : 1f);
         s.last = p.getLocation();
         sessions.put(p.getUniqueId(), s);
         catches.remove(p.getUniqueId());
@@ -304,7 +337,9 @@ public final class BroomService implements Listener, PluginMessageListener {
         // 서버가 이 값을 받아들이려면 allowFlight 가 먼저 켜져 있어야 한다.
         p.setAllowFlight(true);
         p.setFallDistance(0);
-        var ride = new BroomCodec.Ride(type.id(), type.maxSpeed(), type.accel(), type.turn(), type.brake(),
+        leftInAir.remove(p.getUniqueId());
+        sendPerks(p, mask); // ride 보다 먼저 (모드는 효과를 틱마다 읽으므로 순서가 바뀌어도 괜찮음)
+        var ride = new BroomCodec.Ride(type.id(), type.maxSpeed() * speedMul, type.accel(), type.turn(), type.brake(),
                 type.stability(), type.climb(), mastery(p.getUniqueId()), limitTicks, boostCooldown, rollCooldown);
         p.sendPluginMessage(plugin, BroomCodec.CHANNEL_RIDE, BroomCodec.encodeRide(ride));
         broadcast(p, type.id(), BroomCodec.STATE_START, false);
@@ -322,6 +357,7 @@ public final class BroomService implements Listener, PluginMessageListener {
         // 본인 포함 전원에게 "내렸다" 알림 (본인 모드는 이걸 받고 비행을 끝냄)
         broadcast(p, "", reason, true);
         if (!quitting) {
+            if (!p.isOnGround() && !p.isDead() && (perks(p) & BroomCodec.PERK_CUSHION) != 0) leftInAir.put(id, System.currentTimeMillis());
             p.setFlying(false);
             if (p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE) {
                 p.setAllowFlight(s.prevAllowFlight);
@@ -375,7 +411,7 @@ public final class BroomService implements Listener, PluginMessageListener {
             Location now = p.getLocation();
             if (s.last != null && s.last.getWorld() == now.getWorld()) {
                 s.carrier.sample(now.getX() - s.last.getX(), now.getY() - s.last.getY(), now.getZ() - s.last.getZ());
-                double cap = s.type.maxSpeed() * 1.45 + 0.6; // 부스트·급강하·구르기 여유
+                double cap = s.type.maxSpeed() * s.guardMul * 1.45 + 0.6; // 부스트·급강하·구르기 여유
                 if (s.guard.tick(s.last.distance(now), cap)) {
                     plugin.getLogger().warning(p.getName() + " 빗자루 속도 상한 초과로 비행 종료 (" + s.type.id() + ")");
                     stop(s.id, BroomCodec.STATE_NORMAL, false);
@@ -529,6 +565,8 @@ public final class BroomService implements Listener, PluginMessageListener {
         }
         catches.remove(id);
         hangMode.remove(id);
+        perks.remove(id);
+        leftInAir.remove(id);
         lastRoll.remove(id);
         lastRequest.remove(id);
         store.saveIfDirty();
@@ -578,8 +616,16 @@ public final class BroomService implements Listener, PluginMessageListener {
     /** 타고 있는 동안 낙하 피해는 없다 (내리거나 떨어진 뒤의 낙하만 피해). */
     @EventHandler(ignoreCancelled = true)
     public void onFall(EntityDamageEvent e) {
-        if (e.getCause() == EntityDamageEvent.DamageCause.FALL && e.getEntity() instanceof Player p && isRiding(p)) {
-            e.setCancelled(true);
+        if (e.getCause() == EntityDamageEvent.DamageCause.FALL && e.getEntity() instanceof Player p) {
+            if (isRiding(p)) {
+                e.setCancelled(true);
+                return;
+            }
+            // 빗자루 쿠션: 공중에서 빗자루를 떠난 뒤 첫 낙하 피해 -30%
+            Long left = leftInAir.remove(p.getUniqueId());
+            if (left != null && System.currentTimeMillis() - left <= CUSHION_WINDOW_MS && (perks(p) & BroomCodec.PERK_CUSHION) != 0) {
+                e.setDamage(e.getDamage() * CUSHION_MULT);
+            }
         }
     }
 

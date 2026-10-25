@@ -63,6 +63,8 @@ final class ArtifactEffects implements Listener {
     private final MagicHooks hooks = new MagicHooks();
     final ArtifactActions actions;
     final ArtifactLife life;
+    final ArtifactComfort comfort;
+    final ArtifactBroom broom;
 
     /** Time-limited bonus from one source (refreshing the same source replaces it). */
     record Timed(long until, double speed, double haste) {}
@@ -99,9 +101,12 @@ final class ArtifactEffects implements Listener {
         jumpKey = new NamespacedKey(plugin, "artifact_jump"); stepKey = new NamespacedKey(plugin, "artifact_step");
         actions = new ArtifactActions(this);
         life = new ArtifactLife(this);
+        comfort = new ArtifactComfort(this);
+        broom = new ArtifactBroom(this);
         Bukkit.getPluginManager().registerEvents(this, plugin);
         Bukkit.getPluginManager().registerEvents(actions, plugin);
         Bukkit.getPluginManager().registerEvents(life, plugin);
+        Bukkit.getPluginManager().registerEvents(comfort, plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 20, 20);
         Bukkit.getScheduler().runTaskTimer(plugin, this::fastTick, 2, 2);
         Bukkit.getScheduler().runTask(plugin, hooks::connect);
@@ -302,6 +307,7 @@ final class ArtifactEffects implements Listener {
             }
             if (has(p, "love_letter") && social != null) r.lovers = Math.min(20, social.maxedCount(p.getUniqueId()));
             life.second(p, now);
+            broom.second(p, now);
             apply(p);
         }
         orbs.values().removeIf(o -> o.until() < now);
@@ -316,6 +322,7 @@ final class ArtifactEffects implements Listener {
             if (!wearsAny(p)) continue;
             life.fast(p);
             actions.fast(p);
+            comfort.fast(p);
         }
     }
 
@@ -716,7 +723,7 @@ final class ArtifactEffects implements Listener {
         UUID id = e.getPlayer().getUniqueId();
         clear(e.getPlayer());
         worn.remove(id); runs.remove(id);
-        actions.quit(id); life.quit(id);
+        actions.quit(id); life.quit(id); comfort.quit(id); broom.quit(id);
     }
 
     void close() { for (Player p : Bukkit.getOnlinePlayers()) clear(p); }

@@ -193,7 +193,6 @@ artifacts:
     effect: "빗자루로 이륙한 뒤 3초간 가속"
     icon: "magiccodex:textures/artifact/broom_cord.png"
     order: 150
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   squeaky_shoes:
     name: "삑삑이 신발"
     grade: common
@@ -201,7 +200,6 @@ artifacts:
     effect: "걸을 때 발소리가 장난감 삑삑 소리로 바뀜"
     icon: "magiccodex:textures/artifact/squeaky_shoes.png"
     order: 160
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   dancing_ribbon:
     name: "춤추는 리본"
     grade: common
@@ -332,7 +330,6 @@ artifacts:
     effect: "새 마법을 발견할 때마다 경험치 보상"
     icon: "magiccodex:textures/artifact/discovery_journal.png"
     order: 790
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   sand_pouch:
     name: "모래 주머니"
     grade: common
@@ -389,7 +386,6 @@ artifacts:
     effect: "음식 먹는 속도 +20%"
     icon: "magiccodex:textures/artifact/thermos_lunchbox.png"
     order: 870
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   candy_pouch:
     name: "사탕 주머니"
     grade: common
@@ -494,7 +490,6 @@ artifacts:
     effect: "먹는 소리가 귀여운 냠냠 소리로 바뀜"
     icon: "magiccodex:textures/artifact/yum_bib.png"
     order: 1010
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   konpeito_crown:
     name: "별사탕 왕관"
     grade: common
@@ -537,7 +532,6 @@ artifacts:
     effect: "빗자루에서 떨어질 때 받는 피해 -30%"
     icon: "magiccodex:textures/artifact/broom_cushion.png"
     order: 1070
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   pocket_crafting_table:
     name: "주머니 작업대"
     grade: common
@@ -574,7 +568,6 @@ artifacts:
     use: true
     cooldown: 0
     order: 1110
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   party_popper:
     name: "축하 폭죽통"
     grade: common
@@ -857,7 +850,6 @@ artifacts:
     effect: "빗자루로 급하게 방향을 틀어도 떨어질 위험이 줄어듦"
     icon: "magiccodex:textures/artifact/pinwheel_charm.png"
     order: 1320
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   element_ink_bottle:
     name: "원소 잉크병"
     grade: rare
@@ -1146,7 +1138,6 @@ artifacts:
     effect: "빗자루 비행 궤적이 더 오래 남고, 그 궤적을 따라 날면 가속"
     icon: "magiccodex:textures/artifact/star_echo.png"
     order: 630
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   storm_wings:
     name: "폭풍 날개"
     grade: legendary
@@ -1154,7 +1145,6 @@ artifacts:
     effect: "빗자루 최고 속도 +15%, 비행 중 스킬 가속 +20"
     icon: "magiccodex:textures/artifact/storm_wings.png"
     order: 640
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   blacksmith_amulet:
     name: "대장장이의 부적"
     grade: legendary

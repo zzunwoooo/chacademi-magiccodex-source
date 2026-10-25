@@ -169,6 +169,7 @@ public final class ArtifactClient {
                 : !e.usable() ? e.name() + "은(는) 사용하는 아티팩트가 아닙니다."
                 : cooldownLeft(e.id()) > 0 ? e.name() + " 재사용 대기 " + ((cooldownLeft(e.id()) + 999) / 1000) + "초" : null;
         if (local != null) { client.player.sendMessage(Text.literal(local), true); return; }
+        if (e.id().equals(SpyglassZoom.ID)) return; // 접이식 망원경: 누르고 있는 동안 SpyglassZoom 이 직접 확대 (서버에 보내지 않음)
         if (send(ArtifactProtocol.USE, e.id())) awaitingUse = true;
     }
 

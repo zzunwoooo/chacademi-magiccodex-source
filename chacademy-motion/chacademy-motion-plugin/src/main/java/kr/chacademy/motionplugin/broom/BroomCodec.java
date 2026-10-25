@@ -39,6 +39,22 @@ public final class BroomCodec {
     public static final byte FX_HANG_MODE_ON = 3;
     public static final byte FX_HANG_MODE_OFF = 4;
 
+    /**
+     * 서버 → 본인: 빗자루 아티팩트 효과 (2026-10-26). int 4바이트 비트 묶음 PERK_*. 탈 때 ride 패킷 바로 앞에 보낸다.
+     * 이 채널을 모르는 옛 모드에는 보내지 않는다 (서버가 채널 등록 여부를 보고 건너뜀). 모르는 비트는 모드가 무시.
+     */
+    public static final String CHANNEL_PERK = "chacademy:broom_perk";
+    /** 빗자루 끈: 이륙 뒤 3초간 가속 (모드) */
+    public static final int PERK_CORD = 1;
+    /** 빗자루 쿠션: 빗자루에서 떨어진 뒤 낙하 피해 -30% (서버) */
+    public static final int PERK_CUSHION = 1 << 1;
+    /** 바람개비 장식: 급선회로 깎이는 균형 -40% (모드) */
+    public static final int PERK_PINWHEEL = 1 << 2;
+    /** 별의 잔향: 내 궤적 별가루가 오래 남고, 그 궤적을 따라 날면 가속 (모드) */
+    public static final int PERK_STAR_ECHO = 1 << 3;
+    /** 폭풍 날개: 최고 속도 +15% (서버가 ride 수치에 곱해서 보냄) */
+    public static final int PERK_STORM = 1 << 4;
+
     public static final int MAX_ID_BYTES = 64;
     public static final int MAX_TEXT_BYTES = 256;
     public static final int MAX_LIST = 64;
@@ -205,6 +221,17 @@ public final class BroomCodec {
         var e = new Event(buf.get(), buf.getFloat());
         if (!Float.isFinite(e.value())) throw new MalformedException("값이 숫자가 아님");
         return e;
+    }
+
+    public static byte[] encodePerks(int perks) {
+        var out = new ByteArrayOutputStream(4);
+        writeInt(out, perks);
+        return out.toByteArray();
+    }
+
+    public static int decodePerks(byte[] data) throws MalformedException {
+        if (data.length != 4) throw new MalformedException("길이 " + data.length);
+        return ByteBuffer.wrap(data).getInt();
     }
 
     // ---- 기본 형식 ----

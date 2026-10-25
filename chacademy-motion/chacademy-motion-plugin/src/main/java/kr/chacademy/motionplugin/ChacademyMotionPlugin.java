@@ -99,6 +99,14 @@ public final class ChacademyMotionPlugin extends JavaPlugin implements PluginMes
         return brooms != null && brooms.hangMode(player, on);
     }
 
+    /**
+     * 아티팩트 빗자루 효과 (2026-10-26, BroomCodec.PERK_* 비트 묶음: 1 빗자루 끈, 2 빗자루 쿠션, 4 바람개비 장식,
+     * 8 별의 잔향, 16 폭풍 날개). MagicCodexBridge 가 장착이 바뀔 때 리플렉션으로 부른다. 0 = 없음.
+     */
+    public void setBroomPerks(@NotNull Player player, int perks) {
+        if (brooms != null) brooms.setPerks(player, perks);
+    }
+
     public BroomService brooms() {
         return brooms;
     }

@@ -86,6 +86,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     public void revokeTitle(UUID player,String id,java.util.function.Consumer<Boolean> result){if(titles==null)result.accept(false);else titles.grant(player,id,true,result);}
     /** MagicDiscovery가 리플렉션으로 부른다 (서버 스레드): 발견한 마법 → title-awards.yml discovery 칭호. 중복 지급은 칭호 장부가 막는다. */
     public void discoveryTitles(UUID player,java.util.Collection<String> spells){if(titles!=null)titles.discovered(player,spells);}
+    /** MagicDiscovery가 리플렉션으로 부른다 (서버 스레드): 처음 발견한 마법 하나 (다시 습득·접속 시 맞추기는 안 옴) → 아티팩트 반응 일지. */
+    public void discoveryFirst(UUID player,String spell){if(artifactEffects!=null)artifactEffects.comfort.discovered(player,spell);}
     public void registerDialogueAction(String id,java.util.function.BiConsumer<Player,String> action){if(dialogues==null)throw new IllegalStateException("Dialogue not ready");dialogues.register(id,action);}
     public void registerDialogueCondition(String id,java.util.function.BiPredicate<Player,String> condition){if(dialogues==null)throw new IllegalStateException("Dialogue not ready");dialogues.registerCondition(id,condition);}
     boolean dialogueQuestCondition(Player p,String id,String status){return quests!=null&&quests.dialogueCondition(p,id,status);}
