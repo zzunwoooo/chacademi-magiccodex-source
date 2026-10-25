@@ -48,7 +48,7 @@ final class HousingStore {
     private ConnectionHolder db; private DatabaseSettings settings; private boolean maria;
     private HousingNames displayNames;
     private HousingDirectory directory;
-    private String tRoom, tLayout, tLike, tVisit, tBook, tPresence, tOnline, tFriends, tNick, tHouse;
+    private String tRoom, tLayout, tLike, tVisit, tBook, tPresence, tOnline, tFriends, tNick, tHouse, tShowcase;
     private ExpandLedger ledger;
     /** 종료 중(onDisable)에 끝난 작업의 콜백: 메인 스레드로 보낼 수 없으므로 close() 가 작업 스레드를 기다린 뒤 메인 스레드에서 실행한다. */
     private final java.util.concurrent.ConcurrentLinkedQueue<Runnable> late = new java.util.concurrent.ConcurrentLinkedQueue<>();
@@ -77,6 +77,7 @@ final class HousingStore {
             tFriends = settings.table("friends", "friends");
             tNick = settings.table("nicknames", "nicknames");
             tHouse = settings.table("houses", "houses");
+            tShowcase = settings.table("housing_showcase", "housing_showcase");
             ledger = new ExpandLedger(settings.table("housing_expand_tx", "housing_expand_tx"), tRoom);
             String engine = maria ? " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" : "";
             try (var s = db.get().createStatement()) {
@@ -94,6 +95,9 @@ final class HousingStore {
                         + " server VARCHAR(32) NOT NULL, seen BIGINT NOT NULL" + (maria ? ", KEY ix_housing_presence(owner)" : "") + ")" + engine);
                 if (!maria) s.execute("CREATE INDEX IF NOT EXISTS ix_housing_presence ON " + tPresence + "(owner)");
                 s.execute("CREATE TABLE IF NOT EXISTS " + tOnline + "(player CHAR(36) NOT NULL PRIMARY KEY, server VARCHAR(32) NOT NULL, seen BIGINT NOT NULL)" + engine);
+                // #108 (2026-10-26) 특수 가구 전시 값: 주인의 장착 빗자루 id·이름, 장착 아티팩트 id(쉼표). 다른 서버에 있는 주인 방에서도 보이게.
+                s.execute("CREATE TABLE IF NOT EXISTS " + tShowcase + "(owner CHAR(36) NOT NULL PRIMARY KEY, broom VARCHAR(64) NOT NULL, broom_name VARCHAR(64) NOT NULL,"
+                        + " artifacts VARCHAR(600) NOT NULL, updated BIGINT NOT NULL)" + engine);
             }
             ledger.create(db.get(), engine);
             return null;
@@ -605,6 +609,27 @@ final class HousingStore {
             }
         }, done);
     }
+    // ------------------------------------------------------------ #108 특수 가구 전시 값
+    /** 주인의 지금 전시 값을 적는다 (바뀌었을 때만 부름 — Showcases 가 거른다). @return true = 적음, null = DB 오류 */
+    void saveShowcase(UUID owner, String broom, String broomName, String artifacts, Consumer<Boolean> done) {
+        async("전시 값 저장", c -> {
+            try (var s = c.prepareStatement(upsert(tShowcase, "owner", "broom", "broom_name", "artifacts", "updated"))) {
+                s.setString(1, owner.toString()); s.setString(2, clip(broom, 64)); s.setString(3, clip(broomName, 64)); s.setString(4, clip(artifacts, 600));
+                s.setLong(5, System.currentTimeMillis()); s.executeUpdate(); return true;
+            }
+        }, done);
+    }
+    /** 마지막으로 적힌 전시 값 {빗자루 id, 빗자루 이름, 아티팩트 id 쉼표}. 기록이 없으면 빈 값 셋, DB 오류면 null. */
+    void showcase(UUID owner, Consumer<String[]> done) {
+        async("전시 값 읽기", c -> {
+            try (var s = c.prepareStatement("SELECT broom,broom_name,artifacts FROM " + tShowcase + " WHERE owner=?")) {
+                s.setString(1, owner.toString());
+                try (var r = s.executeQuery()) { return r.next() ? new String[]{r.getString(1), r.getString(2), r.getString(3)} : new String[]{"", "", ""}; }
+            }
+        }, done);
+    }
+    private static String clip(String v, int max) { return v == null ? "" : v.length() > max ? v.substring(0, max) : v; }
+
     private RoomRow room(Connection c, UUID owner) throws SQLException {
         try (var s = c.prepareStatement("SELECT * FROM " + tRoom + " WHERE owner=?")) {
             s.setString(1, owner.toString()); try (var r = s.executeQuery()) { return r.next() ? row(r) : null; }

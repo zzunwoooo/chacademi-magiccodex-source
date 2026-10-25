@@ -52,7 +52,16 @@ final class ArtifactCodexScreen extends Screen {
     private String notice = "";
     private final Map<String, List<String>> wraps = new HashMap<>();
 
-    ArtifactCodexScreen(Screen parent) { super(Text.literal("아티팩트 도감")); this.parent = parent; }
+    /** #108 하우징 아티팩트 진열장 구경 모드 (읽기 전용): 방 주인이 장착한 아티팩트만, 장착·해제 버튼 없음. null = 보통 도감. */
+    private final List<String> showcase;
+    private final String showcaseOwner;
+
+    ArtifactCodexScreen(Screen parent) { this(parent, null, null); }
+    /** #108 구경 모드. 디자인 납품 대기 — HousingShowcaseLayout 참고. */
+    ArtifactCodexScreen(Screen parent, String owner, List<String> showcase) {
+        super(Text.literal("아티팩트 도감")); this.parent = parent;
+        this.showcase = showcase == null ? null : List.copyOf(showcase); this.showcaseOwner = owner == null ? "" : owner;
+    }
 
     @Override protected void init() {
         ArtifactClient.query();
@@ -73,6 +82,12 @@ final class ArtifactCodexScreen extends Screen {
         var list = new ArrayList<Item>();
         for (int i = 0; i < catalog.size(); i++) {
             Entry e = catalog.get(i);
+            if (showcase != null) { // 구경 모드: 주인이 장착한 것만, 이름·그림은 보여 줌 (주인이 전시한 것)
+                if (!showcase.contains(e.id()) || tab > 0 && e.grade() != tab - 1) continue;
+                if (!q.isEmpty() && !e.name().toLowerCase(Locale.ROOT).contains(q)) continue;
+                list.add(new Item(i, e, true, true));
+                continue;
+            }
             boolean owned = ArtifactClient.owned(i);
             if (tab > 0 && e.grade() != tab - 1) continue;
             if (ownedOnly && !owned) continue;
@@ -93,6 +108,7 @@ final class ArtifactCodexScreen extends Screen {
 
     private Item selectedItem(List<Item> items) {
         for (Item it : items) if (it.entry().id().equals(selected)) return it;
+        if (showcase != null) return null;
         var catalog = ArtifactClient.catalog();
         for (int i = 0; i < catalog.size(); i++) if (catalog.get(i).id().equals(selected))
             return new Item(i, catalog.get(i), ArtifactClient.owned(i), ArtifactClient.equipped().contains(selected));
@@ -137,7 +153,7 @@ final class ArtifactCodexScreen extends Screen {
     private void header(DrawContext c, double mx, double my) {
         var r = ArtifactCodexLayout.COMPASS;
         UiResources.images().drawTexture(c, COMPASS, r.x(), r.y(), 0, 0, r.w(), r.h(), 166, 168, 166, 168);
-        String title = "아티팩트 도감";
+        String title = showcase == null ? "아티팩트 도감" : String.format(HousingShowcaseLayout.ARTIFACT_VIEW_TITLE, showcaseOwner);
         float size = 44, tw = UiResources.text().width(title, size, TITLE);
         float cx = ArtifactCodexLayout.TITLE_X, cy = ArtifactCodexLayout.TITLE_Y;
         text(c, title, cx, cy, size, 0xFFF2D9A0, TITLE, Align.CENTER);
@@ -181,7 +197,8 @@ final class ArtifactCodexScreen extends Screen {
         }
         // Collection count
         var all = ArtifactClient.catalog().size();
-        text(c, "수집 " + ArtifactClient.ownedCount() + " / " + all, ArtifactCodexLayout.COUNT_RIGHT, ArtifactCodexLayout.ROW1_Y, 23, 0xFFE9E3D4, LABEL, Align.RIGHT);
+        String count = showcase == null ? "수집 " + ArtifactClient.ownedCount() + " / " + all : String.format(HousingShowcaseLayout.ARTIFACT_VIEW_COUNT, showcase.size());
+        text(c, count, ArtifactCodexLayout.COUNT_RIGHT, ArtifactCodexLayout.ROW1_Y, 23, 0xFFE9E3D4, LABEL, Align.RIGHT);
         // Sort dropdown
         var so = ArtifactCodexLayout.SORT;
         box(c, so, 0xCC0B1830, sortOpen || so.contains(mx, my) ? 0xFFB49A66 : 0xFF56657E, 1.5f);
@@ -206,7 +223,7 @@ final class ArtifactCodexScreen extends Screen {
             return;
         }
         if (items.isEmpty()) {
-            text(c, ArtifactClient.catalog().isEmpty() ? "등록된 아티팩트가 없습니다." : "조건에 맞는 아티팩트가 없습니다.", 584, 530, 22, MUTED, LABEL, Align.CENTER);
+            text(c, ArtifactClient.catalog().isEmpty() ? "등록된 아티팩트가 없습니다." : showcase != null && showcase.isEmpty() ? "장착한 아티팩트가 없습니다." : "조건에 맞는 아티팩트가 없습니다.", 584, 530, 22, MUTED, LABEL, Align.CENTER);
             return;
         }
         for (int slot = 0; slot < ArtifactCodexLayout.PAGE_SIZE; slot++) {
@@ -260,6 +277,7 @@ final class ArtifactCodexScreen extends Screen {
         String description = sel.owned() ? e.description() : "아직 발견하지 못한 아티팩트입니다.";
         paragraph(c, description, ArtifactCodexLayout.DESCRIPTION_Y, 22, ArtifactCodexLayout.DESCRIPTION_LINE, ArtifactCodexLayout.DESCRIPTION_LINES, 0xFFE4E9EF, BODY);
         boolean busy = !pending.isEmpty();
+        if (showcase != null) return; // 구경 모드: 장착·해제 없음
         button(c, ArtifactCodexLayout.EQUIP, busy && !sel.equipped() ? "확인 중…" : sel.equipped() ? "장착 중" : "장착", sel.owned() && !sel.equipped() && !busy, mx, my);
         button(c, ArtifactCodexLayout.UNEQUIP, busy && sel.equipped() ? "확인 중…" : "해제", sel.equipped() && !busy, mx, my);
         if (!notice.isBlank()) text(c, fit(notice, 17, LABEL, ArtifactCodexLayout.DETAIL.w() - 40), ArtifactCodexLayout.DETAIL.cx(), ArtifactCodexLayout.NOTICE_Y, 17, 0xFFB4C7D7, LABEL, Align.CENTER);
@@ -494,7 +512,7 @@ final class ArtifactCodexScreen extends Screen {
             }
         }
         Item sel = selectedItem(items);
-        if (sel != null && pending.isEmpty()) {
+        if (sel != null && pending.isEmpty() && showcase == null) {
             if (ArtifactCodexLayout.EQUIP.contains(mx, my) && sel.owned() && !sel.equipped()) request(sel, true);
             else if (ArtifactCodexLayout.UNEQUIP.contains(mx, my) && sel.equipped()) request(sel, false);
         }

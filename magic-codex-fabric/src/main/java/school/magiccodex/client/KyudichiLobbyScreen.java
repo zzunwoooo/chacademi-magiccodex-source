@@ -27,6 +27,9 @@ final class KyudichiLobbyScreen extends KyudichiViewScreen {
     private String notice = ""; private long noticeAt;
 
     KyudichiLobbyScreen(int tab, int mode) { super("결투장"); this.tab = Math.clamp(tab, 0, 3); this.mode = Math.clamp(mode, 0, 1); }
+    /** #108 하우징 큐디치 트로피장: 처음 열 때 이 닉네임의 전적 탭으로 (null = 보통). */
+    private String recordNick;
+    static KyudichiLobbyScreen record(int mode, String nick) { var s = new KyudichiLobbyScreen(LobbyView.RECORD, mode); s.recordNick = nick == null ? "" : nick; return s; }
 
     void show(int t, int m) { tab = Math.clamp(t, 0, 3); mode = Math.clamp(m, 0, 1); menuFor = -1; focus = 0; request(); }
 
@@ -39,6 +42,7 @@ final class KyudichiLobbyScreen extends KyudichiViewScreen {
         super.init();
         if (rankSearch == null) { rankSearch = new TextFieldWidget(textRenderer, 0, 0, 200, 20, Text.literal("닉네임")); rankSearch.setMaxLength(16); }
         if (recordSearch == null) { recordSearch = new TextFieldWidget(textRenderer, 0, 0, 200, 20, Text.literal("닉네임")); recordSearch.setMaxLength(16); }
+        if (recordNick != null) { String nick = recordNick; recordNick = null; openRecord(nick); lobbyRefreshAt = Util.getMeasuringTimeMs() + 5000; return; }
         request();
     }
 

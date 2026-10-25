@@ -310,11 +310,16 @@ public final class HousingScreen extends SocialScreen {
             hits.add(new Drawn(i,p,d,hull));
         }
         drawn=hits;
+        showcases(c,room,hits);
         // 마우스 아래 가구
         hoverItem=-1;int hit=0;
         if(live&&held==null)for(int k=hits.size()-1;k>=0;k--)if(HousingIso.inside(hits.get(k).hull(),mx,my)){hoverItem=hits.get(k).index();break;}
         if(hoverItem>=0){
-            for(var d:hits)if(d.index()==hoverItem){outline(c,d.hull(),editing()?0xFFFFF0C8:0xCCFFFFFF);label(c,d);}
+            for(var d:hits)if(d.index()==hoverItem){
+                outline(c,d.hull(),editing()?0xFFFFF0C8:0xCCFFFFFF);
+                c.getMatrices().push();c.getMatrices().translate(0,0,300); // 빗자루 모델(z 200) 위로
+                try{label(c,d);}finally{c.getMatrices().pop();}
+            }
             hit=500;
         }
         // 들고 있는 가구 미리보기
@@ -408,7 +413,7 @@ public final class HousingScreen extends SocialScreen {
     }
     private void label(DrawContext c,Drawn d){
         float top=Float.MAX_VALUE,cx=0;for(var p:d.hull()){top=Math.min(top,p[1]);cx+=p[0];}cx/=d.hull().length;
-        String name=d.def().name()+(!editing()&&functional(d.def().id())?" · 클릭해서 보기":"");float w=type.width(name,16,BODY)+30;
+        String name=d.def().name()+labelSuffix(d.def().id());float w=type.width(name,16,BODY)+30;
         nine(images,c,TOOLTIP,cx-w/2,top-40,w,32,8,0xF0FFFFFF);
         type.draw(c,name,cx,top-24,16,TEXT,BODY,true);
     }
@@ -848,32 +853,122 @@ public final class HousingScreen extends SocialScreen {
         post.focus(false);
         search.focus(false);
         if(inRoom(mx,my)){
-            if(edit&&held!=null){place();return true;}
-            if(edit&&hoverItem>=0){pickUp(hoverItem);return true;}
+            if(edit&&held!=null){
+                // #108: 내 방 꾸미기 중에는 특수 가구를 두 번 눌러 연다 (첫 번은 평소처럼 집힘 → 제자리로 되돌리고 연다)
+                if(held.origin()!=null&&functional(held.def().id())&&Util.getMeasuringTimeMs()-pickedAt<DOUBLE_CLICK_MS){String id=held.def().id();cancelHeld();useFurniture(room,id);return true;}
+                place();return true;
+            }
+            if(edit&&hoverItem>=0){pickUp(hoverItem);pickedAt=Util.getMeasuringTimeMs();return true;}
             if(!edit&&held==null&&hoverItem>=0&&openFunctional(room,hoverItem))return true;
             panning=true;lastX=mx;lastY=my;return true;
         }
         return true;
     }
     /**
-     * #108 (2026-10-25): 구경 중 기능성 가구 클릭 → 이미 있는 화면으로 연결. 새 화면은 만들지 않는다 (레퍼런스 필요).
-     * house_scoreboard = 기숙사 점수 창(SchoolScreen, 전체 공개 정보), profile_frame = 방 주인의 내 정보(/스탯창 — 주인이 같은 서버에 접속 중일 때만 서버가 열어 줌).
-     * 빗자루 거치대·아티팩트 진열장·큐디치 트로피장은 남에게 보여 줄 서버 경로·화면이 없어 아직 연결하지 않음.
+     * #108 특수 가구 (오너 승인 2026-10-26). 새 화면은 만들지 않고 기존 창·카드를 그대로 연다 (빗자루·아티팩트·트로피·수조 구경 화면은 GPT 디자인 납품 대기,
+     * {@link HousingShowcaseLayout}). 구경 중엔 한 번 클릭, 내 방 꾸미기 중엔 두 번 클릭.
+     * <ul>
+     *   <li>모두: 빗자루 거치대(걸린 빗자루 이름) · 아티팩트 진열장(장착 아티팩트 읽기 전용 도감) · 큐디치 트로피장(결투장 전적) · 기숙사 점수판(기숙사 점수 창)
+     *       · 내 정보 액자(주인 정보창 — 남이면 /스탯창, 주인이 같은 서버에 접속 중일 때만 서버가 열어 줌)</li>
+     *   <li>주인만: 연금 작업대(/연금술) · 거울 옷장(칭호 창) · 펫 쿠션(펫 창) · 미끼 상자(받기 기능 없음 → "준비 중")</li>
+     * </ul>
      */
-    private static boolean functional(String id){return id.equals("house_scoreboard")||id.equals("profile_frame");}
+    private static final Set<String> SHARED=Set.of("house_scoreboard","profile_frame","broom_rack","artifact_cabinet","trophy_case"),
+            OWNER_ONLY=Set.of("alchemy_bench","mirror_wardrobe","pet_cushion","bait_box_common","bait_box_rare","bait_box_unique");
+    private static final long DOUBLE_CLICK_MS=350;
+    private long pickedAt;
+    private static boolean functional(String id){return SHARED.contains(id)||OWNER_ONLY.contains(id);}
+    private boolean mine(){var r=room();return r!=null&&r.owner().id().equals(self());}
+    /** 가구 이름표 뒤 문구. */
+    private String labelSuffix(String id){
+        if(!functional(id))return "";
+        var r=room();if(r==null)return "";
+        UUID owner=r.owner().id();boolean mine=mine();
+        String extra=switch(id){
+            case "broom_rack"->{String b=HousingShowcase.broom(owner,mine);yield b.isEmpty()?" · 걸린 빗자루 없음":" · "+HousingShowcase.broomName(owner,mine,b);}
+            case "artifact_cabinet"->" · 장착 "+HousingShowcase.artifacts(owner,mine).size()+"개";
+            case "trophy_case"->{int t=HousingShowcase.tier(owner);yield t>=0?" · "+HousingShowcaseLayout.TIER_NAMES[t]:HousingShowcase.noRecord(owner)?" · 전적 없음":"";}
+            default->"";
+        };
+        if(editing())return extra+" · 두 번 눌러 열기";
+        if(OWNER_ONLY.contains(id)&&!mine)return extra;
+        return extra+" · 클릭해서 보기";
+    }
     private boolean openFunctional(Room room,int index){
         var list=layout().placements();if(index<0||index>=list.size())return false;
         String id=list.get(index).id();if(!functional(id))return false;
+        useFurniture(room,id);return true;
+    }
+    private void useFurniture(Room room,String id){
+        UUID owner=room.owner().id();boolean mine=owner.equals(self());String ownerName=room.owner().name();
+        if(OWNER_ONLY.contains(id)&&!mine){say("주인만 쓸 수 있어요.",false);sound(.9f,.15f);return;}
+        // 다른 창으로 넘어가면 이 창이 닫히므로, 저장 안 한 배치가 있으면 먼저 저장하게 한다 (빗자루·미끼 알림과 진열장 구경은 방으로 돌아오므로 괜찮음)
+        boolean staysHere=id.equals("broom_rack")||id.equals("artifact_cabinet")||id.startsWith("bait_box_");
+        if(!staysHere&&editing()&&anyDirty()){say("저장하지 않은 레이아웃이 있어요. 먼저 저장해 주세요.",false);sound(.9f,.15f);return;}
         sound(1.13f,.2f);
-        if(id.equals("house_scoreboard")){
-            if(!SchoolClient.supported()){say("기숙사 점수판을 열 수 없어요. 서버 연결을 확인해 주세요.",false);return true;}
-            SchoolClient.open();return true;
+        var h=client.getNetworkHandler();
+        switch(id){
+            case "house_scoreboard"->{
+                if(!SchoolClient.supported()){say("기숙사 점수판을 열 수 없어요. 서버 연결을 확인해 주세요.",false);return;}
+                SchoolClient.open();
+            }
+            case "profile_frame"->{
+                if(mine){MagicCodexClient.dismiss();client.setScreen(new StatsScreen());return;}
+                if(h==null){say("서버에 연결되어 있지 않아요.",false);return;}
+                h.sendChatCommand("스탯창 "+owner); // 주인이 접속 중이 아니면 서버가 안내 문구를 보낸다 (창은 그대로)
+            }
+            case "broom_rack"->{ // 교체 지점 1 (빗자루 거치대 상세 카드, 디자인 납품 대기): 지금은 방 알림으로 이름만
+                String b=HousingShowcase.broom(owner,mine);
+                say(b.isEmpty()?(mine?"장착한 빗자루가 없어요.":ownerName+"님은 빗자루를 걸어 두지 않았어요."):(mine?"내":ownerName+"님의")+" 빗자루 · "+HousingShowcase.broomName(owner,mine,b),true);
+            }
+            case "artifact_cabinet"->{ // 교체 지점 2 (아티팩트 진열장 구경 창): 지금은 아티팩트 도감 구경 모드(읽기 전용), 닫으면 방으로 돌아옴
+                var screen=new ArtifactCodexScreen(this,mine?"내":ownerName,HousingShowcase.artifacts(owner,mine));
+                HousingClient.suspend(this,screen);client.setScreen(screen);
+            }
+            case "trophy_case"->{ // 교체 지점 3 (트로피장 전적 카드): 지금은 결투장 로비 전적 탭 (주인 닉네임으로 검색)
+                MagicCodexClient.dismiss();client.setScreen(KyudichiLobbyScreen.record(school.magiccodex.protocol.KyudichiQueueProtocol.MODE_KYUDICHI,mine?"":ownerName));
+            }
+            case "alchemy_bench"->{if(h==null){say("서버에 연결되어 있지 않아요.",false);return;}h.sendChatCommand("연금술");}
+            case "mirror_wardrobe"->TitleClient.open();
+            case "pet_cushion"->PetClient.open();
+            default->say("미끼 상자는 준비 중이에요.",true); // bait_box_*: 미끼 생성·받기 수치 미정 (오너 결정 대기)
         }
-        UUID owner=room.owner().id();
-        if(owner.equals(self())){MagicCodexClient.dismiss();client.setScreen(new StatsScreen());return true;}
-        var h=client.getNetworkHandler();if(h==null){say("서버에 연결되어 있지 않아요.",false);return true;}
-        h.sendChatCommand("스탯창 "+owner); // 주인이 접속 중이 아니면 서버가 안내 문구를 보낸다 (창은 그대로)
-        return true;
+    }
+
+    /** #108 가구 위 전시: 빗자루 거치대 = 걸린 빗자루 모델, 아티팩트 진열장 = 장착 아티팩트 아이콘, 트로피장 = 큐디치 티어 아이콘. 그리기만 (요청은 주인당 한 번). */
+    private void showcases(DrawContext c,Room room,List<Drawn> hits){
+        UUID owner=room.owner().id();boolean mine=mine();
+        for(var d:hits){
+            String id=d.def().id();
+            if(!id.equals("broom_rack")&&!id.equals("artifact_cabinet")&&!id.equals("trophy_case"))continue;
+            float x0=Float.MAX_VALUE,x1=-Float.MAX_VALUE,y0=Float.MAX_VALUE,y1=-Float.MAX_VALUE;
+            for(var p:d.hull()){x0=Math.min(x0,p[0]);x1=Math.max(x1,p[0]);y0=Math.min(y0,p[1]);y1=Math.max(y1,p[1]);}
+            float cx=(x0+x1)/2,h=y1-y0,tile=iso.tile;
+            switch(id){
+                case "broom_rack"->{
+                    String b=HousingShowcase.broom(owner,mine);
+                    if(b.isEmpty()||popup!=Popup.NONE)continue; // 모델은 z 200 에 그려져 창 위로 올라오므로 팝업 중엔 숨김
+                    BroomUiLink.render(c,b,cx+tile*HousingShowcaseLayout.BROOM_X,y0+h*HousingShowcaseLayout.BROOM_Y,tile*HousingShowcaseLayout.BROOM_LENGTH,
+                            HousingShowcaseLayout.BROOM_YAW,HousingShowcaseLayout.BROOM_PITCH,HousingShowcaseLayout.BROOM_SPIN);
+                }
+                case "artifact_cabinet"->{
+                    var list=HousingShowcase.artifacts(owner,mine);
+                    int per=HousingShowcaseLayout.ARTIFACT_PER_ROW,max=Math.min(list.size(),per*HousingShowcaseLayout.ARTIFACT_ROWS);
+                    int size=Math.max(4,Math.round(tile*HousingShowcaseLayout.ARTIFACT_SIZE));float step=tile*HousingShowcaseLayout.ARTIFACT_STEP;
+                    for(int i=0;i<max;i++){
+                        var e=HousingShowcase.entry(list.get(i));if(e==null||e.icon().isBlank())continue;
+                        int row=i/per,inRow=Math.min(per,max-row*per),col=i%per;
+                        float ix=cx+(col-(inRow-1)/2f)*step,iy=y0+h*HousingShowcaseLayout.ARTIFACT_Y+row*tile*HousingShowcaseLayout.ARTIFACT_ROW_STEP;
+                        images.drawCentered(c,e.icon(),ix,iy,size,0xFFFFFFFF);
+                    }
+                }
+                default->{ // trophy_case
+                    HousingShowcase.askTier(owner,room.owner().name(),mine);
+                    int t=HousingShowcase.tier(owner);if(t<0)continue;
+                    images.drawCentered(c,HousingShowcaseLayout.tierTexture(t),cx,y0+h*HousingShowcaseLayout.TIER_Y,Math.max(4,Math.round(tile*HousingShowcaseLayout.TIER_SIZE)),0xFFFFFFFF);
+                }
+            }
+        }
     }
     private Entry entry(int index){var b=HousingClient.guestbook();return b==null||index<0||index>=b.entries().size()?null:b.entries().get(index);}
     private void popupClick(Room room,double mx,double my){
@@ -1046,5 +1141,6 @@ public final class HousingScreen extends SocialScreen {
         if(editing()&&anyDirty()&&popup!=Popup.CONFIRM_CLOSE){popup=Popup.CONFIRM_CLOSE;return;}
         sound(.95f,.18f);super.close();
     }
-    @Override public void removed(){HousingClient.closed();super.removed();}
+    /** 구경 화면(아티팩트 진열장)으로 잠깐 넘어갈 때는 방을 닫지 않는다 (HousingClient.suspend). */
+    @Override public void removed(){if(!HousingClient.suspended(this))HousingClient.closed();super.removed();}
 }

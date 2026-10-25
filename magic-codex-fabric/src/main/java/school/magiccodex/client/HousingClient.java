@@ -5,11 +5,13 @@ import com.mojang.authlib.properties.Property;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Supplier;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.client.util.SkinTextures;
 import net.minecraft.network.RegistryByteBuf;
@@ -54,8 +56,22 @@ public final class HousingClient {
             catch(IllegalArgumentException ignored){/* 잘못된 패킷은 통째로 버린다. */}
         });
         ClientPlayConnectionEvents.DISCONNECT.register((handler,client)->client.execute(HousingClient::reset));
+        ClientTickEvents.END_CLIENT_TICK.register(HousingClient::tick);
     }
-    private static void reset(){defs=Map.of();ordered=List.of();room=null;viewers=null;guestbook=null;friends=null;skins.clear();}
+    private static void reset(){defs=Map.of();ordered=List.of();room=null;viewers=null;guestbook=null;friends=null;skins.clear();suspended=null;child=null;HousingShowcase.reset();}
+
+    // ---- #108 구경 화면을 방 위에 잠깐 (아티팩트 진열장 → 도감 구경 모드): 그 창을 닫으면 방으로 돌아온다, 그동안 방 세션은 유지
+    private static HousingScreen suspended;
+    private static Screen child;
+    static void suspend(HousingScreen room,Screen over){suspended=room;child=over;}
+    static boolean suspended(HousingScreen room){return suspended==room;}
+    /** 방으로 돌아왔으면 풀고, 다른 창으로 가 버렸으면 그때 방을 닫은 것으로 처리 (구경 중 명단에서 빠지게). 참조 비교 두 번뿐. */
+    private static void tick(MinecraftClient c){
+        if(suspended==null)return;
+        var now=c.currentScreen;
+        if(now==suspended){suspended=null;child=null;}
+        else if(now!=child){suspended=null;child=null;closed();}
+    }
 
     static Def def(String id){return defs.get(id);}
     static List<Def> catalog(){return ordered;}
@@ -75,7 +91,7 @@ public final class HousingClient {
             }
             case RoomMessage rm->{
                 var previous=room;room=rm.room();
-                if(previous==null||!previous.owner().id().equals(room.owner().id())){viewers=null;guestbook=null;}
+                if(previous==null||!previous.owner().id().equals(room.owner().id())){viewers=null;guestbook=null;HousingShowcase.reset();}
                 if(c.currentScreen instanceof HousingScreen screen)screen.roomChanged(previous,room);
                 else if(room.open()&&(c.currentScreen==null||c.currentScreen instanceof ChatScreen||c.currentScreen instanceof HudCursorScreen)){
                     MagicCodexClient.dismiss();c.setScreen(new HousingScreen());
@@ -85,6 +101,7 @@ public final class HousingClient {
                 }
             }
             case Viewers v->viewers=v;
+            case Showcase s->{if(room!=null&&room.owner().id().equals(s.owner()))HousingShowcase.accept(s);}
             case Guestbook g->{guestbook=g;if(c.currentScreen instanceof HousingScreen screen)screen.guestbookChanged();}
             case FriendList f->{friends=f.friends();if(c.currentScreen instanceof HousingScreen screen)screen.friendsChanged();}
             case Result r->{
@@ -101,7 +118,7 @@ public final class HousingClient {
         ClientPlayNetworking.send(new Payload(HousingProtocol.encode(r)));return true;
     }
     /** 창을 닫을 때: 지금 방 정보는 지운다 (다음에 열 때 서버가 다시 보낸다). */
-    static void closed(){HousingSearchClient.invalidate();send(new Close());room=null;viewers=null;guestbook=null;friends=null;}
+    static void closed(){HousingSearchClient.invalidate();send(new Close());room=null;viewers=null;guestbook=null;friends=null;HousingShowcase.reset();}
 
     /** 얼굴 텍스처 (파티 창과 같은 방식: 같은 서버면 탭 목록 스킨, 아니면 스킨 해시로 내려받기, 없으면 기본 스킨). */
     static Identifier face(Person p){

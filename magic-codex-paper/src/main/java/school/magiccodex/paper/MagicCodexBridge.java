@@ -70,6 +70,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     /** 정보창(StatsBridge)이 장신구·아티팩트를 읽는다. 없으면 null. */
     EquipmentBridge equipmentBridge(){return equipment;}
     ArtifactBridge artifactBridge(){return artifacts;}
+    /** #108 하우징 아티팩트 진열장 (ChacaHousing 이 리플렉션으로 부름): 장착 중이고 아직 가진 아티팩트 id. 메인 스레드. */
+    public java.util.List<String> equippedArtifactIds(org.bukkit.entity.Player p){return artifacts==null||p==null?java.util.List.of():artifacts.equipped(p);}
     private TemperatureBridge temperature;
     private PetBridge pets;
     private TamingBridge taming;
