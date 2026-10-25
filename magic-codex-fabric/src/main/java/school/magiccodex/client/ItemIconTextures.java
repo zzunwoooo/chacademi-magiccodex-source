@@ -84,30 +84,47 @@ public final class ItemIconTextures {
     }
 
     /** Vanilla glint over a 16x16 square in the given matrix (used by ExactItemIcons). */
-    static void glint(DrawContext ctx, org.joml.Matrix4f matrix) { drawGlint(ctx, matrix); }
+    static void glint(DrawContext ctx, org.joml.Matrix4f matrix) { drawGlint(ctx, matrix, 0, 0, 16, 16); }
 
-    /** Called from the DrawContext mixin. @return true when the vanilla item draw must be skipped. */
-    public static boolean draw(DrawContext ctx, ItemStack stack, int x, int y) {
+    /**
+     * GUI replacement after ItemModelManager.update: use the sprite vanilla actually selected,
+     * including range_dispatch/custom_model_data. Draw into the caller's current framebuffer;
+     * 16 is a coordinate extent, never an intermediate texture resolution. The projection and
+     * matrix retain the caller's GUI scale, drag depth and model GUI display transform.
+     */
+    public static boolean drawResolved(DrawContext ctx, ItemStack stack, int x, int y, int z,
+                                       net.minecraft.client.render.item.ItemRenderState state) {
         if (stack.isEmpty()) return false;
-        Identifier model = stack.get(DataComponentTypes.ITEM_MODEL);
-        if (model == null) return false;
-        var known = ICONS.get(model);
-        if (known == null) { request(model); return false; }
+        var model = ((HiResItemState) state).magiccodex$singleFlatModel();
+        Identifier key = flatSpriteKey(model);
+        if (key == null) return false;
+        var known = ICONS.get(key);
+        if (known == null) { request(key); return false; }
         if (known.isEmpty()) return false;
         var t = known.get();
+        float fw = fitW(t), fh = fitH(t);
+        float x0 = (1 - fw) / 2, x1 = x0 + fw, y0 = (1 - fh) / 2, y1 = y0 + fh;
+        ctx.draw();
         var m = ctx.getMatrices();
         m.push();
         try {
-            m.translate(x, y, 150);
-            // Fit non-square art inside the 16x16 slot square instead of stretching it.
-            float fw = fitW(t), fh = fitH(t);
-            m.translate((1 - fw) * 8, (1 - fh) * 8, 0);
-            m.scale(fw, fh, 1);
-            ctx.drawTexture(id -> t.layer(), t.id(), 0, 0, 0, 0, 16, 16, t.width(), t.height(), t.width(), t.height(), 0xFFFFFFFF);
-            ctx.draw(); // vanilla flushes each GUI item too; keeps painter's order with later slot overlays
-            if (stack.hasGlint()) drawGlint(ctx, m.peek().getPositionMatrix());
+            // Same transform/depth sequence as DrawContext.drawItem in Minecraft 1.21.4.
+            m.translate(x + 8, y + 8, 150 + (state.hasDepth() ? z : 0));
+            m.scale(16, -16, 16);
+            state.getTransformation().apply(false, m);
+            m.translate(-0.5f, -0.5f, -0.5f);
+            var matrix = m.peek().getPositionMatrix();
+            ctx.draw(provider -> {
+                var v = provider.getBuffer(t.layer());
+                v.vertex(matrix, x0, y0, 0.5f).texture(0, 1).color(0xFFFFFFFF);
+                v.vertex(matrix, x1, y0, 0.5f).texture(1, 1).color(0xFFFFFFFF);
+                v.vertex(matrix, x1, y1, 0.5f).texture(1, 0).color(0xFFFFFFFF);
+                v.vertex(matrix, x0, y1, 0.5f).texture(0, 0).color(0xFFFFFFFF);
+            });
+            ctx.draw();
+            if (stack.hasGlint()) drawGlint(ctx, matrix, x0, y0, x1, y1);
         } finally { m.pop(); }
-        announce(model);
+        announce(key);
         return true;
     }
     private static void announce(Identifier key) {
@@ -121,16 +138,19 @@ public final class ItemIconTextures {
 
     /**
      * Called from the ItemModelManager mixin after vanilla filled an ItemRenderState.
-     * 1) items/&lt;id&gt;.json path (same rules as the GUI path; GUI itself is drawn by ItemIconMixin).
+     * 1) items/&lt;id&gt;.json path for non-GUI item rendering.
      * 2) Otherwise the model vanilla actually resolved: one layer, flat item/generated-like quads,
      *    one texture larger than 32px. This also catches range_dispatch / custom_model_data
-     *    definitions (ItemsAdder) that the JSON path cannot follow, in every mode including GUI.
+     *    definitions (ItemsAdder) that the JSON path cannot follow. GUI uses drawResolved instead.
      * @return icon key to draw as a smooth flat card, or null to keep vanilla.
      */
     public static Identifier stateKey(ItemStack stack, net.minecraft.item.ModelTransformationMode mode,
                                       net.minecraft.client.render.model.BakedModel resolved) {
         if (stack == null || stack.isEmpty() || stack.hasGlint()) return null;
+        // GUI is owned exclusively by DrawContext's resolved-model hook. Never route it
+        // through the entity/world shader (including during asynchronous icon loading).
         boolean gui = mode == net.minecraft.item.ModelTransformationMode.GUI;
+        if (gui) return null;
         Identifier model = stack.get(DataComponentTypes.ITEM_MODEL);
         if (model != null && !gui) {
             var known = ICONS.get(model);
@@ -248,15 +268,15 @@ public final class ItemIconTextures {
      * where its texels are visible (item_icon.fsh discards clear texels), and the vanilla glint layer
      * tests depth EQUAL, so the shimmer follows the icon's own silhouette like on a vanilla item.
      */
-    private static void drawGlint(DrawContext ctx, org.joml.Matrix4f matrix) {
+    private static void drawGlint(DrawContext ctx, org.joml.Matrix4f matrix, float x0, float y0, float x1, float y1) {
         if (glintFailed) return;
         try {
             ctx.draw(provider -> {
                 var v = provider.getBuffer(RenderLayer.getGlint());
-                v.vertex(matrix, 0, 0, 0).texture(0, 0);
-                v.vertex(matrix, 0, 16, 0).texture(0, GLINT_UV);
-                v.vertex(matrix, 16, 16, 0).texture(GLINT_UV, GLINT_UV);
-                v.vertex(matrix, 16, 0, 0).texture(GLINT_UV, 0);
+                v.vertex(matrix, x0, y0, 0.5f).texture(0, GLINT_UV);
+                v.vertex(matrix, x1, y0, 0.5f).texture(GLINT_UV, GLINT_UV);
+                v.vertex(matrix, x1, y1, 0.5f).texture(GLINT_UV, 0);
+                v.vertex(matrix, x0, y1, 0.5f).texture(0, 0);
             });
             ctx.draw();
         } catch (RuntimeException error) {
