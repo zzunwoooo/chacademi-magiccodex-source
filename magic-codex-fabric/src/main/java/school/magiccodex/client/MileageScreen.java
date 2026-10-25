@@ -267,6 +267,7 @@ public final class MileageScreen extends SocialScreen {
         }
         public void text(String s, float x, float cy, float size, int color, MileageView.Face f, boolean centered) { type.draw(c, s, x, cy, size, color, face(f), centered); }
         public float width(String s, float size, MileageView.Face f) { return type.width(s, size, face(f)); }
+        public float[] ink(String s, float size, MileageView.Face f) { return type.ink(s, size, face(f)); }
         public void gradient(float x, float y, float w, float h, int left, int right) { HudMesh.quad(c, x, y, w, h, left, right); }
         public void line(float ax, float ay, float bx, float by, float t, int color) { HudMesh.line(c, ax, ay, bx, by, t, color); }
         public void polygon(float[] p, int color) {

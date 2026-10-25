@@ -160,8 +160,8 @@ public final class FriendRequestToast {
             NotificationSkin.background(images,ctx,0,0,P_W,P_H,white);
             NotificationSkin.seat(images,ctx,57,P_H/2,70,white);
             var skin=PartyUiClient.face(party);
-            ctx.drawTexture(net.minecraft.client.render.RenderLayer::getGuiTextured,skin,35,P_H/2-22,8,8,44,44,8,8,64,64);
-            ctx.drawTexture(net.minecraft.client.render.RenderLayer::getGuiTextured,skin,35,P_H/2-22,40,8,44,44,8,8,64,64);
+            ctx.drawTexture(net.minecraft.client.render.RenderLayer::getGuiTextured,skin,35,Math.round(P_H/2-22),8,8,44,44,8,8,64,64);
+            ctx.drawTexture(net.minecraft.client.render.RenderLayer::getGuiTextured,skin,35,Math.round(P_H/2-22),40,8,44,44,8,8,64,64);
             text.draw(ctx,"파티 초대",116,46,22,color(alpha,0xFF,NotificationSkin.TITLE),BOLD,false);
             if(PARTY.size()>0)text.draw(ctx,"+"+PARTY.size(),116+text.width("파티 초대",22,BOLD)+10,46,16,color(alpha,0xFF,NotificationSkin.GOLD),BODY,false);
             if(!cursor){String hint=UiKeys.cursorHint()+" 클릭";text.draw(ctx,hint,P_CLOSE_X-22-text.width(hint,14,BODY),P_CLOSE_Y,14,color(alpha,0xFF,NotificationSkin.MUTED),BODY,false);}
