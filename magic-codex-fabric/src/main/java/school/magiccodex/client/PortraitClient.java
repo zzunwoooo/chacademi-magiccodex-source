@@ -24,7 +24,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import school.magiccodex.portrait.PortraitProtocol;
 
-/** Own portrait only. Disk IO, hashing, PNG decode and premultiplication run on IO;
+/** Own portrait (상대 일러스트는 {@link OtherPortraits}, 같은 채널). Disk IO, hashing, PNG decode and premultiplication run on IO;
  * texture upload/destruction and all Minecraft state run on the client thread. */
 public final class PortraitClient {
     private interface Bytes { byte[] bytes(); }
@@ -61,6 +61,9 @@ public final class PortraitClient {
     private static ByteArrayOutputStream incoming;
     private PortraitClient(){}
     static boolean ready(){return ready&&confirmed&&texture!=null;}
+    /** 일러스트 서버와 HELLO 를 마쳤는지 (상대 일러스트 요청 가능). */
+    static boolean serverReady(){return ready;}
+    static boolean sendPacket(PortraitProtocol.Packet p){return send(p);}
     static boolean loading(){return loading;}
     static String status(){return loading?"일러스트를 불러오는 중…":!helloSent?"일러스트 서버에 연결되지 않았습니다.":message;}
     static String displayName(){var c=MinecraftClient.getInstance();return NicknameClient.display(c.player==null?"나":c.player.getName().getString());}
@@ -71,7 +74,7 @@ public final class PortraitClient {
     static boolean drawFace(DrawContext c,float cx,float cy,float radius){if(!ready())return false;texture.drawFace(c,cx,cy,radius);return true;}
     static void drawTurn(DrawContext c){if(texture!=null)texture.drawTurn(c);}
     private static void reset(){
-        LOAD.next();IO.getQueue().clear();helloSent=ready=confirmed=loading=helloRetried=false;loadingSince=0;dropIncoming();
+        OtherPortraits.reset();LOAD.next();IO.getQueue().clear();helloSent=ready=confirmed=loading=helloRetried=false;loadingSince=0;dropIncoming();
         if(texture!=null){texture.close();texture=null;}textureSha="";message="아직 저장된 일러스트가 없습니다.";
     }
     private static void dropIncoming(){incomingSha=null;incoming=null;incomingTotal=incomingChunks=incomingNext=0;}
@@ -106,6 +109,7 @@ public final class PortraitClient {
             case PortraitProtocol.S_HELLO_ACK->ready=p.number()==PortraitProtocol.VERSION;
             case PortraitProtocol.S_META->{if(ready)meta(client,p);}
             case PortraitProtocol.S_CHUNK->{if(ready)chunk(client,p);}
+            case PortraitProtocol.S_OTHER_META,PortraitProtocol.S_OTHER_CHUNK,PortraitProtocol.S_OTHER_BUSY->{if(ready)OtherPortraits.receive(p);}
             case PortraitProtocol.S_PROMPT_OPEN->{
                 if(!ready||!PortraitProtocol.validToken(p.text())||client.player==null)return;
                 String hint=p.extra().length()>200?p.extra().substring(0,200):p.extra();

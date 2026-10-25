@@ -43,6 +43,8 @@ final class EquipmentBridge implements PluginMessageListener,Listener,AutoClosea
         Bukkit.getScheduler().runTaskTimer(plugin,()->{long now=System.currentTimeMillis();sessions.values().removeIf(s->s.until<now);limits.values().removeIf(t->t<now);},200,200);
     }
     Double power(UUID id,Double base){double extra=totals.getOrDefault(id,new double[5])[0];if(base!=null)return base+extra;if(extra==0)return null;return extra;}
+    /** 정보창(StatsBridge): 장신구 칸 i (0 아티팩트 · 1 반지 · 2 귀걸이 · 3 목걸이). 비어 있으면 null. */
+    ItemStack accessoryItem(Player p,int i){return accessory(p,i);}
     private ItemStack accessory(Player p,int i){byte[] b=p.getPersistentDataContainer().get(slots[i],PersistentDataType.BYTE_ARRAY);if(b==null)return null;return ItemStack.deserializeBytes(b);}
     private void accessory(Player p,int i,ItemStack item){if(empty(item))p.getPersistentDataContainer().remove(slots[i]);else p.getPersistentDataContainer().set(slots[i],PersistentDataType.BYTE_ARRAY,item.serializeAsBytes());}
     private static boolean empty(ItemStack i){return i==null||i.getType().isAir()||i.getAmount()<=0;}

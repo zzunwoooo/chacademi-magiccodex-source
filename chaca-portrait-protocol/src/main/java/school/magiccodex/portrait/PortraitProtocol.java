@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
  * 플레이어 일러스트 패킷 계약 (ChacaPortrait 서버 플러그인 ↔ MagicCodex Fabric UI).
  * 서버는 본인 일러스트 PNG를 조각(CHUNK)으로 보내고, 클라이언트는 SHA-256을 확인한 뒤 디스크에 캐시한다.
  * 다시 그리기 아이템(ItemsAdder item:reroll)을 쓰면 서버가 PROMPT_OPEN을 보내고 클라이언트가 입력창을 연다.
+ * 상대 정보창은 C_OTHER 로 다른 사람의 일러스트를 요청하고 S_OTHER_META/S_OTHER_CHUNK 로 받는다 (대상 UUID 로 구분, 2026-10-26).
  *
  * <p>이 소스는 magic-codex-fabric 과 chaca-portrait-paper 에만 포함된다.
  */
@@ -36,6 +37,11 @@ public final class PortraitProtocol {
     public static final int C_HELLO = 0;
     /** text = 다시 그리기 토큰, extra = 추가 요청 문장, flag = 진행(true) / 취소(false). */
     public static final int C_PROMPT = 1;
+    /**
+     * 상대 일러스트 요청 (정보창 v4, 2026-10-26): text = 대상 UUID, extra = 클라이언트가 가진 그 사람 그림 SHA-256 (없으면 "").
+     * 같으면 서버는 '그대로'만 알린다. 옛 서버는 모르는 op 라 무시한다 (클라이언트는 시간이 지나면 3D 스킨으로 둔다).
+     */
+    public static final int C_OTHER = 2;
 
     // 서버 → 클라이언트
     /** number = 서버 프로토콜 버전. */
@@ -50,6 +56,15 @@ public final class PortraitProtocol {
     public static final int S_STATUS = 4;
     /** text = 토큰. 입력 시간이 지나 서버가 입력창을 닫음. */
     public static final int S_PROMPT_CLOSE = 5;
+    /**
+     * 상대 일러스트 머리: text = 대상 UUID, extra = SHA-256 ("" = 그림 없음), number = 전체 바이트 (0 = 보낼 조각 없음),
+     * flag = '그대로' (클라이언트가 보낸 SHA 와 같아 다시 보내지 않음). 원본 PNG 를 줄이지 않고 그대로 보낸다.
+     */
+    public static final int S_OTHER_META = 6;
+    /** 상대 일러스트 조각: text = 대상 UUID, extra = SHA-256, number = 조각 번호, data = 바이트. */
+    public static final int S_OTHER_CHUNK = 7;
+    /** 서버가 지금 다른 그림을 보내느라 바쁨: text = 대상 UUID. 클라이언트는 잠시 뒤 다시 요청한다. */
+    public static final int S_OTHER_BUSY = 8;
 
     private static final String SHA_RE = "[a-f0-9]{64}";
     private static final String TOKEN_RE = "[a-f0-9]{32}";
@@ -76,6 +91,14 @@ public final class PortraitProtocol {
 
     public static boolean validToken(String s) {
         return s != null && s.matches(TOKEN_RE);
+    }
+
+    /** 상대 일러스트 요청·응답의 대상 UUID (소문자 36자 표준 형식만). null = 형식이 틀림. */
+    public static java.util.UUID uuid(String s) {
+        if (s == null || !s.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")) {
+            return null;
+        }
+        return java.util.UUID.fromString(s);
     }
 
     /** 추가 요청 문장 검사: 100 코드포인트·UTF-8 400바이트 이하, 제어문자·§ 금지. 빈 문장은 허용(기본 그림). */

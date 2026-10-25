@@ -65,8 +65,8 @@ final class StatsVisualCheck {
                 return;
             }
             if(c.player==null||c.world==null||c.getServer()==null)return;
-            if(phase[0]==7)pointAt(c,StatsLayout.FRIEND);
-            if(phase[0]==8)pointAt(c,StatsLayout.POPULARITY);
+            if(phase[0]==7)pointAt(c,StatsLayout.BOTTOM_BUTTONS[1]);
+            if(phase[0]==8)pointAt(c,StatsLayout.POPULARITY_BUTTONS[0]);
             if(phase[0]==1){
                 if(c.currentScreen!=null)return;
                 c.getServer().execute(()->{
@@ -114,23 +114,23 @@ final class StatsVisualCheck {
                 }else if(phase[0]==5){
                     screenshot(c,"04-class1-gui4");
                     var l=StatsLayout.fit(c.currentScreen.width,c.currentScreen.height);
-                    check(!c.currentScreen.mouseClicked(l.x()+215*l.scale(),l.y()+707*l.scale(),1),"Right click triggered social action");
-                    check(c.currentScreen.mouseClicked(l.x()+215*l.scale(),l.y()+707*l.scale(),0),"Friend target missed");
+                    check(!c.currentScreen.mouseClicked(l.x()+StatsLayout.BOTTOM_BUTTONS[1].centerX()*l.scale(),l.y()+StatsLayout.BOTTOM_BUTTONS[1].centerY()*l.scale(),1),"Right click triggered social action");
+                    check(c.currentScreen.mouseClicked(l.x()+StatsLayout.BOTTOM_BUTTONS[1].centerX()*l.scale(),l.y()+StatsLayout.BOTTOM_BUTTONS[1].centerY()*l.scale(),0),"Friend target missed");
                     check(c.currentScreen instanceof StatsScreen,"Placeholder closed stats");phase[0]=7;
                 }else if(phase[0]==7){
                     screenshot(c,"05-friend-notice");
                     var l=StatsLayout.fit(c.currentScreen.width,c.currentScreen.height);
                     var calls=new java.util.ArrayList<StatsSocialActions.Action>();
                     StatsSocialActions.connect((action,target)->{check(target.equals(c.player.getUuid()),"Wrong target UUID");calls.add(action);return "테스트 연결 확인";});
-                    check(c.currentScreen.mouseClicked(l.x()+538*l.scale(),l.y()+707*l.scale(),0),"Popularity target missed");
-                    check(calls.equals(java.util.List.of(StatsSocialActions.Action.POPULARITY)),"Wrong action");
-                    c.currentScreen.mouseClicked(l.x()+538*l.scale(),l.y()+707*l.scale(),0);
-                    check(calls.size()==1,"Rapid duplicate click sent");StatsSocialActions.reset();
+                    check(c.currentScreen.mouseClicked(l.x()+StatsLayout.POPULARITY_BUTTONS[0].centerX()*l.scale(),l.y()+StatsLayout.POPULARITY_BUTTONS[0].centerY()*l.scale(),0),"Popularity target missed");
+                    check(calls.isEmpty(),"Own popularity button must stay disabled");
+                    c.currentScreen.mouseClicked(l.x()+StatsLayout.POPULARITY_BUTTONS[0].centerX()*l.scale(),l.y()+StatsLayout.POPULARITY_BUTTONS[0].centerY()*l.scale(),0);
+                    check(calls.isEmpty(),"Disabled button sent an action");StatsSocialActions.reset();
                     check(StatsClient.values().popularity()==null,"UI fabricated popularity");phase[0]=8;
                 }else if(phase[0]==8){
                     screenshot(c,"06-popularity-hover");
                     var l=StatsLayout.fit(c.currentScreen.width,c.currentScreen.height);
-                    c.currentScreen.mouseClicked(l.x()+1329*l.scale(),l.y()+111*l.scale(),0);
+                    c.currentScreen.mouseClicked(l.x()+StatsLayout.CLOSE.centerX()*l.scale(),l.y()+StatsLayout.CLOSE.centerY()*l.scale(),0);
                     check(c.currentScreen==null,"Scaled close target failed");phase[0]=6;
                 }else if(phase[0]==6){
                     check(CodexCatalog.permissions().active()==null,"Permission lease not closed");
@@ -147,15 +147,15 @@ final class StatsVisualCheck {
                     check(ManaClient.current()==23&&ManaClient.maximum()==180,"Remote mana overwrote local HUD");
                     check(CodexCatalog.permissions().active()==null,"Remote view subscribed viewer permissions");
                     screenshot(c,"07-remote-profile");var l=StatsLayout.fit(screen.width,screen.height);
-                    screen.mouseClicked(l.x()+215*l.scale(),l.y()+707*l.scale(),0);phase[0]=11;
+                    screen.mouseClicked(l.x()+StatsLayout.BOTTOM_BUTTONS[1].centerX()*l.scale(),l.y()+StatsLayout.BOTTOM_BUTTONS[1].centerY()*l.scale(),0);phase[0]=11;
                 }else if(phase[0]==11){
                     check(java.util.Collections.frequency(remoteRequests,StatsProtocol.FRIEND)==1,"Friend request missing or duplicated");
                     screenshot(c,"08-remote-friend-response");
                     c.options.getGuiScale().setValue(3);c.onResolutionChanged();
                     var l=StatsLayout.fit(c.currentScreen.width,c.currentScreen.height);
-                    c.currentScreen.mouseClicked(l.x()+538*l.scale(),l.y()+707*l.scale(),0);phase[0]=12;
+                    c.currentScreen.mouseClicked(l.x()+StatsLayout.POPULARITY_BUTTONS[0].centerX()*l.scale(),l.y()+StatsLayout.POPULARITY_BUTTONS[0].centerY()*l.scale(),0);phase[0]=12;
                 }else if(phase[0]==12){
-                    check(remoteRequests.contains(StatsProtocol.POPULARITY),"Popularity request missing");
+                    check(!remoteRequests.contains(StatsProtocol.POPULARITY),"v2 server: popularity buttons must stay disabled");
                     check(!remoteRequests.contains(StatsProtocol.CLOSE),"Resize closed remote session");
                     check(remoteRequests.contains(StatsProtocol.REFRESH),"Open remote screen did not refresh");
                     // A stale old session must never replace a current profile.
@@ -166,8 +166,8 @@ final class StatsVisualCheck {
                     remoteReply(c,StatsProtocol.GONE,73,REMOTE,null);phase[0]=14;
                 }else if(phase[0]==14){
                     var l=StatsLayout.fit(c.currentScreen.width,c.currentScreen.height);
-                    c.currentScreen.mouseClicked(l.x()+538*l.scale(),l.y()+707*l.scale(),0);
-                    check(java.util.Collections.frequency(remoteRequests,StatsProtocol.POPULARITY)==1,"Offline target received action");
+                    c.currentScreen.mouseClicked(l.x()+StatsLayout.POPULARITY_BUTTONS[0].centerX()*l.scale(),l.y()+StatsLayout.POPULARITY_BUTTONS[0].centerY()*l.scale(),0);
+                    check(java.util.Collections.frequency(remoteRequests,StatsProtocol.POPULARITY)==0,"Offline target received action");
                     screenshot(c,"09-remote-offline");c.currentScreen.close();phase[0]=15;
                 }else if(phase[0]==15){
                     check(remoteRequests.contains(StatsProtocol.CLOSE),"Remote subscription not closed");
@@ -204,7 +204,7 @@ final class StatsVisualCheck {
         c.getServer().execute(()->ServerPlayNetworking.send(c.getServer().getPlayerManager().getPlayer(c.player.getUuid()),new DiscoveryClient.Notification(bytes)));
     }
     private static void key(MinecraftClient c,int action){c.keyboard.onKey(c.getWindow().getHandle(),GLFW.GLFW_KEY_P,0,action,0);}
-    private static void pointAt(MinecraftClient c,CodexHitboxes.Rect r){
+    private static void pointAt(MinecraftClient c,StatsLayout.Box r){
         if(!(c.currentScreen instanceof StatsScreen))return;
         var l=StatsLayout.fit(c.currentScreen.width,c.currentScreen.height);
         try{
