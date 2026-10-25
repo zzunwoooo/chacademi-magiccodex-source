@@ -34,11 +34,14 @@ summon:
     amount: {common: 1, rare: 1, unique: 1, legendary: 1}
     mail-title: "아티팩트 조각"
     mail-body: "이미 가진 아티팩트가 나와 조각으로 바꿔 드렸습니다."
-  pity:                          # 천장 (#98): count번째 뽑기까지 grade 이상이 한 번도 안 나오면 그 뽑기는 grade 이상 확정.
-                                 # grade 이상이 나오면(천장이든 운이든) 카운터는 0부터. 카운터는 학교·야생·아레나 공유 DB.
-                                 # ※ 자리표시 값 — 기준 등급·횟수는 오너 결정 필요. count: 0 이면 천장 끔.
-    grade: unique
-    count: 50
+  # 천장(pity)은 폐기 (2026-10-26 오너 결정 #98). 중복 조각은 상점 "아티팩트 교환소"(shops/artifact_exchange.yml)에서
+  # 아래 등급 확정 뽑기권으로 바꾼다.
+  tickets:                       # 등급 확정 뽑기권: 우클릭하면 소환 창이 열리고 그 등급으로 1회 뽑기 (중복이면 위 조각, 열쇠 뽑기와 같음)
+                                 # 등급 키: common/rare/unique/legendary. 줄을 빼면 그 등급 확정권 없음. 그림은 ItemsAdder 쪽에서.
+    rare:      {item: "item:artifact_ticket_rare",      name: "고급 확정 뽑기권"}
+    unique:    {item: "item:artifact_ticket_unique",    name: "유일 확정 뽑기권"}
+    legendary: {item: "item:artifact_ticket_legendary", name: "전설 확정 뽑기권"}
+
 
 # 항목 형식
 #   아이디(영문 소문자·숫자·_):

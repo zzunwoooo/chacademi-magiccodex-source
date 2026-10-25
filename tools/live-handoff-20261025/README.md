@@ -84,3 +84,11 @@ their pinned SHA fails. Restore a separately retained original baseline into an 
 input directory. The driver input-gate smoke used unchanged raw build files, not a claim
 of full final release reproduction; fullOfflineRebuildPerformed is explicitly false.
 Output under any network/launcher path component is rejected, as is outputName traversal.
+
+## 2026-10-26 note: artifact pity removed (owner decision #98)
+
+The pity system was removed from source. FinalArtifactPityHookCheck.java, the ArtifactOwnershipStore /
+ArtifactOwnershipService cases of OpeningSpecial.java and helper-source opening$pity are 옛 확인용, 무시 (historical
+2026-10-25 evidence only; tools/opening-final-20261025 uses its own OpeningSpecial without pity hooks). Do not apply
+them to new builds: take the Artifact* classes whole from the new raw build. Leftover codex_artifact_pity tables may
+be dropped. See docs/handoff/CLAUDE_OPENING_FINAL_PATCHES_20261026.md section 21.

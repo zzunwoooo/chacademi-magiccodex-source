@@ -65,6 +65,7 @@ public final class ShopScreen extends SocialScreen {
             var stack = decode(p.preview());
             map.put(p.id(), stack);
             text.put(p.id(), describe(stack));
+            if (p.exchange()) map.put("cost:" + p.id(), decode(p.costPreview()));   // 교환 상품: 가격 자리에 그릴 비용 아이템
         }
         icons = Map.copyOf(map);
         lore = Map.copyOf(text);
@@ -76,12 +77,12 @@ public final class ShopScreen extends SocialScreen {
      * Captured at request time so it still fires when the shop was closed before the reply arrived.
      */
     private Runnable receipt(Product p, boolean sell, int count, String sum) {
-        String item = name(p), price = ShopView.money(sum) + " G";
+        String item = name(p), price = p.exchange() && !sell ? costName(p) + " ×" + ShopView.money(sum) : ShopView.money(sum) + " G";
         ItemStack icon = icons.getOrDefault(p.id(), ItemStack.EMPTY).copy();
         String id = "shop:" + UUID.randomUUID();
         return sell
                 ? () -> SharedNotifications.item(id, item + " ×" + count + " 판매 완료", price + " 획득 · 보유 골드에 더해졌습니다.", icon)
-                : () -> SharedNotifications.item(id, item + " ×" + count + " 구매 완료", "우편함으로 보냈습니다 · " + price + " 사용", icon);
+                : () -> SharedNotifications.item(id, item + " ×" + count + (p.exchange() ? " 교환 완료" : " 구매 완료"), "우편함으로 보냈습니다 · " + price + " 사용", icon);
     }
     void tradeSucceeded() {
         notice = "";   // the success card replaces the in-shop "완료" toast; failures still use the toast
@@ -114,6 +115,13 @@ public final class ShopScreen extends SocialScreen {
     private String name(Product p) {
         var stack = icons.getOrDefault(p.id(), ItemStack.EMPTY);
         return stack.isEmpty() ? p.name() : ItemTooltipRenderer.localName(stack, stack.getName()).getString();
+    }
+    /** 교환 상품의 비용 아이템 이름 (견본이 있으면 그 아이템 이름, 없으면 서버가 보낸 이름). 보통 상품은 "". */
+    private String costName(Product p) {
+        if (!p.exchange()) return "";
+        var stack = icons.getOrDefault("cost:" + p.id(), ItemStack.EMPTY);
+        String n = stack.isEmpty() ? p.costName() : ItemTooltipRenderer.localName(stack, stack.getName()).getString();
+        return n.isBlank() ? "교환 아이템" : n;
     }
 
     // ---- filter / selection ----------------------------------------------------------------------------------
@@ -185,6 +193,7 @@ public final class ShopScreen extends SocialScreen {
         var icon = icons.getOrDefault(p.id(), ItemStack.EMPTY);
         int max = Math.min(576, (icon.isEmpty() ? 64 : icon.getMaxCount()) * 9);
         if (sell) return Math.min(max, p.owned());
+        if (p.exchange()) return Math.min(max, p.costHeld() / p.costCount());   // 교환: 가진 비용 아이템으로 살 수 있는 만큼
         try {
             var price = new BigDecimal(p.buy());
             if (price.signum() == 0) return max;
@@ -237,7 +246,8 @@ public final class ShopScreen extends SocialScreen {
         var rows = new ArrayList<ShopView.Row>(products.size());
         for (var p : products)
             rows.add(new ShopView.Row(p.id(), name(p), lore.getOrDefault(p.id(), List.of()), p.buy(), p.sell(), p.owned(),
-                    possible(p, false) > 0, possible(p, true) > 0, null));
+                    possible(p, false) > 0, possible(p, true) > 0, null, costName(p)));
+
         var all = data == null ? List.<Product>of() : data.products();
         boolean[] tabs = {!all.isEmpty(), all.stream().anyMatch(p -> !p.buy().isEmpty()), all.stream().anyMatch(p -> !p.sell().isEmpty())};
         tabs[tab.ordinal()] = true;

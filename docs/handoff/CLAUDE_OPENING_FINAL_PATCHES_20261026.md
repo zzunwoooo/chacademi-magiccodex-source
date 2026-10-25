@@ -281,7 +281,7 @@ python3 tools/operating_overlay.py regenerate && python3 tools/operating_overlay
 | 퀘스트 | 의뢰 수락(게시판·대화·호감도 퀘스트), 완료·보상(돈·아이템·명령·기숙사 점수) | QuestBridge |
 | 스토리 | 스토리 단계 완료(단계 → 다음) | ChacademyStory QuestEngine.advance (ChacaLink.audit) |
 | 호감도 | 선물(아이템·증감·결과 점수), AI 대화 보상, 퀘스트·기타 출처 증가, 관리자 설정/추가/빼기·하트 단계 | NpcSocialService add·chatReward·commitGift·adminChange·adminHeart |
-| 아티팩트 | 뽑기 결과(등급·새것/중복 조각·천장 발동·천장 카운터) | ArtifactBridge |
+| 아티팩트 | 뽑기 결과(등급·새것/중복 조각·재료 = 열쇠 또는 확정권, 천장은 #98 로 폐기 §21) | ArtifactBridge |
 | 펫 | 교화 성공(몹·펫·확률·위치), 관리자 펫 주기·회수 | TamingBridge, PetBridge |
 | 강화 / 감정 | 장비 강화 성공·실패(전 능력치·상승·스타캐치·비용), 코어 감정(노드 수·파괴·비용) | EnhancementBridge, AppraisalBridge |
 | 연금술 | 제작(레시피·결과·경험치·레시피 발견) — **레시피에 등급이 없어 전부** 남김 (자주 하지 않는 행동) | AlchemyBridge |
@@ -488,3 +488,64 @@ Essentials 비슷한 한글 명령. 새 파일 `ConvenienceCommands.java`(등록
 3. 제작창(우상단 아래 버튼)을 연 채 가만히 있기 → F3 프레임 그래프에 0.5초 주기 튀는 막대 없음. 나무를 넣으면 판자 카드가 바로 "제작 가능"으로 바뀜, 빼면 바로 돌아감. 새 레시피 해금 시 목록 갱신.
 4. 확장권으로 2쪽 연 뒤 E → 쪽 표시 "1 / 3", 화살표로 넘기기·되돌리기 정상, 복제 없음(기존 쪽 넘김 확인 절차 그대로).
 5. 서버 이동(학교↔야생) 후 E → 쪽 표시·잠금이 새 서버 상태로 바로 맞음.
+## 25. 아티팩트 천장 폐기 · 상점 교환 · 등급 확정 뽑기권 (2026-10-26, 메모 #98)
+
+오너 결정: **기존 천장(pity) 폐기.** 중복 아티팩트 → 아티팩트 조각(`item:artifact_shard`) 우편 지급은 그대로(`summon.duplicate.amount` 1). 조각은 상점 **"아티팩트 교환소"** 에서 **등급 확정 뽑기권**과 바꾼다.
+
+**천장 걷어낸 것**
+- `ArtifactBridge`: `summon.pity` 읽기, 미리 굴린 대체 결과, 소환 창 안내문 "유일 이상 확정까지 N회", `/컨텐츠관리 아티팩트 목록` 의 "천장:" 줄, `/유저관리 <닉> 아티팩트 보기` 의 "천장:" 줄, 감사 로그 "천장발동·천장카운터" 칸 없앰. 프로토콜은 그대로 (안내문 칸에 천장 문구만 안 붙음).
+- `ArtifactOwnershipStore`: `Choice.pity`·`Pity` 레코드·`codex_artifact_pity` 만들기/읽기/쓰기·`Poll.pity` 없앰. `ArtifactOwnershipService`: `pityCount`·`ensurePityTable` 없앰. `ArtifactPurchaseJournal`: `pityGrade/pityCount` 안 씀. **배포 전 남은 옛 영수증**(`artifact-purchase-receipts/*.properties`, "/대체결과" 붙은 것)도 읽힌다 — 대체 결과는 버리고 원래 굴린 결과로 처리.
+- `artifacts.yml` (소스 + `deployment/operating-config`): `pity:` 블록 → `tickets:` 블록. overlay `regenerate`·`check` "차이 없음".
+- `ArtifactPityTest` 삭제.
+- **DB**: `codex_artifact_pity` 는 더 만들지 않는다. **운영 DB 에 남은 `codex_artifact_pity` 표는 지워도 됨** (`DROP TABLE codex_artifact_pity;`, 코드가 안 읽음 — 안 지워도 무해).
+- `tools/live-handoff-20261025/bounded-packaging` 의 천장 관련(`FinalArtifactPityHookCheck.java`, `OpeningSpecial.java` 의 `ArtifactOwnershipStore`·`ArtifactOwnershipService` 케이스, `helper-source/…/ArtifactOwnershipStore.java` 의 `opening$pity`) = **옛 확인용, 무시.** 2026-10-25 배포 패키징용이고, 오픈 최종(`tools/opening-final-20261025`)은 자체 `OpeningSpecial` 을 쓰며 천장 훅이 없음. README 에도 적어 둠. → 이번 합성 때 **`ArtifactBridge`·`ArtifactOwnershipStore`·`ArtifactOwnershipService`·`ArtifactPurchaseJournal` 은 새 빌드 클래스를 통째로** 쓴다 (운영 jar 의 천장 메서드를 살리지 말 것. 남기면 없는 표를 읽음).
+
+**상점 교환 (돈 대신 아이템을 내고 사기)** — 중단됐던 `dd3a2d76` 을 다시 적용하고 완성
+- 저장: `shop_products.cost_item`·`cost_count`, `shop_orders.cost` 열 (추가 전용 ALTER, 서버가 시작할 때 자동). 교환 상품은 판매 막힘.
+- 거래 (`ShopBridge`): `prepared` → 비용 아이템 회수 + 영수증 PDC `shop_sale_<id>` 같은 틱 기록·`saveData` → 플레이어 파일에 저장된 것 확인 → `paid` → 우편 지급(출처 키 `shop:<id>` 멱등) → `done` → 영수증 지움. 판매와 같은 방식이라 **경제(Vault) 없어도 동작**. 서버가 시작할 때 `prepared` 교환은 자동 실패 처리하지 **않음**(비용 회수 뒤일 수 있음) — 유저가 그 서버에 접속하거나 상점을 열 때 영수증 유무로 판정(있으면 이어서 우편, 없으면 실패). `paid` 는 구매처럼 자동 재발송.
+- 비용 아이템 판정: ItemsAdder 키(`namespace:id`)면 ItemsAdder 아이템만, `minecraft:id` 면 메타 없는 바닐라만 센다. ItemsAdder 가 꺼져 있으면 ItemsAdder 비용 교환은 거절(아무것도 안 뺌).
+- 관리자 처리 `/상점관리 거래처리 <번호> 완료|환불|취소`: 교환은 완료 = 상품 우편, 환불 = 비용 아이템 우편 반환(`shop-refund:<id>` 멱등), 취소 = 보상 없이 닫기. `/유저관리 <닉> 거래기록` 에 "교환 · 비용 item:artifact_shard ×N".
+- 명령: **`/상점관리 교환 <상점> <상품> <아이템키> <개수|없음>`** (없음 = 해제, 원래 구매가·판매가로). `/상점관리 목록 <상점>` 에 "교환 item:… ×N". 관리 창(`/상점관리 편집`)은 **안내 줄로만 보임**(교환 칸 없음, 편집해도 교환 값은 안 바뀜).
+- 가져오기 파일: `교환: "item:artifact_shard 10"` 칸, 아이템 칸에 ItemsAdder 키 허용. 번들 `shops/artifact_exchange.yml` (상점 `artifact_exchange` "아티팩트 교환소", 분류 "확정 뽑기권").
+- 프로토콜: 상점 **응답만** 머리 `SHP3`→`SHP4` (상품마다 비용 이름·개수·보유 수·견본). 요청은 SHP3 그대로, 새 클라는 SHP3 응답도 읽음. **옛 클라는 새 서버의 상점 응답을 못 읽음 → 서버·클라 같이 배포.** 교환 상품은 `buy` = 1개당 비용 개수, `sell` = "".
+- 클라 (`ShopScreen`·`ShopView`): 가격 자리(카드·아래 구매 칸·합계)에 "아티팩트 조각 ×10", 동전 자리에 비용 아이템 아이콘. 살 수 있는 수량 = 가진 조각 ÷ 개수. 완료 알림 "… 교환 완료 · 아티팩트 조각 ×N 사용". 새 장식 없음.
+- 테스트: `ShopExchangeTest` (새, 순수 로직). 빌드 때 실행.
+
+**등급 확정 뽑기권**
+- `artifacts.yml summon.tickets` (등급 키 common/rare/unique/legendary, 줄을 빼면 그 확정권 없음, 키가 열쇠·조각·서로 같으면 새로고침 실패):
+  `rare: {item: "item:artifact_ticket_rare", name: "고급 확정 뽑기권"}` · `unique: … _unique` · `legendary: … _legendary`
+- **사용 흐름**: 확정권을 들고 우클릭 → (모드·DB 준비·그 등급 아티팩트 있음 확인, 안 되면 알림만 · 확정권 안 줄어듦) → 열쇠 뽑기와 같은 영수증 흐름으로 확정권 1장 차감·그 등급 아티팩트 1개 균등 추첨 → 소환 창(`ArtifactSummonScreen`)이 열리고 결과가 오면 **같은 연출**(유물함 5개 고르기 → 열기 → 카드). 중복이면 조각 우편(열쇠와 같음). 결과 카드 아래 "고급 확정 뽑기권 사용 · 고급 확정". 창의 "다시 소환" 은 열쇠로 뽑음. 클라 변경 없음.
+- `/컨텐츠관리 아티팩트 목록` 에 "확정권:" 줄. 감사 로그 "재료" 칸에 확정권 키.
+- **교환소 기본 가격 (자리표시, 오너 결정 필요): 고급 10 · 유일 30 · 전설 80 조각.**
+
+**ItemsAdder 정의 예시** (서버 `plugins/ItemsAdder/contents/<폴더>/configs/artifact_tickets.yml`, namespace 는 기존 `item:random_artifact` 와 같은 `item`. 그림은 오너가 따로 — 텍스처 `textures/item/artifact_ticket_*.png`)
+```yaml
+info:
+  namespace: item
+items:
+  artifact_ticket_rare:
+    display_name: "고급 확정 뽑기권"
+    lore: ["우클릭: 고급 아티팩트 1회 뽑기", "이미 가진 아티팩트면 조각으로"]
+    resource: {material: PAPER, generate: true, textures: [item/artifact_ticket_rare.png]}
+  artifact_ticket_unique:
+    display_name: "유일 확정 뽑기권"
+    lore: ["우클릭: 유일 아티팩트 1회 뽑기", "이미 가진 아티팩트면 조각으로"]
+    resource: {material: PAPER, generate: true, textures: [item/artifact_ticket_unique.png]}
+  artifact_ticket_legendary:
+    display_name: "전설 확정 뽑기권"
+    lore: ["우클릭: 전설 아티팩트 1회 뽑기", "이미 가진 아티팩트면 조각으로"]
+    resource: {material: PAPER, generate: true, textures: [item/artifact_ticket_legendary.png]}
+```
+(`item:artifact_shard` 도 ItemsAdder 에 있어야 함 — 기존.) 정의 뒤 `/iazip` → 리소스팩 다시 배포.
+
+**바꾼 파일**: paper `ArtifactBridge`·`ArtifactOwnershipStore`·`ArtifactOwnershipService`·`ArtifactPurchaseJournal`·`ShopBridge`·`ShopStore`·`ShopImportFile`·`ShopAdminBridge`·`ShopExchange`(새), `resources/artifacts.yml`·`resources/shops/artifact_exchange.yml`(새), 테스트 `ArtifactPityTest`(삭제)·`ShopExchangeTest`(새); protocol `ShopProtocol`; fabric `ShopScreen`·`ShopView`; `deployment/operating-config/MagicCodexBridge/artifacts.yml`(+manifest); `tools/live-handoff-20261025/README.md`(무시 표기).
+
+**같이 배포할 것**: MagicCodexBridge jar → 학교·야생·아레나 전부 + **MagicCodex 클라 모드 (상점 프로토콜 SHP4, 같이)**. 서버 `plugins/MagicCodexBridge/artifacts.yml` 은 jar 가 안 덮으므로 operating-config 것으로 교체(또는 `pity:` 블록 지우고 `tickets:` 추가) 뒤 `/서버관리 새로고침 아티팩트`. ItemsAdder 확정권 3종 정의 + 리소스팩. DB 는 자동(ALTER 3열), `codex_artifact_pity` 는 지워도 됨.
+
+**게임 확인 방법**
+1. 학교에서 `/상점관리 가져오기 artifact_exchange` → "아티팩트 교환소(artifact_exchange) 상점을 만들고 상품 3개 추가". `/상점관리 열기 artifact_exchange` → 카드 가격이 "아티팩트 조각 ×10/×30/×80" + 조각 아이콘, 판매 탭 없음.
+2. 조각 9개만 들고 고급 확정권 → 구매 버튼 꺼짐(가능 수량 0). 조각 25개 → 수량 최대 2, 2개 교환 → 조각 20개 줄고 우편에 고급 확정권 2장, 알림 "교환 완료 · 아티팩트 조각 ×20 사용". Vault 꺼진 서버에서도 됨.
+3. 교환 도중 서버를 죽였다 켜기(어려우면 생략): 다시 접속하면 "이전에 교환한 상품을 우편으로 보냈어요" 또는 조각 그대로.
+4. 우편에서 확정권을 받아 들고 우클릭 → 소환 창이 열리고 유물함 고르기 → 고급 아티팩트 카드, 확정권 1장 줄어듦. 이미 가진 것이면 조각 우편. 전설 확정권도 같은 방법(전설 아티팩트가 켜져 있어야 함).
+5. 소환 창 안내문·`/컨텐츠관리 아티팩트 목록` 에 "천장" 글자가 없음, 목록에 "확정권:" 줄.
+6. `/상점관리 교환 artifact_exchange 고급확정뽑기권 item:artifact_shard 12` → 가격 ×12. `… 없음` → 해제(구매가 없음이면 안 보임).
